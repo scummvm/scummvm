@@ -222,7 +222,7 @@ class GameObject;
 			// in the obstacles/pathfinding map
 			// Should be 1 while we execute a "character stopped walking" script,
 			// otherwise 0
-			bool global1032;
+			bool global1032 = false;
 
 			// Scene data [di+53B7h] - TODO: Confirm that we use a script variable as well as this thing
 			int chosenDialogueOption = 0;
