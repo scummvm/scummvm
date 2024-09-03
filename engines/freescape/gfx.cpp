@@ -130,7 +130,7 @@ byte getCGAStipple(byte x, int back, int fore) {
 }
 
 void Renderer::clearColorPairArray() {
-	for (int i = 0; i < 15; i++)
+	for (int i = 0; i < 16; i++)
 		_colorPair[i] = 0;
 }
 
