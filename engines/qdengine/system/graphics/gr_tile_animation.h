@@ -77,6 +77,8 @@ public:
 		_progressHandlerContext = context;
 	}
 
+	int find_closest_scale(float *scale);
+
 private:
 
 	grTileCompressionMethod _compression;

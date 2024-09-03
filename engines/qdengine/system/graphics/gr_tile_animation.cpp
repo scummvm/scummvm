@@ -330,4 +330,21 @@ void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float a
 	grDispatcher::instance()->putSpr_rot(position, _frameSize, buf, _hasAlpha, mode, angle);
 }
 
+int grTileAnimation::find_closest_scale(float *scale) {
+	int idx = -1;
+	float temp = 1.0;
+
+	for (int i = 0; i < _scaleArray.size(); i++) {
+		if (fabs(*scale - _scaleArray[i]._scale) < fabs(*scale - temp)) {
+			idx = i;
+			temp = _scaleArray[i]._scale;
+		}
+	}
+
+	if (idx != -1)
+		*scale = *scale / temp;
+
+	return idx;
+}
+
 } // namespace QDEngine
