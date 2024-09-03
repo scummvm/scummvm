@@ -39,6 +39,20 @@ namespace Agi {
  * @param n room number
  */
 void AgiEngine::newRoom(int16 newRoomNr) {
+	// The Gold Rush copy protection quiz is based on the book "California
+	// Gold, story of the rush to riches" by Phyllis and Lou Zauner. It was
+	// published in 1980, eight years before the game, so presumably Sierra
+	// had some sort of licensing agreement. It was not included with the
+	// Software Farm re-release, and that version skips (but does not
+	// reomve) the copy protection.
+	//
+	// Since this was done by the original authors, we disable it in all
+	// versions but give the player the option to re-enable it.
+
+	if (getGameID() == GID_GOLDRUSH && _game.curLogicNr == 129) {
+		newRoomNr = ConfMan.getBool("copy_protection") ? 125 : 73;
+	}
+
 	ScreenObjEntry *screenObjEgo = &_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY];
 
 	// Loading trigger
