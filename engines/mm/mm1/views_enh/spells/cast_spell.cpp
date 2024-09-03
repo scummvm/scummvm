@@ -172,6 +172,10 @@ void CastSpell::castSpell(Character *target) {
 	if (_spellIndex == -1)
 		return;
 
+	Character &c = *g_globals->_currCharacter;
+	c._sp._current = MAX((int)c._sp._current - _requiredSp, 0);
+	c._gems = MAX((int)c._gems - _requiredGems, 0);
+
 	if (!isMagicAllowed()) {
 		g_events->send(InfoMessage(STRING["spells.magic_doesnt_work"]));
 

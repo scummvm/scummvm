@@ -115,7 +115,7 @@ void SpellCasting::setSpell(const Character *chr, int lvl, int num) {
 
 	if (SPELLS_SP_GEMS[spellIndex] < 0 && chr->_sp._current < chr->_level._current)
 		_spellState = SS_NOT_ENOUGH_SP;
-	else if ((lvl - 1) > chr->_sp._current)
+	else if (requiredSp > chr->_sp._current)
 		_spellState = SS_NOT_ENOUGH_SP;
 
 	int requiredGems = ABS(SPELLS_SP_GEMS[spellIndex]);

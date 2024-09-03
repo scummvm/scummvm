@@ -40,7 +40,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  MM:
    - Added MT32/LAPC-1 support for Xeen engine.
    - Fixed Xeen regression which caused some sound effects to stop abruptly.
-   - Fixed spell SP/gem requirements
+   - Fixed spell SP/gem requirements in MM1 enhanced mode, and actually remove spell points & gems when spells are cast.
 
  SCI:
    - Added support for Russian fan-translation of QFG3.
