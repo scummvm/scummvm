@@ -363,7 +363,43 @@ void grTileAnimation::drawFrame_scale(const Vect2i &position, int frame_index, f
 }
 
 byte *grTileAnimation::decode_frame_data(int frame_index, int closest_scale) const {
-	return nullptr;
+	Vect2i frameSize;
+
+	if (closest_scale == -1)
+		frameSize = _frameSize;
+	else
+		frameSize = _scaleArray[closest_scale]._frameSize;
+
+	Vect2i frameTileSize;
+	if (closest_scale == -1)
+		frameTileSize = _frameTileSize;
+	else
+		frameTileSize = _scaleArray[closest_scale]._pitch;
+
+	int numTiles;
+	if (closest_scale == -1)
+		numTiles = 0;
+	else
+		numTiles = _scaleArray[closest_scale]._numTiles;
+
+	byte *buf = (byte *)grDispatcher::instance()->temp_buffer(frameSize.x * frameSize.y * 4);
+
+	const uint32 *index_ptr = &_frameIndex[numTiles] + frameTileSize.x * frameTileSize.y * frame_index;
+
+	for (int i = 0; i < frameTileSize.y; i++) {
+		for (int j = 0; j < frameTileSize.x; j++) {
+			byte *buf_ptr = buf + (i * _frameSize.x + j) * 4;
+			const byte *data_ptr = (const byte *)getTile(*index_ptr++).data();
+			int dx = MIN(_frameSize.x - j * GR_TILE_SPRITE_SIZE_X, GR_TILE_SPRITE_SIZE_X) * 4;
+			for (int k = 0; k < GR_TILE_SPRITE_SIZE_Y; k++) {
+				memcpy(buf_ptr, data_ptr, dx);
+				data_ptr += GR_TILE_SPRITE_SIZE_X * 4;
+				buf_ptr += frameSize.x * 4;
+			}
+		}
+	}
+
+	return buf;
 }
 
 //////////////////////////////////////////////////////////////////////
