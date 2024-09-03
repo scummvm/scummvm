@@ -88,11 +88,172 @@ void Room501::daemon() {
 }
 
 void Room501::parser() {
+	bool lookFlag = player_said_any("look", "look at");
+	bool takeFlag = player_said("take");
+	bool talkFlag = player_said_any("talk", "talk to");
+	bool useFlag = player_said("gear");
+
 	if (player_said("conv501a")) {
 		conv501a();
-	}
-	// TODO
-	else {
+	} else if (_G(kernel).trigger == 747) {
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(1, 509);
+	} else if (lookFlag && player_said(" ")) {
+		digi_play("COM001", 1, 255, -1, 997);
+	} else if (lookFlag && player_said("CLOCK") && _G(flags)[V143] == 1) {
+		digi_play("501R05", 1);
+	} else if (lookFlag && player_said("CLOCK") && _G(flags)[V143] == 0) {
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			player_set_commands_allowed(false);
+			digi_play("501R05", 1, 255, 2);
+			break;
+		case 2:
+			_G(flags)[V143] = 1;
+			digi_play("501R05A", 1);
+			break;
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("POSTCARD RACK")) {
+		digi_play("501R06", 1);
+	} else if (lookFlag && player_said_any("PUFFIN", "PUFFINS", "PUFFIN POSTER") &&
+			_G(flags)[V145] == 1) {
+		digi_play("501R07", 1);
+	} else if (lookFlag && player_said_any("PUFFIN", "PUFFINS", "PUFFIN POSTER") &&
+			_G(flags)[V145] == 0) {
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			player_set_commands_allowed(false);
+			digi_play("501R07", 1, 255, 2);
+			break;
+		case 2:
+			_G(flags)[V145] = 1;
+			digi_play("501R07A", 1);
+			break;
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("STELE")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			player_set_commands_allowed(false);
+
+			if (!_G(flags)[V146]) {
+				digi_play("501R08", 1, 255, 2);
+				_G(flags)[V146]++;
+			} else {
+				if (_G(flags)[V146] < 2)
+					++_G(flags)[V146];
+
+				digi_play("501R08", 1);
+			}
+			break;
+
+		case 2:
+			_G(kernel).trigger_mode = KT_DAEMON;
+			digi_play("501R08A", 1, 255, _G(flags)[V148] ? 612 : 544);
+			break;
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("POSTER")) {
+		// No implementation
+	} else if (takeFlag && player_said("POSTCARD RACK")) {
+		digi_play("COM004", 1, 255, -1, 997);
+	} else if (takeFlag && player_said("MAGAZINES")) {
+		digi_play("COM005", 1, 255, -1, 997);
+	} else if (takeFlag && player_said("STELE")) {
+		digi_play("501R19", 1);
+	} else if (takeFlag && player_said("PUFFIN")) {
+		digi_play("501R20", 1);
+	} else if (takeFlag && player_said("CLOCK")) {
+		digi_play("501R21", 1);
+	} else if (takeFlag) {
+		Common::String digiName = Common::String::format("COM%.3d",
+			imath_ranged_rand(6, 11));
+		digi_play(digiName.c_str(), 1, 255, -1, 997);
+	} else if (player_said("DRIFTWOOD PUFFIN", "AGENT") &&
+		_G(flags)[V041] == 1 && _G(flags)[V144] == 1) {
+		player_set_commands_allowed(false);
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(1, 555);
+	} else if (player_said("DRIFTWOOD PUFFIN", "AGENT") &&
+		(_G(flags)[V041] == 0 || _G(flags)[V144] == 0)) {
+		player_set_commands_allowed(false);
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(1, 594);
+	} else if (useFlag && player_said("SOFA")) {
+		digi_play("COM025", 1, 255, -1, 997);
+	} else if (useFlag && player_said("PHONE")) {
+		digi_play("COM026", 1, 255, -1, 997);
+	} else if (useFlag && !inv_player_has(_G(player).noun)) {
+		digi_play("COM027", 1, 255, -1, 997);
+	} else if (player_said("WALK THROUGH") && !player_been_here(504)) {
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			ws_walk(595, 267, nullptr, 2, 3);
+			break;
+		case 2:
+			player_set_commands_allowed(false);
+			digi_play("501R40", 1);
+			ws_walk(287, 268, nullptr, 3, 9);
+			break;
+		case 3:
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("WALK THROUGH") && player_been_here(504)) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			ws_walk(595, 267, nullptr, 2, 3);
+			break;
+		case 2:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(3);
+			break;
+		case 3:
+			_G(game).setRoom(504);
+			if (_G(flags)[V035] == 1)
+				_G(flags)[V147] = 1;
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("JOURNAL", "STELE")) {
+		if (_G(flags)[V148] == 1) {
+			digi_play("501R34", 1);
+		} else {
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_timing_trigger(1, 544);
+		}
+	} else if (lookFlag && player_said("JOURNAL") && !player_said("STELE")) {
+		digi_play("501R35", 1);
+	} else if (talkFlag && player_said("AGENT")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			player_set_commands_allowed(false);
+			_val1 = 1;
+			_val3 = 3;
+			_val6 = kernel_trigger_create(2);
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_timing_trigger(2, 501);
+			break;
+		case 2:
+			_val3 = 2;
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else {
 		return;
 	}
 
