@@ -168,6 +168,9 @@ void qdAnimation::redraw(int x, int y, int z, float scale, int mode) const {
 	if (check_flag(QD_ANIMATION_FLAG_BLACK_FON))
 		mode |= GR_BLACK_FON;
 
+	if (tileAnimation())
+		tileAnimation()->drawFrame_scale(Vect2i(x, y), get_cur_frame_number(), scale, mode);
+
 	if (const qdAnimationFrame *p = get_cur_frame(scale))
 		p->redraw(x, y, z, scale, mode);
 }

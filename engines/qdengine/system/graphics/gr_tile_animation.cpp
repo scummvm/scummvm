@@ -340,11 +340,37 @@ void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float a
 	grDispatcher::instance()->putSpr_rot(position, _frameSize, buf, _hasAlpha, mode, angle);
 }
 
+void grTileAnimation::drawFrame_scale(const Vect2i &position, int frame_index, float scale, int mode) const {
+	float closest_scale = find_closest_scale(&scale);
+
+	if (wasFrameSizeChanged(frame_index, closest_scale, scale)) {
+		byte *data = decode_frame_data(frame_index, closest_scale);
+
+		Vect2i frameSize;
+
+		if (closest_scale == -1)
+			frameSize = _frameSize;
+		else
+			frameSize =_scaleArray[closest_scale]._frameSize;
+
+		int x = position.x - (int)((float)(frameSize.x / 2) * scale);
+		int y = position.y - (int)((float)(frameSize.y / 2) * scale);
+
+		grDispatcher::instance()->putSpr_a(x, y, frameSize.x, frameSize.y, data, mode, scale);
+	} else {
+		drawFrame(position, frame_index, mode, closest_scale);
+	}
+}
+
+byte *grTileAnimation::decode_frame_data(int frame_index, int closest_scale) const {
+	return nullptr;
+}
+
 //////////////////////////////////////////////////////////////////////
 ////  New version 105 & 106 code
 //////////////////////////////////////////////////////////////////////
 
-int grTileAnimation::find_closest_scale(float *scale) {
+int grTileAnimation::find_closest_scale(float *scale) const {
 	int idx = -1;
 	float temp = 1.0;
 
@@ -361,7 +387,7 @@ int grTileAnimation::find_closest_scale(float *scale) {
 	return idx;
 }
 
-bool grTileAnimation::wasFrameSizeChanged(int frame_index, int scaleIdx, float scale) {
+bool grTileAnimation::wasFrameSizeChanged(int frame_index, int scaleIdx, float scale) const {
 	int sx = _frameSizeArray[frame_index].x;
 	int sy = _frameSizeArray[frame_index].y;
 

@@ -71,14 +71,16 @@ public:
 
 	void drawFrame(const Vect2i &position, int32 frame_index, int32 mode, int closest_scale) const;
 	void drawFrame(const Vect2i &position, int frame_index, float angle, int mode = 0) const;
+	void drawFrame_scale(const Vect2i &position, int frame_index, float scale, int mode) const;
 
 	static void setProgressHandler(CompressionProgressHandler handler, void *context) {
 		_progressHandler = handler;
 		_progressHandlerContext = context;
 	}
 
-	int find_closest_scale(float *scale);
-	bool wasFrameSizeChanged(int frame_index, int scaleIdx, float scale);
+	byte *decode_frame_data(int frame_index, int closest_scale) const;
+	int find_closest_scale(float *scale) const;
+	bool wasFrameSizeChanged(int frame_index, int scaleIdx, float scale) const;
 
 private:
 
