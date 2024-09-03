@@ -278,29 +278,39 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 }
 
 void grTileAnimation::drawFrame(const Vect2i &position, int32 frame_index, int32 mode, int closest_scale) const {
-	Vect2i pos0 = position - _frameSize / 2;
+	Vect2i frameSize = _frameSize;
+	Vect2i frameTileSize = _frameTileSize;
+	int numTiles = 0;
+
+	if (closest_scale != -1) {
+		frameSize = _scaleArray[closest_scale]._frameSize;
+		frameTileSize = _scaleArray[closest_scale]._pitch;
+		numTiles = _scaleArray[closest_scale]._numTiles;
+	}
+
+	Vect2i pos0 = position - frameSize / 2;
 
 	int32 dx = GR_TILE_SPRITE_SIZE_X;
 	int32 dy = GR_TILE_SPRITE_SIZE_Y;
 
 	if (mode & GR_FLIP_HORIZONTAL) {
-		pos0.x += _frameSize.x - GR_TILE_SPRITE_SIZE_X;
+		pos0.x += frameSize.x - GR_TILE_SPRITE_SIZE_X;
 		dx = -dx;
 	}
 	if (mode & GR_FLIP_VERTICAL) {
-		pos0.y += _frameSize.y - GR_TILE_SPRITE_SIZE_Y;
+		pos0.y += frameSize.y - GR_TILE_SPRITE_SIZE_Y;
 		dy = -dy;
 	}
 
 //	grDispatcher::instance()->Rectangle(position.x - _frameSize.x/2, position.y - _frameSize.y/2, _frameSize.x, _frameSize.y, 0xFFFFF, 0, GR_OUTLINED);
 
-	const uint32 *index_ptr = &_frameIndex[0] + _frameTileSize.x * _frameTileSize.y * frame_index;
+	const uint32 *index_ptr = &_frameIndex[numTiles] + frameTileSize.x * frameTileSize.y * frame_index;
 
 	Vect2i pos = pos0;
-	for (int32 i = 0; i < _frameTileSize.y; i++) {
+	for (int32 i = 0; i < frameTileSize.y; i++) {
 		pos.x = pos0.x;
 
-		for (int32 j = 0; j < _frameTileSize.x; j++) {
+		for (int32 j = 0; j < frameTileSize.x; j++) {
 			grDispatcher::instance()->putTileSpr(pos.x, pos.y, getTile(*index_ptr++), _hasAlpha, mode);
 			pos.x += dx;
 		}
