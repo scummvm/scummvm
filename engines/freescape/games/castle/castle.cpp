@@ -51,6 +51,8 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_playerSteps.push_back(120);
 	_playerStepIndex = 2;
 
+	_angleRotations.push_back(5);
+
 	_playerWidth = 8;
 	_playerDepth = 8;
 	_stepUpDistance = 32;
