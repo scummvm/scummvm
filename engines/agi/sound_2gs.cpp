@@ -456,16 +456,15 @@ void SoundGen2GS::setProgramChangeMapping(const IIgsMidiProgramMapping *mapping)
 	_progToInst = mapping;
 }
 
-IIgsMidi::IIgsMidi(uint8 *data, uint32 len, int resnum) : AgiSound() {
-	_data = data; // Save the resource pointer
-	_ptr = _data + 2; // Set current position to just after the header
-	_len = len;  // Save the resource's length
-	_type = READ_LE_UINT16(data); // Read sound resource's type
-	_ticks = 0;
-	_isValid = (_type == AGI_SOUND_MIDI) && (_data != nullptr) && (_len >= 2);
+IIgsMidi::IIgsMidi(byte resourceNr, byte *data, uint32 length, uint16 type) :
+	AgiSound(resourceNr, data, length, type) {
 
-	if (!_isValid) // Check for errors
-		warning("Error creating Apple IIGS midi sound from resource %d (Type %d, length %d)", resnum, _type, len);
+	_ptr = _data + 2; // Set current position to just after the header
+	_ticks = 0;
+	bool isValid = (_type == AGI_SOUND_MIDI) && (_data != nullptr) && (_length >= 2);
+
+	if (!isValid) // Check for errors
+		warning("Error creating Apple IIGS midi sound from resource %d (Type %d, length %d)", _resourceNr, _type, _length);
 }
 
 /**
@@ -481,8 +480,10 @@ static bool convertWave(Common::SeekableReadStream &source, int8 *dest, uint len
 	return !(source.eos() || source.err());
 }
 
-IIgsSample::IIgsSample(uint8 *data, uint32 len, int16 resourceNr) : AgiSound() {
-	Common::MemoryReadStream stream(data, len, DisposeAfterUse::YES);
+IIgsSample::IIgsSample(byte resourceNr, byte *data, uint32 length, uint16 type) :
+	_isValid(false), AgiSound(resourceNr, data, length, type) {
+
+	Common::MemoryReadStream stream(_data, _length, DisposeAfterUse::NO);
 
 	_sample = nullptr;
 
@@ -521,7 +522,7 @@ IIgsSample::IIgsSample(uint8 *data, uint32 len, int16 resourceNr) : AgiSound() {
 	}
 
 	if (!_isValid) // Check for errors
-		warning("Error creating Apple IIGS sample from resource %d (Type %d, length %d)", resourceNr, _header.type, len);
+		warning("Error creating Apple IIGS sample from resource %d (Type %d, length %d)", resourceNr, _header.type, _length);
 }
 
 

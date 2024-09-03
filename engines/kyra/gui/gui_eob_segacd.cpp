@@ -927,7 +927,7 @@ void GUI_EoB_SegaCD::memorizePrayMenuPrintString(int spellId, int bookPageIndex,
 		Common::String s = Common::String::format(_vm->_menuStringsMgc[0], spellType ? _vm->_clericSpellList[spellId] : _vm->_mageSpellList[spellId], _numAssignedSpellsOfType[spellId * 2 - 2]);
 		if (_vm->gameFlags().lang == Common::JA_JPN) {
 			for (int i = 0; i < 19; ++i) {
-				if (s[i] == -34 || s[i] == -33)
+				if ((int8)s[i] == -34 || (int8)s[i] == -33)
 					s.insertChar(' ', 18);
 			}
 		}

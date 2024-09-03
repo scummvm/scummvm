@@ -327,15 +327,19 @@ Common::Error SciEngine::run() {
 
 		// Check if the selected render mode is available for the game. This is quite specific for each game.
 		// Sometime it is only EGA, sometimes only CGA b/w without CGA 4 colors, etc. Also set default mode if undithering is enabled.
+		Common::Platform p = getPlatform();
 		if ((renderMode == Common::kRenderEGA && (((getSciVersion() <= SCI_VERSION_0_LATE || getSciVersion() == SCI_VERSION_1_EGA_ONLY) && undither) ||
-			(getSciVersion() >= SCI_VERSION_1_EARLY && getSciVersion() <= SCI_VERSION_1_1 && !SCI1_EGADriver::validateMode()))) ||
-			(renderMode == Common::kRenderVGAGrey && !SCI1_VGAGreyScaleDriver::validateMode()) ||
-			(renderMode == Common::kRenderCGA && !SCI0_CGADriver::validateMode()) ||
-			(renderMode == Common::kRenderCGA_BW && !SCI0_CGABWDriver::validateMode()) ||
-			((renderMode == Common::kRenderHercA || renderMode == Common::kRenderHercG) && !SCI0_HerculesDriver::validateMode()))
-			renderMode = Common::kRenderDefault;
+			(getSciVersion() >= SCI_VERSION_1_EARLY && getSciVersion() <= SCI_VERSION_1_1 && !SCI1_EGADriver::validateMode(p)))) ||
+			(renderMode == Common::kRenderVGAGrey && !SCI1_VGAGreyScaleDriver::validateMode(p)) ||
+			(renderMode == Common::kRenderCGA && !SCI0_CGADriver::validateMode(p)) ||
+			(renderMode == Common::kRenderCGA_BW && !SCI0_CGABWDriver::validateMode(p)) ||
+			((renderMode == Common::kRenderHercA || renderMode == Common::kRenderHercG) && !SCI0_HerculesDriver::validateMode(p)) ||
+			(renderMode == Common::kRenderPC98_8c && ((getSciVersion() <= SCI_VERSION_01 && !SCI0_PC98Gfx8ColorsDriver::validateMode(p)) ||
+			(getSciVersion() > SCI_VERSION_01 && !SCI1_PC98Gfx8ColorsDriver::validateMode(p)))) ||
+			(renderMode == Common::kRenderPC98_16c && undither))
+				renderMode = Common::kRenderDefault;
 
-		// Disable undithering for CGA and Hercules modes
+		// Disable undithering for CGA, Hercules and other unsuitable video modes
 		if (renderMode != Common::kRenderDefault)
 			undither = false;
 
@@ -380,7 +384,7 @@ Common::Error SciEngine::run() {
 	// we try to find the super class address of the game object, we can't do that earlier
 	const Object *gameObject = segMan->getObject(_gameObjectAddress);
 	if (!gameObject) {
-		warning("Could not get game object, aborting...");
+		warning("Could not get game object, aborting");
 		return Common::kUnknownError;
 	}
 

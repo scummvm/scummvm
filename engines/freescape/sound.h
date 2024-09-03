@@ -34,8 +34,11 @@ struct soundFx {
 };
 
 struct soundUnitZX {
+	bool isRaw;
 	uint16 freqTimesSeconds;
 	uint16 tStates;
+	float rawFreq;
+	uint32 rawLengthus;
 	float multiplier;
 };
 

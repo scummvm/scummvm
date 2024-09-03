@@ -422,8 +422,6 @@ class MiniscriptThread {
 public:
 	MiniscriptThread(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msgProps, const Common::SharedPtr<MiniscriptProgram> &program, const Common::SharedPtr<MiniscriptReferences> &refs, Modifier *modifier);
 
-	static void runOnVThread(VThread &vthread, const Common::SharedPtr<MiniscriptThread> &thread);
-
 	void error(const Common::String &message);
 
 	const Common::SharedPtr<MiniscriptProgram> &getProgram() const;
@@ -444,6 +442,13 @@ public:
 
 	void createWriteIncomingDataProxy(DynamicValueWriteProxy &proxy);
 
+	void retryInstruction();
+
+	struct ResumeThreadCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_1(Common::SharedPtr<MiniscriptThread>, thread);
+	};
+
 private:
 	struct IncomingDataWriteInterface {
 		static MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr ptrOrOffset);
@@ -451,18 +456,16 @@ private:
 		static MiniscriptInstructionOutcome refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index);
 	};
 
-	struct ResumeTaskData {
-		Common::SharedPtr<MiniscriptThread> thread;
-	};
+	MiniscriptInstructionOutcome runNextInstruction();
 
-	static VThreadState resumeTask(const ResumeTaskData &data);
-	VThreadState resume(const ResumeTaskData &data);
+	VThreadState resume(MiniscriptThread *thread);
 
 	MiniscriptInstructionOutcome tryLoadVariable(MiniscriptStackValue &stackValue);
 
 	Common::SharedPtr<MiniscriptProgram> _program;
 	Common::SharedPtr<MiniscriptReferences> _refs;
 	Common::SharedPtr<MessageProperties> _msgProps;
+
 	Modifier *_modifier;
 	Runtime *_runtime;
 	Common::Array<MiniscriptStackValue> _stack;
@@ -470,6 +473,8 @@ private:
 	size_t _currentInstruction;
 	bool _failed;
 };
+
+MiniscriptInstructionOutcome miniscriptIgnoreFailure(MiniscriptInstructionOutcome outcome);
 
 } // End of namespace MTropolis
 

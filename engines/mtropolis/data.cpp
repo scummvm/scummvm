@@ -1575,7 +1575,7 @@ DataReadErrorCode VectorMotionModifier::load(DataReader &reader) {
 		|| !reader.readU16(unknown1) || !reader.readU8(vecSourceLength) || !reader.readU8(vecStringLength)
 		|| !reader.readNonTerminatedStr(vecSource, vecSourceLength)
 		/*|| !reader.readNonTerminatedStr(vecString, vecStringLength)*/)	// mTropolis bug!
-		return kDataReadErrorNone;
+		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
 }
@@ -1594,7 +1594,7 @@ DataReadErrorCode SceneTransitionModifier::load(DataReader &reader) {
 	if (!enableWhen.load(reader) || !disableWhen.load(reader) || !reader.readU16(transitionType)
 		|| !reader.readU16(direction) || !reader.readU16(unknown3) || !reader.readU16(steps)
 		|| !reader.readU32(duration) || !reader.readBytes(unknown5))
-		return kDataReadErrorNone;
+		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
 }
@@ -1614,7 +1614,7 @@ DataReadErrorCode ElementTransitionModifier::load(DataReader &reader) {
 	if (!enableWhen.load(reader) || !disableWhen.load(reader) || !reader.readU16(revealType)
 		|| !reader.readU16(transitionType) || !reader.readU16(unknown3) || !reader.readU16(unknown4)
 		|| !reader.readU16(steps) || !reader.readU16(rate))
-		return kDataReadErrorNone;
+		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
 }

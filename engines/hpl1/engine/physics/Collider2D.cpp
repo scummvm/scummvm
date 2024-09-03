@@ -132,7 +132,7 @@ tFlag cCollider2D::CollideBody(cBody2D *apBody, cCollideData2D *apData) {
 				apBody->ResetLastPosition();
 
 				apBody->UpdateCollisionMesh();
-				// not really needed untill layer change
+				// not really needed until layer change
 				CollideRect = apBody->GetBoundingBox();
 
 				lCollision |= eFlagBit_0;
@@ -176,7 +176,7 @@ tFlag cCollider2D::CollideBody(cBody2D *apBody, cCollideData2D *apData) {
 				apBody->ResetLastPosition();
 
 				// apBody->UpdateCollisionMesh();
-				// not really needed untill layer change
+				// not really needed until layer change
 				CollideRect = apBody->GetBoundingBox();
 
 				lCollision |= eFlagBit_0;

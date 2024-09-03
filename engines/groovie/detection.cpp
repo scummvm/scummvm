@@ -97,7 +97,7 @@ const int BASE_FLAGS = ADGF_NO_FLAGS;
 	GROOVIEGAME("tlc", extra, f1, x1, s1, f2, x2, s2, language, platform, flags | ADGF_CD, GUIO4(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_SLIMHOTSPOTS, GAMEOPTION_SPEEDRUN), kGroovieTLC)
 
 #define TLCDVDENTRY(f1, x1, s1, f2, x2, s2, language, platform) \
-	GROOVIEGAME("tlc", _s("Missing game code"), f1, x1, s1, f2, x2, s2, language, platform, ADGF_UNSUPPORTED | ADGF_DVD, GUIO4(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_SLIMHOTSPOTS, GAMEOPTION_SPEEDRUN), kGroovieTLC)
+	GROOVIEGAME("tlc", MetaEngineDetection::GAME_NOT_IMPLEMENTED, f1, x1, s1, f2, x2, s2, language, platform, ADGF_UNSUPPORTED | ADGF_DVD, GUIO4(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_SLIMHOTSPOTS, GAMEOPTION_SPEEDRUN), kGroovieTLC)
 
 #define TLCDEMOENTRY(f1, x1, s1, f2, x2, s2, language, platform, flags) \
 	GROOVIEGAME("tlc", "Demo", f1, x1, s1, f2, x2, s2, language, platform, flags | ADGF_DEMO, GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GUIO_NOLAUNCHLOAD), kGroovieTLC)

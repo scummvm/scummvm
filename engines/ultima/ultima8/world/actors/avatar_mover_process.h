@@ -22,6 +22,7 @@
 #ifndef WORLD_ACTORS_AVATARMOVERPROCESS_H
 #define WORLD_ACTORS_AVATARMOVERPROCESS_H
 
+#include "ultima/ultima8/metaengine.h"
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/world/actors/animation.h"
@@ -61,6 +62,10 @@ public:
 	}
 	void onMouseDown(int button, int32 mx, int32 my);
 	void onMouseUp(int button);
+
+	// Return true if handled, false if not.
+	bool onActionDown(KeybindingAction action);
+	bool onActionUp(KeybindingAction action);
 
 	enum MovementFlags {
 		MOVE_MOUSE_DIRECTION = 0x001,

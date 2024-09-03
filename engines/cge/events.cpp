@@ -49,71 +49,55 @@ Sprite *Keyboard::setClient(Sprite *spr) {
 	return spr;
 }
 
-bool Keyboard::getKey(Common::Event &event) {
-	Common::KeyCode keycode = event.kbd.keycode;
+void Keyboard::handleAction(Common::Event &event) {
+	_keyAlt = false;
 
-	if (((keycode == Common::KEYCODE_LALT) || (keycode == Common::KEYCODE_RALT)) && event.type == Common::EVENT_KEYDOWN)
-		_keyAlt = true;
-	else
-		_keyAlt = false;
-
-	switch (keycode) {
-	case Common::KEYCODE_F1:
-		if (event.type == Common::EVENT_KEYUP)
-			return false;
+	switch (event.customType) {
+	case kActionInfo:
 		// Display ScummVM version and translation strings
 		for (int i = 0; i < 5; i++)
 			_vm->_commandHandler->addCommand(kCmdInf, 1, kShowScummVMVersion + i, nullptr);
-		return false;
-	case Common::KEYCODE_F5:
+		break;
+	case kActionSave:
 		_vm->saveGameDialog();
-		return false;
-	case Common::KEYCODE_F7:
+		break;
+	case kActionLoad:
 		_vm->loadGameDialog();
-		return false;
-	case Common::KEYCODE_x:
-		if (event.type == Common::EVENT_KEYDOWN && (event.kbd.flags & Common::KBD_ALT)) {
-			_vm->quit();
-			return false;
+		break;
+	case kActionQuit:
+		_vm->quit();
+		break;
+	case kActionEscape:
+		if (_client) {
+			CGEEvent &evt = _vm->_eventManager->getNextEvent();
+			evt._x = 0;
+			evt._y = 0;
+			evt._mask = kEventEsc;    // Event mask
+			evt._spritePtr = _client; // Sprite pointer
 		}
 		break;
-	case Common::KEYCODE_0:
-	case Common::KEYCODE_1:
-	case Common::KEYCODE_2:
-	case Common::KEYCODE_3:
-	case Common::KEYCODE_4:
-		if (event.kbd.flags & Common::KBD_ALT) {
-			_vm->_commandHandler->addCommand(kCmdLevel, -1, keycode - Common::KEYCODE_0, nullptr);
-			return false;
-		}
-		// fall through
-	case Common::KEYCODE_5:
-	case Common::KEYCODE_6:
-	case Common::KEYCODE_7:
-	case Common::KEYCODE_8:
-		if (event.type == Common::EVENT_KEYDOWN && !(event.kbd.flags & Common::KBD_ALT) && keycode != Common::KEYCODE_0) {
-			_vm->selectPocket(keycode - Common::KEYCODE_1);
-			return false;
-		}
+	case kActionAltDice:
+		_keyAlt = true;
+		break;
+	case kActionInv1:
+	case kActionInv2:
+	case kActionInv3:
+	case kActionInv4:
+	case kActionInv5:
+	case kActionInv6:
+	case kActionInv7:
+	case kActionInv8:
+		_vm->selectPocket(event.customType - kActionInv1);
+		break;
+	case kActionLevel0:
+	case kActionLevel1:
+	case kActionLevel2:
+	case kActionLevel3:
+	case kActionLevel4:
+		_vm->_commandHandler->addCommand(kCmdLevel, -1, event.customType - kActionLevel0, nullptr);
 		break;
 	default:
 		break;
-	}
-
-	return true;
-}
-
-void Keyboard::newKeyboard(Common::Event &event) {
-	if (!getKey(event))
-		return;
-
-	if ((event.type == Common::EVENT_KEYDOWN) && (_client)) {
-		CGEEvent &evt = _vm->_eventManager->getNextEvent();
-		evt._x = 0;
-		evt._y = 0;
-		evt._keyCode = event.kbd.keycode;   // Keycode
-		evt._mask = kEventKeyb;             // Event mask
-		evt._spritePtr = _client;           // Sprite pointer
 	}
 }
 
@@ -180,7 +164,6 @@ void Mouse::newMouse(Common::Event &event) {
 	CGEEvent &evt = _vm->_eventManager->getNextEvent();
 	evt._x = event.mouse.x;
 	evt._y = event.mouse.y;
-	evt._keyCode = Common::KEYCODE_INVALID;
 	evt._spritePtr = _vm->spriteAt(evt._x, evt._y);
 
 	switch (event.type) {
@@ -227,10 +210,9 @@ EventManager::EventManager(CGEEngine *vm) : _vm(vm){
 void EventManager::poll() {
 	while (g_system->getEventManager()->pollEvent(_event)) {
 		switch (_event.type) {
-		case Common::EVENT_KEYDOWN:
-		case Common::EVENT_KEYUP:
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 			// Handle keyboard events
-			_vm->_keyboard->newKeyboard(_event);
+			_vm->_keyboard->handleAction(_event);
 			handleEvents();
 			break;
 		case Common::EVENT_MOUSEMOVE:
@@ -253,7 +235,7 @@ void EventManager::handleEvents() {
 		CGEEvent e = _eventQueue[_eventQueueTail];
 		if (e._mask) {
 			if (_vm->_mouse->_hold && e._spritePtr != _vm->_mouse->_hold)
-				_vm->_mouse->_hold->touch(e._mask | kEventAttn, e._x - _vm->_mouse->_hold->_x, e._y - _vm->_mouse->_hold->_y, e._keyCode);
+				_vm->_mouse->_hold->touch(e._mask | kEventAttn, e._x - _vm->_mouse->_hold->_x, e._y - _vm->_mouse->_hold->_y);
 
 			// update mouse cursor position
 			if (e._mask & kMouseRoll)
@@ -261,12 +243,9 @@ void EventManager::handleEvents() {
 
 			// activate current touched SPRITE
 			if (e._spritePtr) {
-				if (e._mask & kEventKeyb)
-					e._spritePtr->touch(e._mask, e._x, e._y, e._keyCode);
-				else
-					e._spritePtr->touch(e._mask, e._x - e._spritePtr->_x, e._y - e._spritePtr->_y, e._keyCode);
+				e._spritePtr->touch(e._mask, e._x - e._spritePtr->_x, e._y - e._spritePtr->_y);
 			} else if (_vm->_sys)
-				_vm->_sys->touch(e._mask, e._x, e._y, e._keyCode);
+				_vm->_sys->touch(e._mask, e._x, e._y);
 
 			if (e._mask & kMouseLeftDown) {
 				_vm->_mouse->_hold = e._spritePtr;

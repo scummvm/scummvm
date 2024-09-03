@@ -62,7 +62,7 @@ void _prim_route_builder::Add_barrier(RouteBarrier *new_barrier) {
 
 void _prim_route_builder::Give_barrier_list(_route_description *route) {
 	// this may seem daft, but now we're giving the barriers back - for NETHACK diagnostics, not the logic
-	// this wont be called in final .exe
+	// this won't be called in final .exe
 
 	if (!total_points) {
 		route->number_of_diag_bars = 0;
@@ -94,7 +94,7 @@ void _prim_route_builder::Give_route(_route_description *route) {
 	if (!final_points)
 		Fatal_error("_prim_route_builder::Give_route no route to give!");
 
-	// do a check for length exceeding MAX_final_route as this isnt really done anyway - it will have already scribbled of course but hey we're hanging on in there
+	// do a check for length exceeding MAX_final_route as this isn't really done anyway - it will have already scribbled of course but hey we're hanging on in there
 
 	if (final_points + 1 >= MAX_final_route)
 		Fatal_error("route too big");
@@ -167,7 +167,7 @@ _route_stat _prim_route_builder::Calc_route(PXreal startx, PXreal startz, PXreal
 
 		//		test against all our lines
 		for (l = 0; l < total_points - 2; l += 2) {
-			//			dont test point J against the line it is derived from
+			//			don't test point J against the line it is derived from
 			if (l != (j & 0xfffffffe)) {
 				if (Get_intersect(/*firing line from*/ barrier_list[j].x, barrier_list[j].z, /*firing line to*/ barrier_list[to].x, barrier_list[to].z,
 				                  /*barrier*/ barrier_list[l].x, barrier_list[l].z, barrier_list[l + 1].x, barrier_list[l + 1].z)) {
@@ -226,7 +226,7 @@ _route_stat _prim_route_builder::Calc_route(PXreal startx, PXreal startz, PXreal
 						// test point thisp to point lastp
 						// test against all our lines
 						for (l = 0; l < total_points - 2; l += 2) {
-							// dont test point J against the line it is derived from
+							// don't test point J against the line it is derived from
 							if ((l != (thisp & 0xfffffffe)) && (l != (lastp & 0xfffffffe))) {
 								if (Get_intersect(/*firing line*/ barrier_list[thisp].x, barrier_list[thisp].z, barrier_list[lastp].x,
 								                  barrier_list[lastp].z,

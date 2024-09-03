@@ -22,6 +22,7 @@
 #include "common/tokenizer.h"
 #include "common/events.h"
 #include "graphics/cursorman.h"
+#include "graphics/framelimiter.h"
 
 #include "hypno/grammar.h"
 #include "hypno/hypno.h"
@@ -278,7 +279,15 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_objMissesAllowed[0] = arc->objMissesAllowed[0];
 	_objMissesAllowed[1] = arc->objMissesAllowed[1];
 
+	bool vsync = g_system->getFeatureState(OSystem::kFeatureVSync);
+	// Disable vsync for arcade sequences, since these require a fixed frame rate
+	g_system->beginGFXTransaction();
+	g_system->setFeatureState(OSystem::kFeatureVSync, false);
+	g_system->endGFXTransaction();
+
 	debugC(1, kHypnoDebugArcade, "Using frame delay: %d", arc->frameDelay);
+	Graphics::FrameLimiter limiter(g_system, 1000.0 / arc->frameDelay);
+	limiter.startFrame();
 
 	Common::Event event;
 	while (!shouldQuit()) {
@@ -555,8 +564,15 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			drawAmmo();
 		}
 
-		g_system->delayMillis(arc->frameDelay);
+		limiter.delayBeforeSwap();
+		drawScreen();
+		limiter.startFrame();
 	}
+
+	g_system->beginGFXTransaction();
+	// Restore vsync state
+	g_system->setFeatureState(OSystem::kFeatureVSync, vsync);
+	g_system->endGFXTransaction();
 
 	// Deallocate shoots
 	for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
@@ -631,7 +647,6 @@ void HypnoEngine::drawCursorArcade(const Common::Point &mousePos) {
 	else
 		changeCursor("arcade");
 
-	g_system->copyRectToScreen(_compositeSurface->getPixels(), _compositeSurface->pitch, 0, 0, _screenW, _screenH);
 }
 
 bool HypnoEngine::clickedPrimaryShoot(const Common::Point &mousePos) { return true; }

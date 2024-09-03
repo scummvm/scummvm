@@ -2210,7 +2210,7 @@ void ToucheEngine::drawAmountOfMoneyInInventory() {
 
 void ToucheEngine::packInventoryItems(int index) {
 	int16 *p = _inventoryStateTable[index].itemsList;
-	for (int i = 0; *p != -1; ++i, ++p) {
+	for (; *p != -1; ++p) {
 		if (p[0] == 0 && p[1] != -1) {
 			p[0] = p[1];
 			p[1] = 0;
@@ -2241,7 +2241,7 @@ void ToucheEngine::addItemToInventory(int inventory, int16 item) {
 		appendItemToInventoryList(inventory);
 		assert(inventory >= 0 && inventory < 3);
 		int16 *p = _inventoryStateTable[inventory].itemsList;
-		for (int i = 0; *p != -1; ++i, ++p) {
+		for (; *p != -1; ++p) {
 			if (*p == 0) {
 				*p = item;
 				_inventoryItemsInfoTable[item] = inventory | 0x10;
@@ -2260,7 +2260,7 @@ void ToucheEngine::removeItemFromInventory(int inventory, int16 item) {
 	} else {
 		assert(inventory >= 0 && inventory < 3);
 		int16 *p = _inventoryStateTable[inventory].itemsList;
-		for (int i = 0; *p != -1; ++i, ++p) {
+		for (; *p != -1; ++p) {
 			if (*p == item) {
 				*p = 0;
 				packInventoryItems(0);

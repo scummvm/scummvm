@@ -63,6 +63,8 @@ public:
 	bool isPlanar() override;
 	bool _cyclingColors;
 
+	bool isLineButNotStraight();
+
 	Common::String _conditionSource;
 	FCLInstructionVector _condition;
 

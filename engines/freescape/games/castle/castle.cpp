@@ -23,6 +23,11 @@
 #include "common/memstream.h"
 #include "common/config-manager.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
+#include "common/translation.h"
+
 #include "freescape/freescape.h"
 #include "freescape/games/castle/castle.h"
 #include "freescape/language/8bitDetokeniser.h"
@@ -56,12 +61,31 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_optionTexture = nullptr;
 	_keysFrame = nullptr;
 	_spiritsMeterIndicatorFrame = nullptr;
+	_strenghtBackgroundFrame = nullptr;
+	_strenghtBarFrame = nullptr;
+	_thunderFrame = nullptr;
 	_menu = nullptr;
+	_menuButtons = nullptr;
+
+	_menuCrawlIndicator = nullptr;
+	_menuWalkIndicator = nullptr;
+	_menuRunIndicator = nullptr;
+	_menuFxOnIndicator = nullptr;
+	_menuFxOffIndicator = nullptr;
+
+	_flagFrames[0] = nullptr;
+	_flagFrames[1] = nullptr;
+	_flagFrames[2] = nullptr;
+	_flagFrames[3] = nullptr;
 
 	_numberKeys = 0;
 	_spiritsDestroyed = 0;
 	_spiritsMeter = 32;
 	_spiritsToKill = 26;
+
+	_soundIndexStart = 9;
+	_soundIndexAreaChange = 5;
+
 }
 
 CastleEngine::~CastleEngine() {
@@ -69,6 +93,84 @@ CastleEngine::~CastleEngine() {
 		_option->free();
 		delete _option;
 	}
+
+	for (int i = 0; i < int(_strenghtWeightsFrames.size()); i++) {
+		if (_strenghtWeightsFrames[i]) {
+			_strenghtWeightsFrames[i]->free();
+			delete _strenghtWeightsFrames[i];
+		}
+	}
+}
+
+void CastleEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) {
+	FreescapeEngine::initKeymaps(engineKeyMap, infoScreenKeyMap, target);
+	Common::Action *act;
+
+	act = new Common::Action("SELECTPRINCE", _("Select Prince"));
+	act->setCustomEngineActionEvent(kActionSelectPrince);
+	act->addDefaultInputMapping("1");
+	infoScreenKeyMap->addAction(act);
+
+	act = new Common::Action("SELECTPRINCESS", _("Select Princess"));
+	act->setCustomEngineActionEvent(kActionSelectPrincess);
+	act->addDefaultInputMapping("2");
+	infoScreenKeyMap->addAction(act);
+
+	act = new Common::Action("SAVE", _("Save Game"));
+	act->setCustomEngineActionEvent(kActionSave);
+	act->addDefaultInputMapping("s");
+	infoScreenKeyMap->addAction(act);
+
+	act = new Common::Action("LOAD", _("Load Game"));
+	act->setCustomEngineActionEvent(kActionLoad);
+	act->addDefaultInputMapping("l");
+	infoScreenKeyMap->addAction(act);
+
+	act = new Common::Action("QUIT", _("Quit Game"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	if (isDOS() || isCPC())
+		act->addDefaultInputMapping("ESCAPE");
+	else if (isSpectrum())
+		act->addDefaultInputMapping("1");
+
+	infoScreenKeyMap->addAction(act);
+
+	act = new Common::Action("TOGGLESOUND", _("Toggle Sound"));
+	act->setCustomEngineActionEvent(kActionToggleSound);
+	act->addDefaultInputMapping("t");
+	infoScreenKeyMap->addAction(act);
+
+	act = new Common::Action("ROTL", _("Rotate Left"));
+	act->setCustomEngineActionEvent(kActionRotateLeft);
+	act->addDefaultInputMapping("z");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("ROTR", _("Rotate Right"));
+	act->setCustomEngineActionEvent(kActionRotateRight);
+	act->addDefaultInputMapping("x");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("RUNMODE", _("Run"));
+	act->setCustomEngineActionEvent(kActionRunMode);
+	act->addDefaultInputMapping("r");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("WALK", _("Walk"));
+	act->setCustomEngineActionEvent(kActionRiseOrFlyUp);
+	act->addDefaultInputMapping("JOY_B");
+	act->addDefaultInputMapping("w");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("CRAWL", _("Crawl"));
+	act->setCustomEngineActionEvent(kActionLowerOrFlyDown);
+	act->addDefaultInputMapping("JOY_Y");
+	act->addDefaultInputMapping("c");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("FACEFRWARD", _("Face Forward"));
+	act->setCustomEngineActionEvent(kActionFaceForward);
+	act->addDefaultInputMapping("f");
+	engineKeyMap->addAction(act);
 }
 
 void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
@@ -94,9 +196,9 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (areaID == _startArea && entranceID == _startEntrance) {
 		_yaw = 310;
 		_pitch = 0;
-		playSound(9, false);
+		playSound(_soundIndexStart, false);
 	} else {
-		playSound(5, false);
+		playSound(_soundIndexAreaChange, false);
 	}
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
@@ -158,30 +260,30 @@ void CastleEngine::endGame() {
 
 void CastleEngine::pressedKey(const int keycode) {
 	// This code is duplicated in the DrillerEngine::pressedKey (except for the J case)
-	if (keycode == Common::KEYCODE_z) {
+	if (keycode == kActionRotateLeft) {
 		rotate(-_angleRotations[_angleRotationIndex], 0);
-	} else if (keycode == Common::KEYCODE_x) {
+	} else if (keycode == kActionRotateRight) {
 		rotate(_angleRotations[_angleRotationIndex], 0);
 	} else if (keycode == Common::KEYCODE_s) {
 		// TODO: show score
-	} else if (keycode ==  Common::KEYCODE_r) {
+	} else if (keycode == kActionRunMode) {
 		if (_playerHeightNumber == 0)
 			rise();
 		// TODO: raising can fail if there is no room, so the action should fail
 		_playerStepIndex = 2;
 		insertTemporaryMessage(_messagesList[15], _countdown - 2);
-	} else if (keycode == Common::KEYCODE_w) {
+	} else if (keycode == kActionRiseOrFlyUp) {
 		if (_playerHeightNumber == 0)
 			rise();
 		// TODO: raising can fail if there is no room, so the action should fail
 		_playerStepIndex = 1;
 		insertTemporaryMessage(_messagesList[14], _countdown - 2);
-	} else if (keycode == Common::KEYCODE_c) {
+	} else if (keycode == kActionLowerOrFlyDown) {
 		if (_playerHeightNumber == 1)
 			lower();
 		_playerStepIndex = 0;
 		insertTemporaryMessage(_messagesList[13], _countdown - 2);
-	} else if (keycode == Common::KEYCODE_f) {
+	} else if (keycode == kActionFaceForward) {
 		_pitch = 0;
 		updateCamera();
 	}
@@ -189,6 +291,10 @@ void CastleEngine::pressedKey(const int keycode) {
 
 void CastleEngine::drawInfoMenu() {
 	PauseToken pauseToken = pauseEngine();
+	if (_savedScreen) {
+		_savedScreen->free();
+		delete _savedScreen;
+	}
 	_savedScreen = _gfx->getScreenshot();
 
 	uint8 r, g, b;
@@ -205,7 +311,7 @@ void CastleEngine::drawInfoMenu() {
 	if (isDOS()) {
 		g_system->lockMouse(false);
 		g_system->showMouse(true);
-		surface->copyRectToSurface(*_menu, 40, 33, Common::Rect(0, 0, _menu->w, _menu->h));
+		surface->copyRectToSurface(*_menu, 47, 35, Common::Rect(0, 0, _menu->w, _menu->h));
 
 		_gfx->readFromPalette(10, r, g, b);
 		front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
@@ -220,8 +326,8 @@ void CastleEngine::drawInfoMenu() {
 
 			// Events
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_l) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionLoad) {
 					_gfx->setViewport(_fullscreenViewArea);
 					_eventManager->purgeKeyboardEvents();
 					loadGameDialog();
@@ -231,7 +337,7 @@ void CastleEngine::drawInfoMenu() {
 					}
 
 					_gfx->setViewport(_viewArea);
-				} else if (event.kbd.keycode == Common::KEYCODE_s) {
+				} else if (event.customType == kActionSave) {
 					_gfx->setViewport(_fullscreenViewArea);
 					_eventManager->purgeKeyboardEvents();
 					saveGameDialog();
@@ -241,15 +347,15 @@ void CastleEngine::drawInfoMenu() {
 					}
 
 					_gfx->setViewport(_viewArea);
-				} else if (isDOS() && event.kbd.keycode == Common::KEYCODE_t) {
+				} else if (isDOS() && event.customType == kActionToggleSound) {
 					// TODO
-				} else if ((isDOS() || isCPC()) && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					_forceEndGame = true;
-					cont = false;
-				} else if (isSpectrum() && event.kbd.keycode == Common::KEYCODE_1) {
+				} else if ((isDOS() || isCPC() || isSpectrum()) && event.customType == kActionEscape) {
 					_forceEndGame = true;
 					cont = false;
 				} else
+					cont = false;
+				break;
+			case Common::EVENT_KEYDOWN:
 					cont = false;
 				break;
 			case Common::EVENT_SCREEN_CHANGED:
@@ -278,6 +384,7 @@ void CastleEngine::drawInfoMenu() {
 
 	_savedScreen->free();
 	delete _savedScreen;
+	_savedScreen = nullptr;
 	surface->free();
 	delete surface;
 	delete menuTexture;
@@ -330,6 +437,17 @@ void CastleEngine::executePrint(FCLInstruction &instruction) {
 	insertTemporaryMessage(_messagesList[index], _countdown - 3);
 }
 
+
+void CastleEngine::loadAssets() {
+	FreescapeEngine::loadAssets();
+	if (isDOS()) {
+		for (auto &it : _areaMap)
+			it._value->addStructure(_areaMap[255]);
+
+		_areaMap[1]->addFloor();
+		_areaMap[2]->addFloor();
+	}
+}
 
 void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int number) {
 	file->seek(offset);
@@ -399,7 +517,7 @@ void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int
 		}
 
 	}
-	debugC(1, kFreescapeDebugParser, "End of riddles at %llx", file->pos());
+	debugC(1, kFreescapeDebugParser, "End of riddles at %" PRIx64, file->pos());
 }
 
 void CastleEngine::drawFullscreenRiddleAndWait(uint16 riddle) {
@@ -436,8 +554,8 @@ void CastleEngine::drawFullscreenRiddleAndWait(uint16 riddle) {
 
 			// Events
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_SPACE) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionSkip) {
 					cont = false;
 				}
 				break;
@@ -544,33 +662,46 @@ void CastleEngine::drawStringInSurface(const Common::String &str, int x, int y, 
 }
 
 void CastleEngine::drawEnergyMeter(Graphics::Surface *surface) {
-	uint32 back = 0;
-	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
-	Common::Rect weightRect;
-	Common::Rect barRect;
-	Common::Rect backRect;
+	Common::Point origin;
 
-	if (isDOS()) {
-		back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xA7, 0x00, 0x00);
-		barRect = Common::Rect(45, 164, 110, 166);
-		weightRect = Common::Rect(57, 158, 59, 172);
-		backRect = Common::Rect(45, 157, 112, 173);
-		if (_gameStateVars[k8bitVariableShield] > 16)
-			weightRect.translate(3, 0);
+	if (isDOS())
+		origin = Common::Point(43, 157);
+	if (isSpectrum())
+		origin = Common::Point(63, 154);
+
+	if (!_strenghtBackgroundFrame)
+		return;
+
+	surface->copyRectToSurface((const Graphics::Surface)*_strenghtBackgroundFrame, origin.x, origin.y, Common::Rect(0, 0, _strenghtBackgroundFrame->w, _strenghtBackgroundFrame->h));
+	surface->copyRectToSurface((const Graphics::Surface)*_strenghtBarFrame, origin.x, origin.y + 8, Common::Rect(0, 0, _strenghtBarFrame->w, _strenghtBarFrame->h));
+
+	Common::Point weightPoint;
+	int frameIdx = -1;
+
+	weightPoint = Common::Point(origin.x + 5, origin.y);
+	frameIdx = 3 - _gameStateVars[k8bitVariableShield] % 4;
+	frameIdx++;
+	frameIdx = frameIdx % 4;
+
+	surface->copyRectToSurface((const Graphics::Surface)*_strenghtWeightsFrames[frameIdx], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[frameIdx]->h));
+	weightPoint += Common::Point(3, 0);
+
+	for (int i = 0; i < _gameStateVars[k8bitVariableShield] / 4 - 1; i++) {
+		surface->copyRectToSurface((const Graphics::Surface)*_strenghtWeightsFrames[0], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[0]->h));
+		weightPoint += Common::Point(3, 0);
 	}
-	surface->fillRect(backRect, black);
-	surface->fillRect(barRect, back);
 
-	for (int i = 0; i < _gameStateVars[k8bitVariableShield] / 4; i++) {
-		surface->fillRect(weightRect, back);
-		weightRect.translate(-3, 0);
-	}
+	weightPoint = Common::Point(origin.x + 62, origin.y);
+	frameIdx = 3 - _gameStateVars[k8bitVariableShield] % 4;
+	frameIdx++;
+	frameIdx = frameIdx % 4;
 
-	uint8 remainder = 3 - _gameStateVars[k8bitVariableShield] % 4;
-	if (remainder < 3) {
-		weightRect.translate(0, remainder / 2);
-		weightRect.setHeight(weightRect.height() - remainder);
-		surface->fillRect(weightRect, back);
+	surface->copyRectToSurface((const Graphics::Surface)*_strenghtWeightsFrames[frameIdx], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[frameIdx]->h));
+	weightPoint += Common::Point(-3, 0);
+
+	for (int i = 0; i < _gameStateVars[k8bitVariableShield] / 4 - 1; i++) {
+		surface->copyRectToSurface((const Graphics::Surface)*_strenghtWeightsFrames[0], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[0]->h));
+		weightPoint += Common::Point(-3, 0);
 	}
 }
 
@@ -703,29 +834,58 @@ extern Common::String centerAndPadString(const Common::String &x, int y);
 
 void CastleEngine::selectCharacterScreen() {
 	Common::Array<Common::String> lines;
-	if (isDOS()) {
-		lines.push_back("Select your character");
-		lines.push_back("");
-		lines.push_back("");
-		lines.push_back("            1. Prince");
-		lines.push_back("            2. Princess");
-	} else if (isSpectrum()) {
-		lines.push_back(centerAndPadString("*******************", 21));
-		lines.push_back(centerAndPadString("Select your character", 21));
-		lines.push_back(centerAndPadString("you wish to play", 21));
-		lines.push_back(centerAndPadString("and press enter", 21));
-		lines.push_back("");
-		lines.push_back(centerAndPadString("1. Prince  ", 21));
-		lines.push_back(centerAndPadString("2. Princess", 21));
-		lines.push_back("");
-		lines.push_back(centerAndPadString("*******************", 21));
+	switch (_language) {
+		case Common::ES_ESP:
+			// No accent in "príncipe" since it is not supported by the font
+			if (isDOS()) {
+				lines.push_back("Elija su personaje");
+				lines.push_back("");
+				lines.push_back("");
+				lines.push_back("            1. Principe");
+				lines.push_back("            2. Princesa");
+			} else if (isSpectrum()) {
+				lines.push_back(centerAndPadString("*******************", 21));
+				lines.push_back(centerAndPadString("Seleccion el ", 21));
+				lines.push_back(centerAndPadString("personaje que quiera", 21));
+				lines.push_back(centerAndPadString("ser y precione enter", 21));
+				lines.push_back("");
+				lines.push_back(centerAndPadString("1. Principe", 21));
+				lines.push_back(centerAndPadString("2. Princesa", 21));
+				lines.push_back("");
+				lines.push_back(centerAndPadString("*******************", 21));
+			}
+			break;
+		default: //case Common::EN_ANY:
+			if (isDOS()) {
+				lines.push_back("Select your character");
+				lines.push_back("");
+				lines.push_back("");
+				lines.push_back("            1. Prince");
+				lines.push_back("            2. Princess");
+			} else if (isSpectrum()) {
+				lines.push_back(centerAndPadString("*******************", 21));
+				lines.push_back(centerAndPadString("Select your character", 21));
+				lines.push_back(centerAndPadString("you wish to play", 21));
+				lines.push_back(centerAndPadString("and press enter", 21));
+				lines.push_back("");
+				lines.push_back(centerAndPadString("1. Prince  ", 21));
+				lines.push_back(centerAndPadString("2. Princess", 21));
+				lines.push_back("");
+				lines.push_back(centerAndPadString("*******************", 21));
+			}
+			break;
 	}
 
 	Graphics::Surface *surface = drawStringsInSurface(lines);
+	_system->lockMouse(false);
+	_system->showMouse(true);
+	Common::Rect princeSelector(82, 100, 163, 109);
+	Common::Rect princessSelector(82, 110, 181, 120);
 
 	bool selected = false;
 	while (!selected) {
 		Common::Event event;
+		Common::Point mouse;
 		while (_eventManager->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
@@ -733,31 +893,39 @@ void CastleEngine::selectCharacterScreen() {
 				quitGame();
 				return;
 
+			// Left mouse click
+			case Common::EVENT_LBUTTONDOWN:
+				// fallthrough
+			case Common::EVENT_RBUTTONDOWN:
+				mouse.x = _screenW * event.mouse.x / g_system->getWidth();
+				mouse.y = _screenH * event.mouse.y / g_system->getHeight();
+
+				if (princeSelector.contains(mouse)) {
+					selected = true;
+					// Nothing, since game bit should be already zero
+				} else if (princessSelector.contains(mouse)) {
+					selected = true;
+					setGameBit(32);
+				}
+				break;
 			case Common::EVENT_SCREEN_CHANGED:
 				_gfx->computeScreenViewport();
 				_gfx->clear(0, 0, 0, true);
 				break;
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_1:
+			default:
+				break;
+			}
+			switch (event.customType) {
+				case kActionSelectPrince:
 					selected = true;
 					// Nothing, since game bit should be already zero
 					break;
-				case Common::KEYCODE_2:
+				case kActionSelectPrincess:
 					selected = true;
 					setGameBit(32);
 					break;
 				default:
 					break;
-				}
-			break;
-			case Common::EVENT_RBUTTONDOWN:
-				// fallthrough
-			case Common::EVENT_LBUTTONDOWN:
-				// TODO: allow to select character with mouse
-				break;
-			default:
-				break;
 			}
 		}
 		_gfx->clear(0, 0, 0, true);
@@ -770,6 +938,8 @@ void CastleEngine::selectCharacterScreen() {
 		g_system->updateScreen();
 		g_system->delayMillis(15); // try to target ~60 FPS
 	}
+	_system->lockMouse(true);
+	_system->showMouse(false);
 	_gfx->clear(0, 0, 0, true);
 
 }

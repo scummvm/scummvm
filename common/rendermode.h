@@ -54,8 +54,8 @@ enum RenderMode {
 	kRenderHercA = 5,
 	kRenderAmiga = 6,
 	kRenderFMTowns = 7,
-	kRenderPC9821 = 8,
-	kRenderPC9801 = 9,
+	kRenderPC98_256c = 8,
+	kRenderPC98_16c = 9,
 	kRenderApple2GS = 10,
 	kRenderAtariST = 11,
 	kRenderMacintosh = 12,
@@ -65,7 +65,8 @@ enum RenderMode {
 	kRenderCPC = 16,
 	kRenderZX = 17,
 	kRenderC64 = 18,
-	kRenderVGAGrey = 19
+	kRenderVGAGrey = 19,
+	kRenderPC98_8c = 20
 };
 
 struct RenderModeDescription {

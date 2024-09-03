@@ -353,7 +353,7 @@ cMeshEntity::cMeshEntity(const tString asName, cMesh *apMesh, cMaterialManager *
 cMeshEntity::~cMeshEntity() {
 	for (tEntity3DListIt it = mlstAttachedEntities.begin(); it != mlstAttachedEntities.end(); ++it) {
 		// iEntity3D *pEntity = *it;
-		//  TODO: if(mpWorld) mpWorld->DestroyUnkownEntity(pEntity);
+		//  TODO: if(mpWorld) mpWorld->DestroyUnknownEntity(pEntity);
 	}
 
 	for (int i = 0; i < (int)mvSubMeshes.size(); i++) {
@@ -988,7 +988,7 @@ cMatrixf cMeshEntity::CalculateTransformFromSkeleton(cVector3f *apPostion, cVect
 	cBoneIterator BoneIt = GetMesh()->GetSkeleton()->GetRootBone()->GetChildIterator();
 	cBone *pBone = BoneIt.Next();
 
-	// Rotation and postion
+	// Rotation and position
 	cMatrixf mtxInvBind = pBone->GetInvWorldTransform();
 	cMatrixf mtxInvBone = cMath::MatrixInverse(pBoneState->GetWorldMatrix());
 	cVector3f vStateForward = mtxInvBone.GetForward();
@@ -1347,9 +1347,9 @@ void cMeshEntity::UpdateBVFromSubs() {
 	////////////////////////////////////
 	// Nodes
 	else {
-		// Use this to make sure the the nodes are in the same postions as when
-		// exported. This to give a working Bounding Volume.
-		// This fells kind a slow... but might be only way..
+		// Use this to make sure the the nodes are in the same positions as when
+		// exported. This is to give a working Bounding Volume.
+		// This feels kind of slow...but might be the only way.
 
 		cMatrixf mtxTemp2;
 		if (mpRootNode) {

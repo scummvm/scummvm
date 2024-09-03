@@ -235,6 +235,11 @@ private:
 	GfxScreenUpscaledMode _upscaledHires;
 
 	/**
+	 * This buffer is used to draw a single hires font glyph.
+	 */
+	byte *_hiresGlyphBuffer;
+
+	/**
 	 * This here holds a translation for vertical+horizontal coordinates between native
 	 * (visual) and actual (display) screen.
 	 */

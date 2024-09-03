@@ -71,10 +71,10 @@ public:
 
 	int getFontHeight();
 	int getMaxCharWidth();
-	int getCharWidth(byte chr);
+	int getCharWidth(uint16 chr);
 	int getKerningOffset(byte left, byte right);
 
-	void drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color);
+	void drawChar(Graphics::Surface *dst, uint16 chr, int x, int y, uint32 color);
 
 	void drawString(Graphics::Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, Graphics::TextAlign align = Graphics::kTextAlignLeft);
 	int getStringWidth(const Common::String &str);

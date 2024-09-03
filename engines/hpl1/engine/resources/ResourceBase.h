@@ -41,7 +41,7 @@ public:
 
 	/**
 	 * virtual bool Reload()=0;
-	 * \return true is reload was succesful, else false.
+	 * \return true is reload was successful, else false.
 	 */
 	virtual bool reload() = 0;
 

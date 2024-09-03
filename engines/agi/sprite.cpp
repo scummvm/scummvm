@@ -406,7 +406,7 @@ void SpritesMgr::showObject(int16 viewNr) {
 	ScreenObjEntry screenObj;
 	uint8 *backgroundBuffer = nullptr;
 
-	_vm->agiLoadResource(RESOURCETYPE_VIEW, viewNr);
+	_vm->loadResource(RESOURCETYPE_VIEW, viewNr);
 	_vm->setView(&screenObj, viewNr);
 
 	screenObj.ySize_prev = screenObj.celData->height;

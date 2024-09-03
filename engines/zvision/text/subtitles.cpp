@@ -52,7 +52,7 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool upscaleToH
 				Common::File txt;
 				if (_engine->getSearchManager()->openFile(txt, Common::Path(filename))) {
 					while (!txt.eos()) {
-						Common::String txtline = readWideLine(txt);
+						Common::String txtline = readWideLine(txt).encode();
 						sub curSubtitle;
 						curSubtitle.start = -1;
 						curSubtitle.stop = -1;

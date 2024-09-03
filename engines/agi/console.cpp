@@ -159,7 +159,7 @@ bool Console::Cmd_Version(int argc, const char **argv) {
 		bool scriptLoadedByUs = false;
 		if (!(game->dirLogic[scriptNr].flags & RES_LOADED)) {
 			// But not currently loaded? -> load it now
-			if (_vm->agiLoadResource(RESOURCETYPE_LOGIC, scriptNr) != errOK) {
+			if (_vm->loadResource(RESOURCETYPE_LOGIC, scriptNr) != errOK) {
 				// In case we can't load the source, skip it
 				continue;
 			}
@@ -259,7 +259,7 @@ bool Console::Cmd_Version(int argc, const char **argv) {
 		}
 
 		if (scriptLoadedByUs) {
-			_vm->agiUnloadResource(RESOURCETYPE_LOGIC, scriptNr);
+			_vm->unloadResource(RESOURCETYPE_LOGIC, scriptNr);
 		}
 	}
 

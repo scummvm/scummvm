@@ -127,6 +127,7 @@ void Movie::setArchive(Archive *archive) {
 	if ((r = archive->getMovieResourceIfPresent(MKTAG('M', 'C', 's', 'L'))) != nullptr) {
 		// D5 archive, can contain multiple internal/external casts
 		loadCastLibMapping(*r);
+		delete r;
 	} else {
 		// D4 or lower, only 1 cast
 		_cast->setArchive(archive);

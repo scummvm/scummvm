@@ -72,7 +72,7 @@ void CastleEngine::loadDOSFonts(Common::SeekableReadStream *file, int pos) {
 		}
 		//debugN("\n");
 	}
-	debug("%llx", file->pos());
+	//debug("%" PRIx64, file->pos());
 	_fontPlane1.set_size(64 * 59);
 	_fontPlane1.set_bits(bufferPlane1);
 
@@ -87,6 +87,38 @@ void CastleEngine::loadDOSFonts(Common::SeekableReadStream *file, int pos) {
 	free(bufferPlane3);
 }
 
+Graphics::ManagedSurface *CastleEngine::loadFrameFromPlanes(Common::SeekableReadStream *file, int widthInBytes, int height) {
+	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
+	surface->create(widthInBytes * 8 / 4, height, Graphics::PixelFormat::createFormatCLUT8());
+	surface->fillRect(Common::Rect(0, 0, widthInBytes * 8 / 4, height), 0);
+	loadFrameFromPlanesInternal(file, surface, widthInBytes, height);
+	return surface;
+}
+
+Graphics::ManagedSurface *CastleEngine::loadFrameFromPlanesInternal(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int width, int height) {
+	byte *colors = (byte *)malloc(sizeof(byte) * height * width);
+	file->read(colors, height * width);
+
+	for (int p = 0; p < 4; p++) {
+		for (int i = 0; i < height * width; i++) {
+			byte color = colors[i];
+			for (int n = 0; n < 8; n++) {
+				int y = i / width;
+				int x = (i % width) * 8 + (7 - n);
+				// Check that we are in the right plane
+				if (x < width * (8 / 4) * p || x >= width * (8 / 4) * (p + 1))
+					continue;
+
+				int bit = ((color >> n) & 0x01) << p;
+				int sample = surface->getPixel(x % (width * 8 / 4), y) | bit;
+				assert(sample < 16);
+				surface->setPixel(x % (width * 8 / 4), y, sample);
+			}
+		}
+	}
+	return surface;
+}
+
 void CastleEngine::loadAssetsDOSFullGame() {
 	Common::File file;
 	Common::SeekableReadStream *stream = nullptr;
@@ -99,6 +131,58 @@ void CastleEngine::loadAssetsDOSFullGame() {
 		if (stream) {
 			loadSpeakerFxDOS(stream, 0x636d + 0x200, 0x63ed + 0x200);
 			loadDOSFonts(stream, 0x29696);
+
+			stream->seek(0x1c700);
+			_background = loadFrameFromPlanes(stream, 252, 42);
+			_background->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+
+			stream->seek(0x221ae);
+			_menu = loadFrameFromPlanes(stream, 112, 114);
+			_menu->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+
+			//debug("%lx", stream->pos());
+			// TODO: some space here from the menu image
+			/*stream->seek(0x25414);
+			_menuCrawlIndicator = loadFrameFromPlanes(stream, 16, 12, lightGray, lightGray, lightGray, darkGray);
+			_menuWalkIndicator = loadFrameFromPlanes(stream, 16, 12, lightGray, lightGray, lightGray, darkGray);
+			_menuRunIndicator = loadFrameFromPlanes(stream, 16, 12, lightGray, lightGray, lightGray, darkGray);
+			_menuFxOffIndicator = loadFrameFromPlanes(stream, 16, 12, lightGray, lightGray, lightGray, darkGray);
+			_menuFxOnIndicator = loadFrameFromPlanes(stream, 16, 12, lightGray, lightGray, lightGray, darkGray);*/
+
+			// This end in 0x257d4??
+			byte flagPalette[4][3] = {
+				{0x00, 0x00, 0x00},
+				{0x00, 0xaa, 0x00},
+				{0x55, 0xff, 0x55},
+				{0xff, 0xff, 0xff}
+			};
+
+			stream->seek(0x257cc);
+			_flagFrames[0] = loadFrameFromPlanes(stream, 16, 11);
+			_flagFrames[0]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&flagPalette, 4);
+			_flagFrames[1] = loadFrameFromPlanes(stream, 16, 11);
+			_flagFrames[1]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&flagPalette, 4);
+			_flagFrames[2] = loadFrameFromPlanes(stream, 16, 11);
+			_flagFrames[2]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&flagPalette, 4);
+			_flagFrames[3] = loadFrameFromPlanes(stream, 16, 11);
+			_flagFrames[3]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&flagPalette, 4);
+
+			//debug("%lx", stream->pos());
+			//stream->seek(0x25a90);
+			// This has only two planes?
+			//_riddleTopFrames[0] = loadFrameFromPlanes(stream, 30, ??, lightGreen, transparent, darkGreen, transparent);
+			//_riddleBottomFrames[0] = loadFrameFromPlanes(stream, 30, ??, lightGreen, transparent, darkGreen, transparent);*/
+
+			/*stream->seek(0x25a94 + 0xe00);
+			byte *grayPalette = (byte *)malloc(16 * 3);
+			for (int i = 0; i < 16; i++) { // gray scale palette
+				grayPalette[i * 3 + 0] = i * (255 / 16);
+				grayPalette[i * 3 + 1] = i * (255 / 16);
+				grayPalette[i * 3 + 2] = i * (255 / 16);
+			}
+
+			_something = loadFrameFromPlanes(stream, 36, 82);
+			_something->convertToInPlace(_gfx->_texturePixelFormat, grayPalette, 16);*/
 		}
 
 		delete stream;
@@ -142,16 +226,7 @@ void CastleEngine::loadAssetsDOSFullGame() {
 
 		stream = decryptFile("CMEDF");
 		load8bitBinary(stream, 0, 16);
-		for (auto &it : _areaMap)
-			it._value->addStructure(_areaMap[255]);
-
-		_areaMap[1]->addFloor();
-		_areaMap[2]->addFloor();
 		delete stream;
-
-		_menu = loadBundledImage("castle_menu");
-		assert(_menu);
-		_menu->convertToInPlace(_gfx->_texturePixelFormat);
 	} else
 		error("Not implemented yet");
 
@@ -202,15 +277,7 @@ void CastleEngine::loadAssetsDOSDemo() {
 
 		stream = decryptFile("CDEDF");
 		load8bitBinary(stream, 0, 16);
-		for (auto &it : _areaMap)
-			it._value->addStructure(_areaMap[255]);
-
-		_areaMap[1]->addFloor();
-		_areaMap[2]->addFloor();
 		delete stream;
-		_menu = loadBundledImage("castle_menu");
-		assert(_menu);
-		_menu->convertToInPlace(_gfx->_texturePixelFormat);
 	} else
 		error("Not implemented yet");
 }
@@ -241,6 +308,9 @@ void CastleEngine::drawDOSUI(Graphics::Surface *surface) {
 		drawStringInSurface(_currentArea->_name, 97, 182, front, back, surface);
 
 	drawEnergyMeter(surface);
+	int flagFrameIndex = (_ticks / 10) % 4;
+	surface->copyRectToSurface(*_flagFrames[flagFrameIndex], 282, 5, Common::Rect(10, 0, _flagFrames[flagFrameIndex]->w, _flagFrames[flagFrameIndex]->h));
+	//surface->copyRectToSurface(*_something, 100, 50, Common::Rect(0, 0, _something->w, _something->h));
 }
 
 } // End of namespace Freescape

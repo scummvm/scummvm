@@ -43,8 +43,9 @@ const RenderModeDescription g_renderModes[] = {
 	{ "vga", "VGA", kRenderVGA },
 	{ "amiga", "Amiga", kRenderAmiga },
 	{ "fmtowns", "FM-TOWNS", kRenderFMTowns },
-	{ "pc9821", _s("PC-9821 (256 Colors)"), kRenderPC9821 },
-	{ "pc9801", _s("PC-9801 (16 Colors)"), kRenderPC9801 },
+	{ "pc98-256c", _s("PC-9821 (256 Colors)"), kRenderPC98_256c },
+	{ "pc98-16c", _s("PC-9801 (16 Colors)"), kRenderPC98_16c },
+	{ "pc98-8c", _s("PC-9801 (8 Colors)"), kRenderPC98_8c },
 	{ "2gs", "Apple IIgs", kRenderApple2GS },
 	{ "atari", "Atari ST", kRenderAtariST },
 	{ "macintosh", "Macintosh", kRenderMacintosh },
@@ -73,8 +74,8 @@ static const RenderGUIOMapping s_renderGUIOMapping[] = {
 	{ kRenderVGA,			GUIO_RENDERVGA },
 	{ kRenderAmiga,			GUIO_RENDERAMIGA },
 	{ kRenderFMTowns,		GUIO_RENDERFMTOWNS },
-	{ kRenderPC9821,		GUIO_RENDERPC9821 },
-	{ kRenderPC9801,		GUIO_RENDERPC9801 },
+	{ kRenderPC98_256c,		GUIO_RENDERPC98_256C },
+	{ kRenderPC98_16c,		GUIO_RENDERPC98_16C },
 	{ kRenderApple2GS,		GUIO_RENDERAPPLE2GS },
 	{ kRenderAtariST,		GUIO_RENDERATARIST },
 	{ kRenderMacintosh,		GUIO_RENDERMACINTOSH },
@@ -84,7 +85,8 @@ static const RenderGUIOMapping s_renderGUIOMapping[] = {
 	{ kRenderCPC,		    GUIO_RENDERCPC },
 	{ kRenderZX,			GUIO_RENDERZX },
 	{ kRenderC64,			GUIO_RENDERC64 },
-	{ kRenderVGAGrey,		GUIO_RENDERVGAGREY }
+	{ kRenderVGAGrey,		GUIO_RENDERVGAGREY },
+	{ kRenderPC98_8c,		GUIO_RENDERPC98_8C },
 };
 
 DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Hercules Green", "lowres")

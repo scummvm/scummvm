@@ -33,11 +33,15 @@ namespace Riddle {
 namespace Rooms {
 
 class Room : public M4::Room {
+private:
+	static int _ripSketching;
+
 protected:
 	static void intrMsgNull(frac16 myMessage, machine *sender) {}
 	static void triggerMachineByHashCallback(frac16 myMessage, machine *sender = nullptr);
 	static void triggerMachineByHashCallbackNegative(frac16 myMessage, machine *sender = nullptr);
 	static void triggerMachineByHashCallback3000(frac16 myMessage, machine *sender = nullptr);
+	static void triggerMachineByHashCallbackAlways(frac16 myMessage, machine *sender = nullptr);
 
 	void restoreAutosave();
 
@@ -82,9 +86,11 @@ protected:
 	void sendWSMessage_F0000(machine *mach, int trigger);
 	void sendWSMessage_F0000(int trigger);
 	void sendWSMessage_110000(machine *mach, int trigger);
+	void sendWSMessage_110000(int trigger);
 	void sendWSMessage_120000(int trigger);
 	void sendWSMessage_120000(machine *mach, int trigger);
-	void sendWSMessage_110000(int trigger);
+	void sendWSMessage_130000(machine *recv, int val1);
+	void sendWSMessage_130000(int val1);
 	void sendWSMessage_140000(machine *mach, int trigger);
 	void sendWSMessage_140000(int trigger);
 	void sendWSMessage_150000(machine *mach, int trigger);
@@ -92,16 +98,37 @@ protected:
 	void sendWSMessage_160000(machine *mach, int val1, int trigger);
 	void sendWSMessage_160000(int val1, int trigger);
 	void sendWSMessage_190000(machine *recv, int trigger);
+	void sendWSMessage_190000(int trigger);
 	void sendWSMessage_1a0000(machine *recv, int trigger);
+	void sendWSMessage_29a0000(machine *recv, int val1);
+	void sendWSMessage_29a0000(int val1);
+	void sendWSMessage_multi(const char *name);
 
 	/**
 	 * Get the number of key items placed in room 305 (display room)
 	 */
 	int getNumKeyItemsPlaced() const;
 
+	bool setItemsPlacedFlags();
+	const char *getItemsPlacedDigi() const;
+
+	/**
+	 * Sets all the hotspots to be inactive
+	 */
+	void disableHotspots();
+
+	/**
+	 * Sets all the hotspots to be active
+	 */
+	void enableHotspots();
+
+	bool checkStrings() const;
+
 public:
 	Room() : M4::Room() {}
 	~Room() override {}
+
+	void preload() override;
 };
 
 } // namespace Rooms

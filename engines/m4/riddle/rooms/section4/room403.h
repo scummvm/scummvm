@@ -29,12 +29,75 @@ namespace Riddle {
 namespace Rooms {
 
 class Room403 : public Room {
+private:
+	machine *_bell = nullptr;
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+	int _val5 = 0;
+	int _val6 = 0;
+	int _val7 = 0;
+	int _val8 = 0;
+	int _val9 = 0;
+	int _val10 = 0;
+	Common::String _sound1;
+	int _val12 = 0;
+	int _val13 = 0;
+	int _plank = 0;
+	machine *_ventClosed = nullptr;
+	machine *_edger = nullptr;
+	machine *_ladder = nullptr;
+	machine *_board = nullptr;
+	machine *_wolfie = nullptr;
+	machine *_ripOnLadder = nullptr;
+	int _ripClimbsLadder = 0;
+	int _safariShadow = 0;
+	int _wolfTurnTalk = 0;
+	int _wolfTurnHand = 0;
+	int _wolfTalkLeave = 0;
+	int _ripTalkPay = 0;
+	int _wolfEdger = 0;
+	int _ripLegUp = 0;
+	int _ripTurtle = 0;
+	int _noTreat = 0;
+	bool _flag1 = false;
+	bool _flag2 = false;
+	bool _flag3 = 0;
+	int _ripRingsBell = 0;
+	machine *_wolfWalker = nullptr;
+	int _wolfAdmonish = 0;
+	int _ripHeadTurn = 0;
+	int _ripMedReach = 0;
+	int _series1 = 0;
+	int _ripPutBoard = 0;
+	machine *_ripTalksWolf = nullptr;
+	int _ripPlankEdger = 0;
+	machine *_wolfJustSo = nullptr;
+	int _wolfIndicatesTomb = 0;
+	int _turtlePopup = 0;
+
+	void conv403a();
+	void conv403a1();
+	void edgerBell();
+	bool edgerUrn();
+	bool stepLadderTomb();
+	bool takePlank();
+	bool takeEdger();
+	bool takeStepLadder();
+	void takeStepLadder_();
+	void useJournal();
+	void playNum1(int num);
+	void playNum2(int num);
+
 public:
 	Room403() : Room() {}
 	~Room403() override {}
 
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms

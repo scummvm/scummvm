@@ -443,7 +443,7 @@ static void str_format() {
 				initf += 2;  // skip the 'n$'
 			}
 			arg++;
-			strncpy(form+1, initf, strfrmt - initf + 1); // +1 to include convertion
+			strncpy(form+1, initf, strfrmt - initf + 1); // +1 to include conversion
 			form[strfrmt-initf + 2] = 0;
 			buff = luaL_openspace(1000);  // to store the formatted value
 			switch (*strfrmt++) {

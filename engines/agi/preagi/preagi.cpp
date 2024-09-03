@@ -54,8 +54,6 @@ void PreAgiEngine::initialize() {
 
 	_defaultColor = 0xF;
 
-	_game.name[0] = '\0';
-
 	//_game._vm->_text->configureScreen(0); // hardcoded
 
 	_gfx->initVideo();

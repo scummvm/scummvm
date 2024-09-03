@@ -235,29 +235,6 @@ void OPL::write(int port, int val) {
 	}
 }
 
-byte OPL::read(int port) {
-	switch (_type) {
-	case Config::kOpl2:
-		if (!(port & 1))
-			//Make sure the low bits are 6 on opl2
-			return _chip[0].read() | 0x6;
-		break;
-	case Config::kOpl3:
-		if (!(port & 1))
-			return _chip[0].read();
-		break;
-	case Config::kDualOpl2:
-		// Only return for the lower ports
-		if (port & 1)
-			return 0xff;
-		// Make sure the low bits are 6 on opl2
-		return _chip[(port >> 1) & 1].read() | 0x6;
-	default:
-		break;
-	}
-	return 0;
-}
-
 void OPL::writeReg(int r, int v) {
 	int tempReg = 0;
 	switch (_type) {

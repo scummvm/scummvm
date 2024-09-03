@@ -153,7 +153,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 // only a single unique variant. This is used to help the detector quickly
 // decide whether it has to worry about distinguishing multiple variants or not.
 static const GameSettings gameVariantsTable[] = {
-	{"maniac", "Apple II",   0, GID_MANIAC, 0, 0, MDT_APPLEIIGS, 0, Common::kPlatformApple2GS, GUIO3(GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_ORIGINALGUI)},
+	{"maniac", "Apple II",   0, GID_MANIAC, 0, 0, MDT_APPLEIIGS, 0, Common::kPlatformApple2GS, GUIO4(GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_ORIGINALGUI, GAMEOPTION_ENHANCEMENTS)},
 	{"maniac", "C64",        0, GID_MANIAC, 0, 0, MDT_C64, 0, Common::kPlatformC64, GUIO3(GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_ORIGINALGUI) },
 	{"maniac", "C64 Demo",   0, GID_MANIAC, 0, 0, MDT_C64, GF_DEMO, Common::kPlatformC64, GUIO3(GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_ORIGINALGUI) },
 	{"maniac", "V1",      "v1", GID_MANIAC, 1, 0, MDT_PCSPK | MDT_PCJR, 0, Common::kPlatformDOS, GUIO10(GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGABW, GUIO_RENDERCGACOMP, GUIO_RENDERCGA, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI, GAMEOPTION_COPY_PROTECTION)},

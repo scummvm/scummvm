@@ -84,14 +84,14 @@
 		[_fullSetElementsThumbstick addObjectsFromArray:_commonElements];
 		[_fullSetElementsThumbstick addObjectsFromArray:_additionalElements];
 	
-		NSMutableSet<NSString *> *_miniSetElementsThumbstick = [[NSMutableSet alloc] initWithObjects:GCInputLeftThumbstick,  nil];
+		NSMutableSet<NSString *> *_miniSetElementsThumbstick = [[NSMutableSet alloc] initWithObjects:GCInputLeftThumbstick, nil];
 		[_miniSetElementsThumbstick addObjectsFromArray:_commonElements];
 
 		NSMutableSet<NSString *> *_fullSetElementsDpad = [[NSMutableSet alloc] initWithObjects: GCInputDirectionalDpad, nil];
 		[_fullSetElementsDpad addObjectsFromArray:_commonElements];
 		[_fullSetElementsDpad addObjectsFromArray:_additionalElements];
 
-		NSMutableSet<NSString *> *_miniSetElementsDpad = [[NSMutableSet alloc] initWithObjects:GCInputDirectionalDpad,  nil];
+		NSMutableSet<NSString *> *_miniSetElementsDpad = [[NSMutableSet alloc] initWithObjects:GCInputDirectionalDpad, nil];
 		[_miniSetElementsDpad addObjectsFromArray:_commonElements];
 
 		_configThumbstick.elements = _fullSetElementsThumbstick;
@@ -99,11 +99,23 @@
 		_configDpad.elements = _fullSetElementsDpad;
 		_configMiniDpad.elements = _miniSetElementsDpad;
 
+		[_miniSetElementsDpad release];
+		[_fullSetElementsDpad release];
+		[_miniSetElementsThumbstick release];
+		[_fullSetElementsThumbstick release];
+		[_commonElements release];
+		[_additionalElements release];
+
 		_virtualControllerThumbstick = [[GCVirtualController alloc] initWithConfiguration:_configThumbstick];
 		_virtualControllerMiniThumbstick = [[GCVirtualController alloc] initWithConfiguration:_configMiniThumbstick];
 		_virtualControllerDpad = [[GCVirtualController alloc] initWithConfiguration:_configDpad];
 		_virtualControllerMiniDpad = [[GCVirtualController alloc] initWithConfiguration:_configMiniDpad];
 		_currentController = _virtualControllerThumbstick;
+
+		[_configDpad release];
+		[_configMiniDpad release];
+		[_configThumbstick release];
+		[_configMiniThumbstick release];
 	}
 #endif
 #endif

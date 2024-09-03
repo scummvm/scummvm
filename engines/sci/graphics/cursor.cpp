@@ -178,12 +178,6 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 
 	_screen->gfxDriver()->replaceCursor(rawBitmap->getUnsafeDataAt(0, heightWidth * heightWidth), heightWidth, heightWidth, hotspot.x, hotspot.y, SCI_CURSOR_SCI0_TRANSPARENCYCOLOR);
 
-	if (g_system->getScreenFormat().bytesPerPixel != 1) {
-		byte buf[3*256];
-		_screen->grabPalette(buf, 0, 256);
-		CursorMan.replaceCursorPalette(buf, 0, 256);
-	}
-
 	kernelShow();
 }
 
@@ -251,14 +245,9 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 		Common::SpanOwner<SciSpan<byte> > cursorBitmap;
 		cursorBitmap->allocate(width * height, "upscaled cursor bitmap");
 		_screen->scale2x(rawBitmap, *cursorBitmap, celInfo->width, celInfo->height);
-		CursorMan.replaceCursor(cursorBitmap->getUnsafeDataAt(0, width * height), width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
+		_screen->gfxDriver()->replaceCursor(cursorBitmap->getUnsafeDataAt(0, width * height), width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
 	} else {
 		_screen->gfxDriver()->replaceCursor(rawBitmap.getUnsafeDataAt(0, width * height), width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
-	}
-	if (g_system->getScreenFormat().bytesPerPixel != 1) {
-		byte buf[3*256];
-		_screen->grabPalette(buf, 0, 256);
-		CursorMan.replaceCursorPalette(buf, 0, 256);
 	}
 
 	kernelShow();
@@ -289,12 +278,11 @@ void GfxCursor::setPosition(Common::Point pos) {
 		return;
 
 	if (!_upscaledHires) {
-		g_system->warpMouse(pos.x, pos.y);
+		_screen->gfxDriver()->setMousePos(pos);
 	} else {
 		_screen->adjustToUpscaledCoordinates(pos.y, pos.x);
 		g_system->warpMouse(pos.x, pos.y);
 	}
-
 	// WORKAROUNDS for games with windows that are hidden when the mouse cursor
 	// is moved outside them - also check setPositionWorkarounds above.
 	//

@@ -92,24 +92,100 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 
 	_endArea = 127;
 	_endEntrance = 0;
+
+	_soundIndexShoot = 1;
+	_soundIndexCollide = -1;
+	_soundIndexFall = 3;
+	_soundIndexClimb = -1;
+	_soundIndexMenu = -1;
+	_soundIndexStart = 9;
+	_soundIndexAreaChange = 5;
+
+	_soundIndexNoShield = 20;
+	_soundIndexNoEnergy = 20;
+	_soundIndexFallen = 20;
+	_soundIndexTimeout = 20;
+	_soundIndexForceEndGame = 20;
+	_soundIndexCrushed = 20;
 }
 
 DrillerEngine::~DrillerEngine() {
 	delete _drillBase;
 }
 
-void DrillerEngine::initKeymaps(Common::Keymap *engineKeyMap, const char *target) {
-	FreescapeEngine::initKeymaps(engineKeyMap, target);
+void DrillerEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) {
+	FreescapeEngine::initKeymaps(engineKeyMap, infoScreenKeyMap, target);
 	Common::Action *act;
 
+	if (!(isAmiga() || isAtariST())) {
+		act = new Common::Action("SAVE", _("Save Game"));
+		act->setCustomEngineActionEvent(kActionSave);
+		act->addDefaultInputMapping("s");
+		infoScreenKeyMap->addAction(act);
+
+		act = new Common::Action("LOAD", _("Load Game"));
+		act->setCustomEngineActionEvent(kActionLoad);
+		act->addDefaultInputMapping("l");
+		infoScreenKeyMap->addAction(act);
+
+		act = new Common::Action("QUIT", _("Quit Game"));
+		act->setCustomEngineActionEvent(kActionEscape);
+		if (isSpectrum())
+			act->addDefaultInputMapping("1");
+		else
+			act->addDefaultInputMapping("ESCAPE");
+		infoScreenKeyMap->addAction(act);
+
+		act = new Common::Action("TOGGLESOUND", _("Toggle Sound"));
+		act->setCustomEngineActionEvent(kActionToggleSound);
+		act->addDefaultInputMapping("t");
+		infoScreenKeyMap->addAction(act);
+	}
+
+	act = new Common::Action("ROTL", _("Rotate Left"));
+	act->setCustomEngineActionEvent(kActionRotateLeft);
+	act->addDefaultInputMapping("q");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("ROTR", _("Rotate Right"));
+	act->setCustomEngineActionEvent(kActionRotateRight);
+	act->addDefaultInputMapping("w");
+	engineKeyMap->addAction(act);
+
+	// I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
+	act = new Common::Action("INCSTEPSIZE", _("Increase Step Size"));
+	act->setCustomEngineActionEvent(kActionIncreaseStepSize);
+	act->addDefaultInputMapping("s");
+	engineKeyMap->addAction(act);
+
+	// I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
+	act = new Common::Action("DECSTEPSIZE", _("Decrease Step Size"));
+	act->setCustomEngineActionEvent(kActionDecreaseStepSize);
+	act->addDefaultInputMapping("x");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("RISE", _("Rise/Fly up"));
+	act->setCustomEngineActionEvent(kActionRiseOrFlyUp);
+	act->addDefaultInputMapping("JOY_B");
+	act->addDefaultInputMapping("r");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("LOWER", _("Lower/Fly down"));
+	act->setCustomEngineActionEvent(kActionLowerOrFlyDown);
+	act->addDefaultInputMapping("JOY_Y");
+	act->addDefaultInputMapping("f");
+	engineKeyMap->addAction(act);
+
+	// I18N: drilling rig is an in game item
 	act = new Common::Action("DEPLOY", _("Deploy drilling rig"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_d, 'd'));
+	act->setCustomEngineActionEvent(kActionDeployDrillingRig);
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	act->addDefaultInputMapping("d");
 	engineKeyMap->addAction(act);
 
+	// I18N: drilling rig is an in game item
 	act = new Common::Action("COLLECT", _("Collect drilling rig"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_c, 'c'));
+	act->setCustomEngineActionEvent(kActionCollectDrillingRig);
 	act->addDefaultInputMapping("c");
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	engineKeyMap->addAction(act);
@@ -168,7 +244,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (areaID == _startArea && entranceID == _startEntrance) {
 		_yaw = 280;
 		_pitch = 0;
-		playSound(9, true);
+		playSound(_soundIndexStart, true);
 	} else if (areaID == 127) {
 		assert(entranceID == 0);
 		_yaw = 90;
@@ -177,7 +253,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 		// Show the number of completed areas
 		_areaMap[127]->_name.replace(0, 3, Common::String::format("%4d", _gameStateVars[32]));
 	} else
-		playSound(5, false);
+		playSound(_soundIndexAreaChange, false);
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	clearTemporalMessages();
@@ -229,12 +305,17 @@ void DrillerEngine::loadAssets() {
 	_noShieldMessage = _messagesList[15];
 	_noEnergyMessage = _messagesList[16];
 	_fallenMessage = _messagesList[17];
+	_forceEndGameMessage = _messagesList[18];
 	// Small extra feature: allow player to be crushed in Driller
 	_crushedMessage = "CRUSHED!";
 }
 
 void DrillerEngine::drawInfoMenu() {
 	PauseToken pauseToken = pauseEngine();
+	if (_savedScreen) {
+		_savedScreen->free();
+		delete _savedScreen;
+	}
 	_savedScreen = _gfx->getScreenshot();
 
 	uint32 color = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
@@ -328,26 +409,26 @@ void DrillerEngine::drawInfoMenu() {
 
 			// Events
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_l) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionLoad) {
 					_gfx->setViewport(_fullscreenViewArea);
 					_eventManager->purgeKeyboardEvents();
 					loadGameDialog();
 					_gfx->setViewport(_viewArea);
-				} else if (event.kbd.keycode == Common::KEYCODE_s) {
+				} else if (event.customType == kActionSave) {
 					_gfx->setViewport(_fullscreenViewArea);
 					_eventManager->purgeKeyboardEvents();
 					saveGameDialog();
 					_gfx->setViewport(_viewArea);
-				} else if (isDOS() && event.kbd.keycode == Common::KEYCODE_t) {
+				} else if (isDOS() && event.customType == kActionToggleSound) {
 					// TODO
-				} else if ((isDOS() || isCPC()) && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					_forceEndGame = true;
-					cont = false;
-				} else if (isSpectrum() && event.kbd.keycode == Common::KEYCODE_1) {
+				} else if ((isDOS() || isCPC() || isSpectrum()) && event.customType == kActionEscape) {
 					_forceEndGame = true;
 					cont = false;
 				} else
+					cont = false;
+				break;
+			case Common::EVENT_KEYDOWN:
 					cont = false;
 				break;
 			case Common::EVENT_SCREEN_CHANGED:
@@ -376,6 +457,7 @@ void DrillerEngine::drawInfoMenu() {
 
 	_savedScreen->free();
 	delete _savedScreen;
+	_savedScreen = nullptr;
 	surface->free();
 	delete surface;
 	delete menuTexture;
@@ -391,19 +473,19 @@ Math::Vector3d getProjectionToPlane(const Math::Vector3d &vect, const Math::Vect
 }
 
 void DrillerEngine::pressedKey(const int keycode) {
-	if (keycode == Common::KEYCODE_q) {
+	if (keycode == kActionRotateLeft) {
 		rotate(-_angleRotations[_angleRotationIndex], 0);
-	} else if (keycode == Common::KEYCODE_w) {
+	} else if (keycode == kActionRotateRight) {
 		rotate(_angleRotations[_angleRotationIndex], 0);
-	} else if (keycode == Common::KEYCODE_s) {
+	} else if (keycode == kActionIncreaseStepSize) {
 		increaseStepSize();
-	} else if (keycode ==  Common::KEYCODE_x) {
+	} else if (keycode == kActionDecreaseStepSize) {
 		decreaseStepSize();
-	} else if (keycode == Common::KEYCODE_r) {
+	} else if (keycode == kActionRiseOrFlyUp) {
 		rise();
-	} else if (keycode == Common::KEYCODE_f) {
+	} else if (keycode == kActionLowerOrFlyDown) {
 		lower();
-	} else if (keycode == Common::KEYCODE_d) {
+	} else if (keycode == kActionDeployDrillingRig) {
 		if (isDOS() && isDemo()) // No support for drilling here yet
 			return;
 		clearTemporalMessages();
@@ -468,7 +550,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 		} else
 			_drillStatusByArea[_currentArea->getAreaID()] = kDrillerRigOutOfPlace;
 		executeMovementConditions();
-	} else if (keycode == Common::KEYCODE_c) {
+	} else if (keycode == kActionCollectDrillingRig) {
 		if (isDOS() && isDemo()) // No support for drilling here yet
 			return;
 		uint32 gasPocketRadius = _currentArea->_gasPocketRadius;
@@ -818,7 +900,7 @@ bool DrillerEngine::onScreenControls(Common::Point mouse) {
 		lower();
 		return true;
 	} else if (_deployDrillArea.contains(mouse)) {
-		pressedKey(Common::KEYCODE_d);
+		pressedKey(kActionDeployDrillingRig);
 		return true;
 	} else if (_infoScreenArea.contains(mouse)) {
 		drawInfoMenu();
@@ -838,6 +920,11 @@ bool DrillerEngine::onScreenControls(Common::Point mouse) {
 }
 
 void DrillerEngine::drawSensorShoot(Sensor *sensor) {
+	if (_gameStateControl == kFreescapeGameStatePlaying) {
+		// Avoid playing new sounds, so the endgame can progress
+		playSound(_soundIndexHit, true);
+	}
+
 	Math::Vector3d target;
 	target = _position;
 	target.y() = target.y() - _playerHeight;
@@ -866,6 +953,8 @@ void DrillerEngine::updateTimeVariables() {
 
 	if (_lastMinute != minutes) {
 		_lastMinute = minutes;
+		if (_gameStateVars[k8bitVariableEnergy] > 0)
+			_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 1;
 		_gameStateVars[0x1e] += 1;
 		_gameStateVars[0x1f] += 1;
 		executeLocalGlobalConditions(false, true, false); // Only execute "on collision" room/global conditions

@@ -238,7 +238,10 @@ void ShaderSurfaceRenderer::prepareState() {
 	glGetBooleanv(GL_DEPTH_WRITEMASK, &_prevStateDepthWriteMask);
 	glDepthMask(GL_FALSE);
 	_prevStateBlend = glIsEnabled(GL_BLEND);
-	glGetIntegerv(GL_BLEND_SRC_ALPHA, &_prevStateBlendFunc);
+	glGetIntegerv(GL_BLEND_SRC_RGB, &_prevStateBlendSrcRGB);
+	glGetIntegerv(GL_BLEND_DST_RGB, &_prevStateBlendDstRGB);
+	glGetIntegerv(GL_BLEND_SRC_ALPHA, &_prevStateBlendSrcAlpha);
+	glGetIntegerv(GL_BLEND_DST_ALPHA, &_prevStateBlendDstAlpha);
 	glGetIntegerv(GL_VIEWPORT, _prevStateViewport);
 	_prevStateScissorTest = glIsEnabled(GL_SCISSOR_TEST);
 	glDisable(GL_SCISSOR_TEST);
@@ -264,7 +267,8 @@ void ShaderSurfaceRenderer::restorePreviousState() {
 	glDepthMask(_prevStateDepthWriteMask);
 	_prevStateScissorTest ? glEnable(GL_SCISSOR_TEST) : glDisable(GL_SCISSOR_TEST);
 	_prevStateBlend ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
-	glBlendFunc(GL_BLEND_SRC_ALPHA, _prevStateBlendFunc);
+	glBlendFuncSeparate(_prevStateBlendSrcRGB, _prevStateBlendDstRGB,
+		_prevStateBlendSrcAlpha, _prevStateBlendDstAlpha);
 	glViewport(_prevStateViewport[0], _prevStateViewport[1], _prevStateViewport[2], _prevStateViewport[3]);
 
 	_flipY = false;

@@ -27,10 +27,62 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+void Room309::preload() {
+	_G(player).walker_type = 0;
+	_G(player).shadow_type = 0;
+	_G(player).walker_in_this_scene = false;
+}
+
 void Room309::init() {
+	digi_preload("303_s02");
+	player_set_commands_allowed(false);
+	series_stream("first pass creature", 5, 0x100, 101);
+	digi_play("303_s02", 3);
+	kernel_timing_trigger(300, 100);
 }
 
 void Room309::daemon() {
+	switch (_G(kernel).trigger) {
+	case 100:
+		digi_play("303_s02", 3);
+		kernel_timing_trigger(300, 100);
+		break;
+
+	case 101:
+		disable_player_commands_and_fade_init(123);
+		break;
+
+	case 123:
+		_G(game).setRoom(303);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room309::parser() {
+	if (player_said("exit")) {
+		switch (_G(kernel).trigger) {
+		case 0:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(1);
+			break;
+
+		case 1:
+			midi_stop();
+			digi_stop(3);
+			_G(game).setRoom(303);
+			break;
+
+		default:
+			break;
+		}
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
 }
 
 } // namespace Rooms

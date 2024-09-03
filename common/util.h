@@ -131,20 +131,6 @@ class U32String;
  */
 
 /**
- * Provides a way to store two heterogeneous objects as a single unit.
- */
-template<class T1, class T2>
-struct Pair {
-	T1 first;
-	T2 second;
-
-	Pair() {
-	}
-	Pair(T1 first_, T2 second_) : first(first_), second(second_) {
-	}
-};
-
-/**
  * A set of templates which remove const and/or volatile specifiers.
  * Use the remove_*_t<T> variants.
  */
@@ -219,6 +205,48 @@ template<class T>
 constexpr T&& forward(remove_reference_t<T> &t) noexcept {
 	return static_cast<T &&>(t);
 }
+
+/**
+ * Provides a way to store two heterogeneous objects as a single unit.
+ */
+template<class T1, class T2>
+struct Pair {
+	T1 first;
+	T2 second;
+
+	Pair() {
+	}
+
+	Pair(const Pair &other) : first(other.first), second(other.second) {
+	}
+
+	Pair(Pair &&other) : first(Common::move(other.first)), second(Common::move(other.second)) {
+	}
+
+	Pair(const T1 &first_, const T2 &second_) : first(first_), second(second_) {
+	}
+
+	Pair(T1 &&first_, T2 &&second_) : first(Common::move(first_)), second(Common::move(second_)) {
+	}
+
+	Pair(T1 &&first_, const T2 &second_) : first(Common::move(first_)), second(second_) {
+	}
+
+	Pair(const T1 &first_, T2 &&second_) : first(first_), second(Common::move(second_)) {
+	}
+
+	Pair &operator=(const Pair &other) {
+		this->first = other.first;
+		this->second = other.second;
+		return *this;
+	}
+
+	Pair &operator=(Pair &&other) {
+		this->first = Common::move(other.first);
+		this->second = Common::move(other.second);
+		return *this;
+	}
+};
 
 /**
  * Print a hexdump of the data passed in. The number of bytes per line is

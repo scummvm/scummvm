@@ -31,6 +31,32 @@ DECLARE_SINGLETON(Graphics::CursorManager);
 
 namespace Graphics {
 
+static const int CURSOR_W = 12;
+static const int CURSOR_H = 20;
+static const byte ARROW_CURSOR[CURSOR_W * CURSOR_H] = {
+	1,1,0,0,0,0,0,0,0,0,0,0,
+	1,2,1,0,0,0,0,0,0,0,0,0,
+	1,2,2,1,0,0,0,0,0,0,0,0,
+	1,2,2,2,1,0,0,0,0,0,0,0,
+	1,2,2,2,2,1,0,0,0,0,0,0,
+	1,2,2,2,2,2,1,0,0,0,0,0,
+	1,2,2,2,2,2,2,1,0,0,0,0,
+	1,2,2,2,2,2,2,2,1,0,0,0,
+	1,2,2,2,2,2,2,2,2,1,0,0,
+	1,2,2,2,2,2,2,2,2,2,1,0,
+	1,2,2,2,2,2,2,1,1,1,1,1,
+	1,2,2,2,1,2,2,1,0,0,0,0,
+	1,2,2,1,1,2,2,1,0,0,0,0,
+	1,2,1,0,0,1,2,2,1,0,0,0,
+	1,1,0,0,0,1,2,2,1,0,0,0,
+	1,0,0,0,0,0,1,2,2,1,0,0,
+	0,0,0,0,0,0,1,2,2,1,0,0,
+	0,0,0,0,0,0,0,1,2,2,1,0,
+	0,0,0,0,0,0,0,1,2,2,1,0,
+	0,0,0,0,0,0,0,0,1,1,0,0,
+};
+static const byte CURSOR_PALETTE[] = { 0x80, 0x80, 0x80, 0, 0, 0, 0xff, 0xff, 0xff };
+
 CursorManager::~CursorManager() {
 	for (Common::Stack<Cursor *>::size_type i = 0; i < _cursorStack.size(); ++i)
 		delete _cursorStack[i];
@@ -273,6 +299,18 @@ void CursorManager::replaceCursorPalette(const byte *colors, uint start, uint nu
 
 void CursorManager::lock(bool locked) {
 	_locked = locked;
+}
+
+void CursorManager::setDefaultArrowCursor(bool push) {
+	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+
+	if (push) {
+		pushCursorPalette(CURSOR_PALETTE, 0, ARRAYSIZE(CURSOR_PALETTE) / 3);
+		pushCursor(ARROW_CURSOR, CURSOR_W, CURSOR_H, 0, 0, 0, true, &format);
+	} else {
+		replaceCursorPalette(CURSOR_PALETTE, 0, ARRAYSIZE(CURSOR_PALETTE) / 3);
+		replaceCursor(ARROW_CURSOR, CURSOR_W, CURSOR_H, 0, 0, 0, true, &format);
+	}
 }
 
 CursorManager::Cursor::Cursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const byte *mask) {

@@ -52,13 +52,16 @@ private:
 
 	TextStyleState _state;
 	StyledTTFont _fnt;
-	Common::String _txtbuf;
+	Common::U32String _txtbuf;
 	uint32 _txtpos;
+	uint32 _lineStartPos;
+	bool _isRTL;
 
 	int32 _delay;
 	int32 _nexttime;
 	Graphics::Surface _img;
 	int16 _dx;
+	int16 _startX;
 	int16 _dy;
 private:
 

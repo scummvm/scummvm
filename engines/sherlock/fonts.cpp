@@ -120,11 +120,9 @@ void Fonts::setFont(int fontNum) {
 					byte *frameExclMarkPixels = (byte *)frameExclamationMark._frame.getPixels();
 					byte *frameRevExclMarkPixels = (byte *)frameRevExclamationMark._frame.getPixels();
 
-					uint16 revExclMarkY = frameExclamationMark._height - 1;
 					frameRevExclMarkPixels += frameExclamationMark._width * (frameExclamationMark._height - 1);
 					for (uint16 exclMarkY = 0; exclMarkY < frameExclamationMark._height; exclMarkY++) {
 						memcpy(frameRevExclMarkPixels, frameExclMarkPixels, frameExclamationMark._width);
-						revExclMarkY--;
 						frameRevExclMarkPixels -= frameExclamationMark._width;
 						frameExclMarkPixels += frameExclamationMark._width;
 					}

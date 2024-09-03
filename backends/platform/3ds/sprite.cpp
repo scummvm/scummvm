@@ -48,7 +48,7 @@ Sprite::~Sprite() {
 	//
 }
 
-void Sprite::create(uint16 width, uint16 height, const GfxMode3DS *mode) {
+void Sprite::create(uint16 width, uint16 height, const GfxMode3DS *mode, bool vram) {
 	free();
 
 	actualWidth = width;
@@ -62,7 +62,11 @@ void Sprite::create(uint16 width, uint16 height, const GfxMode3DS *mode) {
 
 	if (width && height) {
 		pixels = linearAlloc(h * pitch);
-		C3D_TexInit(&texture, w, h, mode->textureFormat);
+		if (vram) {
+			if (!C3D_TexInitVRAM(&texture, w, h, mode->textureFormat))
+				C3D_TexInit(&texture, w, h, mode->textureFormat);
+		} else
+			C3D_TexInit(&texture, w, h, mode->textureFormat);
 		assert(pixels && texture.data);
 		clear();
 	}

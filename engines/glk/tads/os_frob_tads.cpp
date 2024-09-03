@@ -143,7 +143,8 @@ int osfflush(osfildef *fp) {
 }
 
 int osfgetc(osfildef *fp) {
-	return dynamic_cast<Common::ReadStream *>(fp)->readByte();
+    Common::ReadStream *s = dynamic_cast<Common::ReadStream *>(fp);
+    return s->eos() ? EOF : s->readByte();
 }
 
 int osfrb(osfildef *fp, void *buf, size_t bufl) {

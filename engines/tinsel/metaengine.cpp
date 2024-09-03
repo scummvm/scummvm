@@ -32,6 +32,10 @@
 
 #include "tinsel/detection.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_CROP_HEIGHT_480_TO_432,
@@ -97,6 +101,8 @@ public:
 	
 	void registerDefaultSettings(const Common::String &target) const override;
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool TinselMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -224,6 +230,142 @@ void TinselMetaEngine::registerDefaultSettings(const Common::String &target) con
 
 const ADExtraGuiOptionsMap *TinselMetaEngine::getAdvancedExtraGuiOptions() const {
 	return optionsList;
+}
+
+Common::KeymapArray TinselMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Tinsel;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "tinsel-default", _("Default keymappings"));
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
+	Keymap *saveloadKeyMap = new Keymap(Keymap::kKeymapTypeGame, "saveload-shortcuts", _("Save/Load keymappings"));
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Left click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Right click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("ESCAPE", _("Escape"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	act->addDefaultInputMapping("ESCAPE");
+	engineKeyMap->addAction(act);
+
+	act = new Action("MOVEUP", _("Move up"));
+	act->setCustomEngineActionEvent(kActionMoveUp);
+	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("KP8");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MOVEDOWN", _("Move down"));
+	act->setCustomEngineActionEvent(kActionMoveDown);
+	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("KP2");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MOVELEFT", _("Move left"));
+	act->setCustomEngineActionEvent(kActionMoveLeft);
+	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("KP4");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MOVERIGHT", _("Move right"));
+	act->setCustomEngineActionEvent(kActionMoveRight);
+	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("KP6");
+	gameKeyMap->addAction(act);
+
+	// I18N: Walk to where cursor points
+	act = new Action("WALK", _("Walk to"));
+	act->setCustomEngineActionEvent(kActionWalkTo);
+	act->addDefaultInputMapping("SPACE");
+	gameKeyMap->addAction(act);
+
+	// I18N: Perform action on object where cursor points
+	act = new Action("ACTION", _("Action"));
+	act->setCustomEngineActionEvent(kActionAction);
+	act->addDefaultInputMapping("RETURN");
+	act->addDefaultInputMapping("KP_ENTER");
+	gameKeyMap->addAction(act);
+
+	act = new Action("LOOK", _("Look"));
+	act->setCustomEngineActionEvent(kActionLook);
+	act->addDefaultInputMapping("l");
+	act->addDefaultInputMapping("LCTRL");
+	act->addDefaultInputMapping("RCTRL");
+	gameKeyMap->addAction(act);
+
+	act = new Action("OPTIONSDIALOG", _("Options Dialog"));
+	act->setCustomEngineActionEvent(kActionOptionsDialog);
+	act->addDefaultInputMapping("F1");
+	act->addDefaultInputMapping("1");
+	gameKeyMap->addAction(act);
+
+	act = new Action("INVENTORY", _("Inventory"));
+	act->setCustomEngineActionEvent(kActionInventory);
+	act->addDefaultInputMapping("F2");
+	gameKeyMap->addAction(act);
+
+	act = new Action("NOTEBOOK", _("Notebook"));
+	act->setCustomEngineActionEvent(kActionNotebook);
+	act->addDefaultInputMapping("F3");
+	gameKeyMap->addAction(act);
+
+	act = new Action("SAVE", _("Save"));
+	act->setCustomEngineActionEvent(kActionSave);
+	act->addDefaultInputMapping("F5");
+	act->addDefaultInputMapping("5");
+	gameKeyMap->addAction(act);
+
+	act = new Action("LOAD", _("Load"));
+	act->setCustomEngineActionEvent(kActionLoad);
+	act->addDefaultInputMapping("7");
+	act->addDefaultInputMapping("F7");
+	gameKeyMap->addAction(act);
+
+	act = new Action("QUIT", _("Quit"));
+	act->setCustomEngineActionEvent(kActionQuit);
+	act->addDefaultInputMapping("C+q");
+	act->addDefaultInputMapping("A+q");
+	gameKeyMap->addAction(act);
+
+	act = new Action("PGUPMENU", _("Page Up in save/load menu"));
+	act->setCustomEngineActionEvent(kActionPageUp);
+	act->addDefaultInputMapping("PAGEUP");
+	act->addDefaultInputMapping("KP9");
+	saveloadKeyMap->addAction(act);
+
+	act = new Action("PGDOWNMENU", _("Page down in save/load menu"));
+	act->setCustomEngineActionEvent(kActionPageDown);
+	act->addDefaultInputMapping("PAGEDOWN");
+	act->addDefaultInputMapping("KP3");
+	saveloadKeyMap->addAction(act);
+
+	act = new Action("STARTOFMENU", _("Go to start of save/load menu"));
+	act->setCustomEngineActionEvent(kActionHome);
+	act->addDefaultInputMapping("HOME");
+	act->addDefaultInputMapping("KP7");
+	saveloadKeyMap->addAction(act);
+
+	act = new Action("ENDOFMENU", _("Go to end of save/load menu"));
+	act->setCustomEngineActionEvent(kActionEnd);
+	act->addDefaultInputMapping("END");
+	act->addDefaultInputMapping("KP1");
+	saveloadKeyMap->addAction(act);
+
+	KeymapArray keymaps(3);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeyMap;
+	keymaps[2] = saveloadKeyMap;
+	return keymaps;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TINSEL)

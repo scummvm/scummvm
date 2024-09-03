@@ -1414,7 +1414,6 @@ void StarTrekEngine::scaleBitmapRow(byte *src, byte *dest, uint16 origWidth, uin
 		uint16 var4 = scaledWidth << 1;
 		uint16 var6 = (scaledWidth - origWidth) << 1;
 		uint16 varE = 0;
-		uint16 varA = 0;
 		uint16 var8 = origWidth;
 		uint16 di = 0;
 
@@ -1437,13 +1436,11 @@ void StarTrekEngine::scaleBitmapRow(byte *src, byte *dest, uint16 origWidth, uin
 			}
 
 			di++;
-			varA++;
 		}
 	} else {
 		int16 var2 = ((origWidth - 1) << 1) - (scaledWidth - 1);
 		uint16 var4 = (origWidth - 1) << 1;
 		uint16 var6 = ((origWidth - 1) - (scaledWidth - 1)) << 1;
-		uint16 varA = 0;
 		uint16 var8 = scaledWidth;
 		uint16 di = 0;
 
@@ -1460,8 +1457,6 @@ void StarTrekEngine::scaleBitmapRow(byte *src, byte *dest, uint16 origWidth, uin
 				var2 += var6;
 				di++;
 			}
-
-			varA++;
 		}
 	}
 }

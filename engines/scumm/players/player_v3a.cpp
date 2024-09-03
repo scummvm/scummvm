@@ -143,7 +143,7 @@ Player_V3A::~Player_V3A() {
 }
 
 void Player_V3A::setMusicVolume (int vol) {
-	_mixer->setChannelVolume(_soundHandle, vol);
+	_mixer->setChannelVolume(_soundHandle, CLIP<int>(vol, 0, 255));
 }
 
 void Player_V3A::stopAllSounds() {

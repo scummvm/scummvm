@@ -406,7 +406,10 @@ int ScummEngine_v6::readArray(int array, int idx, int base) {
 	// ...
 	// So it checks for invalid array indices only *after* using them to access
 	// the array. Ouch.
-	if (_game.id == GID_FT && array == 447 && _currentRoom == 95 && vm.slot[_currentScript].number == 2010 && idx == -1 && base == -1) {
+	//
+	// TODO: what did the original interpreter precisely do in this case?
+	if (_game.id == GID_FT && array == 447 && _currentRoom == 95 && vm.slot[_currentScript].number == 2010 && idx == -1 && base == -1 &&
+		enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		return 0;
 	}
 
@@ -1029,9 +1032,10 @@ void ScummEngine_v6::o6_jump() {
 	// This is a script bug, due to a missing jump in one segment of the script,
 	// and it also happens with the original interpreters.
 	//
-	// Intentionally not using enhancementEnabled, since having the game hang
+	// Intentionally using `kEnhGameBreakingBugFixes`, since having the game hang
 	// is not useful to anyone.
-	if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 101 && readVar(0x8000 + 97) == 1 && offset == 1) {
+	if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 101 && readVar(0x8000 + 97) == 1 && offset == 1 &&
+		enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		offset = -18;
 	}
 
@@ -2176,16 +2180,17 @@ void ScummEngine_v6::o6_roomOps() {
 	case SO_ROOM_NEW_PALETTE:
 		a = pop();
 
-		// This opcode is used when turning off noir mode in Sam & Max,
-		// but since our implementation of this feature doesn't change
-		// the original palette there's no need to reload it. Doing it
-		// this way, we avoid some graphics glitches that the original
-		// interpreter had.
-
-		if (_game.id == GID_SAMNMAX && _currentScript != 0xFF && vm.slot[_currentScript].number == 64)
+		// This opcode is used when turning off noir mode in Sam & Max;
+		// the original exhibited some minor glitches during this mode,
+		// so we have two ways to perform it: the accurate one, and our
+		// improved one...
+		if (_game.id == GID_SAMNMAX && enhancementEnabled(kEnhMinorBugFixes) &&
+			_currentScript != 0xFF && vm.slot[_currentScript].number == 64) {
 			setDirtyColors(0, 255);
-		else
+		} else {
 			setCurrentPalette(a);
+		}
+
 		break;
 	default:
 		error("o6_roomOps: default case %d", subOp);
@@ -2669,6 +2674,8 @@ void ScummEngine_v6::o6_wait() {
 		//
 		// For now, if the value passed in is divisible by 45, assume it is an
 		// angle, and use _curActor as the actor to wait for.
+		//
+		// TODO: what did the original interpreter do in this case?
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		if (actnum % 45 == 0) {
@@ -2696,10 +2703,12 @@ void ScummEngine_v6::o6_soundKludge() {
 	// slight bug causing it to busy-wait for a sound to finish. Even under
 	// the best of circumstances, this will cause the game to hang briefly.
 	// On platforms where threading is cooperative, it will cause the game
-	// to hang indefinitely. We identify the buggy part of the script by
-	// looking for a soundKludge() opcode immediately followed by a jump.
+	// to hang indefinitely (hence the use of `kEnhGameBreakingBugFixes`).
+	// We identify the buggy part of the script by looking for a
+	// soundKludge() opcode immediately followed by a jump.
 
-	if (_game.id == GID_CMI && _roomResource == 11 && vm.slot[_currentScript].number == 2016 && *_scriptPointer == 0x66) {
+	if (_game.id == GID_CMI && _roomResource == 11 && vm.slot[_currentScript].number == 2016 && *_scriptPointer == 0x66 &&
+		enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		debug(3, "Working around script bug in room-11-2016");
 		o6_breakHere();
 	}
@@ -3214,17 +3223,21 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 	case 114:
 		// Sam & Max film noir mode
 		if (_game.id == GID_SAMNMAX) {
-			// At this point ScummVM will already have set
-			// variable 0x8000 to indicate that the game is
-			// in film noir mode. All we have to do here is
-			// to mark the palette as "dirty", because
-			// updatePalette() will desaturate the colors
-			// as they are uploaded to the backend.
-			//
-			// This actually works better than the original
-			// interpreter, where actors would sometimes
-			// still be drawn in color.
-			setDirtyColors(0, 255);
+			if (enhancementEnabled(kEnhMinorBugFixes)) {
+				// At this point ScummVM will already have set
+				// variable 0x8000 to indicate that the game is
+				// in film noir mode. All we have to do here is
+				// to mark the palette as "dirty", because
+				// updatePalette() will desaturate the colors
+				// as they are uploaded to the backend.
+				//
+				// This actually works better than the original
+				// interpreter, where actors would sometimes
+				// still be drawn in color.
+				setDirtyColors(0, 255);
+			} else {
+				applyGrayscaleToPaletteRange(0, 254);
+			}
 		} else
 			error("stub o6_kernelSetFunctions_114()");
 		break;

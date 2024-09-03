@@ -29,12 +29,51 @@ namespace Riddle {
 namespace Rooms {
 
 class Room406 : public Room {
+private:
+	machine *_billiardTable = nullptr;
+	machine *_painting = nullptr;
+	machine *_mirror = nullptr;
+	machine *_cardDoor = nullptr;
+	machine *_gamesCabinet = nullptr;
+	machine *_desk = nullptr;
+	machine *_poolBall = nullptr;
+	machine *_emptyDrawer = nullptr;
+	machine *_envelope = nullptr;
+	machine *_keys = nullptr;
+	machine *_cards = nullptr;
+	int _rptmhr = 0;
+	int _rptmr15 = 0;
+	int _val1 = 0;
+	int _val2 = 0;
+	int _ripReachHand = 0;
+	int _ripHiHand = 0;
+	int _pickupBall = 0;
+	machine *_ripAction = nullptr;
+	int _lookMirror = 0;
+	int _tableRaises = 0;
+	int _paintingOpening = 0;
+	int _ripThrowsBall = 0;
+	int _deskOpening = 0;
+	int _cabinetOpens = 0;
+
+	void setHotspots();
+	bool takeKeys();
+	bool takeBilliardBall();
+	bool billiardBallOnTable();
+	void useSwitchPaintingOpen();
+	void useSwitchPaintingClosed();
+	void useAceOfSpades1();
+	void useAceOfSpades2();
+	bool lookBilliardBall();
+
 public:
 	Room406() : Room() {}
 	~Room406() override {}
 
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms

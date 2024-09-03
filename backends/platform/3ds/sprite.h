@@ -41,7 +41,7 @@ class Sprite : public Graphics::Surface {
 public:
 	Sprite();
 	~Sprite();
-	void create(uint16 width, uint16 height, const GfxMode3DS *mode);
+	void create(uint16 width, uint16 height, const GfxMode3DS *mode, bool vram = false);
 	void free();
 	void convertToInPlace(const Graphics::PixelFormat &dstFormat, const byte *palette = 0);
 	void transfer();

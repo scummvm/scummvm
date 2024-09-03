@@ -52,7 +52,7 @@ void cEnvMapReflect_SetUp::Setup(iGpuProgram *apProgram, cRenderSettings *apRend
 //-----------------------------------------------------------------------
 
 void cEnvMapReflect_SetUp::SetupMatrix(cMatrixf *apModelMatrix, cRenderSettings *apRenderSettings) {
-	// Put here so it is updated with every matrix, just aswell...
+	// Put here so it is updated with every matrix, just as well...
 	if (apModelMatrix)
 		apRenderSettings->gpuProgram->SetMatrixf("objectWorldMatrix", *apModelMatrix);
 	else {

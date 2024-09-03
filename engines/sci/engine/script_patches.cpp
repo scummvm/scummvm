@@ -4388,7 +4388,9 @@ static const uint16 gk1EndGameFontPatch[] = {
 //  to kDisposeTextBitmap. By patching just the callk instructions, the Destroy
 //  subop (1) on the stack becomes the new parameter count. The old parameter
 //  count (2) remains on the stack until the next ret instruction. This allows
-//  one patch to work on all calls.
+//  one patch to work on all calls. This patch is hard-coded to little endian
+//  bytecode so that it it is not applied to the Macintosh version, as that
+//  version does use a SCI2.1 interpreter.
 //
 // Applies to: Italian fan translation, PC CD version
 // Responsible methods: DEdit:hilite, DText:dispose, DText:draw, DSelector:dispose, 
@@ -4396,12 +4398,12 @@ static const uint16 gk1EndGameFontPatch[] = {
 //                      TellerButton:hilite, TopicButton:hilite
 static const uint16 gk1ItalianTranslationSignature[] = {
 	SIG_MAGICDWORD,
-	0x43, 0x91, SIG_UINT16(0x0004),     // callk 91 0004 [ SCI2: invalid, SCI2.1: kBitmap ]
+	0x43, 0x91, 0x04, 0x00,             // callk 91 0004 [ SCI2: invalid, SCI2.1: kBitmap ]
 	SIG_END
 };
 
 static const uint16 gk1ItalianTranslationPatch[] = {
-	0x43, 0x2e, PATCH_UINT16(0x0002),   // callk 2e 0002 [ kDisposeTextBitmap ]
+	0x43, 0x2e, 0x02, 0x00,             // callk 2e 0002 [ kDisposeTextBitmap ]
 	PATCH_END
 };
 

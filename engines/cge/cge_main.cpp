@@ -533,8 +533,8 @@ Square::Square(CGEEngine *vm) : Sprite(vm, nullptr), _vm(vm) {
 	setShapeList(MB);
 }
 
-void Square::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
-	Sprite::touch(mask, x, y, keyCode);
+void Square::touch(uint16 mask, int x, int y) {
+	Sprite::touch(mask, x, y);
 	if (mask & kMouseLeftUp) {
 		_vm->XZ(_x + x, _y + y).cell() = 0;
 		_vm->_commandHandlerTurbo->addCommand(kCmdKill, -1, 0, this);
@@ -772,18 +772,16 @@ void System::funTouch() {
 		_funDel = n;
 }
 
-void System::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
+void System::touch(uint16 mask, int x, int y) {
 	funTouch();
 
-	if (mask & kEventKeyb) {
-		if (keyCode == Common::KEYCODE_ESCAPE) {
-			// The original was calling keyClick()
-			// The sound is uselessly annoying and noisy, so it has been removed
-			_vm->killText();
-			if (_vm->_startupMode == 1) {
-				_vm->_commandHandler->addCommand(kCmdClear, -1, 0, nullptr);
-				return;
-			}
+	if (mask & kEventEsc) {
+		// The original was calling keyClick()
+		// The sound is uselessly annoying and noisy, so it has been removed
+		_vm->killText();
+		if (_vm->_startupMode == 1) {
+			_vm->_commandHandler->addCommand(kCmdClear, -1, 0, nullptr);
+			return;
 		}
 	} else {
 		if (_vm->_startupMode)
@@ -942,7 +940,7 @@ void CGEEngine::optionTouch(int opt, uint16 mask) {
 }
 
 #pragma argsused
-void Sprite::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
+void Sprite::touch(uint16 mask, int x, int y) {
 	_vm->_sys->funTouch();
 
 	if ((mask & kEventAttn) != 0)

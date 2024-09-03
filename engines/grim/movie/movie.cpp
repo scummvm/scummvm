@@ -238,7 +238,7 @@ void MoviePlayer::restoreState(SaveGame *state) {
 #define NEED_NULLPLAYER
 #endif
 
-// Fallback for when USE_MPEG2 / USE_BINK isnt defined
+// Fallback for when USE_MPEG2 / USE_BINK isn't defined
 
 #ifdef NEED_NULLPLAYER
 class NullPlayer : public MoviePlayer {

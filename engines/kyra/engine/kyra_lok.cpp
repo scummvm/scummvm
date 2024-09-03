@@ -192,7 +192,7 @@ KyraEngine_LoK::~KyraEngine_LoK() {
 }
 
 Common::Error KyraEngine_LoK::init() {
-	if (Common::parseRenderMode(ConfMan.get("render_mode")) == Common::kRenderPC9801)
+	if (Common::parseRenderMode(ConfMan.get("render_mode")) == Common::kRenderPC98_16c)
 		_screen = new Screen_LoK_16(this, _system);
 	else
 		_screen = new Screen_LoK(this, _system);

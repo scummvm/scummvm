@@ -19,8 +19,6 @@
  *
  */
 
-#if defined(__ANDROID__)
-
 // Allow use of stuff in <time.h> and abort()
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_abort
@@ -80,6 +78,7 @@ int JNI::egl_surface_height = 0;
 int JNI::egl_bits_per_pixel = 0;
 bool JNI::_ready_for_events = 0;
 bool JNI::virt_keyboard_state = false;
+int32 JNI::gestures_insets[4] = { 0, 0, 0, 0 };
 
 jmethodID JNI::_MID_getDPI = 0;
 jmethodID JNI::_MID_displayMessageOnOSD = 0;
@@ -91,7 +90,6 @@ jmethodID JNI::_MID_isConnectionLimited = 0;
 jmethodID JNI::_MID_setWindowCaption = 0;
 jmethodID JNI::_MID_showVirtualKeyboard = 0;
 jmethodID JNI::_MID_showOnScreenControls = 0;
-jmethodID JNI::_MID_getBitmapResource = 0;
 jmethodID JNI::_MID_setTouchMode = 0;
 jmethodID JNI::_MID_getTouchMode = 0;
 jmethodID JNI::_MID_setOrientation = 0;
@@ -140,6 +138,8 @@ const JNINativeMethod JNI::_natives[] = {
 		(void *)JNI::syncVirtkeyboardState },
 	{ "setPause", "(Z)V",
 		(void *)JNI::setPause },
+	{ "systemInsetsUpdated", "([I)V",
+		(void *)JNI::systemInsetsUpdated },
 	{ "getNativeVersionInfo", "()Ljava/lang/String;",
 		(void *)JNI::getNativeVersionInfo }
 };
@@ -432,71 +432,6 @@ void JNI::showOnScreenControls(int enableMask) {
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 	}
-}
-
-Graphics::Surface *JNI::getBitmapResource(BitmapResources resource) {
-	JNIEnv *env = JNI::getEnv();
-
-	jobject bitmap = env->CallObjectMethod(_jobj, _MID_getBitmapResource, (int) resource);
-
-	if (env->ExceptionCheck()) {
-		LOGE("Can't get bitmap resource");
-
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-
-		return nullptr;
-	}
-
-	if (bitmap == nullptr) {
-		LOGE("Bitmap resource was not found");
-		return nullptr;
-	}
-
-	AndroidBitmapInfo bitmap_info;
-	if (AndroidBitmap_getInfo(env, bitmap, &bitmap_info) != ANDROID_BITMAP_RESULT_SUCCESS) {
-		LOGE("Error reading bitmap info");
-		env->DeleteLocalRef(bitmap);
-		return nullptr;
-	}
-
-	Graphics::PixelFormat fmt;
-	switch(bitmap_info.format) {
-		case ANDROID_BITMAP_FORMAT_RGBA_8888:
-#ifdef SCUMM_BIG_ENDIAN
-			fmt = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-#else
-			fmt = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-#endif
-			break;
-		case ANDROID_BITMAP_FORMAT_RGBA_4444:
-			fmt = Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0);
-			break;
-		case ANDROID_BITMAP_FORMAT_RGB_565:
-			fmt = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-			break;
-		default:
-			LOGE("Bitmap has unsupported format");
-			env->DeleteLocalRef(bitmap);
-			return nullptr;
-	}
-
-	void *src_pixels = nullptr;
-	if (AndroidBitmap_lockPixels(env, bitmap, &src_pixels) != ANDROID_BITMAP_RESULT_SUCCESS) {
-		LOGE("Error locking bitmap pixels");
-		env->DeleteLocalRef(bitmap);
-		return nullptr;
-	}
-
-	Graphics::Surface *ret = new Graphics::Surface();
-	ret->create(bitmap_info.width, bitmap_info.height, fmt);
-	ret->copyRectToSurface(src_pixels, bitmap_info.stride,
-			0, 0, bitmap_info.width, bitmap_info.height);
-
-	AndroidBitmap_unlockPixels(env, bitmap);
-	env->DeleteLocalRef(bitmap);
-
-	return ret;
 }
 
 void JNI::setTouchMode(int touchMode) {
@@ -819,7 +754,6 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, isConnectionLimited, "()Z");
 	FIND_METHOD(, showVirtualKeyboard, "(Z)V");
 	FIND_METHOD(, showOnScreenControls, "(I)V");
-	FIND_METHOD(, getBitmapResource, "(I)Landroid/graphics/Bitmap;");
 	FIND_METHOD(, setTouchMode, "(I)V");
 	FIND_METHOD(, getTouchMode, "()I");
 	FIND_METHOD(, setOrientation, "(I)V");
@@ -1034,6 +968,12 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 	}
 }
 
+void JNI::systemInsetsUpdated(JNIEnv *env, jobject self, jintArray insets) {
+	assert(env->GetArrayLength(insets) == ARRAYSIZE(gestures_insets));
+
+	env->GetIntArrayRegion(insets, 0, ARRAYSIZE(gestures_insets), gestures_insets);
+}
+
 jstring JNI::getNativeVersionInfo(JNIEnv *env, jobject self) {
 	return convertToJString(env, Common::U32String(gScummVMVersion));
 }
@@ -1185,5 +1125,3 @@ jobject JNI::findSAFTree(const Common::String &name) {
 
 	return tree;
 }
-
-#endif

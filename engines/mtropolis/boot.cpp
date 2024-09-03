@@ -40,7 +40,6 @@
 
 #include "mtropolis/plugin/mti.h"
 #include "mtropolis/plugin/obsidian.h"
-#include "mtropolis/plugin/spqr.h"
 #include "mtropolis/plugin/standard.h"
 #include "mtropolis/plugins.h"
 
@@ -1076,7 +1075,6 @@ class BootScriptContext {
 public:
 	enum PlugIn {
 		kPlugInMTI,
-		kPlugInSPQR,
 		kPlugInStandard,
 		kPlugInObsidian,
 		kPlugInMIDI,
@@ -1122,11 +1120,13 @@ public:
 	const Common::Array<PlugIn> &getPlugIns() const;
 	const VirtualFileSystemLayout &getVFSLayout() const;
 	const ManifestSubtitlesDef &getSubtitlesDef() const;
+	const Common::String &getMainSegmentFileOverride() const;
 
 	BitDepth getBitDepth() const;
 	BitDepth getEnhancedBitDepth() const;
 	RuntimeVersion getRuntimeVersion() const;
 	const Common::Point &getResolution() const;
+	bool getWantPrintVFS() const;
 
 private:
 	enum ArchiveType {
@@ -1150,6 +1150,8 @@ private:
 	void setBitDepth(BitDepth bitDepth);
 	void setEnhancedBitDepth(BitDepth bitDepth);
 	void setRuntimeVersion(RuntimeVersion version);
+	void setMainSegmentFile(const Common::String &mainSegmentFilePath);
+	void printVFS();
 
 	void executeFunction(const Common::String &functionName, const Common::Array<Common::String> &paramTokens);
 
@@ -1169,14 +1171,19 @@ private:
 	ManifestSubtitlesDef _subtitlesDef;
 
 	Common::Array<Common::SharedPtr<Common::Archive> > _persistentArchives;
+	Common::String _mainSegmentFileOverride;
 	bool _isMac;
+	bool _wantPrintVFS;
 	Common::Point _preferredResolution;
 	BitDepth _bitDepth;
 	BitDepth _enhancedBitDepth;
 	RuntimeVersion _runtimeVersion;
 };
 
-BootScriptContext::BootScriptContext(bool isMac) : _isMac(isMac), _preferredResolution(0, 0), _bitDepth(kBitDepthAuto), _enhancedBitDepth(kBitDepthAuto), _runtimeVersion(kRuntimeVersionAuto) {
+BootScriptContext::BootScriptContext(bool isMac)
+	: _isMac(isMac), _preferredResolution(0, 0)
+	, _bitDepth(kBitDepthAuto), _enhancedBitDepth(kBitDepthAuto), _runtimeVersion(kRuntimeVersionAuto)
+	, _wantPrintVFS(false) {
 	_vfsLayout._pathSeparator = isMac ? ':' : '/';
 
 	VirtualFileSystemLayout::ArchiveJunction fsJunction;
@@ -1290,6 +1297,14 @@ void BootScriptContext::setRuntimeVersion(RuntimeVersion version) {
 	_runtimeVersion = version;
 }
 
+void BootScriptContext::setMainSegmentFile(const Common::String &mainSegmentFilePath) {
+	_mainSegmentFileOverride = mainSegmentFilePath;
+}
+
+void BootScriptContext::printVFS() {
+	_wantPrintVFS = true;
+}
+
 void BootScriptContext::bootObsidianRetailMacEn() {
 	addPlugIn(kPlugInObsidian);
 	addPlugIn(kPlugInMIDI);
@@ -1380,7 +1395,6 @@ void BootScriptContext::bootMTIRetailWinRu() {
 }
 
 void BootScriptContext::bootSPQRMac() {
-	addPlugIn(kPlugInSPQR);
 	addPlugIn(kPlugInStandard);
 
 	addArchive(kArchiveTypeMacVISE, "installer", "fs:Install.vct");
@@ -1390,7 +1404,6 @@ void BootScriptContext::bootSPQRMac() {
 }
 
 void BootScriptContext::bootSPQRWin() {
-	addPlugIn(kPlugInSPQR);
 	addPlugIn(kPlugInStandard);
 }
 
@@ -1452,7 +1465,6 @@ void BootScriptContext::executeFunction(const Common::String &functionName, cons
 	const EnumBinding plugInEnum[] = {ENUM_BINDING(kPlugInMTI),
 									  ENUM_BINDING(kPlugInStandard),
 									  ENUM_BINDING(kPlugInObsidian),
-									  ENUM_BINDING(kPlugInSPQR),
 									  ENUM_BINDING(kPlugInMIDI)};
 
 	const EnumBinding bitDepthEnum[] = {ENUM_BINDING(kBitDepthAuto),
@@ -1529,6 +1541,15 @@ void BootScriptContext::executeFunction(const Common::String &functionName, cons
 		parseEnum(functionName, paramTokens, 0, runtimeVersionEnum, ui1);
 
 		setRuntimeVersion(static_cast<RuntimeVersion>(ui1));
+	} else if (functionName == "setMainSegmentFile") {
+		checkParams(functionName, paramTokens, 1);
+
+		parseString(functionName, paramTokens, 0, str1);
+		setMainSegmentFile(str1);
+	} else if (functionName == "printVFS") {
+		checkParams(functionName, paramTokens, 0);
+
+		printVFS();
 	} else {
 		error("Unknown function '%s'", functionName.c_str());
 	}
@@ -1603,6 +1624,10 @@ const ManifestSubtitlesDef &BootScriptContext::getSubtitlesDef() const {
 	return _subtitlesDef;
 }
 
+const Common::String &BootScriptContext::getMainSegmentFileOverride() const {
+	return _mainSegmentFileOverride;
+}
+
 BootScriptContext::BitDepth BootScriptContext::getBitDepth() const {
 	return _bitDepth;
 }
@@ -1617,6 +1642,10 @@ BootScriptContext::RuntimeVersion BootScriptContext::getRuntimeVersion() const {
 
 const Common::Point &BootScriptContext::getResolution() const {
 	return _preferredResolution;
+}
+
+bool BootScriptContext::getWantPrintVFS() const {
+	return _wantPrintVFS;
 }
 
 namespace Games {
@@ -1800,6 +1829,11 @@ const Game games[] = {
 		MTBOOT_SPQR_RETAIL_MAC,
 		&BootScriptContext::bootSPQRMac
 	},
+	// Star Trek: The Game Show - Retail - Windows
+	{
+		MTBOOT_STTGS_RETAIL_WIN,
+		&BootScriptContext::bootGeneric
+	},
 	// Star Trek: The Game Show - Demo - Windows
 	{
 		MTBOOT_STTGS_DEMO_WIN,
@@ -1808,6 +1842,241 @@ const Game games[] = {
 	// Unit: Rebooted
 	{
 		MTBOOT_UNIT_REBOOTED_WIN,
+		&BootScriptContext::bootGeneric
+	},
+	// Mind Gym - Windows - English
+	{
+		MTBOOT_MINDGYM_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Mind Gym - Windows - German
+	{
+		MTBOOT_MINDGYM_WIN_DE,
+		&BootScriptContext::bootGeneric
+	},
+	// Fun With Architecture - Windows - English
+	{
+		MTBOOT_ARCHITECTURE_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// The Magic World of Beatrix Potter - Windows - English
+	{
+		MTBOOT_BEATRIX_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// Whitetail Impact - Windows - English
+	{
+		MTBOOT_WT_IMPACT_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// The Day The World Broke - Windows - English
+	{
+		MTBOOT_WORLDBROKE_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// The Totally Techie World of Young Dilbert: Hi-Tech Hijinks - Windows - English
+	{
+		MTBOOT_DILBERT_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// Free Willy Activity Center - Windows - English
+	{
+		MTBOOT_FREEWILLY_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// Hercules & Xena Learning Adventure: Quest for the Scrolls - Windows - English
+	{
+		MTBOOT_HERCULES_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// I Can Be a Dinosaur Finder - Retail - Windows - English
+	{
+		MTBOOT_IDINO_RETAIL_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// I Can Be an Animal Doctor - Retail - Windows - English
+	{
+		MTBOOT_IDOCTOR_RETAIL_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// How to Draw the Marvel Way - Windows - English
+	{
+		MTBOOT_DRAWMARVELWAY_WIN_EN,
+		&BootScriptContext::bootGeneric,
+	},
+	// FairyTale: A True Story - Activity Center - Windows - English
+	{
+		MTBOOT_FTTS_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// Purple Moon Sampler - Demo - Windows - English
+	{
+		MTBOOT_PURPLEMOON_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// Chomp! The Video Game - Retail - Windows - English
+	{
+		MTBOOT_CHOMP_RETAIL_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// Chomp! The Video Game - Demo - Windows - English
+	{
+		MTBOOT_CHOMP_DEMO_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// 24 Hours in Cyberspace - Windows - English
+	{
+		MTBOOT_CYBER24_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// IVOCLAR - Windows - English
+	{
+		MTBOOT_IVOCLAR_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// Real Wild Child! Australian Rock Music 1950s-90s - Windows - English
+	{
+		MTBOOT_REALWILD_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// How to Build a Telemedicine Program - Windows - English
+	{
+		MTBOOT_TELEMED_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// Rugrats: Totally Angelica Boredom Buster - Windows - English
+	{
+		MTBOOT_ANGELICA_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Babe and Friends: Animated Early Reader - Windows - English
+	{
+		MTBOOT_BABE_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Biologia Cellulare Evoluzione E Variet� Della Vita - Windows - Italian
+	{
+		MTBOOT_BIOCELLEVO_WIN_IT,
+		&BootScriptContext::bootGeneric
+	},
+	// Easy-Bake Kitchen - Windows - English
+	{
+		MTBOOT_EASYBAKE_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// The Forgotten: It Begins - Windows - English
+	{
+		MTBOOT_FORGOTTEN_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// The Mystery at Greveholm 2: The Journey to Planutus - Windows - Swedish
+	{
+		MTBOOT_GREVEHOLM2_WIN_SE,
+		&BootScriptContext::bootGeneric
+	},
+	// Itacante: La Cit� des Robots - Windows - French
+	{
+		MTBOOT_ITACANTE_WIN_FR,
+		&BootScriptContext::bootGeneric
+	},
+	// King of Dragon Pass - Windows - English
+	{
+		MTBOOT_KINGOFDRAGONPASS_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// The Times Key Stage 1 English - Windows - English
+	{
+		MTBOOT_KS1ENG_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Maisy's Playhouse - Windows - English
+	{
+		MTBOOT_MAISY_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// The Magic School Bus Explores the World of Animals - Windows - English
+	{
+		MTBOOT_MSB_ANIMAL_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// The Magic School Bus Explores Bugs - Windows - English
+	{
+		MTBOOT_MSB_BUGS_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// The Magic School Bus In Concert - Windows - English
+	{
+		MTBOOT_MSB_CONCERT_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// The Magic School Bus Discovers Flight - Windows - English
+	{
+		MTBOOT_MSB_FLIGHT_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// The Magic School Bus Lands on Mars - Windows - English
+	{
+		MTBOOT_MSB_MARS_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// The Magic School Bus Volcano Adventure - Windows - English
+	{
+		MTBOOT_MSB_VOLCANO_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// The Magic School Bus Whales & Dolphins - Windows - English
+	{
+		MTBOOT_MSB_WHALES_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Mykropolis Planet der Roboter - Windows - German
+	{
+		MTBOOT_MYKROPOLIS_WIN_DE,
+		&BootScriptContext::bootGeneric
+	},
+	// Your Notebook (with help from Amelia) - Windows - English
+	{
+		MTBOOT_NOTEBOOK_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Pferd & Pony Lass uns reiten	- Windows - English
+	{
+		MTBOOT_PFERDPONY_WIN_DE,
+		&BootScriptContext::bootGeneric
+	},
+	// Pinnacle Systems miroVideo Studio DC10 Plus - Windows - English
+	{
+		MTBOOT_MIRODC10_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Pinnacle Systems miroVideo Studio DC10 Plus - Windows - German
+	{
+		MTBOOT_MIRODC10_WIN_DE,
+		&BootScriptContext::bootGeneric
+	},
+	// Poser 3 Content Sampler - Windows - English
+	{
+		MTBOOT_POSER3_SAMPLER_ZYGOTE_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Another Poser 3 content sampler - Windows - English
+	{
+		MTBOOT_POSER3_ZYGOTE_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Whitetail Extreme - Windows - English
+	{
+		MTBOOT_WT_EXTREME_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Cloud 9 CD Sampler Volume 2 - Windows - English
+	{
+		MTBOOT_C9SAMPLER_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Adobe 24 Hours Tools Sampler - Windows - English
+	{
+		MTBOOT_ADOBE24_WIN_EN,
 		&BootScriptContext::bootGeneric
 	},
 };
@@ -1836,11 +2105,6 @@ Common::SharedPtr<MTropolis::PlugIn> loadObsidianPlugIn(const MTropolisGameDescr
 Common::SharedPtr<MTropolis::PlugIn> loadMTIPlugIn(const MTropolisGameDescription &gameDesc) {
 	Common::SharedPtr<MTropolis::PlugIn> mtiPlugIn(PlugIns::createMTI());
 	return mtiPlugIn;
-}
-
-Common::SharedPtr<MTropolis::PlugIn> loadSPQRPlugIn(const MTropolisGameDescription &gameDesc) {
-	Common::SharedPtr<MTropolis::PlugIn> spqrPlugIn(PlugIns::createSPQR());
-	return spqrPlugIn;
 }
 
 enum PlayerType {
@@ -2046,21 +2310,50 @@ void findMacPlayer(Common::Archive &fs, Common::Path &resolvedPath, PlayerType &
 	resolvedPlayerType = bestPlayerType;
 }
 
-void findWindowsMainSegment(Common::Archive &fs, Common::Path &resolvedPath, bool &resolvedIsV2) {
+void findWindowsMainSegment(Common::Archive &fs, const BootScriptContext &bootScriptContext, Common::Path &resolvedPath, bool &resolvedIsV2) {
 	Common::ArchiveMemberList allFiles;
 	Common::ArchiveMemberList filteredFiles;
 
-	fs.listMembers(allFiles);
+	const char *mainSegmentSuffixes[] = {".mpl", ".mfw", ".mfx"};
 
-	for (const Common::ArchiveMemberPtr &archiveMember : allFiles) {
-		Common::String fileName = archiveMember->getFileName();
-		if (fileName.hasSuffixIgnoreCase(".mpl") || fileName.hasSuffixIgnoreCase(".mfw") || fileName.hasSuffixIgnoreCase(".mfx")) {
-			filteredFiles.push_back(archiveMember);
-			debug(4, "Identified possible main segment file %s", fileName.c_str());
+	if (bootScriptContext.getMainSegmentFileOverride().empty()) {
+		fs.listMembers(allFiles);
+
+		for (const Common::ArchiveMemberPtr &archiveMember : allFiles) {
+			Common::String fileName = archiveMember->getFileName();
+
+			for (const char *suffix : mainSegmentSuffixes) {
+				if (fileName.hasSuffixIgnoreCase(suffix)) {
+					filteredFiles.push_back(archiveMember);
+					debug(4, "Identified possible main segment file %s", archiveMember->getPathInArchive().toString(fs.getPathSeparator()).c_str());
+					break;
+				}
+			}
 		}
-	}
 
-	allFiles.clear();
+		allFiles.clear();
+	} else {
+		const Common::String &pathStr = bootScriptContext.getMainSegmentFileOverride();
+
+		Common::ArchiveMemberPtr mainSegmentFile = fs.getMember(Common::Path(pathStr, fs.getPathSeparator()));
+
+		if (!mainSegmentFile)
+			error("Couldn't find main segment '%s' in VFS", pathStr.c_str());
+
+		filteredFiles.push_back(mainSegmentFile);
+
+		bool hasRecognizedSuffix = false;
+		
+		for (const char *suffix : mainSegmentSuffixes) {
+			if (pathStr.hasSuffixIgnoreCase(suffix)) {
+				hasRecognizedSuffix = true;
+				break;
+			}
+		}
+
+		if (!hasRecognizedSuffix && bootScriptContext.getRuntimeVersion() == BootScriptContext::kRuntimeVersionAuto)
+			error("Main segment has an unknown suffix, you must set a runtime version with setRuntimeVersion");
+	}
 
 	if (filteredFiles.size() == 0)
 		error("Couldn't find any main segment files");
@@ -2087,6 +2380,7 @@ enum SegmentSignatureType {
 
 	kSegmentSignatureMacV1,
 	kSegmentSignatureWinV1,
+	kSegmentSignatureCrossV1,
 	kSegmentSignatureMacV2,
 	kSegmentSignatureWinV2,
 	kSegmentSignatureCrossV2,
@@ -2097,13 +2391,14 @@ const uint kSignatureHeaderSize = 10;
 SegmentSignatureType identifyStreamBySignature(byte (&header)[kSignatureHeaderSize]) {
 	const byte macV1Signature[kSignatureHeaderSize] = {0, 0, 0xaa, 0x55, 0xa5, 0xa5, 0, 0, 0, 0};
 	const byte winV1Signature[kSignatureHeaderSize] = {1, 0, 0xa5, 0xa5, 0x55, 0xaa, 0, 0, 0, 0};
+	const byte crossV1Signature[kSignatureHeaderSize] = {8, 0, 0xa5, 0xa5, 0x55, 0xaa, 0, 0, 0, 0};
 	const byte macV2Signature[kSignatureHeaderSize] = {0, 0, 0xaa, 0x55, 0xa5, 0xa5, 2, 0, 0, 0};
 	const byte winV2Signature[kSignatureHeaderSize] = {1, 0, 0xa5, 0xa5, 0x55, 0xaa, 0, 0, 0, 2};
 	const byte crossV2Signature[kSignatureHeaderSize] = {8, 0, 0xa5, 0xa5, 0x55, 0xaa, 0, 0, 0, 2};
 
-	const byte *signatures[5] = {macV1Signature, winV1Signature, macV2Signature, winV2Signature, crossV2Signature};
+	const byte *signatures[6] = {macV1Signature, winV1Signature, crossV1Signature, macV2Signature, winV2Signature, crossV2Signature};
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < ARRAYSIZE(signatures); i++) {
 		const byte *signature = signatures[i];
 
 		if (!memcmp(signature, header, kSignatureHeaderSize))
@@ -2404,6 +2699,57 @@ void resolveBitDepthAndResolutionFromPresentationSettings(Common::SeekableReadSt
 BootConfiguration::BootConfiguration() : _bitDepth(0), _enhancedBitDepth(0), _width(0), _height(0) {
 }
 
+bool stableSortCaseInsensitive(const Common::String &a, const Common::String &b) {
+	uint shorterPath = a.size();
+	if (b.size() < shorterPath)
+		shorterPath = b.size();
+
+	bool aLessSensitive = false;
+	bool bLessSensitive = false;
+	for (uint i = 0; i < shorterPath; i++) {
+		char ca = a[i];
+		char cb = b[i];
+
+		char ccia = invariantToLower(ca);
+		char ccib = invariantToLower(cb);
+
+		if (ccia < ccib)
+			return true;
+		if (ccib < ccia)
+			return false;
+
+		if (ca < cb)
+			aLessSensitive = true;
+		if (cb < ca)
+			bLessSensitive = true;
+	}
+
+	if (aLessSensitive)
+		return true;
+	if (bLessSensitive)
+		return false;
+
+	return a.size() < b.size();
+}
+
+struct StablePathInArchiveSorter {
+	explicit StablePathInArchiveSorter(char pathSeparator);
+
+	bool operator()(const Common::ArchiveMember *a, const Common::ArchiveMember *b) const {
+		Common::String aPathStr = a->getPathInArchive().toString(_pathSeparator);
+		Common::String bPathStr = b->getPathInArchive().toString(_pathSeparator);
+
+		return stableSortCaseInsensitive(aPathStr, bPathStr);
+	}
+
+private:
+	char _pathSeparator;
+};
+
+StablePathInArchiveSorter::StablePathInArchiveSorter(char pathSeparator) : _pathSeparator(pathSeparator) {
+}
+
+
 BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 	BootConfiguration bootConfig;
 
@@ -2446,7 +2792,72 @@ BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 
 	bootScriptContext.finalize();
 
+	if (bootScriptContext.getWantPrintVFS()) {
+		const VirtualFileSystemLayout &vfsLayout = bootScriptContext.getVFSLayout();
+
+		char pathSeparator = vfsLayout._pathSeparator;
+
+		debug("VFS layout:");
+
+		debug("Workspace root: %s", vfsLayout._workspaceRoot.toString(pathSeparator).c_str());
+
+		debug("Archive junctions:");
+
+		for (const VirtualFileSystemLayout::ArchiveJunction &arcJunction : vfsLayout._archiveJunctions) {
+			debug("Physical paths from archive '%s':", arcJunction._archiveName.c_str());
+
+			Common::ArchiveMemberList memberList;
+			arcJunction._archive->listMembers(memberList);
+
+			Common::Array<Common::ArchiveMember *> sortedArchiveMembers;
+
+			for (const Common::ArchiveMemberPtr &archiveMember : memberList)
+				sortedArchiveMembers.push_back(archiveMember.get());
+
+			Common::sort(sortedArchiveMembers.begin(), sortedArchiveMembers.end(), StablePathInArchiveSorter(pathSeparator));
+
+			for (const Common::ArchiveMember *archiveMember : sortedArchiveMembers) {
+				debug("    %s%c%s", arcJunction._archiveName.c_str(), pathSeparator, archiveMember->getPathInArchive().toString(pathSeparator).c_str());
+			}
+
+			debug("%s", "");
+		}
+
+		debug("Virtual-to-physical path mappings:");
+		for (const VirtualFileSystemLayout::PathJunction &pathJunction : vfsLayout._pathJunctions) {
+			debug("    %s -> %s", pathJunction._srcPath.c_str(), pathJunction._destPath.c_str());
+		}
+		debug("%s", "");
+
+		debug("Exclusions:");
+
+		Common::StringArray exclusions = vfsLayout._exclusions;
+		Common::sort(exclusions.begin(), exclusions.end(), stableSortCaseInsensitive);
+
+		for (const Common::String &str : vfsLayout._exclusions)
+			debug("    %s", str.c_str());
+
+		debug("%s", "");
+	}
+
 	Common::SharedPtr<VirtualFileSystem> vfs(new VirtualFileSystem(bootScriptContext.getVFSLayout()));
+
+	if (bootScriptContext.getWantPrintVFS()) {
+		debug("Files in VFS:");
+		Common::ArchiveMemberList memberList;
+		vfs->listMembers(memberList);
+
+		Common::Array<Common::ArchiveMember *> sortedArchiveMembers;
+
+		for (const Common::ArchiveMemberPtr &archiveMember : memberList)
+			sortedArchiveMembers.push_back(archiveMember.get());
+
+		Common::sort(sortedArchiveMembers.begin(), sortedArchiveMembers.end(), StablePathInArchiveSorter(vfs->getPathSeparator()));
+
+		for (const Common::ArchiveMember *archiveMember : sortedArchiveMembers) {
+			debug("    %s", archiveMember->getPathInArchive().toString(vfs->getPathSeparator()).c_str());
+		}
+	}
 
 	Common::Path playerLocation;
 	Common::Path mainSegmentLocation;
@@ -2463,8 +2874,11 @@ BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 		Boot::findMacMainSegment(*vfs, mainSegmentLocation, isV2Project);
 	} else if (gameDesc.desc.platform == Common::kPlatformWindows) {
 		Boot::findWindowsPlayer(*vfs, playerLocation, playerType);
-		Boot::findWindowsMainSegment(*vfs, mainSegmentLocation, isV2Project);
+		Boot::findWindowsMainSegment(*vfs, bootScriptContext,  mainSegmentLocation, isV2Project);
 	}
+
+	if (bootScriptContext.getRuntimeVersion() != Boot::BootScriptContext::kRuntimeVersionAuto)
+		isV2Project = (bootScriptContext.getRuntimeVersion() >= Boot::BootScriptContext::kRuntimeVersion200);
 
 	{
 		Common::StringArray pathComponents = playerLocation.splitComponents();
@@ -2519,6 +2933,8 @@ BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 
 		vfs->listMatchingMembers(pluginFiles, pluginsLocation.appendComponent("*"));
 
+		
+		debug(4, "Looking for plug-in files in %s", pluginsLocation.toString(vfs->getPathSeparator()).c_str());
 		for (const Common::ArchiveMemberPtr &pluginFile : pluginFiles) {
 			Common::String fileName = pluginFile->getFileName();
 			uint fnameLen = fileName.size();
@@ -2531,6 +2947,10 @@ BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 		// and possibly case-sensitive too.  Sort order on Windows is case-insensitive.  However, we don't
 		// want to rely on the filenames having the correct case on the user machine.
 		Common::sort(pluginPathsSorted.begin(), pluginPathsSorted.end(), Boot::sortPathFileName);
+
+		for (const Common::Path &plugInPath : pluginPathsSorted) {
+			debug(4, "Found plug-in %s", plugInPath.toString(vfs->getPathSeparator()).c_str());
+		}
 
 		if (gameDesc.desc.platform == Common::kPlatformMacintosh) {
 			Boot::loadCursorsMac(*vfs, playerLocation, *cursorGraphics);
@@ -2559,9 +2979,6 @@ BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 			break;
 		case Boot::BootScriptContext::kPlugInMTI:
 			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
-			break;
-		case Boot::BootScriptContext::kPlugInSPQR:
-			plugIns.push_back(Boot::loadSPQRPlugIn(gameDesc));
 			break;
 		default:
 			error("Unknown plug-in ID");

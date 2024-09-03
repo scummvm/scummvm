@@ -28,7 +28,7 @@
 namespace Illusions {
 
 enum {
-	kUFNext      = 1,  // Run next update funtion
+	kUFNext      = 1,  // Run next update function
 	kUFTerminate = 2   // Terminate update function
 };
 

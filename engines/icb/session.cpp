@@ -67,7 +67,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	uint32 buf_hash;
 
 	// begin with no set object
-	// a camera will be choosen after the first logic cycle based upon the player objects position
+	// a camera will be chosen after the first logic cycle based upon the player objects position
 	set.Reset();
 
 	// no special footsteps set
@@ -207,7 +207,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 		Fatal_error("%s version check failed (file has %d, engine has %d)", temp_buf, LinkedDataObject::GetHeaderVersion(prop_anims), VERSION_PXWGPROPANIMS);
 
 	// init features file
-	// we stick this in the private cache so it hangs around and later in-game references wont cause a main pool reload
+	// we stick this in the private cache so it hangs around and later in-game references won't cause a main pool reload
 
 	// When clustered the session files have the base stripped
 	Common::strcpy_s(temp_buf, "pxwgfeatures");
@@ -493,7 +493,7 @@ void _game_session::Init_objects() {
 			itemName = "scenes";
 		id = LinkedDataObject::Fetch_item_number_by_name(objects, itemName.c_str()); // returns -1 if object not in existence
 		if (id == 0xffffffff)
-			Fatal_error("Init_objects cant find '%s'", itemName.c_str());
+			Fatal_error("Init_objects can't find '%s'", itemName.c_str());
 		Common::String hashString = itemName + "::globals";
 		script_hash = HashString(hashString.c_str());
 		const char *pc = (const char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, script_hash);
@@ -573,7 +573,7 @@ void _game_session::Init_objects() {
 
 			//          set base logic to logic context script
 			logic_structs[j]->logic[0] = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, CGameObject::GetScriptNameFullHash(object, OB_LOGIC_CONTEXT));
-			//          **note, we dont need to set up the script reference (logic_ref) for level 0
+			//          **note, we don't need to set up the script reference (logic_ref) for level 0
 		} else
 			Shut_down_object("by initialise - no init script");
 
@@ -637,7 +637,7 @@ void _game_session::Init_objects() {
 }
 
 void _game_session::Pre_initialise_objects() {
-	// prepare gameworld and objects but dont run init scripts yet
+	// prepare gameworld and objects but don't run init scripts yet
 
 	// so PSX can have nice session loading screen and details (for timing and to stop player getting bored)
 	StartInit(total_objects + 6); // +6 because also floors, barriers, markers, camera_table, plan_view, player
@@ -650,7 +650,7 @@ void _game_session::Pre_initialise_objects() {
 	InitMsg("Floors");
 
 	// initialise the floor area definition file
-	// uses the private resman so mission->session-> need to be initialised so this cant be on session contructor
+	// uses the private resman so mission->session-> need to be initialised so this can't be on session contructor
 	floor_def = g_icb_session_floors;
 	g_icb_session_floors->___init();
 
@@ -967,7 +967,7 @@ void _game_session::Script_cycle() {
 		// this can change within a cycle
 		if ((L->image_type == VOXEL) && (M->interacting)) { // check for megas who are interacting
 			// object is running someone elses interaction script
-			// so get their object and pass to interpretter so that local vars can be accessed correctly
+			// so get their object and pass to interpreter so that local vars can be accessed correctly
 			script_owner = (CGame *)LinkedDataObject::Fetch_item_by_number(objects, M->target_id);
 		} else {
 			script_owner = object; // object running its own script
@@ -1025,7 +1025,7 @@ void _game_session::Script_cycle() {
 
 uint32 _game_session::Fetch_prop_state(char *prop_name) {
 	// return a props state
-	// if the prop object doesnt exist we create a dummy - the system continues regardless - which is nice
+	// if the prop object doesn't exist we create a dummy - the system continues regardless - which is nice
 
 	uint32 prop_number;
 	uint32 j;
@@ -1046,10 +1046,10 @@ uint32 _game_session::Fetch_prop_state(char *prop_name) {
 	while ((j < number_of_missing_objects) && (strcmp(missing_obs[j], prop_name)))
 		++j;
 
-	// didnt find the object
+	// didn't find the object
 	if (j == number_of_missing_objects) {
 		// create entry for the object
-		if (strcmp(prop_name, "not a prop") && (camera_hack == FALSE8)) // dont report dummy lights
+		if (strcmp(prop_name, "not a prop") && (camera_hack == FALSE8)) // don't report dummy lights
 			Message_box("object missing for prop [%s]", prop_name);
 
 		Set_string(prop_name, missing_obs[number_of_missing_objects], MAX_missing_object_name_length);
@@ -1066,7 +1066,7 @@ uint32 _game_session::Fetch_prop_state(char *prop_name) {
 
 void _game_session::Set_prop_state(char *prop_name, uint32 value) {
 	// set a prop state
-	// if the prop doesnt exist we skip it - and assume it will soon be built
+	// if the prop doesn't exist we skip it - and assume it will soon be built
 	// there is no scope checking
 
 	uint32 prop_number;
@@ -1087,7 +1087,7 @@ void _game_session::Set_prop_state(char *prop_name, uint32 value) {
 	while ((j < number_of_missing_objects) && (strcmp(missing_obs[j], prop_name)))
 		++j;
 
-	// didnt find the object
+	// didn't find the object
 	if (j == number_of_missing_objects)
 		return;
 
@@ -1117,7 +1117,7 @@ void _game_session::Process_player_floor_status() {
 
 	player_floor = logic_structs[player.Fetch_player_id()]->owner_floor_rect;
 
-	// dont need to tell the player he's on the players floor
+	// don't need to tell the player he's on the players floor
 	if (player.Fetch_player_id() == cur_id)
 		return;
 
@@ -1160,7 +1160,7 @@ void _game_session::Idle_manager() {
 
 			script_hash = HashString("idle");
 
-			// try and find a script with the passed extention i.e. ???::looping
+			// try and find a script with the passed extension i.e. ???::looping
 			for (k = 0; k < CGameObject::GetNoScripts(object); k++) {
 				if (script_hash == CGameObject::GetScriptNamePartHash(object, k)) {
 					//          script k is the one to run
@@ -1186,7 +1186,7 @@ void _game_session::Idle_manager() {
 }
 
 void _game_session::Set_init_voxel_floors() {
-	// set all mega characters floors - called after game restore because logics may begin by checking the floor number but it wont be set until end of first cycle
+	// set all mega characters floors - called after game restore because logics may begin by checking the floor number but it won't be set until end of first cycle
 	uint32 j;
 
 	for (j = 0; j < number_of_voxel_ids; j++)

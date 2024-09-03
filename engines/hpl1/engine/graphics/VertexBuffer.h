@@ -108,7 +108,7 @@ public:
 
 	/**
 	 * This creates a double of the vertex array with w=0.
-	 * \param abUpdateData if the hardware buffer should be updated aswell.
+	 * \param abUpdateData if the hardware buffer should be updated as well.
 	 */
 	virtual void CreateShadowDouble(bool abUpdateData) = 0;
 

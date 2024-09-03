@@ -71,10 +71,6 @@ void OPL::write(int a, int v) {
 	MAME::OPLWrite(_opl, a, v);
 }
 
-byte OPL::read(int a) {
-	return MAME::OPLRead(_opl, a);
-}
-
 void OPL::writeReg(int r, int v) {
 	MAME::OPLWriteReg(_opl, r, v);
 }

@@ -936,7 +936,7 @@ void TlcGame::tatResultEpisode() {
 		// increment 16 Bit interpreted variables with score sum of the current episode
 		setScriptVar16(0x5D + iBin * 2, getScriptVar16(0x5D + iBin * 2) + binScoreSum);
 
-		// Find the two biggest bin ratios. Remeber idx and ratio, A is biggest, B second
+		// Find the two biggest bin ratios. Remember idx and ratio, A is biggest, B second
 		if (binScoreSum != 0) {
 			ratioCur = (float)binScoreSum / (float)_tatHeaders[episode].binDividends[iBin];
 			if (ratioCur > ratioA) {
@@ -1243,7 +1243,7 @@ void TlcGame::tatGetProfile() {
 		binRatios[iBin] = (float)getScriptVar16(0x5D + 2 * iBin) / (float)sumBinDivs[iBin];
 	}
 
-	// Select higher ratio of each pair (A=iBin and B=iBin+1) and 1 or 2 accoring to threshold
+	// Select higher ratio of each pair (A=iBin and B=iBin+1) and 1 or 2 according to threshold
 	for (iBin = 0; iBin < 16; iBin += 2) {
 		if (binRatios[iBin] > binRatios[iBin + 1]) {
 

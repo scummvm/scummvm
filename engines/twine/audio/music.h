@@ -51,6 +51,12 @@ private:
 	Audio::SoundHandle _midiHandle;
 	/** Track number of the current playing music */
 	int32 currentMusic = -1;
+public:
+	// TODO: implement the handling
+	int32 _nextMusic = -1;       // lba2: NextMusic
+	int32 _nextMusicTimer;       // lba2: NextMusicTimer
+	bool _stopLastMusic = false; // lba2: StopLastMusic
+private:
 	/**
 	 * Play CD music
 	 * @param track track number to play

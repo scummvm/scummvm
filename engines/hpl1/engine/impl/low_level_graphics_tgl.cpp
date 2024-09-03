@@ -166,7 +166,7 @@ TGLenum GetGLTextureFuncEnum(eTextureFunc type) {
 	case eTextureFunc_Add:
 		return TGL_ADD;
 
-	case eTextureFunc_Substract:
+	case eTextureFunc_Subtract:
 	case eTextureFunc_AddSigned:
 	case eTextureFunc_Interpolate:
 	case eTextureFunc_Dot3RGB:

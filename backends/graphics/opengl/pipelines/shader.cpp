@@ -31,7 +31,7 @@ static const int kCoordinatesSize = 4 * 2 * sizeof(float);
 
 #if !USE_FORCED_GLES
 ShaderPipeline::ShaderPipeline(Shader *shader)
-	: _activeShader(shader), _colorAttributes() {
+	: _activeShader(shader), _colorAttributes(), _colorDirty(true) {
 	// Use the same VBO for vertices and texcoords as we modify them at the same time
 	_coordsVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, kCoordinatesSize, nullptr, GL_STATIC_DRAW);
 	_activeShader->enableVertexAttribute("position", _coordsVBO, 2, GL_FLOAT, GL_FALSE, 0, 0);
@@ -57,10 +57,6 @@ void ShaderPipeline::activateInternal() {
 	}
 
 	_activeShader->use();
-
-	GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _colorVBO));
-	GL_CALL(glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(_colorAttributes), _colorAttributes));
-	GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
 void ShaderPipeline::deactivateInternal() {
@@ -77,6 +73,7 @@ void ShaderPipeline::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
 		*dst++ = b;
 		*dst++ = a;
 	}
+	_colorDirty = true;
 }
 
 void ShaderPipeline::drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
@@ -84,6 +81,11 @@ void ShaderPipeline::drawTextureInternal(const GLTexture &texture, const GLfloat
 
 	texture.bind();
 
+	if (_colorDirty) {
+		GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _colorVBO));
+		GL_CALL(glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(_colorAttributes), _colorAttributes));
+		_colorDirty = false;
+	}
 	GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _coordsVBO));
 	GL_CALL(glBufferData(GL_ARRAY_BUFFER, kCoordinatesSize, coordinates, GL_STATIC_DRAW));
 	GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _texcoordsVBO));

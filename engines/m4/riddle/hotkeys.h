@@ -42,6 +42,8 @@ public:
 	 */
 	static void escape_key_pressed(void *, void *);
 
+	static void show_version(void *, void *);
+
 	virtual ~Hotkeys() {}
 
 	void add_hot_keys() override;

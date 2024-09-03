@@ -55,6 +55,9 @@ public:
 	uint32 _initialEnergy;
 	uint32 _initialShield;
 
+	int _soundIndexStartFalling;
+	int _soundIndexEndFalling;
+
 	bool _resting;
 	int _lastThirtySeconds;
 	int _lastSecond;
@@ -71,6 +74,7 @@ public:
 	void loadAssetsCPCDemo() override;
 	void loadAssetsZXDemo() override;
 
+	void initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) override;
 	void initGameState() override;
 	void executePrint(FCLInstruction &instruction) override;
 

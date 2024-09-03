@@ -553,6 +553,8 @@ static const GrimGameDescription gameDescriptions[] = {
 		},
 		GType_MONKEY4
 	},
+
+#if defined(USE_MPEG2)
 	{
 		// Escape from Monkey Island English PS2
 		{
@@ -618,6 +620,8 @@ static const GrimGameDescription gameDescriptions[] = {
 		},
 		GType_MONKEY4
 	},
+#endif
+
 	{
 		// Escape from Monkey Island CD demo (English)
 		{

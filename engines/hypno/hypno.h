@@ -538,8 +538,6 @@ private:
 	Common::Rect _h2Area;
 	Common::Rect _h3Area;
 
-	Common::BitArray _font05;
-	Common::BitArray _font08;
 	const Graphics::Font *_font;
 };
 
@@ -652,9 +650,6 @@ public:
 
 	Common::Array<Filename> _deathVideo;
 	Common::HashMap<Common::String, bool> _shootsDestroyed;
-
-	Common::BitArray _font05;
-	Common::BitArray _font08;
 
 	bool hasFeature(EngineFeature f) const override {
 		return (f == kSupportsReturnToLauncher);

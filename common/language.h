@@ -65,6 +65,7 @@ enum Language : int8 {
 	IT_ITA,
 	JA_JPN,
 	KO_KOR,
+	LT_LTU,
 	LV_LVA,
 	NL_BEL,
 	NL_NLD,

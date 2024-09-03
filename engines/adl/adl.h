@@ -107,13 +107,13 @@ struct Room {
 
 	byte description;
 	byte connections[IDI_DIR_TOTAL];
-	DataBlockPtr data;
+	Common::DataBlockPtr data;
 	byte picture;
 	byte curPicture;
 	bool isFirstTime;
 };
 
-typedef Common::HashMap<byte, DataBlockPtr> PictureMap;
+typedef Common::HashMap<byte, Common::DataBlockPtr> PictureMap;
 
 typedef Common::Array<byte> Script;
 
@@ -400,7 +400,7 @@ protected:
 	// Opcodes
 	Common::Array<Opcode> _condOpcodes, _actOpcodes;
 	// Message strings in data file
-	Common::Array<DataBlockPtr> _messages;
+	Common::Array<Common::DataBlockPtr> _messages;
 	// Picture data
 	PictureMap _pictures;
 	// Dropped item screen offsets

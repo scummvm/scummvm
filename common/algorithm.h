@@ -256,6 +256,12 @@ Op for_each(In first, In last, Op f) {
 	return f;
 }
 
+template<typename T>
+void reverse(T first, T last) {
+  for (; first != last && first != --last; ++first)
+    SWAP(*first, *last);
+}
+
 /**
  * @}
  */

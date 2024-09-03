@@ -36,7 +36,7 @@ namespace Grim {
 
 struct Region {
 	int32 offset;       // offset of region
-	int32 length;       // lenght of region
+	int32 length;       // length of region
 };
 
 struct SoundDesc {

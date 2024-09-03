@@ -22,8 +22,6 @@
 #ifndef _ANDROID_H_
 #define _ANDROID_H_
 
-#if defined(__ANDROID__)
-
 #include "backends/platform/android/portdefs.h"
 #include "common/fs.h"
 #include "common/archive.h"
@@ -278,5 +276,4 @@ public:
 	virtual const char * const *buildHelpDialogData() override;
 };
 
-#endif
 #endif

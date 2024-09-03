@@ -686,7 +686,7 @@ void MPEGPSDecoder::MPEGVideoTrack::findDimensions(Common::SeekableReadStream *f
 	if (_pixelFormat.bytesPerPixel == 1)
 		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
 
-	debug(0, "MPEG dimensions: %dx%d", _width, _height);
+	debug(3, "MPEG dimensions: %dx%d", _width, _height);
 
 	firstPacket->seek(0);
 }

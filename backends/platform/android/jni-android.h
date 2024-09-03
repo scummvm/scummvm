@@ -22,8 +22,6 @@
 #ifndef _ANDROID_JNI_H_
 #define _ANDROID_JNI_H_
 
-#if defined(__ANDROID__)
-
 #include <jni.h>
 #include <semaphore.h>
 #include <pthread.h>
@@ -46,10 +44,6 @@ private:
 	virtual ~JNI();
 
 public:
-	enum struct BitmapResources {
-		TOUCH_ARROWS_BITMAP = 0
-	};
-
 	static bool pause;
 	static sem_t pause_sem;
 
@@ -59,6 +53,8 @@ public:
 	static int egl_bits_per_pixel;
 
 	static bool virt_keyboard_state;
+
+	static int32 gestures_insets[4];
 
 	static jint onLoad(JavaVM *vm);
 
@@ -92,7 +88,6 @@ public:
 	static bool isConnectionLimited();
 	static void showVirtualKeyboard(bool enable);
 	static void showOnScreenControls(int enableMask);
-	static Graphics::Surface *getBitmapResource(BitmapResources resource);
 	static void setTouchMode(int touchMode);
 	static int getTouchMode();
 	static void setOrientation(int touchMode);
@@ -155,7 +150,6 @@ private:
 	static jmethodID _MID_setWindowCaption;
 	static jmethodID _MID_showVirtualKeyboard;
 	static jmethodID _MID_showOnScreenControls;
-	static jmethodID _MID_getBitmapResource;
 	static jmethodID _MID_setTouchMode;
 	static jmethodID _MID_getTouchMode;
 	static jmethodID _MID_setOrientation;
@@ -202,6 +196,8 @@ private:
 	static void syncVirtkeyboardState(JNIEnv *env, jobject self, jboolean newState);
 	static void setPause(JNIEnv *env, jobject self, jboolean value);
 
+	static void systemInsetsUpdated(JNIEnv *env, jobject self, jintArray insets);
+
 	static jstring getNativeVersionInfo(JNIEnv *env, jobject self);
 	static jstring convertToJString(JNIEnv *env, const Common::U32String &str);
 	static Common::U32String convertFromJString(JNIEnv *env, const jstring &jstr);
@@ -228,5 +224,4 @@ inline int JNI::writeAudio(JNIEnv *env, jbyteArray &data, int offset, int size) 
 								offset, size);
 }
 
-#endif
 #endif

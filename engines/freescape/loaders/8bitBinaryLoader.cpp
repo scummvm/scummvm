@@ -664,7 +664,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	}
 
 	int64 endLastObject = file->pos();
-	debugC(1, kFreescapeDebugParser, "Last position %llx", endLastObject);
+	debugC(1, kFreescapeDebugParser, "Last position %" PRIx64, endLastObject);
 	debugC(1, kFreescapeDebugParser, "endLastObject is supposed to be %x", base + cPtr);
 	if ((isDark() || isEclipse()) && (isAmiga() || isAtariST()))
 		assert(endLastObject <= static_cast<int64>(base + cPtr) + 4);
@@ -989,7 +989,7 @@ void FreescapeEngine::loadMessagesVariableSize(Common::SeekableReadStream *file,
 		_messagesList.push_back(message);
 		debugC(1, kFreescapeDebugParser, "'%s'", _messagesList[i].c_str());
 	}
-	debugC(1, kFreescapeDebugParser, "End of messages at %lx", file->pos());
+	debugC(1, kFreescapeDebugParser, "End of messages at %" PRIx64, file->pos());
 }
 
 void FreescapeEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offset, int size) {

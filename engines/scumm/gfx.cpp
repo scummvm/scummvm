@@ -765,7 +765,10 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 			// NES can address negative number strips and that poses problem for
 			// our code. So instead of adding zillions of fixes and potentially
 			// breaking other games, we shift it right at the rendering stage.
-			if (((_NESStartStrip > 0) && (vs->number == kMainVirtScreen)) || (vs->number == kTextVirtScreen)) {
+			//
+			// This hack originally checked for (vs->number == kTextVirtScreen) as well.
+			// This causes bug #3594/#13107 to happen though...
+			if (((_NESStartStrip > 0) && (vs->number == kMainVirtScreen))) {
 				x += 16;
 				while (x + width >= _screenWidth)
 					width -= 16;
@@ -1292,11 +1295,13 @@ void ScummEngine::restoreCharsetBg() {
 				blit(screenBuf, vs->pitch, backBuf, vs->pitch, vs->w, vs->h, vs->format.bytesPerPixel);
 			}
 		} else {
-			// Clear area
-			if (_game.platform == Common::kPlatformNES)
-				memset(screenBuf, 0x1d, vs->h * vs->pitch);
-			else
-				memset(screenBuf, 0, vs->h * vs->pitch);
+			if (!(_game.version < 4 && _messageBannerActive && (getCurrentLights() & LIGHTMODE_flashlight_on))) {
+				// Clear area
+				if (_game.platform == Common::kPlatformNES)
+					memset(screenBuf, 0x1d, vs->h * vs->pitch);
+				else
+					memset(screenBuf, 0, vs->h * vs->pitch);
+			}
 		}
 
 		if (vs->hasTwoBuffers || _macScreen) {
@@ -1738,49 +1743,132 @@ void ScummEngine::moveScreen(int dx, int dy, int height) {
 }
 
 void ScummEngine_v5::clearFlashlight() {
-	_flashlight.isDrawn = false;
+	_flashlight.eraseFlag = false;
 	_flashlight.buffer = nullptr;
 }
 
+static const byte townsCurveData[] = { 0x01, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0x7F, 0xFF };
+
+static const byte v1FwdCurveData[] = {
+	0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0xFF,
+	0x00, 0x00, 0xFF, 0xFF,
+	0x00, 0x00, 0xFF, 0xFF,
+	0x00, 0xFF, 0xFF, 0xFF,
+	0x00, 0xFF, 0xFF, 0xFF,
+	0x00, 0xFF, 0xFF, 0xFF,
+	0xFF, 0xFF, 0xFF, 0xFF
+};
+
+static const byte v1BkwdCurveData[] = {
+	0xFF, 0x00, 0x00, 0x00,
+	0xFF, 0xFF, 0x00, 0x00,
+	0xFF, 0xFF, 0x00, 0x00,
+	0xFF, 0xFF, 0xFF, 0x00,
+	0xFF, 0xFF, 0xFF, 0x00,
+	0xFF, 0xFF, 0xFF, 0x00,
+	0xFF, 0xFF, 0xFF, 0xFF,
+	0xFF, 0xFF, 0xFF, 0xFF
+};
+
+
+static const byte v2FwdCurveData[] = {
+	0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x0F, 0xFF,
+	0x00, 0x00, 0xFF, 0xFF,
+	0x00, 0x0F, 0xFF, 0xFF,
+	0x00, 0xFF, 0xFF, 0xFF,
+	0x0F, 0xFF, 0xFF, 0xFF,
+	0x0F, 0xFF, 0xFF, 0xFF,
+	0xFF, 0xFF, 0xFF, 0xFF
+};
+
+static const byte v2BkwdCurveData[] = {
+	0x00, 0x00, 0x00, 0x00,
+	0xFF, 0x00, 0x00, 0x00,
+	0xFF, 0xFF, 0x00, 0x00,
+	0xFF, 0xFF, 0x00, 0x00,
+	0xFF, 0xFF, 0xFF, 0x00,
+	0xFF, 0xFF, 0xFF, 0x00,
+	0xFF, 0xFF, 0xFF, 0x00,
+	0xFF, 0xFF, 0xFF, 0xFF
+};
+
+static const byte v4FwdCurveData[] = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF,
+	0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,
+	0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+};
+
+static const byte v4BkwdCurveData[] = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+};
+
 void ScummEngine_v5::drawFlashlight() {
-	int i, j, x, y;
+	int x, y;
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
-	byte backgroundColor = 0;
+	byte blackColor = 0x00;
 
 	// NES uses 0x1d for black
 	if (g_scumm->_game.platform == Common::kPlatformNES)
-		backgroundColor = 0x1d;
+		blackColor = 0x1D;
 
 	// Remove the flash light first if it was previously drawn
-	if (_flashlight.isDrawn) {
-		markRectAsDirty(kMainVirtScreen, _flashlight.x, _flashlight.x + _flashlight.w,
-										_flashlight.y, _flashlight.y + _flashlight.h, USAGE_BIT_DIRTY);
-
+	if (_flashlight.eraseFlag) {
 		if (_flashlight.buffer) {
-			fill(_flashlight.buffer, vs->pitch, backgroundColor, _flashlight.w, _flashlight.h, vs->format.bytesPerPixel);
+			fill(_flashlight.buffer, vs->pitch, blackColor, _flashlight.w, _flashlight.h, vs->format.bytesPerPixel);
 		}
-		_flashlight.isDrawn = false;
+
+		markRectAsDirty(kMainVirtScreen, _flashlight.x, _flashlight.x + _flashlight.w,
+				_flashlight.y, _flashlight.y + _flashlight.h, USAGE_BIT_DIRTY);
+
+		_flashlight.eraseFlag = false;
 	}
 
 	if (_flashlight.xStrips == 0 || _flashlight.yStrips == 0)
 		return;
 
-	// Calculate the area of the flashlight
+	// Calculate the position of the flashlight.
 	if (_game.id == GID_ZAK || _game.id == GID_MANIAC) {
-		x = _mouse.x + vs->xstart;
-		y = _mouse.y - vs->topline;
+		x = (_mouse.x + vs->xstart);
+		y = (_mouse.y - vs->topline);
 	} else {
 		Actor *a = derefActor(VAR(VAR_EGO), "drawFlashlight");
 		x = a->getPos().x;
 		y = a->getPos().y;
 	}
+
+	// The original only shows the flashlight in locations whose:
+	// - X position is a multiple of 8;
+	// - Y position is a multiple of 2.
+	//
+	// FM-Towns doesn't seem to do so...
+	if (_game.platform != Common::kPlatformFMTowns) {
+		x &= ~7;
+		y &= ~1;
+	}
+
 	_flashlight.w = _flashlight.xStrips * 8;
 	_flashlight.h = _flashlight.yStrips * 8;
 	_flashlight.x = x - _flashlight.w / 2 - _screenStartStrip * 8;
 	_flashlight.y = y - _flashlight.h / 2;
 
-	if (_game.id == GID_LOOM)
+	if (_game.id == GID_LOOM && _game.version == 3 && _game.platform != Common::kPlatformFMTowns) {
+		_flashlight.x += 4;
 		_flashlight.y -= 12;
+	}
 
 	// Clip the flashlight at the borders
 	if (_flashlight.x < 0)
@@ -1793,7 +1881,7 @@ void ScummEngine_v5::drawFlashlight() {
 		_flashlight.y = vs->h - _flashlight.h;
 
 	// Redraw any actors "under" the flashlight
-	for (i = _flashlight.x / 8; i < (_flashlight.x + _flashlight.w) / 8; i++) {
+	for (int i = _flashlight.x / 8; i < (_flashlight.x + _flashlight.w) / 8; i++) {
 		assert(0 <= i && i < _gdi->_numStrips);
 		setGfxUsageBit(_screenStartStrip + i, USAGE_BIT_DIRTY);
 		vs->tdirty[i] = 0;
@@ -1806,36 +1894,148 @@ void ScummEngine_v5::drawFlashlight() {
 
 	blit(_flashlight.buffer, vs->pitch, bgbak, vs->pitch, _flashlight.w, _flashlight.h, vs->format.bytesPerPixel);
 
-	// C64 & NES does not round the flashlight
-	if (_game.platform != Common::kPlatformC64 && _game.platform != Common::kPlatformNES) {
-		// Round the corners. To do so, we simply hard-code a set of nicely
-		// rounded corners.
-		static const int corner_data[] = { 8, 6, 4, 3, 2, 2, 1, 1 };
-		int minrow = 0;
-		int maxcol = (_flashlight.w - 1) * vs->format.bytesPerPixel;
-		int maxrow = (_flashlight.h - 1) * vs->pitch;
+	// Apple IIGS, C64 & NES does not round the flashlight
+	if (_game.platform != Common::kPlatformApple2GS && _game.platform != Common::kPlatformC64 && _game.platform != Common::kPlatformNES) {
+		// Round the corners. Different versions have different rounding parameters.
+		if (vs->format.bytesPerPixel == 1) {
+			int width, height, heightLoc;
+			byte maskValue;
+			bool isIndy3VGA = (_game.id == GID_INDY3 && (_game.features & GF_OLD256));
 
-		for (i = 0; i < 8; i++, minrow += vs->pitch, maxrow -= vs->pitch) {
-			int d = corner_data[i];
+			height = _flashlight.h - 1;
 
-			for (j = 0; j < d; j++) {
-				if (vs->format.bytesPerPixel == 2) {
+			byte *buffPtr = _flashlight.buffer;
+
+			if (_game.platform == Common::kPlatformFMTowns) {
+				for (int i = 0; i < 8; ++i) {
+					heightLoc = vs->pitch * height;
+					width = _flashlight.w - 1;
+
+					for (byte j = 128, idx = 0; j; j >>= 1, idx++) {
+						if ((j & townsCurveData[i]) != 0)
+							maskValue = 0xFF; // Pixel ON
+						else
+							maskValue = 0x00; // Pixel OFF
+
+						buffPtr[idx] &= maskValue;
+						buffPtr[idx + heightLoc] &= maskValue;
+						buffPtr[idx + width] &= maskValue;
+						buffPtr[idx + width + heightLoc] &= maskValue;
+
+						width -= 2;
+					}
+
+					buffPtr += vs->pitch;
+					height -= 2;
+				}
+			} else {
+				const byte *fwdCurvePtr, *bkwdCurvePtr;
+		
+				switch (_game.version) {
+				case 1:
+					fwdCurvePtr = v1FwdCurveData;
+					bkwdCurvePtr = v1BkwdCurveData;
+					break;
+				case 2:
+					fwdCurvePtr = v2FwdCurveData;
+					bkwdCurvePtr = v2BkwdCurveData;
+					break;
+				case 3:
+					if (isIndy3VGA) {
+						fwdCurvePtr = v4FwdCurveData;
+						bkwdCurvePtr = v4BkwdCurveData;
+					} else {
+						fwdCurvePtr = v2FwdCurveData;
+						bkwdCurvePtr = v2BkwdCurveData;
+					}
+
+					break;
+				default:
+					fwdCurvePtr = bkwdCurvePtr = v4FwdCurveData;
+				}
+
+				if (_game.version <= 3 && !isIndy3VGA) {
+					width = _flashlight.w - 8;
+
+					for (int i = 8, curveHorizLine = 0; i > 0; i--, curveHorizLine += 4) {
+						heightLoc = vs->pitch * height;
+
+						// v1 and v2 use a nibble mask on an half resolution buffer! ARGH!
+						// We have to double the maskings in order to match the original,
+						// without handling an half-res flashlight buffer...
+						for (byte j = 0, ptInCurveHorizLine = 0; j < 8; j += 2, ptInCurveHorizLine++) {
+							// Top left
+							buffPtr[j]     &= (fwdCurvePtr[ptInCurveHorizLine + curveHorizLine] & 0xF0) ? 0xFF : 0x00;
+							buffPtr[j + 1] &= (fwdCurvePtr[ptInCurveHorizLine + curveHorizLine] & 0x0F) ? 0xFF : 0x00;
+
+							// Bottom left
+							buffPtr[j + heightLoc]     &= (fwdCurvePtr[ptInCurveHorizLine + curveHorizLine] & 0xF0) ? 0xFF : 0x00;
+							buffPtr[j + heightLoc + 1] &= (fwdCurvePtr[ptInCurveHorizLine + curveHorizLine] & 0x0F) ? 0xFF : 0x00;
+
+							// Top right
+							buffPtr[j + width]     &= (bkwdCurvePtr[ptInCurveHorizLine + curveHorizLine] & 0x0F) ? 0xFF : 0x00;
+							buffPtr[j + width + 1] &= (bkwdCurvePtr[ptInCurveHorizLine + curveHorizLine] & 0xF0) ? 0xFF : 0x00;
+
+							// Bottom right
+							buffPtr[j + width + heightLoc]     &= (bkwdCurvePtr[ptInCurveHorizLine + curveHorizLine] & 0x0F) ? 0xFF : 0x00;
+							buffPtr[j + width + heightLoc + 1] &= (bkwdCurvePtr[ptInCurveHorizLine + curveHorizLine] & 0xF0) ? 0xFF : 0x00;
+						}
+
+						height -= 2;
+						buffPtr += vs->pitch;
+					}
+				} else {
+					byte maskValueFwd, maskValueBkwd;
+
+					for (int i = 0; i < 8; ++i) {
+						heightLoc = vs->pitch * height;
+
+						width = _flashlight.w - 8;
+
+						for (byte j = 8, idx = 0; j; j--, idx++) {
+							maskValueFwd = fwdCurvePtr[i * 8 + idx];
+							maskValueBkwd = isIndy3VGA ? bkwdCurvePtr[i * 8 + idx] : bkwdCurvePtr[i * 8 + j - 1];
+
+							buffPtr[idx] &= maskValueFwd; // Top left
+							buffPtr[idx + heightLoc] &= maskValueFwd; // Bottom left
+							buffPtr[idx + width] &= maskValueBkwd; // Top right
+							buffPtr[idx + width + heightLoc] &= maskValueBkwd; // Bottom right
+						}
+
+						buffPtr += vs->pitch;
+						height -= 2;
+					}
+				}
+			}
+		} else {
+			// The bytesPerPixel == 2 case should only happen for the PC-Engine version of Loom...
+			// I'd rather avoid attempting to reverse what happens here in the original and just
+			// use the old code...
+
+			static const int corner_data[] = { 8, 6, 4, 3, 2, 2, 1, 1 };
+			int minrow = 0;
+			int maxcol = (_flashlight.w - 1) * vs->format.bytesPerPixel;
+			int maxrow = (_flashlight.h - 1) * vs->pitch;
+
+			for (int i = 0; i < 8; i++, minrow += vs->pitch, maxrow -= vs->pitch) {
+				int d = corner_data[i];
+
+				for (int j = 0; j < d; j++) {
 					WRITE_UINT16(&_flashlight.buffer[minrow + 2 * j], 0);
 					WRITE_UINT16(&_flashlight.buffer[minrow + maxcol - 2 * j], 0);
 					WRITE_UINT16(&_flashlight.buffer[maxrow + 2 * j], 0);
 					WRITE_UINT16(&_flashlight.buffer[maxrow + maxcol - 2 * j], 0);
 				}
-				else {
-					_flashlight.buffer[minrow + j] = backgroundColor;
-					_flashlight.buffer[minrow + maxcol - j] = backgroundColor;
-					_flashlight.buffer[maxrow + j] = backgroundColor;
-					_flashlight.buffer[maxrow + maxcol - j] = backgroundColor;
-				}
 			}
 		}
 	}
 
-	_flashlight.isDrawn = true;
+	// Not in the original, but this avoids glitches on the borders of the flashlight, since
+	// otherwise the next rects refresh would have been on the next drawFlashlight() call...
+	markRectAsDirty(kMainVirtScreen, _flashlight.x, _flashlight.x + _flashlight.w,
+					_flashlight.y, _flashlight.y + _flashlight.h, USAGE_BIT_DIRTY);
+
+	_flashlight.eraseFlag = true;
 }
 
 int ScummEngine_v0::getCurrentLights() const {

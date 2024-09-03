@@ -48,6 +48,7 @@ protected:
 	GLuint _colorVBO;
 
 	GLfloat _colorAttributes[4*4];
+	bool _colorDirty;
 
 	Shader *const _activeShader;
 };

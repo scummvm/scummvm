@@ -29,69 +29,77 @@
 
 namespace Freescape {
 
-void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, const char *target) {
+void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) {
 	Common::Action *act;
 
 	act = new Common::Action(Common::kStandardActionMoveUp, _("Up"));
-	act->setKeyEvent(Common::KEYCODE_UP);
+	act->setCustomEngineActionEvent(kActionMoveUp);
+	act->addDefaultInputMapping("UP");
 	act->addDefaultInputMapping("JOY_UP");
 	act->addDefaultInputMapping("o");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action(Common::kStandardActionMoveDown, _("Down"));
-	act->setKeyEvent(Common::KEYCODE_DOWN);
+	act->setCustomEngineActionEvent(kActionMoveDown);
+	act->addDefaultInputMapping("DOWN");
 	act->addDefaultInputMapping("JOY_DOWN");
 	act->addDefaultInputMapping("k");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action(Common::kStandardActionMoveLeft, _("Strafe Left"));
-	act->setKeyEvent(Common::KEYCODE_LEFT);
+	act->setCustomEngineActionEvent(kActionMoveLeft);
+	act->addDefaultInputMapping("LEFT");
 	act->addDefaultInputMapping("JOY_LEFT");
-	//act->addDefaultInputMapping("q");
+	// act->addDefaultInputMapping("q");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action(Common::kStandardActionMoveRight, _("Strafe Right"));
-	act->setKeyEvent(Common::KEYCODE_RIGHT);
+	act->setCustomEngineActionEvent(kActionMoveRight);
+	act->addDefaultInputMapping("RIGHT");
 	act->addDefaultInputMapping("JOY_RIGHT");
-	//act->addDefaultInputMapping("w");
+	// act->addDefaultInputMapping("w");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("SHOOT", _("Shoot"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_KP5, '5'));
+	act->setCustomEngineActionEvent(kActionShoot);
 	act->addDefaultInputMapping("JOY_A");
+	act->addDefaultInputMapping("KP5");
 	act->addDefaultInputMapping("5");
+	act->addDefaultInputMapping("KP0");
+	act->addDefaultInputMapping("0");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action("RISE", _("Rise/Fly up"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_r, 'r'));
-	act->addDefaultInputMapping("JOY_B");
-	act->addDefaultInputMapping("r");
+	act = new Common::Action("ROTUP", _("Rotate up"));
+	act->setCustomEngineActionEvent(kActionRotateUp);
+	act->addDefaultInputMapping("p");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action("LOWER", _("Lower/Fly down"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_f, 'f'));
-	act->addDefaultInputMapping("JOY_Y");
-	act->addDefaultInputMapping("f");
+	act = new Common::Action("ROTDN", _("Rotate down"));
+	act->setCustomEngineActionEvent(kActionRotateDown);
+	act->addDefaultInputMapping("l");
 	engineKeyMap->addAction(act);
 
+	act = new Common::Action("SKIP", _("Skip"));
+	act->setCustomEngineActionEvent(kActionSkip);
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("RETURN");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+  // I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
 	act = new Common::Action("SWITCH", _("Change mode"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_SPACE, Common::ASCII_SPACE));
+	act->setCustomEngineActionEvent(kActionChangeMode);
 	act->addDefaultInputMapping("SPACE");
 	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action("ROTL", _("Rotate Left"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_q, 'q'));
-	act->addDefaultInputMapping("q");
-	engineKeyMap->addAction(act);
-
-	act = new Common::Action("ROTR", _("Rotate Right"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_w, 'w'));
-	act->addDefaultInputMapping("w");
+	act = new Common::Action("ESCAPE", _("Escape"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	act->addDefaultInputMapping("ESCAPE");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("MENU", _("Info Menu"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_i, 'i'));
+	act->setCustomEngineActionEvent(kActionInfoMenu);
 	act->addDefaultInputMapping("i");
 	act->addDefaultInputMapping("JOY_GUIDE");
 	engineKeyMap->addAction(act);
@@ -100,7 +108,7 @@ void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, const char *targ
 Math::AABB createPlayerAABB(Math::Vector3d const position, int playerHeight) {
 	Math::AABB boundingBox(position, position);
 
-	Math::Vector3d v1(position.x() + 1, position.y() + 1, position.z() + 1);
+	Math::Vector3d v1(position.x() + 1, position.y() - 1, position.z() + 1);
 	Math::Vector3d v2(position.x() - 1, position.y() - playerHeight, position.z() - 1);
 
 	boundingBox.expand(v1);
@@ -176,18 +184,7 @@ void FreescapeEngine::shoot() {
 	if (_shootingFrames > 0) // No more than one shot at a time
 		return;
 
-	if (isDriller())
-		playSound(1, false);
-	else if (isSpectrum()) {
-		if (isDark())
-			playSound(15, false);
-		else if (isEclipse())
-			playSound(5, false);
-		else
-			playSound(8, false);
-	} else
-		playSound(8, false);
-
+	playSound(_soundIndexShoot, false);
 	g_system->delayMillis(2);
 	_shootingFrames = 10;
 
@@ -222,7 +219,7 @@ void FreescapeEngine::changePlayerHeight(int index) {
 	int scale = _currentArea->getScale();
 
 	_position.setValue(1, _position.y() - _playerHeight);
-	_playerHeight = 32 * (index + 1) - 16 / scale;
+	_playerHeight = 32 * (index + 1) - 16 / float(scale);
 	assert(_playerHeight > 0);
 	_position.setValue(1, _position.y() + _playerHeight);
 }
@@ -377,7 +374,7 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 		if ((lastPosition - newPosition).length() < 1) { // Something is blocking the player
 			if (!executed)
 				setGameBit(31);
-			playSound(4, false);
+			playSound(_soundIndexClimb, false);
 		}
 		_position = newPosition;
 		return;
@@ -392,15 +389,15 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 		lastPosition.y() = lastPosition.y() + _stepUpDistance;
 
 		newPosition = _currentArea->resolveCollisions(lastPosition, newPosition, _playerHeight);
+		if (_lastPosition.y() < newPosition.y())
+			playSound(_soundIndexClimb, false);
 	}
 
 	if ((lastPosition - newPosition).length() < 1) { // Something is blocking the player
 		if (!executed)
 			setGameBit(31);
-		if (isSpectrum())
-			playSound(10, false);
-		else
-			playSound(2, false);
+
+		playSound(_soundIndexCollide, false);
 	}
 
 	lastPosition = newPosition;
@@ -411,12 +408,12 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 	if (fallen > _maxFallingDistance) {
 		_hasFallen = !_disableFalling;
 		_avoidRenderingFrames = 60 * 3;
-		if (isEclipse())
+		if (isEclipse()) // No need for an variable index, since these are special types of sound
 			playSoundFx(0, true);
 	}
 
 	if (!_hasFallen && fallen > 0) {
-		playSound(3, false);
+		playSound(_soundIndexFall, false);
 
 		// Position in Y was changed, let's re-run effects
 		runCollisionConditions(lastPosition, newPosition);
@@ -443,16 +440,21 @@ bool FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, 
 
 	Math::Vector3d direction = newPosition - lastPosition;
 	direction.normalize();
-	ray = Math::Ray(lastPosition, direction);
 	int rayLenght = 45;
 	if (_currentArea->getScale() >= 5)
 		rayLenght = MAX(5, 45 / (2 * _currentArea->getScale()));
 
-	collided = _currentArea->checkCollisionRay(ray, rayLenght);
-	if (collided) {
-		gobj = (GeometricObject *)collided;
-		debugC(1, kFreescapeDebugMove, "Collided with object id %d of size %f %f %f", gobj->getObjectID(), gobj->getSize().x(), gobj->getSize().y(), gobj->getSize().z());
-		executed |= executeObjectConditions(gobj, false, true, false);
+	for (int i = 0; i <= 2; i++) {
+		Math::Vector3d rayPosition = lastPosition;
+		rayPosition.y() = rayPosition.y() - _playerHeight * (i / 4.0);
+		ray = Math::Ray(rayPosition, direction);
+		collided = _currentArea->checkCollisionRay(ray, rayLenght);
+		if (collided) {
+			gobj = (GeometricObject *)collided;
+			debugC(1, kFreescapeDebugMove, "Collided with object id %d of size %f %f %f", gobj->getObjectID(), gobj->getSize().x(), gobj->getSize().y(), gobj->getSize().z());
+			executed |= executeObjectConditions(gobj, false, true, false);
+			break;
+		}
 	}
 
 	return executed;

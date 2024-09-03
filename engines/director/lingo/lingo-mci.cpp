@@ -445,9 +445,12 @@ void Lingo::func_mci(const Common::String &name) {
             Audio::AudioStream *sound = Audio::makeWAVStream(file, DisposeAfterUse::YES);
             if (parsedCmd.parameters.contains("alias")) {
                 _audioAliases[parsedCmd.parameters["alias"].string] = sound;
+            } else {
+                delete sound;
             }
         } else {
             warning("func_mci(): Unhandled audio type %s", parsedCmd.parameters["type"].string.c_str());
+            delete file;
         }
         }
         break;

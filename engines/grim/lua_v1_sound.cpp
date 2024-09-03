@@ -317,7 +317,7 @@ void Lua_V1::PlaySoundAt() {
 }
 
 void Lua_V1::LoadBundle() {
-	// loading grimdemo.mus is allready handled
+	// loading grimdemo.mus is already handled
 }
 
 void Lua_V1::PlaySound() {

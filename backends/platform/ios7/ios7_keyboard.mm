@@ -281,7 +281,7 @@
 }
 
 - (NSArray *)overloadKeys:(NSArray<NSString *> *)keys withSelector:(SEL)selector {
-	NSMutableArray<UIKeyCommand *> *overloadedKeys = [[NSMutableArray alloc] init];
+	NSMutableArray<UIKeyCommand *> *overloadedKeys = [[[NSMutableArray alloc] init] autorelease];
 	for (NSString *key in keys) {
 		[overloadedKeys addObject:[self createKeyCommandForKey:key withModifierFlags:0 andSelector:selector]];
 		[overloadedKeys addObject:[self createKeyCommandForKey:key withModifierFlags:UIKeyModifierShift andSelector:selector]];
@@ -296,13 +296,13 @@
 }
 
 - (NSArray *)overloadArrowKeys {
-	NSArray<NSString *> *arrowKeys = [[NSArray alloc] initWithObjects:UIKeyInputUpArrow, UIKeyInputDownArrow, UIKeyInputLeftArrow, UIKeyInputRightArrow, nil];
+	NSArray<NSString *> *arrowKeys = [[[NSArray alloc] initWithObjects:UIKeyInputUpArrow, UIKeyInputDownArrow, UIKeyInputLeftArrow, UIKeyInputRightArrow, nil] autorelease];
 	return [self overloadKeys:arrowKeys withSelector:@selector(handleArrowKey:)];
 }
 
 - (NSArray *)overloadRomanLetters {
 	NSString *romanLetters = @"abcdefghijklmnopqrstuvwxyz";
-	NSMutableArray<NSString *> *letters = [[NSMutableArray alloc] init];
+	NSMutableArray<NSString *> *letters = [[[NSMutableArray alloc] init] autorelease];
 	for (NSUInteger x = 0; x < romanLetters.length; x++) {
 		unichar c = [romanLetters characterAtIndex:x];
 		[letters addObject:[NSString stringWithCharacters:&c length:1]];
@@ -312,7 +312,7 @@
 
 - (NSArray *)overloadNumbers {
 	NSString *numbers = @"0123456789";
-	NSMutableArray<NSString *> *numArray = [[NSMutableArray alloc] init];
+	NSMutableArray<NSString *> *numArray = [[[NSMutableArray alloc] init] autorelease];
 	for (NSUInteger x = 0; x < numbers.length; x++) {
 		unichar c = [numbers characterAtIndex:x];
 		[numArray addObject:[NSString stringWithCharacters:&c length:1]];
@@ -323,7 +323,7 @@
 - (NSArray *)overloadFnKeys {
 #ifdef __IPHONE_13_4
 	if (@available(iOS 13.4, *)) {
-		NSArray<NSString *> *fnKeys = [[NSArray alloc] initWithObjects:UIKeyInputF1, UIKeyInputF2, UIKeyInputF3, UIKeyInputF4, UIKeyInputF5, UIKeyInputF6, UIKeyInputF7, UIKeyInputF8, UIKeyInputF9, UIKeyInputF10, UIKeyInputF11, UIKeyInputF12, nil];
+		NSArray<NSString *> *fnKeys = [[[NSArray alloc] initWithObjects:UIKeyInputF1, UIKeyInputF2, UIKeyInputF3, UIKeyInputF4, UIKeyInputF5, UIKeyInputF6, UIKeyInputF7, UIKeyInputF8, UIKeyInputF9, UIKeyInputF10, UIKeyInputF11, UIKeyInputF12, nil] autorelease];
 		return [self overloadKeys:fnKeys withSelector:@selector(handleFnKey:)];
 	}
 #endif
@@ -332,7 +332,7 @@
 
 - (NSArray *)overloadSpecialKeys {
 #ifdef __IPHONE_13_4
-	NSMutableArray<NSString *> *specialKeys = [[NSMutableArray alloc] initWithObjects:UIKeyInputEscape, UIKeyInputPageUp, UIKeyInputPageDown, nil];
+	NSMutableArray<NSString *> *specialKeys = [[[NSMutableArray alloc] initWithObjects:UIKeyInputEscape, UIKeyInputPageUp, UIKeyInputPageDown, nil] autorelease];
 
 	if (@available(iOS 13.4, *)) {
 		[specialKeys addObject: UIKeyInputHome];
@@ -479,7 +479,7 @@
 }
 
 - (NSArray *)keyCommands {
-	NSMutableArray<UIKeyCommand *> *overloadedKeys = [[NSMutableArray alloc] init];
+	NSMutableArray<UIKeyCommand *> *overloadedKeys = [[[NSMutableArray alloc] init] autorelease];
 	// Arrows
 	[overloadedKeys addObjectsFromArray:[self overloadArrowKeys]];
 	// Roman letters
@@ -761,6 +761,11 @@
 		[inputDelegate handleKeyPress:[text characterAtIndex:0] withModifierFlags:0];
 	}
 	return YES;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+	[inputView returnKey];
+	return NO;
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {

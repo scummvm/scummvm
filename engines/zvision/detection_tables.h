@@ -126,7 +126,7 @@ static const ZVisionGameDescription gameDescriptions[] = {
 		// Bugreport #11755
 		{
 			"znemesis",
-			_s("Missing game code"), // Reason for being unsupported
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 			{
 				{ "CSCR.ZFS", 0, "d:ce26cbb17bfbaa774742b3187262a7c0", 2597635 },
 				{ "ASCR.ZFS", 0, "d:5ee98db1bf73983eb8148da231342085", 929931 },

@@ -36,7 +36,7 @@
 {
 	{
 		"adi1",
-		_s("Missing game code"), // CE1
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // CE1
 		AD_ENTRY1s("adi2.stk", "77f2b5baa30f02eecf0a94f05316c031", 334671),
 		FR_FRA,
 		kPlatformDOS,
@@ -49,7 +49,7 @@
 {
 	{
 		"adi1",
-		_s("Missing game code"), // CE2
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // CE2
 		AD_ENTRY1s("adi2.stk", "1f22d389a3f0857cacb25bb174107145", 323562),
 		FR_FRA,
 		kPlatformDOS,
@@ -62,7 +62,7 @@
 {
 	{
 		"adi1",
-		_s("Missing game code"), // CM1
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // CM1
 		AD_ENTRY1s("adi2.stk", "78125e8b87dad64d014648883a553b87", 327022),
 		FR_FRA,
 		kPlatformDOS,
@@ -75,7 +75,7 @@
 {
 	{
 		"adi1",
-		_s("Missing game code"), // CM2
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // CM2
 		AD_ENTRY1s("adi2.stk", "9084badfe3631ece4598c4016dcee4eb", 335032),
 		FR_FRA,
 		kPlatformDOS,
@@ -88,7 +88,7 @@
 {
 	{
 		"adi1",
-		_s("Missing game code"), // 3ème
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // 3ème
 		AD_ENTRY1s("adi2.stk", "37de6bae596262071ad23131dc85e505", 334432),
 		FR_FRA,
 		kPlatformDOS,
@@ -101,7 +101,7 @@
 {
 	{
 		"adi1",
-		_s("Missing game code"), // 4ème
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // 4ème
 		AD_ENTRY1s("adi2.stk", "d662248b3b27e53fccd5355351075236", 344496),
 		FR_FRA,
 		kPlatformDOS,
@@ -114,7 +114,7 @@
 {
 	{
 		"adi1",
-		_s("Missing game code"), // 5ème
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // 5ème
 		AD_ENTRY1s("adi2.stk", "38ebd0ae0bdd0facee0084e305bf5152", 335780),
 		FR_FRA,
 		kPlatformDOS,
@@ -127,7 +127,7 @@
 {
 	{
 		"adi1",
-		_s("Missing game code"), // 6ème
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // 6ème
 		AD_ENTRY1s("adi2.stk", "2f24f14c58a062ab25dab7de8fb2489b", 335780),
 		FR_FRA,
 		kPlatformDOS,
@@ -140,7 +140,7 @@
 {
 	{
 		"adi1",
-		_s("Missing game code"), // ADIBAC
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // ADIBAC
 		AD_ENTRY1s("adi2.stk", "93377cd4582554258ed421239760a434", 307512),
 		FR_FRA,
 		kPlatformDOS,
@@ -157,7 +157,7 @@
 {
 	{
 		"adi1",
-		_s("Missing game code"), // English 12/13
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // English 12/13
 		AD_ENTRY1s("adi2.stk", "a3e04e7c575fff9e42d6912d127c2e30", 324550),
 		EN_GRB,
 		kPlatformDOS,
@@ -173,7 +173,7 @@
 {
 	{
 		"adi1",
-		_s("Missing game code"), 
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 		AD_ENTRY1s("adi2.stk", "955fd172fb2bae38e25d80e6584fca9e", 319718),
 		IT_ITA,
 		kPlatformDOS,
@@ -186,7 +186,7 @@
 {
 	{
 		"adi1",
-		_s("Missing game code"), // Matematica 2a
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Matematica 2a
 		AD_ENTRY1s("adi2.stk", "ff6bc3bd581c686a2796c4b6aee9e27d", 329888),
 		IT_ITA,
 		kPlatformDOS,
@@ -202,7 +202,7 @@
 {
 	{
 		"adi1",
-		_s("Missing game code"), // Lengua Espanola 6
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Lengua Espanola 6
 		AD_ENTRY1s("adi2.stk", "bbbe5880b2f62145f8f84b63e5105c95", 317067),
 		ES_ESP,
 		kPlatformDOS,
@@ -215,7 +215,7 @@
 {
 	{
 		"adi1",
-		_s("Missing game code"), // Lengua Espanola 8
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Lengua Espanola 8
 		AD_ENTRY1s("adi2.stk", "d5c1f812093b751a445d110734b69519", 327672),
 		ES_ESP,
 		kPlatformDOS,

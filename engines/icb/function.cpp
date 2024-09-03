@@ -397,7 +397,7 @@ mcodeFunctionReturnCodes _game_session::socket_force_new_logic(int32 &, int32 *p
 	if (g_px->socket_watch)
 		Message_box("socket_force_new_logic - obj %s, script %s", CGameObject::GetName(socket_object), script_name);
 
-	// now try and find a script with the passed extention i.e. ???::looping
+	// now try and find a script with the passed extension i.e. ???::looping
 	for (uint32 k = 0; k < CGameObject::GetNoScripts(socket_object); k++) {
 		// now check for actual script name
 		if (script_hash == CGameObject::GetScriptNamePartHash(socket_object, k)) {
@@ -428,7 +428,7 @@ mcodeFunctionReturnCodes _game_session::socket_force_new_logic(int32 &, int32 *p
 		}
 	}
 
-	// didnt find the script in the target
+	// didn't find the script in the target
 	// shut that object down as its full of holes!
 
 	Fatal_error("socket_force_new_logic can't find script - obj %s, script %s", CGameObject::GetName(socket_object), script_name);
@@ -592,7 +592,7 @@ mcodeFunctionReturnCodes _game_session::fn_init_from_marker_file(int32 &, int32 
 	start_pos = (_map_marker *)markers.Fetch_marker_by_object_name(const_cast<char *>(CGameObject::GetName(object)));
 
 	if (!start_pos) {
-		Message_box("fn_init_from_marker_file missing map marker file entry for item %s.  You must edit the markers - dont play the game.", CGameObject::GetName(object));
+		Message_box("fn_init_from_marker_file missing map marker file entry for item %s.  You must edit the markers - don't play the game.", CGameObject::GetName(object));
 		Shut_down_object("fn_init_from_marker_file");
 		return IR_STOP;
 	}
@@ -846,7 +846,7 @@ mcodeFunctionReturnCodes _game_session::fn_call_socket(int32 &result, int32 *par
 	if (socket_id == 0xffffffff)
 		Fatal_error("fn_call_socket couldnt find object [%s]", target_object_name);
 
-	// now try and find a script with the passed extention i.e. ???::looping
+	// now try and find a script with the passed extension i.e. ???::looping
 	for (uint32 k = 0; k < CGameObject::GetNoScripts(socket_object); k++) {
 		// now check for actual script name
 		if (script_hash == CGameObject::GetScriptNamePartHash(socket_object, k)) {
@@ -907,14 +907,14 @@ bool8 _game_session::Call_socket(uint32 id, const char *script, int32 *retval) {
 	// get target object
 	socket_object = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, id);
 	if (!socket_object)
-		Fatal_error("internal Call_socket - named object dont exist");
+		Fatal_error("internal Call_socket - named object don't exist");
 
 	Zdebug("\nCall_socket - obj %s, script %s", CGameObject::GetName(socket_object), script);
 
 	// set this for socket fn_ functions
 	socket_id = id;
 
-	// now try and find a script with the passed extention i.e. ???::looping
+	// now try and find a script with the passed extension i.e. ???::looping
 	for (uint32 k = 0; k < CGameObject::GetNoScripts(socket_object); k++) {
 		// skip past the object:: aspect
 
@@ -1152,7 +1152,7 @@ mcodeFunctionReturnCodes _game_session::fn_can_mega_see_dead_megas(int32 &result
 		if (cur_id != voxel_id_list[j]) {
 			if ((logic_structs[voxel_id_list[j]]->mega->dead) &&                  // dead
 			    (logic_structs[voxel_id_list[j]]->ob_status != OB_STATUS_HELD)) { // not held
-				// found a dead mega who isnt us - is it on our floor?
+				// found a dead mega who isn't us - is it on our floor?
 
 				// same camera means same floor
 				if (floor_to_camera_index[L->owner_floor_rect] == floor_to_camera_index[logic_structs[voxel_id_list[j]]->owner_floor_rect]) {
@@ -1544,7 +1544,7 @@ extern _player_stat player_stat_table[__TOTAL_WEAPONS];
 mcodeFunctionReturnCodes _game_session::fn_set_player_pose(int32 &, int32 *params) {
 	// change/set the weapon type
 	// set instantly - i.e. init the _vox_image
-	// sets players status to equivelent mode
+	// sets players status to equivalent mode
 
 	//	params   0 ascii name of pose - should be compatible with weapon_text
 
@@ -2705,7 +2705,7 @@ mcodeFunctionReturnCodes _game_session::fn_switch_off_the_really_neat_and_specia
 
 mcodeFunctionReturnCodes _game_session::fn_preload_custom_mega_anim(int32 &result, int32 *params) {
 	// set a resource loading
-	// we have devided fn_functions into types (i.e. mega animations) in-case there are cluster complications
+	// we have divided fn_functions into types (i.e. mega animations) in-case there are cluster complications
 
 	// params    0   name of final anim
 
@@ -3132,7 +3132,7 @@ uint32 _game_session::Register_stair_or_ladder(const char *target, bool8 top, ui
 mcodeFunctionReturnCodes _game_session::fn_align_with_floor(int32 &, int32 *) {
 	// mega climbing stairs and ladder calls this afterward to realign with artist misaligned floors
 
-	floor_def->Allign_with_floor(M);
+	floor_def->Align_with_floor(M);
 
 	return IR_CONT;
 }

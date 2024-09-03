@@ -324,8 +324,11 @@ void SciMusic::resetGlobalPauseCounter() {
 	// do anything unpleasant afterwards, either). So this is not
 	// needed there.
 	// I have added an assert, since it is such a special case,
-	// people need to know what they're doing if they call this...
-	assert(_globalPause == 1);
+	// people need to know what they're doing if they call this.
+	// The value can be greater than 1, since the scripts may
+	// already have increased it, before the kRestoreGame() call
+	// happens.
+	assert(_globalPause >= 1);
 	_globalPause = 0;
 }
 

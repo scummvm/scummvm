@@ -59,6 +59,8 @@ class  IMuseSysex_Scumm;
 
 #define MDPG_TAG "MDpg"
 
+#define MUS_REDUCTION_TIMER_TICKS 16667 // 60 Hz
+
 
 ////////////////////////////////////////
 //
@@ -416,6 +418,7 @@ class IMuseInternal : public IMuse {
 #endif
 
 protected:
+	ScummEngine *_vm;
 	const bool _native_mt32;
 	const bool _newSystem;
 	const bool _dynamicChanAllocation;
@@ -445,13 +448,16 @@ protected:
 	int  _player_limit;       // Limits how many simultaneous music tracks are played
 	bool _recycle_players;    // Can we stop a player in order to start another one?
 
+	int _musicVolumeReductionTimer = 0; // 60 Hz
+
 	uint _queue_end, _queue_pos, _queue_sound;
 	byte _queue_adding;
 
 	byte _queue_marker;
 	byte _queue_cleared;
 	byte _master_volume; // Master volume. 0-255
-	byte _music_volume; // Global music volume. 0-255
+	byte _music_volume; // Music volume which can be reduced during speech. 0-255
+	byte _music_volume_eff; // Global effective music volume. 0-255
 
 	uint16 _trigger_count;
 	ImTrigger _snm_triggers[16]; // Sam & Max triggers
@@ -528,6 +534,7 @@ protected:
 	int set_volchan_entry(uint a, uint b);
 	int set_channel_volume(uint chan, uint vol);
 	void update_volumes();
+	void musicVolumeReduction(MidiDriver *midi);
 
 	int set_volchan(int sound, int volchan);
 

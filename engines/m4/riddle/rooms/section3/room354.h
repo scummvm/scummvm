@@ -29,10 +29,18 @@ namespace Riddle {
 namespace Rooms {
 
 class Room354 : public Room {
+private:
+	int _val1 = 0;
+	machine *_all = nullptr;
+	bool _buttonFlag = false;
+
+	static void escapeKeyPressed(void *, void *);
+
 public:
 	Room354() : Room() {}
 	~Room354() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
 };

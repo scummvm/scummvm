@@ -30,6 +30,7 @@ namespace Common {
 
 PEResources::PEResources() {
 	_exe = nullptr;
+	_disposeFileHandle = DisposeAfterUse::YES;
 }
 
 PEResources::~PEResources() {

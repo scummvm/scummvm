@@ -245,6 +245,331 @@ void Room305::init() {
 }
 
 void Room305::daemon() {
+	int frame;
+
+	switch (_G(kernel).trigger) {
+	case 2:
+		series_play(_G(flags)[V000] == 1 ? "395 jelly beans" : "jelly beans",
+			0, 0, 3, 7, 0, 100, 0, 0, 49, 61);
+		digi_play("305_s01", 3, 140);
+		break;
+
+	case 3:
+		series_play(_G(flags)[V000] == 1 ? "395 jelly beans" : "jelly beans",
+			0, 0, 2, 7, 0, 100, 0, 0, 0, 48);
+		break;
+
+	case 10:
+		ws_walk(1220, 296, 0, 50, 9);
+		break;
+
+	case 40:
+		sendWSMessage_10000(_stander, 1199, 296, 9, 41, 0);
+		break;
+
+	case 41:
+		sendWSMessage_10000(_stander, 494, 278, 8, 42, 1);
+		break;
+
+	case 42:
+		sendWSMessage_60000(_stander);
+		_stander = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 494, 278, 73, 0xf00, 1,
+			triggerMachineByHashCallbackNegative, "fl stander");
+		_G(kernel).trigger_mode = KT_DAEMON;
+		sendWSMessage_10000(1, _stander, _feng3, 1, 1, 400, _feng3, 1, 6, 1);
+		_val6 = _val7 = 1;
+		setShadow5(true);
+		_G(player).disable_hyperwalk = false;
+		break;
+
+	case 50:
+		player_set_commands_allowed(true);
+		break;
+
+	case 200:
+		if (!_val8 && !_conv1 && _val1 != -1) {
+			kernel_trigger_dispatchx(_val1);
+			_val1 = -1;
+
+			if (_val2) {
+				ws_unhide_walker();
+				_val2 = 0;
+			}
+		}
+
+		kernel_trigger_dispatchx(kernel_trigger_create(201));
+		break;
+
+	case 201:
+		switch (_val8) {
+		case 0:
+			switch (_conv1) {
+			case 0:
+				sendWSMessage_10000(1, _rip6, 1, 1, 1, 200, 1, 1, 1, 0);
+				break;
+
+			case 1:
+				sendWSMessage_10000(1, _rip6, _rip3, 1, 6, 200, _rip3, 6, 6, 0);
+				_val8 = 1;
+				break;
+
+			case 3:
+				sendWSMessage_10000(1, _rip6, _rip2, 1, 16, 200, _rip2, 16, 16, 0);
+				_val8 = 3;
+				break;
+
+			case 5:
+				sendWSMessage_10000(1, _rip6, _rip1, 1, 12, 200, _rip1, 12, 12, 0);
+				_val8 = 5;
+				break;
+
+			case 7:
+				terminateMachineAndNull(_rip6);
+				terminateMachineAndNull(_rip5);
+				ws_unhide_walker();
+				player_set_commands_allowed(true);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 1:
+			if (_conv1 == 1) {
+				sendWSMessage_10000(1, _rip6, _rip3, 6, 6, 200, _rip3, 6, 6, 0);
+			} else {
+				sendWSMessage_10000(1, _rip6, _rip3, 6, 1, 200, 1, 1, 1, 0);
+				_val8 = 5;
+			}
+			break;
+
+		case 3:
+			if (_conv1 == 3) {
+				sendWSMessage_10000(1, _rip6, _rip2, 16, 16, 200, _rip2, 16, 16, 0);
+			} else {
+				sendWSMessage_10000(1, _rip6, _rip2, 16, 1, 200, 1, 1, 1, 0);
+				_val8 = 0;
+			}
+			break;
+
+		case 5:
+			if (_conv1 == 5) {
+				sendWSMessage_10000(1, _rip6, _rip1, 12, 12, 200, _rip1, 12, 12, 0);
+			} else {
+				sendWSMessage_10000(1, _rip6, _rip1, 12, 1, 200, 1, 1, 1, 0);
+				_val8 = 0;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 300:
+		if (!_val8 && !_conv1 && _val1 != -1) {
+			kernel_trigger_dispatchx(_val1);
+			_val1 = -1;
+
+			if (_val2) {
+				ws_unhide_walker();
+				_val2 = 0;
+			}
+		}
+
+		kernel_trigger_dispatchx(kernel_trigger_create(301));
+		break;
+
+	case 301:
+		switch (_val8) {
+		case 0:
+			switch (_conv1) {
+			case 0:
+				sendWSMessage_10000(1, _rip6, 1, 1, 1, 300, 1, 1, 1, 0);
+				break;
+
+			case 1:
+				sendWSMessage_10000(1, _rip6, _suit2, 1, 10, 300, _suit2, 10, 10, 0);
+				_val8 = 1;
+				break;
+
+			case 3:
+				sendWSMessage_10000(1, _rip6, _suit1, 1, 17, 300, _suit1, 17, 17, 0);
+				_val8 = 3;
+				break;
+
+			case 5:
+			case 6:
+				sendWSMessage_10000(1, _rip6, _suit3, 1, 14, 300, _suit3, 14, 14, 0);
+				_val8 = 5;
+				break;
+
+			case 7:
+				terminateMachineAndNull(_rip6);
+				terminateMachineAndNull(_rip5);
+				ws_unhide_walker();
+				player_set_commands_allowed(true);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 1:
+			if (_conv1 == 1) {
+				sendWSMessage_10000(1, _rip6, _suit2, 10, 10, 300, _suit2, 10, 10, 0);
+			} else {
+				sendWSMessage_10000(1, _rip6, _suit2, 11, 18, 300, 1, 1, 1, 0);
+				_val8 = 0;
+			}
+			break;
+
+		case 3:
+			if (_conv1 == 3) {
+				sendWSMessage_10000(1, _rip6, _suit1, 17, 17, 300, _suit1, 17, 17, 0);
+			} else {
+				sendWSMessage_10000(1, _rip6, _suit1, 17, 1, 300, 1, 1, 1, 0);
+				_val8 = 0;
+			}
+			break;
+
+		case 5:
+			switch (_conv1) {
+			case 5:
+				sendWSMessage_10000(1, _rip6, _suit3, 14, 14, 300, _suit3, 14, 14, 0);
+				break;
+
+			case 6:
+				sendWSMessage_10000(1, _rip6, _suit3, 15, 25, 300, _suit3, 25, 25, 0);
+				_val8 = 6;
+				break;
+
+			default:
+				sendWSMessage_10000(1, _rip6, _suit3, 14, 1, 300, 1, 1, 1, 0);
+				_val8 = 0;
+				break;
+			}
+			break;
+
+		case 6:
+			if (_conv1 == 6) {
+				sendWSMessage_10000(1, _rip6, _suit3, 25, 25, 300, _suit3, 25, 25, 0);
+			} else {
+				sendWSMessage_10000(1, _rip6, _suit3, 25, 15, 300, _suit3, 14, 14, 0);
+				_val8 = 5;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 400:
+		if (!_val6 && !_val7 && _val1 != -1) {
+			kernel_trigger_dispatchx(_val1);
+			_val1 = -1;
+
+			if (_val2) {
+				ws_unhide_walker();
+				_val2 = 0;
+			}
+		}
+
+		kernel_trigger_dispatchx(kernel_trigger_create(401));
+		break;
+
+	case 401:
+		switch (_val6) {
+		case 0:
+			switch (_val7) {
+			case 0:
+				sendWSMessage_10000(1, _stander, _jellyBeans, 1, 1, 400, _jellyBeans, 1, 1, 0);
+				break;
+
+			case 1:
+			case 2:
+			case 4:
+				sendWSMessage_10000(1, _stander, _feng1, 16, 1, 400, _feng3, 1, 6, 1);
+				_val6 = 1;
+				break;
+
+			case 3:
+				sendWSMessage_10000(1, _stander, _jellyBeans, 1, 13, 400, _jellyBeans, 14, 19, 1);
+				_val6 = 3;
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 1:
+			switch (_val7) {
+			case 0:
+				sendWSMessage_10000(1, _stander, _feng1, 16, 1, 400, _jellyBeans, 1, 1, 0);
+				_val6 = 0;
+				break;
+
+			case 1:
+				frame = imath_ranged_rand(1, 6);
+				sendWSMessage_10000(1, _stander, _feng3, frame, frame, 400, _feng3, frame, frame, 0);
+				break;
+
+			case 2:
+				sendWSMessage_10000(1, _stander, _feng2, 1, 18, 400, _feng2, 19, 21, 1);
+				_val6 = 2;
+				break;
+
+			case 3:
+				sendWSMessage_10000(1, _stander, _feng1, 16, 1, 400, _jellyBeans, 1, 1, 0);
+				_val6 = 0;
+				break;
+
+			case 4:
+				frame = imath_ranged_rand(1, 6);
+				sendWSMessage_10000(1, _stander, _feng3, frame, frame, 400, _feng3, frame, frame, 0);
+				_val7 = 1;
+				break;
+
+			default:
+				sendWSMessage_10000(1, _stander, _feng2, 1, 18, 400, _feng2, 19, 21, 1);
+				_val6 = 2;
+				break;
+			}
+			break;
+
+		case 2:
+			if (_val7 == 2) {
+				frame = imath_ranged_rand(19, 21);
+				sendWSMessage_10000(1, _stander, _feng2, frame, frame, 400, _feng2, frame, frame, 0);
+			} else {
+				sendWSMessage_10000(1, _stander, _feng2, 18, 1, 400, _feng3, 1, 6, 0);
+				_val6 = 1;
+				break;
+			}
+			break;
+
+		case 3:
+			if (_val7 == 3) {
+				frame = imath_ranged_rand(14, 19);
+				sendWSMessage_10000(1, _stander, _jellyBeans, frame, frame, 400, _jellyBeans, frame, frame, 0);
+			} else {
+				sendWSMessage_10000(1, _stander, _jellyBeans, 20, 31, 400, _jellyBeans, 1, 1, 0);
+				_val6 = 0;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Room305::pre_parser() {
@@ -380,8 +705,8 @@ void Room305::parser() {
 			_val4 = 0;
 			break;
 
-
-
+		default:
+			break;
 		}
 	} else if (useFlag && player_said("drawer")) {
 		switch (_G(kernel).trigger) {
@@ -878,10 +1203,104 @@ next4:
 	} else if (lookFlag && player_said("drawer")) {
 		digi_play("305r17", 1);
 	} else if (lookFlag && player_said("button display case")) {
-		// TODO
-	}
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			player_set_commands_allowed(false);
 
-	// TODO
+			if (_G(flags)[V000] == 1)
+				setGlobals4(_rip1, 12, 12, 12);
+			else
+				setGlobals4(_suit1, 17, 17, 17);
+
+			sendWSMessage_C0000(0);
+			digi_play("305r14", 1, 255, 2);
+			break;
+
+		case 2:
+			sendWSMessage_B0000(3);
+			break;
+
+		case 3:
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("hammerhead shark")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			player_set_commands_allowed(false);
+
+			if (_G(flags)[V000] == 1) {
+				_lookUp = series_load("rip looks up pos3");
+				setGlobals4(_lookUp, 6, 6, 6);
+			} else {
+				_lookUp = series_load("rpsd103");
+				setGlobals4(_lookUp, 7, 7, 7);
+			}
+
+			sendWSMessage_C0000(0);
+			digi_play("305r12", 1, 255, 2);
+			break;
+
+		case 2:
+			sendWSMessage_B0000(3);
+			break;
+
+		case 3:
+			series_unload(_lookUp);
+			break;
+
+		default:
+			break;
+		}
+	}
+#define LOOK(ITEM) lookFlag && player_said(ITEM) && inv_object_is_here(ITEM)
+	else if (LOOK("SHRUNKEN HEAD")) {
+		digi_play("305r41", 1);
+	} else if (LOOK("INCENSE BURNER")) {
+		digi_play("305r50", 1);
+	} else if (LOOK("CRYSTAL SKULL")) {
+		digi_play("3055r51", 1);
+	} else if (LOOK("ROMANOV EMERALD")) {
+		digi_play("305r29a", 1);
+	} else if (LOOK("WHALE BONE HORN")) {
+		digi_play(_G(flags)[V042] ? "305r47" : "305r47a", 1);
+	} else if (LOOK("WHEELED TOY")) {
+		digi_play("305r42", 1);
+	} else if (LOOK("SILVER BUTTERFLY")) {
+		digi_play("305r46", 1);
+	} else if (LOOK("REBUS AMULET")) {
+		digi_play("305r39", 1);
+	} else if (LOOK("CHISEL")) {
+		digi_play("305r49", 1);
+	} else if (LOOK("GERMAN BANKNOTE")) {
+		digi_play("305r53", 1);
+	} else if (LOOK("POSTAGE STAMP")) {
+		digi_play("305r52", 1);
+	} else if (LOOK("STICK AND SHELL MAP")) {
+		digi_play("305r48", 1);
+	} else if (player_said("exit")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(1);
+			break;
+
+		case 1:
+			_G(game).setRoom(303);
+
+		default:
+			break;
+		}
+	} else {
+		return;
+	}
+#undef LOOK
+
 exit:
 	_G(player).command_ready = false;
 }

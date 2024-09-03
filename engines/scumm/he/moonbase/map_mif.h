@@ -85,7 +85,7 @@ public:
 	int _mapType;
 	char _name[17];
 	byte _cornerMap[MAX_TILE_COUNT][MAX_TILE_COUNT];
-	char _centerMap[MAX_TILE_COUNT][MAX_TILE_COUNT];
+	int8 _centerMap[MAX_TILE_COUNT][MAX_TILE_COUNT];
 private:
 
 	void defineStartLocations(MapFile *map);

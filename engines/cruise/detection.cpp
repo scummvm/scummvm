@@ -127,6 +127,17 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 	},
+	{ // Fanmade translation by old-games.ru
+		{
+			"cruise",
+			"256 colors",
+			AD_ENTRY1s("D1", "39b0f99d38be6da2af54af988efd58f1", 754587),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
 	{
 		{
 			"cruise",

@@ -91,7 +91,7 @@ MapFile *SpiffGenerator::generateMap(int water, int tileset, int mapSize, int en
 			mif._cornerMap[newX][newY] = levelMap[_mapCorner[x][y]];
 			switch (_mapMiddle[x][y]) {
 			case HUB:
-				t = '\xFF';
+				t = 0xff;
 				break;
 			case SMALLPOOL:
 				t = 'S';

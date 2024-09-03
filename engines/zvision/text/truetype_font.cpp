@@ -155,7 +155,7 @@ int StyledTTFont::getMaxCharWidth() {
 	return 0;
 }
 
-int StyledTTFont::getCharWidth(byte chr) {
+int StyledTTFont::getCharWidth(uint16 chr) {
 	if (_font)
 		return _font->getCharWidth(chr);
 
@@ -169,7 +169,7 @@ int StyledTTFont::getKerningOffset(byte left, byte right) {
 	return 0;
 }
 
-void StyledTTFont::drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color) {
+void StyledTTFont::drawChar(Graphics::Surface *dst, uint16 chr, int x, int y, uint32 color) {
 	if (_font) {
 		_font->drawChar(dst, chr, x, y, color);
 		if (_style & TTF_STYLE_UNDERLINE) {

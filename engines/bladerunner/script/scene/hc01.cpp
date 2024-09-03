@@ -136,7 +136,19 @@ bool SceneScriptHC01::ClickedOnActor(int actorId) {
 				dialogueWithIzo();
 			}
 		}
+#if BLADERUNNER_ORIGINAL_BUGS
 		AI_Movement_Track_Unpause(kActorIzo);
+#else
+		// NOTE If Izo has not finished his path, before McCoy asks him the final question
+		// which makes him take the photo, then he would play the animation of getting the camera (kGoalIzoPrepareCamera)
+		// but then would not take the photo, but instead walk to the end of his path (due to this Upause() call)
+		// and the game would soft lock (original game bug).
+		// See bug report ticket (trac): #15321
+		//
+		if (Actor_Query_Goal_Number(kActorIzo) != kGoalIzoTakePhoto) {
+			AI_Movement_Track_Unpause(kActorIzo);
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
@@ -333,10 +345,23 @@ void SceneScriptHC01::dialogueWithIzo() {
 		} else {
 			Actor_Says(kActorIzo, 250, 13);
 			Actor_Modify_Friendliness_To_Other(kActorIzo, kActorMcCoy, -1);
-			if (Actor_Query_Friendliness_To_Other(kActorIzo, kActorMcCoy) < 47
-			 && Query_Difficulty_Level() == kGameDifficultyEasy
-			) {
-				takePhotoAndRunAway();
+			if (!_vm->_cutContent) {
+				// Original untriggered code (Easy Mode shortcut)
+				if (Actor_Query_Friendliness_To_Other(kActorIzo, kActorMcCoy) < 47
+				 && Query_Difficulty_Level() == kGameDifficultyEasy) {
+					// NOTE This code is unreachable in the original.
+					//      When we end up in the else clause, Izo friendliness has to be >= 50.
+					//      Essentially it's 50, which is the starting value.
+					//      Then we deduct 1 from it, so it will be 49.
+					//      And then we check if it's < 47, which is impossible regardless of the game difficulty setting.
+					//      Also, subsequently, this else clause is never re-entered, since Izo friendliness is now 49, thus < 50.
+					takePhotoAndRunAway();
+				}
+			} else {
+				// Enabled triggering of the Easy Mode shortcut
+				if (Query_Difficulty_Level() == kGameDifficultyEasy) {
+					takePhotoAndRunAway();
+				}
 			}
 		}
 		return;

@@ -102,7 +102,7 @@ void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
 }
 
 void Scene::SceneSummary::readTerse(Common::SeekableReadStream &stream) {
-	char *buf = new char[0x32];
+	char buf[0x32];
 	stream.read(buf, 0x32);
 	description = buf;
 	readFilename(stream, videoFile);

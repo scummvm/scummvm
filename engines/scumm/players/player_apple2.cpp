@@ -244,8 +244,10 @@ private:
 			_speakerShiftReg ^= _bitmask1;
 		}
 
-		if (_speakerShiftReg & 0x1)
-			_player->speakerToggle();
+		if (_count < 0xff80) { // add a note separation towards the end of the note, otherwise, play the note
+			if (_speakerShiftReg & 0x1)
+				_player->speakerToggle();
+		}
 		_speakerShiftReg >>= 1;
 		_player->generateSamples(42); /* actually 42.5 */
 

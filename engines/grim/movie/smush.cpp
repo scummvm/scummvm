@@ -103,7 +103,7 @@ void SmushPlayer::handleFrame() {
 			return;
 		} else {
 			if (!_currentVideoIsTheora) {
-				_smushDecoder->rewind(); // This doesnt handle if looping fails.
+				_smushDecoder->rewind(); // This doesn't handle if looping fails.
 				_smushDecoder->start();
 			}
 		}

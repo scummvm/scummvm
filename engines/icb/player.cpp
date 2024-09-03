@@ -183,7 +183,7 @@ __mode_return _player::Player_press_fire_button() {
 
 	// check for interact button
 	if ((being_shot == 0) && (cur_state.IsButtonSet(__ATTACK)) && (!fire_lock) && (GetNoBullets())) {
-		// cant shoot at non evils
+		// can't shoot at non evils
 		if ((interact_selected) && (!MS->logic_structs[cur_interact_id]->mega->is_evil)) {
 			if (!MS->Engine_start_interaction("non_evil_interact", cur_interact_id))
 				return __MORE_THIS_CYCLE;
@@ -255,7 +255,7 @@ __mode_return _player::Player_press_fire_button() {
 			else
 				RegisterSound(player_id, defaultRicochetSfx, ricochetDesc); // use small version as we have string not hash
 
-			// now, we hit nothing, but if chi cant see us then set her permission
+			// now, we hit nothing, but if chi can't see us then set her permission
 			if (!g_oLineOfSight->LineOfSight(MS->chi_id, Fetch_player_id()))
 				MS->Set_chi_permission(); // if chi's around she gets permission to start shooting
 		}
@@ -309,7 +309,7 @@ __mode_return _player::Player_press_strike_button() {
 
 		fire_lock = TRUE8; // switch the lock on
 
-		// physically cant punch chi or no evils
+		// physically can't punch chi or no evils
 		if ((interact_selected) && (MS->logic_structs[cur_interact_id]->image_type == VOXEL) && (!MS->logic_structs[cur_interact_id]->mega->is_evil)) {
 			PXreal sub1, sub2, dist;
 
@@ -376,7 +376,7 @@ mcodeFunctionReturnCodes _game_session::fn_prime_player_history(int32 &, int32 *
 	pre_interact_floor = history[cur_history].id;
 
 	if (history[cur_history].id == PXNULL)
-		Message_box("fn_prime_player_history hasnt got a legal coordinate from player?");
+		Message_box("fn_prime_player_history hasn't got a legal coordinate from player?");
 
 	Tdebug("history.txt", ">> %d", history[cur_history].id);
 
@@ -498,7 +498,7 @@ mcodeFunctionReturnCodes _game_session::fn_player(int32 &, int32 *) {
 
 	if ((!local_count_down) && (prev_save_state)) {
 		//		ok, we're pinned to last spot
-		//		unless we've moved significantly then we dont record another position
+		//		unless we've moved significantly then we don't record another position
 
 		sub1 = (PXreal)M->actor_xyz.x - hist_pin_x;
 		sub2 = (PXreal)M->actor_xyz.z - hist_pin_z;
@@ -921,7 +921,7 @@ mcodeFunctionReturnCodes _player::Gateway() {
 			break;
 		case LEAVE_LADDER_BOTTOM:
 			log->pan += HALF_TURN;
-			MS->floor_def->Allign_with_floor(log->mega);
+			MS->floor_def->Align_with_floor(log->mega);
 			Start_new_mode(STOOD);
 			ret = __MORE_THIS_CYCLE;
 			break;
@@ -1678,7 +1678,7 @@ __mode_return _player::Player_running_on_stairs() {
 				return (__MORE_THIS_CYCLE);
 			}
 
-			if (!begun_at_bottom) // didnt begin at bottom so write the history
+			if (!begun_at_bottom) // didn't begin at bottom so write the history
 				Add_to_interact_history();
 
 			Leave_stair();
@@ -1783,7 +1783,7 @@ __mode_return _player::Player_stairs() {
 
 		if (stair_unit == MS->stairs[stair_num].units) {
 
-			if (!begun_at_bottom) // didnt begin at bottom so write the history
+			if (!begun_at_bottom) // didn't begin at bottom so write the history
 				Add_to_interact_history();
 
 			Leave_stair();
@@ -1893,7 +1893,7 @@ void _player::Leave_stair() {
 	// align with floor
 	// set next mode according to momentum
 
-	MS->floor_def->Allign_with_floor(log->mega);
+	MS->floor_def->Align_with_floor(log->mega);
 
 	// coming off the stair
 	if (MS->stairs[stair_num].is_stair) {
@@ -1962,7 +1962,7 @@ __mode_return _player::Player_ladder() {
 			if (cur_state.momentum == __FORWARD_2) {
 				stair_unit = (uint8)((MS->stairs[stair_num].units - stair_unit));
 
-				if (!begun_at_bottom) // didnt begin at bottom so write the history
+				if (!begun_at_bottom) // didn't begin at bottom so write the history
 					Add_to_interact_history();
 
 				Set_to_first_frame(__SLIDE_DOWN_LADDER); //
@@ -1986,7 +1986,7 @@ __mode_return _player::Player_ladder() {
 			log->mega->actor_xyz.y -= (REAL_ONE * 24);
 
 		if (stair_unit == (MS->stairs[stair_num].units + 0)) {
-			if (!begun_at_bottom) // didnt begin at bottom so write the history
+			if (!begun_at_bottom) // didn't begin at bottom so write the history
 				Add_to_interact_history();
 
 			log->mega->actor_xyz.y -= (REAL_ONE * 24);
@@ -2012,7 +2012,7 @@ __mode_return _player::Player_ladder() {
 				return __MORE_THIS_CYCLE;
 			}
 			if (cur_state.IsButtonSet(__JOG)) {
-				if (!begun_at_bottom) // didnt begin at bottom so write the history
+				if (!begun_at_bottom) // didn't begin at bottom so write the history
 					Add_to_interact_history();
 
 				log->pan = MS->stairs[stair_num].pan_ref; // if we are not traveling in the stairs original direction then we reverse the pan by 180deg
@@ -2040,7 +2040,7 @@ __mode_return _player::Player_ladder() {
 __mode_return _player::Player_slide_on_ladder() {
 	if (stair_unit == (MS->stairs[stair_num].units + 1)) {
 
-		MS->floor_def->Allign_with_floor(log->mega);
+		MS->floor_def->Align_with_floor(log->mega);
 
 		log->mega->drawShadow = TRUE8; // shadows on
 		Easy_start_new_mode(STOOD, __SLIDE_DOWN_LADDER_TO_STAND); // get off
@@ -2354,7 +2354,7 @@ __mode_return _player::Player_stood() {
 	log->cur_anim_type = __STAND;
 	MS->Set_motion(__MOTION_WALK); // back to walk in-case were running
 	MS->Set_can_save(TRUE8); // can save
-	MS->floor_def->Allign_with_floor(log->mega);
+	MS->floor_def->Align_with_floor(log->mega);
 
 	MS->Process_guard_alert(__ASTOOD);
 
@@ -2846,7 +2846,7 @@ bool8 _player::Reverse_frame_motion_and_pan(__mega_set_names anim_type) {
 	znext = z1 - z2;
 
 	// update pc
-	log->anim_pc = next_pc; // allready computed
+	log->anim_pc = next_pc; // already computed
 
 	// get the pan unwind value of the frame to be printed
 	PXreal pan;
@@ -2903,7 +2903,7 @@ void _player::Set_player_id(uint32 id) {
 
 	Zdebug("\nSet_player_id %d", player_id);
 
-	// get player structures - we can be sure they wont get moved
+	// get player structures - we can be sure they won't get moved
 	log = g_mission->session->Fetch_object_struct(player_id);
 
 	if (g_icb->getGameType() == GType_ICB) {
@@ -3015,7 +3015,7 @@ void _game_session::Process_guard_alert(__alert alert_type) {
 
 	for (j = 0; j < number_of_voxel_ids; j++) {
 		if (cur_id != voxel_id_list[j]) { // not us
-			if (!g_oLineOfSight->LineOfSight(voxel_id_list[j], player.Fetch_player_id())) { // cant see
+			if (!g_oLineOfSight->LineOfSight(voxel_id_list[j], player.Fetch_player_id())) { // can't see
 				if (PXfabs(logic_structs[voxel_id_list[j]]->mega->actor_xyz.y - M->actor_xyz.y) < (200 * REAL_ONE)) { // slack for height calc
 					PXreal sub1 = logic_structs[voxel_id_list[j]]->mega->actor_xyz.x - M->actor_xyz.x;
 					PXreal sub2 = logic_structs[voxel_id_list[j]]->mega->actor_xyz.z - M->actor_xyz.z;
@@ -3158,7 +3158,7 @@ void _game_session::Restart_player() {
 
 	var_num = CGameObject::GetVariable(ob, "hits");
 	if (var_num == -1)
-		Fatal_error("Restart_player cant fetch hits");
+		Fatal_error("Restart_player can't fetch hits");
 	CGameObject::SetIntegerVariable(ob, var_num, MAX_HITS); // another 10 hits
 
 	L->logic_level = 0; // restart

@@ -224,7 +224,7 @@ public:
 	void step(int nr = -1);
 	Seq *setSeq(Seq *seq);
 	CommandHandler::Command *snList(Action type);
-	virtual void touch(uint16 mask, V2D pos, Common::KeyCode keyCode);
+	virtual void touch(uint16 mask, V2D pos);
 	virtual void tick();
 	virtual void setScene(int c);
 	void clrHide() { if (_ext) _ext->_b0 = nullptr; }

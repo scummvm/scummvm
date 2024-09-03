@@ -747,6 +747,7 @@ void CharsetRendererPC::drawBits1(Graphics::Surface &dest, int x, int y, const b
 	byte *dst4 = dst - dest.pitch;
 	byte prevBits = 0;
 	bool leftShadePixel = false;
+	int savedX = x;
 
 	for (y = 0; y < height && y + drawTop < dest.h; y++) {
 		for (x = 0; x < width; x++) {
@@ -775,7 +776,13 @@ void CharsetRendererPC::drawBits1(Graphics::Surface &dest, int x, int y, const b
 					if (prevBits & revBitMask(x % 8))
 						dst4[0] = _shadowColor;
 				}
-				dst[0] = col;
+
+				// Since C64 texts are moved one pixel forward in the X axis, let's avoid
+				// any out-of-line pixel drawing...
+				if (_vm->_game.platform != Common::kPlatformC64 || (savedX + x < dest.pitch)) {
+					dst[0] = col;
+				}
+
 			} else if (!(bits & revBitMask(x % 8))) {
 				leftShadePixel = true;
 				if (y < height - 1 && _vm->_useCJKMode && _vm->_game.platform == Common::kPlatformSegaCD)
@@ -2154,8 +2161,8 @@ void CharsetRendererNES::printChar(int chr, bool ignoreCharsetMask) {
 	}
 
 	int drawTop = _top - vs->topline;
-
-	_vm->markRectAsDirty(vs->number, _left, _left + width, drawTop, drawTop + height);
+	int offset = vs->number == kTextVirtScreen ? 16 : 0;
+	_vm->markRectAsDirty(vs->number, _left + offset, _left + width + offset, drawTop, drawTop + height);
 
 	if (!ignoreCharsetMask) {
 		_hasMask = true;
@@ -2163,9 +2170,9 @@ void CharsetRendererNES::printChar(int chr, bool ignoreCharsetMask) {
 	}
 
 	if (ignoreCharsetMask || !vs->hasTwoBuffers)
-		drawBits1(*vs, _left + vs->xstart, drawTop, charPtr, drawTop, origWidth, origHeight);
+		drawBits1(*vs, _left + vs->xstart + offset, drawTop, charPtr, drawTop, origWidth, origHeight);
 	else
-		drawBits1(_vm->_textSurface, _left, _top, charPtr, drawTop, origWidth, origHeight);
+		drawBits1(_vm->_textSurface, _left + offset, _top, charPtr, drawTop, origWidth, origHeight);
 
 	if (_str.left > _left)
 		_str.left = _left;

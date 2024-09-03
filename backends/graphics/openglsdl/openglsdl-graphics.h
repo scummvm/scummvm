@@ -86,6 +86,7 @@ private:
 
 	OpenGL::ContextType _glContextType;
 
+	uint _forceFrameUpdate = 0;
 	uint _lastRequestedWidth;
 	uint _lastRequestedHeight;
 	uint _graphicsScale;

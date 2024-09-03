@@ -295,7 +295,7 @@ else
 GIT_DIRTY_FLAG = --dirty
 endif
 # Get the working copy base revision
-VER_REV := $(shell cd $(srcdir); git describe $(GIT_DIRTY_FLAG) --long --match desc/\* | cut -d '-' -f 2-)$(VER_DIRTY)
+VER_REV := $(shell cd $(srcdir); git describe $(GIT_DIRTY_FLAG) --always --long --match desc/\* | cut -d '-' -f 2-)$(VER_DIRTY)
 endif
 else
 GITROOT := git://github.com/scummvm/scummvm.git

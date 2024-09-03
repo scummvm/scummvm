@@ -418,7 +418,7 @@ bool MoviePlayer::playVideo() {
 
 		Common::Event event;
 		while (_vm->_system->getEventManager()->pollEvent(event))
-			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
+			if ((event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START && event.customType == kActionEscape) || event.type == Common::EVENT_LBUTTONUP)
 				skipped = true;
 
 		_vm->_system->delayMillis(10);

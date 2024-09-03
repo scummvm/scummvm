@@ -581,7 +581,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Tivola, 1998
 		{
 			"albert1",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "Albert.exe",   0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 				{ "album411.MPL", 0, "08a742f5087d25e8ee45c2fcd57ad9a6", 17979781 },
@@ -607,7 +607,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by VTech, 1999
 		{
 			"albert1",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{"ALBUM.EXE",    0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"album411.MPL", 0, "ad34822a1d7a4fd2c69487566c383b2e", 17658069},
@@ -634,7 +634,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 1998
 		{
 			"albert1",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{"MTPLAY95.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"album421.MPL", 0, "2f3cc30f13ecc99e8e4818353cef1d34", 18879823},
@@ -661,7 +661,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 1999
 		{
 			"albert1",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{"Boek.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"boek1.MPL", 0, "4d10ee9943bdf9d8b751c7527e1c3a13", 18053917},
@@ -688,7 +688,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Tivola, 2000
 		{
 			"albert2",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "reise.exe",    0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 				{ "voyage1.MPL",  0, "fe202ad897cb6cf5303f2f046e8123d5", 26122297 },
@@ -714,7 +714,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 2000
 		{
 			"albert2",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{"voyage.exe",  0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"voyage1.MPL", 0, "1859b9507c118f52402ecb248fa4ae9c", 25972983},
@@ -741,7 +741,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 1999
 		{
 			"albert2",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{"voyage.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"voyage1.MPL", 0, "174683d29a1c8511830262940223cc8a", 27889879},
@@ -768,7 +768,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 1999
 		{
 			"albert2",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{"reis.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"voyage1.MPL", 0, "1bda2dd6149cc398296031439dc3d25b", 25618601},
@@ -795,7 +795,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Tivola, 2001
 		{
 			"albert3",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "insel.exe",      0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 				{ "ile_myst1.MPL",  0, "44ac2e944a61303f4028408165bafeb4", 24080377 },
@@ -821,7 +821,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 2000
 		{
 			"albert3",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{"Ile_myst.exe",  0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"ile_myst1.MPL", 0, "90a71952e2336bddd30d0bacd59aa510", 22167812},
@@ -848,7 +848,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 2000
 		{
 			"albert3",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{"Ile_myst.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"ile_myst1.MPL", 0, "426868b7ea8fa555fa9240594c5e9903", 22181982},
@@ -875,7 +875,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 2001
 		{
 			"albert3",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{"Eiland.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"ile_myst1.MPL", 0, "d851ca7a48c7adc98445624e154dc0bb", 21866179},
@@ -902,7 +902,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 2001
 		{
 			"albert3",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{"Ile_Myst.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"ile_myst1.MPL", 0, "9ca7bddd55bf755df6508dd4aca3fa69", 21280759},
@@ -982,6 +982,25 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_STTGS_DEMO_WIN,
 	},
 
+	{ // Star Trek: The Game Show
+		{
+			"sttgs",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				// { "MTPLAY95.EXE", 0, "3ce9559e8c8047243fb7393a90d8b8f5", 756736 },
+				{"Trektriv.mpl", 0, "1a3e920c9334f4ddb02a0fca0a55b8e2", 540573701},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_STTGS,
+		0,
+		MTBOOT_STTGS_RETAIL_WIN,
+	},
+
 	{ // Unit: Rebooted (Music Videos)
 		{
 			"unit",
@@ -998,8 +1017,1114 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		},
 		GID_UNIT,
 		0,
-		MTBOOT_UNIT_REBOOTED_WIN,
+		MTBOOT_UNIT_REBOOTED_WIN
 	},
+
+	{ // Mind Gym (English, Windows)
+	  // Published by Macmillan, 1996
+		{
+			"mindgym",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "MTPLAY95.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
+			 	{ "MINDGYM1.MPL", 0, "90a71952e2336bddd30d0bacd59aa510", 22167812 },
+			 	// { "MINDGYM2.MPX", 0, "aa49de0c8337ec97045c6af57ead02a3", 277412342 },
+			 	AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_MINDGYM,
+		0,
+		MTBOOT_MINDGYM_WIN_EN,
+	},
+
+	{ // Mind Gym (German, Windows)
+	  // Original Title: Mind Gym
+	  // Published by Ravensburger, 1997
+		{
+			"mindgym",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "MTPLAY95.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
+				{ "MINDGYM1.MPL", 0, "8fd1e5e8d269da5d442b77023a2854d0", 21632226 },
+				// { "MINDGYM2.MPX", 0, "7db9dc6b76bcca4d0629c37fb8c352c3", 621175049 },
+		  		AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_MINDGYM,
+		0,
+		MTBOOT_MINDGYM_WIN_DE,
+	},
+
+	{ // Fun With Architecture (English, Windows)
+	  // Published by The Voyager Company, 1997
+		{
+			"architecture",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "MTPLAY95.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
+			 	{ "FWA1041.MPL", 0, "90a71952e2336bddd30d0bacd59aa510", 22167812 },
+			 	AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_ARCHITECTURE,
+		0,
+		MTBOOT_ARCHITECTURE_EN,
+	},
+
+	{ // The Magic World of Beatrix Potter (English, Windows)
+	  // Published by Europress Software, 1997
+		{
+			"beatrix",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "POTTER95.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
+			 	{ "DATA.MPL", 0, "90a71952e2336bddd30d0bacd59aa510", 22167812 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_BEATRIX,
+		0,
+		MTBOOT_BEATRIX_EN,
+	},
+
+	{ // Whitetail Impact (English, Windows)
+	  // AKA: Whitetail Fever
+	  // Published by Valusoft, 1998
+		{
+			"wtimpact",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "WTIMPACT.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
+			 	{ "DATA.MPL", 0, "90a71952e2336bddd30d0bacd59aa510", 22167812 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_WTIMPACT,
+		0,
+		MTBOOT_WT_IMPACT_EN,
+	},
+
+	{ // The Day The World Broke (English, Windows)
+	  // Published by Houghton Mifflin Interactive, 1997
+		{
+			"worldbroke",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "TDTWB.EXE", 0, "ead983d2002f2b7b18da7f2f173fd425", 757760 },
+			 	{ "TDTWB1.MPL", 0, "18d48974dbaff13829addbd47a5c374b", 5883239 },
+			 	// { "TDTWB2.MPX", 0, "05c607388c8abcd70b1209088729311f", 663745644 },
+			 	AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_WORLDBROKE,
+		0,
+		MTBOOT_WORLDBROKE_EN,
+	},
+
+	{
+		// The Totally Techie World of Young Dilbert: Hi-Tech Hijinks (English, Windows)
+		// Published by KnowWonder, 1997
+		{
+			"dilbert",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "Hijinks.exe", 0, "418335f719bebcab41af9f23dd3ae27c", 30104 },
+				// { "ALIENS2.MPX", 0, "9cc257dd254860bd20fd4204e7a2fb87", 46348146 },
+				// { "Aliens1.mpl", 0, "330dae4abc82efa8c7bf48d5a5e4dcf3", 307527 },
+				// { "BOB2.MPX", 0, "58357fb97c4424fedacc2775b39ad9a6", 63452005 },
+				// { "Bob1.mpl", 0, "4b6dd1a3ee888fdf0bc587ce89bd713b", 216795 },
+				// { "HIJINKS2.MPX", 0, "551d67b730f4fcd674e4166431038e8e", 52615395 },
+				{ "Hijinks1.mpl", 0, "9552749a9d6031c10125cea155dfee57", 36070890 },
+				// { "STROID2.MPX", 0, "f9b34f867a3d039b7e16e394e3fcb4d7", 44764602 },
+				// { "Stroid1.mpl", 0, "c2763a45614c0fd566002417a976f5a5", 176178 },
+				// { "VIRUS2.MPX", 0, "7047796bbd385ca22d205e24abcf9f99", 41056147 },
+				// { "Virus1.mpl", 0, "86dbc04255eb1e7c46809d8590536df1", 195399 },
+			 AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_DILBERT,
+		0,
+		MTBOOT_DILBERT_WIN_EN,
+	},
+
+	{ // Free Willy Activity Center (English, Windows)
+	  // Published by Sound Source Interactive, 1997
+		{
+			"freewilly",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "MTPLAY95.EXE", 0, "3ce9559e8c8047243fb7393a90d8b8f5", 756736 },
+				{ "FWAC.MPL", 0, "0b847e5ac895fcdc669ea40f8930b0c6", 77218688 },
+			 	AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_FREEWILLY,
+		0,
+		MTBOOT_FREEWILLY_WIN_EN,
+	},
+
+	{ // Hercules & Xena Learning Adventure: Quest for the Scrolls (English, Windows)
+	  // Published by Sound Source Interactive, 1997
+		{
+			"hercules",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "MTPLAY95.EXE", 0, "3ce9559e8c8047243fb7393a90d8b8f5", 756736 },
+		 		{ "HERCXENA.MPL", 0, "549f965bc589a86d149c24f2ebd15bdc", 169595018 },
+			 	AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_HERCULES,
+		0,
+		MTBOOT_HERCULES_WIN_EN,
+	},
+
+	{ // I Can Be a Dinosaur Finder (English, Windows)
+	  // Published by Macmillan, 1997
+		{
+			"idino",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "WBDFR1.C9A", 0, "e6ec553f1f5ff0a420a7aed8b0543123", 584374209 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_IDINO,
+		0,
+		MTBOOT_IDINO_RETAIL_EN,
+	},
+
+	{ // I Can Be an Animal Doctor (English, Windows)
+	  // Published by Macmillan, 1998
+		{
+			"idoctor",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "VET.C9A", 0, "6409415e9879c9287d0f72f900cfb4c7", 537078248 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_IDOCTOR,
+		0,
+		MTBOOT_IDOCTOR_RETAIL_EN,
+	},
+
+	{ // Cloud 9 CD Sampler Volume 2 - Demo (English, Windows)
+	  // Published by Cloud 9 Interactive, 1997
+		{
+			"c9sampler",
+			"Demo",
+			{
+				{ "RUNSAMP.C9A", 0, "349d9318b181ac4f6e0326a4b8fe7238", 5954633 },
+				//{ "VETS.C9A", 0, "836765ba5202c146c5228933309e90cd", 149747132 },
+				//{ "WBDFS.C9A", 0, "d28310a331ae07801e4e2fdc30a323b6", 172110125 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED | ADGF_DEMO,
+			GUIO0()
+		},
+		GID_C9SAMPLER,
+		0,
+		MTBOOT_C9SAMPLER_WIN_EN,
+	},
+
+	{ // How to Draw the Marvel Way (English, Windows)
+	  // Published by Marvel Studios, 1996
+		{
+			"drawmarvelway",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{"MDRAW.C9A", 0, "601539f3e9f9e169aa6b2fac5a4e82c7", 369901410},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_DRAWMARVELWAY,
+		0,
+		MTBOOT_DRAWMARVELWAY_WIN_EN,
+	},
+
+	{ // FairyTale: A True Story - Activity Center (English, Windows)
+	  // Published by Knowledge Adventure, 1999
+		{
+			"ftts",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "FAIRIES.EXE", 0, "b37ecc3aa2b1f24ddfbf27841f15442e", 758272 },
+			 	{ "FT_1.MPL", 0, "76282d2f5a8f0eea5c73289e065d66d2", 800203 },
+			 	// { "FT_2.MPX", 0, "08208838a8c5c4c95beae41e5208328b", 149851712 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_FTTS,
+		0,
+		MTBOOT_FTTS_WIN_EN,
+	},
+
+	{ // Purple Moon Sampler (English, Windows)
+	  // Published by Purple Moon, 1997
+		{
+			"purplemoon",
+			"Demo",
+			{
+				{ "MTPLAY95.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
+			 	{ "0SAMPLER.MPL", 0, "27899cf914b6d1b3099a3e5bb9108122", 311323 },
+			 	// { "MAINMENU.MPL", 0, "476e9c774d30eda319cabec8e5b9e19c", 1517692 },
+			 	// { "MSDAY1.MPL", 0, "0d5d7d0fc0c224b08eb183e2d498d23f", 73801500 },
+			 	// { "MSDAY2.MPL", 0, "dbac1163593b11c13d9a496db96143c6", 8633775 },
+			 	// { "SPATH.MPL", 0, "82ae96e0eac36bfd34e2f3e5fd1dfa6e", 57841860 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED | ADGF_DEMO,
+			GUIO0()
+		},
+		GID_PURPLEMOON,
+		0,
+		MTBOOT_PURPLEMOON_WIN_EN,
+	},
+
+	{ // Chomp! The Video Game (English, Windows)
+	  // Published by Nabisco, 1996
+		{
+			"chomp",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "MPLAY_95.EXE", 0, "369e485a92c4aaf1d7037214fc641848", 721920 },
+			 	{ "MINIGAME.MPL", 0, "ad79f779eb6f87da5eecee7718fba483", 7768522 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_CHOMP,
+		0,
+		MTBOOT_CHOMP_RETAIL_WIN_EN,
+	},
+
+	{ // Chomp! The Video Game Demo (English, Windows)
+	  // Published by Nabisco, 1996
+		{
+			"chomp",
+			"Demo",
+			{
+				{ "MTPLAY32.EXE", 0, "5bc345c80c615e7c8c633468ba9bd7b4", 681984 },
+				{ "JUMBLE.MPL", 0, "6f1c9e3e83e0eb87506b500b71a6e73c", 6473576 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED | ADGF_DEMO,
+			GUIO0()
+		},
+		GID_CHOMP,
+		0,
+		MTBOOT_CHOMP_DEMO_WIN_EN,
+	},
+
+	{ // 24 Hours in Cyberspace (English, Windows)
+		{
+		 	"cyber24",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+		 	{
+				{ "ABC32.EXE", 0, "b5efd541d37b23ab6a587e0929b05c2e", 1218048 },
+				{ "DATA1.MPL", 0, "7fb0b50e9db45dd069a1ca96efdefa5a", 1227933 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_CYBER24,
+		0,
+		MTBOOT_CYBER24_WIN_EN,
+	},
+
+	{ // IVOCLAR (English, Windows)
+	  // A presentation of some dental medicine technology
+		{
+			"ivoclar",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+		 		{ "RUN95NT.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
+				{ "DATA.MPL", 0, "d963537b9996b969492e095dca4c5b2a", 1717658 },
+				AD_LISTEND
+			},
+		 	Common::EN_ANY,
+		 	Common::kPlatformWindows,
+		 	ADGF_UNSUPPORTED,
+		 	GUIO0()
+		},
+	 	GID_IVOCLAR,
+	 	0,
+	 	MTBOOT_IVOCLAR_WIN_EN,
+	},
+
+	{ // Real Wild Child! Australian Rock Music 1950s-90s (English, Windows)
+		{
+			"realwild",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+		 		{ "RWC.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
+		  		{ "RWC_DATA.MPL", 0, "7c271bed9ef7ea012896860358590791", 90144089 },
+				AD_LISTEND
+			},
+		 	Common::EN_ANY,
+		 	Common::kPlatformWindows,
+		 	ADGF_UNSUPPORTED,
+		 	GUIO0()
+		},
+	 	GID_REALWILD,
+	 	0,
+	 	MTBOOT_REALWILD_WIN_EN,
+	},
+
+	{ // How to Build a Telemedicine Program (English, Windows)
+		{
+			"telemed",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+		 		{ "TELEMED.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
+				{ "TELEMED.MPL", 0, "cd73ec482fb21508a34daeff6773623c", 44022984 },
+				AD_LISTEND
+			},
+		 	Common::EN_ANY,
+		 	Common::kPlatformWindows,
+		 	ADGF_UNSUPPORTED,
+		 	GUIO0()
+		},
+	 	GID_TELEMED,
+	 	0,
+	 	MTBOOT_TELEMED_WIN_EN,
+	},
+
+	{ // Rugrats: Totally Angelica Boredom Buster (English, Windows)
+	  // Published by Mattel Interactive, 2000
+		{
+			"angelica",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "MTPLAY32.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
+				// { "BedRm.mfx", 0, "ff59f93ec9d61f43be11fa05f339495b", 13919113 },
+				// { "HighScore.mfx", 0, "35742a1cdc503ff73897f8617d328759", 2613743 },
+				// { "Journal.mfx", 0, "a48bc254d2c58075ca3433b80111db55", 10815621 },
+				// { "LivRm.mfx", 0, "5e3f918f54e4d1343df7e6144b505895", 23964970 },
+				// { "Makeup.mfx", 0, "4c0b8a760d525e066ec977dad685d9bd", 18024760 },
+				// { "MatchAc.mfx", 0, "d097776158f8df266a6e66a1a3d36008", 19040502 },
+				// { "OnIce.mfx", 0, "99f062b610f2533abe2a56f9fcf4ce15", 1668905 },
+				// { "PBedRm.mfx", 0, "54438f3b8a42819e1166a43fe6116530", 13934291 },
+				// { "SignIn.mfx", 0, "a7bfc234e36ddcb38798973984215395", 5260294 },
+				{ "Splash.mfx", 0, "a95eb9155418e5fd2d9e7e7b855c8242", 1770003 },
+				// { "TV.mfx", 0, "471e95b81207b56338defd4faf53ebc5", 44146820 },
+				// { "WRobe.mfx", 0, "0ec2865d77e935e0932854201b5d1e24", 110314929 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_ANGELICA,
+		0,
+		MTBOOT_ANGELICA_WIN_EN,
+	},
+
+	{ // Babe and Friends: Animated Early Reader (English, Windows)
+	  // Published by Sound Source Interactive, 1999
+		{
+			"babe",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "BabeER.exe", 0, "a77039aa17f3f81f6b06e34bd6cc62db", 1041920 },
+				{ "BabeER.mfx", 0, "890b294288581b20abac226c4ab37748", 15113800 },
+				// { "BabeER2.mxx", 0, "3cce691bbdd9b1247aceb75ed3d567cb", 245599825 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_BABE,
+		0,
+		MTBOOT_BABE_WIN_EN,
+	},
+
+	{ // Biologia Cellulare Evoluzione E Varietà Della Vita (Italian, Windows)
+		{
+			"biocellevo",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "BIO.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
+				{ "BIO1.mfx", 0, "7ae8e3384da3860e4b6b3a2de40d231a", 542088601 },
+				AD_LISTEND
+			},
+			Common::IT_ITA,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_BIOCELLEVO,
+		0,
+		MTBOOT_BIOCELLEVO_WIN_IT,
+	},
+
+	{ // Easy-Bake Kitchen (English, Windows)
+	  // Published by Hasbro, 1999
+		{
+			"easybake",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "Mtplay32.exe", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
+				// { "BAKESESS.MFX", 0, "1aa7b078b614b21e91022dab97d167b9", 78386865 },
+				// { "DECOSESS.MFX", 0, "4f92c1f3caab95818bbf4ede17ddd960", 38170867 },
+				// { "DOUGH.MFX", 0, "bec653daa80d92585eac670d1315f1e9", 11102671 },
+				// { "GAMEHUB.MFX", 0, "6f1c8d3951128bc446f1e8981b2806bf", 8544387 },
+				// { "ICING.MFX", 0, "2f35e759f6a686c3fdb1ab5874f54c19", 12424423 },
+				{ "INTRO.MFX", 0, "8a7e999c047583f8ae6157210aef256e", 36640375 },
+				// { "JAR.MFX", 0, "0f46d4d19fda1513b08803cb9c14df76", 58458020 },
+				// { "MUSIC.MFX", 0, "b53fd2981dfb008356aa1828c5e586c4", 24862538 },
+				// { "RECIPSEL.MFX", 0, "fc0fead02ab3c00b3aa15282927850f4", 7397433 },
+				// { "SKILL.MFX", 0, "b22b5bd3c9322300da1f68c6195c5d4f", 43974421 },
+				// { "TPARTY.MFX", 0, "089cfcc56296b47b9d3088280aa4e30a", 30451868 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_EASYBAKE,
+		0,
+		MTBOOT_EASYBAKE_WIN_EN,
+	},
+
+	{ // The Forgotten: It Begins (English, Windows)
+	  // Published by DreamCatcher Interactive, 1999
+		{
+			"forgotten",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "Forgot.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
+				{ "Forgotten.mfw", 0, "d54d5b0d7e6e2d000fa3284d6bb3b1b7", 102093801 },
+				// { "Forgotten2.mxw", 0, "60576ac2f3b7d4b506d8934deb54ad00", 269910629 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_FORGOTTEN,
+		0,
+		MTBOOT_FORGOTTEN_WIN_EN,
+	},
+
+	{ // The Mystery at Greveholm 2: The Journey to Planutus (Swedish, Windows)
+	  // Published by Young Genius Software, 1998
+		{
+			"greveholm2",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "Planutus.exe", 0, "15c9a577478fdee6bfc7aa32e0edc10b", 1085952 },
+				{ "pData.mfw", 0, "9f17d1caab9be5078639e73a2c326969", 10690754 },
+				// { "pData2.mxw", 0, "b7888606944d8fadee9c807eaaedaf19", 50885620 },
+				// { "pData3.mxw", 0, "515d9ceb1fb58121d7c5b7c296590efd", 127879332 },
+				// { "pData4.mxw", 0, "32461427fbc3e3a5e71ebc0c8f95b46b", 4581550 },
+				// { "pData5.mxw", 0, "d453c37e5624f1c57a11c330162e03ba", 8140530 },
+				// { "pData6.mxw", 0, "c7ac100c8afb2f40503cd04c065aa1c2", 3120251 },
+				// { "pData7.mxw", 0, "ebb27c171261c17fb52af43ffab9ce2a", 8626512 },
+				// { "pData8.mxw", 0, "3ca49943418521ed8608382480994ac4", 3123415 },
+				// { "pData9.mxw", 0, "6562e4a7cc83dd134e01e179a6478d4d", 17303805 },
+				// { "pData10.mxw", 0, "fc0e391cc891b30a6d41969aaeeaf116", 9759220 },
+				// { "pData11.mxw", 0, "2be469dd466c3ad29adbcf22a052eff4", 5742569 },
+				// { "pData12.mxw", 0, "780394367788facc5251ff038e9fd94b", 3330452 },
+				// { "pData13.mxw", 0, "71d23e427ad999d9d75580731562c862", 3954444 },
+				// { "pData15.mxw", 0, "fcfed4619b6c757df20c90ba9b111b59", 14658903 },
+				// { "pData16.mxw", 0, "e2a89640876608487769e722699646f1", 26378754 },
+				// { "pData17.mxw", 0, "997d05a8ad34d4fd17dfecfad17f8981", 17060297 },
+				// { "pData18.mxw", 0, "62cebd98a9bf2f17fa9a3352ab952b6d", 10892439 },
+				// { "pData19.mxw", 0, "695f75f8bdc65aadfc95970f1a2e16e6", 4582666 },
+				// { "pData20.mxw", 0, "02aa4a3bfbfba7c21aa7cd388334d060", 15462415 },
+				AD_LISTEND
+			},
+			Common::SE_SWE,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_GREVEHOLM2,
+		0,
+		MTBOOT_GREVEHOLM2_WIN_SE,
+	},
+
+	{ // Itacante: La Cité des Robots (French, Windows)
+	  // Published by Emme Interactive, 1999
+		{
+			"itacante",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "itacante.exe", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
+				{ "machina.mfx", 0, "d500d15fb68cbc96988bbd868df316d0", 37537889 },
+				// { "machina2.mxx", 0, "74f775d98a17277897940e58b69c5e7f", 214246774 },
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_ITACANTE,
+		0,
+		MTBOOT_ITACANTE_WIN_FR,
+	},
+
+	{ // King of Dragon Pass (English, Windows)
+	  // Published by A-Sharp, 1999
+		{
+			"kingofdragonpass",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "Mtplay95.exe", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
+				{ "opal.mfx", 0, "cb1d4f044a0293458e3816185a50a2b6", 36377208 },
+				// { "KODP5182.mxx", 0, "5f1318edd0a90837f7a48295c6debf81", 144497671 },
+				// { "KODP5183.mxx", 0, "05cd0df24f866ff2b942d7e39d91f400", 310970688 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_KINGOFDRAGONPASS,
+		0,
+		MTBOOT_KINGOFDRAGONPASS_WIN_EN,
+	},
+
+	{ // The Times: Key Stage 1 English (English, Windows)
+		{
+			"ks1eng",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "POWER.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
+				{ "PmdataT.mfx", 0, "9eda23aece0732e7b69b9b9234301164", 86965804 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_KS1ENG,
+		0,
+		MTBOOT_KS1ENG_WIN_EN,
+	},
+
+	{ // Maisy's Playhouse (English, Windows)
+	  // Published by Simon & Schuster, 1999
+		{
+			"maisy",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "Maisy.exe", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
+				{ "data.mfx", 0, "04f20a0a5e721ff0c4f84ee900c99530", 4588716 },
+				// { "data2.mxx", 0, "de7b7bf70ec8f628922f7ceb2fc004f1", 294743286 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_MAISY,
+		0,
+		MTBOOT_MAISY_WIN_EN,
+	},
+
+	{ // The Magic School Bus Explores the World of Animals (English, Windows)
+	  // Published by Microsoft, 1999
+		{
+			"msb_animal",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "MTPLAY32.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952},
+				// { "reports.mfw", 0, "bb588986e16f9e9ae12816c6d9f51268", 35712973},
+				{ "Startup.mfw", 0, "f52d750ffe3072e488023dedcdfbfd0b", 2000203},
+				// { "Arctic.mfx", 0, "a595b7b712ad777bde46d08b6f583ff4", 32374648},
+				// { "BackBus.mfx", 0, "ca6d7948723f862e28c491ede89c895b", 12526142 },
+				// { "Bones.mfx", 0, "2489291991bc9ce84823137d25979991", 9826379 },
+				// { "Bus.mfx", 0, "56038d8eb1d6aab4ad5abd1e01c24326", 49004547 },
+				// { "camo.mfx", 0, "58248080d2c63e3c6265765371440cda", 3926076 },
+				// { "cert.mfx", 0, "1c6c752f52293951473d9eba5d8ac89e", 4234176 },
+				// { "Class.mfx", 0, "7a8bf0f67ba72678df5f012379b218e7", 22494146 },
+				// { "crtr.mfx", 0, "d0c0506fa234d54c80c3e3b3cbd9015b", 4969456 },
+				// { "Desert.mfx", 0, "851247a3200f368a3a3cd8d359e074b8", 26331602 },
+				// { "EcoPost.mfx", 0, "5f3521ed0ca386d91bfb74112a0e4b9c", 10845589 },
+				// { "Expmnts.mfx", 0, "cbf8509512a7769f4836daab4edabcc2", 22450663 },
+				// { "frank.mfx", 0, "d602a3ac418a0983457192530116848a", 6414082 },
+				// { "Himlaya.mfx", 0, "7cc63328f93b8326d31d8272b7cf21bb", 20834694 },
+				// { "Pacific.mfx", 0, "db572822c9cdb26f66e35adfe6490c45", 29213317 },
+				// { "Penquin.mfx", 0, "6974867092197e9d62cfb67f04638810", 5584817 },
+				// { "picPuz.mfx", 0, "279cc6a2de8442afe6af51fb94a77787", 9257620 },
+				// { "Rain.mfx", 0, "a7e6dafddf1b0a6df52ec386a3038e5b", 27309278 },
+				// { "roar.mfx", 0, "353077cd53891b121228b4c7021f3c96", 3758103 },
+				// { "Savanna.mfx", 0, "21dc6a27b4d264dba8758255aaf1e515", 26035394 },
+				// { "Scat.mfx", 0, "75105868539b68f814c41efb641c5c82", 19246689 },
+				// { "shelx.mfx", 0, "af1a4cf3f196226339de5845e8177cba", 7223058 },
+				// { "Snake.mfx", 0, "273ea44cf95946f5246a2c564bec6545", 6231640 },
+				// { "SThing.mfx", 0, "5d719c15d43a10a2feb5f0edbdbf2b86", 5659555 },
+				// { "Swamp.mfx", 0, "2c3eed7ffce09c584f5ca1bfc7f53a6f", 26466355 },
+				// { "Tag.mfx", 0, "0a71dfd5d8a8c491a60f08435daef832", 10795860 },
+				// { "Tile.mfx", 0, "8e23fa37e32640b778d3675e337adc19", 5915594 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_MSB_ANIMAL,
+		0,
+		MTBOOT_MSB_ANIMAL_WIN_EN,
+	},
+
+	{ // The Magic School Bus Explores Bugs (English, Windows)
+	  // Published by Microsoft, 2000
+		{
+			"msb_bugs",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "MTPLAY32.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
+				// { "Bus.mfw", 0, "cdbe91cfaa4634c5920413a3ee56b1dd", 19193104 },
+				// { "AntMaze.mfx", 0, "0ef81926da5ca6c205651c7f744f49c0", 4183723 },
+				// { "BackBus.mfx", 0, "96cf4976106fdf9a501a3b35b4bc10d4", 13208304 },
+				// { "BugEat.mfx", 0, "c773d6779394ab12ce89c339c9f3afb4", 8425720 },
+				// { "BuildBug.mfx", 0, "a37b009c051318e4e4442d7d28434fea", 3774580 },
+				// { "Bus.mfx", 0, "31841ec5be05f7eb18e77e9ff5040c05", 67852118 },
+				// { "cert.mfx", 0, "3e7496a5ead768bcfcc88983c3342e56", 4369317 },
+				// { "EBT.mfx", 0, "43d916c710c05ebd2e56d8668a8697fa", 11946840 },
+				// { "EcoPost.mfx", 0, "ec441b4b965026ef2dd9e748a7a3ffe8", 8354730 },
+				// { "FireFly.mfx", 0, "210fef0df8888bda3b5b733f1d7993c4", 4547310 },
+				// { "Flight.mfx", 0, "fd1d071032c9cdf83cc6f0933fd0865e", 4465039 },
+				// { "Forest.mfx", 0, "b2067495ef209f547942af829a90c491", 24773402 },
+				// { "GameShow.mfx", 0, "c73ec09cbf9def72e0bd2378292ad699", 23056010 },
+				// { "GBE.mfx", 0, "2b77b64fd1a2f0302ced71eb15fd3951", 8302512 },
+				// { "Jungle.mfx", 0, "d65aacf5c3e46027300c4f451da593d3", 30996636 },
+				// { "KidMorph.mfx", 0, "ae6cf12fad8901be85fabca592fa834c", 4760950 },
+				// { "License.mfx", 0, "078f0f2eda2e94b0a06b69be301931ba", 4249248 },
+				// { "meadow.mfx", 0, "09c56fc553efbbdeb2bbeb46623b4393", 22720812 },
+				// { "Pond.mfx", 0, "b2030dac8053f792b5166960bfb1fb8b", 24635938 },
+				// { "RBE.mfx", 0, "5d8bdb9044de697ca78c7571c9618384", 5495682 },
+				// { "RBT.mfx", 0, "083152f6af3d40e823d067b676543116", 5500961 },
+				// { "RCM.mfx", 0, "479e2709dcbef49b7ed2ebf42f014177", 5782712 },
+				// { "RFL.mfx", 0, "a5cf594438743a533704beb0d9259380", 7978091 },
+				// { "RGB.mfx", 0, "e43cb6267fb859d0d0c2e300703040d9", 5519579 },
+				// { "RMT.mfx", 0, "8d639c2d43c14aa0d80c068f686c9b8f", 6107984 },
+				// { "RPL.mfx", 0, "ae617deabe3a654c513a85bab18d9fe6", 6331374 },
+				// { "RWB.mfx", 0, "a3931939f91c64ab2cb38286c146d8ca", 6844343 },
+				// { "school.mfx", 0, "d03459adf342651da0eee1fc9f4185e5", 23830537 },
+				{ "SignIn.mfx", 0, "a33f52fb5cc96809b1e9eafac2f28045", 2246830 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_MSB_BUGS,
+		0,
+		MTBOOT_MSB_BUGS_WIN_EN,
+	},
+
+	{ // The Magic School Bus In Concert (English, Windows)
+	  // Published by Microsoft, 2000
+		{
+			"msb_concert",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "MTPLAY32.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
+				// { "Acoust.mfx", 0, "112ea6c2a4a8b3a49770443ad9859190", 17246635 },
+				// { "backbus.mfx", 0, "586e2e0981325935711cfab0bea3a06a", 15183980 },
+				// { "Concert.mfx", 0, "bf644854cf510ea1316083f772384196", 26730066 },
+				// { "gallery.mfx", 0, "ca949f69f12c63ce09ccf6258f88cbc1", 8769879 },
+				// { "GameShow.mfx", 0, "b29f513d5b64a5d33717d73cb5337137", 54962750 },
+				{ "SignInC.mfx", 0, "c03d48eb2af46e2111e46b64fd90b4e1", 3846548 },
+				// { "simonsnd.mfx", 0, "fdfb9334ab5aa7bc3e9e550c85304727", 8483542 },
+				// { "sndmixer.mfx", 0, "01021dc6ffb6fa6f3907c37d80264ed4", 12449504 },
+				// { "SndPuzz.mfx", 0, "a3b20a084aec9818fe08b3de58b6fd84", 52351464 },
+				// { "sndwave.mfx", 0, "051b36665d23497b11961fac85da1408", 13706241 },
+				// { "stgpass.mfx", 0, "e4df5e2802d2346e8a9291fbec8579a3", 5680467 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_MSB_CONCERT,
+		0,
+		MTBOOT_MSB_CONCERT_WIN_EN,
+	},
+
+	{ // The Magic School Bus Discovers Flight (English, Windows)
+	  // Published by Microsoft, 2000
+		{
+			"msb_flight",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "MTPLAY32.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
+				// { "balloon.mfx", 0, "bafca52d8e8bcbe6f9b5f7bfeb2be29b", 4827052 },
+				// { "buildaplane.mfx", 0, "53047c70893c012e7c81e645820ef433", 8152708 },
+				// { "Bus.mfx", 0, "f16da286a05a5ced1b800ee74e5f9727", 36580418 },
+				// { "fgs.mfx", 0, "44d34ce1f59bd4b0c19dd6b10df73a1e", 33408756 },
+				// { "FPass.mfx", 0, "15d69a865e05791f58751fca3c41c0c3", 3370535 },
+				// { "FPuzzle.mfx", 0, "bd5a9edb1b7c99d455b012508903145e", 10775749 },
+				// { "FWT.mfx", 0, "af94af6733b98fe719daed303c3e92fa", 7788077 },
+				// { "poster.mfx", 0, "2a28d92eb4fa78c796c01e7c0c412724", 5317029 },
+				{ "SignInF.mfx", 0, "232be4bc0540c1bd025f9abeeef14135", 2770575 },
+				// { "smkjump.mfx", 0, "d6b7a569fd8afcbe9e290415b6a4684c", 4627390 },
+				// { "Zone.mfx", 0, "2110b284cbc2fec5d11381ff06c6bea9", 42565436 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_MSB_FLIGHT,
+		0,
+		MTBOOT_MSB_FLIGHT_WIN_EN,
+	},
+
+	{ // The Magic School Bus Lands on Mars (English, Windows)
+	  // Published by Microsoft, 2000
+		{
+			"msb_mars",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "Mtplay32.exe", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
+				// { "Bus.mfx", 0, "b72a82877c8dfe8d0dd1f96f8f9259e2", 51951667 },
+				// { "CrewPass.mfx", 0, "e230104d86d9e38cd5eb8bd21837e5b3", 3844705 },
+				// { "EBR.mfx", 0, "1603a2de3ace14768e7885b2ab676c38", 53142318 },
+				// { "GameShow.mfx", 0, "bb69c4f7cd72a5c4c6a3c14d292c92cb", 24045815 },
+				// { "Lander.mfx", 0, "5c24f1a4148dec627dd08f453d4b361e", 9645963 },
+				// { "MPuzzle.mfx", 0, "3b0b6423431daba4d74fdd27b50d0201", 16779619 },
+				// { "Postcard.mfx", 0, "72cbed8ea0c8286f903475060af8ca5b", 5170443 },
+				// { "Pressure.mfx", 0, "147022e8e5cbc9c80bdf12565d57b4e0", 11582143 },
+				// { "RRace.mfx", 0, "4349471749723d02f0e5865f180cec2e", 11464016 },
+				{ "SignInM.mfx", 0, "a5aafcc2676bd1f0297623b053e0f1b4", 2984038 },
+				// { "Zone.mfx", 0, "4d9f4dc6252996103fc1300f2910395b", 23110033 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_MSB_MARS,
+		0,
+		MTBOOT_MSB_MARS_WIN_EN,
+	},
+
+	{ // The Magic School Bus Volcano Adventure (English, Windows)
+	  // Published by Microsoft, 2001
+		{
+			"msb_volcano",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "Mtplay32.exe", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
+				// { "Art.mfx", 0, "672cf2da2dd8233074746e1e657c2f62", 7297320 },
+				// { "BOB.mfx", 0, "2a5666aeb650c93374bee1b4d13b84ed", 24617929 },
+				// { "crewpass.mfx", 0, "409384a1e43a70bf480162573da07d67", 2794311 },
+				// { "Ex1Erupt.mfx", 0, "e99be79f854965b34c16720278122f4e", 49765988 },
+				// { "ex2Cmpr.mfx", 0, "a50865d73eb030f26f6df54341df8930", 19028980 },
+				// { "LLava.mfx", 0, "05614efcb330c8f856980b2515007252", 5178433 },
+				// { "Puzzle.mfx", 0, "d835730da23e09fb539c4a77293f7337", 13281112 },
+				// { "SaveTown.mfx", 0, "10518372621f35dcd9559cfad68678f5", 5819650 },
+				{ "SignInV.mfx", 0, "04d2f5d7182d7e91ff3e207a6d7e5cde", 2617580 },
+				// { "SubRace.mfx", 0, "1c3415b492f7b7b6b6a3eebc8b09e37b", 7764830 },
+				// { "Zone.mfx", 0, "80c23a93bddfa77454ba86d3ddf886f6", 31418461 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_MSB_VOLCANO,
+		0,
+		MTBOOT_MSB_VOLCANO_WIN_EN,
+	},
+
+	{ // The Magic School Bus Whales & Dolphins (English, Windows)
+	  // Published by Microsoft, 2001
+		{
+			"msb_whales",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "Mtplay32.exe", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
+				// { "BOB.mfx", 0, "d4d6abc27f96febfcd70258d05be39be", 20627391 },
+				// { "CrewPass.mfx", 0, "7725162d0305af00458b866a0e90ab90", 3102954 },
+				// { "gameshow.mfx", 0, "d26c52d3725fb442e5a4a906b6e90a39", 14590001 },
+				// { "Maze.mfx", 0, "1f2d5e47009fdc101413c27ccd64d70c", 10024159 },
+				// { "Scales.mfx", 0, "fb792fe3f15a7f4d05ae1a0e83146f80", 6135250 },
+				{ "SignInW.mfx", 0, "c92ca5d5ef4b0d2ea34a477871ea3b27", 2038047 },
+				// { "SpyHop.mfx", 0, "1e2856e9101b49d2f544b6782a0be56f", 6200975 },
+				// { "Teria.mfx", 0, "5349254b0fbbaf58ec9c4c06c6fae579", 6343211 },
+				// { "WPoster.mfx", 0, "e416437248335e1739fcd4a5a3306b78", 4294222 },
+				// { "wpuzzle.mfx", 0, "b209404a7a46af109b93bee1964bb19e", 31800918 },
+				// { "Zone.mfx", 0, "ccaa81d3542b27991e35b28ec5c847b6", 59535774 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_MSB_WHALES,
+		0,
+		MTBOOT_MSB_WHALES_WIN_EN,
+	},
+
+	{ // Mykropolis: Planet der Roboter (German, Windows)
+	  // Original title: Itacante: La Cité des Robots
+	  // Published by Tivola, 2000
+		{
+			"mykropolis",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "mykropolis.exe", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
+				{ "machina.mfx", 0, "4cb398466b078280a237b9437c7a934a", 39111217 },
+				// { "machina2.mxx", 0, "99a55b1cb02a761d29b75f75fbf4dc4b", 210044061 },
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_MYKROPOLIS,
+		0,
+		MTBOOT_MYKROPOLIS_WIN_DE,
+	},
+
+	{ // Your Notebook (with help from Amelia) (English, Windows)
+	  // Published by Pleasant Company, 1999
+		{
+			"notebook",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "Mtplay32.exe", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
+				// { "Bedroom.mfx", 0, "994009fcad48d713f4168503c2ebcb63", 54491655 },
+				{ "Hallway.mfx", 0, "2b5991e1c00b7cc9ba2d80a9fa277020", 7664235 },
+				// { "HallwayM.mfx", 0, "df60d2694d908d9686cb8fccebe1826d", 7698531 },
+				// { "Journal.mfx", 0, "e57cd06e55c46e552154377d3ca73d27", 54028999 },
+				// { "tutorial.mfx", 0, "41e1816fc1d475a93a0bef9f95c0a15b", 77214074 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_NOTEBOOK,
+		0,
+		MTBOOT_NOTEBOOK_WIN_EN,
+	},
+
+	{ // Pferd & Pony Lass uns reiten (German, Windows)
+	  // Published by dtp entertainment, 2003
+		{
+			"pferdpony",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "hast.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
+				{ "Start.mfw", 0, "66d0b37f3580d2d66f84ae100690aef6", 13609 },
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_PFERDPONY,
+		0,
+		MTBOOT_PFERDPONY_WIN_DE,
+	},
+
+	{ // Pinnacle Systems miroVideo Studio DC10 Plus (German, Windows)
+		{
+			"mirodc10",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "MTPLAY32.EXE", 0, "c23dccd2b7a525a9f7bb8505f7c7f2d4", 1085952 },
+				{ "Studio Guided Tour.mfw", 0, "67f8ebfde1fe329b5c282f35fc885a8b", 54496799 },
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_MIRODC10,
+		0,
+		MTBOOT_MIRODC10_WIN_DE,
+	},
+
+	{ // Pinnacle Systems miroVideo Studio DC10 Plus (English, Windows)
+		{
+			"mirodc10",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "MTPLAY32.EXE", 0, "c23dccd2b7a525a9f7bb8505f7c7f2d4", 1085952 },
+				{ "Studio Guided Tour.mfw", 0, "47263c3d7f5bebba2d5dbcb4ed8aab1a", 32270329 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_MIRODC10,
+		0,
+		MTBOOT_MIRODC10_WIN_EN,
+	},
+
+	{ // Poser 3 content sampler on the sampler disc "Stuff for Poser" (English, Windows)
+		{
+			"poser3_sampler_zygote",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "ClickMe.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
+				{ "summer98.mfw", 0, "c079c98d39833ea733669e88e42cae03", 96352413 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_POSER3_SAMPLER_ZYGOTE,
+		0,
+		MTBOOT_POSER3_SAMPLER_ZYGOTE_WIN_EN,
+	},
+
+	{ // Poser 3 content sampler on the disc for Poser 3 (English, Windows)
+		{
+			"poser3_zygote",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "CLICKME.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
+				{ "ZYGOTE.MFW", 0, "7b98d86857bd412af291cae3e214d331", 18642284 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_POSER3_ZYGOTE,
+		0,
+		MTBOOT_POSER3_ZYGOTE_WIN_EN,
+	},
+
+	{ // Whitetail Extreme (English, Windows)
+	  // Published by ValuSoft, 1999
+		{
+			"wtextreme",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "WTX.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
+				{ "DATA.MFW", 0, "aa1d4694b3400f01e4fd55530331794d", 220904580 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_WTEXTREME,
+		0,
+		MTBOOT_WT_EXTREME_WIN_EN,
+	},
+
+	{ // Adobe 24 Hours Tools Sampler (English, Windows)
+	  // Published by Against All Odds Productions, 1996
+		{
+			"adobe24",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "ADOBE32.EXE", 0, "b5efd541d37b23ab6a587e0929b05c2e", 1218048 },
+				{ "DATA.MPL", 0, "e5d4f39ab5685556115ba0b34103bc2e", 27625660 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_ADOBE24,
+		0,
+		MTBOOT_ADOBE24_WIN_EN,
+	},
+
 
 	{ AD_TABLE_END_MARKER, 0, 0, MTBOOT_INVALID }
 };

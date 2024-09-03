@@ -19,8 +19,6 @@
  *
  */
 
-#if defined(__ANDROID__)
-
 #define FORBIDDEN_SYMBOL_EXCEPTION_getenv(a)
 
 // Allow use of stuff in <time.h>
@@ -556,6 +554,10 @@ void OSystem_Android::initBackend() {
 
 	_audio_thread_exit = false;
 	pthread_create(&_audio_thread, 0, audioThreadFunc, this);
+
+	JNI::DPIValues dpi;
+	JNI::getDPI(dpi);
+	_touchControls.init(dpi[2]);
 
 	_graphicsManager = new AndroidGraphicsManager();
 
@@ -1156,5 +1158,3 @@ _s(
 const char * const *OSystem_Android::buildHelpDialogData() {
 	return helpTabs;
 }
-
-#endif

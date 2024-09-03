@@ -31,6 +31,25 @@ void EclipseEngine::initZX() {
 	_viewArea = Common::Rect(56, 36, 265, 139);
 	_maxEnergy = 63;
 	_maxShield = 63;
+
+	_soundIndexShoot = 5;
+	_soundIndexCollide = -1;
+	_soundIndexFall = 3;
+	_soundIndexClimb = 4;
+	_soundIndexMenu = -1;
+	_soundIndexStart = 7;
+	_soundIndexAreaChange = 7;
+
+	_soundIndexStartFalling = 6;
+	_soundIndexEndFalling = 5;
+
+	_soundIndexNoShield = 8;
+	_soundIndexNoEnergy = -1;
+	_soundIndexFallen = 8;
+	_soundIndexTimeout = 8;
+	_soundIndexForceEndGame = 8;
+	_soundIndexCrushed = 8;
+	_soundIndexMissionComplete = 16;
 }
 
 void EclipseEngine::loadAssetsZXFullGame() {
@@ -111,6 +130,7 @@ void EclipseEngine::loadAssetsZXDemo() {
 		error("Failed to open totaleclipse.zx.data");
 
 	if (_variant & GF_ZX_DEMO_MICROHOBBY) {
+		loadSpeakerFxZX(&file, 0x798, 0x7ec);
 		loadMessagesFixedSize(&file, 0x2ac, 16, 23);
 		loadMessagesFixedSize(&file, 0x56e6, 264, 1);
 		loadFonts(&file, 0x5f7b, _font);

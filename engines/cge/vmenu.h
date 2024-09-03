@@ -57,7 +57,7 @@ public:
 	MenuBar *_bar;
 	Vmenu(CGEEngine *vm, Choice *list, int x, int y);
 	~Vmenu() override;
-	void touch(uint16 mask, int x, int y, Common::KeyCode keyCode) override;
+	void touch(uint16 mask, int x, int y) override;
 private:
 	char *_vmgt;
 	CGEEngine *_vm;

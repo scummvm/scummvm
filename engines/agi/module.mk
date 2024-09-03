@@ -5,11 +5,13 @@ MODULE_OBJS := \
 	checks.o \
 	console.o \
 	cycle.o \
+	disk_image.o \
 	font.o \
 	global.o \
 	graphics.o \
 	inv.o \
 	keyboard.o \
+	loader_a2.o \
 	loader_v1.o \
 	loader_v2.o \
 	loader_v3.o \
@@ -27,6 +29,7 @@ MODULE_OBJS := \
 	saveload.o \
 	sound.o \
 	sound_2gs.o \
+	sound_a2.o \
 	sound_coco3.o \
 	sound_midi.o \
 	sound_pcjr.o \
@@ -56,3 +59,10 @@ DETECT_OBJS += $(MODULE)/detection.o
 # This is unneeded by the engine module itself,
 # so separate it completely.
 DETECT_OBJS += $(MODULE)/wagparser.o
+
+# Skip building the following objects if a static
+# module is enabled, because it already has the contents.
+ifneq ($(ENABLE_AGI), STATIC_PLUGIN)
+# External dependencies for detection.
+DETECT_OBJS += $(MODULE)/disk_image.o
+endif

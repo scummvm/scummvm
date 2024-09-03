@@ -405,9 +405,9 @@ void ScummEngine_v2::decodeParseString() {
 	// So we add some extra spaces at the end of the string if it's too short; this
 	// unblocks the cutscene and also lets Sandy react as intended.
 	//
-	// (Not using enhancementEnabled because some users could be really confused
+	// (Using `kEnhGameBreakingBugFixes`, because some users could be really confused
 	// by the game hanging and they may not know about the Esc key.)
-	if (_game.id == GID_MANIAC && _game.platform != Common::kPlatformNES && _language == Common::FR_FRA && _currentScript != 0xFF && vm.slot [_currentScript].number == 155 && _roomResource == 31 && _actorToPrintStrFor == 9) {
+	if (_game.id == GID_MANIAC && _game.platform != Common::kPlatformNES && _language == Common::FR_FRA && _currentScript != 0xFF && vm.slot [_currentScript].number == 155 && _roomResource == 31 && _actorToPrintStrFor == 9 && enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		while (ptr - buffer < 100) {
 			*ptr++ = ' ';
 		}
@@ -428,10 +428,11 @@ void ScummEngine_v2::decodeParseString() {
 		buffer[29] = 'y';
 	}
 
+	int pixelXOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
 	int textSlot = 0;
-	_string[textSlot].xpos = 0;
+	_string[textSlot].xpos = 0 + pixelXOffset;
 	_string[textSlot].ypos = 0;
-	_string[textSlot].right = _screenWidth - 1;
+	_string[textSlot].right = _screenWidth - 1 + pixelXOffset;
 	_string[textSlot].center = false;
 	_string[textSlot].overhead = false;
 
@@ -1088,7 +1089,7 @@ void ScummEngine_v2::o2_walkActorTo() {
 	// WORKAROUND bug #2110: crash when trying to fly back to San Francisco.
 	// walkActorTo() is called with an invalid actor number by script 115,
 	// after the room is loaded. The original DOS interpreter probably let
-	// this slip by.
+	// this slip by (TODO: confirm this? and chose an Enhancement class).
 	if (_game.id == GID_ZAK && _game.version == 1 && vm.slot[_currentScript].number == 115 && act == 249) {
 		act = VAR(VAR_EGO);
 	}
@@ -1291,6 +1292,8 @@ void ScummEngine_v2::o2_putActorInRoom() {
 	// We don't touch the variable in the following situations
 	//  If the Caponian is being put into the space ship room, or the current room is the
 	//  space ship and the Caponian is being put into the backroom of the telephone company (you didnt show your fan club card)
+	//
+	// TODO: choose an Enhancement class for this
 	if (_game.id == GID_ZAK && _game.version <= 2 && act == 7) {
 		// Is script-96 cutscene done
 		if ((getState(344) & kObjectStateLocked)) {
@@ -1336,8 +1339,11 @@ void ScummEngine_v2::o2_findObject() {
 	int y = getVarOrDirectByte(PARAM_2) * V12_Y_MULTIPLIER;
 	obj = findObject(x, y);
 	if (obj == 0 && (_game.platform == Common::kPlatformNES) && (_userState & USERSTATE_IFACE_INVENTORY)) {
-		if (_mouseOverBoxV2 >= 0 && _mouseOverBoxV2 < 4)
-			obj = findInventory(VAR(VAR_EGO), _mouseOverBoxV2 + _inventoryOffset + 1);
+		if (_mouseOverBoxV2 >= 0 && _mouseOverBoxV2 < 4) {
+			// Simulate inverse order
+			int invCount = getInventoryCount(VAR(VAR_EGO));
+			obj = findInventory(VAR(VAR_EGO), invCount - _inventoryOffset - _mouseOverBoxV2);
+		}
 	}
 	setResult(obj);
 }
@@ -1588,8 +1594,9 @@ void ScummEngine_v2::o2_pickupObject() {
 	if (getObjectIndex(obj) == -1)
 		return;
 
-	if (whereIsObject(obj) == WIO_INVENTORY)	/* Don't take an */
-		return;											/* object twice */
+	// Don't take an object twice
+	if (whereIsObject(obj) == WIO_INVENTORY)
+		return;
 
 	addObjectToInventory(obj, _roomResource);
 	markObjectRectAsDirty(obj);
@@ -1599,7 +1606,7 @@ void ScummEngine_v2::o2_pickupObject() {
 
 	runInventoryScript(1);
 	if (_game.platform == Common::kPlatformNES)
-		_sound->startSound(51);	// play 'pickup' sound
+		_sound->triggerSound(51); // play 'pickup' sound (not using the queue; see Trac#2536)
 }
 
 void ScummEngine_v2::o2_cursorCommand() {	// TODO: Define the magic numbers

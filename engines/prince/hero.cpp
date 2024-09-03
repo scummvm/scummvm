@@ -264,7 +264,6 @@ void Hero::showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 		int shadWallBitAddr = 0;
 		int shadWallBitMask = 0;
 		byte *shadWallDestAddr = nullptr;
-		int shadWallPosY = 0;
 		int shadWallSkipX = 0;
 		int shadWallModulo = 0;
 
@@ -408,7 +407,6 @@ void Hero::showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 						shadWallBitAddr = shadBitAddr;
 						shadWallDestAddr = (byte *)screen->getBasePtr(shadDrawX + diffX, shadDrawY + diffY);
 						shadWallBitMask = shadBitMask;
-						shadWallPosY = shadPosY;
 						shadWallSkipX = shadSkipX;
 						shadWallModulo = sprModulo;
 					}
@@ -455,7 +453,6 @@ void Hero::showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 						//krap2
 						shadWallDestAddr -= PrinceEngine::kNormalWidth;
 						shadWallBitAddr -= PrinceEngine::kMaxPicWidth / 8;
-						shadWallPosY--;
 					}
 				}
 			}

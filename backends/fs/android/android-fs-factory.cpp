@@ -19,8 +19,6 @@
  *
  */
 
-#if defined(__ANDROID__)
-
 #include "backends/platform/android/jni-android.h"
 
 #include "backends/fs/android/android-fs-factory.h"
@@ -131,5 +129,3 @@ bool AndroidFilesystemFactory::Config::isDrive(const Common::String &path) const
 	}
 	return false;
 }
-
-#endif

@@ -146,6 +146,7 @@ public:
 	void resetSpeechTimer();
 	void startSpeechTimer();
 	void stopSpeechTimer();
+	bool speechIsPlaying(); // Used within MIDI iMUSE
 
 	void startCDTimer();
 	void stopCDTimer();

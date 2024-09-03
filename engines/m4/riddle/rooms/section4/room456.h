@@ -29,12 +29,26 @@ namespace Riddle {
 namespace Rooms {
 
 class Room456 : public Room {
+private:
+	machine *_lighter = nullptr;
+	machine *_lid = nullptr;
+	machine *_vent = nullptr;
+	int _seriesLighterChain = 0;
+	int _seriesGrateOpens = 0;
+	int _seriesCigarBoxTop = 0;
+	int _trigger = 0;
+
+	static void triggerMachineByHashCallback456(frac16 myMessage, machine *);
+
 public:
 	Room456() : Room() {}
 	~Room456() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms

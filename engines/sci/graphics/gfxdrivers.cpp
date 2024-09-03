@@ -41,6 +41,10 @@ Common::Point GfxDriver::getMousePos() const {
 	return g_system->getEventManager()->getMousePos();
 }
 
+void GfxDriver::setMousePos(const Common::Point &pos) const {
+	g_system->warpMouse(pos.x, pos.y);
+}
+
 void GfxDriver::clearRect(const Common::Rect &r) const {
 	GFXDRV_ASSERT_READY;
 	g_system->fillScreen(r, 0);
@@ -62,12 +66,12 @@ bool GfxDriver::checkDriver(const char *const *driverNames, int listSize) {
 		missing += "'" + Common::String(*driverNames) + "'";
 		++driverNames;
 	}
-	warning("Driver file %s not found. Starting game in EGA mode", missing.c_str());
+	warning("Driver file %s not found. Starting game in default mode", missing.c_str());
 	return false;
 }
 
-GfxDefaultDriver::GfxDefaultDriver(uint16 screenWidth, uint16 screenHeight, bool rgbRendering) : GfxDriver(screenWidth, screenHeight, 0),
-	_srcPixelSize(1), _requestRGBMode(rgbRendering), _compositeBuffer(nullptr), _currentBitmap(nullptr), _internalPalette(nullptr), _currentPalette(nullptr) {
+GfxDefaultDriver::GfxDefaultDriver(uint16 screenWidth, uint16 screenHeight, bool isSCI0, bool rgbRendering) : GfxDriver(screenWidth, screenHeight, 0), _cursorUsesScreenPalette(true),  _colorConv(nullptr), _colorConvMod(nullptr),
+	_srcPixelSize(1), _requestRGBMode(rgbRendering), _compositeBuffer(nullptr), _currentBitmap(nullptr), _internalPalette(nullptr), _currentPalette(nullptr), _virtualW(screenWidth), _virtualH(screenHeight), _alwaysCreateBmpBuffer(!isSCI0) {
 	switch (g_sci->getResMan()->getViewType()) {
 	case kViewEga:
 		_numColors = 16;	// QFG PC-98 with 8 colors also reports 16 here
@@ -97,6 +101,43 @@ GfxDefaultDriver::~GfxDefaultDriver() {
 	delete[] _currentPalette;
 }
 
+template <typename T> void colorConvert(byte *dst, const byte *src, int pitch, int w, int h, const byte *pal) {
+	T *d = reinterpret_cast<T*>(dst);
+	const T *p = reinterpret_cast<const T*>(pal);
+	const byte *s = src;
+	pitch -= w;
+
+	while (h--) {
+		for (int i = 0; i < w; ++i)
+			*d++ = p[*s++];
+		s += pitch;
+	}
+}
+
+#define applyMod(a, b) MIN<uint>(a * (128 + b) / 128, 255)
+template <typename T> void colorConvertMod(byte *dst, const byte *src, int pitch, int w, int h, const byte *srcPal, const byte *internalPal, Graphics::PixelFormat &f, const PaletteMod *mods, const byte *modMapping) {
+	T *d = reinterpret_cast<T*>(dst);
+	const T *p = reinterpret_cast<const T*>(internalPal);
+	const byte *s1 = src;
+	const byte *s2 = modMapping;
+	pitch -= w;
+
+	while (h--) {
+		for (int i = 0; i < w; ++i) {
+			byte m = *s2++;
+			if (m) {
+				const byte *col = &srcPal[*s1++ * 3];
+				*d++ = f.RGBToColor(applyMod(col[0], mods[m].r), applyMod(col[1], mods[m].g), applyMod(col[2], mods[m].b));
+			} else {
+				*d++ = p[*s1++];
+			}
+		}
+		s1 += pitch;
+		s2 += pitch;
+	}
+}
+#undef applyMod
+
 void GfxDefaultDriver::initScreen(const Graphics::PixelFormat *srcRGBFormat) {
 	Graphics::PixelFormat format8bt(Graphics::PixelFormat::createFormatCLUT8());
 	initGraphics(_screenW, _screenH, srcRGBFormat ? srcRGBFormat : (_requestRGBMode ? nullptr : &format8bt));
@@ -123,10 +164,16 @@ void GfxDefaultDriver::initScreen(const Graphics::PixelFormat *srcRGBFormat) {
 		assert(_compositeBuffer);
 	}
 
+	// Not needed for SCI0, except for rgb rendering. Unfortunately, SCI_VERSION_01
+	// does need it and we can't tell the version from the number of colors there.
+	// That's why we have the _alwaysCreateBmpBuffer flag...
+	if (_alwaysCreateBmpBuffer || _numColors > 16 || _pixelSize > 1) {
+		_currentBitmap = new byte[_virtualW * _virtualH * _srcPixelSize]();
+		assert(_currentBitmap);
+	}
+
 	if (_numColors > 16 || _pixelSize > 1) {
 		// Not needed for SCI0, except for rgb rendering
-		_currentBitmap = new byte[_screenW * _screenH * _srcPixelSize]();
-		assert(_currentBitmap);
 		_currentPalette = new byte[256 * 3]();
 		assert(_currentPalette);
 		if (_pixelSize != _srcPixelSize) {
@@ -134,6 +181,22 @@ void GfxDefaultDriver::initScreen(const Graphics::PixelFormat *srcRGBFormat) {
 			assert(_internalPalette);
 		}
 	}
+
+	static const ColorConvProc colorConvProcs[] = {
+		&colorConvert<byte>,
+		&colorConvert<uint16>,
+		&colorConvert<uint32>
+	};
+	assert((_pixelSize >> 1) < ARRAYSIZE(colorConvProcs));
+	_colorConv = colorConvProcs[_pixelSize >> 1];
+
+	static const ColorConvModProc colorConvModProcs[] = {
+		&colorConvertMod<byte>,
+		&colorConvertMod<uint16>,
+		&colorConvertMod<uint32>
+	};
+	assert((_pixelSize >> 1) < ARRAYSIZE(colorConvModProcs));
+	_colorConvMod = colorConvModProcs[_pixelSize >> 1];
 
 	_ready = true;
 }
@@ -143,13 +206,13 @@ void GfxDefaultDriver::setPalette(const byte *colors, uint start, uint num, bool
 	if (_pixelSize > 1) {
 		updatePalette(colors, start, num);
 		if (update)
-			copyRectToScreen(_currentBitmap, 0, 0, _screenW, 0, 0, _screenW, _screenH, palMods, palModMapping);
-		CursorMan.replaceCursorPalette(_currentPalette, 0, 256);
+			copyRectToScreen(_currentBitmap, 0, 0, _virtualW, 0, 0, _virtualW, _virtualH, palMods, palModMapping);
+		if (_cursorUsesScreenPalette)
+			CursorMan.replaceCursorPalette(_currentPalette, 0, 256);
 	} else {
 		g_system->getPaletteManager()->setPalette(colors, start, num);
 	}
 }
-
 
 void updateBitmapBuffer(byte *dst, int dstPitch, const byte *src, int srcPitch, int x, int y, int w, int h) {
 	if (!dst)
@@ -187,6 +250,13 @@ void GfxDefaultDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int
 void GfxDefaultDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
 	GFXDRV_ASSERT_READY;
 	CursorMan.replaceCursor(cursor, w, h, hotspotX, hotspotY, keycolor);
+	if (_pixelSize > 1 && _currentPalette != nullptr)
+		CursorMan.replaceCursorPalette(_currentPalette, 0, 256);
+}
+
+void GfxDefaultDriver::replaceMacCursor(const Graphics::Cursor*) {
+	// This is not needed for any non-Mac version of games at all)
+	error("GfxDefaultDriver::replaceMacCursor(Graphics::Cursor*): Not implemented");
 }
 
 void GfxDefaultDriver::copyCurrentBitmap(byte *dest, uint32 size) const {
@@ -196,7 +266,7 @@ void GfxDefaultDriver::copyCurrentBitmap(byte *dest, uint32 size) const {
 
 	// SCI 0 should not make calls to this method (except when using palette mods), but we have to know if it does...
 	if (!_currentBitmap)
-		error("GfxDefaultDriver::copyDataFromCurrentBitmap(): unexpected call");
+		error("GfxDefaultDriver::copyCurrentBitmap(): unexpected call");
 
 	// I have changed the implementation a bit from what the engine did before. For non-rgb rendering
 	// it would call OSystem::lockScreen() and then memcpy the data from there (which avoided the need
@@ -221,6 +291,11 @@ void GfxDefaultDriver::copyCurrentPalette(byte *dest, int start, int num) const 
 	memcpy(dest + start * 3, _currentPalette + start * 3, num * 3);
 }
 
+void GfxDefaultDriver::drawTextFontGlyph(const byte*, int, int, int, int, int, int, const PaletteMod*, const byte*) {
+	// This is only needed for scaling drivers with unscaled hires fonts.
+	error("GfxDefaultDriver::drawTextFontGlyph(): Not implemented");
+}
+
 template <typename T> void updateRGBPalette(byte *dest, const byte *src, uint start, uint num, Graphics::PixelFormat &f) {
 	T *dst = &reinterpret_cast<T*>(dest)[start];
 	for (uint i = 0; i < num; ++i) {
@@ -239,59 +314,11 @@ void GfxDefaultDriver::updatePalette(const byte *colors, uint start, uint num) {
 		error("GfxDefaultDriver::updatePalette(): Unsupported pixel size %d", _pixelSize);
 }
 
-template <typename T> void render(byte *dst, const byte *src, int pitch, int w, int h, const byte *pal) {
-	T *d = reinterpret_cast<T*>(dst);
-	const T *p = reinterpret_cast<const T*>(pal);
-	const byte *s = src;
-	pitch -= w;
-
-	while (h--) {
-		for (int i = 0; i < w; ++i)
-			*d++ = p[*s++];
-		s += pitch;
-	}
-}
-
-#define applyMod(a, b) MIN<uint>(a * (128 + b) / 128, 255)
-template <typename T> void renderMod(byte *dst, const byte *src, int pitch, int w, int h, const byte *srcPal, const byte *internalPal, Graphics::PixelFormat &f, const PaletteMod *mods, const byte *modMapping) {
-	T *d = reinterpret_cast<T*>(dst);
-	const T *p = reinterpret_cast<const T*>(internalPal);
-	const byte *s1 = src;
-	const byte *s2 = modMapping;
-	pitch -= w;
-
-	while (h--) {
-		for (int i = 0; i < w; ++i) {
-			byte m = *s2++;
-			if (m) {
-				const byte *col = &srcPal[*s1++ * 3];
-				*d++ = f.RGBToColor(applyMod(col[0], mods[m].r), applyMod(col[1], mods[m].g), applyMod(col[2], mods[m].b));
-			} else {
-				*d++ = p[*s1++];
-			}
-		}
-		s1 += pitch;
-		s2 += pitch;
-	}
-}
-#undef applyMod
-
 void GfxDefaultDriver::generateOutput(byte *dst, const byte *src, int pitch, int w, int h, const PaletteMod *palMods, const byte *palModMapping) {
-	if (palMods && palModMapping) {
-		if (_pixelSize == 2)
-			renderMod<uint16>(dst, src, pitch, w, h, _currentPalette, _internalPalette, _format, palMods, palModMapping);
-		else if (_pixelSize == 4)
-			renderMod<uint32>(dst, src, pitch, w, h, _currentPalette, _internalPalette, _format, palMods, palModMapping);
-		else
-			error("GfxDefaultDriver::generateOutput(): Unsupported pixel size %d", _pixelSize);
-	} else {
-		if (_pixelSize == 2)
-			render<uint16>(dst, src, pitch, w, h, _internalPalette);
-		else if (_pixelSize == 4)
-			render<uint32>(dst, src, pitch, w, h, _internalPalette);
-		else
-			error("GfxDefaultDriver::generateOutput(): Unsupported pixel size %d", _pixelSize);
-	}
+	if (palMods && palModMapping)
+		_colorConvMod(dst, src, pitch, w, h, _currentPalette, _internalPalette, _format, palMods, palModMapping);
+	else
+		_colorConv(dst, src, pitch, w, h, _internalPalette);
 }
 
 SCI0_DOSPreVGADriver::SCI0_DOSPreVGADriver(int numColors, int screenW, int screenH, bool rgbRendering) :
@@ -346,6 +373,11 @@ void SCI0_DOSPreVGADriver::initScreen(const Graphics::PixelFormat*) {
 	_ready = true;
 }
 
+void SCI0_DOSPreVGADriver::replaceMacCursor(const Graphics::Cursor*) {
+	// This is not needed for SCI0 (and not for any PC version of games at all)
+	error("SCI0_DOSPreVGADriver::replaceMacCursor(Graphics::Cursor*): Not implemented");
+}
+
 void SCI0_DOSPreVGADriver::copyCurrentBitmap(byte*, uint32) const {
 	// This is not needed for SCI0
 	error("SCI0_DOSPreVGADriver::copyCurrentBitmap(): Not implemented");
@@ -363,7 +395,12 @@ void SCI0_DOSPreVGADriver::copyCurrentPalette(byte *dest, int start, int num) co
 	memcpy(dest + start * 3, _colors + start * 3, MIN<int>(num, _numColors) * 3);
 }
 
-SCI0_CGADriver::SCI0_CGADriver(bool emulateCGAModeOnEGACard, bool rgbRendering) : SCI0_DOSPreVGADriver(4, 320, 200, rgbRendering), _cgaPatterns(nullptr), _disableMode5(emulateCGAModeOnEGACard) {
+void SCI0_DOSPreVGADriver::drawTextFontGlyph(const byte*, int, int, int, int, int, int, const PaletteMod*, const byte*) {
+	// This is only needed for scaling drivers with unscaled hires fonts.
+	error("SCI0_DOSPreVGADriver::drawTextFontGlyph(): Not implemented");
+}
+
+SCI0_CGADriver::SCI0_CGADriver(bool emulateCGAModeOnEGACard, bool rgbRendering) : SCI0_DOSPreVGADriver(4, 320, 200, rgbRendering), _cgaPatterns(nullptr), _disableMode5(emulateCGAModeOnEGACard), _renderLine(nullptr) {
 	static const byte cgaColors[48] = {
 		/*
 		// Canonical CGA palette
@@ -465,9 +502,10 @@ SCI0_CGADriver::~SCI0_CGADriver() {
 void SCI0_CGADriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod*, const byte*) {
 	GFXDRV_ASSERT_READY;
 
+	byte diff = srcX & 1;
 	srcX &= ~1;
 	destX &= ~1;
-	w = (w + 1) & ~1;
+	w = (w + diff + 1) & ~1;
 
 	src += (srcY * pitch + srcX);
 
@@ -577,7 +615,7 @@ const byte *monochrInit(const char *drvFile, bool &earlyVersion) {
 	return result;
 }
 
-SCI0_CGABWDriver::SCI0_CGABWDriver(uint32 monochromeColor, bool rgbRendering) : SCI0_DOSPreVGADriver(2, 640, 400, rgbRendering), _monochromePatterns(nullptr), _earlyVersion(false) {
+SCI0_CGABWDriver::SCI0_CGABWDriver(uint32 monochromeColor, bool rgbRendering) : SCI0_DOSPreVGADriver(2, 640, 400, rgbRendering), _monochromePatterns(nullptr), _earlyVersion(false), _renderLine(nullptr) {
 	_monochromePalette[0] = _monochromePalette[1] = _monochromePalette[2] = 0;
 	_monochromePalette[3] = (monochromeColor >> 16) & 0xff;
 	_monochromePalette[4] = (monochromeColor >> 8) & 0xff;
@@ -600,9 +638,10 @@ void SCI0_CGABWDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int
 
 	if (_earlyVersion) {
 		++ty;
+		byte diff = srcX & 1;
 		srcX &= ~1;
 		destX &= ~1;
-		w = (w + 1) & ~1;
+		w = (w + diff + 1) & ~1;
 	}
 
 	src += (srcY * pitch + srcX);
@@ -645,6 +684,10 @@ Common::Point SCI0_CGABWDriver::getMousePos() const {
 	res.x >>= 1;
 	res.y >>= 1;
 	return res;
+}
+
+void SCI0_CGABWDriver::setMousePos(const Common::Point &pos) const {
+	g_system->warpMouse(pos.x << 1, pos.y << 1);
 }
 
 void SCI0_CGABWDriver::clearRect(const Common::Rect &r) const {
@@ -723,7 +766,7 @@ void SCI0_CGABWDriver::setupRenderProc() {
 const char *SCI0_CGABWDriver::_driverFiles[2] = { "CGA320BW.DRV", "CGA320M.DRV" };
 
 SCI0_HerculesDriver::SCI0_HerculesDriver(uint32 monochromeColor, bool rgbRendering, bool cropImage) : SCI0_DOSPreVGADriver(2, cropImage ? 640 : 720, cropImage ? 300 : 350, rgbRendering),
-	_centerX(cropImage ? 0 : 40), _centerY(cropImage ? 0 : 25), _monochromePatterns(nullptr) {
+	_centerX(cropImage ? 0 : 40), _centerY(cropImage ? 0 : 25), _monochromePatterns(nullptr), _renderLine(nullptr) {
 	_monochromePalette[0] = _monochromePalette[1] = _monochromePalette[2] = 0;
 	_monochromePalette[3] = (monochromeColor >> 16) & 0xff;
 	_monochromePalette[4] = (monochromeColor >> 8) & 0xff;
@@ -804,8 +847,12 @@ Common::Point SCI0_HerculesDriver::getMousePos() const {
 	return res;
 }
 
+void SCI0_HerculesDriver::setMousePos(const Common::Point &pos) const {
+	g_system->warpMouse((pos.x << 1) + _centerX, (pos.y & ~1) * 3 / 2 + (pos.y & 1) + _centerY);
+}
+
 void SCI0_HerculesDriver::clearRect(const Common::Rect &r) const {
-	Common::Rect r2((r.left << 1) + _centerX, (r.top & ~1) * 3 / 2 + (r.top & 1) + _centerY, (r.right << 1) + 40, (r.bottom & ~1) * 3 / 2 + (r.bottom & 1) + 25);
+	Common::Rect r2((r.left << 1) + _centerX, (r.top & ~1) * 3 / 2 + (r.top & 1) + _centerY, (r.right << 1) + 40, (r.bottom & ~1) * 3 / 2 + (r.bottom & 1) + _centerY);
 	GfxDriver::clearRect(r2);
 }
 
@@ -842,7 +889,7 @@ void SCI0_HerculesDriver::setupRenderProc() {
 const char *SCI0_HerculesDriver::_driverFile = "HERCMONO.DRV";
 
 
-SCI1_VGAGreyScaleDriver::SCI1_VGAGreyScaleDriver(bool rgbRendering) : GfxDefaultDriver(320, 200, rgbRendering), _greyScalePalette(nullptr) {
+SCI1_VGAGreyScaleDriver::SCI1_VGAGreyScaleDriver(bool rgbRendering) : GfxDefaultDriver(320, 200, false, rgbRendering), _greyScalePalette(nullptr) {
 	_greyScalePalette = new byte[_numColors * 3]();
 }
 
@@ -867,7 +914,7 @@ void SCI1_VGAGreyScaleDriver::setPalette(const byte *colors, uint start, uint nu
 const char *SCI1_VGAGreyScaleDriver::_driverFile = "VGA320BW.DRV";
 
 SCI1_EGADriver::SCI1_EGADriver(bool rgbRendering) : GfxDriver(320, 200, 256), _requestRGBMode(rgbRendering), _egaColorPatterns(nullptr), _egaMatchTable(nullptr),
-	_currentBitmap(nullptr), _compositeBuffer(nullptr), _currentPalette(nullptr), _internalPalette(nullptr), _colAdjust(0) {
+	_currentBitmap(nullptr), _compositeBuffer(nullptr), _currentPalette(nullptr), _internalPalette(nullptr), _colAdjust(0), _renderLine(nullptr) {
 	Common::File drv;
 	if (!drv.open(_driverFile))
 		error("SCI1_EGADriver: Failed to open '%s'", _driverFile);
@@ -1068,8 +1115,6 @@ void SCI1_EGADriver::replaceCursor(const void *cursor, uint w, uint h, int hotsp
 		d2 += dstPitch;
 	}
 
-	keycolor = newKeyColor;
-
 	CursorMan.replaceCursor(_compositeBuffer, w << 1, h << 1, hotspotX << 1, hotspotY << 1, newKeyColor);
 }
 
@@ -1087,11 +1132,20 @@ void SCI1_EGADriver::copyCurrentPalette(byte *dest, int start, int num) const {
 	memcpy(dest + start * 3, _currentPalette + start * 3, num * 3);
 }
 
+void SCI1_EGADriver::drawTextFontGlyph(const byte*, int, int, int, int, int, int, const PaletteMod*, const byte*) {
+	// This is only needed for scaling drivers with unscaled hires fonts.
+	error("SCI1_EGADriver::drawTextFontGlyph(): Not implemented");
+}
+
 Common::Point SCI1_EGADriver::getMousePos() const {
 	Common::Point res = GfxDriver::getMousePos();
 	res.x >>= 1;
 	res.y >>= 1;
 	return res;
+}
+
+void SCI1_EGADriver::setMousePos(const Common::Point &pos) const {
+	g_system->warpMouse(pos.x << 1, pos.y << 1);
 }
 
 void SCI1_EGADriver::clearRect(const Common::Rect &r) const {
@@ -1100,6 +1154,606 @@ void SCI1_EGADriver::clearRect(const Common::Rect &r) const {
 }
 
 const char *SCI1_EGADriver::_driverFile = "EGA640.DRV";
+
+template <typename T> void scale2x(byte *dst, const byte *src, int pitch, int w, int h) {
+	const T *s = reinterpret_cast<const T*>(src);
+	int dstPitch = pitch << 1;
+	T *d1 = reinterpret_cast<T*>(dst);
+	T *d2 = d1 + dstPitch;
+	pitch -= w;
+	dstPitch += (pitch << 1);
+
+	while (h--) {
+		for (int i = 0; i < w; ++i) {
+			d1[0] = d1[1] = d2[0] = d2[1] = *s++;
+			d1 += 2;
+			d2 += 2;
+		}
+		s += pitch;
+		d1 += dstPitch;
+		d2 += dstPitch;
+	}
+}
+
+UpscaledGfxDriver::UpscaledGfxDriver(uint16 screenWidth, uint16 screenHeight, uint16 textAlignX, bool scaleCursor, bool rgbRendering) :
+	GfxDefaultDriver(screenWidth << 1, screenHeight << 1, false, rgbRendering), _textAlignX(textAlignX), _scaleCursor(scaleCursor), _needCursorBuffer(false),
+	_scaledBitmap(nullptr), _renderScaled(nullptr), _renderGlyph(nullptr), _cursorWidth(0), _cursorHeight(0) {
+	_virtualW = screenWidth;
+	_virtualH = screenHeight;
+}
+
+UpscaledGfxDriver::~UpscaledGfxDriver() {
+	delete[] _scaledBitmap;
+}
+
+void renderGlyph(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h, int transpCol) {
+	dstPitch -= w;
+	srcPitch -= w;
+
+	while (h--) {
+		for (int i = 0; i < w; ++i) {
+			byte in = *src++;
+			if (in != transpCol)
+				*dst = in;
+			++dst;
+		}
+		src += srcPitch;
+		dst += dstPitch;
+	}
+}
+
+void UpscaledGfxDriver::initScreen(const Graphics::PixelFormat *format) {
+	GfxDefaultDriver::initScreen(format);
+	_scaledBitmap = new byte[_screenW * _screenH * _srcPixelSize]();
+
+	static const ScaledRenderProc scaledRenderProcs[] = {
+		&scale2x<byte>,
+		&scale2x<uint16>,
+		&scale2x<uint32>
+	};
+	assert((_srcPixelSize >> 1) < ARRAYSIZE(scaledRenderProcs));
+	_renderScaled = scaledRenderProcs[_srcPixelSize >> 1];
+	_renderGlyph = &renderGlyph;
+}
+
+void UpscaledGfxDriver::setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod *palMods, const byte *palModMapping) {
+	GfxDefaultDriver::setPalette(colors, start, num, update, palMods, palModMapping);
+	if (_pixelSize > 1 && update)
+		updateScreen(0, 0, _screenW * _srcPixelSize, _screenH, palMods, palModMapping);
+}
+
+void UpscaledGfxDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) {
+	GFXDRV_ASSERT_READY;
+	src += (srcY * pitch + srcX * _srcPixelSize);
+	if (src != _currentBitmap)
+		updateBitmapBuffer(_currentBitmap, _virtualW * _srcPixelSize, src, pitch, destX * _srcPixelSize, destY, w * _srcPixelSize, h);
+
+	// We need to scale and color convert the bitmap in separate functions, because we want
+	// to keep the scaled non-color-modified bitmap for palette updates in rgb rendering mode.
+	byte *scb = _scaledBitmap + (destY << 1) * _screenW * _srcPixelSize + (destX << 1) * _srcPixelSize;
+	_renderScaled(scb, src, pitch, w, h);
+
+	updateScreen(destX << 1, destY << 1,  w << 1, h << 1, palMods, palModMapping);
+}
+
+void UpscaledGfxDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
+	GFXDRV_ASSERT_READY;
+	if (_scaleCursor) {
+		adjustCursorBuffer(w << 1, h << 1);
+		scale2x<byte>(_compositeBuffer, reinterpret_cast<const byte*>(cursor), w, w, h);
+		CursorMan.replaceCursor(_compositeBuffer, w << 1, h << 1, hotspotX << 1, hotspotY << 1, keycolor);
+	} else {
+		CursorMan.replaceCursor(cursor, w, h, hotspotX, hotspotY, keycolor);
+	}
+}
+
+Common::Point UpscaledGfxDriver::getMousePos() const {
+	Common::Point res = GfxDriver::getMousePos();
+	res.x >>= 1;
+	res.y >>= 1;
+	return res;
+}
+
+void UpscaledGfxDriver::setMousePos(const Common::Point &pos) const {
+	g_system->warpMouse(pos.x << 1, pos.y << 1);
+}
+
+void UpscaledGfxDriver::clearRect(const Common::Rect &r) const {
+	Common::Rect r2(r.left << 1, r.top << 1, r.right << 1, r.bottom << 1);
+	GfxDriver::clearRect(r2);
+}
+
+void UpscaledGfxDriver::drawTextFontGlyph(const byte *src, int pitch, int hiresDestX, int hiresDestY, int hiresW, int hiresH, int transpColor, const PaletteMod *palMods, const byte *palModMapping) {
+	GFXDRV_ASSERT_READY;
+	hiresDestX &= ~(_textAlignX - 1);
+	byte *scb = _scaledBitmap + hiresDestY * _screenW * _srcPixelSize + hiresDestX * _srcPixelSize;
+	_renderGlyph(scb, _screenW, src, pitch, hiresW, hiresH, transpColor);
+	updateScreen(hiresDestX, hiresDestY, hiresW, hiresH, palMods, palModMapping);
+}
+
+void UpscaledGfxDriver::updateScreen(int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) {
+	byte *buff = _compositeBuffer;
+	int pitch = w * _pixelSize;
+	byte *scb = _scaledBitmap + destY * _screenW * _srcPixelSize + destX * _srcPixelSize;
+	if (palMods && palModMapping) {
+		_colorConvMod(buff, scb, _screenW, w, h, _currentPalette, _internalPalette, _format, palMods, palModMapping);
+	} else if (_pixelSize != _srcPixelSize) {
+		_colorConv(buff, scb, _screenW, w, h, _internalPalette);
+	} else {
+		buff = scb;
+		pitch = _screenW *_pixelSize;
+	}
+
+	g_system->copyRectToScreen(buff, pitch, destX, destY, w, h);
+}
+
+void UpscaledGfxDriver::adjustCursorBuffer(uint16 newWidth, uint16 newHeight) {
+	// For configs which need/have the composite buffer for other purposes, we can skip this.
+	if (!_compositeBuffer)
+		_needCursorBuffer = true;
+	else if (!_needCursorBuffer)
+		return;
+
+	if (_cursorWidth * _cursorHeight < newWidth * newHeight) {
+		delete[] _compositeBuffer;
+		_compositeBuffer = new byte[newWidth * newHeight * _srcPixelSize]();
+		_cursorWidth = newWidth;
+		_cursorHeight = newHeight;
+	}
+}
+
+PC98Gfx16ColorsDriver::PC98Gfx16ColorsDriver(int textAlignX, bool cursorScaleWidth, bool cursorScaleHeight, SjisFontStyle sjisFontStyle, bool rgbRendering, bool needsUnditheringPalette) :
+	UpscaledGfxDriver(320, 200, textAlignX, cursorScaleWidth && cursorScaleHeight, rgbRendering), _textModePalette(nullptr), _fontStyle(sjisFontStyle),
+		_cursorScaleHeightOnly(!cursorScaleWidth && cursorScaleHeight), _needsUnditheringPalette(needsUnditheringPalette), _convPalette(nullptr) {
+	// Palette taken from driver file (identical for all versions of the
+	// driver I have seen so far, also same for SCI0 and SCI1)
+	static const byte pc98colorsV16[] = {
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x07, 0x00, 0x07, 0x00, 0x00, 0x07, 0x07,
+		0x07, 0x00, 0x00, 0x07, 0x00, 0x07, 0x05, 0x07, 0x00, 0x09, 0x09, 0x09,
+		0x06, 0x06, 0x06, 0x00, 0x00, 0x0f, 0x07, 0x0f, 0x06, 0x00, 0x0f, 0x0f,
+		0x0f, 0x00, 0x00, 0x0f, 0x00, 0x0f, 0x0f, 0x0f, 0x00, 0x0f, 0x0f, 0x0f
+	};
+
+	byte *col = new byte[768]();
+	const byte *s = pc98colorsV16;
+
+	for (uint i = 0; i < sizeof(pc98colorsV16) / 3; ++i) {
+		int a = ((i & 6) == 4 || (i & 6) == 2 ? i ^ 6 : i) * 3;
+		col[a + 0] = (s[1] * 0x11);
+		col[a + 1] = (s[0] * 0x11);
+		col[a + 2] = (s[2] * 0x11);
+		s += 3;
+	}
+
+	if (_fontStyle == kFontStyleTextMode) {
+		byte *d = &col[48];
+		for (uint8 i = 0; i < 8; ++i) {
+			*d++ = (i & 4) ? 0xff : 0;
+			*d++ = (i & 2) ? 0xff : 0;
+			*d++ = (i & 1) ? 0xff : 0;
+		}
+	}
+
+	if (needsUnditheringPalette) {
+		// We store the text mode color separately, since we need the slots for the undithering.
+		if (_fontStyle == kFontStyleTextMode) {
+			byte *tpal = new byte[24]();
+			memcpy(tpal, &col[48], 24);
+			_textModePalette = tpal;
+		}
+		// For the undithered mode, we generate the missing colors using the same formula as for EGA.
+		byte *d = &col[48];
+		for (int i = 16; i < 256; i++) {
+			const byte *s1 = &col[(i & 0x0f) * 3];
+			const byte *s2 = &col[(i >> 4) * 3];
+			for (int ii = 0; ii < 3; ++ii)
+				*d++ = (byte)(0.5 + (pow(0.5 * ((pow(*s1++ / 255.0, 2.2 / 1.0) * 255.0) + (pow(*s2++ / 255.0, 2.2 / 1.0) * 255.0)) / 255.0, 1.0 / 2.2) * 255.0));
+		}
+	}
+
+	_convPalette = col;
+}
+
+PC98Gfx16ColorsDriver::~PC98Gfx16ColorsDriver() {
+	delete[] _convPalette;
+	delete[] _textModePalette;
+}
+
+void renderPC98GlyphFat(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h, int transpCol) {
+	dstPitch -= w;
+	srcPitch -= w;
+
+	while (h--) {
+		for (int i = 0; i < w - 1; ++i) {
+			uint8 a = *src++;
+			uint8 b = *src;
+			if (a != transpCol)
+				*dst = a;
+			else if (b != transpCol)
+				*dst = b;
+			++dst;
+		}
+		byte l = *src++;
+		if (l != transpCol)
+			*dst = l;
+		++dst;
+		src += srcPitch;
+		dst += dstPitch;
+	}
+}
+
+void renderPC98GlyphSpecial(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h, int transpCol) {
+	assert(h == 16); // This is really not suitable for anything but the special SCI1 PC98 glyph drawing
+	dstPitch -= w;
+	srcPitch -= w;
+
+	while (h--) {
+		if (h > 10 || h < 5) {
+			for (int i = 0; i < w - 1; ++i) {
+				uint8 a = *src++;
+				uint8 b = *src;
+				if (a != transpCol)
+					*dst = a;
+				else if (b != transpCol)
+					*dst = b;
+				++dst;
+			}
+			byte l = *src++;
+			if (l != transpCol)
+				*dst = l;
+			++dst;
+		} else {
+			for (int i = 0; i < w; ++i) {
+				byte in = *src++;
+				if (in != transpCol)
+					*dst = in;
+				++dst;
+			}
+		}
+		src += srcPitch;
+		dst += dstPitch;
+	}
+}
+
+void PC98Gfx16ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
+	UpscaledGfxDriver::initScreen(format);
+
+	assert(_convPalette);
+	GfxDefaultDriver::setPalette(_convPalette, 0, 256, true, nullptr, nullptr);
+
+	if (_fontStyle == kFontStyleTextMode)
+		_renderGlyph = &renderPC98GlyphFat;
+
+	if (_fontStyle != kFontStyleSpecialSCI1)
+		return;
+
+	_renderGlyph = &renderPC98GlyphSpecial;
+}
+
+void PC98Gfx16ColorsDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
+	GFXDRV_ASSERT_READY;
+	if (!_cursorScaleHeightOnly) {
+		UpscaledGfxDriver::replaceCursor(cursor, w, h, hotspotX, hotspotY, keycolor);
+		return;
+	}
+
+	// Special case for PQ2 which scales the cursor height (but not the width)
+	adjustCursorBuffer(w, h << 1);
+	const byte *s = reinterpret_cast<const byte*>(cursor);
+	byte *d = _compositeBuffer;
+
+	for (uint i = 0; i < h; ++i) {
+		memcpy(d, s, w);
+		d += w;
+		memcpy(d, s, w);
+		d += w;
+		s += w;
+	}
+
+	CursorMan.replaceCursor(_compositeBuffer, w, h << 1, hotspotX, hotspotY << 1, keycolor);
+}
+
+byte PC98Gfx16ColorsDriver::remapTextColor(byte color) const {
+	if (_fontStyle != kFontStyleTextMode)
+		return color;
+
+	color &= 7;
+	// This seems to be a bug in the original PQ2 interpreter, which I replicate, so that we get the same colors.
+	// What they were trying to do is just getting the rgb bits in the right order (switch red and green). But
+	// instead, before checking and setting the bits, they also copy the full color byte to the target color. So,
+	// the extra bits come just on top. The result: All green and red colors are turned into yellow, all magenta
+	// and cyan colors are turned into white.
+	if (color & 2)
+		color |= 4;
+	if (color & 4)
+		color |= 2;
+	// This is the blue color that PQ2 uses basically for all Japanese text...
+	if (color == 0)
+		color = 1;
+
+	byte textCol = color;
+	color += 0x10;
+
+	if (_textModePalette) {
+		// If we have used up the whole space of the CLUT8 for the undithering, we try
+		// to relocate the color which will work for all text mode colors with the default
+		// palette that is used by the PC-98 ports...
+		for (int i = 0; i < 256; ++i) {
+			if (_convPalette[i * 3] != _textModePalette[textCol * 3] || _convPalette[i * 3 + 1] != _textModePalette[textCol * 3 + 1] || _convPalette[i * 3 + 2] != _textModePalette[textCol * 3 + 2])
+				continue;
+			color = i;
+			break;
+		}
+		if (color >= 16)
+			color = 0;
+	}
+	return color;
+}
+
+SCI0_PC98Gfx8ColorsDriver::SCI0_PC98Gfx8ColorsDriver(bool cursorScaleHeight, bool useTextModeForSJISChars, bool rgbRendering) :
+	UpscaledGfxDriver(320, 200, 8, false, rgbRendering), _cursorScaleHeightOnly(cursorScaleHeight), _useTextMode(useTextModeForSJISChars), _convPalette(nullptr) {
+	byte *col = new byte[8 * 3]();
+	_convPalette = col;
+
+	for (uint8 i = 0; i < 8; ++i) {
+		*col++ = (i & 4) ? 0xff : 0;
+		*col++ = (i & 2) ? 0xff : 0;
+		*col++ = (i & 1) ? 0xff : 0;
+	}
+}
+
+SCI0_PC98Gfx8ColorsDriver::~SCI0_PC98Gfx8ColorsDriver() {
+	delete[] _convPalette;
+}
+
+void pc98SimpleDither(byte *dst, const byte *src, int pitch, int w, int h) {
+	int dstPitch = pitch << 1;
+	byte *d1 = dst;
+	byte *d2 = d1 + dstPitch;
+	pitch -= w;
+	dstPitch += (pitch << 1);
+
+	while (h--) {
+		for (int i = 0; i < w; ++i) {
+			uint8 v = *src++;
+			d1[0] = d2[0] = (v & 7);
+			d1[1] = d2[1] = (v & 8) ? (v & 7) : 0;
+			d1 += 2;
+			d2 += 2;
+		}
+		src += pitch;
+		d1 += dstPitch;
+		d2 += dstPitch;
+	}
+}
+
+void SCI0_PC98Gfx8ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
+	UpscaledGfxDriver::initScreen(format);
+	_renderScaled = &pc98SimpleDither;
+	if (_useTextMode)
+		_renderGlyph = &renderPC98GlyphFat;
+	assert(_convPalette);
+	GfxDefaultDriver::setPalette(_convPalette, 0, 8, true, nullptr, nullptr);
+}
+
+void SCI0_PC98Gfx8ColorsDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
+	GFXDRV_ASSERT_READY;
+	adjustCursorBuffer(w, _cursorScaleHeightOnly ? h << 1 : h);
+	const byte *s = reinterpret_cast<const byte*>(cursor);
+	byte *d = _compositeBuffer;
+	uint32 newKeyColor = 0xFF;
+
+	for (uint i = 0; i < h; ++i) {
+		for (uint ii = 0; ii < w; ++ii) {
+			byte col = *s++;
+			*d++ = (col == keycolor) ? newKeyColor : (col & 7);
+		}
+	}
+
+	// Special case for PQ2 which 2x scales the cursor height
+	if (_cursorScaleHeightOnly) {
+		s = _compositeBuffer + h * w - w;
+		d = _compositeBuffer + h * w * 2 - w;
+
+		for (uint i = 0; i < h; ++i) {
+			memcpy(d, s, w);
+			d -= w;
+			memcpy(d, s, w);
+			d -= w;
+			s -= w;
+		}
+		h <<= 1;
+		hotspotX <<= 1;
+	}
+
+	CursorMan.replaceCursor(_compositeBuffer, w, h, hotspotX, hotspotY, newKeyColor);
+}
+
+byte SCI0_PC98Gfx8ColorsDriver::remapTextColor(byte color) const {
+	if (!_useTextMode)
+		return color;
+
+	color &= 7;
+	// This seems to be a bug in the original PQ2 interpreter, which I replicate, so that we get the same colors.
+	// What they were trying to do is just getting the rgb bits in the right order (switch red and green). But
+	// instead, before checking and setting the bits, they also copy the full color byte to the target color. So,
+	// the extra bits come just on top. The result: All green and red colors are turned into yellow, all magenta
+	// and cyan colors are turned into white.
+	if (color & 2)
+		color |= 4;
+	if (color & 4)
+		color |= 2;
+	// This is the blue color that PQ2 uses basically for all Japanese text...
+	if (color == 0)
+		color = 1;
+
+	return color;
+}
+
+const char *SCI0_PC98Gfx8ColorsDriver::_driverFiles[2] = { "9801V8M.DRV", "9801VID.DRV" };
+
+SCI1_PC98Gfx8ColorsDriver::SCI1_PC98Gfx8ColorsDriver(bool rgbRendering) : UpscaledGfxDriver(320, 200, 1, true, rgbRendering), _ditheringTable(nullptr), _convPalette(nullptr) {
+	Common::File drv;
+	if (!drv.open(_driverFile))
+		error("SCI1_PC98Gfx8ColorsDriver: Failed to open '%s'", _driverFile);
+
+	uint16 eprcOffs = 0;
+
+	uint32 cmd = drv.readUint32LE();
+	if ((cmd & 0xFF) == 0xE9)
+		eprcOffs = ((cmd >> 8) & 0xFFFF) + 3;
+
+	if (!eprcOffs || drv.readUint32LE() != 0x87654321 || !drv.skip(1) || !drv.seek(drv.readByte(), SEEK_CUR) || !drv.seek(drv.readByte(), SEEK_CUR))
+		error("SCI1_PC98Gfx8ColorsDriver: Driver file '%s' unknown version", _driverFile);
+
+	uint32 pos = (drv.pos() + 1) & ~1;
+
+	drv.seek(pos + 2);
+	drv.seek(drv.readUint16LE());
+	byte *buff = new byte[190];
+	drv.read(buff, 190);
+
+	uint16 tableOffs = 0;
+	int step = 0;
+	for (int i = 0; i < 182 && !tableOffs; ++i) {
+		uint32 c = READ_BE_UINT32(buff + i);
+		if (step == 0 && ((c & 0xFFF0FFF0) != 0xD1E0D1E0 || (READ_BE_UINT32(buff + i + 4) ^ c)))
+			continue;
+
+		if (step == 0) {
+			step = 1;
+			i += 7;
+			continue;
+		}
+
+		if (c >> 20 != 0x81C || ((READ_BE_UINT32(buff + i + 4) >> 20) ^ (c >> 20)))
+			continue;
+
+		if ((c & 0xFFFF) == READ_BE_UINT16(buff + i + 6))
+			tableOffs = FROM_BE_16(c);
+	}
+	delete[] buff;
+
+	if (!tableOffs)
+		error("SCI1_PC98Gfx8ColorsDriver: Failed to load dithering data from '%s'", _driverFile);
+
+	drv.seek(tableOffs);
+	byte *dmx = new byte[96]();
+	drv.read(dmx, 96);
+
+	if (drv.readUint16LE() != 0xA800 || drv.readUint16LE() != 0xB000)
+		error("SCI1_PC98Gfx8ColorsDriver: Driver file '%s' unknown version", _driverFile);
+
+	drv.close();
+
+	byte *dt = new byte[1536]();
+	_ditheringTable = dt;	
+
+	for (uint16 i = 0; i < 256; ++i) {
+		for (int ii = 0; ii < 6; ++ii)
+			*dt++ = (dmx[(i >> 4) * 6 + ii] & 0xCC) | (dmx[(i & 0x0f) * 6 + ii] & 0x33);
+	}
+
+	delete[] dmx;
+
+	_textAlignX = 1;
+
+	byte *col = new byte[8 * 3]();
+	_convPalette = col;
+
+	for (uint8 i = 0; i < 8; ++i) {
+		*col++ = (i & 2) ? 0xff : 0;
+		*col++ = (i & 1) ? 0xff : 0;
+		*col++ = (i & 4) ? 0xff : 0;
+	}
+}
+
+SCI1_PC98Gfx8ColorsDriver::~SCI1_PC98Gfx8ColorsDriver() {
+	delete[] _ditheringTable;
+	delete[] _convPalette;
+}
+
+void renderPlanarMatrix(byte *dst, const byte *src, int pitch, int w, int h, const byte *tbl) {
+	int dstPitch = pitch << 1;
+	byte *d1 = dst;
+	byte *d2 = d1 + dstPitch;
+	pitch -= w;
+	dstPitch += (pitch << 1);
+
+	while (h--) {
+		byte sh = 0;
+		for (int i = 0; i < (w >> 1); ++i) {
+			const byte *c = &tbl[(src[0] << 4 | src[1]) * 6];
+			for (int ii = sh; ii < sh + 4; ++ii) {
+				*d1++ = (((c[0] >> (7 - ii)) & 1) << 2) | (((c[1] >> (7 - ii)) & 1) << 1) | ((c[2] >> (7 - ii)) & 1);
+				*d2++ = (((c[3] >> (7 - ii)) & 1) << 2) | (((c[4] >> (7 - ii)) & 1) << 1) | ((c[5] >> (7 - ii)) & 1);
+			}
+			src += 2;
+			sh ^= 4;
+		}
+
+		src += pitch;
+		d1 += dstPitch;
+		d2 += dstPitch;
+	}
+}
+
+void SCI1_PC98Gfx8ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
+	UpscaledGfxDriver::initScreen(format);
+
+	_renderGlyph = &renderPC98GlyphFat;
+
+	assert(_convPalette);
+	GfxDefaultDriver::setPalette(_convPalette, 0, 8, true, nullptr, nullptr);
+}
+
+void SCI1_PC98Gfx8ColorsDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) {
+	GFXDRV_ASSERT_READY;
+
+	byte diff = srcX & 7;
+	srcX &= ~7;
+	destX &= ~7;
+	w = (w + diff + 7) & ~7;
+
+	src += (srcY * pitch + srcX * _srcPixelSize);
+	if (src != _currentBitmap)
+		updateBitmapBuffer(_currentBitmap, _virtualW * _srcPixelSize, src, pitch, destX * _srcPixelSize, destY, w * _srcPixelSize, h);
+
+	byte *scb = _scaledBitmap + (destY << 1) * _screenW * _srcPixelSize + (destX << 1) * _srcPixelSize;
+	renderPlanarMatrix(scb, src, pitch, w, h, _ditheringTable);
+
+	updateScreen(destX << 1, destY << 1,  w << 1, h << 1, palMods, palModMapping);
+}
+
+void SCI1_PC98Gfx8ColorsDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
+	GFXDRV_ASSERT_READY;
+	adjustCursorBuffer(w << 1, h << 1);
+	const byte *s = reinterpret_cast<const byte*>(cursor);
+	byte *d1 = _compositeBuffer;
+	uint32 newKeyColor = 0xFF;
+
+	int dstPitch = (w << 1);
+	byte *d2 = _compositeBuffer + dstPitch;	
+
+	for (uint i = 0; i < h; ++i) {
+		for (uint ii = 0; ii < w; ++ii) {
+			byte col = *s++;
+			if (col == keycolor) {
+				*d1++ = *d2++ = newKeyColor;
+				*d1++ = *d2++ = newKeyColor;
+			} else {
+				*d1++ = *d2++ = (col & 7);
+				*d1++ = *d2++ = (col & 8) ? (col & 7) : 0;
+			}
+		}
+		d1 += dstPitch;
+		d2 += dstPitch;
+	}
+
+	CursorMan.replaceCursor(_compositeBuffer, w << 1, h << 1, hotspotX << 1, hotspotY << 1, newKeyColor);
+}
+
+const char *SCI1_PC98Gfx8ColorsDriver::_driverFile = "9801V8.DRV";
 
 #undef GFXDRV_ASSERT_READY
 #undef GFXDRV_ASEERT_ALIGNED

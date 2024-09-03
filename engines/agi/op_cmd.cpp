@@ -270,39 +270,39 @@ void cmdNewRoomF(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 void cmdLoadView(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 resourceNr = parameter[0];
 
-	vm->agiLoadResource(RESOURCETYPE_VIEW, resourceNr);
+	vm->loadResource(RESOURCETYPE_VIEW, resourceNr);
 }
 
 void cmdLoadLogic(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 resourceNr = parameter[0];
 
-	vm->agiLoadResource(RESOURCETYPE_LOGIC, resourceNr);
+	vm->loadResource(RESOURCETYPE_LOGIC, resourceNr);
 }
 
 void cmdLoadSound(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 resourceNr = parameter[0];
 
-	vm->agiLoadResource(RESOURCETYPE_SOUND, resourceNr);
+	vm->loadResource(RESOURCETYPE_SOUND, resourceNr);
 }
 
 void cmdLoadViewF(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 varNr = parameter[0];
 	byte   value = vm->getVar(varNr);
 
-	vm->agiLoadResource(RESOURCETYPE_VIEW, value);
+	vm->loadResource(RESOURCETYPE_VIEW, value);
 }
 
 void cmdLoadLogicF(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 varNr = parameter[0];
 	byte   value = vm->getVar(varNr);
 
-	vm->agiLoadResource(RESOURCETYPE_LOGIC, value);
+	vm->loadResource(RESOURCETYPE_LOGIC, value);
 }
 
 void cmdDiscardView(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 resourceNr = parameter[0];
 
-	vm->agiUnloadResource(RESOURCETYPE_VIEW, resourceNr);
+	vm->unloadResource(RESOURCETYPE_VIEW, resourceNr);
 }
 
 void cmdObjectOnAnything(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -704,7 +704,20 @@ void cmdSound(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 resourceNr = parameter[0];
 	uint16 flagNr = parameter[1];
 
-	vm->_sound->startSound(resourceNr, flagNr);
+	if (vm->getPlatform() == Common::kPlatformApple2 ||
+		vm->getPlatform() == Common::kPlatformCoCo3) {
+		// Play the sound until it finishes or until a key is pressed.
+		// Sound playback is a blocking operation on these platforms.
+		// If sound is off then playback is not started.
+		if (vm->getFlag(VM_FLAG_SOUND_ON)) {
+			vm->_sound->startSound(resourceNr, flagNr);
+			vm->waitAnyKeyOrFinishedSound();
+			vm->_sound->stopSound();
+		}
+		vm->setFlag(flagNr, true);
+	} else {
+		vm->_sound->startSound(resourceNr, flagNr);
+	}
 }
 
 void cmdStopSound(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -971,7 +984,7 @@ void cmdSetSimple(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		uint16 resourceNr = vm->getVar(varNr);
 
 		spritesMgr->eraseSprites();
-		vm->agiLoadResource(RESOURCETYPE_PICTURE, resourceNr);
+		vm->loadResource(RESOURCETYPE_PICTURE, resourceNr);
 
 		// Draw the picture. Similar to void cmdDraw_pic(AgiGame *state, AgiEngine *vm, uint8 *p).
 		vm->_picture->decodePicture(resourceNr, false, true);
@@ -1223,7 +1236,7 @@ void cmdLoadPic(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 resourceNr = vm->getVar(varNr);
 
 	spritesMgr->eraseSprites();
-	vm->agiLoadResource(RESOURCETYPE_PICTURE, resourceNr);
+	vm->loadResource(RESOURCETYPE_PICTURE, resourceNr);
 	spritesMgr->buildAllSpriteLists();
 	spritesMgr->drawAllSpriteLists();
 }
@@ -1232,7 +1245,7 @@ void cmdLoadPicV1(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 varNr = parameter[0];
 	uint16 resourceNr = vm->getVar(varNr);
 
-	vm->agiLoadResource(RESOURCETYPE_PICTURE, resourceNr);
+	vm->loadResource(RESOURCETYPE_PICTURE, resourceNr);
 }
 
 void cmdDiscardPic(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -2301,7 +2314,7 @@ void cmdSetItemView(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 void cmdCallV1(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 resourceNr = parameter[0];
 
-	vm->agiLoadResource(RESOURCETYPE_LOGIC, resourceNr);
+	vm->loadResource(RESOURCETYPE_LOGIC, resourceNr);
 	// FIXME: The following instruction looks incomplete.
 	// Maybe something is meant to be assigned to, or read from,
 	// the logic_list entry?
@@ -2315,7 +2328,7 @@ void cmdNewRoomV1(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 resourceNr = parameter[0];
 
 	warning("cmdNewRoomV1()");
-	vm->agiLoadResource(RESOURCETYPE_LOGIC, resourceNr);
+	vm->loadResource(RESOURCETYPE_LOGIC, resourceNr);
 	state->max_logics = 1;
 	state->logic_list[1] = resourceNr;
 	vm->setVar(13, 1);
@@ -2325,7 +2338,7 @@ void cmdNewRoomVV1(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 resourceNr = vm->getVar(parameter[0]);
 
 	warning("cmdNewRoomVV1()");
-	vm->agiLoadResource(RESOURCETYPE_LOGIC, resourceNr);
+	vm->loadResource(RESOURCETYPE_LOGIC, resourceNr);
 	state->max_logics = 1;
 	state->logic_list[1] = resourceNr;
 	vm->setVar(13, 1);
@@ -2365,7 +2378,7 @@ int AgiEngine::runLogic(int16 logicNr) {
 	// If logic not loaded, load it
 	if (~_game.dirLogic[logicNr].flags & RES_LOADED) {
 		debugC(4, kDebugLevelScripts, "logic %d not loaded!", logicNr);
-		agiLoadResource(RESOURCETYPE_LOGIC, logicNr);
+		loadResource(RESOURCETYPE_LOGIC, logicNr);
 	}
 
 	_game.curLogicNr = logicNr;
@@ -2422,7 +2435,7 @@ int AgiEngine::runLogic(int16 logicNr) {
 //					state->_curLogic = &state->logics[n];
 //					state->lognum = n;
 //					ip = 2;
-//					warning("running logic %d\n", n);
+//					warning("running logic %d", n);
 //					break;
 //				}
 //				_v[13]=0;
@@ -2452,7 +2465,7 @@ int AgiEngine::runLogic(int16 logicNr) {
 //			state->_curLogic = &state->logics[n];
 //			state->lognum = n;
 //			state->_curLogic_cIP = 2;
-//			warning("running logic %d\n", n);
+//			warning("running logic %d", n);
 //		}
 
 		if (_game.exitAllLogics)

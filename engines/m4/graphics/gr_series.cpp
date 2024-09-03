@@ -341,6 +341,14 @@ machine *series_play_xy(const char *seriesName, int loopCount, int flags,
 		scale, x, y);
 }
 
+machine *series_simple_play(const char *seriesName, frac16 layer, bool stickWhenDone) {
+	int flags = 0;
+	if (stickWhenDone)
+		flags |= 0x10;
+
+	return series_play(seriesName, layer, flags);
+}
+
 void series_stream_check_series(machine *m, int val) {
 	// TODO: series_stream_check_series
 	error("TODO: series_stream_check_series");

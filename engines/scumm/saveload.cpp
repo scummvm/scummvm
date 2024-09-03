@@ -45,6 +45,7 @@
 #include "backends/audiocd/audiocd.h"
 
 #include "graphics/thumbnail.h"
+#include "gui/message.h"
 
 namespace Scumm {
 
@@ -218,6 +219,9 @@ bool ScummEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return (VAR_MAINMENU_KEY == 0xFF || (VAR(VAR_MAINMENU_KEY) != 0 && _currentRoom != 0)) && !isOriginalMenuActive;
 }
 
+bool ScummEngine::canSaveAutosaveCurrently() {
+	return !isUsingOriginalGUI();
+}
 
 void ScummEngine::requestSave(int slot, const Common::String &name) {
 	_saveLoadSlot = slot;
@@ -1949,11 +1953,35 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 
 	s.syncArray(_roomVars, _numRoomVariables, Common::Serializer::Sint32LE, VER(38));
 
+	int currentSoundCard = VAR_SOUNDCARD != 0xFF ? VAR(VAR_SOUNDCARD) : -1;
+	bool isMonkey1MacDefaultSoundCardValue =
+		(_game.id == GID_MONKEY &&
+		(_sound->_musicType & MidiDriverFlags::MDT_MACINTOSH) &&
+		currentSoundCard == 0xFFFF);
+
 	// The variables grew from 16 to 32 bit.
 	if (s.getVersion() < VER(15))
 		s.syncArray(_scummVars, _numVariables, Common::Serializer::Sint16LE);
 	else
 		s.syncArray(_scummVars, _numVariables, Common::Serializer::Sint32LE);
+
+	if (s.isLoading() && VAR_SOUNDCARD != 0xFF && (_game.heversion < 70 && _game.version <= 6)) {
+		if (currentSoundCard != VAR(VAR_SOUNDCARD) && !isMonkey1MacDefaultSoundCardValue) {
+			Common::String soundCards[] = {
+				"PC Speaker", "IBM PCjr/Tandy", "Creative Music System", "AdLib", "Roland MT-32/CM-32L"
+				"", "", "", "", "", "", "Macintosh Low Quality Sound", "Macintosh High Quality Sound"
+			};
+			
+			GUI::MessageDialog dialog(
+				Common::U32String::format(_("Warning: incompatible sound settings detected between the current configuration and this saved game.\n\n"
+					"Current music device: %s (id %d)\nSave file music device: %s (id %d)\n\n"
+					"Loading will be attempted, but the game may behave incorrectly or crash.\n"
+					"Please change the audio configuration accordingly in order to properly load this save file."),
+					soundCards[currentSoundCard].c_str(), currentSoundCard, soundCards[VAR(VAR_SOUNDCARD)].c_str(), VAR(VAR_SOUNDCARD))
+			);
+			runDialog(dialog);
+		}
+	}
 
 	if (_game.id == GID_TENTACLE)	// Maybe misplaced, but that's the main idea
 		_scummVars[120] = var120Backup;

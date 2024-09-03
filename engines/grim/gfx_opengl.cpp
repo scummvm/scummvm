@@ -79,8 +79,11 @@ static char dimFragSrc[] =
 
 GfxOpenGL::GfxOpenGL() : _smushNumTex(0),
 		_smushTexIds(nullptr), _smushWidth(0), _smushHeight(0),
-		_useDepthShader(false), _fragmentProgram(0), _useDimShader(0),
-		_dimFragProgram(0), _maxLights(0), _storedDisplay(nullptr),
+		_useDepthShader(false), _useDimShader(0),
+		_maxLights(0), _storedDisplay(nullptr),
+#ifdef GL_ARB_fragment_program
+		_fragmentProgram(0), _dimFragProgram(0),
+#endif
 		_emergFont(0), _alpha(1.f) {
 	type = Graphics::RendererType::kRendererTypeOpenGL;
 	// GL_LEQUAL as glDepthFunc ensures that subsequent drawing attempts for
@@ -256,7 +259,18 @@ void GfxOpenGL::clearDepthBuffer() {
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-void GfxOpenGL::flipBuffer() {
+void GfxOpenGL::flipBuffer(bool opportunistic) {
+	if (opportunistic) {
+		GLint fbo = 0;
+		glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &fbo);
+		if (fbo == 0) {
+			// Don't flip if we are not rendering on FBO
+			// Flipping without any draw is undefined
+			// When using an FBO, the older texture will be used
+			return;
+		}
+	}
+
 	g_system->updateScreen();
 }
 

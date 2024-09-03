@@ -23,21 +23,9 @@
 #define AGI_SOUND_COCO3_H
 
 #include "audio/audiostream.h"
+#include "audio/softsynth/pcspk.h"
 
 namespace Agi {
-
-struct CoCoNote {
-	uint8  freq;
-	uint8  volume;
-	uint16 duration;    ///< Note duration
-
-	/** Reads a CoCoNote through the given pointer. */
-	void read(const uint8 *ptr) {
-		freq = *ptr;
-		volume = *(ptr + 1);
-		duration = READ_LE_UINT16(ptr + 2);
-	}
-};
 
 class SoundGenCoCo3 : public SoundGen, public Audio::AudioStream {
 public:
@@ -47,7 +35,6 @@ public:
 	void play(int resnum) override;
 	void stop() override;
 
-	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples) override;
 
 	bool isStereo() const override {
@@ -59,9 +46,13 @@ public:
 	}
 
 	int getRate() const override {
-		// FIXME: Ideally, we should use _sampleRate.
-		return 22050;
+		return _speaker.getRate();
 	}
+
+private:
+	Common::Mutex _mutex;
+	bool _isPlaying;
+	Audio::PCSpeaker _speaker;
 };
 
 } // End of namespace Agi

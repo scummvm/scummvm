@@ -229,7 +229,7 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 	ObjectArray nonPlanarObjects;
 	Object *floor = nullptr;
 	Common::HashMap<Object *, float> sizes;
-	float offset = !gfx->_isAccelerated ? 2.0 : 1.0;
+	float offset = gfx->_isAccelerated ? (1.0 / _scale) : 2.0;
 
 	for (auto &obj : _drawableObjects) {
 		if (!obj->isDestroyed() && !obj->isInvisible()) {
@@ -385,6 +385,11 @@ Object *Area::checkCollisionRay(const Math::Ray &ray, int raySize) {
 	Math::AABB boundingBox(ray.getOrigin(), ray.getOrigin());
 	Object *collided = nullptr;
 	for (auto &obj : _drawableObjects) {
+		if (obj->getType() == kLineType)
+			// If the line is not along an axis, the AABB is wildly inaccurate so we skip it
+			if (((GeometricObject *)obj)->isLineButNotStraight())
+				continue;
+
 		if (!obj->isDestroyed() && !obj->isInvisible()) {
 			GeometricObject *gobj = (GeometricObject *)obj;
 			Math::Vector3d collidedNormal;

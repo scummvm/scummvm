@@ -416,6 +416,30 @@ GeometricObject::~GeometricObject() {
 	delete _initialOrdinates;
 }
 
+// This function returns when the object is a line, but it is not a straight line
+bool GeometricObject::isLineButNotStraight() {
+	if (_type != kLineType)
+		return false;
+
+	if (!_ordinates)
+		return false;
+
+	if (_ordinates->size() != 6)
+		return false;
+
+	// At least two coordinates should be the same to be a straight line
+	if ((*_ordinates)[0] == (*_ordinates)[3] && (*_ordinates)[1] == (*_ordinates)[4])
+		return false;
+
+	if ((*_ordinates)[0] == (*_ordinates)[3] && (*_ordinates)[2] == (*_ordinates)[5])
+		return false;
+
+	if ((*_ordinates)[1] == (*_ordinates)[4] && (*_ordinates)[2] == (*_ordinates)[5])
+		return false;
+
+	return true;
+}
+
 bool GeometricObject::isDrawable() { return true; }
 bool GeometricObject::isPlanar() {
 	ObjectType t = this->getType();

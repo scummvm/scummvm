@@ -38,7 +38,7 @@
 
 namespace Sci {
 
-GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _resMan(resMan) {
+GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _resMan(resMan), _hiresGlyphBuffer(nullptr) {
 
 	// Scale the screen, if needed
 	_upscaledHires = GFX_SCREEN_UPSCALED_DISABLED;
@@ -62,13 +62,6 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 			_upscaledHires = GFX_SCREEN_UPSCALED_640x440;
 		}
 	}
-
-	// Korean versions of games use hi-res font on upscaled version of the game.
-	if ((g_sci->getLanguage() == Common::KO_KOR) && (getSciVersion() <= SCI_VERSION_1_1))
-		_upscaledHires = GFX_SCREEN_UPSCALED_640x400;
-	// Japanese versions of games use hi-res font on upscaled version of the game.
-	if ((g_sci->getLanguage() == Common::JA_JPN) && (getSciVersion() <= SCI_VERSION_1_1))
-		_upscaledHires = GFX_SCREEN_UPSCALED_640x400;
 
 	if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
 		if (getSciVersion() <= SCI_VERSION_01) {
@@ -119,9 +112,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 			_upscaledWidthMapping[i] = (i * 3) >> 1;
 		break;
 	case GFX_SCREEN_UPSCALED_640x400:
-		// Police Quest 2 and Quest For Glory on PC9801 (Japanese)
 		// Mac SCI1/1.1 with hi-res Mac fonts
-		// Korean fan translations
 		_displayWidth = _scriptWidth * 2;
 		_displayHeight = _scriptHeight * 2;
 		for (int i = 0; i <= _scriptHeight; i++)
@@ -174,37 +165,71 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 	bool requestRGB = enablePaletteMods || (ConfMan.hasKey("rgb_rendering") && ConfMan.getBool("rgb_rendering"));
 
 	_gfxDrv = nullptr;
-	if (getSciVersion() <= SCI_VERSION_0_LATE || getSciVersion() == SCI_VERSION_1_EGA_ONLY) {
-		switch (renderMode) {
-		case Common::kRenderCGA:
-			_gfxDrv = new SCI0_CGADriver(false, requestRGB);
-			break;
-		case Common::kRenderCGA_BW:
-			_gfxDrv = new SCI0_CGABWDriver(0xffffff, requestRGB);
-			break;
-		case Common::kRenderHercA:
-		case Common::kRenderHercG:
-			_gfxDrv = new SCI0_HerculesDriver(renderMode == Common::kRenderHercG ? 0x66ff66 : 0xffbf66, requestRGB, false);
-			break;
-		default:
-			break;
-		}
-	} else {
-		switch (renderMode) {
-		case Common::kRenderEGA:
+	switch (renderMode) {
+	case Common::kRenderCGA:
+		_gfxDrv = new SCI0_CGADriver(false, requestRGB);
+		break;
+	case Common::kRenderCGA_BW:
+		_gfxDrv = new SCI0_CGABWDriver(0xffffff, requestRGB);
+		break;
+	case Common::kRenderHercA:
+	case Common::kRenderHercG:
+		_gfxDrv = new SCI0_HerculesDriver(renderMode == Common::kRenderHercG ? 0x66ff66 : 0xffbf66, requestRGB, false);
+		break;
+	case Common::kRenderEGA:
+		// No support for this mode in the Korean version yet.
+		if (getSciVersion() > SCI_VERSION_1_EGA_ONLY && g_sci->getLanguage() != Common::KO_KOR)
 			_gfxDrv = new SCI1_EGADriver(requestRGB);
-			break;
-		case Common::kRenderVGAGrey:
+		break;
+	case Common::kRenderVGAGrey:
+		// No support for this mode in the Korean version yet.
+		if (g_sci->getLanguage() != Common::KO_KOR)
 			_gfxDrv = new SCI1_VGAGreyScaleDriver(requestRGB);
+		break;
+	case Common::kRenderPC98_8c:
+		if (g_sci->getGameId() == GID_PQ2)
+			// PQ2 is a bit special, probably the oldest of the PC-98 ports. Unlike all the others, it uses text mode print
+			// and it doesn't even have a 16 colors drivers. See comment below...
+			_gfxDrv = new SCI0_PC98Gfx8ColorsDriver(true, true, requestRGB);
+		else if (getSciVersion() <= SCI_VERSION_01)
+			_gfxDrv = new SCI0_PC98Gfx8ColorsDriver(false, false, requestRGB);
+		else
+			_gfxDrv = new SCI1_PC98Gfx8ColorsDriver(requestRGB);
+		_hiresGlyphBuffer = new byte[16 * 16]();
+		break;
+	default:
+		break;
+	}
+
+	if (_gfxDrv == nullptr) {
+		switch (g_sci->getPlatform()) {
+		case Common::kPlatformPC98:
+			if (g_sci->getGameId() == GID_PQ2)
+				// PQ2 is a bit special, probably the oldest of the PC-98 ports. Unlike all the others, it uses text mode print,
+				// so the text color is a system color outside the normal 16 colors palette. The original does not even have a
+				// 16 colors mode driver. Only the 8 colors mode, where the colors are identical for text and graphics mode.
+				// But we do want to provide the 16 colors mode, since it is not a big deal (i.e., it does not require data
+				// from a driver file and the fat print is also already there for the 8 colors mode). So we just make the
+				// necessary adjustments.
+				_gfxDrv = new PC98Gfx16ColorsDriver(8, false, true, PC98Gfx16ColorsDriver::kFontStyleTextMode, requestRGB, ConfMan.getBool("disable_dithering"));
+			else if (getSciVersion() <= SCI_VERSION_01)
+				_gfxDrv = new PC98Gfx16ColorsDriver(8, false, false, PC98Gfx16ColorsDriver::kFontStyleNone, requestRGB, true);
+			else
+				_gfxDrv = new PC98Gfx16ColorsDriver(1, true, true, PC98Gfx16ColorsDriver::kFontStyleSpecialSCI1, requestRGB, true);
 			break;
 		default:
+			if (g_sci->getLanguage() == Common::KO_KOR)
+				_gfxDrv = new UpscaledGfxDriver(_displayWidth, _displayHeight + extraHeight, 1, true, requestRGB);
+			else // The driver has to be told if is SCI_VERSION_01, since that cannot be determined from the number of colors.
+				_gfxDrv = new GfxDefaultDriver(_displayWidth, _displayHeight + extraHeight, getSciVersion() < SCI_VERSION_01, requestRGB);
 			break;
 		}
 	}
-
-	if (_gfxDrv == nullptr)
-		_gfxDrv = new GfxDefaultDriver(_displayWidth, _displayHeight + extraHeight, requestRGB);
 	assert(_gfxDrv);
+
+	// Buffer for rendering a single two-byte character
+	if (_gfxDrv->driverBasedTextRendering())
+		_hiresGlyphBuffer = new byte[16 * 16]();
 
 	_displayPixels = _displayWidth * _displayHeight;
 
@@ -265,6 +290,7 @@ GfxScreen::~GfxScreen() {
 	free(_displayScreen);
 	free(_paletteMapScreen);
 	delete[] _backupScreen;
+	delete[] _hiresGlyphBuffer;
 	delete _gfxDrv;
 }
 
@@ -526,20 +552,48 @@ void GfxScreen::putMacChar(const Graphics::Font *commonFont, int16 x, int16 y, u
 	commonFont->drawChar(&_displayScreenSurface, chr, x, y, color);
 }
 
-// We put hires hangul chars onto upscaled background, so we need to adjust
-// coordinates. Caller gives use low-res ones.
 void GfxScreen::putHangulChar(Graphics::FontKorean *commonFont, int16 x, int16 y, uint16 chr, byte color) {
-	byte *displayPtr = _displayScreen + y * _displayWidth * 2 + x * 2;
+	// We put hires Hangul chars onto upscaled background, so we need to adjust coordinates. Caller coordinates are
+	// low-res ones. Same magic as for the Japanese SJIS characters...
+	memset(_hiresGlyphBuffer, 0xff, 256);
 	// we don't use outline, so color 0 is actually not used
-	commonFont->drawChar(displayPtr, chr, _displayWidth, 1, color, 0, -1, -1);
+	uint16 charWidth = commonFont->getCharWidth(chr);
+	commonFont->drawChar(_hiresGlyphBuffer, chr, charWidth, 1, color, 0, -1, -1);
+	_gfxDrv->drawTextFontGlyph(_hiresGlyphBuffer, charWidth, x << 1, y << 1, charWidth, commonFont->getFontHeight(), 0xff, _paletteModsEnabled ? _paletteMods : nullptr, _paletteMapScreen);
 }
 
-// We put hires kanji chars onto upscaled background, so we need to adjust
-// coordinates. Caller gives use low-res ones.
 void GfxScreen::putKanjiChar(Graphics::FontSJIS *commonFont, int16 x, int16 y, uint16 chr, byte color) {
-	byte *displayPtr = _displayScreen + y * _displayWidth * 2 + x * 2;
+	// We put hires SJIS ROM chars onto upscaled background, so we need to adjust coordinates. Caller coordinates are
+	// low-res ones.
+
+	// The PC-98 gfx driver's normal blitting opcode will scale everything up by 2. So that opcode does not get used for
+	// the hires glyphs.
+
+	// SCI0 PC-98 interpreters don't actually render SJIS ROM glyphs via the gfx driver. The QFG interpreter copies the
+	// glyph data directly into the video mem planes. For QFG, the glyph data gets xored with 0xff and copied into all 4
+	// planes. So it will be black text on white background. Also, the interpreter divides the x-coordinate by 4 to find
+	// the right position in the vmem planes. It does not do any bit shifting to fix the x-coordinate. So the text will
+	// be aligned on byte boundaries in vmem which equals 4 pixel boundaries in lowres. We make that bounds adjustment
+	// in the driver, since the layout relies on it. PQ2 on the other hand uses the PC-98 text mode for text print
+	// instead of rendering it in graphics mode (many PC-98 games do that). In an emulator you can easily recognize
+	// it, since the mouse cursor will move underneath the text. The use of the text mode has a similiar effect to
+	// x-coordinates as what happens with QFG: In text mode, the coordinates can only be set as text columns and lines,
+	// so the coordinates have to be divided and loose some precision ('& ~3' for x, and '& ~7' for y).
+
+	// SCI1 PC-98 (KQ5/SQ4) has a gfx driver opcode to render the glyphs via the PC-98 GRCG. In the 16 colors drivers it
+	// uses a unique way to do that: The first 5 lines and the last 5 lines of the glyph get scaled 2x horizontally
+	// (= basically fat print), the middle 6 lines are drawn normally. It's the same for KQ5 and SQ4. This is also
+	// implemented in our on-top rendering in the driver. Unlike SCI0, the SCI1 gfx opcode for the text glyph rendering
+	// is actually able to properly x-shift the glyph data to the right x coordinate. However, my impression is that
+	// Sierra just fixed the x-bounds in the game scripts here.
+
+	memset(_hiresGlyphBuffer, 0xff, 256);
+	// This is for the PC-98 text mode colors which are outside of the normal palette. Also, these colors get modified
+	// for PQ2, see PC98Gfx16ColorsDriver::remapTextColor().
+	color = _gfxDrv->remapTextColor(color);
 	// we don't use outline, so color 0 is actually not used
-	commonFont->drawChar(displayPtr, chr, _displayWidth, 1, color, 0, -1, -1);
+	commonFont->drawChar(_hiresGlyphBuffer, chr, 16, 1, color, 0, -1, -1);
+	_gfxDrv->drawTextFontGlyph(_hiresGlyphBuffer, 16, x << 1, y << 1, 16, 16, 0xff, _paletteModsEnabled ? _paletteMods : nullptr, _paletteMapScreen);
 }
 
 int GfxScreen::bitsGetDataSize(Common::Rect rect, byte mask) {

@@ -76,12 +76,12 @@ struct StaticFlagsStruct {
 	uint32 bIsCarrierActor : 1;             // 0x004000 OBJ_CARRIER - can carry and move an obj
 	// take smaller value for bound, or if not set take average for bound
 	uint32 bUseMiniZv : 1;                  // 0x008000 MINI_ZV - square on smaller dimension (if 3D object)
-	uint32 bHasInvalidPosition : 1;         // 0x010000
-	uint32 bNoElectricShock : 1;            // 0x020000 NO_CHOC
-	uint32 bHasSpriteAnim3D : 1;            // 0x040000
-	uint32 bNoPreClipping : 1;              // 0x080000
-	uint32 bHasZBuffer : 1;                 // 0x100000
-	uint32 bHasZBufferInWater : 1;          // 0x200000
+	uint32 bHasInvalidPosition : 1;         // 0x010000 POS_INVALIDE - carrier considered as an invalid position
+	uint32 bNoElectricShock : 1;            // 0x020000 NO_CHOC - does not trigger electric shock animation
+	uint32 bHasSpriteAnim3D : 1;            // 0x040000 ANIM_3DS - 3DS animation (extension of 3D sprite)
+	uint32 bNoPreClipping : 1;              // 0x080000 NO_PRE_CLIP - does not pre-clip the object (for large objects)
+	uint32 bHasZBuffer : 1;                 // 0x100000 OBJ_ZBUFFER - displays object in ZBuffer (exterior only!)
+	uint32 bHasZBufferInWater : 1;          // 0x200000 OBJ_IN_WATER - displays object in ZBuffer in water (exterior only!)
 };
 
 /** Actors dynamic flags structure */
@@ -135,8 +135,6 @@ struct BonusParameter {
 	uint16 unused : 7;
 };
 
-#define kActorMaxLife 50
-
 /**
  * Actors structure
  *
@@ -146,10 +144,12 @@ class ActorStruct { // T_OBJET
 private:
 	ShapeType _col = ShapeType::kNone; // collision
 	bool _brickCausesDamage = false;
+	int32 _maxLife;
 
 	EntityData _entityData;
 
 public:
+	ActorStruct(int maxLife = 0) : _lifePoint(maxLife), _maxLife(maxLife) {}
 	StaticFlagsStruct _staticFlags; // Flags
 	DynamicFlagsStruct _workFlags;  // WorkFlags
 
@@ -183,6 +183,14 @@ public:
 
 	int16 _actorIdx = 0; // own actor index
 	IVec3 _pos; // PosObjX, PosObjY, PosObjZ
+
+	// T_ANIM_3DS - Coord.A3DS
+	struct A3DSAnim {
+		int32 Num;
+		int32 Deb;
+		int32 Fin;
+	} A3DS;
+
 	int32 _strengthOfHit = 0;
 	int32 _hitBy = -1;
 	BonusParameter _bonusParameter;
@@ -198,7 +206,7 @@ public:
 	int32 _bonusAmount = 0;
 	int32 _talkColor = COLOR_BLACK;
 	int32 _armor = 1;
-	int32 _lifePoint = kActorMaxLife;
+	int32 _lifePoint = 0;
 
 	/** Process actor coordinate Nxw, Nyw, Nzw */
 	IVec3 _processActor;
@@ -237,6 +245,8 @@ public:
 	uint8 _brickSound = 0U; // CodeJeu
 	int32 SampleAlways = 0; // lba2
 	uint8 SampleVolume = 0; // lba2
+	// SizeSHit contains the number of the brick under the wagon - hack
+	int16 SizeSHit; // lba2 - always square
 
 	BoundingBox _boundingBox; // Xmin, YMin, Zmin, Xmax, Ymax, Zmax
 	ActorMoveStruct realAngle;
@@ -253,8 +263,8 @@ inline void ActorStruct::addLife(int32 val) {
 
 inline void ActorStruct::setLife(int32 val) {
 	_lifePoint = val;
-	if (_lifePoint > kActorMaxLife) {
-		_lifePoint = kActorMaxLife;
+	if (_lifePoint > _maxLife) {
+		_lifePoint = _maxLife;
 	}
 }
 
@@ -314,7 +324,8 @@ public:
 	/** Hero anim for behaviour menu */
 	int16 _heroAnimIdx[4];
 
-	void initSpriteActor(int32 actorIdx);
+	void initSprite(int32 spriteNum, int32 actorIdx);
+	void setFrame(int32 actorIdx, uint32 frame);
 
 	/** Restart hero variables while opening new scenes */
 	void restartHeroScene();

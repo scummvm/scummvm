@@ -29,6 +29,24 @@ namespace Riddle {
 namespace Rooms {
 
 class Room409 : public Room {
+private:
+	int _volume = 0;
+	bool _flag = false;
+	machine *_ripley = nullptr;
+	machine *_shadow = nullptr;
+	machine *_turtleRope = nullptr;
+	machine *_wolfWalker = nullptr;
+	machine *_doorOpen = nullptr;
+	int _seriesShadow = 0;
+	int _seriesDoorOpen = 0;
+	int _seriesRope = 0;
+	int _seriesWolfOpensDoor = 0;
+	int _seriesReadTelegram = 0;
+	int _seriesRp02 = 0;
+	int _seriesHeadTurn = 0;
+	int _seriesTalker = 0;
+	int _seriesReachHand = 0;
+
 public:
 	Room409() : Room() {}
 	~Room409() override {}

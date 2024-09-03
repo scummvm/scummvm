@@ -66,7 +66,7 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 		screenObj.cycleTimeCount = 1;
 		screenObj.stepSize = 1;
 	}
-	agiUnloadResources();
+	unloadResources();
 
 	_game.playerControl = true;
 	_game.block.active = false;
@@ -77,7 +77,7 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 	setVar(VM_VAR_BORDER_CODE, 0);
 	setVar(VM_VAR_EGO_VIEW_RESOURCE, screenObjEgo->currentViewNr);
 
-	agiLoadResource(RESOURCETYPE_LOGIC, newRoomNr);
+	loadResource(RESOURCETYPE_LOGIC, newRoomNr);
 
 	// Reposition ego in the new room
 	switch (getVar(VM_VAR_BORDER_TOUCH_EGO)) {
@@ -104,7 +104,7 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 
 		screenObjEgo->flags &= ~fDidntMove;
 		// animateObject(0);
-		agiLoadResource(RESOURCETYPE_VIEW, screenObjEgo->currentViewNr);
+		loadResource(RESOURCETYPE_VIEW, screenObjEgo->currentViewNr);
 		setView(screenObjEgo, screenObjEgo->currentViewNr);
 
 	} else {
@@ -324,8 +324,7 @@ uint16 AgiEngine::processAGIEvents() {
 	return key;
 }
 
-int AgiEngine::playGame() {
-	int ec = errOK;
+void AgiEngine::playGame() {
 	const AgiAppleIIgsDelayOverwriteGameEntry *appleIIgsDelayOverwrite = nullptr;
 	const AgiAppleIIgsDelayOverwriteRoomEntry *appleIIgsDelayRoomOverwrite = nullptr;
 
@@ -351,7 +350,7 @@ int AgiEngine::playGame() {
 	_game.gfxMode = true;
 	_text->promptRow_Set(22);
 
-	debug(0, "Running AGI script.\n");
+	debug(0, "Running AGI script");
 
 	setFlag(VM_FLAG_ENTERED_CLI, false);
 	setFlag(VM_FLAG_SAID_ACCEPTED_INPUT, false);
@@ -485,8 +484,6 @@ int AgiEngine::playGame() {
 	} while (!(shouldQuit() || _restartGame));
 
 	_sound->stopSound();
-
-	return ec;
 }
 
 int AgiEngine::runGame() {
@@ -497,7 +494,8 @@ int AgiEngine::runGame() {
 		debugC(2, kDebugLevelMain, "game loop");
 		debugC(2, kDebugLevelMain, "game version = 0x%x", getVersion());
 
-		if (agiInit() != errOK)
+		ec = agiInit();
+		if (ec != errOK)
 			break;
 
 		if (_restartGame) {
@@ -519,6 +517,10 @@ int AgiEngine::runGame() {
 		case Common::kPlatformAmiga:
 			setVar(VM_VAR_COMPUTER, kAgiComputerAmiga);
 			setVar(VM_VAR_SOUNDGENERATOR, kAgiSoundTandy);
+			break;
+		case Common::kPlatformApple2:
+			setVar(VM_VAR_COMPUTER, kAgiComputerApple2);
+			setVar(VM_VAR_SOUNDGENERATOR, kAgiSoundPC);
 			break;
 		case Common::kPlatformApple2GS:
 			setVar(VM_VAR_COMPUTER, kAgiComputerApple2GS);
@@ -565,7 +567,7 @@ int AgiEngine::runGame() {
 		setVar(VM_VAR_MAX_INPUT_CHARACTERS, 38);
 		_text->promptDisable();
 
-		ec = playGame();
+		playGame();
 		agiDeinit();
 	} while (_restartGame);
 

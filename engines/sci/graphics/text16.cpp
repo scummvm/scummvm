@@ -595,10 +595,8 @@ void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const 
 	while (*curTextPos) {
 		// We need to check for Shift-JIS every line
 		//  Police Quest 2 PC-9801 often draws English + Japanese text during the same call
-		if (g_sci->getLanguage() == Common::JA_JPN) {
-			if (SwitchToFont900OnSjis(curTextPos, languageSplitter))
-				doubleByteMode = true;
-		}
+		if (g_sci->getLanguage() == Common::JA_JPN)
+			doubleByteMode = SwitchToFont900OnSjis(curTextPos, languageSplitter);
 
 		int16 charCount = GetLongest(curTextPos, rect.width(), fontId);
 		if (charCount == 0)
@@ -646,7 +644,10 @@ void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const 
 			curTextLine = textString.c_str();
 		}
 
-		if (show) {
+		// This seems to be the method used by the original PC-98 interpreters. They will set the `show`
+		// argument (only) for the SCI_CONTROLS_TYPE_TEXT, but then there is a separate code path for
+		// the SJIS characters, which will not get the screen surface update (since they get drawn directly).
+		if (show && !doubleByteMode) {
 			Show(curTextLine, 0, charCount, fontId, previousPenColor);
 		} else {
 			Draw(curTextLine, 0, charCount, fontId, previousPenColor);
@@ -657,25 +658,6 @@ void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const 
 	}
 	SetFont(previousFontId);
 	_ports->penColor(previousPenColor);
-
-	if (doubleByteMode) {
-		// Kanji is written by pc98 rom to screen directly. Because of
-		// GetLongest() behavior (not cutting off the last char, that causes a
-		// new line), results in the script thinking that the text would need
-		// less space. The coordinate adjustment in fontsjis.cpp handles the
-		// incorrect centering because of that and this code actually shows all
-		// of the chars - if we don't do this, the scripts will only show most
-		// of the chars, but the last few pixels won't get shown most of the
-		// time.
-		Common::Rect kanjiRect = rect;
-		_ports->offsetRect(kanjiRect);
-		kanjiRect.left &= 0xFFC;
-		kanjiRect.right = kanjiRect.left + maxTextWidth;
-		kanjiRect.bottom = kanjiRect.top + hline;
-		kanjiRect.left *= 2; kanjiRect.right *= 2;
-		kanjiRect.top *= 2; kanjiRect.bottom *= 2;
-		_screen->copyDisplayRectToScreen(kanjiRect);
-	}
 }
 
 void GfxText16::DrawString(const Common::String &textOrig) {

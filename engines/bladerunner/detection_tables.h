@@ -120,7 +120,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// BladeRunner (Chinese)
 	{
 		"bladerunner",
-		_s("Missing game code"), // Reason for being unsupported
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 		AD_ENTRY2s("STARTUP.MIX", "c198b54a5366b88b1734bbca21d3b192", 2678672,
 				   "95blade.dll", "187f257c3183d6b0a0aee69e5cde4c76", 307200),
 		Common::ZH_CHN,

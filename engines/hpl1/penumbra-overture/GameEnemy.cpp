@@ -1456,7 +1456,7 @@ bool iGameEnemy::LineOfSight(const cVector3f &avPos, const cVector3f &avSize) {
 	const float fHalfWidth = avSize.x * 0.4f;
 	const float fHalfHeight = avSize.y * 0.4f;
 
-	// Count of 2 is need for a line of sight sucess.
+	// Count of 2 is needed for a line of sight success.
 	int lCount = 0;
 	// Iterate through all the rays.
 	for (int i = 0; i < 5; ++i) {

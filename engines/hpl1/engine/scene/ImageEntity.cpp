@@ -101,7 +101,7 @@ int cImageEntity::GetMaxFrameNum() {
 	if (mpAnimation == NULL)
 		return 0;
 
-	// One for the -1, one for the frame jump, and one becuase we start with 0.
+	// One for the -1, one for the frame jump, and one because we start with 0.
 	return (int)mpAnimation->mvFrameNums.size() - 3;
 }
 

@@ -29,12 +29,18 @@ namespace Riddle {
 namespace Rooms {
 
 class Room410 : public Room {
+private:
+	int _val1 = 0;
+	machine *_pu = nullptr;
+
 public:
 	Room410() : Room() {}
 	~Room410() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
+	void parser() override;
 };
 
 } // namespace Rooms

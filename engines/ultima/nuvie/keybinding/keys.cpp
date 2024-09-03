@@ -152,6 +152,19 @@ struct KeycodeString {
 	Common::KeyCode k;
 };
 
+// for additional key mappings outside txt file
+struct KeycodeToAction {
+    Common::KeyCode keyCode;
+    const char *actionTitle;
+};
+
+const KeycodeToAction iosKeycodes[] = {
+    { JOY12, "WALK_NORTH" },
+    { JOY13, "WALK_SOUTH" },
+    { JOY14, "WALK_WEST" },
+    { JOY15, "WALK_EAST"}
+};
+
 //
 // These don't match the strings in backends/keymapper/hardware-input.cpp
 // but are from Nuvie before ScummVM integration.  Leave them here for
@@ -338,6 +351,19 @@ KeyBinder::KeyBinder(const Configuration *config) : enable_joystick(false) {
 
 	next_axes_pair_update = next_axes_pair2_update = next_axes_pair3_update = 0;
 	next_axes_pair4_update = next_joy_repeat_time = 0;
+    
+    AddIosBindings();
+}
+
+void KeyBinder::AddIosBindings()
+{
+    unsigned long i;
+    for (i=0; i < sizeof(iosKeycodes) / sizeof(KeycodeToAction); i++)
+    {
+        KeycodeToAction ka = iosKeycodes[i];
+        if (!_bindings.contains(ka.keyCode))
+            AddKeyBinding(ka.keyCode, 0, _actions.getVal(ka.actionTitle), 0, 0);
+    }
 }
 
 KeyBinder::~KeyBinder() {

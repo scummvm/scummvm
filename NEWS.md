@@ -15,6 +15,7 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Added optional dependency for libopenmpt for sound.
   - The "Aspect ratio correction" option within the Global Options section
     is now active by default.
+  - Added optional dependency for libmpcdec (musepack) for sound.
 
  AGI:
   - Fixed duration of timed text boxes. They were shown only half as long as
@@ -25,15 +26,24 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Fixed glitchy staircase in old Maniac Mansion Mania episodes, caused by
     imperfect pathfinding.
 
+ Crusie:
+  - Added support for Russian fan-translation.
+
  Freescape:
   - Added support for Atari/Amiga releases of Dark Side.
   - Improved handling of close colinear surfaces.
   - Added "authentic graphics" mode.
   - Fixed several glitches in the different render modes.
+  - Refactored sound handling for different games.
+  - Improved keymapper support coverage.
 
  MM:
    - Added MT32/LAPC-1 support for Xeen engine.
    - Fixed Xeen regression which caused some sound effects to stop abruptly.
+   - Fixed spell SP/gem requirements in MM1 enhanced mode, and actually remove spell points & gems when spells are cast.
+
+ SCI:
+   - Added support for Russian fan-translation of QFG3.
 
  SCUMM:
    - Added map generator from Moonbase Console for Moonbase Commander.

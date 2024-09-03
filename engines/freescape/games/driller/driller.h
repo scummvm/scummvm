@@ -38,7 +38,7 @@ public:
 	Common::HashMap<uint16, uint32> _drillMaxScoreByArea;
 	Common::HashMap<uint16, uint32> _drillSuccessByArea;
 
-	void initKeymaps(Common::Keymap *engineKeyMap, const char *target) override;
+	void initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) override;
 	void initGameState() override;
 	bool checkIfGameEnded() override;
 	void endGame() override;
@@ -108,19 +108,8 @@ private:
 };
 
 enum DrillerReleaseFlags {
-		GF_AMIGA_RETAIL = (1 << 0),
-		GF_AMIGA_BUDGET = (1 << 1),
-		GF_ZX_RETAIL = (1 << 2),
-		GF_ZX_BUDGET = (1 << 3),
-		GF_ZX_DISC = (1 << 4),
-		GF_CPC_RETAIL = (1 << 5),
-		GF_CPC_RETAIL2 = (1 << 6),
-		GF_CPC_BUDGET = (1 << 7),
-		GF_CPC_VIRTUALWORLDS = (1 << 8),
-		GF_ATARI_RETAIL = (1 << 9),
-		GF_ATARI_BUDGET = (1 << 10),
-		GF_AMIGA_MAGAZINE_DEMO = (1 << 11),
-		GF_ATARI_MAGAZINE_DEMO = (1 << 12),
+	GF_AMIGA_MAGAZINE_DEMO = (1 << 0),
+	GF_ATARI_MAGAZINE_DEMO = (1 << 1),
 };
 
 }

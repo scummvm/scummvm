@@ -29,12 +29,44 @@ namespace Riddle {
 namespace Rooms {
 
 class Room401 : public Room {
+private:
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+	int32 _val4 = 0;
+	int _val5 = 0;
+	int _val6 = 0;
+	int _val7 = 0;
+	const char *_digiName1 = nullptr;
+	const char *_digiName2 = nullptr;
+	const char *_digiName3 = nullptr;
+	const char *_digiName4 = nullptr;
+	int _401a01 = 0;
+	int _401a02 = 0;
+	int _401a03 = 0;
+	int _401a04 = 0;
+	int _401a05 = 0;
+	int _401a06 = 0;
+	int _401rp01 = 0;
+	int _rip1 = 0;
+	int _rip2 = 0;
+	int _rip3 = 0;
+	int _rip4 = 0;
+	machine *_agent = nullptr;
+	machine *_ripMach = nullptr;
+	const char *_digiName = nullptr;
+	int _ctr1 = 0;
+		
+	void conv401a();
+	int getItemCount() const;
+
 public:
 	Room401() : Room() {}
 	~Room401() override {}
 
 	void init() override;
 	void daemon() override;
+	void parser() override;
 };
 
 } // namespace Rooms

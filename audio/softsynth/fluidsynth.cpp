@@ -50,7 +50,7 @@
 #include "audio/softsynth/emumidi.h"
 #include "gui/message.h"
 #include "backends/fs/fs-factory.h"
-#ifdef __ANDROID__
+#ifdef ANDROID_BACKEND
 #include "backends/fs/android/android-fs-factory.h"
 #endif
 
@@ -340,7 +340,7 @@ int MidiDriver_FluidSynth::open() {
 		return MERR_DEVICE_NOT_AVAILABLE;
 	}
 
-#if defined(__ANDROID__) && defined(FS_HAS_STREAM_SUPPORT)
+#if defined(ANDROID_BACKEND) && defined(FS_HAS_STREAM_SUPPORT)
 	// In Android, when using SAF we need to wrap IO to make it work
 	// We can only do this with FluidSynth 2.0
 	if (!isUsingInMemorySoundFontData &&

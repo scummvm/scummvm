@@ -32,6 +32,7 @@
 #include "sci/engine/selector.h"
 #include "sci/engine/tts.h"
 #include "sci/graphics/compare.h"
+#include "sci/graphics/gfxdrivers.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/scifont.h"
@@ -346,7 +347,9 @@ void GfxControls16::kernelDrawButton(Common::Rect rect, reg_t obj, const char *t
 		}
 	} else {
 		// SCI0early used xor to invert button rectangles resulting in pink/white buttons
-		if (getSciVersion() == SCI_VERSION_0_EARLY)
+		// All PC-98 targets (both SCI_VERSION_01 and SCI_VERSION_1_LATE) also use the
+		// xor method, resulting in a grey color.
+		if (getSciVersion() == SCI_VERSION_0_EARLY || g_sci->getPlatform() == Common::kPlatformPC98)
 			_paint16->invertRectViaXOR(rect);
 		else
 			_paint16->invertRect(rect);
@@ -371,17 +374,32 @@ void GfxControls16::kernelDrawText(Common::Rect rect, reg_t obj, const char *tex
 		_paint16->eraseRect(rect);
 		rect.grow(-1);
 		if (!g_sci->hasMacFonts()) {
-			_text16->Box(text, languageSplitter, false, rect, alignment, fontId);
+			// The PC-98 versions set the 'show` argument here (unlike normal DOS versions).
+			_text16->Box(text, languageSplitter, _screen->gfxDriver()->driverBasedTextRendering(), rect, alignment, fontId);
 		} else {
 			_text16->macDraw(text, rect, alignment, fontId, _text16->GetFontId(), 0);
 		}
 		if (style & SCI_CONTROLS_STYLE_SELECTED) {
 			_paint16->frameRect(rect);
 		}
-		if (!getPicNotValid())
+
+		// I have checked the PC-98 versions of QFG1 and KQ5. These set all rect bounds for the
+		// screen update rect to 0 after the text drawing. So nothing gets updated on screen.
+		// Otherwise, it would just overdraw the hi-res text. I have looked at the DOS version of
+		// QFG1 for comparison. There, it copies the text box rect into the screen update rect.
+		// So this specific handling for the PC-98 versions is correct.
+		bool allowScreenUpdate = _screen->gfxDriver()->driverBasedTextRendering() ? false : true;
+
+		if (allowScreenUpdate && !getPicNotValid())
 			_paint16->bitsShow(rect);
 	} else {
-		_paint16->invertRect(rect);
+		// SCI0early used xor to invert button rectangles resulting in pink/white buttons
+		// All PC-98 targets (both SCI_VERSION_01 and SCI_VERSION_1_LATE) also use the
+		// xor method, resulting in a grey color.
+		if (getSciVersion() == SCI_VERSION_0_EARLY || g_sci->getPlatform() == Common::kPlatformPC98)
+			_paint16->invertRectViaXOR(rect);
+		else
+			_paint16->invertRect(rect);
 		_paint16->bitsShow(rect);
 	}
 }
@@ -416,7 +434,13 @@ void GfxControls16::kernelDrawIcon(Common::Rect rect, reg_t obj, GuiResourceId v
 		if (!getPicNotValid())
 			_paint16->bitsShow(rect);
 	} else {
-		_paint16->invertRect(rect);
+		// SCI0early used xor to invert button rectangles resulting in pink/white buttons
+		// All PC-98 targets (both SCI_VERSION_01 and SCI_VERSION_1_LATE) also use the
+		// xor method, resulting in a grey color.
+		if (getSciVersion() == SCI_VERSION_0_EARLY || g_sci->getPlatform() == Common::kPlatformPC98)
+			_paint16->invertRectViaXOR(rect);
+		else
+			_paint16->invertRect(rect);
 		_paint16->bitsShow(rect);
 	}
 }

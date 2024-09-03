@@ -2432,9 +2432,11 @@ void GlobalOptionsDialog::build() {
 	_rendererPopUp->setSelectedTag(mode);
 
 #ifdef USE_SDL_NET
+#ifdef USE_CLOUD
 	Common::Path rootPath(ConfMan.getPath("rootpath", "cloud"));
 	_rootPath->setLabel(rootPath);
-#endif
+#endif // USE_CLOUD
+#endif // USE_SDL_NET
 }
 
 void GlobalOptionsDialog::clean() {
@@ -2982,11 +2984,13 @@ void GlobalOptionsDialog::apply() {
 #endif // DYNAMIC_MODULES
 
 #ifdef USE_SDL_NET
+#ifdef USE_CLOUD
 	Common::Path rootPath(_rootPath->getLabel());
 	if (!rootPath.empty())
 		ConfMan.setPath("rootpath", rootPath, "cloud");
 	else
 		ConfMan.removeKey("rootpath", "cloud");
+#endif // USE_CLOUD
 #endif // USE_SDL_NET
 
 	int oldGuiScale = ConfMan.getInt("gui_scale");

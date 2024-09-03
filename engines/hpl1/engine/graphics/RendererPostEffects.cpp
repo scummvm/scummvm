@@ -438,7 +438,7 @@ void cRendererPostEffects::RenderDepthOfField() {
 
 		pObject->GetVertexBuffer()->UnBind();
 
-		// Set the previous postion to the current
+		// Set the previous position to the current
 		if (pMtx)
 			pObject->SetPrevMatrix(*pMtx);
 	}
@@ -543,7 +543,7 @@ void cRendererPostEffects::RenderMotionBlur() {
 
 		pObject->GetVertexBuffer()->UnBind();
 
-		// Set the previous postion to the current
+		// Set the previous position to the current
 		if (pMtx)
 			pObject->SetPrevMatrix(*pMtx);
 	}

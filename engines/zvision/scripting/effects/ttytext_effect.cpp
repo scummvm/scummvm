@@ -30,6 +30,7 @@
 
 #include "common/stream.h"
 #include "common/file.h"
+#include "common/unicode-bidi.h"
 
 namespace ZVision {
 
@@ -42,11 +43,13 @@ ttyTextNode::ttyTextNode(ZVision *engine, uint32 key, const Common::Path &file, 
 	_nexttime = 0;
 	_dx = 0;
 	_dy = 0;
+	_lineStartPos = 0;
+	_startX = 0;
 
 	Common::File *infile = _engine->getSearchManager()->openFile(file);
 	if (infile) {
 		while (!infile->eos()) {
-			Common::String asciiLine = readWideLine(*infile);
+			Common::U32String asciiLine = readWideLine(*infile);
 			if (asciiLine.empty()) {
 				continue;
 			}
@@ -55,9 +58,10 @@ ttyTextNode::ttyTextNode(ZVision *engine, uint32 key, const Common::Path &file, 
 
 		delete infile;
 	}
+	_isRTL = Common::convertBiDiU32String(_txtbuf).visual != _txtbuf;
 	_img.create(_r.width(), _r.height(), _engine->_resourcePixelFormat);
 	_state._sharp = true;
-	_state.readAllStyles(_txtbuf);
+	_state.readAllStyles(_txtbuf.encode());
 	_state.updateFontWithTextState(_fnt);
 	_engine->getScriptManager()->setStateValue(_key, 1);
 }
@@ -81,7 +85,8 @@ bool ttyTextNode::process(uint32 deltaTimeInMillis) {
 				end = _txtpos;
 				if (start != -1) {
 					if ((end - start - 1) > 0) {
-						ret = _state.parseStyle(_txtbuf.c_str() + start + 1, end - start - 1);
+						Common::String buf = _txtbuf.substr(start + 1, end - start - 1);
+						ret = _state.parseStyle(buf, buf.size());
 					}
 				}
 
@@ -95,38 +100,59 @@ bool ttyTextNode::process(uint32 deltaTimeInMillis) {
 					Common::String buf;
 					buf = Common::String::format("%d", _engine->getScriptManager()->getStateValue(_state._statebox));
 
-					for (uint8 j = 0; j < buf.size(); j++)
-						outchar(buf[j]);
+					if (_isRTL) {
+						int16 currDx = _dx + _fnt.getStringWidth(buf);
+						_dx = _r.width() - currDx;
+						_isRTL = false;
+						for (uint8 j = 0; j < buf.size(); j++)
+							outchar(buf[j]);
+						_isRTL = true;
+						_dx = currDx;
+					} else {
+						for (uint8 j = 0; j < buf.size(); j++)
+							outchar(buf[j]);
+					}
 				}
 
 				_txtpos++;
+				_lineStartPos = _txtpos;
+				_startX = _dx;
 			} else {
-				int8 charsz = getUtf8CharSize(_txtbuf[_txtpos]);
+				uint32 pos = _lineStartPos;
+				int16 dx = _startX;
 
-				uint16 chr = readUtf8Char(_txtbuf.c_str() + _txtpos);
+				while (pos < _txtbuf.size() && _txtbuf[pos] != '<') {
+					uint16 chr = _txtbuf[pos];
 
-				if (chr == ' ') {
-					uint32 i = _txtpos + charsz;
-					uint16 width = _fnt.getCharWidth(chr);
+					if (chr == ' ') {
+						uint32 i = pos + 1;
+						uint16 width = _fnt.getCharWidth(chr);
 
-					while (i < _txtbuf.size() && _txtbuf[i] != ' ' && _txtbuf[i] != '<') {
+						while (i < _txtbuf.size() && _txtbuf[i] != ' ' && _txtbuf[i] != '<') {
 
-						int8 chsz   = getUtf8CharSize(_txtbuf[i]);
-						uint16 uchr = readUtf8Char(_txtbuf.c_str() + _txtpos);
+							uint16 uchr = _txtbuf[i];
 
-						width += _fnt.getCharWidth(uchr);
+							width += _fnt.getCharWidth(uchr);
 
-						i += chsz;
+							i++;
+						}
+
+						if (dx + width > _r.width())
+							break;
 					}
+					dx += _fnt.getCharWidth(chr);
+					pos++;
+				}
 
-					if (_dx + width > _r.width())
-						newline();
-					else
-						outchar(chr);
-				} else
-					outchar(chr);
+				Common::U32String lineBuffer = Common::convertBiDiU32String(_txtbuf.substr(_lineStartPos, pos - _lineStartPos)).visual;
+				if (pos == _txtpos)
+					newline();
+				else if (_isRTL)
+					outchar(lineBuffer[pos - _txtpos - 1]);
+				else
+					outchar(lineBuffer[_txtpos - _lineStartPos]);
 
-				_txtpos += charsz;
+				_txtpos++;
 			}
 			_nexttime = _delay;
 			_engine->getRenderManager()->blitSurfaceToBkg(_img, _r.left, _r.top);
@@ -152,6 +178,8 @@ void ttyTextNode::scroll() {
 void ttyTextNode::newline() {
 	_dy += _fnt.getFontHeight();
 	_dx = 0;
+	_lineStartPos = _txtpos + 1;
+	_startX = _dx;
 }
 
 void ttyTextNode::outchar(uint16 chr) {
@@ -163,8 +191,10 @@ void ttyTextNode::outchar(uint16 chr) {
 	if (_dy + _fnt.getFontHeight() >= _r.height())
 		scroll();
 
-	_fnt.drawChar(&_img, chr, _dx, _dy, clr);
-
+	if (_isRTL)
+		_fnt.drawChar(&_img, chr, _r.width() - _dx - _fnt.getCharWidth(chr), _dy, clr);
+	else
+		_fnt.drawChar(&_img, chr, _dx, _dy, clr);
 	_dx += _fnt.getCharWidth(chr);
 }
 
