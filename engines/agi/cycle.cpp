@@ -46,7 +46,7 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 	// Software Farm re-release, and that version skips (but does not
 	// reomve) the copy protection.
 	//
-	// Since theis was done by the original authors, we disable it in all
+	// Since this was done by the original authors, we disable it in all
 	// versions but give the player the option to re-enable it.
 
 	if (getGameID() == GID_GOLDRUSH && _game.curLogicNr == 129) {
