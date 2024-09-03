@@ -277,7 +277,7 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 	return true;
 }
 
-void grTileAnimation::drawFrame(const Vect2i &position, int32 frame_index, int32 mode) const {
+void grTileAnimation::drawFrame(const Vect2i &position, int32 frame_index, int32 mode, int closest_scale) const {
 	Vect2i pos0 = position - _frameSize / 2;
 
 	int32 dx = GR_TILE_SPRITE_SIZE_X;
@@ -330,6 +330,10 @@ void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float a
 	grDispatcher::instance()->putSpr_rot(position, _frameSize, buf, _hasAlpha, mode, angle);
 }
 
+//////////////////////////////////////////////////////////////////////
+////  New version 105 & 106 code
+//////////////////////////////////////////////////////////////////////
+
 int grTileAnimation::find_closest_scale(float *scale) {
 	int idx = -1;
 	float temp = 1.0;
@@ -345,6 +349,24 @@ int grTileAnimation::find_closest_scale(float *scale) {
 		*scale = *scale / temp;
 
 	return idx;
+}
+
+bool grTileAnimation::wasFrameSizeChanged(int frame_index, int scaleIdx, float scale) {
+	int sx = _frameSizeArray[frame_index].x;
+	int sy = _frameSizeArray[frame_index].y;
+
+	float newScale;
+
+	if (scaleIdx == -1)
+		newScale = 1.0;
+	else
+		newScale = _scaleArray[scaleIdx]._scale;
+
+	if ((int)((float)sx * newScale * scale == sx) &&
+		(int)((float)sy * newScale * scale == sy))
+		return false;
+
+	return true;
 }
 
 } // namespace QDEngine

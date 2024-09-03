@@ -148,7 +148,7 @@ void qdAnimation::redraw(int x, int y, int z, int mode) const {
 		mode |= GR_BLACK_FON;
 
 	if (tileAnimation()) {
-		tileAnimation()->drawFrame(Vect2i(x, y), get_cur_frame_number(), mode);
+		tileAnimation()->drawFrame(Vect2i(x, y), get_cur_frame_number(), mode, -1);
 	} else if (const qdAnimationFrame *p = get_cur_frame())
 		p->redraw(x, y, z, mode);
 }

@@ -69,7 +69,7 @@ public:
 
 	bool load(Common::SeekableReadStream *fh, int version);
 
-	void drawFrame(const Vect2i &position, int32 frame_index, int32 mode = 0) const;
+	void drawFrame(const Vect2i &position, int32 frame_index, int32 mode, int closest_scale) const;
 	void drawFrame(const Vect2i &position, int frame_index, float angle, int mode = 0) const;
 
 	static void setProgressHandler(CompressionProgressHandler handler, void *context) {
@@ -78,6 +78,7 @@ public:
 	}
 
 	int find_closest_scale(float *scale);
+	bool wasFrameSizeChanged(int frame_index, int scaleIdx, float scale);
 
 private:
 
