@@ -117,6 +117,8 @@ void Group::run() {
 			assemble(i);
 		_active = false;
 		_step++;
+	} else if (opcode == 0x58) {
+		debugC(1, kFreescapeDebugCode, "Ignoring unknown opcode 0x58");
 	} else if (opcode == 0x48) {
 		// TODO: not sure the difference with 0x6e
 		uint32 groupSize = _objects.size();
