@@ -349,7 +349,7 @@ void CastleEngine::drawInfoMenu() {
 					_gfx->setViewport(_viewArea);
 				} else if (isDOS() && event.customType == kActionToggleSound) {
 					// TODO
-				} else if ((isDOS() || isCPC() || isSpectrum()) && event.customType == kActionEscape) {
+				} else if ((isCPC() || isSpectrum()) && event.customType == kActionEscape) {
 					_forceEndGame = true;
 					cont = false;
 				} else
