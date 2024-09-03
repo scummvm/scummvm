@@ -231,6 +231,14 @@ void CastleEngine::loadAssetsDOSFullGame() {
 		error("Not implemented yet");
 
 	addGhosts();
+	// Discard the first three global conditions
+	// It is unclear why they hide/unhide objects that formed the spirits
+	for (int i = 0; i < 3; i++) {
+		debugC(kFreescapeDebugParser, "Discarding condition %s", _conditionSources[1].c_str());
+		_conditions.remove_at(1);
+		_conditionSources.remove_at(1);
+	}
+
 	// CPC
 	// file = gameDir.createReadStreamForMember("cm.bin");
 	// if (file == nullptr)
