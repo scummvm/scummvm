@@ -1758,7 +1758,7 @@ bool Runtime::runFrame() {
 bool Runtime::bootGame(bool newGame) {
 	assert(_gameState == kGameStateBoot);
 
-	if (!ConfMan.hasKey("vcruise_increase_drag_distance") || ConfMan.hasKey("vcruise_increase_drag_distance"))
+	if (!ConfMan.hasKey("vcruise_increase_drag_distance") || ConfMan.getBool("vcruise_increase_drag_distance"))
 		_lmbDragTolerance = 3;
 
 	if (ConfMan.hasKey("vcruise_mute_music") && ConfMan.getBool("vcruise_mute_music"))
