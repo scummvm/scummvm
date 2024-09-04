@@ -220,7 +220,7 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 			_scaleArray[i]._pitch.y = (_scaleArray[i]._frameSize.y + 15) / 16;
 
 			if (i == 0)
-				_scaleArray[i]._numTiles = 0; //_frameTileSize.x * _frameTileSize.y * _frameCount;
+				_scaleArray[i]._numTiles = _frameTileSize.x * _frameTileSize.y * _frameCount;
 			else
 				_scaleArray[i]._numTiles = _scaleArray[i - 1]._numTiles
 	                 + _frameCount * _scaleArray[i - 1]._pitch.y * _scaleArray[i - 1]._pitch.x;
@@ -409,9 +409,9 @@ byte *grTileAnimation::decode_frame_data(int frame_index, int closest_scale) con
 
 	for (int i = 0; i < frameTileSize.y; i++) {
 		for (int j = 0; j < frameTileSize.x; j++) {
-			byte *buf_ptr = buf + (i * _frameSize.x + j) * 4;
+			byte *buf_ptr = buf + (i * frameSize.x + j) * 4;
 			const byte *data_ptr = (const byte *)getTile(*index_ptr++).data();
-			int dx = MIN(_frameSize.x - j * GR_TILE_SPRITE_SIZE_X, GR_TILE_SPRITE_SIZE_X) * 4;
+			int dx = MIN(frameSize.x - j * GR_TILE_SPRITE_SIZE_X, GR_TILE_SPRITE_SIZE_X) * 4;
 			for (int k = 0; k < GR_TILE_SPRITE_SIZE_Y; k++) {
 				memcpy(buf_ptr, data_ptr, dx);
 				data_ptr += GR_TILE_SPRITE_SIZE_X * 4;
