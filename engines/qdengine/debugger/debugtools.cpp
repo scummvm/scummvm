@@ -115,6 +115,7 @@ static void showScore() {
 
 void onImGuiInit() {
 	ImGuiIO &io = ImGui::GetIO();
+	io.Fonts->AddFontDefault();
 
 	static const ImWchar cyrillic_ranges[] = {
 		0x0020, 0x00FF, // Basic Latin + Latin Supplement
@@ -123,6 +124,16 @@ void onImGuiInit() {
 	};
 
 	io.FontDefault = ImGui::addTTFFontFromArchive("FreeSans.ttf", 16.0f, nullptr, cyrillic_ranges);;
+
+	ImFontConfig icons_config;
+	icons_config.MergeMode = true;
+	icons_config.PixelSnapH = false;
+	icons_config.OversampleH = 3;
+	icons_config.OversampleV = 3;
+	icons_config.GlyphOffset = {0, 4};
+
+	static const ImWchar icons_ranges[] = {0xE000, 0xF8FF, 0};
+	ImGui::addTTFFontFromArchive("MaterialSymbolsSharp.ttf", 16.f, &icons_config, icons_ranges);
 
 	_state = new ImGuiState();
 	memset(_state, 0, sizeof(ImGuiState));
