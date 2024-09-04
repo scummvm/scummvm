@@ -7325,13 +7325,6 @@ cat > config.h.new << EOF
 $_config_h_data
 $(cat config.h.engines)
 
-/* TODO: What does this do? */
-#if defined(__APPLE__) && !defined(__ppc__)
-#ifndef _UINT64
-#define _UINT64
-#endif
-#endif
-
 #endif /* CONFIG_H */
 EOF
 rm -f config.h.engines
