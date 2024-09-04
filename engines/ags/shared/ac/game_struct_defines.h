@@ -136,11 +136,12 @@ namespace AGS3 {
 
 #define DIALOG_OPTIONS_HIGHLIGHT_COLOR_DEFAULT  14 // Yellow
 
-#define MAXVIEWNAMELENGTH 15
+// MAXVIEWNAMELENGTH comes from unknown old engine version
+#define LEGACY_MAXVIEWNAMELENGTH 15
 #define MAXLIPSYNCFRAMES  20
 #define MAX_GUID_LENGTH   40
 #define MAX_SG_EXT_LENGTH 20
-#define MAX_SG_FOLDER_LEN 50
+#define LEGACY_MAX_SG_FOLDER_LEN 50
 
 enum GameResolutionType {
 	kGameResolution_Undefined = -1,

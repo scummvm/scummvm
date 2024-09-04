@@ -391,7 +391,7 @@ void replace_macro_tokens(const char *text, String &fixed_text) {
 			else if (ags_stricmp(macroname, "scoretext") == 0)
 				snprintf(tempo, sizeof(tempo), "%d of %d", _GP(play).score, MAXSCORE);
 			else if (ags_stricmp(macroname, "gamename") == 0)
-				snprintf(tempo, sizeof(tempo), "%s", _GP(play).game_name);
+				snprintf(tempo, sizeof(tempo), "%s", _GP(play).game_name.GetCStr());
 			else if (ags_stricmp(macroname, "overhotspot") == 0) {
 				// While game is in Wait mode, no overhotspot text
 				if (!IsInterfaceEnabled())

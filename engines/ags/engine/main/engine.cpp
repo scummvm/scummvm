@@ -114,7 +114,7 @@ void engine_setup_window() {
 	Debug::Printf(kDbgMsg_Info, "Setting up window");
 
 	_G(our_eip) = -198;
-	sys_window_set_title(_GP(game).gamename);
+	sys_window_set_title(_GP(game).gamename.GetCStr());
 	sys_window_set_icon();
 	sys_evt_set_quit_callback(winclosehook);
 	_G(our_eip) = -197;
@@ -372,7 +372,7 @@ int engine_load_game_data() {
 
 // Replace special tokens inside a user path option
 static void resolve_configured_path(String &option) {
-	option.Replace("$GAMENAME$", _GP(game).gamename);
+	option.Replace(Shared::String("$GAMENAME$"), _GP(game).gamename);
 }
 
 // Setup paths and directories that may be affected by user configuration
@@ -737,7 +737,7 @@ void engine_init_game_settings() {
 	_GP(play).speech_textwindow_gui = _GP(game).options[OPT_TWCUSTOM];
 	if (_GP(play).speech_textwindow_gui == 0)
 		_GP(play).speech_textwindow_gui = -1;
-	snprintf(_GP(play).game_name, sizeof(_GP(play).game_name), "%s", _GP(game).gamename);
+	_GP(play).game_name = _GP(game).gamename;
 	_GP(play).lastParserEntry[0] = 0;
 	_GP(play).follow_change_room_timer = 150;
 	for (ee = 0; ee < MAX_ROOM_BGFRAMES; ee++)

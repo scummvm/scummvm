@@ -568,8 +568,8 @@ const char *Game_GetName() {
 }
 
 void Game_SetName(const char *newName) {
-	snprintf(_GP(play).game_name, MAX_GAME_STATE_NAME_LENGTH, "%s", newName);
-	sys_window_set_title(_GP(play).game_name);
+	_GP(play).game_name = newName;
+	sys_window_set_title(_GP(play).game_name.GetCStr());
 	GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Gamename);
 }
 
