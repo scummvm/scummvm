@@ -47,6 +47,7 @@ namespace Image {
 JPEGDecoder::JPEGDecoder() :
 		_surface(),
 		_colorSpace(kColorSpaceRGB),
+		_accuracy(CodecAccuracy::Default),
 		_requestedPixelFormat(getByteOrderRgbPixelFormat()) {
 }
 
@@ -75,6 +76,10 @@ const Graphics::Surface *JPEGDecoder::decodeFrame(Common::SeekableReadStream &st
 		return 0;
 
 	return getSurface();
+}
+
+void JPEGDecoder::setCodecAccuracy(CodecAccuracy accuracy) {
+	_accuracy = accuracy;
 }
 
 Graphics::PixelFormat JPEGDecoder::getPixelFormat() const {
@@ -242,6 +247,11 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	// Initialize the decompression structure
 	jpeg_create_decompress(&cinfo);
+
+	if (_accuracy <= CodecAccuracy::Fast)
+		cinfo.dct_method = JDCT_FASTEST;
+	else if (_accuracy >= CodecAccuracy::Accurate)
+		cinfo.dct_method = JDCT_ISLOW;
 
 	// Initialize our buffer handling
 	jpeg_scummvm_src(&cinfo, &stream);

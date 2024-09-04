@@ -19,41 +19,15 @@
  *
  */
 
-#ifndef IMAGE_CODECS_MJPEG_H
-#define IMAGE_CODECS_MJPEG_H
-
-#include "image/codecs/codec.h"
-#include "graphics/pixelformat.h"
-
-namespace Common {
-class SeekableReadStream;
-}
-
-namespace Graphics {
-struct Surface;
-}
+#ifndef IMAGE_CODEC_OPTIONS_H
+#define IMAGE_CODEC_OPTIONS_H
 
 namespace Image {
 
-/**
- * Motion JPEG decoder.
- *
- * Used by BMP/AVI.
- */
-class MJPEGDecoder : public Codec {
-public:
-	MJPEGDecoder();
-	~MJPEGDecoder() override;
-
-	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
-	void setCodecAccuracy(CodecAccuracy accuracy) override;
-	Graphics::PixelFormat getPixelFormat() const override { return _pixelFormat; }
-	bool setOutputPixelFormat(const Graphics::PixelFormat &format) override { _pixelFormat = format; return true; }
-
-private:
-	Graphics::PixelFormat _pixelFormat;
-	Graphics::Surface *_surface;
-	CodecAccuracy _accuracy;
+enum class CodecAccuracy {
+	Fast,
+	Default,
+	Accurate,
 };
 
 } // End of namespace Image

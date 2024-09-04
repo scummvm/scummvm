@@ -25,6 +25,8 @@
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
 
+#include "image/codec-options.h"
+
 namespace Common {
 class SeekableReadStream;
 }
@@ -115,6 +117,11 @@ public:
 	 * Activate dithering mode with a palette
 	 */
 	virtual void setDither(DitherType type, const byte *palette) {}
+
+	/**
+	 * Set the decoding accuracy of the codec, if supported
+	 */
+	virtual void setCodecAccuracy(CodecAccuracy accuracy) {}
 
 	/**
 	 * Create a dither table, as used by QuickTime codecs.
