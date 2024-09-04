@@ -33,7 +33,21 @@ namespace Script {
 
 #define ScriptNoEntry debug("Unhandled case in script handling.");
 #define STR_HELPER(x) #x
-#define ScriptUnimplementedOpcode(opcode) debug("Unimplemented opcode: %.2x.", (opcode));
+
+	inline void ScriptUnimplementedOpcode(const char* source, uint16 opcode) {
+		debug("Unimplemented opcode (%s): %.2x.", source, opcode);
+	}
+
+	inline void ScriptUnimplementedOpcode_Helper(uint16 opcode) {
+		// TODO: Could this also be done with a template?
+		ScriptUnimplementedOpcode("Helper", opcode);
+	}
+
+	inline void ScriptUnimplementedOpcode_Main(uint16 opcode) {
+		// TODO: Could this also be done with a template?
+		ScriptUnimplementedOpcode("Main", opcode);
+	}
+
 
 ScriptExecutor::ScriptExecutor() {
 	// TODO: Hardcoded values for testing
@@ -922,7 +936,7 @@ l0037_A324:
 		return;
 	} else {
 		// TODO: Handle others
-		ScriptUnimplementedOpcode(value);
+		ScriptUnimplementedOpcode_Helper(value);
 	}
 
 /*
@@ -1539,7 +1553,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				shouldSkip = v2 > v4 || (v2 == v4 && v1 >= v3);
 				shouldSkip = !shouldSkip;
 			} else if (opcode2 <= 0x6) {
-				ScriptUnimplementedOpcode(opcode2);
+				ScriptUnimplementedOpcode_Main(opcode2);
 				EndBuffering(lastOpcodeTriggeredSkip);
 				break;
 			}
@@ -2078,7 +2092,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			Func9F4D_Placeholder();
 		}
 		else {
-			ScriptUnimplementedOpcode(opcode1)
+			ScriptUnimplementedOpcode_Main(opcode1);
 			EndBuffering(lastOpcodeTriggeredSkip);
 			break;
 		}
