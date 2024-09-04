@@ -5627,7 +5627,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("springhead", "", "Springhead", "e6833f1ce3b022f0128e4c80a55bcd46", 288490, 404),
 
 	// Full game is not Director
-	WINDEMO1("spycraft", "Demo", "SPYCRAFT.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 400),
+	WINDEMO2("spycraft", "Demo", "SPYCRAFT.EXE", "t:0f492b1b4d9598bd0ac19ea35f89dd3a",  712817,
+								 "SPYCRAFT.DIR", "d:6ecc0be07e44de502b73d4df6e980e15", 2317010, 404),
 
 	// Original filename is 東北新社･ｻﾝﾗｲｽﾞﾛﾎﾞｯﾄ編
 	MACGAME1_l("srdsunrise", "", "xn--djrs64bpib449aukfxo2t9baxa4fva2f2f0eoc0atc", "1c2e5371b835680e7c1ca8bcea008bef", 502589, Common::JA_JPN, 404),
@@ -5637,7 +5638,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("ssdietcoke", "", "DietCoke Animations", "6e86a061950bc3987ce2ddf531bfde34", 295426, 403),
 	MACGAME1("sslivepicture", "", "Live Picture Screen Saver", "4502263d183dd9dae0e3c3505fdf8ae1", 555539, 404),
 
-	WINGAME1("ssseven", "", "SEVEN.EXE", "f85b47849209eb19709dabe338544827", 1892673, 404),
+	WINGAME2("ssseven", "", "SEVEN.EXE", "t:972ab398e28fc4b600405af200902bb9", 1892673,
+							"LINGO.INI", "d:4f75e838a13079b4fc75af0fd6f70f3c", 	   826, 404),
 
 	MACGAME1("stream", "Volume 1", "Stream_1", "cdb27c916044ae4dceb4b7326063fa03", 304217, 400),
 	WINGAME1("stream", "Volume 1", "STREAM_1.EXE", "147c76b43a5ec051381c238488f722d5", 690979, 400),
@@ -8062,7 +8064,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("pelitcd2000", "", "PELIT.EXE",	   "t:7be5a7141a379872f92808d394b79421", 1512657,
 								  "DATA/MAIN.DXR", "t:55e78270243ff4c98c680864bb056308", 58250, Common::FI_FIN, 601),
 
-	WINGAME1t_l("pettson1", "", "GUBBEN.EXE", "9ee9a4d1112db68a3a64f26d043518a3", 1341473, Common::NB_NOR, 600),
+	WINGAME1_l("pettson1", "",  "ANNAT/PETT16.EXE", "t:952b4ae03dac79cb5cf3fdeed1c194ea", 1154257, Common::DE_DEU, 600),
+	WINGAME1t_l("pettson1", "", "GUBBEN.EXE",		"9ee9a4d1112db68a3a64f26d043518a3",   1341473, Common::NB_NOR, 600),
 
 	WINGAME2_l("pettson2", "", "START32.EXE", "518a98696fe1122e08410b0f157f21bf", 1723219,
 							   "START.DXR",	  "18d333b1b9b02d76b35a07252046d295", 37384, Common::SE_SWE, 602),
