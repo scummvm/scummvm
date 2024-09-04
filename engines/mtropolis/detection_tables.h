@@ -1027,8 +1027,8 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "MTPLAY95.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
-			 	{ "MINDGYM1.MPL", 0, "90a71952e2336bddd30d0bacd59aa510", 22167812 },
-			 	// { "MINDGYM2.MPX", 0, "aa49de0c8337ec97045c6af57ead02a3", 277412342 },
+			 	{ "MINDGYM1.MPL", 0, "a183294df65173d4a16e51005b72e92b", 21260398 },
+			 	// { "MINDGYM2.MPX", 0, "c8fb5c2c8dbf175c206b9f1d0ef4582d", 623947336 },
 			 	AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -1070,7 +1070,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "MTPLAY95.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
-			 	{ "FWA1041.MPL", 0, "90a71952e2336bddd30d0bacd59aa510", 22167812 },
+			 	{ "FWA1041.MPL", 0, "cb108fec620eff4108f194b1a730ec16", 50695771 },
 			 	AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -1090,7 +1090,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "POTTER95.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
-			 	{ "DATA.MPL", 0, "90a71952e2336bddd30d0bacd59aa510", 22167812 },
+			 	{ "DATA.MPL", 0, "1dc4d2bf656ebb5a89e5f4a750a8cec0", 259660228 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -1111,7 +1111,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "WTIMPACT.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
-			 	{ "DATA.MPL", 0, "90a71952e2336bddd30d0bacd59aa510", 22167812 },
+			 	{ "DATA.MPL", 0, "b86b35aa87a487e8af996d17cfe5f1b1", 285839431 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
