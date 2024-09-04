@@ -439,6 +439,10 @@ void CastleEngine::executePrint(FCLInstruction &instruction) {
 	insertTemporaryMessage(_messagesList[index], _countdown - 3);
 }
 
+void CastleEngine::executeRedraw(FCLInstruction &instruction) {
+	FreescapeEngine::executeRedraw(instruction);
+	tryToCollectKey();
+}
 
 void CastleEngine::loadAssets() {
 	FreescapeEngine::loadAssets();
@@ -793,16 +797,19 @@ void CastleEngine::checkSensors() {
 	}*/
 }
 
-void CastleEngine::updateTimeVariables() {
-	if (_gameStateControl != kFreescapeGameStatePlaying)
-		return;
-	// This function only executes "on collision" room/global conditions
-
+void CastleEngine::tryToCollectKey() {
 	if (_gameStateVars[32] > 0) { // Key collected!
 		setGameBit(_gameStateVars[32]);
 		_gameStateVars[32] = 0;
 		_numberKeys++;
 	}
+}
+
+void CastleEngine::updateTimeVariables() {
+	if (_gameStateControl != kFreescapeGameStatePlaying)
+		return;
+	// This function only executes "on collision" room/global conditions
+	tryToCollectKey();
 
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);

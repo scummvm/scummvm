@@ -64,6 +64,7 @@ public:
 
 	void executePrint(FCLInstruction &instruction) override;
 	void executeMakeInvisible(FCLInstruction &instruction) override;
+	void executeRedraw(FCLInstruction &instruction) override;
 	void gotoArea(uint16 areaID, int entranceID) override;
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
@@ -103,6 +104,7 @@ private:
 	void loadDOSFonts(Common::SeekableReadStream *file, int pos);
 	void drawFullscreenRiddleAndWait(uint16 riddle);
 	void drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics::Surface *surface);
+	void tryToCollectKey();
 	void addGhosts();
 	Texture *_optionTexture;
 };

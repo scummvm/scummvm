@@ -399,7 +399,7 @@ public:
 	void executeMakeVisible(FCLInstruction &instruction);
 	void executeToggleVisibility(FCLInstruction &instruction);
 	void executeDestroy(FCLInstruction &instruction);
-	void executeRedraw(FCLInstruction &instruction);
+	virtual void executeRedraw(FCLInstruction &instruction);
 	void executeSound(FCLInstruction &instruction);
 	void executeDelay(FCLInstruction &instruction);
 	bool executeEndIfNotEqual(FCLInstruction &instruction);
