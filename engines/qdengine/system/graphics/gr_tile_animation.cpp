@@ -129,11 +129,20 @@ grTileSprite grTileAnimation::getTile(int tile_index) const {
 	case TILE_UNCOMPRESSED:
 		return grTileSprite(&*_tileData.begin() + _tileOffsets[tile_index]);
 	default:
+		if (tile_index >= _tileOffsets.size()) {
+			warning("grTileAnimation::getTile(): Too big tile index %d >= %d", tile_index, _tileOffsets.size());
+			break;
+		}
+		if (_tileOffsets[tile_index] >= _tileData.size()) {
+			warning("grTileAnimation::getTile(): Too big tile offset %d (%d >= %d)", tile_index, _tileOffsets[tile_index], _tileData.size());
+			break;
+		}
 		if (!grTileSprite::uncompress(&*_tileData.begin() + _tileOffsets[tile_index], GR_TILE_SPRITE_SIZE, tile_buf, _compression)) {
 			assert(0 && "Unknown compression algorithm");
 		}
-		return grTileSprite(tile_buf);
 	}
+
+	return grTileSprite(tile_buf);
 }
 
 void grTileAnimation::addFrame(const uint32 *frame_data) {
@@ -482,6 +491,9 @@ void grTileAnimation::dumpTiles(Common::Path basename, int tilesPerRow) {
 			if (index >= _tileOffsets.size())
 				break;
 		}
+
+		if (index >= _tileOffsets.size())
+			break;
 
 		y += GR_TILE_SPRITE_SIZE_X + 1;
 	}
