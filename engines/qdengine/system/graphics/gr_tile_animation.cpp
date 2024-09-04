@@ -225,7 +225,9 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 				_scaleArray[i]._numTiles = _scaleArray[i - 1]._numTiles
 	                 + _frameCount * _scaleArray[i - 1]._pitch.y * _scaleArray[i - 1]._pitch.x;
 
-			debugCN(3, kDebugLoad, " %f ", _scaleArray[i]._scale);
+			debugCN(3, kDebugLoad, " %f, { %d x %d, [%d x %d], tiles: %d } ", _scaleArray[i]._scale,
+					_scaleArray[i]._frameSize.x, _scaleArray[i]._frameSize.y, _scaleArray[i]._pitch.x,
+					_scaleArray[i]._pitch.y, _scaleArray[i]._numTiles);
 		}
 		debugCN(3, kDebugLoad, "\n");
 	}
