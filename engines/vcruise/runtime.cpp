@@ -4624,6 +4624,10 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 
 		if (aviFile->open(aviFileName)) {
 			_animDecoder.reset(new Video::AVIDecoder());
+
+			if (ConfMan.hasKey("vcruise_fast_video_decoder") && ConfMan.getBool("vcruise_fast_video_decoder"))
+				_animDecoder->setVideoCodecAccuracy(Image::CodecAccuracy::Fast);
+
 			if (!_animDecoder->loadStream(aviFile)) {
 				warning("Animation file %i could not be loaded", animFile);
 				return;

@@ -180,7 +180,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			ADGF_CD | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::EN_GRB,
@@ -194,7 +194,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::DE_DEU,
@@ -209,7 +209,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_GENTEE_PACKAGE,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::EN_GRB,
@@ -222,7 +222,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_GENTEE_PACKAGE,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::EN_GRB,
@@ -235,7 +235,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_GENTEE_PACKAGE,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::EN_GRB,
@@ -248,7 +248,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_GENTEE_PACKAGE,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::PL_POL,
@@ -261,7 +261,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_GENTEE_PACKAGE,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::DE_DEU,
@@ -274,7 +274,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_GENTEE_PACKAGE,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::DE_DEU,
@@ -289,7 +289,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::EN_GRB,
@@ -303,7 +303,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::DE_DEU,
@@ -317,7 +317,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::ES_ESP,
@@ -331,7 +331,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::FR_FRA,
@@ -345,7 +345,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::HU_HUN,
@@ -359,7 +359,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::IT_ITA,
@@ -373,7 +373,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::PL_POL,
@@ -387,7 +387,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::RU_RUS,
@@ -404,7 +404,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_STEAM_LANGUAGES,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::EN_GRB,
@@ -419,7 +419,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_STEAM_LANGUAGES,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::DE_DEU,
@@ -434,7 +434,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_STEAM_LANGUAGES,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::ES_ESP,
@@ -449,7 +449,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_STEAM_LANGUAGES,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::FR_FRA,
@@ -464,7 +464,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_STEAM_LANGUAGES,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::HU_HUN,
@@ -479,7 +479,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_STEAM_LANGUAGES,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::IT_ITA,
@@ -494,7 +494,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_STEAM_LANGUAGES,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::PL_POL,
@@ -509,7 +509,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_STEAM_LANGUAGES,
-			GUIO0()
+			GUIO1(GAMEOPTION_FAST_VIDEO_DECODER)
 		},
 		GID_SCHIZM,
 		Common::RU_RUS,
