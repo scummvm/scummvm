@@ -345,7 +345,7 @@ void AVIDecoder::handleStreamHeader(uint32 size) {
 			}
 		}
 
-		AVIVideoTrack *track = new AVIVideoTrack(_header.totalFrames, sHeader, bmInfo, initialPalette);
+		AVIVideoTrack *track = new AVIVideoTrack(_header.totalFrames, sHeader, bmInfo, initialPalette, _videoCodecAccuracy);
 		if (track->isValid())
 			addTrack(track);
 		else
@@ -945,8 +945,8 @@ VideoDecoder::AudioTrack *AVIDecoder::getAudioTrack(int index) {
 	return (AudioTrack *)track;
 }
 
-AVIDecoder::AVIVideoTrack::AVIVideoTrack(int frameCount, const AVIStreamHeader &streamHeader, const BitmapInfoHeader &bitmapInfoHeader, byte *initialPalette)
-		: _frameCount(frameCount), _vidsHeader(streamHeader), _bmInfo(bitmapInfoHeader), _initialPalette(initialPalette) {
+AVIDecoder::AVIVideoTrack::AVIVideoTrack(int frameCount, const AVIStreamHeader &streamHeader, const BitmapInfoHeader &bitmapInfoHeader, byte *initialPalette, Image::CodecAccuracy accuracy)
+		: _frameCount(frameCount), _vidsHeader(streamHeader), _bmInfo(bitmapInfoHeader), _initialPalette(initialPalette), _accuracy(accuracy) {
 	_videoCodec = createCodec();
 	_lastFrame = 0;
 	_curFrame = -1;
@@ -1041,7 +1041,7 @@ void AVIDecoder::AVIVideoTrack::forceDimensions(uint16 width, uint16 height) {
 
 bool AVIDecoder::AVIVideoTrack::rewind() {
 	_curFrame = -1;
-
+	 
 	useInitialPalette();
 
 	delete _videoCodec;
@@ -1051,8 +1051,12 @@ bool AVIDecoder::AVIVideoTrack::rewind() {
 }
 
 Image::Codec *AVIDecoder::AVIVideoTrack::createCodec() {
-	return Image::createBitmapCodec(_bmInfo.compression, _vidsHeader.streamHandler, _bmInfo.width,
+	Image::Codec *codec = Image::createBitmapCodec(_bmInfo.compression, _vidsHeader.streamHandler, _bmInfo.width,
 									_bmInfo.height, _bmInfo.bitCount);
+
+	codec->setCodecAccuracy(_accuracy);
+
+	return codec;
 }
 
 void AVIDecoder::AVIVideoTrack::forceTrackEnd() {
@@ -1098,6 +1102,15 @@ bool AVIDecoder::AVIVideoTrack::canDither() const {
 void AVIDecoder::AVIVideoTrack::setDither(const byte *palette) {
 	assert(_videoCodec);
 	_videoCodec->setDither(Image::Codec::kDitherTypeVFW, palette);
+}
+
+void AVIDecoder::AVIVideoTrack::setCodecAccuracy(Image::CodecAccuracy accuracy) {
+	if (_accuracy != accuracy) {
+		_accuracy = accuracy;
+
+		if (_videoCodec)
+			_videoCodec->setCodecAccuracy(accuracy);
+	}
 }
 
 AVIDecoder::AVIAudioTrack::AVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType) :
