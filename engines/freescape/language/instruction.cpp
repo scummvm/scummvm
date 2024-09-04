@@ -146,6 +146,7 @@ void FreescapeEngine::executeLocalGlobalConditions(bool shot, bool collided, boo
 bool FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool collided, bool timer, bool activated) {
 	int ip = 0;
 	bool skip = false;
+	bool elseFound = false;
 	bool executed = false;
 	int codeSize = code.size();
 	assert(codeSize > 0);
@@ -190,11 +191,16 @@ bool FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			break;
 
 		case Token::ELSE:
+			if (elseFound && skip)
+				break;
+
+			elseFound = true;
 			skip = !skip;
 			break;
 
 		case Token::ENDIF:
 			skip = false;
+			elseFound = false;
 			break;
 
 		case Token::SWAPJET:
