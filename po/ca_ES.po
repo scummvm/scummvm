@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-04 13:54+0000\n"
-"PO-Revision-Date: 2024-08-31 05:43+0000\n"
+"PO-Revision-Date: 2024-09-04 21:43+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -10959,40 +10959,28 @@ msgid ""
 msgstr ""
 
 #: engines/tinsel/metaengine.cpp:241
-#, fuzzy
-#| msgid "Yes/No keymappings"
 msgid "Save/Load keymappings"
-msgstr "Assignació de tecles Sí/No"
+msgstr "Assignació de tecles Desa/Carrega"
 
 #: engines/tinsel/metaengine.cpp:306
-#, fuzzy
-#| msgid "Option dialog"
 msgid "Options Dialog"
 msgstr "Finestra d'opcions"
 
 #: engines/tinsel/metaengine.cpp:340
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Page Up in save/load menu"
-msgstr "Ves al menú de desar/carregar"
+msgstr "Pàgina amunt en el menú de desar/carregar"
 
 #: engines/tinsel/metaengine.cpp:346
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Page down in save/load menu"
-msgstr "Ves al menú de desar/carregar"
+msgstr "Pàgina avall en el menú de desar/carregar"
 
 #: engines/tinsel/metaengine.cpp:352
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Go to start of save/load menu"
-msgstr "Ves al menú de desar/carregar"
+msgstr "Ves a l'inici del menú de desar/carregar"
 
 #: engines/tinsel/metaengine.cpp:358
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Go to end of save/load menu"
-msgstr "Ves al menú de desar/carregar"
+msgstr "Ves al final del menú de desar/carregar"
 
 #: engines/tony/tony.cpp:248
 #, c-format
