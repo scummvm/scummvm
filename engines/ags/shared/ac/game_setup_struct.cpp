@@ -39,7 +39,6 @@ GameSetupStruct::GameSetupStruct()
 	memset(lipSyncFrameLetters, 0, sizeof(lipSyncFrameLetters));
 	memset(guid, 0, sizeof(guid));
 	memset(saveGameFileExtension, 0, sizeof(saveGameFileExtension));
-	memset(saveGameFolderName, 0, sizeof(saveGameFolderName));
 }
 
 GameSetupStruct::~GameSetupStruct() {
@@ -112,7 +111,7 @@ void GameSetupStruct::read_savegame_info(Shared::Stream *in, GameDataVersion dat
 	if (data_ver > kGameVersion_272) { // only 3.x
 		StrUtil::ReadCStrCount(guid, in, MAX_GUID_LENGTH);
 		StrUtil::ReadCStrCount(saveGameFileExtension, in, MAX_SG_EXT_LENGTH);
-		StrUtil::ReadCStrCount(saveGameFolderName, in, MAX_SG_FOLDER_LEN);
+		saveGameFolderName.ReadCount(in, LEGACY_MAX_SG_FOLDER_LEN);
 	}
 }
 

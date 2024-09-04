@@ -666,17 +666,16 @@ void SetDefaultGlobalMessages(GameSetupStruct &game) {
 void FixupSaveDirectory(GameSetupStruct &game) {
 	// If the save game folder was not specified by game author, create one of
 	// the game name, game GUID, or uniqueid, as a last resort
-	if (!_GP(game).saveGameFolderName[0]) {
-		if (_GP(game).gamename[0])
-			snprintf(_GP(game).saveGameFolderName, MAX_SG_FOLDER_LEN, "%s", _GP(game).gamename);
+	if (_GP(game).saveGameFolderName.IsEmpty()) {
+		if (!_GP(game).gamename.IsEmpty())
+			_GP(game).saveGameFolderName = _GP(game).gamename;
 		else if (_GP(game).guid[0])
-			snprintf(_GP(game).saveGameFolderName, MAX_SG_FOLDER_LEN, "%s", _GP(game).guid);
+			_GP(game).saveGameFolderName = _GP(game).guid;
 		else
-			snprintf(_GP(game).saveGameFolderName, MAX_SG_FOLDER_LEN, "AGS-Game-%d", _GP(game).uniqueid);
+			_GP(game).saveGameFolderName.Format("AGS-Game-%d", _GP(game).uniqueid);
 	}
 	// Lastly, fixup folder name by removing any illegal characters
-	String s = Path::FixupSharedFilename(_GP(game).saveGameFolderName);
-	snprintf(_GP(game).saveGameFolderName, MAX_SG_FOLDER_LEN, "%s", s.GetCStr());
+	_GP(game).saveGameFolderName = Path::FixupSharedFilename(_GP(game).saveGameFolderName);
 }
 
 HGameFileError ReadSpriteFlags(LoadedGameEntities &ents, Stream *in, GameDataVersion data_ver) {
@@ -741,6 +740,8 @@ HError GameDataExtReader::ReadBlock(int /*block_id*/, const String &ext_id,
 	} else if (ext_id.CompareNoCase("v361_objnames") == 0) {
 		// Extended object names and script names:
 		// for object types that had hard name length limits
+		_ents.Game.gamename = StrUtil::ReadString(_in);
+		_ents.Game.saveGameFolderName = StrUtil::ReadString(_in);
 		size_t num_chars = _in->ReadInt32();
 		if (num_chars != _ents.Game.chars.size())
 			return new Error(String::FromFormat("Mismatching number of characters: read %zu expected %zu", num_chars, _ents.Game.chars.size()));
@@ -785,7 +786,7 @@ HGameFileError ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersio
 	GameSetupStruct::SerializeInfo sinfo;
 	game.GameSetupStructBase::ReadFromFile(in, data_ver, sinfo);
 
-	Debug::Printf(kDbgMsg_Info, "Game title: '%s'", game.gamename);
+	Debug::Printf(kDbgMsg_Info, "Game title: '%s'", game.gamename.GetCStr());
 	Debug::Printf(kDbgMsg_Info, "Game uid (old format): `%d`", game.uniqueid);
 	Debug::Printf(kDbgMsg_Info, "Game guid: '%s'", game.guid);
 

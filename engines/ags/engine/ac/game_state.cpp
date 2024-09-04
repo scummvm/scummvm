@@ -595,7 +595,10 @@ void GameState::ReadFromSavegame(Stream *in, GameDataVersion data_ver, GameState
 	in->Read(playmp3file_name, PLAYMP3FILE_MAX_FILENAME_LEN);
 	in->Read(globalstrings, MAXGLOBALSTRINGS * MAX_MAXSTRLEN);
 	in->Read(lastParserEntry, MAX_MAXSTRLEN);
-	StrUtil::ReadCStrCount(game_name, in, MAX_GAME_STATE_NAME_LENGTH);
+	if (svg_ver < kGSSvgVersion_361_14)
+		game_name.ReadCount(in, LEGACY_GAMESTATE_GAMENAMELENGTH);
+	else
+		game_name = StrUtil::ReadString(in);
 	ground_level_areas_disabled = in->ReadInt32();
 	next_screen_transition = in->ReadInt32();
 	in->ReadInt32(); // gamma_adjustment -- do not apply gamma level from savegame
@@ -786,7 +789,7 @@ void GameState::WriteForSavegame(Stream *out) const {
 	out->Write(playmp3file_name, PLAYMP3FILE_MAX_FILENAME_LEN);
 	out->Write(globalstrings, MAXGLOBALSTRINGS * MAX_MAXSTRLEN);
 	out->Write(lastParserEntry, MAX_MAXSTRLEN);
-	out->Write(game_name, MAX_GAME_STATE_NAME_LENGTH);
+	StrUtil::WriteString(game_name, out);
 	out->WriteInt32(ground_level_areas_disabled);
 	out->WriteInt32(next_screen_transition);
 	out->WriteInt32(gamma_adjustment);

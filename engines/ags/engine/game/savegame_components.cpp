@@ -1067,7 +1067,7 @@ struct ComponentHandlers {
 	const ComponentHandler _items[18] = {
 		{
 			"Game State",
-			kGSSvgVersion_350_10,
+			kGSSvgVersion_361_14,
 			kGSSvgVersion_Initial,
 			WriteGameState,
 			ReadGameState
