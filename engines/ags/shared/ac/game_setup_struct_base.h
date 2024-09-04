@@ -55,11 +55,11 @@ struct ccScript;
 
 
 struct GameSetupStructBase {
-	static const int  GAME_NAME_LENGTH = 50;
+	static const int  LEGACY_GAME_NAME_LENGTH = 50;
 	static const int  MAX_OPTIONS = 100;
 	static const int  NUM_INTS_RESERVED = 17;
 
-	char              gamename[GAME_NAME_LENGTH];
+	Shared::String    gamename;
 	int32_t           options[MAX_OPTIONS];
 	unsigned char     paluses[256];
 	RGB               defpal[256];

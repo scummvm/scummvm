@@ -517,7 +517,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	// ensure that the current cursor is locked
 	_GP(spriteset).Precache(_GP(game).mcurs[r_data.CursorID].pic);
 
-	sys_window_set_title(_GP(play).game_name);
+	sys_window_set_title(_GP(play).game_name.GetCStr());
 
 	if (_G(displayed_room) >= 0) {
 		// Fixup the frame index, in case the restored room does not have enough background frames
