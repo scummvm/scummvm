@@ -357,27 +357,6 @@
 	#endif
 #endif
 
-//
-// Some more system specific settings.
-// TODO/FIXME: All of these should be moved to backend specific files (such as portdefs.h)
-//
-#if defined(DINGUX)
-
-	// Very BAD hack following, used to avoid triggering an assert in uClibc dingux library
-	// "toupper" when pressing keyboard function keys.
-	#undef toupper
-	#define toupper(c) __extension__ ({ auto _x = ((c) & 0xFF); (_x >= 97 && _x <= 122) ? (_x - 32) : _x; })
-
-#elif defined(__PSP__)
-
-	#include <malloc.h>
-	#include "backends/platform/psp/memory.h"
-
-	/* to make an efficient, inlined memcpy implementation */
-	#define memcpy(dst, src, size)   psp_memcpy(dst, src, size)
-
-#endif
-
 #if defined(USE_TREMOR) && !defined(USE_VORBIS)
 #define USE_VORBIS // make sure this one is defined together with USE_TREMOR!
 #endif
@@ -605,6 +584,27 @@ namespace std {
 #include <initializer_list>
 
 #endif // NO_CXX11_INITIALIZER_LIST
+
+//
+// Some more system specific settings.
+// TODO/FIXME: All of these should be moved to backend specific files (such as portdefs.h)
+//
+#if defined(DINGUX)
+
+	// Very BAD hack following, used to avoid triggering an assert in uClibc dingux library
+	// "toupper" when pressing keyboard function keys.
+	#undef toupper
+	#define toupper(c) __extension__ ({ auto _x = ((c) & 0xFF); (_x >= 97 && _x <= 122) ? (_x - 32) : _x; })
+
+#elif defined(__PSP__)
+
+	#include <malloc.h>
+	#include "backends/platform/psp/memory.h"
+
+	/* to make an efficient, inlined memcpy implementation */
+	#define memcpy(dst, src, size)   psp_memcpy(dst, src, size)
+
+#endif
 
 #include "common/forbidden.h"
 
