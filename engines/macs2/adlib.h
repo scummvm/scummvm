@@ -85,6 +85,9 @@ namespace Macs2 {
 
 		// Reads a byte without advancing the read stream
 		uint8 peekByte();
+
+		// Reads a byte from the specified offset without changing the position in the stream
+		uint8 peekByteAt(uint16 offset);
 	
 
 	public:
