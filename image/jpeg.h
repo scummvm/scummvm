@@ -58,6 +58,7 @@ public:
 
 	// Codec API
 	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
+	void setCodecAccuracy(CodecAccuracy accuracy) override;
 	Graphics::PixelFormat getPixelFormat() const override;
 	bool setOutputPixelFormat(const Graphics::PixelFormat &format) override { _requestedPixelFormat = format; return true; }
 
@@ -100,6 +101,7 @@ private:
 	Graphics::Surface _surface;
 	ColorSpace _colorSpace;
 	Graphics::PixelFormat _requestedPixelFormat;
+	CodecAccuracy _accuracy;
 
 	Graphics::PixelFormat getByteOrderRgbPixelFormat() const;
 };
