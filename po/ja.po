@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-03 19:24+0000\n"
+"POT-Creation-Date: 2024-09-04 07:14+0000\n"
 "PO-Revision-Date: 2024-08-29 16:43+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -6171,15 +6171,15 @@ msgstr "右クリック"
 msgid "Exit cutscene"
 msgstr "ムービーを終了"
 
-#: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:187
+#: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:198
 msgid "Music volume down"
 msgstr "BGMの音量ダウン"
 
-#: engines/agos/metaengine.cpp:262 engines/vcruise/metaengine.cpp:192
+#: engines/agos/metaengine.cpp:262 engines/vcruise/metaengine.cpp:203
 msgid "Music volume up"
 msgstr "BGMの音量アップ"
 
-#: engines/agos/metaengine.cpp:268 engines/vcruise/metaengine.cpp:177
+#: engines/agos/metaengine.cpp:268 engines/vcruise/metaengine.cpp:188
 msgid "Toggle music on/off"
 msgstr "BGM ON/OFFの切替"
 
@@ -6851,7 +6851,7 @@ msgstr "スキップ"
 #: engines/hopkins/metaengine.cpp:238 engines/lure/metaengine.cpp:191
 #: engines/made/metaengine.cpp:162 engines/mads/metaengine.cpp:305
 #: engines/saga/metaengine.cpp:441 engines/stark/metaengine.cpp:208
-#: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:151
+#: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:162
 #: engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "ゲームをセーブ"
@@ -6861,7 +6861,7 @@ msgstr "ゲームをセーブ"
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:431
 #: engines/stark/metaengine.cpp:213 engines/trecision/metaengine.cpp:175
-#: engines/vcruise/metaengine.cpp:156 engines/wintermute/keymapper_tables.h:925
+#: engines/vcruise/metaengine.cpp:167 engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
 msgstr "ゲームをロード"
@@ -9492,7 +9492,7 @@ msgstr ""
 
 #: engines/saga/metaengine.cpp:333 engines/scumm/help.cpp:80
 #: engines/stark/metaengine.cpp:286 engines/trecision/metaengine.cpp:150
-#: engines/vcruise/metaengine.cpp:171
+#: engines/vcruise/metaengine.cpp:182
 msgid "Pause game"
 msgstr "ポーズ"
 
@@ -9578,7 +9578,7 @@ msgid "Continue game"
 msgstr "ゲームを続行"
 
 #: engines/saga/metaengine.cpp:436 engines/trecision/metaengine.cpp:156
-#: engines/vcruise/metaengine.cpp:166
+#: engines/vcruise/metaengine.cpp:177
 msgid "Quit game"
 msgstr "ゲーム終了"
 
@@ -12245,31 +12245,39 @@ msgstr "サウンドを先行読込"
 msgid "Preload sounds. May improve performance on slow hard drives."
 msgstr "サウンドを先行読込。低速なドライブで有効な可能性があります。"
 
-#: engines/vcruise/metaengine.cpp:146
+#: engines/vcruise/metaengine.cpp:108
+msgid "Faster video decoder (lower quality)"
+msgstr ""
+
+#: engines/vcruise/metaengine.cpp:109
+msgid "Reduce video decoding CPU usage at the cost of quality."
+msgstr ""
+
+#: engines/vcruise/metaengine.cpp:157
 msgid "Display help screen"
 msgstr "情報スクリーンの表示"
 
-#: engines/vcruise/metaengine.cpp:161
+#: engines/vcruise/metaengine.cpp:172
 msgid "Open sound settings"
 msgstr "サウンド設定を開く"
 
-#: engines/vcruise/metaengine.cpp:182
+#: engines/vcruise/metaengine.cpp:193
 msgid "Toggle sound effects on/off"
 msgstr "SE ON/OFFの切替"
 
-#: engines/vcruise/metaengine.cpp:197
+#: engines/vcruise/metaengine.cpp:208
 msgid "Sound effect volume down"
 msgstr "SEの音量ダウン"
 
-#: engines/vcruise/metaengine.cpp:202
+#: engines/vcruise/metaengine.cpp:213
 msgid "Sound effect volume up"
 msgstr "SEの音量アップ"
 
-#: engines/vcruise/metaengine.cpp:207
+#: engines/vcruise/metaengine.cpp:218
 msgid "Skip current animation"
 msgstr "アニメをスキップ"
 
-#: engines/vcruise/metaengine.cpp:211
+#: engines/vcruise/metaengine.cpp:222
 msgid "Cycle item in scene (debug cheat)"
 msgstr "アイテム無限(デバッグチート)"
 

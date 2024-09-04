@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-03 19:24+0000\n"
+"POT-Creation-Date: 2024-09-04 07:14+0000\n"
 "PO-Revision-Date: 2024-07-11 17:47+0000\n"
 "Last-Translator: Krish <ganatrakrish2882005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -5831,17 +5831,17 @@ msgstr "दाहिना क्लिक"
 msgid "Exit cutscene"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:187
+#: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:198
 #, fuzzy
 #| msgid "Move down"
 msgid "Music volume down"
 msgstr "नीचे को चलें"
 
-#: engines/agos/metaengine.cpp:262 engines/vcruise/metaengine.cpp:192
+#: engines/agos/metaengine.cpp:262 engines/vcruise/metaengine.cpp:203
 msgid "Music volume up"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:268 engines/vcruise/metaengine.cpp:177
+#: engines/agos/metaengine.cpp:268 engines/vcruise/metaengine.cpp:188
 msgid "Toggle music on/off"
 msgstr ""
 
@@ -6464,7 +6464,7 @@ msgstr ""
 #: engines/hopkins/metaengine.cpp:238 engines/lure/metaengine.cpp:191
 #: engines/made/metaengine.cpp:162 engines/mads/metaengine.cpp:305
 #: engines/saga/metaengine.cpp:441 engines/stark/metaengine.cpp:208
-#: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:151
+#: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:162
 #: engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr ""
@@ -6474,7 +6474,7 @@ msgstr ""
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:431
 #: engines/stark/metaengine.cpp:213 engines/trecision/metaengine.cpp:175
-#: engines/vcruise/metaengine.cpp:156 engines/wintermute/keymapper_tables.h:925
+#: engines/vcruise/metaengine.cpp:167 engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
 msgstr ""
@@ -8963,7 +8963,7 @@ msgstr ""
 
 #: engines/saga/metaengine.cpp:333 engines/scumm/help.cpp:80
 #: engines/stark/metaengine.cpp:286 engines/trecision/metaengine.cpp:150
-#: engines/vcruise/metaengine.cpp:171
+#: engines/vcruise/metaengine.cpp:182
 msgid "Pause game"
 msgstr ""
 
@@ -9054,7 +9054,7 @@ msgid "Continue game"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:436 engines/trecision/metaengine.cpp:156
-#: engines/vcruise/metaengine.cpp:166
+#: engines/vcruise/metaengine.cpp:177
 #, fuzzy
 #| msgid "Quit Game"
 msgid "Quit game"
@@ -11597,35 +11597,43 @@ msgstr ""
 msgid "Preload sounds. May improve performance on slow hard drives."
 msgstr ""
 
-#: engines/vcruise/metaengine.cpp:146
+#: engines/vcruise/metaengine.cpp:108
+msgid "Faster video decoder (lower quality)"
+msgstr ""
+
+#: engines/vcruise/metaengine.cpp:109
+msgid "Reduce video decoding CPU usage at the cost of quality."
+msgstr ""
+
+#: engines/vcruise/metaengine.cpp:157
 msgid "Display help screen"
 msgstr ""
 
-#: engines/vcruise/metaengine.cpp:161
+#: engines/vcruise/metaengine.cpp:172
 #, fuzzy
 #| msgid "Override global audio settings"
 msgid "Open sound settings"
 msgstr "ग्लोबल ऑडियो सेटिंग्स को ओवरराइड करें"
 
-#: engines/vcruise/metaengine.cpp:182
+#: engines/vcruise/metaengine.cpp:193
 msgid "Toggle sound effects on/off"
 msgstr ""
 
-#: engines/vcruise/metaengine.cpp:197
+#: engines/vcruise/metaengine.cpp:208
 msgid "Sound effect volume down"
 msgstr ""
 
-#: engines/vcruise/metaengine.cpp:202
+#: engines/vcruise/metaengine.cpp:213
 msgid "Sound effect volume up"
 msgstr ""
 
-#: engines/vcruise/metaengine.cpp:207
+#: engines/vcruise/metaengine.cpp:218
 #, fuzzy
 #| msgid "Speech Options"
 msgid "Skip current animation"
 msgstr "बोली के विकल्प(O)..."
 
-#: engines/vcruise/metaengine.cpp:211
+#: engines/vcruise/metaengine.cpp:222
 msgid "Cycle item in scene (debug cheat)"
 msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-03 19:24+0000\n"
+"POT-Creation-Date: 2024-09-04 07:14+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -6068,19 +6068,19 @@ msgstr "Правы пстрык"
 msgid "Exit cutscene"
 msgstr "Прапусьціць сцэнку"
 
-#: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:187
+#: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:198
 #, fuzzy
 #| msgid "Music volume up / down"
 msgid "Music volume down"
 msgstr "Павялічыць / паменьшыць гучнасьць музыкі"
 
-#: engines/agos/metaengine.cpp:262 engines/vcruise/metaengine.cpp:192
+#: engines/agos/metaengine.cpp:262 engines/vcruise/metaengine.cpp:203
 #, fuzzy
 #| msgid "Music volume: "
 msgid "Music volume up"
 msgstr "Гучнасьць музыкі: "
 
-#: engines/agos/metaengine.cpp:268 engines/vcruise/metaengine.cpp:177
+#: engines/agos/metaengine.cpp:268 engines/vcruise/metaengine.cpp:188
 #, fuzzy
 #| msgid "Toggle fullscreen"
 msgid "Toggle music on/off"
@@ -6787,7 +6787,7 @@ msgstr "Прапусьціць"
 #: engines/hopkins/metaengine.cpp:238 engines/lure/metaengine.cpp:191
 #: engines/made/metaengine.cpp:162 engines/mads/metaengine.cpp:305
 #: engines/saga/metaengine.cpp:441 engines/stark/metaengine.cpp:208
-#: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:151
+#: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:162
 #: engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Захаваць гульню"
@@ -6797,7 +6797,7 @@ msgstr "Захаваць гульню"
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:431
 #: engines/stark/metaengine.cpp:213 engines/trecision/metaengine.cpp:175
-#: engines/vcruise/metaengine.cpp:156 engines/wintermute/keymapper_tables.h:925
+#: engines/vcruise/metaengine.cpp:167 engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
 msgstr "Заладаваць гульню"
@@ -9549,7 +9549,7 @@ msgstr ""
 
 #: engines/saga/metaengine.cpp:333 engines/scumm/help.cpp:80
 #: engines/stark/metaengine.cpp:286 engines/trecision/metaengine.cpp:150
-#: engines/vcruise/metaengine.cpp:171
+#: engines/vcruise/metaengine.cpp:182
 msgid "Pause game"
 msgstr "Перапынак гульні"
 
@@ -9647,7 +9647,7 @@ msgid "Continue game"
 msgstr "Працягнуць"
 
 #: engines/saga/metaengine.cpp:436 engines/trecision/metaengine.cpp:156
-#: engines/vcruise/metaengine.cpp:166
+#: engines/vcruise/metaengine.cpp:177
 #, fuzzy
 #| msgid "Quit Game"
 msgid "Quit game"
@@ -12370,43 +12370,51 @@ msgstr ""
 msgid "Preload sounds. May improve performance on slow hard drives."
 msgstr ""
 
-#: engines/vcruise/metaengine.cpp:146
+#: engines/vcruise/metaengine.cpp:108
+msgid "Faster video decoder (lower quality)"
+msgstr ""
+
+#: engines/vcruise/metaengine.cpp:109
+msgid "Reduce video decoding CPU usage at the cost of quality."
+msgstr ""
+
+#: engines/vcruise/metaengine.cpp:157
 #, fuzzy
 #| msgid "Display/Hide Info Screen"
 msgid "Display help screen"
 msgstr "Паказаць/схаваць экран інфармацыі"
 
-#: engines/vcruise/metaengine.cpp:161
+#: engines/vcruise/metaengine.cpp:172
 #, fuzzy
 #| msgid "Open 3DS Settings"
 msgid "Open sound settings"
 msgstr "Адкрыць налады 3DS"
 
-#: engines/vcruise/metaengine.cpp:182
+#: engines/vcruise/metaengine.cpp:193
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Toggle sound effects on/off"
 msgstr "Гучнасьць спэцыяльных гукавых эфэктаў"
 
-#: engines/vcruise/metaengine.cpp:197
+#: engines/vcruise/metaengine.cpp:208
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Sound effect volume down"
 msgstr "Гучнасьць спэцыяльных гукавых эфэктаў"
 
-#: engines/vcruise/metaengine.cpp:202
+#: engines/vcruise/metaengine.cpp:213
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Sound effect volume up"
 msgstr "Гучнасьць спэцыяльных гукавых эфэктаў"
 
-#: engines/vcruise/metaengine.cpp:207
+#: engines/vcruise/metaengine.cpp:218
 #, fuzzy
 #| msgid "Speech Options"
 msgid "Skip current animation"
 msgstr "Налады агучкі"
 
-#: engines/vcruise/metaengine.cpp:211
+#: engines/vcruise/metaengine.cpp:222
 msgid "Cycle item in scene (debug cheat)"
 msgstr ""
 
