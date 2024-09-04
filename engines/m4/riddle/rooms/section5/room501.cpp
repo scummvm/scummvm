@@ -85,6 +85,358 @@ void Room501::init() {
 }
 
 void Room501::daemon() {
+	int frame;
+
+	switch (_G(kernel).trigger) {
+	case 501:
+		_val9 = 1;
+		_xyzzy1 = 0;
+		_xyzzy2 = -1;
+		_xyzzy3 = 0;
+
+		_ripTalkLoop = series_load("RIP TALK LOOP");
+		player_update_info();
+		_shadow = series_show("SAFARI SHADOW 3", 0xf00, 128, -1, -1, 0,
+			_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, 0,
+			triggerMachineByHashCallbackNegative, "Rip Delta Machine State");
+
+		switch (_val3) {
+		case 3:
+			ws_hide_walker();
+			sendWSMessage_10000(1, _ripley, _ripTalkLoop, 2, 11, 502,
+				_ripTalkLoop, 11, 11, 0);
+			_val9 = 3;
+			break;
+
+		case 4:
+			sendWSMessage_10000(1, _ripley, _ripTalkLoop, 11, 11, 502,
+				_ripTalkLoop, 11, 11, 0);
+			_val9 = 3;
+			break;
+
+		case 5:
+			sendWSMessage_10000(1, _ripley, _ripTalkLoop, 11, 11, 502,
+				_ripTalkLoop, 11, 11, 0);
+			_val3 = 3;
+			_val9 = 3;
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 502:
+		if (_val9 == 3 && _val3 == 3 && _val6 != -1) {
+			kernel_trigger_dispatchx(_val6);
+			_val6 = -1;
+		}
+		if (_val9 == 7 && _val3 == 7 && _xyzzy2 != -1) {
+			kernel_trigger_dispatchx(_xyzzy2);
+			_xyzzy2 = -1;
+		}
+		if (_val9 == 13 && _val3 == 13 && _xyzzy4 != -1) {
+			kernel_trigger_dispatchx(_xyzzy4);
+			_xyzzy4 = -1;
+		}
+		if (_val9 == 3 && _val3 == 4 && _val7 != -1) {
+			kernel_trigger_dispatchx(_val7);
+			_val7 = -1;
+		}
+
+		if (_xyzzy1) {
+			terminateMachineAndNull(_ripley);
+
+			if (!_xyzzy3)
+				ws_unhide_walker();
+
+			terminateMachineAndNull(_shadow);
+			_val5 = 0;
+
+			if (_val9 == 3)
+				series_unload(_ripTalkLoop);
+
+		} else {
+			kernel_timing_trigger(1, 503);
+		}
+		break;
+
+	case 503:
+		switch (_val9) {
+		case 3:
+			switch (_val3) {
+			case 2:
+				_val3 = 3;
+				_val6 = kernel_trigger_create(508);
+				kernel_timing_trigger(1, 502);
+				break;
+			case 3:
+				sendWSMessage_10000(1, _ripley, _ripTalkLoop, 11, 11, 502,
+					_ripTalkLoop, 11, 11, 0);
+				break;
+			case 4:
+				frame = imath_ranged_rand(52, 76);
+				sendWSMessage_10000(1, _ripley, _ripTalkLoop, frame, frame, 502,
+					_ripTalkLoop, frame, frame, 0);
+				break;
+			case 6:
+				_xyzzy5 = 1;
+				digi_play((_val4 == 1) ? "501x02" : "501x03", 1);
+				sendWSMessage_10000(1, _ripley, _ripSeries1, 1, 85, 502,
+					_ripSeries1, 85, 85, 0);
+				_val3 = 7;
+				_val9 = 7;
+				break;
+			case 9:
+				_xyzzy5 = 1;
+				sendWSMessage_10000(1, _ripley, _ripSeries2, 90, 1, 502,
+					_ripSeries2, 1, 1, 0);
+				_val3 = 10;
+				break;
+			case 10:
+				digi_play("COM084", 1, 255, -1, 997);
+				kernel_timing_trigger(1, 505);
+				sendWSMessage_10000(1, _ripley, _ripSeries2, 1, 1, 502,
+					_ripSeries2, 1, 1, 0);
+				_val3 = 3;
+				break;
+			case 11:
+				_xyzzy5 = 1;
+				sendWSMessage_10000(1, _ripley, _ripSeries2, 1, 90, 502,
+					_ripSeries2, 90, 90, 0);
+				_val3 = 12;
+				break;
+			case 12:
+				kernel_timing_trigger(1, 505);
+				sendWSMessage_10000(1, _ripley, _ripSeries2, 1, 1, 502,
+					_ripSeries2, 1, 1, 0);
+				_val3 = 3;
+				break;
+			case 13:
+				sendWSMessage_10000(1, _ripley, _ripTalkLoop, 11, 2, 502,
+					_ripTalkLoop, 2, 2, 0);
+				_val9 = 13;
+				break;
+			case 14:
+				_xyzzy5 = 1;
+				sendWSMessage_10000(1, _ripley, _ripMoneyExchange, 1, 85, 502,
+					_ripMoneyExchange, 85, 85, 0);
+				_val3 = 15;
+				break;
+			case 15:
+				kernel_timing_trigger(1, 505);
+				sendWSMessage_10000(1, _ripley, _ripMoneyExchange, 85, 85, 502,
+					_ripMoneyExchange, 85, 85, 0);
+				_val3 = 3;
+				_val6 = kernel_trigger_create(551);
+
+				if (!inv_player_has("PERUVIAN INTI"))
+					inv_give_to_player("PERUVIAN INTI");
+				break;
+			case 16:
+				_ripSignsPaper = series_load("RIP SIGNS PAPER");
+				_xyzzy5 = 1;
+				digi_play(conv_sound_to_play(), 1);
+				sendWSMessage_10000(1, _ripley, _ripSignsPaper, 1, 91, 502,
+					_ripSignsPaper, 91, 91, 0);
+				_val3 = 17;
+				break;
+			case 17:
+				sendWSMessage_10000(1, _ripley, _ripSignsPaper, 85, 92, -1,
+					_ripSignsPaper, 90, 92, 4);
+				digi_play("950_S35", 1, 255, 502);
+				_val3 = 18;
+				break;
+			case 18:
+				if (!_paper) {
+					_paper = series_place_sprite("one frame paper", 0, 0, 0, 100, 0x780);
+					_flag = 1;
+				}
+
+				kernel_timing_trigger(1, 505);
+				sendWSMessage_10000(1, _ripley, _ripSignsPaper, 92, 111, 502,
+					_ripSignsPaper, 111, 111, 0);
+				_val3 = 3;
+				break;
+			case 19:
+				_ripMoneyExchange = series_load("MONEY XCHANGE");
+				_xyzzy5 = 1;
+				sendWSMessage_10000(1, _ripley, _ripMoneyExchange, 61, 85, 502,
+					_ripMoneyExchange, 85, 85, 0);
+				_val3 = 20;
+				break;
+			case 20:
+				if (!inv_player_has("US DOLLARS"))
+					inv_give_to_player("US DOLLARS");
+
+				kernel_timing_trigger(1, 505);
+				sendWSMessage_10000(1, _ripley, _ripSignsPaper, 85, 85, 502,
+					_ripSignsPaper, 85, 85, 0);
+				_val3 = 3;
+				break;
+			default:
+				break;
+			}
+			break;
+
+		case 7:
+			switch (_val3) {
+			case 3:
+				kernel_timing_trigger(1, 504);
+				sendWSMessage_10000(1, _ripley, _ripSeries1, 86, 94, 502,
+					_ripTalkLoop, 11, 11, 0);
+				_val3 = 3;
+				_val9 = 3;
+				break;
+			case 7:
+				sendWSMessage_10000(1, _ripley, _ripSeries1, 85, 85, 502,
+					_ripSeries1, 85, 85, 0);
+				break;
+			case 8:
+				sendWSMessage_10000(1, _ripley, _ripSeries1, 85, 86, 502,
+					_ripSeries1, 86, 85, 0);
+				_val3 = 7;
+				break;
+			default:
+				break;
+			}
+			break;
+
+		case 13:
+			switch (_val3) {
+			case 3:
+				sendWSMessage_10000(1, _ripley, _ripTalkLoop, 2, 11, 502,
+					_ripTalkLoop, 11, 11, 0);
+				_val9 = 3;
+				break;
+			case 13:
+				sendWSMessage_10000(1, _ripley, _ripTalkLoop, 11, 2, 502,
+					_ripTalkLoop, 2, 2, 0);
+				break;
+			default:
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 504:
+		_xyzzy8 = 1;
+		_val1 = 1;
+		_xyzzy6 = -1;
+		_xyzzy7 = -1;
+		_xyzzy5 = -1;
+		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, 0,
+			triggerMachineByHashCallbackNegative, "Agent at Desk");
+		sendWSMessage_10000(1, _agent, _agentTalkLoop, 1, 1, 506,
+			_agentTalkLoop, 1, 1, 0);
+		_xyzzy8 = 1;
+		break;
+
+	case 505:
+		_xyzzy8 = 5;
+		_val1 = 5;
+		_xyzzy6 = -1;
+		_xyzzy7 = -1;
+		_xyzzy5 = -1;
+		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, 0,
+			triggerMachineByHashCallbackNegative, "Agent at Desk");
+		sendWSMessage_10000(1, _agent, _agentStridesForward, 15, 15, 506,
+			_agentStridesForward, 15, 15, 0);
+		break;
+
+	case 506:
+		if (_val1 == 1 && _xyzzy8 == 1 && _xyzzy6 != -1) {
+			kernel_trigger_dispatchx(_xyzzy6);
+			_xyzzy6 = -1;
+		}
+		if (_val1 == 5 && _xyzzy8 == 5 && _xyzzy7 != -1) {
+			kernel_trigger_dispatchx(_xyzzy7);
+			_xyzzy7 = -1;
+		}
+		if (_xyzzy5 == 1) {
+			terminateMachineAndNull(_agent);
+		} else {
+			kernel_timing_trigger(1, 507);
+		}
+		break;
+
+	case 507:
+		switch (_xyzzy8) {
+		case 1:
+			switch (_val1) {
+			case 1:
+				sendWSMessage_10000(1, _agent, _agentTalkLoop, 1, 1, 506,
+					_agentTalkLoop, 1, 1, 0);
+				break;
+			case 2:
+				frame = imath_ranged_rand(1, 50);
+				sendWSMessage_10000(1, _agent, _agentTalkLoop, frame, frame, 506,
+					_agentTalkLoop, frame, frame, 0);
+				break;
+			case 3:
+				player_set_commands_allowed(false);
+				_ripMoneyExchange = series_load("MONEY XCHANGE");
+				ws_hide_walker();
+				sendWSMessage_10000(1, _agent, _ripMoneyExchange, 1, 86, 506,
+					_ripMoneyExchange, 1, 1, 0);
+				_val1 = 4;
+				break;
+			case 4:
+				ws_unhide_walker();
+				sendWSMessage_10000(1, _agent, _agentTalkLoop, 1, 1, 506,
+					_agentTalkLoop, 1, 1, 0);
+				series_unload(_ripMoneyExchange);
+				_val1 = 1;
+				player_set_commands_allowed(true);
+				break;
+			case 5:
+				sendWSMessage_10000(1, _agent, _agentStridesForward, 1, 15, 506,
+					_agentStridesForward, 15, 15, 0);
+				_xyzzy8 = 5;
+				break;
+			default:
+				break;
+			}
+			break;
+
+		case 5:
+			switch (_val1) {
+			case 1:
+				sendWSMessage_10000(1, _agent, _agentStridesForward, 15, 1, 506,
+					_agentTalkLoop, 1, 1, 0);
+				_xyzzy8 = 1;
+				break;
+
+			case 5:
+				sendWSMessage_10000(1, _agent, _agentStridesForward, 15, 15, 506,
+					_agentStridesForward, 15, 15, 0);
+				break;
+
+			case 6:
+				sendWSMessage_10000(1, _agent, _agentSeries1, 1, 46, 502,
+					_agentSeries1, 46, 46, 0);
+				digi_play("501R36", 1);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	// TODO
+	default:
+		break;
+	}
 }
 
 void Room501::parser() {

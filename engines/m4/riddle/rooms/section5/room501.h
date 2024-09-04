@@ -30,12 +30,22 @@ namespace Rooms {
 
 class Room501 : public Room {
 private:
+	machine *_ripley = nullptr;
+	machine *_shadow = nullptr;
+	machine *_agent = nullptr;
 	machine *_clock = nullptr;
 	machine *_paper = nullptr;
 	int _agentTalkLoop = 0;
 	int _agentStridesForward = 0;
+	int _agentSeries1 = 0;
 	const char *_digiName = nullptr;
+	int _convEntry = 0;
 	bool _flag = false;
+	int _ripTalkLoop = 0;
+	int _ripSeries1 = 0;
+	int _ripSeries2 = 0;
+	int _ripMoneyExchange = 0;
+	int _ripSignsPaper = 0;
 	int _val1 = 0;
 	int _val2 = 0;
 	int _val3 = 0;
@@ -44,7 +54,15 @@ private:
 	int _val6 = 0;
 	int _val7 = 0;
 	int _val8 = 0;
-	int _convEntry = 0;
+	int _val9 = 0;
+	int _xyzzy1 = 0;
+	int _xyzzy2 = 0;
+	int _xyzzy3 = 0;
+	int _xyzzy4 = 0;
+	int _xyzzy5 = 0;
+	int _xyzzy6 = 0;
+	int _xyzzy7 = 0;
+	int _xyzzy8 = 0;
 
 	void conv501a();
 
