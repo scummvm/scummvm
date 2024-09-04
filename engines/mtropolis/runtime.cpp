@@ -3629,7 +3629,7 @@ bool Structural::readAttributeIndexed(MiniscriptThread *thread, DynamicValue &re
 		return true;
 	}
 
-	return Structural::readAttributeIndexed(thread, result, attrib, index);
+	return RuntimeObject::readAttributeIndexed(thread, result, attrib, index);
 }
 
 
