@@ -131,10 +131,10 @@ bool PspSemaphore::pollForValue(int value) {
 }
 
 // false: timeout or error
-bool PspSemaphore::takeWithTimeOut(uint32 timeOut) {
+bool PspSemaphore::takeWithTimeOut(uint timeOut) {
 	DEBUG_ENTER_FUNC();
 
-	uint32 *pTimeOut = 0;
+	uint *pTimeOut = 0;
 	if (timeOut)
 		pTimeOut = &timeOut;
 

@@ -102,7 +102,7 @@ void Palette::setColorPositionAlpha(uint32 position, bool alpha) {
 
 //	Set some of the palette to color values in array
 //	By default, ScummVm doesn't support alpha values in palettes
-void Palette::setPartial(const byte *colors, uint32 start, uint32 num, bool supportsAlpha /* = false */) {
+void Palette::setPartial(const byte *colors, uint start, uint num, bool supportsAlpha /* = false */) {
 	DEBUG_ENTER_FUNC();
 
 	assert(_values);
