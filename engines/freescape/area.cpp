@@ -398,6 +398,9 @@ Object *Area::checkCollisionRay(const Math::Ray &ray, int raySize) {
 			if (collidedDistance >= 1.0)
 				continue;
 
+			if (collidedDistance == 0.0 && signbit(collidedDistance))
+				continue;
+
 			if (collidedDistance < distance || (ABS(collidedDistance - distance) <= 0.05 && gobj->getSize().length() < size)) {
 				collided = obj;
 				size = gobj->getSize().length();
