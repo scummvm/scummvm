@@ -720,30 +720,60 @@ HError GameDataExtReader::ReadBlock(int /*block_id*/, const String &ext_id,
     //     // read new gui properties
     // }
 	if (ext_id.CompareNoCase("v360_fonts") == 0) {
-		for (int i = 0; i < _ents.Game.numfonts; ++i) {
+		for (FontInfo &finfo : _ents.Game.fonts) {
 			// adjustable font outlines
-			_ents.Game.fonts[i].AutoOutlineThickness = _in->ReadInt32();
-			_ents.Game.fonts[i].AutoOutlineStyle =
-				static_cast<enum FontInfo::AutoOutlineStyle>(_in->ReadInt32());
+			finfo.AutoOutlineThickness = _in->ReadInt32();
+			finfo.AutoOutlineStyle = static_cast<enum FontInfo::AutoOutlineStyle>(_in->ReadInt32());
 			// reserved
 			_in->ReadInt32();
 			_in->ReadInt32();
 			_in->ReadInt32();
 			_in->ReadInt32();
 		}
-		return HError::None();
 	} else if (ext_id.CompareNoCase("v360_cursors") == 0) {
-		for (int i = 0; i < _ents.Game.numcursors; ++i) {
-			_ents.Game.mcurs[i].animdelay = _in->ReadInt32();
+		for (MouseCursor &mcur : _ents.Game.mcurs) {
+			mcur.animdelay = _in->ReadInt32();
 			// reserved
 			_in->ReadInt32();
 			_in->ReadInt32();
 			_in->ReadInt32();
 		}
-		return HError::None();
+	} else if (ext_id.CompareNoCase("v361_objnames") == 0) {
+		// Extended object names and script names:
+		// for object types that had hard name length limits
+		size_t num_chars = _in->ReadInt32();
+		if (num_chars != _ents.Game.chars.size())
+			return new Error(String::FromFormat("Mismatching number of characters: read %zu expected %zu", num_chars, _ents.Game.chars.size()));
+		for (CharacterInfo &chinfo : _ents.Game.chars) {
+			chinfo.scrname = StrUtil::ReadString(_in);
+			chinfo.name = StrUtil::ReadString(_in);
+			// assign to the legacy fields for compatibility with old plugins
+			snprintf(chinfo.legacy_scrname, LEGACY_MAX_SCRIPT_NAME_LEN, "%s", chinfo.scrname.GetCStr());
+			snprintf(chinfo.legacy_name, LEGACY_MAX_CHAR_NAME_LEN, "%s", chinfo.name.GetCStr());
+		}
+		size_t num_invitems = _in->ReadInt32();
+		if (num_invitems != _ents.Game.numinvitems)
+			return new Error(String::FromFormat("Mismatching number of inventory items: read %zu expected %zu", num_invitems, (size_t)_ents.Game.numinvitems));
+		for (int i = 0; i < _ents.Game.numinvitems; ++i) {
+			_ents.Game.invinfo[i].name = StrUtil::ReadString(_in);
+		}
+		size_t num_cursors = _in->ReadInt32();
+		if (num_cursors != _ents.Game.mcurs.size())
+			return new Error(String::FromFormat("Mismatching number of cursors: read %zu expected %zu", num_cursors, _ents.Game.mcurs.size()));
+		for (MouseCursor &mcur : _ents.Game.mcurs) {
+			mcur.name = StrUtil::ReadString(_in);
+		}
+		size_t num_clips = _in->ReadInt32();
+		if (num_clips != _ents.Game.audioClips.size())
+			return new Error(String::FromFormat("Mismatching number of audio clips: read %zu expected %zu", num_clips, _ents.Game.audioClips.size()));
+		for (ScriptAudioClip &clip : _ents.Game.audioClips) {
+			clip.scriptName = StrUtil::ReadString(_in);
+			clip.fileName = StrUtil::ReadString(_in);
+		}
+	} else {
+		return new MainGameFileError(kMGFErr_ExtUnknown, String::FromFormat("Type: %s", ext_id.GetCStr()));
 	}
-
-    return new MainGameFileError(kMGFErr_ExtUnknown, String::FromFormat("Type: %s", ext_id.GetCStr()));
+	return HError::None();
 }
 
 HGameFileError ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersion data_ver) {
