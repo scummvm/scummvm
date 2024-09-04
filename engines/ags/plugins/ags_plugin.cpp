@@ -755,7 +755,7 @@ void IAGSEngine::GetRenderStageDesc(AGSRenderStageDesc *desc) {
 
 void IAGSEngine::GetGameInfo(AGSGameInfo* ginfo) {
 	if (ginfo->Version >= 26) {
-		snprintf(ginfo->GameName, sizeof(ginfo->GameName), "%s", _GP(game).gamename);
+		snprintf(ginfo->GameName, sizeof(ginfo->GameName), "%s", _GP(game).gamename.GetCStr());
 		snprintf(ginfo->Guid, sizeof(ginfo->Guid), "%s", _GP(game).guid);
 		ginfo->UniqueId = _GP(game).uniqueid;
 	}
