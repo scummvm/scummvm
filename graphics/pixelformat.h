@@ -173,10 +173,12 @@ struct PixelFormat {
 		gLoss(8 - GBits),
 		bLoss(8 - BBits),
 		aLoss(8 - ABits),
-		rShift(RShift),
-		gShift(GShift),
-		bShift(BShift),
-		aShift(AShift) {}
+		rShift((RBits == 0) ? 0 : RShift),
+		gShift((GBits == 0) ? 0 : GShift),
+		bShift((BBits == 0) ? 0 : BShift),
+		aShift((ABits == 0) ? 0 : AShift)
+	{
+	}
 
 	/** Define a CLUT8 pixel format. */
 	static inline PixelFormat createFormatCLUT8() {
@@ -185,7 +187,6 @@ struct PixelFormat {
 
 	/** Check if two pixel formats are the same */
 	inline bool operator==(const PixelFormat &fmt) const {
-		// TODO: If aLoss==8, then the value of aShift is irrelevant, and should be ignored.
 		return bytesPerPixel == fmt.bytesPerPixel &&
 		       rLoss == fmt.rLoss &&
 		       gLoss == fmt.gLoss &&
