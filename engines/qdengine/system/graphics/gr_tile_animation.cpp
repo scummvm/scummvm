@@ -22,6 +22,9 @@
 #include "common/debug.h"
 #include "common/file.h"
 
+#include "graphics/managed_surface.h"
+#include "image/png.h"
+
 #include "qdengine/qdengine.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 #include "qdengine/system/graphics/gr_tile_animation.h"
@@ -457,5 +460,41 @@ bool grTileAnimation::wasFrameSizeChanged(int frame_index, int scaleIdx, float s
 
 	return true;
 }
+
+void grTileAnimation::dumpTiles(Common::Path basename, int tilesPerRow) {
+	Common::Path path = Common::Path(Common::String::format("dumps/%s.tiles.png", transCyrillic(basename.baseName())));
+
+	int w = tilesPerRow;
+	int h = (_tileOffsets.size() + tilesPerRow - 1) / tilesPerRow;
+
+	Graphics::ManagedSurface *dstSurf = new Graphics::ManagedSurface(w * (GR_TILE_SPRITE_SIZE_X + 1), h * (GR_TILE_SPRITE_SIZE_Y + 1), g_engine->_pixelformat);
+
+	int index = 0;
+
+	int x = 0, y = 0;
+	for (int32 i = 0; i < tilesPerRow; i++) {
+		x = 0;
+
+		for (int32 j = 0; j < tilesPerRow; j++) {
+			grDispatcher::instance()->putTileSpr(x, y, getTile(index++), _hasAlpha, 0, dstSurf);
+			x += GR_TILE_SPRITE_SIZE_X + 1;
+
+			if (index >= _tileOffsets.size())
+				break;
+		}
+
+		y += GR_TILE_SPRITE_SIZE_X + 1;
+	}
+
+	Common::DumpFile bitmapFile;
+	bitmapFile.open(path, true);
+	Image::writePNG(bitmapFile, *(dstSurf->surfacePtr()));
+	bitmapFile.close();
+
+	warning("Dumped tile %s of %d x %d", path.toString().c_str(), dstSurf->w, dstSurf->h);
+
+	delete dstSurf;
+}
+
 
 } // namespace QDEngine

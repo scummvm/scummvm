@@ -23,6 +23,8 @@
 #ifndef QDENGINE_SYSTEM_GRAPHICS_GR_TILE_ANIMATION_H
 #define QDENGINE_SYSTEM_GRAPHICS_GR_TILE_ANIMATION_H
 
+#include "common/path.h"
+
 #include "qdengine/xmath.h"
 #include "qdengine/system/graphics/gr_tile_sprite.h"
 
@@ -81,6 +83,8 @@ public:
 	byte *decode_frame_data(int frame_index, int closest_scale) const;
 	int find_closest_scale(float *scale) const;
 	bool wasFrameSizeChanged(int frame_index, int scaleIdx, float scale) const;
+
+	void dumpTiles(Common::Path baseName, int tilesPerRow);
 
 private:
 

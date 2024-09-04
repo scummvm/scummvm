@@ -599,6 +599,8 @@ bool qdAnimation::qda_load(Common::Path fpath) {
 		debugC(1, kDebugLoad, "qdAnimation::qda_load() tileAnimation %s", transCyrillic(fpath.toString()));
 		_tileAnimation = new grTileAnimation;
 		_tileAnimation->load(fh, version);
+
+		//_tileAnimation->dumpTiles(fpath, 50);
 	}
 
 	init_size();
