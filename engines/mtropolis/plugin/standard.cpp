@@ -337,7 +337,7 @@ bool MediaCueMessengerModifier::load(const PlugInModifierLoaderContext &context,
 		break;
 	case Data::PlugInTypeTaggedValue::kString:
 		_cueSourceType = kCueSourceString;
-		_cueSource.asString = data.executeAt.value.asString;
+		_cueSource.construct<Common::String, &CueSourceUnion::asString>(data.executeAt.value.asString);
 		break;
 	default:
 		return false;
