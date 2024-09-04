@@ -74,6 +74,13 @@ void showArchives() {
 	if (ImGui::Begin("Archives", &_state->_showArchives)) {
 		ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.3f, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_None);
 
+		ImGui::Button("\uef4f"); // Filter	// filter_alt
+		ImGui::SameLine();
+
+		ImGuiTextFilter nameFilter;
+		nameFilter.Draw();
+		ImGui::Separator();
+
 		// Iterate through the 3 resource pak files
 		for (int i = 0; i < 3; i++) {
 			Common::Archive *archive = qdFileManager::instance().get_package(i);
@@ -86,7 +93,8 @@ void showArchives() {
 
 				for (auto &it : members) {
 
-					if (ImGui::Selectable(Common::String::format("%s", transCyrillic(it->getFileName().c_str())).c_str())) {
+					const char *fileName = it->getFileName().c_str();
+					if (nameFilter.PassFilter(fileName) && ImGui::Selectable(Common::String::format("%s", transCyrillic(it->getFileName().c_str())).c_str())) {
 
 					}
 
