@@ -86,7 +86,8 @@ void showArchives() {
 
 				for (auto &it : members) {
 
-					if (ImGui::Selectable(Common::String::format("%s", it->getFileName().c_str()).c_str())) {
+					if (ImGui::Selectable(Common::String::format("%s", transCyrillic(it->getFileName().c_str())).c_str())) {
+
 					}
 
 				}
