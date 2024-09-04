@@ -262,8 +262,11 @@ MediaCueMessengerModifier::MediaCueMessengerModifier(const MediaCueMessengerModi
 	}
 }
 
-
 MediaCueMessengerModifier::~MediaCueMessengerModifier() {
+	destructCueSource();
+}
+
+void MediaCueMessengerModifier::destructCueSource() {
 	switch (_cueSourceType) {
 	case kCueSourceInteger:
 		_cueSource.destruct<int32, &CueSourceUnion::asInt>();
@@ -316,30 +319,40 @@ bool MediaCueMessengerModifier::load(const PlugInModifierLoaderContext &context,
 	if (!_mediaCue.send.load(data.sendEvent, messageFlags, data.with, data.destination))
 		return false;
 
+	destructCueSource();
+
 	switch (data.executeAt.type) {
 	case Data::PlugInTypeTaggedValue::kInteger:
+		_cueSource.construct<int32, &CueSourceUnion::asInt>(data.executeAt.value.asInt);
 		_cueSourceType = kCueSourceInteger;
-		_cueSource.asInt = data.executeAt.value.asInt;
 		break;
-	case Data::PlugInTypeTaggedValue::kIntegerRange:
-		_cueSourceType = kCueSourceIntegerRange;
-		if (!_cueSource.asIntRange.load(data.executeAt.value.asIntRange))
-			return false;
-		break;
+	case Data::PlugInTypeTaggedValue::kIntegerRange: {
+			IntRange intRange;
+			if (!intRange.load(data.executeAt.value.asIntRange))
+				return false;
+
+			_cueSource.construct<IntRange, &CueSourceUnion::asIntRange>(intRange);
+			_cueSourceType = kCueSourceIntegerRange;
+		} break;
 	case Data::PlugInTypeTaggedValue::kVariableReference:
+		_cueSource.construct<uint32, &CueSourceUnion::asVarRefGUID>(data.executeAt.value.asVarRefGUID);
 		_cueSourceType = kCueSourceVariableReference;
-		_cueSource.asVarRefGUID = data.executeAt.value.asVarRefGUID;
 		break;
-	case Data::PlugInTypeTaggedValue::kLabel:
-		_cueSourceType = kCueSourceLabel;
-		if (!_cueSource.asLabel.load(data.executeAt.value.asLabel))
-			return false;
-		break;
+	case Data::PlugInTypeTaggedValue::kLabel: {
+			Label label;
+			if (!label.load(data.executeAt.value.asLabel))
+				return false;
+
+			_cueSource.construct<Label, &CueSourceUnion::asLabel>(label);
+			_cueSourceType = kCueSourceLabel;
+		} break;
 	case Data::PlugInTypeTaggedValue::kString:
+		_cueSource.construct<Common::String, &CueSourceUnion::asString>(data.executeAt.value.asString);
 		_cueSourceType = kCueSourceString;
-		_cueSource.asString = data.executeAt.value.asString;
 		break;
 	default:
+		_cueSource.construct<uint64, &CueSourceUnion::asUnset>(0);
+		_cueSourceType = kCueSourceInvalid;
 		return false;
 	}
 

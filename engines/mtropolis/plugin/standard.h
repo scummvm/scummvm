@@ -149,6 +149,8 @@ private:
 
 	MediaCueMessengerModifier(const MediaCueMessengerModifier &other);
 
+	void destructCueSource();
+
 	Common::SharedPtr<Modifier> shallowClone() const override;
 	const char *getDefaultName() const override;
 
