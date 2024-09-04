@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-04 07:14+0000\n"
-"PO-Revision-Date: 2024-09-01 09:06+0000\n"
+"PO-Revision-Date: 2024-09-04 09:20+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -12531,11 +12531,13 @@ msgstr ""
 
 #: engines/vcruise/metaengine.cpp:108
 msgid "Faster video decoder (lower quality)"
-msgstr ""
+msgstr "Decodificador de vídeo más rápido (de menor calidad)"
 
 #: engines/vcruise/metaengine.cpp:109
 msgid "Reduce video decoding CPU usage at the cost of quality."
 msgstr ""
+"Reduce el consumo de la CPU por parte del decodificador de vídeo a costa de "
+"perder calidad."
 
 #: engines/vcruise/metaengine.cpp:157
 msgid "Display help screen"
