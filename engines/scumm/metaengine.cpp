@@ -818,7 +818,11 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 	}
     if (target.empty() || gameid == "maniac") {
 		// The kiosk demo script is in V1/V2 DOS, V2 Atari ST and V2 Amiga.
-        bool isValidTarget = !extra.contains("Demo") && (platform == Common::kPlatformDOS ||                                                                                        platform == Common::kPlatformAmiga  || platform == Common::kPlatformAtariST);
+        bool isValidTarget = !extra.contains("Demo") &&
+			(platform == Common::kPlatformDOS   ||
+			 platform == Common::kPlatformAmiga ||
+			 platform == Common::kPlatformAtariST) &&
+			 !guiOptionsString.contains("lang_Italian");
 
 		if (isValidTarget)
 			options.push_back(mmDemoObjectLabelsOption);
