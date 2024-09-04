@@ -186,9 +186,9 @@ void grTileAnimation::addFrame(const uint32 *frame_data) {
 }
 
 bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
-	int debugLevel = (version >= 105) ? 2 : 7;
+	int dL = (version >= 105) ? 2 : 7;
 
-	debugC(debugLevel, kDebugLoad, "grTileAnimation::load(): pos start: %lu", fh->pos());
+	debugC(dL, kDebugLoad, "grTileAnimation::load(): pos start: %lu", fh->pos());
 
 	_frameCount = fh->readSint32LE();
 	_frameSize.x = fh->readSint32LE();
@@ -197,7 +197,7 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 	_frameTileSize.y = fh->readSint32LE();
 	uint32 size = fh->readUint32LE();
 
-	debugC(debugLevel, kDebugLoad, "grTileAnimation::load(): frameCount: %d, frame: %d x %d, tile: %d x %d, comp: %d", _frameCount, _frameSize.x, _frameSize.y,
+	debugC(dL, kDebugLoad, "grTileAnimation::load(): frameCount: %d, frame: %d x %d, tile: %d x %d, comp: %d", _frameCount, _frameSize.x, _frameSize.y,
 		_frameTileSize.x, _frameTileSize.y, size);
 
 	_compression = grTileCompressionMethod(size);
@@ -206,9 +206,9 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 		size = fh->readUint32LE();
 		_scaleArray.resize(size);
 
-		debugC(2, kDebugLoad, "grTileAnimation::load(): pos: %ld _scaleArray size: %u", fh->pos() - 4, size);
+		debugC(dL, kDebugLoad, "grTileAnimation::load(): pos: %ld _scaleArray size: %u", fh->pos() - 4, size);
 
-		debugCN(3, kDebugLoad, "   ");
+		debugCN(dL + 1, kDebugLoad, "   ");
 
 		for (uint i = 0; i < size; i++) {
 			float scale = fh->readFloatLE();
@@ -220,16 +220,16 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 			_scaleArray[i]._pitch.y = (_scaleArray[i]._frameSize.y + 15) / 16;
 
 			if (i == 0)
-				_scaleArray[i]._numTiles = _frameTileSize.x * _frameTileSize.y * _frameCount;
+				_scaleArray[i]._numTiles = 0; //_frameTileSize.x * _frameTileSize.y * _frameCount;
 			else
 				_scaleArray[i]._numTiles = _scaleArray[i - 1]._numTiles
 	                 + _frameCount * _scaleArray[i - 1]._pitch.y * _scaleArray[i - 1]._pitch.x;
 
-			debugCN(3, kDebugLoad, " %f, { %d x %d, [%d x %d], tiles: %d } ", _scaleArray[i]._scale,
+			debugCN(dL + 1, kDebugLoad, " %f, { %d x %d, [%d x %d], tiles: %d } ", _scaleArray[i]._scale,
 					_scaleArray[i]._frameSize.x, _scaleArray[i]._frameSize.y, _scaleArray[i]._pitch.x,
 					_scaleArray[i]._pitch.y, _scaleArray[i]._numTiles);
 		}
-		debugCN(3, kDebugLoad, "\n");
+		debugCN(dL + 1, kDebugLoad, "\n");
 	}
 
 	_frameSizeArray.resize(_frameCount);
@@ -238,43 +238,58 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 		for (uint i = 0; i < _frameCount; i++)
 			_frameSizeArray[i] = _frameSize;
 	} else {
-		debugC(2, kDebugLoad, "grTileAnimation::load(): pos: %ld _frameSizeArray size: %u", fh->pos() - 4, _frameCount);
+		debugC(dL, kDebugLoad, "grTileAnimation::load(): pos: %ld _frameSizeArray size: %u", fh->pos() - 4, _frameCount);
 
-		debugCN(3, kDebugLoad, "   ");
+		debugCN(dL + 1, kDebugLoad, "   ");
 
 		for (uint i = 0; i < _frameCount; i++) {
 			_frameSizeArray[i].x = fh->readUint32LE();
 			_frameSizeArray[i].y = fh->readUint32LE();
 
-			debugCN(3, kDebugLoad, " %d x %d, ", _frameSizeArray[i].x, _frameSizeArray[i].y);
+			debugCN(dL + 1, kDebugLoad, " %d x %d, ", _frameSizeArray[i].x, _frameSizeArray[i].y);
 		}
-		debugCN(3, kDebugLoad, "\n");
+		debugCN(dL + 1, kDebugLoad, "\n");
 	}
 
 	size = fh->readUint32LE();
 	_frameIndex.resize(size);
-	debugC(7, kDebugLoad, "grTileAnimation::load(): pos: %ld _frameIndex size: %u", fh->pos() - 4, size);
+	debugC(dL, kDebugLoad, "grTileAnimation::load(): pos: %ld _frameIndex size: %u", fh->pos() - 4, size);
 
-	debugCN(8, kDebugLoad, "   ");
+	debugCN(dL + 1, kDebugLoad, "   ");
 	for (uint i = 0; i < size; i++) {
 		_frameIndex[i] = fh->readUint32LE();
-		debugCN(8, kDebugLoad, " %d ", _frameIndex[i]);
+		debugCN(dL + 1, kDebugLoad, " %d ", _frameIndex[i]);
 	}
-	debugCN(8, kDebugLoad, "\n");
+	debugCN(dL + 1, kDebugLoad, "\n");
 
 	size = fh->readUint32LE();
+
+	debugC(dL, kDebugLoad, "grTileAnimation::load(): pos: %ld _tileOffsets size: %u", fh->pos() - 4, size);
+
 	_tileOffsets.resize(size);
+
+	debugCN(dL, kDebugLoad, "   ");
 	for (uint i = 0; i < size; i++) {
 		_tileOffsets[i] = fh->readUint32LE();
+		debugCN(dL + 1, kDebugLoad, " %d ", _tileOffsets[i]);
 	}
+	debugCN(dL + 1, kDebugLoad, "\n");
 
 	size = fh->readUint32LE();
+
+	debugC(dL, kDebugLoad, "grTileAnimation::load(): pos: %ld _tileData size: %u", fh->pos() - 4, size);
+
 	_tileData.resize(size);
+
+	debugCN(dL, kDebugLoad, "   ");
+
 	for (uint i = 0; i < size; i++) {
 		_tileData[i] = fh->readUint32LE();
+		debugCN(dL + 1, kDebugLoad, " %08x ", _tileData[i]);
 	}
+	debugCN(dL + 1, kDebugLoad, "\n");
 
-	debugC(debugLevel, kDebugLoad, "  --> grTileAnimation::load(): pos: %ld remaining: %ld", fh->pos(), fh->size() - fh->pos());
+	debugC(dL + 1, kDebugLoad, "  --> grTileAnimation::load(): pos: %ld remaining: %ld", fh->pos(), fh->size() - fh->pos());
 
 	return true;
 }
@@ -343,7 +358,7 @@ void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float a
 }
 
 void grTileAnimation::drawFrame_scale(const Vect2i &position, int frame_index, float scale, int mode) const {
-	float closest_scale = find_closest_scale(&scale);
+	int closest_scale = find_closest_scale(&scale);
 
 	if (wasFrameSizeChanged(frame_index, closest_scale, scale)) {
 		byte *data = decode_frame_data(frame_index, closest_scale);
@@ -363,6 +378,10 @@ void grTileAnimation::drawFrame_scale(const Vect2i &position, int frame_index, f
 		drawFrame(position, frame_index, mode, closest_scale);
 	}
 }
+
+//////////////////////////////////////////////////////////////////////
+////  New version 105 & 106 code
+//////////////////////////////////////////////////////////////////////
 
 byte *grTileAnimation::decode_frame_data(int frame_index, int closest_scale) const {
 	Vect2i frameSize;
@@ -403,10 +422,6 @@ byte *grTileAnimation::decode_frame_data(int frame_index, int closest_scale) con
 
 	return buf;
 }
-
-//////////////////////////////////////////////////////////////////////
-////  New version 105 & 106 code
-//////////////////////////////////////////////////////////////////////
 
 int grTileAnimation::find_closest_scale(float *scale) const {
 	int idx = -1;
