@@ -635,6 +635,12 @@ void Adlib::OnTimer() {
 				data->seek(Func19BE(1), SEEK_SET);
 				g225A++;
 			}
+			// l0017_1B5F:
+			uint8 bp3 = g229B & 0x0F;
+			uint8 bp6 = g229B;
+			uint8 bp4 = peekByte();
+			uint16 bp10 = Func19BE(1);
+			uint8 bp5 = peekByteAt(bp10);
 			// TODO: Continue from here
 		}
 
@@ -686,6 +692,14 @@ void Adlib::Func1A03() {
 uint8 Adlib::peekByte() {
 	uint8 result = data->readByte();
 	data->seek(-1, SEEK_CUR);
+	return result;
+}
+
+uint8 Adlib::peekByteAt(uint16 offset) {
+	int32 originalOffset = data->pos();
+	data->seek(offset, SEEK_SET);
+	uint8 result = data->readByte();
+	data->seek(originalOffset, SEEK_SET);
 	return result;
 }
 
