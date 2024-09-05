@@ -27,6 +27,11 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+Room501::Room501() : Room() {
+	Common::fill(_items, _items + 12, 0);
+	Common::fill(_queuedDigi, _queuedDigi + 4, (const char *)nullptr);
+}
+
 void Room501::init() {
 	digi_preload("501_s01");
 	_agentTalkLoop = series_load("AGENT TALK LOOP");
@@ -190,27 +195,27 @@ void Room501::daemon() {
 				break;
 			case 9:
 				_xyzzy5 = 1;
-				sendWSMessage_10000(1, _ripley, _ripSeries2, 90, 1, 502,
-					_ripSeries2, 1, 1, 0);
+				sendWSMessage_10000(1, _ripley, _ripParcelExchange, 90, 1, 502,
+					_ripParcelExchange, 1, 1, 0);
 				_val3 = 10;
 				break;
 			case 10:
 				digi_play("COM084", 1, 255, -1, 997);
 				kernel_timing_trigger(1, 505);
-				sendWSMessage_10000(1, _ripley, _ripSeries2, 1, 1, 502,
-					_ripSeries2, 1, 1, 0);
+				sendWSMessage_10000(1, _ripley, _ripParcelExchange, 1, 1, 502,
+					_ripParcelExchange, 1, 1, 0);
 				_val3 = 3;
 				break;
 			case 11:
 				_xyzzy5 = 1;
-				sendWSMessage_10000(1, _ripley, _ripSeries2, 1, 90, 502,
-					_ripSeries2, 90, 90, 0);
+				sendWSMessage_10000(1, _ripley, _ripParcelExchange, 1, 90, 502,
+					_ripParcelExchange, 90, 90, 0);
 				_val3 = 12;
 				break;
 			case 12:
 				kernel_timing_trigger(1, 505);
-				sendWSMessage_10000(1, _ripley, _ripSeries2, 1, 1, 502,
-					_ripSeries2, 1, 1, 0);
+				sendWSMessage_10000(1, _ripley, _ripParcelExchange, 1, 1, 502,
+					_ripParcelExchange, 1, 1, 0);
 				_val3 = 3;
 				break;
 			case 13:
@@ -431,6 +436,278 @@ void Room501::daemon() {
 		default:
 			break;
 		}
+		break;
+
+	case 508:
+		_val8 = 0;
+		_G(kernel).trigger_mode = KT_PARSE;
+		conv_load("conv501a", 10, 10, 747);
+
+		conv_export_value_curr((_G(flags)[V088] >= 3) ? 1 : 0, 0);
+		_hasItems = updateItems();
+		conv_export_pointer_curr(&_G(flags)[V182], 1);
+
+		if (inv_player_has("DRIFTWOOD PUFFIN")) {
+			_xyzzy9 = 2;
+		} else if (_G(flags)[V183] == 1) {
+			_xyzzy9 = 1;
+		} else {
+			_xyzzy9 = 0;
+		}
+
+		_hasLetter = inv_player_has("MENENDEZ'S LETTER");
+		conv_export_pointer_curr(&_hasLetter, 3);
+		conv_export_pointer_curr(&_hasItems, 4);
+		conv_export_pointer_curr(&_G(flags)[V145], 5);
+		conv_export_value_curr(_G(flags)[146] > 0 ? 1 : 0, 6);
+		conv_export_pointer_curr(&_G(flags)[V143], 7);
+		conv_export_pointer_curr(&_G(flags)[V142], 8);
+		conv_export_pointer_curr(&_G(flags)[V147], 9);
+		conv_export_value_curr(_G(flags)[145] == 1 ||
+			_G(flags)[V146] > 0 || _G(flags)[V143] == 1 ? 1 : 0, 10);
+
+		_hasStickAndShellMap = inv_player_has("STICK AND SHELL MAP");
+		_hasWheeledToy = inv_player_has("WHEELED TOY");
+		_hasRebusAmulet = inv_player_has("REBUS AMULET");
+		_hasShrunkenHead = inv_player_has("SHRUNKEN HEAD");
+		_hasSilverButterfly = inv_player_has("SILVER BUTTERFLY");
+		_hasPostageStamp = inv_player_has("POSTAGE STAMP");
+		_hasGermanBanknote = inv_player_has("GERMAN BANKNOTE");
+		_hasWhaleBoneHorn = inv_player_has("WHALE BONE HORN");
+		_hasChisel = inv_player_has("CHISEL");
+		_hasIncenseBurner = inv_player_has("INCENSE BURNER");
+		_hasRomanovEmerald = inv_player_has("ROMANOV EMERALD");
+
+		conv_export_pointer_curr(&_hasCrystalSkull, 11);
+		conv_export_pointer_curr(&_hasStickAndShellMap, 12);
+		conv_export_pointer_curr(&_hasWheeledToy, 13);
+		conv_export_pointer_curr(&_hasRebusAmulet, 14);
+		conv_export_pointer_curr(&_hasShrunkenHead, 15);
+		conv_export_pointer_curr(&_hasSilverButterfly, 16);
+		conv_export_pointer_curr(&_hasPostageStamp, 17);
+		conv_export_pointer_curr(&_hasGermanBanknote, 18);
+		conv_export_pointer_curr(&_hasWhaleBoneHorn, 19);
+		conv_export_pointer_curr(&_hasChisel, 20);
+		conv_export_pointer_curr(&_hasIncenseBurner, 21);
+		conv_export_pointer_curr(&_hasRomanovEmerald, 22);
+		conv_export_pointer_curr(&_G(flags)[V035], 30);
+		conv_play();
+		break;
+
+	case 509:
+		_val3 = 3;
+		_val6 = kernel_trigger_create(510);
+		break;
+
+	case 510:
+		if (_val8 == 1) {
+			kernel_timing_trigger(1, 512);
+		} else {
+			_val3 = 13;
+			_xyzzy4 = kernel_trigger_create(511);
+		}
+		break;
+
+	case 511:
+	case 524:
+		_xyzzy1 = 1;
+		player_set_commands_allowed(true);
+		break;
+
+	case 512:
+		player_set_commands_allowed(false);
+		pal_fade_init(21, 255, 0, 30, 513);
+		break;
+
+	case 513:
+		switch (_convEntry) {
+		case 0:
+			_G(flags)[V129] = 1;
+			break;
+		case 1:
+			_G(flags)[V129] = 2;
+			break;
+		case 2:
+			_G(flags)[V129] = 0;
+			break;
+		case 3:
+			_G(flags)[V129] = 3;
+			break;
+		case 4:
+			_G(flags)[V129] = 5;
+			break;
+		default:
+			break;
+		}
+
+		if (_G(flags)[V161] == 1)
+			_G(flags)[V371] = 1;
+
+		_G(game).setRoom((_convEntry == 5) ? 504 : 495);
+
+		if (_G(flags)[V035] == 1)
+			_G(flags)[V147] = 1;
+		break;
+
+	case 514:
+		_val1 = 1;
+		_val3 = 3;
+		_val6 = kernel_trigger_create(515);
+		kernel_timing_trigger(2, 501);
+		break;
+
+	case 515:
+		_val3 = 4;
+		digi_play("501r01", 1, 255, 516);
+		break;
+
+	case 516:
+		_val3 = 3;
+		_val1 = 2;
+		digi_play("501x01", 1, 255, 517);
+		break;
+
+	case 517:
+		_val4 = checkFlags(true);
+		_val1 = 1;
+
+		if (_val4 > 0) {
+			_ripSeries1 = series_load("TELEGRAM XCHANGE");
+			kernel_timing_trigger(1, 518);
+		} else {
+			kernel_timing_trigger(1, 523);
+		}
+		break;
+
+	case 518:
+		_val3 = 6;
+		_xyzzy2 = kernel_trigger_create(526);
+		break;
+
+	case 522:
+		kernel_timing_trigger(30, 514);
+		break;
+
+	case 523:
+		_val3 = 13;
+		_xyzzy4 = kernel_trigger_create(524);
+		break;
+
+	case 526:
+		Common::fill(_queuedDigi, _queuedDigi + 4, (const char *)nullptr);
+		inv_give_to_player("MESSAGE LOG");
+
+		if (_val4 <= 0) {
+			kernel_timing_trigger(1, 523);
+		} else {
+			if (_digiName) {
+				_queuedDigi[0] = _digiName;
+				_digiName = nullptr;
+			} else if (_G(flags)[V364] == 1) {
+				_queuedDigi[0] = "201R26";
+				_G(flags)[V364] = 0;
+			} else if (_G(flags)[V365] == 1) {
+				_queuedDigi[0] = "201R61";
+				_G(flags)[V365] = 0;
+			} else if (_G(flags)[V373] == 1) {
+				_queuedDigi[0] = "401R36";
+				_G(flags)[V373] = 0;
+			} else if (_G(flags)[V366] == 1) {
+				_queuedDigi[0] = "401R31";
+				_G(flags)[V366] = 0;
+			} else if (_G(flags)[V370] == 1) {
+				_queuedDigi[0] = "501R02B";
+				_queuedDigi[1] = nullptr;
+				_queuedDigi[2] = nullptr;
+				_G(flags)[V370] = 0;
+			} else if (_G(flags)[V372] == 1) {
+				_queuedDigi[0] = "701R39";
+				_queuedDigi[1] = "701R39A";
+				_G(flags)[V372] = 0;
+			} else if (_G(flags)[V367] == 1) {
+				_queuedDigi[0] = "401R37";
+				_G(flags)[V367] = 0;
+				_val2 = 1;
+			} else if (_G(flags)[V368] == 1) {
+				_queuedDigi[0] = "401R38";
+				_G(flags)[V368] = 0;
+				_val2 = 1;
+			} else if (_G(flags)[V369] == 1) {
+				_queuedDigi[0] = "401R39";
+				_G(flags)[V369] = 0;
+				_val2 = 1;
+			}
+
+			kernel_timing_trigger(1, 527);
+		}
+		break;
+
+	case 527:
+		_val3 = 7;
+		_xyzzy2 = kernel_trigger_create(528);
+		break;
+
+	case 528:
+		if (_queuedDigi[0])
+			digi_play(_queuedDigi[0], 1, 255, 529);
+		else
+			kernel_timing_trigger(1, 529);
+		break;
+
+	case 529:
+		if (_queuedDigi[1])
+			digi_play(_queuedDigi[1], 1, 255, 530);
+		else
+			kernel_timing_trigger(1, 530);
+		break;
+
+	case 530:
+		if (_queuedDigi[2])
+			digi_play(_queuedDigi[2], 1, 255, 531);
+		else
+			kernel_timing_trigger(1, 531);
+		break;
+
+	case 531:
+		if (_queuedDigi[3])
+			digi_play(_queuedDigi[3], 1, 255, 532);
+		else
+			kernel_timing_trigger(1, 532);
+		break;
+
+	case 532:
+		if (_val2 == 1) {
+			_val2 = 0;
+			kernel_timing_trigger(1, 534);
+		} else {
+			if (--_val4 > 0) {
+				_val3 = 8;
+				_xyzzy2 = kernel_trigger_create(526);
+			} else {
+				kernel_timing_trigger(1, 533);
+			}
+		}
+		break;
+
+	case 533:
+		_val3 = 3;
+		_val6 = kernel_trigger_create(523);
+		break;
+
+	case 534:
+		_val3 = 3;
+		_val6 = kernel_trigger_create(535);
+		break;
+
+	case 535:
+		_ripParcelExchange = series_load("PARCEL XCHANGE");
+		_val1 = 5;
+		_xyzzy7 = kernel_trigger_create(536);
+		break;
+
+	case 536:
+		_val3 = 9;
+		_xyzzy7 = kernel_trigger_create(537);
 		break;
 
 	// TODO
@@ -691,6 +968,25 @@ void Room501::conv501a() {
 	}
 
 	conv_resume();
+}
+
+bool Room501::updateItems() {
+	Common::fill(_items, _items + 12, 0);
+	_itemsCount = 0;
+
+	static const char *ITEMS[12] = {
+		"CRYSTAL SKULL", "STICK AND SHELL MAP", "WHEELED TOY",
+		"REBUS AMULET", "SHRUNKEN HEAD", "SILVER BUTTERFLY",
+		"POSTAGE STAMP", "GERMAN BANKNOTE", "WHALE BONE HORN",
+		"CHISEL", "INCENSE BURNER", "ROMANOV EMERALD"
+	};
+
+	for (int i = 0; i < 12; ++i) {
+		if (inv_player_has(ITEMS[i]))
+			_items[_itemsCount++] = i + 1;
+	}
+
+	return _itemsCount > 0;
 }
 
 } // namespace Rooms
