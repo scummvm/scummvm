@@ -140,7 +140,7 @@ DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 				if (dataDisk.open(*file)) {
 					hasSkyDsk = true;
 					dataDiskSize = dataDisk.size();
-					if (dataDiskSize == 73123264)
+					if (dataDiskSize == 73123264 || dataDiskSize == 75893200)
 						dataDiskHeadMD5 = Common::computeStreamMD5AsString(dataDisk, 5000);
 				}
 			}
@@ -185,6 +185,8 @@ DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 		Common::Language lang = Common::Language::UNK_LANG;
 		if (dataDiskSize == 73123264 && dataDiskHeadMD5 == "886d6faecd97488be09b73f4f87b92d9")
 			lang = Common::Language::RU_RUS;
+		if (dataDiskSize == 75893200 && dataDiskHeadMD5 == "886d6faecd97488be09b73f4f87b92d9")
+			lang = Common::Language::HE_ISR;
 
 		if (sv->dinnerTableEntries) {
 			Common::String extra = Common::String::format("v0.0%d %s", sv->version, sv->extraDesc);
