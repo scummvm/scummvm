@@ -187,6 +187,8 @@ void showArchives() {
 				ImGui::Text("Frame <none>");
 			}
 
+			ImGui::Button("\ue020"); // Fast Rewind    // fast_rewind
+
 			ImGui::SameLine();
 			if (ImGui::Button("\ue045")) { // Skip Previous    // skip_previous
 				_state->_qdaToDisplayFrame = _state->_qdaToDisplayFrame + totalFrames - 1;
@@ -199,8 +201,6 @@ void showArchives() {
 				_state->_qdaToDisplayFrame += 1;
 				_state->_qdaToDisplayFrame %= totalFrames;
 			}
-			ImGui::SameLine();
-			ImGui::Button("\ue020"); // Fast Rewind    // fast_rewind
 			ImGui::SameLine();
 			ImGui::Button("\ue01f"); // Fast Forward    // fast_forward
 			ImGui::SameLine();
