@@ -228,8 +228,8 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 			addScale(i, scale);
 
 			debugCN(dL + 1, kDebugLoad, " %f, { %d x %d, [%d x %d], tiles: %d } ", _scaleArray[i]._scale,
-					_scaleArray[i]._frameSize.x, _scaleArray[i]._frameSize.y, _scaleArray[i]._pitch.x,
-					_scaleArray[i]._pitch.y, _scaleArray[i]._numTiles);
+					_scaleArray[i]._frameSize.x, _scaleArray[i]._frameSize.y, _scaleArray[i]._frameTileSize.x,
+					_scaleArray[i]._frameTileSize.y, _scaleArray[i]._frameStart);
 		}
 		debugCN(dL + 1, kDebugLoad, "\n");
 	}
@@ -300,12 +300,12 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 void grTileAnimation::drawFrame(const Vect2i &position, int32 frame_index, int32 mode, int closest_scale) const {
 	Vect2i frameSize = _frameSize;
 	Vect2i frameTileSize = _frameTileSize;
-	int numTiles = 0;
+	int frameStart = 0;
 
 	if (closest_scale != -1) {
 		frameSize = _scaleArray[closest_scale]._frameSize;
-		frameTileSize = _scaleArray[closest_scale]._pitch;
-		numTiles = _scaleArray[closest_scale]._numTiles;
+		frameTileSize = _scaleArray[closest_scale]._frameTileSize;
+		frameStart = _scaleArray[closest_scale]._frameStart;
 	}
 
 	Vect2i pos0 = position - frameSize / 2;
@@ -324,7 +324,7 @@ void grTileAnimation::drawFrame(const Vect2i &position, int32 frame_index, int32
 
 //	grDispatcher::instance()->Rectangle(position.x - _frameSize.x/2, position.y - _frameSize.y/2, _frameSize.x, _frameSize.y, 0xFFFFF, 0, GR_OUTLINED);
 
-	const uint32 *index_ptr = &_frameIndex[numTiles] + frameTileSize.x * frameTileSize.y * frame_index;
+	const uint32 *index_ptr = &_frameIndex[frameStart] + frameTileSize.x * frameTileSize.y * frame_index;
 
 	Vect2i pos = pos0;
 	for (int32 i = 0; i < frameTileSize.y; i++) {
@@ -390,14 +390,14 @@ void grTileAnimation::addScale(int i, float scale) {
 	_scaleArray[i]._scale = scale;
 	_scaleArray[i]._frameSize.x = (int)((float)_frameSize.x * scale);
 	_scaleArray[i]._frameSize.y = (int)((float)_frameSize.y * scale);
-	_scaleArray[i]._pitch.x = (_scaleArray[i]._frameSize.x + 15) / 16;
-	_scaleArray[i]._pitch.y = (_scaleArray[i]._frameSize.y + 15) / 16;
+	_scaleArray[i]._frameTileSize.x = (_scaleArray[i]._frameSize.x + 15) / 16;
+	_scaleArray[i]._frameTileSize.y = (_scaleArray[i]._frameSize.y + 15) / 16;
 
 	if (i == 0)
-		_scaleArray[i]._numTiles = _frameTileSize.x * _frameTileSize.y * _frameCount;
+		_scaleArray[i]._frameStart = _frameTileSize.x * _frameTileSize.y * _frameCount;
 	else
-		_scaleArray[i]._numTiles = _scaleArray[i - 1]._numTiles
-				+ _frameCount * _scaleArray[i - 1]._pitch.y * _scaleArray[i - 1]._pitch.x;
+		_scaleArray[i]._frameStart = _scaleArray[i - 1]._frameStart
+				+ _frameCount * _scaleArray[i - 1]._frameTileSize.y * _scaleArray[i - 1]._frameTileSize.x;
 }
 
 byte *grTileAnimation::decode_frame_data(int frame_index, int closest_scale) const {
@@ -412,17 +412,17 @@ byte *grTileAnimation::decode_frame_data(int frame_index, int closest_scale) con
 	if (closest_scale == -1)
 		frameTileSize = _frameTileSize;
 	else
-		frameTileSize = _scaleArray[closest_scale]._pitch;
+		frameTileSize = _scaleArray[closest_scale]._frameTileSize;
 
-	int numTiles;
+	int frameStart;
 	if (closest_scale == -1)
-		numTiles = 0;
+		frameStart = 0;
 	else
-		numTiles = _scaleArray[closest_scale]._numTiles;
+		frameStart = _scaleArray[closest_scale]._frameStart;
 
 	byte *buf = (byte *)grDispatcher::instance()->temp_buffer(frameSize.x * frameSize.y * 4);
 
-	const uint32 *index_ptr = &_frameIndex[numTiles] + frameTileSize.x * frameTileSize.y * frame_index;
+	const uint32 *index_ptr = &_frameIndex[frameStart] + frameTileSize.x * frameTileSize.y * frame_index;
 
 	for (int i = 0; i < frameTileSize.y; i++) {
 		for (int j = 0; j < frameTileSize.x; j++) {

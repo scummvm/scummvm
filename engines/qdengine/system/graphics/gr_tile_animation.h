@@ -109,8 +109,8 @@ private:
 	struct ScaleArray {
 		float _scale;
 		Vect2i _frameSize;
-		Vect2i _pitch;
-		int _numTiles;
+		Vect2i _frameTileSize;
+		int _frameStart;
 	};
 
 	Std::vector<ScaleArray> _scaleArray;
