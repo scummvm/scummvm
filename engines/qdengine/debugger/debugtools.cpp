@@ -78,6 +78,7 @@ ImGuiImage getImageID(Common::Path filename, int frameNum) {
 	animation->qda_load(filename);
 
 	qdAnimationFrame *frame = animation->get_frame(frameNum);
+	_state->_qdaToDisplayFrameCount = animation->num_frames();
 
 	int sx = 10, sy = 10;
 	if (frame) {
@@ -160,7 +161,6 @@ void showArchives() {
 						_state->_qdaToDisplay = it->getPathInArchive();
 						_state->_qdaToDisplayFrame = 0;
 					}
-
 				}
 
 				ImGui::TreePop();
@@ -174,6 +174,9 @@ void showArchives() {
 		{ // Right pane
 			ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Border);
 
+			int totalFrames = _state->_qdaToDisplayFrameCount;
+
+
 			ImGuiImage imgID;
 			if (!_state->_qdaToDisplay.empty()) {
 				imgID = getImageID(_state->_qdaToDisplay, _state->_qdaToDisplayFrame);
@@ -183,6 +186,32 @@ void showArchives() {
 			} else {
 				ImGui::Text("Frame <none>");
 			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("\ue045")) { // Skip Previous    // skip_previous
+				_state->_qdaToDisplayFrame = _state->_qdaToDisplayFrame + totalFrames - 1;
+				_state->_qdaToDisplayFrame %= totalFrames;
+			}
+			ImGui::SameLine();
+			ImGui::Button("\ue037"); // Play    // play_arrow
+			ImGui::SameLine();
+			if (ImGui::Button("\ue044")) { // Skip Next    // skip_next
+				_state->_qdaToDisplayFrame += 1;
+				_state->_qdaToDisplayFrame %= totalFrames;
+			}
+			ImGui::SameLine();
+			ImGui::Button("\ue020"); // Fast Rewind    // fast_rewind
+			ImGui::SameLine();
+			ImGui::Button("\ue01f"); // Fast Forward    // fast_forward
+			ImGui::SameLine();
+
+			// Frame Count
+			char buf[6];
+			snprintf(buf, 6, "%d", _state->_qdaToDisplayFrame);
+
+			ImGui::SetNextItemWidth(35);
+			ImGui::InputText("##frame", buf, 5, ImGuiInputTextFlags_CharsDecimal);
+			ImGui::SetItemTooltip("Frame");
 
 			ImGui::Separator();
 

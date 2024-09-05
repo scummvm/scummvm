@@ -37,6 +37,7 @@ typedef struct ImGuiState {
 
 	Common::Path _qdaToDisplay;
 	int _qdaToDisplayFrame = -1;
+	int _qdaToDisplayFrameCount = 0;
 } ImGuiState;
 
 extern ImGuiState *_state;
