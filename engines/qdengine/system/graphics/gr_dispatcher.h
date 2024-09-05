@@ -238,6 +238,9 @@ public:
 
 	void setPixel(int x, int y, int r, int g, int b);
 
+	void surfaceOverride(Graphics::ManagedSurface *target);
+	void resetSurfaceOverride();
+
 	void getPixel(int x, int y, uint16 &col);
 	void getPixel(int x, int y, byte &r, byte &g, byte &b);
 
@@ -496,6 +499,7 @@ protected:
 	void *_hWnd;
 
 	Graphics::ManagedSurface *_screenBuf = nullptr;
+	Graphics::ManagedSurface * _surfaceOverride = nullptr;
 
 	int *_yTable;
 
