@@ -78,23 +78,29 @@ ImGuiImage getImageID(Common::Path filename, int frameNum) {
 	qdAnimation *animation = new qdAnimation();
 	animation->qda_load(filename);
 
-	qdAnimationFrame *frame = animation->get_frame(frameNum);
 	_state->_qdaToDisplayFrameCount = animation->num_frames();
 
 	int sx = 10, sy = 10;
-	if (frame) {
+
+	if (animation->tileAnimation() && 0) {
+		Vect2i size = animation->tileAnimation()->frameSize();
+
+		sx = size.x;
+		sy = size.y;
+	} else {
+		qdAnimationFrame *frame = animation->get_frame(frameNum);
+
 		sx = frame->size_x();
 		sy = frame->size_y();
 	}
+
 	Graphics::ManagedSurface surface(sx, sy, g_engine->_pixelformat);
 
-	if (frame) {
-		grDispatcher::instance()->surfaceOverride(&surface);
+	animation->set_cur_frame(frameNum);
 
-		frame->redraw(sx / 2, sy / 2, 0);
-
-		grDispatcher::instance()->resetSurfaceOverride();
-	}
+	grDispatcher::instance()->surfaceOverride(&surface);
+	animation->redraw(sx / 2, sy/ 2, 0, 0);
+	grDispatcher::instance()->resetSurfaceOverride();
 
 	_state->_frames[key] = { (ImTextureID)(intptr_t)loadTextureFromSurface(surface.surfacePtr()), sx, sy };
 

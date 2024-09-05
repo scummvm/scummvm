@@ -266,6 +266,13 @@ public:
 		_scales.clear();
 	}
 
+	const grTileAnimation *tileAnimation() const {
+		if (check_flag(QD_ANIMATION_FLAG_REFERENCE) && _parent)
+			return _parent->_tileAnimation;
+		else
+			return _tileAnimation;
+	}
+
 private:
 	int _sx;
 	int _sy;
@@ -301,13 +308,6 @@ private:
 
 	bool copy_frames(const qdAnimation &anm);
 	void clear_frames();
-
-	const grTileAnimation *tileAnimation() const {
-		if (check_flag(QD_ANIMATION_FLAG_REFERENCE) && _parent)
-			return _parent->_tileAnimation;
-		else
-			return _tileAnimation;
-	}
 };
 
 } // namespace QDEngine
