@@ -450,6 +450,7 @@ void CastleEngine::loadAssets() {
 		for (auto &it : _areaMap) {
 			it._value->addStructure(_areaMap[255]);
 			it._value->addObjectFromArea(229, _areaMap[255]);
+			it._value->addObjectFromArea(242, _areaMap[255]);
 		}
 
 		_areaMap[1]->addFloor();
