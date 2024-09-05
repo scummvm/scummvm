@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QDENGINE_DEBUGGER_H
-#define QDENGINE_DEBUGGER_H
+#ifndef QDENGINE_DT_INTERNAL_H
+#define QDENGINE_DT_INTERNAL_H
 
 namespace QDEngine {
 
@@ -46,4 +46,4 @@ extern ImGuiState *_state;
 
 }
 
-#endif // QDENGINE_DEBUGGER_H
+#endif // QDENGINE_DT_INTERNAL_H
