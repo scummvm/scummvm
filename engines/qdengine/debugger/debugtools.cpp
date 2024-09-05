@@ -28,6 +28,7 @@
 #include "common/compression/unzip.h"
 #include "common/debug.h"
 #include "common/path.h"
+#include "common/system.h"
 
 #include "graphics/opengl/shader.h"
 #include "graphics/managed_surface.h"
@@ -195,7 +196,9 @@ void showArchives() {
 				_state->_qdaToDisplayFrame %= totalFrames;
 			}
 			ImGui::SameLine();
-			ImGui::Button("\ue037"); // Play    // play_arrow
+			if (ImGui::Button("\ue037")) // Play    // play_arrow
+				_state->_qdaIsPlaying = !_state->_qdaIsPlaying;
+
 			ImGui::SameLine();
 			if (ImGui::Button("\ue044")) { // Skip Next    // skip_next
 				_state->_qdaToDisplayFrame += 1;
@@ -261,6 +264,13 @@ void onImGuiRender() {
 
 	if (!_state)
 		return;
+
+	if (_state->_qdaIsPlaying && g_system->getMillis() > _state->_qdaNextFrameTimestamp) {
+		_state->_qdaToDisplayFrame++;
+		_state->_qdaToDisplayFrame %= _state->_qdaToDisplayFrameCount;
+
+		_state->_qdaNextFrameTimestamp = g_system->getMillis() + 50; // 20 fps
+	}
 
 	ImGui::GetIO().ConfigFlags &= ~(ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse);
 
