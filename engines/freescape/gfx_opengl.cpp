@@ -80,6 +80,7 @@ void OpenGLRenderer::init() {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_SCISSOR_TEST);
 	setViewport(_viewport);
+	glEnable(GL_DEPTH_CLAMP);
 }
 
 void OpenGLRenderer::setViewport(const Common::Rect &rect) {
