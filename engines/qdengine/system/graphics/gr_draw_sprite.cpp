@@ -165,9 +165,12 @@ void grDispatcher::putSpr_a(int x, int y, int sx, int sy, const byte *p, int mod
 	sx <<= 2;
 	px <<= 2;
 
+	Graphics::ManagedSurface *target = _surfaceOverride ? _surfaceOverride : _screenBuf;
+	if (target == _surfaceOverride)
+		debugC(3, kDebugImGui, "grDispatcher::putSpr_a(): _surfaceOverride: %p", (void *)target);
 	const byte *data_ptr = p + py * sx;
 	for (int i = 0; i < psy; i++) {
-		uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
+		uint16 *scr_buf = reinterpret_cast<uint16 *>(target->getBasePtr(x, y));
 		const byte *data_line = data_ptr + px;
 
 		for (int j = 0; j < psx; j++) {
@@ -614,6 +617,7 @@ void grDispatcher::putSpr(int x, int y, int sx, int sy, const byte *p, int mode,
 	} else
 		dy = 1;
 
+	Graphics::ManagedSurface *target = _surfaceOverride ? _surfaceOverride : _screenBuf;
 	if (spriteFormat == GR_RGB888) {
 		sx *= 3;
 		px *= 3;
@@ -621,7 +625,7 @@ void grDispatcher::putSpr(int x, int y, int sx, int sy, const byte *p, int mode,
 		const byte *data_ptr = p + py * sx;
 
 		for (int i = 0; i < psy; i++) {
-			uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
+			uint16 *scr_buf = reinterpret_cast<uint16 *>(target->getBasePtr(x, y));
 			const byte *data_line = data_ptr + px;
 
 			for (int j = 0; j < psx; j++) {
@@ -641,7 +645,7 @@ void grDispatcher::putSpr(int x, int y, int sx, int sy, const byte *p, int mode,
 		const byte *data_ptr = p + py * sx;
 
 		for (int i = 0; i < psy; i++) {
-			uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
+			uint16 *scr_buf = reinterpret_cast<uint16 *>(target->getBasePtr(x, y));
 			const byte *data_line = data_ptr + px;
 
 			for (int j = 0; j < psx; j++) {
