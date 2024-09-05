@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-04 23:57+0000\n"
-"PO-Revision-Date: 2024-08-27 03:43+0000\n"
+"PO-Revision-Date: 2024-09-05 23:43+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -8008,16 +8008,12 @@ msgid "Enable Gore Mode when available"
 msgstr "Aktivoi hurmemoodi jos saatavilla"
 
 #: engines/hopkins/metaengine.cpp:231
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Open inventory"
-msgstr "Avaa/Sulje Inventaario"
+msgstr "Avaa Inventaario"
 
 #: engines/hopkins/metaengine.cpp:250
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Option dialog"
-msgstr "Ohita dialogi"
+msgstr "Asetusdialogi"
 
 #: engines/hpl1/metaengine.cpp:76
 msgid "Forward"
@@ -11395,39 +11391,29 @@ msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "Kirjaimet näyttävät sileämmiltä kun antialiasointi on päällä."
 
 #: engines/stark/metaengine.cpp:184
-#, fuzzy
-#| msgid "Default keymappings"
 msgid "Default keymapppings"
 msgstr "Näppäinten oletuskartoitukset"
 
 #. I18N: Opens in-game Diary
 #: engines/stark/metaengine.cpp:202
-#, fuzzy
-#| msgid "Game menu"
 msgid "Diary menu"
-msgstr "Pelivalikko"
+msgstr "Päiväkirjavalikko"
 
 #. I18N: Opens in-game conversation log
 #: engines/stark/metaengine.cpp:219
-#, fuzzy
-#| msgid "Conversation position - Up"
 msgid "Conversation log"
-msgstr "Keskustelun sijainti - ylhäällä"
+msgstr "Keskusteluloki"
 
 #. I18N: Opens in-game Diary
 #: engines/stark/metaengine.cpp:225
 msgid "April's diary (initially disabled)"
-msgstr ""
+msgstr "April:in päiväkirja (aluksi pois päältä)"
 
 #: engines/stark/metaengine.cpp:230
-#, fuzzy
-#| msgid "Fast replay"
 msgid "Video replay"
-msgstr "Nopea toisto"
+msgstr "Videon toisto"
 
 #: engines/stark/metaengine.cpp:235
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game settings"
 msgstr "Pelin asetukset"
 
@@ -11436,65 +11422,53 @@ msgid "Toggle subtitles"
 msgstr "Tekstitys päälle / pois"
 
 #: engines/stark/metaengine.cpp:250
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit to menu"
 msgstr "Lopeta peli"
 
 #: engines/stark/metaengine.cpp:255
 msgid "Cycle back through inventory cursor items"
-msgstr ""
+msgstr "Siirry takaisinpäin inventaariossa"
 
 #: engines/stark/metaengine.cpp:261
 msgid "Cycle forward through inventory cursor items"
-msgstr ""
+msgstr "Siirry eteenpäin inventaariossa"
 
 #. I18N: A popup on screen shows shows the exits
 #: engines/stark/metaengine.cpp:274
 msgid "Display all exits on current location"
-msgstr ""
+msgstr "Näytä kaikki tämän sijainnin uloskäynnit"
 
 #: engines/stark/metaengine.cpp:292
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Scroll up in inventory"
-msgstr "Avaa/Sulje Inventaario"
+msgstr "Vieritä inventaariota ylös"
 
 #: engines/stark/metaengine.cpp:299
-#, fuzzy
-#| msgid "Show inventory"
 msgid "Scroll down in inventory"
-msgstr "Näytä inventaario"
+msgstr "Vieritä inventaariota alas"
 
 #: engines/stark/metaengine.cpp:306
 msgid "Scroll up in your dialogues"
-msgstr ""
+msgstr "Vieritä dialogeja ylös"
 
 #: engines/stark/metaengine.cpp:312
 msgid "Scroll down in your dialogues"
-msgstr ""
+msgstr "Vieritä dialogeja alas"
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "Highlight next dialogue"
 msgid "go to next dialogue"
-msgstr "Korosta seuraavaa dialogia"
+msgstr "siirry seuraavaan dialogiin"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "Go to previous index"
 msgid "go to previous dialogues"
-msgstr "Siirry edelliseen indeksiin"
+msgstr "siirry edeltäviin dialogeihin"
 
 #: engines/stark/metaengine.cpp:328
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Select dialogue"
-msgstr "Ohita dialogi"
+msgstr "Valitse dialogi"
 
 #: engines/stark/metaengine.cpp:335
 msgid "Skip video sequence or dialogue"
-msgstr ""
+msgstr "Ohita videosekvenssi tai dialogi"
 
 #: engines/stark/stark.cpp:106
 msgid "Software renderer does not support modded assets"
@@ -11696,40 +11670,28 @@ msgstr ""
 "istuu paremmin näytöille joiden kuvasuhde on leveämpi kuin 4:3."
 
 #: engines/tinsel/metaengine.cpp:241
-#, fuzzy
-#| msgid "Yes/No keymappings"
 msgid "Save/Load keymappings"
-msgstr "Näppäinkartoitukset päällä/pois"
+msgstr "Tallenna/Lataa näppäinkartoitukset"
 
 #: engines/tinsel/metaengine.cpp:306
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Options Dialog"
-msgstr "Ohita dialogi"
+msgstr "Asetusdialogi"
 
 #: engines/tinsel/metaengine.cpp:340
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Page Up in save/load menu"
-msgstr "Mene tallennus/lataus valikkoon"
+msgstr "Page Up tallennus/lataus valikossa"
 
 #: engines/tinsel/metaengine.cpp:346
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Page down in save/load menu"
-msgstr "Mene tallennus/lataus valikkoon"
+msgstr "Page Down tallennus/lataus valikossa"
 
 #: engines/tinsel/metaengine.cpp:352
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Go to start of save/load menu"
-msgstr "Mene tallennus/lataus valikkoon"
+msgstr "Mene tallennus/lataus valikon alkuun"
 
 #: engines/tinsel/metaengine.cpp:358
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Go to end of save/load menu"
-msgstr "Mene tallennus/lataus valikkoon"
+msgstr "Mene tallennus/lataus valikon loppuun"
 
 #: engines/tony/tony.cpp:248
 #, c-format
@@ -12361,11 +12323,11 @@ msgstr "Esilataa äänet. Saattaa parantaa suorituskykyä hitailla kovalevyillä
 
 #: engines/vcruise/metaengine.cpp:108
 msgid "Faster video decoder (lower quality)"
-msgstr ""
+msgstr "Nopeampi videodekooderi (huonompi laatu)"
 
 #: engines/vcruise/metaengine.cpp:109
 msgid "Reduce video decoding CPU usage at the cost of quality."
-msgstr ""
+msgstr "Madalla videodekoodauksen prosessorinkuormitusta laadun kustannuksella."
 
 #: engines/vcruise/metaengine.cpp:157
 msgid "Display help screen"
