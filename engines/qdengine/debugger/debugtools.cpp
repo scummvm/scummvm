@@ -27,9 +27,15 @@
 #include "common/debug.h"
 #include "common/path.h"
 
-#include "qdengine/qdengine.h"
+#include "graphics/managed_surface.h"
+
 #include "qdengine/debugger/debugtools.h"
+#include "qdengine/qd_fwd.h"
+#include "qdengine/qdcore/qd_animation.h"
+#include "qdengine/qdcore/qd_animation_frame.h"
 #include "qdengine/qdcore/qd_file_manager.h"
+#include "qdengine/qdengine.h"
+#include "qdengine/system/graphics/gr_dispatcher.h"
 
 namespace QDEngine {
 
@@ -93,8 +99,27 @@ void showArchives() {
 
 				for (auto &it : members) {
 
-					const char *fileName = it->getFileName().c_str();
-					if (nameFilter.PassFilter(fileName) && ImGui::Selectable(Common::String::format("%s", transCyrillic(it->getFileName().c_str())).c_str())) {
+					const char *fileName = (char *)transCyrillic(it->getFileName().c_str());
+					if (nameFilter.PassFilter(fileName) && ImGui::Selectable(fileName)) {
+						Common::Path fpath = Common::Path(it->getName());
+
+						// Load the animation
+						qdAnimation *animation = new qdAnimation();
+						animation->qda_load(fpath);
+
+						qdAnimationFrame *firstFrame = animation->get_frame(0);
+						debugC(3, kDebugImGui, "showArchives(): %p %d %d", (void *)firstFrame, firstFrame->size_x(), firstFrame->size_y());
+
+						Graphics::ManagedSurface *surface = new Graphics::ManagedSurface(800, 600);
+						grDispatcher::instance()->surfaceOverride(surface);
+
+						firstFrame->redraw(400, 300, 0);
+						grDispatcher::instance()->resetSurfaceOverride();
+
+						if (surface) {
+							int x = 390, y = 390;
+							debugC(3, kDebugImGui, "showArchives(): Pixel at (%d, %d): %d", x, y, surface->getPixel(390, 390));;
+						}
 
 					}
 
