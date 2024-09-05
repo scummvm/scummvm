@@ -483,7 +483,7 @@ void scan_qda() {
 		Common::Archive *archive = qdFileManager::instance().get_package(i);
 		Common::ArchiveMemberList members;
 
-		if (archive)
+		if (archive) {
 			archive->listMembers(members);
 
 			for (auto &it : members) {
@@ -515,6 +515,7 @@ void scan_qda() {
 					}
 				}
 			}
+		}
 	}
 }
 

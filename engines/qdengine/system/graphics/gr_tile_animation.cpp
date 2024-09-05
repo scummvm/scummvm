@@ -238,14 +238,14 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 	_frameSizeArray.resize(_frameCount);
 
 	if (version < 106) {
-		for (uint i = 0; i < _frameCount; i++)
+		for (int i = 0; i < _frameCount; i++)
 			_frameSizeArray[i] = _frameSize;
 	} else {
 		debugC(dL, kDebugLoad, "grTileAnimation::load(): pos: %ld _frameSizeArray size: %u", fh->pos() - 4, _frameCount);
 
 		debugCN(dL + 1, kDebugLoad, "   ");
 
-		for (uint i = 0; i < _frameCount; i++) {
+		for (int i = 0; i < _frameCount; i++) {
 			_frameSizeArray[i].x = fh->readUint32LE();
 			_frameSizeArray[i].y = fh->readUint32LE();
 
@@ -430,7 +430,7 @@ int grTileAnimation::find_closest_scale(float *scale) const {
 	int idx = -1;
 	float temp = 1.0;
 
-	for (int i = 0; i < _scaleArray.size(); i++) {
+	for (uint i = 0; i < _scaleArray.size(); i++) {
 		if (fabs(*scale - _scaleArray[i]._scale) < fabs(*scale - temp)) {
 			idx = i;
 			temp = _scaleArray[i]._scale;
