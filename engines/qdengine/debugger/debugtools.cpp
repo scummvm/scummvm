@@ -19,7 +19,6 @@
  *
  */
 
-#include "backends/imgui/imgui.h"
 #include "backends/imgui/imgui_fonts.h"
 
 #include "common/archive.h"
@@ -27,9 +26,9 @@
 #include "common/debug.h"
 #include "common/path.h"
 
-#include "graphics/managed_surface.h"
-
+#include "qdengine/debugger/debugger.h"
 #include "qdengine/debugger/debugtools.h"
+
 #include "qdengine/qd_fwd.h"
 #include "qdengine/qdcore/qd_animation.h"
 #include "qdengine/qdcore/qd_animation_frame.h"
@@ -39,14 +38,8 @@
 
 namespace QDEngine {
 
-typedef struct ImGuiState {
-	bool _showCallStack = false;
-	bool _showVars = false;
-	bool _showScore = false;
-	bool _showArchives = false;
-} ImGuiState;
-
 ImGuiState *_state = nullptr;
+Graphics::ManagedSurface *_surface = nullptr;
 
 static void showCallStack() {
 }
@@ -110,16 +103,17 @@ void showArchives() {
 						qdAnimationFrame *firstFrame = animation->get_frame(0);
 						debugC(3, kDebugImGui, "showArchives(): %p %d %d", (void *)firstFrame, firstFrame->size_x(), firstFrame->size_y());
 
-						Graphics::ManagedSurface *surface = new Graphics::ManagedSurface(800, 600);
-						grDispatcher::instance()->surfaceOverride(surface);
+						grDispatcher::instance()->surfaceOverride(_surface);
 
 						firstFrame->redraw(400, 300, 0);
 						grDispatcher::instance()->resetSurfaceOverride();
 
-						if (surface) {
+						if (_surface) {
 							int x = 390, y = 390;
-							debugC(3, kDebugImGui, "showArchives(): Pixel at (%d, %d): %d", x, y, surface->getPixel(390, 390));;
+							debugC(3, kDebugImGui, "showArchives(): Pixel at (%d, %d): %d", x, y, _surface->getPixel(390, 390));;
 						}
+
+						_surface->clear(0);
 
 					}
 
@@ -170,6 +164,8 @@ void onImGuiInit() {
 
 	_state = new ImGuiState();
 	memset(_state, 0, sizeof(ImGuiState));
+
+	_surface = new Graphics::ManagedSurface(800, 600);
 }
 
 void onImGuiRender() {
