@@ -82,7 +82,7 @@ ImGuiImage getImageID(Common::Path filename, int frameNum) {
 	int sx = 10, sy = 10;
 	if (frame) {
 		sx = frame->size_x();
-		sy = frame->size_x();
+		sy = frame->size_y();
 	}
 	Graphics::ManagedSurface surface(sx, sy, g_engine->_pixelformat);
 
@@ -100,18 +100,12 @@ ImGuiImage getImageID(Common::Path filename, int frameNum) {
 }
 
 void showImage(const ImGuiImage &image, const char *name, float thumbnailSize) {
-	ImVec2 size;
-	if (image.width > image.height) {
-		size = {thumbnailSize - 2, (thumbnailSize - 2) * image.height / image.width};
-	} else {
-		size = {(thumbnailSize - 2) * image.width / image.height, thumbnailSize - 2};
-	}
+	ImVec2 size = { (float)image.width * 2, (float)image.height * 2 };
+
 	ImGui::BeginGroup();
 	ImVec2 screenPos = ImGui::GetCursorScreenPos();
-	ImGui::GetWindowDrawList()->AddRect(screenPos, screenPos + ImVec2(thumbnailSize, thumbnailSize), 0xFFFFFFFF);
-	ImVec2 pos = ImGui::GetCursorPos();
-	ImVec2 imgPos = pos + ImVec2(1 + (thumbnailSize - 2 - size.x) * 0.5f, 1 + (thumbnailSize - 2 - size.y) * 0.5f);
-	ImGui::SetCursorPos(imgPos);
+	ImGui::GetWindowDrawList()->AddRect(screenPos, screenPos + ImVec2(size.x, size.y), 0xFFFFFFFF);
+
 	ImGui::Image(image.id, size);
 	ImGui::EndGroup();
 	//setToolTipImage(image, name);
