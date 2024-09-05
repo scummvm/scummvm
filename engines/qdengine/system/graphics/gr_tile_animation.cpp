@@ -270,7 +270,10 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 	debugCN(dL + 1, kDebugLoad, "   ");
 	for (uint i = 0; i < size; i++) {
 		_frameIndex[i] = fh->readUint32LE();
-		debugCN(dL + 1, kDebugLoad, " %d ", _frameIndex[i]);
+		debugCN(dL + 1, kDebugLoad, " %5d ", _frameIndex[i]);
+
+		if ((i + 1) % 20 == 0)
+			debugCN(dL + 1, kDebugLoad, "\n   ");
 	}
 	debugCN(dL + 1, kDebugLoad, "\n");
 
@@ -283,7 +286,10 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 	debugCN(dL, kDebugLoad, "   ");
 	for (uint i = 0; i < size; i++) {
 		_tileOffsets[i] = fh->readUint32LE();
-		debugCN(dL + 1, kDebugLoad, " %d ", _tileOffsets[i]);
+		debugCN(dL + 1, kDebugLoad, " %6d ", _tileOffsets[i]);
+
+		if ((i + 1) % 20 == 0)
+			debugCN(dL + 1, kDebugLoad, "\n   ");
 	}
 	debugCN(dL + 1, kDebugLoad, "\n");
 
@@ -293,13 +299,8 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 
 	_tileData.resize(size);
 
-	debugCN(dL, kDebugLoad, "   ");
-
-	for (uint i = 0; i < size; i++) {
+	for (uint i = 0; i < size; i++)
 		_tileData[i] = fh->readUint32LE();
-		debugCN(dL + 1, kDebugLoad, " %08x ", _tileData[i]);
-	}
-	debugCN(dL + 1, kDebugLoad, "\n");
 
 	debugC(dL + 1, kDebugLoad, "  --> grTileAnimation::load(): pos: %ld remaining: %ld", fh->pos(), fh->size() - fh->pos());
 
