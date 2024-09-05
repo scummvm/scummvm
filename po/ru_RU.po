@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-04 18:52+0000\n"
+"POT-Creation-Date: 2024-09-04 23:57+0000\n"
 "PO-Revision-Date: 2024-06-05 08:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -9402,10 +9402,6 @@ msgstr ""
 "но MPEG аудио отсутвует в сборке.\n"
 "Игра запустится, но некоторые звуки не будут работать."
 
-#: engines/mtropolis/plugin/mti.cpp:550
-msgid "Image Viewer"
-msgstr "Просмотрщик изображений"
-
 #: engines/mutationofjb/util.cpp:32
 #, c-format
 msgid "Unable to locate the '%s' engine data file"
@@ -13361,6 +13357,9 @@ msgstr ""
 "понадобятся все шрифты из выбранного вами пакета, то есть, LiberationMono, "
 "LiberationSans и LiberationSerif, либо FreeMono, FreeSans и FreeSerif "
 "соответственно."
+
+#~ msgid "Image Viewer"
+#~ msgstr "Просмотрщик изображений"
 
 #~ msgid "Missing game code"
 #~ msgstr "Отсутствует код для игры"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-04 18:52+0000\n"
+"POT-Creation-Date: 2024-09-04 23:57+0000\n"
 "PO-Revision-Date: 2024-07-04 15:43+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
@@ -9114,10 +9114,6 @@ msgstr ""
 "支持，但未编入此支持。\n"
 "游戏仍会运行，但不会播放某些音频。"
 
-#: engines/mtropolis/plugin/mti.cpp:550
-msgid "Image Viewer"
-msgstr "图像查看器"
-
 #: engines/mutationofjb/util.cpp:32
 #, c-format
 msgid "Unable to locate the '%s' engine data file"
@@ -12934,6 +12930,9 @@ msgstr ""
 "载 Liberation Fonts 或 GNU FreeFont 这两套字体包，并二选一。你会需要用到其中"
 "任意一套中的全部字体，也就是：LiberationMono，LiberationSans 和"
 "LiberationSerif ，或者 FreeMono，FreeSans 和 FreeSerif。"
+
+#~ msgid "Image Viewer"
+#~ msgstr "图像查看器"
 
 #~ msgid "Missing game code"
 #~ msgstr "缺失游戏代码"

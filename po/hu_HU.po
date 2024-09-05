@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-04 18:52+0000\n"
+"POT-Creation-Date: 2024-09-04 23:57+0000\n"
 "PO-Revision-Date: 2023-12-08 17:19+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -9196,10 +9196,6 @@ msgid ""
 msgstr ""
 "A játék zenéjéhez MP3-támogatás szükséges, ami nem lett lefordítva.\n"
 "A játék továbbra is játszható, de nem lesz benne zene."
-
-#: engines/mtropolis/plugin/mti.cpp:550
-msgid "Image Viewer"
-msgstr ""
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format

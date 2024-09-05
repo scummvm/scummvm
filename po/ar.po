@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-04 18:52+0000\n"
+"POT-Creation-Date: 2024-09-04 23:57+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -9186,10 +9186,6 @@ msgid ""
 msgstr ""
 "تتطلب الموسيقى الخاصة بهذه اللعبة دعم MP3 ، والذي لم يتم تجميعه بتنسيق.\n"
 "ستستمر اللعبة في اللعب ، لكن لن تحتوي على أي موسيقى."
-
-#: engines/mtropolis/plugin/mti.cpp:550
-msgid "Image Viewer"
-msgstr ""
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
