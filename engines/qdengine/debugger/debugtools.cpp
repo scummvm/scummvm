@@ -32,8 +32,7 @@
 #include "graphics/opengl/shader.h"
 #include "graphics/managed_surface.h"
 
-#include "qdengine/debugger/debugger.h"
-#include "qdengine/debugger/debugtools.h"
+#include "qdengine/debugger/dt-internal.h"
 
 #include "qdengine/qd_fwd.h"
 #include "qdengine/qdcore/qd_animation.h"
