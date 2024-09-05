@@ -499,7 +499,7 @@ protected:
 	void *_hWnd;
 
 	Graphics::ManagedSurface *_screenBuf = nullptr;
-	Graphics::ManagedSurface * _surfaceOverride = nullptr;
+	Graphics::ManagedSurface *_realScreenBuf = nullptr;
 
 	int *_yTable;
 
