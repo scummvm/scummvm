@@ -80,6 +80,7 @@ public:
 		_progressHandlerContext = context;
 	}
 
+	void addScale(int i, float scale);
 	byte *decode_frame_data(int frame_index, int closest_scale) const;
 	int find_closest_scale(float *scale) const;
 	bool wasFrameSizeChanged(int frame_index, int scaleIdx, float scale) const;

@@ -225,17 +225,7 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 		for (uint i = 0; i < size; i++) {
 			float scale = fh->readFloatLE();
 
-			_scaleArray[i]._scale = scale;
-			_scaleArray[i]._frameSize.x = (int)((float)_frameSize.x * scale);
-			_scaleArray[i]._frameSize.y = (int)((float)_frameSize.y * scale);
-			_scaleArray[i]._pitch.x = (_scaleArray[i]._frameSize.x + 15) / 16;
-			_scaleArray[i]._pitch.y = (_scaleArray[i]._frameSize.y + 15) / 16;
-
-			if (i == 0)
-				_scaleArray[i]._numTiles = _frameTileSize.x * _frameTileSize.y * _frameCount;
-			else
-				_scaleArray[i]._numTiles = _scaleArray[i - 1]._numTiles
-	                 + _frameCount * _scaleArray[i - 1]._pitch.y * _scaleArray[i - 1]._pitch.x;
+			addScale(i, scale);
 
 			debugCN(dL + 1, kDebugLoad, " %f, { %d x %d, [%d x %d], tiles: %d } ", _scaleArray[i]._scale,
 					_scaleArray[i]._frameSize.x, _scaleArray[i]._frameSize.y, _scaleArray[i]._pitch.x,
@@ -395,6 +385,20 @@ void grTileAnimation::drawFrame_scale(const Vect2i &position, int frame_index, f
 //////////////////////////////////////////////////////////////////////
 ////  New version 105 & 106 code
 //////////////////////////////////////////////////////////////////////
+
+void grTileAnimation::addScale(int i, float scale) {
+	_scaleArray[i]._scale = scale;
+	_scaleArray[i]._frameSize.x = (int)((float)_frameSize.x * scale);
+	_scaleArray[i]._frameSize.y = (int)((float)_frameSize.y * scale);
+	_scaleArray[i]._pitch.x = (_scaleArray[i]._frameSize.x + 15) / 16;
+	_scaleArray[i]._pitch.y = (_scaleArray[i]._frameSize.y + 15) / 16;
+
+	if (i == 0)
+		_scaleArray[i]._numTiles = _frameTileSize.x * _frameTileSize.y * _frameCount;
+	else
+		_scaleArray[i]._numTiles = _scaleArray[i - 1]._numTiles
+				+ _frameCount * _scaleArray[i - 1]._pitch.y * _scaleArray[i - 1]._pitch.x;
+}
 
 byte *grTileAnimation::decode_frame_data(int frame_index, int closest_scale) const {
 	Vect2i frameSize;
