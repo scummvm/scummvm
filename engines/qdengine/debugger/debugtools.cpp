@@ -161,10 +161,9 @@ void showArchives() {
 			if (archive && ImGui::TreeNode(Common::String::format("Resource/resource%d.pak", i).c_str())) {
 
 				for (auto &it : members) {
-
-					const char *fileName = (char *)transCyrillic(it->getFileName().c_str());
-					if (nameFilter.PassFilter(fileName) && ImGui::Selectable(fileName)) {
-						_state->_qdaToDisplay = it->getFileName();
+					const char *fileName = (char *)transCyrillic(it->getFileName());
+					if (nameFilter.PassFilter(fileName) && ImGui::Selectable(fileName) && it->getFileName().hasSuffixIgnoreCase(".qda")) {
+						_state->_qdaToDisplay = it->getPathInArchive();
 						_state->_qdaToDisplayFrame = 0;
 					}
 
@@ -181,15 +180,19 @@ void showArchives() {
 		{ // Right pane
 			ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Border);
 
-			if (!_state->_qdaToDisplay.empty())
-				ImGui::Text("Frame %s: %d", transCyrillic(_state->_qdaToDisplay.toString()), _state->_qdaToDisplayFrame);
-			else
+			ImGuiImage imgID;
+			if (!_state->_qdaToDisplay.empty()) {
+				imgID = getImageID(_state->_qdaToDisplay, _state->_qdaToDisplayFrame);
+
+				ImGui::Text("Frame %s: %d  [%d x %d]", transCyrillic(_state->_qdaToDisplay.toString()), _state->_qdaToDisplayFrame,
+						imgID.width, imgID.height);
+			} else {
 				ImGui::Text("Frame <none>");
+			}
 
 			ImGui::Separator();
 
 			if (!_state->_qdaToDisplay.empty()) {
-				ImGuiImage imgID = getImageID(_state->_qdaToDisplay, _state->_qdaToDisplayFrame);
 				showImage(imgID, (char *)transCyrillic(_state->_qdaToDisplay.toString()), 120.0f);
 			} else {
 				ImGui::InvisibleButton("##canvas", ImVec2(32.f, 32.f));
