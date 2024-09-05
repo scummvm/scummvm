@@ -1577,12 +1577,12 @@ Common::Error Myst3Engine::saveGameState(int slot, const Common::String &desc, b
 		return Common::Error(Common::kCreatingFileFailed, _("Invalid file name for saving"));
 	}
 
-	// Try to use an already generated thumbnail
-	const Graphics::Surface *thumbnail = _menu->borrowSaveThumbnail();
-	if (!thumbnail) {
+	// If autosaving, get a fresh thumbnail of the game screen
+	if (isAutosave && !_menu->isOpen()) {
 		_menu->generateSaveThumbnail();
 	}
-	thumbnail = _menu->borrowSaveThumbnail();
+	// Use the currently generated thumbnail
+	const Graphics::Surface *thumbnail = _menu->borrowSaveThumbnail();
 	assert(thumbnail);
 
 	return saveGameState(desc, thumbnail, isAutosave);
