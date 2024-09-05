@@ -187,7 +187,7 @@ uint16 duplicate_bits(uint8 byte) {
 }
 
 
-void scaleStipplePattern(byte originalPattern[128], byte newPattern[128]) {
+void Renderer::scaleStipplePattern(byte originalPattern[128], byte newPattern[128]) {
     // Initialize the new pattern to all 0
     memset(newPattern, 0, 128);
 

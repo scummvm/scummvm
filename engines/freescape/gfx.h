@@ -128,6 +128,8 @@ public:
 
 	virtual void setStippleData(byte *data) {};
 	virtual void useStipple(bool enabled) {};
+	void scaleStipplePattern(byte originalPattern[128], byte newPattern[128]);
+
 	byte *_palette;
 	void setColorMap(ColorMap *colorMap_);
 	ColorMap *_colorMap;
