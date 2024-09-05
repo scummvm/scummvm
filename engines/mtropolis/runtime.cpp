@@ -6225,7 +6225,6 @@ CORO_BEGIN_DEFINITION(Runtime::SendMessageToStructuralCoroutine)
 		// Send to children if cascade
 		CORO_IF(params->dispatch->isCascade())
 			CORO_FOR((locals->childrenArray = &params->structural->getChildren()), (locals->childIndex < locals->childrenArray->size()), (locals->childIndex++))
-				debug("traversing into child %u: %s", locals->childIndex, (*locals->childrenArray)[locals->childIndex]->debugGetName().c_str());
 				CORO_CALL(Runtime::SendMessageToStructuralCoroutine, params->runtime, params->isTerminatedPtr, (*locals->childrenArray)[locals->childIndex].get(), params->dispatch);
 
 				CORO_IF (*params->isTerminatedPtr)
