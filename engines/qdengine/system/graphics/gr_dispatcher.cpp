@@ -350,6 +350,14 @@ void grDispatcher::erase(int x, int y, int sx, int sy, int col) {
 	return;
 }
 
+void grDispatcher::surfaceOverride(Graphics::ManagedSurface *target) {
+	_surfaceOverride = target;
+}
+
+void grDispatcher::resetSurfaceOverride() {
+	_surfaceOverride = nullptr;
+}
+
 void grDispatcher::setPixel(int x, int y, int col) {
 	if (_clipMode && !clipCheck(x, y)) return;
 
