@@ -19,12 +19,18 @@
  *
  */
 
+#define IMGUI_DEFINE_MATH_OPERATORS
+
+#include "backends/imgui/imgui.h"
 #include "backends/imgui/imgui_fonts.h"
 
 #include "common/archive.h"
 #include "common/compression/unzip.h"
 #include "common/debug.h"
 #include "common/path.h"
+
+#include "graphics/opengl/shader.h"
+#include "graphics/managed_surface.h"
 
 #include "qdengine/debugger/debugger.h"
 #include "qdengine/debugger/debugtools.h"
@@ -39,12 +45,77 @@
 namespace QDEngine {
 
 ImGuiState *_state = nullptr;
-Graphics::ManagedSurface *_surface = nullptr;
 
-static void showCallStack() {
+static GLuint loadTextureFromSurface(Graphics::Surface *surface) {
+	// Create a OpenGL texture identifier
+	GLuint image_texture;
+	glGenTextures(1, &image_texture);
+	glBindTexture(GL_TEXTURE_2D, image_texture);
+
+	// Setup filtering parameters for display
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // This is required on WebGL for non power-of-two textures
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Same
+
+	// Upload pixels into texture
+	Graphics::Surface *s = surface->convertTo(Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0));
+	glPixelStorei(GL_UNPACK_ALIGNMENT, s->format.bytesPerPixel);
+
+	GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, s->w, s->h, 0, GL_RGB, GL_UNSIGNED_BYTE, s->getPixels()));
+	s->free();
+	delete s;
+	return image_texture;
 }
 
-static void showVars() {
+ImGuiImage getImageID(Common::Path filename, int frameNum) {
+	Common::String key = Common::String::format("%s:%d", filename.toString().c_str(), frameNum);
+
+	if (_state->_frames.contains(key))
+		return _state->_frames[key];
+
+	// Load the animation
+	qdAnimation *animation = new qdAnimation();
+	animation->qda_load(filename);
+
+	qdAnimationFrame *frame = animation->get_frame(frameNum);
+
+	int sx = 10, sy = 10;
+	if (frame) {
+		sx = frame->size_x();
+		sy = frame->size_x();
+	}
+	Graphics::ManagedSurface surface(sx, sy, g_engine->_pixelformat);
+
+	if (frame) {
+		grDispatcher::instance()->surfaceOverride(&surface);
+
+		frame->redraw(0, 0, 0);
+
+		grDispatcher::instance()->resetSurfaceOverride();
+	}
+
+	_state->_frames[key] = { (ImTextureID)(intptr_t)loadTextureFromSurface(surface.surfacePtr()), sx, sy };
+
+	return _state->_frames[key];
+}
+
+void showImage(const ImGuiImage &image, const char *name, float thumbnailSize) {
+	ImVec2 size;
+	if (image.width > image.height) {
+		size = {thumbnailSize - 2, (thumbnailSize - 2) * image.height / image.width};
+	} else {
+		size = {(thumbnailSize - 2) * image.width / image.height, thumbnailSize - 2};
+	}
+	ImGui::BeginGroup();
+	ImVec2 screenPos = ImGui::GetCursorScreenPos();
+	ImGui::GetWindowDrawList()->AddRect(screenPos, screenPos + ImVec2(thumbnailSize, thumbnailSize), 0xFFFFFFFF);
+	ImVec2 pos = ImGui::GetCursorPos();
+	ImVec2 imgPos = pos + ImVec2(1 + (thumbnailSize - 2 - size.x) * 0.5f, 1 + (thumbnailSize - 2 - size.y) * 0.5f);
+	ImGui::SetCursorPos(imgPos);
+	ImGui::Image(image.id, size);
+	ImGui::EndGroup();
+	//setToolTipImage(image, name);
 }
 
 void showArchives() {
@@ -94,27 +165,8 @@ void showArchives() {
 
 					const char *fileName = (char *)transCyrillic(it->getFileName().c_str());
 					if (nameFilter.PassFilter(fileName) && ImGui::Selectable(fileName)) {
-						Common::Path fpath = Common::Path(it->getName());
-
-						// Load the animation
-						qdAnimation *animation = new qdAnimation();
-						animation->qda_load(fpath);
-
-						qdAnimationFrame *firstFrame = animation->get_frame(0);
-						debugC(3, kDebugImGui, "showArchives(): %p %d %d", (void *)firstFrame, firstFrame->size_x(), firstFrame->size_y());
-
-						grDispatcher::instance()->surfaceOverride(_surface);
-
-						firstFrame->redraw(400, 300, 0);
-						grDispatcher::instance()->resetSurfaceOverride();
-
-						if (_surface) {
-							int x = 390, y = 390;
-							debugC(3, kDebugImGui, "showArchives(): Pixel at (%d, %d): %d", x, y, _surface->getPixel(390, 390));;
-						}
-
-						_surface->clear(0);
-
+						_state->_qdaToDisplay = it->getFileName();
+						_state->_qdaToDisplayFrame = 0;
 					}
 
 				}
@@ -124,18 +176,29 @@ void showArchives() {
 		}
 
 		ImGui::EndChild();
-	}
-	ImGui::End();
-}
 
-static void showScore() {
-	if (!_state->_showScore)
-		return;
+		ImGui::SameLine();
 
-	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(120, 120), ImGuiCond_FirstUseEver);
-	if (ImGui::Begin("Score", &_state->_showScore)) {
-		ImGui::Text("WIP");
+		{ // Right pane
+			ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Border);
+
+			if (!_state->_qdaToDisplay.empty())
+				ImGui::Text("Frame %s: %d", transCyrillic(_state->_qdaToDisplay.toString()), _state->_qdaToDisplayFrame);
+			else
+				ImGui::Text("Frame <none>");
+
+			ImGui::Separator();
+
+			if (!_state->_qdaToDisplay.empty()) {
+				ImGuiImage imgID = getImageID(_state->_qdaToDisplay, _state->_qdaToDisplayFrame);
+				showImage(imgID, (char *)transCyrillic(_state->_qdaToDisplay.toString()), 120.0f);
+			} else {
+				ImGui::InvisibleButton("##canvas", ImVec2(32.f, 32.f));
+			}
+
+			ImGui::EndChild();
+		}
+
 	}
 	ImGui::End();
 }
@@ -163,9 +226,6 @@ void onImGuiInit() {
 	ImGui::addTTFFontFromArchive("MaterialSymbolsSharp.ttf", 16.f, &icons_config, icons_ranges);
 
 	_state = new ImGuiState();
-	memset(_state, 0, sizeof(ImGuiState));
-
-	_surface = new Graphics::ManagedSurface(800, 600);
 }
 
 void onImGuiRender() {
@@ -183,18 +243,12 @@ void onImGuiRender() {
 		if (ImGui::BeginMenu("View")) {
 			ImGui::SeparatorText("Windows");
 
-			ImGui::MenuItem("CallStack", NULL, &_state->_showCallStack);
-			ImGui::MenuItem("Vars", NULL, &_state->_showVars);
-			ImGui::MenuItem("Score", NULL, &_state->_showScore);
 			ImGui::MenuItem("Archives", NULL, &_state->_showArchives);
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
 	}
 
-	showVars();
-	showCallStack();
-	showScore();
 	showArchives();
 }
 

@@ -22,21 +22,7 @@
 #ifndef QDENGINE_DEBUGGER_H
 #define QDENGINE_DEBUGGER_H
 
-#define IMGUI_DEFINE_MATH_OPERATORS
-
-#include "backends/imgui/imgui.h"
-#include "graphics/managed_surface.h"
-#include "graphics/surface.h"
-
 namespace QDEngine {
-
-// debugarchive.cpp
-typedef struct ImGuiState {
-	bool _showCallStack = false;
-	bool _showVars = false;
-	bool _showScore = false;
-	bool _showArchives = false;
-} ImGuiState;
 
 typedef struct ImGuiImage {
 	ImTextureID id;
@@ -44,8 +30,16 @@ typedef struct ImGuiImage {
 	int height;
 } ImGuiImage;
 
+typedef struct ImGuiState {
+	bool _showArchives = false;
+
+	Common::HashMap<Common::String, ImGuiImage> _frames;
+
+	Common::Path _qdaToDisplay;
+	int _qdaToDisplayFrame = -1;
+} ImGuiState;
+
 extern ImGuiState *_state;
-extern Graphics::ManagedSurface *_surface;
 
 }
 
