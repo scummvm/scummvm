@@ -89,7 +89,7 @@ ImGuiImage getImageID(Common::Path filename, int frameNum) {
 	if (frame) {
 		grDispatcher::instance()->surfaceOverride(&surface);
 
-		frame->redraw(0, 0, 0);
+		frame->redraw(sx / 2, sy / 2, 0);
 
 		grDispatcher::instance()->resetSurfaceOverride();
 	}
