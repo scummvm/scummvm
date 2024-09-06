@@ -89,7 +89,12 @@ public:
 		return _packages[idx].is_open();
 	}
 	bool is_package_available(const qdFileOwner &file_owner);
+	int get_num_packages() { return _packageCount; }
+
 	Common::Archive *get_package(int idx) {
+		if (!_packages[idx].is_open())
+			_packages[idx].open();
+
 		return _packages[idx]._container;
 	}
 

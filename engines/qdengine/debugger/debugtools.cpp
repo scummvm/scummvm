@@ -86,7 +86,7 @@ ImGuiImage getImageID(Common::Path filename, int frameNum) {
 	Graphics::ManagedSurface *surface = nullptr;
 
 	if (frameNum != TILES_ID) {
-		if (animation->tileAnimation() && 0) {
+		if (animation->tileAnimation()) {
 			Vect2i size = animation->tileAnimation()->frameSize();
 
 			sx = size.x;
@@ -167,7 +167,7 @@ void showArchives() {
 		ImGui::Separator();
 
 		// Iterate through the 3 resource pak files
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < qdFileManager::instance().get_num_packages(); i++) {
 			Common::Archive *archive = qdFileManager::instance().get_package(i);
 			Common::ArchiveMemberList members;
 
