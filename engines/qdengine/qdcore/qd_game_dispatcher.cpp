@@ -1947,8 +1947,9 @@ bool qdGameDispatcher::close_video() {
 		if (it != video_list().end()) ++it;
 		for (; it != video_list().end(); ++it) {
 			if ((*it)->is_intro_movie()) {
-				play_video(*it);
-				return true;
+				if (play_video(*it)) {
+					return true;
+				}
 			}
 		}
 
