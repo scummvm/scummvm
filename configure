@@ -5917,12 +5917,7 @@ define_in_config_if_yes "$_libmikmod" "USE_MIKMOD"
 echocheck "libmpcdec"
 
 if test "$_libmpcdec" != "no"; then
-	if test "$_pkg_config" = "yes" && $_pkgconfig --exists libmpcdec; then
-		append_var LIBMPCDEC_LIBS "`$_pkgconfig --libs libmpcdec`"
-		append_var LIBMPCDEC_CFLAGS "`$_pkgconfig --cflags libmpcdec`"
-	else
-		append_var LIBMPCDEC_LIBS "-lmpcdec"
-	fi
+	append_var LIBMPCDEC_LIBS "-lmpcdec"
 
 	if test "$_libmpcdec" = "auto"; then
 		_libmpcdec=no
