@@ -397,7 +397,7 @@ View1::View1() : UIElement("View1") {
 
 			// uint32 value = getSurface().getPixel(msg._pos.x, msg._pos.y);
 			uint32 value = g_engine->_map.getPixel(msg._pos.x, msg._pos.y);
-			g_system->setWindowCaption(Common::String::format("%u,%u: %u", msg._pos.x, msg._pos.y, value));
+			// g_system->setWindowCaption(Common::String::format("%u,%u: %u", msg._pos.x, msg._pos.y, value));
 			//g_engine->CalculatePath(Common::Point(154, 136), Common::Point(msg._pos.x, msg._pos.y));
 
 			if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Walk) {
@@ -427,6 +427,10 @@ View1::View1() : UIElement("View1") {
 				// TODO: Not sure where the original code rewinds the script
 				Scenes::instance().CurrentSceneScript->seek(0, SEEK_SET);
 				g_engine->RunScriptExecutor(false);
+				// TODO: For the case of clicking an object, this reset happens at l0037_EFD3:
+				// Not sure where and if it happens for an inventory interaction
+				g_engine->_scriptExecutor->_interactedObjectID = 0;
+				g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
 			}
 			return true;
 		} else if (msg._button == MouseMessage::MB_RIGHT) {
@@ -446,7 +450,7 @@ View1::View1() : UIElement("View1") {
 	bool View1::msgMouseMove(const MouseMoveMessage &msg) {
 		// TODO: Check what we are hovering over and save this info
 		uint16 areaID = g_engine->_scriptExecutor->Func101D(msg._pos.x, msg._pos.y);
-		g_system->setWindowCaption(Common::String::format("Area ID: %.4x", areaID));
+		// g_system->setWindowCaption(Common::String::format("Area ID: %.4x", areaID));
 		return true;
 	}
 
@@ -807,6 +811,9 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		
 		// AnimFrame *frame = current->GetCurrentPortrait();
 		uint8 depth = current->GetPosition().y;
+		uint8 bgDepth = g_engine->_depthMap.getPixel(current->GetPosition().x, current->GetPosition().y);
+		g_system->setWindowCaption(Common::String::format("Depth %u vs. %u", depth, bgDepth));
+
 		DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s, mirror, true, depth);
 		// Draw the white dot
 		// TODO: Why does it not work for the others apart from the player?
