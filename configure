@@ -1350,6 +1350,11 @@ for ac_option in $@; do
 		A52_CFLAGS="-I$arg/include"
 		A52_LIBS="-L$arg/lib"
 		;;
+	--with-mpcdec-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		LIBMPCDEC_CFLAGS="-I$arg/include"
+		LIBMPCDEC_LIBS="-L$arg/lib"
+		;;
 	--with-alsa-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		ALSA_CFLAGS="-I$arg/include"
