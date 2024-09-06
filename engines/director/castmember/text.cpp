@@ -150,13 +150,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 
 	if (asButton) {
 		_type = kCastButton;
-
-		if (version < kFileVer500) {
-			_buttonType = static_cast<ButtonType>(stream.readUint16BE() - 1);
-		} else {
-			warning("TextCastMember(): Attempting to initialize >D4 button castmember");
-			_buttonType = kTypeButton;
-		}
+		_buttonType = static_cast<ButtonType>(stream.readUint16BE() - 1);
 	}
 
 	_bgcolor = g_director->_wm->findBestColor(_bgpalinfo1 & 0xff, _bgpalinfo2 & 0xff, _bgpalinfo3 & 0xff);
