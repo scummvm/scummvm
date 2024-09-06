@@ -44,6 +44,8 @@
 
 namespace QDEngine {
 
+const int TILES_ID = -10;
+
 ImGuiState *_state = nullptr;
 
 static GLuint loadTextureFromSurface(Graphics::Surface *surface) {
@@ -81,34 +83,47 @@ ImGuiImage getImageID(Common::Path filename, int frameNum) {
 	_state->_qdaToDisplayFrameCount = animation->num_frames();
 
 	int sx = 10, sy = 10;
+	Graphics::ManagedSurface *surface = nullptr;
 
-	if (animation->tileAnimation() && 0) {
-		Vect2i size = animation->tileAnimation()->frameSize();
+	if (frameNum != TILES_ID) {
+		if (animation->tileAnimation() && 0) {
+			Vect2i size = animation->tileAnimation()->frameSize();
 
-		sx = size.x;
-		sy = size.y;
+			sx = size.x;
+			sy = size.y;
+		} else {
+			qdAnimationFrame *frame = animation->get_frame(frameNum);
+
+			sx = frame->size_x();
+			sy = frame->size_y();
+		}
+
+		surface = new Graphics::ManagedSurface(sx, sy, g_engine->_pixelformat);
+
+		animation->set_cur_frame(frameNum);
+
+		grDispatcher::instance()->surfaceOverride(surface);
+		animation->redraw(sx / 2, sy/ 2, 0, 0);
+		grDispatcher::instance()->resetSurfaceOverride();
 	} else {
-		qdAnimationFrame *frame = animation->get_frame(frameNum);
+		if (animation->tileAnimation()) {
+			surface = animation->tileAnimation()->dumpTiles(25);
 
-		sx = frame->size_x();
-		sy = frame->size_y();
+			sx = surface->w;
+			sy = surface->h;
+		}
 	}
 
-	Graphics::ManagedSurface surface(sx, sy, g_engine->_pixelformat);
+	if (surface)
+		_state->_frames[key] = { (ImTextureID)(intptr_t)loadTextureFromSurface(surface->surfacePtr()), sx, sy };
 
-	animation->set_cur_frame(frameNum);
-
-	grDispatcher::instance()->surfaceOverride(&surface);
-	animation->redraw(sx / 2, sy/ 2, 0, 0);
-	grDispatcher::instance()->resetSurfaceOverride();
-
-	_state->_frames[key] = { (ImTextureID)(intptr_t)loadTextureFromSurface(surface.surfacePtr()), sx, sy };
+	delete surface;
 
 	return _state->_frames[key];
 }
 
-void showImage(const ImGuiImage &image, const char *name, float thumbnailSize) {
-	ImVec2 size = { (float)image.width * 2, (float)image.height * 2 };
+void showImage(const ImGuiImage &image, const char *name, float scale) {
+	ImVec2 size = { (float)image.width * scale, (float)image.height * scale };
 
 	ImGui::BeginGroup();
 	ImVec2 screenPos = ImGui::GetCursorScreenPos();
@@ -194,40 +209,63 @@ void showArchives() {
 				ImGui::Text("Frame <none>");
 			}
 
-			ImGui::Button("\ue020"); // Fast Rewind    // fast_rewind
+			ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
+            if (ImGui::BeginTabBar("FrameTabBar", tab_bar_flags)) {
 
-			ImGui::SameLine();
-			if (ImGui::Button("\ue045")) { // Skip Previous    // skip_previous
-				_state->_qdaToDisplayFrame = _state->_qdaToDisplayFrame + totalFrames - 1;
-				_state->_qdaToDisplayFrame %= totalFrames;
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("\ue037")) // Play    // play_arrow
-				_state->_qdaIsPlaying = !_state->_qdaIsPlaying;
+				if (ImGui::BeginTabItem("Animation")) {
 
-			ImGui::SameLine();
-			if (ImGui::Button("\ue044")) { // Skip Next    // skip_next
-				_state->_qdaToDisplayFrame += 1;
-				_state->_qdaToDisplayFrame %= totalFrames;
-			}
-			ImGui::SameLine();
-			ImGui::Button("\ue01f"); // Fast Forward    // fast_forward
-			ImGui::SameLine();
+					ImGui::Button("\ue020"); // Fast Rewind    // fast_rewind
 
-			// Frame Count
-			char buf[6];
-			snprintf(buf, 6, "%d", _state->_qdaToDisplayFrame);
+					ImGui::SameLine();
+					if (ImGui::Button("\ue045")) { // Skip Previous    // skip_previous
+						_state->_qdaToDisplayFrame = _state->_qdaToDisplayFrame + totalFrames - 1;
+						_state->_qdaToDisplayFrame %= totalFrames;
+					}
+					ImGui::SameLine();
+					if (ImGui::Button("\ue037")) // Play    // play_arrow
+						_state->_qdaIsPlaying = !_state->_qdaIsPlaying;
 
-			ImGui::SetNextItemWidth(35);
-			ImGui::InputText("##frame", buf, 5, ImGuiInputTextFlags_CharsDecimal);
-			ImGui::SetItemTooltip("Frame");
+					ImGui::SameLine();
+					if (ImGui::Button("\ue044")) { // Skip Next    // skip_next
+						_state->_qdaToDisplayFrame += 1;
+						_state->_qdaToDisplayFrame %= totalFrames;
+					}
+					ImGui::SameLine();
+					ImGui::Button("\ue01f"); // Fast Forward    // fast_forward
+					ImGui::SameLine();
 
-			ImGui::Separator();
+					// Frame Count
+					char buf[6];
+					snprintf(buf, 6, "%d", _state->_qdaToDisplayFrame);
 
-			if (!_state->_qdaToDisplay.empty()) {
-				showImage(imgID, (char *)transCyrillic(_state->_qdaToDisplay.toString()), 120.0f);
-			} else {
-				ImGui::InvisibleButton("##canvas", ImVec2(32.f, 32.f));
+					ImGui::SetNextItemWidth(35);
+					ImGui::InputText("##frame", buf, 5, ImGuiInputTextFlags_CharsDecimal);
+					ImGui::SetItemTooltip("Frame");
+
+					ImGui::Separator();
+
+					if (!_state->_qdaToDisplay.empty()) {
+						showImage(imgID, (char *)transCyrillic(_state->_qdaToDisplay.toString()), 2.0);
+					} else {
+						ImGui::InvisibleButton("##canvas", ImVec2(32.f, 32.f));
+					}
+
+					ImGui::EndTabItem();
+				}
+
+				if (ImGui::BeginTabItem("Tiles")) {
+					if (!_state->_qdaToDisplay.empty()) {
+						imgID = getImageID(_state->_qdaToDisplay, TILES_ID);
+
+						showImage(imgID, (char *)transCyrillic(_state->_qdaToDisplay.toString()), 1.0);
+					} else {
+						ImGui::InvisibleButton("##canvas", ImVec2(32.f, 32.f));
+					}
+
+					ImGui::EndTabItem();
+				}
+
+				ImGui::EndTabBar();
 			}
 
 			ImGui::EndChild();

@@ -475,9 +475,7 @@ bool grTileAnimation::wasFrameSizeChanged(int frame_index, int scaleIdx, float s
 	return true;
 }
 
-void grTileAnimation::dumpTiles(Common::Path basename, int tilesPerRow) {
-	Common::Path path = Common::Path(Common::String::format("dumps/%s.tiles.png", transCyrillic(basename.baseName())));
-
+Graphics::ManagedSurface *grTileAnimation::dumpTiles(int tilesPerRow) const {
 	int w = tilesPerRow;
 	int h = (_tileOffsets.size() + tilesPerRow - 1) / tilesPerRow;
 
@@ -503,6 +501,14 @@ void grTileAnimation::dumpTiles(Common::Path basename, int tilesPerRow) {
 		y += GR_TILE_SPRITE_SIZE_X + 1;
 	}
 
+	return dstSurf;
+}
+
+void grTileAnimation::dumpTiles(Common::Path basename, int tilesPerRow) const {
+	Common::Path path = Common::Path(Common::String::format("dumps/%s.tiles.png", transCyrillic(basename.baseName())));
+
+	Graphics::ManagedSurface *dstSurf = dumpTiles(tilesPerRow);
+
 	Common::DumpFile bitmapFile;
 	bitmapFile.open(path, true);
 	Image::writePNG(bitmapFile, *(dstSurf->surfacePtr()));
@@ -512,6 +518,5 @@ void grTileAnimation::dumpTiles(Common::Path basename, int tilesPerRow) {
 
 	delete dstSurf;
 }
-
 
 } // namespace QDEngine

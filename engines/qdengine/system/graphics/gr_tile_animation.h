@@ -32,6 +32,10 @@ namespace Common {
 class SeekableReadStream;
 }
 
+namespace Graphics {
+class ManagedSurface;
+}
+
 namespace QDEngine {
 
 typedef void (*CompressionProgressHandler)(int percents_loaded, void *context);
@@ -85,7 +89,8 @@ public:
 	int find_closest_scale(float *scale) const;
 	bool wasFrameSizeChanged(int frame_index, int scaleIdx, float scale) const;
 
-	void dumpTiles(Common::Path baseName, int tilesPerRow);
+	Graphics::ManagedSurface *dumpTiles(int tilesPerRow) const;
+	void dumpTiles(Common::Path baseName, int tilesPerRow) const;
 
 private:
 
