@@ -825,7 +825,10 @@ void CastleEngine::updateTimeVariables() {
 
 void CastleEngine::borderScreen() {
 	FreescapeEngine::borderScreen();
-	selectCharacterScreen();
+	if (isAmiga() && isDemo()) {
+		// Skip character selection
+	} else
+		selectCharacterScreen();
 }
 
 void CastleEngine::drawOption() {

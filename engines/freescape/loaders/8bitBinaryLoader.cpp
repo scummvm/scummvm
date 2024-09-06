@@ -623,6 +623,10 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		}
 
 		if (isAmiga()) {
+			readField(file, 8);
+			readField(file, 8);
+			readField(file, 8);
+			readField(file, 8);
 			// TODO
 			groundColor = skyColor;
 			skyColor = 0;
