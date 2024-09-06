@@ -94,8 +94,10 @@ ImGuiImage getImageID(Common::Path filename, int frameNum) {
 		} else {
 			qdAnimationFrame *frame = animation->get_frame(frameNum);
 
-			sx = frame->size_x();
-			sy = frame->size_y();
+			if (frame) {
+				sx = frame->size_x();
+				sy = frame->size_y();
+			}
 		}
 
 		surface = new Graphics::ManagedSurface(sx, sy, g_engine->_pixelformat);
