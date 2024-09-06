@@ -682,6 +682,7 @@ bool View1::tick() {
 }
 
 void View1::drawInventory(Graphics::ManagedSurface &s) {
+	Common::Rect inventoryRect(0x36, 0x2C, 0x10A, 0x82);
 	drawDarkRectangle(0x36, 0x2c, 0x10A - 0x36, 0x82 - 0x2c);
 	// TODO: Add proper grid, add y as well
 	int x = 0;
@@ -690,11 +691,16 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 		AnimFrame *icon = GetInventoryIcon(currentItem);
 		DrawSprite(0x36 + x, 0x2c + y, icon->Width, icon->Height, icon->Data, s, false);
 		x += icon->Width;
+		if (x > inventoryRect.width()) {
+			x = 0;
+			y += icon->Height;
+		}
 	}
 }
 
 GameObject *View1::getClickedInventoryItem(const Common::Point &p) {
 	// TODO: Add proper grid, add y as well
+	Common::Rect inventoryRect(0x36, 0x2C, 0x10A, 0x82);
 	int x = 0;
 	int y = 0;
 	for (GameObject *currentItem : inventoryItems) {
@@ -704,6 +710,10 @@ GameObject *View1::getClickedInventoryItem(const Common::Point &p) {
 			return currentItem;
 		}
 		x += icon->Width;
+		if (x > inventoryRect.width()) {
+			x = 0;
+			y += icon->Height;
+		}
 	}
 	return nullptr;
 }
