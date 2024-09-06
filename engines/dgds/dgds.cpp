@@ -62,6 +62,7 @@
 #include "dgds/scripts.h"
 #include "dgds/sound.h"
 #include "dgds/game_palettes.h"
+#include "dgds/dragon_arcade.h"
 
 // for frame contents debugging
 //#define DUMP_FRAME_DATA 1
@@ -83,7 +84,8 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_gdsScene(nullptr), _resource(nullptr), _gamePals(nullptr), _gameGlobals(nullptr),
 	_detailLevel(kDgdsDetailHigh), _textSpeed(1), _justChangedScene1(false), _justChangedScene2(false),
 	_random("dgds"), _currentCursor(-1), _menuToTrigger(kMenuNone), _isLoading(true), _flipMode(false),
-	_rstFileName(nullptr), _difficulty(1), _menu(nullptr), _adsInterp(nullptr), _isDemo(false) {
+	_rstFileName(nullptr), _difficulty(1), _menu(nullptr), _adsInterp(nullptr), _isDemo(false),
+	_dragonArcade(nullptr) {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
@@ -124,6 +126,7 @@ DgdsEngine::~DgdsEngine() {
 	delete _menu;
 	delete _inventory;
 	delete _shellGame;
+	delete _dragonArcade;
 
 	_icons.reset();
 	_corners.reset();
@@ -326,7 +329,9 @@ void DgdsEngine::init(bool restarting) {
 	_menu = new Menu();
 	_adsInterp = new ADSInterpreter(this);
 	_inventory = new Inventory();
-	if (_gameId == GID_HOC)
+	if (_gameId == GID_DRAGON)
+		_dragonArcade = new DragonArcade();
+	else if (_gameId == GID_HOC)
 		_shellGame = new ShellGame();
 
 	_backgroundBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
