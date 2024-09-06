@@ -138,7 +138,7 @@ grTileSprite grTileAnimation::getTile(int tile_index) const {
 			break;
 		}
 		if (!grTileSprite::uncompress(&*_tileData.begin() + _tileOffsets[tile_index], GR_TILE_SPRITE_SIZE, tile_buf, _compression)) {
-			assert(0 && "Unknown compression algorithm");
+			warning("Unknown compression algorithm");
 		}
 	}
 
@@ -484,11 +484,11 @@ Graphics::ManagedSurface *grTileAnimation::dumpTiles(int tilesPerRow) const {
 	int index = 0;
 
 	int x = 0, y = 0;
-	for (int32 i = 0; i < tilesPerRow; i++) {
+	for (int32 i = 0; i < h; i++) {
 		x = 0;
 
-		for (int32 j = 0; j < tilesPerRow; j++) {
-			grDispatcher::instance()->putTileSpr(x, y, getTile(index++), _hasAlpha, 0, dstSurf);
+		for (int32 j = 0; j < w; j++) {
+			grDispatcher::instance()->putTileSpr(x, y, getTile(index++), _hasAlpha, 0, dstSurf, false);
 			x += GR_TILE_SPRITE_SIZE_X + 1;
 
 			if (index >= _tileOffsets.size())
