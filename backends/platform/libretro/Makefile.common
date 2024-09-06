@@ -194,17 +194,16 @@ endif
 
 # Engine modules
 # Following script generates configuration engines files (build/config.mk.engines, engines/engines.mk, engines/plugins_table.h, engines/detection_table.h) from actual source in $(SCUMMVM_PATH).
-ifeq (,$(filter clean datafiles coreinfo,$(MAKECMDGOALS)))
+ifeq (,$(filter clean datafiles coreinfo noengine,$(MAKECMDGOALS)))
 $(info Configuring ScummVM engines...)
 ifneq ($(shell cd $(SCRIPTS_PATH); ./configure_engines.sh $(ROOT_PATH) $(SCUMMVM_PATH) $(NO_WIP) $(STATIC_LINKING) $(LITE) $(UNAVAILABLE_DEPS)),0)
    $(error Configuring ScummVM engines failed)
 else
+-include $(SCUMMVM_PATH)/config.mk.engines
+-include $(SCUMMVM_PATH)/engines/engines.mk
    $(info - ScummVM engines configured)
 endif
 endif
-
--include $(SCUMMVM_PATH)/config.mk.engines
--include $(SCUMMVM_PATH)/engines/engines.mk
 
 ifeq ($(USE_MT32EMU),1)
    INCLUDES    += -I$(SCUMMVM_PATH)/audio/softsynth/mt32/sha1
@@ -236,6 +235,8 @@ endif
 ######################################################################
 
 core: $(TARGET)
+
+noengine: $(TARGET)
 
 datafiles: scummvm.zip
 
