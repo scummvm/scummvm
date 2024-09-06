@@ -64,6 +64,10 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 	// seems like the line spacing is default to 1 in D4
 	_lineSpacing = g_director->getVersion() >= 400 ? 1 : 0;
 
+	if (debugChannelSet(4, kDebugLoading)) {
+		stream.hexdump(stream.size());
+	}
+
 	if (version < kFileVer400) {
 		_flags1 = flags1; // region: 0 - auto, 1 - matte, 2 - disabled
 		_borderSize = static_cast<SizeType>(stream.readByte());
