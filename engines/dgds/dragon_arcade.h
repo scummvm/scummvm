@@ -42,7 +42,11 @@ enum DragonBladeMoveFlag {
 	kBladeMoveLeft = 8,
 };
 
-struct ArcadeNPCState {
+class ArcadeNPCState {
+public:
+	ArcadeNPCState() : val1(0), val2(0), x(0), y(0), x_11(0), y_11(0), x_12(0), y_12(0),
+		ttmPage(0), byte12(0), byte13(0), health(0), byte15(0), x_21(0), y_21(0),
+		x_22(0), y_22(0) {}
 	int16 val1;
 	int16 val2;
 	int16 x;
@@ -55,23 +59,11 @@ struct ArcadeNPCState {
 	int8 byte12;
 	int8 byte13;
 	int8 health;
-	int8 byte14; /* Set to 0, 1 or 2 */
+	int8 byte15; /* Set to 0, 1 or 2 */
 	int16 x_21;
 	int16 y_21;
 	int16 x_22;
 	int16 y_22;
-};
-
-struct AracdeSomething {
-	int16 val0;
-	int16 val2;
-	byte unk4[12];
-	int16 val10;
-	byte val12;
-	byte unk13;
-	byte val14;
-	byte val15;
-	byte unk16[8];
 };
 
 class DragonArcadeBullet {
@@ -103,7 +95,7 @@ private:
 	void clearAllNPCStates();
 	void createBullet(int16 x, int16 y, ImageFlipMode flipMode, uint16 var1);
 	void bladeTakeHitAndCheck();
-	void enemyTakeHit() { _bossHealth--; }
+	void enemyTakeHit() { _npcState[1].health--; }
 	void enemyTakeHitAndCheck();
 	void playSfx(int16 num) const;
 	void drawBulletHitCircles(uint16 x, uint16 y, bool flag);
@@ -131,13 +123,13 @@ private:
 	void bladeTakeHit();
 	void arcade16bc();
 	void arcade16de(int16 param);
-	void arcadeUpdateXScrollOffset();
 	void arcade1e83();
 	void arcade2445();
 	void arcade2754(int16 findResult);
+	void arcade34b4();
 	void arcade3e96();
 	void arcade4085();
-	void arcade34b4();
+	void updateXScrollOffset();
 	bool isNpcInsideXRange(int16 num);
 	void updateBullets();
 	void checkBladeFireAllStages();
@@ -161,10 +153,7 @@ private:
 	void playSFX55AndStuff();
 	void moveBladeX();
 	void handleMouseStates();
-	void updateXScrollOffset();
 
-	int16 _bladeHealth;
-	int16 _bossHealth;
 	int16 _lastDrawnBladeHealth;
 	int16 _lastDrawnBossHealth;
 	uint16 _nextRandomVal;
@@ -186,6 +175,7 @@ private:
 	uint16 _uint0a17;
 	int16 _int0b54;
 	int16 _int0b58;
+	int16 _int0b5a;
 	int16 _int0b60;
 	int16 _int3d18;
 	uint16 _uint0be6;
@@ -220,8 +210,7 @@ private:
 	DragonBladeMoveFlag _keyStateFlags;
 	DragonBladeMoveFlag _bladeMoveFlagBeforeRButton;
 	DragonArcadeBullet _bullets[20];
-	ArcadeNPCState _npcState[10];
-	AracdeSomething _somethingArray[9];
+	ArcadeNPCState _npcState[20];
 	Common::SharedPtr<Image> _bulletImg;
 	Common::SharedPtr<Image> _arrowImg;
 	Common::SharedPtr<Image> _scrollImg;

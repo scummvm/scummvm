@@ -30,8 +30,8 @@
 namespace Dgds {
 
 DragonArcadeTTM::DragonArcadeTTM(ArcadeNPCState *npcState) : _npcState(npcState),
-_currentTTMNum(0), _currentNPCRunningTTM(0), _drawXOffset(0), _drawYOffset(0),
-_startYOffset(0), _doingInit(false), _drawColBG(0), _drawColFG(0)
+	_currentTTMNum(0), _currentNPCRunningTTM(0), _drawXOffset(0), _drawYOffset(0),
+	_startYOffset(0), _doingInit(false), _drawColBG(0), _drawColFG(0)
 {
 	ARRAYCLEAR(_shapes3);
 	ARRAYCLEAR(_brushes);
@@ -51,6 +51,7 @@ int16 DragonArcadeTTM::load(const char *filename) {
 	for (envNum = 0; envNum < ARRAYSIZE(_ttmEnvs); envNum++) {
 		if (_ttmEnvs[envNum].scr == nullptr) {
 			env = &_ttmEnvs[envNum];
+			break;
 		}
 	}
 	if (!env)
@@ -157,7 +158,7 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 		engine->_soundPlayer->playSFX(sound);
 		break;
 	}
-	case 0x4054: { // SET NPC POS 1
+	case 0x4504: { // SET NPC POS 1
 		int16 x = _drawXOffset + ivals[0];
 		int16 y = _drawYOffset + ivals[1] + 2;
 		_npcState[_currentNPCRunningTTM].x_11 = x;
@@ -237,12 +238,14 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 		if (_currentNPCRunningTTM == 0) {
 			int16 x = ivals[0] + _npcState[0].x - 152;
 			int16 y = ivals[1] + _startYOffset + 2;
-			_shapes[_currentTTMNum]->drawBitmap(_brushes[_currentTTMNum], x, y, drawWin, compBuffer, flipMode);
+			if (_shapes[_currentTTMNum])
+				_shapes[_currentTTMNum]->drawBitmap(_brushes[_currentTTMNum], x, y, drawWin, compBuffer, flipMode);
 			_npcState[0].y = ivals[1];
 		} else {
 			int16 x = ivals[0] + _drawXOffset;
 			int16 y = ivals[1] + _drawYOffset + 2;
-			_shapes[_currentTTMNum]->drawBitmap(_brushes[_currentTTMNum], x, y, drawWin, compBuffer, flipMode);
+			if (_shapes[_currentTTMNum])
+				_shapes[_currentTTMNum]->drawBitmap(_brushes[_currentTTMNum], x, y, drawWin, compBuffer, flipMode);
 			_npcState[_currentNPCRunningTTM].x = ivals[0];
 			_npcState[_currentNPCRunningTTM].y = ivals[1];
 		}
@@ -259,7 +262,7 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 		// Do nothing (ignore arg)
 		break;
 	default:
-		error("Unsupported TTM opcode 0x%04x for Dragon arcade.", op);
+		warning("Unsupported TTM opcode 0x%04x for Dragon arcade.", op);
 	}
 	return 0;
 }
@@ -283,6 +286,7 @@ int16 DragonArcadeTTM::runScriptPage(int16 pageNum) {
 		}
 
 		handleOperation(_ttmEnvs[_currentTTMNum], pageNum, opcode, count, ivals, sval);
+		opcode = scr->readUint16LE();
 	}
 	return 1;
 
@@ -302,7 +306,7 @@ void DragonArcadeTTM::runPagesForEachNPC(int16 xScrollOffset) {
 			npcState.y_12 = 0;
 			 _drawXOffset = npcState.val1 - xScrollOffset * 8 - 152;
 			 _drawYOffset = npcState.val2;
-			_currentTTMNum = npcState.byte14;
+			_currentTTMNum = npcState.byte15;
 			if (_drawXOffset > -20 || _drawXOffset < 340) {
 				runNextPage(npcState.ttmPage);
 			}
@@ -319,6 +323,7 @@ void DragonArcadeTTM::freePages(uint16 num) {
 void DragonArcadeTTM::freeShapes() {
 	_shapes3[_currentTTMNum] = 0;
 	_shapes[_currentTTMNum].reset();
+	_shapes2[_currentTTMNum].reset();
 	for (int i = 0; i < 6; i++) {
 		_allShapes[i * 5 + _currentTTMNum].reset();
 	}
