@@ -183,6 +183,7 @@ void showArchives() {
 							if (it->getFileName().hasSuffixIgnoreCase(".qda")) {
 								_state->_qdaToDisplay = it->getPathInArchive();
 								_state->_qdaToDisplayFrame = 0;
+								_state->_qdaIsPlaying = false;
 							}
 					}
 				}
