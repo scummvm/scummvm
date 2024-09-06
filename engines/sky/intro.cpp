@@ -845,7 +845,7 @@ bool Intro::commandFlirt(uint16 *&data) {
 			uint16 command = *data++;
 			switch (command) {
 			case IC_PREPARE_TEXT:
-				_skyText->displayText(*data++, _textBuf, true, INTRO_TEXT_WIDTH, 255);
+				_skyText->displayText(*data++, _textBuf, Graphics::kTextAlignCenter, INTRO_TEXT_WIDTH, 255);
 				break;
 			case IC_SHOW_TEXT:
 				((DataFileHeader *)_textBuf)->s_x = *data++;

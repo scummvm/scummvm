@@ -1751,7 +1751,7 @@ bool Logic::fnChooser(uint32 a, uint32 b, uint32 c) {
 	while (*p) {
 		uint32 textNum = *p++;
 
-		DisplayedText lowText = _skyText->lowTextManager(textNum, GAME_SCREEN_WIDTH, 0, 241, 0);
+		DisplayedText lowText = _skyText->lowTextManager(textNum, GAME_SCREEN_WIDTH, 0, 241, Graphics::kTextAlignStart);
 
 		uint8 *data = lowText.textData;
 
@@ -2367,7 +2367,7 @@ bool Logic::fnBlankScreen(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnPrintCredit(uint32 a, uint32 b, uint32 c) {
-	DisplayedText creditText = _skyText->lowTextManager(a, 240, 0, 248, true);
+	DisplayedText creditText = _skyText->lowTextManager(a, 240, 0, 248, Graphics::kTextAlignCenter);
 	Compact *credCompact = _skyCompact->fetchCpt(creditText.compactNum);
 	credCompact->xcood = 168;
 	if ((a == 558) && (c == 215))
@@ -2379,7 +2379,7 @@ bool Logic::fnPrintCredit(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnLookAt(uint32 a, uint32 b, uint32 c) {
-	DisplayedText textInfo = _skyText->lowTextManager(a, 240, 0, 248, true);
+	DisplayedText textInfo = _skyText->lowTextManager(a, 240, 0, 248, Graphics::kTextAlignCenter);
 	Compact *textCpt = _skyCompact->fetchCpt(textInfo.compactNum);
 	textCpt->xcood = 168;
 	textCpt->ycood = (uint16)c;
@@ -2409,7 +2409,7 @@ bool Logic::fnLincTextModule(uint32 textPos, uint32 textNo, uint32 buttonAction)
 	if (buttonAction < 10)
 		_scriptVariables[LINC_DIGIT_0 + buttonAction] = textNo;
 
-	DisplayedText text = _skyText->lowTextManager(textNo, 220, 0, 215, false);
+	DisplayedText text = _skyText->lowTextManager(textNo, SkyEngine::_systemVars->textDirRTL ? 175 : 220, 0, 215, Graphics::kTextAlignStart);
 
 	Compact *textCpt = _skyCompact->fetchCpt(text.compactNum);
 
@@ -2529,7 +2529,7 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 		// form the text sprite, if player wants subtitles or
 		// if we couldn't find the speech file
 		DisplayedText textInfo;
-		textInfo = _skyText->lowTextManager(textNum, FIXED_TEXT_WIDTH, 0, (uint8)target->spColor, true);
+		textInfo = _skyText->lowTextManager(textNum, FIXED_TEXT_WIDTH, 0, (uint8)target->spColor, Graphics::kTextAlignCenter);
 		Compact *textCompact = _skyCompact->fetchCpt(textInfo.compactNum);
 		target->spTextId = textInfo.compactNum;	//So we know what text to kill
 		byte *textGfx = textInfo.textData;
