@@ -179,7 +179,7 @@ void showArchives() {
 				for (auto &it : members) {
 					const char *fileName = (char *)transCyrillic(it->getFileName());
 					if (_state->_nameFilter.PassFilter(fileName)) {
-						if (ImGui::Selectable(fileName))
+						if (ImGui::Selectable(fileName, _state->_qdaToDisplay == it->getPathInArchive()))
 							if (it->getFileName().hasSuffixIgnoreCase(".qda")) {
 								_state->_qdaToDisplay = it->getPathInArchive();
 								_state->_qdaToDisplayFrame = 0;
