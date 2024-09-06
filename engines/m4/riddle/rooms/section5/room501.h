@@ -35,9 +35,10 @@ private:
 	machine *_agent = nullptr;
 	machine *_clock = nullptr;
 	machine *_paper = nullptr;
+	machine *_deltaPuffinMachine = nullptr;
 	int _agentTalkLoop = 0;
 	int _agentStridesForward = 0;
-	int _agentSeries1 = 0;
+	int _puffinExchange = 0;
 	const char *_digiName = nullptr;
 	int _convEntry = 0;
 	bool _flag = false;
@@ -64,6 +65,7 @@ private:
 	int _xyzzy7 = 0;
 	int _xyzzy8 = 0;
 	int _xyzzy9 = 0;
+	int _xyzzy10 = 0;
 	int _itemsCount = 0;
 	int _items[12];
 	int32 _hasItems = 0;
@@ -81,6 +83,7 @@ private:
 	int32 _hasIncenseBurner = 0;
 	int32 _hasRomanovEmerald = 0;
 	const char *_queuedDigi[4];
+	int _ripSketching = 0;
 
 	void conv501a();
 

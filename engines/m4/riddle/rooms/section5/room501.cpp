@@ -423,8 +423,8 @@ void Room501::daemon() {
 				break;
 
 			case 6:
-				sendWSMessage_10000(1, _agent, _agentSeries1, 1, 46, 502,
-					_agentSeries1, 46, 46, 0);
+				sendWSMessage_10000(1, _agent, _puffinExchange, 1, 46, 502,
+					_puffinExchange, 46, 46, 0);
 				digi_play("501R36", 1);
 				break;
 
@@ -710,7 +710,402 @@ void Room501::daemon() {
 		_xyzzy7 = kernel_trigger_create(537);
 		break;
 
-	// TODO
+	case 537:
+		if (!inv_player_has("ROMANOV EMERALD"))
+			inv_give_to_player("ROMANOV EMERALD");
+
+		_val1 = 1;
+		_xyzzy6 = kernel_trigger_create(538);
+		break;
+
+	case 538:
+		series_unload(_ripParcelExchange);
+		kernel_timing_trigger(1, 523);
+		break;
+
+	case 539:
+		_ripParcelExchange = series_load("PARCEL XCHANGE");
+		_val3 = 3;
+		_val6 = kernel_trigger_create(540);
+		break;
+
+	case 540:
+		_val1 = 5;
+		_xyzzy7 = kernel_trigger_create(540);
+		break;
+
+	case 541:
+		_val3 = 11;
+		_val6 = kernel_trigger_create(542);
+		break;
+
+	case 542:
+		_val1 = 1;
+		_xyzzy6 = kernel_trigger_create(543);
+		break;
+
+	case 543: {
+		series_unload(_ripParcelExchange);
+
+		int item = conv_current_entry();
+		if (item >= 1 && item <= 12) {
+			static const char *ITEMS[12] = {
+				"CRYSTAL SKULL", "STICK AND SHELL MAP",
+				"WHEELED TOY", "REBUS AMULET", "SHRUNKEN HEAD",
+				"SILVER BUTTERFLY", "POSTAGE STAMP",
+				"GERMAN BANKNOTE", "WHALE BONE HORN",
+				"CHISEL",  "INCENSE BURNER",  "INCENSE BURNER"
+			};
+
+			inv_move_object(ITEMS[item - 1], (item == 12) ? NOWHERE : 305);
+		}
+		conv_resume();
+		break;
+	}
+
+	case 544:
+		player_set_commands_allowed(false);
+		digi_preload("950_s34");
+		_ripSketching = series_load("RIP SKETCHING IN NOTEBOOK POS 2");
+		setGlobals1(_ripSketching, 1, 17, 17, 17, 0, 18, 39, 37, 39, 1);
+		sendWSMessage_110000(545);
+		break;
+
+	case 545:
+		sendWSMessage_120000(-1);
+		digi_play("950_s34", 2, 200, 546);
+		break;
+
+	case 546:
+		sendWSMessage_110000(547);
+		break;
+
+	case 547:
+		sendWSMessage_140000(548);
+		break;
+
+	case 548:
+		_G(flags)[V148] = 1;
+		series_unload(_ripSketching);
+		digi_unload("950_s34");
+		player_set_commands_allowed(true);
+		break;
+
+	case 549:
+		player_set_commands_allowed(false);
+		_ripMoneyExchange = series_load("MONEY XCHANGE");
+		_val3 = 3;
+		_val6 = kernel_trigger_create(550);
+		break;
+
+	case 550:
+		_val3 = 14;
+		break;
+
+	case 551:
+		_xyzzy7 = kernel_trigger_create(552);
+		break;
+
+	case 552:
+		_val1 = 1;
+		_xyzzy6 = kernel_trigger_create(553);
+		break;
+
+	case 553:
+		series_unload(_ripMoneyExchange);
+		player_set_commands_allowed(true);
+		conv_resume();
+		break;
+
+	case 555:
+		_puffinExchange = series_load("PUFFIN XCHANGE");
+		_val1 = 5;
+		kernel_timing_trigger(1, 501);
+		_val3 = 3;
+		_val6 = kernel_trigger_create(556);
+		break;
+
+	case 556:
+		_xyzzy7 = kernel_trigger_create(557);
+		break;
+
+	case 557:
+		_deltaPuffinMachine = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, 0,
+			triggerMachineByHashCallbackNegative, "Delta Puffin Machine State");
+		_xyzzy3 = 1;
+		_xyzzy1 = 1;
+		_xyzzy5 = 1;
+		_xyzzy10 = 1;
+		sendWSMessage_10000(1, _deltaPuffinMachine, _puffinExchange, 1, 1, 558,
+			_puffinExchange, 1, 39, 0);
+		digi_play("501R36", 1, 255, 559);
+		break;
+
+	case 558:
+	case 569:
+	case 597:
+	case 600:
+		_xyzzy10 = 0;
+		break;
+
+	case 559:
+		kernel_timing_trigger(1, (_xyzzy10 == 1) ? 559 : 561);
+		break;
+
+	case 561:
+		inv_move_object("DRIFTWOOD PUFFIN", 501);
+		_xyzzy10 = 1;
+		sendWSMessage_10000(1, _deltaPuffinMachine, _puffinExchange, 39, 41, 562,
+			_puffinExchange, 41, 39, 2);
+		digi_play("501X05", 1, 255, 563);
+		break;
+
+	case 562:
+		midi_play("SADBOY2", 255, 0, -1, 949);
+		break;
+
+	case 563:
+		kernel_timing_trigger(1, (_xyzzy10 == 1) ? 563 : 564);
+		break;
+
+	case 564:
+		sendWSMessage_10000(1, _deltaPuffinMachine, _puffinExchange, 40, 47, 565,
+			_puffinExchange, 47, 47, 0);
+		break;
+
+	case 565:
+		kernel_timing_trigger(1, 501);
+		_val3 = 4;
+		_val7 = kernel_trigger_create(566);
+		break;
+
+	case 566:
+		sendWSMessage_10000(1, _deltaPuffinMachine, _puffinExchange, 48, 48, -1,
+			_puffinExchange, 48, 48, 0);
+		digi_play("501R37", 1, 255, 567);
+		break;
+
+	case 567:
+		sendWSMessage_10000(1, _deltaPuffinMachine, _puffinExchange, 47, 40, 568,
+			_puffinExchange, 47, 47, 0);
+		_xyzzy3 = 1;
+		_xyzzy1 = 1;
+		break;
+
+	case 568:
+		_xyzzy10 = 0;
+		sendWSMessage_10000(1, _deltaPuffinMachine, _puffinExchange, 39, 41, 569,
+			_puffinExchange, 39, 41, 2);
+		digi_play("501X06", 1, 255, 570);
+		break;
+
+	case 570:
+		kernel_timing_trigger(1, (_xyzzy10 == 1) ? 570 : 571);
+		break;
+
+	case 571:
+		sendWSMessage_10000(1, _deltaPuffinMachine, _puffinExchange, 40, 47, 572,
+			_puffinExchange, 47, 47, 0);
+		break;
+
+	case 572:
+		kernel_timing_trigger(1, 501);
+		_val3 = 4;
+		_val7 = kernel_trigger_create(573);
+		break;
+
+	case 573:
+		sendWSMessage_10000(1, _deltaPuffinMachine, _puffinExchange, 48, 48, -1,
+			_puffinExchange, 48, 48, 0);
+		digi_play("501R38", 1, 255, 574);
+		break;
+
+	case 574:
+		sendWSMessage_10000(1, _deltaPuffinMachine, _puffinExchange, 49, 65, 575,
+			_puffinExchange, 65, 65, 0);
+		_xyzzy3 = 1;
+		_xyzzy1 = 1;
+		break;
+
+	case 575:
+		terminateMachineAndNull(_clock);
+		_clock = series_place_sprite("501 PUFFIN CLOCK", 0, 0, 0, 100, 0x780);
+		_xyzzy10 = 1;
+		sendWSMessage_10000(1, _deltaPuffinMachine, _puffinExchange, 66, 135, 576,
+			_puffinExchange, 135, 135, 0);
+		digi_play("501x07", 1, 255, 577);
+		break;
+
+	case 576:
+		sendWSMessage_10000(1, _deltaPuffinMachine, _puffinExchange, 135, 135, -1,
+			_puffinExchange, 135, 135, 0);
+		break;
+
+	case 577:
+		kernel_timing_trigger(1, (_xyzzy10 == 1) ? 577 : 576);
+		break;
+
+	case 578:
+		kernel_timing_trigger(1, 505);
+		kernel_timing_trigger(1, 501);
+		_val3 = 5;
+		_val6 = kernel_trigger_create(579);
+		break;
+
+	case 579:
+		terminateMachineAndNull(_deltaPuffinMachine);
+		kernel_examine_inventory_object("PING CLOCK FACING",
+			_G(master_palette), 5, 1, 195, 126, -1, nullptr, -1);
+
+		if (!inv_player_has("CLOCK FACING"))
+			inv_give_to_player("CLOCK FACING");
+
+		_val1 = 1;
+		_xyzzy6 = kernel_trigger_create(580);
+		break;
+
+	case 580:
+		digi_play("501x08", 1, 255, 581);
+		break;
+
+	case 581:
+		_val1 = 1;
+		_val3 = 4;
+		digi_play("501R39", 1, 255, 582);
+		break;
+
+	case 582:
+		_val3 = 13;
+		_xyzzy4 = kernel_trigger_create(583);
+		break;
+
+	case 583:
+		_G(flags)[V143] = 1;
+		_G(flags)[V142] = 1;
+		series_unload(_puffinExchange);
+		_xyzzy3 = 0;
+		_xyzzy1 = 1;
+		player_set_commands_allowed(true);
+		break;
+
+	case 585:
+		_val3 = 3;
+		_val6 = kernel_trigger_create(586);
+		_val1 = 5;
+		break;
+
+	case 586:
+		_xyzzy7 = kernel_trigger_create(587);
+		break;
+
+	case 587:
+		_val3 = 16;
+		_val6 = kernel_trigger_create(588);
+		break;
+
+	case 588:
+		_val1 = 5;
+		_xyzzy7 = kernel_trigger_create(589);
+		break;
+
+	case 589:
+		_val3 = 19;
+		_val6 = kernel_trigger_create(590);
+		break;
+
+	case 590:
+		_val1 = 1;
+		_xyzzy6 = kernel_trigger_create(591);
+		break;
+
+	case 591:
+		series_unload(_ripSignsPaper);
+		player_set_commands_allowed(true);
+		conv_resume();
+		break;
+
+	case 594:
+		_puffinExchange = series_load("PUFFIN XCHANGE");
+		_val1 = 5;
+		kernel_timing_trigger(1, 501);
+		_val3 = 3;
+		_val6 = kernel_trigger_create(595);
+		break;
+
+	case 595:
+		_xyzzy7 = kernel_trigger_create(596);
+		break;
+
+	case 596:
+		_deltaPuffinMachine = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, 0,
+			triggerMachineByHashCallbackNegative, "Delta Puffin Machine State");
+		_xyzzy3 = 1;
+		_xyzzy1 = 1;
+		_xyzzy5 = 1;
+		_xyzzy10 = 1;
+		sendWSMessage_10000(1, _deltaPuffinMachine, _puffinExchange, 1, 1, 558,
+			_puffinExchange, 1, 39, 0);
+		digi_play("501R36", 1, 255, 598);
+		break;
+
+	case 598:
+		kernel_timing_trigger(1, (_xyzzy10 == 1) ? 598 : 599);
+		break;
+
+	case 599:
+		_xyzzy10 = 1;
+		sendWSMessage_10000(1, _deltaPuffinMachine, _puffinExchange, 39, 41, 600,
+			_puffinExchange, 41, 39, 2);
+		digi_play("501X05", 1, 255, 601);
+		break;
+
+	case 601:
+		kernel_timing_trigger(1, (_xyzzy10 == 1) ? 601 : 602);
+		break;
+
+	case 602:
+		sendWSMessage_10000(1, _deltaPuffinMachine, _puffinExchange, 39, 1, 603,
+			_puffinExchange, 1, 1, 0);
+		break;
+
+	case 603:
+		kernel_timing_trigger(1, 505);
+		kernel_timing_trigger(1, 501);
+		_val3 = 5;
+		_val6 = kernel_trigger_create(604);
+		break;
+
+	case 604:
+		terminateMachineAndNull(_deltaPuffinMachine);
+		_val1 = 1;
+		_xyzzy6 = kernel_trigger_create(605);
+		break;
+
+	case 605:
+		_val3 = 13;
+		_xyzzy4 = kernel_trigger_create(606);
+		break;
+
+	case 606:
+		series_unload(_puffinExchange);
+		_xyzzy3 = 0;
+		_xyzzy1 = 1;
+		player_set_commands_allowed(true);
+		break;
+
+	case 610:
+		_val3 = 4;
+		digi_play("COM084", 1, 255, 611, 997);
+		break;
+
+	case 611:
+		_val3 = 3;
+		break;
+
+	case 612:
+		player_set_commands_allowed(true);
+		break;
+
 	default:
 		break;
 	}
