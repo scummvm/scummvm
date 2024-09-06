@@ -159,6 +159,7 @@ enum TheFieldType {
 	kTheBackColor,
 	kTheBlend,
 	kTheBottom,
+	kTheCastLibNum,
 	kTheCastNum,
 	kTheCastType,
 	kTheCenter,

@@ -113,12 +113,14 @@ bool CastMember::setProp(const Common::String &propName, const Datum &value, boo
 bool CastMember::hasField(int field) {
 	switch (field) {
 	case kTheBackColor:
+	case kTheCastLibNum:
 	case kTheCastType:
 	case kTheFileName:
 	case kTheForeColor:
 	case kTheHeight:
 	case kTheLoaded:
 	case kTheModified:
+	case kTheMemberNum:
 	case kTheName:
 	case kTheNumber:
 	case kTheRect:
@@ -145,6 +147,9 @@ Datum CastMember::getField(int field) {
 	case kTheBackColor:
 		d = (int)getBackColor();
 		break;
+	case kTheCastLibNum:
+		d = _cast->_castLibID;
+		break;
 	case kTheCastType:
 	case kTheType:
 		d.type = SYMBOL;
@@ -170,6 +175,7 @@ Datum CastMember::getField(int field) {
 		if (castInfo)
 			d = Datum(castInfo->name);
 		break;
+	case kTheMemberNum:
 	case kTheNumber:
 		d = _castId;
 		break;

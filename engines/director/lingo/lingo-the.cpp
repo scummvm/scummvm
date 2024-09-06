@@ -202,12 +202,14 @@ TheEntityField fields[] = {
 
 	// Common cast fields
 	{ kTheCast,		"backColor",	kTheBackColor,	400 },//				D4 p
+	{ kTheCast,		"castLibNum",	kTheCastLibNum,	500 },// 					D5 p
 	{ kTheCast,		"castType",		kTheCastType,	400 },//				D4 p
 	{ kTheCast,		"filename",		kTheFileName,	400 },//				D4 p
 	{ kTheCast,		"foreColor",	kTheForeColor,	400 },//				D4 p
 	{ kTheCast,		"height",		kTheHeight,		400 },//				D4 p
 	{ kTheCast,		"loaded",		kTheLoaded,		400 },//				D4 p
 	{ kTheCast,		"modified",		kTheModified,	400 },//				D4 p
+	{ kTheCast,		"memberNum",	kTheMemberNum,	500 },//					D5 p
 	{ kTheCast,		"name",			kTheName,		300 },//		D3 p
 	{ kTheCast,		"number",		kTheNumber,		300 },//		D3 p
 	{ kTheCast,		"rect",			kTheRect,		400 },//				D4 p
@@ -1336,6 +1338,9 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 	case kTheCastNum:
 	case kTheMemberNum:
 		d = sprite->_castId.member;
+		break;
+	case kTheCastLibNum:
+		d = sprite->_castId.castLib;
 		break;
 	case kTheConstraint:
 		d = (int)channel->_constraint;
