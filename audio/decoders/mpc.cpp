@@ -24,7 +24,11 @@
 
 #ifdef USE_MPCDEC
 
+#ifdef USE_MPCDEC_OLD_API
+#include <mpcdec/mpcdec.h>
+#else
 #include <mpc/mpcdec.h>
+#endif
 
 #include "common/debug.h"
 #include "common/stream.h"
@@ -37,37 +41,63 @@ namespace Audio {
 // These are wrapper functions to allow using a SeekableReadStream object to
 // provide data to the mpc_reader object.
 
+#ifdef USE_MPCDEC_OLD_API
+static mpc_int32_t read_stream(void *data, void *ptr, mpc_int32_t size) {
+	Common::SeekableReadStream *stream = (Common::SeekableReadStream *)data;
+#else
 static mpc_int32_t read_stream(mpc_reader *p_reader, void *ptr, mpc_int32_t size) {
 	Common::SeekableReadStream *stream = (Common::SeekableReadStream *)p_reader->data;
+#endif
 
 	return stream->read(ptr, size);
 }
 
 /// Seeks to byte position offset.
+#ifdef USE_MPCDEC_OLD_API
+static mpc_bool_t seek_stream(void *data, mpc_int32_t offset) {
+	Common::SeekableReadStream *stream = (Common::SeekableReadStream *)data;
+#else
 static mpc_bool_t seek_stream(mpc_reader *p_reader, mpc_int32_t offset) {
 	Common::SeekableReadStream *stream = (Common::SeekableReadStream *)p_reader->data;
+#endif
 
 	return stream->seek(offset);
 }
 
 /// Returns the current byte offset in the stream.
+#ifdef USE_MPCDEC_OLD_API
+static mpc_int32_t tell_stream(void *data) {
+	Common::SeekableReadStream *stream = (Common::SeekableReadStream *)data;
+#else
 static mpc_int32_t tell_stream(mpc_reader *p_reader) {
 	Common::SeekableReadStream *stream = (Common::SeekableReadStream *)p_reader->data;
+#endif
 
 	return stream->pos();
 }
 
 /// Returns the total length of the source stream, in bytes.
+#ifdef USE_MPCDEC_OLD_API
+static mpc_int32_t get_size_stream(void *data) {
+	Common::SeekableReadStream *stream = (Common::SeekableReadStream *)data;
+#else
 static mpc_int32_t get_size_stream(mpc_reader *p_reader) {
 	Common::SeekableReadStream *stream = (Common::SeekableReadStream *)p_reader->data;
+#endif
 
 	return stream->size();
 }
 
 /// True if the stream is a seekable stream.
+#ifdef USE_MPCDEC_OLD_API
+static mpc_bool_t canseek_stream(void *p_reader) {
+	return TRUE;
+}
+#else
 static mpc_bool_t canseek_stream(mpc_reader *p_reader) {
 	return MPC_TRUE;
 }
+#endif
 
 
 #pragma mark -
@@ -86,7 +116,12 @@ protected:
 
 	mpc_reader _reader;
 	mpc_streaminfo _si;
+
+#ifdef USE_MPCDEC_OLD_API
+	mpc_decoder _decoder;
+#else
 	mpc_demux *_demux;
+#endif
 
 	MPC_SAMPLE_FORMAT _bufferDec[MPC_DECODER_BUFFER_LENGTH];
 	uint16 _buffer[MPC_DECODER_BUFFER_LENGTH];
@@ -124,6 +159,19 @@ MPCStream::MPCStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag
 	_reader.canseek = canseek_stream;
 	_reader.data = (void *)inStream;
 
+#ifdef USE_MPCDEC_OLD_API
+	mpc_streaminfo_init(&_si);
+	if (mpc_streaminfo_read(&_si, &_reader) < 0) {
+		warning("Cannot read musepack stream info");
+		return;
+	}
+	mpc_decoder_setup(&_decoder, &_reader);
+	mpc_decoder_scale_output (&_decoder, 1.0);
+	if (!mpc_decoder_initialize(&_decoder, &_si)) {
+		warning("Cannot initialize musepack decoder");
+		return;
+	}
+#else
 	_demux = mpc_demux_init(&_reader);
 
 	if (!_demux) {
@@ -132,6 +180,7 @@ MPCStream::MPCStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag
 	}
 
 	mpc_demux_get_info(_demux, &_si);
+#endif
 
 	_isStereo = _si.channels >= 2;
 	_rate = _si.sample_freq;
@@ -143,8 +192,12 @@ MPCStream::MPCStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag
 
 	debug(9, "stream version %d", _si.stream_version);
 	debug(9, "encoder: %s", _si.encoder);
+#ifdef USE_MPCDEC_OLD_API
+	debug(9, "profile: %s (q=%d)", _si.profile_name, _si.profile);
+#else
 	debug(9, "profile: %s (q=%0.2f)", _si.profile_name, _si.profile - 5);
 	debug(9, "PNS: %s", _si.pns == 0xFF ? "unknow" : _si.pns ? "on" : "off");
+#endif
 	debug(9, "mid/side stereo: %s", _si.ms ? "on" : "off");
 	debug(9, "gapless: %s", _si.is_true_gapless ? "on" : "off");
 	debug(9, "average bitrate: %6.1f kbps", _si.average_bitrate * 1.e-3);
@@ -162,7 +215,9 @@ MPCStream::MPCStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag
 }
 
 MPCStream::~MPCStream() {
+#ifndef USE_MPCDEC_OLD_API
 	mpc_demux_exit(_demux);
+#endif
 }
 
 int MPCStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -182,8 +237,12 @@ int MPCStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 bool MPCStream::seek(const Timestamp &where) {
-	mpc_status res = mpc_demux_seek_second(_demux, (double)where.msecs() / 1000.0);
-	if (res != MPC_STATUS_OK) {
+#ifdef USE_MPCDEC_OLD_API
+	bool res = (mpc_decoder_seek_seconds(&_decoder, (double)where.msecs() / 1000.0) == TRUE);
+#else
+	bool res = (mpc_demux_seek_second(_demux, (double)where.msecs() / 1000.0) == MPC_STATUS_OK);
+#endif
+	if (!res) {
 		warning("Error seeking in musepack stream");
 		_pos = _bufferEnd;
 		return false;
@@ -193,12 +252,31 @@ bool MPCStream::seek(const Timestamp &where) {
 }
 
 bool MPCStream::refill() {
-	mpc_status result;
+	bool result;
+	uint32 samples;
 
+#ifdef USE_MPCDEC_OLD_API
+	uint32 vbr_update_acc, vbr_update_bits;
+	samples = mpc_decoder_decode(&_decoder, _bufferDec, &vbr_update_acc, &vbr_update_bits);
+
+	if (samples == 0) { // End of stream
+		_pos = _buffer;
+		_bufferEnd = _buffer;
+
+		return false;
+	}
+
+	if (samples == -1u) { // Corruptd stream
+		result = false;
+		samples = 0;
+	} else {
+		result = true;
+	}
+#else
 	mpc_frame_info frame;
 	frame.buffer = _bufferDec;
 
-	result = mpc_demux_decode(_demux, &frame);
+	result = (mpc_demux_decode(_demux, &frame) == MPC_STATUS_OK);
 
 	if (frame.bits == -1) { // End of stream
 		_pos = _buffer;
@@ -207,7 +285,10 @@ bool MPCStream::refill() {
 		return false;
 	}
 
-	if (result != MPC_STATUS_OK) {
+	samples = frame.samples;
+#endif
+
+	if (!result) {
 		// Possibly recoverable, just warn about it
 		warning("Corrupted data in musepack file");
 	}
@@ -231,7 +312,7 @@ bool MPCStream::refill() {
 #endif
 
 	_pos = _buffer;
-	_bufferEnd = &_buffer[frame.samples * _si.channels];
+	_bufferEnd = &_buffer[samples * _si.channels];
 
 	return true;
 }

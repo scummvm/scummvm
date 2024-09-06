@@ -5936,7 +5936,27 @@ if test "$_libmpcdec" != "no"; then
 			return 0;
 		}
 EOF
-		cc_check $LIBMPCDEC_CFLAGS $LIBMPCDEC_LIBS && _libmpcdec=yes
+		if cc_check $LIBMPCDEC_CFLAGS $LIBMPCDEC_LIBS; then
+			_libmpcdec=yes
+		else
+			cat > $TMPC << EOF
+			#include <mpcdec/mpcdec.h>
+			int main(void) {
+				mpc_decoder decoder;
+				mpc_reader reader;
+				mpc_streaminfo info;
+
+				mpc_decoder_setup(&decoder, &reader);
+				mpc_decoder_initialize(&decoder, &info);
+
+				return 0;
+			}
+EOF
+			if cc_check $LIBMPCDEC_CFLAGS $LIBMPCDEC_LIBS; then
+				_libmpcdec=yes
+				add_line_to_config_h '#define USE_MPCDEC_OLD_API'
+			fi
+		fi
 	fi
 
 	if test "$_libmpcdec" = "yes"; then
