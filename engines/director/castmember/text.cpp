@@ -115,7 +115,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 		if (debugChannelSet(2, kDebugLoading)) {
 			_initialRect.debugPrint(2, "TextCastMember(): rect:");
 		}
-	} else if (version >= kFileVer400 && version < kFileVer500) {
+	} else if (version >= kFileVer400 && version < kFileVer600) {
 		_flags1 = flags1;
 		_borderSize = static_cast<SizeType>(stream.readByte());
 		_gutterSize = static_cast<SizeType>(stream.readByte());
@@ -145,29 +145,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 			_initialRect.debugPrint(2, "TextCastMember(): rect:");
 		}
 	} else {
-		_fontId = 1;
-
-		stream.readUint32();
-		stream.readUint32();
-		stream.readUint32();
-		stream.readUint32();
-		uint16 skip = stream.readUint16();
-		for (int i = 0; i < skip; i++)
-			stream.readUint32();
-
-		stream.readUint32();
-		stream.readUint32();
-		stream.readUint32();
-		stream.readUint32();
-		stream.readUint32();
-		stream.readUint32();
-
-		_initialRect = Movie::readRect(stream);
-		_boundingRect = Movie::readRect(stream);
-
-		stream.readUint32();
-		stream.readUint16();
-		stream.readUint16();
+		warning("Text/ButtonCastMember(): >D5 isn't handled");
 	}
 
 	if (asButton) {
