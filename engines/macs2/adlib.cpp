@@ -641,7 +641,22 @@ void Adlib::OnTimer() {
 			uint8 bp4 = peekByte();
 			uint16 bp10 = Func19BE(1);
 			uint8 bp5 = peekByteAt(bp10);
-			// TODO: Continue from here
+			if ((bp6 & 0x0F) == 0x90) {
+				// l0017_1BA1:
+				if (bp5 != 0) {
+					// l0017_1BAA:
+
+					// TODO: Continue from here
+				}
+				// TODO: This must be 2097h
+
+
+				
+			}
+			// TODO: This must be 209Bh
+
+		
+			
 		}
 
 
