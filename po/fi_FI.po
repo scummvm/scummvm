@@ -12327,7 +12327,8 @@ msgstr "Nopeampi videodekooderi (huonompi laatu)"
 
 #: engines/vcruise/metaengine.cpp:109
 msgid "Reduce video decoding CPU usage at the cost of quality."
-msgstr "Madalla videodekoodauksen prosessorinkuormitusta laadun kustannuksella."
+msgstr ""
+"Madalla videodekoodauksen prosessorinkuormitusta laadun kustannuksella."
 
 #: engines/vcruise/metaengine.cpp:157
 msgid "Display help screen"
