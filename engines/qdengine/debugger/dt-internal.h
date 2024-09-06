@@ -40,6 +40,8 @@ typedef struct ImGuiState {
 	int _qdaToDisplayFrameCount = 0;
 	bool _qdaIsPlaying = false;
 	int _qdaNextFrameTimestamp = 0;
+
+	ImGuiTextFilter _nameFilter;
 } ImGuiState;
 
 extern ImGuiState *_state;

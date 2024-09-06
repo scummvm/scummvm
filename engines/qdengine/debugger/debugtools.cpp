@@ -163,8 +163,7 @@ void showArchives() {
 		ImGui::Button("\uef4f"); // Filter	// filter_alt
 		ImGui::SameLine();
 
-		ImGuiTextFilter nameFilter;
-		nameFilter.Draw();
+		_state->_nameFilter.Draw();
 		ImGui::Separator();
 
 		// Iterate through the 3 resource pak files
@@ -179,9 +178,12 @@ void showArchives() {
 
 				for (auto &it : members) {
 					const char *fileName = (char *)transCyrillic(it->getFileName());
-					if (nameFilter.PassFilter(fileName) && ImGui::Selectable(fileName) && it->getFileName().hasSuffixIgnoreCase(".qda")) {
-						_state->_qdaToDisplay = it->getPathInArchive();
-						_state->_qdaToDisplayFrame = 0;
+					if (_state->_nameFilter.PassFilter(fileName)) {
+						if (ImGui::Selectable(fileName))
+							if (it->getFileName().hasSuffixIgnoreCase(".qda")) {
+								_state->_qdaToDisplay = it->getPathInArchive();
+								_state->_qdaToDisplayFrame = 0;
+							}
 					}
 				}
 
