@@ -2482,10 +2482,12 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 	// are only sleeping has a dark blue background instead of white. This
 	// makes the sign harder to read, so temporarily remap the color while
 	// drawing it. The text is also slightly different, but that is taken
-	// care of elsewhere.
+	// care of in ScummEngine_v5::decodeParseString().
 	//
 	// The SEGA CD version uses the old colors already, and the FM Towns
 	// version makes the text more readable by giving it a black outline.
+	// The Macintosh release fixes the background color, but not through
+	// its scripts, apparently (was it done in its interpreter?).
 
 	else if (_vm->_game.id == GID_MONKEY &&
 			!(_vm->_game.features & GF_ULTIMATE_TALKIE) &&
@@ -2494,7 +2496,8 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 			_vm->_currentRoom == 36 &&
 			vs->number == kMainVirtScreen &&
 			y == 8 && x >= 7 && x <= 30 && height == 88 &&
-			_vm->enhancementEnabled(kEnhVisualChanges)) {
+			(_vm->enhancementEnabled(kEnhVisualChanges) ||
+			_vm->_game.platform == Common::kPlatformMacintosh)) {
 		_roomPalette[47] = 15;
 
 		byte result = decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
