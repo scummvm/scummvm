@@ -996,7 +996,6 @@ allocError:
 	return false;
 }
 
-#if !defined(NDEBUG) && 0
 void MaxTrax::outPutEvent(const Event &ev, int num) {
 	struct {
 		byte cmd;
@@ -1019,24 +1018,23 @@ void MaxTrax::outPutEvent(const Event &ev, int num) {
 		;
 
 	if (num == -1)
-		debug("Event    : %02X %s %s %02X %04X %04X", ev.command, COMMANDS[i].name, COMMANDS[i].param, ev.parameter, ev.startTime, ev.stopTime);
+		debug(6, "Event    : %02X %s %s %02X %04X %04X", ev.command, COMMANDS[i].name, COMMANDS[i].param, ev.parameter, ev.startTime, ev.stopTime);
 	else
-		debug("Event %3d: %02X %s %s %02X %04X %04X", num, ev.command, COMMANDS[i].name, COMMANDS[i].param, ev.parameter, ev.startTime, ev.stopTime);
+		debug(6, "Event %3d: %02X %s %s %02X %04X %04X", num, ev.command, COMMANDS[i].name, COMMANDS[i].param, ev.parameter, ev.startTime, ev.stopTime);
 }
 
 void MaxTrax::outPutScore(const Score &sc, int num) {
+	if (gDebugLevel < 6)
+		return;
+
 	if (num == -1)
-		debug("score   : %i Events", sc.numEvents);
+		debug(6, "score   : %i Events", sc.numEvents);
 	else
-		debug("score %2d: %i Events", num, sc.numEvents);
+		debug(6, "score %2d: %i Events", num, sc.numEvents);
 	for (uint i = 0; i < sc.numEvents; ++i)
 		outPutEvent(sc.events[i], i);
-	debug("");
+	debug(6, "");
 }
-#else
-void MaxTrax::outPutEvent(const Event &ev, int num) {}
-void MaxTrax::outPutScore(const Score &sc, int num) {}
-#endif	// #ifndef NDEBUG
 
 } // End of namespace Audio
 
