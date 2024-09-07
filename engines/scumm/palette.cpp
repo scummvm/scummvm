@@ -1629,6 +1629,19 @@ void ScummEngine::applyGrayscaleToPaletteRange(int min, int max) {
 	setDirtyColors(min, max);
 }
 
+bool ScummEngine::haveToApplyMonkey1PaletteFix() {
+	if (_game.id != GID_MONKEY)
+		return false;
+
+	bool canChangeMonkey1PaletteSlot = _game.platform == Common::kPlatformMacintosh;
+
+	canChangeMonkey1PaletteSlot |= enhancementEnabled(kEnhVisualChanges) &&
+								   (_game.platform != Common::kPlatformSegaCD && _game.platform != Common::kPlatformFMTowns &&
+									!(_game.features & GF_ULTIMATE_TALKIE));
+
+	return canChangeMonkey1PaletteSlot;
+}
+
 void ScummEngine::updatePalette() {
 	if (_game.features & GF_16BIT_COLOR)
 		return;

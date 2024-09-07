@@ -1388,6 +1388,7 @@ protected:
 	void palManipulate();
 	uint32 findClosestPaletteColor(byte *palette, int paletteLength, byte r, byte g, byte b);
 	void applyGrayscaleToPaletteRange(int min, int max); // For Sam&Max original noir mode
+	bool haveToApplyMonkey1PaletteFix();
 
 public:
 	uint8 *getHEPaletteSlot(uint16 palSlot);

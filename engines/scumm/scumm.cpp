@@ -3508,6 +3508,18 @@ void ScummEngine_v5::scummLoop_handleSaveLoad() {
 		}
 	}
 
+	// Reset the room palette after changing it in room 36 and
+	// loading a savegame (which doesn't trigger a startScene() call)...
+	if (haveToApplyMonkey1PaletteFix()) {
+		for (int i = 0; i < ARRAYSIZE(_roomPalette); i++) {
+			_roomPalette[i] = i;
+		}
+
+		// If we're coming from a different room, apply the fix...
+		if (_currentRoom == 36)
+			_roomPalette[47] = 15;
+	}
+
 	if (_completeScreenRedraw) {
 		clearCharsetMask();
 		_charset->_hasMask = false;

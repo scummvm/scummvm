@@ -143,13 +143,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	// version makes the text more readable by giving it a black outline.
 	// The Ultimate Talkie version already takes care of that within the data files.
 
-	bool canChangeMonkey1PaletteSlot = _game.platform == Common::kPlatformMacintosh;
-
-	canChangeMonkey1PaletteSlot |= enhancementEnabled(kEnhVisualChanges) &&
-		(_game.platform != Common::kPlatformSegaCD && _game.platform != Common::kPlatformFMTowns &&
-		!(_game.features & GF_ULTIMATE_TALKIE));
-
-	if (_game.id == GID_MONKEY && room == 36 && canChangeMonkey1PaletteSlot)
+	if (haveToApplyMonkey1PaletteFix() && room == 36)
 		_roomPalette[47] = 15;
 
 	VAR(VAR_ROOM) = room;
