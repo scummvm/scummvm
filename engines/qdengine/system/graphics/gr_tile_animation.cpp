@@ -390,6 +390,12 @@ void grTileAnimation::drawMask(const Vect2i &pos, int frame_index, uint32 mask_c
 	grDispatcher::instance()->putSprMask_a(pos.x - frameSize.x / 2, pos.y - frameSize.y / 2, frameSize.x, frameSize.y, buf, mask_colour, mask_alpha, mode);
 }
 
+void grTileAnimation::drawMask_rot(const Vect2i &pos, int frame_index, uint32 mask_colour, int mask_alpha, float angle, int mode) const {
+	byte *buf = decode_frame_data(frame_index, -1);
+
+	grDispatcher::instance()->putSprMask_rot(Vect2i(pos.x - _frameSize.x / 2, pos.y - _frameSize.y / 2), _frameSize, buf, _hasAlpha, mask_colour, mask_alpha, mode, angle);
+}
+
 void grTileAnimation::addScale(int i, float scale) {
 	_scaleArray[i]._scale = scale;
 	_scaleArray[i]._frameSize.x = (int)((float)_frameSize.x * scale);
