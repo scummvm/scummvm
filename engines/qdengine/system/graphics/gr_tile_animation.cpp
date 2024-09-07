@@ -475,6 +475,55 @@ bool grTileAnimation::wasFrameSizeChanged(int frame_index, int scaleIdx, float s
 	return true;
 }
 
+Graphics::ManagedSurface *grTileAnimation::dumpFrameTiles(int frame_index, float scale) const {
+	int closest_scale = find_closest_scale(&scale);
+
+	Vect2i frameSize;
+
+	if (closest_scale == -1)
+		frameSize = _frameSize;
+	else
+		frameSize = _scaleArray[closest_scale]._frameSize;
+
+	Vect2i frameTileSize;
+	if (closest_scale == -1)
+		frameTileSize = _frameTileSize;
+	else
+		frameTileSize = _scaleArray[closest_scale]._frameTileSize;
+
+	int frameStart;
+	if (closest_scale == -1)
+		frameStart = 0;
+	else
+		frameStart = _scaleArray[closest_scale]._frameStart;
+
+	int w = frameTileSize.x * (GR_TILE_SPRITE_SIZE_X + 1);
+	int h = frameTileSize.y * (GR_TILE_SPRITE_SIZE_Y + 1);
+
+	Graphics::ManagedSurface *dstSurf = new Graphics::ManagedSurface(w, h, g_engine->_pixelformat);
+
+	const uint32 *index_ptr = &_frameIndex[frameStart] + frameTileSize.x * frameTileSize.y * frame_index;
+
+	for (int i = 0; i < frameTileSize.y; i++) {
+		for (int j = 0; j < frameTileSize.x; j++) {
+			const byte *src = (const byte *)getTile(*index_ptr++).data();
+
+			for (int yy = 0; yy < GR_TILE_SPRITE_SIZE_Y; yy++) {
+				uint16 *dst = (uint16 *)dstSurf->getBasePtr(j * (GR_TILE_SPRITE_SIZE_X + 1), i * (GR_TILE_SPRITE_SIZE_Y + 1) + yy);
+
+				for (int xx = 0; xx < GR_TILE_SPRITE_SIZE_X; xx++) {
+					*dst = grDispatcher::instance()->make_rgb565u(src[2], src[1], src[0]);
+					dst++;
+					src += 4;
+				}
+			}
+		}
+	}
+
+	return dstSurf;
+}
+
+
 Graphics::ManagedSurface *grTileAnimation::dumpTiles(int tilesPerRow) const {
 	int w = tilesPerRow;
 	int h = (_tileOffsets.size() + tilesPerRow - 1) / tilesPerRow;

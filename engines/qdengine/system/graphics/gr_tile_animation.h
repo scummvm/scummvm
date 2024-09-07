@@ -92,6 +92,8 @@ public:
 	Graphics::ManagedSurface *dumpTiles(int tilesPerRow) const;
 	void dumpTiles(Common::Path baseName, int tilesPerRow) const;
 
+	Graphics::ManagedSurface *dumpFrameTiles(int frame_index, float scale) const;
+
 private:
 
 	grTileCompressionMethod _compression;

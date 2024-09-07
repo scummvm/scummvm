@@ -44,7 +44,7 @@
 
 namespace QDEngine {
 
-const int TILES_ID = -10;
+const int TILES_ID = -1337;
 
 ImGuiState *_state = nullptr;
 
@@ -85,7 +85,21 @@ ImGuiImage getImageID(Common::Path filename, int frameNum) {
 	int sx = 10, sy = 10;
 	Graphics::ManagedSurface *surface = nullptr;
 
-	if (frameNum != TILES_ID) {
+	if (frameNum == TILES_ID) {
+		if (animation->tileAnimation()) {
+			surface = animation->tileAnimation()->dumpTiles(25);
+
+			sx = surface->w;
+			sy = surface->h;
+		}
+	} else if (frameNum < 0) { // Tiles
+		if (animation->tileAnimation()) {
+			surface = animation->tileAnimation()->dumpFrameTiles(-frameNum + 1, 0.91670);
+
+			sx = surface->w;
+			sy = surface->h;
+		}
+	} else {
 		if (animation->tileAnimation()) {
 			Vect2i size = animation->tileAnimation()->frameSize();
 
@@ -105,15 +119,8 @@ ImGuiImage getImageID(Common::Path filename, int frameNum) {
 		animation->set_cur_frame(frameNum);
 
 		grDispatcher::instance()->surfaceOverride(surface);
-		animation->redraw(sx / 2, sy/ 2, 0, 0);
+		animation->redraw(sx / 2, sy / 2, 0, 0.91670, 0);
 		grDispatcher::instance()->resetSurfaceOverride();
-	} else {
-		if (animation->tileAnimation()) {
-			surface = animation->tileAnimation()->dumpTiles(25);
-
-			sx = surface->w;
-			sy = surface->h;
-		}
 	}
 
 	if (surface)
@@ -254,6 +261,12 @@ void showArchives() {
 					} else {
 						ImGui::InvisibleButton("##canvas", ImVec2(32.f, 32.f));
 					}
+
+					ImGui::SameLine();
+
+					imgID = getImageID(_state->_qdaToDisplay, -_state->_qdaToDisplayFrame - 1);
+
+					showImage(imgID, (char *)transCyrillic(_state->_qdaToDisplay.toString()), 2.0);
 
 					ImGui::EndTabItem();
 				}
