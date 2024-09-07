@@ -134,7 +134,7 @@ $(EXECUTABLE): $(DETECT_OBJS) $(OBJS)
 
 ifdef SPLIT_DWARF
 %.dwp: %
-	$(QUIET_DWP)$(DWP) -e $<
+	$(QUIET_DWP)$(DWP) -e $< -o $@
 endif
 
 # Grab the ScummVM Manual from Read the Docs
