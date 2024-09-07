@@ -490,7 +490,14 @@
 	typedef int8_t int8;
 	typedef uint16_t uint16;
 	typedef int16_t int16;
-#if defined(__MORPHOS__) || defined(__amigaos4__)
+#if defined(__3DS__) || defined(__DC__) || defined(__PSP__)
+	/**
+	 * The system headers define uint32_t and int32_t as long while int is enough
+	 * Force use of int to avoid errors on format strings.
+	 */
+	typedef unsigned int uint32;
+	typedef int int32;
+#elif defined(__amigaos4__) || defined(__MORPHOS__)
 	/**
 	 * The system headers define uint32 and int32 as long, so we have to do the same here.
 	 * Without this, we get a conflicting declaration error when this file is included
