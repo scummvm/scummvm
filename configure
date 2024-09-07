@@ -2126,13 +2126,13 @@ if test "$_host_os" = android; then
 	esac
 
 	# These values can get overriden below by environments variables
-	_ar="$_android_toolchain/bin/$_ar"
-	_as="$_android_toolchain/bin/$_as"
-	_dwp="$_android_toolchain/bin/$_dwp"
-	_ranlib="$_android_toolchain/bin/$_ranlib"
-	_strip="$_android_toolchain/bin/$_strip"
+	_ar="$_android_toolchain/bin/llvm-ar cr"
+	_as="$_android_toolchain/bin/llvm-as"
+	_dwp="$_android_toolchain/bin/llvm-dwp"
+	_ranlib="$_android_toolchain/bin/llvm-ranlib"
+	_strip="$_android_toolchain/bin/llvm-strip"
 	if test -z "$STRINGS"; then
-		STRINGS="$_android_toolchain/bin/$_host_alias-strings"
+		STRINGS="$_android_toolchain/bin/llvm-strings"
 	fi
 	if test -z "$PKG_CONFIG_LIBDIR"; then
 		PKG_CONFIG_LIBDIR="$_android_toolchain/sysroot/usr/lib/$_host_alias/$_android_version/pkgconfig"
@@ -7343,10 +7343,7 @@ case $_host_os in
 			esac
 		done
 
-		# -lgcc is carefully placed here - we want to catch
-		# all toolchain symbols in *our* libraries rather
-		# than pick up anything unhygienic from the Android libs.
-		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -landroid -ljnigraphics -lEGL"
+		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic $system_libs -llog -landroid -ljnigraphics -lEGL"
 		;;
 	ds)
 		# Moved -Wl,--gc-sections here to avoid it interfering with the library checks
