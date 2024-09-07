@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-04 23:57+0000\n"
+"POT-Creation-Date: 2024-09-07 19:45+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -312,7 +312,7 @@ msgstr "אחסון אחר עובד כעת. האם להפריע לו?"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:601 engines/kyra/gui/saveload_eob.cpp:634
 #: engines/parallaction/metaengine.cpp:143
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4008
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4020
 #: engines/toon/toon.cpp:1543
 msgid "Yes"
 msgstr "כן"
@@ -325,7 +325,7 @@ msgstr "כן"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:601 engines/kyra/gui/saveload_eob.cpp:634
 #: engines/parallaction/metaengine.cpp:149
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4008
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4020
 #: engines/toon/toon.cpp:1543
 msgid "No"
 msgstr "לא"
@@ -9887,7 +9887,7 @@ msgid "Your Name:"
 msgstr "שמכם:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4014
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4026
 msgid "Host"
 msgstr ""
 
@@ -9899,7 +9899,7 @@ msgid "Querying games..."
 msgstr "שומר משחק ..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4014
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4026
 msgid "Join"
 msgstr ""
 
@@ -10923,7 +10923,7 @@ msgstr ""
 "גרסה זו של אי הקופים 1 ידועה כחסרה\n"
 "משאבים מסוים שנדרשים עבור MT-32. משתמשים ב-AdLib במקום."
 
-#: engines/scumm/scumm.cpp:3903
+#: engines/scumm/scumm.cpp:3915
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -10933,7 +10933,7 @@ msgstr ""
 "Mansion חייבים להיות בספריית 'Maniac' בתוך ספריית המשחק Tentacle, ויש להוסיף "
 "את המשחק ל- ScummVM."
 
-#: engines/scumm/scumm.cpp:4014
+#: engines/scumm/scumm.cpp:4026
 #, fuzzy
 msgid "Would you like to host or join a network play session?"
 msgstr "האם ברצונכם לשמור או לטעון משחק?"
