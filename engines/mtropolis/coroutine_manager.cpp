@@ -521,7 +521,7 @@ void CoroutineCompiler::compileOne(CompiledCoroutine *compiledCoro, CoroutineCom
 							chainEndInstr[chainID] = (uint)-1;
 							break;
 						} else if (instrJumpRoot[traceInstr] == 0) {
-							// Propgate jump chain
+							// Propagate jump chain
 							instrJumpRoot[traceInstr] = jumpRootID;
 							traceInstr = instr._value;
 						} else {

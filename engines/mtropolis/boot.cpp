@@ -743,7 +743,7 @@ bool BootScriptParser::parseNumber(char firstChar, Common::String &outToken) {
 		}
 
 		if (isAlpha(ch)) {
-			warning("Invalid floating point constantin boot script");
+			warning("Invalid floating point constant in boot script");
 			return false;
 		}
 

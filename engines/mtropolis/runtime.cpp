@@ -2412,7 +2412,7 @@ void MessengerSendSpec::resolveDestination(Runtime *runtime, Modifier *sender, R
 
 void MessengerSendSpec::resolveVariableObjectType(RuntimeObject *obj, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest) {
 	if (!obj) {
-		warning("Couldn't resolve mesenger destination");
+		warning("Couldn't resolve messenger destination");
 		return;
 	}
 
@@ -4471,7 +4471,7 @@ Palette::Palette() {
 }
 
 void Palette::initDefaultPalette(int version) {
-	// NOTE: The "V2" pallete is correct for Unit: Rebooted.
+	// NOTE: The "V2" palette is correct for Unit: Rebooted.
 	// Is it correct for all V2 apps?
 	assert(version == 1 || version == 2);
 	int outColorIndex = 0;
@@ -5320,7 +5320,7 @@ void Runtime::executeCloneObject(RuntimeObject *object) {
 		if (container)
 			container->appendModifier(modifierRef);
 		else
-			error("Internal error: Cloned a modifier, but the parent isn't a modifeir container");
+			error("Internal error: Cloned a modifier, but the parent isn't a modifier container");
 
 		{
 			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kClone, 0), DynamicValue(), modifierRef));
@@ -10228,7 +10228,7 @@ bool Modifier::respondsToEvent(const Event &evt) const {
 }
 
 VThreadState Modifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	// If you're here, a message type was reported as responsive by respondsToEvent but consumeMessage wasn't overrided
+	// If you're here, a message type was reported as responsive by respondsToEvent but consumeMessage wasn't overridden
 	assert(false);
 	return kVThreadError;
 }
