@@ -918,6 +918,27 @@ const ScummNESFile::ResourceGroup res_preplist = {
 	}
 };
 
+static const ScummNESFile::Resource res_titles_usa[2] = { {0x02701, 0x0BCA}, {0x0324D, 0x091F} };
+static const ScummNESFile::Resource res_titles_eur[2] = { {0x02701, 0x0B8C}, {0x0320F, 0x091F} };
+static const ScummNESFile::Resource res_titles_swe[2] = { {0x02701, 0x0B8C}, {0x0320F, 0x091F} };
+static const ScummNESFile::Resource res_titles_fra[2] = { {0x02701, 0x0B8C}, {0x0320F, 0x091F} };
+static const ScummNESFile::Resource res_titles_ger[2] = { {0x02701, 0x0B8C}, {0x0320F, 0x091F} };
+static const ScummNESFile::Resource res_titles_esp[2] = { {0x02701, 0x0B8C}, {0x0320F, 0x091F} };
+static const ScummNESFile::Resource res_titles_ita[2] = { {0x02701, 0x0B8C}, {0x0320F, 0x091F} };
+
+const ScummNESFile::ResourceGroup res_titles = {
+    ScummNESFile::NES_TITLES,
+    {
+    res_titles_usa,
+    res_titles_eur,
+    res_titles_swe,
+    res_titles_fra,
+    res_titles_ger,
+    res_titles_esp,
+    res_titles_ita,
+    }
+};
+
 static uint16 write_byte(Common::WriteStream *out, byte val) {
 	val ^= 0xFF;
 	if (out != nullptr)
@@ -1083,6 +1104,39 @@ uint16 ScummNESFile::extractResource(Common::WriteStream *output, const Resource
 				reslen += write_byte(output, 0);
 		}
 		break;
+        case NES_TITLES:
+            reslen += write_word(output, (uint16)(res->length + 2)); // Writing the word length to output
+            len = fileReadByte(); // Read a byte to determine the length or loop control value
+            reslen += write_byte(output, (byte)len); // Write the length byte to output
+
+            // If len is 0, set it to 256 (preserving the original C++ logic)
+            if (!len)
+                len = 256;
+            len = len << 4; // Multiply len by 16 (similar to the original C++ approach)
+
+            // Begin processing the data
+            for (i = 0; i < len;) {
+                reslen += write_byte(output, cnt = fileReadByte()); // Read a byte and write it to output
+
+                // If the high bit of cnt is set, copy bytes directly
+                if (cnt & 0x80) {
+                    for (j = 0; j < (cnt & 0x7F); j++, i++) {
+                        reslen += write_byte(output, fileReadByte()); // Write each byte to output
+                    }
+                }
+                // If the high bit is not set, repeat the byte
+                else {
+                    uint8_t data = fileReadByte(); // Fetch the data byte
+                    for (j = 0; j < (cnt & 0x7F); j++, i++) {
+                        reslen += write_byte(output, data); // Write the repeated data byte to output
+                    }
+                }
+            }
+
+            if (_baseStream->pos() - res->offset != res->length)
+                error("extract_resource - length mismatch while extracting graphics resource (was %04X, should be %04X)", (int32)_baseStream->pos() - res->offset, res->length);
+
+            break;
 
 	default:
 		error("extract_resource - unknown resource type %d specified", type);
@@ -1154,7 +1208,7 @@ static const ScummNESFile::LFLEntry lfl_52[] = { {&res_rooms, 52}, {nullptr, 0} 
 // remaining 'standard' resources (not used by any of the original LFL files)
 static const ScummNESFile::LFLEntry lfl_53[] = { {&res_rooms, 53}, {&res_scripts, 177}, {&res_scripts, 178}, {&res_sounds, 70}, {&res_sounds, 71}, {&res_sounds, 72}, {&res_sounds, 73}, {&res_sounds, 74}, {&res_sounds, 75}, {&res_sounds, 76}, {&res_sounds, 77}, {&res_sounds, 78}, {&res_sounds, 79}, {&res_sounds, 80}, {&res_sounds, 81}, {nullptr, 0} };
 // all 'non-standard' resources (the costume-related stuff)
-static const ScummNESFile::LFLEntry lfl_54[] = { {&res_rooms, 54}, {&res_sprdesc, 0}, {&res_sprdesc, 1}, {&res_sprlens, 0}, {&res_sprlens, 1}, {&res_sproffs, 0}, {&res_sproffs, 1}, {&res_sprdata, 0}, {&res_sprdata, 1}, {&res_costumegfx, 0}, {&res_costumegfx, 1}, {&res_sprpals, 0}, {&res_sprpals, 1}, {&res_charset, 0}, {&res_preplist, 0}, {nullptr, 0} };
+static const ScummNESFile::LFLEntry lfl_54[] = { {&res_rooms, 54}, {&res_sprdesc, 0}, {&res_sprdesc, 1}, {&res_sprlens, 0}, {&res_sprlens, 1}, {&res_sproffs, 0}, {&res_sproffs, 1}, {&res_sprdata, 0}, {&res_sprdata, 1}, {&res_costumegfx, 0}, {&res_costumegfx, 1}, {&res_sprpals, 0}, {&res_sprpals, 1}, {&res_charset, 0}, {&res_preplist, 0}, {&res_titles, 0}, {&res_titles, 1}, {nullptr, 0} };
 
 struct ScummNESFile::LFL {
 	int num;
@@ -1327,6 +1381,10 @@ bool ScummNESFile::generateIndex() {
 				lfl_index.costume_lfl[78] = lfl->num;
 				lfl_index.costume_addr[78] = TO_LE_16(respos);
 				break;
+            case NES_TITLES:
+                lfl_index.costume_lfl[79] = lfl->num;
+                lfl_index.costume_addr[79] = TO_LE_16(respos);
+                break;
 			default:
 				error("Unindexed entry found");
 				break;

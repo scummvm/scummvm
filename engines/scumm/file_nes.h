@@ -59,7 +59,8 @@ public:
 		NES_SPROFFS,
 		NES_SPRDATA,
 		NES_CHARSET,
-		NES_PREPLIST
+		NES_PREPLIST,
+        NES_TITLES
 	};
 
 
