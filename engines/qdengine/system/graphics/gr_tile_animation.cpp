@@ -426,10 +426,12 @@ byte *grTileAnimation::decode_frame_data(int frame_index, int closest_scale) con
 
 	for (int i = 0; i < frameTileSize.y; i++) {
 		for (int j = 0; j < frameTileSize.x; j++) {
-			byte *buf_ptr = buf + (i * frameSize.x + j) * 4;
+			byte *buf_ptr = buf + (i * frameSize.x * GR_TILE_SPRITE_SIZE_Y + j * GR_TILE_SPRITE_SIZE_X) * 4;
+
 			const byte *data_ptr = (const byte *)getTile(*index_ptr++).data();
 			int dx = MIN(frameSize.x - j * GR_TILE_SPRITE_SIZE_X, GR_TILE_SPRITE_SIZE_X) * 4;
-			for (int k = 0; k < GR_TILE_SPRITE_SIZE_Y; k++) {
+			int dy = MIN(frameSize.y - i * GR_TILE_SPRITE_SIZE_Y, GR_TILE_SPRITE_SIZE_Y);
+			for (int k = 0; k < dy; k++) {
 				memcpy(buf_ptr, data_ptr, dx);
 				data_ptr += GR_TILE_SPRITE_SIZE_X * 4;
 				buf_ptr += frameSize.x * 4;
