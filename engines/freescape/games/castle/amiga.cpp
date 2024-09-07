@@ -81,7 +81,7 @@ void CastleEngine::loadAssetsAmigaDemo() {
 	file.seek(0x2cf28 + 0x28 - 0x2 + 0x28);
 	_border = loadFrameFromPlanesVertical(&file, 160, 200);
 	_border->convertToInPlace(_gfx->_texturePixelFormat, borderPalete, 16);
-	free(borderPalete);
+	delete[] borderPalete;
 	file.close();
 
 	_areaMap[2]->_groundColor = 1;
