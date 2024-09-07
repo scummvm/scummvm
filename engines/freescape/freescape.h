@@ -243,6 +243,7 @@ public:
 	Graphics::ManagedSurface *loadAndConvertNeoImage(Common::SeekableReadStream *stream, int offset, byte *palette = nullptr);
 	Graphics::ManagedSurface *loadAndCenterScrImage(Common::SeekableReadStream *stream);
 	void loadPalettes(Common::SeekableReadStream *file, int offset);
+	byte *loadPalette(Common::SeekableReadStream *file);
 	void swapPalette(uint16 areaID);
 	virtual byte *findCGAPalette(uint16 levelID);
 	const CGAPaletteEntry *_rawCGAPaletteByArea;

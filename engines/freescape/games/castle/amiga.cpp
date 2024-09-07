@@ -66,7 +66,7 @@ void CastleEngine::loadAssetsAmigaDemo() {
 	if (!file.isOpen())
 		error("Failed to open 'x' file");
 
-	_viewArea = Common::Rect(37, 29, 277, 149);
+	_viewArea = Common::Rect(40, 29, 280, 154);
 	loadMessagesVariableSize(&file, 0x8bb2, 178);
 	loadRiddles(&file, 0x96c8, 20);
 	load8bitBinary(&file, 0x162a6, 16);
@@ -75,9 +75,13 @@ void CastleEngine::loadAssetsAmigaDemo() {
 	file.seek(0x2be96); // Area 255
 	_areaMap[255] = load8bitArea(&file, 16);
 
-	file.seek(0x2cf26);
+	file.seek(0x3c6d0);
+	byte *borderPalete = loadPalette(&file);
+
+	file.seek(0x2cf28 + 0x28 - 0x2 + 0x28);
 	_border = loadFrameFromPlanesVertical(&file, 160, 200);
-	_border->convertToInPlace(_gfx->_texturePixelFormat, _paletteByArea[1], 16);
+	_border->convertToInPlace(_gfx->_texturePixelFormat, borderPalete, 16);
+	free(borderPalete);
 	file.close();
 
 	_areaMap[2]->_groundColor = 1;
