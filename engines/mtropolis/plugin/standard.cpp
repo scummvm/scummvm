@@ -1718,6 +1718,91 @@ const char *PrintModifier::getDefaultName() const {
 	return "Print Modifier";
 }
 
+NavigateModifier::NavigateModifier() {
+}
+
+NavigateModifier::~NavigateModifier() {
+}
+
+bool NavigateModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::NavigateModifier &data) {
+	return true;
+}
+
+bool NavigateModifier::respondsToEvent(const Event &evt) const {
+	return false;
+}
+
+VThreadState NavigateModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	return kVThreadReturn;
+}
+
+void NavigateModifier::disable(Runtime *runtime) {
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void NavigateModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+}
+#endif
+
+Common::SharedPtr<Modifier> NavigateModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new NavigateModifier(*this));
+}
+
+const char *NavigateModifier::getDefaultName() const {
+	return "Navigate Modifier"; // ???
+}
+
+OpenTitleModifier::OpenTitleModifier()
+	: _addToReturnList(false){
+}
+
+OpenTitleModifier::~OpenTitleModifier() {
+}
+
+bool OpenTitleModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::OpenTitleModifier &data) {
+	if (data.executeWhen.type != Data::PlugInTypeTaggedValue::kEvent || data.pathOrUrl.type != Data::PlugInTypeTaggedValue::kString || data.addToReturnList.type != Data::PlugInTypeTaggedValue::kInteger)
+		return false;
+
+	if (!_executeWhen.load(data.executeWhen.value.asEvent))
+		return false;
+
+	_pathOrUrl = data.pathOrUrl.value.asString;
+
+	_addToReturnList = static_cast<bool>(data.addToReturnList.value.asInt);
+
+	return true;
+}
+
+bool OpenTitleModifier::respondsToEvent(const Event &evt) const {
+	return _executeWhen.respondsTo(evt);
+}
+
+VThreadState OpenTitleModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	if (Debugger *debugger = runtime->debugGetDebugger())
+		debugger->notify(kDebugSeverityWarning, "Open Title modifier was executed, which isn't implemented yet");
+#endif
+	return kVThreadReturn;
+}
+
+void OpenTitleModifier::disable(Runtime *runtime) {
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void OpenTitleModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+}
+#endif
+
+Common::SharedPtr<Modifier> OpenTitleModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new OpenTitleModifier(*this));
+}
+
+const char *OpenTitleModifier::getDefaultName() const {
+	return "Open Title Modifier"; // ???
+}
+
 StandardPlugInHacks::StandardPlugInHacks() : allowGarbledListModData(false) {
 }
 
@@ -1730,7 +1815,9 @@ StandardPlugIn::StandardPlugIn()
 	, _sysInfoModifierFactory(this)
 	, _panningModifierFactory(this)
 	, _fadeModifierFactory(this)
-	, _printModifierFactory(this) {
+	, _printModifierFactory(this)
+	, _navigateModifierFactory(this)
+	, _openTitleModifierFactory(this) {
 }
 
 StandardPlugIn::~StandardPlugIn() {
@@ -1747,6 +1834,8 @@ void StandardPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) cons
 
 	registrar->registerPlugInModifier("panning", &_panningModifierFactory);
 	registrar->registerPlugInModifier("fade", &_fadeModifierFactory);
+	registrar->registerPlugInModifier("Navigate", &_navigateModifierFactory);
+	registrar->registerPlugInModifier("OpenTitle", &_openTitleModifierFactory);
 }
 
 const StandardPlugInHacks &StandardPlugIn::getHacks() const {
