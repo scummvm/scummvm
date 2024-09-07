@@ -29,12 +29,47 @@ namespace Riddle {
 namespace Rooms {
 
 class Room504 : public Room {
+private:
+	machine *_ripley = nullptr;
+	machine *_waterfall = nullptr;
+	int _downSteps = 0;
+	int _volume = 0;
+
+	machine *_vines1 = nullptr;
+	machine *_vines2 = nullptr;
+	machine *_vines3 = nullptr;
+	machine *_vines4 = nullptr;
+	machine *_rope = nullptr;
+	machine *_ladder = nullptr;
+	machine *_toy = nullptr;
+	machine *_shovel = nullptr;
+	machine *_driftwood = nullptr;
+	machine *_pole = nullptr;
+	int _xyzzy2 = 0;
+
+	int _val1 = 0;
+
+	void setVines();
+	void freeVines();
+	void setVinesRope();
+	void setMiscItems();
+	void disableVinesRope();
+	void deleteHotspot(const char *hotspotName);
+	void addRope();
+	void addGreenVine();
+	void addBrownVine();
+	void addHotspot(int x1, int y1, int x2, int y2,
+		const char *verb, const char *vocab);
+	void addShovel();
+
 public:
 	Room504() : Room() {}
 	~Room504() override {}
 
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms
