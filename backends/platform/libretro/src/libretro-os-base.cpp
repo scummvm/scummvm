@@ -181,6 +181,13 @@ void OSystem_libretro::refreshScreen(void) {
 void *OSystem_libretro::getOpenGLProcAddress(const char *name) const {
 	return retro_get_proc_address(name);
 }
+
+void OSystem_libretro::resetGraphicsContext(void) {
+	if ((retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_HW) && (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_HAVE_OPENGL))
+		dynamic_cast<LibretroOpenGLGraphics *>(_graphicsManager)->resetContext(OpenGL::kContextGL);
+	else if ((retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_HW) && (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_HAVE_OPENGLES2))
+		dynamic_cast<LibretroOpenGLGraphics *>(_graphicsManager)->resetContext(OpenGL::kContextGLES2);
+}
 #endif
 
 int16 OSystem_libretro::getScreenWidth(void){

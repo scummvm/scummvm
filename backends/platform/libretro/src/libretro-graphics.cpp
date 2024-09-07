@@ -460,14 +460,7 @@ bool LibretroGraphics::getFeatureState(OSystem::Feature f) const {
 
 #ifdef USE_OPENGL
 LibretroOpenGLGraphics::LibretroOpenGLGraphics(OpenGL::ContextType contextType) {
-	const Graphics::PixelFormat rgba8888 =
-#ifdef SCUMM_LITTLE_ENDIAN
-									   Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-#else
-									   Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-#endif
-	notifyContextCreate(contextType, new LibretroHWFramebuffer(), rgba8888, rgba8888);
-	handleResize(RES_W_OVERLAY, RES_H_OVERLAY);
+	resetContext(contextType);
 }
 
 void LibretroOpenGLGraphics::refreshScreen(){
@@ -485,4 +478,17 @@ Common::Point LibretroOpenGLGraphics::convertWindowToVirtual(int x, int y) const
 void LibretroHWFramebuffer::activateInternal(){
 	GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, retro_get_hw_fb()));
 }
+
+void LibretroOpenGLGraphics::resetContext(OpenGL::ContextType contextType) {
+	const Graphics::PixelFormat rgba8888 =
+#ifdef SCUMM_LITTLE_ENDIAN
+									   Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#else
+									   Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#endif
+	notifyContextDestroy();
+	notifyContextCreate(contextType, new LibretroHWFramebuffer(), rgba8888, rgba8888);
+	handleResize(RES_W_OVERLAY, RES_H_OVERLAY);
+}
+
 #endif

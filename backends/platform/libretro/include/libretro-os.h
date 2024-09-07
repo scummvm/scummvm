@@ -93,6 +93,7 @@ public:
 	bool isOverlayInGUI(void);
 
 #ifdef USE_OPENGL
+	void resetGraphicsContext(void);
 	void *getOpenGLProcAddress(const char *name) const override;
 #endif
 

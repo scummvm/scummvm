@@ -90,7 +90,7 @@ public:
 	bool hasFeature(OSystem::Feature f) const override;
 	void setFeatureState(OSystem::Feature f, bool enable) override;
 	bool getFeatureState(OSystem::Feature f) const override;
-	
+
 	int getDefaultGraphicsMode() const override {
 		return 0;
 	}
@@ -141,6 +141,7 @@ public:
 	bool isOverlayInGUI(void){ return _overlayInGUI; }
 	void setMousePosition(int x, int y);
 	Common::Point convertWindowToVirtual(int x, int y) const;
+	void resetContext(OpenGL::ContextType contextType);
 };
 
 class LibretroHWFramebuffer : public OpenGL::Backbuffer {

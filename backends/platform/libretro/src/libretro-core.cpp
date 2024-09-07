@@ -110,6 +110,8 @@ static struct retro_hw_render_callback hw_render;
 
 static void context_reset(void) {
 	retro_log_cb(RETRO_LOG_DEBUG, "HW context reset\n");
+	if (retro_emu_thread_started())
+		LIBRETRO_G_SYSTEM->resetGraphicsContext();
 }
 
 static void context_destroy(void) {
