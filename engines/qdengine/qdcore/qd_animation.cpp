@@ -255,8 +255,20 @@ void qdAnimation::draw_mask(int x, int y, int z, uint32 mask_color, int mask_alp
 	if (check_flag(QD_ANIMATION_FLAG_BLACK_FON))
 		mode |= GR_BLACK_FON;
 
-	if (const qdAnimationFrame *p = get_cur_frame(scale))
-		p->draw_mask(x, y, z, mask_color, mask_alpha, scale, mode);
+	if (tileAnimation()) {
+		tileAnimation()->drawMask(Vect2i(x, y), get_cur_frame_number(), mask_color, mask_alpha, scale, mode);
+	} else {
+		int scale_index = get_scale_index(scale);
+		const qdAnimationFrame *scaled_frame;
+
+		if (scale_index == -1)
+			scaled_frame = get_cur_frame();
+		else
+			scaled_frame = get_scaled_frame(get_cur_frame_number(), scale_index);
+
+		if (scaled_frame)
+			scaled_frame->draw_mask(x, y, z, mask_color, mask_alpha, scale, mode);
+	}
 }
 
 void qdAnimation::draw_mask_rot(int x, int y, int z, float angle, uint32 mask_color, int mask_alpha, int mode) const {
