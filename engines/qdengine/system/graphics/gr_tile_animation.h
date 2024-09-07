@@ -77,6 +77,8 @@ public:
 
 	void drawFrame(const Vect2i &position, int32 frame_index, int32 mode, int closest_scale) const;
 	void drawFrame(const Vect2i &position, int frame_index, float angle, int mode = 0) const;
+	void drawFrame(const Vect2i &position, int frame_index, float angle, const Vect2f &scale, int mode) const;
+
 	void drawFrame_scale(const Vect2i &position, int frame_index, float scale, int mode) const;
 
 	static void setProgressHandler(CompressionProgressHandler handler, void *context) {

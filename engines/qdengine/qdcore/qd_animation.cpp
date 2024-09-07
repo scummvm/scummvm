@@ -200,8 +200,28 @@ void qdAnimation::redraw_rot(int x, int y, int z, float angle, const Vect2f &sca
 	if (check_flag(QD_ANIMATION_FLAG_FLIP_VERTICAL))
 		mode |= GR_FLIP_VERTICAL;
 
-	if (const qdAnimationFrame *p = get_cur_frame())
-		p->redraw_rot(x, y, z, angle, scale, mode);
+	if (tileAnimation()) {
+		tileAnimation()->drawFrame(Vect2i(x, y), get_cur_frame_number(), angle, scale, mode);
+	} else if (fabs(scale.x - scale.y) < 0.01f) {
+		if (const qdAnimationFrame *p = get_cur_frame())
+			p->redraw_rot(x, y, z, angle, scale, mode);
+	} else {
+		const qdAnimationFrame *scaled_frame;
+		float newScale = scale.x;
+		int scale_index = get_scale_index(newScale);
+
+		if (scale_index == -1)
+			scaled_frame = get_cur_frame();
+		else
+			scaled_frame = get_scaled_frame(get_cur_frame_number(), scale_index);
+
+		if (scaled_frame) {
+			if (fabs(newScale - 1.0) >= 0.01f)
+				scaled_frame->redraw_rot(x, y, z, angle, Vect2f(newScale, newScale), mode);
+			else
+				scaled_frame->redraw_rot(x, y, z, angle, mode);
+		}
+	}
 }
 
 void qdAnimation::draw_mask(int x, int y, int z, uint32 mask_color, int mask_alpha, int mode) const {

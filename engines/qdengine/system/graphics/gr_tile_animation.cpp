@@ -340,24 +340,15 @@ void grTileAnimation::drawFrame(const Vect2i &position, int32 frame_index, int32
 }
 
 void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float angle, int mode) const {
-	byte *buf = (byte *)grDispatcher::instance()->temp_buffer(_frameSize.x * _frameSize.y * 4);
-
-	const uint32 *index_ptr = &_frameIndex[0] + _frameTileSize.x * _frameTileSize.y * frame_index;
-
-	for (int i = 0; i < _frameTileSize.y; i++) {
-		for (int j = 0; j < _frameTileSize.x; j++) {
-			byte *buf_ptr = buf + (i * _frameSize.x + j) * 4;
-			const byte *data_ptr = (const byte *)getTile(*index_ptr++).data();
-			int dx = MIN(_frameSize.x - j * GR_TILE_SPRITE_SIZE_X, GR_TILE_SPRITE_SIZE_X) * 4;
-			for (int k = 0; k < GR_TILE_SPRITE_SIZE_Y; k++) {
-				memcpy(buf_ptr, data_ptr, dx);
-				data_ptr += GR_TILE_SPRITE_SIZE_X * 4;
-				buf_ptr += _frameSize.x * 4;
-			}
-		}
-	}
+	byte *buf = decode_frame_data(frame_index, -1);
 
 	grDispatcher::instance()->putSpr_rot(position, _frameSize, buf, _hasAlpha, mode, angle);
+}
+
+void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float angle, const Vect2f &scale, int mode) const {
+	byte *buf = decode_frame_data(frame_index, -1);
+
+	grDispatcher::instance()->putSpr_rot(position, _frameSize, buf, _hasAlpha, mode, angle, scale);
 }
 
 void grTileAnimation::drawFrame_scale(const Vect2i &position, int frame_index, float scale, int mode) const {
