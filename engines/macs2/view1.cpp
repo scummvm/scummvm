@@ -847,6 +847,11 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 	// Draw the background
 	drawDarkRectangle(pos.x + 1, pos.y + 1, size.x - 1, size.y - 1);
 	// TODO: Continue here
+
+	// Add the function for filling a side of the border
+	// Algorithm
+	// Set up clipping rect on one side
+	// Draw the texture enough times in x and y to fill the clipping rect
 }
 
 void View1::ShowDialogueChoice(const Common::Array<Common::StringArray> &choices, const Common::Point &position, bool onRightSide) {
