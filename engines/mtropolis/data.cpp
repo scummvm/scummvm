@@ -766,7 +766,7 @@ AssetCatalog::AssetCatalog() : persistFlags(0), totalNameSizePlus22(0), unknown1
 }
 
 DataReadErrorCode AssetCatalog::load(DataReader& reader) {
-	if (_revision != 2 && _revision != 4)
+	if (_revision != 2 && _revision != 3 && _revision != 4)
 		return kDataReadErrorUnsupportedRevision;
 
 	haveRev4Fields = (_revision >= 4);
@@ -784,7 +784,7 @@ DataReadErrorCode AssetCatalog::load(DataReader& reader) {
 		if (!reader.readU32(asset.flags1) || !reader.readU16(asset.nameLength) || !reader.readU16(asset.alwaysZero) || !reader.readU32(asset.streamID) || !reader.readU32(asset.filePosition))
 			return kDataReadErrorReadFailed;
 
-		if (_revision >= 4) {
+		if (_revision >= 3) {
 			if (!reader.readU32(asset.rev4Fields.assetType) || !reader.readU32(asset.rev4Fields.flags2))
 				return kDataReadErrorReadFailed;
 		}
@@ -1280,7 +1280,7 @@ ColorTableModifier::ColorTableModifier() : unknown1(0), unknown2{0, 0, 0, 0}, as
 }
 
 DataReadErrorCode ColorTableModifier::load(DataReader &reader) {
-	if (_revision != 1001)
+	if (_revision != 1001 && _revision != 2001)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader, _revision >= 2000) || !applyWhen.load(reader) || !reader.readU32(unknown1)
@@ -1355,7 +1355,7 @@ SetModifier::SetModifier()
 }
 
 DataReadErrorCode SetModifier::load(DataReader &reader) {
-	if (_revision != 1000)
+	if (_revision != 1000 && _revision != 2000)
 		return kDataReadErrorUnsupportedRevision;
 
 	// NOTE: executeWhen is split in half and stored in 2 separate parts
@@ -1441,7 +1441,7 @@ SoundEffectModifier::SoundEffectModifier()
 }
 
 DataReadErrorCode SoundEffectModifier::load(DataReader &reader) {
-	if (_revision != 1000)
+	if (_revision != 1000 && _revision != 2000)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader, _revision >= 2000) || !reader.readBytes(unknown1) || !executeWhen.load(reader)
@@ -1493,7 +1493,7 @@ PathMotionModifier::PathMotionModifier(uint version)
 }
 
 DataReadErrorCode PathMotionModifier::load(DataReader &reader) {
-	if (_revision != 1001)
+	if (_revision != 1001 && _revision != 2001)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader, _revision >= 2000)
@@ -1579,7 +1579,7 @@ VectorMotionModifier::VectorMotionModifier()
 }
 
 DataReadErrorCode VectorMotionModifier::load(DataReader &reader) {
-	if (_revision != 1001)
+	if (_revision != 1001 && _revision != 2001)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader, _revision >= 2000))
@@ -1599,7 +1599,7 @@ SceneTransitionModifier::SceneTransitionModifier()
 }
 
 DataReadErrorCode SceneTransitionModifier::load(DataReader &reader) {
-	if (_revision != 1001)
+	if (_revision != 1001 && _revision != 2001)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader, _revision >= 2000))
@@ -1655,7 +1655,7 @@ IfMessengerModifier::IfMessengerModifier()
 }
 
 DataReadErrorCode IfMessengerModifier::load(DataReader &reader) {
-	if (_revision != 1002)
+	if (_revision != 1002 && _revision != 2002)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader, _revision >= 2000) || !reader.readU32(messageFlags) || !when.load(reader) || !send.load(reader)
@@ -1722,7 +1722,7 @@ CollisionDetectionMessengerModifier::CollisionDetectionMessengerModifier()
 }
 
 DataReadErrorCode CollisionDetectionMessengerModifier::load(DataReader &reader) {
-	if (_revision != 1002)
+	if (_revision != 1002 && _revision != 2002)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader, _revision >= 2000))
@@ -1765,7 +1765,7 @@ TextStyleModifier::TextStyleModifier()
 }
 
 DataReadErrorCode TextStyleModifier::load(DataReader &reader) {
-	if (_revision != 1000)
+	if (_revision != 1000 && _revision != 2000)
 		return kDataReadErrorUnsupportedRevision;
 	
 	if (!modHeader.load(reader, _revision >= 2000) || !reader.readBytes(unknown1) || !reader.readU16(macFontID)
@@ -1842,7 +1842,7 @@ ReturnModifier::ReturnModifier() : unknown1(0) {
 }
 
 DataReadErrorCode ReturnModifier::load(DataReader &reader) {
-	if (_revision != 1001)
+	if (_revision != 1001 && _revision != 2001)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader, _revision >= 2000) || !executeWhen.load(reader) || !reader.readU16(unknown1))
@@ -1899,7 +1899,7 @@ BooleanVariableModifier::BooleanVariableModifier() : value(0), unknown5(0) {
 }
 
 DataReadErrorCode BooleanVariableModifier::load(DataReader &reader) {
-	if (_revision != 1000)
+	if (_revision != 1000 && _revision != 2000)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader, _revision >= 2000) || !reader.readU8(value) || !reader.readU8(unknown5))
