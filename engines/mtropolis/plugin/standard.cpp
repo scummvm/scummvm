@@ -1765,6 +1765,6 @@ Common::SharedPtr<PlugIn> createStandard() {
 	return Common::SharedPtr<PlugIn>(new Standard::StandardPlugIn());
 }
 
-} // End of namespace MTropolis
+} // End of namespace PlugIns
 
 } // End of namespace MTropolis
