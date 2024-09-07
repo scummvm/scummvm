@@ -649,7 +649,7 @@ bool qdTriggerElement::set_parent_link_status(qdTriggerElementConstPtr parent, q
 }
 
 bool qdTriggerElement::load_data(Common::SeekableReadStream &fh, int saveVersion) {
-	debugC(5, kDebugSave, "      qdTriggerElement::load_data before: %ld", fh.pos());
+	debugC(5, kDebugSave, "      qdTriggerElement::load_data before: %d", (int)fh.pos());
 	char st = fh.readByte();
 	set_status(ElementStatus(st));
 
@@ -663,12 +663,12 @@ bool qdTriggerElement::load_data(Common::SeekableReadStream &fh, int saveVersion
 		it.set_status(qdTriggerLink::LinkStatus(st));
 	}
 
-	debugC(5, kDebugSave, "      qdTriggerElement::load_data after: %ld", fh.pos());
+	debugC(5, kDebugSave, "      qdTriggerElement::load_data after: %d", (int)fh.pos());
 	return true;
 }
 
 bool qdTriggerElement::save_data(Common::WriteStream &fh) const {
-	debugC(5, kDebugSave, "      qdTriggerElement::save_data before: %ld", fh.pos());
+	debugC(5, kDebugSave, "      qdTriggerElement::save_data before: %d", (int)fh.pos());
 	/*  switch(_status){
 	    case TRIGGER_EL_INACTIVE:
 	        for(qdTriggerLinkList::const_iterator it = _parents.begin(); it != _parents.end(); ++it){
@@ -704,7 +704,7 @@ bool qdTriggerElement::save_data(Common::WriteStream &fh) const {
 		fh.writeByte(it.status());
 	}
 
-	debugC(5, kDebugSave, "      qdTriggerElement::save_data after: %ld", fh.pos());
+	debugC(5, kDebugSave, "      qdTriggerElement::save_data after: %d", (int)fh.pos());
 	return true;
 }
 

@@ -942,7 +942,7 @@ const sGridCell *qdCamera::get_cell(const Vect2s &cell_pos) const {
 }
 
 bool qdCamera::load_data(Common::SeekableReadStream &fh, int save_version) {
-	debugC(3, kDebugSave, "  qdCamera::load_data(): before %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdCamera::load_data(): before: %d", (int)fh.pos());
 
 	int x, y;
 	char flag;
@@ -977,12 +977,12 @@ bool qdCamera::load_data(Common::SeekableReadStream &fh, int save_version) {
 		_default_object = dynamic_cast<qdGameObjectAnimated *>(qdGameDispatcher::get_dispatcher()->get_named_object(&ref));
 	}
 
-	debugC(3, kDebugSave, "  qdCamera::load_data(): after %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdCamera::load_data(): after: %d", (int)fh.pos());
 	return true;
 }
 
 bool qdCamera::save_data(Common::WriteStream &fh) const {
-	debugC(3, kDebugSave, "  qdCamera::save_data(): before %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdCamera::save_data(): before: %d", (int)fh.pos());
 	fh.writeSint32LE(_scrCenter.x);
 	fh.writeSint32LE(_scrCenter.y);
 	fh.writeSint32LE(_GSX);
@@ -1009,7 +1009,7 @@ bool qdCamera::save_data(Common::WriteStream &fh) const {
 		fh.writeByte(char(0));
 	}
 
-	debugC(3, kDebugSave, "  qdCamera::save_data(): after %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdCamera::save_data(): after: %d", (int)fh.pos());
 	return true;
 }
 

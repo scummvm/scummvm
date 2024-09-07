@@ -135,7 +135,7 @@ bool qdInventoryCell::free_resources() {
 }
 
 bool qdInventoryCell::load_data(Common::SeekableReadStream &fh, int saveVersion) {
-	debugC(5, kDebugSave, "      qdInventoryCell::load_data before: %ld", fh.pos());
+	debugC(5, kDebugSave, "      qdInventoryCell::load_data before: %d", (int)fh.pos());
 	char flag = fh.readByte();
 
 	if (flag) {
@@ -150,12 +150,12 @@ bool qdInventoryCell::load_data(Common::SeekableReadStream &fh, int saveVersion)
 	} else
 		_object = NULL;
 
-	debugC(5, kDebugSave, "      qdInventoryCell::load_data after: %ld", fh.pos());
+	debugC(5, kDebugSave, "      qdInventoryCell::load_data after: %d", (int)fh.pos());
 	return true;
 }
 
 bool qdInventoryCell::save_data(Common::WriteStream &fh) const {
-	debugC(5, kDebugSave, "      qdInventoryCell::save_data before: %ld", fh.pos());
+	debugC(5, kDebugSave, "      qdInventoryCell::save_data before: %d", (int)fh.pos());
 	if (_object) {
 		fh.writeByte(1);
 
@@ -166,7 +166,7 @@ bool qdInventoryCell::save_data(Common::WriteStream &fh) const {
 	} else
 		fh.writeByte(0);
 
-	debugC(5, kDebugSave, "      qdInventoryCell::save_data after: %ld", fh.pos());
+	debugC(5, kDebugSave, "      qdInventoryCell::save_data after: %d", (int)fh.pos());
 	return true;
 }
 
@@ -399,7 +399,7 @@ bool qdInventoryCellSet::free_resources() {
 }
 
 bool qdInventoryCellSet::load_data(Common::SeekableReadStream &fh, int save_version) {
-	debugC(4, kDebugSave, "    qdInventoryCellSet::load_data before: %ld", fh.pos());
+	debugC(4, kDebugSave, "    qdInventoryCellSet::load_data before: %d", (int)fh.pos());
 	if (save_version >= 102) {
 		_additional_cells.x = fh.readSint32LE();
 		_additional_cells.y = fh.readSint32LE();
@@ -409,12 +409,12 @@ bool qdInventoryCellSet::load_data(Common::SeekableReadStream &fh, int save_vers
 			return false;
 	}
 
-	debugC(4, kDebugSave, "    qdInventoryCellSet::load_data after: %ld", fh.pos());
+	debugC(4, kDebugSave, "    qdInventoryCellSet::load_data after: %d", (int)fh.pos());
 	return true;
 }
 
 bool qdInventoryCellSet::save_data(Common::WriteStream &fh) const {
-	debugC(4, kDebugSave, "    qdInventoryCellSet::save_data before: %ld", fh.pos());
+	debugC(4, kDebugSave, "    qdInventoryCellSet::save_data before: %d", (int)fh.pos());
 	fh.writeSint32LE(_additional_cells.x);
 	fh.writeSint32LE(_additional_cells.y);
 
@@ -423,7 +423,7 @@ bool qdInventoryCellSet::save_data(Common::WriteStream &fh) const {
 			return false;
 	}
 
-	debugC(4, kDebugSave, "    qdInventoryCellSet::save_data after: %ld", fh.pos());
+	debugC(4, kDebugSave, "    qdInventoryCellSet::save_data after: %d", (int)fh.pos());
 	return true;
 }
 

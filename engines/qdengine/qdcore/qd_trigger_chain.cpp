@@ -268,7 +268,7 @@ const char *qdTriggerChain::debug_comline() {
 }
 
 bool qdTriggerChain::load_data(Common::SeekableReadStream &fh, int save_version) {
-	debugC(4, kDebugSave, "    qdTriggerChain::load_data before: %ld", fh.pos());
+	debugC(4, kDebugSave, "    qdTriggerChain::load_data before: %d", (int)fh.pos());
 	int32 size = fh.readSint32LE();
 
 	if (size != (int)_elements.size()) {
@@ -284,13 +284,13 @@ bool qdTriggerChain::load_data(Common::SeekableReadStream &fh, int save_version)
 			return false;
 		}
 	}
-	debugC(4, kDebugSave, "    qdTriggerChain::load_data after: %ld", fh.pos());
+	debugC(4, kDebugSave, "    qdTriggerChain::load_data after: %d", (int)fh.pos());
 
 	return true;
 }
 
 bool qdTriggerChain::save_data(Common::WriteStream &fh) const {
-	debugC(4, kDebugSave, "    qdTriggerChain::save_data before: %ld", fh.pos());
+	debugC(4, kDebugSave, "    qdTriggerChain::save_data before: %d", (int)fh.pos());
 	fh.writeUint32LE(_elements.size());
 
 	if (!root_element()->save_data(fh)) {
@@ -303,7 +303,7 @@ bool qdTriggerChain::save_data(Common::WriteStream &fh) const {
 		}
 	}
 
-	debugC(4, kDebugSave, "    qdTriggerChain::save_data after: %ld", fh.pos());
+	debugC(4, kDebugSave, "    qdTriggerChain::save_data after: %d", (int)fh.pos());
 	return true;
 }
 

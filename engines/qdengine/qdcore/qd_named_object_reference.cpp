@@ -156,7 +156,7 @@ bool qdNamedObjectReference::save_script(Common::WriteStream &fh, int indent) co
 }
 
 bool qdNamedObjectReference::load_data(Common::SeekableReadStream &fh, int version) {
-	debugC(5, kDebugSave, "      qdNamedObjectReference::load_data before: %ld", fh.pos());
+	debugC(5, kDebugSave, "      qdNamedObjectReference::load_data before: %d", (int)fh.pos());
 	int nlevels = fh.readSint32LE();
 
 	_object_types.resize(nlevels);
@@ -172,12 +172,12 @@ bool qdNamedObjectReference::load_data(Common::SeekableReadStream &fh, int versi
 		_object_names[i] = str.c_str();
 	}
 
-	debugC(5, kDebugSave, "      qdNamedObjectReference::load_data after: %ld", fh.pos());
+	debugC(5, kDebugSave, "      qdNamedObjectReference::load_data after: %d", (int)fh.pos());
 	return true;
 }
 
 bool qdNamedObjectReference::save_data(Common::WriteStream &fh) const {
-	debugC(5, kDebugSave, "      qdNamedObjectReference::save_data before: %ld", fh.pos());
+	debugC(5, kDebugSave, "      qdNamedObjectReference::save_data before: %d", (int)fh.pos());
 	fh.writeSint32LE(num_levels());
 
 	for (int i = 0; i < num_levels(); i++) {
@@ -186,7 +186,7 @@ bool qdNamedObjectReference::save_data(Common::WriteStream &fh) const {
 		fh.writeString(_object_names[i].c_str());
 	}
 
-	debugC(5, kDebugSave, "      qdNamedObjectReference::save_data after: %ld", fh.pos());
+	debugC(5, kDebugSave, "      qdNamedObjectReference::save_data after: %d", (int)fh.pos());
 	return true;
 }
 

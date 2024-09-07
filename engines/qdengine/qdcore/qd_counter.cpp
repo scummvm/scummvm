@@ -270,7 +270,7 @@ bool qdCounter::save_script(Common::WriteStream &fh, int indent) const {
 }
 
 bool qdCounter::load_data(Common::SeekableReadStream &fh, int save_version) {
-	debugC(3, kDebugSave, "  qdCounter::load_data(): before %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdCounter::load_data(): before: %d", (int)fh.pos());
 	int sz;
 	_value = fh.readSint32LE();
 	sz = fh.readSint32LE();
@@ -281,12 +281,12 @@ bool qdCounter::load_data(Common::SeekableReadStream &fh, int save_version) {
 	for (auto &it : _elements)
 		it.load_data(fh, save_version);
 
-	debugC(3, kDebugSave, "  qdCounter::load_data(): after %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdCounter::load_data(): after: %d", (int)fh.pos());
 	return true;
 }
 
 bool qdCounter::save_data(Common::WriteStream &fh) const {
-	debugC(3, kDebugSave, "  qdCounter::save_data(): before %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdCounter::save_data(): before: %d", (int)fh.pos());
 	fh.writeSint32LE(_value);
 	fh.writeSint32LE(_elements.size());
 
@@ -294,7 +294,7 @@ bool qdCounter::save_data(Common::WriteStream &fh) const {
 		it.save_data(fh);
 	}
 
-	debugC(3, kDebugSave, "  qdCounter::save_data(): after %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdCounter::save_data(): after: %d", (int)fh.pos());
 	return true;
 }
 

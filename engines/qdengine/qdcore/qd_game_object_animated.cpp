@@ -1251,7 +1251,7 @@ int qdGameObjectAnimated::get_state_index(const qdGameObjectState *p) const {
 }
 
 bool qdGameObjectAnimated::load_data(Common::SeekableReadStream &fh, int save_version) {
-	debugC(4, kDebugSave, "    qdGameObjectAnimated::load_data before: %ld", fh.pos());
+	debugC(4, kDebugSave, "    qdGameObjectAnimated::load_data before: %d", (int)fh.pos());
 	if (!qdGameObject::load_data(fh, save_version)) return false;
 
 	_cur_state = fh.readSint32LE();
@@ -1286,13 +1286,13 @@ bool qdGameObjectAnimated::load_data(Common::SeekableReadStream &fh, int save_ve
 	_inventory_cell_index = fh.readSint32LE();
 	_last_chg_time = fh.readUint32LE();
 
-	debugC(4, kDebugSave, "    qdGameObjectAnimated::load_data after: %ld", fh.pos());
+	debugC(4, kDebugSave, "    qdGameObjectAnimated::load_data after: %d", (int)fh.pos());
 
 	return true;
 }
 
 bool qdGameObjectAnimated::save_data(Common::WriteStream &fh) const {
-	debugC(4, kDebugSave, "    qdGameObjectAnimated::save_data before: %ld", fh.pos());
+	debugC(4, kDebugSave, "    qdGameObjectAnimated::save_data before: %d", (int)fh.pos());
 	if (!qdGameObject::save_data(fh)) return false;
 
 	fh.writeSint32LE(_cur_state);
@@ -1323,7 +1323,7 @@ bool qdGameObjectAnimated::save_data(Common::WriteStream &fh) const {
 
 	fh.writeSint32LE(_last_chg_time);
 
-	debugC(4, kDebugSave, "    qdGameObjectAnimated::save_data after: %ld", fh.pos());
+	debugC(4, kDebugSave, "    qdGameObjectAnimated::save_data after: %d", (int)fh.pos());
 	return true;
 }
 

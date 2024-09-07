@@ -658,7 +658,7 @@ void qdGameObjectState::set_bound(const Vect3f &b) {
 }
 
 bool qdGameObjectState::load_data(Common::SeekableReadStream &fh, int save_version) {
-	debugC(3, kDebugSave, "  qdGameObjectState::load_data before: %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdGameObjectState::load_data before: %d", (int)fh.pos());
 	if (!qdConditionalObject::load_data(fh, save_version)) return false;
 
 	_cur_time = fh.readFloatLE();
@@ -695,12 +695,12 @@ bool qdGameObjectState::load_data(Common::SeekableReadStream &fh, int save_versi
 		}
 	}
 
-	debugC(3, kDebugSave, "  qdGameObjectState::load_data after: %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdGameObjectState::load_data after: %d", (int)fh.pos());
 	return true;
 }
 
 bool qdGameObjectState::save_data(Common::WriteStream &fh) const {
-	debugC(3, kDebugSave, "  qdGameObjectState::save_data before: %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdGameObjectState::save_data before: %d", (int)fh.pos());
 	if (!qdConditionalObject::save_data(fh)) return false;
 
 	fh.writeFloatLE(_cur_time);
@@ -732,7 +732,7 @@ bool qdGameObjectState::save_data(Common::WriteStream &fh) const {
 	} else
 		fh.writeByte(0);
 
-	debugC(3, kDebugSave, "  qdGameObjectState::save_data after: %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdGameObjectState::save_data after: %d", (int)fh.pos());
 	return true;
 }
 

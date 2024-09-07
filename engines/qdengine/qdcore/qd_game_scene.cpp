@@ -754,7 +754,7 @@ bool qdGameScene::is_music_track_in_list(qdMusicTrack *p) const {
 }
 
 bool qdGameScene::load_data(Common::SeekableReadStream &fh, int save_version) {
-	debugC(3, kDebugSave, "  qdGameScene::load_data before: %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdGameScene::load_data before: %d", (int)fh.pos());
 	if (!qdConditionalObject::load_data(fh, save_version)) {
 		return false;
 	}
@@ -762,7 +762,7 @@ bool qdGameScene::load_data(Common::SeekableReadStream &fh, int save_version) {
 	if (!_camera.load_data(fh, save_version))
 		return false;
 
-	debugC(3, kDebugSave, "  qdGameScene::load_data(%u): Loading _objects %ld", object_list().size(), fh.pos());
+	debugC(3, kDebugSave, "  qdGameScene::load_data(%u): Loading _objects %d", object_list().size(), (int)fh.pos());
 	for (auto &it : object_list()) {
 		if (!it->load_data(fh, save_version)) {
 			return false;
@@ -822,13 +822,13 @@ bool qdGameScene::load_data(Common::SeekableReadStream &fh, int save_version) {
 			_minigame->load_game(save_buf, fl, this);
 	}
 
-	debugC(3, kDebugSave, "  qdGameScene::load_data after: %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdGameScene::load_data after: %d", (int)fh.pos());
 
 	return true;
 }
 
 bool qdGameScene::save_data(Common::WriteStream &fh) const {
-	debugC(3, kDebugSave, "  qdGameScene::save_data before: %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdGameScene::save_data before: %d", (int)fh.pos());
 	if (!qdConditionalObject::save_data(fh)) {
 		return false;
 	}
@@ -837,7 +837,7 @@ bool qdGameScene::save_data(Common::WriteStream &fh) const {
 		return false;
 	}
 
-	debugC(3, kDebugSave, "  qdGameSceen::save_data(%u): Saving _objects %ld", object_list().size(), fh.pos());
+	debugC(3, kDebugSave, "  qdGameSceen::save_data(%u): Saving _objects %d", object_list().size(), (int)fh.pos());
 	for (auto &it : object_list()) {
 		if (!it->save_data(fh)) {
 			return false;
@@ -872,7 +872,7 @@ bool qdGameScene::save_data(Common::WriteStream &fh) const {
 		fh.writeUint32LE(0);
 	}
 
-	debugC(3, kDebugSave, "  qdGameScene::save_data after: %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdGameScene::save_data after: %d", (int)fh.pos());
 	return true;
 }
 

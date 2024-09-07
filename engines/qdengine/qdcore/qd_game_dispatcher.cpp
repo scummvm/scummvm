@@ -2450,11 +2450,11 @@ bool qdGameDispatcher::load_save(Common::SeekableReadStream *fh) {
 
 	if (!ref.load_data(*fh, save_version)) return false;
 
-	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): active_scene %ld", fh->pos());
+	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): active_scene %d", (int)fh->pos());
 	qdGameScene *cur_scene_ptr = static_cast<qdGameScene *>(get_named_object(&ref));
 	select_scene(0, false);
 
-	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): music %ld", fh->pos());
+	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): music %d", (int)fh->pos());
 	if (!ref.load_data(*fh, save_version)) return false;
 	if (qdMusicTrack *p = static_cast<qdMusicTrack *>(get_named_object(&ref))) {
 		_cur_music_track = 0;
@@ -2467,7 +2467,7 @@ bool qdGameDispatcher::load_save(Common::SeekableReadStream *fh) {
 	else
 		toggle_inventory(false);
 
-	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): object_list 1 %ld", fh->pos());
+	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): object_list 1 %d", (int)fh->pos());
 	uint32 size = fh->readUint32LE();
 	if (size != global_object_list().size()) return false;
 
@@ -2476,7 +2476,7 @@ bool qdGameDispatcher::load_save(Common::SeekableReadStream *fh) {
 			return false;
 	}
 
-	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): counter_list %ld", fh->pos());
+	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): counter_list %d", (int)fh->pos());
 	size = fh->readUint32LE();
 	if (size != counter_list().size()) return false;
 
@@ -2485,19 +2485,19 @@ bool qdGameDispatcher::load_save(Common::SeekableReadStream *fh) {
 			return false;
 	}
 
-	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): scene_list %ld", fh->pos());
+	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): scene_list %d", (int)fh->pos());
 	size = fh->readUint32LE();
 	if (size != scene_list().size()) return false;
 
-	debugC(3, kDebugLog, "Scene list size: %u pos: %ld", scene_list().size(), fh->pos());
+	debugC(3, kDebugLog, "Scene list size: %u pos: %d", scene_list().size(), (int)fh->pos());
 	for (auto &it : scene_list()) {
 		if (!it->load_data(*fh, save_version))
 			return false;
 	}
 
-	debugC(3, kDebugLog, "Global object list size: %u pos: %ld", global_object_list().size(), fh->pos());
+	debugC(3, kDebugLog, "Global object list size: %u pos: %d", global_object_list().size(), (int)fh->pos());
 
-	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): object_list 2 %ld", fh->pos());
+	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): object_list 2 %d", (int)fh->pos());
 	size = fh->readSint32LE();
 	if (size != global_object_list().size()) return false;
 
@@ -2506,7 +2506,7 @@ bool qdGameDispatcher::load_save(Common::SeekableReadStream *fh) {
 			return false;
 	}
 
-	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): trigger_chain_list %ld", fh->pos());
+	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): trigger_chain_list %d", (int)fh->pos());
 	size = fh->readSint32LE();
 	if (size != trigger_chain_list().size()) return false;
 
@@ -2515,7 +2515,7 @@ bool qdGameDispatcher::load_save(Common::SeekableReadStream *fh) {
 			return false;
 	}
 
-	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): inventory_list %ld", fh->pos());
+	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): inventory_list %d", (int)fh->pos());
 	size = fh->readSint32LE();
 	if (size != inventory_list().size()) return false;
 
@@ -2524,11 +2524,11 @@ bool qdGameDispatcher::load_save(Common::SeekableReadStream *fh) {
 			return false;
 	}
 
-	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): mouse_obj %ld", fh->pos());
+	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): mouse_obj %d", (int)fh->pos());
 	if (save_version >= 10)
 		_mouse_obj->load_data(*fh, save_version);
 
-	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): TOTAL SIZE %ld", fh->pos());
+	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): TOTAL SIZE %d", (int)fh->pos());
 
 	if (cur_scene_ptr)
 		select_scene(cur_scene_ptr, false);
@@ -2550,7 +2550,7 @@ bool qdGameDispatcher::save_save(Common::WriteStream *fh) const {
 	const int32 save_version = 107;
 	fh->writeUint32LE(save_version);
 
-	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): active_scene %ld", fh->pos());
+	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): active_scene %d", (int)fh->pos());
 	if (get_active_scene()) {
 		qdNamedObjectReference ref(get_active_scene());
 		if (!ref.save_data(*fh)) {
@@ -2563,7 +2563,7 @@ bool qdGameDispatcher::save_save(Common::WriteStream *fh) const {
 		}
 	}
 
-	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): music %ld", fh->pos());
+	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): music %d", (int)fh->pos());
 	if (_cur_music_track) {
 		qdNamedObjectReference ref(_cur_music_track);
 		if (!ref.save_data(*fh)) {
@@ -2581,7 +2581,7 @@ bool qdGameDispatcher::save_save(Common::WriteStream *fh) const {
 	else
 		fh->writeSint32LE(0);
 
-	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): object_list 1 %ld", fh->pos());
+	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): object_list 1 %d", (int)fh->pos());
 	fh->writeUint32LE(global_object_list().size());
 	for (auto &it : global_object_list()) {
 		if (!it->save_data(*fh)) {
@@ -2589,7 +2589,7 @@ bool qdGameDispatcher::save_save(Common::WriteStream *fh) const {
 		}
 	}
 
-	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): counter_list %ld", fh->pos());
+	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): counter_list %d", (int)fh->pos());
 	fh->writeUint32LE(counter_list().size());
 	for (auto &it : counter_list()) {
 		if (!it->save_data(*fh)) {
@@ -2597,17 +2597,17 @@ bool qdGameDispatcher::save_save(Common::WriteStream *fh) const {
 		}
 	}
 
-	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): scene_list %ld", fh->pos());
+	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): scene_list %d", (int)fh->pos());
 	fh->writeUint32LE(scene_list().size());
-	debugC(3, kDebugLog, "Scene list size: %u pos: %ld", scene_list().size(), fh->pos());
+	debugC(3, kDebugLog, "Scene list size: %u pos: %d", scene_list().size(), (int)fh->pos());
 	for (auto &it : scene_list()) {
 		if (!it->save_data(*fh))
 			return false;
 	}
 
-	debugC(3, kDebugLog, "Global object list size: %u pos: %ld", global_object_list().size(), fh->pos());
+	debugC(3, kDebugLog, "Global object list size: %u pos: %d", global_object_list().size(), (int)fh->pos());
 
-	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): object_list 2 %ld", fh->pos());
+	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): object_list 2 %d", (int)fh->pos());
 	fh->writeUint32LE(global_object_list().size());
 	for (auto &it : global_object_list()) {
 		if (!it->save_data(*fh)) {
@@ -2615,7 +2615,7 @@ bool qdGameDispatcher::save_save(Common::WriteStream *fh) const {
 		}
 	}
 
-	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): trigger_chain_list %ld", fh->pos());
+	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): trigger_chain_list %d", (int)fh->pos());
 	fh->writeUint32LE(trigger_chain_list().size());
 	for (auto &it : trigger_chain_list()) {
 		if (!it->save_data(*fh)) {
@@ -2623,7 +2623,7 @@ bool qdGameDispatcher::save_save(Common::WriteStream *fh) const {
 		}
 	}
 
-	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): inventory_list %ld", fh->pos());
+	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): inventory_list %d", (int)fh->pos());
 	fh->writeUint32LE(inventory_list().size());
 	for (auto &it : inventory_list()) {
 		if (!it->save_data(*fh)) {
@@ -2631,10 +2631,10 @@ bool qdGameDispatcher::save_save(Common::WriteStream *fh) const {
 		}
 	}
 
-	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): mouse_obj %ld", fh->pos());
+	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): mouse_obj %d", (int)fh->pos());
 	_mouse_obj->save_data(*fh);
 
-	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): TOTAL SIZE %ld", fh->pos());
+	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): TOTAL SIZE %d", (int)fh->pos());
 
 	return true;
 }

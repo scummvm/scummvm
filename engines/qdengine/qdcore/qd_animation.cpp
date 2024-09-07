@@ -948,7 +948,7 @@ Vect2i qdAnimation::remove_edges() {
 }
 
 bool qdAnimation::load_data(Common::SeekableReadStream &fh, int save_version) {
-	debugC(3, kDebugSave, "  qdAnimation::load_data(): before %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdAnimation::load_data(): before: %d", (int)fh.pos());
 
 	if (!qdNamedObject::load_data(fh, save_version))
 		return false;
@@ -985,12 +985,12 @@ bool qdAnimation::load_data(Common::SeekableReadStream &fh, int save_version) {
 	_status = st;
 	_is_finished = (finished) ? true : false;
 
-	debugC(2, kDebugSave, "  qdAnimation::load_data(): after %ld", fh.pos());
+	debugC(2, kDebugSave, "  qdAnimation::load_data(): after: %d", (int)fh.pos());
 	return true;
 }
 
 bool qdAnimation::save_data(Common::WriteStream &fh) const {
-	debugC(3, kDebugSave, "  qdAnimation::save_data(): before %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdAnimation::save_data(): before: %d", (int)fh.pos());
 
 	if (!qdNamedObject::save_data(fh)) return false;
 
@@ -1008,7 +1008,7 @@ bool qdAnimation::save_data(Common::WriteStream &fh) const {
 	fh.writeFloatLE(_cur_time);
 	fh.writeFloatLE(_length);
 
-	debugC(3, kDebugSave, "  qdAnimation::save_data(): after %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdAnimation::save_data(): after: %d", (int)fh.pos());
 	return true;
 }
 

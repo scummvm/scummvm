@@ -1742,7 +1742,7 @@ void qdGameObjectMoving::split(qdGameObjectMoving *p) {
 }
 
 bool qdGameObjectMoving::load_data(Common::SeekableReadStream &fh, int save_version) {
-	debugC(3, kDebugSave, "  qdGameObjectMoving::load_data before: %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdGameObjectMoving::load_data before: %d", (int)fh.pos());
 	if (!qdGameObjectAnimated::load_data(fh, save_version)) return false;
 
 	int idx = fh.readSint32LE();
@@ -1805,12 +1805,12 @@ bool qdGameObjectMoving::load_data(Common::SeekableReadStream &fh, int save_vers
 		                            qdGameDispatcher::get_dispatcher()->get_named_object(&circ_ref)));
 	}
 
-	debugC(3, kDebugSave, "  qdGameObjectMoving::load_data after: %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdGameObjectMoving::load_data after: %d", (int)fh.pos());
 	return true;
 }
 
 bool qdGameObjectMoving::save_data(Common::WriteStream &fh) const {
-	debugC(3, kDebugSave, "  qdGameObjectMoving::save_data before: %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdGameObjectMoving::save_data before: %d", (int)fh.pos());
 	if (!qdGameObjectAnimated::save_data(fh)) return false;
 
 	int idx = -1;
@@ -1853,7 +1853,7 @@ bool qdGameObjectMoving::save_data(Common::WriteStream &fh) const {
 		circ_ref.save_data(fh);
 	}
 
-	debugC(3, kDebugSave, "  qdGameObjectMoving::save_data after: %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdGameObjectMoving::save_data after: %d", (int)fh.pos());
 	return true;
 }
 

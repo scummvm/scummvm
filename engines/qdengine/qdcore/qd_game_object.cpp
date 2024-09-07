@@ -150,7 +150,7 @@ bool qdGameObject::update_screen_pos() {
 }
 
 bool qdGameObject::load_data(Common::SeekableReadStream &fh, int saveVersion) {
-	debugC(3, kDebugSave, "  qdGameObject::load_data(): before %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdGameObject::load_data(): before: %d", (int)fh.pos());
 
 	if (!qdNamedObject::load_data(fh, saveVersion)) {
 		return false;
@@ -160,12 +160,12 @@ bool qdGameObject::load_data(Common::SeekableReadStream &fh, int saveVersion) {
 	_r.y = fh.readFloatLE();
 	_r.z = fh.readFloatLE();
 
-	debugC(3, kDebugSave, "  qdGameObject::load_data(): after %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdGameObject::load_data(): after: %d", (int)fh.pos());
 	return true;
 }
 
 bool qdGameObject::save_data(Common::WriteStream &fh) const {
-	debugC(3, kDebugSave, "  qdGameObject::save_data(): before %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdGameObject::save_data(): before: %d", (int)fh.pos());
 	if (!qdNamedObject::save_data(fh)) {
 		return false;
 	}
@@ -174,7 +174,7 @@ bool qdGameObject::save_data(Common::WriteStream &fh) const {
 	fh.writeFloatLE(_r.y);
 	fh.writeFloatLE(_r.z);
 
-	debugC(3, kDebugSave, "  qdGameObject::save_data(): after %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdGameObject::save_data(): after: %d", (int)fh.pos());
 	return true;
 }
 

@@ -322,12 +322,12 @@ bool qdInventory::free_resources() {
 }
 
 bool qdInventory::load_data(Common::SeekableReadStream &fh, int save_version) {
-	debugC(3, kDebugSave, "  qdInventory::load_data before: %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdInventory::load_data before: %d", (int)fh.pos());
 	for (auto &it : _cell_sets) {
 		if (!it.load_data(fh, save_version))
 			return false;
 	}
-	debugC(3, kDebugSave, "  qdInventory::load_data after: %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdInventory::load_data after: %d", (int)fh.pos());
 
 	debug_log();
 
@@ -335,13 +335,13 @@ bool qdInventory::load_data(Common::SeekableReadStream &fh, int save_version) {
 }
 
 bool qdInventory::save_data(Common::WriteStream &fh) const {
-	debugC(3, kDebugSave, "  qdInventory::save_data before: %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdInventory::save_data before: %d", (int)fh.pos());
 	for (auto &it : _cell_sets) {
 		if (!it.save_data(fh)) {
 			return false;
 		}
 	}
-	debugC(3, kDebugSave, "  qdInventory::save_data after: %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdInventory::save_data after: %d", (int)fh.pos());
 
 	return true;
 }

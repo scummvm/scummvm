@@ -124,7 +124,7 @@ bool qdGameObjectMouse::save_script(Common::WriteStream &fh, int indent) const {
 }
 
 bool qdGameObjectMouse::load_data(Common::SeekableReadStream &fh, int save_version) {
-	debugC(3, kDebugSave, "  qdGameObjectMouse::load_data before: %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdGameObjectMouse::load_data before: %d", (int)fh.pos());
 	if (!qdGameObjectAnimated::load_data(fh, save_version))
 		return false;
 
@@ -141,12 +141,12 @@ bool qdGameObjectMouse::load_data(Common::SeekableReadStream &fh, int save_versi
 		if (!_object) return false;
 	}
 
-	debugC(3, kDebugSave, "  qdGameObjectMouse::load_data after: %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdGameObjectMouse::load_data after: %d", (int)fh.pos());
 	return true;
 }
 
 bool qdGameObjectMouse::save_data(Common::WriteStream &fh) const {
-	debugC(3, kDebugSave, "  qdGameObjectMouse::save_data before: %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdGameObjectMouse::save_data before: %d", (int)fh.pos());
 
 	if (!qdGameObjectAnimated::save_data(fh))
 		return false;
@@ -161,7 +161,7 @@ bool qdGameObjectMouse::save_data(Common::WriteStream &fh) const {
 		fh.writeUint32LE(0);
 	}
 
-	debugC(3, kDebugSave, "  qdGameObjectMouse::save_data after: %ld", fh.pos());
+	debugC(3, kDebugSave, "  qdGameObjectMouse::save_data after: %d", (int)fh.pos());
 	return true;
 }
 

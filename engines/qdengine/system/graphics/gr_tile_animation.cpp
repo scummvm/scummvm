@@ -200,7 +200,7 @@ void grTileAnimation::addFrame(const uint32 *frame_data) {
 bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 	int dL = (version >= 105) ? 2 : 7;
 
-	debugC(dL, kDebugLoad, "grTileAnimation::load(): pos start: %lu", fh->pos());
+	debugC(dL, kDebugLoad, "grTileAnimation::load(): pos start: %d", (int)fh->pos());
 
 	_frameCount = fh->readSint32LE();
 	_frameSize.x = fh->readSint32LE();
@@ -218,7 +218,7 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 		size = fh->readUint32LE();
 		_scaleArray.resize(size);
 
-		debugC(dL, kDebugLoad, "grTileAnimation::load(): pos: %ld _scaleArray size: %u", fh->pos() - 4, size);
+		debugC(dL, kDebugLoad, "grTileAnimation::load(): pos: %d _scaleArray size: %u", (int)fh->pos() - 4, size);
 
 		debugCN(dL + 1, kDebugLoad, "   ");
 
@@ -240,7 +240,7 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 		for (int i = 0; i < _frameCount; i++)
 			_frameSizeArray[i] = _frameSize;
 	} else {
-		debugC(dL, kDebugLoad, "grTileAnimation::load(): pos: %ld _frameSizeArray size: %u", fh->pos() - 4, _frameCount);
+		debugC(dL, kDebugLoad, "grTileAnimation::load(): pos: %d _frameSizeArray size: %u", (int)fh->pos() - 4, _frameCount);
 
 		debugCN(dL + 1, kDebugLoad, "   ");
 
@@ -255,7 +255,7 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 
 	size = fh->readUint32LE();
 	_frameIndex.resize(size);
-	debugC(dL, kDebugLoad, "grTileAnimation::load(): pos: %ld _frameIndex size: %u", fh->pos() - 4, size);
+	debugC(dL, kDebugLoad, "grTileAnimation::load(): pos: %d _frameIndex size: %u", (int)fh->pos() - 4, size);
 
 	debugCN(dL + 1, kDebugLoad, "   ");
 	for (uint i = 0; i < size; i++) {
@@ -269,7 +269,7 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 
 	size = fh->readUint32LE();
 
-	debugC(dL, kDebugLoad, "grTileAnimation::load(): pos: %ld _tileOffsets size: %u", fh->pos() - 4, size);
+	debugC(dL, kDebugLoad, "grTileAnimation::load(): pos: %d _tileOffsets size: %u", (int)fh->pos() - 4, size);
 
 	_tileOffsets.resize(size);
 
@@ -285,14 +285,14 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 
 	size = fh->readUint32LE();
 
-	debugC(dL, kDebugLoad, "grTileAnimation::load(): pos: %ld _tileData size: %u", fh->pos() - 4, size);
+	debugC(dL, kDebugLoad, "grTileAnimation::load(): pos: %d _tileData size: %u", (int)fh->pos() - 4, size);
 
 	_tileData.resize(size);
 
 	for (uint i = 0; i < size; i++)
 		_tileData[i] = fh->readUint32LE();
 
-	debugC(dL + 1, kDebugLoad, "  --> grTileAnimation::load(): pos: %ld remaining: %ld", fh->pos(), fh->size() - fh->pos());
+	debugC(dL + 1, kDebugLoad, "  --> grTileAnimation::load(): pos: %d remaining: %d", (int)fh->pos(), (int)(fh->size() - fh->pos()));
 
 	return true;
 }

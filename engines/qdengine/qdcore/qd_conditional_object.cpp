@@ -198,19 +198,19 @@ void qdConditionalObject::conditions_quant(float dt) {
 }
 
 bool qdConditionalObject::load_data(Common::SeekableReadStream &fh, int save_version) {
-	debugC(4, kDebugSave, "    qdConditionalObject::load_data(): before %ld", fh.pos());
+	debugC(4, kDebugSave, "    qdConditionalObject::load_data(): before: %d", (int)fh.pos());
 	if (!qdNamedObject::load_data(fh, save_version))
 		return false;
 
 	for (auto &it : _conditions)
 		it.load_data(fh, save_version);
 
-	debugC(4, kDebugSave, "    qdConditionalObject::load_data(): after %ld", fh.pos());
+	debugC(4, kDebugSave, "    qdConditionalObject::load_data(): after: %d", (int)fh.pos());
 	return true;
 }
 
 bool qdConditionalObject::save_data(Common::WriteStream &fh) const {
-	debugC(4, kDebugSave, "    qdConditionalObject::save_data(): before %ld", fh.pos());
+	debugC(4, kDebugSave, "    qdConditionalObject::save_data(): before: %d", (int)fh.pos());
 	if (!qdNamedObject::save_data(fh)) {
 		return false;
 	}
@@ -218,7 +218,7 @@ bool qdConditionalObject::save_data(Common::WriteStream &fh) const {
 	for (auto &it : _conditions)
 		it.save_data(fh);
 
-	debugC(4, kDebugSave, "    qdConditionalObject::save_data(): after %ld", fh.pos());
+	debugC(4, kDebugSave, "    qdConditionalObject::save_data(): after: %d", (int)fh.pos());
 	return true;
 }
 
