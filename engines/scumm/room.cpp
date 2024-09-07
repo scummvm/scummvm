@@ -136,7 +136,8 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	// - The color of some of the stars in the sky.
 	//
 	// It has been noted that the Mac version apparently fixes that on the fly
-	// within the interpreter, so we do that as well if kEnhVisualChanges is active.
+	// within the interpreter, so we do that as well even if kEnhVisualChanges
+	// is not active.
 	// 
 	// The SEGA CD version points to the correct color, and the FM Towns
 	// version makes the text more readable by giving it a black outline.
