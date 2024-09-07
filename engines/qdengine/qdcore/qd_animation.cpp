@@ -312,8 +312,13 @@ void qdAnimation::draw_contour(int x, int y, uint32 color) const {
 	if (check_flag(QD_ANIMATION_FLAG_BLACK_FON))
 		mode |= GR_BLACK_FON;
 
-	const qdAnimationFrame *p = get_cur_frame();
-	if (p) p->draw_contour(x, y, color, mode);
+	if (tileAnimation()) {
+		tileAnimation()->drawContour(Vect2i(x, y), get_cur_frame_number(), color, mode, -1);
+	} else {
+		const qdAnimationFrame *p = get_cur_frame();
+		if (p)
+			p->draw_contour(x, y, color, mode);
+	}
 }
 
 void qdAnimation::draw_contour(int x, int y, uint32 color, float scale) const {
@@ -328,8 +333,16 @@ void qdAnimation::draw_contour(int x, int y, uint32 color, float scale) const {
 	if (check_flag(QD_ANIMATION_FLAG_BLACK_FON))
 		mode |= GR_BLACK_FON;
 
-	const qdAnimationFrame *p = get_cur_frame();
-	if (p) p->draw_contour(x, y, color, scale, mode);
+	if (tileAnimation()) {
+		if (fabs(scale - 1.0) >= 0.01f)
+			tileAnimation()->drawContour(Vect2i(x, y), get_cur_frame_number(), color, scale, mode);
+		else
+			tileAnimation()->drawContour(Vect2i(x, y), get_cur_frame_number(), color, mode, -1);
+	} else {
+		const qdAnimationFrame *p = get_cur_frame();
+		if (p)
+			p->draw_contour(x, y, color, scale, mode);
+	}
 }
 
 qdAnimationFrame *qdAnimation::get_cur_frame() {

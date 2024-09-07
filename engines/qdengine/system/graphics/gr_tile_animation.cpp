@@ -396,6 +396,41 @@ void grTileAnimation::drawMask_rot(const Vect2i &pos, int frame_index, uint32 ma
 	grDispatcher::instance()->putSprMask_rot(Vect2i(pos.x - _frameSize.x / 2, pos.y - _frameSize.y / 2), _frameSize, buf, _hasAlpha, mask_colour, mask_alpha, mode, angle);
 }
 
+void grTileAnimation::drawContour(const Vect2i &pos, int frame_index, uint32 color, int mode, int closest_scale) const {
+	Vect2i frameSize;
+
+	if (closest_scale == -1)
+		frameSize = _frameSize;
+	else
+		frameSize =_scaleArray[closest_scale]._frameSize;
+
+	byte *buf = decode_frame_data(frame_index, closest_scale);
+
+	grDispatcher::instance()->drawSprContour_a(pos.x - frameSize.x / 2, pos.y - frameSize.y / 2, frameSize.x, frameSize.y, buf, color, mode);
+}
+
+void grTileAnimation::drawContour(const Vect2i &pos, int frame_index, uint32 color, float scale, int mode) const {
+	int closest_scale = find_closest_scale(&scale);
+
+	if (wasFrameSizeChanged(frame_index, closest_scale, scale)) {
+		byte *data = decode_frame_data(frame_index, closest_scale);
+
+		Vect2i frameSize;
+
+		if (closest_scale == -1)
+			frameSize = _frameSize;
+		else
+			frameSize =_scaleArray[closest_scale]._frameSize;
+
+		int x = pos.x - (int)((float)(frameSize.x / 2) * scale);
+		int y = pos.y - (int)((float)(frameSize.y / 2) * scale);
+
+		grDispatcher::instance()->drawSprContour_a(x, y, frameSize.x, frameSize.y, data, color, mode, scale);
+	} else {
+		drawContour(pos, frame_index, color, mode, closest_scale);
+	}
+}
+
 void grTileAnimation::addScale(int i, float scale) {
 	_scaleArray[i]._scale = scale;
 	_scaleArray[i]._frameSize.x = (int)((float)_frameSize.x * scale);
