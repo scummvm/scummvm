@@ -32,7 +32,7 @@ namespace FTTS {
 
 // Known Fairy Tale: A True Story - Activity Center custom modifiers:
 // - Motion
-// - Sparke
+// - Sparkle
 
 
 struct MotionModifier : public PlugInModifierData {

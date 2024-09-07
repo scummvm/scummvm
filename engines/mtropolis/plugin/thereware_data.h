@@ -54,7 +54,7 @@ namespace Thereware {
 // - EasyScroller: various detail controls for scrolling behavior
 //
 // * Quick Kit:
-// - Flasher: Lets objects blinko on the screen
+// - Flasher: Lets objects blink on the screen
 // - Snapper: Creates an invisible grid that elements can snap onto when dragged
 // - Conductor: Forward messages to all the children of an element
 // - Randomizer: Use random numbers without Miniscript

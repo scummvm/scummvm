@@ -36,7 +36,7 @@ namespace Hoologic {
 // - hlCaptureBitmap: captures a screen image into a bitmap
 // - hlPrintBitmap: print a bitmap
 // - hlSaveBitmap: saves a bitmap as a PICT/BMP file
-// - hlImportBitamp: load a bitmap from a PICT/BMP file
+// - hlImportBitmap: load a bitmap from a PICT/BMP file
 // - hlDisplayBitmap: display a bitmap
 // - hlScaleBitmap: scale a bitmap
 //

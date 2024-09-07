@@ -1826,7 +1826,7 @@ MiniscriptInstructionOutcome MToonElement::scriptSetCel(MiniscriptThread *thread
 
 	int32 maxCel = _metadata->frames.size();
 
-	// Intentially ignore play range.  The cel may be set to an out-of-range cel here and will
+	// Intentionally ignore play range.  The cel may be set to an out-of-range cel here and will
 	// in fact play from that cel even if it's out of range.  The mariachi hint room near the
 	// Bureau booths in Obsidian depends on this behavior, since it sets the mToon cel and then
 	// sets the range based on the cel value.
