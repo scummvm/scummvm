@@ -209,6 +209,25 @@ DataReadErrorCode PrintModifier::load(PlugIn &plugIn, const PlugInModifier &pref
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode NavigateModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 0)
+		return kDataReadErrorUnsupportedRevision;
+
+	error("Data structure loading for the Navigate modifier is not implemented.");
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode OpenTitleModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 0)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!executeWhen.load(reader) || !pathOrUrl.load(reader) || !addToReturnList.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 } // End of namespace Standard
 
 } // End of namespace Data
