@@ -234,7 +234,9 @@ void qdAnimation::draw_mask(int x, int y, int z, uint32 mask_color, int mask_alp
 	if (check_flag(QD_ANIMATION_FLAG_BLACK_FON))
 		mode |= GR_BLACK_FON;
 
-	if (const qdAnimationFrame *p = get_cur_frame())
+	if (tileAnimation())
+		tileAnimation()->drawMask(Vect2i(x, y), get_cur_frame_number(), mask_color, mask_alpha, mode, -1);
+	else if (const qdAnimationFrame *p = get_cur_frame())
 		p->draw_mask(x, y, z, mask_color, mask_alpha, mode);
 }
 

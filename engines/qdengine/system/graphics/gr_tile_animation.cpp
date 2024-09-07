@@ -351,6 +351,10 @@ void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float a
 	grDispatcher::instance()->putSpr_rot(position, _frameSize, buf, _hasAlpha, mode, angle, scale);
 }
 
+//////////////////////////////////////////////////////////////////////
+////  New version 105 & 106 code
+//////////////////////////////////////////////////////////////////////
+
 void grTileAnimation::drawFrame_scale(const Vect2i &position, int frame_index, float scale, int mode) const {
 	int closest_scale = find_closest_scale(&scale);
 
@@ -373,9 +377,18 @@ void grTileAnimation::drawFrame_scale(const Vect2i &position, int frame_index, f
 	}
 }
 
-//////////////////////////////////////////////////////////////////////
-////  New version 105 & 106 code
-//////////////////////////////////////////////////////////////////////
+void grTileAnimation::drawMask(const Vect2i &pos, int frame_index, uint32 mask_colour, int mask_alpha, int mode, int closest_scale) const {
+	Vect2i frameSize;
+
+	if (closest_scale == -1)
+		frameSize = _frameSize;
+	else
+		frameSize =_scaleArray[closest_scale]._frameSize;
+
+	byte *buf = decode_frame_data(frame_index, closest_scale);
+
+	grDispatcher::instance()->putSprMask_a(pos.x - frameSize.x / 2, pos.y - frameSize.y / 2, frameSize.x, frameSize.y, buf, mask_colour, mask_alpha, mode);
+}
 
 void grTileAnimation::addScale(int i, float scale) {
 	_scaleArray[i]._scale = scale;

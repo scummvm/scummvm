@@ -81,6 +81,8 @@ public:
 
 	void drawFrame_scale(const Vect2i &position, int frame_index, float scale, int mode) const;
 
+	void drawMask(const Vect2i &position, int frame_index, uint32 mask_color, int mask_alpha, int mode, int closest_scale) const;
+
 	static void setProgressHandler(CompressionProgressHandler handler, void *context) {
 		_progressHandler = handler;
 		_progressHandlerContext = context;
