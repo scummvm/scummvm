@@ -55,6 +55,7 @@ public:
 
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawZXUI(Graphics::Surface *surface) override;
+	void drawAmigaAtariSTUI(Graphics::Surface *surface);
 	void drawEnergyMeter(Graphics::Surface *surface);
 	void pressedKey(const int keycode) override;
 	void checkSensors() override;
@@ -81,6 +82,9 @@ public:
 	Graphics::ManagedSurface *loadFrame(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int width, int height, uint32 back);
 	Graphics::ManagedSurface *loadFrameFromPlanes(Common::SeekableReadStream *file, int widthInBytes, int height);
 	Graphics::ManagedSurface *loadFrameFromPlanesInternal(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int width, int height);
+
+	Graphics::ManagedSurface *loadFrameFromPlanesVertical(Common::SeekableReadStream *file, int widthInBytes, int height);
+	Graphics::ManagedSurface *loadFrameFromPlanesInternalVertical(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int width, int height, int plane);
 
 	Graphics::ManagedSurface *_keysFrame;
 	Graphics::ManagedSurface *_spiritsMeterIndicatorFrame;
