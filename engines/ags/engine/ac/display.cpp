@@ -449,7 +449,7 @@ int GetTextDisplayLength(const char *text) {
 
 int GetTextDisplayTime(const char *text, int canberel) {
 	int uselen = 0;
-	auto fpstimer = ::lround(get_current_fps());
+	auto fpstimer = ::lround(get_game_fps());
 
 	// if it's background speech, make it stay relative to game speed
 	if ((canberel == 1) && (_GP(play).bgspeech_game_speed == 1))

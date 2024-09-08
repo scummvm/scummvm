@@ -31,6 +31,7 @@
 #include "ags/engine/ac/display.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/draw_software.h"
+#include "ags/engine/ac/game.h"
 #include "ags/engine/ac/game_setup.h"
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/game_state.h"
@@ -66,8 +67,8 @@
 #include "ags/engine/gfx/gfx_util.h"
 #include "ags/engine/gfx/graphics_driver.h"
 #include "ags/engine/gfx/blender.h"
+#include "ags/engine/main/game_run.h"
 #include "ags/engine/media/audio/audio_system.h"
-#include "ags/engine/ac/game.h"
 #include "ags/ags.h"
 #include "ags/globals.h"
 
@@ -1686,6 +1687,7 @@ void draw_fps(const Rect &viewport) {
 
 	char fps_buffer[60];
 	// Don't display fps if we don't have enough information (because loop count was just reset)
+	float fps = get_real_fps();
 	if (!isnan(_G(fps))) {
 		snprintf(fps_buffer, sizeof(fps_buffer), "FPS: %2.1f / %s", _G(fps), base_buffer);
 	} else {
