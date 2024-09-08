@@ -24,7 +24,12 @@
 
 namespace AGS3 {
 
-int do_movelist_move(short *mlnum, int *xx, int *yy);
+// Update MoveList of certain index, save current position;
+// *resets* mslot to zero if path is complete.
+// returns "need_to_fix_sprite" value, which may be 0,1,2;
+// TODO: find out what this return value means, and refactor.
+// TODO: do not reset mslot in this function, reset externally instead.
+int do_movelist_move(short &mslot, int &pos_x, int &pos_y);
 void update_stuff();
 
 } // namespace AGS3
