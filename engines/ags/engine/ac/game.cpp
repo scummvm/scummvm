@@ -187,7 +187,6 @@ int Game_GetDialogCount() {
 
 void set_debug_mode(bool on) {
 	_GP(play).debug_mode = on ? 1 : 0;
-	debug_set_console(on);
 }
 
 void set_game_speed(int new_fps) {

@@ -77,7 +77,6 @@
 #include "ags/engine/ac/dynobj/script_string.h"
 #include "ags/engine/ac/dynobj/script_system.h"
 #include "ags/engine/ac/statobj/static_array.h"
-#include "ags/engine/debugging/console_output_target.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/engine/debugging/log_file.h"
 #include "ags/engine/debugging/message_buffer.h"
@@ -164,10 +163,8 @@ Globals::Globals() {
 
 	// debug.cpp globals
 	_display_fps = kFPS_Hide;
-	_debug_line = new String[DEBUG_CONSOLE_NUMLINES];
 	_DebugMsgBuff = new std::unique_ptr<AGS::Engine::MessageBuffer>();
 	_DebugLogFile = new std::unique_ptr<AGS::Engine::LogFile>();
-	_DebugConsole = new std::unique_ptr<AGS::Engine::ConsoleOutputTarget>();
 
 	// debug_manager.cpp globals
 	_DbgMgr = new AGS::Shared::DebugManager();
@@ -443,10 +440,8 @@ Globals::~Globals() {
 	delete[] _oswi;
 
 	// debug.cpp globals
-	delete[] _debug_line;
 	delete _DebugMsgBuff;
 	delete _DebugLogFile;
-	delete _DebugConsole;
 
 	// debug_manager.cpp globals
 	delete _DbgMgr;

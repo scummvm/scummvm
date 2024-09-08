@@ -2112,34 +2112,6 @@ void construct_engine_overlay() {
 	const Rect &viewport = RectWH(_GP(game).GetGameRes());
 	_G(gfxDriver)->BeginSpriteBatch(viewport, SpriteTransform());
 
-	// draw the debug console, if appropriate
-	if ((_GP(play).debug_mode > 0) && (_G(display_console) != 0)) {
-		const int font = FONT_NORMAL;
-		int ypp = 1;
-		int txtspacing = get_font_linespacing(font);
-		int barheight = get_text_lines_surf_height(font, DEBUG_CONSOLE_NUMLINES - 1) + 4;
-
-		if (_G(debugConsoleBuffer) == nullptr) {
-			_G(debugConsoleBuffer) = CreateCompatBitmap(viewport.GetWidth(), barheight);
-		}
-
-		color_t draw_color = _G(debugConsoleBuffer)->GetCompatibleColor(15);
-		_G(debugConsoleBuffer)->FillRect(Rect(0, 0, viewport.GetWidth() - 1, barheight), draw_color);
-		color_t text_color = _G(debugConsoleBuffer)->GetCompatibleColor(16);
-		for (int jj = _G(first_debug_line); jj != _G(last_debug_line); jj = (jj + 1) % DEBUG_CONSOLE_NUMLINES) {
-			wouttextxy(_G(debugConsoleBuffer), 1, ypp, font, text_color, _G(debug_line)[jj].GetCStr());
-			ypp += txtspacing;
-		}
-
-		if (_G(debugConsole) == nullptr)
-			_G(debugConsole) = _G(gfxDriver)->CreateDDBFromBitmap(_G(debugConsoleBuffer), false, true);
-		else
-			_G(gfxDriver)->UpdateDDBFromBitmap(_G(debugConsole), _G(debugConsoleBuffer), false);
-
-		_G(gfxDriver)->DrawSprite(0, 0, _G(debugConsole));
-		invalidate_sprite_glob(0, 0, _G(debugConsole));
-	}
-
 	if (_G(display_fps) != kFPS_Hide)
 		draw_fps(viewport);
 

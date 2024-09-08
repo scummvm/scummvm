@@ -510,13 +510,9 @@ public:
 
 	int _debug_flags = 0;
 
-	String *_debug_line;
-	int _first_debug_line = 0, _last_debug_line = 0, _display_console = 0;
-
 	int _display_fps;
 	std::unique_ptr<AGS::Engine::MessageBuffer> *_DebugMsgBuff;
 	std::unique_ptr<AGS::Engine::LogFile> *_DebugLogFile;
-	std::unique_ptr<AGS::Engine::ConsoleOutputTarget> *_DebugConsole;
 
 	/**@}*/
 
@@ -586,7 +582,6 @@ public:
 	AGS::Engine::IGraphicsDriver *_gfxDriver = nullptr;
 	AGS::Engine::IDriverDependantBitmap *_blankImage = nullptr;
 	AGS::Engine::IDriverDependantBitmap *_blankSidebarImage = nullptr;
-	AGS::Engine::IDriverDependantBitmap *_debugConsole = nullptr;
 
 	// actsps is used for temporary storage of the bitamp and texture
 	// of the latest version of the sprite (room objects and characters);
@@ -611,7 +606,6 @@ public:
 	bool _current_background_is_dirty = false;
 	// Room background sprite
 	AGS::Engine::IDriverDependantBitmap *_roomBackgroundBmp = nullptr;
-	AGS::Shared::Bitmap *_debugConsoleBuffer = nullptr;
 	// whether there are currently remnants of a DisplaySpeech
 	bool _screen_is_dirty = false;
 	AGS::Shared::Bitmap *_raw_saved_screen = nullptr;

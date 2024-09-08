@@ -224,7 +224,6 @@ MODULE_OBJS = \
 	engine/ac/dynobj/script_view_frame.o \
 	engine/ac/statobj/ags_static_object.o \
 	engine/ac/statobj/static_array.o \
-	engine/debugging/console_output_target.o \
 	engine/debugging/debug.o \
 	engine/debugging/file_based_ags_debugger.o \
 	engine/debugging/log_file.o \
