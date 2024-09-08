@@ -620,7 +620,7 @@ void engine_init_game_settings() {
 	_GP(play).debug_mode = _GP(game).options[OPT_DEBUGMODE];
 	_GP(play).inv_top = 0;
 	_GP(play).inv_numdisp = 0;
-	_GP(play).obsolete_inv_numorder = 0;
+	_GP(play).inv_numorder = 0;
 	_GP(play).text_speed = 15;
 	_GP(play).text_min_display_time_ms = 1000;
 	_GP(play).ignore_user_input_after_text_timeout_ms = 500;
