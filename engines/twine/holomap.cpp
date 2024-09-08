@@ -45,6 +45,7 @@
 
 namespace TwinE {
 
+// these are lba1 specific
 #define HOLOMAP_ARROW		(1 << 0)
 #define HOLOMAP_VISITED		(1 << 1)
 #define HOLOMAP_UNK3		(1 << 2)
@@ -106,12 +107,15 @@ bool Holomap::loadLocations() {
 	return true;
 }
 
-void Holomap::setHoloPos(int32 locationIdx) {
+bool Holomap::setHoloPos(int32 locationIdx) {
 	assert(locationIdx >= 0 && locationIdx < _engine->numHoloPos());
-	_engine->_gameState->_holomapFlags[locationIdx] = HOLOMAP_ACTIVE;
-	if (_engine->_gameState->hasItem(InventoryItems::kiHolomap)) {
-		_engine->_redraw->addOverlay(OverlayType::koInventoryItem, InventoryItems::kiHolomap, 0, 0, 0, OverlayPosType::koNormal, 3);
+	if (_engine->isLBA1()) {
+		_engine->_gameState->_holomapFlags[locationIdx] = HOLOMAP_ACTIVE;
+		return true;
 	}
+	// TODO: lba2
+	_engine->_gameState->_holomapFlags[locationIdx] = HOLOMAP_ACTIVE | HOLOMAP_VISITED;
+	return true;
 }
 
 void Holomap::clrHoloPos(int32 locationIdx) {

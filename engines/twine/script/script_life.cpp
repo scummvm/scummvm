@@ -1624,7 +1624,11 @@ int32 ScriptLife::lINIT_PINGOUIN(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLife::lSET_HOLO_POS(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 location = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_HOLO_POS(%i)", (int)location);
-	engine->_holomap->setHoloPos(location);
+	if (engine->_holomap->setHoloPos(location)) {
+		if (engine->_gameState->hasItem(InventoryItems::kiHolomap)) {
+			engine->_redraw->addOverlay(OverlayType::koInventoryItem, InventoryItems::kiHolomap, 0, 0, 0, OverlayPosType::koNormal, 3);
+		}
+	}
 	return 0;
 }
 

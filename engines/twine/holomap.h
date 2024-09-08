@@ -112,7 +112,7 @@ public:
 	 * Set Holomap location position
 	 * @param locationIdx Scene where position must be set
 	 */
-	void setHoloPos(int32 locationIdx);
+	bool setHoloPos(int32 locationIdx);
 
 	bool loadLocations();
 
