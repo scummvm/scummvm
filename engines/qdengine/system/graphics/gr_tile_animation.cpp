@@ -408,6 +408,28 @@ void grTileAnimation::drawMask(const Vect2i &pos, int frame_index, uint32 mask_c
 	grDispatcher::instance()->putSprMask_a(pos.x - frameSize.x / 2, pos.y - frameSize.y / 2, frameSize.x, frameSize.y, buf, mask_colour, mask_alpha, mode);
 }
 
+void grTileAnimation::drawMask_scale(const Vect2i &pos, int frame_index, uint32 mask_colour, int mask_alpha, float scale, int mode) const {
+	int closest_scale = find_closest_scale(&scale);
+
+	if (wasFrameSizeChanged(frame_index, closest_scale, scale)) {
+		byte *buf = decode_frame_data(frame_index, closest_scale);
+
+		Vect2i frameSize;
+
+		if (closest_scale == -1)
+			frameSize = _frameSize;
+		else
+			frameSize =_scaleArray[closest_scale]._frameSize;
+
+		int x = pos.x - (int)((float)(frameSize.x / 2) * scale);
+		int y = pos.y - (int)((float)(frameSize.y / 2) * scale);
+
+		grDispatcher::instance()->putSprMask_a(x, y, frameSize.x, frameSize.y, buf, mask_colour, mask_alpha, mode, scale);
+	} else {
+		drawMask(pos, frame_index, mask_colour, mask_alpha, mode, closest_scale);
+	}
+}
+
 void grTileAnimation::drawMask_rot(const Vect2i &pos, int frame_index, uint32 mask_colour, int mask_alpha, float angle, int mode) const {
 	byte *buf = decode_frame_data(frame_index, -1);
 

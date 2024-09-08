@@ -265,7 +265,7 @@ void qdAnimation::draw_mask(int x, int y, int z, uint32 mask_color, int mask_alp
 		mode |= GR_BLACK_FON;
 
 	if (tileAnimation()) {
-		tileAnimation()->drawMask(Vect2i(x, y), get_cur_frame_number(), mask_color, mask_alpha, scale, mode);
+		tileAnimation()->drawMask_scale(Vect2i(x, y), get_cur_frame_number(), mask_color, mask_alpha, scale, mode);
 	} else {
 		int scale_index = get_scale_index(scale);
 		const qdAnimationFrame *scaled_frame;
