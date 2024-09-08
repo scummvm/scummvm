@@ -126,7 +126,8 @@ void TwineScreen::update() {
 
 	if (_engine->_redraw->_flagMCGA) {
 		markAllDirty();
-		Graphics::ManagedSurface zoomWorkVideoBuffer(_engine->_workVideoBuffer);
+		Graphics::ManagedSurface zoomWorkVideoBuffer;
+		zoomWorkVideoBuffer.copyFrom(_engine->_workVideoBuffer);
 		const int maxW = zoomWorkVideoBuffer.w;
 		const int maxH = zoomWorkVideoBuffer.h;
 		const int left = CLIP<int>(_engine->_redraw->_sceneryViewX - maxW / 4, 0, maxW / 2);
