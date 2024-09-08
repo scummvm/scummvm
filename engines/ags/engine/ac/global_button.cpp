@@ -68,17 +68,17 @@ int GetButtonPic(int guin, int objn, int ptype) {
 
 	if (ptype == 0) {
 		// currently displayed pic
-		if (guil->CurrentImage < 0)
-			return guil->Image;
-		return guil->CurrentImage;
+		if (guil->GetCurrentImage() < 0)
+			return guil->GetNormalImage();
+		return guil->GetCurrentImage();
 	} else if (ptype == 1) {
 		// nomal pic
-		return guil->Image;
+		return guil->GetNormalImage();
 	} else if (ptype == 2) {
 		// mouseover pic
-		return guil->MouseOverImage;
+		return guil->GetMouseOverImage();
 	} else { // pushed pic
-		return guil->PushedImage;
+		return guil->GetPushedImage();
 	}
 }
 
