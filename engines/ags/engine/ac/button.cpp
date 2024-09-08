@@ -171,10 +171,9 @@ void Button_SetNormalGraphic(GUIButton *guil, int slotn) {
 		height = _GP(game).SpriteInfos[slotn].Height;
 	}
 
-	if ((slotn != guil->GetNormalImage()) || (width != guil->Width) || (height != guil->Height)) {
+	if ((slotn != guil->GetNormalImage()) || (width != guil->GetWidth()) || (height != guil->GetHeight())) {
 		guil->SetNormalImage(slotn);
-		guil->Width = width;
-		guil->Height = height;
+		guil->SetSize(width, height);
 	}
 
 	FindAndRemoveButtonAnimation(guil->ParentId, guil->Id);

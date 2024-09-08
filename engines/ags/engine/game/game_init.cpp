@@ -347,8 +347,8 @@ static void ConvertGuiToGameRes(GameSetupStruct &game, GameDataVersion data_ver)
 			GUIObject *guio = cgp->GetControl(j);
 			guio->X *= mul;
 			guio->Y *= mul;
-			guio->Width *= mul;
-			guio->Height *= mul;
+			Size sz = guio->GetSize() * mul;
+			guio->SetSize(sz.Width, sz.Height);
 			guio->IsActivated = false;
 			guio->OnResized();
 		}
