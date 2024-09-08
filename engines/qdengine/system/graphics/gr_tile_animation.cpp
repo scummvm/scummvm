@@ -341,14 +341,16 @@ void grTileAnimation::drawFrame(const Vect2i &position, int32 frame_index, int32
 
 void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float angle, int mode) const {
 	byte *buf = decode_frame_data(frame_index, -1);
+	Vect2i pos = position - _frameSize / 2;
 
-	grDispatcher::instance()->putSpr_rot(position, _frameSize, buf, _hasAlpha, mode, angle);
+	grDispatcher::instance()->putSpr_rot(pos, _frameSize, buf, _hasAlpha, mode, angle);
 }
 
 void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float angle, const Vect2f &scale, int mode) const {
 	byte *buf = decode_frame_data(frame_index, -1);
+	Vect2i pos = position - _frameSize / 2;
 
-	grDispatcher::instance()->putSpr_rot(position, _frameSize, buf, _hasAlpha, mode, angle, scale);
+	grDispatcher::instance()->putSpr_rot(pos, _frameSize, buf, _hasAlpha, mode, angle, scale);
 }
 
 //////////////////////////////////////////////////////////////////////
