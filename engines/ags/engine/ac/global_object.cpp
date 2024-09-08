@@ -459,8 +459,8 @@ int GetThingRect(int thing, _Rect *rect) {
 		int charwid = game_to_data_coord(GetCharacterWidth(thing));
 		rect->x1 = _GP(game).chars[thing].x - (charwid / 2);
 		rect->x2 = rect->x1 + charwid;
-		rect->y1 = _GP(game).chars[thing].get_effective_y() - game_to_data_coord(GetCharacterHeight(thing));
-		rect->y2 = _GP(game).chars[thing].get_effective_y();
+		rect->y1 = _GP(charextra)[thing].GetEffectiveY(&_GP(game).chars[thing]) - game_to_data_coord(GetCharacterHeight(thing));
+		rect->y2 = _GP(charextra)[thing].GetEffectiveY(&_GP(game).chars[thing]);
 	} else if (is_valid_object(thing - OVERLAPPING_OBJECT)) {
 		int objid = thing - OVERLAPPING_OBJECT;
 		if (_G(objs)[objid].on != 1)
