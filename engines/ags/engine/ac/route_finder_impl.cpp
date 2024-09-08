@@ -234,7 +234,6 @@ int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int
 	_GP(mls)[mlist].onstage = 0;
 	_GP(mls)[mlist].onpart = 0;
 	_GP(mls)[mlist].doneflag = 0;
-	_GP(mls)[mlist].last = { -1, -1};
 	return mlist;
 }
 
@@ -247,8 +246,6 @@ bool add_waypoint_direct(MoveList *mlsp, short x, short y, int move_speed_x, int
 	mlsp->pos[mlsp->numstage] = {x, y};
 	calculate_move_stage(mlsp, mlsp->numstage - 1, fix_speed_x, fix_speed_y);
 	mlsp->numstage++;
-	mlsp->last.X = x;
-	mlsp->last.Y = y;
 	return true;
 }
 
