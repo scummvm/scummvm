@@ -430,17 +430,27 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	free(holomapImagePtr);
 }
 
-int32 Holomap::searchNextArrow(int32 currentLocation, int32 dir) const {
-	const int32 idx = currentLocation;
+int32 Holomap::searchNextArrow(int32 num) const {
 	const int maxLocations = _engine->numLocations();
-	for (int32 i = currentLocation + dir; i != idx; i += dir) {
-		if (i < 0) {
-			i = maxLocations - 1;
-		} else {
-			i %= maxLocations;
+	for (int32 n = num + 1; n < maxLocations; ++n) {
+		if ((_engine->_gameState->_holomapFlags[n] & HOLOMAP_ACTIVE) != 0u) {
+			return n;
 		}
-		if ((_engine->_gameState->_holomapFlags[i] & HOLOMAP_ACTIVE) != 0u) {
-			return i;
+	}
+	return -1;
+}
+
+int32 Holomap::searchPrevArrow(int32 num) const {
+	int32 n;
+	const int maxLocations = _engine->numLocations();
+
+	if (num == -1) {
+		num = maxLocations;
+	}
+
+	for (n = num - 1; n >= 0; n--) {
+		if ((_engine->_gameState->_holomapFlags[n] & HOLOMAP_ACTIVE) != 0u) {
+			return n;
 		}
 	}
 	return -1;
@@ -561,7 +571,7 @@ void Holomap::holoMap() {
 		}
 
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapPrev)) {
-			currentLocation = searchNextArrow(currentLocation, -1);
+			currentLocation = searchPrevArrow(currentLocation);
 			if (currentLocation == -1) {
 				currentLocation = _engine->_scene->_currentSceneIdx;
 			}
@@ -574,7 +584,7 @@ void Holomap::holoMap() {
 			automove = true;
 			redraw = true;
 		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapNext)) {
-			currentLocation = searchNextArrow(currentLocation, 1);
+			currentLocation = searchNextArrow(currentLocation);
 			if (currentLocation == -1) {
 				currentLocation = _engine->_scene->_currentSceneIdx;
 			}

@@ -84,7 +84,8 @@ private:
 	uint8 _paletteHolomap[NUMOFCOLORS * 3]{0};
 
 	void drawHolomapText(int32 centerx, int32 top, const char *title);
-	int32 searchNextArrow(int32 currentLocation, int32 dir) const;
+	int32 searchNextArrow(int32 num) const;
+	int32 searchPrevArrow(int32 num) const;
 
 	void drawListPos(int xRot, int yRot, int zRot, bool lower);
 
