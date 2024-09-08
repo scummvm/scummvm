@@ -243,8 +243,8 @@ void Redraw::updateOverlayTypePosition(int16 x1, int16 y1, int16 x2, int16 y2) {
 
 int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool flagflip) {
 	int32 drawListPos = 0;
-	for (int32 a = 0; a < _engine->_scene->_nbObjets; a++) {
-		ActorStruct *actor = _engine->_scene->getActor(a);
+	for (int32 n = 0; n < _engine->_scene->_nbObjets; n++) {
+		ActorStruct *actor = _engine->_scene->getActor(n);
 		actor->_workFlags.bWasDrawn = 0; // reset visible state
 		actor->_workFlags.bIsTargetable = 0;
 
@@ -281,13 +281,13 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool flagflip) {
 
 			if (actor->_staticFlags.bSprite3D) {
 				drawList[drawListPos].type = DrawListType::DrawActorSprites;
-				drawList[drawListPos].actorIdx = a;
+				drawList[drawListPos].actorIdx = n;
 				if (actor->_staticFlags.bSpriteClip) {
 					ztri = actor->_animStep.x - _engine->_grid->_worldCube.x + actor->_animStep.z - _engine->_grid->_worldCube.z;
 				}
 			} else {
 				drawList[drawListPos].type = DrawListType::DrawObject3D;
-				drawList[drawListPos].actorIdx = a;
+				drawList[drawListPos].actorIdx = n;
 			}
 
 			drawList[drawListPos].z = ztri;
@@ -295,7 +295,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool flagflip) {
 			drawListPos++;
 
 			// if use shadows
-			if (_engine->_cfgfile.ShadowMode != 0 && !(actor->_staticFlags.bDoesntCastShadow)) {
+			if (_engine->_cfgfile.ShadowMode != 0 && !(actor->_staticFlags.bNoShadow)) {
 				if (actor->_carryBy != -1) {
 					drawList[drawListPos].xw = actor->_posObj.x;
 					drawList[drawListPos].yw = actor->_posObj.y - 1;
@@ -313,7 +313,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool flagflip) {
 				drawList[drawListPos].num = 1;
 				drawListPos++;
 			}
-			if (_flagMCGA && a == _engine->_scene->_currentlyFollowedActor) {
+			if (_flagMCGA && n == _engine->_scene->_currentlyFollowedActor) {
 				_sceneryViewX = projPos.x;
 				_sceneryViewY = projPos.y;
 			}

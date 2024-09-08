@@ -579,7 +579,7 @@ int32 ScriptLifeV2::lSHADOW_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SHADOW_OBJ(%i, %s)", actorIdx, castShadow ? "true" : "false");
 	ActorStruct *actor = engine->_scene->getActor(actorIdx);
 	if (actor->_lifePoint > 0) {
-		actor->_staticFlags.bDoesntCastShadow = !castShadow;
+		actor->_staticFlags.bNoShadow = !castShadow;
 	}
 	return 0;
 }

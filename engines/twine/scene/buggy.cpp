@@ -84,7 +84,7 @@ void Buggy::initBuggy(uint8 numobj, uint32 flaginit) {
 
 				ptrobj->_beta = ptb->Beta;
 
-				ptrobj->_staticFlags.bDoesntCastShadow = 1;
+				ptrobj->_staticFlags.bNoShadow = 1;
 				ptrobj->_staticFlags.bIsBackgrounded = 1;
 				ptrobj->_staticFlags.bNoElectricShock = 1;
 				ptrobj->_staticFlags.bHasZBuffer = 1;

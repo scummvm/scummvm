@@ -87,7 +87,7 @@ void Scene::setActorStaticFlags(ActorStruct *act, uint32 staticFlags) {
 		act->_staticFlags.bCanFall = 1;
 	}
 	if (staticFlags & 0x1000) {
-		act->_staticFlags.bDoesntCastShadow = 1;
+		act->_staticFlags.bNoShadow = 1;
 	}
 	if (staticFlags & 0x2000) {
 		act->_staticFlags.bIsBackgrounded = 1;

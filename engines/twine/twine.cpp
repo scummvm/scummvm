@@ -1082,7 +1082,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 						actor->_controlMode = ControlMode::kNoMove;
 						actor->setLife(-1);
 						_actor->_cropBottomScreen = projPos.y;
-						actor->_staticFlags.bDoesntCastShadow = 1;
+						actor->_staticFlags.bNoShadow = 1;
 					}
 				} else {
 					_sound->playSample(Samples::Explode, 1, actor->posObj(), a);
