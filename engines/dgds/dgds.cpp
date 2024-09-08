@@ -699,7 +699,7 @@ bool DgdsEngine::canSaveGameStateCurrently(Common::U32String *msg /*= nullptr*/)
 }
 
 bool DgdsEngine::canSaveAutosaveCurrently() {
-	return canSaveGameStateCurrently() && !_scene->hasVisibleDialog() && !_menu->menuShown();
+	return canSaveGameStateCurrently() && !_scene->hasVisibleDialog() && !_menu->menuShown() && _gameGlobals->getGameIsInteractiveGlobal();
 }
 
 Common::Error DgdsEngine::syncGame(Common::Serializer &s) {

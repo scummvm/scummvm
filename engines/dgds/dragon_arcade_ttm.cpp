@@ -182,12 +182,12 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 	}
 	case 0xA104: // DRAW FILLED RECT
 		if (_doingInit) {
-			ArcadeLevelData data;
+			ArcadeFloor data;
 			data.x = (page - 1) * 320 + ivals[0];
-			data.y = ivals[2];
-			data.data = (byte)ivals[1];
+			data.width = ivals[2];
+			data.yval = (byte)ivals[1];
 			data.flag = false;
-			_levelData.push_back(data);
+			_floorData.push_back(data);
 		} else {
 			const Common::Rect rect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
 			compBuffer.fillRect(rect, _drawColFG);
@@ -195,12 +195,12 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 		break;
 	case 0xA114: // DRAW EMPTY RECT
 		if (_doingInit) {
-			ArcadeLevelData data;
+			ArcadeFloor data;
 			data.x = (page - 1) * 320 + ivals[0];
-			data.y = ivals[2];
-			data.data = (byte)ivals[1];
+			data.width = ivals[2];
+			data.yval = (byte)ivals[1];
 			data.flag = true;
-			_levelData.push_back(data);
+			_floorData.push_back(data);
 		} else {
 			const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2] - 1, ivals[3] - 1);
 			compBuffer.drawLine(r.left, r.top, r.right, r.top, _drawColFG);
@@ -304,8 +304,8 @@ void DragonArcadeTTM::runPagesForEachNPC(int16 xScrollOffset) {
 			npcState.y_11 = 0;
 			npcState.y_22 = 0;
 			npcState.y_12 = 0;
-			 _drawXOffset = npcState.val1 - xScrollOffset * 8 - 152;
-			 _drawYOffset = npcState.val2;
+			 _drawXOffset = npcState.xx - xScrollOffset * 8 - 152;
+			 _drawYOffset = npcState.yy;
 			_currentTTMNum = npcState.byte15;
 			if (_drawXOffset > -20 || _drawXOffset < 340) {
 				runNextPage(npcState.ttmPage);

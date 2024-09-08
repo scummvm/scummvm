@@ -44,11 +44,11 @@ enum DragonBladeMoveFlag {
 
 class ArcadeNPCState {
 public:
-	ArcadeNPCState() : val1(0), val2(0), x(0), y(0), x_11(0), y_11(0), x_12(0), y_12(0),
+	ArcadeNPCState() : xx(0), yy(0), x(0), y(0), x_11(0), y_11(0), x_12(0), y_12(0),
 		ttmPage(0), byte12(0), byte13(0), health(0), byte15(0), x_21(0), y_21(0),
 		x_22(0), y_22(0) {}
-	int16 val1;
-	int16 val2;
+	int16 xx;
+	int16 yy;
 	int16 x;
 	int16 y;
 	int16 x_11;
@@ -98,7 +98,7 @@ private:
 	void enemyTakeHit() { _npcState[1].health--; }
 	void enemyTakeHitAndCheck();
 	void playSfx(int16 num) const;
-	void drawBulletHitCircles(uint16 x, uint16 y, bool flag);
+	void drawBulletHitCircles(uint16 x, uint16 y, bool colorFlag);
 	void drawHealthBars();
 	void runThenDrawBulletsInFlight();
 	void redraw();
@@ -137,22 +137,23 @@ private:
 	void checkBossFireStage3();
 	void checkBossFireStage6();
 	void updateMouseAndJoystickStates();
-	int16 findValuesIn3d30Array();
+	int16 findFloorUnderBlade();
 	int16 checkBulletCollision(int16 num);
 	void mouseUpdate();
 	void keyboardUpdate();
 	void limitToCenterOfScreenAndUpdateCursor();
 	uint16 moveToNextStage();
-	void findMatchIn3d30Array();
-	void findMinIn3d30ArrayFirst();
-	void findMinIn3d30ArrayLast();
-	void findMatchOrMinOrMax();
-	void findMaxIn3d30Array();
-	void fill3d30ArrayFromLevelData();
-	bool isAbsFoundValOver990();
+	void findFloorMatch();
+	void findFloorMinGT();
+	void findFloorMinGE();
+	void findFloorMatchOrMinOrMax();
+	void findFloorMax();
+	void updateFloorsUnderBlade();
+	bool isFloorNotFound();
 	void playSFX55AndStuff();
 	void moveBladeX();
 	void handleMouseStates();
+	void drawScrollBmp();
 
 	int16 _lastDrawnBladeHealth;
 	int16 _lastDrawnBossHealth;
@@ -171,15 +172,15 @@ private:
 	int16 _startDifficultyMaybe;
 	int16 _bossStateUpdateCounter;
 	int16 _someCounter40f0;
-	int16 _int0b5c;
+	int16 _scrollVelocityX;
 	uint16 _uint0a17;
-	int16 _int0b54;
+	int16 _currentYOffset;
 	int16 _int0b58;
 	int16 _int0b5a;
 	int16 _int0b60;
-	int16 _int3d18;
+	int16 _ttmYAdjust;
 	uint16 _uint0be6;
-	bool _flag3d14;
+	bool _dontMoveBladeFlag;
 	int16 _scrollXIncrement;
 	int16 _lMouseButtonState;
 	int16 _rMouseButtonState;
@@ -188,9 +189,9 @@ private:
 	int16 _bladeXMove;
 	int16 _bladeHorizMoveAttempt;
 	int16 _currentArrowNum;
-	int16 _foundValueFrom3d30Array;
-	bool _foundValueFrom3d1cArray;
-	int16 _2754Val;
+	int16 _foundFloorY;
+	bool _foundFloorFlag;
+	int16 _lastFloorY;
 
 	bool _haveBigGun;
 	bool _haveBomb;
@@ -215,8 +216,8 @@ private:
 	Common::SharedPtr<Image> _arrowImg;
 	Common::SharedPtr<Image> _scrollImg;
 	DragonArcadeTTM _arcadeTTM;
-	Common::Array<int16> _array3d30;
-	Common::Array<bool> _array3d1c;
+	Common::Array<int16> _floorY;
+	Common::Array<bool> _floorFlag;
 };
 
 } // end namespace Dgds
