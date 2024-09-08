@@ -52,12 +52,19 @@ bool Darkseed::Sprite::loadData(Common::SeekableReadStream &readStream) {
 	return true;
 }
 
-void Darkseed::Sprite::draw(int x, int y) const {
+void Darkseed::Sprite::draw(int x, int y, uint16 frameBottom) const {
 	uint16 clippedWidth = width;
+	uint16 clippedHeight = height;
 	if (x + width > g_engine->_screen->w) {
 		clippedWidth = g_engine->_screen->w - x;
 	}
-	g_engine->_screen->copyRectToSurfaceWithKey(pixels.data(), pitch, x, y, clippedWidth, height, 0xf);
+	if (frameBottom != 0 && y + height > g_engine->_frameBottom) {
+		if ( y >= frameBottom) {
+			return;
+		}
+		clippedHeight = frameBottom - y;
+	}
+	g_engine->_screen->copyRectToSurfaceWithKey(pixels.data(), pitch, x, y, clippedWidth, clippedHeight, 0xf);
 }
 
 void Darkseed::Sprite::drawScaled(int destX, int destY, int destWidth, int destHeight, bool flipX) const {
@@ -92,7 +99,8 @@ void Darkseed::Sprite::drawScaled(int destX, int destY, int destWidth, int destH
 	byte *dst = (byte *)destSurface->getBasePtr(destX, destY);
 	int yi = ys * clipY;
 	const byte *hsrc = source + pitch * ((yi + 0x8000) >> 16);
-	for (int yc = 0; yc < destHeight; ++yc) {
+	int16 currY = destY;
+	for (int yc = 0; yc < destHeight && currY < g_engine->_frameBottom; ++yc) {
 		byte *wdst = flipX ? dst + (destWidth - 1) : dst;
 		int16 currX = flipX ? destX + (destWidth - 1) : destX;
 		int xi = flipX ? xs : xs * clipX;
@@ -120,6 +128,7 @@ void Darkseed::Sprite::drawScaled(int destX, int destY, int destWidth, int destH
 		dst += destPitch;
 		yi += ys;
 		hsrc = source + pitch * ((yi + 0x8000) >> 16);
+		currY++;
 	}
 }
 

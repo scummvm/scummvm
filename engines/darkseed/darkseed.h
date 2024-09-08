@@ -115,7 +115,6 @@ public:
 	bool player_sprite_related_2c85_82f3 = false;
 	int _frameBottom = 0;
 	bool _ObjRestarted = false;
-	bool animFrameChanged = false;
 	char prefsCutsceneId = 'I';
 	int animIndexTbl[30];
 	int spriteAnimCountdownTimer[30];

@@ -1656,7 +1656,7 @@ void DarkseedEngine::updateAnimation() {
 		} else {
 			advanceAnimationFrame(2);
 		}
-		if (animFrameChanged && ((currentRoomNumber == 6 && animIndexTbl[1] == 1) || (currentRoomNumber == 5 && animIndexTbl[2] == 1))) {
+		if (_FrameAdvanced && ((currentRoomNumber == 6 && animIndexTbl[1] == 1) || (currentRoomNumber == 5 && animIndexTbl[2] == 1))) {
 //			FUN_1208_0dac_sound_related(0xd,CONCAT11(uVar4,5));
 		}
 		if (!_ObjRestarted) {
@@ -1678,7 +1678,7 @@ void DarkseedEngine::updateAnimation() {
 	case 7: // stairs down
 		if (currentRoomNumber == 5) {
 			advanceAnimationFrame(3);
-			if (animFrameChanged && animIndexTbl[3] == 1) {
+			if (_FrameAdvanced && animIndexTbl[3] == 1) {
 				// FUN_1208_0dac_sound_related(0xd,CONCAT11(extraout_AH_05,5));
 			}
 			if (!_ObjRestarted) {
@@ -1689,7 +1689,7 @@ void DarkseedEngine::updateAnimation() {
 			}
 		} else {
 			advanceAnimationFrame(0);
-			if (animFrameChanged && animIndexTbl[0] == 1) {
+			if (_FrameAdvanced && animIndexTbl[0] == 1) {
 				// FUN_1208_0dac_sound_related(0xd,CONCAT11(extraout_AH_05,5));
 			}
 			if (!_ObjRestarted) {
@@ -1807,7 +1807,7 @@ void DarkseedEngine::updateAnimation() {
 		if (!_ObjRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]];
 		}
-		if (animIndexTbl[0] == 5 && animFrameChanged) {
+		if (animIndexTbl[0] == 5 && _FrameAdvanced) {
 			playSound(31,5,-1);
 			_console->printTosText(666);
 			if (_objectVar[42] == 0) {
@@ -1822,7 +1822,7 @@ void DarkseedEngine::updateAnimation() {
 		if (!_ObjRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]];
 		}
-		if (_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]] == 3 && animFrameChanged) {
+		if (_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]] == 3 && _FrameAdvanced) {
 			_console->printTosText(_objectVar[22] + 662);
 			_objectVar[22] = _objectVar[22] + 1;
 			if (_objectVar[22] == 3) {
@@ -1980,7 +1980,7 @@ void DarkseedEngine::updateAnimation() {
 	case 37: // smash mirror
 		advanceAnimationFrame(otherNspAnimationType_maybe - 36);
 		_player->_frameIdx = _player->_animations.getAnimAt(otherNspAnimationType_maybe - 36).frameNo[animIndexTbl[otherNspAnimationType_maybe - 36]];
-		if (animFrameChanged && otherNspAnimationType_maybe == 36 && _player->_frameIdx == 4) {
+		if (_FrameAdvanced && otherNspAnimationType_maybe == 36 && _player->_frameIdx == 4) {
 			playSound(28, 5, -1);
 		}
 		if (_ObjRestarted) {
@@ -2119,7 +2119,7 @@ void DarkseedEngine::updateAnimation() {
 				break;
 			}
 		}
-		if (animFrameChanged && animIndexTbl[0] == 1) {
+		if (_FrameAdvanced && animIndexTbl[0] == 1) {
 			// FUN_1208_0dac_sound_related(0xd,CONCAT11(extraout_AH_05,5));
 			// PlaySound(1,5,-1);
 		}
@@ -2144,7 +2144,7 @@ void DarkseedEngine::updateAnimation() {
 			_player->_direction = 1;
 			_player->updateSprite();
 		}
-		if (animFrameChanged && _player->_frameIdx == 3) {
+		if (_FrameAdvanced && _player->_frameIdx == 3) {
 			playSound(26, 5, -1);
 		}
 		break;
@@ -2211,11 +2211,11 @@ void DarkseedEngine::advanceAnimationFrame(int nspAminIdx) {
 		_room->calculateScaledSpriteDimensions(10, 10, _player->_position.y);
 	}
 	_ObjRestarted = false;
-	animFrameChanged = false;
+	_FrameAdvanced = false;
 	const Obt &anim = _player->_animations.getAnimAt(nspAminIdx);
 	spriteAnimCountdownTimer[nspAminIdx] = spriteAnimCountdownTimer[nspAminIdx] - 1;
 	if (spriteAnimCountdownTimer[nspAminIdx] < 1) {
-		animFrameChanged = true;
+		_FrameAdvanced = true;
 		animIndexTbl[nspAminIdx] = animIndexTbl[nspAminIdx] + 1;
 		_player->_position.x += ((int16)anim.deltaX[animIndexTbl[nspAminIdx]] * scaledWalkSpeed_maybe) / 1000;
 		_player->_position.y += ((int16)anim.deltaY[animIndexTbl[nspAminIdx]] * scaledWalkSpeed_maybe) / 1000;

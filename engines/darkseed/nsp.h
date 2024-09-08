@@ -38,7 +38,7 @@ public:
 public:
 	Sprite(uint16 width, uint16 height, uint16 pitch);
 	bool loadData(Common::SeekableReadStream &readStream);
-	void draw(int x, int y) const;
+	void draw(int x, int y, uint16 frameBottom = 0) const;
 	void drawScaled(int x, int y, int destWidth, int destHeight, bool flipX) const;
 };
 
