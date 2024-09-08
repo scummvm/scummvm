@@ -62,7 +62,6 @@ public:
 	Nsp _locationSprites;
 	Common::Array<int16> _locObjFrame;
 	Common::Array<int16> _locObjFrameTimer;
-	bool _ObjRestarted = false;
 
 	Common::Array<RoomExit> room1;
 	Common::Array<RoomStruct2> walkableLocationsMap;
