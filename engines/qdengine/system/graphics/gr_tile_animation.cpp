@@ -355,6 +355,22 @@ void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float a
 ////  New version 105 & 106 code
 //////////////////////////////////////////////////////////////////////
 
+grTileSprite grTileAnimation::getFrameTile(int frame_number, int tile_index) const {
+	return getTile(_frameIndex[tile_index + frame_number * _frameTileSize.x * _frameTileSize.y]);
+}
+
+bool grTileAnimation::hit(int frame_number, Vect2i &pos) const {
+	int x = _frameSize.x / 2 + pos.x;
+	int y = _frameSize.y / 2 + pos.y;
+
+	if (x < 0 || x >= _frameSize.x || y < 0 || y >= _frameSize.y)
+		return false;
+
+	const byte *tile = (const byte *)getFrameTile(frame_number, x / 16 + y / 16 * _frameTileSize.x).data();
+
+	return tile[64 * (y % 16) + 4 * (x % 16) + 3] < 0xC8u;
+}
+
 void grTileAnimation::drawFrame_scale(const Vect2i &position, int frame_index, float scale, int mode) const {
 	int closest_scale = find_closest_scale(&scale);
 

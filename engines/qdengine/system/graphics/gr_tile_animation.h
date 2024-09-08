@@ -70,6 +70,7 @@ public:
 	bool compress(grTileCompressionMethod method);
 
 	grTileSprite getTile(int tile_index) const;
+	grTileSprite getFrameTile(int frame_number, int tile_index) const;
 
 	void addFrame(const uint32 *frame_data);
 
@@ -86,6 +87,8 @@ public:
 
 	void drawContour(const Vect2i &position, int frame_index, uint32 color, int mode, int closest_scale) const;
 	void drawContour(const Vect2i &position, int frame_index, uint32 color, float scale, int mode) const;
+
+	bool hit(int frame_number, Vect2i &pos) const;
 
 	static void setProgressHandler(CompressionProgressHandler handler, void *context) {
 		_progressHandler = handler;

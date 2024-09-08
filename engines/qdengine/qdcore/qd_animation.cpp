@@ -546,14 +546,19 @@ bool qdAnimation::hit(int x, int y) const {
 	int xx = x;
 	int yy = y;
 
-	const qdAnimationFrame *p = get_cur_frame();
-	if (p) {
-		if (check_flag(QD_ANIMATION_FLAG_FLIP_HORIZONTAL))
-			xx = -x;
-		if (check_flag(QD_ANIMATION_FLAG_FLIP_VERTICAL))
-			yy = -y;
+	if (check_flag(QD_ANIMATION_FLAG_FLIP_HORIZONTAL))
+		xx = -x;
+	if (check_flag(QD_ANIMATION_FLAG_FLIP_VERTICAL))
+		yy = -y;
 
-		return p->hit(xx, yy);
+	if (tileAnimation()) {
+		Vect2i pos(xx, yy);
+
+		return tileAnimation()->hit(get_cur_frame_number(), pos);
+	} else {
+		const qdAnimationFrame *p = get_cur_frame();
+		if (p)
+			return p->hit(xx, yy);
 	}
 
 	return false;
@@ -563,14 +568,19 @@ bool qdAnimation::hit(int x, int y, float scale) const {
 	int xx = x;
 	int yy = y;
 
-	const qdAnimationFrame *p = get_cur_frame();
-	if (p) {
-		if (check_flag(QD_ANIMATION_FLAG_FLIP_HORIZONTAL))
-			xx = -x;
-		if (check_flag(QD_ANIMATION_FLAG_FLIP_VERTICAL))
-			yy = -y;
+	if (check_flag(QD_ANIMATION_FLAG_FLIP_HORIZONTAL))
+		xx = -x;
+	if (check_flag(QD_ANIMATION_FLAG_FLIP_VERTICAL))
+		yy = -y;
 
-		return p->hit(xx, yy, scale);
+	if (tileAnimation()) {
+		Vect2i pos(xx, yy);
+
+		return tileAnimation()->hit(get_cur_frame_number(), pos); // Weirdly, but there is no _scale variant
+	} else {
+		const qdAnimationFrame *p = get_cur_frame();
+		if (p)
+			return p->hit(xx, yy, scale);
 	}
 
 	return false;
