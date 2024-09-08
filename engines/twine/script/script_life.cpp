@@ -1381,8 +1381,8 @@ int32 ScriptLife::lOR_IF(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x38
  */
 int32 ScriptLife::lINVISIBLE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	ctx.actor->_staticFlags.bIsHidden = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::INVISIBLE(%i)", (int)ctx.actor->_staticFlags.bIsHidden);
+	ctx.actor->_staticFlags.bIsInvisible = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::INVISIBLE(%i)", (int)ctx.actor->_staticFlags.bIsInvisible);
 	return 0;
 }
 

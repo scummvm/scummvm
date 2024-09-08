@@ -877,7 +877,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 	} else {
 		// Process give up menu - Press ESC
-		if (_input->toggleAbortAction() && _scene->_sceneHero->_lifePoint > 0 && _scene->_sceneHero->_body != -1 && !_scene->_sceneHero->_staticFlags.bIsHidden) {
+		if (_input->toggleAbortAction() && _scene->_sceneHero->_lifePoint > 0 && _scene->_sceneHero->_body != -1 && !_scene->_sceneHero->_staticFlags.bIsInvisible) {
 			ScopedEngineFreeze scopedFreeze(this);
 			extInitSvga();
 			const int giveUp = _menu->giveupMenu();
@@ -1155,9 +1155,9 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 	// workaround to fix hero redraw after drowning
 	if (_actor->_cropBottomScreen && _redraw->_firstTime) {
-		_scene->_sceneHero->_staticFlags.bIsHidden = 1;
+		_scene->_sceneHero->_staticFlags.bIsInvisible = 1;
 		_redraw->redrawEngineActions(true);
-		_scene->_sceneHero->_staticFlags.bIsHidden = 0;
+		_scene->_sceneHero->_staticFlags.bIsInvisible = 0;
 	}
 
 	_scene->_needChangeScene = SCENE_CEILING_GRID_FADE_1;

@@ -266,7 +266,7 @@ bool Collision::checkValidObjPos(int32 actorIdx) {
 
 	for (int32 n = 0; n < _engine->_scene->_nbObjets; ++n) {
 		const ActorStruct *ptrobjt = _engine->_scene->getActor(n);
-		if (n != actorIdx && ptrobjt->_body != -1 && !ptrobj->_staticFlags.bIsHidden && ptrobjt->_carryBy != actorIdx) {
+		if (n != actorIdx && ptrobjt->_body != -1 && !ptrobj->_staticFlags.bIsInvisible && ptrobjt->_carryBy != actorIdx) {
 			const IVec3 &t0 = ptrobjt->posObj() + ptrobjt->_boundingBox.mins;
 			const IVec3 &t1 = ptrobjt->posObj() + ptrobjt->_boundingBox.maxs;
 			if (m0.x < t1.x && m1.x > t0.x && m0.y < t1.y && m1.y > t0.y && m0.z < t1.z && m1.z > t0.z) {
@@ -290,7 +290,7 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 		ActorStruct *ptrobjt = _engine->_scene->getActor(a);
 
 		// avoid current processed actor
-		if (a != actorIdx && ptrobjt->_body != -1 && !ptrobj->_staticFlags.bIsHidden && ptrobjt->_carryBy != actorIdx) {
+		if (a != actorIdx && ptrobjt->_body != -1 && !ptrobj->_staticFlags.bIsInvisible && ptrobjt->_carryBy != actorIdx) {
 			const IVec3 &minsTest = ptrobjt->posObj() + ptrobjt->_boundingBox.mins;
 			const IVec3 &maxsTest = ptrobjt->posObj() + ptrobjt->_boundingBox.maxs;
 
@@ -335,7 +335,7 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 			const ActorStruct *actorTest = _engine->_scene->getActor(a);
 
 			// avoid current processed actor
-			if (a != actorIdx && actorTest->_body != -1 && !actorTest->_staticFlags.bIsHidden && actorTest->_carryBy != actorIdx) {
+			if (a != actorIdx && actorTest->_body != -1 && !actorTest->_staticFlags.bIsInvisible && actorTest->_carryBy != actorIdx) {
 				const IVec3 minsTest = actorTest->posObj() + actorTest->_boundingBox.mins;
 				const IVec3 maxsTest = actorTest->posObj() + actorTest->_boundingBox.maxs;
 				if (mins.x < maxsTest.x && maxs.x > minsTest.x && mins.y < maxsTest.y && maxs.y > minsTest.y && mins.z < maxsTest.z && maxs.z > minsTest.z) {

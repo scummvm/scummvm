@@ -78,7 +78,7 @@ void Scene::setActorStaticFlags(ActorStruct *act, uint32 staticFlags) {
 		act->_staticFlags.bUnk0100 = 1;
 	}
 	if (staticFlags & 0x200) {
-		act->_staticFlags.bIsHidden = 1;
+		act->_staticFlags.bIsInvisible = 1;
 	}
 	if (staticFlags & 0x400) {
 		act->_staticFlags.bSprite3D = 1;

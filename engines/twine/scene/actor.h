@@ -68,7 +68,7 @@ struct StaticFlagsStruct {
 	uint32 bCanDrown : 1;                   // 0x000040 CHECK_CODE_JEU
 	uint32 bComputeCollisionWithFloor : 1;  // 0x000080 CHECK_WATER_COL
 	uint32 bUnk0100 : 1;                    // 0x000100
-	uint32 bIsHidden : 1;                   // 0x000200 INVISIBLE - not drawn but all computed
+	uint32 bIsInvisible : 1;                // 0x000200 INVISIBLE - not drawn but all computed
 	uint32 bSprite3D : 1;                   // 0x000400 SPRITE_3D - a sprite not a 3D object
 	uint32 bCanFall : 1;                    // 0x000800 OBJ_FALLABLE
 	uint32 bNoShadow : 1;                   // 0x001000 NO_SHADOW - no auto shadow

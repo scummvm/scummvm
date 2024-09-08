@@ -262,7 +262,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool flagflip) {
 			continue;
 		}
 		// if the actor isn't set as hidden
-		if (actor->_body == -1 || actor->_staticFlags.bIsHidden) {
+		if (actor->_body == -1 || actor->_staticFlags.bIsInvisible) {
 			continue;
 		}
 		// get actor position on screen
@@ -543,9 +543,9 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 	}
 }
 
-void Redraw::correctZLevels(DrawListStruct *drawList, int32 drawListPos) {
+void Redraw::correctZLevels(DrawListStruct *listTri, int32 drawListPos) {
 	ActorStruct *ptrobj = _engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX);
-	if (ptrobj->_staticFlags.bIsHidden || ptrobj->_body == -1) {
+	if (ptrobj->_staticFlags.bIsInvisible || ptrobj->_body == -1) {
 		return;
 	}
 
@@ -554,7 +554,7 @@ void Redraw::correctZLevels(DrawListStruct *drawList, int32 drawListPos) {
 	int32 twinsenpos = -1;
 	int32 twinsenz = -1;
 	for (int32 pos = 0; pos < drawListPos; ++pos) {
-		DrawListStruct &drawCmd = drawList[pos];
+		DrawListStruct &drawCmd = listTri[pos];
 		if (drawCmd.type == DrawListType::DrawObject3D && drawCmd.actorIdx == OWN_ACTOR_SCENE_INDEX) {
 			twinsenpos = pos;
 			twinsenz = drawCmd.z;
@@ -567,7 +567,7 @@ void Redraw::correctZLevels(DrawListStruct *drawList, int32 drawListPos) {
 	}
 
 	for (int32 n = 0; n < drawListPos; ++n) {
-		DrawListStruct &ptrtri = drawList[n];
+		DrawListStruct &ptrtri = listTri[n];
 		uint32 typeobj = ptrtri.type;
 		int32 numobj = ptrtri.actorIdx;
 		ptrobj = _engine->_scene->getActor(numobj);
@@ -584,9 +584,9 @@ void Redraw::correctZLevels(DrawListStruct *drawList, int32 drawListPos) {
 						// twinsen after
 						if (twinsenz < ptrtri.z) {
 							// correct the error
-							drawList[twinsenpos].z = ptrtri.z;
-							drawList[twinsenpos].actorIdx = ptrtri.actorIdx;
-							drawList[twinsenpos].type = ptrtri.type;
+							listTri[twinsenpos].z = ptrtri.z;
+							listTri[twinsenpos].actorIdx = ptrtri.actorIdx;
+							listTri[twinsenpos].type = ptrtri.type;
 
 							ptrtri.actorIdx = OWN_ACTOR_SCENE_INDEX;
 							ptrtri.type = DrawListType::DrawObject3D;
@@ -601,9 +601,9 @@ void Redraw::correctZLevels(DrawListStruct *drawList, int32 drawListPos) {
 						// twinsen before
 						if (twinsenz > ptrtri.z) {
 							// correct the error
-							drawList[twinsenpos].z = ptrtri.z;
-							drawList[twinsenpos].actorIdx = ptrtri.actorIdx;
-							drawList[twinsenpos].type = ptrtri.type;
+							listTri[twinsenpos].z = ptrtri.z;
+							listTri[twinsenpos].actorIdx = ptrtri.actorIdx;
+							listTri[twinsenpos].type = ptrtri.type;
 
 							ptrtri.actorIdx = OWN_ACTOR_SCENE_INDEX;
 							ptrtri.type = DrawListType::DrawObject3D;
@@ -621,9 +621,9 @@ void Redraw::correctZLevels(DrawListStruct *drawList, int32 drawListPos) {
 						// twinsen after
 						if (twinsenz < ptrtri.z) {
 							// correct the error
-							drawList[twinsenpos].z = ptrtri.z;
-							drawList[twinsenpos].actorIdx = ptrtri.actorIdx;
-							drawList[twinsenpos].type = ptrtri.type;
+							listTri[twinsenpos].z = ptrtri.z;
+							listTri[twinsenpos].actorIdx = ptrtri.actorIdx;
+							listTri[twinsenpos].type = ptrtri.type;
 
 							ptrtri.actorIdx = OWN_ACTOR_SCENE_INDEX;
 							ptrtri.type = DrawListType::DrawObject3D;
@@ -637,9 +637,9 @@ void Redraw::correctZLevels(DrawListStruct *drawList, int32 drawListPos) {
 						// twinsen before
 						if (twinsenz > ptrtri.z) {
 							// correct the error
-							drawList[twinsenpos].z = ptrtri.z;
-							drawList[twinsenpos].actorIdx = ptrtri.actorIdx;
-							drawList[twinsenpos].type = ptrtri.type;
+							listTri[twinsenpos].z = ptrtri.z;
+							listTri[twinsenpos].actorIdx = ptrtri.actorIdx;
+							listTri[twinsenpos].type = ptrtri.type;
 
 							ptrtri.actorIdx = OWN_ACTOR_SCENE_INDEX;
 							ptrtri.type = DrawListType::DrawObject3D;
