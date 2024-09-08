@@ -511,7 +511,7 @@ int Character_IsCollidingWithObject(CharacterInfo *chin, ScriptObject *objid) {
 	int charWidth = charpic->GetWidth();
 	int charHeight = charpic->GetHeight();
 	int o2x = chin->x - game_to_data_coord(charWidth) / 2;
-	int o2y = chin->get_effective_y() - 5;  // only check feet
+	int o2y = _GP(charextra)[chin->index_id].GetEffectiveY(chin) - 5; // only check feet
 
 	if ((o2x >= o1x - game_to_data_coord(charWidth)) &&
 	        (o2x <= o1x + game_to_data_coord(objWidth)) &&
@@ -2139,17 +2139,18 @@ void update_character_scale(int charid) {
 		chin.frame = 0;
 	}
 
-	int zoom, scale_width, scale_height;
+	int zoom, zoom_offs, scale_width, scale_height;
 	update_object_scale(zoom, scale_width, scale_height,
 						chin.x, chin.y, _GP(views)[chin.view].loops[chin.loop].frames[chin.frame].pic,
 						chex.zoom, (chin.flags & CHF_MANUALSCALING) == 0);
+	zoom_offs = (_GP(game).options[OPT_SCALECHAROFFSETS] != 0) ? zoom : 100;
 
 	// Calculate the X & Y co-ordinates of where the sprite will be;
 	// for the character sprite's origin is at the bottom-mid of a sprite.
 	const int atxp = (data_to_game_coord(chin.x)) - scale_width / 2;
 	const int atyp = (data_to_game_coord(chin.y) - scale_height)
 					 // adjust the Y positioning for the character's Z co-ord
-					 - data_to_game_coord(chin.z);
+					 - (data_to_game_coord(chin.z) * zoom_offs / 100);
 
 	// Save calculated properties
 	chex.width = scale_width;
@@ -2157,6 +2158,7 @@ void update_character_scale(int charid) {
 	chin.actx = atxp;
 	chin.acty = atyp;
 	chex.zoom = zoom;
+	chex.zoom_offs = zoom_offs;
 }
 
 int is_pos_on_character(int xx, int yy) {
@@ -2180,7 +2182,7 @@ int is_pos_on_character(int xx, int yy) {
 		if (usewid == 0) usewid = _GP(game).SpriteInfos[sppic].Width;
 		if (usehit == 0) usehit = _GP(game).SpriteInfos[sppic].Height;
 		int xxx = chin->x - game_to_data_coord(usewid) / 2;
-		int yyy = chin->get_effective_y() - game_to_data_coord(usehit);
+		int yyy = _GP(charextra)[cc].GetEffectiveY(chin) - game_to_data_coord(usehit);
 
 		int mirrored = _GP(views)[chin->view].loops[chin->loop].frames[chin->frame].flags & VFLG_FLIPSPRITE;
 		Bitmap *theImage = GetCharacterImage(cc, &mirrored);
@@ -2466,7 +2468,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 		if (tdyp < 0) {
 			int sppic = _GP(views)[speakingChar->view].loops[speakingChar->loop].frames[0].pic;
 			int height = (_GP(charextra)[aschar].height < 1) ? _GP(game).SpriteInfos[sppic].Height : _GP(charextra)[aschar].height;
-			tdyp = view->RoomToScreen(0, data_to_game_coord(_GP(game).chars[aschar].get_effective_y()) - height).first.Y
+			tdyp = view->RoomToScreen(0, data_to_game_coord(_GP(charextra)[aschar].GetEffectiveY(speakingChar)) - height).first.Y
 			       - get_fixed_pixel_size(5);
 			if (isThought) // if it's a thought, lift it a bit further up
 				tdyp -= get_fixed_pixel_size(10);
@@ -2833,6 +2835,12 @@ int update_lip_sync(int talkview, int talkloop, int *talkframeptr) {
 
 	talkframeptr[0] = talkframe;
 	return talkwait;
+}
+
+void restore_characters() {
+	for (int i = 0; i < _GP(game).numcharacters; ++i) {
+		_GP(charextra)[i].zoom_offs = (_GP(game).options[OPT_SCALECHAROFFSETS] != 0) ? _GP(charextra)[i].zoom : 100;
+	}
 }
 
 Rect GetCharacterRoomBBox(int charid, bool use_frame_0) {

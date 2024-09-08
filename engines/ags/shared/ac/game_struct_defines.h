@@ -89,7 +89,8 @@ namespace AGS3 {
 #define OPT_GAMETEXTENCODING 49 // how the text in the game data should be interpreted
 #define OPT_KEYHANDLEAPI    50 // key handling mode (old/new)
 #define OPT_CUSTOMENGINETAG 51 // custom engine tag (for overriding behavior)
-#define OPT_HIGHESTOPTION   OPT_CUSTOMENGINETAG
+#define OPT_SCALECHAROFFSETS 52 // apply character scaling to the sprite offsets (z, locked offs)
+#define OPT_HIGHESTOPTION   OPT_SCALECHAROFFSETS
 #define OPT_NOMODMUSIC      98 // [DEPRECATED]
 #define OPT_LIPSYNCTEXT     99
 

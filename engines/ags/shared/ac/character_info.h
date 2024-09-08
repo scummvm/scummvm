@@ -130,7 +130,6 @@ struct CharacterInfo {
 	char  scrname[MAX_SCRIPT_NAME_LEN];
 	int8  on;
 
-	int get_effective_y() const;   // return Y - Z
 	int get_baseline() const;      // return baseline, or Y if not set
 	int get_blocking_top() const;    // return Y - BlockingHeight/2
 	int get_blocking_bottom() const; // return Y + BlockingHeight/2
