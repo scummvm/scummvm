@@ -515,25 +515,25 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 		_engine->_extra->affSpecial(extraIdx, projPos.x, projPos.y, renderRect);
 	} else {
 		const SpriteData &spritePtr = _engine->_resources->_spriteData[extra->sprite];
-		const int32 spriteWidth = spritePtr.surface().w;
-		const int32 spriteHeight = spritePtr.surface().h;
+		const int32 dx = spritePtr.surface().w;
+		const int32 dy = spritePtr.surface().h;
 
 		// calculate sprite position on screen
 		const SpriteDim *dim = _engine->_resources->_spriteBoundingBox.dim(extra->sprite);
 		renderRect.left = projPos.x + dim->x;
 		renderRect.top = projPos.y + dim->y;
-		renderRect.right = renderRect.left + spriteWidth;
-		renderRect.bottom = renderRect.top + spriteHeight;
+		renderRect.right = renderRect.left + dx;
+		renderRect.bottom = renderRect.top + dy;
 
 		_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
 	}
 
 	if (_engine->_interface->setClip(renderRect)) {
-		const int32 tmpX = (extra->pos.x + DEMI_BRICK_XZ) / SIZE_BRICK_XZ;
-		const int32 tmpY = extra->pos.y / SIZE_BRICK_Y;
-		const int32 tmpZ = (extra->pos.z + DEMI_BRICK_XZ) / SIZE_BRICK_XZ;
+		const int32 xm = (extra->pos.x + DEMI_BRICK_XZ) / SIZE_BRICK_XZ;
+		const int32 ym = extra->pos.y / SIZE_BRICK_Y;
+		const int32 zm = (extra->pos.z + DEMI_BRICK_XZ) / SIZE_BRICK_XZ;
 
-		_engine->_grid->drawOverBrick(tmpX, tmpY, tmpZ);
+		_engine->_grid->drawOverBrick(xm, ym, zm);
 		addRedrawArea(_engine->_interface->_clip);
 
 		// show clipping area
