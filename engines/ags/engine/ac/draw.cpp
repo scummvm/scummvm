@@ -1516,8 +1516,8 @@ void prepare_characters_for_drawing() {
 		ObjTexture &actsp = _GP(actsps)[charid + ACTSP_OBJSOFF];
 
 		// Calculate sprite top-left position in the room and baseline
-		const int atx = chin.actx + chin.pic_xoffs;
-		const int aty = chin.acty + chin.pic_yoffs;
+		const int atx = chin.actx + chin.pic_xoffs * chex.zoom_offs / 100;
+		const int aty = chin.acty + chin.pic_yoffs * chex.zoom_offs / 100;
 		int usebasel = chin.get_baseline();
 
         // Generate raw bitmap in ObjTexture and store parameters in ObjectCache.

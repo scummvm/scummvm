@@ -27,6 +27,10 @@ namespace AGS3 {
 
 using AGS::Shared::Stream;
 
+int CharacterExtras::GetEffectiveY(CharacterInfo *chi) const {
+	return chi->y - (chi->z * zoom_offs) / 100;
+}
+
 int CharacterExtras::GetFrameSoundVolume(CharacterInfo *chi) const {
 	return AGS3::CalcFrameSoundVolume(
 		anim_volume, cur_anim_volume,
