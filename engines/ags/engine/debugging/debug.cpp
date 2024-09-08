@@ -32,7 +32,6 @@
 #include "ags/engine/debugging/debugger.h"
 #include "ags/shared/debugging/debug_manager.h"
 #include "ags/shared/debugging/out.h"
-#include "ags/engine/debugging/console_output_target.h"
 #include "ags/engine/debugging/log_file.h"
 #include "ags/engine/debugging/message_buffer.h"
 #include "ags/engine/main/config.h"
@@ -91,7 +90,6 @@ void send_message_to_debugger(const std::vector<std::pair<String, String> > &tag
 static const char *OutputMsgBufID = "buffer";
 static const char *OutputFileID = "file";
 static const char *OutputSystemID = "stdout";
-static const char *OutputGameConsoleID = "console";
 
 PDebugOutput create_log_output(const String &name, const String &path = "", LogFile::OpenMode open_mode = LogFile::kLogFile_Overwrite) {
 	// Else create new one, if we know this ID
@@ -110,9 +108,6 @@ PDebugOutput create_log_output(const String &name, const String &path = "", LogF
 		Debug::Printf(kDbgMsg_Info, "Logging to %s", logfile_path.GetCStr());
 		auto dbgout = _GP(DbgMgr).RegisterOutput(OutputFileID, _GP(DebugLogFile).get(), kDbgMsg_None);
 		return dbgout;
-	} else if (name.CompareNoCase(OutputGameConsoleID) == 0) {
-		_GP(DebugConsole).reset(new ConsoleOutputTarget());
-		return _GP(DbgMgr).RegisterOutput(OutputGameConsoleID, _GP(DebugConsole).get(), kDbgMsg_None);
 	}
 	return nullptr;
 }
@@ -243,17 +238,6 @@ void apply_debug_config(const ConfigTree &cfg) {
 #endif
 	});
 
-	// Init game console if the game was compiled in Debug mode or is run in test mode
-	if (_GP(game).options[OPT_DEBUGMODE] != 0 || (_G(debug_flags) & DBG_DEBUGMODE) != 0) {
-		apply_log_config(cfg, OutputGameConsoleID,
-		                 /* defaults */
-		true, {
-			DbgGroupOption(kDbgGroup_Main, kDbgMsg_All),
-			DbgGroupOption(kDbgGroup_Game, kDbgMsg_All)
-		});
-		debug_set_console(true);
-	}
-
 	// If the game was compiled in Debug mode *and* there's no regular file log,
 	// then open "warnings.log" for printing script warnings.
 	if (_GP(game).options[OPT_DEBUGMODE] != 0 && !_GP(DebugLogFile)) {
@@ -273,12 +257,6 @@ void shutdown_debug() {
 
 	_GP(DebugMsgBuff).reset();
 	_GP(DebugLogFile).reset();
-	_GP(DebugConsole).reset();
-}
-
-void debug_set_console(bool enable) {
-	if (_GP(DebugConsole))
-		_GP(DbgMgr).GetOutput(OutputGameConsoleID)->SetEnabled(enable);
 }
 
 // Prepends message text with current room number and running script info, then logs result
