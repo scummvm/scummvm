@@ -59,7 +59,7 @@ void Scene::setActorStaticFlags(ActorStruct *act, uint32 staticFlags) {
 		act->_staticFlags.bIsZonable = 1;
 	}
 	if (staticFlags & 0x8) {
-		act->_staticFlags.bUsesClipping = 1;
+		act->_staticFlags.bSpriteClip = 1;
 	}
 	if (staticFlags & 0x10) {
 		act->_staticFlags.bCanBePushed = 1;
@@ -81,7 +81,7 @@ void Scene::setActorStaticFlags(ActorStruct *act, uint32 staticFlags) {
 		act->_staticFlags.bIsHidden = 1;
 	}
 	if (staticFlags & 0x400) {
-		act->_staticFlags.bIsSpriteActor = 1;
+		act->_staticFlags.bSprite3D = 1;
 	}
 	if (staticFlags & 0x800) {
 		act->_staticFlags.bCanFall = 1;
@@ -235,9 +235,9 @@ bool Scene::loadSceneLBA2() {
 		act->_genBody = (BodyType)stream.readSint16LE();
 		act->_genAnim = (AnimationTypes)stream.readByte();
 		act->_sprite = (int16)stream.readUint16LE();
-		act->_pos.x = (int16)stream.readUint16LE();
-		act->_pos.y = (int16)stream.readUint16LE();
-		act->_pos.z = (int16)stream.readUint16LE();
+		act->_posObj.x = (int16)stream.readUint16LE();
+		act->_posObj.y = (int16)stream.readUint16LE();
+		act->_posObj.z = (int16)stream.readUint16LE();
 		act->_oldPos = act->posObj();
 		act->_strengthOfHit = stream.readByte();
 		setBonusParameterFlags(act, stream.readUint16LE());
@@ -367,9 +367,9 @@ bool Scene::loadSceneLBA1() {
 		act->_genBody = (BodyType)stream.readByte();
 		act->_genAnim = (AnimationTypes)stream.readByte();
 		act->_sprite = (int16)stream.readUint16LE();
-		act->_pos.x = (int16)stream.readUint16LE();
-		act->_pos.y = (int16)stream.readUint16LE();
-		act->_pos.z = (int16)stream.readUint16LE();
+		act->_posObj.x = (int16)stream.readUint16LE();
+		act->_posObj.y = (int16)stream.readUint16LE();
+		act->_posObj.z = (int16)stream.readUint16LE();
 		act->_oldPos = act->posObj();
 		act->_strengthOfHit = stream.readByte();
 		setBonusParameterFlags(act, stream.readUint16LE());
@@ -433,11 +433,11 @@ bool Scene::loadSceneLBA1() {
 	if (_enableEnhancements) {
 		switch (_currentSceneIdx) {
 		case LBA1SceneId::Hamalayi_Mountains_landing_place:
-			_sceneActors[21]._pos.x = _sceneActors[21]._oldPos.x = 6656 + 256;
-			_sceneActors[21]._pos.z = _sceneActors[21]._oldPos.z = 768;
+			_sceneActors[21]._posObj.x = _sceneActors[21]._oldPos.x = 6656 + 256;
+			_sceneActors[21]._posObj.z = _sceneActors[21]._oldPos.z = 768;
 			break;
 		case LBA1SceneId::Principal_Island_outside_the_fortress:
-			_sceneActors[29]._pos.z = _sceneActors[29]._oldPos.z = 1795;
+			_sceneActors[29]._posObj.z = _sceneActors[29]._oldPos.z = 1795;
 #if 0
 			_sceneZones[15].mins.x = 1104;
 			_sceneZones[15].mins.z = 8448;
@@ -601,7 +601,7 @@ void Scene::changeScene() {
 		_newHeroPos = _sceneHeroPos;
 	}
 
-	_sceneHero->_pos = _newHeroPos;
+	_sceneHero->_posObj = _newHeroPos;
 	_startYFalling = _newHeroPos.y;
 
 	_engine->_renderer->setLightVector(_alphaLight, _betaLight, LBAAngles::ANGLE_0);
@@ -727,7 +727,7 @@ void Scene::processZoneExtraBonus(ZoneStruct *zone) {
 	const int32 amount = zone->infoData.Bonus.amount;
 	const int32 x = (zone->maxs.x + zone->mins.x) / 2;
 	const int32 z = (zone->maxs.z + zone->mins.z) / 2;
-	const int32 angle = _engine->_movements->getAngle(x, z, _sceneHero->_pos.x, _sceneHero->_pos.z);
+	const int32 angle = _engine->_movements->getAngle(x, z, _sceneHero->_posObj.x, _sceneHero->_posObj.z);
 	const int32 index = _engine->_extra->addExtraBonus(x, zone->maxs.y, z, LBAAngles::ANGLE_63, angle, bonusSprite, amount);
 
 	if (index != -1) {
@@ -739,9 +739,9 @@ void Scene::processZoneExtraBonus(ZoneStruct *zone) {
 void Scene::checkZoneSce(int32 actorIdx) {
 	ActorStruct *actor = &_sceneActors[actorIdx];
 
-	int32 currentX = actor->_pos.x;
-	int32 currentY = actor->_pos.y;
-	int32 currentZ = actor->_pos.z;
+	int32 currentX = actor->_posObj.x;
+	int32 currentY = actor->_posObj.y;
+	int32 currentZ = actor->_posObj.z;
 
 	actor->_zoneSce = -1;
 	bool tmpCellingGrid = false;
@@ -763,9 +763,9 @@ void Scene::checkZoneSce(int32 actorIdx) {
 			case ZoneType::kCube:
 				if (IS_HERO(actorIdx) && actor->_lifePoint > 0) {
 					_needChangeScene = zone->num;
-					_zoneHeroPos.x = actor->_pos.x - zone->mins.x + zone->infoData.ChangeScene.x;
-					_zoneHeroPos.y = actor->_pos.y - zone->mins.y + zone->infoData.ChangeScene.y;
-					_zoneHeroPos.z = actor->_pos.z - zone->mins.z + zone->infoData.ChangeScene.z;
+					_zoneHeroPos.x = actor->_posObj.x - zone->mins.x + zone->infoData.ChangeScene.x;
+					_zoneHeroPos.y = actor->_posObj.y - zone->mins.y + zone->infoData.ChangeScene.y;
+					_zoneHeroPos.z = actor->_posObj.z - zone->mins.z + zone->infoData.ChangeScene.z;
 					_heroPositionType = ScenePositionType::kZone;
 				}
 				break;
@@ -821,9 +821,9 @@ void Scene::checkZoneSce(int32 actorIdx) {
 					destPos.y += actor->_processActor.z;
 
 					if (destPos.x >= 0 && destPos.y >= 0 && destPos.x <= SCENE_SIZE_MAX && destPos.y <= SCENE_SIZE_MAX) {
-						if (_engine->_grid->worldColBrick(destPos.x, actor->_pos.y + SIZE_BRICK_Y, destPos.y) != ShapeType::kNone) {
+						if (_engine->_grid->worldColBrick(destPos.x, actor->_posObj.y + SIZE_BRICK_Y, destPos.y) != ShapeType::kNone) {
 							_flagClimbing = true;
-							if (actor->_pos.y >= (zone->mins.y + zone->maxs.y) / 2) {
+							if (actor->_posObj.y >= (zone->mins.y + zone->maxs.y) / 2) {
 								_engine->_animations->initAnim(AnimationTypes::kTopLadder, AnimType::kAnimationAllThen, AnimationTypes::kStanding, actorIdx); // reached end of ladder
 							} else {
 								_engine->_animations->initAnim(AnimationTypes::kClimbLadder, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, actorIdx); // go up in ladder

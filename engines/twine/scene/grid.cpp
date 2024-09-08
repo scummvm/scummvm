@@ -831,9 +831,9 @@ uint8 Grid::worldCodeBrick(int32 x, int32 y, int32 z) {
 }
 
 void Grid::centerOnActor(const ActorStruct* actor) {
-	_newCamera.x = (actor->_pos.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
-	_newCamera.y = (actor->_pos.y + SIZE_BRICK_Y) / SIZE_BRICK_Y;
-	_newCamera.z = (actor->_pos.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
+	_newCamera.x = (actor->_posObj.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
+	_newCamera.y = (actor->_posObj.y + SIZE_BRICK_Y) / SIZE_BRICK_Y;
+	_newCamera.z = (actor->_posObj.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
 	_engine->_redraw->_firstTime = true;
 }
 
@@ -846,14 +846,14 @@ void Grid::centerScreenOnActor() {
 	}
 
 	ActorStruct *actor = _engine->_scene->getActor(_engine->_scene->_currentlyFollowedActor);
-	const IVec3 projPos = _engine->_renderer->projectPoint(actor->_pos.x - (_newCamera.x * SIZE_BRICK_XZ),
-	                                   actor->_pos.y - (_newCamera.y * SIZE_BRICK_Y),
-	                                   actor->_pos.z - (_newCamera.z * SIZE_BRICK_XZ));
+	const IVec3 projPos = _engine->_renderer->projectPoint(actor->_posObj.x - (_newCamera.x * SIZE_BRICK_XZ),
+	                                   actor->_posObj.y - (_newCamera.y * SIZE_BRICK_Y),
+	                                   actor->_posObj.z - (_newCamera.z * SIZE_BRICK_XZ));
 	// TODO: these border values should get scaled for higher resolutions
 	if (projPos.x < 80 || projPos.x >= _engine->width() - 60 || projPos.y < 80 || projPos.y >= _engine->height() - 50) {
-		_newCamera.x = ((actor->_pos.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ) + (((actor->_pos.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ) - _newCamera.x) / 2;
-		_newCamera.y = actor->_pos.y / SIZE_BRICK_Y;
-		_newCamera.z = ((actor->_pos.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ) + (((actor->_pos.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ) - _newCamera.z) / 2;
+		_newCamera.x = ((actor->_posObj.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ) + (((actor->_posObj.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ) - _newCamera.x) / 2;
+		_newCamera.y = actor->_posObj.y / SIZE_BRICK_Y;
+		_newCamera.z = ((actor->_posObj.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ) + (((actor->_posObj.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ) - _newCamera.z) / 2;
 
 		if (_newCamera.x >= SIZE_CUBE_X) {
 			_newCamera.x = SIZE_CUBE_X - 1;

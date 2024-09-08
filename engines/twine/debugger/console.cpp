@@ -369,7 +369,7 @@ bool TwinEConsole::doListMenuText(int argc, const char **argv) {
 }
 
 bool TwinEConsole::doSetHeroPosition(int argc, const char **argv) {
-	IVec3 &pos = _engine->_scene->_sceneHero->_pos;
+	IVec3 &pos = _engine->_scene->_sceneHero->_posObj;
 	if (argc < 4) {
 		debugPrintf("Current hero position: %i:%i:%i\n", pos.x, pos.y, pos.z);
 		return true;

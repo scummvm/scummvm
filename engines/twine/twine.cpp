@@ -780,9 +780,9 @@ void TwinEEngine::processInventoryAction() {
 
 		const IVec2 &destPos = _renderer->rotate(0, 800, _scene->_sceneHero->_beta);
 
-		penguin->_pos = _scene->_sceneHero->posObj();
-		penguin->_pos.x += destPos.x;
-		penguin->_pos.z += destPos.y;
+		penguin->_posObj = _scene->_sceneHero->posObj();
+		penguin->_posObj.x += destPos.x;
+		penguin->_posObj.z += destPos.y;
 		// TODO: HACK for https://bugs.scummvm.org/ticket/13731
 		// The movement of the meca penguin is different from dos version
 		// the problem is that the value set to 1 even if the penguin is not yet spawned
@@ -1068,7 +1068,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		if (actor->_staticFlags.bCanDrown) {
-			const uint8 brickSound = _grid->worldCodeBrick(actor->_pos.x, actor->_pos.y - 1, actor->_pos.z);
+			const uint8 brickSound = _grid->worldCodeBrick(actor->_posObj.x, actor->_posObj.y - 1, actor->_posObj.z);
 			actor->_brickSound = brickSound;
 
 			if (brickSound == WATER_BRICK) {
@@ -1100,7 +1100,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			if (IS_HERO(a)) {
 				if (actor->_workFlags.bAnimEnded) {
 					if (_gameState->_inventoryNumLeafs > 0) { // use clover leaf automaticaly
-						_scene->_sceneHero->_pos = _scene->_newHeroPos;
+						_scene->_sceneHero->_posObj = _scene->_newHeroPos;
 
 						_scene->_needChangeScene = _scene->_currentSceneIdx;
 						_gameState->setMaxMagicPoints();

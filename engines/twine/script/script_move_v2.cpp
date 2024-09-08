@@ -149,7 +149,7 @@ int32 ScriptMoveV2::mWAIT_NB_SECOND_RND(TwinEEngine *engine, MoveScriptContext &
 
 int32 ScriptMoveV2::mSPRITE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int16 num = ctx.stream.readSint16LE();
-	if (ctx.actor->_staticFlags.bIsSpriteActor) {
+	if (ctx.actor->_staticFlags.bSprite3D) {
 		engine->_actor->initSprite(num, ctx.actorIdx);
 	}
 	return 0;
@@ -157,7 +157,7 @@ int32 ScriptMoveV2::mSPRITE(TwinEEngine *engine, MoveScriptContext &ctx) {
 
 int32 ScriptMoveV2::mSET_FRAME(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const uint8 num = ctx.stream.readByte();
-	if (!ctx.actor->_staticFlags.bIsSpriteActor) {
+	if (!ctx.actor->_staticFlags.bSprite3D) {
 		engine->_actor->setFrame(ctx.actorIdx, num);
 	}
 	return 0;

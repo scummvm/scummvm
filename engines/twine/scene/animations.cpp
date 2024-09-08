@@ -287,12 +287,12 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 			break;
 		case ActionType::ACTION_THROW_EXTRA_BONUS:
 			if (action.animFrame == actor->_frame) {
-				_engine->_extra->throwExtra(actorIdx, actor->_pos.x, actor->_pos.y + action.yHeight, actor->_pos.z, action.spriteIndex, action.xAngle, actor->_beta + action.yAngle, action.xRotPoint, action.extraAngle, action.strength);
+				_engine->_extra->throwExtra(actorIdx, actor->_posObj.x, actor->_posObj.y + action.yHeight, actor->_posObj.z, action.spriteIndex, action.xAngle, actor->_beta + action.yAngle, action.xRotPoint, action.extraAngle, action.strength);
 			}
 			break;
 		case ActionType::ACTION_THROW_MAGIC_BALL:
 			if (_engine->_gameState->_magicBall == -1 && action.animFrame == actor->_frame) {
-				_engine->_extra->addExtraThrowMagicball(actor->_pos.x, actor->_pos.y + action.yHeight, actor->_pos.z, action.xAngle, actor->_beta + action.yAngle, action.xRotPoint, action.extraAngle);
+				_engine->_extra->addExtraThrowMagicball(actor->_posObj.x, actor->_posObj.y + action.yHeight, actor->_posObj.z, action.xAngle, actor->_beta + action.yAngle, action.xRotPoint, action.extraAngle);
 			}
 			break;
 		case ActionType::ACTION_SAMPLE_REPEAT:
@@ -302,12 +302,12 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 			break;
 		case ActionType::ACTION_THROW_SEARCH:
 			if (action.animFrame == actor->_frame) {
-				_engine->_extra->addExtraAiming(actorIdx, actor->_pos.x, actor->_pos.y + action.yHeight, actor->_pos.z, action.spriteIndex, action.targetActor, action.finalAngle, action.strength);
+				_engine->_extra->addExtraAiming(actorIdx, actor->_posObj.x, actor->_posObj.y + action.yHeight, actor->_posObj.z, action.spriteIndex, action.targetActor, action.finalAngle, action.strength);
 			}
 			break;
 		case ActionType::ACTION_THROW_ALPHA:
 			if (action.animFrame == actor->_frame) {
-				_engine->_extra->throwExtra(actorIdx, actor->_pos.x, actor->_pos.y + action.yHeight, actor->_pos.z, action.spriteIndex, action.xAngle, actor->_beta + action.yAngle, action.xRotPoint, action.extraAngle, action.strength);
+				_engine->_extra->throwExtra(actorIdx, actor->_posObj.x, actor->_posObj.y + action.yHeight, actor->_posObj.z, action.spriteIndex, action.xAngle, actor->_beta + action.yAngle, action.xRotPoint, action.extraAngle, action.strength);
 			}
 			break;
 		case ActionType::ACTION_SAMPLE_STOP:
@@ -337,9 +337,9 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 			if (action.animFrame == actor->_frame) {
 				const IVec2 &destPos = _engine->_renderer->rotate(action.distanceX, action.distanceZ, actor->_beta);
 
-				const int32 throwX = destPos.x + actor->_pos.x;
-				const int32 throwY = action.distanceY + actor->_pos.y;
-				const int32 throwZ = destPos.y + actor->_pos.z;
+				const int32 throwX = destPos.x + actor->_posObj.x;
+				const int32 throwY = action.distanceY + actor->_posObj.y;
+				const int32 throwZ = destPos.y + actor->_posObj.z;
 
 				_engine->_extra->throwExtra(actorIdx, throwX, throwY, throwZ, action.spriteIndex,
 				                               action.xAngle, action.yAngle + actor->_beta, action.xRotPoint, action.extraAngle, action.strength);
@@ -348,13 +348,13 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 		case ActionType::ACTION_THROW_3D_ALPHA:
 			if (action.animFrame == actor->_frame) {
 				const int32 distance = getDistance2D(actor->posObj(), _engine->_scene->_sceneHero->posObj());
-				const int32 newAngle = _engine->_movements->getAngle(actor->_pos.y, 0, _engine->_scene->_sceneHero->_pos.y, distance);
+				const int32 newAngle = _engine->_movements->getAngle(actor->_posObj.y, 0, _engine->_scene->_sceneHero->_posObj.y, distance);
 
 				const IVec2 &destPos = _engine->_renderer->rotate(action.distanceX, action.distanceZ, actor->_beta);
 
-				const int32 throwX = destPos.x + actor->_pos.x;
-				const int32 throwY = action.distanceY + actor->_pos.y;
-				const int32 throwZ = destPos.y + actor->_pos.z;
+				const int32 throwX = destPos.x + actor->_posObj.x;
+				const int32 throwY = action.distanceY + actor->_posObj.y;
+				const int32 throwZ = destPos.y + actor->_posObj.z;
 
 				_engine->_extra->throwExtra(actorIdx, throwX, throwY, throwZ, action.spriteIndex,
 				                               action.xAngle + newAngle, action.yAngle + actor->_beta, action.xRotPoint, action.extraAngle, action.strength);
@@ -363,9 +363,9 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 		case ActionType::ACTION_THROW_3D_SEARCH:
 			if (action.animFrame == actor->_frame) {
 				const IVec2 &destPos = _engine->_renderer->rotate(action.distanceX, action.distanceZ, actor->_beta);
-				const int32 x = actor->_pos.x + destPos.x;
-				const int32 y = actor->_pos.y + action.distanceY;
-				const int32 z = actor->_pos.z + destPos.y;
+				const int32 x = actor->_posObj.x + destPos.x;
+				const int32 y = actor->_posObj.y + action.distanceY;
+				const int32 z = actor->_posObj.z + destPos.y;
 				_engine->_extra->addExtraAiming(actorIdx, x, y, z, action.spriteIndex,
 				                                action.targetActor, action.finalAngle, action.strength);
 			}
@@ -373,9 +373,9 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 		case ActionType::ACTION_THROW_3D_MAGIC:
 			if (_engine->_gameState->_magicBall == -1 && action.animFrame == actor->_frame) {
 				const IVec2 &destPos = _engine->_renderer->rotate(action.distanceX, action.distanceZ, actor->_beta);
-				const int32 x = actor->_pos.x + destPos.x;
-				const int32 y = actor->_pos.y + action.distanceY;
-				const int32 z = actor->_pos.z + destPos.y;
+				const int32 x = actor->_posObj.x + destPos.x;
+				const int32 y = actor->_posObj.y + action.distanceY;
+				const int32 z = actor->_posObj.z + destPos.y;
 				_engine->_extra->addExtraThrowMagicball(x, y, z, action.xAngle, actor->_beta, action.yAngle, action.finalAngle);
 			}
 			break;
@@ -392,7 +392,7 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType flag, AnimationTypes 
 		return false;
 	}
 
-	if (actor->_staticFlags.bIsSpriteActor) {
+	if (actor->_staticFlags.bSprite3D) {
 		return false;
 	}
 
@@ -470,7 +470,7 @@ void Animations::doAnim(int32 actorIdx) {
 	const IVec3 &oldPos = actor->_oldPos;
 
 	IVec3 &processActor = actor->_processActor;
-	if (actor->_staticFlags.bIsSpriteActor) {
+	if (actor->_staticFlags.bSprite3D) {
 		if (actor->_strengthOfHit) {
 			actor->_workFlags.bIsHitting = 1;
 		}
@@ -490,12 +490,12 @@ void Animations::doAnim(int32 actorIdx) {
 
 				const IVec2 xRotPos = _engine->_renderer->rotate(xAxisRotation, 0, actor->_spriteActorRotation);
 
-				processActor.y = actor->_pos.y - xRotPos.y;
+				processActor.y = actor->_posObj.y - xRotPos.y;
 
 				const IVec2 destPos = _engine->_renderer->rotate(0, xRotPos.x, actor->_beta);
 
-				processActor.x = actor->_pos.x + destPos.x;
-				processActor.z = actor->_pos.z + destPos.y;
+				processActor.x = actor->_posObj.x + destPos.x;
+				processActor.z = actor->_posObj.z + destPos.y;
 
 				_engine->_movements->setActorAngle(LBAAngles::ANGLE_0, actor->_speed, LBAAngles::ANGLE_17, &actor->realAngle);
 
@@ -654,7 +654,7 @@ void Animations::doAnim(int32 actorIdx) {
 		if (col != ShapeType::kNone) {
 			if (col == ShapeType::kSolid) {
 				processActor.y = (processActor.y / SIZE_BRICK_Y) * SIZE_BRICK_Y + SIZE_BRICK_Y; // go upper
-				actor->_pos.y = processActor.y;
+				actor->_posObj.y = processActor.y;
 			} else {
 				collision->reajustPos(processActor, col);
 			}
@@ -701,7 +701,7 @@ void Animations::doAnim(int32 actorIdx) {
 
 			if (destPos.x >= 0 && destPos.y >= 0 && destPos.x <= SCENE_SIZE_MAX && destPos.y <= SCENE_SIZE_MAX) {
 				if (_engine->_grid->worldColBrick(destPos.x, processActor.y + SIZE_BRICK_Y, destPos.y) != ShapeType::kNone && _engine->_cfgfile.WallCollision) { // avoid wall hit damage
-					_engine->_extra->initSpecial(actor->_pos.x, actor->_pos.y + 1000, actor->_pos.z, ExtraSpecialType::kHitStars);
+					_engine->_extra->initSpecial(actor->_posObj.x, actor->_posObj.y + 1000, actor->_posObj.z, ExtraSpecialType::kHitStars);
 					initAnim(AnimationTypes::kBigHit, AnimType::kAnimationAllThen, AnimationTypes::kStanding, actorIdx);
 
 					if (IS_HERO(actorIdx)) {
@@ -723,7 +723,7 @@ void Animations::doAnim(int32 actorIdx) {
 					processActor.y = (collision->_collision.y * SIZE_BRICK_Y) + SIZE_BRICK_Y;
 				} else {
 					if (IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_genAnim == AnimationTypes::kForward && _engine->_cfgfile.WallCollision) { // avoid wall hit damage
-						_engine->_extra->initSpecial(actor->_pos.x, actor->_pos.y + 1000, actor->_pos.z, ExtraSpecialType::kHitStars);
+						_engine->_extra->initSpecial(actor->_posObj.x, actor->_posObj.y + 1000, actor->_posObj.z, ExtraSpecialType::kHitStars);
 						initAnim(AnimationTypes::kBigHit, AnimType::kAnimationAllThen, AnimationTypes::kStanding, actorIdx);
 						_engine->_movements->_lastJoyFlag = true;
 						actor->addLife(-1);
@@ -821,7 +821,7 @@ void Animations::doAnim(int32 actorIdx) {
 		processActor.z = SCENE_SIZE_MAX;
 	}
 
-	actor->_pos = processActor;
+	actor->_posObj = processActor;
 }
 
 } // namespace TwinE

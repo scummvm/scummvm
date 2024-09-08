@@ -96,9 +96,9 @@ int32 ScriptMove::mGOTO_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::GOTO_POINT(%i)", (int)engine->_scene->_currentScriptValue);
 
 	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
-	const int32 newAngle = engine->_movements->getAngle(ctx.actor->_pos.x, ctx.actor->_pos.z, sp.x, sp.z);
+	const int32 newAngle = engine->_movements->getAngle(ctx.actor->_posObj.x, ctx.actor->_posObj.z, sp.x, sp.z);
 
-	if (ctx.actor->_staticFlags.bIsSpriteActor) {
+	if (ctx.actor->_staticFlags.bSprite3D) {
 		ctx.actor->_beta = newAngle;
 	} else {
 		engine->_movements->initRealAngleConst(ctx.actor->_beta, newAngle, ctx.actor->_speed, &ctx.actor->realAngle);
@@ -144,7 +144,7 @@ int32 ScriptMove::mLOOP(TwinEEngine *engine, MoveScriptContext &ctx) {
 int32 ScriptMove::mANGLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int16 angle = ToAngle(ctx.stream.readSint16LE());
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::ANGLE(%i)", (int)angle);
-	if (ctx.actor->_staticFlags.bIsSpriteActor) {
+	if (ctx.actor->_staticFlags.bSprite3D) {
 		return 0;
 	}
 	engine->_scene->_currentScriptValue = angle;
@@ -168,11 +168,11 @@ int32 ScriptMove::mPOS_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::POS_POINT(%i)", (int)engine->_scene->_currentScriptValue);
 
 	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
-	if (ctx.actor->_staticFlags.bIsSpriteActor) {
+	if (ctx.actor->_staticFlags.bSprite3D) {
 		ctx.actor->_speed = 0;
 	}
 
-	ctx.actor->_pos = sp;
+	ctx.actor->_posObj = sp;
 
 	return 0;
 }
@@ -226,9 +226,9 @@ int32 ScriptMove::mGOTO_SYM_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::GOTO_SYM_POINT(%i)", (int)engine->_scene->_currentScriptValue);
 
 	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
-	const int32 newAngle = LBAAngles::ANGLE_180 + engine->_movements->getAngle(ctx.actor->_pos, sp);
+	const int32 newAngle = LBAAngles::ANGLE_180 + engine->_movements->getAngle(ctx.actor->_posObj, sp);
 
-	if (ctx.actor->_staticFlags.bIsSpriteActor) {
+	if (ctx.actor->_staticFlags.bSprite3D) {
 		ctx.actor->_beta = newAngle;
 	} else {
 		engine->_movements->initRealAngleConst(ctx.actor->_beta, newAngle, ctx.actor->_speed, &ctx.actor->realAngle);
@@ -291,21 +291,21 @@ int32 ScriptMove::mSAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 int32 ScriptMove::mGOTO_POINT_3D(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int32 trackId = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::GOTO_POINT_3D(%i)", (int)trackId);
-	if (!ctx.actor->_staticFlags.bIsSpriteActor) {
+	if (!ctx.actor->_staticFlags.bSprite3D) {
 		return 0;
 	}
 
 	engine->_scene->_currentScriptValue = trackId;
 
 	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
-	ctx.actor->_beta = engine->_movements->getAngle(ctx.actor->_pos.x, ctx.actor->_pos.z, sp.x, sp.z);
-	ctx.actor->_spriteActorRotation = engine->_movements->getAngle(ctx.actor->_pos.y, 0, sp.y, engine->_movements->_targetActorDistance);
+	ctx.actor->_beta = engine->_movements->getAngle(ctx.actor->_posObj.x, ctx.actor->_posObj.z, sp.x, sp.z);
+	ctx.actor->_spriteActorRotation = engine->_movements->getAngle(ctx.actor->_posObj.y, 0, sp.y, engine->_movements->_targetActorDistance);
 
 	if (engine->_movements->_targetActorDistance > 100) {
 		ctx.undo(1);
 		return 1;
 	}
-	ctx.actor->_pos = sp;
+	ctx.actor->_posObj = sp;
 
 	return 0;
 }
@@ -318,7 +318,7 @@ int32 ScriptMove::mSPEED(TwinEEngine *engine, MoveScriptContext &ctx) {
 	ctx.actor->_speed = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::SPEED(%i)", (int)ctx.actor->_speed);
 
-	if (ctx.actor->_staticFlags.bIsSpriteActor) {
+	if (ctx.actor->_staticFlags.bSprite3D) {
 		engine->_movements->setActorAngle(LBAAngles::ANGLE_0, ctx.actor->_speed, LBAAngles::ANGLE_17, &ctx.actor->realAngle);
 	}
 
@@ -335,14 +335,14 @@ int32 ScriptMove::mBACKGROUND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	if (val != 0) {
 		if (!ctx.actor->_staticFlags.bIsBackgrounded) {
 			ctx.actor->_staticFlags.bIsBackgrounded = 1;
-			if (ctx.actor->_workFlags.bIsDrawn) {
+			if (ctx.actor->_workFlags.bWasDrawn) {
 				engine->_redraw->_firstTime = true;
 			}
 		}
 	} else {
 		if (ctx.actor->_staticFlags.bIsBackgrounded) {
 			ctx.actor->_staticFlags.bIsBackgrounded = 0;
-			if (ctx.actor->_workFlags.bIsDrawn) {
+			if (ctx.actor->_workFlags.bWasDrawn) {
 				engine->_redraw->_firstTime = true;
 			}
 		}
@@ -397,7 +397,7 @@ int32 ScriptMove::mBETA(TwinEEngine *engine, MoveScriptContext &ctx) {
 
 	ctx.actor->_beta = beta;
 
-	if (!ctx.actor->_staticFlags.bIsSpriteActor) {
+	if (!ctx.actor->_staticFlags.bSprite3D) {
 		engine->_movements->clearRealAngle(ctx.actor);
 	}
 
@@ -407,7 +407,7 @@ int32 ScriptMove::mBETA(TwinEEngine *engine, MoveScriptContext &ctx) {
 int32 ScriptMove::mOPEN_GENERIC(TwinEEngine *engine, MoveScriptContext &ctx, int32 angle) {
 	const int16 doorStatus = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::OPEN(%i, %i)", (int)doorStatus, angle);
-	if (ctx.actor->_staticFlags.bIsSpriteActor && ctx.actor->_staticFlags.bUsesClipping) {
+	if (ctx.actor->_staticFlags.bSprite3D && ctx.actor->_staticFlags.bSpriteClip) {
 		ctx.actor->_beta = angle;
 		ctx.actor->_doorWidth = doorStatus;
 		ctx.actor->_workFlags.bIsSpriteMoving = 1;
@@ -460,7 +460,7 @@ int32 ScriptMove::mOPEN_DOWN(TwinEEngine *engine, MoveScriptContext &ctx) {
  */
 int32 ScriptMove::mCLOSE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::CLOSE()");
-	if (ctx.actor->_staticFlags.bIsSpriteActor && ctx.actor->_staticFlags.bUsesClipping) {
+	if (ctx.actor->_staticFlags.bSprite3D && ctx.actor->_staticFlags.bSpriteClip) {
 		ctx.actor->_doorWidth = 0;
 		ctx.actor->_workFlags.bIsSpriteMoving = 1;
 		ctx.actor->_speed = -1000;
@@ -475,7 +475,7 @@ int32 ScriptMove::mCLOSE(TwinEEngine *engine, MoveScriptContext &ctx) {
  */
 int32 ScriptMove::mWAIT_DOOR(TwinEEngine *engine, MoveScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::WAIT_DOOR()");
-	if (ctx.actor->_staticFlags.bIsSpriteActor && ctx.actor->_staticFlags.bUsesClipping) {
+	if (ctx.actor->_staticFlags.bSprite3D && ctx.actor->_staticFlags.bSpriteClip) {
 		if (ctx.actor->_speed) {
 			ctx.undo(0);
 			return 1;
@@ -573,7 +573,7 @@ int32 ScriptMove::mSIMPLE_SAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 int32 ScriptMove::mFACE_HERO(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int16 angle = ToAngle(ctx.stream.readSint16LE());
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::FACE_HERO(%i)", (int)angle);
-	if (ctx.actor->_staticFlags.bIsSpriteActor) {
+	if (ctx.actor->_staticFlags.bSprite3D) {
 		return 0;
 	}
 	engine->_scene->_currentScriptValue = angle;
@@ -602,7 +602,7 @@ int32 ScriptMove::mANGLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int16 val1 = ctx.stream.readSint16LE();
 	const int16 val2 = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::LBAAngles::ANGLE_RND(%i, %i)", (int)val1, (int)val2);
-	if (ctx.actor->_staticFlags.bIsSpriteActor) {
+	if (ctx.actor->_staticFlags.bSprite3D) {
 		return 0;
 	}
 

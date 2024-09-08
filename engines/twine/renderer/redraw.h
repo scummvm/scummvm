@@ -66,22 +66,23 @@ struct OverlayListStruct {
 
 struct DrawListStruct {
 	// DrawActorSprites, DrawShadows, DrawExtras
-	int16 posValue = 0; // sorting value
+	int16 z = 0; // sorting value
+	// NumObj was a mask of type and actorIdx
 	uint32 type = 0;
 	uint16 actorIdx = 0;
 
 	// DrawShadows
-	uint16 x = 0;
-	uint16 y = 0;
-	uint16 z = 0;
-	uint16 offset = 0;
+	uint16 xw = 0;
+	uint16 yw = 0;
+	uint16 zw = 0;
+	uint16 num = 0;
 
 	inline bool operator==(const DrawListStruct& other) const {
-		return posValue == other.posValue;
+		return z == other.z;
 	}
 
 	inline bool operator<(const DrawListStruct& other) const {
-		return posValue < other.posValue;
+		return z < other.z;
 	}
 };
 
@@ -94,13 +95,13 @@ class Redraw {
 private:
 	TwinEEngine *_engine;
 	enum DrawListType {
-		DrawObject3D = (0 << TYPE_OBJ_SHIFT),
+		DrawObject3D = (0 << TYPE_OBJ_SHIFT), // TYPE_OBJ_3D
 		DrawFlagRed = (1 << TYPE_OBJ_SHIFT),
 		DrawFlagYellow = (2 << TYPE_OBJ_SHIFT),
-		DrawShadows = (3 << TYPE_OBJ_SHIFT),
-		DrawActorSprites = (4 << TYPE_OBJ_SHIFT),
+		DrawShadows = (3 << TYPE_OBJ_SHIFT), // TYPE_SHADOW
+		DrawActorSprites = (4 << TYPE_OBJ_SHIFT), // TYPE_OBJ_SPRITE
 		DrawZoneDec = (5 << TYPE_OBJ_SHIFT),
-		DrawExtras = (6 << TYPE_OBJ_SHIFT),
+		DrawExtras = (6 << TYPE_OBJ_SHIFT), // TYPE_EXTRA
 		DrawPrimitive = (7 << TYPE_OBJ_SHIFT)
 	};
 

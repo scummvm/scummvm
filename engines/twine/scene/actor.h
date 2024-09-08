@@ -62,14 +62,14 @@ struct StaticFlagsStruct {
 	uint32 bComputeCollisionWithObj : 1;    // 0x000001 CHECK_OBJ_COL
 	uint32 bComputeCollisionWithBricks : 1; // 0x000002 CHECK_BRICK_COL
 	uint32 bIsZonable : 1;                  // 0x000004 CHECK_ZONE - testing of scenaric areas
-	uint32 bUsesClipping : 1;               // 0x000008 SPRITE_CLIP - (doors) fixed clip area
+	uint32 bSpriteClip : 1;                 // 0x000008 SPRITE_CLIP - (doors) fixed clip area
 	uint32 bCanBePushed : 1;                // 0x000010 PUSHABLE
 	uint32 bComputeLowCollision : 1;        // 0x000020 COL_BASSE
 	uint32 bCanDrown : 1;                   // 0x000040 CHECK_CODE_JEU
 	uint32 bComputeCollisionWithFloor : 1;  // 0x000080 CHECK_WATER_COL
 	uint32 bUnk0100 : 1;                    // 0x000100
 	uint32 bIsHidden : 1;                   // 0x000200 INVISIBLE - not drawn but all computed
-	uint32 bIsSpriteActor : 1;              // 0x000400 SPRITE_3D - a sprite not a 3D object
+	uint32 bSprite3D : 1;                   // 0x000400 SPRITE_3D - a sprite not a 3D object
 	uint32 bCanFall : 1;                    // 0x000800 OBJ_FALLABLE
 	uint32 bDoesntCastShadow : 1;           // 0x001000 NO_SHADOW - no auto shadow
 	uint32 bIsBackgrounded : 1;             // 0x002000 OBJ_BACKGROUND - is embedded in the decor the 1st time
@@ -90,13 +90,13 @@ struct DynamicFlagsStruct {
 	uint32 bIsHitting : 1;               // 0x0002 OK_HIT - hit frame anim
 	uint32 bAnimEnded : 1;               // 0x0004 ANIM_END - anim ended in the current loop (will be looped in the next engine loop)
 	uint32 bAnimNewFrame : 1;            // 0x0008 NEW_FRAME - new frame anim reached
-	uint32 bIsDrawn : 1;                 // 0x0010 WAS_DRAWN - actor has been drawn in this loop
+	uint32 bWasDrawn : 1;                // 0x0010 WAS_DRAWN - actor has been drawn in this loop
 	uint32 bIsDead : 1;                  // 0x0020 OBJ_DEAD - is dead
 	uint32 bIsSpriteMoving : 1;          // 0x0040 AUTO_STOP_DOOR - door is opening or closing (wait to reach the destination position)
 	uint32 bIsRotationByAnim : 1;        // 0x0080 ANIM_MASTER_ROT - actor rotation is managed by its animation not by the engine
 	uint32 bIsFalling : 1;               // 0x0100 FALLING - is falling on scene
-	uint32 bIsTargetable : 1;            // 0x0200 OK_SUPER_HIT (lba2)
-	uint32 bIsBlinking : 1;              // 0x0400 FRAME_SHIELD (lba2)
+	uint32 bIsTargetable : 1;            // 0x0200 IS_TARGETABLE (lba1) OK_SUPER_HIT (lba2)
+	uint32 bIsBlinking : 1;              // 0x0400 IS_BLINKING (lba1) FRAME_SHIELD (lba2)
 	uint32 bWasWalkingBeforeFalling : 1; // 0x0800 DRAW_SHADOW (lba2) - bWasWalkingBeforeFalling in lba1
 	uint32 bUnk1000 : 1;                 // 0x1000 ANIM_MASTER_GRAVITY (lba2)
 	uint32 bUnk2000 : 1;                 // 0x2000 SKATING (lba2) Ouch! I slip in a forbidden collision
@@ -182,7 +182,7 @@ public:
 	EntityData *_entityDataPtr = nullptr;
 
 	int16 _actorIdx = 0; // own actor index
-	IVec3 _pos; // PosObjX, PosObjY, PosObjZ
+	IVec3 _posObj; // PosObjX, PosObjY, PosObjZ
 
 	// T_ANIM_3DS - Coord.A3DS
 	struct A3DSAnim {
@@ -254,7 +254,7 @@ public:
 };
 
 inline const IVec3 &ActorStruct::posObj() const {
-	return _pos;
+	return _posObj;
 }
 
 inline void ActorStruct::addLife(int32 val) {

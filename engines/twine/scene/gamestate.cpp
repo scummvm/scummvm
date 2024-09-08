@@ -347,17 +347,17 @@ void GameState::doFoundObj(InventoryItems item) {
 	itemCamera.z = _engine->_grid->_newCamera.z * SIZE_BRICK_XZ;
 
 	BodyData &bodyData = _engine->_resources->_bodyData[_engine->_scene->_sceneHero->_body];
-	const IVec3 bodyPos = _engine->_scene->_sceneHero->_pos - itemCamera;
+	const IVec3 bodyPos = _engine->_scene->_sceneHero->_posObj - itemCamera;
 	Common::Rect modelRect;
 	_engine->_renderer->renderIsoModel(bodyPos, LBAAngles::ANGLE_0, LBAAngles::ANGLE_45, LBAAngles::ANGLE_0, bodyData, modelRect);
 	_engine->_interface->setClip(modelRect);
 
-	const int32 itemX = (_engine->_scene->_sceneHero->_pos.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
-	int32 itemY = _engine->_scene->_sceneHero->_pos.y / SIZE_BRICK_Y;
+	const int32 itemX = (_engine->_scene->_sceneHero->_posObj.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
+	int32 itemY = _engine->_scene->_sceneHero->_posObj.y / SIZE_BRICK_Y;
 	if (_engine->_scene->_sceneHero->brickShape() != ShapeType::kNone) {
 		itemY++;
 	}
-	const int32 itemZ = (_engine->_scene->_sceneHero->_pos.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
+	const int32 itemZ = (_engine->_scene->_sceneHero->_posObj.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
 
 	_engine->_grid->drawOverBrick(itemX, itemY, itemZ);
 

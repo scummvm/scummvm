@@ -493,12 +493,12 @@ void Holomap::drawListPos(int calpha, int cbeta, int cgamma, bool pos) {
 			t |= HOLOMAP_VISITED; // model type
 		}
 		DrawListStruct &drawList = listTri[nbobjets];
-		drawList.posValue = destPos3.z;
+		drawList.z = destPos3.z;
 		drawList.actorIdx = n;
 		drawList.type = t;
-		drawList.x = m.x;
-		drawList.y = m.y;
-		drawList.z = m.z;
+		drawList.xw = m.x;
+		drawList.yw = m.y;
+		drawList.zw = m.z;
 		++nbobjets;
 	}
 	_engine->_redraw->sortDrawingList(listTri, nbobjets);
@@ -518,7 +518,7 @@ void Holomap::drawListPos(int calpha, int cbeta, int cgamma, bool pos) {
 			const int32 angleY = _listHoloPos[drawList.actorIdx].beta;
 			Common::Rect dummy;
 			// first scene with twinsen model: x = 0, y = -497, z -764, a 432, b: 172
-			_engine->_renderer->affObjetIso(drawList.x, drawList.y, drawList.z, angleX, angleY, LBAAngles::ANGLE_0, *bodyData, dummy);
+			_engine->_renderer->affObjetIso(drawList.xw, drawList.yw, drawList.zw, angleX, angleY, LBAAngles::ANGLE_0, *bodyData, dummy);
 		}
 	}
 }

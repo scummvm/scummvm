@@ -462,8 +462,8 @@ void Debug::processDebug() {
 	Input *input = _engine->_input;
 	if (input->isActionActive(TwinEActionType::DebugPlaceActorAtCenterOfScreen)) {
 		ActorStruct *actor = _engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX);
-		actor->_pos = _engine->_grid->_worldCube;
-		actor->_pos.y += 1000;
+		actor->_posObj = _engine->_grid->_worldCube;
+		actor->_posObj.y += 1000;
 	}
 
 	debugProcessWindow();

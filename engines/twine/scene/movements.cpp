@@ -419,7 +419,7 @@ void Movements::processFollowAction(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	const ActorStruct *followedActor = _engine->_scene->getActor(actor->_followedActor);
 	int32 newAngle = getAngle(actor->posObj(), followedActor->posObj());
-	if (actor->_staticFlags.bIsSpriteActor) {
+	if (actor->_staticFlags.bSprite3D) {
 		actor->_beta = newAngle;
 	} else {
 		initRealAngleConst(actor->_beta, newAngle, actor->_speed, &actor->realAngle);
@@ -459,8 +459,8 @@ void Movements::processTrackAction(int actorIdx) {
 void Movements::processSameXZAction(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	const ActorStruct *followedActor = _engine->_scene->getActor(actor->_followedActor);
-	actor->_pos.x = followedActor->_pos.x;
-	actor->_pos.z = followedActor->_pos.z;
+	actor->_posObj.x = followedActor->_posObj.x;
+	actor->_posObj.z = followedActor->_posObj.z;
 }
 
 void Movements::manualRealAngle(ActorStruct *actor) {
@@ -487,7 +487,7 @@ void Movements::doDir(int32 actorIdx) {
 		}
 		return;
 	}
-	if (!actor->_staticFlags.bIsSpriteActor && actor->_controlMode != ControlMode::kManual) {
+	if (!actor->_staticFlags.bSprite3D && actor->_controlMode != ControlMode::kManual) {
 		actor->_beta = actor->realAngle.getRealAngle(_engine->timerRef);
 	}
 

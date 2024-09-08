@@ -646,7 +646,7 @@ int32 ScriptLifeV2::lACTION(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lSET_FRAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int frame = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_FRAME(%i)", (int)frame);
-	if (!ctx.actor->_staticFlags.bIsSpriteActor) {
+	if (!ctx.actor->_staticFlags.bSprite3D) {
 		// TODO: ObjectSetFrame(ctx.actorIdx, frame);
 	}
 	return -1;
@@ -655,7 +655,7 @@ int32 ScriptLifeV2::lSET_FRAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lSET_SPRITE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int16 num = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_SPRITE(%i)", (int)num);
-	if (ctx.actor->_staticFlags.bIsSpriteActor) {
+	if (ctx.actor->_staticFlags.bSprite3D) {
 		engine->_actor->initSprite(num, ctx.actorIdx);
 	}
 	return 0;

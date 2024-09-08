@@ -145,7 +145,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		conditionValueSize = ReturnType::RET_S16;
 		ActorStruct *otherActor = engine->_scene->getActor(actorIdx);
 		if (!otherActor->_workFlags.bIsDead) {
-			if (ABS(ctx.actor->_pos.y - otherActor->_pos.y) >= 1500) {
+			if (ABS(ctx.actor->_posObj.y - otherActor->_posObj.y) >= 1500) {
 				engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 			} else {
 				// Returns int32, so we check for integer overflow
@@ -222,7 +222,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 			break;
 		}
 
-		if (ABS(targetActor->_pos.y - ctx.actor->_pos.y) < 1500) {
+		if (ABS(targetActor->_posObj.y - ctx.actor->_posObj.y) < 1500) {
 			newAngle = engine->_movements->getAngle(ctx.actor->posObj(), targetActor->posObj());
 			if (ABS(engine->_movements->_targetActorDistance) > MAX_TARGET_ACTOR_DISTANCE) {
 				engine->_movements->_targetActorDistance = MAX_TARGET_ACTOR_DISTANCE;
@@ -420,7 +420,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		break;
 	case kcOBJECT_DISPLAYED: {
 		int32 actorIdx = ctx.stream.readByte();
-		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_workFlags.bIsDrawn ? 1 : 0;
+		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_workFlags.bWasDrawn ? 1 : 0;
 		break;
 	}
 	case kcPROCESSOR:
@@ -1236,7 +1236,7 @@ int32 ScriptLife::lSET_DOOR_LEFT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_LEFT(%i)", (int)distance);
 
 	ctx.actor->_beta = LBAAngles::ANGLE_270;
-	ctx.actor->_pos.x = ctx.actor->_animStep.x - distance;
+	ctx.actor->_posObj.x = ctx.actor->_animStep.x - distance;
 	ctx.actor->_workFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
 
@@ -1252,7 +1252,7 @@ int32 ScriptLife::lSET_DOOR_RIGHT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_RIGHT(%i)", (int)distance);
 
 	ctx.actor->_beta = LBAAngles::ANGLE_90;
-	ctx.actor->_pos.x = ctx.actor->_animStep.x + distance;
+	ctx.actor->_posObj.x = ctx.actor->_animStep.x + distance;
 	ctx.actor->_workFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
 
@@ -1268,7 +1268,7 @@ int32 ScriptLife::lSET_DOOR_UP(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_UP(%i)", (int)distance);
 
 	ctx.actor->_beta = LBAAngles::ANGLE_180;
-	ctx.actor->_pos.z = ctx.actor->_animStep.z - distance;
+	ctx.actor->_posObj.z = ctx.actor->_animStep.z - distance;
 	ctx.actor->_workFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
 
@@ -1284,7 +1284,7 @@ int32 ScriptLife::lSET_DOOR_DOWN(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_DOWN(%i)", (int)distance);
 
 	ctx.actor->_beta = LBAAngles::ANGLE_0;
-	ctx.actor->_pos.z = ctx.actor->_animStep.z + distance;
+	ctx.actor->_posObj.z = ctx.actor->_animStep.z + distance;
 	ctx.actor->_workFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
 
@@ -1426,7 +1426,7 @@ int32 ScriptLife::lPOS_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
 			return 0;
 		}
 	}
-	ctx.actor->_pos = engine->_scene->_sceneTracks[trackIdx];
+	ctx.actor->_posObj = engine->_scene->_sceneTracks[trackIdx];
 	return 0;
 }
 

@@ -558,9 +558,9 @@ void Extra::gereExtras() {
 			int32 actorIdx = extra->payload.actorIdx;
 
 			const ActorStruct *actor = _engine->_scene->getActor(actorIdxAttacked);
-			currentExtraX = actor->_pos.x;
-			currentExtraY = actor->_pos.y + 1000;
-			currentExtraZ = actor->_pos.z;
+			currentExtraX = actor->_posObj.x;
+			currentExtraY = actor->_posObj.y + 1000;
+			currentExtraZ = actor->_posObj.z;
 
 			const int32 tmpAngle = _engine->_movements->getAngle(extra->pos, actor->posObj());
 			const int32 angle = ClampAngle(tmpAngle - extra->angle);

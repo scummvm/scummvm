@@ -53,9 +53,9 @@ void Buggy::initBuggy(uint8 numobj, uint32 flaginit) {
 	{
 		ptb->Cube = _engine->_scene->_currentSceneIdx; // Port-Ludo (Desert)
 
-		ptb->X = ptrobj->_pos.x;
-		ptb->Y = ptrobj->_pos.y;
-		ptb->Z = ptrobj->_pos.z;
+		ptb->X = ptrobj->_posObj.x;
+		ptb->Y = ptrobj->_posObj.y;
+		ptb->Z = ptrobj->_posObj.z;
 
 		ptb->Beta = ptrobj->_beta;
 
@@ -67,9 +67,9 @@ void Buggy::initBuggy(uint8 numobj, uint32 flaginit) {
 			int32 x, y;
 
 			if (_engine->_scene->_currentSceneIdx == ptb->Cube) {
-				ptrobj->_pos.x = ptb->X;
-				ptrobj->_pos.y = ptb->Y;
-				ptrobj->_pos.z = ptb->Z;
+				ptrobj->_posObj.x = ptb->X;
+				ptrobj->_posObj.y = ptb->Y;
+				ptrobj->_posObj.z = ptb->Z;
 
 				ptrobj->_beta = ptb->Beta;
 
@@ -78,9 +78,9 @@ void Buggy::initBuggy(uint8 numobj, uint32 flaginit) {
 				x -= _engine->_scene->_currentCubeX;
 				y -= _engine->_scene->_currentCubeY;
 
-				ptrobj->_pos.x = ptb->X + x * 32768;
-				ptrobj->_pos.y = ptb->Y;
-				ptrobj->_pos.z = ptb->Z + y * 32768;
+				ptrobj->_posObj.x = ptb->X + x * 32768;
+				ptrobj->_posObj.y = ptb->Y;
+				ptrobj->_posObj.z = ptb->Z + y * 32768;
 
 				ptrobj->_beta = ptb->Beta;
 
@@ -188,9 +188,9 @@ void Buggy::leaveBuggy(HeroBehaviourType behaviour) {
 		ptrobj->SampleAlways = 0;
 	}
 
-	ptb->X = ptrobj->_pos.x;
-	ptb->Y = ptrobj->_pos.y;
-	ptb->Z = ptrobj->_pos.z;
+	ptb->X = ptrobj->_posObj.x;
+	ptb->Y = ptrobj->_posObj.y;
+	ptb->Z = ptrobj->_posObj.z;
 	ptb->Beta = ptrobj->_beta;
 	ptb->Cube = _engine->_scene->_currentSceneIdx;
 
@@ -207,9 +207,9 @@ void Buggy::leaveBuggy(HeroBehaviourType behaviour) {
 
 	ptrobj = _engine->_scene->getActor(NUM_BUGGY);
 
-	ptrobj->_pos.x = ptb->X;
-	ptrobj->_pos.y = ptb->Y;
-	ptrobj->_pos.z = ptb->Z;
+	ptrobj->_posObj.x = ptb->X;
+	ptrobj->_posObj.y = ptb->Y;
+	ptrobj->_posObj.z = ptb->Z;
 	ptrobj->_beta = ptb->Beta;
 
 	ptrobj->_brickSound = _engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX)->_brickSound;
