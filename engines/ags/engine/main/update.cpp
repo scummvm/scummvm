@@ -59,10 +59,10 @@ int do_movelist_move(short *mlnum, int *xx, int *yy) {
 	cmls = &_GP(mls)[mlnum[0]];
 	fixed xpermove = cmls->xpermove[cmls->onstage], ypermove = cmls->ypermove[cmls->onstage];
 
-	short targetx = short((cmls->pos[cmls->onstage + 1] >> 16) & 0x00ffff);
-	short targety = short(cmls->pos[cmls->onstage + 1] & 0x00ffff);
+	int targetx = cmls->pos[cmls->onstage + 1].X;
+	int targety = cmls->pos[cmls->onstage + 1].Y;
 	int xps = xx[0], yps = yy[0];
-	if (cmls->doneflag & 1) {
+	if (cmls->doneflag & kMoveListDone_X) {
 		// if the X-movement has finished, and the Y-per-move is < 1, finish
 		// This can cause jump at the end, but without it the character will
 		// walk on the spot for a while if the Y-per-move is for example 0.2
@@ -90,9 +90,9 @@ int do_movelist_move(short *mlnum, int *xx, int *yy) {
 		// Y per move is > -1, so finish the move
 		else if ((ypermove & 0xffff0000) == 0xffff0000)
 			targety += adjAmnt;
-	} else xps = cmls->fromx + (int)(fixtof(xpermove) * (float)cmls->onpart);
+	} else xps = cmls->from.X + (int)(fixtof(xpermove) * (float)cmls->onpart);
 
-	if (cmls->doneflag & 2) {
+	if (cmls->doneflag & kMoveListDone_Y) {
 		// Y-movement has finished
 
 		int adjAmnt = 3;
@@ -117,11 +117,11 @@ int do_movelist_move(short *mlnum, int *xx, int *yy) {
 		/*    int xpmm=(xpermove >> 16) & 0x0000ffff;
 		//    if ((xpmm==0) | (xpmm==0xffff)) cmls->doneflag|=1;
 		    if (xpmm==0) cmls->doneflag|=1;*/
-	} else yps = cmls->fromy + (int)(fixtof(ypermove) * (float)cmls->onpart);
+	} else yps = cmls->from.Y + (int)(fixtof(ypermove) * (float)cmls->onpart);
 	// check if finished horizontal movement
 	if (((xpermove > 0) && (xps >= targetx)) ||
 	        ((xpermove < 0) && (xps <= targetx))) {
-		cmls->doneflag |= 1;
+		cmls->doneflag |= kMoveListDone_X;
 		xps = targetx;
 		// if the Y is almost there too, finish it
 		// this is new in v2.40
@@ -129,32 +129,27 @@ int do_movelist_move(short *mlnum, int *xx, int *yy) {
 		/*if (abs(yps - targety) <= 2)
 		  yps = targety;*/
 	} else if (xpermove == 0)
-		cmls->doneflag |= 1;
+		cmls->doneflag |= kMoveListDone_X;
 	// check if finished vertical movement
 	if ((ypermove > 0) & (yps >= targety)) {
-		cmls->doneflag |= 2;
+		cmls->doneflag |= kMoveListDone_Y;
 		yps = targety;
 	} else if ((ypermove < 0) & (yps <= targety)) {
-		cmls->doneflag |= 2;
+		cmls->doneflag |= kMoveListDone_Y;
 		yps = targety;
 	} else if (ypermove == 0)
-		cmls->doneflag |= 2;
+		cmls->doneflag |= kMoveListDone_Y;
 
-	if ((cmls->doneflag & 0x03) == 3) {
+	if ((cmls->doneflag & kMoveListDone_XY) == kMoveListDone_XY) {
 		// this stage is done, go on to the next stage
-		// signed shorts to ensure that numbers like -20 do not become 65515
-		cmls->fromx = (signed short)((cmls->pos[cmls->onstage + 1] >> 16) & 0x000ffff);
-		cmls->fromy = (signed short)(cmls->pos[cmls->onstage + 1] & 0x000ffff);
-		if ((cmls->fromx > 65000) || (cmls->fromy > 65000))
-			quit("do_movelist: int to short rounding error");
+		cmls->from = cmls->pos[cmls->onstage + 1];
 
-		cmls->onstage++;
-		cmls->onpart = -1;
-		cmls->doneflag &= 0xf0;
-		cmls->lastx = -1;
+		cmls->onstage++; cmls->onpart = -1; cmls->doneflag = 0;
+		cmls->last.X = -1;
+
 		if (cmls->onstage < cmls->numstage) {
-			xps = cmls->fromx;
-			yps = cmls->fromy;
+			xps = cmls->from.X;
+			yps = cmls->from.Y;
 		}
 		if (cmls->onstage >= cmls->numstage - 1) {  // last stage is just dest pos
 			cmls->numstage = 0;

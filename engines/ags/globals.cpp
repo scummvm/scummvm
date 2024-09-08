@@ -346,7 +346,7 @@ Globals::Globals() {
 	_rgb_table = new RGB_MAP();
 
 	// route_finder_impl.cpp globals
-	_navpoints = new int32_t[MAXNEEDSTAGES];
+	_navpoints = new Point[MAXNEEDSTAGES];
 	_nav = new Navigation();
 	_route_finder_impl = new std::unique_ptr<IRouteFinder>();
 

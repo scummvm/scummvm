@@ -2190,10 +2190,10 @@ void update_room_debug() {
 				mlsnum %= TURNING_AROUND;
 			const MoveList &cmls = _GP(mls)[mlsnum];
 			for (int i = 0; i < cmls.numstage - 1; i++) {
-				short srcx = short((cmls.pos[i] >> 16) & 0x00ffff);
-				short srcy = short(cmls.pos[i] & 0x00ffff);
-				short targetx = short((cmls.pos[i + 1] >> 16) & 0x00ffff);
-				short targety = short(cmls.pos[i + 1] & 0x00ffff);
+				short srcx = cmls.pos[i].X;
+				short srcy = cmls.pos[i].Y;
+				short targetx = cmls.pos[i + 1].X;
+				short targety = cmls.pos[i + 1].Y;
 				_GP(debugMoveListObj).Bmp->DrawLine(Line(srcx / mult, srcy / mult, targetx / mult, targety / mult),
 					MakeColor(i + 1));
 			}
