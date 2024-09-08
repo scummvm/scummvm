@@ -114,7 +114,7 @@ private:
 	int32 _bubbleActor = -1;
 	int32 _bubbleSpriteIndex;
 
-	IVec3 _projPosScreen;
+	IVec3 _projPosScreen; // XpOrgw, YpOrgw
 
 	// big font shadow text in the lower left corner
 	Common::String _text;
@@ -175,7 +175,7 @@ public:
 	 * @param right end width to redraw the region
 	 * @param bottom end height to redraw the region
 	 */
-	void addRedrawArea(int32 left, int32 top, int32 right, int32 bottom);
+	void addRedrawArea(int32 left, int32 top, int32 right, int32 bottom); // AddPhysBox
 	void addRedrawArea(const Common::Rect &rect); // AddPhysBox
 
 	/**

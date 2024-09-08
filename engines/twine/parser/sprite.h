@@ -38,6 +38,7 @@ struct SpriteDim {
 	int16 h = 0;
 };
 
+// PtrZvExtra
 class SpriteBoundingBoxData : public Parser {
 private:
 	Common::Array<BoundingBox> _boundingBoxes;
