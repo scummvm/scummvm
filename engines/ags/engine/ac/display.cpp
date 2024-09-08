@@ -614,7 +614,7 @@ void do_corner(Bitmap *ds, int sprn, int x, int y, int offx, int offy) {
 
 int get_but_pic(GUIMain *guo, int indx) {
 	int butid = guo->GetControlID(indx);
-	return butid >= 0 ? _GP(guibuts)[butid].Image : 0;
+	return butid >= 0 ? _GP(guibuts)[butid].GetNormalImage() : 0;
 }
 
 void draw_button_background(Bitmap *ds, int xx1, int yy1, int xx2, int yy2, GUIMain *iep) {
