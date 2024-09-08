@@ -42,6 +42,8 @@ typedef struct ImGuiState {
 	int _qdaNextFrameTimestamp = 0;
 
 	ImGuiTextFilter _nameFilter;
+
+	Common::List<Common::Path> _files;
 } ImGuiState;
 
 extern ImGuiState *_state;

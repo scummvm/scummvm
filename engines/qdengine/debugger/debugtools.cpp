@@ -143,6 +143,22 @@ void showImage(const ImGuiImage &image, const char *name, float scale) {
 	//setToolTipImage(image, name);
 }
 
+void populateFileList() {
+	// Iterate through the 3 resource pak files
+	for (int i = 0; i < qdFileManager::instance().get_num_packages(); i++) {
+		Common::Archive *archive = qdFileManager::instance().get_package(i);
+		Common::ArchiveMemberList members;
+
+		if (archive)
+			archive->listMembers(members);
+
+		for (auto &it : members)
+			_state->_files.push_back(it->getPathInArchive());
+	}
+
+	Common::sort(_state->_files.begin(), _state->_files.end());
+}
+
 void showArchives() {
 	if (!_state->_showArchives)
 		return;
@@ -175,29 +191,19 @@ void showArchives() {
 		_state->_nameFilter.Draw();
 		ImGui::Separator();
 
-		// Iterate through the 3 resource pak files
-		for (int i = 0; i < qdFileManager::instance().get_num_packages(); i++) {
-			Common::Archive *archive = qdFileManager::instance().get_package(i);
-			Common::ArchiveMemberList members;
+		if (_state->_files.empty())
+			populateFileList();
 
-			if (archive)
-				archive->listMembers(members);
-
-			if (archive && ImGui::TreeNode(Common::String::format("Resource/resource%d.pak", i).c_str())) {
-
-				for (auto &it : members) {
-					const char *fileName = (char *)transCyrillic(it->getFileName());
-					if (_state->_nameFilter.PassFilter(fileName)) {
-						if (ImGui::Selectable(fileName, _state->_qdaToDisplay == it->getPathInArchive()))
-							if (it->getFileName().hasSuffixIgnoreCase(".qda")) {
-								_state->_qdaToDisplay = it->getPathInArchive();
-								_state->_qdaToDisplayFrame = 0;
-								_state->_qdaIsPlaying = false;
-							}
+		for (auto &it : _state->_files) {
+			const char *fileName = (char *)transCyrillic(it.baseName());
+			if (_state->_nameFilter.PassFilter(fileName)) {
+				if (ImGui::Selectable(fileName, _state->_qdaToDisplay == it)) {
+					if (it.baseName().hasSuffixIgnoreCase(".qda")) {
+						_state->_qdaToDisplay = it;
+						_state->_qdaToDisplayFrame = 0;
+						_state->_qdaIsPlaying = false;
 					}
 				}
-
-				ImGui::TreePop();
 			}
 		}
 
