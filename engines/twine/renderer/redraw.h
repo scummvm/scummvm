@@ -65,13 +65,12 @@ struct OverlayListStruct {
 };
 
 struct DrawListStruct {
-	// DrawActorSprites, DrawShadows, DrawExtras
-	int16 z = 0; // sorting value
-	// NumObj was a mask of type and actorIdx
+	int16 z = 0; // depth sorting value
 	uint32 type = 0;
-	uint16 actorIdx = 0;
+	// NumObj was also used with mask of type and numObj - we are
+	// not masking the value in numObj, but store the type in type
+	uint16 numObj = 0;
 
-	// DrawShadows
 	uint16 xw = 0;
 	uint16 yw = 0;
 	uint16 zw = 0;

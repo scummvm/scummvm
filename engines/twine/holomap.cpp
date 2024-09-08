@@ -494,8 +494,8 @@ void Holomap::drawListPos(int calpha, int cbeta, int cgamma, bool pos) {
 		}
 		DrawListStruct &drawList = listTri[nbobjets];
 		drawList.z = destPos3.z;
-		drawList.actorIdx = n;
-		drawList.type = t;
+		drawList.numObj = n;
+		drawList.num = t;
 		drawList.xw = m.x;
 		drawList.yw = m.y;
 		drawList.zw = m.z;
@@ -504,21 +504,21 @@ void Holomap::drawListPos(int calpha, int cbeta, int cgamma, bool pos) {
 	_engine->_redraw->sortDrawingList(listTri, nbobjets);
 	for (int i = 0; i < nbobjets; ++i) {
 		const DrawListStruct &drawList = listTri[i];
-		const uint32 flags = drawList.type;
-		const BodyData *bodyData = nullptr;
+		const uint32 flags = drawList.num;
+		const BodyData *ptr3do = nullptr;
 		if (flags == HOLOMAP_ARROW) {
-			bodyData = &_engine->_resources->_holomapArrowPtr;
+			ptr3do = &_engine->_resources->_holomapArrowPtr;
 		} else if (flags == HOLOMAP_VISITED) {
-			bodyData = &_engine->_resources->_holomapTwinsenModelPtr;
+			ptr3do = &_engine->_resources->_holomapTwinsenModelPtr;
 		} else if (flags == (HOLOMAP_ARROW | HOLOMAP_VISITED)) {
-			bodyData = &_engine->_resources->_holomapTwinsenArrowPtr;
+			ptr3do = &_engine->_resources->_holomapTwinsenArrowPtr;
 		}
-		if (bodyData != nullptr) {
-			const int32 angleX = _listHoloPos[drawList.actorIdx].alpha;
-			const int32 angleY = _listHoloPos[drawList.actorIdx].beta;
+		if (ptr3do != nullptr) {
+			const int32 alpha = _listHoloPos[drawList.numObj].alpha;
+			const int32 beta = _listHoloPos[drawList.numObj].beta;
 			Common::Rect dummy;
 			// first scene with twinsen model: x = 0, y = -497, z -764, a 432, b: 172
-			_engine->_renderer->affObjetIso(drawList.xw, drawList.yw, drawList.zw, angleX, angleY, LBAAngles::ANGLE_0, *bodyData, dummy);
+			_engine->_renderer->affObjetIso(drawList.xw, drawList.yw, drawList.zw, alpha, beta, LBAAngles::ANGLE_0, *ptr3do, dummy);
 		}
 	}
 }

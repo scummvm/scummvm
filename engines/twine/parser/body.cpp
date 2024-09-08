@@ -132,6 +132,7 @@ void BodyData::loadPolygons(Common::SeekableReadStream &stream) {
 			if (poly.materialType >= MAT_GOURAUD) {
 				normal = stream.readSint16LE();
 			}
+			// numPoint is point index precomupted * 6
 			const uint16 vertexIndex = stream.readUint16LE() / 6;
 			poly.indices.push_back(vertexIndex);
 			poly.normals.push_back(normal);
@@ -152,6 +153,7 @@ void BodyData::loadLines(Common::SeekableReadStream &stream) {
 		stream.skip(1);
 		line.color = stream.readByte();
 		stream.skip(2);
+		// indexPoint is point index precomupted * 6
 		line.vertex1 = stream.readUint16LE() / 6;
 		line.vertex2 = stream.readUint16LE() / 6;
 		_lines.push_back(line);

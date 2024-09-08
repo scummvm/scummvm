@@ -1390,6 +1390,7 @@ uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int
 		renderBufferPtr += sizeof(CmdRenderPolygon);
 
 		ComputedVertex *const vertices = (ComputedVertex *)(void*)renderBufferPtr;
+
 		renderBufferPtr += destinationPolygon->numVertices * sizeof(ComputedVertex);
 
 		ComputedVertex *vertex = vertices;

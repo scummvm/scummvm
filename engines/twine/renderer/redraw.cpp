@@ -281,13 +281,13 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool flagflip) {
 
 			if (actor->_staticFlags.bSprite3D) {
 				drawList[drawListPos].type = DrawListType::DrawActorSprites;
-				drawList[drawListPos].actorIdx = n;
+				drawList[drawListPos].numObj = n;
 				if (actor->_staticFlags.bSpriteClip) {
 					ztri = actor->_animStep.x - _engine->_grid->_worldCube.x + actor->_animStep.z - _engine->_grid->_worldCube.z;
 				}
 			} else {
 				drawList[drawListPos].type = DrawListType::DrawObject3D;
-				drawList[drawListPos].actorIdx = n;
+				drawList[drawListPos].numObj = n;
 			}
 
 			drawList[drawListPos].z = ztri;
@@ -309,7 +309,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool flagflip) {
 
 				drawList[drawListPos].z = ztri - 1; // save the shadow entry in the _drawList
 				drawList[drawListPos].type = DrawListType::DrawShadows;
-				drawList[drawListPos].actorIdx = 0;
+				drawList[drawListPos].numObj = 0;
 				drawList[drawListPos].num = 1;
 				drawListPos++;
 			}
@@ -348,7 +348,7 @@ int32 Redraw::fillExtraDrawingList(DrawListStruct *drawList, int32 drawListPos) 
 		if (projPos.x > VIEW_X0 && projPos.x < VIEW_X1(_engine) && projPos.y > VIEW_Y0 && projPos.y < VIEW_Y1(_engine)) {
 			const int16 zVal = extra->pos.x - _engine->_grid->_worldCube.x + extra->pos.z - _engine->_grid->_worldCube.z;
 			drawList[drawListPos].z = zVal;
-			drawList[drawListPos].actorIdx = i;
+			drawList[drawListPos].numObj = i;
 			drawList[drawListPos].type = DrawListType::DrawExtras;
 			drawListPos++;
 
@@ -356,7 +356,7 @@ int32 Redraw::fillExtraDrawingList(DrawListStruct *drawList, int32 drawListPos) 
 				const IVec3 &shadowCoord = _engine->_movements->getShadow(extra->pos);
 
 				drawList[drawListPos].z = zVal - 1;
-				drawList[drawListPos].actorIdx = 0;
+				drawList[drawListPos].numObj = 0;
 				drawList[drawListPos].type = DrawListType::DrawShadows;
 				drawList[drawListPos].xw = shadowCoord.x;
 				drawList[drawListPos].yw = shadowCoord.y;
@@ -400,7 +400,7 @@ void Redraw::processDrawListShadows(const DrawListStruct &drawCmd) {
 }
 
 void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw) {
-	const int32 actorIdx = drawCmd.actorIdx;
+	const int32 actorIdx = drawCmd.numObj;
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (actor->_anim >= 0) {
 		const AnimData &animData = _engine->_resources->_animData[actor->_anim];
@@ -444,7 +444,7 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 }
 
 void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgRedraw) {
-	int32 actorIdx = drawCmd.actorIdx;
+	int32 actorIdx = drawCmd.numObj;
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	const SpriteData &spriteData = _engine->_resources->_spriteData[actor->_body];
 	// TODO: using the raw pointer and not the SpriteData surface here is a workaround for issue https://bugs.scummvm.org/ticket/12024
@@ -505,7 +505,7 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 }
 
 void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
-	int32 extraIdx = drawCmd.actorIdx;
+	int32 extraIdx = drawCmd.numObj;
 	ExtraListStruct *extra = &_engine->_extra->_extraList[extraIdx];
 
 	const IVec3 &projPos = _engine->_renderer->projectPoint(extra->pos - _engine->_grid->_worldCube);
@@ -554,7 +554,7 @@ void Redraw::correctZLevels(DrawListStruct *listTri, int32 drawListPos) {
 	int32 twinsenz = -1;
 	for (int32 pos = 0; pos < drawListPos; ++pos) {
 		DrawListStruct &drawCmd = listTri[pos];
-		if (drawCmd.type == DrawListType::DrawObject3D && drawCmd.actorIdx == OWN_ACTOR_SCENE_INDEX) {
+		if (drawCmd.type == DrawListType::DrawObject3D && drawCmd.numObj == OWN_ACTOR_SCENE_INDEX) {
 			twinsenpos = pos;
 			twinsenz = drawCmd.z;
 			break;
@@ -568,7 +568,7 @@ void Redraw::correctZLevels(DrawListStruct *listTri, int32 drawListPos) {
 	for (int32 n = 0; n < drawListPos; ++n) {
 		DrawListStruct &ptrtri = listTri[n];
 		uint32 typeobj = ptrtri.type;
-		int32 numobj = ptrtri.actorIdx;
+		int32 numobj = ptrtri.numObj;
 		ptrobj = _engine->_scene->getActor(numobj);
 		switch (typeobj) {
 		default:
@@ -584,10 +584,10 @@ void Redraw::correctZLevels(DrawListStruct *listTri, int32 drawListPos) {
 						if (twinsenz < ptrtri.z) {
 							// correct the error
 							listTri[twinsenpos].z = ptrtri.z;
-							listTri[twinsenpos].actorIdx = ptrtri.actorIdx;
+							listTri[twinsenpos].numObj = ptrtri.numObj;
 							listTri[twinsenpos].type = ptrtri.type;
 
-							ptrtri.actorIdx = OWN_ACTOR_SCENE_INDEX;
+							ptrtri.numObj = OWN_ACTOR_SCENE_INDEX;
 							ptrtri.type = DrawListType::DrawObject3D;
 							ptrtri.z = (int16)twinsenz;
 
@@ -601,10 +601,10 @@ void Redraw::correctZLevels(DrawListStruct *listTri, int32 drawListPos) {
 						if (twinsenz > ptrtri.z) {
 							// correct the error
 							listTri[twinsenpos].z = ptrtri.z;
-							listTri[twinsenpos].actorIdx = ptrtri.actorIdx;
+							listTri[twinsenpos].numObj = ptrtri.numObj;
 							listTri[twinsenpos].type = ptrtri.type;
 
-							ptrtri.actorIdx = OWN_ACTOR_SCENE_INDEX;
+							ptrtri.numObj = OWN_ACTOR_SCENE_INDEX;
 							ptrtri.type = DrawListType::DrawObject3D;
 							ptrtri.z = (int16)twinsenz;
 
@@ -622,10 +622,10 @@ void Redraw::correctZLevels(DrawListStruct *listTri, int32 drawListPos) {
 						if (twinsenz < ptrtri.z) {
 							// correct the error
 							listTri[twinsenpos].z = ptrtri.z;
-							listTri[twinsenpos].actorIdx = ptrtri.actorIdx;
+							listTri[twinsenpos].numObj = ptrtri.numObj;
 							listTri[twinsenpos].type = ptrtri.type;
 
-							ptrtri.actorIdx = OWN_ACTOR_SCENE_INDEX;
+							ptrtri.numObj = OWN_ACTOR_SCENE_INDEX;
 							ptrtri.type = DrawListType::DrawObject3D;
 							ptrtri.z = (int16)twinsenz;
 
@@ -638,10 +638,10 @@ void Redraw::correctZLevels(DrawListStruct *listTri, int32 drawListPos) {
 						if (twinsenz > ptrtri.z) {
 							// correct the error
 							listTri[twinsenpos].z = ptrtri.z;
-							listTri[twinsenpos].actorIdx = ptrtri.actorIdx;
+							listTri[twinsenpos].numObj = ptrtri.numObj;
 							listTri[twinsenpos].type = ptrtri.type;
 
-							ptrtri.actorIdx = OWN_ACTOR_SCENE_INDEX;
+							ptrtri.numObj = OWN_ACTOR_SCENE_INDEX;
 							ptrtri.type = DrawListType::DrawObject3D;
 							ptrtri.z = (int16)twinsenz;
 
@@ -667,9 +667,9 @@ void Redraw::processDrawList(DrawListStruct *drawList, int32 drawListPos, bool b
 		const uint32 flags = drawCmd.type;
 		if (flags == DrawListType::DrawObject3D) {
 			// this is correcting a bug that came with correctZLevels() - original sources
-			if (_engine->_cfgfile.ShadowMode != 0 && drawCmd.actorIdx == OWN_ACTOR_SCENE_INDEX && !shadowtwinsen) {
+			if (_engine->_cfgfile.ShadowMode != 0 && drawCmd.numObj == OWN_ACTOR_SCENE_INDEX && !shadowtwinsen) {
 				for (int32 i = pos; i < drawListPos; i++) {
-					if (drawList[i].actorIdx == OWN_ACTOR_SCENE_INDEX && drawList[i].type == DrawListType::DrawShadows) {
+					if (drawList[i].numObj == OWN_ACTOR_SCENE_INDEX && drawList[i].type == DrawListType::DrawShadows) {
 						shadowtwinsen = true;
 						processDrawListShadows(drawList[i]);
 						drawList[i].type = -1; // invalidate shadow entry
@@ -679,7 +679,7 @@ void Redraw::processDrawList(DrawListStruct *drawList, int32 drawListPos, bool b
 			}
 			processDrawListActors(drawCmd, bgRedraw);
 		} else if (flags == DrawListType::DrawShadows && !_engine->_actor->_cropBottomScreen) {
-			if (drawCmd.actorIdx == OWN_ACTOR_SCENE_INDEX) {
+			if (drawCmd.numObj == OWN_ACTOR_SCENE_INDEX) {
 				shadowtwinsen = true;
 			}
 			processDrawListShadows(drawCmd);
