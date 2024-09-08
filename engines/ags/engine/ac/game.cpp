@@ -1369,7 +1369,7 @@ void game_sprite_updated(int sprnum) {
 	}
 	// gui buttons
 	for (auto &but : _GP(guibuts)) {
-		if (but.CurrentImage == sprnum) {
+		if (but.GetCurrentImage() == sprnum) {
 			but.MarkChanged();
 		}
 	}
@@ -1410,15 +1410,15 @@ void game_sprite_deleted(int sprnum) {
 	}
 	// gui buttons
 	for (auto &but : _GP(guibuts)) {
-		if (but.Image == sprnum)
-			but.Image = 0;
-		if (but.MouseOverImage == sprnum)
-			but.MouseOverImage = 0;
-		if (but.PushedImage == sprnum)
-			but.PushedImage = 0;
+		if (but.GetCurrentImage() == sprnum)
+			but.SetCurrentImage(0);
+		if (but.GetMouseOverImage() == sprnum)
+			but.SetMouseOverImage(0);
+		if (but.GetPushedImage() == sprnum)
+			but.SetPushedImage(0);
 
-		if (but.CurrentImage == sprnum) {
-			but.CurrentImage = 0;
+		if (but.GetCurrentImage() == sprnum) {
+			but.SetCurrentImage(0);
 			but.MarkChanged();
 		}
 	}
