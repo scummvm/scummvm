@@ -623,8 +623,8 @@ void grDispatcher::drawSprContour(int x, int y, int sx, int sy, const class RLEB
 
 	warning("STUB: grDispatcher::drawSprContour");
 	for (int i = 0; i < psy; i++) {
-		uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
-		uint16 *scr_buf_prev = (i) ? reinterpret_cast<uint16 *>(_screenBuf + _yTable[y - dy] + x) : scr_buf;
+		uint16 *scr_buf = (uint16 *)_screenBuf->getBasePtr(x, y);
+		uint16 *scr_buf_prev = (i) ? (uint16 *)_screenBuf->getBasePtr(x, y - dy) : scr_buf;
 		p->decode_line(py + i, i & 1);
 
 		const uint16 *data_ptr = (i & 1) ? data1 + px : data0 + px;
@@ -680,7 +680,7 @@ void grDispatcher::drawSprContour(int x, int y, int sx, int sy, const class RLEB
 
 		y += dy;
 	}
-	uint16 *scr_buf_prev = reinterpret_cast<uint16 *>(_screenBuf + _yTable[y - dy] + x);
+	uint16 *scr_buf_prev = (uint16 *)_screenBuf->getBasePtr(x, y - dy);
 	const uint16 *data_ptr_prev = (psy & 1) ? data0 + px : data1 + px;
 	if (!alpha_flag) {
 		for (int j = 0; j < psx; j += 2) {

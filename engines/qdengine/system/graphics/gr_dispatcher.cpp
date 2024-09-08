@@ -51,7 +51,6 @@ grDispatcher::grDispatcher() : _screenBuf(NULL),
 	zbuffer_(NULL),
 #endif
 	_hWnd(NULL),
-	_yTable(NULL),
 	_temp_buffer(0) {
 	_flags = 0;
 
@@ -91,8 +90,6 @@ bool grDispatcher::finit() {
 	_wndPosX = _wndPosY = 0;
 	delete _realScreenBuf;
 	_realScreenBuf = nullptr;
-	delete  _yTable;
-	_yTable = NULL;
 
 	return true;
 }

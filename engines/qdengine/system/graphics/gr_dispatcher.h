@@ -501,8 +501,6 @@ protected:
 	Graphics::ManagedSurface *_screenBuf = nullptr;
 	Graphics::ManagedSurface *_realScreenBuf = nullptr;
 
-	int *_yTable;
-
 	char *_temp_buffer;
 	int _temp_buffer_size;
 

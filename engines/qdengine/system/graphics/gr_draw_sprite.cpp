@@ -230,7 +230,7 @@ void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 
 	if (has_alpha) {
 		for (int y = 0; y <= sy; y++) {
-					uint16 *screen_ptr = (uint16 *)(_screenBuf + _yTable[y + y0] + x0 * 2);
+			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);
 
 					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + ((size.x + 1 + dx) << (F_PREC - 1));
 					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + ((size.y + 1 + dy) << (F_PREC - 1));
@@ -264,7 +264,7 @@ void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 				}
 	} else {
 		for (int y = 0; y <= sy; y++) {
-			uint16 *screen_ptr = (uint16 *)(_screenBuf + _yTable[y + y0] + x0 * 2);
+			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + ((size.x + 1 + dx) << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + ((size.y + 1 + dy) << (F_PREC - 1));
@@ -319,7 +319,7 @@ void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 
 	if (has_alpha) {
 		for (int y = 0; y <= sy; y++) {
-					uint16 *screen_ptr = (uint16 *)(_screenBuf + _yTable[y + y0] + x0 * 2);
+			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);
 
 					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
 					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
@@ -353,7 +353,7 @@ void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 				}
 	} else {
 		for (int y = 0; y <= sy; y++) {
-			uint16 *screen_ptr = (uint16 *)(_screenBuf + _yTable[y + y0] + x0 * 2);
+			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
@@ -407,7 +407,7 @@ void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 		split_rgb565u(mask_color, mr, mg, mb);
 
 		for (int y = 0; y <= sy; y++) {
-			uint16 *screen_ptr = (uint16 *)(_screenBuf + _yTable[y + y0] + x0 * 2);
+			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + (size.x + 1) * (1 << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + (size.y + 1) * (1 << (F_PREC - 1));
@@ -456,7 +456,7 @@ void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 		uint32 mcl = make_rgb565u(mr, mg, mb);
 
 		for (int y = 0; y <= sy; y++) {
-			uint16 *screen_ptr = (uint16 *)(_screenBuf + _yTable[y + y0] + x0 * 2);
+			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + (size.x + 1) * (1 << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + (size.y + 1) * (1 << (F_PREC - 1));
@@ -515,7 +515,7 @@ void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 		split_rgb565u(mask_color, mr, mg, mb);
 
 		for (int y = 0; y <= sy; y++) {
-			uint16 *screen_ptr = (uint16 *)(_screenBuf + _yTable[y + y0] + x0 * 2);
+			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
@@ -561,7 +561,7 @@ void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 		mb = (mb * (255 - mask_alpha)) >> 8;
 
 		for (int y = 0; y <= sy; y++) {
-			uint16 *screen_ptr = (uint16 *)(_screenBuf + _yTable[y + y0] + x0 * 2);
+			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
