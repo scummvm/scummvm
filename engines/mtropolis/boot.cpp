@@ -1878,6 +1878,11 @@ const Game games[] = {
 		MTBOOT_BEATRIX_EN,
 	 	&BootScriptContext::bootGeneric
 	},
+	// The Magic World of Beatrix Potter - Demo - Windows - English
+	{
+		MTBOOT_BEATRIX_DEMO_EN,
+		&BootScriptContext::bootGeneric
+	},
 	// Whitetail Impact - Windows - English
 	{
 		MTBOOT_WT_IMPACT_EN,
@@ -2091,6 +2096,11 @@ const Game games[] = {
 	// Adobe 24 Hours Tools Sampler - Windows - English
 	{
 		MTBOOT_ADOBE24_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Byzantine: The Betrayal - Demo - Windows - English
+	{
+		MTBOOT_BYZANTINE_DEMO_WIN_EN,
 		&BootScriptContext::bootGeneric
 	},
 };
