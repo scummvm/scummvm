@@ -1183,8 +1183,9 @@ void Renderer::svgaPolyTriche(int16 vtop, int16 Ymax, uint16 color) const {
 
 void Renderer::renderPolygons(const CmdRenderPolygon &polygon, ComputedVertex *vertices) {
 	int16 vtop, vbottom;
-	if (computePoly(polygon.renderType, vertices, polygon.numVertices, vtop, vbottom)) {
-		fillVertices(vtop, vbottom, polygon.renderType, polygon.colorIndex);
+	uint8 renderType = polygon.renderType;
+	if (computePoly(renderType, vertices, polygon.numVertices, vtop, vbottom)) {
+		fillVertices(vtop, vbottom, renderType, polygon.colorIndex);
 	}
 }
 

@@ -143,7 +143,7 @@ void Redraw::blitBackgroundAreas() {
 	}
 }
 
-void Redraw::sortDrawingList(DrawListStruct *list, int32 listSize) const {
+void Redraw::sortDrawingList(DrawListStruct *list, int32 listSize) const { // SmallSort
 	DrawListStruct* pNext;
 	DrawListStruct* pSmallest;
 	int32 n;
