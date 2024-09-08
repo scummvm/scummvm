@@ -271,7 +271,7 @@ public:
 	Common::Language getGameLang() const;
 
 	inline int numLocations() const {
-		const int maxLocations = isLBA1() ? 150 : NUM_LOCATIONS;
+		const int maxLocations = isLBA1() ? MAX_HOLO_POS : MAX_HOLO_POS_2;
 		return maxLocations;
 	}
 

@@ -31,7 +31,8 @@
 /** Number of colors used in the game */
 #define NUMOFCOLORS 256
 
-#define NUM_LOCATIONS 334 /* 150 for lba1 (MAX_HOLO_POS) */
+#define MAX_HOLO_POS 150 /* lba1 */
+#define MAX_HOLO_POS_2 334 /* lba2 */
 
 #define NUM_INVENTORY_ITEMS 28
 /**

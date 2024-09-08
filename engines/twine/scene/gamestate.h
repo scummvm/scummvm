@@ -131,7 +131,7 @@ public:
 	 */
 	uint8 _inventoryFlags[NUM_INVENTORY_ITEMS];
 
-	uint8 _holomapFlags[NUM_LOCATIONS];
+	uint8 _holomapFlags[MAX_HOLO_POS_2];
 
 	char _sceneName[30] {};
 

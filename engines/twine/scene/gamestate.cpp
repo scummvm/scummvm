@@ -53,7 +53,7 @@ namespace TwinE {
 GameState::GameState(TwinEEngine *engine) : _engine(engine) {
 	clearGameFlags();
 	Common::fill(&_inventoryFlags[0], &_inventoryFlags[NUM_INVENTORY_ITEMS], 0);
-	Common::fill(&_holomapFlags[0], &_holomapFlags[NUM_LOCATIONS], 0);
+	Common::fill(&_holomapFlags[0], &_holomapFlags[MAX_HOLO_POS_2], 0);
 	Common::fill(&_gameChoices[0], &_gameChoices[10], TextId::kNone);
 }
 
@@ -81,7 +81,7 @@ void GameState::initGameStateVars() {
 
 	_engine->_scene->initSceneVars();
 
-	Common::fill(&_holomapFlags[0], &_holomapFlags[NUM_LOCATIONS], 0);
+	Common::fill(&_holomapFlags[0], &_holomapFlags[MAX_HOLO_POS_2], 0);
 }
 
 void GameState::initHeroVars() {

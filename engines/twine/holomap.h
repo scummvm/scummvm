@@ -78,7 +78,7 @@ private:
 	//float _distanceModifier = 1.0f;
 
 	int32 _numLocations = 0;
-	Location _locations[NUM_LOCATIONS];
+	Location _locations[MAX_HOLO_POS_2];
 
 	int32 _holomapPaletteIndex = 0;
 	uint8 _paletteHolomap[NUMOFCOLORS * 3]{0};

@@ -458,7 +458,7 @@ int32 Holomap::searchPrevArrow(int32 num) const {
 
 void Holomap::drawListPos(int calpha, int cbeta, int cgamma, bool pos) {
 	int nbobjets = 0;
-	DrawListStruct listTri[NUM_LOCATIONS];
+	DrawListStruct listTri[MAX_HOLO_POS_2];
 	const int numCube = _engine->_scene->_currentSceneIdx;
 	const int maxHoloPos = _engine->numLocations();
 	for (int n = 0; n < maxHoloPos; ++n) {
