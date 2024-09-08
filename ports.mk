@@ -551,6 +551,10 @@ ifdef USE_A52
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/liba52.a
 endif
 
+ifdef USE_MPCDEC
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmpcdec.a
+endif
+
 ifdef USE_VPX
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libvpx.a
 endif
