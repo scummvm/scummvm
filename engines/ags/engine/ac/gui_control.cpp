@@ -182,21 +182,19 @@ void GUIControl_SetPosition(GUIObject *guio, int xx, int yy) {
 
 
 int GUIControl_GetWidth(GUIObject *guio) {
-	return game_to_data_coord(guio->Width);
+	return game_to_data_coord(guio->GetWidth());
 }
 
 void GUIControl_SetWidth(GUIObject *guio, int newwid) {
-	guio->Width = data_to_game_coord(newwid);
-	guio->OnResized();
+	guio->SetWidth(data_to_game_coord(newwid));
 }
 
 int GUIControl_GetHeight(GUIObject *guio) {
-	return game_to_data_coord(guio->Height);
+	return game_to_data_coord(guio->GetHeight());
 }
 
 void GUIControl_SetHeight(GUIObject *guio, int newhit) {
-	guio->Height = data_to_game_coord(newhit);
-	guio->OnResized();
+	guio->SetHeight(data_to_game_coord(newhit));
 }
 
 void GUIControl_SetSize(GUIObject *guio, int newwid, int newhit) {

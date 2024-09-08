@@ -60,6 +60,9 @@ public:
 	bool            IsVisible() const;
 	// implemented separately in engine and editor
 	bool            IsClickable() const;
+	Size            GetSize() const { return Size(_width, _height); }
+	int             GetWidth() const { return _width; }
+	int             GetHeight() const { return _height; }
 	int             GetTransparency() const { return _transparency; }
 	// Compatibility: should the control's graphic be clipped to its x,y,w,h
     virtual bool    IsContentClipped() const { return true; }
@@ -70,13 +73,16 @@ public:
 	// Returns the (untransformed!) visual rectangle of this control,
 	// in *relative* coordinates, optionally clipped by the logical size
 	virtual Rect    CalcGraphicRect(bool /*clipped*/) {
-		return RectWH(0, 0, Width, Height);
+		return RectWH(0, 0, _width, _height);
 	}
 	virtual void    Draw(Bitmap *ds, int x = 0, int y = 0) {
 		(void)ds; (void)x; (void)y;
 	}
 	void            SetClickable(bool on);
 	void            SetEnabled(bool on);
+	void            SetSize(int width, int height);
+	inline void     SetWidth(int width) { SetSize(width, _height); }
+	inline void     SetHeight(int height) { SetSize(_width, height); }
 	void            SetTranslated(bool on);
 	void            SetVisible(bool on);
 	void            SetTransparency(int trans);
@@ -127,8 +133,6 @@ public:
 
 	int32_t  X;
 	int32_t  Y;
-	int32_t  Width;
-	int32_t  Height;
 	int32_t  ZOrder;
 	bool     IsActivated; // signals user interaction
 
@@ -136,6 +140,8 @@ public:
 
 protected:
 	uint32_t Flags;      // generic style and behavior flags
+	int32_t  _width;
+	int32_t  _height;
 	int32_t  _transparency; // "incorrect" alpha (in legacy 255-range units)
 	bool     _hasChanged;
 
