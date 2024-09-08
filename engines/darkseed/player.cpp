@@ -30,8 +30,11 @@ Darkseed::Player::Player() {
 }
 
 const Darkseed::Sprite &Darkseed::Player::getSprite(int frameNo) {
-	// TODO switch sprite based on over or underworld.
-	return _cPlayerSprites.getSpriteAt(frameNo);
+	if (g_engine->_room->isGiger()) {
+		return _gPlayerSprites.getSpriteAt(frameNo);
+	} else {
+		return _cPlayerSprites.getSpriteAt(frameNo);
+	}
 }
 
 bool Darkseed::Player::loadAnimations(const Common::Path &filename) {
