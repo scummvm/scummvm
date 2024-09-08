@@ -306,7 +306,7 @@ void qdAnimation::draw_mask_rot(int x, int y, int z, float angle, uint32 mask_co
 		mode |= GR_FLIP_VERTICAL;
 
 	if (tileAnimation()) {
-		tileAnimation()->drawMask_rot(Vect2i(x, y), get_cur_frame_number(), mask_color, mask_alpha, angle, mode);
+		tileAnimation()->drawMask_rot(Vect2i(x, y), get_cur_frame_number(), mask_color, mask_alpha, angle, scale, mode);
 	} else if (fabs(scale.x - scale.y) >= 0.01f) {
 		if (const qdAnimationFrame *p = get_cur_frame())
 			p->draw_mask_rot(x, y, z, angle, mask_color, mask_alpha, scale, mode);
