@@ -513,7 +513,6 @@ public:
 	String *_debug_line;
 	int _first_debug_line = 0, _last_debug_line = 0, _display_console = 0;
 
-	float _fps;
 	int _display_fps;
 	std::unique_ptr<AGS::Engine::MessageBuffer> *_DebugMsgBuff;
 	std::unique_ptr<AGS::Engine::LogFile> *_DebugLogFile;
@@ -842,6 +841,7 @@ public:
 		int data2 = 0;
 	} _restrict_until;
 
+	float _fps;
 	unsigned int _loopcounter = 0;
 	unsigned int _lastcounter = 0;
 	int _numEventsAtStartOfFunction = 0;

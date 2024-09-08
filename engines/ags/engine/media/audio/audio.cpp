@@ -833,7 +833,7 @@ void update_audio_system_on_game_loop() {
 					// we want to crossfade, and we know how far through
 					// the tune we are
 					int takesSteps = calculate_max_volume() / _GP(game).options[OPT_CROSSFADEMUSIC];
-					int takesMs = ::lround(takesSteps * 1000.0f / get_current_fps());
+					int takesMs = ::lround(takesSteps * 1000.0f / get_game_fps());
 					if (curpos >= muslen - takesMs)
 						play_next_queued();
 				}
