@@ -29,16 +29,20 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 void MoveList::ReadFromFile_Legacy(Stream *in) {
-	in->ReadArrayOfInt32(pos, MAXNEEDSTAGES_LEGACY);
+	for (int i = 0; i < MAXNEEDSTAGES_LEGACY; ++i) {
+		// X & Y was packed as high/low shorts, and hence reversed in lo-end
+		pos[i].Y = in->ReadInt16();
+		pos[i].X = in->ReadInt16();
+	}
 	numstage = in->ReadInt32();
 	in->ReadArrayOfInt32(xpermove, MAXNEEDSTAGES_LEGACY);
 	in->ReadArrayOfInt32(ypermove, MAXNEEDSTAGES_LEGACY);
-	fromx = in->ReadInt32();
-	fromy = in->ReadInt32();
+	from.X = in->ReadInt32();
+	from.Y = in->ReadInt32();
 	onstage = in->ReadInt32();
 	onpart = in->ReadInt32();
-	lastx = in->ReadInt32();
-	lasty = in->ReadInt32();
+	last.X = in->ReadInt32();
+	last.Y = in->ReadInt32();
 	doneflag = in->ReadInt8();
 	direct = in->ReadInt8();
 }
@@ -56,16 +60,20 @@ HSaveError MoveList::ReadFromFile(Stream *in, int32_t cmp_ver) {
 		                         String::FromFormat("Incompatible number of movelist steps (count: %d, max : %d).", numstage, MAXNEEDSTAGES));
 	}
 
-	fromx = in->ReadInt32();
-	fromy = in->ReadInt32();
+	from.X = in->ReadInt32();
+	from.Y = in->ReadInt32();
 	onstage = in->ReadInt32();
 	onpart = in->ReadInt32();
-	lastx = in->ReadInt32();
-	lasty = in->ReadInt32();
+	last.X = in->ReadInt32();
+	last.Y = in->ReadInt32();
 	doneflag = in->ReadInt8();
 	direct = in->ReadInt8();
 
-	in->ReadArrayOfInt32(pos, numstage);
+	for (int i = 0; i < numstage; ++i) {
+		// X & Y was packed as high/low shorts, and hence reversed in lo-end
+		pos[i].Y = in->ReadInt16();
+		pos[i].X = in->ReadInt16();
+	}
 	in->ReadArrayOfInt32(xpermove, numstage);
 	in->ReadArrayOfInt32(ypermove, numstage);
 	return HSaveError::None();
@@ -73,16 +81,20 @@ HSaveError MoveList::ReadFromFile(Stream *in, int32_t cmp_ver) {
 
 void MoveList::WriteToFile(Stream *out) {
 	out->WriteInt32(numstage);
-	out->WriteInt32(fromx);
-	out->WriteInt32(fromy);
+	out->WriteInt32(from.X);
+	out->WriteInt32(from.Y);
 	out->WriteInt32(onstage);
 	out->WriteInt32(onpart);
-	out->WriteInt32(lastx);
-	out->WriteInt32(lasty);
+	out->WriteInt32(last.X);
+	out->WriteInt32(last.Y);
 	out->WriteInt8(doneflag);
 	out->WriteInt8(direct);
 
-	out->WriteArrayOfInt32(pos, numstage);
+	for (int i = 0; i < numstage; ++i) {
+		// X & Y was packed as high/low shorts, and hence reversed in lo-end
+		out->WriteInt16(pos[i].Y);
+		out->WriteInt16(pos[i].X);
+	}
 	out->WriteArrayOfInt32(xpermove, numstage);
 	out->WriteArrayOfInt32(ypermove, numstage);
 }

@@ -19,11 +19,12 @@
  *
  */
 
-#ifndef AGS_ENGINE_AC_MOVE_H
-#define AGS_ENGINE_AC_MOVE_H
+#ifndef AGS_ENGINE_AC_MOVE_LIST_H
+#define AGS_ENGINE_AC_MOVE_LIST_H
 
 #include "ags/lib/allegro.h" // fixed math
 #include "ags/engine/game/savegame.h"
+#include "ags/shared/util/geometry.h"
 
 namespace AGS3 {
 
@@ -38,15 +39,23 @@ using namespace AGS; // FIXME later
 #define MAXNEEDSTAGES 256
 #define MAXNEEDSTAGES_LEGACY 40
 
+enum MoveListDoneFlags {
+	kMoveListDone_X = 0x01,
+	kMoveListDone_Y = 0x02,
+	kMoveListDone_XY = kMoveListDone_X | kMoveListDone_Y
+};
+
 struct MoveList {
-	int32_t pos[MAXNEEDSTAGES] = {};
-	int   numstage = 0;
-	fixed xpermove[MAXNEEDSTAGES] = {}, ypermove[MAXNEEDSTAGES] = {};
-	int   fromx = 0, fromy = 0;
-	int   onstage = 0, onpart = 0;
-	int   lastx = 0, lasty = 0;
-	int8  doneflag = 0;
-	int8  direct = 0;  // MoveCharDirect was used or not
+	int 	numstage = 0;
+	Point 	pos[MAXNEEDSTAGES];
+	fixed 	xpermove[MAXNEEDSTAGES]{};
+	fixed 	ypermove[MAXNEEDSTAGES]{};
+	Point 	from;
+	int 	onstage = 0;
+	int 	onpart = 0;
+	Point 	last;
+	uint8_t doneflag = 0u;
+	uint8_t direct = 0; // MoveCharDirect was used or not
 
 	void ReadFromFile_Legacy(Shared::Stream *in);
 	AGS::Engine::HSaveError ReadFromFile(Shared::Stream *in, int32_t cmp_ver);
