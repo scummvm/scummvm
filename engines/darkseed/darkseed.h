@@ -63,17 +63,18 @@ class DarkseedEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	Pic _frame;
 	Pic *_fullscreenPic = nullptr;
 	bool _timeAdvanceEventSelected = false;
 	uint8 _delbertspeech = 0;
 	int16 _yvec = 0; //delbert throw stick related.
 	bool _normalWorldSpritesLoaded = true;
+	bool _redrawFrame = true;
 
 protected:
 	// Engine APIs
 	Common::Error run() override;
 public:
+	Pic _frame;
 	bool _FrameAdvanced = false;
 	bool _ct_voice_status = false;
 	bool _isRightMouseClicked = false;

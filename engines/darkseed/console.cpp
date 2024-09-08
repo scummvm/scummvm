@@ -19,10 +19,13 @@
  *
  */
 
-#include "darkseed/console.h"
 #include "common/debug.h"
+#include "darkseed/console.h"
+#include "darkseed/darkseed.h"
 
 namespace Darkseed {
+
+static constexpr Common::Rect consoleArea = {{0x70, 280}, 416, 44};
 
 Console::Console(TosText *tosText, Sound *sound) : _tosText(tosText), _sound(sound) {
 	if(!_font.load()) {
@@ -53,6 +56,11 @@ void Console::addToCurrentLine(const Common::String &text) {
 }
 
 void Console::draw() {
+	if (!redrawRequired) {
+		return;
+	}
+
+	g_engine->_screen->fillRect(consoleArea, 0);
 	int curIdx = _startIdx == 0 ? _text.size() - 1 : _startIdx - 1;
 	int y = 0x139;
 	for (int i = 0; i < 4 && curIdx != _startIdx && !_text[curIdx].empty(); i++) {
@@ -60,6 +68,8 @@ void Console::draw() {
 		y -= 11;
 		curIdx = curIdx == 0 ? _text.size() - 1 : curIdx - 1;
 	}
+	redrawRequired = false;
+	g_engine->_screen->addDirtyRect(consoleArea);
 }
 
 Common::Array<Common::String> Console::wrapText(const Common::String &text) {
@@ -74,7 +84,7 @@ Common::Array<Common::String> Console::wrapText(const Common::String &text) {
 		}
 		if (text[i] == ' ' || text[i] == '\r') {
 			int wordLength = _font.stringLength(word);
-			if (lineLength + wordLength > 0x1a0) {
+			if (lineLength + wordLength > consoleArea.width()) {
 				lines.push_back(line);
 				line = word;
 				lineLength = wordLength;
@@ -100,6 +110,7 @@ Common::Array<Common::String> Console::wrapText(const Common::String &text) {
 void Console::addLine(const Common::String &line) {
 	_text[_startIdx] = line;
 	_startIdx = (_startIdx + 1) % _text.size();
+	redrawRequired = true;
 }
 
 } // End of namespace Darkseed

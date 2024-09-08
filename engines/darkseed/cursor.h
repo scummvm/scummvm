@@ -41,9 +41,11 @@ class Cursor {
 private:
 	Common::Point _position;
 	enum CursorType _currentCursorType = Pointer;
+	bool hasLoadedCursor = false;
 
 public:
 
+	void showCursor(bool showCursor);
 	void setCursorType(enum CursorType newType);
 	CursorType getCursorType() { return _currentCursorType; }
 
@@ -58,7 +60,6 @@ public:
 	const Sprite &getSprite();
 	const Sprite &getSpriteForType(CursorType cursorType);
 	void updatePosition(int16 x, int16 y);
-	void draw();
 };
 
 } // End of namespace Darkseed

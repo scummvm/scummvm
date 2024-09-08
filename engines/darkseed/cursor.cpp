@@ -21,40 +21,25 @@
 
 #include "cursor.h"
 #include "darkseed.h"
+#include "graphics/cursorman.h"
 
 void Darkseed::Cursor::setCursorType(enum CursorType newType) {
+	bool loadCursor = !hasLoadedCursor || _currentCursorType != newType;
 	_currentCursorType = newType;
+
+	if (loadCursor) {
+		const Sprite cursorSprite = g_engine->_baseSprites.getSpriteAt(_currentCursorType);
+		Graphics::Surface surf;
+		surf.create(cursorSprite.width, cursorSprite.height, Graphics::PixelFormat::createFormatCLUT8());
+		surf.copyRectToSurface(cursorSprite.pixels.data(), cursorSprite.pitch, 0, 0, cursorSprite.width, cursorSprite.height);
+		CursorMan.replaceCursor(surf, 0, 0, 0xf);
+	}
 }
 
 void Darkseed::Cursor::updatePosition(int16 x, int16 y) {
 	_position.x = x;
 	_position.y = y;
 //	debug("mouse at (%d,%d)", _x, _y);
-}
-
-void Darkseed::Cursor::draw() {
-	const Sprite cursorSprite = g_engine->_baseSprites.getSpriteAt(_currentCursorType);
-	int drawX = _position.x;
-	if (drawX + cursorSprite.width > 640) {
-		drawX = 640 - cursorSprite.width;
-	}
-	if (drawX < 0) {
-		drawX = 0;
-	}
-
-	int drawY = _position.y;
-	if (drawY + cursorSprite.height > 350) {
-		drawY = 350 - cursorSprite.height;
-	}
-	if (drawY < 0) {
-		drawY = 0;
-	}
-
-	if (_currentCursorType == HourGlass) {
-		g_engine->_baseSprites.getSpriteAt(_currentCursorType).draw(310, 20);
-	} else {
-		g_engine->_baseSprites.getSpriteAt(_currentCursorType).draw(drawX, drawY);
-	}
 }
 
 int Darkseed::Cursor::getWidth() {
@@ -71,4 +56,8 @@ const Darkseed::Sprite &Darkseed::Cursor::getSprite() {
 
 const Darkseed::Sprite &Darkseed::Cursor::getSpriteForType(Darkseed::CursorType cursorType) {
 	return g_engine->_baseSprites.getSpriteAt(cursorType);
+}
+
+void Darkseed::Cursor::showCursor(bool showCursor) {
+	CursorMan.showMouse(showCursor);
 }

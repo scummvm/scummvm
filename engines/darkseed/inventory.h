@@ -32,6 +32,7 @@ private:
 	Common::Array<uint8> _iconList;
 	int _viewOffset = 0;
 	int _numIcons = 0;
+	bool isVisible = false;
 
 public:
 	Inventory();
