@@ -232,36 +232,36 @@ void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 		for (int y = 0; y <= sy; y++) {
 			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);
 
-					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + ((size.x + 1 + dx) << (F_PREC - 1));
-					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + ((size.y + 1 + dy) << (F_PREC - 1));
+			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + ((size.x + 1 + dx) << (F_PREC - 1));
+			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + ((size.y + 1 + dy) << (F_PREC - 1));
 
-					for (int x = 0; x <= sx; x++) {
-						int xb = (xx >> F_PREC);
-						int yb = (yy >> F_PREC);
+			for (int x = 0; x <= sx; x++) {
+				int xb = (xx >> F_PREC);
+				int yb = (yy >> F_PREC);
 
-						if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-							if (mode & GR_FLIP_HORIZONTAL)
-								xb = size.x - xb - 1;
-							if (mode & GR_FLIP_VERTICAL)
-								yb = size.y - yb - 1;
+				if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
+					if (mode & GR_FLIP_HORIZONTAL)
+						xb = size.x - xb - 1;
+					if (mode & GR_FLIP_VERTICAL)
+						yb = size.y - yb - 1;
 
-							const byte *data_ptr = data + size.x * 4 * yb + xb * 4;
+					const byte *data_ptr = data + size.x * 4 * yb + xb * 4;
 
-							uint32 a = data_ptr[3];
-							if (a != 255) {
-								if (a)
-									*screen_ptr = alpha_blend_565(make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]), *screen_ptr, a);
-								else
-									*screen_ptr = make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]);
-							}
-						}
-
-						xx += cos_a;
-						yy -= sin_a;
-
-						screen_ptr++;
+					uint32 a = data_ptr[3];
+					if (a != 255) {
+						if (a)
+							*screen_ptr = alpha_blend_565(make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]), *screen_ptr, a);
+						else
+							*screen_ptr = make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]);
 					}
 				}
+
+				xx += cos_a;
+				yy -= sin_a;
+
+				screen_ptr++;
+			}
+		}
 	} else {
 		for (int y = 0; y <= sy; y++) {
 			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);
@@ -321,36 +321,36 @@ void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 		for (int y = 0; y <= sy; y++) {
 			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);
 
-					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
-					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
+			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
+			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
 
-					for (int x = 0; x <= sx; x++) {
-						int xb = xx / iscale.x;
-						int yb = yy / iscale.y;
+			for (int x = 0; x <= sx; x++) {
+				int xb = xx / iscale.x;
+				int yb = yy / iscale.y;
 
-						if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-							if (mode & GR_FLIP_HORIZONTAL)
-								xb = size.x - xb - 1;
-							if (mode & GR_FLIP_VERTICAL)
-								yb = size.y - yb - 1;
+				if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
+					if (mode & GR_FLIP_HORIZONTAL)
+						xb = size.x - xb - 1;
+					if (mode & GR_FLIP_VERTICAL)
+						yb = size.y - yb - 1;
 
-							const byte *data_ptr = data + size.x * 4 * yb + xb * 4;
+					const byte *data_ptr = data + size.x * 4 * yb + xb * 4;
 
-							uint32 a = data_ptr[3];
-							if (a != 255) {
-								if (a)
-									*screen_ptr = alpha_blend_565(make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]), *screen_ptr, a);
-								else
-									*screen_ptr = make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]);
-							}
-						}
-
-						xx += cos_a;
-						yy -= sin_a;
-
-						screen_ptr++;
+					uint32 a = data_ptr[3];
+					if (a != 255) {
+						if (a)
+							*screen_ptr = alpha_blend_565(make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]), *screen_ptr, a);
+						else
+							*screen_ptr = make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]);
 					}
 				}
+
+				xx += cos_a;
+				yy -= sin_a;
+
+				screen_ptr++;
+			}
+		}
 	} else {
 		for (int y = 0; y <= sy; y++) {
 			uint16 *screen_ptr = (uint16 *)_screenBuf->getBasePtr(x0, y + y0);

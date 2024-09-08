@@ -480,7 +480,7 @@ void grDispatcher::putSprMask_rle(int x, int y, int sx, int sy, const RLEBuffer 
 				fx += dx;
 			}
 		}
-		}
+	}
 }
 
 void grDispatcher::putSpr_rle_rot(const Vect2i &pos, const Vect2i &size, const RLEBuffer *data, bool has_alpha, int mode, float angle) {
