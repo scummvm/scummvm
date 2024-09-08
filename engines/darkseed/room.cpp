@@ -166,13 +166,13 @@ bool Darkseed::Room::load() {
 
 	_pal.load(g_engine->getPictureFilePath(Common::Path(Common::String::format("%s.pal", filenameBase.c_str()))));
 
-	_locationSprites.load(Common::Path(Common::String::format("%s.nsp", filenameBase.c_str())));
+	loadLocationSprites(Common::Path(Common::String::format("%s.nsp", filenameBase.c_str())));
 
 	if (_roomNumber == 61 && g_engine->_objectVar[22] > 2) {
 		loadRoom61AWalkableLocations();
 	}
 	if (_roomNumber == 10 && ((g_engine->_currentDay == 3 && g_engine->_currentTimeInSeconds > 39600) || g_engine->_objectVar[88] != 0)) {
-		_locationSprites.load(Common::Path("room15.nsp"));
+		loadLocationSprites(Common::Path("room15.nsp"));
 		g_engine->_objectVar.setObjectRunningCode(72, 1);
 	}
 	g_engine->_objectVar.setMoveObjectX(45, 230);
@@ -840,7 +840,7 @@ void Darkseed::Room::runRoomObjects() {
 					roomObj.yOffset += anim.deltaY[_locObjFrame[g_engine->_objectVar[79]]];
 				}
 				spriteNum = _locationSprites.getAnimAt(g_engine->_objectVar[79]).frameNo[_locObjFrame[g_engine->_objectVar[79]]];
-				if (_ObjRestarted) {
+				if (g_engine->_ObjRestarted) {
 					if (g_engine->_objectVar[79] == 1) {
 						g_engine->_objectVar[79] = 3;
 					}
@@ -979,7 +979,7 @@ void Darkseed::Room::runRoomObjects() {
 			}
 			if (_roomNumber == 57 && g_engine->_previousRoomNumber == 54 && spriteNum < 6) {
 				g_engine->_objectVar[56] = spriteNum;
-				if (_ObjRestarted) {
+				if (g_engine->_ObjRestarted) {
 					g_engine->_objectVar[56] = 6;
 				}
 			}
@@ -1069,7 +1069,7 @@ void Darkseed::Room::runRoomObjects() {
 				g_engine->_sprites.addSpriteToDrawList(334, 153, &sprite2, 255, sprite2.width, sprite2.height, false);
 			} else {
 				advanceLocAnimFrame(0);
-				if (!_ObjRestarted) {
+				if (!g_engine->_ObjRestarted) {
 					const Sprite &sprite = _locationSprites.getSpriteAt(_locationSprites.getAnimAt(0).frameNo[_locObjFrame[0]]);
 					g_engine->_sprites.addSpriteToDrawList(245, 93, &sprite, 255, sprite.width, sprite.height, false);
 				} else {
@@ -1255,13 +1255,13 @@ void Darkseed::Room::drawTrunk() {
 
 void Darkseed::Room::advanceLocAnimFrame(int roomObjIdx) {
 	const Obt &anim = _locationSprites.getAnimAt(_roomObj[roomObjIdx].spriteNum);
-	_ObjRestarted = false;
+	g_engine->_ObjRestarted = false;
 	_locObjFrameTimer[roomObjIdx]--;
 	if (_locObjFrameTimer[roomObjIdx] < 1) {
 		_locObjFrame[roomObjIdx]++;
 		if (_locObjFrame[roomObjIdx] == anim.numFrames) {
 			_locObjFrame[roomObjIdx] = 0;
-			_ObjRestarted = true;
+			g_engine->_ObjRestarted = true;
 		}
 		_locObjFrameTimer[roomObjIdx] = anim.frameDuration[_locObjFrame[roomObjIdx]];
 	}
@@ -1270,14 +1270,14 @@ void Darkseed::Room::advanceLocAnimFrame(int roomObjIdx) {
 bool Darkseed::Room::advanceFrame(int animIdx) {
 	g_engine->_FrameAdvanced = false;
 	const Obt &anim = _locationSprites.getAnimAt(animIdx);
-	_ObjRestarted = false;
+	g_engine->_ObjRestarted = false;
 	_locObjFrameTimer[animIdx]--;
 	if (_locObjFrameTimer[animIdx] < 1) {
 		g_engine->_FrameAdvanced = true;
 		_locObjFrame[animIdx]++;
 		if (_locObjFrame[animIdx] == anim.numFrames) {
 			_locObjFrame[animIdx] = 0;
-			_ObjRestarted = true;
+			g_engine->_ObjRestarted = true;
 		}
 		_locObjFrameTimer[animIdx] = anim.frameDuration[_locObjFrame[animIdx]];
 	}
@@ -1286,7 +1286,7 @@ bool Darkseed::Room::advanceFrame(int animIdx) {
 
 void Darkseed::Room::mikeStickThrowAnim() {
 	advanceFrame(2);
-	if (!_ObjRestarted) {
+	if (!g_engine->_ObjRestarted) {
 		g_engine->_player->_frameIdx = _locationSprites.getAnimAt(2).frameNo[_locObjFrame[2]];
 	} else {
 		g_engine->_objectVar[79] = 1;
@@ -1334,6 +1334,9 @@ void Darkseed::Room::darkenSky() {
 
 void Darkseed::Room::loadLocationSprites(const Common::Path &path) {
 	_locationSprites.load(path);
+	for (int i = 0; i < 20; i++) {
+		_locObjFrameTimer[i] = _locationSprites.getAnimAt(i).frameDuration[0];
+	}
 }
 
 Common::Point Darkseed::Room::getExitPointForRoom(uint8 roomNumber) {

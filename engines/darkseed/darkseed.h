@@ -114,7 +114,7 @@ public:
 
 	bool player_sprite_related_2c85_82f3 = false;
 	int _frameBottom = 0;
-	bool isAnimFinished_maybe = false; // TODO replace this with _ObjRestarted we should only have one.
+	bool _ObjRestarted = false;
 	bool animFrameChanged = false;
 	char prefsCutsceneId = 'I';
 	int animIndexTbl[30];
