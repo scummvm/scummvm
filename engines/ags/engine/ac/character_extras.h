@@ -58,6 +58,14 @@ struct CharacterExtras {
 	int   anim_volume = 100; // default animation volume (relative factor)
 	int   cur_anim_volume = 100; // current animation sound volume (relative factor)
 
+	// Following fields are deriatives of the above (calculated from these
+	// and other factors), and hence are not serialized.
+	//
+	// zoom factor of sprite offsets, fixed at 100 in backwards compatible mode
+	int zoom_offs = 100;
+
+	int GetEffectiveY(CharacterInfo *chi) const; // return Y - Z
+
 	// Calculate wanted frame sound volume based on multiple factors
 	int GetFrameSoundVolume(CharacterInfo *chi) const;
 	// Process the current animation frame for the character:

@@ -230,6 +230,9 @@ int get_character_currently_talking();
 void DisplaySpeech(const char *texx, int aschar);
 int update_lip_sync(int talkview, int talkloop, int *talkframeptr);
 
+// Recalculate dynamic character properties, e.g. after restoring a game save
+void restore_characters();
+
 // Calculates character's bounding box in room coordinates (takes only in-room transform into account)
 // use_frame_0 optionally tells to use frame 0 of current loop instead of current frame.
 Rect GetCharacterRoomBBox(int charid, bool use_frame_0 = false);
