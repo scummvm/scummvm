@@ -1222,6 +1222,8 @@ bool Macs2Engine::tick() {
 		runScheduled = false;
 		bool shouldRunInit = scheduledRunIsInitScene;
 		scheduledRunIsInitScene = false;
+		// TODO: Not sure if it is correct setting this one here as well
+		_scriptExecutor->global1032 = true;
 		_scriptExecutor->Run(shouldRunInit);
 	}
 	return Events::tick();
