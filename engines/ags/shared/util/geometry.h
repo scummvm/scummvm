@@ -109,6 +109,10 @@ struct Point {
 	inline Point operator +(const Point &p) const {
 		return Point(X + p.X, Y + p.Y);
 	}
+
+	inline bool Equals(const int x, const int y) const {
+		return X == x && Y == y;
+	}
 };
 
 struct Line {

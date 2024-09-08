@@ -154,8 +154,9 @@ void Character_AddWaypoint(CharacterInfo *chaa, int x, int y) {
 		return;
 	}
 
+	cmls->pos[cmls->numstage] = { x, y };
 	// They're already walking there anyway
-	if (cmls->lastx == x && cmls->lasty == y)
+	if (cmls->last.X == x && cmls->last.Y == y)
 		return;
 
 	int move_speed_x, move_speed_y;
@@ -169,12 +170,11 @@ void Character_AddWaypoint(CharacterInfo *chaa, int x, int y) {
 	// a pathfinder api, and then we'll convert old and new last step back.
 	// TODO: figure out a better way of processing this!
 	const int last_stage = cmls->numstage - 1;
-	cmls->pos[last_stage] = ((room_to_mask_coord(cmls->pos[last_stage] >> 16)) << 16) | ((room_to_mask_coord(cmls->pos[last_stage] & 0xFFFF)) & 0xFFFF);
+	cmls->pos[last_stage] = { room_to_mask_coord(cmls->pos[last_stage].X), room_to_mask_coord(cmls->pos[last_stage].Y) };
 	const int dst_x = room_to_mask_coord(x);
 	const int dst_y = room_to_mask_coord(y);
-	if (add_waypoint_direct(cmls, dst_x, dst_y, move_speed_x, move_speed_y)) {
+	if(add_waypoint_direct(cmls, dst_x, dst_y, move_speed_x, move_speed_y))
 		convert_move_path_to_room_resolution(cmls, last_stage, last_stage + 1);
-	}
 }
 
 void Character_Animate(CharacterInfo *chaa, int loop, int delay, int repeat,
@@ -1322,7 +1322,7 @@ int Character_GetMoving(CharacterInfo *chaa) {
 int Character_GetDestinationX(CharacterInfo *chaa) {
 	if (chaa->walking) {
 		MoveList *cmls = &_GP(mls)[chaa->walking % TURNING_AROUND];
-		return cmls->pos[cmls->numstage - 1] >> 16;
+		return cmls->pos[cmls->numstage - 1].X;
 	} else
 		return chaa->x;
 }
@@ -1330,7 +1330,7 @@ int Character_GetDestinationX(CharacterInfo *chaa) {
 int Character_GetDestinationY(CharacterInfo *chaa) {
 	if (chaa->walking) {
 		MoveList *cmls = &_GP(mls)[chaa->walking % TURNING_AROUND];
-		return cmls->pos[cmls->numstage - 1] & 0xFFFF;
+		return cmls->pos[cmls->numstage - 1].Y;
 	} else
 		return chaa->y;
 }
