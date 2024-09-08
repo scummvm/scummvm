@@ -230,13 +230,13 @@ bool TwinEConsole::doSetHolomapFlag(int argc, const char **argv) {
 
 	const int idx = atoi(argv[1]);
 	if (idx == -1) {
-		for (int i = 0; i < MAX_HOLO_POS_2; ++i) {
+		for (int i = 0; i < _engine->numHoloPos(); ++i) {
 			_engine->_holomap->setHoloPos(i);
 		}
 		return true;
 	}
-	if (idx >= 0 && idx >= MAX_HOLO_POS_2) {
-		debugPrintf("given index exceeds the max allowed value of %i\n", MAX_HOLO_POS_2 - 1);
+	if (idx < 0 || idx >= _engine->numHoloPos()) {
+		debugPrintf("given index exceeds the max allowed value of %i\n", _engine->numHoloPos() - 1);
 		return true;
 	}
 	_engine->_holomap->setHoloPos(idx);
