@@ -641,18 +641,26 @@ void Adlib::OnTimer() {
 			uint8 bp4 = peekByte();
 			uint16 bp10 = Func19BE(1);
 			uint8 bp5 = peekByteAt(bp10);
+			
 			if ((bp6 & 0x0F) == 0x90) {
 				// l0017_1BA1:
 				if (bp5 != 0) {
 					// l0017_1BAA:
 					data->seek(Func19BE(2), SEEK_SET);
 					g225A += 2;
-					// TODO: Continue from here
-					// Before continuing, look at structure
-					if (g2291 == 0x09) {
-						
+					
+					if (g2291 == 0x09 || bp3 < 0x0B) {
+						// l0017_1BE4:
+						// TODO: Is this the first usage?
+						uint8 bp8 = 0;
+						// TODO: Figure out the loop conditions
+						do {
+							// l0017_1BE9:
+							// TODO: Continue from here
+						} while (true);
 					}
-					// TODO: Should be 1BE4
+					// TODO: Should be 1E94h
+
 					
 				}
 				// TODO: This must be 2097h
