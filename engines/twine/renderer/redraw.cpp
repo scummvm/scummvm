@@ -614,6 +614,7 @@ void Redraw::correctZLevels(DrawListStruct *listTri, int32 drawListPos) {
 							break;
 						}
 					}
+					break;
 				}
 
 				if (pmax.z > tmin.z && pmin.z < tmax.z) {
