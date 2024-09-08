@@ -90,7 +90,12 @@ void FSUtilXObj::m_new(int nargs) {
 }
 
 XOBJSTUBNR(FSUtilXObj::m_dispose)
+// This stub is fine: a system folder of "" roots the files it creates in
+// ScummVM's save directory.
 XOBJSTUB(FSUtilXObj::m_getSystemFolder, "")
+// This stub is also fine; the only folders it creates are within the
+// save directory, and since ScummVM encodes the path inside the filename
+// instead of actually creating directories, we don't have to do anything.
 XOBJSTUB(FSUtilXObj::m_makeFolder, 0)
 
 }

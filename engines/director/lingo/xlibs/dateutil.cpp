@@ -138,6 +138,7 @@ void DateUtilXObj::m_getTime(int nargs) {
 	g_lingo->push(Datum(out));
 }
 
+// These two methods are never called in Phantasmagoria.
 XOBJSTUB(DateUtilXObj::m_getDateTime, "")
 XOBJSTUB(DateUtilXObj::m_getSecond, 0)
 
