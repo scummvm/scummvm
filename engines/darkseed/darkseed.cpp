@@ -1029,6 +1029,8 @@ void DarkseedEngine::loadRoom(int roomNumber) {
 	delete _room;
 	_room = new Room(roomNumber); // getroomstuff
 
+	updateBaseSprites();
+
 	if (roomNumber == 46 && _previousRoomNumber == 60 && _objectVar[57] == 1) {
 		return;
 	}
@@ -1138,6 +1140,8 @@ void DarkseedEngine::changeToRoom(int newRoomNumber) { // AKA LoadNewRoom
 void DarkseedEngine::debugTeleportToRoom(int newRoomNumber, int entranceNumber) {
 	delete _room;
 	_room = new Room(newRoomNumber);
+
+	updateBaseSprites();
 
 	if (entranceNumber < _room->room1.size()) {
 		const RoomExit &roomExit = _room->room1[entranceNumber];
@@ -1271,8 +1275,9 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 					} else if (otherNspAnimationType_maybe == 43 || otherNspAnimationType_maybe == 44) {
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
 						_sprites.addSpriteToDrawList(303, 105, &animSprite, 240 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
-					} else if (otherNspAnimationType_maybe == 62) {
-						error("anim display 62"); // TODO
+					} else if (otherNspAnimationType_maybe == 62) { // sargent approaches jail cell.
+						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
+						_sprites.addSpriteToDrawList(_player->_position.x - animSprite.width / 2, _player->_position.y - animSprite.height, &animSprite, 240 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
 					} else if (otherNspAnimationType_maybe == 45 || otherNspAnimationType_maybe == 46) { // pull lever
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
 						_sprites.addSpriteToDrawList(446, 124, &animSprite, 240 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
@@ -1489,6 +1494,11 @@ void DarkseedEngine::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 		_player->_position.x = 324;
 		_player->_position.y = 50;
 		break;
+	case 19:
+	case 23:
+		_scaleSequence = true;
+		_player->_frameIdx = 24;
+		break;
 	case 20:
 		spriteAnimCountdownTimer[3] = 3;
 		break;
@@ -1503,6 +1513,10 @@ void DarkseedEngine::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 	case 28 :
 		_player->_position.x = 397;
 		_player->_position.y = 77;
+		break;
+	case 39:
+		_scaleSequence = true;
+		_player->_frameIdx = _room->_locationSprites.getAnimAt(nspAnimIdx).frameNo[0];
 		break;
 	case 41 :
 	case 42 :
@@ -1816,12 +1830,28 @@ void DarkseedEngine::updateAnimation() {
 			}
 		}
 		break;
+	case 19: // pickup book from library
+		_player->_frameIdx = 24;
+		if (_room->_ObjRestarted) {
+			isPlayingAnimation_maybe = true;
+			_objectVar[46] = 2;
+			libanim(true);
+		}
+		break;
 	case 20: // receive card from delbert
 		advanceAnimationFrame(3);
 		if (!isAnimFinished_maybe) {
 			_player->_frameIdx = _player->_animations.getAnimAt(3).frameNo[animIndexTbl[3]];
 		} else {
 			_inventory.addItem(18);
+		}
+		break;
+	case 23:
+		_player->_frameIdx = 24;
+		if (_room->_ObjRestarted != 0) {
+			isPlayingAnimation_maybe = false;
+			_objectVar[99] = 1;
+			_console->printTosText(468);
 		}
 		break;
 	case 10:
@@ -1963,6 +1993,26 @@ void DarkseedEngine::updateAnimation() {
 			}
 		}
 		break;
+	case 38:
+		advanceAnimationFrame(0);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]];
+		} else {
+			stuffPlayer();
+		}
+		break;
+	case 39: // Arrest Mike.
+		_room->advanceFrame(1);
+		if (!_room->_ObjRestarted) {
+			_player->_frameIdx = _room->_locationSprites.getAnimAt(1).frameNo[_room->_locObjFrame[1]];
+		}
+		else {
+			throwmikeinjail();
+		}
+		break;
+	case 40:
+		error("updateAnimation 40"); //TODO
+		break;
 	case 41:
 		advanceAnimationFrame(0);
 		if (!isAnimFinished_maybe) {
@@ -2096,6 +2146,48 @@ void DarkseedEngine::updateAnimation() {
 		}
 		if (animFrameChanged && _player->_frameIdx == 3) {
 			playSound(26, 5, -1);
+		}
+		break;
+	case 60:
+		_room->advanceFrame(0);
+		if (!_room->_ObjRestarted) {
+			_player->_frameIdx = _room->_locationSprites.getAnimAt(0).frameNo[_room->_locObjFrame[0]];
+		} else {
+			isPlayingAnimation_maybe = false;
+			_objectVar[187] = 1;
+		}
+		break;
+	case 61:
+		_room->advanceFrame(1);
+		if (!_room->_ObjRestarted) {
+			_player->_frameIdx = _room->_locationSprites.getAnimAt(1).frameNo[_room->_locObjFrame[1]];
+		} else {
+			isPlayingAnimation_maybe = false;
+		}
+		_objectVar[187] = 0;
+		break;
+	case 62: // bang cup against bars
+		advanceAnimationFrame(0);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]];
+		} else {
+			bool bVar5 = _objectVar.getMoveObjectRoom(18) == 250;
+			if (!bVar5) {
+				if (_inventory.hasObject(18)) {
+					bVar5 = true;
+				}
+			}
+			if (bVar5) {
+				isPlayingAnimation_maybe = false;
+				_objectVar.setObjectRunningCode(53, 1);
+				_player->loadAnimations("copcard.nsp");
+				animIndexTbl[0] = 0;
+				spriteAnimCountdownTimer[0] = 3;
+				_objectVar[1] = 2000;
+			}
+			else {
+				_console->addTextLine("The cops ignore your demands for attention.");
+			}
 		}
 		break;
 	case 65:
@@ -3063,7 +3155,7 @@ void DarkseedEngine::runObjects() {
 		((_currentDay == 3 && _currentTimeInSeconds > 39600 && _objectVar[57] == 0) ||
 		  _objectVar[88] != 0)) {
 		if (_player->_position.x == 322 && _player->_position.y == 226) {
-			setupOtherNspAnimation(1, 39);
+			setupOtherNspAnimation(1, 39); // arrest mike.
 		} else {
 			const Sprite &sprite = _room->_locationSprites.getSpriteAt(4);
 			_room->calculateScaledSpriteDimensions(sprite.width, sprite.height, 224);
@@ -3307,6 +3399,23 @@ void DarkseedEngine::removeFullscreenPic() {
 void DarkseedEngine::zeromousebuttons() {
 	_isLeftMouseClicked = false;
 	_isRightMouseClicked = false;
+}
+
+void DarkseedEngine::updateBaseSprites() {
+	if (!_room->isGiger() == _normalWorldSpritesLoaded) {
+		// no need to change graphics
+		return;
+	}
+
+	if (_room->isGiger()) {
+		_baseSprites.load("gbase.nsp");
+		_frame.load("gframe.pic");
+		_normalWorldSpritesLoaded = false;
+	} else {
+		_baseSprites.load("cbase.nsp");
+		_frame.load("cframe.pic");
+		_normalWorldSpritesLoaded = true;
+	}
 }
 
 } // End of namespace Darkseed

@@ -68,6 +68,7 @@ private:
 	bool _timeAdvanceEventSelected = false;
 	uint8 _delbertspeech = 0;
 	int16 _yvec = 0; //delbert throw stick related.
+	bool _normalWorldSpritesLoaded = true;
 
 protected:
 	// Engine APIs
@@ -113,7 +114,7 @@ public:
 
 	bool player_sprite_related_2c85_82f3 = false;
 	int _frameBottom = 0;
-	bool isAnimFinished_maybe = false;
+	bool isAnimFinished_maybe = false; // TODO replace this with _ObjRestarted we should only have one.
 	bool animFrameChanged = false;
 	char prefsCutsceneId = 'I';
 	int animIndexTbl[30];
@@ -217,6 +218,7 @@ public:
 	void changeToRoom(int newRoomNumber);
 
 private:
+	void updateBaseSprites();
 	void updateAnimation();
 	void advanceAnimationFrame(int nspAminIdx);
 	void fadeInner(int startValue, int endValue, int increment);
