@@ -69,7 +69,7 @@ void GameState::initGameStateVars() {
 	_engine->_extra->resetExtras();
 
 	for (int32 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
-		_engine->_redraw->overlayList[i].info0 = -1;
+		_engine->_redraw->overlayList[i].num = -1;
 	}
 
 	for (int32 i = 0; i < ARRAYSIZE(_engine->_scene->_listFlagCube); i++) {

@@ -177,7 +177,7 @@ void Redraw::posObjIncrust(OverlayListStruct *ptrdisp, int32 num) {
 	if (type == OverlayType::koInventory || type == OverlayType::koInventoryItem) {
 		for (int32 n = 0; n < ARRAYSIZE(overlayList); n++) {
 			OverlayListStruct *overlay = &overlayList[n];
-			if (n != num && overlay->info0 != -1) {
+			if (n != num && overlay->num != -1) {
 				if (overlay->type == OverlayType::koInventory || overlay->type == OverlayType::koInventoryItem) {
 					x += 70;
 				}
@@ -193,19 +193,19 @@ int32 Redraw::addOverlay(OverlayType type, int16 info0, int16 x, int16 y, int16 
 	for (int32 i = 0; i < ARRAYSIZE(overlayList); i++) {
 		OverlayListStruct *overlay = &overlayList[i];
 		if (_engine->isLBA1()) {
-			if (overlay->info0 == -1) {
+			if (overlay->num == -1) {
 				overlay->type = type;
-				overlay->info0 = info0;
+				overlay->num = info0;
 				overlay->x = x;
 				overlay->y = y;
-				overlay->info1 = info1;
-				overlay->posType = posType;
-				overlay->lifeTime = _engine->timerRef + _engine->toSeconds(lifeTime);
+				overlay->info = info1;
+				overlay->move = posType;
+				overlay->timerEnd = _engine->timerRef + _engine->toSeconds(lifeTime);
 				return i;
 			}
 		} else {
-			if (overlay->info0 == -1 || (overlay->info0 == info0 && overlay->type == type)) {
-				if (overlay->info0 == -1 || overlay->type != type) {
+			if (overlay->num == -1 || (overlay->num == info0 && overlay->type == type)) {
+				if (overlay->num == -1 || overlay->type != type) {
 					overlay->x = x;
 					overlay->y = y;
 				}
@@ -216,10 +216,10 @@ int32 Redraw::addOverlay(OverlayType type, int16 info0, int16 x, int16 y, int16 
 					overlay->y = info0;
 				}
 				overlay->type = type;
-				overlay->info0 = info0;
-				overlay->info1 = info1;
-				overlay->posType = posType;
-				overlay->lifeTime = _engine->timerRef + _engine->toSeconds(lifeTime);
+				overlay->num = info0;
+				overlay->info = info1;
+				overlay->move = posType;
+				overlay->timerEnd = _engine->timerRef + _engine->toSeconds(lifeTime);
 				posObjIncrust(overlay, i);
 				return i;
 			}
@@ -234,7 +234,7 @@ void Redraw::updateOverlayTypePosition(int16 x1, int16 y1, int16 x2, int16 y2) {
 
 	for (int32 i = 0; i < ARRAYSIZE(overlayList); i++) {
 		OverlayListStruct *overlay = &overlayList[i];
-		if (overlay->posType == OverlayPosType::koFollowActor) {
+		if (overlay->move == OverlayPosType::koFollowActor) {
 			overlay->x = newX;
 			overlay->y = newY;
 		}
@@ -696,148 +696,149 @@ void Redraw::processDrawList(DrawListStruct *drawList, int32 drawListPos, bool b
 void Redraw::renderOverlays() {
 	for (int32 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
 		OverlayListStruct *overlay = &overlayList[i];
-		if (overlay->info0 != -1) {
-			// process position overlay
-			switch (overlay->posType) {
-			case OverlayPosType::koNormal:
-				if (_engine->timerRef >= overlay->lifeTime) {
-					overlay->info0 = -1;
-					continue;
-				}
-				break;
-			case OverlayPosType::koFollowActor: {
-				ActorStruct *actor2 = _engine->_scene->getActor(overlay->info1);
-
-				const IVec3 &projPos = _engine->_renderer->projectPoint(actor2->_posObj.x - _engine->_grid->_worldCube.x, actor2->_posObj.y + actor2->_boundingBox.maxs.y - _engine->_grid->_worldCube.y, actor2->_posObj.z - _engine->_grid->_worldCube.z);
-
-				overlay->x = projPos.x;
-				overlay->y = projPos.y;
-
-				if (_engine->timerRef >= overlay->lifeTime) {
-					overlay->info0 = -1;
-					continue;
-				}
-				break;
+		if (overlay->num == -1) {
+			continue;
+		}
+		// process position overlay
+		switch (overlay->move) {
+		case OverlayPosType::koNormal: // wait number of seconds and die
+			if (_engine->timerRef >= overlay->timerEnd) {
+				overlay->num = -1;
+				continue;
 			}
+			break;
+		case OverlayPosType::koFollowActor: { // follow obj coordinates for number of seconds and die
+			ActorStruct *actor2 = _engine->_scene->getActor(overlay->info);
+
+			const IVec3 &projPos = _engine->_renderer->projectPoint(actor2->_posObj.x - _engine->_grid->_worldCube.x, actor2->_posObj.y + actor2->_boundingBox.maxs.y - _engine->_grid->_worldCube.y, actor2->_posObj.z - _engine->_grid->_worldCube.z);
+
+			overlay->x = projPos.x;
+			overlay->y = projPos.y;
+
+			if (_engine->timerRef >= overlay->timerEnd) {
+				overlay->num = -1;
+				continue;
 			}
+			break;
+		}
+		}
 
-			// process overlay type
-			switch (overlay->type) {
-			case OverlayType::koSprite: {
-				const SpriteData &spritePtr = _engine->_resources->_spriteData[overlay->info0];
-				const int32 spriteWidth = spritePtr.surface().w;
-				const int32 spriteHeight = spritePtr.surface().h;
+		// process overlay type
+		switch (overlay->type) {
+		case OverlayType::koSprite: {
+			const SpriteData &spritePtr = _engine->_resources->_spriteData[overlay->num];
+			const int32 spriteWidth = spritePtr.surface().w;
+			const int32 spriteHeight = spritePtr.surface().h;
 
-				const SpriteDim *dim = _engine->_resources->_spriteBoundingBox.dim(overlay->info0);
-				Common::Rect renderRect;
-				renderRect.left = dim->x + overlay->x;
-				renderRect.top = dim->y + overlay->y;
-				renderRect.right = renderRect.left + spriteWidth;
-				renderRect.bottom = renderRect.top + spriteHeight;
+			const SpriteDim *dim = _engine->_resources->_spriteBoundingBox.dim(overlay->num);
+			Common::Rect renderRect;
+			renderRect.left = dim->x + overlay->x;
+			renderRect.top = dim->y + overlay->y;
+			renderRect.right = renderRect.left + spriteWidth;
+			renderRect.bottom = renderRect.top + spriteHeight;
 
-				_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
+			_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
 
-				addRedrawArea(_engine->_interface->_clip);
-				break;
-			}
-			case OverlayType::koNumber: {
-				char text[10];
-				snprintf(text, sizeof(text), "%d", overlay->info0);
+			addRedrawArea(_engine->_interface->_clip);
+			break;
+		}
+		case OverlayType::koNumber: {
+			char text[10];
+			snprintf(text, sizeof(text), "%d", overlay->num);
 
-				const int32 textLength = _engine->_text->getTextSize(text);
-				const int32 textHeight = 48;
+			const int32 textLength = _engine->_text->getTextSize(text);
+			const int32 textHeight = 48;
 
-				Common::Rect renderRect;
-				renderRect.left = overlay->x - (textLength / 2);
-				renderRect.top = overlay->y - 24;
-				renderRect.right = overlay->x + (textLength / 2);
-				renderRect.bottom = overlay->y + textHeight;
+			Common::Rect renderRect;
+			renderRect.left = overlay->x - (textLength / 2);
+			renderRect.top = overlay->y - 24;
+			renderRect.right = overlay->x + (textLength / 2);
+			renderRect.bottom = overlay->y + textHeight;
 
-				_engine->_interface->setClip(renderRect);
+			_engine->_interface->setClip(renderRect);
 
-				_engine->_text->setFontColor(overlay->info1);
+			_engine->_text->setFontColor(overlay->info);
 
-				_engine->_text->drawText(renderRect.left, renderRect.top, text);
+			_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
-				addRedrawArea(_engine->_interface->_clip);
+			addRedrawArea(_engine->_interface->_clip);
 
-				_engine->_interface->unsetClip();
-				break;
-			}
-			case OverlayType::koNumberRange: {
-				const int32 range = _engine->_collision->boundRuleThree(overlay->info1, overlay->info0, 100, overlay->lifeTime - _engine->timerRef - _engine->toSeconds(1));
+			_engine->_interface->unsetClip();
+			break;
+		}
+		case OverlayType::koNumberRange: {
+			const int32 range = _engine->_collision->boundRuleThree(overlay->info, overlay->num, 100, overlay->timerEnd - _engine->timerRef - _engine->toSeconds(1));
 
-				char text[10];
-				Common::sprintf_s(text, "%d", range);
+			char text[10];
+			Common::sprintf_s(text, "%d", range);
 
-				const int32 textLength = _engine->_text->getTextSize(text);
-				const int32 textHeight = 48;
+			const int32 textLength = _engine->_text->getTextSize(text);
+			const int32 textHeight = 48;
 
-				Common::Rect renderRect;
-				renderRect.left = overlay->x - (textLength / 2);
-				renderRect.top = overlay->y - 24;
-				renderRect.right = overlay->x + (textLength / 2);
-				renderRect.bottom = overlay->y + textHeight;
+			Common::Rect renderRect;
+			renderRect.left = overlay->x - (textLength / 2);
+			renderRect.top = overlay->y - 24;
+			renderRect.right = overlay->x + (textLength / 2);
+			renderRect.bottom = overlay->y + textHeight;
 
-				_engine->_interface->setClip(renderRect);
+			_engine->_interface->setClip(renderRect);
 
-				_engine->_text->setFontColor(COLOR_GOLD);
+			_engine->_text->setFontColor(COLOR_GOLD);
 
-				_engine->_text->drawText(renderRect.left, renderRect.top, text);
+			_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
-				addRedrawArea(_engine->_interface->_clip);
-				_engine->_interface->unsetClip();
-				break;
-			}
-			case OverlayType::koInventoryItem: {
-				const int32 item = overlay->info0;
-				const Common::Rect rect(10, 10, 79, 79);
+			addRedrawArea(_engine->_interface->_clip);
+			_engine->_interface->unsetClip();
+			break;
+		}
+		case OverlayType::koInventoryItem: {
+			const int32 item = overlay->num;
+			const Common::Rect rect(10, 10, 79, 79);
 
-				_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
-				_engine->_interface->setClip(rect);
+			_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
+			_engine->_interface->setClip(rect);
 
-				const BodyData &bodyPtr = _engine->_resources->_inventoryTable[item];
-				_overlayRotation += 1; // overlayRotation += 8;
-				_engine->_renderer->draw3dObject(40, 40, bodyPtr, _overlayRotation, 16000);
-				_engine->_menu->drawRectBorders(rect);
-				addRedrawArea(rect);
-				_engine->_gameState->init3DGame();
-				_engine->_interface->unsetClip();
-				break;
-			}
-			case OverlayType::koText: {
-				char text[256];
-				_engine->_text->getMenuText((TextId)overlay->info0, text, sizeof(text));
+			const BodyData &bodyPtr = _engine->_resources->_inventoryTable[item];
+			_overlayRotation += 1; // overlayRotation += 8;
+			_engine->_renderer->draw3dObject(40, 40, bodyPtr, _overlayRotation, 16000);
+			_engine->_menu->drawRectBorders(rect);
+			addRedrawArea(rect);
+			_engine->_gameState->init3DGame();
+			_engine->_interface->unsetClip();
+			break;
+		}
+		case OverlayType::koText: {
+			char text[256];
+			_engine->_text->getMenuText((TextId)overlay->num, text, sizeof(text));
 
-				const int32 textLength = _engine->_text->getTextSize(text);
-				const int32 textHeight = 48;
+			const int32 textLength = _engine->_text->getTextSize(text);
+			const int32 textHeight = 48;
 
-				Common::Rect renderRect;
-				renderRect.left = overlay->x - (textLength / 2);
-				renderRect.top = overlay->y - (textHeight / 2);
-				renderRect.right = overlay->x + (textLength / 2);
-				renderRect.bottom = overlay->y + textHeight;
+			Common::Rect renderRect;
+			renderRect.left = overlay->x - (textLength / 2);
+			renderRect.top = overlay->y - (textHeight / 2);
+			renderRect.right = overlay->x + (textLength / 2);
+			renderRect.bottom = overlay->y + textHeight;
 
-				renderRect.clip(_engine->rect());
+			renderRect.clip(_engine->rect());
 
-				_engine->_interface->setClip(renderRect);
+			_engine->_interface->setClip(renderRect);
 
-				_engine->_text->setFontColor(_engine->_scene->getActor(overlay->info1)->_talkColor);
+			_engine->_text->setFontColor(_engine->_scene->getActor(overlay->info)->_talkColor);
 
-				_engine->_text->drawText(renderRect.left, renderRect.top, text);
+			_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
-				addRedrawArea(_engine->_interface->_clip);
-				_engine->_interface->unsetClip();
-				break;
-			}
-			case OverlayType::koSysText:
-			case OverlayType::koFlash:
-			case OverlayType::koRain:
-			case OverlayType::koInventory:
-				// TODO lba2
-			case OverlayType::koMax:
-				break;
-			}
+			addRedrawArea(_engine->_interface->_clip);
+			_engine->_interface->unsetClip();
+			break;
+		}
+		case OverlayType::koSysText:
+		case OverlayType::koFlash:
+		case OverlayType::koRain:
+		case OverlayType::koInventory:
+			// TODO lba2
+		case OverlayType::koMax:
+			break;
 		}
 	}
 }

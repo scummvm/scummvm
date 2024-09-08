@@ -55,13 +55,13 @@ enum class OverlayPosType {
 
 /** Overlay list structure */
 struct OverlayListStruct {
-	OverlayType type = OverlayType::koSprite;
-	int16 info0 = 0; // sprite/3d model entry | number | number range
+	int16 num = 0; // sprite/3d model entry | number | number range
 	int16 x = 0;
 	int16 y = 0;
-	int16 info1 = 0; // text = actor | total coins
-	OverlayPosType posType = OverlayPosType::koNormal;
-	int16 lifeTime = 0; // life time in ticks - see toSeconds()
+	OverlayType type = OverlayType::koSprite;
+	int16 info = 0; // text = actor | total coins
+	OverlayPosType move = OverlayPosType::koNormal;
+	int16 timerEnd = 0; // life time in ticks - see toSeconds()
 };
 
 struct DrawListStruct {

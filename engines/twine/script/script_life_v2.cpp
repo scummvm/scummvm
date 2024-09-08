@@ -510,7 +510,7 @@ int32 ScriptLifeV2::lRAIN(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 n = engine->_redraw->addOverlay(OverlayType::koRain, 0, 0, 0, 0, OverlayPosType::koNormal, 1);
 	if (n != -1) {
 		// Rain n/10s
-		engine->_redraw->overlayList[n].lifeTime = engine->timerRef + engine->toSeconds(num / 10);
+		engine->_redraw->overlayList[n].timerEnd = engine->timerRef + engine->toSeconds(num / 10);
 		engine->_flagRain = true;
 		engine->_sound->startRainSample();
 	}
@@ -590,7 +590,7 @@ int32 ScriptLifeV2::lECLAIR(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 n = engine->_redraw->addOverlay(OverlayType::koFlash, 0, 0, 0, 0, OverlayPosType::koNormal, 1);
 	if (n != -1) {
 		// Eclair n/10s
-		engine->_redraw->overlayList[n].lifeTime = engine->timerRef + engine->toSeconds(num / 10);
+		engine->_redraw->overlayList[n].timerEnd = engine->timerRef + engine->toSeconds(num / 10);
 	}
 	return 0;
 }
