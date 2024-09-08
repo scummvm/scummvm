@@ -90,8 +90,54 @@ void DateUtilXObj::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
 }
 
-XOBJSTUB(DateUtilXObj::m_getTime, "")
-XOBJSTUB(DateUtilXObj::m_getDate, "")
+// Amusement Planet Phantasmagoria calls this method, treating its return
+// value as a single string, and reading chars 1-4, 6-7, 9-10, and 12-14
+// as the values we set here.
+void DateUtilXObj::m_getDate(int nargs) {
+	TimeDate time;
+	g_system->getTimeAndDate(time);
+
+	Common::String day;
+	switch (time.tm_wday) {
+	case 0:
+		day = Common::String("SUN");
+		;;
+	case 1:
+		day = Common::String("MON");
+		;;
+	case 2:
+		day = Common::String("TUE");
+		;;
+	case 3:
+		day = Common::String("WED");
+		;;
+	case 4:
+		day = Common::String("THU");
+		;;
+	case 5:
+		day = Common::String("FRI");
+		;;
+	case 6:
+		day = Common::String("SAT");
+		;;
+	}
+
+	// Phantasmagoria's get_season() suggests months start from 1.
+	Common::String out = Common::String::format("%04d:%02d:%02d:%s", time.tm_year + 1900, time.tm_mon + 1, time.tm_mday, day.c_str());
+	g_lingo->push(Datum(out));
+}
+
+// Amusement Planet Phantasmagoria calls this method, treating its return
+// value as a single string, and reading chars 1-2, 4-5 and 7-8 as the
+// values we set here.
+void DateUtilXObj::m_getTime(int nargs) {
+	TimeDate time;
+	g_system->getTimeAndDate(time);
+
+	Common::String out = Common::String::format("%02d:%02d:%02d", time.tm_hour, time.tm_min, time.tm_sec);
+	g_lingo->push(Datum(out));
+}
+
 XOBJSTUB(DateUtilXObj::m_getDateTime, "")
 XOBJSTUB(DateUtilXObj::m_getSecond, 0)
 
