@@ -135,6 +135,24 @@ void CastleEngine::loadAssetsDOSFullGame() {
 			stream->seek(0x1c700);
 			_background = loadFrameFromPlanes(stream, 252, 42);
 			_background->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+			// Eye widget is next to 0x1f058
+
+			stream->seek(0x1f4ea);
+			for (int i = 0; i < 9; i++) {
+				Graphics::ManagedSurface *frame = loadFrameFromPlanes(stream, 8, 14);
+				frame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+				_keysBorderFrames.push_back(frame);
+			}
+
+			for (int i = 0; i < 11; i++) {
+				Graphics::ManagedSurface *frame = loadFrameFromPlanes(stream, 8, 14);
+				frame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+				_keysMenuFrames.push_back(frame);
+			}
+
+			stream->seek(0x202b8);
+			_strenghtBackgroundFrame = loadFrameFromPlanes(stream, 40, 14);
+			_strenghtBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
 
 			stream->seek(0x221ae);
 			_menu = loadFrameFromPlanes(stream, 112, 114);
@@ -349,6 +367,10 @@ void CastleEngine::drawDOSUI(Graphics::Surface *surface) {
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else
 		drawStringInSurface(_currentArea->_name, 97, 182, front, back, surface);
+
+	for (int k = 0; k < _numberKeys; k++) {
+		surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_keysBorderFrames[k], 76 - k * 4, 179, Common::Rect(0, 0, 6, 14), _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00));
+	}
 
 	drawEnergyMeter(surface);
 	int flagFrameIndex = (_ticks / 10) % 4;

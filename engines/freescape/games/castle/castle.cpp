@@ -61,7 +61,6 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 
 	_option = nullptr;
 	_optionTexture = nullptr;
-	_keysFrame = nullptr;
 	_spiritsMeterIndicatorFrame = nullptr;
 	_strenghtBackgroundFrame = nullptr;
 	_strenghtBarFrame = nullptr;
@@ -674,14 +673,15 @@ void CastleEngine::drawEnergyMeter(Graphics::Surface *surface) {
 	Common::Point origin;
 
 	if (isDOS())
-		origin = Common::Point(43, 157);
+		origin = Common::Point(40, 160);
 	if (isSpectrum())
 		origin = Common::Point(63, 154);
 
-	if (!_strenghtBackgroundFrame)
-		return;
 
 	surface->copyRectToSurface((const Graphics::Surface)*_strenghtBackgroundFrame, origin.x, origin.y, Common::Rect(0, 0, _strenghtBackgroundFrame->w, _strenghtBackgroundFrame->h));
+	if (!_strenghtBarFrame)
+		return;
+
 	surface->copyRectToSurface((const Graphics::Surface)*_strenghtBarFrame, origin.x, origin.y + 8, Common::Rect(0, 0, _strenghtBarFrame->w, _strenghtBarFrame->h));
 
 	Common::Point weightPoint;

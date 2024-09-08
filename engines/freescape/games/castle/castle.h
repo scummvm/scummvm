@@ -86,7 +86,8 @@ public:
 	Graphics::ManagedSurface *loadFrameFromPlanesVertical(Common::SeekableReadStream *file, int widthInBytes, int height);
 	Graphics::ManagedSurface *loadFrameFromPlanesInternalVertical(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int width, int height, int plane);
 
-	Graphics::ManagedSurface *_keysFrame;
+	Common::Array<Graphics::ManagedSurface *>_keysBorderFrames;
+	Common::Array<Graphics::ManagedSurface *>_keysMenuFrames;
 	Graphics::ManagedSurface *_spiritsMeterIndicatorFrame;
 	Graphics::ManagedSurface *_strenghtBackgroundFrame;
 	Graphics::ManagedSurface *_strenghtBarFrame;
