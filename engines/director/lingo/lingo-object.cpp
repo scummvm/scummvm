@@ -45,6 +45,7 @@
 #include "director/lingo/xlibs/consumer.h"
 #include "director/lingo/xlibs/cursorxobj.h"
 #include "director/lingo/xlibs/darkenscreen.h"
+#include "director/lingo/xlibs/dateutil.h"
 #include "director/lingo/xlibs/developerStack.h"
 #include "director/lingo/xlibs/dialogsxobj.h"
 #include "director/lingo/xlibs/dirutil.h"
@@ -68,6 +69,7 @@
 #include "director/lingo/xlibs/findwin.h"
 #include "director/lingo/xlibs/flushxobj.h"
 #include "director/lingo/xlibs/fplayxobj.h"
+#include "director/lingo/xlibs/fsutil.h"
 #include "director/lingo/xlibs/genutils.h"
 #include "director/lingo/xlibs/getscreenrectsxfcn.h"
 #include "director/lingo/xlibs/getscreensizexfcn.h"
@@ -228,6 +230,7 @@ static struct XLibProto {
 	XLIBDEF(DPWAVIXObj,			kXObj,			300),	// D3
 	XLIBDEF(DPWQTWXObj,			kXObj,			300),	// D3
 	XLIBDEF(DarkenScreen,		kXObj,			300),	// D3
+	XLIBDEF(DateUtilXObj,			kXObj,					400),	// D4
 	XLIBDEF(DeveloperStack,		kXObj,			300),	// D3
 	XLIBDEF(DialogsXObj,		kXObj,			400),	// D4
 	XLIBDEF(DirUtilXObj,		kXObj,			400),	// D4
@@ -238,6 +241,7 @@ static struct XLibProto {
 	XLIBDEF(FEDraculXObj,		kXObj,			400),	// D4
 	XLIBDEF(FEIMasksXObj,		kXObj,			400),	// D4
 	XLIBDEF(FEIPrefsXObj,		kXObj,			400),	// D4
+	XLIBDEF(FSUtilXObj,			kXObj,					400),	// D4
 	XLIBDEF(FadeGammaDownXCMD,	kXObj,			400),	// D4
 	XLIBDEF(FadeGammaUpXCMD,	kXObj,			400),	// D4
 	XLIBDEF(FadeGammaXCMD,		kXObj,			400),	// D4

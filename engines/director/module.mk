@@ -74,6 +74,7 @@ MODULE_OBJS = \
 	lingo/xlibs/consumer.o \
 	lingo/xlibs/cursorxobj.o \
 	lingo/xlibs/darkenscreen.o \
+	lingo/xlibs/dateutil.o \
 	lingo/xlibs/developerStack.o \
 	lingo/xlibs/dialogsxobj.o \
 	lingo/xlibs/dirutil.o \
@@ -97,6 +98,7 @@ MODULE_OBJS = \
 	lingo/xlibs/findwin.o \
 	lingo/xlibs/flushxobj.o \
 	lingo/xlibs/fplayxobj.o \
+	lingo/xlibs/fsutil.o \
 	lingo/xlibs/genutils.o \
 	lingo/xlibs/getscreenrectsxfcn.o \
 	lingo/xlibs/getscreensizexfcn.o \
