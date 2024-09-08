@@ -142,7 +142,7 @@ void GUIObject::ClearChanged() {
 int GUILabel::PrepareTextToDraw() {
 	const bool is_translated = (Flags & kGUICtrl_Translated) != 0;
 	replace_macro_tokens(is_translated ? get_translation(Text.GetCStr()) : Text.GetCStr(), _textToDraw);
-	return GUI::SplitLinesForDrawing(_textToDraw.GetCStr(), is_translated, _GP(Lines), Font, Width);
+	return GUI::SplitLinesForDrawing(_textToDraw.GetCStr(), is_translated, _GP(Lines), Font, _width);
 }
 
 void GUITextBox::DrawTextBoxContents(Bitmap *ds, int x, int y, color_t text_color) {
@@ -156,7 +156,7 @@ void GUITextBox::DrawTextBoxContents(Bitmap *ds, int x, int y, color_t text_colo
 	}
 
 	Line tpos = GUI::CalcTextPositionHor(_textToDraw.GetCStr(), Font,
-										 x + 1 + get_fixed_pixel_size(1), x + Width - 1, y + 1 + get_fixed_pixel_size(1),
+										 x + 1 + get_fixed_pixel_size(1), x + _width - 1, y + 1 + get_fixed_pixel_size(1),
 										 reverse ? kAlignTopRight : kAlignTopLeft);
 	wouttext_outline(ds, tpos.X1, tpos.Y1, Font, text_color, _textToDraw.GetCStr());
 
