@@ -389,7 +389,7 @@ void SetGameSpeed(int newspd) {
 }
 
 int GetGameSpeed() {
-	return ::lround(get_current_fps()) - _GP(play).game_speed_modifier;
+	return ::lround(get_game_fps()) - _GP(play).game_speed_modifier;
 }
 
 int SetGameOption(int opt, int newval) {

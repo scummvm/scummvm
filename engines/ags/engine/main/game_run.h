@@ -57,7 +57,9 @@ void UpdateGameAudioOnly();
 void UpdateCursorAndDrawables();
 // Gets current logical game FPS, this is normally a fixed number set in script;
 // in case of "maxed fps" mode this function returns real measured FPS.
-float get_current_fps();
+float get_game_fps();
+// Gets real fps, calculated based on the game performance.
+float get_real_fps();
 // Runs service key controls, returns false if no key was pressed or key input was claimed by the engine,
 // otherwise returns true and provides a keycode.
 bool run_service_key_controls(KeyInput &kgn);
