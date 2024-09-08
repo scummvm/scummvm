@@ -41,8 +41,8 @@ void MoveList::ReadFromFile_Legacy(Stream *in) {
 	from.Y = in->ReadInt32();
 	onstage = in->ReadInt32();
 	onpart = in->ReadInt32();
-	last.X = in->ReadInt32();
-	last.Y = in->ReadInt32();
+	in->ReadInt32(); // UNUSED
+	in->ReadInt32(); // UNUSED
 	doneflag = in->ReadInt8();
 	direct = in->ReadInt8();
 }
@@ -64,8 +64,8 @@ HSaveError MoveList::ReadFromFile(Stream *in, int32_t cmp_ver) {
 	from.Y = in->ReadInt32();
 	onstage = in->ReadInt32();
 	onpart = in->ReadInt32();
-	last.X = in->ReadInt32();
-	last.Y = in->ReadInt32();
+	in->ReadInt32(); // UNUSED
+	in->ReadInt32();
 	doneflag = in->ReadInt8();
 	direct = in->ReadInt8();
 
@@ -85,8 +85,8 @@ void MoveList::WriteToFile(Stream *out) {
 	out->WriteInt32(from.Y);
 	out->WriteInt32(onstage);
 	out->WriteInt32(onpart);
-	out->WriteInt32(last.X);
-	out->WriteInt32(last.Y);
+	out->WriteInt32(0); // UNUSED
+	out->WriteInt32(0);
 	out->WriteInt8(doneflag);
 	out->WriteInt8(direct);
 

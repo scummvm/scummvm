@@ -48,12 +48,13 @@ enum MoveListDoneFlags {
 struct MoveList {
 	int 	numstage = 0;
 	Point 	pos[MAXNEEDSTAGES];
+	// xpermove and ypermove contain number of pixels done per a single step
+	// along x and y axes; i.e. this is a movement vector, per path stage
 	fixed 	xpermove[MAXNEEDSTAGES]{};
 	fixed 	ypermove[MAXNEEDSTAGES]{};
 	Point 	from;
-	int 	onstage = 0;
-	int 	onpart = 0;
-	Point 	last;
+	int 	onstage = 0; // current path stage
+	int 	onpart = 0; // total number of steps done on this stage
 	uint8_t doneflag = 0u;
 	uint8_t direct = 0; // MoveCharDirect was used or not
 
