@@ -257,7 +257,7 @@ void update_speech_and_messages() {
 		if (!_GP(play).speech_in_post_state && (_GP(play).fast_forward == 0) && (_GP(play).messagetime < 1)) {
 			_GP(play).speech_in_post_state = true;
 			if (_GP(play).speech_display_post_time_ms > 0) {
-				_GP(play).messagetime = ::lround(_GP(play).speech_display_post_time_ms * get_current_fps() / 1000.0f);
+				_GP(play).messagetime = ::lround(_GP(play).speech_display_post_time_ms * get_game_fps() / 1000.0f);
 			}
 		}
 

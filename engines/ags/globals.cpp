@@ -163,7 +163,6 @@ Globals::Globals() {
 	_pushbuttonlightcolor = COL253;
 
 	// debug.cpp globals
-	_fps = std::numeric_limits<float>::quiet_NaN();
 	_display_fps = kFPS_Hide;
 	_debug_line = new String[DEBUG_CONSOLE_NUMLINES];
 	_DebugMsgBuff = new std::unique_ptr<AGS::Engine::MessageBuffer>();
@@ -264,6 +263,9 @@ Globals::Globals() {
 	_StaticRegionArray = new StaticArray();
 	_StaticInventoryArray = new StaticArray();
 	_StaticDialogArray = new StaticArray();
+
+	// game_run.cpp globals
+	_fps = std::numeric_limits<float>::quiet_NaN();
 
 	_scummvmGfxFilter = new AGS::Engine::GfxFilterInfo("StdScale", "Nearest-neighbour");
 

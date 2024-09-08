@@ -333,12 +333,6 @@ bool run_service_key_controls(KeyInput &out_key) {
 		quit("!|");
 	}
 
-	// debug console
-	if ((agskey == '`') && (_GP(play).debug_mode > 0)) {
-		_G(display_console) = !_G(display_console);
-		return false;
-	}
-
 	if ((agskey == eAGSKeyCodeCtrlE) && (_G(display_fps) == kFPS_Forced)) {
 		// if --fps paramter is used, Ctrl+E will max out frame rate
 		setTimerFps(isTimerFpsMaxed() ? _G(frames_per_second) : 1000);
@@ -770,13 +764,17 @@ static void game_loop_update_fps() {
 	}
 }
 
-float get_current_fps() {
+float get_game_fps() {
 	// if we have maxed out framerate then return the frame rate we're seeing instead
 	// fps must be greater that 0 or some timings will take forever.
 	if (isTimerFpsMaxed() && _G(fps) > 0.0f) {
 		return _G(fps);
 	}
 	return _G(frames_per_second);
+}
+
+float get_real_fps() {
+	return _G(fps);
 }
 
 void set_loop_counter(unsigned int new_counter) {
@@ -930,7 +928,7 @@ static void UpdateMouseOverLocation() {
 	}
 }
 
-// Checks if user interface should remain disabled for now
+
 // Checks if user interface should remain disabled for now
 static bool ShouldStayInWaitMode() {
 	if (_G(restrict_until).type == 0)
