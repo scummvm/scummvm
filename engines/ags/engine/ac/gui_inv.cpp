@@ -54,7 +54,7 @@ void GUIInvWindow::Draw(Bitmap *ds, int x, int y) {
 	// TODO: find a way to not have this inside GUIInvWindow::Draw!
 	_GP(play).inv_numinline = ColCount;
 	_GP(play).inv_numdisp = RowCount * ColCount;
-	_GP(play).obsolete_inv_numorder = _GP(charextra)[_GP(game).playercharacter].invorder_count;
+	_GP(play).inv_numorder = _GP(charextra)[_GP(game).playercharacter].invorder_count;
 	// if the user changes top_inv_item, switch into backwards compat mode
 	if (_GP(play).inv_top != 0)
 		_GP(play).inv_backwards_compatibility = 1;
