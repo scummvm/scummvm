@@ -51,10 +51,10 @@ private:
 	TwinEEngine *_engine;
 
 	struct Location {
-		int16 angleX;
-		int16 angleY;
+		int16 alpha;
+		int16 beta;
 		int16 size;
-		TextId textIndex = TextId::kNone;
+		TextId mess = TextId::kNone;
 		char name[30] = "";
 	};
 

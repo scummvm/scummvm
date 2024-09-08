@@ -93,12 +93,12 @@ bool Holomap::loadLocations() {
 
 	_engine->_text->initDial(TextBankId::Inventory_Intro_and_Holomap);
 	for (int32 i = 0; i < _numLocations; i++) {
-		_locations[i].angleX = stream.readSint16LE();
-		_locations[i].angleY = stream.readSint16LE();
+		_locations[i].alpha = stream.readSint16LE();
+		_locations[i].beta = stream.readSint16LE();
 		_locations[i].size = stream.readSint16LE();
-		_locations[i].textIndex = (TextId)stream.readSint16LE();
+		_locations[i].mess = (TextId)stream.readSint16LE();
 
-		if (_engine->_text->getMenuText(_locations[i].textIndex, _locations[i].name, sizeof(_locations[i].name))) {
+		if (_engine->_text->getMenuText(_locations[i].mess, _locations[i].name, sizeof(_locations[i].name))) {
 			debug(2, "Scene %i: %s", i, _locations[i].name);
 			continue;
 		}
@@ -357,7 +357,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	drawHoloMap(holomapImagePtr, holomapImageSize);
 
 	const Location &loc = _locations[data->locationIdx];
-	drawHoloObj(data->pos, loc.angleX, loc.angleY);
+	drawHoloObj(data->pos, loc.alpha, loc.beta);
 
 	ActorMoveStruct move;
 	AnimTimerDataStruct animTimerData;
@@ -408,8 +408,8 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 				if (data->numAnimFrames < trajAnimFrameIdx) {
 					break;
 				}
-				modelX = loc.angleX;
-				modelY = loc.angleY;
+				modelX = loc.alpha;
+				modelY = loc.beta;
 			}
 			drawHoloObj(data->pos, modelX, modelY);
 			++trajAnimFrameIdx;
@@ -470,7 +470,7 @@ void Holomap::drawListPos(int calpha, int cbeta, int cgamma, bool pos) {
 			continue;
 		}
 		const Location &loc = _locations[n];
-		_engine->_renderer->setAngleCamera(loc.angleX, loc.angleY, 0);
+		_engine->_renderer->setAngleCamera(loc.alpha, loc.beta, 0);
 		const IVec3 &m = _engine->_renderer->worldRotatePoint(IVec3(0, 0, 1000 + loc.size));
 		const IVec3 &m1 = _engine->_renderer->worldRotatePoint(IVec3(0, 0, 1500));
 		_engine->_renderer->setInverseAngleCamera(calpha, cbeta, cgamma);
@@ -514,8 +514,8 @@ void Holomap::drawListPos(int calpha, int cbeta, int cgamma, bool pos) {
 			bodyData = &_engine->_resources->_holomapTwinsenArrowPtr;
 		}
 		if (bodyData != nullptr) {
-			const int32 angleX = _locations[drawList.actorIdx].angleX;
-			const int32 angleY = _locations[drawList.actorIdx].angleY;
+			const int32 angleX = _locations[drawList.actorIdx].alpha;
+			const int32 angleY = _locations[drawList.actorIdx].beta;
 			Common::Rect dummy;
 			// first scene with twinsen model: x = 0, y = -497, z -764, a 432, b: 172
 			_engine->_renderer->affObjetIso(drawList.x, drawList.y, drawList.z, angleX, angleY, LBAAngles::ANGLE_0, *bodyData, dummy);
@@ -552,11 +552,11 @@ void Holomap::holoMap() {
 	}
 
 	int32 currentLocation = _engine->_scene->_currentSceneIdx;
-	_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
+	_engine->_text->drawHolomapLocation(_locations[currentLocation].mess);
 
 	int32 otimer = _engine->timerRef;
-	int32 dalpha = _locations[currentLocation].angleX;
-	int32 dbeta = _locations[currentLocation].angleY;
+	int32 dalpha = ClampAngle(_locations[currentLocation].alpha);
+	int32 dbeta = ClampAngle(_locations[currentLocation].beta);
 	int32 calpha = dalpha;
 	int32 cbeta = dbeta;
 	int32 cgamma = 0;
@@ -579,12 +579,12 @@ void Holomap::holoMap() {
 			if (currentLocation == -1) {
 				currentLocation = _engine->_scene->_currentSceneIdx;
 			}
-			_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
+			_engine->_text->drawHolomapLocation(_locations[currentLocation].mess);
 			oalpha = calpha;
 			obeta = cbeta;
 			otimer = _engine->timerRef;
-			dalpha = _locations[currentLocation].angleX;
-			dbeta = _locations[currentLocation].angleY;
+			dalpha = _locations[currentLocation].alpha;
+			dbeta = _locations[currentLocation].beta;
 			automove = true;
 			redraw = true;
 		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapNext)) {
@@ -592,12 +592,12 @@ void Holomap::holoMap() {
 			if (currentLocation == -1) {
 				currentLocation = _engine->_scene->_currentSceneIdx;
 			}
-			_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
+			_engine->_text->drawHolomapLocation(_locations[currentLocation].mess);
 			oalpha = calpha;
 			obeta = cbeta;
 			otimer = _engine->timerRef;
-			dalpha = _locations[currentLocation].angleX;
-			dbeta = _locations[currentLocation].angleY;
+			dalpha = _locations[currentLocation].alpha;
+			dbeta = _locations[currentLocation].beta;
 			automove = true;
 			redraw = true;
 		}
