@@ -94,7 +94,7 @@ ImGuiImage getImageID(Common::Path filename, int frameNum) {
 		}
 	} else if (frameNum < 0) { // Tiles
 		if (animation->tileAnimation()) {
-			surface = animation->tileAnimation()->dumpFrameTiles(-frameNum + 1, 0.91670);
+			surface = animation->tileAnimation()->dumpFrameTiles(-frameNum + 1, 0.91670f);
 
 			sx = surface->w;
 			sy = surface->h;
@@ -119,7 +119,7 @@ ImGuiImage getImageID(Common::Path filename, int frameNum) {
 		animation->set_cur_frame(frameNum);
 
 		grDispatcher::instance()->surfaceOverride(surface);
-		animation->redraw(sx / 2, sy / 2, 0, 0.91670, 0);
+		animation->redraw(sx / 2, sy / 2, 0, 0.91670f, 0);
 		grDispatcher::instance()->resetSurfaceOverride();
 	}
 
