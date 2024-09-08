@@ -1688,8 +1688,8 @@ void draw_fps(const Rect &viewport) {
 	char fps_buffer[60];
 	// Don't display fps if we don't have enough information (because loop count was just reset)
 	float fps = get_real_fps();
-	if (!isnan(_G(fps))) {
-		snprintf(fps_buffer, sizeof(fps_buffer), "FPS: %2.1f / %s", _G(fps), base_buffer);
+	if (!isnan(fps)) {
+		snprintf(fps_buffer, sizeof(fps_buffer), "FPS: %2.1f / %s", fps, base_buffer);
 	} else {
 		snprintf(fps_buffer, sizeof(fps_buffer), "FPS: --.- / %s", base_buffer);
 	}
