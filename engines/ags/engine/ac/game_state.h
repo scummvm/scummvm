@@ -83,10 +83,12 @@ struct GameState {
 	int32_t globalvars[MAXGLOBALVARS]{};  // obsolete
 	int  messagetime = 0;      // time left for auto-remove messages
 	int  usedinv = 0;          // inventory item last used
-	int  inv_top = 0;
-	int  inv_numdisp = 0;
-	int  obsolete_inv_numorder = 0;
-	int  inv_numinline = 0;
+	// Following inv_* variables are legacy variables controlling
+	// the single player's inventory (used prior to supporting custom InvWindow controls).
+	int  inv_top = 0;       // topmost index of displayed player's inventory
+	int  inv_numdisp = 0;   // number of player's items displayed at once
+	int  inv_numorder = 0;  // total number of player's items
+	int  inv_numinline = 0; // number of items displayed on a single inventory row
 	int  text_speed = 0;       // how quickly text is removed
 	int  sierra_inv_color = 0; // background used to paint defualt inv window
 	int  talkanim_speed = 0;   // animation speed of talking anims
