@@ -1624,7 +1624,7 @@ int32 ScriptLife::lINIT_PINGOUIN(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLife::lSET_HOLO_POS(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 location = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_HOLO_POS(%i)", (int)location);
-	engine->_holomap->setHolomapPosition(location);
+	engine->_holomap->setHoloPos(location);
 	return 0;
 }
 
@@ -1635,7 +1635,7 @@ int32 ScriptLife::lSET_HOLO_POS(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLife::lCLR_HOLO_POS(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 location = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::CLR_HOLO_POS(%i)", (int)location);
-	engine->_holomap->clearHolomapPosition(location);
+	engine->_holomap->clrHoloPos(location);
 	return 0;
 }
 

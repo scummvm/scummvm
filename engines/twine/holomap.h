@@ -112,7 +112,7 @@ public:
 	 * Set Holomap location position
 	 * @param locationIdx Scene where position must be set
 	 */
-	void setHolomapPosition(int32 locationIdx);
+	void setHoloPos(int32 locationIdx);
 
 	bool loadLocations();
 
@@ -122,7 +122,7 @@ public:
 	 * Clear Holomap location position
 	 * @param locationIdx Scene where position must be cleared
 	 */
-	void clearHolomapPosition(int32 locationIdx);
+	void clrHoloPos(int32 locationIdx);
 
 	void drawHolomapTrajectory(int32 trajectoryIndex);
 

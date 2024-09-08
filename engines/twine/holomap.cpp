@@ -85,8 +85,8 @@ bool Holomap::loadLocations() {
 
 	Common::MemoryReadStream stream(locationsPtr, locationsSize, DisposeAfterUse::YES);
 	_numLocations = locationsSize / 8;
-	if (_numLocations > _engine->numLocations()) {
-		warning("Amount of locations (%i) exceeds the maximum of %i", _numLocations, _engine->numLocations());
+	if (_numLocations > _engine->numHoloPos()) {
+		warning("Amount of locations (%i) exceeds the maximum of %i", _numLocations, _engine->numHoloPos());
 		return false;
 	}
 
@@ -106,15 +106,15 @@ bool Holomap::loadLocations() {
 	return true;
 }
 
-void Holomap::setHolomapPosition(int32 locationIdx) { // SetHoloPos
-	assert(locationIdx >= 0 && locationIdx <= ARRAYSIZE(_engine->_gameState->_holomapFlags));
+void Holomap::setHoloPos(int32 locationIdx) {
+	assert(locationIdx >= 0 && locationIdx < _engine->numHoloPos());
 	_engine->_gameState->_holomapFlags[locationIdx] = HOLOMAP_ACTIVE;
 	if (_engine->_gameState->hasItem(InventoryItems::kiHolomap)) {
 		_engine->_redraw->addOverlay(OverlayType::koInventoryItem, InventoryItems::kiHolomap, 0, 0, 0, OverlayPosType::koNormal, 3);
 	}
 }
 
-void Holomap::clearHolomapPosition(int32 locationIdx) { // ClrHoloPos
+void Holomap::clrHoloPos(int32 locationIdx) {
 	assert(locationIdx >= 0 && locationIdx <= ARRAYSIZE(_engine->_gameState->_holomapFlags));
 	_engine->_gameState->_holomapFlags[locationIdx] &= ~HOLOMAP_ACTIVE;
 	_engine->_gameState->_holomapFlags[locationIdx] |= HOLOMAP_CUBE_DONE;
@@ -431,7 +431,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 }
 
 int32 Holomap::searchNextArrow(int32 num) const {
-	const int maxLocations = _engine->numLocations();
+	const int maxLocations = _engine->numHoloPos();
 	for (int32 n = num + 1; n < maxLocations; ++n) {
 		if ((_engine->_gameState->_holomapFlags[n] & HOLOMAP_ACTIVE) != 0u) {
 			return n;
@@ -442,7 +442,7 @@ int32 Holomap::searchNextArrow(int32 num) const {
 
 int32 Holomap::searchPrevArrow(int32 num) const {
 	int32 n;
-	const int maxLocations = _engine->numLocations();
+	const int maxLocations = _engine->numHoloPos();
 
 	if (num == -1) {
 		num = maxLocations;
@@ -460,7 +460,7 @@ void Holomap::drawListPos(int calpha, int cbeta, int cgamma, bool pos) {
 	int nbobjets = 0;
 	DrawListStruct listTri[MAX_HOLO_POS_2];
 	const int numCube = _engine->_scene->_currentSceneIdx;
-	const int maxHoloPos = _engine->numLocations();
+	const int maxHoloPos = _engine->numHoloPos();
 	for (int n = 0; n < maxHoloPos; ++n) {
 		if (!(_engine->_gameState->_holomapFlags[n] & HOLOMAP_CAN_FOCUS) && n != numCube) {
 			continue;

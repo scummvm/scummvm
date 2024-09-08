@@ -231,7 +231,7 @@ bool TwinEConsole::doSetHolomapFlag(int argc, const char **argv) {
 	const int idx = atoi(argv[1]);
 	if (idx == -1) {
 		for (int i = 0; i < MAX_HOLO_POS_2; ++i) {
-			_engine->_holomap->setHolomapPosition(i);
+			_engine->_holomap->setHoloPos(i);
 		}
 		return true;
 	}
@@ -239,7 +239,7 @@ bool TwinEConsole::doSetHolomapFlag(int argc, const char **argv) {
 		debugPrintf("given index exceeds the max allowed value of %i\n", MAX_HOLO_POS_2 - 1);
 		return true;
 	}
-	_engine->_holomap->setHolomapPosition(idx);
+	_engine->_holomap->setHoloPos(idx);
 	return true;
 }
 
@@ -288,14 +288,14 @@ bool TwinEConsole::doPrintInventoryFlag(int argc, const char **argv) {
 
 bool TwinEConsole::doPrintHolomapFlag(int argc, const char **argv) {
 	if (argc <= 1) {
-		for (int i = 0; i < _engine->numLocations(); ++i) {
+		for (int i = 0; i < _engine->numHoloPos(); ++i) {
 			debugPrintf("[%03d] = %d\n", i, _engine->_gameState->_holomapFlags[i]);
 		}
 		return true;
 	}
 
 	const uint16 idx = atoi(argv[1]);
-	if (idx < _engine->numLocations()) {
+	if (idx < _engine->numHoloPos()) {
 		debugPrintf("[%03d] = %d\n", idx, _engine->_gameState->_holomapFlags[idx]);
 	}
 

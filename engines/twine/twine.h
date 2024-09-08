@@ -270,7 +270,7 @@ public:
 	const char *getGameId() const;
 	Common::Language getGameLang() const;
 
-	inline int numLocations() const {
+	inline int numHoloPos() const {
 		const int maxLocations = isLBA1() ? MAX_HOLO_POS : MAX_HOLO_POS_2;
 		return maxLocations;
 	}
