@@ -31,6 +31,7 @@ namespace TwinE {
  * @brief Caches sin cos table for all possible angles (0-1024 = 0-360 degree)
  * @todo this is for lba1 - lba2 is missing
  */
+ // P_SinTab
 const int16 sinTab[] = {
 	0, // tab1
 	101,

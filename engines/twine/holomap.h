@@ -77,8 +77,8 @@ private:
 	int _projectedSurfaceIndex = 0;
 	//float _distanceModifier = 1.0f;
 
-	int32 _numLocations = 0;
-	Location _locations[MAX_HOLO_POS_2];
+	int32 _numHoloPos = 0;
+	Location _listHoloPos[MAX_HOLO_POS_2];
 
 	int32 _holomapPaletteIndex = 0;
 	uint8 _paletteHolomap[NUMOFCOLORS * 3]{0};

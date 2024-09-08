@@ -85,21 +85,21 @@ bool Holomap::loadLocations() {
 	}
 
 	Common::MemoryReadStream stream(locationsPtr, locationsSize, DisposeAfterUse::YES);
-	_numLocations = locationsSize / 8;
-	if (_numLocations > _engine->numHoloPos()) {
-		warning("Amount of locations (%i) exceeds the maximum of %i", _numLocations, _engine->numHoloPos());
+	_numHoloPos = locationsSize / 8;
+	if (_numHoloPos > _engine->numHoloPos()) {
+		warning("Amount of locations (%i) exceeds the maximum of %i", _numHoloPos, _engine->numHoloPos());
 		return false;
 	}
 
 	_engine->_text->initDial(TextBankId::Inventory_Intro_and_Holomap);
-	for (int32 i = 0; i < _numLocations; i++) {
-		_locations[i].alpha = stream.readSint16LE();
-		_locations[i].beta = stream.readSint16LE();
-		_locations[i].size = stream.readSint16LE();
-		_locations[i].mess = (TextId)stream.readSint16LE();
+	for (int32 i = 0; i < _numHoloPos; i++) {
+		_listHoloPos[i].alpha = stream.readSint16LE();
+		_listHoloPos[i].beta = stream.readSint16LE();
+		_listHoloPos[i].size = stream.readSint16LE();
+		_listHoloPos[i].mess = (TextId)stream.readSint16LE();
 
-		if (_engine->_text->getMenuText(_locations[i].mess, _locations[i].name, sizeof(_locations[i].name))) {
-			debug(2, "Scene %i: %s", i, _locations[i].name);
+		if (_engine->_text->getMenuText(_listHoloPos[i].mess, _listHoloPos[i].name, sizeof(_listHoloPos[i].name))) {
+			debug(2, "Scene %i: %s", i, _listHoloPos[i].name);
 			continue;
 		}
 		debug(2, "Could not get location text for index %i", i);
@@ -356,7 +356,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	}
 	drawHoloMap(holomapImagePtr, holomapImageSize);
 
-	const Location &loc = _locations[data->locationIdx];
+	const Location &loc = _listHoloPos[data->locationIdx];
 	drawHoloObj(data->pos, loc.alpha, loc.beta);
 
 	ActorMoveStruct move;
@@ -469,9 +469,9 @@ void Holomap::drawListPos(int calpha, int cbeta, int cgamma, bool pos) {
 		if (!(_engine->_gameState->_holomapFlags[n] & HOLOMAP_CAN_FOCUS) && n != numCube) {
 			continue;
 		}
-		const Location &loc = _locations[n];
-		_engine->_renderer->setAngleCamera(loc.alpha, loc.beta, 0);
-		const IVec3 &m = _engine->_renderer->worldRotatePoint(IVec3(0, 0, 1000 + loc.size));
+		const Location &ptrpos = _listHoloPos[n];
+		_engine->_renderer->setAngleCamera(ptrpos.alpha, ptrpos.beta, 0);
+		const IVec3 &m = _engine->_renderer->worldRotatePoint(IVec3(0, 0, 1000 + ptrpos.size));
 		const IVec3 &m1 = _engine->_renderer->worldRotatePoint(IVec3(0, 0, 1500));
 		_engine->_renderer->setInverseAngleCamera(calpha, cbeta, cgamma);
 		_engine->_renderer->setCameraRotation(0, 0, distance(ZOOM_BIG_HOLO));
@@ -514,8 +514,8 @@ void Holomap::drawListPos(int calpha, int cbeta, int cgamma, bool pos) {
 			bodyData = &_engine->_resources->_holomapTwinsenArrowPtr;
 		}
 		if (bodyData != nullptr) {
-			const int32 angleX = _locations[drawList.actorIdx].alpha;
-			const int32 angleY = _locations[drawList.actorIdx].beta;
+			const int32 angleX = _listHoloPos[drawList.actorIdx].alpha;
+			const int32 angleY = _listHoloPos[drawList.actorIdx].beta;
 			Common::Rect dummy;
 			// first scene with twinsen model: x = 0, y = -497, z -764, a 432, b: 172
 			_engine->_renderer->affObjetIso(drawList.x, drawList.y, drawList.z, angleX, angleY, LBAAngles::ANGLE_0, *bodyData, dummy);
@@ -551,19 +551,19 @@ void Holomap::holoMap() {
 		error("Failed to load holomap image");
 	}
 
-	int32 currentLocation = _engine->_scene->_currentSceneIdx;
-	_engine->_text->drawHolomapLocation(_locations[currentLocation].mess);
+	int32 current = _engine->_scene->_currentSceneIdx;
+	_engine->_text->drawHolomapLocation(_listHoloPos[current].mess);
 
 	int32 otimer = _engine->timerRef;
-	int32 dalpha = ClampAngle(_locations[currentLocation].alpha);
-	int32 dbeta = ClampAngle(_locations[currentLocation].beta);
+	int32 dalpha = ClampAngle(_listHoloPos[current].alpha);
+	int32 dbeta = ClampAngle(_listHoloPos[current].beta);
 	int32 calpha = dalpha;
 	int32 cbeta = dbeta;
 	int32 cgamma = 0;
 	int32 oalpha = dalpha;
 	int32 obeta = dbeta;
 	bool automove = false;
-	bool redraw = true;
+	bool flagredraw = true;
 	int waterPaletteChangeTimer = 0;
 	bool flagpal = true;
 	_engine->_input->enableKeyMap(holomapKeyMapId);
@@ -575,55 +575,51 @@ void Holomap::holoMap() {
 		}
 
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapPrev)) {
-			currentLocation = searchPrevArrow(currentLocation);
-			if (currentLocation == -1) {
-				currentLocation = _engine->_scene->_currentSceneIdx;
+			current = searchPrevArrow(current);
+			if (current == -1) {
+				current = _engine->_scene->_currentSceneIdx;
 			}
-			_engine->_text->drawHolomapLocation(_locations[currentLocation].mess);
+			_engine->_text->drawHolomapLocation(_listHoloPos[current].mess);
 			oalpha = calpha;
 			obeta = cbeta;
 			otimer = _engine->timerRef;
-			dalpha = _locations[currentLocation].alpha;
-			dbeta = _locations[currentLocation].beta;
+			dalpha = _listHoloPos[current].alpha;
+			dbeta = _listHoloPos[current].beta;
 			automove = true;
-			redraw = true;
+			flagredraw = true;
 		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapNext)) {
-			currentLocation = searchNextArrow(currentLocation);
-			if (currentLocation == -1) {
-				currentLocation = _engine->_scene->_currentSceneIdx;
+			current = searchNextArrow(current);
+			if (current == -1) {
+				current = _engine->_scene->_currentSceneIdx;
 			}
-			_engine->_text->drawHolomapLocation(_locations[currentLocation].mess);
+			_engine->_text->drawHolomapLocation(_listHoloPos[current].mess);
 			oalpha = calpha;
 			obeta = cbeta;
 			otimer = _engine->timerRef;
-			dalpha = _locations[currentLocation].alpha;
-			dbeta = _locations[currentLocation].beta;
+			dalpha = _listHoloPos[current].alpha;
+			dbeta = _listHoloPos[current].beta;
 			automove = true;
-			redraw = true;
+			flagredraw = true;
 		}
 
 		if (!automove) {
 			if (_engine->_input->isActionActive(TwinEActionType::HolomapDown)) {
 				calpha += LBAAngles::ANGLE_2;
 				calpha = ClampAngle(calpha);
-				cbeta = ClampAngle(cbeta);
-				redraw = true;
+				flagredraw = true;
 			} else if (_engine->_input->isActionActive(TwinEActionType::HolomapUp)) {
 				calpha -= LBAAngles::ANGLE_2;
 				calpha = ClampAngle(calpha);
-				cbeta = ClampAngle(cbeta);
-				redraw = true;
+				flagredraw = true;
 			}
 			if (_engine->_input->isActionActive(TwinEActionType::HolomapRight)) {
 				cbeta += LBAAngles::ANGLE_2;
-				calpha = ClampAngle(calpha);
 				cbeta = ClampAngle(cbeta);
-				redraw = true;
+				flagredraw = true;
 			} else if (_engine->_input->isActionActive(TwinEActionType::HolomapLeft)) {
 				cbeta -= LBAAngles::ANGLE_2;
-				calpha = ClampAngle(calpha);
 				cbeta = ClampAngle(cbeta);
-				redraw = true;
+				flagredraw = true;
 			}
 		}
 
@@ -631,7 +627,7 @@ void Holomap::holoMap() {
 			const int32 dt = _engine->timerRef - otimer;
 			calpha = _engine->_collision->boundRuleThree(oalpha, dalpha, 75, dt);
 			cbeta = _engine->_collision->boundRuleThree(obeta, dbeta, 75, dt);
-			redraw = true;
+			flagredraw = true;
 		}
 
 		if (!flagpal && waterPaletteChangeTimer < _engine->timerRef) {
@@ -641,11 +637,11 @@ void Holomap::holoMap() {
 				_holomapPaletteIndex = 0;
 			}
 			waterPaletteChangeTimer = _engine->timerRef + 3;
-			redraw = true;
+			flagredraw = true;
 		}
 
-		if (redraw) {
-			redraw = false;
+		if (flagredraw) {
+			flagredraw = false;
 			const Common::Rect &rect = _engine->centerOnScreenX(scale(300), 0, scale(330));
 			// clip reduces the bad effect of https://bugs.scummvm.org/ticket/12074
 			// but it's not part of the original code
@@ -697,8 +693,8 @@ void Holomap::holoMap() {
 }
 
 const char *Holomap::getLocationName(int index) const {
-	assert(index >= 0 && index <= ARRAYSIZE(_locations));
-	return _locations[index].name;
+	assert(index >= 0 && index <= ARRAYSIZE(_listHoloPos));
+	return _listHoloPos[index].name;
 }
 
 } // namespace TwinE

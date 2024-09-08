@@ -77,7 +77,7 @@ void Renderer::projIso(IVec3 &pos, int32 x, int32 y, int32 z) {
 
 IVec3 Renderer::projectPoint(int32 cX, int32 cY, int32 cZ) { // ProjettePoint
 	IVec3 pos;
-	if (_isUsingIsoProjection) {
+	if (_typeProj == TYPE_ISO) {
 		projIso(pos, cX, cY, cZ);
 		return pos;
 	}
@@ -112,7 +112,7 @@ void Renderer::setProjection(int32 x, int32 y, int32 kfact, int32 lfactx, int32 
 	_lFactorX = lfactx;
 	_lFactorY = lfacty;
 
-	_isUsingIsoProjection = false;
+	_typeProj = TYPE_3D;
 }
 
 void Renderer::setPosCamera(int32 x, int32 y, int32 z) {
@@ -126,7 +126,7 @@ void Renderer::setIsoProjection(int32 x, int32 y, int32 scale) {
 	_projectionCenter.y = y;
 	_projectionCenter.z = scale; // not used - IsoScale is always 512
 
-	_isUsingIsoProjection = true;
+	_typeProj = TYPE_ISO;
 }
 
 void Renderer::flipMatrix() { // FlipMatrice
@@ -135,8 +135,8 @@ void Renderer::flipMatrix() { // FlipMatrice
 	SWAP(_matrixWorld.row2.z, _matrixWorld.row3.y);
 }
 
-IVec3 Renderer::setInverseAngleCamera(int32 x, int32 y, int32 z) {
-	setAngleCamera(x, y, z);
+IVec3 Renderer::setInverseAngleCamera(int32 alpha, int32 beta, int32 gamma) {
+	setAngleCamera(alpha, beta, gamma);
 	flipMatrix();
 	_cameraRot = longWorldRot(_cameraPos.x, _cameraPos.y, _cameraPos.z);
 	return _cameraRot;
@@ -209,10 +209,10 @@ IVec3 Renderer::rot(const IMatrix3x3 &matrix, int32 x, int32 y, int32 z) {
 	return IVec3(vx, vy, vz);
 }
 
-void Renderer::setFollowCamera(int32 transPosX, int32 transPosY, int32 transPosZ, int32 cameraAlpha, int32 cameraBeta, int32 cameraGamma, int32 cameraZoom) {
-	_cameraPos.x = transPosX;
-	_cameraPos.y = transPosY;
-	_cameraPos.z = transPosZ;
+void Renderer::setFollowCamera(int32 targetX, int32 targetY, int32 targetZ, int32 cameraAlpha, int32 cameraBeta, int32 cameraGamma, int32 cameraZoom) {
+	_cameraPos.x = targetX;
+	_cameraPos.y = targetY;
+	_cameraPos.z = targetZ;
 
 	setAngleCamera(cameraAlpha, cameraBeta, cameraGamma);
 	_cameraRot.z += cameraZoom;
@@ -1494,7 +1494,7 @@ bool Renderer::renderObjectIso(const BodyData &bodyData, RenderCommand **renderC
 			const CmdRenderSphere *sphere = (const CmdRenderSphere *)(const void*)pointer;
 			int32 radius = sphere->radius;
 
-			if (_isUsingIsoProjection) {
+			if (_typeProj == TYPE_ISO) {
 				// * sqrt(sx+sy) / 512 (isometric scale)
 				radius = (radius * 34) / ISO_SCALE;
 			} else {
@@ -1577,7 +1577,7 @@ void Renderer::animModel(ModelData *modelData, const BodyData &bodyData, RenderC
 	const I16Vec3 *pointPtr = &modelData->computedPoints[0];
 	I16Vec3 *pointPtrDest = &modelData->flattenPoints[0];
 
-	if (_isUsingIsoProjection) {
+	if (_typeProj == TYPE_ISO) {
 		do {
 			const int32 coX = pointPtr->x + poswr.x;
 			const int32 coY = pointPtr->y + poswr.y;
@@ -1705,7 +1705,7 @@ bool Renderer::affObjetIso(int32 x, int32 y, int32 z, int32 alpha, int32 beta, i
 	modelRect.bottom = SCENE_SIZE_MIN;
 
 	IVec3 poswr; // PosXWr, PosYWr, PosZWr
-	if (!_isUsingIsoProjection) {
+	if (_typeProj == TYPE_3D) {
 		poswr = longWorldRot(x, y, z) - _cameraRot;
 	} else {
 		poswr.x = x;
@@ -1716,6 +1716,7 @@ bool Renderer::affObjetIso(int32 x, int32 y, int32 z, int32 alpha, int32 beta, i
 	if (!bodyData.isAnimated()) {
 #if 0
 		// TODO: fill modeldata.flattenedpoints
+		// not used in original source release
 		int32 numOfPrimitives = 0;
 		RenderCommand* renderCmds = _renderCmds;
 		return renderModelElements(numOfPrimitives, bodyData, &renderCmds, &_modelData, modelRect);
@@ -1725,7 +1726,9 @@ bool Renderer::affObjetIso(int32 x, int32 y, int32 z, int32 alpha, int32 beta, i
 	}
 	// restart at the beginning of the renderTable
 	RenderCommand *renderCmds = _renderCmds;
-	animModel(&_modelData, bodyData, renderCmds, renderAngle, poswr, modelRect);
+	if (bodyData.isAnimated()) {
+		animModel(&_modelData, bodyData, renderCmds, renderAngle, poswr, modelRect);
+	}
 	if (!renderObjectIso(bodyData, &renderCmds, &_modelData, modelRect)) {
 		modelRect.right = -1;
 		modelRect.bottom = -1;

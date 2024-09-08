@@ -52,6 +52,9 @@
 #define MAT_GOURAUD 9
 #define MAT_DITHER 10
 
+#define TYPE_3D 0
+#define TYPE_ISO 1
+
 namespace TwinE {
 
 class BodyData;
@@ -168,17 +171,17 @@ private:
 	 */
 	IVec3 rot(const IMatrix3x3 &matrix, int32 x, int32 y, int32 z);
 
-	IVec3 _cameraPos;
-	IVec3 _projectionCenter{320, 200, 0};
+	IVec3 _cameraPos; // CameraX, CameraY, CameraZ
+	IVec3 _projectionCenter{320, 200, 0}; // XCentre, YCentre, IsoScale
 
 	int32 _kFactor = 128;
 	int32 _lFactorX = 1024;
 	int32 _lFactorY = 840;
 
-	IMatrix3x3 _matrixWorld;
+	IMatrix3x3 _matrixWorld; // LMatriceWorld
 	IMatrix3x3 _matricesTable[30 + 1];
 	IVec3 _normalLight; // NormalXLight, NormalYLight, NormalZLight
-	IVec3 _cameraRot;
+	IVec3 _cameraRot; // CameraXr, CameraYr, CameraZr
 
 	RenderCommand _renderCmds[1000];
 	/**
@@ -198,7 +201,7 @@ private:
 	int16* _tabx0 = nullptr; // also _tabCoulG
 	int16* _tabx1 = nullptr; // also _tabCoulD
 
-	bool _isUsingIsoProjection = false;
+	bool _typeProj = TYPE_3D;
 
 	void svgaPolyCopper(int16 vtop, int16 vbottom, uint16 color) const;
 	void svgaPolyBopper(int16 vtop, int16 vbottom, uint16 color) const;
@@ -262,8 +265,8 @@ public:
 
 	void setFollowCamera(int32 transPosX, int32 transPosY, int32 transPosZ, int32 cameraAlpha, int32 cameraBeta, int32 cameraGamma, int32 cameraZoom);
 	void setPosCamera(int32 x, int32 y, int32 z);
-	IVec3 setAngleCamera(int32 x, int32 y, int32 z);
-	IVec3 setInverseAngleCamera(int32 x, int32 y, int32 z);
+	IVec3 setAngleCamera(int32 alpha, int32 beta, int32 gamma);
+	IVec3 setInverseAngleCamera(int32 alpha, int32 beta, int32 gamma);
 
 	inline IVec3 setBaseRotation(const IVec3 &rot) {
 		return setAngleCamera(rot.x, rot.y, rot.z);
