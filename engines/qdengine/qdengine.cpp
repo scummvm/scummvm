@@ -479,6 +479,8 @@ void restore_graphics() {
 }
 
 void scan_qda() {
+	debug("======== QDA Scan start ========");
+
 	for (int i = 0; i < 3; i++) {
 		Common::Archive *archive = qdFileManager::instance().get_package(i);
 		Common::ArchiveMemberList members;
@@ -517,6 +519,8 @@ void scan_qda() {
 			}
 		}
 	}
+
+	debug("======== QDA Scan end ========");
 }
 
 } // namespace QDEngine
