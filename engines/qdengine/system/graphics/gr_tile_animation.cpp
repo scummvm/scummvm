@@ -598,11 +598,16 @@ Graphics::ManagedSurface *grTileAnimation::dumpFrameTiles(int frame_index, float
 
 	Graphics::ManagedSurface *dstSurf = new Graphics::ManagedSurface(w, h, g_engine->_pixelformat);
 
-	const uint32 *index_ptr = &_frameIndex[frameStart] + frameTileSize.x * frameTileSize.y * frame_index;
+	int idx = frameStart + frameTileSize.x * frameTileSize.y * frame_index;
 
 	for (int i = 0; i < frameTileSize.y; i++) {
 		for (int j = 0; j < frameTileSize.x; j++) {
-			const byte *src = (const byte *)getTile(*index_ptr++).data();
+			if (idx >= _frameIndex.size()) {
+				warning("grTileAnimation::dumpFrameTiles(): overflow of frame index (%d > %d)", idx, _frameIndex.size());
+				break;
+			}
+
+			const byte *src = (const byte *)getTile(_frameIndex[idx++]).data();
 
 			for (int yy = 0; yy < GR_TILE_SPRITE_SIZE_Y; yy++) {
 				uint16 *dst = (uint16 *)dstSurf->getBasePtr(j * (GR_TILE_SPRITE_SIZE_X + 1), i * (GR_TILE_SPRITE_SIZE_Y + 1) + yy);
