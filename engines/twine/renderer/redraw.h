@@ -176,7 +176,7 @@ public:
 	 * @param bottom end height to redraw the region
 	 */
 	void addRedrawArea(int32 left, int32 top, int32 right, int32 bottom);
-	void addRedrawArea(const Common::Rect &rect);
+	void addRedrawArea(const Common::Rect &rect); // AddPhysBox
 
 	/**
 	 * Flip currentRedrawList regions in the screen
