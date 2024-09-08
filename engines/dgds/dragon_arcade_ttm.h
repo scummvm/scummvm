@@ -30,11 +30,15 @@
 
 namespace Dgds {
 
-struct ArcadeLevelData {
-	ArcadeLevelData() : x(0), y(0), data(0), flag(false) {}
+/**
+ * A segment of floor in the arcade section with a start x, width, height, and flag.
+ */
+class ArcadeFloor {
+public:
+	ArcadeFloor() : x(0), width(0), yval(0), flag(false) {}
 	int16 x;
-	int16 y;
-	byte data;
+	int16 width;
+	byte yval;
 	bool flag;
 };
 
@@ -52,7 +56,7 @@ public:
 	void freePages(uint16 num);
 	void freeShapes();
 	void runPagesForEachNPC(int16 xScrollOffset);
-	const Common::Array<ArcadeLevelData> &getLevelData() { return _levelData; }
+	const Common::Array<ArcadeFloor> &getFloorData() { return _floorData; }
 
 	uint16 _currentTTMNum;
 	int16 _currentNPCRunningTTM;
@@ -74,8 +78,8 @@ private:
 	byte _drawColFG;
 	byte _drawColBG;
 	ArcadeNPCState *_npcState;
-	// int16 _numA1x4OpsInInit; // implicit by count of items in _levelData
-	Common::Array<ArcadeLevelData> _levelData;
+	// int16 _numA1x4OpsInInit; // implicit by count of items in _floorData
+	Common::Array<ArcadeFloor> _floorData;
 
 	// Note: only a subset of the enviro members get used, but
 	// use the same structure for simplicity.

@@ -94,6 +94,7 @@ public:
 	int16 getGameMinsToAddOnRClick() const { return _gameMinsToAddOnRClick; }
 	int16 getGameMinsToAddOnDragFinished() const { return _gameMinsToAddOnDragFinished; }
 	int16 getGameMinsToAddOnObjInteraction() const { return _gameMinsToAddOnObjInteraction; }
+	int16 getGameIsInteractiveGlobal() { return _gameIsInteractiveGlobal; }
 
 	void setLastSceneNum(int16 num) { _lastOpcode1SceneChageNum = num; }
 
