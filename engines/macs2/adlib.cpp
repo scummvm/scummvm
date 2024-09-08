@@ -645,8 +645,15 @@ void Adlib::OnTimer() {
 				// l0017_1BA1:
 				if (bp5 != 0) {
 					// l0017_1BAA:
-
+					data->seek(Func19BE(2), SEEK_SET);
+					g225A += 2;
 					// TODO: Continue from here
+					// Before continuing, look at structure
+					if (g2291 == 0x09) {
+						
+					}
+					// TODO: Should be 1BE4
+					
 				}
 				// TODO: This must be 2097h
 
