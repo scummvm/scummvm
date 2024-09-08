@@ -168,11 +168,20 @@ void qdAnimation::redraw(int x, int y, int z, float scale, int mode) const {
 	if (check_flag(QD_ANIMATION_FLAG_BLACK_FON))
 		mode |= GR_BLACK_FON;
 
-	if (tileAnimation())
+	if (tileAnimation()) {
 		tileAnimation()->drawFrame_scale(Vect2i(x, y), get_cur_frame_number(), scale, mode);
+	} else {
+		const qdAnimationFrame *scaled_frame;
+		int scale_index = get_scale_index(scale);
 
-	if (const qdAnimationFrame *p = get_cur_frame(scale))
-		p->redraw(x, y, z, scale, mode);
+		if (scale_index == -1)
+			scaled_frame = get_cur_frame();
+		else
+			scaled_frame = get_scaled_frame(get_cur_frame_number(), scale_index);
+
+		if (scaled_frame)
+			scaled_frame->redraw_rot(x, y, z, scale, mode);
+	}
 }
 
 void qdAnimation::redraw_rot(int x, int y, int z, float angle, int mode) const {
