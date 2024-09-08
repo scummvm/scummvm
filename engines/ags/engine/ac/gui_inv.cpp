@@ -85,7 +85,7 @@ void GUIInvWindow::Draw(Bitmap *ds, int x, int y) {
 		GUI::Options.DisabledStyle == kGuiDis_Greyout &&
 		_GP(play).inventory_greys_out == 1) {
 		// darken the inventory when disabled
-		GUI::DrawDisabledEffect(ds, RectWH(x, y, Width, Height));
+		GUI::DrawDisabledEffect(ds, RectWH(x, y, _width, _height));
 	}
 }
 

@@ -195,7 +195,7 @@ int ListBox_GetItemAtLocation(GUIListBox *listbox, int x, int y) {
 	x = (x - listbox->X) - _GP(guis)[listbox->ParentId].X;
 	y = (y - listbox->Y) - _GP(guis)[listbox->ParentId].Y;
 
-	if ((x < 0) || (y < 0) || (x >= listbox->Width) || (y >= listbox->Height))
+	if ((x < 0) || (y < 0) || (x >= listbox->GetWidth()) || (y >= listbox->GetHeight()))
 		return -1;
 
 	return listbox->GetItemAt(x, y);

@@ -1717,7 +1717,7 @@ void draw_gui_controls(GUIMain &gui) {
 	for (int i = 0; i < gui.GetControlCount(); ++i, ++draw_index) {
 		GUIObject *obj = gui.GetControl(i);
 		if (!obj->IsVisible() ||
-			(obj->Width <= 0 || obj->Height <= 0) ||
+			(obj->GetSize().IsNull()) ||
 			(!obj->IsEnabled() && (GUI::Options.DisabledStyle == kGuiDis_Blackout)))
 			continue;
 		if (!obj->HasChanged())
@@ -1850,7 +1850,7 @@ void draw_gui_and_overlays() {
 		for (const auto &obj_id : _GP(guis)[s.id].GetControlsDrawOrder()) {
 			GUIObject *obj = _GP(guis)[s.id].GetControl(obj_id);
 			if (!obj->IsVisible() ||
-				(obj->Width <= 0 || obj->Height <= 0) ||
+				(obj->GetSize().IsNull()) ||
 				(!obj->IsEnabled() && (GUI::Options.DisabledStyle == kGuiDis_Blackout)))
 				continue;
 			const auto &obj_tx = _GP(guiobjbg)[draw_index + obj_id];
