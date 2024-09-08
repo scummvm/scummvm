@@ -42,8 +42,6 @@ namespace AGS {
 namespace Engine {
 namespace RouteFinder {
 
-#define MAKE_INTCOORD(x,y) (((unsigned short)x << 16) | ((unsigned short)y))
-
 static const int MAXNAVPOINTS = MAXNEEDSTAGES;
 
 void init_pathfinder() {
@@ -101,7 +99,7 @@ static int find_route_jps(int fromx, int fromy, int destx, int desty) {
 		int x, y;
 		_GP(nav).UnpackSquare(cpath[i], x, y);
 
-		_G(navpoints)[_G(num_navpoints)++] = MAKE_INTCOORD(x, y);
+		_G(navpoints)[_G(num_navpoints)++] = {x, y};
 	}
 
 	return 1;
@@ -125,10 +123,10 @@ void calculate_move_stage(MoveList *mlsp, int aaa, fixed move_speed_x, fixed mov
 		return;
 	}
 
-	short ourx = (mlsp->pos[aaa] >> 16) & 0x000ffff;
-	short oury = (mlsp->pos[aaa] & 0x000ffff);
-	short destx = ((mlsp->pos[aaa + 1] >> 16) & 0x000ffff);
-	short desty = (mlsp->pos[aaa + 1] & 0x000ffff);
+	short ourx = mlsp->pos[aaa].X;
+	short oury = mlsp->pos[aaa].Y;
+	short destx = mlsp->pos[aaa + 1].X;
+	short desty = mlsp->pos[aaa + 1].Y;
 
 	// Special case for vertical and horizontal movements
 	if (ourx == destx) {
@@ -197,8 +195,8 @@ int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int
 
 	if (ignore_walls || can_see_from(srcx, srcy, xx, yy)) {
 		_G(num_navpoints) = 2;
-		_G(navpoints)[0] = MAKE_INTCOORD(srcx, srcy);
-		_G(navpoints)[1] = MAKE_INTCOORD(xx, yy);
+		_G(navpoints)[0] = {srcx, srcy};
+		_G(navpoints)[1] = {xx, yy};
 	} else {
 		if ((nocross == 0) && (_G(wallscreen)->GetPixel(xx, yy) == 0))
 			return 0; // clicked on a wall
@@ -221,7 +219,7 @@ int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int
 
 	int mlist = movlst;
 	_GP(mls)[mlist].numstage = _G(num_navpoints);
-	memcpy(&_GP(mls)[mlist].pos[0], &_G(navpoints)[0], sizeof(int) * _G(num_navpoints));
+	memcpy(&_GP(mls)[mlist].pos[0], &_G(navpoints)[0], sizeof(Point) * _G(num_navpoints));
 #ifdef DEBUG_PATHFINDER
 	AGS::Shared::Debug::Printf("stages: %d\n", _G(num_navpoints));
 #endif
@@ -232,13 +230,11 @@ int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int
 		calculate_move_stage(&_GP(mls)[mlist], i, fix_speed_x, fix_speed_y);
 	}
 
-	_GP(mls)[mlist].fromx = srcx;
-	_GP(mls)[mlist].fromy = srcy;
+	_GP(mls)[mlist].from = { srcx, srcy };
 	_GP(mls)[mlist].onstage = 0;
 	_GP(mls)[mlist].onpart = 0;
 	_GP(mls)[mlist].doneflag = 0;
-	_GP(mls)[mlist].lastx = -1;
-	_GP(mls)[mlist].lasty = -1;
+	_GP(mls)[mlist].last = { -1, -1};
 	return mlist;
 }
 
@@ -248,11 +244,11 @@ bool add_waypoint_direct(MoveList *mlsp, short x, short y, int move_speed_x, int
 
 	const fixed fix_speed_x = input_speed_to_fixed(move_speed_x);
 	const fixed fix_speed_y = input_speed_to_fixed(move_speed_y);
-	mlsp->pos[mlsp->numstage] = MAKE_INTCOORD(x, y);
+	mlsp->pos[mlsp->numstage] = {x, y};
 	calculate_move_stage(mlsp, mlsp->numstage - 1, fix_speed_x, fix_speed_y);
 	mlsp->numstage++;
-	mlsp->lastx = x;
-	mlsp->lasty = y;
+	mlsp->last.X = x;
+	mlsp->last.Y = y;
 	return true;
 }
 

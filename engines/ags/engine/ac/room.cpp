@@ -1041,19 +1041,11 @@ void convert_move_path_to_room_resolution(MoveList *ml, int from_step, int to_st
 	if (_GP(thisroom).MaskResolution == _GP(game).GetDataUpscaleMult())
 		return;
 
-	if (from_step == 0) {
-		ml->fromx = mask_to_room_coord(ml->fromx);
-		ml->fromy = mask_to_room_coord(ml->fromy);
-	}
-	if (to_step == ml->numstage - 1) {
-		ml->lastx = mask_to_room_coord(ml->lastx);
-		ml->lasty = mask_to_room_coord(ml->lasty);
-	}
+	ml->from = {mask_to_room_coord(ml->from.X), mask_to_room_coord(ml->from.Y)};
+	ml->last = {mask_to_room_coord(ml->last.X), mask_to_room_coord(ml->last.Y)};
 
 	for (int i = from_step; i <= to_step; i++) {
-		uint16_t lowPart = mask_to_room_coord(ml->pos[i] & 0x0000ffff);
-		uint16_t highPart = mask_to_room_coord((ml->pos[i] >> 16) & 0x0000ffff);
-		ml->pos[i] = ((int)highPart << 16) | (lowPart & 0x0000ffff);
+		ml->pos[i] = {mask_to_room_coord(ml->pos[i].X), mask_to_room_coord(ml->pos[i].Y)};
 	}
 
 	// If speed is scaling with MaskResolution...

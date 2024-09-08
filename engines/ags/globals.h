@@ -1220,7 +1220,7 @@ public:
 	 * @{
 	 */
 
-	int32_t *_navpoints;
+	Point *_navpoints;
 	Navigation *_nav;
 	int _num_navpoints = 0;
 	AGS::Shared::Bitmap *_wallscreen = nullptr;
