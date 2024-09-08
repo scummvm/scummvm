@@ -1103,6 +1103,26 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_BEATRIX_EN,
 	},
 
+	{ // The Magic World of Beatrix Potter - Demo (English, Windows)
+	  // Published by Europress Software, 1997
+		{
+			"beatrix",
+			"Demo",
+			{
+				{ "PLAY.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
+				{ "PLAY.MPL", 0, "93b4c5329a4752e26e3ba5a737e68430", 38415262 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED | ADGF_DEMO,
+			GUIO0()
+		},
+		GID_BEATRIX,
+		0,
+		MTBOOT_BEATRIX_DEMO_EN,
+	},
+
 	{ // Whitetail Impact (English, Windows)
 	  // AKA: Whitetail Fever
 	  // Published by Valusoft, 1998
@@ -2125,6 +2145,25 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_ADOBE24_WIN_EN,
 	},
 
+	{ // Byzantine: The Betrayal - Demo (English, Windows)
+	  // Published by Discovery Communications, 1997
+		{
+			"byzantine",
+			"Demo",
+			{
+				{ "MTPLAY95.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
+				{ "BYZPROJV.MPL", 0, "4f805af9af615f00482299746ff2474d", 62407900 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED | ADGF_DEMO,
+			GUIO0()
+		},
+		GID_BYZANTINE,
+		0,
+		MTBOOT_BYZANTINE_DEMO_WIN_EN,
+	},
 
 	{ AD_TABLE_END_MARKER, 0, 0, MTBOOT_INVALID }
 };
