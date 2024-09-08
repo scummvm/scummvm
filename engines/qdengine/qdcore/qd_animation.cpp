@@ -180,7 +180,7 @@ void qdAnimation::redraw(int x, int y, int z, float scale, int mode) const {
 			scaled_frame = get_scaled_frame(get_cur_frame_number(), scale_index);
 
 		if (scaled_frame)
-			scaled_frame->redraw_rot(x, y, z, scale, mode);
+			scaled_frame->redraw(x, y, z, scale, mode);
 	}
 }
 
