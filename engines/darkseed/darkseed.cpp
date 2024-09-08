@@ -96,6 +96,7 @@ Common::Error DarkseedEngine::run() {
 
 	_cursor.updatePosition(0x140,0xaf);
 	_cursor.setCursorType(Pointer);
+	_cursor.showCursor(true);
 
 	_player->_position.x = 0x87;
 	_player->_position.y = 0x5b;
@@ -172,6 +173,11 @@ void DarkseedEngine::fadeInner(int startValue, int endValue, int increment) {
 void DarkseedEngine::gameloop() {
 	while (!shouldQuit()) {
 		updateEvents();
+		if (_redrawFrame) {
+			_redrawFrame = false;
+			_screen->makeAllDirty();
+			_frame.draw();
+		}
 		if (_fullscreenPic) {
 			if (_isLeftMouseClicked || _isRightMouseClicked) {
 				_isRightMouseClicked = false;
@@ -306,6 +312,19 @@ void DarkseedEngine::gameloop() {
 				gotosleepinjail();
 			}
 			updateDisplay(); // Aka serviceRoom()
+
+			_screen->addDirtyRect({{0x45, 0x28}, 501, 200});
+
+			if (_fullscreenPic) {
+				_fullscreenPic->draw(0x45, 0x28);
+			} else {
+				_room->draw();
+				_inventory.draw();
+				_sprites.drawSprites();
+				_player->draw();
+				_console->draw();
+			}
+
 //			if (((*(int *)&_CursorX < 70) || (570 < *(int *)&_CursorX)) && (*(int *)&_DrawCursorNum < 90)) { TODO do we need this restriction?
 //				zeromousebuttons();
 //			}
@@ -331,18 +350,7 @@ void DarkseedEngine::gameloop() {
 			_isLeftMouseClicked = false;
 		}
 		_room->update();
-		_frame.draw();
-		if (_fullscreenPic) {
-			_fullscreenPic->draw(0x45, 0x28);
-		} else {
-			_room->draw();
-			_inventory.draw();
-			_sprites.drawSprites();
-			_player->draw();
-			_console->draw();
-			_cursor.draw();
-		}
-		_screen->makeAllDirty();
+
 		_screen->update();
 		wait();
 	}

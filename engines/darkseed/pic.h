@@ -23,8 +23,9 @@
 #define DARKSEED_PIC_H
 
 #include "common/array.h"
-#include "common/scummsys.h"
 #include "common/file.h"
+#include "common/rect.h"
+#include "common/scummsys.h"
 
 namespace Darkseed {
 
@@ -52,6 +53,7 @@ public:
 
 	void draw();
 	void draw(int xOffset, int yOffset);
+	void drawRect(const Common::Rect &rect);
 private:
 	bool load(Common::SeekableReadStream &readStream);
 

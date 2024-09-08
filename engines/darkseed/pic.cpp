@@ -96,3 +96,8 @@ void Darkseed::Pic::draw() {
 void Darkseed::Pic::draw(int xOffset, int yOffset) {
 	g_engine->_screen->copyRectToSurface(getPixels().data(), getWidth(), xOffset, yOffset, getWidth(), getHeight());
 }
+
+void Darkseed::Pic::drawRect(const Common::Rect &rect) {
+	void *ptr = getPixels().data() + rect.left + (rect.top * getWidth());
+	g_engine->_screen->copyRectToSurface(ptr, getWidth(), rect.left, rect.top, rect.width(), rect.height());
+}
