@@ -890,8 +890,8 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // AffScene
 	drawListPos = fillExtraDrawingList(drawList, drawListPos);
 
 	_currNumOfRedrawBox = 0;
-	correctZLevels(drawList, drawListPos);
 	sortDrawingList(drawList, drawListPos);
+	correctZLevels(drawList, drawListPos);
 	processDrawList(drawList, drawListPos, bgRedraw);
 
 	if (_engine->_cfgfile.Debug) {
