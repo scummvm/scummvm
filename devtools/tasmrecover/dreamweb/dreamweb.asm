@@ -5840,7 +5840,7 @@ Resetkeyboard	proc	near
 
 	cmp	oldint9add,-1
 	jz	noreset
-	mov	dx,oldint9add		;Restore old interupt vector
+	mov	dx,oldint9add		;Restore old interrupt vector
 	mov	ax,oldint9seg		;for keys
 	mov	ds,ax
 	mov	ah,25h

@@ -1936,7 +1936,7 @@ function actor_update_all()
             perform_worktype(selected_actor)
             --sub_1C34A() --update map window??
             if selected_actor.wt > 1 and selected_actor.wt < 0x10 then
-               --FIXME targetting?? do *(&objlist_ptr_unk_18f1 + actor_num) = actor_num
+               --FIXME targeting?? do *(&objlist_ptr_unk_18f1 + actor_num) = actor_num
             end
          end
 
