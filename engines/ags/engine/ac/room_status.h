@@ -54,7 +54,8 @@ enum RoomStatSvgVersion {
 	kRoomStatSvgVersion_Initial = 0,
 	kRoomStatSvgVersion_36025 = 3,
 	kRoomStatSvgVersion_36041 = 4,
-	kRoomStatSvgVersion_Current = kRoomStatSvgVersion_36041
+	kRoomStatSvgVersion_36109 = 5,
+	kRoomStatSvgVersion_Current = kRoomStatSvgVersion_36109
 };
 
 // RoomStatus contains everything about a room that could change at runtime.
