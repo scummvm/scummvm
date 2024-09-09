@@ -84,7 +84,7 @@ bool PngLoader::load() {
 		return false;
 	}
 
-	PSP_DEBUG_PRINT("succeded in loading image\n");
+	PSP_DEBUG_PRINT("succeeded in loading image\n");
 
 	if (_bitDepth == 4)		// 4-bit
 		_buffer->flipNibbles();	// required because of PNG 4-bit format
