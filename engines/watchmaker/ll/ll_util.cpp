@@ -364,7 +364,7 @@ void UpdateRoomVisibility(WGame &game) {
 		}
 	}
 
-//	Accende le animazioni di backgorund delle stanze che si vedono
+//	Accende le animazioni di background delle stanze che si vedono
 //	DebugFile("RoomVisibility %s",t3dCurRoom->Name);
 	for (i = 0; i < MAX_ROOMS; i++) {
 		if (init.Room[i].flags & ROOM_VISIBLE) {
