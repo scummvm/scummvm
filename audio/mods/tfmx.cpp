@@ -401,7 +401,7 @@ void Tfmx::macroRun(ChannelContext &channel) {
 			continue;
 
 		case 0x18: {	// Sampleloop. Parameters: Offset from Samplestart(W)
-			// TODO: MI loads 24 bit, but thats useless?
+			// TODO: MI loads 24 bit, but that's useless?
 			const uint16 temp = /* ((int8)macroPtr[1] << 16) | */ READ_BE_UINT16(&macroPtr[2]);
 			if (macroPtr[1] || (temp & 1))
 				warning("Tfmx: Problematic value for sampleloop: %06X", (macroPtr[1] << 16) | temp);
@@ -985,7 +985,7 @@ const Tfmx::MdatResource *Tfmx::loadMdatFile(Common::SeekableReadStream &musicDa
 		resource->macroOffset[i] = musicData.readUint32BE();
 
 	// Read in mdat-file
-	// TODO: we can skip everything thats already stored in the resource-structure.
+	// TODO: we can skip everything that's already stored in the resource-structure.
 	const int32 mdatOffset = offTrackstep ? 0x200 : 0x600;	// 0x200 is very conservative
 	const uint32 allocSize = (uint32)mdatSize - mdatOffset;
 
