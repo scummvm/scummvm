@@ -605,7 +605,7 @@ bool BaseFontTT::initFont() {
 
 	// Fallback3: Try to ask FontMan for the FreeSans.ttf ScummModern.zip uses:
 	if (!_font) {
-		// Really not desireable, as we will get a font with dpi-72 then
+		// Really not desirable, as we will get a font with dpi-72 then
 		Common::String fontName = Common::String::format("%s-%s@%d", fallbackFilename, "ASCII", _fontHeight);
 		warning("Looking for %s", fontName.c_str());
 		_font = FontMan.getFontByName(fontName);
