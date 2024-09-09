@@ -49,6 +49,7 @@ void MoveList::SetPixelUnitFraction(float frac) {
 }
 
 void MoveList::ReadFromFile_Legacy(Stream *in) {
+	*this = MoveList(); // reset struct
 	for (int i = 0; i < MAXNEEDSTAGES_LEGACY; ++i) {
 		// X & Y was packed as high/low shorts, and hence reversed in lo-end
 		pos[i].Y = in->ReadInt16();
@@ -68,16 +69,16 @@ void MoveList::ReadFromFile_Legacy(Stream *in) {
 }
 
 HSaveError MoveList::ReadFromFile(Stream *in, int32_t cmp_ver) {
-	*this = MoveList();
-
 	if (cmp_ver < 1) {
 		ReadFromFile_Legacy(in);
 		return HSaveError::None();
 	}
 
+	*this = MoveList(); // reset struct
 	numstage = in->ReadInt32();
-	if ((numstage == 0) && cmp_ver >= 2)
+	if ((numstage == 0) && cmp_ver >= 2) {
 		return HSaveError::None();
+	}
 	// TODO: reimplement MoveList stages as vector to avoid these limits
 	if (numstage > MAXNEEDSTAGES) {
 		return new SavegameError(kSvgErr_IncompatibleEngine,
@@ -88,15 +89,10 @@ HSaveError MoveList::ReadFromFile(Stream *in, int32_t cmp_ver) {
 	from.Y = in->ReadInt32();
 	onstage = in->ReadInt32();
 	BBOp::IntFloatSwap onpart_u(in->ReadInt32());
-	in->ReadInt32(); // UNUSED
-	in->ReadInt32();
+	int finmove = in->ReadInt32();
+	BBOp::IntFloatSwap finpart_u(in->ReadInt32());
 	doneflag = in->ReadInt8();
 	direct = in->ReadInt8();
-
-	if (cmp_ver < 2)
-		onpart = static_cast<float>(onpart_u.val.i32);
-	else
-		onpart = onpart_u.val.f;
 
 	for (int i = 0; i < numstage; ++i) {
 		// X & Y was packed as high/low shorts, and hence reversed in lo-end
@@ -105,6 +101,18 @@ HSaveError MoveList::ReadFromFile(Stream *in, int32_t cmp_ver) {
 	}
 	in->ReadArrayOfInt32(xpermove, numstage);
 	in->ReadArrayOfInt32(ypermove, numstage);
+
+	// Some variables require conversion depending on a save version
+	if (cmp_ver < 2) {
+		onpart = static_cast<float>(onpart_u.val.i32);
+		fin_move = 0;
+		fin_from_part = 0.f;
+	} else {
+		onpart = onpart_u.val.f;
+		fin_move = finmove;
+		fin_from_part = finpart_u.val.f;
+	}
+
 	return HSaveError::None();
 }
 
@@ -117,8 +125,8 @@ void MoveList::WriteToFile(Stream *out) const {
 	out->WriteInt32(from.Y);
 	out->WriteInt32(onstage);
 	out->WriteInt32(BBOp::IntFloatSwap(onpart).val.i32);
-	out->WriteInt32(0); // UNUSED
-	out->WriteInt32(0);
+	out->WriteInt32(fin_move);
+	out->WriteInt32(BBOp::IntFloatSwap(fin_from_part).val.i32);
 	out->WriteInt8(doneflag);
 	out->WriteInt8(direct);
 
