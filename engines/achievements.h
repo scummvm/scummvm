@@ -232,13 +232,13 @@ public:
 	 */
 
 	/**
-	 * Get number of achivement descriptions available.
+	 * Get number of achievement descriptions available.
 	 *
 	 */
 	uint16 getAchievementCount() const;
 
 	/**
-	 * Get achivement description by index.
+	 * Get achievement description by index.
 	 *
 	 * @param[in] index	Internal index of the achievement, counted from 0 to (getAchievementCount() - 1)
 	 *
