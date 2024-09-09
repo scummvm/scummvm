@@ -2094,7 +2094,7 @@ bool Ship::interact(Action verb, Object &obj1, Object &obj2) {
 void Ship::outro() {
 	_vm->_screen->paletteFadeOut(100);
 	_vm->renderImage(13);
-	// Because the screen is partialy faded out, the original values (63, 20, 20)
+	// Because the screen is partially faded out, the original values (63, 20, 20)
 	// should be multiplied by 2.55, but are multiplied by 3.5, because the color
 	// looks closer to the original
 	byte palette[768];
