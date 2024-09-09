@@ -104,9 +104,14 @@ public:
 	// NOTE: this only matters if GUI's own graphic changes (content, size etc),
 	// but not its state (visible) or texture drawing mode (transparency, etc).
 	void	MarkChanged();
-	void	MarkControlsChanged();
+	// Marks GUI as having any of its controls changed its looks.
+	void	MarkControlChanged();
 	// Clears changed flag
 	void	ClearChanged();
+	// Notify GUI about any of its controls changing its location.
+	void	NotifyControlPosition();
+	// Notify GUI about one of its controls changing its interactive state.
+	void	NotifyControlState(int objid, bool mark_changed);
 	// Resets control-under-mouse detection.
 	void	ResetOverControl();
 
@@ -201,6 +206,7 @@ private:
 	int32_t _flags;         // style and behavior flags
 	bool    _hasChanged;    // flag tells whether GUI has graphically changed recently
 	bool    _hasControlsChanged;
+	bool	_polling; // inside the polling process
 
 	// Array of types and control indexes in global GUI object arrays;
 	// maps GUI child slots to actual controls and used for rebuilding Controls array
