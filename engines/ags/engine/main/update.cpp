@@ -98,6 +98,45 @@ static void movelist_handle_remainer(const fixed xpermove, const fixed ypermove,
 	fin_from_part = (float)xdistance / fixtof(xpermove);
 }
 
+// Handle remaining move fixup, but only if necessary
+static void movelist_handle_remainer(MoveList &m) {
+	assert(m.numstage > 0);
+	const fixed xpermove = m.xpermove[m.onstage];
+	const fixed ypermove = m.ypermove[m.onstage];
+	const Point target = m.pos[m.onstage + 1];
+	// Apply remainer to movelists where only ONE axis was completed, and another remains
+	if ((xpermove != 0) && (ypermove != 0)) {
+		if ((m.doneflag & kMoveListDone_XY) == kMoveListDone_X)
+			movelist_handle_remainer(xpermove, ypermove, target.X - m.from.X,
+									 m.GetStepLength(), m.fin_move, m.fin_from_part);
+		else if ((m.doneflag & kMoveListDone_XY) == kMoveListDone_Y)
+			movelist_handle_remainer(ypermove, xpermove, target.Y - m.from.Y,
+									 m.GetStepLength(), m.fin_move, m.fin_from_part);
+	}
+}
+
+// Test if move completed, returns if just completed
+static bool movelist_handle_donemove(const uint8_t testflag, const fixed xpermove, const int targetx, uint8_t &doneflag, int &xps) {
+	if ((doneflag & testflag) != 0)
+		return false; // already done before
+
+	if (((xpermove > 0) && (xps >= targetx)) || ((xpermove < 0) && (xps <= targetx))) {
+		doneflag |= testflag;
+		xps = targetx; // snap to the target (in case run over)
+		// Comment about old engine behavior:
+		// if the Y is almost there too, finish it
+		// this is new in v2.40
+		// removed in 2.70
+		/*if (abs(yps - targety) <= 2)
+			yps = targety;*/
+		return true;
+	} else if (xpermove == 0) {
+		doneflag |= testflag;
+		return true;
+	}
+	return false;
+}
+
 int do_movelist_move(short &mslot, int &pos_x, int &pos_y) {
 	// TODO: find out why movelist 0 is not being used
 	assert(mslot >= 1);
@@ -111,16 +150,15 @@ int do_movelist_move(short &mslot, int &pos_x, int &pos_y) {
 	const fixed fin_move = cmls.fin_move;
 	const float main_onpart = (cmls.fin_from_part > 0.f) ? cmls.fin_from_part : cmls.onpart;
 	const float fin_onpart = cmls.onpart - main_onpart;
-	int targetx = cmls.pos[cmls.onstage + 1].X;
-	int targety = cmls.pos[cmls.onstage + 1].Y;
+	Point target = cmls.pos[cmls.onstage + 1];
 	int xps = pos_x, yps = pos_y;
 
 	// Old-style optional move target fixup
 	if (_G(loaded_game_file_version) < kGameVersion_361) {
 		if ((ypermove != 0) && (cmls.doneflag & kMoveListDone_X) != 0) { // X-move has finished, handle the Y-move remainer
-			movelist_handle_targetfix(xpermove, ypermove, targety);
+			movelist_handle_targetfix(xpermove, ypermove, target.Y);
 		} else if ((xpermove != 0) && (cmls.doneflag & kMoveListDone_Y) != 0) { // Y-move has finished, handle the X-move remainer
-			movelist_handle_targetfix(xpermove, ypermove, targety);
+			movelist_handle_targetfix(xpermove, ypermove, target.Y);
 		}
 	}
 
@@ -132,36 +170,11 @@ int do_movelist_move(short &mslot, int &pos_x, int &pos_y) {
 		yps = cmls.from.Y + (int)(fixtof(ypermove) * main_onpart) + (int)(fixtof(fin_move) * fin_onpart);
 	}
 
-	// Check if finished horizontal movement
-	if ((cmls.doneflag & kMoveListDone_X) == 0) {
-		if (((xpermove > 0) && (xps >= targetx)) || ((xpermove < 0) && (xps <= targetx))) {
-			cmls.doneflag |= kMoveListDone_X;
-			xps = targetx; // snap to the target (in case run over)
-			if (ypermove != 0)
-				movelist_handle_remainer(xpermove, ypermove, targetx - cmls.from.X,
-										 cmls.GetStepLength(), cmls.fin_move, cmls.fin_from_part);
-			// Comment about old engine behavior:
-			// if the Y is almost there too, finish it
-			// this is new in v2.40
-			// removed in 2.70
-			/*if (abs(yps - targety) <= 2)
-			  yps = targety;*/
-		} else if (xpermove == 0) {
-			cmls.doneflag |= kMoveListDone_X;
-		}
-	}
-
-	// Check if finished vertical movement
-	if ((cmls.doneflag & kMoveListDone_Y) == 0) {
-		if (((ypermove > 0) && (yps >= targety)) || ((ypermove < 0) & (yps <= targety))) {
-			cmls.doneflag |= kMoveListDone_Y;
-			yps = targety; // snap to the target (in case run over)
-			if (xpermove != 0)
-				movelist_handle_remainer(ypermove, xpermove, targety - cmls.from.Y,
-										 cmls.GetStepLength(), cmls.fin_move, cmls.fin_from_part);
-		} else if (ypermove == 0) {
-			cmls.doneflag |= kMoveListDone_Y;
-		}
+	// Check if finished either horizontal or vertical movement;
+	// if any was finished just now, then also handle remainer fixup
+	if (movelist_handle_donemove(kMoveListDone_X, xpermove, target.X, cmls.doneflag, xps) ||
+		movelist_handle_donemove(kMoveListDone_Y, ypermove, target.Y, cmls.doneflag, yps)) {
+		movelist_handle_remainer(cmls);
 	}
 
 	// Handle end of move stage
