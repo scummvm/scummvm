@@ -291,7 +291,7 @@ bool U6Actor::init_silver_serpent() {
 	if (obj != nullptr) //old snake
 		gather_snake_objs_from_map(obj, x, y, z);
 	else { //new snake
-		//FIXME we need to make long, randomly layed out snakes here!
+		//FIXME: we need to make long, randomly laid out snakes here!
 		init_new_silver_serpent();
 	}
 
