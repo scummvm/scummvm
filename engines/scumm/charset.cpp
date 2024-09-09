@@ -466,7 +466,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int pos = 0;
 	bool isV3Towns = _vm->_game.version == 3 && _vm->_game.platform == Common::kPlatformFMTowns;
 
-	// I have confirmed from disasm that neither LOOM EGA and FM-TOWNS (EN/JP) nor any other games withing the
+	// I have confirmed from disasm that neither LOOM EGA and FM-TOWNS (EN/JP) nor any other games within the
 	// v0-v3 version range add 1 to the width. There isn't even a getStringWidth method. And the v0-2 games don't
 	// even support text rendering over strip borders. However, LOOM VGA Talkie and MONKEY1 EGA do have the
 	// getStringWidth method and they do add 1 to the width. So that seems to have been introduced with version 4.

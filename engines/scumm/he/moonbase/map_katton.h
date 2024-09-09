@@ -63,7 +63,7 @@ private:
 	int findcoord(int value, int move);
 	int replacenum(int replacee, int replacer);
 	int fattenone(int x, int y, int howfat, int middle, int ignorer, int replacer);
-	// howfat: postive 1-5 for distance, -100 to 0 for random 3 spread from 2 to 5.
+	// howfat: positive 1-5 for distance, -100 to 0 for random 3 spread from 2 to 5.
 	int fattenall(int howfat, int middle, int ignorer, int replacer);
 	int findstartloc();
 	int whatheightstartloc(int x, int y);

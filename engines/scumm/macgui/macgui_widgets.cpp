@@ -1152,7 +1152,7 @@ void MacGuiImpl::MacSlider::handleMouseMove(Common::Event &event) {
 		int y1 = _handlePos + 16;
 
 		// Drawing a solid rectangle would be easier, and probably look
-		// better. But it seems the orginal Mac widget would draw the
+		// better. But it seems the original Mac widget would draw the
 		// frame as an inverted slider background, even when drawing it
 		// on top of the slider handle.
 

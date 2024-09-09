@@ -852,7 +852,7 @@ int Wiz::auxHitTestTRLEXPos(const byte *dataStream, int skipAmount) {
 }
 
 int Wiz::auxHitTestTRLEImageRelPos(const byte *compData, int x, int y, int width, int height) {
-	// Quickly reject points outside the image boundry.
+	// Quickly reject points outside the image boundary.
 	if ((x < 0) || (width <= x) || (y < 0) || (height <= y)) {
 		return 0;
 	}
@@ -920,7 +920,7 @@ int Wiz::auxPixelHitTestTRLEXPos(byte *dataStream, int skipAmount, int transpare
 }
 
 int Wiz::auxPixelHitTestTRLEImageRelPos(byte *compData, int x, int y, int width, int height, int transparentValue) {
-	// Quickly reject points outside the image boundry.
+	// Quickly reject points outside the image boundary.
 	if ((x < 0) || (width <= x) || (y < 0) || (height <= y)) {
 		return transparentValue;
 	}

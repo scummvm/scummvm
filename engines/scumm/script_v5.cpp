@@ -3347,7 +3347,7 @@ void ScummEngine_v5::decodeParseString() {
 						}
 
 						// Slightly increase the delay (5 frames = 1/25 of a second).
-						// This noticably improves the experience in Loom CD.
+						// This noticeably improves the experience in Loom CD.
 						delay = (int)(delay * 7.5 + 5);
 
 						_sound->playCDTrack(1, 1, offset, delay);

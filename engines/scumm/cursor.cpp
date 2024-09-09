@@ -877,7 +877,7 @@ void ScummEngine_v2::setBuiltinCursor(int idx) {
 
 		byte *hotspot = _grabbedCursor + _cursor.hotspotY * _cursor.width + _cursor.hotspotX;
 
-		// Crosshair, slightly assymetric
+		// Crosshair, slightly asymmetric
 		// TODO: Instead of setting this up via code, we should simply extend
 		//       default_cursor_images to contain this shape.
 

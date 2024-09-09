@@ -1614,7 +1614,7 @@ int ScummEngine::convertVerbMessage(byte *dst, int dstSize, int var) {
 	num = readVar(var);
 	if (num) {
 		for (k = 1; k < _numVerbs; k++) {
-			// Fix ZAK FM-TOWNS bug #1734 by emulating exact (inconsistant?) behavior of the original code
+			// Fix ZAK FM-TOWNS bug #1734 by emulating exact (inconsistent?) behavior of the original code
 			if (num == _verbs[k].verbid && !_verbs[k].type && (!_verbs[k].saveid || (_game.version == 3 && _game.platform == Common::kPlatformFMTowns))) {
 				// Process variation of Korean postpositions
 				// Used by Korean fan translated games (monkey1, monkey2)

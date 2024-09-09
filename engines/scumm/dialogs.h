@@ -67,7 +67,7 @@ protected:
 
 /**
  * A dialog which displays an arbitrary message to the user and returns
- * ther users reply as its result value. More specifically, it returns
+ * the users reply as its result value. More specifically, it returns
  * the ASCII code of the key used to close the dialog (0 if a mouse
  * click closed the dialog).
  */

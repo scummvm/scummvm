@@ -2436,7 +2436,7 @@ void ScummEngine::processActors() {
 		if (a->_costume) {
 
 			// Unfortunately in V0, the 'animateCostume' call happens right after the call to 'walkActor' (which is before drawing the actor)...
-			// doing it the other way with V0, causes animation glitches (when beginnning to walk, as the costume hasnt been updated).
+			// doing it the other way with V0, causes animation glitches (when beginnning to walk, as the costume hasn't been updated).
 			// Updating the costume directly after 'walkActor' and again, after drawing... causes frame skipping
 			if (_game.version == 0) {
 				a->animateCostume();
@@ -2846,7 +2846,7 @@ void Actor::animateActor(int anim) {
 			stopActorMoving();
 		}
 		break;
-	case 3:				// change direction immediatly
+	case 3:				// change direction immediately
 		if (isInCurrentRoom() ||
 			!(_vm->_game.version >= 3 && _vm->_game.version <= 6)) {
 			_moving &= ~MF_TURN;
@@ -2941,7 +2941,7 @@ void Actor_v0::speakCheck() {
 
 #ifdef ENABLE_SCUMM_7_8
 void Actor::animateLimb(int limb, int f) {
-	// This methods is very similiar to animateCostume().
+	// This methods is very similar to animateCostume().
 	// However, instead of animating *all* the limbs, it only animates
 	// the specified limb to be at the frame specified by "f".
 

@@ -745,7 +745,7 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	memset(_newNames, 0, sizeof(_newNames[0]) * _numNewNames);
 
 	// Because old savegames won't fill the entire gfxUsageBits[] array,
-	// clear it here just to be sure it won't hold any unforseen garbage.
+	// clear it here just to be sure it won't hold any unforeseen garbage.
 	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
 
 	// Nuke all resources

@@ -241,7 +241,7 @@ int32 Lobby::dispatch(int op, int numArgs, int32 *args) {
 		break;
 	case OP_NET_PING_OPPONENT:
 		// NOTE: See getUserProfile, this op only gets
-		// called after an oponent picks up the phone.
+		// called after an opponent picks up the phone.
 		break;
 	case OP_NET_RECEIVER_BUSY:
 		sendBusy(args[0]);

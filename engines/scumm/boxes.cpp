@@ -1013,7 +1013,7 @@ void ScummEngine::calcItineraryMatrix(byte *itineraryMatrix, int num) {
 	// Compute the shortest routes between boxes via Kleene's algorithm.
 	// The original code used some kind of mangled Dijkstra's algorithm;
 	// while that might in theory be slightly faster, it was
-	// a) extremly obfuscated
+	// a) extremely obfuscated
 	// b) incorrect: it didn't always find the shortest paths
 	// c) not any faster in reality for our sparse & small adjacent matrices
 	for (k = 0; k < num; k++) {
@@ -1103,11 +1103,11 @@ bool ScummEngine::areBoxesNeighbors(int box1nr, int box2nr) {
 	box2 = getBoxCoordinates(box1nr);
 	box = getBoxCoordinates(box2nr);
 
-	// Roughly, the idea of this algorithm is to search for sies of the given
+	// Roughly, the idea of this algorithm is to search for sides of the given
 	// boxes that touch each other.
-	// In order to keep te code simple, we only match the upper sides;
+	// In order to keep the code simple, we only match the upper sides;
 	// then, we "rotate" the box coordinates four times each, for a total
-	// of 16 comparisions.
+	// of 16 comparisons.
 	for (int j = 0; j < 4; j++) {
 		for (int k = 0; k < 4; k++) {
 			// Are the "upper" sides of the boxes on a single vertical line
