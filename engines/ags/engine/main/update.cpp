@@ -104,12 +104,12 @@ static void movelist_handle_remainer(MoveList &m) {
 	const fixed xpermove = m.xpermove[m.onstage];
 	const fixed ypermove = m.ypermove[m.onstage];
 	const Point target = m.pos[m.onstage + 1];
-	// Apply remainer to movelists where only ONE axis was completed, and another remains
+	// Apply remainer to movelists where LONGER axis was completed, and SHORTER remains
 	if ((xpermove != 0) && (ypermove != 0)) {
-		if ((m.doneflag & kMoveListDone_XY) == kMoveListDone_X)
+		if ((m.doneflag & kMoveListDone_XY) == kMoveListDone_X && (ypermove < xpermove))
 			movelist_handle_remainer(xpermove, ypermove, target.X - m.from.X,
 									 m.GetStepLength(), m.fin_move, m.fin_from_part);
-		else if ((m.doneflag & kMoveListDone_XY) == kMoveListDone_Y)
+		else if ((m.doneflag & kMoveListDone_XY) == kMoveListDone_Y && (xpermove < ypermove))
 			movelist_handle_remainer(ypermove, xpermove, target.Y - m.from.Y,
 									 m.GetStepLength(), m.fin_move, m.fin_from_part);
 	}
@@ -205,6 +205,14 @@ int do_movelist_move(short &mslot, int &pos_x, int &pos_y) {
 	pos_x = xps;
 	pos_y = yps;
 	return need_to_fix_sprite;
+}
+
+void restore_movelists() {
+	// Recalculate move remainer fixups, where necessary
+	for (auto &m : _GP(mls)) {
+		if (m.numstage > 0)
+			movelist_handle_remainer(m);
+	}
 }
 
 void update_script_timers() {
