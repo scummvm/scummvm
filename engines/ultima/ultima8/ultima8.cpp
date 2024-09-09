@@ -771,7 +771,7 @@ void Ultima8Engine::changeVideoMode(int width, int height) {
 
 void Ultima8Engine::handleEvent(const Common::Event &event) {
 	// Handle the fact that we can get 2 modals stacking.
-	// We want the focussed one preferrably.
+	// We want the focussed one preferably.
 	Gump *modal = dynamic_cast<ModalGump *>(_desktopGump->GetFocusChild());
 	if (!modal)
 		modal = _desktopGump->FindGump<ModalGump>();
