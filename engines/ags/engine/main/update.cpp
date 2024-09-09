@@ -52,7 +52,11 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-static void movelist_handle_remainer(const fixed &xpermove, const fixed &ypermove, int &targety) {
+
+// Optionally fixes target position, when one axis is left to move along.
+// This is done only for backwards compatibility now.
+// Uses generic parameters.
+static void movelist_handle_targetfix(const fixed &xpermove, const fixed &ypermove, int &targety) {
 	// Old comment about ancient behavior:
 	// if the X-movement has finished, and the Y-per-move is < 1, finish
 	// This can cause jump at the end, but without it the character will
@@ -62,6 +66,8 @@ static void movelist_handle_remainer(const fixed &xpermove, const fixed &ypermov
 
 	// NEW 2.15 SR-1 plan: if X-movement has finished, and Y-per-move is < 1,
 	// allow it to finish more easily by moving target zone
+	// NOTE: interesting fact: this fix was also done for the strictly vertical
+	// move, probably because of the logical mistake in condition.
 
 	int tfix = 3;
 	// 2.70: if the X permove is also <=1, don't skip as far
@@ -83,6 +89,16 @@ static void movelist_handle_remainer(const fixed &xpermove, const fixed &ypermov
 		targety += tfix;
 }
 
+// Handle remaining move along a single axis; uses generic parameters.
+static void movelist_handle_remainer(const fixed xpermove, const fixed ypermove, const int xdistance,
+									 const int onpart, const float step_length, int &fin_ymove, int &fin_onpart) {
+	// Walk along the remaining axis with the full walking speed
+	assert(xpermove != 0 && ypermove != 0);
+	fin_ymove = ypermove > 0 ? ftofix(step_length) : -ftofix(step_length);
+	float onpart_to_dist = (float)xdistance / fixtof(xpermove);
+	fin_onpart = (int)((float)onpart - onpart_to_dist);
+}
+
 int do_movelist_move(short &mslot, int &pos_x, int &pos_y) {
 	// TODO: find out why movelist 0 is not being used
 	assert(mslot >= 1);
@@ -96,21 +112,33 @@ int do_movelist_move(short &mslot, int &pos_x, int &pos_y) {
 	int targetx = cmls.pos[cmls.onstage + 1].X;
 	int targety = cmls.pos[cmls.onstage + 1].Y;
 	int xps = pos_x, yps = pos_y;
+	const bool do_fix_target = _G(loaded_game_file_version) < kGameVersion_361;
+	fixed fin_xmove = 0, fin_ymove = 0;
+	int fin_onpart = 0;
 
-	if (cmls.doneflag & kMoveListDone_X) {
-		// X-move has finished, handle the Y-move remainer
-		movelist_handle_remainer(xpermove, ypermove, targety);
-	} else {
-		xps = cmls.from.X + (int)(fixtof(xpermove) * (float)cmls.onpart);
+	// Handle possible move remainers
+	if ((ypermove != 0) && (cmls.doneflag & kMoveListDone_X) != 0) { // X-move has finished, handle the Y-move remainer
+		if (do_fix_target)
+			movelist_handle_targetfix(xpermove, ypermove, targety);
+		if (xpermove != 0)
+			movelist_handle_remainer(xpermove, ypermove, targetx - cmls.from.X, cmls.onpart, cmls.GetStepLength(), fin_ymove, fin_onpart);
+	}
+	if ((xpermove != 0) && (cmls.doneflag & kMoveListDone_Y) != 0) { // Y-move has finished, handle the X-move remainer
+		if (do_fix_target)
+			movelist_handle_targetfix(xpermove, ypermove, targety);
+		if (ypermove != 0)
+			movelist_handle_remainer(ypermove, xpermove, targety - cmls.from.Y, cmls.onpart, cmls.GetStepLength(), fin_xmove, fin_onpart);
 	}
 
-	if (cmls.doneflag & kMoveListDone_Y) {
-		// Y-move has finished, handle the X-move remainer
-		movelist_handle_remainer(ypermove, xpermove, targetx);
-	} else {
-		yps = cmls.from.Y + (int)(fixtof(ypermove) * (float)cmls.onpart);
+	// Calculate next positions, as required
+	if ((cmls.doneflag & kMoveListDone_X) == 0) {
+		xps = cmls.from.X + (int)(fixtof(xpermove) * (float)cmls.onpart) + (int)(fixtof(fin_xmove) * (float)fin_onpart);
 	}
-	// check if finished horizontal movement
+	if ((cmls.doneflag & kMoveListDone_Y) == 0) {
+		yps = cmls.from.Y + (int)(fixtof(ypermove) * (float)cmls.onpart) + (int)(fixtof(fin_ymove) * (float)fin_onpart);
+	}
+
+	// Check if finished horizontal movement
 	if (((xpermove > 0) && (xps >= targetx)) ||
 		((xpermove < 0) && (xps <= targetx))) {
 		cmls.doneflag |= kMoveListDone_X;
@@ -124,7 +152,8 @@ int do_movelist_move(short &mslot, int &pos_x, int &pos_y) {
 	} else if (xpermove == 0) { // NOTE: do not snap pos_x to target in this case (?)
 		cmls.doneflag |= kMoveListDone_X;
 	}
-	// check if finished vertical movement
+
+	// Check if finished vertical movement
 	if (((ypermove > 0) && (yps >= targety)) ||
 		((ypermove < 0) & (yps <= targety))) {
 		cmls.doneflag |= kMoveListDone_Y;
@@ -133,6 +162,7 @@ int do_movelist_move(short &mslot, int &pos_x, int &pos_y) {
 		cmls.doneflag |= kMoveListDone_Y;
 	}
 
+	// Handle end of move stage
 	if ((cmls.doneflag & kMoveListDone_XY) == kMoveListDone_XY) {
 		// this stage is done, go on to the next stage
 		cmls.from = cmls.pos[cmls.onstage + 1];
