@@ -485,7 +485,7 @@ Getlocation	proc	near
 	endp
 
 
-Setlocation	proc	near		;makes a location accessable
+Setlocation	proc	near		;makes a location accessible
 
 	mov	ah,0
 	mov	bx,ax
