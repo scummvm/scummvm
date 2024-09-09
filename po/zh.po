@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-07 19:45+0000\n"
+"POT-Creation-Date: 2024-09-09 00:19+0000\n"
 "PO-Revision-Date: 2024-05-14 12:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -5578,7 +5578,7 @@ msgstr "啟用Discord整合"
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
 
-#: engines/agi/metaengine.cpp:422 engines/asylum/asylum.cpp:655
+#: engines/agi/metaengine.cpp:408 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
 #, fuzzy
@@ -5586,7 +5586,7 @@ msgstr ""
 msgid "This game does not support loading"
 msgstr "这个游戏不支持直接从启动器载入存档。"
 
-#: engines/agi/metaengine.cpp:444 engines/asylum/asylum.cpp:666
+#: engines/agi/metaengine.cpp:431 engines/asylum/asylum.cpp:666
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
 msgid "This game does not support saving"
