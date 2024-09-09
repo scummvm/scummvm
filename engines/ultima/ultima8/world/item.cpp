@@ -180,7 +180,7 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 		World::get_instance()->etherealRemove(_objId);
 	}
 
-	// Remove from container (if contained or equiped)
+	// Remove from container (if contained or equipped)
 	if (_flags & (FLG_CONTAINED | FLG_EQUIPPED)) {
 		if (_parent) {
 			// If we are flagged as Ethereal, we are already removed
@@ -294,7 +294,7 @@ bool Item::moveToContainer(Container *container, bool checkwghtvol) {
 		World::get_instance()->etherealRemove(_objId);
 	}
 
-	// Remove from container (if contained or equiped)
+	// Remove from container (if contained or equipped)
 	if (_flags & (FLG_CONTAINED | FLG_EQUIPPED)) {
 		if (_parent) {
 			// If we are flagged as Ethereal, we are already removed
