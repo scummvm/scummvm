@@ -173,7 +173,7 @@ bool Map::generateMapWithInfo(Common::String encodedMap, uint8 generator, int se
 	_generatedMap = new MapFile();
 	bool success = Common::b64DecodeData(encodedMap, _generatedMap);
 	if (!success) {
-		warning("Map: Error has occured when decoding map data from base64");
+		warning("Map: Error has occurred while decoding map data from base64");
 		return false;
 	}
 	_mapGenerated = true;
