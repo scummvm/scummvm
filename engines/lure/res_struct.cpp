@@ -210,7 +210,7 @@ void RoomPathsData::clearOccupied(int x, int y, int width) {
 // decompresses the bit-packed data for which parts of a room are occupied
 // into a byte array. It also adds a column and row of padding around the
 // edges of the screen, and extends occupied areas to adjust for the width
-// of the chracter
+// of the character
 
 void RoomPathsData::decompress(RoomPathsDecompressedData &dataOut, int characterWidth) {
 	byte *pIn = &_data[ROOM_PATHS_SIZE - 1];
