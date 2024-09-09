@@ -4010,7 +4010,7 @@ StaticTilePoint pickTile(Point32 pos,
 							}
 
 							//  If pick point is on vertical surface
-							//  not facing protaganist, reject tile
+							//  not facing protagonist, reject tile
 							if (surface == surfaceVertU &&  pCoords.v < protagPos.v)
 								continue;
 							if (surface == surfaceVertV &&  pCoords.u < protagPos.u)
@@ -4051,7 +4051,7 @@ StaticTilePoint pickTile(Point32 pos,
 		relPos.y += kTileDY;
 
 		//  Compute new altitude range based upon the tile position
-		//  relative to the protaganist's position.
+		//  relative to the protagonist's position.
 		zMin = protagPos.z - kMaxPickHeight - (coords - protagPos).quickHDistance();
 		zMax = protagPos.z + kMaxPickHeight + (coords - protagPos).quickHDistance();
 	}
