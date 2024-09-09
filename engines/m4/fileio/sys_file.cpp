@@ -380,7 +380,7 @@ bool SysFile::open_hash_file() {
 		Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(temp_ptr->hag_fp);
 		assert(rs);
 
-		// set hag file pointer to current file postion //
+		// set hag file pointer to current file position //
 		if (!rs->seek(curr_hash_record.offset))
 			term_message("fail to fseek");
 		last_head_pos = rs->pos();
