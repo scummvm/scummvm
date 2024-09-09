@@ -803,7 +803,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		// animation state 21 is for the full shooting animation
 		*animation = kModelAnimationMcCoyWithGunShooting;
 		_animationFrame = 0;
-		// weird, but thats in game code
+		// weird, but that's in game code
 		if (Slice_Animation_Query_Number_Of_Frames(*animation) <= 0) {
 			_animationFrame = 0;
 			_animationState = 17;
