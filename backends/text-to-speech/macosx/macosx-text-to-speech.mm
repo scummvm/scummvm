@@ -137,7 +137,7 @@ bool MacOSXTextToSpeechManager::stop() {
 		_currentSpeech.clear(); // so that it immediately reports that it is no longer speaking
 		// Stop as soon as possible
 		// Also tell the MacOSXTextToSpeechManagerDelegate to ignore the next finishedSpeaking as
-		// it has already been handled, but we might have started another speach by the time we
+		// it has already been handled, but we might have started another speech by the time we
 		// receive it, and we don't want to stop that one.
 		[synthesizerDelegate ignoreNextFinishedSpeaking:YES];
 		[synthesizer stopSpeakingAtBoundary:NSSpeechImmediateBoundary];
