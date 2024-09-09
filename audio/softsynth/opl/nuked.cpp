@@ -426,8 +426,6 @@ static void OPL3_EnvelopeCalc(opl3_slot *slot)
         case envelope_gen_num_release:
             reg_rate = slot->reg_rr;
             break;
-        default:
-            break;
         }
     }
     slot->pg_reset = reset;
@@ -466,7 +464,7 @@ static void OPL3_EnvelopeCalc(opl3_slot *slot)
         }
         else
         {
-            shift = (rate_hi & 0x03) + eg_incstep[rate_lo][slot->chip->timer & 0x03u];
+            shift = (rate_hi & 0x03) + eg_incstep[rate_lo][slot->chip->eg_timer_lo];
             if (shift & 0x04)
             {
                 shift = 0x03;
@@ -522,8 +520,6 @@ static void OPL3_EnvelopeCalc(opl3_slot *slot)
         {
             eg_inc = 1 << (shift - 1);
         }
-        break;
-    default:
         break;
     }
     slot->eg_rout = (eg_rout + eg_inc) & 0x1ff;
@@ -872,8 +868,6 @@ static void OPL3_ChannelSetupAlg(opl3_channel *channel)
             channel->slotz[0]->mod = &channel->slotz[0]->fbmod;
             channel->slotz[1]->mod = &channel->chip->zeromod;
             break;
-        default:
-            break;
         }
         return;
     }
@@ -929,8 +923,6 @@ static void OPL3_ChannelSetupAlg(opl3_channel *channel)
             channel->out[2] = &channel->slotz[1]->out;
             channel->out[3] = &channel->chip->zeromod;
             break;
-        default:
-            break;
         }
     }
     else
@@ -952,8 +944,6 @@ static void OPL3_ChannelSetupAlg(opl3_channel *channel)
             channel->out[1] = &channel->slotz[1]->out;
             channel->out[2] = &channel->chip->zeromod;
             channel->out[3] = &channel->chip->zeromod;
-            break;
-        default:
             break;
         }
     }
@@ -1219,10 +1209,9 @@ inline void OPL3_Generate4Ch(opl3_chip *chip, int16_t *buf4)
 
     chip->timer++;
 
-    chip->eg_add = 0;
-    if (chip->eg_timer)
+    if (chip->eg_state)
     {
-        while (shift < 36 && ((chip->eg_timer >> shift) & 1) == 0)
+        while (shift < 13 && ((chip->eg_timer >> shift) & 1) == 0)
         {
             shift++;
         }
@@ -1234,6 +1223,7 @@ inline void OPL3_Generate4Ch(opl3_chip *chip, int16_t *buf4)
         {
             chip->eg_add = shift + 1;
         }
+        chip->eg_timer_lo = (uint8_t)(chip->eg_timer & 0x3u);
     }
 
     if (chip->eg_timerrem || chip->eg_state)
@@ -1392,8 +1382,6 @@ void OPL3_WriteReg(opl3_chip *chip, uint16_t reg, uint8_t v)
                 chip->stereoext = (v >> 1) & 0x01;
 #endif
                 break;
-            default:
-                break;
             }
         }
         else
@@ -1402,8 +1390,6 @@ void OPL3_WriteReg(opl3_chip *chip, uint16_t reg, uint8_t v)
             {
             case 0x08:
                 chip->nts = (v >> 6) & 0x01;
-                break;
-            default:
                 break;
             }
         }
@@ -1483,8 +1469,6 @@ void OPL3_WriteReg(opl3_chip *chip, uint16_t reg, uint8_t v)
         }
         break;
 #endif
-    default:
-        break;
     }
 }
 
