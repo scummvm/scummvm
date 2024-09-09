@@ -869,7 +869,7 @@ const byte *ScummEngine::postProcessDOSGraphics(VirtScreen *vs, int &pitch, int 
 		}
 
 	} else if (renderHerc || _renderMode == Common::kRenderCGA_BW) {
-		// The monochrome rendering is very similiar for Hercules and CGA b/w. For Hercules we have to do some corrections to fit into the 350 pixels height.
+		// The monochrome rendering is very similar for Hercules and CGA b/w. For Hercules we have to do some corrections to fit into the 350 pixels height.
 		// For Hercules V1/2, the text and verb vs are rendered in normal height, only the main vs gets scaled by leaving out every other line. Hercules V4
 		// instead scales everything in a 4-to-7 lines ratio. And for all versions, we center the image horizontally within the 720 pixels width.
 		// For CGA b/w the origial resolution is 640x200, so we just scale that to our 640x400 by repeating each line.
