@@ -3222,7 +3222,7 @@ void Actor::useKnowledge(scriptCallFrame &scf) {
 
 //-----------------------------------------------------------------------
 //	Polling function to determine if any of this actor's followers can
-//	sense a protaganist within a specified range
+//	sense a protagonist within a specified range
 
 bool Actor::canSenseProtaganistIndirectly(SenseInfo &info, int16 range) {
 	if (_followers != nullptr) {
