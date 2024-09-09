@@ -2182,7 +2182,7 @@ void ScummEngine_v72he::o72_readINI() {
 		} else if (!strcmp((char *)option, "GameResourcePath") || !strcmp((char *)option, "SaveGamePath")) {
 			// We set SaveGamePath in order to detect where it used
 			// in convertFilePath and to avoid warning about invalid
-			// path in Macintosh verisons.
+			// path in Macintosh versions.
 			data = defineArray(0, kStringArray, 0, 0, 0, 2);
 			if (_game.platform == Common::kPlatformMacintosh)
 				memcpy(data, (const char *)"*:", 2);
