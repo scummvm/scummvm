@@ -165,7 +165,7 @@ AutoMap::AutoMap(const Rect16 box,
 	: ModalWindow(box, ident, cmd) {
 	_autoMapCheat = false; // FIXME: Allow setting from debug console
 
-	// setup boundry definitions
+	// setup boundary definitions
 	_sumMapArea  = Rect16(0, 0, kSumMapAreaWidth, kSumMapAreaHeight);
 	_summaryData = summary;
 
