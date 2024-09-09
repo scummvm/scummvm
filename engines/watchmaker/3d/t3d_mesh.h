@@ -51,7 +51,7 @@ struct t3dMESH {
 	t3dNORMAL             BBoxNormal[6] = {};             // bound box normals
 	t3dF32                BBoxAverageZ = 0.0f;            // average distance from eye
 	t3dV3F                Intersection;                   // intersecton form eye
-	t3dM3X3F              Matrix;                         // transformation matrix (usefull only for 1st mesh in body)
+	t3dM3X3F              Matrix;                         // transformation matrix (useful only for 1st mesh in body)
 	uint16                LightmapDim = 0;                // lightmap texture dimensions
 	Common::Array<t3dMODVERTS> ModVertices;         // mod vertices list
 	t3dBONEANIM           DefaultAnim;                    // Default Animations

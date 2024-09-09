@@ -195,7 +195,7 @@ WGame::WGame() : workDirs(WATCHMAKER_CFG_NAME) {
 	// ...
 	// } else
 
-	warning("Currently doing an unneccessary copy here");
+	warning("Currently doing an unnecessary copy here");
 	loadAll(workDirs, init);
 
 	sdl = new sdl_wrapper();
