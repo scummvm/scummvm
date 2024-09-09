@@ -1513,7 +1513,7 @@ void Interface::assembleBorder() {
 		windows[10]._enabled || windows[2]._enabled ? 52 : _face2UIFrame,
 		Common::Point(215, 32));
 
-	// Draw resistence indicators
+	// Draw resistance indicators
 	if (!windows[10]._enabled && !windows[2]._enabled
 		&& !windows[38]._enabled) {
 		_fecpSprites.draw(0, _vm->_party->_fireResistence ? 1 : 0,
