@@ -27,7 +27,7 @@ namespace TwinE {
 bool EntityData::loadBody(Common::SeekableReadStream &stream) {
 	EntityBody body;
 	body.index = stream.readByte();
-	const int32 pos = stream.pos();
+	const int64 pos = stream.pos();
 	uint8 size = stream.readByte();
 	body.hqrBodyIndex = (int16)stream.readUint16LE();
 	const uint8 numActions = stream.readByte();
@@ -50,7 +50,7 @@ bool EntityData::loadBody(Common::SeekableReadStream &stream) {
 bool EntityData::loadAnim(Common::SeekableReadStream &stream) {
 	EntityAnim anim;
 	anim.animation = (AnimationTypes)stream.readByte();
-	const int32 pos = stream.pos();
+	const int64 pos = stream.pos();
 	uint8 size = stream.readByte();
 	anim.animIndex = stream.readSint16LE();
 	const uint8 numActions = stream.readByte();
