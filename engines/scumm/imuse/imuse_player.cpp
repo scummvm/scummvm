@@ -913,7 +913,7 @@ int Player::query_part_param(int param, byte chan) {
 
 void Player::onTimer() {
 	// First handle any parameter transitions
-	// that are occuring.
+	// that are occurring.
 	transitionParameters();
 
 	// Since the volume parameter can cause
