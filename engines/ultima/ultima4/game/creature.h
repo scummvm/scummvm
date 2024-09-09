@@ -430,7 +430,7 @@ public:
 private:
 	CreatureMgr() {}
 
-	// disallow assignments, copy contruction
+	// disallow assignments, copy construction
 	CreatureMgr(const CreatureMgr &);
 	const CreatureMgr &operator=(const CreatureMgr &);
 
