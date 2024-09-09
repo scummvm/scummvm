@@ -611,7 +611,7 @@ void Gump::AddChild(Gump *gump, bool take_focus) {
 		// Why don't we check for FLAG_CLOSING here?
 		// Because we want to make sure that the sort order is always valid
 
-		// If we are same layer as focus and we wont take it, we will not be
+		// If we are same layer as focus and we won't take it, we will not be
 		// placed in front of it
 		if (!take_focus && other == _focusChild && other->_layer == gump->_layer)
 			break;
