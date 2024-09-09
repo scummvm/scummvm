@@ -316,8 +316,8 @@ struct AgiDir {
 
 	// 0 = not in mem, can be freed
 	// 1 = in mem, can be released
-	// 2 = not in mem, cant be released
-	// 3 = in mem, cant be released
+	// 2 = not in mem, can't be released
+	// 3 = in mem, can't be released
 	// 0x40 = was compressed
 	uint8 flags;
 
