@@ -4394,7 +4394,7 @@ void updateMainDisplay() {
 	_mCoords.v = trackPos.v >> (kTileUVShift + kPlatShift);
 	_mCoords.z = 0;
 
-	//  If trackPos has crossed a metatile boundry, rebuild object
+	//  If trackPos has crossed a metatile boundary, rebuild object
 	//  ripping tables
 	if (_mCoords != ripTableCoords) buildRipTables();
 
