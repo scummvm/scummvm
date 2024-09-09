@@ -326,7 +326,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback,
 
 	private void deinitAudio() {
 		if (_audio_track != null)
-			_audio_track.stop();
+			_audio_track.release();
 
 		_audio_track = null;
 		_buffer_size = 0;
