@@ -1415,7 +1415,7 @@ void KyraEngine_HoF::snd_playVoiceFile(int id) {
 	Common::sprintf_s(vocFile, "%07d", id);
 	if (_sound->isVoicePresent(vocFile)) {
 		// Unlike the original I have added a timeout here. I have chosen a size that makes sure that it
-		// won't get triggered in bug #11309 or similiar situations, but still avoids infinite hangups
+		// won't get triggered in bug #11309 or similar situations, but still avoids infinite hangups
 		// if something goes wrong.
 		uint32 timeout = _system->getMillis() + 5000;
 		while (snd_voiceIsPlaying() && _system->getMillis() < timeout && !skipFlag() && !shouldQuit())
