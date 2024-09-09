@@ -121,7 +121,7 @@ struct CharacterInfo {
 	short pic_xoffs; // this is fixed in screen coordinates
 	short walkwaitcounter;
 	uint16_t loop, frame;
-	short walking;
+	short walking;  // stores movelist index, optionally +TURNING_AROUND
 	short animating; // stores CHANIM_* flags in lower byte and delay in upper byte
 	short walkspeed, animspeed;
 	short inv[MAX_INV];

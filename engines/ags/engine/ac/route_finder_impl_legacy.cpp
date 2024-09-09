@@ -647,6 +647,11 @@ inline fixed input_speed_to_fixed(int speed_val) {
 	}
 }
 
+void set_route_move_speed(int speed_x, int speed_y) {
+	_G(move_speed_x) = input_speed_to_fixed(speed_x);
+	_G(move_speed_y) = input_speed_to_fixed(speed_y);
+}
+
 // Calculates the X and Y per game loop, for this stage of the movelist
 void calculate_move_stage(MoveList *mlsp, int aaa, fixed move_speed_x, fixed move_speed_y) {
 	assert(mlsp != nullptr);

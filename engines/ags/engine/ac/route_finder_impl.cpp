@@ -114,6 +114,31 @@ inline fixed input_speed_to_fixed(int speed_val) {
 	}
 }
 
+void set_route_move_speed(int speed_x, int speed_y) {
+	_G(move_speed_x) = input_speed_to_fixed(speed_x);
+	_G(move_speed_y) = input_speed_to_fixed(speed_y);
+}
+
+inline fixed calc_move_speed_at_angle(fixed speed_x, fixed speed_y, fixed xdist, fixed ydist) {
+	fixed useMoveSpeed;
+	if (speed_x == speed_y) {
+		useMoveSpeed = speed_x;
+	} else {
+		// different X and Y move speeds
+		// the X proportion of the movement is (x / (x + y))
+		fixed xproportion = fixdiv(xdist, (xdist + ydist));
+
+		if (speed_x > speed_y) {
+			// speed = y + ((1 - xproportion) * (x - y))
+			useMoveSpeed = speed_y + fixmul(xproportion, speed_x - speed_y);
+		} else {
+			// speed = x + (xproportion * (y - x))
+			useMoveSpeed = speed_x + fixmul(itofix(1) - xproportion, speed_y - speed_x);
+		}
+	}
+	return useMoveSpeed;
+}
+
 // Calculates the X and Y per game loop, for this stage of the movelist
 void calculate_move_stage(MoveList *mlsp, int aaa, fixed move_speed_x, fixed move_speed_y) {
 	// work out the x & y per move. First, opp/adj=tan, so work out the angle
@@ -150,23 +175,7 @@ void calculate_move_stage(MoveList *mlsp, int aaa, fixed move_speed_x, fixed mov
 	fixed xdist = itofix(abs(ourx - destx));
 	fixed ydist = itofix(abs(oury - desty));
 
-	fixed useMoveSpeed;
-
-	if (move_speed_x == move_speed_y) {
-		useMoveSpeed = move_speed_x;
-	} else {
-		// different X and Y move speeds
-		// the X proportion of the movement is (x / (x + y))
-		fixed xproportion = fixdiv(xdist, (xdist + ydist));
-
-		if (move_speed_x > move_speed_y) {
-			// speed = y + ((1 - xproportion) * (x - y))
-			useMoveSpeed = move_speed_y + fixmul(xproportion, move_speed_x - move_speed_y);
-		} else {
-			// speed = x + (xproportion * (y - x))
-			useMoveSpeed = move_speed_x + fixmul(itofix(1) - xproportion, move_speed_y - move_speed_x);
-		}
-	}
+	fixed useMoveSpeed = calc_move_speed_at_angle(move_speed_x, move_speed_y, xdist, ydist);
 
 	fixed angl = fixatan(fixdiv(ydist, xdist));
 
@@ -185,6 +194,50 @@ void calculate_move_stage(MoveList *mlsp, int aaa, fixed move_speed_x, fixed mov
 
 	mlsp->xpermove[aaa] = newxmove;
 	mlsp->ypermove[aaa] = newymove;
+}
+
+void recalculate_move_speeds(MoveList *mlsp, int old_speed_x, int old_speed_y, int new_speed_x, int new_speed_y) {
+	const fixed old_movspeed_x = input_speed_to_fixed(old_speed_x);
+	const fixed old_movspeed_y = input_speed_to_fixed(old_speed_y);
+	const fixed new_movspeed_x = input_speed_to_fixed(new_speed_x);
+	const fixed new_movspeed_y = input_speed_to_fixed(new_speed_y);
+	// save current stage's step lengths, for later onpart's update
+	const fixed old_stage_xpermove = mlsp->xpermove[mlsp->onstage];
+	const fixed old_stage_ypermove = mlsp->ypermove[mlsp->onstage];
+
+	for (int i = 0; (i < mlsp->numstage) && ((mlsp->xpermove[i] != 0) || (mlsp->ypermove[i] != 0)); ++i) {
+		// First three cases where the speed is a plain factor, therefore
+		// we may simply divide on old one and multiple on a new one
+		if ((old_movspeed_x == old_movspeed_y) || // diagonal move at straight 45 degrees
+			(mlsp->xpermove[i] == 0) ||           // straight vertical move
+			(mlsp->ypermove[i] == 0))             // straight horizontal move
+		{
+			mlsp->xpermove[i] = fixdiv(fixmul(mlsp->xpermove[i], new_movspeed_x), old_movspeed_x);
+			mlsp->ypermove[i] = fixdiv(fixmul(mlsp->ypermove[i], new_movspeed_y), old_movspeed_y);
+		} else {
+			// Move at angle has adjusted speed factor, which we must recalculate first
+			short ourx = mlsp->pos[i].X;
+			short oury = mlsp->pos[i].Y;
+			short destx = mlsp->pos[i + 1].X;
+			short desty = mlsp->pos[i + 1].Y;
+
+			fixed xdist = itofix(abs(ourx - destx));
+			fixed ydist = itofix(abs(oury - desty));
+			fixed old_speed_at_angle = calc_move_speed_at_angle(old_movspeed_x, old_movspeed_y, xdist, ydist);
+			fixed new_speed_at_angle = calc_move_speed_at_angle(new_movspeed_x, new_movspeed_y, xdist, ydist);
+
+			mlsp->xpermove[i] = fixdiv(fixmul(mlsp->xpermove[i], new_speed_at_angle), old_speed_at_angle);
+			mlsp->ypermove[i] = fixdiv(fixmul(mlsp->ypermove[i], new_speed_at_angle), old_speed_at_angle);
+		}
+	}
+
+	// now adjust current passed stage fraction
+	if (mlsp->onpart >= 0) {
+		if (old_stage_xpermove != 0)
+			mlsp->onpart = (int)(fixtof(old_stage_xpermove) * (float)mlsp->onpart) / fixtof(mlsp->xpermove[mlsp->onstage]);
+		else
+			mlsp->onpart = (int)(fixtof(old_stage_ypermove) * (float)mlsp->onpart) / fixtof(mlsp->ypermove[mlsp->onstage]);
+	}
 }
 
 int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int move_speed_y, Bitmap *onscreen, int movlst, int nocross, int ignore_walls) {
