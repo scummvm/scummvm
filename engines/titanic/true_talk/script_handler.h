@@ -72,7 +72,7 @@ public:
 	void setParserConcept(TTconcept *newConcept, TTconcept *oldConcept);
 
 	/**
-	 * Sets a conversation reponse
+	 * Sets a conversation response
 	 */
 	int setResponse(TTscriptBase *script, TTresponse *response);
 

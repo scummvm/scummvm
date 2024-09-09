@@ -150,7 +150,7 @@ public:
 	}
 
 	/**
-	 * Split off everything in the string until the first occurance
+	 * Split off everything in the string until the first occurrence
 	 * of any specified delimiter character
 	 */
 	TTstring tokenize(const char *delim);
