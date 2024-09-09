@@ -811,7 +811,7 @@ void OPLWriteReg(FM_OPL *OPL, int r, int v) {
 	uint block_fnum;
 
 	switch (r & 0xe0) {
-	case 0x00: /* 00-1f:controll */
+	case 0x00: /* 00-1f:control */
 		switch (r & 0x1f) {
 		case 0x01:
 			/* wave selector enable */
@@ -1215,7 +1215,7 @@ int OPLTimerOver(FM_OPL *OPL, int c) {
 		OPL_STATUS_SET(OPL, 0x20);
 	} else {	/* Timer A */
 		OPL_STATUS_SET(OPL, 0x40);
-		/* CSM mode key,TL controll */
+		/* CSM mode key,TL control */
 		if (OPL->mode & 0x80) {	/* CSM mode total level latch and auto key on */
 			int ch;
 			if (OPL->UpdateHandler)
