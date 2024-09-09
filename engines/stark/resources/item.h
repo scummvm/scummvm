@@ -115,7 +115,7 @@ public:
 	 */
 	void setMovementSuspendedScript(Script *script);
 
-	/** Set the currently active anim hierachy */
+	/** Set the currently active anim hierarchy */
 	virtual void setAnimHierarchy(AnimHierarchy *animHierarchy) = 0;
 
 	/** List all the exit positions */
