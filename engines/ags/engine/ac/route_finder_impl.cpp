@@ -240,7 +240,7 @@ void recalculate_move_speeds(MoveList *mlsp, int old_speed_x, int old_speed_y, i
 	}
 }
 
-int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int move_speed_y, Bitmap *onscreen, int movlst, int nocross, int ignore_walls) {
+int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int move_speed_y, Bitmap *onscreen, int move_id, int nocross, int ignore_walls) {
 
 	_G(wallscreen) = onscreen;
 
@@ -270,9 +270,9 @@ int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int
 	AGS::Shared::Debug::Printf("Route from %d,%d to %d,%d - %d stages", srcx, srcy, xx, yy, _G(num_navpoints));
 #endif
 
-	int mlist = movlst;
-	_GP(mls)[mlist].numstage = _G(num_navpoints);
-	memcpy(&_GP(mls)[mlist].pos[0], &_G(navpoints)[0], sizeof(Point) * _G(num_navpoints));
+	MoveList mlist;
+	mlist.numstage = _G(num_navpoints);
+	memcpy(&mlist.pos[0], &_G(navpoints)[0], sizeof(Point) * _G(num_navpoints));
 #ifdef DEBUG_PATHFINDER
 	AGS::Shared::Debug::Printf("stages: %d\n", _G(num_navpoints));
 #endif
@@ -280,14 +280,12 @@ int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int
 	const fixed fix_speed_x = input_speed_to_fixed(move_speed_x);
 	const fixed fix_speed_y = input_speed_to_fixed(move_speed_y);
 	for (int i = 0; i < _G(num_navpoints) - 1; i++) {
-		calculate_move_stage(&_GP(mls)[mlist], i, fix_speed_x, fix_speed_y);
+		calculate_move_stage(&mlist, i, fix_speed_x, fix_speed_y);
 	}
 
-	_GP(mls)[mlist].from = { srcx, srcy };
-	_GP(mls)[mlist].onstage = 0;
-	_GP(mls)[mlist].onpart = 0.f;
-	_GP(mls)[mlist].doneflag = 0;
-	return mlist;
+	mlist.from = {srcx, srcy};
+	_GP(mls)[move_id] = mlist;
+	return move_id;
 }
 
 bool add_waypoint_direct(MoveList *mlsp, short x, short y, int move_speed_x, int move_speed_y) {
