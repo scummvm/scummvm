@@ -643,7 +643,7 @@
 		if (GCKeyboard.coalescedKeyboard != nil) {
 			if (didShow) {
 				// The inputAccessoryView is hidden by setting it to nil. Then when
-				// receving the UIKeyboardDidHideNotification the height will be 0.
+				// receiving the UIKeyboardDidHideNotification the height will be 0.
 				// Remember the height of the inputAccessoryView when it's presented
 				// so the main frame can be resized back to the proper size.
 				_inputAccessoryHeight = inputView.inputAccessoryView.frame.size.height;
