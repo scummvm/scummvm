@@ -3122,7 +3122,7 @@ void Screen::showMouse() {
 		CursorMan.showMouse(true);
 
 		// We need to call OSystem::updateScreen here, else the mouse cursor
-		// will only be visible on mouse movment.
+		// will only be visible on mouse movement.
 		updateBackendScreen(true);
 	}
 
