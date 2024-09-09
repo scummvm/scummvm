@@ -336,7 +336,7 @@ const int16 GlobeGame::_siloCoords[kNumAllSilos][2] = {
 	{ -9, -76 },  // Lima, Peru
 	{ 38, -4 },   // Madrid, Spain
 	{ -8, -51 },  // Manaus, Brazil
-	{ 13, 120 },  // Manila, Phillipines
+	{ 13, 120 },  // Manila, Philippines
 	{ -35, 143 }, // Melbourne, Australia
 	{ 60, -161 }, // Nome, Alaska
 	{ -7, 142 },  // Papua, New Guinea
