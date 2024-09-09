@@ -186,21 +186,29 @@ void CastleEngine::loadAssetsDOSFullGame() {
 			_flagFrames[3]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&flagPalette, 4);
 
 			//debug("%lx", stream->pos());
-			//stream->seek(0x25a90);
-			// This has only two planes?
-			//_riddleTopFrames[0] = loadFrameFromPlanes(stream, 30, ??, lightGreen, transparent, darkGreen, transparent);
-			//_riddleBottomFrames[0] = loadFrameFromPlanes(stream, 30, ??, lightGreen, transparent, darkGreen, transparent);*/
+			stream->seek(0x25a90);
+			_riddleTopFrame = loadFrameFromPlanes(stream, 120, 20);
+			_riddleTopFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
 
-			/*stream->seek(0x25a94 + 0xe00);
-			byte *grayPalette = (byte *)malloc(16 * 3);
-			for (int i = 0; i < 16; i++) { // gray scale palette
-				grayPalette[i * 3 + 0] = i * (255 / 16);
-				grayPalette[i * 3 + 1] = i * (255 / 16);
-				grayPalette[i * 3 + 2] = i * (255 / 16);
-			}
+			for (int i = 0; i < 6; i++)
+				debug("i: %d -> %x", i, stream->readByte());
 
-			_something = loadFrameFromPlanes(stream, 36, 82);
-			_something->convertToInPlace(_gfx->_texturePixelFormat, grayPalette, 16);*/
+			_riddleBackgroundFrame = loadFrameFromPlanes(stream, 120, 1);
+			_riddleBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+
+			//loadFrameFromPlanes(stream, 60, 8);
+			//debug("%lx", stream->pos());
+
+			for (int i = 0; i < 6; i++)
+				debug("i: %d -> %x", i, stream->readByte());
+
+			_riddleBottomFrame = loadFrameFromPlanes(stream, 120, 8);
+			_riddleBottomFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+
+
+			stream->seek(0x25a94 + 0xe00);
+			_endOfGameThroneFrame = loadFrameFromPlanes(stream, 36, 82);
+			_endOfGameThroneFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
 		}
 
 		delete stream;

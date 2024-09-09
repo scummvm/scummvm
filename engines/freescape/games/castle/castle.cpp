@@ -446,6 +446,12 @@ void CastleEngine::executeRedraw(FCLInstruction &instruction) {
 void CastleEngine::loadAssets() {
 	FreescapeEngine::loadAssets();
 	if (isDOS()) {
+
+		/*Graphics::Surface *surface = loadBundledImage("castle_riddle_background");
+		surface->convertToInPlace(_gfx->_texturePixelFormat);
+		_riddleBackgroundFrame = new Graphics::ManagedSurface();
+		_riddleBackgroundFrame->copyFrom(surface);*/
+
 		for (auto &it : _areaMap) {
 			it._value->addStructure(_areaMap[255]);
 			it._value->addObjectFromArea(229, _areaMap[255]);
@@ -602,34 +608,20 @@ void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics
 	for (int i = 6 * riddle; i < 6 * (riddle + 1); i++) {
 		riddleMessages.push_back(_riddleList[i]);
 	}
-
-	uint32 noColor = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
-	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
-	uint32 grey = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x60, 0x60, 0x60);
-	uint32 frame = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xA7, 0xA7, 0xA7);
-
-	Common::Rect outerFrame(47, 47, 271, 147);
-	Common::Rect innerFrame(53, 53, 266, 141);
-
+	uint32 frameColor = 0;
 	if (isDOS()) {
-		black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
-		grey = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x60, 0x60, 0x60);
-		frame = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xA7, 0xA7, 0xA7);
+		int w = 34;
+		surface->copyRectToSurface((const Graphics::Surface)*_riddleTopFrame, 40, w, Common::Rect(0, 0, _riddleTopFrame->w, _riddleTopFrame->h));
+		for (w += _riddleTopFrame->h; w < 136;) {
+			surface->copyRectToSurface((const Graphics::Surface)*_riddleBackgroundFrame, 40, w, Common::Rect(0, 0, _riddleBackgroundFrame->w, _riddleBackgroundFrame->h));
+			w += _riddleBackgroundFrame->h;
+		}
+		surface->copyRectToSurface((const Graphics::Surface)*_riddleBottomFrame, 40, 136, Common::Rect(0, 0, _riddleBottomFrame->w, _riddleBottomFrame->h - 1));
 	} else {
-		outerFrame = Common::Rect(67, 47, 251, 143 - 5);
-		innerFrame = Common::Rect(70, 49, 249, 141 - 5);
-		grey = noColor;
-		frame = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xD8, 0xD8, 0xD8);
+		frameColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xD8, 0xD8, 0xD8);
+		surface->fillRect(_viewArea, frameColor);
 	}
 
-	surface->fillRect(_fullscreenViewArea, noColor);
-	surface->fillRect(_viewArea, black);
-
-	surface->fillRect(outerFrame, grey);
-	surface->frameRect(outerFrame, frame);
-	surface->frameRect(innerFrame, frame);
-
-	surface->fillRect(Common::Rect(54, 54, 265, 140), back);
 	int x = 0;
 	int y = 0;
 	int numberOfLines = 6;

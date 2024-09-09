@@ -94,6 +94,11 @@ public:
 	Common::Array<Graphics::ManagedSurface *> _strenghtWeightsFrames;
 	Graphics::ManagedSurface *_flagFrames[4];
 	Graphics::ManagedSurface *_thunderFrame;
+	Graphics::ManagedSurface *_riddleTopFrame;
+	Graphics::ManagedSurface *_riddleBackgroundFrame;
+	Graphics::ManagedSurface *_riddleBottomFrame;
+
+	Graphics::ManagedSurface *_endOfGameThroneFrame;
 
 	int _numberKeys;
 	bool _useRockTravel;
