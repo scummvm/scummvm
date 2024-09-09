@@ -54,7 +54,7 @@ protected:
 };
 
 // Displays a static image inside the viewport. The static image corresponds to an
-// inventory item, and is only displayed if the item is not in the player's possesion.
+// inventory item, and is only displayed if the item is not in the player's possession.
 // On click, it hides the image and adds the item to the inventory.
 class ShowInventoryItem : public RenderActionRecord {
 public:
