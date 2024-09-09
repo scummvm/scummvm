@@ -721,6 +721,7 @@ static const char *const kEoB2SpellNamesAmigaEnglish[68] = {
 	"true seeing",
 	"harm",
 	"heal",
+	// FIXME: Spelling incorrect. ressurection should be resurrection. Fixing changes game data and thus may cause issues
 	"ressurection",
 	"lay on hands",
 	"turn undead",
