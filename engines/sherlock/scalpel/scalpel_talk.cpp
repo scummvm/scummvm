@@ -424,7 +424,7 @@ OpcodeReturn ScalpelTalk::cmdDisplayInfoLine(const byte *&str) {
 }
 
 OpcodeReturn ScalpelTalk::cmdElse(const byte *&str) {
-	// If this is encountered here, it means that a preceeding IF statement was found,
+	// If this is encountered here, it means that a preceding IF statement was found,
 	// and evaluated to true. Now all the statements for the true block are finished,
 	// so skip over the block of code that would have executed if the result was false
 	_wait = 0;
