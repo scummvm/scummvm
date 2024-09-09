@@ -51,7 +51,7 @@ bool SaveManager::scummVMSaveLoadDialog(bool isSave) {
 		desc = dialog->getResultString();
 
 		if (desc.empty()) {
-			// create our own description for the saved game, the user didnt enter it
+			// create our own description for the saved game, the user didn't enter it
 			desc = dialog->createDefaultSaveDescription(slot);
 		}
 

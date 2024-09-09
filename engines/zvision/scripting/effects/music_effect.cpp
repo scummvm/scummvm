@@ -225,7 +225,7 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 		int deltaVol = balance;
 
 		// This value sets how fast volume goes off than sound source back of you
-		// By this value we can hack some "bugs" have place in originall game engine like beat sound in ZGI-dc10
+		// By this value we can hack some "bugs" have place in original game engine like beat sound in ZGI-dc10
 		int volumeCorrection = 2;
 
 		if (_engine->getGameId() == GID_GRANDINQUISITOR) {
