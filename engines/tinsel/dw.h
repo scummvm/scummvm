@@ -75,7 +75,7 @@ typedef int HPOLYGON;
 #define Z_CURSORTRAIL	999	// Cursor trails
 #define Z_ACURSOR	990	// Auxillary cursor
 
-#define Z_TAG_TEXT	995	// In front of auxillary cursor
+#define Z_TAG_TEXT	995	// In front of auxiliary cursor
 
 #define Z_MDGROOVE	20
 #define Z_MDSLIDER	21
