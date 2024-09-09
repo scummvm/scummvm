@@ -243,6 +243,7 @@ dialogs:
 			4_1: "Telgoran is in s.e. maze"
 			4_2: "Some items give protection"
 			4_3: "Dragadune holds many gems"
+   			// FIXME: Spelling incorrect. judgement should be judgment. Fixing changes game data and thus may cause issues
 			4_4: "Donations help on judgement day"
 			5_1: "Agar lives behind the inn"
 			5_2: "Find the prisoner"
@@ -1184,6 +1185,7 @@ maps:
 		pit: "Jagged slime pit!"
 		poof: "Poof! you've been teleported..."
 		ranalou1: "\"I'm the wizard Ranalou. Are you here to\nuse the portals (Y/N)?\""
+     	// FIXME: Spelling incorrect. judgement should be judgment. Fixing changes game data and thus may cause issues
 		ranalou2: "\"Good! inside this room are 6 portals,\neach of which leads to a castle. The\nstatue of judgement requires you to find\none prisoner from each of these castles\nbefore you may be found worthy.\""
 		ranalou3: "\"Then begone!\""
 		sign1: "A sign:\n\nExperiment in progress, do not enter!"
