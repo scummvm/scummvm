@@ -428,7 +428,7 @@ void Scene::loadBackground(int xAmount, int yAmount) {
 
 	if ((g_globals->_sceneOffset.x != g_globals->_prevSceneOffset.x) ||
 		(g_globals->_sceneOffset.y != g_globals->_prevSceneOffset.y)) {
-		// Change has happend, so refresh background
+		// Change has happened, so refresh background
 		g_globals->_prevSceneOffset = g_globals->_sceneOffset;
 		refreshBackground(xAmount, yAmount);
 	}
