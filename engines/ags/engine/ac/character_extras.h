@@ -35,6 +35,13 @@ class Stream;
 }
 using namespace AGS; // FIXME later
 
+enum CharacterSvgVersion {
+	kCharSvgVersion_Initial = 0,
+	// 1 was skipped somehow
+	kCharSvgVersion_36025 = 2, // animation volume
+	kCharSvgVersion_36109 = 3, // removed movelists, save externally
+};
+
 // The CharacterInfo struct size is fixed because it's exposed to script
 // and plugin API, therefore new stuff has to go here
 struct CharacterExtras {

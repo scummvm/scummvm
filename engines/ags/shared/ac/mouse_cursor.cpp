@@ -60,7 +60,7 @@ void MouseCursor::ReadFromSavegame(Stream *in, int cmp_ver) {
 	hoty = static_cast<int16_t>(in->ReadInt32());
 	view = static_cast<int16_t>(in->ReadInt32());
 	flags = static_cast<int8_t>(in->ReadInt32());
-	if (cmp_ver > 0)
+	if (cmp_ver >= kCursorSvgVersion_36016)
 		animdelay = in->ReadInt32();
 }
 

@@ -35,7 +35,7 @@ using namespace AGS::Engine;
 
 void HotspotState::ReadFromSavegame(Shared::Stream *in, int save_ver) {
 	Enabled = in->ReadInt8() != 0;
-	if (save_ver > 0) {
+	if (save_ver >= kRoomStatSvgVersion_36016) {
 		Name = StrUtil::ReadString(in);
 	}
 }
