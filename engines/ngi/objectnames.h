@@ -19,7 +19,7 @@
  *
  */
 
-// This file is used in order to avoid usage of constants in Russian accross the code
+// This file is used in order to avoid usage of constants in Russian across the code
 
 #ifndef NGI_OBJECTNAMES_H
 #define NGI_OBJECTNAMES_H
