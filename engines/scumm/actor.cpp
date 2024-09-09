@@ -2941,7 +2941,7 @@ void Actor_v0::speakCheck() {
 
 #ifdef ENABLE_SCUMM_7_8
 void Actor::animateLimb(int limb, int f) {
-	// This methods is very similiar to animateCostume().
+	// This methods is very similar to animateCostume().
 	// However, instead of animating *all* the limbs, it only animates
 	// the specified limb to be at the frame specified by "f".
 
