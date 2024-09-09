@@ -89,6 +89,7 @@ public:
 	void SetMouseOverImage(int32_t image);
 	void SetNormalImage(int32_t image);
 	void SetPushedImage(int32_t image);
+	void SetImages(int32_t normal, int32_t over, int32_t pushed);
 	void SetText(const String &text);
 
 	// Events
