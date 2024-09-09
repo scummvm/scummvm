@@ -62,7 +62,7 @@ public:
 		 * Newly drawn pixels mix with the framebuffer based on their alpha value
 		 * for transparency.
 		 *
-		 * Requires the image data being drawn to have its color values pre-multipled
+		 * Requires the image data being drawn to have its color values pre-multiplied
 		 * with the alpha value.
 		 */
 		kBlendModePremultipliedTransparency,

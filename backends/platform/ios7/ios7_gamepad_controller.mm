@@ -124,7 +124,7 @@
 	return self;
 }
 
-// Undocumented way to retreive the GCControllerView.
+// Undocumented way to retrieve the GCControllerView.
 // Drill down the layer structure to get the GCControllerView.
 // The view layers for iPhones are:
 // - TransitionView
