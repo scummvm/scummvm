@@ -21071,7 +21071,7 @@ static const uint16 qfg4CharScreenKeyboardPatch[] = {
 //  selected and highlighted. This doesn't make sense for the static picture and
 //  text, and they don't have any of the properties necessary to make that work.
 //  When the common IconBar code attempts to select these, DeathIcon:highlight
-//  proptly crashes upon trying to use and draw non-existant objects.
+//  proptly crashes upon trying to use and draw non-existent objects.
 //
 // We fix this by patching out the broken control cycling on the death screen.
 //  Note that this code was unable to even highlight the real clickable icons.
