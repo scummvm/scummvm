@@ -37,7 +37,7 @@
 namespace Saga2 {
 
 /* ===================================================================== *
-   Tile ID's and asociated functions
+   Tile ID's and associated functions
  * ===================================================================== */
 
 class   TileBank;
