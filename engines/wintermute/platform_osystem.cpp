@@ -157,7 +157,7 @@ bool BasePlatform::getCursorPos(Point32 *lpPoint) {
 	lpPoint->x = p.x;
 	lpPoint->y = p.y;
 
-	// in 3d mode we take the mouse postion as is for now
+	// in 3d mode we take the mouse position as is for now
 	// this seems to give the right results
 	// actually, BaseRenderer has no functions pointFromScreen/pointToScreen anyways
 #ifndef ENABLE_WME3D
@@ -176,7 +176,7 @@ bool BasePlatform::setCursorPos(int x, int y) {
 	p.x = x;
 	p.y = y;
 
-	// in 3d mode we take the mouse postion as is for now
+	// in 3d mode we take the mouse position as is for now
 	// this seems to give the right results
 	// actually, BaseRenderer has no functions pointFromScreen/pointToScreen anyways
 #ifndef ENABLE_WME3D
