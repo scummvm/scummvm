@@ -22,7 +22,7 @@
 #include "startrek/room.h"
 
 // This room is confusing, because it has two hotspots directly adjacent to each other
-// that deal with torpedos, but they act differently.
+// that deal with torpedoes, but they act differently.
 
 // BUG: It's possible to swap from having shields up to some other system, by first
 // putting shields up, then swapping to another system in the few seconds before the Elasi
