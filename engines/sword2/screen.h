@@ -328,7 +328,7 @@ private:
 
 	// This is used to cache PSX backgrounds and parallaxes
 	// data, as they are kept in a file unmanageable from
-	// resource manager. These gets freed everytime an user
+	// resource manager. These get freed every time a user
 	// exits from a room.
 	byte *_psxScrCache[3];
 	bool _psxCacheEnabled[3];
