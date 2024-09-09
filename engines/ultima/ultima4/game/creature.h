@@ -309,7 +309,7 @@ public:
 	/**
 	 * Performs a special action for the creature
 	 * Returns true if the action takes up the creatures
-	 * whole turn (i.e. it cant move afterwords)
+	 * whole turn (i.e. it can't move afterwards)
 	 */
 	bool specialAction();
 
