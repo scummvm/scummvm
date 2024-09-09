@@ -54,6 +54,8 @@ struct RoomObjElement {
 };
 
 class Room {
+private:
+	bool palLoaded = false;
 public:
 	static constexpr int MAX_CONNECTORS = 12;
 	uint8 _roomNumber;

@@ -32,7 +32,7 @@ Pal::Pal(const Pal &pal) {
 	memcpy(palData, pal.palData, DARKSEED_PAL_SIZE);
 }
 
-bool Pal::load(const Common::Path &filename) {
+bool Pal::load(const Common::Path &filename, bool shouldInstallPalette) {
 	Common::File file;
 	if(!file.open(filename)) {
 		return false;
@@ -43,7 +43,9 @@ bool Pal::load(const Common::Path &filename) {
 	for (int i=0; i < DARKSEED_PAL_SIZE; i++) {
 		palData[i] = palData[i] << 2;
 	}
-	installPalette();
+	if (shouldInstallPalette) {
+		installPalette();
+	}
 	return true;
 }
 

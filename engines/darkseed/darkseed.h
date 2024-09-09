@@ -215,7 +215,8 @@ public:
 	void getPackageObj(int packageType);
 	void libanim(bool pickingUpReservedBook);
 	void printTime();
-	void changeToRoom(int newRoomNumber);
+	void changeToRoom(int newRoomNumber, bool placeDirectly = false);
+	void waitxticks(int ticks);
 
 private:
 	void updateBaseSprites();
