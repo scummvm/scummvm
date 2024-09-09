@@ -202,7 +202,7 @@ SQSharedState::~SQSharedState()
             t = nx;
         }
     }
-    assert(_gc_chain==NULL); //just to proove a theory
+    assert(_gc_chain==NULL); //just to prove a theory
     while(_gc_chain){
         _gc_chain->_uiRef++;
         _gc_chain->Release();
