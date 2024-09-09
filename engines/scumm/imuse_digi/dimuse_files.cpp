@@ -147,7 +147,7 @@ int IMuseDigiFilesHandler::getNextSound(int soundId) {
 int IMuseDigiFilesHandler::seek(int soundId, int32 offset, int mode, int bufId) {
 	// This function and files_read() are used for sounds for which a stream is needed (speech
 	// and music), therefore they will always refer to sounds in a bundle file for DIG and COMI
-	// The seeked position is in reference to the decompressed sound
+	// The seek'd position is in reference to the decompressed sound
 
 	if (_engine->isEngineDisabled())
 		return 0;
