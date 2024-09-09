@@ -46,7 +46,7 @@ typedef Common::List<Port *> PortList;
 typedef Common::Array<Port *> PortArray;
 
 /**
- * Ports class, includes all port managment for SCI0->SCI1.1 games. Ports are some sort of windows in SCI
+ * Ports class, includes all port management for SCI0->SCI1.1 games. Ports are some sort of windows in SCI
  *  this class also handles adjusting coordinates to a specific port
  */
 class GfxPorts : public Common::Serializable {
