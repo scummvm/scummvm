@@ -208,7 +208,7 @@ export class ScummvmFS {
                         // the UTF16 characters into 2 bytes and prepend the stripped BOM again,  but it turned out that there were other 
                         // issues how browsers handle UTF16 (e.g. 0xDFC3, 0xDFAD, 0xDFFB, 0xDF5B all somehow getting converted to 0xFFFD 
                         // - i.e. "REPLACEMENT CHARACTER") so this now just reruns shifts the start of the download. 
-                        // That's wasting some data, but it's a rare enough occurance
+                        // That's wasting some data, but it's a rare enough occurrence
                         //
                         // TODO: The only proper fix for this is to implement a asynchronous filesystem for emscripten. Something which currently
                         // isn't possible
