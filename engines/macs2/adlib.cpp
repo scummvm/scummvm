@@ -656,7 +656,32 @@ void Adlib::OnTimer() {
 						// TODO: Figure out the loop conditions
 						do {
 							// l0017_1BE9:
-							// TODO: Continue from here
+							// TODO: Not sure if it's important to remove the higher bits as the
+							// original does
+							if (g2291 > bp8) {
+								// l0017_1BF3:
+								// TODO: Need to handle a comparison with 222Ch
+								if (true) {
+									// l0017_1BFD:
+									// TODO: Need to handle another comparison of not yet implemented
+									// data structure
+									//	mov	di,[bp-8h]
+									//mov al, [di + 227Fh]
+									// cmp al, [bp - 3h]
+									// jnz 1C15h
+									if (true) {
+
+									}
+								}
+								// TODO: Should be 1C15h
+
+
+								// TODO: Continue from here
+							}
+							// TODO: Should be 1C1Ah
+				
+
+							
 						} while (true);
 					}
 					// TODO: Should be 1E94h
