@@ -84,7 +84,7 @@ int                     gameKiller = 0;         // will contain the exception th
 //  Resource files
 hResource               *resFile,               // main resource file
                         *objResFile,            // object resource file
-                        *auxResFile,            // auxillary data resource file
+                        *auxResFile,            // auxiliary data resource file
                         *scriptResFile,         // script resources
                         *soundResFile,
                         *voiceResFile;          // sound resources
