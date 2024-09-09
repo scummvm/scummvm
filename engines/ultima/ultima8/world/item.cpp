@@ -1287,7 +1287,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 		break;
 	}
 
-	// HACK: this should be fixed to use inheritence so the behavior
+	// HACK: this should be fixed to use inheritance so the behavior
 	// is clean for both Item and Actor.
 	DirectionMode dirmode = dirmode_8dirs;
 	const Actor *thisactor = dynamic_cast<Actor *>(this);
