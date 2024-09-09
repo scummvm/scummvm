@@ -45,6 +45,12 @@ enum MoveListDoneFlags {
 	kMoveListDone_XY = kMoveListDone_X | kMoveListDone_Y
 };
 
+enum MoveListSvgVersion {
+	kMoveSvgVersion_Initial = 0,
+	kMoveSvgVersion_350,   // new pathfinder, arbitrary number of stages
+	kMoveSvgVersion_36109, // skip empty lists, progress as float
+};
+
 struct MoveList {
 	int 	numstage = 0;
 	// Waypoints, per stage

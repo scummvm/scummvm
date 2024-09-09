@@ -69,14 +69,14 @@ void MoveList::ReadFromFile_Legacy(Stream *in) {
 }
 
 HSaveError MoveList::ReadFromFile(Stream *in, int32_t cmp_ver) {
-	if (cmp_ver < 1) {
+	if (cmp_ver < kMoveSvgVersion_350) {
 		ReadFromFile_Legacy(in);
 		return HSaveError::None();
 	}
 
 	*this = MoveList(); // reset struct
 	numstage = in->ReadInt32();
-	if ((numstage == 0) && cmp_ver >= 2) {
+	if ((numstage == 0) && cmp_ver >= kMoveSvgVersion_36109) {
 		return HSaveError::None();
 	}
 	// TODO: reimplement MoveList stages as vector to avoid these limits
@@ -103,7 +103,7 @@ HSaveError MoveList::ReadFromFile(Stream *in, int32_t cmp_ver) {
 	in->ReadArrayOfInt32(ypermove, numstage);
 
 	// Some variables require conversion depending on a save version
-	if (cmp_ver < 2)
+	if (cmp_ver < kMoveSvgVersion_36109)
 		onpart = static_cast<float>(onpart_u.val.i32);
 	else
 		onpart = onpart_u.val.f;
