@@ -404,7 +404,7 @@ scummvm (0.7.1-2) unstable; urgency=low
       - Compile the package with GCC 3.4.
 
   * debian/prepare (new):
-      - Added a script that prepares the debian/ tree for building developement
+      - Added a script that prepares the debian/ tree for building development
         snapshots of ScummVM.
 
   * debian/control:
