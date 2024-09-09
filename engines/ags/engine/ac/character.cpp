@@ -1822,7 +1822,7 @@ int doNextCharMoveStep(CharacterInfo *chi, int &char_index, CharacterExtras *che
 
 		if ((chi->walking < 1) || (chi->walking >= TURNING_AROUND)) ;
 		else if (_GP(mls)[chi->walking].onpart > 0) {
-			_GP(mls)[chi->walking].onpart --;
+			_GP(mls)[chi->walking].onpart -= itofix(1);
 			chi->x = xwas;
 			chi->y = ywas;
 		}

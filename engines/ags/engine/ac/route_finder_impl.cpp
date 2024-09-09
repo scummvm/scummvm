@@ -234,9 +234,9 @@ void recalculate_move_speeds(MoveList *mlsp, int old_speed_x, int old_speed_y, i
 	// now adjust current passed stage fraction
 	if (mlsp->onpart >= 0) {
 		if (old_stage_xpermove != 0)
-			mlsp->onpart = (int)(fixtof(old_stage_xpermove) * (float)mlsp->onpart) / fixtof(mlsp->xpermove[mlsp->onstage]);
+			mlsp->onpart = fixdiv(fixmul(mlsp->onpart, old_stage_xpermove), mlsp->xpermove[mlsp->onstage]);
 		else
-			mlsp->onpart = (int)(fixtof(old_stage_ypermove) * (float)mlsp->onpart) / fixtof(mlsp->ypermove[mlsp->onstage]);
+			mlsp->onpart = fixdiv(fixmul(mlsp->onpart, old_stage_ypermove), mlsp->ypermove[mlsp->onstage]);
 	}
 }
 
