@@ -51,6 +51,14 @@ void AgiBase::flipFlag(int16 flagNr) {
 	*flagPtr ^= 1 << (flagNr & 0x07);        // flip bit
 }
 
+void AgiBase::setFlagOrVar(int16 flagNr, bool newState) {
+	if (getVersion() < 0x2000) {
+		_game.vars[flagNr] = (newState ? 1 : 0);
+	} else {
+		setFlag(flagNr, newState);
+	}
+}
+
 void AgiEngine::setVar(int16 varNr, byte newValue) {
 	_game.vars[varNr] = newValue;
 

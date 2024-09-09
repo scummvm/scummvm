@@ -759,6 +759,8 @@ public:
 	bool getFlag(int16 flagNr);
 	void setFlag(int16 flagNr, bool newState);
 	void flipFlag(int16 flagNr);
+	/** Sets a flag in AGIv2+, sets a variable in AGIv1 */
+	void setFlagOrVar(int16 flagNr, bool newState);
 
 	const AGIGameDescription *_gameDescription;
 

@@ -143,11 +143,7 @@ void SoundMgr::startSound(int resnum, int flag) {
 	// Reset the flag
 	_endflag = flag;
 
-	if (_vm->getVersion() < 0x2000) {
-		_vm->_game.vars[_endflag] = 0;
-	} else {
-		_vm->setFlag(_endflag, false);
-	}
+	_vm->setFlagOrVar(_endflag, false);
 }
 
 void SoundMgr::stopSound() {
@@ -163,11 +159,7 @@ void SoundMgr::stopSound() {
 	// This is needed all the time, some games wait until music got played and when a sound/music got stopped early
 	// it would otherwise block the game (for example Death Angel jingle in back door poker room in Police Quest 1, room 71)
 	if (_endflag != -1) {
-		if (_vm->getVersion() < 0x2000) {
-			_vm->_game.vars[_endflag] = 1;
-		} else {
-			_vm->setFlag(_endflag, true);
-		}
+		_vm->setFlagOrVar(_endflag, true);
 	}
 
 	_endflag = -1;
@@ -176,7 +168,7 @@ void SoundMgr::stopSound() {
 // FIXME: This is called from SoundGen classes on unsynchronized background threads.
 void SoundMgr::soundIsFinished() {
 	if (_endflag != -1)
-		_vm->setFlag(_endflag, true);
+		_vm->setFlagOrVar(_endflag, true);
 
 	if (_playingSound != -1)
 		_vm->_game.sounds[_playingSound]->stop();

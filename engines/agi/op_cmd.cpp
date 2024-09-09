@@ -714,7 +714,7 @@ void cmdSound(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 			vm->waitAnyKeyOrFinishedSound();
 			vm->_sound->stopSound();
 		}
-		vm->setFlag(flagNr, true);
+		vm->setFlagOrVar(flagNr, true);
 	} else {
 		vm->_sound->startSound(resourceNr, flagNr);
 	}
@@ -1684,11 +1684,10 @@ void cmdFollowEgo(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	screenObj->follow_flag = followFlag;
 	screenObj->follow_count = 255;
 
+	vm->setFlagOrVar(screenObj->follow_flag, false);
 	if (vm->getVersion() < 0x2000) {
-		vm->setVar(screenObj->follow_flag, 0);
 		screenObj->flags |= fUpdate | fAnimated;
 	} else {
-		vm->setFlag(screenObj->follow_flag, false);
 		screenObj->flags |= fUpdate;
 	}
 
@@ -1712,11 +1711,10 @@ void cmdMoveObj(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	if (stepSize != 0)
 		screenObj->stepSize = stepSize;
 
+	vm->setFlagOrVar(screenObj->move_flag, false);
 	if (vm->getVersion() < 0x2000) {
-		vm->setVar(moveFlag, 0);
 		screenObj->flags |= fUpdate | fAnimated;
 	} else {
-		vm->setFlag(screenObj->move_flag, false);
 		screenObj->flags |= fUpdate;
 	}
 
