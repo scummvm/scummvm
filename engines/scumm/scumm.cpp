@@ -3392,7 +3392,7 @@ void ScummEngine_v3::scummLoop_handleSaveLoad() {
 					byte restoreScript = (_game.platform == Common::kPlatformFMTowns) ? 17 : 18;
 					args[0] = 2;
 					runScript(restoreScript, 0, 0, args);
-					// Reset two variables, similiar to what the save script would do, to avoid minor glitches
+					// Reset two variables, similar to what the save script would do, to avoid minor glitches
 					// of the verb image on the right of the distaff (image remainung blank when moving the
 					// mouse cursor over an object, bug #13369).
 					VAR(saveLoadVar + 2) = VAR(saveLoadVar + 3) = 0;
