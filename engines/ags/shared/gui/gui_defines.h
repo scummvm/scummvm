@@ -52,7 +52,7 @@ namespace AGS3 {
 // 3.4.0      (118): Removed GUI limits
 // 3.5.0      (119): Game data contains GUI properties that previously
 //                   could be set only at runtime.
-//
+// Since then format value is defined as AGS version represented as NN,NN,NN,NN
 //=============================================================================
 
 enum GuiVersion {

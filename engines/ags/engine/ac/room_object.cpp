@@ -25,6 +25,7 @@
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/object.h"
+#include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/view_frame.h"
 #include "ags/engine/debugging/debug_log.h"
@@ -134,10 +135,10 @@ void RoomObject::ReadFromSavegame(Stream *in, int save_ver) {
 	flags = in->ReadInt8();
 	blocking_width = in->ReadInt16();
 	blocking_height = in->ReadInt16();
-	if (save_ver >= 1) {
+	if (save_ver >= kRoomStatSvgVersion_36016) {
 		name = StrUtil::ReadString(in);
 	}
-	if (save_ver >= 2) {
+	if (save_ver >= kRoomStatSvgVersion_36025) {
 		// anim vols order inverted compared to character, by mistake :(
 		cur_anim_volume = static_cast<uint8_t>(in->ReadInt8());
 		anim_volume = static_cast<uint8_t>(in->ReadInt8());

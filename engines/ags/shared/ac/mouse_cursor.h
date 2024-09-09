@@ -39,6 +39,11 @@ using namespace AGS; // FIXME later
 #define MCF_STANDARD 4
 #define MCF_HOTSPOT  8  // only animate when over hotspot
 
+enum CursorSvgVersion {
+	kCursorSvgVersion_Initial = 0,
+	kCursorSvgVersion_36016 = 1, // animation delay
+};
+
 #define MAX_CURSOR_NAME_LENGTH 10
 
 // IMPORTANT: exposed to plugin API as AGSCursor!
