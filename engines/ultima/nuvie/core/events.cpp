@@ -3474,7 +3474,7 @@ bool Events::newAction(EventMode new_mode) {
 		drop_start();
 		// fall through
 	case EQUIP_MODE: // if this was called from moveCursorToInventory, the
-		// mode has now changed, so it wont be called again
+		// mode has now changed, so it won't be called again
 		moveCursorToInventory();
 		break;
 //		case DROPCOUNT_MODE:
