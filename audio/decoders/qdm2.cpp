@@ -703,7 +703,7 @@ static int allocTable(VLC *vlc, int size, int use_static) {
 	vlc->table_size += size;
 	if (vlc->table_size > vlc->table_allocated) {
 		if(use_static)
-			error("QDM2 cant do anything, init_vlc() is used with too little memory");
+			error("QDM2 can't do anything, init_vlc() is used with too little memory");
 		vlc->table_allocated += (1 << vlc->bits);
 		temp = (int16 (*)[2])realloc(vlc->table, sizeof(int16 *) * 2 * vlc->table_allocated);
 		if (!temp) {
