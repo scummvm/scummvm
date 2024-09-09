@@ -576,7 +576,7 @@ void GfxScreen::putKanjiChar(Graphics::FontSJIS *commonFont, int16 x, int16 y, u
 	// be aligned on byte boundaries in vmem which equals 4 pixel boundaries in lowres. We make that bounds adjustment
 	// in the driver, since the layout relies on it. PQ2 on the other hand uses the PC-98 text mode for text print
 	// instead of rendering it in graphics mode (many PC-98 games do that). In an emulator you can easily recognize
-	// it, since the mouse cursor will move underneath the text. The use of the text mode has a similiar effect to
+	// it, since the mouse cursor will move underneath the text. The use of the text mode has a similar effect to
 	// x-coordinates as what happens with QFG: In text mode, the coordinates can only be set as text columns and lines,
 	// so the coordinates have to be divided and loose some precision ('& ~3' for x, and '& ~7' for y).
 
