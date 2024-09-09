@@ -653,7 +653,7 @@ void Screen::transition(ScreenTransition transitionType, bool surfaceFlag) {
 
 	case kNullPaletteCopy:
 		// Original temporarily set the palette to black, copied the scene to the
-		// screen, and then restored the palette. We can give a similiar effect
+		// screen, and then restored the palette. We can give a similar effect
 		// by doing a standard quick palette fade in
 		transition(kTransitionFadeIn, surfaceFlag);
 		break;
