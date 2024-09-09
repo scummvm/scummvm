@@ -54,7 +54,7 @@ static SQInteger aux_printerror(HSQUIRRELVM v) {
 	if (SQ_FAILED(sq_getstring(v, 2, &error))) {
 		error = "unknown";
 	}
-	pf(v, _SC("\nAn error occured in the script: %s\n"), error);
+	pf(v, _SC("\nAn error occurred in the script: %s\n"), error);
 	sqstd_printcallstack(v);
 
 	return 0;
