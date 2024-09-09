@@ -78,7 +78,7 @@ Aspect ratio correction
 .. _fullscreen:
 
 Fullscreen mode
-	If ticked, games are played using the entire screen, instead of a window. The actual apperance is defined by the other graphics settings.
+	If ticked, games are played using the entire screen, instead of a window. The actual appearance is defined by the other graphics settings.
 
 	*fullscreen*
 
