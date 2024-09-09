@@ -57,7 +57,7 @@ void CharacterExtras::ReadFromSavegame(Stream *in, int save_ver) {
 	process_idle_this_time = in->ReadInt8();
 	slow_move_counter = in->ReadInt8();
 	animwait = in->ReadInt16();
-	if (save_ver >= 2) // expanded at ver 2
+	if (save_ver >= kCharSvgVersion_36025)
 	{
 		anim_volume = static_cast<uint8_t>(in->ReadInt8());
 		cur_anim_volume = static_cast<uint8_t>(in->ReadInt8());
