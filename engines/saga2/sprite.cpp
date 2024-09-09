@@ -851,7 +851,7 @@ void initSprites() {
 			delete stream;
 		}
 
-		stream = loadResourceToStream(spriteRes, missileSpriteID, "missle sprites");
+		stream = loadResourceToStream(spriteRes, missileSpriteID, "missile sprites");
 		missileSprites = new SpriteSet(stream);
 		delete stream;
 	}
