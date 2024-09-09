@@ -733,7 +733,7 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 
 int32 Logic::fnFadeDown(int32 *params) {
 	// NONE means up! can only be called when screen is fully faded up -
-	// multiple calls wont have strange effects
+	// multiple calls won't have strange effects
 
 	// params:	none
 
@@ -896,7 +896,7 @@ int32 Logic::fnISpeak(int32 *params) {
 
 			_animId = READ_LE_UINT32(anim_table + 4 * obMega.getCurDir());
 		} else {
-			// No animation choosen
+			// No animation chosen
 			_animId = 0;
 		}
 
@@ -2158,7 +2158,7 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	_smackerLeadIn = 0;
 	_smackerLeadOut = 0;
 
-	// now clear the screen in case the Sequence was quitted (using ESC)
+	// now clear the screen in case the Sequence was quit (using ESC)
 	// rather than fading down to black
 
 	_vm->_screen->clearScene();
