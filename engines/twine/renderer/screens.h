@@ -95,7 +95,7 @@ public:
 	void loadMenuImage(bool fadeIn = true);
 
 	/**
-	 * Load and display a particulary image on \a RESS.HQR file with cross fade effect
+	 * Load and display a particularly image on \a RESS.HQR file with cross fade effect
 	 * @param index \a RESS.HQR entry index (starting from 0)
 	 * @param paletteIndex \a RESS.HQR entry index of the palette for the given image. This is often the @c index + 1
 	 * @param fadeIn if we fade in before using the palette
@@ -103,7 +103,7 @@ public:
 	void loadImage(TwineImage image, bool fadeIn = true);
 
 	/**
-	 * Load and display a particulary image on \a RESS.HQR file with cross fade effect and delay
+	 * Load and display a particularly image on \a RESS.HQR file with cross fade effect and delay
 	 * @param index \a RESS.HQR entry index (starting from 0)
 	 * @param paletteIndex \a RESS.HQR entry index of the palette for the given image. This is often the @c index + 1
 	 * @param seconds number of seconds to delay
