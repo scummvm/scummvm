@@ -98,7 +98,7 @@ private:
 	int16 _number;
 	bool _blackoutFlag;
 	Common::Rect _picRect;
-	byte *_oldScreen; // buffer for saving current active screen data to, has dimenions of _screen->_displayScreen
+	byte *_oldScreen; // buffer for saving current active screen data to, has dimensions of _screen->_displayScreen
 
 	uint32 _transitionStartTime; // when the current transition started in milliseconds
 };

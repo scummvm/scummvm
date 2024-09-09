@@ -863,7 +863,7 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 }
 
 // Original top-left must stay on kControl rects, we adjust accordingly because
-// sierra sci actually wont draw rects that are upside down (example: jones,
+// sierra sci actually won't draw rects that are upside down (example: jones,
 // when challenging jones - one button is a duplicate and also has lower-right
 // which is 0, 0)
 Common::Rect kControlCreateRect(int16 x, int16 y, int16 x1, int16 y1) {

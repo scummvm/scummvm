@@ -228,7 +228,7 @@ void Resource::unalloc() {
 void Resource::writeToStream(Common::WriteStream *stream) const {
 	if (_headerSize == 0) {
 		// create patch file header
-		stream->writeByte(getType() | 0x80); // 0x80 is required by old Sierra SCI, otherwise it wont accept the patch file
+		stream->writeByte(getType() | 0x80); // 0x80 is required by old Sierra SCI, otherwise it won't accept the patch file
 		stream->writeByte(_headerSize);
 	} else {
 		// use existing patch file header

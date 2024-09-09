@@ -69,7 +69,7 @@ reg_t kDrawStatus(EngineState *s, int argc, reg_t *argv) {
 	int16 colorBack = (argc > 2) ? argv[2].toSint16() : g_sci->_gfxScreen->getColorWhite();
 
 	if (!textReference.isNull()) {
-		// Sometimes this is called without giving text, if thats the case dont process it.
+		// Sometimes this is called without giving text, if that's the case don't process it.
 		text = s->_segMan->getString(textReference);
 
 		if (text == "Replaying sound") {

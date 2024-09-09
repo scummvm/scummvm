@@ -245,9 +245,9 @@ void GfxView::initData() {
 		// flags is actually a bit-mask
 		//  it seems it was only used for some early sci1.1 games (or even just laura bow 2)
 		//  later interpreters dont support it at all anymore
-		// we assume that if flags is 0h the view does not support flags and default to scaleable
+		// we assume that if flags is 0h the view does not support flags and default to scalable
 		// if it's 1h then we assume that the view is not to be scaled
-		// if it's 40h then we assume that the view is scaleable
+		// if it's 40h then we assume that the view is scalable
 		switch (_resource->getUint8At(3)) {
 		case 1:
 			_isScaleable = false;

@@ -218,7 +218,7 @@ bool GfxPalette::setAmiga() {
 			}
 		}
 
-		// Directly set the palette, because setOnScreen() wont do a thing for amiga
+		// Directly set the palette, because setOnScreen() won't do a thing for amiga
 		copySysPaletteToScreen(true);
 		return true;
 	}
@@ -309,7 +309,7 @@ void GfxPalette::set(Palette *newPalette, bool force, bool forceRealMerge, bool 
 			_sysPaletteChanged |= insert(newPalette, &_sysPalette, includeFirstColor);
 		}
 
-		// Adjust timestamp on newPalette, so it wont get merged/inserted w/o need
+		// Adjust timestamp on newPalette, so it won't get merged/inserted w/o need
 		newPalette->timestamp = _sysPalette.timestamp;
 
 		bool updatePalette = _sysPaletteChanged && _screen->_picNotValid == 0;
@@ -681,7 +681,7 @@ void GfxPalette::kernelSyncScreenPalette() {
 //         do various things
 //         return 1
 //  deinit - unloads target palette, kills timer hook, disables palVaryOn
-//  pause - counts up or down, if counter != 0 -> signal wont get counted up by timer
+//  pause - counts up or down, if counter != 0 -> signal won't get counted up by timer
 //           will only count down to 0
 //
 // Restarting game

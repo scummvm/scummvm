@@ -213,7 +213,7 @@ void GfxMenu::kernelAddEntry(const Common::String &title, Common::String content
 			itemEntry->separatorLine = true;
 		} else {
 			// We don't strSplit here, because multilingual SCI01 support
-			// language switching on the fly, so we have to do this everytime
+			// language switching on the fly, so we have to do this every time
 			// the menu is called.
 			itemEntry->text = Common::String(content.c_str() + beginPos, tempPos - beginPos);
 

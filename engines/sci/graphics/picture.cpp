@@ -215,7 +215,7 @@ void GfxPicture::drawCelData(const SciSpan<const byte> &inbuffer, int headerPos,
 		// Change clearcolor to white, if we dont add to an existing picture. That way we will paint everything on screen
 		// but white and that won't matter because the screen is supposed to be already white. It seems that most (if not all)
 		// SCI1.1 games use color 0 as transparency and SCI1 games use color 255 as transparency. Sierra SCI seems to paint
-		// the whole data to screen and wont skip over transparent pixels. So this will actually make it work like Sierra.
+		// the whole data to screen and won't skip over transparent pixels. So this will actually make it work like Sierra.
 		if (!_addToFlag)
 			clearColor = _screen->getColorWhite();
 

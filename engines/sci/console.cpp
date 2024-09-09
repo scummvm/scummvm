@@ -4032,7 +4032,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 		_engine->_gamestate->_executionStackPosChanged = true;
 		debugPrintf("Message scheduled for execution\n");
 
-		// We call run_engine explictly so we can restore the value of r_acc
+		// We call run_engine explicitly so we can restore the value of r_acc
 		// after execution.
 		run_vm(_engine->_gamestate);
 		_engine->_gamestate->xs = old_xstack;

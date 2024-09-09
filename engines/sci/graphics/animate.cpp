@@ -316,7 +316,7 @@ void GfxAnimate::adjustInvalidCels(GfxView *view, AnimateList::iterator it) {
 
 void GfxAnimate::processViewScaling(GfxView *view, AnimateList::iterator it) {
 	if (!view->isScaleable()) {
-		// Laura Bow 2 (especially floppy) depends on this, some views are not supposed to be scaleable
+		// Laura Bow 2 (especially floppy) depends on this, some views are not supposed to be scalable
 		//  this "feature" was removed in later versions of SCI1.1
 		it->scaleSignal = 0;
 		it->scaleY = it->scaleX = 128;
