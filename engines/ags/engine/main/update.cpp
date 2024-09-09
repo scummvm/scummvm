@@ -129,12 +129,10 @@ static bool movelist_handle_donemove(const uint8_t testflag, const fixed xpermov
 		// removed in 2.70
 		/*if (abs(yps - targety) <= 2)
 			yps = targety;*/
-		return true;
 	} else if (xpermove == 0) {
 		doneflag |= testflag;
-		return true;
 	}
-	return false;
+	return (doneflag & testflag) != 0;
 }
 
 int do_movelist_move(short &mslot, int &pos_x, int &pos_y) {
@@ -172,10 +170,10 @@ int do_movelist_move(short &mslot, int &pos_x, int &pos_y) {
 
 	// Check if finished either horizontal or vertical movement;
 	// if any was finished just now, then also handle remainer fixup
-	if (movelist_handle_donemove(kMoveListDone_X, xpermove, target.X, cmls.doneflag, xps) ||
-		movelist_handle_donemove(kMoveListDone_Y, ypermove, target.Y, cmls.doneflag, yps)) {
+	bool done_now = movelist_handle_donemove(kMoveListDone_X, xpermove, target.X, cmls.doneflag, xps);
+	done_now |= movelist_handle_donemove(kMoveListDone_Y, ypermove, target.Y, cmls.doneflag, yps);
+	if (done_now)
 		movelist_handle_remainer(cmls);
-	}
 
 	// Handle end of move stage
 	if ((cmls.doneflag & kMoveListDone_XY) == kMoveListDone_XY) {
