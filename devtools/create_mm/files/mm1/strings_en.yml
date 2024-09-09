@@ -37,6 +37,7 @@ dialogs:
 		cannot_two_handed: "*** cannot with two-handed weapon ***"
 		have_weapon: "*** already have weapon ***"
 		full: "*** full ***"
+  		// FIXME: Spelling incorrect. aready should be already. Fixing changes game data and thus may cause issues
 		have_missile: "*** aready have missile weapon ***"
 		wrong_alignment: "*** wrong alignment ***"
 		cursed: "*** cursed ***"
