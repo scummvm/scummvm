@@ -2738,6 +2738,8 @@ void DarkseedEngine::showFullscreenPic(const Common::Path &filename) {
 	Common::Path palFilename = Common::Path(filePathStr.substr(0, filePathStr.size() - 4) + ".pal");
 	Pal pal;
 	pal.load(g_engine->getPictureFilePath(palFilename));
+	_fullscreenPic->draw(0x45, 0x28);
+	_screen->addDirtyRect({{0x45, 0x28}, 501, 200});
 }
 
 void DarkseedEngine::keeperanim() {
