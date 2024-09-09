@@ -731,6 +731,7 @@ const char *string_t_Data_1d[] = {
 	"From the looks of it, this\nis the kitchen.  You can hear\nthe sounds of a feast or some-\nthing going on in the room to\nthe right.",
 	"They have a housemaid\nto do that!!",
 	"It probably warrants further\ninvestigation inside!",
+	// FIXME: Spelling incorrect. excercise should be exercise. Fixing changes game data and thus may cause issues
 	"You shinny up the tree,\nfind lots of branches\nand leaves and stuff,\nand shinny down again.\nGood excercise, huh?",
 	"Everything in the garden\nis as it seems!",
 	"You are behind the house, now,\nin what appears to be a small\nfenced in yard.  To the rear\nof the garden is a little shed",
