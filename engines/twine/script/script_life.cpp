@@ -1411,7 +1411,7 @@ int32 ScriptLife::lZOOM(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 /**
- * Set new postion for the current actor (Parameter = Track Index)
+ * Set new position for the current actor (Parameter = Track Index)
  * @note Opcode @c 0x3A
  */
 int32 ScriptLife::lPOS_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
