@@ -449,7 +449,7 @@ void BaseRenderOSystem::drawTickets() {
 			drawFromSurface(ticket, &pos, &dstClip);
 			_needsFlip = true;
 		}
-		// Some tickets want redraw but don't actually clip the dirty area (typically the ones that shouldnt become clear-color)
+		// Some tickets want redraw but don't actually clip the dirty area (typically the ones that shouldn't become clear-color)
 		ticket->_wantsDraw = false;
 	}
 	g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
