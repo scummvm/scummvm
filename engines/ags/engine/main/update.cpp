@@ -93,9 +93,10 @@ static void movelist_handle_targetfix(const fixed &xpermove, const fixed &ypermo
 static void movelist_handle_remainer(const fixed xpermove, const fixed ypermove,
 									 const int xdistance, const float step_length, fixed &fin_ymove, float &fin_from_part) {
 	// Walk along the remaining axis with the full walking speed
-	assert(xpermove != 0 && ypermove != 0);
+	assert(xpermove != 0 && ypermove != 0 && step_length >= 0.f);
 	fin_ymove = ypermove > 0 ? ftofix(step_length) : -ftofix(step_length);
 	fin_from_part = (float)xdistance / fixtof(xpermove);
+	assert(fin_from_part >= 0);
 }
 
 // Handle remaining move fixup, but only if necessary
@@ -106,10 +107,10 @@ static void movelist_handle_remainer(MoveList &m) {
 	const Point target = m.pos[m.onstage + 1];
 	// Apply remainer to movelists where LONGER axis was completed, and SHORTER remains
 	if ((xpermove != 0) && (ypermove != 0)) {
-		if ((m.doneflag & kMoveListDone_XY) == kMoveListDone_X && (ypermove < xpermove))
+		if ((m.doneflag & kMoveListDone_XY) == kMoveListDone_X && (abs(ypermove) < abs(xpermove)))
 			movelist_handle_remainer(xpermove, ypermove, target.X - m.from.X,
 									 m.GetStepLength(), m.fin_move, m.fin_from_part);
-		else if ((m.doneflag & kMoveListDone_XY) == kMoveListDone_Y && (xpermove < ypermove))
+		else if ((m.doneflag & kMoveListDone_XY) == kMoveListDone_Y && (abs(xpermove) < abs(ypermove)))
 			movelist_handle_remainer(ypermove, xpermove, target.Y - m.from.Y,
 									 m.GetStepLength(), m.fin_move, m.fin_from_part);
 	}
