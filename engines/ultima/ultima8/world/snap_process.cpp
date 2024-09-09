@@ -196,7 +196,7 @@ bool SnapProcess::loadData(Common::ReadStream *rs, uint32 version) {
 		_snapEggs.push_back(rs->readUint16LE());
 	}
 
-	_type = 1; // should be persistant but older savegames may not know that.
+	_type = 1; // should be persistent but older savegames may not know that.
 
 	return true;
 }
