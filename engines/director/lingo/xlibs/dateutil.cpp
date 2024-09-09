@@ -101,25 +101,25 @@ void DateUtilXObj::m_getDate(int nargs) {
 	switch (time.tm_wday) {
 	case 0:
 		day = Common::String("SUN");
-		;;
+		break;
 	case 1:
 		day = Common::String("MON");
-		;;
+		break;
 	case 2:
 		day = Common::String("TUE");
-		;;
+		break;
 	case 3:
 		day = Common::String("WED");
-		;;
+		break;
 	case 4:
 		day = Common::String("THU");
-		;;
+		break;
 	case 5:
 		day = Common::String("FRI");
-		;;
+		break;
 	case 6:
 		day = Common::String("SAT");
-		;;
+		break;
 	}
 
 	// Phantasmagoria's get_season() suggests months start from 1.
