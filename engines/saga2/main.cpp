@@ -84,7 +84,7 @@ int                     gameKiller = 0;         // will contain the exception th
 //  Resource files
 hResource               *resFile,               // main resource file
                         *objResFile,            // object resource file
-                        *auxResFile,            // auxillary data resource file
+                        *auxResFile,            // auxiliary data resource file
                         *scriptResFile,         // script resources
                         *soundResFile,
                         *voiceResFile;          // sound resources
@@ -182,7 +182,7 @@ void main_saga2() {
 }
 
 // ------------------------------------------------------------------------
-// Inner chunk of main - this bizzare nesting is required because VC++
+// Inner chunk of main - this bizarre nesting is required because VC++
 // doesn't like  try{} catch(){ } blocks in the same routine as its
 // __try{} __except(){} blocks
 
@@ -843,7 +843,7 @@ int32 gamePerformance() {
 /********************************************************************/
 
 //-----------------------------------------------------------------------
-//	Function to handle miscellanous events to the window.
+//	Function to handle miscellaneous events to the window.
 //	Any panel events which are not handled by individual panels
 //	are sent to this function.
 

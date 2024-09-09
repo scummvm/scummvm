@@ -64,7 +64,7 @@ void dayNightUpdate() {
 
 	uint32 lightLevel = g_vm->_calendar->lightLevel(MAX_LIGHT);
 
-	//  Code to avoid unneccessary fades.
+	//  Code to avoid unnecessary fades.
 	if (lightLevel != g_vm->_pal->_prevLightLevel) {
 		g_vm->_pal->_prevLightLevel = lightLevel;
 

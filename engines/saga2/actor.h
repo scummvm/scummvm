@@ -850,7 +850,7 @@ public:
 	int16 offenseScore();
 
 	//  Return a numeric value which roughly estimates this actor's
-	//  defensive strenght
+	//  defensive strength
 	int16 defenseScore();
 
 	//  Handle the effect of a successful hit on an opponent in combat

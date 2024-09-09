@@ -426,7 +426,7 @@ bool ProtaganistSensor::check(SenseInfo &info, uint32 senseFlags) {
 
 		assert(isActor(protag));
 
-		//  Skip this protaganist if they're dead
+		//  Skip this protagonist if they're dead
 		if (protag->isDead())
 			continue;
 
@@ -434,7 +434,7 @@ bool ProtaganistSensor::check(SenseInfo &info, uint32 senseFlags) {
 			continue;
 
 		//  This extra test is a HACK to ensure that the center actor
-		//  will be able to sense a protaganist even if the protaganist
+		//  will be able to sense a protagonist even if the protaganist
 		//  is invisible.
 		if (!objIsActor || getObject() != getCenterActor()) {
 			if (!(senseFlags & kActorSeeInvis)
@@ -447,7 +447,7 @@ bool ProtaganistSensor::check(SenseInfo &info, uint32 senseFlags) {
 		        &&  !getObject()->inRange(protag->getLocation(), getRange()))
 			continue;
 
-		//  Skip if we're checking for an actor and the protaganist is
+		//  Skip if we're checking for an actor and the protagonist is
 		//  not in sight or not under the same roof
 		if (objIsActor
 		        && (!underSameRoof(getObject(), protag)
@@ -492,7 +492,7 @@ bool ObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 		bool objToTestIsActor = isActor(objToTest);
 
 		//  This extra test is a HACK to ensure that the center actor
-		//  will be able to sense a protaganist even if the protaganist
+		//  will be able to sense a protagonist even if the protagonist
 		//  is invisible.
 		if (objToTestIsActor
 		        && (!objIsActor
@@ -511,7 +511,7 @@ bool ObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 		if (!isObjectSought(objToTest))
 			continue;
 
-		//  Skip if we're checking for an actor and the protaganist is
+		//  Skip if we're checking for an actor and the protagonist is
 		//  not in sight or not under the same roof
 		if (objIsActor
 		        && (!underSameRoof(getObject(), objToTest)
@@ -575,7 +575,7 @@ bool SpecificObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 		return false;
 
 	//  This extra test is a HACK to ensure that the center actor
-	//  will be able to sense a protaganist even if the protaganist
+	//  will be able to sense a protagonist even if the protagonist
 	//  is invisible.
 	if (isActor(soughtObject)
 	        && (!objIsActor
@@ -704,7 +704,7 @@ bool SpecificActorSensor::check(SenseInfo &info, uint32 senseFlags) {
 		return false;
 
 	//  This extra test is a HACK to ensure that the center actor
-	//  will be able to sense a protaganist even if the protaganist
+	//  will be able to sense a protagonist even if the protagonist
 	//  is invisible.
 	if (!objIsActor
 	        ||  getObject() != getCenterActor()

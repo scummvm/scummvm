@@ -38,7 +38,7 @@ namespace Saga2 {
 
 // notes: the load/unload resource functions are to be fazed out in lieu of
 // the newer image cache object which will handle duplicate images without
-// all the unwieldly calls
+// all the unwieldy calls
 
 // the appfunc helper functions will eventually be merged into an object
 // that will handle all of the trasitive portion of the UI.

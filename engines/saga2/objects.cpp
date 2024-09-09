@@ -1966,7 +1966,7 @@ bool GameObject::addSensor(Sensor *newSensor) {
 }
 
 //-----------------------------------------------------------------------
-//	Add a protaganist sensor to this object's sensor list
+//	Add a protagonist sensor to this object's sensor list
 
 bool GameObject::addProtaganistSensor(SensorID id, int16 range) {
 	ProtaganistSensor   *newSensor;
@@ -2117,7 +2117,7 @@ void GameObject::removeAllSensors() {
 }
 
 //-----------------------------------------------------------------------
-//	Polling function to determine if this object can sense a protaganist
+//	Polling function to determine if this object can sense a protagonist
 //	within a specified range
 
 bool GameObject::canSenseProtaganist(SenseInfo &info, int16 range) {

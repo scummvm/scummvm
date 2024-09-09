@@ -126,7 +126,7 @@ enum SpellID {
 	kSkillBrawn,
 	kSkillVitality,
 	kSkillCartography,
-	kSpellCold_Blast = 96,       // had to skip because of disapeared skills
+	kSpellCold_Blast = 96,       // had to skip because of disappeared skills
 	kSpellThorn,
 	kSpellLife_Shield,
 	kSpellFlame_Shield,

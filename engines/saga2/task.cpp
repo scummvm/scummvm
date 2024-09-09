@@ -1147,7 +1147,7 @@ TaskResult GotoTask::update() {
 			_wander = nullptr;
 		}
 
-		//  Determine if there is aready a motion task, and if so,
+		//  Determine if there is already a motion task, and if so,
 		//  whether or not it needs to be modified.
 		MotionTask  *actorMotion = a->_moveTask;
 		TilePoint   actorLoc = a->getLocation();

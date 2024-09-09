@@ -698,7 +698,7 @@ int16 scriptGameObjectRemoveAllTimers(int16 *args) {
 
 //-----------------------------------------------------------------------
 //	Create a sensor for this object to detect the proximity of a
-//	protaganist
+//	protagonist
 //		int "c" addProtaganistSensor( int sensorID, int range );
 
 int16 scriptGameObjectAddProtaganistSensor(int16 *args) {
@@ -817,7 +817,7 @@ int16 scriptGameObjectRemoveAllSensors(int16 *args) {
 }
 
 //-----------------------------------------------------------------------
-//	Determine if this object can sense the proximity of a protaganist
+//	Determine if this object can sense the proximity of a protagonist
 //		int "c" canSenseProtaganist( int range );
 
 int16 scriptGameObjectCanSenseProtaganist(int16 *args) {

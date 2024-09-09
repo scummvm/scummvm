@@ -29,7 +29,7 @@
 namespace Saga2 {
 /* ===================================================================== *
    class  GrabInfo
-   this will need to be transfered to grabinfo.h
+   this will need to be transferred to grabinfo.h
  * ===================================================================== */
 
 class GrabInfo {
