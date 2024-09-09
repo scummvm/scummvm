@@ -500,7 +500,7 @@ Setlocation	proc	near		;makes a location accessible
 
 
 
-Resetlocation	proc	near		;makes a location inaccessable
+Resetlocation	proc	near		;makes a location inaccessible
 
 	push	ax
 	cmp	al,5
