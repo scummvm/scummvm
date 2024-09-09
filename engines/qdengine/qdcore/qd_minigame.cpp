@@ -46,6 +46,9 @@
 #include "qdengine/minigames/book_all.h"
 #include "qdengine/minigames/puzzle_all.h"
 
+// shveik
+#include "qdengine/minigames/inv_popup.h"
+
 
 namespace QDEngine {
 
