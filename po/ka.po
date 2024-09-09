@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-09 00:19+0000\n"
-"PO-Revision-Date: 2024-08-31 05:43+0000\n"
+"PO-Revision-Date: 2024-09-09 19:43+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -10605,16 +10605,12 @@ msgid ""
 msgstr ""
 
 #: engines/tinsel/metaengine.cpp:241
-#, fuzzy
-#| msgid "Yes/No keymappings"
 msgid "Save/Load keymappings"
-msgstr "დიახ/არა კლავიატურის მალსახმობები"
+msgstr "კლავიატურის მალსახმობების შენახვა/ჩატვირთვა"
 
 #: engines/tinsel/metaengine.cpp:306
-#, fuzzy
-#| msgid "Option dialog"
 msgid "Options Dialog"
-msgstr "არჩევნის დიალოგი"
+msgstr "პარამეტრების დიალოგი"
 
 #: engines/tinsel/metaengine.cpp:340
 msgid "Page Up in save/load menu"
