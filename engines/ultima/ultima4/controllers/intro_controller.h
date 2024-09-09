@@ -42,7 +42,7 @@ class Tile;
  */
 class IntroBinData {
 private:
-	// disallow assignments, copy contruction
+	// disallow assignments, copy construction
 	IntroBinData(const IntroBinData &);
 	const IntroBinData &operator=(const IntroBinData &);
 	void openFile(Shared::File &f, const Common::String &name);

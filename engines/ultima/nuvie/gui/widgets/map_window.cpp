@@ -961,7 +961,7 @@ inline void MapWindow::drawActor(const Actor *actor) {
 }
 
 void MapWindow::drawObjs() {
-//FIX we need to make this more efficent.
+//FIXME: we need to make this more efficient.
 
 	drawObjSuperBlock(true, false); //draw force lower objects
 	drawObjSuperBlock(false, false); //draw lower objects

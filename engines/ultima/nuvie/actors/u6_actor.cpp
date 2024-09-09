@@ -291,7 +291,7 @@ bool U6Actor::init_silver_serpent() {
 	if (obj != nullptr) //old snake
 		gather_snake_objs_from_map(obj, x, y, z);
 	else { //new snake
-		//FIXME we need to make long, randomly layed out snakes here!
+		//FIXME: we need to make long, randomly laid out snakes here!
 		init_new_silver_serpent();
 	}
 
@@ -598,7 +598,7 @@ bool U6Actor::check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags
 
 	case MOVETYPE_U6_AIR_LOW :
 		map_tile = map->get_tile(new_x, new_y, new_z, MAP_ORIGINAL_TILE);
-		if (map_tile->flags1 & TILEFLAG_WALL) //low air boundry
+		if (map_tile->flags1 & TILEFLAG_WALL) //low air boundary
 			return false;
 
 		map_tile = obj_manager->get_obj_tile(new_x, new_y, new_z, false);

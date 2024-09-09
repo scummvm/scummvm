@@ -187,7 +187,7 @@ public:
 #endif
 
 
-//FIXME: It isnt container search. Its a msgscroll effect to print one line at a time.
+//FIXME: It isn't container search. Its a msgscroll effect to print one line at a time.
 /* Dump one item at a time out of a container, and print it's name to MsgScroll.
  */
 class TimedContainerSearch : public TimedEvent {

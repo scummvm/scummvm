@@ -24,7 +24,7 @@
 
 //priorities:
 //todo:
-//-sample loading partialy implemented, will do later (now is 21/01/04)
+//-sample loading partially implemented, will do later (now is 21/01/04)
 //-make songs fade in & out - add query/callback for end of song so that they can cycle
 //-make samples sound from mapwindow
 //-make samples fade in & out according to distance

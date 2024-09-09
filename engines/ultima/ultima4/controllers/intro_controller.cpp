@@ -763,7 +763,7 @@ void IntroController::finishInitiateGame(const Common::String &nameBuffer, SexTy
 
 		_justInitiatedNewGame = true;
 
-		// show the text thats segues into the main game
+		// show the text that's segues into the main game
 		showText(_binData->_introGypsy[GYP_SEGUE1]);
 #ifdef IOS_ULTIMA4
 		U4IOS::switchU4IntroControllerToContinueButton();

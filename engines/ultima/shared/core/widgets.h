@@ -87,7 +87,7 @@ public:
 
 	/**
 	 * Called to update the widget at the end of a turn
-	 * @param isPreUpdate		Update is called twice in succesion during the end of turn update.
+	 * @param isPreUpdate		Update is called twice in succession during the end of turn update.
 	 *		Once with true for all widgets, then with it false
 	 */
 	void update(bool isPreUpdate) override;

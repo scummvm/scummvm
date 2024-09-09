@@ -289,7 +289,7 @@ static const uint8 mul_tab[16] = {
 	The whole table takes: 64 * 210 = 13440 samples.
 
 	When AM = 1 data is used directly
-	When AM = 0 data is divided by 4 before being used (loosing precision is important)
+	When AM = 0 data is divided by 4 before being used (losing precision is important)
 */
 
 #define LFO_AM_TAB_ELEMENTS 210
@@ -1486,7 +1486,7 @@ static int OPLTimerOver(FM_OPL *OPL, int c) {
 	} else {
 		/* Timer A */
 		OPL_STATUS_SET(OPL, 0x40);
-		/* CSM mode key,TL controll */
+		/* CSM mode key,TL control */
 		if (OPL->mode & 0x80) {
 			/* CSM mode total level latch and auto key on */
 			int ch;

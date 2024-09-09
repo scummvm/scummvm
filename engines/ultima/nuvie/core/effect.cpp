@@ -882,7 +882,7 @@ uint16 SleepEffect::callback(uint16 msg, CallBack *caller, void *data) {
 	if (msg == MESG_EFFECT_COMPLETE) {
 		if (timer == nullptr) { // starting
 			if (stop_time != "") { // advance to start time
-				timer = new TimedAdvance(stop_time, 360); // 6 hours per second FIXME: it isnt going anywhere near that fast
+				timer = new TimedAdvance(stop_time, 360); // 6 hours per second FIXME: it isn't going anywhere near that fast
 				timer->set_target(this);
 				timer->get_time_from_string(stop_hour, stop_minute, stop_time);
 				// stop_hour & stop_minute are checked each hour
@@ -1090,7 +1090,7 @@ inline bool FadeEffect::find_free_pixel(uint32 &rnum, uint32 pixelCount) {
 /* Returns the next pixel to check/colorize. */
 #if 0
 #warning this crashes if x,y is near boundary
-#warning make sure center_thresh doesnt go over boundary
+#warning make sure center_thresh doesn't go over boundary
 inline uint32 FadeEffect::get_random_pixel(uint16 center_thresh) {
 	if (center_x == -1 || center_y == -1)
 		return (NUVIE_RAND() % pixel_count);

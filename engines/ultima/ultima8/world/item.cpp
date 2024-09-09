@@ -180,7 +180,7 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 		World::get_instance()->etherealRemove(_objId);
 	}
 
-	// Remove from container (if contained or equiped)
+	// Remove from container (if contained or equipped)
 	if (_flags & (FLG_CONTAINED | FLG_EQUIPPED)) {
 		if (_parent) {
 			// If we are flagged as Ethereal, we are already removed
@@ -294,7 +294,7 @@ bool Item::moveToContainer(Container *container, bool checkwghtvol) {
 		World::get_instance()->etherealRemove(_objId);
 	}
 
-	// Remove from container (if contained or equiped)
+	// Remove from container (if contained or equipped)
 	if (_flags & (FLG_CONTAINED | FLG_EQUIPPED)) {
 		if (_parent) {
 			// If we are flagged as Ethereal, we are already removed
@@ -1287,7 +1287,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 		break;
 	}
 
-	// HACK: this should be fixed to use inheritence so the behavior
+	// HACK: this should be fixed to use inheritance so the behavior
 	// is clean for both Item and Actor.
 	DirectionMode dirmode = dirmode_8dirs;
 	const Actor *thisactor = dynamic_cast<Actor *>(this);

@@ -107,7 +107,7 @@ enum ClassType {
 
 /**
  * The list of status values for the savegame character records.  The
- * values match the letter thats appear in the ztats area.
+ * values match the letter that's appear in the ztats area.
  */
 enum StatusType {
 	STAT_GOOD = 'G',

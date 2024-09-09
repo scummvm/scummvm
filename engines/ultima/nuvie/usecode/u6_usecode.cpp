@@ -1526,7 +1526,7 @@ bool U6UseCode::use_crystal_ball(Obj *obj, UseCodeEvent ev) {
 
 /* USE: Enter instrument playing mode, with sound for used object. */
 bool U6UseCode::play_instrument(Obj *obj, UseCodeEvent ev) {
-// FIXME: need intrument sounds AND a config option to simply change music
+// FIXME: need instrument sounds AND a config option to simply change music
 // track when an instrument is played. Maybe NORTH_KEY and SOUTH_KEY can cycle through sounds/music and DO_ACTION_KEY can play it.
 /// FIXME: also some floating music note icons like in U7
 	game->get_event()->close_gumps(); // gumps will steal input
@@ -2275,7 +2275,7 @@ bool U6UseCode::use_horse(Obj *obj, UseCodeEvent ev) {
 
 		// create a temporary horse on the map.
 		actor_manager->create_temp_actor(OBJ_U6_HORSE, NO_OBJ_STATUS, obj->x, obj->y, obj->z, ACTOR_ALIGNMENT_DEFAULT, WORKTYPE_U6_ANIMAL_WANDER);
-	} else if (!actor_manager->is_temp_actor(actor)) { // Try to mount horse. Don't use permenant Actors eg Smith, push-me pull-you
+	} else if (!actor_manager->is_temp_actor(actor)) { // Try to mount horse. Don't use permanent Actors eg Smith, push-me pull-you
 		scroll->display_string("\nHorse not boardable!\n");
 	} else { // mount up.
 		if (UseCode::out_of_use_range(obj, true))
