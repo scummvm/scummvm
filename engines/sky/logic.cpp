@@ -171,7 +171,7 @@ void Logic::engine() {
 void Logic::nop() {}
 
 /**
- * This function is basicly a wrapper around the real script engine. It runs
+ * This function is basically a wrapper around the real script engine. It runs
  * the script engine until a script has finished.
  * @see script()
  */
