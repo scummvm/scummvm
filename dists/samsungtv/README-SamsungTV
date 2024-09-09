@@ -7,7 +7,7 @@ Notes:
 - Buttons on remote controler: EXIT, SOURCE, P+, P-, TV, POWER, CONTENT - cause immediately exit from ScummVM
 - Config file is in /mtd_rwarea/.scummvmrc
 - Saves are stored in '/mtd_wiselink/scummvm savegames' directory
-- Audio is delayed a upto one second, it's TV software issue :/
+- Audio is delayed up to one second, it's a TV software issue :/
 - Do not use 3x scalers, they are not fit in TV display frame buffer and you get gfx glitches
 
 Remote Controler buttons:
