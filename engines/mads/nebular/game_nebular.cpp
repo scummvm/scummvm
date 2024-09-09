@@ -77,7 +77,7 @@ void GameNebular::startGame() {
 		AnimationView::execute(_vm, "rexend1");
 		break;
 	case 2:
-		// Shields, but no targetting failure ending
+		// Shields, but no targeting failure ending
 		AnimationView::execute(_vm, "rexend2");
 		break;
 	case 3:
