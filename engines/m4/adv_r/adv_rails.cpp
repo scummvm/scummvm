@@ -913,7 +913,7 @@ bool GetShortestPath(int32 origID, int32 destID, railNode **shortPath) {
 				}
 			}
 
-			// Set the stackTop to point at the node preceeding currNode, which preceeds destID
+			// Set the stackTop to point at the node preceding currNode, which precedes destID
 			// we want to check the contents of the stack from the top, and stackTop always point to
 			// the next available location, not directly at the top element.
 			_G(rails).stackTop--;
@@ -1013,7 +1013,7 @@ bool GetShortestPath(int32 origID, int32 destID, railNode **shortPath) {
 				// Take currNode off the stack top
 				_G(rails).stackTop--;
 
-				// Set the _G(rails).stackTop to point at the node preceeding currNode
+				// Set the _G(rails).stackTop to point at the node preceding currNode
 				// we want to check the contents of the stack from the top, and _G(rails).stackTop always point to
 				// the next available location, not directly at the top element.
 				_G(rails).stackTop--;
