@@ -2708,7 +2708,7 @@ const char Sound::_tuneList[TOTAL_TUNES][8] = {
 	"4m9",		// DONE 108	Room 21, on "Maybe it wasn't the right room"
 	"4m10",		// DONE 109	On coming into 21 on subsequent occasions.
 
-	"4m11",		// DONE 110 As George steps upto window.
+	"4m11",		// DONE 110 As George steps up to the window.
 	"4m12",		// DONE 111	Alternative times he steps up to the window.
 	"4m13",		// DONE 112	In Moerlin's room
 	"4m14",		// DONE 113	Sees "Moerlin" on the Stairs
