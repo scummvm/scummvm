@@ -780,7 +780,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 // =========================================================
 // Intrinsics for German version.
 // This is annoyingly similar to the main version, but has an extra intrinsic inserted,
-// at 13F so they are all offset after taht
+// at 13F so they are all offset after that
 //
 
 Intrinsic RegretDeIntrinsics[] = {
