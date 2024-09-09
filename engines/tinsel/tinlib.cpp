@@ -630,7 +630,7 @@ static void AddInv(int invno, int object) {
 }
 
 /**
- * Define an actor's walk and stand reels for an auxilliary scale.
+ * Define an actor's walk and stand reels for an auxiliary scale.
  */
 static void AuxScale(int actor, int scale, SCNHANDLE *rp) {
 	MOVER *pMover = GetMover(actor);
