@@ -45,7 +45,7 @@ static const int SETUP_POINTS_INTL[12][4]  = {
 	{ 219, 187, 316, 268 }		// _key Pad Accel. Toggle
 };
 
-// Different from original to accomodate hotkeys
+// Different from original to accommodate hotkeys
 static const int SETUP_POINTS_ZH[12][4]  = {
 	{ 3, 159, 73, 38 },		// Exit // OK
 	{ 3, 178, 73, 38 },		// Music Toggle // OK
