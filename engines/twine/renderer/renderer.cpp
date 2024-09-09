@@ -702,21 +702,22 @@ int32 Renderer::computePolyMinMax(int16 polyRenderType, ComputedVertex **offTabP
 	}
 
 	if (hasBeenClipped) {
+		// search the new Ymin or Ymax
 		ymin = 32767;
 		ymax = -32768;
 
-		for (int32 i = 0; i < clippedNumVertices; i++) {
-			if (offTabPoly[0][i].y < ymin) {
-				ymin = offTabPoly[0][i].y;
+		for (int32 n = 0; n < clippedNumVertices; ++n) {
+			if (offTabPoly[0][n].y < ymin) {
+				ymin = offTabPoly[0][n].y;
 			}
 
-			if (offTabPoly[0][i].y > ymax) {
-				ymax = offTabPoly[0][i].y;
+			if (offTabPoly[0][n].y > ymax) {
+				ymax = offTabPoly[0][n].y;
 			}
 		}
 
 		if (ymin >= ymax) {
-			return 0;
+			return 0; // No valid polygon after clipping
 		}
 	}
 
@@ -745,8 +746,9 @@ bool Renderer::computePoly(int16 polyRenderType, const ComputedVertex *vertices,
 	int32 dx, dy, x, y, dc;
 	int32 step, reminder;
 
+	// Drawing lines between vertices
 	for (; numVertices > 0; --numVertices, pTabPoly++) {
-		pCoul = NULL;
+		pCoul = nullptr;
 		p0 = pTabPoly;
 		p1 = p0 + 1;
 
@@ -755,7 +757,7 @@ bool Renderer::computePoly(int16 polyRenderType, const ComputedVertex *vertices,
 			// forget same Y points
 			continue;
 		} else if (dy > 0) {
-			// Y descend donc buffer gauche
+			// Y therefore goes down left buffer
 			if (p0->x <= p1->x) {
 				incY = 1;
 			} else {
@@ -792,8 +794,8 @@ bool Renderer::computePoly(int16 polyRenderType, const ComputedVertex *vertices,
 		step = dx / dy;
 		reminder = ((dx % dy) >> 1) + 0x7FFF;
 
-		dx = step >> 16; // recup partie haute division (entier)
-		step &= 0xFFFF;  // conserve partie basse (mantisse)
+		dx = step >> 16; // recovery part high division (entire)
+		step &= 0xFFFF;  // preserves lower part (mantissa)
 		x = p0->x;
 
 		for (y = dy; y >= 0; --y) {

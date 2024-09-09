@@ -145,7 +145,7 @@ private:
 	};
 
 	struct ModelData {
-		I16Vec3 computedPoints[800];
+		I16Vec3 computedPoints[800]; // List_Anim_Point
 		I16Vec3 flattenPoints[800];
 		int16 normalTable[500]{0};
 	};
@@ -226,6 +226,7 @@ private:
 	void fillHolomapTriangle(int16 *pDest, int32 x1, int32 y1, int32 x2, int32 y2);
 	void fillHolomapTriangles(const ComputedVertex &vertex1, const ComputedVertex &vertex2, const ComputedVertex &texCoord1, const ComputedVertex &texCoord2, int32 &top, int32 &bottom);
 
+	// ClipGauche, ClipDroite, ClipHaut, ClipBas
 	int16 leftClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices);
 	int16 rightClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices);
 	int16 topClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices);
