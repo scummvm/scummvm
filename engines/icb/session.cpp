@@ -978,7 +978,7 @@ void _game_session::Script_cycle() {
 		// ret is:
 		// 0 done enough this cycle
 		// 1 current script has finished and hit closing brace
-		// 2 FN_ returned an IR_TERMINATE to interpretter so we just go around - new script or gosub
+		// 2 FN_ returned an IR_TERMINATE to interpreter so we just go around - new script or gosub
 
 		if (ret == IR_RET_SCRIPT_FINISHED) { // script has finished so drop down a level
 			if (L->logic_level) { // not on base, so we can just drop down to the script below

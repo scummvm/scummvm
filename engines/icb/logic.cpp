@@ -458,7 +458,7 @@ void _game_session::Context_check(uint32 script_name) {
 
 mcodeFunctionReturnCodes fn_context_chosen_logic(int32 &result, int32 *params) {
 	// the logic context script has chosen a logic to set up but we do nothing if the script is running already
-	// this function is used for an immediate logic change - i.e. it wont wait for animations to finish first
+	// this function is used for an immediate logic change - i.e. it won't wait for animations to finish first
 
 	//	params[0]    ascii name of new script
 
@@ -604,7 +604,7 @@ void _game_session::Shut_down_id(uint32 id) {
 }
 
 mcodeFunctionReturnCodes fn_shut_down_object(int32 &result, int32 *params) {
-	// shut down current object - wont be logic processed any int32er
+	// shut down current object - won't be logic processed any int32er
 	return (MS->fn_shut_down_object(result, params));
 }
 
@@ -617,7 +617,7 @@ mcodeFunctionReturnCodes _game_session::fn_shut_down_object(int32 & /*result*/, 
 }
 
 mcodeFunctionReturnCodes fn_pause(int32 &result, int32 *params) {
-	// shut down current object - wont be logic processed any int32er
+	// shut down current object - won't be logic processed any int32er
 	return (MS->fn_pause(result, params));
 }
 
@@ -643,7 +643,7 @@ mcodeFunctionReturnCodes _game_session::fn_pause(int32 &, int32 *params) {
 }
 
 mcodeFunctionReturnCodes fn_missing_routine(int32 &, int32 *) {
-	// shut down current object - wont be logic processed any int32er
+	// shut down current object - won't be logic processed any int32er
 	Message_box("fn_missing_routine shutting down [%s]", MS->Fetch_object_name(MS->Fetch_cur_id()));
 
 	MS->Shut_down_object(" - fn_missing_routine");

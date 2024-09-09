@@ -452,7 +452,7 @@ bool8 _game_session::Process_wa_list() {
 
 					// in case we are coming here afresh - from a reset camera director - i.e. from nethack mode
 					// find the floor and set the current camera
-					// in other words we fake the system to think that the floor camera is chosen - thats how we decide
+					// in other words we fake the system to think that the floor camera is chosen - that's how we decide
 					// who is on camera.
 
 					if (!g_mission->camera_follow_id_overide) {

@@ -729,7 +729,7 @@ int32 _game_session::Soften_up_anim_file(__mega_set_names link, int32 diff) {
 bool8 _game_session::Play_anim() {
 	// plays anim until finished
 	// keeps playing anim even if motion has been stopped
-	// when current is done it will play the queued M->next_anim_type if it exists. When thats done we're done
+	// when current is done it will play the queued M->next_anim_type if it exists. When that's done we're done
 
 	// returns   1 when done
 	//				0 we need to come back next cycle
@@ -768,7 +768,7 @@ bool8 _game_session::Play_anim() {
 bool8 _game_session::Play_reverse_anim() {
 	// plays anim until finished
 	// keeps playing anim even if motion has been stopped
-	// when current is done it will play the queued M->next_anim_type if it exists. When thats done we're done
+	// when current is done it will play the queued M->next_anim_type if it exists. When that's done we're done
 
 	// returns   1 when done
 	//				0 we need to come back next cycle
@@ -809,7 +809,7 @@ bool8 _game_session::Play_reverse_anim() {
 bool8 _game_session::Play_anim_with_no_movement() {
 	// plays anim until finished
 	// keeps playing anim even if motion has been stopped
-	// when current is done it will play the queued M->next_anim_type if it exists. When thats done we're done
+	// when current is done it will play the queued M->next_anim_type if it exists. When that's done we're done
 
 	// returns   1 when done
 	//			0 we need to come back next cycle
