@@ -1282,12 +1282,12 @@ void ScummEngine_v2::o2_putActorInRoom() {
 	// After first using the blue crystal, a cutscene of the two Caponians plays (script-96),
 	// locking object 344 (which prevents the cutscene playing again) and setting Var[245] to 0x18.
 	// script-5 uses this variable to set the Caponian costume
-	// On first apperance after using the blue crystal, the Caponians now will have the disguise on
+	// On first appearance after using the blue crystal, the Caponians now will have the disguise on
 	//
 	// If you visit the spacecraft and ring the doorbell, Var[245] will be set to 0x1C (Disguise off)
 	// Using the blue crystal again, will result in the Caponian appearing without his disguise
 	// as Var[245] is never set back to 0x18. This WORKAROUND fixes the problem by ensuring
-	// Var[245] is set to have the Disguise on in most situations
+	// Var[245] is set to have the disguise on in most situations
 	//
 	// We don't touch the variable in the following situations
 	//  If the Caponian is being put into the space ship room, or the current room is the
