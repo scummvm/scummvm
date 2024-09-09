@@ -3438,7 +3438,7 @@ SurfaceType pointOnTile(TileInfo            *ti,
 			subUVPointRel = relPos.y + (relPos.x >> 1) - h;
 		}
 
-		//  Compute the terrain hieght of the first point
+		//  Compute the terrain height of the first point
 		pointH = ptHeight(subUVPoint, ti->attrs.cornerHeight);
 
 		while (subUVPoint.u < 16 &&
@@ -3597,7 +3597,7 @@ SurfaceType pointOnTile(TileInfo            *ti,
 					subUVPointRel = subTileRel.y + (subTileRel.x >> 1);
 				}
 
-				//  Compute the terrain hieght of the first point
+				//  Compute the terrain height of the first point
 				pointH = ptHeight((subTile << 2) + subUVPoint, ti->attrs.cornerHeight);
 
 				while (subUVPoint.u < 4 &&
