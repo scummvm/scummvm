@@ -2702,7 +2702,7 @@ void buildRipTables() {
 
 		RipTable    *mtRipTable = mt->ripTable(g_vm->_currentMapNum);
 
-		//  If meta tile aready has a valid object ripping table, simply
+		//  If meta tile already has a valid object ripping table, simply
 		//  recycle it
 		if (mtRipTable && mtRipTable->ripID == rippedRoofID) {
 			//  Null out pointer
