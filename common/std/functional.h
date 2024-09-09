@@ -46,6 +46,18 @@ struct binary_function { // base class for binary functions
 	using result_type = _Result;
 };
 
+// Predicate to check for x being less than y.
+template<class T>
+struct less : public binary_function<T, T, bool> {
+        bool operator()(const T &x, const T &y) const { return x < y; }
+};
+
+// Predicate to check for x being greater than y.
+template<class T>
+struct greater : public binary_function<T, T, bool> {
+        bool operator()(const T &x, const T &y) const { return x > y; }
+};
+
 template <typename _Fty>
 struct function {
 	_Fty *_fn;
