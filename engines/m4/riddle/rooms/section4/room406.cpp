@@ -585,7 +585,7 @@ void Room406::parser() {
 			useSwitchPaintingClosed();
 	} else if (useFlag && player_said_any("ACE OF SPADES", "ACE OF SPADES ")) {
 		// Note: The original had two separate blocks for use ace of spades.
-		// Since the second version could never be called, I've ommitted it
+		// Since the second version could never be called, I've omitted it
 		if (_G(flags)[V310])
 			useAceOfSpades1();
 		else
