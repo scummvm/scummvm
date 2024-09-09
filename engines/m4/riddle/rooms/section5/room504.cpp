@@ -23,13 +23,14 @@
 #include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
 #include "m4/gui/gui_vmng.h"
+#include "m4/m4.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
 void Room504::init() {
-	_val1 = -1;
+	_trigger1 = -1;
 
 	_vines1 = nullptr;
 	_vines2 = nullptr;
@@ -59,7 +60,7 @@ void Room504::init() {
 		ws_demand_location(1384, 205, 9);
 		ws_hide_walker();
 		MoveScreenDelta(_G(game_buff_ptr), -1280, 0);
-		_xyzzy2 = 1;
+		_flag1 = true;
 
 		_downSteps = series_load("504 down steps");
 		player_update_info();
@@ -86,7 +87,7 @@ void Room504::init() {
 			ws_walk(183, 207, nullptr, 655, 3);
 		}
 
-		_xyzzy2 = 0;
+		_flag1 = false;
 		break;
 	}
 
@@ -102,11 +103,234 @@ void Room504::daemon() {
 }
 
 void Room504::pre_parser() {
+	bool useFlag = player_said("gear");
+	bool useFlag1 = useFlag && _flag1;
+	bool useFlag0 = useFlag && !_flag1;
 
+	if (useFlag1 && player_said("ROPE COIL "))
+		intr_freshen_sentence(62);
+	else if (useFlag1 && player_said("GREEN VINE COIL "))
+		intr_freshen_sentence(63);
+	else if (useFlag1 && player_said("BROWN VINE COIL "))
+		intr_freshen_sentence(64);
+	else if (useFlag1 && player_said("COIL OF VINES "))
+		intr_freshen_sentence(107);
+
+	else if (useFlag1 && player_said("ROPE COIL    "))
+		intr_freshen_sentence(62);
+	else if (useFlag1 && player_said("GREEN VINE COIL    "))
+		intr_freshen_sentence(63);
+	else if (useFlag1 && player_said("BROWN VINE COIL    "))
+		intr_freshen_sentence(64);
+	else if (useFlag1 && player_said("COIL OF VINES    "))
+		intr_freshen_sentence(107);
+
+	else if (useFlag0 && player_said("ROPE COIL  "))
+		intr_freshen_sentence(62);
+	else if (useFlag0 && player_said("GREEN VINE COIL  "))
+		intr_freshen_sentence(63);
+	else if (useFlag0 && player_said("BROWN VINE COIL  "))
+		intr_freshen_sentence(64);
+	else if (useFlag0 && player_said("COIL OF VINES  "))
+		intr_freshen_sentence(107);
+
+	else if (useFlag0 && player_said("ROPE COIL   "))
+		intr_freshen_sentence(62);
+	else if (useFlag0 && player_said("GREEN VINE COIL   "))
+		intr_freshen_sentence(63);
+	else if (useFlag0 && player_said("BROWN VINE COIL   "))
+		intr_freshen_sentence(64);
+	else if (useFlag0 && player_said("COIL OF VINES   "))
+		intr_freshen_sentence(107);
 }
 
 void Room504::parser() {
+	bool ropeCoilFlag = player_said_any("ROPE COIL ", "ROPE COIL  ",
+		"ROPE COIL   ", "ROPE COIL    ");
+	bool greenVineFlag = player_said_any("GREEN VINE COIL ",
+		"GREEN VINE COIL  ", "GREEN VINE COIL   ", "GREEN VINE COIL    ");
+	bool brownVineFlag = player_said_any("BROWN VINE COIL ",
+		"BROWN VINE COIL  ", "BROWN VINE COIL   ", "BROWN VINE COIL    ");
+	bool vineCoilFlag = player_said_any("COIL OF VINES ", "COIL OF VINES  ",
+		"COIL OF VINES   ", "COIL OF VINES    ");
+	bool lookFlag = player_said_any("look", "look at");
+	bool takeFlag = player_said("take");
+	bool talkFlag = player_said_any("talk", "talk to");
+	bool useFlag = player_said("gear");
+	//bool vineStatueFlag = player_said_any("rope ",
+	//	"green vine ", "brown vine ", "vines ", "spider statue");
+	bool menendezFlag = player_said_any("PERSON IN HOLE", "MENENDEZ");
 
+	player_update_info();
+	_flag1 = _G(player_info).x > 300;
+
+	if (player_said("GREEN VINE", "BROWN VINE") && inv_player_has("GREEN VINE") &&
+			inv_player_has("BROWN VINE")) {
+		inv_move_object("GREEN VINE", NOWHERE);
+		inv_move_object("BROWN VINE", NOWHERE);
+		inv_give_to_player("VINES");
+		_G(player).command_ready = false;
+		return;
+	} else if (((!_flag1 && _G(player).click_x > 300) ||
+			(_flag1 && _G(player).click_x <= 300)) &&
+			!lookFlag && !takeFlag && !useFlag &&
+			checkVinesDistance()) {
+		_G(player).command_ready = false;
+		return;
+	}
+
+	_flag2 = _G(flags)[V154] == 2 ||
+		(_G(flags)[V152] == 2 && _G(flags)[V153] == 2);
+
+	if (!lookFlag && !takeFlag && !useFlag && !ropeCoilFlag &&
+			!greenVineFlag && !brownVineFlag && !vineCoilFlag &&
+			(_G(flags)[V154] == 2 || _G(flags)[V152] == 2 || _G(flags)[V153] == 2) &&
+			parser1()) {
+		// No implementation
+	} else if (player_said("conv504a")) {
+		conv504a();
+	} else if (_G(kernel).trigger == 747) {
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(1, 509);
+	} else if (talkFlag && menendezFlag) {
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			player_set_commands_allowed(false);
+			g_engine->camera_shift_xy(862, 0);
+			kernel_timing_trigger(1, 1);
+			break;
+		case 1:
+			if (g_engine->game_camera_panning()) {
+				kernel_timing_trigger(5, 1);
+			} else {
+				_trigger1 = kernel_trigger_create(2);
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_timing_trigger(5, 505);
+			}
+			break;
+		case 2:
+			_convState2 = 3;
+			digi_play("504R51", 1, 255, 3);
+			break;
+		case 3:
+			_convState2 = 1;
+			_convState = 2;
+			_trigger2 = kernel_trigger_create(4);
+			break;
+		case 4:
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_timing_trigger(1, 508);
+			break;
+		default:
+			break;
+		}
+	} else if (menendezFlag && player_said("ROMANOV EMERALD")) {
+		player_set_commands_allowed(false);
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(1, 511);
+	} else if ((menendezFlag && player_said("PERUVIAN INTI")) ||
+			(menendezFlag && !lookFlag && !takeFlag && !useFlag)) {
+		player_set_commands_allowed(false);
+		_flag4 = true;
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(1, 548);
+	} else if (player_said("WALK UP")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			player_set_commands_allowed(false);
+			_upSteps = series_load("504 UP STEPS");
+			player_update_info();
+			ws_hide_walker();
+			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
+				_G(player_info).depth, 0, triggerMachineByHashCallbackNegative, "Rp");
+			sendWSMessage_10000(1, _ripley, _upSteps, 1, 25, -1, _upSteps, 25, 25, 0);
+			kernel_timing_trigger(60, 2);
+			break;
+		case 2:
+			disable_player_commands_and_fade_init(2);
+			break;
+		case 3:
+			_G(game).setRoom(506);
+			break;	
+		default:
+			break;
+		}
+	} else if (player_said("EXIT") && !_flag1) {
+		if (inv_player_has("ROPE")) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				player_update_info();
+				ws_walk(_G(player_info).x, _G(player_info).y, nullptr, -1, 9);
+				disable_player_commands_and_fade_init(2);
+				break;
+			case 2:
+				_G(game).setRoom(501);
+				inv_move_object("ROPE", 504);
+				break;
+			default:
+				break;
+			}
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				ws_walk(183, 207, nullptr, 2, 3);
+				break;
+			case 2:
+				digi_play("504R44", 1, 255, 3);
+				break;
+			case 3:
+				player_set_commands_allowed(true);
+				break;
+			default:
+				break;
+			}
+		}
+	} else if (lookFlag && player_said("ROPE ") &&
+			(_G(flags)[V154] == 1 || _G(flags)[V154] == 4)) {
+		digi_play("504R39", 1);
+	} else if (lookFlag && player_said("GREEN VINE ") &&
+			(_G(flags)[V152] == 1 || _G(flags)[V152] == 4)) {
+		digi_play("504R39", 1);
+	} else if (lookFlag && player_said("BROWN VINE ") &&
+			(_G(flags)[V153] == 1 || _G(flags)[V153] == 4)) {
+		digi_play("504R39", 1);
+	} else if (lookFlag && player_said("ROPE  ") &&
+			(_G(flags)[V154] == 0 || _G(flags)[V154] == 5)) {
+		digi_play("504R40", 1);
+	} else if (lookFlag && player_said("GREEN VINE  ") &&
+			(_G(flags)[V152] == 0 || _G(flags)[V152] == 5)) {
+		digi_play("504R40", 1);
+	} else if (lookFlag && player_said("BROWN VINE  ") &&
+			(_G(flags)[V153] == 0 || _G(flags)[V153] == 5)) {
+		digi_play("504R40", 1);
+	} else if (lookFlag && ropeCoilFlag) {
+		digi_play("504R36", 1);
+	} else if (lookFlag && greenVineFlag) {
+		digi_play("504R34", 1);
+	} else if (lookFlag && brownVineFlag) {
+		digi_play("504R34", 1);
+	} else if (lookFlag && vineCoilFlag) {
+		digi_play("504R35", 1);
+	} else if (lookFlag && (
+			player_said_any("GREEN VINE ", "GREEN VINE  ") ||
+			player_said_any("BROWN VINE ", "BROWN VINE  ") ||
+			player_said_any("ROPE ", "ROPE  ", "ROPE   ") ||
+			player_said_any("GREEN VINE   ", "BROWN VINE   ")) &&
+			lookVines()) {
+		// No implementation
+	} else if (lookFlag && player_said(" ")) {
+		// TODO
+	}
+	// TODO
+	else {
+		return;
+	}
+
+	_G(player).command_ready = false;
 }
 
 void Room504::setVines() {
@@ -396,6 +620,126 @@ void Room504::addShovel() {
 	hs->facing = 11;
 
 	_G(currentSceneDef).hotspots = hotspot_add(_G(currentSceneDef).hotspots, hs, true);
+}
+
+bool Room504::checkVinesDistance() {
+	if (player_said("ROPE") && inv_player_has("ROPE"))
+		digi_play("504R49", 1);
+	else if (player_said("GREEN VINE") && inv_player_has("GREEN VINE"))
+		digi_play("504R49", 1);
+	else if (player_said("BROWN VINE") && inv_player_has("BROWN VINE"))
+		digi_play("504R49", 1);
+	else if (player_said("VINES") && inv_player_has("VINES"))
+		digi_play("504R49", 1);
+	else
+		return false;
+
+	return true;
+}
+
+bool Room504::parser1() {
+	if (!_flag1 && _G(player).click_x > 300) {
+		_G(kernel).trigger_mode = KT_DAEMON;
+		if (inv_player_has("DRIFTWOOD STUMP") || inv_player_has("POLE")) {
+			kernel_timing_trigger(1, 707);
+		} else if (!_flag2) {
+			ws_walk(200, 153, nullptr, 714, 3);
+		} else {
+			ws_walk(200, 153, nullptr, 570, 3);
+		}
+	} else if (_flag1 && _G(player).click_x <= 300) {
+		_flag3 = player_said("EXIT") && _flag2;
+		_G(kernel).trigger_mode = KT_DAEMON;
+
+		if (inv_player_has("WOODEN LADDER") ||
+				inv_player_has("LADDER/ROPE") ||
+				inv_player_has("LADDER/GREEN VINE") ||
+				inv_player_has("LADDER/BROWN VINE") ||
+				inv_player_has("LADDER/VINES")) {
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_timing_trigger(1, 725);
+		} else if (inv_player_has("SHOVEL")) {
+			kernel_timing_trigger(1, 755);
+		} else if (_flag2) {
+			ws_walk(528, 168, nullptr, 558, 8);
+		} else {
+			ws_walk(528, 168, nullptr, 734, 8);
+		}
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+void Room504::conv504a() {
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+	const char *sound = conv_sound_to_play();
+
+	if (_G(kernel).trigger == 1) {
+		if (who <= 0)
+			_convState = 2;
+		else if (who == 1)
+			_convState2 = 1;
+
+		conv_resume();
+	} else {
+		if (who <= 0) {
+			if (node == 8 && entry == 3) {
+				_convState = 10;
+			} else if (node == 19 && entry == 2) {
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_timing_trigger(1, 669);
+			} else {
+				_convState = 4;
+
+				if (sound)
+					digi_play(sound, 1, 255, 1);
+				else
+					conv_resume();
+			}
+		} else if (who == 1) {
+			if ((node == 15 && entry == 0) || (node == 18 && entry == 0)) {
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_timing_trigger(1, 657);
+			} else {
+				_convState2 = 3;
+
+				if (sound)
+					digi_play(sound, 1, 255, 1);
+				else
+					conv_resume();
+			}
+		}
+	}
+}
+
+bool Room504::lookVines() {
+	if (_G(flags)[V152] == 2 && _G(flags)[V153] == 2 &&
+		_G(flags)[V154] == 2) {
+		digi_play("504R38", 1);
+	} else if (_G(flags)[V154] == 2 && _G(flags)[V152] == 2) {
+		digi_play("504R37", 1);
+	} else if (_G(flags)[V154] == 2 && _G(flags)[V153] == 2) {
+		digi_play("504R37", 1);
+	} else if (_G(flags)[V154] == 2) {
+		if (_G(flags)[V167]) {
+			digi_play("504R05A", 1);
+		} else {
+			digi_play("504R05", 1);
+			_G(flags)[V167] = 1;
+		}
+	} else if (_G(flags)[V152] == 2 && _G(flags)[V153] == 2) {
+		digi_play("504R42", 1);
+	} else if (_G(flags)[V152] == 2 || _G(flags)[V153] == 2) {
+		digi_play("504R41", 1);
+	} else {
+		return false;
+	}
+
+	return true;
 }
 
 } // namespace Rooms

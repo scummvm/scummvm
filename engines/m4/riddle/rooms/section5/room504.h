@@ -32,8 +32,11 @@ class Room504 : public Room {
 private:
 	machine *_ripley = nullptr;
 	machine *_waterfall = nullptr;
+	int _upSteps = 0;
 	int _downSteps = 0;
 	int _volume = 0;
+	int _convState = 0;
+	int _convState2 = 0;
 
 	machine *_vines1 = nullptr;
 	machine *_vines2 = nullptr;
@@ -45,9 +48,13 @@ private:
 	machine *_shovel = nullptr;
 	machine *_driftwood = nullptr;
 	machine *_pole = nullptr;
-	int _xyzzy2 = 0;
+	bool _flag1 = false;
+	bool _flag2 = false;
+	bool _flag3 = false;
+	bool _flag4 = false;
 
-	int _val1 = 0;
+	int _trigger1 = 0;
+	int _trigger2 = 0;
 
 	void setVines();
 	void freeVines();
@@ -61,6 +68,10 @@ private:
 	void addHotspot(int x1, int y1, int x2, int y2,
 		const char *verb, const char *vocab);
 	void addShovel();
+	bool checkVinesDistance();
+	bool parser1();
+	void conv504a();
+	bool lookVines();
 
 public:
 	Room504() : Room() {}

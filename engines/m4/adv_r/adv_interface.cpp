@@ -79,4 +79,9 @@ void intr_freshen_sentence() {
 	_GI().freshen_sentence();
 }
 
+void intr_freshen_sentence(int cursor) {
+	mouse_set_sprite(cursor);
+	_GI().freshen_sentence();
+}
+
 } // End of namespace M4

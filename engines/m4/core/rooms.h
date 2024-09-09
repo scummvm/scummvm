@@ -159,6 +159,9 @@ public:
 
 	void pal_game_task();
 	void camera_shift_xy(int32 x, int32 y);
+	bool game_camera_panning() const {
+		return _cameraShiftAmount != 0 || _cameraShift_vert_Amount != 0;
+	}
 
 	virtual void global_daemon() = 0;
 	virtual void global_pre_parser() = 0;

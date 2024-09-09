@@ -79,6 +79,7 @@ bool intr_EventHandler(void *bufferPtr, int32 eventType, int32 event, int32 x, i
 
 void intr_cancel_sentence();
 void intr_freshen_sentence();
+void intr_freshen_sentence(int cursor);
 
 } // End of namespace M4
 
