@@ -178,7 +178,7 @@ static SQInteger actorColor(HSQUIRRELVM v) {
 }
 
 // Sets the actor's costume to the (JSON) filename animation file.
-// If the actor is expected to preform the standard walk, talk, stand, reach animations, they need to exist in the file.
+// If the actor is expected to perform the standard walk, talk, stand, reach animations, they need to exist in the file.
 // If a sheet is given, this is a sprite sheet containing all the images needed for the animation.
 static SQInteger actorCostume(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> actor = sqactor(v, 2);
