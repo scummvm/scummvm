@@ -485,8 +485,6 @@ HSaveError WriteCharacters(Stream *out) {
 		Properties::WriteValues(_GP(play).charProps[i], out);
 		if (_G(loaded_game_file_version) <= kGameVersion_272)
 			WriteTimesRun272(*_GP(game).intrChar[i], out);
-		// character movement path cache
-		_GP(mls)[CHMLSOFFS + i].WriteToFile(out);
 	}
 	return HSaveError::None();
 }
@@ -501,10 +499,12 @@ HSaveError ReadCharacters(Stream *in, int32_t cmp_ver, const PreservedParams & /
 		Properties::ReadValues(_GP(play).charProps[i], in);
 		if (_G(loaded_game_file_version) <= kGameVersion_272)
 			ReadTimesRun272(*_GP(game).intrChar[i], in);
-		// character movement path cache
-		err = _GP(mls)[CHMLSOFFS + i].ReadFromFile(in, cmp_ver > 0 ? 1 : 0);
-		if (!err)
-			return err;
+		// character movement path (for old saves)
+		if (cmp_ver < 3) {
+			err = _GP(mls)[CHMLSOFFS + i].ReadFromFile(in, cmp_ver > 0 ? 1 : 0);
+			if (!err)
+				return err;
+		}
 	}
 	return err;
 }
@@ -935,13 +935,6 @@ HSaveError WriteThisRoom(Stream *out) {
 		out->WriteInt32(_GP(thisroom).WalkAreas[i].ScalingNear);
 	}
 
-	// room object movement paths cache
-	// CHECKME: not sure why it saves (object count + 1) move lists
-	out->WriteInt32(_GP(thisroom).Objects.size() + 1);
-	for (size_t i = 0; i < _GP(thisroom).Objects.size() + 1; ++i) {
-		_GP(mls)[i].WriteToFile(out);
-	}
-
 	// room music volume
 	out->WriteInt32(_GP(thisroom).Options.MusicVolume);
 
@@ -981,14 +974,17 @@ HSaveError ReadThisRoom(Stream *in, int32_t cmp_ver, const PreservedParams & /*p
 		r_data.RoomZoomLevels2[i] = in->ReadInt32();
 	}
 
-	// room object movement paths cache
-	int objmls_count = in->ReadInt32();
-	if (!AssertCompatLimit(err, objmls_count, CHMLSOFFS, "room object move lists"))
-		return err;
-	for (int i = 0; i < objmls_count; ++i) {
-		err = _GP(mls)[i].ReadFromFile(in, cmp_ver > 0 ? 1 : 0); // FIXME cmp_ver, ugly
-		if (!err)
+	// room object movement paths, for old saves
+	if (cmp_ver < kRoomStatSvgVersion_36109) {
+		int objmls_count = in->ReadInt32();
+		if (!AssertCompatLimit(err, objmls_count, CHMLSOFFS, "room object move lists"))
 			return err;
+		const int mls_cmp_ver = cmp_ver > 0 ? 1 : 0;
+		for (int i = 0; i < objmls_count; ++i) {
+			err = _GP(mls)[i].ReadFromFile(in, mls_cmp_ver);
+			if (!err)
+				return err;
+		}
 	}
 
 	// save the new room music vol for later use
@@ -999,6 +995,31 @@ HSaveError ReadThisRoom(Stream *in, int32_t cmp_ver, const PreservedParams & /*p
 		_GP(troom).ReadFromSavegame(in, _G(loaded_game_file_version), (RoomStatSvgVersion)cmp_ver);
 
 	return HSaveError::None();
+}
+
+HSaveError WriteMoveLists(Stream *out) {
+	out->WriteInt32(static_cast<int32_t>(_GP(mls).size()));
+	for (const auto &movelist : _GP(mls)) {
+		movelist.WriteToFile(out);
+	}
+	return HSaveError::None();
+}
+
+HSaveError ReadMoveLists(Stream *in, int32_t cmp_ver, const PreservedParams & /*pp*/, RestoredData & /*r_data*/) {
+	HSaveError err;
+	size_t movelist_count = in->ReadInt32();
+	// TODO: this assertion is needed only because mls size is fixed to the
+	// number of characters + max number of objects, where each game object
+	// has a fixed movelist index. It may be removed if movelists will be
+	// allocated on demand with an arbitrary index instead.
+	if (!AssertGameContent(err, movelist_count, _GP(mls).size(), "Move Lists"))
+		return err;
+	for (size_t i = 0; i < movelist_count; ++i) {
+		err = _GP(mls)[i].ReadFromFile(in, cmp_ver);
+		if (!err)
+			return err;
+	}
+	return err;
 }
 
 HSaveError WriteManagedPool(Stream *out) {
@@ -1036,7 +1057,7 @@ struct ComponentHandler {
 
 // Array of supported components
 struct ComponentHandlers {
-	const ComponentHandler _items[17] = {
+	const ComponentHandler _items[18] = {
 		{
 			"Game State",
 			kGSSvgVersion_350_10,
@@ -1053,7 +1074,7 @@ struct ComponentHandlers {
 		},
 		{
 			"Characters",
-			2,
+			3,
 			0,
 			WriteCharacters,
 			ReadCharacters
@@ -1123,17 +1144,24 @@ struct ComponentHandlers {
 		},
 		{
 			"Room States",
-			kRoomStatSvgVersion_36041,
+			kRoomStatSvgVersion_36109,
 			kRoomStatSvgVersion_Initial,
 			WriteRoomStates,
 			ReadRoomStates
 		},
 		{
 			"Loaded Room State",
-			kRoomStatSvgVersion_36041, // must correspond to "Room States"
+			kRoomStatSvgVersion_36109, // must correspond to "Room States"
 			kRoomStatSvgVersion_Initial,
 			WriteThisRoom,
 			ReadThisRoom
+		},
+		{
+			"Move Lists",
+			2,
+			0,
+			WriteMoveLists,
+			ReadMoveLists
 		},
 		{
 			"Managed Pool",

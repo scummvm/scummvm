@@ -68,7 +68,7 @@ struct MoveList {
 
 	void ReadFromFile_Legacy(Shared::Stream *in);
 	AGS::Engine::HSaveError ReadFromFile(Shared::Stream *in, int32_t cmp_ver);
-	void WriteToFile(Shared::Stream *out);
+	void WriteToFile(Shared::Stream *out) const;
 };
 
 } // namespace AGS3
