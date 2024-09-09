@@ -136,7 +136,7 @@ bool CycleProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	_running = rs->readByte();
 	_instance = this; //static
 
-	_type = 1; // should be persistant but older savegames may not know that.
+	_type = 1; // should be persistent but older savegames may not know that.
 	return true;
 }
 
