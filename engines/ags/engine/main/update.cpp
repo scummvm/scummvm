@@ -137,8 +137,9 @@ int do_movelist_move(short &mslot, int &pos_x, int &pos_y) {
 		if (((xpermove > 0) && (xps >= targetx)) || ((xpermove < 0) && (xps <= targetx))) {
 			cmls.doneflag |= kMoveListDone_X;
 			xps = targetx; // snap to the target (in case run over)
-			movelist_handle_remainer(xpermove, ypermove, targetx - cmls.from.X,
-									 cmls.GetStepLength(), cmls.fin_move, cmls.fin_from_part);
+			if (ypermove != 0)
+				movelist_handle_remainer(xpermove, ypermove, targetx - cmls.from.X,
+										 cmls.GetStepLength(), cmls.fin_move, cmls.fin_from_part);
 			// Comment about old engine behavior:
 			// if the Y is almost there too, finish it
 			// this is new in v2.40
@@ -155,8 +156,9 @@ int do_movelist_move(short &mslot, int &pos_x, int &pos_y) {
 		if (((ypermove > 0) && (yps >= targety)) || ((ypermove < 0) & (yps <= targety))) {
 			cmls.doneflag |= kMoveListDone_Y;
 			yps = targety; // snap to the target (in case run over)
-			movelist_handle_remainer(ypermove, xpermove, targety - cmls.from.Y,
-									 cmls.GetStepLength(), cmls.fin_move, cmls.fin_from_part);
+			if (xpermove != 0)
+				movelist_handle_remainer(ypermove, xpermove, targety - cmls.from.Y,
+										 cmls.GetStepLength(), cmls.fin_move, cmls.fin_from_part);
 		} else if (ypermove == 0) {
 			cmls.doneflag |= kMoveListDone_Y;
 		}
