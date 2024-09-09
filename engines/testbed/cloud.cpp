@@ -186,7 +186,7 @@ TestExitStatus CloudTests::testInfo() {
 		"Welcome to the Cloud test suite!\n"
 		"We're going to use the %s cloud storage which is connected right now.\n\n"
 		"Testing Cloud Storage API info() method.\n"
-		"In this test we'll try to list user infomation.",
+		"In this test we'll try to list user information.",
 		CloudMan.getCurrentStorage()->name().c_str()
 	);
 
