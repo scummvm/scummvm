@@ -583,12 +583,12 @@ void Room::trial1UseCommunicator() {
 				};
 				int choice = showMultipleTexts(choices);
 
-				if (choice == 0) { // Don't analyze the anomolous program
+				if (choice == 0) { // Don't analyze the anomalous program
 					showText(TX_SPEAKER_UHURA, TX_TRI1U079);
 					_awayMission->trial.doorCodeBehaviour = 2;
 					_awayMission->trial.uhuraAnalyzedCode = true;
 					_awayMission->trial.missionScore += 1;
-				} else { // Analyze the anomolous program
+				} else { // Analyze the anomalous program
 					showText(TX_SPEAKER_UHURA, TX_TRI1U102);
 
 					const TextRef choices2[] = {
