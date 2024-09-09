@@ -2275,7 +2275,7 @@ bool U6UseCode::use_horse(Obj *obj, UseCodeEvent ev) {
 
 		// create a temporary horse on the map.
 		actor_manager->create_temp_actor(OBJ_U6_HORSE, NO_OBJ_STATUS, obj->x, obj->y, obj->z, ACTOR_ALIGNMENT_DEFAULT, WORKTYPE_U6_ANIMAL_WANDER);
-	} else if (!actor_manager->is_temp_actor(actor)) { // Try to mount horse. Don't use permenant Actors eg Smith, push-me pull-you
+	} else if (!actor_manager->is_temp_actor(actor)) { // Try to mount horse. Don't use permanent Actors eg Smith, push-me pull-you
 		scroll->display_string("\nHorse not boardable!\n");
 	} else { // mount up.
 		if (UseCode::out_of_use_range(obj, true))
