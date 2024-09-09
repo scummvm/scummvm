@@ -212,7 +212,7 @@ void TinyTSA::clickInHotspot(const Input &input, const Hotspot *clickedSpot) {
 	if (clickedSpot) {
 		switch (clickedSpot->getObjectID()) {
 		case kTinyTSA37NorthJumpMenuSpotID:
-			// This hotspot isn't accessable from Tiny TSA
+			// This hotspot isn't accessible from Tiny TSA
 			warning("jump menu spot");
 			return;
 		case kTinyTSA37NorthJumpToNoradSpotID:
