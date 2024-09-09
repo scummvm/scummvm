@@ -733,9 +733,9 @@ void calculate_move_stage(MoveList *mlsp, int aaa, fixed move_speed_x, fixed mov
 #endif
 }
 
-int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int move_speed_y, Bitmap *onscreen, int movlst, int nocross, int ignore_walls) {
+int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int move_speed_y, Bitmap *onscreen, int move_id, int nocross, int ignore_walls) {
 	assert(onscreen != nullptr);
-	assert((int)_GP(mls).size() > movlst);
+	assert((int)_GP(mls).size() > move_id);
 	assert(pathbackx != nullptr);
 	assert(pathbacky != nullptr);
 
@@ -851,9 +851,9 @@ stage_again:
 #ifdef DEBUG_PATHFINDER
 		AGS::Shared::Debug::Printf("Route from %d,%d to %d,%d - %d stage, %d stages", orisrcx, orisrcy, xx, yy, pathbackstage, numstages);
 #endif
-		int mlist = movlst;
-		_GP(mls)[mlist].numstage = numstages;
-		memcpy(&_GP(mls)[mlist].pos[0], &reallyneed[0], sizeof(Point) * numstages);
+		MoveList mlist;
+		mlist.numstage = numstages;
+		memcpy(&mlist.pos[0], &reallyneed[0], sizeof(Point) * numstages);
 #ifdef DEBUG_PATHFINDER
 		AGS::Shared::Debug::Printf("stages: %d\n", numstages);
 #endif
@@ -861,18 +861,16 @@ stage_again:
 		const fixed fix_speed_x = input_speed_to_fixed(move_speed_x);
 		const fixed fix_speed_y = input_speed_to_fixed(move_speed_y);
 		for (aaa = 0; aaa < numstages - 1; aaa++) {
-			calculate_move_stage(&_GP(mls)[mlist], aaa, fix_speed_x, fix_speed_y);
+			calculate_move_stage(&mlist, aaa, fix_speed_x, fix_speed_y);
 		}
 
-		_GP(mls)[mlist].from = {orisrcx, orisrcy};
-		_GP(mls)[mlist].onstage = 0;
-		_GP(mls)[mlist].onpart = 0.f;
-		_GP(mls)[mlist].doneflag = 0;
+		mlist.from = {orisrcx, orisrcy};
+		_GP(mls)[move_id] = mlist;
 #ifdef DEBUG_PATHFINDER
 		// getch();
 #endif
 
-		return mlist;
+		return move_id;
 	} else {
 		return 0;
 	}
