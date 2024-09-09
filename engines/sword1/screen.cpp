@@ -585,7 +585,7 @@ void Screen::draw() {
 		memcpy(_screenBuf, _layerBlocks[0], _scrnSizeX * _scrnSizeY);
 	} else { //We are using PSX version
 		if (_currentScreen == 45 || _currentScreen == 55 ||
-		        _currentScreen == 57 || _currentScreen == 63 || _currentScreen == 71) { // Width shrinked backgrounds
+		        _currentScreen == 57 || _currentScreen == 63 || _currentScreen == 71) { // Width shrunk backgrounds
 			if (!_psxCache.decodedBackground)
 				_psxCache.decodedBackground = psxShrinkedBackgroundToIndexed(_layerBlocks[0], _scrnSizeX, _scrnSizeY);
 		} else {
@@ -696,11 +696,11 @@ void Screen::processImage(uint32 id) {
 	uint16 sprSizeX, sprSizeY;
 	if (compact->o_status & STAT_SHRINK) {
 		memset(_shrinkBuffer, 0, SHRINK_BUFFER_SIZE); //Clean shrink buffer to avoid corruption
-		if (SwordEngine::isPsx() && (compact->o_resource != GEORGE_MEGA)) { //PSX Height shrinked sprites
+		if (SwordEngine::isPsx() && (compact->o_resource != GEORGE_MEGA)) { //PSX Height shrunk sprites
 			sprSizeX = (scale * _resMan->readUint16(&frameHead->width)) / 256;
 			sprSizeY = (scale * (_resMan->readUint16(&frameHead->height))) / 256 / 2;
 			fastShrink(sprData, _resMan->readUint16(&frameHead->width), (_resMan->readUint16(&frameHead->height)) / 2, scale, _shrinkBuffer);
-		} else if (SwordEngine::isPsx()) { //PSX width/height shrinked sprites
+		} else if (SwordEngine::isPsx()) { //PSX width/height shrunk sprites
 			sprSizeX = (scale * _resMan->readUint16(&frameHead->width)) / 256 / 2;
 			sprSizeY = (scale * _resMan->readUint16(&frameHead->height)) / 256 / 2;
 			fastShrink(sprData, _resMan->readUint16(&frameHead->width) / 2, _resMan->readUint16(&frameHead->height) / 2, scale, _shrinkBuffer);
@@ -743,12 +743,12 @@ void Screen::processImage(uint32 id) {
 		if ((!(SwordEngine::isPsx()) || (compact->o_type == TYPE_TEXT)
 		        || (compact->o_resource == LVSFLY) || (!(compact->o_resource == GEORGE_MEGA) && (sprSizeX < 260))))
 			drawSprite(sprData + incr, spriteX, spriteY, sprSizeX, sprSizeY, sprPitch);
-		else if (((sprSizeX >= 260) && (sprSizeX < 450)) || ((compact->o_resource == GMWRITH) && (sprSizeX < 515))  // a psx shrinked sprite (1/2 width)
+		else if (((sprSizeX >= 260) && (sprSizeX < 450)) || ((compact->o_resource == GMWRITH) && (sprSizeX < 515))  // a PSX shrunk sprite (1/2 width)
 		         || ((compact->o_resource == GMPOWER) && (sprSizeX < 515)))                                         // some needs to be hardcoded, headers don't give useful infos
 			drawPsxHalfShrinkedSprite(sprData + incr, spriteX, spriteY, sprSizeX / 2, sprSizeY, sprPitch / 2);
-		else if (sprSizeX >= 450) // A PSX double shrinked sprite (1/3 width)
+		else if (sprSizeX >= 450) // a PSX double shrunk sprite (1/3 width)
 			drawPsxFullShrinkedSprite(sprData + incr, spriteX, spriteY, sprSizeX / 3, sprSizeY, sprPitch / 3);
-		else // This is for psx half shrinked, walking george and remaining sprites
+		else // This is for PSX half shrunk, walking george and remaining sprites
 			drawPsxHalfShrinkedSprite(sprData + incr, spriteX, spriteY, sprSizeX, sprSizeY, sprPitch);
 		if (!(compact->o_status & STAT_FORE) && !(SwordEngine::isPsx() && (compact->o_resource == MOUBUSY))) // Check fixes moue sprite being masked by layer, happens only on psx
 			verticalMask(spriteX, spriteY, sprSizeX, sprSizeY);
@@ -765,7 +765,7 @@ void Screen::verticalMask(uint16 x, uint16 y, uint16 bWidth, uint16 bHeight) {
 	if (_roomDefTable[_currentScreen].totalLayers <= 1)
 		return;
 
-	if (SwordEngine::isPsx()) { // PSX sprites are vertical shrinked, and some width shrinked
+	if (SwordEngine::isPsx()) { // PSX sprites are vertical shrunk, and some width shrunk
 		bHeight *= 2;
 		bWidth *= 2;
 	}
