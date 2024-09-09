@@ -1505,6 +1505,7 @@ maps:
 		banner: "A banner reads:\nThe endless spiral!!!"
 		sign: "A sign above the door reads:\nMonster breeding grounds, keep out!"
 		machine: "A loud machine pulsates rhythmically."
+  		// FIXME: Spelling incorrect. metalic should be metallic. Fixing changes game data and thus may cause issues
 		box: "A metalic box echoes:\n\"Intruder alert!\""
 		message1: "Scratched on the wall:\nSearch after the canine rewards you!"
 		message2: "Scrawled on the wall:\nFor the world is hollow and i have\ntouched the sky!"
