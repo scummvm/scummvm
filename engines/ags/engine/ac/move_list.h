@@ -58,7 +58,7 @@ struct MoveList {
 	// Steps made during current stage;
 	// distance passed is calculated as xpermove[onstage] * onpart;
 	// made a fractional value to let recalculate movelist dynamically
-	fixed onpart = 0;
+	float onpart = 0.f;
 	uint8_t doneflag = 0u;
 	uint8_t direct = 0; // MoveCharDirect was used or not
 
