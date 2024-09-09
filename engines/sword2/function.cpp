@@ -896,7 +896,7 @@ int32 Logic::fnISpeak(int32 *params) {
 
 			_animId = READ_LE_UINT32(anim_table + 4 * obMega.getCurDir());
 		} else {
-			// No animation choosen
+			// No animation chosen
 			_animId = 0;
 		}
 
