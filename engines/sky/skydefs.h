@@ -4276,7 +4276,7 @@ namespace Sky {
 #define SF_PLUS_FX	(1 << 10)	// set if extra fx module needed
 #define SF_FX_OFF	(1 << 11)	// set if fx disabled
 #define SF_MUS_OFF	(1 << 12)	// set if music disabled
-#define SF_TIMER_TICK	(1 << 13)	// set every timer interupt
+#define SF_TIMER_TICK	(1 << 13)	// set every timer interrupt
 
 // Status flags
 #define SF_CHOOSING	(1 << 14)	// set when choosing text
