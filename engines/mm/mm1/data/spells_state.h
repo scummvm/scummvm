@@ -34,7 +34,7 @@ struct SpellsState {
 	byte _mmVal5 = 0;
 	byte _mmVal7 = 0;
 
-	// This can hold both a resistence type, or count of monsters to affect
+	// This can hold both a resistance type, or count of monsters to affect
 	byte _resistanceTypeOrTargetCount = RESISTANCE_MAGIC;
 
 	// TODO: Is this variable different in different contexts?
