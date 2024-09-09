@@ -1088,7 +1088,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("foxtail", "1.2.230.1291",
 		WME_ENTRY1s("data.dcp", "651ae5b062073021edaca7e1de131eec", 59357572), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_230),
 
-	// FoxTail 1.2.230.1291 (Ukranian)
+	// FoxTail 1.2.230.1291 (Ukrainian)
 	WME_WINENTRY("foxtail", "1.2.230.1291",
 		WME_ENTRY1s("data.dcp", "651ae5b062073021edaca7e1de131eec", 59357572), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_230),
 
@@ -1104,7 +1104,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("foxtail", "1.2.230.1303",
 		WME_ENTRY1s("data.dcp", "03ed77b1ac8b94bbd0247324a41621ad", 59357623), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_230),
 
-	// FoxTail 1.2.230.1303 (Ukranian)
+	// FoxTail 1.2.230.1303 (Ukrainian)
 	WME_WINENTRY("foxtail", "1.2.230.1303",
 		WME_ENTRY1s("data.dcp", "03ed77b1ac8b94bbd0247324a41621ad", 59357623), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_230),
 
@@ -1120,7 +1120,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("foxtail", "1.2.230.1313",
 		WME_ENTRY1s("data.dcp", "d7287c49210c7c9f9376327c6e224c7b", 59383312), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_230),
 
-	// FoxTail 1.2.230.1313 (Ukranian)
+	// FoxTail 1.2.230.1313 (Ukrainian)
 	WME_WINENTRY("foxtail", "1.2.230.1313",
 		WME_ENTRY1s("data.dcp", "d7287c49210c7c9f9376327c6e224c7b", 59383312), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_230),
 
@@ -1136,7 +1136,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("foxtail", "1.2.230.1315",
 		WME_ENTRY1s("data.dcp", "434c4f598582a569972acd4d700a44e5", 59383416), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_230),
 
-	// FoxTail 1.2.230.1315 (Ukranian)
+	// FoxTail 1.2.230.1315 (Ukrainian)
 	WME_WINENTRY("foxtail", "1.2.230.1315",
 		WME_ENTRY1s("data.dcp", "434c4f598582a569972acd4d700a44e5", 59383416), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_230),
 
@@ -1152,7 +1152,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("foxtail", "1.2.230.1316",
 		WME_ENTRY1s("data.dcp", "5aa16c180998f1816a734c58a01ab8b1", 59383306), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_230),
 
-	// FoxTail 1.2.230.1316 (Ukranian)
+	// FoxTail 1.2.230.1316 (Ukrainian)
 	WME_WINENTRY("foxtail", "1.2.230.1316",
 		WME_ENTRY1s("data.dcp", "5aa16c180998f1816a734c58a01ab8b1", 59383306), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_230),
 
@@ -1168,7 +1168,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("foxtail", "1.2.230.1318",
 		WME_ENTRY1s("data.dcp", "363856606d19fb7e0e3a0a67737697fa", 59382887), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_230),
 
-	// FoxTail 1.2.230.1318 (Ukranian)
+	// FoxTail 1.2.230.1318 (Ukrainian)
 	WME_WINENTRY("foxtail", "1.2.230.1318",
 		WME_ENTRY1s("data.dcp", "363856606d19fb7e0e3a0a67737697fa", 59382887), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_230),
 
@@ -1184,7 +1184,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("foxtail", "1.2.230.1321",
 		WME_ENTRY1s("data.dcp", "bbab16777c4bc979c5f773e12b804a63", 59151985), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_230),
 
-	// FoxTail 1.2.230.1321 (Ukranian)
+	// FoxTail 1.2.230.1321 (Ukrainian)
 	WME_WINENTRY("foxtail", "1.2.230.1321",
 		WME_ENTRY1s("data.dcp", "bbab16777c4bc979c5f773e12b804a63", 59151985), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_230),
 
@@ -1201,7 +1201,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("foxtail", "1.2.230.1322",
 		WME_ENTRY1s("data.dcp", "22e5f634742956b6f4087459a9c8acf4", 59151985), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_230),
 
-	// FoxTail 1.2.230.1322 (Ukranian)
+	// FoxTail 1.2.230.1322 (Ukrainian)
 	WME_WINENTRY("foxtail", "1.2.230.1322",
 		WME_ENTRY1s("data.dcp", "22e5f634742956b6f4087459a9c8acf4", 59151985), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_230),
 
@@ -1217,7 +1217,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("foxtail", "1.2.304.1571",
 		WME_ENTRY1s("data.dcp", "32fd78f0b1509863f2e91bc7afc633ff", 59630008), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_304),
 
-	// FoxTail 1.2.304.1571 (Ukranian)
+	// FoxTail 1.2.304.1571 (Ukrainian)
 	WME_WINENTRY("foxtail", "1.2.304.1571",
 		WME_ENTRY1s("data.dcp", "32fd78f0b1509863f2e91bc7afc633ff", 59630008), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_304),
 
@@ -1233,7 +1233,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("foxtail", "1.2.362.2039",
 		WME_ENTRY1s("data.dcp", "ca1b0379c8f0dffd3bf8b95e91379b2c", 70132635), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_362),
 
-	// FoxTail 1.2.362.2039 (Ukranian)
+	// FoxTail 1.2.362.2039 (Ukrainian)
 	WME_WINENTRY("foxtail", "1.2.362.2039",
 		WME_ENTRY1s("data.dcp", "ca1b0379c8f0dffd3bf8b95e91379b2c", 70132635), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_362),
 
@@ -1249,7 +1249,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("foxtail", "1.2.362.2047",
 		WME_ENTRY1s("data.dcp", "2c4c744ff103f4fc6e770515e2da8b16", 70124937), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_362),
 
-	// FoxTail 1.2.362.2047 (Ukranian)
+	// FoxTail 1.2.362.2047 (Ukrainian)
 	WME_WINENTRY("foxtail", "1.2.362.2047",
 		WME_ENTRY1s("data.dcp", "2c4c744ff103f4fc6e770515e2da8b16", 70124937), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_362),
 
@@ -1269,7 +1269,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("foxtail", "1.2.527.3377",
 		WME_ENTRY1s("data.dcp", "e0177c5752d067a3e473b86ad40d57c3", 109502449), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_527),
 
-	// FoxTail 1.2.527.3377 (Ukranian)
+	// FoxTail 1.2.527.3377 (Ukrainian)
 	WME_WINENTRY("foxtail", "1.2.527.3377",
 		WME_ENTRY1s("data.dcp", "e0177c5752d067a3e473b86ad40d57c3", 109502449), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_527),
 
@@ -1289,7 +1289,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("foxtail", "1.2.527.3389",
 		WME_ENTRY1s("data.dcp", "a940ffa1b4347588d13e4a9756bb0bbd", 109503345), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_527),
 
-	// FoxTail 1.2.527.3389 (Ukranian)
+	// FoxTail 1.2.527.3389 (Ukrainian)
 	WME_WINENTRY("foxtail", "1.2.527.3389",
 		WME_ENTRY1s("data.dcp", "a940ffa1b4347588d13e4a9756bb0bbd", 109503345), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_527),
 
@@ -1309,7 +1309,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("foxtail", "1.2.527.3391",
 		WME_ENTRY1s("data.dcp", "e5d06fa058cd9d6f20d6206356e5854d", 109503303), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_527),
 
-	// FoxTail 1.2.527.3391 (Ukranian)
+	// FoxTail 1.2.527.3391 (Ukrainian)
 	WME_WINENTRY("foxtail", "1.2.527.3391",
 		WME_ENTRY1s("data.dcp", "e5d06fa058cd9d6f20d6206356e5854d", 109503303), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_527),
 
@@ -1329,7 +1329,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("foxtail", "1.2.896.4370",
 		WME_ENTRY1s("data.dcp", "cee21687240aa160b8ebf1e0cccaef59", 154006218), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_896),
 
-	// FoxTail 1.2.896.4370 (Ukranian)
+	// FoxTail 1.2.896.4370 (Ukrainian)
 	WME_WINENTRY("foxtail", "1.2.896.4370",
 		WME_ENTRY1s("data.dcp", "cee21687240aa160b8ebf1e0cccaef59", 154006218), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_896),
 
@@ -1349,7 +1349,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("foxtail", "1.2.896.4371",
 		WME_ENTRY1s("data.dcp", "ca9842a6461cc7b00e63b5bc11813971", 154006242), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_896),
 
-	// FoxTail 1.2.896.4371 (Ukranian)
+	// FoxTail 1.2.896.4371 (Ukrainian)
 	WME_WINENTRY("foxtail", "1.2.896.4371",
 		WME_ENTRY1s("data.dcp", "ca9842a6461cc7b00e63b5bc11813971", 154006242), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_896),
 
@@ -1369,7 +1369,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("foxtail", "1.2.902.4379",
 		WME_ENTRY1s("data.dcp", "a4a5458afa42ac1d90f4050b033421a4", 153987445), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_902),
 
-	// FoxTail 1.2.902.4379 (Ukranian)
+	// FoxTail 1.2.902.4379 (Ukrainian)
 	WME_WINENTRY("foxtail", "1.2.902.4379",
 		WME_ENTRY1s("data.dcp", "a4a5458afa42ac1d90f4050b033421a4", 153987445), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_902),
 
