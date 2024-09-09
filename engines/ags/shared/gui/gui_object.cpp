@@ -68,19 +68,17 @@ bool GUIObject::IsOverControl(int x, int y, int leeway) const {
 }
 
 void GUIObject::SetClickable(bool on) {
-	if (on)
-		Flags |= kGUICtrl_Clickable;
-	else
-		Flags &= ~kGUICtrl_Clickable;
+	if (on != ((Flags & kGUICtrl_Clickable) != 0)) {
+		Flags = (Flags & ~kGUICtrl_Clickable) | kGUICtrl_Clickable * on;
+		MarkStateChanged(false, false); // update cursor-over-control only
+	}
 }
 
 void GUIObject::SetEnabled(bool on) {
-	if (on != ((Flags & kGUICtrl_Enabled) != 0))
-		MarkChanged();
-	if (on)
-		Flags |= kGUICtrl_Enabled;
-	else
-		Flags &= ~kGUICtrl_Enabled;
+	if (on != ((Flags & kGUICtrl_Enabled) != 0)) {
+		Flags = (Flags & ~kGUICtrl_Enabled) | kGUICtrl_Enabled * on;
+		MarkStateChanged(true, true); // may change looks, and update cursor-over-control
+	}
 }
 
 void GUIObject::SetSize(int width, int height) {
@@ -92,27 +90,23 @@ void GUIObject::SetSize(int width, int height) {
 }
 
 void GUIObject::SetTranslated(bool on) {
-	if (on != ((Flags & kGUICtrl_Translated) != 0))
+	if (on != ((Flags & kGUICtrl_Translated) != 0)) {
+		Flags = (Flags & ~kGUICtrl_Translated) | kGUICtrl_Translated * on;
 		MarkChanged();
-	if (on)
-		Flags |= kGUICtrl_Translated;
-	else
-		Flags &= ~kGUICtrl_Translated;
+	}
 }
 
 void GUIObject::SetVisible(bool on) {
-	if (on != ((Flags & kGUICtrl_Visible) != 0))
-		NotifyParentChanged(); // for software mode
-	if (on)
-		Flags |= kGUICtrl_Visible;
-	else
-		Flags &= ~kGUICtrl_Visible;
+	if (on != ((Flags & kGUICtrl_Visible) != 0)) {
+		Flags = (Flags & ~kGUICtrl_Visible) | kGUICtrl_Visible * on;
+		MarkStateChanged(false, true); // for software mode, and to update cursor-over-control
+	}
 }
 
 void GUIObject::SetTransparency(int trans) {
 	if (_transparency != trans) {
 		_transparency = trans;
-		NotifyParentChanged(); // for software mode
+		MarkParentChanged(); // for software mode
 	}
 }
 

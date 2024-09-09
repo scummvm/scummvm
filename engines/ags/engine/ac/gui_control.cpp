@@ -65,9 +65,6 @@ void GUIControl_SetVisible(GUIObject *guio, int visible) {
 	const bool on = visible != 0;
 	if (on != guio->IsVisible()) {
 		guio->SetVisible(on);
-		// Make sure that the overpic is turned off when the GUI goes off
-		if (!on && (_GP(guis)[guio->ParentId].MouseOverCtrl == guio->Id))
-			_GP(guis)[guio->ParentId].ResetOverControl();
 	}
 }
 
@@ -78,13 +75,10 @@ int GUIControl_GetClickable(GUIObject *guio) {
 }
 
 void GUIControl_SetClickable(GUIObject *guio, int enabled) {
-	if (enabled)
-		guio->SetClickable(true);
-	else
-		guio->SetClickable(false);
-
-	// clickable property may change control behavior under mouse
-	_GP(guis)[guio->ParentId].MarkControlsChanged();
+	const bool on = enabled != 0;
+	if (on != guio->IsClickable()) {
+		guio->SetClickable(on);
+	}
 }
 
 int GUIControl_GetEnabled(GUIObject *guio) {
@@ -155,7 +149,7 @@ int GUIControl_GetX(GUIObject *guio) {
 
 void GUIControl_SetX(GUIObject *guio, int xx) {
 	guio->X = data_to_game_coord(xx);
-	_GP(guis)[guio->ParentId].MarkControlsChanged(); // update control under cursor
+	_GP(guis)[guio->ParentId].NotifyControlPosition(); // update control under cursor
 }
 
 int GUIControl_GetY(GUIObject *guio) {
@@ -164,7 +158,7 @@ int GUIControl_GetY(GUIObject *guio) {
 
 void GUIControl_SetY(GUIObject *guio, int yy) {
 	guio->Y = data_to_game_coord(yy);
-	_GP(guis)[guio->ParentId].MarkControlsChanged(); // update control under cursor
+	_GP(guis)[guio->ParentId].NotifyControlPosition(); // update control under cursor
 }
 
 int GUIControl_GetZOrder(GUIObject *guio) {

@@ -74,8 +74,6 @@ void InterfaceOn(int ifn) {
 	debug_script_log("GUI %d turned on", ifn);
 	// modal interface
 	if (_GP(guis)[ifn].PopupStyle == kGUIPopupModal) PauseGame();
-	_GP(guis)[ifn].MarkControlsChanged();
-	_GP(guis)[ifn].ResetOverControl(); // clear the cached mouse position
 	_GP(guis)[ifn].Poll(_G(mousex), _G(mousey));
 }
 
@@ -86,12 +84,6 @@ void InterfaceOff(int ifn) {
 	}
 	debug_script_log("GUI %d turned off", ifn);
 	_GP(guis)[ifn].SetVisible(false);
-	if (_GP(guis)[ifn].MouseOverCtrl >= 0) {
-		// Make sure that the overpic is turned off when the GUI goes off
-		_GP(guis)[ifn].GetControl(_GP(guis)[ifn].MouseOverCtrl)->OnMouseLeave();
-	}
-	_GP(guis)[ifn].MarkControlsChanged();
-	_GP(guis)[ifn].ResetOverControl(); // clear the cached mouse position
 	// modal interface
 	if (_GP(guis)[ifn].PopupStyle == kGUIPopupModal) UnPauseGame();
 }
