@@ -43,7 +43,7 @@ public:
 
 	void run() override;
 
-	//!< Notify this process that the item we're targetting has moved
+	//!< Notify this process that the item we're targeting has moved
 	void itemMoved(Item *item);
 
 	//!< Avatar direction changed - force update of finding a new item next frame.
