@@ -79,7 +79,7 @@ int WMakerMain() {
 
 	game->initCharNames();
 
-	// Setup soudn/kbd/mouse
+	// Setup sound/kbd/mouse
 	if (!(LoaderFlags & T3D_NOSOUND) && !(InitMusic()))                // Attiva DirectSound
 		warning("No Sound-Card detected");
 
