@@ -59,7 +59,7 @@ public:
 	int32 _hotspotX;
 	int32 _hotspotY;
 	uint32 _alpha;
-	// These two setters and getters are rather usefull, as they allow _rect to be lazily defined
+	// These two setters and getters are rather useful, as they allow _rect to be lazily defined
 	// Thus we don't need to load the actual graphics before the rect is actually needed.
 	Rect32 getRect();
 	void setRect(Rect32 rect);
