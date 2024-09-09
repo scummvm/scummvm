@@ -2158,7 +2158,7 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	_smackerLeadIn = 0;
 	_smackerLeadOut = 0;
 
-	// now clear the screen in case the Sequence was quitted (using ESC)
+	// now clear the screen in case the Sequence was quit (using ESC)
 	// rather than fading down to black
 
 	_vm->_screen->clearScene();
