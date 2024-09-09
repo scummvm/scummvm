@@ -455,7 +455,7 @@ public:
 
 private:
 	int _hits;
-	bool _rmode; // animation after loosing
+	bool _rmode; // animation after losing
 	int _score[2];
 
 	bool _soundEnabled;
