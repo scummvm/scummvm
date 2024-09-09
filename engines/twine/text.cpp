@@ -70,7 +70,7 @@ void Text::initVoxBank(TextBankId bankIdx) {
 	    "002", // White Leaf Desert voices
 	    "003", // Proxima Island voices
 	    "004", // Rebellion Island voices
-	    "005", // Hamalayi Mountains - sourthern range voices
+	    "005", // Hamalayi Mountains - southern range voices
 	    "006", // Hamalayi Mountains - northern range voices
 	    "007", // Tippett Island voices
 	    "008", // Brundle Island voices
