@@ -134,7 +134,7 @@ struct ScreenInfo {
 	uint16 scroll_offset_y;		// Position y
 	uint16 max_scroll_offset_x;	// Calc'ed in fnInitBackground
 	uint16 max_scroll_offset_y;
-	int16 player_feet_x;		// Feet coordinates to use - cant just
+	int16 player_feet_x;		// Feet coordinates to use - can't just
 	int16 player_feet_y;		// fetch the player compact anymore
 	int16 feet_x;			// Special offset-to-player position -
 	int16 feet_y;			// tweek as desired - always set in
