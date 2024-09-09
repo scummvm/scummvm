@@ -147,7 +147,7 @@ bool LuaBindhelper::addConstantsToLib(lua_State *L, const Common::String &libNam
 			lua_settable(L, LUA_GLOBALSINDEX);
 		}
 	}
-	// If the table name is nto empty, the constants are added to that table
+	// If the table name is not empty, the constants are added to that table
 	else {
 		// Ensure that the library table exists
 		if (!createTable(L, libName)) return false;
