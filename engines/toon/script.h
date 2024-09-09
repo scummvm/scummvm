@@ -80,7 +80,7 @@ public:
 		// It seems Westwood missunderstood the 'size' field of the FORM chunk.
 		//
 		// For EMC scripts (type EMC2) it's filesize instead of filesize - 8,
-		// means accidently including the 8 bytes used by the chunk header for the FORM
+		// means accidentally including the 8 bytes used by the chunk header for the FORM
 		// chunk.
 		//
 		// For TIM scripts (type AVFS) it's filesize - 12 instead of filesize - 8,
