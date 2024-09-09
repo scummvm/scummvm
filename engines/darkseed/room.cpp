@@ -1318,7 +1318,7 @@ void Darkseed::Room::loadRoom61AWalkableLocations() {
 }
 
 void Darkseed::Room::restorePalette() {
-	_pal.installPalette();
+	palLoaded = false;
 }
 
 void Darkseed::Room::darkenSky() {
