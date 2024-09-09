@@ -233,8 +233,7 @@ IVec2 Renderer::rotate(int32 side, int32 forward, int32 angle) const {
 }
 
 void Renderer::rotMatIndex2(IMatrix3x3 *pDest, const IMatrix3x3 *pSrc, const IVec3 &angleVec) {
-	IMatrix3x3 matrix1;
-	IMatrix3x3 matrix2;
+	IMatrix3x3 tmp;
 	const int32 lAlpha = angleVec.x;
 	const int32 lBeta = angleVec.y;
 	const int32 lGamma = angleVec.z;
@@ -243,55 +242,61 @@ void Renderer::rotMatIndex2(IMatrix3x3 *pDest, const IMatrix3x3 *pSrc, const IVe
 		int32 nSin = sinTab[ClampAngle(lAlpha)];
 		int32 nCos = sinTab[ClampAngle(lAlpha + LBAAngles::ANGLE_90)];
 
-		matrix1.row1.x = pSrc->row1.x;
-		matrix1.row2.x = pSrc->row2.x;
-		matrix1.row3.x = pSrc->row3.x;
+		pDest->row1.x = pSrc->row1.x;
+		pDest->row2.x = pSrc->row2.x;
+		pDest->row3.x = pSrc->row3.x;
 
-		matrix1.row1.y = (pSrc->row1.z * nSin + pSrc->row1.y * nCos) / SCENE_SIZE_HALF;
-		matrix1.row1.z = (pSrc->row1.z * nCos - pSrc->row1.y * nSin) / SCENE_SIZE_HALF;
-		matrix1.row2.y = (pSrc->row2.z * nSin + pSrc->row2.y * nCos) / SCENE_SIZE_HALF;
-		matrix1.row2.z = (pSrc->row2.z * nCos - pSrc->row2.y * nSin) / SCENE_SIZE_HALF;
-		matrix1.row3.y = (pSrc->row3.z * nSin + pSrc->row3.y * nCos) / SCENE_SIZE_HALF;
-		matrix1.row3.z = (pSrc->row3.z * nCos - pSrc->row3.y * nSin) / SCENE_SIZE_HALF;
-	} else {
-		matrix1 = *pSrc;
+		pDest->row1.y = (pSrc->row1.z * nSin + pSrc->row1.y * nCos) / SCENE_SIZE_HALF;
+		pDest->row1.z = (pSrc->row1.z * nCos - pSrc->row1.y * nSin) / SCENE_SIZE_HALF;
+		pDest->row2.y = (pSrc->row2.z * nSin + pSrc->row2.y * nCos) / SCENE_SIZE_HALF;
+		pDest->row2.z = (pSrc->row2.z * nCos - pSrc->row2.y * nSin) / SCENE_SIZE_HALF;
+		pDest->row3.y = (pSrc->row3.z * nSin + pSrc->row3.y * nCos) / SCENE_SIZE_HALF;
+		pDest->row3.z = (pSrc->row3.z * nCos - pSrc->row3.y * nSin) / SCENE_SIZE_HALF;
+		pSrc = pDest;
 	}
 
 	if (lGamma) {
 		int32 nSin = sinTab[ClampAngle(lGamma)];
 		int32 nCos = sinTab[ClampAngle(lGamma + LBAAngles::ANGLE_90)];
 
-		matrix2.row1.z = matrix1.row1.z;
-		matrix2.row2.z = matrix1.row2.z;
-		matrix2.row3.z = matrix1.row3.z;
+		tmp.row1.z = pSrc->row1.z;
+		tmp.row2.z = pSrc->row2.z;
+		tmp.row3.z = pSrc->row3.z;
 
-		matrix2.row1.x = (matrix1.row1.y * nSin + matrix1.row1.x * nCos) / SCENE_SIZE_HALF;
-		matrix2.row1.y = (matrix1.row1.y * nCos - matrix1.row1.x * nSin) / SCENE_SIZE_HALF;
-		matrix2.row2.x = (matrix1.row2.y * nSin + matrix1.row2.x * nCos) / SCENE_SIZE_HALF;
-		matrix2.row2.y = (matrix1.row2.y * nCos - matrix1.row2.x * nSin) / SCENE_SIZE_HALF;
-		matrix2.row3.x = (matrix1.row3.y * nSin + matrix1.row3.x * nCos) / SCENE_SIZE_HALF;
-		matrix2.row3.y = (matrix1.row3.y * nCos - matrix1.row3.x * nSin) / SCENE_SIZE_HALF;
-	} else {
-		matrix2 = matrix1;
+		tmp.row1.x = (pSrc->row1.y * nSin + pSrc->row1.x * nCos) / SCENE_SIZE_HALF;
+		tmp.row1.y = (pSrc->row1.y * nCos - pSrc->row1.x * nSin) / SCENE_SIZE_HALF;
+		tmp.row2.x = (pSrc->row2.y * nSin + pSrc->row2.x * nCos) / SCENE_SIZE_HALF;
+		tmp.row2.y = (pSrc->row2.y * nCos - pSrc->row2.x * nSin) / SCENE_SIZE_HALF;
+		tmp.row3.x = (pSrc->row3.y * nSin + pSrc->row3.x * nCos) / SCENE_SIZE_HALF;
+		tmp.row3.y = (pSrc->row3.y * nCos - pSrc->row3.x * nSin) / SCENE_SIZE_HALF;
 	}
 
 	if (lBeta) {
 		int32 nSin = sinTab[ClampAngle(lBeta)];
 		int32 nCos = sinTab[ClampAngle(lBeta + LBAAngles::ANGLE_90)];
 
-		pDest->row1.y = matrix2.row1.y;
-		pDest->row2.y = matrix2.row2.y;
-		pDest->row3.y = matrix2.row3.y;
+		if (pSrc == pDest) {
+			tmp.row1.x = pSrc->row1.x;
+			tmp.row1.z = pSrc->row1.z;
+			tmp.row2.x = pSrc->row2.x;
+			tmp.row2.z = pSrc->row2.z;
+			tmp.row3.x = pSrc->row3.x;
+			tmp.row3.z = pSrc->row3.z;
+			pSrc = &tmp;
+		} else {
+			pDest->row1.y = pSrc->row1.y;
+			pDest->row2.y = pSrc->row2.y;
+			pDest->row3.y = pSrc->row3.y;
+		}
 
-		pDest->row1.x = (matrix2.row1.x * nCos - matrix2.row1.z * nSin) / SCENE_SIZE_HALF;
-		pDest->row1.z = (matrix2.row1.x * nSin + matrix2.row1.z * nCos) / SCENE_SIZE_HALF;
-		pDest->row2.x = (matrix2.row2.x * nCos - matrix2.row2.z * nSin) / SCENE_SIZE_HALF;
-		pDest->row2.z = (matrix2.row2.x * nSin + matrix2.row2.z * nCos) / SCENE_SIZE_HALF;
-
-		pDest->row3.x = (matrix2.row3.x * nCos - matrix2.row3.z * nSin) / SCENE_SIZE_HALF;
-		pDest->row3.z = (matrix2.row3.x * nSin + matrix2.row3.z * nCos) / SCENE_SIZE_HALF;
-	} else {
-		*pDest = matrix2;
+		pDest->row1.x = (pSrc->row1.x * nCos - pSrc->row1.z * nSin) / SCENE_SIZE_HALF;
+		pDest->row1.z = (pSrc->row1.x * nSin + pSrc->row1.z * nCos) / SCENE_SIZE_HALF;
+		pDest->row2.x = (pSrc->row2.x * nCos - pSrc->row2.z * nSin) / SCENE_SIZE_HALF;
+		pDest->row2.z = (pSrc->row2.x * nSin + pSrc->row2.z * nCos) / SCENE_SIZE_HALF;
+		pDest->row3.x = (pSrc->row3.x * nCos - pSrc->row3.z * nSin) / SCENE_SIZE_HALF;
+		pDest->row3.z = (pSrc->row3.x * nSin + pSrc->row3.z * nCos) / SCENE_SIZE_HALF;
+	} else if (pSrc != pDest) {
+		*pDest = *pSrc;
 	}
 }
 
