@@ -228,7 +228,7 @@ void PlayModeSetup() {
 	g_vm->_mouseInfo = new GrabInfo;
 	g_vm->_mouseInfo->setIntent(GrabInfo::kIntWalkTo);
 
-	//  Start by displaying first frame stright off, no delay
+	//  Start by displaying first frame straight off, no delay
 	frameAlarm.set(0);
 
 	//  Test to draw borders.
