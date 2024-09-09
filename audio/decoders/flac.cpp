@@ -228,7 +228,7 @@ int FLACStream::readBuffer(int16 *buffer, const int numSamples) {
 	const uint numChannels = getChannels();
 
 	if (numChannels == 0) {
-		warning("FLACStream: Stream not successfully initialized, cant playback");
+		warning("FLACStream: Stream not successfully initialized, can't playback");
 		return -1; // streaminfo wasn't read!
 	}
 
