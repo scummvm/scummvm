@@ -77,29 +77,29 @@ public:
 	// Tells if the gui background supports alpha channel
 	bool	HasAlphaChannel() const;
 	// Tells if GUI will react on clicking on it
-	bool	IsClickable() const;
+	bool	IsClickable() const { return (_flags & kGUIMain_Clickable) != 0; }
 	// Tells if GUI's visibility is overridden and it won't be displayed on
 	// screen regardless of Visible property (until concealed mode is off).
-	bool	IsConcealed() const;
+	bool	IsConcealed() const { return (_flags & kGUIMain_Concealed) != 0; }
 	// Tells if gui is actually meant to be displayed on screen.
 	// Normally Visible property determines whether GUI is allowed to be seen,
 	// but there may be other settings that override it.
-	bool	IsDisplayed() const;
+	bool	IsDisplayed() const { return IsVisible() && !IsConcealed(); }
 	// Tells if given coordinates are within interactable area of gui
 	// NOTE: this currently tests for actual visibility and Clickable property
 	bool	IsInteractableAt(int x, int y) const;
 	// Tells if gui is a text window
-	bool	IsTextWindow() const;
+	bool	IsTextWindow() const { return (_flags & kGUIMain_TextWindow) != 0; }
 	// Tells if GUI is *allowed* to be displayed and interacted with.
 	// This does not necessarily mean that it is displayed right now, because
 	// GUI may be hidden for other reasons, including overriding behavior.
 	// For example GUI with kGUIPopupMouseY style will not be shown unless
 	// mouse cursor is at certain position on screen.
-	bool	IsVisible() const;
+	bool	IsVisible() const { return (_flags & kGUIMain_Visible) != 0; }
 
 	// Tells if GUI has graphically changed recently
-	bool	HasChanged() const;
-	bool	HasControlsChanged() const;
+	bool	HasChanged() const { return _hasChanged; }
+	bool	HasControlsChanged() const { return _hasControlsChanged; }
 	// Manually marks GUI as graphically changed
 	// NOTE: this only matters if GUI's own graphic changes (content, size etc),
 	// but not its state (visible) or texture drawing mode (transparency, etc).
