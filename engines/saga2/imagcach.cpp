@@ -106,8 +106,8 @@ CImageCache::~CImageCache() {
 
 
 	    // for some reason, doing a nodes.last() ( or nodes.first() )
-	    // here causes an access viloation.  This might be caused
-	    // by list corruption occuring during runtime,
+	    // here causes an access violation.  This might be caused
+	    // by list corruption occurring during runtime,
 	    // I'm going to disable destructor for now to run some tests
 	    // to determine cause.  This should not adversely affect normal runtime
 	    // execution as all nodes should be released DURING runtime.
