@@ -143,7 +143,7 @@ public:
 	Common::Point getBeamInPosition(int crewmanIndex);
 
 	/**
-	 * This is analagous to above, but instead of beaming in, they just appear in a spot.
+	 * This is analogous to above, but instead of beaming in, they just appear in a spot.
 	 * Used sparingly, ie. in feather's serpent when appearing in cave after Quetzecoatl
 	 * warps the crew.
 	 */
