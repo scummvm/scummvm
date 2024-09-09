@@ -162,6 +162,9 @@ bool Darkseed::Room::load() {
 		if (roomObj.objNum < 42 && g_engine->_objectVar.getMoveObjectRoom(roomObj.objNum) != 255) {
 			removeObjectFromRoom(roomObj.objNum);
 		}
+		if (roomObj.objNum == 41 && roomObj.type == 0) { // TODO hack. figure out why the tincup doesn't show in the jail cell normally.
+			roomObj.type = 1;
+		}
 	}
 
 	_pal.load(g_engine->getPictureFilePath(Common::Path(Common::String::format("%s.pal", filenameBase.c_str()))), false);
