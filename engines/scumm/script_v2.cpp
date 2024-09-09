@@ -1291,7 +1291,7 @@ void ScummEngine_v2::o2_putActorInRoom() {
 	//
 	// We don't touch the variable in the following situations
 	//  If the Caponian is being put into the space ship room, or the current room is the
-	//  space ship and the Caponian is being put into the backroom of the telephone company (you didnt show your fan club card)
+	//  space ship and the Caponian is being put into the backroom of the telephone company (you didn't show your fan club card)
 	//
 	// TODO: choose an Enhancement class for this
 	if (_game.id == GID_ZAK && _game.version <= 2 && act == 7) {
