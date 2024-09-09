@@ -866,7 +866,7 @@ stage_again:
 
 		_GP(mls)[mlist].from = {orisrcx, orisrcy};
 		_GP(mls)[mlist].onstage = 0;
-		_GP(mls)[mlist].onpart = 0;
+		_GP(mls)[mlist].onpart = 0.f;
 		_GP(mls)[mlist].doneflag = 0;
 #ifdef DEBUG_PATHFINDER
 		// getch();
