@@ -777,7 +777,7 @@ ScummEngine_v90he::ScummEngine_v90he(OSystem *syst, const DetectorResult &dr)
 	_videoParams.wizResNum = 0;
 
 #ifdef USE_ENET
-	/* Online stuff for compatable HE games */
+	/* Online stuff for compatible HE games */
 	_net = 0;
 	if (_game.id == GID_FOOTBALL || _game.id == GID_BASEBALL2001 || _game.id == GID_FOOTBALL2002 ||
 		_game.id == GID_MOONBASE) {
