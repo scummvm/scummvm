@@ -2982,7 +2982,7 @@ void qdGameDispatcher::request_file_package(const qdFileOwner &file_owner) const
 	if (qdFileManager::instance().is_package_available(file_owner))
 		return;
 
-	error("Requested file package is not avaliable");
+	error("Requested file package is not available");
 }
 
 Common::Path qdGameDispatcher::find_file(const Common::Path file_name, const qdFileOwner &file_owner) const {

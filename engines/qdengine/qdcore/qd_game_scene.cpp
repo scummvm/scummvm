@@ -136,7 +136,7 @@ void qdGameScene::quant(float dt) {
 			follow_pers_init(qdGameObjectMoving::FOLLOW_UPDATE_PATH);
 
 			if (false == _selected_object->is_moving()) {
-				// If the active one was not able to walk, but potentialy could, it goes inot a waiting mode
+				// If the active one was not able to walk, but potentially could, it goes into a waiting mode
 				if (_selected_object->can_move())
 					_selected_object->set_follow_condition(qdGameObjectMoving::FOLLOW_WAIT);
 				else
