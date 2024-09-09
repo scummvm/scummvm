@@ -887,11 +887,11 @@ const uint16 dsAddr_inventoryItemDataPtrTable = 0xc4a6;
 const uint16 dsAddr_lansAnimationTablePtr = 0xd89e;
 
 // Spoken With Mansion Guard Flag : 0xda96
-// FIXME - This is probably unecessary as although this location is set, it
+// FIXME - This is probably unnecessary as although this location is set, it
 //         doesn't now appear to be read.
 const uint16 dsAddr_spokenWithMansionGuardFlag = 0xda96; // 1 byte
 // Have Not Spoken With Mansion Guard Flag : 0xda97
-// FIXME - This is probably unecessary as although this location is set, it
+// FIXME - This is probably unnecessary as although this location is set, it
 //         doesn't now appear to be read.
 const uint16 dsAddr_haveNotSpokenWithMansionGuardFlag = 0xda97; // 1 byte
 
