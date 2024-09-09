@@ -100,8 +100,14 @@ Common::Array<Common::String> Console::wrapText(const Common::String &text) {
 	}
 
 	if (!line.empty() || !word.empty()) {
-		line += word;
-		lines.push_back(line);
+		int wordLength = _font.stringLength(word);
+		if (lineLength + wordLength > consoleArea.width()) {
+			lines.push_back(line);
+			lines.push_back(word);
+		} else {
+			line += word;
+			lines.push_back(line);
+		}
 	}
 
 	return lines;

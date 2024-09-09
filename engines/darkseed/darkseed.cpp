@@ -1047,7 +1047,7 @@ void DarkseedEngine::loadRoom(int roomNumber) {
 	}
 }
 
-void DarkseedEngine::changeToRoom(int newRoomNumber) { // AKA LoadNewRoom
+void DarkseedEngine::changeToRoom(int newRoomNumber, bool placeDirectly) { // AKA LoadNewRoom
 	_objectVar[99] = 0;
 	_objectVar[66] = 0;
 	_objectVar[67] = 0;
@@ -1120,7 +1120,7 @@ void DarkseedEngine::changeToRoom(int newRoomNumber) { // AKA LoadNewRoom
 				_player->_walkTarget = _player->_position;
 			}
 		}
-	} else if (newRoomNumber != 0x22 && (newRoomNumber < 0x13 || newRoomNumber > 0x17)) {
+	} else if (!placeDirectly && newRoomNumber != 0x22 && (newRoomNumber < 0x13 || newRoomNumber > 0x17)) {
 		for (int i = 0; i < _room->room1.size(); i++) {
 			const RoomExit &roomExit = _room->room1[i];
 			if (roomExit.roomNumber == _previousRoomNumber) {
@@ -1309,7 +1309,10 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 						_sprites.addSpriteToDrawList((_player->_position.x - animSprite.width / 2) - 4, _player->_position.y - animSprite.height, &animSprite, 240 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
 					} else if (otherNspAnimationType_maybe < 30 || otherNspAnimationType_maybe > 34) {
 						if (otherNspAnimationType_maybe == 40) {
-							error("anim 40 display"); // TODO
+							const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
+							_sprites.addSpriteToDrawList(373, 99, &animSprite, 240 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
+							const Sprite &legsSprite = _player->_animations.getSpriteAt(12);
+							_sprites.addSpriteToDrawList(373, 99 + animSprite.height, &legsSprite, 240 - _player->_position.y, legsSprite.width, legsSprite.height, player_sprite_related_2c85_82f3);
 						} else if (otherNspAnimationType_maybe < 48 || otherNspAnimationType_maybe > 52) {
 							if (otherNspAnimationType_maybe == 35) {
 								const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
@@ -2018,8 +2021,25 @@ void DarkseedEngine::updateAnimation() {
 			throwmikeinjail();
 		}
 		break;
-	case 40:
-		error("updateAnimation 40"); //TODO
+	case 40: // give Delbert's card to cop.
+		advanceAnimationFrame(1);
+		if (!_ObjRestarted) {
+			_player->_frameIdx = _player->_animations.getAnimAt(1).frameNo[animIndexTbl[1]];
+		} else {
+			_console->printTosText(61);
+			_console->draw();
+			_screen->updateScreen();
+			waitxticks(60);
+			_previousRoomNumber = _room->_roomNumber;
+			_player->_position.x = 240;
+			_player->_position.y = 200;
+			_player->updateSprite();
+			isPlayingAnimation_maybe = false;
+			changeToRoom(15, true);
+			_inventory.removeItem(41);
+			_inventory.removeItem(18);
+			_objectVar.setMoveObjectRoom(41, 255);
+		}
 		break;
 	case 41:
 		advanceAnimationFrame(0);
@@ -3423,6 +3443,16 @@ void DarkseedEngine::updateBaseSprites() {
 		_baseSprites.load("cbase.nsp");
 		_frame.load("cframe.pic");
 		_normalWorldSpritesLoaded = true;
+	}
+	_redrawFrame = true;
+}
+
+void DarkseedEngine::waitxticks(int ticks) {
+	for (int i = 0; i < ticks * 6; i++) {
+		updateEvents();
+		_room->update();
+		_screen->updateScreen();
+		wait();
 	}
 }
 

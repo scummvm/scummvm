@@ -164,7 +164,7 @@ bool Darkseed::Room::load() {
 		}
 	}
 
-	_pal.load(g_engine->getPictureFilePath(Common::Path(Common::String::format("%s.pal", filenameBase.c_str()))));
+	_pal.load(g_engine->getPictureFilePath(Common::Path(Common::String::format("%s.pal", filenameBase.c_str()))), false);
 
 	loadLocationSprites(Common::Path(Common::String::format("%s.nsp", filenameBase.c_str())));
 
@@ -205,6 +205,10 @@ Common::String Darkseed::Room::stripSpaces(Common::String source) {
 }
 
 void Darkseed::Room::draw() {
+	if (!palLoaded) {
+		_pal.installPalette();
+		palLoaded = true;
+	}
 	pic.draw(0x45, 0x28);
 
 	// print walkable area map.
@@ -1334,7 +1338,7 @@ void Darkseed::Room::darkenSky() {
 
 void Darkseed::Room::loadLocationSprites(const Common::Path &path) {
 	_locationSprites.load(path);
-	for (int i = 0; i < 20; i++) {
+	for (int i = 0; i < _locationSprites.getTotalAnim(); i++) {
 		_locObjFrameTimer[i] = _locationSprites.getAnimAt(i).frameDuration[0];
 	}
 }
