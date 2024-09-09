@@ -76,7 +76,7 @@ protected:
 	virtual void callbackHandler(byte *samples, int len);
 
 	/**
-	 * The mixer callback entry point. Static functions can't be overrided
+	 * The mixer callback entry point. Static functions can't be overridden
 	 * by subclasses, so it invokes the non-static function callbackHandler()
 	 */
 	static void sdlCallback(void *this_, byte *samples, int len);
