@@ -3755,7 +3755,7 @@ bool Events::can_get_to_actor(const Actor *actor, uint16 x, uint16 y) { // need 
 	Map *map = game->get_game_map();
 	MapCoord player_loc = player->get_actor()->get_location();
 
-// FIXME false obj matches can occur (should be extremly rare)
+// FIXME: false obj matches can occur (should be extremely rare)
 	if (map->lineTest(player_loc.x, player_loc.y, x, y, player_loc.z, LT_HitUnpassable, lt)
 	        && (!lt.hitObj || lt.hitObj->quality != actor->get_actor_num())) // actor part
 		return false;
