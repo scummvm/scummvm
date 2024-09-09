@@ -843,7 +843,7 @@ int32 gamePerformance() {
 /********************************************************************/
 
 //-----------------------------------------------------------------------
-//	Function to handle miscellanous events to the window.
+//	Function to handle miscellaneous events to the window.
 //	Any panel events which are not handled by individual panels
 //	are sent to this function.
 
