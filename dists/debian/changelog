@@ -300,7 +300,7 @@ scummvm (0.13.0-1) unstable; urgency=low
   * New upstream release (Closes: #499849)
   * Move maintainer to Debian Games Team, add myself and David as
     uploaders
-  * Fix link to compability matrix in package description
+  * Fix link to compatibility matrix in package description
     (Closes: #508894)
 
  -- Moritz Muehlenhoff <jmm@debian.org>  Sat, 07 Mar 2009 01:18:12 +0100
@@ -404,7 +404,7 @@ scummvm (0.7.1-2) unstable; urgency=low
       - Compile the package with GCC 3.4.
 
   * debian/prepare (new):
-      - Added a script that prepares the debian/ tree for building developement
+      - Added a script that prepares the debian/ tree for building development
         snapshots of ScummVM.
 
   * debian/control:
@@ -498,7 +498,7 @@ scummvm (0.6.0-2) unstable; urgency=low
         I really wish this would be fixed in the upstream sources.
 
   * debian/control:
-      - Correct the compability chart link in the package description.
+      - Correct the compatibility chart link in the package description.
       - Update package description so it is clear that Flight of The Amazon
         Queen and Beneath a Steel Sky is available in Debian, closes: #245356.
 
@@ -596,7 +596,7 @@ scummvm (0.4.1-1) unstable; urgency=low
   * Added debian/patches/00buildopts, which makes it possible
     for environment variables to override the compiler flags.
   * Better handling of $DEB_BUILD_OPTIONS.
-  * Declare the debhelper compability level in debian/compat instead
+  * Declare the debhelper compatibility level in debian/compat instead
     of debian/rules.
 
  -- Tore Anderson <tore@linpro.no>  Thu, 29 May 2003 15:15:55 +0200

@@ -3,7 +3,7 @@
 # pnd_make.sh
 #
 # This script is meant to ease generation of a pnd file. Please consult the output
-# when running --help for a list of available parameters and an explaination of
+# when running --help for a list of available parameters and an explanation of
 # those.
 #
 # Required tools when running the script:
