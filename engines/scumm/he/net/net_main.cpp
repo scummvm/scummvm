@@ -1055,7 +1055,7 @@ void Net::handleSessionServerData(Common::String data) {
 				// destinated address, allowing someone with the same address to
 				// communicate with us.  This does not work with every router though...
 				//
-				// More infomation: https://en.wikipedia.org/wiki/UDP_hole_punching
+				// More information: https://en.wikipedia.org/wiki/UDP_hole_punching
 				debugC(DEBUG_NETWORK, "NETWORK: Hole punching %s:%d", address.host.c_str(), address.port);
 				_sessionHost->sendRawData(address.host, address.port, "");
 			}
