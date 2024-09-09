@@ -105,7 +105,7 @@ public:
 	virtual void    OnMouseUp() {
 	}
 	// Control was resized
-	virtual void    OnResized() { MarkChanged(); }
+	virtual void    OnResized() { MarkPositionChanged(true); }
 
 	// Serialization
 	virtual void    ReadFromFile(Shared::Stream *in, GuiVersion gui_version);
@@ -116,14 +116,17 @@ public:
 	// TODO: these members are currently public; hide them later
 public:
 	// Manually marks GUIObject as graphically changed
-	// NOTE: this only matters if control's own graphic changes (content, size etc),
-	// but not its state (visible) or texture drawing mode (transparency, etc).
-	void     MarkChanged();
-	// Notifies parent GUI that this control has changed its state (but not graphic)
-	void     NotifyParentChanged();
-
-	bool     HasChanged() const { return _hasChanged; };
-	void     ClearChanged();
+	// NOTE: this only matters if control's own graphic changes, but not its
+	// logical (visible, clickable, etc) or visual (e.g. transparency) state.
+	void	MarkChanged();
+	// Notifies parent GUI that this control has changed its visual state
+	void	MarkParentChanged();
+	// Notifies parent GUI that this control has changed its location (pos, size)
+	void	MarkPositionChanged(bool self_changed);
+	// Notifies parent GUI that this control's interactive state has changed
+	void	MarkStateChanged(bool self_changed, bool parent_changed);
+	bool	HasChanged() const { return _hasChanged; };
+	void	ClearChanged();
 
 	int32_t  Id;         // GUI object's identifier
 	int32_t  ParentId;   // id of parent GUI
