@@ -93,7 +93,7 @@ void CursorManager::pushCursor(const void *buf, uint w, uint h, int hotspotX, in
 		pixelFormat = PixelFormat::createFormatCLUT8();
 
 	Surface surf;
-	// we wont touch 'buf' ...
+	// we won't touch 'buf' ...
 	surf.init(w, h, w * pixelFormat.bytesPerPixel, const_cast<void *>(buf), pixelFormat);
 
 	pushCursor(surf, hotspotX, hotspotY, keycolor, dontScale, mask);
@@ -154,7 +154,7 @@ void CursorManager::replaceCursor(const void *buf, uint w, uint h, int hotspotX,
 		pixelFormat = PixelFormat::createFormatCLUT8();
 
 	Surface surf;
-	// we wont touch 'buf' ...
+	// we won't touch 'buf' ...
 	surf.init(w, h, w * pixelFormat.bytesPerPixel, const_cast<void *>(buf), pixelFormat);
 
 	replaceCursor(surf, hotspotX, hotspotY, keycolor, dontScale, mask);

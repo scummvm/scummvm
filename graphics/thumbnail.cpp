@@ -122,7 +122,7 @@ bool checkThumbnailHeader(Common::SeekableReadStream &in) {
 	// TODO: It is not clear whether this is the best semantics. Now
 	// checkThumbnailHeader will return true even when the thumbnail header
 	// found is actually not usable. However, most engines seem to use this
-	// to detect the presence of any header and if there is none it wont even
+	// to detect the presence of any header and if there is none it won't even
 	// try to skip it. Thus, this looks like the best solution for now...
 	bool hasHeader = (loadHeader(in, header, false) != kHeaderNone);
 
