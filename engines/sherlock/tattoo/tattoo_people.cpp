@@ -1168,7 +1168,7 @@ void TattooPerson::walkBothToCoords(const PositionFacing &holmesDest, const Posi
 	holmes._centerWalk = true;
 	_centerWalk = true;
 
-	// Do one last frame draw so that the lsat person to stop will be drawn in their final position
+	// Do one last frame draw so that the last person to stop will be drawn in their final position
 	scene.doBgAnim();
 
 	_updateNPCPath = true;

@@ -442,7 +442,7 @@ void WidgetTalk::setStatementLines() {
 	_statementLines.clear();
 
 	for (uint statementNum = 0; statementNum < talk._statements.size(); ++statementNum) {
-		// See if this statment meets all of its flag requirements
+		// See if this statement meets all of its flag requirements
 		if (talk._statements[statementNum]._talkMap != -1) {
 			// Get the next statement text to process
 			Common::String str = talk._statements[statementNum]._statement;
