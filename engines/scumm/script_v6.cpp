@@ -771,7 +771,7 @@ void ScummEngine_v6::o6_eq() {
 
 	// WORKAROUND: Online play is disabled in the Macintosh versions of Backyard Football and Backyard Baseball 2001
 	// because the original U32 makes use of DirectPlay, a Windows exclusive API; we now have our own implementation
-	// which is cross-platform compatable.  We get around that by tricking those checks that we are playing on
+	// which is cross-platform compatible.  We get around that by tricking those checks that we are playing on
 	// the Windows version. These scripts check VAR_PLATFORM (b) against the value (2) of the Macintosh platform (a).
 	} else if (_game.id == GID_FOOTBALL && _currentRoom == 2 && (vm.slot[_currentScript].number == 2049 || vm.slot[_currentScript].number == 2050 ||
 #else
