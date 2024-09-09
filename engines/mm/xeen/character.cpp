@@ -712,7 +712,7 @@ void Character::setValue(int id, uint value) {
 		_experience = value;
 		break;
 	case 17:
-		// Set party poison resistence
+		// Set party poison resistance
 		party._poisonResistence = value;
 		break;
 	case 18:

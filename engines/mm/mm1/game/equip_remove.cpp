@@ -202,7 +202,7 @@ bool EquipRemove::removeItem(int index, Common::Point &textPos, Common::String &
 		// the character updates are being done to
 		//error("TODO: item flag in remove item");
 
-		//substract const equip bonus from character parameters
+		//subtract const equip bonus from character parameters
 		applyEquipBonus(item._constBonus_id, -item._constBonus_value);
 	}
 

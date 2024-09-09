@@ -59,8 +59,8 @@ static const ScriptEntry SCRIPT_PATCHES[] = {
 };
 
 // List of objects that need to be removed. Most of these are for copies of objects that appear in
-// the distance on the edge of other maps, so they don't simply pop into existance when the map changes.
-// When the main object is removed, the original didn't properly also removie the object copies
+// the distance on the edge of other maps, so they don't simply pop into existence when the map changes.
+// When the main object is removed, the original didn't properly also remove the object copies
 #define REMOVE_OBJECTS_COUNT 6
 static const ObjectEntry REMOVE_OBJECTS[] = {
 	// Floating statue in the distance off SE corner of map

@@ -325,7 +325,7 @@ public:
 	void shootRangedWeapon();
 
 	/**
-	 * Returns true if there are any monsters in the vacinity
+	 * Returns true if there are any monsters in the vicinity
 	 */
 	bool areMonstersPresent() const;
 };
