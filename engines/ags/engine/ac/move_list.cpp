@@ -28,6 +28,13 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
+float MoveList::GetStepLength() const {
+	assert(numstage > 0);
+	float permove_x = fixtof(xpermove[onstage]);
+	float permove_y = fixtof(ypermove[onstage]);
+	return sqrt(permove_x * permove_x + permove_y * permove_y);
+}
+
 void MoveList::ReadFromFile_Legacy(Stream *in) {
 	for (int i = 0; i < MAXNEEDSTAGES_LEGACY; ++i) {
 		// X & Y was packed as high/low shorts, and hence reversed in lo-end
