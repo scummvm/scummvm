@@ -324,7 +324,7 @@ Obj *InventoryWidget::get_obj_at_location(int x, int y) {
 	uint16 i;
 
 	if (x >= objlist_offset_x && y >= objlist_offset_y) {
-		location = get_list_position(x, y); //find the postion of the object we hit in the inventory
+		location = get_list_position(x, y); //find the position of the object we hit in the inventory
 
 		if (container_obj)
 			inventory = container_obj->container;
