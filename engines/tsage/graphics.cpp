@@ -1275,7 +1275,7 @@ void GfxFont::setFontNumber(uint32 fontNumber) {
 		_fontData = g_resourceManager->getResource(RES_FONT, _fontNumber, 0);
 
 	// Since some TsAGE game versions don't have a valid character count at offset 4, use the offset of the
-	// first charactre data to calculate the number of characters in the offset table preceeding it
+	// first character data to calculate the number of characters in the offset table preceding it
 	_numChars = (READ_LE_UINT32(_fontData + 12) - 12) / 4;
 	assert(_numChars <= 256);
 
