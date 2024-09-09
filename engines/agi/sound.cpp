@@ -98,17 +98,6 @@ const uint8 *PCjrSound::getVoicePointer(uint voiceNum) {
 	return _data + voiceStartOffset;
 }
 
-#if 0
-static const uint16 period[] = {
-	1024, 1085, 1149, 1218, 1290, 1367,
-	1448, 1534, 1625, 1722, 1825, 1933
-};
-
-static int noteToPeriod(int note) {
-	return 10 * (period[note % 12] >> (note / 12 - 3));
-}
-#endif
-
 void SoundMgr::unloadSound(int resnum) {
 	if (_vm->_game.dirSound[resnum].flags & RES_LOADED) {
 		if (_vm->_game.sounds[resnum]->isPlaying()) {
@@ -184,6 +173,7 @@ void SoundMgr::stopSound() {
 	_endflag = -1;
 }
 
+// FIXME: This is called from SoundGen classes on unsynchronized background threads.
 void SoundMgr::soundIsFinished() {
 	if (_endflag != -1)
 		_vm->setFlag(_endflag, true);
@@ -223,10 +213,6 @@ SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) {
 		_soundGen = new SoundGenMIDI(_vm, pMixer);
 		break;
 	}
-}
-
-void SoundMgr::setVolume(uint8 volume) {
-	// TODO
 }
 
 SoundMgr::~SoundMgr() {

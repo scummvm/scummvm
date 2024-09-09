@@ -95,10 +95,6 @@ public:
 	/**
 	 * A named constructor for creating different types of AgiSound objects
 	 * from a raw sound resource.
-	 *
-	 * NOTE: This function should take responsibility for freeing the raw resource
-	 * from memory using free() or delegate the responsibility onwards to some other
-	 * function!
 	 */
 	static AgiSound *createFromRawResource(uint8 *data, uint32 len, int resnum, int soundemu);
 
@@ -121,8 +117,6 @@ class SoundMgr {
 public:
 	SoundMgr(AgiBase *agi, Audio::Mixer *pMixer);
 	~SoundMgr();
-
-	void setVolume(uint8 volume);
 
 	void unloadSound(int);
 	void startSound(int, int);
