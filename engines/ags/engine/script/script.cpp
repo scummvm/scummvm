@@ -293,7 +293,7 @@ static bool DoRunScriptFuncCantBlock(ccInstance *sci, NonBlockingScriptFunction 
 		return false;
 
 	if (result == -2) {
-		// the function doens't exist, so don't try and run it again
+		// the function doesn't exist, so don't try and run it again
 		hasTheFunc = false;
 	} else if ((result != 0) && (result != 100)) {
 		quit_with_script_error(funcToRun->functionName);
