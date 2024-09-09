@@ -882,7 +882,7 @@ uint16 SleepEffect::callback(uint16 msg, CallBack *caller, void *data) {
 	if (msg == MESG_EFFECT_COMPLETE) {
 		if (timer == nullptr) { // starting
 			if (stop_time != "") { // advance to start time
-				timer = new TimedAdvance(stop_time, 360); // 6 hours per second FIXME: it isnt going anywhere near that fast
+				timer = new TimedAdvance(stop_time, 360); // 6 hours per second FIXME: it isn't going anywhere near that fast
 				timer->set_target(this);
 				timer->get_time_from_string(stop_hour, stop_minute, stop_time);
 				// stop_hour & stop_minute are checked each hour
