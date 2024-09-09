@@ -2846,7 +2846,7 @@ void Actor::animateActor(int anim) {
 			stopActorMoving();
 		}
 		break;
-	case 3:				// change direction immediatly
+	case 3:				// change direction immediately
 		if (isInCurrentRoom() ||
 			!(_vm->_game.version >= 3 && _vm->_game.version <= 6)) {
 			_moving &= ~MF_TURN;
