@@ -7,7 +7,7 @@ dialogs:
 			3: "--blacksmith--"
 			4: "--tavern--"
 		gold: "gold= "
-		buy: "'a'-'f' to buy\r(- = cant use)"
+		buy: "'a'-'f' to buy\r(- = cannot use)"
 		sell: "'a'-'f' to sell"
 		gather: "'g' gather gold\r'#' other char"
 	blacksmith:
