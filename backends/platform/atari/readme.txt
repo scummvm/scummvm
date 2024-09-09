@@ -393,7 +393,7 @@ The least amount of cycles is spent when:
 - "Subtitles" as "Text and speech": this prevents any sampled speech to be
   mixed
 - all external audio files are deleted (typically *.wav); that way the mixer
-  wont have anything to mix. However beware, this is not allowed in every game!
+  won't have anything to mix. However beware, this is not allowed in every game!
 
 Sample rate
 ~~~~~~~~~~~
@@ -407,7 +407,7 @@ of them (esp. the ones from the 80s/90s) use simple samples like mono 11025 Hz
 Obviously, setting "output_channels" to "1" is the easiest improvement
 (unfortunately only on TT). Next best thing you can do is to buy an external DSP
 clock for your Falcon: nearly all games use sample frequencies which are
-multiplies of 44100 Hz: 22050, 11025, ... so with the external clock there wont
+multiplies of 44100 Hz: 22050, 11025, ... so with the external clock there won't
 be the need to resample them.
 
 There's one caveat, though: it is important whether your replay frequency is
@@ -504,7 +504,7 @@ Known issues
   it has improved the situation.
 
 - When using FreeMiNT, ScummVM requires a recent kernel (>= 2021), otherwise
-  keyboard handling wont work properly.
+  keyboard handling won't work properly.
 
 - When using EmuTOS, ScummVM requires a recent release (>= 1.3), otherwise
   various screen- and sound-related issues may appear.
@@ -519,7 +519,7 @@ Future plans
 - avoid loading music/speech files (and thus slowing down everything) if muted
 
 - cached audio/video streams (i.e. don't load only "audio_buffer_size" number
-  of samples but cache, say, 1 second so disk i/o wont be so stressed)
+  of samples but cache, say, 1 second so disk i/o won't be so stressed)
 
 - using Thorsten Otto's sharedlibs: https://tho-otto.de/sharedlibs.php for game
   engine plugins to relieve the huge binary size
