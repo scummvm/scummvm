@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/debug.h"
+
 #include "qdengine/qd_fwd.h"
 #include "qdengine/xmath.h"
 
@@ -70,8 +72,12 @@ void qdAnimationInfo::load_script(const xml::tag *p) {
 bool qdAnimationInfo::save_script(Common::WriteStream &fh, int indent) const {
 	Common::String res;
 
-	if (flags())
-		res += Common::String::format(" flags=\"%d\"", flags());
+	if (flags()) {
+		if (debugChannelSet(-1, kDebugLog))
+			res += Common::String::format(" flags=\"%s\"", qdAnimation::flag2str(flags()).c_str());
+		else
+			res += Common::String::format(" flags=\"%d\"", flags());
+	}
 
 	if (_speed > 0.01f)
 		res += Common::String::format(" speed=\"%f\"", _speed);

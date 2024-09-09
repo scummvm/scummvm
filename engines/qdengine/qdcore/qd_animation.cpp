@@ -1170,4 +1170,44 @@ uint32 qdAnimation::resource_data_size() const {
 	return size;
 }
 #endif
+
+#define defFlag(x) { x, #x }
+
+struct FlagsList {
+	int f;
+	const char *s;
+} static flagList[] = {
+	defFlag(QD_ANIMATION_FLAG_REFERENCE),
+	defFlag(QD_ANIMATION_FLAG_REFERENCE),
+	defFlag(QD_ANIMATION_FLAG_LOOP),
+	defFlag(QD_ANIMATION_FLAG_FLIP_HORIZONTAL),
+	defFlag(QD_ANIMATION_FLAG_FLIP_VERTICAL),
+	defFlag(QD_ANIMATION_FLAG_BLACK_FON),
+	defFlag(QD_ANIMATION_FLAG_SUPPRESS_ALPHA),
+	defFlag(QD_ANIMATION_FLAG_CROP),
+	defFlag(QD_ANIMATION_FLAG_COMPRESS),
+	defFlag(QD_ANIMATION_FLAG_TILE_COMPRESS),
+};
+
+Common::String qdAnimation::flag2str(int fl) {
+	Common::String res;
+
+	for (int i = 0; i < ARRAYSIZE(flagList); i++) {
+		if (fl & flagList[i].f) {
+			if (!res.empty())
+				res += " | ";
+
+			res += flagList[i].s;
+
+			fl &= ~flagList[i].f;
+		}
+	}
+
+	if (fl)
+		res += Common::String::format(" | %x", fl);
+
+	return res;
+}
+
+
 } // namespace QDEngine

@@ -273,6 +273,8 @@ public:
 			return _tileAnimation;
 	}
 
+	static Common::String flag2str(int fl);
+
 private:
 	int _sx;
 	int _sy;
