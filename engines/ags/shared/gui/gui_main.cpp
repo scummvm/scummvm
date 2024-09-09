@@ -149,18 +149,6 @@ const std::vector<int> &GUIMain::GetControlsDrawOrder() const {
 	return _ctrlDrawOrder;
 }
 
-bool GUIMain::IsClickable() const {
-	return (_flags & kGUIMain_Clickable) != 0;
-}
-
-bool GUIMain::IsConcealed() const {
-	return (_flags & kGUIMain_Concealed) != 0;
-}
-
-bool GUIMain::IsDisplayed() const {
-	return IsVisible() && !IsConcealed();
-}
-
 bool GUIMain::IsInteractableAt(int x, int y) const {
 	if (!IsDisplayed())
 		return false;
@@ -174,22 +162,6 @@ bool GUIMain::IsInteractableAt(int x, int y) const {
 	if ((x >= X) & (y >= Y) & (x < X + Width) & (y < Y + Height))
 		return true;
 	return false;
-}
-
-bool GUIMain::IsTextWindow() const {
-	return (_flags & kGUIMain_TextWindow) != 0;
-}
-
-bool GUIMain::IsVisible() const {
-	return (_flags & kGUIMain_Visible) != 0;
-}
-
-bool GUIMain::HasChanged() const {
-	return _hasChanged;
-}
-
-bool GUIMain::HasControlsChanged() const {
-	return _hasControlsChanged;
 }
 
 void GUIMain::MarkChanged() {
