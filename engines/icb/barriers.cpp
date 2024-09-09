@@ -75,7 +75,7 @@ PXreal REPULSE_DISTANCE = (15 * REAL_ONE); // 15 cm
 
 __barrier_result _game_session::Check_barrier_bump_and_bounce(PXreal newx, PXreal newy, PXreal newz, PXreal oldx, PXreal /* oldy */, PXreal oldz, bool8 pl) {
 	// see if the coordinates passed are close to the players current barriers
-	// returns   0 no barrier found thats too near
+	// returns   0 no barrier found that's too near
 	//				1 a barrier was too close
 
 	RouteBarrier *bar;
