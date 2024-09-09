@@ -1526,7 +1526,7 @@ bool U6UseCode::use_crystal_ball(Obj *obj, UseCodeEvent ev) {
 
 /* USE: Enter instrument playing mode, with sound for used object. */
 bool U6UseCode::play_instrument(Obj *obj, UseCodeEvent ev) {
-// FIXME: need intrument sounds AND a config option to simply change music
+// FIXME: need instrument sounds AND a config option to simply change music
 // track when an instrument is played. Maybe NORTH_KEY and SOUTH_KEY can cycle through sounds/music and DO_ACTION_KEY can play it.
 /// FIXME: also some floating music note icons like in U7
 	game->get_event()->close_gumps(); // gumps will steal input
