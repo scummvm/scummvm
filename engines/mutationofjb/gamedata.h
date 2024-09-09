@@ -120,7 +120,7 @@ struct Door : public Common::Serializable {
  *
  * Object frames consist of surfaces carved out of room frames (starting from _roomFrame
  * up until _roomFrame + _numFrames - 1) based on the object's rectangle. They are stored
- * in the shared object frame space that each object occupies a continous part of from
+ * in the shared object frame space that each object occupies a continuous part of from
  * the beginning.
  *
  * By using the term "frame" alone we will be referring to an object frame, not a room
