@@ -32,7 +32,7 @@ template<class T> class TeIntrusivePtr {
 public:
 	// NOTE: The original uses a member function for this, which is cleaner, but
 	// MSVC compiles member functions for different class types (forward
-	// declaration, multi-inheritance, etc) as differnt sizes which causes all
+	// declaration, multi-inheritance, etc) as different sizes which causes all
 	// sorts of issues.  Only accept a static function to avoid such problems.
 	typedef void(*Tdestructor)(T *obj);
 
