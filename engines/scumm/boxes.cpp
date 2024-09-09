@@ -1013,7 +1013,7 @@ void ScummEngine::calcItineraryMatrix(byte *itineraryMatrix, int num) {
 	// Compute the shortest routes between boxes via Kleene's algorithm.
 	// The original code used some kind of mangled Dijkstra's algorithm;
 	// while that might in theory be slightly faster, it was
-	// a) extremly obfuscated
+	// a) extremely obfuscated
 	// b) incorrect: it didn't always find the shortest paths
 	// c) not any faster in reality for our sparse & small adjacent matrices
 	for (k = 0; k < num; k++) {
