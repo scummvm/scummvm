@@ -338,7 +338,7 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 
 	if (r.width() > _screen->getScriptWidth()) {
 		// We get invalid dimensions at least at the end of sq3 (script bug!).
-		// Same happens very often in lsl5, sierra sci didnt fix it but it looked awful.
+		// Same happens very often in lsl5, sierra sci didn't fix it but it looked awful.
 		// Also happens frequently in the demo of GK1.
 		warning("Fixing too large window, left: %d, right: %d", dims.left, dims.right);
 		r.left = 0;
