@@ -715,12 +715,12 @@ void Insane::readState() { // PATCH
 
 		// FIXME
 		// This used to be here but.
-		//  - bootparam 551 gives googles without cavefish met
-		//  - when you get the ramp, googles disappear, but you already won the cavefish
+		//  - bootparam 551 gives goggles without cavefish met
+		//  - when you get the ramp, goggles disappear, but you already won the cavefish
 		// Incorrect situation would be
-		//  you won cavefish, don't have googles, don't have ramp
+		//  you won cavefish, don't have goggles, don't have ramp
 		//
-		// So if you find out what how to check ramp presense, feel free to add check here
+		// So if you find out how to check ramp presence, feel free to add check here
 		// (beware of FT ver a and ver b. In version b var311 is inserted and all vars >311
 		// are shifted),
 		//
