@@ -10547,7 +10547,7 @@ msgid "Enable online competitive mods"
 msgstr "Включить моды для онлайн-соревнований"
 
 #: engines/scumm/dialogs.cpp:1713
-msgid "Enables custom-made modifications intented for online competitive play."
+msgid "Enables custom-made modifications intended for online competitive play."
 msgstr "Включает настройки игр, предназначенные для онлайн-соревнований."
 
 #: engines/scumm/dialogs.cpp:1717
