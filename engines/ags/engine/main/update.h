@@ -30,6 +30,9 @@ namespace AGS3 {
 // TODO: find out what this return value means, and refactor.
 // TODO: do not reset mslot in this function, reset externally instead.
 int do_movelist_move(short &mslot, int &pos_x, int &pos_y);
+// Recalculate derived (non-serialized) values in movelists
+void restore_movelists();
+// Update various things on the game frame (historical code mess...)
 void update_stuff();
 
 } // namespace AGS3
