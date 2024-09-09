@@ -566,7 +566,7 @@ void ScummEngine::loadCharset(int no) {
 
 	debugC(DEBUG_GENERAL, "loadCharset(%d)", no);
 
-	/* FIXME - hack around crash in Indy4 (occurs if you try to load after dieing) */
+	/* FIXME - hack around crash in Indy4 (occurs if you try to load after dying) */
 	if (_game.id == GID_INDY4 && no == 0)
 		no = 1;
 
