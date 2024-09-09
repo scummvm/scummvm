@@ -1405,7 +1405,7 @@ bool CrunchAnim8(Anim8 *myAnim8) {
 		timeElapsed = (_GWS(ws_globals)[GLB_TIME] - myAnim8->startTime) << 16;
 
 		// This must be checked before TAG_TARGS because a bez path can use a target scale and rotate
-		// And we don't want to accidently setup a target x or y.
+		// And we don't want to accidentally set up a target x or y.
 		// NOTE: for both bez paths, and targets, the time for the anim8 to reach the target or traverse
 		//      the path is stored in IDX_TRANS_TIME, however, in order to determine how far aint32 the
 		//      path we should be, we normally compute the elapsed time divided by the trans time.
