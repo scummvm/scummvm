@@ -89,7 +89,7 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 		_soundRate = 8000;
 		break;
 	case GID_RTZ:
-		// Return to Zork sets it itself via a script funtion
+		// Return to Zork sets it itself via a script function
 		break;
 	default:
 		break;
