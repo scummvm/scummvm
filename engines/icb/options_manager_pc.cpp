@@ -3396,7 +3396,7 @@ void OptionsManager::EditSlotLabel() {
 
 		// Shall we quit
 		if (c == Common::KEYCODE_RETURN) {
-			// Not allowed an empty name 'cos thats daft
+			// Not allowed an empty name 'cos that's daft
 			if (!VerifyLabel())
 				return;
 
