@@ -311,7 +311,7 @@ public:
 	DebugScene *_debugScene;
 
 	/** Configuration file structure
-	 * Contains all the data used in the engine to configurated the game in particulary ways. */
+	 * Contains all the data used in the engine to configurate the game in particularly ways. */
 	ConfigFile _cfgfile;
 
 	int32 _frameCounter = 0;
