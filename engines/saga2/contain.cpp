@@ -1093,7 +1093,7 @@ ScrollableContainerWindow::ScrollableContainerWindow(
 	: ContainerWindow(nd, app, saveas) {
 	_view = new ContainerView(*this, app.viewRect, nd, app);
 
-	// make the button conected to this window
+	// make the button connected to this window
 	_scrollCompButton = new GfxCompButton(
 	                       *this,
 	                       app.scrollRect,                 // rect for button
@@ -1212,7 +1212,7 @@ void TangibleContainerWindow::drawClipped(
 IntangibleContainerWindow::IntangibleContainerWindow(
     ContainerNode &nd, const ContainerAppearanceDef &app)
 	: ScrollableContainerWindow(nd, app, "MentalWindow") {
-	// make the button conected to this window
+	// make the button connected to this window
 	_mindSelectorCompButton = new GfxMultCompButton(
 	                             *this,
 	                             Rect16(49, 15 - 13, 52, 67),
@@ -1242,7 +1242,7 @@ EnchantmentContainerWindow::EnchantmentContainerWindow(
 	: ContainerWindow(nd, app, "EnchantmentWindow") {
 	_view = new EnchantmentContainerView(*this, nd, app);
 
-	// make the button conected to this window
+	// make the button connected to this window
 	_scrollCompButton = new GfxCompButton(
 	                       *this,
 	                       app.scrollRect,                 // rect for button
