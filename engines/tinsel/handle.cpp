@@ -221,7 +221,7 @@ void Handle::LoadCDGraphData(MEMHANDLE *pH) {
 }
 
 /**
- * Called immediatly preceding a CDplay().
+ * Called immediately preceding a CDplay().
  * Prepares the ground so that when LockMem() is called, the
  * appropriate section of the extra scene file is loaded.
  * @param start			Handle of start of range
