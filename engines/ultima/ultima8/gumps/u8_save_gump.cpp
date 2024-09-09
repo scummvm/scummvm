@@ -203,7 +203,7 @@ void U8SaveGump::onMouseClick(int button, int32 mx, int32 my) {
 	}
 
 	if (!_save) {
-		// If our parent has a notifiy process, we'll put our result in it and wont actually load the game
+		// If our parent has a notifiy process, we'll put our result in it and won't actually load the game
 		GumpNotifyProcess *p = _parent ? _parent->GetNotifyProcess() : nullptr;
 		if (p) {
 			// Do nothing in this case
