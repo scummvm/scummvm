@@ -182,7 +182,7 @@ void main_saga2() {
 }
 
 // ------------------------------------------------------------------------
-// Inner chunk of main - this bizzare nesting is required because VC++
+// Inner chunk of main - this bizarre nesting is required because VC++
 // doesn't like  try{} catch(){ } blocks in the same routine as its
 // __try{} __except(){} blocks
 
