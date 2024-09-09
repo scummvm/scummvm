@@ -578,7 +578,7 @@ void GfxScreen::putKanjiChar(Graphics::FontSJIS *commonFont, int16 x, int16 y, u
 	// instead of rendering it in graphics mode (many PC-98 games do that). In an emulator you can easily recognize
 	// it, since the mouse cursor will move underneath the text. The use of the text mode has a similar effect to
 	// x-coordinates as what happens with QFG: In text mode, the coordinates can only be set as text columns and lines,
-	// so the coordinates have to be divided and loose some precision ('& ~3' for x, and '& ~7' for y).
+	// so the coordinates have to be divided and lose some precision ('& ~3' for x, and '& ~7' for y).
 
 	// SCI1 PC-98 (KQ5/SQ4) has a gfx driver opcode to render the glyphs via the PC-98 GRCG. In the 16 colors drivers it
 	// uses a unique way to do that: The first 5 lines and the last 5 lines of the glyph get scaled 2x horizontally
