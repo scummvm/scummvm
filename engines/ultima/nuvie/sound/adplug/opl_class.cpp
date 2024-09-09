@@ -1486,7 +1486,7 @@ static int OPLTimerOver(FM_OPL *OPL, int c) {
 	} else {
 		/* Timer A */
 		OPL_STATUS_SET(OPL, 0x40);
-		/* CSM mode key,TL controll */
+		/* CSM mode key,TL control */
 		if (OPL->mode & 0x80) {
 			/* CSM mode total level latch and auto key on */
 			int ch;
