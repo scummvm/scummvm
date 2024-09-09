@@ -2436,7 +2436,7 @@ void ScummEngine::processActors() {
 		if (a->_costume) {
 
 			// Unfortunately in V0, the 'animateCostume' call happens right after the call to 'walkActor' (which is before drawing the actor)...
-			// doing it the other way with V0, causes animation glitches (when beginnning to walk, as the costume hasnt been updated).
+			// doing it the other way with V0, causes animation glitches (when beginnning to walk, as the costume hasn't been updated).
 			// Updating the costume directly after 'walkActor' and again, after drawing... causes frame skipping
 			if (_game.version == 0) {
 				a->animateCostume();
