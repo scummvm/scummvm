@@ -151,7 +151,7 @@ public:
 	/**
 	 * Create a Surface fit for use with the renderer.
 	 * As diverse implementations of BaseRenderer might have different solutions for storing surfaces
-	 * this allows for a common interface for creating surface-handles. (Mostly usefull to ease future
+	 * this allows for a common interface for creating surface-handles. (Mostly useful to ease future
 	 * implementation of hw-accelerated rendering, or readding 3D-support at some point).
 	 *
 	 * @return a surface that can be used with this renderer
