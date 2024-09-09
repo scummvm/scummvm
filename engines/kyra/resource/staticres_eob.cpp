@@ -552,7 +552,7 @@ void EoBCoreEngine::initStaticResource() {
 
 	// Hard code the following strings, since EOB I doesn't have them in the original.
 	// EOB I doesn't have load and save menus, because there is only one single
-	// save slot. Instead of emulating this we provide a menu similiar to EOB II.
+	// save slot. Instead of emulating this we provide a menu similar to EOB II.
 	// EOB I SegaCD actually has save/load menus with more than 1 slot if there is
 	// a RAM cart present). I supply the strings here, too...
 
