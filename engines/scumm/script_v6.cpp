@@ -2760,7 +2760,7 @@ void ScummEngine_v6::o6_delay() {
 
 void ScummEngine_v6::o6_delaySeconds() {
 	uint32 delay = (uint32)pop();
-	// WORKAROUND: On Baseball 2001, this script downloads the news, poll and banner infomation.
+	// WORKAROUND: On Baseball 2001, this script downloads the news, poll and banner information.
 	// It gives a one second break before validating that the download has completed, which is
 	// a tad bit too long.  So let's turn that into a one frame break.  This is safe because
 	// the script also checks if either var135 == 1, or the check has been done
@@ -3406,7 +3406,7 @@ int ScummEngine::getActionState(ScummAction action) {
 void ScummEngine_v6::o6_delayFrames() {
 	// WORKAROUND:  At startup, Moonbase Commander will pause for 20 frames before
 	// showing the Infogrames logo.  The purpose of this break is to give time for the
-	// GameSpy Arcade application to fill with the online game infomation.
+	// GameSpy Arcade application to fill with the online game information.
 	//
 	// [0000] (84) localvar2 = max(readConfigFile.number(":var263:","user","wait-for-gamespy"),10)
 	// [0029] (08) delayFrames((localvar2 * 2))
@@ -3414,7 +3414,7 @@ void ScummEngine_v6::o6_delayFrames() {
 	// But since we don't support GameSpy and have our own online support, this break
 	// has become redundant and only wastes time.
 	//
-	// WORKAROUND:  On Baseball 2001, there is a 10 frame pause before sending the login infomation
+	// WORKAROUND:  On Baseball 2001, there is a 10 frame pause before sending the login information
 	// to the server.  This is rather a pointless break, so let's skip that.
 	if ((_game.id == GID_MOONBASE && vm.slot[_currentScript].number == 69) ||
 		(_game.id == GID_BASEBALL2001 && _currentRoom == 37 && vm.slot[_currentScript].number == 2068)) {
