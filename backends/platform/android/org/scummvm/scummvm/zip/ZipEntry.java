@@ -642,7 +642,7 @@ public class ZipEntry implements ZipConstants, Cloneable {
                             // and compressed file size fields.
                             // If invalid zip64 extra fields, simply skip. Even
                             // it's rare, it's possible the entry size happens to
-                            // be the magic value and it "accidently" has some
+                            // be the magic value and it "accidentally" has some
                             // bytes in extra match the id.
                             if (sz >= 16) {
                                 size = get64(extra, off);
