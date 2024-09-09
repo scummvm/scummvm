@@ -679,7 +679,7 @@ void GfxPorts::priorityBandsInit(int16 bandCount, int16 top, int16 bottom) {
 		while (_priorityBands[--y] == _priorityBandCount)
 			_priorityBands[y]--;
 	}
-	// We fill space that is left over with the highest band (hardcoded 200 limit, because this algo isnt meant to be used on hires)
+	// We fill space that is left over with the highest band (hardcoded 200 limit, because this algo isn't meant to be used on hires)
 	for (y = _priorityBottom; y < 200; y++)
 		_priorityBands[y] = _priorityBandCount;
 
