@@ -65,6 +65,11 @@ struct MoveList {
 	// Gets a movelist's step length, in coordinate units
 	// (normally the coord unit is a game pixel)
 	float GetStepLength() const;
+	// Gets a fraction of a coordinate unit that is in progress of stepping over;
+	// (normally the coord unit is a game pixel)
+	float GetPixelUnitFraction() const;
+	// Sets a step progress to this fraction of a coordinate unit
+	void SetPixelUnitFraction(float frac);
 
 	void ReadFromFile_Legacy(Shared::Stream *in);
 	AGS::Engine::HSaveError ReadFromFile(Shared::Stream *in, int32_t cmp_ver);

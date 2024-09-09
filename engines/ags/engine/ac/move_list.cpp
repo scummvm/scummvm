@@ -35,6 +35,18 @@ float MoveList::GetStepLength() const {
 	return sqrt(permove_x * permove_x + permove_y * permove_y);
 }
 
+float MoveList::GetPixelUnitFraction() const {
+	assert(numstage > 0);
+	float distance = GetStepLength() * fixtof(onpart);
+	return distance - floor(distance);
+}
+
+void MoveList::SetPixelUnitFraction(float frac) {
+	assert(numstage > 0);
+	float permove_dist = GetStepLength();
+	onpart = permove_dist > 0.f ? ftofix((1.f / permove_dist) * frac) : 0;
+}
+
 void MoveList::ReadFromFile_Legacy(Stream *in) {
 	for (int i = 0; i < MAXNEEDSTAGES_LEGACY; ++i) {
 		// X & Y was packed as high/low shorts, and hence reversed in lo-end
