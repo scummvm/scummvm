@@ -608,7 +608,7 @@ void GfxElement::highlight() {
 	GfxManager &gfxManager = g_globals->gfxManager();
 	Graphics::Surface surface = gfxManager.lockSurface();
 
-	// Scan through the contents of the element, switching any occurances of the foreground
+	// Scan through the contents of the element, switching any occurrences of the foreground
 	// color with the background color and vice versa
 	Rect tempRect(_bounds);
 	tempRect.collapse(g_globals->_gfxEdgeAdjust - 1, g_globals->_gfxEdgeAdjust - 1);
