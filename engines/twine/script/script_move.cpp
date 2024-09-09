@@ -160,7 +160,7 @@ int32 ScriptMove::mANGLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 }
 
 /**
- * Set new postion for the current actor (Parameter = Track Index)
+ * Set new position for the current actor (Parameter = Track Index)
  * @note Opcode @c 0x08
  */
 int32 ScriptMove::mPOS_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
