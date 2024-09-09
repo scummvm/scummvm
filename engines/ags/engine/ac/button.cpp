@@ -46,9 +46,8 @@ using namespace AGS::Shared;
 
 // Update the actual button's image from the current animation frame
 void UpdateButtonState(const AnimatingGUIButton &abtn) {
-	_GP(guibuts)[abtn.buttonid].SetPushedImage(0);
-	_GP(guibuts)[abtn.buttonid].SetMouseOverImage(0);
-	_GP(guibuts)[abtn.buttonid].SetNormalImage(_GP(views)[abtn.view].loops[abtn.loop].frames[abtn.frame].pic);
+    // Assign view frame as normal image and reset all the rest
+    _GP(guibuts)[abtn.buttonid].SetImages(_GP(views)[abtn.view].loops[abtn.loop].frames[abtn.frame].pic, 0, 0);
 }
 
 void Button_Animate(GUIButton *butt, int view, int loop, int speed,	int repeat, int blocking, int direction, int sframe, int volume) {

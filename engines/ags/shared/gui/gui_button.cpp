@@ -226,6 +226,13 @@ void GUIButton::SetPushedImage(int32_t image) {
 	UpdateCurrentImage();
 }
 
+void GUIButton::SetImages(int32_t normal, int32_t over, int32_t pushed) {
+	_image = normal;
+	_mouseOverImage = over;
+	_pushedImage = pushed;
+	UpdateCurrentImage();
+}
+
 void GUIButton::SetText(const String &text) {
 	if (_text == text)
 		return;
@@ -249,63 +256,51 @@ void GUIButton::SetText(const String &text) {
 	MarkChanged();
 }
 
-
 bool GUIButton::OnMouseDown() {
-	int new_image = (_pushedImage > 0) ? _pushedImage : _currentImage;
-	if (_currentImage != new_image || !IsImageButton())
-		MarkChanged();
-	_currentImage = new_image;
 	IsPushed = true;
+	if (!IsImageButton())
+		MarkChanged();
+	UpdateCurrentImage();
 	return false;
 }
 
 void GUIButton::OnMouseEnter() {
-	int new_image = (IsPushed && _pushedImage > 0) ? _pushedImage :
-		(_mouseOverImage > 0) ? _mouseOverImage : _image;
-	if ((_currentImage != new_image) || (IsPushed && !IsImageButton())) {
-		_currentImage = new_image;
-		MarkChanged();
-	}
 	IsMouseOver = true;
+	if (IsPushed && !IsImageButton())
+		MarkChanged();
+	UpdateCurrentImage();
 }
 
 void GUIButton::OnMouseLeave() {
-	if ((_currentImage != _image) || (IsPushed && !IsImageButton())) {
-		_currentImage = _image;
-		MarkChanged();
-	}
 	IsMouseOver = false;
+	if (IsPushed && !IsImageButton())
+		MarkChanged();
+	UpdateCurrentImage();
 }
 
 void GUIButton::OnMouseUp() {
-	int new_image = _image;
 	if (IsMouseOver) {
-		if (_mouseOverImage > 0)
-			new_image = _mouseOverImage;
 		if (IsGUIEnabled(this) && IsClickable())
 			IsActivated = true;
 	}
-
-	if ((_currentImage != new_image) || (IsPushed && !IsImageButton())) {
-		_currentImage = new_image;
-		MarkChanged();
-	}
 	IsPushed = false;
+	if (IsPushed && !IsImageButton())
+		MarkChanged();
+	UpdateCurrentImage();
 }
 
 void GUIButton::UpdateCurrentImage() {
-	int was_image = _currentImage;
+	int new_image = _currentImage;
 
 	if (IsPushed && (_pushedImage > 0)) {
-		_currentImage = _pushedImage;
+		new_image = _pushedImage;
 	} else if (IsMouseOver && (_mouseOverImage > 0)) {
-		_currentImage = _mouseOverImage;
+		new_image = _mouseOverImage;
 	} else {
-		_currentImage = _image;
+		new_image = _image;
 	}
 
-	if (was_image != _currentImage)
-		MarkChanged();
+	SetCurrentImage(new_image);
 }
 
 void GUIButton::WriteToFile(Stream *out) const {
