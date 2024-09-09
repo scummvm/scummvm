@@ -91,7 +91,7 @@ protected:
 	uint32                     _field_24;
 	FightAction                _action;
 	uint32                     _sequenceIndex2;
-	int32                      _countdown;  // countdown before loosing ?
+	int32                      _countdown;  // countdown before losing ?
 	uint32                     _field_34;
 
 	// Drawing and processing
