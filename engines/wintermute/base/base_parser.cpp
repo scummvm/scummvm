@@ -156,7 +156,7 @@ char *BaseParser::getSubText(char **buf, char open, char close) {
 	char theChar;
 	long skip = 1;
 
-	if (open == close) {          // we cant nest identical delimiters
+	if (open == close) {          // we can't nest identical delimiters
 		open = 0;
 	}
 	while ((theChar = **buf) != 0) {
