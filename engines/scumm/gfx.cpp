@@ -4679,7 +4679,7 @@ void ScummEngine::dissolveEffect(int width, int height) {
 	//   The original construct the image piece by piece but blits it
 	//   every time it finds an offset smaller than the height of the virtual
 	//   screen. This is trivial to do in our code, so we just sleep for a
-	//   quarter frame everytime the condition above is met.
+	//   quarter frame every time the condition above is met.
 	//
 	// If we ever get a blitsToFreeze == 0, we will use 18 in its place
 	// since it's the most typical value got out of the calculations.
