@@ -68,7 +68,7 @@ class KyraMetaEngine;
  * all sound drivers that the originals had.
  * Some execeptions:
  * - The PC-98 version of Eye of the Beholder II is not yet supported.
- * - We don't support NES or Gameboy versions of Eye of the Beholder.
+ * - We don't support NES or Game Boy versions of Eye of the Beholder.
  *
  * The official translations of the games of which we are aware are mostly
  * supported. Some of the more rare versions (of which we don't even know

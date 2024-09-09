@@ -3122,7 +3122,7 @@ void Screen::showMouse() {
 		CursorMan.showMouse(true);
 
 		// We need to call OSystem::updateScreen here, else the mouse cursor
-		// will only be visible on mouse movment.
+		// will only be visible on mouse movement.
 		updateBackendScreen(true);
 	}
 
@@ -3646,9 +3646,9 @@ void Screen::crossFadeRegion(int x1, int y1, int x2, int y2, int w, int h, int s
 			addDirtyRect(dX, dY, 1, 1);
 		}
 
-		// This tries to speed things up, to get similiar speeds as in DOSBox etc.
+		// This tries to speed things up, to get similar speeds as in DOSBox etc.
 		// We can't write single pixels directly into the video memory like the original did.
-		// We also (unlike the original) want to aim at similiar speeds for all platforms.
+		// We also (unlike the original) want to aim at similar speeds for all platforms.
 		if (!(i % 10))
 			updateScreen();
 

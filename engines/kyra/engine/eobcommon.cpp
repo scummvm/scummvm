@@ -1080,7 +1080,7 @@ int EoBCoreEngine::incrCharacterHitPointsDividendByLevel(int charIndex, int leve
 	if (shouldRollHitDieAtCurrentLevel(charIndex, levelIndex)) {
 		/*
 		 * Per AD&D 2nd Edition Player's Handbook, HP adjustment is added
-		 * or substracted from each Hit Die rolled for the character.
+		 * or subtracted from each Hit Die rolled for the character.
 		 *
 		 * If the adjustment would lower the number rolled to 0 or less,
 		 * the final result should be considered to be 1.

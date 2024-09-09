@@ -441,7 +441,7 @@ void DarkMoonEngine::replaceMonster(int unit, uint16 block, int pos, int dir, in
 		// The boss level and the mindflayer level share the same monster data. If you hang around
 		// long enough in the mindflayer level all 30 monster slots will be used up. When this
 		// happens it will trigger the dragon transformation sequence when Dran is moved around by script.
-		// We avoid removing Dran here by prefering monster slots occupied by monsters from another
+		// We avoid removing Dran here by preferring monster slots occupied by monsters from another
 		// sub level.
 		if (_monsters[i].sub != _currentSub) {
 			index = i;
