@@ -630,7 +630,7 @@ static void AddInv(int invno, int object) {
 }
 
 /**
- * Define an actor's walk and stand reels for an auxilliary scale.
+ * Define an actor's walk and stand reels for an auxiliary scale.
  */
 static void AuxScale(int actor, int scale, SCNHANDLE *rp) {
 	MOVER *pMover = GetMover(actor);
@@ -5231,7 +5231,7 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 		break;
 	case 215: // this case produces "Unsupported library function" error,
-			  // followed by "You cant possibly get here", so map it to an invalid value
+			  // followed by "You can't possibly get here", so map it to an invalid value
 		mapping = NoirMapping{"OP215_USUPPORTED", -1, 0};
 		debug(7, "%s()", mapping.name);
 		break;

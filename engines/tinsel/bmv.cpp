@@ -539,7 +539,7 @@ void BMVPlayer::InitBMV(byte *memoryBuffer) {
 	if (TinselVersion == 3) {
 		// Clear the whole buffer
 		memset(memoryBuffer, 0, SCREEN_WIDE * (SCREEN_HIGH + 2) * bpp);
-		// Reset the pallete as it might be partially updated
+		// Reset the palette as it might be partially updated
 		memset(moviePal, 0, sizeof(moviePal));
 	} else {
 		// Clear the two extra 'off-screen' rows
