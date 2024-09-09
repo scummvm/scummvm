@@ -181,7 +181,7 @@ public:
 	void cancelWalk();
 
 	/**
-	 * Cancels any oustanding player action
+	 * Cancels any outstanding player action
 	 */
 	void cancelCommand();
 
