@@ -91,12 +91,12 @@ static void movelist_handle_targetfix(const fixed &xpermove, const fixed &ypermo
 
 // Handle remaining move along a single axis; uses generic parameters.
 static void movelist_handle_remainer(const fixed xpermove, const fixed ypermove, const int xdistance,
-									 const float step_length, int &onpart, int &fin_ymove, int &fin_onpart) {
+									 const float step_length, fixed &onpart, fixed &fin_ymove, fixed &fin_onpart) {
 	// Walk along the remaining axis with the full walking speed
 	assert(xpermove != 0 && ypermove != 0);
 	fin_ymove = ypermove > 0 ? ftofix(step_length) : -ftofix(step_length);
-	float onpart_to_dist = (float)xdistance / fixtof(xpermove);
-	fin_onpart = (int)((float)onpart - onpart_to_dist);
+	fixed onpart_to_dist = ftofix((float)xdistance / fixtof(xpermove));
+	fin_onpart = onpart - onpart_to_dist;
 	onpart = onpart_to_dist;
 }
 
@@ -116,7 +116,7 @@ int do_movelist_move(short &mslot, int &pos_x, int &pos_y) {
 	int main_onpart = cmls.onpart;
 	const bool do_fix_target = _G(loaded_game_file_version) < kGameVersion_361;
 	fixed fin_xmove = 0, fin_ymove = 0;
-	int fin_onpart = 0;
+	fixed fin_onpart = 0;
 
 	// Handle possible move remainers
 	if ((ypermove != 0) && (cmls.doneflag & kMoveListDone_X) != 0) { // X-move has finished, handle the Y-move remainer
@@ -134,10 +134,10 @@ int do_movelist_move(short &mslot, int &pos_x, int &pos_y) {
 
 	// Calculate next positions, as required
 	if ((cmls.doneflag & kMoveListDone_X) == 0) {
-		xps = cmls.from.X + (int)(fixtof(xpermove) * (float)main_onpart) + (int)(fixtof(fin_xmove) * (float)fin_onpart);
+		xps = cmls.from.X + (int)(fixtof(xpermove) * fixtof(main_onpart)) + (int)(fixtof(fin_xmove) * fixtof(fin_onpart));
 	}
 	if ((cmls.doneflag & kMoveListDone_Y) == 0) {
-		yps = cmls.from.Y + (int)(fixtof(ypermove) * (float)main_onpart) + (int)(fixtof(fin_ymove) * (float)fin_onpart);
+		yps = cmls.from.Y + (int)(fixtof(ypermove) * fixtof(main_onpart)) + (int)(fixtof(fin_ymove) * fixtof(fin_onpart));
 	}
 
 	// Check if finished horizontal movement
@@ -169,7 +169,7 @@ int do_movelist_move(short &mslot, int &pos_x, int &pos_y) {
 		// this stage is done, go on to the next stage
 		cmls.from = cmls.pos[cmls.onstage + 1];
 		cmls.onstage++;
-		cmls.onpart = -1;
+		cmls.onpart = itofix(-1);
 		cmls.doneflag = 0;
 		if (cmls.onstage < cmls.numstage) {
 			xps = cmls.from.X;
@@ -186,7 +186,7 @@ int do_movelist_move(short &mslot, int &pos_x, int &pos_y) {
 	}
 
 	// Make a step along the current vector and return
-	cmls.onpart++;
+	cmls.onpart += itofix(1);
 	pos_x = xps;
 	pos_y = yps;
 	return need_to_fix_sprite;
