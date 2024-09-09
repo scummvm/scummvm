@@ -146,7 +146,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_setNpcNum, // void Item::I_setSomething068(Item *, int16 something) , see VALUEBOX:ordinal20
 	Item::I_andStatus, // void Intrinsic069(6 bytes)
 	Item::I_move, // void Intrinsic06A(10 bytes)
-	UCMachine::I_true, // Note: This is actualy "is compiled with VIOLENCE=1" (was set to 0 in germany). For now just always say yes.
+	UCMachine::I_true, // Note: This is actually "is compiled with VIOLENCE=1" (was set to 0 in germany). For now just always say yes.
 	Kernel::I_resetRef, // void Intrinsic06C(4 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	Item::I_andStatus, // void Intrinsic06E(6 bytes)
