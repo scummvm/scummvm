@@ -68,7 +68,7 @@ bool Map::generateNewMap() {
 		return false;
 
 	// Create a new seed just for the below values.  This is to
-	// ensure these are truely random after generating a previous
+	// ensure these are truly random after generating a previous
 	// map (or to debug with a prefixed seed).
 	_rnd.generateNewSeed();
 
