@@ -416,7 +416,7 @@ void Sound::triggerSound(int soundID) {
 		// There are at least two main variants: in one,
 		// there are two subchunks AUhd and AUdt, in the other
 		// the chunks are called WVhd and WVdt. Besides that,
-		// the two variants seem pretty similiar.
+		// the two variants seem pretty similar.
 
 		// The first subchunk (AUhd resp. WVhd) seems to always
 		// contain three bytes (00 00 80) of unknown meaning.
