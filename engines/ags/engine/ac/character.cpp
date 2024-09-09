@@ -855,7 +855,7 @@ void Character_SetOption(CharacterInfo *chaa, int flag, int yesorno) {
 void Character_SetSpeed(CharacterInfo *chaa, int xspeed, int yspeed) {
 	if ((xspeed == 0) || (yspeed == 0))
 		quit("!SetCharacterSpeedEx: invalid speed value");
-	if (chaa->walking) {
+	if ((chaa->walking > 0) && (_G(loaded_game_file_version) < kGameVersion_350)) {
 		debug_script_warn("Character_SetSpeed: cannot change speed while walking");
 		return;
 	}
@@ -863,14 +863,19 @@ void Character_SetSpeed(CharacterInfo *chaa, int xspeed, int yspeed) {
 	xspeed = Math::Clamp(xspeed, (int)INT16_MIN, (int)INT16_MAX);
 	yspeed = Math::Clamp(yspeed, (int)INT16_MIN, (int)INT16_MAX);
 
-	chaa->walkspeed = xspeed;
+	uint16_t old_speedx = chaa->walkspeed;
+	uint16_t old_speedy = ((chaa->walkspeed_y == UNIFORM_WALK_SPEED) ? chaa->walkspeed : chaa->walkspeed_y);
 
+	chaa->walkspeed = xspeed;
 	if (yspeed == xspeed)
 		chaa->walkspeed_y = UNIFORM_WALK_SPEED;
 	else
 		chaa->walkspeed_y = yspeed;
-}
 
+	if (chaa->walking > 0) {
+		recalculate_move_speeds(&_GP(mls)[chaa->walking % TURNING_AROUND], old_speedx, old_speedy, xspeed, yspeed);
+	}
+}
 
 void Character_StopMoving(CharacterInfo *charp) {
 

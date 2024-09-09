@@ -1224,6 +1224,7 @@ public:
 	Navigation *_nav;
 	int _num_navpoints = 0;
 	AGS::Shared::Bitmap *_wallscreen = nullptr;
+	fixed _move_speed_x, _move_speed_y;
 	int _lastcx = 0, _lastcy = 0;
 	std::unique_ptr<IRouteFinder> *_route_finder_impl;
 
