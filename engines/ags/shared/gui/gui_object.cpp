@@ -63,24 +63,8 @@ String GUIObject::GetEventArgs(int event) const {
 	return _scEventArgs[event];
 }
 
-bool GUIObject::IsDeleted() const {
-	return (Flags & kGUICtrl_Deleted) != 0;
-}
-
-bool GUIObject::IsEnabled() const {
-	return (Flags & kGUICtrl_Enabled) != 0;
-}
-
 bool GUIObject::IsOverControl(int x, int y, int leeway) const {
 	return x >= X && y >= Y && x < (X + _width + leeway) && y < (Y + _height + leeway);
-}
-
-bool GUIObject::IsTranslated() const {
-	return (Flags & kGUICtrl_Translated) != 0;
-}
-
-bool GUIObject::IsVisible() const {
-	return (Flags & kGUICtrl_Visible) != 0;
 }
 
 void GUIObject::SetClickable(bool on) {
