@@ -733,7 +733,7 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 
 int32 Logic::fnFadeDown(int32 *params) {
 	// NONE means up! can only be called when screen is fully faded up -
-	// multiple calls wont have strange effects
+	// multiple calls won't have strange effects
 
 	// params:	none
 
