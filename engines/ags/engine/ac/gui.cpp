@@ -83,7 +83,7 @@ int GUI_GetVisible(ScriptGUI *tehgui) {
 	// Since 3.5.0 this always returns honest state of the Visible property as set by the game
 	if (_G(loaded_game_file_version) >= kGameVersion_350)
 		return (_GP(guis)[tehgui->id].IsVisible()) ? 1 : 0;
-	// Prior to 3.5.0 PopupY guis overrided Visible property and set it to 0 when auto-hidden;
+	// Prior to 3.5.0 PopupY guis override Visible property and set it to 0 when auto-hidden;
 	// in order to simulate same behavior we only return positive if such gui is popped up:
 	return (_GP(guis)[tehgui->id].IsDisplayed()) ? 1 : 0;
 }
