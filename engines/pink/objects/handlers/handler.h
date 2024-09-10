@@ -81,7 +81,7 @@ public:
 
 private:
 	Common::String _inventoryItem;
-	Common::String _recepient;
+	Common::String _recipient;
 };
 
 class HandlerTimerActions : public Handler {
