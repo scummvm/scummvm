@@ -39,7 +39,7 @@ void loadPal(volumeDataStruct *entry) {
 	if (_vm->_PAL_file.isOpen())
 		_vm->_PAL_file.close();
 
-	removeExtention(entry->ident, name);
+	removeExtension(entry->ident, name);
 	strcat(name, ".PAL");
 
 	if (!_vm->_PAL_file.open(name))
