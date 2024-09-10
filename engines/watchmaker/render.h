@@ -36,7 +36,7 @@ namespace Watchmaker {
 #define T3D_MATERIAL_ADDITIVE           (1<<2)          // additive (25-49)
 #define T3D_MATERIAL_GLASS              (1<<3)          // glass (50-74)
 #define T3D_MATERIAL_BOTTLE             (1<<4)          // bottle (75-100)
-#define T3D_MATERIAL_ENVIROMENT         (1<<5)          // enviroment
+#define T3D_MATERIAL_ENVIRONMENT        (1<<5)          // environment
 #define T3D_MATERIAL_SKY                (1<<6)          // sky
 #define T3D_MATERIAL_NOLIGHTMAP         (1<<7)          // no lightmap
 #define T3D_MATERIAL_MOVIE              (1<<8)          // with movie
