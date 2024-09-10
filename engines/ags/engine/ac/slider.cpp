@@ -183,18 +183,22 @@ RuntimeScriptValue Sc_Slider_SetValue(void *self, const RuntimeScriptValue *para
 
 
 void RegisterSliderAPI() {
-	ccAddExternalObjectFunction("Slider::get_BackgroundGraphic", Sc_Slider_GetBackgroundGraphic);
-	ccAddExternalObjectFunction("Slider::set_BackgroundGraphic", Sc_Slider_SetBackgroundGraphic);
-	ccAddExternalObjectFunction("Slider::get_HandleGraphic", Sc_Slider_GetHandleGraphic);
-	ccAddExternalObjectFunction("Slider::set_HandleGraphic", Sc_Slider_SetHandleGraphic);
-	ccAddExternalObjectFunction("Slider::get_HandleOffset", Sc_Slider_GetHandleOffset);
-	ccAddExternalObjectFunction("Slider::set_HandleOffset", Sc_Slider_SetHandleOffset);
-	ccAddExternalObjectFunction("Slider::get_Max", Sc_Slider_GetMax);
-	ccAddExternalObjectFunction("Slider::set_Max", Sc_Slider_SetMax);
-	ccAddExternalObjectFunction("Slider::get_Min", Sc_Slider_GetMin);
-	ccAddExternalObjectFunction("Slider::set_Min", Sc_Slider_SetMin);
-	ccAddExternalObjectFunction("Slider::get_Value", Sc_Slider_GetValue);
-	ccAddExternalObjectFunction("Slider::set_Value", Sc_Slider_SetValue);
+	ScFnRegister slider_api[] = {
+		{"Slider::get_BackgroundGraphic", API_FN_PAIR(Slider_GetBackgroundGraphic)},
+		{"Slider::set_BackgroundGraphic", API_FN_PAIR(Slider_SetBackgroundGraphic)},
+		{"Slider::get_HandleGraphic", API_FN_PAIR(Slider_GetHandleGraphic)},
+		{"Slider::set_HandleGraphic", API_FN_PAIR(Slider_SetHandleGraphic)},
+		{"Slider::get_HandleOffset", API_FN_PAIR(Slider_GetHandleOffset)},
+		{"Slider::set_HandleOffset", API_FN_PAIR(Slider_SetHandleOffset)},
+		{"Slider::get_Max", API_FN_PAIR(Slider_GetMax)},
+		{"Slider::set_Max", API_FN_PAIR(Slider_SetMax)},
+		{"Slider::get_Min", API_FN_PAIR(Slider_GetMin)},
+		{"Slider::set_Min", API_FN_PAIR(Slider_SetMin)},
+		{"Slider::get_Value", API_FN_PAIR(Slider_GetValue)},
+		{"Slider::set_Value", API_FN_PAIR(Slider_SetValue)},
+	};
+
+	ccAddExternalFunctions361(slider_api);
 }
 
 } // namespace AGS3
