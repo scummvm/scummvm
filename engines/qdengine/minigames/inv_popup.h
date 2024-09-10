@@ -42,10 +42,10 @@ public:
 		if (!_scene)
 			return false;
 
-			_invClickObj = _scene->object_interface("$inv_click_flag");
+			//_invClickObj = _scene->object_interface("$inv_click_flag");
 			_invDescObj = _scene->object_interface("%inv_desc");
 			_invDescCloseupObj = _scene->object_interface("%inv_desc_closeup");
-			_invActiveFlagObj = _scene->object_interface("$inv_active_flag");
+			//_invActiveFlagObj = _scene->object_interface("$inv_active_flag");
 			_blockPersObj = _scene->object_interface("\x24\xe1\xeb\xee\xea\xe8\xf0\xee\xe2\xea\xe0\x5f\xef\xe5\xf0\xf1\xee\xed\xe0\xe6\xe0");	// "$блокировка_персонажа"
 			_blockPersFlagObj = _scene->object_interface("\x24\xe1\xeb\xee\xea\xe8\xf0\xee\xe2\xea\xe0\x5f\xef\xe5\xf0\xf1\xee\xed\xe0\xe6\xe0\x5f\xf4\xeb\xe0\xe3");	// "$блокировка_персонажа_флаг"
 
@@ -68,11 +68,11 @@ public:
 	bool quant(float dt) {
 		debugC(3, kDebugMinigames, "InvPopup::quant(%f)", dt);
 
-		if (_blockPersObj->is_state_active("включить")) {
+		if (_blockPersObj->is_state_active("\xe2\xea\xeb\xfe\xf7\xe8\xf2\xfc")) { // "включить"
 			_scene->activate_personage("Lock");
-		} else if (_blockPersObj->is_state_active("выключить")) {
-			_scene->activate_personage("Швейк");
-			_blockPersObj->set_state("выключена");
+		} else if (_blockPersObj->is_state_active("\xe2\xfb\xea\xeb\xfe\xf7\xe8\xf2\xfc")) { // "выключить"
+			_scene->activate_personage("\xd8\xe2\xe5\xe9\xea");	// "Швейк"
+			_blockPersObj->set_state("\xe2\xfb\xea\xeb\xfe\xf7\xe5\xed\xe0");	// "выключена"
 		}
 
 		qdMinigameObjectInterface *obj;
@@ -98,8 +98,8 @@ LABEL_20:
 
 		pos = strstr(state, "#inv#");
 		char buf2[5];
-		strncpy(buf2, pos + 5, 2);
-		strncpy(buf, _invDescCloseupObj->current_state_name(), 2);
+		Common::strlcpy(buf2, pos + 5, 3);
+		Common::strlcpy(buf, _invDescCloseupObj->current_state_name(), 3);
 
 		if (buf2[0] != buf[0] || buf2[1] != buf[1]) {
 			_invDescObj->set_state(buf2);
@@ -127,7 +127,7 @@ LABEL_21:
 
 				if (strstr(state, "#closeup#")) {
 					pos = strstr(state, "#inv#");
-					strncpy(buf, pos + 5, 2);
+					Common::strlcpy(buf, pos + 5, 3);
 					buf[2] = 0;
 
 					_invDescCloseupObj->set_state(buf);
@@ -139,11 +139,11 @@ LABEL_21:
 			}
 		}
 
-		if (Common::String(_blockPersFlagObj->current_state_name()) == "да") {
-			if (!_blockPersObj->is_state_active("включить"))
-				_blockPersObj->set_state("включить");
-		} else if (_blockPersObj->is_state_active("включить")) {
-			_blockPersObj->set_state("выключить");
+		if (Common::String(_blockPersFlagObj->current_state_name()) == "\xe4\xe0") { // "да"
+			if (!_blockPersObj->is_state_active("\xe2\xea\xeb\xfe\xf7\xe8\xf2\xfc")) // "включить"
+				_blockPersObj->set_state("\xe2\xea\xeb\xfe\xf7\xe8\xf2\xfc"); // "включить"
+		} else if (_blockPersObj->is_state_active("\xe2\xea\xeb\xfe\xf7\xe8\xf2\xfc")) { // "включить"
+			_blockPersObj->set_state("\xe2\xfb\xea\xeb\xfe\xf7\xe8\xf2\xfc"); // "выключить"
 		}
 
 		_direction = -10;
@@ -264,7 +264,7 @@ LABEL_21:
 			break;
 		}
 
-		if (strstr(_shveikMoveEnabledObj->current_state_name(), "да")) {
+		if (strstr(_shveikMoveEnabledObj->current_state_name(), "\xe4\xe0")) { // "да"
 			if (!_shveikIsMoving) {
 				_shveikIsMoving = 1;
 				_time = 0.0;
@@ -276,16 +276,17 @@ LABEL_21:
 			} else {
 				_shveikIsMoving = 2;
 				_time = -1.0;
-				_shveikMoveObj->set_state("выполнить");
+				_shveikMoveObj->set_state("\xe2\xfb\xef\xee\xeb\xed\xe8\xf2\xfc"); // "выполнить"
 			}
 		}
 
-		if ((strstr(_shveikMoveEnabledObj->current_state_name(), "нет") || _shveikMoveObj->is_state_active("отработан"))
+		if ((strstr(_shveikMoveEnabledObj->current_state_name(), "\xed\xe5\xf2")	// "нет"
+				|| _shveikMoveObj->is_state_active("\xee\xf2\xf0\xe0\xe1\xee\xf2\xe0\xed"))		// "отработан"
 				&& _shveikIsMoving > 0) {
 			_shveikIsMoving = 0;
 			_time = -1.0;
 			_timeout = -1;
-			_shveikMoveObj->set_state("ожидание");
+			_shveikMoveObj->set_state("\xee\xe6\xe8\xe4\xe0\xed\xe8\xe5"); // "ожидание"
 		}
 
 		if ((_shveikObj->R().x != _oldShveikPos.x
@@ -294,7 +295,7 @@ LABEL_21:
 			_shveikIsMoving = 0;
 			_time = -1.0;
 			_timeout = -1;
-			_shveikMoveObj->set_state("ожидание");
+			_shveikMoveObj->set_state("\xee\xe6\xe8\xe4\xe0\xed\xe8\xe5"); // "ожидание"
 		}
 
 		_oldShveikPos = _shveikObj->R();
@@ -334,10 +335,10 @@ private:
 	const qdEngineInterface *_engine = nullptr;
 	qdMinigameSceneInterface *_scene = nullptr;
 
-	qdMinigameObjectInterface *_invClickObj = nullptr;
+//	qdMinigameObjectInterface *_invClickObj = nullptr;
 	qdMinigameObjectInterface *_invDescObj = nullptr;
 	qdMinigameObjectInterface *_invDescCloseupObj = nullptr;
-	qdMinigameObjectInterface *_invActiveFlagObj = nullptr;
+//	qdMinigameObjectInterface *_invActiveFlagObj = nullptr;
 	qdMinigameObjectInterface *_shveikObj = nullptr;
 	qdMinigameObjectInterface *_blockPersObj = nullptr;
 	qdMinigameObjectInterface *_blockPersFlagObj = nullptr;
