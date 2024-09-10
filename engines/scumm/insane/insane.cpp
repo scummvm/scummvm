@@ -476,7 +476,7 @@ void Insane::init_enemyStruct(int n, int32 handler, int32 initializer,
 
 	_enemy[n].handler = handler;
 	_enemy[n].initializer = initializer;
-	_enemy[n].occurences = occurrences;
+	_enemy[n].occurrences = occurrences;
 	_enemy[n].maxdamage = maxdamage;
 	_enemy[n].isEmpty = isEmpty;
 	_enemy[n].weapon = weapon;
