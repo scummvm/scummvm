@@ -3105,7 +3105,7 @@ RuntimeScriptValue Sc_Character_SetIdleView(void *self, const RuntimeScriptValue
 	API_OBJCALL_VOID_PINT2(CharacterInfo, Character_SetIdleView);
 }
 
-RuntimeScriptValue Sc_Character_HasExplicitLight(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetHasExplicitLight(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_BOOL(CharacterInfo, Character_GetHasExplicitLight);
 }
 
@@ -3631,168 +3631,174 @@ void ScPl_Character_Think(CharacterInfo *chaa, const char *texx, ...) {
 }
 
 void RegisterCharacterAPI(ScriptAPIVersion base_api, ScriptAPIVersion /* compat_api */) {
-	ccAddExternalObjectFunction("Character::AddInventory^2",            Sc_Character_AddInventory);
-	ccAddExternalObjectFunction("Character::AddWaypoint^2",             Sc_Character_AddWaypoint);
-	ccAddExternalObjectFunction("Character::Animate^5",                 Sc_Character_Animate5);
-	ccAddExternalObjectFunction("Character::Animate^6",                 Sc_Character_Animate6);
-	ccAddExternalObjectFunction("Character::Animate^7",                 Sc_Character_Animate);
-	ccAddExternalObjectFunction("Character::ChangeRoom^3",              Sc_Character_ChangeRoom);
-	ccAddExternalObjectFunction("Character::ChangeRoom^4",              Sc_Character_ChangeRoomSetLoop);
-	ccAddExternalObjectFunction("Character::ChangeRoomAutoPosition^2",  Sc_Character_ChangeRoomAutoPosition);
-	ccAddExternalObjectFunction("Character::ChangeView^1",              Sc_Character_ChangeView);
-	ccAddExternalObjectFunction("Character::FaceCharacter^2",           Sc_Character_FaceCharacter);
-	ccAddExternalObjectFunction("Character::FaceDirection^2",           Sc_Character_FaceDirection);
-	ccAddExternalObjectFunction("Character::FaceLocation^3",            Sc_Character_FaceLocation);
-	ccAddExternalObjectFunction("Character::FaceObject^2",              Sc_Character_FaceObject);
-	ccAddExternalObjectFunction("Character::FollowCharacter^3",         Sc_Character_FollowCharacter);
-	ccAddExternalObjectFunction("Character::GetProperty^1",             Sc_Character_GetProperty);
-	ccAddExternalObjectFunction("Character::GetPropertyText^2",         Sc_Character_GetPropertyText);
-	ccAddExternalObjectFunction("Character::GetTextProperty^1",         Sc_Character_GetTextProperty);
-	ccAddExternalObjectFunction("Character::SetProperty^2",             Sc_Character_SetProperty);
-	ccAddExternalObjectFunction("Character::SetTextProperty^2",         Sc_Character_SetTextProperty);
-	ccAddExternalObjectFunction("Character::HasInventory^1",            Sc_Character_HasInventory);
-	ccAddExternalObjectFunction("Character::IsCollidingWithChar^1",     Sc_Character_IsCollidingWithChar);
-	ccAddExternalObjectFunction("Character::IsCollidingWithObject^1",   Sc_Character_IsCollidingWithObject);
-	ccAddExternalObjectFunction("Character::IsInteractionAvailable^1",  Sc_Character_IsInteractionAvailable);
-	ccAddExternalObjectFunction("Character::LockView^1",                Sc_Character_LockView);
-	ccAddExternalObjectFunction("Character::LockView^2",                Sc_Character_LockViewEx);
+	ScFnRegister character_api[] = {
+		{"Character::GetAtRoomXY^2", API_FN_PAIR(GetCharacterAtRoom)},
+		{"Character::GetAtScreenXY^2", API_FN_PAIR(GetCharacterAtScreen)},
+
+		{"Character::AddInventory^2", API_FN_PAIR(Character_AddInventory)},
+		{"Character::AddWaypoint^2", API_FN_PAIR(Character_AddWaypoint)},
+		{"Character::Animate^5", API_FN_PAIR(Character_Animate5)},
+		{"Character::Animate^6", API_FN_PAIR(Character_Animate6)},
+		{"Character::Animate^7", API_FN_PAIR(Character_Animate)},
+		{"Character::ChangeRoom^3", API_FN_PAIR(Character_ChangeRoom)},
+		{"Character::ChangeRoom^4", API_FN_PAIR(Character_ChangeRoomSetLoop)},
+		{"Character::ChangeRoomAutoPosition^2", API_FN_PAIR(Character_ChangeRoomAutoPosition)},
+		{"Character::ChangeView^1", API_FN_PAIR(Character_ChangeView)},
+		{"Character::FaceCharacter^2", API_FN_PAIR(Character_FaceCharacter)},
+		{"Character::FaceDirection^2", API_FN_PAIR(Character_FaceDirection)},
+		{"Character::FaceLocation^3", API_FN_PAIR(Character_FaceLocation)},
+		{"Character::FaceObject^2", API_FN_PAIR(Character_FaceObject)},
+		{"Character::FollowCharacter^3", API_FN_PAIR(Character_FollowCharacter)},
+		{"Character::GetProperty^1", API_FN_PAIR(Character_GetProperty)},
+		{"Character::GetPropertyText^2", API_FN_PAIR(Character_GetPropertyText)},
+		{"Character::GetTextProperty^1", API_FN_PAIR(Character_GetTextProperty)},
+		{"Character::SetProperty^2", API_FN_PAIR(Character_SetProperty)},
+		{"Character::SetTextProperty^2", API_FN_PAIR(Character_SetTextProperty)},
+		{"Character::HasInventory^1", API_FN_PAIR(Character_HasInventory)},
+		{"Character::IsCollidingWithChar^1", API_FN_PAIR(Character_IsCollidingWithChar)},
+		{"Character::IsCollidingWithObject^1", API_FN_PAIR(Character_IsCollidingWithObject)},
+		{"Character::IsInteractionAvailable^1", API_FN_PAIR(Character_IsInteractionAvailable)},
+		{"Character::LockView^1", API_FN_PAIR(Character_LockView)},
+		{"Character::LockView^2", API_FN_PAIR(Character_LockViewEx)},
+		{"Character::LockViewFrame^3", API_FN_PAIR(Character_LockViewFrame)},
+		{"Character::LockViewFrame^4", API_FN_PAIR(Character_LockViewFrameEx)},
+		{"Character::LockViewOffset^3", API_FN_PAIR(Character_LockViewOffset)},
+		{"Character::LockViewOffset^4", API_FN_PAIR(Character_LockViewOffsetEx)},
+		{"Character::LoseInventory^1", API_FN_PAIR(Character_LoseInventory)},
+		{"Character::Move^4", API_FN_PAIR(Character_Move)},
+		{"Character::PlaceOnWalkableArea^0", API_FN_PAIR(Character_PlaceOnWalkableArea)},
+		{"Character::RemoveTint^0", API_FN_PAIR(Character_RemoveTint)},
+		{"Character::RunInteraction^1", API_FN_PAIR(Character_RunInteraction)},
+		{"Character::Say^101", Sc_Character_Say},
+		{"Character::SayAt^4", API_FN_PAIR(Character_SayAt)},
+		{"Character::SayBackground^1", API_FN_PAIR(Character_SayBackground)},
+		{"Character::SetAsPlayer^0", API_FN_PAIR(Character_SetAsPlayer)},
+		{"Character::SetIdleView^2", API_FN_PAIR(Character_SetIdleView)},
+		{"Character::SetLightLevel^1", API_FN_PAIR(Character_SetLightLevel)},
+		{"Character::SetWalkSpeed^2", API_FN_PAIR(Character_SetSpeed)},
+		{"Character::StopMoving^0", API_FN_PAIR(Character_StopMoving)},
+		{"Character::Think^101", Sc_Character_Think},
+		{"Character::Tint^5", API_FN_PAIR(Character_Tint)},
+		{"Character::UnlockView^0", API_FN_PAIR(Character_UnlockView)},
+		{"Character::UnlockView^1", API_FN_PAIR(Character_UnlockViewEx)},
+		{"Character::Walk^4", API_FN_PAIR(Character_Walk)},
+		{"Character::WalkStraight^3", API_FN_PAIR(Character_WalkStraight)},
+
+		{"Character::get_ActiveInventory", API_FN_PAIR(Character_GetActiveInventory)},
+		{"Character::set_ActiveInventory", API_FN_PAIR(Character_SetActiveInventory)},
+		{"Character::get_Animating", API_FN_PAIR(Character_GetAnimating)},
+		{"Character::get_AnimationSpeed", API_FN_PAIR(Character_GetAnimationSpeed)},
+		{"Character::set_AnimationSpeed", API_FN_PAIR(Character_SetAnimationSpeed)},
+		{"Character::get_AnimationVolume", API_FN_PAIR(Character_GetAnimationVolume)},
+		{"Character::set_AnimationVolume", API_FN_PAIR(Character_SetAnimationVolume)},
+		{"Character::get_Baseline", API_FN_PAIR(Character_GetBaseline)},
+		{"Character::set_Baseline", API_FN_PAIR(Character_SetBaseline)},
+		{"Character::get_BlinkInterval", API_FN_PAIR(Character_GetBlinkInterval)},
+		{"Character::set_BlinkInterval", API_FN_PAIR(Character_SetBlinkInterval)},
+		{"Character::get_BlinkView", API_FN_PAIR(Character_GetBlinkView)},
+		{"Character::set_BlinkView", API_FN_PAIR(Character_SetBlinkView)},
+		{"Character::get_BlinkWhileThinking", API_FN_PAIR(Character_GetBlinkWhileThinking)},
+		{"Character::set_BlinkWhileThinking", API_FN_PAIR(Character_SetBlinkWhileThinking)},
+		{"Character::get_BlockingHeight", API_FN_PAIR(Character_GetBlockingHeight)},
+		{"Character::set_BlockingHeight", API_FN_PAIR(Character_SetBlockingHeight)},
+		{"Character::get_BlockingWidth", API_FN_PAIR(Character_GetBlockingWidth)},
+		{"Character::set_BlockingWidth", API_FN_PAIR(Character_SetBlockingWidth)},
+		{"Character::get_Clickable", API_FN_PAIR(Character_GetClickable)},
+		{"Character::set_Clickable", API_FN_PAIR(Character_SetClickable)},
+		{"Character::get_DestinationX", API_FN_PAIR(Character_GetDestinationX)},
+		{"Character::get_DestinationY", API_FN_PAIR(Character_GetDestinationY)},
+		{"Character::get_DiagonalLoops", API_FN_PAIR(Character_GetDiagonalWalking)},
+		{"Character::set_DiagonalLoops", API_FN_PAIR(Character_SetDiagonalWalking)},
+		{"Character::get_Frame", API_FN_PAIR(Character_GetFrame)},
+		{"Character::set_Frame", API_FN_PAIR(Character_SetFrame)},
+		{"Character::get_ID", API_FN_PAIR(Character_GetID)},
+		{"Character::get_IdleView", API_FN_PAIR(Character_GetIdleView)},
+		{"Character::get_IdleAnimationDelay", API_FN_PAIR(Character_GetIdleAnimationDelay)},
+		{"Character::set_IdleAnimationDelay", API_FN_PAIR(Character_SetIdleAnimationDelay)},
+		{"Character::geti_InventoryQuantity", API_FN_PAIR(Character_GetIInventoryQuantity)},
+		{"Character::seti_InventoryQuantity", API_FN_PAIR(Character_SetIInventoryQuantity)},
+		{"Character::get_IgnoreLighting", API_FN_PAIR(Character_GetIgnoreLighting)},
+		{"Character::set_IgnoreLighting", API_FN_PAIR(Character_SetIgnoreLighting)},
+		{"Character::get_IgnoreScaling", API_FN_PAIR(Character_GetIgnoreScaling)},
+		{"Character::set_IgnoreScaling", API_FN_PAIR(Character_SetIgnoreScaling)},
+		{"Character::get_IgnoreWalkbehinds", API_FN_PAIR(Character_GetIgnoreWalkbehinds)},
+		{"Character::set_IgnoreWalkbehinds", API_FN_PAIR(Character_SetIgnoreWalkbehinds)},
+		{"Character::get_Loop", API_FN_PAIR(Character_GetLoop)},
+		{"Character::set_Loop", API_FN_PAIR(Character_SetLoop)},
+		{"Character::get_ManualScaling", API_FN_PAIR(Character_GetIgnoreScaling)},
+		{"Character::set_ManualScaling", API_FN_PAIR(Character_SetManualScaling)},
+		{"Character::get_MovementLinkedToAnimation", API_FN_PAIR(Character_GetMovementLinkedToAnimation)},
+		{"Character::set_MovementLinkedToAnimation", API_FN_PAIR(Character_SetMovementLinkedToAnimation)},
+		{"Character::get_Moving", API_FN_PAIR(Character_GetMoving)},
+		{"Character::get_Name", API_FN_PAIR(Character_GetName)},
+		{"Character::set_Name", API_FN_PAIR(Character_SetName)},
+		{"Character::get_NormalView", API_FN_PAIR(Character_GetNormalView)},
+		{"Character::get_PreviousRoom", API_FN_PAIR(Character_GetPreviousRoom)},
+		{"Character::get_Room", API_FN_PAIR(Character_GetRoom)},
+		{"Character::get_ScaleMoveSpeed", API_FN_PAIR(Character_GetScaleMoveSpeed)},
+		{"Character::set_ScaleMoveSpeed", API_FN_PAIR(Character_SetScaleMoveSpeed)},
+		{"Character::get_ScaleVolume", API_FN_PAIR(Character_GetScaleVolume)},
+		{"Character::set_ScaleVolume", API_FN_PAIR(Character_SetScaleVolume)},
+		{"Character::get_Scaling", API_FN_PAIR(Character_GetScaling)},
+		{"Character::set_Scaling", API_FN_PAIR(Character_SetScaling)},
+		{"Character::get_Solid", API_FN_PAIR(Character_GetSolid)},
+		{"Character::set_Solid", API_FN_PAIR(Character_SetSolid)},
+		{"Character::get_Speaking", API_FN_PAIR(Character_GetSpeaking)},
+		{"Character::get_SpeakingFrame", API_FN_PAIR(Character_GetSpeakingFrame)},
+		{"Character::get_SpeechAnimationDelay", API_FN_PAIR(GetCharacterSpeechAnimationDelay)},
+		{"Character::set_SpeechAnimationDelay", API_FN_PAIR(Character_SetSpeechAnimationDelay)},
+		{"Character::get_SpeechColor", API_FN_PAIR(Character_GetSpeechColor)},
+		{"Character::set_SpeechColor", API_FN_PAIR(Character_SetSpeechColor)},
+		{"Character::get_SpeechView", API_FN_PAIR(Character_GetSpeechView)},
+		{"Character::set_SpeechView", API_FN_PAIR(Character_SetSpeechView)},
+		{"Character::get_Thinking", API_FN_PAIR(Character_GetThinking)},
+		{"Character::get_ThinkingFrame", API_FN_PAIR(Character_GetThinkingFrame)},
+		{"Character::get_ThinkView", API_FN_PAIR(Character_GetThinkView)},
+		{"Character::set_ThinkView", API_FN_PAIR(Character_SetThinkView)},
+		{"Character::get_Transparency", API_FN_PAIR(Character_GetTransparency)},
+		{"Character::set_Transparency", API_FN_PAIR(Character_SetTransparency)},
+		{"Character::get_TurnBeforeWalking", API_FN_PAIR(Character_GetTurnBeforeWalking)},
+		{"Character::set_TurnBeforeWalking", API_FN_PAIR(Character_SetTurnBeforeWalking)},
+		{"Character::get_View", API_FN_PAIR(Character_GetView)},
+		{"Character::get_WalkSpeedX", API_FN_PAIR(Character_GetWalkSpeedX)},
+		{"Character::get_WalkSpeedY", API_FN_PAIR(Character_GetWalkSpeedY)},
+		{"Character::get_X", API_FN_PAIR(Character_GetX)},
+		{"Character::set_X", API_FN_PAIR(Character_SetX)},
+		{"Character::get_x", API_FN_PAIR(Character_GetX)},
+		{"Character::set_x", API_FN_PAIR(Character_SetX)},
+		{"Character::get_Y", API_FN_PAIR(Character_GetY)},
+		{"Character::set_Y", API_FN_PAIR(Character_SetY)},
+		{"Character::get_y", API_FN_PAIR(Character_GetY)},
+		{"Character::set_y", API_FN_PAIR(Character_SetY)},
+		{"Character::get_Z", API_FN_PAIR(Character_GetZ)},
+		{"Character::set_Z", API_FN_PAIR(Character_SetZ)},
+		{"Character::get_z", API_FN_PAIR(Character_GetZ)},
+		{"Character::set_z", API_FN_PAIR(Character_SetZ)},
+		{"Character::get_HasExplicitLight", API_FN_PAIR(Character_GetHasExplicitLight)},
+		{"Character::get_LightLevel", API_FN_PAIR(Character_GetLightLevel)},
+		{"Character::get_TintBlue", API_FN_PAIR(Character_GetTintBlue)},
+		{"Character::get_TintGreen", API_FN_PAIR(Character_GetTintGreen)},
+		{"Character::get_TintRed", API_FN_PAIR(Character_GetTintRed)},
+		{"Character::get_TintSaturation", API_FN_PAIR(Character_GetTintSaturation)},
+		{"Character::get_TintLuminance", API_FN_PAIR(Character_GetTintLuminance)},
+	};
+
+	ccAddExternalFunctions361(character_api);
+
+	// Few functions have to be selected based on API level
 	if (base_api < kScriptAPI_v350) {
-		ccAddExternalObjectFunction("Character::LockViewAligned^3", Sc_Character_LockViewAligned_Old);
-		ccAddExternalObjectFunction("Character::LockViewAligned^4", Sc_Character_LockViewAlignedEx_Old);
+		ccAddExternalObjectFunction361("Character::LockViewAligned^3", API_FN_PAIR(Character_LockViewAligned_Old));
+		ccAddExternalObjectFunction361("Character::LockViewAligned^4", API_FN_PAIR(Character_LockViewAlignedEx_Old));
 	} else {
-		ccAddExternalObjectFunction("Character::LockViewAligned^3", Sc_Character_LockViewAligned);
-		ccAddExternalObjectFunction("Character::LockViewAligned^4", Sc_Character_LockViewAlignedEx);
+		ccAddExternalObjectFunction361("Character::LockViewAligned^3", API_FN_PAIR(Character_LockViewAligned));
+		ccAddExternalObjectFunction361("Character::LockViewAligned^4", API_FN_PAIR(Character_LockViewAlignedEx));
 	}
-	ccAddExternalObjectFunction("Character::LockViewFrame^3",           Sc_Character_LockViewFrame);
-	ccAddExternalObjectFunction("Character::LockViewFrame^4",           Sc_Character_LockViewFrameEx);
-	ccAddExternalObjectFunction("Character::LockViewOffset^3",          Sc_Character_LockViewOffset);
-	ccAddExternalObjectFunction("Character::LockViewOffset^4",          Sc_Character_LockViewOffsetEx);
-	ccAddExternalObjectFunction("Character::LoseInventory^1",           Sc_Character_LoseInventory);
-	ccAddExternalObjectFunction("Character::Move^4",                    Sc_Character_Move);
-	ccAddExternalObjectFunction("Character::PlaceOnWalkableArea^0",     Sc_Character_PlaceOnWalkableArea);
-	ccAddExternalObjectFunction("Character::RemoveTint^0",              Sc_Character_RemoveTint);
-	ccAddExternalObjectFunction("Character::RunInteraction^1",          Sc_Character_RunInteraction);
-	ccAddExternalObjectFunction("Character::Say^101",                   Sc_Character_Say);
-	ccAddExternalObjectFunction("Character::SayAt^4",                   Sc_Character_SayAt);
-	ccAddExternalObjectFunction("Character::SayBackground^1",           Sc_Character_SayBackground);
-	ccAddExternalObjectFunction("Character::SetAsPlayer^0",             Sc_Character_SetAsPlayer);
-	ccAddExternalObjectFunction("Character::SetIdleView^2",             Sc_Character_SetIdleView);
-	ccAddExternalObjectFunction("Character::SetLightLevel^1",           Sc_Character_SetLightLevel);
-	//ccAddExternalObjectFunction("Character::SetOption^2",             Sc_Character_SetOption);
-	ccAddExternalObjectFunction("Character::SetWalkSpeed^2",            Sc_Character_SetSpeed);
-	ccAddExternalObjectFunction("Character::StopMoving^0",              Sc_Character_StopMoving);
-	ccAddExternalObjectFunction("Character::Think^101",                 Sc_Character_Think);
-	ccAddExternalObjectFunction("Character::Tint^5",                    Sc_Character_Tint);
-	ccAddExternalObjectFunction("Character::UnlockView^0",              Sc_Character_UnlockView);
-	ccAddExternalObjectFunction("Character::UnlockView^1",              Sc_Character_UnlockViewEx);
-	ccAddExternalObjectFunction("Character::Walk^4",                    Sc_Character_Walk);
-	ccAddExternalObjectFunction("Character::WalkStraight^3",            Sc_Character_WalkStraight);
 
-	ccAddExternalStaticFunction("Character::GetAtRoomXY^2",             Sc_GetCharacterAtRoom);
-	ccAddExternalStaticFunction("Character::GetAtScreenXY^2",           Sc_GetCharacterAtScreen);
-
-	ccAddExternalObjectFunction("Character::get_ActiveInventory",       Sc_Character_GetActiveInventory);
-	ccAddExternalObjectFunction("Character::set_ActiveInventory",       Sc_Character_SetActiveInventory);
-	ccAddExternalObjectFunction("Character::get_Animating",             Sc_Character_GetAnimating);
-	ccAddExternalObjectFunction("Character::get_AnimationSpeed",        Sc_Character_GetAnimationSpeed);
-	ccAddExternalObjectFunction("Character::set_AnimationSpeed",        Sc_Character_SetAnimationSpeed);
-	ccAddExternalObjectFunction("Character::get_AnimationVolume",       Sc_Character_GetAnimationVolume);
-	ccAddExternalObjectFunction("Character::set_AnimationVolume",       Sc_Character_SetAnimationVolume);
-	ccAddExternalObjectFunction("Character::get_Baseline",              Sc_Character_GetBaseline);
-	ccAddExternalObjectFunction("Character::set_Baseline",              Sc_Character_SetBaseline);
-	ccAddExternalObjectFunction("Character::get_BlinkInterval",         Sc_Character_GetBlinkInterval);
-	ccAddExternalObjectFunction("Character::set_BlinkInterval",         Sc_Character_SetBlinkInterval);
-	ccAddExternalObjectFunction("Character::get_BlinkView",             Sc_Character_GetBlinkView);
-	ccAddExternalObjectFunction("Character::set_BlinkView",             Sc_Character_SetBlinkView);
-	ccAddExternalObjectFunction("Character::get_BlinkWhileThinking",    Sc_Character_GetBlinkWhileThinking);
-	ccAddExternalObjectFunction("Character::set_BlinkWhileThinking",    Sc_Character_SetBlinkWhileThinking);
-	ccAddExternalObjectFunction("Character::get_BlockingHeight",        Sc_Character_GetBlockingHeight);
-	ccAddExternalObjectFunction("Character::set_BlockingHeight",        Sc_Character_SetBlockingHeight);
-	ccAddExternalObjectFunction("Character::get_BlockingWidth",         Sc_Character_GetBlockingWidth);
-	ccAddExternalObjectFunction("Character::set_BlockingWidth",         Sc_Character_SetBlockingWidth);
-	ccAddExternalObjectFunction("Character::get_Clickable",             Sc_Character_GetClickable);
-	ccAddExternalObjectFunction("Character::set_Clickable",             Sc_Character_SetClickable);
-	ccAddExternalObjectFunction("Character::get_DestinationX",          Sc_Character_GetDestinationX);
-	ccAddExternalObjectFunction("Character::get_DestinationY",          Sc_Character_GetDestinationY);
-	ccAddExternalObjectFunction("Character::get_DiagonalLoops",         Sc_Character_GetDiagonalWalking);
-	ccAddExternalObjectFunction("Character::set_DiagonalLoops",         Sc_Character_SetDiagonalWalking);
-	ccAddExternalObjectFunction("Character::get_Frame",                 Sc_Character_GetFrame);
-	ccAddExternalObjectFunction("Character::set_Frame",                 Sc_Character_SetFrame);
-	if (base_api < kScriptAPI_v341)
-		ccAddExternalObjectFunction("Character::get_HasExplicitTint",       Sc_Character_GetHasExplicitTint_Old);
-	else
-		ccAddExternalObjectFunction("Character::get_HasExplicitTint",       Sc_Character_GetHasExplicitTint);
-	ccAddExternalObjectFunction("Character::get_ID",                    Sc_Character_GetID);
-	ccAddExternalObjectFunction("Character::get_IdleView",              Sc_Character_GetIdleView);
-	ccAddExternalObjectFunction("Character::get_IdleAnimationDelay",    Sc_Character_GetIdleAnimationDelay);
-	ccAddExternalObjectFunction("Character::set_IdleAnimationDelay",    Sc_Character_SetIdleAnimationDelay);
-	ccAddExternalObjectFunction("Character::geti_InventoryQuantity",    Sc_Character_GetIInventoryQuantity);
-	ccAddExternalObjectFunction("Character::seti_InventoryQuantity",    Sc_Character_SetIInventoryQuantity);
-	ccAddExternalObjectFunction("Character::get_IgnoreLighting",        Sc_Character_GetIgnoreLighting);
-	ccAddExternalObjectFunction("Character::set_IgnoreLighting",        Sc_Character_SetIgnoreLighting);
-	ccAddExternalObjectFunction("Character::get_IgnoreScaling",         Sc_Character_GetIgnoreScaling);
-	ccAddExternalObjectFunction("Character::set_IgnoreScaling",         Sc_Character_SetIgnoreScaling);
-	ccAddExternalObjectFunction("Character::get_IgnoreWalkbehinds",     Sc_Character_GetIgnoreWalkbehinds);
-	ccAddExternalObjectFunction("Character::set_IgnoreWalkbehinds",     Sc_Character_SetIgnoreWalkbehinds);
-	ccAddExternalObjectFunction("Character::get_Loop",                  Sc_Character_GetLoop);
-	ccAddExternalObjectFunction("Character::set_Loop",                  Sc_Character_SetLoop);
-	ccAddExternalObjectFunction("Character::get_ManualScaling",         Sc_Character_GetIgnoreScaling);
-	ccAddExternalObjectFunction("Character::set_ManualScaling",         Sc_Character_SetManualScaling);
-	ccAddExternalObjectFunction("Character::get_MovementLinkedToAnimation", Sc_Character_GetMovementLinkedToAnimation);
-	ccAddExternalObjectFunction("Character::set_MovementLinkedToAnimation", Sc_Character_SetMovementLinkedToAnimation);
-	ccAddExternalObjectFunction("Character::get_Moving",                Sc_Character_GetMoving);
-	ccAddExternalObjectFunction("Character::get_Name",                  Sc_Character_GetName);
-	ccAddExternalObjectFunction("Character::set_Name",                  Sc_Character_SetName);
-	ccAddExternalObjectFunction("Character::get_NormalView",            Sc_Character_GetNormalView);
-	ccAddExternalObjectFunction("Character::get_PreviousRoom",          Sc_Character_GetPreviousRoom);
-	ccAddExternalObjectFunction("Character::get_Room",                  Sc_Character_GetRoom);
-	ccAddExternalObjectFunction("Character::get_ScaleMoveSpeed",        Sc_Character_GetScaleMoveSpeed);
-	ccAddExternalObjectFunction("Character::set_ScaleMoveSpeed",        Sc_Character_SetScaleMoveSpeed);
-	ccAddExternalObjectFunction("Character::get_ScaleVolume",           Sc_Character_GetScaleVolume);
-	ccAddExternalObjectFunction("Character::set_ScaleVolume",           Sc_Character_SetScaleVolume);
-	ccAddExternalObjectFunction("Character::get_Scaling",               Sc_Character_GetScaling);
-	ccAddExternalObjectFunction("Character::set_Scaling",               Sc_Character_SetScaling);
-	ccAddExternalObjectFunction("Character::get_Solid",                 Sc_Character_GetSolid);
-	ccAddExternalObjectFunction("Character::set_Solid",                 Sc_Character_SetSolid);
-	ccAddExternalObjectFunction("Character::get_Speaking",              Sc_Character_GetSpeaking);
-	ccAddExternalObjectFunction("Character::get_SpeakingFrame",         Sc_Character_GetSpeakingFrame);
-	ccAddExternalObjectFunction("Character::get_SpeechAnimationDelay",  Sc_GetCharacterSpeechAnimationDelay);
-	ccAddExternalObjectFunction("Character::set_SpeechAnimationDelay",  Sc_Character_SetSpeechAnimationDelay);
-	ccAddExternalObjectFunction("Character::get_SpeechColor",           Sc_Character_GetSpeechColor);
-	ccAddExternalObjectFunction("Character::set_SpeechColor",           Sc_Character_SetSpeechColor);
-	ccAddExternalObjectFunction("Character::get_SpeechView",            Sc_Character_GetSpeechView);
-	ccAddExternalObjectFunction("Character::set_SpeechView",            Sc_Character_SetSpeechView);
-	ccAddExternalObjectFunction("Character::get_Thinking",              Sc_Character_GetThinking);
-	ccAddExternalObjectFunction("Character::get_ThinkingFrame",         Sc_Character_GetThinkingFrame);
-	ccAddExternalObjectFunction("Character::get_ThinkView",             Sc_Character_GetThinkView);
-	ccAddExternalObjectFunction("Character::set_ThinkView",             Sc_Character_SetThinkView);
-	ccAddExternalObjectFunction("Character::get_Transparency",          Sc_Character_GetTransparency);
-	ccAddExternalObjectFunction("Character::set_Transparency",          Sc_Character_SetTransparency);
-	ccAddExternalObjectFunction("Character::get_TurnBeforeWalking",     Sc_Character_GetTurnBeforeWalking);
-	ccAddExternalObjectFunction("Character::set_TurnBeforeWalking",     Sc_Character_SetTurnBeforeWalking);
-	ccAddExternalObjectFunction("Character::get_View",                  Sc_Character_GetView);
-	ccAddExternalObjectFunction("Character::get_WalkSpeedX",            Sc_Character_GetWalkSpeedX);
-	ccAddExternalObjectFunction("Character::get_WalkSpeedY",            Sc_Character_GetWalkSpeedY);
-	ccAddExternalObjectFunction("Character::get_X",                     Sc_Character_GetX);
-	ccAddExternalObjectFunction("Character::set_X",                     Sc_Character_SetX);
-	ccAddExternalObjectFunction("Character::get_x",                     Sc_Character_GetX);
-	ccAddExternalObjectFunction("Character::set_x",                     Sc_Character_SetX);
-	ccAddExternalObjectFunction("Character::get_Y",                     Sc_Character_GetY);
-	ccAddExternalObjectFunction("Character::set_Y",                     Sc_Character_SetY);
-	ccAddExternalObjectFunction("Character::get_y",                     Sc_Character_GetY);
-	ccAddExternalObjectFunction("Character::set_y",                     Sc_Character_SetY);
-	ccAddExternalObjectFunction("Character::get_Z",                     Sc_Character_GetZ);
-	ccAddExternalObjectFunction("Character::set_Z",                     Sc_Character_SetZ);
-	ccAddExternalObjectFunction("Character::get_z",                     Sc_Character_GetZ);
-	ccAddExternalObjectFunction("Character::set_z",                     Sc_Character_SetZ);
-
-	ccAddExternalObjectFunction("Character::get_HasExplicitLight",      Sc_Character_HasExplicitLight);
-	ccAddExternalObjectFunction("Character::get_LightLevel",            Sc_Character_GetLightLevel);
-	ccAddExternalObjectFunction("Character::get_TintBlue",              Sc_Character_GetTintBlue);
-	ccAddExternalObjectFunction("Character::get_TintGreen",             Sc_Character_GetTintGreen);
-	ccAddExternalObjectFunction("Character::get_TintRed",               Sc_Character_GetTintRed);
-	ccAddExternalObjectFunction("Character::get_TintSaturation",        Sc_Character_GetTintSaturation);
-	ccAddExternalObjectFunction("Character::get_TintLuminance",         Sc_Character_GetTintLuminance);
+	if (base_api < kScriptAPI_v341) {
+		ccAddExternalObjectFunction361("Character::get_HasExplicitTint", API_FN_PAIR(Character_GetHasExplicitTint_Old));
+	} else {
+		ccAddExternalObjectFunction361("Character::get_HasExplicitTint", API_FN_PAIR(Character_GetHasExplicitTint));
+	}
 }
 
 } // namespace AGS3
