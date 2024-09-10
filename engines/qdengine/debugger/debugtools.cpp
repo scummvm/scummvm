@@ -19,6 +19,7 @@
  *
  */
 
+#include "backends/imgui/IconsMaterialSymbols.h"
 #define IMGUI_DEFINE_MATH_OPERATORS
 
 #include "backends/imgui/imgui.h"
@@ -258,28 +259,28 @@ static void displayQDA() {
 
 		if (ImGui::BeginTabItem("Animation")) {
 
-			if (ImGui::Button("\ue020")) { // Fast Rewind    // fast_rewind
+			if (ImGui::Button(ICON_MS_FAST_REWIND)) {
 				_state->_qdaToDisplayFrame = 0;
 				_state->_qdaIsPlaying = false;
 			}
 
 			ImGui::SameLine();
-			if (ImGui::Button("\ue045")) { // Skip Previous    // skip_previous
+			if (ImGui::Button(ICON_MS_SKIP_PREVIOUS)) {
 				_state->_qdaToDisplayFrame = _state->_qdaToDisplayFrame + totalFrames - 1;
 				_state->_qdaToDisplayFrame %= totalFrames;
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("\ue037")) // Play    // play_arrow
+			if (ImGui::Button(ICON_MS_PLAY_ARROW))
 				_state->_qdaIsPlaying = !_state->_qdaIsPlaying;
 
 			ImGui::SameLine();
-			if (ImGui::Button("\ue044")) { // Skip Next    // skip_next
+			if (ImGui::Button(ICON_MS_SKIP_NEXT)) {
 				_state->_qdaToDisplayFrame += 1;
 				_state->_qdaToDisplayFrame %= totalFrames;
 			}
 
 			ImGui::SameLine();
-			if (ImGui::Button("\ue01f")) { // Fast Forward    // fast_forward
+			if (ImGui::Button(ICON_MS_FAST_FORWARD)) {
 				_state->_qdaToDisplayFrame = totalFrames - 1;
 				_state->_qdaIsPlaying = false;
 			}
@@ -393,7 +394,7 @@ void showArchives() {
 	if (ImGui::Begin("Archives", &_state->_showArchives)) {
 		ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.4f, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_None);
 
-		ImGui::Button("\uef4f"); // Filter	// filter_alt
+		ImGui::Button(ICON_MS_FILTER_ALT);
 		ImGui::SameLine();
 
 		_state->_nameFilter.Draw();
@@ -443,7 +444,7 @@ void onImGuiInit() {
 	icons_config.OversampleV = 3;
 	icons_config.GlyphOffset = {0, 4};
 
-	static const ImWchar icons_ranges[] = {0xE000, 0xF8FF, 0};
+	static const ImWchar icons_ranges[] = {ICON_MIN_MS, ICON_MAX_MS, 0};
 	ImGui::addTTFFontFromArchive("MaterialSymbolsSharp.ttf", 16.f, &icons_config, icons_ranges);
 
 	_state = new ImGuiState();

@@ -19,6 +19,7 @@
  *
  */
 
+#include "backends/imgui/IconsMaterialSymbols.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
 
@@ -78,14 +79,14 @@ void ImGuiLogger::draw(const char *title, bool *p_open) {
     }
 
     // Clear
-    if (ImGui::Button("\ue0b8")) {
+    if (ImGui::Button(ICON_MS_CLEAR_ALL)) {
         clear();
     }
     ImGui::SetItemTooltip("Clear");
     ImGui::SameLine();
 
     // Copy
-    bool copy_to_clipboard = ImGui::Button("\ue14d");
+    bool copy_to_clipboard = ImGui::Button(ICON_MS_CONTENT_COPY);
     ImGui::SetItemTooltip("Copy to clipboard");
     ImGui::SameLine();
 
@@ -132,7 +133,7 @@ void ImGuiLogger::draw(const char *title, bool *p_open) {
     }
 
     // Options, Filter
-    if (ImGui::Button("\ue8b8"))
+    if (ImGui::Button(ICON_MS_SETTINGS))
         ImGui::OpenPopup("Options");
     ImGui::SetItemTooltip("Options");
     ImGui::SameLine();
@@ -156,14 +157,14 @@ void ImGuiLogger::draw(const char *title, bool *p_open) {
 
     // Info
     ImGui::PushStyleColor(ImGuiCol_Text, _state->_colors._logger_info_b);
-    toggleButton("\ue88e", &_showInfo);
+    toggleButton(ICON_MS_INFO, &_showInfo);
     ImGui::PopStyleColor();
     ImGui::SetItemTooltip("Show Info");
     ImGui::SameLine();
 
     // Debug
     ImGui::PushStyleColor(ImGuiCol_Text, _state->_colors._logger_debug_b);
-    toggleButton("\ue868", &_showdebug);
+    toggleButton(ICON_MS_BUG_REPORT, &_showdebug);
     ImGui::PopStyleColor();
     ImGui::SetItemTooltip("Show Debug");
     ImGui::SameLine();
@@ -173,9 +174,9 @@ void ImGuiLogger::draw(const char *title, bool *p_open) {
 
     ImGui::BeginChild("ScrollingRegion", ImVec2(), false, ImGuiWindowFlags_HorizontalScrollbar);
     if (ImGui::BeginPopupContextWindow()) {
-        if (ImGui::Selectable("\ue0b8 Clear"))
+        if (ImGui::Selectable(ICON_MS_CLEAR_ALL " Clear"))
             clear();
-        if (ImGui::Selectable("\ue14d Copy"))
+        if (ImGui::Selectable(ICON_MS_CONTENT_COPY " Copy"))
             copy_to_clipboard = true;
         ImGui::EndPopup();
     }

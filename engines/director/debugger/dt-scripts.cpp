@@ -19,6 +19,7 @@
  *
  */
 
+#include "backends/imgui/IconsMaterialSymbols.h"
 #include "director/director.h"
 #include "director/debugger/dt-internal.h"
 
@@ -187,7 +188,7 @@ void showScripts() {
 
 	if (ImGui::Begin("Script", &_state->_functions._showScript)) {
 		ImGui::BeginDisabled(_state->_functions._scripts.empty() || _state->_functions._current == 0);
-		if (ImGui::Button("\ue5c4")) { // Backward	// arrow_back
+		if (ImGui::Button(ICON_MS_ARROW_BACK)) {
 			_state->_functions._current--;
 		}
 		ImGui::EndDisabled();
@@ -195,7 +196,7 @@ void showScripts() {
 		ImGui::SameLine();
 
 		ImGui::BeginDisabled(_state->_functions._current >= _state->_functions._scripts.size() - 1);
-		if (ImGui::Button("\ue5c8")) { // Forward	// arrow_forward
+		if (ImGui::Button(ICON_MS_ARROW_FORWARD)) {
 			_state->_functions._current++;
 		}
 		ImGui::EndDisabled();
@@ -220,11 +221,11 @@ void showScripts() {
 
 		if (!_state->_functions._scripts[_state->_functions._current].oldAst) {
 			ImGui::SameLine(0, 20);
-			toggleButton("\uf569", &_state->_functions._showByteCode, true); // Lingo		// package_2
+			toggleButton(ICON_MS_PACKAGE_2, &_state->_functions._showByteCode, true); // Lingo
 			ImGui::SetItemTooltip("Lingo");
 			ImGui::SameLine();
 
-			toggleButton("\uf500", &_state->_functions._showByteCode); // Bytecode	// stacks
+			toggleButton(ICON_MS_STACKS, &_state->_functions._showByteCode); // Bytecode
 			ImGui::SetItemTooltip("Bytecode");
 		}
 
