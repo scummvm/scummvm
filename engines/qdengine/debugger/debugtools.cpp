@@ -76,51 +76,67 @@ ImGuiImage getImageID(Common::Path filename, int frameNum) {
 	if (_state->_frames.contains(key))
 		return _state->_frames[key];
 
-	// Load the animation
-	qdAnimation *animation = new qdAnimation();
-	animation->qda_load(filename);
-
-	_state->_qdaToDisplayFrameCount = animation->num_frames();
-
 	int sx = 10, sy = 10;
 	Graphics::ManagedSurface *surface = nullptr;
 
-	if (frameNum == TILES_ID) {
-		if (animation->tileAnimation()) {
-			surface = animation->tileAnimation()->dumpTiles(25);
+	if (_state->_displayMode == kDisplayQDA) {
+		// Load the animation
+		qdAnimation *animation = new qdAnimation();
+		animation->qda_load(filename);
 
-			sx = surface->w;
-			sy = surface->h;
-		}
-	} else if (frameNum < 0) { // Tiles
-		if (animation->tileAnimation()) {
-			surface = animation->tileAnimation()->dumpFrameTiles(-frameNum + 1, 0.91670f);
+		_state->_qdaToDisplayFrameCount = animation->num_frames();
 
-			sx = surface->w;
-			sy = surface->h;
-		}
-	} else {
-		if (animation->tileAnimation()) {
-			Vect2i size = animation->tileAnimation()->frameSize();
+		if (frameNum == TILES_ID) {
+			if (animation->tileAnimation()) {
+				surface = animation->tileAnimation()->dumpTiles(25);
 
-			sx = size.x;
-			sy = size.y;
-		} else {
-			qdAnimationFrame *frame = animation->get_frame(frameNum);
-
-			if (frame) {
-				sx = frame->size_x();
-				sy = frame->size_y();
+				sx = surface->w;
+				sy = surface->h;
 			}
+		} else if (frameNum < 0) { // Tiles
+			if (animation->tileAnimation()) {
+				surface = animation->tileAnimation()->dumpFrameTiles(-frameNum + 1, 0.91670f);
+
+				sx = surface->w;
+				sy = surface->h;
+			}
+		} else {
+			if (animation->tileAnimation()) {
+				Vect2i size = animation->tileAnimation()->frameSize();
+
+				sx = size.x;
+				sy = size.y;
+			} else {
+				qdAnimationFrame *frame = animation->get_frame(frameNum);
+
+				if (frame) {
+					sx = frame->size_x();
+					sy = frame->size_y();
+				}
+			}
+
+			surface = new Graphics::ManagedSurface(sx, sy, g_engine->_pixelformat);
+
+			animation->set_cur_frame(frameNum);
+
+			grDispatcher::instance()->surfaceOverride(surface);
+			animation->redraw(sx / 2, sy / 2, 0, 0.91670f, 0);
+			grDispatcher::instance()->resetSurfaceOverride();
 		}
+	} else if (_state->_displayMode == kDisplayTGA) {
+		qdSprite *sprite = new qdSprite();
+		if (sprite->load(filename)) {
+			sx = sprite->size_x();
+			sy = sprite->size_y();
 
-		surface = new Graphics::ManagedSurface(sx, sy, g_engine->_pixelformat);
+			surface = new Graphics::ManagedSurface(sx, sy, g_engine->_pixelformat);
 
-		animation->set_cur_frame(frameNum);
-
-		grDispatcher::instance()->surfaceOverride(surface);
-		animation->redraw(sx / 2, sy / 2, 0, 0.91670f, 0);
-		grDispatcher::instance()->resetSurfaceOverride();
+			grDispatcher::instance()->surfaceOverride(surface);
+			sprite->redraw(sx / 2, sy / 2, 0);
+			grDispatcher::instance()->resetSurfaceOverride();
+		} else {
+			warning("Error loading TGA file '%s'", transCyrillic(filename.toString()));
+		}
 	}
 
 	if (surface)
@@ -246,6 +262,17 @@ static void displayQDA() {
 	}
 }
 
+static void displayTGA() {
+	ImGuiImage imgID;
+
+	imgID = getImageID(_state->_fileToDisplay, 0);
+
+	ImGui::Text("TGA %s: [%d x %d]", transCyrillic(_state->_fileToDisplay.toString()), imgID.width, imgID.height);
+
+	ImGui::Separator();
+
+	showImage(imgID, (char *)transCyrillic(_state->_fileToDisplay.toString()), 1.0);
+}
 
 void showArchives() {
 	if (!_state->_showArchives)
@@ -293,6 +320,8 @@ void showArchives() {
 						_state->_qdaIsPlaying = false;
 
 						_state->_displayMode = kDisplayQDA;
+					} else if (it.baseName().hasSuffixIgnoreCase(".tga")) {
+						_state->_displayMode = kDisplayTGA;
 					} else {
 						_state->_displayMode = -1;
 					}
@@ -309,6 +338,8 @@ void showArchives() {
 
 			if (_state->_displayMode == kDisplayQDA) {
 				displayQDA();
+			} else if (_state->_displayMode == kDisplayTGA) {
+				displayTGA();
 			}
 
 			ImGui::EndChild();
