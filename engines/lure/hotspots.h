@@ -200,7 +200,7 @@ private:
 	uint8 _layer;
 	uint16 _hotspotScriptOffset;
 	uint8 _colorOffset;
-	bool _persistant;
+	bool _persistent;
 	HotspotOverrideData *_override;
 	bool _skipFlag;
 	PathFinder _pathFinder;
@@ -318,8 +318,8 @@ public:
 	uint8 layer() const { return _layer; }
 	bool skipFlag() const { return _skipFlag; }
 	void setTickProc(uint16 newVal);
-	bool persistant() const { return _persistant; }
-	void setPersistant(bool value) { _persistant = value; }
+	bool persistent() const { return _persistent; }
+	void setPersistent(bool value) { _persistent = value; }
 	uint8 colorOffset() const { return _colorOffset; }
 	void setColorOffset(uint8 value) { _colorOffset = value; }
 	void setRoomNumber(uint16 roomNum) {
