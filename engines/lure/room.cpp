@@ -138,7 +138,7 @@ void Room::leaveRoom() {
 	HotspotList::iterator i = list.begin();
 	while (i != list.end()) {
 		Hotspot const &h = **i;
-		if (!h.persistant()) {
+		if (!h.persistent()) {
 			i = list.erase(i);
 		} else {
 			++i;
