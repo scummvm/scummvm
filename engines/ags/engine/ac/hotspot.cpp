@@ -229,27 +229,30 @@ RuntimeScriptValue Sc_Hotspot_GetWalkToY(void *self, const RuntimeScriptValue *p
 	API_OBJCALL_INT(ScriptHotspot, Hotspot_GetWalkToY);
 }
 
-
-
 void RegisterHotspotAPI() {
-	ccAddExternalStaticFunction("Hotspot::GetAtRoomXY^2", Sc_GetHotspotAtRoom);
-	ccAddExternalStaticFunction("Hotspot::GetAtScreenXY^2", Sc_GetHotspotAtScreen);
-	ccAddExternalStaticFunction("Hotspot::GetDrawingSurface", Sc_Hotspot_GetDrawingSurface);
-	ccAddExternalObjectFunction("Hotspot::GetName^1", Sc_Hotspot_GetName);
-	ccAddExternalObjectFunction("Hotspot::GetProperty^1", Sc_Hotspot_GetProperty);
-	ccAddExternalObjectFunction("Hotspot::GetPropertyText^2", Sc_Hotspot_GetPropertyText);
-	ccAddExternalObjectFunction("Hotspot::GetTextProperty^1", Sc_Hotspot_GetTextProperty);
-	ccAddExternalObjectFunction("Hotspot::SetProperty^2", Sc_Hotspot_SetProperty);
-	ccAddExternalObjectFunction("Hotspot::SetTextProperty^2", Sc_Hotspot_SetTextProperty);
-	ccAddExternalObjectFunction("Hotspot::IsInteractionAvailable^1", Sc_Hotspot_IsInteractionAvailable);
-	ccAddExternalObjectFunction("Hotspot::RunInteraction^1", Sc_Hotspot_RunInteraction);
-	ccAddExternalObjectFunction("Hotspot::get_Enabled", Sc_Hotspot_GetEnabled);
-	ccAddExternalObjectFunction("Hotspot::set_Enabled", Sc_Hotspot_SetEnabled);
-	ccAddExternalObjectFunction("Hotspot::get_ID", Sc_Hotspot_GetID);
-	ccAddExternalObjectFunction("Hotspot::get_Name", Sc_Hotspot_GetName_New);
-	ccAddExternalObjectFunction("Hotspot::set_Name", Sc_Hotspot_SetName);
-	ccAddExternalObjectFunction("Hotspot::get_WalkToX", Sc_Hotspot_GetWalkToX);
-	ccAddExternalObjectFunction("Hotspot::get_WalkToY", Sc_Hotspot_GetWalkToY);
+	ScFnRegister hotspot_api[] = {
+		{"Hotspot::GetAtRoomXY^2", API_FN_PAIR(GetHotspotAtRoom)},
+		{"Hotspot::GetAtScreenXY^2", API_FN_PAIR(GetHotspotAtScreen)},
+		{"Hotspot::GetDrawingSurface", API_FN_PAIR(Hotspot_GetDrawingSurface)},
+
+		{"Hotspot::GetName^1", API_FN_PAIR(Hotspot_GetName)},
+		{"Hotspot::GetProperty^1", API_FN_PAIR(Hotspot_GetProperty)},
+		{"Hotspot::GetPropertyText^2", API_FN_PAIR(Hotspot_GetPropertyText)},
+		{"Hotspot::GetTextProperty^1", API_FN_PAIR(Hotspot_GetTextProperty)},
+		{"Hotspot::SetProperty^2", API_FN_PAIR(Hotspot_SetProperty)},
+		{"Hotspot::SetTextProperty^2", API_FN_PAIR(Hotspot_SetTextProperty)},
+		{"Hotspot::IsInteractionAvailable^1", API_FN_PAIR(Hotspot_IsInteractionAvailable)},
+		{"Hotspot::RunInteraction^1", API_FN_PAIR(Hotspot_RunInteraction)},
+		{"Hotspot::get_Enabled", API_FN_PAIR(Hotspot_GetEnabled)},
+		{"Hotspot::set_Enabled", API_FN_PAIR(Hotspot_SetEnabled)},
+		{"Hotspot::get_ID", API_FN_PAIR(Hotspot_GetID)},
+		{"Hotspot::get_Name", API_FN_PAIR(Hotspot_GetName_New)},
+		{"Hotspot::set_Name", API_FN_PAIR(Hotspot_SetName)},
+		{"Hotspot::get_WalkToX", API_FN_PAIR(Hotspot_GetWalkToX)},
+		{"Hotspot::get_WalkToY", API_FN_PAIR(Hotspot_GetWalkToY)},
+	};
+
+	ccAddExternalFunctions361(hotspot_api);
 }
 
 } // namespace AGS3

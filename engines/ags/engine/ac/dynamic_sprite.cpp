@@ -585,30 +585,34 @@ RuntimeScriptValue Sc_DynamicSprite_CreateFromScreenShot(const RuntimeScriptValu
 	API_SCALL_OBJAUTO_PINT2(ScriptDynamicSprite, DynamicSprite_CreateFromScreenShot);
 }
 
-
 void RegisterDynamicSpriteAPI() {
-	ccAddExternalObjectFunction("DynamicSprite::ChangeCanvasSize^4", Sc_DynamicSprite_ChangeCanvasSize);
-	ccAddExternalObjectFunction("DynamicSprite::CopyTransparencyMask^1", Sc_DynamicSprite_CopyTransparencyMask);
-	ccAddExternalObjectFunction("DynamicSprite::Crop^4", Sc_DynamicSprite_Crop);
-	ccAddExternalObjectFunction("DynamicSprite::Delete", Sc_DynamicSprite_Delete);
-	ccAddExternalObjectFunction("DynamicSprite::Flip^1", Sc_DynamicSprite_Flip);
-	ccAddExternalObjectFunction("DynamicSprite::GetDrawingSurface^0", Sc_DynamicSprite_GetDrawingSurface);
-	ccAddExternalObjectFunction("DynamicSprite::Resize^2", Sc_DynamicSprite_Resize);
-	ccAddExternalObjectFunction("DynamicSprite::Rotate^3", Sc_DynamicSprite_Rotate);
-	ccAddExternalObjectFunction("DynamicSprite::SaveToFile^1", Sc_DynamicSprite_SaveToFile);
-	ccAddExternalObjectFunction("DynamicSprite::Tint^5", Sc_DynamicSprite_Tint);
-	ccAddExternalObjectFunction("DynamicSprite::get_ColorDepth", Sc_DynamicSprite_GetColorDepth);
-	ccAddExternalObjectFunction("DynamicSprite::get_Graphic", Sc_DynamicSprite_GetGraphic);
-	ccAddExternalObjectFunction("DynamicSprite::get_Height", Sc_DynamicSprite_GetHeight);
-	ccAddExternalObjectFunction("DynamicSprite::get_Width", Sc_DynamicSprite_GetWidth);
-	ccAddExternalStaticFunction("DynamicSprite::Create^3", Sc_DynamicSprite_Create);
-	ccAddExternalStaticFunction("DynamicSprite::CreateFromBackground", Sc_DynamicSprite_CreateFromBackground);
-	ccAddExternalStaticFunction("DynamicSprite::CreateFromDrawingSurface^5", Sc_DynamicSprite_CreateFromDrawingSurface);
-	ccAddExternalStaticFunction("DynamicSprite::CreateFromExistingSprite^1", Sc_DynamicSprite_CreateFromExistingSprite_Old);
-	ccAddExternalStaticFunction("DynamicSprite::CreateFromExistingSprite^2", Sc_DynamicSprite_CreateFromExistingSprite);
-	ccAddExternalStaticFunction("DynamicSprite::CreateFromFile", Sc_DynamicSprite_CreateFromFile);
-	ccAddExternalStaticFunction("DynamicSprite::CreateFromSaveGame", Sc_DynamicSprite_CreateFromSaveGame);
-	ccAddExternalStaticFunction("DynamicSprite::CreateFromScreenShot", Sc_DynamicSprite_CreateFromScreenShot);
+	ScFnRegister dynsprite_api[] = {
+		{"DynamicSprite::Create^3", API_FN_PAIR(DynamicSprite_Create)},
+		{"DynamicSprite::CreateFromBackground", API_FN_PAIR(DynamicSprite_CreateFromBackground)},
+		{"DynamicSprite::CreateFromDrawingSurface^5", API_FN_PAIR(DynamicSprite_CreateFromDrawingSurface)},
+		{"DynamicSprite::CreateFromExistingSprite^1", API_FN_PAIR(DynamicSprite_CreateFromExistingSprite_Old)},
+		{"DynamicSprite::CreateFromExistingSprite^2", API_FN_PAIR(DynamicSprite_CreateFromExistingSprite)},
+		{"DynamicSprite::CreateFromFile", API_FN_PAIR(DynamicSprite_CreateFromFile)},
+		{"DynamicSprite::CreateFromSaveGame", API_FN_PAIR(DynamicSprite_CreateFromSaveGame)},
+		{"DynamicSprite::CreateFromScreenShot", API_FN_PAIR(DynamicSprite_CreateFromScreenShot)},
+
+		{"DynamicSprite::ChangeCanvasSize^4", API_FN_PAIR(DynamicSprite_ChangeCanvasSize)},
+		{"DynamicSprite::CopyTransparencyMask^1", API_FN_PAIR(DynamicSprite_CopyTransparencyMask)},
+		{"DynamicSprite::Crop^4", API_FN_PAIR(DynamicSprite_Crop)},
+		{"DynamicSprite::Delete", API_FN_PAIR(DynamicSprite_Delete)},
+		{"DynamicSprite::Flip^1", API_FN_PAIR(DynamicSprite_Flip)},
+		{"DynamicSprite::GetDrawingSurface^0", API_FN_PAIR(DynamicSprite_GetDrawingSurface)},
+		{"DynamicSprite::Resize^2", API_FN_PAIR(DynamicSprite_Resize)},
+		{"DynamicSprite::Rotate^3", API_FN_PAIR(DynamicSprite_Rotate)},
+		{"DynamicSprite::SaveToFile^1", API_FN_PAIR(DynamicSprite_SaveToFile)},
+		{"DynamicSprite::Tint^5", API_FN_PAIR(DynamicSprite_Tint)},
+		{"DynamicSprite::get_ColorDepth", API_FN_PAIR(DynamicSprite_GetColorDepth)},
+		{"DynamicSprite::get_Graphic", API_FN_PAIR(DynamicSprite_GetGraphic)},
+		{"DynamicSprite::get_Height", API_FN_PAIR(DynamicSprite_GetHeight)},
+		{"DynamicSprite::get_Width", API_FN_PAIR(DynamicSprite_GetWidth)},
+	};
+
+	ccAddExternalFunctions361(dynsprite_api);
 }
 
 } // namespace AGS3

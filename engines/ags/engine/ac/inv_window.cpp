@@ -591,22 +591,25 @@ RuntimeScriptValue Sc_InvWindow_SetTopItem(void *self, const RuntimeScriptValue 
 }
 
 
-
 void RegisterInventoryWindowAPI() {
-	ccAddExternalObjectFunction("InvWindow::ScrollDown^0", Sc_InvWindow_ScrollDown);
-	ccAddExternalObjectFunction("InvWindow::ScrollUp^0", Sc_InvWindow_ScrollUp);
-	ccAddExternalObjectFunction("InvWindow::get_CharacterToUse", Sc_InvWindow_GetCharacterToUse);
-	ccAddExternalObjectFunction("InvWindow::set_CharacterToUse", Sc_InvWindow_SetCharacterToUse);
-	ccAddExternalObjectFunction("InvWindow::geti_ItemAtIndex", Sc_InvWindow_GetItemAtIndex);
-	ccAddExternalObjectFunction("InvWindow::get_ItemCount", Sc_InvWindow_GetItemCount);
-	ccAddExternalObjectFunction("InvWindow::get_ItemHeight", Sc_InvWindow_GetItemHeight);
-	ccAddExternalObjectFunction("InvWindow::set_ItemHeight", Sc_InvWindow_SetItemHeight);
-	ccAddExternalObjectFunction("InvWindow::get_ItemWidth", Sc_InvWindow_GetItemWidth);
-	ccAddExternalObjectFunction("InvWindow::set_ItemWidth", Sc_InvWindow_SetItemWidth);
-	ccAddExternalObjectFunction("InvWindow::get_ItemsPerRow", Sc_InvWindow_GetItemsPerRow);
-	ccAddExternalObjectFunction("InvWindow::get_RowCount", Sc_InvWindow_GetRowCount);
-	ccAddExternalObjectFunction("InvWindow::get_TopItem", Sc_InvWindow_GetTopItem);
-	ccAddExternalObjectFunction("InvWindow::set_TopItem", Sc_InvWindow_SetTopItem);
+	ScFnRegister invwindow_api[] = {
+		{"InvWindow::ScrollDown^0", API_FN_PAIR(InvWindow_ScrollDown)},
+		{"InvWindow::ScrollUp^0", API_FN_PAIR(InvWindow_ScrollUp)},
+		{"InvWindow::get_CharacterToUse", API_FN_PAIR(InvWindow_GetCharacterToUse)},
+		{"InvWindow::set_CharacterToUse", API_FN_PAIR(InvWindow_SetCharacterToUse)},
+		{"InvWindow::geti_ItemAtIndex", API_FN_PAIR(InvWindow_GetItemAtIndex)},
+		{"InvWindow::get_ItemCount", API_FN_PAIR(InvWindow_GetItemCount)},
+		{"InvWindow::get_ItemHeight", API_FN_PAIR(InvWindow_GetItemHeight)},
+		{"InvWindow::set_ItemHeight", API_FN_PAIR(InvWindow_SetItemHeight)},
+		{"InvWindow::get_ItemWidth", API_FN_PAIR(InvWindow_GetItemWidth)},
+		{"InvWindow::set_ItemWidth", API_FN_PAIR(InvWindow_SetItemWidth)},
+		{"InvWindow::get_ItemsPerRow", API_FN_PAIR(InvWindow_GetItemsPerRow)},
+		{"InvWindow::get_RowCount", API_FN_PAIR(InvWindow_GetRowCount)},
+		{"InvWindow::get_TopItem", API_FN_PAIR(InvWindow_GetTopItem)},
+		{"InvWindow::set_TopItem", API_FN_PAIR(InvWindow_SetTopItem)},
+	};
+
+	ccAddExternalFunctions361(invwindow_api);
 }
 
 } // namespace AGS3

@@ -320,7 +320,7 @@ void Mouse_EnableControl(bool on) {
 	_GP(usetup).mouse_ctrl_enabled = on; // remember setting in config
 }
 
-bool Mouse_IsAutoLocking() {
+bool Mouse_GetAutoLock() {
 	return _GP(usetup).mouse_auto_lock;
 }
 
@@ -565,7 +565,7 @@ RuntimeScriptValue Sc_Mouse_SetControlEnabled(const RuntimeScriptValue *params, 
 }
 
 RuntimeScriptValue Sc_Mouse_GetAutoLock(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_BOOL(Mouse_IsAutoLocking);
+	API_SCALL_BOOL(Mouse_GetAutoLock);
 }
 
 RuntimeScriptValue Sc_Mouse_SetAutoLock(const RuntimeScriptValue *params, int32_t param_count) {
@@ -577,40 +577,44 @@ RuntimeScriptValue Sc_Mouse_GetSpeed(const RuntimeScriptValue *params, int32_t p
 }
 
 RuntimeScriptValue Sc_Mouse_SetSpeed(const RuntimeScriptValue *params, int32_t param_count) {
-	ASSERT_VARIABLE_VALUE("Mouse::Speed");
+	ASSERT_PARAM_COUNT("Mouse::Speed", 1);
 	_GP(mouse).SetSpeed(params[0].FValue);
 	return RuntimeScriptValue();
 }
 
 void RegisterMouseAPI() {
-	ccAddExternalStaticFunction("Mouse::ChangeModeGraphic^2", Sc_ChangeCursorGraphic);
-	ccAddExternalStaticFunction("Mouse::ChangeModeHotspot^3", Sc_ChangeCursorHotspot);
-	ccAddExternalStaticFunction("Mouse::ChangeModeView^2", Sc_Mouse_ChangeModeView2);
-	ccAddExternalStaticFunction("Mouse::ChangeModeView^3", Sc_Mouse_ChangeModeView);
-	ccAddExternalStaticFunction("Mouse::Click^1", Sc_Mouse_Click);
-	ccAddExternalStaticFunction("Mouse::DisableMode^1", Sc_disable_cursor_mode);
-	ccAddExternalStaticFunction("Mouse::EnableMode^1", Sc_enable_cursor_mode);
-	ccAddExternalStaticFunction("Mouse::GetModeGraphic^1", Sc_Mouse_GetModeGraphic);
-	ccAddExternalStaticFunction("Mouse::IsButtonDown^1", Sc_IsButtonDown);
-	ccAddExternalStaticFunction("Mouse::IsModeEnabled^1", Sc_IsModeEnabled);
-	ccAddExternalStaticFunction("Mouse::SaveCursorUntilItLeaves^0", Sc_SaveCursorForLocationChange);
-	ccAddExternalStaticFunction("Mouse::SelectNextMode^0", Sc_SetNextCursor);
-	ccAddExternalStaticFunction("Mouse::SelectPreviousMode^0", Sc_SetPreviousCursor);
-	ccAddExternalStaticFunction("Mouse::SetBounds^4", Sc_SetMouseBounds);
-	ccAddExternalStaticFunction("Mouse::SetPosition^2", Sc_SetMousePosition);
-	ccAddExternalStaticFunction("Mouse::Update^0", Sc_RefreshMouse);
-	ccAddExternalStaticFunction("Mouse::UseDefaultGraphic^0", Sc_set_default_cursor);
-	ccAddExternalStaticFunction("Mouse::UseModeGraphic^1", Sc_set_mouse_cursor);
-	ccAddExternalStaticFunction("Mouse::get_AutoLock", Sc_Mouse_GetAutoLock);
-	ccAddExternalStaticFunction("Mouse::set_AutoLock", Sc_Mouse_SetAutoLock);
-	ccAddExternalStaticFunction("Mouse::get_ControlEnabled", Sc_Mouse_GetControlEnabled);
-	ccAddExternalStaticFunction("Mouse::set_ControlEnabled", Sc_Mouse_SetControlEnabled);
-	ccAddExternalStaticFunction("Mouse::get_Mode", Sc_GetCursorMode);
-	ccAddExternalStaticFunction("Mouse::set_Mode", Sc_set_cursor_mode);
-	ccAddExternalStaticFunction("Mouse::get_Speed", Sc_Mouse_GetSpeed);
-	ccAddExternalStaticFunction("Mouse::set_Speed", Sc_Mouse_SetSpeed);
-	ccAddExternalStaticFunction("Mouse::get_Visible", Sc_Mouse_GetVisible);
-	ccAddExternalStaticFunction("Mouse::set_Visible", Sc_Mouse_SetVisible);
+	ScFnRegister mouse_api[] = {
+		{"Mouse::ChangeModeGraphic^2", API_FN_PAIR(ChangeCursorGraphic)},
+		{"Mouse::ChangeModeHotspot^3", API_FN_PAIR(ChangeCursorHotspot)},
+		{"Mouse::ChangeModeView^2", API_FN_PAIR(Mouse_ChangeModeView2)},
+		{"Mouse::ChangeModeView^3", API_FN_PAIR(Mouse_ChangeModeView)},
+		{"Mouse::Click^1", Sc_Mouse_Click},
+		{"Mouse::DisableMode^1", API_FN_PAIR(disable_cursor_mode)},
+		{"Mouse::EnableMode^1", API_FN_PAIR(enable_cursor_mode)},
+		{"Mouse::GetModeGraphic^1", API_FN_PAIR(Mouse_GetModeGraphic)},
+		{"Mouse::IsButtonDown^1", API_FN_PAIR(IsButtonDown)},
+		{"Mouse::IsModeEnabled^1", API_FN_PAIR(IsModeEnabled)},
+		{"Mouse::SaveCursorUntilItLeaves^0", API_FN_PAIR(SaveCursorForLocationChange)},
+		{"Mouse::SelectNextMode^0", API_FN_PAIR(SetNextCursor)},
+		{"Mouse::SelectPreviousMode^0", API_FN_PAIR(SetPreviousCursor)},
+		{"Mouse::SetBounds^4", API_FN_PAIR(SetMouseBounds)},
+		{"Mouse::SetPosition^2", API_FN_PAIR(SetMousePosition)},
+		{"Mouse::Update^0", API_FN_PAIR(RefreshMouse)},
+		{"Mouse::UseDefaultGraphic^0", API_FN_PAIR(set_default_cursor)},
+		{"Mouse::UseModeGraphic^1", API_FN_PAIR(set_mouse_cursor)},
+		{"Mouse::get_AutoLock", API_FN_PAIR(Mouse_GetAutoLock)},
+		{"Mouse::set_AutoLock", API_FN_PAIR(Mouse_SetAutoLock)},
+		{"Mouse::get_ControlEnabled", Sc_Mouse_GetControlEnabled},
+		{"Mouse::set_ControlEnabled", Sc_Mouse_SetControlEnabled},
+		{"Mouse::get_Mode", API_FN_PAIR(GetCursorMode)},
+		{"Mouse::set_Mode", API_FN_PAIR(set_cursor_mode)},
+		{"Mouse::get_Speed", Sc_Mouse_GetSpeed},
+		{"Mouse::set_Speed", Sc_Mouse_SetSpeed},
+		{"Mouse::get_Visible", API_FN_PAIR(Mouse_GetVisible)},
+		{"Mouse::set_Visible", API_FN_PAIR(Mouse_SetVisible)},
+	};
+
+	ccAddExternalFunctions361(mouse_api);
 }
 
 } // namespace AGS3

@@ -1147,24 +1147,28 @@ RuntimeScriptValue Sc_Room_Exists(const RuntimeScriptValue *params, int32_t para
 
 
 void RegisterRoomAPI() {
-	ccAddExternalStaticFunction("Room::GetDrawingSurfaceForBackground^1",   Sc_Room_GetDrawingSurfaceForBackground);
-	ccAddExternalStaticFunction("Room::GetProperty^1",      Sc_Room_GetProperty);
-	ccAddExternalStaticFunction("Room::GetTextProperty^1",  Sc_Room_GetTextProperty);
-	ccAddExternalStaticFunction("Room::SetProperty^2",      Sc_Room_SetProperty);
-	ccAddExternalStaticFunction("Room::SetTextProperty^2",  Sc_Room_SetTextProperty);
-	ccAddExternalStaticFunction("Room::ProcessClick^3",     Sc_RoomProcessClick);
-	ccAddExternalStaticFunction("ProcessClick",             Sc_RoomProcessClick);
-	ccAddExternalStaticFunction("Room::get_BottomEdge",     Sc_Room_GetBottomEdge);
-	ccAddExternalStaticFunction("Room::get_ColorDepth",     Sc_Room_GetColorDepth);
-	ccAddExternalStaticFunction("Room::get_Height",         Sc_Room_GetHeight);
-	ccAddExternalStaticFunction("Room::get_LeftEdge",       Sc_Room_GetLeftEdge);
-	ccAddExternalStaticFunction("Room::geti_Messages",      Sc_Room_GetMessages);
-	ccAddExternalStaticFunction("Room::get_MusicOnLoad",    Sc_Room_GetMusicOnLoad);
-	ccAddExternalStaticFunction("Room::get_ObjectCount",    Sc_Room_GetObjectCount);
-	ccAddExternalStaticFunction("Room::get_RightEdge",      Sc_Room_GetRightEdge);
-	ccAddExternalStaticFunction("Room::get_TopEdge",        Sc_Room_GetTopEdge);
-	ccAddExternalStaticFunction("Room::get_Width",          Sc_Room_GetWidth);
-	ccAddExternalStaticFunction("Room::Exists",             Sc_Room_Exists);
+	ScFnRegister room_api[] = {
+		{"Room::GetDrawingSurfaceForBackground^1", API_FN_PAIR(Room_GetDrawingSurfaceForBackground)},
+		{"Room::GetProperty^1", API_FN_PAIR(Room_GetProperty)},
+		{"Room::GetTextProperty^1", API_FN_PAIR(Room_GetTextProperty)},
+		{"Room::SetProperty^2", API_FN_PAIR(Room_SetProperty)},
+		{"Room::SetTextProperty^2", API_FN_PAIR(Room_SetTextProperty)},
+		{"Room::ProcessClick^3", API_FN_PAIR(RoomProcessClick)},
+		{"ProcessClick", API_FN_PAIR(RoomProcessClick)},
+		{"Room::get_BottomEdge", API_FN_PAIR(Room_GetBottomEdge)},
+		{"Room::get_ColorDepth", API_FN_PAIR(Room_GetColorDepth)},
+		{"Room::get_Height", API_FN_PAIR(Room_GetHeight)},
+		{"Room::get_LeftEdge", API_FN_PAIR(Room_GetLeftEdge)},
+		{"Room::geti_Messages", API_FN_PAIR(Room_GetMessages)},
+		{"Room::get_MusicOnLoad", API_FN_PAIR(Room_GetMusicOnLoad)},
+		{"Room::get_ObjectCount", API_FN_PAIR(Room_GetObjectCount)},
+		{"Room::get_RightEdge", API_FN_PAIR(Room_GetRightEdge)},
+		{"Room::get_TopEdge", API_FN_PAIR(Room_GetTopEdge)},
+		{"Room::get_Width", API_FN_PAIR(Room_GetWidth)},
+		{"Room::Exists", API_FN_PAIR(Room_Exists)},
+	};
+
+	ccAddExternalFunctions361(room_api);
 }
 
 } // namespace AGS3
