@@ -43,8 +43,8 @@ public:
 			return false;
 
 			_invClickObj = _scene->object_interface("$inv_click_flag");
-			_invDescObj = _scene->object_interface("%%inv_desc");
-			_invDescCloseupObj = _scene->object_interface("%%inv_desc_closeup");
+			_invDescObj = _scene->object_interface("%inv_desc");
+			_invDescCloseupObj = _scene->object_interface("%inv_desc_closeup");
 			_invActiveFlagObj = _scene->object_interface("$inv_active_flag");
 			_blockPersObj = _scene->object_interface("\x24\xe1\xeb\xee\xea\xe8\xf0\xee\xe2\xea\xe0\x5f\xef\xe5\xf0\xf1\xee\xed\xe0\xe6\xe0");	// "$блокировка_персонажа"
 			_blockPersFlagObj = _scene->object_interface("\x24\xe1\xeb\xee\xea\xe8\xf0\xee\xe2\xea\xe0\x5f\xef\xe5\xf0\xf1\xee\xed\xe0\xe6\xe0\x5f\xf4\xeb\xe0\xe3");	// "$блокировка_персонажа_флаг"
@@ -68,7 +68,6 @@ public:
 	bool quant(float dt) {
 		debugC(3, kDebugMinigames, "InvPopup::quant(%f)", dt);
 
-#if 0
 		if (_blockPersObj->is_state_active("включить")) {
 			_scene->activate_personage("Lock");
 		} else if (_blockPersObj->is_state_active("выключить")) {
@@ -87,6 +86,7 @@ public:
 
 		char buf[5];
 		const char *state;
+		const char *pos;
 
 		state = _scene->mouse_hover_object_interface()->current_state_name();
 		if (!strstr(state, "#inv#")) {
@@ -96,10 +96,10 @@ LABEL_20:
 			goto LABEL_21;
 		}
 
-		const char *pos = strstr(state, "#inv#");
+		pos = strstr(state, "#inv#");
 		char buf2[5];
 		strncpy(buf2, pos + 5, 2);
-		strncpy(buf, _invDescCloseupObj->current_state_name(), 2u);
+		strncpy(buf, _invDescCloseupObj->current_state_name(), 2);
 
 		if (buf2[0] != buf[0] || buf2[1] != buf[1]) {
 			_invDescObj->set_state(buf2);
@@ -115,8 +115,8 @@ LABEL_20:
 				} else {
 					_invDescPos.x = _hoverObjectPos.x;
 			}
-			_invDescPos.y = _invDescObj->screen_size()->y / 2 + 73;
-			_invDescObj->set_R(_scene->screen2world_coords(&_invDescPos, -1000.0));
+			_invDescPos.y = _invDescObj->screen_size().y / 2 + 73;
+			_invDescObj->set_R(_scene->screen2world_coords(_invDescPos, -1000.0));
 			_invDescCloseupObj->set_state("00");
 		}
 
@@ -127,7 +127,7 @@ LABEL_21:
 
 				if (strstr(state, "#closeup#")) {
 					pos = strstr(state, "#inv#");
-					strncpy(buf, pos + 5, 2u);
+					strncpy(buf, pos + 5, 2);
 					buf[2] = 0;
 
 					_invDescCloseupObj->set_state(buf);
@@ -298,7 +298,7 @@ LABEL_21:
 		}
 
 		_oldShveikPos = _shveikObj->R();
-#endif
+
 		return true;
 	}
 
@@ -352,7 +352,7 @@ private:
 	bool  _shveikIsMoving = false;
 	float _time = 0;
 	int _timeout = 0;
-	mgVect2f _oldShveikPos;
+	mgVect3f _oldShveikPos;
 };
 
 } // namespace QDEngine
