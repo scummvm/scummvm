@@ -309,7 +309,7 @@ void printInfoBlackBox(const char *string) {
 void waitForPlayerInput() {
 }
 
-void getFileExtention(const char *name, char *buffer, size_t ln) {
+void getFileExtension(const char *name, char *buffer, size_t ln) {
 	while (*name != '.' && *name) {
 		name++;
 	}
@@ -317,7 +317,7 @@ void getFileExtention(const char *name, char *buffer, size_t ln) {
 	Common::strcpy_s(buffer, ln, name);
 }
 
-void removeExtention(const char *name, char *buffer, size_t ln) {	// not like in original
+void removeExtension(const char *name, char *buffer, size_t ln) {	// not like in original
 	char *ptr;
 
 	Common::strcpy_s(buffer, ln, name);
@@ -344,10 +344,10 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 		}
 	}
 
-	getFileExtention(name, buffer, sizeof(buffer));
+	getFileExtension(name, buffer, sizeof(buffer));
 
 	if (!strcmp(buffer, ".SPL")) {
-		removeExtention(name, buffer, sizeof(buffer));
+		removeExtension(name, buffer, sizeof(buffer));
 
 		/* if (useH32)
 		 *{
