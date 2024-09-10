@@ -221,8 +221,8 @@ void showArchives() {
 			if (!_state->_qdaToDisplay.empty()) {
 				imgID = getImageID(_state->_qdaToDisplay, _state->_qdaToDisplayFrame);
 
-				ImGui::Text("Frame %s: %d  [%d x %d]", transCyrillic(_state->_qdaToDisplay.toString()), _state->_qdaToDisplayFrame,
-						imgID.width, imgID.height);
+				ImGui::Text("Frame %s: %d of %d  [%d x %d]", transCyrillic(_state->_qdaToDisplay.toString()), _state->_qdaToDisplayFrame + 1,
+						totalFrames, imgID.width, imgID.height);
 			} else {
 				ImGui::Text("Frame <none>");
 			}
