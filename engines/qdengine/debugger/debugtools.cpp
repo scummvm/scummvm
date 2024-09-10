@@ -232,7 +232,10 @@ void showArchives() {
 
 				if (ImGui::BeginTabItem("Animation")) {
 
-					ImGui::Button("\ue020"); // Fast Rewind    // fast_rewind
+					if (ImGui::Button("\ue020")) { // Fast Rewind    // fast_rewind
+						_state->_qdaToDisplayFrame = 0;
+						_state->_qdaIsPlaying = false;
+					}
 
 					ImGui::SameLine();
 					if (ImGui::Button("\ue045")) { // Skip Previous    // skip_previous
@@ -248,8 +251,13 @@ void showArchives() {
 						_state->_qdaToDisplayFrame += 1;
 						_state->_qdaToDisplayFrame %= totalFrames;
 					}
+
 					ImGui::SameLine();
-					ImGui::Button("\ue01f"); // Fast Forward    // fast_forward
+					if (ImGui::Button("\ue01f")) { // Fast Forward    // fast_forward
+						_state->_qdaToDisplayFrame = totalFrames - 1;
+						_state->_qdaIsPlaying = false;
+					}
+
 					ImGui::SameLine();
 
 					// Frame Count
