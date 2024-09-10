@@ -442,26 +442,31 @@ RuntimeScriptValue Sc_String_GetLength(void *self, const RuntimeScriptValue *par
 //=============================================================================
 
 void RegisterStringAPI() {
-	ccAddExternalStaticFunction("String::IsNullOrEmpty^1", Sc_String_IsNullOrEmpty);
-	ccAddExternalObjectFunction("String::Append^1", Sc_String_Append);
-	ccAddExternalObjectFunction("String::AppendChar^1", Sc_String_AppendChar);
-	ccAddExternalObjectFunction("String::CompareTo^2", Sc_String_CompareTo);
-	ccAddExternalObjectFunction("String::Contains^1", Sc_StrContains);
-	ccAddExternalObjectFunction("String::Copy^0", Sc_String_Copy);
-	ccAddExternalObjectFunction("String::EndsWith^2", Sc_String_EndsWith);
-	ccAddExternalStaticFunction("String::Format^101", Sc_String_Format);
-	ccAddExternalObjectFunction("String::IndexOf^1", Sc_StrContains);
-	ccAddExternalObjectFunction("String::LowerCase^0", Sc_String_LowerCase);
-	ccAddExternalObjectFunction("String::Replace^3", Sc_String_Replace);
-	ccAddExternalObjectFunction("String::ReplaceCharAt^2", Sc_String_ReplaceCharAt);
-	ccAddExternalObjectFunction("String::StartsWith^2", Sc_String_StartsWith);
-	ccAddExternalObjectFunction("String::Substring^2", Sc_String_Substring);
-	ccAddExternalObjectFunction("String::Truncate^1", Sc_String_Truncate);
-	ccAddExternalObjectFunction("String::UpperCase^0", Sc_String_UpperCase);
-	ccAddExternalObjectFunction("String::get_AsFloat", Sc_StringToFloat);
-	ccAddExternalObjectFunction("String::get_AsInt", Sc_StringToInt);
-	ccAddExternalObjectFunction("String::geti_Chars", Sc_String_GetChars);
-	ccAddExternalObjectFunction("String::get_Length", Sc_String_GetLength);
+	ScFnRegister string_api[] = {
+		{"String::IsNullOrEmpty^1", API_FN_PAIR(String_IsNullOrEmpty)},
+		{"String::Format^101", Sc_String_Format},
+
+		{"String::Append^1", API_FN_PAIR(String_Append)},
+		{"String::AppendChar^1", API_FN_PAIR(String_AppendChar)},
+		{"String::CompareTo^2", API_FN_PAIR(String_CompareTo)},
+		{"String::Contains^1", API_FN_PAIR(StrContains)},
+		{"String::Copy^0", API_FN_PAIR(String_Copy)},
+		{"String::EndsWith^2", API_FN_PAIR(String_EndsWith)},
+		{"String::IndexOf^1", API_FN_PAIR(StrContains)},
+		{"String::LowerCase^0", API_FN_PAIR(String_LowerCase)},
+		{"String::Replace^3", API_FN_PAIR(String_Replace)},
+		{"String::ReplaceCharAt^2", API_FN_PAIR(String_ReplaceCharAt)},
+		{"String::StartsWith^2", API_FN_PAIR(String_StartsWith)},
+		{"String::Substring^2", API_FN_PAIR(String_Substring)},
+		{"String::Truncate^1", API_FN_PAIR(String_Truncate)},
+		{"String::UpperCase^0", API_FN_PAIR(String_UpperCase)},
+		{"String::get_AsFloat", API_FN_PAIR(StringToFloat)},
+		{"String::get_AsInt", API_FN_PAIR(StringToInt)},
+		{"String::geti_Chars", API_FN_PAIR(String_GetChars)},
+		{"String::get_Length", API_FN_PAIR(String_GetLength)},
+	};
+
+	ccAddExternalFunctions361(string_api);
 }
 
 } // namespace AGS3

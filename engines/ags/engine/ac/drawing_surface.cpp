@@ -548,31 +548,37 @@ RuntimeScriptValue Sc_DrawingSurface_GetWidth(void *self, const RuntimeScriptVal
 //=============================================================================
 
 void RegisterDrawingSurfaceAPI(ScriptAPIVersion base_api, ScriptAPIVersion /*compat_api */) {
-	ccAddExternalObjectFunction("DrawingSurface::Clear^1", Sc_DrawingSurface_Clear);
-	ccAddExternalObjectFunction("DrawingSurface::CreateCopy^0", Sc_DrawingSurface_CreateCopy);
-	ccAddExternalObjectFunction("DrawingSurface::DrawCircle^3", Sc_DrawingSurface_DrawCircle);
-	ccAddExternalObjectFunction("DrawingSurface::DrawImage^6", Sc_DrawingSurface_DrawImage6);
-	ccAddExternalObjectFunction("DrawingSurface::DrawImage^10", Sc_DrawingSurface_DrawImage);
-	ccAddExternalObjectFunction("DrawingSurface::DrawLine^5", Sc_DrawingSurface_DrawLine);
-	ccAddExternalObjectFunction("DrawingSurface::DrawMessageWrapped^5", Sc_DrawingSurface_DrawMessageWrapped);
-	ccAddExternalObjectFunction("DrawingSurface::DrawPixel^2", Sc_DrawingSurface_DrawPixel);
-	ccAddExternalObjectFunction("DrawingSurface::DrawRectangle^4", Sc_DrawingSurface_DrawRectangle);
-	ccAddExternalObjectFunction("DrawingSurface::DrawString^104", Sc_DrawingSurface_DrawString);
+	ScFnRegister drawsurf_api[] = {
+		{"DrawingSurface::Clear^1", API_FN_PAIR(DrawingSurface_Clear)},
+		{"DrawingSurface::CreateCopy^0", API_FN_PAIR(DrawingSurface_CreateCopy)},
+		{"DrawingSurface::DrawCircle^3", API_FN_PAIR(DrawingSurface_DrawCircle)},
+		{"DrawingSurface::DrawImage^6", API_FN_PAIR(DrawingSurface_DrawImage6)},
+		{"DrawingSurface::DrawImage^10", API_FN_PAIR(DrawingSurface_DrawImage)},
+		{"DrawingSurface::DrawLine^5", API_FN_PAIR(DrawingSurface_DrawLine)},
+		{"DrawingSurface::DrawMessageWrapped^5", API_FN_PAIR(DrawingSurface_DrawMessageWrapped)},
+		{"DrawingSurface::DrawPixel^2", API_FN_PAIR(DrawingSurface_DrawPixel)},
+		{"DrawingSurface::DrawRectangle^4", API_FN_PAIR(DrawingSurface_DrawRectangle)},
+		{"DrawingSurface::DrawString^104", Sc_DrawingSurface_DrawString},
+		{"DrawingSurface::DrawSurface^2", API_FN_PAIR(DrawingSurface_DrawSurface2)},
+		{"DrawingSurface::DrawSurface^10", API_FN_PAIR(DrawingSurface_DrawSurface)},
+		{"DrawingSurface::DrawTriangle^6", API_FN_PAIR(DrawingSurface_DrawTriangle)},
+		{"DrawingSurface::GetPixel^2", API_FN_PAIR(DrawingSurface_GetPixel)},
+		{"DrawingSurface::Release^0", API_FN_PAIR(DrawingSurface_Release)},
+		{"DrawingSurface::get_DrawingColor", API_FN_PAIR(DrawingSurface_GetDrawingColor)},
+		{"DrawingSurface::set_DrawingColor", API_FN_PAIR(DrawingSurface_SetDrawingColor)},
+		{"DrawingSurface::get_Height", API_FN_PAIR(DrawingSurface_GetHeight)},
+		{"DrawingSurface::get_UseHighResCoordinates", API_FN_PAIR(DrawingSurface_GetUseHighResCoordinates)},
+		{"DrawingSurface::set_UseHighResCoordinates", API_FN_PAIR(DrawingSurface_SetUseHighResCoordinates)},
+		{"DrawingSurface::get_Width", API_FN_PAIR(DrawingSurface_GetWidth)},
+	};
+
+	ccAddExternalFunctions361(drawsurf_api);
+
+	// Few functions have to be selected based on API level
 	if (base_api < kScriptAPI_v350)
-		ccAddExternalObjectFunction("DrawingSurface::DrawStringWrapped^6", Sc_DrawingSurface_DrawStringWrapped_Old);
+		ccAddExternalObjectFunction361("DrawingSurface::DrawStringWrapped^6", API_FN_PAIR(DrawingSurface_DrawStringWrapped_Old));
 	else
-		ccAddExternalObjectFunction("DrawingSurface::DrawStringWrapped^6", Sc_DrawingSurface_DrawStringWrapped);
-	ccAddExternalObjectFunction("DrawingSurface::DrawSurface^2", Sc_DrawingSurface_DrawSurface2);
-	ccAddExternalObjectFunction("DrawingSurface::DrawSurface^10", Sc_DrawingSurface_DrawSurface);
-	ccAddExternalObjectFunction("DrawingSurface::DrawTriangle^6", Sc_DrawingSurface_DrawTriangle);
-	ccAddExternalObjectFunction("DrawingSurface::GetPixel^2", Sc_DrawingSurface_GetPixel);
-	ccAddExternalObjectFunction("DrawingSurface::Release^0", Sc_DrawingSurface_Release);
-	ccAddExternalObjectFunction("DrawingSurface::get_DrawingColor", Sc_DrawingSurface_GetDrawingColor);
-	ccAddExternalObjectFunction("DrawingSurface::set_DrawingColor", Sc_DrawingSurface_SetDrawingColor);
-	ccAddExternalObjectFunction("DrawingSurface::get_Height", Sc_DrawingSurface_GetHeight);
-	ccAddExternalObjectFunction("DrawingSurface::get_UseHighResCoordinates", Sc_DrawingSurface_GetUseHighResCoordinates);
-	ccAddExternalObjectFunction("DrawingSurface::set_UseHighResCoordinates", Sc_DrawingSurface_SetUseHighResCoordinates);
-	ccAddExternalObjectFunction("DrawingSurface::get_Width", Sc_DrawingSurface_GetWidth);
+		ccAddExternalObjectFunction361("DrawingSurface::DrawStringWrapped^6", API_FN_PAIR(DrawingSurface_DrawStringWrapped));
 }
 
 } // namespace AGS3

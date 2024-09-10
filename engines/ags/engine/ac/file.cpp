@@ -732,28 +732,31 @@ RuntimeScriptValue Sc_File_GetPath(void *self, const RuntimeScriptValue *params,
 }
 
 void RegisterFileAPI() {
-	ccAddExternalStaticFunction("File::Delete^1", Sc_File_Delete);
-	ccAddExternalStaticFunction("File::Exists^1", Sc_File_Exists);
-	ccAddExternalStaticFunction("File::Open^2", Sc_sc_OpenFile);
-	ccAddExternalStaticFunction("File::ResolvePath^1", Sc_File_ResolvePath);
-	ccAddExternalObjectFunction("File::Close^0", Sc_File_Close);
-	ccAddExternalObjectFunction("File::ReadInt^0", Sc_File_ReadInt);
-	ccAddExternalObjectFunction("File::ReadRawChar^0", Sc_File_ReadRawChar);
-	ccAddExternalObjectFunction("File::ReadRawInt^0", Sc_File_ReadRawInt);
-	ccAddExternalObjectFunction("File::ReadRawLine^1", Sc_File_ReadRawLine);
-	ccAddExternalObjectFunction("File::ReadRawLineBack^0", Sc_File_ReadRawLineBack);
-	ccAddExternalObjectFunction("File::ReadString^1", Sc_File_ReadString);
-	ccAddExternalObjectFunction("File::ReadStringBack^0", Sc_File_ReadStringBack);
-	ccAddExternalObjectFunction("File::WriteInt^1", Sc_File_WriteInt);
-	ccAddExternalObjectFunction("File::WriteRawChar^1", Sc_File_WriteRawChar);
-	ccAddExternalObjectFunction("File::WriteRawInt^1", Sc_File_WriteRawInt);
-	ccAddExternalObjectFunction("File::WriteRawLine^1", Sc_File_WriteRawLine);
-	ccAddExternalObjectFunction("File::WriteString^1", Sc_File_WriteString);
-	ccAddExternalObjectFunction("File::Seek^2", Sc_File_Seek);
-	ccAddExternalObjectFunction("File::get_EOF", Sc_File_GetEOF);
-	ccAddExternalObjectFunction("File::get_Error", Sc_File_GetError);
-	ccAddExternalObjectFunction("File::get_Position", Sc_File_GetPosition);
-	ccAddExternalObjectFunction("File::get_Path", Sc_File_GetPath);
+	ScFnRegister file_api[] = {
+		{"File::Delete^1", API_FN_PAIR(File_Delete)},
+		{"File::Exists^1", API_FN_PAIR(File_Exists)},
+		{"File::Open^2", API_FN_PAIR(sc_OpenFile)},
+
+		{"File::Close^0", API_FN_PAIR(File_Close)},
+		{"File::ReadInt^0", API_FN_PAIR(File_ReadInt)},
+		{"File::ReadRawChar^0", API_FN_PAIR(File_ReadRawChar)},
+		{"File::ReadRawInt^0", API_FN_PAIR(File_ReadRawInt)},
+		{"File::ReadRawLine^1", API_FN_PAIR(File_ReadRawLine)},
+		{"File::ReadRawLineBack^0", API_FN_PAIR(File_ReadRawLineBack)},
+		{"File::ReadString^1", API_FN_PAIR(File_ReadString)},
+		{"File::ReadStringBack^0", API_FN_PAIR(File_ReadStringBack)},
+		{"File::WriteInt^1", API_FN_PAIR(File_WriteInt)},
+		{"File::WriteRawChar^1", API_FN_PAIR(File_WriteRawChar)},
+		{"File::WriteRawInt^1", API_FN_PAIR(File_WriteRawInt)},
+		{"File::WriteRawLine^1", API_FN_PAIR(File_WriteRawLine)},
+		{"File::WriteString^1", API_FN_PAIR(File_WriteString)},
+		{"File::Seek^2", API_FN_PAIR(File_Seek)},
+		{"File::get_EOF", API_FN_PAIR(File_GetEOF)},
+		{"File::get_Error", API_FN_PAIR(File_GetError)},
+		{"File::get_Position", API_FN_PAIR(File_GetPosition)},
+	};
+
+	ccAddExternalFunctions361(file_api);
 }
 
 } // namespace AGS3
