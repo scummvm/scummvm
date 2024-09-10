@@ -351,35 +351,41 @@ RuntimeScriptValue Sc_Speech_GetPortraitOverlay(const RuntimeScriptValue *params
 extern RuntimeScriptValue Sc_SetVoiceMode(const RuntimeScriptValue *params, int32_t param_count);
 
 void RegisterSpeechAPI(ScriptAPIVersion base_api, ScriptAPIVersion /*compat_api*/) {
-	ccAddExternalStaticFunction("Speech::get_AnimationStopTimeMargin", Sc_Speech_GetAnimationStopTimeMargin);
-	ccAddExternalStaticFunction("Speech::set_AnimationStopTimeMargin", Sc_Speech_SetAnimationStopTimeMargin);
-	ccAddExternalStaticFunction("Speech::get_CustomPortraitPlacement", Sc_Speech_GetCustomPortraitPlacement);
-	ccAddExternalStaticFunction("Speech::set_CustomPortraitPlacement", Sc_Speech_SetCustomPortraitPlacement);
-	ccAddExternalStaticFunction("Speech::get_DisplayPostTimeMs", Sc_Speech_GetDisplayPostTimeMs);
-	ccAddExternalStaticFunction("Speech::set_DisplayPostTimeMs", Sc_Speech_SetDisplayPostTimeMs);
-	ccAddExternalStaticFunction("Speech::get_GlobalSpeechAnimationDelay", Sc_Speech_GetGlobalSpeechAnimationDelay);
-	ccAddExternalStaticFunction("Speech::set_GlobalSpeechAnimationDelay", Sc_Speech_SetGlobalSpeechAnimationDelay);
-	ccAddExternalStaticFunction("Speech::get_PortraitOverlay", Sc_Speech_GetPortraitOverlay);
-	ccAddExternalStaticFunction("Speech::get_PortraitXOffset", Sc_Speech_GetPortraitXOffset);
-	ccAddExternalStaticFunction("Speech::set_PortraitXOffset", Sc_Speech_SetPortraitXOffset);
-	ccAddExternalStaticFunction("Speech::get_PortraitY", Sc_Speech_GetPortraitY);
-	ccAddExternalStaticFunction("Speech::set_PortraitY", Sc_Speech_SetPortraitY);
-	ccAddExternalStaticFunction("Speech::get_SkipKey", Sc_Speech_GetSkipKey);
-	ccAddExternalStaticFunction("Speech::set_SkipKey", Sc_Speech_SetSkipKey);
-	ccAddExternalStaticFunction("Speech::get_SkipStyle", Sc_Speech_GetSkipStyle);
-	ccAddExternalStaticFunction("Speech::set_SkipStyle", Sc_SetSkipSpeech);
-	ccAddExternalStaticFunction("Speech::get_Style", Sc_Speech_GetStyle);
-	ccAddExternalStaticFunction("Speech::set_Style", Sc_SetSpeechStyle);
-	ccAddExternalStaticFunction("Speech::get_TextAlignment", Sc_Speech_GetTextAlignment);
+	ScFnRegister speech_api[] = {
+		{"Speech::get_AnimationStopTimeMargin", API_FN_PAIR(Speech_GetAnimationStopTimeMargin)},
+		{"Speech::set_AnimationStopTimeMargin", API_FN_PAIR(Speech_SetAnimationStopTimeMargin)},
+		{"Speech::get_CustomPortraitPlacement", API_FN_PAIR(Speech_GetCustomPortraitPlacement)},
+		{"Speech::set_CustomPortraitPlacement", API_FN_PAIR(Speech_SetCustomPortraitPlacement)},
+		{"Speech::get_DisplayPostTimeMs", API_FN_PAIR(Speech_GetDisplayPostTimeMs)},
+		{"Speech::set_DisplayPostTimeMs", API_FN_PAIR(Speech_SetDisplayPostTimeMs)},
+		{"Speech::get_GlobalSpeechAnimationDelay", API_FN_PAIR(Speech_GetGlobalSpeechAnimationDelay)},
+		{"Speech::set_GlobalSpeechAnimationDelay", API_FN_PAIR(Speech_SetGlobalSpeechAnimationDelay)},
+		{"Speech::get_PortraitOverlay", API_FN_PAIR(Speech_GetPortraitOverlay)},
+		{"Speech::get_PortraitXOffset", API_FN_PAIR(Speech_GetPortraitXOffset)},
+		{"Speech::set_PortraitXOffset", API_FN_PAIR(Speech_SetPortraitXOffset)},
+		{"Speech::get_PortraitY", API_FN_PAIR(Speech_GetPortraitY)},
+		{"Speech::set_PortraitY", API_FN_PAIR(Speech_SetPortraitY)},
+		{"Speech::get_SkipKey", API_FN_PAIR(Speech_GetSkipKey)},
+		{"Speech::set_SkipKey", API_FN_PAIR(Speech_SetSkipKey)},
+		{"Speech::get_SkipStyle", Sc_Speech_GetSkipStyle},
+		{"Speech::set_SkipStyle", API_FN_PAIR(SetSkipSpeech)},
+		{"Speech::get_Style", API_FN_PAIR(Speech_GetStyle)},
+		{"Speech::set_Style", API_FN_PAIR(SetSpeechStyle)},
+		{"Speech::get_TextAlignment", API_FN_PAIR(Speech_GetTextAlignment)},
+		{"Speech::get_TextOverlay", API_FN_PAIR(Speech_GetTextOverlay)},
+		{"Speech::get_UseGlobalSpeechAnimationDelay", API_FN_PAIR(Speech_GetUseGlobalSpeechAnimationDelay)},
+		{"Speech::set_UseGlobalSpeechAnimationDelay", API_FN_PAIR(Speech_SetUseGlobalSpeechAnimationDelay)},
+		{"Speech::get_VoiceMode", Sc_Speech_GetVoiceMode},
+		{"Speech::set_VoiceMode", API_FN_PAIR(SetVoiceMode)},
+	};
+
+	ccAddExternalFunctions361(speech_api);
+
+	// Few functions have to be selected based on API level
 	if (base_api < kScriptAPI_v350)
-		ccAddExternalStaticFunction("Speech::set_TextAlignment", Sc_Speech_SetTextAlignment_Old);
+		ccAddExternalStaticFunction361("Speech::set_TextAlignment", API_FN_PAIR(Speech_SetTextAlignment_Old));
 	else
-		ccAddExternalStaticFunction("Speech::set_TextAlignment", Sc_Speech_SetTextAlignment);
-	ccAddExternalStaticFunction("Speech::get_TextOverlay", Sc_Speech_GetTextOverlay);
-	ccAddExternalStaticFunction("Speech::get_UseGlobalSpeechAnimationDelay", Sc_Speech_GetUseGlobalSpeechAnimationDelay);
-	ccAddExternalStaticFunction("Speech::set_UseGlobalSpeechAnimationDelay", Sc_Speech_SetUseGlobalSpeechAnimationDelay);
-	ccAddExternalStaticFunction("Speech::get_VoiceMode", Sc_Speech_GetVoiceMode);
-	ccAddExternalStaticFunction("Speech::set_VoiceMode", Sc_SetVoiceMode);
+		ccAddExternalStaticFunction361("Speech::set_TextAlignment", API_FN_PAIR(Speech_SetTextAlignment));
 
 	/* -- Don't register more unsafe plugin symbols until new plugin interface is designed --*/
 }

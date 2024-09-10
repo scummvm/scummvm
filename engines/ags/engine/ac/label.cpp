@@ -146,19 +146,21 @@ RuntimeScriptValue Sc_Label_SetColor(void *self, const RuntimeScriptValue *param
 	API_OBJCALL_VOID_PINT(GUILabel, Label_SetColor);
 }
 
-
-
 void RegisterLabelAPI() {
-	ccAddExternalObjectFunction("Label::GetText^1", Sc_Label_GetText);
-	ccAddExternalObjectFunction("Label::SetText^1", Sc_Label_SetText);
-	ccAddExternalObjectFunction("Label::get_TextAlignment", Sc_Label_GetTextAlignment);
-	ccAddExternalObjectFunction("Label::set_TextAlignment", Sc_Label_SetTextAlignment);
-	ccAddExternalObjectFunction("Label::get_Font", Sc_Label_GetFont);
-	ccAddExternalObjectFunction("Label::set_Font", Sc_Label_SetFont);
-	ccAddExternalObjectFunction("Label::get_Text", Sc_Label_GetText_New);
-	ccAddExternalObjectFunction("Label::set_Text", Sc_Label_SetText);
-	ccAddExternalObjectFunction("Label::get_TextColor", Sc_Label_GetColor);
-	ccAddExternalObjectFunction("Label::set_TextColor", Sc_Label_SetColor);
+	ScFnRegister label_api[] = {
+		{"Label::GetText^1", API_FN_PAIR(Label_GetText)},
+		{"Label::SetText^1", API_FN_PAIR(Label_SetText)},
+		{"Label::get_TextAlignment", API_FN_PAIR(Label_GetTextAlignment)},
+		{"Label::set_TextAlignment", API_FN_PAIR(Label_SetTextAlignment)},
+		{"Label::get_Font", API_FN_PAIR(Label_GetFont)},
+		{"Label::set_Font", API_FN_PAIR(Label_SetFont)},
+		{"Label::get_Text", API_FN_PAIR(Label_GetText_New)},
+		{"Label::set_Text", API_FN_PAIR(Label_SetText)},
+		{"Label::get_TextColor", API_FN_PAIR(Label_GetColor)},
+		{"Label::set_TextColor", API_FN_PAIR(Label_SetColor)},
+	};
+
+	ccAddExternalFunctions361(label_api);
 }
 
 } // namespace AGS3

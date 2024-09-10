@@ -790,46 +790,51 @@ RuntimeScriptValue Sc_GUI_GetShown(void *self, const RuntimeScriptValue *params,
 }
 
 void RegisterGUIAPI() {
-	ccAddExternalObjectFunction("GUI::Centre^0", Sc_GUI_Centre);
-	ccAddExternalObjectFunction("GUI::Click^1", Sc_GUI_Click);
-	ccAddExternalStaticFunction("GUI::GetAtScreenXY^2", Sc_GetGUIAtLocation);
-	ccAddExternalStaticFunction("GUI::ProcessClick^3", Sc_GUI_ProcessClick);
-	ccAddExternalObjectFunction("GUI::SetPosition^2", Sc_GUI_SetPosition);
-	ccAddExternalObjectFunction("GUI::SetSize^2", Sc_GUI_SetSize);
-	ccAddExternalObjectFunction("GUI::get_BackgroundGraphic", Sc_GUI_GetBackgroundGraphic);
-	ccAddExternalObjectFunction("GUI::set_BackgroundGraphic", Sc_GUI_SetBackgroundGraphic);
-	ccAddExternalObjectFunction("GUI::get_BackgroundColor", Sc_GUI_GetBackgroundColor);
-	ccAddExternalObjectFunction("GUI::set_BackgroundColor", Sc_GUI_SetBackgroundColor);
-	ccAddExternalObjectFunction("GUI::get_BorderColor", Sc_GUI_GetBorderColor);
-	ccAddExternalObjectFunction("GUI::set_BorderColor", Sc_GUI_SetBorderColor);
-	ccAddExternalObjectFunction("GUI::get_Clickable", Sc_GUI_GetClickable);
-	ccAddExternalObjectFunction("GUI::set_Clickable", Sc_GUI_SetClickable);
-	ccAddExternalObjectFunction("GUI::get_ControlCount", Sc_GUI_GetControlCount);
-	ccAddExternalObjectFunction("GUI::geti_Controls", Sc_GUI_GetiControls);
-	ccAddExternalObjectFunction("GUI::get_Height", Sc_GUI_GetHeight);
-	ccAddExternalObjectFunction("GUI::set_Height", Sc_GUI_SetHeight);
-	ccAddExternalObjectFunction("GUI::get_ID", Sc_GUI_GetID);
-	ccAddExternalObjectFunction("GUI::get_AsTextWindow", Sc_GUI_AsTextWindow);
-	ccAddExternalObjectFunction("GUI::get_PopupStyle", Sc_GUI_GetPopupStyle);
-	ccAddExternalObjectFunction("GUI::get_PopupYPos", Sc_GUI_GetPopupYPos);
-	ccAddExternalObjectFunction("GUI::set_PopupYPos", Sc_GUI_SetPopupYPos);
-	ccAddExternalObjectFunction("TextWindowGUI::get_TextColor", Sc_GUI_GetTextColor);
-	ccAddExternalObjectFunction("TextWindowGUI::set_TextColor", Sc_GUI_SetTextColor);
-	ccAddExternalObjectFunction("TextWindowGUI::get_TextPadding", Sc_GUI_GetTextPadding);
-	ccAddExternalObjectFunction("TextWindowGUI::set_TextPadding", Sc_GUI_SetTextPadding);
-	ccAddExternalObjectFunction("GUI::get_Transparency", Sc_GUI_GetTransparency);
-	ccAddExternalObjectFunction("GUI::set_Transparency", Sc_GUI_SetTransparency);
-	ccAddExternalObjectFunction("GUI::get_Visible", Sc_GUI_GetVisible);
-	ccAddExternalObjectFunction("GUI::set_Visible", Sc_GUI_SetVisible);
-	ccAddExternalObjectFunction("GUI::get_Width", Sc_GUI_GetWidth);
-	ccAddExternalObjectFunction("GUI::set_Width", Sc_GUI_SetWidth);
-	ccAddExternalObjectFunction("GUI::get_X", Sc_GUI_GetX);
-	ccAddExternalObjectFunction("GUI::set_X", Sc_GUI_SetX);
-	ccAddExternalObjectFunction("GUI::get_Y", Sc_GUI_GetY);
-	ccAddExternalObjectFunction("GUI::set_Y", Sc_GUI_SetY);
-	ccAddExternalObjectFunction("GUI::get_ZOrder", Sc_GUI_GetZOrder);
-	ccAddExternalObjectFunction("GUI::set_ZOrder", Sc_GUI_SetZOrder);
-	ccAddExternalObjectFunction("GUI::get_Shown", Sc_GUI_GetShown);
+	ScFnRegister gui_api[] = {
+		{"GUI::GetAtScreenXY^2", API_FN_PAIR(GetGUIAtLocation)},
+		{"GUI::ProcessClick^3", API_FN_PAIR(GUI_ProcessClick)},
+
+		{"GUI::Centre^0", API_FN_PAIR(GUI_Centre)},
+		{"GUI::Click^1", API_FN_PAIR(GUI_Click)},
+		{"GUI::SetPosition^2", API_FN_PAIR(GUI_SetPosition)},
+		{"GUI::SetSize^2", API_FN_PAIR(GUI_SetSize)},
+		{"GUI::get_BackgroundGraphic", API_FN_PAIR(GUI_GetBackgroundGraphic)},
+		{"GUI::set_BackgroundGraphic", API_FN_PAIR(GUI_SetBackgroundGraphic)},
+		{"GUI::get_BackgroundColor", API_FN_PAIR(GUI_GetBackgroundColor)},
+		{"GUI::set_BackgroundColor", API_FN_PAIR(GUI_SetBackgroundColor)},
+		{"GUI::get_BorderColor", API_FN_PAIR(GUI_GetBorderColor)},
+		{"GUI::set_BorderColor", API_FN_PAIR(GUI_SetBorderColor)},
+		{"GUI::get_Clickable", API_FN_PAIR(GUI_GetClickable)},
+		{"GUI::set_Clickable", API_FN_PAIR(GUI_SetClickable)},
+		{"GUI::get_ControlCount", API_FN_PAIR(GUI_GetControlCount)},
+		{"GUI::geti_Controls", API_FN_PAIR(GUI_GetiControls)},
+		{"GUI::get_Height", API_FN_PAIR(GUI_GetHeight)},
+		{"GUI::set_Height", API_FN_PAIR(GUI_SetHeight)},
+		{"GUI::get_ID", API_FN_PAIR(GUI_GetID)},
+		{"GUI::get_AsTextWindow", API_FN_PAIR(GUI_AsTextWindow)},
+		{"GUI::get_PopupStyle", API_FN_PAIR(GUI_GetPopupStyle)},
+		{"GUI::get_PopupYPos", API_FN_PAIR(GUI_GetPopupYPos)},
+		{"GUI::set_PopupYPos", API_FN_PAIR(GUI_SetPopupYPos)},
+		{"TextWindowGUI::get_TextColor", API_FN_PAIR(GUI_GetTextColor)},
+		{"TextWindowGUI::set_TextColor", API_FN_PAIR(GUI_SetTextColor)},
+		{"TextWindowGUI::get_TextPadding", API_FN_PAIR(GUI_GetTextPadding)},
+		{"TextWindowGUI::set_TextPadding", API_FN_PAIR(GUI_SetTextPadding)},
+		{"GUI::get_Transparency", API_FN_PAIR(GUI_GetTransparency)},
+		{"GUI::set_Transparency", API_FN_PAIR(GUI_SetTransparency)},
+		{"GUI::get_Visible", API_FN_PAIR(GUI_GetVisible)},
+		{"GUI::set_Visible", API_FN_PAIR(GUI_SetVisible)},
+		{"GUI::get_Width", API_FN_PAIR(GUI_GetWidth)},
+		{"GUI::set_Width", API_FN_PAIR(GUI_SetWidth)},
+		{"GUI::get_X", API_FN_PAIR(GUI_GetX)},
+		{"GUI::set_X", API_FN_PAIR(GUI_SetX)},
+		{"GUI::get_Y", API_FN_PAIR(GUI_GetY)},
+		{"GUI::set_Y", API_FN_PAIR(GUI_SetY)},
+		{"GUI::get_ZOrder", API_FN_PAIR(GUI_GetZOrder)},
+		{"GUI::set_ZOrder", API_FN_PAIR(GUI_SetZOrder)},
+		{"GUI::get_Shown", API_FN_PAIR(GUI_GetShown)},
+	};
+
+	ccAddExternalFunctions361(gui_api);
 }
 
 } // namespace AGS3

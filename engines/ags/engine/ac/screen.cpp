@@ -199,16 +199,20 @@ RuntimeScriptValue Sc_Screen_RoomToScreenPoint(const RuntimeScriptValue *params,
 }
 
 void RegisterScreenAPI() {
-	ccAddExternalStaticFunction("Screen::get_Height", Sc_Screen_GetScreenHeight);
-	ccAddExternalStaticFunction("Screen::get_Width", Sc_Screen_GetScreenWidth);
-	ccAddExternalStaticFunction("Screen::get_AutoSizeViewportOnRoomLoad", Sc_Screen_GetAutoSizeViewport);
-	ccAddExternalStaticFunction("Screen::set_AutoSizeViewportOnRoomLoad", Sc_Screen_SetAutoSizeViewport);
-	ccAddExternalStaticFunction("Screen::get_Viewport", Sc_Screen_GetViewport);
-	ccAddExternalStaticFunction("Screen::get_ViewportCount", Sc_Screen_GetViewportCount);
-	ccAddExternalStaticFunction("Screen::geti_Viewports", Sc_Screen_GetAnyViewport);
-	ccAddExternalStaticFunction("Screen::ScreenToRoomPoint^2", Sc_Screen_ScreenToRoomPoint2);
-	ccAddExternalStaticFunction("Screen::ScreenToRoomPoint^3", Sc_Screen_ScreenToRoomPoint);
-	ccAddExternalStaticFunction("Screen::RoomToScreenPoint", Sc_Screen_RoomToScreenPoint);
+	ScFnRegister screen_api[] = {
+		{"Screen::get_Height", API_FN_PAIR(Screen_GetScreenHeight)},
+		{"Screen::get_Width", API_FN_PAIR(Screen_GetScreenWidth)},
+		{"Screen::get_AutoSizeViewportOnRoomLoad", API_FN_PAIR(Screen_GetAutoSizeViewport)},
+		{"Screen::set_AutoSizeViewportOnRoomLoad", API_FN_PAIR(Screen_SetAutoSizeViewport)},
+		{"Screen::get_Viewport", API_FN_PAIR(Screen_GetViewport)},
+		{"Screen::get_ViewportCount", API_FN_PAIR(Screen_GetViewportCount)},
+		{"Screen::geti_Viewports", API_FN_PAIR(Screen_GetAnyViewport)},
+		{"Screen::ScreenToRoomPoint^2", API_FN_PAIR(Screen_ScreenToRoomPoint2)},
+		{"Screen::ScreenToRoomPoint^3", API_FN_PAIR(Screen_ScreenToRoomPoint)},
+		{"Screen::RoomToScreenPoint", API_FN_PAIR(Screen_RoomToScreenPoint)},
+	};
+
+	ccAddExternalFunctions361(screen_api);
 }
 
 } // namespace AGS3

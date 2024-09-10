@@ -1231,16 +1231,20 @@ RuntimeScriptValue Sc_Dialog_Start(void *self, const RuntimeScriptValue *params,
 }
 
 void RegisterDialogAPI() {
-	ccAddExternalObjectFunction("Dialog::get_ID",               Sc_Dialog_GetID);
-	ccAddExternalObjectFunction("Dialog::get_OptionCount",      Sc_Dialog_GetOptionCount);
-	ccAddExternalObjectFunction("Dialog::get_ShowTextParser",   Sc_Dialog_GetShowTextParser);
-	ccAddExternalObjectFunction("Dialog::DisplayOptions^1",     Sc_Dialog_DisplayOptions);
-	ccAddExternalObjectFunction("Dialog::GetOptionState^1",     Sc_Dialog_GetOptionState);
-	ccAddExternalObjectFunction("Dialog::GetOptionText^1",      Sc_Dialog_GetOptionText);
-	ccAddExternalObjectFunction("Dialog::HasOptionBeenChosen^1", Sc_Dialog_HasOptionBeenChosen);
-	ccAddExternalObjectFunction("Dialog::SetHasOptionBeenChosen^2", Sc_Dialog_SetHasOptionBeenChosen);
-	ccAddExternalObjectFunction("Dialog::SetOptionState^2",     Sc_Dialog_SetOptionState);
-	ccAddExternalObjectFunction("Dialog::Start^0",              Sc_Dialog_Start);
+	ScFnRegister dialog_api[] = {
+		{"Dialog::get_ID", API_FN_PAIR(Dialog_GetID)},
+		{"Dialog::get_OptionCount", API_FN_PAIR(Dialog_GetOptionCount)},
+		{"Dialog::get_ShowTextParser", API_FN_PAIR(Dialog_GetShowTextParser)},
+		{"Dialog::DisplayOptions^1", API_FN_PAIR(Dialog_DisplayOptions)},
+		{"Dialog::GetOptionState^1", API_FN_PAIR(Dialog_GetOptionState)},
+		{"Dialog::GetOptionText^1", API_FN_PAIR(Dialog_GetOptionText)},
+		{"Dialog::HasOptionBeenChosen^1", API_FN_PAIR(Dialog_HasOptionBeenChosen)},
+		{"Dialog::SetHasOptionBeenChosen^2", API_FN_PAIR(Dialog_SetHasOptionBeenChosen)},
+		{"Dialog::SetOptionState^2", API_FN_PAIR(Dialog_SetOptionState)},
+		{"Dialog::Start^0", API_FN_PAIR(Dialog_Start)},
+	};
+
+	ccAddExternalFunctions361(dialog_api);
 }
 
 } // namespace AGS3

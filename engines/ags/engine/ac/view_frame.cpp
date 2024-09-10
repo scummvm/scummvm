@@ -247,17 +247,21 @@ RuntimeScriptValue Sc_ViewFrame_GetView(void *self, const RuntimeScriptValue *pa
 
 
 void RegisterViewFrameAPI() {
-	ccAddExternalObjectFunction("ViewFrame::get_Flipped", Sc_ViewFrame_GetFlipped);
-	ccAddExternalObjectFunction("ViewFrame::get_Frame", Sc_ViewFrame_GetFrame);
-	ccAddExternalObjectFunction("ViewFrame::get_Graphic", Sc_ViewFrame_GetGraphic);
-	ccAddExternalObjectFunction("ViewFrame::set_Graphic", Sc_ViewFrame_SetGraphic);
-	ccAddExternalObjectFunction("ViewFrame::get_LinkedAudio", Sc_ViewFrame_GetLinkedAudio);
-	ccAddExternalObjectFunction("ViewFrame::set_LinkedAudio", Sc_ViewFrame_SetLinkedAudio);
-	ccAddExternalObjectFunction("ViewFrame::get_Loop", Sc_ViewFrame_GetLoop);
-	ccAddExternalObjectFunction("ViewFrame::get_Sound", Sc_ViewFrame_GetSound);
-	ccAddExternalObjectFunction("ViewFrame::set_Sound", Sc_ViewFrame_SetSound);
-	ccAddExternalObjectFunction("ViewFrame::get_Speed", Sc_ViewFrame_GetSpeed);
-	ccAddExternalObjectFunction("ViewFrame::get_View", Sc_ViewFrame_GetView);
+	ScFnRegister viewframe_api[] = {
+		{"ViewFrame::get_Flipped", API_FN_PAIR(ViewFrame_GetFlipped)},
+		{"ViewFrame::get_Frame", API_FN_PAIR(ViewFrame_GetFrame)},
+		{"ViewFrame::get_Graphic", API_FN_PAIR(ViewFrame_GetGraphic)},
+		{"ViewFrame::set_Graphic", API_FN_PAIR(ViewFrame_SetGraphic)},
+		{"ViewFrame::get_LinkedAudio", API_FN_PAIR(ViewFrame_GetLinkedAudio)},
+		{"ViewFrame::set_LinkedAudio", API_FN_PAIR(ViewFrame_SetLinkedAudio)},
+		{"ViewFrame::get_Loop", API_FN_PAIR(ViewFrame_GetLoop)},
+		{"ViewFrame::get_Sound", API_FN_PAIR(ViewFrame_GetSound)},
+		{"ViewFrame::set_Sound", API_FN_PAIR(ViewFrame_SetSound)},
+		{"ViewFrame::get_Speed", API_FN_PAIR(ViewFrame_GetSpeed)},
+		{"ViewFrame::get_View", API_FN_PAIR(ViewFrame_GetView)},
+	};
+
+	ccAddExternalFunctions361(viewframe_api);
 }
 
 } // namespace AGS3

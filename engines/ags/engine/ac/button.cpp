@@ -396,7 +396,7 @@ RuntimeScriptValue Sc_Button_Click(void *self, const RuntimeScriptValue *params,
 	API_OBJCALL_VOID_PINT(GUIButton, Button_Click);
 }
 
-RuntimeScriptValue Sc_Button_GetAnimating(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Button_IsAnimating(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_BOOL(GUIButton, Button_IsAnimating);
 }
 
@@ -408,46 +408,50 @@ RuntimeScriptValue Sc_Button_SetTextAlignment(void *self, const RuntimeScriptVal
 	API_OBJCALL_VOID_PINT(GUIButton, Button_SetTextAlignment);
 }
 
-RuntimeScriptValue Sc_Button_GetFrame(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Button_GetAnimFrame(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(GUIButton, Button_GetAnimFrame);
 }
 
-RuntimeScriptValue Sc_Button_GetLoop(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Button_GetAnimLoop(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(GUIButton, Button_GetAnimLoop);
 }
 
-RuntimeScriptValue Sc_Button_GetView(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Button_GetAnimView(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(GUIButton, Button_GetAnimView);
 }
 
 void RegisterButtonAPI() {
-	ccAddExternalObjectFunction("Button::Animate^4", Sc_Button_Animate4);
-	ccAddExternalObjectFunction("Button::Animate^7", Sc_Button_Animate7);
-	ccAddExternalObjectFunction("Button::Animate^8", Sc_Button_Animate);
-	ccAddExternalObjectFunction("Button::Click^1", Sc_Button_Click);
-	ccAddExternalObjectFunction("Button::GetText^1", Sc_Button_GetText);
-	ccAddExternalObjectFunction("Button::SetText^1", Sc_Button_SetText);
-	ccAddExternalObjectFunction("Button::get_TextAlignment", Sc_Button_GetTextAlignment);
-	ccAddExternalObjectFunction("Button::set_TextAlignment", Sc_Button_SetTextAlignment);
-	ccAddExternalObjectFunction("Button::get_Animating", Sc_Button_GetAnimating);
-	ccAddExternalObjectFunction("Button::get_ClipImage", Sc_Button_GetClipImage);
-	ccAddExternalObjectFunction("Button::set_ClipImage", Sc_Button_SetClipImage);
-	ccAddExternalObjectFunction("Button::get_Font", Sc_Button_GetFont);
-	ccAddExternalObjectFunction("Button::set_Font", Sc_Button_SetFont);
-	ccAddExternalObjectFunction("Button::get_Frame", Sc_Button_GetFrame);
-	ccAddExternalObjectFunction("Button::get_Graphic", Sc_Button_GetGraphic);
-	ccAddExternalObjectFunction("Button::get_Loop", Sc_Button_GetLoop);
-	ccAddExternalObjectFunction("Button::get_MouseOverGraphic", Sc_Button_GetMouseOverGraphic);
-	ccAddExternalObjectFunction("Button::set_MouseOverGraphic", Sc_Button_SetMouseOverGraphic);
-	ccAddExternalObjectFunction("Button::get_NormalGraphic", Sc_Button_GetNormalGraphic);
-	ccAddExternalObjectFunction("Button::set_NormalGraphic", Sc_Button_SetNormalGraphic);
-	ccAddExternalObjectFunction("Button::get_PushedGraphic", Sc_Button_GetPushedGraphic);
-	ccAddExternalObjectFunction("Button::set_PushedGraphic", Sc_Button_SetPushedGraphic);
-	ccAddExternalObjectFunction("Button::get_Text", Sc_Button_GetText_New);
-	ccAddExternalObjectFunction("Button::set_Text", Sc_Button_SetText);
-	ccAddExternalObjectFunction("Button::get_TextColor", Sc_Button_GetTextColor);
-	ccAddExternalObjectFunction("Button::set_TextColor", Sc_Button_SetTextColor);
-	ccAddExternalObjectFunction("Button::get_View", Sc_Button_GetView);
+	ScFnRegister button_api[] = {
+		{"Button::Animate^4", API_FN_PAIR(Button_Animate4)},
+		{"Button::Animate^7", API_FN_PAIR(Button_Animate7)},
+		{"Button::Animate^8", API_FN_PAIR(Button_Animate)},
+		{"Button::Click^1", API_FN_PAIR(Button_Click)},
+		{"Button::GetText^1", API_FN_PAIR(Button_GetText)},
+		{"Button::SetText^1", API_FN_PAIR(Button_SetText)},
+		{"Button::get_TextAlignment", API_FN_PAIR(Button_GetTextAlignment)},
+		{"Button::set_TextAlignment", API_FN_PAIR(Button_SetTextAlignment)},
+		{"Button::get_Animating", API_FN_PAIR(Button_IsAnimating)},
+		{"Button::get_ClipImage", API_FN_PAIR(Button_GetClipImage)},
+		{"Button::set_ClipImage", API_FN_PAIR(Button_SetClipImage)},
+		{"Button::get_Font", API_FN_PAIR(Button_GetFont)},
+		{"Button::set_Font", API_FN_PAIR(Button_SetFont)},
+		{"Button::get_Frame", API_FN_PAIR(Button_GetAnimFrame)},
+		{"Button::get_Graphic", API_FN_PAIR(Button_GetGraphic)},
+		{"Button::get_Loop", API_FN_PAIR(Button_GetAnimLoop)},
+		{"Button::get_MouseOverGraphic", API_FN_PAIR(Button_GetMouseOverGraphic)},
+		{"Button::set_MouseOverGraphic", API_FN_PAIR(Button_SetMouseOverGraphic)},
+		{"Button::get_NormalGraphic", API_FN_PAIR(Button_GetNormalGraphic)},
+		{"Button::set_NormalGraphic", API_FN_PAIR(Button_SetNormalGraphic)},
+		{"Button::get_PushedGraphic", API_FN_PAIR(Button_GetPushedGraphic)},
+		{"Button::set_PushedGraphic", API_FN_PAIR(Button_SetPushedGraphic)},
+		{"Button::get_Text", API_FN_PAIR(Button_GetText_New)},
+		{"Button::set_Text", API_FN_PAIR(Button_SetText)},
+		{"Button::get_TextColor", API_FN_PAIR(Button_GetTextColor)},
+		{"Button::set_TextColor", API_FN_PAIR(Button_SetTextColor)},
+		{"Button::get_View", API_FN_PAIR(Button_GetAnimView)},
+	};
+
+	ccAddExternalFunctions361(button_api);
 }
 
 } // namespace AGS3
