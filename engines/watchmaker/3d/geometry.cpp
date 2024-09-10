@@ -2320,7 +2320,7 @@ void t3dSetFaceVisibility(t3dMESH *mesh, t3dCAMERA *cam) {
 		} else
 			T2 = -1;
 
-		if (Material->hasFlag(T3D_MATERIAL_ENVIROMENT)) {                                        // se ha l'enviroment
+		if (Material->hasFlag(T3D_MATERIAL_ENVIRONMENT)) {                                       // se ha l'environnement
 			t3dM3X3F    m;
 			t3dMatMul(&m, &mesh->Matrix, &t3dCurViewMatrix);
 
