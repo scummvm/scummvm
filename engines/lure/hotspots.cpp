@@ -45,7 +45,7 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_anim = nullptr;
 	_frames = nullptr;
 	_numFrames = 0;
-	_persistant = false;
+	_persistent = false;
 	_direction = NO_DIRECTION;
 
 	_hotspotId = res->hotspotId;
@@ -96,7 +96,7 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 	_anim = nullptr;
 	_frames = nullptr;
 	_numFrames = 0;
-	_persistant = false;
+	_persistent = false;
 	_hotspotId = 0xffff;
 	_override = nullptr;
 	_colorOffset = 0;
