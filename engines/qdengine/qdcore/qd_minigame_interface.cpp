@@ -312,12 +312,16 @@ qdMinigameObjectInterface *qdMinigameSceneInterfaceImpl::object_interface(const 
 	if (qdGameObjectAnimated * p = dynamic_cast<qdGameObjectAnimated * >(_scene->get_object(object_name)))
 		return new qdMinigameObjectInterfaceImpl(p);
 
+	warning("object_interface(): Unknown object '%s'", transCyrillic(object_name));
+
 	return NULL;
 }
 
 qdMinigameObjectInterface *qdMinigameSceneInterfaceImpl::personage_interface(const char *personage_name) {
 	if (qdGameObjectMoving * p = dynamic_cast<qdGameObjectMoving * >(_scene->get_object(personage_name)))
 		return new qdMinigamePersonageInterfaceImpl(p);
+
+	warning("personage_interface(): Unknown personage '%s'", transCyrillic(personage_name));
 
 	return NULL;
 }
@@ -391,6 +395,9 @@ const char *qdMinigameObjectInterfaceImplBase::current_state_name() const {
 }
 
 bool qdMinigameObjectInterfaceImplBase::is_state_active(const char *state_name) const {
+	if (!has_state(state_name))
+		warning("is_state_active(): Unknown state '%s'", transCyrillic(state_name));
+
 	return _object->is_state_active(state_name);
 }
 
@@ -409,6 +416,8 @@ bool qdMinigameObjectInterfaceImplBase::set_state(const char *state_name) {
 		return true;
 	}
 
+	warning("set_state(): Unknown state '%s'", transCyrillic(state_name));
+
 	return false;
 }
 
@@ -420,6 +429,8 @@ bool qdMinigameObjectInterfaceImplBase::set_state(int state_index) {
 int qdMinigameObjectInterfaceImplBase::state_index(const char *state_name) const {
 	if (const qdGameObjectState * p = _object->get_state(state_name))
 		return _object->get_state_index(p);
+
+	warning("state_index(): Unknown state '%s'", transCyrillic(state_name));
 
 	return -1;
 }
