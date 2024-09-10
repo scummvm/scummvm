@@ -18,7 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include "common/config-manager.h"
 #include "common/file.h"
+
 #include "graphics/managed_surface.h"
 
 #include "video/mpegps_decoder.h"
@@ -100,6 +102,7 @@ bool winVideo::play() {
 		return false;
 	}
 
+	_decoder->setVolume(ConfMan.getInt("music_volume"));
 	_decoder->start();
 	return true;
 }
