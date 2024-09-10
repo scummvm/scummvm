@@ -197,7 +197,7 @@ void DarkseedEngine::gameloop() {
 				}
 			}
 			closeShops();
-			if (_room->_roomNumber == 57 && _objectVar.getMoveObjectRoom(28) == 255 && _previousRoomNumber == 54) {
+			if (_room->_roomNumber == 57 && _previousRoomNumber == 54) {
 				if (_objectVar.getMoveObjectRoom(28) == 255) {
 					if (_objectVar[56] == 4) {
 						playSound(21,5,-1);
@@ -208,8 +208,8 @@ void DarkseedEngine::gameloop() {
 						stuffPlayer();
 					}
 				} else {
-//					dcopanim(); TODO annoyingly this animation runs inside this function.
-					changeToRoom(59); // TODO implement don't place hero flag.
+					dcopanim();
+					changeToRoom(59, true);
 					_player->_position = {320, 200};
 					_player->updateSprite();
 					_inventory.gotoJailLogic();
@@ -2176,7 +2176,7 @@ void DarkseedEngine::updateAnimation() {
 			playSound(26, 5, -1);
 		}
 		break;
-	case 60:
+	case 60: // turn on alien computer
 		_room->advanceFrame(0);
 		if (!_ObjRestarted) {
 			_player->_frameIdx = _room->_locationSprites.getAnimAt(0).frameNo[_room->_locObjFrame[0]];
@@ -2185,7 +2185,7 @@ void DarkseedEngine::updateAnimation() {
 			_objectVar[187] = 1;
 		}
 		break;
-	case 61:
+	case 61: // turn off alien computer
 		_room->advanceFrame(1);
 		if (!_ObjRestarted) {
 			_player->_frameIdx = _room->_locationSprites.getAnimAt(1).frameNo[_room->_locObjFrame[1]];
@@ -2742,14 +2742,6 @@ void DarkseedEngine::showFullscreenPic(const Common::Path &filename) {
 	_screen->addDirtyRect({{0x45, 0x28}, 501, 200});
 }
 
-void DarkseedEngine::keeperanim() {
-	// TODO
-}
-
-void DarkseedEngine::sargoanim() {
-	// TODO
-}
-
 void DarkseedEngine::playCutscene(const Common::String cutsceneId) {
 	debug("Play Cutscene %s", cutsceneId.c_str()); // TODO play cutscenes.
 }
@@ -2790,7 +2782,7 @@ void DarkseedEngine::nextFrame(int nspAminIdx) {
 }
 
 void DarkseedEngine::stuffPlayer() {
-	// TODO
+	error("Implement stuffPlayer()"); // TODO
 }
 
 void DarkseedEngine::updateHeadache() {
@@ -3416,6 +3408,250 @@ void DarkseedEngine::libanim(bool pickingUpReservedBook) {
 		_objectVar[62] = 0;
 		playCutscene("G");
 	}
+}
+
+static constexpr uint8 dcopList[100] = {
+	0, 1, 2, 3,
+	2, 1, 2, 3,
+	2, 1, 0, 1,
+	2, 3, 2, 3,
+	2, 3, 2, 1,
+	0, 1, 2, 1,
+	2, 1, 2, 3,
+	2, 1, 0, 1,
+	2, 3, 2, 1,
+	2, 3, 2, 1,
+	0, 1, 2, 3,
+	2, 3, 2, 3,
+	2, 1, 0, 1,
+	2, 1, 2, 1,
+	2, 3, 2, 1,
+	0, 1, 2, 1,
+	2, 1, 2, 3,
+	2, 1, 0, 1,
+	2, 3, 2, 3,
+	2, 3, 2, 1,
+	0, 1, 2, 1,
+	2, 1, 2, 3,
+	2, 1, 0, 1,
+	2, 1, 2, 1,
+	2, 3, 2, 1};
+
+void DarkseedEngine::dcopanim() {
+	_player->loadAnimations("dcopb.nsp");
+	showFullscreenPic("dcopb.pic");
+	animIndexTbl[0] = 0;
+	spriteAnimCountdownTimer[0] = _player->_animations.getAnimAt(0).frameDuration[0];
+
+	_sprites.clearSpriteDrawList();
+	_console->printTosText(923);
+
+	uint8 lipsIdx = 0;
+	while (_sound->isPlayingSpeech()) {
+		_sprites.clearSpriteDrawList();
+
+		if (_fullscreenPic) {
+			_fullscreenPic->draw(0x45, 0x28);
+		}
+		advanceAnimationFrame(0);
+		const Sprite &dcopSprite = _player->_animations.getSpriteAt(dcopList[lipsIdx]);
+		g_engine->_sprites.addSpriteToDrawList(310, 180, &dcopSprite, 255, dcopSprite.width, dcopSprite.height, false);
+		_sprites.drawSprites();
+
+		_console->draw();
+		_screen->makeAllDirty();
+		_screen->update();
+
+		lipsIdx++;
+		if (lipsIdx == 100) {
+			lipsIdx = 0;
+		}
+
+		for (int i = 0; i < 6; i++) {
+			wait();
+		}
+	}
+	removeFullscreenPic();
+}
+
+static constexpr uint8 keeperList[250] = {
+	10, 11, 12, 13,
+	12, 12, 13, 10,
+	11, 10, 10, 11,
+	12, 13, 12, 12,
+	13, 10, 11, 10,
+	10, 10, 11, 11,
+	12, 12, 11, 12,
+	12, 13, 12, 12,
+	12, 13, 13, 12,
+	13, 12, 11, 12,
+	13, 12, 11, 10,
+	11, 12, 13, 10,
+	11, 10, 10, 11,
+	12, 13, 12, 12,
+	13, 10, 11, 10,
+	0, 0, 1, 1,
+	2, 2, 3, 3,
+	4, 4, 5, 5,
+	6, 6, 7, 7,
+	8, 8, 9, 9,
+	10, 10, 11, 11,
+	12, 12, 11, 12,
+	12, 13, 12, 12,
+	12, 13, 13, 12,
+	13, 12, 11, 10,
+	10, 11, 12, 13,
+	12, 12, 13, 10,
+	11, 10, 10, 11,
+	12, 13, 12, 12,
+	13, 10, 11, 10,
+	10, 11, 12, 13,
+	12, 12, 13, 10,
+	11, 10, 10, 11,
+	12, 13, 12, 12,
+	13, 10, 11, 10,
+	10, 11, 12, 13,
+	12, 12, 13, 10,
+	11, 10, 10, 10,
+	11, 11, 12, 12,
+	11, 12, 12, 13,
+	12, 12, 12, 13,
+	13, 12, 13, 12,
+	11, 10, 10, 11,
+	12, 13, 12, 12,
+	13, 10, 11, 10,
+	10, 11, 12, 13,
+	12, 12, 13, 10,
+	11, 10, 10, 11,
+	12, 13, 12, 12,
+	13, 10, 11, 10,
+	10, 10, 11, 11,
+	12, 12, 11, 12,
+	12, 13, 12, 12,
+	12, 13, 13, 12,
+	13, 12, 11, 10,
+	0, 1, 2, 3,
+	4, 5, 6, 7,
+	8, 9, 10, 11,
+	12, 13, 12, 12,
+	13, 10, 11, 10,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+	0, 0};
+
+void DarkseedEngine::keeperanim() {
+	_cursor.showCursor(false);
+	_player->loadAnimations("keeper.nsp");
+	showFullscreenPic("keeper.pic");
+	animIndexTbl[0] = 0;
+	spriteAnimCountdownTimer[0] = _player->_animations.getAnimAt(0).frameDuration[0];
+
+	_console->printTosText(913);
+
+	uint8 dialogIdx = 73;
+	uint8 lipsIdx = 0;
+	while (_sound->isPlayingSpeech() || dialogIdx < 76) {
+		_sprites.clearSpriteDrawList();
+
+		if (_fullscreenPic) {
+			_fullscreenPic->draw(0x45, 0x28);
+		}
+		advanceAnimationFrame(0);
+		const Sprite &keeperSprite = _player->_animations.getSpriteAt(keeperList[lipsIdx]);
+		g_engine->_sprites.addSpriteToDrawList(254, 117, &keeperSprite, 255, keeperSprite.width, keeperSprite.height, false);
+		_sprites.drawSprites();
+
+		_console->draw();
+		_screen->makeAllDirty();
+		_screen->update();
+
+		lipsIdx++;
+		if (lipsIdx == 250) {
+			lipsIdx = 0;
+		}
+
+		if (!_sound->isPlayingSpeech()) {
+			dialogIdx++;
+			if (dialogIdx == 74) {
+				_console->printTosText(914);
+			} else if (dialogIdx == 75) {
+				_console->printTosText(915);
+			}
+		}
+		waitxticks(1);
+	}
+	removeFullscreenPic();
+	_cursor.showCursor(true);
+}
+
+static constexpr uint8 sargoList[100] = {
+	0, 1, 2, 3,
+	4, 3, 2, 1,
+	0, 1, 0, 1,
+	2, 3, 2, 3,
+	2, 3, 2, 1,
+	0, 1, 2, 3,
+	4, 3, 4, 3,
+	2, 1, 0, 1,
+	2, 3, 4, 3,
+	2, 1, 0, 1,
+	0, 1, 2, 3,
+	2, 3, 2, 3,
+	2, 1, 0, 1,
+	2, 3, 2, 1,
+	0, 4, 3, 2,
+	1, 1, 2, 3,
+	4, 3, 2, 1,
+	0, 1, 0, 1,
+	2, 3, 2, 3,
+	2, 3, 2, 1,
+	2, 1, 0, 0,
+	1, 2, 3, 2,
+	1, 0, 1, 2,
+	3, 4, 3, 2,
+	3, 2, 1, 1};
+
+void DarkseedEngine::sargoanim() {
+	_cursor.showCursor(false);
+	_player->loadAnimations("sargo.nsp");
+	showFullscreenPic("sargo.pic");
+	animIndexTbl[0] = 0;
+	spriteAnimCountdownTimer[0] = _player->_animations.getAnimAt(0).frameDuration[0];
+
+	_console->printTosText(916);
+
+	uint8 dialogIdx = 79;
+	uint8 lipsIdx = 0;
+	while (_sound->isPlayingSpeech() || dialogIdx < 81) {
+		_sprites.clearSpriteDrawList();
+
+		if (_fullscreenPic) {
+			_fullscreenPic->draw(0x45, 0x28);
+		}
+		advanceAnimationFrame(0);
+		const Sprite &sargoSprite = _player->_animations.getSpriteAt(sargoList[lipsIdx]);
+		g_engine->_sprites.addSpriteToDrawList(334, 160, &sargoSprite, 255, sargoSprite.width, sargoSprite.height, false);
+		_sprites.drawSprites();
+
+		_console->draw();
+		_screen->makeAllDirty();
+		_screen->update();
+
+		lipsIdx++;
+		if (lipsIdx == 100) {
+			lipsIdx = 0;
+		}
+
+		if (!_sound->isPlayingSpeech()) {
+			dialogIdx++;
+			if (dialogIdx == 80) {
+				_console->printTosText(917);
+			}
+		}
+		waitxticks(1);
+	}
+	removeFullscreenPic();
+	_cursor.showCursor(true);
 }
 
 void DarkseedEngine::removeFullscreenPic() {

@@ -157,7 +157,7 @@ int16 UseCode::getUseWatchTosIdx(uint16 objNum) {
 
 void Darkseed::UseCode::useCode(int objNum) {
 	debug("useCode: objNum = %d", objNum);
-	
+
 	if (objNum == 141) {
 		_console->addTextLine("You touch Delbert...");
 		return;
@@ -266,7 +266,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 		_console->printTosText(719);
 		return;
 	}
-	if (objNum == 187) {
+	if (objNum == 187) { //keeper computer screen
 		if (_objectVar[187] == 0) {
 			_console->printTosText(856);
 			g_engine->setupOtherNspAnimation(0, 60);

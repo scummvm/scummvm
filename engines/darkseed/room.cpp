@@ -1015,7 +1015,7 @@ void Darkseed::Room::runRoomObjects() {
 	}
 	if (_roomNumber == 56 && g_engine->_objectVar[187] == 1) {
 		const Sprite &sprite = _locationSprites.getSpriteAt(3);
-		g_engine->_sprites.addSpriteToDrawList(490, 70, &sprite, 255, sprite.width, sprite.height, false);
+		g_engine->_sprites.addSpriteToDrawList(431, 66, &sprite, 255, sprite.width, sprite.height, false);
 	}
 	if (_roomNumber == 30 && g_engine->_objectVar[29] == 2) {
 		const Sprite &sprite = _locationSprites.getSpriteAt(0);
