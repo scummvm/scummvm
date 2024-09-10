@@ -55,6 +55,7 @@ private:
 
 	int _trigger1 = 0;
 	int _trigger2 = 0;
+	int _val1 = 0;
 
 	void setVines();
 	void freeVines();

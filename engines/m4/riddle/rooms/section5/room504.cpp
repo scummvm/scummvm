@@ -144,6 +144,8 @@ void Room504::pre_parser() {
 		intr_freshen_sentence(107);
 }
 
+#define ITEM(NAME) player_said(NAME) && inv_object_is_here(NAME)
+
 void Room504::parser() {
 	bool ropeCoilFlag = player_said_any("ROPE COIL ", "ROPE COIL  ",
 		"ROPE COIL   ", "ROPE COIL    ");
@@ -157,8 +159,8 @@ void Room504::parser() {
 	bool takeFlag = player_said("take");
 	bool talkFlag = player_said_any("talk", "talk to");
 	bool useFlag = player_said("gear");
-	//bool vineStatueFlag = player_said_any("rope ",
-	//	"green vine ", "brown vine ", "vines ", "spider statue");
+	bool vineStatueFlag = player_said_any("rope ",
+		"green vine ", "brown vine ", "vines ", "spider statue");
 	bool menendezFlag = player_said_any("PERSON IN HOLE", "MENENDEZ");
 
 	player_update_info();
@@ -323,7 +325,173 @@ void Room504::parser() {
 			lookVines()) {
 		// No implementation
 	} else if (lookFlag && player_said(" ")) {
-		// TODO
+		if (_G(flags)[V150]) {
+			digi_play("504R02", 1);
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				digi_play("504R02", 1, 255, 2);
+				break;
+			case 2:
+				_G(kernel).trigger_mode = KT_DAEMON;
+				digi_play("504R02A", 1, 255, 762);
+				_G(flags)[V150] = 1;
+				break;
+			default:
+				break;
+			}
+		}
+	} else if (lookFlag && player_said("WATERFALL")) {
+		digi_play("504R03", 1);
+	} else if (lookFlag && player_said("TREE")) {
+		digi_play("504R04", 1);
+	} else if (lookFlag && player_said("SPIDER STATUE")) {
+		if (_G(flags)[V151] == 0 && _G(flags)[V154] == 2) {
+			player_set_commands_allowed(false);
+			_G(kernel).trigger_mode = KT_DAEMON;
+			digi_play("504R06", 1, 255, 762);
+			_G(flags)[V151] = 1;
+		} else if (_G(flags)[V154] == 2 || _G(flags)[V154] == 1 ||
+				_G(flags)[V154] == 4) {
+			digi_play("504R06A", 1);
+		} else {
+			digi_play("504R06B", 1);
+		}
+	} else if (lookFlag && player_said("BROWN VINES")) {
+		digi_play("504R07", 1);
+	} else if (lookFlag && player_said("CHASM")) {
+		digi_play("504R08", 1);
+	} else if (lookFlag && player_said("STONE WALL")) {
+		digi_play("504R09", 1);
+	} else if (lookFlag && menendezFlag) {
+		digi_play("504R12", 1);
+	} else if (lookFlag && player_said("HOLE ")) {
+		digi_play("504R33", 1);
+	} else if (lookFlag && player_said("WHEELED TOY") &&
+			_G(flags)[V141] == 1 && inv_player_has("WHEELED TOY")) {
+		digi_play("504R20", 1);
+	} else if (lookFlag && ITEM("WHEELED TOY")) {
+		digi_play("504R50", 1);
+	} else if (lookFlag && player_said("STAIRS")) {
+		digi_play("504R25", 1);
+	} else if (lookFlag && ITEM("DRIFTWOOD STUMP")) {
+		digi_play("504R43", 1);
+	} else if (lookFlag && ITEM("POLE")) {
+		digi_play("504R43", 1);
+	} else if (lookFlag && player_said("WOODEN LADDER ")) {
+		digi_play("504R43", 1);
+	} else if (lookFlag && ITEM("WOODEN LADDER")) {
+		digi_play("COM107", 1, 255, -1, 504);
+	} else if (lookFlag && ITEM("SHOVEL")) {
+		digi_play("COM106", 1);
+	} else if (lookFlag && player_said("SHOVEL ")) {
+		digi_play("504R43", 1);
+	}
+
+	else if (useFlag && ITEM("SHOVEL")) {
+		digi_play("504R19", 1);
+	} else if (useFlag && player_said("HOLE ")) {
+		digi_play("504R21", 1);
+	} else if (vineStatueFlag && player_said("ROPE") &&
+			_flag1 && inv_player_has("ROPE")) {
+		player_set_commands_allowed(false);
+		_val1 = 1;
+		_G(flags)[V154] = 1;
+		hotspot_set_active("ROPE", true);
+		hotspot_set_active("ROPE COIL", true);
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(1, 580);
+	} else if (vineStatueFlag && player_said("GREEN VINE") &&
+			_flag1 && inv_player_has("GREEN VINE")) {
+		player_set_commands_allowed(false);
+		_val1 = 2;
+		_G(flags)[V152] = 1;
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(1, 580);
+	} else if (vineStatueFlag && player_said("BROWN VINE") &&
+		_flag1 && inv_player_has("BROWN VINE")) {
+		player_set_commands_allowed(false);
+		_val1 = 3;
+		_G(flags)[V153] = 1;
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(1, 580);
+	} else if (vineStatueFlag && player_said("VINES") &&
+		_flag1 && inv_player_has("VINES")) {
+		player_set_commands_allowed(false);
+		_val1 = 4;
+		_G(flags)[V171] = 1;
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(1, 580);
+	}
+
+	else if (takeFlag && player_said_any("ROPE ", "ROPE COIL ") &&
+			_G(flags)[V154] == 1 && _flag1) {
+		player_set_commands_allowed(false);
+		_val1 = 1;
+		_G(flags)[V154] = 3;
+		_G(kernel).trigger_mode = KT_DAEMON;
+		ws_walk(491, 166, nullptr, 586, 11);
+	} else if (takeFlag && player_said_any("ROPE ") &&
+		_G(flags)[V154] == 4 && _flag1) {
+		player_set_commands_allowed(false);
+		_val1 = 1;
+		_G(flags)[V154] = 3;
+		kernel_timing_trigger(1, 603);
+	} else if (takeFlag && player_said_any("GREEN VINE ", "GREEN VINE COIL ") &&
+			_G(flags)[V152] == 1 && _flag1) {
+		player_set_commands_allowed(false);
+		_val1 = 2;
+		_G(flags)[V152] = 3;
+		_G(kernel).trigger_mode = KT_DAEMON;
+		ws_walk(491, 166, nullptr, 586, 11);
+	} else if (takeFlag && player_said("GREEN VINE ") &&
+			_G(flags)[V152] == 4 && _flag1) {
+		player_set_commands_allowed(false);
+		_val1 = 2;
+		_G(flags)[V152] = 3;
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(1, 603);
+	} else if (takeFlag && player_said_any(
+			"BROWN VINE ", "BROWN VINE COIL ") && _flag1) {
+		player_set_commands_allowed(false);
+		_val1 = 1;
+		_G(flags)[V153] = 3;
+		_G(kernel).trigger_mode = KT_DAEMON;
+		ws_walk(491, 166, nullptr, 586, 11);
+	} else if (takeFlag && player_said("BROWN VINE ") &&
+			_G(flags)[V153] == 4 && _flag1) {
+		player_set_commands_allowed(false);
+		_val1 = 3;
+		_G(flags)[V153] = 3;
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(1, 603);
+	} else if (takeFlag && player_said("VINES ", "COIL OF VINES ") &&
+			_G(flags)[V171] == 1 && _flag1) {
+		player_set_commands_allowed(false);
+		_val1 = 4;
+		_G(flags)[V171] = 3;
+		_G(kernel).trigger_mode = KT_DAEMON;
+		ws_walk(491, 166, nullptr, 586, 11);
+	} else if (takeFlag && player_said("VINES ") &&
+			_G(flags)[V171] == 4 && _flag1) {
+		player_set_commands_allowed(false);
+		_val1 = 4;
+		_G(flags)[V171] = 3;
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(1, 603);
+	} else if (takeFlag && !_flag1 && player_said_any("ROPE ", "ROPE COIL ") &&
+			_G(flags)[V154] == 4) {
+		digi_play("COM126", 1, 255, -1, 997);
+	} else if (takeFlag && !_flag1 && player_said_any("GREEN VINE ", "GREEN VINE COIL ") &&
+			_G(flags)[V154] == 4) {
+		digi_play("COM126", 1, 255, -1, 997);
+	} else if (takeFlag && !_flag1 && player_said_any("BROWN VINE ", "BROWN VINE COIL ") &&
+			_G(flags)[V153] == 4) {
+		digi_play("COM126", 1, 255, -1, 997);
+	} else if (takeFlag && !_flag1 && player_said_any("VINES ", "COIL OF VINES  ") &&
+			_G(flags)[V171] == 4) {
+		digi_play("COM126", 1, 255, -1, 997);
 	}
 	// TODO
 	else {
