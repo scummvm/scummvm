@@ -30,12 +30,18 @@ typedef struct ImGuiImage {
 	int height;
 } ImGuiImage;
 
+enum {
+	kDisplayQDA,
+	kDisplayTGA,
+};
+
 typedef struct ImGuiState {
 	bool _showArchives = false;
 
 	Common::HashMap<Common::String, ImGuiImage> _frames;
 
-	Common::Path _qdaToDisplay;
+	Common::Path _fileToDisplay;
+
 	int _qdaToDisplayFrame = -1;
 	int _qdaToDisplayFrameCount = 0;
 	bool _qdaIsPlaying = false;
@@ -44,6 +50,8 @@ typedef struct ImGuiState {
 	ImGuiTextFilter _nameFilter;
 
 	Common::List<Common::Path> _files;
+
+	int _displayMode = -1;
 } ImGuiState;
 
 extern ImGuiState *_state;

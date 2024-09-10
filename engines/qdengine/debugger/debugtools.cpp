@@ -159,6 +159,94 @@ void populateFileList() {
 	Common::sort(_state->_files.begin(), _state->_files.end());
 }
 
+static void displayQDA() {
+	int totalFrames = _state->_qdaToDisplayFrameCount;
+
+	ImGuiImage imgID;
+	if (!_state->_fileToDisplay.empty()) {
+		imgID = getImageID(_state->_fileToDisplay, _state->_qdaToDisplayFrame);
+
+		ImGui::Text("Frame %s: %d of %d  [%d x %d]", transCyrillic(_state->_fileToDisplay.toString()), _state->_qdaToDisplayFrame + 1,
+				totalFrames, imgID.width, imgID.height);
+	} else {
+		ImGui::Text("Frame <none>");
+	}
+
+	ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
+	if (ImGui::BeginTabBar("FrameTabBar", tab_bar_flags)) {
+
+		if (ImGui::BeginTabItem("Animation")) {
+
+			if (ImGui::Button("\ue020")) { // Fast Rewind    // fast_rewind
+				_state->_qdaToDisplayFrame = 0;
+				_state->_qdaIsPlaying = false;
+			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("\ue045")) { // Skip Previous    // skip_previous
+				_state->_qdaToDisplayFrame = _state->_qdaToDisplayFrame + totalFrames - 1;
+				_state->_qdaToDisplayFrame %= totalFrames;
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("\ue037")) // Play    // play_arrow
+				_state->_qdaIsPlaying = !_state->_qdaIsPlaying;
+
+			ImGui::SameLine();
+			if (ImGui::Button("\ue044")) { // Skip Next    // skip_next
+				_state->_qdaToDisplayFrame += 1;
+				_state->_qdaToDisplayFrame %= totalFrames;
+			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("\ue01f")) { // Fast Forward    // fast_forward
+				_state->_qdaToDisplayFrame = totalFrames - 1;
+				_state->_qdaIsPlaying = false;
+			}
+
+			ImGui::SameLine();
+
+			// Frame Count
+			char buf[6];
+			snprintf(buf, 6, "%d", _state->_qdaToDisplayFrame);
+
+			ImGui::SetNextItemWidth(35);
+			ImGui::InputText("##frame", buf, 5, ImGuiInputTextFlags_CharsDecimal);
+			ImGui::SetItemTooltip("Frame");
+
+			ImGui::Separator();
+
+			if (!_state->_fileToDisplay.empty()) {
+				showImage(imgID, (char *)transCyrillic(_state->_fileToDisplay.toString()), 2.0);
+			} else {
+				ImGui::InvisibleButton("##canvas", ImVec2(32.f, 32.f));
+			}
+
+			ImGui::SameLine();
+
+			imgID = getImageID(_state->_fileToDisplay, -_state->_qdaToDisplayFrame - 1);
+
+			showImage(imgID, (char *)transCyrillic(_state->_fileToDisplay.toString()), 2.0);
+
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Tiles")) {
+			if (!_state->_fileToDisplay.empty()) {
+				imgID = getImageID(_state->_fileToDisplay, TILES_ID);
+
+				showImage(imgID, (char *)transCyrillic(_state->_fileToDisplay.toString()), 1.0);
+			} else {
+				ImGui::InvisibleButton("##canvas", ImVec2(32.f, 32.f));
+			}
+
+			ImGui::EndTabItem();
+		}
+
+		ImGui::EndTabBar();
+	}
+}
+
+
 void showArchives() {
 	if (!_state->_showArchives)
 		return;
@@ -197,11 +285,16 @@ void showArchives() {
 		for (auto &it : _state->_files) {
 			const char *fileName = (char *)transCyrillic(it.baseName());
 			if (_state->_nameFilter.PassFilter(fileName)) {
-				if (ImGui::Selectable(fileName, _state->_qdaToDisplay == it)) {
+				if (ImGui::Selectable(fileName, _state->_fileToDisplay == it)) {
+					_state->_fileToDisplay = it;
+
 					if (it.baseName().hasSuffixIgnoreCase(".qda")) {
-						_state->_qdaToDisplay = it;
 						_state->_qdaToDisplayFrame = 0;
 						_state->_qdaIsPlaying = false;
+
+						_state->_displayMode = kDisplayQDA;
+					} else {
+						_state->_displayMode = -1;
 					}
 				}
 			}
@@ -214,90 +307,8 @@ void showArchives() {
 		{ // Right pane
 			ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Border);
 
-			int totalFrames = _state->_qdaToDisplayFrameCount;
-
-
-			ImGuiImage imgID;
-			if (!_state->_qdaToDisplay.empty()) {
-				imgID = getImageID(_state->_qdaToDisplay, _state->_qdaToDisplayFrame);
-
-				ImGui::Text("Frame %s: %d of %d  [%d x %d]", transCyrillic(_state->_qdaToDisplay.toString()), _state->_qdaToDisplayFrame + 1,
-						totalFrames, imgID.width, imgID.height);
-			} else {
-				ImGui::Text("Frame <none>");
-			}
-
-			ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
-            if (ImGui::BeginTabBar("FrameTabBar", tab_bar_flags)) {
-
-				if (ImGui::BeginTabItem("Animation")) {
-
-					if (ImGui::Button("\ue020")) { // Fast Rewind    // fast_rewind
-						_state->_qdaToDisplayFrame = 0;
-						_state->_qdaIsPlaying = false;
-					}
-
-					ImGui::SameLine();
-					if (ImGui::Button("\ue045")) { // Skip Previous    // skip_previous
-						_state->_qdaToDisplayFrame = _state->_qdaToDisplayFrame + totalFrames - 1;
-						_state->_qdaToDisplayFrame %= totalFrames;
-					}
-					ImGui::SameLine();
-					if (ImGui::Button("\ue037")) // Play    // play_arrow
-						_state->_qdaIsPlaying = !_state->_qdaIsPlaying;
-
-					ImGui::SameLine();
-					if (ImGui::Button("\ue044")) { // Skip Next    // skip_next
-						_state->_qdaToDisplayFrame += 1;
-						_state->_qdaToDisplayFrame %= totalFrames;
-					}
-
-					ImGui::SameLine();
-					if (ImGui::Button("\ue01f")) { // Fast Forward    // fast_forward
-						_state->_qdaToDisplayFrame = totalFrames - 1;
-						_state->_qdaIsPlaying = false;
-					}
-
-					ImGui::SameLine();
-
-					// Frame Count
-					char buf[6];
-					snprintf(buf, 6, "%d", _state->_qdaToDisplayFrame);
-
-					ImGui::SetNextItemWidth(35);
-					ImGui::InputText("##frame", buf, 5, ImGuiInputTextFlags_CharsDecimal);
-					ImGui::SetItemTooltip("Frame");
-
-					ImGui::Separator();
-
-					if (!_state->_qdaToDisplay.empty()) {
-						showImage(imgID, (char *)transCyrillic(_state->_qdaToDisplay.toString()), 2.0);
-					} else {
-						ImGui::InvisibleButton("##canvas", ImVec2(32.f, 32.f));
-					}
-
-					ImGui::SameLine();
-
-					imgID = getImageID(_state->_qdaToDisplay, -_state->_qdaToDisplayFrame - 1);
-
-					showImage(imgID, (char *)transCyrillic(_state->_qdaToDisplay.toString()), 2.0);
-
-					ImGui::EndTabItem();
-				}
-
-				if (ImGui::BeginTabItem("Tiles")) {
-					if (!_state->_qdaToDisplay.empty()) {
-						imgID = getImageID(_state->_qdaToDisplay, TILES_ID);
-
-						showImage(imgID, (char *)transCyrillic(_state->_qdaToDisplay.toString()), 1.0);
-					} else {
-						ImGui::InvisibleButton("##canvas", ImVec2(32.f, 32.f));
-					}
-
-					ImGui::EndTabItem();
-				}
-
-				ImGui::EndTabBar();
+			if (_state->_displayMode == kDisplayQDA) {
+				displayQDA();
 			}
 
 			ImGui::EndChild();
