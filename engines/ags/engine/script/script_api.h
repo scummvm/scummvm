@@ -58,6 +58,11 @@ inline const char *ScriptVSprintf(char *buffer, size_t buf_length, const char *f
 	return ScriptSprintf(buffer, buf_length, format, nullptr, 0, &arg_ptr);
 }
 
+// Helper macro for registering an API function for both script and plugin,
+// for the common case where they have similar names: the script's "translator"
+// function's name is derived from the real one by adding a "Sc_" prefix.
+#define API_FN_PAIR(FN_NAME) Sc_##FN_NAME, (void *)FN_NAME
+
 // Helper macros for script functions;
 // asserting for internal mistakes; suppressing "unused param" warnings
 #define ASSERT_SELF(METHOD) \
