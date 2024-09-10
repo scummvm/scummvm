@@ -174,8 +174,8 @@ public:
 	}
 
 	//! Устанавливает имя файла, в котором хранятся данные ресурса.
-	void set_resource_file(const Common::Path _filename) {
-		set_file(_filename);
+	void set_resource_file(const Common::Path filename) {
+		set_file(filename);
 	}
 	//! Возвращает имя файла, в котором хранятся данные ресурса.
 	/**
