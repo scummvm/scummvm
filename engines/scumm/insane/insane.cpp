@@ -468,7 +468,7 @@ void Insane::init_actStruct(int actornum, int actnum, int32 actorval, byte state
 }
 
 void Insane::init_enemyStruct(int n, int32 handler, int32 initializer,
-								   int16 occurences, int32 maxdamage, int32 isEmpty,
+								   int16 occurrences, int32 maxdamage, int32 isEmpty,
 								   int32 weapon, int32 sound, const char *filename,
 								   int32 costume4, int32 costume6, int32 costume5,
 								   int16 costumevar, int32 maxframe, int32 apprAnim) {
@@ -476,7 +476,7 @@ void Insane::init_enemyStruct(int n, int32 handler, int32 initializer,
 
 	_enemy[n].handler = handler;
 	_enemy[n].initializer = initializer;
-	_enemy[n].occurences = occurences;
+	_enemy[n].occurrences = occurrences;
 	_enemy[n].maxdamage = maxdamage;
 	_enemy[n].isEmpty = isEmpty;
 	_enemy[n].weapon = weapon;
@@ -684,15 +684,15 @@ void Insane::readState() { // PATCH
 		_posBrokenCar = readArray(326);
 		_val54d = readArray(327);
 		_posFatherTorque = readArray(328);
-		_enemy[EN_TORQUE].occurences = readArray(337);
-		_enemy[EN_ROTT1].occurences = readArray(329);
-		_enemy[EN_ROTT2].occurences = readArray(330);
-		_enemy[EN_ROTT3].occurences = readArray(331);
-		_enemy[EN_VULTF1].occurences = readArray(332);
-		_enemy[EN_VULTM1].occurences = readArray(333);
-		_enemy[EN_VULTF2].occurences = readArray(334);
-		_enemy[EN_VULTM2].occurences = readArray(335);
-		_enemy[EN_CAVEFISH].occurences = readArray(336);
+		_enemy[EN_TORQUE].occurrences = readArray(337);
+		_enemy[EN_ROTT1].occurrences = readArray(329);
+		_enemy[EN_ROTT2].occurrences = readArray(330);
+		_enemy[EN_ROTT3].occurrences = readArray(331);
+		_enemy[EN_VULTF1].occurrences = readArray(332);
+		_enemy[EN_VULTM1].occurrences = readArray(333);
+		_enemy[EN_VULTF2].occurrences = readArray(334);
+		_enemy[EN_VULTM2].occurrences = readArray(335);
+		_enemy[EN_CAVEFISH].occurrences = readArray(336);
 		_enemy[EN_VULTM2].isEmpty = readArray(340);
 		_enemy[EN_VULTF2].isEmpty = readArray(339);
 		_enemy[EN_CAVEFISH].isEmpty = readArray(56);

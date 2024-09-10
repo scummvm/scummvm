@@ -180,7 +180,7 @@ class Insane {
 	struct enemy {
 		int32 handler;
 		int32 initializer;
-		int16 occurences;
+		int16 occurrences;
 		int32 maxdamage;
 		int32 isEmpty;
 		int32 weapon;
@@ -333,7 +333,7 @@ class Insane {
 	void init_actStruct(int actornum, int actnum, int32 actorval, byte state,
 						  int32 room, int32 animtilt, int32 tilt, int32 frame);
 	void init_enemyStruct(int n, int32 handler, int32 initializer,
-							   int16 occurences, int32 maxdamage, int32 isEmpty,
+							   int16 occurrences, int32 maxdamage, int32 isEmpty,
 							   int32 field_14, int32 sound, const char *filename,
 							   int32 costume4, int32 costume6, int32 costume5,
 							   int16 field_2C, int32 field_30, int32 field_34);
