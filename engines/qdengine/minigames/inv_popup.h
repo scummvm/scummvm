@@ -68,7 +68,237 @@ public:
 	bool quant(float dt) {
 		debugC(3, kDebugMinigames, "InvPopup::quant(%f)", dt);
 
+#if 0
+		if (_blockPersObj->is_state_active("включить")) {
+			_scene->activate_personage("Lock");
+		} else if (_blockPersObj->is_state_active("выключить")) {
+			_scene->activate_personage("Швейк");
+			_blockPersObj->set_state("выключена");
+		}
 
+		qdMinigameObjectInterface *obj;
+
+		if (!_scene->mouse_hover_object_interface()
+				|| _scene->mouse_object_interface()) {
+			_invDescObj->set_state("00");
+			obj = _invDescCloseupObj;
+			goto LABEL_20;
+		}
+
+		char buf[5];
+		const char *state;
+
+		state = _scene->mouse_hover_object_interface()->current_state_name();
+		if (!strstr(state, "#inv#")) {
+			obj = _invDescObj;
+LABEL_20:
+			obj->set_state("00");
+			goto LABEL_21;
+		}
+
+		const char *pos = strstr(state, "#inv#");
+		char buf2[5];
+		strncpy(buf2, pos + 5, 2);
+		strncpy(buf, _invDescCloseupObj->current_state_name(), 2u);
+
+		if (buf2[0] != buf[0] || buf2[1] != buf[1]) {
+			_invDescObj->set_state(buf2);
+			_hoverObjectPos = _scene->mouse_hover_object_interface()->screen_R();
+			if (_hoverObjectPos.x + _invDescObj->screen_size().x / 2 >= 800
+					|| (_hoverObjectPos.x - _invDescObj->screen_size().x / 2 <= 0)) {
+				if (_hoverObjectPos.x + _invDescObj->screen_size().x / 2 < 800) {
+					if (_hoverObjectPos.x - _invDescObj->screen_size().x / 2 <= 0)
+						_invDescPos.x = _invDescObj->screen_size().x / 2 + 10;
+					} else {
+						_invDescPos.x = 790 - _invDescObj->screen_size().x / 2;
+					}
+				} else {
+					_invDescPos.x = _hoverObjectPos.x;
+			}
+			_invDescPos.y = _invDescObj->screen_size()->y / 2 + 73;
+			_invDescObj->set_R(_scene->screen2world_coords(&_invDescPos, -1000.0));
+			_invDescCloseupObj->set_state("00");
+		}
+
+LABEL_21:
+		if (_scene->mouse_right_click_object_interface()) {
+			if (!_scene->mouse_object_interface()) {
+				state = _scene->mouse_hover_object_interface()->current_state_name();
+
+				if (strstr(state, "#closeup#")) {
+					pos = strstr(state, "#inv#");
+					strncpy(buf, pos + 5, 2u);
+					buf[2] = 0;
+
+					_invDescCloseupObj->set_state(buf);
+					_invDescPos.y = 300;
+					_invDescPos.x = 400;
+					_invDescCloseupObj->set_R( _scene->screen2world_coords(_invDescPos, -1000.0));
+					_invDescObj->set_state("00");
+				}
+			}
+		}
+
+		if (Common::String(_blockPersFlagObj->current_state_name()) == "да") {
+			if (!_blockPersObj->is_state_active("включить"))
+				_blockPersObj->set_state("включить");
+		} else if (_blockPersObj->is_state_active("включить")) {
+			_blockPersObj->set_state("выключить");
+		}
+
+		_direction = -10;
+		int angle = (int)(_shveikObj->direction_angle() * 180.0 * 0.3183098865475127);
+
+		if (angle > 220 && angle < 230)
+			_direction = 1;
+		else if (angle > 265 && angle < 275)
+			_direction = 2;
+		else if (angle > 310 && angle < 320)
+			_direction = 3;
+		else if (angle > 175 && angle < 185)
+			_direction = 4;
+		else if (angle >= 0 && angle < 5)
+			_direction = 6;
+		else if (angle > 40 && angle < 50)
+			_direction = 9;
+		else if (angle > 85 && angle < 95)
+			_direction = 8;
+		else if (angle > 130 && angle < 140)
+			_direction = 7;
+
+		Common::String curState = _shveikObj->current_state_name();
+		if (curState == "#1#") {
+			_direction = 1;
+		} else if (curState == "#2#") {
+			_direction = 2;
+		} else if (curState == "#3#") {
+			_direction = 3;
+		} else if (curState == "#4#") {
+			_direction = 4;
+		} else if (curState == "#6#") {
+			_direction = 6;
+		} else if (curState == "#7#") {
+			_direction = 7;
+		} else if (curState == "#8#") {
+			_direction = 8;
+		} else if (curState == "#9#") {
+			_direction = 9;
+		}
+
+		switch (_direction) {
+		case -10:
+			_shveikLookObj->set_state("0");
+			break;
+		case 1:
+			_shveikLookObj->set_state("1");
+			break;
+		case 2:
+			_shveikLookObj->set_state("2");
+			break;
+		case 3:
+			_shveikLookObj->set_state("3");
+			break;
+		case 4:
+			_shveikLookObj->set_state("4");
+			break;
+		case 6:
+			_shveikLookObj->set_state("6");
+			break;
+		case 7:
+			_shveikLookObj->set_state("7");
+			break;
+		case 8:
+			_shveikLookObj->set_state("8");
+			break;
+		case 9:
+			_shveikLookObj->set_state("9");
+			break;
+		default:
+			break;
+		}
+
+		if (curState == "?1?") {
+			_direction = 10;
+		} else if (curState == "?2?") {
+			_direction = 20;
+		} else if (curState == "?3?") {
+			_direction = 30;
+		} else if (curState == "?4?") {
+			_direction = 40;
+		} else if (curState == "?6?") {
+			_direction = 60;
+		} else if (curState == "?7?") {
+			_direction = 70;
+		} else if (curState == "?8?") {
+			_direction = 80;
+		} else if (curState == "?9?") {
+			_direction = 90;
+		}
+
+		switch (_direction) {
+		case 10:
+			_shveikObj->set_direction_angle(5 * M_PI / 4);
+			break;
+		case 20:
+			_shveikObj->set_direction_angle(6 * M_PI / 4);
+			break;
+		case 30:
+			_shveikObj->set_direction_angle(7 * M_PI / 4);
+			break;
+		case 40:
+			_shveikObj->set_direction_angle(M_PI);
+			break;
+		case 60:
+			_shveikObj->set_direction_angle(0.0);
+			break;
+		case 70:
+			_shveikObj->set_direction_angle(3 * M_PI / 4);
+			break;
+		case 80:
+			_shveikObj->set_direction_angle(2 * M_PI / 4);
+			break;
+		case 90:
+			_shveikObj->set_direction_angle(1 * M_PI / 4);
+			break;
+		default:
+			break;
+		}
+
+		if (strstr(_shveikMoveEnabledObj->current_state_name(), "да")) {
+			if (!_shveikIsMoving) {
+				_shveikIsMoving = 1;
+				_time = 0.0;
+				_timeout = qd_rnd(10) + 5;
+			}
+
+			if (_timeout >= _time || _time == -1.0) {
+				_time = dt + _time;
+			} else {
+				_shveikIsMoving = 2;
+				_time = -1.0;
+				_shveikMoveObj->set_state("выполнить");
+			}
+		}
+
+		if ((strstr(_shveikMoveEnabledObj->current_state_name(), "нет") || _shveikMoveObj->is_state_active("отработан"))
+				&& _shveikIsMoving > 0) {
+			_shveikIsMoving = 0;
+			_time = -1.0;
+			_timeout = -1;
+			_shveikMoveObj->set_state("ожидание");
+		}
+
+		if ((_shveikObj->R().x != _oldShveikPos.x
+				|| _shveikObj->R().y != _oldShveikPos.y)
+				&& _shveikIsMoving > 0) {
+			_shveikIsMoving = 0;
+			_time = -1.0;
+			_timeout = -1;
+			_shveikMoveObj->set_state("ожидание");
+		}
+
+		_oldShveikPos = _shveikObj->R();
+#endif
 		return true;
 	}
 
