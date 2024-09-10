@@ -34,6 +34,19 @@ struct StaticArray;
 
 using AGS::Shared::String;
 
+// Helper struct for declaring a script API function registration
+struct ScFnRegister {
+	const char *Name = nullptr;
+	RuntimeScriptValue Fn;   // for script VM calls
+	RuntimeScriptValue PlFn; // for plugins, direct unsafe call style
+
+	ScFnRegister() = default;
+	ScFnRegister(const char *name, ScriptAPIFunction *fn, void *plfn = nullptr)
+		: Name(name), Fn(RuntimeScriptValue().SetStaticFunction(fn)), PlFn(RuntimeScriptValue().SetPluginMethod((Plugins::ScriptContainer *)plfn, nullptr)) {}
+	ScFnRegister(const char *name, ScriptAPIObjectFunction *fn, void *plfn = nullptr)
+		: Name(name), Fn(RuntimeScriptValue().SetObjectFunction(fn)), PlFn(RuntimeScriptValue().SetPluginMethod((Plugins::ScriptContainer *)plfn, nullptr)) {}
+};
+
 // Following functions register engine API symbols for script and plugins.
 // Calls from script is handled by specific "translator" functions, which
 // unpack script interpreter's values into the real arguments and call the
@@ -54,6 +67,18 @@ bool ccAddExternalScriptSymbol(const String &name, const RuntimeScriptValue &prv
 void ccRemoveExternalSymbol(const String &name);
 // Remove all external symbols, allowing you to start from scratch
 void ccRemoveAllSymbols();
+
+// FIXME: These functions should replace the older ones; for now they are duplicated to ease
+// the transition
+bool ccAddExternalStaticFunction361(const String &name, ScriptAPIFunction *scfn, void *dirfn = nullptr);
+bool ccAddExternalObjectFunction361(const String &name, ScriptAPIObjectFunction *scfn, void *dirfn = nullptr);
+bool ccAddExternalFunction361(const ScFnRegister &scfnreg);
+// Registers an array of static functions
+template<size_t N>
+inline void ccAddExternalFunctions361(const ScFnRegister (&arr)[N]) {
+	for (const ScFnRegister *it = arr; it != (arr + N); ++it)
+		ccAddExternalFunction361(*it);
+}
 
 // Get the address of an exported variable in the script
 void *ccGetSymbolAddress(const String &name);
