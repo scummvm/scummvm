@@ -1380,7 +1380,7 @@ int FWScript::o1_loadBg() {
 
 	if (g_cine->getGameType() == GType_FW && (g_cine->getFeatures() & GF_CD)) {
 		char buffer[20];
-		removeExtention(buffer, param, sizeof(buffer));
+		removeExtension(buffer, param, sizeof(buffer));
 		g_sound->setBgMusic(atoi(buffer + 1));
 	}
 

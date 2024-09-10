@@ -1514,7 +1514,7 @@ void checkForPendingDataLoad() {
 void hideMouse() {
 }
 
-void removeExtention(char *dest, const char *source, size_t sz) {
+void removeExtension(char *dest, const char *source, size_t sz) {
 	Common::strcpy_s(dest, sz, source);
 
 	byte *ptr = (byte *) strchr(dest, '.');
