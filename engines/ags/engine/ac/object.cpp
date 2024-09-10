@@ -1037,83 +1037,80 @@ RuntimeScriptValue Sc_Object_SetY(void *self, const RuntimeScriptValue *params, 
 	API_OBJCALL_VOID_PINT(ScriptObject, Object_SetY);
 }
 
-
-
 void RegisterObjectAPI() {
-	ccAddExternalObjectFunction("Object::Animate^5", Sc_Object_Animate5);
-	ccAddExternalObjectFunction("Object::Animate^6", Sc_Object_Animate6);
-	ccAddExternalObjectFunction("Object::Animate^7", Sc_Object_Animate);
-	ccAddExternalObjectFunction("Object::IsCollidingWithObject^1", Sc_Object_IsCollidingWithObject);
-	ccAddExternalObjectFunction("Object::GetName^1", Sc_Object_GetName);
-	ccAddExternalObjectFunction("Object::GetProperty^1", Sc_Object_GetProperty);
-	ccAddExternalObjectFunction("Object::GetPropertyText^2", Sc_Object_GetPropertyText);
-	ccAddExternalObjectFunction("Object::GetTextProperty^1", Sc_Object_GetTextProperty);
-	ccAddExternalObjectFunction("Object::SetProperty^2", Sc_Object_SetProperty);
-	ccAddExternalObjectFunction("Object::SetTextProperty^2", Sc_Object_SetTextProperty);
-	ccAddExternalObjectFunction("Object::IsInteractionAvailable^1", Sc_Object_IsInteractionAvailable);
-	ccAddExternalObjectFunction("Object::MergeIntoBackground^0", Sc_Object_MergeIntoBackground);
-	ccAddExternalObjectFunction("Object::Move^5", Sc_Object_Move);
-	ccAddExternalObjectFunction("Object::RemoveTint^0", Sc_Object_RemoveTint);
-	ccAddExternalObjectFunction("Object::RunInteraction^1", Sc_Object_RunInteraction);
-	ccAddExternalObjectFunction("Object::SetLightLevel^1", Sc_Object_SetLightLevel);
-	ccAddExternalObjectFunction("Object::SetPosition^2", Sc_Object_SetPosition);
-	ccAddExternalObjectFunction("Object::SetView^3", Sc_Object_SetView);
-	ccAddExternalObjectFunction("Object::StopAnimating^0", Sc_Object_StopAnimating);
-	ccAddExternalObjectFunction("Object::StopMoving^0", Sc_Object_StopMoving);
-	ccAddExternalObjectFunction("Object::Tint^5", Sc_Object_Tint);
+	ScFnRegister object_api[] = {
+		{"Object::GetAtRoomXY^2", API_FN_PAIR(GetObjectAtRoom)},
+		{"Object::GetAtScreenXY^2", API_FN_PAIR(GetObjectAtScreen)},
 
-	// static
-	ccAddExternalStaticFunction("Object::GetAtRoomXY^2", Sc_GetObjectAtRoom);
-	ccAddExternalStaticFunction("Object::GetAtScreenXY^2", Sc_GetObjectAtScreen);
+		{"Object::Animate^5", API_FN_PAIR(Object_Animate5)},
+		{"Object::Animate^6", API_FN_PAIR(Object_Animate6)},
+		{"Object::Animate^7", API_FN_PAIR(Object_Animate)},
+		{"Object::IsCollidingWithObject^1", API_FN_PAIR(Object_IsCollidingWithObject)},
+		{"Object::GetName^1", API_FN_PAIR(Object_GetName)},
+		{"Object::GetProperty^1", API_FN_PAIR(Object_GetProperty)},
+		{"Object::GetPropertyText^2", API_FN_PAIR(Object_GetPropertyText)},
+		{"Object::GetTextProperty^1", API_FN_PAIR(Object_GetTextProperty)},
+		{"Object::SetProperty^2", API_FN_PAIR(Object_SetProperty)},
+		{"Object::SetTextProperty^2", API_FN_PAIR(Object_SetTextProperty)},
+		{"Object::IsInteractionAvailable^1", API_FN_PAIR(Object_IsInteractionAvailable)},
+		{"Object::MergeIntoBackground^0", API_FN_PAIR(Object_MergeIntoBackground)},
+		{"Object::Move^5", API_FN_PAIR(Object_Move)},
+		{"Object::RemoveTint^0", API_FN_PAIR(Object_RemoveTint)},
+		{"Object::RunInteraction^1", API_FN_PAIR(Object_RunInteraction)},
+		{"Object::SetLightLevel^1", API_FN_PAIR(Object_SetLightLevel)},
+		{"Object::SetPosition^2", API_FN_PAIR(Object_SetPosition)},
+		{"Object::SetView^3", API_FN_PAIR(Object_SetView)},
+		{"Object::StopAnimating^0", API_FN_PAIR(Object_StopAnimating)},
+		{"Object::StopMoving^0", API_FN_PAIR(Object_StopMoving)},
+		{"Object::Tint^5", API_FN_PAIR(Object_Tint)},
+		{"Object::get_Animating", API_FN_PAIR(Object_GetAnimating)},
+		{"Object::get_Baseline", API_FN_PAIR(Object_GetBaseline)},
+		{"Object::set_Baseline", API_FN_PAIR(Object_SetBaseline)},
+		{"Object::get_BlockingHeight", API_FN_PAIR(Object_GetBlockingHeight)},
+		{"Object::set_BlockingHeight", API_FN_PAIR(Object_SetBlockingHeight)},
+		{"Object::get_BlockingWidth", API_FN_PAIR(Object_GetBlockingWidth)},
+		{"Object::set_BlockingWidth", API_FN_PAIR(Object_SetBlockingWidth)},
+		{"Object::get_Clickable", API_FN_PAIR(Object_GetClickable)},
+		{"Object::set_Clickable", API_FN_PAIR(Object_SetClickable)},
+		{"Object::get_Frame", API_FN_PAIR(Object_GetFrame)},
+		{"Object::get_Graphic", API_FN_PAIR(Object_GetGraphic)},
+		{"Object::set_Graphic", API_FN_PAIR(Object_SetGraphic)},
+		{"Object::get_ID", API_FN_PAIR(Object_GetID)},
+		{"Object::get_IgnoreScaling", API_FN_PAIR(Object_GetIgnoreScaling)},
+		{"Object::set_IgnoreScaling", API_FN_PAIR(Object_SetIgnoreScaling)},
+		{"Object::get_IgnoreWalkbehinds", API_FN_PAIR(Object_GetIgnoreWalkbehinds)},
+		{"Object::set_IgnoreWalkbehinds", API_FN_PAIR(Object_SetIgnoreWalkbehinds)},
+		{"Object::get_Loop", API_FN_PAIR(Object_GetLoop)},
+		{"Object::get_ManualScaling", API_FN_PAIR(Object_GetIgnoreScaling)},
+		{"Object::set_ManualScaling", API_FN_PAIR(Object_SetManualScaling)},
+		{"Object::get_Moving", API_FN_PAIR(Object_GetMoving)},
+		{"Object::get_Name", API_FN_PAIR(Object_GetName_New)},
+		{"Object::set_Name", API_FN_PAIR(Object_SetName)},
+		{"Object::get_Scaling", API_FN_PAIR(Object_GetScaling)},
+		{"Object::set_Scaling", API_FN_PAIR(Object_SetScaling)},
+		{"Object::get_Solid", API_FN_PAIR(Object_GetSolid)},
+		{"Object::set_Solid", API_FN_PAIR(Object_SetSolid)},
+		{"Object::get_Transparency", API_FN_PAIR(Object_GetTransparency)},
+		{"Object::set_Transparency", API_FN_PAIR(Object_SetTransparency)},
+		{"Object::get_View", API_FN_PAIR(Object_GetView)},
+		{"Object::get_Visible", API_FN_PAIR(Object_GetVisible)},
+		{"Object::set_Visible", API_FN_PAIR(Object_SetVisible)},
+		{"Object::get_X", API_FN_PAIR(Object_GetX)},
+		{"Object::set_X", API_FN_PAIR(Object_SetX)},
+		{"Object::get_Y", API_FN_PAIR(Object_GetY)},
+		{"Object::set_Y", API_FN_PAIR(Object_SetY)},
+		{"Object::get_HasExplicitLight", API_FN_PAIR(Object_HasExplicitLight)},
+		{"Object::get_HasExplicitTint", API_FN_PAIR(Object_HasExplicitTint)},
+		{"Object::get_LightLevel", API_FN_PAIR(Object_GetLightLevel)},
+		{"Object::set_LightLevel", API_FN_PAIR(Object_SetLightLevel)},
+		{"Object::get_TintBlue", API_FN_PAIR(Object_GetTintBlue)},
+		{"Object::get_TintGreen", API_FN_PAIR(Object_GetTintGreen)},
+		{"Object::get_TintRed", API_FN_PAIR(Object_GetTintRed)},
+		{"Object::get_TintSaturation", API_FN_PAIR(Object_GetTintSaturation)},
+		{"Object::get_TintLuminance", API_FN_PAIR(Object_GetTintLuminance)},
+	};
 
-	ccAddExternalObjectFunction("Object::get_Animating", Sc_Object_GetAnimating);
-	ccAddExternalObjectFunction("Object::get_AnimationVolume", Sc_Object_GetAnimationVolume),
-	ccAddExternalObjectFunction("Object::set_AnimationVolume", Sc_Object_SetAnimationVolume),
-	ccAddExternalObjectFunction("Object::get_Baseline", Sc_Object_GetBaseline);
-	ccAddExternalObjectFunction("Object::set_Baseline", Sc_Object_SetBaseline);
-	ccAddExternalObjectFunction("Object::get_BlockingHeight", Sc_Object_GetBlockingHeight);
-	ccAddExternalObjectFunction("Object::set_BlockingHeight", Sc_Object_SetBlockingHeight);
-	ccAddExternalObjectFunction("Object::get_BlockingWidth", Sc_Object_GetBlockingWidth);
-	ccAddExternalObjectFunction("Object::set_BlockingWidth", Sc_Object_SetBlockingWidth);
-	ccAddExternalObjectFunction("Object::get_Clickable", Sc_Object_GetClickable);
-	ccAddExternalObjectFunction("Object::set_Clickable", Sc_Object_SetClickable);
-	ccAddExternalObjectFunction("Object::get_Frame", Sc_Object_GetFrame);
-	ccAddExternalObjectFunction("Object::get_Graphic", Sc_Object_GetGraphic);
-	ccAddExternalObjectFunction("Object::set_Graphic", Sc_Object_SetGraphic);
-	ccAddExternalObjectFunction("Object::get_ID", Sc_Object_GetID);
-	ccAddExternalObjectFunction("Object::get_IgnoreScaling", Sc_Object_GetIgnoreScaling);
-	ccAddExternalObjectFunction("Object::set_IgnoreScaling", Sc_Object_SetIgnoreScaling);
-	ccAddExternalObjectFunction("Object::get_IgnoreWalkbehinds", Sc_Object_GetIgnoreWalkbehinds);
-	ccAddExternalObjectFunction("Object::set_IgnoreWalkbehinds", Sc_Object_SetIgnoreWalkbehinds);
-	ccAddExternalObjectFunction("Object::get_Loop", Sc_Object_GetLoop);
-	ccAddExternalObjectFunction("Object::get_ManualScaling", Sc_Object_GetIgnoreScaling);
-	ccAddExternalObjectFunction("Object::set_ManualScaling", Sc_Object_SetManualScaling);
-	ccAddExternalObjectFunction("Object::get_Moving", Sc_Object_GetMoving);
-	ccAddExternalObjectFunction("Object::get_Name", Sc_Object_GetName_New);
-	ccAddExternalObjectFunction("Object::set_Name", Sc_Object_SetName);
-	ccAddExternalObjectFunction("Object::get_Scaling", Sc_Object_GetScaling);
-	ccAddExternalObjectFunction("Object::set_Scaling", Sc_Object_SetScaling);
-	ccAddExternalObjectFunction("Object::get_Solid", Sc_Object_GetSolid);
-	ccAddExternalObjectFunction("Object::set_Solid", Sc_Object_SetSolid);
-	ccAddExternalObjectFunction("Object::get_Transparency", Sc_Object_GetTransparency);
-	ccAddExternalObjectFunction("Object::set_Transparency", Sc_Object_SetTransparency);
-	ccAddExternalObjectFunction("Object::get_View", Sc_Object_GetView);
-	ccAddExternalObjectFunction("Object::get_Visible", Sc_Object_GetVisible);
-	ccAddExternalObjectFunction("Object::set_Visible", Sc_Object_SetVisible);
-	ccAddExternalObjectFunction("Object::get_X", Sc_Object_GetX);
-	ccAddExternalObjectFunction("Object::set_X", Sc_Object_SetX);
-	ccAddExternalObjectFunction("Object::get_Y", Sc_Object_GetY);
-	ccAddExternalObjectFunction("Object::set_Y", Sc_Object_SetY);
-
-	ccAddExternalObjectFunction("Object::get_HasExplicitLight", Sc_Object_HasExplicitLight);
-	ccAddExternalObjectFunction("Object::get_HasExplicitTint", Sc_Object_HasExplicitTint);
-	ccAddExternalObjectFunction("Object::get_LightLevel", Sc_Object_GetLightLevel);
-	ccAddExternalObjectFunction("Object::set_LightLevel", Sc_Object_SetLightLevel);
-	ccAddExternalObjectFunction("Object::get_TintBlue", Sc_Object_GetTintBlue);
-	ccAddExternalObjectFunction("Object::get_TintGreen", Sc_Object_GetTintGreen);
-	ccAddExternalObjectFunction("Object::get_TintRed", Sc_Object_GetTintRed);
-	ccAddExternalObjectFunction("Object::get_TintSaturation", Sc_Object_GetTintSaturation);
-	ccAddExternalObjectFunction("Object::get_TintLuminance", Sc_Object_GetTintLuminance);
+	ccAddExternalFunctions361(object_api);
 }
 
 } // namespace AGS3
