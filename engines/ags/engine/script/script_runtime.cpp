@@ -40,6 +40,25 @@ bool ccAddExternalFunctionForPlugin(const String &name, Plugins::ScriptContainer
 	return _GP(simp_for_plugin).add(name, RuntimeScriptValue().SetPluginMethod(instance, name), nullptr) != UINT32_MAX;
 }
 
+bool ccAddExternalStaticFunction361(const String &name, ScriptAPIFunction *scfn, void *dirfn) {
+	return _GP(simp).add(name, RuntimeScriptValue().SetStaticFunction(scfn), nullptr) != UINT32_MAX &&
+		   (!dirfn ||
+			_GP(simp_for_plugin).add(name, RuntimeScriptValue().SetPluginMethod((Plugins::ScriptContainer *)dirfn, name), nullptr) != UINT32_MAX);
+}
+
+bool ccAddExternalObjectFunction361(const String &name, ScriptAPIObjectFunction *scfn, void *dirfn) {
+	return _GP(simp).add(name, RuntimeScriptValue().SetObjectFunction(scfn), nullptr) != UINT32_MAX &&
+		   (!dirfn ||
+			_GP(simp_for_plugin).add(name, RuntimeScriptValue().SetPluginMethod((Plugins::ScriptContainer *)dirfn, name), nullptr) != UINT32_MAX);
+}
+
+bool ccAddExternalFunction361(const ScFnRegister &scfnreg) {
+	String name = String::Wrapper(scfnreg.Name);
+	return _GP(simp).add(name, scfnreg.Fn, nullptr) != UINT32_MAX &&
+		   (scfnreg.PlFn.IsNull() ||
+			_GP(simp_for_plugin).add(name, scfnreg.PlFn, nullptr) != UINT32_MAX);
+}
+
 bool ccAddExternalPluginFunction(const String &name, Plugins::ScriptContainer *instance) {
 	return _GP(simp).add(name, RuntimeScriptValue().SetPluginMethod(instance, name), nullptr) != UINT32_MAX;
 }
