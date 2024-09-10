@@ -209,6 +209,7 @@ public:
 	void playSound(int16 unk, uint8 unk1, int16 unk2);
 	void nextFrame(int nspAminIdx);
 	void stuffPlayer();
+	void dcopanim();
 
 	void throwmikeinjail();
 	void runObjects();
