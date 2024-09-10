@@ -19,6 +19,7 @@
  *
  */
 
+#include "backends/imgui/IconsMaterialSymbols.h"
 #include "director/director.h"
 #include "director/debugger/dt-internal.h"
 
@@ -50,21 +51,21 @@ static const char *toString(ScriptType scriptType) {
 
 static const char *toIcon(CastType castType) {
 	static const char *castTypes[] = {
-		"",        // Empty
-		"\uf79e",  // Bitmap		// backround_dot_large
-		"\ue8da",  // FilmLoop		// theaters
-		"\uf6f1",  // Text			// match_case
-		"\ue40a",  // Palette		// palette
-		"\uefa2",  // Picture		// imagesmode
-		"\ue050",  // Sound			// volume_up
-		"\uf4ab",  // Button		// slab_serif
-		"\ue602",  // Shape			// shapes
-		"\ue02c",  // Movie			// movie
-		"\uf49a",  // DigitalVideo	// animated_images
-		"\uf0c8",  // Script		// forms_apps_script
-		"\uf4f1",  // RTE			// brand_family
-		"?",       // ???
-		"\uf50c"}; // Transition	// transition_fade
+		"",                           // Empty
+		ICON_MS_BACKGROUND_DOT_LARGE, // Bitmap
+		ICON_MS_THEATERS,             // FilmLoop
+		ICON_MS_MATCH_CASE,           // Text
+		ICON_MS_PALETTE,              // Palette
+		ICON_MS_IMAGESMODE,           // Picture
+		ICON_MS_VOLUME_UP,            // Sound
+		ICON_MS_SLAB_SERIF,           // Button
+		ICON_MS_SHAPES,               // Shape
+		ICON_MS_MOVIE,                // Movie
+		ICON_MS_ANIMATED_IMAGES,      // DigitalVideo
+		ICON_MS_FORMS_APPS_SCRIPT,    // Script
+		ICON_MS_BRAND_FAMILY,         // RTE
+		"?",                          // ???
+		ICON_MS_TRANSITION_FADE};     // Transition
 	if (castType < 0 || castType > kCastTransition)
 		return "";
 	return castTypes[(int)castType];
@@ -113,14 +114,14 @@ void showCast() {
 
 	if (ImGui::Begin("Cast", &_state->_w.cast)) {
 		// display a toolbar with: grid/list/filters buttons + name filter
-		toggleButton("\ue896", &_state->_cast._listView); // list
+		toggleButton(ICON_MS_LIST, &_state->_cast._listView);
 		ImGui::SetItemTooltip("List");
 		ImGui::SameLine();
-		toggleButton("\ue9b0", &_state->_cast._listView, true); // grid_view
+		toggleButton(ICON_MS_GRID_VIEW, &_state->_cast._listView, true);
 		ImGui::SetItemTooltip("Grid");
 		ImGui::SameLine();
 
-		if (ImGui::Button("\uef4f")) { // filter_alt
+		if (ImGui::Button(ICON_MS_FILTER_ALT)) {
 			ImGui::OpenPopup("filters_popup");
 		}
 		ImGui::SameLine();

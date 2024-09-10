@@ -19,6 +19,7 @@
  *
  */
 
+#include "backends/imgui/IconsMaterialSymbols.h"
 #include "graphics/opengl/shader.h"
 
 #include "director/director.h"
@@ -213,7 +214,7 @@ void displayVariable(const Common::String &name, bool changed) {
 
 	ImDrawList *dl = ImGui::GetWindowDrawList();
 	ImVec2 pos = ImGui::GetCursorScreenPos();
-	ImVec2 eyeSize = ImGui::CalcTextSize("\ue8f4 ");	// visibility
+	ImVec2 eyeSize = ImGui::CalcTextSize(ICON_MS_VISIBILITY " ");
 	ImVec2 textSize = ImGui::CalcTextSize(name.c_str());
 
 	ImGui::InvisibleButton("Line", ImVec2(textSize.x + eyeSize.x, textSize.y));
@@ -234,7 +235,7 @@ void displayVariable(const Common::String &name, bool changed) {
 		color = ImGui::GetColorU32(_state->_colors._bp_color_hover);
 	}
 
-	dl->AddText(pos, color, "\ue8f4 ");	// visibility
+	dl->AddText(pos, color, ICON_MS_VISIBILITY " ");
 	dl->AddText(ImVec2(pos.x + eyeSize.x, pos.y), var_color, name.c_str());
 }
 
@@ -347,7 +348,7 @@ void onImGuiInit() {
 	icons_config.OversampleV = 3;
 	icons_config.GlyphOffset = {0, 4};
 
-	static const ImWchar icons_ranges[] = {0xE000, 0xF8FF, 0};
+	static const ImWchar icons_ranges[] = {ICON_MIN_MS, ICON_MAX_MS, 0};
 	ImGui::addTTFFontFromArchive("MaterialSymbolsSharp.ttf", 16.f, &icons_config, icons_ranges);
 
 	_state = new ImGuiState();
