@@ -273,12 +273,12 @@ public:
 	// when a ref count reaches 0, this is called with the address
 	// of the object. Return 1 to remove the object from memory, 0 to
 	// leave it
-	virtual int Dispose(const char *address, bool force) = 0;
+	virtual int Dispose(void *address, bool force) = 0;
 	// return the type name of the object
 	virtual const char *GetType() = 0;
 	// serialize the object into BUFFER (which is BUFSIZE bytes)
 	// return number of bytes used
-	virtual int Serialize(const char *address, char *buffer, int bufsize) = 0;
+	virtual int Serialize(void *address, char *buffer, int bufsize) = 0;
 protected:
 	IAGSScriptManagedObject() {
 	}
@@ -516,17 +516,17 @@ public:
 	// run the specified script function whenever script engine is available
 	AGSIFUNC(void)   QueueGameScriptFunction(const char *name, int32 globalScript, int32 numArgs, long arg1 = 0, long arg2 = 0);
 	// register a new dynamic managed script object
-	AGSIFUNC(int)    RegisterManagedObject(const void *object, IAGSScriptManagedObject *callback);
+	AGSIFUNC(int)    RegisterManagedObject(void *object, IAGSScriptManagedObject *callback);
 	// add an object reader for the specified object type
 	AGSIFUNC(void)   AddManagedObjectReader(const char *typeName, IAGSManagedObjectReader *reader);
 	// register an un-serialized managed script object
-	AGSIFUNC(void)   RegisterUnserializedObject(int key, const void *object, IAGSScriptManagedObject *callback);
+	AGSIFUNC(void)   RegisterUnserializedObject(int key, void *object, IAGSScriptManagedObject *callback);
 
 	// *** BELOW ARE INTERFACE VERSION 16 AND ABOVE ONLY
 	// get the address of a managed object based on its key
 	AGSIFUNC(void *)  GetManagedObjectAddressByKey(int key);
 	// get managed object's key from its address
-	AGSIFUNC(int)    GetManagedObjectKeyByAddress(const char *address);
+	AGSIFUNC(int)    GetManagedObjectKeyByAddress(void *address);
 
 	// *** BELOW ARE INTERFACE VERSION 17 AND ABOVE ONLY
 	// create a new script string
@@ -534,9 +534,9 @@ public:
 
 	// *** BELOW ARE INTERFACE VERSION 18 AND ABOVE ONLY
 	// increment reference count
-	AGSIFUNC(int)    IncrementManagedObjectRefCount(const char *address);
+	AGSIFUNC(int)    IncrementManagedObjectRefCount(void *address);
 	// decrement reference count
-	AGSIFUNC(int)    DecrementManagedObjectRefCount(const char *address);
+	AGSIFUNC(int)    DecrementManagedObjectRefCount(void *address);
 	// set mouse position
 	AGSIFUNC(void)   SetMousePosition(int32 x, int32 y);
 	// simulate the mouse being clicked

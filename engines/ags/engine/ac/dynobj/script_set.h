@@ -47,7 +47,7 @@ using namespace AGS::Shared;
 
 class ScriptSetBase : public AGSCCDynamicObject {
 public:
-	int Dispose(const char *address, bool force) override;
+	int Dispose(void *address, bool force) override;
 	const char *GetType() override;
 	void Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz) override;
 
@@ -63,9 +63,9 @@ public:
 
 protected:
 	// Calculate and return required space for serialization, in bytes
-	virtual size_t CalcSerializeSize(const char *address) override;
+	virtual size_t CalcSerializeSize(void *address) override;
 	// Write object data into the provided stream
-	void Serialize(const char *address, AGS::Shared::Stream *out) override;
+	void Serialize(void *address, AGS::Shared::Stream *out) override;
 
 private:
 	virtual size_t CalcContainerSize() = 0;

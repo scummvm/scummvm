@@ -35,28 +35,28 @@ char video_filename[200];
 
 struct D3D : public IAGSScriptManagedObject {
 public:
-	int Dispose(const char *address, bool force) override {
+	int Dispose(void *address, bool force) override {
 		delete this;
 		return true;
 	}
 	const char *GetType() override {
 		return "D3D";
 	};
-	int Serialize(const char *address, char *buffer, int bufsize) override {
+	int Serialize(void *address, char *buffer, int bufsize) override {
 		return 0;
 	}
 };
 
 struct D3DVideo : public IAGSScriptManagedObject {
 public:
-	int Dispose(const char *address, bool force) override {
+	int Dispose(void *address, bool force) override {
 		delete this;
 		return true;
 	}
 	const char *GetType() override {
 		return "D3DVideo";
 	};
-	int Serialize(const char *address, char *buffer, int bufsize) override {
+	int Serialize(void *address, char *buffer, int bufsize) override {
 		return 0;
 	}
 };

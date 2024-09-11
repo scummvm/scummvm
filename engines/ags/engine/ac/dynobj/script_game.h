@@ -29,7 +29,7 @@ namespace AGS3 {
 // Wrapper around script's "Game" struct, managing access to its variables
 struct StaticGame : public AGSCCStaticObject {
 	const char *GetType() override { return "Game"; }
-	void WriteInt32(const char *address, intptr_t offset, int32_t val) override;
+	void WriteInt32(void *address, intptr_t offset, int32_t val) override;
 };
 
 } // namespace AGS3

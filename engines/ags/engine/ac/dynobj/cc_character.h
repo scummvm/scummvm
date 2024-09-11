@@ -33,12 +33,12 @@ struct CCCharacter final : AGSCCDynamicObject {
 
 	void Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz) override;
 
-	void WriteInt16(const char *address, intptr_t offset, int16_t val) override;
+	void WriteInt16(void *address, intptr_t offset, int16_t val) override;
 protected:
 	// Calculate and return required space for serialization, in bytes
-	size_t CalcSerializeSize(const char *address) override;
+	size_t CalcSerializeSize(void *address) override;
 	// Write object data into the provided stream
-	void Serialize(const char *address, AGS::Shared::Stream *out) override;
+	void Serialize(void *address, AGS::Shared::Stream *out) override;
 };
 
 } // namespace AGS3
