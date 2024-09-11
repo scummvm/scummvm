@@ -78,7 +78,10 @@ public:
 
 		qdMinigameObjectInterface *obj;
 		char buf[5];
-		const char *state = _scene->mouse_hover_object_interface()->current_state_name();
+		const char *state = nullptr;
+
+		if (_scene->mouse_hover_object_interface())
+			state = _scene->mouse_hover_object_interface()->current_state_name();
 
 		if (!_scene->mouse_hover_object_interface() || _scene->mouse_object_interface()) {
 			_invDescObj->set_state("00");
