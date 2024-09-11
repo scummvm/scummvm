@@ -69,6 +69,8 @@ private:
 	int16 _yvec = 0; //delbert throw stick related.
 	bool _normalWorldSpritesLoaded = true;
 	bool _redrawFrame = true;
+	bool _isPlayingCutscene = false;
+	Common::String _cutsceneId;
 
 protected:
 	// Engine APIs
@@ -206,6 +208,7 @@ public:
 	void lookCode(int objNum);
 	void handleObjCollision(int targetObjNum);
 	void playCutscene(const Common::String cutsceneId);
+	void updateCutscene();
 	void playSound(int16 unk, uint8 unk1, int16 unk2);
 	void nextFrame(int nspAminIdx);
 	void stuffPlayer();
