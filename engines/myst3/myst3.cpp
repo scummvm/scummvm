@@ -1513,7 +1513,15 @@ bool Myst3Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 
 Common::Error Myst3Engine::loadGameState(int slot) {
 	Common::StringArray filenames = Saves::list(_saveFileMan, getPlatform());
-	return loadGameState(filenames[slot], kTransitionNone);
+
+	// Slots are assigned consecutively, starting from slot 1
+	// Get the Save List index for the selected slot
+	int listIndex = (slot == 0) ? slot : slot - 1;
+	if (!listIndex < filenames.size()) {
+		return Common::kReadingFailed;
+	}
+
+	return loadGameState(filenames[listIndex], kTransitionNone);
 }
 
 Common::Error Myst3Engine::loadGameState(Common::String fileName, TransitionType transition) {
