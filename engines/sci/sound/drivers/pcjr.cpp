@@ -29,43 +29,381 @@
 
 namespace Sci {
 
-#define VOLUME_SHIFT 3
+class SoundHWChannel {
+public:
+	SoundHWChannel(const uint16 *&_smpVolTable, const byte &masterVol, int outputRate);
+	virtual ~SoundHWChannel() {}
 
-#define BASE_NOTE 129	// A10
-#define BASE_OCTAVE 10	// A10, as I said
+	virtual void reset();
+	virtual void updateChannelVolume() = 0;
+	virtual void processEnvelope() = 0;
+	void recalcSample();
 
-static const int freq_table[12] = { // A4 is 440Hz, halftone map is x |-> ** 2^(x/12)
-	28160, // A10
-	29834,
-	31608,
-	33488,
-	35479,
-	37589,
-	39824,
-	42192,
-	44701,
-	47359,
-	50175,
-	53159
+	void setPart(byte number) { _partMapping = number; }
+
+	virtual void noteOn(byte note, byte velocity) = 0;
+	virtual void noteOff(byte sustain) = 0;
+	virtual void chanOff();
+	virtual void sustainOff() {}
+	void setVolume(byte volume) { _ctrlVolume = volume; }
+
+	int16 currentSample() const { return _curSample; }
+	bool isMappedToPart(byte part) const { return _partMapping == part; }
+	bool hasNote(byte note) const { return _note == note; }
+	bool isPlaying() const { return _note != 0xFF; }
+	virtual bool isSustained() const { return false; }
+	virtual uint16 getDuration() const { return 0; }
+
+protected:
+	byte _partMapping;
+	byte _ctrlVolume;
+	byte _velocity;
+	int8 _envVolume;
+	byte _note;
+	byte _envState;
+	byte _envCount;
+	int8 _envAttn;
+	int _freqCount;
+	uint16 _smpAmplitude;
+	int16 _curSample;
+
+	const int _outputRate;
+	const byte &_masterVolume;
+	const uint16 *&_smpVolTable;
+
+private:
+	int getFrequency() const;
 };
 
-static inline int get_freq(int note) {
-	int halftone_delta = note - BASE_NOTE;
-	int oct_diff = ((halftone_delta + BASE_OCTAVE * 12) / 12) - BASE_OCTAVE;
-	int halftone_index = (halftone_delta + (12 * 100)) % 12;
-	int freq = (!note) ? 0 : freq_table[halftone_index] / (1 << (-oct_diff));
+class SoundChannel_PCSpeaker : public SoundHWChannel {
+public:
+	SoundChannel_PCSpeaker(const uint16 *&smpVolTable, const byte &masterVol, int outputRate) : SoundHWChannel(smpVolTable, masterVol, outputRate) {}
+	~SoundChannel_PCSpeaker() override {}
+
+	void reset() override;
+	void updateChannelVolume() override;
+	void processEnvelope() override {}
+
+	void noteOn(byte note, byte velocity) override;
+	void noteOff(byte) override;
+};
+
+class SoundChannel_PCJr_SCI0 : public SoundHWChannel {
+public:
+	SoundChannel_PCJr_SCI0(const uint16 *&smpVolTable, const byte &masterVol, int outputRate) : SoundHWChannel(smpVolTable, masterVol, outputRate) {}
+	~SoundChannel_PCJr_SCI0() override {}
+
+	void reset() override;
+	void updateChannelVolume() override;
+	void processEnvelope() override;
+
+	void noteOn(byte note, byte velocity) override;
+	void noteOff(byte) override;
+
+private:
+	void envAT();
+	void envST();
+	void envRL();
+
+	byte _envCount2;
+};
+
+class SoundChannel_PCJr_SCI1 : public SoundHWChannel {
+public:
+	SoundChannel_PCJr_SCI1(const uint16 *&smpVolTable, const byte &masterVol, int outputRate, const uint16 *&instrumentOffsets, const byte *&instrumentData, byte *&program) :
+		SoundHWChannel(smpVolTable, masterVol, outputRate), _instrumentOffsets(instrumentOffsets), _instrumentData(instrumentData), _program(program) {}
+	~SoundChannel_PCJr_SCI1() override {}
+
+	void reset() override;
+	void updateChannelVolume() override;
+	void processEnvelope() override;
+
+	void noteOn(byte note, byte velocity) override;
+	void noteOff(byte sustain) override;
+	void chanOff() override;
+	void sustainOff() override;
+
+	bool isSustained() const override { return _sustain != 0; }
+	uint16 getDuration() const override { return _releaseDuration ? _releaseDuration + 0x8000 : _duration; }
+
+private:
+	void processInstrument();
+
+	uint16 _duration;
+	uint16 _releaseDuration;
+	byte _sustain;
+	byte _release;
+	byte *&_program;
+	const byte *_envData;
+	const uint16 *&_instrumentOffsets;
+	const byte *&_instrumentData;
+};
+
+SoundHWChannel::SoundHWChannel(const uint16 *&smpVolTable, const byte &masterVol, int outputRate) : _smpVolTable(smpVolTable), _masterVolume(masterVol), _outputRate(outputRate) {
+	reset();
+}
+
+void SoundHWChannel::reset() {
+	_partMapping = _note = 0xFF;
+	_ctrlVolume = _velocity = 0;
+	_envVolume = 0;
+	_envAttn = 0;
+	_envState = _envCount = 0;
+	_freqCount = 0;
+	_smpAmplitude = 0;
+	_curSample = 0;
+}
+
+void SoundHWChannel::recalcSample() {
+	int freq = getFrequency();
+	_freqCount += freq;
+
+	while (_freqCount >= (_outputRate << 1))
+		_freqCount -= (_outputRate << 1);
+
+	if (_freqCount - freq < 0) {
+		// Unclean rising edge
+		int l = _smpAmplitude << 1;
+		_curSample = (int16)~_smpAmplitude + (l * _freqCount) / freq;
+	} else if (_freqCount >= _outputRate && _freqCount - freq < _outputRate) {
+		// Unclean falling edge
+		int l = _smpAmplitude << 1;
+		_curSample = _smpAmplitude - (l * (_freqCount - _outputRate)) / freq;
+	} else {
+		if (_freqCount < _outputRate)
+			_curSample = _smpAmplitude;
+		else
+			_curSample = (int16)~_smpAmplitude;
+	}
+}
+
+void SoundHWChannel::chanOff() {
+	_note = 0xFF;
+	_envState = 0;
+	_envAttn = 0;
+	_envVolume = 0;
+	_envCount = 0;
+}
+
+#define SCI_PCJR_BASE_NOTE 129	// A10
+#define SCI_PCJR_BASE_OCTAVE 10	// A10, as I said
+
+int SoundHWChannel::getFrequency() const {
+	static const uint16 freqTable[12] = { // A4 is 440Hz, halftone map is x |-> ** 2^(x/12)
+		28160, // A10
+		29834,
+		31608,
+		33488,
+		35479,
+		37589,
+		39824,
+		42192,
+		44701,
+		47359,
+		50175,
+		53159
+	};
+
+	assert(_note != 0xFF);
+
+	int halftoneDelta = _note - SCI_PCJR_BASE_NOTE;
+	int octDiff = ((halftoneDelta + SCI_PCJR_BASE_OCTAVE * 12) / 12) - SCI_PCJR_BASE_OCTAVE;
+	int halftoneIndex = (halftoneDelta + (12 * 100)) % 12;
+	int freq = (!_note) ? 0 : freqTable[halftoneIndex] / (1 << (-octDiff));
 
 	return freq;
+}
+
+#undef SCI_PCJR_BASE_NOTE
+#undef SCI_PCJR_BASE_OCTAVE
+
+void SoundChannel_PCSpeaker::reset() {
+	SoundHWChannel::reset();
+	updateChannelVolume();
+}
+
+void SoundChannel_PCSpeaker::updateChannelVolume() {
+	// The PC speaker has a fixed volume level. The original will turn it off if the volume is zero
+	// or otherwise turn it on. We just use the PCJr volume table for the master volume, so that our
+	// volume controls still work.
+	_smpAmplitude = _smpVolTable[15 - _masterVolume];
+}
+
+void SoundChannel_PCSpeaker::noteOn(byte note, byte velocity) {
+	_note = note;
+}
+
+void SoundChannel_PCSpeaker::noteOff(byte) {
+	chanOff();
+}
+
+void SoundChannel_PCJr_SCI0::reset() {
+	SoundHWChannel::reset();
+	_ctrlVolume = 96;
+	updateChannelVolume();
+}
+
+void SoundChannel_PCJr_SCI0::updateChannelVolume() {
+	int veloAttn = 3 - (_velocity >> 5);
+	int volAttn = 15 - (_ctrlVolume >> 3);
+	int attn = volAttn + veloAttn + _envVolume;
+	if (attn >= 15) {
+		attn = 15;
+		if (_envState >= 2)
+			chanOff();
+	} else if (attn < 0) {
+		attn = 0;
+	}
+	attn = CLIP<int>(attn + (15 - _masterVolume), volAttn, 15);
+	_smpAmplitude = _smpVolTable[attn];
+}
+
+void SoundChannel_PCJr_SCI0::processEnvelope() {
+	switch (_envState) {
+	case 1:
+		envAT();
+		break;
+	case 2:
+		envST();
+		break;
+	case 3:
+		envRL();
+		break;
+	default:
+		break;
+	}
+}
+
+void SoundChannel_PCJr_SCI0::noteOn(byte note, byte velocity) {
+	_note = note;
+	_velocity = velocity;
+	_envState = 1;
+	_envCount = 0;
+	envAT();
+}
+
+void SoundChannel_PCJr_SCI0::noteOff(byte) {
+	_envState = 3;
+	_envCount = 0;
+	envRL();
+}
+
+void SoundChannel_PCJr_SCI0::envAT() {
+	static const int8 envTable[] = { 0, -2, -3, -2, -1, 0, 127 };
+	byte c = _envCount++;
+	if (envTable[c] == 127) {
+		_envState++;
+		_envCount = 0;
+		_envCount2 = 20;
+		envST();
+	} else {
+		_envVolume = _envAttn = envTable[c];
+		updateChannelVolume();
+	}
+}
+
+void SoundChannel_PCJr_SCI0::envST() {
+	if (!_envCount2 || --_envCount2)
+		return;
+	_envVolume = ++_envAttn;
+	_envCount2 = 20;
+	updateChannelVolume();
+}
+
+void SoundChannel_PCJr_SCI0::envRL() {
+	static const byte envTable[] = { 1, 1, 1, 2, 2, 3, 3, 4, 4, 6, 6, 7, 8, 9, 10, 11, 12, 127 };
+	byte c = _envCount++;
+	_envVolume = (envTable[c] == 127) ? 15 : _envAttn + envTable[c];
+	updateChannelVolume();
+}
+
+void SoundChannel_PCJr_SCI1::reset() {
+	SoundHWChannel::reset();
+	_duration = _releaseDuration = 0;
+	_sustain = _release = 0;
+	_ctrlVolume = _envVolume = 15;
+	_envData = nullptr;
+	updateChannelVolume();	
+}
+
+void SoundChannel_PCJr_SCI1::updateChannelVolume() {
+	static const byte veloTable[16] = { 0x01, 0x03, 0x06, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0C, 0x0D, 0x0D, 0x0E, 0x0E, 0x0E, 0x0F, 0x0F };
+	int velo = _velocity ? veloTable[_velocity >> 3] : 0;
+	int vol = _ctrlVolume ? MAX<int>(1, _ctrlVolume >> 3) : 0;
+	int tl = ((vol * velo / 15) * _envVolume / 15) * _masterVolume;
+	if (tl > 0 && tl < 15)
+		tl = 15;
+	int attn = 15 - tl / 15;
+	_smpAmplitude = _smpVolTable[attn];
+}
+
+void SoundChannel_PCJr_SCI1::processEnvelope() {
+	++_duration;
+	if (_release)
+		++_releaseDuration;
+	processInstrument();
+	updateChannelVolume();
+}
+
+void SoundChannel_PCJr_SCI1::noteOn(byte note, byte velocity) {
+	_note = note;
+	_velocity = velocity;
+	_envState = 0;
+	_envCount = 0;
+	_duration = 0;
+	_releaseDuration = 0;
+	_release = 0;
+	_sustain = 0;
+
+	assert(_instrumentOffsets);
+	assert(_instrumentData);
+	_envData = &_instrumentData[_instrumentOffsets[_program[_partMapping]]];
+}
+
+void SoundChannel_PCJr_SCI1::noteOff(byte sustain) {
+	byte &dest = sustain ? _sustain : _release;
+	dest = 1;
+}
+
+void SoundChannel_PCJr_SCI1::chanOff() {
+	SoundHWChannel::chanOff();
+	_duration = 0;
+	_releaseDuration = 0;
+	_sustain = 0;
+	_release = 0;
+}
+
+void SoundChannel_PCJr_SCI1::sustainOff() {
+	_sustain = 0;
+	_release = 1;
+}
+
+void SoundChannel_PCJr_SCI1::processInstrument() {
+	if (_envCount == 0xFE) {
+		if (_release)
+			_envCount = 0;
+		else
+			return;
+	}
+
+	if (_envCount == 0) {
+		byte a = _envData[_envState << 1];
+		if (a == 0xFF) {
+			chanOff();
+			_envCount = 0;
+		} else {
+			_envCount = _envData[(_envState << 1) + 1];
+			_envVolume = a;
+			++_envState;
+		}
+	} else {
+		--_envCount;
+	}
 }
 
 class MidiDriver_PCJr : public MidiDriver_Emulated {
 public:
 	friend class MidiPlayer_PCJr;
-
-	enum {
-		kMaxChannels = 3
-	};
-
 	enum Properties {
 		kPropNone = 0,
 		kPropVolume
@@ -92,15 +430,7 @@ public:
 
 private:
 	bool loadInstruments(Resource &resource);
-	void updateChannelVolume(int chan);
-	void updateSounds();
-
-	void envAT(byte chan);
-	void envST(byte chan);
-	void envRL(byte chan);
-	void envINST(byte chan);
-	void chanNoteOn(byte chan, byte note, byte velocity);
-	void chanOff(byte chan);
+	void processEnvelopes();
 
 	void noteOn(byte part, byte note, byte velocity);
 	void noteOff(byte part, byte note);
@@ -115,34 +445,23 @@ private:
 	void assignFreeChannels(byte part);
 	byte allocateChannel(byte part);
 
-	byte _globalVolume; // Base volume
-	byte _chanVolume[kMaxChannels];
-	byte _chanVelocity[kMaxChannels];
-	int8 _chanEnvVolume[kMaxChannels];
-	uint16 _smpVolume[kMaxChannels];
-	byte _notes[kMaxChannels]; // Current halftone, or 0 if off
-	byte _envState[kMaxChannels];
-	byte _envCount[kMaxChannels];
-	byte _envCount2[kMaxChannels];
-	const byte *_envData[kMaxChannels];
-	int8 _envAttn[kMaxChannels];
-	int _freq_count[kMaxChannels];
-	byte _partMapping[kMaxChannels];
-	uint16 _duration[kMaxChannels];
-	uint16 _releaseDuration[kMaxChannels];
-	byte _chanSustain[kMaxChannels];
-	byte _chanRelease[kMaxChannels];
-	byte _chanMapping[16];
-	byte _chanMissing[16];
-	byte _program[16];
-	byte _partSustain[16];
+	byte _masterVolume;
+	byte *_chanMapping;
+	byte *_chanMissing;
+	byte *_program;
+	byte *_sustain;
+
 	uint32 _sndUpdateSmpQty;
 	uint32 _sndUpdateSmpQtyRem;
 	uint32 _sndUpdateCountDown;
 	uint32 _sndUpdateCountDownRem;
-	const uint16 *_smpVolTable;
+
+	SoundHWChannel **_channels;
+
 	const uint16 *_instrumentOffsets;
-	const uint8 *_instrumentData;
+	const byte *_instrumentData;
+
+	const uint16 *_smpVolTable;
 	const SciVersion _version;
 	const byte _numChannels;
 	const bool _pcsMode;
@@ -185,11 +504,11 @@ uint32 MidiDriver_PCJr::property(int prop, uint32 value) {
 
 	switch (prop) {
 	case kPropVolume:
-		res = _globalVolume;
+		res = _masterVolume;
 		if (value != 0xffff) {
-			_globalVolume = value;
+			_masterVolume = value;
 			for (int i = 0; i < _numChannels; ++i)
-				updateChannelVolume(i);
+				_channels[i]->updateChannelVolume();
 		}
 		break;
 	default:
@@ -208,23 +527,15 @@ void MidiDriver_PCJr::initTrack(SciSpan<const byte> &header) {
 	if (caps != 0 && caps != 2)
 		return;
 
-	for (int i = 0; i < _numChannels; ++i) {
-		_smpVolume[i] = 0;
-		_chanVolume[i] = 96;
-		_chanVelocity[i] = 0;
-		_notes[i] = 0xFF;
-		_partMapping[i] = 0x10;
-		_envState[i] = 0;
-		_envCount[i] = 0;
-		updateChannelVolume(i);
-	}
+	for (int i = 0; i < _numChannels; ++i)
+		_channels[i]->reset();
 
 	if (_version == SCI_VERSION_0_EARLY) {
 		byte chanFlag = _pcsMode ? 0x04 : 0x02;
 		for (int i = 0, numAssigned = 0; i < 16 && numAssigned < _numChannels; ++i) {
 			uint8 f = header.getInt8At(++readPos);
 			if ((!(f & 8) || (f & 1)) && (f & chanFlag))
-				_partMapping[numAssigned++] = i;
+				_channels[numAssigned++]->setPart(i);
 		}
 	} else {
 		byte chanFlag = _pcsMode ? 0x20 : 0x10;
@@ -232,18 +543,12 @@ void MidiDriver_PCJr::initTrack(SciSpan<const byte> &header) {
 			uint8 f = header.getInt8At(++readPos);
 			readPos++;
 			if (f & chanFlag)
-				_partMapping[numAssigned++] = i;
+				_channels[numAssigned++]->setPart(i);
 		}
 	}
 }
 
 void MidiDriver_PCJr::generateSamples(int16 *data, int len) {
-	int freq[kMaxChannels];
-	int frequency = getRate();
-
-	for (int chan = 0; chan < _numChannels; chan++)
-		freq[chan] = get_freq(_notes[chan]);
-
 	for (int i = 0; i < len; i++) {
 		if (!--_sndUpdateCountDown) {
 			_sndUpdateCountDown = _sndUpdateSmpQty;
@@ -252,100 +557,80 @@ void MidiDriver_PCJr::generateSamples(int16 *data, int len) {
 				_sndUpdateCountDownRem -= (_sndUpdateSmpQty << 16);
 				++_sndUpdateCountDown;
 			}
-			updateSounds();
+			processEnvelopes();
 		}
 
 		int16 result = 0;
 
-		for (int chan = 0; chan < _numChannels; chan++)
-			if (_notes[chan] != 0xFF) {
-				uint16 volume = _smpVolume[chan];
-				_freq_count[chan] += freq[chan];
-				while (_freq_count[chan] >= (frequency << 1))
-					_freq_count[chan] -= (frequency << 1);
-
-				if (_freq_count[chan] - freq[chan] < 0) {
-					// Unclean rising edge
-					int l = volume << 1;
-					result += (int16)~volume + (l * _freq_count[chan]) / freq[chan];
-				} else if (_freq_count[chan] >= frequency && _freq_count[chan] - freq[chan] < frequency) {
-					// Unclean falling edge
-					int l = volume << 1;
-					result += volume - (l * (_freq_count[chan] - frequency)) / freq[chan];
-				} else {
-					if (_freq_count[chan] < frequency)
-						result += volume;
-					else
-						result += (int16)~volume;
-				}
-			}
+		for (int chan = 0; chan < _numChannels; chan++) {
+			if (!_channels[chan]->isPlaying())
+				continue;
+			_channels[chan]->recalcSample();
+			result += _channels[chan]->currentSample();
+		}
 		data[i] = result;
 	}
 }
 
-MidiDriver_PCJr::MidiDriver_PCJr(Audio::Mixer *mixer, SciVersion version, bool pcsMode) : MidiDriver_Emulated(mixer), _version(version), _pcsMode(pcsMode),
-	_numChannels(pcsMode ? 1 : 3), _globalVolume(0), _instrumentOffsets(nullptr), _instrumentData(nullptr), _smpVolTable(nullptr) {
-	for (int i = 0; i < kMaxChannels; ++i) {
-		_chanVolume[i] = 0;
-		_chanVelocity[i] = 0;
-		_chanEnvVolume[i] = 0;
-		_smpVolume[i] = 0;
-		_notes[i] = 0;
-		_envState[i] = 0;
-		_envCount[i] = 0;
-		_envCount2[i] = 0;
-		_envAttn[i] = 0;
-		_freq_count[i] = 0;
-		_partMapping[i] = 0;
-		_duration[i] = 0;
-		_releaseDuration[i] = 0;
-		_chanSustain[i] = 0;
-		_chanRelease[i] = 0;
-		_envData[i] = nullptr;
-	}
-
-	for (int i = 0; i < 16; ++i) {
-		_chanMapping[i] = 0;
-		_chanMissing[i] = 0;
-		_program[i] = 0;
-		_partSustain[i] = 0;
-	}
+MidiDriver_PCJr::MidiDriver_PCJr(Audio::Mixer *mixer, SciVersion version, bool pcsMode) : MidiDriver_Emulated(mixer), _version(version), _pcsMode(pcsMode), _numChannels(pcsMode ? 1 : 3),
+	_masterVolume(0), _channels(nullptr), _instrumentOffsets(nullptr), _instrumentData(nullptr) {
 
 	uint16 *smpVolTable = new uint16[16]();
 	for (int i = 0; i < 15; ++i) // The last entry is left at zero.
 		smpVolTable[i] = (double)((32767 & ~_numChannels) / _numChannels) / pow(10.0, (double)i / 10.0);
 	_smpVolTable = smpVolTable;
+	assert(_smpVolTable);
+
+	_chanMapping = new byte[16]();
+	_chanMissing = new byte[16]();
+	_program = new byte[16]();
+	_sustain = new byte[16]();
+
+	assert(_chanMapping);
+	assert(_chanMissing);
+	assert(_program);
+	assert(_sustain);
+
+	_channels = new SoundHWChannel*[_numChannels]();
+	assert(_channels);
+	for (int i = 0; i < _numChannels; ++i) {
+		if (pcsMode)
+			_channels[i] = new SoundChannel_PCSpeaker(_smpVolTable, _masterVolume, getRate());
+		else if (version <= SCI_VERSION_0_LATE)
+			_channels[i] = new SoundChannel_PCJr_SCI0(_smpVolTable, _masterVolume, getRate());
+		else
+			_channels[i] = new SoundChannel_PCJr_SCI1(_smpVolTable, _masterVolume, getRate(), _instrumentOffsets, _instrumentData, _program);
+	}
 
 	_sndUpdateSmpQty = (mixer->getOutputRate() << 16) / 0x3C0000;
 	_sndUpdateSmpQtyRem = (mixer->getOutputRate() << 16) % 0x3C0000;
 	_sndUpdateCountDown = _sndUpdateSmpQty;
 	_sndUpdateCountDownRem = 0;
-};
+}
 
 MidiDriver_PCJr::~MidiDriver_PCJr() {
 	close();
+	if (_channels) {
+		for (int i = 0; i < _numChannels; ++i)
+			delete _channels[i];
+		delete[] _channels;
+	}
 	delete[] _smpVolTable;
 	delete[] _instrumentOffsets;
 	delete[] _instrumentData;
+	delete[] _chanMapping;
+	delete[] _chanMissing;
+	delete[] _program;
+	delete[] _sustain;
 }
 
 int MidiDriver_PCJr::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 
-	_globalVolume = 15;
-	for (int i = 0; i < _numChannels; i++) {
-		_smpVolume[i] = 0;
-		_chanVolume[i] = 15;
-		_chanVelocity[i] = 0;
-		_chanEnvVolume[i] = 15;
-		_partMapping[i] = 0xFF;
-		_notes[i] = 0xFF;
-		_freq_count[i] = 0;
-		_envState[i] = 0;
-		_envCount[i] = 0;
-		updateChannelVolume(i);
-	}
+	_masterVolume = 15;
+	for (int i = 0; i < _numChannels; i++)
+		_channels[i]->reset();
 
 	if (_version > SCI_VERSION_0_LATE && !_pcsMode) {
 		ResourceManager *resMan = g_sci->getResMan();
@@ -402,202 +687,44 @@ bool MidiDriver_PCJr::loadInstruments(Resource &resource) {
 	return true;
 }
 
-void MidiDriver_PCJr::updateChannelVolume(int chan) {
-	assert(chan >= 0 && chan < kMaxChannels);
-	int attn = 0;
-
-	if (_pcsMode) {
-		// The PC speaker has a fixed volume level. The original will turn it off if the volume is zero
-		// or otherwise turn it on. We just use the PCJr volume table for the master volume, so that our
-		// volume controls still work.
-		attn = 15 - _globalVolume;
-	} else if (_version <= SCI_VERSION_0_LATE) {
-		int veloAttn = 3 - (_chanVelocity[chan] >> 5);
-		int volAttn = 15 - (_chanVolume[chan] >> 3);
-		attn = volAttn + veloAttn + _chanEnvVolume[chan];
-		if (attn >= 15) {
-			attn = 15;
-			if (_envState[chan] >= 2)
-				chanOff(chan);
-		} else if (attn < 0) {
-			attn = 0;
-		}
-		attn = CLIP<int>(attn + (15 - _globalVolume), volAttn, 15);
-	} else {
-		static const byte veloTable[16] = { 0x01, 0x03, 0x06, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0C, 0x0D, 0x0D, 0x0E, 0x0E, 0x0E, 0x0F, 0x0F };
-		int velo = _chanVelocity[chan] ? veloTable[_chanVelocity[chan] >> 3] : 0;
-		int vol = _chanVolume[chan] ? MAX<int>(1, _chanVolume[chan] >> 3) : 0;
-		int tl = ((vol * velo / 15) * _chanEnvVolume[chan] / 15) * _globalVolume;
-		if (tl > 0 && tl < 15)
-			tl = 15;
-		attn = 15 - tl / 15;
-	}
-
-	_smpVolume[chan] = _smpVolTable[attn];
-}
-
-void MidiDriver_PCJr::updateSounds() {
-	if (_pcsMode)
-		return;
-
+void MidiDriver_PCJr::processEnvelopes() {
 	for (int i = 0; i < _numChannels; i++) {
-		if (_notes[i] == 0xFF)
-			continue;
-
-		if (_version > SCI_VERSION_0_LATE) {
-			++_duration[i];
-			if (_chanRelease[i])
-				++_releaseDuration[i];
-			envINST(i);
-			updateChannelVolume(i);
-		} else {
-			switch (_envState[i]) {
-			case 1:
-				envAT(i);
-				break;
-			case 2:
-				envST(i);
-				break;
-			case 3:
-				envRL(i);
-				break;
-			default:
-				break;
-			}
-		}
+		if (_channels[i]->isPlaying())
+			_channels[i]->processEnvelope();
 	}
-}
-
-void MidiDriver_PCJr::envAT(byte chan) {
-	static const int8 envTable[] = { 0, -2, -3, -2, -1, 0, 127 };
-	byte c = _envCount[chan]++;
-	if (envTable[c] == 127) {
-		_envState[chan]++;
-		_envCount[chan] = 0;
-		_envCount2[chan] = 20;
-		envST(chan);
-	} else {
-		_chanEnvVolume[chan] = _envAttn[chan] = envTable[c];
-		updateChannelVolume(chan);
-	}
-}
-
-void MidiDriver_PCJr::envST(byte chan) {
-	if (!_envCount2[chan] || --_envCount2[chan])
-		return;
-	_chanEnvVolume[chan] = ++_envAttn[chan];
-	_envCount2[chan] = 20;
-	updateChannelVolume(chan);
-}
-
-void MidiDriver_PCJr::envRL(byte chan) {
-	static const byte envTable[] = { 1, 1, 1, 2, 2, 3, 3, 4, 4, 6, 6, 7, 8, 9, 10, 11, 12, 127 };
-	byte c = _envCount[chan]++;
-	_chanEnvVolume[chan] = (envTable[c] == 127) ? 15 : _envAttn[chan] + envTable[c];
-	updateChannelVolume(chan);
-}
-
-void MidiDriver_PCJr::envINST(byte chan) {
-	if (_envCount[chan] == 0xFE) {
-		if (_chanRelease[chan])
-			_envCount[chan] = 0;
-		else
-			return;
-	}
-
-	if (_envCount[chan] == 0) {
-		byte a = _envData[chan][_envState[chan] << 1];
-		if (a == 0xFF) {
-			chanOff(chan);
-			_envCount[chan] = 0;
-		} else {
-			_envCount[chan] = _envData[chan][(_envState[chan] << 1) + 1];
-			_chanEnvVolume[chan] = a;
-			++_envState[chan];
-		}
-	} else {
-		--_envCount[chan];
-	}
-}
-
-void MidiDriver_PCJr::chanNoteOn(byte chan, byte note, byte velocity) {
-	_notes[chan] = note;
-	_chanVelocity[chan] = velocity;
-	_envState[chan] = _version > SCI_VERSION_0_LATE ? 0 : 1;
-	_envCount[chan] = 0;
-	_duration[chan] = 0;
-	_releaseDuration[chan] = 0;
-	_chanRelease[chan] = 0;
-	_chanSustain[chan] = 0;
-
-	if (_pcsMode)
-		return;
-
-	if (_version <= SCI_VERSION_0_LATE) {
-		envAT(chan);
-	} else {
-		assert(_instrumentOffsets);
-		assert(_instrumentData);
-		_envData[chan] = &_instrumentData[_instrumentOffsets[_program[_partMapping[chan]]]];
-	}
-}
-
-void MidiDriver_PCJr::chanOff(byte chan) {
-	_notes[chan] = 0xFF;
-	_duration[chan] = 0;
-	_releaseDuration[chan] = 0;
-	_chanSustain[chan] = 0;
-	_chanRelease[chan] = 0;
-	_envState[chan] = 0;
-	_envAttn[chan] = 0;
-	_chanEnvVolume[chan] = 0;
-	_envCount[chan] = 0;
 }
 
 void MidiDriver_PCJr::noteOn(byte part, byte note, byte velocity) {
 	if (_pcsMode) {
-		if (_partMapping[0] != part)
+		if (!_channels[0]->isMappedToPart(part))
 			return;
-		chanOff(0);
-		if (note < 24 || note > 119)
-			return;
-		chanNoteOn(0, note, velocity);
+		_channels[0]->chanOff();
+		if (note >= 24 && note <= 119)
+			_channels[0]->noteOn(note, velocity);
 		return;
 	} else if (_version > SCI_VERSION_0_LATE) {
 		if (note < 21 || note > 116)
 			return;
 
 		for (int i = 0; i < _numChannels; ++i) {
-			if (_partMapping[i] != part || _notes[i] != note)
+			if (!_channels[i]->isMappedToPart(part) || !_channels[i]->hasNote(note))
 				continue;
-			chanOff(i);
-			chanNoteOn(i, note, velocity);
+			_channels[i]->chanOff();
+			_channels[i]->noteOn(note, velocity);
 			return;
 		}
 	}
 
 	byte c = allocateChannel(part);
 	if (c != 0xFF)
-		chanNoteOn(c, note, velocity);
+		_channels[c]->noteOn(note, velocity);
 }
 
 void MidiDriver_PCJr::noteOff(byte part, byte note) {
 	for (int i = 0; i < _numChannels; ++i) {
-		if (_partMapping[i] != part || _notes[i] != note)
+		if (!_channels[i]->isMappedToPart(part) || !_channels[i]->hasNote(note))
 			continue;
-
-		if (_pcsMode) {
-			chanOff(i);
-		} else if (_version > SCI_VERSION_0_LATE) {
-			if (_partSustain[part])
-				_chanSustain[i] = 1;
-			else
-				_chanRelease[i] = 1;
-		} else {
-			_envState[i] = 3;
-			_envCount[i] = 0;
-			envRL(i);
-		}
+		_channels[i]->noteOff(_sustain[part]);
 	}	
 }
 
@@ -605,8 +732,8 @@ void MidiDriver_PCJr::controlChange(byte part, byte controller, byte value) {
 	switch (controller) {
 	case 7:
 		for (int i = 0; i < _numChannels; ++i) {
-			if (_partMapping[i] == part)
-				_chanVolume[i] = value;
+			if (_channels[i]->isMappedToPart(part))
+				_channels[i]->setVolume(value);
 		}
 		break;
 	case 64:
@@ -618,8 +745,8 @@ void MidiDriver_PCJr::controlChange(byte part, byte controller, byte value) {
 	case SCI_MIDI_CHANNEL_NOTES_OFF:
 	case SCI_MIDI_CHANNEL_SOUND_OFF:
 		for (int i = 0; i < _numChannels; ++i) {
-			if (_partMapping[i] == part)
-				chanOff(i);
+			if (_channels[i]->isMappedToPart(part))
+				_channels[i]->chanOff();
 		}
 		break;
 	default:
@@ -639,15 +766,13 @@ void MidiDriver_PCJr::controlChangeSustain(byte part, byte sus) {
 	if (_version <= SCI_VERSION_0_LATE || _pcsMode)
 		return;
 
-	_partSustain[part] = sus;
+	_sustain[part] = sus;
 	if (sus)
 		return;
 
 	for (int i = 0; i < _numChannels; ++i) {
-		if (_partMapping[i] != part || !_chanSustain[i])
-			continue;
-		_chanSustain[i] = 0;
-		_chanRelease[i] = 1;
+		if (_channels[i]->isMappedToPart(part) && _channels[i]->isSustained())
+			_channels[i]->sustainOff();
 	}
 }
 
@@ -656,15 +781,15 @@ void MidiDriver_PCJr::controlChangePolyphony(byte part, byte numChan) {
 		return;
 
 	if (_pcsMode) {
-		if (numChan == 0 || _partMapping[0] != part)
-			chanOff(0);
-		_partMapping[0] = numChan ? part : 0xFF;
+		if (numChan == 0 || !_channels[0]->isMappedToPart(part))
+			_channels[0]->chanOff();
+		_channels[0]->setPart(numChan ? part : 0xFF);
 		return;
 	}
 
 	uint8 numAssigned = 0;
 	for (int i = 0; i < _numChannels; ++i) {
-		if (_partMapping[i] == part)
+		if (_channels[i]->isMappedToPart(part))
 			numAssigned++;
 	}
 
@@ -679,12 +804,12 @@ void MidiDriver_PCJr::controlChangePolyphony(byte part, byte numChan) {
 
 void MidiDriver_PCJr::addChannels(byte part, byte num) {
 	for (int i = 0; i < _numChannels; ++i) {
-		if (_partMapping[i] != 0xFF)
+		if (!_channels[i]->isMappedToPart(0xFF))
 			continue;
-		_partMapping[i] = part;
+		_channels[i]->setPart(part);
 
-		if (_notes[i] != 0xFF)
-			chanOff(i);
+		if (_channels[i]->isPlaying())
+			_channels[i]->chanOff();
 
 		if (!--num)
 			break;
@@ -705,9 +830,9 @@ void MidiDriver_PCJr::dropChannels(byte part, byte num) {
 	_chanMissing[part] = 0;
 
 	for (int i = 0; i < _numChannels; i++) {
-		if (_partMapping[i] != part || _notes[i] != 0xFF)
+		if (!_channels[i]->isMappedToPart(part) || _channels[i]->isPlaying())
 			continue;
-		_partMapping[i] = 0xFF;
+		_channels[i]->setPart(0xFF);
 		if (!--num)
 			return;
 	}
@@ -716,10 +841,10 @@ void MidiDriver_PCJr::dropChannels(byte part, byte num) {
 		uint16 oldest = 0;
 		byte dropCh = 0;
 		for (int i = 0; i < _numChannels; i++) {
-			if (_partMapping[i] != part)
+			if (!_channels[i]->isMappedToPart(part))
 				continue;
 
-			uint16 ct = _releaseDuration[i] ? _releaseDuration[i] + 0x8000 : _duration[i];
+			uint16 ct = _channels[i]->getDuration();
 
 			if (ct >= oldest) {
 				dropCh = i;
@@ -727,15 +852,15 @@ void MidiDriver_PCJr::dropChannels(byte part, byte num) {
 			}
 		}
 
-		chanOff(dropCh);
-		_partMapping[dropCh] = 0xFF;
+		_channels[dropCh]->chanOff();
+		_channels[dropCh]->setPart(0xFF);
 	} while (--num);
 }
 
 void MidiDriver_PCJr::assignFreeChannels(byte part) {
 	uint8 freeChan = 0;
 	for (int i = 0; i < _numChannels; i++) {
-		if (_partMapping[i] == 0xff)
+		if (_channels[i]->isMappedToPart(0xFF))
 			freeChan++;
 	}
 
@@ -761,7 +886,7 @@ byte MidiDriver_PCJr::allocateChannel(byte part) {
 	byte res = 0xFF;
 	if (_version <= SCI_VERSION_0_LATE) {
 		for (int i = 0; i < _numChannels; ++i) {
-			if (_partMapping[i] == part)
+			if (_channels[i]->isMappedToPart(part))
 				res = i;
 		}
 		return res;
@@ -775,15 +900,15 @@ byte MidiDriver_PCJr::allocateChannel(byte part) {
 		if (c == _chanMapping[part])
 			loop = false;
 
-		if (_partMapping[c] != part)
+		if (!_channels[c]->isMappedToPart(part))
 			continue;
 
-		if (_notes[c] == 0xFF) {
+		if (!_channels[c]->isPlaying()) {
 			_chanMapping[part] = c;
 			return c;
 		}
 
-		uint16 ct = _releaseDuration[c] ? _releaseDuration[c] + 0x8000 : _duration[c];
+		uint16 ct = _channels[c]->getDuration();
 		if (ct < oldest)
 			continue;
 
@@ -793,7 +918,7 @@ byte MidiDriver_PCJr::allocateChannel(byte part) {
 
 	if (oldest != 0) {
 		_chanMapping[part] = res;
-		chanOff(res);
+		_channels[res]->chanOff();
 	}
 
 	return res;
@@ -823,7 +948,7 @@ byte MidiPlayer_PCJr::getPlayId() const {
 void MidiPlayer_PCJr::initTrack(SciSpan<const byte> &trackData) {
 	if (_driver)
 		static_cast<MidiDriver_PCJr*>(_driver)->initTrack(trackData);
-};
+}
 
 MidiPlayer *MidiPlayer_PCJr_create(SciVersion version) {
 	return new MidiPlayer_PCJr(version, false);
