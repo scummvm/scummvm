@@ -20,11 +20,10 @@
  */
 
 #include "ags/engine/ac/dynobj/cc_static_array.h"
-#include "ags/engine/ac/dynobj/cc_dynamic_object.h"
 
 namespace AGS3 {
 
-void CCStaticArray::Create(ICCDynamicObject *mgr, size_t elem_script_size, size_t elem_mem_size, size_t elem_count) {
+void CCStaticArray::Create(IScriptObject *mgr, size_t elem_script_size, size_t elem_mem_size, size_t elem_count) {
 	_mgr = mgr;
 	_elemScriptSize = elem_script_size;
 	_elemMemSize = elem_mem_size;
