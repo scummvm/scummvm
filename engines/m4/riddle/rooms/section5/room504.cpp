@@ -906,10 +906,156 @@ void Room504::parser() {
 		default:
 			break;
 		}
-	}
-
-	// TODO
-	else {
+	} else if (takeFlag && ITEM("DRIFTWOOD STUMP") && !_flag1) {
+		switch(_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripLowReach = series_load("RIP LOW REACH POS1");
+			setGlobals1(_ripLowReach, 1, 10, 10, 10);
+			sendWSMessage_110000(2);
+			break;
+		case 2:
+			terminateMachineAndNull(_driftwood);
+			kernel_examine_inventory_object("PING DRIFTWOOD STUMP",
+				_G(master_palette), 5, 1, 139, 102, 3, nullptr, -1);
+			break;
+		case 3:
+			sendWSMessage_140000(4);
+			break;
+		case 4:
+			inv_give_to_player("DRIFTWOOD STUMP");
+			setMiscItems();
+			series_unload(_ripLowReach);
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (takeFlag && player_said_any("GREEN VINE ",
+			"GREEN VINE  ", "GREEN VINE   ") && _G(flags)[V152] == 2) {
+		digi_play("COM126", 1, 255, -1, 997);
+	} else if (takeFlag && player_said_any("BROWN VINE ",
+			"BROWN VINE  ", "BROWN VINE   ") && _G(flags)[V153] == 2) {
+		digi_play("COM126", 1, 255, -1, 997);
+	} else if (takeFlag && player_said_any("ROPE ", "ROPE  ", "ROPE   ") &&
+			_G(flags)[V154] == 2) {
+		digi_play("COM126", 1, 255, -1, 997);
+	} else if (takeFlag && ITEM("POLE") && !_flag1) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripLowReach = series_load("RIP LOW REACH POS1");
+			setGlobals1(_ripLowReach, 1, 10, 10, 10);
+			sendWSMessage_110000(2);
+			break;
+		case 2:
+			terminateMachineAndNull(_pole);
+			kernel_examine_inventory_object("PING POLE",
+				_G(master_palette), 5, 1, 139, 102, 3, nullptr, -1);
+			break;
+		case 3:
+			sendWSMessage_140000(4);
+			break;
+		case 4:
+			inv_give_to_player("POLE");
+			setMiscItems();
+			series_unload(_ripLowReach);
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (takeFlag && ITEM("SHOVEL") && _flag1) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			g_engine->camera_shift_xy(862, 0);
+			kernel_timing_trigger(1, 1);
+			break;
+		case 1:
+			if (g_engine->game_camera_panning()) {
+				kernel_timing_trigger(5, 1);
+			} else {
+				_ripLowReach = series_load("RIP LOW REACH POS1");
+				setGlobals1(_ripLowReach, 1, 10, 10, 10);
+				sendWSMessage_110000(2);
+			}
+			break;
+		case 2:
+			terminateMachineAndNull(_shovel);
+			kernel_examine_inventory_object("PING SHOVEL",
+				_G(master_palette), 5, 1, 154, 114, 3, nullptr, -1);
+			break;
+		case 3:
+			sendWSMessage_140000(4);
+			break;
+		case 4:
+			inv_give_to_player("SHOVEL");
+			setMiscItems();
+			series_unload(_ripLowReach);
+			_G(flags)[V044] = 1;
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (takeFlag && player_said("SHOVEL ") &&
+			inv_object_is_here("SHOVEL") && _flag1) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			g_engine->camera_shift_xy(0, 0);
+			kernel_timing_trigger(1, 1);
+			break;
+		case 1:
+			if (g_engine->game_camera_panning()) {
+				kernel_timing_trigger(5, 1);
+			} else {
+				_ripLowReach = series_load("RIP LOW REACH POS1");
+				setGlobals1(_ripLowReach, 1, 10, 10, 10);
+				sendWSMessage_110000(2);
+			}
+			break;
+		case 2:
+			terminateMachineAndNull(_shovel);
+			kernel_examine_inventory_object("PING SHOVEL",
+				_G(master_palette), 5, 1, 440, 109, 3, nullptr, -1);
+			break;
+		case 3:
+			sendWSMessage_140000(4);
+			break;
+		case 4:
+			inv_give_to_player("SHOVEL");
+			setMiscItems();
+			series_unload(_ripLowReach);
+			_G(flags)[V044] = 1;
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (takeFlag && player_said("STELE")) {
+		digi_play("504R24", 1);
+	} else if (player_said("GREEN VINE", "BROWN VINE")) {
+		inv_move_object("GREEN VINE", NOWHERE);
+		inv_move_object("BROWN VINE", NOWHERE);
+		inv_give_to_player("VINES");
+	} else if (useFlag && player_said("VINES")) {
+		inv_move_object("VINES", NOWHERE);
+		inv_give_to_player("GREEN VINE");
+		inv_give_to_player("BROWN VINE");
+	} else if (!lookFlag && !takeFlag && !useFlag &&
+			!ropeCoilFlag && !greenVineFlag && !brownVineFlag &&
+			!vineCoilFlag && _G(flags)[V154] != 2 &&
+			_G(flags)[V152] != 2 && _G(flags)[V153] != 2) {
+		if (_flag1) {
+			if (_G(player).click_x <= 300)
+				digi_play("504R05A", 1);
+		} else {
+			if (_G(player).click_x > 300)
+				digi_play("504R05A", 1);
+		}
+	} else {
 		return;
 	}
 
