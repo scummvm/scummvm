@@ -45,9 +45,9 @@ struct CCStaticArray : public AGSCCStaticObject {
 public:
 	~CCStaticArray() override {}
 
-	void Create(ICCDynamicObject *mgr, size_t elem_script_size, size_t elem_mem_size, size_t elem_count = SIZE_MAX /*unknown*/);
+	void Create(IScriptObject *mgr, size_t elem_script_size, size_t elem_mem_size, size_t elem_count = SIZE_MAX /*unknown*/);
 
-	inline ICCDynamicObject *GetObjectManager() const {
+	inline IScriptObject *GetObjectManager() const {
 		return _mgr;
 	}
 
@@ -69,7 +69,7 @@ public:
 	void 	WriteFloat(void *address, intptr_t offset, float val) override;
 
 private:
-	ICCDynamicObject *_mgr = nullptr;
+	IScriptObject	 *_mgr = nullptr;
 	size_t			 _elemScriptSize = 0u;
 	size_t			 _elemMemSize = 0u;
 	size_t			 _elemCount = 0u;

@@ -32,7 +32,7 @@
 
 #include "ags/shared/core/types.h"
 #include "ags/engine/script/runtime_script_value.h"
-#include "ags/engine/ac/dynobj/cc_dynamic_object.h"
+#include "ags/engine/ac/dynobj/cc_script_object.h"
 
 namespace AGS3 {
 
@@ -49,9 +49,9 @@ using namespace AGS; // FIXME later
 extern void  ccSetStringClassImpl(ICCStringClass *theClass);
 // register a memory handle for the object and allow script
 // pointers to point to it
-extern int32_t ccRegisterManagedObject(void *object, ICCDynamicObject *, ScriptValueType obj_type = kScValDynamicObject);
+extern int32_t ccRegisterManagedObject(void *object, IScriptObject *, ScriptValueType obj_type = kScValDynamicObject);
 // register a de-serialized object
-extern int32_t ccRegisterUnserializedObject(int index, void *object, ICCDynamicObject *, ScriptValueType obj_type = kScValDynamicObject);
+extern int32_t ccRegisterUnserializedObject(int index, void *object, IScriptObject *, ScriptValueType obj_type = kScValDynamicObject);
 // unregister a particular object
 extern int   ccUnRegisterManagedObject(void *object);
 // remove all registered objects
@@ -65,7 +65,7 @@ extern void  ccAttemptDisposeObject(int32_t handle);
 // translate between object handles and memory addresses
 extern int32_t ccGetObjectHandleFromAddress(void *address);
 extern void *ccGetObjectAddressFromHandle(int32_t handle);
-extern ScriptValueType ccGetObjectAddressAndManagerFromHandle(int32_t handle, void *&object, ICCDynamicObject *&manager);
+extern ScriptValueType ccGetObjectAddressAndManagerFromHandle(int32_t handle, void *&object, IScriptObject *&manager);
 
 extern int ccAddObjectReference(int32_t handle);
 extern int ccReleaseObjectReference(int32_t handle);

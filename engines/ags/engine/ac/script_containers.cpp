@@ -28,7 +28,7 @@
 #include "ags/shared/ac/common.h" // quit
 #include "ags/engine/ac/string.h"
 #include "ags/engine/ac/dynobj/cc_dynamic_array.h"
-#include "ags/engine/ac/dynobj/cc_dynamic_object.h"
+#include "ags/engine/ac/dynobj/cc_script_object.h"
 #include "ags/engine/ac/dynobj/script_dict.h"
 #include "ags/engine/ac/dynobj/script_set.h"
 #include "ags/engine/ac/dynobj/script_string.h"
