@@ -109,9 +109,9 @@ class SplitLines;
 class TTFFontRenderer;
 class WFNFontRenderer;
 
+struct AGSCCStaticObject;
 struct AGSDeSerializer;
 struct AGSPlatformDriver;
-struct AGSStaticObject;
 struct AmbientSound;
 struct AnimatingGUIButton;
 struct CachedActSpsData;
@@ -177,6 +177,7 @@ struct SOUNDCLIP;
 struct SpeechLipSyncLine;
 struct SpriteListEntry;
 struct StaticArray;
+struct CCStaticArray;
 struct StaticGame;
 struct SystemImports;
 struct TopBarSettings;
@@ -302,8 +303,8 @@ public:
 	 * @{
 	 */
 
-	AGSStaticObject *_GlobalStaticManager;
-	StaticGame      *_GameStaticManager;
+	AGSCCStaticObject *_GlobalStaticManager;
+	StaticGame        *_GameStaticManager;
 
 	/**@}*/
 
@@ -807,13 +808,13 @@ public:
 	 * @{
 	 */
 
-	StaticArray *_StaticCharacterArray;
-	StaticArray *_StaticObjectArray;
-	StaticArray *_StaticGUIArray;
-	StaticArray *_StaticHotspotArray;
-	StaticArray *_StaticRegionArray;
-	StaticArray *_StaticInventoryArray;
-	StaticArray *_StaticDialogArray;
+	CCStaticArray *_StaticCharacterArray;
+	CCStaticArray *_StaticObjectArray;
+	CCStaticArray *_StaticGUIArray;
+	CCStaticArray *_StaticHotspotArray;
+	CCStaticArray *_StaticRegionArray;
+	CCStaticArray *_StaticInventoryArray;
+	CCStaticArray *_StaticDialogArray;
 
 	/**@}*/
 
