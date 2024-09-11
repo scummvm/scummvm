@@ -1581,8 +1581,14 @@ static bool isValidSaveFileName(const Common::String &desc) {
 Common::Error Myst3Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	assert(!desc.empty());
 
+	Common::String saveName = desc;
 	if (!isValidSaveFileName(desc)) {
-		return Common::Error(Common::kCreatingFileFailed, _("Invalid file name for saving"));
+		if (isAutosave) {
+			// Fall back to the expected English translation
+			saveName = "Autosave";
+		} else {
+			return Common::Error(Common::kCreatingFileFailed, _("Invalid file name for saving"));
+		}
 	}
 
 	// If autosaving, get a fresh thumbnail of the game screen
@@ -1593,7 +1599,7 @@ Common::Error Myst3Engine::saveGameState(int slot, const Common::String &desc, b
 	const Graphics::Surface *thumbnail = _menu->borrowSaveThumbnail();
 	assert(thumbnail);
 
-	return saveGameState(desc, thumbnail, isAutosave);
+	return saveGameState(saveName, thumbnail, isAutosave);
 }
 
 Common::Error Myst3Engine::saveGameState(const Common::String &desc, const Graphics::Surface *thumbnail, bool isAutosave) {
