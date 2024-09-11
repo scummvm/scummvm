@@ -28,6 +28,7 @@
 #include "common/compression/unzip.h"
 #include "common/debug.h"
 #include "common/path.h"
+#include "common/stack.h"
 #include "common/system.h"
 
 #include "graphics/opengl/shader.h"
@@ -159,7 +160,20 @@ void showImage(const ImGuiImage &image, const char *name, float scale) {
 	//setToolTipImage(image, name);
 }
 
+FileTree::FileTree(Common::Path *p, Common::String n, bool node, int i) {
+	id = i;
+
+	if (!node) {
+		name = (char *)transCyrillic(n);
+	} else {
+		path = *p;
+		name = (char *)transCyrillic(p->baseName());
+	}
+}
+
 void populateFileList() {
+	Common::Array<Common::Path> files;
+
 	// Iterate through the 3 resource pak files
 	for (int i = 0; i < qdFileManager::instance().get_num_packages(); i++) {
 		Common::Archive *archive = qdFileManager::instance().get_package(i);
@@ -169,10 +183,61 @@ void populateFileList() {
 			archive->listMembers(members);
 
 		for (auto &it : members)
-			_state->_files.push_back(it->getPathInArchive());
+			files.push_back(it->getPathInArchive());
 	}
 
-	Common::sort(_state->_files.begin(), _state->_files.end());
+	Common::sort(files.begin(), files.end());
+
+	// Now build a tree
+	Common::Path curr;
+	Common::Stack<FileTree *> treeStack;
+
+	_state->_files.name = "Resource";
+	treeStack.push(&_state->_files);
+
+	int id = 0;
+	for (int f = 0; f < files.size(); f++) {
+		// Skip duplicates between the archives
+		if (f && files[f] == files[f - 1])
+			continue;
+
+		Common::Path parent = files[f].getParent();
+
+		if (parent != curr) {
+			Common::StringArray curArr = curr.splitComponents();
+			Common::StringArray newArr = parent.splitComponents();
+
+			if (curArr.back().empty())
+				curArr.pop_back();
+
+			if (newArr.back().empty())
+				newArr.pop_back();
+
+			int pos = 0;
+			while (pos < curArr.size() && pos < newArr.size() && curArr[pos] == newArr[pos])
+				pos++;
+
+			// if we need to close directories
+			if (pos < curArr.size()) {
+				for (int i = pos; i < curArr.size(); i++)
+					(void)treeStack.pop();
+			}
+
+			for (; pos < newArr.size(); pos++) {
+				if (id == 0 && newArr[pos] == "Resource") // Skip the root node
+					continue;
+
+				treeStack.top()->children.push_back(new FileTree(nullptr, newArr[pos], false, ++id));
+				treeStack.push(treeStack.top()->children.back());
+			}
+
+			curr = parent;
+		}
+
+		treeStack.top()->children.push_back(new FileTree(&files[f], "", true, ++id));
+
+		id++;
+	}
 }
 
 static void displayQDA() {
@@ -232,7 +297,7 @@ static void displayQDA() {
 			ImGui::Separator();
 
 			if (!_state->_fileToDisplay.empty()) {
-				showImage(imgID, (char *)transCyrillic(_state->_fileToDisplay.toString()), 2.0);
+				showImage(imgID, (char *)transCyrillic(_state->_fileToDisplay.toString()), 1.0);
 			} else {
 				ImGui::InvisibleButton("##canvas", ImVec2(32.f, 32.f));
 			}
@@ -241,7 +306,7 @@ static void displayQDA() {
 
 			imgID = getImageID(_state->_fileToDisplay, -_state->_qdaToDisplayFrame - 1);
 
-			showImage(imgID, (char *)transCyrillic(_state->_fileToDisplay.toString()), 2.0);
+			showImage(imgID, (char *)transCyrillic(_state->_fileToDisplay.toString()), 1.0);
 
 			ImGui::EndTabItem();
 		}
@@ -274,6 +339,34 @@ static void displayTGA() {
 	showImage(imgID, (char *)transCyrillic(_state->_fileToDisplay.toString()), 1.0);
 }
 
+void displayTree(FileTree *tree) {
+	if (tree->children.empty()) { // It is a file
+		if (ImGui::Selectable(tree->name.c_str(), _state->_fileToDisplay == tree->path)) {
+			_state->_fileToDisplay = tree->path;
+
+			if (tree->name.hasSuffixIgnoreCase(".qda")) {
+				_state->_qdaToDisplayFrame = 0;
+				_state->_qdaIsPlaying = false;
+
+				_state->_displayMode = kDisplayQDA;
+			} else if (tree->name.hasSuffixIgnoreCase(".tga")) {
+				_state->_displayMode = kDisplayTGA;
+			} else {
+				_state->_displayMode = -1;
+			}
+		}
+
+		return;
+	}
+
+	if (ImGui::TreeNode((void*)(intptr_t)(tree->id), tree->name.c_str())) {
+		for (auto &it : tree->children)
+			displayTree(it);
+
+		ImGui::TreePop();
+	}
+}
+
 void showArchives() {
 	if (!_state->_showArchives)
 		return;
@@ -283,8 +376,8 @@ void showArchives() {
 
 	// Calculate the window size
 	ImVec2 windowSize = ImVec2(
-		viewportSize.x * 0.7f,
-		viewportSize.y * 0.7f
+		viewportSize.x * 0.9f,
+		viewportSize.y * 0.9f
 	);
 
 	// Calculate the centered position
@@ -298,7 +391,7 @@ void showArchives() {
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Archives", &_state->_showArchives)) {
-		ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.3f, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_None);
+		ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.4f, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_None);
 
 		ImGui::Button("\uef4f"); // Filter	// filter_alt
 		ImGui::SameLine();
@@ -306,28 +399,10 @@ void showArchives() {
 		_state->_nameFilter.Draw();
 		ImGui::Separator();
 
-		if (_state->_files.empty())
+		if (_state->_files.children.empty())
 			populateFileList();
 
-		for (auto &it : _state->_files) {
-			const char *fileName = (char *)transCyrillic(it.baseName());
-			if (_state->_nameFilter.PassFilter(fileName)) {
-				if (ImGui::Selectable(fileName, _state->_fileToDisplay == it)) {
-					_state->_fileToDisplay = it;
-
-					if (it.baseName().hasSuffixIgnoreCase(".qda")) {
-						_state->_qdaToDisplayFrame = 0;
-						_state->_qdaIsPlaying = false;
-
-						_state->_displayMode = kDisplayQDA;
-					} else if (it.baseName().hasSuffixIgnoreCase(".tga")) {
-						_state->_displayMode = kDisplayTGA;
-					} else {
-						_state->_displayMode = -1;
-					}
-				}
-			}
-		}
+		displayTree(&_state->_files);
 
 		ImGui::EndChild();
 

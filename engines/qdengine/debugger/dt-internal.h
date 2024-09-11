@@ -35,6 +35,16 @@ enum {
 	kDisplayTGA,
 };
 
+struct FileTree {
+	Common::Path path;
+	Common::String name;
+	Common::Array<FileTree *> children;
+	int id;
+
+	FileTree(Common::Path *p, Common::String n, bool node, int i);
+	FileTree() { id = 0; }
+};
+
 typedef struct ImGuiState {
 	bool _showArchives = false;
 
@@ -49,7 +59,7 @@ typedef struct ImGuiState {
 
 	ImGuiTextFilter _nameFilter;
 
-	Common::List<Common::Path> _files;
+	FileTree _files;
 
 	int _displayMode = -1;
 } ImGuiState;
