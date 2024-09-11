@@ -98,7 +98,7 @@ void InitAndRegisterAudioObjects(GameSetupStruct &game) {
 		// between game versions, for now.
 		game.audioClips[i].id = i;
 		ccRegisterManagedObject(&game.audioClips[i], &_GP(ccDynamicAudioClip));
-		ccAddExternalDynamicObject(game.audioClips[i].scriptName, &game.audioClips[i], &_GP(ccDynamicAudioClip));
+		ccAddExternalScriptObject(game.audioClips[i].scriptName, &game.audioClips[i], &_GP(ccDynamicAudioClip));
 	}
 }
 
@@ -121,7 +121,7 @@ void InitAndRegisterCharacters(GameSetupStruct &game) {
 		ccRegisterManagedObject(&game.chars[i], &_GP(ccDynamicCharacter));
 
 		// export the character's script object
-		ccAddExternalDynamicObject(game.chars[i].scrname, &game.chars[i], &_GP(ccDynamicCharacter));
+		ccAddExternalScriptObject(game.chars[i].scrname, &game.chars[i], &_GP(ccDynamicCharacter));
 	}
 }
 
@@ -134,7 +134,7 @@ void InitAndRegisterDialogs(GameSetupStruct &game) {
 		ccRegisterManagedObject(&_GP(scrDialog)[i], &_GP(ccDynamicDialog));
 
 		if (!game.dialogScriptNames[i].IsEmpty())
-			ccAddExternalDynamicObject(game.dialogScriptNames[i], &_GP(scrDialog)[i], &_GP(ccDynamicDialog));
+			ccAddExternalScriptObject(game.dialogScriptNames[i], &_GP(scrDialog)[i], &_GP(ccDynamicDialog));
 	}
 }
 
@@ -163,7 +163,7 @@ HError InitAndRegisterGUI(GameSetupStruct &game) {
 		// export all the GUI's controls
 		export_gui_controls(i);
 		_GP(scrGui)[i].id = i;
-		ccAddExternalDynamicObject(_GP(guis)[i].Name, &_GP(scrGui)[i], &_GP(ccDynamicGUI));
+		ccAddExternalScriptObject(_GP(guis)[i].Name, &_GP(scrGui)[i], &_GP(ccDynamicGUI));
 		ccRegisterManagedObject(&_GP(scrGui)[i], &_GP(ccDynamicGUI));
 	}
 	return HError::None();
@@ -177,7 +177,7 @@ void InitAndRegisterInvItems(GameSetupStruct &game) {
 		ccRegisterManagedObject(&_G(scrInv)[i], &_GP(ccDynamicInv));
 
 		if (!game.invScriptNames[i].IsEmpty())
-			ccAddExternalDynamicObject(game.invScriptNames[i], &_G(scrInv)[i], &_GP(ccDynamicInv));
+			ccAddExternalScriptObject(game.invScriptNames[i], &_G(scrInv)[i], &_GP(ccDynamicInv));
 	}
 }
 
@@ -245,7 +245,7 @@ HError InitAndRegisterGameEntities(GameSetupStruct &game) {
 
 	setup_player_character(game.playercharacter);
 	if (_G(loaded_game_file_version) >= kGameVersion_270)
-		ccAddExternalStaticObject("player", &_G(sc_PlayerCharPtr), &_GP(GlobalStaticManager));
+		ccAddExternalScriptObject("player", &_G(sc_PlayerCharPtr), &_GP(GlobalStaticManager));
 	return HError::None();
 }
 

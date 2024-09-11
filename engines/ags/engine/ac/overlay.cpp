@@ -530,14 +530,14 @@ RuntimeScriptValue Sc_Overlay_CreateTextual(const RuntimeScriptValue *params, in
 	API_SCALL_SCRIPT_SPRINTF(Overlay_CreateTextual, 6);
 	ScriptOverlay *overlay = Overlay_CreateTextual(params[0].IValue, params[1].IValue, params[2].IValue,
 												   params[3].IValue, params[4].IValue, scsf_buffer);
-	return RuntimeScriptValue().SetDynamicObject(overlay, overlay);
+	return RuntimeScriptValue().SetScriptObject(overlay, overlay);
 }
 
 RuntimeScriptValue Sc_Overlay_CreateRoomTextual(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_SCRIPT_SPRINTF(Overlay_CreateRoomTextual, 6);
 	ScriptOverlay *overlay = Overlay_CreateRoomTextual(params[0].IValue, params[1].IValue, params[2].IValue,
 													   params[3].IValue, params[4].IValue, scsf_buffer);
-	return RuntimeScriptValue().SetDynamicObject(overlay, overlay);
+	return RuntimeScriptValue().SetScriptObject(overlay, overlay);
 }
 
 // void (ScriptOverlay *scover, int wii, int fontid, int clr, char*texx, ...)

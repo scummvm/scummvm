@@ -421,7 +421,7 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 	// Allow to pass less parameters if script callback has less declared args
 	numargs = MIN(numargs, export_args);
 	// object pointer needs to start zeroed
-	registers[SREG_OP].SetDynamicObject(nullptr, nullptr);
+	registers[SREG_OP].SetScriptObject(nullptr, nullptr);
 	registers[SREG_SP].SetStackPtr(&stack[0]);
 	stackdata_ptr = stackdata;
 	// NOTE: Pushing parameters to stack in reverse order
@@ -1021,7 +1021,7 @@ int ccInstance::Run(int32_t curpc) {
 			void *object;
 			IScriptObject *manager;
 			ScriptValueType obj_type = ccGetObjectAddressAndManagerFromHandle(handle, object, manager);
-			reg1.SetDynamicObject(obj_type, object, manager);
+			reg1.SetScriptObject(obj_type, object, manager);
 			ASSERT_CC_ERROR();
 			break;
 		}
@@ -1035,7 +1035,7 @@ int ccInstance::Run(int32_t curpc) {
 				// CC_ERROR_IF_RETCODE(!reg1.ArrMgr->GetDynamicManager(), "internal error: MEMWRITEPTR argument is not a dynamic object");
 				address = reg1.ArrMgr->GetElementPtr(reg1.Ptr, reg1.IValue);
 				break;
-			case kScValDynamicObject:
+			case kScValScriptObject:
 			case kScValPluginObject:
 				address = reg1.Ptr;
 				break;
@@ -1073,7 +1073,7 @@ int ccInstance::Run(int32_t curpc) {
 				// CC_ERROR_IF_RETCODE(!reg1.ArrMgr->GetDynamicManager(), "internal error: SCMD_MEMINITPTR argument is not a dynamic object");
 				address = reg1.ArrMgr->GetElementPtr(reg1.Ptr, reg1.IValue);
 				break;
-			case kScValDynamicObject:
+			case kScValScriptObject:
 			case kScValPluginObject:
 				address = reg1.Ptr;
 				break;
@@ -1281,8 +1281,7 @@ int ccInstance::Run(int32_t curpc) {
 			}
 			switch (reg1.Type) {
 			// This might be a static object, passed to the user-defined extender function
-			case kScValStaticObject:
-			case kScValDynamicObject:
+			case kScValScriptObject:
 			case kScValPluginObject:
 			case kScValPluginArg:
 			// This might be an object of USER-DEFINED type, calling its MEMBER-FUNCTION.
@@ -1295,7 +1294,7 @@ int ccInstance::Run(int32_t curpc) {
 			case kScValStaticArray:
 				// FIXME: return manager type from interface?
 				// CC_ERROR_IF_RETCODE(!reg1.ArrMgr->GetDynamicManager(), "internal error: SCMD_CALLOBJ argument is not a dynamic object");
-				registers[SREG_OP].SetDynamicObject(reg1.ArrMgr->GetElementPtr(reg1.Ptr, reg1.IValue), reg1.ArrMgr->GetObjectManager());
+				registers[SREG_OP].SetScriptObject(reg1.ArrMgr->GetElementPtr(reg1.Ptr, reg1.IValue), reg1.ArrMgr->GetObjectManager());
 				break;
 			default:
 				cc_error("internal error: SCMD_CALLOBJ argument is not an object of built-in or user-defined type");
@@ -1331,7 +1330,7 @@ int ccInstance::Run(int32_t curpc) {
 				return -1;
 			}
 			DynObjectRef ref = _GP(globalDynamicArray).Create(numElements, arg_elsize, arg_managed);
-			reg1.SetDynamicObject(ref.second, &_GP(globalDynamicArray));
+			reg1.SetScriptObject(ref.second, &_GP(globalDynamicArray));
 			break;
 		}
 		case SCMD_NEWUSEROBJECT: {
@@ -1342,7 +1341,7 @@ int ccInstance::Run(int32_t curpc) {
 				return -1;
 			}
 			ScriptUserObject *suo = ScriptUserObject::CreateManaged(arg_size);
-			reg1.SetDynamicObject(suo, suo);
+			reg1.SetScriptObject(suo, suo);
 			break;
 		}
 		case SCMD_FADD: {
@@ -1435,7 +1434,7 @@ int ccInstance::Run(int32_t curpc) {
 				return -1;
 			} else {
 				const char *ptr = reinterpret_cast<const char *>(reg1.GetDirectPtr());
-				reg1.SetDynamicObject(
+				reg1.SetScriptObject(
 					_G(stringClassImpl)->CreateString(ptr).second,
 					&_GP(myScriptStringImpl));
 			}
@@ -1564,8 +1563,7 @@ void ccInstance::DumpInstruction(const ScriptOperation &op) const {
 				debugN(" %p", (void *)arg.GetPtrWithOffset());
 				break;
 			case kScValStaticArray:
-			case kScValStaticObject:
-			case kScValDynamicObject:
+			case kScValScriptObject:
 			case kScValStaticFunction:
 			case kScValObjectFunction:
 			case kScValPluginFunction:
@@ -1825,7 +1823,7 @@ bool ccInstance::CreateGlobalVars(const ccScript *scri) {
 				return false;
 			}
 			// TODO: register this explicitly as a string instead (can do this later)
-			glvar.RValue.SetStaticObject(globaldata + data_addr, &_GP(GlobalStaticManager));
+			glvar.RValue.SetScriptObject(globaldata + data_addr, &_GP(GlobalStaticManager));
 		}
 		break;
 		default:
