@@ -42,34 +42,34 @@ public:
 		if (!_scene)
 			return false;
 
-		_stones[0] = _scene->object_interface("камень1");
-		_stones[1] = _scene->object_interface("камень2");
-		_stones[2] = _scene->object_interface("камень3");
-		_stones[3] = _scene->object_interface("камень4");
-		_stones[4] = _scene->object_interface("камень5");
-		_stones[5] = _scene->object_interface("камень6");
-		_stones[6] = _scene->object_interface("камень7");
-		_stones[7] = _scene->object_interface("камень8");
-		_stones[8] = _scene->object_interface("камень9");
-		_stones[9] = _scene->object_interface("камень10");
-		_stones[10] = _scene->object_interface("камень11");
-		_stones[11] = _scene->object_interface("камень12");
-		_stones[12] = _scene->object_interface("камень13");
-		_stones[13] = _scene->object_interface("камень14");
+		_stones[0] = _scene->object_interface("\xea\xe0\xec\xe5\xed\xfc\x31"); // "камень1"
+		_stones[1] = _scene->object_interface("\xea\xe0\xec\xe5\xed\xfc\x32"); // "камень2"
+		_stones[2] = _scene->object_interface("\xea\xe0\xec\xe5\xed\xfc\x33"); // "камень3"
+		_stones[3] = _scene->object_interface("\xea\xe0\xec\xe5\xed\xfc\x34"); // "камень4"
+		_stones[4] = _scene->object_interface("\xea\xe0\xec\xe5\xed\xfc\x35"); // "камень5"
+		_stones[5] = _scene->object_interface("\xea\xe0\xec\xe5\xed\xfc\x36"); // "камень6"
+		_stones[6] = _scene->object_interface("\xea\xe0\xec\xe5\xed\xfc\x37"); // "камень7"
+		_stones[7] = _scene->object_interface("\xea\xe0\xec\xe5\xed\xfc\x38"); // "камень8"
+		_stones[8] = _scene->object_interface("\xea\xe0\xec\xe5\xed\xfc\x39"); // "камень9"
+		_stones[9] = _scene->object_interface("\xea\xe0\xec\xe5\xed\xfc\x31\x30"); // "камень10"
+		_stones[10] = _scene->object_interface("\xea\xe0\xec\xe5\xed\xfc\x31\x31"); // "камень11"
+		_stones[11] = _scene->object_interface("\xea\xe0\xec\xe5\xed\xfc\x31\x32"); // "камень12"
+		_stones[12] = _scene->object_interface("\xea\xe0\xec\xe5\xed\xfc\x31\x33"); // "камень13"
+		_stones[13] = _scene->object_interface("\xea\xe0\xec\xe5\xed\xfc\x31\x34"); // "камень14"
 
-		_cursorObj = _scene->object_interface("курсор");
+		_cursorObj = _scene->object_interface("\xea\xf3\xf0\xf1\xee\xf0"); // "курсор"
 		_doneObj = _scene->object_interface("$done");
-		_startObj = _scene->object_interface("$запуск");
-		_jumpSoundObj = _scene->object_interface("звук перескока");
+		_startObj = _scene->object_interface("\x24\xe7\xe0\xef\xf3\xf1\xea"); // "$запуск"
+		_jumpSoundObj = _scene->object_interface("\xe7\xe2\xf3\xea\x20\xef\xe5\xf0\xe5\xf1\xea\xee\xea\xe0"); // "звук перескока"
 
 		_someVar1 = 0;
 		_cursorTakenFlag = 0;
 		_someVar3 = 0;
 		_someVar4 = 0;
 
-		if (_startObj->is_state_active("не был")) {
+		if (_startObj->is_state_active("\xed\xe5\x20\xe1\xfb\xeb")) { // "не был"
 			resetStones();
-			_startObj->set_state("был");
+			_startObj->set_state("\xe1\xfb\xeb"); // "был"
 		}
 
 		return true;
