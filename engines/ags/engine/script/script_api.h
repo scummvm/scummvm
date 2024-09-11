@@ -32,7 +32,6 @@
 //include <stdarg.h>
 #include "ags/shared/core/types.h"
 #include "ags/engine/ac/runtime_defines.h"
-#include "ags/engine/ac/statobj/ags_static_object.h"
 #include "ags/shared/debugging/out.h"
 
 namespace AGS3 {

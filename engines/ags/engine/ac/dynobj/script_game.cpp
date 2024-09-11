@@ -19,38 +19,21 @@
  *
  */
 
-#ifndef AGS_ENGINE_DYNOBJ__SCRIPTFILE_H
-#define AGS_ENGINE_DYNOBJ__SCRIPTFILE_H
+#include "ags/engine/ac/dynobj/script_game.h"
+#include "ags/engine/ac/game.h"
+#include "ags/engine/ac/game_state.h"
 
-#include "ags/engine/ac/dynobj/cc_ags_dynamic_object.h"
-#include "ags/shared/util/file.h"
 
 namespace AGS3 {
 
-using namespace AGS; // FIXME later
-
-#define scFileRead   1
-#define scFileWrite  2
-#define scFileAppend 3
-
-struct sc_File final : CCBasicObject {
-	int32_t             handle;
-
-	static const Shared::FileOpenMode fopenModes[];
-	static const Shared::FileWorkMode fworkModes[];
-
-	int Dispose(const char *address, bool force) override;
-
-	const char *GetType() override;
-
-	int Serialize(const char *address, char *buffer, int bufsize) override;
-
-	int OpenFile(const char *filename, int mode);
-	void Close();
-
-	sc_File();
-};
+void StaticGame::WriteInt32(const char *address, intptr_t offset, int32_t val) {
+	if (offset == 4 * sizeof(int32_t)) { // game.debug_mode
+		set_debug_mode(val != 0);
+	} else if (offset == 99 * sizeof(int32_t) || offset == 112 * sizeof(int32_t)) { // game.text_align, game.speech_text_align
+		*(int32_t *)(address + offset) = ReadScriptAlignment(val);
+	} else {
+		*(int32_t *)(address + offset) = val;
+	}
+}
 
 } // namespace AGS3
-
-#endif

@@ -57,6 +57,7 @@
 #include "ags/engine/ac/dynobj/all_dynamic_classes.h"
 #include "ags/engine/ac/dynobj/all_script_classes.h"
 #include "ags/engine/ac/dynobj/script_camera.h"
+#include "ags/engine/ac/dynobj/script_game.h"
 #include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/debugging/debugger.h"
