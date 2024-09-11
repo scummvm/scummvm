@@ -37,6 +37,9 @@ private:
 	int _volume = 0;
 	int _convState = 0;
 	int _convState2 = 0;
+	int _ripSketching = 0;
+	int _ripLowReach = 0;
+	int _ripMedReach = 0;
 
 	machine *_vines1 = nullptr;
 	machine *_vines2 = nullptr;
