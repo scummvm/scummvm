@@ -24,7 +24,7 @@
 
 constexpr uint16 MAX_INVENTORY = 42;
 constexpr uint16 MAX_ICONS = 9;
-static constexpr Common::Rect drawArea = {{139,0}, 333, 40};
+static constexpr Common::Rect drawArea = {{139,0}, 334, 40};
 
 Darkseed::Inventory::Inventory() {
 	_iconList.resize(MAX_ICONS);
@@ -86,16 +86,26 @@ void Darkseed::Inventory::update() {
 		}
 	}
 	_numIcons = MIN(_inventoryLength + 1, 9);
+	redraw = true;
+}
+
+void Darkseed::Inventory::restoreFrame() {
+	g_engine->_frame.drawRect(drawArea);
+	g_engine->_screen->addDirtyRect(drawArea);
 }
 
 void Darkseed::Inventory::draw() {
 	if ((g_engine->_actionMode <= 4 && g_engine->_cursor.getY() > 40) || g_engine->isPlayingAnimation_maybe || (g_engine->_objectVar[141] >= 1 && g_engine->_objectVar[141] <= 3)) {
 		if (isVisible) {
-			g_engine->_frame.drawRect(drawArea);
-			g_engine->_screen->addDirtyRect(drawArea);
+			restoreFrame();
 			isVisible = false;
 		}
 		return;
+	}
+
+	if (redraw) {
+		restoreFrame();
+		redraw = false;
 	}
 
 	isVisible = true;
