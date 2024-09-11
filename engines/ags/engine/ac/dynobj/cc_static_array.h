@@ -45,7 +45,7 @@ struct CCStaticArray : public AGSCCStaticObject {
 public:
 	~CCStaticArray() override {}
 
-	void Create(ICCDynamicObject *mgr, int elem_legacy_size, int elem_real_size, int elem_count = -1 /*unknown*/);
+	void Create(ICCDynamicObject *mgr, size_t elem_script_size, size_t elem_mem_size, size_t elem_count = SIZE_MAX /*unknown*/);
 
 	inline ICCDynamicObject *GetObjectManager() const {
 		return _mgr;
@@ -67,10 +67,10 @@ public:
 	void    WriteFloat(const char *address, intptr_t offset, float val) override;
 
 private:
-	ICCDynamicObject	*_mgr;
-	int                 _elemLegacySize;
-	int                 _elemRealSize;
-	int                 _elemCount;
+	ICCDynamicObject *_mgr = nullptr;
+	size_t			 _elemScriptSize = 0u;
+	size_t			 _elemMemSize = 0u;
+	size_t			 _elemCount = 0u;
 };
 
 } // namespace AGS3
