@@ -65,7 +65,7 @@ inline const char *GetArgPtr(const RuntimeScriptValue *sc_args, va_list *varg_pt
 	if (varg_ptr)
 		return va_arg(*varg_ptr, const char *);
 	else
-		return sc_args[arg_idx].Ptr;
+		return reinterpret_cast<const char *>(sc_args[arg_idx].Ptr);
 }
 
 
