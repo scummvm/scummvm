@@ -28,7 +28,7 @@
 #include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_audio.h"
 #include "ags/engine/ac/global_display.h"
-#include "ags/engine/ac/dynobj/cc_dynamic_object.h"
+#include "ags/engine/ac/dynobj/cc_script_object.h"
 #include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"

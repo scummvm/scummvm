@@ -119,7 +119,7 @@ void *ManagedObjectPool::HandleToAddress(int32_t handle) {
 }
 
 // this function is called often (whenever a pointer is used)
-ScriptValueType ManagedObjectPool::HandleToAddressAndManager(int32_t handle, void *&object, ICCDynamicObject *&manager) {
+ScriptValueType ManagedObjectPool::HandleToAddressAndManager(int32_t handle, void *&object, IScriptObject *&manager) {
 	if ((handle < 0 || (size_t)handle >= objects.size()) || !objects[handle].isUsed()) {
 		object = nullptr;
 		manager = nullptr;
@@ -165,7 +165,7 @@ void ManagedObjectPool::RunGarbageCollection() {
 	ManagedObjectLog("Ran garbage collection");
 }
 
-int ManagedObjectPool::Add(int handle, void *address, ICCDynamicObject *callback, ScriptValueType obj_type)
+int ManagedObjectPool::Add(int handle, void *address, IScriptObject *callback, ScriptValueType obj_type)
 {
     auto &o = objects[handle];
     assert(!o.isUsed());
@@ -177,7 +177,7 @@ int ManagedObjectPool::Add(int handle, void *address, ICCDynamicObject *callback
     return handle;
 }
 
-int ManagedObjectPool::AddObject(void *address, ICCDynamicObject *callback, ScriptValueType obj_type) {
+int ManagedObjectPool::AddObject(void *address, IScriptObject *callback, ScriptValueType obj_type) {
 	int32_t handle;
 
 	if (!available_ids.empty()) {
@@ -194,7 +194,7 @@ int ManagedObjectPool::AddObject(void *address, ICCDynamicObject *callback, Scri
 	return Add(handle, address, callback, obj_type);
 }
 
-int ManagedObjectPool::AddUnserializedObject(void *address, ICCDynamicObject *callback, ScriptValueType obj_type, int handle) {
+int ManagedObjectPool::AddUnserializedObject(void *address, IScriptObject *callback, ScriptValueType obj_type, int handle) {
 	if (handle < 0) {
 		cc_error("Attempt to assign invalid handle: %d", handle);
 		return 0;

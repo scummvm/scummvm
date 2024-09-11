@@ -21,12 +21,16 @@
 
 //=============================================================================
 //
-// Managed script object interface.
+// IScriptObject: script managed object interface.
+// Provides interaction with a object which allocation and lifetime is
+// managed by the engine and/or the managed pool rather than the script VM.
+// These may be both static objects existing throughout the game, and
+// dynamic objects allocated by the script command.
 //
 //=============================================================================
 
-#ifndef AGS_ENGINE_AC_DYNOBJ_CC_DYNAMIC_OBJECT_H
-#define AGS_ENGINE_AC_DYNOBJ_CC_DYNAMIC_OBJECT_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_CC_SCRIPT_OBJECT_H
+#define AGS_ENGINE_AC_DYNOBJ_CC_SCRIPT_OBJECT_H
 
 #include "common/std/utility.h"
 #include "ags/shared/core/types.h"
@@ -45,7 +49,7 @@ class Stream;
 typedef std::pair<int32_t, void *> DynObjectRef;
 
 
-struct ICCDynamicObject {
+struct IScriptObject {
 	// WARNING: The first section of this interface is also a part of the AGS plugin API!
 
 	// when a ref count reaches 0, this is called with the address
@@ -89,16 +93,19 @@ struct ICCDynamicObject {
 	virtual void 	WriteFloat(void *address, intptr_t offset, float val) = 0;
 
 protected:
-	ICCDynamicObject() {}
-	virtual ~ICCDynamicObject() {}
+	IScriptObject() {}
+	virtual ~IScriptObject() {}
 };
 
+// The interface of a script object deserializer.
+// WARNING: a part of the plugin API.
 struct ICCObjectReader {
 	virtual ~ICCObjectReader() {}
 	// TODO: pass savegame format version
-	virtual void Unserialize(int index, const char *objectType, const char *serializedData, int dataSize) = 0;
+	virtual void Unserialize(int32_t handle, const char *objectType, const char *serializedData, int dataSize) = 0;
 };
 
+// The interface of a dynamic String allocator.
 struct ICCStringClass {
 	virtual ~ICCStringClass() {}
 	virtual DynObjectRef CreateString(const char *fromText) = 0;

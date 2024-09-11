@@ -1019,7 +1019,7 @@ int ccInstance::Run(int32_t curpc) {
 			// FIXME: make pool return a ready RuntimeScriptValue with these set?
 			// or another struct, which may be assigned to RSV
 			void *object;
-			ICCDynamicObject *manager;
+			IScriptObject *manager;
 			ScriptValueType obj_type = ccGetObjectAddressAndManagerFromHandle(handle, object, manager);
 			reg1.SetDynamicObject(obj_type, object, manager);
 			ASSERT_CC_ERROR();
