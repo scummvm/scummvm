@@ -503,7 +503,7 @@ void AkosRenderer::byleRLEDecode(ByleRLEData &dataBlock) {
 	color = dataBlock.repColor;
 	height = _height;
 
-	scaleytab = &dataBlock.scaleTable[dataBlock.scaleYIndex];
+	scaleytab = &dataBlock.scaleTable[MAX<int>(0, dataBlock.scaleYIndex)]; // Avoid invalid mem reads in Basketball...
 	maskbit = revBitMask(dataBlock.x & 7);
 	mask = _vm->getMaskBuffer(dataBlock.x - (_vm->_virtscr[kMainVirtScreen].xstart & 7), dataBlock.y, _zbuf);
 
@@ -583,7 +583,7 @@ void AkosRenderer::byleRLEDecode(ByleRLEData &dataBlock) {
 				height = _height;
 				y = dataBlock.y;
 
-				scaleytab = &dataBlock.scaleTable[dataBlock.scaleYIndex];
+				scaleytab = &dataBlock.scaleTable[MAX<int>(0, dataBlock.scaleYIndex)]; // Avoid invalid mem reads in Basketball...
 				lastColumnX = dataBlock.x;
 
 				if (_scaleX == 255 || dataBlock.scaleTable[dataBlock.scaleXIndex] < _scaleX) {
@@ -807,6 +807,18 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 
 		startScaleIndexY = scaletableSize - yMoveCur;
 		for (i = 0; i < yMoveCur; i++) {
+			// WORKAROUND: Backyard Basketball sends out yMoveCur values higher than 128!
+			// This triggers ASAN, because it tries to reach a negative index of compData.scaleTable[].
+			if (startScaleIndexY < 0) {
+				debug(8, "AkosRenderer::paintCelByleRLE(): Negative startScaleIndexY: %d; actor (%d), scaletableSize (%d), yMoveCur (%d), working around it...",
+					_actorID, startScaleIndexY, scaletableSize, yMoveCur);
+				if (compData.scaleTable[0] < _scaleY)
+					compData.y -= step;
+
+				startScaleIndexY++;
+				continue;
+			}
+
 			if (compData.scaleTable[startScaleIndexY++] < _scaleY)
 				compData.y -= step;
 		}
@@ -814,6 +826,15 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 		rect.top = rect.bottom = compData.y;
 		startScaleIndexY = scaletableSize - yMoveCur;
 		for (i = 0; i < _height; i++) {
+			// WORKAROUND: See above...
+			if (startScaleIndexY < 0) {
+				if (compData.scaleTable[0] < _scaleY)
+					rect.bottom++;
+
+				startScaleIndexY++;
+				continue;
+			}
+
 			if (compData.scaleTable[startScaleIndexY++] < _scaleY)
 				rect.bottom++;
 		}
