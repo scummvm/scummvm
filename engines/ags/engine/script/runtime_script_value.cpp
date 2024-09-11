@@ -21,7 +21,7 @@
 
 #include "ags/shared/script/cc_common.h"
 #include "ags/engine/script/runtime_script_value.h"
-#include "ags/engine/ac/dynobj/cc_dynamic_object.h"
+#include "ags/engine/ac/dynobj/cc_script_object.h"
 #include "ags/shared/util/memory.h"
 
 namespace AGS3 {

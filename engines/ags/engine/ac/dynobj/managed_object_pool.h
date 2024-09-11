@@ -28,7 +28,7 @@
 
 #include "ags/shared/core/platform.h"
 #include "ags/engine/script/runtime_script_value.h"
-#include "ags/engine/ac/dynobj/cc_dynamic_object.h"   // ICCDynamicObject
+#include "ags/engine/ac/dynobj/cc_script_object.h"   // IScriptObject
 
 namespace AGS3 {
 
@@ -54,7 +54,7 @@ private:
 		ScriptValueType obj_type;
 		int32_t handle;
 		void *addr;
-		ICCDynamicObject *callback;
+		IScriptObject *callback;
 		int refCount;
 
 		bool isUsed() const {
@@ -64,7 +64,7 @@ private:
 		ManagedObject() : obj_type(kScValUndefined), handle(0), addr(nullptr),
 			callback(nullptr), refCount(0) {}
 		ManagedObject(ScriptValueType theType, int32_t theHandle,
-		              void *theAddr, ICCDynamicObject *theCallback)
+		              void *theAddr, IScriptObject *theCallback)
 			: obj_type(theType), handle(theHandle), addr(theAddr),
 			  callback(theCallback), refCount(0) {
 		}
@@ -77,7 +77,7 @@ private:
 	std::vector<ManagedObject> objects;
 	std::unordered_map<void *, int32_t, Pointer_Hash> handleByAddress;
 
-	int Add(int handle, void *address, ICCDynamicObject *callback, ScriptValueType obj_type);
+	int Add(int handle, void *address, IScriptObject *callback, ScriptValueType obj_type);
 	int Remove(ManagedObject &o, bool force = false);
 	void RunGarbageCollection();
 
@@ -88,11 +88,11 @@ public:
 	int32_t SubRef(int32_t handle);
 	int32_t AddressToHandle(void *addr);
 	void *HandleToAddress(int32_t handle);
-	ScriptValueType HandleToAddressAndManager(int32_t handle, void *&object, ICCDynamicObject *&manager);
+	ScriptValueType HandleToAddressAndManager(int32_t handle, void *&object, IScriptObject *&manager);
 	int RemoveObject(void *address);
 	void RunGarbageCollectionIfAppropriate();
-	int AddObject(void *address, ICCDynamicObject *callback, ScriptValueType obj_type);
-	int AddUnserializedObject(void *address, ICCDynamicObject *callback, ScriptValueType obj_type, int handle);
+	int AddObject(void *address, IScriptObject *callback, ScriptValueType obj_type);
+	int AddUnserializedObject(void *address, IScriptObject *callback, ScriptValueType obj_type, int handle);
 	void WriteToDisk(Shared::Stream *out);
 	int ReadFromDisk(Shared::Stream *in, ICCObjectReader *reader);
 	void reset();
