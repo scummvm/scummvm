@@ -77,11 +77,11 @@ public:
 	void toConsole() const override;
 
 	const Common::String &getInventoryItem() const { return _inventoryItem; }
-	const Common::String &getRecepient() const { return _recepient; }
+	const Common::String &getRecipient() const { return _recipient; }
 
 private:
 	Common::String _inventoryItem;
-	Common::String _recepient;
+	Common::String _recipient;
 };
 
 class HandlerTimerActions : public Handler {

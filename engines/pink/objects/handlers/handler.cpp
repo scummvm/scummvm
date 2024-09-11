@@ -110,11 +110,11 @@ void HandlerLeftClick::toConsole() const {
 void HandlerUseClick::deserialize(Archive &archive) {
 	HandlerSequences::deserialize(archive);
 	_inventoryItem = archive.readString();
-	_recepient = archive.readString();
+	_recipient = archive.readString();
 }
 
 void HandlerUseClick::toConsole() const {
-	debugC(6, kPinkDebugLoadingObjects, "HandlerUseClick: _inventoryItem=%s, _recepient=%s", _inventoryItem.c_str(), _recepient.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "HandlerUseClick: _inventoryItem=%s, _recipient=%s", _inventoryItem.c_str(), _recipient.c_str());
 	debugC(6, kPinkDebugLoadingObjects, "\tSideEffects:");
 	for (uint i = 0; i < _sideEffects.size(); ++i) {
 		_sideEffects[i]->toConsole();
