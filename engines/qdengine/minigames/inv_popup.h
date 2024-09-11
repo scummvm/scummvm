@@ -76,57 +76,48 @@ public:
 		}
 
 		qdMinigameObjectInterface *obj;
+		char buf[5];
+		const char *state = _scene->mouse_hover_object_interface()->current_state_name();
 
-		if (!_scene->mouse_hover_object_interface()
-				|| _scene->mouse_object_interface()) {
+		if (!_scene->mouse_hover_object_interface() || _scene->mouse_object_interface()) {
 			_invDescObj->set_state("00");
 			obj = _invDescCloseupObj;
-			goto LABEL_20;
-		}
-
-		char buf[5];
-		const char *state;
-		const char *pos;
-
-		state = _scene->mouse_hover_object_interface()->current_state_name();
-		if (!strstr(state, "#inv#")) {
-			obj = _invDescObj;
-LABEL_20:
 			obj->set_state("00");
-			goto LABEL_21;
-		}
+		} else if (!strstr(state, "#inv#")) {
+			obj = _invDescObj;
+			obj->set_state("00");
+		} else {
+			const char *pos = strstr(state, "#inv#");
+			char buf2[5];
+			Common::strlcpy(buf2, pos + 5, 3);
+			Common::strlcpy(buf, _invDescCloseupObj->current_state_name(), 3);
 
-		pos = strstr(state, "#inv#");
-		char buf2[5];
-		Common::strlcpy(buf2, pos + 5, 3);
-		Common::strlcpy(buf, _invDescCloseupObj->current_state_name(), 3);
-
-		if (buf2[0] != buf[0] || buf2[1] != buf[1]) {
-			_invDescObj->set_state(buf2);
-			_hoverObjectPos = _scene->mouse_hover_object_interface()->screen_R();
-			if (_hoverObjectPos.x + _invDescObj->screen_size().x / 2 >= 800
-					|| (_hoverObjectPos.x - _invDescObj->screen_size().x / 2 <= 0)) {
-				if (_hoverObjectPos.x + _invDescObj->screen_size().x / 2 < 800) {
-					if (_hoverObjectPos.x - _invDescObj->screen_size().x / 2 <= 0)
-						_invDescPos.x = _invDescObj->screen_size().x / 2 + 10;
+			if (buf2[0] != buf[0] || buf2[1] != buf[1]) {
+				_invDescObj->set_state(buf2);
+				_hoverObjectPos = _scene->mouse_hover_object_interface()->screen_R();
+				if (_hoverObjectPos.x + _invDescObj->screen_size().x / 2 >= 800
+						|| (_hoverObjectPos.x - _invDescObj->screen_size().x / 2 <= 0)) {
+					if (_hoverObjectPos.x + _invDescObj->screen_size().x / 2 < 800) {
+						if (_hoverObjectPos.x - _invDescObj->screen_size().x / 2 <= 0)
+							_invDescPos.x = _invDescObj->screen_size().x / 2 + 10;
+						} else {
+							_invDescPos.x = 790 - _invDescObj->screen_size().x / 2;
+						}
 					} else {
-						_invDescPos.x = 790 - _invDescObj->screen_size().x / 2;
-					}
-				} else {
-					_invDescPos.x = _hoverObjectPos.x;
+						_invDescPos.x = _hoverObjectPos.x;
+				}
+				_invDescPos.y = _invDescObj->screen_size().y / 2 + 73;
+				_invDescObj->set_R(_scene->screen2world_coords(_invDescPos, -1000.0));
+				_invDescCloseupObj->set_state("00");
 			}
-			_invDescPos.y = _invDescObj->screen_size().y / 2 + 73;
-			_invDescObj->set_R(_scene->screen2world_coords(_invDescPos, -1000.0));
-			_invDescCloseupObj->set_state("00");
 		}
 
-LABEL_21:
 		if (_scene->mouse_right_click_object_interface()) {
 			if (!_scene->mouse_object_interface()) {
 				state = _scene->mouse_hover_object_interface()->current_state_name();
 
 				if (strstr(state, "#closeup#")) {
-					pos = strstr(state, "#inv#");
+					const char *pos = strstr(state, "#inv#");
 					Common::strlcpy(buf, pos + 5, 3);
 					buf[2] = 0;
 
