@@ -2035,7 +2035,7 @@ void setup_player_character(int charid) {
 	_G(playerchar) = &_GP(game).chars[charid];
 	_G(sc_PlayerCharPtr) = ccGetObjectHandleFromAddress((char *)_G(playerchar));
 	if (_G(loaded_game_file_version) < kGameVersion_270) {
-		ccAddExternalDynamicObject("player", _G(playerchar), &_GP(ccDynamicCharacter));
+		ccAddExternalScriptObject("player", _G(playerchar), &_GP(ccDynamicCharacter));
 	}
 }
 

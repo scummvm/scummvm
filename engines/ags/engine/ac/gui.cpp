@@ -307,7 +307,7 @@ void remove_popup_interface(int ifacenum) {
 void process_interface_click(int ifce, int btn, int mbut) {
 	if (btn < 0) {
 		// click on GUI background
-		RuntimeScriptValue params[]{ RuntimeScriptValue().SetDynamicObject(&_GP(scrGui)[ifce], &_GP(ccDynamicGUI)),
+		RuntimeScriptValue params[]{ RuntimeScriptValue().SetScriptObject(&_GP(scrGui)[ifce], &_GP(ccDynamicGUI)),
 					RuntimeScriptValue().SetInt32(mbut) };
 		QueueScriptFunction(kScInstGame, _GP(guis)[ifce].OnClickHandler.GetCStr(), 2, params);
 		return;
@@ -335,11 +335,11 @@ void process_interface_click(int ifce, int btn, int mbut) {
 			(!_G(gameinst)->GetSymbolAddress(theObj->EventHandlers[0].GetCStr()).IsNull())) {
 			// control-specific event handler
 			if (theObj->GetEventArgs(0).FindChar(',') != String::NoIndex) {
-				RuntimeScriptValue params[]{ RuntimeScriptValue().SetDynamicObject(theObj, &_GP(ccDynamicGUIObject)),
+				RuntimeScriptValue params[]{ RuntimeScriptValue().SetScriptObject(theObj, &_GP(ccDynamicGUIObject)),
 					RuntimeScriptValue().SetInt32(mbut) };
 				QueueScriptFunction(kScInstGame, theObj->EventHandlers[0].GetCStr(), 2, params);
 			} else {
-				RuntimeScriptValue params[]{ RuntimeScriptValue().SetDynamicObject(theObj, &_GP(ccDynamicGUIObject)) };
+				RuntimeScriptValue params[]{ RuntimeScriptValue().SetScriptObject(theObj, &_GP(ccDynamicGUIObject)) };
 				QueueScriptFunction(kScInstGame, theObj->EventHandlers[0].GetCStr(), 1, params);
 			}
 		} else {
@@ -420,7 +420,7 @@ void export_gui_controls(int ee) {
 	for (int ff = 0; ff < _GP(guis)[ee].GetControlCount(); ff++) {
 		GUIObject *guio = _GP(guis)[ee].GetControl(ff);
 		if (!guio->Name.IsEmpty())
-			ccAddExternalDynamicObject(guio->Name, guio, &_GP(ccDynamicGUIObject));
+			ccAddExternalScriptObject(guio->Name, guio, &_GP(ccDynamicGUIObject));
 		ccRegisterManagedObject(guio, &_GP(ccDynamicGUIObject));
 	}
 }
