@@ -75,7 +75,9 @@ public:
 
 		SaveStateList saveList;
 		for (uint32 i = 0; i < filenames.size(); i++)
-			saveList.push_back(SaveStateDescriptor(this, i, filenames[i]));
+			// Since slots are ignored when saving, we always return slot 0
+			// as an unused slot to optimise the autosave process
+			saveList.push_back(SaveStateDescriptor(this, i + 1, filenames[i]));
 
 		return saveList;
 	}
