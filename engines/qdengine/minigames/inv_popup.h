@@ -350,7 +350,7 @@ private:
 	mgVect2i _invDescPos;
 	bool _someFlag = false;
 	int _direction = 0;
-	bool  _shveikIsMoving = false;
+	int _shveikIsMoving = 0;
 	float _time = 0;
 	int _timeout = 0;
 	mgVect3f _oldShveikPos;
