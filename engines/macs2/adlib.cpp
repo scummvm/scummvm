@@ -653,7 +653,7 @@ void Adlib::OnTimer() {
 						// l0017_1BE4:
 						// TODO: Is this the first usage?
 						uint8 bp8 = 0;
-						// TODO: Figure out the loop conditions
+						// TODO: Figure out the loop conditions and correct indentation
 						do {
 							// l0017_1BE9:
 							// TODO: Not sure if it's important to remove the higher bits as the
@@ -670,19 +670,33 @@ void Adlib::OnTimer() {
 									// cmp al, [bp - 3h]
 									// jnz 1C15h
 									if (true) {
-
+										// l0017_1C09:
+										// TODO: And another comparison with an unimplemented
+										// structure
+										// 	mov	di,[bp-8h]
+										// mov al, [di + 2235h]
+										// cmp al, [bp - 4h]
+										// jz 1C1Ah
+										if (true) {
+											// l0017_1C15:
+											bp8++;
+										} else {
+											break;
+										}
 									}
-								}
-								// TODO: Should be 1C15h
-
-
-								// TODO: Continue from here
+								}	
 							}
-							// TODO: Should be 1C1Ah
-				
-
-							
 						} while (true);
+						// l0017_1C1A:
+						// TODO: Not sure about removal of AH bits in the original
+						if (g2291 == bp8) {
+							// l0017_1C27:
+							// TODO: Continue from here
+						}
+						// TODO: Should be 1CF2
+						// TODO: Check if this is an else or just an if
+
+
 					}
 					// TODO: Should be 1E94h
 
