@@ -816,9 +816,9 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 			options.push_back(fmtownsForceHiResMode);
 #endif
 	}
-    if (target.empty() || gameid == "maniac") {
+	if (target.empty() || gameid == "maniac") {
 		// The kiosk demo script is in V1/V2 DOS, V2 Atari ST and V2 Amiga.
-        bool isValidTarget = !extra.contains("Demo") &&
+		bool isValidTarget = !extra.contains("Demo") &&
 			(platform == Common::kPlatformDOS   ||
 			 platform == Common::kPlatformAmiga ||
 			 platform == Common::kPlatformAtariST) &&
@@ -826,7 +826,7 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 
 		if (isValidTarget)
 			options.push_back(mmDemoModeOption);
-    }
+	}
 	// The Steam Mac versions of Loom and Indy 3 are more akin to the VGA
 	// DOS versions, and that's how ScummVM usually sees them. But that
 	// rebranding does not happen until later.
