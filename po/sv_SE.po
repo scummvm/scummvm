@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-09 00:19+0000\n"
-"PO-Revision-Date: 2024-08-29 03:43+0000\n"
+"PO-Revision-Date: 2024-09-12 05:43+0000\n"
 "Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -7616,6 +7616,14 @@ msgid ""
 "\n"
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt"
 msgstr ""
+"FEL: Hittade inte tillräckligt med musikspår!\n"
+"Escape from Monkey Island har två versioner av FullMonkeyMap.imt,\n"
+"du måste kopiera båda filerna från båda CD:arna till Textures/, och byta\n"
+"namn på dem som följer för att gå musikstöd i spelet:\n"
+"CD1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
+"CD2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
+"\n"
+"Alternativt har en Stream- eller GOG-kopia en kombinerad FullMonkeyMap.imt"
 
 #: engines/groovie/metaengine.cpp:41
 msgid "Fast movie speed"
@@ -7635,12 +7643,14 @@ msgstr "Reducera svårigheten för AI pussel"
 
 #: engines/groovie/metaengine.cpp:89
 msgid "Updated Credits Music"
-msgstr ""
+msgstr "Uppdaterad eftertextmusik"
 
 #: engines/groovie/metaengine.cpp:90
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr ""
+"Spela sång The Final Hour under eftertexterna istället för att återanvända "
+"MIDI-sånger"
 
 #: engines/groovie/metaengine.cpp:101
 msgid "Slim Left/Right Hotspots"
@@ -7765,13 +7775,13 @@ msgstr "Glid höger"
 
 #: engines/hpl1/metaengine.cpp:83
 msgid "Jump"
-msgstr ""
+msgstr "Hoppa"
 
 #. I18N: Action in In Cold Blood
 #: engines/hpl1/metaengine.cpp:84 engines/icb/icb.cpp:119
 #: engines/icb/icb.cpp:185
 msgid "Crouch"
-msgstr ""
+msgstr "Huka"
 
 #: engines/hpl1/metaengine.cpp:87
 #, fuzzy
@@ -7787,15 +7797,15 @@ msgstr "Våldsamt läge"
 
 #: engines/hpl1/metaengine.cpp:89
 msgid "Holster"
-msgstr ""
+msgstr "Hölstra"
 
 #: engines/hpl1/metaengine.cpp:95 engines/tinsel/metaengine.cpp:317
 msgid "Notebook"
-msgstr ""
+msgstr "Anteckningsbok"
 
 #: engines/hpl1/metaengine.cpp:96
 msgid "Personal Notes"
-msgstr ""
+msgstr "Personliga Anteckningar"
 
 #: engines/hpl1/metaengine.cpp:97
 #, fuzzy
@@ -7805,7 +7815,7 @@ msgstr "Flyg rakt fram"
 
 #: engines/hpl1/metaengine.cpp:98
 msgid "Glowstick"
-msgstr ""
+msgstr "Ljusstav"
 
 #: engines/hypno/metaengine.cpp:33
 #, fuzzy
@@ -7814,7 +7824,7 @@ msgstr "Aktivera fusk"
 
 #: engines/hypno/metaengine.cpp:34
 msgid "Allow cheats using the C key."
-msgstr ""
+msgstr "Tillåt fusk med C-knappen."
 
 #: engines/hypno/metaengine.cpp:44
 #, fuzzy
@@ -7824,6 +7834,7 @@ msgstr "Aktivera censurering"
 #: engines/hypno/metaengine.cpp:45
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr ""
+"Spelarhälsan kommer aldrig att minskap (förutom under spelet slut-scener)."
 
 #: engines/hypno/metaengine.cpp:55
 #, fuzzy
@@ -7832,15 +7843,15 @@ msgstr "Aktivera fusk"
 
 #: engines/hypno/metaengine.cpp:56
 msgid "Player ammo will never decrease."
-msgstr ""
+msgstr "Spelarammunition kommer aldrig att minska."
 
 #: engines/hypno/metaengine.cpp:66
 msgid "Unlock all levels"
-msgstr ""
+msgstr "Lås upp alla nivåer"
 
 #: engines/hypno/metaengine.cpp:67
 msgid "All levels will be available to play."
-msgstr ""
+msgstr "Alla nivåer kommer att finnas tillgängliga att spela."
 
 #: engines/hypno/metaengine.cpp:77
 #, fuzzy
@@ -7850,16 +7861,18 @@ msgstr "Aktivera Discord integration"
 #: engines/hypno/metaengine.cpp:78
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
+"Lägg till ytterligare innehåll som inte aktiverats i "
+"originalimplementationen."
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:89
 msgid "Fire"
-msgstr ""
+msgstr "Skjut"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:107
 msgid "Arm"
-msgstr ""
+msgstr "Armera"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:113
@@ -7876,7 +7889,7 @@ msgstr "Glid vänster"
 
 #: engines/kyra/detection_tables.h:75
 msgid "Missing language specific game code and/or resources."
-msgstr ""
+msgstr "Saknar språkspecifik spelkod och/eller resurser."
 
 #: engines/kyra/detection_tables.h:76
 msgid ""
