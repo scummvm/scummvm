@@ -186,6 +186,9 @@ void DarkseedEngine::gameloop() {
 			}
 		}
 		counter_2c85_888b = (counter_2c85_888b + 1) & 0xff;
+		if (_isPlayingCutscene) {
+			updateCutscene();
+		}
 		if (systemTimerCounter == 5) {
 			if (_objectVar[1] != 0) {
 				if (_room->_roomNumber == 30) {
@@ -2714,7 +2717,7 @@ void DarkseedEngine::lookCode(int objNum) {
 }
 
 void DarkseedEngine::wongame() {
-	// TODO
+	error("implement wongame()"); // TODO
 }
 
 void DarkseedEngine::printTime() {
@@ -2744,6 +2747,21 @@ void DarkseedEngine::showFullscreenPic(const Common::Path &filename) {
 
 void DarkseedEngine::playCutscene(const Common::String cutsceneId) {
 	debug("Play Cutscene %s", cutsceneId.c_str()); // TODO play cutscenes.
+	_cutsceneId = cutsceneId;
+	_isPlayingCutscene = true;
+}
+
+void DarkseedEngine::updateCutscene() {
+	// TODO play cutscene here.
+
+	// HACK to get cut scene E to work.
+	if (_isPlayingCutscene) {
+		_isPlayingCutscene = false;
+		if (_cutsceneId == "E") {
+			_previousRoomNumber = 38;
+			changeToRoom(7);
+		}
+	}
 }
 
 void DarkseedEngine::getPackageObj(int packageType) {
