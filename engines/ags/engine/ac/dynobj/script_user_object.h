@@ -44,25 +44,25 @@ protected:
 
 public:
 	static ScriptUserObject *CreateManaged(size_t size);
-	void Create(const char *data, AGS::Shared::Stream *in, size_t size);
+	void Create(const uint8_t *data, AGS::Shared::Stream *in, size_t size);
 
 	// return the type name of the object
 	const char *GetType() override;
-	int Dispose(const char *address, bool force) override;
+	int  Dispose(void *address, bool force) override;
 	void Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz) override;
 
 	// Support for reading and writing object values by their relative offset
-	const char *GetFieldPtr(const char *address, intptr_t offset) override;
-	void    Read(const char *address, intptr_t offset, void *dest, int size) override;
-	uint8_t ReadInt8(const char *address, intptr_t offset) override;
-	int16_t ReadInt16(const char *address, intptr_t offset) override;
-	int32_t ReadInt32(const char *address, intptr_t offset) override;
-	float   ReadFloat(const char *address, intptr_t offset) override;
-	void    Write(const char *address, intptr_t offset, void *src, int size) override;
-	void    WriteInt8(const char *address, intptr_t offset, uint8_t val) override;
-	void    WriteInt16(const char *address, intptr_t offset, int16_t val) override;
-	void    WriteInt32(const char *address, intptr_t offset, int32_t val) override;
-	void    WriteFloat(const char *address, intptr_t offset, float val) override;
+	void	*GetFieldPtr(void *address, intptr_t offset) override;
+	void 	Read(void *address, intptr_t offset, uint8_t *dest, size_t size) override;
+	uint8_t ReadInt8(void *address, intptr_t offset) override;
+	int16_t ReadInt16(void *address, intptr_t offset) override;
+	int32_t ReadInt32(void *address, intptr_t offset) override;
+	float	ReadFloat(void *address, intptr_t offset) override;
+	void	Write(void *address, intptr_t offset, const uint8_t *src, size_t size) override;
+	void	WriteInt8(void *address, intptr_t offset, uint8_t val) override;
+	void	WriteInt16(void *address, intptr_t offset, int16_t val) override;
+	void	WriteInt32(void *address, intptr_t offset, int32_t val) override;
+	void	WriteFloat(void *address, intptr_t offset, float val) override;
 
 private:
 	// NOTE: we use signed int for Size at the moment, because the managed
@@ -76,9 +76,9 @@ private:
 
 	// Savegame serialization
 	// Calculate and return required space for serialization, in bytes
-	size_t CalcSerializeSize(const char *address) override;
+	size_t CalcSerializeSize(void *address) override;
 	// Write object data into the provided stream
-	void Serialize(const char *address, AGS::Shared::Stream *out) override;
+	void Serialize(void *address, AGS::Shared::Stream *out) override;
 };
 
 

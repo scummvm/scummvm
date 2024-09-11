@@ -35,13 +35,13 @@ const char *CCInventory::GetType() {
 	return "Inventory";
 }
 
-size_t CCInventory::CalcSerializeSize(const char * /*address*/) {
+size_t CCInventory::CalcSerializeSize(void * /*address*/) {
 	return sizeof(int32_t);
 }
 
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
-void CCInventory::Serialize(const char *address, Stream *out) {
+void CCInventory::Serialize(void *address, Stream *out) {
 	const ScriptInvItem *shh = (const ScriptInvItem *)address;
 	out->WriteInt32(shh->id);
 }

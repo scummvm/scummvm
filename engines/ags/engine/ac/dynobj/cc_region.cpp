@@ -36,13 +36,13 @@ const char *CCRegion::GetType() {
 	return "Region";
 }
 
-size_t CCRegion::CalcSerializeSize(const char * /*address*/) {
+size_t CCRegion::CalcSerializeSize(void * /*address*/) {
 	return sizeof(int32_t);
 }
 
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
-void CCRegion::Serialize(const char *address, Stream *out) {
+void CCRegion::Serialize(void *address, Stream *out) {
 	const ScriptRegion *shh = (const ScriptRegion *)address;
 	out->WriteInt32(shh->id);
 }

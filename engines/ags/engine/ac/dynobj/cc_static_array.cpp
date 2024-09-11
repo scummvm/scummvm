@@ -31,61 +31,57 @@ void CCStaticArray::Create(ICCDynamicObject *mgr, size_t elem_script_size, size_
 	_elemCount = elem_count;
 }
 
-const char *CCStaticArray::GetElementPtr(const char *address, intptr_t legacy_offset) {
-	return address + (legacy_offset / _elemScriptSize) * _elemMemSize;
-}
-
-const char *CCStaticArray::GetFieldPtr(const char *address, intptr_t offset) {
+void *CCStaticArray::GetFieldPtr(void *address, intptr_t offset) {
 	return GetElementPtr(address, offset);
 }
 
-void CCStaticArray::Read(const char *address, intptr_t offset, void *dest, int size) {
-	const char *el_ptr = GetElementPtr(address, offset);
+void CCStaticArray::Read(void *address, intptr_t offset, uint8_t *dest, size_t size) {
+	void *el_ptr = GetElementPtr(address, offset);
 	return _mgr->Read(el_ptr, offset % _elemScriptSize, dest, size);
 }
 
-uint8_t CCStaticArray::ReadInt8(const char *address, intptr_t offset) {
-	const char *el_ptr = GetElementPtr(address, offset);
+uint8_t CCStaticArray::ReadInt8(void *address, intptr_t offset) {
+	void *el_ptr = GetElementPtr(address, offset);
 	return _mgr->ReadInt8(el_ptr, offset % _elemScriptSize);
 }
 
-int16_t CCStaticArray::ReadInt16(const char *address, intptr_t offset) {
-	const char *el_ptr = GetElementPtr(address, offset);
+int16_t CCStaticArray::ReadInt16(void *address, intptr_t offset) {
+	void *el_ptr = GetElementPtr(address, offset);
 	return _mgr->ReadInt16(el_ptr, offset % _elemScriptSize);
 }
 
-int32_t CCStaticArray::ReadInt32(const char *address, intptr_t offset) {
-	const char *el_ptr = GetElementPtr(address, offset);
+int32_t CCStaticArray::ReadInt32(void *address, intptr_t offset) {
+	void *el_ptr = GetElementPtr(address, offset);
 	return _mgr->ReadInt32(el_ptr, offset % _elemScriptSize);
 }
 
-float CCStaticArray::ReadFloat(const char *address, intptr_t offset) {
-	const char *el_ptr = GetElementPtr(address, offset);
+float CCStaticArray::ReadFloat(void *address, intptr_t offset) {
+	void *el_ptr = GetElementPtr(address, offset);
 	return _mgr->ReadFloat(el_ptr, offset % _elemScriptSize);
 }
 
-void CCStaticArray::Write(const char *address, intptr_t offset, void *src, int size) {
-	const char *el_ptr = GetElementPtr(address, offset);
+void CCStaticArray::Write(void *address, intptr_t offset, const uint8_t *src, size_t size) {
+	void *el_ptr = GetElementPtr(address, offset);
 	return _mgr->Write(el_ptr, offset % _elemScriptSize, src, size);
 }
 
-void CCStaticArray::WriteInt8(const char *address, intptr_t offset, uint8_t val) {
-	const char *el_ptr = GetElementPtr(address, offset);
+void CCStaticArray::WriteInt8(void *address, intptr_t offset, uint8_t val) {
+	void *el_ptr = GetElementPtr(address, offset);
 	return _mgr->WriteInt8(el_ptr, offset % _elemScriptSize, val);
 }
 
-void CCStaticArray::WriteInt16(const char *address, intptr_t offset, int16_t val) {
-	const char *el_ptr = GetElementPtr(address, offset);
+void CCStaticArray::WriteInt16(void *address, intptr_t offset, int16_t val) {
+	void *el_ptr = GetElementPtr(address, offset);
 	return _mgr->WriteInt16(el_ptr, offset % _elemScriptSize, val);
 }
 
-void CCStaticArray::WriteInt32(const char *address, intptr_t offset, int32_t val) {
-	const char *el_ptr = GetElementPtr(address, offset);
+void CCStaticArray::WriteInt32(void *address, intptr_t offset, int32_t val) {
+	void *el_ptr = GetElementPtr(address, offset);
 	return _mgr->WriteInt32(el_ptr, offset % _elemScriptSize, val);
 }
 
-void CCStaticArray::WriteFloat(const char *address, intptr_t offset, float val) {
-	const char *el_ptr = GetElementPtr(address, offset);
+void CCStaticArray::WriteFloat(void *address, intptr_t offset, float val) {
+	void *el_ptr = GetElementPtr(address, offset);
 	return _mgr->WriteFloat(el_ptr, offset % _elemScriptSize, val);
 }
 

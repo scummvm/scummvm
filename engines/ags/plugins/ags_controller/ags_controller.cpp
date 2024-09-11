@@ -31,7 +31,7 @@ namespace AGSController {
 struct Controller : public IAGSScriptManagedObject {
 public:
 
-	int Dispose(const char *address, bool force) override {
+	int Dispose(void *address, bool force) override {
 		return true;
 	}
 
@@ -39,7 +39,7 @@ public:
 		return "Controller";
 	};
 
-	int Serialize(const char *address, char *buffer, int bufsize) override {
+	int Serialize(void *address, char *buffer, int bufsize) override {
 		return 0;
 	}
 };
