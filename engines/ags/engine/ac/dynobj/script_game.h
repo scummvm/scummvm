@@ -19,36 +19,17 @@
  *
  */
 
-#ifndef AGS_ENGINE_DYNOBJ__SCRIPTFILE_H
-#define AGS_ENGINE_DYNOBJ__SCRIPTFILE_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_AGS_SCRIPT_GAME_H
+#define AGS_ENGINE_AC_DYNOBJ_AGS_SCRIPT_GAME_H
 
 #include "ags/engine/ac/dynobj/cc_ags_dynamic_object.h"
-#include "ags/shared/util/file.h"
 
 namespace AGS3 {
 
-using namespace AGS; // FIXME later
-
-#define scFileRead   1
-#define scFileWrite  2
-#define scFileAppend 3
-
-struct sc_File final : CCBasicObject {
-	int32_t             handle;
-
-	static const Shared::FileOpenMode fopenModes[];
-	static const Shared::FileWorkMode fworkModes[];
-
-	int Dispose(const char *address, bool force) override;
-
-	const char *GetType() override;
-
-	int Serialize(const char *address, char *buffer, int bufsize) override;
-
-	int OpenFile(const char *filename, int mode);
-	void Close();
-
-	sc_File();
+// Wrapper around script's "Game" struct, managing access to its variables
+struct StaticGame : public AGSCCStaticObject {
+	const char *GetType() override { return "Game"; }
+	void WriteInt32(const char *address, intptr_t offset, int32_t val) override;
 };
 
 } // namespace AGS3

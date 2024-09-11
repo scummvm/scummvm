@@ -65,10 +65,12 @@
 #include "ags/engine/ac/dynobj/cc_object.h"
 #include "ags/engine/ac/dynobj/cc_region.h"
 #include "ags/engine/ac/dynobj/cc_serializer.h"
+#include "ags/engine/ac/dynobj/cc_static_array.h"
 #include "ags/engine/ac/dynobj/managed_object_pool.h"
 #include "ags/engine/ac/dynobj/script_audio_channel.h"
 #include "ags/engine/ac/dynobj/script_dialog.h"
 #include "ags/engine/ac/dynobj/script_dialog_options_rendering.h"
+#include "ags/engine/ac/dynobj/script_game.h"
 #include "ags/engine/ac/dynobj/script_gui.h"
 #include "ags/engine/ac/dynobj/script_hotspot.h"
 #include "ags/engine/ac/dynobj/script_inv_item.h"
@@ -76,7 +78,6 @@
 #include "ags/engine/ac/dynobj/script_region.h"
 #include "ags/engine/ac/dynobj/script_string.h"
 #include "ags/engine/ac/dynobj/script_system.h"
-#include "ags/engine/ac/statobj/static_array.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/engine/debugging/log_file.h"
 #include "ags/engine/debugging/message_buffer.h"
@@ -119,8 +120,8 @@ Globals::Globals() {
 	// ags_plugin.cpp globals
 	_glVirtualScreenWrap = new AGS::Shared::Bitmap();
 
-	// ags_static_object.cpp globals
-	_GlobalStaticManager = new AGSStaticObject();
+	// cc_ags_dynamic_object.cpp globals
+	_GlobalStaticManager = new AGSCCStaticObject();
 	_GameStaticManager = new StaticGame();
 
 	// asset_manager.cpp globals
@@ -253,13 +254,13 @@ Globals::Globals() {
 	_saveGameDirectory = AGS::Shared::SAVE_FOLDER_PREFIX;
 
 	// game_init.cpp globals
-	_StaticCharacterArray = new StaticArray();
-	_StaticObjectArray = new StaticArray();
-	_StaticGUIArray = new StaticArray();
-	_StaticHotspotArray = new StaticArray();
-	_StaticRegionArray = new StaticArray();
-	_StaticInventoryArray = new StaticArray();
-	_StaticDialogArray = new StaticArray();
+	_StaticCharacterArray = new CCStaticArray();
+	_StaticObjectArray = new CCStaticArray();
+	_StaticGUIArray = new CCStaticArray();
+	_StaticHotspotArray = new CCStaticArray();
+	_StaticRegionArray = new CCStaticArray();
+	_StaticInventoryArray = new CCStaticArray();
+	_StaticDialogArray = new CCStaticArray();
 
 	// game_run.cpp globals
 	_fps = std::numeric_limits<float>::quiet_NaN();
