@@ -53,30 +53,30 @@ namespace AGS { namespace Shared { class Stream; } }
 // * Serialization skipped, does not save or load anything;
 // * Provides default implementation for reading and writing data fields,
 //   treats the contents of an object as a raw byte buffer.
-struct CCBasicObject : ICCDynamicObject {
+struct CCBasicObject : public ICCDynamicObject {
 public:
 	virtual ~CCBasicObject() = default;
 
 	// Dispose the object
-	int Dispose(const char * /*address*/, bool /*force*/) override;
+	int Dispose(void * /*address*/, bool /*force*/) override;
 	// Serialize the object into BUFFER (which is BUFSIZE bytes)
 	// return number of bytes used
-	int Serialize(const char * /*address*/, char * /*buffer*/, int /*bufsize*/) override;
+	int Serialize(void * /*address*/, uint8_t * /*buffer*/, int /*bufsize*/) override;
 
 	//
 	// Legacy support for reading and writing object fields by their relative offset
 	//
-	const char *GetFieldPtr(const char *address, intptr_t offset) override;
-	void Read(const char *address, intptr_t offset, void *dest, int size) override;
-	uint8_t ReadInt8(const char *address, intptr_t offset) override;
-	int16_t ReadInt16(const char *address, intptr_t offset) override;
-	int32_t ReadInt32(const char *address, intptr_t offset) override;
-	float ReadFloat(const char *address, intptr_t offset) override;
-	void Write(const char *address, intptr_t offset, void *src, int size) override;
-	void WriteInt8(const char *address, intptr_t offset, uint8_t val) override;
-	void WriteInt16(const char *address, intptr_t offset, int16_t val) override;
-	void WriteInt32(const char *address, intptr_t offset, int32_t val) override;
-	void WriteFloat(const char *address, intptr_t offset, float val) override;
+	void *GetFieldPtr(void *address, intptr_t offset) override;
+	void Read(void *address, intptr_t offset, uint8_t *dest, size_t size) override;
+	uint8_t ReadInt8(void *address, intptr_t offset) override;
+	int16_t ReadInt16(void *address, intptr_t offset) override;
+	int32_t ReadInt32(void *address, intptr_t offset) override;
+	float ReadFloat(void *address, intptr_t offset) override;
+	void Write(void *address, intptr_t offset, const uint8_t *src, size_t size) override;
+	void WriteInt8(void *address, intptr_t offset, uint8_t val) override;
+	void WriteInt16(void *address, intptr_t offset, int16_t val) override;
+	void WriteInt32(void *address, intptr_t offset, int32_t val) override;
+	void WriteFloat(void *address, intptr_t offset, float val) override;
 };
 
 
@@ -90,29 +90,27 @@ public:
 	virtual ~AGSCCDynamicObject() = default;
 
 	// TODO: pass savegame format version
-	int Serialize(const char *address, char *buffer, int bufsize) override;
+	int Serialize(void *address, uint8_t *buffer, int bufsize) override;
 	// Try unserializing the object from the given input stream
 	virtual void Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz) = 0;
 
 protected:
 	// Savegame serialization
 	// Calculate and return required space for serialization, in bytes
-	virtual size_t CalcSerializeSize(const char *address) = 0;
+	virtual size_t CalcSerializeSize(void *address) = 0;
 	// Write object data into the provided stream
-	virtual void Serialize(const char *address, AGS::Shared::Stream *out) = 0;
+	virtual void Serialize(void *address, AGS::Shared::Stream *out) = 0;
 };
 
 // CCStaticObject is a base class for managing static global objects in script.
 // The static objects can never be disposed, and do not support serialization
 // through ICCDynamicObject interface.
-struct AGSCCStaticObject : CCBasicObject {
+struct AGSCCStaticObject : public CCBasicObject {
 public:
 	virtual ~AGSCCStaticObject() = default;
 
 	const char *GetType() override { return "StaticObject"; }
 };
-
-// extern AGSCCStaticObject GlobalStaticManager;
 
 } // namespace AGS3
 

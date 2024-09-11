@@ -642,8 +642,8 @@ void IAGSEngine::QueueGameScriptFunction(const char *name, int32 globalScript, i
 	_G(curscript)->run_another(name, globalScript ? kScInstGame : kScInstRoom, numArgs, params);
 }
 
-int IAGSEngine::RegisterManagedObject(const void *object, IAGSScriptManagedObject *callback) {
-	_GP(GlobalReturnValue).SetPluginObject(const_cast<void *>(object), (ICCDynamicObject *)callback);
+int IAGSEngine::RegisterManagedObject(void *object, IAGSScriptManagedObject *callback) {
+	_GP(GlobalReturnValue).SetPluginObject(object, (ICCDynamicObject *)callback);
 	return ccRegisterManagedObject(object, (ICCDynamicObject *)callback, kScValPluginObject);
 }
 
@@ -664,12 +664,12 @@ void IAGSEngine::AddManagedObjectReader(const char *typeName, IAGSManagedObjectR
 	_G(numPluginReaders)++;
 }
 
-void IAGSEngine::RegisterUnserializedObject(int key, const void *object, IAGSScriptManagedObject *callback) {
-	_GP(GlobalReturnValue).SetPluginObject(const_cast<void *>(object), (ICCDynamicObject *)callback);
+void IAGSEngine::RegisterUnserializedObject(int key, void *object, IAGSScriptManagedObject *callback) {
+	_GP(GlobalReturnValue).SetPluginObject(object, (ICCDynamicObject *)callback);
 	ccRegisterUnserializedObject(key, object, (ICCDynamicObject *)callback, kScValPluginObject);
 }
 
-int IAGSEngine::GetManagedObjectKeyByAddress(const char *address) {
+int IAGSEngine::GetManagedObjectKeyByAddress(void *address) {
 	return ccGetObjectHandleFromAddress(address);
 }
 
@@ -688,11 +688,11 @@ const char *IAGSEngine::CreateScriptString(const char *fromText) {
 	return string;
 }
 
-int IAGSEngine::IncrementManagedObjectRefCount(const char *address) {
+int IAGSEngine::IncrementManagedObjectRefCount(void *address) {
 	return ccAddObjectReference(GetManagedObjectKeyByAddress(address));
 }
 
-int IAGSEngine::DecrementManagedObjectRefCount(const char *address) {
+int IAGSEngine::DecrementManagedObjectRefCount(void *address) {
 	return ccReleaseObjectReference(GetManagedObjectKeyByAddress(address));
 }
 

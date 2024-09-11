@@ -30,14 +30,14 @@ namespace AGSSock {
 
 struct SockData : public IAGSScriptManagedObject, public Common::Array<byte> {
 public:
-	int Dispose(const char *address, bool force) override {
+	int Dispose(void *address, bool force) override {
 		delete this;
 		return true;
 	}
 	const char *GetType() override {
 		return "SockData";
 	};
-	int Serialize(const char *address, char *buffer, int bufsize) override {
+	int Serialize(void *address, char *buffer, int bufsize) override {
 		return 0;
 	}
 };
@@ -48,14 +48,14 @@ public:
 	Common::String _address;
 	Common::String _ip;
 
-	int Dispose(const char *address, bool force) override {
+	int Dispose(void *address, bool force) override {
 		delete this;
 		return true;
 	}
 	const char *GetType() override {
 		return "SockAddr";
 	};
-	int Serialize(const char *address, char *buffer, int bufsize) override {
+	int Serialize(void *address, char *buffer, int bufsize) override {
 		return 0;
 	}
 };
@@ -73,14 +73,14 @@ public:
 	bool _valid = false;
 	Common::String _errorString;
 
-	int Dispose(const char *address, bool force) override {
+	int Dispose(void *address, bool force) override {
 		delete this;
 		return true;
 	}
 	const char *GetType() override {
 		return "Socket";
 	};
-	int Serialize(const char *address, char *buffer, int bufsize) override {
+	int Serialize(void *address, char *buffer, int bufsize) override {
 		return 0;
 	}
 };

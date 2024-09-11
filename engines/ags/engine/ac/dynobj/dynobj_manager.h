@@ -49,11 +49,11 @@ using namespace AGS; // FIXME later
 extern void  ccSetStringClassImpl(ICCStringClass *theClass);
 // register a memory handle for the object and allow script
 // pointers to point to it
-extern int32_t ccRegisterManagedObject(const void *object, ICCDynamicObject *, ScriptValueType obj_type = kScValDynamicObject);
+extern int32_t ccRegisterManagedObject(void *object, ICCDynamicObject *, ScriptValueType obj_type = kScValDynamicObject);
 // register a de-serialized object
-extern int32_t ccRegisterUnserializedObject(int index, const void *object, ICCDynamicObject *, ScriptValueType obj_type = kScValDynamicObject);
+extern int32_t ccRegisterUnserializedObject(int index, void *object, ICCDynamicObject *, ScriptValueType obj_type = kScValDynamicObject);
 // unregister a particular object
-extern int   ccUnRegisterManagedObject(const void *object);
+extern int   ccUnRegisterManagedObject(void *object);
 // remove all registered objects
 extern void  ccUnregisterAllObjects();
 // serialize all objects to disk
@@ -63,10 +63,8 @@ extern int   ccUnserializeAllObjects(Shared::Stream *in, ICCObjectReader *callba
 // dispose the object if RefCount==0
 extern void  ccAttemptDisposeObject(int32_t handle);
 // translate between object handles and memory addresses
-extern int32_t ccGetObjectHandleFromAddress(const void *address);
-// TODO: not sure if it makes any sense whatsoever to use "const char*"
-// in these functions, might as well change to char* or just void*.
-extern const char *ccGetObjectAddressFromHandle(int32_t handle);
+extern int32_t ccGetObjectHandleFromAddress(void *address);
+extern void *ccGetObjectAddressFromHandle(int32_t handle);
 extern ScriptValueType ccGetObjectAddressAndManagerFromHandle(int32_t handle, void *&object, ICCDynamicObject *&manager);
 
 extern int ccAddObjectReference(int32_t handle);

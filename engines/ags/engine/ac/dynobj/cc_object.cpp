@@ -36,13 +36,13 @@ const char *CCObject::GetType() {
 	return "Object";
 }
 
-size_t CCObject::CalcSerializeSize(const char * /*address*/) {
+size_t CCObject::CalcSerializeSize(void * /*address*/) {
 	return sizeof(int32_t);
 }
 
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
-void CCObject::Serialize(const char *address, Stream *out) {
+void CCObject::Serialize(void *address, Stream *out) {
 	const ScriptObject *shh = (const ScriptObject *)address;
 	out->WriteInt32(shh->id);
 }

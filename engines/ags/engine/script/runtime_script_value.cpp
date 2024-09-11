@@ -49,7 +49,7 @@ uint8_t RuntimeScriptValue::ReadByte() const {
 	case kScValStaticObject:
 	case kScValStaticArray:
 	case kScValDynamicObject:
-		return this->ObjMgr->ReadInt8((const char *)this->Ptr, this->IValue);
+		return this->ObjMgr->ReadInt8(this->Ptr, this->IValue);
 	default:
 		return *((uint8_t *)this->GetPtrWithOffset());
 	}
@@ -72,7 +72,7 @@ int16_t RuntimeScriptValue::ReadInt16() const {
 	case kScValStaticObject:
 	case kScValStaticArray:
 	case kScValDynamicObject:
-		return this->ObjMgr->ReadInt16((const char *)this->Ptr, this->IValue);
+		return this->ObjMgr->ReadInt16(this->Ptr, this->IValue);
 
 	default:
 		return *((int16_t *)this->GetPtrWithOffset());
@@ -96,7 +96,7 @@ int32_t RuntimeScriptValue::ReadInt32() const {
 	case kScValStaticObject:
 	case kScValStaticArray:
 	case kScValDynamicObject:
-		return this->ObjMgr->ReadInt32((const char *)this->Ptr, this->IValue);
+		return this->ObjMgr->ReadInt32(this->Ptr, this->IValue);
 	default:
 		return *((int32_t *)this->GetPtrWithOffset());
 	}
@@ -115,7 +115,7 @@ void RuntimeScriptValue::WriteByte(uint8_t val) {
 	case kScValStaticObject:
 	case kScValStaticArray:
 	case kScValDynamicObject:
-		this->ObjMgr->WriteInt8((const char *)this->Ptr, this->IValue, val);
+		this->ObjMgr->WriteInt8(this->Ptr, this->IValue, val);
 		break;
 	default:
 		*((uint8_t *)this->GetPtrWithOffset()) = val;
@@ -142,7 +142,7 @@ void RuntimeScriptValue::WriteInt16(int16_t val) {
 	case kScValStaticObject:
 	case kScValStaticArray:
 	case kScValDynamicObject:
-		this->ObjMgr->WriteInt16((const char *)this->Ptr, this->IValue, val);
+		this->ObjMgr->WriteInt16(this->Ptr, this->IValue, val);
 		break;
 	default:
 		*((int16_t *)this->GetPtrWithOffset()) = val;
@@ -169,7 +169,7 @@ void RuntimeScriptValue::WriteInt32(int32_t val) {
 	case kScValStaticObject:
 	case kScValStaticArray:
 	case kScValDynamicObject:
-		this->ObjMgr->WriteInt32((const char *)this->Ptr, this->IValue, val);
+		this->ObjMgr->WriteInt32(this->Ptr, this->IValue, val);
 		break;
 	default:
 		*((int32_t *)this->GetPtrWithOffset()) = val;
@@ -186,7 +186,7 @@ RuntimeScriptValue &RuntimeScriptValue::DirectPtr() {
 
 	if (Ptr) {
 		if (Type == kScValDynamicObject || Type == kScValStaticObject)
-			Ptr = const_cast<char *>(ObjMgr->GetFieldPtr((const char *)Ptr, IValue));
+			Ptr = ObjMgr->GetFieldPtr(Ptr, IValue);
 		else
 			Ptr = PtrU8 + IValue;
 		IValue = 0;
@@ -208,7 +208,7 @@ intptr_t RuntimeScriptValue::GetDirectPtr() const {
 		ival += temp_val->IValue;
 	}
 	if (temp_val->Type == kScValDynamicObject || temp_val->Type == kScValStaticObject)
-		return (intptr_t)temp_val->ObjMgr->GetFieldPtr((const char *)temp_val->Ptr, ival);
+		return (intptr_t)temp_val->ObjMgr->GetFieldPtr(temp_val->Ptr, ival);
 	else
 		return (intptr_t)(temp_val->PtrU8 + ival);
 }
