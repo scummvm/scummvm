@@ -27,60 +27,59 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-int CCBasicObject::Dispose(const char * /*address*/, bool /*force*/) {
+int CCBasicObject::Dispose(void * /*address*/, bool /*force*/) {
 	return 0; // cannot be removed from memory
 }
 
-int CCBasicObject::Serialize(const char * /*address*/, char * /*buffer*/, int /*bufsize*/) {
+int CCBasicObject::Serialize(void * /*address*/, uint8_t * /*buffer*/, int /*bufsize*/) {
 	return 0; // does not save data
 }
 
-const char *CCBasicObject::GetFieldPtr(const char *address, intptr_t offset) {
-	return address + offset;
+void *CCBasicObject::GetFieldPtr(void *address, intptr_t offset) {
+	return static_cast<uint8_t *>(address) + offset;
 }
 
-void CCBasicObject::Read(const char *address, intptr_t offset, void *dest, int size) {
-	memcpy(dest, address + offset, size);
+void CCBasicObject::Read(void *address, intptr_t offset, uint8_t *dest, size_t size) {
+	memcpy(dest, static_cast<uint8_t *>(address) + offset, size);
 }
 
-uint8_t CCBasicObject::ReadInt8(const char *address, intptr_t offset) {
-	return *(const uint8_t *)(address + offset);
+uint8_t CCBasicObject::ReadInt8(void *address, intptr_t offset) {
+	return *(uint8_t *)(static_cast<uint8_t *>(address) + offset);
 }
 
-int16_t CCBasicObject::ReadInt16(const char *address, intptr_t offset) {
-	return *(const int16_t *)(address + offset);
+int16_t CCBasicObject::ReadInt16(void *address, intptr_t offset) {
+	return *(int16_t *)(static_cast<uint8_t *>(address) + offset);
 }
 
-int32_t CCBasicObject::ReadInt32(const char *address, intptr_t offset) {
-	return *(const int32_t *)(address + offset);
+int32_t CCBasicObject::ReadInt32(void *address, intptr_t offset) {
+	return *(int32_t *)(static_cast<uint8_t *>(address) + offset);
 }
 
-float CCBasicObject::ReadFloat(const char *address, intptr_t offset) {
-	return *(const float *)(address + offset);
+float CCBasicObject::ReadFloat(void *address, intptr_t offset) {
+	return *(float *)(static_cast<uint8_t *>(address) + offset);
 }
 
-void CCBasicObject::Write(const char *address, intptr_t offset, void *src, int size) {
-	memcpy((void *)(const_cast<char *>(address) + offset), src, size);
+void CCBasicObject::Write(void *address, intptr_t offset, const uint8_t *src, size_t size) {
+	memcpy(static_cast<uint8_t *>(address) + offset, src, size);
 }
 
-void CCBasicObject::WriteInt8(const char *address, intptr_t offset, uint8_t val) {
-	*(uint8_t *)(const_cast<char *>(address) + offset) = val;
+void CCBasicObject::WriteInt8(void *address, intptr_t offset, uint8_t val) {
+	*(uint8_t *)(static_cast<uint8_t *>(address) + offset) = val;
 }
 
-void CCBasicObject::WriteInt16(const char *address, intptr_t offset, int16_t val) {
-	*(int16_t *)(const_cast<char *>(address) + offset) = val;
+void CCBasicObject::WriteInt16(void *address, intptr_t offset, int16_t val) {
+	*(int16_t *)(static_cast<uint8_t *>(address) + offset) = val;
 }
 
-void CCBasicObject::WriteInt32(const char *address, intptr_t offset, int32_t val) {
-	*(int32_t *)(const_cast<char *>(address) + offset) = val;
+void CCBasicObject::WriteInt32(void *address, intptr_t offset, int32_t val) {
+	*(int32_t *)(static_cast<uint8_t *>(address) + offset) = val;
 }
 
-void CCBasicObject::WriteFloat(const char *address, intptr_t offset, float val) {
-	*(float *)(const_cast<char *>(address) + offset) = val;
+void CCBasicObject::WriteFloat(void *address, intptr_t offset, float val) {
+	*(float *)(static_cast<uint8_t *>(address) + offset) = val;
 }
 
-
-int AGSCCDynamicObject::Serialize(const char *address, char *buffer, int bufsize) {
+int AGSCCDynamicObject::Serialize(void *address, uint8_t *buffer, int bufsize) {
 	// If the required space is larger than the provided buffer,
 	// then return negated required space, notifying the caller that a larger buffer is necessary
 	size_t req_size = CalcSerializeSize(address);

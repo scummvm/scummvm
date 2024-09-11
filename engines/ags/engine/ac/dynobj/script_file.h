@@ -39,11 +39,11 @@ struct sc_File final : CCBasicObject {
 	static const Shared::FileOpenMode fopenModes[];
 	static const Shared::FileWorkMode fworkModes[];
 
-	int Dispose(const char *address, bool force) override;
+	int Dispose(void *address, bool force) override;
 
 	const char *GetType() override;
 
-	int Serialize(const char *address, char *buffer, int bufsize) override;
+	int Serialize(void *address, uint8_t *buffer, int bufsize) override;
 
 	int OpenFile(const char *filename, int mode);
 	void Close();

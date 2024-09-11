@@ -32,7 +32,7 @@ struct SteamData : public IAGSScriptManagedObject {
 public:
 	Common::String steamLanguage = "english";
 
-	int Dispose(const char *address, bool force) override {
+	int Dispose(void *address, bool force) override {
 		delete this;
 		return true;
 	}
@@ -41,7 +41,7 @@ public:
 		return "SteamData";
 	};
 
-	int Serialize(const char *address, char *buffer, int bufsize) override {
+	int Serialize(void *address, char *buffer, int bufsize) override {
 		return 0;
 	}
 };

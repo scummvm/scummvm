@@ -342,7 +342,7 @@ static void dispose_overlay(ScreenOverlay &over) {
 	over.ddb = nullptr;
 	// invalidate script object and dispose it if there are no more refs
 	if (over.associatedOverlayHandle > 0) {
-		ScriptOverlay *scover = (ScriptOverlay *)const_cast<char *>(ccGetObjectAddressFromHandle(over.associatedOverlayHandle));
+		ScriptOverlay *scover = (ScriptOverlay *)ccGetObjectAddressFromHandle(over.associatedOverlayHandle);
 		if (scover) scover->overlayId = -1;
 		ccAttemptDisposeObject(over.associatedOverlayHandle);
 	}

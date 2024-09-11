@@ -34,11 +34,11 @@ const char *CCAudioChannel::GetType() {
 	return "AudioChannel";
 }
 
-size_t CCAudioChannel::CalcSerializeSize(const char * /*address*/) {
+size_t CCAudioChannel::CalcSerializeSize(void * /*address*/) {
 	return sizeof(int32_t);
 }
 
-void CCAudioChannel::Serialize(const char *address, Stream *out) {
+void CCAudioChannel::Serialize(void *address, Stream *out) {
 	const ScriptAudioChannel *ach = (const ScriptAudioChannel *)address;
 	out->WriteInt32(ach->id);
 }

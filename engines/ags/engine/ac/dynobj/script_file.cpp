@@ -30,7 +30,7 @@ const Shared::FileOpenMode sc_File::fopenModes[] =
 const Shared::FileWorkMode sc_File::fworkModes[] =
 { Shared::kFile_Read/*CHECKME, was undefined*/, Shared::kFile_Read, Shared::kFile_Write, Shared::kFile_Write };
 
-int sc_File::Dispose(const char *address, bool force) {
+int sc_File::Dispose(void *address, bool force) {
 	Close();
 	delete this;
 	return 1;
@@ -40,7 +40,7 @@ const char *sc_File::GetType() {
 	return "File";
 }
 
-int sc_File::Serialize(const char *address, char *buffer, int bufsize) {
+int sc_File::Serialize(void *address, uint8_t *buffer, int bufsize) {
 	// we cannot serialize an open file, so it will get closed
 	return 0;
 }

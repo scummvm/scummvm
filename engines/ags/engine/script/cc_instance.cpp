@@ -996,7 +996,7 @@ int ccInstance::Run(int32_t curpc) {
 			// That might be dynamic object, but also a non-managed dynamic array, "allocated"
 			// on global or local memspace (buffer)
 			void *arr_ptr = registers[SREG_MAR].GetPtrWithOffset();
-			const auto &hdr = CCDynamicArray::GetHeader((const char *)arr_ptr);
+			const auto &hdr = CCDynamicArray::GetHeader(arr_ptr);
 			if ((reg1.IValue < 0) ||
 				(static_cast<uint32_t>(reg1.IValue) >= hdr.TotalSize)) {
 				int elem_count = hdr.ElemCount & (~ARRAY_MANAGED_TYPE_FLAG);
@@ -1028,16 +1028,16 @@ int ccInstance::Run(int32_t curpc) {
 		case SCMD_MEMWRITEPTR: {
 			const auto &reg1 = registers[codeOp.Arg1i()];
 			int32_t handle = registers[SREG_MAR].ReadInt32();
-			const char *address;
+			void *address;
 			switch (reg1.Type) {
 			case kScValStaticArray:
 				// FIXME: return manager type from interface?
 				// CC_ERROR_IF_RETCODE(!reg1.ArrMgr->GetDynamicManager(), "internal error: MEMWRITEPTR argument is not a dynamic object");
-				address = reg1.ArrMgr->GetElementPtr((char *)reg1.Ptr, reg1.IValue);
+				address = reg1.ArrMgr->GetElementPtr(reg1.Ptr, reg1.IValue);
 				break;
 			case kScValDynamicObject:
 			case kScValPluginObject:
-				address = (char *)reg1.Ptr;
+				address = reg1.Ptr;
 				break;
 			case kScValPluginArg:
 				// FIXME: plugin API is currently strictly 32-bit, so this may break on 64-bit systems
@@ -1064,22 +1064,22 @@ int ccInstance::Run(int32_t curpc) {
 			break;
 		}
 		case SCMD_MEMINITPTR: {
-			const char *address;
+			void *address;
 			const auto &reg1 = registers[codeOp.Arg1i()];
 
 			switch (reg1.Type) {
 			case kScValStaticArray:
 				// FIXME: return manager type from interface?
 				// CC_ERROR_IF_RETCODE(!reg1.ArrMgr->GetDynamicManager(), "internal error: SCMD_MEMINITPTR argument is not a dynamic object");
-				address = (char *)reg1.ArrMgr->GetElementPtr((char *)reg1.Ptr, reg1.IValue);
+				address = reg1.ArrMgr->GetElementPtr(reg1.Ptr, reg1.IValue);
 				break;
 			case kScValDynamicObject:
 			case kScValPluginObject:
-				address = (char *)reg1.Ptr;
+				address = reg1.Ptr;
 				break;
 			case kScValPluginArg:
 				// FIXME: plugin API is currently strictly 32-bit, so this may break on 64-bit systems
-				address = Int32ToPtr<char>(reg1.IValue);
+				address = Int32ToPtr<uint8_t>(reg1.IValue);
 				break;
 			default:
 				// There's one possible case when the reg1 is 0, which means writing nullptr
@@ -1111,7 +1111,7 @@ int ccInstance::Run(int32_t curpc) {
 			// Note: we might be freeing a dynamic array which contains the DisableDispose
 			// object, that will be handled inside the recursive call to SubRef.
 			// CHECKME!! what type of data may reg1 point to?
-			_GP(pool).disableDisposeForObject = (const char *)registers[SREG_AX].Ptr;
+			_GP(pool).disableDisposeForObject = registers[SREG_AX].Ptr;
 			ccReleaseObjectReference(handle);
 			_GP(pool).disableDisposeForObject = nullptr;
 			registers[SREG_MAR].WriteInt32(0);
@@ -1295,8 +1295,7 @@ int ccInstance::Run(int32_t curpc) {
 			case kScValStaticArray:
 				// FIXME: return manager type from interface?
 				// CC_ERROR_IF_RETCODE(!reg1.ArrMgr->GetDynamicManager(), "internal error: SCMD_CALLOBJ argument is not a dynamic object");
-				registers[SREG_OP].SetDynamicObject(
-					(char *)reg1.ArrMgr->GetElementPtr((char *)reg1.Ptr, reg1.IValue), reg1.ArrMgr->GetObjectManager());
+				registers[SREG_OP].SetDynamicObject(reg1.ArrMgr->GetElementPtr(reg1.Ptr, reg1.IValue), reg1.ArrMgr->GetObjectManager());
 				break;
 			default:
 				cc_error("internal error: SCMD_CALLOBJ argument is not an object of built-in or user-defined type");

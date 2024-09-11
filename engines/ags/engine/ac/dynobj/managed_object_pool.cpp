@@ -95,7 +95,7 @@ int32_t ManagedObjectPool::SubRef(int32_t handle) {
 	return newRefCount;
 }
 
-int32_t ManagedObjectPool::AddressToHandle(const char *addr) {
+int32_t ManagedObjectPool::AddressToHandle(void *addr) {
 	if (addr == nullptr) {
 		return 0;
 	}
@@ -107,7 +107,7 @@ int32_t ManagedObjectPool::AddressToHandle(const char *addr) {
 }
 
 // this function is called often (whenever a pointer is used)
-const char *ManagedObjectPool::HandleToAddress(int32_t handle) {
+void *ManagedObjectPool::HandleToAddress(int32_t handle) {
 	if (handle < 1 || (size_t)handle >= objects.size()) {
 		return nullptr;
 	}
@@ -126,12 +126,12 @@ ScriptValueType ManagedObjectPool::HandleToAddressAndManager(int32_t handle, voi
 		return kScValUndefined;
 	}
 	auto &o = objects[handle];
-	object = const_cast<char *>(o.addr);  // WARNING: This strips the const from the char* pointer.
+	object = (void *)(o.addr); // WARNING: This strips the const from the char* pointer.
 	manager = o.callback;
 	return o.obj_type;
 }
 
-int ManagedObjectPool::RemoveObject(const char *address) {
+int ManagedObjectPool::RemoveObject(void *address) {
 	if (address == nullptr) {
 		return 0;
 	}
@@ -165,7 +165,7 @@ void ManagedObjectPool::RunGarbageCollection() {
 	ManagedObjectLog("Ran garbage collection");
 }
 
-int ManagedObjectPool::Add(int handle, const char *address, ICCDynamicObject *callback, ScriptValueType obj_type)
+int ManagedObjectPool::Add(int handle, void *address, ICCDynamicObject *callback, ScriptValueType obj_type)
 {
     auto &o = objects[handle];
     assert(!o.isUsed());
@@ -177,7 +177,7 @@ int ManagedObjectPool::Add(int handle, const char *address, ICCDynamicObject *ca
     return handle;
 }
 
-int ManagedObjectPool::AddObject(const char *address, ICCDynamicObject *callback, ScriptValueType obj_type) {
+int ManagedObjectPool::AddObject(void *address, ICCDynamicObject *callback, ScriptValueType obj_type) {
 	int32_t handle;
 
 	if (!available_ids.empty()) {
@@ -194,7 +194,7 @@ int ManagedObjectPool::AddObject(const char *address, ICCDynamicObject *callback
 	return Add(handle, address, callback, obj_type);
 }
 
-int ManagedObjectPool::AddUnserializedObject(const char *address, ICCDynamicObject *callback, ScriptValueType obj_type, int handle) {
+int ManagedObjectPool::AddUnserializedObject(void *address, ICCDynamicObject *callback, ScriptValueType obj_type, int handle) {
 	if (handle < 0) {
 		cc_error("Attempt to assign invalid handle: %d", handle);
 		return 0;
@@ -211,7 +211,7 @@ void ManagedObjectPool::WriteToDisk(Stream *out) {
 	// use this opportunity to clean up any non-referenced pointers
 	RunGarbageCollection();
 
-	std::vector<char> serializeBuffer;
+	std::vector<uint8_t> serializeBuffer;
 	serializeBuffer.resize(SERIALIZE_BUFFER_SIZE);
 
 	out->WriteInt32(OBJECT_CACHE_MAGIC_NUMBER);
