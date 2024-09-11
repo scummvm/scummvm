@@ -42,26 +42,27 @@ public:
 		if (!_scene)
 			return false;
 
-			//_invClickObj = _scene->object_interface("$inv_click_flag");
-			_invDescObj = _scene->object_interface("%inv_desc");
-			_invDescCloseupObj = _scene->object_interface("%inv_desc_closeup");
-			//_invActiveFlagObj = _scene->object_interface("$inv_active_flag");
-			_blockPersObj = _scene->object_interface("\x24\xe1\xeb\xee\xea\xe8\xf0\xee\xe2\xea\xe0\x5f\xef\xe5\xf0\xf1\xee\xed\xe0\xe6\xe0");	// "$блокировка_персонажа"
-			_blockPersFlagObj = _scene->object_interface("\x24\xe1\xeb\xee\xea\xe8\xf0\xee\xe2\xea\xe0\x5f\xef\xe5\xf0\xf1\xee\xed\xe0\xe6\xe0\x5f\xf4\xeb\xe0\xe3");	// "$блокировка_персонажа_флаг"
+		//_invClickObj = _scene->object_interface("$inv_click_flag");
+		_invDescObj = _scene->object_interface("%inv_desc");
+		_invDescCloseupObj = _scene->object_interface("%inv_desc_closeup");
+		//_invActiveFlagObj = _scene->object_interface("$inv_active_flag");
+		_blockPersObj = _scene->object_interface("\x24\xe1\xeb\xee\xea\xe8\xf0\xee\xe2\xea\xe0\x5f\xef\xe5\xf0\xf1\xee\xed\xe0\xe6\xe0");	// "$блокировка_персонажа"
+		_blockPersFlagObj = _scene->object_interface("\x24\xe1\xeb\xee\xea\xe8\xf0\xee\xe2\xea\xe0\x5f\xef\xe5\xf0\xf1\xee\xed\xe0\xe6\xe0\x5f\xf4\xeb\xe0\xe3");	// "$блокировка_персонажа_флаг"
 
-			_shveikObj = _scene->personage_interface("\xd8\xe2\xe5\xe9\xea");	// "Швейк"
+		_shveikObj = _scene->personage_interface("\xd8\xe2\xe5\xe9\xea");	// "Швейк"
 
-			_shveikLookObj = _scene->object_interface("\x24\xf8\xe2\xe5\xe9\xea\x20\xf1\xec\xee\xf2\xf0\xe8\xf2");	// "$швейк смотрит"
-			_shveikMoveObj = _scene->object_interface("\x25\xF3\xEF\xF0\xE0\xE2\xEB\xE5\xED\xE8\xE5\x20\xEE\xE6\xE8\xE2\xEB\xFF\xE6\xE5\xEC\x20\xD8\xE2\xE5\xE9\xEA\xE0");	// "%управление оживляжем Швейка"
-			_shveikMoveEnabledObj = _scene->object_interface("\x25\xEE\xE6\xE8\xE2\xEB\xFF\xE6\x20\xD8\xE2\xE5\xE9\xEA\xE0\x20\xF0\xE0\xE7\xF0\xE5\xF8\xE5\xED");	// "%оживляж Швейка разрешен"
+		_shveikLookObj = _scene->object_interface("\x24\xf8\xe2\xe5\xe9\xea\x20\xf1\xec\xee\xf2\xf0\xe8\xf2");	// "$швейк смотрит"
+		_shveikMoveObj = _scene->object_interface("\x25\xF3\xEF\xF0\xE0\xE2\xEB\xE5\xED\xE8\xE5\x20\xEE\xE6\xE8\xE2\xEB\xFF\xE6\xE5\xEC\x20\xD8\xE2\xE5\xE9\xEA\xE0");	// "%управление оживляжем Швейка"
+		_shveikMoveEnabledObj = _scene->object_interface("\x25\xEE\xE6\xE8\xE2\xEB\xFF\xE6\x20\xD8\xE2\xE5\xE9\xEA\xE0\x20\xF0\xE0\xE7\xF0\xE5\xF8\xE5\xED");	// "%оживляж Швейка разрешен"
 
-			_someFlag = false;
-			_scene->activate_personage("\xd8\xe2\xe5\xe9\xea");	// "Швейк"
+		_someFlag = false;
+		_scene->activate_personage("\xd8\xe2\xe5\xe9\xea");	// "Швейк"
 
-			// srand(time(0));
-			_shveikIsMoving = 0;
-			_time = -1.0;
-			_timeout = -1;
+		// srand(time(0));
+		_shveikIsMoving = 0;
+		_time = -1.0;
+		_timeout = -1;
+
   		return true;
 	}
 
