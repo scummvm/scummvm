@@ -33,6 +33,7 @@ private:
 	int _viewOffset = 0;
 	int _numIcons = 0;
 	bool isVisible = false;
+	bool redraw = false;
 
 public:
 	Inventory();
@@ -51,6 +52,7 @@ private:
 	void update();
 	void leftArrowClicked();
 	void rightArrowClicked();
+	void restoreFrame();
 
 };
 
