@@ -31,7 +31,7 @@ namespace Sci {
 
 class SoundHWChannel {
 public:
-	SoundHWChannel(const uint16 *&_smpVolTable, const byte &masterVol, int outputRate);
+	SoundHWChannel(const Common::SharedPtr<const uint16> &freqTable, const Common::SharedPtr<const uint16> &smpVolTable, const byte &masterVol, int outputRate);
 	virtual ~SoundHWChannel() {}
 
 	virtual void reset();
@@ -45,6 +45,7 @@ public:
 	virtual void noteOff(byte sustain) = 0;
 	virtual void chanOff();
 	virtual void sustainOff() {}
+	void pitchBend(uint16 pb);
 	void setVolume(byte volume) { _ctrlVolume = volume; }
 
 	int16 currentSample() const { return _curSample; }
@@ -60,24 +61,28 @@ protected:
 	byte _velocity;
 	int8 _envVolume;
 	byte _note;
+	byte _pbDiv;
 	byte _envState;
 	byte _envCount;
 	int8 _envAttn;
-	int _freqCount;
 	uint16 _smpAmplitude;
-	int16 _curSample;
 
 	const int _outputRate;
 	const byte &_masterVolume;
-	const uint16 *&_smpVolTable;
+	const Common::SharedPtr<const uint16> _freqTable;
+	const Common::SharedPtr<const uint16> _smpVolTable;
 
 private:
 	int getFrequency() const;
+
+	int16 _pitchBend;
+	int16 _curSample;
+	int _freqCount;
 };
 
 class SoundChannel_PCSpeaker : public SoundHWChannel {
 public:
-	SoundChannel_PCSpeaker(const uint16 *&smpVolTable, const byte &masterVol, int outputRate) : SoundHWChannel(smpVolTable, masterVol, outputRate) {}
+	SoundChannel_PCSpeaker(const Common::SharedPtr<const uint16> &freqTable, const Common::SharedPtr<const uint16> &smpVolTable, const byte &masterVol, int outputRate) : SoundHWChannel(freqTable, smpVolTable, masterVol, outputRate) {}
 	~SoundChannel_PCSpeaker() override {}
 
 	void reset() override;
@@ -90,7 +95,7 @@ public:
 
 class SoundChannel_PCJr_SCI0 : public SoundHWChannel {
 public:
-	SoundChannel_PCJr_SCI0(const uint16 *&smpVolTable, const byte &masterVol, int outputRate) : SoundHWChannel(smpVolTable, masterVol, outputRate) {}
+	SoundChannel_PCJr_SCI0(const Common::SharedPtr<const uint16> &freqTable, const Common::SharedPtr<const uint16> &smpVolTable, const byte &masterVol, int outputRate) : SoundHWChannel(freqTable, smpVolTable, masterVol, outputRate), _envCount2(0) {}
 	~SoundChannel_PCJr_SCI0() override {}
 
 	void reset() override;
@@ -110,8 +115,9 @@ private:
 
 class SoundChannel_PCJr_SCI1 : public SoundHWChannel {
 public:
-	SoundChannel_PCJr_SCI1(const uint16 *&smpVolTable, const byte &masterVol, int outputRate, const uint16 *&instrumentOffsets, const byte *&instrumentData, byte *&program) :
-		SoundHWChannel(smpVolTable, masterVol, outputRate), _instrumentOffsets(instrumentOffsets), _instrumentData(instrumentData), _program(program) {}
+	SoundChannel_PCJr_SCI1(const Common::SharedPtr<const uint16> &freqTable, const Common::SharedPtr<const uint16> &smpVolTable, const byte &masterVol, int outputRate, const uint16 *&instrumentOffsets, const byte *&instrumentData, byte *&program) :
+		SoundHWChannel(freqTable, smpVolTable, masterVol, outputRate), _instrumentOffsets(instrumentOffsets), _instrumentData(instrumentData), _program(program), _duration(0), _releaseDuration(0), _sustain(0),
+			_release(0), _envData(nullptr) {}
 	~SoundChannel_PCJr_SCI1() override {}
 
 	void reset() override;
@@ -139,7 +145,7 @@ private:
 	const byte *&_instrumentData;
 };
 
-SoundHWChannel::SoundHWChannel(const uint16 *&smpVolTable, const byte &masterVol, int outputRate) : _smpVolTable(smpVolTable), _masterVolume(masterVol), _outputRate(outputRate) {
+SoundHWChannel::SoundHWChannel(const Common::SharedPtr<const uint16> &freqTable, const Common::SharedPtr<const uint16> &smpVolTable, const byte &masterVol, int outputRate) : _freqTable(freqTable), _smpVolTable(smpVolTable), _masterVolume(masterVol), _outputRate(outputRate) {
 	reset();
 }
 
@@ -152,6 +158,7 @@ void SoundHWChannel::reset() {
 	_freqCount = 0;
 	_smpAmplitude = 0;
 	_curSample = 0;
+	_pitchBend = 0;
 }
 
 void SoundHWChannel::recalcSample() {
@@ -185,31 +192,21 @@ void SoundHWChannel::chanOff() {
 	_envCount = 0;
 }
 
+void SoundHWChannel::pitchBend(uint16 pb) {
+	_pitchBend = ((pb < 0x2000) ? -(0x2000 - pb) : pb - 0x2000) / _pbDiv;
+}
+
 #define SCI_PCJR_BASE_NOTE 129	// A10
 #define SCI_PCJR_BASE_OCTAVE 10	// A10, as I said
 
 int SoundHWChannel::getFrequency() const {
-	static const uint16 freqTable[12] = { // A4 is 440Hz, halftone map is x |-> ** 2^(x/12)
-		28160, // A10
-		29834,
-		31608,
-		33488,
-		35479,
-		37589,
-		39824,
-		42192,
-		44701,
-		47359,
-		50175,
-		53159
-	};
+	if (_note == 0xFF)
+		return 0;
 
-	assert(_note != 0xFF);
-
-	int halftoneDelta = _note - SCI_PCJR_BASE_NOTE;
-	int octDiff = ((halftoneDelta + SCI_PCJR_BASE_OCTAVE * 12) / 12) - SCI_PCJR_BASE_OCTAVE;
-	int halftoneIndex = (halftoneDelta + (12 * 100)) % 12;
-	int freq = (!_note) ? 0 : freqTable[halftoneIndex] / (1 << (-octDiff));
+	int halftoneDelta = (_note - SCI_PCJR_BASE_NOTE) * 4 + _pitchBend;
+	int octDiff = ((halftoneDelta + SCI_PCJR_BASE_OCTAVE * 48) / 48) - SCI_PCJR_BASE_OCTAVE;
+	int halftoneIndex = (halftoneDelta + (48 * 100)) % 48;
+	int freq = _freqTable.get()[halftoneIndex] / (1 << (-octDiff));
 
 	return freq;
 }
@@ -219,6 +216,7 @@ int SoundHWChannel::getFrequency() const {
 
 void SoundChannel_PCSpeaker::reset() {
 	SoundHWChannel::reset();
+	_pbDiv = 171;
 	updateChannelVolume();
 }
 
@@ -226,7 +224,7 @@ void SoundChannel_PCSpeaker::updateChannelVolume() {
 	// The PC speaker has a fixed volume level. The original will turn it off if the volume is zero
 	// or otherwise turn it on. We just use the PCJr volume table for the master volume, so that our
 	// volume controls still work.
-	_smpAmplitude = _smpVolTable[15 - _masterVolume];
+	_smpAmplitude = _smpVolTable.get()[15 - _masterVolume];
 }
 
 void SoundChannel_PCSpeaker::noteOn(byte note, byte velocity) {
@@ -240,6 +238,7 @@ void SoundChannel_PCSpeaker::noteOff(byte) {
 void SoundChannel_PCJr_SCI0::reset() {
 	SoundHWChannel::reset();
 	_ctrlVolume = 96;
+	_pbDiv = 171;
 	updateChannelVolume();
 }
 
@@ -255,7 +254,7 @@ void SoundChannel_PCJr_SCI0::updateChannelVolume() {
 		attn = 0;
 	}
 	attn = CLIP<int>(attn + (15 - _masterVolume), volAttn, 15);
-	_smpAmplitude = _smpVolTable[attn];
+	_smpAmplitude = _smpVolTable.get()[attn];
 }
 
 void SoundChannel_PCJr_SCI0::processEnvelope() {
@@ -323,6 +322,7 @@ void SoundChannel_PCJr_SCI1::reset() {
 	_sustain = _release = 0;
 	_ctrlVolume = _envVolume = 15;
 	_envData = nullptr;
+	_pbDiv = 170;
 	updateChannelVolume();	
 }
 
@@ -334,7 +334,7 @@ void SoundChannel_PCJr_SCI1::updateChannelVolume() {
 	if (tl > 0 && tl < 15)
 		tl = 15;
 	int attn = 15 - tl / 15;
-	_smpAmplitude = _smpVolTable[attn];
+	_smpAmplitude = _smpVolTable.get()[attn];
 }
 
 void SoundChannel_PCJr_SCI1::processEnvelope() {
@@ -461,7 +461,6 @@ private:
 	const uint16 *_instrumentOffsets;
 	const byte *_instrumentData;
 
-	const uint16 *_smpVolTable;
 	const SciVersion _version;
 	const byte _numChannels;
 	const bool _pcsMode;
@@ -490,7 +489,7 @@ void MidiDriver_PCJr::send(uint32 b) {
 		programChange(part, op1);
 		break;
 	case 0xe0:
-		pitchBend(part, op1 | (op2 << 7));
+		pitchBend(part, (op1 & 0x7f) | ((op2 & 0x7f) << 7));
 		break;
 	default:
 		debug(2, "Unused MIDI command %02x %02x %02x", command, op1, op2);
@@ -578,8 +577,13 @@ MidiDriver_PCJr::MidiDriver_PCJr(Audio::Mixer *mixer, SciVersion version, bool p
 	uint16 *smpVolTable = new uint16[16]();
 	for (int i = 0; i < 15; ++i) // The last entry is left at zero.
 		smpVolTable[i] = (double)((32767 & ~_numChannels) / _numChannels) / pow(10.0, (double)i / 10.0);
-	_smpVolTable = smpVolTable;
-	assert(_smpVolTable);
+	Common::SharedPtr<const uint16> smpVolTablePtr(smpVolTable, Common::ArrayDeleter<const uint16>());
+
+	uint16 *freqTable = new uint16[48]();
+	assert(freqTable);
+	for (int i = 0; i < 48; ++i)
+		freqTable[i] = pow(2, (double)(288 + i) / 48.0) * 440.0;
+	Common::SharedPtr<const uint16> freqTablePtr(freqTable, Common::ArrayDeleter<const uint16>());
 
 	_chanMapping = new byte[16]();
 	_chanMissing = new byte[16]();
@@ -595,11 +599,11 @@ MidiDriver_PCJr::MidiDriver_PCJr(Audio::Mixer *mixer, SciVersion version, bool p
 	assert(_channels);
 	for (int i = 0; i < _numChannels; ++i) {
 		if (pcsMode)
-			_channels[i] = new SoundChannel_PCSpeaker(_smpVolTable, _masterVolume, getRate());
+			_channels[i] = new SoundChannel_PCSpeaker(freqTablePtr, smpVolTablePtr, _masterVolume, getRate());
 		else if (version <= SCI_VERSION_0_LATE)
-			_channels[i] = new SoundChannel_PCJr_SCI0(_smpVolTable, _masterVolume, getRate());
+			_channels[i] = new SoundChannel_PCJr_SCI0(freqTablePtr, smpVolTablePtr, _masterVolume, getRate());
 		else
-			_channels[i] = new SoundChannel_PCJr_SCI1(_smpVolTable, _masterVolume, getRate(), _instrumentOffsets, _instrumentData, _program);
+			_channels[i] = new SoundChannel_PCJr_SCI1(freqTablePtr, smpVolTablePtr, _masterVolume, getRate(), _instrumentOffsets, _instrumentData, _program);
 	}
 
 	_sndUpdateSmpQty = (mixer->getOutputRate() << 16) / 0x3C0000;
@@ -615,7 +619,7 @@ MidiDriver_PCJr::~MidiDriver_PCJr() {
 			delete _channels[i];
 		delete[] _channels;
 	}
-	delete[] _smpVolTable;
+
 	delete[] _instrumentOffsets;
 	delete[] _instrumentData;
 	delete[] _chanMapping;
@@ -713,6 +717,8 @@ void MidiDriver_PCJr::noteOn(byte part, byte note, byte velocity) {
 			_channels[i]->noteOn(note, velocity);
 			return;
 		}
+	} else if (note == 0) {
+		return;
 	}
 
 	byte c = allocateChannel(part);
@@ -760,6 +766,10 @@ void MidiDriver_PCJr::programChange(byte part, byte program) {
 }
 
 void MidiDriver_PCJr::pitchBend(byte part, uint16 value) {
+	for (int i = 0; i < _numChannels; ++i) {
+		if (_channels[i]->isMappedToPart(part))
+			_channels[i]->pitchBend(value);
+	}
 }
 
 void MidiDriver_PCJr::controlChangeSustain(byte part, byte sus) {
