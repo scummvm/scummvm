@@ -840,12 +840,6 @@ Common::StringArray Saves::list(Common::SaveFileManager *saveFileManager, Common
 	// The saves are sorted alphabetically
 	Common::sort(filenames.begin(), filenames.end(), AutosaveFirstComparator());
 
-	// The MetaEngine save system expects the Autosave to be in slot 0
-	// if we don't have an autosave (yet), insert a fake one.
-	if (!filenames.empty() && !filenames[0].hasPrefixIgnoreCase("autosave.")) {
-		filenames.insert_at(0, buildName("Autosave", platform));
-	}
-
 	return filenames;
 }
 
