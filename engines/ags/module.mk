@@ -207,6 +207,7 @@ MODULE_OBJS = \
 	engine/ac/dynobj/cc_object.o \
 	engine/ac/dynobj/cc_region.o \
 	engine/ac/dynobj/cc_serializer.o \
+	engine/ac/dynobj/cc_static_array.o \
 	engine/ac/dynobj/dynobj_manager.o \
 	engine/ac/dynobj/managed_object_pool.o \
 	engine/ac/dynobj/script_camera.o \
@@ -216,14 +217,13 @@ MODULE_OBJS = \
 	engine/ac/dynobj/script_drawing_surface.o \
 	engine/ac/dynobj/script_dynamic_sprite.o \
 	engine/ac/dynobj/script_file.o \
+	engine/ac/dynobj/script_game.o \
 	engine/ac/dynobj/script_overlay.o \
 	engine/ac/dynobj/script_set.o \
 	engine/ac/dynobj/script_string.o \
 	engine/ac/dynobj/script_user_object.o \
 	engine/ac/dynobj/script_viewport.o \
 	engine/ac/dynobj/script_view_frame.o \
-	engine/ac/statobj/ags_static_object.o \
-	engine/ac/statobj/static_array.o \
 	engine/debugging/debug.o \
 	engine/debugging/file_based_ags_debugger.o \
 	engine/debugging/log_file.o \

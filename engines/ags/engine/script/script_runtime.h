@@ -28,9 +28,7 @@
 
 namespace AGS3 {
 
-struct ICCStaticObject;
 struct ICCDynamicObject;
-struct StaticArray;
 
 using AGS::Shared::String;
 
@@ -64,8 +62,9 @@ bool ccAddExternalFunctionForPlugin(const String &name, Plugins::ScriptContainer
 // Register a function, exported from a plugin. Requires direct function pointer only.
 bool ccAddExternalPluginFunction(const String &name, Plugins::ScriptContainer *sc);
 // Register engine objects for script's access.
-bool ccAddExternalStaticObject(const String &name, void *ptr, ICCStaticObject *manager);
-bool ccAddExternalStaticArray(const String &name, void *ptr, StaticArray *array_mgr);
+// TODO: get manager type from the interface!
+bool ccAddExternalStaticObject(const String &name, void *ptr, ICCDynamicObject *manager);
+bool ccAddExternalStaticArray(const String &name, void *ptr, CCStaticArray *array_mgr);
 bool ccAddExternalDynamicObject(const String &name, void *ptr, ICCDynamicObject *manager);
 // Register script own functions (defined in the linked scripts)
 bool ccAddExternalScriptSymbol(const String &name, const RuntimeScriptValue &prval, ccInstance *inst);

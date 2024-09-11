@@ -21,7 +21,6 @@
 
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/cc_dynamic_array.h"
-#include "ags/engine/ac/statobj/static_object.h"
 #include "ags/shared/script/cc_common.h"
 #include "ags/engine/script/system_imports.h"
 #include "ags/globals.h"
@@ -63,11 +62,11 @@ bool ccAddExternalPluginFunction(const String &name, Plugins::ScriptContainer *i
 	return _GP(simp).add(name, RuntimeScriptValue().SetPluginMethod(instance, name), nullptr) != UINT32_MAX;
 }
 
-bool ccAddExternalStaticObject(const String &name, void *ptr, ICCStaticObject *manager) {
+bool ccAddExternalStaticObject(const String &name, void *ptr, ICCDynamicObject *manager) {
 	return _GP(simp).add(name, RuntimeScriptValue().SetStaticObject(ptr, manager), nullptr) != UINT32_MAX;
 }
 
-bool ccAddExternalStaticArray(const String &name, void *ptr, StaticArray *array_mgr) {
+bool ccAddExternalStaticArray(const String &name, void *ptr, CCStaticArray *array_mgr) {
 	return _GP(simp).add(name, RuntimeScriptValue().SetStaticArray(ptr, array_mgr), nullptr) != UINT32_MAX;
 }
 
