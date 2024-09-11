@@ -218,6 +218,8 @@ View1::View1() : UIElement("View1") {
 		AnimFrame *frame = currentSpeechActData.speaker->GetCurrentPortrait();
 		if (currentSpeechActData.onRightSide) {
 			// TODO: Need to measure the string box for this one
+			// TODO: Temporary fix by moving it to the left side
+			currentSpeechActData.position.x = 10;
 		}
 		// TODO: Add the else block
 
@@ -879,6 +881,9 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 void View1::DrawVerticalBorderSide(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
 	// 0037h:39B5h
 
+	// Clipping rectangle setup at l0037_39FE:
+	Common::Rect clippingRect(pos + Common::Point(1, 1), pos + size);
+	// TODO: Should check which texture we actually use at the moment
 }
 
 void View1::DrawHorizontalBorderSide(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
