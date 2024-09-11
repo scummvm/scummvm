@@ -378,7 +378,7 @@ RuntimeScriptValue Sc_String_EndsWith(void *self, const RuntimeScriptValue *para
 // const char* (const char *texx, ...)
 RuntimeScriptValue Sc_String_Format(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_SCRIPT_SPRINTF(String_Format, 1);
-	return RuntimeScriptValue().SetDynamicObject(const_cast<char *>(CreateNewScriptString(scsf_buffer)), &_GP(myScriptStringImpl));
+	return RuntimeScriptValue().SetScriptObject(const_cast<char *>(CreateNewScriptString(scsf_buffer)), &_GP(myScriptStringImpl));
 }
 
 // const char* (const char *thisString)

@@ -42,22 +42,21 @@ enum ScriptValueType {
 	kScValInteger,      // as strictly 32-bit integer (for integer math)
 	kScValFloat,        // as float (for floating point math), 32-bit
 	kScValPluginArg,    // an 32-bit value, passed to a script function when called
-	// directly by plugin; is allowed to represent object pointer
+						// directly by plugin; is allowed to represent object pointer
 	kScValStackPtr,     // as a pointer to stack entry
 	kScValData,         // as a container for randomly sized data (usually array)
 	kScValGlobalVar,    // as a pointer to script variable; used only for global vars,
-	// as pointer to local vars must have StackPtr type so that the
-	// stack allocation could work
+						// as pointer to local vars must have StackPtr type so that the
+						// stack allocation could work
 	kScValStringLiteral,// as a pointer to literal string (array of chars)
-	kScValStaticObject, // as a pointer to static global script object
 	kScValStaticArray,  // as a pointer to static global array (of static or dynamic objects)
-	kScValDynamicObject,// as a pointer to managed script object
+	kScValScriptObject, // as a pointer to managed script object
 	kScValPluginObject, // as a pointer to object managed by plugin (similar to
-	// kScValDynamicObject, but has backward-compatible limitations)
+						// kScValScriptObject, but has backward-compatible limitations)
 	kScValStaticFunction,// as a pointer to static function
 	kScValPluginFunction,// temporary workaround for plugins (unsafe function ptr)
 	kScValObjectFunction,// as a pointer to object member function, gets object pointer as
-	// first parameter
+						 // first parameter
 	kScValCodePtr       // as a pointer to element in byte-code array
 };
 
@@ -237,16 +236,6 @@ public:
 		return *this;
 	}
 
-	inline RuntimeScriptValue &SetStaticObject(void *object, IScriptObject *manager) {
-		Type = kScValStaticObject;
-		methodName.clear();
-		IValue = 0;
-		Ptr = object;
-		ObjMgr = manager;
-		Size = 4;
-		return *this;
-	}
-
 	inline RuntimeScriptValue &SetStaticArray(void *object, CCStaticArray *manager) {
 		Type = kScValStaticArray;
 		methodName.clear();
@@ -257,8 +246,8 @@ public:
 		return *this;
 	}
 
-	inline RuntimeScriptValue &SetDynamicObject(void *object, IScriptObject *manager) {
-		Type = kScValDynamicObject;
+	inline RuntimeScriptValue &SetScriptObject(void *object, IScriptObject *manager) {
+		Type = kScValScriptObject;
 		methodName.clear();
 		IValue = 0;
 		Ptr = object;
@@ -277,7 +266,7 @@ public:
 		return *this;
 	}
 
-	inline RuntimeScriptValue &SetDynamicObject(ScriptValueType type, void *object, IScriptObject *manager) {
+	inline RuntimeScriptValue &SetScriptObject(ScriptValueType type, void *object, IScriptObject *manager) {
 		Type = type;
 		IValue = 0;
 		Ptr = object;
@@ -369,9 +358,8 @@ public:
 				return *RValue;
 			}
 		}
-		case kScValStaticObject:
 		case kScValStaticArray:
-		case kScValDynamicObject:
+		case kScValScriptObject:
 			return RuntimeScriptValue().SetInt32(this->ObjMgr->ReadInt32(this->Ptr, this->IValue));
 		default:
 			return RuntimeScriptValue().SetInt32(*(int32_t *)this->GetPtrWithOffset());
@@ -416,9 +404,8 @@ public:
 			}
 			break;
 		}
-		case kScValStaticObject:
 		case kScValStaticArray:
-		case kScValDynamicObject: {
+		case kScValScriptObject: {
 			this->ObjMgr->WriteInt32(this->Ptr, this->IValue, rval.IValue);
 			break;
 		}

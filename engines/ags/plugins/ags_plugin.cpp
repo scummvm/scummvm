@@ -677,14 +677,14 @@ void *IAGSEngine::GetManagedObjectAddressByKey(int key) {
 	void *object;
 	IScriptObject *manager;
 	ScriptValueType obj_type = ccGetObjectAddressAndManagerFromHandle(key, object, manager);
-	_GP(GlobalReturnValue).SetDynamicObject(obj_type, object, manager);
+	_GP(GlobalReturnValue).SetScriptObject(obj_type, object, manager);
 	return object;
 }
 
 const char *IAGSEngine::CreateScriptString(const char *fromText) {
 	const char *string = CreateNewScriptString(fromText);
 	// Should be still standard dynamic object, because not managed by plugin
-	_GP(GlobalReturnValue).SetDynamicObject(const_cast<char *>(string), &_GP(myScriptStringImpl));
+	_GP(GlobalReturnValue).SetScriptObject(const_cast<char *>(string), &_GP(myScriptStringImpl));
 	return string;
 }
 
