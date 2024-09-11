@@ -74,11 +74,6 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_menuFxOnIndicator = nullptr;
 	_menuFxOffIndicator = nullptr;
 
-	_flagFrames[0] = nullptr;
-	_flagFrames[1] = nullptr;
-	_flagFrames[2] = nullptr;
-	_flagFrames[3] = nullptr;
-
 	_numberKeys = 0;
 	_spiritsDestroyed = 0;
 	_spiritsMeter = 32;
