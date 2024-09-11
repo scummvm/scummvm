@@ -119,6 +119,23 @@ Graphics::ManagedSurface *CastleEngine::loadFrameFromPlanesInternal(Common::Seek
 	return surface;
 }
 
+Graphics::ManagedSurface *CastleEngine::loadFrameWithHeaderDOS(Common::SeekableReadStream *file) {
+	uint8 header1 = file->readByte();
+	uint8 header2 = file->readByte();
+	int height = file->readByte();
+	uint8 mask = file->readByte();
+	int size = file->readUint16LE();
+
+	assert(size % height == 0);
+	int widthBytes = (size / height);
+
+	Graphics::ManagedSurface *frame = loadFrameFromPlanes(file, widthBytes, height);
+	frame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+
+	debug("header: %x %x, height: %d, mask: %x, widthBytes: %d, size: %d", header1, header2, height, mask, widthBytes, size);
+	return frame;
+}
+
 void CastleEngine::loadAssetsDOSFullGame() {
 	Common::File file;
 	Common::SeekableReadStream *stream = nullptr;
@@ -137,7 +154,12 @@ void CastleEngine::loadAssetsDOSFullGame() {
 			_background->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
 			// Eye widget is next to 0x1f058
 
-			stream->seek(0x1f4ea);
+			stream->seek(0x1f4e3);
+			for (int i = 0; i < 6; i++)
+				debug("i: %d -> %x", i, stream->readByte());
+			debug("%lx", stream->pos());
+			debug("extra: %x", stream->readByte());
+
 			for (int i = 0; i < 9; i++) {
 				Graphics::ManagedSurface *frame = loadFrameFromPlanes(stream, 8, 14);
 				frame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
@@ -150,13 +172,55 @@ void CastleEngine::loadAssetsDOSFullGame() {
 				_keysMenuFrames.push_back(frame);
 			}
 
-			stream->seek(0x202b8);
-			_strenghtBackgroundFrame = loadFrameFromPlanes(stream, 40, 14);
-			_strenghtBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+			//for (int i = 0; i < 6; i++)
+			//	debug("i: %d -> %x", i, stream->readByte());
+
+			//loadFrameWithHeaderDOS(stream);
+			//debug("%lx", stream->pos());
+			//assert(0);
+
+			stream->seek(0x20262);
+			_strenghtBackgroundFrame = loadFrameWithHeaderDOS(stream);
+			//loadFrameFromPlanes(stream, 40, 15);
+			//_strenghtBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+
+			_strenghtBarFrame = loadFrameWithHeaderDOS(stream);
+			//assert(0);
+			//for (int i = 0; i < 6; i++)
+			//	debug("i: %d -> %x", i, stream->readByte());
+			//debug("%lx", stream->pos());
+			//assert(0);
+
+			/*_strenghtBarFrame = loadFrameFromPlanes(stream, 40, 3);
+			_strenghtBarFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);*/
+
+			for (int i = 0; i < 6; i++)
+				debug("i: %d -> %x", i, stream->readByte());
+			debug("%lx", stream->pos());
+			//assert(0);
+
+			Graphics::ManagedSurface *frame = nullptr;
+
+			for (int i = 0; i < 4; i++) {
+				frame = loadFrameFromPlanes(stream, 4, 15);
+				frame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+				_strenghtWeightsFrames.push_back(frame);
+			}
+
+			for (int i = 0; i < 6; i++)
+				debug("i: %d -> %x", i, stream->readByte());
+			debug("%lx", stream->pos());
+			//assert(0);
 
 			stream->seek(0x221ae);
+			// No header?
 			_menu = loadFrameFromPlanes(stream, 112, 114);
 			_menu->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+
+			for (int i = 0; i < 6; i++)
+				debug("i: %d -> %x", i, stream->readByte());
+			debug("%lx", stream->pos());
+			//assert(0);
 
 			//debug("%lx", stream->pos());
 			// TODO: some space here from the menu image
@@ -168,47 +232,39 @@ void CastleEngine::loadAssetsDOSFullGame() {
 			_menuFxOnIndicator = loadFrameFromPlanes(stream, 16, 12, lightGray, lightGray, lightGray, darkGray);*/
 
 			// This end in 0x257d4??
-			byte flagPalette[4][3] = {
-				{0x00, 0x00, 0x00},
-				{0x00, 0xaa, 0x00},
-				{0x55, 0xff, 0x55},
-				{0xff, 0xff, 0xff}
-			};
+			stream->seek(0x257c2);
+			for (int i = 0; i < 6; i++)
+				debug("i: %d -> %x", i, stream->readByte());
+			debug("%lx", stream->pos());
 
-			stream->seek(0x257cc);
 			_flagFrames[0] = loadFrameFromPlanes(stream, 16, 11);
-			_flagFrames[0]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&flagPalette, 4);
+			_flagFrames[0]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 4);
 			_flagFrames[1] = loadFrameFromPlanes(stream, 16, 11);
-			_flagFrames[1]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&flagPalette, 4);
+			_flagFrames[1]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 4);
 			_flagFrames[2] = loadFrameFromPlanes(stream, 16, 11);
-			_flagFrames[2]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&flagPalette, 4);
+			_flagFrames[2]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 4);
 			_flagFrames[3] = loadFrameFromPlanes(stream, 16, 11);
-			_flagFrames[3]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&flagPalette, 4);
+			_flagFrames[3]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 4);
 
-			//debug("%lx", stream->pos());
-			stream->seek(0x25a90);
-			_riddleTopFrame = loadFrameFromPlanes(stream, 120, 20);
-			_riddleTopFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+			debug("extra: %x", stream->readByte());
+			debug("extra: %x", stream->readByte());
 
-			for (int i = 0; i < 6; i++)
+			/*for (int i = 0; i < 6; i++)
 				debug("i: %d -> %x", i, stream->readByte());
 
-			_riddleBackgroundFrame = loadFrameFromPlanes(stream, 120, 1);
-			_riddleBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+			debug("%lx", stream->pos());*/
+			//stream->seek(0x25a8a);
 
-			//loadFrameFromPlanes(stream, 60, 8);
-			//debug("%lx", stream->pos());
+			_riddleTopFrame = loadFrameWithHeaderDOS(stream);
+			_riddleBackgroundFrame = loadFrameWithHeaderDOS(stream);
+			_riddleBottomFrame = loadFrameWithHeaderDOS(stream);
+			_endOfGameThroneFrame = loadFrameWithHeaderDOS(stream);
+			// No header
+			_thunderFrame = loadFrameFromPlanes(stream, 16, 128);
+			_thunderFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
 
-			for (int i = 0; i < 6; i++)
-				debug("i: %d -> %x", i, stream->readByte());
-
-			_riddleBottomFrame = loadFrameFromPlanes(stream, 120, 8);
-			_riddleBottomFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
-
-
-			stream->seek(0x25a94 + 0xe00);
-			_endOfGameThroneFrame = loadFrameFromPlanes(stream, 36, 82);
-			_endOfGameThroneFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+			// No header
+			// Another thunder frame?
 		}
 
 		delete stream;
@@ -383,7 +439,7 @@ void CastleEngine::drawDOSUI(Graphics::Surface *surface) {
 	drawEnergyMeter(surface);
 	int flagFrameIndex = (_ticks / 10) % 4;
 	surface->copyRectToSurface(*_flagFrames[flagFrameIndex], 282, 5, Common::Rect(10, 0, _flagFrames[flagFrameIndex]->w, _flagFrames[flagFrameIndex]->h));
-	//surface->copyRectToSurface(*_something, 100, 50, Common::Rect(0, 0, _something->w, _something->h));
+	//surface->copyRectToSurface(*_endOfGameThroneFrame, 100, 50, Common::Rect(0, 0, _endOfGameThroneFrame->w, _endOfGameThroneFrame->h));
 }
 
 } // End of namespace Freescape
