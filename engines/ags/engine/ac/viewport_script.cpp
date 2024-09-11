@@ -519,41 +519,49 @@ RuntimeScriptValue Sc_Viewport_RoomToScreenPoint(void *self, const RuntimeScript
 
 
 void RegisterViewportAPI() {
-	ccAddExternalStaticFunction("Camera::Create", Sc_Camera_Create);
-	ccAddExternalObjectFunction("Camera::Delete", Sc_Camera_Delete);
-	ccAddExternalObjectFunction("Camera::get_X", Sc_Camera_GetX);
-	ccAddExternalObjectFunction("Camera::set_X", Sc_Camera_SetX);
-	ccAddExternalObjectFunction("Camera::get_Y", Sc_Camera_GetY);
-	ccAddExternalObjectFunction("Camera::set_Y", Sc_Camera_SetY);
-	ccAddExternalObjectFunction("Camera::get_Width", Sc_Camera_GetWidth);
-	ccAddExternalObjectFunction("Camera::set_Width", Sc_Camera_SetWidth);
-	ccAddExternalObjectFunction("Camera::get_Height", Sc_Camera_GetHeight);
-	ccAddExternalObjectFunction("Camera::set_Height", Sc_Camera_SetHeight);
-	ccAddExternalObjectFunction("Camera::get_AutoTracking", Sc_Camera_GetAutoTracking);
-	ccAddExternalObjectFunction("Camera::set_AutoTracking", Sc_Camera_SetAutoTracking);
-	ccAddExternalObjectFunction("Camera::SetAt", Sc_Camera_SetAt);
-	ccAddExternalObjectFunction("Camera::SetSize", Sc_Camera_SetSize);
+	ScFnRegister camera_api[] = {
+		{"Camera::Create", API_FN_PAIR(Camera_Create)},
+		{"Camera::Delete", API_FN_PAIR(Camera_Delete)},
+		{"Camera::get_X", API_FN_PAIR(Camera_GetX)},
+		{"Camera::set_X", API_FN_PAIR(Camera_SetX)},
+		{"Camera::get_Y", API_FN_PAIR(Camera_GetY)},
+		{"Camera::set_Y", API_FN_PAIR(Camera_SetY)},
+		{"Camera::get_Width", API_FN_PAIR(Camera_GetWidth)},
+		{"Camera::set_Width", API_FN_PAIR(Camera_SetWidth)},
+		{"Camera::get_Height", API_FN_PAIR(Camera_GetHeight)},
+		{"Camera::set_Height", API_FN_PAIR(Camera_SetHeight)},
+		{"Camera::get_AutoTracking", API_FN_PAIR(Camera_GetAutoTracking)},
+		{"Camera::set_AutoTracking", API_FN_PAIR(Camera_SetAutoTracking)},
+		{"Camera::SetAt", API_FN_PAIR(Camera_SetAt)},
+		{"Camera::SetSize", API_FN_PAIR(Camera_SetSize)},
+	};
 
-	ccAddExternalStaticFunction("Viewport::Create", Sc_Viewport_Create);
-	ccAddExternalObjectFunction("Viewport::Delete", Sc_Viewport_Delete);
-	ccAddExternalObjectFunction("Viewport::get_X", Sc_Viewport_GetX);
-	ccAddExternalObjectFunction("Viewport::set_X", Sc_Viewport_SetX);
-	ccAddExternalObjectFunction("Viewport::get_Y", Sc_Viewport_GetY);
-	ccAddExternalObjectFunction("Viewport::set_Y", Sc_Viewport_SetY);
-	ccAddExternalObjectFunction("Viewport::get_Width", Sc_Viewport_GetWidth);
-	ccAddExternalObjectFunction("Viewport::set_Width", Sc_Viewport_SetWidth);
-	ccAddExternalObjectFunction("Viewport::get_Height", Sc_Viewport_GetHeight);
-	ccAddExternalObjectFunction("Viewport::set_Height", Sc_Viewport_SetHeight);
-	ccAddExternalObjectFunction("Viewport::get_Camera", Sc_Viewport_GetCamera);
-	ccAddExternalObjectFunction("Viewport::set_Camera", Sc_Viewport_SetCamera);
-	ccAddExternalObjectFunction("Viewport::get_Visible", Sc_Viewport_GetVisible);
-	ccAddExternalObjectFunction("Viewport::set_Visible", Sc_Viewport_SetVisible);
-	ccAddExternalObjectFunction("Viewport::get_ZOrder", Sc_Viewport_GetZOrder);
-	ccAddExternalObjectFunction("Viewport::set_ZOrder", Sc_Viewport_SetZOrder);
-	ccAddExternalStaticFunction("Viewport::GetAtScreenXY", Sc_Viewport_GetAtScreenXY);
-	ccAddExternalObjectFunction("Viewport::SetPosition", Sc_Viewport_SetPosition);
-	ccAddExternalObjectFunction("Viewport::ScreenToRoomPoint", Sc_Viewport_ScreenToRoomPoint);
-	ccAddExternalObjectFunction("Viewport::RoomToScreenPoint", Sc_Viewport_RoomToScreenPoint);
+	ccAddExternalFunctions361(camera_api);
+
+	ScFnRegister viewport_api[] = {
+		{"Viewport::Create", API_FN_PAIR(Viewport_Create)},
+		{"Viewport::Delete", API_FN_PAIR(Viewport_Delete)},
+		{"Viewport::get_X", API_FN_PAIR(Viewport_GetX)},
+		{"Viewport::set_X", API_FN_PAIR(Viewport_SetX)},
+		{"Viewport::get_Y", API_FN_PAIR(Viewport_GetY)},
+		{"Viewport::set_Y", API_FN_PAIR(Viewport_SetY)},
+		{"Viewport::get_Width", API_FN_PAIR(Viewport_GetWidth)},
+		{"Viewport::set_Width", API_FN_PAIR(Viewport_SetWidth)},
+		{"Viewport::get_Height", API_FN_PAIR(Viewport_GetHeight)},
+		{"Viewport::set_Height", API_FN_PAIR(Viewport_SetHeight)},
+		{"Viewport::get_Camera", API_FN_PAIR(Viewport_GetCamera)},
+		{"Viewport::set_Camera", API_FN_PAIR(Viewport_SetCamera)},
+		{"Viewport::get_Visible", API_FN_PAIR(Viewport_GetVisible)},
+		{"Viewport::set_Visible", API_FN_PAIR(Viewport_SetVisible)},
+		{"Viewport::get_ZOrder", API_FN_PAIR(Viewport_GetZOrder)},
+		{"Viewport::set_ZOrder", API_FN_PAIR(Viewport_SetZOrder)},
+		{"Viewport::GetAtScreenXY", API_FN_PAIR(Viewport_GetAtScreenXY)},
+		{"Viewport::SetPosition", API_FN_PAIR(Viewport_SetPosition)},
+		{"Viewport::ScreenToRoomPoint", API_FN_PAIR(Viewport_ScreenToRoomPoint)},
+		{"Viewport::RoomToScreenPoint", API_FN_PAIR(Viewport_RoomToScreenPoint)},
+	};
+
+	ccAddExternalFunctions361(viewport_api);
 }
 
 } // namespace AGS3
