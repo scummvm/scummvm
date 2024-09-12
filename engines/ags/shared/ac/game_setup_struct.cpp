@@ -190,10 +190,8 @@ void GameSetupStruct::read_interaction_scripts(Shared::Stream *in, GameDataVersi
 }
 
 void GameSetupStruct::read_words_dictionary(Shared::Stream *in) {
-	if (load_dictionary) {
-		dict.reset(new WordsDictionary());
-		read_dictionary(dict.get(), in);
-	}
+	dict.reset(new WordsDictionary());
+	read_dictionary(dict.get(), in);
 }
 
 void GameSetupStruct::ReadMouseCursors_Aligned(Stream *in) {
@@ -226,7 +224,7 @@ void GameSetupStruct::read_lipsync(Shared::Stream *in, GameDataVersion data_ver)
 		in->ReadArray(&lipSyncFrameLetters[0][0], MAXLIPSYNCFRAMES, 50);
 }
 
-void GameSetupStruct::read_messages(Shared::Stream *in, GameDataVersion data_ver) {
+void GameSetupStruct::read_messages(Shared::Stream *in, const std::array<int> &load_messages, GameDataVersion data_ver) {
 	char mbuf[GLOBALMESLENGTH];
 	for (int i = 0; i < MAXGLOBALMES; ++i) {
 		if (!load_messages[i])
@@ -246,8 +244,6 @@ void GameSetupStruct::read_messages(Shared::Stream *in, GameDataVersion data_ver
 		}
 		messages[i] = mbuf;
 	}
-	delete[] load_messages;
-	load_messages = nullptr;
 }
 
 void GameSetupStruct::ReadCharacters_Aligned(Stream *in, bool is_save) {

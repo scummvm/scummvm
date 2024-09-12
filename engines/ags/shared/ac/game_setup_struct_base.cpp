@@ -52,11 +52,6 @@ GameSetupStructBase::GameSetupStructBase()
 	, default_lipsync_frame(0)
 	, invhotdotsprite(0)
 	, dict(nullptr)
-	, globalscript(nullptr)
-	, compiled_script(nullptr)
-	, load_messages(nullptr)
-	, load_dictionary(false)
-	, load_compiled_script(false)
 	, _resolutionType(kGameResolution_Undefined)
 	, _dataUpscaleMult(1)
 	, _screenUpscaleMult(1) {
@@ -75,13 +70,7 @@ void GameSetupStructBase::Free() {
 	for (int i = 0; i < MAXGLOBALMES; ++i) {
 		messages[i].Free();
 	}
-	delete[] load_messages;
-	load_messages = nullptr;
 	dict.reset();
-	delete globalscript;
-	globalscript = nullptr;
-	delete compiled_script;
-	compiled_script = nullptr;
 	chars.clear();
 
 	numcharacters = 0;
@@ -142,7 +131,7 @@ void GameSetupStructBase::OnResolutionSet() {
 	_relativeUIMult = IsLegacyHiRes() ? HIRES_COORD_MULTIPLIER : 1;
 }
 
-void GameSetupStructBase::ReadFromFile(Stream *in, GameDataVersion game_ver) {
+void GameSetupStructBase::ReadFromFile(Stream *in, GameDataVersion game_ver, SerializeInfo &info) {
 	StrUtil::ReadCStrCount(gamename, in, GAME_NAME_LENGTH);
 	in->ReadArrayOfInt32(options, MAX_OPTIONS);
 	if (game_ver < kGameVersion_340_4) { // TODO: this should probably be possible to deduce script API level
@@ -180,18 +169,15 @@ void GameSetupStructBase::ReadFromFile(Stream *in, GameDataVersion game_ver) {
 	default_lipsync_frame = in->ReadInt32();
 	invhotdotsprite = in->ReadInt32();
 	in->ReadArrayOfInt32(reserved, NUM_INTS_RESERVED);
-	load_messages = new int32_t[MAXGLOBALMES];
-	in->ReadArrayOfInt32(load_messages, MAXGLOBALMES);
+	in->ReadArrayOfInt32(&info.HasMessages.front(), MAXGLOBALMES);
 
-	// - GameSetupStruct::read_words_dictionary() checks load_dictionary
-	// - load_game_file() checks load_compiled_script
-	load_dictionary = in->ReadInt32() != 0;
-	in->ReadInt32(); // globalscript
-	in->ReadInt32(); // chars
-	load_compiled_script = in->ReadInt32() != 0;
+	info.HasWordsDict = in->ReadInt32() != 0;
+	in->ReadInt32(); // globalscript (dummy 32-bit pointer value)
+	in->ReadInt32(); // chars (dummy 32-bit pointer value)
+	info.HasCCScript = in->ReadInt32() != 0;
 }
 
-void GameSetupStructBase::WriteToFile(Stream *out) const {
+void GameSetupStructBase::WriteToFile(Stream *out, const SerializeInfo &info) const {
 	out->Write(gamename, GAME_NAME_LENGTH);
 	out->WriteArrayOfInt32(options, MAX_OPTIONS);
 	out->Write(&paluses[0], sizeof(paluses));
@@ -225,9 +211,9 @@ void GameSetupStructBase::WriteToFile(Stream *out) const {
 		out->WriteInt32(!messages[i].IsEmpty() ? 1 : 0);
 	}
 	out->WriteInt32(dict ? 1 : 0);
-	out->WriteInt32(0); // globalscript
-	out->WriteInt32(0); // chars
-	out->WriteInt32(compiled_script ? 1 : 0);
+	out->WriteInt32(0); // globalscript (dummy 32-bit pointer value)
+	out->WriteInt32(0); // chars  (dummy 32-bit pointer value)
+	out->WriteInt32(info.HasCCScript ? 1 : 0);
 }
 
 Size ResolutionTypeToSize(GameResolutionType resolution, bool letterbox) {
