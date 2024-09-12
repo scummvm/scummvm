@@ -83,7 +83,7 @@ void ccSerializeAllObjects(Stream *out) {
 }
 
 // un-serialise all objects (will remove all currently registered ones)
-int ccUnserializeAllObjects(Stream *in, ICCObjectReader *callback) {
+int ccUnserializeAllObjects(Stream *in, ICCObjectCollectionReader *callback) {
 	return _GP(pool).ReadFromDisk(in, callback);
 }
 
