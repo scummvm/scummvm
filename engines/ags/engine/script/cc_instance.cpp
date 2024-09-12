@@ -1329,8 +1329,8 @@ int ccInstance::Run(int32_t curpc) {
 				cc_error("invalid size for dynamic array; requested: %d, range: 1..%d", numElements, INT32_MAX);
 				return -1;
 			}
-			DynObjectRef ref = _GP(globalDynamicArray).Create(numElements, arg_elsize, arg_managed);
-			reg1.SetScriptObject(ref.second, &_GP(globalDynamicArray));
+			DynObjectRef ref = CCDynamicArray::Create(numElements, arg_elsize, arg_managed);
+			reg1.SetScriptObject(ref.Obj, &_GP(globalDynamicArray));
 			break;
 		}
 		case SCMD_NEWUSEROBJECT: {
@@ -1340,8 +1340,8 @@ int ccInstance::Run(int32_t curpc) {
 				cc_error("Invalid size for user object; requested: %d (or %d), range: 0..%d", arg_size, arg_size, INT_MAX);
 				return -1;
 			}
-			ScriptUserObject *suo = ScriptUserObject::CreateManaged(arg_size);
-			reg1.SetScriptObject(suo, suo);
+			DynObjectRef ref = ScriptUserObject::Create(arg_size);
+			reg1.SetScriptObject(ref.Obj, ref.Mgr);
 			break;
 		}
 		case SCMD_FADD: {
@@ -1435,7 +1435,7 @@ int ccInstance::Run(int32_t curpc) {
 			} else {
 				const char *ptr = reinterpret_cast<const char *>(reg1.GetDirectPtr());
 				reg1.SetScriptObject(
-					_G(stringClassImpl)->CreateString(ptr).second,
+					_G(stringClassImpl)->CreateString(ptr).Obj,
 					&_GP(myScriptStringImpl));
 			}
 			break;

@@ -35,102 +35,51 @@ const char *ScriptUserObject::GetType() {
 	return TypeName;
 }
 
-ScriptUserObject::~ScriptUserObject() {
-	delete[] _data;
-}
-
-/* static */ ScriptUserObject *ScriptUserObject::CreateManaged(size_t size) {
-	ScriptUserObject *suo = new ScriptUserObject();
-	suo->Create(nullptr, nullptr, size);
-	ccRegisterManagedObject(suo, suo);
-	return suo;
-}
-
-void ScriptUserObject::Create(const uint8_t *data, Stream *in, size_t size) {
-	delete[] _data;
-	_data = nullptr;
-
-	_size = size;
-	if (_size > 0) {
-		_data = new uint8_t[size];
-		if (data)
-			memcpy(_data, data, _size);
-		else if (in)
-			in->Read(_data, _size);
-		else
-			memset(_data, 0, _size);
+/* static */ DynObjectRef ScriptUserObject::Create(size_t size) {
+	uint8_t *new_data = new uint8_t[size + MemHeaderSz];
+	memset(new_data, 0, size + MemHeaderSz);
+	Header &hdr = reinterpret_cast<Header &>(*new_data);
+	hdr.Size = size;
+	void *obj_ptr = &new_data[MemHeaderSz];
+	int32_t handle = ccRegisterManagedObject(obj_ptr, &globalDynamicStruct);
+	if (handle == 0) {
+		delete[] new_data;
+		return DynObjectRef();
 	}
+	return DynObjectRef(handle, obj_ptr, &globalDynamicStruct);
 }
 
-int ScriptUserObject::Dispose(void * /*address*/, bool force) {
-	delete this;
+int ScriptUserObject::Dispose(void *address, bool /*force*/) {
+	delete[] (static_cast<uint8_t *>(address) - MemHeaderSz);
 	return 1;
 }
 
-size_t ScriptUserObject::CalcSerializeSize(void * /*address*/) {
-	return _size;
+size_t ScriptUserObject::CalcSerializeSize(void *address) {
+	const Header &hdr = GetHeader(address);
+	return hdr.Size + FileHeaderSz;
 }
 
-void ScriptUserObject::Serialize(void * /*address*/, AGS::Shared::Stream *out) {
-	out->Write(_data, _size);
+void ScriptUserObject::Serialize(void *address, AGS::Shared::Stream *out) {
+	const Header &hdr = GetHeader(address);
+	// NOTE: we only write the data, no header at the moment
+	out->Write(address, hdr.Size);
 }
 
 void ScriptUserObject::Unserialize(int index, Stream *in, size_t data_sz) {
-	Create(nullptr, in, data_sz);
-	ccRegisterUnserializedObject(index, this, this);
+	uint8_t *new_data = new uint8_t[(data_sz - FileHeaderSz) + MemHeaderSz];
+	Header &hdr = reinterpret_cast<Header &>(*new_data);
+	in->Read(new_data + MemHeaderSz, data_sz - FileHeaderSz);
+	ccRegisterUnserializedObject(index, &new_data[MemHeaderSz], this);
 }
 
-void *ScriptUserObject::GetFieldPtr(void * /*address*/, intptr_t offset) {
-	return _data + offset;
-}
-
-void ScriptUserObject::Read(void * /*address*/, intptr_t offset, uint8_t *dest, size_t size) {
-	memcpy(dest, _data + offset, size);
-}
-
-uint8_t ScriptUserObject::ReadInt8(void * /*address*/, intptr_t offset) {
-	return *(uint8_t *)(_data + offset);
-}
-
-int16_t ScriptUserObject::ReadInt16(void * /*address*/, intptr_t offset) {
-	return *(int16_t *)(_data + offset);
-}
-
-int32_t ScriptUserObject::ReadInt32(void * /*address*/, intptr_t offset) {
-	return *(int32_t *)(_data + offset);
-}
-
-float ScriptUserObject::ReadFloat(void * /*address*/, intptr_t offset) {
-	return *(float *)(_data + offset);
-}
-
-void ScriptUserObject::Write(void * /*address*/, intptr_t offset, const uint8_t *src, size_t size) {
-	memcpy((void *)(_data + offset), src, size);
-}
-
-void ScriptUserObject::WriteInt8(void * /*address*/, intptr_t offset, uint8_t val) {
-	*(uint8_t *)(_data + offset) = val;
-}
-
-void ScriptUserObject::WriteInt16(void * /*address*/, intptr_t offset, int16_t val) {
-	*(int16_t *)(_data + offset) = val;
-}
-
-void ScriptUserObject::WriteInt32(void * /*address*/, intptr_t offset, int32_t val) {
-	*(int32_t *)(_data + offset) = val;
-}
-
-void ScriptUserObject::WriteFloat(void * /*address*/, intptr_t offset, float val) {
-	*(float *)(_data + offset) = val;
-}
-
+ScriptUserObject globalDynamicStruct;
 
 // Allocates managed struct containing two ints: X and Y
 ScriptUserObject *ScriptStructHelpers::CreatePoint(int x, int y) {
-	ScriptUserObject *suo = ScriptUserObject::CreateManaged(sizeof(int32_t) * 2);
-	suo->WriteInt32(suo, 0, x);
-	suo->WriteInt32(suo, sizeof(int32_t), y);
-	return suo;
+	DynObjectRef ref = ScriptUserObject::Create(sizeof(int32_t) * 2);
+	ref.Mgr->WriteInt32(ref.Obj, 0, x);
+	ref.Mgr->WriteInt32(ref.Obj, sizeof(int32_t), y);
+	return static_cast<ScriptUserObject *>(ref.Obj);
 }
 
 } // namespace AGS3

@@ -118,7 +118,7 @@ void *Dict_GetKeysAsArray(ScriptDictBase *dic) {
 	if (items.size() == 0)
 		return nullptr;
 	DynObjectRef arr = DynamicArrayHelpers::CreateStringArray(items);
-	return arr.second;
+	return arr.Obj;
 }
 
 void *Dict_GetValuesAsArray(ScriptDictBase *dic) {
@@ -127,7 +127,7 @@ void *Dict_GetValuesAsArray(ScriptDictBase *dic) {
 	if (items.size() == 0)
 		return nullptr;
 	DynObjectRef arr = DynamicArrayHelpers::CreateStringArray(items);
-	return arr.second;
+	return arr.Obj;
 }
 
 RuntimeScriptValue Sc_Dict_Create(const RuntimeScriptValue *params, int32_t param_count) {
@@ -247,7 +247,7 @@ void *Set_GetItemsAsArray(ScriptSetBase *set) {
 	if (items.size() == 0)
 		return nullptr;
 	DynObjectRef arr = DynamicArrayHelpers::CreateStringArray(items);
-	return arr.second;
+	return arr.Obj;
 }
 
 RuntimeScriptValue Sc_Set_Create(const RuntimeScriptValue *params, int32_t param_count) {
