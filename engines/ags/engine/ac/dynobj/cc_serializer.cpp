@@ -32,8 +32,7 @@
 #include "ags/engine/ac/dynobj/script_viewport.h"
 #include "ags/engine/ac/game.h"
 #include "ags/engine/debugging/debug_log.h"
-#include "ags/plugins/ags_plugin.h"
-#include "ags/plugins/plugin_object_reader.h"
+#include "ags/plugins/plugin_engine.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -118,11 +117,15 @@ void AGSDeSerializer::Unserialize(int index, const char *objectType, const char 
 		Viewport_Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "Camera2") == 0) {
 		Camera_Unserialize(index, &mems, data_sz);
-	} else if (!unserialize_audio_script_object(index, objectType, &mems, data_sz)) {
+	} else if (strcmp(objectType, "AudioChannel") == 0) {
+		_GP(ccDynamicAudio).Unserialize(index, &mems, data_sz);
+	} else if (strcmp(objectType, "AudioClip") == 0) {
+		_GP(ccDynamicAudioClip).Unserialize(index, &mems, data_sz);
+	} else {
 		// check if the type is read by a plugin
-		for (int ii = 0; ii < _G(numPluginReaders); ii++) {
-			if (strcmp(objectType, _G(pluginReaders)[ii].type) == 0) {
-				_G(pluginReaders)[ii].reader->Unserialize(index, serializedData, dataSize);
+		for (const auto &pr : _GP(pluginReaders)) {
+			if (pr.Type == objectType) {
+				pr.Reader->Unserialize(index, serializedData, dataSize);
 				return;
 			}
 		}

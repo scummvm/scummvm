@@ -295,6 +295,7 @@ public:
 	 */
 
 	AGS::Shared::Bitmap *_glVirtualScreenWrap;
+	std::vector<PluginObjectReader> *_pluginReaders;
 
 	/**@}*/
 
@@ -1184,9 +1185,6 @@ public:
 	 * @ingroup agsglobals
 	 * @{
 	 */
-
-	PluginObjectReader *_pluginReaders;
-	int _numPluginReaders = 0;
 
 	/**@}*/
 
