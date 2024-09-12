@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-09 00:19+0000\n"
+"POT-Creation-Date: 2024-09-12 22:11+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -1028,8 +1028,8 @@ msgstr "Etkileşim"
 #: gui/gui-manager.cpp:176 engines/metaengine.cpp:117
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
 #: engines/dragons/metaengine.cpp:159 engines/freescape/movement.cpp:35
-#: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:473
-#: engines/grim/grim.cpp:554 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
+#: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:481
+#: engines/grim/grim.cpp:562 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
 #: engines/scumm/metaengine.cpp:904 engines/twine/metaengine.cpp:478
 #: engines/twine/metaengine.cpp:545 engines/twp/metaengine.cpp:154
 #: engines/wintermute/keymapper_tables.h:1290
@@ -1043,8 +1043,8 @@ msgstr "Yukarı"
 #: gui/gui-manager.cpp:182 engines/metaengine.cpp:123
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
 #: engines/dragons/metaengine.cpp:165 engines/freescape/movement.cpp:42
-#: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:478
-#: engines/grim/grim.cpp:559 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
+#: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:486
+#: engines/grim/grim.cpp:567 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
 #: engines/scumm/metaengine.cpp:871 engines/twine/metaengine.cpp:485
 #: engines/twine/metaengine.cpp:553 engines/twp/metaengine.cpp:155
 #: engines/wintermute/keymapper_tables.h:1296
@@ -1058,7 +1058,7 @@ msgstr "Aşağı"
 #: gui/gui-manager.cpp:188 engines/metaengine.cpp:129
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:171 engines/griffon/metaengine.cpp:133
-#: engines/grim/grim.cpp:483 engines/grim/grim.cpp:564 engines/icb/icb.cpp:78
+#: engines/grim/grim.cpp:491 engines/grim/grim.cpp:572 engines/icb/icb.cpp:78
 #: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:884
 #: engines/twine/metaengine.cpp:500 engines/twine/metaengine.cpp:568
 #: engines/twp/metaengine.cpp:152 engines/wintermute/keymapper_tables.h:320
@@ -1073,7 +1073,7 @@ msgstr "Sol"
 #: gui/gui-manager.cpp:194 engines/metaengine.cpp:135
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:177 engines/griffon/metaengine.cpp:139
-#: engines/grim/grim.cpp:488 engines/grim/grim.cpp:569 engines/icb/icb.cpp:83
+#: engines/grim/grim.cpp:496 engines/grim/grim.cpp:577 engines/icb/icb.cpp:83
 #: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:891
 #: engines/twine/metaengine.cpp:492 engines/twine/metaengine.cpp:561
 #: engines/twp/metaengine.cpp:153 engines/wintermute/keymapper_tables.h:326
@@ -3688,7 +3688,7 @@ msgstr "Sağ"
 
 #. I18N: Action in In Cold Blood
 #: engines/metaengine.cpp:79 engines/agos/metaengine.cpp:252
-#: engines/crab/input/input.cpp:261 engines/grim/grim.cpp:541
+#: engines/crab/input/input.cpp:261 engines/grim/grim.cpp:549
 #: engines/hdb/metaengine.cpp:258 engines/icb/icb.cpp:137
 #: engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
 #: engines/mohawk/riven.cpp:876 engines/sky/metaengine.cpp:126
@@ -3702,7 +3702,7 @@ msgid "Game menu"
 msgstr "Oyun"
 
 #: engines/metaengine.cpp:92 engines/freescape/movement.cpp:82
-#: engines/grim/grim.cpp:524 engines/grim/grim.cpp:620
+#: engines/grim/grim.cpp:532 engines/grim/grim.cpp:628
 #: engines/made/metaengine.cpp:121 engines/mohawk/myst.cpp:566
 #: engines/mohawk/riven.cpp:847 engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
@@ -3725,8 +3725,8 @@ msgstr ""
 #. and allows confirming popup dialogue prompts (eg. for save game deletion or overwriting)
 #. and also submitting a new save game name, or choosing an existing save game for overwriting.
 #: engines/metaengine.cpp:111 engines/bladerunner/metaengine.cpp:273
-#: engines/griffon/metaengine.cpp:115 engines/grim/grim.cpp:530
-#: engines/grim/grim.cpp:626 engines/sky/metaengine.cpp:101
+#: engines/griffon/metaengine.cpp:115 engines/grim/grim.cpp:538
+#: engines/grim/grim.cpp:634 engines/sky/metaengine.cpp:101
 #: engines/wintermute/keymapper_tables.h:54
 msgid "Confirm"
 msgstr ""
@@ -5468,8 +5468,8 @@ msgstr ""
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:83
-#: backends/platform/sdl/miyoo/miyoo.cpp:114 engines/grim/grim.cpp:536
-#: engines/grim/grim.cpp:632 engines/hdb/metaengine.cpp:264
+#: backends/platform/sdl/miyoo/miyoo.cpp:114 engines/grim/grim.cpp:544
+#: engines/grim/grim.cpp:640 engines/hdb/metaengine.cpp:264
 #: engines/made/metaengine.cpp:156
 msgid "Menu"
 msgstr ""
@@ -6853,7 +6853,7 @@ msgstr ""
 msgid "Faster game speed"
 msgstr ""
 
-#: engines/cine/metaengine.cpp:315 engines/grim/grim.cpp:498
+#: engines/cine/metaengine.cpp:315 engines/grim/grim.cpp:506
 #: engines/hpl1/metaengine.cpp:90 engines/scumm/help.cpp:243
 #: engines/scumm/help.cpp:251
 msgid "Examine"
@@ -6866,7 +6866,7 @@ msgstr ""
 #. I18N: Action in In Cold Blood
 #: engines/cine/metaengine.cpp:325 engines/crab/input/input.cpp:251
 #: engines/dragons/metaengine.cpp:148 engines/griffon/metaengine.cpp:152
-#: engines/grim/grim.cpp:513 engines/grim/grim.cpp:609
+#: engines/grim/grim.cpp:521 engines/grim/grim.cpp:617
 #: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:94
 #: engines/icb/icb.cpp:101 engines/icb/icb.cpp:179 engines/scumm/help.cpp:229
 #: engines/scumm/help.cpp:238 engines/scumm/help.cpp:245
@@ -7419,41 +7419,41 @@ msgid ""
 msgstr ""
 
 #. I18N: Action in In Cold Blood
-#: engines/grim/grim.cpp:493 engines/grim/grim.cpp:584
+#: engines/grim/grim.cpp:501 engines/grim/grim.cpp:592
 #: engines/hpl1/metaengine.cpp:82 engines/icb/icb.cpp:131
 #: engines/icb/icb.cpp:197
 msgid "Run"
 msgstr ""
 
-#: engines/grim/grim.cpp:503 engines/grim/grim.cpp:599
+#: engines/grim/grim.cpp:511 engines/grim/grim.cpp:607
 msgid "Use/Talk"
 msgstr ""
 
-#: engines/grim/grim.cpp:508 engines/grim/grim.cpp:604
+#: engines/grim/grim.cpp:516 engines/grim/grim.cpp:612
 msgid "Pick up/Put away"
 msgstr ""
 
-#: engines/grim/grim.cpp:518 engines/grim/grim.cpp:614
+#: engines/grim/grim.cpp:526 engines/grim/grim.cpp:622
 msgid "Skip dialog lines"
 msgstr ""
 
-#: engines/grim/grim.cpp:574
+#: engines/grim/grim.cpp:582
 msgid "Cycle Objects Up"
 msgstr ""
 
-#: engines/grim/grim.cpp:579
+#: engines/grim/grim.cpp:587
 msgid "Cycle Objects Down"
 msgstr ""
 
-#: engines/grim/grim.cpp:589
+#: engines/grim/grim.cpp:597
 msgid "Quick Room Exit"
 msgstr ""
 
-#: engines/grim/grim.cpp:594
+#: engines/grim/grim.cpp:602
 msgid "Examine/Look"
 msgstr ""
 
-#: engines/grim/grim.cpp:1370
+#: engines/grim/grim.cpp:1378
 #, fuzzy
 msgid "Error: the game could not be saved."
 msgstr "Görüntü modu değiştirilemedi"
