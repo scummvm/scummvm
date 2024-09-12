@@ -1014,11 +1014,12 @@ void croom_ptr_clear() {
 	_G(objs) = nullptr;
 }
 
-
+// coordinate conversion (data) ---> game ---> (room mask)
 int room_to_mask_coord(int coord) {
 	return coord * _GP(game).GetDataUpscaleMult() / _GP(thisroom).MaskResolution;
 }
 
+// coordinate conversion (room mask) ---> game ---> (data)
 int mask_to_room_coord(int coord) {
 	return coord * _GP(thisroom).MaskResolution / _GP(game).GetDataUpscaleMult();
 }
@@ -1031,9 +1032,9 @@ void convert_move_path_to_room_resolution(MoveList *ml, int from_step, int to_st
 
 	// If speed is independent from MaskResolution...
 	if ((_GP(game).options[OPT_WALKSPEEDABSOLUTE] != 0) && _GP(game).GetDataUpscaleMult() > 1) {
-		for (int i = from_step; i <= to_step; i++) { // ...so they are not multiplied by MaskResolution factor when converted to room coords
-			ml->xpermove[i] = ml->xpermove[i] / _GP(game).GetDataUpscaleMult();
-			ml->ypermove[i] = ml->ypermove[i] / _GP(game).GetDataUpscaleMult();
+		for (int i = from_step; i <= to_step; i++) { // ...we still need to convert from game to data coords
+			ml->xpermove[i] = game_to_data_coord(ml->xpermove[i]);
+			ml->ypermove[i] = game_to_data_coord(ml->ypermove[i]);
 		}
 	}
 
