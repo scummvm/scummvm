@@ -249,6 +249,10 @@ void Menu::plasmaEffectRenderFrame() {
 }
 
 void Menu::processPlasmaEffect(const Common::Rect &rect, int32 color) {
+	if (_engine->isLBA2()) {
+		// TODO: effects are handled differently here.
+		return;
+	}
 	const int32 max_value = color + 15;
 
 	plasmaEffectRenderFrame();

@@ -678,7 +678,7 @@ enum InventoryItems {
 
 struct TwineResource {
 	const char *hqr;
-	const int32 index;
+	int32 index;
 
 	constexpr TwineResource(const char *_hqr, int32 _index) : hqr(_hqr), index(_index) {
 	}

@@ -70,7 +70,11 @@ void Actor::restartHeroScene() {
 }
 
 void Actor::loadBehaviourEntity(ActorStruct *actor, EntityData &entityData, int16 &bodyAnimIndex, int32 index) {
-	if (!entityData.loadFromHQR(Resources::HQR_FILE3D_FILE, index, _engine->isLBA1())) {
+	TwineResource modelRes(Resources::HQR_FILE3D_FILE, index);
+	if (_engine->isLBA2()) {
+		modelRes = TwineResource(Resources::HQR_RESS_FILE, index + 44);
+	}
+	if (!entityData.loadFromHQR(modelRes, _engine->isLBA1())) {
 		error("Failed to load actor 3d data for index: %i", index);
 	}
 
@@ -503,7 +507,11 @@ void ActorStruct::loadModel(int32 modelIndex, bool lba1) {
 	_body = modelIndex;
 	if (!_staticFlags.bSprite3D) {
 		debug(1, "Init actor with model %i", modelIndex);
-		if (!_entityData.loadFromHQR(Resources::HQR_FILE3D_FILE, modelIndex, lba1)) {
+		TwineResource modelRes(Resources::HQR_FILE3D_FILE, modelIndex);
+		if (!lba1) {
+			modelRes = TwineResource(Resources::HQR_RESS_FILE, modelIndex + 44);
+		}
+		if (!_entityData.loadFromHQR(modelRes, lba1)) {
 			error("Failed to load entity data for index %i", modelIndex);
 		}
 		_entityDataPtr = &_entityData;
