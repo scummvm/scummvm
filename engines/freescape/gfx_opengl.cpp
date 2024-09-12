@@ -169,7 +169,12 @@ void OpenGLRenderer::drawSkybox(Texture *texture, Math::Vector3d camera) {
 	glBindTexture(GL_TEXTURE_2D, glTexture->_id);
 	glVertexPointer(3, GL_FLOAT, 0, _skyVertices);
 	glNormalPointer(GL_FLOAT, 0, _skyNormals);
-	glTexCoordPointer(2, GL_FLOAT, 0, _skyUvs);
+	if (texture->_height == 18) {
+		glTexCoordPointer(2, GL_FLOAT, 0, _skyUvs18);
+	} else if (texture->_height == 42) {
+		glTexCoordPointer(2, GL_FLOAT, 0, _skyUvs42);
+	} else
+		error("Unsupported skybox texture width %d", texture->_width);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
