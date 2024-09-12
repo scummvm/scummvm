@@ -20,6 +20,7 @@
  */
 
 #include "ags/engine/ac/dynobj/cc_static_array.h"
+#include "ags/engine/ac/dynobj/cc_script_object.h"
 
 namespace AGS3 {
 

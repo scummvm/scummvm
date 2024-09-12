@@ -19,6 +19,12 @@
  *
  */
 
+//=============================================================================
+//
+// Wrapper around script "GameState" struct, managing access to its variables.
+//
+//=============================================================================
+
 #ifndef AGS_ENGINE_AC_DYNOBJ_AGS_SCRIPT_GAME_H
 #define AGS_ENGINE_AC_DYNOBJ_AGS_SCRIPT_GAME_H
 
@@ -26,9 +32,8 @@
 
 namespace AGS3 {
 
-// Wrapper around script's "Game" struct, managing access to its variables
-struct StaticGame : public AGSCCStaticObject {
-	const char *GetType() override { return "Game"; }
+struct CCScriptGame : public AGSCCStaticObject {
+	int32_t ReadInt32(void *address, intptr_t offset) override;
 	void WriteInt32(void *address, intptr_t offset, int32_t val) override;
 };
 
