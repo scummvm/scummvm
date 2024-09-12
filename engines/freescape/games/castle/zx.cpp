@@ -230,7 +230,7 @@ void CastleEngine::drawZXUI(Graphics::Surface *surface) {
 
 	surface->fillRect(Common::Rect(152, 156, 216, 164), green);
 	surface->copyRectToSurface((const Graphics::Surface)*_spiritsMeterIndicatorFrame, 140 + _spiritsMeterPosition, 156, Common::Rect(0, 0, 15, 8));
-	drawEnergyMeter(surface);
+	drawEnergyMeter(surface, Common::Point(63, 154));
 }
 
 } // End of namespace Freescape

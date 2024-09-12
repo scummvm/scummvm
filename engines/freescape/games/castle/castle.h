@@ -55,7 +55,7 @@ public:
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawZXUI(Graphics::Surface *surface) override;
 	void drawAmigaAtariSTUI(Graphics::Surface *surface) override;
-	void drawEnergyMeter(Graphics::Surface *surface);
+	void drawEnergyMeter(Graphics::Surface *surface, Common::Point origin);
 	void pressedKey(const int keycode) override;
 	void checkSensors() override;
 	void updateTimeVariables() override;

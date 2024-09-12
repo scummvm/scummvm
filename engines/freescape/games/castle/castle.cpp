@@ -441,12 +441,6 @@ void CastleEngine::executeRedraw(FCLInstruction &instruction) {
 void CastleEngine::loadAssets() {
 	FreescapeEngine::loadAssets();
 	if (isDOS()) {
-
-		/*Graphics::Surface *surface = loadBundledImage("castle_riddle_background");
-		surface->convertToInPlace(_gfx->_texturePixelFormat);
-		_riddleBackgroundFrame = new Graphics::ManagedSurface();
-		_riddleBackgroundFrame->copyFrom(surface);*/
-
 		for (auto &it : _areaMap) {
 			it._value->addStructure(_areaMap[255]);
 			it._value->addObjectFromArea(229, _areaMap[255]);
@@ -656,14 +650,7 @@ void CastleEngine::drawStringInSurface(const Common::String &str, int x, int y, 
 	//FreescapeEngine::drawStringInSurface(str, x, y, transparent, green, surface, offset);
 }
 
-void CastleEngine::drawEnergyMeter(Graphics::Surface *surface) {
-	Common::Point origin;
-
-	if (isDOS())
-		origin = Common::Point(39, 157);
-	if (isSpectrum())
-		origin = Common::Point(63, 154);
-
+void CastleEngine::drawEnergyMeter(Graphics::Surface *surface, Common::Point origin) {
 	if (!_strenghtBackgroundFrame)
 		return;
 
