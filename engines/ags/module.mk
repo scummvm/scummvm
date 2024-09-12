@@ -218,6 +218,7 @@ MODULE_OBJS = \
 	engine/ac/dynobj/script_dynamic_sprite.o \
 	engine/ac/dynobj/script_file.o \
 	engine/ac/dynobj/script_game.o \
+	engine/ac/dynobj/script_mouse.o \
 	engine/ac/dynobj/script_overlay.o \
 	engine/ac/dynobj/script_set.o \
 	engine/ac/dynobj/script_string.o \
