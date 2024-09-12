@@ -19,6 +19,13 @@
  *
  */
 
+//=============================================================================
+//
+// Wrapper around script "Character" struct, managing access to its variables.
+// Assumes object data contains CharacterInfo object.
+//
+//=============================================================================
+
 #ifndef AGS_ENGINE_AC_DYNOBJ_CC_CHARACTER_H
 #define AGS_ENGINE_AC_DYNOBJ_CC_CHARACTER_H
 
@@ -27,13 +34,18 @@
 namespace AGS3 {
 
 struct CCCharacter final : AGSCCDynamicObject {
-
+public:
 	// return the type name of the object
 	const char *GetType() override;
-
 	void Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz) override;
 
+	uint8_t ReadInt8(void *address, intptr_t offset) override;
+	int16_t ReadInt16(void *address, intptr_t offset) override;
+	int32_t ReadInt32(void *address, intptr_t offset) override;
+	void WriteInt8(void *address, intptr_t offset, uint8_t val) override;
 	void WriteInt16(void *address, intptr_t offset, int16_t val) override;
+	void WriteInt32(void *address, intptr_t offset, int32_t val) override;
+
 protected:
 	// Calculate and return required space for serialization, in bytes
 	size_t CalcSerializeSize(void *address) override;
