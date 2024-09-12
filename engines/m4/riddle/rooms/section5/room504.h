@@ -35,11 +35,17 @@ private:
 	int _upSteps = 0;
 	int _downSteps = 0;
 	int _volume = 0;
-	int _convState = 0;
+	int _convState1 = 0;
 	int _convState2 = 0;
 	int _ripSketching = 0;
 	int _ripLowReach = 0;
 	int _ripMedReach = 0;
+	int _ripWipe = 0;
+	int _mzDigs = 0;
+	int _mzStandsTalks = 0;
+	int _mzSeries1 = 0;
+	int _mzSeries2 = 0;
+	int _vineTie = 0;
 
 	machine *_vines1 = nullptr;
 	machine *_vines2 = nullptr;
@@ -51,6 +57,11 @@ private:
 	machine *_shovel = nullptr;
 	machine *_driftwood = nullptr;
 	machine *_pole = nullptr;
+	machine *_mzMachine = nullptr;
+	machine *_menendez = nullptr;
+	machine *_vineMachine2 = nullptr;
+	machine *_ripStep = nullptr;
+	machine *_vine = nullptr;
 	bool _flag1 = false;
 	bool _flag2 = false;
 	bool _flag3 = false;
@@ -58,7 +69,11 @@ private:
 
 	int _trigger1 = 0;
 	int _trigger2 = 0;
+	int _trigger3 = 0;
+	int _trigger4 = 0;
 	int _val1 = 0;
+	int _val2 = 0;
+	int32 _val3 = 0;
 
 	void setVines();
 	void freeVines();

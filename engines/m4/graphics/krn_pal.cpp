@@ -341,6 +341,12 @@ void kernel_examine_inventory_object(const char *picName, RGB8 *pal, int steps, 
 	pauseEngines();
 }
 
+void kernel_examine_inventory_object(const char *picName, int steps, int delay,
+		int32 x, int32 y, int32 triggerNum, const char *digiName, int32 digiTrigger) {
+	kernel_examine_inventory_object(picName, _G(master_palette), steps, delay,
+		x, y, triggerNum, digiName, digiTrigger);
+}
+
 void kernel_unexamine_inventory_object(RGB8 *pal, int steps, int delay) {
 	if (!_GP(seriesAnim8) || _GP(seriesHash) < 0)
 		return;
