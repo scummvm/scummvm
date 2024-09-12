@@ -680,7 +680,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 			StopMoving(cc);
 	}
 
-	_G(roominst) = nullptr;
+	_G(roominst).reset();
 	if (_G(debug_flags) & DBG_NOSCRIPT) ;
 	else if (_GP(thisroom).CompiledScript != nullptr) {
 		compile_room_script();
@@ -961,7 +961,7 @@ void check_new_room() {
 void compile_room_script() {
 	cc_clear_error();
 
-	_G(roominst) = ccInstance::CreateFromScript(_GP(thisroom).CompiledScript);
+	_G(roominst).reset(ccInstance::CreateFromScript(_GP(thisroom).CompiledScript));
 	if (cc_has_error() || (_G(roominst) == nullptr)) {
 		quitprintf("Unable to create local script:\n%s", cc_get_error().ErrorString.GetCStr());
 	}
@@ -972,7 +972,7 @@ void compile_room_script() {
 	if (!_G(roominst)->ResolveImportFixups(_G(roominst)->instanceof.get()))
 		quitprintf("Unable to resolve import fixups in room script:\n%s", cc_get_error().ErrorString.GetCStr());
 
-	_G(roominstFork) = _G(roominst)->Fork();
+	_G(roominstFork).reset(_G(roominst)->Fork());
 	if (_G(roominstFork) == nullptr)
 		quitprintf("Unable to create forked room instance:\n%s", cc_get_error().ErrorString.GetCStr());
 
