@@ -1813,7 +1813,7 @@ void RegisterStaticObjects() {
 	ccAddExternalScriptObject("gs_globals", &_GP(play).globalvars[0], &_GP(GlobalStaticManager));
 	ccAddExternalScriptObject("mouse", &_GP(scmouse), &_GP(scmouse));
 	ccAddExternalScriptObject("palette", &_G(palette)[0], &_GP(GlobalStaticManager));
-	ccAddExternalScriptObject("system", &_GP(scsystem), &_GP(GlobalStaticManager));
+	ccAddExternalScriptObject("system", &_GP(scsystem), &_GP(scsystem));
 	ccAddExternalScriptObject("savegameindex", &_GP(play).filenumbers[0], &_GP(GlobalStaticManager));
 }
 

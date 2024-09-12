@@ -19,7 +19,8 @@
  *
  */
 
-// ScriptSystem is a readable/writeable struct which has been exposed to
+// Wrapper around script "System" struct, managing access to its variables.
+// ScriptSystem is a readable/writeable struct which had been exposed to
 // script in older versions of API (deprecated).
 // WARNING: it *MUST* keep its size exact to avoid breaking address offsets
 // when running old scripts. In case of emergency you may use its reserved
@@ -29,10 +30,11 @@
 #ifndef AGS_ENGINE_DYNOBJ_SCRIPT_SYSTEM_H
 #define AGS_ENGINE_DYNOBJ_SCRIPT_SYSTEM_H
 
+#include "ags/engine/ac/dynobj/cc_ags_dynamic_object.h"
+
 namespace AGS3 {
 
-// The text script's "system" struct
-struct ScriptSystem {
+struct ScriptSystem : AGSCCStaticObject {
 	int width = 0; // game screen width
 	int height = 0; // game screen height
 	int coldepth = 0; // game's color depth, in bits per pixel (8, 16, 32)
@@ -43,6 +45,9 @@ struct ScriptSystem {
 	int viewport_height = 0; // game viewport height (normal or letterboxed)
 	char aci_version[10]{}; // engine version string (informational)
 	int reserved[5]{}; // reserved fields
+
+	int32_t ReadInt32(void *address, intptr_t offset) override;
+	void	WriteInt32(void *address, intptr_t offset, int32_t val) override;
 };
 
 } // namespace AGS3
