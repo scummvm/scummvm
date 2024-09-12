@@ -31,6 +31,7 @@
 #include "common/std/vector.h"
 #include "ags/engine/game/game_init.h"
 #include "ags/shared/game/plugin_info.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 
@@ -42,6 +43,19 @@ class Stream;
 } // namespace AGS
 
 using namespace AGS; // FIXME later
+
+
+//
+// PluginObjectReader is a managed object unserializer registered by plugin.
+//
+struct PluginObjectReader {
+	const Shared::String Type;
+	ICCObjectReader *const Reader = nullptr;
+
+	PluginObjectReader(const Shared::String &type, ICCObjectReader *reader)
+		: Type(type), Reader(reader) {}
+};
+
 
 void pl_stop_plugins();
 void pl_startup_plugins();

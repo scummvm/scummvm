@@ -94,7 +94,7 @@ public:
 	int AddObject(void *address, IScriptObject *callback, ScriptValueType obj_type);
 	int AddUnserializedObject(void *address, IScriptObject *callback, ScriptValueType obj_type, int handle);
 	void WriteToDisk(Shared::Stream *out);
-	int ReadFromDisk(Shared::Stream *in, ICCObjectReader *reader);
+	int ReadFromDisk(Shared::Stream *in, ICCObjectCollectionReader *reader);
 	void reset();
 	ManagedObjectPool();
 

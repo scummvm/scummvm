@@ -208,8 +208,6 @@ void replace_tokens(const char *srcmes, char *destm, int maxlen = 99999);
 const char *get_global_message(int msnum);
 void get_message_text(int msnum, char *buffer, char giveErr = 1);
 
-bool unserialize_audio_script_object(int index, const char *objectType, AGS::Shared::Stream *in, size_t data_sz);
-
 // Notifies the game objects that certain sprite was updated.
 // This make them update their render states, caches, and so on.
 void game_sprite_updated(int sprnum);

@@ -284,7 +284,6 @@ MODULE_OBJS = \
 	engine/script/system_imports.o \
 	plugins/ags_plugin.o \
 	plugins/plugin_base.o \
-	plugins/plugin_object_reader.o \
 	plugins/core/core.o \
 	plugins/core/audio_channel.o \
 	plugins/core/audio_clip.o \
