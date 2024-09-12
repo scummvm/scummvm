@@ -752,6 +752,7 @@ void CastleEngine::drawStringInSurface(const Common::String &str, int x, int y, 
 	_font = _fontPlane2;
 	FreescapeEngine::drawStringInSurface(str, x, y, yellow, transparent, surface, offset);
 
+	_font = Common::BitArray();
 	//_font = _fontPlane3;
 	//FreescapeEngine::drawStringInSurface(str, x, y, transparent, green, surface, offset);
 }
