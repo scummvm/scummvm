@@ -73,17 +73,6 @@ static const ADExtraGuiOptionsMap twineOptionsList[] = {
 		}
 	},
 	{
-		GAMEOPTION_AUDIO_CD,
-		{
-			_s("Enable audio CD"),
-			_s("Enable the original audio cd track"),
-			"usecd",
-			false,
-			0,
-			0
-		}
-	},
-	{
 		GAMEOPTION_SOUND,
 		{
 			_s("Enable sound"),

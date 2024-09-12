@@ -93,6 +93,7 @@ void TwinEMidiPlayer::play(byte *buf, int size, bool loop) {
 	_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 
 	syncVolume();
+	debug("play midi with volume: %i", getVolume());
 
 	_isLooping = loop;
 	_isPlaying = true;
@@ -109,12 +110,16 @@ int32 Music::getLengthTrackCDR(int track) const {
 bool Music::playMidi(int32 midiIdx) {
 	const int32 loop = 1;
 	if (_engine->isDotEmuEnhanced() || _engine->isLba1Classic()) {
-		Common::Path trackName(Common::String::format("lba1-%02i", midiIdx + 1));
+		// the midi tracks are stored in the lba1-xx files and the adeline logo jingle
+		// is in lba1-32.xx - while the midiIdx is 31
+		const int32 trackOffset = 1;
+		Common::Path trackName(Common::String::format("lba1-%02i", midiIdx + trackOffset));
 		Audio::SeekableAudioStream *stream = Audio::SeekableAudioStream::openStreamFile(trackName);
 		if (stream != nullptr) {
 			const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
 			_engine->_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_midiHandle,
 													 Audio::makeLoopingAudioStream(stream, loop), volume);
+			debug("Play midi music track %i", midiIdx);
 			return true;
 		}
 	}
@@ -197,7 +202,6 @@ bool Music::initCdrom() {
 void Music::stopMusic() {
 	stopMusicCD();
 	stopMusicMidi();
-	numXmi = -1;
 }
 
 void Music::stopMusicCD() {
@@ -233,18 +237,15 @@ bool Music::playMusic(int32 track) {
 	if (_engine->isCDROM()) {
 		if (_flagVoiceCD || track < 1 || track > 9) {
 			if (playMidiFile(track)) {
-				debug("Play midi music track %i", track);
 				return true;
 			}
 		} else {
 			if (playCdTrack(track)) {
-				debug("Play cd music track %i", track);
 				return true;
 			}
 		}
 	} else {
 		if (playMidiFile(track)) {
-			debug("Play midi music track %i", track);
 			return true;
 		}
 	}
@@ -288,9 +289,10 @@ bool Music::playCdTrack(int32 track) {
 
 	if (track != getMusicCD()) {
 		stopMusicCD();
-		// TODO: endMusicCD = _engine->toSeconds(getLengthTrackCDR(track + 1)) / 75 + _engine->toSeconds(1);
+		// TODO: endMusicCD = _engine->toSeconds(getLengthTrackCDR(track)) / 75 + _engine->toSeconds(1);
 		if (playTrackCDR(track)) {
 			// TODO: endMusicCD += _engine->_system->getMillis();
+			debug("Play cd music track %i", track);
 			currentMusicCD = track;
 		}
 	}
@@ -306,7 +308,7 @@ void Music::playAllMusic(int num) {
 	}
 	if (num != getMusicCD()) {
 		stopMusicCD();
-		// TODO: endMusicCD = _engine->toSeconds(getLengthTrackCDR(num + 1)) / 75 + _engine->toSeconds(1);
+		// TODO: endMusicCD = _engine->toSeconds(getLengthTrackCDR(num)) / 75 + _engine->toSeconds(1);
 		if (playTrackCDR(num)) {
 			// TODO: endMusicCD += _engine->_system->getMillis();
 			currentMusicCD = num;

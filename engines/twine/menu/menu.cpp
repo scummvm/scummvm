@@ -31,22 +31,22 @@
 #include "common/system.h"
 #include "common/util.h"
 #include "graphics/cursorman.h"
-#include "twine/scene/actor.h"
-#include "twine/scene/animations.h"
 #include "twine/audio/music.h"
 #include "twine/audio/sound.h"
-#include "twine/movies.h"
-#include "twine/scene/gamestate.h"
-#include "twine/scene/grid.h"
-#include "twine/resources/hqr.h"
 #include "twine/input.h"
 #include "twine/menu/interface.h"
 #include "twine/menu/menuoptions.h"
-#include "twine/scene/movements.h"
+#include "twine/movies.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
+#include "twine/resources/hqr.h"
 #include "twine/resources/resources.h"
+#include "twine/scene/actor.h"
+#include "twine/scene/animations.h"
+#include "twine/scene/gamestate.h"
+#include "twine/scene/grid.h"
+#include "twine/scene/movements.h"
 #include "twine/scene/scene.h"
 #include "twine/shared.h"
 #include "twine/text.h"
@@ -79,7 +79,6 @@ enum MenuButtonTypesEnum {
 	if ((callMenu) == kQuitEngine) { \
 		return kQuitEngine;          \
 	}
-#define kBackground 9999
 
 namespace _priv {
 
@@ -219,12 +218,12 @@ void Menu::plasmaEffectRenderFrame() {
 			/* Here we calculate the average of all 8 neighbour pixel values */
 
 			int16 c;
-			c = _plasmaEffectPtr[(i - 1) + (j - 1) * PLASMA_WIDTH];  //top-left
-			c += _plasmaEffectPtr[(i + 0) + (j - 1) * PLASMA_WIDTH]; //top
-			c += _plasmaEffectPtr[(i + 1) + (j - 1) * PLASMA_WIDTH]; //top-right
+			c = _plasmaEffectPtr[(i - 1) + (j - 1) * PLASMA_WIDTH];  // top-left
+			c += _plasmaEffectPtr[(i + 0) + (j - 1) * PLASMA_WIDTH]; // top
+			c += _plasmaEffectPtr[(i + 1) + (j - 1) * PLASMA_WIDTH]; // top-right
 
-			c += _plasmaEffectPtr[(i - 1) + (j + 0) * PLASMA_WIDTH]; //left
-			c += _plasmaEffectPtr[(i + 1) + (j + 0) * PLASMA_WIDTH]; //right
+			c += _plasmaEffectPtr[(i - 1) + (j + 0) * PLASMA_WIDTH]; // left
+			c += _plasmaEffectPtr[(i + 1) + (j + 0) * PLASMA_WIDTH]; // right
 
 			c += _plasmaEffectPtr[(i - 1) + (j + 1) * PLASMA_WIDTH]; // bottom-left
 			c += _plasmaEffectPtr[(i + 0) + (j + 1) * PLASMA_WIDTH]; // bottom
@@ -235,7 +234,7 @@ void Menu::plasmaEffectRenderFrame() {
 			c = (c >> 3) | ((c & 0x0003) << 13);
 
 			if (!(c & 0x6500) &&
-			    (j >= (PLASMA_HEIGHT - 4) || c > 0)) {
+				(j >= (PLASMA_HEIGHT - 4) || c > 0)) {
 				c--; /*fade this pixel*/
 			}
 
@@ -277,8 +276,8 @@ void Menu::processPlasmaEffect(const Common::Rect &rect, int32 color) {
 }
 
 void Menu::drawRectBorders(const Common::Rect &rect, int32 colorLeftTop, int32 colorRightBottom) {
-	_engine->_interface->drawLine(rect.left, rect.top, rect.right, rect.top, colorLeftTop);           // top line
-	_engine->_interface->drawLine(rect.left, rect.top, rect.left, rect.bottom, colorLeftTop);         // left line
+	_engine->_interface->drawLine(rect.left, rect.top, rect.right, rect.top, colorLeftTop);               // top line
+	_engine->_interface->drawLine(rect.left, rect.top, rect.left, rect.bottom, colorLeftTop);             // left line
 	_engine->_interface->drawLine(rect.right, rect.top + 1, rect.right, rect.bottom, colorRightBottom);   // right line
 	_engine->_interface->drawLine(rect.left + 1, rect.bottom, rect.right, rect.bottom, colorRightBottom); // bottom line
 }
@@ -445,6 +444,28 @@ int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 		topHeight += HEIGHT_STANDARD + MENU_SPACE; // increase button top height
 	}
 	return mouseActiveButton;
+}
+
+void Menu::menuDemo() {
+	// TODO: lba2 only show the credits only in the main menu and you could force it by pressing shift+c
+	// TODO: lba2 has a cd audio track (2) for the credits
+	_engine->_menuOptions->showCredits();
+	if (_engine->_movie->playMovie(FLA_DRAGON3)) {
+		if (!_engine->_screens->loadImageDelay(TwineImage(Resources::HQR_RESS_FILE, 15, 16), 3)) {
+			if (!_engine->_screens->loadImageDelay(TwineImage(Resources::HQR_RESS_FILE, 17, 18), 3)) {
+				if (!_engine->_screens->loadImageDelay(TwineImage(Resources::HQR_RESS_FILE, 19, 20), 3)) {
+					if (_engine->_movie->playMovie(FLA_BATEAU)) {
+						if (_engine->_cfgfile.Version == USA_VERSION) {
+							_engine->_screens->loadImageDelay(_engine->_resources->relentLogo(), 3);
+						} else {
+							_engine->_screens->loadImageDelay(_engine->_resources->lbaLogo(), 3);
+						}
+						_engine->_screens->adelineLogo();
+					}
+				}
+			}
+		}
+	}
 }
 
 int32 Menu::doGameMenu(MenuSettings *menuSettings) {
@@ -660,29 +681,14 @@ int32 Menu::doGameMenu(MenuSettings *menuSettings) {
 			}
 			startMillis = loopMillis;
 		}
-		if (!_engine->_scene->isGameRunning() && loopMillis - startMillis > 11650) {
-			// TODO: lba2 only show the credits only in the main menu and you could force it by pressing shift+c
-			// TODO: lba2 has a cd audio track (2) for the credits
-			_engine->_menuOptions->showCredits();
-			if (_engine->_movie->playMovie(FLA_DRAGON3)) {
-				if (!_engine->_screens->loadImageDelay(TwineImage(Resources::HQR_RESS_FILE, 15, 16), 3)) {
-					if (!_engine->_screens->loadImageDelay(TwineImage(Resources::HQR_RESS_FILE, 17, 18), 3)) {
-						if (!_engine->_screens->loadImageDelay(TwineImage(Resources::HQR_RESS_FILE, 19, 20), 3)) {
-							if (_engine->_movie->playMovie(FLA_BATEAU)) {
-								if (_engine->_cfgfile.Version == USA_VERSION) {
-									_engine->_screens->loadImageDelay(_engine->_resources->relentLogo(), 3);
-								} else {
-									_engine->_screens->loadImageDelay(_engine->_resources->lbaLogo(), 3);
-								}
-								_engine->_screens->adelineLogo();
-							}
-						}
-					}
-				}
+		if (menuSettings == &_mainMenuState) {
+			uint32 idleTime = 60 * 3 + 53 * 1000;
+			if (_engine->isDemo()) {
+				idleTime = 60 * 1000;
 			}
-			_engine->_text->initDial(TextBankId::Options_and_menus);
-			startMillis = _engine->_system->getMillis();
-			_engine->_screens->loadMenuImage(false);
+			if (loopMillis - startMillis > idleTime) {
+				return kDemoMenu;
+			}
 		}
 	} while (!_engine->_input->toggleActionIfActive(TwinEActionType::UIEnter));
 
@@ -802,7 +808,14 @@ int32 Menu::optionsMenu() {
 	_engine->restoreFrontBuffer();
 
 	_engine->_sound->stopSamples();
-	_engine->_music->playMusic(9); // LBA's Theme
+	if (_engine->isLBA1()) {
+		// LBA's Theme
+		if (_engine->isCDROM()) {
+			_engine->_music->playCdTrack(9);
+		} else {
+			_engine->_music->playMidiFile(9);
+		}
+	}
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
@@ -942,8 +955,9 @@ EngineState Menu::run() {
 		optionsMenu();
 		break;
 	}
-	case kBackground: {
-		_engine->_screens->loadMenuImage();
+	case kDemoMenu: {
+		menuDemo();
+		_engine->_screens->loadMenuImage(false);
 		break;
 	}
 	case (int32)TextId::kQuit:
@@ -1351,7 +1365,7 @@ void Menu::processInventoryMenu() {
 	ProgressiveTextState textState = ProgressiveTextState::ContinueRunning;
 	bool updateItemText = true;
 
-	//ScopedCursor scopedCursor(_engine);
+	// ScopedCursor scopedCursor(_engine);
 	ScopedKeyMap scopedKeyMap(_engine, uiKeyMapId);
 	for (;;) {
 		FrameMarker frame(_engine, 66);

@@ -54,7 +54,7 @@ public:
 
 	void showEndSequence();
 	void showCredits();
-	bool canShowCredits = false;
+	bool flagCredits = false;
 
 	char _saveGameName[32] {'\0'};
 

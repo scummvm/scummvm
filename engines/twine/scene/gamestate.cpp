@@ -120,7 +120,7 @@ void GameState::initEngineVars() {
 	_engine->_scene->_needChangeScene = LBA1SceneId::Citadel_Island_Prison;
 	_engine->_sceneLoopState = SceneLoopState::Continue;
 	_engine->_scene->_mecaPenguinIdx = -1;
-	_engine->_menuOptions->canShowCredits = false;
+	_engine->_menuOptions->flagCredits = false;
 
 	_inventoryNumLeafs = 0;
 	_inventoryNumLeafsBox = 2;

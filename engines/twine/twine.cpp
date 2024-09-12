@@ -867,7 +867,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 	_debug->processDebug();
 
-	if (_menuOptions->canShowCredits) {
+	if (_menuOptions->flagCredits) {
 		if (isLBA1()) {
 			if (isCDROM()) {
 				if (_music->getMusicCD() != 8) {

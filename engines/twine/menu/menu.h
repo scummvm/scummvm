@@ -30,6 +30,7 @@ namespace TwinE {
 #define MAX_BUTTONS 10
 #define PLASMA_WIDTH 320
 #define PLASMA_HEIGHT 50
+#define kDemoMenu 9999
 #define kQuitEngine 9998
 
 class BodyData;
@@ -226,6 +227,7 @@ public:
 	 * @param menuSettings menu settings array with the information to build the menu options
 	 * @return pressed menu button identification
 	 */
+	void menuDemo();
 	int32 doGameMenu(MenuSettings *menuSettings);
 
 	bool init();

@@ -105,10 +105,10 @@ void MenuOptions::showCredits() {
 	_engine->_scene->_currentSceneIdx = LBA1SceneId::Credits_List_Sequence;
 	_engine->_scene->_needChangeScene = LBA1SceneId::Credits_List_Sequence;
 
-	canShowCredits = true;
+	flagCredits = true;
 	_engine->gameEngineLoop();
 	_engine->_scene->stopRunningGame();
-	canShowCredits = false;
+	flagCredits = false;
 
 	_engine->_cfgfile.ShadowMode = tmpShadowMode;
 
