@@ -1763,6 +1763,7 @@ void RegisterGameAPI() {
 		{"Game::InputBox^1", API_FN_PAIR(Game_InputBox)},
 		{"Game::SetSaveGameDirectory^1", API_FN_PAIR(Game_SetSaveGameDirectory)},
 		{"Game::StopSound^1", API_FN_PAIR(StopAllSounds)},
+		{"Game::ResetDoOnceOnly", API_FN_PAIR(Game_ResetDoOnceOnly)},
 		{"Game::get_CharacterCount", API_FN_PAIR(Game_GetCharacterCount)},
 		{"Game::get_DialogCount", API_FN_PAIR(Game_GetDialogCount)},
 		{"Game::get_FileName", API_FN_PAIR(Game_GetFileName)},
