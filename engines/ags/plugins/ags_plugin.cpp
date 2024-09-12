@@ -65,7 +65,6 @@
 #include "ags/engine/main/engine.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/plugins/plugin_engine.h"
-#include "ags/plugins/plugin_object_reader.h"
 #include "ags/engine/script/runtime_script_value.h"
 #include "ags/engine/script/script.h"
 #include "ags/engine/script/script_runtime.h"
@@ -650,20 +649,15 @@ int IAGSEngine::RegisterManagedObject(void *object, IAGSScriptManagedObject *cal
 }
 
 void IAGSEngine::AddManagedObjectReader(const char *typeName, IAGSManagedObjectReader *reader) {
-	if (_G(numPluginReaders) >= MAX_PLUGIN_OBJECT_READERS)
-		quit("Plugin error: IAGSEngine::AddObjectReader: Too many object readers added");
-
 	if ((typeName == nullptr) || (typeName[0] == 0))
 		quit("Plugin error: IAGSEngine::AddObjectReader: invalid name for type");
 
-	for (int ii = 0; ii < _G(numPluginReaders); ii++) {
-		if (strcmp(_G(pluginReaders)[ii].type, typeName) == 0)
-			quitprintf("Plugin error: IAGSEngine::AddObjectReader: type '%s' has been registered already", typeName);
+	for (const auto &pr : _GP(pluginReaders)) {
+		if (pr.Type == typeName)
+			quitprintf("Plugin error: IAGSEngine::AddObjectReader: type '%s' has been registered already", pr.Type.GetCStr());
 	}
 
-	_G(pluginReaders)[_G(numPluginReaders)].reader = reader;
-	_G(pluginReaders)[_G(numPluginReaders)].type = typeName;
-	_G(numPluginReaders)++;
+	_GP(pluginReaders).push_back(PluginObjectReader(typeName, reinterpret_cast<ICCObjectReader*>(reader)));
 }
 
 void IAGSEngine::RegisterUnserializedObject(int key, void *object, IAGSScriptManagedObject *callback) {
@@ -848,8 +842,7 @@ Engine::GameInitError pl_register_plugins(const std::vector<PluginInfo> &infos) 
 		// AGS Editor currently saves plugin names in game data with
 		// ".dll" extension appended; we need to take care of that
 		const String name_ext = ".dll";
-		if (name.GetLength() <= name_ext.GetLength() || name.GetLength() > PLUGIN_FILENAME_MAX + name_ext.GetLength() ||
-		        name.CompareRightNoCase(name_ext, name_ext.GetLength())) {
+		if (name.GetLength() <= name_ext.GetLength() || name.CompareRightNoCase(name_ext, name_ext.GetLength())) {
 			return kGameInitErr_PluginNameInvalid;
 		}
 		// remove ".dll" from plugin's name

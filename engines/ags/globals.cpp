@@ -98,7 +98,7 @@
 #include "ags/engine/script/system_imports.h"
 #include "common/std/limits.h"
 #include "ags/plugins/ags_plugin.h"
-#include "ags/plugins/plugin_object_reader.h"
+#include "ags/plugins/plugin_engine.h"
 #include "ags/plugins/core/core.h"
 #include "common/file.h"
 
@@ -119,6 +119,7 @@ Globals::Globals() {
 
 	// ags_plugin.cpp globals
 	_glVirtualScreenWrap = new AGS::Shared::Bitmap();
+	_pluginReaders = new std::vector<PluginObjectReader>();
 
 	// cc_ags_dynamic_object.cpp globals
 	_GlobalStaticManager = new AGSCCStaticObject();
@@ -341,7 +342,6 @@ Globals::Globals() {
 	_plugins->reserve(MAXPLUGINS);
 
 	// plugin_object_reader.cpp globals
-	_pluginReaders = new PluginObjectReader[MAX_PLUGIN_OBJECT_READERS];
 
 	// room.cpp globals
 	_rgb_table = new RGB_MAP();
@@ -403,6 +403,7 @@ Globals::~Globals() {
 
 	// ags_plugin.cpp globals
 	delete _glVirtualScreenWrap;
+	delete _pluginReaders;
 
 	// ags_static_object.cpp globals
 	delete _GlobalStaticManager;
@@ -596,7 +597,6 @@ Globals::~Globals() {
 	delete _plugins;
 
 	// plugin_object_reader.cpp globals
-	delete[] _pluginReaders;
 
 	// room.cpp globals
 	delete _rgb_table;
