@@ -27,13 +27,19 @@
 namespace MM {
 namespace Xeen {
 
+namespace {
+const int kBig5Width = 16;
+const int kBig5Height = 14;
+}
+
 const byte *FontData::_fontData;
 Common::Point *FontData::_fontWritePos;
 byte FontData::_textColors[4];
 byte FontData::_bgColor;
 bool FontData::_fontReduced;
 Justify FontData::_fontJustify;
-
+Graphics::Big5Font *FontData::_big5Font;
+	
 FontSurface::FontSurface() : XSurface(), _msgWraps(false), _displayString(nullptr),
 		_writePos(*FontData::_fontWritePos) {
 	setTextColor(0);
@@ -54,6 +60,7 @@ FontSurface::FontSurface() : XSurface(), _msgWraps(false), _displayString(nullpt
 		_fntEnWOffset           = 0x1000;
 		_fntEnReducedWOffset    = 0x1080;
 	}
+	_isBig5 = Common::ZH_TWN == lang;
 }
 
 FontSurface::FontSurface(int wv, int hv) : XSurface(wv, hv),
@@ -77,6 +84,7 @@ FontSurface::FontSurface(int wv, int hv) : XSurface(wv, hv),
 		_fntEnWOffset           = 0x1000;
 		_fntEnReducedWOffset    = 0x1080;
 	}
+	_isBig5 = Common::ZH_TWN == lang;
 }
 
 void FontSurface::writeSymbol(int symbolId) {
@@ -183,7 +191,7 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 
 		// Main character display loop
 		while (_displayString <= displayEnd) {
-			char c = getNextChar();
+			uint16_t c = getNextChar();
 
 			if (c == ' ') {
 				_writePos.x += _fontReduced ? 3 : 4;
@@ -233,7 +241,7 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 				} else {
 					if (c == 6)
 						c = ' ';
-					int offset_charW = c < 0 ?
+					int offset_charW = c & 0x80 ?
 						(_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (int)(c & 0x7F) :
 						(_fontReduced ? _fntEnReducedWOffset : _fntEnWOffset) + (int)c;
 					byte charSize = _fontData[offset_charW];
@@ -273,14 +281,12 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 				if (idx < 0)
 					idx = 0;
 				setTextColor(idx);
+			} else if (Common::RU_RUS == lang && (c & 0x80)) {
+				writeChar(c, bounds);
 			} else if (c < ' ') {
-				if (Common::RU_RUS == lang && c < 0) {
-					writeChar(c, bounds);
-				} else {
-					// End of string or invalid command
-					_displayString = nullptr;
-					break;
-				}
+				// End of string or invalid command
+				_displayString = nullptr;
+				break;
 			} else {
 				// Standard character - write it out
 				writeChar(c, bounds);
@@ -297,24 +303,35 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 	return _displayString;
 }
 
-void FontSurface::writeCharacter(char c, const Common::Rect &clipRect) {
+void FontSurface::writeCharacter(uint16_t c, const Common::Rect &clipRect) {
 	Justify justify = _fontJustify;
 	_fontJustify = JUSTIFY_NONE;
-	writeString(Common::String::format("%c", c), clipRect);
+	if (_isBig5 && c >= 0x100)
+		writeString(Common::String::format("%c%c", c >> 8, c & 0xff), clipRect);
+	else
+		writeString(Common::String::format("%c", c), clipRect);
 	_fontJustify = justify;
 }
 
-char FontSurface::getNextChar() {
-	if (Common::RU_RUS == lang)
-		return *_displayString++;
+uint16_t FontSurface::getNextChar() {
+	if (_isBig5) {
+		uint8_t lead = *_displayString++;
+		if (!(lead & 0x80))
+			return lead;
+		return (lead << 8) | (*_displayString++ & 0xff);
+	} else if (Common::RU_RUS == lang)
+		return *_displayString++ & 0xff;
 	else
 		return *_displayString++ & 0x7f;
 }
 
 bool FontSurface::getNextCharWidth(int &total) {
-	char c = getNextChar();
+	uint16_t c = getNextChar();
 
-	if (c > ' ') {
+	if (_isBig5 && c > 0xff) {
+		total += kBig5Width;
+		return false;
+	} if (c > ' ') {
 		total += _fontData[(_fontReduced ? _fntEnReducedWOffset : _fntEnWOffset) + (int)c];
 		return false;
 	} else if (c == ' ') {
@@ -334,7 +351,7 @@ bool FontSurface::getNextCharWidth(int &total) {
 		if (c != 'd')
 			getNextChar();
 		return false;
-	} else if (Common::RU_RUS == lang && c < 0) {
+	} else if (Common::RU_RUS == lang && (c & 0x80)) {
 		total += _fontData[(_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (int)(c & 0x7F)];
 		return false;
 	} else {
@@ -360,7 +377,7 @@ bool FontSurface::newLine(const Common::Rect &bounds) {
 int FontSurface::fontAtoi(int len) {
 	int total = 0;
 	for (int i = 0; i < len; ++i) {
-		char c = getNextChar();
+		uint16_t c = getNextChar();
 		if (c == ' ')
 			c = '0';
 
@@ -379,9 +396,17 @@ void FontSurface::setTextColor(int idx) {
 	Common::copy(colP, colP + 4, &_textColors[0]);
 }
 
-void FontSurface::writeChar(char c, const Common::Rect &clipRect) {
+void FontSurface::writeChar(uint16_t c, const Common::Rect &clipRect) {
 	// Get y position, handling kerning
 	int y = _writePos.y;
+	if (_isBig5 && c > 0xff) {
+		_big5Font->drawBig5Char(surfacePtr(), c, _writePos, _textColors[0]);
+		_writePos.x += kBig5Width;
+		addDirtyRect(Common::Rect(_writePos.x, _writePos.y, _writePos.x + kBig5Width,
+					  _writePos.y + kBig5Height));
+
+		return;
+	}
 	if (c == 'g' || c == 'p' || c == 'q' || c == 'y')
 		++y;
 	int yStart = y;
@@ -389,7 +414,7 @@ void FontSurface::writeChar(char c, const Common::Rect &clipRect) {
 	// Get pointers into font data and surface to write pixels to
 	int offset_charData;
 	int offset_charW;
-	if (Common::RU_RUS == lang && c < 0) {
+	if (Common::RU_RUS == lang && (c & 0x80)) {
 		offset_charData = (_fontReduced ? _fntNonEnReducedOffset : _fntNonEnOffset) + (int)(c & 0x7F) * 16;
 		offset_charW = (_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (int)(c & 0x7F);
 	} else {
