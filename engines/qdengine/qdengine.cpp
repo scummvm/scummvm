@@ -297,7 +297,6 @@ Common::Error QDEngineEngine::run() {
 			}
 			resD.quant();
 			_gameD->redraw();
-
 		} else {
 			was_inactive = true;
 			g_system->delayMillis(100);
@@ -305,6 +304,7 @@ Common::Error QDEngineEngine::run() {
 		}
 
 		g_system->updateScreen();
+		g_system->delayMillis(10);
 	}
 
 	delete _gameD;
