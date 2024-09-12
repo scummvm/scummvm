@@ -1255,11 +1255,11 @@ public:
 
 	PScript *_gamescript;
 	PScript *_dialogScriptsScript;
-	PInstance _gameinst;
-	PInstance _roominst;
-	PInstance _dialogScriptsInst;
-	PInstance _gameinstFork;
-	PInstance _roominstFork;
+	UInstance _gameinst;
+	UInstance _roominst;
+	UInstance _dialogScriptsInst;
+	UInstance _gameinstFork;
+	UInstance _roominstFork;
 
 	int _num_scripts = 0;
 	int _post_script_cleanup_stack = 0;
@@ -1281,8 +1281,8 @@ public:
 	ScriptSystem *_scsystem;
 
 	std::vector<PScript> *_scriptModules;
-	std::vector<PInstance> *_moduleInst;
-	std::vector<PInstance> *_moduleInstFork;
+	std::vector<UInstance> *_moduleInst;
+	std::vector<UInstance> *_moduleInstFork;
 	std::vector<RuntimeScriptValue> *_moduleRepExecAddr;
 	size_t _numScriptModules = 0;
 

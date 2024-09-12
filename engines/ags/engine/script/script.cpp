@@ -59,7 +59,7 @@ static char scfunctionname[MAX_FUNCTION_NAME_LEN + 1];
 int run_dialog_request(int parmtr) {
 	_GP(play).stop_dialog_at_end = DIALOG_RUNNING;
 	RuntimeScriptValue params[]{ parmtr };
-	RunScriptFunction(_G(gameinst), "dialog_request", 1, params);
+	RunScriptFunction(_G(gameinst).get(), "dialog_request", 1, params);
 
 	if (_GP(play).stop_dialog_at_end == DIALOG_STOP) {
 		_GP(play).stop_dialog_at_end = DIALOG_NONE;
@@ -200,25 +200,25 @@ int create_global_script() {
 
 	// NOTE: this function assumes that the module lists have their elements preallocated!
 
-	std::vector<PInstance> all_insts; // gather all to resolve exports below
+	std::vector<ccInstance *> all_insts; // gather all to resolve exports below
 	for (size_t i = 0; i < _G(numScriptModules); ++i) {
 		auto inst = ccInstance::CreateFromScript(_GP(scriptModules)[i]);
 		if (!inst)
 			return kscript_create_error;
-		_GP(moduleInst)[i] = inst;
+		_GP(moduleInst)[i].reset(inst);
 		all_insts.push_back(inst);
 	}
 
-	_G(gameinst) = ccInstance::CreateFromScript(_GP(gamescript));
+	_G(gameinst).reset(ccInstance::CreateFromScript(_GP(gamescript)));
 	if (!_G(gameinst))
 		return kscript_create_error;
-	all_insts.push_back(_G(gameinst));
+	all_insts.push_back(_G(gameinst).get());
 
-	if (_GP(dialogScriptsScript) != nullptr) {
-		_G(dialogScriptsInst) = ccInstance::CreateFromScript(_GP(dialogScriptsScript));
+	if (_GP(dialogScriptsScript)) {
+		_G(dialogScriptsInst).reset(ccInstance::CreateFromScript(_GP(dialogScriptsScript)));
 		if (!_G(dialogScriptsInst))
 			return kscript_create_error;
-		all_insts.push_back(_G(dialogScriptsInst));
+		all_insts.push_back(_G(dialogScriptsInst).get());
 	}
 
 	// Resolve the script imports after all the scripts have been loaded
@@ -236,11 +236,11 @@ int create_global_script() {
 		if (!fork)
 			return kscript_create_error;
 
-		_GP(moduleInstFork)[module_idx] = fork;
+		_GP(moduleInstFork)[module_idx].reset(fork);
 		_GP(moduleRepExecAddr)[module_idx] = _GP(moduleInst)[module_idx]->GetSymbolAddress(REP_EXEC_NAME);
 	}
 
-	_G(gameinstFork) = _G(gameinst)->Fork();
+	_G(gameinstFork).reset(_G(gameinst)->Fork());
 	if (_G(gameinstFork) == nullptr)
 		return kscript_create_error;
 
@@ -252,7 +252,7 @@ void cancel_all_scripts() {
 	for (int i = 0; i < _G(num_scripts); ++i) {
 		auto &sc = _G(scripts)[i];
 		if (sc.inst) {
-			(sc.forked) ? sc.inst->AbortAndDestroy() : sc.inst->Abort();
+			(sc.forkedInst) ? sc.inst->AbortAndDestroy() : sc.inst->Abort();
 		}
 		sc.numanother = 0;
 	}
@@ -263,11 +263,11 @@ void cancel_all_scripts() {
 		inst->Abort();
 }
 
-PInstance GetScriptInstanceByType(ScriptInstType sc_inst) {
+ccInstance *GetScriptInstanceByType(ScriptInstType sc_inst) {
 	if (sc_inst == kScInstGame)
-		return _G(gameinst);
+		return _G(gameinst).get();
 	else if (sc_inst == kScInstRoom)
-		return _G(roominst);
+		return _G(roominst).get();
 	return nullptr;
 }
 
@@ -305,7 +305,7 @@ static bool DoRunScriptFuncCantBlock(ccInstance *sci, NonBlockingScriptFunction 
 	return (hasTheFunc);
 }
 
-static int PrepareTextScript(PInstance sci, const char **tsname) {
+static int PrepareTextScript(ccInstance *sci, const char **tsname) {
 	cc_clear_error();
 	// FIXME: try to make it so this function is not called with NULL sci
 	if (sci == nullptr) return -1;
@@ -317,16 +317,19 @@ static int PrepareTextScript(PInstance sci, const char **tsname) {
 		cc_error("script is already in execution");
 		return -3;
 	}
-	_G(scripts)[_G(num_scripts)].init();
-	_G(scripts)[_G(num_scripts)].inst = sci;
+	ExecutingScript exscript;
 	// CHECKME: this conditional block will never run, because
 	// function would have quit earlier (deprecated functionality?)
 	if (sci->IsBeingRun()) {
-		_G(scripts)[_G(num_scripts)].inst = sci->Fork();
-		if (_G(scripts)[_G(num_scripts)].inst == nullptr)
+		auto fork = sci->Fork();
+		if (!fork)
 			quit("unable to fork instance for secondary script");
-		_G(scripts)[_G(num_scripts)].forked = true;
+		exscript.forkedInst.reset(fork);
+		exscript.inst = fork;
+	} else {
+		exscript.inst = sci;
 	}
+	_G(scripts)[_G(num_scripts)] = std::move(exscript);
 	_G(curscript) = &_G(scripts)[_G(num_scripts)];
 	_G(num_scripts)++;
 	if (_G(num_scripts) >= MAX_SCRIPT_AT_ONCE)
@@ -339,7 +342,7 @@ static int PrepareTextScript(PInstance sci, const char **tsname) {
 	return 0;
 }
 
-int RunScriptFunction(PInstance sci, const char *tsname, size_t numParam, const RuntimeScriptValue *params) {
+int RunScriptFunction(ccInstance *sci, const char *tsname, size_t numParam, const RuntimeScriptValue *params) {
 	int oldRestoreCount = _G(gameHasBeenRestored);
 	// TODO: research why this is really necessary, and refactor to avoid such hacks!
 	// First, save the current ccError state
@@ -385,8 +388,8 @@ int RunScriptFunction(PInstance sci, const char *tsname, size_t numParam, const 
 
 void RunScriptFunctionInModules(const char *tsname, size_t param_count, const RuntimeScriptValue *params) {
 	for (size_t i = 0; i < _G(numScriptModules); ++i)
-		RunScriptFunction(_GP(moduleInst)[i], tsname, param_count, params);
-	RunScriptFunction(_G(gameinst), tsname, param_count, params);
+		RunScriptFunction(_GP(moduleInst)[i].get(), tsname, param_count, params);
+	RunScriptFunction(_G(gameinst).get(), tsname, param_count, params);
 }
 
 int RunScriptFunctionInRoom(const char *tsname, size_t param_count, const RuntimeScriptValue *params) {
@@ -394,7 +397,7 @@ int RunScriptFunctionInRoom(const char *tsname, size_t param_count, const Runtim
 	// identified by having no parameters;
 	// TODO: this is a hack, this should be defined either by function type, or as an arg
 	const bool strict_room_event = (param_count == 0);
-	int toret = RunScriptFunction(_G(roominst), tsname, param_count, params);
+	int toret = RunScriptFunction(_G(roominst).get(), tsname, param_count, params);
 	// If it's a obligatory room event, and return code means missing function - error
 	if (strict_room_event && (toret == -18))
 		quitprintf("RunScriptFunction: error %d (%s) trying to run '%s'   (Room %d)",
@@ -408,13 +411,13 @@ static int RunUnclaimableEvent(const char *tsname) {
 	const int restore_game_count_was = _G(gameHasBeenRestored);
 	for (size_t i = 0; i < _G(numScriptModules); ++i) {
 		if (!_GP(moduleRepExecAddr)[i].IsNull())
-			RunScriptFunction(_GP(moduleInst)[i], tsname);
+			RunScriptFunction(_GP(moduleInst)[i].get(), tsname);
 		// Break on room change or save restoration
 		if ((room_changes_was != _GP(play).room_changes) ||
 			(restore_game_count_was != _G(gameHasBeenRestored)))
 			return 0;
 	}
-	return RunScriptFunction(_G(gameinst), tsname);
+	return RunScriptFunction(_G(gameinst).get(), tsname);
 }
 
 static int RunClaimableEvent(const char *tsname, size_t param_count, const RuntimeScriptValue *params) {
@@ -424,7 +427,7 @@ static int RunClaimableEvent(const char *tsname, size_t param_count, const Runti
 	// Break on event claim
 	if (eventWasClaimed)
 		return toret;
-	return RunScriptFunction(_G(gameinst), tsname, param_count, params);
+	return RunScriptFunction(_G(gameinst).get(), tsname, param_count, params);
 }
 
 int RunScriptFunctionAuto(ScriptInstType sc_inst, const char *tsname, size_t param_count, const RuntimeScriptValue *params) {
@@ -443,7 +446,7 @@ int RunScriptFunctionAuto(ScriptInstType sc_inst, const char *tsname, size_t par
 		return RunClaimableEvent(tsname, param_count, params);
 	}
 	// Else run on the single chosen script instance
-	PInstance sci = GetScriptInstanceByType(sc_inst);
+	ccInstance *sci = GetScriptInstanceByType(sc_inst);
 	if (!sci)
 		return 0;
 	return RunScriptFunction(sci, tsname, param_count, params);
@@ -451,8 +454,8 @@ int RunScriptFunctionAuto(ScriptInstType sc_inst, const char *tsname, size_t par
 
 void AllocScriptModules() {
 	// NOTE: this preallocation possibly required to safeguard some algorithms
-	_GP(moduleInst).resize(_G(numScriptModules), nullptr);
-	_GP(moduleInstFork).resize(_G(numScriptModules), nullptr);
+	_GP(moduleInst).resize(_G(numScriptModules));
+	_GP(moduleInstFork).resize(_G(numScriptModules));
 	_GP(moduleRepExecAddr).resize(_G(numScriptModules));
 	_GP(repExecAlways).moduleHasFunction.resize(_G(numScriptModules), true);
 	_GP(lateRepExecAlways).moduleHasFunction.resize(_G(numScriptModules), true);
@@ -539,9 +542,9 @@ void post_script_cleanup() {
 		quit(cc_get_error().ErrorString);
 
 	ExecutingScript copyof;
-	if (_G(num_scripts) > 0) {
-		copyof = _G(scripts)[_G(num_scripts) - 1];
-		_G(scripts)[_G(num_scripts) - 1].inst.reset();
+	if (_G(num_scripts) > 0) {  // save until the end of function
+		copyof = std::move(_G(scripts)[_G(num_scripts) - 1]);
+		copyof.forkedInst.reset(); // don't need it further
 		_G(num_scripts)--;
 	}
 	_G(inside_script)--;
