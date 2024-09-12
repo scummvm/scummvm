@@ -731,6 +731,8 @@ void qdGameDispatcher::redraw() {
 
 	if (!check_flag(SKIP_REDRAW_FLAG)) {
 		if (!is_video_playing()) {
+			debugC(1, kDebugGraphics, "qdGameDispatcher::redraw(): =========== FRAME START");
+
 			pre_redraw();
 #ifndef _GD_REDRAW_REGIONS_CHECK_
 			for (grDispatcher::region_iterator it = grDispatcher::instance()->changed_regions().begin(); it != grDispatcher::instance()->changed_regions().end(); ++it) {
@@ -747,6 +749,7 @@ void qdGameDispatcher::redraw() {
 
 			grDispatcher::instance()->flush();
 #endif
+			debugC(1, kDebugGraphics, "qdGameDispatcher::redraw(): =========== FRAME END\n");
 		}
 		if (!g_engine->_forceFullRedraw)
 			drop_flag(FULLSCREEN_REDRAW_FLAG);
