@@ -45,6 +45,7 @@ public:
 	virtual void replaceMacCursor(const Graphics::Cursor *cursor) = 0;
 	virtual Common::Point getMousePos() const;
 	virtual void setMousePos(const Common::Point &pos) const;
+	virtual void setShakePos(int shakeXOffset, int shakeYOffset) const;
 	virtual void clearRect(const Common::Rect &r) const;
 	virtual void copyCurrentBitmap(byte *dest, uint32 size) const = 0;
 	virtual void copyCurrentPalette(byte *dest, int start, int num) const;
@@ -145,6 +146,7 @@ public:
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	Common::Point getMousePos() const override;
 	void setMousePos(const Common::Point &pos) const override;
+	void setShakePos(int shakeXOffset, int shakeYOffset) const override;
 	void clearRect(const Common::Rect &r) const override;
 	static bool validateMode(Common::Platform p) { return (p == Common::kPlatformDOS) && checkDriver(_driverFiles, 2); }
 private:
@@ -165,6 +167,7 @@ public:
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	Common::Point getMousePos() const override;
 	void setMousePos(const Common::Point &pos) const override;
+	void setShakePos(int shakeXOffset, int shakeYOffset) const override;
 	void clearRect(const Common::Rect &r) const override;
 	static bool validateMode(Common::Platform p) { return (p == Common::kPlatformDOS) && checkDriver(&_driverFile, 1); }
 private:
@@ -203,6 +206,7 @@ public:
 	void drawTextFontGlyph(const byte*, int, int, int, int, int, int, const PaletteMod*, const byte*) override; // Only for HiRes fonts. Not implemented here.
 	Common::Point getMousePos() const override;
 	void setMousePos(const Common::Point &pos) const override;
+	void setShakePos(int shakeXOffset, int shakeYOffset) const override;
 	void clearRect(const Common::Rect &r) const override;
 	bool supportsPalIntensity() const override { return false; }
 	bool driverBasedTextRendering() const override { return false; }
@@ -231,6 +235,7 @@ public:
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	Common::Point getMousePos() const override;
 	void setMousePos(const Common::Point &pos) const override;
+	void setShakePos(int shakeXOffset, int shakeYOffset) const override;
 	void clearRect(const Common::Rect &r) const override;
 	void drawTextFontGlyph(const byte *src, int pitch, int hiresDestX, int hiresDestY, int hiresW, int hiresH, int transpColor, const PaletteMod *palMods, const byte *palModMapping) override; // For HiRes fonts. PC-98 versions bypass the video driver for this and render directly on top of the vram.
 	bool driverBasedTextRendering() const override { return true; }
