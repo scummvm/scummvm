@@ -19,26 +19,33 @@
  *
  */
 
-//=============================================================================
-//
-// Wrapper around script "Mouse" struct, managing access to its variables.
-//
-//=============================================================================
-#ifndef AGS_ENGINE_DYNOBJ__SCRIPTMOUSE_H
-#define AGS_ENGINE_DYNOBJ__SCRIPTMOUSE_H
-
-#include "ags/engine/ac/dynobj/cc_ags_dynamic_object.h"
+#include "ags/engine/ac/dynobj/script_mouse.h"
+#include "ags/shared/script/cc_common.h" // cc_error
 
 namespace AGS3 {
 
-struct ScriptMouse : public AGSCCStaticObject {
-	int x;
-	int y;
+int32_t ScriptMouse::ReadInt32(void *address, intptr_t offset) {
+	switch (offset) {
+	case 0:
+		return x;
+	case 4:
+		return y;
+	default:
+		cc_error("ScriptMouse: unsupported variable offset %d", offset);
+		return 0;
+	}
+}
 
-	int32_t ReadInt32(void *address, intptr_t offset) override;
-	void WriteInt32(void *address, intptr_t offset, int32_t val) override;
-};
+void ScriptMouse::WriteInt32(void *address, intptr_t offset, int32_t val) {
+	switch (offset) {
+	case 0:
+	case 4:
+		cc_error("ScriptMouse: attempt to write readonly variable at offset %d", offset);
+		break;
+	default:
+		cc_error("ScriptMouse: unsupported variable offset %d", offset);
+		break;
+	}
+}
 
 } // namespace AGS3
-
-#endif
