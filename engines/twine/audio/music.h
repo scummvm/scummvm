@@ -50,7 +50,7 @@ private:
 	uint8 *midiPtr = nullptr;
 	Audio::SoundHandle _midiHandle;
 	/** Track number of the current playing music */
-	int32 currentMusic = -1;
+	int32 currentMusic = -1; // NumXmi, CurrentMusicCD
 public:
 	// TODO: implement the handling
 	int32 _nextMusic = -1;       // lba2: NextMusic
@@ -61,9 +61,9 @@ private:
 	 * Play CD music
 	 * @param track track number to play
 	 */
-	bool playTrackMusicCd(int32 track);
+	bool playCdTrack(int32 track);
 	/** Stop CD music */
-	void stopTrackMusicCd();
+	void stopMusicCD();
 public:
 	Music(TwinEEngine *engine);
 
@@ -77,7 +77,7 @@ public:
 	 * Generic play music, according with settings it plays CD or high quality sounds instead
 	 * @param track track number to play
 	 */
-	bool playTrackMusic(int32 track);
+	bool playAllMusic(int32 track);
 	/** Generic stop music according with settings */
 	void stopTrackMusic();
 	/**
@@ -85,9 +85,9 @@ public:
 	 * @param midiIdx music index under mini_mi_win.hqr
 	 * @note valid indices for lba1 are [1-32]
 	 */
-	bool playMidiMusic(int32 midiIdx, int32 loop = 1);
+	bool playMidiFile(int32 midiIdx);
 	/** Stop MIDI music */
-	void stopMidiMusic();
+	void stopMusicMidi();
 
 	/** Initialize CD-Rom */
 	bool initCdrom();

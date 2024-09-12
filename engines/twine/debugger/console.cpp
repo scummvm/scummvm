@@ -395,7 +395,7 @@ bool TwinEConsole::doPlayMidi(int argc, const char **argv) {
 		return true;
 	}
 	int newMidiIndex = atoi(argv[1]);
-	_engine->_music->playMidiMusic(newMidiIndex);
+	_engine->_music->playMidiFile(newMidiIndex);
 	return true;
 }
 
@@ -405,7 +405,7 @@ bool TwinEConsole::doPlayMusic(int argc, const char **argv) {
 		return true;
 	}
 	int newMusicTrackIndex = atoi(argv[1]);
-	_engine->_music->playTrackMusic(newMusicTrackIndex);
+	_engine->_music->playAllMusic(newMusicTrackIndex);
 	return true;
 }
 

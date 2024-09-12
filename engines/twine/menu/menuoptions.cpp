@@ -80,7 +80,7 @@ void MenuOptions::newGame() {
 		_engine->_screens->clearScreen();
 
 		if (!aborted) {
-			_engine->_music->playMidiMusic(1);
+			_engine->_music->playMidiFile(1);
 			_engine->_movie->playMovie(FLA_INTROD);
 		}
 

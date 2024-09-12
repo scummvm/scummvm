@@ -147,7 +147,7 @@ static const char *musicTracksLba2[] = {
 	"LOGADPCM"
 };
 
-bool Music::playTrackMusicCd(int32 track) {
+bool Music::playCdTrack(int32 track) {
 	if (!_engine->_cfgfile.UseCD) {
 		return false;
 	}
@@ -176,12 +176,12 @@ bool Music::playTrackMusicCd(int32 track) {
 	return cdrom->play(track, 1, 0, 0);
 }
 
-void Music::stopTrackMusicCd() {
+void Music::stopMusicCD() {
 	AudioCDManager *cdrom = g_system->getAudioCDManager();
 	cdrom->stop();
 }
 
-bool Music::playTrackMusic(int32 track) {
+bool Music::playAllMusic(int32 track) {
 	if (track == -1) {
 		stopMusic();
 		return true;
@@ -195,12 +195,12 @@ bool Music::playTrackMusic(int32 track) {
 	}
 
 	stopMusic();
-	if (playTrackMusicCd(track)) {
+	if (playCdTrack(track)) {
 		currentMusic = track;
 		debug("Play cd music track %i", track);
 		return true;
 	}
-	if (playMidiMusic(track)) {
+	if (playMidiFile(track)) {
 		currentMusic = track;
 		debug("Play midi music track %i", track);
 		return true;
@@ -215,10 +215,10 @@ void Music::stopTrackMusic() {
 	}
 
 	musicFadeOut();
-	stopTrackMusicCd();
+	stopMusicCD();
 }
 
-bool Music::playMidiMusic(int32 midiIdx, int32 loop) {
+bool Music::playMidiFile(int32 midiIdx) {
 	if (!_engine->_cfgfile.Sound) {
 		debug("sound disabled - skip playing %i", midiIdx);
 		return false;
@@ -233,8 +233,9 @@ bool Music::playMidiMusic(int32 midiIdx, int32 loop) {
 	currentMusic = midiIdx;
 
 	musicFadeOut();
-	stopMidiMusic();
+	stopMusicMidi();
 
+	const int32 loop = 1;
 	if (_engine->isDotEmuEnhanced() || _engine->isLba1Classic()) {
 		Common::Path trackName(Common::String::format("lba1-%02i", midiIdx + 1));
 		Audio::SeekableAudioStream *stream = Audio::SeekableAudioStream::openStreamFile(trackName);
@@ -266,8 +267,8 @@ bool Music::playMidiMusic(int32 midiIdx, int32 loop) {
 	return true;
 }
 
-void Music::stopMidiMusic() {
-	if (_engine->isDotEmuEnhanced() || _engine->isLba1Classic()) {
+void Music::stopMusicMidi() {
+	if (_engine->isDotEmuEnhanced() || _engine->isLba1Classic() || _engine->isLBA2()) {
 		_engine->_system->getMixer()->stopHandle(_midiHandle);
 	}
 
@@ -284,7 +285,7 @@ bool Music::initCdrom() {
 
 void Music::stopMusic() {
 	stopTrackMusic();
-	stopMidiMusic();
+	stopMusicMidi();
 	currentMusic = -1;
 }
 

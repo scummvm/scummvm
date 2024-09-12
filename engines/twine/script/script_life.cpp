@@ -1981,7 +1981,7 @@ int32 ScriptLife::lTHE_END(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLife::lPLAY_CD_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 track = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::PLAY_CD_TRACK(%i)", (int)track);
-	engine->_music->playTrackMusic(track);
+	engine->_music->playAllMusic(track);
 	return 0;
 }
 

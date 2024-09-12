@@ -51,7 +51,7 @@ int32 Screens::mapLba2Palette(int32 palIndex) {
 }
 
 bool Screens::adelineLogo() {
-	_engine->_music->playMidiMusic(31);
+	_engine->_music->playMidiFile(31);
 
 	return loadImageDelay(_engine->_resources->adelineLogo(), 7);
 }

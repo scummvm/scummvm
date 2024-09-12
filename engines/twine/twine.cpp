@@ -387,7 +387,7 @@ Common::Error TwinEEngine::run() {
 
 	_sound->stopSamples();
 	_music->stopTrackMusic();
-	_music->stopMidiMusic();
+	_music->stopMusicMidi();
 	return Common::kNoError;
 }
 

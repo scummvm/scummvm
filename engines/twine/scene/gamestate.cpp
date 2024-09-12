@@ -524,7 +524,7 @@ void GameState::processGameoverAnimation() {
 	}
 
 	_engine->_sound->stopSamples();
-	_engine->_music->stopMidiMusic(); // stop fade music
+	_engine->_music->stopMusicMidi(); // stop fade music
 	_engine->_renderer->setProjection(_engine->width() / 2, _engine->height() / 2, 128, 200, 200);
 	int32 startLbaTime = _engine->timerRef;
 	const Common::Rect &rect = _engine->centerOnScreen(_engine->width() / 2, _engine->height() / 2);

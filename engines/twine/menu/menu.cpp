@@ -794,7 +794,7 @@ int32 Menu::optionsMenu() {
 	_engine->restoreFrontBuffer();
 
 	_engine->_sound->stopSamples();
-	_engine->_music->playTrackMusic(9); // LBA's Theme
+	_engine->_music->playAllMusic(9); // LBA's Theme
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
@@ -897,9 +897,9 @@ EngineState Menu::run() {
 	_engine->_text->initDial(TextBankId::Options_and_menus);
 
 	if (_engine->isLBA1()) {
-		_engine->_music->playTrackMusic(9); // LBA's Theme
+		_engine->_music->playAllMusic(9); // LBA's Theme
 	} else {
-		_engine->_music->playTrackMusic(6); // LBA2's Theme
+		_engine->_music->playAllMusic(6); // LBA2's Theme
 	}
 	_engine->_sound->stopSamples();
 

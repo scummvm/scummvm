@@ -195,7 +195,7 @@ void Movies::processFrame() {
 			int16 innerOpcpde = stream.readSint16LE();
 			switch (innerOpcpde) {
 			case 1: // fla flute
-				_engine->_music->playMidiMusic(26);
+				_engine->_music->playMidiFile(26);
 				break;
 			case 2:
 				// FLA movies don't use cross fade
@@ -211,7 +211,7 @@ void Movies::processFrame() {
 				break;
 			case 4:
 				// TODO: fade out for 1 second before we stop it
-				_engine->_music->stopMidiMusic();
+				_engine->_music->stopMusicMidi();
 				break;
 			}
 			break;

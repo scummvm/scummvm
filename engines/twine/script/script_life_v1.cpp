@@ -54,7 +54,7 @@ int32 ScriptLifeV1::lBUBBLE_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 int32 ScriptLifeV1::lPLAY_MIDI(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 midiIdx = ctx.stream.readByte();
-	engine->_music->playMidiMusic(midiIdx); // TODO: improve this
+	engine->_music->playMidiFile(midiIdx); // TODO: improve this
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::PLAY_MIDI(%i)", (int)midiIdx);
 	return 0;
 }
@@ -65,7 +65,7 @@ int32 ScriptLifeV1::lPLAY_MIDI(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 int32 ScriptLifeV1::lMIDI_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::MIDI_OFF()");
-	engine->_music->stopMidiMusic();
+	engine->_music->stopMusicMidi();
 	return 0;
 }
 
