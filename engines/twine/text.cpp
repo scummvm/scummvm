@@ -350,12 +350,12 @@ void Text::initDialogueBox() {
 }
 
 // TODO: this blits a few pixels too much when switching an item in the inventory menu.
-void Text::initInventoryDialogueBox() {
+void Text::initInventoryDialogueBox() { // SecondInitDialWindow
 	_engine->blitWorkToFront(_dialTextBox);
 	_fadeInCharactersPos = 0;
 }
 
-void Text::initInventoryText(InventoryItems index) {
+void Text::initInventoryText(InventoryItems index) { // OpenDialNoWindow
 	// 100 if the offset for the inventory item descriptions
 	initText((TextId)(100 + (int)index));
 }

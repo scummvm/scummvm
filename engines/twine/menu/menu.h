@@ -190,11 +190,12 @@ private:
 	Common::Rect calcBehaviourRect(int32 left, int32 top, HeroBehaviourType behaviour) const;
 	bool isBehaviourHovered(int32 left, int32 top, HeroBehaviourType behaviour) const;
 	void drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int32 angle, bool cantDrawBox);
-	void drawInventoryItems(int32 left, int32 top);
+	void drawListInventory(int32 left, int32 top);
 	void prepareAndDrawBehaviour(int32 left, int32 top, int32 angle, HeroBehaviourType behaviour); // DrawComportement
 	void drawBehaviourMenu(int32 left, int32 top, int32 angle); // DrawMenuComportement
 	Common::Rect calcItemRect(int32 left, int32 top, int32 item, int32 *centerX = nullptr, int32 *centerY = nullptr) const;
-	void drawItem(int32 left, int32 top, int32 item);
+	// draw the 2d sprite of the item
+	void drawOneInventory(int32 left, int32 top, int32 item);
 
 	void drawSpriteAndString(int32 left, int32 top, const SpriteData &spriteData, const Common::String &str, int32 color = COLOR_GOLD);
 
