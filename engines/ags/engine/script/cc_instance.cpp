@@ -211,13 +211,13 @@ void ccInstance::FreeInstanceStack() {
 	_GP(InstThreads).clear();
 }
 
-PInstance ccInstance::CreateFromScript(PScript scri) {
+ccInstance *ccInstance::CreateFromScript(PScript scri) {
 	return CreateEx(scri, nullptr);
 }
 
-PInstance ccInstance::CreateEx(PScript scri, ccInstance *joined) {
+ccInstance *ccInstance::CreateEx(PScript scri, ccInstance *joined) {
 	// allocate and copy all the memory with data, code and strings across
-	std::shared_ptr<ccInstance> cinst(new ccInstance());
+	ccInstance *cinst = new ccInstance();
 	if (!cinst->_Create(scri, joined)) {
 		return nullptr;
 	}
@@ -263,7 +263,7 @@ ccInstance::~ccInstance() {
 	Free();
 }
 
-PInstance ccInstance::Fork() {
+ccInstance *ccInstance::Fork() {
 	return CreateEx(instanceof, this);
 }
 
@@ -1715,6 +1715,8 @@ bool ccInstance::_Create(PScript scri, ccInstance *joined) {
 }
 
 void ccInstance::Free() {
+	// When the base script has no more "instances",
+	// remove all script exports
 	if (instanceof != nullptr) {
 		instanceof->instances--;
 		if (instanceof->instances == 0) {
