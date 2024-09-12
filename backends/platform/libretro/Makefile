@@ -109,7 +109,7 @@ else ifeq ($(platform), qnx)
 
 # Genode
 else ifeq ($(platform), genode)
-   TARGET  := libretro.so
+   TARGET  := $(TARGET_NAME)_libretro_$(platform).so
    DEFINES += -fPIC -DSYSTEM_NOT_SUPPORTING_D_TYPE -DDEFAULT_PERF_TUNER
    C_PKGS   = libc
    CXX_PKGS = stdcxx genode-base
