@@ -29,7 +29,7 @@
 namespace QDEngine {
 
 void grDispatcher::putSpr_a(int x, int y, int sx, int sy, const byte *p, int mode, float scale) {
-	debugC(2, kDebugGraphics, "grDispatcher::putSpr_a(%d, %d, %d, %d, scale=%f)", x, y, sx, sy, scale);
+	debugC(4, kDebugGraphics, "grDispatcher::putSpr_a([%d, %d], [%d, %d], mode: %d, scale: %f)", x, y, sx, sy, mode, scale);
 
 	int i, j, sx_dest, sy_dest;
 
@@ -88,7 +88,7 @@ void grDispatcher::putSpr_a(int x, int y, int sx, int sy, const byte *p, int mod
 }
 
 void grDispatcher::putSpr(int x, int y, int sx, int sy, const byte *p, int mode, int spriteFormat, float scale) {
-	debugC(2, kDebugGraphics, "grDispatcher::putSpr(%d, %d, %d, %d, scale=%f)", x, y, sx, sy, scale);
+	debugC(4, kDebugGraphics, "grDispatcher::putSpr([%d, %d], [%d, %d], mode: %d, format: %d, scale: %f)", x, y, sx, sy, mode, spriteFormat, scale);
 
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
@@ -138,7 +138,7 @@ void grDispatcher::putSpr(int x, int y, int sx, int sy, const byte *p, int mode,
 }
 
 void grDispatcher::putSpr_a(int x, int y, int sx, int sy, const byte *p, int mode) {
-	debugC(2, kDebugGraphics, "grDispatcher::putSpr_a(%d, %d, %d, %d)", x, y, sx, sy);
+	debugC(4, kDebugGraphics, "grDispatcher::putSpr_a([%d, %d], [%d, %d], mode: %d)", x, y, sx, sy, mode);
 
 	int px = 0;
 	int py = 0;
@@ -189,6 +189,8 @@ void grDispatcher::putSpr_a(int x, int y, int sx, int sy, const byte *p, int mod
 }
 
 void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, int mode, float angle) {
+	debugC(4, kDebugGraphics, "grDispatcher::putSpr_rot([%d, %d], [%d, %d], alpha: %d, mode: %d, angle: %f)", pos.x, pos.y, size.x, size.y, has_alpha, mode, angle);
+
 	const int F_PREC = 16;
 
 	int xc = pos.x + size.x / 2;
@@ -294,6 +296,8 @@ void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 }
 
 void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, int mode, float angle, const Vect2f &scale) {
+	debugC(4, kDebugGraphics, "grDispatcher::putSpr_rot([%d, %d], [%d, %d], alpha: %d, mode: %d, angle: %f, scale: [%f, %f])", pos.x, pos.y, size.x, size.y, has_alpha, mode, angle, scale.x, scale.y);
+
 	const int F_PREC = 16;
 
 	int xc = pos.x + round(float(size.x) * scale.x / 2.f);
@@ -590,7 +594,7 @@ void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 }
 
 void grDispatcher::putSpr(int x, int y, int sx, int sy, const byte *p, int mode, int spriteFormat) {
-	debugC(2, kDebugGraphics, "grDispatcher::putSpr(%d, %d, %d, %d, %d)", x, y, sx, sy, spriteFormat);
+	debugC(4, kDebugGraphics, "grDispatcher::putSpr([%d, %d], [%d, %d], mode: %d, format: %d)", x, y, sx, sy, mode, spriteFormat);
 
 	int px = 0;
 	int py = 0;

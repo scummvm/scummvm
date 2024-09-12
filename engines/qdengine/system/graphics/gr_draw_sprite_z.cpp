@@ -27,6 +27,8 @@ namespace QDEngine {
 
 #ifdef _GR_ENABLE_ZBUFFER
 void grDispatcher::putSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p, int mode, float scale) {
+	debugC(4, kDebugGraphics, "grDispatcher::a_z([%d, %d], [%d, %d], mode: %d, scale: %f)", pos.x, pos.y, size.x, size.y, mode, scale);
+
 	int i, j, sx_dest, sy_dest;
 
 	sx_dest = round(float(sx) * scale);
@@ -133,6 +135,8 @@ void grDispatcher::putSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p
 }
 
 void grDispatcher::putSpr_z(int x, int y, int z, int sx, int sy, const byte *p, int mode, float scale) {
+	debugC(4, kDebugGraphics, "grDispatcher::putSpr_z([%d, %d], [%d, %d], mode: %d, scale: %f)", pos.x, pos.y, size.x, size.y, mode, scale);
+
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
 
@@ -233,6 +237,8 @@ void grDispatcher::putSpr_z(int x, int y, int z, int sx, int sy, const byte *p, 
 }
 
 void grDispatcher::putSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p, int mode) {
+	debugC(4, kDebugGraphics, "grDispatcher::putSpr_a_z([%d, %d], [%d, %d], mode: %d)", pos.x, pos.y, size.x, size.y, mode);
+
 	int px = 0;
 	int py = 0;
 
@@ -413,6 +419,8 @@ void grDispatcher::putSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p
 }
 
 void grDispatcher::putSpr_z(int x, int y, int z, int sx, int sy, const byte *p, int mode) {
+	debugC(4, kDebugGraphics, "grDispatcher::putSpr_z([%d, %d], [%d, %d], mode: %d", pos.x, pos.y, size.x, size.y, mode);
+
 	int px = 0;
 	int py = 0;
 
