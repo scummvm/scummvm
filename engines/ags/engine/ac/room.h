@@ -69,14 +69,16 @@ void  on_background_frame_change();
 // Clear the current room pointer if room status is no longer valid
 void  croom_ptr_clear();
 
-// These functions convert coordinates between data resolution and region mask.
-// In hi-res games region masks are 1:2 (or smaller) of the room size.
-// In legacy games with low-res data resolution there's additional conversion
-// between data and room coordinates.
+// Following functions convert coordinates between room resolution and region mask.
+// Region masks can be 1:N of the room size: 1:1, 1:2 etc.
+// In contemporary games this is simply multiplying or dividing on mask resolution.
+// In legacy upscale mode (and generally pre-3.* high-res games) things are more
+// complicated, as first we need to make an additional conversion between data coords
+// and upscale game coordinates.
 //
-// coordinate conversion data ---> room ---> mask
+// coordinate conversion (data) ---> game ---> (room mask)
 extern int room_to_mask_coord(int coord);
-// coordinate conversion mask ---> room ---> data
+// coordinate conversion (room mask) ---> game ---> (data)
 extern int mask_to_room_coord(int coord);
 
 struct MoveList;
