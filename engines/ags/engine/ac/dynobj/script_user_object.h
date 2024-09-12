@@ -71,8 +71,8 @@ private:
 	// enough. Since this interface is also a part of Plugin API, we would
 	// need more significant change to program before we could use different
 	// approach.
-	int32_t _size = 0;
-	char *_data = nullptr;
+	int32_t  _size = 0;
+	uint8_t *_data = nullptr;
 
 	// Savegame serialization
 	// Calculate and return required space for serialization, in bytes
