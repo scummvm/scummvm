@@ -30,6 +30,7 @@
 #define AGS_SHARED_AC_GAME_SETUP_STRUCT_BASE_H
 
 #include "ags/lib/allegro.h" // RGB
+#include "common/std/array.h"
 #include "common/std/memory.h"
 #include "common/std/vector.h"
 #include "ags/shared/ac/game_version.h"
@@ -81,18 +82,7 @@ struct GameSetupStructBase {
 	int32_t           reserved[NUM_INTS_RESERVED];
 	String			  messages[MAXGLOBALMES];
 	std::unique_ptr<WordsDictionary> dict;
-	char *globalscript;
 	std::vector<CharacterInfo> chars;
-	ccScript *compiled_script;
-
-	// TODO: refactor to not have this as struct members
-	int32_t *load_messages;
-	bool load_dictionary;
-	bool load_compiled_script;
-	// [IKM] 2013-03-30
-	// NOTE: it looks like nor 'globalscript', not 'compiled_script' are used
-	// to store actual script data anytime; 'ccScript* _GP(gamescript)' global
-	// pointer is used for that instead.
 
 	GameSetupStructBase();
 	GameSetupStructBase(GameSetupStructBase &&gss) = default;
@@ -105,8 +95,20 @@ struct GameSetupStructBase {
 	void SetDefaultResolution(Size game_res);
 	void SetGameResolution(GameResolutionType type);
 	void SetGameResolution(Size game_res);
-	void ReadFromFile(Shared::Stream *in, GameDataVersion game_ver);
-	void WriteToFile(Shared::Stream *out) const;
+
+	// Tells whether the serialized game data contains certain components
+	struct SerializeInfo {
+		bool HasCCScript = false;
+		bool HasWordsDict = false;
+		std::array<int> HasMessages;
+
+		SerializeInfo() {
+			HasMessages.resize(MAXGLOBALMES);
+		}
+	};
+
+	void ReadFromFile(Shared::Stream *in, GameDataVersion game_ver, SerializeInfo &info);
+	void WriteToFile(Shared::Stream *out, const SerializeInfo &info) const;
 
 	//
 	// ** On game resolution.

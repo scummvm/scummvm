@@ -19,9 +19,16 @@
  *
  */
 
+//=============================================================================
+//
+// GameSetupStruct is a contemporary main game data.
+//
+//=============================================================================
+
 #ifndef AGS_SHARED_AC_GAME_SETUP_STRUCT_H
 #define AGS_SHARED_AC_GAME_SETUP_STRUCT_H
 
+#include "common/std/array.h"
 #include "common/std/vector.h"
 #include "ags/shared/ac/audio_clip_type.h"
 #include "ags/shared/ac/character_info.h" // TODO: constants to separate header
@@ -148,7 +155,7 @@ struct GameSetupStruct : public GameSetupStructBase {
 	// Part 2
 	void read_characters(Shared::Stream *in);
 	void read_lipsync(Shared::Stream *in, GameDataVersion data_ver);
-	void read_messages(Shared::Stream *in, GameDataVersion data_ver);
+	void read_messages(Shared::Stream *in, const std::array<int> &load_messages, GameDataVersion data_ver);
 
 	void ReadCharacters_Aligned(Shared::Stream *in, bool is_save);
 	void WriteCharacters_Aligned(Shared::Stream *out);

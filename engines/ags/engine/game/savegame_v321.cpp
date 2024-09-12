@@ -206,9 +206,9 @@ static void ReadMoveList_Aligned(Stream *in) {
 	}
 }
 
-static void ReadGameSetupStructBase_Aligned(Stream *in, GameDataVersion data_ver) {
+static void ReadGameSetupStructBase_Aligned(Stream *in, GameDataVersion data_ver, GameSetupStruct::SerializeInfo &info) {
 	AlignedStream align_s(in, Shared::kAligned_Read);
-	_GP(game).GameSetupStructBase::ReadFromFile(&align_s, data_ver);
+	_GP(game).GameSetupStructBase::ReadFromFile(&align_s, data_ver, info);
 }
 
 static void ReadCharacterExtras_Aligned(Stream *in) {
@@ -476,12 +476,8 @@ HSaveError restore_save_data_v321(Stream *in, GameDataVersion data_ver, const Pr
 		int ViewCount = _GP(game).numviews;
 	} objwas;
 
-	ReadGameSetupStructBase_Aligned(in, data_ver);
-
-	// Delete unneeded data
-	// TODO: reorganize this (may be solved by optimizing safe format too)
-	delete[] _GP(game).load_messages;
-	_GP(game).load_messages = nullptr;
+	GameSetupStruct::SerializeInfo info;
+	ReadGameSetupStructBase_Aligned(in, data_ver, info);
 
 	if (!AssertGameContent(err, objwas.CharacterCount, _GP(game).numcharacters, "Characters") ||
 		!AssertGameContent(err, objwas.DialogCount, _GP(game).numdialog, "Dialogs") ||
