@@ -758,7 +758,7 @@ void GfxScreen::bitsRestoreDisplayScreen(Common::Rect rect, const byte *&memoryP
 
 void GfxScreen::setShakePos(uint16 shakeXOffset, uint16 shakeYOffset) {
 	if (!_upscaledHires)
-		g_system->setShakePos(shakeXOffset, shakeYOffset);
+		_gfxDrv->setShakePos(shakeXOffset, shakeYOffset);
 	else
 		g_system->setShakePos(_upscaledWidthMapping[shakeXOffset], _upscaledHeightMapping[shakeYOffset]);
 }
