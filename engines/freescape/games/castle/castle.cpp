@@ -90,11 +90,117 @@ CastleEngine::~CastleEngine() {
 		delete _option;
 	}
 
+	for (int i = 0; i < int(_keysBorderFrames.size()); i++) {
+		if (_keysBorderFrames[i]) {
+			_keysBorderFrames[i]->free();
+			delete _keysBorderFrames[i];
+		}
+	}
+
+	for (int i = 0; i < int(_keysMenuFrames.size()); i++) {
+		if (_keysMenuFrames[i]) {
+			_keysMenuFrames[i]->free();
+			delete _keysMenuFrames[i];
+		}
+	}
+
+	if (_spiritsMeterIndicatorBackgroundFrame) {
+		_spiritsMeterIndicatorBackgroundFrame->free();
+		delete _spiritsMeterIndicatorBackgroundFrame;
+	}
+
+	if (_spiritsMeterIndicatorFrame) {
+		_spiritsMeterIndicatorFrame->free();
+		delete _spiritsMeterIndicatorFrame;
+	}
+
+	if (_strenghtBackgroundFrame) {
+		_strenghtBackgroundFrame->free();
+		delete _strenghtBackgroundFrame;
+	}
+
+	if (_strenghtBarFrame) {
+		_strenghtBarFrame->free();
+		delete _strenghtBarFrame;
+	}
+
 	for (int i = 0; i < int(_strenghtWeightsFrames.size()); i++) {
 		if (_strenghtWeightsFrames[i]) {
 			_strenghtWeightsFrames[i]->free();
 			delete _strenghtWeightsFrames[i];
 		}
+	}
+
+	for (int i = 0; i < int(_flagFrames.size()); i++) {
+		if (_flagFrames[i]) {
+			_flagFrames[i]->free();
+			delete _flagFrames[i];
+		}
+	}
+
+	if (_thunderFrame) {
+		_thunderFrame->free();
+		delete _thunderFrame;
+	}
+
+	if (_riddleTopFrame) {
+		_riddleTopFrame->free();
+		delete _riddleTopFrame;
+	}
+
+	if (_riddleBackgroundFrame) {
+		_riddleBackgroundFrame->free();
+		delete _riddleBackgroundFrame;
+	}
+
+	if (_riddleBottomFrame) {
+		_riddleBottomFrame->free();
+		delete _riddleBottomFrame;
+	}
+
+	if (_endGameThroneFrame) {
+		_endGameThroneFrame->free();
+		delete _endGameThroneFrame;
+	}
+
+	if (_endGameBackgroundFrame) {
+		_endGameBackgroundFrame->free();
+		delete _endGameBackgroundFrame;
+	}
+
+	if (_menu) {
+		_menu->free();
+		delete _menu;
+	}
+
+	if (_menuButtons) {
+		_menuButtons->free();
+		delete _menuButtons;
+	}
+
+	if (_menuCrawlIndicator) {
+		_menuCrawlIndicator->free();
+		delete _menuCrawlIndicator;
+	}
+
+	if (_menuWalkIndicator) {
+		_menuWalkIndicator->free();
+		delete _menuWalkIndicator;
+	}
+
+	if (_menuRunIndicator) {
+		_menuRunIndicator->free();
+		delete _menuRunIndicator;
+	}
+
+	if (_menuFxOnIndicator) {
+		_menuFxOnIndicator->free();
+		delete _menuFxOnIndicator;
+	}
+
+	if (_menuFxOffIndicator) {
+		_menuFxOffIndicator->free();
+		delete _menuFxOffIndicator;
 	}
 }
 
