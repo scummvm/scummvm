@@ -386,8 +386,7 @@ Common::Error TwinEEngine::run() {
 	ConfMan.setInt("polygondetails", _cfgfile.PolygonDetails);
 
 	_sound->stopSamples();
-	_music->stopTrackMusic();
-	_music->stopMusicMidi();
+	_music->stopMusic();
 	return Common::kNoError;
 }
 
@@ -510,7 +509,6 @@ void TwinEEngine::initConfigurations() {
 		_cfgfile.Movie = CONF_MOVIE_FLAGIF;
 	}
 
-	_cfgfile.UseCD = ConfGetBoolOrDefault("usecd", false);
 	_cfgfile.Sound = ConfGetBoolOrDefault("sound", true);
 	_cfgfile.Fps = ConfGetIntOrDefault("fps", DEFAULT_FRAMES_PER_SECOND);
 	_cfgfile.Debug = ConfGetBoolOrDefault("debug", false);
@@ -528,7 +526,6 @@ void TwinEEngine::initConfigurations() {
 	if (ttsMan != nullptr)
 		ttsMan->enable(ConfGetBoolOrDefault("tts_narrator", false));
 
-	debug(1, "UseCD:          %s", (_cfgfile.UseCD ? "true" : "false"));
 	debug(1, "Sound:          %s", (_cfgfile.Sound ? "true" : "false"));
 	debug(1, "Movie:          %i", _cfgfile.Movie);
 	debug(1, "Fps:            %i", _cfgfile.Fps);
@@ -859,11 +856,11 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		if (!isMod() && isDemo() && isLBA1()) {
 			// the demo only has these scenes
 			if (_scene->_needChangeScene != LBA1SceneId::Citadel_Island_Prison && _scene->_needChangeScene != LBA1SceneId::Citadel_Island_outside_the_citadel && _scene->_needChangeScene != LBA1SceneId::Citadel_Island_near_the_tavern) {
-				// TODO: PlayMidiFile(6);
+				_music->playMidiFile(6);
 				return true;
 			}
 		}
-		_scene->changeScene();
+		_scene->changeCube();
 	}
 
 	_movements->update();
@@ -871,7 +868,15 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 	_debug->processDebug();
 
 	if (_menuOptions->canShowCredits) {
-		// TODO: if current music playing != 8, than play_track(8);
+		if (isLBA1()) {
+			if (isCDROM()) {
+				if (_music->getMusicCD() != 8) {
+					_music->playCdTrack(8);
+				}
+			} else if (!_music->isMidiPlaying()) {
+				_music->playMidiFile(9);
+			}
+		}
 		if (_input->toggleAbortAction()) {
 			return true;
 		}

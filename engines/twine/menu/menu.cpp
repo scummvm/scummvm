@@ -447,7 +447,7 @@ int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 	return mouseActiveButton;
 }
 
-int32 Menu::processMenu(MenuSettings *menuSettings) {
+int32 Menu::doGameMenu(MenuSettings *menuSettings) {
 	int16 currentButton = menuSettings->getActiveButton();
 	bool buttonsNeedRedraw = true;
 	const int32 numEntry = menuSettings->getButtonCount();
@@ -694,7 +694,7 @@ int32 Menu::advoptionsMenu() {
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
-		switch (processMenu(&_advOptionsMenuState)) {
+		switch (doGameMenu(&_advOptionsMenuState)) {
 		case (int32)TextId::kReturnMenu: {
 			return 0;
 		}
@@ -718,7 +718,7 @@ int32 Menu::savemanageMenu() {
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
-		switch (processMenu(&_saveManageMenuState)) {
+		switch (doGameMenu(&_saveManageMenuState)) {
 		case (int32)TextId::kReturnMenu:
 			return 0;
 		case (int32)TextId::kCreateSaveGame:
@@ -738,12 +738,20 @@ int32 Menu::savemanageMenu() {
 	return 0;
 }
 
-int32 Menu::volumeMenu() {
+int32 Menu::volumeOptions() {
 	_engine->restoreFrontBuffer();
+
+	if (_engine->isLBA1()) {
+		if (_engine->isCDROM()) {
+			_engine->_music->playAllMusic(9);
+		} else {
+			_engine->_music->playMidiFile(9);
+		}
+	}
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
-		switch (processMenu(&_volumeMenuState)) {
+		switch (doGameMenu(&_volumeMenuState)) {
 		case (int32)TextId::kReturnMenu:
 			return 0;
 		case kQuitEngine:
@@ -766,7 +774,7 @@ int32 Menu::languageMenu() {
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
-		switch (processMenu(&_languageMenuState)) {
+		switch (doGameMenu(&_languageMenuState)) {
 		case (int32)TextId::kReturnMenu:
 			return 0;
 		case kQuitEngine:
@@ -794,17 +802,17 @@ int32 Menu::optionsMenu() {
 	_engine->restoreFrontBuffer();
 
 	_engine->_sound->stopSamples();
-	_engine->_music->playAllMusic(9); // LBA's Theme
+	_engine->_music->playMusic(9); // LBA's Theme
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
-		switch (processMenu(&_optionsMenuState)) {
+		switch (doGameMenu(&_optionsMenuState)) {
 		case (int32)TextId::kReturnGame:
 		case (int32)TextId::kReturnMenu: {
 			return 0;
 		}
 		case (int32)TextId::kVolumeSettings: {
-			checkMenuQuit(volumeMenu()) break;
+			checkMenuQuit(volumeOptions()) break;
 		}
 		case (int32)TextId::kCustomLanguageOption: {
 			checkMenuQuit(languageMenu()) break;
@@ -830,7 +838,7 @@ int32 Menu::newGameClassicMenu() {
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
-		switch (processMenu(&_newGameMenuState)) {
+		switch (doGameMenu(&_newGameMenuState)) {
 		case (int32)TextId::kReturnGame:
 		case (int32)TextId::kReturnMenu: {
 			return 0;
@@ -896,15 +904,19 @@ EngineState Menu::run() {
 	FrameMarker frame(_engine);
 	_engine->_text->initDial(TextBankId::Options_and_menus);
 
-	if (_engine->isLBA1()) {
-		_engine->_music->playAllMusic(9); // LBA's Theme
-	} else {
-		_engine->_music->playAllMusic(6); // LBA2's Theme
-	}
 	_engine->_sound->stopSamples();
+	if (_engine->isLBA1()) {
+		if (_engine->isCDROM()) {
+			_engine->_music->playCdTrack(9); // LBA's Theme
+		} else {
+			_engine->_music->playMidiFile(9); // LBA's Theme
+		}
+	} else {
+		_engine->_music->playMusic(6); // LBA2's Theme
+	}
 
 	ScopedCursor scoped(_engine);
-	switch (processMenu(&_mainMenuState)) {
+	switch (doGameMenu(&_mainMenuState)) {
 	case (int32)TextId::toNewGame:
 	case (int32)TextId::kNewGame: {
 		if (_engine->isLba1Classic()) {
@@ -960,7 +972,7 @@ int32 Menu::giveupMenu() {
 	do {
 		FrameMarker frame(_engine);
 		_engine->_text->initDial(TextBankId::Options_and_menus);
-		menuId = processMenu(localMenu);
+		menuId = doGameMenu(localMenu);
 		switch (menuId) {
 		case (int32)TextId::kContinue:
 			_engine->_sound->resumeSamples();

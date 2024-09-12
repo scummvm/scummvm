@@ -206,7 +206,7 @@ bool Scene::loadSceneLBA2() {
 	_sampleMinDelay = stream.readUint16LE();
 	_sampleMinDelayRnd = stream.readUint16LE();
 
-	_sceneMusic = stream.readByte();
+	_cubeJingle = stream.readByte();
 
 	// load hero properties
 	_sceneHeroPos.x = stream.readSint16LE();
@@ -339,7 +339,7 @@ bool Scene::loadSceneLBA1() {
 	_sampleMinDelay = stream.readUint16LE();
 	_sampleMinDelayRnd = stream.readUint16LE();
 
-	_sceneMusic = stream.readByte();
+	_cubeJingle = stream.readByte();
 
 	// load hero properties
 	_sceneHeroPos.x = (int16)stream.readUint16LE();
@@ -519,8 +519,7 @@ void Scene::dumpSceneScripts() const {
 	}
 }
 
-// ChangeCube
-void Scene::changeScene() {
+void Scene::changeCube() {
 	if (_engine->isLBA1()) {
 		if (_enableEnhancements) {
 			if (_currentSceneIdx == LBA1SceneId::Citadel_Island_Harbor && _needChangeScene == LBA1SceneId::Principal_Island_Harbor) {
@@ -637,9 +636,9 @@ void Scene::changeScene() {
 	_zoneHeroPos = IVec3();
 	_sampleAmbienceTime = 0;
 
-	if (_sceneMusic != -1) {
-		debug(2, "Scene %i music track id: %i", _currentSceneIdx, _sceneMusic);
-		_engine->_music->playAllMusic(_sceneMusic);
+	debug(2, "Scene %i music track id: %i", _currentSceneIdx, _cubeJingle);
+	if (_cubeJingle != 255) {
+		_engine->_music->playMusic(_cubeJingle);
 	}
 	_engine->_gameState->handleLateGameItems();
 }
@@ -675,11 +674,15 @@ void Scene::initSceneVars() {
 void Scene::playSceneMusic() {
 	if (_engine->isLBA1()) {
 		if (_currentSceneIdx == LBA1SceneId::Tippet_Island_Twinsun_Cafe && _engine->_gameState->hasArrivedHamalayi()) {
-			_engine->_music->playAllMusic(8);
+			if (_engine->isCDROM()) {
+				_engine->_music->playCdTrack(8);
+			} else {
+				_engine->_music->playMusic(_cubeJingle);
+			}
 			return;
 		}
 	}
-	_engine->_music->playMidiFile(_sceneMusic);
+	_engine->_music->playMidiFile(_cubeJingle);
 }
 
 void Scene::processEnvironmentSound() {

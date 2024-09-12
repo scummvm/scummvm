@@ -379,7 +379,7 @@ int MenuOptions::chooseSave(TextId textIdx, bool showEmptySlots) {
 		}
 	}
 
-	const int32 id = _engine->_menu->processMenu(&saveFiles);
+	const int32 id = _engine->_menu->doGameMenu(&saveFiles);
 	switch (id) {
 	case kQuitEngine:
 	case (int32)TextId::kReturnMenu:

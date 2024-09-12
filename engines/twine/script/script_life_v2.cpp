@@ -220,7 +220,7 @@ int32 ScriptLifeV2::lPLAY_MUSIC(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lPLAY_MUSIC()");
 	const int32 val = lPLAY_CD_TRACK(engine, ctx);
 	if (engine->isLBA2()) {
-		engine->_scene->_sceneMusic = 255;
+		engine->_scene->_cubeJingle = 255;
 		engine->_music->_nextMusic = -1;
 		if (engine->_gameState->hasGameFlag(157) > 0) {
 			engine->_music->_stopLastMusic = false;

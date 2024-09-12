@@ -181,7 +181,7 @@ private:
 	/** Used to run the advanced options menu */
 	int32 advoptionsMenu();
 	/** Used to run the volume menu */
-	int32 volumeMenu();
+	int32 volumeOptions();
 	int32 languageMenu();
 	/** Used to run the save game management menu */
 	int32 savemanageMenu();
@@ -226,7 +226,7 @@ public:
 	 * @param menuSettings menu settings array with the information to build the menu options
 	 * @return pressed menu button identification
 	 */
-	int32 processMenu(MenuSettings *menuSettings);
+	int32 doGameMenu(MenuSettings *menuSettings);
 
 	bool init();
 
