@@ -473,8 +473,6 @@ int32 Menu::doGameMenu(MenuSettings *menuSettings) {
 	bool buttonsNeedRedraw = true;
 	const int32 numEntry = menuSettings->getButtonCount();
 	int32 maxButton = numEntry - 1;
-	Common::Point mousepos = _engine->_input->getMousePositions();
-	bool useMouse = true;
 
 	_engine->_input->enableKeyMap(uiKeyMapId);
 
@@ -490,18 +488,11 @@ int32 Menu::doGameMenu(MenuSettings *menuSettings) {
 		const uint32 loopMillis = _engine->_system->getMillis();
 		_engine->readKeys();
 
-		Common::Point newmousepos = _engine->_input->getMousePositions();
-		if (mousepos != newmousepos) {
-			useMouse = true;
-			mousepos = newmousepos;
-		}
-
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UIDown)) {
 			currentButton++;
 			if (currentButton == numEntry) { // if current button is the last, than next button is the first
 				currentButton = 0;
 			}
-			useMouse = false;
 			buttonsNeedRedraw = true;
 			startMillis = loopMillis;
 		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIUp)) {
@@ -509,7 +500,6 @@ int32 Menu::doGameMenu(MenuSettings *menuSettings) {
 			if (currentButton < 0) { // if current button is the first, than previous button is the last
 				currentButton = maxButton;
 			}
-			useMouse = false;
 			buttonsNeedRedraw = true;
 			startMillis = loopMillis;
 		}
@@ -654,7 +644,7 @@ int32 Menu::doGameMenu(MenuSettings *menuSettings) {
 		if (buttonsNeedRedraw) {
 			// draw all buttons
 			const int16 mouseButtonHovered = drawButtons(menuSettings, false);
-			if (useMouse && mouseButtonHovered != -1) {
+			if (mouseButtonHovered != -1) {
 				currentButton = mouseButtonHovered;
 			}
 			menuSettings->setActiveButton(currentButton);
@@ -662,7 +652,7 @@ int32 Menu::doGameMenu(MenuSettings *menuSettings) {
 
 		// draw plasma effect for the current selected button
 		const int16 mouseButtonHovered = drawButtons(menuSettings, true);
-		if (useMouse && mouseButtonHovered != -1) {
+		if (mouseButtonHovered != -1) {
 			if (mouseButtonHovered != currentButton) {
 				buttonsNeedRedraw = true;
 			}
@@ -1105,6 +1095,9 @@ Common::Rect Menu::calcBehaviourRect(int32 left, int32 top, HeroBehaviourType be
 }
 
 bool Menu::isBehaviourHovered(int32 left, int32 top, HeroBehaviourType behaviour) const {
+	if (!_engine->_cfgfile.Mouse) {
+		return false;
+	}
 	const Common::Rect &boxRect = calcBehaviourRect(left, top, behaviour);
 	return _engine->_input->isMouseHovering(boxRect);
 }
@@ -1235,9 +1228,7 @@ void Menu::processBehaviourMenu(bool behaviourMenu) {
 
 		int32 tmpTime = _engine->timerRef;
 
-#if 0
 		ScopedCursor scopedCursor(_engine);
-#endif
 		ScopedKeyMap scopedKeyMap(_engine, uiKeyMapId);
 		while (_engine->_input->isActionActive(TwinEActionType::BehaviourMenu) || _engine->_input->isQuickBehaviourActionActive()) {
 			FrameMarker frame(_engine, 50);
@@ -1246,17 +1237,15 @@ void Menu::processBehaviourMenu(bool behaviourMenu) {
 				break;
 			}
 
-#if 0
-			if (isBehaviourHovered(HeroBehaviourType::kNormal)) {
-				_engine->_actor->heroBehaviour = HeroBehaviourType::kNormal;
-			} else if (isBehaviourHovered(HeroBehaviourType::kAthletic)) {
-				_engine->_actor->heroBehaviour = HeroBehaviourType::kAthletic;
-			} else if (isBehaviourHovered(HeroBehaviourType::kAggressive)) {
-				_engine->_actor->heroBehaviour = HeroBehaviourType::kAggressive;
-			} else if (isBehaviourHovered(HeroBehaviourType::kDiscrete)) {
-				_engine->_actor->heroBehaviour = HeroBehaviourType::kDiscrete;
+			if (isBehaviourHovered(left, top, HeroBehaviourType::kNormal)) {
+				_engine->_actor->_heroBehaviour = HeroBehaviourType::kNormal;
+			} else if (isBehaviourHovered(left, top, HeroBehaviourType::kAthletic)) {
+				_engine->_actor->_heroBehaviour = HeroBehaviourType::kAthletic;
+			} else if (isBehaviourHovered(left, top, HeroBehaviourType::kAggressive)) {
+				_engine->_actor->_heroBehaviour = HeroBehaviourType::kAggressive;
+			} else if (isBehaviourHovered(left, top, HeroBehaviourType::kDiscrete)) {
+				_engine->_actor->_heroBehaviour = HeroBehaviourType::kDiscrete;
 			}
-#endif
 
 			int heroBehaviour = (int)_engine->_actor->_heroBehaviour;
 			if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
@@ -1298,7 +1287,7 @@ void Menu::processBehaviourMenu(bool behaviourMenu) {
 	_engine->_text->initSceneTextBank();
 }
 
-void Menu::drawItem(int32 left, int32 top, int32 item) {
+Common::Rect Menu::calcItemRect(int32 left, int32 top, int32 item, int32 *centerX, int32 *centerY) const {
 	const int32 itemWidth = 74;
 	const int32 itemHeight = 64;
 	const int32 itemPadding = 11;
@@ -1306,7 +1295,18 @@ void Menu::drawItem(int32 left, int32 top, int32 item) {
 	const int32 itemHeightHalf = itemHeight / 2;
 	const int32 itemX = (item / 4) * (itemWidth + itemPadding) + left + itemWidthHalf + itemPadding - 1;
 	const int32 itemY = (item % 4) * (itemHeight + itemPadding) + top + itemHeightHalf + itemPadding - 1;
-	const Common::Rect rect(itemX - itemWidthHalf, itemY - itemHeightHalf, itemX + itemWidthHalf, itemY + itemHeightHalf);
+	if (centerX) {
+		*centerX = itemX;
+	}
+	if (centerY) {
+		*centerY = itemY;
+	}
+	return Common::Rect(itemX - itemWidthHalf, itemY - itemHeightHalf, itemX + itemWidthHalf, itemY + itemHeightHalf);
+}
+
+void Menu::drawItem(int32 left, int32 top, int32 item) {
+	int32 itemX, itemY;
+	const Common::Rect rect = calcItemRect(left, top, item, &itemX, &itemY);
 	const int32 color = _inventorySelectedItem == item ? _inventorySelectedColor : COLOR_BLACK;
 
 	_engine->_interface->drawFilledRect(rect, color);
@@ -1330,7 +1330,6 @@ void Menu::drawInventoryItems(int32 left, int32 top) {
 	const Common::Rect rect(left, top, left + 605, top + 310);
 	_engine->_interface->drawTransparentBox(rect, 4);
 	drawRectBorders(rect);
-
 	for (int32 item = 0; item < NUM_INVENTORY_ITEMS; item++) {
 		drawItem(left, top, item);
 	}
@@ -1365,7 +1364,7 @@ void Menu::processInventoryMenu() {
 	ProgressiveTextState textState = ProgressiveTextState::ContinueRunning;
 	bool updateItemText = true;
 
-	// ScopedCursor scopedCursor(_engine);
+	ScopedCursor scopedCursor(_engine);
 	ScopedKeyMap scopedKeyMap(_engine, uiKeyMapId);
 	for (;;) {
 		FrameMarker frame(_engine, 66);
@@ -1374,6 +1373,16 @@ void Menu::processInventoryMenu() {
 
 		if (_engine->_input->toggleAbortAction() || _engine->shouldQuit()) {
 			break;
+		}
+
+		for (int32 item = 0; item < NUM_INVENTORY_ITEMS; item++) {
+			const Common::Rect &rect = calcItemRect(left, top, item);
+			if (_engine->_input->isMouseHovering(rect)) {
+				_inventorySelectedItem = item;
+				drawItem(left, top, prevSelectedItem);
+				updateItemText = true;
+				break;
+			}
 		}
 
 		const bool cursorDown = _engine->_input->toggleActionIfActive(TwinEActionType::UIDown);

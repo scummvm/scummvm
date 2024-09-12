@@ -92,6 +92,7 @@ ScopedCursor::ScopedCursor(TwinEEngine *engine) : _engine(engine) {
 
 ScopedCursor::~ScopedCursor() {
 	_engine->popMouseCursorVisible();
+	_engine->_input->resetLastHoveredMousePosition();
 }
 
 FrameMarker::FrameMarker(TwinEEngine *engine, uint32 fps) : _engine(engine), _fps(fps) {

@@ -116,6 +116,7 @@ private:
 	Common::String _currentKeyMap;
 
 	uint8 _actionStates[TwinEActionType::Max]{false};
+	Common::Point _lastMousePos;
 public:
 	Input(TwinEEngine *engine);
 
@@ -137,7 +138,8 @@ public:
 	 */
 	bool isActionActive(TwinEActionType actionType, bool onlyFirstTime = true) const;
 
-	bool isMouseHovering(const Common::Rect &rect) const;
+	void resetLastHoveredMousePosition();
+	bool isMouseHovering(const Common::Rect &rect, bool onlyIfMoved = true);
 
 	/**
 	 * @brief If the action is active, the internal state is reset and a following call of this method won't return

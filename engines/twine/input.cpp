@@ -45,7 +45,9 @@ ScopedKeyMap::~ScopedKeyMap() {
 	}
 }
 
-Input::Input(TwinEEngine *engine) : _engine(engine) {}
+Input::Input(TwinEEngine *engine) : _engine(engine) {
+	resetLastHoveredMousePosition();
+}
 
 bool Input::isActionActive(TwinEActionType actionType, bool onlyFirstTime) const {
 	if (onlyFirstTime) {
@@ -172,12 +174,23 @@ Common::Point Input::getMousePositions() const {
 	return g_system->getEventManager()->getMousePos();
 }
 
-bool Input::isMouseHovering(const Common::Rect &rect) const {
+bool Input::isMouseHovering(const Common::Rect &rect, bool onlyIfMoved) {
 	if (!_engine->_cfgfile.Mouse) {
 		return false;
 	}
 	const Common::Point &point = getMousePositions();
-	return rect.contains(point);
+	if (onlyIfMoved && _lastMousePos == point) {
+		return false;
+	}
+	if (rect.contains(point)) {
+		_lastMousePos = point;
+		return true;
+	}
+	return false;
+}
+
+void Input::resetLastHoveredMousePosition() {
+	_lastMousePos = Common::Point(-1, -1);
 }
 
 } // namespace TwinE

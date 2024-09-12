@@ -193,6 +193,7 @@ private:
 	void drawInventoryItems(int32 left, int32 top);
 	void prepareAndDrawBehaviour(int32 left, int32 top, int32 angle, HeroBehaviourType behaviour); // DrawComportement
 	void drawBehaviourMenu(int32 left, int32 top, int32 angle); // DrawMenuComportement
+	Common::Rect calcItemRect(int32 left, int32 top, int32 item, int32 *centerX = nullptr, int32 *centerY = nullptr) const;
 	void drawItem(int32 left, int32 top, int32 item);
 
 	void drawSpriteAndString(int32 left, int32 top, const SpriteData &spriteData, const Common::String &str, int32 color = COLOR_GOLD);
