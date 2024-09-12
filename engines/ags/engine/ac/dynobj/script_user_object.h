@@ -21,7 +21,7 @@
 
 //=============================================================================
 //
-// Managed object, which size and contents are defined by user script
+// ScriptUserObject is a dynamic (managed) struct manager.
 //
 //=============================================================================
 
@@ -37,42 +37,36 @@ struct ScriptUserObject final : AGSCCDynamicObject {
 public:
 	static const char *TypeName;
 
+	struct Header {
+		uint32_t Size = 0u;
+		// NOTE: we use signed int for Size at the moment, because the managed
+		// object interface's Serialize() function requires the object to return
+		// negative value of size in case the provided buffer was not large
+		// enough. Since this interface is also a part of Plugin API, we would
+		// need more significant change to program before we could use different
+		// approach.
+	};
+
 	ScriptUserObject() = default;
+	~ScriptUserObject() = default;
 
-protected:
-	virtual ~ScriptUserObject();
+	inline static const Header &GetHeader(void *address) {
+		return reinterpret_cast<const Header &>(*(static_cast<uint8_t *>(address) - MemHeaderSz));
+	}
 
-public:
-	static ScriptUserObject *CreateManaged(size_t size);
-	void Create(const uint8_t *data, AGS::Shared::Stream *in, size_t size);
+	// Create managed struct object and return a pointer to the beginning of a buffer
+	static DynObjectRef Create(size_t size);
 
 	// return the type name of the object
 	const char *GetType() override;
 	int  Dispose(void *address, bool force) override;
 	void Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz) override;
 
-	// Support for reading and writing object values by their relative offset
-	void	*GetFieldPtr(void *address, intptr_t offset) override;
-	void 	Read(void *address, intptr_t offset, uint8_t *dest, size_t size) override;
-	uint8_t ReadInt8(void *address, intptr_t offset) override;
-	int16_t ReadInt16(void *address, intptr_t offset) override;
-	int32_t ReadInt32(void *address, intptr_t offset) override;
-	float	ReadFloat(void *address, intptr_t offset) override;
-	void	Write(void *address, intptr_t offset, const uint8_t *src, size_t size) override;
-	void	WriteInt8(void *address, intptr_t offset, uint8_t val) override;
-	void	WriteInt16(void *address, intptr_t offset, int16_t val) override;
-	void	WriteInt32(void *address, intptr_t offset, int32_t val) override;
-	void	WriteFloat(void *address, intptr_t offset, float val) override;
-
 private:
-	// NOTE: we use signed int for Size at the moment, because the managed
-	// object interface's Serialize() function requires the object to return
-	// negative value of size in case the provided buffer was not large
-	// enough. Since this interface is also a part of Plugin API, we would
-	// need more significant change to program before we could use different
-	// approach.
-	int32_t  _size = 0;
-	uint8_t *_data = nullptr;
+	// The size of the array's header in memory, prepended to the element data
+	static const size_t MemHeaderSz = sizeof(Header);
+	// The size of the serialized header
+	static const size_t FileHeaderSz = sizeof(uint32_t) * 0; // no header serialized
 
 	// Savegame serialization
 	// Calculate and return required space for serialization, in bytes
@@ -81,6 +75,7 @@ private:
 	void Serialize(void *address, AGS::Shared::Stream *out) override;
 };
 
+extern ScriptUserObject globalDynamicStruct;
 
 // Helper functions for setting up custom managed structs based on ScriptUserObject.
 namespace ScriptStructHelpers {

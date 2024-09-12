@@ -70,7 +70,7 @@ void CCDynamicArray::Serialize(void *address, AGS::Shared::Stream *out) {
 }
 
 void CCDynamicArray::Unserialize(int index, Stream *in, size_t data_sz) {
-	char *new_arr = new char[(data_sz - FileHeaderSz) + MemHeaderSz];
+	uint8_t *new_arr = new uint8_t[(data_sz - FileHeaderSz) + MemHeaderSz];
 	Header &hdr = reinterpret_cast<Header &>(*new_arr);
 	hdr.ElemCount = in->ReadInt32();
 	hdr.TotalSize = in->ReadInt32();
@@ -78,35 +78,34 @@ void CCDynamicArray::Unserialize(int index, Stream *in, size_t data_sz) {
 	ccRegisterUnserializedObject(index, &new_arr[MemHeaderSz], this);
 }
 
-DynObjectRef CCDynamicArray::Create(int numElements, int elementSize, bool isManagedType) {
-	char *new_arr = new char[numElements * elementSize + MemHeaderSz];
+/* static */ DynObjectRef CCDynamicArray::Create(int numElements, int elementSize, bool isManagedType) {
+	uint8_t *new_arr = new uint8_t[numElements * elementSize + MemHeaderSz];
 	memset(new_arr, 0, numElements * elementSize + MemHeaderSz);
 	Header &hdr = reinterpret_cast<Header &>(*new_arr);
 	hdr.ElemCount = numElements | (ARRAY_MANAGED_TYPE_FLAG * isManagedType);
 	hdr.TotalSize = elementSize * numElements;
 	void *obj_ptr = &new_arr[MemHeaderSz];
-	// TODO: investigate if it's possible to register real object ptr directly
-	int32_t handle = ccRegisterManagedObject(obj_ptr, this);
+	int32_t handle = ccRegisterManagedObject(obj_ptr, &_GP(globalDynamicArray));
 	if (handle == 0) {
 		delete[] new_arr;
-		return DynObjectRef(0, nullptr);
+		return DynObjectRef();
 	}
-	return DynObjectRef(handle, obj_ptr);
+	return DynObjectRef(handle, obj_ptr, &_GP(globalDynamicArray));
 }
 
 DynObjectRef DynamicArrayHelpers::CreateStringArray(const std::vector<const char *> items) {
 	// NOTE: we need element size of "handle" for array of managed pointers
 	DynObjectRef arr = _GP(globalDynamicArray).Create(items.size(), sizeof(int32_t), true);
-	if (!arr.second)
+	if (!arr.Obj)
 		return arr;
 	// Create script strings and put handles into array
-	int32_t *slots = static_cast<int32_t *>(arr.second);
+	int32_t *slots = static_cast<int32_t *>(arr.Obj);
 	for (auto s : items) {
 		DynObjectRef str = _G(stringClassImpl)->CreateString(s);
 		// We must add reference count, because the string is going to be saved
 		// within another object (array), not returned to script directly
-		ccAddObjectReference(str.first);
-		*(slots++) = str.first;
+		ccAddObjectReference(str.Handle);
+		*(slots++) = str.Handle;
 	}
 
 	return arr;
