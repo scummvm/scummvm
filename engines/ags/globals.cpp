@@ -122,7 +122,7 @@ Globals::Globals() {
 
 	// cc_ags_dynamic_object.cpp globals
 	_GlobalStaticManager = new AGSCCStaticObject();
-	_GameStaticManager = new StaticGame();
+	_GameStaticManager = new CCScriptGame();
 
 	// asset_manager.cpp globals
 	_AssetMgr = new std::unique_ptr<Shared::AssetManager>();
