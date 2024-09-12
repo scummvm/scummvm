@@ -59,7 +59,7 @@
 #include "ags/shared/debugging/out.h"
 #include "ags/shared/game/room_version.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
-#include "ags/plugins/ags_plugin.h"
+#include "ags/plugins/ags_plugin_evts.h"
 #include "ags/plugins/plugin_engine.h"
 #include "ags/shared/script/cc_common.h"
 #include "ags/engine/script/script.h"

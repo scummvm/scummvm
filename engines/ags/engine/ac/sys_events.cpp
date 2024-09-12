@@ -184,9 +184,9 @@ bool ags_misbuttondown(eAGSMouseButton but) {
 }
 
 eAGSMouseButton ags_mgetbutton() {
-	if (_G(pluginSimulatedClick) > kMouseNone) {
-		eAGSMouseButton mbut = _G(pluginSimulatedClick);
-		_G(pluginSimulatedClick) = kMouseNone;
+	if (_G(simulatedClick) > kMouseNone) {
+		eAGSMouseButton mbut = _G(simulatedClick);
+		_G(simulatedClick) = kMouseNone;
 		return mbut;
 	}
 	return mgetbutton();

@@ -29,6 +29,7 @@
 #define AGS_ENGINE_PLUGIN_PLUGIN_ENGINE_H
 
 #include "common/std/vector.h"
+#include "ags/engine/ac/dynobj/cc_script_object.h"
 #include "ags/engine/game/game_init.h"
 #include "ags/shared/game/plugin_info.h"
 #include "ags/shared/util/string.h"
@@ -71,6 +72,8 @@ bool pl_any_want_hook(int event);
 
 void pl_set_file_handle(long data, AGS::Shared::Stream *stream);
 void pl_clear_file_handle();
+
+bool RegisterPluginStubs(const char* name);
 
 } // namespace AGS3
 

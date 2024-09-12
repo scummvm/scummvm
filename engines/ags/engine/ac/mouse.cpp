@@ -312,6 +312,10 @@ int IsModeEnabled(int which) {
 	       (_GP(game).mcurs[which].flags & MCF_DISABLED) == 0;
 }
 
+void SimulateMouseClick(int button_id) {
+	_G(simulatedClick) = static_cast<eAGSMouseButton>(button_id);
+}
+
 void Mouse_EnableControl(bool on) {
 	bool should_control_mouse =
 	    _GP(usetup).mouse_ctrl_when == kMouseCtrl_Always ||
@@ -553,7 +557,7 @@ RuntimeScriptValue Sc_Mouse_SetVisible(const RuntimeScriptValue *params, int32_t
 }
 
 RuntimeScriptValue Sc_Mouse_Click(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_VOID_PINT(PluginSimulateMouseClick);
+	API_SCALL_VOID_PINT(SimulateMouseClick);
 }
 
 RuntimeScriptValue Sc_Mouse_GetControlEnabled(const RuntimeScriptValue *params, int32_t param_count) {

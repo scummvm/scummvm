@@ -61,7 +61,7 @@
 #include "ags/shared/gui/gui_main.h"
 #include "ags/shared/gui/gui_object.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
-#include "ags/plugins/ags_plugin.h"
+#include "ags/plugins/ags_plugin_evts.h"
 #include "ags/plugins/plugin_engine.h"
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/engine/gfx/gfx_util.h"

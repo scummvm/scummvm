@@ -1339,7 +1339,7 @@ public:
 	long _pl_file_handle = -1;
 	AGS::Shared::Stream *_pl_file_stream = nullptr;
 
-	eAGSMouseButton _pluginSimulatedClick = kMouseNone;
+	eAGSMouseButton _simulatedClick = kMouseNone;
 	int _mouse_z_was = 0;
 
 	/**@}*/
