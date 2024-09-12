@@ -222,6 +222,7 @@ MODULE_OBJS = \
 	engine/ac/dynobj/script_overlay.o \
 	engine/ac/dynobj/script_set.o \
 	engine/ac/dynobj/script_string.o \
+	engine/ac/dynobj/script_system.o \
 	engine/ac/dynobj/script_user_object.o \
 	engine/ac/dynobj/script_viewport.o \
 	engine/ac/dynobj/script_view_frame.o \
