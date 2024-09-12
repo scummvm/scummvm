@@ -84,6 +84,18 @@ Windows::Windows() {
 	};
 
 	_windows = Common::Array<Window>(windows, 42);
+
+	Common::File pat;
+	if (pat.open("TEXTPAT.FNT")) {
+		_big5Font = new Graphics::Big5Font();
+		_big5Font->loadPrefixedRaw(pat, 14);
+	} else if (pat.open("CMM4.PAT")) {
+		_big5Font = new Graphics::Big5Font();
+		_big5Font->loadPrefixedRaw(pat, 15);
+	} else if (g_vm->getLanguage() == Common::ZH_TWN) {
+		error("Unable to find TEXTPAT.FNT or CMM4.PAT for Chinese version");
+	}	
+
 }
 
 Windows::~Windows() {
