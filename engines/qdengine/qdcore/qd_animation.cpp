@@ -138,6 +138,8 @@ void qdAnimation::quant(float dt) {
 }
 
 void qdAnimation::redraw(int x, int y, int z, int mode) const {
+	debugC(2, kDebugGraphics, "qdAnimation::redraw([%d, %d, %d], mode: %d), file: '%s'", x, y, z, mode, transCyrillic(qda_file().toString()));
+
 	if (check_flag(QD_ANIMATION_FLAG_FLIP_HORIZONTAL))
 		mode |= GR_FLIP_HORIZONTAL;
 
@@ -154,6 +156,8 @@ void qdAnimation::redraw(int x, int y, int z, int mode) const {
 }
 
 void qdAnimation::redraw(int x, int y, int z, float scale, int mode) const {
+	debugC(2, kDebugGraphics, "qdAnimation::redraw([%d, %d, %d], scale: %f, mode: %d), file: '%s'", x, y, z, scale, mode, transCyrillic(qda_file().toString()));
+
 	if (fabs(scale - 1.0f) < 0.01f) {
 		redraw(x, y, z, mode);
 		return;
@@ -185,6 +189,8 @@ void qdAnimation::redraw(int x, int y, int z, float scale, int mode) const {
 }
 
 void qdAnimation::redraw_rot(int x, int y, int z, float angle, int mode) const {
+	debugC(2, kDebugGraphics, "qdAnimation::redraw_rot([%d, %d, %d], angle: %f, mode: %d), file: '%s'", x, y, z, angle, mode, transCyrillic(qda_file().toString()));
+
 	if (check_flag(QD_ANIMATION_FLAG_FLIP_HORIZONTAL))
 		mode |= GR_FLIP_HORIZONTAL;
 
@@ -198,6 +204,8 @@ void qdAnimation::redraw_rot(int x, int y, int z, float angle, int mode) const {
 }
 
 void qdAnimation::redraw_rot(int x, int y, int z, float angle, const Vect2f &scale, int mode) const {
+	debugC(2, kDebugGraphics, "qdAnimation::redraw_rot([%d, %d, %d], angle: %f, scale: [%f, %f], mode: %d), file: '%s'", x, y, z, angle, scale.x, scale.y, mode, transCyrillic(qda_file().toString()));
+
 	if (fabs(scale.x - 1.0f) < 0.01f && fabs(scale.y - 1.0f) < 0.01f) {
 		redraw_rot(x, y, z, angle, mode);
 		return;

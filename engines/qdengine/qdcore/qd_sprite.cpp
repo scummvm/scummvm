@@ -608,7 +608,7 @@ bool qdSprite::uncompress() {
 }
 
 void qdSprite::redraw(int x, int y, int z, int mode) const {
-	debugC(2, kDebugGraphics, "qdSprite::redraw(%d, %d, z=%d, mode=%d)", x, y, z, mode);
+	debugC(3, kDebugGraphics, "qdSprite::redraw([%d, %d, %d], mode: %d)", x, y, z, mode);
 
 	int xx = x - size_x() / 2;
 	int yy = y - size_y() / 2;
@@ -648,6 +648,8 @@ void qdSprite::redraw(int x, int y, int z, int mode) const {
 }
 
 void qdSprite::redraw_rot(int x, int y, int z, float angle, int mode) const {
+	debugC(3, kDebugGraphics, "qdSprite::redraw_rot([%d, %d, %d], angle: %f, mode: %d)", x, y, z, angle, mode);
+
 	int xx = x;
 	int yy = y;
 
@@ -674,6 +676,8 @@ void qdSprite::redraw_rot(int x, int y, int z, float angle, int mode) const {
 }
 
 void qdSprite::redraw_rot(int x, int y, int z, float angle, const Vect2f &scale, int mode) const {
+	debugC(3, kDebugGraphics, "qdSprite::redraw_rot([%d, %d, %d], angle: %f, scale: [%f, %f], mode: %d)", x, y, z, angle, scale.x, scale.y, mode);
+
 	int xx = x;
 	int yy = y;
 
@@ -703,6 +707,8 @@ void qdSprite::redraw_rot(int x, int y, int z, float angle, const Vect2f &scale,
 }
 
 void qdSprite::redraw(int x, int y, int z, float scale, int mode) const {
+	debugC(3, kDebugGraphics, "qdSprite::redraw([%d, %d, %d], scale: %f, mode: %d)", x, y, z, scale, mode);
+
 	int xx = x - round(float(size_x()) * scale) / 2;
 	int yy = y - round(float(size_y()) * scale) / 2;
 

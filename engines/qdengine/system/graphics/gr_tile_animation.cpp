@@ -298,6 +298,8 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 }
 
 void grTileAnimation::drawFrame(const Vect2i &position, int32 frame_index, int32 mode, int closest_scale) const {
+	debugC(3, kDebugGraphics, "grTileAnimation::drawFrame([%d, %d], frame: %d, mode=%d, scale_idx: %d)", position.x, position.y, frame_index, mode, closest_scale);
+
 	Vect2i frameSize = _frameSize;
 	Vect2i frameTileSize = _frameTileSize;
 	int frameStart = 0;
@@ -340,6 +342,8 @@ void grTileAnimation::drawFrame(const Vect2i &position, int32 frame_index, int32
 }
 
 void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float angle, int mode) const {
+	debugC(3, kDebugGraphics, "grTileAnimation::drawFrame([%d, %d], frame: %d, angle=%f, scake: %d)", position.x, position.y, frame_index, angle, mode);
+
 	byte *buf = decode_frame_data(frame_index, -1);
 	Vect2i pos = position - _frameSize / 2;
 
@@ -347,6 +351,8 @@ void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float a
 }
 
 void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float angle, const Vect2f &scale, int mode) const {
+	debugC(3, kDebugGraphics, "grTileAnimation::drawFrame([%d, %d], frame: %d, angle: %f, scale: [%f, %f], mode: %d)", position.x, position.y, frame_index, angle, scale.x, scale.y, mode);
+
 	byte *buf = decode_frame_data(frame_index, -1);
 	Vect2i pos = position - _frameSize / 2;
 
@@ -374,6 +380,8 @@ bool grTileAnimation::hit(int frame_number, Vect2i &pos) const {
 }
 
 void grTileAnimation::drawFrame_scale(const Vect2i &position, int frame_index, float scale, int mode) const {
+	debugC(3, kDebugGraphics, "grTileAnimation::drawFrame_scale([%d, %d], frame: %d, scale: %f, mode: %d)", position.x, position.y, frame_index, scale, mode);
+
 	int closest_scale = find_closest_scale(&scale);
 
 	if (wasFrameSizeChanged(frame_index, closest_scale, scale)) {
