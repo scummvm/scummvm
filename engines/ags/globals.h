@@ -35,6 +35,7 @@
 #include "ags/shared/font/wfn_font.h"
 #include "ags/shared/gui/gui_main.h"
 #include "ags/shared/script/cc_script.h"
+#include "ags/engine/ac/dynobj/script_game.h"
 #include "ags/engine/ac/event.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/walk_behind.h"
@@ -304,7 +305,7 @@ public:
 	 */
 
 	AGSCCStaticObject *_GlobalStaticManager;
-	StaticGame        *_GameStaticManager;
+	CCScriptGame	  *_GameStaticManager;
 
 	/**@}*/
 
