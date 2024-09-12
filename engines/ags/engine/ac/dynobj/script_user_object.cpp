@@ -52,7 +52,7 @@ void ScriptUserObject::Create(const uint8_t *data, Stream *in, size_t size) {
 
 	_size = size;
 	if (_size > 0) {
-		_data = new char[size];
+		_data = new uint8_t[size];
 		if (data)
 			memcpy(_data, data, _size);
 		else if (in)
