@@ -512,7 +512,7 @@ void TwinEEngine::initConfigurations() {
 	_cfgfile.Sound = ConfGetBoolOrDefault("sound", true);
 	_cfgfile.Fps = ConfGetIntOrDefault("fps", DEFAULT_FRAMES_PER_SECOND);
 	_cfgfile.Debug = ConfGetBoolOrDefault("debug", false);
-	_cfgfile.Mouse = ConfGetIntOrDefault("mouse", true);
+	_cfgfile.Mouse = ConfGetBoolOrDefault("mouse", true);
 
 	_cfgfile.UseAutoSaving = ConfGetBoolOrDefault("useautosaving", false);
 	_cfgfile.WallCollision = ConfGetBoolOrDefault("wallcollision", false);

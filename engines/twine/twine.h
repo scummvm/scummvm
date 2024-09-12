@@ -110,7 +110,7 @@ struct ConfigFile {
 	bool WallCollision = false;
 	/** Use original autosaving system or save when you want */
 	bool UseAutoSaving = false;
-	bool Mouse = false;
+	bool Mouse = true;
 
 	// these settings can be changed in-game - and must be persisted
 	/** Shadow mode type, value: all, character only, none */
