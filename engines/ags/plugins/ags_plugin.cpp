@@ -25,7 +25,6 @@
 #include "ags/lib/allegro.h"
 #include "common/std/vector.h"
 #include "ags/shared/core/platform.h"
-#include "ags/plugins/ags_plugin.h"
 #include "ags/plugins/core/core.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/view.h"
@@ -77,10 +76,16 @@
 #include "ags/shared/util/wgt2_allg.h"
 #include "ags/globals.h"
 
+// hide internal constants conflicting with plugin API
+#undef OBJF_NOINTERACT
+#undef OBJF_NOWALKBEHINDS
+
+#include "ags/plugins/ags_plugin.h"
+
+
 namespace AGS3 {
 
 using namespace AGS::Shared;
-using namespace AGS::Shared::Memory;
 using namespace AGS::Engine;
 
 const int PLUGIN_API_VERSION = 26;
@@ -89,7 +94,7 @@ const int PLUGIN_API_VERSION = 26;
 // we can reuse the same handle.
 
 void PluginSimulateMouseClick(int pluginButtonID) {
-	_G(pluginSimulatedClick) = static_cast<eAGSMouseButton>(pluginButtonID);
+	_G(simulatedClick) = static_cast<eAGSMouseButton>(pluginButtonID);
 }
 
 void IAGSEngine::AbortGame(const char *reason) {
@@ -698,7 +703,7 @@ void IAGSEngine::SetMousePosition(int32 x, int32 y) {
 }
 
 void IAGSEngine::SimulateMouseClick(int32 button) {
-	PluginSimulateMouseClick(button);
+	SimulateMouseClick(button);
 }
 
 int IAGSEngine::GetMovementPathWaypointCount(int32 pathId) {

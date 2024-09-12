@@ -292,7 +292,7 @@ struct KeyInput {
 };
 
 // AGS own mouse button codes;
-// These correspond to MouseButton enum in script API (sans special values)
+// These correspond to MouseButton enum in script and plugin API (sans special values)
 enum eAGSMouseButton
 {
 	kMouseNone = 0,
