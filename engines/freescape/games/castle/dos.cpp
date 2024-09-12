@@ -386,6 +386,7 @@ void CastleEngine::loadAssetsDOSDemo() {
 
 void CastleEngine::drawDOSUI(Graphics::Surface *surface) {
 	uint32 color = 10;
+	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 	uint8 r, g, b;
 
 	_gfx->readFromPalette(color, r, g, b);
@@ -410,13 +411,15 @@ void CastleEngine::drawDOSUI(Graphics::Surface *surface) {
 		drawStringInSurface(_currentArea->_name, 97, 182, front, back, surface);
 
 	for (int k = 0; k < _numberKeys; k++) {
-		surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_keysBorderFrames[k], 76 - k * 4, 179, Common::Rect(0, 0, 6, 14), _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00));
+		surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_keysBorderFrames[k], 76 - k * 4, 179, Common::Rect(0, 0, 6, 14), black);
 	}
 
 	drawEnergyMeter(surface, Common::Point(39, 157));
 	int flagFrameIndex = (_ticks / 10) % 4;
 	surface->copyRectToSurface(*_flagFrames[flagFrameIndex], 285, 5, Common::Rect(0, 0, _flagFrames[flagFrameIndex]->w, _flagFrames[flagFrameIndex]->h));
-	surface->copyRectToSurface((const Graphics::Surface)*_spiritsMeterIndicatorFrame, 140 + _spiritsMeterPosition, 156, Common::Rect(0, 0, _spiritsMeterIndicatorFrame->w, _spiritsMeterIndicatorFrame->h));
+
+	surface->copyRectToSurface((const Graphics::Surface)*_spiritsMeterIndicatorBackgroundFrame, 136, 162, Common::Rect(0, 0, _spiritsMeterIndicatorBackgroundFrame->w, _spiritsMeterIndicatorBackgroundFrame->h));
+	surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_spiritsMeterIndicatorFrame, 125 + _spiritsMeterPosition, 161, Common::Rect(0, 0, _spiritsMeterIndicatorFrame->w, _spiritsMeterIndicatorFrame->h), black);
 	//surface->copyRectToSurface(*_spiritsMeterIndicatorFrame, 100, 50, Common::Rect(0, 0, _spiritsMeterIndicatorFrame->w, _spiritsMeterIndicatorFrame->h));
 }
 
