@@ -394,8 +394,8 @@ void grTileAnimation::drawFrame_scale(const Vect2i &position, int frame_index, f
 		else
 			frameSize =_scaleArray[closest_scale]._frameSize;
 
-		int x = position.x - (int)((float)(frameSize.x / 2) * scale);
-		int y = position.y - (int)((float)(frameSize.y / 2) * scale);
+		int x = position.x - round(float(frameSize.x) * scale) / 2;
+		int y = position.y - round(float(frameSize.y) * scale) / 2;
 
 		grDispatcher::instance()->putSpr_a(x, y, frameSize.x, frameSize.y, data, mode, scale);
 	} else {
@@ -490,8 +490,8 @@ void grTileAnimation::drawContour(const Vect2i &pos, int frame_index, uint32 col
 
 void grTileAnimation::addScale(int i, float scale) {
 	_scaleArray[i]._scale = scale;
-	_scaleArray[i]._frameSize.x = (int)((float)_frameSize.x * scale);
-	_scaleArray[i]._frameSize.y = (int)((float)_frameSize.y * scale);
+	_scaleArray[i]._frameSize.x = round((double)_frameSize.x * scale);
+	_scaleArray[i]._frameSize.y = round((double)_frameSize.y * scale);
 	_scaleArray[i]._frameTileSize.x = (_scaleArray[i]._frameSize.x + 15) / 16;
 	_scaleArray[i]._frameTileSize.y = (_scaleArray[i]._frameSize.y + 15) / 16;
 
@@ -572,8 +572,8 @@ bool grTileAnimation::wasFrameSizeChanged(int frame_index, int scaleIdx, float s
 	else
 		newScale = _scaleArray[scaleIdx]._scale;
 
-	if ((int)((float)sx * newScale * scale == sx) &&
-		(int)((float)sy * newScale * scale == sy))
+	if ((int)((float)sx * newScale * scale) == sx &&
+		(int)((float)sy * newScale * scale) == sy)
 		return false;
 
 	return true;
