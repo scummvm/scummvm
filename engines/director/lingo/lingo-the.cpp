@@ -128,6 +128,7 @@ TheEntity entities[] = {
 	{ kTheRightMouseUp,		"rightMouseUp",		false, 500, true },	//					D5 f
 	{ kTheRollOver,			"rollOver",			false, 500, true },	//					D5 f, undocumented
 	{ kTheRomanLingo,		"romanLingo",		false, 300, false },	//		D3.1 p
+	{ kTheRunMode, 			"runMode",			false, 500, false },//					D5 f, documented in D6
 	{ kTheScummvmVersion,	"scummvmVersion",	false, 200, true }, // 					ScummVM only
 	{ kTheSearchCurrentFolder,"searchCurrentFolder",false,400, true },//			D4 f
 	{ kTheSearchPath,		"searchPath",		false, 400, true },	//			D4 f
@@ -791,6 +792,13 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheRomanLingo:
 		d = g_lingo->_romanLingo;
 		warning("BUILDBOT: the romanLingo is get, value is %d", g_lingo->_romanLingo);
+		break;
+	case kTheRunMode:
+		if (ConfMan.hasKey("director_runMode"))
+			d = Datum(ConfMan.get("director_runMode"));
+		else {
+			d = Datum("Projector");
+		}
 		break;
 	case kTheScummvmVersion:
 		d = _vm->getVersion();
