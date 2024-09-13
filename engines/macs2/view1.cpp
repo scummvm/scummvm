@@ -258,14 +258,16 @@ View1::View1() : UIElement("View1") {
 		int contentWidth = g_engine->MeasureStrings(sa);
 		int borderWidth = 10;
 		int padding = 3;
-		int totalWidth = contentWidth + (borderWidth * padding) * 2;
-		int totalHeight = contentHeight + (borderWidth * padding) * 2;
+		int totalWidth = contentWidth + (borderWidth + padding) * 2;
+		int totalHeight = contentHeight + (borderWidth + padding) * 2;
+		constexpr int x = 80;
+		constexpr int y = 20;
 
-		drawStringBackground(20, 20, totalWidth, totalHeight);
+		drawStringBackground(x, y, totalWidth, totalHeight);
 		// TODO range based
 		int lineOffset = borderWidth + padding;
 		for (auto iter = sa.begin(); iter < sa.end(); iter++) {
-			renderString(20 + borderWidth + padding, 20 + lineOffset, *iter);
+			renderString(x + borderWidth + padding, y + lineOffset, *iter);
 			lineOffset += 10;
 		}
 	}
