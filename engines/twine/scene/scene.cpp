@@ -202,8 +202,8 @@ bool Scene::loadSceneLBA2() {
 
 	/*uint8 n =*/ stream.readByte();
 
-	_alphaLight = ClampAngle((int16)stream.readUint16LE());
-	_betaLight = ClampAngle((int16)stream.readUint16LE());
+	_alphaLight = ClampAngle(stream.readSint16LE());
+	_betaLight = ClampAngle(stream.readSint16LE());
 	debug(2, "Using %i and %i as light vectors", _alphaLight, _betaLight);
 
 	for (int i = 0; i < 4; ++i) {
@@ -232,8 +232,6 @@ bool Scene::loadSceneLBA2() {
 	_sceneHero->_lifeScript = _currentScene + stream.pos();
 	stream.skip(_sceneHero->_lifeScriptSize);
 
-	/*uint32 checksum =*/ stream.readUint32LE();
-
 	_nbObjets = (int16)stream.readUint16LE();
 	int cnt = 1;
 	for (int32 a = 1; a < _nbObjets; a++, cnt++) {
@@ -243,8 +241,8 @@ bool Scene::loadSceneLBA2() {
 
 		loadModel(*act, (int16)stream.readUint16LE(), false);
 
-		act->_genBody = (BodyType)stream.readSint16LE();
-		act->_genAnim = (AnimationTypes)stream.readByte();
+		act->_genBody = (BodyType)stream.readByte();
+		act->_genAnim = (AnimationTypes)stream.readSint16LE();
 		act->_sprite = (int16)stream.readUint16LE();
 		act->_posObj.x = (int16)stream.readUint16LE();
 		act->_posObj.y = (int16)stream.readUint16LE();
@@ -253,8 +251,8 @@ bool Scene::loadSceneLBA2() {
 		act->_strengthOfHit = stream.readByte();
 		setBonusParameterFlags(act, stream.readUint16LE());
 		act->_beta = (int16)stream.readUint16LE();
-		act->_speed = (int16)stream.readUint16LE();
-		act->_controlMode = (ControlMode)stream.readByte();
+		act->_speed = (int16)stream.readUint16LE(); // srot
+		act->_controlMode = (ControlMode)stream.readByte(); // move
 		act->_cropLeft = stream.readSint16LE();
 		act->_delayInMillis = act->_cropLeft; // TODO: this might not be needed
 		act->_cropTop = stream.readSint16LE();
@@ -284,6 +282,8 @@ bool Scene::loadSceneLBA2() {
 			a--;
 		}
 	}
+
+	/* uint32 checksum = */stream.readUint32LE();
 
 	_sceneNumZones = (int16)stream.readUint16LE();
 	for (int32 i = 0; i < _sceneNumZones; i++) {
@@ -317,7 +317,7 @@ bool Scene::loadSceneLBA2() {
 		point->z = stream.readSint32LE();
 	}
 
-	uint16 sceneNumPatches = stream.readUint16LE();
+	uint16 sceneNumPatches = stream.readUint32LE();
 	for (uint16 i = 0; i < sceneNumPatches; i++) {
 		/*size = */stream.readUint16LE();
 		/*offset = */stream.readUint16LE();
@@ -560,11 +560,7 @@ void Scene::changeCube() {
 	_previousSceneIdx = _currentSceneIdx;
 	_currentSceneIdx = _needChangeScene;
 
-	if (_engine->isLBA1() && _currentSceneIdx >= LBA1SceneId::Citadel_Island_Prison && _currentSceneIdx < LBA1SceneId::SceneIdMax) {
-		snprintf(_engine->_gameState->_sceneName, sizeof(_engine->_gameState->_sceneName), "%i %s", _currentSceneIdx, _engine->_holomap->getLocationName(_currentSceneIdx));
-	} else {
-		snprintf(_engine->_gameState->_sceneName, sizeof(_engine->_gameState->_sceneName), "%i", _currentSceneIdx);
-	}
+	snprintf(_engine->_gameState->_sceneName, sizeof(_engine->_gameState->_sceneName), "%i %s", _currentSceneIdx, _engine->_holomap->getLocationName(_currentSceneIdx));
 	debug(2, "Entering scene %s (came from %i)", _engine->_gameState->_sceneName, _previousSceneIdx);
 
 	if (_engine->isLBA1()) {

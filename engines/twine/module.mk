@@ -52,7 +52,8 @@ MODULE_OBJS := \
 	resources/resources.o \
 	\
 	movies.o \
-	holomap.o \
+	holomap_v1.o \
+	holomap_v2.o \
 	input.o \
 	metaengine.o \
 	shared.o \

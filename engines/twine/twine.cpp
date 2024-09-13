@@ -45,7 +45,8 @@
 #include "twine/debugger/debug_grid.h"
 #include "twine/debugger/debug_scene.h"
 #include "twine/detection.h"
-#include "twine/holomap.h"
+#include "twine/holomap_v1.h"
+#include "twine/holomap_v2.h"
 #include "twine/input.h"
 #include "twine/menu/interface.h"
 #include "twine/menu/menu.h"
@@ -210,6 +211,7 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 	if (isLBA1()) {
 		_scriptLife = new ScriptLifeV1(this);
 		_scriptMove = new ScriptMoveV1(this);
+		_holomap = new HolomapV1(this);
 	} else {
 		_scriptLife = new ScriptLifeV2(this);
 		_scriptMove = new ScriptMoveV2(this);
@@ -217,8 +219,8 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 		_dart = new Dart(this);
 		_rain = new Rain(this);
 		_wagon = new Wagon(this);
+		_holomap = new HolomapV2(this);
 	}
-	_holomap = new Holomap(this);
 	_sound = new Sound(this);
 	_text = new Text(this);
 	_debugGrid = new DebugGrid(this);

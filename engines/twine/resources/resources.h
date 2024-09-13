@@ -51,6 +51,7 @@ namespace TwinE {
 
 #define RESSHQR_BLACKPAL 9   // lba2
 #define RESSHQR_ECLAIRPAL 10 // lba2
+#define RESSHQR_ARROWBIN 12  // lba2
 #define SAMPLE_RAIN 13
 
 #define RESSHQR_GAMEOVERMDL 21
@@ -242,6 +243,8 @@ public:
 	static constexpr const char *HQR_ANIM3DS_FILE = "anim3ds.hqr";
 	// inventory objects
 	static constexpr const char *HQR_INVOBJ_FILE = "invobj.hqr";
+	// lba2 holomap
+	static constexpr const char *HQR_HOLOMAP_FILE = "holomap.hqr";
 
 	/**
 	 * @brief Floppy version of the game uses gifs for replacing the videos

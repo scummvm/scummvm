@@ -94,8 +94,6 @@ static MenuSettings createMainMenu(bool lba1) {
 		settings.setButtonsBoxHeight(335);
 		settings.addButton(TextId::toContinueGame);
 		settings.addButton(TextId::toNewGame);
-		settings.addButton(TextId::toLoadGame);
-		settings.addButton(TextId::toSauver);
 		settings.addButton(TextId::toOptions);
 		settings.addButton(TextId::toQuit);
 	}

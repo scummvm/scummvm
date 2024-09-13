@@ -19,63 +19,68 @@
  *
  */
 
-#ifndef TWINE_HOLOMAP_H
-#define TWINE_HOLOMAP_H
+#ifndef TWINE_HOLOMAPV2_H
+#define TWINE_HOLOMAPV2_H
 
-#include "twine/shared.h"
-#include "common/scummsys.h"
+#include "twine/holomap.h"
 
-#define NUM_HOLOMAPCOLORS 32
-#define HOLOMAP_PALETTE_INDEX 192
-
-namespace Common {
-class SeekableReadStream;
-}
+#define MAX_OBJECTIF 50
+#define MAX_CUBE 255
 
 namespace TwinE {
-
-class TwinEEngine;
-class BodyData;
-class AnimData;
-struct ActorMoveStruct;
-struct Vertex;
-struct AnimTimerDataStruct;
 
 /**
  * The Holomap shows the hero position. The arrows (@c RESSHQR_HOLOARROWMDL) represent important places in your quest - they automatically disappear once that part of
  * the quest is done (@c clearHolomapPosition()). You can rotate the holoamp by pressing ctrl+cursor keys - but only using the cursor keys, you can scroll through the
  * text for the visible arrows.
  */
-class Holomap {
-protected:
-	TwinEEngine *_engine;
+class HolomapV2 : public Holomap {
+private:
+	using Super = Holomap;
+
 public:
-	Holomap(TwinEEngine *engine) : _engine(engine) {}
-	virtual ~Holomap() = default;
+	HolomapV2(TwinEEngine *engine) : Super(engine) {}
+	virtual ~HolomapV2() = default;
+
+	struct Location {
+		int32 X; // Position Island X Y Z
+		int32 Y;
+		int32 Z;
+		int32 Alpha; // Position Planet Alpha, Beta and Altitude
+		int32 Beta;
+		int32 Alt;
+		int32 Mess;
+		int8 ObjFix;    // Eventual Obj Inventory 3D (FREE NOT USED!)
+		uint8 FlagHolo; // Flag for Planet display, active, etc.
+		uint8 Planet;
+		uint8 Island;
+	};
+	static_assert(sizeof(Location) == 32, "Invalid Location size");
+	Location _locations[MAX_OBJECTIF + MAX_CUBE];
 
 	/**
 	 * Set Holomap location position
 	 * @param locationIdx Scene where position must be set
 	 */
-	virtual bool setHoloPos(int32 locationIdx) = 0;
+	bool setHoloPos(int32 locationIdx) override;
 
-	virtual bool loadLocations() = 0;
+	bool loadLocations() override;
 
-	virtual const char *getLocationName(int index) const = 0;
+	const char *getLocationName(int index) const override;
 
 	/**
 	 * Clear Holomap location position
 	 * @param locationIdx Scene where position must be cleared
 	 */
-	virtual void clrHoloPos(int32 locationIdx) = 0;
+	void clrHoloPos(int32 locationIdx) override;
 
-	virtual void drawHolomapTrajectory(int32 trajectoryIndex) = 0;
+	void drawHolomapTrajectory(int32 trajectoryIndex) override;
 
 	/** Load Holomap content */
-	virtual void initHoloDatas() = 0;
+	void initHoloDatas() override;
 
 	/** Main holomap process loop */
-	virtual void holoMap() = 0;
+	void holoMap() override;
 };
 
 } // namespace TwinE

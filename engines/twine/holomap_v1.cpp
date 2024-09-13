@@ -19,7 +19,7 @@
  *
  */
 
-#include "twine/holomap.h"
+#include "twine/holomap_v1.h"
 #include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/memstream.h"
@@ -46,37 +46,35 @@
 namespace TwinE {
 
 // these are lba1 specific
-#define HOLOMAP_ARROW		(1 << 0)
-#define HOLOMAP_VISITED		(1 << 1)
-#define HOLOMAP_UNK3		(1 << 2)
-#define HOLOMAP_UNK4		(1 << 3)
-#define HOLOMAP_UNK5		(1 << 4)
-#define HOLOMAP_UNK6		(1 << 5)
-#define HOLOMAP_CUBE_DONE	(1 << 6)
-#define HOLOMAP_CAN_FOCUS	(1 << 7)
-#define HOLOMAP_ACTIVE		(HOLOMAP_CAN_FOCUS | HOLOMAP_ARROW)
+#define HOLOMAP_ARROW (1 << 0)
+#define HOLOMAP_VISITED (1 << 1)
+#define HOLOMAP_UNK3 (1 << 2)
+#define HOLOMAP_UNK4 (1 << 3)
+#define HOLOMAP_UNK5 (1 << 4)
+#define HOLOMAP_UNK6 (1 << 5)
+#define HOLOMAP_CUBE_DONE (1 << 6)
+#define HOLOMAP_CAN_FOCUS (1 << 7)
+#define HOLOMAP_ACTIVE (HOLOMAP_CAN_FOCUS | HOLOMAP_ARROW)
 
 static const float ZOOM_BIG_HOLO = 9500.0f;
 static const float zDistanceTrajectory = 5300.0f;
 static const int SIZE_CURSOR = 20;
 
-Holomap::Holomap(TwinEEngine *engine) : _engine(engine) {}
-
-int32 Holomap::distance(float distance) const {
+int32 HolomapV1::distance(float distance) const {
 	const float w = (float)_engine->width() / (float)_engine->originalWidth();
 	const float h = (float)_engine->height() / (float)_engine->originalHeight();
 	const float f = MIN<float>(w, h);
 	return (int32)(distance / f);
 }
 
-int32 Holomap::scale(float val) const {
+int32 HolomapV1::scale(float val) const {
 	const float w = (float)_engine->width() / (float)_engine->originalWidth();
 	const float h = (float)_engine->height() / (float)_engine->originalHeight();
 	const float f = MIN<float>(w, h);
 	return (int32)(val * f);
 }
 
-bool Holomap::loadLocations() {
+bool HolomapV1::loadLocations() {
 	uint8 *locationsPtr = nullptr;
 	const int32 locationsSize = HQR::getAllocEntry(&locationsPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWINFO);
 	if (locationsSize == 0) {
@@ -107,7 +105,7 @@ bool Holomap::loadLocations() {
 	return true;
 }
 
-bool Holomap::setHoloPos(int32 locationIdx) {
+bool HolomapV1::setHoloPos(int32 locationIdx) {
 	assert(locationIdx >= 0 && locationIdx < _engine->numHoloPos());
 	if (_engine->isLBA1()) {
 		_engine->_gameState->_holomapFlags[locationIdx] = HOLOMAP_ACTIVE;
@@ -118,13 +116,13 @@ bool Holomap::setHoloPos(int32 locationIdx) {
 	return true;
 }
 
-void Holomap::clrHoloPos(int32 locationIdx) {
+void HolomapV1::clrHoloPos(int32 locationIdx) {
 	assert(locationIdx >= 0 && locationIdx <= ARRAYSIZE(_engine->_gameState->_holomapFlags));
 	_engine->_gameState->_holomapFlags[locationIdx] &= ~HOLOMAP_ACTIVE;
 	_engine->_gameState->_holomapFlags[locationIdx] |= HOLOMAP_CUBE_DONE;
 }
 
-void Holomap::initHoloDatas() {
+void HolomapV1::initHoloDatas() {
 	constexpr TwineResource resource(Resources::HQR_RESS_FILE, RESSHQR_HOLOPAL);
 	_engine->_screens->loadCustomPalette(resource);
 
@@ -154,7 +152,7 @@ void Holomap::initHoloDatas() {
 	_holomapPaletteIndex = 0;
 }
 
-void Holomap::computeCoorGlobe(Common::SeekableReadStream *holomapSurfaceStream) {
+void HolomapV1::computeCoorGlobe(Common::SeekableReadStream *holomapSurfaceStream) {
 	int holomapSurfaceArrayIdx = 0;
 	_engine->_renderer->setAngleCamera(0, 0, 0);
 	for (int alpha = -LBAAngles::ANGLE_90; alpha <= LBAAngles::ANGLE_90; alpha += LBAAngles::ANGLE_11_25) {
@@ -183,7 +181,7 @@ void Holomap::computeCoorGlobe(Common::SeekableReadStream *holomapSurfaceStream)
 	assert(holomapSurfaceStream->eos());
 }
 
-void Holomap::computeCoorMapping() {
+void HolomapV1::computeCoorMapping() {
 	int projectedIndex = 0;
 	for (int32 alpha = -LBAAngles::ANGLE_90; alpha <= LBAAngles::ANGLE_90; alpha += LBAAngles::ANGLE_11_25) {
 		for (int32 beta = 0; beta < LBAAngles::ANGLE_360; beta += LBAAngles::ANGLE_11_25) {
@@ -205,7 +203,7 @@ void Holomap::computeCoorMapping() {
 	}
 }
 
-void Holomap::computeGlobeProj() {
+void HolomapV1::computeGlobeProj() {
 	int holomapSortArrayIdx = 0;
 	int holomapSurfaceArrayIdx = 0;
 	_projectedSurfaceIndex = 0;
@@ -237,7 +235,7 @@ void Holomap::computeGlobeProj() {
 }
 
 #define SURFACE_POS_OFFSET ((LBAAngles::ANGLE_360 / LBAAngles::ANGLE_11_25) + 1)
-void Holomap::drawHoloMap(uint8 *holomapImage, uint32 holomapImageSize) {
+void HolomapV1::drawHoloMap(uint8 *holomapImage, uint32 holomapImageSize) {
 	computeGlobeProj();
 	for (int32 i = 0; i < ARRAYSIZE(_holomapSort); ++i) {
 		assert(_holomapSort[i].projectedPosIdx + 34 < _projectedSurfaceIndex);
@@ -283,7 +281,7 @@ void Holomap::drawHoloMap(uint8 *holomapImage, uint32 holomapImageSize) {
 	}
 }
 
-void Holomap::drawHolomapText(int32 centerx, int32 top, const char *title) {
+void HolomapV1::drawHolomapText(int32 centerx, int32 top, const char *title) {
 	const int32 size = _engine->_text->getTextSize(title);
 	const int32 x = centerx - size / 2;
 	const int32 y = top;
@@ -291,7 +289,7 @@ void Holomap::drawHolomapText(int32 centerx, int32 top, const char *title) {
 	_engine->_text->drawText(x, y, title);
 }
 
-void Holomap::drawHoloObj(const IVec3 &angle, int32 alpha, int32 beta) {
+void HolomapV1::drawHoloObj(const IVec3 &angle, int32 alpha, int32 beta) {
 	_engine->_renderer->setAngleCamera(alpha, beta, 0);
 	const IVec3 &m = _engine->_renderer->worldRotatePoint(IVec3(0, 0, 1000));
 	_engine->_renderer->setFollowCamera(0, 0, 0, angle.x, angle.y, angle.z, distance(zDistanceTrajectory));
@@ -301,7 +299,7 @@ void Holomap::drawHoloObj(const IVec3 &angle, int32 alpha, int32 beta) {
 	_engine->copyBlockPhys(dirtyRect);
 }
 
-void Holomap::renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, AnimTimerDataStruct &animTimerData, BodyData &bodyData, AnimData &animData) {
+void HolomapV1::renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, AnimTimerDataStruct &animTimerData, BodyData &bodyData, AnimData &animData) {
 	const int16 newAngle = move.getRealAngle(_engine->timerRef);
 	if (move.timeValue == 0) {
 		_engine->_movements->initRealAngle(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_90, 500, &move);
@@ -324,7 +322,7 @@ void Holomap::renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, Ani
 	_engine->copyBlockPhys(rect);
 }
 
-void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
+void HolomapV1::drawHolomapTrajectory(int32 trajectoryIndex) {
 	if (_engine->isDemo()) {
 		return;
 	}
@@ -434,7 +432,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	free(holomapImagePtr);
 }
 
-int32 Holomap::searchNextArrow(int32 num) const {
+int32 HolomapV1::searchNextArrow(int32 num) const {
 	const int maxLocations = _engine->numHoloPos();
 	for (int32 n = num + 1; n < maxLocations; ++n) {
 		if ((_engine->_gameState->_holomapFlags[n] & HOLOMAP_ACTIVE) != 0u) {
@@ -444,7 +442,7 @@ int32 Holomap::searchNextArrow(int32 num) const {
 	return -1;
 }
 
-int32 Holomap::searchPrevArrow(int32 num) const {
+int32 HolomapV1::searchPrevArrow(int32 num) const {
 	int32 n;
 	const int maxLocations = _engine->numHoloPos();
 
@@ -460,7 +458,7 @@ int32 Holomap::searchPrevArrow(int32 num) const {
 	return -1;
 }
 
-void Holomap::drawListPos(int calpha, int cbeta, int cgamma, bool pos) {
+void HolomapV1::drawListPos(int calpha, int cbeta, int cgamma, bool pos) {
 	int nbobjets = 0;
 	DrawListStruct listTri[MAX_HOLO_POS_2];
 	const int numCube = _engine->_scene->_currentSceneIdx;
@@ -523,7 +521,7 @@ void Holomap::drawListPos(int calpha, int cbeta, int cgamma, bool pos) {
 	}
 }
 
-void Holomap::holoMap() {
+void HolomapV1::holoMap() {
 	const int32 alphaLightTmp = _engine->_scene->_alphaLight;
 	const int32 betaLightTmp = _engine->_scene->_betaLight;
 
@@ -692,7 +690,7 @@ void Holomap::holoMap() {
 	free(holomapImagePtr);
 }
 
-const char *Holomap::getLocationName(int index) const {
+const char *HolomapV1::getLocationName(int index) const {
 	assert(index >= 0 && index <= ARRAYSIZE(_listHoloPos));
 	return _listHoloPos[index].name;
 }
