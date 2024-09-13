@@ -197,7 +197,7 @@ Globals::Globals() {
 	_overlaybmp = new std::vector<std::unique_ptr<Shared::Bitmap> >();
 	_debugRoomMaskObj =  new ObjTexture();
 	_debugMoveListObj = new ObjTexture();
-
+	_debugConsoleBuffer = new AGS::Shared::Bitmap();
 	_maincoltable = new COLOR_MAP();
 	_palette = new color[256];
 	for (int i = 0; i < PALETTE_COUNT; ++i)

@@ -605,7 +605,9 @@ public:
 	ObjTexture *_debugMoveListObj;
 	RoomAreaMask _debugRoomMask = kRoomAreaNone;
 	int _debugMoveListChar = -1;
-
+	// For in-game "console" surface
+	AGS::Shared::Bitmap *_debugConsoleBuffer;
+	// Whether room bg was modified
 	bool _current_background_is_dirty = false;
 	// Room background sprite
 	AGS::Engine::IDriverDependantBitmap *_roomBackgroundBmp = nullptr;
@@ -613,7 +615,6 @@ public:
 	bool _screen_is_dirty = false;
 	AGS::Shared::Bitmap *_raw_saved_screen = nullptr;
 	AGS::Shared::Bitmap **_dynamicallyCreatedSurfaces = nullptr;
-	int _places_r = 3, _places_g = 2, _places_b = 3;
 	color *_palette;
 	COLOR_MAP *_maincoltable;
 
@@ -1398,7 +1399,6 @@ public:
 	int _walkBehindRight[MAX_WALK_BEHINDS], _walkBehindBottom[MAX_WALK_BEHINDS];
 	AGS::Engine::IDriverDependantBitmap *_walkBehindBitmap[MAX_WALK_BEHINDS];
 	int _walkBehindsCachedForBgNum = 0;
-	WalkBehindMethodEnum _walkBehindMethod = DrawOverCharSprite;
 	int _walk_behind_baselines_changed = 0;
 	Rect _walkBehindAABB[MAX_WALK_BEHINDS]; // WB bounding box
 	std::vector<WalkBehindColumn> _walkBehindCols; // precalculated WB positions

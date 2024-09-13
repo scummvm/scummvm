@@ -239,7 +239,13 @@ public:
 	VideoMemoryGraphicsDriver();
 	~VideoMemoryGraphicsDriver() override;
 
-	bool UsesMemoryBackBuffer() override;
+	bool RequiresFullRedrawEachFrame() override { return true; }
+	bool HasAcceleratedTransform() override { return true; }
+	// NOTE: although we do use ours, we do not let engine draw upon it;
+	// only plugin handling are allowed to request our mem buffer
+	// for compatibility reasons.
+	bool UsesMemoryBackBuffer() override { return false; }
+
 	Bitmap *GetMemoryBackBuffer() override;
 	void SetMemoryBackBuffer(Bitmap *backBuffer) override;
 	Bitmap *GetStageBackBuffer(bool mark_dirty) override;
