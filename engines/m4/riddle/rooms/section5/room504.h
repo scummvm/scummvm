@@ -35,17 +35,29 @@ private:
 	int _upSteps = 0;
 	int _downSteps = 0;
 	int _volume = 0;
+	int _volume2 = 0;
 	int _convState1 = 0;
 	int _convState2 = 0;
 	int _ripSketching = 0;
 	int _ripLowReach = 0;
 	int _ripMedReach = 0;
 	int _ripWipe = 0;
+	int _ripStepUpLeft = 0;
+	int _ripThrowFromLeft = 0;
+	int _ripHiReach2Handed = 0;
+	int _ripLeansBack = 0;
 	int _mzDigs = 0;
 	int _mzStandsTalks = 0;
-	int _mzSeries1 = 0;
-	int _mzSeries2 = 0;
+	int _mzTakesEmerald = 0;
+	int _mzMenancesClimbs = 0;
+	int _mzTakesMoney = 0;
+	int _mzGivesHead = 0;
 	int _vineTie = 0;
+	int _vineUnrolling = 0;
+	int _rightVineTie = 0;
+	int _leftVineTie = 0;
+	int _ropeLSlurpsUp = 0;
+	int _ropeRSlurpsUp = 0;
 
 	machine *_vines1 = nullptr;
 	machine *_vines2 = nullptr;
@@ -59,6 +71,7 @@ private:
 	machine *_pole = nullptr;
 	machine *_mzMachine = nullptr;
 	machine *_menendez = nullptr;
+	machine *_vineMachine1 = nullptr;
 	machine *_vineMachine2 = nullptr;
 	machine *_ripStep = nullptr;
 	machine *_vine = nullptr;
@@ -66,7 +79,7 @@ private:
 	bool _flag2 = false;
 	bool _flag3 = false;
 	bool _flag4 = false;
-
+	
 	int _trigger1 = 0;
 	int _trigger2 = 0;
 	int _trigger3 = 0;

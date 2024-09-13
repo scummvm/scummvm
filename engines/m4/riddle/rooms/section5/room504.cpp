@@ -107,6 +107,8 @@ void Room504::init() {
 }
 
 void Room504::daemon() {
+	int frame;
+
 	switch (_G(kernel).trigger) {
 	case 501:
 		player_update_info();
@@ -165,9 +167,228 @@ void Room504::daemon() {
 		break;
 
 	case 504:
-		// TODO
 		switch (_val2) {
 		case 1:
+			switch (_convState1) {
+			case 1:
+				sendWSMessage_10000(1, _mzMachine, _mzDigs, 1, 23, 503,
+					_mzDigs, 23, 23, 0);
+
+				if (_flag1) {
+					player_update_info();
+					_volume2 = 1;
+
+					switch (imath_ranged_rand(1, 4)) {
+					case 1:
+						digi_play("504_s02", 2, _volume2);
+						break;
+					case 2:
+						digi_play("504_s02a", 2, _volume2);
+						break;
+					case 3:
+						digi_play("504_s02b", 2, _volume2);
+						break;
+					case 4:
+						digi_play("504_s02c", 2, _volume2);
+						break;
+					}
+
+					if (_G(player_info).x < 550) {
+						_volume2 = 0;
+					} else if (_G(player_info).x < 1050) {
+						_volume2 = 255;
+					} else if (_G(player_info).x > 1050) {
+						_volume2 = _G(player_info).x * -0.219827586 + 485.8189655;
+					}
+
+					digi_change_panning(2, _volume2);
+				}
+				break;
+
+			case 2:
+				sendWSMessage_10000(1, _mzMachine, _mzStandsTalks, 1, 11, 503,
+					_mzStandsTalks, 11, 11, 0);
+				_val2 = 2;
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 2:
+			switch (_convState1) {
+			case 1:
+				sendWSMessage_10000(1, _mzMachine, _mzStandsTalks, 11, 1, 503,
+					_mzStandsTalks, 1, 1, 0);
+				_val2 = 1;
+				break;
+
+			case 2:
+				sendWSMessage_10000(1, _mzMachine, _mzStandsTalks, 11, 11, 503,
+					_mzStandsTalks, 11, 11, 0);
+				break;
+
+			case 4:
+				frame = imath_ranged_rand(10, 26);
+				sendWSMessage_10000(1, _mzMachine, _mzStandsTalks, frame, frame, 503,
+					_mzStandsTalks, frame, frame, 0);
+				break;
+
+			case 5:
+				_mzTakesMoney = series_load("504 MZ TAKES MONEY");
+				sendWSMessage_10000(1, _mzMachine, _mzTakesMoney, 1, 11, 503,
+					_mzTakesMoney, 11, 11, 0);
+				_val2 = 5;
+				break;
+
+			case 6:
+				_mzTakesEmerald = series_load("504 MZ TAKES EMERALD");
+				sendWSMessage_10000(1, _mzMachine, _mzTakesEmerald, 1, 12, 517,
+					_mzTakesEmerald, 13, 13, 0);
+				break;
+
+			case 9:
+				_mzGivesHead = series_load("504 MZ GIVES HEAD");
+				sendWSMessage_10000(1, _mzMachine, _mzGivesHead, 1, 27, 503,
+					_mzGivesHead, 28, 28, 0);
+				_val2 = 9;
+				break;
+
+			case 10:
+				_mzGivesHead = series_load("504 MZ GIVES HEAD");
+				digi_play(conv_sound_to_play(), 1);
+				sendWSMessage_10000(1, _mzMachine, _mzGivesHead, 1, 27, 503,
+					_mzGivesHead, 28, 28, 0);
+				_convState1 = 11;
+				break;
+
+			case 11:
+				kernel_timing_trigger(60, 503);
+				_convState1 = 12;
+				break;
+
+			case 12:
+				sendWSMessage_10000(1, _mzMachine, _mzGivesHead, 27, 1, 503,
+					_mzGivesHead, 1, 1, 0);
+				break;
+
+			case 13:
+				conv_resume();
+				_convState1 = 2;
+				kernel_timing_trigger(1, 503);
+				break;
+
+			case 15:
+				_ripLeansBack = series_load("504 rip leans back");
+				_mzMenancesClimbs = series_load("504 MZ MENACES CLIMBS");
+				digi_preload("504_S02D");
+				digi_play("504_S02D", 1);
+				sendWSMessage_10000(1, _mzMachine, _mzMenancesClimbs, 1, 21, 503,
+					_mzMenancesClimbs, 21, 21, 0);
+				sendWSMessage_190000(3);
+				_convState1 = 15;
+				_val2 = 15;
+				break;
+
+			case 16:
+				_mzMenancesClimbs = series_load("504 MZ MENACES CLIMBS");
+				_ripLeansBack = series_load("504 rip leans back");
+				digi_preload("504_502D");
+				digi_play("504_502D", 1);
+				sendWSMessage_10000(1, _mzMachine, _mzMenancesClimbs, 1, 21, 524,
+					_mzMenancesClimbs, 21, 21, 0);
+				sendWSMessage_190000(_mzMachine, 3);
+				series_unload(_mzDigs);
+				series_unload(_mzStandsTalks);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 5:
+			switch (_convState1) {
+			case 2:
+				sendWSMessage_10000(1, _mzMachine, _mzTakesMoney, 12, 32, 503,
+					_mzTakesMoney, 32, 32, 0);
+				_convState1 = 3;
+				break;
+
+			case 3:
+				sendWSMessage_10000(1, _mzMachine, _mzStandsTalks, 11, 11, 503,
+					_mzStandsTalks, 11, 11, 0);
+				_convState1 = 2;
+				_val2 = 2;
+				series_unload(_mzTakesMoney);
+				break;
+
+			case 5:
+				sendWSMessage_10000(1, _mzMachine, _mzTakesMoney, 11, 11, 503,
+					_mzTakesMoney, 11, 11, 0);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 9:
+			switch (_convState1) {
+			case 2:
+				sendWSMessage_10000(1, _mzMachine, _mzGivesHead, 30, 43, 503,
+					_mzGivesHead, 43, 43, 0);
+				_convState1 = 3;
+				break;
+
+			case 3:
+				sendWSMessage_10000(1, _mzMachine, _mzStandsTalks, 11, 11, 503,
+					_mzStandsTalks, 11, 11, 0);
+				_convState1 = 2;
+				_val2 = 2;
+				series_unload(_mzGivesHead);
+				break;
+
+			case 9:
+				sendWSMessage_10000(1, _mzMachine, _mzStandsTalks, 28, 28, 503,
+					_mzStandsTalks, 28, 28, 0);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 15:
+			switch (_convState1) {
+			case 2:
+				sendWSMessage_10000(1, _mzMachine, _mzMenancesClimbs, 21, 1, 503,
+					_mzMenancesClimbs, 1, 1, 0);
+				_convState1 = 3;
+				break;
+
+			case 3:
+				sendWSMessage_10000(1, _mzMachine, _mzStandsTalks, 11, 11, 503,
+					_mzStandsTalks, 11, 11, 0);
+				_convState1 = 2;
+				_val2 = 2;
+				series_unload(_mzMenancesClimbs);
+				digi_unload("504_S02D");
+				break;
+
+			case 15:
+				frame = imath_ranged_rand(21, 23);
+				sendWSMessage_10000(1, _mzMachine, _mzMenancesClimbs, frame, frame, 503,
+					_mzMenancesClimbs, frame, frame, 0);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		default:
 			break;
 		}
 		break;
@@ -195,6 +416,18 @@ void Room504::daemon() {
 		}
 		break;
 
+	case 511:
+		g_engine->camera_shift_xy(862, 0);
+		_trigger1 = kernel_trigger_create(512);
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(5, 505);
+		break;
+
+	case 512:
+		_convState2 = 3;
+		digi_play("504R51", 1, 255, 513);
+		break;
+
 	case 513:
 		_convState2 = 1;
 		_convState1 = 2;
@@ -206,18 +439,46 @@ void Room504::daemon() {
 		_trigger4 = kernel_trigger_create(515);
 		break;
 
+	case 515:
+		_convState2 = 6;
+		digi_play("504R13", 1, 255, 516);
+		break;
+
 	case 516:
 		_convState2 = 5;
 		_convState1 = 6;
 		break;
 
+	case 518:
+		sendWSMessage_10000(1, _mzMachine, _mzTakesEmerald, 20, 21, -1,
+			_mzTakesEmerald, 20, 20, 4);
+		digi_play("504Z13", 1, 255, 519);
+		break;
+
+	case 519:
+		_convState2 = 3;
+		digi_play("504R14", 1, 255, 520);
+		break;
+
 	case 520:
 		_convState2 = 1;
-		sendWSMessage_10000(1, _mzMachine, _mzSeries1, 21, 29, 503,
+		sendWSMessage_10000(1, _mzMachine, _mzTakesEmerald, 21, 29, 503,
 			_mzStandsTalks, 11, 11, 4);
 		_convState1 = 2;
 		_val2 = 2;
 		_trigger2 = kernel_trigger_create(521);
+		break;
+
+	case 521:
+		series_unload(_mzTakesEmerald);
+		_convState1 = 4;
+		digi_play("504Z15", 1, 255, 522);
+		break;
+
+	case 522:
+		_convState1 = 2;
+		_convState2 = 5;
+		digi_play("504R15", 1, 255, 523);
 		break;
 
 	case 523:
@@ -229,6 +490,27 @@ void Room504::daemon() {
 		_trigger1 = kernel_trigger_create(525);
 		break;
 
+	case 525:
+		_convState2 = 8;
+		_trigger4 = kernel_trigger_create(526);
+		sendWSMessage_10000(1, _mzMachine, _mzMenancesClimbs, 21, 23, -1,
+			_mzMenancesClimbs, 21, 23, 4);
+		digi_play("504Z15", 1, 255, 526);
+		break;
+
+
+	case 527:
+		digi_play("504_S06", 1, 255, 528);
+		break;
+
+	case 528:
+		digi_unload("504_S06");
+		_convState2 = 1;
+		sendWSMessage_10000(1, _mzMachine, _mzMenancesClimbs, 52, 59, -1,
+			_mzMenancesClimbs, 58, 59, 4);
+		digi_play("504Z16", 1, 255, 529);
+		break;
+
 	case 529:
 		_convState2 = 3;
 		digi_play("504R16", 1, 255, 530);
@@ -236,8 +518,8 @@ void Room504::daemon() {
 
 	case 530:
 		_convState2 = 1;
-		sendWSMessage_10000(1, _mzMachine, _mzSeries2, 60, 61, -1,
-			_mzSeries2, 60, 62, 4);
+		sendWSMessage_10000(1, _mzMachine, _mzMenancesClimbs, 60, 61, -1,
+			_mzMenancesClimbs, 60, 62, 4);
 		digi_play("504Z17", 1, 255, 531);
 		break;
 
@@ -251,7 +533,7 @@ void Room504::daemon() {
 		ws_walk_load_walker_series(NORMAL_DIRS, NORMAL_NAMES);
 		ws_walk_load_shadow_series(SHADOW_DIRS, SHADOW_NAMES);
 		terminateMachineAndNull(_mzMachine);
-		series_unload(_mzSeries2);
+		series_unload(_mzMenancesClimbs);
 		digi_unload("504_S02D");
 
 		_menendez = triggerMachineByHash_3000(8, 16, NORMAL_DIRS, SHADOW_DIRS,
@@ -274,6 +556,12 @@ void Room504::daemon() {
 	case 537:
 		_convState2 = 13;
 		digi_play("504Z18", 1, 255, 538);
+		break;
+
+	case 538:
+		_convState2 = 10;
+		digi_play("504R18", 1, 255, 540);
+		kernel_timing_trigger(150, 539);
 		break;
 
 	case 540:
@@ -307,6 +595,12 @@ void Room504::daemon() {
 		_convState2 = 9;
 		break;
 
+	case 548:
+		_trigger1 = kernel_trigger_create(549);
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(5, 505);
+		break;
+
 	case 549:
 		_convState2 = 3;
 		digi_play("504R51", 1, 255, 550);
@@ -326,6 +620,33 @@ void Room504::daemon() {
 	case 552:
 		_convState2 = 6;
 		digi_play("504R13", 1, 255, 553);
+		break;
+
+	case 553:
+		_convState2 = 5;
+		_convState1 = 4;
+
+		if (_flag4) {
+			_flag4 = false;
+			_convState1 = 5;
+			_trigger3 = kernel_trigger_create(554);
+		} else {
+			switch (imath_ranged_rand(1, 3)) {
+			case 1:
+				digi_play("504Z05", 1, 255, 555);
+				break;
+			case 2:
+				digi_play("504Z10", 1, 255, 555);
+				break;
+
+			case 3:
+				digi_play("504Z11", 1, 255, 555);
+				break;
+
+			default:
+				break;
+			}
+		}
 		break;
 
 	case 554:
@@ -392,6 +713,11 @@ void Room504::daemon() {
 		kernel_timing_trigger(5, 566);
 		break;
 
+	case 566:
+		player_update_info();
+		ws_walk(_G(player_info).x + 10, _G(player_info).y, nullptr, 567, 3);
+		break;
+
 	case 567:
 		player_update_info();
 		digi_preload("COM125");
@@ -438,6 +764,14 @@ void Room504::daemon() {
 		digi_play("COM125", 1);
 		break;
 
+	case 580:
+		player_set_commands_allowed(false);
+		_ripMedReach = series_load("RIP TREK MED REACH HAND POS1");
+		_vineTie = series_load("504 R VINE TIE BEFORE THROW");
+		setGlobals1(_ripMedReach, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+		sendWSMessage_110000(581);
+		break;
+
 	case 581:
 		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
 			triggerMachineByHashCallbackNegative, "Rope Falling to the Ground");
@@ -471,12 +805,76 @@ void Room504::daemon() {
 		terminateMachineAndNull(_vineMachine2);
 		break;
 
+	case 586:
+		player_set_commands_allowed(false);
+		kernel_timing_trigger(30, 587);
+		break;
+
+	case 587:
+		if (g_engine->game_camera_panning()) {
+			kernel_timing_trigger(5, 587);
+		} else {
+			player_set_commands_allowed(false);
+			_ripMedReach = series_load("RIP TREK MED REACH HAND POS1");
+			_ripLowReach = series_load("RIP LOW REACH POS1");
+			setGlobals1(_ripMedReach, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+			sendWSMessage_110000(588);
+		}
+		break;
+
 	case 588:
 		sendWSMessage_120000(589);
 		break;
 
+	case 590:
+		setGlobals1(_ripLowReach, 1, 24, 24, 24, 0, 24, 1, 1, 1);
+		sendWSMessage_110000(591);
+		break;
+
+	case 591:
+		switch (_val1) {
+		case 1:
+			inv_give_to_player("ROPE");
+			kernel_examine_inventory_object("PING ROPE", 5, 1, 449, 90, 592);
+			break;
+		case 2:
+			inv_give_to_player("GREEN VINE");
+			kernel_examine_inventory_object("PING GREEN VINE", 5, 1, 449, 90, 592);
+			break;
+		case 3:
+			inv_give_to_player("BROWN VINE");
+			kernel_examine_inventory_object("PING BROWN VINE", 5, 1, 449, 90, 592);
+			break;
+		case 4:
+			inv_give_to_player("VINES");
+			kernel_examine_inventory_object("PING VINES", 5, 1, 449, 90, 592);
+			break;
+		default:
+			break;
+		}
+
+		setVines();
+		break;
+
 	case 592:
 		sendWSMessage_120000(593);
+		break;
+
+	case 603:
+		player_set_commands_allowed(false);
+		kernel_timing_trigger(30, 604);
+		break;
+
+	case 604:
+		if (g_engine->game_camera_panning()) {
+			kernel_timing_trigger(5, 587);
+		} else {
+			player_set_commands_allowed(false);
+			_ripMedReach = series_load("RIP TREK MED REACH HAND POS1");
+			_ropeRSlurpsUp = series_load("504 R ROPE SLURPS UP");
+			setGlobals1(_ropeRSlurpsUp, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+			sendWSMessage_110000(605);
+		}
 		break;
 
 	case 606:
@@ -515,6 +913,43 @@ void Room504::daemon() {
 		}
 		break;
 
+	case 613:
+		_vineUnrolling = series_load("VINE UNROLLING AS TIED");
+		_vineMachine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+			triggerMachineByHashCallbackNegative, "Vine Unrolling as Tied");
+		sendWSMessage_10000(1, _vineMachine1, _vineUnrolling, 1, 6, 614,
+			_vineUnrolling, 6, 6, 0);
+		break;
+
+	case 620:
+		player_set_commands_allowed(false);
+		_ripStepUpLeft = series_load("RIP STEP UP ON LEFT");
+		_ripThrowFromLeft = series_load("RIP THROW FROM L");
+		digi_preload("504_S04");
+		digi_preload("504_S04A");
+		ws_hide_walker();
+
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x300, 0,
+			triggerMachineByHashCallbackNegative, "Rip Throwing Right");
+		sendWSMessage_10000(1, _ripley, _ripStepUpLeft, 1, 25, 622,
+			_ripStepUpLeft, 25, 25, 0);
+		break;
+
+	case 630:
+		player_set_commands_allowed(false);
+		_ripHiReach2Handed = series_load("RIP TREK HI REACH 2HND");
+		_vineUnrolling = series_load("VINE UNROLLING AS TIED");
+		setGlobals1(_ripHiReach2Handed, 1, 13, 13, 13, 0, 13, 1, 1, 1);
+		sendWSMessage_110000(632);
+		break;
+
+	case 632:
+		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+			triggerMachineByHashCallbackNegative, "Vine Unrolling as Tied");
+		sendWSMessage_10000(1, _vineMachine2, _vineUnrolling, 1, 6, 633,
+			_vineUnrolling, 6, 6, 0);
+		break;
+
 	case 633:
 		switch (_val1) {
 		case 1:
@@ -547,6 +982,38 @@ void Room504::daemon() {
 		terminateMachineAndNull(_vineMachine2);
 		break;
 
+	case 638:
+		player_set_commands_allowed(false);
+		_ripLowReach = series_load("RIP LOW REACH POS1");
+		_leftVineTie = series_load("VINE PULLS TIGHT FROM L TO R");
+		setGlobals1(_ripLowReach, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+		sendWSMessage_110000(639);
+		break;
+
+	case 639:
+		switch (_val1) {
+		case 1:
+			_G(flags)[V154] = 3;
+			break;
+		case 2:
+			_G(flags)[V152] = 3;
+			break;
+		case 3:
+			_G(flags)[V153] = 3;
+			break;
+		case 4:
+			_G(flags)[V171] = 3;
+			break;
+		default:
+			break;
+		}
+
+		setVines();
+		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+			triggerMachineByHashCallbackNegative, "Rope Rising");
+		sendWSMessage_120000(640);
+		break;
+
 	case 641:
 		_vineTie = series_load("504 R VINE TIE BEFORE THROW");
 		_vine = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
@@ -554,6 +1021,9 @@ void Room504::daemon() {
 		sendWSMessage_10000(1, _vine, _vineTie, 1, 6, 642, _vineTie, 6, 6, 0);
 		break;
 
+	case 655:
+		digi_play("504R01", 1, 255, 762);
+		break;
 
 	case 657:
 		_convState2 = 5;
@@ -636,6 +1106,22 @@ void Room504::daemon() {
 		_trigger2 = kernel_trigger_create(674);
 		break;
 
+	case 684:
+		player_set_commands_allowed(false);
+		_ripHiReach2Handed = series_load("RIP TREK HI REACH 2HND");
+		_rightVineTie = series_load("504 R VINE TIE TO L SIDE");
+		setGlobals1(_ripHiReach2Handed, 1, 13, 13, 13, 0, 13, 1, 1, 1);
+		sendWSMessage_110000(685);
+		break;
+
+	case 693:
+		player_set_commands_allowed(false);
+		_ripHiReach2Handed = series_load("RIP TREK HI REACH 2HND");
+		_vineUnrolling = series_load("VINE UNROLLING AS TIED");
+		setGlobals1(_ripHiReach2Handed, 1, 13, 13, 13);
+		sendWSMessage_110000(694);
+		break;
+
 	case 696:
 		switch (_val1) {
 		case 1:
@@ -665,6 +1151,14 @@ void Room504::daemon() {
 		default:
 			break;
 		}
+		break;
+
+	case 700:
+		player_set_commands_allowed(false);
+		_ripHiReach2Handed = series_load("RIP TREK HI REACH 2HND");
+		_ropeLSlurpsUp = series_load("504 ROPE SLURPS UP");
+		setGlobals1(_ripHiReach2Handed, 1, 13, 13, 13);
+		sendWSMessage_110000(701);
 		break;
 
 	case 703:
@@ -703,6 +1197,22 @@ void Room504::daemon() {
 		digi_play("504R45", 1, 255, 708);
 		break;
 
+	case 708:
+		ws_walk(173, 198, nullptr, 709, 11);
+		break;
+
+	case 709:
+		player_set_commands_allowed(false);
+		_ripLowReach = series_load("RIP LOW REACH POS1");
+		setGlobals1(_ripLowReach, 1, 10, 10, 10);
+		sendWSMessage_110000(710);
+		break;
+
+	case 711:
+		series_unload(_ripLowReach);
+		ws_walk(200, 153, nullptr, _flag2 ? 570 : 714, 3);
+		break;
+
 	case 714:
 		player_set_commands_allowed(false);
 		digi_preload("504_S09");
@@ -729,8 +1239,17 @@ void Room504::daemon() {
 		series_stream_break_on_frame(_ripStep, 27, 721);
 		break;
 
+	case 719:
+		kernel_timing_trigger(30, 720);
+		break;
+
 	case 720:
 		digi_play("504_S03", 1);
+		break;
+
+	case 721:
+		series_stream_check_series(_ripStep, 9999);
+		kernel_timing_trigger(360, 722);
 		break;
 
 	case 722:
@@ -747,6 +1266,27 @@ void Room504::daemon() {
 	case 725:
 		player_set_commands_allowed(false);
 		digi_play("504R45", 1, 255, 726);
+		break;
+
+	case 726:
+		ws_walk(530, 161, nullptr, 727, 11);
+		break;
+
+	case 728:
+		player_set_commands_allowed(false);
+		_ripMedReach = series_load("RIP TREK MED REACH HAND POS1");
+		setGlobals1(_ripHiReach2Handed, 1, 10, 10, 10);
+		sendWSMessage_110000(728);
+		break;
+
+	case 729:
+		series_unload(_ripMedReach);
+
+		if (inv_player_has("SHOVEL")) {
+			kernel_timing_trigger(1, 756);
+		} else {
+			ws_walk(528, 168, nullptr, _flag2 ? 558 : 734, 8);
+		}
 		break;
 
 	case 734:
@@ -779,8 +1319,17 @@ void Room504::daemon() {
 		series_stream_break_on_frame(_ripStep, 25, 742);
 		break;
 
+	case 740:
+		kernel_timing_trigger(30, 741);
+		break;
+
 	case 741:
 		digi_play("504_S03", 1);
+		break;
+
+	case 742:
+		series_stream_check_series(_ripStep, 9999);
+		kernel_timing_trigger(360, 743);
 		break;
 
 	case 743:
@@ -788,13 +1337,37 @@ void Room504::daemon() {
 		interface_hide();
 		break;
 
+	case 746:
+		player_set_commands_allowed(false);
+		ws_walk(50, 226, nullptr, 747, 9);
+		break;
+
+	case 747:
+		disable_player_commands_and_fade_init(748);
+		ws_walk(0, 226, nullptr, -1, 9);
+		break;
+
 	case 748:
 		_G(game).setRoom(501);
 		inv_move_object("ROPE", 504);
 		break;
 
+	case 749:
+		player_set_commands_allowed(false);
+		ws_walk(50, 226, nullptr, 750, 9);
+		break;
+
+	case 750:
+		ws_walk(183, 207, nullptr, 751, 3);
+		break;
+
 	case 751:
 		digi_play("504R44", 1, 255, 752);
+		break;
+
+	case 754:
+		digi_play("504_S01", 3, _volume);
+		kernel_timing_trigger(828, 754);
 		break;
 
 	case 755:
@@ -805,6 +1378,17 @@ void Room504::daemon() {
 	case 756:
 		player_set_commands_allowed(false);
 		ws_walk(546, 143, nullptr, 757, 11);
+		break;
+
+	case 757:
+		_ripLowReach = series_load("RIP LOW REACH POS1");
+		setGlobals1(_ripLowReach, 1, 10, 10, 10);
+		sendWSMessage_110000(758);
+		break;
+
+	case 759:
+		series_unload(_ripLowReach);
+		ws_walk(528, 168, nullptr, _flag2 ? 558 : 734, 8);
 		break;
 
 	// TODO: Various switch cases
