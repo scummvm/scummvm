@@ -691,7 +691,36 @@ void Adlib::OnTimer() {
 						// TODO: Not sure about removal of AH bits in the original
 						if (g2291 == bp8) {
 							// l0017_1C27:
-							// TODO: Continue from here
+							uint16 bp0C = 0;
+							// TODO: Not sure about upper bits removal for both
+							bp8 = g2291;
+							uint16 bp16 = g2291 - 1;
+							if (bp16 <= 0) {
+								// l0017_1C44:
+								uint16 bp0A = 0;
+								// TODO: Loop condition
+								do {
+									// l0017_1C4C:
+									// TODO: Comparison with a structure
+									/*
+									mov di, [bp - 0Ah]
+									cmp byte ptr[di + 222Ch], 0h
+									jz 1C5Dh
+									*/
+
+									if (true) {
+										// l0017_1C56:
+										// TODO: Increase the pointed to value
+
+										// mov di, [bp - 0Ah]
+										// inc byte ptr[di + 222Ch]
+									}
+									// TODO: Continue from here
+								} while (true);
+
+								
+							}
+							// TODO: Should be 1C85h	
 						}
 						// TODO: Should be 1CF2
 						// TODO: Check if this is an else or just an if
