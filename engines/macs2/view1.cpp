@@ -746,7 +746,7 @@ void View1::DrawSprite(const Common::Point &pos, uint16 width, uint16 height, by
 	DrawSprite(pos.x, pos.y, width, height, data, s, mirrored, useDepth, depth);
 }
 
-void View1::DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s) {
+void View1::DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, const byte * const data, Graphics::ManagedSurface &s) {
 	for (int currentX = 0; currentX < width; currentX++) {
 		for (int currentY = 0; currentY < height; currentY++) {
 			uint8 val = data[currentY * width + currentX];
@@ -757,6 +757,10 @@ void View1::DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, ui
 			}
 		}
 	}
+}
+
+void View1::DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, const Sprite &sprite, Graphics::ManagedSurface &s) {
+	DrawSpriteClipped(x, y, clippingRect, sprite.Width, sprite.Height, sprite.Data.data(), s);
 }
 
 void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, uint16 scaling, byte *data, Graphics::ManagedSurface &s) {
@@ -884,6 +888,20 @@ void View1::DrawVerticalBorderSide(const Common::Point &pos, const Common::Point
 	// Clipping rectangle setup at l0037_39FE:
 	Common::Rect clippingRect(pos + Common::Point(1, 1), pos + size);
 	// TODO: Should check which texture we actually use at the moment
+
+	// TODO: Check which area we actually fill
+	uint16 currentX = clippingRect.left;
+	uint16 currentY = clippingRect.top;
+	const Sprite &sprite = g_engine->_borderSprite;
+
+	while (currentY < clippingRect.bottom) {
+		while (currentX < clippingRect.right) {
+			DrawSpriteClipped(currentX, currentY, clippingRect, sprite, s);
+			currentX += sprite.Width;
+		}
+		currentX = clippingRect.left;
+		currentY += sprite.Height;
+	}
 }
 
 void View1::DrawHorizontalBorderSide(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {

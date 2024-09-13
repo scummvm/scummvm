@@ -88,6 +88,12 @@ struct BackgroundAnimationBlob {
 	static uint16 Func1480(Common::Array<uint8>& blob, bool bpp6, uint16 bpp8);
 };
 
+struct Sprite {
+	uint16 Width;
+	uint16 Height;
+	Common::Array<uint8> Data;
+};
+
 enum DebugFlag {
 	DEBUG_RLE = 1 << 10,
 	DEBUG_SV = 1 << 11
@@ -172,6 +178,7 @@ public:
 	uint16 _guyWidth;
 	uint16 _guyHeight;
 
+	Sprite _borderSprite;
 	byte* _borderData;
 	uint16 _borderWidth;
 	uint16 _borderHeight;
