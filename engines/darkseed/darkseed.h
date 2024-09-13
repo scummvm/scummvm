@@ -36,6 +36,7 @@
 
 #include "console.h"
 #include "cursor.h"
+#include "cutscene.h"
 #include "darkseed/detection.h"
 #include "inventory.h"
 #include "nsp.h"
@@ -69,8 +70,7 @@ private:
 	int16 _yvec = 0; //delbert throw stick related.
 	bool _normalWorldSpritesLoaded = true;
 	bool _redrawFrame = true;
-	bool _isPlayingCutscene = false;
-	Common::String _cutsceneId;
+	bool _restartGame = false;
 
 protected:
 	// Engine APIs
@@ -95,6 +95,7 @@ public:
 	Objects _objectVar;
 	Inventory _inventory;
 	UseCode *_useCode = nullptr;
+	Cutscene _cutscene;
 
 	uint8 _currentDay = 1;
 	int _currentTimeInSeconds = 0x7e8e;
@@ -201,14 +202,14 @@ public:
 	void fadeIn();
 	void fadeOut();
 
+	void restartGame();
+
 	void updateDisplay();
 	void setupOtherNspAnimation(int nspAnimIdx, int animId);
 	void debugTeleportToRoom(int newRoomNumber, int entranceNumber);
 	void showFullscreenPic(const Common::Path &filename);
 	void lookCode(int objNum);
 	void handleObjCollision(int targetObjNum);
-	void playCutscene(const Common::String cutsceneId);
-	void updateCutscene();
 	void playSound(int16 unk, uint8 unk1, int16 unk2);
 	void nextFrame(int nspAminIdx);
 	void stuffPlayer();

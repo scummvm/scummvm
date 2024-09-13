@@ -171,7 +171,7 @@ void DarkseedEngine::fadeInner(int startValue, int endValue, int increment) {
 }
 
 void DarkseedEngine::gameloop() {
-	while (!shouldQuit()) {
+	while (!shouldQuit() && !_restartGame) {
 		updateEvents();
 		if (_redrawFrame) {
 			_redrawFrame = false;
@@ -186,10 +186,9 @@ void DarkseedEngine::gameloop() {
 			}
 		}
 		counter_2c85_888b = (counter_2c85_888b + 1) & 0xff;
-		if (_isPlayingCutscene) {
-			updateCutscene();
-		}
-		if (systemTimerCounter == 5) {
+		if (_cutscene.isPlaying()) {
+			_cutscene.update();
+		} else if (systemTimerCounter == 5) {
 			if (_objectVar[1] != 0) {
 				if (_room->_roomNumber == 30) {
 					if (!_inventory.hasObject(18)) {
@@ -1094,7 +1093,7 @@ void DarkseedEngine::changeToRoom(int newRoomNumber, bool placeDirectly) { // AK
 	} else if (newRoomNumber == 46 && _previousRoomNumber == 60 && _objectVar[57] == 1) {
 		_console->printTosText(62);
 		// TODO wait logic here.
-		g_engine->playCutscene("E");
+		_cutscene.play('E');
 		return;
 	} else if (newRoomNumber == 7 && _previousRoomNumber == 38) {
 		_player->loadAnimations("mirror.nsp");
@@ -2718,6 +2717,7 @@ void DarkseedEngine::lookCode(int objNum) {
 
 void DarkseedEngine::wongame() {
 	error("implement wongame()"); // TODO
+	//	_cutscene.play('Z');
 }
 
 void DarkseedEngine::printTime() {
@@ -2745,29 +2745,10 @@ void DarkseedEngine::showFullscreenPic(const Common::Path &filename) {
 	_screen->addDirtyRect({{0x45, 0x28}, 501, 200});
 }
 
-void DarkseedEngine::playCutscene(const Common::String cutsceneId) {
-	debug("Play Cutscene %s", cutsceneId.c_str()); // TODO play cutscenes.
-	_cutsceneId = cutsceneId;
-	_isPlayingCutscene = true;
-}
-
-void DarkseedEngine::updateCutscene() {
-	// TODO play cutscene here.
-
-	// HACK to get cut scene E to work.
-	if (_isPlayingCutscene) {
-		_isPlayingCutscene = false;
-		if (_cutsceneId == "E") {
-			_previousRoomNumber = 38;
-			changeToRoom(7);
-		}
-	}
-}
-
 void DarkseedEngine::getPackageObj(int packageType) {
 	_console->printTosText(424);
 	if (packageType == 1) {
-		playCutscene("D");
+		_cutscene.play('D');
 	}
 	if (packageType == 2) {
 		_inventory.addItem(15);
@@ -2797,10 +2778,6 @@ void DarkseedEngine::nextFrame(int nspAminIdx) {
 		}
 		spriteAnimCountdownTimer[nspAminIdx] = anim.frameDuration[animIndexTbl[nspAminIdx]];
 	}
-}
-
-void DarkseedEngine::stuffPlayer() {
-	error("Implement stuffPlayer()"); // TODO
 }
 
 void DarkseedEngine::updateHeadache() {
@@ -2839,11 +2816,11 @@ void DarkseedEngine::gotonextmorning() {
 
 void DarkseedEngine::playDayChangeCutscene() {
 	if (_currentDay == 4) {
-		playCutscene("Y");
+		_cutscene.play('Y');
 	} else if (_currentDay == 2) {
-		playCutscene("B");
+		_cutscene.play('B');
 	} else if (_currentDay == 3) {
-		playCutscene("C");
+		_cutscene.play('C');
 	}
 }
 
@@ -3424,7 +3401,7 @@ void DarkseedEngine::libanim(bool pickingUpReservedBook) {
 	if (pickingUpReservedBook) {
 		_objectVar[49] = 1;
 		_objectVar[62] = 0;
-		playCutscene("G");
+		_cutscene.play('G');
 	}
 }
 
@@ -3602,6 +3579,42 @@ void DarkseedEngine::keeperanim() {
 	_cursor.showCursor(true);
 }
 
+void DarkseedEngine::stuffPlayer() {
+	_cursor.showCursor(false);
+	_player->loadAnimations("labparts.nsp");
+	showFullscreenPic("lab.pic");
+	const Sprite &alienSprite = _player->_animations.getSpriteAt(8);
+
+	bool updateCounter = false;
+	int counter = 0;
+	while (counter < 8) {
+		_sprites.clearSpriteDrawList();
+
+		if (_fullscreenPic) {
+			_fullscreenPic->draw(0x45, 0x28);
+		}
+		const Sprite &mikeSprite = _player->_animations.getSpriteAt(counter);
+		g_engine->_sprites.addSpriteToDrawList(103, 93, &mikeSprite, 255, mikeSprite.width, mikeSprite.height, false);
+		g_engine->_sprites.addSpriteToDrawList(226, 100, &alienSprite, 255, alienSprite.width, alienSprite.height, false);
+
+		_sprites.drawSprites();
+
+		_console->draw();
+		_screen->makeAllDirty();
+		_screen->update();
+
+		updateCounter = !updateCounter;
+		if (updateCounter) {
+			counter++;
+		}
+		waitxticks(1);
+	}
+	waitxticks(3);
+	removeFullscreenPic();
+	_cursor.showCursor(true);
+	_cutscene.play('Z');
+}
+
 static constexpr uint8 sargoList[100] = {
 	0, 1, 2, 3,
 	4, 3, 2, 1,
@@ -3710,6 +3723,9 @@ void DarkseedEngine::waitxticks(int ticks) {
 		_screen->updateScreen();
 		wait();
 	}
+}
+void DarkseedEngine::restartGame() {
+	_restartGame = true;
 }
 
 } // End of namespace Darkseed
