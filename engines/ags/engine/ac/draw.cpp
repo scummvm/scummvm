@@ -77,7 +77,22 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-int _places_r = 3, _places_g = 2, _places_b = 3;
+// TODO: refactor the draw unit into a virtual interface with
+// two implementations: for software and video-texture render,
+// instead of checking whether the current method is "software".
+struct DrawState {
+	// Whether we should use software rendering methods
+	// (aka raw draw), as opposed to video texture transform & fx
+	bool SoftwareRender = false;
+	// Whether we should redraw whole game screen each frame
+	bool FullFrameRedraw = false;
+	// Walk-behinds representation
+	WalkBehindMethodEnum WalkBehindMethod = DrawAsSeparateSprite;
+	// Whether there are currently remnants of a on-screen effect
+	bool ScreenIsDirty = false;
+};
+
+DrawState drawstate;
 
 ObjTexture::ObjTexture(ObjTexture &&o) {
 	*this = std::move(o);
@@ -363,11 +378,16 @@ int MakeColor(int color_index) {
 }
 
 void init_draw_method() {
-	if (_G(gfxDriver)->HasAcceleratedTransform()) {
-		_G(walkBehindMethod) = DrawAsSeparateSprite;
-		create_blank_image(_GP(game).GetColorDepth());
+	drawstate.SoftwareRender = !_G(gfxDriver)->HasAcceleratedTransform();
+	drawstate.FullFrameRedraw = _G(gfxDriver)->RequiresFullRedrawEachFrame();
+
+	if (drawstate.SoftwareRender) {
+		drawstate.SoftwareRender = true;
+		drawstate.WalkBehindMethod = DrawOverCharSprite;
 	} else {
-		_G(walkBehindMethod) = DrawOverCharSprite;
+		drawstate.WalkBehindMethod = DrawAsSeparateSprite;
+		create_blank_image(_GP(game).GetColorDepth());
+		// texturecache.SetMaxCacheSize(usetup.TextureCacheSize);
 	}
 
 	on_mainviewport_changed();
@@ -453,7 +473,7 @@ void clear_drawobj_cache() {
 }
 
 void on_mainviewport_changed() {
-	if (!_G(gfxDriver)->RequiresFullRedrawEachFrame()) {
+	if (!drawstate.FullFrameRedraw) {
 		const auto &view = _GP(play).GetMainViewport();
 		set_invalidrects_globaloffs(view.Left, view.Top);
 		// the black background region covers whole game screen
@@ -508,12 +528,18 @@ void sync_roomview(Viewport *view) {
 }
 
 void init_room_drawdata() {
+	if (_G(displayed_room) < 0)
+		return; // not loaded yet
+
+	if (drawstate.WalkBehindMethod == DrawAsSeparateSprite) {
+		walkbehinds_generate_sprites();
+	}
 	// Update debug overlays, if any were on
 	debug_draw_room_mask(_G(debugRoomMask));
 	debug_draw_movelist(_G(debugMoveListChar));
 
 	// Following data is only updated for software renderer
-	if (_G(gfxDriver)->RequiresFullRedrawEachFrame())
+	if (drawstate.FullFrameRedraw)
 		return;
 	// Make sure all frame buffers are created for software drawing
 	int view_count = _GP(play).GetRoomViewportCount();
@@ -523,7 +549,7 @@ void init_room_drawdata() {
 }
 
 void on_roomviewport_created(int index) {
-	if (!_G(gfxDriver) || _G(gfxDriver)->RequiresFullRedrawEachFrame())
+	if (!_G(gfxDriver) || drawstate.FullFrameRedraw)
 		return;
 	if ((size_t)index < _GP(CameraDrawData).size())
 		return;
@@ -531,14 +557,14 @@ void on_roomviewport_created(int index) {
 }
 
 void on_roomviewport_deleted(int index) {
-	if (_G(gfxDriver)->RequiresFullRedrawEachFrame())
+	if (drawstate.FullFrameRedraw)
 		return;
 	_GP(CameraDrawData).erase(_GP(CameraDrawData).begin() + index);
 	delete_invalid_regions(index);
 }
 
 void on_roomviewport_changed(Viewport *view) {
-	if (_G(gfxDriver)->RequiresFullRedrawEachFrame())
+	if (drawstate.FullFrameRedraw)
 		return;
 	if (!view->IsVisible() || view->GetCamera() == nullptr)
 		return;
@@ -556,7 +582,7 @@ void on_roomviewport_changed(Viewport *view) {
 }
 
 void detect_roomviewport_overlaps(size_t z_index) {
-	if (_G(gfxDriver)->RequiresFullRedrawEachFrame())
+	if (drawstate.FullFrameRedraw)
 		return;
 	// Find out if we overlap or are overlapped by anything;
 	const auto &viewports = _GP(play).GetRoomViewportsZOrdered();
@@ -580,7 +606,7 @@ void detect_roomviewport_overlaps(size_t z_index) {
 }
 
 void on_roomcamera_changed(Camera *cam) {
-	if (_G(gfxDriver)->RequiresFullRedrawEachFrame())
+	if (drawstate.FullFrameRedraw)
 		return;
 	if (cam->HasChangedSize()) {
 		auto viewrefs = cam->GetLinkedViewports();
@@ -623,11 +649,11 @@ void reset_objcache_for_sprite(int sprnum, bool deleted) {
 }
 
 void mark_screen_dirty() {
-	_G(screen_is_dirty) = true;
+	drawstate.ScreenIsDirty = true;
 }
 
 bool is_screen_dirty() {
-	return _G(screen_is_dirty);
+	return drawstate.ScreenIsDirty;
 }
 
 void invalidate_screen() {
@@ -680,11 +706,10 @@ static void render_black_borders() {
 }
 
 void render_to_screen() {
-	const bool full_frame_rend = _G(gfxDriver)->RequiresFullRedrawEachFrame();
 	// Stage: final plugin callback (still drawn on game screen
 	if (pl_any_want_hook(AGSE_FINALSCREENDRAW)) {
 		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(),
-										_GP(play).GetGlobalTransform(full_frame_rend), (GraphicFlip)_GP(play).screen_flipped);
+										_GP(play).GetGlobalTransform(drawstate.FullFrameRedraw), (GraphicFlip)_GP(play).screen_flipped);
 		_G(gfxDriver)->DrawSprite(AGSE_FINALSCREENDRAW, 0, nullptr);
 		_G(gfxDriver)->EndSpriteBatch();
 	}
@@ -704,7 +729,7 @@ void render_to_screen() {
 	while (!succeeded && !_G(want_exit) && !_G(abort_engine)) {
 		//     try
 		//     {
-		if (full_frame_rend) {
+		if (drawstate.FullFrameRedraw) {
 			_G(gfxDriver)->Render();
 		}
 		else {
@@ -848,7 +873,7 @@ static void add_to_sprite_list(IDriverDependantBitmap *ddb, int x, int y, int zo
 	sprite.x = x;
 	sprite.y = y;
 
-	if (_G(walkBehindMethod) == DrawAsSeparateSprite)
+	if (drawstate.WalkBehindMethod == DrawAsSeparateSprite)
 		sprite.takesPriorityIfEqual = !isWalkBehind;
 	else
 		sprite.takesPriorityIfEqual = isWalkBehind;
@@ -1181,7 +1206,7 @@ static bool construct_object_gfx(const ViewFrame *vf, int pic,
 								 ObjTexture &actsp,			// object texture to draw upon
 								 bool optimize_by_position, // allow to optimize walk-behind merging using object's pos
 								 bool force_software) {
-	const bool use_hw_transform = !force_software && _G(gfxDriver)->HasAcceleratedTransform();
+	const bool use_hw_transform = !force_software && !drawstate.SoftwareRender;
 
 	int tint_red, tint_green, tint_blue;
 	int tint_level, tint_light, light_level;
@@ -1217,7 +1242,7 @@ static bool construct_object_gfx(const ViewFrame *vf, int pic,
 	// NOTE: we need cached bitmap if:
 	// * it's a software renderer, otherwise
 	// * the walk-behind method is DrawOverCharSprite
-	if ((use_hw_transform) && (_G(walkBehindMethod) != DrawOverCharSprite)) {
+	if ((use_hw_transform) && (drawstate.WalkBehindMethod != DrawOverCharSprite)) {
 		// HW acceleration
 		const bool is_texture_intact = objsav.sppic == specialpic;
 		objsav.sppic = specialpic;
@@ -1236,8 +1261,8 @@ static bool construct_object_gfx(const ViewFrame *vf, int pic,
 	// Software mode below
 	//
 
-	if ((!use_hw_transform) && (_G(gfxDriver)->HasAcceleratedTransform())) {
-		// They want to draw it in software mode with the D3D driver, so force a redraw
+	if ((!use_hw_transform) && (!drawstate.SoftwareRender)) {
+		// They want to draw it in software mode with the hw driver, so force a redraw
 		objsav.sppic = INT32_MIN;
 	}
 
@@ -1253,7 +1278,7 @@ static bool construct_object_gfx(const ViewFrame *vf, int pic,
 			(objsav.zoom == objsrc.zoom) &&
 			(objsav.mirrored == is_mirrored)) {
 		// the image is the same, we can use it cached!
-		if ((_G(walkBehindMethod) != DrawOverCharSprite) &&
+		if ((drawstate.WalkBehindMethod != DrawOverCharSprite) &&
 			(actsp.Bmp != nullptr))
 			return true;
 		// Check if the X & Y co-ords are the same, too -- if so, there
@@ -1329,13 +1354,13 @@ void prepare_and_add_object_gfx(const ObjectCache &objsav, ObjTexture &actsp, bo
 	// This potentially may edit actsp's raw bitmap if actsp_modified is set.
 	if (use_walkbehinds) {
 		// Only merge sprite with the walk-behinds in software mode
-		if ((_G(walkBehindMethod) == DrawOverCharSprite) && (actsp_modified)) {
+		if ((drawstate.WalkBehindMethod == DrawOverCharSprite) && (actsp_modified)) {
 			walkbehinds_cropout(actsp.Bmp.get(), atx, aty, usebasel);
 		}
 	} else {
 		// Ignore walk-behinds by shifting baseline to a larger value
 		// CHECKME: may this fail if WB somehow got larger than room baseline?
-		if (_G(walkBehindMethod) == DrawAsSeparateSprite) {
+		if (drawstate.WalkBehindMethod == DrawAsSeparateSprite) {
 			usebasel += _GP(thisroom).Height;
 		}
 	}
@@ -1393,7 +1418,7 @@ bool construct_object_gfx(int objid, bool force_software) {
 void prepare_objects_for_drawing() {
 	_G(our_eip) = 32;
 
-	const bool hw_accel = _G(gfxDriver)->HasAcceleratedTransform();
+	const bool hw_accel = !drawstate.SoftwareRender;
 
 	for (uint32_t objid = 0; objid < _G(croom)->numobj; ++objid) {
 		const RoomObject &obj = _G(objs)[objid];
@@ -1500,7 +1525,7 @@ bool construct_char_gfx(int charid, bool force_software) {
 
 void prepare_characters_for_drawing() {
 	_G(our_eip) = 33;
-	const bool hw_accel = _G(gfxDriver)->HasAcceleratedTransform();
+	const bool hw_accel = !drawstate.SoftwareRender;
 
 	// draw characters
 	for (uint32_t charid = 0; charid < _GP(game).numcharacters; ++charid) {
@@ -1569,9 +1594,9 @@ void prepare_room_sprites() {
 			recycle_ddb_bitmap(_G(roomBackgroundBmp), _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic.get(), false, true);
 
 	}
-	if (_G(gfxDriver)->RequiresFullRedrawEachFrame()) {
+	if (drawstate.FullFrameRedraw) {
 		if (_G(current_background_is_dirty) || _G(walkBehindsCachedForBgNum) != _GP(play).bg_frame) {
-			if (_G(walkBehindMethod) == DrawAsSeparateSprite) {
+			if (drawstate.WalkBehindMethod == DrawAsSeparateSprite) {
 				walkbehinds_generate_sprites();
 			}
 		}
@@ -1589,7 +1614,7 @@ void prepare_room_sprites() {
 		if ((_G(debug_flags) & DBG_NODRAWSPRITES) == 0) {
 			_G(our_eip) = 34;
 
-			if (_G(walkBehindMethod) == DrawAsSeparateSprite) {
+			if (drawstate.WalkBehindMethod == DrawAsSeparateSprite) {
 				for (size_t wb = 1 /* 0 is "no area" */;
 					(wb < MAX_WALK_BEHINDS) && (wb < (size_t)_GP(walkbehindobj).size()); ++wb) {
 					const auto &wbobj = _GP(walkbehindobj)[wb];
@@ -1621,7 +1646,7 @@ void prepare_room_sprites() {
 
 // Draws the black surface behind (or rather between) the room viewports
 void draw_preroom_background() {
-	if (_G(gfxDriver)->RequiresFullRedrawEachFrame())
+	if (drawstate.FullFrameRedraw)
 		return;
 	update_black_invreg_and_reset(_G(gfxDriver)->GetMemoryBackBuffer());
 }
@@ -1918,7 +1943,7 @@ static void construct_room_view() {
 		const SpriteTransform view_trans(view_rc.Left, view_rc.Top, view_sx, view_sy);
 		const SpriteTransform cam_trans(-cam_rc.Left, -cam_rc.Top);
 
-		if (_G(gfxDriver)->RequiresFullRedrawEachFrame()) {
+		if (drawstate.FullFrameRedraw) {
 			// For hw renderer we draw everything as a sprite stack;
 			// viewport-camera pair is done as 2 nested scene nodes,
 			// where first defines how camera's image translates into the viewport on screen,
@@ -1972,7 +1997,7 @@ static void construct_ui_view() {
 // Prepares overlay textures;
 // but does not put them on screen yet - that's done in respective construct_*_view functions
 static void construct_overlays() {
-	const bool is_software_mode = !_G(gfxDriver)->HasAcceleratedTransform();
+	const bool is_software_mode = drawstate.SoftwareRender;
 	auto &overs = get_overlays();
 	if (_GP(overlaybmp).size() < overs.size()) {
 		_GP(overlaybmp).resize(overs.size());
@@ -1984,7 +2009,7 @@ static void construct_overlays() {
 		if (over.transparency == 255) continue; // skip fully transparent
 
 		bool has_changed = over.HasChanged();
-		if (over.IsRoomLayer() && (_G(walkBehindMethod) == DrawOverCharSprite)) {
+		if (over.IsRoomLayer() && (drawstate.WalkBehindMethod == DrawOverCharSprite)) {
 			Point pos = get_overlay_position(over);
 			has_changed |= (pos.X != _GP(screenovercache)[i].X || pos.Y != _GP(screenovercache)[i].Y);
 			_GP(screenovercache)[i].X = pos.X; _GP(screenovercache)[i].Y = pos.Y;
@@ -1996,7 +2021,7 @@ static void construct_overlays() {
 				transform_sprite(over.GetImage(), over.HasAlphaChannel(), _GP(overlaybmp)[i], Size(over.scaleWidth, over.scaleHeight)) :
 				over.GetImage();
 
-			if ((_G(walkBehindMethod) == DrawOverCharSprite) && over.IsRoomLayer()) {
+			if ((drawstate.WalkBehindMethod == DrawOverCharSprite) && over.IsRoomLayer()) {
 				if (use_bmp != _GP(overlaybmp)[i].get()) {
 					recycle_bitmap(_GP(overlaybmp)[i], use_bmp->GetColorDepth(), use_bmp->GetWidth(), use_bmp->GetHeight(), true);
 					_GP(overlaybmp)[i]->Blit(use_bmp);
@@ -2046,16 +2071,15 @@ void construct_game_scene(bool full_redraw) {
 		_GP(play).UpdateRoomCameras();
 
 	// Begin with the parent scene node, defining global offset and flip
-	bool full_frame_rend = _G(gfxDriver)->RequiresFullRedrawEachFrame();
 	_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(),
-									_GP(play).GetGlobalTransform(full_frame_rend),
+									_GP(play).GetGlobalTransform(drawstate.FullFrameRedraw),
 									(GraphicFlip)_GP(play).screen_flipped);
 
 	// Stage: room viewports
 	if (_GP(play).screen_is_faded_out == 0 && _GP(play).complete_overlay_on == 0) {
 		if (_G(displayed_room) >= 0) {
 			construct_room_view();
-		} else if (!full_frame_rend) {
+		} else if (!drawstate.FullFrameRedraw) {
 			// black it out so we don't get cursor trails
 			// TODO: this is possible to do with dirty rects system now too (it can paint black rects outside of room viewport)
 			_G(gfxDriver)->GetMemoryBackBuffer()->Fill(0);
@@ -2074,9 +2098,8 @@ void construct_game_scene(bool full_redraw) {
 }
 
 void construct_game_screen_overlay(bool draw_mouse) {
-	const bool full_frame_rend = _G(gfxDriver)->RequiresFullRedrawEachFrame();
 	_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(),
-									_GP(play).GetGlobalTransform(full_frame_rend),
+									_GP(play).GetGlobalTransform(drawstate.FullFrameRedraw),
 									(GraphicFlip)_GP(play).screen_flipped);
 	if (pl_any_want_hook(AGSE_POSTSCREENDRAW)) {
 		_G(gfxDriver)->DrawSprite(AGSE_POSTSCREENDRAW, 0, nullptr);
@@ -2096,7 +2119,7 @@ void construct_game_screen_overlay(bool draw_mouse) {
 	_G(gfxDriver)->EndSpriteBatch();
 
 	// For hardware-accelerated renderers: legacy letterbox and global screen fade effect
-	if (full_frame_rend) {
+	if (drawstate.FullFrameRedraw) {
 		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform());
 		// Stage: legacy letterbox mode borders
 		if (_GP(play).screen_is_faded_out == 0)
@@ -2143,7 +2166,7 @@ void debug_draw_room_mask(RoomAreaMask mask) {
 
 	// Software mode scaling
 	// note we don't use transparency in software mode - may be slow in hi-res games
-	if (!_G(gfxDriver)->HasAcceleratedTransform() &&
+	if (drawstate.SoftwareRender &&
 		(mask != kRoomAreaWalkBehind) &&
 		(bmp->GetSize() != Size(_GP(thisroom).Width, _GP(thisroom).Height))) {
 		recycle_bitmap(_GP(debugRoomMaskObj).Bmp,
@@ -2165,7 +2188,7 @@ void update_room_debug() {
 	if (_G(debugRoomMask) == kRoomAreaWalkable) {
 		Bitmap *bmp = prepare_walkable_areas(-1);
 		// Software mode scaling
-		if (!_G(gfxDriver)->HasAcceleratedTransform() && (_GP(thisroom).MaskResolution > 1)) {
+		if (drawstate.SoftwareRender && (_GP(thisroom).MaskResolution > 1)) {
 			recycle_bitmap(_GP(debugRoomMaskObj).Bmp,
 				bmp->GetColorDepth(), _GP(thisroom).Width, _GP(thisroom).Height);
 			_GP(debugRoomMaskObj).Bmp->StretchBlt(bmp, RectWH(0, 0, _GP(thisroom).Width, _GP(thisroom).Height));
@@ -2176,13 +2199,13 @@ void update_room_debug() {
 		_GP(debugRoomMaskObj).Ddb->SetStretch(_GP(thisroom).Width, _GP(thisroom).Height);
 	}
 	if (_G(debugMoveListChar) >= 0) {
-		const int mult = _G(gfxDriver)->HasAcceleratedTransform() ? _GP(thisroom).MaskResolution : 1;
-		if (_G(gfxDriver)->HasAcceleratedTransform())
-			recycle_bitmap(_GP(debugMoveListObj).Bmp, _GP(game).GetColorDepth(),
-				_GP(thisroom).WalkAreaMask->GetWidth(), _GP(thisroom).WalkAreaMask->GetHeight(), true);
-		else
+		const int mult = drawstate.SoftwareRender ? 1 : _GP(thisroom).MaskResolution;
+		if (drawstate.SoftwareRender)
 			recycle_bitmap(_GP(debugMoveListObj).Bmp, _GP(game).GetColorDepth(),
 				_GP(thisroom).Width, _GP(thisroom).Height, true);
+		else
+			recycle_bitmap(_GP(debugMoveListObj).Bmp, _GP(game).GetColorDepth(),
+				_GP(thisroom).WalkAreaMask->GetWidth(), _GP(thisroom).WalkAreaMask->GetHeight(), true);
 
 		if (_GP(game).chars[_G(debugMoveListChar)].walking > 0) {
 			int mlsnum = _GP(game).chars[_G(debugMoveListChar)].walking;
@@ -2222,7 +2245,7 @@ void render_graphics(IDriverDependantBitmap *extraBitmap, int extraX, int extraY
 	// TODO: extraBitmap is a hack, used to place an additional gui element
 	// on top of the screen. Normally this should be a part of the game UI stage.
 	if (extraBitmap != nullptr) {
-		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), _GP(play).GetGlobalTransform(_G(gfxDriver)->RequiresFullRedrawEachFrame()),
+		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), _GP(play).GetGlobalTransform(drawstate.FullFrameRedraw),
 										(GraphicFlip)_GP(play).screen_flipped);
 		invalidate_sprite(extraX, extraY, extraBitmap, false);
 		_G(gfxDriver)->DrawSprite(extraX, extraY, extraBitmap);
@@ -2240,7 +2263,7 @@ void render_graphics(IDriverDependantBitmap *extraBitmap, int extraX, int extraY
 		}
 	}
 
-	_G(screen_is_dirty) = false;
+	drawstate.ScreenIsDirty = false;
 }
 
 } // namespace AGS3

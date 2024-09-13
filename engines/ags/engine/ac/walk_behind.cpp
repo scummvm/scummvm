@@ -159,10 +159,6 @@ void walkbehinds_recalc() {
 			}
 		}
 	}
-
-	if (_G(walkBehindMethod) == DrawAsSeparateSprite) {
-		walkbehinds_generate_sprites();
-	}
 }
 
 } // namespace AGS3

@@ -163,6 +163,12 @@ public:
 	const char *GetDriverID() override {
 		return "Software";
 	}
+
+	bool RequiresFullRedrawEachFrame() override { return false; }
+	bool HasAcceleratedTransform() override { return false; }
+	bool UsesMemoryBackBuffer() override { return true; }
+	bool ShouldReleaseRenderTargets() override { return false; }
+
 	const char *GetDriverName() override {
 		return "ScummVM 2D renderer";
 	}
@@ -220,15 +226,6 @@ public:
 	void UseSmoothScaling(bool /*enabled*/) override {}
 	bool DoesSupportVsyncToggle() override;
 	void RenderSpritesAtScreenResolution(bool /*enabled*/, int /*supersampling*/) override {}
-	bool RequiresFullRedrawEachFrame() override {
-		return false;
-	}
-	bool HasAcceleratedTransform() override {
-		return false;
-	}
-	bool UsesMemoryBackBuffer() override {
-		return true;
-	}
 	Bitmap *GetMemoryBackBuffer() override;
 	void SetMemoryBackBuffer(Bitmap *backBuffer) override;
 	Bitmap *GetStageBackBuffer(bool mark_dirty) override;
