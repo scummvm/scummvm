@@ -430,6 +430,7 @@ void CastleEngine::drawInfoMenu() {
 
 	Texture *menuTexture = _gfx->createTexture(surface);
 	Common::Event event;
+	Common::Point mousePos;
 	bool cont = true;
 	while (!shouldQuit() && cont) {
 		while (_eventManager->pollEvent(event)) {
@@ -440,21 +441,19 @@ void CastleEngine::drawInfoMenu() {
 				if (event.customType == kActionLoad) {
 					_gfx->setViewport(_fullscreenViewArea);
 					_eventManager->purgeKeyboardEvents();
+
+					g_system->lockMouse(false);
+					g_system->showMouse(true);
 					loadGameDialog();
-					if (isDOS()) {
-						g_system->lockMouse(false);
-						g_system->showMouse(true);
-					}
 
 					_gfx->setViewport(_viewArea);
 				} else if (event.customType == kActionSave) {
 					_gfx->setViewport(_fullscreenViewArea);
 					_eventManager->purgeKeyboardEvents();
+
+					g_system->lockMouse(false);
+					g_system->showMouse(true);
 					saveGameDialog();
-					if (isDOS()) {
-						g_system->lockMouse(false);
-						g_system->showMouse(true);
-					}
 
 					_gfx->setViewport(_viewArea);
 				} else if (isDOS() && event.customType == kActionToggleSound) {
@@ -475,8 +474,33 @@ void CastleEngine::drawInfoMenu() {
 			case Common::EVENT_RBUTTONDOWN:
 			// fallthrough
 			case Common::EVENT_LBUTTONDOWN:
-				if (g_system->hasFeature(OSystem::kFeatureTouchscreen))
-					cont = false;
+				if (isSpectrum() || isCPC())
+					break;
+
+				mousePos = getNormalizedPosition(event.mouse);
+				if (Common::Rect(101, 67, 133, 79).contains(mousePos)) {
+					_gfx->setViewport(_fullscreenViewArea);
+					_eventManager->purgeKeyboardEvents();
+					loadGameDialog();
+					g_system->lockMouse(false);
+					g_system->showMouse(true);
+
+					_gfx->setViewport(_viewArea);
+				} else if (Common::Rect(101, 82, 133, 95).contains(mousePos)) {
+					_gfx->setViewport(_fullscreenViewArea);
+					_eventManager->purgeKeyboardEvents();
+					saveGameDialog();
+					g_system->lockMouse(false);
+					g_system->showMouse(true);
+
+					_gfx->setViewport(_viewArea);
+				} else if (Common::Rect(101, 101, 133, 114).contains(mousePos)) {
+					// Toggle sounds
+				} else if (Common::Rect(101, 116, 133, 129).contains(mousePos)) {
+					// Cycle between crawl, walk or run
+					// It can fail if there is no room
+				} else if (Common::Rect(101, 131, 133, 144).contains(mousePos))
+					cont = false; // Back to game
 				break;
 			default:
 				break;

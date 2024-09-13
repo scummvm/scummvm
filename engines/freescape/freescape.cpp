@@ -632,10 +632,7 @@ void FreescapeEngine::processInput() {
 			mousePos = event.mouse;
 			{
 				bool touchedScreenControls = false;
-
-				Common::Point resolution(g_system->getWidth(), g_system->getHeight());
-				mousePos.x = _screenW * mousePos.x / resolution.x;
-				mousePos.y = _screenH * mousePos.y / resolution.y;
+				mousePos = getNormalizedPosition(mousePos);
 				touchedScreenControls = onScreenControls(mousePos);
 
 				if (!touchedScreenControls) {
@@ -656,6 +653,13 @@ void FreescapeEngine::processInput() {
 			break;
 		}
 	}
+}
+
+Common::Point FreescapeEngine::getNormalizedPosition(Common::Point position) {
+	Common::Point resolution(g_system->getWidth(), g_system->getHeight());
+	position.x = _screenW * position.x / resolution.x;
+	position.y = _screenH * position.y / resolution.y;
+	return position;
 }
 
 bool FreescapeEngine::onScreenControls(Common::Point mouse) {

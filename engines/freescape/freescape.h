@@ -318,6 +318,7 @@ public:
 	void generateDemoInput();
 	virtual void pressedKey(const int keycode);
 	virtual void releasedKey(const int keycode);
+	Common::Point getNormalizedPosition(Common::Point position);
 	virtual bool onScreenControls(Common::Point mouse);
 	void move(CameraMovement direction, uint8 scale, float deltaTime);
 	void resolveCollisions(Math::Vector3d newPosition);
