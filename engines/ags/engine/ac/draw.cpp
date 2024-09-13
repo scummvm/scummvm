@@ -387,7 +387,13 @@ void init_draw_method() {
 	} else {
 		drawstate.WalkBehindMethod = DrawAsSeparateSprite;
 		create_blank_image(_GP(game).GetColorDepth());
-		// texturecache.SetMaxCacheSize(usetup.TextureCacheSize);
+		size_t tx_cache_size = _GP(usetup).TextureCacheSize * 1024;
+		// If graphics driver can report available texture memory,
+		// then limit the setting by, let's say, 66% of it (we use it for other things)
+		size_t avail_tx_mem = _G(gfxDriver)->GetAvailableTextureMemory();
+		if (avail_tx_mem > 0)
+			tx_cache_size = std::min<size_t>(tx_cache_size, avail_tx_mem * 0.66);
+		// texturecache.SetMaxCacheSize(tx_cache_size);
 	}
 
 	on_mainviewport_changed();
