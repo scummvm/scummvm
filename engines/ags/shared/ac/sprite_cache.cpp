@@ -94,10 +94,8 @@ void SpriteCache::Reset() {
 	_file.Close();
 	// TODO: find out if it's safe to simply always delete _spriteData.Image with array element
 	for (size_t i = 0; i < _spriteData.size(); ++i) {
-		if (_spriteData[i].Image) {
-			delete _spriteData[i].Image;
-			_spriteData[i].Image = nullptr;
-		}
+		delete _spriteData[i].Image;
+		_spriteData[i].Image = nullptr;
 	}
 	_spriteData.clear();
 	_mru.clear();
@@ -114,6 +112,7 @@ bool SpriteCache::SetSprite(sprkey_t index, Bitmap *sprite, int flags) {
 		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Error, "SetSprite: attempt to assign nullptr to index %d", index);
 		return false;
 	}
+	delete _spriteData[index].Image; // delete old sprite, if was present
 	_spriteData[index].Image = sprite;
 	_spriteData[index].Flags = SPRCACHEFLAG_LOCKED; // NOT from asset file
 	_spriteData[index].Size = 0;
@@ -129,6 +128,7 @@ void SpriteCache::SetEmptySprite(sprkey_t index, bool as_asset) {
 		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Error, "SetEmptySprite: unable to use index %d", index);
 		return;
 	}
+	delete _spriteData[index].Image; // delete old sprite, if was present
 	if (as_asset)
 		_spriteData[index].Flags = SPRCACHEFLAG_ISASSET;
 	RemapSpriteToSprite0(index);
