@@ -550,8 +550,9 @@ int isposinbox(int mmx, int mmy, int lf, int tp, int rt, int bt) {
 }
 
 // xx,yy is the position in room co-ordinates that we are checking
-// arx,ary is the sprite x/y co-ordinates
-int is_pos_in_sprite(int xx, int yy, int arx, int ary, Bitmap *sprit, int spww, int sphh, int flipped) {
+// arx,ary,spww,sphh are the sprite's bounding box
+// bitmap_original tells whether bitmap is an original sprite, or transformed version
+int is_pos_in_sprite(int xx, int yy, int arx, int ary, Bitmap *sprit, int spww, int sphh, int flipped, bool bitmap_original) {
 	if (spww == 0) spww = game_to_data_coord(sprit->GetWidth()) - 1;
 	if (sphh == 0) sphh = game_to_data_coord(sprit->GetHeight()) - 1;
 
@@ -563,10 +564,9 @@ int is_pos_in_sprite(int xx, int yy, int arx, int ary, Bitmap *sprit, int spww, 
 		int xpos = data_to_game_coord(xx - arx);
 		int ypos = data_to_game_coord(yy - ary);
 
-		if (_G(gfxDriver)->HasAcceleratedTransform()) {
-			// hardware acceleration, so the sprite in memory will not have
-			// been stretched, it will be original size. Thus, adjust our
-			// calculations to compensate
+		if (bitmap_original) {
+			// Bitmap has original sprite's resolution,
+			// thus adjust our calculations to compensate
 			data_to_game_coords(&spww, &sphh);
 
 			if (spww != sprit->GetWidth())

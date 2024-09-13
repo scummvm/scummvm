@@ -500,13 +500,13 @@ int Character_IsCollidingWithObject(CharacterInfo *chin, ScriptObject *objid) {
 	if (_G(objs)[objid->id].on != 1)
 		return 0;
 
-	Bitmap *checkblk = GetObjectImage(objid->id, nullptr);
+	Bitmap *checkblk = GetObjectImage(objid->id);
 	int objWidth = checkblk->GetWidth();
 	int objHeight = checkblk->GetHeight();
 	int o1x = _G(objs)[objid->id].x;
 	int o1y = _G(objs)[objid->id].y - game_to_data_coord(objHeight);
 
-	Bitmap *charpic = GetCharacterImage(chin->index_id, nullptr);
+	Bitmap *charpic = GetCharacterImage(chin->index_id);
 
 	int charWidth = charpic->GetWidth();
 	int charHeight = charpic->GetHeight();
@@ -2103,16 +2103,13 @@ int GetCharacterFrameVolume(CharacterInfo *chi) {
 	return frame_vol;
 }
 
-Bitmap *GetCharacterImage(int charid, int *isFlipped) {
-	if (!_G(gfxDriver)->HasAcceleratedTransform()) {
-		Bitmap *actsp = get_cached_character_image(charid);
-		if (actsp) {
-			// the cached image is pre-flipped, so no longer register the image as such
-			if (isFlipped)
-				*isFlipped = 0;
-			return actsp;
-		}
-	}
+Bitmap *GetCharacterImage(int charid, bool *is_original) {
+	// NOTE: the cached image will only be present in software render mode
+	Bitmap *actsp = get_cached_character_image(charid);
+	if (is_original)
+		*is_original = !actsp; // no cached means we use original sprite
+	if (actsp)
+		return actsp;
 	CharacterInfo *chin = &_GP(game).chars[charid];
 	int sppic = _GP(views)[chin->view].loops[chin->loop].frames[chin->frame].pic;
 	return _GP(spriteset)[sppic];
@@ -2199,11 +2196,15 @@ int is_pos_on_character(int xx, int yy) {
 		int yyy = _GP(charextra)[cc].GetEffectiveY(chin) - game_to_data_coord(usehit);
 
 		int mirrored = _GP(views)[chin->view].loops[chin->loop].frames[chin->frame].flags & VFLG_FLIPSPRITE;
-		Bitmap *theImage = GetCharacterImage(cc, &mirrored);
+
+		bool is_original;
+		Bitmap *theImage = GetCharacterImage(cc, &is_original);
+		if (!is_original)
+			mirrored = 0; // transformed image is already flipped
 
 		if (is_pos_in_sprite(xx, yy, xxx, yyy, theImage,
 		                     game_to_data_coord(usewid),
-		                     game_to_data_coord(usehit), mirrored) == FALSE)
+		                     game_to_data_coord(usehit), mirrored, is_original) == FALSE)
 			continue;
 
 		int use_base = chin->get_baseline();

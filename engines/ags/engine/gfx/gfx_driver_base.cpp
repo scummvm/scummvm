@@ -166,13 +166,6 @@ VideoMemoryGraphicsDriver::~VideoMemoryGraphicsDriver() {
 	DestroyAllStageScreens();
 }
 
-bool VideoMemoryGraphicsDriver::UsesMemoryBackBuffer() {
-	// Although we do use ours, we do not let engine draw upon it;
-	// only plugin handling are allowed to request our mem buffer.
-	// TODO: find better workaround?
-	return false;
-}
-
 Bitmap *VideoMemoryGraphicsDriver::GetMemoryBackBuffer() {
 	return nullptr;
 }

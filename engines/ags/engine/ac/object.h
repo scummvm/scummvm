@@ -109,7 +109,10 @@ void    update_object_scale(int &res_zoom, int &res_width, int &res_height,
 void    move_object(int objj, int tox, int toy, int spee, int ignwal);
 void    get_object_blocking_rect(int objid, int *x1, int *y1, int *width, int *y2);
 int     isposinbox(int mmx, int mmy, int lf, int tp, int rt, int bt);
-int     is_pos_in_sprite(int xx, int yy, int arx, int ary, Shared::Bitmap *sprit, int spww, int sphh, int flipped = 0);
+// xx,yy is the position in room co-ordinates that we are checking
+// arx,ary,spww,sphh are the sprite's bounding box (including sprite scaling);
+// bitmap_original tells whether bitmap is an original sprite, or transformed version
+int     is_pos_in_sprite(int xx, int yy, int arx, int ary, Shared::Bitmap *sprit, int spww, int sphh, int flipped, bool bitmap_original);
 // X and Y co-ordinates must be in native format
 // X and Y are ROOM coordinates
 int     check_click_on_object(int roomx, int roomy, int mood);

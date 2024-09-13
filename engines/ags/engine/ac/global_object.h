@@ -79,7 +79,7 @@ int  AreThingsOverlapping(int thing1, int thing2);
 int  GetObjectProperty(int hss, const char *property);
 void GetObjectPropertyText(int item, const char *property, char *bufer);
 
-Shared::Bitmap *GetObjectImage(int obj, int *isFlipped);
+Shared::Bitmap *GetObjectImage(int obj, bool *is_original = nullptr);
 
 } // namespace AGS3
 
