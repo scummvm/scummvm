@@ -188,6 +188,7 @@ void AdlEngine::delay(uint32 ms) const {
 		pollEvent(event);
 		g_system->delayMillis(end - now < 16 ? end - now : 16);
 		now = g_system->getMillis();
+		g_system->updateScreen();
 	}
 }
 
@@ -294,6 +295,7 @@ byte AdlEngine::inputKey(bool showCursor) const {
 
 		_display->renderText();
 		g_system->delayMillis(16);
+		g_system->updateScreen();
 	}
 
 	_display->showCursor(false);
@@ -316,6 +318,7 @@ void AdlEngine::waitKey(uint32 ms, Common::KeyCode keycode) const {
 			return;
 
 		g_system->delayMillis(16);
+		g_system->updateScreen();
 	}
 }
 
