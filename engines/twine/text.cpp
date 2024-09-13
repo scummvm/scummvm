@@ -173,7 +173,8 @@ void Text::initDial(TextBankId bankIdx) {
 }
 
 void Text::initSceneTextBank() {
-	initDial((TextBankId)((int)_engine->_scene->_sceneTextBank + (int)TextBankId::Citadel_Island));
+	const int textBankId = (int)_engine->_scene->_sceneTextBank;
+	initDial((TextBankId)(textBankId + (int)TextBankId::Citadel_Island));
 }
 
 void Text::drawCharacter(int32 x, int32 y, uint16 character) {

@@ -197,6 +197,8 @@ bool EntityData::loadAnim(Common::SeekableReadStream &stream, bool lba1) {
 			case ActionType::ACTION_NEW_SAMPLE:
 				action.animFrame = stream.readByte();
 				action.sampleIndex = stream.readSint16LE();
+				action.decal = stream.readSint16LE();
+				action.sampleVolume = stream.readByte();
 				action.frequency = stream.readSint16LE();
 				break;
 			case ActionType::ACTION_THROW_DART:

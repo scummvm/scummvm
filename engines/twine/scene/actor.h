@@ -146,13 +146,12 @@ private:
 	bool _brickCausesDamage = false;
 	int32 _maxLife;
 
-	EntityData _entityData;
-
 public:
 	ActorStruct(int maxLife = 0) : _lifePoint(maxLife), _maxLife(maxLife) {}
 	StaticFlagsStruct _staticFlags; // Flags
 	DynamicFlagsStruct _workFlags;  // WorkFlags
 
+	EntityData _entityData;
 	inline ShapeType brickShape() const { return _col; }
 	inline void setCollision(ShapeType shapeType) {
 		_col = shapeType;
@@ -160,7 +159,6 @@ public:
 	}
 	inline void setBrickCausesDamage() { _brickCausesDamage = true; }
 	inline bool brickCausesDamage() { return _brickCausesDamage; }
-	void loadModel(int32 modelIndex, bool lba1);
 
 	void addLife(int32 val);
 

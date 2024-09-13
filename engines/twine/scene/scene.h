@@ -117,6 +117,8 @@ class Scene {
 private:
 	TwinEEngine *_engine;
 
+	void loadModel(ActorStruct &actor, int32 modelIndex, bool lba1);
+
 	/** Process zone extra bonus */
 	void processZoneExtraBonus(ZoneStruct *zone);
 	void setActorStaticFlags(ActorStruct *act, uint32 staticFlags);

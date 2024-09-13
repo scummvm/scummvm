@@ -179,6 +179,17 @@ bool Scene::loadSceneCubeXY(int numcube, int32 *cubex, int32 *cubey) {
 	return false;
 }
 
+void Scene::loadModel(ActorStruct &actor, int32 modelIndex, bool lba1) {
+	actor._body = modelIndex;
+	if (!actor._staticFlags.bSprite3D) {
+		debug(1, "Init actor with model %i", modelIndex);
+		_engine->_resources->loadEntityData(actor._entityData, modelIndex);
+		actor._entityDataPtr = &actor._entityData;
+	} else {
+		actor._entityDataPtr = nullptr;
+	}
+}
+
 bool Scene::loadSceneLBA2() {
 	Common::MemoryReadStream stream(_currentScene, _currentSceneSize);
 	_island = stream.readByte();
@@ -230,7 +241,7 @@ bool Scene::loadSceneLBA2() {
 		ActorStruct *act = &_sceneActors[a];
 		setActorStaticFlags(act, stream.readUint32LE());
 
-		act->loadModel((int16)stream.readUint16LE(), false);
+		loadModel(*act, (int16)stream.readUint16LE(), false);
 
 		act->_genBody = (BodyType)stream.readSint16LE();
 		act->_genAnim = (AnimationTypes)stream.readByte();
@@ -362,7 +373,7 @@ bool Scene::loadSceneLBA1() {
 		ActorStruct *act = &_sceneActors[a];
 		setActorStaticFlags(act, stream.readUint16LE());
 
-		act->loadModel(stream.readUint16LE(), true);
+		loadModel(*act, stream.readUint16LE(), true);
 
 		act->_genBody = (BodyType)stream.readByte();
 		act->_genAnim = (AnimationTypes)stream.readByte();
@@ -467,6 +478,9 @@ bool Scene::loadSceneLBA1() {
 
 bool Scene::initScene(int32 index) {
 	// load scene from file
+	if (_engine->isLBA2()) {
+		index++;
+	}
 	_currentSceneSize = HQR::getAllocEntry(&_currentScene, Resources::HQR_SCENE_FILE, index);
 	if (_currentSceneSize == 0) {
 		return false;
