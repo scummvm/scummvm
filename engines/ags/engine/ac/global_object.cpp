@@ -75,10 +75,13 @@ int GetObjectIDAtRoom(int roomx, int roomy) {
 		if (_G(objs)[aa].view != RoomObject::NoView)
 			isflipped = _GP(views)[_G(objs)[aa].view].loops[_G(objs)[aa].loop].frames[_G(objs)[aa].frame].flags & VFLG_FLIPSPRITE;
 
-		Bitmap *theImage = GetObjectImage(aa, &isflipped);
+		bool is_original;
+		Bitmap *theImage = GetObjectImage(aa, &is_original);
+		if (!is_original)
+			isflipped = 0; // transformed image is already flipped
 
 		if (is_pos_in_sprite(roomx, roomy, xxx, yyy - spHeight, theImage,
-		                     spWidth, spHeight, isflipped) == FALSE)
+		                     spWidth, spHeight, isflipped, is_original) == FALSE)
 			continue;
 
 		int usebasel = _G(objs)[aa].get_baseline();
@@ -517,16 +520,13 @@ void GetObjectPropertyText(int item, const char *property, char *bufer) {
 	get_text_property(_GP(thisroom).Objects[item].Properties, _G(croom)->objProps[item], property, bufer);
 }
 
-Bitmap *GetObjectImage(int obj, int *isFlipped) {
-	if (!_G(gfxDriver)->HasAcceleratedTransform()) {
-		Bitmap *actsp = get_cached_object_image(obj);
-		if (actsp) {
-			// the cached image is pre-flipped, so no longer register the image as such
-			if (isFlipped)
-				*isFlipped = 0;
-			return actsp;
-		}
-	}
+Bitmap *GetObjectImage(int obj, bool *is_original) {
+	// NOTE: the cached image will only be present in software render mode
+	Bitmap *actsp = get_cached_object_image(obj);
+	if (is_original)
+		*is_original = !actsp; // no cached means we use original sprite
+	if (actsp)
+		return actsp;
 	return _GP(spriteset)[_G(objs)[obj].num];
 }
 
