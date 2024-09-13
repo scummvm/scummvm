@@ -51,6 +51,7 @@
 #include "ags/engine/ac/sys_events.h"
 #include "ags/engine/ac/rich_game_media.h"
 #include "ags/engine/ac/room_status.h"
+#include "ags/engine/ac/sprite.h"
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/engine/ac/string.h"
 #include "ags/engine/ac/translation.h"

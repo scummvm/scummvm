@@ -183,7 +183,6 @@ MODULE_OBJS = \
 	engine/ac/slider.o \
 	engine/ac/speech.o \
 	engine/ac/sprite.o \
-	engine/ac/sprite_cache_engine.o \
 	engine/ac/string.o \
 	engine/ac/system.o \
 	engine/ac/sys_events.o \
