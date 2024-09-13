@@ -2033,7 +2033,7 @@ int wantMoveNow(CharacterInfo *chi, CharacterExtras *chex) {
 void setup_player_character(int charid) {
 	_GP(game).playercharacter = charid;
 	_G(playerchar) = &_GP(game).chars[charid];
-	_G(sc_PlayerCharPtr) = ccGetObjectHandleFromAddress((char *)_G(playerchar));
+	_G(sc_PlayerCharPtr) = ccGetObjectHandleFromAddress(_G(playerchar));
 	if (_G(loaded_game_file_version) < kGameVersion_270) {
 		ccAddExternalScriptObject("player", _G(playerchar), &_GP(ccDynamicCharacter));
 	}

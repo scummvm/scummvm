@@ -235,7 +235,7 @@ void ManagedObjectPool::WriteToDisk(Stream *out) {
 		// handle
 		out->WriteInt32(o.handle);
 		// write the type of the object
-		StrUtil::WriteCStr(const_cast<char *>(o.callback->GetType()), out);
+		StrUtil::WriteCStr(o.callback->GetType(), out);
 		// now write the object data
 		int bytesWritten = o.callback->Serialize(o.addr, &serializeBuffer.front(), serializeBuffer.size());
 		if ((bytesWritten < 0) && ((size_t)(-bytesWritten) > serializeBuffer.size())) {
