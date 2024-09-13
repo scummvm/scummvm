@@ -666,6 +666,8 @@ void SoundChannel_PC9801_FM4OP::programChange(uint8 program) {
 
 void SoundChannel_PC9801_FM4OP::sendSoundOnOff(bool soundOn) {
 	_flags = soundOn ? (_flags | kChanKeyOn) : (_flags & ~kChanKeyOn);
+	if (soundOn && _version == SCI_VERSION_0_LATE)
+		writeReg(0, 0x28, _operatorFlags & 7);
 	writeReg(0, 0x28, soundOn ? _operatorFlags : _operatorFlags & 7);
 }
 
@@ -1016,6 +1018,10 @@ void SoundChannel_PC9801_SSG::sendSoundOnOff(bool soundOn) {
 		_ssgSpeed = _selectedInstrument[18];
 		_note = 0xFF;
 	} else if (_version == SCI_VERSION_0_LATE && soundOn) {
+		_activeChannnelsStatus |= ~_chanEnableMask1;
+		if (_ccngEnabled)
+			_activeChannnelsStatus |= ~_chanEnableMask2;
+		sendActiveChannelsStatus();
 		_activeChannnelsStatus &= _chanEnableMask1;
 		if (_ccngEnabled)
 			_activeChannnelsStatus &= _chanEnableMask2;
@@ -1463,7 +1469,8 @@ void MidiDriver_PC9801::send(uint32 b) {
 	case 0xb0:
 		switch (para1) {
 		case 7:
-			part->controlChangeVolume(para2);
+			if (_internalVersion > 0) // QFG ignores channel volume
+				part->controlChangeVolume(para2);
 			break;
 		case 64:
 			part->controlChangeSustain(para2);
@@ -1489,7 +1496,8 @@ void MidiDriver_PC9801::send(uint32 b) {
 		}
 		break;
 	case 0xc0:
-		part->programChange(para1);
+		if (_internalVersion > 0) // QFG ignores program changes
+			part->programChange(para1);
 		break;
 	case 0xe0:
 		part->pitchBend(para1 | (para2 << 7));
