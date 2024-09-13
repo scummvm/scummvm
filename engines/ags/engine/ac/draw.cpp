@@ -1239,10 +1239,8 @@ static bool construct_object_gfx(const ViewFrame *vf, int pic,
 
 	actsp.SpriteID = pic; // for texture sharing
 
-	// NOTE: we need cached bitmap if:
-	// * it's a software renderer, otherwise
-	// * the walk-behind method is DrawOverCharSprite
-	if ((use_hw_transform) && (drawstate.WalkBehindMethod != DrawOverCharSprite)) {
+	// Hardware accelerated mode: always use original sprite and apply texture transform
+	if (use_hw_transform) {
 		// HW acceleration
 		const bool is_texture_intact = objsav.sppic == specialpic;
 		objsav.sppic = specialpic;
@@ -1260,9 +1258,8 @@ static bool construct_object_gfx(const ViewFrame *vf, int pic,
 	//
 	// Software mode below
 	//
-
-	if ((!use_hw_transform) && (!drawstate.SoftwareRender)) {
-		// They want to draw it in software mode with the hw driver, so force a redraw
+	// They want to draw it in software mode with the hw driver, so force a redraw (???)
+	if (!drawstate.SoftwareRender) {
 		objsav.sppic = INT32_MIN;
 	}
 
@@ -1300,10 +1297,8 @@ static bool construct_object_gfx(const ViewFrame *vf, int pic,
 	const int src_sprwidth = sprite->GetWidth();
 	const int src_sprheight = sprite->GetHeight();
 	bool actsps_used = false;
-	if (!use_hw_transform) {
-		// draw the base sprite, scaled and flipped as appropriate
-		actsps_used = scale_and_flip_sprite(actsp, pic, scale_size.Width, scale_size.Height, is_mirrored);
-	}
+	// draw the base sprite, scaled and flipped as appropriate
+	actsps_used = scale_and_flip_sprite(actsp, pic, scale_size.Width, scale_size.Height, is_mirrored);
 	if (!actsps_used) {
 		// ensure actsps exists // CHECKME: why do we need this in hardware accel mode too?
 		recycle_bitmap(actsp.Bmp, coldept, src_sprwidth, src_sprheight);
@@ -1311,7 +1306,7 @@ static bool construct_object_gfx(const ViewFrame *vf, int pic,
 
 	// apply tints or lightenings where appropriate, else just copy
 	// the source bitmap
-	if (!use_hw_transform && ((tint_level > 0) || (light_level != 0))) {
+	if ((tint_level > 0) || (light_level != 0)) {
 		// direct read from source bitmap, where possible
 		Bitmap *blit_from = nullptr;
 		if (!actsps_used)
@@ -1998,6 +1993,8 @@ static void construct_ui_view() {
 // but does not put them on screen yet - that's done in respective construct_*_view functions
 static void construct_overlays() {
 	const bool is_software_mode = drawstate.SoftwareRender;
+	const bool crop_walkbehinds = (drawstate.WalkBehindMethod == DrawOverCharSprite);
+
 	auto &overs = get_overlays();
 	if (_GP(overlaybmp).size() < overs.size()) {
 		_GP(overlaybmp).resize(overs.size());
@@ -2009,26 +2006,30 @@ static void construct_overlays() {
 		if (over.transparency == 255) continue; // skip fully transparent
 
 		bool has_changed = over.HasChanged();
-		if (over.IsRoomLayer() && (drawstate.WalkBehindMethod == DrawOverCharSprite)) {
+		// If walk behinds are drawn over the cached object sprite, then check if positions were updated
+		if (crop_walkbehinds && over.IsRoomLayer()) {
 			Point pos = get_overlay_position(over);
 			has_changed |= (pos.X != _GP(screenovercache)[i].X || pos.Y != _GP(screenovercache)[i].Y);
 			_GP(screenovercache)[i].X = pos.X; _GP(screenovercache)[i].Y = pos.Y;
 		}
 
 		if (has_changed) {
-			// For software mode - prepare transformed bitmap if necessary
-			Bitmap *use_bmp = is_software_mode ?
-				transform_sprite(over.GetImage(), over.HasAlphaChannel(), _GP(overlaybmp)[i], Size(over.scaleWidth, over.scaleHeight)) :
-				over.GetImage();
-
-			if ((drawstate.WalkBehindMethod == DrawOverCharSprite) && over.IsRoomLayer()) {
-				if (use_bmp != _GP(overlaybmp)[i].get()) {
-					recycle_bitmap(_GP(overlaybmp)[i], use_bmp->GetColorDepth(), use_bmp->GetWidth(), use_bmp->GetHeight(), true);
-					_GP(overlaybmp)[i]->Blit(use_bmp);
+			// For software mode - prepare transformed bitmap if necessary;
+			// for hardware-accelerated - use the sprite ID if possible, to avoid redundant sprite load
+			Bitmap *use_bmp = nullptr;
+			if (is_software_mode) {
+				use_bmp = transform_sprite(over.GetImage(), over.HasAlphaChannel(), _GP(overlaybmp)[i], Size(over.scaleWidth, over.scaleHeight));
+				if (crop_walkbehinds && over.IsRoomLayer()) {
+					if (use_bmp != _GP(overlaybmp)[i].get()) {
+						recycle_bitmap(_GP(overlaybmp)[i], use_bmp->GetColorDepth(), use_bmp->GetWidth(), use_bmp->GetHeight(), true);
+						_GP(overlaybmp)[i]->Blit(use_bmp);
+					}
+					Point pos = get_overlay_position(over);
+					walkbehinds_cropout(_GP(overlaybmp)[i].get(), pos.X, pos.Y, over.zorder);
+					use_bmp = _GP(overlaybmp)[i].get();
 				}
-				Point pos = get_overlay_position(over);
-				walkbehinds_cropout(_GP(overlaybmp)[i].get(), pos.X, pos.Y, over.zorder);
-				use_bmp = _GP(overlaybmp)[i].get();
+			} else if (over.GetSpriteNum() < 0) {
+				use_bmp = over.GetImage();
 			}
 
 			over.ddb = recycle_ddb_sprite(over.ddb, over.GetSpriteNum(), use_bmp, over.HasAlphaChannel());
