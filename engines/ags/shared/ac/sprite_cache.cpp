@@ -206,12 +206,14 @@ Bitmap *SpriteCache::operator [] (sprkey_t index) {
 	// Externally added sprite or locked sprite, don't put it into MRU list
 	if (_spriteData[index].IsExternalSprite() || _spriteData[index].IsLocked())
 		return _spriteData[index].Image.get();
-
+	// Resolve potentially remapped sprites
+	index = GetDataIndex(index);
+	// Either use ready image, or load one from assets
 	if (_spriteData[index].Image) {
 		// Move to the beginning of the MRU list
 		_mru.splice(_mru.begin(), _mru, _spriteData[index].MruIt);
 	} else {
-		// Sprite exists in file but is not in mem, load it
+		// Sprite exists in file but is not in mem, load it and add to MRU list
 		LoadSprite(index);
 		_spriteData[index].MruIt = _mru.insert(_mru.begin(), index);
 	}
@@ -311,9 +313,8 @@ size_t SpriteCache::LoadSprite(sprkey_t index) {
 		return 0;
 	assert((_spriteData[index].Flags & SPRCACHEFLAG_ISASSET) != 0);
 
-	sprkey_t load_index = GetDataIndex(index);
 	Bitmap *image;
-	HError err = _file.LoadSprite(load_index, image);
+	HError err = _file.LoadSprite(index, image);
 	if (!image) {
 		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Warn,
 			"LoadSprite: failed to load sprite %d:\n%s\n - remapping to sprite 0.", index,
