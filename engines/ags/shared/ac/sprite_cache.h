@@ -46,6 +46,7 @@
 #include "common/std/list.h"
 #include "ags/shared/ac/sprite_file.h"
 #include "ags/shared/core/platform.h"
+#include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/util/error.h"
 #include "ags/shared/util/geometry.h"
 
@@ -63,13 +64,6 @@ using namespace AGS; // FIXME later
 typedef AGS::Shared::HError HAGSError;
 
 struct SpriteInfo;
-
-// Tells that the sprite is found in the game resources.
-#define SPRCACHEFLAG_ISASSET        0x01
-// Tells that the sprite index was remapped to another existing sprite.
-#define SPRCACHEFLAG_REMAPPED       0x02
-// Locked sprites are ones that should not be freed when out of cache space.
-#define SPRCACHEFLAG_LOCKED         0x04
 
 // Max size of the sprite cache, in bytes
 #if AGS_PLATFORM_OS_ANDROID || AGS_PLATFORM_OS_IOS
@@ -105,9 +99,9 @@ public:
 	~SpriteCache();
 
 	// Loads sprite reference information and inits sprite stream
-	HError      InitFile(const Shared::String &filename, const Shared::String &sprindex_filename);
+	HError      InitFile(const String &filename, const String &sprindex_filename);
 	// Saves current cache contents to the file
-	int         SaveToFile(const Shared::String &filename, int store_flags, SpriteCompression compress, SpriteFileIndex &index);
+	int         SaveToFile(const String &filename, int store_flags, SpriteCompression compress, SpriteFileIndex &index);
 	// Closes an active sprite file stream
 	void        DetachFile();
 
@@ -142,15 +136,15 @@ public:
 	Bitmap		*RemoveSprite(sprkey_t index);
 	// Deletes particular sprite, marks slot as unused
 	void		DisposeSprite(sprkey_t index);
-	// Deletes all loaded (non-locked, non-external) images from the cache;
+	// Deletes all loaded asset (non-locked, non-external) images from the cache;
 	// this keeps all the auxiliary sprite information intact
-	void        DisposeAll();
+	void        DisposeAllCached();
 	// Deletes all data and resets cache to the clear state
 	void        Reset();
 	// Assigns new sprite for the given index; this sprite won't be auto disposed.
 	// *Deletes* the previous sprite if one was found at the same index.
 	// "flags" are SPF_* constants that define sprite's behavior in game.
-	bool        SetSprite(sprkey_t index, Shared::Bitmap *, int flags = 0);
+	bool        SetSprite(sprkey_t index, Bitmap *, int flags = 0);
 	// Assigns new sprite for the given index, remapping it to sprite 0;
 	// optionally marks it as an asset placeholder.
 	// *Deletes* the previous sprite if one was found at the same index.
@@ -159,7 +153,7 @@ public:
 	void        SetMaxCacheSize(size_t size);
 
 	// Loads (if it's not in cache yet) and returns bitmap by the sprite index
-	Shared::Bitmap *operator[](sprkey_t index);
+	Bitmap *operator[](sprkey_t index);
 
 private:
 	// Load sprite from game resource
@@ -185,18 +179,25 @@ private:
 
 	// Information required for the sprite streaming
 	struct SpriteData {
-		size_t          Size = 0; // to track cache size
-		uint32_t        Flags = 0;
-		// TODO: investigate if we may safely use unique_ptr here
-		// (some of these bitmaps may be assigned from outside of the cache)
-		Shared::Bitmap *Image = nullptr; // actual bitmap
+		size_t	 Size  = 0;			   // to track cache size, 0 = means don't track
+		uint32_t Flags = 0;			   // SPRCACHEFLAG* flags
+		std::unique_ptr<Bitmap> Image; // actual bitmap
+
 		// MRU list reference
 		std::list<sprkey_t>::iterator MruIt;
+
+		SpriteData() = default;
+		SpriteData(SpriteData &&other) = default;
+		SpriteData(Bitmap *image, size_t size, uint32_t flags) : Size(size), Flags(flags), Image(image) {}
+
+		SpriteData &operator=(SpriteData &&other) = default;
 
 		// Tells if there actually is a registered sprite in this slot
 		bool DoesSpriteExist() const;
 		// Tells if there's a game resource corresponding to this slot
 		bool IsAssetSprite() const;
+		// Tells if a sprite is remapped to placeholder (e.g. failed to load)
+		bool IsRemapped() const;
 		// Tells if sprite was added externally, not loaded from game resources
 		bool IsExternalSprite() const;
 		// Tells if sprite is locked and should not be disposed by cache logic
