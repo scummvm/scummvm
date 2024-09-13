@@ -198,9 +198,9 @@ const Vect2f &qdGameObjectAnimated::screen_scale() const {
 }
 
 void qdGameObjectAnimated::redraw(int offs_x, int offs_y) const {
-	debugC(1, kDebugTemp, "qdGameObjectAnimated::redraw(), empty?: %d", _animation.is_empty());
+
 	if (!_animation.is_empty()) {
-		debugC(1, kDebugTemp, "anim is not empty");
+		debugC(2, kDebugGraphics, "qdGameObjectAnimated::redraw([%d, %d]), name: '%s'", offs_x, offs_y, transCyrillic(name()));
 		Vect2i r = screen_pos() + Vect2i(offs_x, offs_y);
 
 		if (_current_transform()) {

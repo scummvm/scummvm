@@ -1892,6 +1892,8 @@ grScreenRegion qdGameObjectMoving::screen_region() const {
 }
 
 void qdGameObjectMoving::redraw(int offs_x, int offs_y) const {
+	debugC(2, kDebugGraphics, "qdGameObjectMoving::redraw([%d, %d]), name: '%s'", offs_x, offs_y, transCyrillic(name()));
+
 	if (get_animation()->is_empty())
 		return;
 

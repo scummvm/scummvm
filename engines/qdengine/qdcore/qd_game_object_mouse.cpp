@@ -166,6 +166,8 @@ bool qdGameObjectMouse::save_data(Common::WriteStream &fh) const {
 }
 
 void qdGameObjectMouse::redraw(int offs_x, int offs_y) const {
+	debugC(2, kDebugGraphics, "qdGameObjectMouse::redraw([%d, %d]), name: '%s'", offs_x, offs_y, transCyrillic(name()));
+
 	if (_object && !qdInterfaceDispatcher::get_dispatcher()->is_active()) {
 		update_object_position();
 		const qdGameObjectState *p = _object-> get_cur_state();

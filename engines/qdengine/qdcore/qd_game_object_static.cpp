@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/debug.h"
+
 #include "qdengine/qd_fwd.h"
 #include "qdengine/parser/xml_tag.h"
 #include "qdengine/parser/qdscr_parser.h"
@@ -35,6 +37,8 @@ qdGameObjectStatic::~qdGameObjectStatic() {
 }
 
 void qdGameObjectStatic::redraw(int offs_x, int offs_y) const {
+	debugC(2, kDebugGraphics, "qdGameObjectStatic::redraw([%d, %d]), name: '%s'", offs_x, offs_y, transCyrillic(name()));
+
 	Vect2i scrCoord = screen_pos() + Vect2i(offs_x, offs_y);
 	_sprite.redraw(scrCoord.x, scrCoord.y, screen_depth(), 0);
 }
