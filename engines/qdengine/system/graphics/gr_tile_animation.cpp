@@ -298,7 +298,7 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 }
 
 void grTileAnimation::drawFrame(const Vect2i &position, int32 frame_index, int32 mode, int closest_scale) const {
-	debugC(3, kDebugGraphics, "grTileAnimation::drawFrame([%d, %d], frame: %d, mode=%d, scale_idx: %d)", position.x, position.y, frame_index, mode, closest_scale);
+	debugC(3, kDebugGraphics, "grTileAnimation::drawFrame([%d, %d], frame: %d, mode: %d, scale_idx: %d)", position.x, position.y, frame_index, mode, closest_scale);
 
 	Vect2i frameSize = _frameSize;
 	Vect2i frameTileSize = _frameTileSize;
@@ -310,17 +310,18 @@ void grTileAnimation::drawFrame(const Vect2i &position, int32 frame_index, int32
 		frameStart = _scaleArray[closest_scale]._frameStart;
 	}
 
-	Vect2i pos0 = position - frameSize / 2;
+	int xx = position.x - frameSize.x / 2;
+	int yy = position.y - frameSize.y / 2;
 
 	int32 dx = GR_TILE_SPRITE_SIZE_X;
 	int32 dy = GR_TILE_SPRITE_SIZE_Y;
 
 	if (mode & GR_FLIP_HORIZONTAL) {
-		pos0.x += frameSize.x - GR_TILE_SPRITE_SIZE_X;
+		xx += frameSize.x - GR_TILE_SPRITE_SIZE_X;
 		dx = -dx;
 	}
 	if (mode & GR_FLIP_VERTICAL) {
-		pos0.y += frameSize.y - GR_TILE_SPRITE_SIZE_Y;
+		yy += frameSize.y - GR_TILE_SPRITE_SIZE_Y;
 		dy = -dy;
 	}
 
@@ -328,21 +329,21 @@ void grTileAnimation::drawFrame(const Vect2i &position, int32 frame_index, int32
 
 	const uint32 *index_ptr = &_frameIndex[frameStart] + frameTileSize.x * frameTileSize.y * frame_index;
 
-	Vect2i pos = pos0;
+	int x = xx, y = yy;
 	for (int32 i = 0; i < frameTileSize.y; i++) {
-		pos.x = pos0.x;
+		x = xx;
 
 		for (int32 j = 0; j < frameTileSize.x; j++) {
-			grDispatcher::instance()->putTileSpr(pos.x, pos.y, getTile(*index_ptr++), _hasAlpha, mode);
-			pos.x += dx;
+			grDispatcher::instance()->putTileSpr(x, y, getTile(*index_ptr++), _hasAlpha, mode);
+			x += dx;
 		}
 
-		pos.y += dy;
+		y += dy;
 	}
 }
 
 void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float angle, int mode) const {
-	debugC(3, kDebugGraphics, "grTileAnimation::drawFrame([%d, %d], frame: %d, angle=%f, scake: %d)", position.x, position.y, frame_index, angle, mode);
+	debugC(3, kDebugGraphics, "grTileAnimation::drawFrame([%d, %d], frame: %d, angle: %f, scale: %d)", position.x, position.y, frame_index, angle, mode);
 
 	byte *buf = decode_frame_data(frame_index, -1);
 	Vect2i pos = position - _frameSize / 2;
