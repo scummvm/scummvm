@@ -329,6 +329,9 @@ void Macs2Engine::readResourceFile() {
 	_borderHeight = _fileStream->readUint16LE();
 	_borderData = new byte[_borderWidth * _borderHeight];
 	_fileStream->read(_borderData, _borderWidth * _borderHeight);
+	_borderSprite.Width = _borderWidth;
+	_borderSprite.Height = _borderHeight;
+	_borderSprite.Data = Common::Array<uint8>(_borderData, _borderWidth * _borderHeight);
 
 	// And the highlight part
 	_fileStream->seek(0x6962);
