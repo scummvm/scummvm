@@ -903,7 +903,7 @@ void new_room(int newnum, CharacterInfo *forchar) {
 
 	if (_GP(usetup).clear_cache_on_room_change) {
 		// Delete all cached sprites
-		_GP(spriteset).DisposeAll();
+		_GP(spriteset).DisposeAllCached();
 	}
 
 	load_new_room(newnum, forchar);

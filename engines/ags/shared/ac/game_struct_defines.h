@@ -231,11 +231,12 @@ enum GameGuiAlphaRenderingStyle {
 
 // General information about sprite (properties, size)
 struct SpriteInfo {
-	uint32_t Flags;
-	int      Width;
-	int      Height;
+	int Width  = 0;
+	int Height = 0;
+	uint32_t Flags = 0u; // SPF_* flags
 
-	SpriteInfo();
+	SpriteInfo() = default;
+	SpriteInfo(int w, int h, uint32_t flags) : Width(w), Height(h), Flags(flags) {}
 
 	inline Size GetResolution() const { return Size(Width, Height); }
 
