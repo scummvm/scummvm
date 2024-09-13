@@ -405,6 +405,12 @@ public:
 		return _is_paused;
 	}
 
+	bool is_gameplay_paused() {
+		return _is_gameplay_paused;
+	}
+
+	void pause_gameplay(bool pause) { _is_gameplay_paused = pause; }
+
 	bool restart();
 
 	qdScreenTextDispatcher &screen_texts_dispatcher() {
@@ -556,6 +562,7 @@ private:
 	int _timer;
 
 	bool _is_paused;
+	bool _is_gameplay_paused = false;
 
 	bool _enable_file_packages;
 	/// компрессия ресурсов в архивах, 0 - отключена, 9 - максимальная

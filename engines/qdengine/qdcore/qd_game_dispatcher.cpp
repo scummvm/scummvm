@@ -729,9 +729,9 @@ void qdGameDispatcher::redraw() {
 	_mouse_obj->set_pos(Vect3f(mouseDispatcher::instance()->mouse_x(), mouseDispatcher::instance()->mouse_y(), 0));
 	_mouse_obj->update_screen_pos();
 
-	if (!check_flag(SKIP_REDRAW_FLAG)) {
+	if (!check_flag(SKIP_REDRAW_FLAG) && (!is_gameplay_paused() || check_flag(NEXT_FRAME_FLAG))) {
 		if (!is_video_playing()) {
-			debugC(1, kDebugGraphics, "qdGameDispatcher::redraw(): =========== FRAME START");
+			debugC(1, kDebugGraphics, "qdGameDispatcher::redraw(): =========== FRAME START paused: %d", is_gameplay_paused());
 
 			pre_redraw();
 #ifndef _GD_REDRAW_REGIONS_CHECK_
@@ -2363,6 +2363,7 @@ bool qdGameDispatcher::keyboard_handler(Common::KeyCode vkey, bool event) {
 			switch (vkey) {
 			case Common::KEYCODE_p:
 				resume();
+				pause_gameplay(false);
 				return true;
 			case Common::KEYCODE_SPACE:
 				set_flag(NEXT_FRAME_FLAG);
@@ -2414,6 +2415,7 @@ bool qdGameDispatcher::keyboard_handler(Common::KeyCode vkey, bool event) {
 			return true;
 		case Common::KEYCODE_p:
 			pause();
+			pause_gameplay(true);
 			return true;
 #ifdef __QD_DEBUG_ENABLE__
 		case Common::KEYCODE_F10:
