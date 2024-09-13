@@ -296,7 +296,11 @@ void SoundChannel_PCJr_SCI0::envAT() {
 		_envCount2 = 20;
 		envST();
 	} else {
-		_envVolume = _envAttn = envTable[c];
+		// The original makes a signed check whether the table value is negative. If negative, it will put
+		// zero, if zero or positive it will put the table value. Since the table is all zero or negative,
+		// it will always be zero. This is weird, but just just be the remainder of a sloppy bug fix. If
+		// we put the table value instead of zero, e. g. the LSL3 opening fanfare will sound wrong.
+		_envVolume = _envAttn = 0;
 		updateChannelVolume();
 	}
 }
