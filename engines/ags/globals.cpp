@@ -51,6 +51,7 @@
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/route_finder_jps.h"
 #include "ags/engine/ac/screen_overlay.h"
+#include "ags/engine/ac/sprite.h"
 #include "ags/engine/ac/sprite_list_entry.h"
 #include "ags/engine/ac/top_bar_settings.h"
 #include "ags/engine/ac/dynobj/cc_audio_channel.h"
@@ -236,7 +237,14 @@ Globals::Globals() {
 	_guis = new std::vector<AGS::Shared::GUIMain>();
 	_play = new GameState();
 	_game = new GameSetupStruct();
-	_spriteset = new AGS::Shared::SpriteCache(_game->SpriteInfos);
+
+	AGS::Shared::SpriteCache::Callbacks spritecallbacks = {
+		get_new_size_for_sprite,
+		initialize_sprite,
+		post_init_sprite,
+		nullptr};
+	_spriteset = new AGS::Shared::SpriteCache(_game->SpriteInfos, spritecallbacks);
+
 	_thisroom = new AGS::Shared::RoomStruct();
 	_troom = new RoomStatus();
 	_usetup = new GameSetup();

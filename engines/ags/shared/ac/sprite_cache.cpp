@@ -39,10 +39,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-// [IKM] We have to forward-declare these because their implementations are in the Engine
-extern void initialize_sprite(int);
-extern void pre_save_sprite(Bitmap *image);
-extern void get_new_size_for_sprite(int, int, int, int &, int &);
 
 // High-verbosity sprite cache log
 #if DEBUG_SPRITECACHE
@@ -60,9 +56,13 @@ SpriteInfo::SpriteInfo()
 namespace AGS {
 namespace Shared {
 
-SpriteCache::SpriteCache(std::vector<SpriteInfo> &sprInfos)
+SpriteCache::SpriteCache(std::vector<SpriteInfo> &sprInfos, const Callbacks &callbacks)
 	: _sprInfos(sprInfos), _maxCacheSize(DEFAULTCACHESIZE_KB * 1024u),
-	_cacheSize(0u), _lockedSize(0u) {
+	  _cacheSize(0u), _lockedSize(0u) {
+	_callbacks.AdjustSize = (callbacks.AdjustSize) ? callbacks.AdjustSize : DummyAdjustSize;
+	_callbacks.InitSprite = (callbacks.InitSprite) ? callbacks.InitSprite : DummyInitSprite;
+	_callbacks.PostInitSprite = (callbacks.PostInitSprite) ? callbacks.PostInitSprite : DummyPostInitSprite;
+	_callbacks.PrewriteSprite = (callbacks.PrewriteSprite) ? callbacks.PrewriteSprite : DummyPrewriteSprite;
 }
 
 SpriteCache::~SpriteCache() {
@@ -132,15 +132,6 @@ void SpriteCache::SetEmptySprite(sprkey_t index, bool as_asset) {
 	if (as_asset)
 		_spriteData[index].Flags = SPRCACHEFLAG_ISASSET;
 	RemapSpriteToSprite0(index);
-}
-
-void SpriteCache::SubstituteBitmap(sprkey_t index, Bitmap *sprite) {
-	if (!DoesSpriteExist(index)) {
-		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Error, "SubstituteBitmap: attempt to set for non-existing sprite %d", index);
-		return;
-	}
-	_spriteData[index].Image = sprite;
-	SprCacheLog("SubstituteBitmap: %d", index);
 }
 
 Bitmap *SpriteCache::RemoveSprite(sprkey_t index) {
@@ -335,27 +326,25 @@ size_t SpriteCache::LoadSprite(sprkey_t index) {
 		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Warn,
 			"LoadSprite: failed to load sprite %d:\n%s\n - remapping to sprite 0.", index,
 			err ? "Sprite does not exist." : err->FullMessage().GetCStr());
-		RemapSpriteToSprite0(index);
+		InitNullSpriteParams(index);
 		return 0;
 	}
 
-	// update the stored width/height
+	// Let the external user convert this sprite's image for their needs
+	image = _callbacks.InitSprite(index, image, _sprInfos[index].Flags);
+	if (!image) {
+		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Warn,
+					  "LoadSprite: failed to initialize sprite %d, remapping to sprite 0.", index);
+		InitNullSpriteParams(index);
+		return 0;
+	}
+
+	// save the stored sprite info
 	_sprInfos[index].Width = image->GetWidth();
 	_sprInfos[index].Height = image->GetHeight();
 	_spriteData[index].Image = image;
-
-	// Stop it adding the sprite to the used list just because it's loaded
-	// TODO: this messy hack is required, because initialize_sprite calls operator[]
-	// which puts the sprite to the MRU list.
-	_spriteData[index].Flags |= SPRCACHEFLAG_LOCKED;
-
-	// TODO: this is ugly: asks the engine to convert the sprite using its own knowledge.
-	// And engine assigns new bitmap using SpriteCache::SubstituteBitmap().
-	// Perhaps change to the callback function pointer?
-	initialize_sprite(index);
-
-	if (index != 0)  // leave sprite 0 locked
-		_spriteData[index].Flags &= ~SPRCACHEFLAG_LOCKED;
+	if (index == 0) // keep sprite 0 locked
+		_spriteData[index].Flags |= SPRCACHEFLAG_LOCKED;
 
 	const size_t size = _sprInfos[index].Width * _sprInfos[index].Height *
 		_spriteData[index].Image->GetBPP();
@@ -364,6 +353,12 @@ size_t SpriteCache::LoadSprite(sprkey_t index) {
 	_spriteData[index].Size = size;
 	_cacheSize += size;
 	SprCacheLog("Loaded %d, size now %zu KB", index, _cacheSize / 1024);
+
+	// Let the external user to react to the new sprite;
+	// note that this callback is allowed to modify the sprite's pixels,
+	// but not its size or flags.
+	_callbacks.PostInitSprite(index);
+
 	return size;
 }
 
@@ -377,15 +372,20 @@ void SpriteCache::RemapSpriteToSprite0(sprkey_t index) {
 	SprCacheLog("RemapSpriteToSprite0: %d", index);
 }
 
+void SpriteCache::InitNullSpriteParams(sprkey_t index) {
+	assert(index >= 0);
+	if (index > 0) {
+		RemapSpriteToSprite0(index);
+	} else {
+		_sprInfos[index] = SpriteInfo();
+		_spriteData[index] = SpriteData();
+	}
+}
+
 int SpriteCache::SaveToFile(const String &filename, int store_flags, SpriteCompression compress, SpriteFileIndex &index) {
 	std::vector<std::pair<bool, Bitmap *>> sprites;
 	for (size_t i = 0; i < _spriteData.size(); ++i) {
-		// NOTE: this is a horrible hack:
-		// because Editor expects slightly different RGB order, it swaps colors
-		// when loading them (call to initialize_sprite), so here we basically
-		// unfix that fix to save the data in a way that engine will expect.
-		// TODO: perhaps adjust the editor to NOT need this?!
-		pre_save_sprite(_spriteData[i].Image);
+		_callbacks.PrewriteSprite(_spriteData[i].Image);
 		sprites.push_back(std::make_pair(DoesSpriteExist(i), _spriteData[i].Image));
 	}
 	return SaveSpriteFile(filename, sprites, &_file, store_flags, compress, index);
@@ -408,11 +408,12 @@ HError SpriteCache::InitFile(const String &filename, const String &sprindex_file
 		if (!metrics[i].IsNull()) {
 			// Existing sprite
 			_spriteData[i].Flags = SPRCACHEFLAG_ISASSET;
-			get_new_size_for_sprite(i, metrics[i].Width, metrics[i].Height, _sprInfos[i].Width, _sprInfos[i].Height);
+			Size newsz = _callbacks.AdjustSize(Size(metrics[i].Width, metrics[i].Height), _sprInfos[i].Flags);
+			_sprInfos[i].Width = newsz.Width;
+			_sprInfos[i].Height = newsz.Height;
 		} else {
 			// Handle empty slot: remap to sprite 0
-			if (i > 0) // FIXME: optimize
-				InitNullSpriteParams(i);
+			InitNullSpriteParams(i);
 		}
 	}
 	return HError::None();

@@ -89,7 +89,19 @@ public:
 	static const sprkey_t MAX_SPRITE_INDEX = INT32_MAX - 1;
 	static const size_t   MAX_SPRITE_SLOTS = INT32_MAX;
 
-	SpriteCache(std::vector<SpriteInfo> &sprInfos);
+	typedef Size (*PfnAdjustSpriteSize)(const Size &size, const uint32_t sprite_flags);
+	typedef Bitmap *(*PfnInitSprite)(sprkey_t index, Bitmap *image, uint32_t &sprite_flags);
+	typedef void (*PfnPostInitSprite)(sprkey_t index);
+	typedef void (*PfnPrewriteSprite)(Bitmap *image);
+
+	struct Callbacks {
+		PfnAdjustSpriteSize AdjustSize;
+		PfnInitSprite InitSprite;
+		PfnPostInitSprite PostInitSprite;
+		PfnPrewriteSprite PrewriteSprite;
+	};
+
+	SpriteCache(std::vector<SpriteInfo> &sprInfos, const Callbacks &callbacks);
 	~SpriteCache();
 
 	// Loads sprite reference information and inits sprite stream
@@ -126,8 +138,6 @@ public:
 	size_t      GetSpriteSlotCount() const;
 	// Loads sprite and and locks in memory (so it cannot get removed implicitly)
 	void        Precache(sprkey_t index);
-	// Remap the given index to the sprite 0
-	void        RemapSpriteToSprite0(sprkey_t index);
 	// Unregisters sprite from the bank and returns the bitmap
 	Bitmap		*RemoveSprite(sprkey_t index);
 	// Deletes particular sprite, marks slot as unused
@@ -143,8 +153,6 @@ public:
 	// Assigns new sprite for the given index, remapping it to sprite 0;
 	// optionally marks it as an asset placeholder
 	void        SetEmptySprite(sprkey_t index, bool as_asset);
-	// Assigns new bitmap for the *registered* sprite without changing its properties
-	void        SubstituteBitmap(sprkey_t index, Shared::Bitmap *);
 	// Sets max cache size in bytes
 	void        SetMaxCacheSize(size_t size);
 
@@ -154,6 +162,8 @@ public:
 private:
 	// Load sprite from game resource
 	size_t      LoadSprite(sprkey_t index);
+	// Remap the given index to the sprite 0
+	void        RemapSpriteToSprite0(sprkey_t index);
 	// Gets the index of a sprite which data is used for the given slot;
 	// in case of remapped sprite this will return the one given sprite is remapped to
 	sprkey_t    GetDataIndex(sprkey_t index);
@@ -161,6 +171,15 @@ private:
 	void        DisposeOldest();
 	// Keep disposing oldest elements until cache has at least the given free space
 	void        FreeMem(size_t space);
+	// Initialize the empty sprite slot
+	void 		InitNullSpriteParams(sprkey_t index);
+	//
+    // Dummy no-op variants for callbacks
+    //
+	static Size   DummyAdjustSize(const Size &size, const uint32_t) { return size; }
+	static Bitmap *DummyInitSprite(sprkey_t, Bitmap *image, uint32_t &) { return image; }
+	static void   DummyPostInitSprite(sprkey_t) { /* do nothing */ }
+	static void   DummyPrewriteSprite(Bitmap *) { /* do nothing */ }
 
 	// Information required for the sprite streaming
 	struct SpriteData {
@@ -187,6 +206,7 @@ private:
 	// Array of sprite references
 	std::vector<SpriteData> _spriteData;
 
+	Callbacks _callbacks;
 	SpriteFile _file;
 
 	size_t _maxCacheSize;  // cache size limit
@@ -198,8 +218,6 @@ private:
 	// that were last time used long ago.
 	std::list<sprkey_t> _mru;
 
-	// Initialize the empty sprite slot
-	void        InitNullSpriteParams(sprkey_t index);
 };
 
 } // namespace Shared
