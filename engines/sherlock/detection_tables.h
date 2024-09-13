@@ -263,6 +263,22 @@ static const SherlockGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Case of the Rose Tattoo - Russian CD
+		{
+			"rosetattoo",
+			"CD",
+			/* talk.lib is actually different from English but first 5000 bytes and sizes are identical.  */
+			AD_ENTRY2s("talk.lib", "9639a756b0993ebd71cb5f4d8b78b2dc", 765134,
+				   "font.vgs", "t:11a7df2e63cfc6e48415f62c3ec291d5", 8959),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO3(GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_HELP_STYLE, GAMEOPTION_TRANSPARENT_WINDOWS)
+		},
+		GType_RoseTattoo,
+	},
+
+	{
 		// Case of the Rose Tattoo - German CD
 		// Provided by m_kiewitz
 		{
