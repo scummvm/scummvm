@@ -1753,7 +1753,7 @@ void UseCode::putobjunderpillow(int objNum) {
 }
 
 void UseCode::gancanim() {
-	// TODO
+	error("implement gancanim()"); // TODO
 }
 
 static constexpr bool diggingxflipTbl[12] = {
