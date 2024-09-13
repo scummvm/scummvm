@@ -868,7 +868,9 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 	DrawVerticalBorderSide(pos, Common::Point(6, size.y), s);
 
 	// Right side
-	DrawVerticalBorderSide(pos - Common::Point(6, 0), Common::Point(6, size.y), s);
+	// TODO: Check if we have the right offset on the right, I missed the part about adding
+	// the width originally
+	DrawVerticalBorderSide(pos + Common::Point(size.x - 6, 0), Common::Point(6, size.y), s);
 
 	// Top side
 	DrawHorizontalBorderSide(pos, Common::Point(size.x, 6), s);
