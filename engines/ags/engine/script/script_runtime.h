@@ -87,6 +87,8 @@ inline void ccAddExternalFunctions361(const ScFnRegister (&arr)[N]) {
 void *ccGetSymbolAddress(const String &name);
 // Get a registered symbol's direct pointer; this is used solely for plugins
 Plugins::PluginMethod ccGetSymbolAddressForPlugin(const String &name);
+// Get a registered Script Object, optionally restricting to the given type name
+void *ccGetScriptObjectAddress(const String &name, const String &type);
 
 // DEBUG HOOK
 typedef void (*new_line_hook_type)(ccInstance *, int);

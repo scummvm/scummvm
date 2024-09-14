@@ -718,6 +718,14 @@ bool CycleViewAnim(int view, uint16_t &o_loop, uint16_t &o_frame, bool forwards,
 //
 //=============================================================================
 
+ScriptObject *Object_GetByName(const char *name) {
+	return static_cast<ScriptObject *>(ccGetScriptObjectAddress(name, _GP(ccDynamicObject).GetType()));
+}
+
+RuntimeScriptValue Sc_Object_GetByName(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_OBJ_POBJ(ScriptObject, _GP(ccDynamicObject), Object_GetByName, const char);
+}
+
 // void (ScriptObject *objj, int loop, int delay, int repeat, int blocking, int direction)
 RuntimeScriptValue Sc_Object_Animate5(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT5(ScriptObject, Object_Animate5);
@@ -1041,6 +1049,7 @@ void RegisterObjectAPI() {
 	ScFnRegister object_api[] = {
 		{"Object::GetAtRoomXY^2", API_FN_PAIR(GetObjectAtRoom)},
 		{"Object::GetAtScreenXY^2", API_FN_PAIR(GetObjectAtScreen)},
+		{"Object::GetByName", API_FN_PAIR(Object_GetByName)},
 
 		{"Object::Animate^5", API_FN_PAIR(Object_Animate5)},
 		{"Object::Animate^6", API_FN_PAIR(Object_Animate6)},
