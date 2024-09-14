@@ -747,7 +747,6 @@ public:
 	CCDialog *_ccDynamicDialog;
 	CCAudioClip *_ccDynamicAudioClip;
 	CCAudioChannel *_ccDynamicAudio;
-	ScriptString *_myScriptStringImpl;
 	ScriptObject *_scrObj;
 	std::vector<ScriptGUI> *_scrGui;
 	ScriptHotspot *_scrHotspot;
@@ -1288,7 +1287,7 @@ public:
 	/**@}*/
 
 	/**
-	 * @defgroup agsscript_runtimeglobals script_runtime globals
+	 * @defgroup agsscript_runtimeglobals agscript_string script_runtime globals
 	 * @ingroup agsglobals
 	 * @{
 	 */
@@ -1304,6 +1303,7 @@ public:
 	// after which the interpreter will abort
 	unsigned _maxWhileLoops = 0u;
 	ccInstance *_loadedInstances[MAX_LOADED_INSTANCES];
+	ScriptString *_myScriptStringImpl;
 
 	/**@}*/
 

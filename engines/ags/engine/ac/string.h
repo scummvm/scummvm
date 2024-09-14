@@ -24,11 +24,16 @@
 
 //include <stdarg.h>
 #include "ags/engine/ac/dynobj/cc_script_object.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 
 // Check that a supplied buffer from a text script function was not null
 #define VALIDATE_STRING(strin) if (!strin) quit("!String argument was null: make sure you pass a string buffer")
+
+const char *CreateNewScriptString(const char *text);
+inline const char *CreateNewScriptString(const AGS::Shared::String &text) { return CreateNewScriptString(text.GetCStr()); }
+char *CreateNewScriptString(size_t buf_len); // FIXME, unsafe to expose raw buf like this
 
 int String_IsNullOrEmpty(const char *thisString);
 const char *String_Copy(const char *srcString);
@@ -49,8 +54,6 @@ int StrContains(const char *s1, const char *s2);
 
 //=============================================================================
 
-const char *CreateNewScriptString(const char *fromText, bool reAllocate = true);
-DynObjectRef CreateNewScriptStringObj(const char *fromText, bool reAllocate = true);
 class SplitLines;
 // Break up the text into lines restricted by the given width;
 // returns number of lines, or 0 if text cannot be split well to fit in this width.

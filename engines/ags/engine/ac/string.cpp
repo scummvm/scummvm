@@ -42,6 +42,14 @@
 
 namespace AGS3 {
 
+const char *CreateNewScriptString(const char *text) {
+	return (const char *)ScriptString::Create(text).Obj;
+}
+
+char *CreateNewScriptString(size_t buf_length) {
+	return (char *)ScriptString::Create(buf_length).Obj;
+}
+
 int String_IsNullOrEmpty(const char *thisString) {
 	if ((thisString == nullptr) || (thisString[0] == 0))
 		return 1;
@@ -54,20 +62,20 @@ const char *String_Copy(const char *srcString) {
 }
 
 const char *String_Append(const char *thisString, const char *extrabit) {
-	size_t ln = strlen(thisString) + strlen(extrabit) + 1;
-	char *buffer = (char *)malloc(ln);
-	Common::strcpy_s(buffer, ln, thisString);
-	Common::strcat_s(buffer, ln, extrabit);
-	return CreateNewScriptString(buffer, false);
+	size_t new_len = strlen(thisString) + strlen(extrabit);
+	char *buffer = CreateNewScriptString(new_len);
+	Common::strcpy_s(buffer, new_len, thisString);
+	Common::strcat_s(buffer, new_len, extrabit);
+	return buffer;
 }
 
 const char *String_AppendChar(const char *thisString, int extraOne) {
 	char chr[5]{};
 	size_t chw = usetc(chr, extraOne);
-	size_t ln = strlen(thisString) + chw + 1;
-	char *buffer = (char *)malloc(ln);
-	Common::sprintf_s(buffer, ln, "%s%s", thisString, chr);
-	return CreateNewScriptString(buffer, false);
+    size_t new_len = strlen(thisString) + chw;
+    char *buffer = CreateNewScriptString(new_len);
+	Common::sprintf_s(buffer, new_len, "%s%s", thisString, chr);
+	return buffer;
 }
 
 const char *String_ReplaceCharAt(const char *thisString, int index, int newChar) {
@@ -81,12 +89,12 @@ const char *String_ReplaceCharAt(const char *thisString, int index, int newChar)
 	size_t old_sz = ucwidth(uchar);
 	char new_chr[5]{};
 	size_t new_chw = usetc(new_chr, newChar);
-	size_t total_sz = off + remain_sz + new_chw - old_sz + 1;
-	char *buffer = (char *)malloc(total_sz);
+	size_t new_len = off + remain_sz + new_chw - old_sz;
+	char *buffer = CreateNewScriptString(new_len);
 	memcpy(buffer, thisString, off);
 	memcpy(buffer + off, new_chr, new_chw);
 	memcpy(buffer + off + new_chw, thisString + off + old_sz, remain_sz - old_sz + 1);
-	return CreateNewScriptString(buffer, false);
+	return buffer;
 }
 
 const char *String_Truncate(const char *thisString, int length) {
@@ -97,10 +105,10 @@ const char *String_Truncate(const char *thisString, int length) {
 		return thisString;
 
 	size_t sz = uoffset(thisString, length);
-	char *buffer = (char *)malloc(sz + 1);
+	char *buffer = CreateNewScriptString(sz);
 	memcpy(buffer, thisString, sz);
 	buffer[sz] = 0;
-	return CreateNewScriptString(buffer, false);
+	return buffer;
 }
 
 const char *String_Substring(const char *thisString, int index, int length) {
@@ -114,10 +122,10 @@ const char *String_Substring(const char *thisString, int index, int length) {
 	size_t end = uoffset(thisString + start, sublen) + start;
 	size_t copysz = end - start;
 
-	char *buffer = (char *)malloc(copysz + 1);
+	char *buffer = CreateNewScriptString(copysz);
 	memcpy(buffer, thisString + start, copysz);
 	buffer[copysz] = 0;
-	return CreateNewScriptString(buffer, false);
+	return buffer;
 }
 
 int String_CompareTo(const char *thisString, const char *otherString, bool caseSensitive) {
@@ -185,19 +193,23 @@ const char *String_Replace(const char *thisString, const char *lookForText, cons
 	}
 
 	resultBuffer[outputSize] = 0; // terminate
-	return CreateNewScriptString(resultBuffer, true);
+	return CreateNewScriptString(resultBuffer);
 }
 
 const char *String_LowerCase(const char *thisString) {
-	char *buffer = ags_strdup(thisString);
+	size_t len = strlen(thisString);
+	char *buffer = CreateNewScriptString(len);
+	memcpy(buffer, thisString, len);
 	ustrlwr(buffer);
-	return CreateNewScriptString(buffer, false);
+	return buffer;
 }
 
 const char *String_UpperCase(const char *thisString) {
-	char *buffer = ags_strdup(thisString);
+	size_t len = strlen(thisString);
+	char *buffer = CreateNewScriptString(len);
+	memcpy(buffer, thisString, len);
 	ustrupr(buffer);
-	return CreateNewScriptString(buffer, false);
+	return buffer;
 }
 
 int String_GetChars(const char *texx, int index) {
@@ -244,34 +256,6 @@ int StrContains(const char *s1, const char *s2) {
 }
 
 //=============================================================================
-
-const char *CreateNewScriptString(const String &fromText) {
-	return (const char *)CreateNewScriptStringObj(fromText.GetCStr(), true).Obj;
-}
-
-const char *CreateNewScriptString(const char *fromText, bool reAllocate) {
-	return (const char *)CreateNewScriptStringObj(fromText, reAllocate).Obj;
-}
-
-DynObjectRef CreateNewScriptStringObj(const String &fromText) {
-	return CreateNewScriptStringObj(fromText.GetCStr(), true);
-}
-
-DynObjectRef CreateNewScriptStringObj(const char *fromText, bool reAllocate) {
-	ScriptString *str;
-	if (reAllocate) {
-		str = new ScriptString(fromText);
-	} else { // TODO: refactor to avoid const casts!
-		str = new ScriptString(const_cast<char *>(fromText), true);
-	}
-	void *obj_ptr = str->GetTextPtr();
-	int32_t handle = ccRegisterManagedObject(obj_ptr, str);
-	if (handle == 0) {
-		delete str;
-		return DynObjectRef();
-	}
-	return DynObjectRef(handle, obj_ptr, str);
-}
 
 size_t break_up_text_into_lines(const char *todis, bool apply_direction, SplitLines &lines, int wii, int fonnt, size_t max_lines) {
 	if (fonnt == -1)

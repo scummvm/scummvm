@@ -21,7 +21,7 @@
 
 #include "ags/engine/ac/dynobj/cc_dynamic_array.h"
 #include "ags/engine/ac/dynobj/dynobj_manager.h"
-#include "ags/shared/util/memory_stream.h"
+#include "ags/engine/ac/dynobj/script_string.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -62,7 +62,7 @@ size_t CCDynamicArray::CalcSerializeSize(const void *address) {
 	return hdr.TotalSize + FileHeaderSz;
 }
 
-void CCDynamicArray::Serialize(const void *address, AGS::Shared::Stream *out) {
+void CCDynamicArray::Serialize(const void *address, Stream *out) {
 	const Header &hdr = GetHeader(address);
 	out->WriteInt32(hdr.ElemCount);
 	out->WriteInt32(hdr.TotalSize);
@@ -101,7 +101,7 @@ DynObjectRef DynamicArrayHelpers::CreateStringArray(const std::vector<const char
 	// Create script strings and put handles into array
 	int32_t *slots = static_cast<int32_t *>(arr.Obj);
 	for (auto s : items) {
-		DynObjectRef str = _G(stringClassImpl)->CreateString(s);
+		DynObjectRef str = ScriptString::Create(s);
 		// We must add reference count, because the string is going to be saved
 		// within another object (array), not returned to script directly
 		ccAddObjectReference(str.Handle);
