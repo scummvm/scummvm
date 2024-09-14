@@ -918,6 +918,7 @@ void FreescapeEngine::initGameState() {
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
 	_lastMinute = minutes;
+	_exploredAreas.clear();
 }
 
 void FreescapeEngine::rotate(float xoffset, float yoffset) {

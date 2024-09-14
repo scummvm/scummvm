@@ -112,7 +112,6 @@ private:
 	bool tryDestroyECD(int index);
 	bool tryDestroyECDFullGame(int index);
 	void addWalls(Area *area);
-	Common::HashMap<uint16, bool> _exploredAreas;
 };
 
 }

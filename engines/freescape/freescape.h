@@ -530,6 +530,7 @@ public:
 	bool _endGamePlayerEndArea;
 	bool _forceEndGame;
 	bool _playerWasCrushed;
+	Common::HashMap<uint16, bool> _exploredAreas;
 	ObjectArray _sensors;
 	virtual void checkSensors();
 	virtual void drawSensorShoot(Sensor *sensor);

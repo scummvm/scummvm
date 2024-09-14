@@ -286,6 +286,11 @@ void CastleEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *inf
 void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
 
+	if (!_exploredAreas.contains(areaID)) {
+		_gameStateVars[k8bitVariableScore] += 17500;
+		_exploredAreas[areaID] = true;
+	}
+
 	assert(_areaMap.contains(areaID));
 	_currentArea = _areaMap[areaID];
 	_currentArea->show();
@@ -349,6 +354,7 @@ void CastleEngine::initGameState() {
 	_spiritsMeter = 32;
 	_spiritsMeterMax = 64;
 
+	_exploredAreas[_startArea] = true;
 	if (_useRockTravel) // Enable cheat
 		setGameBit(k8bitGameBitTravelRock);
 }
@@ -1133,6 +1139,12 @@ Common::Error CastleEngine::saveGameStreamExtended(Common::WriteStream *stream, 
 	stream->writeUint32LE(_numberKeys);
 	stream->writeUint32LE(_spiritsMeter);
 	stream->writeUint32LE(_spiritsDestroyed);
+
+	for (auto &it : _areaMap) {
+		stream->writeUint16LE(it._key);
+		stream->writeUint32LE(_exploredAreas[it._key]);
+	}
+
 	return Common::kNoError;
 }
 
@@ -1140,6 +1152,11 @@ Common::Error CastleEngine::loadGameStreamExtended(Common::SeekableReadStream *s
 	_numberKeys = stream->readUint32LE();
 	_spiritsMeter = stream->readUint32LE();
 	_spiritsDestroyed = stream->readUint32LE();
+
+	for (uint i = 0; i < _areaMap.size(); i++) {
+		uint16 key = stream->readUint16LE();
+		_exploredAreas[key] = stream->readUint32LE();
+	}
 
 	if (_useRockTravel) // Enable cheat
 		setGameBit(k8bitGameBitTravelRock);

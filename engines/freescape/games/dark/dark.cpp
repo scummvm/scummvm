@@ -255,7 +255,6 @@ void DarkEngine::initGameState() {
 	_gameStateVars[kVariableActiveECDs] = 100;
 
 	_playerHeightNumber = 1;
-	_exploredAreas.clear();
 	_exploredAreas[_startArea] = true;
 
 	_endArea = 1;
