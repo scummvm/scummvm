@@ -233,7 +233,6 @@ Globals::Globals() {
 	_ccDynamicDialog = new CCDialog();
 	_ccDynamicAudioClip = new CCAudioClip();
 	_ccDynamicAudio = new CCAudioChannel();
-	_myScriptStringImpl = new ScriptString();
 	_guis = new std::vector<AGS::Shared::GUIMain>();
 	_play = new GameState();
 	_game = new GameSetupStruct();
@@ -386,6 +385,9 @@ Globals::Globals() {
 	Common::fill(_loadedInstances, _loadedInstances + MAX_LOADED_INSTANCES,
 	             (ccInstance *)nullptr);
 
+	// script_string.cpp globals
+	_myScriptStringImpl = new ScriptString();
+
 	// system_imports.cpp globals
 	_simp = new SystemImports();
 	_simp_for_plugin = new SystemImports();
@@ -510,7 +512,6 @@ Globals::~Globals() {
 	delete _ccDynamicDialog;
 	delete _ccDynamicAudioClip;
 	delete _ccDynamicAudio;
-	delete _myScriptStringImpl;
 	delete _guis;
 	delete _game;
 	delete _play;
@@ -635,6 +636,9 @@ Globals::~Globals() {
 	delete _moduleInst;
 	delete _moduleInstFork;
 	delete _moduleRepExecAddr;
+
+	// script_string.cpp globals
+	delete _myScriptStringImpl;
 
 	// system_imports.cpp globals
 	delete _simp;
