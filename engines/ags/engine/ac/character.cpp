@@ -3098,14 +3098,16 @@ RuntimeScriptValue Sc_Character_Say(void *self, const RuntimeScriptValue *params
 	return RuntimeScriptValue((int32_t)0);
 }
 
-// void (CharacterInfo *chaa, int x, int y, int width, const char *texx)
 RuntimeScriptValue Sc_Character_SayAt(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_VOID_PINT3_POBJ(CharacterInfo, Character_SayAt, const char);
+	API_OBJCALL_SCRIPT_SPRINTF(Character_SayAt, 4);
+	Character_SayAt((CharacterInfo *)self, params[0].IValue, params[1].IValue, params[2].IValue, scsf_buffer);
+	return RuntimeScriptValue((int32_t)0);
 }
 
-// ScriptOverlay* (CharacterInfo *chaa, const char *texx)
 RuntimeScriptValue Sc_Character_SayBackground(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_OBJAUTO_POBJ(CharacterInfo, ScriptOverlay, Character_SayBackground, const char);
+	API_OBJCALL_SCRIPT_SPRINTF(Character_SayBackground, 1);
+	auto *ret_obj = Character_SayBackground((CharacterInfo *)self, scsf_buffer);
+	return RuntimeScriptValue().SetScriptObject(ret_obj, ret_obj);
 }
 
 // void (CharacterInfo *chaa)
@@ -3629,13 +3631,21 @@ RuntimeScriptValue Sc_Character_SetZ(void *self, const RuntimeScriptValue *param
 //
 //=============================================================================
 
-// void (CharacterInfo *chaa, const char *texx, ...)
 void ScPl_Character_Say(CharacterInfo *chaa, const char *texx, ...) {
 	API_PLUGIN_SCRIPT_SPRINTF(texx);
 	Character_Say(chaa, scsf_buffer);
 }
 
-// void (CharacterInfo *chaa, const char *texx, ...)
+void ScPl_Character_SayAt(CharacterInfo *chaa, int x, int y, int width, const char *texx, ...) {
+	API_PLUGIN_SCRIPT_SPRINTF(texx);
+	Character_SayAt(chaa, x, y, width, scsf_buffer);
+}
+
+ScriptOverlay *ScPl_Character_SayBackground(CharacterInfo *chaa, const char *texx, ...) {
+	API_PLUGIN_SCRIPT_SPRINTF(texx);
+	return Character_SayBackground(chaa, scsf_buffer);
+}
+
 void ScPl_Character_Think(CharacterInfo *chaa, const char *texx, ...) {
 	API_PLUGIN_SCRIPT_SPRINTF(texx);
 	Character_Think(chaa, scsf_buffer);
@@ -3682,8 +3692,12 @@ void RegisterCharacterAPI(ScriptAPIVersion base_api, ScriptAPIVersion /* compat_
 		{"Character::RemoveTint^0", API_FN_PAIR(Character_RemoveTint)},
 		{"Character::RunInteraction^1", API_FN_PAIR(Character_RunInteraction)},
 		{"Character::Say^101", Sc_Character_Say},
+		// old non-variadic variants
 		{"Character::SayAt^4", API_FN_PAIR(Character_SayAt)},
 		{"Character::SayBackground^1", API_FN_PAIR(Character_SayBackground)},
+		// newer variadic variants
+		{"Character::SayAt^104", Sc_Character_SayAt},
+		{"Character::SayBackground^101", Sc_Character_SayBackground},
 		{"Character::SetAsPlayer^0", API_FN_PAIR(Character_SetAsPlayer)},
 		{"Character::SetIdleView^2", API_FN_PAIR(Character_SetIdleView)},
 		{"Character::SetLightLevel^1", API_FN_PAIR(Character_SetLightLevel)},
