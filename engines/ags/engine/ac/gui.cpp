@@ -604,6 +604,14 @@ void gui_on_mouse_down(const int guin, const int mbut) {
 //
 //=============================================================================
 
+ScriptGUI *GUI_GetByName(const char *name) {
+	return static_cast<ScriptGUI *>(ccGetScriptObjectAddress(name, _GP(ccDynamicGUI).GetType()));
+}
+
+RuntimeScriptValue Sc_GUI_GetByName(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_OBJ_POBJ(ScriptGUI, _GP(ccDynamicGUI), GUI_GetByName, const char);
+}
+
 // void GUI_Centre(ScriptGUI *sgui)
 RuntimeScriptValue Sc_GUI_Centre(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID(ScriptGUI, GUI_Centre);
@@ -792,6 +800,7 @@ RuntimeScriptValue Sc_GUI_GetShown(void *self, const RuntimeScriptValue *params,
 void RegisterGUIAPI() {
 	ScFnRegister gui_api[] = {
 		{"GUI::GetAtScreenXY^2", API_FN_PAIR(GetGUIAtLocation)},
+		{"GUI::GetByName", API_FN_PAIR(GUI_GetByName)},
 		{"GUI::ProcessClick^3", API_FN_PAIR(GUI_ProcessClick)},
 
 		{"GUI::Centre^0", API_FN_PAIR(GUI_Centre)},

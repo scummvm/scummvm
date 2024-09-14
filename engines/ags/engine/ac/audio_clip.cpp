@@ -27,6 +27,7 @@
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/shared/core/asset_manager.h"
 #include "ags/engine/ac/dynobj/cc_audio_channel.h"
+#include "ags/engine/ac/dynobj/cc_audio_clip.h"
 #include "ags/engine/script/runtime_script_value.h"
 #include "ags/globals.h"
 
@@ -90,6 +91,14 @@ ScriptAudioChannel *AudioClip_PlayOnChannel(ScriptAudioClip *clip, int chan, int
 //
 //=============================================================================
 
+ScriptAudioClip *AudioClip_GetByName(const char *name) {
+	return static_cast<ScriptAudioClip *>(ccGetScriptObjectAddress(name, _GP(ccDynamicAudioClip).GetType()));
+}
+
+RuntimeScriptValue Sc_AudioClip_GetByName(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_OBJ_POBJ(ScriptAudioClip, _GP(ccDynamicAudioClip), AudioClip_GetByName, const char);
+}
+
 RuntimeScriptValue Sc_AudioClip_GetID(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptAudioClip, AudioClip_GetID);
 }
@@ -135,6 +144,7 @@ RuntimeScriptValue Sc_AudioClip_PlayOnChannel(void *self, const RuntimeScriptVal
 
 void RegisterAudioClipAPI() {
 	ScFnRegister audioclip_api[] = {
+		{"AudioClip::GetByName", API_FN_PAIR(AudioClip_GetByName)},
 		{"AudioClip::Play^2", API_FN_PAIR(AudioClip_Play)},
 		{"AudioClip::PlayFrom^3", API_FN_PAIR(AudioClip_PlayFrom)},
 		{"AudioClip::PlayQueued^2", API_FN_PAIR(AudioClip_PlayQueued)},

@@ -63,6 +63,7 @@
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
+#include "ags/engine/ac/dynobj/cc_dialog.h"
 #include "ags/engine/ac/dynobj/script_string.h"
 #include "ags/ags.h"
 #include "ags/globals.h"
@@ -1181,6 +1182,14 @@ void do_conversation(int dlgnum) {
 //
 //=============================================================================
 
+ScriptDialog *Dialog_GetByName(const char *name) {
+	return static_cast<ScriptDialog *>(ccGetScriptObjectAddress(name, _GP(ccDynamicDialog).GetType()));
+}
+
+RuntimeScriptValue Sc_Dialog_GetByName(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_OBJ_POBJ(ScriptDialog, _GP(ccDynamicDialog), Dialog_GetByName, const char);
+}
+
 // int (ScriptDialog *sd)
 RuntimeScriptValue Sc_Dialog_GetID(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptDialog, Dialog_GetID);
@@ -1232,6 +1241,7 @@ RuntimeScriptValue Sc_Dialog_Start(void *self, const RuntimeScriptValue *params,
 
 void RegisterDialogAPI() {
 	ScFnRegister dialog_api[] = {
+		{"Dialog::GetByName", API_FN_PAIR(Dialog_GetByName)},
 		{"Dialog::get_ID", API_FN_PAIR(Dialog_GetID)},
 		{"Dialog::get_OptionCount", API_FN_PAIR(Dialog_GetOptionCount)},
 		{"Dialog::get_ShowTextParser", API_FN_PAIR(Dialog_GetShowTextParser)},
