@@ -1064,6 +1064,8 @@ void RegisterObjectAPI() {
 		{"Object::StopMoving^0", API_FN_PAIR(Object_StopMoving)},
 		{"Object::Tint^5", API_FN_PAIR(Object_Tint)},
 		{"Object::get_Animating", API_FN_PAIR(Object_GetAnimating)},
+		{"Object::get_AnimationVolume", API_FN_PAIR(Object_GetAnimationVolume)},
+		{"Object::set_AnimationVolume", API_FN_PAIR(Object_SetAnimationVolume)},
 		{"Object::get_Baseline", API_FN_PAIR(Object_GetBaseline)},
 		{"Object::set_Baseline", API_FN_PAIR(Object_SetBaseline)},
 		{"Object::get_BlockingHeight", API_FN_PAIR(Object_GetBlockingHeight)},
