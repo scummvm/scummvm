@@ -231,14 +231,10 @@ void CCScriptGame::WriteInt32(void *address, intptr_t offset, int32_t val) {
 	case 57:
 		_GP(play).inv_top = val;
 		break;
-	case 58:
-		_GP(play).inv_numdisp = val;
-		break;
-	case 59:
-		_GP(play).inv_numorder = val;
-		break;
-	case 60:
-		_GP(play).inv_numinline = val;
+	case 58: // play.inv_numdisp
+	case 59: // play.inv_numorder
+	case 60: // play.inv_numinline
+		cc_error("ScriptGame: attempt to write readonly variable at offset %d", offset);
 		break;
 	case 61:
 		_GP(play).text_speed = val;
