@@ -318,40 +318,60 @@ void CastleEngine::loadAssetsDOSDemo() {
 			loadSpeakerFxDOS(stream, 0x636d + 0x200, 0x63ed + 0x200);
 			loadDOSFonts(stream, 0x293f6);
 
-			stream->seek(0x1c700 - 0x2a0);
-			_background = loadFrameFromPlanes(stream, 252, 42);
+			stream->seek(0x197c0 - 0x2a0);
+			_endGameBackgroundFrame = loadFrameFromPlanes(stream, 112, 108);
+			_endGameBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+
+			_background = loadFrameFromPlanes(stream, 504, 42);
 			_background->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
 
+			stream->seek(0x1f4e3 - 0x2a0);
+			for (int i = 0; i < 6; i++)
+				debug("i: %d -> %x", i, stream->readByte());
+			debug("%lx", stream->pos());
+			debug("extra: %x", stream->readByte());
+
+			for (int i = 0; i < 9; i++) {
+				Graphics::ManagedSurface *frame = loadFrameFromPlanes(stream, 8, 14);
+				frame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+				_keysBorderFrames.push_back(frame);
+			}
+
+			for (int i = 0; i < 11; i++) {
+				Graphics::ManagedSurface *frame = loadFrameFromPlanes(stream, 8, 14);
+				frame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+				_keysMenuFrames.push_back(frame);
+			}
+
+			stream->seek(0x20262 - 0x2a0);
+			_strenghtBackgroundFrame = loadFrameWithHeaderDOS(stream);
+			_strenghtBarFrame = loadFrameWithHeaderDOS(stream);
+			_strenghtWeightsFrames = loadFramesWithHeaderDOS(stream, 4);
+			_spiritsMeterIndicatorBackgroundFrame = loadFrameWithHeaderDOS(stream);
+			_spiritsMeterIndicatorFrame = loadFrameWithHeaderDOS(stream);
+			loadFrameWithHeaderDOS(stream); // side
+			loadFrameWithHeaderDOS(stream); // ???
+
 			stream->seek(0x221ae - 0x2a0);
-			_menu = loadFrameFromPlanes(stream, 112, 114);
+			// No header?
+			_menu = loadFrameFromPlanes(stream, 112, 115);
 			_menu->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
 
-			//debug("%lx", stream->pos());
-			// TODO: some space here from the menu image
-			/*stream->seek(0x25414);
-			_menuCrawlIndicator = loadFrameFromPlanes(stream, 16, 12, lightGray, lightGray, lightGray, darkGray);
-			_menuWalkIndicator = loadFrameFromPlanes(stream, 16, 12, lightGray, lightGray, lightGray, darkGray);
-			_menuRunIndicator = loadFrameFromPlanes(stream, 16, 12, lightGray, lightGray, lightGray, darkGray);
-			_menuFxOffIndicator = loadFrameFromPlanes(stream, 16, 12, lightGray, lightGray, lightGray, darkGray);
-			_menuFxOnIndicator = loadFrameFromPlanes(stream, 16, 12, lightGray, lightGray, lightGray, darkGray);*/
+			Common::Array <Graphics::ManagedSurface *> menuFrames = loadFramesWithHeaderDOS(stream, 5);
+			_menuCrawlIndicator = menuFrames[0];
+			_menuWalkIndicator = menuFrames[1];
+			_menuRunIndicator = menuFrames[2];
+			_menuFxOffIndicator = menuFrames[3];
+			_menuFxOnIndicator = menuFrames[4];
 
-			// This end in 0x257d4??
-			byte flagPalette[4][3] = {
-				{0x00, 0x00, 0x00},
-				{0x00, 0xaa, 0x00},
-				{0x55, 0xff, 0x55},
-				{0xff, 0xff, 0xff}
-			};
-
-			stream->seek(0x257cc - 0x2a0);
-			_flagFrames[0] = loadFrameFromPlanes(stream, 16, 11);
-			_flagFrames[0]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&flagPalette, 4);
-			_flagFrames[1] = loadFrameFromPlanes(stream, 16, 11);
-			_flagFrames[1]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&flagPalette, 4);
-			_flagFrames[2] = loadFrameFromPlanes(stream, 16, 11);
-			_flagFrames[2]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&flagPalette, 4);
-			_flagFrames[3] = loadFrameFromPlanes(stream, 16, 11);
-			_flagFrames[3]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&flagPalette, 4);
+			_flagFrames = loadFramesWithHeaderDOS(stream, 4);
+			_riddleTopFrame = loadFrameWithHeaderDOS(stream);
+			_riddleBackgroundFrame = loadFrameWithHeaderDOS(stream);
+			_riddleBottomFrame = loadFrameWithHeaderDOS(stream);
+			_endGameThroneFrame = loadFrameWithHeaderDOS(stream);
+			// No header
+			_thunderFrame = loadFrameFromPlanes(stream, 16, 128);
+			_thunderFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
 		}
 
 		delete stream;
@@ -374,7 +394,7 @@ void CastleEngine::loadAssetsDOSDemo() {
 
 		stream = decryptFile("CMLD"); // Only english
 		loadMessagesVariableSize(stream, 0x11, 164);
-		loadRiddles(stream, 0xaae, 10);
+		loadRiddles(stream, 0xaae, 21);
 		delete stream;
 
 		stream = decryptFile("CDEDF");
