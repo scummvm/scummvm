@@ -399,9 +399,7 @@ template <typename T> void get_pixel_if_not_transparent(const T *pixel, T *red, 
 	( (((a) & 0xFF) << _vmem_a_shift_32) | (((r) & 0xFF) << _vmem_r_shift_32) | (((g) & 0xFF) << _vmem_g_shift_32) | (((b) & 0xFF) << _vmem_b_shift_32) )
 
 template<typename T, bool HasAlpha, bool UsingLinearFiltering>
-void VideoMemoryGraphicsDriver::BitmapToVideoMemImpl(
-	const Bitmap *bitmap, const TextureTile *tile,
-	uint8_t *dst_ptr, const int dst_pitch) {
+void VideoMemoryGraphicsDriver::BitmapToVideoMemImpl(const Bitmap *bitmap, const TextureTile *tile, uint8_t *dst_ptr, const int dst_pitch) {
 	// tell the compiler these won't change mid loop execution
 	const int t_width = tile->width;
 	const int t_height = tile->height;
@@ -499,60 +497,38 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMem(const Bitmap *bitmap, const boo
 	}
 }
 
-template<typename T, bool HasAlpha>
-void VideoMemoryGraphicsDriver::BitmapToVideoMemOpaqueImpl(
-	const Bitmap *bitmap, const TextureTile *tile,
-	uint8_t *dst_ptr, const int dst_pitch) {
+template<typename T>
+void VideoMemoryGraphicsDriver::BitmapToVideoMemOpaqueImpl(const Bitmap *bitmap, const TextureTile *tile, uint8_t *dst_ptr, const int dst_pitch) {
 	const int t_width = tile->width;
 	const int t_height = tile->height;
 	const int t_x = tile->x;
 	const int t_y = tile->y;
-	if (HasAlpha) {
-		for (int y = 0; y < t_height; y++) {
-			const uint8_t *scanline_at = bitmap->GetScanLine(y + t_y);
-			unsigned int *memPtrLong = (unsigned int *)dst_ptr;
+	for (int y = 0; y < t_height; y++) {
+		const uint8_t *scanline_at = bitmap->GetScanLine(y + t_y);
+		unsigned int *memPtrLong = (unsigned int *)dst_ptr;
 
-			for (int x = 0; x < t_width; x++) {
-				auto srcData = (const T *)&scanline_at[(x + t_x) * sizeof(T)];
-				const T src_color = srcData[0];
-				memPtrLong[x] = VMEMCOLOR_RGBA(
-					algetr<T>(src_color), algetg<T>(src_color), algetb<T>(src_color), algeta<T>(src_color));
-			}
-			dst_ptr += dst_pitch;
+		for (int x = 0; x < t_width; x++) {
+			auto srcData = (const T *)&scanline_at[(x + t_x) * sizeof(T)];
+			const T src_color = srcData[0];
+			memPtrLong[x] = VMEMCOLOR_RGBA(
+				algetr<T>(src_color), algetg<T>(src_color), algetb<T>(src_color), 0xFF);
 		}
-	} else {
-		for (int y = 0; y < t_height; y++) {
-			const uint8_t *scanline_at = bitmap->GetScanLine(y + t_y);
-			unsigned int *memPtrLong = (unsigned int *)dst_ptr;
-
-			for (int x = 0; x < t_width; x++) {
-				auto srcData = (const T *)&scanline_at[(x + t_x) * sizeof(T)];
-				const T src_color = srcData[0];
-				memPtrLong[x] = VMEMCOLOR_RGBA(
-					algetr<T>(src_color), algetg<T>(src_color), algetb<T>(src_color), 0xFF);
-			}
-			dst_ptr += dst_pitch;
-		}
+		dst_ptr += dst_pitch;
 	}
 }
 
-void VideoMemoryGraphicsDriver::BitmapToVideoMemOpaque(const Bitmap *bitmap, const bool has_alpha, const TextureTile *tile,
-													   uint8_t *dst_ptr, const int dst_pitch) {
+void VideoMemoryGraphicsDriver::BitmapToVideoMemOpaque(const Bitmap *bitmap, const TextureTile *tile, uint8_t *dst_ptr, const int dst_pitch) {
 	const int src_depth = bitmap->GetColorDepth();
 
 	switch (src_depth) {
 	case 8:
-		BitmapToVideoMemOpaqueImpl<uint8_t, false>(bitmap, tile, dst_ptr, dst_pitch);
+		BitmapToVideoMemOpaqueImpl<uint8_t>(bitmap, tile, dst_ptr, dst_pitch);
 		break;
 	case 16:
-		BitmapToVideoMemOpaqueImpl<uint16_t, false>(bitmap, tile, dst_ptr, dst_pitch);
+		BitmapToVideoMemOpaqueImpl<uint16_t>(bitmap, tile, dst_ptr, dst_pitch);
 		break;
 	case 32:
-		if (has_alpha) {
-			BitmapToVideoMemOpaqueImpl<uint32_t, true>(bitmap, tile, dst_ptr, dst_pitch);
-		} else {
-			BitmapToVideoMemOpaqueImpl<uint32_t, false>(bitmap, tile, dst_ptr, dst_pitch);
-		}
+		BitmapToVideoMemOpaqueImpl<uint32_t>(bitmap, tile, dst_ptr, dst_pitch);
 		break;
 	default:
 		break;
