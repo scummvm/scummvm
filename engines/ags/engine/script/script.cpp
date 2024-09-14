@@ -164,7 +164,7 @@ int run_interaction_script(const ObjectEvent &obj_evt, InteractionScripts *nint,
 		return -1;
 	}
 
-	int room_was = _GP(play).room_changes;
+	const int room_was = _GP(play).room_changes;
 
 	// TODO: find a way to generalize all the following hard-coded behavior
 
