@@ -19,6 +19,7 @@
  *
  */
 
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/ac/dynobj/script_system.h"
 #include "ags/shared/script/cc_common.h" // cc_error
 
@@ -59,7 +60,7 @@ void ScriptSystem::WriteInt32(void *address, intptr_t offset, int32_t val) {
 	case 4:
 	case 6:
 	case 7:
-		cc_error("ScriptSystem: attempt to write readonly variable at offset %d", offset);
+		debug_script_warn("ScriptSystem: attempt to write in readonly variable at offset %d, value %d", offset, val);
 		break;
 	case 5:
 		vsync = val;
