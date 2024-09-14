@@ -41,10 +41,12 @@
 #include "ags/engine/ac/properties.h"
 #include "ags/engine/ac/screen_overlay.h"
 #include "ags/engine/ac/string.h"
+#include "ags/engine/ac/dynobj/cc_character.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/game/room_struct.h"
 #include "ags/engine/main/game_run.h"
 #include "ags/engine/script/script.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -388,7 +390,8 @@ void RunCharacterInteraction(int cc, int mood) {
 		_GP(play).usedinv = _G(playerchar)->activeinv;
 	}
 
-	const auto obj_evt = ObjectEvent("character%d", cc);
+	const auto obj_evt = ObjectEvent("character%d", cc,
+									 RuntimeScriptValue().SetScriptObject(&_GP(game).chars[cc], &_GP(ccDynamicCharacter)), mood);
 	if (_G(loaded_game_file_version) > kGameVersion_272) {
 		if ((evnt >= 0) &&
 			run_interaction_script(obj_evt, _GP(game).charScripts[cc].get(), evnt, anyclick_evt) < 0)
