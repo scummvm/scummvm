@@ -125,8 +125,10 @@ typedef std::shared_ptr<Bitmap> PBitmap;
 // Various room options
 struct RoomOptions {
 	// Index of the startup music in the room
+	// this is a deprecated option, used before 3.2.* with old audio API.
 	int  StartupMusic;
-	// If saving and loading game is disabled in the room
+	// If saving and loading game is disabled in the room;
+	// this is a deprecated option that affects only built-in save/load dialogs
 	bool SaveLoadDisabled;
 	// If player character is turned off in the room
 	bool PlayerCharOff;
@@ -134,7 +136,7 @@ struct RoomOptions {
 	int  PlayerView;
 	// Room's music volume modifier
 	RoomVolumeMod MusicVolume;
-	// A collection of boolean options
+	// A collection of RoomFlags
 	int  Flags;
 
 	RoomOptions();
