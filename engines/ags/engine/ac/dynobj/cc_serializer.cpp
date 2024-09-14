@@ -50,6 +50,7 @@ void AGSDeSerializer::Unserialize(int index, const char *objectType, const char 
 	// classes registered by plugin cannot, because streams are not (yet)
 	// part of the plugin API.
 	size_t data_sz = static_cast<size_t>(dataSize);
+	assert(data_sz <= INT32_MAX); // dynamic object API does not support size > int32
 	MemoryStream mems(reinterpret_cast<const uint8_t *>(serializedData), dataSize);
 
 	// TODO: consider this: there are object types that are part of the
