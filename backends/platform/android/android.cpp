@@ -576,6 +576,7 @@ void OSystem_Android::initBackend() {
 void OSystem_Android::engineInit() {
 	_engineRunning = true;
 	updateOnScreenControls();
+	dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->applyTouchSettings();
 
 	JNI::setCurrentGame(ConfMan.getActiveDomainName());
 }

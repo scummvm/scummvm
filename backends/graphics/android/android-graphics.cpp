@@ -221,6 +221,11 @@ void AndroidGraphicsManager::refreshScreen() {
 	JNI::swapBuffers();
 }
 
+void AndroidGraphicsManager::applyTouchSettings() const {
+	// not in 3D, maybe in GUI
+	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, _overlayVisible && _overlayInGUI);
+}
+
 void AndroidGraphicsManager::syncVirtkeyboardState(bool virtkeybd_on) {
 	_screenAlign = SCREEN_ALIGN_CENTER;
 	if (virtkeybd_on) {

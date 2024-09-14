@@ -126,6 +126,7 @@ public:
 	void touchControlDraw(uint8 alpha, int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) override;
 
 	void syncVirtkeyboardState(bool virtkeybd_on) override;
+	void applyTouchSettings() const override;
 
 protected:
 	void updateScreenRect();

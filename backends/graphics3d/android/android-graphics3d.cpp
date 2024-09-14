@@ -1110,6 +1110,11 @@ void AndroidGraphics3dManager::touchControlDraw(uint8 alpha, int16 x, int16 y, i
 	_touchcontrols_texture->drawTexture(x, y, w, h, clip);
 }
 
+void AndroidGraphics3dManager::applyTouchSettings() const {
+	// in 3D, maybe in GUI
+	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(true, _show_overlay && _overlay_in_gui);
+}
+
 void AndroidGraphics3dManager::syncVirtkeyboardState(bool virtkeybd_on) {
 	_virtkeybd_on = virtkeybd_on;
 	updateScreenRect();

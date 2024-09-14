@@ -39,6 +39,7 @@ public:
 	virtual bool notifyMousePosition(Common::Point &mouse) = 0;
 
 	virtual void syncVirtkeyboardState(bool virtkeybd_on) = 0;
+	virtual void applyTouchSettings() const = 0;
 
 	/**
 	 * A (subset) of the graphic manager's state. This is used when switching
@@ -104,6 +105,7 @@ protected:
 	void refreshScreen() override;
 
 	void syncVirtkeyboardState(bool virtkeybd_on) override;
+	void applyTouchSettings() const override;
 
 private:
 	OpenGL::Surface *_touchcontrols;
