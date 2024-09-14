@@ -82,8 +82,7 @@ void AGSDeSerializer::Unserialize(int index, const char *objectType, const char 
 	} else if (strcmp(objectType, "Object") == 0) {
 		_GP(ccDynamicObject).Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "String") == 0) {
-		ScriptString *scf = new ScriptString();
-		scf->Unserialize(index, &mems, data_sz);
+		_GP(myScriptStringImpl).Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "File") == 0) {
 		// files cannot be restored properly -- so just recreate
 		// the object; attempting any operations on it will fail

@@ -487,7 +487,6 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	// require access to script API at initialization time.
 	//
 	ccSetScriptAliveTimer(1000 / 60u, 1000u, 150000u);
-	ccSetStringClassImpl(&_GP(myScriptStringImpl));
 	setup_script_exports(base_api, compat_api);
 
 	//

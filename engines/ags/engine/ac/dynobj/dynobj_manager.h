@@ -45,8 +45,6 @@ class Stream;
 
 using namespace AGS; // FIXME later
 
-// set the class that will be used for dynamic strings
-extern void  ccSetStringClassImpl(ICCStringClass *theClass);
 // register a memory handle for the object and allow script
 // pointers to point to it
 extern int32_t ccRegisterManagedObject(void *object, IScriptObject *, ScriptValueType obj_type = kScValScriptObject);

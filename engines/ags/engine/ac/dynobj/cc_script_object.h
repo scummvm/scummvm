@@ -119,12 +119,6 @@ struct ICCObjectReader {
 	virtual void Unserialize(int32_t handle, const char *serializedData, int dataSize) = 0;
 };
 
-// The interface of a dynamic String allocator.
-struct ICCStringClass {
-	virtual ~ICCStringClass() {}
-	virtual DynObjectRef CreateString(const char *fromText) = 0;
-};
-
 } // namespace AGS3
 
 #endif
