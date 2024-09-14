@@ -105,9 +105,20 @@ Plugins::PluginMethod ccGetSymbolAddressForPlugin(const String &name) {
 	return Plugins::PluginMethod();
 }
 
+void *ccGetScriptObjectAddress(const String &name, const String &type) {
+	const auto *imp = _GP(simp).getByName(name);
+	if (!imp)
+		return nullptr;
+	if (imp->Value.Type != kScValScriptObject && imp->Value.Type != kScValPluginObject)
+		return nullptr;
+	if (type != imp->Value.ObjMgr->GetType())
+		return nullptr;
+	return imp->Value.Ptr;
+}
+
 void ccSetScriptAliveTimer(unsigned sys_poll_timeout, unsigned abort_timeout, unsigned abort_loops) {
-	 ccInstance::SetExecTimeout(sys_poll_timeout, abort_timeout, abort_loops);
- }
+	ccInstance::SetExecTimeout(sys_poll_timeout, abort_timeout, abort_loops);
+}
 
 void ccNotifyScriptStillAlive() {
 	ccInstance *cur_inst = ccInstance::GetCurrentInstance();
