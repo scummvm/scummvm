@@ -123,6 +123,14 @@ void set_inv_item_cursorpic(int invItemId, int piccy) {
 //
 //=============================================================================
 
+ScriptInvItem *InventoryItem_GetByName(const char *name) {
+	return static_cast<ScriptInvItem *>(ccGetScriptObjectAddress(name, _GP(ccDynamicInv).GetType()));
+}
+
+RuntimeScriptValue Sc_InventoryItem_GetByName(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_OBJ_POBJ(ScriptInvItem, _GP(ccDynamicInv), InventoryItem_GetByName, const char);
+}
+
 // ScriptInvItem *(int xx, int yy)
 RuntimeScriptValue Sc_GetInvAtLocation(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_OBJ_PINT2(ScriptInvItem, _GP(ccDynamicInv), GetInvAtLocation);
@@ -204,6 +212,7 @@ RuntimeScriptValue Sc_InventoryItem_GetName_New(void *self, const RuntimeScriptV
 void RegisterInventoryItemAPI() {
 	ScFnRegister invitem_api[] = {
 		{"InventoryItem::GetAtScreenXY^2", API_FN_PAIR(GetInvAtLocation)},
+		{"InventoryItem::GetByName", API_FN_PAIR(InventoryItem_GetByName)},
 
 		{"InventoryItem::IsInteractionAvailable^1", API_FN_PAIR(InventoryItem_CheckInteractionAvailable)},
 		{"InventoryItem::GetName^1", API_FN_PAIR(InventoryItem_GetName)},
