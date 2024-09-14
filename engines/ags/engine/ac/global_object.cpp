@@ -37,6 +37,7 @@
 #include "ags/engine/ac/room_object.h"
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/string.h"
+#include "ags/engine/ac/dynobj/cc_object.h"
 #include "ags/engine/ac/view_frame.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/main/game_run.h"
@@ -433,7 +434,9 @@ void RunObjectInteraction(int aa, int mood) {
 		_GP(play).usedinv = _G(playerchar)->activeinv;
 	}
 
-	const auto obj_evt = ObjectEvent("object%d", aa);
+	const auto obj_evt = ObjectEvent("object%d", aa,
+									 RuntimeScriptValue().SetScriptObject(&_G(scrObj)[aa], &_GP(ccDynamicObject)), mood);
+
 	if (_G(loaded_game_file_version) > kGameVersion_272) {
 		if ((evnt >= 0) &&
 			run_interaction_script(obj_evt, _GP(thisroom).Objects[aa].EventHandlers.get(), evnt, anyclick_evt) < 0)

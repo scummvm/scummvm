@@ -26,6 +26,7 @@
 #include "ags/engine/ac/region.h"
 #include "ags/engine/ac/room.h"
 #include "ags/engine/ac/room_status.h"
+#include "ags/engine/ac/dynobj/cc_region.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/game/room_struct.h"
 #include "ags/shared/gfx/bitmap.h"
@@ -145,7 +146,9 @@ void RunRegionInteraction(int regnum, int mood) {
 
 	// NOTE: for Regions the mode has specific meanings (NOT verbs):
 	// 0 - stands on region, 1 - walks onto region, 2 - walks off region
-	const auto obj_evt = ObjectEvent("region%d", regnum);
+	const auto obj_evt = ObjectEvent("region%d", regnum,
+									 RuntimeScriptValue().SetScriptObject(&_G(scrRegion)[regnum], &_GP(ccDynamicRegion)), mood);
+
 	if (_G(loaded_game_file_version) > kGameVersion_272) {
 		run_interaction_script(obj_evt, _GP(thisroom).Regions[regnum].EventHandlers.get(), mood);
 	} else {

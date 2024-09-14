@@ -33,9 +33,11 @@
 #include "ags/engine/ac/properties.h"
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/string.h"
+#include "ags/engine/ac/dynobj/cc_hotspot.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/game/room_struct.h"
 #include "ags/engine/script/script.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -118,9 +120,8 @@ void RunHotspotInteraction(int hotspothere, int mood) {
 	else if ((mood != MODE_WALK) && (_GP(play).check_interaction_only == 0))
 		MoveCharacterToHotspot(_GP(game).playercharacter, hotspothere);
 
-	// can't use the setevent functions because this ProcessClick is only
-	// executed once in a eventlist
-	const auto obj_evt = ObjectEvent("hotspot%d", hotspothere);
+	const auto obj_evt = ObjectEvent("hotspot%d", hotspothere,
+									 RuntimeScriptValue().SetScriptObject(&_G(scrHotspot)[hotspothere], &_GP(ccDynamicHotspot)), mood);
 
 	if (_G(loaded_game_file_version) > kGameVersion_272) {
 		if ((evnt >= 0) &&
