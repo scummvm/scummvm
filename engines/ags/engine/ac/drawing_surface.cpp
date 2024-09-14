@@ -480,7 +480,10 @@ RuntimeScriptValue Sc_DrawingSurface_DrawStringWrapped_Old(void *self, const Run
 }
 
 RuntimeScriptValue Sc_DrawingSurface_DrawStringWrapped(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_VOID_PINT5_POBJ(ScriptDrawingSurface, DrawingSurface_DrawStringWrapped, const char);
+	API_OBJCALL_SCRIPT_SPRINTF(DrawingSurface_DrawString, 6);
+	DrawingSurface_DrawStringWrapped((ScriptDrawingSurface *)self, params[0].IValue, params[1].IValue, params[2].IValue,
+									 params[3].IValue, params[4].IValue, scsf_buffer);
+	return RuntimeScriptValue((int32_t)0);
 }
 
 // void (ScriptDrawingSurface* target, ScriptDrawingSurface* source, int translev)
@@ -547,6 +550,11 @@ RuntimeScriptValue Sc_DrawingSurface_GetWidth(void *self, const RuntimeScriptVal
 //
 //=============================================================================
 
+void ScPl_DrawingSurface_DrawStringWrapped(ScriptDrawingSurface *sds, int xx, int yy, int wid, int font, int alignment, const char *msg, ...) {
+	API_PLUGIN_SCRIPT_SPRINTF(msg);
+	DrawingSurface_DrawStringWrapped(sds, xx, yy, wid, font, alignment, scsf_buffer);
+}
+
 void RegisterDrawingSurfaceAPI(ScriptAPIVersion base_api, ScriptAPIVersion /*compat_api */) {
 	ScFnRegister drawsurf_api[] = {
 		{"DrawingSurface::Clear^1", API_FN_PAIR(DrawingSurface_Clear)},
@@ -575,10 +583,13 @@ void RegisterDrawingSurfaceAPI(ScriptAPIVersion base_api, ScriptAPIVersion /*com
 	ccAddExternalFunctions361(drawsurf_api);
 
 	// Few functions have to be selected based on API level
-	if (base_api < kScriptAPI_v350)
+	if (base_api < kScriptAPI_v350) {
 		ccAddExternalObjectFunction361("DrawingSurface::DrawStringWrapped^6", API_FN_PAIR(DrawingSurface_DrawStringWrapped_Old));
-	else
+	}
+	else { // old non-variadic and new variadic variants
 		ccAddExternalObjectFunction361("DrawingSurface::DrawStringWrapped^6", API_FN_PAIR(DrawingSurface_DrawStringWrapped));
+		ccAddExternalObjectFunction361("DrawingSurface::DrawStringWrapped^106", Sc_DrawingSurface_DrawStringWrapped, (void *)ScPl_DrawingSurface_DrawStringWrapped);
+	}
 }
 
 } // namespace AGS3
