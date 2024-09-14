@@ -30,6 +30,8 @@
 #include "ags/engine/ac/gui.h"
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/screen.h"
+#include "ags/engine/ac/dynobj/script_hotspot.h"
+#include "ags/engine/ac/dynobj/cc_hotspot.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/main/game_run.h"
 #include "ags/shared/script/cc_common.h"
@@ -141,13 +143,14 @@ void process_event(const EventHappened *evp) {
 		ObjectEvent obj_evt;
 
 		if (evp->data1 == EVB_HOTSPOT) {
-
-			if (_GP(thisroom).Hotspots[evp->data2].EventHandlers != nullptr)
-				scriptPtr = _GP(thisroom).Hotspots[evp->data2].EventHandlers;
+			const int hotspot_id = evp->data2;
+			if (_GP(thisroom).Hotspots[hotspot_id].EventHandlers != nullptr)
+				scriptPtr = _GP(thisroom).Hotspots[hotspot_id].EventHandlers;
 			else
-				evpt = &_G(croom)->intrHotspot[evp->data2];
+				evpt = &_G(croom)->intrHotspot[hotspot_id];
 
-			obj_evt = ObjectEvent("hotspot%d", evp->data2);
+			obj_evt = ObjectEvent("hotspot%d", hotspot_id,
+								  RuntimeScriptValue().SetScriptObject(&_G(scrHotspot)[hotspot_id], &_GP(ccDynamicHotspot)));
 			// Debug::Printf("Running hotspot interaction for hotspot %d, event %d", evp->data2, evp->data3);
 		} else if (evp->data1 == EVB_ROOM) {
 
