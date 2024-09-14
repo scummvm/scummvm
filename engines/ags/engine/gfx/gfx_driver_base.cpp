@@ -397,10 +397,10 @@ template <typename T> void get_pixel_if_not_transparent(const T *pixel, T *red, 
 #define VMEMCOLOR_RGBA(r,g,b,a) \
 	( (((a) & 0xFF) << _vmem_a_shift_32) | (((r) & 0xFF) << _vmem_r_shift_32) | (((g) & 0xFF) << _vmem_g_shift_32) | (((b) & 0xFF) << _vmem_b_shift_32) )
 
-template<typename T, bool HasAlpha>
+template<typename T, bool HasAlpha, bool UsingLinearFiltering>
 void VideoMemoryGraphicsDriver::BitmapToVideoMemImpl(
 	const Bitmap *bitmap, const TextureTile *tile,
-	uint8_t *dst_ptr, const int dst_pitch, const bool usingLinearFiltering) {
+	uint8_t *dst_ptr, const int dst_pitch) {
 
 	bool lastPixelWasTransparent = false;
 	for (int y = 0; y < tile->height; y++) {
@@ -414,7 +414,7 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMemImpl(
 			auto *srcData = (const T *)&scanline_at[(x + tile->x) * sizeof(T)];
 
 			if (is_color_mask<T>(*srcData)) {
-				if (!usingLinearFiltering)
+				if (!UsingLinearFiltering)
 					memPtrLong[x] = 0;
 				// set to transparent, but use the colour from the neighbouring
 				// pixel to stop the linear filter doing black outlines
@@ -461,16 +461,28 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMem(const Bitmap *bitmap, const boo
 	const int src_depth = bitmap->GetColorDepth();
 	switch (src_depth) {
 	case 8:
-		BitmapToVideoMemImpl<uint8_t, false>(bitmap, tile, dst_ptr, dst_pitch, usingLinearFiltering);
+		if (usingLinearFiltering) {
+			BitmapToVideoMemImpl<uint8_t, false, true>(bitmap, tile, dst_ptr, dst_pitch);
+		} else {
+			BitmapToVideoMemImpl<uint8_t, false, false>(bitmap, tile, dst_ptr, dst_pitch);
+		}
 		break;
 	case 16:
-		BitmapToVideoMemImpl<uint16_t, false>(bitmap, tile, dst_ptr, dst_pitch, usingLinearFiltering);
+		if (usingLinearFiltering) {
+			BitmapToVideoMemImpl<uint16_t, false, true>(bitmap, tile, dst_ptr, dst_pitch);
+		} else {
+			BitmapToVideoMemImpl<uint16_t, false, false>(bitmap, tile, dst_ptr, dst_pitch);
+		}
 		break;
 	case 32:
-		if (has_alpha) {
-			BitmapToVideoMemImpl<uint32_t, true>(bitmap, tile, dst_ptr, dst_pitch, usingLinearFiltering);
+		if (has_alpha && usingLinearFiltering) {
+			BitmapToVideoMemImpl<uint32_t, true, true>(bitmap, tile, dst_ptr, dst_pitch);
+		} else if (has_alpha && !usingLinearFiltering) {
+			BitmapToVideoMemImpl<uint32_t, true, false>(bitmap, tile, dst_ptr, dst_pitch);
+		} else if (!has_alpha && usingLinearFiltering) {
+			BitmapToVideoMemImpl<uint32_t, false, true>(bitmap, tile, dst_ptr, dst_pitch);
 		} else {
-			BitmapToVideoMemImpl<uint32_t, false>(bitmap, tile, dst_ptr, dst_pitch, usingLinearFiltering);
+			BitmapToVideoMemImpl<uint32_t, false, false>(bitmap, tile, dst_ptr, dst_pitch);
 		}
 		break;
 	default:
