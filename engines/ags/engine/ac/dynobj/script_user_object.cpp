@@ -68,6 +68,7 @@ void ScriptUserObject::Serialize(void *address, AGS::Shared::Stream *out) {
 void ScriptUserObject::Unserialize(int index, Stream *in, size_t data_sz) {
 	uint8_t *new_data = new uint8_t[(data_sz - FileHeaderSz) + MemHeaderSz];
 	Header &hdr = reinterpret_cast<Header &>(*new_data);
+	hdr.Size = data_sz - FileHeaderSz;
 	in->Read(new_data + MemHeaderSz, data_sz - FileHeaderSz);
 	ccRegisterUnserializedObject(index, &new_data[MemHeaderSz], this);
 }

@@ -83,6 +83,7 @@ int AGSCCDynamicObject::Serialize(void *address, uint8_t *buffer, int bufsize) {
 	// If the required space is larger than the provided buffer,
 	// then return negated required space, notifying the caller that a larger buffer is necessary
 	size_t req_size = CalcSerializeSize(address);
+	assert(req_size <= INT32_MAX); // dynamic object API does not support size > int32
 	if (bufsize < 0 || req_size > static_cast<size_t>(bufsize))
 		return -(static_cast<int32_t>(req_size));
 
