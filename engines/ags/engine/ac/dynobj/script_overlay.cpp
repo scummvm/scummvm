@@ -59,11 +59,11 @@ const char *ScriptOverlay::GetType() {
 	return "Overlay";
 }
 
-size_t ScriptOverlay::CalcSerializeSize(void * /*address*/) {
+size_t ScriptOverlay::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t) * 4;
 }
 
-void ScriptOverlay::Serialize(void * /*address*/, Stream *out) {
+void ScriptOverlay::Serialize(const void * /*address*/, Stream *out) {
 	out->WriteInt32(overlayId);
 	out->WriteInt32(0); // unused (was text window x padding)
 	out->WriteInt32(0); // unused (was text window y padding)

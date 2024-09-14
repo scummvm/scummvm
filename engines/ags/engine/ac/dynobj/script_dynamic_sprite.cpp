@@ -41,11 +41,11 @@ const char *ScriptDynamicSprite::GetType() {
 	return "DynamicSprite";
 }
 
-size_t ScriptDynamicSprite::CalcSerializeSize(void * /*address*/) {
+size_t ScriptDynamicSprite::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t);
 }
 
-void ScriptDynamicSprite::Serialize(void *address, Stream *out) {
+void ScriptDynamicSprite::Serialize(const void *address, Stream *out) {
 	out->WriteInt32(slot);
 }
 

@@ -32,13 +32,13 @@ const char *ScriptDialogOptionsRendering::GetType() {
 	return "DialogOptionsRendering";
 }
 
-size_t ScriptDialogOptionsRendering::CalcSerializeSize(void * /*address*/) {
+size_t ScriptDialogOptionsRendering::CalcSerializeSize(const void * /*address*/) {
 	return 0;
 }
 
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
-void ScriptDialogOptionsRendering::Serialize(void *address, Stream *out) {
+void ScriptDialogOptionsRendering::Serialize(const void *address, Stream *out) {
 }
 
 void ScriptDialogOptionsRendering::Unserialize(int index, Stream *in, size_t data_sz) {

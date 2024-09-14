@@ -36,14 +36,14 @@ const char *CCDialog::GetType() {
 	return "Dialog";
 }
 
-size_t CCDialog::CalcSerializeSize(void * /*address*/) {
+size_t CCDialog::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t);
 }
 
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
-void CCDialog::Serialize(void *address, Stream *out) {
-	const ScriptDialog *shh = (const ScriptDialog *)address;
+void CCDialog::Serialize(const void *address, Stream *out) {
+	const ScriptDialog *shh = static_cast<const ScriptDialog *>(address);
 	out->WriteInt32(shh->id);
 }
 
