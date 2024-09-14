@@ -307,7 +307,7 @@ protected:
 	void BitmapToVideoMem(const Bitmap *bitmap, const bool has_alpha, const TextureTile *tile,
 						  uint8_t *dst_ptr, const int dst_pitch, const bool usingLinearFiltering);
 	// Same but optimized for opaque source bitmaps which ignore transparent "mask color"
-	void BitmapToVideoMemOpaque(const Bitmap *bitmap, const bool has_alpha, const TextureTile *tile,
+	void BitmapToVideoMemOpaque(const Bitmap *bitmap, const TextureTile *tile,
 								uint8_t *dst_ptr, const int dst_pitch);
 
 	// Stage virtual screen is used to let plugins draw custom graphics
@@ -357,7 +357,7 @@ private:
 		const Bitmap *bitmap, const TextureTile *tile,
 		uint8_t *dst_ptr, const int dst_pitch);
 
-	template<typename T, bool HasAlpha>
+	template<typename T>
 	void
 	BitmapToVideoMemOpaqueImpl(
 		const Bitmap *bitmap, const TextureTile *tile,
