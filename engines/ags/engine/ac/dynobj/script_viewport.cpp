@@ -44,11 +44,11 @@ int ScriptViewport::Dispose(void * /*address*/, bool force) {
 	return 1;
 }
 
-size_t ScriptViewport::CalcSerializeSize(void * /*address*/) {
+size_t ScriptViewport::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t);
 }
 
-void ScriptViewport::Serialize(void * /*address*/, Stream *out) {
+void ScriptViewport::Serialize(const void * /*address*/, Stream *out) {
 	out->WriteInt32(_id);
 }
 

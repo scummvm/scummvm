@@ -37,11 +37,11 @@ const char *ScriptViewFrame::GetType() {
 	return "ViewFrame";
 }
 
-size_t ScriptViewFrame::CalcSerializeSize(void * /*address*/) {
+size_t ScriptViewFrame::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t) * 3;
 }
 
-void ScriptViewFrame::Serialize(void * /*address*/, Stream *out) {
+void ScriptViewFrame::Serialize(const void * /*address*/, Stream *out) {
 	out->WriteInt32(view);
 	out->WriteInt32(loop);
 	out->WriteInt32(frame);

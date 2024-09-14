@@ -37,11 +37,11 @@ const char *ScriptDateTime::GetType() {
 	return "DateTime";
 }
 
-size_t ScriptDateTime::CalcSerializeSize(void * /*address*/) {
+size_t ScriptDateTime::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t) * 7;
 }
 
-void ScriptDateTime::Serialize(void *address, Stream *out) {
+void ScriptDateTime::Serialize(const void *address, Stream *out) {
 	out->WriteInt32(year);
 	out->WriteInt32(month);
 	out->WriteInt32(day);
