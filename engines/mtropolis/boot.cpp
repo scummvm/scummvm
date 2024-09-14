@@ -1143,6 +1143,11 @@ public:
 	void bootMsbVolcanoWin();
 	void bootMsbWhalesWin();
 	void bootTelemedWin();
+	void bootWorldBrokeWin();
+	void bootFreeWillyWin();
+	void bootHerculesWin();
+	void bootMindGymWin();
+	void bootStarTrekWin();
 
 
 	void bootGeneric();
@@ -1444,6 +1449,9 @@ void BootScriptContext::bootSPQRWin() {
 void BootScriptContext::bootPurpleMoonWin() {
 	addPlugIn(kPlugInStandard);
 	setMainSegmentFile("workspace/0Sampler.mpl");
+	// Force V112 mode for PlugInModifier::load
+	// Autodetected V100 causes error there
+	setRuntimeVersion(RuntimeVersion::kRuntimeVersion112);
 }
 
 void BootScriptContext::bootDilbertWin() {
@@ -1453,6 +1461,9 @@ void BootScriptContext::bootDilbertWin() {
 	addPlugIn(kPlugInAxLogic);
 	addPlugIn(kPlugInHoologic);
 	setMainSegmentFile("workspace/HIJINKS/Hijinks1.mpl");
+	// Force V112 mode for PlugInModifier::load
+	// Autodetected V100 causes error there
+	setRuntimeVersion(RuntimeVersion::kRuntimeVersion112);
 }
 
 void BootScriptContext::bootEasyBakeWin() {
@@ -1471,6 +1482,9 @@ void BootScriptContext::bootFTTSWin() {
 	addPlugIn(kPlugInStandard);
 	addPlugIn(kPlugInFTTS);
 	addPlugIn(kPlugInHoologic);
+	// Force V112 mode for PlugInModifier::load
+	// Autodetected V100 causes error there
+	setRuntimeVersion(RuntimeVersion::kRuntimeVersion112);
 }
 
 void BootScriptContext::bootArchitectureWin() {
@@ -1521,6 +1535,9 @@ void BootScriptContext::bootRWCWin() {
 	addPlugIn(kPlugInStandard);
 	addPlugIn(kPlugInThereware);
 	addPlugIn(kPlugInRWC);
+	// Force V112 mode for PlugInModifier::load
+	// Autodetected V100 causes error there
+	setRuntimeVersion(RuntimeVersion::kRuntimeVersion112);
 }
 
 void BootScriptContext::bootAngelicaWin() {
@@ -1532,11 +1549,17 @@ void BootScriptContext::bootAlbertWin() {
 	addPlugIn(kPlugInStandard);
 	addPlugIn(kPlugInHoologic);
 	addPlugIn(kPlugInThereware);
+	// Force V112 mode for PlugInModifier::load
+	// Autodetected V100 causes error there
+	setRuntimeVersion(RuntimeVersion::kRuntimeVersion112);
 }
 
 void BootScriptContext::bootWhitetailWin() {
 	addPlugIn(kPlugInStandard);
 	addPlugIn(kPlugInThereware);
+	// Force V112 mode for PlugInModifier::load
+	// Autodetected V100 causes error there
+	setRuntimeVersion(RuntimeVersion::kRuntimeVersion112);
 }
 
 void BootScriptContext::bootNotebookWin() {
@@ -1588,6 +1611,41 @@ void BootScriptContext::bootMsbWhalesWin() {
 }
 
 void BootScriptContext::bootTelemedWin() {
+	addPlugIn(kPlugInStandard);
+	// Force V112 mode for PlugInModifier::load
+	// Autodetected V100 causes error there
+	setRuntimeVersion(RuntimeVersion::kRuntimeVersion112);
+}
+
+void BootScriptContext::bootWorldBrokeWin() {
+	addPlugIn(kPlugInStandard);
+	// Force V112 mode for PlugInModifier::load
+	// Autodetected V100 causes error there
+	setRuntimeVersion(RuntimeVersion::kRuntimeVersion112);
+}
+
+void BootScriptContext::bootFreeWillyWin() {
+	addPlugIn(kPlugInStandard);
+	// Force V112 mode for PlugInModifier::load
+	// Autodetected V100 causes error there
+	setRuntimeVersion(RuntimeVersion::kRuntimeVersion112);
+}
+
+void BootScriptContext::bootHerculesWin() {
+	addPlugIn(kPlugInStandard);
+	// Force V112 mode for PlugInModifier::load
+	// Autodetected V100 causes error there
+	setRuntimeVersion(RuntimeVersion::kRuntimeVersion112);
+}
+
+void BootScriptContext::bootMindGymWin() {
+	addPlugIn(kPlugInStandard);
+	// Force V112 mode for PlugInModifier::load
+	// Autodetected V100 causes error there
+	setRuntimeVersion(RuntimeVersion::kRuntimeVersion112);
+}
+
+void BootScriptContext::bootStarTrekWin() {
 	addPlugIn(kPlugInStandard);
 	// Force V112 mode for PlugInModifier::load
 	// Autodetected V100 causes error there
@@ -2026,12 +2084,12 @@ const Game games[] = {
 	// Star Trek: The Game Show - Retail - Windows
 	{
 		MTBOOT_STTGS_RETAIL_WIN,
-		&BootScriptContext::bootGeneric
+		&BootScriptContext::bootStarTrekWin
 	},
 	// Star Trek: The Game Show - Demo - Windows
 	{
 		MTBOOT_STTGS_DEMO_WIN,
-		&BootScriptContext::bootGeneric
+		&BootScriptContext::bootStarTrekWin
 	},
 	// Unit: Rebooted
 	{
@@ -2041,12 +2099,12 @@ const Game games[] = {
 	// Mind Gym - Windows - English
 	{
 		MTBOOT_MINDGYM_WIN_EN,
-		&BootScriptContext::bootGeneric
+		&BootScriptContext::bootMindGymWin
 	},
 	// Mind Gym - Windows - German
 	{
 		MTBOOT_MINDGYM_WIN_DE,
-		&BootScriptContext::bootGeneric
+		&BootScriptContext::bootMindGymWin
 	},
 	// Fun With Architecture - Windows - English
 	{
@@ -2071,7 +2129,7 @@ const Game games[] = {
 	// The Day The World Broke - Windows - English
 	{
 		MTBOOT_WORLDBROKE_EN,
-	 	&BootScriptContext::bootGeneric
+	 	&BootScriptContext::bootWorldBrokeWin
 	},
 	// The Totally Techie World of Young Dilbert: Hi-Tech Hijinks - Windows - English
 	{
@@ -2081,12 +2139,12 @@ const Game games[] = {
 	// Free Willy Activity Center - Windows - English
 	{
 		MTBOOT_FREEWILLY_WIN_EN,
-	 	&BootScriptContext::bootGeneric
+	 	&BootScriptContext::bootFreeWillyWin
 	},
 	// Hercules & Xena Learning Adventure: Quest for the Scrolls - Windows - English
 	{
 		MTBOOT_HERCULES_WIN_EN,
-	 	&BootScriptContext::bootGeneric
+	 	&BootScriptContext::bootHerculesWin
 	},
 	// I Can Be a Dinosaur Finder - Retail - Windows - English
 	{
