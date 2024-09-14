@@ -715,11 +715,32 @@ void Adlib::OnTimer() {
 										// mov di, [bp - 0Ah]
 										// inc byte ptr[di + 222Ch]
 									}
+									// l0017_1C5D:
+									// TODO: Again several struct accesses that are not
+									// implemented yet
+									/*
+									mov	di,[bp-0Ah]
+									mov	al,[di+222Ch]
+									xor	ah,ah
+									cmp	ax,[bp-0Ch]
+									jle	1C7Dh
+
+								l0017_1C6B:
+									mov	di,[bp-0Ah]
+									mov	al,[di+222Ch]
+									xor	ah,ah
+									mov	[bp-0Ch],ax
+									mov	ax,[bp-0Ah]
+									mov	[bp-8h],ax
+								*/
+									// l0017_1C7D:
+									if (bp0A == bp16) {
+										break;
+									}
 									// TODO: Continue from here
 								} while (true);
-
-								
 							}
+							// TODO: Continue from here
 							// TODO: Should be 1C85h	
 						}
 						// TODO: Should be 1CF2
