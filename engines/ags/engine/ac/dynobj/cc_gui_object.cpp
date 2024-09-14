@@ -36,14 +36,14 @@ const char *CCGUIObject::GetType() {
 	return "GUIObject";
 }
 
-size_t CCGUIObject::CalcSerializeSize(void * /*address*/) {
+size_t CCGUIObject::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t) * 2;
 }
 
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
-void CCGUIObject::Serialize(void *address, Stream *out) {
-	const GUIObject *guio = (const GUIObject *)address;
+void CCGUIObject::Serialize(const void *address, Stream *out) {
+	const GUIObject *guio = static_cast<const GUIObject *>(address);
 	out->WriteInt32(guio->ParentId);
 	out->WriteInt32(guio->Id);
 }

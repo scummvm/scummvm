@@ -54,12 +54,12 @@ int ScriptUserObject::Dispose(void *address, bool /*force*/) {
 	return 1;
 }
 
-size_t ScriptUserObject::CalcSerializeSize(void *address) {
+size_t ScriptUserObject::CalcSerializeSize(const void *address) {
 	const Header &hdr = GetHeader(address);
 	return hdr.Size + FileHeaderSz;
 }
 
-void ScriptUserObject::Serialize(void *address, AGS::Shared::Stream *out) {
+void ScriptUserObject::Serialize(const void *address, AGS::Shared::Stream *out) {
 	const Header &hdr = GetHeader(address);
 	// NOTE: we only write the data, no header at the moment
 	out->Write(address, hdr.Size);
