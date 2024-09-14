@@ -52,12 +52,18 @@ namespace Darkseed {
 
 struct DarkseedGameDescription;
 
-enum ActionMode {
+enum ActionMode : uint8 {
 	PointerAction = 0,
 	HandAction = 2,
 	LookAction = 3,
 	Unk19Action = 19,
 	Unk27Action = 27,
+};
+
+enum class FadeDirection : uint8 {
+	NONE,
+	IN,
+	OUT
 };
 
 class DarkseedEngine : public Engine {
@@ -71,6 +77,11 @@ private:
 	bool _normalWorldSpritesLoaded = true;
 	bool _redrawFrame = true;
 	bool _restartGame = false;
+
+	FadeDirection _fadeDirection = FadeDirection::NONE;
+	uint8 _fadeStepCounter = 0;
+	Pal _fadeTempPalette;
+	Pal _fadeTargetPalette;
 
 protected:
 	// Engine APIs
@@ -201,8 +212,10 @@ public:
 
 	void fadeIn();
 	void fadeOut();
+	bool fadeStep();
 
 	void restartGame();
+	void newGame();
 
 	void updateDisplay();
 	void setupOtherNspAnimation(int nspAnimIdx, int animId);
@@ -227,7 +240,6 @@ private:
 	void updateBaseSprites();
 	void updateAnimation();
 	void advanceAnimationFrame(int nspAminIdx);
-	void fadeInner(int startValue, int endValue, int increment);
 	void gameloop();
 	void updateEvents();
 	void handleInput();

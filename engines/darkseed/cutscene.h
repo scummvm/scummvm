@@ -23,6 +23,8 @@
 #define DARKSEED_CUTSCENE_H
 
 #include "common/str.h"
+#include "pal.h"
+#include "titlefont.h"
 
 namespace Darkseed {
 
@@ -30,7 +32,11 @@ class Cutscene {
 private:
 	char _cutsceneId;
 	uint16 _movieStep = 9999;
+	TitleFont *titleFont = nullptr;
+	Pal _palette;
+
 public:
+	virtual ~Cutscene();
 	void play(char cutsceneId);
 	bool isPlaying() { return _movieStep != 9999; }
 	void update();

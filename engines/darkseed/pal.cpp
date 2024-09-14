@@ -29,6 +29,10 @@ namespace Darkseed {
 #define DARKSEED_PAL_SIZE DARKSEED_NUM_PAL_ENTRIES * 3
 
 Pal::Pal(const Pal &pal) {
+	load(pal);
+}
+
+void Pal::load(const Pal &pal) {
 	memcpy(palData, pal.palData, DARKSEED_PAL_SIZE);
 }
 
@@ -47,6 +51,29 @@ bool Pal::load(const Common::Path &filename, bool shouldInstallPalette) {
 		installPalette();
 	}
 	return true;
+}
+
+void Pal::loadFromScreen() {
+	g_system->getPaletteManager()->grabPalette(palData, 0, DARKSEED_NUM_PAL_ENTRIES);
+}
+
+void Pal::clear() {
+	memset(palData, 0, DARKSEED_PAL_SIZE);
+}
+
+void Pal::updatePalette(int delta, const Pal &targetPal, bool shouldInstallPalette) {
+	for (int i = 0; i < DARKSEED_PAL_SIZE; i++) {
+		int c = palData[i] + delta;
+		if (c < 0) {
+			c = 0;
+		} else if (delta > 0 && c > targetPal.palData[i]) {
+			c = targetPal.palData[i];
+		}
+		palData[i] = (uint8)c;
+	}
+	if (shouldInstallPalette) {
+		installPalette();
+	}
 }
 
 void Pal::installPalette() {
