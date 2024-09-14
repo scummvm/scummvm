@@ -274,7 +274,7 @@ void CastleEngine::loadAssetsDOSFullGame() {
 				break;
 			case Common::EN_ANY:
 				stream = decryptFile("CMLE");
-				loadRiddles(stream, 0xaae, 11);
+				loadRiddles(stream, 0xaae, 21);
 				break;
 			default:
 				error("Invalid or unsupported language: %x", _language);

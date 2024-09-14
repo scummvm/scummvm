@@ -611,12 +611,9 @@ void CastleEngine::executeDestroy(FCLInstruction &instruction) {
 void CastleEngine::executePrint(FCLInstruction &instruction) {
 	uint16 index = instruction._source;
 	_currentAreaMessages.clear();
-	if (index > 129) {
-		index = index - 129;
-		if (index < _riddleList.size() / 6)
-			drawFullscreenRiddleAndWait(index);
-		else
-			debugC(1, kFreescapeDebugCode, "Riddle index %d out of bounds", index);
+	if (index > 127) {
+		index = index - 127;
+		drawFullscreenRiddleAndWait(index);
 		return;
 	}
 	debugC(1, kFreescapeDebugCode, "Printing message %d: \"%s\"", index, _messagesList[index].c_str());
@@ -650,7 +647,7 @@ void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int
 	for (int i = 0; i < number; i++) {
 		numberAsteriskLines = 0;
 		int header = file->readByte();
-		debugC(1, kFreescapeDebugParser, "riddle %d extra byte each 6: %x", i, header);
+		debugC(1, kFreescapeDebugParser, "riddle %d header: %x", i, header);
 		int numberLines = 6;
 		if (header == 0x15 || header == 0x1a || header == 0x1c)
 			numberLines = 7;
@@ -662,13 +659,12 @@ void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int
 		for (int j = 0; j < numberLines; j++) {
 			int size = file->readByte();
 			debugC(1, kFreescapeDebugParser, "size: %d (max 23?)", size);
-			//assert(size <= 23);
-			//assert(size > 0);
 
 			Common::String message = "";
 			if (size > 23) {
 				debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
 				debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
+				_riddleList.push_back("");
 				continue;
 
 			} else if (size == 255) {
@@ -685,8 +681,6 @@ void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int
 				size = 21;
 			}
 
-			//if (size > 22)
-			//	size = 22;
 			int padSpaces = (22 - size) / 2;
 			debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
 
@@ -726,6 +720,12 @@ void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int
 				//	break;
 			}*/
 		}
+
+		if (numberLines < 7)
+			for (int j = numberLines; j < 7; j++) {
+				_riddleList.push_back("");
+				debugC(1, kFreescapeDebugParser, "Padded with ''");
+			}
 
 	}
 	debugC(1, kFreescapeDebugParser, "End of riddles at %" PRIx64, file->pos());
@@ -802,7 +802,7 @@ void CastleEngine::drawFullscreenRiddleAndWait(uint16 riddle) {
 void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics::Surface *surface) {
 
 	Common::StringArray riddleMessages;
-	for (int i = 6 * riddle; i < 6 * (riddle + 1); i++) {
+	for (int i = 7 * riddle; i < 7 * (riddle + 1); i++) {
 		riddleMessages.push_back(_riddleList[i]);
 	}
 	uint32 frameColor = 0;
@@ -821,11 +821,11 @@ void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics
 
 	int x = 0;
 	int y = 0;
-	int numberOfLines = 6;
+	int numberOfLines = 7;
 
 	if (isDOS()) {
 		x = 60;
-		y = 66;
+		y = 62;
 	} else if (isSpectrum() || isCPC()) {
 		x = 60;
 		y = 40;
@@ -833,7 +833,7 @@ void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics
 
 	for (int i = 0; i < numberOfLines; i++) {
 		drawStringInSurface(riddleMessages[i], x, y, front, back, surface);
-		y = y + 12;
+		y = y + 10;
 	}
 	drawFullscreenSurface(surface);
 }
