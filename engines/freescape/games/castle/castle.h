@@ -64,6 +64,7 @@ public:
 
 	void executePrint(FCLInstruction &instruction) override;
 	void executeMakeInvisible(FCLInstruction &instruction) override;
+	void executeDestroy(FCLInstruction &instruction) override;
 	void executeRedraw(FCLInstruction &instruction) override;
 	void gotoArea(uint16 areaID, int entranceID) override;
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;

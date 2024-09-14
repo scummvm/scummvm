@@ -545,6 +545,7 @@ void CastleEngine::drawInfoMenu() {
 	g_system->showMouse(false);
 }
 
+// Same as FreescapeEngine::executeExecute but updates the spirits destroyed counter
 void CastleEngine::executeMakeInvisible(FCLInstruction &instruction) {
 	uint16 objectID = 0;
 	uint16 areaID = _currentArea->getAreaID();
@@ -572,6 +573,33 @@ void CastleEngine::executeMakeInvisible(FCLInstruction &instruction) {
 		assert(isDOS() && isDemo()); // Should only happen in the DOS demo
 	}
 
+}
+
+// Same as FreescapeEngine::executeExecute but updates the spirits destroyed counter
+void CastleEngine::executeDestroy(FCLInstruction &instruction) {
+	uint16 objectID = 0;
+	uint16 areaID = _currentArea->getAreaID();
+
+	if (instruction._destination > 0) {
+		objectID = instruction._destination;
+		areaID = instruction._source;
+	} else {
+		objectID = instruction._source;
+	}
+
+	debugC(1, kFreescapeDebugCode, "Destroying obj %d in area %d!", objectID, areaID);
+	assert(_areaMap.contains(areaID));
+	Object *obj = _areaMap[areaID]->objectWithID(objectID);
+	assert(obj); // We know that an object should be there
+
+	if (!obj->isDestroyed() && obj->getType() == kSensorType && isCastle()) {
+		_spiritsDestroyed++;
+	}
+
+	if (obj->isDestroyed())
+		debugC(1, kFreescapeDebugCode, "WARNING: Destroying obj %d in area %d already destroyed!", objectID, areaID);
+
+	obj->destroy();
 }
 
 void CastleEngine::executePrint(FCLInstruction &instruction) {

@@ -400,7 +400,7 @@ public:
 	virtual void executeMakeInvisible(FCLInstruction &instruction);
 	void executeMakeVisible(FCLInstruction &instruction);
 	void executeToggleVisibility(FCLInstruction &instruction);
-	void executeDestroy(FCLInstruction &instruction);
+	virtual void executeDestroy(FCLInstruction &instruction);
 	virtual void executeRedraw(FCLInstruction &instruction);
 	void executeSound(FCLInstruction &instruction);
 	void executeDelay(FCLInstruction &instruction);
