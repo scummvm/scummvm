@@ -35,11 +35,13 @@ private:
 	bool _flag2 = false;
 	bool _flag3 = false;
 	bool _flag4 = false;
+	int _destX = 0, _destY = 0;
+	int _destFacing = 0;
+	machine *_ripley = nullptr;
 	machine *_dome = nullptr;
 	machine *_skullSparkle = nullptr;
 	machine *_domeRotation = nullptr;
-	int _destX = 0, _destY = 0;
-	int _destFacing = 0;
+	int _ripLowReach = 0;
 
 	void restorePalette();
 	void setupPalette();

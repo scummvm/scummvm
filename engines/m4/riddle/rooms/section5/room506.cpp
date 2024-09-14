@@ -197,7 +197,204 @@ void Room506::pre_parser() {
 }
 
 void Room506::parser() {
-	// TODO
+	bool lookFlag = player_said_any("look", "look at");
+	bool takeFlag = player_said("take");
+	bool useFlag = player_said("gear");
+
+	if (takeFlag && player_said("CLUMP OF VINES")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			if (_G(flags)[V152] != 6 && _G(flags)[V153] != 6) {
+				digi_play("504R47", 1, 255, -1, 504);
+			} else {
+				player_set_commands_allowed(false);
+				_ripLowReach = series_load("RIP TREK LOW REACHER POS5");
+				setGlobals1(_ripLowReach, 1, 26, 26, 26, 0, 26, 1, 1, 1);
+				sendWSMessage_110000(2);				
+			}
+			break;
+
+		case 2:
+			kernel_examine_inventory_object(_G(flags)[V152] == 6 ? "PING GREEN VINE" :
+				"PING BROWN VINE", 5, 1, 396, 180, 3);
+			break;
+
+		case 3:
+			if (_G(flags)[V152] == 6) {
+				inv_give_to_player("GREEN VINE");
+				_G(flags)[V152] = 3;
+			} else {
+				inv_give_to_player("BROWN VINE");
+				_G(flags)[V153] = 3;
+			}
+
+			sendWSMessage_120000(4);
+			break;
+
+		case 4:
+			sendWSMessage_150000(5);
+			break;
+
+		case 5:
+			series_unload(_ripLowReach);
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("CLUMP OF VINES")) {
+		digi_play("506R19", 1);
+	} else if (lookFlag && player_said("NICHE")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			digi_play(inv_object_in_scene("CRYSTAL SKULL", 510) ? "506R04" : "com127", 1, 255, 3);
+			_ripley = series_play("RIPLEY LOOKS TO NICH", 0x700, 16, -1, 7);
+
+		case 3:
+			terminateMachineAndNull(_ripley);
+			_ripley = series_play("RIPLEY LOOKS TO NICH", 0x700, 2, 5, 7);
+			break;
+
+		case 5:
+			terminateMachineAndNull(_ripley);
+			ws_unhide_walker();
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("SKELETON")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			digi_play("506R03", 1, 255, 3);
+			_ripley = series_play("RIPLEY LOOKS TO NICH", 0x700, 16, -1, 7);
+			break;
+
+		case 3:
+			terminateMachineAndNull(_ripley);
+			_ripley = series_play("RIPLEY LOOKS TO NICH", 0x700, 2, 5, 7);
+			break;
+
+		case 5:
+			terminateMachineAndNull(_ripley);
+			ws_unhide_walker();
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("TERRACE")) {
+		digi_play("506R05", 1);
+	} else if (lookFlag && player_said("OBSERVATORY")) {
+		digi_play("506R06", 1);
+	} else if (player_said("OBSERVATORY DOOR") && (!lookFlag && !takeFlag && !useFlag)) {
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(2);
+			break;
+
+		case 2:
+			adv_kill_digi_between_rooms(false);
+			digi_preload("506_s01");
+			digi_play_loop("506_s01", 3, 100);
+			_G(game).setRoom(507);
+			break;
+
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("OBSERVATORY DOME")) {
+		digi_play("506R07", 1);
+	} else if (lookFlag && player_said("SPIDER STATUE")) {
+		digi_play("506R08", 1);
+	} else if (lookFlag && player_said("TOWER")) {
+		digi_play("506R02", 1);
+	} else if (lookFlag && player_said_any(" ", "  ")) {
+		digi_play(_G(player).been_here_before ? "506r01" : "506r01a", 1);
+	} else if (player_said("STAIRS FROM LANDING")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			series_play("506 RIP DOWN STEPS", 0x700, 0, -1, 5);
+			kernel_timing_trigger(60, 3);
+			break;
+
+		case 3:
+			disable_player_commands_and_fade_init(5);
+			break;
+
+		case 5:
+			_G(game).setRoom(504);
+			break;
+
+		default:
+			break;
+		}
+	} else if (player_said("IN TOWER")) {
+		player_set_commands_allowed(false);
+
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			disable_player_commands_and_fade_init(2);
+			break;
+
+		case 2:
+			_G(game).setRoom(509);
+			break;
+
+		default:
+			break;
+		}
+	} else if (player_said("IN OBSERVATORY")) {
+		player_set_commands_allowed(false);
+
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			disable_player_commands_and_fade_init(2);
+			break;
+
+		case 2:
+			_G(game).setRoom(508);
+			break;
+
+		default:
+			break;
+		}
+	} else {
+		if (player_said("   ")) {
+			restorePalette();
+			ws_walk(662, 143, nullptr, -1, 8);
+
+			if (_flag4)
+				Common::strcpy_s(_G(player).verb, "IN TOWER");
+		}
+
+		if (player_said("    ")) {
+			setupPalette();
+			ws_walk(1039, 328, nullptr, -1, 4);
+
+			if (_flag4)
+				Common::strcpy_s(_G(player).verb, "IN TOWER");
+		}
+
+		return;
+	}
+
+	_G(player).command_ready = false;
 }
 
 void Room506::restorePalette() {
