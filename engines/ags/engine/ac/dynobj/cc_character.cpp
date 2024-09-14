@@ -39,14 +39,14 @@ const char *CCCharacter::GetType() {
 
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
-size_t CCCharacter::CalcSerializeSize(void * /*address*/) {
+size_t CCCharacter::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t);
 }
 
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
-void CCCharacter::Serialize(void *address, Stream *out) {
-	const CharacterInfo *chaa = (const CharacterInfo *)address;
+void CCCharacter::Serialize(const void *address, Stream *out) {
+	const CharacterInfo *chaa = static_cast<const CharacterInfo *>(address);
 	out->WriteInt32(chaa->index_id);
 }
 

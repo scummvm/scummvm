@@ -34,14 +34,14 @@ const char *CCGUI::GetType() {
 	return "GUI";
 }
 
-size_t CCGUI::CalcSerializeSize(void * /*address*/) {
+size_t CCGUI::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t);
 }
 
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
-void CCGUI::Serialize(void *address, Stream *out) {
-	const ScriptGUI *shh = (const ScriptGUI *)address;
+void CCGUI::Serialize(const void *address, Stream *out) {
+	const ScriptGUI *shh = static_cast<const ScriptGUI *>(address);
 	out->WriteInt32(shh->id);
 }
 

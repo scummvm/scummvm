@@ -46,11 +46,11 @@ const char *ScriptString::GetType() {
 	return "String";
 }
 
-size_t ScriptString::CalcSerializeSize(void * /*address*/) {
+size_t ScriptString::CalcSerializeSize(const void * /*address*/) {
 	return _len + 1 + sizeof(int32_t);
 }
 
-void ScriptString::Serialize(void * /*address*/, Stream *out) {
+void ScriptString::Serialize(const void * /*address*/, Stream *out) {
 	const auto *cstr = _text ? _text : "";
 	out->WriteInt32(_len);
 	out->Write(cstr, _len + 1);
