@@ -500,6 +500,7 @@ HSaveError ReadCharacters(Stream *in, int32_t cmp_ver, const PreservedParams & /
 	HSaveError err;
 	if (!AssertGameContent(err, in->ReadInt32(), _GP(game).numcharacters, "Characters"))
 		return err;
+	const int mls_cmp_ver = cmp_ver > kCharSvgVersion_Initial ? kMoveSvgVersion_350 : kMoveSvgVersion_Initial;
 	for (int i = 0; i < _GP(game).numcharacters; ++i) {
 		_GP(game).chars[i].ReadFromFile(in, kGameVersion_Undefined, cmp_ver);
 		_GP(charextra)[i].ReadFromSavegame(in, cmp_ver);
@@ -507,8 +508,8 @@ HSaveError ReadCharacters(Stream *in, int32_t cmp_ver, const PreservedParams & /
 		if (_G(loaded_game_file_version) <= kGameVersion_272)
 			ReadTimesRun272(*_GP(game).intrChar[i], in);
 		// character movement path (for old saves)
-		if (cmp_ver < 3) {
-			err = _GP(mls)[CHMLSOFFS + i].ReadFromFile(in, cmp_ver > 0 ? 1 : 0);
+		if (cmp_ver < kCharSvgVersion_36109) {
+			err = _GP(mls)[CHMLSOFFS + i].ReadFromFile(in, mls_cmp_ver);
 			if (!err)
 				return err;
 		}
@@ -986,7 +987,7 @@ HSaveError ReadThisRoom(Stream *in, int32_t cmp_ver, const PreservedParams & /*p
 		int objmls_count = in->ReadInt32();
 		if (!AssertCompatLimit(err, objmls_count, CHMLSOFFS, "room object move lists"))
 			return err;
-		const int mls_cmp_ver = cmp_ver > 0 ? 1 : 0;
+		const int mls_cmp_ver = cmp_ver > kRoomStatSvgVersion_Initial ? kMoveSvgVersion_350 : kMoveSvgVersion_Initial;
 		for (int i = 0; i < objmls_count; ++i) {
 			err = _GP(mls)[i].ReadFromFile(in, mls_cmp_ver);
 			if (!err)
