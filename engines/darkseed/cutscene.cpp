@@ -22,6 +22,10 @@
 #include "cutscene.h"
 #include "darkseed.h"
 
+Darkseed::Cutscene::~Cutscene() {
+	delete titleFont;
+}
+
 void Darkseed::Cutscene::play(char cutsceneId) {
 	_cutsceneId = cutsceneId;
 	_movieStep = 1;
@@ -50,6 +54,10 @@ void Darkseed::Cutscene::update() {
 			g_engine->changeToRoom(7);
 		} else if (_cutsceneId == 'Z') {
 			g_engine->restartGame();
+		} else if (_cutsceneId == 'I') {
+			delete titleFont;
+			titleFont = nullptr;
+			g_engine->newGame();
 		}
 	}
 }
@@ -57,6 +65,37 @@ void Darkseed::Cutscene::update() {
 bool Darkseed::Cutscene::introScene() {
 	switch (_movieStep) {
 	case 1: g_engine->fadeOut(); break;
+	case 2: if (g_engine->fadeStep()) { return true; } break;
+	case 3: {
+		g_engine->_screen->clear();
+		_palette.load("art/house.pal");
+		if (titleFont == nullptr) {
+			titleFont = new TitleFont();
+		}
+		titleFont->displayString(68,160, "DEVELOPING NEW WAYS TO AMAZE");
+		g_engine->fadeIn();
+	}
+		break;
+	case 4: if (g_engine->fadeStep()) { return true; } break;
+	case 5: g_engine->fadeOut(); break;
+	case 6: if (g_engine->fadeStep()) { return true; } break;
+	case 7:
+		g_engine->_screen->clear();
+		_palette.installPalette();
+		titleFont->displayString(222,160, "CYBERDREAMS");
+		g_engine->fadeIn();
+		break;
+	case 8: if (g_engine->fadeStep()) { return true; } break;
+	case 9: g_engine->fadeOut(); break;
+	case 10: if (g_engine->fadeStep()) { return true; } break;
+	case 11:
+		g_engine->_screen->clear();
+		_palette.installPalette();
+		titleFont->displayString(250,160, "PRESENTS");
+		g_engine->fadeIn();
+		break;
+	case 12: if (g_engine->fadeStep()) { return true; } break;
+	case 13: g_engine->fadeOut(); break;
 	default: _movieStep = 9999; return false;
 	}
 	_movieStep++;

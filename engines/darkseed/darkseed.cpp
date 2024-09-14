@@ -82,11 +82,6 @@ Common::Error DarkseedEngine::run() {
 	Img letterD1;
 	lettersAnm.getImg(7, letterD1);
 
-	Pal housePalette;
-	housePalette.load("art/house.pal");
-	TitleFont titleFont;
-	titleFont.displayString(0x44, 0xa0, "DEVELOPING NEW WAYS TO AMAZE");
-
 	// Set the engine's debugger console
 	setDebugger(new DebugConsole(_tosText));
 
@@ -129,7 +124,13 @@ Common::Error DarkseedEngine::run() {
 		}
 	}
 
-	gameloop();
+	while (!shouldQuit()) {
+		gameloop();
+		_restartGame = false;
+		if (!shouldQuit()) {
+			_cutscene.play('I');
+		}
+	}
 
 	delete _room;
 	delete _player;
@@ -159,15 +160,27 @@ Common::Error DarkseedEngine::syncGame(Common::Serializer &s) {
 	}
 	return Common::kNoError;
 }
+
 void DarkseedEngine::fadeOut() {
+	_fadeDirection = FadeDirection::OUT;
+	_fadeStepCounter = 0;
+	_fadeTempPalette.loadFromScreen();
 }
 
 void DarkseedEngine::fadeIn() {
-
+	_fadeDirection = FadeDirection::IN;
+	_fadeStepCounter = 0;
+	_fadeTargetPalette.loadFromScreen();
+	_fadeTempPalette.clear();
+	_fadeTempPalette.installPalette();
 }
 
-void DarkseedEngine::fadeInner(int startValue, int endValue, int increment) {
-
+bool DarkseedEngine::fadeStep() {
+	if (_fadeStepCounter < 16) {
+		_fadeTempPalette.updatePalette(_fadeDirection == FadeDirection::OUT ? -16 : 16, _fadeTargetPalette);
+		_fadeStepCounter++;
+	}
+	return _fadeStepCounter < 16;
 }
 
 void DarkseedEngine::gameloop() {
@@ -317,14 +330,16 @@ void DarkseedEngine::gameloop() {
 
 			_screen->addDirtyRect({{0x45, 0x28}, 501, 200});
 
-			if (_fullscreenPic) {
-				_fullscreenPic->draw(0x45, 0x28);
-			} else {
-				_room->draw();
-				_inventory.draw();
-				_sprites.drawSprites();
-				_player->draw();
-				_console->draw();
+			if (!_cutscene.isPlaying()) {
+				if (_fullscreenPic) {
+					_fullscreenPic->draw(0x45, 0x28);
+				} else {
+					_room->draw();
+					_inventory.draw();
+					_sprites.drawSprites();
+					_player->draw();
+					_console->draw();
+				}
 			}
 
 //			if (((*(int *)&_CursorX < 70) || (570 < *(int *)&_CursorX)) && (*(int *)&_DrawCursorNum < 90)) { TODO do we need this restriction?
@@ -3611,6 +3626,7 @@ void DarkseedEngine::stuffPlayer() {
 	}
 	waitxticks(3);
 	removeFullscreenPic();
+	_sprites.clearSpriteDrawList();
 	_cursor.showCursor(true);
 	_cutscene.play('Z');
 }
@@ -3726,6 +3742,31 @@ void DarkseedEngine::waitxticks(int ticks) {
 }
 void DarkseedEngine::restartGame() {
 	_restartGame = true;
+}
+
+void DarkseedEngine::newGame() {
+	_sprites.clearSpriteDrawList();
+	removeFullscreenPic();
+	_inventory.reset();
+	_sound->resetSpeech();
+	_objectVar.reset();
+	_room->_roomNumber = 0;
+	changeToRoom(0);
+	_player->loadAnimations("bedsleep.nsp");
+	_player->_position.x = 0x87;
+	_player->_position.y = 0x5b;
+	_player->_frameIdx = 0;
+	_player->_direction = 1;
+	setupOtherNspAnimation(0, 1);
+	//		bVar1 = true;
+	if (_currentDay == 1) {
+		_console->printTosText(8);
+	} else if (_currentDay == 2) {
+		_console->printTosText(0xc);
+	} else if (_currentDay == 3) {
+		_console->printTosText(0xe);
+	}
+
 }
 
 } // End of namespace Darkseed

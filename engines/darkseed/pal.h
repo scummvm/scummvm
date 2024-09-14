@@ -36,7 +36,11 @@ public:
 public:
 	Pal() {};
 	Pal(const Pal &pal);
+	void loadFromScreen();
+	void load(const Pal &pal);
 	bool load(const Common::Path &filename, bool shouldInstallPalette = true);
+	void clear();
+	void updatePalette(int delta, const Pal &targetPal, bool shouldInstallPalette = true);
 	void installPalette();
 };
 
