@@ -1142,6 +1142,7 @@ public:
 	void bootMsbMarsWin();
 	void bootMsbVolcanoWin();
 	void bootMsbWhalesWin();
+	void bootTelemedWin();
 
 
 	void bootGeneric();
@@ -1475,6 +1476,9 @@ void BootScriptContext::bootFTTSWin() {
 void BootScriptContext::bootArchitectureWin() {
 	addPlugIn(kPlugInStandard);
 	addPlugIn(kPlugInHoologic);
+	// Force V112 mode for PlugInModifier::load
+	// Autodetected V100 causes error there
+	setRuntimeVersion(RuntimeVersion::kRuntimeVersion112);
 }
 
 void BootScriptContext::bootDrawMarvelWin() {
@@ -1581,6 +1585,13 @@ void BootScriptContext::bootMsbWhalesWin() {
 	addPlugIn(kPlugInStandard);
 	addPlugIn(kPlugInKnowWonder);
 	setMainSegmentFile("workspace/MSB/SignInW.mfx");
+}
+
+void BootScriptContext::bootTelemedWin() {
+	addPlugIn(kPlugInStandard);
+	// Force V112 mode for PlugInModifier::load
+	// Autodetected V100 causes error there
+	setRuntimeVersion(RuntimeVersion::kRuntimeVersion112);
 }
 
 void BootScriptContext::bootGeneric() {
@@ -2130,7 +2141,7 @@ const Game games[] = {
 	// How to Build a Telemedicine Program - Windows - English
 	{
 		MTBOOT_TELEMED_WIN_EN,
-	 	&BootScriptContext::bootGeneric
+	 	&BootScriptContext::bootTelemedWin
 	},
 	// Rugrats: Totally Angelica Boredom Buster - Windows - English
 	{
