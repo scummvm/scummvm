@@ -1199,6 +1199,10 @@ int Character_GetID(CharacterInfo *chaa) {
 
 }
 
+const char *Character_GetScriptName(CharacterInfo *chin) {
+	return CreateNewScriptString(chin->scrname);
+}
+
 int Character_GetFrame(CharacterInfo *chaa) {
 	return chaa->frame;
 }
@@ -3333,6 +3337,10 @@ RuntimeScriptValue Sc_Character_GetID(void *self, const RuntimeScriptValue *para
 	API_OBJCALL_INT(CharacterInfo, Character_GetID);
 }
 
+RuntimeScriptValue Sc_Character_GetScriptName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_OBJ(CharacterInfo, const char, _GP(myScriptStringImpl), Character_GetScriptName);
+}
+
 // int (CharacterInfo *chaa)
 RuntimeScriptValue Sc_Character_GetIdleView(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetIdleView);
@@ -3745,6 +3753,7 @@ void RegisterCharacterAPI(ScriptAPIVersion base_api, ScriptAPIVersion /* compat_
 		{"Character::set_ScaleVolume", API_FN_PAIR(Character_SetScaleVolume)},
 		{"Character::get_Scaling", API_FN_PAIR(Character_GetScaling)},
 		{"Character::set_Scaling", API_FN_PAIR(Character_SetScaling)},
+		{"Character::get_ScriptName", API_FN_PAIR(Character_GetScriptName)},
 		{"Character::get_Solid", API_FN_PAIR(Character_GetSolid)},
 		{"Character::set_Solid", API_FN_PAIR(Character_SetSolid)},
 		{"Character::get_Speaking", API_FN_PAIR(Character_GetSpeaking)},

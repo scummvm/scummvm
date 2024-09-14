@@ -25,9 +25,11 @@
 #include "ags/engine/ac/audio_channel.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/string.h"
 #include "ags/shared/core/asset_manager.h"
 #include "ags/engine/ac/dynobj/cc_audio_channel.h"
 #include "ags/engine/ac/dynobj/cc_audio_clip.h"
+#include "ags/engine/ac/dynobj/script_string.h"
 #include "ags/engine/script/runtime_script_value.h"
 #include "ags/globals.h"
 
@@ -37,6 +39,10 @@ using namespace AGS::Shared;
 
 int AudioClip_GetID(ScriptAudioClip *clip) {
 	return clip->id;
+}
+
+const char *AudioClip_GetScriptName(ScriptAudioClip *clip) {
+	return CreateNewScriptString(clip->scriptName);
 }
 
 int AudioClip_GetFileType(ScriptAudioClip *clip) {
@@ -103,6 +109,10 @@ RuntimeScriptValue Sc_AudioClip_GetID(void *self, const RuntimeScriptValue *para
 	API_OBJCALL_INT(ScriptAudioClip, AudioClip_GetID);
 }
 
+RuntimeScriptValue Sc_AudioClip_GetScriptName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_OBJ(ScriptAudioClip, const char, _GP(myScriptStringImpl), AudioClip_GetScriptName);
+}
+
 // int | ScriptAudioClip *clip
 RuntimeScriptValue Sc_AudioClip_GetFileType(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptAudioClip, AudioClip_GetFileType);
@@ -153,6 +163,7 @@ void RegisterAudioClipAPI() {
 		{"AudioClip::get_ID", API_FN_PAIR(AudioClip_GetID)},
 		{"AudioClip::get_FileType", API_FN_PAIR(AudioClip_GetFileType)},
 		{"AudioClip::get_IsAvailable", API_FN_PAIR(AudioClip_GetIsAvailable)},
+		{"AudioClip::get_ScriptName", API_FN_PAIR(AudioClip_GetScriptName)},
 		{"AudioClip::get_Type", API_FN_PAIR(AudioClip_GetType)},
 	};
 

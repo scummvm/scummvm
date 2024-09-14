@@ -37,6 +37,7 @@
 #include "ags/engine/ac/inv_window.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/ac/string.h"
 #include "ags/engine/ac/system.h"
 #include "ags/engine/ac/dynobj/cc_gui_object.h"
 #include "ags/engine/ac/dynobj/script_gui.h"
@@ -53,6 +54,7 @@
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/ac/dynobj/cc_gui.h"
 #include "ags/engine/ac/dynobj/cc_gui_object.h"
+#include "ags/engine/ac/dynobj/script_string.h"
 #include "ags/engine/script/runtime_script_value.h"
 #include "ags/shared/util/string_compat.h"
 #include "ags/shared/debugging/out.h"
@@ -165,6 +167,10 @@ int GUI_GetClickable(ScriptGUI *tehgui) {
 
 int GUI_GetID(ScriptGUI *tehgui) {
 	return tehgui->id;
+}
+
+const char *GUI_GetScriptName(ScriptGUI *tehgui) {
+	return CreateNewScriptString(_GP(guis)[tehgui->id].Name);
 }
 
 GUIObject *GUI_GetiControls(ScriptGUI *tehgui, int idx) {
@@ -701,6 +707,10 @@ RuntimeScriptValue Sc_GUI_GetID(void *self, const RuntimeScriptValue *params, in
 	API_OBJCALL_INT(ScriptGUI, GUI_GetID);
 }
 
+RuntimeScriptValue Sc_GUI_GetScriptName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_OBJ(ScriptGUI, const char, _GP(myScriptStringImpl), GUI_GetScriptName);
+}
+
 RuntimeScriptValue Sc_GUI_GetPopupYPos(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptGUI, GUI_GetPopupYPos);
 }
@@ -824,6 +834,7 @@ void RegisterGUIAPI() {
 		{"GUI::get_PopupStyle", API_FN_PAIR(GUI_GetPopupStyle)},
 		{"GUI::get_PopupYPos", API_FN_PAIR(GUI_GetPopupYPos)},
 		{"GUI::set_PopupYPos", API_FN_PAIR(GUI_SetPopupYPos)},
+		{"GUI::get_ScriptName", API_FN_PAIR(GUI_GetScriptName)},
 		{"TextWindowGUI::get_TextColor", API_FN_PAIR(GUI_GetTextColor)},
 		{"TextWindowGUI::set_TextColor", API_FN_PAIR(GUI_SetTextColor)},
 		{"TextWindowGUI::get_TextPadding", API_FN_PAIR(GUI_GetTextPadding)},
