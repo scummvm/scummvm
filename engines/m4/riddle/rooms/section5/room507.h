@@ -29,12 +29,23 @@ namespace Riddle {
 namespace Rooms {
 
 class Room507 : public Room {
+private:
+	int _blockSeries[8];
+	machine *_block[8];
+	bool _blockFlag[8];
+	int _doorSeries = 0;
+	machine *_door = nullptr;
+
+	void useStoneGlyph(int blockNum);
 public:
-	Room507() : Room() {}
+	Room507();
 	~Room507() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms

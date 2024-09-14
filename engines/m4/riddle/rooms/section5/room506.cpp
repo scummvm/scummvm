@@ -33,6 +33,11 @@ namespace Rooms {
 Room506::Room506() : Room() {
 }
 
+void Room506::preload() {
+	_G(player).walker_type = 1;
+	_G(player).shadow_type = 1;
+}
+
 void Room506::init() {
 	_flag2 = _flag3 = _flag4 = false;
 
