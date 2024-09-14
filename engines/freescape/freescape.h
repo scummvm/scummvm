@@ -512,7 +512,7 @@ public:
 	bool _fontLoaded;
 	virtual void drawStringInSurface(const Common::String &str, int x, int y, uint32 fontColor, uint32 backColor, Graphics::Surface *surface, int offset = 0);
 	virtual void drawStringInSurface(const Common::String &str, int x, int y, uint32 primaryFontColor, uint32 secondaryFontColor, uint32 backColor, Graphics::Surface *surface, int offset = 0);
-	Graphics::Surface *drawStringsInSurface(const Common::Array<Common::String> &lines);
+	Graphics::Surface *drawStringsInSurface(const Common::Array<Common::String> &lines, Graphics::Surface *surface);
 
 	// Game state
 	virtual void initGameState();

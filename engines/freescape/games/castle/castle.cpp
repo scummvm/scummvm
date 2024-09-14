@@ -399,6 +399,8 @@ void CastleEngine::pressedKey(const int keycode) {
 	}
 }
 
+extern Common::String centerAndPadString(const Common::String &x, int y);
+
 void CastleEngine::drawInfoMenu() {
 	PauseToken pauseToken = pauseEngine();
 	if (_savedScreen) {
@@ -426,6 +428,18 @@ void CastleEngine::drawInfoMenu() {
 		_gfx->readFromPalette(10, r, g, b);
 		front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 		drawStringInSurface(Common::String::format("%07d", score), 166, 71, front, black, surface);
+	} else if (isSpectrum()) {
+		Common::Array<Common::String> lines;
+		lines.push_back(centerAndPadString("********************", 21));
+		lines.push_back(centerAndPadString("s-save l-load q-quit", 21));
+		lines.push_back("");
+		lines.push_back(centerAndPadString(Common::String::format("keys   %d collected", _numberKeys), 21));
+		lines.push_back(centerAndPadString(Common::String::format("spirits  %d destroyed", _spiritsDestroyed), 21));
+		lines.push_back(centerAndPadString("strength  strong", 21));
+		lines.push_back(centerAndPadString(Common::String::format("score   %07d", score), 21));
+		lines.push_back("");
+		lines.push_back(centerAndPadString("********************", 21));
+		surface = drawStringsInSurface(lines, surface);
 	}
 
 	Texture *menuTexture = _gfx->createTexture(surface);
@@ -442,18 +456,22 @@ void CastleEngine::drawInfoMenu() {
 					_gfx->setViewport(_fullscreenViewArea);
 					_eventManager->purgeKeyboardEvents();
 
-					g_system->lockMouse(false);
-					g_system->showMouse(true);
 					loadGameDialog();
+					if (isDOS() || isAmiga() || isAtariST()) {
+						g_system->lockMouse(false);
+						g_system->showMouse(true);
+					}
 
 					_gfx->setViewport(_viewArea);
 				} else if (event.customType == kActionSave) {
 					_gfx->setViewport(_fullscreenViewArea);
 					_eventManager->purgeKeyboardEvents();
 
-					g_system->lockMouse(false);
-					g_system->showMouse(true);
 					saveGameDialog();
+					if (isDOS() || isAmiga() || isAtariST()) {
+						g_system->lockMouse(false);
+						g_system->showMouse(true);
+					}
 
 					_gfx->setViewport(_viewArea);
 				} else if (isDOS() && event.customType == kActionToggleSound) {
@@ -968,6 +986,11 @@ extern Common::String centerAndPadString(const Common::String &x, int y);
 
 void CastleEngine::selectCharacterScreen() {
 	Common::Array<Common::String> lines;
+	uint32 color = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
+	surface->fillRect(_fullscreenViewArea, color);
+
 	switch (_language) {
 		case Common::ES_ESP:
 			// No accent in "príncipe" since it is not supported by the font
@@ -1010,7 +1033,7 @@ void CastleEngine::selectCharacterScreen() {
 			break;
 	}
 
-	Graphics::Surface *surface = drawStringsInSurface(lines);
+	drawStringsInSurface(lines, surface);
 	_system->lockMouse(false);
 	_system->showMouse(true);
 	Common::Rect princeSelector(82, 100, 163, 109);
