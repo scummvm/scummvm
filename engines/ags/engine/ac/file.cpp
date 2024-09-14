@@ -736,6 +736,7 @@ void RegisterFileAPI() {
 		{"File::Delete^1", API_FN_PAIR(File_Delete)},
 		{"File::Exists^1", API_FN_PAIR(File_Exists)},
 		{"File::Open^2", API_FN_PAIR(sc_OpenFile)},
+		{"File::ResolvePath^1", API_FN_PAIR(File_ResolvePath)},
 
 		{"File::Close^0", API_FN_PAIR(File_Close)},
 		{"File::ReadInt^0", API_FN_PAIR(File_ReadInt)},
@@ -754,6 +755,7 @@ void RegisterFileAPI() {
 		{"File::get_EOF", API_FN_PAIR(File_GetEOF)},
 		{"File::get_Error", API_FN_PAIR(File_GetError)},
 		{"File::get_Position", API_FN_PAIR(File_GetPosition)},
+		{"File::get_Path", API_FN_PAIR(File_GetPath)},
 	};
 
 	ccAddExternalFunctions361(file_api);
