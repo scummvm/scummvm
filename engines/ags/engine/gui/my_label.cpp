@@ -19,13 +19,12 @@
  *
  */
 
+#include "ags/engine/gui/my_label.h"
 #include "ags/engine/ac/display.h"
 #include "ags/engine/ac/game_setup.h"
 #include "ags/engine/ac/string.h"
 #include "ags/shared/font/fonts.h"
-#include "ags/shared/gui/gui_defines.h"
-#include "ags/engine/gui/my_label.h"
-#include "ags/engine/gui/gui_dialog_internal_defs.h"
+#include "ags/engine/gui/gui_dialog_defines.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
