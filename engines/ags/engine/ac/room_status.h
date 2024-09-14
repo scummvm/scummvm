@@ -51,8 +51,8 @@ struct HotspotState {
 // Savegame data format for RoomStatus
 enum RoomStatSvgVersion {
 	kRoomStatSvgVersion_Initial = 0,
-	kRoomStatSvgVersion_36016   = 1, // hotspot and object names
-	// 2 was practically unused
+	kRoomStatSvgVersion_350     = 1, // new movelist format (along with pathfinder)
+	kRoomStatSvgVersion_36016   = 2, // hotspot and object names
 	kRoomStatSvgVersion_36025   = 3, // object animation volume
 	kRoomStatSvgVersion_36041   = 4, // room state's contentFormat
 	kRoomStatSvgVersion_36109   = 5, // removed movelists, save externally
