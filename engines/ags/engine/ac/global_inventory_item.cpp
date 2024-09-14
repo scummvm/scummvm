@@ -30,9 +30,11 @@
 #include "ags/engine/ac/inv_window.h"
 #include "ags/engine/ac/properties.h"
 #include "ags/engine/ac/string.h"
+#include "ags/engine/ac/dynobj/cc_inventory.h"
 #include "ags/shared/gui/gui_main.h"
 #include "ags/shared/gui/gui_inv.h"
 #include "ags/engine/script/script.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -116,7 +118,9 @@ void RunInventoryInteraction(int iit, int mood) {
 	if (evnt < 0) // on any non-supported mode - use "other-click"
 		evnt = otherclick_evt;
 
-	auto obj_evt = ObjectEvent("inventory%d", iit);
+	const auto obj_evt = ObjectEvent("inventory%d", iit,
+									 RuntimeScriptValue().SetScriptObject(&_G(scrInv)[iit], &_GP(ccDynamicInv)), mood);
+
 	if (_G(loaded_game_file_version) > kGameVersion_272) {
 		run_interaction_script(obj_evt, _GP(game).invScripts[iit].get(), evnt);
 	} else {
