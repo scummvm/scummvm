@@ -867,26 +867,37 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 	// TODO: Continue here
 
 	// Left side
-	DrawVerticalBorderSide(pos, Common::Point(6, size.y), s);
+	DrawBorderSide(pos, Common::Point(6, size.y), s);
 
 	// Right side
 	// TODO: Check if we have the right offset on the right, I missed the part about adding
 	// the width originally
-	DrawVerticalBorderSide(pos + Common::Point(size.x - 6, 0), Common::Point(6, size.y), s);
+	DrawBorderSide(pos + Common::Point(size.x - 6, 0), Common::Point(6, size.y), s);
 
 	// Top side
-	DrawHorizontalBorderSide(pos, Common::Point(size.x, 6), s);
+	DrawBorderSide(pos, Common::Point(size.x, 6), s);
 
 	// Bottom side
-	DrawHorizontalBorderSide(pos - Common::Point(0, 6), Common::Point(size.x, 6), s);
+	DrawBorderSide(pos + Common::Point(0, size.y - 6), Common::Point(size.x, 6), s);
 
 	// Add the function for filling a side of the border
 	// Algorithm
 	// Set up clipping rect on one side
 	// Draw the texture enough times in x and y to fill the clipping rect
+
+	// Draw the highlights
+	// TODO: Check if positions are really correct
+	// Top side
+	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0xFF, s);
+
+	// TODO: Left side
+
+	// Bottom highlight
+	DrawHorizontalBorderHighlight(pos + Common::Point(1, size.y + 1), size.x - 1, 0xFF, s);
+
 }
 
-void View1::DrawVerticalBorderSide(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
+void View1::DrawBorderSide(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
 	// 0037h:39B5h
 
 	// Clipping rectangle setup at l0037_39FE:
@@ -908,8 +919,24 @@ void View1::DrawVerticalBorderSide(const Common::Point &pos, const Common::Point
 	}
 }
 
-void View1::DrawHorizontalBorderSide(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
-	// 0037h:39B5h
+void View1::DrawHorizontalBorderHighlight(const Common::Point &pos, int16 width, uint8 unknown, Graphics::ManagedSurface &s) {
+
+	// 0037:3AF5 (in fn0037_3AD4)
+
+	// TODO: There is quite some setup going on in this function before we get to the drawing
+	
+	Common::Rect clippingRect(pos, pos + Common::Point(width, 1));
+	// TODO: Should check which texture we actually use at the moment
+
+	// TODO: Check which area we actually fill
+	uint16 currentX = clippingRect.left;
+	uint16 currentY = clippingRect.top;
+	const Sprite &sprite = g_engine->_borderSprite;
+
+	while (currentX < clippingRect.right) {
+		DrawSpriteClipped(currentX, currentY, clippingRect, sprite, s);
+		currentX += sprite.Width;
+	}
 }
 
 void View1::ShowDialogueChoice(const Common::Array<Common::StringArray> &choices, const Common::Point &position, bool onRightSide) {
