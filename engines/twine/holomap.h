@@ -51,7 +51,7 @@ protected:
 	TwinEEngine *_engine;
 public:
 	Holomap(TwinEEngine *engine) : _engine(engine) {}
-	virtual ~Holomap() = default;
+	virtual ~Holomap() {}
 
 	/**
 	 * Set Holomap location position
