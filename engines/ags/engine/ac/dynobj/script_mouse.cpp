@@ -19,6 +19,7 @@
  *
  */
 
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/ac/dynobj/script_mouse.h"
 #include "ags/shared/script/cc_common.h" // cc_error
 
@@ -40,7 +41,7 @@ void ScriptMouse::WriteInt32(void *address, intptr_t offset, int32_t val) {
 	switch (offset) {
 	case 0:
 	case 4:
-		cc_error("ScriptMouse: attempt to write readonly variable at offset %d", offset);
+		debug_script_warn("ScriptMouse: attempt to write in readonly variable at offset %d, value", offset, val);
 		break;
 	default:
 		cc_error("ScriptMouse: unsupported variable offset %d", offset);
