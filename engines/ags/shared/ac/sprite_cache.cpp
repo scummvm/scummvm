@@ -112,7 +112,7 @@ bool SpriteCache::SetSprite(sprkey_t index, Bitmap *sprite, int flags) {
 
 	// Assign sprite with 0 size, as it will not be included into the cache size
 	_spriteData[index] = SpriteData(sprite, 0, SPRCACHEFLAG_EXTERNAL | SPRCACHEFLAG_LOCKED);
-	_sprInfos[index] = SpriteInfo(flags, sprite->GetWidth(), sprite->GetHeight());
+	_sprInfos[index] = SpriteInfo(sprite->GetWidth(), sprite->GetHeight(), flags);
 	SprCacheLog("SetSprite: (external) %d", index);
 	return true;
 }
