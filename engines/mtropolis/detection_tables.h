@@ -1067,7 +1067,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by The Voyager Company, 1997
 		{
 			"architecture",
-			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			"",
 			{
 				{ "MTPLAY95.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 			 	{ "FWA1041.MPL", 0, "cb108fec620eff4108f194b1a730ec16", 50695771 },
@@ -1075,7 +1075,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSUPPORTED,
+			ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GID_ARCHITECTURE,
@@ -1087,7 +1087,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Europress Software, 1997
 		{
 			"beatrix",
-			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			"",
 			{
 				{ "POTTER95.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 			 	{ "DATA.MPL", 0, "1dc4d2bf656ebb5a89e5f4a750a8cec0", 259660228 },
@@ -1095,7 +1095,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSUPPORTED,
+			ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GID_BEATRIX,
@@ -1115,7 +1115,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSUPPORTED | ADGF_DEMO,
+			ADGF_UNSTABLE | ADGF_DEMO,
 			GUIO0()
 		},
 		GID_BEATRIX,
@@ -1459,7 +1459,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	{ // How to Build a Telemedicine Program (English, Windows)
 		{
 			"telemed",
-			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			"",
 			{
 		 		{ "TELEMED.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 				{ "TELEMED.MPL", 0, "cd73ec482fb21508a34daeff6773623c", 44022984 },
@@ -1467,7 +1467,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 		 	Common::EN_ANY,
 		 	Common::kPlatformWindows,
-		 	ADGF_UNSUPPORTED,
+		 	ADGF_UNSTABLE,
 		 	GUIO0()
 		},
 	 	GID_TELEMED,
