@@ -38,6 +38,7 @@ private:
 	int _volume2 = 0;
 	int _convState1 = 0;
 	int _convState2 = 0;
+	int _convState3 = 0;
 	int _ripSketching = 0;
 	int _ripLowReach = 0;
 	int _ripMedReach = 0;
@@ -46,6 +47,12 @@ private:
 	int _ripThrowFromLeft = 0;
 	int _ripHiReach2Handed = 0;
 	int _ripLeansBack = 0;
+	int _ripStepUpRight = 0;
+	int _ripThrowFromRight = 0;
+	int _ripKneels = 0;
+	int _ripShrunkenHead = 0;
+	int _ripGivesMoneyEmerald = 0;
+	int _ripGetsUp = 0;
 	int _mzDigs = 0;
 	int _mzStandsTalks = 0;
 	int _mzTakesEmerald = 0;
