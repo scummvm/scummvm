@@ -23,6 +23,7 @@
 #include "ags/engine/ac/gui_control.h"
 #include "ags/engine/ac/global_gui.h"
 #include "ags/engine/ac/mouse.h"
+#include "ags/engine/ac/string.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/gui/gui_button.h"
 #include "ags/shared/gui/gui_inv.h"
@@ -34,6 +35,7 @@
 #include "ags/engine/script/runtime_script_value.h"
 #include "ags/engine/ac/dynobj/cc_gui.h"
 #include "ags/engine/ac/dynobj/cc_gui_object.h"
+#include "ags/engine/ac/dynobj/script_string.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
@@ -95,6 +97,10 @@ void GUIControl_SetEnabled(GUIObject *guio, int enabled) {
 
 int GUIControl_GetID(GUIObject *guio) {
 	return guio->Id;
+}
+
+const char *GUIControl_GetScriptName(GUIObject *guio) {
+	return CreateNewScriptString(guio->Name);
 }
 
 ScriptGUI *GUIControl_GetOwningGUI(GUIObject *guio) {
@@ -322,6 +328,10 @@ RuntimeScriptValue Sc_GUIControl_GetID(void *self, const RuntimeScriptValue *par
 	API_OBJCALL_INT(GUIObject, GUIControl_GetID);
 }
 
+RuntimeScriptValue Sc_GUIControl_GetScriptName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_OBJ(GUIObject, const char, _GP(myScriptStringImpl), GUIControl_GetScriptName);
+}
+
 // ScriptGUI* (GUIObject *guio)
 RuntimeScriptValue Sc_GUIControl_GetOwningGUI(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_OBJ(GUIObject, ScriptGUI, _GP(ccDynamicGUI), GUIControl_GetOwningGUI);
@@ -406,6 +416,7 @@ void RegisterGUIControlAPI() {
 		{"GUIControl::set_Height", API_FN_PAIR(GUIControl_SetHeight)},
 		{"GUIControl::get_ID", API_FN_PAIR(GUIControl_GetID)},
 		{"GUIControl::get_OwningGUI", API_FN_PAIR(GUIControl_GetOwningGUI)},
+		{"GUIControl::get_ScriptName", API_FN_PAIR(GUIControl_GetScriptName)},
 		{"GUIControl::get_Visible", API_FN_PAIR(GUIControl_GetVisible)},
 		{"GUIControl::set_Visible", API_FN_PAIR(GUIControl_SetVisible)},
 		{"GUIControl::get_Width", API_FN_PAIR(GUIControl_GetWidth)},
