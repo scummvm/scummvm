@@ -499,6 +499,11 @@ void MidiDriver_PCJr::send(uint32 b) {
 		debug(2, "Unused MIDI command %02x %02x %02x", command, op1, op2);
 		break;
 	}
+
+	if (!_pcsMode) {
+		_sndUpdateCountDown = 1;
+		_sndUpdateCountDownRem = 0;
+	}
 }
 
 uint32 MidiDriver_PCJr::property(int prop, uint32 value) {
@@ -721,7 +726,7 @@ void MidiDriver_PCJr::noteOn(byte part, byte note, byte velocity) {
 			_channels[i]->noteOn(note, velocity);
 			return;
 		}
-	} else if (note == 0) {
+	} else if (note == 0 || note == 1) {
 		return;
 	}
 
