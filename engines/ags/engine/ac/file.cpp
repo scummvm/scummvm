@@ -189,10 +189,9 @@ const char *File_ReadStringBack(sc_File *fil) {
 		return CreateNewScriptString("");
 	}
 
-	char *retVal = (char *)malloc(lle);
-	in->Read(retVal, lle);
-
-	return CreateNewScriptString(retVal, false);
+	char *buffer = CreateNewScriptString(lle);
+	in->Read(buffer, lle);
+	return buffer;
 }
 
 int File_ReadInt(sc_File *fil) {

@@ -1425,17 +1425,9 @@ int ccInstance::Run(int32_t curpc) {
 		}
 		case SCMD_CREATESTRING: {
 			auto &reg1 = registers[codeOp.Arg1i()];
-			// FIXME: provide a dummy impl to avoid this?
-			// why arrays can be created using global mgr and strings not?
-			if (_G(stringClassImpl) == nullptr) {
-				cc_error("No string class implementation set, but opcode was used");
-				return -1;
-			} else {
-				const char *ptr = reinterpret_cast<const char *>(reg1.GetDirectPtr());
-				reg1.SetScriptObject(
-					_G(stringClassImpl)->CreateString(ptr).Obj,
-					&_GP(myScriptStringImpl));
-			}
+			const char *ptr = reinterpret_cast<const char *>(reg1.GetDirectPtr());
+			DynObjectRef ref = ScriptString::Create(ptr);
+			reg1.SetScriptObject(ref.Obj, &_GP(myScriptStringImpl));
 			break;
 		}
 		case SCMD_STRINGSEQUAL: {
