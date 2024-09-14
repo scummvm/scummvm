@@ -570,7 +570,80 @@ void Room504::daemon() {
 			break;
 
 		case 8:
-			// TODO: Rest of case 508's subsections
+			switch (_convState2) {
+			case 1:
+				sendWSMessage_10000(1, _ripley, _ripLeansBack, 12, 24, 506,
+					_ripKneels, 17, 17, 0);
+				_convState2 = 2;
+				break;
+
+			case 2:
+				sendWSMessage_10000(1, _ripley, _ripKneels, 13, 25, 506,
+					_ripKneels, 17, 17, 0);
+				_convState2 = 1;
+				_convState3 = 1;
+				series_unload(_ripLeansBack);
+				break;
+
+			case 8:
+				sendWSMessage_10000(1, _ripley, _ripLeansBack, 12, 12, 506,
+					_ripLeansBack, 12, 12, 0);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 11:
+			switch (_convState2) {
+			case 7:
+				sendWSMessage_10000(1, _ripley, _ripGetsUp, 83, 69, 506, _ripGetsUp, 46, 46, 0);
+				_convState2 = 7;
+				_convState3 = 7;
+				break;
+
+			case 11:
+				sendWSMessage_10000(1, _ripley, _ripGetsUp, 83, 83, 506, _ripGetsUp, 83, 83, 0);
+				break;
+
+			case 13:
+				_ripYells = series_load("504 rip yells ");
+				sendWSMessage_10000(1, _ripley, _ripYells, 1, 9, 506, _ripYells, 9, 9, 0);
+				_convState3 = 13;
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 13:
+			switch (_convState2) {
+			case 10:
+				frame = imath_ranged_rand(10, 12);
+				sendWSMessage_10000(1, _ripley, _ripYells, frame, frame, 506,
+					_ripYells, frame, frame, 0);
+				break;
+			case 11:
+				sendWSMessage_10000(1, _ripley, _ripYells, 9, 1, 506,
+					_ripGetsUp, 83, 83, 0);
+				_convState2 = 12;
+				break;
+			case 12:
+				sendWSMessage_10000(1, _ripley, _ripYells, 9, 9, 506,
+					_ripYells, 9, 9, 0);
+				break;
+			case 13:
+				sendWSMessage_10000(1, _ripley, _ripGetsUp, 83, 83, 506,
+					_ripGetsUp, 83, 83, 0);
+				_convState2 = 11;
+				_convState3 = 11;
+				break;
+			default:
+				break;
+			}
+			break;
 
 		default:
 			break;
@@ -1225,7 +1298,7 @@ void Room504::daemon() {
 			triggerMachineByHashCallbackNegative, "Rope Being Slurped Up from right");
 		sendWSMessage_10000(1, _vineMachine2, _ropeRSlurpsUp, 1, 14, 606,
 			_ropeRSlurpsUp, 14, 14, 0);
-
+		break;
 
 	case 606:
 		terminateMachineAndNull(_vineMachine2);
@@ -1837,6 +1910,7 @@ void Room504::daemon() {
 			triggerMachineByHashCallbackNegative, "Vine Untied ");
 		sendWSMessage_10000(1, _vineMachine2, _vineUnrolling, 6, 1, 695,
 			_vineUnrolling, 1, 1, 0);
+		break;
 
 	case 695:
 		terminateMachineAndNull(_vineMachine2);

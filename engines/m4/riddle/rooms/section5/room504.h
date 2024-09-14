@@ -53,6 +53,7 @@ private:
 	int _ripShrunkenHead = 0;
 	int _ripGivesMoneyEmerald = 0;
 	int _ripGetsUp = 0;
+	int _ripYells = 0;
 	int _mzDigs = 0;
 	int _mzStandsTalks = 0;
 	int _mzTakesEmerald = 0;
