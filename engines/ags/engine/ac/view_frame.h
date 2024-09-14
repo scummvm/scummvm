@@ -50,7 +50,7 @@ int  ViewFrame_GetView(ScriptViewFrame *svf);
 int  ViewFrame_GetLoop(ScriptViewFrame *svf);
 int  ViewFrame_GetFrame(ScriptViewFrame *svf);
 
-void precache_view(int view);
+void precache_view(int view, int max_loops = INT_MAX);
 // Calculate the frame sound volume from different factors;
 // pass scale as 100 if volume scaling is disabled
 // NOTE: historically scales only in 0-100 range :/
