@@ -62,7 +62,7 @@ const char *String_Copy(const char *srcString) {
 }
 
 const char *String_Append(const char *thisString, const char *extrabit) {
-	size_t new_len = strlen(thisString) + strlen(extrabit);
+	size_t new_len = strlen(thisString) + strlen(extrabit) + 1;
 	char *buffer = CreateNewScriptString(new_len);
 	Common::strcpy_s(buffer, new_len, thisString);
 	Common::strcat_s(buffer, new_len, extrabit);
@@ -72,7 +72,7 @@ const char *String_Append(const char *thisString, const char *extrabit) {
 const char *String_AppendChar(const char *thisString, int extraOne) {
 	char chr[5]{};
 	size_t chw = usetc(chr, extraOne);
-    size_t new_len = strlen(thisString) + chw;
+    size_t new_len = strlen(thisString) + chw + 1;
     char *buffer = CreateNewScriptString(new_len);
 	Common::sprintf_s(buffer, new_len, "%s%s", thisString, chr);
 	return buffer;
@@ -89,7 +89,7 @@ const char *String_ReplaceCharAt(const char *thisString, int index, int newChar)
 	size_t old_sz = ucwidth(uchar);
 	char new_chr[5]{};
 	size_t new_chw = usetc(new_chr, newChar);
-	size_t new_len = off + remain_sz + new_chw - old_sz;
+	size_t new_len = off + remain_sz + new_chw - old_sz + 1;
 	char *buffer = CreateNewScriptString(new_len);
 	memcpy(buffer, thisString, off);
 	memcpy(buffer + off, new_chr, new_chw);
@@ -105,7 +105,7 @@ const char *String_Truncate(const char *thisString, int length) {
 		return thisString;
 
 	size_t sz = uoffset(thisString, length);
-	char *buffer = CreateNewScriptString(sz);
+	char *buffer = CreateNewScriptString(sz + 1);
 	memcpy(buffer, thisString, sz);
 	buffer[sz] = 0;
 	return buffer;
@@ -122,7 +122,7 @@ const char *String_Substring(const char *thisString, int index, int length) {
 	size_t end = uoffset(thisString + start, sublen) + start;
 	size_t copysz = end - start;
 
-	char *buffer = CreateNewScriptString(copysz);
+	char *buffer = CreateNewScriptString(copysz + 1);
 	memcpy(buffer, thisString + start, copysz);
 	buffer[copysz] = 0;
 	return buffer;
@@ -198,16 +198,16 @@ const char *String_Replace(const char *thisString, const char *lookForText, cons
 
 const char *String_LowerCase(const char *thisString) {
 	size_t len = strlen(thisString);
-	char *buffer = CreateNewScriptString(len);
-	memcpy(buffer, thisString, len);
+	char *buffer = CreateNewScriptString(len + 1);
+	memcpy(buffer, thisString, len + 1);
 	ustrlwr(buffer);
 	return buffer;
 }
 
 const char *String_UpperCase(const char *thisString) {
 	size_t len = strlen(thisString);
-	char *buffer = CreateNewScriptString(len);
-	memcpy(buffer, thisString, len);
+	char *buffer = CreateNewScriptString(len + 1);
+	memcpy(buffer, thisString, len + 1);
 	ustrupr(buffer);
 	return buffer;
 }
