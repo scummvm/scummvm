@@ -398,8 +398,65 @@ template <typename T> void get_pixel_if_not_transparent(const T *pixel, T *red, 
 #define VMEMCOLOR_RGBA(r,g,b,a) \
 	( (((a) & 0xFF) << _vmem_a_shift_32) | (((r) & 0xFF) << _vmem_r_shift_32) | (((g) & 0xFF) << _vmem_g_shift_32) | (((b) & 0xFF) << _vmem_b_shift_32) )
 
-template<typename T, bool HasAlpha, bool UsingLinearFiltering>
+// Template helper function which converts bitmap to a video memory buffer,
+// applies transparency and optionally copies the source alpha channel (if available).
+template<typename T, bool HasAlpha>
 void VideoMemoryGraphicsDriver::BitmapToVideoMemImpl(const Bitmap *bitmap, const TextureTile *tile, uint8_t *dst_ptr, const int dst_pitch) {
+	// tell the compiler these won't change mid loop execution
+	const int t_width = tile->width;
+	const int t_height = tile->height;
+	const int t_x = tile->x;
+	const int t_y = tile->y;
+
+	const int idst_pitch = dst_pitch * sizeof(uint8_t) / sizeof(uint32_t); // destination is always 32-bit
+	auto idst = reinterpret_cast<uint32_t *>(dst_ptr);
+
+	for (int y = 0; y < t_height; y++) {
+		const uint8_t *scanline_at = bitmap->GetScanLine(y + t_y);
+		for (int x = 0; x < t_width; x++) {
+			auto srcData = (const T *)&scanline_at[(x + t_x) * sizeof(T)];
+			const T src_color = srcData[0];
+			if (HasAlpha) {
+				idst[x] = VMEMCOLOR_RGBA(algetr<T>(src_color), algetg<T>(src_color), algetb<T>(src_color), algeta<T>(src_color));
+			} else if (is_color_mask<T>(src_color)) {
+				idst[x] = 0;
+			} else {
+				idst[x] = VMEMCOLOR_RGBA(algetr<T>(src_color), algetg<T>(src_color), algetb<T>(src_color), 0xFF);
+			}
+		}
+		idst += idst_pitch;
+	}
+}
+
+// Template helper function which converts bitmap to a video memory buffer,
+// assuming that the destination is always opaque (alpha channel is filled with 0xFF)
+template<typename T>
+void VideoMemoryGraphicsDriver::BitmapToVideoMemOpaqueImpl(const Bitmap *bitmap, const TextureTile *tile, uint8_t *dst_ptr, const int dst_pitch) {
+	// tell the compiler these won't change mid loop execution
+	const int t_width = tile->width;
+	const int t_height = tile->height;
+	const int t_x = tile->x;
+	const int t_y = tile->y;
+
+	const int idst_pitch = dst_pitch * sizeof(uint8_t) / sizeof(uint32_t); // destination is always 32-bit
+	auto idst = reinterpret_cast<uint32_t *>(dst_ptr);
+
+	for (int y = 0; y < t_height; y++) {
+		const uint8_t *scanline_at = bitmap->GetScanLine(y + t_y);
+		for (int x = 0; x < t_width; x++) {
+			auto srcData = (const T *)&scanline_at[(x + t_x) * sizeof(T)];
+			const T src_color = srcData[0];
+			idst[x] = VMEMCOLOR_RGBA(algetr<T>(src_color), algetg<T>(src_color), algetb<T>(src_color), 0xFF);
+		}
+		idst += idst_pitch;
+	}
+}
+
+// Template helper function which converts bitmap to a video memory buffer
+// with a semi-transparent pixels fix for "Linear" graphics filter which prevents
+// colored outline (usually either of black or "magic pink" color).
+template<typename T, bool HasAlpha>
+void VideoMemoryGraphicsDriver::BitmapToVideoMemLinearImpl(const Bitmap *bitmap, const TextureTile *tile, uint8_t *dst_ptr, const int dst_pitch) {
 	// tell the compiler these won't change mid loop execution
 	const int t_width = tile->width;
 	const int t_height = tile->height;
@@ -410,50 +467,39 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMemImpl(const Bitmap *bitmap, const
 	const int idst_pitch = dst_pitch * sizeof(uint8_t) / sizeof(uint32_t); // destination is always 32-bit
 	auto idst = reinterpret_cast<uint32_t *>(dst_ptr);
 	bool lastPixelWasTransparent = false;
-
 	for (int y = 0; y < t_height; y++) {
 		lastPixelWasTransparent = false;
 		const uint8_t *scanline_before = (y > 0) ? bitmap->GetScanLine(y + t_y - 1) : nullptr;
 		const uint8_t *scanline_at = bitmap->GetScanLine(y + t_y);
 		const uint8_t *scanline_after = (y < t_height - 1) ? bitmap->GetScanLine(y + t_y + 1) : nullptr;
-
 		for (int x = 0; x < t_width; x++) {
 			auto srcData = (const T *)&scanline_at[(x + t_x) * src_bpp];
 			const T src_color = srcData[0];
 
 			if (is_color_mask<T>(src_color)) {
-				if (!UsingLinearFiltering) {
+				// set to transparent, but use the colour from the neighbouring
+				// pixel to stop the linear filter doing colored outlines
+				T red = 0, green = 0, blue = 0, divisor = 0;
+				if (x > 0)
+					get_pixel_if_not_transparent<T>(&srcData[-1], &red, &green, &blue, &divisor);
+				if (x < t_width - 1)
+					get_pixel_if_not_transparent<T>(&srcData[1], &red, &green, &blue, &divisor);
+				if (y > 0)
+					get_pixel_if_not_transparent<T>((const T *)&scanline_before[(x + t_x) * src_bpp], &red, &green, &blue, &divisor);
+				if (y < t_height - 1)
+					get_pixel_if_not_transparent<T>((const T *)&scanline_after[(x + t_x) * src_bpp], &red, &green, &blue, &divisor);
+				if (divisor > 0)
+					idst[x] = VMEMCOLOR_RGBA(red / divisor, green / divisor, blue / divisor, 0);
+				else
 					idst[x] = 0;
-				} else {
-					// set to transparent, but use the colour from the neighbouring
-					// pixel to stop the linear filter doing black outlines
-					T red = 0, green = 0, blue = 0, divisor = 0;
-					if (x > 0)
-						get_pixel_if_not_transparent<T>(&srcData[-1], &red, &green, &blue, &divisor);
-					if (x < t_width - 1)
-						get_pixel_if_not_transparent<T>(&srcData[1], &red, &green, &blue, &divisor);
-					if (y > 0)
-						get_pixel_if_not_transparent<T>(
-							(const T *)&scanline_before[(x + t_x) * src_bpp], &red, &green,
-							&blue, &divisor);
-					if (y < t_height - 1)
-						get_pixel_if_not_transparent<T>(
-							(const T *)&scanline_after[(x + t_x) * src_bpp], &red, &green,
-							&blue, &divisor);
-					if (divisor > 0)
-						idst[x] = VMEMCOLOR_RGBA(red / divisor, green / divisor, blue / divisor, 0);
-					else
-						idst[x] = 0;
-				}
 				lastPixelWasTransparent = true;
 			} else if (HasAlpha) {
-				idst[x] = VMEMCOLOR_RGBA(algetr<T>(src_color), algetg<T>(src_color), algetb<T>(src_color),
-										 algeta<T>(src_color));
+				idst[x] = VMEMCOLOR_RGBA(algetr<T>(src_color), algetg<T>(src_color), algetb<T>(src_color), algeta<T>(src_color));
 			} else {
 				idst[x] = VMEMCOLOR_RGBA(algetr<T>(src_color), algetg<T>(src_color), algetb<T>(src_color), 0xFF);
 				if (lastPixelWasTransparent) {
 					// update the colour of the previous transparent pixel, to
-					// stop black outlines when linear filtering
+					// stop colored outlines when linear filtering
 					idst[x - 1] = idst[x] & 0x00FFFFFF;
 					lastPixelWasTransparent = false;
 				}
@@ -462,34 +508,37 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMemImpl(const Bitmap *bitmap, const
 		idst += idst_pitch;
 	}
 }
-
 void VideoMemoryGraphicsDriver::BitmapToVideoMem(const Bitmap *bitmap, const bool has_alpha, const TextureTile *tile,
 												 uint8_t *dst_ptr, const int dst_pitch, const bool usingLinearFiltering) {
-	const int src_depth = bitmap->GetColorDepth();
-	switch (src_depth) {
+	switch (bitmap->GetColorDepth()) {
 	case 8:
 		if (usingLinearFiltering) {
-			BitmapToVideoMemImpl<uint8_t, false, true>(bitmap, tile, dst_ptr, dst_pitch);
+			BitmapToVideoMemLinearImpl<uint8_t, false>(bitmap, tile, dst_ptr, dst_pitch);
 		} else {
-			BitmapToVideoMemImpl<uint8_t, false, false>(bitmap, tile, dst_ptr, dst_pitch);
+			BitmapToVideoMemImpl<uint8_t, false>(bitmap, tile, dst_ptr, dst_pitch);
 		}
+
 		break;
 	case 16:
 		if (usingLinearFiltering) {
-			BitmapToVideoMemImpl<uint16_t, false, true>(bitmap, tile, dst_ptr, dst_pitch);
+			BitmapToVideoMemLinearImpl<uint16_t, false>(bitmap, tile, dst_ptr, dst_pitch);
 		} else {
-			BitmapToVideoMemImpl<uint16_t, false, false>(bitmap, tile, dst_ptr, dst_pitch);
+			BitmapToVideoMemImpl<uint16_t, false>(bitmap, tile, dst_ptr, dst_pitch);
 		}
 		break;
 	case 32:
-		if (has_alpha && usingLinearFiltering) {
-			BitmapToVideoMemImpl<uint32_t, true, true>(bitmap, tile, dst_ptr, dst_pitch);
-		} else if (has_alpha && !usingLinearFiltering) {
-			BitmapToVideoMemImpl<uint32_t, true, false>(bitmap, tile, dst_ptr, dst_pitch);
-		} else if (!has_alpha && usingLinearFiltering) {
-			BitmapToVideoMemImpl<uint32_t, false, true>(bitmap, tile, dst_ptr, dst_pitch);
+		if (usingLinearFiltering) {
+			if (has_alpha) {
+				BitmapToVideoMemLinearImpl<uint32_t, true>(bitmap, tile, dst_ptr, dst_pitch);
+			} else {
+				BitmapToVideoMemLinearImpl<uint32_t, false>(bitmap, tile, dst_ptr, dst_pitch);
+			}
 		} else {
-			BitmapToVideoMemImpl<uint32_t, false, false>(bitmap, tile, dst_ptr, dst_pitch);
+			if (has_alpha) {
+				BitmapToVideoMemImpl<uint32_t, true>(bitmap, tile, dst_ptr, dst_pitch);
+			} else {
+				BitmapToVideoMemImpl<uint32_t, false>(bitmap, tile, dst_ptr, dst_pitch);
+			}
 		}
 		break;
 	default:
@@ -497,30 +546,8 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMem(const Bitmap *bitmap, const boo
 	}
 }
 
-template<typename T>
-void VideoMemoryGraphicsDriver::BitmapToVideoMemOpaqueImpl(const Bitmap *bitmap, const TextureTile *tile, uint8_t *dst_ptr, const int dst_pitch) {
-	const int t_width = tile->width;
-	const int t_height = tile->height;
-	const int t_x = tile->x;
-	const int t_y = tile->y;
-	for (int y = 0; y < t_height; y++) {
-		const uint8_t *scanline_at = bitmap->GetScanLine(y + t_y);
-		unsigned int *memPtrLong = (unsigned int *)dst_ptr;
-
-		for (int x = 0; x < t_width; x++) {
-			auto srcData = (const T *)&scanline_at[(x + t_x) * sizeof(T)];
-			const T src_color = srcData[0];
-			memPtrLong[x] = VMEMCOLOR_RGBA(
-				algetr<T>(src_color), algetg<T>(src_color), algetb<T>(src_color), 0xFF);
-		}
-		dst_ptr += dst_pitch;
-	}
-}
-
 void VideoMemoryGraphicsDriver::BitmapToVideoMemOpaque(const Bitmap *bitmap, const TextureTile *tile, uint8_t *dst_ptr, const int dst_pitch) {
-	const int src_depth = bitmap->GetColorDepth();
-
-	switch (src_depth) {
+	switch (bitmap->GetColorDepth()) {
 	case 8:
 		BitmapToVideoMemOpaqueImpl<uint8_t>(bitmap, tile, dst_ptr, dst_pitch);
 		break;
