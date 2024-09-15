@@ -407,7 +407,6 @@ struct GameState {
 	//
 	// Serialization
 	//
-	void ReadQueuedAudioItems_Aligned(Shared::Stream *in);
 	void ReadCustomProperties_v340(Shared::Stream *in, GameDataVersion data_ver);
 	void WriteCustomProperties_v340(Shared::Stream *out, GameDataVersion data_ver) const;
 	void ReadFromSavegame(Shared::Stream *in, GameDataVersion data_ver, GameStateSvgVersion svg_ver, AGS::Engine::RestoredData &r_data);
