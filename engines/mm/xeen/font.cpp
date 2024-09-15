@@ -414,6 +414,9 @@ void FontSurface::writeChar(uint16_t c, const Common::Rect &clipRect) {
 	}
 	if (c == 'g' || c == 'p' || c == 'q' || c == 'y')
 		++y;
+	if (_isBig5 && _big5Font) {
+		y += (_big5Font->getFontHeight() - FONT_HEIGHT) / 2;
+	}
 	int yStart = y;
 
 	// Get pointers into font data and surface to write pixels to
