@@ -258,6 +258,7 @@ void Room506::parser() {
 			ws_hide_walker();
 			digi_play(inv_object_in_scene("CRYSTAL SKULL", 510) ? "506R04" : "com127", 1, 255, 3);
 			_ripley = series_play("RIPLEY LOOKS TO NICH", 0x700, 16, -1, 7);
+			break;
 
 		case 3:
 			terminateMachineAndNull(_ripley);
