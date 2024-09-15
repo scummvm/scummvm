@@ -61,7 +61,6 @@
 #include "ags/plugins/plugin_engine.h"
 #include "ags/engine/script/script.h"
 #include "ags/shared/script/cc_common.h"
-#include "ags/shared/util/aligned_stream.h"
 #include "ags/shared/util/string_utils.h"
 
 namespace AGS3 {
@@ -197,10 +196,8 @@ static void restore_game_play(Stream *in, GameDataVersion data_ver, RestoredData
 }
 
 static void ReadMoveList_Aligned(Stream *in) {
-	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (int i = 0; i < _GP(game).numcharacters + MAX_ROOM_OBJECTS_v300 + 1; ++i) {
-		_GP(mls)[i].ReadFromFile_Legacy(&align_s);
-		align_s.Reset();
+		_GP(mls)[i].ReadFromSavegame_Legacy(in);
 	}
 }
 
@@ -209,10 +206,8 @@ static void ReadGameSetupStructBase_Aligned(Stream *in, GameDataVersion data_ver
 }
 
 static void ReadCharacterExtras_Aligned(Stream *in) {
-	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (int i = 0; i < _GP(game).numcharacters; ++i) {
-		_GP(charextra)[i].ReadFromSavegame(&align_s, 0);
-		align_s.Reset();
+		_GP(charextra)[i].ReadFromSavegame(in, 0);
 	}
 }
 
@@ -234,12 +229,10 @@ static void restore_game_more_dynamic_values(Stream *in) {
 }
 
 void ReadAnimatedButtons_Aligned(Stream *in, int num_abuts) {
-	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (int i = 0; i < num_abuts; ++i) {
 		AnimatingGUIButton abtn;
-		abtn.ReadFromSavegame(&align_s, 0);
+		abtn.ReadFromSavegame(in, 0);
 		AddButtonAnimation(abtn);
-		align_s.Reset();
 	}
 }
 
@@ -314,15 +307,13 @@ static void restore_game_ambientsounds(Stream *in, RestoredData &r_data) {
 }
 
 static void ReadOverlays_Aligned(Stream *in, std::vector<bool> &has_bitmap, size_t num_overs) {
-	AlignedStream align_s(in, Shared::kAligned_Read);
 	has_bitmap.resize(num_overs);
 	// Remember that overlay indexes may be non-sequential
 	auto &overs = get_overlays();
 	for (size_t i = 0; i < num_overs; ++i) {
 		bool has_bm;
 		ScreenOverlay over;
-		over.ReadFromFile(&align_s, has_bm, 0);
-		align_s.Reset();
+		over.ReadFromSavegame(in, has_bm, -1);
 		if (over.type < 0)
 			continue; // safety abort
 		if (overs.size() <= static_cast<uint32_t>(over.type)) {
