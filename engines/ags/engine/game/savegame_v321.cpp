@@ -207,8 +207,7 @@ static void ReadMoveList_Aligned(Stream *in) {
 }
 
 static void ReadGameSetupStructBase_Aligned(Stream *in, GameDataVersion data_ver, GameSetupStruct::SerializeInfo &info) {
-	AlignedStream align_s(in, Shared::kAligned_Read);
-	_GP(game).GameSetupStructBase::ReadFromFile(&align_s, data_ver, info);
+	_GP(game).GameSetupStructBase::ReadFromFile(in, data_ver, info);
 }
 
 static void ReadCharacterExtras_Aligned(Stream *in) {

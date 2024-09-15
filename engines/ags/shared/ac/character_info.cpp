@@ -30,7 +30,8 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-void CharacterInfo::ReadFromFile(Stream *in, GameDataVersion data_ver, int save_ver) {
+void CharacterInfo::ReadFromFileImpl(Stream *in, GameDataVersion data_ver, int save_ver) {
+	const bool do_align_pad = data_ver != kGameVersion_Undefined;
 	defview = in->ReadInt32();
 	talkview = in->ReadInt32();
 	view = in->ReadInt32();
@@ -77,7 +78,8 @@ void CharacterInfo::ReadFromFile(Stream *in, GameDataVersion data_ver, int save_
 	StrUtil::ReadCStrCount(name, in, MAX_CHAR_NAME_LEN);
 	StrUtil::ReadCStrCount(scrname, in, MAX_SCRIPT_NAME_LEN);
 	on = in->ReadInt8();
-	in->ReadInt8(); // alignment padding to int32
+	if (do_align_pad)
+		in->ReadInt8(); // alignment padding to int32
 
 	// Upgrade data
 	if ((data_ver > kGameVersion_Undefined && data_ver < kGameVersion_360_16) ||
@@ -86,7 +88,8 @@ void CharacterInfo::ReadFromFile(Stream *in, GameDataVersion data_ver, int save_
 	}
 }
 
-void CharacterInfo::WriteToFile(Stream *out) {
+void CharacterInfo::WriteToFileImpl(Stream *out, bool is_save) const {
+	const bool do_align_pad = !is_save;
 	out->WriteInt32(defview);
 	out->WriteInt32(talkview);
 	out->WriteInt32(view);
@@ -133,7 +136,24 @@ void CharacterInfo::WriteToFile(Stream *out) {
 	out->Write(name, 40);
 	out->Write(scrname, MAX_SCRIPT_NAME_LEN);
 	out->WriteInt8(on);
-	out->WriteInt8(0); // alignment padding to int32
+	if (do_align_pad)
+		out->WriteInt8(0); // alignment padding to int32
+}
+
+void CharacterInfo::ReadFromFile(Stream *in, GameDataVersion data_ver) {
+	ReadFromFileImpl(in, data_ver, -1);
+}
+
+void CharacterInfo::WriteToFile(Stream *out) const {
+	WriteToFileImpl(out, false);
+}
+
+void CharacterInfo::ReadFromSavegame(Stream *in, int save_ver) {
+	ReadFromFileImpl(in, kGameVersion_Undefined, save_ver);
+}
+
+void CharacterInfo::WriteToSavegame(Stream *out) const {
+	WriteToFileImpl(out, true);
 }
 
 #if defined (OBSOLETE)
