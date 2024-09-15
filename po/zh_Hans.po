@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-14 14:53+0000\n"
+"POT-Creation-Date: 2024-09-15 23:05+0000\n"
 "PO-Revision-Date: 2024-07-04 15:43+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
@@ -10185,7 +10185,10 @@ msgid "Enable online competitive mods"
 msgstr "启用在线竞争模组"
 
 #: engines/scumm/dialogs.cpp:1713
-msgid "Enables custom-made modifications intented for online competitive play."
+#, fuzzy
+#| msgid ""
+#| "Enables custom-made modifications intented for online competitive play."
+msgid "Enables custom-made modifications intended for online competitive play."
 msgstr "允许为在线经济设计的自定义更改。"
 
 #: engines/scumm/dialogs.cpp:1717

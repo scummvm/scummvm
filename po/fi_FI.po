@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-14 14:53+0000\n"
+"POT-Creation-Date: 2024-09-15 23:05+0000\n"
 "PO-Revision-Date: 2024-09-05 23:43+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -10330,7 +10330,10 @@ msgid "Enable online competitive mods"
 msgstr "Kilpailumodit"
 
 #: engines/scumm/dialogs.cpp:1713
-msgid "Enables custom-made modifications intented for online competitive play."
+#, fuzzy
+#| msgid ""
+#| "Enables custom-made modifications intented for online competitive play."
+msgid "Enables custom-made modifications intended for online competitive play."
 msgstr "Kilpailuhenkiseen moninpeliin räätälöidyt modifikaatiot."
 
 #: engines/scumm/dialogs.cpp:1717

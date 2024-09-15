@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-14 14:53+0000\n"
+"POT-Creation-Date: 2024-09-15 23:05+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -10242,7 +10242,7 @@ msgid "Enable online competitive mods"
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1713
-msgid "Enables custom-made modifications intented for online competitive play."
+msgid "Enables custom-made modifications intended for online competitive play."
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1717
