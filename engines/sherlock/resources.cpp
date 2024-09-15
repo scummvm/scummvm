@@ -396,6 +396,9 @@ void Resources::decompressLZ(Common::SeekableReadStream &source, byte *outBuffer
 	if (inSize != -1 && source.pos() < endPos) {
 		source.skip(endPos - source.pos());
 	}
+	if (outSize != -1 && outBuffer < outBufferEnd) {
+		memset(outBuffer, 0, outBufferEnd - outBuffer);
+	}	
 }
 
 } // End of namespace Sherlock
