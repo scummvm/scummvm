@@ -120,7 +120,7 @@ void CastleEngine::loadAssetsZXFullGame() {
 			loadFonts(&file, 0x1218 + 16, _font);
 			break;
 		case Common::EN_ANY:
-			loadRiddles(&file, 0x1460 - 1 - 3, 8);
+			loadRiddles(&file, 0x145c, 9);
 			load8bitBinary(&file, 0x6a3b, 16);
 			loadSpeakerFxZX(&file, 0xc91, 0xccd);
 			loadFonts(&file, 0x1219, _font);

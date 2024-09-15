@@ -611,8 +611,8 @@ void CastleEngine::executeDestroy(FCLInstruction &instruction) {
 void CastleEngine::executePrint(FCLInstruction &instruction) {
 	uint16 index = instruction._source;
 	_currentAreaMessages.clear();
-	if (index > 127) {
-		index = index - 127;
+	if (index >= 129) {
+		index = index - 129;
 		drawFullscreenRiddleAndWait(index);
 		return;
 	}
@@ -642,43 +642,40 @@ void CastleEngine::loadAssets() {
 void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int number) {
 	file->seek(offset);
 	debugC(1, kFreescapeDebugParser, "Riddle table:");
+	int maxLineSize = isSpectrum() ? 20 : 23;
 
-	int numberAsteriskLines = 0;
 	for (int i = 0; i < number; i++) {
-		numberAsteriskLines = 0;
 		int header = file->readByte();
 		debugC(1, kFreescapeDebugParser, "riddle %d header: %x", i, header);
 		int numberLines = 6;
-		if (header == 0x15 || header == 0x1a || header == 0x1c)
+		if (header == 0x15 || header == 0x1a || header == 0x1b || header == 0x1c || header == 0x1e)
 			numberLines = 7;
 		else if (header == 0x1d)
 			numberLines = 6;
 		else if (header == 0x27)
 			numberLines = 5;
 
+		if (isSpectrum())
+			--numberLines;
+
 		for (int j = 0; j < numberLines; j++) {
 			int size = file->readByte();
-			debugC(1, kFreescapeDebugParser, "size: %d (max 23?)", size);
+			debugC(1, kFreescapeDebugParser, "size: %d (max %d?)", size, maxLineSize);
 
 			Common::String message = "";
-			if (size > 23) {
-				debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
-				debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
-				_riddleList.push_back("");
-				continue;
+			if (size > maxLineSize) {
+				if (isSpectrum()) {
+					size = 19;
+					while (size-- > 0)
+						message = message + "*";
+				}
+				for (int k = j; k < numberLines; k++)
+					_riddleList.push_back(message);
 
-			} else if (size == 255) {
-				size = 19;
-				while (size-- > 0)
-					message = message + "*";
-
-				_riddleList.push_back(message);
-				debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
-				debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
 				debugC(1, kFreescapeDebugParser, "'%s'", message.c_str());
-				continue;
+				break;
 			} else if (size == 0) {
-				size = 21;
+				size = 20;
 			}
 
 			int padSpaces = (22 - size) / 2;
@@ -709,16 +706,6 @@ void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int
 			debugC(1, kFreescapeDebugParser, "'%s'", message.c_str());
 
 			_riddleList.push_back(message);
-			if (message.size() > 0 && message[0] == '*')
-				numberAsteriskLines++;
-
-			/*if (numberAsteriskLines == 2 && j < 5) {
-
-				_riddleList.push_back("");
-				debugC(1, kFreescapeDebugParser, "Padded with ''");
-				//if (j == 4)
-				//	break;
-			}*/
 		}
 
 		if (numberLines < 7)
