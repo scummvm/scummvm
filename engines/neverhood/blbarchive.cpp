@@ -111,11 +111,13 @@ void BlbArchive::load(BlbArchiveEntry *entry, byte *buffer, uint32 size) {
 			size = entry->diskSize;
 		_fd.read(buffer, size);
 		break;
-	case 3: // DCL-compressed
+	case 3: {// DCL-compressed
+		memset(buffer, 0, size);
 		if (!Common::decompressDCL(&_fd, buffer, entry->diskSize, entry->size))
-			error("BlbArchive::load() Error during decompression of %08X (offset: %d, disk size: %d, size: %d)",
+			warning("BlbArchive::load() Error during decompression of %08X (offset: %d, disk size: %d, size: %d)",
 					entry->fileHash, entry->offset, entry->diskSize, entry->size);
 		break;
+	}
 	default:
 		error("BlbArchive::load() Unknown compression type %d", entry->comprType);
 	}
