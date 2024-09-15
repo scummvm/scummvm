@@ -27,7 +27,6 @@
 //
 // Only streams with uncommon behavior should be derived directly from Stream.
 // Most I/O devices should inherit DataStream instead.
-// Streams that wrap other streams should inherit ProxyStream.
 //
 //=============================================================================
 
