@@ -954,6 +954,12 @@ void View1::TriggerDialogueChoice(uint8 index) {
 	// TODO: Confirm that these two are really set accordingly
 	g_engine->_scriptExecutor->SetVariableValue(0x0d, index, 0);
 	g_engine->_scriptExecutor->chosenDialogueOption = index;
+
+	// TODO: Should check where this happens, but seems like we need to close the
+	// options ourselves
+	// TODO: Check if the run script after UI needs to be overridden here to not
+	// schedule an unnecessary run
+	clearStringBox();
 	// TODO: Not sure about the first run variable here
 	g_engine->RunScriptExecutor();
 }
