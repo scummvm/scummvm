@@ -111,6 +111,7 @@ void RoomObject::CheckViewFrame() {
 }
 
 void RoomObject::ReadFromSavegame(Stream *in, int save_ver) {
+	const bool do_align_pad = save_ver < 0;
 	x = in->ReadInt32();
 	y = in->ReadInt32();
 	transparent = in->ReadInt32();
@@ -135,6 +136,9 @@ void RoomObject::ReadFromSavegame(Stream *in, int save_ver) {
 	flags = in->ReadInt8();
 	blocking_width = in->ReadInt16();
 	blocking_height = in->ReadInt16();
+	if (do_align_pad)
+		in->ReadInt16(); // int16 padding to int32 (max)
+
 	if (save_ver >= kRoomStatSvgVersion_36016) {
 		name = StrUtil::ReadString(in);
 	}

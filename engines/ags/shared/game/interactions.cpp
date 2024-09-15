@@ -285,8 +285,8 @@ void Interaction::ReadFromSavedgame_v321(Stream *in) {
 	for (size_t i = 0; i < evt_count; ++i) {
 		Events[i].Type = in->ReadInt32();
 	}
-	const size_t padding = (MAX_NEWINTERACTION_EVENTS - evt_count);
-	for (size_t i = 0; i < padding; ++i)
+	const size_t dummy_count = (MAX_NEWINTERACTION_EVENTS - evt_count);
+	for (size_t i = 0; i < dummy_count; ++i)
 		in->ReadInt32(); // cannot skip when reading aligned structs
 	ReadTimesRunFromSave_v321(in);
 
