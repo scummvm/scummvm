@@ -46,7 +46,7 @@ enum MoveListDoneFlags {
 };
 
 enum MoveListSvgVersion {
-	kMoveSvgVersion_Initial = 0,
+	kMoveSvgVersion_Initial = 0, // [UNSUPPORTED] from 3.5.0 pre-alpha
 	kMoveSvgVersion_350,   // new pathfinder, arbitrary number of stages
 	kMoveSvgVersion_36109, // skip empty lists, progress as float
 };

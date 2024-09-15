@@ -50,7 +50,7 @@ struct HotspotState {
 
 // Savegame data format for RoomStatus
 enum RoomStatSvgVersion {
-	kRoomStatSvgVersion_Initial = 0,
+	kRoomStatSvgVersion_Initial = 0, // [UNSUPPORTED] from 3.5.0 pre-alpha
 	kRoomStatSvgVersion_350     = 1, // new movelist format (along with pathfinder)
 	kRoomStatSvgVersion_36016   = 2, // hotspot and object names
 	kRoomStatSvgVersion_36025   = 3, // object animation volume
