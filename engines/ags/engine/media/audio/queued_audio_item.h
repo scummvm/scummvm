@@ -40,8 +40,9 @@ struct QueuedAudioItem {
 	bool  repeat = false;
 	SOUNDCLIP *cachedClip = nullptr;
 
-	void ReadFromFile(Shared::Stream *in);
-	void WriteToFile(Shared::Stream *out) const;
+	void ReadFromSavegame_v321(Shared::Stream *in);
+	void ReadFromSavegame(Shared::Stream *in);
+	void WriteToSavegame(Shared::Stream *out) const;
 };
 
 } // namespace AGS3
