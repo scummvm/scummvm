@@ -91,6 +91,20 @@ enum DgdsKeyEvent {
 	kDgdsKeyActivate,
 };
 
+enum DragonArcadeKeyEvent {
+	kDragonArcadeKeyLeft,
+	kDragonArcadeKeyRight,
+	kDragonArcadeKeyUp,
+	kDragonArcadeKeyDown,
+	kDragonArcadeKeyLeftUp,
+	kDragonArcadeKeyRightUp,
+	kDragonArcadeKeyLeftDown,
+	kDragonArcadeKeyRightDown,
+	kDragonArcadeKeyJumpMode,
+	kDragonArcadeKeyFire,
+};
+
+
 class DgdsEngine : public Engine {
 public:
 	Common::Platform _platform;
@@ -226,6 +240,9 @@ public:
 
 	static DgdsEngine *getInstance() { return static_cast<DgdsEngine *>(g_engine); }
 	void setFlipMode(bool mode) { _flipMode = mode; }
+
+	void enableKeymapper();
+	void disableKeymapper();
 
 private:
 	Common::Error syncGame(Common::Serializer &s);

@@ -29,12 +29,17 @@
 
 namespace Dgds {
 
+Common::String ArcadeFloor::dump() {
+	return Common::String::format("ArcadeFloor<x:%d-%d y:%d flg:%d>",
+				x, x + width, yval, flag);
+}
+
+
 DragonArcadeTTM::DragonArcadeTTM(ArcadeNPCState *npcState) : _npcState(npcState),
 	_currentTTMNum(0), _currentNPCRunningTTM(0), _drawXOffset(0), _drawYOffset(0),
 	_startYOffset(0), _doingInit(false), _drawColBG(0), _drawColFG(0)
 {
 	ARRAYCLEAR(_shapes3);
-	ARRAYCLEAR(_brushes);
 }
 
 void DragonArcadeTTM::clearDataPtrs() {
@@ -51,6 +56,7 @@ int16 DragonArcadeTTM::load(const char *filename) {
 	for (envNum = 0; envNum < ARRAYSIZE(_ttmEnvs); envNum++) {
 		if (_ttmEnvs[envNum].scr == nullptr) {
 			env = &_ttmEnvs[envNum];
+			debug("Arcade TTM load %s into env %d", filename, envNum);
 			break;
 		}
 	}
@@ -102,7 +108,7 @@ int16 DragonArcadeTTM::runNextPage(int16 pageNum) {
 	//UINT_39e5_3ca2 = 0;
 
 	if (pageNum < _ttmEnvs[_currentTTMNum]._totalFrames && pageNum > -1 &&
-	_ttmEnvs[_currentTTMNum]._frameOffsets[pageNum] > -1) {
+			_ttmEnvs[_currentTTMNum]._frameOffsets[pageNum] > -1) {
 		return runScriptPage(pageNum);
 	} else {
 		return 0;
@@ -124,14 +130,16 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 		engine->adsInterpreter()->setScriptDelay((int)(ivals[0] * MS_PER_FRAME));
 		break;
 	case 0x1031: // SET BRUSH
+		//debug("Set brush %d for slot %d", ivals[0], _currentTTMNum);
 		if (!_shapes2[_currentTTMNum]) {
-			_brushes[_currentTTMNum] = 0;
+			_brushes[_currentTTMNum].reset();
 		} else {
-			_brushes[_currentTTMNum] = ivals[0];
+			_brushes[_currentTTMNum] = Brush(_shapes2[_currentTTMNum], ivals[0]);
 		}
 		break;
 	case 0x1051: // SET SHAPE
 		_shapes3[_currentTTMNum] = ivals[0];
+		//debug("Set img %d into slot %d", ivals[0], _currentTTMNum);
 		_shapes[_currentTTMNum] = _allShapes[ivals[0] * 5 + _currentTTMNum];
 		_shapes2[_currentTTMNum] = _allShapes[ivals[0] * 5 + _currentTTMNum];
 		break;
@@ -187,6 +195,7 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 			data.width = ivals[2];
 			data.yval = (byte)ivals[1];
 			data.flag = false;
+			debug("Floor: %s", data.dump().c_str());
 			_floorData.push_back(data);
 		} else {
 			const Common::Rect rect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
@@ -200,6 +209,7 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 			data.width = ivals[2];
 			data.yval = (byte)ivals[1];
 			data.flag = true;
+			debug("Floor: %s", data.dump().c_str());
 			_floorData.push_back(data);
 		} else {
 			const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2] - 1, ivals[3] - 1);
@@ -234,18 +244,19 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 		else if (op == 0xa532)
 			flipMode = kImageFlipHV;
 
-		Common::Rect drawWin(SCREEN_WIDTH, SCREEN_HEIGHT);
+		// Only draw in the scroll area
+		const Common::Rect drawWin(Common::Point(8, 8), SCREEN_WIDTH - 16, 117);
 		if (_currentNPCRunningTTM == 0) {
 			int16 x = ivals[0] + _npcState[0].x - 152;
 			int16 y = ivals[1] + _startYOffset + 2;
-			if (_shapes[_currentTTMNum])
-				_shapes[_currentTTMNum]->drawBitmap(_brushes[_currentTTMNum], x, y, drawWin, compBuffer, flipMode);
+			if (_brushes[_currentTTMNum].isValid())
+				_brushes[_currentTTMNum].getShape()->drawBitmap(_brushes[_currentTTMNum].getFrame(), x, y, drawWin, compBuffer, flipMode);
 			_npcState[0].y = ivals[1];
 		} else {
 			int16 x = ivals[0] + _drawXOffset;
 			int16 y = ivals[1] + _drawYOffset + 2;
-			if (_shapes[_currentTTMNum])
-				_shapes[_currentTTMNum]->drawBitmap(_brushes[_currentTTMNum], x, y, drawWin, compBuffer, flipMode);
+			if (_brushes[_currentTTMNum].isValid())
+				_brushes[_currentTTMNum].getShape()->drawBitmap(_brushes[_currentTTMNum].getFrame(), x, y, drawWin, compBuffer, flipMode);
 			_npcState[_currentNPCRunningTTM].x = ivals[0];
 			_npcState[_currentNPCRunningTTM].y = ivals[1];
 		}
@@ -254,6 +265,7 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 	case 0xF02F: {
 		_shapes[_currentTTMNum].reset(new Image(engine->getResourceManager(), engine->getDecompressor()));
 		_shapes[_currentTTMNum]->loadBitmap(sval);
+		debug("Load img %s into slot %d", sval.c_str(), _currentTTMNum);
 		_shapes2[_currentTTMNum] = _shapes[_currentTTMNum];
 		_allShapes[_shapes3[_currentTTMNum] * 5 + _currentTTMNum] = _shapes[_currentTTMNum];
 		break;
@@ -306,7 +318,7 @@ void DragonArcadeTTM::runPagesForEachNPC(int16 xScrollOffset) {
 			npcState.y_12 = 0;
 			 _drawXOffset = npcState.xx - xScrollOffset * 8 - 152;
 			 _drawYOffset = npcState.yy;
-			_currentTTMNum = npcState.byte15;
+			_currentTTMNum = npcState.ttmNum;
 			if (_drawXOffset > -20 || _drawXOffset < 340) {
 				runNextPage(npcState.ttmPage);
 			}

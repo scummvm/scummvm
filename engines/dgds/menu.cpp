@@ -350,7 +350,8 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 	// Click animation
 	if (dynamic_cast<ButtonGadget *>(gadget)) {
 		gadget->toggle(false);
-		isToggle = updateOptionsGadget(gadget);
+		if (_curMenu == kMenuOptions)
+			isToggle = updateOptionsGadget(gadget);
 		drawMenu(_curMenu);
 		g_system->delayMillis(500);
 		gadget->toggle(true);

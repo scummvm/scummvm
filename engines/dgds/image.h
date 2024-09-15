@@ -43,8 +43,8 @@ class ResourceManager;
 
 enum ImageFlipMode {
 	kImageFlipNone = 0,
-	kImageFlipH = 1,
-	kImageFlipV = 2,
+	kImageFlipV = 1,
+	kImageFlipH = 2,
 	kImageFlipHV = 3,
 };
 

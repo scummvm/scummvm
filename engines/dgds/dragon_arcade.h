@@ -45,7 +45,7 @@ enum DragonBladeMoveFlag {
 class ArcadeNPCState {
 public:
 	ArcadeNPCState() : xx(0), yy(0), x(0), y(0), x_11(0), y_11(0), x_12(0), y_12(0),
-		ttmPage(0), byte12(0), byte13(0), health(0), byte15(0), x_21(0), y_21(0),
+		ttmPage(0), byte12(0), byte13(0), health(0), ttmNum(0), x_21(0), y_21(0),
 		x_22(0), y_22(0) {}
 	int16 xx;
 	int16 yy;
@@ -59,7 +59,7 @@ public:
 	int8 byte12;
 	int8 byte13;
 	int8 health;
-	int8 byte15; /* Set to 0, 1 or 2 */
+	int8 ttmNum; /* Set to 0, 1 or 2 */
 	int16 x_21;
 	int16 y_21;
 	int16 x_22;
@@ -86,6 +86,8 @@ public:
 	DragonArcade();
 
 	void arcadeTick();
+	void onKeyDown(Common::KeyState kbd);
+	void onKeyUp(Common::KeyState kbd);
 
 private:
 	void initIfNeeded();
@@ -161,7 +163,6 @@ private:
 	int16 _loadedArcadeStage;
 	int16 _nextStage;
 	int16 _arcadeModeSomethingCounter;
-	int16 _currentArcadeTT3Num;
 	int16 _shouldUpdateState;
 	int16 _finishCountdown;
 	int16 _bladeState1;
@@ -182,10 +183,10 @@ private:
 	uint16 _uint0be6;
 	bool _dontMoveBladeFlag;
 	int16 _scrollXIncrement;
-	int16 _lMouseButtonState;
-	int16 _rMouseButtonState;
-	int16 _lastLMouseButtonState;
-	int16 _lastRMouseButtonState;
+	bool _lMouseButtonState;
+	bool _rMouseButtonState;
+	bool _lastLMouseButtonState;
+	bool _lastRMouseButtonState;
 	int16 _bladeXMove;
 	int16 _bladeHorizMoveAttempt;
 	int16 _currentArrowNum;
