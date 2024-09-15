@@ -261,6 +261,7 @@ static void read_legacy_graphics_config(const ConfigTree &cfg) {
 	}
 
 	_GP(usetup).Screen.Params.RefreshRate = CfgReadInt(cfg, "misc", "refresh");
+	_GP(usetup).enable_antialiasing = CfgReadBoolInt(cfg, "misc", "antialias");
 }
 
 static void read_legacy_config(const ConfigTree &cfg) {
@@ -308,6 +309,7 @@ void apply_config(const ConfigTree &cfg) {
 			_GP(usetup).Screen.Params.VSync = CfgReadBoolInt(cfg, "graphics", "vsync");
 
 		_GP(usetup).RenderAtScreenRes = CfgReadBoolInt(cfg, "graphics", "render_at_screenres");
+		_GP(usetup).enable_antialiasing = CfgReadBoolInt(cfg, "graphics", "antialias");
 		_GP(usetup).Supersampling = CfgReadInt(cfg, "graphics", "supersampling", 1);
 		_GP(usetup).software_render_driver = CfgReadString(cfg, "graphics", "software_driver");
 
@@ -318,7 +320,6 @@ void apply_config(const ConfigTree &cfg) {
 			rotation_str, CstrArr<kNumScreenRotationOptions>{ "unlocked", "portrait", "landscape" },
 			_GP(usetup).rotation);
 #endif
-		_GP(usetup).enable_antialiasing = CfgReadBoolInt(cfg, "misc", "antialias");
 
 		// Custom paths
 		_GP(usetup).load_latest_save = CfgReadBoolInt(cfg, "misc", "load_latest_save", _GP(usetup).load_latest_save);
