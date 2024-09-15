@@ -1070,8 +1070,7 @@ void GridWidget::reflowLayout() {
 		_platformIconsAlpha.clear();
 		_languageIconsAlpha.clear();
 		_extraIconsAlpha.clear();
-		if (_disabledIconOverlay)
-			_disabledIconOverlay->free();
+		delete _disabledIconOverlay;
 		reloadThumbnails();
 		loadFlagIcons();
 		loadPlatformIcons();
@@ -1080,10 +1079,7 @@ void GridWidget::reflowLayout() {
 		Graphics::ManagedSurface *gfx = new Graphics::ManagedSurface(_thumbnailWidth, _thumbnailHeight, g_system->getOverlayFormat());
 		uint32 disabledThumbnailColor = gfx->format.ARGBToColor(153, 0, 0, 0);  // 60% opacity black
 		gfx->fillRect(Common::Rect(0, 0, _thumbnailWidth, _thumbnailHeight), disabledThumbnailColor);
-		if (gfx)
-			_disabledIconOverlay = gfx;
-		else
-			_disabledIconOverlay = nullptr;
+		_disabledIconOverlay = gfx;
 	}
 
 	_trayHeight = kLineHeight * 3;
