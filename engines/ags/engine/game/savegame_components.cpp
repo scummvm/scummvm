@@ -509,7 +509,7 @@ HSaveError ReadCharacters(Stream *in, int32_t cmp_ver, const PreservedParams & /
 			ReadTimesRun272(*_GP(game).intrChar[i], in);
 		// character movement path (for old saves)
 		if (cmp_ver < kCharSvgVersion_36109) {
-			err = _GP(mls)[CHMLSOFFS + i].ReadFromFile(in, mls_cmp_ver);
+			err = _GP(mls)[CHMLSOFFS + i].ReadFromSavegame(in, mls_cmp_ver);
 			if (!err)
 				return err;
 		}
@@ -773,7 +773,7 @@ HSaveError WriteOverlays(Stream *out) {
 		if (over.type < 0)
 			continue;
 		valid_count++;
-		over.WriteToFile(out);
+		over.WriteToSavegame(out);
 		if (!over.IsSpriteReference())
 			serialize_bitmap(over.GetImage(), out);
 	}
@@ -792,7 +792,7 @@ HSaveError ReadOverlays(Stream *in, int32_t cmp_ver, const PreservedParams & /*p
 	for (size_t i = 0; i < over_count; ++i) {
 		ScreenOverlay over;
 		bool has_bitmap;
-		over.ReadFromFile(in, has_bitmap, cmp_ver);
+		over.ReadFromSavegame(in, has_bitmap, cmp_ver);
 		if (over.type < 0)
 			continue; // safety abort
 		if (has_bitmap)
@@ -989,7 +989,7 @@ HSaveError ReadThisRoom(Stream *in, int32_t cmp_ver, const PreservedParams & /*p
 			return err;
 		const int mls_cmp_ver = cmp_ver > kRoomStatSvgVersion_Initial ? kMoveSvgVersion_350 : kMoveSvgVersion_Initial;
 		for (int i = 0; i < objmls_count; ++i) {
-			err = _GP(mls)[i].ReadFromFile(in, mls_cmp_ver);
+			err = _GP(mls)[i].ReadFromSavegame(in, mls_cmp_ver);
 			if (!err)
 				return err;
 		}
@@ -1008,7 +1008,7 @@ HSaveError ReadThisRoom(Stream *in, int32_t cmp_ver, const PreservedParams & /*p
 HSaveError WriteMoveLists(Stream *out) {
 	out->WriteInt32(static_cast<int32_t>(_GP(mls).size()));
 	for (const auto &movelist : _GP(mls)) {
-		movelist.WriteToFile(out);
+		movelist.WriteToSavegame(out);
 	}
 	return HSaveError::None();
 }
@@ -1023,7 +1023,7 @@ HSaveError ReadMoveLists(Stream *in, int32_t cmp_ver, const PreservedParams & /*
 	if (!AssertGameContent(err, movelist_count, _GP(mls).size(), "Move Lists"))
 		return err;
 	for (size_t i = 0; i < movelist_count; ++i) {
-		err = _GP(mls)[i].ReadFromFile(in, cmp_ver);
+		err = _GP(mls)[i].ReadFromSavegame(in, cmp_ver);
 		if (!err)
 			return err;
 	}

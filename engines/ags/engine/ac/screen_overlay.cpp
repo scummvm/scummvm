@@ -65,7 +65,7 @@ void ScreenOverlay::SetSpriteNum(int sprnum, int offx, int offy) {
 	MarkChanged();
 }
 
-void ScreenOverlay::ReadFromFile(Stream *in, bool &has_bitmap, int32_t cmp_ver) {
+void ScreenOverlay::ReadFromSavegame(Stream *in, bool &has_bitmap, int32_t cmp_ver) {
 	_pic.reset();
 	ddb = nullptr;
 	in->ReadInt32(); // ddb 32-bit pointer value (nasty legacy format)
@@ -85,6 +85,9 @@ void ScreenOverlay::ReadFromFile(Stream *in, bool &has_bitmap, int32_t cmp_ver) 
 			_flags |= kOver_PositionAtRoomXY;
 	}
 
+	if (cmp_ver < 0) {
+		in->ReadInt16(); // alignment padding to int32 (finalize struct)
+	}
 	if (cmp_ver >= kOverSvgVersion_35028) {
 		offsetX = in->ReadInt32();
 		offsetY = in->ReadInt32();
@@ -107,7 +110,7 @@ void ScreenOverlay::ReadFromFile(Stream *in, bool &has_bitmap, int32_t cmp_ver) 
 	}
 }
 
-void ScreenOverlay::WriteToFile(Stream *out) const {
+void ScreenOverlay::WriteToSavegame(Stream *out) const {
 	out->WriteInt32(0); // ddb 32-bit pointer value (nasty legacy format)
 	if (_flags & kOver_SpriteReference)
 		out->WriteInt32(_sprnum); // sprite reference
