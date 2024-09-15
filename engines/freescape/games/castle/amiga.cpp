@@ -68,7 +68,7 @@ void CastleEngine::loadAssetsAmigaDemo() {
 
 	_viewArea = Common::Rect(40, 29, 280, 154);
 	loadMessagesVariableSize(&file, 0x8bb2, 178);
-	loadRiddles(&file, 0x96c8, 20);
+	loadRiddles(&file, 0x96c8, 19);
 	load8bitBinary(&file, 0x162a6, 16);
 	loadPalettes(&file, 0x151a6);
 
