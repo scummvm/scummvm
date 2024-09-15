@@ -122,8 +122,8 @@ struct ScreenOverlay {
 		_hasChanged = false;
 	}
 
-	void ReadFromFile(Shared::Stream *in, bool &has_bitmap, int32_t cmp_ver);
-	void WriteToFile(Shared::Stream *out) const;
+	void ReadFromSavegame(Shared::Stream *in, bool &has_bitmap, int32_t cmp_ver);
+	void WriteToSavegame(Shared::Stream *out) const;
 
 private:
 	int _flags = 0; // OverlayFlags

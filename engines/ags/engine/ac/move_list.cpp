@@ -48,7 +48,7 @@ void MoveList::SetPixelUnitFraction(float frac) {
 	onpart = permove_dist > 0.f ? (1.f / permove_dist) * frac : 0.f;
 }
 
-void MoveList::ReadFromFile_Legacy(Stream *in) {
+void MoveList::ReadFromSavegame_Legacy(Stream *in) {
 	*this = MoveList(); // reset struct
 	for (int i = 0; i < MAXNEEDSTAGES_LEGACY; ++i) {
 		// X & Y was packed as high/low shorts, and hence reversed in lo-end
@@ -66,11 +66,12 @@ void MoveList::ReadFromFile_Legacy(Stream *in) {
 	in->ReadInt32(); // UNUSED
 	doneflag = in->ReadInt8();
 	direct = in->ReadInt8();
+	in->ReadInt16(); // alignment padding to int32 (finalize struct)
 }
 
-HSaveError MoveList::ReadFromFile(Stream *in, int32_t cmp_ver) {
+HSaveError MoveList::ReadFromSavegame(Stream *in, int32_t cmp_ver) {
 	if (cmp_ver < kMoveSvgVersion_350) {
-		ReadFromFile_Legacy(in);
+		ReadFromSavegame_Legacy(in); // FIXME: pass an arg to not use padding; OR remove support of kMoveSvgVersion_Initial?
 		return HSaveError::None();
 	}
 
@@ -111,7 +112,7 @@ HSaveError MoveList::ReadFromFile(Stream *in, int32_t cmp_ver) {
 	return HSaveError::None();
 }
 
-void MoveList::WriteToFile(Stream *out) const {
+void MoveList::WriteToSavegame(Stream *out) const {
 	out->WriteInt32(numstage);
 	if (numstage == 0)
 		return;
