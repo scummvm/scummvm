@@ -2382,7 +2382,7 @@ bool LocationMessage::execute(int portrait, const Common::String &name, const Co
 	int result = -1;
 	Common::String msgText = text;
 	do {
-		Common::String msg = Common::String::format(Common::ZH_TWN == g_vm->getLanguage() ? "\r\v014\x0c""07\x03""c\t125%s\x0c""04\x03""l\t000\v044%s" : "\r\v014\x03""c\t125%s\t000\v054%s",
+		Common::String msg = Common::String::format(g_vm->getLanguage() == Common::ZH_TWN ? "\r\v014\x0c""07\x03""c\t125%s\x0c""04\x03""l\t000\v044%s" : "\r\v014\x03""c\t125%s\t000\v054%s",
 			name.c_str(), msgText.c_str());
 
 		// Count the number of words
