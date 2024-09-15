@@ -148,8 +148,7 @@ static HSaveError restore_game_scripts(Stream *in, const PreservedParams &pp, Re
 }
 
 static void ReadRoomStatus_Aligned(RoomStatus *roomstat, Stream *in, GameDataVersion data_ver) {
-	AlignedStream align_s(in, Shared::kAligned_Read);
-	roomstat->ReadFromFile_v321(&align_s, data_ver);
+	roomstat->ReadFromSavegame_v321(in, data_ver);
 }
 
 static void restore_game_room_state(Stream *in, GameDataVersion data_ver) {
