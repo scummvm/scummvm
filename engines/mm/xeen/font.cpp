@@ -371,7 +371,7 @@ bool FontSurface::newLine(const Common::Rect &bounds) {
 	_msgWraps = false;
 	_writePos.x = bounds.left;
 
-	int hv = _fontReduced ? 9 : 10;
+	int hv = _isBig5 && _big5Font ? _big5Font->getFontHeight() + 1 : (_fontReduced ? 9 : 10);
 	_writePos.y += hv;
 
 	return ((_writePos.y + hv - 1) > bounds.bottom);
