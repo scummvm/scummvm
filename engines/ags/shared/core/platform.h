@@ -104,6 +104,11 @@ namespace AGS3 {
 #error "Unknown platform"
 #endif
 
+#if 0
+#define AGS_PLATFORM_WINDOWS_MINGW (1)
+#else
+#define AGS_PLATFORM_WINDOWS_MINGW (0)
+#endif
 
 #if defined(__LP64__)
 // LP64 machine, macOS or Linux
