@@ -27,21 +27,26 @@ namespace AGS3 {
 
 using AGS::Shared::Stream;
 
-// [IKM] 2012-07-02: these functions are used during load/save game,
-// and read/written as-is, hence cachedClip pointer should be serialized
-// simply like pointer (although that probably does not mean much sense?)
-void QueuedAudioItem::ReadFromFile(Stream *in) {
+void QueuedAudioItem::ReadFromSavegame_v321(Stream *in) {
 	audioClipIndex = in->ReadInt16();
 	priority = in->ReadInt16();
 	repeat = in->ReadBool();
-	in->ReadInt32(); // cachedClip
+	in->Seek(3);     // alignment padding to int32
+	in->ReadInt32(); // cachedClip 32-bit ptr (legacy format)
 }
 
-void QueuedAudioItem::WriteToFile(Stream *out) const {
+void QueuedAudioItem::ReadFromSavegame(Stream *in) {
+	audioClipIndex = in->ReadInt16();
+	priority = in->ReadInt16();
+	repeat = in->ReadBool();
+	in->ReadInt32(); // reserved
+}
+
+void QueuedAudioItem::WriteToSavegame(Stream *out) const {
 	out->WriteInt16(audioClipIndex);
 	out->WriteInt16(priority);
 	out->WriteBool(repeat);
-	out->WriteInt32(0); // cachedClip
+	out->WriteInt32(0); // reserved
 }
 
 } // namespace AGS3
