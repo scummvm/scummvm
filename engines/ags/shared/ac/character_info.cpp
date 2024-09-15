@@ -77,7 +77,9 @@ void CharacterInfo::ReadFromFile(Stream *in, GameDataVersion data_ver, int save_
 	StrUtil::ReadCStrCount(name, in, MAX_CHAR_NAME_LEN);
 	StrUtil::ReadCStrCount(scrname, in, MAX_SCRIPT_NAME_LEN);
 	on = in->ReadInt8();
+	in->ReadInt8(); // alignment padding to int32
 
+	// Upgrade data
 	if ((data_ver > kGameVersion_Undefined && data_ver < kGameVersion_360_16) ||
 		((data_ver == kGameVersion_Undefined) && save_ver >= 0 && save_ver < 2)) {
 		idle_anim_speed = animspeed + 5;
@@ -131,6 +133,7 @@ void CharacterInfo::WriteToFile(Stream *out) {
 	out->Write(name, 40);
 	out->Write(scrname, MAX_SCRIPT_NAME_LEN);
 	out->WriteInt8(on);
+	out->WriteInt8(0); // alignment padding to int32
 }
 
 #if defined (OBSOLETE)
