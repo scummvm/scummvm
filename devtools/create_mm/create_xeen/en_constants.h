@@ -522,9 +522,9 @@ public:
 			   "077";
 	}
 
-	const char **DEPOSIT_WITHDRAWAL() {
-		static const char *_depositWithdrawal[] = { "Deposit", "Withdrawal" };
-		return _depositWithdrawal;
+	const char **DEPOSIT_WITHDRAWL() {
+		static const char *_depositWithdrawl[] = { "Deposit", "Withdrawl" };
+		return _depositWithdrawl;
 	}
 
 	const char *NOT_ENOUGH_X_IN_THE_Y() {
