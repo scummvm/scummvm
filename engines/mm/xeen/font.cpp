@@ -141,7 +141,10 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 
 			if (endP == _displayString) {
 				// There was no word breaks at all in the string
-				--displayEnd;
+				// Since the loop below includes displayEnd, we need to
+				// subtract 1 to compensate and another time to delete last
+				// char.
+				displayEnd -= 2;
 				if (_fontJustify == JUSTIFY_NONE && _writePos.x != bounds.left) {
 					// Move to the next line
 					if (!newLine(bounds))
