@@ -257,24 +257,24 @@ void GUIButton::SetText(const String &text) {
 }
 
 bool GUIButton::OnMouseDown() {
-	IsPushed = true;
 	if (!IsImageButton())
 		MarkChanged();
+	IsPushed = true;
 	UpdateCurrentImage();
 	return false;
 }
 
 void GUIButton::OnMouseEnter() {
-	IsMouseOver = true;
 	if (IsPushed && !IsImageButton())
 		MarkChanged();
+	IsMouseOver = true;
 	UpdateCurrentImage();
 }
 
 void GUIButton::OnMouseLeave() {
-	IsMouseOver = false;
 	if (IsPushed && !IsImageButton())
 		MarkChanged();
+	IsMouseOver = false;
 	UpdateCurrentImage();
 }
 
@@ -283,9 +283,9 @@ void GUIButton::OnMouseUp() {
 		if (IsGUIEnabled(this) && IsClickable())
 			IsActivated = true;
 	}
-	IsPushed = false;
 	if (IsPushed && !IsImageButton())
 		MarkChanged();
+	IsPushed = false;
 	UpdateCurrentImage();
 }
 
