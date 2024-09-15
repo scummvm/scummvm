@@ -34,8 +34,10 @@ void ScriptAudioClip::ReadFromFile(Stream *in) {
 	type = static_cast<uint8_t>(in->ReadInt8());
 	fileType = static_cast<AudioFileType>(in->ReadInt8());
 	defaultRepeat = in->ReadInt8();
+	in->ReadInt8(); // alignment padding to int16
 	defaultPriority = in->ReadInt16();
 	defaultVolume = in->ReadInt16();
+	in->ReadInt16(); // alignment padding to int32
 	in->ReadInt32(); // reserved
 }
 

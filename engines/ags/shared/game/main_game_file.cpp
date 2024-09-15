@@ -35,7 +35,6 @@
 #include "ags/shared/font/fonts.h"
 #include "ags/shared/gui/gui_main.h"
 #include "ags/shared/script/cc_common.h"
-#include "ags/shared/util/aligned_stream.h"
 #include "ags/shared/util/data_ext.h"
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/string_compat.h"
@@ -245,11 +244,9 @@ HGameFileError ReadScriptModules(std::vector<PScript> &sc_mods, Stream *in, Game
 }
 
 void ReadViewStruct272_Aligned(std::vector<ViewStruct272> &oldv, Stream *in, size_t count) {
-	AlignedStream align_s(in, Shared::kAligned_Read);
 	oldv.resize(count);
 	for (size_t i = 0; i < count; ++i) {
-		oldv[i].ReadFromFile(&align_s);
-		align_s.Reset();
+		oldv[i].ReadFromFile(in);
 	}
 }
 
@@ -759,10 +756,7 @@ HGameFileError ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersio
 	// The classic data section.
 	//-------------------------------------------------------------------------
 	GameSetupStruct::SerializeInfo sinfo;
-	{
-		AlignedStream align_s(in, Shared::kAligned_Read);
-		game.GameSetupStructBase::ReadFromFile(&align_s, data_ver, sinfo);
-	}
+	game.GameSetupStructBase::ReadFromFile(in, data_ver, sinfo);
 
 	Debug::Printf(kDbgMsg_Info, "Game title: '%s'", game.gamename);
 	Debug::Printf(kDbgMsg_Info, "Game uid (old format): `%d`", game.uniqueid);
@@ -776,7 +770,7 @@ HGameFileError ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersio
 	HGameFileError err = ReadSpriteFlags(ents, in, data_ver);
 	if (!err)
 		return err;
-	game.ReadInvInfo_Aligned(in);
+	game.ReadInvInfo(in);
 	err = game.read_cursors(in);
 	if (!err)
 		return err;
@@ -871,10 +865,7 @@ HGameFileError UpdateGameData(LoadedGameEntities &ents, GameDataVersion data_ver
 
 void PreReadGameData(GameSetupStruct &game, Stream *in, GameDataVersion data_ver) {
 	GameSetupStruct::SerializeInfo sinfo;
-	{
-		AlignedStream align_s(in, Shared::kAligned_Read);
-		_GP(game).ReadFromFile(&align_s, data_ver, sinfo);
-	}
+	_GP(game).ReadFromFile(in, data_ver, sinfo);
 	_GP(game).read_savegame_info(in, data_ver);
 }
 

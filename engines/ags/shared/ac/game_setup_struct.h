@@ -147,25 +147,25 @@ struct GameSetupStruct : public GameSetupStructBase {
 	void read_interaction_scripts(Shared::Stream *in, GameDataVersion data_ver);
 	void read_words_dictionary(Shared::Stream *in);
 
-	void ReadInvInfo_Aligned(Shared::Stream *in);
-	void WriteInvInfo_Aligned(Shared::Stream *out);
-	void ReadMouseCursors_Aligned(Shared::Stream *in);
-	void WriteMouseCursors_Aligned(Shared::Stream *out);
+	void ReadInvInfo(Shared::Stream *in);
+	void WriteInvInfo(Shared::Stream *out);
+	void ReadMouseCursors(Shared::Stream *in);
+	void WriteMouseCursors(Shared::Stream *out);
 	//------------------------------
 	// Part 2
 	void read_characters(Shared::Stream *in);
 	void read_lipsync(Shared::Stream *in, GameDataVersion data_ver);
 	void read_messages(Shared::Stream *in, const std::array<int> &load_messages, GameDataVersion data_ver);
 
-	void ReadCharacters_Aligned(Shared::Stream *in, bool is_save);
-	void WriteCharacters_Aligned(Shared::Stream *out);
+	void ReadCharacters(Shared::Stream *in, bool is_save);
+	void WriteCharacters(Shared::Stream *out);
 	//------------------------------
 	// Part 3
 	HGameFileError read_customprops(Shared::Stream *in, GameDataVersion data_ver);
 	HGameFileError read_audio(Shared::Stream *in, GameDataVersion data_ver);
 	void read_room_names(Shared::Stream *in, GameDataVersion data_ver);
 
-	void ReadAudioClips_Aligned(Shared::Stream *in, size_t count);
+	void ReadAudioClips(Shared::Stream *in, size_t count);
 	//--------------------------------------------------------------------
 
 	// Functions for reading and writing appropriate data from/to save game
