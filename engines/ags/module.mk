@@ -70,7 +70,6 @@ MODULE_OBJS = \
 	shared/gui/gui_textbox.o \
 	shared/script/cc_common.o \
 	shared/script/cc_script.o \
-	shared/util/aligned_stream.o \
 	shared/util/buffered_stream.o \
 	shared/util/compress.o \
 	shared/util/data_ext.o \
@@ -85,7 +84,6 @@ MODULE_OBJS = \
 	shared/util/memory_stream.o \
 	shared/util/multi_file_lib.o \
 	shared/util/path.o \
-	shared/util/proxy_stream.o \
 	shared/util/stdio_compat.o \
 	shared/util/stream.o \
 	shared/util/string.o \
