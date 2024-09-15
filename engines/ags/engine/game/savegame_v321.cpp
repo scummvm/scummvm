@@ -146,10 +146,6 @@ static HSaveError restore_game_scripts(Stream *in, const PreservedParams &pp, Re
 	return HSaveError::None();
 }
 
-static void ReadRoomStatus_Aligned(RoomStatus *roomstat, Stream *in, GameDataVersion data_ver) {
-	roomstat->ReadFromSavegame_v321(in, data_ver);
-}
-
 static void restore_game_room_state(Stream *in, GameDataVersion data_ver) {
 	_G(displayed_room) = in->ReadInt32();
 
@@ -161,7 +157,7 @@ static void restore_game_room_state(Stream *in, GameDataVersion data_ver) {
 			roomstat->beenhere = beenhere;
 
 			if (roomstat->beenhere) {
-				ReadRoomStatus_Aligned(roomstat, in, data_ver);
+				roomstat->ReadFromSavegame_v321(in, data_ver);
 				if (roomstat->tsdatasize > 0) {
 					roomstat->tsdata.resize(roomstat->tsdatasize);
 					in->Read(roomstat->tsdata.data(), roomstat->tsdatasize);
@@ -171,15 +167,11 @@ static void restore_game_room_state(Stream *in, GameDataVersion data_ver) {
 	}
 }
 
-static void ReadGameState_Aligned(Stream *in, GameDataVersion data_ver, RestoredData &r_data) {
-	_GP(play).ReadFromSavegame(in, data_ver, kGSSvgVersion_OldFormat, r_data);
-}
-
 static void restore_game_play(Stream *in, GameDataVersion data_ver, RestoredData &r_data) {
 	int screenfadedout_was = _GP(play).screen_is_faded_out;
 	int roomchanges_was = _GP(play).room_changes;
 
-	ReadGameState_Aligned(in, data_ver, r_data);
+	_GP(play).ReadFromSavegame(in, data_ver, kGSSvgVersion_OldFormat, r_data);
 	r_data.Cameras[0].Flags = r_data.Camera0_Flags;
 
 	_GP(play).screen_is_faded_out = screenfadedout_was;
@@ -193,22 +185,6 @@ static void restore_game_play(Stream *in, GameDataVersion data_ver, RestoredData
 
 	// Skip gui_draw_order (no longer applied from saves)
 	in->Seek(_GP(game).numgui * sizeof(int32_t));
-}
-
-static void ReadMoveList_Aligned(Stream *in) {
-	for (int i = 0; i < _GP(game).numcharacters + MAX_ROOM_OBJECTS_v300 + 1; ++i) {
-		_GP(mls)[i].ReadFromSavegame_Legacy(in);
-	}
-}
-
-static void ReadGameSetupStructBase_Aligned(Stream *in, GameDataVersion data_ver, GameSetupStruct::SerializeInfo &info) {
-	_GP(game).GameSetupStructBase::ReadFromFile(in, data_ver, info);
-}
-
-static void ReadCharacterExtras_Aligned(Stream *in) {
-	for (int i = 0; i < _GP(game).numcharacters; ++i) {
-		_GP(charextra)[i].ReadFromSavegame(in, 0);
-	}
 }
 
 static void restore_game_palette(Stream *in) {
@@ -226,14 +202,6 @@ static void restore_game_more_dynamic_values(Stream *in) {
 	in->ReadInt32(); // mouse_pushed_iface
 	_G(ifacepopped) = in->ReadInt32();
 	_G(game_paused) = in->ReadInt32();
-}
-
-void ReadAnimatedButtons_Aligned(Stream *in, int num_abuts) {
-	for (int i = 0; i < num_abuts; ++i) {
-		AnimatingGUIButton abtn;
-		abtn.ReadFromSavegame(in, 0);
-		AddButtonAnimation(abtn);
-	}
 }
 
 static HSaveError restore_game_gui(Stream *in) {
@@ -265,11 +233,14 @@ static HSaveError restore_game_gui(Stream *in) {
 
 		return err;
 	GUI::RebuildGUI(); // rebuild guis in case they were copied from reserved game data
-
 	_GP(game).numgui = _GP(guis).size();
-	RemoveAllButtonAnimations();
+
 	int anim_count = in->ReadInt32();
-	ReadAnimatedButtons_Aligned(in, anim_count);
+	for (int i = 0; i < anim_count; ++i) {
+		AnimatingGUIButton abtn;
+		abtn.ReadFromSavegame(in, 0);
+		AddButtonAnimation(abtn);
+	}
 	return HSaveError::None();
 }
 
@@ -371,7 +342,7 @@ static void restore_game_displayed_room_status(Stream *in, GameDataVersion data_
 			_G(raw_saved_screen) = read_serialized_bitmap(in);
 
 		// get the current troom, in case they save in room 600 or whatever
-		ReadRoomStatus_Aligned(&_GP(troom), in, data_ver);
+		_GP(troom).ReadFromSavegame_v321(in, data_ver);
 
 		if (_GP(troom).tsdatasize > 0) {
 			_GP(troom).tsdata.resize(_GP(troom).tsdatasize);
@@ -454,7 +425,10 @@ HSaveError restore_save_data_v321(Stream *in, GameDataVersion data_ver, const Pr
 		return err;
 	restore_game_room_state(in, data_ver);
 	restore_game_play(in, data_ver, r_data);
-	ReadMoveList_Aligned(in);
+	// Global character movelists
+	for (int i = 0; i < _GP(game).numcharacters + MAX_ROOM_OBJECTS_v300 + 1; ++i) {
+		_GP(mls)[i].ReadFromSavegame_Legacy(in);
+	}
 
 	// List of game objects, used to compare with the save contents
 	struct ObjectCounts {
@@ -465,7 +439,7 @@ HSaveError restore_save_data_v321(Stream *in, GameDataVersion data_ver, const Pr
 	} objwas;
 
 	GameSetupStruct::SerializeInfo info;
-	ReadGameSetupStructBase_Aligned(in, data_ver, info);
+	_GP(game).GameSetupStructBase::ReadFromFile(in, data_ver, info);
 
 	if (!AssertGameContent(err, objwas.CharacterCount, _GP(game).numcharacters, "Characters") ||
 		!AssertGameContent(err, objwas.DialogCount, _GP(game).numdialog, "Dialogs") ||
@@ -478,7 +452,10 @@ HSaveError restore_save_data_v321(Stream *in, GameDataVersion data_ver, const Pr
 	// Modified custom properties are read separately to keep existing save format
 	_GP(play).ReadCustomProperties_v340(in, data_ver);
 
-	ReadCharacterExtras_Aligned(in);
+	// Character extras (runtime only data)
+	for (int i = 0; i < _GP(game).numcharacters; ++i) {
+		_GP(charextra)[i].ReadFromSavegame(in, 0);
+	}
 	restore_game_palette(in);
 	restore_game_dialogs(in);
 	restore_game_more_dynamic_values(in);

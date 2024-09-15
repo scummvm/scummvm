@@ -282,17 +282,14 @@ void Interaction::ReadFromSavedgame_v321(Stream *in) {
 		quit("Can't deserialize interaction: too many events");
 
 	Events.resize(evt_count);
+	// Read required amount and skip the remaining placeholders
 	for (size_t i = 0; i < evt_count; ++i) {
 		Events[i].Type = in->ReadInt32();
 	}
-	const size_t dummy_count = (MAX_NEWINTERACTION_EVENTS - evt_count);
-	for (size_t i = 0; i < dummy_count; ++i)
-		in->ReadInt32(); // cannot skip when reading aligned structs
+	in->Seek((MAX_NEWINTERACTION_EVENTS - evt_count) * sizeof(int32_t));
 	ReadTimesRunFromSave_v321(in);
-
-	// Skip an array of dummy 32-bit pointers
-	for (size_t i = 0; i < MAX_NEWINTERACTION_EVENTS; ++i)
-		in->ReadInt32();
+	// Skip an array of dummy 32-bit pointers (nasty legacy format)
+	in->Seek(MAX_NEWINTERACTION_EVENTS * sizeof(int32_t));
 }
 
 void Interaction::WriteToSavedgame_v321(Stream *out) const {
@@ -304,19 +301,17 @@ void Interaction::WriteToSavedgame_v321(Stream *out) const {
 	}
 	out->WriteByteCount(0, (MAX_NEWINTERACTION_EVENTS - evt_count) * sizeof(int32_t));
 	WriteTimesRunToSave_v321(out);
-
-	// Array of dummy 32-bit pointers
+	// Array of dummy 32-bit pointers (nasty legacy format)
 	out->WriteByteCount(0, MAX_NEWINTERACTION_EVENTS * sizeof(int32_t));
 }
 
 void Interaction::ReadTimesRunFromSave_v321(Stream *in) {
 	const size_t evt_count = Events.size();
+	// Read required amount and skip the remaining placeholders
 	for (size_t i = 0; i < evt_count; ++i) {
 		Events[i].TimesRun = in->ReadInt32();
 	}
-	const size_t padding = (MAX_NEWINTERACTION_EVENTS - evt_count);
-	for (size_t i = 0; i < padding; ++i)
-		in->ReadInt32(); // cannot skip when reading aligned structs
+	in->Seek((MAX_NEWINTERACTION_EVENTS - evt_count) * sizeof(int32_t));
 }
 
 void Interaction::WriteTimesRunToSave_v321(Stream *out) const {
