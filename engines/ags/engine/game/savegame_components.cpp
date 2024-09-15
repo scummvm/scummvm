@@ -500,7 +500,6 @@ HSaveError ReadCharacters(Stream *in, int32_t cmp_ver, const PreservedParams & /
 	HSaveError err;
 	if (!AssertGameContent(err, in->ReadInt32(), _GP(game).numcharacters, "Characters"))
 		return err;
-	const int mls_cmp_ver = cmp_ver > kCharSvgVersion_Initial ? kMoveSvgVersion_350 : kMoveSvgVersion_Initial;
 	for (int i = 0; i < _GP(game).numcharacters; ++i) {
 		_GP(game).chars[i].ReadFromSavegame(in, cmp_ver);
 		_GP(charextra)[i].ReadFromSavegame(in, cmp_ver);
@@ -509,7 +508,7 @@ HSaveError ReadCharacters(Stream *in, int32_t cmp_ver, const PreservedParams & /
 			ReadTimesRun272(*_GP(game).intrChar[i], in);
 		// character movement path (for old saves)
 		if (cmp_ver < kCharSvgVersion_36109) {
-			err = _GP(mls)[CHMLSOFFS + i].ReadFromSavegame(in, mls_cmp_ver);
+			err = _GP(mls)[CHMLSOFFS + i].ReadFromSavegame(in, kMoveSvgVersion_350);
 			if (!err)
 				return err;
 		}
@@ -986,9 +985,8 @@ HSaveError ReadThisRoom(Stream *in, int32_t cmp_ver, const PreservedParams & /*p
 		int objmls_count = in->ReadInt32();
 		if (!AssertCompatLimit(err, objmls_count, CHMLSOFFS, "room object move lists"))
 			return err;
-		const int mls_cmp_ver = cmp_ver > kRoomStatSvgVersion_Initial ? kMoveSvgVersion_350 : kMoveSvgVersion_Initial;
 		for (int i = 0; i < objmls_count; ++i) {
-			err = _GP(mls)[i].ReadFromSavegame(in, mls_cmp_ver);
+			err = _GP(mls)[i].ReadFromSavegame(in, kMoveSvgVersion_350);
 			if (!err)
 				return err;
 		}
@@ -1084,7 +1082,7 @@ struct ComponentHandlers {
 		{
 			"Characters",
 			kCharSvgVersion_36109,
-			kCharSvgVersion_Initial,
+			kCharSvgVersion_350, // skip pre-alpha 3.5.0 ver
 			WriteCharacters,
 			ReadCharacters
 		},
@@ -1154,21 +1152,21 @@ struct ComponentHandlers {
 		{
 			"Room States",
 			kRoomStatSvgVersion_36109,
-			kRoomStatSvgVersion_Initial,
+			kRoomStatSvgVersion_350, // skip pre-alpha 3.5.0 ver
 			WriteRoomStates,
 			ReadRoomStates
 		},
 		{
 			"Loaded Room State",
 			kRoomStatSvgVersion_36109, // must correspond to "Room States"
-			kRoomStatSvgVersion_Initial,
+			kRoomStatSvgVersion_350, // skip pre-alpha 3.5.0 ver
 			WriteThisRoom,
 			ReadThisRoom
 		},
 		{
 			"Move Lists",
 			kMoveSvgVersion_36109,
-			kMoveSvgVersion_Initial,
+			kMoveSvgVersion_350, // skip pre-alpha 3.5.0 ver
 			WriteMoveLists,
 			ReadMoveLists
 		},
