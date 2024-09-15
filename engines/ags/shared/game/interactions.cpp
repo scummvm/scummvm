@@ -22,7 +22,7 @@
 //include <string.h>
 #include "ags/shared/ac/common.h" // quit
 #include "ags/shared/game/interactions.h"
-#include "ags/shared/util/aligned_stream.h"
+#include "ags/shared/util/stream.h"
 #include "ags/shared/util/math.h"
 #include "common/util.h"
 
@@ -47,12 +47,14 @@ void InteractionValue::clear() {
 
 void InteractionValue::Read(Stream *in) {
 	Type = (InterValType)in->ReadInt8();
+	in->Seek(3); // alignment padding to int32
 	Value = in->ReadInt32();
 	Extra = in->ReadInt32();
 }
 
 void InteractionValue::Write(Stream *out) const {
 	out->WriteInt8(Type);
+	out->WriteByteCount(0, 3); // alignment padding to int32
 	out->WriteInt32(Value);
 	out->WriteInt32(Extra);
 }
@@ -82,36 +84,32 @@ void InteractionCommand::Reset() {
 	Parent = nullptr;
 }
 
-void InteractionCommand::ReadValues_Aligned(Stream *in) {
-	AlignedStream align_s(in, Shared::kAligned_Read);
+void InteractionCommand::ReadValues(Stream *in) {
 	for (int i = 0; i < MAX_ACTION_ARGS; ++i) {
-		Data[i].Read(&align_s);
-		align_s.Reset();
+		Data[i].Read(in);
 	}
 }
 
-void InteractionCommand::Read_v321(Stream *in, bool &has_children) {
+void InteractionCommand::Read(Stream *in, bool &has_children) {
 	in->ReadInt32(); // skip the 32-bit vtbl ptr (the old serialization peculiarity)
 	Type = in->ReadInt32();
-	ReadValues_Aligned(in);
+	ReadValues(in);
 	has_children = in->ReadInt32() != 0;
 	in->ReadInt32(); // skip 32-bit Parent pointer
 }
 
-void InteractionCommand::WriteValues_Aligned(Stream *out) const {
-	AlignedStream align_s(out, Shared::kAligned_Write);
+void InteractionCommand::WriteValues(Stream *out) const {
 	for (int i = 0; i < MAX_ACTION_ARGS; ++i) {
-		Data[i].Write(&align_s);
-		align_s.Reset();
+		Data[i].Write(out);
 	}
 }
 
-void InteractionCommand::Write_v321(Stream *out) const {
+void InteractionCommand::Write(Stream *out) const {
 	out->WriteInt32(0); // write dummy 32-bit vtbl ptr
 	out->WriteInt32(Type);
-	WriteValues_Aligned(out);
-	out->WriteInt32(Children.get() ? 1 : 0);
-	out->WriteInt32(Parent ? 1 : 0);
+	WriteValues(out);
+	out->WriteInt32(Children.get() ? 1 : 0);  // notify that has children
+	out->WriteInt32(0);  // skip 32-bit Parent pointer
 }
 
 InteractionCommand &InteractionCommand::operator = (const InteractionCommand &ic) {
@@ -141,52 +139,48 @@ void InteractionCommandList::Reset() {
 	TimesRun = 0;
 }
 
-void InteractionCommandList::Read_Aligned(Stream *in, std::vector<bool> &cmd_children) {
-	AlignedStream align_s(in, Shared::kAligned_Read);
+void InteractionCommandList::ReadCommands(Stream *in, std::vector<bool> &cmd_children) {
 	for (size_t i = 0; i < Cmds.size(); ++i) {
 		bool has_children;
-		Cmds[i].Read_v321(&align_s, has_children);
+		Cmds[i].Read(in, has_children);
 		cmd_children[i] = has_children;
-		align_s.Reset();
 	}
 }
 
-void InteractionCommandList::Read_v321(Stream *in) {
+void InteractionCommandList::Read(Stream *in) {
 	size_t cmd_count = in->ReadInt32();
 	TimesRun = in->ReadInt32();
 
 	std::vector<bool> cmd_children;
 	Cmds.resize(cmd_count);
 	cmd_children.resize(cmd_count);
-	Read_Aligned(in, cmd_children);
+	ReadCommands(in, cmd_children);
 
 	for (size_t i = 0; i < cmd_count; ++i) {
 		if (cmd_children[i]) {
 			Cmds[i].Children.reset(new InteractionCommandList());
-			Cmds[i].Children->Read_v321(in);
+			Cmds[i].Children->Read(in);
 		}
 		Cmds[i].Parent = this;
 	}
 }
 
-void InteractionCommandList::Write_Aligned(Stream *out) const {
-	AlignedStream align_s(out, Shared::kAligned_Write);
+void InteractionCommandList::WriteCommands(Stream *out) const {
 	for (InterCmdVector::const_iterator it = Cmds.begin(); it != Cmds.end(); ++it) {
-		it->Write_v321(&align_s);
-		align_s.Reset();
+		it->Write(out);
 	}
 }
 
-void InteractionCommandList::Write_v321(Stream *out) const {
+void InteractionCommandList::Write(Stream *out) const {
 	size_t cmd_count = Cmds.size();
 	out->WriteInt32(cmd_count);
 	out->WriteInt32(TimesRun);
 
-	Write_Aligned(out);
+	WriteCommands(out);
 
 	for (size_t i = 0; i < cmd_count; ++i) {
 		if (Cmds[i].Children.get() != nullptr)
-			Cmds[i].Children->Write_v321(out);
+			Cmds[i].Children->Write(out);
 	}
 }
 
@@ -257,7 +251,7 @@ Interaction *Interaction::CreateFromStream(Stream *in) {
 		evt.Type = types[i];
 		if (load_response[i] != 0) {
 			evt.Response.reset(new InteractionCommandList());
-			evt.Response->Read_v321(in);
+			evt.Response->Read(in);
 		}
 	}
 	return inter;
@@ -278,7 +272,7 @@ void Interaction::Write(Stream *out) const {
 
 	for (size_t i = 0; i < evt_count; ++i) {
 		if (Events[i].Response.get())
-			Events[i].Response->Write_v321(out);
+			Events[i].Response->Write(out);
 	}
 }
 
