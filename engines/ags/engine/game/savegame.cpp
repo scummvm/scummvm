@@ -19,6 +19,7 @@
  *
  */
 
+#include "ags/engine/ac/button.h"
 #include "ags/engine/ac/character.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/draw.h"
@@ -372,6 +373,7 @@ void DoBeforeRestore(PreservedParams &pp) {
 	_GP(play).FreeViewportsAndCameras();
 	free_do_once_tokens();
 
+	RemoveAllButtonAnimations();
 	// unregister gui controls from API exports
 	// CHECKME: find out why are we doing this here? why only to gui controls?
 	for (int i = 0; i < _GP(game).numgui; ++i) {

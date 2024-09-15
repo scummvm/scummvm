@@ -586,7 +586,9 @@ void GameState::ReadFromSavegame(Stream *in, GameDataVersion data_ver, GameState
 
 	if (old_save) {
 		in->ReadInt16(); // alignment padding to int32 (before array of structs)
-		ReadQueuedAudioItems_Aligned(in);
+		for (int i = 0; i < MAX_QUEUED_MUSIC; ++i) {
+			new_music_queue[i].ReadFromSavegame_v321(in);
+		}
 	}
 
 	in->Read(takeover_from, 50);
@@ -801,12 +803,6 @@ void GameState::WriteForSavegame(Stream *out) const {
 	if (speech_voice_blocking)
 		voice_speech_flags |= 0x02;
 	out->WriteInt32(voice_speech_flags);
-}
-
-void GameState::ReadQueuedAudioItems_Aligned(Stream *in) {
-	for (int i = 0; i < MAX_QUEUED_MUSIC; ++i) {
-		new_music_queue[i].ReadFromSavegame_v321(in);
-	}
 }
 
 void GameState::FreeProperties() {

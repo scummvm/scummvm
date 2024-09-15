@@ -637,7 +637,6 @@ HSaveError ReadGUI(Stream *in, int32_t cmp_ver, const PreservedParams & /*pp*/, 
 	// Animated buttons
 	if (!AssertFormatTagStrict(err, in, "AnimatedButtons"))
 		return err;
-	RemoveAllButtonAnimations();
 	int anim_count = in->ReadInt32();
 	for (int i = 0; i < anim_count; ++i) {
 		AnimatingGUIButton abut;

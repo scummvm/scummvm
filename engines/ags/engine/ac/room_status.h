@@ -101,7 +101,6 @@ struct RoomStatus {
 	void FreeProperties();
 
 	void ReadFromSavegame_v321(Shared::Stream *in, GameDataVersion data_ver);
-	void ReadRoomObjects_Aligned(Shared::Stream *in);
 	void ReadFromSavegame(Shared::Stream *in, GameDataVersion data_ver, RoomStatSvgVersion save_ver);
 	void WriteToSavegame(Shared::Stream *out, GameDataVersion data_ver) const;
 };
