@@ -209,30 +209,57 @@ exit:
 }
 
 void CharacterInfo::loadDrawStructs() {
-	_drawList[0] = DrawStruct(0, 2, 16);
-	_drawList[1] = DrawStruct(2, 2, 39);
-	_drawList[2] = DrawStruct(4, 2, 62);
-	_drawList[3] = DrawStruct(6, 2, 85);
-	_drawList[4] = DrawStruct(8, 2, 108);
-	_drawList[5] = DrawStruct(10, 53, 16);
-	_drawList[6] = DrawStruct(12, 53, 39);
-	_drawList[7] = DrawStruct(14, 53, 62);
-	_drawList[8] = DrawStruct(16, 53, 85);
-	_drawList[9] = DrawStruct(18, 53, 108);
-	_drawList[10] = DrawStruct(20, 104, 16);
-	_drawList[11] = DrawStruct(22, 104, 39);
-	_drawList[12] = DrawStruct(24, 104, 62);
-	_drawList[13] = DrawStruct(26, 104, 85);
-	_drawList[14] = DrawStruct(28, 104, 108);
-	_drawList[15] = DrawStruct(30, 169, 16);
-	_drawList[16] = DrawStruct(32, 169, 39);
-	_drawList[17] = DrawStruct(34, 169, 62);
-	_drawList[18] = DrawStruct(36, 169, 85);
-	_drawList[19] = DrawStruct(38, 169, 108);
-	_drawList[20] = DrawStruct(40, 277, 3);
-	_drawList[21] = DrawStruct(42, 277, 35);
-	_drawList[22] = DrawStruct(44, 277, 67);
-	_drawList[23] = DrawStruct(46, 277, 99);
+	if (g_vm->getLanguage() == Common::ZH_TWN) {
+		_drawList[0] = DrawStruct(0, 2, 16);
+		_drawList[1] = DrawStruct(2, 2, 39);
+		_drawList[2] = DrawStruct(4, 2, 62);
+		_drawList[3] = DrawStruct(6, 2, 85);
+		_drawList[4] = DrawStruct(8, 2, 108);
+		_drawList[5] = DrawStruct(10, 60, 16);
+		_drawList[6] = DrawStruct(12, 60, 39);
+		_drawList[7] = DrawStruct(14, 60, 62);
+		_drawList[8] = DrawStruct(16, 60, 85);
+		_drawList[9] = DrawStruct(18, 60, 108);
+		_drawList[10] = DrawStruct(20, 118, 16);
+		_drawList[11] = DrawStruct(22, 118, 39);
+		_drawList[12] = DrawStruct(24, 118, 62);
+		_drawList[13] = DrawStruct(26, 118, 85);
+		_drawList[14] = DrawStruct(28, 118, 108);
+		_drawList[15] = DrawStruct(30, 176, 16);
+		_drawList[16] = DrawStruct(32, 176, 39);
+		_drawList[17] = DrawStruct(34, 176, 62);
+		_drawList[18] = DrawStruct(36, 176, 85);
+		_drawList[19] = DrawStruct(38, 176, 108);
+		_drawList[20] = DrawStruct(40, 277, 0);
+		_drawList[21] = DrawStruct(42, 277, 34);
+		_drawList[22] = DrawStruct(44, 277, 68);
+		_drawList[23] = DrawStruct(46, 266, 107);
+	} else {
+		_drawList[0] = DrawStruct(0, 2, 16);
+		_drawList[1] = DrawStruct(2, 2, 39);
+		_drawList[2] = DrawStruct(4, 2, 62);
+		_drawList[3] = DrawStruct(6, 2, 85);
+		_drawList[4] = DrawStruct(8, 2, 108);
+		_drawList[5] = DrawStruct(10, 53, 16);
+		_drawList[6] = DrawStruct(12, 53, 39);
+		_drawList[7] = DrawStruct(14, 53, 62);
+		_drawList[8] = DrawStruct(16, 53, 85);
+		_drawList[9] = DrawStruct(18, 53, 108);
+		_drawList[10] = DrawStruct(20, 104, 16);
+		_drawList[11] = DrawStruct(22, 104, 39);
+		_drawList[12] = DrawStruct(24, 104, 62);
+		_drawList[13] = DrawStruct(26, 104, 85);
+		_drawList[14] = DrawStruct(28, 104, 108);
+		_drawList[15] = DrawStruct(30, 169, 16);
+		_drawList[16] = DrawStruct(32, 169, 39);
+		_drawList[17] = DrawStruct(34, 169, 62);
+		_drawList[18] = DrawStruct(36, 169, 85);
+		_drawList[19] = DrawStruct(38, 169, 108);
+		_drawList[20] = DrawStruct(40, 277, 3);
+		_drawList[21] = DrawStruct(42, 277, 35);
+		_drawList[22] = DrawStruct(44, 277, 67);
+		_drawList[23] = DrawStruct(46, 277, 99);
+	}
 
 	_iconSprites.load("view.icn");
 	for (int idx = 0; idx < 24; ++idx)
@@ -240,32 +267,60 @@ void CharacterInfo::loadDrawStructs() {
 }
 
 void CharacterInfo::addButtons() {
-	addButton(Common::Rect(10, 24, 34, 44), 1001, &_iconSprites);
-	addButton(Common::Rect(10, 47, 34, 67), 1002, &_iconSprites);
-	addButton(Common::Rect(10, 70, 34, 90), 1003, &_iconSprites);
-	addButton(Common::Rect(10, 93, 34, 113), 1004, &_iconSprites);
-	addButton(Common::Rect(10, 116, 34, 136), 1005, &_iconSprites);
-	addButton(Common::Rect(61, 24, 85, 44), 1006, &_iconSprites);
-	addButton(Common::Rect(61, 47, 85, 67), 1007, &_iconSprites);
-	addButton(Common::Rect(61, 70, 85, 90), 1008, &_iconSprites);
-	addButton(Common::Rect(61, 93, 85, 113), 1009, &_iconSprites);
-	addButton(Common::Rect(61, 116, 85, 136), 1010, &_iconSprites);
-	addButton(Common::Rect(112, 24, 136, 44), 1011, &_iconSprites);
-	addButton(Common::Rect(112, 47, 136, 67), 1012, &_iconSprites);
-	addButton(Common::Rect(112, 70, 136, 90), 1013, &_iconSprites);
-	addButton(Common::Rect(112, 93, 136, 113), 1014, &_iconSprites);
-	addButton(Common::Rect(112, 116, 136, 136), 1015, &_iconSprites);
-	addButton(Common::Rect(177, 24, 201, 44), 1016, &_iconSprites);
-	addButton(Common::Rect(177, 47, 201, 67), 1017, &_iconSprites);
-	addButton(Common::Rect(177, 70, 201, 90), 1018, &_iconSprites);
-	addButton(Common::Rect(177, 93, 201, 113), 1019, &_iconSprites);
-	addButton(Common::Rect(177, 116, 201, 136), 1020, &_iconSprites);
+	if (g_vm->getLanguage() == Common::ZH_TWN) {
+		addButton(Common::Rect(10, 24, 34, 44), 1001, &_iconSprites);
+		addButton(Common::Rect(10, 47, 34, 67), 1002, &_iconSprites);
+		addButton(Common::Rect(10, 70, 34, 90), 1003, &_iconSprites);
+		addButton(Common::Rect(10, 93, 34, 113), 1004, &_iconSprites);
+		addButton(Common::Rect(10, 116, 34, 136), 1005, &_iconSprites);
+		addButton(Common::Rect(68, 24, 92, 44), 1006, &_iconSprites);
+		addButton(Common::Rect(68, 47, 92, 67), 1007, &_iconSprites);
+		addButton(Common::Rect(68, 70, 92, 90), 1008, &_iconSprites);
+		addButton(Common::Rect(68, 93, 92, 113), 1009, &_iconSprites);
+		addButton(Common::Rect(68, 116, 92, 136), 1010, &_iconSprites);
+		addButton(Common::Rect(126, 24, 150, 44), 1011, &_iconSprites);
+		addButton(Common::Rect(126, 47, 150, 67), 1012, &_iconSprites);
+		addButton(Common::Rect(126, 70, 150, 90), 1013, &_iconSprites);
+		addButton(Common::Rect(126, 93, 150, 113), 1014, &_iconSprites);
+		addButton(Common::Rect(126, 116, 150, 136), 1015, &_iconSprites);
+		addButton(Common::Rect(184, 24, 208, 44), 1016, &_iconSprites);
+		addButton(Common::Rect(184, 47, 208, 67), 1017, &_iconSprites);
+		addButton(Common::Rect(184, 70, 208, 90), 1018, &_iconSprites);
+		addButton(Common::Rect(184, 93, 208, 113), 1019, &_iconSprites);
+		addButton(Common::Rect(184, 116, 208, 136), 1020, &_iconSprites);
 
-	addButton(Common::Rect(285, 11, 309, 31), Res.KeyConstants.DialogsCharInfo.KEY_ITEM, &_iconSprites);
-	addButton(Common::Rect(285, 43, 309, 63), Res.KeyConstants.DialogsCharInfo.KEY_QUICK, &_iconSprites);
-	addButton(Common::Rect(285, 75, 309, 95), Res.KeyConstants.DialogsCharInfo.KEY_EXCHANGE, &_iconSprites);
+		addButton(Common::Rect(285, 8, 309, 28), Res.KeyConstants.DialogsCharInfo.KEY_ITEM, &_iconSprites);
+		addButton(Common::Rect(285, 42, 309, 62), Res.KeyConstants.DialogsCharInfo.KEY_QUICK, &_iconSprites);
+		addButton(Common::Rect(285, 76, 309, 96), Res.KeyConstants.DialogsCharInfo.KEY_EXCHANGE, &_iconSprites);
+		addButton(Common::Rect(274, 115, 298, 135), Common::KEYCODE_ESCAPE, &_iconSprites);
+	} else {
+		addButton(Common::Rect(10, 24, 34, 44), 1001, &_iconSprites);
+		addButton(Common::Rect(10, 47, 34, 67), 1002, &_iconSprites);
+		addButton(Common::Rect(10, 70, 34, 90), 1003, &_iconSprites);
+		addButton(Common::Rect(10, 93, 34, 113), 1004, &_iconSprites);
+		addButton(Common::Rect(10, 116, 34, 136), 1005, &_iconSprites);
+		addButton(Common::Rect(61, 24, 85, 44), 1006, &_iconSprites);
+		addButton(Common::Rect(61, 47, 85, 67), 1007, &_iconSprites);
+		addButton(Common::Rect(61, 70, 85, 90), 1008, &_iconSprites);
+		addButton(Common::Rect(61, 93, 85, 113), 1009, &_iconSprites);
+		addButton(Common::Rect(61, 116, 85, 136), 1010, &_iconSprites);
+		addButton(Common::Rect(112, 24, 136, 44), 1011, &_iconSprites);
+		addButton(Common::Rect(112, 47, 136, 67), 1012, &_iconSprites);
+		addButton(Common::Rect(112, 70, 136, 90), 1013, &_iconSprites);
+		addButton(Common::Rect(112, 93, 136, 113), 1014, &_iconSprites);
+		addButton(Common::Rect(112, 116, 136, 136), 1015, &_iconSprites);
+		addButton(Common::Rect(177, 24, 201, 44), 1016, &_iconSprites);
+		addButton(Common::Rect(177, 47, 201, 67), 1017, &_iconSprites);
+		addButton(Common::Rect(177, 70, 201, 90), 1018, &_iconSprites);
+		addButton(Common::Rect(177, 93, 201, 113), 1019, &_iconSprites);
+		addButton(Common::Rect(177, 116, 201, 136), 1020, &_iconSprites);
 
-	addButton(Common::Rect(285, 107, 309, 127), Common::KEYCODE_ESCAPE, &_iconSprites);
+		addButton(Common::Rect(285, 11, 309, 31), Res.KeyConstants.DialogsCharInfo.KEY_ITEM, &_iconSprites);
+		addButton(Common::Rect(285, 43, 309, 63), Res.KeyConstants.DialogsCharInfo.KEY_QUICK, &_iconSprites);
+		addButton(Common::Rect(285, 75, 309, 95), Res.KeyConstants.DialogsCharInfo.KEY_EXCHANGE, &_iconSprites);
+		addButton(Common::Rect(285, 107, 309, 127), Common::KEYCODE_ESCAPE, &_iconSprites);
+	}
+
 	addPartyButtons(_vm);
 }
 
@@ -332,7 +387,9 @@ Common::String CharacterInfo::loadCharacterDetails(const Character &c) {
 }
 
 void CharacterInfo::showCursor(bool flag) {
-	const int CURSOR_X[5] = { 9, 60, 111, 176, 0 };
+	const int CURSOR_X_NORMAL[5] = { 9, 60, 111, 176, 0 };
+	const int CURSOR_X_ZH[5] = { 9, 67, 125, 183, 0 };
+	const int *CURSOR_X = (g_vm->getLanguage() == Common::ZH_TWN) ? CURSOR_X_ZH : CURSOR_X_NORMAL;
 	const int CURSOR_Y[5] = { 23, 46, 69, 92, 115 };
 
 	if (_cursorCell < 20) {
