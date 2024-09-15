@@ -384,7 +384,7 @@ void Resources::decompressLZ(Common::SeekableReadStream &source, byte *outBuffer
 			copyLen = source.readByte();
 			copyPos = copyPos | ((copyLen & 0xF0) << 4);
 			copyLen = (copyLen & 0x0F) + 3;
-			while (copyLen--) {
+			while (copyLen-- && (outSize == -1 || outBuffer < outBufferEnd)) {
 				byte literal = lzWindow[copyPos];
 				copyPos = (copyPos + 1) & 0x0FFF;
 				*outBuffer++ = literal;
