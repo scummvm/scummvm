@@ -404,7 +404,9 @@ void FontSurface::writeChar(uint16_t c, const Common::Rect &clipRect) {
 	int y = _writePos.y;
 	if (_isBig5 && c > 0xff) {
 		_big5Font->drawBig5Char(surfacePtr(), c, _writePos, _textColors[0]);
-		_writePos.x += kBig5Width;
+		_writePos.x++;
+		_big5Font->drawBig5Char(surfacePtr(), c, _writePos, _textColors[3]);
+		_writePos.x += kBig5Width - 1;
 		addDirtyRect(Common::Rect(_writePos.x, _writePos.y, _writePos.x + kBig5Width,
 					  _writePos.y + kBig5Height));
 
