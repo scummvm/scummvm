@@ -24,7 +24,6 @@
 #include "ags/engine/ac/room_status.h"
 #include "ags/shared/game/custom_properties.h"
 #include "ags/engine/game/savegame_components.h"
-#include "ags/shared/util/aligned_stream.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/globals.h"
 
@@ -71,20 +70,22 @@ void RoomStatus::FreeProperties() {
 	objProps.clear();
 }
 
-void RoomStatus::ReadFromFile_v321(Stream *in, GameDataVersion data_ver) {
+void RoomStatus::ReadFromSavegame_v321(Stream *in, GameDataVersion data_ver) {
 	FreeScriptData();
 	FreeProperties();
 
 	contentFormat = kRoomStatSvgVersion_Initial;
-	beenhere = in->ReadInt32();
-	numobj = in->ReadInt32();
 	obj.resize(MAX_ROOM_OBJECTS_v300);
 	objProps.resize(MAX_ROOM_OBJECTS_v300);
 	intrObject.resize(MAX_ROOM_OBJECTS_v300);
+
+	beenhere = in->ReadInt32();
+	numobj = in->ReadInt32();
 	ReadRoomObjects_Aligned(in);
 
 	int16_t dummy[MAX_LEGACY_ROOM_FLAGS]; // cannot seek with AlignedStream
 	in->ReadArrayOfInt16(dummy, MAX_LEGACY_ROOM_FLAGS); // flagstates (OBSOLETE)
+	in->ReadInt16(); // alignment padding to int32
 	tsdatasize = static_cast<uint32_t>(in->ReadInt32());
 	in->ReadInt32(); // tsdata
 	for (int i = 0; i < MAX_ROOM_HOTSPOTS; ++i) {
@@ -101,6 +102,7 @@ void RoomStatus::ReadFromFile_v321(Stream *in, GameDataVersion data_ver) {
 		hotspot[i].Enabled = in->ReadInt8() != 0;
 	in->ReadArrayOfInt8((int8_t *)region_enabled, MAX_ROOM_REGIONS);
 	in->ReadArrayOfInt16(walkbehind_base, MAX_WALK_BEHINDS);
+	in->ReadInt16(); // alignment padding to int32 (66 int8 + 16 int16 = 49 int16 -> 50)
 	in->ReadArrayOfInt32(interactionVariableValues, MAX_GLOBAL_VARIABLES);
 
 	if (data_ver >= kGameVersion_340_4) {
@@ -115,10 +117,8 @@ void RoomStatus::ReadFromFile_v321(Stream *in, GameDataVersion data_ver) {
 }
 
 void RoomStatus::ReadRoomObjects_Aligned(Shared::Stream *in) {
-	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (auto &o : obj) {
-		o.ReadFromSavegame(&align_s, 0);
-		align_s.Reset();
+		o.ReadFromSavegame(in, -1 /* legacy save with padding */);
 	}
 }
 
