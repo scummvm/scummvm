@@ -181,8 +181,16 @@ struct CharacterInfo {
 	void update_character_idle(CharacterExtras *chex, int &doing_nothing);
 	void update_character_follower(int &char_index, std::vector<int> &followingAsSheep, int &doing_nothing);
 
-	void ReadFromFile(Shared::Stream *in, GameDataVersion data_ver, int save_ver = -1);
-	void WriteToFile(Shared::Stream *out);
+	void ReadFromFile(Shared::Stream *in, GameDataVersion data_ver);
+	void WriteToFile(Shared::Stream *out) const;
+	// TODO: move to runtime-only class (?)
+	void ReadFromSavegame(Shared::Stream *in, int save_ver);
+	void WriteToSavegame(Shared::Stream *out) const;
+
+private:
+	// TODO: this is likely temp here until runtime class is factored out
+	void ReadFromFileImpl(Shared::Stream *in, GameDataVersion data_ver, int save_ver);
+	void WriteToFileImpl(Shared::Stream *out, bool is_save) const;
 };
 
 

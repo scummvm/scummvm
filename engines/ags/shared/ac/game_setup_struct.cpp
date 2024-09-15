@@ -207,7 +207,7 @@ void GameSetupStruct::WriteMouseCursors(Stream *out) {
 void GameSetupStruct::read_characters(Shared::Stream *in) {
 	chars.resize(numcharacters);
 
-	ReadCharacters(in, false);
+	ReadCharacters(in);
 }
 
 void GameSetupStruct::read_lipsync(Shared::Stream *in, GameDataVersion data_ver) {
@@ -237,11 +237,9 @@ void GameSetupStruct::read_messages(Shared::Stream *in, const std::array<int> &l
 	}
 }
 
-void GameSetupStruct::ReadCharacters(Stream *in, bool is_save) {
-	const GameDataVersion data_ver = is_save ? kGameVersion_Undefined : _G(loaded_game_file_version);
-	const int save_ver = is_save ? 0 : -1;
+void GameSetupStruct::ReadCharacters(Stream *in) {
 	for (int iteratorCount = 0; iteratorCount < numcharacters; ++iteratorCount) {
-		chars[iteratorCount].ReadFromFile(in, data_ver, save_ver);
+		chars[iteratorCount].ReadFromFile(in, _G(loaded_game_file_version));
 	}
 }
 
@@ -332,6 +330,8 @@ void GameSetupStruct::ReadAudioClips(Shared::Stream *in, size_t count) {
 }
 
 void GameSetupStruct::ReadFromSaveGame_v321(Stream *in) {
+	// NOTE: the individual object data is read from legacy saves
+	// same way as if it were from a game file
 	ReadInvInfo(in);
 	ReadMouseCursors(in);
 
@@ -345,7 +345,7 @@ void GameSetupStruct::ReadFromSaveGame_v321(Stream *in) {
 	in->ReadArrayOfInt32(&options[0], OPT_HIGHESTOPTION_321 + 1);
 	options[OPT_LIPSYNCTEXT] = in->ReadByte();
 
-	ReadCharacters(in, true);
+	ReadCharacters(in);
 }
 
 //=============================================================================
