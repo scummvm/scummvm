@@ -40,6 +40,33 @@ public:
 	int16 width;
 	byte yval;
 	bool flag;
+
+	Common::String dump();
+};
+
+
+/**
+The regular TTM interpreter always uses the environment's shape for the brushes,
+but the arcade one stores brushes as pointers to the exact frame within the shape.
+
+In practice this may make no difference - maybe we can track use shapes2 and
+store the frame number?
+*/
+class Brush {
+public:
+	Brush() : _frame(0) {}
+	Brush(const Common::SharedPtr<Image> &shape, int16 frame) : _shape(shape), _frame(frame) {}
+
+	void reset() {
+		_shape.reset();
+		_frame = 0;
+	}
+	bool isValid() const { return _shape && _shape->loadedFrameCount() > _frame; }
+	const Common::SharedPtr<Image> &getShape() const { return _shape; }
+	int16 getFrame() const { return _frame; }
+private:
+	Common::SharedPtr<Image> _shape;
+	int16 _frame;
 };
 
 struct ArcadeNPCState;
@@ -70,10 +97,10 @@ private:
 	int16 handleOperation(TTMEnviro &env, int16 page, uint16 op, byte count, const int16 *ivals, const Common::String &sval);
 
 	int16 _shapes3[6];
-	Common::SharedPtr<Image> _shapes2[6];
 	Common::SharedPtr<Image> _shapes[6];
+	Common::SharedPtr<Image> _shapes2[6];
 	Common::SharedPtr<Image> _allShapes[30];
-	int16 _brushes[6];
+	Brush _brushes[6];
 
 	byte _drawColFG;
 	byte _drawColBG;

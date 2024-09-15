@@ -32,7 +32,7 @@
 #include "common/substream.h"
 #include "common/system.h"
 
-#include "common/formats/iff_container.h"
+#include "backends/keymapper/keymapper.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
@@ -536,6 +536,12 @@ Common::Error DgdsEngine::run() {
 					|| ev.type == Common::EVENT_MOUSEMOVE) {
 				mouseEvent = ev.type;
 				_lastMouse = ev.mouse;
+			} else if (ev.type == Common::EVENT_KEYDOWN) {
+				if (_dragonArcade)
+					_dragonArcade->onKeyDown(ev.kbd);
+			} else if (ev.type == Common::EVENT_KEYUP) {
+				if (_dragonArcade)
+					_dragonArcade->onKeyUp(ev.kbd);
 			}
 		}
 
@@ -700,6 +706,14 @@ bool DgdsEngine::canSaveGameStateCurrently(Common::U32String *msg /*= nullptr*/)
 
 bool DgdsEngine::canSaveAutosaveCurrently() {
 	return canSaveGameStateCurrently() && !_scene->hasVisibleDialog() && !_menu->menuShown() && _gameGlobals->getGameIsInteractiveGlobal();
+}
+
+void DgdsEngine::enableKeymapper() {
+	_eventMan->getKeymapper()->setEnabled(true);
+}
+
+void DgdsEngine::disableKeymapper() {
+	_eventMan->getKeymapper()->setEnabled(false);
 }
 
 Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
