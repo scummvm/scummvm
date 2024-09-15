@@ -43,6 +43,7 @@ void MouseCursor::ReadFromFile(Stream *in) {
 	view = in->ReadInt16();
 	StrUtil::ReadCStrCount(name, in, MAX_CURSOR_NAME_LENGTH);
 	flags = in->ReadInt8();
+	in->Seek(3); // alignment padding to int32
 }
 
 void MouseCursor::WriteToFile(Stream *out) {
@@ -52,6 +53,7 @@ void MouseCursor::WriteToFile(Stream *out) {
 	out->WriteInt16(view);
 	out->Write(name, MAX_CURSOR_NAME_LENGTH);
 	out->WriteInt8(flags);
+	out->WriteByteCount(0, 3); // alignment padding to int32
 }
 
 void MouseCursor::ReadFromSavegame(Stream *in, int cmp_ver) {
