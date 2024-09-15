@@ -1,4 +1,4 @@
-MODULE := devtools/create_mm
+MODULE := devtools/create_mm/create_xeen
 
 MODULE_OBJS := \
 	create_xeen.o \
