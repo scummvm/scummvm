@@ -28,6 +28,7 @@
 #include "en_constants.h"
 #include "ru_constants.h"
 #include "de_constants.h"
+#include "zh_constants.h"
 
 const char *const LangConstants::TERRAIN_TYPES[6] = {
 	"town", "cave", "towr", "cstl", "dung", "scfi"
@@ -1298,5 +1299,7 @@ void writeConstants() {
 	RU ru;
 	ru.writeConstants(Common::String::format("_%i", 26 /* Common::RU_RUS */));
 	DE de;
-	de.writeConstants(Common::String::format("_%i", 4 /* Common::DE_DEU */));	
+	de.writeConstants(Common::String::format("_%i", 4 /* Common::DE_DEU */));
+	ZH zh;
+	zh.writeConstants(Common::String::format("_%i", 38 /* Common::ZH_TWN */));
 }

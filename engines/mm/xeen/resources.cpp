@@ -68,6 +68,9 @@ void Resources::loadData() {
 	case Common::RU_RUS:
 		langId = 26;
 		break;
+	case Common::ZH_TWN:
+		langId = 38;
+		break;
 	default:
 		// English
 		langId = 7;
