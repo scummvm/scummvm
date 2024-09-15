@@ -648,7 +648,9 @@ void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int
 		int header = file->readByte();
 		debugC(1, kFreescapeDebugParser, "riddle %d header: %x", i, header);
 		int numberLines = 6;
-		if (header == 0x15 || header == 0x1a || header == 0x1b || header == 0x1c || header == 0x1e)
+		if (header == 0x18)
+			numberLines = 8;
+		else if (header == 0x15 || header == 0x1a || header == 0x1b || header == 0x1c || header == 0x1e)
 			numberLines = 7;
 		else if (header == 0x1d)
 			numberLines = 6;
@@ -663,14 +665,25 @@ void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int
 			debugC(1, kFreescapeDebugParser, "size: %d (max %d?)", size, maxLineSize);
 
 			Common::String message = "";
-			if (size > maxLineSize) {
-				if (isSpectrum()) {
-					size = 19;
-					while (size-- > 0)
-						message = message + "*";
-				}
+			if (size == 255) {
+				size = 19;
+				while (size-- > 0)
+					message = message + "*";
+
+				//debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
+				debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
+				debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
+				debugC(1, kFreescapeDebugParser, "'%s'", message.c_str());
+				_riddleList.push_back(message);
+				continue;
+			} else if (size > maxLineSize) {
 				for (int k = j; k < numberLines; k++)
 					_riddleList.push_back(message);
+
+				if (isSpectrum()) {
+					debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
+					debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
+				}
 
 				debugC(1, kFreescapeDebugParser, "'%s'", message.c_str());
 				break;

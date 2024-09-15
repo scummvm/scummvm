@@ -113,7 +113,7 @@ void CastleEngine::loadAssetsZXFullGame() {
 	loadMessagesVariableSize(&file, 0x4bd, 71);
 	switch (_language) {
 		case Common::ES_ESP:
-			loadRiddles(&file, 0xcf0 - 1 - 1 - 1, 8);
+			loadRiddles(&file, 0x1470 - 4, 8);
 			loadMessagesVariableSize(&file, 0xf3d, 71);
 			load8bitBinary(&file, 0x6aab - 2, 16);
 			loadSpeakerFxZX(&file, 0xca0, 0xcdc);
@@ -158,10 +158,10 @@ void CastleEngine::loadAssetsZXFullGame() {
 	_gfx->readFromPalette(6, r, g, b);
 	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0, 0, 0);
-	_strenghtBackgroundFrame = loadFrameWithHeader(&file, 0xed7, yellow, black);
-	_strenghtBarFrame = loadFrameWithHeader(&file, 0xf63, yellow, black);
+	_strenghtBackgroundFrame = loadFrameWithHeader(&file, _language == Common::ES_ESP ? 0xee6 : 0xed7, yellow, black);
+	_strenghtBarFrame = loadFrameWithHeader(&file, _language == Common::ES_ESP ? 0xf72 : 0xf63, yellow, black);
 
-	_strenghtWeightsFrames = loadFramesWithHeader(&file, 0xf83, 4, yellow, black);
+	_strenghtWeightsFrames = loadFramesWithHeader(&file, _language == Common::ES_ESP ? 0xf92 : 0xf83, 4, yellow, black);
 
 	for (auto &it : _areaMap) {
 		it._value->addStructure(_areaMap[255]);
