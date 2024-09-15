@@ -97,7 +97,339 @@ void Room508::init() {
 }
 
 void Room508::daemon() {
+	switch (_G(kernel).trigger) {
+	case 503:
+		player_set_commands_allowed(false);
+		ws_walk(423, 356, nullptr, 504, 1);
+		break;
 
+	case 504:
+		_ripPutsShovel = series_load("RIP PUTS SHOVEL IN CAPSTAN");
+		digi_preload("508_S03");
+		player_update_info();
+		ws_hide_walker();
+
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
+			_G(player_info).depth, 0, triggerMachineByHashCallbackNegative, "Rp1");
+		sendWSMessage_10000(1, _ripley, _ripPutsShovel, 1, 22, 505,
+			_ripPutsShovel, 22, 22, 0);
+		inv_move_object("SHOVEL", 508);
+		break;
+
+	case 505:
+		digi_play("508_S03", 2);
+		sendWSMessage_10000(1, _ripley, _ripPutsShovel, 23, 34, 506,
+			_ripPutsShovel, 34, 34, 0);
+		break;
+
+	case 506:
+		ws_unhide_walker();
+		_shovel = series_place_sprite("SHOVEL SPRITE", 0, 0, 0, 100, 0x300);
+		hotspot_set_active("SHOVEL", true);
+		terminateMachineAndNull(_ripley);
+		kernel_timing_trigger(1, 507);
+		break;
+
+	case 507:
+		series_unload(_ripPutsShovel);
+		digi_unload("508_S03");
+		player_set_commands_allowed(true);
+		break;
+
+	case 508:
+		player_set_commands_allowed(false);
+		_ripPutsShovel = series_load("RIP PUTS SHOVEL IN CAPSTAN");
+		digi_preload("508_S03");
+		player_update_info();
+		ws_hide_walker();
+
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
+			_G(player_info).depth, 0, triggerMachineByHashCallbackNegative, "Rp2");
+		sendWSMessage_10000(1, _ripley, _ripPutsShovel, 34, 25, 509,
+			_ripPutsShovel, 25, 25, 0);
+		hotspot_set_active("SHOVEL", false);
+		inv_give_to_player("SHOVEL");
+		terminateMachineAndNull(_shovel);
+		break;
+
+	case 509:
+		digi_play("508_S03", 2);
+		sendWSMessage_10000(1, _ripley, _ripPutsShovel, 24, 1, 510,
+			_ripPutsShovel, 1, 1, 0);
+		break;
+
+	case 510:
+		ws_unhide_walker();
+		terminateMachineAndNull(_ripley);
+		series_unload(_ripPutsShovel);
+		digi_unload("508_S03");
+		player_set_commands_allowed(true);
+		break;
+
+	case 511:
+		player_set_commands_allowed(false);
+		_ripTryTurnDome = series_load("508 RIP TRYS TURNING DOME");
+		player_update_info();
+		ws_hide_walker();
+
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
+			_G(player_info).depth, 0, triggerMachineByHashCallbackNegative, "Rp3");
+		terminateMachineAndNull(_shovel);
+		sendWSMessage_10000(1, _ripley, _ripTryTurnDome, 1, 29, 512,
+			_ripTryTurnDome, 29, 29, 0);
+		break;
+
+	case 512:
+		sendWSMessage_10000(1, _ripley, _ripTryTurnDome, 29, 1, 513,
+			_ripTryTurnDome, 1, 1, 0);
+		break;
+
+	case 513:
+		_shovel = series_place_sprite("SHOVEL SPRITE", 0, 0, 0, 100, 0x300);
+		ws_unhide_walker();
+		terminateMachineAndNull(_ripley);
+		series_unload(_ripTryTurnDome);
+
+		if (_val1)
+			kernel_timing_trigger(1, 514);
+		else
+			digi_play("508r11", 1, 255, 514);
+		break;
+
+	case 514:
+		if (_val1) {
+			digi_play("508R16", 1);
+			_val1 = 0;
+		} else {
+			player_set_commands_allowed(true);
+		}
+		break;
+
+	case 515:
+		player_set_commands_allowed(false);
+		interface_hide();
+		digi_preload("508_s02");
+		digi_preload("508_s04");
+		_ripTryTurnDome = series_load("508 RIP TRYS TURNING DOME");
+		player_update_info();
+		ws_hide_walker();
+
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
+			_G(player_info).depth, 0, triggerMachineByHashCallbackNegative, "Rp4");
+		sendWSMessage_10000(1, _ripley, _ripTryTurnDome, 1, 29, 516,
+			_ripTryTurnDome, 29, 29, 0);
+		break;
+
+	case 516:
+		_ripStartTurnDome = series_stream("RIP STARTS TURNING DOME", 7, 0x100, -1);
+		series_stream_break_on_frame(_ripStartTurnDome, 19, 518);
+		kernel_timing_trigger(90, 517);
+		terminateMachineAndNull(_shovel);
+		terminateMachineAndNull(_skull);
+		terminateMachineAndNull(_ripley);
+		break;
+
+	case 517:
+		digi_play_loop("508_S02", 1);
+		digi_play_loop("508_S04", 2);
+		break;
+
+	case 518:
+		terminateMachineAndNull(_shovel);
+		terminateMachineAndNull(_skull);
+		terminateMachineAndNull(_ripley);
+		series_stream_check_series(_ripStartTurnDome, 9999);
+		kernel_timing_trigger(1, 519);
+		break;
+
+	case 519:
+		pal_fade_init(21, 255, 0, 30, 520);
+		break;
+
+	case 520:
+		_G(flags)[V158] = 1;
+		digi_play_loop("508_s01", 3, 120);
+		adv_kill_digi_between_rooms(false);
+		digi_play_loop("508_S02", 1);
+		digi_play_loop("508_S04", 2);
+		_G(game).setRoom(506);
+		break;
+
+	case 525:
+		digi_stop(1);
+		digi_stop(2);
+		digi_unload("508_s02");
+		digi_unload("508_s04");
+
+		_domeAfterTurn = series_place_sprite("DOME SPRITE AFTER ITS TURNED", 0, 0, 0, 100, 0xf00);
+		_skull = series_place_sprite("SKULL SPRITE AFTER DOME TURN", 0, 0, 0, 100, 0x450);
+		_shovel = series_place_sprite("SHOVEL AFTER DOMES TURNED", 0, 0, 0, 100, 0x300);
+		_statue = series_place_sprite("STATU SPRITE AFTER DOME TURN", 0, 0, 0, 100, 0x450);
+
+		_light = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, 0,
+			triggerMachineByHashCallbackNegative, "Receeding Light");
+		sendWSMessage_10000(1, _light, _lightAppearing, 12, 12, -1,
+			_lightAppearing, 12, 12, 0);
+
+		player_update_info();
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
+			_G(player_info).depth, 0, triggerMachineByHashCallbackNegative, "Rp");
+		sendWSMessage_10000(1, _ripley, _ripReturnsToStander, 1, 10, -1,
+			_ripReturnsToStander, 10, 10, 0);
+
+		_chain = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, 0,
+			triggerMachineByHashCallbackNegative, "Chain Breaking Machine");
+		sendWSMessage_10000(1, _chain, _chainBreaking, 1, 58, 675,
+			_chainBreaking, 58, 58, 0);
+		digi_play("508_s08", 1, 255, 555);
+		break;
+
+	case 530:
+		series_unload(_ripReturnsToStander);
+		_G(flags)[V158] = 0;
+		_G(flags)[V157] = 0;
+		break;
+
+	case 539:
+		_x = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, 0,
+			triggerMachineByHashCallbackNegative, "x");
+		sendWSMessage_10000(1, _x, _flick, 1, 2, -1, _flick, 1, 2, 0);
+		sendWSMessage_190000(_x, 1);
+		sendWSMessage_1a0000(_x, 1);
+		series_stream_check_series(_spect, 5);
+		ws_OverrideCrunchTime(_spect);
+		break;
+
+	case 541:
+		sendWSMessage_190000(_light, 17);
+		sendWSMessage_10000(1, _light, _lightAppearing, 12, 8, 542,
+			_lightAppearing, 8, 8, 0);
+		break;
+
+	case 542:
+		sendWSMessage_10000(1, _light, _lightAppearing, 8, 1, 543,
+			_lightAppearing, 1, 1, 0);
+		sendWSMessage_10000(1, _x, _flick, 1, 6, 679, _flick, 6, 6, 0);
+		break;
+
+	case 543:
+		terminateMachineAndNull(_light);
+		series_unload(_lightAppearing);
+		sendWSMessage_120000(544);
+		break;
+
+	case 544:
+		sendWSMessage_10000(1, _x, _flick, 1, 6, 679, _flick, 6, 6, 0);
+		sendWSMessage_130000(545);
+		break;
+
+	case 545:
+		sendWSMessage_150000(546);
+		break;
+
+	case 546:
+		_G(flags)[V161] = 1;
+		series_unload(_ripSketching);
+		kernel_timing_trigger(5, 552);
+		break;
+
+	case 548:
+		digi_play("508R12", 1, 255, 539);
+		break;
+
+	case 552:
+		digi_play("508R14", 1, 255, 553);
+		break;
+
+	case 553:
+		_G(flags)[V157] = 1;
+		_G(flags)[V287] = 1;
+		_val2 -= 5;
+
+		if (_val2 > 0) {
+			digi_change_panning(2, _val2);
+			kernel_timing_trigger(2, 553);
+		} else {
+			digi_stop(2);
+			interface_show();
+			player_set_commands_allowed(true);
+		}
+		break;
+
+	case 555:
+		digi_unload("508_s08");
+		digi_preload("508_s07");
+		_val2 = 255;
+
+		digi_play("508_S07", 2);
+		_lightAppearing = series_load("LIGHT APPEARING ON FLOOR");
+		_flick = series_load("508flick");
+		_spect = series_stream("508spect", 6, 0, 668);
+		series_stream_break_on_frame(_spect, 16, 666);
+		kernel_timing_trigger(30, 673);
+		break;
+
+	case 562:
+		player_set_commands_allowed(true);
+		break;
+
+	case 666:
+		series_stream_check_series(_spect, 3000);
+		hotspot_set_active("CRYSTAL SKULL ", true);
+		hotspot_set_active("SHOVEL ", true);
+		hotspot_set_active("SHOVEL", false);
+		kernel_timing_trigger(5, 530);
+		break;
+
+	case 668:
+		kernel_timing_trigger(1, 671);
+		break;
+
+	case 671:
+		_ripSketching = series_load("RIP SKETCHING IN NOTEBOOK POS 2");
+		setGlobals1(_ripSketching, 1, 24, 24, 24, 0, 24, 39, 39, 39, 0, 39, 1, 1, 1);
+		sendWSMessage_110000(681);
+		break;
+
+	case 673:
+		terminateMachineAndNull(_ripley);
+		ws_unhide_walker();
+		ws_demand_location(437, 349, 1);
+		ws_walk(436, 359, nullptr, 548, 10);
+		break;
+
+	case 675:
+		hotspot_set_active("CHAIN ", false);
+		terminateMachineAndNull(_chain);
+		series_unload(_chainBreaking);
+		_chainAfterBreak = series_place_sprite("508 CHAIN AFTER BREAK", 0, 0, 0, 100, 0xf00);
+		break;
+
+	case 679:
+		terminateMachineAndNull(_x);
+		series_unload(_flick);
+		break;
+
+	case 681:
+		sendWSMessage_120000(682);
+		break;
+
+	case 682:
+		sendWSMessage_110000(684);
+		break;
+
+	case 684:
+		sendWSMessage_120000(686);
+		kernel_timing_trigger(180, 541);
+		break;
+
+	case 686:
+		sendWSMessage_130000(545);
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Room508::pre_parser() {
