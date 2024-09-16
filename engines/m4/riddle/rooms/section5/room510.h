@@ -31,12 +31,25 @@ namespace Rooms {
 class Room510 : public Room {
 private:
 	int _val1 = 0;
+	int _ripLooksDown = 0;
+	int _ripLowReach = 0;
+	int _ripLowReach2 = 0;
+	int _ripLowReach3 = 0;
 	machine *_statue = nullptr;
-	machine *_ropeStatue = nullptr;
+	machine *_rope = nullptr;
 	machine *_ladder = nullptr;
 	machine *_skull = nullptr;
+	machine *_ripDangles = nullptr;
 	int _stepsSeries = 0;
 	machine *_steps = nullptr;
+	int _ripStartsDownWall = 0;
+	machine *_pu03 = nullptr;
+
+	bool parserSub();
+	bool takeVinesRope();
+	void useVines();
+	void woodenLadder();
+	void altar();
 
 public:
 	Room510() : Room() {}
