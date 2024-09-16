@@ -36,7 +36,7 @@ const int ROLL_SLOWDOWN_FREQUENCY = 10; // The ball slows down every x frames wh
 class CCollisionSphere : public ICollisionObject, public U32Sphere {
 public:
 	CCollisionSphere() : ICollisionObject(kSphere),
-						 m_rollingCount(0),
+						 _rollingCount(0),
 						 _positionSaved(false) {}
 
 	~CCollisionSphere() {}
@@ -73,7 +73,7 @@ public:
 	void save() override;
 	void restore() override;
 
-	int m_rollingCount;
+	int _rollingCount;
 
 
 protected:
@@ -91,7 +91,7 @@ private:
 	void defineReflectionPlane(const CCollisionBox &targetObject, const U32Distance3D &distance, U32Plane *collisionPlane) const override;
 	void defineReflectionPlane(const CCollisionCylinder &targetObject, const U32Distance3D &distance, U32Plane *collisionPlane) const override;
 
-	void ReboundOffPlane(const U32Plane &collisionPlane, bool isOnPlane);
+	void reboundOffPlane(const U32Plane &collisionPlane, bool isOnPlane);
 
 	using ICollisionObject::getPenetrationTime;
 	float getPenetrationTime(const CCollisionBox &targetObject, const U32Distance3D &distance, EDimension dimension) const override;

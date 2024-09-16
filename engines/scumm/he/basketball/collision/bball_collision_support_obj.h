@@ -543,12 +543,12 @@ struct U32BoundingBox {
 	U32IntPoint3D minPoint;
 	U32IntPoint3D maxPoint;
 
-	void SetMinPoint(int x, int y) {
+	void setMinPoint(int x, int y) {
 		minPoint.x = x;
 		minPoint.y = y;
 	}
 
-	void SetMaxPoint(int x, int y) {
+	void setMaxPoint(int x, int y) {
 		maxPoint.x = x;
 		maxPoint.y = y;
 	}
@@ -561,7 +561,7 @@ struct U32BoundingBox {
 		return maxPoint;
 	}
 
-	bool Intersect(const U32BoundingBox &targetBox) const {
+	bool intersect(const U32BoundingBox &targetBox) const {
 		return ((((minPoint.x <= targetBox.minPoint.x) &&
 				  (maxPoint.x >= targetBox.minPoint.x)) ||
 
@@ -612,7 +612,7 @@ struct U32Plane {
 	float friction;
 
 	// Average this plane with another plane
-	U32Plane &Average(const U32Plane &otherPlane) {
+	U32Plane &average(const U32Plane &otherPlane) {
 		point.x = (point.x + otherPlane.point.x) / 2;
 		point.y = (point.y + otherPlane.point.y) / 2;
 		point.z = (point.z + otherPlane.point.z) / 2;

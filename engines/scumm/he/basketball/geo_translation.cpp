@@ -78,7 +78,7 @@ int LogicHEBasketball::u32_userInitScreenTranslations() {
 	return 1;
 }
 
-static U32FltPoint2D World_To_Screen_Translation(const U32FltPoint3D &worldPoint, LogicHEBasketball *logic) {
+static U32FltPoint2D worldToScreenTranslation(const U32FltPoint3D &worldPoint, LogicHEBasketball *logic) {
 	U32FltPoint2D screenPoint; // The point on the screen that corresponds to worldPoint
 	float courtWidth;          // The width of the court in pixels at the at the current y location
 	float xOffset;             // The number of pixels from the left side of the screen to the court at the current y location
@@ -141,7 +141,7 @@ static U32FltPoint2D World_To_Screen_Translation(const U32FltPoint3D &worldPoint
 }
 
 int LogicHEBasketball::u32_userWorldToScreenTranslation(const U32FltPoint3D &worldPoint) {
-	U32FltPoint2D screenPoint = World_To_Screen_Translation(worldPoint, this);
+	U32FltPoint2D screenPoint = worldToScreenTranslation(worldPoint, this);
 
 	writeScummVar(_vm1->VAR_U32_USER_VAR_A, _vm->_basketball->u32FloatToInt(screenPoint.x));
 	writeScummVar(_vm1->VAR_U32_USER_VAR_B, _vm->_basketball->u32FloatToInt(screenPoint.y));

@@ -247,12 +247,12 @@ bool CCollisionSphere::backStraightOutOfObject(const ICollisionObject &targetObj
 
 	int loopCounter = 0;
 
-	while (ICollisionObject::testObjectIntersection(targetObject, distance)) {
+	while (testObjectIntersection(targetObject, distance)) {
 		float collisionTimes[3];
 
-		collisionTimes[X_INDEX] = ICollisionObject::getPenetrationTime(targetObject, *distance, X_INDEX);
-		collisionTimes[Y_INDEX] = ICollisionObject::getPenetrationTime(targetObject, *distance, Y_INDEX);
-		collisionTimes[Z_INDEX] = ICollisionObject::getPenetrationTime(targetObject, *distance, Z_INDEX);
+		collisionTimes[X_INDEX] = getPenetrationTime(targetObject, *distance, X_INDEX);
+		collisionTimes[Y_INDEX] = getPenetrationTime(targetObject, *distance, Y_INDEX);
+		collisionTimes[Z_INDEX] = getPenetrationTime(targetObject, *distance, Z_INDEX);
 
 		Std::sort(collisionTimes, collisionTimes + Z_INDEX + 1);
 
@@ -451,7 +451,7 @@ void CCollisionSphere::defineReflectionPlane(const CCollisionCylinder &targetObj
 	collisionPlane->collisionEfficiency = targetObject._collisionEfficiency;
 }
 
-void CCollisionSphere::ReboundOffPlane(const U32Plane &collisionPlane, bool isOnObject) {
+void CCollisionSphere::reboundOffPlane(const U32Plane &collisionPlane, bool isOnObject) {
 	U32FltVector3D normalVector;
 	U32FltVector3D reflectionVector;
 	U32FltVector3D parallelVector;
@@ -469,7 +469,7 @@ void CCollisionSphere::ReboundOffPlane(const U32Plane &collisionPlane, bool isOn
 
 	parallelVector = reflectionVector - normalVector;
 
-	if ((!isOnObject) || ((m_rollingCount % ROLL_SLOWDOWN_FREQUENCY) == 0)) {
+	if ((!isOnObject) || ((_rollingCount % ROLL_SLOWDOWN_FREQUENCY) == 0)) {
 		parallelVector -= ((parallelVector * collisionPlane.friction) + (parallelVector * _friction));
 	}
 
@@ -528,10 +528,10 @@ void CCollisionSphere::handleCollisions(CCollisionObjectVector *collisionVector,
 		 ++objectIt) {
 		const ICollisionObject *currentObject = *objectIt;
 
-		ICollisionObject::testObjectIntersection(*currentObject, &distance);
+		testObjectIntersection(*currentObject, &distance);
 
 		// See if we are rolling on this object...
-		isRollingOnObject = ICollisionObject::isOnObject(*currentObject, distance);
+		isRollingOnObject = isOnObject(*currentObject, distance);
 		if (isRollingOnObject) {
 			// See if rolling has slowed to the point that we are stopped.
 			// Never stop on the backboard or rim...
@@ -555,7 +555,7 @@ void CCollisionSphere::handleCollisions(CCollisionObjectVector *collisionVector,
 			}
 		}
 
-		ICollisionObject::defineReflectionPlane(*currentObject, distance, &collisionPlane);
+		defineReflectionPlane(*currentObject, distance, &collisionPlane);
 		planeVector.push_back(collisionPlane);
 		rollingRecord.push_back(isRollingOnObject);
 	}
@@ -573,11 +573,11 @@ void CCollisionSphere::handleCollisions(CCollisionObjectVector *collisionVector,
 			 planeIt != planeVector.end();
 			 ++planeIt, ++recordIt) {
 
-			collisionPlane.Average(*planeIt);
+			collisionPlane.average(*planeIt);
 			isRollingOnObject = isRollingOnObject || *recordIt;
 		}
 
-		ReboundOffPlane(collisionPlane, isRollingOnObject);
+		reboundOffPlane(collisionPlane, isRollingOnObject);
 	}
 
 	if (advanceObject) {

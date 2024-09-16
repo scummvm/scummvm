@@ -346,7 +346,6 @@ int32 LogicHEBasketball::dispatch(int cmdID, int paramCount, int32 *params) {
 		flt3DVector1.z = (float)params[5];
 
 
-		debug("Basketball INIT (%.6f,%.6f,%.6f)", flt3DPoint1.x, flt3DPoint1.y, flt3DPoint1.z);
 		retValue = u32_userInitBall(flt3DPoint1, flt3DVector1, params[6], params[7]);
 		break;
 
@@ -408,8 +407,6 @@ int32 LogicHEBasketball::dispatch(int cmdID, int paramCount, int32 *params) {
 		flt3DPoint1.y = (float)params[1];
 		flt3DPoint1.z = (float)params[2];
 
-		debug(3, "Basketball SET_BALL_LOCATION (%.6f,%.6f,%.6f)",
-			  flt3DPoint1.x, flt3DPoint1.y, flt3DPoint1.z);
 
 		_vm->_basketball->_court->getBallPtr(params[3])->center = flt3DPoint1;
 
@@ -420,12 +417,6 @@ int32 LogicHEBasketball::dispatch(int cmdID, int paramCount, int32 *params) {
 		assert(paramCount == GET_BALL_LOCATION_PARAMS);
 
 		flt3DPoint1 = _vm->_basketball->_court->getBallPtr(params[0])->center;
-
-		debug(3, "Basketball GET_BALL_LOCATION (%.6f,%.6f,%.6f), (converted as %d,%d,%d)",
-			flt3DPoint1.x, flt3DPoint1.y, flt3DPoint1.z,
-			_vm->_basketball->u32FloatToInt(flt3DPoint1.x),
-			_vm->_basketball->u32FloatToInt(flt3DPoint1.y),
-			_vm->_basketball->u32FloatToInt(flt3DPoint1.z));
 
 		writeScummVar(_vm1->VAR_U32_USER_VAR_A, _vm->_basketball->u32FloatToInt(flt3DPoint1.x));
 		writeScummVar(_vm1->VAR_U32_USER_VAR_B, _vm->_basketball->u32FloatToInt(flt3DPoint1.y));
@@ -470,7 +461,6 @@ int32 LogicHEBasketball::dispatch(int cmdID, int paramCount, int32 *params) {
 		flt3DVector1.x = (float)params[3];
 		flt3DVector1.y = (float)params[4];
 		flt3DVector1.z = (float)params[5];
-		debug(3, "Basketball DETECT_BALL_COLLISION will be put at (%.6f,%.6f,%.6f)", flt3DPoint1.x, flt3DPoint1.y, flt3DPoint1.z);
 
 		retValue = u32_userDetectBallCollision(flt3DPoint1, flt3DVector1, params[6], params[7]);
 		break;
@@ -512,9 +502,6 @@ int32 LogicHEBasketball::dispatch(int cmdID, int paramCount, int32 *params) {
 		int3DVector1.x = params[3];
 		int3DVector1.y = params[4];
 		int3DVector1.z = params[5];
-		debug(3, "Basketball DETECT_SHOT_MADE sphere (%.6f,%.6f,%.6f), vector (%d,%d,%d)",
-			flt3DPoint1.x, flt3DPoint1.y, flt3DPoint1.z,
-			int3DVector1.x, int3DVector1.y, int3DVector1.z);
 
 		retValue = u32_userDetectShotMade(sphere1, int3DVector1, params[7], params[8]);
 		break;

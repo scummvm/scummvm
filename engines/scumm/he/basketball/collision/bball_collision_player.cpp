@@ -82,7 +82,7 @@ bool CCollisionPlayer::testCatch(const ICollisionObject &targetObject, U32Distan
 		int oldHeight = height;
 		height += _catchHeight;
 
-		bool retVal = ICollisionObject::testObjectIntersection(targetObject, distance);
+		bool retVal = testObjectIntersection(targetObject, distance);
 
 		height = oldHeight;
 

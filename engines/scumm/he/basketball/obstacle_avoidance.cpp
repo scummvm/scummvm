@@ -56,19 +56,19 @@ CCollisionPlayer *Basketball::detectObstacle(const U32Circle &playerMarker,
 	poRay._direction = (targetLocation - poRay._origin);
 
 	// Cycle through all potential obstacles and see which obstacle is closest...
-	CCollisionPlayer *pFinalObstacle = nullptr;
+	CCollisionPlayer *finalObstacle = nullptr;
 	float minDistance = (float)0x7FFFFFFF;
 
 	for (int i = 0; i <= LAST_PLAYER; ++i) {
 		// Get a pointer to the current obstacle...
-		CCollisionPlayer *pCurrentObstacle = court->getPlayerPtr(i);
+		CCollisionPlayer *currentObstacle = court->getPlayerPtr(i);
 
 		// Make sure we are not checking ourselves or a bench player...
-		if ((pCurrentObstacle->_objectID != playerID) &&
-			(pCurrentObstacle->_playerIsInGame)) {
+		if ((currentObstacle->_objectID != playerID) &&
+			(currentObstacle->_playerIsInGame)) {
 			U32Circle obstacleMarker;
-			obstacleMarker.center = pCurrentObstacle->center;
-			obstacleMarker.radius = getAvoidanceDistance(playerMarker, *pCurrentObstacle);
+			obstacleMarker.center = currentObstacle->center;
+			obstacleMarker.radius = getAvoidanceDistance(playerMarker, *currentObstacle);
 
 			if (poRay.nearIntersection(obstacleMarker, intersection)) {
 				float obstacleDist = (*intersection - playerMarker.center).magnitude();
@@ -78,11 +78,11 @@ CCollisionPlayer *Basketball::detectObstacle(const U32Circle &playerMarker,
 				// See if this obstacle is in our way...
 				if (obstacleDist < alertDistance) {
 					// See if the target is within the obstacle...
-					float otDist = (targetLocation - pCurrentObstacle->center).magnitude();
+					float otDist = (targetLocation - currentObstacle->center).magnitude();
 					if ((otDist > obstacleMarker.radius) || targetIsObstacle) {
 						// See if this obstacle is the closest one yet...
 						if (obstacleDist < minDistance) {
-							pFinalObstacle = pCurrentObstacle;
+							finalObstacle = currentObstacle;
 							minDistance = obstacleDist;
 						}
 					}
@@ -91,7 +91,7 @@ CCollisionPlayer *Basketball::detectObstacle(const U32Circle &playerMarker,
 		}
 	}
 
-	return pFinalObstacle;
+	return finalObstacle;
 }
 
 bool Basketball::avoidObstacle(const U32Circle &playerMarker, const U32FltPoint2D &targetLocation, const CCollisionPlayer &obstacle, ERevDirection whichDirection, U32FltPoint2D *newTarget) {

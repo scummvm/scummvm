@@ -35,8 +35,8 @@ CCollisionNode::CCollisionNode() {
 		_child[i] = nullptr;
 	}
 
-	_quadrant.SetMinPoint(0, 0);
-	_quadrant.SetMaxPoint(0, 0);
+	_quadrant.setMinPoint(0, 0);
+	_quadrant.setMaxPoint(0, 0);
 
 	_isExternal = false;
 }
@@ -46,8 +46,8 @@ CCollisionNode::CCollisionNode(const CCollisionObjectVector &initObjects) : _obj
 		_child[i] = nullptr;
 	}
 
-	_quadrant.SetMinPoint(0, 0);
-	_quadrant.SetMaxPoint(0, 0);
+	_quadrant.setMinPoint(0, 0);
+	_quadrant.setMaxPoint(0, 0);
 
 	_isExternal = false;
 }
@@ -108,13 +108,13 @@ U32BoundingBox CCollisionNode::getChildQuadrant(const U32BoundingBox &parentQuad
 	}
 
 	U32BoundingBox childQuadrant;
-	childQuadrant.SetMinPoint(minX, minY);
-	childQuadrant.SetMaxPoint(maxX, maxY);
+	childQuadrant.setMinPoint(minX, minY);
+	childQuadrant.setMaxPoint(maxX, maxY);
 	return childQuadrant;
 }
 
 void CCollisionNode::searchTree(const U32BoundingBox &searchRange, CCollisionObjectVector *targetList) const {
-	if (searchRange.Intersect(_quadrant)) {
+	if (searchRange.intersect(_quadrant)) {
 		if (_isExternal) {
 			// Search through and add points that are within bounds...
 			for (CCollisionObjectVector::size_type objectIndex = 0; objectIndex < _objectList.size(); ++objectIndex) {

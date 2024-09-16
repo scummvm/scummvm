@@ -241,8 +241,8 @@ int LogicHEBasketball::u32_userIsPlayerInBounds(int playerID) {
 }
 
 int LogicHEBasketball::u32_userIsBallInBounds() {
-	int bIsBallInBounds = isPlayerInBounds((U32Sphere *)&_vm->_basketball->_court->_basketBall);
-	writeScummVar(_vm1->VAR_U32_USER_VAR_A, bIsBallInBounds);
+	int isBallInBounds = isPlayerInBounds(&_vm->_basketball->_court->_basketBall);
+	writeScummVar(_vm1->VAR_U32_USER_VAR_A, isBallInBounds);
 	return 1;
 }
 

@@ -323,12 +323,12 @@ bool CCollisionCylinder::backStraightOutOfObject(const ICollisionObject &targetO
 
 	int loopCounter = 0;
 
-	while (ICollisionObject::testObjectIntersection(targetObject, distance)) {
+	while (testObjectIntersection(targetObject, distance)) {
 		float collisionTimes[3];
 
-		collisionTimes[X_INDEX] = ICollisionObject::getPenetrationTime(targetObject, *distance, X_INDEX);
-		collisionTimes[Y_INDEX] = ICollisionObject::getPenetrationTime(targetObject, *distance, Y_INDEX);
-		collisionTimes[Z_INDEX] = ICollisionObject::getPenetrationTime(targetObject, *distance, Z_INDEX);
+		collisionTimes[X_INDEX] = getPenetrationTime(targetObject, *distance, X_INDEX);
+		collisionTimes[Y_INDEX] = getPenetrationTime(targetObject, *distance, Y_INDEX);
+		collisionTimes[Z_INDEX] = getPenetrationTime(targetObject, *distance, Z_INDEX);
 
 		Std::sort(collisionTimes, collisionTimes + Z_INDEX + 1);
 
@@ -811,7 +811,7 @@ void CCollisionCylinder::forceOutOfObject(const ICollisionObject &targetObject, 
 
 		center.x = intersectionPoint.x + targetVector.x;
 		center.y = intersectionPoint.y + targetVector.y;
-		ICollisionObject::testObjectIntersection(targetObject, distance);
+		testObjectIntersection(targetObject, distance);
 
 		break;
 
@@ -838,7 +838,7 @@ void CCollisionCylinder::forceOutOfObject(const ICollisionObject &targetObject, 
 
 			center.x = targetCenter.x + targetVector.x;
 			center.y = targetCenter.y + targetVector.y;
-			ICollisionObject::testObjectIntersection(targetObject, distance);
+			testObjectIntersection(targetObject, distance);
 		}
 
 		break;

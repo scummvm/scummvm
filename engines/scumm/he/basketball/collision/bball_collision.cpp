@@ -156,7 +156,7 @@ int LogicHEBasketball::u32_userInitBall(U32FltPoint3D &ballLocation, U32FltVecto
 	_vm->_basketball->_court->_basketBall._velocity = bellVelocity;
 	_vm->_basketball->_court->_basketBall.radius = radius;
 	_vm->_basketball->_court->_basketBall._collisionEfficiency = 1.0F;
-	_vm->_basketball->_court->_basketBall._friction = 0;
+	_vm->_basketball->_court->_basketBall._friction = 0.0F;
 	_vm->_basketball->_court->_basketBall._ignore = false;
 
 	_vm->_basketball->_court->_basketBall.save();
@@ -172,7 +172,7 @@ int LogicHEBasketball::u32_userInitVirtualBall(U32FltPoint3D &ballLocation, U32F
 	_vm->_basketball->_court->_virtualBall._velocity = bellVelocity;
 	_vm->_basketball->_court->_virtualBall.radius = radius;
 	_vm->_basketball->_court->_virtualBall._collisionEfficiency = 1.0F;
-	_vm->_basketball->_court->_virtualBall._friction = 0;
+	_vm->_basketball->_court->_virtualBall._friction = 0.0F;
 	_vm->_basketball->_court->_virtualBall._ignore = false;
 
 	_vm->_basketball->_court->_virtualBall.save();
@@ -300,7 +300,7 @@ int LogicHEBasketball::u32_userDetectBallCollision(U32FltPoint3D &ballLocation, 
 	sourceBall->_objectRollingHistory.clear();
 
 	// Find out who our potential collision candidates are...
-	_vm->_basketball->fillBallTargetList((CCollisionSphere *)sourceBall, &targetList);
+	_vm->_basketball->fillBallTargetList(sourceBall, &targetList);
 
 	// See if there was an error while traversing the object tree,
 	// if there was put the player in the last known safe position...
@@ -309,7 +309,7 @@ int LogicHEBasketball::u32_userDetectBallCollision(U32FltPoint3D &ballLocation, 
 	}
 
 	for (int i = 0; (i < MAX_BALL_COLLISION_PASSES) && (!ballIsClear); i++) {
-		float totalTime = 0; // The time it takes to back out of all objects we have intersected while on the current vector
+		float totalTime = 0.0F; // The time it takes to back out of all objects we have intersected while on the current vector
 		ballIsClear = true;
 
 		// Go through all of the collision candidates....
@@ -318,20 +318,20 @@ int LogicHEBasketball::u32_userDetectBallCollision(U32FltPoint3D &ballLocation, 
 			assert(targetObject);
 
 			// See if we intersect the current object...
-			bool intersectionResult = sourceBall->ICollisionObject::testObjectIntersection(*targetObject, &distance);
+			bool intersectionResult = sourceBall->testObjectIntersection(*targetObject, &distance);
 			if (intersectionResult) {
 				// If we are intersecting a moving object, make sure that we actually
 				// ran into them, and they didn't just run into us...
-				if (sourceBall->ICollisionObject::validateCollision(*targetObject, &distance)) {
+				if (sourceBall->validateCollision(*targetObject, &distance)) {
 					// If we are intersecting the object, back out of it...
-					if (sourceBall->ICollisionObject::backOutOfObject(*targetObject, &distance, &totalTime)) {
+					if (sourceBall->backOutOfObject(*targetObject, &distance, &totalTime)) {
 						// Move in to the exact point of collision...
-						if (sourceBall->ICollisionObject::nudgeObject(*targetObject, &distance, &totalTime)) {
+						if (sourceBall->nudgeObject(*targetObject, &distance, &totalTime)) {
 							// Keep track of this object so we can respond to the collision later...
-							trackCollisionObject(*(ICollisionObject *)sourceBall, *targetObject, &sourceBall->_objectCollisionHistory);
+							trackCollisionObject(*sourceBall, *targetObject, &sourceBall->_objectCollisionHistory);
 
 							if (sourceBall->isCollisionHandled(*targetObject)) {
-								trackCollisionObject(*(ICollisionObject *)sourceBall, *targetObject, &collisionVector);
+								trackCollisionObject(*sourceBall, *targetObject, &collisionVector);
 								ballIsClear = false;
 							}
 
@@ -352,13 +352,13 @@ int LogicHEBasketball::u32_userDetectBallCollision(U32FltPoint3D &ballLocation, 
 			}
 
 			// See if we are rolling on the current object...
-			if (sourceBall->ICollisionObject::isOnObject(*targetObject, distance)) {
+			if (sourceBall->isOnObject(*targetObject, distance)) {
 				rollingHappened = 1;
 
 				if (!intersectionResult) {
 					// This is not really a collision, but the ball is rolling, so we want to slow it down...
-					trackCollisionObject(*(ICollisionObject *)sourceBall, *targetObject, &rollingVector);
-					trackCollisionObject(*(ICollisionObject *)sourceBall, *targetObject, &sourceBall->_objectRollingHistory);
+					trackCollisionObject(*sourceBall, *targetObject, &rollingVector);
+					trackCollisionObject(*sourceBall, *targetObject, &sourceBall->_objectRollingHistory);
 				}
 			}
 		}
@@ -370,9 +370,9 @@ int LogicHEBasketball::u32_userDetectBallCollision(U32FltPoint3D &ballLocation, 
 
 	// Keep track of how long we've been rolling...
 	if (rollingHappened) {
-		++sourceBall->m_rollingCount;
+		++sourceBall->_rollingCount;
 	} else {
-		sourceBall->m_rollingCount = 0;
+		sourceBall->_rollingCount = 0;
 	}
 
 	// If there were no errors this frame, save the position...
@@ -445,19 +445,19 @@ int LogicHEBasketball::u32_userDetectPlayerCollision(int playerID, U32FltPoint3D
 			assert(targetObject);
 
 			// See if we intersect the current object...
-			bool intersectionResult = sourcePlayer->ICollisionObject::testObjectIntersection(*targetObject, &distance);
+			bool intersectionResult = sourcePlayer->testObjectIntersection(*targetObject, &distance);
 			if (intersectionResult) {
 				// If we are intersecting a moving object, make sure that we actually
 				// ran into them, and they didn't just run into us...
-				if (sourcePlayer->ICollisionObject::validateCollision(*targetObject, &distance)) {
+				if (sourcePlayer->validateCollision(*targetObject, &distance)) {
 					// If we are intersecting an object, back out to the exact point of collision...
-					if (sourcePlayer->ICollisionObject::backOutOfObject(*targetObject, &distance, &totalTime)) {
+					if (sourcePlayer->backOutOfObject(*targetObject, &distance, &totalTime)) {
 						// Move in to the exact point of collision...
-						if (sourcePlayer->ICollisionObject::nudgeObject(*targetObject, &distance, &totalTime)) {
+						if (sourcePlayer->nudgeObject(*targetObject, &distance, &totalTime)) {
 							trackCollisionObject(*sourcePlayer, *targetObject, &sourcePlayer->_objectCollisionHistory);
 							collisionOccurred = true;
 
-							if (sourcePlayer->ICollisionObject::isCollisionHandled(*targetObject)) {
+							if (sourcePlayer->isCollisionHandled(*targetObject)) {
 								trackCollisionObject(*sourcePlayer, *targetObject, &collisionVector);
 								playerIsClear = false;
 							}
@@ -479,7 +479,7 @@ int LogicHEBasketball::u32_userDetectPlayerCollision(int playerID, U32FltPoint3D
 			}
 
 			// See if we are standing on the current object...
-			if (sourcePlayer->ICollisionObject::isOnObject(*targetObject, distance)) {
+			if (sourcePlayer->isOnObject(*targetObject, distance)) {
 				playerIsOnObject = true;
 			}
 		}
@@ -550,8 +550,8 @@ int LogicHEBasketball::u32_userGetLastPlayerCollision(int playerID) {
 
 		// See if we are standing on the current object
 		U32Distance3D distance;
-		pPlayer->ICollisionObject::testObjectIntersection(*targetObject, &distance);
-		if (pPlayer->ICollisionObject::isOnObject(*targetObject, distance)) {
+		pPlayer->testObjectIntersection(*targetObject, &distance);
+		if (pPlayer->isOnObject(*targetObject, distance)) {
 			playerIsOnObject = true;
 		}
 

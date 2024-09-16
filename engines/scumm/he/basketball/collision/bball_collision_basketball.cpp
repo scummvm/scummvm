@@ -36,7 +36,7 @@ bool CCollisionBasketball::testCatch(const ICollisionObject &targetObject, U32Di
 	if (targetObject._objectType == kPlayer) {
 		ICollisionObject *object = const_cast<ICollisionObject *>(&targetObject);
 		CCollisionPlayer *player = static_cast<CCollisionPlayer *>(object);
-		return (player->testCatch(*(ICollisionObject *)this, distance, court));
+		return (player->testCatch(*this, distance, court));
 	} else {
 		return false;
 	}

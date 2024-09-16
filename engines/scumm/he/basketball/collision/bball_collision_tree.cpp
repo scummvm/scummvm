@@ -51,8 +51,8 @@ void CCollisionObjectTree::initialize(const CCollisionObjectVector &inputObjects
 	}
 
 	U32BoundingBox buildRange;
-	buildRange.SetMinPoint(inputObjects.getMinPoint(X_INDEX), inputObjects.getMinPoint(Y_INDEX));
-	buildRange.SetMaxPoint(inputObjects.getMaxPoint(X_INDEX), inputObjects.getMaxPoint(Y_INDEX));
+	buildRange.setMinPoint(inputObjects.getMinPoint(X_INDEX), inputObjects.getMinPoint(Y_INDEX));
+	buildRange.setMaxPoint(inputObjects.getMaxPoint(X_INDEX), inputObjects.getMaxPoint(Y_INDEX));
 	_root = buildSelectionStructure(inputObjects, 0, buildRange);
 }
 
@@ -108,7 +108,7 @@ CCollisionNode *CCollisionObjectTree::buildSelectionStructure(const CCollisionOb
 
 			// Figure out which child each point belongs to...
 			for (childID = 0; childID < NUM_CHILDREN_NODES; ++childID) {
-				if (newRange[childID].Intersect(currentObject->getBoundingBox())) {
+				if (newRange[childID].intersect(currentObject->getBoundingBox())) {
 					newList[childID].push_back(currentObject);
 				}
 			}
