@@ -106,8 +106,8 @@ int LogicHEBasketball::u32_userInitCourt(int courtID) {
 
 		// Read in all other object attributes...
 		currentObject->_objectType = (EObjectType)objectFile.readUint32LE();
-		currentObject->_collisionEfficiency = objectFile.readUint32LE();
-		currentObject->_friction  = objectFile.readUint32LE();
+		currentObject->_collisionEfficiency = objectFile.readFloatLE();
+		currentObject->_friction  = objectFile.readFloatLE();
 		currentObject->_soundNumber = objectFile.readUint32LE();
 		currentObject->_objectID = objectFile.readUint32LE();
 		currentObject->minPoint.x = objectFile.readUint32LE();
