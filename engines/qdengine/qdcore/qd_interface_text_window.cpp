@@ -322,7 +322,7 @@ bool qdInterfaceTextWindow::load_script_body(const xml::tag *p) {
 	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		switch (it->ID()) {
 		case QDSCR_TEXT_WINDOW_BORDER_BACK:
-			set_border_background_file(it->data());
+			set_border_background_file(Common::Path(it->data(), '\\'));
 			break;
 		case QDSCR_TEXT_WINDOW_SLIDER:
 			set_slider_name(it->data());
