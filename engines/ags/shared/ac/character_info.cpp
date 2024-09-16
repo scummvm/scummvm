@@ -30,8 +30,8 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-void CharacterInfo::ReadFromFileImpl(Stream *in, GameDataVersion data_ver, int save_ver) {
-	const bool do_align_pad = data_ver != kGameVersion_Undefined;
+void CharacterInfo::ReadFromFileImpl(Stream *in, bool is_save) {
+	const bool do_align_pad = !is_save;
 	defview = in->ReadInt32();
 	talkview = in->ReadInt32();
 	view = in->ReadInt32();
@@ -80,14 +80,6 @@ void CharacterInfo::ReadFromFileImpl(Stream *in, GameDataVersion data_ver, int s
 	on = in->ReadInt8();
 	if (do_align_pad)
 		in->ReadInt8(); // alignment padding to int32
-
-	// Upgrade data
-	name = legacy_name;
-	scrname = legacy_scrname;
-	if ((data_ver > kGameVersion_Undefined && data_ver < kGameVersion_360_16) ||
-		((data_ver == kGameVersion_Undefined) && save_ver >= 0 && save_ver < 2)) {
-		idle_anim_speed = animspeed + 5;
-	}
 }
 
 void CharacterInfo::WriteToFileImpl(Stream *out, bool is_save) const {
@@ -143,15 +135,24 @@ void CharacterInfo::WriteToFileImpl(Stream *out, bool is_save) const {
 }
 
 void CharacterInfo::ReadFromFile(Stream *in, GameDataVersion data_ver) {
-	ReadFromFileImpl(in, data_ver, -1);
+	ReadFromFileImpl(in, false);
+
+	// Assign names from legacy fields
+	name = legacy_name;
+	scrname = legacy_scrname;
+
+	// Upgrade data
+	if (data_ver < kGameVersion_360_16) {
+		idle_anim_speed = animspeed + 5;
+	}
 }
 
 void CharacterInfo::WriteToFile(Stream *out) const {
 	WriteToFileImpl(out, false);
 }
 
-void CharacterInfo::ReadFromSavegame(Stream *in, int save_ver) {
-	ReadFromFileImpl(in, kGameVersion_Undefined, save_ver);
+void CharacterInfo::ReadFromSavegame(Stream *in) {
+	ReadFromFileImpl(in, true);
 }
 
 void CharacterInfo::WriteToSavegame(Stream *out) const {
