@@ -543,6 +543,7 @@ byte *transCyrillic(const Common::String &str) {
 
 #ifndef WIN32
 	static int trans[] = {
+		0xa0, 0xc2a0,
 		0xa8, 0xd081, 0xab, 0xc2ab, 0xb8, 0xd191, 0xbb, 0xc2bb, 0xc0, 0xd090,
 		0xc1, 0xd091, 0xc2, 0xd092, 0xc3, 0xd093, 0xc4, 0xd094,
 		0xc5, 0xd095, 0xc6, 0xd096, 0xc7, 0xd097, 0xc8, 0xd098,
@@ -602,11 +603,14 @@ byte *transCyrillic(const Common::String &str) {
 				tmp[i++] = 0xE2;
 				tmp[i++] = 0x80;
 				tmp[i++] = 0x94;
+			} else if (*p == 0xB9) {  // "№" -- NUMERO DASH
+				tmp[i++] = 0xE2;
+				tmp[i++] = 0x84;
+				tmp[i++] = 0x96;
 			} else {
 				if (!trans[j]) {
 					warning("transCyrillic: no mapping for %d (0x%x)", *p, *p);
-					tmp[i++] = '?';
-					tmp[i++] = '?';
+					tmp[i++] = '^';
 				}
 			}
 		}
