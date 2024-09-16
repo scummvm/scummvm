@@ -198,10 +198,10 @@ bool qdScreenText::format_text(int max_width) {
 			if (cur_wid > max_width) {
 				// Safe space is present, so it is safe to split it (e.g. everything fits max_width)
 				if (safe_space >= 0) {
-					_data.setChar(safe_space, '\n');
+					_data.setChar('\n', safe_space);
 					i = safe_space; // in for(...) we will move to safe_space + 1
 				} else { // it didn't fit (no safe space). But we split it anyway, it is at least something...
-					_data.setChar(i, '\n');
+					_data.setChar('\n', i);
 					correct = false;
 				}
 			}
@@ -209,7 +209,7 @@ bool qdScreenText::format_text(int max_width) {
 			safe_space = -1;
 			cur_wid = 0;
 		} else if (' ' != _data[i]) { // Not a space -- we accumulate width
-			cur_wid += font->find_char(_data[i]).size_x();
+			cur_wid += font->find_char((byte)_data[i]).size_x();
 		} else { // // Space - it is safe to split here (we remember this position or split here)
 			cur_wid += font->size_x() / 2;
 
@@ -219,10 +219,10 @@ bool qdScreenText::format_text(int max_width) {
 				continue;
 			} else { // The width is exceeded, and we saw a safe space -- have to split. (Everything fits max_width)
 				if (safe_space >= 0) {
-					_data.setChar(safe_space, '\n');
+					_data.setChar('\n', safe_space);
 					i = safe_space; // in for(...) we will move to safe_space + 1
 				} else { // it didn't fit (no safe space). But we split it anyway, it is at least something...
-					_data.setChar(i, '\n');
+					_data.setChar('\n', i);
 					correct = false;
 				}
 				safe_space = -1; // We have split -- no more safe space
