@@ -740,11 +740,39 @@ void Adlib::OnTimer() {
 									// TODO: Continue from here
 								} while (true);
 							}
-							// TODO: Continue from here
-							// TODO: Should be 1C85h	
+							
+							// TODO: Should be 1C85h
+							// l0017_1C85:
+							if (bp0C != 0) {
+								// TODO: Lots of struct accesses here
+								/*
+								l0017_1C8B:
+								mov	di,[bp-8h]
+								mov	byte ptr [di+222Ch],0h
+								mov	al,[bp-3h]
+								mov	di,[bp-8h]
+								mov	[di+227Fh],al
+								mov	al,[bp-3h]
+								xor	ah,ah
+								mov	di,ax
+								mov	al,[di+225Fh]
+								mov	di,[bp-8h]
+								cmp	al,[di+2288h]
+								jz	1CF2h
+								*/
+								// TODO: Proper loop condition
+								if (true) {
+									// l0017_1CB1:
+									// TODO: Continue from here
+								}
+							}
+							
+
+								
 						}
 						// TODO: Should be 1CF2
 						// TODO: Check if this is an else or just an if
+
 
 
 					}
