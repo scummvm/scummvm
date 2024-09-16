@@ -97,6 +97,8 @@ protected:
 	void sendWSMessage_150000(int trigger);
 	void sendWSMessage_160000(machine *mach, int val1, int trigger);
 	void sendWSMessage_160000(int val1, int trigger);
+	void sendWSMessage_180000(machine *recv, int trigger);
+	void sendWSMessage_180000(int trigger);
 	void sendWSMessage_190000(machine *recv, int trigger);
 	void sendWSMessage_190000(int trigger);
 	void sendWSMessage_1a0000(machine *recv, int trigger);

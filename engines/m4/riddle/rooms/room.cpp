@@ -383,6 +383,18 @@ void Room::sendWSMessage_160000(int val1, int trigger) {
 	sendWSMessage_160000(_G(my_walker), val1, trigger);
 }
 
+void Room::sendWSMessage_180000(machine *recv, int trigger) {
+	if (!trigger)
+		trigger = -1;
+	_G(globals)[V023] = kernel_trigger_create(trigger);
+
+	sendWSMessage(0x180000, 0, recv, 0, nullptr, 1);
+}
+
+void Room::sendWSMessage_180000(int trigger) {
+	sendWSMessage_180000(_G(my_walker), trigger);
+}
+
 void Room::sendWSMessage_190000(machine *recv, int trigger) {
 	_G(globals)[V023] = trigger << 16;
 	sendWSMessage(0x190000, 0, recv, 0, nullptr, 1);
