@@ -164,7 +164,7 @@ static const int keyMapTable[] = {
 	Common::KEYCODE_LALT,			VK_LMENU,
 	Common::KEYCODE_RMETA,			VK_RWIN,
 	Common::KEYCODE_LMETA,			VK_LWIN,
-	Common::KEYCODE_LSUPER,			-1,
+	Common::KEYCODE_LSUPER,			VK_LWIN,
 	Common::KEYCODE_RSUPER,			-1,
 	Common::KEYCODE_MODE,			-1,
 	Common::KEYCODE_COMPOSE,		-1,
