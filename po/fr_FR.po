@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-16 07:21+0000\n"
-"PO-Revision-Date: 2024-09-04 10:05+0000\n"
+"PO-Revision-Date: 2024-09-16 16:50+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -10528,9 +10528,6 @@ msgid "Enable online competitive mods"
 msgstr "Activer les mods en ligne compétitifs"
 
 #: engines/scumm/dialogs.cpp:1713
-#, fuzzy
-#| msgid ""
-#| "Enables custom-made modifications intented for online competitive play."
 msgid "Enables custom-made modifications intended for online competitive play."
 msgstr ""
 "Active les modifications personnalisées destinées au jeu en ligne compétitif."
