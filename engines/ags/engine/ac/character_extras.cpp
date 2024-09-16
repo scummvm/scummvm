@@ -22,10 +22,11 @@
 #include "ags/engine/ac/character_extras.h"
 #include "ags/engine/ac/view_frame.h"
 #include "ags/shared/util/stream.h"
+#include "ags/shared/util/string_utils.h"
 
 namespace AGS3 {
 
-using AGS::Shared::Stream;
+using namespace AGS::Shared;
 
 int CharacterExtras::GetEffectiveY(CharacterInfo *chi) const {
 	return chi->y - (chi->z * zoom_offs) / 100;
@@ -41,7 +42,7 @@ void CharacterExtras::CheckViewFrame(CharacterInfo *chi) {
 	AGS3::CheckViewFrame(chi->view, chi->loop, chi->frame, GetFrameSoundVolume(chi));
 }
 
-void CharacterExtras::ReadFromSavegame(Stream *in, int save_ver) {
+void CharacterExtras::ReadFromSavegame(Stream *in, CharacterInfo &chinfo, int save_ver) {
 	in->ReadArrayOfInt16(invorder, MAX_INVORDER);
 	invorder_count = in->ReadInt16();
 	width = in->ReadInt16();
@@ -57,16 +58,23 @@ void CharacterExtras::ReadFromSavegame(Stream *in, int save_ver) {
 	process_idle_this_time = in->ReadInt8();
 	slow_move_counter = in->ReadInt8();
 	animwait = in->ReadInt16();
-	if (save_ver >= kCharSvgVersion_36025)
-	{
+	if (save_ver >= kCharSvgVersion_36025) {
 		anim_volume = static_cast<uint8_t>(in->ReadInt8());
 		cur_anim_volume = static_cast<uint8_t>(in->ReadInt8());
 		in->ReadInt8(); // reserved to fill int32
 		in->ReadInt8();
 	}
+	if (save_ver >= kCharSvgVersion_36114) {
+		chinfo.name = StrUtil::ReadString(in);
+	}
+
+	// Upgrade restored data
+	if (save_ver < kCharSvgVersion_36025) {
+		chinfo.idle_anim_speed = chinfo.animspeed + 5;
+	}
 }
 
-void CharacterExtras::WriteToSavegame(Stream *out) {
+void CharacterExtras::WriteToSavegame(Stream *out, const CharacterInfo &chinfo) {
 	out->WriteArrayOfInt16(invorder, MAX_INVORDER);
 	out->WriteInt16(invorder_count);
 	out->WriteInt16(width);
@@ -86,6 +94,8 @@ void CharacterExtras::WriteToSavegame(Stream *out) {
 	out->WriteInt8(static_cast<uint8_t>(cur_anim_volume));
 	out->WriteInt8(0); // reserved to fill int32
 	out->WriteInt8(0);
+	// kCharSvgVersion_36114
+	StrUtil::WriteString(chinfo.name, out);
 }
 
 } // namespace AGS3

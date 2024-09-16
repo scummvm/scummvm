@@ -454,7 +454,7 @@ HSaveError restore_save_data_v321(Stream *in, GameDataVersion data_ver, const Pr
 
 	// Character extras (runtime only data)
 	for (int i = 0; i < _GP(game).numcharacters; ++i) {
-		_GP(charextra)[i].ReadFromSavegame(in, 0);
+		_GP(charextra)[i].ReadFromSavegame(in, _GP(game).chars[i], kCharSvgVersion_Initial);
 	}
 	restore_game_palette(in);
 	restore_game_dialogs(in);
