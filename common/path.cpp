@@ -157,7 +157,7 @@ inline String Path::unescape(char dstSeparator, const char *begin, const char *e
 			dst += ESCAPE;
 #ifndef RELEASE_BUILD
 			if (!_shownSeparatorCollisionWarning && dstSeparator == ESCAPE) {
-				warning("Collision while unescaping in path part \"%s\" with separator %c", begin, dstSeparator);
+				warning("Collision 1 while unescaping in path part \"%s\" with separator %c", begin, dstSeparator);
 				_shownSeparatorCollisionWarning = true;
 			}
 #endif
@@ -166,7 +166,7 @@ inline String Path::unescape(char dstSeparator, const char *begin, const char *e
 			dst += SEPARATOR;
 #ifndef RELEASE_BUILD
 			if (!_shownSeparatorCollisionWarning && dstSeparator == SEPARATOR) {
-				warning("Collision while unescaping in path part \"%s\" with separator %c", begin, dstSeparator);
+				warning("Collision 2 while unescaping in path part \"%s\" with separator %c", begin, dstSeparator);
 				_shownSeparatorCollisionWarning = true;
 			}
 #endif
@@ -298,7 +298,7 @@ String Path::toString(char separator) const {
 		// Path was not escaped, replace all SEPARATOR by the real separator
 #ifndef RELEASE_BUILD
 		if (!_shownSeparatorCollisionWarning && strchr(_str.c_str(), separator)) {
-			warning("Collision while unescaping path \"%s\" with separator %c", _str.c_str(), separator);
+			warning("Collision 3 while unescaping path \"%s\" with separator %c", _str.c_str(), separator);
 			_shownSeparatorCollisionWarning = true;
 		}
 #endif
