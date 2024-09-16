@@ -471,6 +471,16 @@ void LibretroOpenGLGraphics::setMousePosition(int x, int y){
 	OpenGL::OpenGLGraphicsManager::setMousePosition(x,y);
 }
 
+void LibretroOpenGLGraphics::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
+	/* Workaround to fix a cursor glich (e.g. GUI with Classic theme) occurring when any overlay is activated from retroarch (e.g. keyboard overlay).
+	   Currently no feedback is available from frontend to detect if overlays are toggled to delete _cursor only if needed.
+	   @TODO: root cause to be investigated. */
+	delete _cursor;
+	_cursor = nullptr;
+	OpenGL::OpenGLGraphicsManager::setMouseCursor(buf, w, h, hotspotX, hotspotY, keycolor, dontScale, format, mask);
+}
+
+
 Common::Point LibretroOpenGLGraphics::convertWindowToVirtual(int x, int y) const {
 	return OpenGL::OpenGLGraphicsManager::convertWindowToVirtual(x, y);
 }

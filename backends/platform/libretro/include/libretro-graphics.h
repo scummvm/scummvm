@@ -137,6 +137,7 @@ public:
 	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) override { return true; };
 	void refreshScreen() override;
 	void setSystemMousePosition(const int x, const int y) override {};
+	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) override;
 
 	bool isOverlayInGUI(void){ return _overlayInGUI; }
 	void setMousePosition(int x, int y);
