@@ -44,7 +44,7 @@ bool qdNamedObjectIndexer::qdNamedObjectReferenceLink::resolve() {
 	if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher()) {
 		_object = dp->get_named_object(&_reference);
 		if (!_object) {
-			debugC(3, kDebugLog, "qdNamedObjectReferenceLink::resolve() failed '%s'", transCyrillic(_reference.toString()));
+			debugC(1, kDebugLog, "qdNamedObjectReferenceLink::resolve() failed '%s'", _reference.toString().c_str());
 		} else
 			return true;
 	}
