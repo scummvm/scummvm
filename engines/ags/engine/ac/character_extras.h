@@ -40,6 +40,7 @@ enum CharacterSvgVersion {
 	kCharSvgVersion_350	    = 1, // new movelist format (along with pathfinder)
 	kCharSvgVersion_36025   = 2, // animation volume
 	kCharSvgVersion_36109   = 3, // removed movelists, save externally
+	kCharSvgVersion_36114	= 4, // no limit on character name's length
 };
 
 // The CharacterInfo struct size is fixed because it's exposed to script
@@ -79,8 +80,13 @@ struct CharacterExtras {
 	// play linked sounds, and so forth.
 	void CheckViewFrame(CharacterInfo *chi);
 
-	void ReadFromSavegame(Shared::Stream *in, int save_ver);
-	void WriteToSavegame(Shared::Stream *out);
+	// Read character extra data from saves.
+	// NOTE: we read ext name fields into the CharacterInfo struct,
+	// hence require its reference as an argument. This is ugly, but should
+	// be improved when the structs are refactored into having a distinct
+	// runtime Character class, which would hold all relevant data itself.
+	void ReadFromSavegame(Shared::Stream *in, CharacterInfo &chinfo, int save_ver);
+	void WriteToSavegame(Shared::Stream *out, const CharacterInfo &chinfo);
 };
 
 } // namespace AGS3
