@@ -164,8 +164,19 @@ Common::Error QDEngineEngine::run() {
 	_gameD->load_script(script_name.c_str());
 
 	if (ConfMan.getBool("dump_scripts")) {
-		_gameD->save_script("qd_game.xml");
-		debug("Dumped qd_game.xml%s", debugChannelSet(-1, kDebugLog) ? " in human-readable form" : "");
+		Common::String fname = "qd_game";
+
+		if (debugChannelSet(-1, kDebugLog)) {
+			fname += "_" + g_engine->getGameId();
+
+			if (g_engine->getLanguage() != Common::RU_RUS)
+				fname += "-" + Common::String(Common::getLanguageCode(g_engine->getLanguage()));
+		}
+
+		fname += ".xml";
+
+		_gameD->save_script(fname.c_str());
+		debug("Dumped %s%s", fname.c_str(), debugChannelSet(-1, kDebugLog) ? " in human-readable form" : "");
 	}
 
 	_gameD->set_scene_loading_progress_callback(qd_show_load_progress);
