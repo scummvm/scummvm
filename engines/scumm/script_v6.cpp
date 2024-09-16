@@ -636,6 +636,18 @@ void ScummEngine_v6::o6_eq() {
 
 // BACKYARD BASEBALL 2001 ONLINE CHANGES
 #if defined(USE_ENET) && defined(USE_LIBCURL)
+	// The player stat adjustments that should get applied in certain conditions (i.e. when two siblings are on the same team)
+	// don't get applied properly for the away (peer) team in online play. This results in each team's game using a different
+	// version of players' stats, leading to unfair play and potential desyncs. This hack ensures the away team's game doesn't
+	// exit the script before applying these stat adjustments.
+	if (_game.id == GID_BASEBALL2001 && _currentRoom == 27 && vm.slot[_currentScript].number == 2346) {
+		int offset = _scriptPointer - _scriptOrgPointer;
+		if (offset == 196137) {
+			push(0);
+			return;
+		}
+	}
+
 	if (ConfMan.getBool("enable_competitive_mods")) {
 		int pitchXValue = readVar(0x8000 + 11);
 		int pitchYValue = readVar(0x8000 + 12);
