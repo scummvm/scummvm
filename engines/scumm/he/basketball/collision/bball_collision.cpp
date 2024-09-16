@@ -149,37 +149,33 @@ int LogicHEBasketball::u32_userDeinitCourt() {
 }
 
 int LogicHEBasketball::u32_userInitBall(U32FltPoint3D &ballLocation, U32FltVector3D &bellVelocity, int radius, int ballID) {
-	CCollisionBasketball basketBall = _vm->_basketball->_court->_basketBall;
+	_vm->_basketball->_court->_basketBall._description = "Basketball";
+	_vm->_basketball->_court->_basketBall._objectType = kBall;
+	_vm->_basketball->_court->_basketBall._objectID = ballID;
+	_vm->_basketball->_court->_basketBall.center = ballLocation;
+	_vm->_basketball->_court->_basketBall._velocity = bellVelocity;
+	_vm->_basketball->_court->_basketBall.radius = radius;
+	_vm->_basketball->_court->_basketBall._collisionEfficiency = 1.0F;
+	_vm->_basketball->_court->_basketBall._friction = 0;
+	_vm->_basketball->_court->_basketBall._ignore = false;
 
-	basketBall._description = "Basketball";
-	basketBall._objectType = kBall;
-	basketBall._objectID = ballID;
-	basketBall.center = ballLocation;
-	basketBall._velocity = bellVelocity;
-	basketBall.radius = radius;
-	basketBall._collisionEfficiency = 1.0F;
-	basketBall._friction = 0;
-	basketBall._ignore = false;
-
-	basketBall.save();
+	_vm->_basketball->_court->_basketBall.save();
 
 	return 1;
 }
 
 int LogicHEBasketball::u32_userInitVirtualBall(U32FltPoint3D &ballLocation, U32FltVector3D &bellVelocity, int radius, int ballID) {
-	CCollisionBasketball virtualBall = _vm->_basketball->_court->_virtualBall;
+	_vm->_basketball->_court->_virtualBall._description = "Virtual Basketball";
+	_vm->_basketball->_court->_virtualBall._objectType = kBall;
+	_vm->_basketball->_court->_virtualBall._objectID = ballID;
+	_vm->_basketball->_court->_virtualBall.center = ballLocation;
+	_vm->_basketball->_court->_virtualBall._velocity = bellVelocity;
+	_vm->_basketball->_court->_virtualBall.radius = radius;
+	_vm->_basketball->_court->_virtualBall._collisionEfficiency = 1.0F;
+	_vm->_basketball->_court->_virtualBall._friction = 0;
+	_vm->_basketball->_court->_virtualBall._ignore = false;
 
-	virtualBall._description = "Virtual Basketball";
-	virtualBall._objectType = kBall;
-	virtualBall._objectID = ballID;
-	virtualBall.center = ballLocation;
-	virtualBall._velocity = bellVelocity;
-	virtualBall.radius = radius;
-	virtualBall._collisionEfficiency = 1.0F;
-	virtualBall._friction = 0;
-	virtualBall._ignore = false;
-
-	virtualBall.save();
+	_vm->_basketball->_court->_virtualBall.save();
 
 	return 1;
 }
