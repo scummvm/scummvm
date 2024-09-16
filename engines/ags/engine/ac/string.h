@@ -63,8 +63,11 @@ size_t break_up_text_into_lines(const char *todis, bool apply_direction, SplitLi
 inline size_t break_up_text_into_lines(const char *todis, SplitLines &lines, int wii, int fonnt, size_t max_lines = -1) {
 	return break_up_text_into_lines(todis, true, lines, wii, fonnt, max_lines);
 }
-void check_strlen(char *ptt);
-void my_strncpy(char *dest, const char *src, int len);
+// Checks the capacity of an old-style script string buffer.
+// Commonly this should return MAX_MAXSTRLEN, but there are
+// cases when the buffer is a field inside one of the game structs,
+// in which case this returns that field's capacity.
+size_t check_strcapacity(char *ptt);
 
 } // namespace AGS3
 
