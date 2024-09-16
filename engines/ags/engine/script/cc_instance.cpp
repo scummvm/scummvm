@@ -1490,12 +1490,11 @@ void ccInstance::GetScriptPosition(ScriptPosition &script_pos) const {
 
 // get a pointer to a variable or function exported by the script
 RuntimeScriptValue ccInstance::GetSymbolAddress(const char *symname) const {
-	int k;
 	char altName[200];
 	snprintf(altName, sizeof(altName), "%s$", symname);
 	RuntimeScriptValue rval_null;
 	const size_t len_altName = strlen(altName);
-	for (k = 0; k < instanceof->numexports; k++) {
+	for (int k = 0; k < instanceof->numexports; k++) {
 		if (strcmp(instanceof->exports[k], symname) == 0)
 			return exports[k];
 		// mangled function name
