@@ -296,26 +296,15 @@ size_t break_up_text_into_lines(const char *todis, bool apply_direction, SplitLi
 		return lines.Count();
 }
 
-void check_strlen(char *ptt) {
-	_G(MAXSTRLEN) = MAX_MAXSTRLEN;
-	long charstart = (intptr_t)&_GP(game).chars[0];
-	long charend = charstart + sizeof(CharacterInfo) * _GP(game).numcharacters;
-	if (((intptr_t)&ptt[0] >= charstart) && ((intptr_t)&ptt[0] <= charend))
-		_G(MAXSTRLEN) = 30;
-}
-
-/*void GetLanguageString(int indxx,char*buffr) {
-VALIDATE_STRING(buffr);
-char*bptr=get_language_text(indxx);
-if (bptr==NULL) Common::strcpy_s(buffr, 200, "[language string error]");
-else strncpy(buffr,bptr,199);
-buffr[199]=0;
-}*/
-
-void my_strncpy(char *dest, const char *src, int len) {
-	// the normal strncpy pads out the string with zeros up to the
-	// max length -- we don't want that
-	Common::strcpy_s(dest, len + 1, src);
+// This is a somewhat ugly safety fix that tests whether the script tries
+// to write inside the Character's struct (e.g. char.name?), and truncates
+// the write limit accordingly.
+size_t check_strcapacity(char *ptt) {
+	uintptr_t charstart = (uintptr_t)&_GP(game).chars[0];
+	uintptr_t charend = charstart + sizeof(CharacterInfo) * _GP(game).numcharacters;
+	if (((uintptr_t)&ptt[0] >= charstart) && ((uintptr_t)&ptt[0] <= charend))
+		return sizeof(CharacterInfo::name);
+	return MAX_MAXSTRLEN;
 }
 
 //=============================================================================
