@@ -162,8 +162,7 @@ void qdScreenText::redraw(const Vect2i &owner_pos) const {
 
 	uint32 col = _hover_mode ? _text_format.hover_color() : _text_format.color();
 
-	const grFont *font = qdGameDispatcher::get_dispatcher()->
-	                     find_font(_text_format.font_type());
+	const grFont *font = qdGameDispatcher::get_dispatcher()->find_font(_text_format.font_type());
 
 	grDispatcher::instance()->drawAlignedText(x, y, _size.x, _size.y, col, data(), grTextAlign(_text_format.alignment()), 0, 0, font);
 	if (g_engine->_debugDraw)
@@ -173,8 +172,7 @@ void qdScreenText::redraw(const Vect2i &owner_pos) const {
 void qdScreenText::set_data(const char *p) {
 	_data = p;
 
-	const grFont *font = qdGameDispatcher::get_dispatcher()->
-	                     find_font(_text_format.font_type());
+	const grFont *font = qdGameDispatcher::get_dispatcher()->find_font(_text_format.font_type());
 	_size.x = grDispatcher::instance()->textWidth(data(), 0, font);
 	_size.y = grDispatcher::instance()->textHeight(data(), 0, font);
 }
@@ -184,9 +182,9 @@ bool qdScreenText::is_owned_by(const qdNamedObject *p) const {
 }
 
 bool qdScreenText::format_text(int max_width) {
-	const grFont *font = qdGameDispatcher::get_dispatcher()->find_font(
-	                         text_format().font_type());
-	if (NULL == font) font = grDispatcher::get_default_font();
+	const grFont *font = qdGameDispatcher::get_dispatcher()->find_font(text_format().font_type());
+	if (NULL == font)
+		font = grDispatcher::get_default_font();
 
 	bool correct = true;
 	int safe_space = -1;

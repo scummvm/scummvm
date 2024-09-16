@@ -182,14 +182,12 @@ bool qdInterfaceCounter::post_redraw() {
 }
 
 int qdInterfaceCounter::size_x() const {
-	const grFont *font = qdGameDispatcher::get_dispatcher()->
-	                     find_font(_textFormat.font_type());
+	const grFont *font = qdGameDispatcher::get_dispatcher()->find_font(_textFormat.font_type());
 	return grDispatcher::instance()->textWidth(data().c_str(), 0, font);
 }
 
 int qdInterfaceCounter::size_y() const {
-	const grFont *font = qdGameDispatcher::get_dispatcher()->
-	                     find_font(_textFormat.font_type());
+	const grFont *font = qdGameDispatcher::get_dispatcher()->find_font(_textFormat.font_type());
 	return grDispatcher::instance()->textHeight(data().c_str(), 0, font);
 }
 
