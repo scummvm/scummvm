@@ -1313,8 +1313,6 @@ public:
 	 * @{
 	 */
 
-	int _MAXSTRLEN = MAX_MAXSTRLEN;
-
 	/**@}*/
 
 	/**
