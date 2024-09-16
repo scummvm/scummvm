@@ -79,7 +79,7 @@ public:
 		debugC(3, kDebugMinigames, "ShveikShkatulka::quant(%f)", dt);
 
 		if (checkSolution()) {
-			_doneObj->set_state("да");
+			_doneObj->set_state("\xe4\xe0");	// "да"
 			_cursorObj->set_state("nottaken");
 			_draggedStone = 0;
 			_compartment = 0;
@@ -219,7 +219,7 @@ LABEL_38:
 LABEL_53:
 						_draggedStone->set_state(buf1);
 						_mousePos.x = curPos.x;
-						_jumpSoundObj->set_state("да");
+						_jumpSoundObj->set_state("\xe4\xe0");	// "да"
 						goto LABEL_88;
 
 					default:
@@ -251,7 +251,7 @@ LABEL_53:
 LABEL_86:
 					_draggedStone->set_state(buf1);
 					_mousePos.y = curPos.y;
-					_jumpSoundObj->set_state("да");
+					_jumpSoundObj->set_state("\xe4\xe0");	// "да"
 					goto LABEL_88;
 
 				case 4:
@@ -267,7 +267,7 @@ LABEL_72:
 						snprintf(buf1, 29, "%d%d", side, draggedStonePos - 1);
 						_draggedStone->set_state(buf1);
 						_mousePos.x = curPos.x;
-						_jumpSoundObj->set_state("да");
+						_jumpSoundObj->set_state("\xe4\xe0");	// "да"
 					}
 LABEL_88:
 					_compartment = 0;
