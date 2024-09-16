@@ -60,7 +60,7 @@ enum ScriptOpArgIsReg {
 };
 
 struct ScriptCommandInfo {
-	ScriptCommandInfo(int32_t code, const char *cmdname, int arg_count, ScriptOpArgIsReg arg_is_reg)
+	ScriptCommandInfo(const int32_t code, const char *cmdname, const int arg_count, const ScriptOpArgIsReg arg_is_reg)
 		: Code(code), CmdName(cmdname), ArgCount(arg_count), ArgIsReg{
 			(arg_is_reg & kScOpArg1IsReg) != 0,
 			(arg_is_reg & kScOpArg2IsReg) != 0,
@@ -215,7 +215,7 @@ ccInstance *ccInstance::CreateFromScript(PScript scri) {
 	return CreateEx(scri, nullptr);
 }
 
-ccInstance *ccInstance::CreateEx(PScript scri, ccInstance *joined) {
+ccInstance *ccInstance::CreateEx(PScript scri, const ccInstance *joined) {
 	// allocate and copy all the memory with data, code and strings across
 	ccInstance *cinst = new ccInstance();
 	if (!cinst->_Create(scri, joined)) {
@@ -224,7 +224,7 @@ ccInstance *ccInstance::CreateEx(PScript scri, ccInstance *joined) {
 	return cinst;
 }
 
-void ccInstance::SetExecTimeout(unsigned sys_poll_ms, unsigned abort_ms, unsigned abort_loops) {
+void ccInstance::SetExecTimeout(const unsigned sys_poll_ms, const unsigned abort_ms, const unsigned abort_loops) {
 	_G(timeoutCheckMs) = sys_poll_ms;
 	_G(timeoutAbortMs) = abort_ms;
 	_G(maxWhileLoops) = abort_loops;
@@ -379,11 +379,11 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 	// using negative offsets, and does not care about any preceding entries.
 	int32_t startat = -1;
 	char mangledName[200];
-	size_t mangled_len = snprintf(mangledName, sizeof(mangledName), "%s$", funcname);
+	const size_t mangled_len = snprintf(mangledName, sizeof(mangledName), "%s$", funcname);
 	int32_t export_args = numargs;
 
 	for (int k = 0; k < instanceof->numexports; k++) {
-		char *thisExportName = instanceof->exports[k];
+		const char *thisExportName = instanceof->exports[k];
 		bool match = false;
 
 		// check for a mangled name match
@@ -399,7 +399,7 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 		}
 		// check for an exact match (if the script was compiled with an older version)
 		if (match || (strcmp(thisExportName, funcname) == 0)) {
-			int32_t etype = (instanceof->export_addr[k] >> 24L) & 0x000ff;
+			const int32_t etype = (instanceof->export_addr[k] >> 24L) & 0x000ff;
 			if (etype != EXPORT_FUNCTION) {
 				cc_error("symbol is not a function");
 				return -1;
@@ -432,7 +432,7 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 
 	_GP(InstThreads).push_back(this); // push instance thread
 	runningInst = this;
-	int reterr = Run(startat);
+	const int reterr = Run(startat);
 	// Cleanup before returning, even if error
 	ASSERT_STACK_SIZE(numargs);
 	PopValuesFromStack(numargs);
@@ -502,7 +502,7 @@ inline RuntimeScriptValue GetStackPtrOffsetFw(RuntimeScriptValue *stack, int32_t
 // Applies a runtime fixup to the given arg;
 // Fixup of type `fixup` is applied to the `code` value,
 // the result is assigned to the `arg`.
-inline bool FixupArgument(RuntimeScriptValue &arg, int fixup, uintptr code, RuntimeScriptValue *stack, const char *strings) {
+inline bool FixupArgument(RuntimeScriptValue &arg, const int fixup, const uintptr code, RuntimeScriptValue *stack, const char *strings) {
 	// could be relative pointer or import address
 	switch (fixup) {
 	case FIXUP_NOFIXUP:
@@ -1469,7 +1469,7 @@ int ccInstance::Run(int32_t curpc) {
 	return 0;
 }
 
-String ccInstance::GetCallStack(int maxLines) const {
+String ccInstance::GetCallStack(const int maxLines) const {
 	String buffer = String::FromFormat("in \"%s\", line %d\n", runningInst->instanceof->GetSectionName(pc), line_number);
 
 	int linesDone = 0;
@@ -1494,7 +1494,7 @@ RuntimeScriptValue ccInstance::GetSymbolAddress(const char *symname) const {
 	char altName[200];
 	snprintf(altName, sizeof(altName), "%s$", symname);
 	RuntimeScriptValue rval_null;
-	size_t len_altName = strlen(altName);
+	const size_t len_altName = strlen(altName);
 	for (k = 0; k < instanceof->numexports; k++) {
 		if (strcmp(instanceof->exports[k], symname) == 0)
 			return exports[k];
@@ -1582,7 +1582,7 @@ void ccInstance::NotifyAlive() {
 	_lastAliveTs = AGS_Clock::now();
 }
 
-bool ccInstance::_Create(PScript scri, ccInstance *joined) {
+bool ccInstance::_Create(PScript scri, const ccInstance *joined) {
 	_G(currentline) = -1;
 	if ((scri == nullptr) && (joined != nullptr))
 		scri = joined->instanceof;
@@ -1665,8 +1665,8 @@ bool ccInstance::_Create(PScript scri, ccInstance *joined) {
 
 	// find the real address of the exports
 	for (int i = 0; i < scri->numexports; i++) {
-		int32_t etype = (scri->export_addr[i] >> 24L) & 0x000ff;
-		int32_t eaddr = (scri->export_addr[i] & 0x00ffffff);
+		const int32_t etype = (scri->export_addr[i] >> 24L) & 0x000ff;
+		const int32_t eaddr = (scri->export_addr[i] & 0x00ffffff);
 		if (etype == EXPORT_FUNCTION) {
 			// NOTE: unfortunately, there seems to be no way to know if
 			// that's an extender function that expects object pointer
@@ -1805,7 +1805,7 @@ bool ccInstance::CreateGlobalVars(const ccScript *scri) {
 			// DATADATA fixup takes relative address of global data element from fixups array;
 			// this is the address of element, which stores address of actual data
 			glvar.ScAddress = scri->fixups[i];
-			int32_t data_addr = BBOp::Int32FromLE(*(int32_t *)&globaldata[glvar.ScAddress]);
+			const int32_t data_addr = BBOp::Int32FromLE(*(int32_t *)&globaldata[glvar.ScAddress]);
 			if (glvar.ScAddress - data_addr != 200 /* size of old AGS string */) {
 				// CHECKME: probably replace with mere warning in the log?
 				cc_error("unexpected old-style string's alignment");
@@ -1825,8 +1825,8 @@ bool ccInstance::CreateGlobalVars(const ccScript *scri) {
 
 	// Step Two: deduce global variables from exports
 	for (int i = 0; i < scri->numexports; ++i) {
-		int32_t etype = (scri->export_addr[i] >> 24L) & 0x000ff;
-		int32_t eaddr = (scri->export_addr[i] & 0x00ffffff);
+		const int32_t etype = (scri->export_addr[i] >> 24L) & 0x000ff;
+		const int32_t eaddr = (scri->export_addr[i] & 0x00ffffff);
 		if (etype == EXPORT_DATA) {
 			// NOTE: old-style strings could not be exported in AGS,
 			// no need to worry about these here
@@ -1855,7 +1855,7 @@ bool ccInstance::AddGlobalVar(const ScriptVariable &glvar) {
 	return true;
 }
 
-ScriptVariable *ccInstance::FindGlobalVar(int32_t var_addr) {
+ScriptVariable *ccInstance::FindGlobalVar(const int32_t var_addr) {
 	// NOTE: see comment for AddGlobalVar()
 	if (var_addr < 0 || var_addr >= globaldatasize) {
 		/*
@@ -1863,14 +1863,14 @@ ScriptVariable *ccInstance::FindGlobalVar(int32_t var_addr) {
 		*/
 		Debug::Printf(kDbgMsg_Warn, "WARNING: looking up for global variable beyond allocated buffer (%d, %d)", var_addr, globaldatasize);
 	}
-	ScVarMap::iterator it = globalvars->find(var_addr);
+	const ScVarMap::iterator it = globalvars->find(var_addr);
 	return it != globalvars->end() ? &it->_value : nullptr;
 }
 
-static int DetermineScriptLine(const int32_t *code, size_t codesz, size_t at_pc) {
+static int DetermineScriptLine(const int32_t *code, const size_t codesz, const size_t at_pc) {
 	int line = -1;
 	for (size_t pc = 0; (pc <= at_pc) && (pc < codesz); ++pc) {
-		int op = code[pc] & INSTANCE_ID_REMOVEMASK;
+		const int op = code[pc] & INSTANCE_ID_REMOVEMASK;
 		if (op < 0 || op >= CC_NUM_SCCMDS) return -1;
 		if (pc + (*g_commands)[op].ArgCount >= codesz) return -1;
 		if (op == SCMD_LINENUM)
@@ -1880,16 +1880,16 @@ static int DetermineScriptLine(const int32_t *code, size_t codesz, size_t at_pc)
 	return line;
 }
 
-static void cc_error_fixups(const ccScript *scri, size_t pc, const char *fmt, ...) {
+static void cc_error_fixups(const ccScript *scri, const size_t pc, const char *fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);
-	String displbuf = String::FromFormatV(fmt, ap);
+	const String displbuf = String::FromFormatV(fmt, ap);
 	va_end(ap);
 	const char *scname = scri->numSections > 0 ? scri->sectionNames[0] : "?";
 	if (pc == SIZE_MAX) {
 		cc_error("in script %s: %s", scname, displbuf.GetCStr());
 	} else {
-		int line = DetermineScriptLine(scri->code, scri->codesize, pc);
+		const int line = DetermineScriptLine(scri->code, scri->codesize, pc);
 		cc_error("in script %s around line %d: %s", scname, line, displbuf.GetCStr());
 	}
 }
@@ -1961,7 +1961,7 @@ void ccInstance::PushValueToStack(const RuntimeScriptValue &rval) {
 	registers[SREG_SP].RValue++;
 }
 
-void ccInstance::PushDataToStack(int32_t num_bytes) {
+void ccInstance::PushDataToStack(const int32_t num_bytes) {
 	CC_ERROR_IF(registers[SREG_SP].RValue->IsValid(), "internal error: valid data beyond stack ptr");
 	// Assign pointer to data block to the stack tail, advance both stack ptr and stack data ptr
 	// NOTE: memory is zeroed by SCMD_ZEROMEMORY
@@ -1973,13 +1973,13 @@ void ccInstance::PushDataToStack(int32_t num_bytes) {
 RuntimeScriptValue ccInstance::PopValueFromStack() {
 	// rewind stack ptr to the last valid value, decrement stack data ptr if needed and invalidate the stack tail
 	registers[SREG_SP].RValue--;
-	RuntimeScriptValue rval = *registers[SREG_SP].RValue; // save before invalidating
+	const RuntimeScriptValue rval = *registers[SREG_SP].RValue; // save before invalidating
 	stackdata_ptr -= sizeof(int32_t); // formality, to keep data ptr consistent
 	registers[SREG_SP].RValue->Invalidate(); // FIXME: bad, this is used to separate PushValue and PushData
 	return rval;
 }
 
-void ccInstance::PopValuesFromStack(int32_t num_entries = 1) {
+void ccInstance::PopValuesFromStack(const int32_t num_entries = 1) {
 	for (int i = 0; i < num_entries; ++i) {
 		// rewind stack ptr to the last valid value, decrement stack data ptr if needed and invalidate the stack tail
 		registers[SREG_SP].RValue--;
@@ -1988,7 +1988,7 @@ void ccInstance::PopValuesFromStack(int32_t num_entries = 1) {
 	}
 }
 
-void ccInstance::PopDataFromStack(int32_t num_bytes) {
+void ccInstance::PopDataFromStack(const int32_t num_bytes) {
 	int32_t total_pop = 0;
 	while (total_pop < num_bytes && registers[SREG_SP].RValue > &stack[0]) {
 		// rewind stack ptr to the last valid value, decrement stack data ptr if needed and invalidate the stack tail
@@ -2002,7 +2002,7 @@ void ccInstance::PopDataFromStack(int32_t num_bytes) {
 	CC_ERROR_IF(total_pop > num_bytes, "stack pointer points inside local variable after pop, stack corrupted?");
 }
 
-RuntimeScriptValue ccInstance::GetStackPtrOffsetRw(int32_t rw_offset) {
+RuntimeScriptValue ccInstance::GetStackPtrOffsetRw(const int32_t rw_offset) {
 	int32_t total_off = 0;
 	RuntimeScriptValue *stack_entry = registers[SREG_SP].RValue;
 	while (total_off < rw_offset && stack_entry >= &stack[0]) {
