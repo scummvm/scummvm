@@ -313,9 +313,10 @@ bool qdMiniGame::load_interface() {
 		} else if (_dll_name == "DLL\\inv_popup.dll") {
 			_interface = new qdInvPopupMiniGame();
 			return true;
+		} else if (_dll_name == "DLL\\ShveikShkatulka.dll") {
+			_interface = new qdShveikShkatulkaMiniGame();
+			return true;
 		// ShveikPortret.dll
-		// ShveikShkatulka.dll
-		// inv_popup.dll
 
 		// klepa
 		// Karaoke.dll
