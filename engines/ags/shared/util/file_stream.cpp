@@ -41,8 +41,12 @@ FileStream::~FileStream() {
 	FileStream::Close();
 }
 
-bool FileStream::HasErrors() const {
-	return IsValid() && _file->err();
+bool FileStream::GetError() const {
+	if (!_file)
+		return false;
+	bool err = _file->err();
+	_file->clearErr();
+	return err;
 }
 
 void FileStream::Close() {
