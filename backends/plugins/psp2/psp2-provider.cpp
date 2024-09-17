@@ -54,6 +54,7 @@ void *forceLinkFunctions[] = {
 	(void *)tanhf,
 	(void *)vsprintf,
 	(void *)wcstombs,
+	(void *)__cxxabiv1::__cxa_bad_cast,
 	(void *)__cxxabiv1::__cxa_finalize,
 	(void *)__cxxabiv1::__cxa_guard_acquire,
 	(void *)__cxxabiv1::__cxa_guard_release,
