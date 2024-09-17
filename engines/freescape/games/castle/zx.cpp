@@ -142,13 +142,12 @@ void CastleEngine::loadAssetsZXFullGame() {
 	uint32 green = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0, 0xff, 0);
 	_spiritsMeterIndicatorFrame = loadFrameWithHeader(&file, _language == Common::ES_ESP ? 0xe5e : 0xe4f, green, white);
 
-	Graphics::ManagedSurface *background = new Graphics::ManagedSurface();
-
 	_gfx->readFromPalette(4, r, g, b);
 	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	int backgroundWidth = 16;
 	int backgroundHeight = 18;
+	Graphics::ManagedSurface *background = new Graphics::ManagedSurface();
 	background->create(backgroundWidth * 8, backgroundHeight, _gfx->_texturePixelFormat);
 	background->fillRect(Common::Rect(0, 0, backgroundWidth * 8, backgroundHeight), 0);
 
@@ -162,6 +161,15 @@ void CastleEngine::loadAssetsZXFullGame() {
 	_strenghtBarFrame = loadFrameWithHeader(&file, _language == Common::ES_ESP ? 0xf72 : 0xf63, yellow, black);
 
 	_strenghtWeightsFrames = loadFramesWithHeader(&file, _language == Common::ES_ESP ? 0xf92 : 0xf83, 4, yellow, black);
+
+	_flagFrames = loadFramesWithHeader(&file, 0x10e4, 4, green, black);
+
+	int thunderWidth = 4;
+	int thunderHeight = 43;
+	_thunderFrame = new Graphics::ManagedSurface();
+	_thunderFrame->create(thunderWidth * 8, thunderHeight, _gfx->_texturePixelFormat);
+	_thunderFrame->fillRect(Common::Rect(0, 0, thunderWidth * 8, thunderHeight), 0);
+	_thunderFrame = loadFrame(&file, _thunderFrame, thunderWidth, thunderHeight, front);
 
 	for (auto &it : _areaMap) {
 		it._value->addStructure(_areaMap[255]);
@@ -231,6 +239,9 @@ void CastleEngine::drawZXUI(Graphics::Surface *surface) {
 	surface->fillRect(Common::Rect(152, 156, 216, 164), green);
 	surface->copyRectToSurface((const Graphics::Surface)*_spiritsMeterIndicatorFrame, 140 + _spiritsMeterPosition, 156, Common::Rect(0, 0, 15, 8));
 	drawEnergyMeter(surface, Common::Point(63, 154));
+
+	int flagFrameIndex = (_ticks / 10) % 4;
+	surface->copyRectToSurface(*_flagFrames[flagFrameIndex], 264, 9, Common::Rect(0, 0, _flagFrames[flagFrameIndex]->w, _flagFrames[flagFrameIndex]->h));
 }
 
 } // End of namespace Freescape
