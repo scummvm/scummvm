@@ -31,6 +31,7 @@
 
 #include "dgds/includes.h"
 #include "dgds/font.h"
+#include "dgds/globals.h"
 #include "dgds/menu.h"
 #include "dgds/music.h"
 #include "dgds/request.h"
@@ -110,6 +111,13 @@ enum MenuButtonIds {
 
 	kMenuRestartYes = 163,
 	kMenuRestartNo = 164,
+
+	// For Dragon arcade
+	kMenuDragonReplayArcadeYes = 139,
+	kMenuDragonReplayArcadeNo = 140,
+
+	kMenuDragonFrustratedArcadeWin = 147,
+	kMenuDragonFrustratedArcadeKeepTrying = 148,
 
 	kMenuGameOverQuit = 169,
 	kMenuGameOverRestart = 168,
@@ -495,6 +503,22 @@ void Menu::handleClick(const Common::Point &mouse) {
 		drawMenu(_curMenu);
 		break;
 	}
+	case kMenuDragonReplayArcadeYes:
+	case kMenuDragonReplayArcadeNo:
+		if (engine->getGameId() == GID_DRAGON && _curMenu == kMenuReplayArcade) {
+			DragonGlobals *dragonGlobals = static_cast<DragonGlobals *>(engine->getGameGlobals());
+			dragonGlobals->setArcadeState(clickedMenuItem == kMenuDragonReplayArcadeYes ? 20 : 10);
+			_curMenu = kMenuNone;
+		}
+		break;
+	case kMenuDragonFrustratedArcadeWin:
+	case kMenuDragonFrustratedArcadeKeepTrying:
+		if (engine->getGameId() == GID_DRAGON && _curMenu == kMenuArcadeFrustrated) {
+			DragonGlobals *dragonGlobals = static_cast<DragonGlobals *>(engine->getGameGlobals());
+			dragonGlobals->setArcadeState(clickedMenuItem == kMenuDragonFrustratedArcadeWin ? 6 : 20);
+			_curMenu = kMenuNone;
+		}
+		break;
 	case kMenuTankTrainSkipArcade:
 		hideMenu();
 		if (currentScene == 73)

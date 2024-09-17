@@ -38,7 +38,7 @@
 namespace Dgds {
 
 DragonArcade::DragonArcade() : _arcadeTTM(_npcState), _lastDrawnBladeHealth(-1), _lastDrawnBossHealth(-1),
-	_nextRandomVal(0), _loadedArcadeStage(-1), _nextStage(0), _arcadeModeSomethingCounter(0),
+	_nextRandomVal(0), _loadedArcadeStage(-1), _nextStage(0), _attemptCounter(0),
 	_shouldUpdateState(0), _finishCountdown(0), _bladeState1(0), _bladeStateOffset(0), _mouseButtonWentDown(0),
 	_scrollXOffset(0), _nTickUpdates(0), _startDifficultyMaybe(0), _bossStateUpdateCounter(0), _someCounter40f0(0),
 	_scrollVelocityX(0), _uint0a17(0), _currentYOffset(0), _int0b58(0), _int0b5a(0), _int0b60(0), _ttmYAdjust(0),
@@ -46,7 +46,7 @@ DragonArcade::DragonArcade() : _arcadeTTM(_npcState), _lastDrawnBladeHealth(-1),
 	_lastLMouseButtonState(false), _lastRMouseButtonState(false), _bladeXMove(0), _bladeHorizMoveAttempt(0),
 	_currentArrowNum(0), _foundFloorY(0), _foundFloorFlag(0), _lastFloorY(0), _arcadeNotMovingLeftFlag(0),
 	_haveBigGun(true), _haveBomb(true), _enemyHasSmallGun(false), _dontRedrawBgndAndWeapons(false),
-	_arcadeNeedsBufferCopy(false), _flagInventoryOpened(false), _initFinished(false), _stillLoadingScriptsMaybe(false),
+	/*_arcadeNeedsBufferCopy(false), _flagInventoryOpened(false),*/ _initFinished(false), _stillLoadingScriptsMaybe(false),
 	_flag40ee(false), _flag40ef(false), _bladeHasFired(false), _mouseIsAvailable(false), _isMovingStage(false),
 	_bladeMoveFlag(kBladeMoveNone), _keyStateFlags(kBladeMoveNone), _bladeMoveFlagBeforeRButton(kBladeMoveNone)
 {
@@ -89,10 +89,10 @@ bool DragonArcade::doTickUpdate() {
 
 	_nextRandomVal = _getNextRandom();
 
-	if (!_arcadeNeedsBufferCopy) {
+	//if (!_arcadeNeedsBufferCopy) {
 		updateMouseAndJoystickStates();
 		updateBladeWithInputs();
-	}
+	//}
 
 	int16 floorY = findFloorUnderBlade();
 	arcade2754(floorY);
@@ -241,7 +241,7 @@ int16 DragonArcade::checkBulletCollision(int16 num) {
 				case 1:
 				case 2:
 				case 4:
-					if (_loadedArcadeStage == 4 || _npcState[i].byte12 < '\x1e') {
+					if (_loadedArcadeStage == 4 || _npcState[i].byte12 < 0x1e) {
 						if (_bullets[num]._var1 != 1) {
 							playSfx(0x56);
 							_npcState[i].byte12 = 1;
@@ -254,7 +254,7 @@ int16 DragonArcade::checkBulletCollision(int16 num) {
 						}
 						break;
 					}
-					if (_npcState[i].byte12 == '\x1e') {
+					if (_npcState[i].byte12 == 0x1e) {
 						_flag40ee = 0;
 					} else {
 						_flag40ef = 0;
@@ -355,7 +355,7 @@ void DragonArcade::checkBladeFireAllStages() {
 }
 
 
-static const int16 ENEMY_FIRE_ALLOWABLE_PAGES[] = { 3, 0xC, 0x1F, 0x28 };
+static const int16 ENEMY_FIRE_ALLOWABLE_PAGES[] = { 3, 12, 31, 40 };
 static const int16 ENEMY_FIRE_X_OFFSETS[] = { 0xB1, 0xB3, 0x77, 0x75, };
 static const int16 ENEMY_FIRE_Y_OFFSETS[] = { 0x4E, 0x56, 0x4D, 0x55,};
 
@@ -365,8 +365,9 @@ void DragonArcade::checkEnemyFireStage0124() {
 			continue;
 
 		for (int j = 0; j < 4; j++) {
-			if (_npcState[i].x < 0x154 && -20 < _npcState[i].x &&
+			if (_npcState[i].x < 340 && -20 < _npcState[i].x &&
 				ENEMY_FIRE_ALLOWABLE_PAGES[j] == _npcState[i].ttmPage) {
+				debug("enemy %d @ %d firing type %d on page %d", i, _npcState[i].x, j, _npcState[i].ttmPage);
 				ImageFlipMode flipMode = (_npcState[i].ttmPage < 0x1d) ? kImageFlipNone : kImageFlipH;
 				createBullet(ENEMY_FIRE_X_OFFSETS[j] + _npcState[i].xx - _scrollXOffset * 8 - 0xa0,
 							 ENEMY_FIRE_Y_OFFSETS[j] + _npcState[i].yy + 3, flipMode, 1);
@@ -534,8 +535,8 @@ void DragonArcade::mouseUpdate() {
 void DragonArcade::updateMouseAndJoystickStates() {
 	_bladeXMove = 0;
 	_scrollXIncrement = 0;
-	_rMouseButtonState = false;
-	_lMouseButtonState = false;
+	//_rMouseButtonState = false;
+	//_lMouseButtonState = false;
 	if (!_mouseIsAvailable) {
 		//if (g_optionJoystickOnButtonState != 0) {
 		//	Joystick_ArcadeUpdate();
@@ -666,7 +667,6 @@ void DragonArcade::arcade16de(int16 param) {
 	_arcadeTTM._startYOffset = param;
 	_uint0a17 = 0;
 	_bladeState1 = 0;
-	// TODO: What are these ?
 	_ttmYAdjust = 0;
 	_int0b5a = 15;
 }
@@ -802,8 +802,6 @@ uint16 DragonArcade::moveToNextStage() {
 		}
 		break;
 	case 4:
-		/*
-		**FIXME**: Blade Dropping off screen.. this triggers at the start and shouldn't??
 		if (-2 < _arcadeTTM._startYOffset && 129 < _npcState[0].xx && _npcState[0].xx < 201 && _npcState[0].health != 0) {
 			playSfx(0x57);
 			setFinishCountdownIfLessThan0(0x14);
@@ -816,9 +814,9 @@ uint16 DragonArcade::moveToNextStage() {
 			_mouseButtonWentDown = 0x80;
 			_npcState[0].byte12 = 13;
 			_npcState[0].health = 0;
-			_npcState[0].byte15 = 2;
+			_npcState[0].ttmNum = 2;
 			return 1;
-		} */
+		}
 
 		if (_scrollXOffset < 0x100) {
 			if (_isMovingStage == 0 && xblock == 0x54 && 0 < _scrollVelocityX && _bladeState1 == 0) {
@@ -856,7 +854,6 @@ void DragonArcade::playSFX55AndStuff() {
 	playSfx(0x55);
 	_bladeState1 = 7;
 	_uint0a17 = 0;
-	// TODO: What are these?
 	_ttmYAdjust = 0;
 	_int0b5a = 15;
 	_scrollVelocityX = 0;
@@ -970,14 +967,11 @@ void DragonArcade::initValuesForStage2() {
 	for (int i = 10; i < 14; i++) {
 		_npcState[i].xx = STAGE_2_VAL1_PART2[i - 10];
 	}
-	/*
-	 TODO: What are these?
-	 INT_39e5_3f6c = 0x52f;
-	 INT_39e5_3f6e = -0xd;
-	 BYTE_39e5_3f7e = 0x1f;
-	 INT_39e5_3f7c = 0x20;
-	 BYTE_39e5_3f81 = 2;
-	 */
+	_npcState[18].xx = 0x52f;
+	_npcState[18].yy = -13;
+	_npcState[18].byte12 = 31;
+	_npcState[18].ttmPage = 32;
+	_npcState[18].ttmNum = 2;
 }
 
 void DragonArcade::arcade2754(int16 floorY) {
@@ -1688,7 +1682,7 @@ void DragonArcade::initIfNeeded() {
 	drawBackgroundAndWeapons();
 	loadTTMScriptsForStage(_nextStage);
 	_initFinished = true;
-	_arcadeModeSomethingCounter = 0;
+	_attemptCounter = 0;
 	g_system->warpMouse(166, 158);
 	_dontRedrawBgndAndWeapons = true;
 	redraw();
@@ -1698,7 +1692,6 @@ void DragonArcade::updateBladeWithInputs() {
 	if (_stillLoadingScriptsMaybe)
 		return;
 
-	// TODO: What are these?
 	if (_int0b5a != 0) {
 		_int0b5a--;
 		if (_int0b5a == 0)
@@ -1855,9 +1848,7 @@ void DragonArcade::updateBladeWithInputs() {
 				_ttmYAdjust = _int0b58 * -4;
 				_uint0a17 = 1;
 			}
-		}
-		else if ((_bladeState1 == 2) &&
-				 (_bladeStateOffset + 0x38 == _npcState[0].ttmPage)) {
+		} else if (_bladeState1 == 2 && _bladeStateOffset + 0x38 == _npcState[0].ttmPage) {
 			_ttmYAdjust = _int0b58 * -4;
 			_uint0a17 = 1;
 		}
@@ -1954,7 +1945,7 @@ void DragonArcade::handleMouseStates() {
 			}
 		}
 	} else if (_mouseButtonWentDown == 1) {
-		if (_loadedArcadeStage == 3 && _haveBomb != 0 && _npcState[1].health != 0 &&
+		if (_loadedArcadeStage == 3 && _haveBomb && _npcState[1].health != 0 &&
 			  0x19 < abs(_npcState[1].y - _npcState[0].y) && abs(_npcState[1].x - _npcState[0].x) < 0x28) {
 			/* use a bomb */
 			_bladeState1 = 0xb;
@@ -1973,7 +1964,7 @@ void DragonArcade::handleMouseStates() {
 			_npcState[0].ttmPage = _bladeStateOffset + 0x24;
 		}
 	} else if (_mouseButtonWentDown == 2) {
-		if ((_bladeMoveFlagBeforeRButton & (kBladeMoveLeft | kBladeMoveRight)) == 0) {
+		if ((_bladeMoveFlagBeforeRButton & (kBladeMoveLeft | kBladeMoveRight)) == kBladeMoveNone) {
 			_bladeMoveFlag = static_cast<DragonBladeMoveFlag>(_bladeMoveFlagBeforeRButton | (_bladeHorizMoveAttempt & (kBladeMoveLeft | kBladeMoveRight)));
 		} else {
 			_bladeMoveFlag = _bladeMoveFlagBeforeRButton;
@@ -1981,7 +1972,7 @@ void DragonArcade::handleMouseStates() {
 		}
 
 		if ((_bladeMoveFlag & kBladeMoveUp) == kBladeMoveNone) {
-			if (_int0b58 + 1 < 5) {
+			if (_int0b58 < 4) {
 				_int0b58++;
 			} else {
 				_int0b58 = 4;
@@ -1998,9 +1989,9 @@ void DragonArcade::handleMouseStates() {
 			_bladeStateOffset = 0x7a;
 		}
 
-		if ((_bladeMoveFlagBeforeRButton & (kBladeMoveLeft | kBladeMoveRight)) == 0) {
+		if ((_bladeMoveFlagBeforeRButton & (kBladeMoveLeft | kBladeMoveRight)) == kBladeMoveNone) {
 			_bladeState1 = 1;
-			_npcState[0].ttmPage = _bladeStateOffset + 0xf;
+			_npcState[0].ttmPage = _bladeStateOffset + 15;
 		} else {
 			if ((_bladeMoveFlag & kBladeMoveLeft) == kBladeMoveNone) {
 				_scrollVelocityX = 1;
@@ -2012,7 +2003,7 @@ void DragonArcade::handleMouseStates() {
 			_npcState[0].ttmPage = _bladeStateOffset + 0x2d;
 		}
 
-		if ((_bladeMoveFlagBeforeRButton & kBladeMoveRight) != 0) {
+		if ((_bladeMoveFlagBeforeRButton & kBladeMoveDown) != kBladeMoveNone) {
 			findFloorMinGT();
 			if (!isFloorNotFound()) {
 				if (_bladeState1 == 2) {
@@ -2103,7 +2094,9 @@ void DragonArcade::initValuesForStage() {
 		initValuesForStage3();
 		break;
 	case 4:
-		for (int i = 1; i < 10; i++) {
+		// Note: The original also only does 8 NPCs here even though the arrays have
+		// 9 values in them (note the last x value is -1).
+		for (int i = 1; i < 9; i++) {
 			_npcState[i].xx = STAGE_4_NPC_XX_1[i - 1];
 			_npcState[i].yy = STAGE_4_NPC_YY_1[i - 1];
 			_npcState[i].byte12 = STAGE_4_NPC_BYTE12_1[i - 1];
@@ -2235,7 +2228,7 @@ void DragonArcade::arcadeTick() {
 			globals->setArcadeState(6);
 			return;
 		}
-		_arcadeModeSomethingCounter++;
+		_attemptCounter++;
 		checkToOpenMenu();
 		globals->setArcadeState(0);
 		return;
@@ -2247,21 +2240,24 @@ void DragonArcade::arcadeTick() {
 		finish();
 		return;
 	case 10:
+		// Restart? No.
 		fadeInAndClearScreen();
 		finish();
 		globals->setArcadeState(_shouldUpdateState + 6);
 		return;
 	case 20:
+		// Restart? Yes.
 		globals->setArcadeState(30);
 		return;
 	case 30:
+		// Do (re)start
 		loadTTMScriptsForStage(_nextStage);
 		// These don't seem to ever be used?
 		// UINT_39e5_0d0e = 0;
 		// UINT_39e5_0d10 = 0;
 		globals->setArcadeState(5);
-		_arcadeNeedsBufferCopy = true;
-		_flagInventoryOpened = false;
+		//_arcadeNeedsBufferCopy = true;
+		//flagInventoryOpened = false;
 		return;
 	default:
 		_haveBomb = arcadeState > 20;
@@ -2407,7 +2403,7 @@ void DragonArcade::drawBulletHitCircles(uint16 x, uint16 y, bool colorFlag) {
 }
 
 void DragonArcade::checkToOpenMenu() {
-	if (_arcadeModeSomethingCounter < 5) {
+	if (_attemptCounter < 5) {
 		// Open menu 45, hightlight widget 139
 		DgdsEngine::getInstance()->setMenuToTrigger(kMenuReplayArcade);
 	} else {
@@ -2528,7 +2524,7 @@ void DragonArcade::runThenDrawBulletsInFlight() {
 	// TODO: Set clip window here? 8,8,124,311
 	_arcadeTTM.runPagesForEachNPC(_scrollXOffset);
 
-	const Common::Rect screenWin(SCREEN_WIDTH, SCREEN_HEIGHT);
+	const Common::Rect screenWin(Common::Point(8, 8), SCREEN_WIDTH - 16, 117);
 	_arcadeTTM._currentTTMNum = _npcState[0].ttmNum;
 	_npcState[0].x_11 = 0;
 	_npcState[0].x_12 = 0;

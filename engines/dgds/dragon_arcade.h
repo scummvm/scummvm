@@ -162,7 +162,7 @@ private:
 	uint16 _nextRandomVal;
 	int16 _loadedArcadeStage;
 	int16 _nextStage;
-	int16 _arcadeModeSomethingCounter;
+	int16 _attemptCounter;
 	int16 _shouldUpdateState;
 	int16 _finishCountdown;
 	int16 _bladeState1;
@@ -198,8 +198,9 @@ private:
 	bool _haveBomb;
 	bool _enemyHasSmallGun;
 	bool _dontRedrawBgndAndWeapons;
-	bool _arcadeNeedsBufferCopy;
-	bool _flagInventoryOpened;
+	// maybe don't need these
+	//bool _arcadeNeedsBufferCopy;
+	//bool _flagInventoryOpened;
 	bool _initFinished;
 	bool _stillLoadingScriptsMaybe;
 	bool _flag40ee;

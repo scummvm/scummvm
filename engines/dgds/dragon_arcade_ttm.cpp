@@ -105,6 +105,7 @@ void DragonArcadeTTM::finishTTMParse(int16 envNum) {
 
 int16 DragonArcadeTTM::runNextPage(int16 pageNum) {
 	_shapes2[_currentTTMNum] = _shapes[_currentTTMNum];
+	// TODO: what is this?
 	//UINT_39e5_3ca2 = 0;
 
 	if (pageNum < _ttmEnvs[_currentTTMNum]._totalFrames && pageNum > -1 &&
@@ -251,14 +252,14 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 			int16 y = ivals[1] + _startYOffset + 2;
 			if (_brushes[_currentTTMNum].isValid())
 				_brushes[_currentTTMNum].getShape()->drawBitmap(_brushes[_currentTTMNum].getFrame(), x, y, drawWin, compBuffer, flipMode);
-			_npcState[0].y = ivals[1];
+			_npcState[0].y = y;
 		} else {
 			int16 x = ivals[0] + _drawXOffset;
 			int16 y = ivals[1] + _drawYOffset + 2;
 			if (_brushes[_currentTTMNum].isValid())
 				_brushes[_currentTTMNum].getShape()->drawBitmap(_brushes[_currentTTMNum].getFrame(), x, y, drawWin, compBuffer, flipMode);
-			_npcState[_currentNPCRunningTTM].x = ivals[0];
-			_npcState[_currentNPCRunningTTM].y = ivals[1];
+			_npcState[_currentNPCRunningTTM].x = x;
+			_npcState[_currentNPCRunningTTM].y = y;
 		}
 		break;
 	}
@@ -316,8 +317,8 @@ void DragonArcadeTTM::runPagesForEachNPC(int16 xScrollOffset) {
 			npcState.y_11 = 0;
 			npcState.y_22 = 0;
 			npcState.y_12 = 0;
-			 _drawXOffset = npcState.xx - xScrollOffset * 8 - 152;
-			 _drawYOffset = npcState.yy;
+			_drawXOffset = npcState.xx - xScrollOffset * 8 - 152;
+			_drawYOffset = npcState.yy;
 			_currentTTMNum = npcState.ttmNum;
 			if (_drawXOffset > -20 || _drawXOffset < 340) {
 				runNextPage(npcState.ttmPage);
