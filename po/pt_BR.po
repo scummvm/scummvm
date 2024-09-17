@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-16 10:02+0000\n"
+"POT-Creation-Date: 2024-09-17 05:32+0000\n"
 "PO-Revision-Date: 2024-08-27 03:43+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -9360,7 +9360,7 @@ msgstr ""
 "As atualizações podem ser baixadas em:\n"
 "%s"
 
-#: engines/myst3/myst3.cpp:1590 engines/pegasus/pegasus.cpp:749
+#: engines/myst3/myst3.cpp:1591 engines/pegasus/pegasus.cpp:749
 msgid "Invalid file name for saving"
 msgstr "Nome de arquivo inválido para salvar"
 
