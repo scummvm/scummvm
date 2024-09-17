@@ -155,7 +155,7 @@ void DisplayAt(int xxp, int yyp, int widd, const char *text) {
 
 	if (widd < 1) widd = _GP(play).GetUIViewport().GetWidth() / 2;
 	if (xxp < 0) xxp = _GP(play).GetUIViewport().GetWidth() / 2 - widd / 2;
-	_display_at(xxp, yyp, widd, text, DISPLAYTEXT_MESSAGEBOX, 0, 0, 0, false);
+	display_at(xxp, yyp, widd, text);
 }
 
 void DisplayAtYImpl(int ypos, const char *texx, bool as_speech) {
@@ -184,8 +184,7 @@ void DisplayAtYImpl(int ypos, const char *texx, bool as_speech) {
 			_GP(play).disabled_user_interface--;
 		}
 
-		_display_at(-1, ypos, ui_view.GetWidth() / 2 + ui_view.GetWidth() / 4,
-		            get_translation(texx), DISPLAYTEXT_MESSAGEBOX, 0, 0, 0, false);
+		display_at(-1, ypos, ui_view.GetWidth() / 2 + ui_view.GetWidth() / 4, get_translation(texx));
 	}
 }
 

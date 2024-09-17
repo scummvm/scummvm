@@ -237,7 +237,7 @@ ScreenOverlay *Overlay_CreateTextCore(bool room_layer, int x, int y, int width, 
 	if (width < 8) width = _GP(play).GetUIViewport().GetWidth() / 2;
 	if (x < 0) x = _GP(play).GetUIViewport().GetWidth() / 2 - width / 2;
 	if (text_color == 0) text_color = 16;
-	return _display_main(x, y, width, text, disp_type, font, -text_color, 0, allow_shrink, false, room_layer);
+	return display_main(x, y, width, text, disp_type, font, -text_color, 0, allow_shrink, false, room_layer);
 }
 
 ScriptOverlay *Overlay_CreateGraphicalImpl(bool room_layer, int x, int y, int slot, bool transparent, bool clone) {
