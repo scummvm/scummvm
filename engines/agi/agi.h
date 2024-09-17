@@ -1088,6 +1088,10 @@ private:
 
 public:
 	const AgiOpCodeEntry *getOpCodesTable() { return _opCodes; }
+
+private:
+	void goldRushClockTimeWorkaround_OnReadVar();
+	void goldRushClockTimeWorkaround_OnWriteVar(byte oldValue);
 };
 
 } // End of namespace Agi
