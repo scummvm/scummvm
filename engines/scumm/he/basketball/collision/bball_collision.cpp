@@ -192,7 +192,7 @@ int LogicHEBasketball::u32_userDeinitVirtualBall() {
 	return 1;
 }
 
-int LogicHEBasketball::u32_userInitPlayer(int playerID, U32FltPoint3D &playerLocation, int height, int radius, bool bPlayerIsInGame) {
+int LogicHEBasketball::u32_userInitPlayer(int playerID, U32FltPoint3D &playerLocation, int height, int radius, bool playerIsInGame) {
 	if (!((FIRST_PLAYER <= playerID) && (playerID <= LAST_PLAYER)))
 		error("LogicHEBasketball::u32_userInitPlayer(): Passed in invalid player ID");
 
@@ -209,7 +209,7 @@ int LogicHEBasketball::u32_userInitPlayer(int playerID, U32FltPoint3D &playerLoc
 		newPlayer.center.z = playerLocation.z + (height / 2);
 		newPlayer._collisionEfficiency = 0.5F;
 		newPlayer._friction = 0.5F;
-		newPlayer._playerIsInGame = bPlayerIsInGame;
+		newPlayer._playerIsInGame = playerIsInGame;
 		newPlayer.save();
 		playerList->push_back(newPlayer);
 		return 1;
@@ -392,7 +392,7 @@ int LogicHEBasketball::u32_userDetectBallCollision(U32FltPoint3D &ballLocation, 
 	return 1;
 }
 
-int LogicHEBasketball::u32_userDetectPlayerCollision(int playerID, U32FltPoint3D &playerLocation, U32FltVector3D &playerVector, bool bPlayerHasBall) {
+int LogicHEBasketball::u32_userDetectPlayerCollision(int playerID, U32FltPoint3D &playerLocation, U32FltVector3D &playerVector, bool playerHasBall) {
 	U32Distance3D distance;                 // The distance between the ball and a collision object candidate
 	CCollisionObjectVector collisionVector; // All objects that have been collided with
 
@@ -411,7 +411,7 @@ int LogicHEBasketball::u32_userDetectPlayerCollision(int playerID, U32FltPoint3D
 	CCollisionPlayer *sourcePlayer = _vm->_basketball->_court->getPlayerPtr(playerID);
 
 	// Update the player's status...
-	sourcePlayer->_playerHasBall = bPlayerHasBall;
+	sourcePlayer->_playerHasBall = playerHasBall;
 
 	// In SCUMM code, the center of a player in the z dimension is at their feet.
 	// In U32 code, it is in the middle of the cylinder, so make the translation...
