@@ -142,6 +142,23 @@ void Room510::init() {
 }
 
 void Room510::daemon() {
+	switch (_G(kernel).trigger) {
+	case 110:
+		terminateMachineAndNull(_steps);
+		series_unload(_stepsSeries);
+		ws_walk(407, 97, nullptr, 999, 8);
+		break;
+
+	case 999:
+		player_set_commands_allowed(true);
+
+		if (!_G(player).been_here_before)
+			digi_play("510R01", 1);
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Room510::pre_parser() {
