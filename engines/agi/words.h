@@ -48,9 +48,9 @@ private:
 	uint16  _egoWordCount;
 
 public:
-	uint16 getEgoWordCount();
-	const char *getEgoWord(int16 wordNr);
-	uint16 getEgoWordId(int16 wordNr);
+	uint16 getEgoWordCount() const;
+	const char *getEgoWord(int16 wordNr) const;
+	uint16 getEgoWordId(int16 wordNr) const;
 
 	int  loadDictionary_v1(Common::SeekableReadStream &stream);
 	int  loadDictionary(const char *fname);
@@ -64,7 +64,10 @@ public:
 
 private:
 	void  cleanUpInput(const char *userInput, Common::String &cleanInput);
-	int16 findWordInDictionary(const Common::String &userInput, uint16 userInputLen, uint16 userInputPos, uint16 &foundWordLen);
+	int16 findWordInDictionary(const Common::String &userInputLowercase, uint16 userInputLen, uint16 userInputPos, uint16 &foundWordLen);
+
+	bool handleSpeedCommands(const Common::String &userInputLowercase);
+	static void convertRussianUserInput(Common::String &userInputLowercase);
 };
 
 } // End of namespace Agi
