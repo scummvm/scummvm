@@ -139,9 +139,13 @@ public:
 						if (curPos.y <= _mousePos.y) {
 							if (draggedStonePos == 3)
 								delta = 186;
+							else
+								delta = 0;
 						} else {
 							if (draggedStonePos == 8)
 								delta = 196;
+							else
+								delta = 0;
 						}
 						off = delta + 150;
 					}
@@ -381,7 +385,7 @@ private:
 	bool _cursorTakenFlag = false;
 
 	mgVect2i _mousePos;
-	mgVect2f _mouseDelta;
+	mgVect2i _mouseDelta;
 	int _someVar3 = 0;
 	bool _someFlag1 = false;
 
