@@ -68,7 +68,7 @@ int LogicHEBasketball::u32_userInitCourt(int courtID) {
 	char fileVersion[32];
 	int versionStringLength = objectFile.readUint32LE();
 
-	if (versionStringLength <= 0 && versionStringLength > ARRAYSIZE(fileVersion) - 1)
+	if (versionStringLength <= 0 || versionStringLength > ARRAYSIZE(fileVersion) - 1)
 		error("LogicHEBasketball::u32_userInitCourt(): Read from stream did not read the version string length correctly.");
 	
 	objectFile.read(fileVersion, versionStringLength);
