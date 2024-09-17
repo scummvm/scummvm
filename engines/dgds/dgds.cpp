@@ -462,8 +462,6 @@ Common::Error DgdsEngine::run() {
 	init(false);
 	loadGameFiles();
 
-	// changeScene(55); // to test DRAGON intro sequence (after credits)
-
 	// If a savegame was selected from the launcher, load it now.
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot != -1)
