@@ -404,24 +404,24 @@ uint16 Words::getEgoWordId(int16 wordNr) const {
 }
 
 bool Words::handleSpeedCommands(const Common::String &userInputLowercase) {
-	// WORKAROUND: For Apple II support speed changes
-	// some of the games hadn't this feature
-	// some (like PQ1) had it, but we override the speed that the game request
-	// with `timeDelayOverwrite`
-	// this mechanism works for all the games, and therefore, doesn't bother to search in the dictionary
+	// We add speed controls to games that didn't originally have them.
+	// Apple II games had no speed controls, the interpreter ran as fast as it could.
+	// Some Apple IIgs games had speed controls, others didn't. We override the
+	// the speed that the game requests with `timeDelayOverwrite`.
 	switch (_vm->getPlatform()) {
+	case Common::kPlatformApple2:
 	case Common::kPlatformApple2GS:
 		if (userInputLowercase == "fastest") {
-			_vm->_game.setAppleIIgsSpeedLevel(0);
+			_vm->_game.setSpeedLevel(0);
 			return true;
 		} else if (userInputLowercase == "fast") {
-			_vm->_game.setAppleIIgsSpeedLevel(1);
+			_vm->_game.setSpeedLevel(1);
 			return true;
 		} else if (userInputLowercase == "normal") {
-			_vm->_game.setAppleIIgsSpeedLevel(2);
+			_vm->_game.setSpeedLevel(2);
 			return true;
 		} else if (userInputLowercase == "slow") {
-			_vm->_game.setAppleIIgsSpeedLevel(3);
+			_vm->_game.setSpeedLevel(3);
 			return true;
 		}
 		break;

@@ -452,12 +452,16 @@ struct AgiGame {
 
 	bool automaticRestoreGame;
 
+	byte speedLevel; /**< Current game speed for certain platforms/versions */
+
 	uint16 appleIIgsSpeedControllerSlot;
-	int appleIIgsSpeedLevel;
 
 	const char *getString(int number);
 	void setString(int number, const char *str);
-	void setAppleIIgsSpeedLevel(int appleIIgsSpeedLevel);
+	/**
+	 * Sets the speed level and displays a message box.
+	 */
+	void setSpeedLevel(byte s);
 
 	AgiGame() {
 		_vm = nullptr;
@@ -528,8 +532,9 @@ struct AgiGame {
 
 		automaticRestoreGame = false;
 
+		speedLevel = 2; // normal speed
+
 		appleIIgsSpeedControllerSlot = 0xffff;	// we didn't add yet speed menu
-		appleIIgsSpeedLevel = 2;  // normal speed
 	}
 };
 

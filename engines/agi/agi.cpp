@@ -782,10 +782,10 @@ void AgiGame::setString(int number, const char *str) {
 	}
 }
 
-void AgiGame::setAppleIIgsSpeedLevel(int i) {
-	appleIIgsSpeedLevel = i;
+void AgiGame::setSpeedLevel(byte s) {
+	speedLevel = s;
 	_vm->setVar(VM_VAR_WINDOW_AUTO_CLOSE_TIMER, 6);
-	switch (i) {
+	switch (speedLevel) {
 	case 0:
 		_vm->_text->messageBox("Fastest speed.");
 		break;
@@ -796,6 +796,7 @@ void AgiGame::setAppleIIgsSpeedLevel(int i) {
 		_vm->_text->messageBox("Normal speed.");
 		break;
 	case 3:
+	case 4:
 		_vm->_text->messageBox("Slow speed.");
 		break;
 	}

@@ -322,7 +322,7 @@ uint16 AgiEngine::processAGIEvents() {
 		for (int i = 0; i < 4; i++)
 			if (_game.controllerOccurred[_game.appleIIgsSpeedControllerSlot + i]) {
 				_game.controllerOccurred[_game.appleIIgsSpeedControllerSlot + i] = false;
-				_game.setAppleIIgsSpeedLevel(i);
+				_game.setSpeedLevel(i);
 			}
 
 	_gfx->updateScreen();
@@ -384,13 +384,24 @@ void AgiEngine::playGame() {
 		inGameTimerUpdate();
 
 		byte timeDelay;
-		if (getPlatform() == Common::kPlatformApple2GS) {
+		if (getPlatform() == Common::kPlatformApple2) {
+			// Apple II games did not have speed control. The interpreter ran as
+			// fast as it could, but it was still quite slow. Game scripts still
+			// set variable 10, but they do so inconsistently because they were
+			// ported from other platforms and it had no effect.
+			// We add speed control in `Words::handleSpeedCommands`.
+			timeDelay = _game.speedLevel;
+		} else if (getVersion() < 0x2000) {
+			// AGIv1 uses an internal speed level, set by the `set.speed` opcode
+			timeDelay = _game.speedLevel;
+		} else if (getPlatform() == Common::kPlatformApple2GS) {
 			byte newTimeDelay = 0xff;
 			timeDelay = getAppleIIgsTimeDelay(appleIIgsDelayOverwrite, newTimeDelay);
 			if (newTimeDelay != 0xff) {
 				setVar(VM_VAR_TIME_DELAY, newTimeDelay);
 			}
 		} else {
+			// AGIv2 and AGIv3 use the time delay variable set by game scripts
 			timeDelay = getVar(VM_VAR_TIME_DELAY);
 		}
 
@@ -576,12 +587,12 @@ byte AgiEngine::getAppleIIgsTimeDelay(
 
 	if (timeDelayOverwrite == -99) {
 		// use default time delay in case no room specific one was found ...
-		if (_game.appleIIgsSpeedLevel == 2)
+		if (_game.speedLevel == 2)
 			// ... and the user set the speed to "Normal" ...
 			timeDelayOverwrite = appleIIgsDelayOverwrite->defaultTimeDelayOverwrite;
 		else
 			// ... otherwise, use the speed the user requested (either from menu, or from text parser)
-			timeDelayOverwrite = _game.appleIIgsSpeedLevel;
+			timeDelayOverwrite = _game.speedLevel;
 	}
 
 

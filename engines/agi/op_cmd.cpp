@@ -2297,10 +2297,10 @@ void cmdShakeScreen(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 }
 
 void cmdSetSpeed(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	// V1 command
-	(void)state;
-	(void)parameter;
-	// speed = _v[p0];
+	byte varNr = parameter[0];
+	byte speed = vm->getVar(varNr);
+
+	vm->_game.speedLevel = speed;
 }
 
 void cmdSetItemView(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
