@@ -76,7 +76,7 @@ bool GraphicsDriverBase::SetVsync(bool enabled) {
 		_mode.Vsync = new_value;
 	}
 	else {
-		Debug::Printf("SetVsync: failed, stay at %d", new_value);
+		Debug::Printf("SetVsync: failed, stay at %d", _mode.Vsync);
 		_capsVsync = false; // mark as non-capable (at least in current mode)
 	}
 	return _mode.Vsync;
