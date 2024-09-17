@@ -777,6 +777,28 @@ HError GameDataExtReader::ReadBlock(int /*block_id*/, const String &ext_id,
 	return HError::None();
 }
 
+// Search and read only data belonging to the general game info
+class GameDataExtPreloader : public GameDataExtReader {
+public:
+	GameDataExtPreloader(LoadedGameEntities &ents, GameDataVersion data_ver, Stream *in)
+		: GameDataExtReader(ents, data_ver, in) {}
+
+protected:
+	HError ReadBlock(int block_id, const String &ext_id, soff_t block_len, bool &read_next) override;
+};
+
+HError GameDataExtPreloader::ReadBlock(int /*block_id*/, const String &ext_id,
+									   soff_t /*block_len*/, bool &read_next) {
+	// Try reading only data which belongs to the general game info
+	read_next = true;
+	if (ext_id.CompareNoCase("v361_objnames") == 0) {
+		_ents.Game.gamename = StrUtil::ReadString(_in);
+		_ents.Game.saveGameFolderName = StrUtil::ReadString(_in);
+		read_next = false; // we're done
+	}
+	return HError::None();
+}
+
 HGameFileError ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersion data_ver) {
 	GameSetupStruct &game = ents.Game;
 
@@ -895,6 +917,16 @@ void PreReadGameData(GameSetupStruct &game, Stream *in, GameDataVersion data_ver
 	GameSetupStruct::SerializeInfo sinfo;
 	_GP(game).ReadFromFile(in, data_ver, sinfo);
 	_GP(game).read_savegame_info(in, data_ver);
+
+	// Check for particular expansions that might have data necessary
+	// for "preload" purposes
+	if (sinfo.ExtensionOffset == 0u)
+		return; // either no extensions, or data version is too early
+
+	in->Seek(sinfo.ExtensionOffset, kSeekBegin);
+	LoadedGameEntities ents(game);
+	GameDataExtPreloader reader(ents, data_ver, in);
+	reader.Read();
 }
 
 } // namespace Shared
