@@ -202,7 +202,8 @@ void Room510::pre_parser() {
 	}
 }
 
-#define HERE(ITEM) player_said(ITEM) && inv_object_is_here(ITEM)
+#define HERE(ITEM) (player_said(ITEM) && inv_object_is_here(ITEM))
+#define HAS(ITEM) (player_said(ITEM) && inv_player_has(ITEM))
 
 void Room510::parser() {
 	bool lookFlag = player_said_any("look", "look at");
@@ -357,7 +358,7 @@ void Room510::parser() {
 		if (!parserSub())
 			return;
 	} else if (takeFlag && _G(flags)[V170] != 1 &&
-			player_said_any("VINES", "ROPE", "GREEN VINE", "BROWN VINE") && takeVinesRope()) {
+		player_said_any("VINES", "ROPE", "GREEN VINE", "BROWN VINE") && takeVinesRope()) {
 		// No implementation
 	} else if (takeFlag && player_said("WOODEN LADDER")) {
 		switch (_G(kernel).trigger) {
@@ -370,9 +371,9 @@ void Room510::parser() {
 			player_set_commands_allowed(false);
 			if (!_G(flags)[V169]) {
 				if (!inv_object_is_here("VINES") && !inv_object_is_here("ROPE") &&
-						!inv_object_is_here("GREEN VINE") && !inv_object_is_here("BROWN VINE") &&
-						!_G(flags)[V170]) {
-					kernel_timing_trigger(10, 8);					
+					!inv_object_is_here("GREEN VINE") && !inv_object_is_here("BROWN VINE") &&
+					!_G(flags)[V170]) {
+					kernel_timing_trigger(10, 8);
 				} else {
 					kernel_timing_trigger(10, 2);
 				}
@@ -517,22 +518,278 @@ void Room510::parser() {
 			break;
 		}
 	} else if (inv_object_is_here("WOODEN LADDER") && (
-			player_said("ROPE", "WOODEN LADDER") ||
-			player_said("VINES", "WOODEN LADDER") ||
-			player_said("GREEN VINE", "WOODEN LADDER") ||
-			player_said("BROWN VINE", "WOODEN LADDER")
+		player_said("ROPE", "WOODEN LADDER") ||
+		player_said("VINES", "WOODEN LADDER") ||
+		player_said("GREEN VINE", "WOODEN LADDER") ||
+		player_said("BROWN VINE", "WOODEN LADDER")
 		)) {
 		woodenLadder();
 	} else if ((player_said("LADDER/ROPE", "ALTAR") && inv_player_has("LADDER/ROPE")) ||
 		(player_said("LADDER/VINES", "ALTAR") && inv_player_has("LADDER/VINES")) ||
 		(player_said("LADDER/GREEN VINE", "ALTAR") && inv_player_has("LADDER/GREEN VINE")) ||
 		(player_said("LADDER/BROWN VINE", "ALTAR") && inv_player_has("LADDER/BROWN VINE"))
-	) {
+		) {
 		if (!_G(flags)[V169])
 			altar();
-	}
-	// TODO
-	else {
+	} else if (player_said("GREEN VINE", "BROWN VINE") && inv_player_has("GREEN VINE") &&
+		inv_player_has("BROWN VINE")) {
+		inv_put_thing_in("GREEN VINE", NOWHERE);
+		inv_put_thing_in("BROWN VINE", NOWHERE);
+		inv_give_to_player("VINES");
+	} else if (useFlag && HERE("ROPE")) {
+		if (_G(flags)[V169] == 0) {
+			digi_play("510R10", 1);
+		} else if (_G(flags)[V170] == 1) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				terminateMachineAndNull(_steps);
+				terminateMachineAndNull(_ladder);
+				terminateMachineAndNull(_rope);
+				terminateMachineAndNull(_statue);
+
+				_pu03 = series_stream("510pu03", 5, 0, 3);
+				series_stream_break_on_frame(_pu03, 58, 1);
+				break;
+			case 1:
+				_rope = series_play("ROPE UNWINDS DOWN THE TOWER", 0x100, 16, -1, 5, 0, 100, 0, 0, 35, 35);
+				_statue = series_play(" 510 STATUE LAYED DOWN", 0xa00, 16, -1, 5);
+				_ladder = series_play("510 LADDER", 0xf00, 16, -1, 5);
+				_steps = series_play("Rip starts down wall", 0x200, 18, 2, 5, 0, 100, 0, 0, 0, 34);
+				break;
+			case 2:
+				terminateMachineAndNull(_steps);
+
+				if (inv_object_is_here("CRYSTAL SKULL")) {
+					hotspot_set_active("SKULL", false);
+					hotspot_set_active("NICHE", true);
+				}
+
+				ws_unhide_walker();
+				ws_demand_location(425, 128, 11);
+				_G(flags)[V170] = 0;
+				player_set_commands_allowed(true);
+				break;
+			case 3:
+				terminateMachineAndNull(_pu03);
+				break;
+			default:
+				break;
+			}
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				ws_walk(425, 128, nullptr, 1, 11);
+				break;
+			case 1:
+				player_set_commands_allowed(false);
+				ws_hide_walker();
+				_steps = series_play("Rip starts down wall", 0x200, 16, 2, 5, 0, 100, 0, 0, 0, 34);
+				digi_preload("510_s07");
+				break;
+			case 2:
+				terminateMachineAndNull(_steps);
+				terminateMachineAndNull(_ladder);
+				terminateMachineAndNull(_rope);
+				terminateMachineAndNull(_statue);
+				_dangling = series_load("RIP DANGLES FROM ROPE");
+				digi_play("510_s07", 1);
+				series_stream("510 RIP DOWN", 5, 0, 3);
+				break;
+			case 3:
+				digi_unload("510_s07");
+				_rope = series_play("ROPE UNWINDS DOWN THE TOWER", 0x100, 16, -1, 5, 0, 100, 0, 0, 35, 35);
+				_statue = series_play(" 510 STATUE LAYED DOWN", 0xa00, 16, -1, 5);
+				_ladder = series_play("510 LADDER", 0xf00, 16, -1, 5);
+				_steps = series_play("RIP DANGLES FROM ROPE", 0x100, 16, -1, 5, 0, 100, 0, 0, 0, 0);
+				kernel_timing_trigger(1, 4);
+				break;
+			case 4:
+				_G(flags)[V170] = 1;
+				_G(flags)[V292] = 0;
+
+				if (inv_object_is_here("CRYSTAL SKULL")) {
+					hotspot_set_active("SKULL", true);
+					hotspot_set_active("NICHE", false);
+				}
+
+				player_set_commands_allowed(true);
+				break;
+			default:
+				break;
+			}
+		}
+	} else if (useFlag && (HERE("GREEN VINE") || HERE("BROWN VINE"))) {
+		digi_play(_G(flags)[V169] ? "com113" : "510R10", 1);
+	} else if ((player_said("ROPE", "ALTAR POST") && inv_player_has("ROPE")) ||
+		(player_said("GREEN VINE", "ALTAR POST") && inv_player_has("GREEN VINE")) ||
+		(player_said("BROWN VINE", "ALTAR POST") && inv_player_has("BROWN VINE")) ||
+		(player_said("VINES", "ALTAR POST") && inv_player_has("VINES"))) {
+		if (_G(flags)[V169])
+			return;
+
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripLowReach4 = series_load("RIP TREK LOW REACHER POS1");
+			kernel_timing_trigger(1, 1);
+			break;
+		case 1:
+			setGlobals1(_ripLowReach4, 1, 28, 28, 28);
+			sendWSMessage_110000(2);
+			break;
+		case 2:
+			if (player_said("ROPE"))
+				_rope = series_play("510 STATUE AND ROPE", 0xf00, 16, 3, 5);
+			if (player_said("GREEN VINE") || player_said("BROWN VINE"))
+				_rope = series_play("510 STATUE AND ANY VINE", 0xf00, 16, 3, 5);
+			if (player_said("VINES"))
+				_rope = series_play("510 STATUE AND COMBO VINES", 0xf00, 16, 3, 5);
+			break;
+		case 3:
+			sendWSMessage_140000(4);
+			break;
+		case 4:
+			series_unload(_ripLowReach4);
+			kernel_timing_trigger(150, 8);
+			ws_hide_walker();
+			terminateMachineAndNull(_statue);
+			_statue = series_play("510 RIP LOWERS STATUE", 0xa00, 16, 5, 5);
+			break;
+		case 5:
+			ws_unhide_walker();
+			terminateMachineAndNull(_statue);
+			_statue = series_play(" 510 STATUE LAYED DOWN", 0xa00, 16, -1, 5);
+			kernel_timing_trigger(1, 7);
+			hotspot_set_active("ALTAR POST", false);
+			hotspot_set_active("ALTAR POST ", true);
+			kernel_load_variant("510lock1");
+			break;
+		case 7:
+			if (player_said("ROPE")) {
+				inv_put_thing_in("ROPE", 510);
+				hotspot_set_active("ROPE ", true);
+			}
+
+			if (player_said("GREEN VINE")) {
+				inv_put_thing_in("GREEN VINE", 510);
+				hotspot_set_active("GREEN VINE ", true);
+			}
+
+			if (player_said("BROWN VINE")) {
+				inv_put_thing_in("BROWN VINE", 510);
+				hotspot_set_active("BROWN VINE ", true);
+			}
+
+			if (player_said("VINES")) {
+				inv_put_thing_in("VINES", 510);
+				hotspot_set_active("VINES ", true);
+			}
+
+			_G(flags)[V169] = 2;
+			player_set_commands_allowed(true);
+			break;
+		case 8:
+			digi_play("510_s02", 2);
+			break;
+		default:
+			break;
+		}
+	} else if (useFlag && HAS("VINES")) {
+		inv_give_to_player("GREEN VINE");
+		inv_give_to_player("BROWN VINE");
+		inv_put_thing_in("VINES", NOWHERE);
+	} else if (useFlag && HAS("LADDER/ROPE")) {
+		inv_give_to_player("ROPE");
+		inv_give_to_player("WOODEN LADDER");
+		inv_put_thing_in("LADDER/ROPE", NOWHERE);
+	} else if (player_said("ROPE", "WOODEN LADDER") && inv_player_has("ROPE") &&
+		inv_player_has("WOODEN LADDER")) {
+		inv_put_thing_in("ROPE", NOWHERE);
+		inv_put_thing_in("WOODEN LADDER", NOWHERE);
+		inv_give_to_player("LADDER/ROPE");
+	} else if (useFlag && HAS("LADDER/GREEN VINE")) {
+		inv_give_to_player("GREEN VINE");
+		inv_give_to_player("WOODEN LADDER");
+		inv_put_thing_in("LADDER/GREEN VINE", NOWHERE);
+	} else if (player_said("GREEN VINE", "WOODEN LADDER") && inv_player_has("GREEN VINE") &&
+		inv_player_has("WOODEN LADDER")) {
+		inv_put_thing_in("GREEN VINE", NOWHERE);
+		inv_put_thing_in("WOODEN LADDER", NOWHERE);
+		inv_give_to_player("LADDER/GREEN VINE");
+	} else if (useFlag && HAS("LADDER/BROWN VINE")) {
+		inv_give_to_player("BROWN VINE");
+		inv_give_to_player("WOODEN LADDER");
+		inv_put_thing_in("LADDER/BROWN VINE", NOWHERE);
+	} else if (player_said("BROWN VINE", "WOODEN LADDER") && inv_player_has("BROWN VINE") &&
+		inv_player_has("WOODEN LADDER")) {
+		inv_put_thing_in("BROWN VINE", NOWHERE);
+		inv_put_thing_in("WOODEN LADDER", NOWHERE);
+		inv_give_to_player("LADDER/BROWN VINE");
+	} else if (useFlag && HAS("VINES LADDER")) {
+		inv_give_to_player("VINES");
+		inv_give_to_player("WOODEN LADDER");
+		inv_put_thing_in("LADDER/VINES", NOWHERE);
+	} else if (player_said("VINES", "WOODEN LADDER") && inv_player_has("VINES") &&
+		inv_player_has("WOODEN LADDER")) {
+		inv_put_thing_in("VINES", NOWHERE);
+		inv_put_thing_in("WOODEN LADDER", NOWHERE);
+		inv_give_to_player("LADDER/VINES");
+	} else if (player_said("journal") && !takeFlag && !lookFlag &&
+		!inv_player_has(_G(player).noun)) {
+		if (_G(flags)[kMocaMocheCartoon]) {
+			digi_play("com029", 1);
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				ws_walk(407, 97, nullptr, 1, 10);
+				break;
+			case 1:
+				player_set_commands_allowed(false);
+
+				if (_flag1) {
+					sendWSMessage_multi(0);
+				} else {
+					digi_play("com028", 1, 255, 100);
+					_flag1 = true;
+				}
+				break;
+			case 6:
+				_G(flags)[V089] = 1;
+				_G(flags)[kMocaMocheCartoon] = 1;
+				break;
+			case 100:
+				_G(kernel).trigger = -1;
+				sendWSMessage_multi(0);
+				break;
+			default:
+				sendWSMessage_multi(0);
+				break;
+			}
+		}
+	} else if (player_said("Stairs") && !lookFlag && !takeFlag) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			kernel_timing_trigger(15, 1);
+			break;
+		case 1:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			_steps = series_play("510 RIP DOWN STEPS", 0x100, 16, 2, 5, 0, 100, 0, 0, 0, 28);
+			break;
+		case 2:
+			terminateMachineAndNull(_steps);
+			_steps = series_play("510 RIP DOWN STEPS", 0x100, 16, 2, 5, 0, 100, 0, 0, 29, 38);
+			disable_player_commands_and_fade_init(3);
+			break;
+		case 3:
+			_G(game).setRoom(509);
+			terminateMachineAndNull(_steps);
+			break;
+		default:
+			break;
+		}
+	} else {
 		return;
 	}
 
