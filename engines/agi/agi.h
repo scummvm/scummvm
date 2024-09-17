@@ -359,6 +359,8 @@ enum CycleInnerLoopType {
 
 typedef Common::Array<int16> SavedGameSlotIdArray;
 
+struct AgiAppleIIgsDelayOverwriteGameEntry;
+
 /**
  * AGI game structure.
  * This structure contains all global data of an AGI game executed
@@ -932,6 +934,9 @@ public:
 	void checkQuickLoad();
 
 	const Common::String getTargetName() const { return _targetName; }
+
+private:
+	byte getAppleIIgsTimeDelay(const AgiAppleIIgsDelayOverwriteGameEntry *appleIIgsDelayOverwrite, byte &newTimeDelay) const;
 
 	// Objects
 public:
