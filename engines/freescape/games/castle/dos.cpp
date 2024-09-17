@@ -176,7 +176,7 @@ void CastleEngine::loadAssetsDOSFullGame() {
 			_endGameBackgroundFrame = loadFrameFromPlanes(stream, 112, 108);
 			_endGameBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
 
-			_background = loadFrameFromPlanes(stream, 504, 42);
+			_background = loadFrameFromPlanes(stream, 504, 18);
 			_background->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
 			debug("%lx", stream->pos());
 			// Eye widget is next to 0x1f058
