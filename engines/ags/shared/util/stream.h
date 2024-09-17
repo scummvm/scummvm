@@ -59,10 +59,9 @@ public:
 	// Returns an optional path of a stream's source, such as a filepath;
 	// primarily for diagnostic purposes
 	const String &GetPath() const { return _path; }
-	// Tells if the stream has errors
-	virtual bool HasErrors() const {
-		return false;
-	}
+	// Tells if there were errors during previous io operation(s);
+	// the call to GetError() *resets* the error record.
+	virtual bool GetError() const { return false; }
 	// Flush stream buffer to the underlying device
 	virtual bool Flush() = 0;
 
@@ -303,7 +302,7 @@ public:
 		return _stream->seek(offset, origin);
 	}
 
-	bool HasErrors() const override {
+	bool GetError() const override {
 		return _stream->err();
 	}
 	bool Flush() override {

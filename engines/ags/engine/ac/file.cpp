@@ -530,7 +530,7 @@ static int ags_pf_feof(void *userdata) {
 }
 
 static int ags_pf_ferror(void *userdata) {
-	return ((AGS_PACKFILE_OBJ *)userdata)->stream->HasErrors() ? 1 : 0;
+	return ((AGS_PACKFILE_OBJ *)userdata)->stream->GetError() ? 1 : 0;
 }
 
 // Custom PACKFILE callback table

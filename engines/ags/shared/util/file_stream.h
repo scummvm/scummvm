@@ -49,7 +49,9 @@ public:
 
 	FileWorkMode GetWorkMode() const { return _workMode; }
 
-	bool HasErrors() const override;
+	// Tells if there were errors during previous io operation(s);
+	// the call to GetError() *resets* the error record.
+	bool GetError() const override;
 	void Close() override;
 	bool Flush() override;
 
