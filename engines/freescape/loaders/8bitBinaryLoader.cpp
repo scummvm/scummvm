@@ -722,14 +722,6 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	uint8 numberOfAreas = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Number of areas: %d", numberOfAreas);
 
-	// Castle Master seems to have invalid number of areas?
-	if (isCastle()) {
-		if (isDOS())
-			numberOfAreas = isDemo() ? 31 : 104;
-		else if (isAmiga())
-			numberOfAreas = isDemo() ? 87 : 104;
-	}
-
 	uint32 dbSize = readPtr(file);
 	debugC(1, kFreescapeDebugParser, "Database ends at %x", dbSize);
 

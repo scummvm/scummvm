@@ -41,7 +41,8 @@ Common::SeekableReadStream *CastleEngine::decryptFile(const Common::Path &filena
 
 	int seed = 24;
 	for (int i = 0; i < size; i++) {
-		encryptedBuffer[i] ^= seed;
+		if (i > 1)
+			encryptedBuffer[i] ^= seed;
 		seed = (seed + 1) & 0xff;
 	}
 
