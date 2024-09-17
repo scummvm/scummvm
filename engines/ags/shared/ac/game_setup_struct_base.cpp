@@ -173,6 +173,8 @@ void GameSetupStructBase::ReadFromFile(Stream *in, GameDataVersion game_ver, Ser
 	default_lipsync_frame = in->ReadInt32();
 	invhotdotsprite = in->ReadInt32();
 	in->ReadArrayOfInt32(reserved, NUM_INTS_RESERVED);
+
+	info.ExtensionOffset = static_cast<uint32_t>(in->ReadInt32());
 	in->ReadArrayOfInt32(&info.HasMessages.front(), MAXGLOBALMES);
 
 	info.HasWordsDict = in->ReadInt32() != 0;

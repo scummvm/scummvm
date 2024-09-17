@@ -57,7 +57,7 @@ struct ccScript;
 struct GameSetupStructBase {
 	static const int  LEGACY_GAME_NAME_LENGTH = 50;
 	static const int  MAX_OPTIONS = 100;
-	static const int  NUM_INTS_RESERVED = 17;
+	static const int  NUM_INTS_RESERVED = 16;
 
 	Shared::String    gamename;
 	int32_t           options[MAX_OPTIONS];
@@ -101,6 +101,8 @@ struct GameSetupStructBase {
 		bool HasCCScript = false;
 		bool HasWordsDict = false;
 		std::array<int> HasMessages;
+		// File offset at which game data extensions begin
+		uint32_t ExtensionOffset = 0u;
 
 		SerializeInfo() {
 			HasMessages.resize(MAXGLOBALMES);
