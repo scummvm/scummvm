@@ -68,6 +68,13 @@ inline size_t break_up_text_into_lines(const char *todis, SplitLines &lines, int
 // cases when the buffer is a field inside one of the game structs,
 // in which case this returns that field's capacity.
 size_t check_strcapacity(char *ptt);
+// Tries if the input string contains a voice-over token ("&N"),
+// *optionally* fills the voice_num value (if the valid int pointer is passed),
+// and returns the pointer to the text portion after the token.
+// If returned pointer equals input pointer, that means that there was no token.
+// voice_num must be > 0 for a valid token, it's assigned 0 if no token was found,
+// or if there have been a parsing error.
+const char *parse_voiceover_token(const char *text, int *voice_num);
 
 } // namespace AGS3
 
