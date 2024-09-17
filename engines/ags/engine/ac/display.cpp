@@ -401,18 +401,16 @@ void post_display_cleanup() {
 }
 
 bool try_auto_play_speech(const char *text, const char *&replace_text, int charid) {
-	const char *src = text;
-	if (src[0] != '&')
-		return false;
+	int voice_num;
+	const char *src = parse_voiceover_token(text, &voice_num);
+	if (src == text)
+		return false; // no token
 
-	int sndid = atoi(&src[1]);
-	while ((src[0] != ' ') & (src[0] != 0)) src++;
-	if (src[0] == ' ') src++;
-	if (sndid <= 0)
+	if (voice_num <= 0)
 		quit("DisplaySpeech: auto-voice symbol '&' not followed by valid integer");
 
 	replace_text = src; // skip voice tag
-	if (play_voice_speech(charid, sndid)) {
+	if (play_voice_speech(charid, voice_num)) {
 		// if Voice Only, then blank out the text
 		if (_GP(play).speech_mode == kSpeech_VoiceOnly)
 			replace_text = "  ";
@@ -422,16 +420,10 @@ bool try_auto_play_speech(const char *text, const char *&replace_text, int chari
 }
 
 int GetTextDisplayLength(const char *text) {
-	int len = (int)strlen(text);
-	if ((text[0] == '&') && (_GP(play).unfactor_speech_from_textlength != 0)) {
-		// if there's an "&12 text" type line, remove "&12 " from the source length
-		size_t j = 0;
-		while ((text[j] != ' ') && (text[j] != 0))
-			j++;
-		j++;
-		len -= j;
-	}
-	return len;
+	// Skip voice-over token from the length calculation if required
+	if (_GP(play).unfactor_speech_from_textlength != 0)
+		text = parse_voiceover_token(text, nullptr);
+	return static_cast<int>(strlen(text));
 }
 
 int GetTextDisplayTime(const char *text, int canberel) {
