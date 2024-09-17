@@ -261,11 +261,8 @@ size_t break_up_text_into_lines(const char *todis, bool apply_direction, SplitLi
 	if (fonnt == -1)
 		fonnt = _GP(play).normal_font;
 
-	//  char sofar[100];
-	if (todis[0] == '&') {
-		while ((todis[0] != ' ') & (todis[0] != 0)) todis++;
-		if (todis[0] == ' ') todis++;
-	}
+	// Skip voice-over token; FIXME: should not be done in this line-splitting func!
+	todis = parse_voiceover_token(todis, nullptr);
 	lines.Reset();
 	_G(longestline) = 0;
 
@@ -305,6 +302,23 @@ size_t check_strcapacity(char *ptt) {
 	if (((uintptr_t)&ptt[0] >= charstart) && ((uintptr_t)&ptt[0] <= charend))
 		return sizeof(CharacterInfo::name);
 	return MAX_MAXSTRLEN;
+}
+
+const char *parse_voiceover_token(const char *text, int *voice_num) {
+	if (*text != '&') {
+		if (voice_num)
+			*voice_num = 0;
+		return text; // no token
+	}
+
+	if (voice_num)
+		*voice_num = atoi(&text[1]);
+	// Skip the token and a single following space char
+	for (; *text && *text != ' '; ++text) {
+	}
+	if (*text == ' ')
+		++text;
+	return text;
 }
 
 //=============================================================================
