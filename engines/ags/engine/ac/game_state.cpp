@@ -592,7 +592,7 @@ void GameState::ReadFromSavegame(Stream *in, GameDataVersion data_ver, GameState
 	}
 
 	in->Read(takeover_from, 50);
-	in->Read(playmp3file_name, PLAYMP3FILE_MAX_FILENAME_LEN);
+	playmp3file_name.ReadCount(in, PLAYMP3FILE_MAX_FILENAME_LEN);
 	in->Read(globalstrings, MAXGLOBALSTRINGS * MAX_MAXSTRLEN);
 	in->Read(lastParserEntry, MAX_MAXSTRLEN);
 	if (svg_ver < kGSSvgVersion_361_14)
@@ -786,7 +786,7 @@ void GameState::WriteForSavegame(Stream *out) const {
 	out->WriteInt16(crossfade_final_volume_in);
 
 	out->Write(takeover_from, 50);
-	out->Write(playmp3file_name, PLAYMP3FILE_MAX_FILENAME_LEN);
+	playmp3file_name.WriteCount(out, PLAYMP3FILE_MAX_FILENAME_LEN);
 	out->Write(globalstrings, MAXGLOBALSTRINGS * MAX_MAXSTRLEN);
 	out->Write(lastParserEntry, MAX_MAXSTRLEN);
 	StrUtil::WriteString(game_name, out);
