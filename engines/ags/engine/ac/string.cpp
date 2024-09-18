@@ -296,12 +296,23 @@ size_t break_up_text_into_lines(const char *todis, bool apply_direction, SplitLi
 // This is a somewhat ugly safety fix that tests whether the script tries
 // to write inside the Character's struct (e.g. char.name?), and truncates
 // the write limit accordingly.
-size_t check_strcapacity(char *ptt) {
-	uintptr_t charstart = (uintptr_t)&_GP(game).chars[0];
-	uintptr_t charend = charstart + sizeof(CharacterInfo) * _GP(game).numcharacters;
-	if (((uintptr_t)&ptt[0] >= charstart) && ((uintptr_t)&ptt[0] <= charend))
-		return sizeof(CharacterInfo::name);
+size_t check_scstrcapacity(const char *ptr) {
+	const void *charstart = &_GP(game).chars[0];
+	const void *charend = &_GP(game).chars[0] + sizeof(CharacterInfo) * _GP(game).chars.size();
+	if ((ptr >= charstart) && (ptr <= charend))
+		return sizeof(CharacterInfo::legacy_name);
 	return MAX_MAXSTRLEN;
+}
+
+// Similar in principle to check_scstrcapacity, but this will sync
+// legacy fixed-size name field with the contemporary property value.
+void commit_scstr_update(const char *ptr) {
+	const void *charstart = &_GP(game).chars[0];
+	const void *charend = &_GP(game).chars[0] + sizeof(CharacterInfo) * _GP(game).chars.size();
+	if ((ptr >= charstart) && (ptr <= charend)) {
+		size_t char_index = ((uintptr_t)ptr - (uintptr_t)charstart) / sizeof(CharacterInfo);
+		_GP(game).chars[char_index].name = _GP(game).chars[char_index].legacy_name;
+	}
 }
 
 const char *parse_voiceover_token(const char *text, int *voice_num) {
