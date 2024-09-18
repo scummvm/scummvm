@@ -152,7 +152,6 @@ bool FileStream::Seek(soff_t offset, StreamSeek origin) {
 		stdclib_origin = SEEK_END;
 		break;
 	default:
-		// TODO: warning to the log
 		return false;
 	}
 
