@@ -974,7 +974,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DEMO | ADGF_UNSTABLE,
+			ADGF_DEMO | ADGF_UNSUPPORTED,
 			GUIO0()
 		},
 		GID_STTGS,
