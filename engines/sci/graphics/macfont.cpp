@@ -79,9 +79,12 @@ GfxMacFontManager::~GfxMacFontManager() {
 
 // The font mapping table is a small binary resource with id 128 and type `ftbl`
 bool GfxMacFontManager::initFromFontTable(Common::MacResManager *macExecutable) {
-	Common::SeekableReadStream *table = macExecutable->getResource(MKTAG('f', 't', 'b', 'l'), 128);
-	if (table == nullptr) {
-		warning("Mac font table not found in \"%s\"", macExecutable->getBaseFileName().toString(Common::Path::kNativeSeparator).c_str());
+	Common::String macExecutableName = macExecutable->getBaseFileName().baseName();
+	Common::ScopedPtr<Common::SeekableReadStream> table(
+		macExecutable->getResource(MKTAG('f', 't', 'b', 'l'), 128)
+	);
+	if (!table) {
+		warning("Mac font table not found in \"%s\"", macExecutableName.c_str());
 		return false;
 	}
 
@@ -89,14 +92,14 @@ bool GfxMacFontManager::initFromFontTable(Common::MacResManager *macExecutable) 
 	uint16 defaultFontIndex = table->readUint16BE();
 	uint16 numberOfFonts = table->readUint16BE();
 	if (table->eos() || table->size() < 4 + numberOfFonts * 10) {
-		warning("Invalid mac font table in \"%s\"", macExecutable->getBaseFileName().toString(Common::Path::kNativeSeparator).c_str());
+		warning("Invalid mac font table in \"%s\"", macExecutableName.c_str());
 		return false;
 	}
 
 	for (uint16 i = 0; i < numberOfFonts; ++i) {
 		uint16 sciFontId = table->readUint16BE();
 		if (_macFonts.contains(sciFontId)) {
-			warning("Duplicate Mac font table entry for %d in \"%s\"", sciFontId, macExecutable->getBaseFileName().toString(Common::Path::kNativeSeparator).c_str());
+			warning("Duplicate Mac font table entry for %d in \"%s\"", sciFontId, macExecutableName.c_str());
 			return false;
 		}
 		uint16 macFontId = table->readUint16BE();
@@ -107,7 +110,7 @@ bool GfxMacFontManager::initFromFontTable(Common::MacResManager *macExecutable) 
 		const Graphics::Font *smallFont = getMacFont(macFontId, smallFontSize);
 		const Graphics::Font *largeFont = getMacFont(macFontId, MAX(mediumFontSize, largeFontSize));
 		if (smallFont == nullptr || largeFont == nullptr) {
-			warning("Mac font %d not found in \"%s\"", macFontId, macExecutable->getBaseFileName().toString(Common::Path::kNativeSeparator).c_str());
+			warning("Mac font %d not found in \"%s\"", macFontId, macExecutableName.c_str());
 			return false;
 		}
 
