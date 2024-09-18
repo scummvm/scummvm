@@ -209,7 +209,7 @@ monkey	The Secret of Monkey Island
 	0a41311d462b6639fc45297b9044bf16	-1	es	Atari	No AdLib	EGA	-
 
 	49210e124e4c2b30f1290a9ef6306301	8357	en	DOS	EGA	EGA	8 disk v1.0, 9/18/90	Fingolfin
-	1dd3c11ea4439adfe681e4e405b624e1	-1	fr	DOS	EGA	EGA	8 disk	Andrea Petrucci
+	1dd3c11ea4439adfe681e4e405b624e1	8357	fr	DOS	EGA	EGA	8 disk v1.0, 9/7/90 II	Andrea Petrucci
 	fc6b6148e80d67939d9a18697c0f626a	8367	de	DOS	EGA	EGA	8 disk	ghoostkilla
 	910e31cffb28226bd68c569668a0d6b4	8367	es	DOS	EGA	EGA	8 disk	Andrea Petrucci
 	1d05cd189e4908f79b57e78a4402f292	8357	en	DOS	EGA	EGA	4 disk	Andrea Petrucci
