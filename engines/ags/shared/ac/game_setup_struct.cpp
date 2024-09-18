@@ -142,14 +142,14 @@ void GameSetupStruct::read_font_infos(Shared::Stream *in, GameDataVersion data_v
 }
 
 void GameSetupStruct::ReadInvInfo(Stream *in) {
-	for (int iteratorCount = 0; iteratorCount < numinvitems; ++iteratorCount) {
-		invinfo[iteratorCount].ReadFromFile(in);
+	for (int i = 0; i < numinvitems; ++i) {
+		invinfo[i].ReadFromFile(in);
 	}
 }
 
 void GameSetupStruct::WriteInvInfo(Stream *out) {
-	for (int iteratorCount = 0; iteratorCount < numinvitems; ++iteratorCount) {
-		invinfo[iteratorCount].WriteToFile(out);
+	for (int i = 0; i < numinvitems; ++i) {
+		invinfo[i].WriteToFile(out);
 	}
 }
 
@@ -189,14 +189,14 @@ void GameSetupStruct::read_words_dictionary(Shared::Stream *in) {
 }
 
 void GameSetupStruct::ReadMouseCursors(Stream *in) {
-	for (int iteratorCount = 0; iteratorCount < numcursors; ++iteratorCount) {
-		mcurs[iteratorCount].ReadFromFile(in);
+	for (int i = 0; i < numcursors; ++i) {
+		mcurs[i].ReadFromFile(in);
 	}
 }
 
 void GameSetupStruct::WriteMouseCursors(Stream *out) {
-	for (int iteratorCount = 0; iteratorCount < numcursors; ++iteratorCount) {
-		mcurs[iteratorCount].WriteToFile(out);
+	for (int i = 0; i < numcursors; ++i) {
+		mcurs[i].WriteToFile(out);
 	}
 }
 
@@ -237,14 +237,14 @@ void GameSetupStruct::read_messages(Shared::Stream *in, const std::array<int> &l
 }
 
 void GameSetupStruct::ReadCharacters(Stream *in) {
-	for (int iteratorCount = 0; iteratorCount < numcharacters; ++iteratorCount) {
-		chars[iteratorCount].ReadFromFile(in, _G(loaded_game_file_version));
+	for (int i = 0; i < numcharacters; ++i) {
+		chars[i].ReadFromFile(in, _G(loaded_game_file_version));
 	}
 }
 
 void GameSetupStruct::WriteCharacters(Stream *out) {
-	for (int iteratorCount = 0; iteratorCount < numcharacters; ++iteratorCount) {
-		chars[iteratorCount].WriteToFile(out);
+	for (int i = 0; i < numcharacters; ++i) {
+		chars[i].WriteToFile(out);
 	}
 }
 

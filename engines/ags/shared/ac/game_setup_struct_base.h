@@ -61,19 +61,21 @@ struct GameSetupStructBase {
 
 	Shared::String    gamename;
 	int32_t           options[MAX_OPTIONS];
-	unsigned char     paluses[256];
+	uint8_t           paluses[256];
 	RGB               defpal[256];
 	int               numviews;
 	int               numcharacters;
 	int               playercharacter;
 	int               totalscore;
-	short             numinvitems;
-	int               numdialog, numdlgmessage;
+	int               numinvitems;
+	int               numdialog;
+	int               numdlgmessage;  // [DEPRECATED]
 	int               numfonts;
 	int               color_depth;          // in bytes per pixel (ie. 1 or 2)
 	int               target_win;
 	int               dialog_bullet;        // 0 for none, otherwise slot num of bullet point
-	unsigned short    hotdot, hotdotouter;  // inv cursor hotspot dot color
+	int               hotdot;  // inv cursor hotspot dot color
+	int               hotdotouter;
 	int               uniqueid;    // random key identifying the game
 	int               numgui;
 	int               numcursors;
