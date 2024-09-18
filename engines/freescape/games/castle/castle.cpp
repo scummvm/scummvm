@@ -868,12 +868,13 @@ void CastleEngine::drawEnergyMeter(Graphics::Surface *surface, Common::Point ori
 	if (!_strenghtBarFrame)
 		return;
 
-	surface->copyRectToSurface((const Graphics::Surface)*_strenghtBarFrame, origin.x, origin.y + 8, Common::Rect(0, 0, _strenghtBarFrame->w, _strenghtBarFrame->h));
+	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+	surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_strenghtBarFrame, origin.x + 5, origin.y + 8, Common::Rect(0, 0, _strenghtBarFrame->w, _strenghtBarFrame->h), black);
 
 	Common::Point weightPoint;
 	int frameIdx = -1;
 
-	weightPoint = Common::Point(origin.x + 5, origin.y);
+	weightPoint = Common::Point(origin.x + 10, origin.y);
 	frameIdx = 3 - _gameStateVars[k8bitVariableShield] % 4;
 	frameIdx++;
 	frameIdx = frameIdx % 4;

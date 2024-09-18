@@ -324,7 +324,7 @@ void CastleEngine::loadAssetsDOSDemo() {
 			_endGameBackgroundFrame = loadFrameFromPlanes(stream, 112, 108);
 			_endGameBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
 
-			_background = loadFrameFromPlanes(stream, 504, 42);
+			_background = loadFrameFromPlanes(stream, 504, 18);
 			_background->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
 
 			stream->seek(0x1f4e3 - 0x2a0);

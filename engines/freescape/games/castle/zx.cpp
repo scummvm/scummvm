@@ -160,6 +160,13 @@ void CastleEngine::loadAssetsZXFullGame() {
 	_strenghtBackgroundFrame = loadFrameWithHeader(&file, _language == Common::ES_ESP ? 0xee6 : 0xed7, yellow, black);
 	_strenghtBarFrame = loadFrameWithHeader(&file, _language == Common::ES_ESP ? 0xf72 : 0xf63, yellow, black);
 
+	Graphics::ManagedSurface *bar = new Graphics::ManagedSurface();
+	bar->create(_strenghtBarFrame->w - 4, _strenghtBarFrame->h, _gfx->_texturePixelFormat);
+	_strenghtBarFrame->copyRectToSurface(*bar, 4, 0, Common::Rect(4, 0, _strenghtBarFrame->w - 4, _strenghtBarFrame->h));
+	_strenghtBarFrame->free();
+	delete _strenghtBarFrame;
+	_strenghtBarFrame = bar;
+
 	_strenghtWeightsFrames = loadFramesWithHeader(&file, _language == Common::ES_ESP ? 0xf92 : 0xf83, 4, yellow, black);
 
 	_flagFrames = loadFramesWithHeader(&file, 0x10e4, 4, green, black);
