@@ -72,7 +72,7 @@ void Button_Animate(GUIButton *butt, int view, int loop, int speed,	int repeat, 
 	abtn.view = view;
 	abtn.loop = loop;
 	abtn.speed = speed;
-	abtn.repeat = static_cast<bool>(repeat) ? ANIM_REPEAT : ANIM_ONCE; // for now, clamp to supported modes
+	abtn.repeat = (repeat != 0) ? ANIM_REPEAT : ANIM_ONCE; // for now, clamp to supported modes
 	abtn.blocking = blocking;
 	abtn.direction = direction;
 	abtn.frame = SetFirstAnimFrame(view, loop, sframe, direction);
