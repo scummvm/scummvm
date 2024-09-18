@@ -700,7 +700,12 @@ int Game_BlockingWaitSkipped() {
 }
 
 void Game_PrecacheSprite(int sprnum) {
+	const auto tp_start = AGS_Clock::now();
 	_GP(spriteset).PrecacheSprite(sprnum);
+	const auto tp_filedone = AGS_Clock::now();
+
+	const auto dur1 = ToMilliseconds(tp_filedone - tp_start);
+	Debug::Printf("Precache sprite %d; file->mem = %lld ms", sprnum, dur1);
 }
 
 void Game_PrecacheView(int view, int first_loop, int last_loop) {
@@ -1367,13 +1372,29 @@ void precache_view(int view, int first_loop, int last_loop, bool with_sounds) {
 
 	first_loop = Math::Clamp(first_loop, 0, _GP(views)[view].numLoops - 1);
 	last_loop = Math::Clamp(last_loop, 0, _GP(views)[view].numLoops - 1);
+
+	// Record cache sizes and timestamps, for diagnostic purposes
+	const size_t spcache_before = _GP(spriteset).GetCacheSize();
+	int total_frames = 0, total_sounds = 0;
+
+	const auto tp_start = AGS_Clock::now();
+	int64_t dur_sp_load = 0, dur_tx_make = 0, dur_sound_load = 0;
 	for (int i = first_loop; i <= last_loop; ++i) {
-		for (int j = 0; j < _GP(views)[view].loops[i].numFrames; ++j) {
-			const ViewFrame &frame = _GP(views)[view].loops[i].frames[j];
+		for (int j = 0; j < _GP(views)[view].loops[i].numFrames; ++j, ++total_frames) {
+			const auto &frame = _GP(views)[view].loops[i].frames[j];
+			const auto tp_detail1 = AGS_Clock::now();
 			_GP(spriteset).PrecacheSprite(frame.pic);
-			}
+			const auto tp_detail2 = AGS_Clock::now();
+			dur_sp_load += ToMilliseconds(tp_detail2 - tp_detail1);
 		}
 	}
+
+	// Print gathered time and size info
+	size_t spcache_after = _GP(spriteset).GetCacheSize();
+	Debug::Printf("Precache view %d (loops %d-%d) with %d frames, total = %lld ms, average file->mem = %lld ms",
+				  view, first_loop, last_loop, total_frames, dur_sp_load, dur_sp_load / total_frames);
+	Debug::Printf("\tSprite cache: %zu -> %zu KB", spcache_before / 1024u, spcache_after / 1024u);
+}
 
 void game_sprite_deleted(int sprnum) {
 	// clear from texture cache
