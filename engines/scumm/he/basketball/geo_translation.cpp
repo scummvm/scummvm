@@ -29,7 +29,6 @@ namespace Scumm {
 int LogicHEBasketball::u32_userInitScreenTranslations() {
 	// Find the angle between the left and bottom baseline in the court image...
 	_courtAngle = atan(TRANSLATED_MAX_Y / (double)TRANSLATED_MAX_START_X);
-	assert(_courtAngle != 0);
 
 	// The relationship between the location in the game world and the location in pixels
 	// from the bottom of the court can be described by the parametric equation:
