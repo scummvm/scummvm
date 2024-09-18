@@ -129,8 +129,6 @@ public:
 				_mouseDelta.x = curPos.x - _mousePos.x;
 				_mouseDelta.y = curPos.y - _mousePos.y;
 
-				warning("Mouse delta: %d, %d", _mouseDelta.x, _mouseDelta.y);
-
 				if (ABS(_mouseDelta.x) <= ABS(_mouseDelta.y)) {
 					const char *state = _draggedStone->current_state_name();
 					int draggedStonePos;
@@ -141,8 +139,6 @@ public:
 						draggedStonePos = 10;
 					else
 						draggedStonePos = 11;
-
-					warning("State is: '%s'  computed: %d", state, draggedStonePos);
 
 					int off = 60;
 					if (draggedStonePos == 3 || draggedStonePos == 8) {
@@ -185,9 +181,6 @@ public:
 
 LABEL_38:
 
-			if (_direction)
-				warning("Someflag: '%d'  direction: %s", _needSnap, _direction == kDirUp ? "up" : _direction == kDirDown ? "down" : _direction == kDirDown ? "left" : _direction == kDirRight ? "right" : "none");
-
 			if (_cursorTakenFlag && _needSnap) {
 				const char *state = _draggedStone->current_state_name();
 				int draggedStonePos;
@@ -202,7 +195,7 @@ LABEL_38:
 				int side = state[0] - '0';
 				int pos = -1;
 
-				if (state[0] == '1') {
+				if (side == 1) {
 					switch (_direction) {
 					case kDirUp:
 						if (draggedStonePos != 8 || checkStonePosition(3, 1) || checkStonePosition(8, 2))
@@ -254,7 +247,7 @@ LABEL_38:
 								|| checkStonePosition(draggedStonePos + 1, 2))
 							break;
 
-						pos = draggedStonePos - 1;
+						pos = draggedStonePos + 1;
 						break;
 
 					case kDirDown:
@@ -282,12 +275,8 @@ LABEL_38:
 				if (pos == -1) {
 					_cursorTakenFlag = 0;
 					_someVar3 = 0;
-
-					warning("State was reset");
 				} else {
 					snprintf(buf1, 29, "%d%d", side, pos);
-
-					warning("New state is: '%s'", buf1);
 					_draggedStone->set_state(buf1);
 					_mousePos = curPos;
 					_jumpSoundObj->set_state("\xe4\xe0");	// "да"
@@ -373,7 +362,7 @@ private:
 	bool checkStonePosition(int targetPos, int leftStones) {
 		int n = leftStones == 1 ? 0 : 7;
 
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 7; i++) {
 			const char *state = _stones[n + i]->current_state_name();
 			int pos;
 
