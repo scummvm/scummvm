@@ -549,7 +549,7 @@ void engine_init_game_settings() {
 		// The cursor graphics are assigned to mousecurs[] and so cannot
 		// be removed from memory
 		if (_GP(game).mcurs[ee].pic >= 0)
-			_GP(spriteset).Precache(_GP(game).mcurs[ee].pic);
+			_GP(spriteset).PrecacheSprite(_GP(game).mcurs[ee].pic);
 
 		// just in case they typed an invalid view number in the editor
 		if (_GP(game).mcurs[ee].view >= _GP(game).numviews)
