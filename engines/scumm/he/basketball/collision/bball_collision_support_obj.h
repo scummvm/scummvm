@@ -367,8 +367,8 @@ class U32Vector3D : public U32Construct3D<Type> {
 public:
 	U32Vector3D() : U32Construct3D<Type>() {}
 	U32Vector3D(Type xx, Type yy, Type zz) : U32Construct3D<Type>(xx, yy, zz) {}
-	U32Vector3D<Type>(const U32Construct2D<Type> &other) : U32Construct3D<Type>(other.x, other.y, 0) {}
-	U32Vector3D<Type>(const U32Construct3D<Type> &other) : U32Construct3D<Type>(other.x, other.y, other.z) {}
+	U32Vector3D(const U32Construct2D<Type> &other) : U32Construct3D<Type>(other.x, other.y, 0) {}
+	U32Vector3D(const U32Construct3D<Type> &other) : U32Construct3D<Type>(other.x, other.y, other.z) {}
 
 	U32Vector3D<Type> operator-(const U32Construct2D<Type> &other) const {
 		U32Vector3D<Type> newVector;
