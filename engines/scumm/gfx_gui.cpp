@@ -120,7 +120,7 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	// Backup the text surface...
 	if (_game.version < 7 && !_mainMenuIsActive && _game.platform != Common::kPlatformFMTowns) {
 		saveSurfacesPreGUI();
-		if (_charset->_textScreenID == kMainVirtScreen && !(_game.version == 4 && _game.id == GID_LOOM))
+		if (_currentRoom != 0 && _charset->_textScreenID == kMainVirtScreen && !(_game.version == 4 && _game.id == GID_LOOM))
 			restoreCharsetBg();
 	}
 
@@ -460,7 +460,7 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 	// Backup the text surface...
 	if (!_mainMenuIsActive) {
 		saveSurfacesPreGUI();
-		if (_charset->_textScreenID == kMainVirtScreen && _game.id != GID_LOOM) {
+		if (_currentRoom != 0 && _charset->_textScreenID == kMainVirtScreen && _game.id != GID_LOOM) {
 			restoreCharsetBg();
 		}
 	}
