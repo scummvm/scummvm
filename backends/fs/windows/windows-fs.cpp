@@ -203,7 +203,7 @@ AbstractFSNode *WindowsFilesystemNode::getParent() const {
 	if (_isPseudoRoot)
 		return nullptr;
 
-	WindowsFilesystemNode *p = new WindowsFilesystemNode();
+	WindowsFilesystemNode *p;
 	if (_path.size() > 3) {
 		const char *start = _path.c_str();
 		const char *end = lastPathComponent(_path, '\\');
@@ -214,6 +214,9 @@ AbstractFSNode *WindowsFilesystemNode::getParent() const {
 		p->_isDirectory = true;
 		p->_displayName = lastPathComponent(p->_path, '\\');
 		p->_isPseudoRoot = false;
+	} else {
+		// pseudo root
+		p = new WindowsFilesystemNode();
 	}
 
 	return p;
