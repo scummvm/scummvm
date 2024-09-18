@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-17 05:32+0000\n"
+"POT-Creation-Date: 2024-09-18 19:45+0000\n"
 "PO-Revision-Date: 2024-03-24 18:22+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -9840,7 +9840,7 @@ msgstr ""
 msgid "SCI32 support not compiled in"
 msgstr "Ondersteuning voor SCI32 is niet meegecompileerd"
 
-#: engines/sci/resource/resource.cpp:856
+#: engines/sci/resource/resource.cpp:858
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "

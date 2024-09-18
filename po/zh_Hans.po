@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-17 05:32+0000\n"
+"POT-Creation-Date: 2024-09-18 19:45+0000\n"
 "PO-Revision-Date: 2024-07-04 15:43+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
@@ -9783,7 +9783,7 @@ msgstr "无法在最大颜色深度 8bpp 的系统播放 %dbpp 视频"
 msgid "SCI32 support not compiled in"
 msgstr "未编入 SCI32 支持"
 
-#: engines/sci/resource/resource.cpp:856
+#: engines/sci/resource/resource.cpp:858
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "
