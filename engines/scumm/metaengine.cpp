@@ -724,8 +724,7 @@ static const ExtraGuiOption audioOverride {
 static const ExtraGuiOption enableOriginalGUI = {
 	_s("Enable the original GUI and Menu"),
 	_s("Allow the game to use the in-engine graphical interface and the original save/load menu. \
-		Use it together with the \"Ask for confirmation on exit\" for a more complete experience. \
-		Autosaving is disabled when this mode is active."),
+		Use it together with the \"Ask for confirmation on exit\" for a more complete experience."),
 	"original_gui",
 	true,
 	0,
