@@ -58,7 +58,7 @@ StrUtil::ConversionError StrUtil::StringToInt(const String &s, int &val, int def
 		return StrUtil::kFailed;
 	if (lval > INT_MAX || lval < INT_MIN || _G(errnum) == AL_ERANGE)
 		return StrUtil::kOutOfRange;
-	val = (int)lval;
+	val = static_cast<int>(lval);
 	return StrUtil::kNoError;
 }
 
