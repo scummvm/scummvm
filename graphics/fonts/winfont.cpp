@@ -31,7 +31,7 @@
 namespace Graphics {
 
 WinFont::WinFont() {
-	_glyphs = 0;
+	_glyphs = nullptr;
 	close();
 }
 
@@ -47,7 +47,7 @@ void WinFont::close() {
 	_defaultChar = 0;
 	_glyphCount = 0;
 	delete[] _glyphs;
-	_glyphs = 0;
+	_glyphs = nullptr;
 }
 
 // Reads a null-terminated string
@@ -246,6 +246,7 @@ bool WinFont::loadFromFNT(Common::SeekableReadStream &stream) {
 
 	// Begin loading in the glyphs
 	_glyphCount = (_lastChar - _firstChar) + 2;
+	delete[] _glyphs;
 	_glyphs = new GlyphEntry[_glyphCount];
 
 	for (uint16 i = 0; i < _glyphCount; i++) {
