@@ -222,6 +222,8 @@ Resource::~Resource() {
 void Resource::unalloc() {
 	delete[] _data;
 	_data = nullptr;
+	delete[] _header;
+	_header = nullptr;
 	_status = kResStatusNoMalloc;
 }
 
@@ -969,7 +971,7 @@ void ChunkResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	byte *ptr = new byte[entry.length];
 	res->_data = ptr;
 	res->_size = entry.length;
-	res->_header = 0;
+	res->_header = nullptr;
 	res->_headerSize = 0;
 	res->_status = kResStatusAllocated;
 
