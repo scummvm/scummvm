@@ -1525,8 +1525,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	g_sci->_soundCmd->reconstructPlayList();
 
 	// Message state:
-	delete s->_msgState;
-	s->_msgState = new MessageState(s->_segMan);
+	s->initMessageState();
 
 	// System strings:
 	s->_segMan->initSysStrings();

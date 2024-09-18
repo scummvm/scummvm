@@ -176,6 +176,11 @@ void EngineState::initGlobals() {
 	}
 }
 
+void EngineState::initMessageState() {
+	delete _msgState;
+	_msgState = new MessageState(_segMan);
+}
+
 uint16 EngineState::currentRoomNumber() const {
 	return variables[VAR_GLOBAL][kGlobalVarNewRoomNo].toUint16();
 }

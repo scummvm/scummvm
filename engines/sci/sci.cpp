@@ -567,7 +567,7 @@ bool SciEngine::initGame() {
 	int script0Segment = _gamestate->_segMan->getScriptSegment(0, SCRIPT_GET_LOCK);
 	DataStack *stack = _gamestate->_segMan->allocateStack(VM_STACK_SIZE);
 
-	_gamestate->_msgState = new MessageState(_gamestate->_segMan);
+	_gamestate->initMessageState();
 	_gamestate->gcCountDown = GC_INTERVAL - 1;
 
 	// Script 0 should always be at segment 1

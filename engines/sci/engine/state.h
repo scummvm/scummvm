@@ -190,6 +190,7 @@ struct EngineState : public Common::Serializable {
 	int gcCountDown; /**< Number of kernel calls until next gc */
 
 	MessageState *_msgState;
+	void initMessageState();
 
 	// MemorySegment provides access to a 256-byte block of memory that remains
 	// intact across restarts and restores
