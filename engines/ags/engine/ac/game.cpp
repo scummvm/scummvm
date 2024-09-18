@@ -1375,10 +1375,8 @@ void precache_view(int view, int first_loop, int last_loop, bool with_sounds) {
 
 	// Record cache sizes and timestamps, for diagnostic purposes
 	const size_t spcache_before = _GP(spriteset).GetCacheSize();
-	int total_frames = 0, total_sounds = 0;
-
-	const auto tp_start = AGS_Clock::now();
-	int64_t dur_sp_load = 0, dur_tx_make = 0, dur_sound_load = 0;
+	int total_frames = 0;
+	int64_t dur_sp_load = 0;
 	for (int i = first_loop; i <= last_loop; ++i) {
 		for (int j = 0; j < _GP(views)[view].loops[i].numFrames; ++j, ++total_frames) {
 			const auto &frame = _GP(views)[view].loops[i].frames[j];
