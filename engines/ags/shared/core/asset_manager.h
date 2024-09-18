@@ -77,7 +77,7 @@ struct AssetPath {
 
 class AssetManager {
 public:
-	AssetManager();
+	AssetManager() = default;
 	~AssetManager() {
 		RemoveAllLibraries();
 	}
@@ -146,13 +146,10 @@ private:
 	std::vector<AssetLibEx *> _libs;
 	std::vector<AssetLibEx *> _activeLibs;
 
-	struct LibsByPriority {
-		AssetSearchPriority Priority = kAssetPriorityDir;
-
-		bool operator()(const AssetLibInfo *x, const AssetLibInfo *y) const;
-	} _libsByPriority;
+	AssetSearchPriority _libsPriority = kAssetPriorityDir;
+	// Sorting function, depends on priority setting
+	bool (*_libsSorter)(const AssetLibInfo *, const AssetLibInfo *);
 };
-
 
 String GetAssetErrorText(AssetError err);
 
