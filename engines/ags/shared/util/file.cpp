@@ -89,14 +89,14 @@ bool File::DeleteFile(const String &filename) {
 	return g_system->getSavefileManager()->removeSavefile(file);
 }
 
-bool File::RenameFile(const String &old_name, const String &name) {
+bool File::RenameFile(const String &old_name, const String &new_name) {
 	// Only allow renaming files in the savegame folder
-	if (old_name.CompareLeftNoCase(SAVE_FOLDER_PREFIX) || name.CompareLeftNoCase(SAVE_FOLDER_PREFIX)) {
-		warning("Cannot rename file %s to %s. Only files in the savegame directory can be renamed", old_name.GetCStr(), name.GetCStr());
+	if (old_name.CompareLeftNoCase(SAVE_FOLDER_PREFIX) || new_name.CompareLeftNoCase(SAVE_FOLDER_PREFIX)) {
+		warning("Cannot rename file %s to %s. Only files in the savegame directory can be renamed", old_name.GetCStr(), new_name.GetCStr());
 		return false;
 	}
 	Common::String file_old(old_name.GetCStr() + strlen(SAVE_FOLDER_PREFIX));
-	Common::String file_new(name.GetCStr() + strlen(SAVE_FOLDER_PREFIX));
+	Common::String file_new(new_name.GetCStr() + strlen(SAVE_FOLDER_PREFIX));
 	return g_system->getSavefileManager()->renameSavefile(file_old, file_new);
 }
 
