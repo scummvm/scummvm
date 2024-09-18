@@ -616,7 +616,7 @@ static void update_objects_scale() {
 	for (uint32_t objid = 0; objid < _G(croom)->numobj; ++objid) {
 		update_object_scale(objid);
 	}
-	for (uint32_t charid = 0; charid < _GP(game).numcharacters; ++charid) {
+	for (int charid = 0; charid < _GP(game).numcharacters; ++charid) {
 		update_character_scale(charid);
 	}
 }

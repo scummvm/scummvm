@@ -727,7 +727,7 @@ void render_to_screen() {
 		_G(gfxDriver)->SetVsync(false);
 	} else {
 		bool new_vsync = _G(gfxDriver)->SetVsync(_GP(scsystem).vsync > 0);
-		if (new_vsync != _GP(scsystem).vsync)
+		if (new_vsync != (_GP(scsystem).vsync != 0))
 			System_SetVSyncInternal(new_vsync);
 	}
 
@@ -1529,7 +1529,7 @@ void prepare_characters_for_drawing() {
 	const bool hw_accel = !drawstate.SoftwareRender;
 
 	// draw characters
-	for (uint32_t charid = 0; charid < _GP(game).numcharacters; ++charid) {
+	for (int charid = 0; charid < _GP(game).numcharacters; ++charid) {
 		const CharacterInfo &chin = _GP(game).chars[charid];
 		if (chin.on == 0)
 			continue;  // disabled
