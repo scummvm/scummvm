@@ -42,7 +42,7 @@ void CharacterExtras::CheckViewFrame(CharacterInfo *chi) {
 	AGS3::CheckViewFrame(chi->view, chi->loop, chi->frame, GetFrameSoundVolume(chi));
 }
 
-void CharacterExtras::ReadFromSavegame(Stream *in, CharacterInfo &chinfo, int save_ver) {
+void CharacterExtras::ReadFromSavegame(Stream *in, CharacterSvgVersion save_ver) {
 	in->ReadArrayOfInt16(invorder, MAX_INVORDER);
 	invorder_count = in->ReadInt16();
 	width = in->ReadInt16();
@@ -64,17 +64,9 @@ void CharacterExtras::ReadFromSavegame(Stream *in, CharacterInfo &chinfo, int sa
 		in->ReadInt8(); // reserved to fill int32
 		in->ReadInt8();
 	}
-	if (save_ver >= kCharSvgVersion_36114) {
-		chinfo.name = StrUtil::ReadString(in);
-	}
-
-	// Upgrade restored data
-	if (save_ver < kCharSvgVersion_36025) {
-		chinfo.idle_anim_speed = chinfo.animspeed + 5;
-	}
 }
 
-void CharacterExtras::WriteToSavegame(Stream *out, const CharacterInfo &chinfo) {
+void CharacterExtras::WriteToSavegame(Stream *out) const {
 	out->WriteArrayOfInt16(invorder, MAX_INVORDER);
 	out->WriteInt16(invorder_count);
 	out->WriteInt16(width);
@@ -94,8 +86,6 @@ void CharacterExtras::WriteToSavegame(Stream *out, const CharacterInfo &chinfo) 
 	out->WriteInt8(static_cast<uint8_t>(cur_anim_volume));
 	out->WriteInt8(0); // reserved to fill int32
 	out->WriteInt8(0);
-	// kCharSvgVersion_36114
-	StrUtil::WriteString(chinfo.name, out);
 }
 
 } // namespace AGS3
