@@ -560,7 +560,7 @@ void engine_init_game_settings() {
 	}
 	// may as well preload the character gfx
 	if (_G(playerchar)->view >= 0)
-		precache_view(_G(playerchar)->view, Character_GetDiagonalWalking(_G(playerchar)) ? 8 : 4);
+		precache_view(_G(playerchar)->view, 0, Character_GetDiagonalWalking(_G(playerchar)) ? 8 : 4);
 
 	_G(our_eip) = -6;
 
