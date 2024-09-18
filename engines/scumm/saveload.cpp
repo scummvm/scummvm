@@ -139,10 +139,6 @@ bool ScummEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 }
 
 Common::Error ScummEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	// Disable autosaving if the original GUI is in place
-	if (isAutosave && isUsingOriginalGUI())
-		return Common::kNoError;
-
 	requestSave(slot, desc);
 	return Common::kNoError;
 }
