@@ -25,6 +25,7 @@
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/dynobj/script_mouse.h"
 #include "ags/engine/ac/dynobj/script_system.h"
+#include "ags/engine/ac/game.h"
 #include "ags/engine/ac/game_setup.h"
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/game_state.h"
