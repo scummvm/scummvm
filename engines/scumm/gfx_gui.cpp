@@ -2220,18 +2220,18 @@ void ScummEngine::fillSavegameLabels() {
 
 	_savegameNames.clear();
 
-	for (int i = 0; i < 9; i++) {
+	for (int i = GUI_CTRL_FIRST_SG; i <= GUI_CTRL_LAST_SG; i++) {
 		curSaveSlot = i + (isLoomVga ? _firstSaveStateOfList : _curDisplayedSaveSlotPage * 9);
-		if (_game.version > 4 || (_game.version == 4 && _game.id == GID_LOOM)) {
+		if (_game.version > 4 || isLoomVga) {
 			if (availSaves[curSaveSlot]) {
 				if (getSavegameName(curSaveSlot, name)) {
-					_savegameNames.push_back(Common::String::format("%2d. %s", curSaveSlot + 1, name.c_str()));
+					_savegameNames.push_back(Common::String::format("%2d. %s", curSaveSlot, name.c_str()));
 				} else {
 					// The original printed "WARNING... old savegame", but we do support old savegames :-)
-					_savegameNames.push_back(Common::String::format("%2d. WARNING: wrong save version", curSaveSlot + 1));
+					_savegameNames.push_back(Common::String::format("%2d. WARNING: wrong save version", curSaveSlot));
 				}
 			} else {
-				_savegameNames.push_back(Common::String::format("%2d. ", curSaveSlot + 1));
+				_savegameNames.push_back(Common::String::format("%2d. ", curSaveSlot));
 			}
 		} else {
 			if (availSaves[curSaveSlot]) {
@@ -2853,7 +2853,7 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool 
 					// Temporarily restore the shake effect to save it...
 					setShake(_shakeTempSavedState);
 
-					if (saveState(curSlot - 1, false, dummyString)) {
+					if (saveState(curSlot, false, dummyString)) {
 						setShake(0);
 						saveCursorPreMenu();
 						_saveScriptParam = GAME_PROPER_SAVE;
@@ -2915,7 +2915,7 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool 
 				}
 
 				curSlot = _mainMenuSavegameLabel + (isLoomVga ? _firstSaveStateOfList : _curDisplayedSaveSlotPage * 9);
-				if (loadState(curSlot - 1, false)) {
+				if (loadState(curSlot, false)) {
 					hasLoadedState = true;
 
 #ifdef ENABLE_SCUMM_7_8

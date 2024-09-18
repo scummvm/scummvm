@@ -2430,6 +2430,34 @@ Common::Error ScummEngine::go() {
 		_saveLoadFlag = 0;
 	}
 
+	// In ScummVM 2.7.0, original GUI support was added.
+	// Unfortunately it came with an issue: in v4-7 games users could
+	// overwrite autosaves (slot 0). Why? Because I forgot about autosaves :-)
+	// 
+	// To amend this from 2.9.0 onwards we check for savegames which are on slot 0
+	// and are not autosaves (the heuristic is not optimal, but it will have to do),
+	// and performs a mass rename. Unless the user has used all 99 slots, in which case
+	// we just bail because there's no easy way to fix that...
+	if (_game.heversion == 0) {
+		SaveStateDescriptor desc = getMetaEngine()->querySaveMetaInfos(_targetName.c_str(), 0);
+		if (desc.isValid() && !desc.isAutosave()) {
+			SaveStateList list = getMetaEngine()->listSaves(_targetName.c_str());
+			SaveStateDescriptor lastSave = list.back();
+			int lastSaveSlot = lastSave.getSaveSlot();
+
+			if (lastSaveSlot < 99) {
+				debug("Save at slot 0 is not autosave, self correcting...");
+
+				for (int i = lastSaveSlot; i >= 0; i--) {
+					Common::String save1 = makeSavegameName(i, false);
+					Common::String save2 = makeSavegameName(i + 1, false);
+					debug("Renaming %s to %s", save1.c_str(), save2.c_str());
+					getSaveFileManager()->renameSavefile(save1, save2);
+				}
+			}
+		}
+	}
+
 	while (!shouldQuit()) {
 		// Determine how long to wait before the next loop iteration should start
 		int delta = (VAR_TIMER_NEXT != 0xFF) ? VAR(VAR_TIMER_NEXT) : 4;
