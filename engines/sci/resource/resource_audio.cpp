@@ -1280,9 +1280,8 @@ void ResourceManager::changeMacAudioDirectory(const Common::Path &path_) {
 		const Common::ArchiveMemberPtr &file = *it;
 		assert(file);
 
-		const Common::Path fileName = file->getPathInArchive();
 		ResourceId resource36 = convertPatchNameBase36(kResourceTypeAudio36, file->getFileName());
-		processWavePatch(resource36, path.join(fileName));
+		processWavePatch(resource36, file->getPathInArchive());
 	}
 }
 
