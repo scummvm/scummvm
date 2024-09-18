@@ -2242,6 +2242,12 @@ Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src,
 		}
 
 		res->_status = kResStatusNoMalloc;
+		if (res->_source != nullptr && res->_source->getSourceType() == kSourcePatch) {
+			// This resource has already been loaded from another patch file.
+			// Sometimes a patch appears in a game's root and in "PATCHES".
+			// Delete the previous source before replacing it.
+			delete res->_source;
+		}
 		res->_source = src;
 		res->_headerSize = 0;
 		res->_fileOffset = offset;
