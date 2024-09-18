@@ -121,7 +121,6 @@ public:
 			_direction = kDirNone;
 		}
 
-		char buf1[30];
 		mgVect2i curPos = _engine->mouse_cursor_position();
 
 		if (_cursorTakenFlag) {
@@ -129,7 +128,7 @@ public:
 				_mouseDelta.x = curPos.x - _mousePos.x;
 				_mouseDelta.y = curPos.y - _mousePos.y;
 
-				if (ABS(_mouseDelta.x) <= ABS(_mouseDelta.y)) {
+				if (ABS(_mouseDelta.x) <= ABS(_mouseDelta.y)) { // Going down
 					const char *state = _draggedStone->current_state_name();
 					int draggedStonePos;
 
@@ -158,18 +157,15 @@ public:
 						off = delta + 150;
 					}
 
-					if (ABS(_mouseDelta.y) <= off)
-						goto LABEL_38;
+					if (ABS(_mouseDelta.y) > off) {
+						if (curPos.y <= _mousePos.y)
+							_direction = kDirUp;
+						else
+							_direction = kDirDown;
 
-					if (curPos.y <= _mousePos.y)
-						_direction = kDirUp;
-					else
-						_direction = kDirDown;
-
-					_needSnap = true;
-				}
-
-				if (ABS(_mouseDelta.x) > 60) {
+						_needSnap = true;
+					}
+				} else if (ABS(_mouseDelta.x) > 60) {
 					if (curPos.x <= _mousePos.x)
 						_direction = kDirLeft;
 					else
@@ -178,8 +174,6 @@ public:
 					_needSnap = true;
 				}
 			}
-
-LABEL_38:
 
 			if (_cursorTakenFlag && _needSnap) {
 				const char *state = _draggedStone->current_state_name();
@@ -276,8 +270,7 @@ LABEL_38:
 					_cursorTakenFlag = 0;
 					_someVar3 = 0;
 				} else {
-					snprintf(buf1, 29, "%d%d", side, pos);
-					_draggedStone->set_state(buf1);
+					_draggedStone->set_state(Common::String::format("%d%d", side, pos).c_str());
 					_mousePos = curPos;
 					_jumpSoundObj->set_state("\xe4\xe0");	// "да"
 				}
