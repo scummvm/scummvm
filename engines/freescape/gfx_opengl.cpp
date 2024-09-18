@@ -480,6 +480,8 @@ void OpenGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 
 void OpenGLRenderer::depthTesting(bool enabled) {
 	if (enabled) {
+		// If we re-enable depth testing, we need to clear the depth buffer
+		glClear(GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
 	} else {
 		glDisable(GL_DEPTH_TEST);
