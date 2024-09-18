@@ -30,7 +30,7 @@ namespace Rooms {
 
 class Room603 : public Room {
 private:
-	int _val1 = 0;
+	int _trigger1 = 0;
 	int _val2 = 0;
 	int _val3 = 0;
 	int _val4 = 0;
@@ -40,6 +40,8 @@ private:
 	int _val8 = 0;
 	int _val9 = 0;
 	int _val10 = 0;
+	int _num1 = 0;
+	int _num2 = 0;
 	machine *_shed = nullptr;
 	machine *_shenWalker = nullptr;
 	machine *_kuangWalker = nullptr;
@@ -50,6 +52,9 @@ private:
 	machine *_door = nullptr;
 	machine *_tt = nullptr;
 	machine *_ttShadow = nullptr;
+	machine *_pu01 = nullptr;
+	machine *_ripley = nullptr;
+	machine *_shadow = nullptr;
 	int _rp01 = 0;
 	int _rp02 = 0;
 	int _ttDigShirtOff = 0;
@@ -62,6 +67,10 @@ private:
 	int _ripHandsHips = 0;
 	int _ripHandChin = 0;
 	int _ripTwoHandTalk = 0;
+
+	void conv603a();
+	void conv603b();
+	void unloadSeries();
 
 public:
 	Room603() : Room() {}
