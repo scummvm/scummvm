@@ -42,18 +42,17 @@ bool AssetManager::AssetLibEx::TestFilter(const String &filter) const {
 		(std::find(Filters.begin(), Filters.end(), filter) != Filters.end());
 }
 
-bool AssetManager::LibsByPriority::operator()(const AssetLibInfo *lib1, const AssetLibInfo *lib2) const {
-	const bool lib1dir = IsAssetLibDir(lib1);
-	const bool lib2dir = IsAssetLibDir(lib2);
-	if (lib1dir == lib2dir)
-		return false; // both are equal, none is less
-	if (Priority == kAssetPriorityLib)
-		return !lib1dir; // first element is less if it's library file
-	if (Priority == kAssetPriorityDir)
-		return lib1dir; // first element is less if it's directory
-	return false; // unknown priority, just fail
+// Asset library sorting function, directories have priority
+bool SortLibsPriorityDir(const AssetLibInfo *lib1, const AssetLibInfo *lib2) {
+	// first element is less if it's a directory while second is a lib
+	return IsAssetLibDir(lib1) && !IsAssetLibDir(lib2);
 }
 
+// Asset library sorting function, packages have priority
+bool SortLibsPriorityLib(const AssetLibInfo *lib1, const AssetLibInfo *lib2) {
+	// first element is less if it's a lib while second is a directory
+	return !IsAssetLibDir(lib1) && IsAssetLibDir(lib2);
+}
 
 /* static */ bool AssetManager::IsDataFile(const String &data_file) {
 	Stream *in = File::OpenFileCI(data_file.GetCStr(), Shared::kFile_Open, Shared::kFile_Read);
@@ -75,18 +74,14 @@ bool AssetManager::LibsByPriority::operator()(const AssetLibInfo *lib1, const As
 	return kAssetErrNoLibFile;
 }
 
-AssetManager::AssetManager() {
-	_libsByPriority.Priority = kAssetPriorityDir;
-}
-
 void AssetManager::SetSearchPriority(AssetSearchPriority priority) {
-	_libsByPriority.Priority = priority;
-
-	std::sort(_activeLibs.begin(), _activeLibs.end(), _libsByPriority);
+	_libsPriority = priority;
+	_libsSorter = _libsPriority == kAssetPriorityDir ? SortLibsPriorityDir : SortLibsPriorityLib;
+	std::sort(_activeLibs.begin(), _activeLibs.end(), _libsSorter);
 }
 
 AssetSearchPriority AssetManager::GetSearchPriority() const {
-	return _libsByPriority.Priority;
+	return _libsPriority;
 }
 
 AssetError AssetManager::AddLibrary(const String &path, const AssetLibInfo **out_lib) {
@@ -112,7 +107,7 @@ AssetError AssetManager::AddLibrary(const String &path, const String &filters, c
 	if (err != kAssetNoError)
 		return err;
 	lib->Filters = filters.Split(',');
-	auto place = std::upper_bound(_activeLibs.begin(), _activeLibs.end(), lib, _libsByPriority);
+	auto place = std::upper_bound(_activeLibs.begin(), _activeLibs.end(), lib, _libsSorter);
 	_activeLibs.insert(place, lib);
 	if (out_lib)
 		*out_lib = lib;
