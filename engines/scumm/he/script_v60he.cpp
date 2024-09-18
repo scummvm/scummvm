@@ -1089,8 +1089,19 @@ void ScummEngine_v60he::o60_readFilePos() {
 		return;
 	}
 
-	assert(_hInFileTable[slot]);
-	push(_hInFileTable[slot]->pos());
+	// The original uses standard file handles, and not
+	// double in/out handles, so a script can open a file
+	// (as out file) and call this function to perform a ftell().
+	// This causes crashes in at least Backyard Basketball.
+	// 
+	// Let's try imitating that...
+	if (_hInFileTable[slot]) {
+		push(_hInFileTable[slot]->pos());
+	} else if (_hOutFileTable[slot]) {
+		push(_hOutFileTable[slot]->pos());
+	} else {
+		push(0);
+	}
 }
 
 void ScummEngine_v60he::o60_redimArray() {
