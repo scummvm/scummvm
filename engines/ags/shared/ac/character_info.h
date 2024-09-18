@@ -96,7 +96,7 @@ inline int CharFlagsToObjFlags(int chflags) {
 // IMPORTANT: exposed to script API, and plugin API as AGSCharacter!
 // For older script compatibility the struct also has to maintain its size;
 // do not extend or change existing fields, unless planning breaking compatibility.
-// Prefer to use CharacterExtras struct for any extensions.
+// Prefer to use CharacterInfo or CharacterExtras struct for any extensions.
 struct CharacterInfoBase {
 	int   defview;
 	int   talkview;
@@ -131,12 +131,19 @@ struct CharacterInfoBase {
 	short inv[MAX_INV];
 	short actx, acty;
 	// These two name fields are deprecated, but must stay here
-	// for compatibility with the plugin API (unless the plugin interface is reworked)
+	// for compatibility with old scripts and plugin API
 	char legacy_name[LEGACY_MAX_CHAR_NAME_LEN];
 	char legacy_scrname[LEGACY_MAX_SCRIPT_NAME_LEN];
 	int8  on;
 };
 
+enum CharacterSvgVersion {
+	kCharSvgVersion_Initial = 0, // [UNSUPPORTED] from 3.5.0 pre-alpha
+	kCharSvgVersion_350	    = 1, // new movelist format (along with pathfinder)
+	kCharSvgVersion_36025   = 2, // animation volume
+	kCharSvgVersion_36109   = 3, // removed movelists, save externally
+	kCharSvgVersion_36115	= 4, // no limit on character name's length
+};
 
 struct CharacterExtras;
 
@@ -201,13 +208,14 @@ struct CharacterInfo : public CharacterInfoBase {
 	void ReadFromFile(Shared::Stream *in, GameDataVersion data_ver);
 	void WriteToFile(Shared::Stream *out) const;
 	// TODO: move to runtime-only class (?)
-	void ReadFromSavegame(Shared::Stream *in);
+	void ReadFromSavegame(Shared::Stream *in, CharacterSvgVersion save_ver);
 	void WriteToSavegame(Shared::Stream *out) const;
 
 private:
-	// TODO: this is likely temp here until runtime class is factored out
-	void ReadFromFileImpl(Shared::Stream *in, bool is_save);
-	void WriteToFileImpl(Shared::Stream *out, bool is_save) const;
+	// Helper functions that read and write first data fields,
+	// common for both game file and save.
+	void ReadBaseFields(Shared::Stream *in);
+	void WriteBaseFields(Shared::Stream *out) const;
 };
 
 #if defined (OBSOLETE)
