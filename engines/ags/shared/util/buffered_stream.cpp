@@ -38,10 +38,11 @@ const size_t BufferedStream::BufferSize;
 BufferedStream::BufferedStream(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode, DataEndianess stream_endianess)
 	: FileStream(file_name, open_mode, work_mode, stream_endianess) {
 	if (IsValid()) {
-		if (FileStream::Seek(0, kSeekEnd)) {
+		soff_t end_pos = FileStream::Seek(0, kSeekEnd);
+		if (end_pos >= 0) {
 			_start = 0;
-			_end = FileStream::GetPosition();
-			if (!FileStream::Seek(0, kSeekBegin))
+			_end = end_pos;
+			if (FileStream::Seek(0, kSeekBegin) < 0)
 				_end = -1;
 		}
 
@@ -176,18 +177,17 @@ int32_t BufferedStream::WriteByte(uint8_t val) {
 	return val;
 }
 
-bool BufferedStream::Seek(soff_t offset, StreamSeek origin) {
+soff_t BufferedStream::Seek(soff_t offset, StreamSeek origin) {
 	soff_t want_pos = -1;
 	switch (origin) {
 		case StreamSeek::kSeekCurrent:  want_pos = _position + offset; break;
 		case StreamSeek::kSeekBegin:    want_pos = _start + offset; break;
 		case StreamSeek::kSeekEnd:      want_pos = _end + offset; break;
-		default: return false;
+		default: return -1;
 	}
-
-	// clamp
+	// clamp to the valid range
 	_position = MIN(MAX(want_pos, _start), _end);
-	return true;
+	return _position;
 }
 
 //-----------------------------------------------------------------------------
