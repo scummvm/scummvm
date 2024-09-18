@@ -106,7 +106,7 @@ bool VThread::reserveFrameInChunk(VThreadStackChunk *chunk, size_t frameAlignmen
 	bytesAvailable -= dataSize;
 	address -= dataSize;
 
-	size_t dataAlignPadding = static_cast<size_t>(dataAlignment % dataAlignment);
+	size_t dataAlignPadding = static_cast<size_t>(address % dataAlignment);
 
 	if (bytesAvailable < dataAlignPadding)
 		return false;
