@@ -45,7 +45,7 @@ struct ScummVMPlatformDriver : AGSPlatformDriver {
 	FSLocation GetUserConfigDirectory() override;
 	FSLocation GetUserGlobalConfigDirectory() override;
 	FSLocation GetAppOutputDirectory() override;
-	unsigned long GetDiskFreeSpaceMB() override;
+	uint64_t GetDiskFreeSpaceMB() override;
 	const char *GetNoMouseErrorString() override;
 	const char *GetAllegroFailUserHint() override;
 	eScriptSystemOSID GetSystemOSID() override;
@@ -97,7 +97,7 @@ FSLocation ScummVMPlatformDriver::GetAppOutputDirectory() {
 	return FSLocation(".");
 }
 
-unsigned long ScummVMPlatformDriver::GetDiskFreeSpaceMB() {
+uint64_t ScummVMPlatformDriver::GetDiskFreeSpaceMB() {
 	// placeholder
 	return 100;
 }
