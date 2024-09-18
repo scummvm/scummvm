@@ -298,7 +298,7 @@ public:
 		return 0;
 	}
 
-	bool Seek(soff_t offset, StreamSeek origin = kSeekCurrent) override {
+	soff_t Seek(soff_t offset, StreamSeek origin = kSeekCurrent) override {
 		return _stream->seek(offset, origin);
 	}
 
