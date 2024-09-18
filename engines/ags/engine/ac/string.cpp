@@ -298,7 +298,7 @@ size_t break_up_text_into_lines(const char *todis, bool apply_direction, SplitLi
 // the write limit accordingly.
 size_t check_scstrcapacity(const char *ptr) {
 	const void *charstart = &_GP(game).chars[0];
-	const void *charend = &_GP(game).chars[0] + sizeof(CharacterInfo) * _GP(game).chars.size();
+	const void *charend = &_GP(game).chars[0] + _GP(game).chars.size();
 	if ((ptr >= charstart) && (ptr <= charend))
 		return sizeof(CharacterInfo::legacy_name);
 	return MAX_MAXSTRLEN;
@@ -308,7 +308,7 @@ size_t check_scstrcapacity(const char *ptr) {
 // legacy fixed-size name field with the contemporary property value.
 void commit_scstr_update(const char *ptr) {
 	const void *charstart = &_GP(game).chars[0];
-	const void *charend = &_GP(game).chars[0] + sizeof(CharacterInfo) * _GP(game).chars.size();
+	const void *charend = &_GP(game).chars[0] + _GP(game).chars.size();
 	if ((ptr >= charstart) && (ptr <= charend)) {
 		size_t char_index = ((uintptr_t)ptr - (uintptr_t)charstart) / sizeof(CharacterInfo);
 		_GP(game).chars[char_index].name = _GP(game).chars[char_index].legacy_name;
