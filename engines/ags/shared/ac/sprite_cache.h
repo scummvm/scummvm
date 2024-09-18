@@ -130,8 +130,21 @@ public:
 	size_t      GetMaxCacheSize() const;
 	// Returns number of sprite slots in the bank (this includes both actual sprites and free slots)
 	size_t      GetSpriteSlotCount() const;
-	// Loads sprite and and locks in memory (so it cannot get removed implicitly)
-	void        Precache(sprkey_t index);
+	// Loads sprite using SpriteFile if such index is known,
+	// frees the space if cache size reaches the limit
+	void        PrecacheSprite(sprkey_t index);
+	// Locks sprite, preventing it from getting removed by the normal cache limit.
+	// If this is a registered sprite from the game assets, then loads it first.
+	// If this is a sprite with SPRCACHEFLAG_EXTERNAL flag, then does nothing,
+	// as these are always "locked".
+	// If such sprite does not exist, then fails silently.
+	void        LockSprite(sprkey_t index);
+	// Unlocks sprite, putting it back into the cache logic,
+	// where it counts towards normal limit may be deleted to free space.
+	// NOTE: sprites with SPRCACHEFLAG_EXTERNAL flag cannot be unlocked,
+	// only explicitly removed.
+	// If such sprite was not present in memory, then fails silently.
+	void        UnlockSprite(sprkey_t index);
 	// Unregisters sprite from the bank and returns the bitmap
 	Bitmap		*RemoveSprite(sprkey_t index);
 	// Deletes particular sprite, marks slot as unused
@@ -157,7 +170,7 @@ public:
 
 private:
 	// Load sprite from game resource
-	size_t      LoadSprite(sprkey_t index);
+	size_t      LoadSprite(sprkey_t index, bool lock = false);
 	// Remap the given index to the sprite 0
 	void        RemapSpriteToSprite0(sprkey_t index);
 	// Gets the index of a sprite which data is used for the given slot;

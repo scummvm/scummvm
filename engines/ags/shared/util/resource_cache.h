@@ -35,6 +35,12 @@
 // TODO: support data Priority, which tells which items may be disposed
 // when adding new item and surpassing the cache limit.
 //
+// TODO: as an option, consider to have Locked items separate from the normal
+// cache limit, and probably have their own limit setting as a safety measure.
+// (after reaching this limit ResourceCache would simply ignore any further
+// Lock commands until some items are unlocked.)
+// Rethink this when it's time to design a better resource handling in AGS.
+//
 // TODO: as an option, consider supporting a specialized container type that
 // has an associative container's interface, but is optimized for having most
 // keys allocated in large continious sequences by default.
