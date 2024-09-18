@@ -277,7 +277,7 @@ void SpriteCache::DisposeAllCached() {
 	_mru.clear();
 }
 
-void SpriteCache::Precache(sprkey_t index) {
+void SpriteCache::PrecacheSprite(sprkey_t index) {
 	if (index < 0 || (size_t)index >= _spriteData.size())
 		return;
 	if (!_spriteData[index].IsAssetSprite())
@@ -303,11 +303,38 @@ void SpriteCache::Precache(sprkey_t index) {
 	SprCacheLog("Precached %d", index);
 }
 
+void SpriteCache::LockSprite(sprkey_t index) {
+	assert(index >= 0); // out of positive range indexes are valid to fail
+	if (index < 0 || (size_t)index >= _spriteData.size())
+		return;
+	if (!_spriteData[index].IsAssetSprite())
+		return; // cannot lock a non-asset sprite
+
+	if (_spriteData[index].DoesSpriteExist()) {
+		_spriteData[index].Flags |= SPRCACHEFLAG_LOCKED;
+	} else {
+		LoadSprite(index, true);
+	}
+	SprCacheLog("Locked %d", index);
+}
+
+void SpriteCache::UnlockSprite(sprkey_t index) {
+	assert(index >= 0); // out of positive range indexes are valid to fail
+	if (index < 0 || (size_t)index >= _spriteData.size())
+		return;
+	if (!_spriteData[index].IsAssetSprite() ||
+		!_spriteData[index].IsLocked())
+		return; // cannot unlock a non-asset sprite, or non-locked sprite
+
+	_spriteData[index].Flags &= ~SPRCACHEFLAG_LOCKED;
+	SprCacheLog("Unlocked %d", index);
+}
+
 sprkey_t SpriteCache::GetDataIndex(sprkey_t index) {
 	return (_spriteData[index].Flags & SPRCACHEFLAG_REMAP0) == 0 ? index : 0;
 }
 
-size_t SpriteCache::LoadSprite(sprkey_t index) {
+size_t SpriteCache::LoadSprite(sprkey_t index, bool lock) {
 	assert((index >= 0) && ((size_t)index < _spriteData.size()));
 	if (index < 0 || (size_t)index >= _spriteData.size())
 		return 0;
@@ -338,9 +365,10 @@ size_t SpriteCache::LoadSprite(sprkey_t index) {
 	// Clear up space before adding to cache
 	const size_t size = image->GetWidth() * image->GetHeight() * image->GetBPP();
 	FreeMem(size);
+	// Add to the cache, lock if requested or if it's sprite 0
+	const bool should_lock = lock || (index == 0);
 	_spriteData[index] = SpriteData(image, size, SPRCACHEFLAG_ISASSET);
-	if (index == 0) // keep sprite 0 locked
-		_spriteData[index].Flags |= SPRCACHEFLAG_LOCKED;
+	_spriteData[index].Flags |= (SPRCACHEFLAG_LOCKED * should_lock);
 	_cacheSize += size;
 	SprCacheLog("Loaded %d, size now %zu KB", index, _cacheSize / 1024);
 
