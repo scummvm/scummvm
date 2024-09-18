@@ -171,11 +171,19 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 	// WORKAROUND for bug #2826: Disallow pulling the rope if it's
 	// already in the player's inventory.
 	//
-	// TODO: it would be nice to explore what the impacted original
-	// interpreter did in this case, and decide which Enhancement
-	// value we give to this, but so far, I couldn't locate an
-	// original release (interpreter?) showing this issue.  -dwa
-	if (_game.id == GID_MONKEY2 && obj == 1047 && entry == 6 && whereIsObject(obj) == WIO_INVENTORY) {
+	// Doing so would cause fatal errors, such as "Object 1047 not
+	// found in room 98" in (at least) the original DOS/English
+	// release, if one loads the savegame in the bug ticket above,
+	// and pulls the rope after moving to the first room on the
+	// right. The same error happened with the original interpreter.
+	//
+	// Script 97-1047 was fixed in later releases, in different ways.
+	// On Amiga, a getObjectOwner() check was added; the Macintosh
+	// release completely disables pulling the rope, instead. We
+	// choose to follow the latter, as it's simpler, and the former
+	// made Guybrush silent when trying to trigger this action.
+	if (_game.id == GID_MONKEY2 && obj == 1047 && entry == 6 && whereIsObject(obj) == WIO_INVENTORY &&
+		enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		return 0;
 	}
 
