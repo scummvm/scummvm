@@ -515,7 +515,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	if (r_data.CursorMode == MODE_USE)
 		SetActiveInventory(_G(playerchar)->activeinv);
 	// ensure that the current cursor is locked
-	_GP(spriteset).Precache(_GP(game).mcurs[r_data.CursorID].pic);
+	_GP(spriteset).PrecacheSprite(_GP(game).mcurs[r_data.CursorID].pic);
 
 	sys_window_set_title(_GP(play).game_name.GetCStr());
 
