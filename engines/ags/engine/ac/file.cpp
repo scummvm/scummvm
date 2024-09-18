@@ -156,8 +156,9 @@ static bool File_ReadRawLineImpl(sc_File *fil, char *buffer, size_t buf_len) {
 }
 
 void File_ReadRawLine(sc_File *fil, char *buffer) {
-	size_t buflen = check_strcapacity(buffer);
+	size_t buflen = check_scstrcapacity(buffer);
 	File_ReadRawLineImpl(fil, buffer, buflen);
+	commit_scstr_update(buffer);
 }
 
 const char *File_ReadRawLineBack(sc_File *fil) {
