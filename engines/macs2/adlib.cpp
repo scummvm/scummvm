@@ -763,7 +763,33 @@ void Adlib::OnTimer() {
 								// TODO: Proper loop condition
 								if (true) {
 									// l0017_1CB1:
+									// TODO: Access an array via bp-3h
+									/* mov al, [bp - 3h]
+									xor	ah,ah
+									mov	di,ax
+									mov	al,[di+225Fh]
+									mov	di,[bp-8h]
+									mov	[di+2288h],al */
+									// TODO: Move an offset in global 2248 forward based on
+									// the struct
+									/*
+									push word ptr[224Ah]
+									push	word ptr [2248h]
+									mov	di,[bp-8h]
+									mov	al,[di+2288h]
+									xor	ah,ah
+									shl	ax,4h
+									push	ax
+									call	far 0017h:19BEh
+									mov	[bp-14h],ax
+									mov	[bp-12h],dx
+									mov	al,[bp-8h]
+									push	ax
+									push	word ptr [bp-12h]
+									push	word ptr [bp-14h]
+									call	far 0017h:2839h */
 									// TODO: Continue from here
+
 								}
 							}
 							
