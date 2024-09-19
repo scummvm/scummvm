@@ -69,16 +69,17 @@ public:
 class DragonArcadeBullet {
 public:
 	DragonArcadeBullet() : _x(0), _y(0), _state(kBulletInactive),
-		_flipMode(kImageFlipNone), _var1(0), _ySpeed(0), _var2(0), _var3(0) {}
+		_flipMode(kImageFlipNone), _bulletType(0), _ySpeed(0) {}
 
 	int16 _x;
 	int16 _y;
 	DragonBulletState _state;
 	ImageFlipMode _flipMode;
-	int16 _var1;
+	int16 _bulletType;
 	uint16 _ySpeed;
-	int16 _var2;
-	int16 _var3;
+	// these fields are in the original but seem to not be used.
+	// int16 _var2;
+	// int16 _var3;
 };
 
 class DragonArcade {
@@ -95,7 +96,7 @@ private:
 	void checkToOpenMenu();
 	void clearAllBulletStates();
 	void clearAllNPCStates();
-	void createBullet(int16 x, int16 y, ImageFlipMode flipMode, uint16 var1);
+	void createBullet(int16 x, int16 y, ImageFlipMode flipMode, int16 bulletType);
 	void bladeTakeHitAndCheck();
 	void enemyTakeHit() { _npcState[1].health--; }
 	void enemyTakeHitAndCheck();
