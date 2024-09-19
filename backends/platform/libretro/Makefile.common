@@ -135,6 +135,9 @@ ifeq ($(or $(HAVE_OPENGL), $(HAVE_OPENGLES2)), 1)
    USE_OPENGL_GAME := 1
    USE_OPENGL_SHADERS := 1
    DEFINES += -DUSE_OPENGL -DUSE_GLAD -DUSE_OPENGL_GAME -DUSE_OPENGL_SHADERS
+ifeq ($(DEBUG), 1)
+   DEFINES += -DOPENGL_DEBUG
+endif
 ifeq ($(HAVE_OPENGL), 1)
    DEFINES += -DHAVE_OPENGL
    $(info Support for OpenGL requested)
