@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-19 05:09+0000\n"
+"POT-Creation-Date: 2024-09-19 19:33+0000\n"
 "PO-Revision-Date: 2023-12-14 14:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -328,7 +328,7 @@ msgstr "Jiné úložiště právě pracuje. Chcete ho přerušit?"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:601 engines/kyra/gui/saveload_eob.cpp:634
 #: engines/parallaction/metaengine.cpp:143
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4056
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4058
 #: engines/toon/toon.cpp:1543
 msgid "Yes"
 msgstr "Ano"
@@ -341,7 +341,7 @@ msgstr "Ano"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:601 engines/kyra/gui/saveload_eob.cpp:634
 #: engines/parallaction/metaengine.cpp:149
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4056
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4058
 #: engines/toon/toon.cpp:1543
 msgid "No"
 msgstr "Ne"
@@ -374,9 +374,9 @@ msgstr ""
 #: engines/groovie/script.cpp:665 engines/mtropolis/mtropolis.cpp:114
 #: engines/mtropolis/mtropolis.cpp:124 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:76
-#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1268
-#: engines/scumm/scumm.cpp:1641 engines/scumm/scumm.cpp:2129
-#: engines/scumm/scumm.cpp:2145 engines/sky/compact.cpp:140
+#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1270
+#: engines/scumm/scumm.cpp:1643 engines/scumm/scumm.cpp:2131
+#: engines/scumm/scumm.cpp:2147 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2813
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
@@ -5956,7 +5956,7 @@ msgstr "Obnovit"
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:3025
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:3027
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -5967,7 +5967,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:3012
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:3014
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -5978,7 +5978,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3045
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3047
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -9924,7 +9924,7 @@ msgid "Your Name:"
 msgstr "Jméno:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4062
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4064
 msgid "Host"
 msgstr ""
 
@@ -9936,7 +9936,7 @@ msgid "Querying games..."
 msgstr "Ukládání hry..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4062
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4064
 msgid "Join"
 msgstr ""
 
@@ -10878,16 +10878,16 @@ msgid ""
 "320x200, under 'engine' tab."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1222
+#: engines/scumm/scumm.cpp:1224
 msgid "This game requires the 'Indy' Macintosh executable for its fonts."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1247
+#: engines/scumm/scumm.cpp:1249
 msgid ""
 "This game requires the 'Loom' Macintosh executable for its music and fonts."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1267
+#: engines/scumm/scumm.cpp:1269
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
@@ -10895,24 +10895,24 @@ msgstr ""
 "Nelze najít spustitelný soubor 'Monkey Island' pro Macintosh z\n"
 "jehož mají být načteny hudební nástroje. Hudba bude zakázána."
 
-#: engines/scumm/scumm.cpp:1275
+#: engines/scumm/scumm.cpp:1277
 #, c-format
 msgid "Could not open Macintosh resource file %s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1278
+#: engines/scumm/scumm.cpp:1280
 #, c-format
 msgid "Could not find resource fork in Macintosh resource file %s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1638
+#: engines/scumm/scumm.cpp:1640
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please copy the game from the original media without compression."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2127
+#: engines/scumm/scumm.cpp:2129
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -10921,13 +10921,13 @@ msgstr ""
 "Přirozená podpora MIDI vyžaduje Aktualizaci Roland od LucasArts,\n"
 "ale %s chybí. Místo toho je použit AdLib."
 
-#: engines/scumm/scumm.cpp:2143
+#: engines/scumm/scumm.cpp:2145
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:3951
+#: engines/scumm/scumm.cpp:3953
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -10937,7 +10937,7 @@ msgstr ""
 "musí být soubory se hrou umístěny do složky 'Maniac' uvnitř složky se hrou "
 "Tentacle a hra musí být přidána do ScummVM."
 
-#: engines/scumm/scumm.cpp:4062
+#: engines/scumm/scumm.cpp:4064
 #, fuzzy
 msgid "Would you like to host or join a network play session?"
 msgstr "Chcete hru nahrát nebo uložit?"
