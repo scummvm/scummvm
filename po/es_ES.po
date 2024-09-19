@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 05:09+0000\n"
-"PO-Revision-Date: 2024-09-16 08:36+0000\n"
+"PO-Revision-Date: 2024-09-19 09:27+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -11126,18 +11126,13 @@ msgstr ""
 "cámara en la introducción."
 
 #: engines/scumm/metaengine.cpp:726
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
-#| "for a more complete experience."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
 "\" for a more complete experience."
 msgstr ""
 "Permite al juego utilizar la interfaz gráfica interna y los menús originales "
-"para guardar y cargar. Activar junto con «Confirmar al salir» para una "
+"para guardar y cargar. \t\tActivar junto con «Confirmar al salir» para una "
 "experiencia más completa."
 
 #: engines/scumm/metaengine.cpp:735
