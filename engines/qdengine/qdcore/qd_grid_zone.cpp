@@ -127,7 +127,10 @@ bool qdGridZone::save_script(Common::WriteStream &fh, int indent) const {
 	fh.writeString(Common::String::format("<grid_zone name=\"%s\" grid_zone_height=\"%d\"", qdscr_XML_string(name()), _height));
 
 	if (flags()) {
-		fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
+		if (debugChannelSet(-1, kDebugLog))
+			fh.writeString(Common::String::format(" flags=\"%s\"", flags() == 1 ? "ZONE_EXIT_FLAG" : flags() == 0 ? "" : "<error>"));
+		else
+			fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
 	}
 
 	if (_state) {

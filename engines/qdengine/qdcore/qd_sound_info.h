@@ -47,6 +47,8 @@ public:
 	}
 
 	qdSound *sound() const;
+
+	static Common::String flag2str(int fl);
 };
 
 } // namespace QDEngine

@@ -86,6 +86,8 @@ public:
 
 	qdConditionalObject::trigger_start_mode trigger_start();
 
+	static Common::String flag2str(int fl);
+
 private:
 
 	//! Имя mp+ файла.

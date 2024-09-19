@@ -19,7 +19,10 @@
  *
  */
 
+#include "common/debug.h"
+
 #include "qdengine/qd_fwd.h"
+#include "qdengine/qdcore/qd_animation.h"
 #include "qdengine/parser/xml_tag_buffer.h"
 #include "qdengine/parser/qdscr_parser.h"
 
@@ -78,7 +81,10 @@ bool qdInterfaceElementStateMode::save_script(Common::WriteStream &fh, int type_
 	}
 
 	if (_animation_flags) {
-		fh.writeString(Common::String::format(" animation_flags=\"%d\"", _animation_flags));
+		if (debugChannelSet(-1, kDebugLog))
+			fh.writeString(Common::String::format(" animation_flags=\"%s\"", qdAnimation::flag2str(_animation_flags).c_str()));
+		else
+			fh.writeString(Common::String::format(" animation_flags=\"%d\"", _animation_flags));
 	}
 
 	if (has_sound()) {

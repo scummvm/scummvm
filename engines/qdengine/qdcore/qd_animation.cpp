@@ -508,7 +508,10 @@ bool qdAnimation::save_script(Common::WriteStream &fh, int indent) const {
 	}
 
 	if (flags()) {
-		fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
+		if (debugChannelSet(-1, kDebugLog))
+			fh.writeString(Common::String::format(" flags=\"%s\"", flag2str(flags()).c_str()));
+		else
+			fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
 	}
 
 	if (!qda_file().empty()) {

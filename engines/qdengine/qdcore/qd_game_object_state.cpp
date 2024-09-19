@@ -502,7 +502,10 @@ bool qdGameObjectState::save_script_body(Common::WriteStream &fh, int indent) co
 		fh.writeString("<sound");
 
 		if (_sound_info.flags()) {
-			fh.writeString(Common::String::format(" flags=\"%d\"", _sound_info.flags()));
+			if (debugChannelSet(-1, kDebugLog))
+				fh.writeString(Common::String::format(" flags=\"%s\"", qdSoundInfo::flag2str(_sound_info.flags()).c_str()));
+			else
+				fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
 		}
 
 		fh.writeString(Common::String::format(">%s</sound>\r\n", qdscr_XML_string(_sound_info.name())));

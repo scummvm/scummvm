@@ -19,12 +19,13 @@
  *
  */
 
+#include "common/debug.h"
+
 #include "qdengine/qd_fwd.h"
 #include "qdengine/parser/xml_tag_buffer.h"
 #include "qdengine/parser/qdscr_parser.h"
 #include "qdengine/qdcore/qd_game_dispatcher.h"
 #include "qdengine/qdcore/qd_music_track.h"
-
 
 namespace QDEngine {
 
@@ -91,7 +92,10 @@ bool qdMusicTrack::save_script(Common::WriteStream &fh, int indent) const {
 		fh.writeString(Common::String::format(" name=\"%s\"", qdscr_XML_string(name())));
 	}
 
-	fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
+	if (debugChannelSet(-1, kDebugLog))
+		fh.writeString(Common::String::format(" flags=\"%s\"", flag2str(flags()).c_str()));
+	else
+		fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
 
 	if (!_file_name.empty()) {
 		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(_file_name.toString('\\'))));
@@ -117,6 +121,37 @@ bool qdMusicTrack::save_script(Common::WriteStream &fh, int indent) const {
 	}
 
 	return true;
+}
+
+#define defFlag(x) { x, #x }
+
+struct FlagsList {
+	int f;
+	const char *s;
+} static flagList[] = {
+	defFlag(QD_MUSIC_TRACK_CYCLED),
+	defFlag(QD_MUSIC_TRACK_DISABLE_RESTART),
+	defFlag(QD_MUSIC_TRACK_DISABLE_SWITCH_OFF),
+};
+
+Common::String qdMusicTrack::flag2str(int fl) {
+	Common::String res;
+
+	for (int i = 0; i < ARRAYSIZE(flagList); i++) {
+		if (fl & flagList[i].f) {
+			if (!res.empty())
+				res += " | ";
+
+			res += flagList[i].s;
+
+			fl &= ~flagList[i].f;
+		}
+	}
+
+	if (fl)
+		res += Common::String::format(" | %x", fl);
+
+	return res;
 }
 
 qdConditionalObject::trigger_start_mode qdMusicTrack::trigger_start() {

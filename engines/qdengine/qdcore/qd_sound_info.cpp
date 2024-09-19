@@ -41,4 +41,34 @@ qdSound *qdSoundInfo::sound() const {
 
 	return NULL;
 }
+
+#define defFlag(x) { qdSoundInfo::x, #x }
+
+struct FlagsList {
+	int f;
+	const char *s;
+} static flagList[] = {
+	defFlag(LOOP_SOUND_FLAG),
+};
+
+Common::String qdSoundInfo::flag2str(int fl) {
+	Common::String res;
+
+	for (int i = 0; i < ARRAYSIZE(flagList); i++) {
+		if (fl & flagList[i].f) {
+			if (!res.empty())
+				res += " | ";
+
+			res += flagList[i].s;
+
+			fl &= ~flagList[i].f;
+		}
+	}
+
+	if (fl)
+		res += Common::String::format(" | %x", fl);
+
+	return res;
+}
+
 } // namespace QDEngine
