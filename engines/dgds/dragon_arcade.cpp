@@ -144,14 +144,14 @@ bool DragonArcade::doTickUpdate() {
 }
 
 void DragonArcade::updateBullets() {
-	for (int i = 19; i > 0; i--) {
-		if (_bullets[i]._state == 2 || _bullets[i]._state == 3) {
+	for (int i = 19; i >= 0; i--) {
+		if (_bullets[i]._state == kBulletHittingBlade || _bullets[i]._state == kBulletHittingEnemy) {
 			_bullets[i]._state = kBulletInactive;
 			continue;
 		}
 
 		if (_bullets[i]._state == kBulletFlying) {
-			if (_bullets[i]._var1 == 3) {
+			if (_bullets[i]._bulletType == 3) {
 				_bullets[i]._y += _bullets[i]._ySpeed;
 			}
 			if (_bullets[i]._flipMode == kImageFlipNone) {
@@ -188,10 +188,10 @@ int16 DragonArcade::checkBulletCollision(int16 num) {
 		if (_npcState[i].byte12 <= 0)
 			continue;
 
-		if (_bullets[num]._var1 == 3) {
+		if (_bullets[num]._bulletType == 3) {
 			yoff = 7;
 		}
-		if (_bullets[num]._var1 != 1 || i == 0) {
+		if (_bullets[num]._bulletType != 1 || i == 0) {
 			if (_bullets[num]._x < _npcState[i].x_11 || _npcState[i].x_12 < _bullets[num]._x ||
 				_bullets[num]._y + yoff < _npcState[i].y_11 || _npcState[i].y_12 < _bullets[num]._y + yoff) {
 				if (_bullets[num]._x < _npcState[i].x_21 || _npcState[i].x_22 < _bullets[num]._x ||
@@ -201,18 +201,18 @@ int16 DragonArcade::checkBulletCollision(int16 num) {
 					return -1;
 
 				if (_loadedArcadeStage == 3) {
-					if (_bullets[num]._var1 == 3)
+					if (_bullets[num]._bulletType == 3)
 						continue;
 				} else {
 					if (_loadedArcadeStage == 4) {
-						if (_bullets[num]._var1 == 1 || _bullets[num]._var1 == 3)
+						if (_bullets[num]._bulletType == 1 || _bullets[num]._bulletType == 3)
 							continue;
 					} else if (_loadedArcadeStage != 6) {
 						return -1;
 					}
 				}
 
-				if (_bullets[num]._var1 != 2) {
+				if (_bullets[num]._bulletType != 2) {
 					return -1;
 				}
 			} else {
@@ -221,7 +221,7 @@ int16 DragonArcade::checkBulletCollision(int16 num) {
 					if (_npcState[0].health != 0)
 						return 1;
 
-					if (_bullets[num]._var1 != 3) {
+					if (_bullets[num]._bulletType != 3) {
 						return 1;
 					}
 					_shouldUpdateState = 3;
@@ -234,7 +234,7 @@ int16 DragonArcade::checkBulletCollision(int16 num) {
 				case 2:
 				case 4:
 					if (_loadedArcadeStage == 4 || _npcState[i].byte12 < 0x1e) {
-						if (_bullets[num]._var1 != 1) {
+						if (_bullets[num]._bulletType != 1) {
 							playSfx(0x56);
 							_npcState[i].byte12 = 1;
 							if (_npcState[i].ttmPage < 0x1c) {
@@ -255,7 +255,7 @@ int16 DragonArcade::checkBulletCollision(int16 num) {
 					_npcState[i].ttmPage = 0x21;
 					break;
 				case 3:
-					if (_bullets[num]._var1 != 3) {
+					if (_bullets[num]._bulletType != 3) {
 						if (_npcState[i].byte12 == 1) {
 							_npcState[i].byte12 = 7;
 							_npcState[i].ttmPage = 0x4b;
@@ -274,7 +274,7 @@ int16 DragonArcade::checkBulletCollision(int16 num) {
 					}
 					break;
 				case 6:
-					if (_bullets[num]._var1 != 2) {
+					if (_bullets[num]._bulletType != 2) {
 						if (_haveBigGun) {
 							decBossHealthAndCheck();
 						}
@@ -1233,7 +1233,7 @@ void DragonArcade::updateBoss() {
 	int16 distToBoss = _npcState[1].x - _npcState[0].x;
 	int16 absDistToBoss = abs(distToBoss);
 	bool bossIsClose = absDistToBoss < 20;
-	uint16 uVar4 = _nextRandomVal & 0xf;
+	uint16 randVal = _nextRandomVal & 0xf;
 
 	switch(_npcState[1].byte12) {
 	case 0:
@@ -1242,15 +1242,15 @@ void DragonArcade::updateBoss() {
 				_npcState[1].byte12 = 5;
 				_npcState[1].ttmPage = 30;
 			}
-		} else if (distToBoss < 0 || (_bossStateUpdateCounter < 0 && uVar4 == 7)) {
+		} else if (distToBoss < 0 || (_bossStateUpdateCounter < 0 && randVal == 7)) {
 			_npcState[1].byte12 = 3;
 			_npcState[1].ttmPage = 10;
 			_bossStateUpdateCounter++;
-		} else if ((bossIsClose && distToBoss < 70 && 0 < distToBoss && uVar4 == 0xf) || (0 < _bossStateUpdateCounter && uVar4 == 7)) {
+		} else if ((bossIsClose && distToBoss < 70 && 0 < distToBoss && randVal == 0xf) || (0 < _bossStateUpdateCounter && randVal == 7)) {
 			_npcState[1].byte12 = 2;
 			_npcState[1].ttmPage = 3;
 			_bossStateUpdateCounter--;
-		} else if (_bossStateUpdateCounter == 0 && uVar4 == 0xf) {
+		} else if (_bossStateUpdateCounter == 0 && randVal == 0xf) {
 			_npcState[1].byte12 = 4;
 			_npcState[1].ttmPage = 17;
 		}
@@ -2409,15 +2409,15 @@ void DragonArcade::clearAllBulletStates() {
 	}
 }
 
-void DragonArcade::createBullet(int16 x, int16 y, ImageFlipMode flipMode, uint16 var1) {
+void DragonArcade::createBullet(int16 x, int16 y, ImageFlipMode flipMode, int16 bulletType) {
 	for (uint i = 0; i < ARRAYSIZE(_bullets); i++) {
 		if (_bullets[i]._state == kBulletInactive) {
 			_bullets[i]._state = kBulletFlying;
 			_bullets[i]._x = x;
 			_bullets[i]._y = y;
 			_bullets[i]._flipMode = flipMode;
-			_bullets[i]._var1 = var1;
-			if (var1 == 3)
+			_bullets[i]._bulletType = bulletType;
+			if (bulletType == 3)
 				_bullets[i]._ySpeed = _nextRandomVal & 3;
 
 			break;
@@ -2534,7 +2534,7 @@ void DragonArcade::runThenDrawBulletsInFlight() {
 			drawBulletHitCircles(x, y, true);
 		} else if (_bullets[i]._state == kBulletFlying) {
 			int16 frameno;
-			if (_bullets[i]._var1 == 3) {
+			if (_bullets[i]._bulletType == 3) {
 				// FIXME: this is a bit weird?
 				frameno = (_nextRandomVal % 3);
 			} else {
