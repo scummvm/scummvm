@@ -645,7 +645,7 @@ void Room603::conv603a() {
 					_val8 = 16;
 					kernel_timing_trigger(1, 400, KT_DAEMON, KT_PARSE);
 					conv_resume();
-				} else if (node = 0 || node == 1 || node == 2) {
+				} else if (node == 0 || node == 1 || node == 2) {
 					sendWSMessage_10000(1, _tt, _ttDigShirtOff, 43, 43, -1,
 						_ttDigShirtOff, 43, 43, 0);
 					conv_resume();
