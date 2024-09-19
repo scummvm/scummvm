@@ -41,6 +41,8 @@ class Group : public Object {
 public:
 	Group(uint16 objectID_, uint16 flags_,
 		const Common::Array<uint16> objectIds_,
+		const Math::Vector3d offset1_,
+		const Math::Vector3d offset2_,
 		const Common::Array<AnimationOpcode *> operations);
 	~Group();
 	void linkObject(Object *obj);
@@ -52,6 +54,8 @@ public:
 
 	Common::Array<Object *> _objects;
 	Common::Array<Math::Vector3d> _origins;
+	Math::Vector3d _offset1;
+	Math::Vector3d _offset2;
 	Common::Array<AnimationOpcode *> _operations;
 	Common::Array<uint16> _objectIds;
 	int _scale;

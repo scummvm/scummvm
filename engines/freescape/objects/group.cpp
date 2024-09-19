@@ -27,14 +27,18 @@ namespace Freescape {
 
 Group::Group(uint16 objectID_, uint16 flags_,
 const Common::Array<uint16> objectIds_,
+const Math::Vector3d offset1_,
+const Math::Vector3d offset2_,
 const Common::Array<AnimationOpcode *> operations_) {
 	_objectID = objectID_;
 	_flags = flags_;
 	_scale = 0;
 	_active = true;
 	_step = 0;
+	_offset1 = offset1_;
+	_offset2 = offset2_;
 
-	for (int i = 0; i < int(objectIds_.size()); i++) {
+	for (int i = 0; i < 3; i++) { // three is the maximum number of objects in a group
 		if (objectIds_[i] == 0 || objectIds_[i] == 0xffff)
 			break;
 		_objectIds.push_back(objectIds_[i]);
@@ -59,6 +63,8 @@ Object *Group::duplicate() {
 		_objectID,
 		_flags,
 		_objectIds,
+		_offset1,
+		_offset2,
 		_operations
 		);
 }
@@ -88,6 +94,16 @@ void Group::assemble(int index) {
 	//gobj->makeVisible();
 	Math::Vector3d position = _operations[_step]->position;
 	Math::Vector3d offset = _origins[index] - _origins[0];
+	/*if (index == 0)
+		; // offset is always zero
+	else if (index == 1)
+		offset = _offset1;
+	else if (index == 2)
+		offset = _offset2;
+	else
+		error("Invalid index: %d", index);
+
+	offset = 32 * offset / _scale;*/
 	position = 32 * position / _scale;
 
 	debugC(1, kFreescapeDebugCode, "Group %d: Assembling object %d originally at %f, %f, %f", _objectID, gobj->getObjectID(), gobj->getOrigin().x(), gobj->getOrigin().y(), gobj->getOrigin().z());

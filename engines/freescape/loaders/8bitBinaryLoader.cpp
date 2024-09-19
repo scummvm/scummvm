@@ -95,7 +95,23 @@ Group *FreescapeEngine::load8bitGroup(Common::SeekableReadStream *file, byte raw
 Group *FreescapeEngine::load8bitGroupV1(Common::SeekableReadStream *file, byte rawFlagsAndType) {
 	debugC(1, kFreescapeDebugParser, "Object of type 'group'");
 	Common::Array<AnimationOpcode *> animation;
-	Common::Array<uint16> groupObjects = readArray(file, 6);
+	Common::Array<uint16> groupObjects = readArray(file, 3);
+	Math::Vector3d offset1;
+	Math::Vector3d offset2;
+
+	for (int i = 0; i < 3; i++) {
+		uint16 value = 0;
+		if (isAmiga() || isAtariST())
+			value = readField(file, 16);
+		else
+			value = readField(file, 8);
+
+		if (value > 127)
+			value = value - 255;
+
+		debugC(1, kFreescapeDebugParser, "Group offset[1][%d] = %d", i, value);
+		offset1.setValue(i, value);
+	}
 
 	// object ID
 	uint16 objectID = readField(file, 8);
@@ -117,11 +133,15 @@ Group *FreescapeEngine::load8bitGroupV1(Common::SeekableReadStream *file, byte r
 		else
 			value = readField(file, 8);
 
-		groupObjects.push_back(value);
+		if (value > 127)
+			value = value - 255;
+
+		debugC(1, kFreescapeDebugParser, "Group offset[2][%d] = %d", i, value);
+		offset2.setValue(i, value);
 	}
 
 	byteSizeOfObject = byteSizeOfObject - 3;
-	for (int i = 0; i < 9; i++)
+	for (int i = 0; i < 3; i++)
 		debugC(1, kFreescapeDebugParser, "Group object[%d] = %d", i, groupObjects[i]);
 
 	Common::Array<uint16> groupOperations;
@@ -172,6 +192,8 @@ Group *FreescapeEngine::load8bitGroupV1(Common::SeekableReadStream *file, byte r
 		objectID,
 		rawFlagsAndType,
 		groupObjects,
+		offset1,
+		offset2,
 		animation);
 }
 
@@ -179,7 +201,23 @@ Group *FreescapeEngine::load8bitGroupV1(Common::SeekableReadStream *file, byte r
 Group *FreescapeEngine::load8bitGroupV2(Common::SeekableReadStream *file, byte rawFlagsAndType) {
 	debugC(1, kFreescapeDebugParser, "Object of type 'group'");
 	Common::Array<AnimationOpcode *> animation;
-	Common::Array<uint16> groupObjects = readArray(file, 6);
+	Common::Array<uint16> groupObjects = readArray(file, 3);
+	Math::Vector3d offset1;
+	Math::Vector3d offset2;
+
+	for (int i = 0; i < 3; i++) {
+		int16 value = 0;
+		if (isAmiga() || isAtariST())
+			value = readField(file, 16);
+		else
+			value = readField(file, 8);
+
+		if (value > 127)
+			value = value - 255;
+
+		debugC(1, kFreescapeDebugParser, "Group offset[1][%d] = %d", i, value);
+		offset1.setValue(i, value);
+	}
 
 	// object ID
 	uint16 objectID = readField(file, 8);
@@ -196,16 +234,21 @@ Group *FreescapeEngine::load8bitGroupV2(Common::SeekableReadStream *file, byte r
 	byteSizeOfObject = byteSizeOfObject - 9;
 
 	for (int i = 0; i < 3; i++) {
-		uint16 value = 0;
+		int16 value = 0;
 		if (isAmiga() || isAtariST())
 			value = readField(file, 16);
 		else
 			value = readField(file, 8);
-		groupObjects.push_back(value);
+
+		if (value > 127)
+			value = value - 255;
+
+		debugC(1, kFreescapeDebugParser, "Group offset[2][%d] = %d", i, value);
+		offset2.setValue(i, value);
 	}
 
 	byteSizeOfObject = byteSizeOfObject - 3;
-	for (int i = 0; i < 9; i++)
+	for (int i = 0; i < 3; i++)
 		debugC(1, kFreescapeDebugParser, "Group object[%d] = %d", i, groupObjects[i]);
 
 	Common::Array<uint16> groupOperations;
@@ -254,6 +297,8 @@ Group *FreescapeEngine::load8bitGroupV2(Common::SeekableReadStream *file, byte r
 		objectID,
 		rawFlagsAndType,
 		groupObjects,
+		offset1,
+		offset2,
 		animation);
 }
 
