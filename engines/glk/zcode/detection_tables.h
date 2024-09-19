@@ -6782,6 +6782,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("deklinator", "040630", "1ca69e16e8e3e1941eb5c4cd403b2022", 103424, Common::DE_DEU),
 	ENTRY1("dermantel", "100913", "81155fc7363968d2a47612d13d12830d", 281564, Common::DE_DEU),
 	ENTRY1("diegerechtenricht", "101024", "47f0308a684a569ed6df68dbdc92387e", 439064, Common::DE_DEU),
+	ENTRY1("drakdiamanten_zcode", "230707", "8d1c7c9aeaf4ed6e55fb8eda0a7d4c61", 475998, Common::DE_DEU),
 	ENTRY1("drakdiamanten_zcode", "240103", "484eead39ed34619a3af8a23e1e94b6e", 476510, Common::DE_DEU),
 	ENTRY1("eskmausden", "130714", "71d37a2c11f9c0b085ff1ce06ba488f9", 199168, Common::DE_DEU),
 	ENTRY1("halb2", "020523", "d424290a37b5efc67482e4fc9224bc0e", 30208, Common::DE_DEU),
