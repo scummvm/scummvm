@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-18 19:45+0000\n"
+"POT-Creation-Date: 2024-09-19 05:09+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -328,7 +328,7 @@ msgstr "Цяпер працуе іншае сховішча. Перапыніц�
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:601 engines/kyra/gui/saveload_eob.cpp:634
 #: engines/parallaction/metaengine.cpp:143
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4028
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4056
 #: engines/toon/toon.cpp:1543
 msgid "Yes"
 msgstr "Так"
@@ -341,7 +341,7 @@ msgstr "Так"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:601 engines/kyra/gui/saveload_eob.cpp:634
 #: engines/parallaction/metaengine.cpp:149
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4028
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4056
 #: engines/toon/toon.cpp:1543
 msgid "No"
 msgstr "Не"
@@ -1033,7 +1033,7 @@ msgstr "Узаемадзеянне"
 #: engines/dragons/metaengine.cpp:159 engines/freescape/movement.cpp:35
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:481
 #: engines/grim/grim.cpp:562 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
-#: engines/scumm/metaengine.cpp:904 engines/twine/metaengine.cpp:467
+#: engines/scumm/metaengine.cpp:903 engines/twine/metaengine.cpp:467
 #: engines/twine/metaengine.cpp:534 engines/twp/metaengine.cpp:154
 #: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
@@ -1048,7 +1048,7 @@ msgstr "Уверх"
 #: engines/dragons/metaengine.cpp:165 engines/freescape/movement.cpp:42
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:486
 #: engines/grim/grim.cpp:567 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
-#: engines/scumm/metaengine.cpp:871 engines/twine/metaengine.cpp:474
+#: engines/scumm/metaengine.cpp:870 engines/twine/metaengine.cpp:474
 #: engines/twine/metaengine.cpp:542 engines/twp/metaengine.cpp:155
 #: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
@@ -1062,7 +1062,7 @@ msgstr "Уніз"
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:171 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:572 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:884
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:883
 #: engines/twine/metaengine.cpp:489 engines/twine/metaengine.cpp:557
 #: engines/twp/metaengine.cpp:152 engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
@@ -1077,7 +1077,7 @@ msgstr "Налева"
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:177 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:496 engines/grim/grim.cpp:577 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:891
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:890
 #: engines/twine/metaengine.cpp:481 engines/twine/metaengine.cpp:550
 #: engines/twp/metaengine.cpp:153 engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
@@ -3471,7 +3471,7 @@ msgstr ""
 "дапамогі."
 
 #: engines/dialogs.cpp:193 engines/ags/ags.cpp:349
-#: engines/glk/magnetic/magnetic.cpp:197 engines/scumm/saveload.cpp:171
+#: engines/glk/magnetic/magnetic.cpp:197 engines/scumm/saveload.cpp:167
 #, fuzzy
 #| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support saving from the menu. Use in-game interface"
@@ -5877,7 +5877,7 @@ msgstr "Дадаць меню хуткасці гульні (падобна на
 #: engines/dreamweb/metaengine.cpp:36 engines/lure/metaengine.cpp:41
 #: engines/mads/metaengine.cpp:51 engines/mm/metaengine.cpp:46
 #: engines/saga/metaengine.cpp:52 engines/scumm/dialogs.cpp:1188
-#: engines/scumm/metaengine.cpp:756
+#: engines/scumm/metaengine.cpp:755
 #, fuzzy
 msgid "Enable copy protection"
 msgstr "Уключыць цэнзуру змесціва"
@@ -5886,7 +5886,7 @@ msgstr "Уключыць цэнзуру змесціва"
 #: engines/dreamweb/metaengine.cpp:37 engines/lure/metaengine.cpp:42
 #: engines/mads/metaengine.cpp:52 engines/mm/metaengine.cpp:47
 #: engines/saga/metaengine.cpp:53 engines/scumm/dialogs.cpp:1189
-#: engines/scumm/metaengine.cpp:757
+#: engines/scumm/metaengine.cpp:756
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
 
@@ -5947,7 +5947,7 @@ msgstr "Узнавіць"
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2997
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:3025
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -5958,7 +5958,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2984
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:3012
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -5969,7 +5969,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3017
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3045
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6594,7 +6594,7 @@ msgstr "Пераключыць гук"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:930 engines/twp/metaengine.cpp:162
+#: engines/scumm/metaengine.cpp:929 engines/twp/metaengine.cpp:162
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "Прапусціць застаўку"
@@ -7107,7 +7107,7 @@ msgstr "Узаемадзеянне"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:917
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:916
 #, fuzzy
 msgid "Attack"
 msgstr "Атака 1"
@@ -9990,7 +9990,7 @@ msgid "Your Name:"
 msgstr "Назва:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4034
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4062
 msgid "Host"
 msgstr ""
 
@@ -10002,7 +10002,7 @@ msgid "Querying games..."
 msgstr "Захоўваю гульню..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4034
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4062
 msgid "Join"
 msgstr ""
 
@@ -10857,73 +10857,72 @@ msgstr ""
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
-"\" for a more complete experience. \t\tAutosaving is disabled when this mode "
-"is active."
+"\" for a more complete experience."
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:736
+#: engines/scumm/metaengine.cpp:735
 #, fuzzy
 msgid "Enable low latency audio mode"
 msgstr "Уключыць рэжым гелія"
 
-#: engines/scumm/metaengine.cpp:737
+#: engines/scumm/metaengine.cpp:736
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. \t"
 "\tIt is recommended to enable this feature only if you incur in audio "
 "latency issues during normal gameplay."
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:746
+#: engines/scumm/metaengine.cpp:745
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:747
+#: engines/scumm/metaengine.cpp:746
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", \t\twhich was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:765
+#: engines/scumm/metaengine.cpp:764
 #, fuzzy
 msgid "Enable demo/kiosk mode"
 msgstr "Уключыць рэжым гелія"
 
-#: engines/scumm/metaengine.cpp:766
+#: engines/scumm/metaengine.cpp:765
 msgid "Enable demo/kiosk mode in the full retail version of Maniac Mansion."
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:865
+#: engines/scumm/metaengine.cpp:864
 #, fuzzy
 msgid "Down Left"
 msgstr "Паварот налева"
 
-#: engines/scumm/metaengine.cpp:878
+#: engines/scumm/metaengine.cpp:877
 #, fuzzy
 msgid "Down Right"
 msgstr "Паварот направа"
 
-#: engines/scumm/metaengine.cpp:898
+#: engines/scumm/metaengine.cpp:897
 #, fuzzy
 msgid "Up Left"
 msgstr "Налева"
 
-#: engines/scumm/metaengine.cpp:911
+#: engines/scumm/metaengine.cpp:910
 #, fuzzy
 msgid "Up Right"
 msgstr "Направа"
 
-#: engines/scumm/metaengine.cpp:923
+#: engines/scumm/metaengine.cpp:922
 #, fuzzy
 msgid "Switch weapon"
 msgstr "Змена героя:"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:937
+#: engines/scumm/metaengine.cpp:936
 msgid "Win the bike fight cheat"
 msgstr ""
 
-#: engines/scumm/saveload.cpp:1977
+#: engines/scumm/saveload.cpp:1970
 #, c-format
 msgid ""
 "Warning: incompatible sound settings detected between the current "
@@ -10995,7 +10994,7 @@ msgid ""
 "required resources for MT-32. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:3923
+#: engines/scumm/scumm.cpp:3951
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -11006,7 +11005,7 @@ msgstr ""
 "унутры дырэкторыі гульні Tentacle і сама гульня павінна быць дададзена ў "
 "ScummVM."
 
-#: engines/scumm/scumm.cpp:4034
+#: engines/scumm/scumm.cpp:4062
 #, fuzzy
 msgid "Would you like to host or join a network play session?"
 msgstr "Ці вы хочаце захаваць або загрузіць гульню?"

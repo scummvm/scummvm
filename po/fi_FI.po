@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-18 19:45+0000\n"
+"POT-Creation-Date: 2024-09-19 05:09+0000\n"
 "PO-Revision-Date: 2024-09-05 23:43+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -311,7 +311,7 @@ msgstr "Toinen tallennustila on aktiivinen. Haluatko keskeyttää sen?"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:601 engines/kyra/gui/saveload_eob.cpp:634
 #: engines/parallaction/metaengine.cpp:143
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4028
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4056
 #: engines/toon/toon.cpp:1543
 msgid "Yes"
 msgstr "Kyllä"
@@ -324,7 +324,7 @@ msgstr "Kyllä"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:601 engines/kyra/gui/saveload_eob.cpp:634
 #: engines/parallaction/metaengine.cpp:149
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4028
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4056
 #: engines/toon/toon.cpp:1543
 msgid "No"
 msgstr "Ei"
@@ -1010,7 +1010,7 @@ msgstr "Käytä"
 #: engines/dragons/metaengine.cpp:159 engines/freescape/movement.cpp:35
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:481
 #: engines/grim/grim.cpp:562 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
-#: engines/scumm/metaengine.cpp:904 engines/twine/metaengine.cpp:467
+#: engines/scumm/metaengine.cpp:903 engines/twine/metaengine.cpp:467
 #: engines/twine/metaengine.cpp:534 engines/twp/metaengine.cpp:154
 #: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
@@ -1025,7 +1025,7 @@ msgstr "Ylös"
 #: engines/dragons/metaengine.cpp:165 engines/freescape/movement.cpp:42
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:486
 #: engines/grim/grim.cpp:567 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
-#: engines/scumm/metaengine.cpp:871 engines/twine/metaengine.cpp:474
+#: engines/scumm/metaengine.cpp:870 engines/twine/metaengine.cpp:474
 #: engines/twine/metaengine.cpp:542 engines/twp/metaengine.cpp:155
 #: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
@@ -1039,7 +1039,7 @@ msgstr "Alas"
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:171 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:572 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:884
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:883
 #: engines/twine/metaengine.cpp:489 engines/twine/metaengine.cpp:557
 #: engines/twp/metaengine.cpp:152 engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
@@ -1054,7 +1054,7 @@ msgstr "Vasen"
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:177 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:496 engines/grim/grim.cpp:577 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:891
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:890
 #: engines/twine/metaengine.cpp:481 engines/twine/metaengine.cpp:550
 #: engines/twp/metaengine.cpp:153 engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
@@ -3495,7 +3495,7 @@ msgstr ""
 "tiedosto saadaksesi lisätietoa."
 
 #: engines/dialogs.cpp:193 engines/ags/ags.cpp:349
-#: engines/glk/magnetic/magnetic.cpp:197 engines/scumm/saveload.cpp:171
+#: engines/glk/magnetic/magnetic.cpp:197 engines/scumm/saveload.cpp:167
 msgid "This game does not support saving from the menu. Use in-game interface"
 msgstr ""
 "Tämä peli ei tue pelitallennusten tekemistä valikosta. Käytä pelin omaa "
@@ -6151,7 +6151,7 @@ msgstr "Lisää pelinnopeusvalikko (kuten PC-versiossa)"
 #: engines/dreamweb/metaengine.cpp:36 engines/lure/metaengine.cpp:41
 #: engines/mads/metaengine.cpp:51 engines/mm/metaengine.cpp:46
 #: engines/saga/metaengine.cpp:52 engines/scumm/dialogs.cpp:1188
-#: engines/scumm/metaengine.cpp:756
+#: engines/scumm/metaengine.cpp:755
 msgid "Enable copy protection"
 msgstr "Kopiosuojaus päälle"
 
@@ -6159,7 +6159,7 @@ msgstr "Kopiosuojaus päälle"
 #: engines/dreamweb/metaengine.cpp:37 engines/lure/metaengine.cpp:42
 #: engines/mads/metaengine.cpp:52 engines/mm/metaengine.cpp:47
 #: engines/saga/metaengine.cpp:53 engines/scumm/dialogs.cpp:1189
-#: engines/scumm/metaengine.cpp:757
+#: engines/scumm/metaengine.cpp:756
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
 "Laita päälle kopiosuojaukset jotka muuten oletusarvoisesti ohitettaisiin."
@@ -6219,7 +6219,7 @@ msgstr "Lataa tallenne"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "Pelin pikalataus tai tallennus ei ole tuettu tässä sijainnissa"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2997
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:3025
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -6230,7 +6230,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2984
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:3012
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -6241,7 +6241,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3017
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:3045
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6845,7 +6845,7 @@ msgstr "Taistelumoodi päälle / pois"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:930 engines/twp/metaengine.cpp:162
+#: engines/scumm/metaengine.cpp:929 engines/twp/metaengine.cpp:162
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "Ohita video"
@@ -7304,7 +7304,7 @@ msgstr "Puhu/Vuorovaikuta"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:917
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:916
 msgid "Attack"
 msgstr "Hyökkäys"
 
@@ -10055,7 +10055,7 @@ msgid "Your Name:"
 msgstr "Sinun nimesi:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4034
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4062
 msgid "Host"
 msgstr "Isännöi"
 
@@ -10065,7 +10065,7 @@ msgid "Querying games..."
 msgstr "Etsitään pelejä..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4034
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4062
 msgid "Join"
 msgstr "Liity"
 
@@ -10949,23 +10949,26 @@ msgid ""
 msgstr "Salli vähemmän pehmeä vieritys intron nopeissa kameraliikkeissä."
 
 #: engines/scumm/metaengine.cpp:726
+#, fuzzy
+#| msgid ""
+#| "Allow the game to use the in-engine graphical interface and the original "
+#| "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
+#| "for a more complete experience."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
-"\" for a more complete experience. \t\tAutosaving is disabled when this mode "
-"is active."
+"\" for a more complete experience."
 msgstr ""
 "Salli pelin käyttää pelimoottorin sisäistä graafista käyttöliittymää sekä "
-"alkuperäistä tallennus/latausvalikkoa. \t\tKäytä tätä yhdessä 'Varmista että "
+"alkuperäistä tallennus/latausvalikkoa. Käytä tätä yhdessä 'Varmista että "
 "peli tai ohjelma halutaan sulkea'-asetuksen kanssa saadaksesi "
-"kokonaisvaltaisemman kokemuksen. \t\tAutomaattitallennus ei ole päällä tässä "
-"tilassa."
+"kokonaisvaltaisemman kokemuksen."
 
-#: engines/scumm/metaengine.cpp:736
+#: engines/scumm/metaengine.cpp:735
 msgid "Enable low latency audio mode"
 msgstr "Matalalatenssinen audio"
 
-#: engines/scumm/metaengine.cpp:737
+#: engines/scumm/metaengine.cpp:736
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. \t"
 "\tIt is recommended to enable this feature only if you incur in audio "
@@ -10975,11 +10978,11 @@ msgstr ""
 "kustannuksella. \t\tSuosittelemme tätä asetusta vain jos huomaat viivettä "
 "pelin äänissä normaalissa pelitilanteessa."
 
-#: engines/scumm/metaengine.cpp:746
+#: engines/scumm/metaengine.cpp:745
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr "Esitä \"A Pirate I Was Meant To Be\"-laulu"
 
-#: engines/scumm/metaengine.cpp:747
+#: engines/scumm/metaengine.cpp:746
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", \t\twhich was cut in international releases. Beware though: "
@@ -10989,40 +10992,40 @@ msgstr ""
 "Laulu poistettiin kansainvälisistä julkaisuista, tekstitykset saattavat olla "
 "vajavaiset."
 
-#: engines/scumm/metaengine.cpp:765
+#: engines/scumm/metaengine.cpp:764
 msgid "Enable demo/kiosk mode"
 msgstr "Demotila päälle/pois"
 
-#: engines/scumm/metaengine.cpp:766
+#: engines/scumm/metaengine.cpp:765
 msgid "Enable demo/kiosk mode in the full retail version of Maniac Mansion."
 msgstr "Demotila Maniac Mansion:in täyspitkälle myyntiversiolle."
 
-#: engines/scumm/metaengine.cpp:865
+#: engines/scumm/metaengine.cpp:864
 msgid "Down Left"
 msgstr "Alavasemmalle"
 
-#: engines/scumm/metaengine.cpp:878
+#: engines/scumm/metaengine.cpp:877
 msgid "Down Right"
 msgstr "Alaoikealle"
 
-#: engines/scumm/metaengine.cpp:898
+#: engines/scumm/metaengine.cpp:897
 msgid "Up Left"
 msgstr "Ylävasemmalle"
 
-#: engines/scumm/metaengine.cpp:911
+#: engines/scumm/metaengine.cpp:910
 msgid "Up Right"
 msgstr "Yläoikealle"
 
-#: engines/scumm/metaengine.cpp:923
+#: engines/scumm/metaengine.cpp:922
 msgid "Switch weapon"
 msgstr "Vaihda asetta"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:937
+#: engines/scumm/metaengine.cpp:936
 msgid "Win the bike fight cheat"
 msgstr "Voita moottoripyörätaistelu-huijaus"
 
-#: engines/scumm/saveload.cpp:1977
+#: engines/scumm/saveload.cpp:1970
 #, c-format
 msgid ""
 "Warning: incompatible sound settings detected between the current "
@@ -11114,7 +11117,7 @@ msgstr ""
 "vaadittuja käytön mahdollistavia osasia MT-32:lle. Otetaan sen sijasta "
 "käyttöön AdLib."
 
-#: engines/scumm/scumm.cpp:3923
+#: engines/scumm/scumm.cpp:3951
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -11124,7 +11127,7 @@ msgstr ""
 "Maniac Mansionin pelitiedostojen pitää löytyä \"Maniac\"-kansiosta Tentacle-"
 "pelikansion sisältä, ja sen pitää myös olla lisätty pelinä ScummVM:ään."
 
-#: engines/scumm/scumm.cpp:4034
+#: engines/scumm/scumm.cpp:4062
 msgid "Would you like to host or join a network play session?"
 msgstr "Haluatko isännöidä vai liittyä verkkopeliin?"
 
@@ -13103,6 +13106,18 @@ msgstr ""
 "ladata Liberation Fonts -paketin tai GNU FreeFont -paketin. Tarvitset kaikki "
 "fontit paketista jonka valitset, i.e. LiberationMono, LiberationSans ja "
 "LiberationSerif, tai FreeMono, FreeSans ja FreeSerif riippuen valinnastasi."
+
+#~ msgid ""
+#~ "Allow the game to use the in-engine graphical interface and the original "
+#~ "save/load menu. \t\tUse it together with the \"Ask for confirmation on "
+#~ "exit\" for a more complete experience. \t\tAutosaving is disabled when "
+#~ "this mode is active."
+#~ msgstr ""
+#~ "Salli pelin käyttää pelimoottorin sisäistä graafista käyttöliittymää sekä "
+#~ "alkuperäistä tallennus/latausvalikkoa. \t\tKäytä tätä yhdessä 'Varmista "
+#~ "että peli tai ohjelma halutaan sulkea'-asetuksen kanssa saadaksesi "
+#~ "kokonaisvaltaisemman kokemuksen. \t\tAutomaattitallennus ei ole päällä "
+#~ "tässä tilassa."
 
 #~ msgid "Enable audio CD"
 #~ msgstr "Käytä Audio CD:tä"
