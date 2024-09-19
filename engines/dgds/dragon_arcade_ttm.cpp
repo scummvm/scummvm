@@ -151,6 +151,10 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 	case 0x1111:
 		// Do nothing (ignore arg)
 		break;
+	case 0x1201:
+		// This doesn't seem explicitly handled in the original, but assume we just
+		// ignore it??
+		break;
 	case 0x2002: // SET COLORS
 		_drawColFG = (byte)ivals[0];
 		_drawColBG = (byte)ivals[1];

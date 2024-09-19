@@ -69,14 +69,14 @@ public:
 class DragonArcadeBullet {
 public:
 	DragonArcadeBullet() : _x(0), _y(0), _state(kBulletInactive),
-		_flipMode(kImageFlipNone), _var1(0), _speed(0), _var2(0), _var3(0) {}
+		_flipMode(kImageFlipNone), _var1(0), _ySpeed(0), _var2(0), _var3(0) {}
 
 	int16 _x;
 	int16 _y;
 	DragonBulletState _state;
 	ImageFlipMode _flipMode;
 	int16 _var1;
-	uint16 _speed;
+	uint16 _ySpeed;
 	int16 _var2;
 	int16 _var3;
 };
@@ -188,7 +188,6 @@ private:
 	bool _lastLMouseButtonState;
 	bool _lastRMouseButtonState;
 	int16 _bladeXMove;
-	int16 _bladeHorizMoveAttempt;
 	int16 _currentArrowNum;
 	int16 _foundFloorY;
 	bool _foundFloorFlag;
@@ -205,13 +204,14 @@ private:
 	bool _stillLoadingScriptsMaybe;
 	bool _flag40ee;
 	bool _flag40ef;
-	int16 _arcadeNotMovingLeftFlag;
+	int16 _someMoveDirection;
 	bool _bladeHasFired;
 	bool _mouseIsAvailable;
 	bool _isMovingStage;
 	DragonBladeMoveFlag _bladeMoveFlag;
 	DragonBladeMoveFlag _keyStateFlags;
 	DragonBladeMoveFlag _bladeMoveFlagBeforeRButton;
+	DragonBladeMoveFlag _bladeHorizMoveAttempt;
 	DragonArcadeBullet _bullets[20];
 	ArcadeNPCState _npcState[20];
 	Common::SharedPtr<Image> _bulletImg;
