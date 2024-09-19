@@ -590,7 +590,7 @@ int ScummEngine::readVar(uint var) {
 		}
 
 #if defined(USE_ENET) && defined(USE_LIBCURL)
-		if (ConfMan.getBool("enable_competitive_mods")) {
+		if (_enableHECompetitiveOnlineMods) {
 			// HACK: If we're reading var586, competitive mods enabled, playing online,
 			// successfully fetched custom teams, and we're not in one of the three scripts
 			// that cause bugs if 263 is returned here, return 263.
@@ -616,7 +616,7 @@ int ScummEngine::readVar(uint var) {
 			assertRange(0, var, _numRoomVariables - 1, "room variable (reading)");
 
 #if defined(USE_ENET) && defined(USE_LIBCURL)
-			if (ConfMan.getBool("enable_competitive_mods")) {
+			if (_enableHECompetitiveOnlineMods) {
 				// Mod for Backyard Baseball 2001 online competitive play: don't give powerups for double plays
 				// Return true for this variable, which dictates whether powerups are disabled, but only in this script
 				// that detects double plays (among other things)
@@ -669,7 +669,7 @@ int ScummEngine::readVar(uint var) {
 #if defined(USE_ENET) && defined(USE_LIBCURL)
 		// Mod for Backyard Baseball 2001 online competitive play: change impact of
 		// batter's power stat on hit power
-		if (ConfMan.getBool("enable_competitive_mods")) {
+		if (_enableHECompetitiveOnlineMods) {
 			if (_game.id == GID_BASEBALL2001 &&
 				_currentRoom == 4 && vm.slot[_currentScript].number == 2090  // The script that calculates hit power
 				&& readVar(399) == 1  // Check that we're playing online

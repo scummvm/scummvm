@@ -560,6 +560,7 @@ public:
 	bool _isAmigaPALSystem = false;
 	bool _quitFromScriptCmd = false;
 	bool _isHE995 = false;
+	bool _enableHECompetitiveOnlineMods = false;
 
 	Common::Keymap *_insaneKeymap;
 

@@ -166,7 +166,7 @@ int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
 	}
 
 #if defined(USE_ENET) && defined(USE_LIBCURL)
-	if (ConfMan.getBool("enable_competitive_mods")) {
+	if (_enableHECompetitiveOnlineMods) {
 		// Mod for Backyard Baseball 2001 online competitive play: allow baserunners to be
 		// turned around while they're jogging to the next base on a pop-up.
 		// The game checks if the runner is forced to the next base (i.e. there's a runner on the base behind them),

@@ -501,7 +501,7 @@ void ScummEngine_v6::o6_pushByteVar() {
 void ScummEngine_v6::o6_pushWordVar() {
 // BACKYARD BASEBALL 2001 ONLINE CHANGES
 #if defined(USE_ENET) && defined(USE_LIBCURL)
-	if (ConfMan.getBool("enable_competitive_mods")) {
+	if (_enableHECompetitiveOnlineMods) {
 		// Sprinting in competitive Backyard Baseball is considered too weak in its current state. This will increase how effective
 		// it is, limiting the highest speed characters enough to where they cannot go TOO fast.
 		if (_game.id == GID_BASEBALL2001 && _currentRoom == 3 && vm.slot[_currentScript].number == 2095 && readVar(399) == 1) {
@@ -586,7 +586,7 @@ void ScummEngine_v6::o6_wordArrayRead() {
 	int base = pop();
 	int array = fetchScriptWord();
 #if defined(USE_ENET) && defined(USE_LIBCURL)
-	if (ConfMan.getBool("enable_competitive_mods")) {
+	if (_enableHECompetitiveOnlineMods) {
 		// If we're pulling from the randomly selected teams for online play
 		// at Prince Rupert, read from variables 748 and 749 instead
 		if (_game.id == GID_BASEBALL2001 && _currentRoom == 6 && vm.slot[_currentScript].number == 2071 &&
@@ -648,7 +648,7 @@ void ScummEngine_v6::o6_eq() {
 		}
 	}
 
-	if (ConfMan.getBool("enable_competitive_mods")) {
+	if (_enableHECompetitiveOnlineMods) {
 		int pitchXValue = readVar(0x8000 + 11);
 		int pitchYValue = readVar(0x8000 + 12);
 		int strikeZoneTop = readVar(0x8000 + 29);
@@ -777,7 +777,7 @@ void ScummEngine_v6::o6_eq() {
 	// HACK: This script doesn't allow Super Colossal Dome to be chosen for online play, by checking if the selected
 	// field's value is 5 (SCD's number) and incrementing/decrementing if it is. To allow SCD to be used, we return 0
 	// for those checks.
-	} else if (ConfMan.getBool("enable_competitive_mods") && _game.id == GID_BASEBALL2001 && _currentRoom == 40 &&
+	} else if (_enableHECompetitiveOnlineMods && _game.id == GID_BASEBALL2001 && _currentRoom == 40 &&
 		vm.slot[_currentScript].number == 2106 && a == 5 && (offset == 16754 || offset == 16791)) {
 		push(0);
 
@@ -858,7 +858,7 @@ void ScummEngine_v6::o6_ge() {
 #if defined(USE_ENET) && defined(USE_LIBCURL)
 	// Mod for Backyard Baseball 2001 online competitive play: Reduce sprints
 	// required to reach top speed
-	if (ConfMan.getBool("enable_competitive_mods") && _game.id == GID_BASEBALL2001 &&
+	if (_enableHECompetitiveOnlineMods && _game.id == GID_BASEBALL2001 &&
 		_currentRoom == 3 && vm.slot[_currentScript].number == 2095 && readVar(399) == 1) {
 		a -= 1;  // If sprint counter (b) is higher than a, runner gets 1 extra speed
 	}
@@ -889,7 +889,7 @@ void ScummEngine_v6::o6_div() {
 #if defined(USE_ENET) && defined(USE_LIBCURL)
 	// Mod for Backyard Baseball 2001 online competitive play: Allow full sprinting while
 	// running half-speed on a popup
-	if (ConfMan.getBool("enable_competitive_mods") && _game.id == GID_BASEBALL2001 && _currentRoom == 3 &&
+	if (_enableHECompetitiveOnlineMods && _game.id == GID_BASEBALL2001 && _currentRoom == 3 &&
 		vm.slot[_currentScript].number == 2095 && readVar(399) == 1 && a == 2) {
 		// Normally divides speed by two here
 		int runnerIdx = readVar(0x4000);
@@ -1146,7 +1146,7 @@ void ScummEngine_v6::o6_startScriptQuick2() {
 #if defined(USE_ENET) && defined(USE_LIBCURL)
 	// Mod for Backyard Baseball 2001 online competitive play: change effect of
 	// pitch location on hit quality
-	if (ConfMan.getBool("enable_competitive_mods") && _game.id == GID_BASEBALL2001 && _currentRoom == 4 && script == 2085 && readVar(399) == 1) {
+	if (_enableHECompetitiveOnlineMods && _game.id == GID_BASEBALL2001 && _currentRoom == 4 && script == 2085 && readVar(399) == 1) {
 		int zone = _roomVars[2];
 		int stance = readVar(447);
 		int handedness = _roomVars[0];
@@ -1736,7 +1736,7 @@ void ScummEngine_v6::o6_getRandomNumberRange() {
 	int rnd = _rnd.getRandomNumber(0x7fff);
 	rnd = min + (rnd % (max - min + 1));
 #if defined(USE_ENET) && defined(USE_LIBCURL)
-	if (ConfMan.getBool("enable_competitive_mods")) {
+	if (_enableHECompetitiveOnlineMods) {
 		// For using predefined teams in Prince Rupert, instead of choosing player IDs randomly
 		// let's pull from the variables that contain the teams
 		if (_game.id == GID_BASEBALL2001 && vm.slot[_currentScript].number == 298 &&
