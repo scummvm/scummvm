@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 05:09+0000\n"
-"PO-Revision-Date: 2024-09-01 10:39+0000\n"
+"PO-Revision-Date: 2024-09-19 08:37+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -10482,9 +10482,6 @@ msgid "Enable online competitive mods"
 msgstr "Abilita mods per competizioni online"
 
 #: engines/scumm/dialogs.cpp:1713
-#, fuzzy
-#| msgid ""
-#| "Enables custom-made modifications intented for online competitive play."
 msgid "Enables custom-made modifications intended for online competitive play."
 msgstr "Abilita le modifiche create per il gioco online competitivo."
 
@@ -11104,18 +11101,13 @@ msgid ""
 msgstr "Riduce l'intensità dell'effetto durante le scene dell'introduzione."
 
 #: engines/scumm/metaengine.cpp:726
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
-#| "for a more complete experience."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
 "\" for a more complete experience."
 msgstr ""
 "Permette al gioco di utilizzare l'interfaccia grafica e le schermate di "
-"salvataggio/caricamento del gioco originale. Per un'esperienza ottimale, "
+"salvataggio/caricamento del gioco originale. \t\tPer un'esperienza ottimale, "
 "abilita anche l'opzione \"Chiedi conferma in uscita\"."
 
 #: engines/scumm/metaengine.cpp:735
@@ -12509,11 +12501,13 @@ msgstr ""
 
 #: engines/vcruise/metaengine.cpp:108
 msgid "Faster video decoder (lower quality)"
-msgstr ""
+msgstr "Decodifica video velocizzata (qualità inferiore)"
 
 #: engines/vcruise/metaengine.cpp:109
 msgid "Reduce video decoding CPU usage at the cost of quality."
 msgstr ""
+"Riduce l'utilizzo della CPU durante la decodifica dei video, a discapito "
+"della qualità."
 
 #: engines/vcruise/metaengine.cpp:157
 msgid "Display help screen"
