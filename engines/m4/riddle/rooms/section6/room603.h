@@ -55,6 +55,7 @@ private:
 	machine *_pu01 = nullptr;
 	machine *_ripley = nullptr;
 	machine *_shadow = nullptr;
+	machine *_treesGoneHome = nullptr;
 	int _rp01 = 0;
 	int _rp02 = 0;
 	int _ttDigShirtOff = 0;
@@ -67,10 +68,15 @@ private:
 	int _ripHandsHips = 0;
 	int _ripHandChin = 0;
 	int _ripTwoHandTalk = 0;
+	int _ripAction = 0;
 
 	void conv603a();
 	void conv603b();
 	void unloadSeries();
+	bool takeSleeve();
+	bool takeNote();
+	bool takePole();
+	void enter();
 
 public:
 	Room603() : Room() {}

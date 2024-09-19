@@ -36,6 +36,17 @@ static const char *NORMAL_NAMES2[] = { "kuang walker 2" };
 static const int16 SHADOW_DIRS2[] = { 230, -1 };
 static const char *SHADOW_NAMES2[] = { "kuangs shadow 2" };
 
+static const char *SAID[][2] = {
+	{ "shed",          "603r03" },
+	{ "wire",          "603r04" },
+	{ "power line",    "603r05" },
+	{ "altar",         "603r06" },
+	{ "shirt",         "603r07" },
+	{ "cliff",         "603r10" },
+	{ "person in pit", "603r11" },
+	{ nullptr, nullptr }
+};
+
 void Room603::preload() {
 	if (_G(flags)[V191]) {
 		_G(art_base_override) = "EXPLOSION BACKGROUND";
@@ -422,13 +433,173 @@ void Room603::parser() {
 			conv_export_value_curr(_G(flags)[V039], 6);
 			conv_play();
 		}
-	} else if (takeFlag && player_said("sleeve")) {
-		// TODO
-	} else if (lookFlag) {
-		// TODO
-	}
-	// TODO
-	else {
+	} else if (takeFlag && player_said("sleeve") && takeSleeve()) {
+		// No implementation
+	} else if (takeFlag && player_said("NOTE ")) {
+		digi_play("603r45", 1);
+	} else if (takeFlag && player_said("NOTE") && takeNote()) {
+		// No implementation
+	} else if (takeFlag && player_said_any("shirt", "pole") && !_G(flags)[V203]) {
+		player_set_commands_allowed(false);
+		_val8 = 22;
+		_G(kernel).call_daemon_every_loop = false;
+		_val7 = 1;
+		kernel_timing_trigger(1, 200, KT_DAEMON, KT_PARSE);
+		_ripAction = series_load("RIP MED REACH 1HAND POS2");
+		setGlobals1(_ripAction, 1, 15, 15, 15);
+		sendWSMessage_110000(-1);
+	} else if (takeFlag && player_said("pole") && takePole()) {
+		// No implementation
+	} else if (player_said("enter hut")) {
+		if (_G(flags)[V203] == 4 || _G(flags)[V203] == 9) {
+			digi_play("603r32", 1);
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				_val8 = _val5 ? 12 : 7;
+				_ripAction = series_load("RIP TREK HAT TIP POS4");
+				kernel_timing_trigger(60, 2);
+				break;
+
+			case 2:
+				_val8 = _val5 ? 11 : 8;
+				digi_play("603t06", 1, 255, 3);
+				break;
+
+			case 3:
+				_val8 = 17;
+				_val9 = 5000;
+				kernel_timing_trigger(1, _val5 ? 400 : 500, KT_DAEMON, KT_PARSE);
+				setGlobals1(_ripAction, 1, 8, 8, 8);
+				sendWSMessage_110000(4);
+				break;
+
+			case 4:
+				digi_play("603r23", 1, 255, 5);
+				sendWSMessage_140000(5);
+				break;
+
+			case 5:
+				series_unload(_ripAction);
+				player_set_commands_allowed(true);
+				break;
+
+			default:
+				break;
+			}
+		}
+	} else if (player_said("enter")) {
+		enter();
+	} else if (lookFlag && player_said(" ")) {
+		if (_G(flags)[V200]) {
+			digi_play("603r01a", 1);
+		} else {
+			_G(flags)[V200] = 1;
+			digi_play("603r01", 1);
+		}
+	} else if (lookFlag && player_said("hut")) {
+		if (_G(flags)[V203] == 4 || _G(flags)[V203] == 9) {
+			if (inv_object_is_here("TWELVETREES' NOTE") || _G(flags)[V203] == 9)
+				digi_play("603r26", 1);
+			else
+				digi_play("603r02", 1);
+		} else {
+			digi_play("603r02", 1);
+		}
+	} else if (lookFlag && player_said("note ")) {
+		_val6 = 1;
+		hotspot_hide_all();
+		_treesGoneHome = series_show("603 12TREES GONE HOME NOTE", 0, 16);
+		hotspot_add_dynamic("LOOK AT", " ", 0, 0, 640, 480, 0);
+		digi_play("603r44", 1);
+		interface_hide();
+	} else if (lookFlag && player_said("note") &&
+			inv_object_is_here("TWELVETREES' NOTE")) {
+		_val6 = 1;
+		hotspot_hide_all();
+		_treesGoneHome = series_show("603 tt map popup", 0, 16);
+		hotspot_add_dynamic("LOOK AT", " ", 0, 0, 640, 480, 0);
+		_G(flags)[V046] = 1;
+		digi_play("603r28", 1);
+		interface_hide();
+	} else if (player_said("remote note")) {
+		_val6 = 0;
+		hotspot_restore_all();
+		terminateMachineAndNull(_treesGoneHome);
+		interface_show();
+	} else if (_G(kernel).trigger == 555) {
+		if (_G(flags)[V038])
+			_G(flags)[V039] = 1;
+
+		_G(flags)[GLB_TEMP_5] = 0;
+		_G(game).setRoom(495);
+		_G(flags)[V129] = 4;
+	} else if (_G(kernel).trigger == 556) {
+		digi_stop(1);
+		digi_stop(2);
+		digi_unload("603_S02");
+		digi_unload("603_S02a");
+		digi_unload("603_S02b");
+		digi_unload("603_S02c");
+
+		if (_G(flags)[GLB_TEMP_5]) {
+			digi_stop(3);
+			digi_unload("genrun");
+			digi_preload("950_s28a");
+		}
+
+		adv_kill_digi_between_rooms(false);
+		digi_play_loop("950_s28a", 3, 90);
+
+		if (_G(flags)[V038])
+			_G(flags)[V039] = 1;
+		_G(game).setRoom(605);
+	} else if (player_said("down")) {
+		if (_G(flags)[V202])
+			_G(flags)[V205] = 1;
+
+		player_set_commands_allowed(false);
+		disable_player_commands_and_fade_init(555);
+	} else if (player_said("right")) {
+		player_set_commands_allowed(false);
+		disable_player_commands_and_fade_init(556);
+	} else if (player_said_any("TWELVETREES", "TWELVETREES ") &&
+			player_said("POLE")) {
+		digi_play("603r46", 1);
+	} else if (player_said("go into")) {
+		if (_G(flags)[V203] == 4 || _G(flags)[V203] == 9)
+			digi_play("603r34", 1);
+		else if (_G(flags)[V202])
+			digi_play("603r25", 1);
+		else
+			digi_play("603r24", 1);
+	} else if (lookFlag && player_said_any("twelvetrees", "twelvetrees ")) {
+		switch (imath_ranged_rand(1, 4)) {
+		case 1:
+			digi_play("603r36", 1);
+			break;
+		case 2:
+			digi_play("603r37", 1);
+			break;
+		case 3:
+			digi_play("603r38", 1);
+			break;
+		case 4:
+			digi_play("603r39", 1);
+			break;
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("pit")) {
+		digi_play(_G(flags)[V202] ? "603r27" : "603r11", 1);
+	} else if (lookFlag && player_said("sleeve") && inv_object_is_here("SLEEVE")) {
+		digi_play("603r08", 1);
+	} else if (lookFlag && player_said("pole") && inv_object_is_here("POLE")) {
+		digi_play("603r09", 1);
+	} else if (lookFlag && _G(walker).ripley_said(SAID)) {
+		// No implementation
+	} else {
 		return;
 	}
 
@@ -710,7 +881,52 @@ void Room603::conv603a() {
 }
 
 void Room603::conv603b() {
-	// TODO
+	const char *sound = conv_sound_to_play();
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+
+	if (_G(kernel).trigger == 1) {
+		if (!(node == 13 && entry == 16)) {
+			if (who <= 0) {
+				if (node == 2 || node == 5 || node == 7)
+					_G(flags)[V038] = 1;
+
+				if (node == 10 || node == 12) {
+					_val8 = 21;
+					kernel_timing_trigger(1, 500, KT_DAEMON, KT_PARSE);
+					return;
+				} else {
+					_val8 = 7;
+					kernel_timing_trigger(1, 500, KT_DAEMON, KT_PARSE);
+				}
+			} else if (who == 1) {
+				if (node == 11 && entry == 1) {
+					_val8 = 21;
+					kernel_timing_trigger(1, 500, KT_DAEMON, KT_PARSE);
+					_num1 = 0;
+					kernel_timing_trigger(1, 300, KT_DAEMON, KT_PARSE);
+					return;
+				} else {
+					_num1 = 0;
+					kernel_timing_trigger(1, 300, KT_DAEMON, KT_PARSE);
+				}
+			}
+		}
+
+		conv_resume();
+	} else if (sound) {
+		if (node != 13 && node != 16) {
+			if (who <= 0)
+				_val8 = 8;
+			else if (who == 1)
+				_num1 = 5;
+		}
+
+		digi_play(sound, 1);
+	} else {
+		conv_resume();
+	}
 }
 
 void Room603::unloadSeries() {
@@ -723,6 +939,307 @@ void Room603::unloadSeries() {
 	series_unload(211);
 	series_unload(212);
 	series_unload(214);
+}
+
+bool Room603::takeSleeve() {
+	if (_G(flags)[V203] == 4 || _val4) {
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			if (inv_object_is_here("sleeve")) {
+				player_set_commands_allowed(false);
+				_ripAction = series_load("RIP MED REACH 1HAND POS2");
+				setGlobals1(_ripAction, 1, 15, 15, 15);
+				sendWSMessage_110000(2);
+				return true;
+			}
+			break;
+
+		case 2:
+			hotspot_set_active("SLEEVE", false);
+			inv_give_to_player("SLEEVE");
+			kernel_examine_inventory_object("ping sleeve", 5, 1, 280, 220, 3, 0, -1);
+			terminateMachineAndNull(_sleeve);
+			return true;
+
+		case 3:
+			sendWSMessage_140000(5);
+			return true;
+
+		case 5:
+			series_unload(_ripAction);
+			player_set_commands_allowed(true);
+			_val4 = 0;
+			return true;
+
+		default:
+			break;
+		}
+	} else {
+		switch (_G(kernel).trigger) {
+		case -1:
+			if (inv_object_is_here("sleeve")) {
+				if (_val5)
+					ws_walk(345, 300, nullptr, 1, 10);
+				else
+					ws_walk(311, 308, nullptr, 1, 10);
+				return true;
+			}
+			break;
+
+		case 1:
+			player_set_commands_allowed(false);
+			_val8 = _val5 ? 12 : 7;
+			setGlobals1(_ripTalk, 1, 7, 1, 7, 1, 1, 1, 1, 1);
+			sendWSMessage_110000(-1);
+			digi_play("603r14", 1, 255, 2);
+			return true;
+
+		case 2:
+			sendWSMessage_120000(-1);
+			_val8 = _val5 ? 11 : 8;
+			digi_play("603t04", 1, 255, 3);
+			return true;
+
+		case 3:
+			_val8 = _val5 ? 12 : 7;
+			kernel_timing_trigger(1, _val5 ? 400 : 500, KT_DAEMON, KT_PARSE);
+			sendWSMessage_110000(-1);
+			digi_play("603r14a", 1, 255, 5);
+			return true;
+
+		case 5:
+			sendWSMessage_120000(-1);
+			_val8 = _val5 ? 11 : 8;
+			digi_play("603t05", 1, 255, 6);
+			return true;
+
+		case 6:
+			_val8 = 17;
+			kernel_timing_trigger(1, _val5 ? 400 : 500, KT_DAEMON, KT_PARSE);
+			sendWSMessage_150000(-1);
+			ws_walk(365, 298, nullptr, 666, 10);
+			_val4 = 1;
+			return true;
+
+		default:
+			break;
+		}
+	}
+
+	return false;
+}
+
+bool Room603::takeNote() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (!inv_object_is_here("TWELVETREES' NOTE"))
+			return false;
+
+		player_set_commands_allowed(false);
+		_ripAction = series_load("RIP MED HIGH REACHER POS2");
+		setGlobals1(_ripAction, 1, 12, 12, 12);
+		sendWSMessage_110000(2);
+		break;
+
+	case 2:
+		hotspot_set_active("NOTE", false);
+		inv_move_object("TWELVETREES' NOTE", NOWHERE);
+		inv_move_object("TWELVETREES' MAP", NOWHERE);
+		kernel_examine_inventory_object("PING TWELVETREES' NOTE", 5, 1, 205, 190, 3,
+			_G(flags)[V046] ? nullptr : "603R28");
+		_G(flags)[V046] = 1;
+		terminateMachineAndNull(_note);
+		break;
+
+	case 3:
+		kernel_timing_trigger(1, 4);
+		break;
+
+	case 4:
+		kernel_examine_inventory_object("PING OBJ136", 5, 1, 205, 160, 5,
+			player_been_here(623) ? "603R30" : "603R31");
+		break;
+
+	case 5:
+		sendWSMessage_140000(6);
+		break;
+
+	case 6:
+		series_unload(_ripAction);
+		player_update_info();
+		_ripAction = series_load("RIP SKETCHING IN NOTEBOOK POS 2");
+		setGlobals1(_ripAction, 1, 17, 17, 17);
+		sendWSMessage_110000(7);
+		break;
+
+	case 7:
+		kernel_timing_trigger(60, 8);
+		break;
+
+	case 8:
+		sendWSMessage_140000(9);
+		break;
+
+	case 9:
+		series_unload(_ripAction);
+		_G(flags)[V047] = 1;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		return false;
+	}
+
+	return true;
+}
+
+bool Room603::takePole() {
+	if (_G(flags)[V203] == 4) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			if (inv_object_is_here("pole")) {
+				player_set_commands_allowed(false);
+				_ripAction = series_load("RIP MED REACH 1HAND POS2");
+				digi_play("603r29", 1, 255, 1);
+				return true;
+			}
+			break;
+
+		case 1:
+			setGlobals1(_ripAction, 1, 15, 15, 15);
+			sendWSMessage_110000(2);
+			return true;
+
+		case 2:
+			hotspot_set_active("pole", false);
+			inv_give_to_player("pole");
+			kernel_examine_inventory_object("ping pole", 5, 1, 280, 220, 3);
+			terminateMachineAndNull(_pole);
+
+			if (inv_object_is_here("SLEEVE"))
+				terminateMachineAndNull(_sleeve);
+			return true;
+
+		case 3:
+			kernel_timing_trigger(1, 6);
+			return true;
+
+		case 4:
+			sendWSMessage_140000(5);
+			return true;
+
+		case 5:
+			series_unload(_ripAction);
+			player_set_commands_allowed(true);
+			return true;
+
+		case 6:
+			if (inv_object_is_here("SLEEVE")) {
+				hotspot_set_active("SLEEVE", false);
+				inv_give_to_player("SLEEVE");
+				kernel_examine_inventory_object("ping sleeve", 5, 1, 280, 220, 4);
+			} else {
+				kernel_timing_trigger(1, 4);
+			}
+			return true;
+
+		default:
+			break;
+		}
+	} else {
+		switch (_G(kernel).trigger) {
+		case -1:
+			if (inv_object_is_here("pole")) {
+				player_set_commands_allowed(false);
+				_val8 = _val5 ? 12 : 7;
+				_ripAction = series_load("RIP MED REACH 1HAND POS2");
+				return true;
+			}
+			break;
+
+		case 2:
+			_val8 = _val5 ? 11 : 8;
+			digi_play("603t03", 1, 255, 3);
+			return true;
+
+		case 3:
+			_val8 = 17;
+			_val9 = 5000;
+			_val5 = 0;
+			kernel_timing_trigger(1, _val5 ? 400 : 500, KT_DAEMON, KT_PARSE);
+			sendWSMessage_140000(5);
+			return true;
+
+		case 5:
+			series_unload(_ripAction);
+			player_set_commands_allowed(true);
+			return true;
+
+		default:
+			break;
+		}
+	}
+
+	return false;
+}
+
+void Room603::enter() {
+	if (_G(flags)[V203] == 4) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripAction = series_load("rip trek med reach hand pos1");
+			setGlobals1(_ripAction, 1, 10, 10, 10);
+			sendWSMessage_110000(4);
+			disable_player_commands_and_fade_init(4);
+			break;
+
+		case 4:
+			_G(game).setRoom(604);
+			digi_stop(1);
+
+			if (_G(flags)[GLB_TEMP_5]) {
+				adv_kill_digi_between_rooms(false);
+				digi_play_loop("genrun", 3, 140, -1, 604);
+			}
+			break;
+
+		default:
+			break;
+		}
+	} else {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_val8 = _val5 ? 12 : 7;
+			_ripAction = series_load("rip trek med reach hand pos1");
+			setGlobals1(_ripAction, 1, 10, 10, 10);
+			sendWSMessage_110000(2);
+			break;
+
+		case 2:
+			_val8 = _val5 ? 11 : 8;
+			digi_play("603t07", 1, 255, 3);
+			break;
+
+		case 3:
+			_val8 = 17;
+			_val9 = 5000;
+			_val5 = 0;
+			kernel_timing_trigger(1, _val5 ? 400 : 500, KT_DAEMON, KT_PARSE);
+			sendWSMessage_140000(5);
+			break;
+
+		case 5:
+			series_unload(_ripAction);
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+	}
 }
 
 } // namespace Rooms
