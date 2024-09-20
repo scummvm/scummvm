@@ -103,10 +103,10 @@ void qdFileManager::Finit() {
 bool qdFileManager::open_file(Common::SeekableReadStream **fh, const Common::Path file_name, bool err_message) {
 	debugC(4, kDebugLoad, "qdFileManager::open_file(%s)", transCyrillic(file_name.toString()));
 
-	if (SearchMan.hasFile(file_name)) {
+	if (SearchMan.hasFile((char *)transCyrillic(file_name.toString()))) {
 		Common::File *f = new Common::File;
 
-		if (f->open(file_name))
+		if (f->open((char *)transCyrillic(file_name.toString())))
 			*fh = f;
 		else
 			return false;
@@ -135,7 +135,7 @@ bool qdFileManager::open_file(Common::SeekableReadStream **fh, const Common::Pat
 		}
 	}
 
-	debugC(4, kDebugLoad, "qdFileManager::open_file(%s): NOT FOUND", transCyrillic(file_name.toString()));
+	warning("qdFileManager::open_file(%s) (%s): NOT FOUND", transCyrillic(file_name.toString()), file_name.toString().c_str());
 
 	return false;
 }
