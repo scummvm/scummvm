@@ -69,6 +69,8 @@ int pl_run_plugin_debug_hooks(const char *scriptfile, int linenum);
 bool pl_query_next_plugin_for_event(int event, int &pl_index, Shared::String &pl_name);
 // Runs event for a plugin identified by an index it was registered under.
 int pl_run_plugin_hook_by_index(int pl_index, int event, int data);
+// Runs event for a plugin identified by its name.
+int pl_run_plugin_hook_by_name(Shared::String &pl_name, int event, int data);
 
 // Tries to register plugins, either by loading dynamic libraries, or getting any kind of replacement
 Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> &infos);

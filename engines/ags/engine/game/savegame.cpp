@@ -756,23 +756,69 @@ void SaveGameState(Stream *out) {
 void ReadPluginSaveData(Stream *in, PluginSvgVersion svg_ver, soff_t max_size) {
 	const soff_t start_pos = in->GetPosition();
 	const soff_t end_pos = start_pos + max_size;
-	String pl_name;
-	for (int pl_index = 0; pl_query_next_plugin_for_event(AGSE_RESTOREGAME, pl_index, pl_name); ++pl_index) {
-		auto pl_handle = AGSE_RESTOREGAME;
-		pl_set_file_handle(pl_handle, in);
-		pl_run_plugin_hook_by_index(pl_index, AGSE_RESTOREGAME, pl_handle);
-		pl_clear_file_handle();
+
+	if (svg_ver >= kPluginSvgVersion_36115) {
+		int num_plugins_read = in->ReadInt32();
+		soff_t cur_pos = start_pos;
+		while ((num_plugins_read--) > 0 && (cur_pos < end_pos)) {
+			String pl_name = StrUtil::ReadString(in);
+			size_t data_size = in->ReadInt32();
+			soff_t data_start = in->GetPosition();
+
+			auto pl_handle = AGSE_RESTOREGAME;
+			pl_set_file_handle(pl_handle, in);
+			pl_run_plugin_hook_by_name(pl_name, AGSE_RESTOREGAME, pl_handle);
+			pl_clear_file_handle();
+
+			// Seek to the end of plugin data, in case it ended up reading not in the end
+			cur_pos = data_start + data_size;
+			in->Seek(cur_pos, kSeekBegin);
+		}
+	} else {
+		String pl_name;
+		for (int pl_index = 0; pl_query_next_plugin_for_event(AGSE_RESTOREGAME, pl_index, pl_name); ++pl_index) {
+			auto pl_handle = AGSE_RESTOREGAME;
+			pl_set_file_handle(pl_handle, in);
+			pl_run_plugin_hook_by_index(pl_index, AGSE_RESTOREGAME, pl_handle);
+			pl_clear_file_handle();
+		}
 	}
 }
 
 void WritePluginSaveData(Stream *out) {
+	soff_t pluginnum_pos = out->GetPosition();
+	out->WriteInt32(0); // number of plugins which wrote data
+
+	int num_plugins_wrote = 0;
 	String pl_name;
 	for (int pl_index = 0; pl_query_next_plugin_for_event(AGSE_SAVEGAME, pl_index, pl_name); ++pl_index) {
+		// NOTE: we don't care if they really write anything,
+		// but count them so long as they subscribed to AGSE_SAVEGAME
+		num_plugins_wrote++;
+
+		// Write a header for plugin data
+		StrUtil::WriteString(pl_name, out);
+		soff_t data_size_pos = out->GetPosition();
+		out->WriteInt32(0); // data size
+
+		// Create a stream section and write plugin data
+		soff_t data_start_pos = out->GetPosition();
 		auto pl_handle = AGSE_SAVEGAME;
 		pl_set_file_handle(pl_handle, out);
 		pl_run_plugin_hook_by_index(pl_index, AGSE_SAVEGAME, pl_handle);
 		pl_clear_file_handle();
+
+		// Finalize header
+		soff_t data_end_pos = out->GetPosition();
+		out->Seek(data_size_pos, kSeekBegin);
+		out->WriteInt32(data_end_pos - data_start_pos);
+		out->Seek(0, kSeekEnd);
 	}
+
+	// Write number of plugins
+	out->Seek(pluginnum_pos, kSeekBegin);
+	out->WriteInt32(num_plugins_wrote);
+	out->Seek(0, kSeekEnd);
 }
 
 } // namespace Engine
