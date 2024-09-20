@@ -29,6 +29,8 @@
 
 namespace QDEngine {
 
+qdNamedObjectIndexer *g_idx = nullptr;
+
 qdNamedObjectIndexer::qdNamedObjectIndexer() {
 }
 
@@ -36,8 +38,10 @@ qdNamedObjectIndexer::~qdNamedObjectIndexer() {
 }
 
 qdNamedObjectIndexer &qdNamedObjectIndexer::instance() {
-	static qdNamedObjectIndexer idx;
-	return idx;
+	if (!g_idx)
+		g_idx = new qdNamedObjectIndexer;
+
+	return *g_idx;
 }
 
 bool qdNamedObjectIndexer::qdNamedObjectReferenceLink::resolve() {

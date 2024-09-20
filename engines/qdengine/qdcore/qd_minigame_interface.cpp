@@ -496,9 +496,13 @@ bool qdMinigameObjectInterfaceImplBase::is_visible() const {
 	return _object->is_visible();
 }
 
+qdEngineInterfaceImpl *g_qdi = nullptr;
+
 const qdEngineInterfaceImpl &qdEngineInterfaceImpl::instance() {
-	static qdEngineInterfaceImpl qdi;
-	return qdi;
+	if (!g_qdi)
+		g_qdi = new qdEngineInterfaceImpl;
+
+	return *g_qdi;
 }
 
 qdMinigameSceneInterface *qdEngineInterfaceImpl::current_scene_interface() const {
