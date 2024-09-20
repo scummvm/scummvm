@@ -56,6 +56,7 @@ private:
 	machine *_ripley = nullptr;
 	machine *_shadow = nullptr;
 	machine *_treesGoneHome = nullptr;
+	machine *_explosion = nullptr;
 	int _rp01 = 0;
 	int _rp02 = 0;
 	int _ttDigShirtOff = 0;
@@ -77,6 +78,7 @@ private:
 	bool takeNote();
 	bool takePole();
 	void enter();
+	void playRandomDigi(int max);
 
 public:
 	Room603() : Room() {}
