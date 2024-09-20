@@ -564,11 +564,11 @@ void UpgradeCharacters(GameSetupStruct &game, GameDataVersion data_ver) {
 
 	// Fixup charakter script names for 2.x (EGO -> cEgo)
 	if (data_ver <= kGameVersion_272) {
-		char namelwr[LEGACY_MAX_CHAR_NAME_LEN];
+		char namelwr[LEGACY_MAX_SCRIPT_NAME_LEN];
 		for (int i = 0; i < numcharacters; i++) {
 			if (chars[i].legacy_scrname[0] == 0)
 				continue;
-			memcpy(namelwr, chars[i].legacy_scrname, LEGACY_MAX_CHAR_NAME_LEN);
+			memcpy(namelwr, chars[i].legacy_scrname, LEGACY_MAX_SCRIPT_NAME_LEN);
 			ags_strlwr(namelwr + 1); // lowercase starting with the second char
 			snprintf(chars[i].legacy_scrname, LEGACY_MAX_SCRIPT_NAME_LEN, "c%s", namelwr);
 			chars[i].scrname = chars[i].legacy_scrname;
