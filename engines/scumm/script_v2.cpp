@@ -46,7 +46,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0x04, o2_isGreaterEqual);
 	OPCODE(0x05, o2_drawObject);
 	OPCODE(0x06, o2_getActorElevation);
-	OPCODE(0x07, o2_setState08);
+	OPCODE(0x07, o2_setStateIntrinsicOn);
 	/* 08 */
 	OPCODE(0x08, o5_isNotEqual);
 	OPCODE(0x09, o5_faceActor);
@@ -56,7 +56,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0x0c, o2_resourceRoutines);
 	OPCODE(0x0d, o5_walkActorToActor);
 	OPCODE(0x0e, o2_putActorAtObject);
-	OPCODE(0x0f, o2_ifNotState08);
+	OPCODE(0x0f, o2_ifStateIntrinsicOn);
 	/* 10 */
 	OPCODE(0x10, o5_getObjectOwner);
 	OPCODE(0x11, o5_animateActor);
@@ -66,7 +66,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0x14, o5_print);
 	OPCODE(0x15, o2_actorFromPos);
 	OPCODE(0x16, o5_getRandomNr);
-	OPCODE(0x17, o2_clearState02);
+	OPCODE(0x17, o2_setStateTouchable);
 	/* 18 */
 	OPCODE(0x18, o5_jumpRelative);
 	OPCODE(0x19, o2_doSentence);
@@ -76,7 +76,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0x1c, o5_startSound);
 	OPCODE(0x1d, o2_ifClassOfIs);
 	OPCODE(0x1e, o2_walkActorTo);
-	OPCODE(0x1f, o2_ifState02);
+	OPCODE(0x1f, o2_ifStateTouchable);
 	/* 20 */
 	OPCODE(0x20, o5_stopMusic);
 	OPCODE(0x21, o2_putActor);
@@ -86,7 +86,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0x24, o2_loadRoomWithEgo);
 	OPCODE(0x25, o2_drawObject);
 	OPCODE(0x26, o5_setVarRange);
-	OPCODE(0x27, o2_setState04);
+	OPCODE(0x27, o2_setStateLocked);
 	/* 28 */
 	OPCODE(0x28, o5_equalZero);
 	OPCODE(0x29, o2_setOwnerOf);
@@ -96,7 +96,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0x2c, o2_assignVarByte);
 	OPCODE(0x2d, o2_putActorInRoom);
 	OPCODE(0x2e, o2_delay);
-	OPCODE(0x2f, o2_ifNotState04);
+	OPCODE(0x2f, o2_ifStateLocked);
 	/* 30 */
 	OPCODE(0x30, o3_setBoxFlags);
 	OPCODE(0x31, o2_getBitVar);
@@ -106,7 +106,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0x34, o5_getDist);
 	OPCODE(0x35, o2_findObject);
 	OPCODE(0x36, o2_walkActorToObject);
-	OPCODE(0x37, o2_setState01);
+	OPCODE(0x37, o2_setStatePickupable);
 	/* 38 */
 	OPCODE(0x38, o2_isLessEqual);
 	OPCODE(0x39, o2_doSentence);
@@ -116,7 +116,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0x3c, o5_stopSound);
 	OPCODE(0x3d, o2_setActorElevation);
 	OPCODE(0x3e, o2_walkActorTo);
-	OPCODE(0x3f, o2_ifNotState01);
+	OPCODE(0x3f, o2_ifStatePickupable);
 	/* 40 */
 	OPCODE(0x40, o2_cutscene);
 	OPCODE(0x41, o2_putActor);
@@ -126,7 +126,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0x44, o2_isLess);
 	OPCODE(0x45, o2_drawObject);
 	OPCODE(0x46, o5_increment);
-	OPCODE(0x47, o2_clearState08);
+	OPCODE(0x47, o2_setStateIntrinsicOff);
 	/* 48 */
 	OPCODE(0x48, o5_isEqual);
 	OPCODE(0x49, o5_faceActor);
@@ -136,7 +136,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0x4c, o2_waitForSentence);
 	OPCODE(0x4d, o5_walkActorToActor);
 	OPCODE(0x4e, o2_putActorAtObject);
-	OPCODE(0x4f, o2_ifState08);
+	OPCODE(0x4f, o2_ifStateIntrinsicOff);
 	/* 50 */
 	OPCODE(0x50, o2_pickupObject);
 	OPCODE(0x51, o5_animateActor);
@@ -146,7 +146,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0x54, o5_setObjectName);
 	OPCODE(0x55, o2_actorFromPos);
 	OPCODE(0x56, o5_getActorMoving);
-	OPCODE(0x57, o2_setState02);
+	OPCODE(0x57, o2_setStateUntouchable);
 	/* 58 */
 	OPCODE(0x58, o2_beginOverride);
 	OPCODE(0x59, o2_doSentence);
@@ -156,7 +156,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0x5c, o2_dummy);
 	OPCODE(0x5d, o2_ifClassOfIs);
 	OPCODE(0x5e, o2_walkActorTo);
-	OPCODE(0x5f, o2_ifNotState02);
+	OPCODE(0x5f, o2_ifStateUntouchable);
 	/* 60 */
 	OPCODE(0x60, o2_cursorCommand);
 	OPCODE(0x61, o2_putActor);
@@ -166,7 +166,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0x64, o2_loadRoomWithEgo);
 	OPCODE(0x65, o2_drawObject);
 	OPCODE(0x66, o5_getClosestObjActor);
-	OPCODE(0x67, o2_clearState04);
+	OPCODE(0x67, o2_setStateUnlocked);
 	/* 68 */
 	OPCODE(0x68, o5_isScriptRunning);
 	OPCODE(0x69, o2_setOwnerOf);
@@ -176,7 +176,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0x6c, o2_getObjPreposition);
 	OPCODE(0x6d, o2_putActorInRoom);
 	OPCODE(0x6e, o2_dummy);
-	OPCODE(0x6f, o2_ifState04);
+	OPCODE(0x6f, o2_ifStateUnlocked);
 	/* 70 */
 	OPCODE(0x70, o2_lights);
 	OPCODE(0x71, o5_getActorCostume);
@@ -186,7 +186,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0x74, o5_getDist);
 	OPCODE(0x75, o2_findObject);
 	OPCODE(0x76, o2_walkActorToObject);
-	OPCODE(0x77, o2_clearState01);
+	OPCODE(0x77, o2_setStateUnpickupable);
 	/* 78 */
 	OPCODE(0x78, o2_isGreater);
 	OPCODE(0x79, o2_doSentence);
@@ -196,7 +196,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0x7c, o5_isSoundRunning);
 	OPCODE(0x7d, o2_setActorElevation);
 	OPCODE(0x7e, o2_walkActorTo);
-	OPCODE(0x7f, o2_ifState01);
+	OPCODE(0x7f, o2_ifStateUnpickupable);
 	/* 80 */
 	OPCODE(0x80, o5_breakHere);
 	OPCODE(0x81, o2_putActor);
@@ -206,7 +206,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0x84, o2_isGreaterEqual);
 	OPCODE(0x85, o2_drawObject);
 	OPCODE(0x86, o2_getActorElevation);
-	OPCODE(0x87, o2_setState08);
+	OPCODE(0x87, o2_setStateIntrinsicOn);
 	/* 88 */
 	OPCODE(0x88, o5_isNotEqual);
 	OPCODE(0x89, o5_faceActor);
@@ -216,7 +216,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0x8c, o2_resourceRoutines);
 	OPCODE(0x8d, o5_walkActorToActor);
 	OPCODE(0x8e, o2_putActorAtObject);
-	OPCODE(0x8f, o2_ifNotState08);
+	OPCODE(0x8f, o2_ifStateIntrinsicOn);
 	/* 90 */
 	OPCODE(0x90, o5_getObjectOwner);
 	OPCODE(0x91, o5_animateActor);
@@ -226,7 +226,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0x94, o5_print);
 	OPCODE(0x95, o2_actorFromPos);
 	OPCODE(0x96, o5_getRandomNr);
-	OPCODE(0x97, o2_clearState02);
+	OPCODE(0x97, o2_setStateTouchable);
 	/* 98 */
 	OPCODE(0x98, o2_restart);
 	OPCODE(0x99, o2_doSentence);
@@ -236,7 +236,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0x9c, o5_startSound);
 	OPCODE(0x9d, o2_ifClassOfIs);
 	OPCODE(0x9e, o2_walkActorTo);
-	OPCODE(0x9f, o2_ifState02);
+	OPCODE(0x9f, o2_ifStateTouchable);
 	/* A0 */
 	OPCODE(0xa0, o5_stopObjectCode);
 	OPCODE(0xa1, o2_putActor);
@@ -246,7 +246,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0xa4, o2_loadRoomWithEgo);
 	OPCODE(0xa5, o2_drawObject);
 	OPCODE(0xa6, o5_setVarRange);
-	OPCODE(0xa7, o2_setState04);
+	OPCODE(0xa7, o2_setStateLocked);
 	/* A8 */
 	OPCODE(0xa8, o5_notEqualZero);
 	OPCODE(0xa9, o2_setOwnerOf);
@@ -256,7 +256,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0xac, o2_drawSentence);
 	OPCODE(0xad, o2_putActorInRoom);
 	OPCODE(0xae, o2_waitForMessage);
-	OPCODE(0xaf, o2_ifNotState04);
+	OPCODE(0xaf, o2_ifStateLocked);
 	/* B0 */
 	OPCODE(0xb0, o3_setBoxFlags);
 	OPCODE(0xb1, o2_getBitVar);
@@ -266,7 +266,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0xb4, o5_getDist);
 	OPCODE(0xb5, o2_findObject);
 	OPCODE(0xb6, o2_walkActorToObject);
-	OPCODE(0xb7, o2_setState01);
+	OPCODE(0xb7, o2_setStatePickupable);
 	/* B8 */
 	OPCODE(0xb8, o2_isLessEqual);
 	OPCODE(0xb9, o2_doSentence);
@@ -276,7 +276,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0xbc, o5_stopSound);
 	OPCODE(0xbd, o2_setActorElevation);
 	OPCODE(0xbe, o2_walkActorTo);
-	OPCODE(0xbf, o2_ifNotState01);
+	OPCODE(0xbf, o2_ifStatePickupable);
 	/* C0 */
 	OPCODE(0xc0, o2_endCutscene);
 	OPCODE(0xc1, o2_putActor);
@@ -286,7 +286,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0xc4, o2_isLess);
 	OPCODE(0xc5, o2_drawObject);
 	OPCODE(0xc6, o5_decrement);
-	OPCODE(0xc7, o2_clearState08);
+	OPCODE(0xc7, o2_setStateIntrinsicOff);
 	/* C8 */
 	OPCODE(0xc8, o5_isEqual);
 	OPCODE(0xc9, o5_faceActor);
@@ -296,7 +296,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0xcc, o5_pseudoRoom);
 	OPCODE(0xcd, o5_walkActorToActor);
 	OPCODE(0xce, o2_putActorAtObject);
-	OPCODE(0xcf, o2_ifState08);
+	OPCODE(0xcf, o2_ifStateIntrinsicOff);
 	/* D0 */
 	OPCODE(0xd0, o2_pickupObject);
 	OPCODE(0xd1, o5_animateActor);
@@ -306,7 +306,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0xd4, o5_setObjectName);
 	OPCODE(0xd5, o2_actorFromPos);
 	OPCODE(0xd6, o5_getActorMoving);
-	OPCODE(0xd7, o2_setState02);
+	OPCODE(0xd7, o2_setStateUntouchable);
 	/* D8 */
 	OPCODE(0xd8, o5_printEgo);
 	OPCODE(0xd9, o2_doSentence);
@@ -316,7 +316,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0xdc, o2_dummy);
 	OPCODE(0xdd, o2_ifClassOfIs);
 	OPCODE(0xde, o2_walkActorTo);
-	OPCODE(0xdf, o2_ifNotState02);
+	OPCODE(0xdf, o2_ifStateUntouchable);
 	/* E0 */
 	OPCODE(0xe0, o2_cursorCommand);
 	OPCODE(0xe1, o2_putActor);
@@ -326,7 +326,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0xe4, o2_loadRoomWithEgo);
 	OPCODE(0xe5, o2_drawObject);
 	OPCODE(0xe6, o5_getClosestObjActor);
-	OPCODE(0xe7, o2_clearState04);
+	OPCODE(0xe7, o2_setStateUnlocked);
 	/* E8 */
 	OPCODE(0xe8, o5_isScriptRunning);
 	OPCODE(0xe9, o2_setOwnerOf);
@@ -336,7 +336,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0xec, o2_getObjPreposition);
 	OPCODE(0xed, o2_putActorInRoom);
 	OPCODE(0xee, o2_dummy);
-	OPCODE(0xef, o2_ifState04);
+	OPCODE(0xef, o2_ifStateUnlocked);
 	/* F0 */
 	OPCODE(0xf0, o2_lights);
 	OPCODE(0xf1, o5_getActorCostume);
@@ -346,7 +346,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0xf4, o5_getDist);
 	OPCODE(0xf5, o2_findObject);
 	OPCODE(0xf6, o2_walkActorToObject);
-	OPCODE(0xf7, o2_clearState01);
+	OPCODE(0xf7, o2_setStateUnpickupable);
 	/* F8 */
 	OPCODE(0xf8, o2_isGreater);
 	OPCODE(0xf9, o2_doSentence);
@@ -356,7 +356,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0xfc, o5_isSoundRunning);
 	OPCODE(0xfd, o2_setActorElevation);
 	OPCODE(0xfe, o2_walkActorTo);
-	OPCODE(0xff, o2_ifState01);
+	OPCODE(0xff, o2_ifStateUnpickupable);
 }
 
 #define SENTENCE_SCRIPT 2
@@ -510,53 +510,53 @@ void ScummEngine_v2::clearStateCommon(byte type) {
 	putState(obj, getState(obj) & ~type);
 }
 
-void ScummEngine_v2::ifStateCommon(byte type) {
+void ScummEngine_v2::ifStateZeroCommon(byte type) {
 	int obj = getActiveObject();
 
 	jumpRelative((getState(obj) & type) != 0);
 }
 
-void ScummEngine_v2::ifNotStateCommon(byte type) {
+void ScummEngine_v2::ifStateNotZeroCommon(byte type) {
 	int obj = getActiveObject();
 
 	jumpRelative((getState(obj) & type) == 0);
 }
 
-void ScummEngine_v2::o2_setState08() {
+void ScummEngine_v2::o2_setStateIntrinsicOn() {
 	int obj = getActiveObject();
-	putState(obj, getState(obj) | kObjectState_08);
+	putState(obj, getState(obj) | kObjectStateIntrinsic);
 	markObjectRectAsDirty(obj);
 	clearDrawObjectQueue();
 }
 
-void ScummEngine_v2::o2_clearState08() {
+void ScummEngine_v2::o2_setStateIntrinsicOff() {
 	int obj = getActiveObject();
-	putState(obj, getState(obj) & ~kObjectState_08);
+	putState(obj, getState(obj) & ~kObjectStateIntrinsic);
 	markObjectRectAsDirty(obj);
 	clearDrawObjectQueue();
 }
 
-void ScummEngine_v2::o2_setState04() {
+void ScummEngine_v2::o2_setStateLocked() {
 	setStateCommon(kObjectStateLocked);
 }
 
-void ScummEngine_v2::o2_clearState04() {
+void ScummEngine_v2::o2_setStateUnlocked() {
 	clearStateCommon(kObjectStateLocked);
 }
 
-void ScummEngine_v2::o2_setState02() {
+void ScummEngine_v2::o2_setStateUntouchable() {
 	setStateCommon(kObjectStateUntouchable);
 }
 
-void ScummEngine_v2::o2_clearState02() {
+void ScummEngine_v2::o2_setStateTouchable() {
 	clearStateCommon(kObjectStateUntouchable);
 }
 
-void ScummEngine_v2::o2_setState01() {
+void ScummEngine_v2::o2_setStatePickupable() {
 	setStateCommon(kObjectStatePickupable);
 }
 
-void ScummEngine_v2::o2_clearState01() {
+void ScummEngine_v2::o2_setStateUnpickupable() {
 	clearStateCommon(kObjectStatePickupable);
 }
 
@@ -624,36 +624,36 @@ void ScummEngine_v2::o2_getBitVar() {
 	setResult((_scummVars[bit_var] & (1 << bit_offset)) ? 1 : 0);
 }
 
-void ScummEngine_v2::o2_ifState08() {
-	ifStateCommon(kObjectState_08);
+void ScummEngine_v2::o2_ifStateIntrinsicOff() {
+	ifStateZeroCommon(kObjectStateIntrinsic);
 }
 
-void ScummEngine_v2::o2_ifNotState08() {
-	ifNotStateCommon(kObjectState_08);
+void ScummEngine_v2::o2_ifStateIntrinsicOn() {
+	ifStateNotZeroCommon(kObjectStateIntrinsic);
 }
 
-void ScummEngine_v2::o2_ifState04() {
-	ifStateCommon(kObjectStateLocked);
+void ScummEngine_v2::o2_ifStateUnlocked() {
+	ifStateZeroCommon(kObjectStateLocked);
 }
 
-void ScummEngine_v2::o2_ifNotState04() {
-	ifNotStateCommon(kObjectStateLocked);
+void ScummEngine_v2::o2_ifStateLocked() {
+	ifStateNotZeroCommon(kObjectStateLocked);
 }
 
-void ScummEngine_v2::o2_ifState02() {
-	ifStateCommon(kObjectStateUntouchable);
+void ScummEngine_v2::o2_ifStateTouchable() {
+	ifStateZeroCommon(kObjectStateUntouchable);
 }
 
-void ScummEngine_v2::o2_ifNotState02() {
-	ifNotStateCommon(kObjectStateUntouchable);
+void ScummEngine_v2::o2_ifStateUntouchable() {
+	ifStateNotZeroCommon(kObjectStateUntouchable);
 }
 
-void ScummEngine_v2::o2_ifState01() {
-	ifStateCommon(kObjectStatePickupable);
+void ScummEngine_v2::o2_ifStateUnpickupable() {
+	ifStateZeroCommon(kObjectStatePickupable);
 }
 
-void ScummEngine_v2::o2_ifNotState01() {
-	ifNotStateCommon(kObjectStatePickupable);
+void ScummEngine_v2::o2_ifStatePickupable() {
+	ifStateNotZeroCommon(kObjectStatePickupable);
 }
 
 void ScummEngine_v2::o2_addIndirect() {
@@ -786,10 +786,10 @@ void ScummEngine_v2::o2_drawObject() {
 	i = _numLocalObjects;
 	while (i--) {
 		if (_objs[i].obj_nr && _objs[i].x_pos == x && _objs[i].y_pos == y && _objs[i].width == w && _objs[i].height == h)
-			putState(_objs[i].obj_nr, getState(_objs[i].obj_nr) & ~kObjectState_08);
+			putState(_objs[i].obj_nr, getState(_objs[i].obj_nr) & ~kObjectStateIntrinsic);
 	}
 
-	putState(obj, getState(od->obj_nr) | kObjectState_08);
+	putState(obj, getState(od->obj_nr) | kObjectStateIntrinsic);
 }
 
 void ScummEngine_v2::o2_resourceRoutines() {
@@ -1193,7 +1193,7 @@ void ScummEngine_v2::stopScriptCommon(int script) {
 			if (script == MM_SCRIPT(138)) {
 
 				int obj = MM_VALUE(124, 157);
-				putState(obj, getState(obj) & ~kObjectState_08);
+				putState(obj, getState(obj) & ~kObjectStateIntrinsic);
 			}
 		}
 	}
@@ -1601,7 +1601,7 @@ void ScummEngine_v2::o2_pickupObject() {
 	addObjectToInventory(obj, _roomResource);
 	markObjectRectAsDirty(obj);
 	putOwner(obj, VAR(VAR_EGO));
-	putState(obj, getState(obj) | kObjectState_08 | kObjectStateUntouchable);
+	putState(obj, getState(obj) | kObjectStateIntrinsic | kObjectStateUntouchable);
 	clearDrawObjectQueue();
 
 	runInventoryScript(1);

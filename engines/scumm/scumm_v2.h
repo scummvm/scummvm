@@ -88,8 +88,8 @@ protected:
 
 protected:
 	virtual int getActiveObject();
-	void ifStateCommon(byte type);
-	void ifNotStateCommon(byte type);
+	void ifStateZeroCommon(byte type);
+	void ifStateNotZeroCommon(byte type);
 	void setStateCommon(byte type);
 	void clearStateCommon(byte type);
 	void stopScriptCommon(int script);
@@ -123,10 +123,10 @@ protected:
 	void o2_assignVarWordIndirect();
 	void o2_beginOverride();
 	void o2_chainScript();
-	void o2_clearState01();
-	void o2_clearState02();
-	void o2_clearState04();
-	void o2_clearState08();
+	void o2_setStateUnpickupable();
+	void o2_setStateTouchable();
+	void o2_setStateUnlocked();
+	void o2_setStateIntrinsicOff();
 	void o2_cursorCommand();
 	void o2_cutscene();
 	void o2_delay();
@@ -142,14 +142,14 @@ protected:
 	void o2_getBitVar();
 	void o2_getObjPreposition();
 	void o2_ifClassOfIs();
-	void o2_ifNotState01();
-	void o2_ifNotState02();
-	void o2_ifNotState04();
-	void o2_ifNotState08();
-	void o2_ifState01();
-	void o2_ifState02();
-	void o2_ifState04();
-	void o2_ifState08();
+	void o2_ifStatePickupable();
+	void o2_ifStateUntouchable();
+	void o2_ifStateLocked();
+	void o2_ifStateIntrinsicOn();
+	void o2_ifStateUnpickupable();
+	void o2_ifStateTouchable();
+	void o2_ifStateUnlocked();
+	void o2_ifStateIntrinsicOff();
 	void o2_isGreater();
 	void o2_isGreaterEqual();
 	void o2_isLess();
@@ -170,10 +170,10 @@ protected:
 	void o2_setCameraAt();
 	void o2_setObjPreposition();
 	void o2_setOwnerOf();
-	void o2_setState01();
-	void o2_setState02();
-	void o2_setState04();
-	void o2_setState08();
+	void o2_setStatePickupable();
+	void o2_setStateUntouchable();
+	void o2_setStateLocked();
+	void o2_setStateIntrinsicOn();
 	void o2_startScript();
 	void o2_stopScript();
 	void o2_subtract();

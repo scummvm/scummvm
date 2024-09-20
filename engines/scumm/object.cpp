@@ -311,7 +311,7 @@ int ScummEngine::getState(int obj) {
 		// blowing up the mansion, should they feel the urge to.
 
 		if (_game.id == GID_MANIAC && _game.version != 0 && _game.platform != Common::kPlatformNES && (obj == 182 || obj == 193))
-			_objectStateTable[obj] |= kObjectState_08;
+			_objectStateTable[obj] |= kObjectStateIntrinsic;
 	}
 
 	return _objectStateTable[obj];
@@ -550,7 +550,7 @@ int ScummEngine::getObjActToObjActDist(int a, int b) {
 int ScummEngine::findObject(int x, int y) {
 	int i, b;
 	byte a;
-	const int mask = (_game.version <= 2) ? kObjectState_08 : 0xF;
+	const int mask = (_game.version <= 2) ? kObjectStateIntrinsic : 0xF;
 
 	for (i = 1; i < _numLocalObjects; i++) {
 		if ((_objs[i].obj_nr < 1) || getClass(_objs[i].obj_nr, kObjectClassUntouchable))
@@ -593,7 +593,7 @@ int ScummEngine::findObject(int x, int y) {
 void ScummEngine::drawRoomObject(int i, int arg) {
 	ObjectData *od;
 	byte a;
-	const int mask = (_game.version <= 2) ? kObjectState_08 : 0xF;
+	const int mask = (_game.version <= 2) ? kObjectStateIntrinsic : 0xF;
 
 	od = &_objs[i];
 	if ((i < 1) || (od->obj_nr < 1) || !od->state)
@@ -612,7 +612,7 @@ void ScummEngine::drawRoomObject(int i, int arg) {
 
 void ScummEngine::drawRoomObjects(int arg) {
 	int i;
-	const int mask = (_game.version <= 2) ? kObjectState_08 : 0xF;
+	const int mask = (_game.version <= 2) ? kObjectStateIntrinsic : 0xF;
 
 	if (_game.heversion >= 60) {
 		// In HE games, normal objects are drawn, followed by FlObjects.

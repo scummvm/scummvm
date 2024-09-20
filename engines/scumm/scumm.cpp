@@ -3075,7 +3075,7 @@ void ScummEngine_v2::terminateSaveMenuScript() {
 			int obj[] = {182, 193};
 
 			for (int i = 0; i < ARRAYSIZE(obj); i++) {
-				putState(obj[i], getState(obj[i]) & ~kObjectState_08);
+				putState(obj[i], getState(obj[i]) & ~kObjectStateIntrinsic);
 				markObjectRectAsDirty(obj[i]);
 				clearDrawObjectQueue();
 			}
