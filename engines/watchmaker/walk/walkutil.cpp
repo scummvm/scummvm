@@ -28,7 +28,7 @@
 
 namespace Watchmaker {
 
-extern float  x3d, y3d, z3d;
+extern float  x3d, z3d;
 
 /* -----------------05/06/00 12.49-------------------
  *                  PointIn2DRectangle
@@ -156,7 +156,6 @@ int IntersLineLine(float xa, float ya, float xb, float yb, float xc, float yc, f
 		else if (r > 1.0f)   r = 1.0f;
 
 		x3d = xa + r * (xb - xa);
-		y3d = 0.0;
 		z3d = ya + r * (yb - ya);
 	}
 

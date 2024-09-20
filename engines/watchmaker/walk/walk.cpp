@@ -32,7 +32,7 @@
 namespace Watchmaker {
 
 // locals
-float  x3d, y3d, z3d;
+float  x3d, z3d;
 /*
 WALK60      0   225 0
 WALKBACK    4   162 226
