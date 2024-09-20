@@ -55,6 +55,7 @@ struct Hacks {
 	bool mtiVariableReferencesHack;
 	bool mtiSceneReturnHack;
 	bool mtiHispaniolaDamagedStringHack;
+	bool telemedMoviePlaybackInBackground;
 
 	bool ignoreSceneUnloads;
 
@@ -83,6 +84,8 @@ void addObsidianSaveMechanism(const MTropolisGameDescription &desc, Hacks &hacks
 void addObsidianImprovedWidescreen(const MTropolisGameDescription &desc, Hacks &hacks);
 
 void addMTIQuirks(const MTropolisGameDescription &desc, Hacks &hacks);
+
+void addTelemedQuirks(const MTropolisGameDescription &desc, Hacks &hacks);
 
 } // End of namespace HackSuites
 

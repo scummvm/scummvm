@@ -847,8 +847,10 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 		uint32 maxTS = realRange.max;
 		uint32 targetTS = _currentTimestamp;
 
+		bool playInBackgroundHack = runtime->getHacks().telemedMoviePlaybackInBackground;
+
 		int framesDecodedThisFrame = 0;
-		if (_currentPlayState == kMediaStatePlaying) {
+		if (_currentPlayState == kMediaStatePlaying && !playInBackgroundHack) {
 			while (_videoDecoder->needsUpdate()) {
 				if (_playEveryFrame && framesDecodedThisFrame > 0)
 					break;
