@@ -83,7 +83,7 @@ void current_fade_out_effect() {
 	}
 }
 
-IDriverDependantBitmap *prepare_screen_for_transition_in() {
+IDriverDependantBitmap *prepare_screen_for_transition_in(bool opaque) {
 	if (_G(saved_viewport_bitmap) == nullptr)
 		quit("Crossfade: buffer is null attempting transition");
 
@@ -99,7 +99,7 @@ IDriverDependantBitmap *prepare_screen_for_transition_in() {
 		delete _G(saved_viewport_bitmap);
 		_G(saved_viewport_bitmap) = clippedBuffer;
 	}
-	return _G(gfxDriver)->CreateDDBFromBitmap(_G(saved_viewport_bitmap), false, false);
+	return _G(gfxDriver)->CreateDDBFromBitmap(_G(saved_viewport_bitmap), false, opaque);
 }
 
 //=============================================================================

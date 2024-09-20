@@ -260,7 +260,10 @@ void process_event(const EventHappened *evp) {
 			if (_GP(game).color_depth == 1)
 				quit("!Cannot use crossfade screen transition in 256-colour games");
 
-			IDriverDependantBitmap *ddb = prepare_screen_for_transition_in();
+			// TODO: crossfade does not need a screen with transparency, it should be opaque;
+			// but Software renderer cannot alpha-blend non-masked sprite at the moment,
+			// see comment to drawing opaque sprite in SDLRendererGraphicsDriver!
+			IDriverDependantBitmap *ddb = prepare_screen_for_transition_in(false /* transparent */);
 
 			for (int alpha = 254; alpha > 0; alpha -= 16) {
 				// do the crossfade
@@ -288,7 +291,7 @@ void process_event(const EventHappened *evp) {
 			int aa, bb, cc;
 			RGB interpal[256];
 
-			IDriverDependantBitmap *ddb = prepare_screen_for_transition_in();
+			IDriverDependantBitmap *ddb = prepare_screen_for_transition_in(false /* transparent */);
 			for (aa = 0; aa < 16; aa++) {
 				// merge the palette while dithering
 				if (_GP(game).color_depth == 1) {
