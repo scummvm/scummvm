@@ -335,6 +335,12 @@ struct PointXZ {
 	}
 };
 
+// Struct for returning from "partial" functions mathematically
+struct PointResult {
+	PointXZ result;
+	bool isValid = false;
+};
+
 struct t3dPAN {
 	PointXZ a, b;                           // point A / B position
 	PointXZ backA, backB;                   // back to point A / B

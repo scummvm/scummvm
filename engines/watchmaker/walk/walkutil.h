@@ -34,9 +34,9 @@ int PointInside(int32 oc, int32 pan, double x, double z);
 bool PointInside2DRectangle(double pgon[4][2], double x, double z);
 float DistF(PointXZ a, PointXZ b);
 float DistF(float x1, float y1, float x2, float y2);
-int IntersLineLine(const PointXZ &a, const PointXZ &b, float xc, float yc, float xd, float yd);
-int IntersLineLine(const PointXZ &a, const PointXZ &b, const PointXZ &c, const PointXZ &d);
-int IntersLineLine(float xa, float ya, float xb, float yb, float xc, float yc, float xd, float yd);
+PointResult IntersLineLine(const PointXZ &a, const PointXZ &b, float xc, float yc, float xd, float yd);
+PointResult IntersLineLine(const PointXZ &a, const PointXZ &b, const PointXZ &c, const PointXZ &d);
+PointResult IntersLineLine(float xa, float ya, float xb, float yb, float xc, float yc, float xd, float yd);
 int PathCompare(const void *arg1, const void *arg2);
 void SortPath(int32 oc);
 

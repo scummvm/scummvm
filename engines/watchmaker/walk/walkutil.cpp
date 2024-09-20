@@ -28,8 +28,6 @@
 
 namespace Watchmaker {
 
-extern float  x3d, z3d;
-
 /* -----------------05/06/00 12.49-------------------
  *                  PointIn2DRectangle
  * --------------------------------------------------*/
@@ -138,31 +136,30 @@ float DistF(float x1, float y1, float x2, float y2) {
 /*-----------------07/10/96 11.21-------------------
         Interseca linea 2D con linea 2D
 --------------------------------------------------*/
-int IntersLineLine(const PointXZ &a, const PointXZ &b, const PointXZ &c, const PointXZ &d) {
+PointResult IntersLineLine(const PointXZ &a, const PointXZ &b, const PointXZ &c, const PointXZ &d) {
 	return IntersLineLine(a.x, a.z, b.x, b.z, c.x, c.z, d.x, d.z);
 }
-int IntersLineLine(const PointXZ &a, const PointXZ &b, float xc, float yc, float xd, float yd) {
+PointResult IntersLineLine(const PointXZ &a, const PointXZ &b, float xc, float yc, float xd, float yd) {
 	return IntersLineLine(a.x, a.z, b.x, b.z, xc, yc, xd, yd);
 }
-int IntersLineLine(float xa, float ya, float xb, float yb, float xc, float yc, float xd, float yd) {
-	float r, s, divisor;
-
-	divisor = (float)((xb - xa) * (yd - yc) - (yb - ya) * (xd - xc));
+PointResult IntersLineLine(float xa, float ya, float xb, float yb, float xc, float yc, float xd, float yd) {
+	float divisor = (float)((xb - xa) * (yd - yc) - (yb - ya) * (xd - xc));
 	if (!divisor) divisor = 0.000001f;
-	r = (float)((ya - yc) * (xd - xc) - (xa - xc) * (yd - yc)) / divisor;
-	s = (float)((ya - yc) * (xb - xa) - (xa - xc) * (yb - ya)) / divisor;
+	float r = (float)((ya - yc) * (xd - xc) - (xa - xc) * (yd - yc)) / divisor;
+	float s = (float)((ya - yc) * (xb - xa) - (xa - xc) * (yb - ya)) / divisor;
 
-	if ((r < -EPSILON) || (r > (1.0f + EPSILON)) || (s < -EPSILON) || (s > (1.0f + EPSILON)))
-		return FALSE;
-	else {
+	PointResult result;
+	if ((r < -EPSILON) || (r > (1.0f + EPSILON)) || (s < -EPSILON) || (s > (1.0f + EPSILON))) {
+		result.isValid = false;
+	} else {
 		if (r < 0.0f)    r = 0.0f;
 		else if (r > 1.0f)   r = 1.0f;
 
-		x3d = xa + r * (xb - xa);
-		z3d = ya + r * (yb - ya);
+		result.result.x = xa + r * (xb - xa);
+		result.result.z = ya + r * (yb - ya);
 	}
 
-	return TRUE;
+	return result;
 }
 
 /*-----------------15/10/96 10.33-------------------

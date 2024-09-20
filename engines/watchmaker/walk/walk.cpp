@@ -32,7 +32,6 @@
 namespace Watchmaker {
 
 // locals
-float  x3d, z3d;
 /*
 WALK60      0   225 0
 WALKBACK    4   162 226
@@ -155,47 +154,48 @@ void PointOut(int32 oc, t3dCAMERA *Camera) {
 			}
 
 			// controlla intersezione con camera
-			if (IntersLineLine(w->Panel[b].a, w->Panel[b].b,
-			                   Camera->Source.x, Camera->Source.z,
-			                   w->Cur.x, w->Cur.z)) {
-				temp = DistF(w->Cur.x, w->Cur.z, x3d, z3d);
+			PointResult res = IntersLineLine(w->Panel[b].a, w->Panel[b].b,
+			                                 Camera->Source.x, Camera->Source.z,
+			                                 w->Cur.x, w->Cur.z);
+			if (res.isValid) {
+				temp = DistF(w->Cur, res.result);
 
 				if (temp < inters) {
 					inters = temp;
 					w->CurPanel = b;
-					p.x = x3d;
-					p.z = z3d;
+					p = res.result;
 				}
 			}
 
 			// controlla intersezione con omino
-			if (IntersLineLine(w->Panel[b].a, w->Panel[b].b,
-			                   Act->Pos.x, Act->Pos.z,
-			                   w->Cur.x, w->Cur.z)) {
-				temp = DistF(w->Cur.x, w->Cur.z, x3d, z3d);
+			res = IntersLineLine(w->Panel[b].a, w->Panel[b].b,
+			                     Act->Pos.x, Act->Pos.z,
+			                     w->Cur.x, w->Cur.z);
+			if (res.isValid) {
+				temp = DistF(w->Cur, res.result);
 
 				if (temp < inters) {
 					inters = temp;
 					w->CurPanel = b;
-					p.x = x3d;
-					p.z = z3d;
+					p = res.result;
 				}
 			}
 
 			// controlla intersezione con normale pannello
-			/*          if( IntersLineLine( w->Panel[b].x1, w->Panel[b].z1,
-			                                w->Panel[b].x2, w->Panel[b].z2,
-			                                w->CurX+nx*LARGEVAL, w->CurZ+nz*LARGEVAL,
-			                                w->CurX-nx*LARGEVAL, w->CurZ-nz*LARGEVAL ) )
+			/*          PointResult res = IntersLineLine( w->Panel[b].x1, w->Panel[b].z1,
+			                                              w->Panel[b].x2, w->Panel[b].z2,
+			                                              w->CurX+nx*LARGEVAL, w->CurZ+nz*LARGEVAL,
+			                                              w->CurX-nx*LARGEVAL, w->CurZ-nz*LARGEVAL );
+			            if (res.isValid)
 			            {
-			                temp = DistF( w->CurX, w->CurZ, x3d, z3d );
+			                temp = DistF( w->Cur, res.result );
 
 			                if( temp < inters )
 			                {
 			                    inters = temp;
 			                    w->CurPanel = b;
-			                    x = x3d;
-			                    z = z3d;
+			                    x = res.result.x;
+			                    z = res.result.z;
 			                }
 			            }
 			*/
@@ -422,24 +422,27 @@ void FindShortPath(int32 oc) {
 				// non deve intersecare pannello stretto mai
 //				if( !( w->Panel[c].flags & 0x80000000 ) )
 				{
-					if (IntersLineLine(w->Panel[c].backA, w->Panel[c].backB,
-					                   TempPath[a].pos, TempPath[b].pos))
+					PointResult res = IntersLineLine(w->Panel[c].backA, w->Panel[c].backB,
+					                                TempPath[a].pos, TempPath[b].pos);
+					if (res.isValid)
 						inters ++;
 
-					if (IntersLineLine(w->Panel[c].a, w->Panel[c].backA,
-					                   TempPath[a].pos, TempPath[b].pos)) {
-						len2 = DistF(x3d, z3d, TempPath[a].pos.x, TempPath[a].pos.z);
-						len1 = DistF(x3d, z3d, TempPath[b].pos.x, TempPath[b].pos.z);
+					res = IntersLineLine(w->Panel[c].a, w->Panel[c].backA,
+					                     TempPath[a].pos, TempPath[b].pos);
+					if (res.isValid) {
+						len2 = DistF(res.result, TempPath[a].pos);
+						len1 = DistF(res.result, TempPath[b].pos);
 
 						// interseca in un pto distante da partenza e arrivo
 						if ((len1 > EPSILON) && (len2 > EPSILON))
 							inters ++;
 					}
 
-					if (IntersLineLine(w->Panel[c].b, w->Panel[c].backB,
-					                   TempPath[a].pos, TempPath[b].pos)) {
-						len2 = DistF(x3d, z3d, TempPath[a].pos.x, TempPath[a].pos.z);
-						len1 = DistF(x3d, z3d, TempPath[b].pos.x, TempPath[b].pos.z);
+					res = IntersLineLine(w->Panel[c].b, w->Panel[c].backB,
+					                     TempPath[a].pos, TempPath[b].pos);
+					if (res.isValid) {
+						len2 = DistF(res.result, TempPath[a].pos);
+						len1 = DistF(res.result, TempPath[b].pos);
 
 						// interseca in un pto distante da partenza e arrivo
 						if ((len1 > EPSILON) && (len2 > EPSILON))
@@ -530,15 +533,15 @@ void FindPath(int32 oc, t3dCAMERA *Camera) {
 //		return ;
 
 	for (b = 0; b < w->PanelNum; b++) {
-		if (IntersLineLine(w->Panel[b].a, w->Panel[b].b,
-		                   Act->Pos.x, Act->Pos.z,
-		                   w->Cur.x, w->Cur.z)) {
+		PointResult res = IntersLineLine(w->Panel[b].a, w->Panel[b].b,
+		                                 Act->Pos.x, Act->Pos.z,
+		                                 w->Cur.x, w->Cur.z);
+		if (res.isValid) {
 			inters ++;
 			DebugLogFile("Inters %d: %f %f %f %f", b, w->Panel[b].a.x, w->Panel[b].a.z, w->Panel[b].b.x, w->Panel[b].b.z);
 
-			w->PathNode[w->NumPathNodes].pos.x = x3d;
-			w->PathNode[w->NumPathNodes].pos.z = z3d;
-			w->PathNode[w->NumPathNodes].dist = DistF(Act->Pos.x, Act->Pos.z, x3d, z3d);
+			w->PathNode[w->NumPathNodes].pos = res.result;
+			w->PathNode[w->NumPathNodes].dist = DistF(Act->Pos.x, Act->Pos.z, res.result.x, res.result.z);
 			w->PathNode[w->NumPathNodes].oldp = b;
 			w->PathNode[w->NumPathNodes].curp = b;
 			w->NumPathNodes ++;
@@ -649,22 +652,26 @@ void FindPath(int32 oc, t3dCAMERA *Camera) {
 			// conto intersezioni con pannelli stretti
 			// e con unione pannelli larghi con pannelli stretti
 			for (b = 0; b < w->PanelNum; b++) {
-				if (IntersLineLine(w->Panel[b].a, w->Panel[b].b,
-				                   w->PathNode[w->NumPathNodes - 1].pos, w->Cur))
-					if ((DistF(x3d, z3d, w->PathNode[w->NumPathNodes - 1].pos.x, w->PathNode[w->NumPathNodes - 1].pos.z) > EPSILON) &&
-					        (DistF(x3d, z3d, w->Cur.x, w->Cur.z) > EPSILON))
+				PointResult res;
+				res = IntersLineLine(w->Panel[b].a, w->Panel[b].b,
+				                     w->PathNode[w->NumPathNodes - 1].pos, w->Cur);
+				if (res.isValid)
+					if ((DistF(res.result, w->PathNode[w->NumPathNodes - 1].pos) > EPSILON) &&
+					        (DistF(res.result, w->Cur) > EPSILON))
 						inters ++;
 
-				if (IntersLineLine(w->Panel[b].a, w->Panel[b].backA,
-				                   w->PathNode[w->NumPathNodes - 1].pos, w->Cur))
-					if ((DistF(x3d, z3d, w->PathNode[w->NumPathNodes - 1].pos.x, w->PathNode[w->NumPathNodes - 1].pos.z) > EPSILON) &&
-					        (DistF(x3d, z3d, w->Cur.x, w->Cur.z) > EPSILON))
+				res = IntersLineLine(w->Panel[b].a, w->Panel[b].backA,
+				                     w->PathNode[w->NumPathNodes - 1].pos, w->Cur);
+				if (res.isValid)
+					if ((DistF(res.result, w->PathNode[w->NumPathNodes - 1].pos) > EPSILON) &&
+					        (DistF(res.result, w->Cur) > EPSILON))
 						inters ++;
 
-				if (IntersLineLine(w->Panel[b].b, w->Panel[b].backB,
-				                   w->PathNode[w->NumPathNodes - 1].pos, w->Cur))
-					if ((DistF(x3d, z3d, w->PathNode[w->NumPathNodes - 1].pos.x, w->PathNode[w->NumPathNodes - 1].pos.z) > EPSILON) &&
-					        (DistF(x3d, z3d, w->Cur.x, w->Cur.z) > EPSILON))
+				res = IntersLineLine(w->Panel[b].b, w->Panel[b].backB,
+				                     w->PathNode[w->NumPathNodes - 1].pos, w->Cur);
+				if (res.isValid)
+					if ((DistF(res.result, w->PathNode[w->NumPathNodes - 1].pos) > EPSILON) &&
+					        (DistF(res.result, w->Cur) > EPSILON))
 						inters ++;
 
 				if (inters)
@@ -754,13 +761,14 @@ void ForceAnimInBounds(int32 oc) {
 				DebugLogFile("Aggiorno CurPanel %d", b);
 			}
 //			Se un punto interseca pannello slida
-			if (IntersLineLine(w->Panel[b].a, w->Panel[b].b,
-			                   Trasl[0].x, Trasl[0].z,
-			                   Trasl[a].x, Trasl[a].z)) {
+			PointResult res = IntersLineLine(w->Panel[b].a, w->Panel[b].b,
+			                                 Trasl[0].x, Trasl[0].z,
+			                                 Trasl[a].x, Trasl[a].z);
+			if (res.isValid) {
 				inters ++;
 
-				Trasl[a].x = x3d;
-				Trasl[a].z = z3d;
+				Trasl[a].x = res.result.x;
+				Trasl[a].z = res.result.z;
 				DebugLogFile("%d: entrerebbe in %d", a, b);
 			}
 		}

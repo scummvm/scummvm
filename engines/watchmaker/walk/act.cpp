@@ -565,8 +565,9 @@ int32 CheckPathNodes(int32 oc) {
 //	se interseca almeno un baffo si ferma!!
 	for (i = 1; i < w->NumPathNodes; i++) {
 		for (b = 0; b < w->PanelNum; b++) {
-			if (IntersLineLine(w->Panel[b].backA, w->Panel[b].backB,
-			                   w->PathNode[i - 1].pos, w->PathNode[i].pos)) {
+			PointResult res = IntersLineLine(w->Panel[b].backA, w->Panel[b].backB,
+			                   w->PathNode[i - 1].pos, w->PathNode[i].pos);
+			if (res.isValid) {
 				w->NumPathNodes = i - 1;
 				w->CurPanel = w->PathNode[i - 1].curp;
 				w->NumSteps = 0;
