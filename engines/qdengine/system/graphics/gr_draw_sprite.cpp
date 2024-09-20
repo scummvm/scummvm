@@ -1021,8 +1021,6 @@ void grDispatcher::putSprMask(int x, int y, int sx, int sy, const byte *p, uint3
 	} else
 		dy = 1;
 
-	x <<= 1;
-
 	px *= 3;
 	sx *= 3;
 
