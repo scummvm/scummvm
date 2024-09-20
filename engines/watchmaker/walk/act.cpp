@@ -60,10 +60,10 @@ void SlideChar(int32 oc) {
 	v.y = 0.0f;
 	v.z = w->LookZ;
 
-	x1 = w->Panel[w->CurPanel].x1;
-	z1 = w->Panel[w->CurPanel].z1;
-	x2 = w->Panel[w->CurPanel].x2;
-	z2 = w->Panel[w->CurPanel].z2;
+	x1 = w->Panel[w->CurPanel].a.x;
+	z1 = w->Panel[w->CurPanel].a.z;
+	x2 = w->Panel[w->CurPanel].b.x;
+	z2 = w->Panel[w->CurPanel].b.z;
 	if ((len = (x1 - x2) * (x1 - x2) + (z1 - z2) * (z1 - z2)) == 0) {
 		CharStop(oc);
 		return ;
@@ -565,8 +565,9 @@ int32 CheckPathNodes(int32 oc) {
 //	se interseca almeno un baffo si ferma!!
 	for (i = 1; i < w->NumPathNodes; i++) {
 		for (b = 0; b < w->PanelNum; b++) {
-			if (IntersLineLine(w->Panel[b].bx1, w->Panel[b].bz1, w->Panel[b].bx2, w->Panel[b].bz2,
-			                   w->PathNode[i - 1].x, w->PathNode[i - 1].z, w->PathNode[i].x, w->PathNode[i].z)) {
+			if (IntersLineLine(w->Panel[b].backA, w->Panel[b].backB,
+			                   w->PathNode[i - 1].x, w->PathNode[i - 1].z,
+			                   w->PathNode[i].x, w->PathNode[i].z)) {
 				w->NumPathNodes = i - 1;
 				w->CurPanel = w->PathNode[i - 1].curp;
 				w->NumSteps = 0;
@@ -610,37 +611,37 @@ bool CheckCharacterWithBounds(WGame &game, int32 oc, t3dV3F *Pos, uint8 dp, uint
 		if (Character[i] && (Character[i] != Char) && !(Character[i]->Flags & (T3D_CHARACTER_HIDE | T3D_CHARACTER_BNDHIDE)) && (p = Character[i]->Body->Panel[0])) {
 			st = Char->Walk.PanelNum;
 			for (int j = 0; j < Character[i]->Body->NumPanels[0]; j++, p++, Char->Walk.PanelNum++) {
-				tmp.x = p->x1;
+				tmp.x = p->a.x;
 				tmp.y = CurFloorY;
-				tmp.z = p->z1;
+				tmp.z = p->a.z;
 				t3dVectTransform(&tmp, &tmp, &Character[i]->Mesh->Matrix);
 				t3dVectAdd(&tmp, &tmp, &Character[i]->Mesh->Trasl);
-				Char->Walk.Panel[Char->Walk.PanelNum].x1 = tmp.x;
-				Char->Walk.Panel[Char->Walk.PanelNum].z1 = tmp.z;
+				Char->Walk.Panel[Char->Walk.PanelNum].a.x = tmp.x;
+				Char->Walk.Panel[Char->Walk.PanelNum].a.z = tmp.z;
 
-				tmp.x = p->x2;
+				tmp.x = p->b.x;
 				tmp.y = CurFloorY;
-				tmp.z = p->z2;
+				tmp.z = p->b.z;
 				t3dVectTransform(&tmp, &tmp, &Character[i]->Mesh->Matrix);
 				t3dVectAdd(&tmp, &tmp, &Character[i]->Mesh->Trasl);
-				Char->Walk.Panel[Char->Walk.PanelNum].x2 = tmp.x;
-				Char->Walk.Panel[Char->Walk.PanelNum].z2 = tmp.z;
+				Char->Walk.Panel[Char->Walk.PanelNum].b.x = tmp.x;
+				Char->Walk.Panel[Char->Walk.PanelNum].b.z = tmp.z;
 
-				tmp.x = p->bx1;
+				tmp.x = p->backA.x;
 				tmp.y = CurFloorY;
-				tmp.z = p->bz1;
+				tmp.z = p->backA.z;
 				t3dVectTransform(&tmp, &tmp, &Character[i]->Mesh->Matrix);
 				t3dVectAdd(&tmp, &tmp, &Character[i]->Mesh->Trasl);
-				Char->Walk.Panel[Char->Walk.PanelNum].bx1 = tmp.x;
-				Char->Walk.Panel[Char->Walk.PanelNum].bz1 = tmp.z;
+				Char->Walk.Panel[Char->Walk.PanelNum].backA.x = tmp.x;
+				Char->Walk.Panel[Char->Walk.PanelNum].backA.z = tmp.z;
 
-				tmp.x = p->bx2;
+				tmp.x = p->backB.x;
 				tmp.y = CurFloorY;
-				tmp.z = p->bz2;
+				tmp.z = p->backB.z;
 				t3dVectTransform(&tmp, &tmp, &Character[i]->Mesh->Matrix);
 				t3dVectAdd(&tmp, &tmp, &Character[i]->Mesh->Trasl);
-				Char->Walk.Panel[Char->Walk.PanelNum].bx2 = tmp.x;
-				Char->Walk.Panel[Char->Walk.PanelNum].bz2 = tmp.z;
+				Char->Walk.Panel[Char->Walk.PanelNum].backB.x = tmp.x;
+				Char->Walk.Panel[Char->Walk.PanelNum].backB.z = tmp.z;
 
 				Char->Walk.Panel[Char->Walk.PanelNum].near1 = p->near1 + st;
 				Char->Walk.Panel[Char->Walk.PanelNum].near2 = p->near2 + st;

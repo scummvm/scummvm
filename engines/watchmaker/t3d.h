@@ -325,11 +325,13 @@ public:
 	explicit t3dPLIGHT(Common::SeekableReadStream &stream);
 };
 
+struct PointXZ {
+	float x = 0.0f, z = 0.0f;
+};
+
 struct t3dPAN {
-	t3dF32 x1 = 0.0f, z1 = 0.0f;            // point A position
-	t3dF32 x2 = 0.0f, z2 = 0.0f;            // point B position
-	t3dF32 bx1 = 0.0f, bz1 = 0.0f;          // back to point A
-	t3dF32 bx2 = 0.0f, bz2 = 0.0f;          // back to point B
+	PointXZ a, b;                           // point A / B position
+	PointXZ backA, backB;                   // back to point A / B
 	uint16 near1 = 0;                       // panel near to A
 	uint16 near2 = 0;                       // panel near to B
 };

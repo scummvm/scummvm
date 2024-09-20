@@ -1477,33 +1477,33 @@ void t3dShowBounds(t3dPAN *p, uint32 numpan) {
 	rBuildLinesViewMatrix(t3dCurViewMatrix, tmp);
 
 	for (j = 0; j < numpan; j++) {
-		VertPointer->x = p[j].x1;
+		VertPointer->x = p[j].a.x;
 		VertPointer->y = CurFloorY + 1.0f;
-		VertPointer->z = p[j].z1;
+		VertPointer->z = p[j].a.z;
 		VertPointer->diffuse = RGBA_MAKE(250, 0, 0, 255);
 		rAddPointArray();
 		VertPointer++;
 //		t3dNumVertices++;
 
-		VertPointer->x = p[j].x2;
+		VertPointer->x = p[j].b.x;
 		VertPointer->y = CurFloorY + 1.0f;
-		VertPointer->z = p[j].z2;
+		VertPointer->z = p[j].b.z;
 		VertPointer->diffuse = RGBA_MAKE(250, 0, 0, 255);
 		rAddPointArray();
 		VertPointer++;
 //		t3dNumVertices++;
 
-		VertPointer->x = p[j].bx1;
+		VertPointer->x = p[j].backA.x;
 		VertPointer->y = CurFloorY + 1.0f;
-		VertPointer->z = p[j].bz1;
+		VertPointer->z = p[j].backA.z;
 		VertPointer->diffuse = RGBA_MAKE(250, 0, 0, 255);
 		rAddPointArray();
 		VertPointer++;
 //		t3dNumVertices++;
 
-		VertPointer->x = p[j].bx2;
+		VertPointer->x = p[j].backB.x;
 		VertPointer->y = CurFloorY + 1.0f;
-		VertPointer->z = p[j].bz2;
+		VertPointer->z = p[j].backB.z;
 		VertPointer->diffuse = RGBA_MAKE(250, 0, 0, 255);
 		rAddPointArray();
 		VertPointer++;

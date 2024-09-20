@@ -76,16 +76,16 @@ int PointInside(int32 oc, int32 pan, double x, double z) {
 	if (pan < 0)
 		return FALSE;
 
-	pgon[0][0] = (double)w->Panel[pan].x1;
-	pgon[0][1] = (double)w->Panel[pan].z1;
-	pgon[3][0] = (double)w->Panel[pan].x2;
-	pgon[3][1] = (double)w->Panel[pan].z2;
+	pgon[0][0] = (double)w->Panel[pan].a.x;
+	pgon[0][1] = (double)w->Panel[pan].a.z;
+	pgon[3][0] = (double)w->Panel[pan].b.x;
+	pgon[3][1] = (double)w->Panel[pan].b.z;
 
-	pgon[1][0] = (double)w->Panel[pan].bx1;
-	pgon[1][1] = (double)w->Panel[pan].bz1;
+	pgon[1][0] = (double)w->Panel[pan].backA.x;
+	pgon[1][1] = (double)w->Panel[pan].backA.z;
 
-	pgon[2][0] = (double)w->Panel[pan].bx2;
-	pgon[2][1] = (double)w->Panel[pan].bz2;
+	pgon[2][0] = (double)w->Panel[pan].backB.x;
+	pgon[2][1] = (double)w->Panel[pan].backB.z;
 
 	ox = pgon[3][0] - pgon[0][0];
 	oz = pgon[3][1] - pgon[0][1];
@@ -113,6 +113,10 @@ int PointInside(int32 oc, int32 pan, double x, double z) {
 /*-----------------07/10/96 11.14-------------------
             Distanza falsa tra 2 punti 2D
 --------------------------------------------------*/
+float DistF(PointXZ a, PointXZ b) {
+	return DistF(a.x, a.z, b.x, b.z);
+}
+
 float DistF(float x1, float y1, float x2, float y2) {
 	float d1 = (float)fabs(x1 - x2);
 	float d2 = (float)fabs(y1 - y2);
@@ -131,6 +135,9 @@ float DistF(float x1, float y1, float x2, float y2) {
 /*-----------------07/10/96 11.21-------------------
         Interseca linea 2D con linea 2D
 --------------------------------------------------*/
+int IntersLineLine(const PointXZ &a, const PointXZ &b, float xc, float yc, float xd, float yd) {
+	return IntersLineLine(a.x, a.z, b.x, b.z, xc, yc, xd, yd);
+}
 int IntersLineLine(float xa, float ya, float xb, float yb, float xc, float yc, float xd, float yd) {
 	float r, s, divisor;
 

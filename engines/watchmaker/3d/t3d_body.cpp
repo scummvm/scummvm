@@ -285,14 +285,14 @@ void loadBounds(WorkDirs &workDirs, const char *pname, t3dBODY *b) {
 		b->Panel[j] = new t3dPAN[npan + 4 * T3D_MAX_CHARACTERS];        // also leave some space for any additions
 
 		for (int i = 0; i < npan; i++) {
-			b->Panel[j][i].x1 = stream->readFloatLE() * SCALEFACTOR;
-			b->Panel[j][i].z1 = stream->readFloatLE() * SCALEFACTOR;
-			b->Panel[j][i].x2 = stream->readFloatLE() * SCALEFACTOR;
-			b->Panel[j][i].z2 = stream->readFloatLE() * SCALEFACTOR;
-			b->Panel[j][i].bx1 = stream->readFloatLE() * SCALEFACTOR;
-			b->Panel[j][i].bz1 = stream->readFloatLE() * SCALEFACTOR;
-			b->Panel[j][i].bx2 = stream->readFloatLE() * SCALEFACTOR;
-			b->Panel[j][i].bz2 = stream->readFloatLE() * SCALEFACTOR;
+			b->Panel[j][i].a.x = stream->readFloatLE() * SCALEFACTOR;
+			b->Panel[j][i].a.z = stream->readFloatLE() * SCALEFACTOR;
+			b->Panel[j][i].b.x = stream->readFloatLE() * SCALEFACTOR;
+			b->Panel[j][i].b.z = stream->readFloatLE() * SCALEFACTOR;
+			b->Panel[j][i].backA.x = stream->readFloatLE() * SCALEFACTOR;
+			b->Panel[j][i].backA.z = stream->readFloatLE() * SCALEFACTOR;
+			b->Panel[j][i].backB.x = stream->readFloatLE() * SCALEFACTOR;
+			b->Panel[j][i].backB.z = stream->readFloatLE() * SCALEFACTOR;
 			b->Panel[j][i].near1 = stream->readSint16LE();
 			b->Panel[j][i].near2 = stream->readSint16LE();
 		}
