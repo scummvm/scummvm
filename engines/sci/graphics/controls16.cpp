@@ -326,21 +326,44 @@ void GfxControls16::kernelDrawButton(Common::Rect rect, reg_t obj, const char *t
 		rect.grow(1);
 		_paint16->eraseRect(rect);
 		_paint16->frameRect(rect);
+
+		// Unlike PC-98, the Korean fan translations have CJK text for some button controls. The original PC-98
+		// interpreters which were used to make the necessary code changes to kernelDrawText do not have any
+		// modifications for button controls, since it is not necessary (due to the English button labels). I
+		// have now tried to adapt the code changes from kernelDrawText for the button controls. It does require
+		// some extra attention, like drawing the buttons frames first, but seems to work as intended. Also, the
+		// different handling also seems to work fine for the English buttons (which both the Korean and the PC-98
+		// versions have).
+		if (_screen->gfxDriver()->driverBasedTextRendering() && !getPicNotValid()) {
+			if (style & SCI_CONTROLS_STYLE_SELECTED) {
+				rect.grow(-1);
+				_paint16->frameRect(rect);
+				rect.grow(1);
+			}
+			_paint16->bitsShow(rect);
+		}
+
 		rect.grow(-2);
 		_ports->textGreyedOutput(!(style & SCI_CONTROLS_STYLE_ENABLED));
+
 		if (!g_sci->hasMacFonts()) {
-			_text16->Box(text, languageSplitter, false, rect, SCI_TEXT16_ALIGNMENT_CENTER, fontId);
+			_text16->Box(text, languageSplitter, _screen->gfxDriver()->driverBasedTextRendering(), rect, SCI_TEXT16_ALIGNMENT_CENTER, fontId);
 		} else {
 			_text16->macDraw(text, rect, SCI_TEXT16_ALIGNMENT_CENTER, fontId, _text16->GetFontId(), 0);
 		}
 		_ports->textGreyedOutput(false);
-		rect.grow(1);
-		if (style & SCI_CONTROLS_STYLE_SELECTED)
-			_paint16->frameRect(rect);
-		if (!getPicNotValid()) {
+
+		// Fix for Korean fan translation, see comment above.
+		if (!_screen->gfxDriver()->driverBasedTextRendering()) {
 			rect.grow(1);
-			_paint16->bitsShow(rect);
+			if (style & SCI_CONTROLS_STYLE_SELECTED)
+				_paint16->frameRect(rect);
+			if (!getPicNotValid()) {
+				rect.grow(1);
+				_paint16->bitsShow(rect);
+			}
 		}
+
 		if (getSciVersion() == SCI_VERSION_0_EARLY) {
 			_ports->penColor(sci0EarlyPen);
 			_ports->backColor(sci0EarlyBack);
