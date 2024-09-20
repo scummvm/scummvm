@@ -342,6 +342,28 @@ AGS3::eAGSKeyCode EventsManager::scummvm_key_to_ags_key(const Common::Event &eve
 	if (event.kbd.ascii >= 32 && event.kbd.ascii <= 127)
 		return static_cast<AGS3::eAGSKeyCode>(event.kbd.ascii);
 
+	// NumPad with NumLock on
+	if ((sym >= Common::KEYCODE_KP1 && sym <= Common::KEYCODE_KP_PERIOD) && (mod & Common::KBD_NUM) != 0) {
+		switch (sym) {
+		case Common::KEYCODE_KP1:
+		case Common::KEYCODE_KP2:
+		case Common::KEYCODE_KP3:
+		case Common::KEYCODE_KP4:
+		case Common::KEYCODE_KP5:
+		case Common::KEYCODE_KP6:
+		case Common::KEYCODE_KP7:
+		case Common::KEYCODE_KP8:
+		case Common::KEYCODE_KP9:
+			return static_cast<AGS3::eAGSKeyCode>(sym - Common::KEYCODE_KP1 + Common::KEYCODE_1);
+		case Common::KEYCODE_KP0:
+			return AGS3::eAGSKeyCode0;
+		case Common::KEYCODE_KP_PERIOD:
+			return AGS3::eAGSKeyCodePeriod;
+		default:
+			return AGS3::eAGSKeyCodeNone;
+		}
+	}
+
 	// Remaining codes may match or not, but we use a big table anyway.
 	// TODO: this is code by [sonneveld],
 	// double check that we must use scan codes here, maybe can use sdl key (sym) too?
@@ -413,6 +435,17 @@ AGS3::eAGSKeyCode EventsManager::scummvm_key_to_ags_key(const Common::Event &eve
 	case Common::KEYCODE_KP_PERIOD:
 	case Common::KEYCODE_DELETE:
 		return AGS3::eAGSKeyCodeDelete;
+
+	// KeyPad (remaining keys, not handled above)
+	case Common::KEYCODE_KP_DIVIDE:
+		return AGS3::eAGSKeyCodeForwardSlash;
+	case Common::KEYCODE_KP_MULTIPLY:
+		return AGS3::eAGSKeyCodeAsterisk;
+	case Common::KEYCODE_KP_MINUS:
+		return AGS3::eAGSKeyCodeHyphen;
+	case Common::KEYCODE_KP_PLUS:
+		return AGS3::eAGSKeyCodePlus;
+
 	case Common::KEYCODE_LSHIFT:
 		return AGS3::eAGSKeyCodeLShift;
 	case Common::KEYCODE_RSHIFT:
