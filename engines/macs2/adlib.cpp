@@ -788,9 +788,14 @@ void Adlib::OnTimer() {
 									push	word ptr [bp-12h]
 									push	word ptr [bp-14h]
 									call	far 0017h:2839h */
-									// TODO: Continue from here
-
+									
 								}
+								// l0017_1CF2:
+								if (g2291 == bp8) {
+									// TODO: Continue from here
+								}
+								// TODO: Should be 1CFF
+								
 							}
 							
 
