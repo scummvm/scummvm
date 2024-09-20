@@ -129,14 +129,6 @@ namespace AGS3 {
 #error "No endianness defined"
 #endif
 
-#if defined(_DEBUG)
-#define AGS_PLATFORM_DEBUG  (1)
-#elif ! defined(NDEBUG)
-#define AGS_PLATFORM_DEBUG  (1)
-#else
-#define AGS_PLATFORM_DEBUG  (0)
-#endif
-
 #define AGS_PLATFORM_DESKTOP ((AGS_PLATFORM_OS_WINDOWS) || (AGS_PLATFORM_OS_LINUX) || (AGS_PLATFORM_OS_MACOS))
 
 #define AGS_PLATFORM_MOBILE ((AGS_PLATFORM_OS_ANDROID) || (AGS_PLATFORM_OS_IOS))
