@@ -191,7 +191,7 @@ soff_t DataStreamSection::Seek(soff_t offset, StreamSeek origin) {
 	soff_t new_pos = _base->Seek(want_pos, kSeekBegin);
 	if (new_pos >= 0) // the position remains in case of seek error
 		_position = want_pos;
-	return new_pos;
+	return _position - _start; // convert to a stream section pos
 }
 
 void DataStreamSection::Close() {
