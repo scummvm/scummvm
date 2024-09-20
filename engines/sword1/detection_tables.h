@@ -191,6 +191,20 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO2(GAMEOPTION_WINDOWS_AUDIO_MODE, GAMEOPTION_MULTILANGUAGE)
 	},
 
+	{ // This is apparently one of the frankensten versions floating around
+	  // See reports #14865, #15089 and #15376
+		"sword1",
+		"",
+		AD_ENTRY4s("scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087984,
+				   "swordres.rif", "c7df52094d590b568a4ed35b70390d9e", 58916,
+				   "text.clu",     "76f93f5feecc8915435105478f3c6615", 2705446,
+				   "smackshi/intro.smk",    "d602a28f5f5c583bf9870a23a94a9bc5", 13525168),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_PIRATED,
+		GUIO2(GAMEOPTION_WINDOWS_AUDIO_MODE, GAMEOPTION_MULTILANGUAGE)
+	},
+
 	{
 		"sword1",
 		"",
