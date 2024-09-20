@@ -130,8 +130,8 @@ size_t DataStream::WriteAndConvertArrayOfInt64(const int64_t *buffer, size_t cou
 
 DataStreamSection::DataStreamSection(Stream *base, soff_t start, soff_t end)
 	: _base(base) {
-	_start = std::max(0ll, std::min(start, end));
-	_end = std::min(std::max(0ll, end), base->GetLength());
+	_start = std::max((soff_t)0, std::min(start, end));
+	_end = std::min(std::max((soff_t)0, end), base->GetLength());
 	soff_t pos = base->Seek(_start, kSeekBegin);
 	if (pos >= 0)
 		_position = pos;
