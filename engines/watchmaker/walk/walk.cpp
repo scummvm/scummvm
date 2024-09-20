@@ -137,7 +137,7 @@ void PointOut(int32 oc, t3dCAMERA *Camera) {
 //			( Panel[b].flags & (Panel[CurPanel].flags & 0x7FFFFFFF) ) )
 		{
 			// controlla pto 1
-			temp = DistF(w->CurX, w->CurZ, w->Panel[b].a.x, w->Panel[b].a.z);
+			temp = DistF(w->Cur, w->Panel[b].a);
 
 			if (temp < inters) {
 				inters = temp;
@@ -146,7 +146,7 @@ void PointOut(int32 oc, t3dCAMERA *Camera) {
 			}
 
 			// controlla pto 2
-			temp = DistF(w->CurX, w->CurZ, w->Panel[b].b.x, w->Panel[b].b.z);
+			temp = DistF(w->Cur, w->Panel[b].b);
 
 			if (temp < inters) {
 				inters = temp;
@@ -157,8 +157,8 @@ void PointOut(int32 oc, t3dCAMERA *Camera) {
 			// controlla intersezione con camera
 			if (IntersLineLine(w->Panel[b].a, w->Panel[b].b,
 			                   Camera->Source.x, Camera->Source.z,
-			                   w->CurX, w->CurZ)) {
-				temp = DistF(w->CurX, w->CurZ, x3d, z3d);
+			                   w->Cur.x, w->Cur.z)) {
+				temp = DistF(w->Cur.x, w->Cur.z, x3d, z3d);
 
 				if (temp < inters) {
 					inters = temp;
@@ -171,8 +171,8 @@ void PointOut(int32 oc, t3dCAMERA *Camera) {
 			// controlla intersezione con omino
 			if (IntersLineLine(w->Panel[b].a, w->Panel[b].b,
 			                   Act->Pos.x, Act->Pos.z,
-			                   w->CurX, w->CurZ)) {
-				temp = DistF(w->CurX, w->CurZ, x3d, z3d);
+			                   w->Cur.x, w->Cur.z)) {
+				temp = DistF(w->Cur.x, w->Cur.z, x3d, z3d);
 
 				if (temp < inters) {
 					inters = temp;
@@ -202,8 +202,7 @@ void PointOut(int32 oc, t3dCAMERA *Camera) {
 		}
 	}
 
-	w->CurX = p.x;
-	w->CurZ = p.z;
+	w->Cur = p;
 
 #undef LARGEVAL
 }
@@ -387,8 +386,7 @@ void FindShortPath(int32 oc) {
 	}
 
 	// aggiunge arrivo
-	TempPath[count].pos.x = w->CurX;
-	TempPath[count].pos.z = w->CurZ;
+	TempPath[count].pos = w->Cur;
 	TempPath[count].dist = 0.0;
 	TempPath[count].oldp = w->CurPanel;
 	TempPath[count].curp = w->CurPanel;
@@ -505,37 +503,36 @@ void FindPath(int32 oc, t3dCAMERA *Camera) {
 	        w->CurPanel = 1;
 	*/
 	PointOut(oc, Camera);
-	w->LookX = w->CurX;
-	w->LookZ = w->CurZ;
+	w->Look = w->Cur;
 
 	// se hai cliccato dietro il pannello di partenza o dell'angolo non puo' camminare
 	if ((w->CurPanel < 0) && (w->OldPanel >= 0) &&
 	        // dietro il pannello di partenza
-	        ((PointInside(oc, b = w->OldPanel, (double)w->CurX, (double)w->CurZ)) ||
+	        ((PointInside(oc, b = w->OldPanel, w->Cur)) ||
 	         // dietro il pannello angolo1
 	         ((DistF(w->Panel[w->OldPanel].a.x, w->Panel[w->OldPanel].a.z, Act->Pos.x, Act->Pos.z) < EPSILON) &&
-	          (PointInside(oc, b = w->Panel[w->OldPanel].near1, (double)w->CurX, (double)w->CurZ))) ||
+	          (PointInside(oc, b = w->Panel[w->OldPanel].near1, w->Cur))) ||
 	         // dietro il pannello angolo2
 	         ((DistF(w->Panel[w->OldPanel].b.x, w->Panel[w->OldPanel].b.z, Act->Pos.x, Act->Pos.z) < EPSILON) &&
-	          (PointInside(oc, b = w->Panel[w->OldPanel].near2, (double)w->CurX, (double)w->CurZ))))) {
-		w->CurX = Act->Pos.x;
-		w->CurZ = Act->Pos.z;
+	          (PointInside(oc, b = w->Panel[w->OldPanel].near2, w->Cur))))) {
+		w->Cur.x = Act->Pos.x;
+		w->Cur.z = Act->Pos.z;
 		w->CurPanel = b;
 		w->NumPathNodes = 0;
 		check |= CLICKINTO;
 		w->Check = check;
 		return ;
 	}
-	DebugLogFile("W: CP %d OP %d | %f %f | %f %f", w->CurPanel, w->OldPanel, Act->Pos.x, Act->Pos.z, w->CurX, w->CurZ);
+	DebugLogFile("W: CP %d OP %d | %f %f | %f %f", w->CurPanel, w->OldPanel, Act->Pos.x, Act->Pos.z, w->Cur.x, w->Cur.z);
 
-	dist = DistF(Act->Pos.x, Act->Pos.z, w->CurX, w->CurZ);
+	dist = DistF(Act->Pos.x, Act->Pos.z, w->Cur.x, w->Cur.z);
 //	if( dist < EPSILON )
 //		return ;
 
 	for (b = 0; b < w->PanelNum; b++) {
 		if (IntersLineLine(w->Panel[b].a, w->Panel[b].b,
 		                   Act->Pos.x, Act->Pos.z,
-		                   w->CurX, w->CurZ)) {
+		                   w->Cur.x, w->Cur.z)) {
 			inters ++;
 			DebugLogFile("Inters %d: %f %f %f %f", b, w->Panel[b].a.x, w->Panel[b].a.z, w->Panel[b].b.x, w->Panel[b].b.z);
 
@@ -557,9 +554,9 @@ void FindPath(int32 oc, t3dCAMERA *Camera) {
 					check |= OLDANGLESKIP;
 
 					// se ho cliccato dentro il pannello vicino
-					if ((w->CurPanel < 0) && (PointInside(oc, b, (double)w->CurX, (double)w->CurZ))) {
-						w->CurX = Act->Pos.x;
-						w->CurZ = Act->Pos.z;
+					if ((w->CurPanel < 0) && (PointInside(oc, b, w->Cur))) {
+						w->Cur.x = Act->Pos.x;
+						w->Cur.z = Act->Pos.z;
 						w->CurPanel = b;
 						w->NumPathNodes = 0;
 						check |= CLICKINTO;
@@ -594,8 +591,7 @@ void FindPath(int32 oc, t3dCAMERA *Camera) {
 		} else if (b == w->CurPanel) {
 			inters ++;
 
-			w->PathNode[w->NumPathNodes].pos.x = w->CurX;
-			w->PathNode[w->NumPathNodes].pos.z = w->CurZ;
+			w->PathNode[w->NumPathNodes].pos = w->Cur;
 			w->PathNode[w->NumPathNodes].dist = dist;
 			w->PathNode[w->NumPathNodes].oldp = w->CurPanel;
 			w->PathNode[w->NumPathNodes].curp = w->CurPanel;
@@ -620,21 +616,20 @@ void FindPath(int32 oc, t3dCAMERA *Camera) {
 		if (w->NumPathNodes > 1)
 			DebugLogFile("I %d | CP %d | OP %d | FA %d (%d %d) | PI %d (%d)", inters, w->CurPanel, w->OldPanel,
 			             FindAttachedPanel(oc, w->PathNode[w->NumPathNodes - 2].curp, w->PathNode[w->NumPathNodes - 1].curp), w->PathNode[w->NumPathNodes - 2].curp, w->PathNode[w->NumPathNodes - 1].curp,
-			             PointInside(oc, w->PathNode[w->NumPathNodes - 1].curp, (double)w->CurX, (double)w->CurZ), w->PathNode[w->NumPathNodes - 1].curp);
+			             PointInside(oc, w->PathNode[w->NumPathNodes - 1].curp, w->Cur), w->PathNode[w->NumPathNodes - 1].curp);
 
 		if (((inters   & 1) && (w->CurPanel < 0) && (w->OldPanel < 0)) ||
-		        ((w->CurPanel < 0) && (w->NumPathNodes >= 1) && (PointInside(oc, w->PathNode[w->NumPathNodes - 1].curp, (double)w->CurX, (double)w->CurZ))) ||
+		        ((w->CurPanel < 0) && (w->NumPathNodes >= 1) && (PointInside(oc, w->PathNode[w->NumPathNodes - 1].curp, w->Cur))) ||
 		        (((inters - 1) & 1) && (w->CurPanel < 0) && (w->NumPathNodes >= 2) &&
 		         (!(FindAttachedPanel(oc, w->PathNode[w->NumPathNodes - 2].curp, w->PathNode[w->NumPathNodes - 1].curp)) ||
-		          (PointInside(oc, w->PathNode[w->NumPathNodes - 1].curp, (double)w->CurX, (double)w->CurZ))))) {
+		          (PointInside(oc, w->PathNode[w->NumPathNodes - 1].curp, w->Cur))))) {
 			w->CurPanel = w->PathNode[w->NumPathNodes - 1].curp;
 
 			PointOut(oc, Camera);        // tira fuori il pto trovato
 
-			w->PathNode[w->NumPathNodes].pos.x = w->CurX;
-			w->PathNode[w->NumPathNodes].pos.z = w->CurZ;
-			w->PathNode[w->NumPathNodes].oldp  = w->CurPanel;
-			w->PathNode[w->NumPathNodes].curp  = w->CurPanel;
+			w->PathNode[w->NumPathNodes].pos = w->Cur;
+			w->PathNode[w->NumPathNodes].oldp = w->CurPanel;
+			w->PathNode[w->NumPathNodes].curp = w->CurPanel;
 
 			UpdateLook(oc);
 
@@ -642,7 +637,7 @@ void FindPath(int32 oc, t3dCAMERA *Camera) {
 
 			check |= POINTOUT1;
 
-			DebugLogFile("PO %d %d %f", w->NumPathNodes, w->CurPanel, DistF(Act->Pos.x, Act->Pos.z, w->CurX, w->CurZ));
+			DebugLogFile("PO %d %d %f", w->NumPathNodes, w->CurPanel, DistF(Act->Pos.x, Act->Pos.z, w->Cur.x, w->Cur.z));
 //			if ( DistF( Act->Pos.x, Act->Pos.z, w->CurX, w->CurZ ) < EPSILON )
 //				check |= CLICKINTO;
 		}
@@ -655,24 +650,21 @@ void FindPath(int32 oc, t3dCAMERA *Camera) {
 			// e con unione pannelli larghi con pannelli stretti
 			for (b = 0; b < w->PanelNum; b++) {
 				if (IntersLineLine(w->Panel[b].a, w->Panel[b].b,
-				                   w->PathNode[w->NumPathNodes - 1].pos.x, w->PathNode[w->NumPathNodes - 1].pos.z,
-				                   w->CurX, w->CurZ))
+				                   w->PathNode[w->NumPathNodes - 1].pos, w->Cur))
 					if ((DistF(x3d, z3d, w->PathNode[w->NumPathNodes - 1].pos.x, w->PathNode[w->NumPathNodes - 1].pos.z) > EPSILON) &&
-					        (DistF(x3d, z3d, w->CurX, w->CurZ) > EPSILON))
+					        (DistF(x3d, z3d, w->Cur.x, w->Cur.z) > EPSILON))
 						inters ++;
 
 				if (IntersLineLine(w->Panel[b].a, w->Panel[b].backA,
-				                   w->PathNode[w->NumPathNodes - 1].pos.x, w->PathNode[w->NumPathNodes - 1].pos.z,
-				                   w->CurX, w->CurZ))
+				                   w->PathNode[w->NumPathNodes - 1].pos, w->Cur))
 					if ((DistF(x3d, z3d, w->PathNode[w->NumPathNodes - 1].pos.x, w->PathNode[w->NumPathNodes - 1].pos.z) > EPSILON) &&
-					        (DistF(x3d, z3d, w->CurX, w->CurZ) > EPSILON))
+					        (DistF(x3d, z3d, w->Cur.x, w->Cur.z) > EPSILON))
 						inters ++;
 
 				if (IntersLineLine(w->Panel[b].b, w->Panel[b].backB,
-				                   w->PathNode[w->NumPathNodes - 1].pos.x, w->PathNode[w->NumPathNodes - 1].pos.z,
-				                   w->CurX, w->CurZ))
+				                   w->PathNode[w->NumPathNodes - 1].pos, w->Cur))
 					if ((DistF(x3d, z3d, w->PathNode[w->NumPathNodes - 1].pos.x, w->PathNode[w->NumPathNodes - 1].pos.z) > EPSILON) &&
-					        (DistF(x3d, z3d, w->CurX, w->CurZ) > EPSILON))
+					        (DistF(x3d, z3d, w->Cur.x, w->Cur.z) > EPSILON))
 						inters ++;
 
 				if (inters)
@@ -684,8 +676,7 @@ void FindPath(int32 oc, t3dCAMERA *Camera) {
 				w->CurPanel = w->PathNode[w->NumPathNodes - 1].curp;
 
 				PointOut(oc, Camera);        // tira fuori il pto trovato
-				w->PathNode[w->NumPathNodes].pos.x = w->CurX;
-				w->PathNode[w->NumPathNodes].pos.z = w->CurZ;
+				w->PathNode[w->NumPathNodes].pos = w->Cur;
 				w->PathNode[w->NumPathNodes].oldp = w->CurPanel;
 				w->PathNode[w->NumPathNodes].curp = w->CurPanel;
 
@@ -697,12 +688,11 @@ void FindPath(int32 oc, t3dCAMERA *Camera) {
 			}
 		}
 
-		DebugLogFile("CP: %d || OP: %d || %f %f || I: %d || C: %d || NPN: %d", w->CurPanel, w->OldPanel, w->CurX, w->CurZ, inters, check, w->NumPathNodes);
+		DebugLogFile("CP: %d || OP: %d || %f %f || I: %d || C: %d || NPN: %d", w->CurPanel, w->OldPanel, w->Cur.x, w->Cur.z, inters, check, w->NumPathNodes);
 //DebugText("CP: %d || OP: %d || I: %d || C: %d || PI: %d || NPN: %d", CurPanel, OldPanel, inters, check, PointInside( OldPanel, CurX, CurZ ), NumPathNodes );
 
-		w->PathNode[w->NumPathNodes].pos.x = w->CurX;
-		w->PathNode[w->NumPathNodes].pos.z = w->CurZ;
-		w->PathNode[w->NumPathNodes].dist = DistF(Act->Pos.x, Act->Pos.z, w->CurX, w->CurZ);
+		w->PathNode[w->NumPathNodes].pos = w->Cur;
+		w->PathNode[w->NumPathNodes].dist = DistF(Act->Pos.x, Act->Pos.z, w->Cur.x, w->Cur.z);
 		w->PathNode[w->NumPathNodes].oldp = w->CurPanel;
 		w->PathNode[w->NumPathNodes].curp = w->CurPanel;
 		w->NumPathNodes ++;
@@ -723,16 +713,15 @@ void FindPath(int32 oc, t3dCAMERA *Camera) {
 		w->PathNode[w->NumPathNodes].curp = w->OldPanel;
 		w->NumPathNodes ++;
 
-		w->PathNode[w->NumPathNodes].pos.x = w->CurX;
-		w->PathNode[w->NumPathNodes].pos.z = w->CurZ;
-		w->PathNode[w->NumPathNodes].dist = DistF(Act->Pos.x, Act->Pos.z, w->CurX, w->CurZ);
+		w->PathNode[w->NumPathNodes].pos = w->Cur;
+		w->PathNode[w->NumPathNodes].dist = DistF(Act->Pos.x, Act->Pos.z, w->Cur.x, w->Cur.z);
 		w->PathNode[w->NumPathNodes].oldp = w->CurPanel;
 		w->PathNode[w->NumPathNodes].curp = w->CurPanel;
 		w->NumPathNodes ++;
 
 	}
 	w->Check = check;
-	DebugLogFile("End Walk %f %f  %d | %f %f %d", Act->Pos.x, Act->Pos.z, w->OldPanel, w->CurX, w->CurZ, w->CurPanel);
+	DebugLogFile("End Walk %f %f  %d | %f %f %d", Act->Pos.x, Act->Pos.z, w->OldPanel, w->Cur.x, w->Cur.z, w->CurPanel);
 }
 
 /* -----------------12/02/99 11.07-------------------

@@ -327,6 +327,12 @@ public:
 
 struct PointXZ {
 	float x = 0.0f, z = 0.0f;
+	static PointXZ readFromStream(Common::SeekableReadStream &stream) {
+		PointXZ result;
+		result.x = stream.readFloatLE();
+		result.z = stream.readFloatLE();
+		return result;
+	}
 };
 
 struct t3dPAN {
@@ -359,8 +365,8 @@ struct t3dSTEPS {
 };
 
 struct t3dWALK {
-	t3dF32  LookX = 0.0f, LookZ = 0.0f;            // Point on the bounds
-	t3dF32  CurX = 0.0f, CurZ = 0.0f;              // Point perpendicular
+	PointXZ Look;                                  // Point on the bounds
+	PointXZ Cur;                                   // Point perpendicular
 	t3dPAN  *Panel = nullptr;                      // pointer to cur panel struct
 	t3dPATHNODE PathNode[T3D_MAX_PATHNODES] = {};  // path nodes list
 	t3dSTEPS    WalkSteps[T3D_MAX_WALKSTEPS] = {}; // walk steps list

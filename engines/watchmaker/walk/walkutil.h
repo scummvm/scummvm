@@ -29,6 +29,7 @@ namespace Watchmaker {
 
 t3dF32 SinCosAngle(t3dF32 sinus, t3dF32 cosinus);
 t3dF32 t3dVectAngle(t3dV3F *n, t3dV3F *o);
+int PointInside(int32 oc, int32 pan, const PointXZ &point);
 int PointInside(int32 oc, int32 pan, double x, double z);
 bool PointInside2DRectangle(double pgon[4][2], double x, double z);
 float DistF(PointXZ a, PointXZ b);

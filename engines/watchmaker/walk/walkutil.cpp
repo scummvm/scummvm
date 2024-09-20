@@ -69,6 +69,9 @@ bool PointInside2DRectangle(double pgon[4][2], double x, double z) {
 /* 04/02/98 16.01 ----------------------------------
     Guarda se un pto e' all'interno di un pannello
 --------------------------------------------------*/
+int PointInside(int32 oc, int32 pan, const PointXZ &point) {
+	return PointInside(oc, pan, (double)point.x, (double)point.z);
+}
 int PointInside(int32 oc, int32 pan, double x, double z) {
 	t3dWALK *w = &Character[oc]->Walk;
 	double pgon[4][2], ox, oz, s;

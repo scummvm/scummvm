@@ -56,9 +56,9 @@ void SlideChar(int32 oc) {
 		return ;
 	}
 
-	v.x = w->LookX;
+	v.x = w->Look.x;
 	v.y = 0.0f;
-	v.z = w->LookZ;
+	v.z = w->Look.z;
 
 	x1 = w->Panel[w->CurPanel].a.x;
 	z1 = w->Panel[w->CurPanel].a.z;
@@ -293,8 +293,8 @@ void CheckCharacterWithoutBounds(WGame &game, int32 oc, const uint8 *dpl, uint8 
 		w->PathNode[w->NumPathNodes].dist = t3dVectDistance(&tmp, &Char->Pos);
 		w->NumPathNodes ++;
 
-		Char->Walk.CurX = tmp.x;
-		Char->Walk.CurZ = tmp.z;
+		Char->Walk.Cur.x = tmp.x;
+		Char->Walk.Cur.z = tmp.z;
 	}
 	bNotSkippableWalk = TRUE;
 	BuildStepList(oc, dp, back);
@@ -483,14 +483,14 @@ void BuildStepList(int32 oc, uint8 dp, uint8 back) {
 	}
 
 	if ((dp) && (GetLightDirection(&st, dp)) && (st.x != 0.0f) && (st.z != 0.0f)) {
-		lastangle = SinCosAngle((st.x - w->CurX), (st.z - w->CurZ));
+		lastangle = SinCosAngle((st.x - w->Cur.x), (st.z - w->Cur.z));
 //		DebugLogFile("LastPos %d | AN %d | %f %f", dp, lastangle, st.x, st.z );
 	}
 
 	w->WalkSteps[w->NumSteps].Angle = lastangle;
-	w->WalkSteps[w->NumSteps].Pos.x = w->CurX;
+	w->WalkSteps[w->NumSteps].Pos.x = w->Cur.x;
 	w->WalkSteps[w->NumSteps].Pos.y = CurFloorY;
-	w->WalkSteps[w->NumSteps].Pos.z = w->CurZ;
+	w->WalkSteps[w->NumSteps].Pos.z = w->Cur.z;
 	w->WalkSteps[w->NumSteps++].curp = w->CurPanel;
 
 	// arrotonda la fine
@@ -592,8 +592,8 @@ bool CheckCharacterWithBounds(WGame &game, int32 oc, t3dV3F *Pos, uint8 dp, uint
 	if (!Char) return FALSE;
 	StopObjAnim(game, oc);
 
-	Char->Walk.CurX = Pos->x;
-	Char->Walk.CurZ = Pos->z;
+	Char->Walk.Cur.x = Pos->x;
+	Char->Walk.Cur.z = Pos->z;
 
 	// Reset some vars
 	if (!(Char->Mesh->Flags & T3D_MESH_DEFAULTANIM))
