@@ -141,6 +141,7 @@ struct RestoredData {
 
 enum PluginSvgVersion {
 	kPluginSvgVersion_Initial = 0,
+	kPluginSvgVersion_36115   = 1,
 };
 
 // Runs plugin events, requesting to read save data from the given stream.
