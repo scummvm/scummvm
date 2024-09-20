@@ -485,7 +485,7 @@ HSaveError restore_save_data_v321(Stream *in, GameDataVersion data_ver, const Pr
 	if (!err)
 		return err;
 
-	ReadPluginSaveData(in);
+	ReadPluginSaveData(in, kPluginSvgVersion_Initial, SIZE_MAX);
 	if (static_cast<uint32_t>(in->ReadInt32()) != MAGICNUMBER)
 		return new SavegameError(kSvgErr_InconsistentPlugin);
 

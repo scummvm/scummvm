@@ -139,10 +139,14 @@ struct RestoredData {
 	RestoredData();
 };
 
+enum PluginSvgVersion {
+	kPluginSvgVersion_Initial = 0,
+};
+
 // Runs plugin events, requesting to read save data from the given stream.
 // NOTE: there's no error check in this function, because plugin API currently
 // does not let plugins report any errors when restoring their saved data.
-void ReadPluginSaveData(Stream *in);
+void ReadPluginSaveData(Stream *in, PluginSvgVersion svg_ver, soff_t max_size);
 // Runs plugin events, requesting to write save data into the given stream.
 void WritePluginSaveData(Stream *out);
 
