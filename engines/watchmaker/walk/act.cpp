@@ -274,8 +274,8 @@ void CheckCharacterWithoutBounds(WGame &game, int32 oc, const uint8 *dpl, uint8 
 	t3dVectCopy(&Char->Pos, &Char->Mesh->Trasl);
 
 	w->NumPathNodes = 0;
-	w->PathNode[w->NumPathNodes].x = Char->Pos.x;
-	w->PathNode[w->NumPathNodes].z = Char->Pos.z;
+	w->PathNode[w->NumPathNodes].pos.x = Char->Pos.x;
+	w->PathNode[w->NumPathNodes].pos.z = Char->Pos.z;
 	w->PathNode[w->NumPathNodes].oldp = w->CurPanel;
 	w->PathNode[w->NumPathNodes].curp = -1;
 	w->PathNode[w->NumPathNodes].dist = 0.0f;
@@ -286,8 +286,8 @@ void CheckCharacterWithoutBounds(WGame &game, int32 oc, const uint8 *dpl, uint8 
 	dp = 0;
 	while (*dpl && GetLightPosition(&tmp, *dpl)) {
 		dp = *dpl++;
-		w->PathNode[w->NumPathNodes].x = tmp.x;
-		w->PathNode[w->NumPathNodes].z = tmp.z;
+		w->PathNode[w->NumPathNodes].pos.x = tmp.x;
+		w->PathNode[w->NumPathNodes].pos.z = tmp.z;
 		w->PathNode[w->NumPathNodes].oldp = -1;
 		w->PathNode[w->NumPathNodes].curp = -1;
 		w->PathNode[w->NumPathNodes].dist = t3dVectDistance(&tmp, &Char->Pos);
@@ -361,12 +361,12 @@ void BuildStepList(int32 oc, uint8 dp, uint8 back) {
 	lastangle = SinCosAngle(Ch->Dir.x, Ch->Dir.z);
 //	calcola lunghezza totale del percorso
 	for (i = 0; i < w->NumPathNodes - 1; i++) {
-		st.x = w->PathNode[i].x;
+		st.x = w->PathNode[i].pos.x;
 		st.y = 0.0;
-		st.z = w->PathNode[i].z;
-		en.x = w->PathNode[i + 1].x;
+		st.z = w->PathNode[i].pos.z;
+		en.x = w->PathNode[i + 1].pos.x;
 		en.y = 0.0;
-		en.z = w->PathNode[i + 1].z;
+		en.z = w->PathNode[i + 1].pos.z;
 
 		len += t3dVectDistance(&st, &en);               // dist of two points
 	}
@@ -375,7 +375,7 @@ void BuildStepList(int32 oc, uint8 dp, uint8 back) {
 
 //	Cerca di capire se gli conviene andare avanti o indietro
 	if (back >= 10) {
-		t3dVectInit(&st, w->PathNode[1].x - w->PathNode[0].x, 0.0f, w->PathNode[1].z - w->PathNode[0].z);
+		t3dVectInit(&st, w->PathNode[1].pos.x - w->PathNode[0].pos.x, 0.0f, w->PathNode[1].pos.z - w->PathNode[0].pos.z);
 
 		if (!(w->Check & LONGPATH) && (fabs(t3dVectAngle(&Ch->Dir, &st)) > 145.0f)) {        // devo andare dietro
 //			DebugFile("Back %f\n%f %f | %f %f\n",t3dVectAngle( &Ch->Dir, &st ),Ch->Dir.x,Ch->Dir.z,st.x,st.z);
@@ -447,18 +447,18 @@ void BuildStepList(int32 oc, uint8 dp, uint8 back) {
 	w->CurrentStep = 0;
 
 	w->WalkSteps[w->NumSteps].Angle = lastangle;
-	w->WalkSteps[w->NumSteps].Pos.x = w->PathNode[0].x;
+	w->WalkSteps[w->NumSteps].Pos.x = w->PathNode[0].pos.x;
 	w->WalkSteps[w->NumSteps].Pos.y = CurFloorY;
-	w->WalkSteps[w->NumSteps].Pos.z = w->PathNode[0].z;
+	w->WalkSteps[w->NumSteps].Pos.z = w->PathNode[0].pos.z;
 	w->WalkSteps[w->NumSteps++].curp = w->OldPanel;
 
 	for (i = 0; i < w->NumPathNodes - 1; i++) {
-		st.x = w->PathNode[i].x;
+		st.x = w->PathNode[i].pos.x;
 		st.y = 0.0;
-		st.z = w->PathNode[i].z;
-		en.x = w->PathNode[i + 1].x;
+		st.z = w->PathNode[i].pos.z;
+		en.x = w->PathNode[i + 1].pos.x;
 		en.y = 0.0;
-		en.z = w->PathNode[i + 1].z;
+		en.z = w->PathNode[i + 1].pos.z;
 
 		len += t3dVectDistance(&st, &en);               // dist of two points
 		t3dVectSub(&direction, &en, &st);
@@ -566,8 +566,7 @@ int32 CheckPathNodes(int32 oc) {
 	for (i = 1; i < w->NumPathNodes; i++) {
 		for (b = 0; b < w->PanelNum; b++) {
 			if (IntersLineLine(w->Panel[b].backA, w->Panel[b].backB,
-			                   w->PathNode[i - 1].x, w->PathNode[i - 1].z,
-			                   w->PathNode[i].x, w->PathNode[i].z)) {
+			                   w->PathNode[i - 1].pos, w->PathNode[i].pos)) {
 				w->NumPathNodes = i - 1;
 				w->CurPanel = w->PathNode[i - 1].curp;
 				w->NumSteps = 0;

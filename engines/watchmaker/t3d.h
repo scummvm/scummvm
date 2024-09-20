@@ -337,7 +337,7 @@ struct t3dPAN {
 };
 
 struct t3dPATHNODE {
-	float x = 0.0f, z = 0.0f;                   // path node position
+	PointXZ pos;                                // path node position
 	float dist = 0.0f;                          // distance from start
 	short oldp = 0;                             // last panel hit
 	short curp = 0;                             // cur panel hit

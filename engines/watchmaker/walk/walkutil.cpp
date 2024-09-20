@@ -135,6 +135,9 @@ float DistF(float x1, float y1, float x2, float y2) {
 /*-----------------07/10/96 11.21-------------------
         Interseca linea 2D con linea 2D
 --------------------------------------------------*/
+int IntersLineLine(const PointXZ &a, const PointXZ &b, const PointXZ &c, const PointXZ &d) {
+	return IntersLineLine(a.x, a.z, b.x, b.z, c.x, c.z, d.x, d.z);
+}
 int IntersLineLine(const PointXZ &a, const PointXZ &b, float xc, float yc, float xd, float yd) {
 	return IntersLineLine(a.x, a.z, b.x, b.z, xc, yc, xd, yd);
 }

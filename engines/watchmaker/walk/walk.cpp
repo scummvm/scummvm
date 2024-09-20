@@ -224,13 +224,12 @@ float EvalPath(int32 oc, int a, PointXZ dest, int nearp) {
 	len = 0.0;
 
 	curp = w->PathNode[a].curp;
-	cur.x = w->PathNode[a].x;
-	cur.z = w->PathNode[a].z;
+	cur = w->PathNode[a].pos;
 
 	for (;;) {
 		// se raggiunge il pto esce
 		if (curp == w->PathNode[a + 1].curp) {
-			len += DistF(cur.x, cur.z, w->PathNode[a + 1].x, w->PathNode[a + 1].z);
+			len += DistF(cur, w->PathNode[a + 1].pos);
 			break;
 		}
 
@@ -288,8 +287,8 @@ void FindShortPath(int32 oc) {
 
 	count = 0;
 	// aggiunge partenza
-	TempPath[count].x = Act->Pos.x;
-	TempPath[count].z = Act->Pos.z;
+	TempPath[count].pos.x = Act->Pos.x;
+	TempPath[count].pos.z = Act->Pos.z;
 	TempPath[count].dist = 0.0;
 	TempPath[count].oldp = w->OldPanel;
 	TempPath[count].curp = w->OldPanel;
@@ -308,10 +307,10 @@ void FindShortPath(int32 oc) {
 			continue;
 
 		// aggira l'ostacolo partendo da near1
-		len1 = EvalPath(oc, a, w->Panel[curp].a, w->Panel[curp].near1) + DistF(w->PathNode[a].x, w->PathNode[a].z, w->Panel[curp].a.x, w->Panel[curp].a.z);
+		len1 = EvalPath(oc, a, w->Panel[curp].a, w->Panel[curp].near1) + DistF(w->PathNode[a].pos, w->Panel[curp].a);
 
 		// aggira l'ostacolo partendo da near2
-		len2 = EvalPath(oc, a, w->Panel[curp].b, w->Panel[curp].near2) + DistF(w->PathNode[a].x, w->PathNode[a].z, w->Panel[curp].b.x, w->Panel[curp].b.z);
+		len2 = EvalPath(oc, a, w->Panel[curp].b, w->Panel[curp].near2) + DistF(w->PathNode[a].pos,w->Panel[curp].b);
 
 		// guarda quale starda era piu' breve e se esiste una strada
 		if ((len1 < 320000.0) && (len2 < 320000.0)) {
@@ -323,8 +322,7 @@ void FindShortPath(int32 oc) {
 				nearp = w->Panel[curp].near2;
 			}
 
-			cur.x = w->PathNode[a].x;
-			cur.z = w->PathNode[a].z;
+			cur = w->PathNode[a].pos;
 			oldp = curp;
 
 			b = 0;
@@ -332,8 +330,7 @@ void FindShortPath(int32 oc) {
 			// salva percorso piu corto
 			for (;;) {
 
-				TempPath[count].x = cur.x;
-				TempPath[count].z = cur.z;
+				TempPath[count].pos = cur;
 				TempPath[count].oldp = oldp;
 				TempPath[count].curp = curp;
 				count ++;
@@ -390,15 +387,15 @@ void FindShortPath(int32 oc) {
 	}
 
 	// aggiunge arrivo
-	TempPath[count].x = w->CurX;
-	TempPath[count].z = w->CurZ;
+	TempPath[count].pos.x = w->CurX;
+	TempPath[count].pos.z = w->CurZ;
 	TempPath[count].dist = 0.0;
 	TempPath[count].oldp = w->CurPanel;
 	TempPath[count].curp = w->CurPanel;
 	count ++;
 
 	for (b = 0; b < count; b++)
-		DebugLogFile("FSP %d: %f %f | %d %d", b, TempPath[b].x, TempPath[b].z, TempPath[b].oldp, TempPath[b].curp);
+		DebugLogFile("FSP %d: %f %f | %d %d", b, TempPath[b].pos.x, TempPath[b].pos.z, TempPath[b].oldp, TempPath[b].curp);
 	// dopo che ha aggirato tutti gli ostacoli ottimizza
 
 //	memcpy( w->PathNode, TempPath, sizeof( struct SPathNode )*count );
@@ -413,7 +410,7 @@ void FindShortPath(int32 oc) {
 
 		// prima leva tutti i nodi attaccati
 		for (b = (count - 1); b >= a; b--)
-			if (DistF(TempPath[b].x, TempPath[b].z, TempPath[a].x, TempPath[a].z) < EPSILON)
+			if (DistF(TempPath[b].pos, TempPath[a].pos) < EPSILON)
 				break;
 		DebugLogFile("Da %d passo a %d\n", a, b);
 		a = b;
@@ -428,15 +425,13 @@ void FindShortPath(int32 oc) {
 //				if( !( w->Panel[c].flags & 0x80000000 ) )
 				{
 					if (IntersLineLine(w->Panel[c].backA, w->Panel[c].backB,
-					                   TempPath[a].x, TempPath[a].z,
-					                   TempPath[b].x, TempPath[b].z))
+					                   TempPath[a].pos, TempPath[b].pos))
 						inters ++;
 
 					if (IntersLineLine(w->Panel[c].a, w->Panel[c].backA,
-					                   TempPath[a].x, TempPath[a].z,
-					                   TempPath[b].x, TempPath[b].z)) {
-						len2 = DistF(x3d, z3d, TempPath[a].x, TempPath[a].z);
-						len1 = DistF(x3d, z3d, TempPath[b].x, TempPath[b].z);
+					                   TempPath[a].pos, TempPath[b].pos)) {
+						len2 = DistF(x3d, z3d, TempPath[a].pos.x, TempPath[a].pos.z);
+						len1 = DistF(x3d, z3d, TempPath[b].pos.x, TempPath[b].pos.z);
 
 						// interseca in un pto distante da partenza e arrivo
 						if ((len1 > EPSILON) && (len2 > EPSILON))
@@ -444,10 +439,9 @@ void FindShortPath(int32 oc) {
 					}
 
 					if (IntersLineLine(w->Panel[c].b, w->Panel[c].backB,
-					                   TempPath[a].x, TempPath[a].z,
-					                   TempPath[b].x, TempPath[b].z)) {
-						len2 = DistF(x3d, z3d, TempPath[a].x, TempPath[a].z);
-						len1 = DistF(x3d, z3d, TempPath[b].x, TempPath[b].z);
+					                   TempPath[a].pos, TempPath[b].pos)) {
+						len2 = DistF(x3d, z3d, TempPath[a].pos.x, TempPath[a].pos.z);
+						len1 = DistF(x3d, z3d, TempPath[b].pos.x, TempPath[b].pos.z);
 
 						// interseca in un pto distante da partenza e arrivo
 						if ((len1 > EPSILON) && (len2 > EPSILON))
@@ -480,7 +474,7 @@ void FindShortPath(int32 oc) {
 		}
 	}
 	for (b = 0; b < w->NumPathNodes; b++)
-		DebugLogFile("SSP %d: %f %f | %d %d", b, w->PathNode[b].x, w->PathNode[b].z, w->PathNode[b].oldp, w->PathNode[b].curp);
+		DebugLogFile("SSP %d: %f %f | %d %d", b, w->PathNode[b].pos.x, w->PathNode[b].pos.z, w->PathNode[b].oldp, w->PathNode[b].curp);
 }
 
 /* -----------------04/02/98 15.48-------------------
@@ -545,8 +539,8 @@ void FindPath(int32 oc, t3dCAMERA *Camera) {
 			inters ++;
 			DebugLogFile("Inters %d: %f %f %f %f", b, w->Panel[b].a.x, w->Panel[b].a.z, w->Panel[b].b.x, w->Panel[b].b.z);
 
-			w->PathNode[w->NumPathNodes].x    = x3d;
-			w->PathNode[w->NumPathNodes].z    = z3d;
+			w->PathNode[w->NumPathNodes].pos.x = x3d;
+			w->PathNode[w->NumPathNodes].pos.z = z3d;
 			w->PathNode[w->NumPathNodes].dist = DistF(Act->Pos.x, Act->Pos.z, x3d, z3d);
 			w->PathNode[w->NumPathNodes].oldp = b;
 			w->PathNode[w->NumPathNodes].curp = b;
@@ -589,8 +583,8 @@ void FindPath(int32 oc, t3dCAMERA *Camera) {
 		else if (b == w->OldPanel) {
 			inters ++;
 
-			w->PathNode[w->NumPathNodes].x    = Act->Pos.x;
-			w->PathNode[w->NumPathNodes].z    = Act->Pos.z;
+			w->PathNode[w->NumPathNodes].pos.x = Act->Pos.x;
+			w->PathNode[w->NumPathNodes].pos.z = Act->Pos.z;
 			w->PathNode[w->NumPathNodes].dist = 0.0;
 			w->PathNode[w->NumPathNodes].oldp = w->OldPanel;
 			w->PathNode[w->NumPathNodes].curp = w->OldPanel;
@@ -600,8 +594,8 @@ void FindPath(int32 oc, t3dCAMERA *Camera) {
 		} else if (b == w->CurPanel) {
 			inters ++;
 
-			w->PathNode[w->NumPathNodes].x    = w->CurX;
-			w->PathNode[w->NumPathNodes].z    = w->CurZ;
+			w->PathNode[w->NumPathNodes].pos.x = w->CurX;
+			w->PathNode[w->NumPathNodes].pos.z = w->CurZ;
 			w->PathNode[w->NumPathNodes].dist = dist;
 			w->PathNode[w->NumPathNodes].oldp = w->CurPanel;
 			w->PathNode[w->NumPathNodes].curp = w->CurPanel;
@@ -637,10 +631,10 @@ void FindPath(int32 oc, t3dCAMERA *Camera) {
 
 			PointOut(oc, Camera);        // tira fuori il pto trovato
 
-			w->PathNode[w->NumPathNodes].x    = w->CurX;
-			w->PathNode[w->NumPathNodes].z    = w->CurZ;
-			w->PathNode[w->NumPathNodes].oldp = w->CurPanel;
-			w->PathNode[w->NumPathNodes].curp = w->CurPanel;
+			w->PathNode[w->NumPathNodes].pos.x = w->CurX;
+			w->PathNode[w->NumPathNodes].pos.z = w->CurZ;
+			w->PathNode[w->NumPathNodes].oldp  = w->CurPanel;
+			w->PathNode[w->NumPathNodes].curp  = w->CurPanel;
 
 			UpdateLook(oc);
 
@@ -661,23 +655,23 @@ void FindPath(int32 oc, t3dCAMERA *Camera) {
 			// e con unione pannelli larghi con pannelli stretti
 			for (b = 0; b < w->PanelNum; b++) {
 				if (IntersLineLine(w->Panel[b].a, w->Panel[b].b,
-				                   w->PathNode[w->NumPathNodes - 1].x, w->PathNode[w->NumPathNodes - 1].z,
+				                   w->PathNode[w->NumPathNodes - 1].pos.x, w->PathNode[w->NumPathNodes - 1].pos.z,
 				                   w->CurX, w->CurZ))
-					if ((DistF(x3d, z3d, w->PathNode[w->NumPathNodes - 1].x, w->PathNode[w->NumPathNodes - 1].z) > EPSILON) &&
+					if ((DistF(x3d, z3d, w->PathNode[w->NumPathNodes - 1].pos.x, w->PathNode[w->NumPathNodes - 1].pos.z) > EPSILON) &&
 					        (DistF(x3d, z3d, w->CurX, w->CurZ) > EPSILON))
 						inters ++;
 
 				if (IntersLineLine(w->Panel[b].a, w->Panel[b].backA,
-				                   w->PathNode[w->NumPathNodes - 1].x, w->PathNode[w->NumPathNodes - 1].z,
+				                   w->PathNode[w->NumPathNodes - 1].pos.x, w->PathNode[w->NumPathNodes - 1].pos.z,
 				                   w->CurX, w->CurZ))
-					if ((DistF(x3d, z3d, w->PathNode[w->NumPathNodes - 1].x, w->PathNode[w->NumPathNodes - 1].z) > EPSILON) &&
+					if ((DistF(x3d, z3d, w->PathNode[w->NumPathNodes - 1].pos.x, w->PathNode[w->NumPathNodes - 1].pos.z) > EPSILON) &&
 					        (DistF(x3d, z3d, w->CurX, w->CurZ) > EPSILON))
 						inters ++;
 
 				if (IntersLineLine(w->Panel[b].b, w->Panel[b].backB,
-				                   w->PathNode[w->NumPathNodes - 1].x, w->PathNode[w->NumPathNodes - 1].z,
+				                   w->PathNode[w->NumPathNodes - 1].pos.x, w->PathNode[w->NumPathNodes - 1].pos.z,
 				                   w->CurX, w->CurZ))
-					if ((DistF(x3d, z3d, w->PathNode[w->NumPathNodes - 1].x, w->PathNode[w->NumPathNodes - 1].z) > EPSILON) &&
+					if ((DistF(x3d, z3d, w->PathNode[w->NumPathNodes - 1].pos.x, w->PathNode[w->NumPathNodes - 1].pos.z) > EPSILON) &&
 					        (DistF(x3d, z3d, w->CurX, w->CurZ) > EPSILON))
 						inters ++;
 
@@ -690,8 +684,8 @@ void FindPath(int32 oc, t3dCAMERA *Camera) {
 				w->CurPanel = w->PathNode[w->NumPathNodes - 1].curp;
 
 				PointOut(oc, Camera);        // tira fuori il pto trovato
-				w->PathNode[w->NumPathNodes].x    = w->CurX;
-				w->PathNode[w->NumPathNodes].z    = w->CurZ;
+				w->PathNode[w->NumPathNodes].pos.x = w->CurX;
+				w->PathNode[w->NumPathNodes].pos.z = w->CurZ;
 				w->PathNode[w->NumPathNodes].oldp = w->CurPanel;
 				w->PathNode[w->NumPathNodes].curp = w->CurPanel;
 
@@ -706,15 +700,15 @@ void FindPath(int32 oc, t3dCAMERA *Camera) {
 		DebugLogFile("CP: %d || OP: %d || %f %f || I: %d || C: %d || NPN: %d", w->CurPanel, w->OldPanel, w->CurX, w->CurZ, inters, check, w->NumPathNodes);
 //DebugText("CP: %d || OP: %d || I: %d || C: %d || PI: %d || NPN: %d", CurPanel, OldPanel, inters, check, PointInside( OldPanel, CurX, CurZ ), NumPathNodes );
 
-		w->PathNode[w->NumPathNodes].x    = w->CurX;
-		w->PathNode[w->NumPathNodes].z    = w->CurZ;
+		w->PathNode[w->NumPathNodes].pos.x = w->CurX;
+		w->PathNode[w->NumPathNodes].pos.z = w->CurZ;
 		w->PathNode[w->NumPathNodes].dist = DistF(Act->Pos.x, Act->Pos.z, w->CurX, w->CurZ);
 		w->PathNode[w->NumPathNodes].oldp = w->CurPanel;
 		w->PathNode[w->NumPathNodes].curp = w->CurPanel;
 		w->NumPathNodes ++;
 
 		for (b = 0; b < w->NumPathNodes; b++)
-			DebugLogFile("FP %d: %f %f | %d %d", b, w->PathNode[b].x, w->PathNode[b].z, w->PathNode[b].oldp, w->PathNode[b].curp);
+			DebugLogFile("FP %d: %f %f | %d %d", b, w->PathNode[b].pos.x, w->PathNode[b].pos.z, w->PathNode[b].oldp, w->PathNode[b].curp);
 
 		FindShortPath(oc);
 
@@ -722,15 +716,15 @@ void FindPath(int32 oc, t3dCAMERA *Camera) {
 	} else {        // altrimenti starda diretta
 		DebugLogFile("NOI CP: %d || OP: %d || I: %d || C: %d || NPN: %d", w->CurPanel, w->OldPanel, inters, check, w->NumPathNodes);
 //DebugText("NOI CP: %d || OP: %d || I: %d || C: %d || PI: %d || NPN: %d", CurPanel, OldPanel, inters, check, PointInside( OldPanel, CurX, CurZ ), NumPathNodes );
-		w->PathNode[w->NumPathNodes].x    = Act->Pos.x;
-		w->PathNode[w->NumPathNodes].z    = Act->Pos.z;
+		w->PathNode[w->NumPathNodes].pos.x = Act->Pos.x;
+		w->PathNode[w->NumPathNodes].pos.z = Act->Pos.z;
 		w->PathNode[w->NumPathNodes].dist = 0.0;
 		w->PathNode[w->NumPathNodes].oldp = w->OldPanel;
 		w->PathNode[w->NumPathNodes].curp = w->OldPanel;
 		w->NumPathNodes ++;
 
-		w->PathNode[w->NumPathNodes].x    = w->CurX;
-		w->PathNode[w->NumPathNodes].z    = w->CurZ;
+		w->PathNode[w->NumPathNodes].pos.x = w->CurX;
+		w->PathNode[w->NumPathNodes].pos.z = w->CurZ;
 		w->PathNode[w->NumPathNodes].dist = DistF(Act->Pos.x, Act->Pos.z, w->CurX, w->CurZ);
 		w->PathNode[w->NumPathNodes].oldp = w->CurPanel;
 		w->PathNode[w->NumPathNodes].curp = w->CurPanel;
