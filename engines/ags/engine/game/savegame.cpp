@@ -62,6 +62,7 @@
 #include "ags/plugins/plugin_engine.h"
 #include "ags/engine/script/script.h"
 #include "ags/shared/script/cc_common.h"
+#include "ags/shared/util/data_stream.h"
 #include "ags/shared/util/file.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string_utils.h"
@@ -752,18 +753,26 @@ void SaveGameState(Stream *out) {
 	SavegameComponents::WriteAllCommon(out);
 }
 
-void ReadPluginSaveData(Stream *in) {
-	auto pluginFileHandle = AGSE_RESTOREGAME;
-	pl_set_file_handle(pluginFileHandle, in);
-	pl_run_plugin_hooks(AGSE_RESTOREGAME, pluginFileHandle);
-	pl_clear_file_handle();
+void ReadPluginSaveData(Stream *in, PluginSvgVersion svg_ver, soff_t max_size) {
+	const soff_t start_pos = in->GetPosition();
+	const soff_t end_pos = start_pos + max_size;
+	String pl_name;
+	for (int pl_index = 0; pl_query_next_plugin_for_event(AGSE_RESTOREGAME, pl_index, pl_name); ++pl_index) {
+		auto pl_handle = AGSE_RESTOREGAME;
+		pl_set_file_handle(pl_handle, in);
+		pl_run_plugin_hook_by_index(pl_index, AGSE_RESTOREGAME, pl_handle);
+		pl_clear_file_handle();
+	}
 }
 
 void WritePluginSaveData(Stream *out) {
-	auto pluginFileHandle = AGSE_SAVEGAME;
-	pl_set_file_handle(pluginFileHandle, out);
-	pl_run_plugin_hooks(AGSE_SAVEGAME, pluginFileHandle);
-	pl_clear_file_handle();
+	String pl_name;
+	for (int pl_index = 0; pl_query_next_plugin_for_event(AGSE_SAVEGAME, pl_index, pl_name); ++pl_index) {
+		auto pl_handle = AGSE_SAVEGAME;
+		pl_set_file_handle(pl_handle, out);
+		pl_run_plugin_hook_by_index(pl_index, AGSE_SAVEGAME, pl_handle);
+		pl_clear_file_handle();
+	}
 }
 
 } // namespace Engine
