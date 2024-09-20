@@ -640,7 +640,7 @@ clean:
 	$(HIDE)$(RM_REC) libtemp $(MODULES)
 	$(HIDE)$(RM) libnx-ln
 	$(HIDE)$(RM) scummvm.zip  $(TARGET_NAME)_libretro.* script.mri config.mk.engines.lite ScummVM.dat
-	$(HIDE)$(RM) $(ROOT_PATH)/shared_modules.mk
+	$(HIDE)$(RM) $(ROOT_PATH)/shared_modules.mk $(SCUMMVM_PATH)/engines/engines.mk $(SCUMMVM_PATH)/engines/detection_table.h $(SCUMMVM_PATH)/engines/plugins_table.h
 
 # Include the dependency tracking files.
 -include $(wildcard $(addsuffix /*.d,$(DEPDIRS)))

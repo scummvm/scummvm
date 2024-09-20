@@ -21,7 +21,7 @@
 # $2     [REQ] SCUMMVM_PATH
 # $3     [REQ] NO_WIP [0,1]
 # $4     [REQ] STATIC_LINKING [0,1]
-# $5     [REQ] LITE [0,1]
+# $5     [REQ] LITE [0,1,2]
 # $[...] [OPT] Engines dependencies not available
 
 set -e
@@ -58,8 +58,9 @@ tot_deps=""
 [ $NO_WIP -ne 1 ] && engine_enable_all
 
 # Test LITE
+[ $LITE -ne 0 ] && engine_disable_all
+
 if [ $LITE -eq 1 ] ; then
-	engine_disable_all
 	for eng in $(cat "${BUILD_PATH}"/lite_engines.list) ; do
 		engine_enable "$eng"
 	done
