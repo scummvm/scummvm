@@ -1477,7 +1477,7 @@ void DragonArcade::updateBoss2() {
 				updateXScrollOffset();
 			}
 			byte bossByte12 = _npcState[1].byte12;
-			// TODO: do these ever get changed?
+			// Note: these never get changed? they're items in INT_TABLE_0BCE
 			const int16 INT_39e5_0be0 = 0x3A;
 			const int16 INT_39e5_0bda = 0x20;
 			if (bossByte12 == 100) {
@@ -1521,15 +1521,15 @@ void DragonArcade::updateBoss2() {
 				}
 			} else if ((bossByte12 != 106 || INT_39e5_0be0 + 0x41 != _npcState[1].ttmPage) &&
 					   (bossByte12 != 103 || INT_39e5_0bda + 0x41 != _npcState[1].ttmPage)) {
-				error("TODO: Fix references to table at 0xb0c");
-				/*
-				if (*(int *)(bossByte12 * 2 + 0xb0c) + 0x41 == _npcState[1].ttmPage) {
+				// code uses 0x0b0c + byte12, but table that's actually used starts at 0xbce
+				static const int16 INT_TABLE_0BCE[] = {0x2a, 0x34, 0x3b, 0x2, 0xD, 0x1A, 0x20, 0x29, 0x33, 0x3A, 0x42};
+				assert(bossByte12 >= 97 && bossByte12 - 97 < ARRAYSIZE(INT_TABLE_0BCE));
+				if (INT_TABLE_0BCE[bossByte12 - 97] + 0x41 == _npcState[1].ttmPage) {
 					_npcState[1].byte12 = 100;
 					_npcState[1].ttmPage = 67;
 				} else if (bossByte12 != 100 && _nTickUpdates & 1) {
 					_npcState[1].ttmPage++;
 				}
-				*/
 			}
 		}
 	}
