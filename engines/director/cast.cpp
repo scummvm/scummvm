@@ -1099,9 +1099,9 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		warning("BUILDBOT: Read past dataStream for id: %d type: %s", id, castType2str((CastType) castType));
 	}
 
-	if (castStream.pos() < castStream.size()) {
-		warning("BUILDBOT: Left over bytes in dataStream for id: %d type: %s", id, castType2str((CastType) castType));
-	}
+	int leftOver = castStream.size() - castStream.pos();
+	if (leftOver > 0)
+		warning("BUILDBOT: Left over bytes: %d in dataStream for id: %d type: %s", leftOver, id, castType2str((CastType) castType));
 
 	if (_loadedCast->contains(id)) { // Skip unhandled casts
 		debugCN(3, kDebugLoading, "Children: ");
