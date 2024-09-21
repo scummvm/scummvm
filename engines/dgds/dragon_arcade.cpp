@@ -739,7 +739,7 @@ bool DragonArcade::isFloorNotFound() {
 uint16 DragonArcade::moveToNextStage() {
 	int xblock = _scrollXOffset + _npcState[0].x / 8;
 
-	switch(_loadedArcadeStage) {
+	switch (_loadedArcadeStage) {
 	case 0:
 		if (0x31 < _scrollXOffset) {
 			_loadedArcadeStage = 1;
@@ -755,7 +755,7 @@ uint16 DragonArcade::moveToNextStage() {
 		if (0x89 < xblock && xblock < 0x8d && 0x14 < _arcadeTTM._startYOffset &&
 			_arcadeTTM._startYOffset < 0x46 && _bladeStateOffset == 0) {
 			_scrollXOffset = 0x89 - _npcState[0].x / 8;
-			_arcadeTTM._startYOffset = -0xd;
+			_arcadeTTM._startYOffset = -13;
 			playSFX55AndStuff();
 			_loadedArcadeStage = 2;
 			initValuesForStage2();
@@ -773,7 +773,7 @@ uint16 DragonArcade::moveToNextStage() {
 		if (0x99 < xblock && xblock < 0x9c && 0x14 < _arcadeTTM._startYOffset &&
 			  _arcadeTTM._startYOffset < 0x46 && _bladeStateOffset == 0) {
 			_scrollXOffset = 0x9a - _npcState[0].x / 8;
-			_arcadeTTM._startYOffset = -0xd;
+			_arcadeTTM._startYOffset = -13;
 			playSFX55AndStuff();
 			return 1;
 		}
@@ -929,7 +929,7 @@ static const int16 STAGE_2_XX[] = {
 };
 
 static const int16 STAGE_2_YY[] = {
-	0, 0, 0xe9
+	0, 0, -23
 };
 
 static const byte STAGE_2_BYTE12[] = {
@@ -1045,14 +1045,14 @@ void DragonArcade::arcade2754(int16 floorY) {
 }
 
 
-static const int16 arrayC5A[4][7] {
+static const int16 INT_ARRAY_C5A[4][7] {
 	{ 0x8, 0x19, 0x5A, 0x78, 0x8C, 0xA5, 0xBE },
 	{ 0x6, 0x28, 0x5A, 0x87, 0x96, 0xAA, 0xC0 },
 	{ 0x4, 0x37, 0x69, 0x79, 0x91, 0xA0, 0xC2 },
 	{ 0x2, 0x46, 0x69, 0x87, 0x9B, 0xAF, 0xC4 },
 };
 
-static const int16 arrayC92[4][7] {
+static const int16 INT_ARRAY_C92[4][7] {
 	{ 0xA, 0x37, 0x46, 0x55, 0x91, 0xAA, 0xC8 },
 	{ 0x19, 0x5F, 0x87, 0x9B, 0xB9, 0xD7, -0x1 },
 	{ 0x19, 0x23, 0x69, 0x7D, 0x9B, 0xB9, 0xD7 },
@@ -1064,18 +1064,18 @@ void DragonArcade::arcade3e96() {
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 7; j++) {
 			if (_loadedArcadeStage == 0) {
-				if (_flag40ee && arrayC5A[i][j] == _someCounter40f0) {
-					_npcState[i].ttmPage = 1;
+				if (_flag40ee && INT_ARRAY_C5A[i][j] == _someCounter40f0) {
+					_npcState[i + 10].ttmPage = 1;
 				}
 			} else if (_loadedArcadeStage == 1) {
-				if (arrayC92[i][j] == _someCounter40f0) {
-					_npcState[4 + i].ttmPage = 1;
+				if (INT_ARRAY_C92[i][j] == _someCounter40f0) {
+					_npcState[i + 4 + 10].ttmPage = 1;
 				}
-				if (_flag40ee && arrayC5A[i][j] == _someCounter40f0) {
-					_npcState[i].ttmPage = 1;
+				if (_flag40ee && INT_ARRAY_C5A[i][j] == _someCounter40f0) {
+					_npcState[i + 10].ttmPage = 1;
 				}
-			} else if (_loadedArcadeStage == 2 && _flag40ef && arrayC92[i][j] == _someCounter40f0) {
-				_npcState[i].ttmPage = 1;
+			} else if (_loadedArcadeStage == 2 && _flag40ef && INT_ARRAY_C92[i][j] == _someCounter40f0) {
+				_npcState[i + 10].ttmPage = 1;
 			}
 		}
 	}
@@ -1235,7 +1235,7 @@ void DragonArcade::updateBoss() {
 	bool bossIsClose = absDistToBoss < 20;
 	uint16 randVal = _nextRandomVal & 0xf;
 
-	switch(_npcState[1].byte12) {
+	switch(_npcState[1].byte12 - 1) {
 	case 0:
 		if (bossIsClose && absDistToBoss < 45) {
 			if (_bladeState1 != 8 && _bladeState1 != 9) {
@@ -2031,28 +2031,28 @@ void DragonArcade::resetStageState() {
 	_bladeMoveFlag = kBladeMoveNone;
 }
 
-static const int STAGE_0_NPC_XX[] = {
+static const int16 STAGE_0_NPC_XX[] = {
 	0x191, 0x1BB, 0x1F5,
 	0x25B, 0x2D3, 0x341,
 	0x535, 0x5C9, 0x623
 };
 
-static const byte STAGE_0_NPC_YY[] = {
-	0, 0, 0, 0xd8, 0xd8, 0, 0, 0, 0xd8
+static const int16 STAGE_0_NPC_YY[] = {
+	0, 0, 0, -40, -40, 0, 0, 0, -40
 };
 
 static const byte STAGE_0_NPC_BYTE12[] = {
 	5, 4, 4, 5, 4, 5, 4, 5, 5
 };
 
-static const int STAGE_4_NPC_XX_1[] = {
+static const int16 STAGE_4_NPC_XX_1[] = {
 	0x169, 0x19D, 0x1B9,
 	0x30D, 0x32D, 0x457,
 	0x4DB, 0x501, -1
 };
 
-static const byte STAGE_4_NPC_YY_1[] = {
-	0, 0, 0, 0, 0, 0xd8, 0, 0, 0xd8
+static const int16 STAGE_4_NPC_YY_1[] = {
+	0, 0, 0, 0, 0, -40, 0, 0, -40
 };
 
 static const byte STAGE_4_NPC_BYTE12_1[] = {
@@ -2103,35 +2103,35 @@ void DragonArcade::initValuesForStage() {
 	}
 }
 
-static const int16 STAGE_0_ST_INT1[] = {
+static const int16 STAGE_0_NPC2_XX_1[] = {
 	0x13F, 0x150, 0x161, 0x172
 };
 
-static const int16 STAGE_0_ST_INT1_2[] = {
+static const int16 STAGE_0_NPC2_XX_2[] = {
 	0x317, 0x328, 0x339, 0x34A
 };
 
-static const int16 STAGE_0_ST_TTMPAGE[] = {
+static const int16 STAGE_0_NPC2_TTMPAGE[] = {
 	 0, 0x1E, 0xF, 0
 };
 
 void DragonArcade::initValuesForStage0() {
 	_someCounter40f0 = 0;
 	for (int i = 10; i < 14; i++) {
-		_npcState[i].xx = STAGE_0_ST_INT1[i - 10];
+		_npcState[i].xx = STAGE_0_NPC2_XX_1[i - 10];
 		_npcState[i].yy = 2;
-		_npcState[i].ttmPage = STAGE_0_ST_TTMPAGE[i - 10];
+		_npcState[i].ttmPage = STAGE_0_NPC2_TTMPAGE[i - 10];
 		_npcState[i].ttmNum = 2;
 
-		_npcState[i + 4].xx = STAGE_0_ST_INT1_2[i - 10];
+		_npcState[i + 4].xx = STAGE_0_NPC2_XX_2[i - 10];
 		_npcState[i + 4].yy = -37;
-		_npcState[i + 4].ttmPage = STAGE_0_ST_TTMPAGE[i - 10];
+		_npcState[i + 4].ttmPage = STAGE_0_NPC2_TTMPAGE[i - 10];
 		_npcState[i + 4].ttmNum = 2;
 	}
 	_flag40ee = true;
 	_flag40ef = true;
 	_npcState[18].xx = 0x11f;
-	_npcState[18].yy = -0xd;
+	_npcState[18].yy = -13;
 	_npcState[18].byte12 = 0x1e;
 	_npcState[18].ttmPage = 0x20;
 	_npcState[18].ttmNum = 2;
