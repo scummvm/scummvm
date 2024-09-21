@@ -98,4 +98,9 @@ int normalizeAngle(int dirType, int angle) {
 	return toSimpleDir(dirType, temp) * (dirType ? 45 : 90);
 }
 
+void *reallocateArray(void *buffer, size_t count, size_t size) {
+	free(buffer);
+	return calloc(count, size);
+}
+
 } // End of namespace Scumm

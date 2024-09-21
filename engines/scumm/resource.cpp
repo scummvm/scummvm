@@ -386,13 +386,13 @@ void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	case MKTAG('D','L','F','L'):
 		i = _fileHandle->readUint16LE();
 		_fileHandle->seek(-2, SEEK_CUR);
-		_heV7RoomOffsets = (byte *)calloc(2 + (i * 4), 1);
+		_heV7RoomOffsets = (byte *)reallocateArray(_heV7RoomOffsets, 2 + (i * 4), 1);
 		_fileHandle->read(_heV7RoomOffsets, (2 + (i * 4)) );
 		break;
 
 	case MKTAG('D','I','S','K'):
 		i = _fileHandle->readUint16LE();
-		_heV7DiskOffsets = (byte *)calloc(i, 1);
+		_heV7DiskOffsets = (byte *)reallocateArray(_heV7DiskOffsets, i, 1);
 		_fileHandle->read(_heV7DiskOffsets, i);
 		break;
 
@@ -1227,7 +1227,7 @@ void ScummEngine_v5::readMAXS(int blockSize) {
 	_numFlObject = 50;
 
 	if (_shadowPaletteSize)
-		_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
+		_shadowPalette = (byte *)reallocateArray(_shadowPalette, _shadowPaletteSize, 1);
 }
 
 #ifdef ENABLE_SCUMM_7_8
@@ -1252,11 +1252,11 @@ void ScummEngine_v8::readMAXS(int blockSize) {
 	_numArray = _fileHandle->readUint32LE();         // 200
 	_numVerbs = _fileHandle->readUint32LE();         // 50
 
-	_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+	_objectRoomTable = (byte *)reallocateArray(_objectRoomTable, _numGlobalObjects, 1);
 	_numGlobalScripts = 2000;
 
 	_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
-	_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
+	_shadowPalette = (byte *)reallocateArray(_shadowPalette, _shadowPaletteSize, 1);
 }
 
 void ScummEngine_v7::readMAXS(int blockSize) {
@@ -1278,7 +1278,7 @@ void ScummEngine_v7::readMAXS(int blockSize) {
 	_numCharsets = _fileHandle->readUint16LE();
 	_numCostumes = _fileHandle->readUint16LE();
 
-	_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+	_objectRoomTable = (byte *)reallocateArray(_objectRoomTable, _numGlobalObjects, 1);
 
 	if ((_game.id == GID_FT) && (_game.features & GF_DEMO) &&
 		(_game.platform == Common::kPlatformDOS))
@@ -1287,7 +1287,7 @@ void ScummEngine_v7::readMAXS(int blockSize) {
 		_numGlobalScripts = 2000;
 
 	_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
-	_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
+	_shadowPalette = (byte *)reallocateArray(_shadowPalette, _shadowPaletteSize, 1);
 }
 #endif
 
@@ -1314,12 +1314,12 @@ void ScummEngine_v6::readMAXS(int blockSize) {
 		_numGlobalScripts = 200;
 
 		if (_game.heversion >= 70) {
-			_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+			_objectRoomTable = (byte *)reallocateArray(_objectRoomTable, _numGlobalObjects, 1);
 		}
 
 		if (_game.heversion <= 70) {
 			_shadowPaletteSize = 256;
-			_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
+			_shadowPalette = (byte *)reallocateArray(_shadowPalette, _shadowPaletteSize, 1);
 		}
 	} else
 		error("readMAXS(%d) failed to read MAXS data", blockSize);
@@ -1399,19 +1399,19 @@ void ScummEngine::allocateArrays() {
 	// Note: Buffers are now allocated in scummMain to allow for
 	//     early GUI init.
 
-	_objectOwnerTable = (byte *)calloc(_numGlobalObjects, 1);
-	_objectStateTable = (byte *)calloc(_numGlobalObjects, 1);
-	_classData = (uint32 *)calloc(_numGlobalObjects, sizeof(uint32));
-	_newNames = (uint16 *)calloc(_numNewNames, sizeof(uint16));
+	_objectOwnerTable = (byte *)reallocateArray(_objectOwnerTable, _numGlobalObjects, 1);
+	_objectStateTable = (byte *)reallocateArray(_objectStateTable, _numGlobalObjects, 1);
+	_classData = (uint32 *)reallocateArray(_classData, _numGlobalObjects, sizeof(uint32));
+	_newNames = (uint16 *)reallocateArray(_newNames, _numNewNames, sizeof(uint16));
 
-	_inventory = (uint16 *)calloc(_numInventory, sizeof(uint16));
-	_verbs = (VerbSlot *)calloc(_numVerbs, sizeof(VerbSlot));
-	_objs = (ObjectData *)calloc(_numLocalObjects, sizeof(ObjectData));
-	_roomVars = (int32 *)calloc(_numRoomVariables, sizeof(int32));
-	_scummVars = (int32 *)calloc(_numVariables, sizeof(int32));
-	_bitVars = (byte *)calloc(_numBitVariables >> 3, 1);
+	_inventory = (uint16 *)reallocateArray(_inventory, _numInventory, sizeof(uint16));
+	_verbs = (VerbSlot *)reallocateArray(_verbs, _numVerbs, sizeof(VerbSlot));
+	_objs = (ObjectData *)reallocateArray(_objs, _numLocalObjects, sizeof(ObjectData));
+	_roomVars = (int32 *)reallocateArray(_roomVars, _numRoomVariables, sizeof(int32));
+	_scummVars = (int32 *)reallocateArray(_scummVars, _numVariables, sizeof(int32));
+	_bitVars = (byte *)reallocateArray(_bitVars, _numBitVariables >> 3, 1);
 	if (_game.heversion >= 60) {
-		_arraySlot = (byte *)calloc(_numArray, 1);
+		_arraySlot = (byte *)reallocateArray(_arraySlot, _numArray, 1);
 	}
 
 	_res->allocResTypeData(rtCostume, (_game.features & GF_NEW_COSTUMES) ? MKTAG('A','K','O','S') : MKTAG('C','O','S','T'),
@@ -1439,7 +1439,7 @@ void ScummEngine_v70he::allocateArrays() {
 	ScummEngine::allocateArrays();
 
 	_res->allocResTypeData(rtSpoolBuffer, 0, 9, kStaticResTypeMode);
-	_heV7RoomIntOffsets = (uint32 *)calloc(_numRooms, sizeof(uint32));
+	_heV7RoomIntOffsets = (uint32 *)reallocateArray(_heV7RoomIntOffsets, _numRooms, sizeof(uint32));
 }
 
 

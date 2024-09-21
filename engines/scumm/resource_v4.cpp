@@ -235,7 +235,7 @@ void ScummEngine_v4::readMAXS(int blockSize) {
 
 	_shadowPaletteSize = 256;
 
-	_shadowPalette = (byte *) calloc(_shadowPaletteSize, 1);	// FIXME - needs to be removed later
+	_shadowPalette = (byte *)reallocateArray(_shadowPalette, _shadowPaletteSize, 1);	// FIXME - needs to be removed later
 }
 
 void ScummEngine_v4::readGlobalObjects() {
