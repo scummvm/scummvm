@@ -799,6 +799,7 @@ HError GameDataExtPreloader::ReadBlock(int /*block_id*/, const String &ext_id,
 		_ents.Game.saveGameFolderName = StrUtil::ReadString(_in);
 		read_next = false; // we're done
 	}
+	SkipBlock(); // prevent assertion trigger
 	return HError::None();
 }
 
