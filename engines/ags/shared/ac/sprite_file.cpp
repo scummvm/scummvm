@@ -512,7 +512,6 @@ int SaveSpriteFile(const String &save_to_file,
 
 	std::unique_ptr<Bitmap> temp_bmp; // for disposing temp sprites
 	std::vector<uint8_t> membuf; // for loading raw sprite data
-	std::vector<uint32_t> palette;
 
 	const bool diff_compress =
 		read_from_file &&
