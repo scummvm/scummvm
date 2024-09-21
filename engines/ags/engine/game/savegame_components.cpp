@@ -487,7 +487,7 @@ HSaveError ReadInteraction272(Interaction &intr, Stream *in) {
 HSaveError WriteCharacters(Stream *out) {
 	out->WriteInt32(_GP(game).numcharacters);
 	for (int i = 0; i < _GP(game).numcharacters; ++i) {
-		_GP(game).chars[i].WriteToSavegame(out);
+		_GP(game).chars[i].WriteToSavegame(out, _GP(game).chars2[i]);
 		_GP(charextra)[i].WriteToSavegame(out);
 		Properties::WriteValues(_GP(play).charProps[i], out);
 		if (_G(loaded_game_file_version) <= kGameVersion_272)
@@ -501,7 +501,7 @@ HSaveError ReadCharacters(Stream *in, int32_t cmp_ver, soff_t cmp_size, const Pr
 	if (!AssertGameContent(err, in->ReadInt32(), _GP(game).numcharacters, "Characters"))
 		return err;
 	for (int i = 0; i < _GP(game).numcharacters; ++i) {
-		_GP(game).chars[i].ReadFromSavegame(in, static_cast<CharacterSvgVersion>(cmp_ver));
+		_GP(game).chars[i].ReadFromSavegame(in, _GP(game).chars2[i], static_cast<CharacterSvgVersion>(cmp_ver));
 		_GP(charextra)[i].ReadFromSavegame(in, static_cast<CharacterSvgVersion>(cmp_ver));
 		Properties::ReadValues(_GP(play).charProps[i], in);
 		if (_G(loaded_game_file_version) <= kGameVersion_272)

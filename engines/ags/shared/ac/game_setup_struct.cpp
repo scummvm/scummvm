@@ -205,7 +205,7 @@ void GameSetupStruct::WriteMouseCursors(Stream *out) {
 
 void GameSetupStruct::read_characters(Shared::Stream *in) {
 	chars.resize(numcharacters);
-
+	chars2.resize(numcharacters);
 	ReadCharacters(in);
 }
 
@@ -238,7 +238,7 @@ void GameSetupStruct::read_messages(Shared::Stream *in, const std::array<int> &l
 
 void GameSetupStruct::ReadCharacters(Stream *in) {
 	for (int i = 0; i < numcharacters; ++i) {
-		chars[i].ReadFromFile(in, _G(loaded_game_file_version));
+		chars[i].ReadFromFile(in, chars2[i], _G(loaded_game_file_version));
 	}
 }
 
