@@ -140,6 +140,9 @@ public:
 	int _gameVersion = 0;
 
 	Vect2i _screen_offset = Vect2i(0, 0);
+	grScreenRegion _fps_region = grScreenRegion_EMPTY;
+	grScreenRegion _fps_region_last = grScreenRegion_EMPTY;
+	Std::vector<qdGameObject *> _visible_objects;
 
 	// Default text format
 	qdScreenTextFormat _default_format;

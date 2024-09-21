@@ -53,10 +53,7 @@ struct qdGridZoneOrdering {
 };
 
 fpsCounter *g_fpsCounter = nullptr;
-grScreenRegion qdGameScene::_fps_region = grScreenRegion_EMPTY;
-grScreenRegion qdGameScene::_fps_region_last = grScreenRegion_EMPTY;
 char qdGameScene::_fps_string[255];
-Std::vector<qdGameObject *> qdGameScene::_visible_objects;
 
 qdGameScene::qdGameScene() : _mouse_click_object(NULL),
 	_mouse_right_click_object(NULL),
@@ -186,7 +183,7 @@ void qdGameScene::redraw() {
 
 			switch (flags() & (CYCLE_X | CYCLE_Y)) {
 			case CYCLE_X:
-				for (Std::vector<qdGameObject *>::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it) {
+				for (Std::vector<qdGameObject *>::reverse_iterator it = g_engine->_visible_objects.rbegin(); it != g_engine->_visible_objects.rend(); ++it) {
 					for (int i = 0; i < 8; i += 4) {
 						Vect2i pos = (*it)->screen_pos() + Vect2i(offs_x[i], offs_y[i]);
 						Vect2i sz = (*it)->screen_size();
@@ -200,7 +197,7 @@ void qdGameScene::redraw() {
 				}
 				break;
 			case CYCLE_Y:
-				for (Std::vector<qdGameObject *>::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it) {
+				for (Std::vector<qdGameObject *>::reverse_iterator it = g_engine->_visible_objects.rbegin(); it != g_engine->_visible_objects.rend(); ++it) {
 					for (int i = 2; i < 8; i += 4) {
 						Vect2i pos = (*it)->screen_pos() + Vect2i(offs_x[i], offs_y[i]);
 						Vect2i sz = (*it)->screen_size();
@@ -214,7 +211,7 @@ void qdGameScene::redraw() {
 				}
 				break;
 			case CYCLE_X | CYCLE_Y:
-				for (Std::vector<qdGameObject *>::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it) {
+				for (Std::vector<qdGameObject *>::reverse_iterator it = g_engine->_visible_objects.rbegin(); it != g_engine->_visible_objects.rend(); ++it) {
 					for (int i = 0; i < 8; i++) {
 						Vect2i pos = (*it)->screen_pos() + Vect2i(offs_x[i], offs_y[i]);
 						Vect2i sz = (*it)->screen_size();
@@ -229,7 +226,7 @@ void qdGameScene::redraw() {
 				break;
 			}
 		} else {
-			for (Std::vector<qdGameObject *>::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it)
+			for (Std::vector<qdGameObject *>::reverse_iterator it = g_engine->_visible_objects.rbegin(); it != g_engine->_visible_objects.rend(); ++it)
 				(*it)->redraw();
 		}
 	}
@@ -249,7 +246,7 @@ bool qdGameScene::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
 				break;
 			}
 		}
-		for (Std::vector<qdGameObject *>::iterator io = _visible_objects.begin(); io != _visible_objects.end(); ++io) {
+		for (Std::vector<qdGameObject *>::iterator io = g_engine->_visible_objects.begin(); io != g_engine->_visible_objects.end(); ++io) {
 			if (!(*io)->check_flag(QD_OBJ_DISABLE_MOUSE_FLAG) && (*io)->named_object_type() != QD_NAMED_OBJECT_STATIC_OBJ) {
 				if ((*io)->hit(x, y)) {
 					_mouse_hover_object = *io;
@@ -284,7 +281,7 @@ bool qdGameScene::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
 }
 
 qdGameObject *qdGameScene::get_hitted_obj(int x, int y) {
-	for (Std::vector<qdGameObject *>::iterator io = _visible_objects.begin(); io != _visible_objects.end(); ++io) {
+	for (Std::vector<qdGameObject *>::iterator io = g_engine->_visible_objects.begin(); io != g_engine->_visible_objects.end(); ++io) {
 		if (!(*io)->check_flag(QD_OBJ_DISABLE_MOUSE_FLAG) && (*io)->named_object_type() != QD_NAMED_OBJECT_STATIC_OBJ)
 			if ((*io)->hit(x, y))
 				return (*io);
@@ -359,7 +356,7 @@ void qdGameScene::load_script(const xml::tag *p) {
 		}
 	}
 
-	_visible_objects.reserve(object_list().size());
+	g_engine->_visible_objects.reserve(object_list().size());
 	_personages.reserve(personages_count);
 
 	for (qdGameObjectList::const_iterator it = object_list().begin(); it != object_list().end(); ++it) {
@@ -514,7 +511,7 @@ void qdGameScene::debug_redraw() {
 		v1 = qdCamera::current_camera()->global2scr(Vect3f(300,-300,0));
 		grDispatcher::instance()->line(v0.x,v0.y,v1.x,v1.y,cl,2);
 
-		for (Std::vector<qdGameObject *>::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it)
+		for (Std::vector<qdGameObject *>::reverse_iterator it = g_engine->_visible_objects.rbegin(); it != g_engine->_visible_objects.rend(); ++it)
 			(*it)->debug_redraw();
 	}
 
@@ -632,18 +629,18 @@ struct qdObjectOrdering {
 };
 
 bool qdGameScene::init_visible_objects_list() {
-	_visible_objects.clear();
+	g_engine->_visible_objects.clear();
 
 	for (auto &it : object_list()) {
 		it->update_screen_pos();
 		if (it->is_visible() && !it->check_flag(QD_OBJ_SCREEN_COORDS_FLAG)) {
 			// The original depended on stable sort, so we imitate it here
 			// since Common::sort() is unstable
-			it->setTempPosInList(_visible_objects.size());
-			_visible_objects.push_back(it);
+			it->setTempPosInList(g_engine->_visible_objects.size());
+			g_engine->_visible_objects.push_back(it);
 		}
 	}
-	Common::sort(_visible_objects.begin(), _visible_objects.end(), qdObjectOrdering());
+	Common::sort(g_engine->_visible_objects.begin(), g_engine->_visible_objects.end(), qdObjectOrdering());
 
 	return true;
 }
@@ -990,10 +987,10 @@ void qdGameScene::pre_redraw() {
 			}
 		}
 
-		if (!_fps_region.is_empty())
-			dp->add_redraw_region(_fps_region);
-		if (!_fps_region_last.is_empty())
-			dp->add_redraw_region(_fps_region_last);
+		if (!g_engine->_fps_region.is_empty())
+			dp->add_redraw_region(g_engine->_fps_region);
+		if (!g_engine->_fps_region_last.is_empty())
+			dp->add_redraw_region(g_engine->_fps_region_last);
 	}
 
 	if (ConfMan.getBool("show_fps")) {
@@ -1004,9 +1001,9 @@ void qdGameScene::pre_redraw() {
 
 		int sx = grDispatcher::instance()->textWidth(_fps_string);
 		int sy = grDispatcher::instance()->textHeight(_fps_string);
-		_fps_region = grScreenRegion(10 + sx / 2, 10 + sy / 2, sx, sy);
+		g_engine->_fps_region = grScreenRegion(10 + sx / 2, 10 + sy / 2, sx, sy);
 	} else
-		_fps_region.clear();
+		g_engine->_fps_region.clear();
 
 	fps_counter()->quant();
 }
@@ -1015,7 +1012,7 @@ void qdGameScene::post_redraw() {
 	for (qdGameObjectList::const_iterator io = object_list().begin(); io != object_list().end(); ++io)
 		(*io)->post_redraw();
 
-	_fps_region_last = _fps_region;
+	g_engine->_fps_region_last = g_engine->_fps_region;
 }
 
 qdConditionalObject::trigger_start_mode qdGameScene::trigger_start() {

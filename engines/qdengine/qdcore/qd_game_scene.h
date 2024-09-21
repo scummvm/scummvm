@@ -284,10 +284,6 @@ private:
 
 	uint32 _zone_update_count;
 
-	static Std::vector<qdGameObject *> _visible_objects;
-
-	static grScreenRegion _fps_region;
-	static grScreenRegion _fps_region_last;
 	static char _fps_string[255];
 
 	bool init_visible_objects_list();
