@@ -120,6 +120,10 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	Graphics::ManagedSurface &compBuffer = engine->_compositionBuffer;
 	switch (op) {
+	case 0x0020:
+		// This doesn't seem explicitly handled in the original, but appears in
+		// arcade sequence 2 - just ignore it??
+		break;
 	case 0x0070:
 		// Do nothing.
 		break;
@@ -152,8 +156,8 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 		// Do nothing (ignore arg)
 		break;
 	case 0x1201:
-		// This doesn't seem explicitly handled in the original, but assume we just
-		// ignore it??
+		// This doesn't seem explicitly handled in the original, but appears in
+		// arcade sequence 1 - just ignore it??
 		break;
 	case 0x2002: // SET COLORS
 		_drawColFG = (byte)ivals[0];
@@ -280,6 +284,7 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 		break;
 	default:
 		warning("Unsupported TTM opcode 0x%04x for Dragon arcade.", op);
+		break;
 	}
 	return 0;
 }
