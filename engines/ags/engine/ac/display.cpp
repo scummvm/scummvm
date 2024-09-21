@@ -707,7 +707,7 @@ int get_textwindow_padding(int ifnum) {
 
 void draw_text_window(Bitmap **text_window_ds, bool should_free_ds,
                       int *xins, int *yins, int *xx, int *yy, int *wii, color_t *set_text_color, int ovrheight, int ifnum) {
-
+	assert(text_window_ds);
 	Bitmap *ds = *text_window_ds;
 	if (ifnum < 0)
 		ifnum = _GP(game).options[OPT_TWCUSTOM];
@@ -750,7 +750,7 @@ void draw_text_window(Bitmap **text_window_ds, bool should_free_ds,
 
 void draw_text_window_and_bar(Bitmap **text_window_ds, bool should_free_ds,
                               int *xins, int *yins, int *xx, int *yy, int *wii, color_t *set_text_color, int ovrheight, int ifnum) {
-
+	assert(text_window_ds);
 	draw_text_window(text_window_ds, should_free_ds, xins, yins, xx, yy, wii, set_text_color, ovrheight, ifnum);
 
 	if ((_GP(topBar).wantIt) && (text_window_ds && *text_window_ds)) {
