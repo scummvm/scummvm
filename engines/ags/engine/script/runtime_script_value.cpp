@@ -190,7 +190,7 @@ RuntimeScriptValue &RuntimeScriptValue::DirectPtrObj() {
 	return *this;
 }
 
-intptr_t RuntimeScriptValue::GetDirectPtr() const {
+void *RuntimeScriptValue::GetDirectPtr() const {
 	const RuntimeScriptValue *temp_val = this;
 	int ival = temp_val->IValue;
 	if (temp_val->Type == kScValGlobalVar || temp_val->Type == kScValStackPtr) {
@@ -198,9 +198,9 @@ intptr_t RuntimeScriptValue::GetDirectPtr() const {
 		ival += temp_val->IValue;
 	}
 	if (temp_val->Type == kScValScriptObject)
-		return (intptr_t)temp_val->ObjMgr->GetFieldPtr(temp_val->Ptr, ival);
+		return temp_val->ObjMgr->GetFieldPtr(temp_val->Ptr, ival);
 	else
-		return (intptr_t)(temp_val->PtrU8 + ival);
+		return temp_val->PtrU8 + ival;
 }
 
 } // namespace AGS3
