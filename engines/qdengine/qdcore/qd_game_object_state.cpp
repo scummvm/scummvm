@@ -37,8 +37,6 @@
 
 namespace QDEngine {
 
-qdScreenTransform qdScreenTransform::ID;
-
 bool qdScreenTransform::operator == (const qdScreenTransform &trans) const {
 	return fabs(_angle - trans._angle) < FLT_EPS &&
 	       fabs(_scale.x - trans._scale.x) < FLT_EPS && fabs(_scale.y - trans._scale.y) < FLT_EPS;

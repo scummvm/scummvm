@@ -47,7 +47,7 @@ public:
 		return !(*this == trans);
 	}
 	bool operator()() const {
-		return *this != ID;
+		return _angle != 0.f || _scale.x != 1.f || _scale.y != 1.f;
 	}
 
 	qdScreenTransform operator *(float value) const {
@@ -79,9 +79,6 @@ public:
 	bool has_scale() const {
 		return fabs(_scale.x - 1.f) > FLT_EPS || fabs(_scale.y - 1.f) > FLT_EPS;
 	}
-
-	/// единичная трансформация
-	static qdScreenTransform ID;
 
 private:
 
