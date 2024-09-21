@@ -961,8 +961,8 @@ HSaveError load_game(const String &path, int slotNumber, bool &data_overwritten)
 	data_overwritten = false;
 	_G(gameHasBeenRestored)++;
 
-	_G(oldeip) = _G(our_eip);
-	_G(our_eip) = 2050;
+	_G(oldeip) = get_our_eip();
+	set_our_eip(2050);
 
 	HSaveError err;
 	SavegameSource src;
@@ -1012,7 +1012,7 @@ HSaveError load_game(const String &path, int slotNumber, bool &data_overwritten)
 	if (!err)
 		return err;
 	src.InputStream.reset();
-	_G(our_eip) = _G(oldeip);
+	set_our_eip(_G(oldeip));
 
 	// ensure input state is reset
 	ags_clear_input_state();

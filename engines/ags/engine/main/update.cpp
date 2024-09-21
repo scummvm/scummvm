@@ -472,17 +472,17 @@ void update_sierra_speech() {
 // the like.
 void update_stuff() {
 
-	_G(our_eip) = 20;
+	set_our_eip(20);
 
 	update_script_timers();
 
 	update_cycling_views();
 
-	_G(our_eip) = 21;
+	set_our_eip(21);
 
 	update_player_view();
 
-	_G(our_eip) = 22;
+	set_our_eip(22);
 
 	std::vector<int> followingAsSheep;
 
@@ -490,17 +490,17 @@ void update_stuff() {
 
 	update_following_exactly_characters(followingAsSheep);
 
-	_G(our_eip) = 23;
+	set_our_eip(23);
 
 	update_overlay_timers();
 
 	update_speech_and_messages();
 
-	_G(our_eip) = 24;
+	set_our_eip(24);
 
 	update_sierra_speech();
 
-	_G(our_eip) = 25;
+	set_our_eip(25);
 }
 
 } // namespace AGS3

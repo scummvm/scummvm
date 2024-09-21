@@ -443,7 +443,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	}
 
 	// load the room from disk
-	_G(our_eip) = 200;
+	set_our_eip(200);
 	_GP(thisroom).GameID = NO_GAME_ID_IN_ROOM_FILE;
 	load_room(room_filename, &_GP(thisroom), _GP(game).IsLegacyHiRes(), _GP(game).SpriteInfos);
 
@@ -459,7 +459,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 
 	convert_room_coordinates_to_data_res(&_GP(thisroom));
 
-	_G(our_eip) = 201;
+	set_our_eip(201);
 
 	_GP(play).room_width = _GP(thisroom).Width;
 	_GP(play).room_height = _GP(thisroom).Height;
@@ -485,13 +485,13 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		_GP(thisroom).BgFrames[i].Graphic = PrepareSpriteForUse(_GP(thisroom).BgFrames[i].Graphic, false);
 	}
 
-	_G(our_eip) = 202;
+	set_our_eip(202);
 	// Update game viewports
 	if (_GP(game).IsLegacyLetterbox())
 		update_letterbox_mode();
 	SetMouseBounds(0, 0, 0, 0);
 
-	_G(our_eip) = 203;
+	set_our_eip(203);
 	_G(in_new_room) = 1;
 
 	set_color_depth(_GP(game).GetColorDepth());
@@ -509,11 +509,11 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	// copy the walls screen
 	_G(walkareabackup) = BitmapHelper::CreateBitmapCopy(_GP(thisroom).WalkAreaMask.get());
 
-	_G(our_eip) = 204;
+	set_our_eip(204);
 	redo_walkable_areas();
 	walkbehinds_recalc();
 
-	_G(our_eip) = 205;
+	set_our_eip(205);
 	// setup objects
 	if (forchar != nullptr) {
 		// if not restoring a game, always reset this room
@@ -638,7 +638,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		ccAddExternalScriptObject(_GP(thisroom).Hotspots[cc].ScriptName, &_G(scrHotspot)[cc], &_GP(ccDynamicHotspot));
 	}
 
-	_G(our_eip) = 210;
+	set_our_eip(210);
 	if (IS_ANTIALIAS_SPRITES) {
 		// sometimes the palette has corrupt entries, which crash
 		// the create_rgb_table call
@@ -654,7 +654,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		create_rgb_table(&_GP(rgb_table), _G(palette), nullptr);
 		_G(rgb_map) = &_GP(rgb_table);
 	}
-	_G(our_eip) = 211;
+	set_our_eip(211);
 	if (forchar != nullptr) {
 		// if it's not a Restore Game
 
@@ -690,7 +690,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 			memcpy(&_G(roominst)->globaldata[0], _G(croom)->tsdata.data(), _G(croom)->tsdatasize);
 		}
 	}
-	_G(our_eip) = 207;
+	set_our_eip(207);
 	_GP(play).entered_edge = -1;
 
 	if ((_G(new_room_x) != SCR_NO_VALUE) && (forchar != nullptr)) {
@@ -815,7 +815,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	if (_GP(thisroom).Options.StartupMusic > 0)
 		PlayMusicResetQueue(_GP(thisroom).Options.StartupMusic);
 
-	_G(our_eip) = 208;
+	set_our_eip(208);
 	if (forchar != nullptr) {
 		if (_GP(thisroom).Options.PlayerCharOff == 0) {
 			forchar->on = 1;
@@ -835,7 +835,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	}
 	_G(color_map) = nullptr;
 
-	_G(our_eip) = 209;
+	set_our_eip(209);
 	generate_light_table();
 	update_music_volume();
 
@@ -849,7 +849,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	}
 	init_room_drawdata();
 
-	_G(our_eip) = 212;
+	set_our_eip(212);
 	invalidate_screen();
 	for (size_t cc = 0; cc < _G(croom)->numobj; cc++) {
 		if (_G(objs)[cc].on == 2)
@@ -864,7 +864,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	if (_GP(game).color_depth > 1)
 		setpal();
 
-	_G(our_eip) = 220;
+	set_our_eip(220);
 	update_polled_stuff();
 	debug_script_log("Now in room %d", _G(displayed_room));
 	GUI::MarkAllGUIForUpdate(true, true);

@@ -1151,7 +1151,7 @@ static Bitmap *transform_sprite(Bitmap *src, bool src_has_alpha, std::unique_ptr
 		return src; // No transform: return source image
 
 	recycle_bitmap(dst, src->GetColorDepth(), dst_sz.Width, dst_sz.Height, true);
-	_G(our_eip) = 339;
+	set_our_eip(339);
 
 	// If scaled: first scale then optionally mirror
 	if (src->GetSize() != dst_sz) {
@@ -1417,7 +1417,7 @@ bool construct_object_gfx(int objid, bool force_software) {
 }
 
 void prepare_objects_for_drawing() {
-	_G(our_eip) = 32;
+	set_our_eip(32);
 
 	const bool hw_accel = !drawstate.SoftwareRender;
 
@@ -1525,7 +1525,7 @@ bool construct_char_gfx(int charid, bool force_software) {
 }
 
 void prepare_characters_for_drawing() {
-	_G(our_eip) = 33;
+	set_our_eip(33);
 	const bool hw_accel = !drawstate.SoftwareRender;
 
 	// draw characters
@@ -1613,7 +1613,7 @@ void prepare_room_sprites() {
 		add_roomovers_for_drawing();
 
 		if ((_G(debug_flags) & DBG_NODRAWSPRITES) == 0) {
-			_G(our_eip) = 34;
+			set_our_eip(34);
 
 			if (drawstate.WalkBehindMethod == DrawAsSeparateSprite) {
 				for (size_t wb = 1 /* 0 is "no area" */;
@@ -1632,7 +1632,7 @@ void prepare_room_sprites() {
 			draw_sprite_list(true);
 		}
 	}
-	_G(our_eip) = 36;
+	set_our_eip(36);
 
 	// Debug room overlay
 	update_room_debug();
@@ -1660,7 +1660,7 @@ void draw_preroom_background() {
 // no_transform flag tells to copy dirty regions on roomcam_surface without any coordinate conversion
 // whatsoever.
 PBitmap draw_room_background(Viewport *view) {
-	_G(our_eip) = 31;
+	set_our_eip(31);
 
 	// For the sake of software renderer, if there is any kind of camera transform required
 	// except screen offset, we tell it to draw on separate bitmap first with zero transformation.
@@ -1785,7 +1785,7 @@ void draw_gui_and_overlays() {
 	}
 
 	// Add GUIs
-	_G(our_eip) = 35;
+	set_our_eip(35);
 	if (((_G(debug_flags) & DBG_NOIFACE) == 0) && (_G(displayed_room) >= 0)) {
 		if (_G(playerchar)->activeinv >= MAX_INV) {
 			quit("!The player.activeinv variable has been corrupted, probably as a result\n"
@@ -1793,7 +1793,7 @@ void draw_gui_and_overlays() {
 		}
 		if (_G(playerchar)->activeinv < 1) _G(gui_inv_pic) = -1;
 		else _G(gui_inv_pic) = _GP(game).invinfo[_G(playerchar)->activeinv].pic;
-		_G(our_eip) = 37;
+		set_our_eip(37);
 		// Prepare and update GUI textures
 		{
 			for (int index = 0; index < _GP(game).numgui; ++index) {
@@ -1803,7 +1803,7 @@ void draw_gui_and_overlays() {
 				if (gui.Transparency == 255) continue; // 100% transparent
 
 				_G(eip_guinum) = index;
-				_G(our_eip) = 372;
+				set_our_eip(372);
 				const bool draw_with_controls = !draw_controls_as_textures;
 				if (gui.HasChanged() || (draw_with_controls && gui.HasControlsChanged())) {
 					auto &gbg = _GP(guibg)[index];
@@ -1825,16 +1825,16 @@ void draw_gui_and_overlays() {
                     sync_object_texture(gbg, is_alpha);
 				}
 
-				_G(our_eip) = 373;
+				set_our_eip(373);
 				if (!draw_with_controls && gui.HasControlsChanged()) {
 					draw_gui_controls(gui);
 				}
-				_G(our_eip) = 374;
+				set_our_eip(374);
 
 				gui.ClearChanged();
 			}
 		}
-		_G(our_eip) = 38;
+		set_our_eip(38);
 		// Draw the GUIs
 		for (int index = 0; index < _GP(game).numgui; ++index) {
 			const auto &gui = _GP(guis)[index];
@@ -1889,7 +1889,7 @@ void draw_gui_and_overlays() {
 		_G(gfxDriver)->EndSpriteBatch();
 	}
 
-	_G(our_eip) = 1099;
+	set_our_eip(1099);
 }
 
 // Push the gathered list of sprites into the active graphic renderer
@@ -1909,7 +1909,7 @@ void put_sprite_list_on_screen(bool in_room) {
 		}
 	}
 
-	_G(our_eip) = 1100;
+	set_our_eip(1100);
 }
 
 bool GfxDriverSpriteEvtCallback(int evt, int data) {
@@ -2055,7 +2055,7 @@ void construct_game_scene(bool full_redraw) {
 	if (_GP(play).fast_forward)
 		return;
 
-	_G(our_eip) = 3;
+	set_our_eip(3);
 
 	// React to changes to viewports and cameras (possibly from script) just before the render
 	_GP(play).UpdateViewports();
@@ -2093,7 +2093,7 @@ void construct_game_scene(bool full_redraw) {
 		}
 	}
 
-	_G(our_eip) = 4;
+	set_our_eip(4);
 
 	// Stage: UI overlay
 	if (_GP(play).screen_is_faded_out == 0) {
@@ -2248,7 +2248,7 @@ void render_graphics(IDriverDependantBitmap *extraBitmap, int extraX, int extraY
 	update_shakescreen();
 
 	construct_game_scene(false);
-	_G(our_eip) = 5;
+	set_our_eip(5);
 	// TODO: extraBitmap is a hack, used to place an additional gui element
 	// on top of the screen. Normally this should be a part of the game UI stage.
 	if (extraBitmap != nullptr) {

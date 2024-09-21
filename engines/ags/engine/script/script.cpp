@@ -687,11 +687,11 @@ InteractionVariable *FindGraphicalVariable(const char *varName) {
 struct TempEip {
 	int oldval;
 	TempEip(int newval) {
-		oldval = _G(our_eip);
-		_G(our_eip) = newval;
+		oldval = get_our_eip();
+		set_our_eip(newval);
 	}
 	~TempEip() {
-		_G(our_eip) = oldval;
+		set_our_eip(oldval);
 	}
 };
 
