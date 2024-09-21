@@ -616,6 +616,10 @@ void View1::draw() {
 	// drawPathfindingPoints(s);
 	// drawPath(s);
 	drawBackgroundAnimationNumbers(s);
+
+	// Get mouse position
+
+	// Draw the position next to it
 	
 }
 
