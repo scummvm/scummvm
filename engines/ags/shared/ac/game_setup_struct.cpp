@@ -342,7 +342,7 @@ void GameSetupStruct::ReadFromSaveGame_v321(Stream *in) {
 	}
 
 	in->ReadArrayOfInt32(&options[0], OPT_HIGHESTOPTION_321 + 1);
-	options[OPT_LIPSYNCTEXT] = in->ReadByte();
+	options[OPT_LIPSYNCTEXT] = in->ReadInt8();
 
 	ReadCharacters(in);
 }

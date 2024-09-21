@@ -115,7 +115,7 @@ HRoomFileError ReadAncientScriptConfig(Stream *in) {
 
 	size_t var_count = in->ReadInt32();
 	for (size_t i = 0; i < var_count; ++i) {
-		size_t len = in->ReadByte();
+		size_t len = in->ReadInt8();
 		in->Seek(len);
 	}
 	return HRoomFileError::None();
