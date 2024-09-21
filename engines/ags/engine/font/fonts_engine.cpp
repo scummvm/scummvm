@@ -30,19 +30,4 @@
 
 namespace AGS3 {
 
-
-
-
-//=============================================================================
-// Engine-specific implementation split out of acfonts.cpp
-//=============================================================================
-
-void set_our_eip(int eip) {
-	_G(our_eip) = eip;
-}
-
-int get_our_eip() {
-	return _G(our_eip);
-}
-
 } // namespace AGS3

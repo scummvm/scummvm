@@ -86,7 +86,7 @@ void quit_check_dynamic_sprites(QuitReason qreason) {
 }
 
 void quit_shutdown_audio() {
-	_G(our_eip) = 9917;
+	set_our_eip(9917);
 	_GP(game).options[OPT_CROSSFADEMUSIC] = 0;
 	shutdown_sound();
 }
@@ -186,31 +186,31 @@ void quit_free() {
 
 	quit_tell_editor_debugger(errmsg, qreason);
 
-	_G(our_eip) = 9900;
+	set_our_eip(9900);
 
 	quit_stop_cd();
 
-	_G(our_eip) = 9020;
+	set_our_eip(9020);
 
 	// Be sure to unlock mouse on exit, or users will hate us
 	sys_window_lock_mouse(false);
 
-	_G(our_eip) = 9016;
+	set_our_eip(9016);
 
 	quit_check_dynamic_sprites(qreason);
 
 	if (_G(use_cdplayer))
 		_G(platform)->ShutdownCDPlayer();
 
-	_G(our_eip) = 9019;
+	set_our_eip(9019);
 
 	quit_shutdown_audio();
 
-	_G(our_eip) = 9901;
+	set_our_eip(9901);
 
 	_GP(spriteset).Reset();
 
-	_G(our_eip) = 9908;
+	set_our_eip(9908);
 
 	shutdown_pathfinder();
 
@@ -234,7 +234,7 @@ void quit_free() {
 
 	_G(platform)->PostAllegroExit();
 
-	_G(our_eip) = 9903;
+	set_our_eip(9903);
 
 	quit_delete_temp_files();
 
@@ -244,7 +244,7 @@ void quit_free() {
 
 	shutdown_debug();
 
-	_G(our_eip) = 9904;
+	set_our_eip(9904);
 }
 
 } // namespace AGS3
