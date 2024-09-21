@@ -25,6 +25,7 @@
 #include "scumm/resource.h"
 #include "scumm/he/resource_he.h"
 #include "scumm/he/sound_he.h"
+#include "scumm/util.h"
 
 #include "audio/decoders/wave.h"
 #include "graphics/cursorman.h"
@@ -286,7 +287,7 @@ void ScummEngine_v99he::readMAXS(int blockSize) {
 		_numTalkies = _fileHandle->readUint16LE();
 		_numNewNames = 10;
 
-		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+		_objectRoomTable = (byte *)reallocateArray(_objectRoomTable, _numGlobalObjects, 1);
 		_numGlobalScripts = 2048;
 	} else
 		ScummEngine_v90he::readMAXS(blockSize);
@@ -320,7 +321,7 @@ void ScummEngine_v90he::readMAXS(int blockSize) {
 
 		_numNewNames = 10;
 
-		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+		_objectRoomTable = (byte *)reallocateArray(_objectRoomTable, _numGlobalObjects, 1);
 		if (_game.features & GF_HE_985)
 			_numGlobalScripts = 2048;
 		else
@@ -349,7 +350,7 @@ void ScummEngine_v72he::readMAXS(int blockSize) {
 		_numImages = _fileHandle->readUint16LE();
 		_numNewNames = 10;
 
-		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+		_objectRoomTable = (byte *)reallocateArray(_objectRoomTable, _numGlobalObjects, 1);
 		_numGlobalScripts = 200;
 	} else
 		ScummEngine_v6::readMAXS(blockSize);

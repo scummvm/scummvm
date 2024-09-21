@@ -1729,12 +1729,12 @@ void ScummEngine::resetScumm() {
 		|| (_game.platform == Common::kPlatformFMTowns)
 #endif
 		)
-		_16BitPalette = (uint16 *)calloc(512, sizeof(uint16));
+		_16BitPalette = (uint16 *)reallocateArray(_16BitPalette, 512, sizeof(uint16));
 #endif
 
 	// Indy4 Amiga needs another palette map for the verb area.
 	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4 && !_verbPalette)
-		_verbPalette = (uint8 *)calloc(256, 1);
+		_verbPalette = (uint8 *)reallocateArray(_verbPalette, 256, 1);
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_game.platform == Common::kPlatformFMTowns) {
@@ -2037,8 +2037,7 @@ void ScummEngine_v99he::resetScumm() {
 	ScummEngine_v90he::resetScumm();
 
 	_hePaletteSlot = (_game.features & GF_16BIT_COLOR) ? 1280 : 1024;
-	_hePalettes = (uint8 *)malloc((_numPalettes + 1) * _hePaletteSlot);
-	memset(_hePalettes, 0, (_numPalettes + 1) * _hePaletteSlot);
+	_hePalettes = (uint8 *)reallocateArray(_hePalettes, (_numPalettes + 1) * _hePaletteSlot, 1);
 	_isHE995 = (_game.features & GF_HE_995);
 
 	// Array 129 is set to base name
