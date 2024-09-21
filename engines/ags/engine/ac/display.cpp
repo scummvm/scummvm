@@ -262,7 +262,7 @@ ScreenOverlay *display_main(int xx, int yy, int wii, const char *text, int disp_
 	// If fast-forwarding, then skip any blocking message immediately
 	if (_GP(play).fast_forward && (disp_type < DISPLAYTEXT_NORMALOVERLAY)) {
 		_GP(play).SetWaitSkipResult(SKIP_AUTOTIMER);
-		_GP(play).messagetime = -1;
+		post_display_cleanup();
 		return nullptr;
 	}
 
