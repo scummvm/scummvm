@@ -34,6 +34,10 @@ private:
 	uint16 _movieStep = 9999;
 	TitleFont *titleFont = nullptr;
 	Pal _palette;
+	Anm _animation;
+	int _animIdx;
+	int _animCount;
+	uint32 _startTime = 0;
 
 public:
 	virtual ~Cutscene();
@@ -43,6 +47,12 @@ public:
 
 private:
 	bool introScene();
+	bool stepAnim();
+
+	void putHouse();
+
+	void registTime();
+	bool waitTime(int16 duration);
 };
 
 }; // End of namespace Darkseed

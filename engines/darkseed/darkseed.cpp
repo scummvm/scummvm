@@ -70,18 +70,6 @@ Common::Error DarkseedEngine::run() {
 	_player = new Player();
 	_useCode = new UseCode(_console, _player, _objectVar, _inventory);
 
-	Img left00Img;
-	left00Img.load("art/left00.img");
-	Img left01Img;
-	left01Img.load("art/left01.img");
-
-	Anm lettersAnm;
-	lettersAnm.load("art/letters.anm");
-	Img letterD;
-	lettersAnm.getImg(6, letterD);
-	Img letterD1;
-	lettersAnm.getImg(7, letterD1);
-
 	// Set the engine's debugger console
 	setDebugger(new DebugConsole(_tosText));
 
@@ -105,23 +93,7 @@ Common::Error DarkseedEngine::run() {
 	if (saveSlot != -1) {
 		(void)loadGameState(saveSlot);
 	} else {
-		if (prefsCutsceneId == 'I' || ((prefsCutsceneId == 'S' || prefsCutsceneId == 'B' || prefsCutsceneId == 'C') &&
-			  _room->_roomNumber == 0)) {
-			_player->loadAnimations("bedsleep.nsp");
-			_player->_position.x = 0x87;
-			_player->_position.y = 0x5b;
-			_player->_frameIdx = 0;
-			_player->_direction = 1;
-			setupOtherNspAnimation(0, 1);
-	//		bVar1 = true;
-			if (_currentDay == 1) {
-				_console->printTosText(8);
-			} else if (_currentDay == 2) {
-				_console->printTosText(0xc);
-			} else if (_currentDay == 3) {
-				_console->printTosText(0xe);
-			}
-		}
+		_cutscene.play('I');
 	}
 
 	while (!shouldQuit()) {
@@ -167,20 +139,20 @@ void DarkseedEngine::fadeOut() {
 	_fadeTempPalette.loadFromScreen();
 }
 
-void DarkseedEngine::fadeIn() {
+void DarkseedEngine::fadeIn(const Pal &palette) {
 	_fadeDirection = FadeDirection::IN;
 	_fadeStepCounter = 0;
-	_fadeTargetPalette.loadFromScreen();
+	_fadeTargetPalette.load(palette);
 	_fadeTempPalette.clear();
 	_fadeTempPalette.installPalette();
 }
 
 bool DarkseedEngine::fadeStep() {
-	if (_fadeStepCounter < 16) {
-		_fadeTempPalette.updatePalette(_fadeDirection == FadeDirection::OUT ? -16 : 16, _fadeTargetPalette);
+	if (_fadeStepCounter < 32) {
+		_fadeTempPalette.updatePalette(_fadeDirection == FadeDirection::OUT ? -8 : 8, _fadeTargetPalette);
 		_fadeStepCounter++;
 	}
-	return _fadeStepCounter < 16;
+	return _fadeStepCounter < 32;
 }
 
 void DarkseedEngine::gameloop() {
@@ -200,7 +172,9 @@ void DarkseedEngine::gameloop() {
 		}
 		counter_2c85_888b = (counter_2c85_888b + 1) & 0xff;
 		if (_cutscene.isPlaying()) {
-			_cutscene.update();
+//			if (systemTimerCounter == 5) {
+				_cutscene.update();
+//			}
 		} else if (systemTimerCounter == 5) {
 			if (_objectVar[1] != 0) {
 				if (_room->_roomNumber == 30) {
@@ -3736,7 +3710,7 @@ void DarkseedEngine::waitxticks(int ticks) {
 	for (int i = 0; i < ticks * 6; i++) {
 		updateEvents();
 		_room->update();
-		_screen->updateScreen();
+		_screen->update();
 		wait();
 	}
 }
@@ -3745,6 +3719,8 @@ void DarkseedEngine::restartGame() {
 }
 
 void DarkseedEngine::newGame() {
+	_redrawFrame = true;
+	_cursor.showCursor(true);
 	_sprites.clearSpriteDrawList();
 	removeFullscreenPic();
 	_inventory.reset();

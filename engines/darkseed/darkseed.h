@@ -210,7 +210,7 @@ public:
 	Common::Path getRoomFilePath(const Common::Path &filename);
 	Common::Path getPictureFilePath(const Common::Path &filename);
 
-	void fadeIn();
+	void fadeIn(const Pal &palette);
 	void fadeOut();
 	bool fadeStep();
 

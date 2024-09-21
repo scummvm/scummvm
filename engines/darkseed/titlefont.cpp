@@ -30,29 +30,29 @@ TitleFont::TitleFont() {
 	letters.load("art/letters.anm");
 }
 
-int letterIndexLookupTbl[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-							  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-							  0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x04,
-							  0x06, 0x08, 0x0a, 0x0c, 0x0e, 0x10, 0x12,
-							  0x14, 0x16, 0x18, 0x1a, 0x1c, 0x1e, 0x00,
-							  0x20, 0x22, 0x24, 0x26, 0x28, 0x2a, 0x2c,
-							  0x2e, 0x30 };
+uint8 letterIndexLookupTbl[] = {
+	50, 52, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+	0, 2, 4, 6,
+	8, 10, 12, 14,
+	16, 18, 20, 22,
+	24, 26, 28, 30,
+	0, 32, 34, 36,
+	38, 40, 42, 44,
+	46, 48
+};
 
 int16 letterWidthLookupTbl[] = {
- 0x12,  0x12,    0x12,    0x12,
- 0x12,  0x12,    0x12,    0x12,
- 0xA,  0xC,    0x10,    0x12,
- 0x14,  0x14,    0x12,    0x12,
- 0x12,  0x12,    0x12,    0x12,
- 0x12,  0x14,    0x14,    0x12,
- 0x14,  0x12,    0xA,    0x0,
- 0x0,  -1,    0x0,    0x0,
- 0x0,  0x0,    0x0,    0x0,
- 0x0,  0x0,    0x0,    0x0,
- 0x0,  0x0,    0x0,    0x0,
- 0x0,  0x0,    0x0,    0x0,
- 0x0,  0x0,    0x0,    0x0,
- 0x0,  0x0
+	18, 18, 18, 18,
+	18, 18, 18, 18,
+	10, 12, 16, 18,
+	20, 20, 18, 18,
+	18, 18, 18, 18,
+	18, 20, 20, 18,
+	20, 18, 10
 };
 
 void TitleFont::displayString(uint16 x, uint16 y, const Common::String &text) {
@@ -63,14 +63,15 @@ void TitleFont::displayString(uint16 x, uint16 y, const Common::String &text) {
 		}
 		Img letterShadow;
 		Img letter;
-		int letterId = letterIndexLookupTbl[text[i] - 0x2f];
-		letters.getImg(letterId, letterShadow);
-		letters.getImg(letterId+1, letter);
+		int letterId = letterIndexLookupTbl[text[i] - 45];
+		letters.getImg(letterId, letterShadow, false);
+		letters.getImg(letterId+1, letter, false);
 
-		g_engine->_screen->copyRectToSurfaceWithKey(letterShadow.getPixels().data(), letterShadow.getWidth(), x, y, letterShadow.getWidth(), letterShadow.getHeight(), 0xf);
-		g_engine->_screen->copyRectToSurfaceWithKey(letter.getPixels().data(), letter.getWidth(), x + 1, y, letter.getWidth(), letter.getHeight(), 0);
-		debug("%c %d %d", text[i], letterWidthLookupTbl[text[i] - 0x41], letter.getWidth());
-		x += letterWidthLookupTbl[text[i] - 0x41]; //letter.getWidth();
+		int w = letterWidthLookupTbl[letterId / 2];
+		letterShadow.drawAt(x, y, 2, w - 1); // TODO the original doesn't seem to need to override the width here.
+		letter.drawAt(x, y + 1, 3);
+		debug("%c %d %d %d", text[i], w, letter.getWidth(), letterShadow.getWidth());
+		x += w;
 	}
 }
 
