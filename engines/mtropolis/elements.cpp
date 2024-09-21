@@ -846,10 +846,11 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 		uint32 minTS = realRange.min;
 		uint32 maxTS = realRange.max;
 		uint32 targetTS = _currentTimestamp;
+		const bool hasFrames = _videoDecoder->getFrameCount() > 0;
 
 		int framesDecodedThisFrame = 0;
 		if (_currentPlayState == kMediaStatePlaying) {
-			while (_videoDecoder->needsUpdate()) {
+			while (_videoDecoder->needsUpdate() && hasFrames) {
 				if (_playEveryFrame && framesDecodedThisFrame > 0)
 					break;
 
