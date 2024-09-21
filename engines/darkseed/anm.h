@@ -35,7 +35,8 @@ private:
 
 public:
 	bool load(const Common::Path &filename);
-	bool getImg(uint16 index, Img &img);
+	bool getImg(uint16 index, Img &img, bool includesPosition = true);
+	int numImages();
 };
 
 } // namespace Darkseed

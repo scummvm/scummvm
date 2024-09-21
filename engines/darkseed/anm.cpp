@@ -24,6 +24,9 @@
 
 namespace Darkseed {
 bool Anm::load(const Common::Path &filename) {
+	if (file.isOpen()) {
+		file.close();
+	}
 	if(!file.open(filename)) {
 		return false;
 	}
@@ -33,13 +36,22 @@ bool Anm::load(const Common::Path &filename) {
 	return true;
 }
 
-bool Anm::getImg(uint16 index, Img &img) {
+bool Anm::getImg(uint16 index, Img &img, bool includesPosition) {
 	file.seek(4 + index * 2);
 	int offset = file.readUint16LE();
 	file.seek((offset*16) + (4 + numRecords * 2));
-	img.loadWithoutPosition(file);
+	if (includesPosition) {
+		img.load(file);
+	} else {
+		img.loadWithoutPosition(file);
+	}
 	debug("Loaded %d (%d,%d) (%d,%d) %x", index, img.getX(), img.getY(), img.getWidth(), img.getHeight(), 0);
 
 	return false;
 }
+
+int Anm::numImages() {
+	return numRecords;
+}
+
 } // namespace Darkseed
