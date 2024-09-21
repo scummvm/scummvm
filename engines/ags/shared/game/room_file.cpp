@@ -364,11 +364,11 @@ HError ReadObjScNamesBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ve
 
 // Secondary backgrounds
 HError ReadAnimBgBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
-	room->BgFrameCount = in->ReadByte();
+	room->BgFrameCount = in->ReadInt8();
 	if (room->BgFrameCount > MAX_ROOM_BGFRAMES)
 		return new RoomFileError(kRoomFileErr_IncompatibleEngine, String::FromFormat("Too many room backgrounds (in room: %d, max: %d).", room->BgFrameCount, MAX_ROOM_BGFRAMES));
 
-	room->BgAnimSpeed = in->ReadByte();
+	room->BgAnimSpeed = in->ReadInt8();
 	if (data_ver >= kRoomVersion_255a) {
 		for (size_t i = 0; i < room->BgFrameCount; ++i)
 			room->BgFrames[i].IsPaletteShared = in->ReadInt8() != 0;
