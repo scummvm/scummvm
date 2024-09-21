@@ -88,8 +88,8 @@ struct RestoredData {
 	PBitmap                 RoomBkgScene[MAX_ROOM_BGFRAMES];
 	int16_t                 RoomLightLevels[MAX_ROOM_REGIONS];
 	int32_t                 RoomTintLevels[MAX_ROOM_REGIONS];
-	int16_t                 RoomZoomLevels1[MAX_WALK_AREAS + 1];
-	int16_t                 RoomZoomLevels2[MAX_WALK_AREAS + 1];
+	int16_t                 RoomZoomLevels1[MAX_WALK_AREAS];
+	int16_t                 RoomZoomLevels2[MAX_WALK_AREAS];
 	RoomVolumeMod           RoomVolume;
 	// Mouse cursor parameters
 	int                     CursorID;

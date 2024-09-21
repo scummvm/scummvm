@@ -42,7 +42,7 @@ int GetScalingAt(int x, int y) {
 }
 
 void SetAreaScaling(int area, int min, int max) {
-	if ((area < 0) || (area > MAX_WALK_AREAS))
+	if ((area < 0) || (area >= MAX_WALK_AREAS))
 		quit("!SetAreaScaling: invalid walkalbe area");
 
 	if (min > max)
@@ -91,7 +91,7 @@ int GetWalkableAreaAtRoom(int x, int y) {
 	int area = get_walkable_area_pixel(x, y);
 	// IMPORTANT: disabled walkable areas are actually erased completely from the mask;
 	// see: RemoveWalkableArea() and RestoreWalkableArea().
-	return area >= 0 && area < (MAX_WALK_AREAS + 1) ? area : 0;
+	return (area >= 0 && area < MAX_WALK_AREAS) ? area : 0;
 }
 
 } // namespace AGS3

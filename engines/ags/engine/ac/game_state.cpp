@@ -507,7 +507,7 @@ void GameState::ReadFromSavegame(Stream *in, GameDataVersion data_ver, GameState
 	music_repeat = in->ReadInt32();
 	music_master_volume = in->ReadInt32();
 	digital_master_volume = in->ReadInt32();
-	in->Read(walkable_areas_on, MAX_WALK_AREAS + 1);
+	in->Read(walkable_areas_on, MAX_WALK_AREAS);
 	screen_flipped = in->ReadInt16();
 	if (svg_ver < kGSSvgVersion_350_10) {
 		short offsets_locked = in->ReadInt16();
@@ -729,7 +729,7 @@ void GameState::WriteForSavegame(Stream *out) const {
 	out->WriteInt32(music_repeat);
 	out->WriteInt32(music_master_volume);
 	out->WriteInt32(digital_master_volume);
-	out->Write(walkable_areas_on, MAX_WALK_AREAS + 1);
+	out->Write(walkable_areas_on, MAX_WALK_AREAS);
 	out->WriteInt16(screen_flipped);
 	out->WriteInt32(entered_at_x);
 	out->WriteInt32(entered_at_y);
