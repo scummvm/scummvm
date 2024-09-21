@@ -85,6 +85,7 @@ struct GameSetupStructBase {
 	String			  messages[MAXGLOBALMES];
 	std::unique_ptr<WordsDictionary> dict;
 	std::vector<CharacterInfo> chars;
+	std::vector<CharacterInfo2> chars2; // extended character fields
 
 	GameSetupStructBase();
 	GameSetupStructBase(GameSetupStructBase &&gss) = default;
