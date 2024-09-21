@@ -67,10 +67,11 @@ static void(*_on_switchout_callback)(void) = nullptr;
 KeyInput ags_keycode_from_scummvm(const Common::Event &event, bool old_keyhandle) {
 	KeyInput ki;
 
+	snprintf(ki.Text, KeyInput::UTF8_ARR_SIZE, "%c", event.kbd.ascii);
 	ki.UChar = event.kbd.ascii;
 	ki.Key = ::AGS::g_events->scummvm_key_to_ags_key(event, ki.Mod, old_keyhandle);
 	ki.CompatKey = ::AGS::g_events->scummvm_key_to_ags_key(event, ki.Mod, true);
-	if (ki.CompatKey == eAGSKeyCodeNone)
+	if (!old_keyhandle && ki.CompatKey == eAGSKeyCodeNone)
 		ki.CompatKey = ki.Key;
 	return ki;
 }
