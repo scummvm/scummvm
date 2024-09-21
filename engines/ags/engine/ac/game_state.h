@@ -282,6 +282,13 @@ struct GameState {
 
 	// Special overlays
 	//
+	// Total number of existing overlays, only for the reference
+	int overlay_count = 0;
+	// Incrementing index of creation, assigned to overlays.
+	// Currently is used when resolving sorting conflicts with equal z-order.
+	// TODO: this method theoretically can overflow, but was added still as a quick fix;
+	// investigate better solutions later.
+	int overlay_creation_id = 0;
 	// Is there a QFG4-style dialog overlay on screen (contains overlay ID)
 	int  complete_overlay_on = 0;
 	// Is there a blocking text overlay on screen (contains overlay ID)

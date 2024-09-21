@@ -1581,7 +1581,7 @@ static void add_roomovers_for_drawing() {
 		if (!over.IsRoomLayer()) continue; // not a room layer
 		if (over.transparency == 255) continue; // skip fully transparent
 		Point pos = get_overlay_position(over);
-		add_to_sprite_list(over.ddb, pos.X, pos.Y, over.zorder, false);
+		add_to_sprite_list(over.ddb, pos.X, pos.Y, over.zorder, false, over.creation_id);
 	}
 }
 
@@ -1781,7 +1781,7 @@ void draw_gui_and_overlays() {
 		if (over.IsRoomLayer()) continue; // not a ui layer
 		if (over.transparency == 255) continue; // skip fully transparent
 		Point pos = get_overlay_position(over);
-		add_to_sprite_list(over.ddb, pos.X, pos.Y, over.zorder, false);
+		add_to_sprite_list(over.ddb, pos.X, pos.Y, over.zorder, false, over.creation_id);
 	}
 
 	// Add GUIs
