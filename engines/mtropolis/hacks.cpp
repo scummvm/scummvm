@@ -1140,11 +1140,11 @@ void addMTIQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
 }
 
 void addTelemedQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
-	//How To Build A Telemedicine Program wants to play MOV files in the background that are only audio, not video.
-	//The engine implementation will try to play the entire media file during the rendering of a single frame.
-	//Thus, the window freezes, is not repainted/refreshed while the media plays and unfreezes when it finishes.
-	//But the media files in question are between eight and forty minutes long.
-	//As a cheap workaround, media video frame decoding is disabled for this title.
+	// How To Build A Telemedicine Program wants to play MOV files in the background that are only audio, not video.
+	// The engine implementation will try to play the entire media file during the rendering of a single frame.
+	// Thus, the window freezes, is not repainted/refreshed while the media plays and unfreezes when it finishes.
+	// But the media files in question are between eight and forty minutes long.
+	// As a cheap workaround, media video frame decoding is disabled for this title.
 
 	hacks.telemedMoviePlaybackInBackground = true;
 }
