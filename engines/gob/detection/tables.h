@@ -42,6 +42,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{"bargon", "Bargon Attack"},
 	{"babayaga", "Once Upon A Time: Baba Yaga"},
 	{"abracadabra", "Once Upon A Time: Abracadabra"},
+	{"englishfever", "English Fever"},
 	{"littlered", "Once Upon A Time: Little Red Riding Hood"},
 	{"onceupon", "Once Upon A Time"},
 	{"crousti", "Croustibat"},
@@ -104,6 +105,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	#include "gob/detection/tables_urban.h"     // Urban Runner
 	#include "gob/detection/tables_playtoons.h" // The Playtoons series
 	#include "gob/detection/tables_pierresmagiques.h" // Le pays des Pierres Magiques / The Land of the Magic Stones
+	#include "gob/detection/tables_englishfever.h" // English Fever
 	#include "gob/detection/tables_adi1.h"      // The ADI 1 series
 	#include "gob/detection/tables_adi2.h"      // The ADI 2 series
 	#include "gob/detection/tables_adi4.h"      // The ADI / Addy 4 series
