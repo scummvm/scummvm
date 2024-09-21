@@ -169,15 +169,15 @@ struct Size {
 	}
 
 	// Indicates if current size exceeds other size by any metric
-	inline bool ExceedsByAny(const Size size) const {
+	inline bool ExceedsByAny(const Size &size) const {
 		return Width > size.Width || Height > size.Height;
 	}
 
-	inline bool operator==(const Size size) const {
+	inline bool operator==(const Size &size) const {
 		return Width == size.Width && Height == size.Height;
 	}
 
-	inline bool operator!=(const Size size) const {
+	inline bool operator!=(const Size &size) const {
 		return Width != size.Width || Height != size.Height;
 	}
 
