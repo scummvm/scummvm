@@ -93,8 +93,8 @@ Bitmap *remove_alpha_channel(Bitmap *from) {
 }
 
 Bitmap *initialize_sprite(sprkey_t index, Bitmap *image, uint32_t &sprite_flags) {
-	int oldeip = _G(our_eip);
-	_G(our_eip) = 4300;
+	int oldeip = get_our_eip();
+	set_our_eip(4300);
 
 	if (sprite_flags & SPF_HADALPHACHANNEL) {
 		// we stripped the alpha channel out last time, put
@@ -124,7 +124,7 @@ Bitmap *initialize_sprite(sprkey_t index, Bitmap *image, uint32_t &sprite_flags)
 		sprite_flags |= SPF_HADALPHACHANNEL;
 	}
 
-	_G(our_eip) = oldeip;
+	set_our_eip(oldeip);
 	return use_bmp;
 }
 

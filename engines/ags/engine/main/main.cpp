@@ -48,7 +48,7 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 void main_init(int argc, const char *argv[]) {
-	_G(our_eip) = -999;
+	set_our_eip(-999);
 
 	// Init libraries: set text encoding
 	set_uformat(U_UTF8);

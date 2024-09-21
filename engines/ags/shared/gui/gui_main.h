@@ -293,7 +293,6 @@ extern int get_adjusted_spritewidth(int spr);
 extern int get_adjusted_spriteheight(int spr);
 extern bool is_sprite_alpha(int spr);
 
-#define SET_EIP(x) set_our_eip(x);
 extern void set_eip_guiobj(int eip);
 extern int get_eip_guiobj();
 
