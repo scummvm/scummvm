@@ -82,7 +82,7 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 bool engine_init_backend() {
-	_G(our_eip) = -199;
+	set_our_eip(-199);
 	_G(platform)->PreBackendInit();
 	// Initialize SDL
 	Debug::Printf(kDbgMsg_Info, "Initializing backend libs");
@@ -113,11 +113,11 @@ void winclosehook() {
 void engine_setup_window() {
 	Debug::Printf(kDbgMsg_Info, "Setting up window");
 
-	_G(our_eip) = -198;
+	set_our_eip(-198);
 	sys_window_set_title(_GP(game).gamename.GetCStr());
 	sys_window_set_icon();
 	sys_evt_set_quit_callback(winclosehook);
-	_G(our_eip) = -197;
+	set_our_eip(-197);
 }
 
 // Fills map with game settings, to e.g. let setup application(s)
@@ -360,7 +360,7 @@ void engine_pre_init_gfx() {
 
 int engine_load_game_data() {
 	Debug::Printf("Load game data");
-	_G(our_eip) = -17;
+	set_our_eip(-17);
 	HError err = load_game_file();
 	if (!err) {
 		_G(proper_exit) = 1;
@@ -403,7 +403,7 @@ int check_write_access() {
 	if (_G(platform)->GetDiskFreeSpaceMB() < 2)
 		return 0;
 
-	_G(our_eip) = -1895;
+	set_our_eip(-1895);
 
 	// The Save Game Dir is the only place that we should write to
 	String svg_dir = get_save_game_directory();
@@ -426,12 +426,12 @@ int check_write_access() {
 		return 0;
 #endif // AGS_PLATFORM_OS_ANDROID
 
-	_G(our_eip) = -1896;
+	set_our_eip(-1896);
 
 	temp_s->Write("just to test the drive free space", 30);
 	delete temp_s;
 
-	_G(our_eip) = -1897;
+	set_our_eip(-1897);
 
 	if (File::DeleteFile(tempPath))
 		return 0;
@@ -517,7 +517,7 @@ int engine_init_sprites() {
 // TODO: this should not be a part of "engine_" function group,
 // move this elsewhere (InitGameState?).
 void engine_init_game_settings() {
-	_G(our_eip) = -7;
+	set_our_eip(-7);
 	Debug::Printf("Initialize game settings");
 
 	// Initialize randomizer
@@ -562,7 +562,7 @@ void engine_init_game_settings() {
 	if (_G(playerchar)->view >= 0)
 		precache_view(_G(playerchar)->view, 0, Character_GetDiagonalWalking(_G(playerchar)) ? 8 : 4);
 
-	_G(our_eip) = -6;
+	set_our_eip(-6);
 
 	for (ee = 0; ee < MAX_ROOM_OBJECTS; ee++) {
 		_G(scrObj)[ee].id = ee;
@@ -594,7 +594,7 @@ void engine_init_game_settings() {
 		_GP(charextra)[ee].animwait = 0;
 	}
 
-	_G(our_eip) = -5;
+	set_our_eip(-5);
 	for (ee = 0; ee < _GP(game).numinvitems; ee++) {
 		if (_GP(game).invinfo[ee].flags & IFLG_STARTWITH) _G(playerchar)->inv[ee] = 1;
 		else _G(playerchar)->inv[ee] = 0;
@@ -763,7 +763,7 @@ void engine_init_game_settings() {
 	_G(displayed_room) = -10;
 
 	_G(currentcursor) = 0;
-	_G(our_eip) = -4;
+	set_our_eip(-4);
 	_G(mousey) = 100; // stop icon bar popping up
 
 	// We use same variable to read config and be used at runtime for now,
@@ -1073,61 +1073,61 @@ int initialize_engine(const ConfigTree &startup_opts) {
 		return EXIT_NORMAL;
 	}
 
-	_G(our_eip) = -190;
+	set_our_eip(-190);
 
 	//-----------------------------------------------------
 	// Init auxiliary data files and other directories, initialize asset manager
 	engine_init_user_directories();
 
-	_G(our_eip) = -191;
+	set_our_eip(-191);
 
 	engine_locate_speech_pak();
 
-	_G(our_eip) = -192;
+	set_our_eip(-192);
 
 	engine_locate_audio_pak();
 
-	_G(our_eip) = -193;
+	set_our_eip(-193);
 
 	engine_assign_assetpaths();
 
 	//-----------------------------------------------------
 	// Begin setting up systems
 
-	_G(our_eip) = -194;
+	set_our_eip(-194);
 
 	engine_init_fonts();
 
-	_G(our_eip) = -195;
+	set_our_eip(-195);
 
 	engine_init_keyboard();
 
-	_G(our_eip) = -196;
+	set_our_eip(-196);
 
 	engine_init_mouse();
 
-	_G(our_eip) = -198;
+	set_our_eip(-198);
 
 	engine_init_audio();
 
-	_G(our_eip) = -199;
+	set_our_eip(-199);
 
 	engine_init_debug();
 
-	_G(our_eip) = -10;
+	set_our_eip(-10);
 
 	engine_init_pathfinder();
 
 	set_game_speed(40);
 
-	_G(our_eip) = -20;
-	_G(our_eip) = -19;
+	set_our_eip(-20);
+	set_our_eip(-19);
 
 	int res = engine_load_game_data();
 	if (res != 0)
 		return res;
 
-	_G(our_eip) = -189;
+	set_our_eip(-189);
 
 	res = engine_check_disk_space();
 	if (res != 0)
@@ -1140,7 +1140,7 @@ int initialize_engine(const ConfigTree &startup_opts) {
 	if (res != 0)
 		return res;
 
-	_G(our_eip) = -179;
+	set_our_eip(-179);
 
 	engine_adjust_for_rotation_settings();
 

@@ -530,7 +530,7 @@ static void check_keyboard_controls() {
 
 // check_controls: checks mouse & keyboard interface
 static void check_controls() {
-	_G(our_eip) = 1007;
+	set_our_eip(1007);
 
 	sys_evt_process_pending();
 
@@ -574,7 +574,7 @@ static void check_room_edges(size_t numevents_was) {
 			}
 		}
 	}
-	_G(our_eip) = 1008;
+	set_our_eip(1008);
 
 }
 
@@ -797,7 +797,7 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 	}
 
 	ccNotifyScriptStillAlive();
-	_G(our_eip) = 1;
+	set_our_eip(1);
 
 	game_loop_check_problems_at_start();
 
@@ -805,11 +805,11 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 	if ((_GP(play).no_hicolor_fadein) && (_GP(game).options[OPT_FADETYPE] == FADE_NORMAL))
 		_GP(play).screen_is_faded_out = 0;
 
-	_G(our_eip) = 1014;
+	set_our_eip(1014);
 
 	update_gui_disabled_status();
 
-	_G(our_eip) = 1004;
+	set_our_eip(1004);
 
 	game_loop_do_early_script_update();
 	// run this immediately to make sure it gets done before fade-in
@@ -819,7 +819,7 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 	if (_G(abort_engine))
 		return;
 
-	_G(our_eip) = 1005;
+	set_our_eip(1005);
 
 	res = game_loop_check_ground_level_interactions();
 	if (res != RETURN_CONTINUE) {
@@ -845,7 +845,7 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 	if (_G(abort_engine))
 		return;
 
-	_G(our_eip) = 2;
+	set_our_eip(2);
 
 	// do the overall game state update
 	game_loop_do_update();
@@ -866,14 +866,14 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 	if (!_GP(play).fast_forward)
 		render_graphics(extraBitmap, extraX, extraY);
 
-	_G(our_eip) = 6;
+	set_our_eip(6);
 
 	game_loop_update_events();
 
 	if (_G(abort_engine))
 		return;
 
-	_G(our_eip) = 7;
+	set_our_eip(7);
 
 	update_polled_stuff();
 	if (_G(abort_engine))
@@ -887,7 +887,7 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 	if (_GP(play).fast_forward)
 		return;
 
-	_G(our_eip) = 72;
+	set_our_eip(72);
 
 	game_loop_update_fps();
 
@@ -980,7 +980,7 @@ static int UpdateWaitMode() {
 
 	if (!ShouldStayInWaitMode())
 		_G(restrict_until).type = 0;
-	_G(our_eip) = 77;
+	set_our_eip(77);
 
 	if (_G(restrict_until).type > 0) {
 		return RETURN_CONTINUE;
@@ -1023,7 +1023,7 @@ static int GameTick() {
 
 	UpdateMouseOverLocation();
 
-	_G(our_eip) = 76;
+	set_our_eip(76);
 
 	int res = UpdateWaitMode();
 	if (res == RETURN_CONTINUE) {
@@ -1064,7 +1064,7 @@ static void GameLoopUntilEvent(int untilwhat, const void *data_ptr = nullptr, in
 	SetupLoopParameters(untilwhat, data_ptr, data1, data2);
 	while (GameTick() == 0);
 
-	_G(our_eip) = 78;
+	set_our_eip(78);
 
 	_G(restrict_until) = cached_restrict_until;
 }
