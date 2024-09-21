@@ -793,7 +793,25 @@ void Adlib::OnTimer() {
 								// l0017_1CF2:
 								if (g2291 == bp8) {
 									// TODO: Continue from here
+									// l0017_1CFF:
+									// TODO: Array access
+									/* mov al, [bp - 4h]
+									mov	di,[bp-8h]
+									mov	[di+2235h],al*/
+									// TODO: More array access
+									/* push word ptr[224Ah]
+									push	word ptr [2248h]
+									mov	al,[bp-3h]
+									xor	ah,ah
+									mov	di,ax
+									mov	al,[di+225Fh]
+									xor	ah,ah
+									shl	ax,4h
+									push	ax
+									call	far 0017h:19BEh
+									*/
 								}
+								// TODO: The "or" one should go to 1E91h
 								// TODO: Should be 1CFF
 								
 							}

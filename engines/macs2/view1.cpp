@@ -618,9 +618,10 @@ void View1::draw() {
 	drawBackgroundAnimationNumbers(s);
 
 	// Get mouse position
+	Common::Point mousePos = g_system->getEventManager()->getMousePos();
 
 	// Draw the position next to it
-	
+	renderString(mousePos.x + 20, mousePos.y + 20, Common::String::format("%u %u", mousePos.x, mousePos.y));
 }
 
 bool View1::tick() {
