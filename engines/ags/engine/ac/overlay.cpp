@@ -368,10 +368,16 @@ void remove_screen_overlay(int type) {
 		invalidate_and_subref(over);
 	}
 	dispose_overlay(over);
-    // Don't erase vector elements, instead set invalid and record free index
-    _GP(screenover)[type] = ScreenOverlay();
-    if (type >= OVER_FIRSTFREE)
-        _GP(over_free_ids).push(type);
+
+	// Don't erase vector elements, instead set invalid and record free index
+	_GP(screenover)[type] = ScreenOverlay();
+	if (type >= OVER_FIRSTFREE)
+		_GP(over_free_ids).push(type);
+
+	// If all overlays have been removed, reset creation index (helps vs overflows)
+	_GP(play).overlay_count--;
+	if (_GP(play).overlay_count == 0)
+		_GP(play).overlay_creation_id = 0;
 }
 
 void remove_all_overlays() {
@@ -398,6 +404,8 @@ size_t add_screen_overlay_impl(bool roomlayer, int x, int y, int type, int sprnu
 	if (_GP(screenover).size() <= static_cast<uint32_t>(type))
 		_GP(screenover).resize(type + 1);
 	ScreenOverlay over;
+	over.type = type;
+	over.creation_id = _GP(play).overlay_creation_id++;
 	if (piccy) {
 		over.SetImage(piccy, pic_offx, pic_offy);
 		over.SetAlphaChannel(has_alpha);
@@ -411,7 +419,6 @@ size_t add_screen_overlay_impl(bool roomlayer, int x, int y, int type, int sprnu
 	// by default draw speech and portraits over GUI, and the rest under GUI
 	over.zorder = (roomlayer || type == OVER_TEXTMSG || type == OVER_PICTURE || type == OVER_TEXTSPEECH) ?
 		INT_MAX : INT_MIN;
-	over.type = type;
 	over.timeout = 0;
 	over.bgSpeechForChar = -1;
 	over.associatedOverlayHandle = 0;
@@ -432,6 +439,7 @@ size_t add_screen_overlay_impl(bool roomlayer, int x, int y, int type, int sprnu
 	}
 	over.MarkChanged();
 	_GP(screenover)[type] = std::move(over);
+	_GP(play).overlay_count++;
 	return type;
 }
 
