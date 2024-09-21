@@ -1039,7 +1039,9 @@ void convert_move_path_to_room_resolution(MoveList *ml, int from_step, int to_st
 	if (_GP(thisroom).MaskResolution == _GP(game).GetDataUpscaleMult())
 		return;
 
-	ml->from = {mask_to_room_coord(ml->from.X), mask_to_room_coord(ml->from.Y)};
+	if (from_step == 0) {
+		ml->from = {mask_to_room_coord(ml->from.X), mask_to_room_coord(ml->from.Y)};
+	}
 
 	for (int i = from_step; i <= to_step; i++) {
 		ml->pos[i] = {mask_to_room_coord(ml->pos[i].X), mask_to_room_coord(ml->pos[i].Y)};

@@ -154,9 +154,9 @@ void Character_AddWaypoint(CharacterInfo *chaa, int x, int y) {
 		return;
 	}
 
-	cmls->pos[cmls->numstage] = {x, y};
 	// They're already walking there anyway
-	if (cmls->pos[cmls->numstage] == cmls->pos[cmls->numstage - 1])
+	const Point &last_pos = cmls->GetLastPos();
+	if (last_pos == Point(x, y))
 		return;
 
 	int move_speed_x, move_speed_y;
