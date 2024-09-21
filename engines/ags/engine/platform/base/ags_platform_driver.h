@@ -147,6 +147,9 @@ struct AGSPlatformDriver
 	// Formats message and writes to platform's error output;
 	// Always adds trailing '\n' after formatted string
 	virtual void WriteStdErr(const char *fmt, ...);
+	// Display a text in a message box with a "warning" icon.
+	// Platforms which do not support this should do nothing.
+	virtual void DisplayMessageBox(const char *text) = 0;
 	virtual void YieldCPU();
 	// Called when the game window is being switch out from
 	virtual void DisplaySwitchOut();
