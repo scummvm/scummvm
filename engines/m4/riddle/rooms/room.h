@@ -104,7 +104,10 @@ protected:
 	void sendWSMessage_1a0000(machine *recv, int trigger);
 	void sendWSMessage_1e0000(machine *recv, int val1, int val2);
 	void sendWSMessage_1e0000(int val1, int val2);
+	void sendWSMessage_1f0000(machine *recv, int val1, int val2);
+	void sendWSMessage_1f0000(int val1, int val2);
 	void sendWSMessage_200000(machine *recv, int trigger);
+	void sendWSMessage_210000(machine *recv, int trigger);
 
 	void sendWSMessage_29a0000(machine *recv, int val1);
 	void sendWSMessage_29a0000(int val1);
