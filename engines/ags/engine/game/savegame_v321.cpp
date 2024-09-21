@@ -111,7 +111,7 @@ static void restore_game_spriteset(Stream *in) {
 	// get serialized dynamic sprites
 	int sprnum = in->ReadInt32();
 	while (sprnum) {
-		unsigned char spriteflag = in->ReadByte();
+		unsigned char spriteflag = in->ReadInt8();
 		add_dynamic_sprite(sprnum, read_serialized_bitmap(in));
 		_GP(game).SpriteInfos[sprnum].Flags = spriteflag;
 		sprnum = in->ReadInt32();
@@ -151,7 +151,7 @@ static void restore_game_room_state(Stream *in, GameDataVersion data_ver) {
 
 	// read the room state for all the rooms the player has been in
 	for (int vv = 0; vv < MAX_ROOMS; vv++) {
-		int beenhere = in->ReadByte();
+		int beenhere = in->ReadInt8();
 		if (beenhere) {
 			RoomStatus *roomstat = getRoomStatus(vv);
 			roomstat->beenhere = beenhere;

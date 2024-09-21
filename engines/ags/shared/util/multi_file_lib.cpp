@@ -68,7 +68,7 @@ MFLUtil::MFLError MFLUtil::TestIsMFL(Stream *in, bool test_is_main) {
 	if (err == kMFLNoError) {
 		if (lib_version >= kMFLVersion_MultiV10 && test_is_main) {
 			// this version supports multiple data files, check if it is the first one
-			if (in->ReadByte() != 0)
+			if (in->ReadInt8() != 0)
 				return kMFLErrNoLibBase; // not first datafile in chain
 		}
 	}
@@ -192,7 +192,7 @@ MFLUtil::MFLError MFLUtil::ReadSingleFileLib(AssetLibInfo &lib, Stream *in) {
 }
 
 MFLUtil::MFLError MFLUtil::ReadMultiFileLib(AssetLibInfo &lib, Stream *in, MFLVersion lib_version) {
-	if (in->ReadByte() != 0)
+	if (in->ReadInt8() != 0)
 		return kMFLErrNoLibBase; // not first datafile in chain
 
 	if (lib_version >= kMFLVersion_MultiV30) {
