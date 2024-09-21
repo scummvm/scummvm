@@ -703,7 +703,7 @@ void IAGSEngine::SetMousePosition(int32 x, int32 y) {
 }
 
 void IAGSEngine::SimulateMouseClick(int32 button) {
-	SimulateMouseClick(button);
+	AGS3::SimulateMouseClick(button);
 }
 
 int IAGSEngine::GetMovementPathWaypointCount(int32 pathId) {
