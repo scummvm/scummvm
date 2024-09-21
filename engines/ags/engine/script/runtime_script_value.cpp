@@ -33,10 +33,6 @@ using namespace AGS::Shared;
 // distinguish Runtime Values.
 //
 
-// TODO: test again if stack entry really can hold an offset itself
-
-// TODO: use endian-agnostic method to access global vars
-
 uint8_t RuntimeScriptValue::ReadByte() const {
 	switch (this->Type) {
 	case kScValStackPtr:
