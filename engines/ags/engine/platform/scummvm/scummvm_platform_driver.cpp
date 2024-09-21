@@ -30,6 +30,7 @@
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/plugins/ags_plugin.h"
 #include "ags/shared/util/string.h"
+#include "gui/message.h"
 
 namespace AGS3 {
 
@@ -40,6 +41,7 @@ struct ScummVMPlatformDriver : AGSPlatformDriver {
 
 	int  CDPlayerCommand(int cmdd, int datt) override;
 	void DisplayAlert(const char *, ...) override;
+	void DisplayMessageBox(const char *) override;
 	FSLocation GetAllUsersDataDirectory() override;
 	FSLocation GetUserSavedgamesDirectory() override;
 	FSLocation GetUserConfigDirectory() override;
@@ -75,6 +77,12 @@ void ScummVMPlatformDriver::DisplayAlert(const char *text, ...) {
 		debug("ERROR: %s\n", msg.c_str());
 	else
 		::AGS::g_vm->GUIError(msg);
+}
+
+void ScummVMPlatformDriver::DisplayMessageBox(const char *text) {
+	Common::U32String msg(text);
+	GUI::MessageDialog dialog(msg);
+	dialog.runModal();
 }
 
 FSLocation ScummVMPlatformDriver::GetAllUsersDataDirectory() {
