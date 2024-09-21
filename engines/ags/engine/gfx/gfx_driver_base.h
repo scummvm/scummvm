@@ -228,6 +228,8 @@ protected:
 struct TextureTile {
 	int x = 0, y = 0;
 	int width = 0, height = 0;
+	// allocWidth and allocHeight tell the actual allocated texture size
+	int allocWidth = 0, allocHeight = 0;
 };
 
 
