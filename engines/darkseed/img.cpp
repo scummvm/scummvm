@@ -22,6 +22,7 @@
 #include "img.h"
 #include "common/debug.h"
 #include "common/file.h"
+#include "darkseed.h"
 
 namespace Darkseed {
 
@@ -68,13 +69,13 @@ bool Img::unpackRLE(Common::SeekableReadStream &readStream, Common::Array<byte> 
 			uint8 count = byte & 0x7f;
 			count++;
 			byte = readStream.readByte();
-			for (int i = 0; i < count; i++) {
+			for (int i = 0; i < count && idx + i < size; i++) {
 				buf[idx + i] = byte;
 			}
 			idx += count;
 		} else {
 			uint8 count = byte + 1;
-			for (int i = 0; i < count; i++) {
+			for (int i = 0; i < count && idx + i < size; i++) {
 				buf[idx + i] = readStream.readByte();
 			}
 			idx += count;
@@ -105,5 +106,32 @@ Common::Array<uint8> &Img::getPixels() {
 	return pixels;
 }
 
+void Img::draw(int drawMode) {
+	drawAt(x, y, drawMode);
+}
+
+void Img::drawAt(uint16 xPos, uint16 yPos, int drawMode, int drawWidth) {
+	if (drawMode != 0) {
+		uint8 *screen = (uint8 *)g_engine->_screen->getBasePtr(xPos, yPos);
+		uint8 *imgPixels = pixels.data();
+		for (int sy = 0; sy < height; sy++) {
+			int w = drawWidth != 0 ? drawWidth : width;
+			for (int sx = 0; sx < w; sx++) {
+				if (drawMode == 1 && imgPixels[sx] != 0) {
+					screen[sx] ^= imgPixels[sx];
+				} else if (drawMode == 2 && imgPixels[sx] != 15) {
+					screen[sx] &= imgPixels[sx];
+				} else if (drawMode == 3 && imgPixels[sx] != 0) {
+					screen[sx] |= imgPixels[sx];
+				}
+			}
+			imgPixels += width;
+			screen += g_engine->_screen->pitch;
+		}
+	} else {
+		g_engine->_screen->copyRectToSurface(pixels.data(), width, xPos, yPos, width, height);
+	}
+	g_engine->_screen->addDirtyRect({{(int16)xPos, (int16)yPos}, (int16)width, (int16)height});
+}
 
 } // namespace Darkseed
