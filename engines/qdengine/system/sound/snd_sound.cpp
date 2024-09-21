@@ -42,7 +42,7 @@ bool sndSound::create_sound_buffer() {
 
 bool sndSound::release_sound_buffer() {
 	if (!is_stopped())
-		stop();
+		stop(false);
 
 	return true;
 }
@@ -69,11 +69,11 @@ bool sndSound::play() {
 	return true;
 }
 
-bool sndSound::stop() {
+bool sndSound::stop(bool rewind) {
 	debugC(5, kDebugSound, "sndSound::stop(). this: %p",  (void *)this);
 	g_system->getMixer()->stopHandle(_audHandle);
 
-	if (_sound && _sound->_audioStream)
+	if (rewind && _sound && _sound->_audioStream)
 		_sound->_audioStream->seek(0);
 
 	_isStopped = true;
