@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-05 23:43+0000\n"
+"PO-Revision-Date: 2024-09-21 15:43+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -10330,9 +10330,6 @@ msgid "Enable online competitive mods"
 msgstr "Kilpailumodit"
 
 #: engines/scumm/dialogs.cpp:1713
-#, fuzzy
-#| msgid ""
-#| "Enables custom-made modifications intented for online competitive play."
 msgid "Enables custom-made modifications intended for online competitive play."
 msgstr "Kilpailuhenkiseen moninpeliin räätälöidyt modifikaatiot."
 
@@ -10949,18 +10946,13 @@ msgid ""
 msgstr "Salli vähemmän pehmeä vieritys intron nopeissa kameraliikkeissä."
 
 #: engines/scumm/metaengine.cpp:726
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
-#| "for a more complete experience."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
 "\" for a more complete experience."
 msgstr ""
 "Salli pelin käyttää pelimoottorin sisäistä graafista käyttöliittymää sekä "
-"alkuperäistä tallennus/latausvalikkoa. Käytä tätä yhdessä 'Varmista että "
+"alkuperäistä tallennus/latausvalikkoa. \t\tKäytä tätä yhdessä 'Varmista että "
 "peli tai ohjelma halutaan sulkea'-asetuksen kanssa saadaksesi "
 "kokonaisvaltaisemman kokemuksen."
 
