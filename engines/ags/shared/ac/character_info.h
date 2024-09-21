@@ -90,14 +90,31 @@ inline int CharFlagsToObjFlags(int chflags) {
 // Length of deprecated character name field, in bytes
 #define LEGACY_MAX_CHAR_NAME_LEN 40
 
-// CharacterInfoBase contains original set of character fields.
-// It's picked out from CharacterInfo for convenience of adding
-// new design-time fields; easier to maintain backwards compatibility.
+enum CharacterSvgVersion {
+	kCharSvgVersion_Initial = 0, // [UNSUPPORTED] from 3.5.0 pre-alpha
+	kCharSvgVersion_350 = 1,     // new movelist format (along with pathfinder)
+	kCharSvgVersion_36025 = 2,   // animation volume
+	kCharSvgVersion_36109 = 3,   // removed movelists, save externally
+	kCharSvgVersion_36115 = 4,   // no limit on character name's length
+};
+
+
+// Predeclare a design-time Character extension
+struct CharacterInfo2;
+// Predeclare a runtime Character extension (TODO: refactor and remove this from here)
+struct CharacterExtras;
+
+// CharacterInfo is a design-time Character data.
+// Contains original set of character fields.
 // IMPORTANT: exposed to script API, and plugin API as AGSCharacter!
-// For older script compatibility the struct also has to maintain its size;
-// do not extend or change existing fields, unless planning breaking compatibility.
-// Prefer to use CharacterInfo or CharacterExtras struct for any extensions.
-struct CharacterInfoBase {
+// For older script compatibility the struct also has to maintain its size,
+// and be stored in a plain array to keep the relative memory address offsets
+// between the Character objects!
+// Do not add or change existing fields, unless planning breaking compatibility.
+// Prefer to use CharacterInfo2 and CharacterExtras structs for any extensions.
+//
+// TODO: must refactor, some parts of it should be in a runtime Character class.
+struct CharacterInfo {
 	int   defview;
 	int   talkview;
 	int   view;
@@ -132,26 +149,9 @@ struct CharacterInfoBase {
 	short actx, acty;
 	// These two name fields are deprecated, but must stay here
 	// for compatibility with old scripts and plugin API
-	char legacy_name[LEGACY_MAX_CHAR_NAME_LEN];
-	char legacy_scrname[LEGACY_MAX_SCRIPT_NAME_LEN];
+	char name[LEGACY_MAX_CHAR_NAME_LEN];
+	char scrname[LEGACY_MAX_SCRIPT_NAME_LEN];
 	int8  on;
-};
-
-enum CharacterSvgVersion {
-	kCharSvgVersion_Initial = 0, // [UNSUPPORTED] from 3.5.0 pre-alpha
-	kCharSvgVersion_350	    = 1, // new movelist format (along with pathfinder)
-	kCharSvgVersion_36025   = 2, // animation volume
-	kCharSvgVersion_36109   = 3, // removed movelists, save externally
-	kCharSvgVersion_36115	= 4, // no limit on character name's length
-};
-
-struct CharacterExtras;
-
-// Design-time Character data.
-// TODO: must refactor, some parts of it should be in a runtime Character class.
-struct CharacterInfo : public CharacterInfoBase {
-	AGS::Shared::String scrname;
-	AGS::Shared::String name;
 
 	int get_effective_y() const;   // return Y - Z
 	int get_baseline() const;      // return baseline, or Y if not set
@@ -205,11 +205,11 @@ struct CharacterInfo : public CharacterInfoBase {
 	void update_character_idle(CharacterExtras *chex, int &doing_nothing);
 	void update_character_follower(int &char_index, std::vector<int> &followingAsSheep, int &doing_nothing);
 
-	void ReadFromFile(Shared::Stream *in, GameDataVersion data_ver);
+	void ReadFromFile(Shared::Stream *in, CharacterInfo2 &chinfo2, GameDataVersion data_ver);
 	void WriteToFile(Shared::Stream *out) const;
 	// TODO: move to runtime-only class (?)
-	void ReadFromSavegame(Shared::Stream *in, CharacterSvgVersion save_ver);
-	void WriteToSavegame(Shared::Stream *out) const;
+	void ReadFromSavegame(Shared::Stream *in, CharacterInfo2 &chinfo2, CharacterSvgVersion save_ver);
+	void WriteToSavegame(Shared::Stream *out, const CharacterInfo2 &chinfo2) const;
 
 private:
 	// Helper functions that read and write first data fields,
@@ -217,6 +217,15 @@ private:
 	void ReadBaseFields(Shared::Stream *in);
 	void WriteBaseFields(Shared::Stream *out) const;
 };
+
+
+// Design-time Character extended fields
+struct CharacterInfo2 {
+	// Unrestricted scriptname and name fields
+	AGS::Shared::String scrname_new;
+	AGS::Shared::String name_new;
+};
+
 
 #if defined (OBSOLETE)
 struct OldCharacterInfo {

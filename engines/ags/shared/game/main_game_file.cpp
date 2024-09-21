@@ -560,18 +560,19 @@ void UpgradeAudio(GameSetupStruct &game, LoadedGameEntities &ents, GameDataVersi
 // Convert character data to the current version
 void UpgradeCharacters(GameSetupStruct &game, GameDataVersion data_ver) {
 	auto &chars = _GP(game).chars;
+	auto &chars2 = _GP(game).chars2;
 	const int numcharacters = _GP(game).numcharacters;
 
-	// Fixup charakter script names for 2.x (EGO -> cEgo)
+	// Fixup character script names for 2.x (EGO -> cEgo)
 	if (data_ver <= kGameVersion_272) {
 		char namelwr[LEGACY_MAX_SCRIPT_NAME_LEN];
 		for (int i = 0; i < numcharacters; i++) {
-			if (chars[i].legacy_scrname[0] == 0)
+			if (chars[i].scrname[0] == 0)
 				continue;
-			memcpy(namelwr, chars[i].legacy_scrname, LEGACY_MAX_SCRIPT_NAME_LEN);
+			memcpy(namelwr, chars[i].scrname, LEGACY_MAX_SCRIPT_NAME_LEN);
 			ags_strlwr(namelwr + 1); // lowercase starting with the second char
-			snprintf(chars[i].legacy_scrname, LEGACY_MAX_SCRIPT_NAME_LEN, "c%s", namelwr);
-			chars[i].scrname = chars[i].legacy_scrname;
+			snprintf(chars[i].scrname, LEGACY_MAX_SCRIPT_NAME_LEN, "c%s", namelwr);
+			chars2[i].scrname_new = chars[i].scrname;
 		}
 	}
 
@@ -745,12 +746,14 @@ HError GameDataExtReader::ReadBlock(int /*block_id*/, const String &ext_id,
 		size_t num_chars = _in->ReadInt32();
 		if (num_chars != _ents.Game.chars.size())
 			return new Error(String::FromFormat("Mismatching number of characters: read %zu expected %zu", num_chars, _ents.Game.chars.size()));
-		for (CharacterInfo &chinfo : _ents.Game.chars) {
-			chinfo.scrname = StrUtil::ReadString(_in);
-			chinfo.name = StrUtil::ReadString(_in);
+		for (int i = 0; i < _ents.Game.numcharacters; ++i) {
+			auto &chinfo = _ents.Game.chars[i];
+			auto &chinfo2 = _ents.Game.chars2[i];
+			chinfo2.scrname_new = StrUtil::ReadString(_in);
+			chinfo2.name_new = StrUtil::ReadString(_in);
 			// assign to the legacy fields for compatibility with old plugins
-			snprintf(chinfo.legacy_scrname, LEGACY_MAX_SCRIPT_NAME_LEN, "%s", chinfo.scrname.GetCStr());
-			snprintf(chinfo.legacy_name, LEGACY_MAX_CHAR_NAME_LEN, "%s", chinfo.name.GetCStr());
+			snprintf(chinfo.scrname, LEGACY_MAX_SCRIPT_NAME_LEN, "%s", chinfo2.scrname_new.GetCStr());
+			snprintf(chinfo.name, LEGACY_MAX_CHAR_NAME_LEN, "%s", chinfo2.name_new.GetCStr());
 		}
 		size_t num_invitems = _in->ReadInt32();
 		if (num_invitems != _ents.Game.numinvitems)
