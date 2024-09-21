@@ -150,7 +150,7 @@ int find_nearest_walkable_area(Bitmap *tempw, int fromX, int fromY, int toX, int
 	return 0;
 }
 
-static int walk_area_granularity[MAX_WALK_AREAS + 1];
+static int walk_area_granularity[MAX_WALK_AREAS];
 static int is_route_possible(int fromx, int fromy, int tox, int toy, Bitmap *wss, const PathfinderConfig &pfc) {
 	_G(wallscreen) = wss;
 	suggestx = -1;
@@ -169,8 +169,8 @@ static int is_route_possible(int fromx, int fromy, int tox, int toy, Bitmap *wss
 	int dd, ff;
 	// initialize array for finding widths of walkable areas
 	int thisar, inarow = 0, lastarea = 0;
-	int walk_area_times[MAX_WALK_AREAS + 1];
-	for (dd = 0; dd <= MAX_WALK_AREAS; dd++) {
+	int walk_area_times[MAX_WALK_AREAS];
+	for (dd = 0; dd < MAX_WALK_AREAS; dd++) {
 		walk_area_times[dd] = 0;
 		walk_area_granularity[dd] = 0;
 	}
@@ -182,7 +182,7 @@ static int is_route_possible(int fromx, int fromy, int tox, int toy, Bitmap *wss
 			// count how high the area is at this point
 			if ((thisar == lastarea) && (thisar > 0))
 				inarow++;
-			else if (lastarea > MAX_WALK_AREAS)
+			else if (lastarea >= MAX_WALK_AREAS)
 				quit("!Calculate_Route: invalid colours in walkable area mask");
 			else if (lastarea != 0) {
 				walk_area_granularity[lastarea] += inarow;
@@ -212,7 +212,7 @@ static int is_route_possible(int fromx, int fromy, int tox, int toy, Bitmap *wss
 	}
 
 	// find the average "width" of a path in this walkable area
-	for (dd = 1; dd <= MAX_WALK_AREAS; dd++) {
+	for (dd = 1; dd < MAX_WALK_AREAS; dd++) {
 		if (walk_area_times[dd] == 0) {
 			walk_area_granularity[dd] = pfc.MaxGranularity;
 			continue;

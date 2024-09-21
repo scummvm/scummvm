@@ -267,7 +267,7 @@ void unload_old_room() {
 		save_room_data_segment();
 		FreeRoomScriptInstance();
 	} else _G(croom)->tsdatasize = 0;
-	memset(&_GP(play).walkable_areas_on[0], 1, MAX_WALK_AREAS + 1);
+	memset(&_GP(play).walkable_areas_on[0], 1, MAX_WALK_AREAS);
 	_GP(play).bg_frame = 0;
 	_GP(play).bg_frame_locked = 0;
 	remove_all_overlays();

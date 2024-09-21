@@ -752,7 +752,7 @@ void engine_init_game_settings() {
 	// Force GUI metrics recalculation, accommodating for loaded fonts
 	GUI::MarkForFontUpdate(-1);
 
-	memset(&_GP(play).walkable_areas_on[0], 1, MAX_WALK_AREAS + 1);
+	memset(&_GP(play).walkable_areas_on[0], 1, MAX_WALK_AREAS);
 	memset(&_GP(play).script_timers[0], 0, MAX_TIMERS * sizeof(int));
 	memset(&_GP(play).default_audio_type_volumes[0], -1, MAX_AUDIO_TYPES * sizeof(int));
 
