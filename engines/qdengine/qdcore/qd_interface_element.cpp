@@ -38,8 +38,6 @@
 
 namespace QDEngine {
 
-Vect2i qdInterfaceElement::_screen_offset = Vect2i(0, 0);
-
 qdInterfaceElement::qdInterfaceElement() : _r(0, 0),
 	_option_ID(OPTION_NONE),
 	_screen_depth(0),

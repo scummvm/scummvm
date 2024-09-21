@@ -116,11 +116,9 @@ bool qdInterfaceScreen::quant(float dt) {
 		int x = round(float(_autohide_offset.x) * _autohide_phase);
 		int y = round(float(_autohide_offset.y) * _autohide_phase);
 
-		qdInterfaceElement::set_screen_offset(Vect2i(x, y));
-		qdInventoryCell::set_screen_offset(Vect2i(x, y));
+		g_engine->set_screen_offset(Vect2i(x, y));
 	} else {
-		qdInterfaceElement::set_screen_offset(Vect2i(0, 0));
-		qdInventoryCell::set_screen_offset(Vect2i(0, 0));
+		g_engine->set_screen_offset(Vect2i(0, 0));
 	}
 
 	for (element_list_t::const_iterator it = element_list().begin(); it != element_list().end(); ++it) {

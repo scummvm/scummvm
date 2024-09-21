@@ -74,7 +74,6 @@ bool qdInventoryCellType::save_script(Common::WriteStream &fh, int indent) const
 
 // class qdInventoryCell
 
-Vect2i qdInventoryCell::_screen_offset = Vect2i(0, 0);
 uint32 qdInventoryCell::_shadow_color = 0;
 int qdInventoryCell::_shadow_alpha = -1;
 

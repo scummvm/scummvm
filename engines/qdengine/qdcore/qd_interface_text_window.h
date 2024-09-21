@@ -109,7 +109,7 @@ public:
 
 	//! Возвращает экранные координаты центра окна.
 	virtual const Vect2i r() const {
-		return qdInterfaceElement::r() - qdInterfaceElement::screen_offset();
+		return qdInterfaceElement::r() - g_engine->screen_offset();
 	}
 
 	//! Отрисовка окна.

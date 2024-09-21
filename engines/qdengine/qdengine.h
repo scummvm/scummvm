@@ -126,10 +126,20 @@ public:
 
 	int engineMain();
 
+	const Vect2i &screen_offset() {
+		return _screen_offset;
+	}
+	void set_screen_offset(const Vect2i &offset) {
+		_screen_offset = offset;
+	}
+
+public:
 	int _thumbSizeX = 0, _thumbSizeY = 0;
 	bool _debugDraw = false;
 	bool _debugDrawGrid = false;
 	int _gameVersion = 0;
+
+	Vect2i _screen_offset = Vect2i(0, 0);
 
 	// Default text format
 	qdScreenTextFormat _default_format;

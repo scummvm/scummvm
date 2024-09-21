@@ -152,12 +152,6 @@ public:
 		_shadow_color = color;
 		_shadow_alpha = alpha;
 	}
-	static const Vect2i &screen_offset() {
-		return _screen_offset;
-	}
-	static void set_screen_offset(const Vect2i &offset) {
-		_screen_offset = offset;
-	}
 
 private:
 	//! Тип ячейки.
@@ -172,7 +166,6 @@ private:
 	//! Объект, который лежит в ячейке.
 	mutable qdGameObjectAnimated *_object;
 
-	static Vect2i _screen_offset;
 	static uint32 _shadow_color;
 	static int _shadow_alpha;
 };
@@ -190,7 +183,7 @@ public:
 	qdInventoryCellSet &operator = (const qdInventoryCellSet &set);
 
 	const Vect2s screen_pos() const {
-		return _screen_pos + qdInventoryCell::screen_offset();
+		return _screen_pos + g_engine->screen_offset();
 	}
 	void set_screen_pos(const Vect2s &pos) {
 		_screen_pos = pos;

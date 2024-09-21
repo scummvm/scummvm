@@ -117,7 +117,7 @@ public:
 
 	//! Возвращает экранные координаты центра элемента.
 	virtual const Vect2i r() const {
-		return _r + _screen_offset;
+		return _r + g_engine->screen_offset();
 	}
 	//! Устанавливает экранные координаты центра элемента.
 	void set_r(const Vect2i &v) {
@@ -220,13 +220,6 @@ public:
 		_is_locked = state;
 	}
 
-	static const Vect2i &screen_offset() {
-		return _screen_offset;
-	}
-	static void set_screen_offset(const Vect2i &offset) {
-		_screen_offset = offset;
-	}
-
 protected:
 
 	//! Запись данных в скрипт.
@@ -266,8 +259,6 @@ private:
 
 	grScreenRegion _last_screen_region;
 	const qdAnimationFrame *_last_animation_frame;
-
-	static Vect2i _screen_offset;
 };
 
 } // namespace QDEngine
