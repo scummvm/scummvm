@@ -69,7 +69,7 @@ HError DataExtParser::OpenBlock() {
 
 void DataExtParser::SkipBlock() {
 	if (_blockID >= 0)
-		_in->Seek(_blockLen);
+		_in->Seek(_blockStart + _blockLen, kSeekBegin);
 }
 
 HError DataExtParser::PostAssert() {
