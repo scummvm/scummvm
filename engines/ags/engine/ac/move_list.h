@@ -74,6 +74,8 @@ struct MoveList {
 	fixed	fin_move = 0;
 	float	fin_from_part = 0.f;
 
+	const Point &GetLastPos() const { return numstage > 0 ? pos[numstage - 1] : pos[0]; }
+
 	// Gets a movelist's step length, in coordinate units
 	// (normally the coord unit is a game pixel)
 	float GetStepLength() const;
