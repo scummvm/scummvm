@@ -1045,7 +1045,7 @@ void MaxTrax::outPutScore(const Score &sc, int num) {
 		debug(6, "score %2d: %i Events", num, sc.numEvents);
 	for (uint i = 0; i < sc.numEvents; ++i)
 		outPutEvent(sc.events[i], i);
-	debug(6, "");
+	debug(6, "%s", "");
 }
 
 } // End of namespace Audio
