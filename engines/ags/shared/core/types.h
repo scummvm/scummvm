@@ -66,6 +66,7 @@ typedef int64 int64_t;
 
 typedef int64 soff_t;       // Stream offset type
 typedef int64 intptr_t;
+typedef uint64 uintptr_t;
 
 // fixed point type
 #define fixed_t int32_t

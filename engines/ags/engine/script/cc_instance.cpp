@@ -1161,12 +1161,12 @@ int ccInstance::Run(int32_t curpc) {
 			int32_t instId = codeOp.Instruction.InstanceId;
 			// determine the offset into the code of the instance we want
 			runningInst = _G(loadedInstances)[instId];
-			intptr_t callAddr = reg1.PtrU8 - reinterpret_cast<uint8_t *>(&runningInst->code[0]);
-			if (callAddr % sizeof(intptr_t) != 0) {
+			uintptr_t callAddr = reg1.PtrU8 - reinterpret_cast<uint8_t *>(&runningInst->code[0]);
+			if (callAddr % sizeof(uintptr_t) != 0) {
 				cc_error("call address not aligned");
 				return -1;
 			}
-			callAddr /= sizeof(intptr_t); // size of ccScript::code elements
+			callAddr /= sizeof(uintptr_t); // size of ccScript::code elements
 
 			if (Run(static_cast<int32_t>(callAddr)))
 				return -1;
@@ -1669,7 +1669,7 @@ bool ccInstance::_Create(PScript scri, const ccInstance *joined) {
 		if (etype == EXPORT_FUNCTION) {
 			// NOTE: unfortunately, there seems to be no way to know if
 			// that's an extender function that expects object pointer
-			exports[i].SetCodePtr((static_cast<intptr_t>(eaddr) * sizeof(intptr_t) + reinterpret_cast<uint8_t *>(&code[0])));
+			exports[i].SetCodePtr(reinterpret_cast<uint8_t *>(&code[0]) + (static_cast<uintptr_t>(eaddr) * sizeof(uintptr_t)));
 		} else if (etype == EXPORT_DATA) {
 			ScriptVariable *gl_var = FindGlobalVar(eaddr);
 			if (gl_var) {
