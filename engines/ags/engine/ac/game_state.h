@@ -190,7 +190,7 @@ struct GameState {
 	int   music_repeat = 0;
 	int   music_master_volume = 0;
 	int   digital_master_volume = 0;
-	char  walkable_areas_on[MAX_WALK_AREAS + 1]{};
+	char  walkable_areas_on[MAX_WALK_AREAS]{};
 	short screen_flipped = 0;
 	int   entered_at_x = 0;
 	int   entered_at_y = 0;

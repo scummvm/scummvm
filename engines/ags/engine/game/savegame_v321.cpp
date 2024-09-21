@@ -258,8 +258,8 @@ static HSaveError restore_game_audiocliptypes(Stream *in) {
 static void restore_game_thisroom(Stream *in, RestoredData &r_data) {
 	in->ReadArrayOfInt16(r_data.RoomLightLevels, MAX_ROOM_REGIONS);
 	in->ReadArrayOfInt32(r_data.RoomTintLevels, MAX_ROOM_REGIONS);
-	in->ReadArrayOfInt16(r_data.RoomZoomLevels1, MAX_WALK_AREAS + 1);
-	in->ReadArrayOfInt16(r_data.RoomZoomLevels2, MAX_WALK_AREAS + 1);
+	in->ReadArrayOfInt16(r_data.RoomZoomLevels1, MAX_WALK_AREAS);
+	in->ReadArrayOfInt16(r_data.RoomZoomLevels2, MAX_WALK_AREAS);
 }
 
 static void restore_game_ambientsounds(Stream *in, RestoredData &r_data) {
