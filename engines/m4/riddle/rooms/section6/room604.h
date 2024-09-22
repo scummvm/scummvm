@@ -29,12 +29,52 @@ namespace Riddle {
 namespace Rooms {
 
 class Room604 : public Room {
+private:
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+	int _val5 = 0;
+	int _ripLowReach1 = 0;
+	int _ripLowReach2 = 0;
+	int _ripMedReach1 = 0;
+	int ripStartsGenerator = 0;
+	machine *_ripley = nullptr;
+	machine *_sparkPlugTool = nullptr;
+	machine *_sparkPlugWire = nullptr;
+	machine *_flame = nullptr;
+	machine *_shedDoor = nullptr;
+	machine *_pullCord1 = nullptr;
+	machine *_pullCord2 = nullptr;
+	machine *_doorWireGone = nullptr;
+	machine *_cord = nullptr;
+	machine *_tiedWires = nullptr;
+	machine *_generatorCord = nullptr;
+	machine *_shadow = nullptr;
+
+	bool useWhaleBoneHorn();
+	bool takePullCord();
+	bool takeSparkPlugTool();
+
+	/**
+	 * This Ripley is no more! It has ceased to be! It's expired
+	 * and gone to meet its maker! This is a late Ripley!
+	 * It's a stiff! Bereft of life, it rests in peace!
+	 * If you hadn't nailed it to the perch, it would be
+	 * pushing up the daisies! It's rung down the curtain
+	 * and joined the choir invisible. This is an ex-Ripley!
+	 */
+	void killRipley();
+
 public:
 	Room604() : Room() {}
 	~Room604() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms
