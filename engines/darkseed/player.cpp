@@ -19,7 +19,7 @@
 *
 */
 
-#include "common/math.h"
+#include "math/utils.h"
 #include "darkseed/player.h"
 #include "darkseed/darkseed.h"
 
@@ -210,8 +210,8 @@ void Darkseed::Player::calculateWalkTarget() {
 		if (connector.x == -1 && connector.y == -1) {
 			return;
 		}
-		int connectorToTargetDist = Common::hypotenuse(connector.x - _walkTarget.x, connector.y - _walkTarget.y);
-		int playerToTargetDist = Common::hypotenuse(_position.x - _walkTarget.x, _position.y - _walkTarget.y);
+		int connectorToTargetDist = Math::hypotenuse(connector.x - _walkTarget.x, connector.y - _walkTarget.y);
+		int playerToTargetDist = Math::hypotenuse(_position.x - _walkTarget.x, _position.y - _walkTarget.y);
 		if (connectorToTargetDist < playerToTargetDist) {
 			if(g_engine->_room->canWalkInLineToTarget(_position.x, _position.y, connector.x, connector.y)) {
 				_finalTarget = _walkTarget;
@@ -370,7 +370,7 @@ Common::Point Darkseed::Player::getClosestUnusedConnector(int16 x, int16 y, bool
 			}
 		}
 		if (!containsPoint) {
-			int dist = Common::hypotenuse((roomConnector.x - x), (roomConnector.y - y));
+			int dist = Math::hypotenuse((roomConnector.x - x), (roomConnector.y - y));
 			if (dist < closestDist) {
 				if (!mustHaveCleanLine || g_engine->_room->canWalkInLineToTarget(x, y, roomConnector.x, roomConnector.y)) {
 					closestPoint = roomConnector;
