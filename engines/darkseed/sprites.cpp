@@ -25,11 +25,11 @@
 #define DARKSEED_MAX_SPRITES_ON_SCREEN 30
 
 Darkseed::Sprites::Sprites() {
-	spriteDrawList.reserve(DARKSEED_MAX_SPRITES_ON_SCREEN);
+	_spriteDrawList.reserve(DARKSEED_MAX_SPRITES_ON_SCREEN);
 }
 
 void Darkseed::Sprites::addSpriteToDrawList(uint16 destX, uint16 destY, const Darkseed::Sprite *sprite, uint8 order, uint16 destW, uint16 destH, bool flip) {
-	if (spriteDrawList.size() == DARKSEED_MAX_SPRITES_ON_SCREEN || destX >= 570) {
+	if (_spriteDrawList.size() == DARKSEED_MAX_SPRITES_ON_SCREEN || destX >= 570) {
 		return;
 	}
 
@@ -42,30 +42,30 @@ void Darkseed::Sprites::addSpriteToDrawList(uint16 destX, uint16 destY, const Da
 	drawInstruction.destH = destH;
 	drawInstruction.flip = flip;
 
-	if (!spriteDrawList.empty()) {
+	if (!_spriteDrawList.empty()) {
 		uint insertLocation = 0;
-		for (; insertLocation < spriteDrawList.size(); insertLocation++) {
-			if (order < spriteDrawList[insertLocation].order) {
+		for (; insertLocation < _spriteDrawList.size(); insertLocation++) {
+			if (order < _spriteDrawList[insertLocation].order) {
 				break;
 			}
 		}
-		spriteDrawList.insert_at(insertLocation, drawInstruction);
+		_spriteDrawList.insert_at(insertLocation, drawInstruction);
 	} else {
-		spriteDrawList.push_back(drawInstruction);
+		_spriteDrawList.push_back(drawInstruction);
 	}
 }
 
 void Darkseed::Sprites::clearSpriteDrawList() {
 	// not using clear() here to avoid freeing array storage memory.
-	while (!spriteDrawList.empty()) {
-		spriteDrawList.pop_back();
+	while (!_spriteDrawList.empty()) {
+		_spriteDrawList.pop_back();
 	}
 }
 
 void Darkseed::Sprites::drawSprites() {
-	for (int i = spriteDrawList.size() - 1; i >= 0; i--) {
-		SpriteDrawInstruction &drawInstruction = spriteDrawList[i];
-		if (drawInstruction.sprite->width == drawInstruction.destW && drawInstruction.sprite->height == drawInstruction.destH && !drawInstruction.flip) {
+	for (int i = _spriteDrawList.size() - 1; i >= 0; i--) {
+		SpriteDrawInstruction &drawInstruction = _spriteDrawList[i];
+		if (drawInstruction.sprite->_width == drawInstruction.destW && drawInstruction.sprite->_height == drawInstruction.destH && !drawInstruction.flip) {
 			drawInstruction.sprite->draw(drawInstruction.destX, drawInstruction.destY, g_engine->_frameBottom); // TODO add support for flipping sprite.
 		} else {
 			drawInstruction.sprite->drawScaled(drawInstruction.destX, drawInstruction.destY, drawInstruction.destW, drawInstruction.destH, drawInstruction.flip);

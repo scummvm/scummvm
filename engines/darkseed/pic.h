@@ -31,24 +31,24 @@ namespace Darkseed {
 
 class Pic {
 private:
-	uint16 width;
-	uint16 height;
-	Common::Array<uint8> pixels;
+	uint16 _width;
+	uint16 _height;
+	Common::Array<uint8> _pixels;
 
-	bool hasReadByte = false;
-	byte currentDataByte = 0;
+	bool _hasReadByte = false;
+	byte _currentDataByte = 0;
 
 public:
 	bool load(const Common::Path &filename);
 	Common::Array<uint8> &getPixels() {
-		return pixels;
+		return _pixels;
 	}
 
 	uint16 getWidth() const {
-		return width;
+		return _width;
 	}
 	uint16 getHeight() const {
-		return height;
+		return _height;
 	}
 
 	void draw();

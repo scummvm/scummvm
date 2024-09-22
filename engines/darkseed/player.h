@@ -41,17 +41,17 @@ public:
 	Common::Point _walkTarget;
 	Common::Point _finalTarget;
 
-	int16 playerSpriteWalkIndex_maybe = 0;
-	int16 playerWalkFrameDeltaOffset = 0;
-	int16 playerNewFacingDirection_maybe = 0;
-	uint16 playerWalkFrameIdx = 0;
+	int16 _playerSpriteWalkIndex_maybe = 0;
+	int16 _playerWalkFrameDeltaOffset = 0;
+	int16 _playerNewFacingDirection_maybe = 0;
+	uint16 _playerWalkFrameIdx = 0;
 	bool _actionToPerform = false; // player is pathfinding to some destination?
 	bool _playerIsChangingDirection = false; // AKA _Rotating
 	bool _isAutoWalkingToBed = false;
 	bool _heroMoving = false; // maybe set to true while player is walking around the room.
 	bool _herowaiting = false;
-	int walkPathIndex = -1;
-	uint16 numConnectorsInWalkPath = 0;
+	int _walkPathIndex = -1;
+	uint16 _numConnectorsInWalkPath = 0;
 	Common::Array<Common::Point> _connectorList;
 	int16 _sequenceRotation = -1;
 	bool _walkToSequence = false;

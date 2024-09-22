@@ -24,7 +24,7 @@
 
 namespace Darkseed {
 
-DebugConsole::DebugConsole(TosText *tosText) : GUI::Debugger(), tosText(tosText) {
+DebugConsole::DebugConsole(TosText *tosText) : GUI::Debugger(), _tosText(tosText) {
 	registerCmd("tostext",   WRAP_METHOD(DebugConsole, Cmd_tostext));
 	registerCmd("dt",   WRAP_METHOD(DebugConsole, Cmd_dt));
 	registerCmd("getvar",   WRAP_METHOD(DebugConsole, Cmd_getvar));
@@ -47,8 +47,8 @@ bool DebugConsole::Cmd_tostext(int argc, const char **argv) {
 	}
 
 	uint16 textIdx = atoi(argv[1]);
-	if (textIdx < tosText->getNumEntries()) {
-		debugPrintf("%s\n", tosText->getText(textIdx).c_str());
+	if (textIdx < _tosText->getNumEntries()) {
+		debugPrintf("%s\n", _tosText->getText(textIdx).c_str());
 	} else {
 		debugPrintf("index too large!\n");
 	}

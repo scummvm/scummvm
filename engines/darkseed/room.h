@@ -55,22 +55,22 @@ struct RoomObjElement {
 
 class Room {
 private:
-	bool palLoaded = false;
+	bool _palLoaded = false;
 public:
 	static constexpr int MAX_CONNECTORS = 12;
 	uint8 _roomNumber;
-	Pic pic;
+	Pic _pic;
 	Pal _pal;
 	Nsp _locationSprites;
 	Common::Array<int16> _locObjFrame;
 	Common::Array<int16> _locObjFrameTimer;
 
-	Common::Array<RoomExit> room1;
-	Common::Array<RoomStruct2> walkableLocationsMap;
+	Common::Array<RoomExit> _room1;
+	Common::Array<RoomStruct2> _walkableLocationsMap;
 	Common::Array<RoomObjElement> _roomObj;
 	Common::Array<Common::Point> _connectors;
 
-	uint16 selectedObjIndex = 0;
+	uint16 _selectedObjIndex = 0;
 	int16 _collisionType = 0;
 
 public:

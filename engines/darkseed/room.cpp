@@ -44,8 +44,8 @@ const static int roomDescriptionTextTbl[] = {
 };
 
 Darkseed::Room::Room(int roomNumber) : _roomNumber(roomNumber) {
-	room1.resize(8);
-	walkableLocationsMap.resize(16);
+	_room1.resize(8);
+	_walkableLocationsMap.resize(16);
 	_roomObj.resize(30);
 
 	_locObjFrame.resize(30);
@@ -59,7 +59,7 @@ Darkseed::Room::Room(int roomNumber) : _roomNumber(roomNumber) {
 void Darkseed::Room::initRoom() {
 	for (int iVar1 = 0; iVar1 < 30; iVar1 = iVar1 + 1) {
 		_locObjFrame[iVar1] = 0;
-		g_engine->animIndexTbl[iVar1] = 0;
+		g_engine->_animIndexTbl[iVar1] = 0;
 	}
 	if (g_engine->_objectVar[141] == 10) {
 		g_engine->_objectVar[141] = 11;
@@ -94,19 +94,19 @@ bool Darkseed::Room::load() {
 	file.seek(0x27);
 
 	for (int i = 0; i < 8; i++) {
-		room1[i].x = file.readUint16BE();
-		room1[i].y = file.readUint16BE();
-		if (room1[i].y > 233) {
-			room1[i].y = 233;
+		_room1[i].x = file.readUint16BE();
+		_room1[i].y = file.readUint16BE();
+		if (_room1[i].y > 233) {
+			_room1[i].y = 233;
 		}
-		room1[i].width = file.readUint16BE();
-		room1[i].height = file.readUint16BE();
-		room1[i].roomNumber = file.readUint16BE();
-		room1[i].direction = file.readByte();
+		_room1[i].width = file.readUint16BE();
+		_room1[i].height = file.readUint16BE();
+		_room1[i].roomNumber = file.readUint16BE();
+		_room1[i].direction = file.readByte();
 	}
 
 	for (int i = 0; i < 16; i++) {
-		file.read(walkableLocationsMap[i].strip, 40);
+		file.read(_walkableLocationsMap[i].strip, 40);
 	}
 
 	for (int i = 0; i < 30; i++) {
@@ -155,7 +155,7 @@ bool Darkseed::Room::load() {
 	file.close();
 
 	_collisionType = 0;
-	if (!pic.load(picFilename)) {
+	if (!_pic.load(picFilename)) {
 		return false;
 	}
 
@@ -209,16 +209,16 @@ Common::String Darkseed::Room::stripSpaces(Common::String source) {
 }
 
 void Darkseed::Room::draw() {
-	if (!palLoaded) {
+	if (!_palLoaded) {
 		_pal.installPalette();
-		palLoaded = true;
+		_palLoaded = true;
 	}
-	pic.draw(0x45, 0x28);
+	_pic.draw(0x45, 0x28);
 
 	// print walkable area map.
 	if (g_engine->_debugShowWalkPath) {
-		for (int y = 0x28; y < pic.getHeight() + 0x28; y++) {
-			for (int x = 0x45; x < pic.getWidth() + 0x45; x++) {
+		for (int y = 0x28; y < _pic.getHeight() + 0x28; y++) {
+			for (int x = 0x45; x < _pic.getWidth() + 0x45; x++) {
 				if (canWalkAtLocation(x, y)) {
 					g_engine->_screen->drawLine(x, y, x, y, 14);
 				}
@@ -241,9 +241,9 @@ int Darkseed::Room::checkCursorAndMoveableObjects() {
 	_collisionType = 0;
 	for (uint i = 0; i < _roomObj.size(); i++) {
 		if ((_roomObj[i].type == 1 || _roomObj[i].type == 3)
-			&& _roomObj[i].xOffset <= cursorSprite.width + g_engine->_cursor.getX()
+			&& _roomObj[i].xOffset <= cursorSprite._width + g_engine->_cursor.getX()
 			&& g_engine->_cursor.getX() <= _roomObj[i].width + _roomObj[i].xOffset
-			&& _roomObj[i].yOffset <= cursorSprite.height + g_engine->_cursor.getY()
+			&& _roomObj[i].yOffset <= cursorSprite._height + g_engine->_cursor.getY()
 			&& g_engine->_cursor.getY() <= _roomObj[i].height + _roomObj[i].yOffset
 		) {
 			hasObject = true;
@@ -276,9 +276,9 @@ int Darkseed::Room::checkCursorAndStaticObjects(int x, int y) {
 	_collisionType = 0;
 	for (uint i = 0; i < _roomObj.size(); i++) {
 		if (_roomObj[i].type == 0
-			&& _roomObj[i].xOffset <= cursorSprite.width + g_engine->_cursor.getX()
+			&& _roomObj[i].xOffset <= cursorSprite._width + g_engine->_cursor.getX()
 			&& g_engine->_cursor.getX() <= _roomObj[i].width + _roomObj[i].xOffset
-			&& _roomObj[i].yOffset <= cursorSprite.height + g_engine->_cursor.getY()
+			&& _roomObj[i].yOffset <= cursorSprite._height + g_engine->_cursor.getY()
 			&& g_engine->_cursor.getY() <= _roomObj[i].height + _roomObj[i].yOffset
 		) {
 			if (actionMode != PointerAction && _roomObj[i].objNum >= 5) {
@@ -331,19 +331,19 @@ int Darkseed::Room::CheckCursorAndMovedObjects() {
 			if (i == 22) {
 				uint8 spriteIdx = g_engine->_objectVar.getVar(5) != 0 ? 1 : 0;
 				const Sprite &sprite = _locationSprites.getSpriteAt(spriteIdx);
-				spriteWidth = sprite.width;
-				spriteHeight = sprite.height;
+				spriteWidth = sprite._width;
+				spriteHeight = sprite._height;
 			} else {
 				const Sprite &sprite = g_engine->_baseSprites.getSpriteAt(i);
-				spriteWidth = sprite.width;
-				spriteHeight = sprite.height;
+				spriteWidth = sprite._width;
+				spriteHeight = sprite._height;
 			}
 			calculateScaledSpriteDimensions(spriteWidth, spriteHeight, movedObjPos.y);
 
 			if (
-				((spriteWidth / 2 + movedObjPos.x) - g_engine->scaledSpriteWidth / 2 <= cursorSprite.width + g_engine->_cursor.getX()) &&
-				(g_engine->_cursor.getX() <= ((spriteWidth / 2 + movedObjPos.x) - g_engine->scaledSpriteWidth / 2) + g_engine->scaledSpriteWidth) &&
-				((movedObjPos.y + spriteHeight) - g_engine->scaledSpriteHeight <= cursorSprite.height + g_engine->_cursor.getY()) &&
+				((spriteWidth / 2 + movedObjPos.x) - g_engine->_scaledSpriteWidth / 2 <= cursorSprite._width + g_engine->_cursor.getX()) &&
+				(g_engine->_cursor.getX() <= ((spriteWidth / 2 + movedObjPos.x) - g_engine->_scaledSpriteWidth / 2) + g_engine->_scaledSpriteWidth) &&
+				((movedObjPos.y + spriteHeight) - g_engine->_scaledSpriteHeight <= cursorSprite._height + g_engine->_cursor.getY()) &&
 				g_engine->_cursor.getY() <= movedObjPos.y + spriteHeight) {
 				return i;
 			}
@@ -422,15 +422,15 @@ bool Darkseed::Room::exitRoom() {
 }
 int Darkseed::Room::getExitRoomNumberAtPoint(int x, int y) {
 	int obj = checkCursorAndStaticObjects(x, y);
-	for (uint i = 0; i < room1.size(); i++) {
+	for (uint i = 0; i < _room1.size(); i++) {
 		if (
-			room1[i].roomNumber != 0xff
-			&& _roomObj[obj].xOffset <= room1[i].x
-			&& room1[i].x <= _roomObj[obj].width + _roomObj[obj].xOffset
-			&& _roomObj[obj].yOffset <= room1[i].y
-			&& room1[i].y <= _roomObj[obj].yOffset + _roomObj[obj].height
+			_room1[i].roomNumber != 0xff
+			&& _roomObj[obj].xOffset <= _room1[i].x
+			&& _room1[i].x <= _roomObj[obj].width + _roomObj[obj].xOffset
+			&& _roomObj[obj].yOffset <= _room1[i].y
+			&& _room1[i].y <= _roomObj[obj].yOffset + _roomObj[obj].height
 			) {
-			return room1[i].roomNumber;
+			return _room1[i].roomNumber;
 		}
 	}
 	return -1;
@@ -449,7 +449,7 @@ bool Darkseed::Room::canWalkAtLocation(int x, int y) {
 
 	int t = (x - 69) / 5;
 
-	return (walkableLocationsMap[t / 8].strip[(y - 40) / 5] >> (7 - (t % 8) & 0x1f) & 1);
+	return (_walkableLocationsMap[t / 8].strip[(y - 40) / 5] >> (7 - (t % 8) & 0x1f) & 1);
 }
 
 bool Darkseed::Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int destY) {
@@ -632,7 +632,7 @@ int Darkseed::Room::getRoomExitAtCursor() {
 	for (uint i = 0; i < _roomObj.size(); i++) {
 		Common::Rect roomRect(_roomObj[i].xOffset, _roomObj[i].yOffset, _roomObj[i].xOffset + _roomObj[i].width, _roomObj[i].yOffset + _roomObj[i].height);
 		if (_roomObj[i].type == 0 && _roomObj[i].objNum < 6 && roomRect.contains(g_engine->_cursor.getPosition())) {
-			selectedObjIndex = i;
+			_selectedObjIndex = i;
 			return _roomObj[i].objNum;
 		}
 	}
@@ -644,18 +644,18 @@ void Darkseed::Room::getWalkTargetForObjectType_maybe(int objId) {
 		if (_roomObj[i].objNum == objId && _roomObj[i].type == 4) {
 			g_engine->_player->_walkTarget.x = _roomObj[i].xOffset;
 			g_engine->_player->_walkTarget.y = _roomObj[i].yOffset;
-			for (uint j = 0; j < room1.size(); j++) {
-				if (room1[j].roomNumber != 0xff
-					&& _roomObj[selectedObjIndex].xOffset < room1[j].x
-					&& room1[j].x < _roomObj[selectedObjIndex].xOffset + _roomObj[selectedObjIndex].width
-					&& _roomObj[selectedObjIndex].yOffset < room1[j].y
-					&& room1[j].y < _roomObj[selectedObjIndex].yOffset + _roomObj[selectedObjIndex].height
+			for (uint j = 0; j < _room1.size(); j++) {
+				if (_room1[j].roomNumber != 0xff
+					&& _roomObj[_selectedObjIndex].xOffset < _room1[j].x
+					&& _room1[j].x < _roomObj[_selectedObjIndex].xOffset + _roomObj[_selectedObjIndex].width
+					&& _roomObj[_selectedObjIndex].yOffset < _room1[j].y
+					&& _room1[j].y < _roomObj[_selectedObjIndex].yOffset + _roomObj[_selectedObjIndex].height
 					) {
-					if (_roomNumber != 61 || room1[j].roomNumber == 5 || g_engine->_objectVar[22] > 2) {
-						g_engine->useDoorTarget = true;
+					if (_roomNumber != 61 || _room1[j].roomNumber == 5 || g_engine->_objectVar[22] > 2) {
+						g_engine->_useDoorTarget = true;
 					}
-					g_engine->targetRoomNumber = room1[j].roomNumber;
-					g_engine->targetPlayerDirection = room1[j].direction;
+					g_engine->_targetRoomNumber = _room1[j].roomNumber;
+					g_engine->_targetPlayerDirection = _room1[j].direction;
 					break;
 				}
 			}
@@ -709,31 +709,31 @@ static const uint8 room_sprite_related_2c85_4303[] = {
 };
 
 void Darkseed::Room::calculateScaledSpriteDimensions(int width, int height, int curYPosition) {
-	int local_6 = (g_engine->sprite_y_scaling_threshold_maybe - 2) - curYPosition;
+	int local_6 = (g_engine->_sprite_y_scaling_threshold_maybe - 2) - curYPosition;
 	if (local_6 <= 0) {
 		local_6 = 0;
 	}
-	g_engine->scaledWalkSpeed_maybe = scaleTbl[_roomNumber] - ((room_sprite_related_2c85_4303[_roomNumber] * local_6) / 5);
-	g_engine->scaledSpriteWidth = (width * g_engine->scaledWalkSpeed_maybe) / 1000;
-	g_engine->scaledSpriteHeight = (height * g_engine->scaledWalkSpeed_maybe) / 1000;
+	g_engine->_scaledWalkSpeed_maybe = scaleTbl[_roomNumber] - ((room_sprite_related_2c85_4303[_roomNumber] * local_6) / 5);
+	g_engine->_scaledSpriteWidth = (width * g_engine->_scaledWalkSpeed_maybe) / 1000;
+	g_engine->_scaledSpriteHeight = (height * g_engine->_scaledWalkSpeed_maybe) / 1000;
 }
 
 uint16 Darkseed::Room::getDoorTargetRoom(int objId) {
 	for (uint i = 0; i < _roomObj.size(); i++) {
 		if (_roomObj[i].objNum == objId && _roomObj[i].type == 4) {
-			for (uint j = 0; j < room1.size(); j++) {
-				if (room1[j].roomNumber != 0xff
-					&& _roomObj[selectedObjIndex].xOffset < room1[j].x
-					&& room1[j].x < _roomObj[selectedObjIndex].xOffset + _roomObj[selectedObjIndex].width
-					&& _roomObj[selectedObjIndex].yOffset < room1[j].y
-					&& room1[j].y < _roomObj[selectedObjIndex].yOffset + _roomObj[selectedObjIndex].height
+			for (uint j = 0; j < _room1.size(); j++) {
+				if (_room1[j].roomNumber != 0xff
+					&& _roomObj[_selectedObjIndex].xOffset < _room1[j].x
+					&& _room1[j].x < _roomObj[_selectedObjIndex].xOffset + _roomObj[_selectedObjIndex].width
+					&& _roomObj[_selectedObjIndex].yOffset < _room1[j].y
+					&& _room1[j].y < _roomObj[_selectedObjIndex].yOffset + _roomObj[_selectedObjIndex].height
 				) {
-					return room1[j].roomNumber;
+					return _room1[j].roomNumber;
 				}
 			}
 		}
 	}
-	return g_engine->targetRoomNumber; //TODO is this a safe fallback if no door exists?
+	return g_engine->_targetRoomNumber; //TODO is this a safe fallback if no door exists?
 }
 
 int Darkseed::Room::getObjectUnderCursor() {
@@ -785,46 +785,46 @@ void Darkseed::Room::runRoomObjects() {
 			//			debug("roomObj.objNum: %d", roomObj.objNum);
 			const Sprite &sprite = g_engine->_baseSprites.getSpriteAt(roomObj.spriteNum);
 			if (_roomNumber == 15 || _roomNumber == 16) {
-				g_engine->scaledSpriteWidth = sprite.width;
-				g_engine->scaledSpriteHeight = sprite.height;
+				g_engine->_scaledSpriteWidth = sprite._width;
+				g_engine->_scaledSpriteHeight = sprite._height;
 			} else {
-				calculateScaledSpriteDimensions(sprite.width, sprite.height, roomObj.yOffset + sprite.height);
+				calculateScaledSpriteDimensions(sprite._width, sprite._height, roomObj.yOffset + sprite._height);
 			}
 			if (((roomObj.spriteNum != 7) && (roomObj.spriteNum != 36)) && ((roomObj.spriteNum != 37 && (((roomObj.spriteNum != 38 && (roomObj.spriteNum != 39)) && (roomObj.spriteNum != 40)))))) {
-				xPos = (sprite.width / 2 + xPos) - g_engine->scaledSpriteWidth / 2;
+				xPos = (sprite._width / 2 + xPos) - g_engine->_scaledSpriteWidth / 2;
 			}
 			if (roomObj.spriteNum == 14) { // gloves
 				if (g_engine->_objectVar[86] != 0) {
 					g_engine->_sprites.addSpriteToDrawList(
 						xPos,
-						(yPos + sprite.height) - g_engine->scaledSpriteHeight,
+						(yPos + sprite._height) - g_engine->_scaledSpriteHeight,
 						&sprite,
-						240 - (yPos + sprite.height),
-						g_engine->scaledSpriteWidth,
-						g_engine->scaledSpriteHeight,
+						240 - (yPos + sprite._height),
+						g_engine->_scaledSpriteWidth,
+						g_engine->_scaledSpriteHeight,
 						false);
 				}
 			} else {
 				g_engine->_sprites.addSpriteToDrawList(
 					xPos,
-					(yPos + sprite.height) - g_engine->scaledSpriteHeight,
+					(yPos + sprite._height) - g_engine->_scaledSpriteHeight,
 					&sprite,
 					255,
-					sprite.width,
-					sprite.height,
+					sprite._width,
+					sprite._height,
 					false);
 			}
 			break;
 		}
 		case 2: {
 			int spriteNum = 0;
-			if (_roomNumber == 17 && g_engine->isPlayingAnimation_maybe && g_engine->otherNspAnimationType_maybe == 19 && _locObjFrame[roomObjIdx] == 4) {
+			if (_roomNumber == 17 && g_engine->_isPlayingAnimation_maybe && g_engine->_otherNspAnimationType_maybe == 19 && _locObjFrame[roomObjIdx] == 4) {
 				advanceLocAnimFrame(roomObjIdx + 1);
-				spriteNum = _locationSprites.getAnimAt(1).frameNo[_locObjFrame[roomObjIdx + 1]];
-			} else if (_roomNumber == 16 && g_engine->isPlayingAnimation_maybe && g_engine->otherNspAnimationType_maybe == 35) {
+				spriteNum = _locationSprites.getAnimAt(1)._frameNo[_locObjFrame[roomObjIdx + 1]];
+			} else if (_roomNumber == 16 && g_engine->_isPlayingAnimation_maybe && g_engine->_otherNspAnimationType_maybe == 35) {
 				// shop
 				g_engine->nextFrame(5);
-				spriteNum = g_engine->_player->_animations.getAnimAt(5).frameNo[g_engine->animIndexTbl[5]];
+				spriteNum = g_engine->_player->_animations.getAnimAt(5)._frameNo[g_engine->_animIndexTbl[5]];
 			} else if (_roomNumber == 53) {
 				if (g_engine->_objectVar[79] == 4) {
 					g_engine->_objectVar[79] = 2;
@@ -832,10 +832,10 @@ void Darkseed::Room::runRoomObjects() {
 				bool frameAdvanced = advanceFrame(g_engine->_objectVar[79]);
 				const Obt &anim = _locationSprites.getAnimAt(g_engine->_objectVar[79]);
 				if (frameAdvanced) {
-					roomObj.xOffset += anim.deltaX[_locObjFrame[g_engine->_objectVar[79]]];
-					roomObj.yOffset += anim.deltaY[_locObjFrame[g_engine->_objectVar[79]]];
+					roomObj.xOffset += anim._deltaX[_locObjFrame[g_engine->_objectVar[79]]];
+					roomObj.yOffset += anim._deltaY[_locObjFrame[g_engine->_objectVar[79]]];
 				}
-				spriteNum = _locationSprites.getAnimAt(g_engine->_objectVar[79]).frameNo[_locObjFrame[g_engine->_objectVar[79]]];
+				spriteNum = _locationSprites.getAnimAt(g_engine->_objectVar[79])._frameNo[_locObjFrame[g_engine->_objectVar[79]]];
 				if (g_engine->_ObjRestarted) {
 					if (g_engine->_objectVar[79] == 1) {
 						g_engine->_objectVar[79] = 3;
@@ -848,18 +848,18 @@ void Darkseed::Room::runRoomObjects() {
 				if (_roomNumber != 64 || g_engine->_currentTimeInSeconds < 64800) {
 					advanceLocAnimFrame(roomObjIdx);
 				}
-				spriteNum = _locationSprites.getAnimAt(_roomObj[roomObjIdx].spriteNum).frameNo[_locObjFrame[roomObjIdx]];
+				spriteNum = _locationSprites.getAnimAt(_roomObj[roomObjIdx].spriteNum)._frameNo[_locObjFrame[roomObjIdx]];
 			}
 
-			if (_roomNumber == 16 && g_engine->isPlayingAnimation_maybe && g_engine->otherNspAnimationType_maybe == 35) {
+			if (_roomNumber == 16 && g_engine->_isPlayingAnimation_maybe && g_engine->_otherNspAnimationType_maybe == 35) {
 				const Sprite &sprite = g_engine->_player->_animations.getSpriteAt(spriteNum);
 				g_engine->_sprites.addSpriteToDrawList(
 					xPos,
 					yPos,
 					&sprite,
 					255,
-					sprite.width,
-					sprite.height,
+					sprite._width,
+					sprite._height,
 					false);
 			} else if (_roomNumber == 15) {
 				if (g_engine->_objectVar[28] == 2) {
@@ -868,9 +868,9 @@ void Darkseed::Room::runRoomObjects() {
 						xPos,
 						yPos,
 						&sprite,
-						240 - (yPos + sprite.height),
-						sprite.width,
-						sprite.height,
+						240 - (yPos + sprite._height),
+						sprite._width,
+						sprite._height,
 						false);
 				}
 			} else if (_roomNumber == 57 && spriteNum < 6) {
@@ -881,8 +881,8 @@ void Darkseed::Room::runRoomObjects() {
 						yPos,
 						&sprite,
 						255,
-						sprite.width,
-						sprite.height,
+						sprite._width,
+						sprite._height,
 						false);
 				}
 			} else if (_roomNumber == 58) {
@@ -892,21 +892,21 @@ void Darkseed::Room::runRoomObjects() {
 						xPos,
 						yPos,
 						&sprite,
-						240 - (yPos + sprite.height),
-						sprite.width,
-						sprite.height,
+						240 - (yPos + sprite._height),
+						sprite._width,
+						sprite._height,
 						false);
 				}
-				updateRoomObj(48, xPos, sprite.width, yPos, sprite.height);
-			} else if (_roomNumber == 5 && g_engine->isPlayingAnimation_maybe && g_engine->otherNspAnimationType_maybe == 7) {
+				updateRoomObj(48, xPos, sprite._width, yPos, sprite._height);
+			} else if (_roomNumber == 5 && g_engine->_isPlayingAnimation_maybe && g_engine->_otherNspAnimationType_maybe == 7) {
 				const Sprite &sprite = _locationSprites.getSpriteAt(spriteNum);
 				g_engine->_sprites.addSpriteToDrawList(
 					xPos,
 					yPos,
 					&sprite,
 					1,
-					sprite.width,
-					sprite.height,
+					sprite._width,
+					sprite._height,
 					false);
 			} else if (_roomNumber == 53) {
 				if (g_engine->_objectVar[79] != 3) {
@@ -916,8 +916,8 @@ void Darkseed::Room::runRoomObjects() {
 						yPos,
 						&sprite,
 						255,
-						sprite.width,
-						sprite.height,
+						sprite._width,
+						sprite._height,
 						false);
 				}
 			} else if (((((((_roomNumber == 6) || (_roomNumber == 5)) || (_roomNumber == 7)) ||
@@ -941,14 +941,14 @@ void Darkseed::Room::runRoomObjects() {
 						yPos,
 						&sprite,
 						1,
-						sprite.width,
-						sprite.height,
+						sprite._width,
+						sprite._height,
 						false);
 				} else if ((_roomNumber != 64 || g_engine->_currentTimeInSeconds < 64801 || spriteNum == 3 || spriteNum > 13) &&
 						      (
-							   g_engine->isPlayingAnimation_maybe ||
-							   _locationSprites.getAnimAt(roomObj.spriteNum).numFrames > 1 ||
-							   (playerLeftXPos <= xPos + sprite.width && xPos <= playerRightXPos && g_engine->_player->_position.x <= xPos + sprite.width) ||
+							   g_engine->_isPlayingAnimation_maybe ||
+							   _locationSprites.getAnimAt(roomObj.spriteNum)._numFrames > 1 ||
+							   (playerLeftXPos <= xPos + sprite._width && xPos <= playerRightXPos && g_engine->_player->_position.x <= xPos + sprite._width) ||
 							   g_engine->_objectVar[141] == 6 ||
 							   g_engine->_objectVar[141] == 12
 							  )
@@ -957,9 +957,9 @@ void Darkseed::Room::runRoomObjects() {
 						xPos,
 						yPos,
 						&sprite,
-						240 - (yPos + sprite.height),
-						sprite.width,
-						sprite.height,
+						240 - (yPos + sprite._height),
+						sprite._width,
+						sprite._height,
 						false);
 				}
 			} else {
@@ -969,8 +969,8 @@ void Darkseed::Room::runRoomObjects() {
 					yPos,
 					&sprite,
 					255,
-					sprite.width,
-					sprite.height,
+					sprite._width,
+					sprite._height,
 					false);
 			}
 			if (_roomNumber == 57 && g_engine->_previousRoomNumber == 54 && spriteNum < 6) {
@@ -993,175 +993,175 @@ void Darkseed::Room::runRoomObjects() {
 		if (g_engine->_objectVar.getMoveObjectRoom(i) == _roomNumber) {
 			const Sprite &sprite = g_engine->_baseSprites.getSpriteAt(i);
 			Common::Point pos = g_engine->_objectVar.getMoveObjectPosition(i);
-			calculateScaledSpriteDimensions(sprite.width, sprite.height, pos.y + sprite.height);
-			g_engine->_sprites.addSpriteToDrawList((pos.x + sprite.width / 2) - g_engine->scaledSpriteWidth / 2, pos.y, &sprite, 255, sprite.width, sprite.height, false);
+			calculateScaledSpriteDimensions(sprite._width, sprite._height, pos.y + sprite._height);
+			g_engine->_sprites.addSpriteToDrawList((pos.x + sprite._width / 2) - g_engine->_scaledSpriteWidth / 2, pos.y, &sprite, 255, sprite._width, sprite._height, false);
 		}
 	}
 
 	if (_roomNumber == 59 && g_engine->_objectVar[190] > 1) {
 		const Sprite &sprite = _locationSprites.getSpriteAt(0);
-		g_engine->_sprites.addSpriteToDrawList(490, 70, &sprite, 255, sprite.width, sprite.height, false);
+		g_engine->_sprites.addSpriteToDrawList(490, 70, &sprite, 255, sprite._width, sprite._height, false);
 	}
 	if (_roomNumber == 56 && g_engine->_objectVar[187] == 1) {
 		const Sprite &sprite = _locationSprites.getSpriteAt(3);
-		g_engine->_sprites.addSpriteToDrawList(431, 66, &sprite, 255, sprite.width, sprite.height, false);
+		g_engine->_sprites.addSpriteToDrawList(431, 66, &sprite, 255, sprite._width, sprite._height, false);
 	}
 	if (_roomNumber == 30 && g_engine->_objectVar[29] == 2) {
 		const Sprite &sprite = _locationSprites.getSpriteAt(0);
-		g_engine->_sprites.addSpriteToDrawList(201, 140, &sprite, 255, sprite.width, sprite.height, false);
-		updateRoomObj(113, 201, sprite.width, 140, sprite.height);
+		g_engine->_sprites.addSpriteToDrawList(201, 140, &sprite, 255, sprite._width, sprite._height, false);
+		updateRoomObj(113, 201, sprite._width, 140, sprite._height);
 	}
 	if (_roomNumber == 18 && (g_engine->_objectVar[80] == 0 || g_engine->_objectVar[80] == 2)) {
 		const Sprite &sprite = _locationSprites.getSpriteAt(0);
-		g_engine->_sprites.addSpriteToDrawList(361, 127, &sprite, 255, sprite.width, sprite.height, false);
+		g_engine->_sprites.addSpriteToDrawList(361, 127, &sprite, 255, sprite._width, sprite._height, false);
 	}
 	if (_roomNumber == 0 && g_engine->_objectVar[78] == 2) {
 		const Sprite &sprite = _locationSprites.getSpriteAt(0);
-		g_engine->_sprites.addSpriteToDrawList(519, 80, &sprite, 255, sprite.width, sprite.height, false);
+		g_engine->_sprites.addSpriteToDrawList(519, 80, &sprite, 255, sprite._width, sprite._height, false);
 	}
-	if (_roomNumber == 0 && g_engine->isPlayingAnimation_maybe) {
+	if (_roomNumber == 0 && g_engine->_isPlayingAnimation_maybe) {
 		const Sprite &sprite = _locationSprites.getSpriteAt(1);
-		g_engine->_sprites.addSpriteToDrawList(111, 136, &sprite, 1, sprite.width, sprite.height, false);
+		g_engine->_sprites.addSpriteToDrawList(111, 136, &sprite, 1, sprite._width, sprite._height, false);
 	}
 	if (_roomNumber == 2 && g_engine->_player->_isAutoWalkingToBed && g_engine->_player->_position.x < 150) {
 		g_engine->_objectVar[78] = 2; // open door for player.
 	}
 	if (_roomNumber == 2 && g_engine->_objectVar[78] == 2) {
 		const Sprite &sprite = _locationSprites.getSpriteAt(0);
-		g_engine->_sprites.addSpriteToDrawList(69, 104, &sprite, 255, sprite.width, sprite.height, false);
+		g_engine->_sprites.addSpriteToDrawList(69, 104, &sprite, 255, sprite._width, sprite._height, false);
 	}
 	if (_roomNumber == 9 && g_engine->_objectVar[59] == 2) {
 		const Sprite &sprite = _locationSprites.getSpriteAt(0);
-		g_engine->_sprites.addSpriteToDrawList(519, 77, &sprite, 255, sprite.width, sprite.height, false);
+		g_engine->_sprites.addSpriteToDrawList(519, 77, &sprite, 255, sprite._width, sprite._height, false);
 	}
 	if (g_engine->_player->_isAutoWalkingToBed && g_engine->_player->_position.x < 150 && _roomNumber == 3) {
 		g_engine->_objectVar[59] = 2;
 	}
 	if (_roomNumber == 3 && g_engine->_objectVar[59] == 2) {
 		const Sprite &sprite = _locationSprites.getSpriteAt(0);
-		g_engine->_sprites.addSpriteToDrawList(69, 105, &sprite, 255, sprite.width, sprite.height, false);
+		g_engine->_sprites.addSpriteToDrawList(69, 105, &sprite, 255, sprite._width, sprite._height, false);
 	}
 	if (_roomNumber == 17) {
 		const Sprite &sprite = _locationSprites.getSpriteAt(21);
-		g_engine->_sprites.addSpriteToDrawList(69, 91, &sprite, 240 - (91 + sprite.height), sprite.width, sprite.height, false);
+		g_engine->_sprites.addSpriteToDrawList(69, 91, &sprite, 240 - (91 + sprite._height), sprite._width, sprite._height, false);
 	}
 	if (_roomNumber == 32 && g_engine->_objectVar[23] != 0) { // rope garden room
 		const Sprite &sprite = _locationSprites.getSpriteAt(15);
-		g_engine->_sprites.addSpriteToDrawList(338, 46, &sprite, 255, sprite.width, sprite.height, false);
-		updateRoomObj(102, 338, sprite.width, 46, sprite.height);
+		g_engine->_sprites.addSpriteToDrawList(338, 46, &sprite, 255, sprite._width, sprite._height, false);
+		updateRoomObj(102, 338, sprite._width, 46, sprite._height);
 	}
 	if (_roomNumber == 13 && g_engine->_objectVar[23] != 0) { // rope balcony
 		const Sprite &sprite = _locationSprites.getSpriteAt(0);
-		g_engine->_sprites.addSpriteToDrawList(473, 116, &sprite, 255, sprite.width, sprite.height, false);
+		g_engine->_sprites.addSpriteToDrawList(473, 116, &sprite, 255, sprite._width, sprite._height, false);
 	}
 	if (_roomNumber == 14) { // tuttle tome
 		if (g_engine->_objectVar[99] == 0) {
-			if (!g_engine->isPlayingAnimation_maybe || g_engine->otherNspAnimationType_maybe != 23) {
+			if (!g_engine->_isPlayingAnimation_maybe || g_engine->_otherNspAnimationType_maybe != 23) {
 				const Sprite &sprite = _locationSprites.getSpriteAt(g_engine->_objectVar[66] != 0 ? 1 : 0);
-				g_engine->_sprites.addSpriteToDrawList(245, 140, &sprite, 255, sprite.width, sprite.height, false);
+				g_engine->_sprites.addSpriteToDrawList(245, 140, &sprite, 255, sprite._width, sprite._height, false);
 				const Sprite &sprite1 = _locationSprites.getSpriteAt(g_engine->_objectVar[67] == 0 ? 2 : 3);
-				g_engine->_sprites.addSpriteToDrawList(295, 93, &sprite1, 255, sprite1.width, sprite1.height, false);
+				g_engine->_sprites.addSpriteToDrawList(295, 93, &sprite1, 255, sprite1._width, sprite1._height, false);
 				const Sprite &sprite2 = _locationSprites.getSpriteAt(g_engine->_objectVar[68] == 0 ? 4 : 5);
-				g_engine->_sprites.addSpriteToDrawList(334, 153, &sprite2, 255, sprite2.width, sprite2.height, false);
+				g_engine->_sprites.addSpriteToDrawList(334, 153, &sprite2, 255, sprite2._width, sprite2._height, false);
 			} else {
 				advanceLocAnimFrame(0);
 				if (!g_engine->_ObjRestarted) {
-					const Sprite &sprite = _locationSprites.getSpriteAt(_locationSprites.getAnimAt(0).frameNo[_locObjFrame[0]]);
-					g_engine->_sprites.addSpriteToDrawList(245, 93, &sprite, 255, sprite.width, sprite.height, false);
+					const Sprite &sprite = _locationSprites.getSpriteAt(_locationSprites.getAnimAt(0)._frameNo[_locObjFrame[0]]);
+					g_engine->_sprites.addSpriteToDrawList(245, 93, &sprite, 255, sprite._width, sprite._height, false);
 				} else {
 					const Sprite &sprite = _locationSprites.getSpriteAt(9);
-					g_engine->_sprites.addSpriteToDrawList(245, 93, &sprite, 255, sprite.width, sprite.height, false);
+					g_engine->_sprites.addSpriteToDrawList(245, 93, &sprite, 255, sprite._width, sprite._height, false);
 				}
 			}
 		} else {
 			const Sprite &sprite = _locationSprites.getSpriteAt(9);
-			g_engine->_sprites.addSpriteToDrawList(245, 93, &sprite, 255, sprite.width, sprite.height, false);
+			g_engine->_sprites.addSpriteToDrawList(245, 93, &sprite, 255, sprite._width, sprite._height, false);
 		}
 	}
 	if (_roomNumber == 34) { // in car
 		if (g_engine->_objectVar[86] != 0) {
 			const Sprite &sprite = _locationSprites.getSpriteAt(0);
-			g_engine->_sprites.addSpriteToDrawList(470, 124, &sprite, 255, sprite.width, sprite.height, false);
+			g_engine->_sprites.addSpriteToDrawList(470, 124, &sprite, 255, sprite._width, sprite._height, false);
 		}
 		if (g_engine->_objectVar[71] != 0) {
 			const Sprite &sprite = _locationSprites.getSpriteAt(26);
-			g_engine->_sprites.addSpriteToDrawList(261, 165, &sprite, 255, sprite.width, sprite.height, false);
+			g_engine->_sprites.addSpriteToDrawList(261, 165, &sprite, 255, sprite._width, sprite._height, false);
 		}
 	}
 	if (_roomNumber == 33) { // in garage
-		if (g_engine->isPlayingAnimation_maybe && g_engine->otherNspAnimationType_maybe == 25) {
+		if (g_engine->_isPlayingAnimation_maybe && g_engine->_otherNspAnimationType_maybe == 25) {
 			const Sprite &sprite = _locationSprites.getSpriteAt(0);
-			g_engine->_sprites.addSpriteToDrawList(370, 128, &sprite, 255, sprite.width, sprite.height, false);
+			g_engine->_sprites.addSpriteToDrawList(370, 128, &sprite, 255, sprite._width, sprite._height, false);
 		}
 		if (g_engine->_objectVar[101] >= 1 && g_engine->_objectVar[101] <= 3) {
 			const Sprite &sprite = _locationSprites.getSpriteAt(1);
-			g_engine->_sprites.addSpriteToDrawList(488, 127, &sprite, 255, sprite.width, sprite.height, false);
+			g_engine->_sprites.addSpriteToDrawList(488, 127, &sprite, 255, sprite._width, sprite._height, false);
 		}
 	}
 	if (_roomNumber == 9) { // study
 		int moveObj = g_engine->_objectVar.getMoveObjectRoom(34);
 		if (moveObj == 100 || (moveObj >= 252 && moveObj <= 254)) {
 			const Sprite &sprite = _locationSprites.getSpriteAt(2);
-			g_engine->_sprites.addSpriteToDrawList(322, 147, &sprite, 255, sprite.width, sprite.height, false);
+			g_engine->_sprites.addSpriteToDrawList(322, 147, &sprite, 255, sprite._width, sprite._height, false);
 		}
 	}
 	if (_roomNumber == 7 && g_engine->_objectVar[137] == 0) { // mirror
 		const Sprite &sprite = _locationSprites.getSpriteAt(8);
-		g_engine->_sprites.addSpriteToDrawList(455, 149, &sprite, 255, sprite.width, sprite.height, false);
+		g_engine->_sprites.addSpriteToDrawList(455, 149, &sprite, 255, sprite._width, sprite._height, false);
 	}
 	if (_roomNumber == 62 && g_engine->_objectVar[25] != 0) {
 		const Sprite &sprite = _locationSprites.getSpriteAt(0);
-		g_engine->_sprites.addSpriteToDrawList(291, 185, &sprite, 255, sprite.width, sprite.height, false);
+		g_engine->_sprites.addSpriteToDrawList(291, 185, &sprite, 255, sprite._width, sprite._height, false);
 	}
 	if (_roomNumber == 11 && g_engine->_currentTimeInSeconds > 64800) { // street
 		const Sprite &sprite = _locationSprites.getSpriteAt(0);
-		g_engine->_sprites.addSpriteToDrawList(424, 182, &sprite, 255, sprite.width, sprite.height, false);
+		g_engine->_sprites.addSpriteToDrawList(424, 182, &sprite, 255, sprite._width, sprite._height, false);
 	}
 	if (_roomNumber == 64 && g_engine->_currentTimeInSeconds > 64800) {
 		const Sprite &sprite = _locationSprites.getSpriteAt(0);
-		g_engine->_sprites.addSpriteToDrawList(212, 124, &sprite, 255, sprite.width, sprite.height, false);
+		g_engine->_sprites.addSpriteToDrawList(212, 124, &sprite, 255, sprite._width, sprite._height, false);
 		const Sprite &sprite2 = _locationSprites.getSpriteAt(1);
-		g_engine->_sprites.addSpriteToDrawList(305, 124, &sprite2, 255, sprite2.width, sprite2.height, false);
+		g_engine->_sprites.addSpriteToDrawList(305, 124, &sprite2, 255, sprite2._width, sprite2._height, false);
 		const Sprite &sprite3 = _locationSprites.getSpriteAt(2);
-		g_engine->_sprites.addSpriteToDrawList(322, 138, &sprite3, 255, sprite3.width, sprite3.height, false);
+		g_engine->_sprites.addSpriteToDrawList(322, 138, &sprite3, 255, sprite3._width, sprite3._height, false);
 	}
 	if (_roomNumber == 39 && g_engine->_objectVar[117] != 0) {
 		const Sprite &sprite = _locationSprites.getSpriteAt(12);
-		g_engine->_sprites.addSpriteToDrawList(190, 68, &sprite, 255, sprite.width, sprite.height, false);
+		g_engine->_sprites.addSpriteToDrawList(190, 68, &sprite, 255, sprite._width, sprite._height, false);
 	}
 	if (_roomNumber == 8) { // kitchen
 		if (g_engine->_objectVar[104] != 0) {
 			const Sprite &sprite = _locationSprites.getSpriteAt(0);
-			g_engine->_sprites.addSpriteToDrawList(194, 162, &sprite, 255, sprite.width, sprite.height, false);
+			g_engine->_sprites.addSpriteToDrawList(194, 162, &sprite, 255, sprite._width, sprite._height, false);
 		}
 		if (g_engine->_objectVar[105] != 0) {
 			const Sprite &sprite = _locationSprites.getSpriteAt(1);
-			g_engine->_sprites.addSpriteToDrawList(230, 162, &sprite, 255, sprite.width, sprite.height, false);
+			g_engine->_sprites.addSpriteToDrawList(230, 162, &sprite, 255, sprite._width, sprite._height, false);
 		}
 		if (g_engine->_objectVar[106] != 0) {
 			const Sprite &sprite = _locationSprites.getSpriteAt(2);
-			g_engine->_sprites.addSpriteToDrawList(266, 162, &sprite, 255, sprite.width, sprite.height, false);
+			g_engine->_sprites.addSpriteToDrawList(266, 162, &sprite, 255, sprite._width, sprite._height, false);
 		}
 		if (g_engine->_objectVar[107] != 0) {
 			const Sprite &sprite = _locationSprites.getSpriteAt(3);
-			g_engine->_sprites.addSpriteToDrawList(302, 162, &sprite, 255, sprite.width, sprite.height, false);
+			g_engine->_sprites.addSpriteToDrawList(302, 162, &sprite, 255, sprite._width, sprite._height, false);
 		}
 		if (g_engine->_objectVar[108] != 0) {
 			const Sprite &sprite = _locationSprites.getSpriteAt(4);
-			g_engine->_sprites.addSpriteToDrawList(452, 158, &sprite, 255, sprite.width, sprite.height, false);
+			g_engine->_sprites.addSpriteToDrawList(452, 158, &sprite, 255, sprite._width, sprite._height, false);
 		}
 		if (g_engine->_objectVar[109] != 0) {
 			const Sprite &sprite = _locationSprites.getSpriteAt(5);
-			g_engine->_sprites.addSpriteToDrawList(300, 151, &sprite, 254, sprite.width, sprite.height, false);
+			g_engine->_sprites.addSpriteToDrawList(300, 151, &sprite, 254, sprite._width, sprite._height, false);
 		}
 		if (g_engine->_objectVar[110] != 0) { // tap drip
-			const Sprite &sprite = _locationSprites.getSpriteAt((g_engine->counter_2c85_888b & 1) + 6); // TODO double check counter_2c85_888b is actually _ConstantTick
-			g_engine->_sprites.addSpriteToDrawList(266, 141, &sprite, 255, sprite.width, sprite.height, false);
+			const Sprite &sprite = _locationSprites.getSpriteAt((g_engine->_counter_2c85_888b & 1) + 6); // TODO double check counter_2c85_888b is actually _ConstantTick
+			g_engine->_sprites.addSpriteToDrawList(266, 141, &sprite, 255, sprite._width, sprite._height, false);
 		}
 	}
 	if (_roomNumber == 7 && g_engine->_objectVar[137] == 2) {
 		const Sprite &sprite = g_engine->_player->_animations.getSpriteAt(12);
-		g_engine->_sprites.addSpriteToDrawList(428, 78, &sprite, 255, sprite.width, sprite.height, false);
+		g_engine->_sprites.addSpriteToDrawList(428, 78, &sprite, 255, sprite._width, sprite._height, false);
 	}
 }
 
@@ -1233,18 +1233,18 @@ void Darkseed::Room::drawTrunk() {
 	}
 
 	const Sprite &sprite = _locationSprites.getSpriteAt(spriteIdx);
-	g_engine->sprite_y_scaling_threshold_maybe = 211;
-	calculateScaledSpriteDimensions(sprite.width, sprite.height, trunkYPos + sprite.height);
-	g_engine->sprite_y_scaling_threshold_maybe = 240;
+	g_engine->_sprite_y_scaling_threshold_maybe = 211;
+	calculateScaledSpriteDimensions(sprite._width, sprite._height, trunkYPos + sprite._height);
+	g_engine->_sprite_y_scaling_threshold_maybe = 240;
 	updateRoomObj(42, trunkXPos + 20, 6, trunkYPos + 34, 8);
 	updateRoomObj(22, trunkXPos + 60, 12, trunkYPos + 46, 8);
 	g_engine->_sprites.addSpriteToDrawList(
 		trunkXPos,
-		trunkYPos + sprite.height - g_engine->scaledSpriteHeight,
+		trunkYPos + sprite._height - g_engine->_scaledSpriteHeight,
 		&sprite,
 		254,
-		g_engine->scaledSpriteWidth,
-		g_engine->scaledSpriteHeight,
+		g_engine->_scaledSpriteWidth,
+		g_engine->_scaledSpriteHeight,
 		false);
 	return;
 }
@@ -1255,11 +1255,11 @@ void Darkseed::Room::advanceLocAnimFrame(int roomObjIdx) {
 	_locObjFrameTimer[roomObjIdx]--;
 	if (_locObjFrameTimer[roomObjIdx] < 1) {
 		_locObjFrame[roomObjIdx]++;
-		if (_locObjFrame[roomObjIdx] == anim.numFrames) {
+		if (_locObjFrame[roomObjIdx] == anim._numFrames) {
 			_locObjFrame[roomObjIdx] = 0;
 			g_engine->_ObjRestarted = true;
 		}
-		_locObjFrameTimer[roomObjIdx] = anim.frameDuration[_locObjFrame[roomObjIdx]];
+		_locObjFrameTimer[roomObjIdx] = anim._frameDuration[_locObjFrame[roomObjIdx]];
 	}
 }
 
@@ -1271,11 +1271,11 @@ bool Darkseed::Room::advanceFrame(int animIdx) {
 	if (_locObjFrameTimer[animIdx] < 1) {
 		g_engine->_FrameAdvanced = true;
 		_locObjFrame[animIdx]++;
-		if (_locObjFrame[animIdx] == anim.numFrames) {
+		if (_locObjFrame[animIdx] == anim._numFrames) {
 			_locObjFrame[animIdx] = 0;
 			g_engine->_ObjRestarted = true;
 		}
-		_locObjFrameTimer[animIdx] = anim.frameDuration[_locObjFrame[animIdx]];
+		_locObjFrameTimer[animIdx] = anim._frameDuration[_locObjFrame[animIdx]];
 	}
 	return g_engine->_FrameAdvanced;
 }
@@ -1283,10 +1283,10 @@ bool Darkseed::Room::advanceFrame(int animIdx) {
 void Darkseed::Room::mikeStickThrowAnim() {
 	advanceFrame(2);
 	if (!g_engine->_ObjRestarted) {
-		g_engine->_player->_frameIdx = _locationSprites.getAnimAt(2).frameNo[_locObjFrame[2]];
+		g_engine->_player->_frameIdx = _locationSprites.getAnimAt(2)._frameNo[_locObjFrame[2]];
 	} else {
 		g_engine->_objectVar[79] = 1;
-		g_engine->isPlayingAnimation_maybe = false;
+		g_engine->_isPlayingAnimation_maybe = false;
 		g_engine->_inventory.removeItem(19);
 		g_engine->_objectVar.setMoveObjectRoom(19, 100);
 	}
@@ -1302,12 +1302,12 @@ void Darkseed::Room::loadRoom61AWalkableLocations() {
 	file.seek(0x7f);
 
 	for (int i = 0; i < 16; i++) {
-		file.read(walkableLocationsMap[i].strip, 40);
+		file.read(_walkableLocationsMap[i].strip, 40);
 	}
 }
 
 void Darkseed::Room::restorePalette() {
-	palLoaded = false;
+	_palLoaded = false;
 }
 
 void Darkseed::Room::darkenSky() {
@@ -1318,11 +1318,11 @@ void Darkseed::Room::darkenSky() {
 			timeOffset = 1;
 		}
 		for (int i = 0; i < DARKSEED_PAL_SIZE; i++) {
-			uint8 p = workPal.palData[i];
+			uint8 p = workPal._palData[i];
 			if (p == 0) {
 				p = 1;
 			}
-			workPal.palData[i] = p - (p / (26 - timeOffset / 750));
+			workPal._palData[i] = p - (p / (26 - timeOffset / 750));
 		}
 		workPal.installPalette();
 	}
@@ -1331,14 +1331,14 @@ void Darkseed::Room::darkenSky() {
 void Darkseed::Room::loadLocationSprites(const Common::Path &path) {
 	_locationSprites.load(path);
 	for (int i = 0; i < _locationSprites.getTotalAnim(); i++) {
-		_locObjFrameTimer[i] = _locationSprites.getAnimAt(i).frameDuration[0];
+		_locObjFrameTimer[i] = _locationSprites.getAnimAt(i)._frameDuration[0];
 	}
 }
 
 Common::Point Darkseed::Room::getExitPointForRoom(uint8 roomNumber) {
-	for (unsigned int i = 0; i < room1.size(); i++) {
-		if (room1[i].roomNumber == roomNumber) {
-			return Common::Point(room1[i].x, room1[i].y);
+	for (unsigned int i = 0; i < _room1.size(); i++) {
+		if (_room1[i].roomNumber == roomNumber) {
+			return Common::Point(_room1[i].x, _room1[i].y);
 		}
 	}
 	return Common::Point();

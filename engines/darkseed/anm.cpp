@@ -24,26 +24,26 @@
 
 namespace Darkseed {
 bool Anm::load(const Common::Path &filename) {
-	if (file.isOpen()) {
-		file.close();
+	if (_file.isOpen()) {
+		_file.close();
 	}
-	if (!file.open(filename)) {
+	if (!_file.open(filename)) {
 		return false;
 	}
-	numRecords = file.readUint16LE();
-	assetOffset = file.readUint16LE();
+	_numRecords = _file.readUint16LE();
+	_assetOffset = _file.readUint16LE();
 
 	return true;
 }
 
 bool Anm::getImg(uint16 index, Img &img, bool includesPosition) {
-	file.seek(4 + index * 2);
-	int offset = file.readUint16LE();
-	file.seek((offset * 16) + (4 + numRecords * 2));
+	_file.seek(4 + index * 2);
+	int offset = _file.readUint16LE();
+	_file.seek((offset * 16) + (4 + _numRecords * 2));
 	if (includesPosition) {
-		img.load(file);
+		img.load(_file);
 	} else {
-		img.loadWithoutPosition(file);
+		img.loadWithoutPosition(_file);
 	}
 	debug("Loaded %d (%d,%d) (%d,%d) %x", index, img.getX(), img.getY(), img.getWidth(), img.getHeight(), 0);
 
@@ -51,7 +51,7 @@ bool Anm::getImg(uint16 index, Img &img, bool includesPosition) {
 }
 
 int Anm::numImages() {
-	return numRecords;
+	return _numRecords;
 }
 
 } // namespace Darkseed

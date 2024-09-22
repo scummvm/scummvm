@@ -29,7 +29,7 @@ Darkseed::GameFont::GameFont() {
 }
 
 bool GameFont::load() {
-	return letters.load("tosfont.nsp");
+	return _letters.load("tosfont.nsp");
 }
 
 void GameFont::displayString(uint16 x, uint16 y, const Common::String &text) {
@@ -37,7 +37,7 @@ void GameFont::displayString(uint16 x, uint16 y, const Common::String &text) {
 		auto letter = getCharacterSprite(text[i]);
 		if (letter) {
 			letter->draw(x, y);
-			x += letter->width + 1;
+			x += letter->_width + 1;
 		}
 	}
 }
@@ -47,7 +47,7 @@ int GameFont::stringLength(const Common::String &text) {
 	for (unsigned int i = 0; i < text.size(); i++) {
 		const Sprite *sprite = getCharacterSprite(text[i]);
 		if (sprite) {
-			width += sprite->width + 1;
+			width += sprite->_width + 1;
 		}
 	}
 	return width;
@@ -113,7 +113,7 @@ const Sprite *GameFont::getCharacterSprite(char c) {
 	}
 
 	if (letterIdx != 1000) {
-		return &letters.getSpriteAt(letterIdx);
+		return &_letters.getSpriteAt(letterIdx);
 	}
 
 	return nullptr;

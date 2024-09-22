@@ -30,10 +30,10 @@ namespace Darkseed {
 
 class Sprite {
 public:
-	uint16 width;
-	uint16 height;
-	uint16 pitch;
-	Common::Array<uint8> pixels;
+	uint16 _width;
+	uint16 _height;
+	uint16 _pitch;
+	Common::Array<uint8> _pixels;
 
 public:
 	Sprite(uint16 width, uint16 height, uint16 pitch);
@@ -44,29 +44,29 @@ public:
 
 class Obt {
 public:
-	uint8 numFrames;
-	Common::Array<int32> deltaX;
-	Common::Array<int32> deltaY;
-	Common::Array<uint8> frameNo;
-	Common::Array<uint8> frameDuration;
+	uint8 _numFrames;
+	Common::Array<int32> _deltaX;
+	Common::Array<int32> _deltaY;
+	Common::Array<uint8> _frameNo;
+	Common::Array<uint8> _frameDuration;
 	Obt();
 	virtual ~Obt();
 };
 
 class Nsp {
 private:
-	Common::Array<Sprite> frames;
-	Common::Array<Obt> animations;
+	Common::Array<Sprite> _frames;
+	Common::Array<Obt> _animations;
 
 public:
 	bool load(const Common::Path &filename);
 	bool containsSpriteAt(int index) {
-		return (int)frames.size() > index;
+		return (int)_frames.size() > index;
 	}
 	const Sprite &getSpriteAt(int index);
 	const Obt &getAnimAt(int index);
 	int16 getTotalAnim() {
-		return (int16)animations.size();
+		return (int16)_animations.size();
 	}
 
 private:

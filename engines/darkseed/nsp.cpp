@@ -23,18 +23,18 @@
 #include "darkseed/nsp.h"
 #include "common/debug.h"
 
-Darkseed::Sprite::Sprite(uint16 width, uint16 height, uint16 pitch) : width(width), height(height), pitch(pitch) {
-	pixels.resize(pitch * height, 0);
+Darkseed::Sprite::Sprite(uint16 width, uint16 height, uint16 pitch) : _width(width), _height(height), _pitch(pitch) {
+	_pixels.resize(pitch * height, 0);
 }
 
 bool Darkseed::Sprite::loadData(Common::SeekableReadStream &readStream) {
-	if (width == 1 && height == 1) {
+	if (_width == 1 && _height == 1) {
 		byte b = readStream.readByte();
-		pixels[0] = b >> 4;
+		_pixels[0] = b >> 4;
 	} else {
 		bool hasReadByte = false;
 		int currentDataByte = 0;
-		for (int i = 0; i < pitch * height; i++) {
+		for (int i = 0; i < _pitch * _height; i++) {
 			if (!hasReadByte) {
 				currentDataByte = readStream.readByte();
 				if (readStream.eos()) {
@@ -42,10 +42,10 @@ bool Darkseed::Sprite::loadData(Common::SeekableReadStream &readStream) {
 					return false;
 				}
 				hasReadByte = true;
-				pixels[i] = currentDataByte >> 4;
+				_pixels[i] = currentDataByte >> 4;
 			} else {
 				hasReadByte = false;
-				pixels[i] =  currentDataByte & 0xf;
+				_pixels[i] =  currentDataByte & 0xf;
 			}
 		}
 	}
@@ -53,18 +53,18 @@ bool Darkseed::Sprite::loadData(Common::SeekableReadStream &readStream) {
 }
 
 void Darkseed::Sprite::draw(int x, int y, uint16 frameBottom) const {
-	uint16 clippedWidth = width;
-	uint16 clippedHeight = height;
-	if (x + width > g_engine->_screen->w) {
+	uint16 clippedWidth = _width;
+	uint16 clippedHeight = _height;
+	if (x + _width > g_engine->_screen->w) {
 		clippedWidth = g_engine->_screen->w - x;
 	}
-	if (frameBottom != 0 && y + height > g_engine->_frameBottom) {
+	if (frameBottom != 0 && y + _height > g_engine->_frameBottom) {
 		if (y >= frameBottom) {
 			return;
 		}
 		clippedHeight = frameBottom - y;
 	}
-	g_engine->_screen->copyRectToSurfaceWithKey(pixels.data(), pitch, x, y, clippedWidth, clippedHeight, 0xf);
+	g_engine->_screen->copyRectToSurfaceWithKey(_pixels.data(), _pitch, x, y, clippedWidth, clippedHeight, 0xf);
 }
 
 void Darkseed::Sprite::drawScaled(int destX, int destY, int destWidth, int destHeight, bool flipX) const {
@@ -75,9 +75,9 @@ void Darkseed::Sprite::drawScaled(int destX, int destY, int destWidth, int destH
 	if (destWidth == 0 || destHeight == 0) {
 		return;
 	}
-	const byte *source = pixels.data();
-	const int xs = ((width - 1) << 16) / destWidth;
-	const int ys = ((height - 1) << 16) / destHeight;
+	const byte *source = _pixels.data();
+	const int xs = ((_width - 1) << 16) / destWidth;
+	const int ys = ((_height - 1) << 16) / destHeight;
 	int clipX = 0, clipY = 0;
 	const int destPitch = destSurface->pitch;
 	if (destX < 0) {
@@ -98,7 +98,7 @@ void Darkseed::Sprite::drawScaled(int destX, int destY, int destWidth, int destH
 		return;
 	byte *dst = (byte *)destSurface->getBasePtr(destX, destY);
 	int yi = ys * clipY;
-	const byte *hsrc = source + pitch * ((yi + 0x8000) >> 16);
+	const byte *hsrc = source + _pitch * ((yi + 0x8000) >> 16);
 	int16 currY = destY;
 	for (int yc = 0; yc < destHeight && currY < g_engine->_frameBottom; ++yc) {
 		byte *wdst = flipX ? dst + (destWidth - 1) : dst;
@@ -127,7 +127,7 @@ void Darkseed::Sprite::drawScaled(int destX, int destY, int destWidth, int destH
 		}
 		dst += destPitch;
 		yi += ys;
-		hsrc = source + pitch * ((yi + 0x8000) >> 16);
+		hsrc = source + _pitch * ((yi + 0x8000) >> 16);
 		currY++;
 	}
 }
@@ -150,16 +150,16 @@ bool Darkseed::Nsp::load(const Common::Path &filename) {
 }
 
 bool Darkseed::Nsp::load(Common::SeekableReadStream &readStream) {
-	frames.clear();
+	_frames.clear();
 	for (int i = 0; i < 96; i++) {
 		int w = readStream.readByte();
 		int h = readStream.readByte();
 		int p = w + (w & 1);
-		frames.push_back(Sprite(w, h, p));
+		_frames.push_back(Sprite(w, h, p));
 	}
 
 	for (int i = 0; i < 96; i++) {
-		if (!frames[i].loadData(readStream)) {
+		if (!_frames[i].loadData(readStream)) {
 			return false;
 		}
 	}
@@ -168,10 +168,10 @@ bool Darkseed::Nsp::load(Common::SeekableReadStream &readStream) {
 }
 
 const Darkseed::Sprite &Darkseed::Nsp::getSpriteAt(int index) {
-	if (index >= (int) frames.size()) {
+	if (index >= (int)_frames.size()) {
 		error("getSpriteAt: Invalid sprite index. %d", index);
 	}
-	return frames[index];
+	return _frames[index];
 }
 
 bool Darkseed::Nsp::loadObt(const Common::Path &filename) {
@@ -180,24 +180,24 @@ bool Darkseed::Nsp::loadObt(const Common::Path &filename) {
 		return false;
 	}
 
-	animations.clear();
-	animations.resize(20);
+	_animations.clear();
+	_animations.resize(20);
 	for (int i = 0; i < 20; i++) {
-		animations[i].numFrames = file.readByte();
+		_animations[i]._numFrames = file.readByte();
 
 		for (int j = 0; j < 20; j++) {
 			if (file.readByte()) {
-				animations[i].deltaX.push_back(-(file.readUint16LE() / 100));
+				_animations[i]._deltaX.push_back(-(file.readUint16LE() / 100));
 			} else {
-				animations[i].deltaX.push_back(file.readUint16LE() / 100);
+				_animations[i]._deltaX.push_back(file.readUint16LE() / 100);
 			}
 			if (file.readByte()) {
-				animations[i].deltaY.push_back(-(file.readUint16LE() / 100));
+				_animations[i]._deltaY.push_back(-(file.readUint16LE() / 100));
 			} else {
-				animations[i].deltaY.push_back(file.readUint16LE() / 100);
+				_animations[i]._deltaY.push_back(file.readUint16LE() / 100);
 			}
-			animations[i].frameNo.push_back(file.readByte());
-			animations[i].frameDuration.push_back(file.readByte());
+			_animations[i]._frameNo.push_back(file.readByte());
+			_animations[i]._frameDuration.push_back(file.readByte());
 		}
 	}
 
@@ -208,20 +208,20 @@ bool Darkseed::Nsp::loadObt(const Common::Path &filename) {
 }
 
 const Darkseed::Obt &Darkseed::Nsp::getAnimAt(int index) {
-	return animations[index];
+	return _animations[index];
 }
 
 Darkseed::Obt::Obt() {
-	numFrames = 0;
-	deltaX.reserve(20);
-	deltaY.reserve(20);
-	frameNo.reserve(20);
-	frameDuration.reserve(20);
+	_numFrames = 0;
+	_deltaX.reserve(20);
+	_deltaY.reserve(20);
+	_frameNo.reserve(20);
+	_frameDuration.reserve(20);
 }
 
 Darkseed::Obt::~Obt() {
-	deltaX.clear();
-	deltaY.clear();
-	frameNo.clear();
-	frameDuration.clear();
+	_deltaX.clear();
+	_deltaY.clear();
+	_frameNo.clear();
+	_frameDuration.clear();
 }

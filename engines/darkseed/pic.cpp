@@ -33,28 +33,28 @@ bool Darkseed::Pic::load(const Common::Path &filename) {
 	bool ret = load(file);
 	file.close();
 	if (ret) {
-		debug("Loaded %s (%d,%d)", fullPath.toString().c_str(), width, height);
+		debug("Loaded %s (%d,%d)", fullPath.toString().c_str(), _width, _height);
 	}
 	return ret;
 }
 
 bool Darkseed::Pic::load(Common::SeekableReadStream &readStream) {
-	width = readStream.readUint16BE();
-	height = readStream.readUint16BE();
-	pixels.resize(width * (height + 1), 0);
+	_width = readStream.readUint16BE();
+	_height = readStream.readUint16BE();
+	_pixels.resize(_width * (_height + 1), 0);
 
 	int curX = 0;
 	int curY = 0;
-	while (curY < height) {
+	while (curY < _height) {
 		int rleCommand = readNextNibble(readStream);
 
 		if (rleCommand < 8) {
 			// read nibble count of nibbles pixels
 			for (int i = 0; i < rleCommand + 1; i++) {
 				byte pixel = readNextNibble(readStream);
-				pixels[curX + curY * width] = pixel;
+				_pixels[curX + curY * _width] = pixel;
 				curX++;
-				if (curX == width) {
+				if (curX == _width) {
 					curX = 0;
 					curY++;
 				}
@@ -63,9 +63,9 @@ bool Darkseed::Pic::load(Common::SeekableReadStream &readStream) {
 			// fetch next nibble and repeat if n times.
 			byte pixel = readNextNibble(readStream);
 			for (int i = 16; i >= rleCommand; i--) {
-				pixels[curX + curY * width] = pixel;
+				_pixels[curX + curY * _width] = pixel;
 				curX++;
-				if (curX == width) {
+				if (curX == _width) {
 					curX = 0;
 					curY++;
 				}
@@ -76,16 +76,16 @@ bool Darkseed::Pic::load(Common::SeekableReadStream &readStream) {
 }
 
 byte Darkseed::Pic::readNextNibble(Common::SeekableReadStream &readStream) {
-	if (!hasReadByte) {
-		currentDataByte = readStream.readByte();
+	if (!_hasReadByte) {
+		_currentDataByte = readStream.readByte();
 		if (readStream.eos()) {
 			debug("Argh!");
 		}
-		hasReadByte = true;
-		return currentDataByte >> 4;
+		_hasReadByte = true;
+		return _currentDataByte >> 4;
 	} else {
-		hasReadByte = false;
-		return currentDataByte & 0xf;
+		_hasReadByte = false;
+		return _currentDataByte & 0xf;
 	}
 }
 
