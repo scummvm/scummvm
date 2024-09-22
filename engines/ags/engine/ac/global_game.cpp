@@ -647,7 +647,10 @@ int SaveScreenShot(const char *namm) {
 	else
 		fileName = Path::ConcatPaths(svg_dir, namm);
 
-	Bitmap *buffer = CopyScreenIntoBitmap(_GP(play).GetMainViewport().GetWidth(), _GP(play).GetMainViewport().GetHeight());
+	// NOTE: be aware that by the historical logic AGS makes a screenshot
+	// of a "main viewport", that may be smaller in legacy "letterbox" mode.
+	const Rect &viewport = _GP(play).GetMainViewport();
+	Bitmap *buffer = CopyScreenIntoBitmap(_GP(play).GetMainViewport().GetWidth(), _GP(play).GetMainViewport().GetHeight(), &viewport);
 	if (!buffer->SaveToFile(fileName, _G(palette)) != 0) {
 		delete buffer;
 		return 0;
