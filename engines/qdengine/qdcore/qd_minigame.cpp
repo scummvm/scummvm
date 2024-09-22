@@ -49,6 +49,7 @@
 // shveik
 #include "qdengine/minigames/inv_popup.h"
 #include "qdengine/minigames/shveik_shkatulka.h"
+#include "qdengine/minigames/shveik_portret.h"
 
 
 namespace QDEngine {
