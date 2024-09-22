@@ -32,7 +32,7 @@ class Cutscene {
 private:
 	char _cutsceneId;
 	uint16 _movieStep = 9999;
-	TitleFont *titleFont = nullptr;
+	TitleFont *_titleFont = nullptr;
 	Pal _palette;
 	Anm _animation;
 	int _animIdx;

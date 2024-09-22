@@ -30,7 +30,7 @@ namespace Darkseed {
 
 class DebugConsole : public GUI::Debugger {
 private:
-	TosText *tosText;
+	TosText *_tosText;
 private:
 	bool Cmd_tostext(int argc, const char **argv);
 	bool Cmd_dt(int argc, const char **argv);

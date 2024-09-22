@@ -30,12 +30,12 @@ namespace Darkseed {
 
 class Img {
 private:
-	uint16 x;
-	uint16 y;
-	uint16 width;
-	uint16 height;
-	byte mode;
-	Common::Array<uint8> pixels;
+	uint16 _x;
+	uint16 _y;
+	uint16 _width;
+	uint16 _height;
+	byte _mode;
+	Common::Array<uint8> _pixels;
 public:
 	bool load(const Common::Path &filename);
 	bool load(Common::SeekableReadStream &readStream);
@@ -45,16 +45,16 @@ public:
 
 	Common::Array<uint8> &getPixels();
 	uint16 getX() const {
-		return x;
+		return _x;
 	}
 	uint16 getY() const {
-		return y;
+		return _y;
 	}
 	uint16 getWidth() const {
-		return width;
+		return _width;
 	}
 	uint16 getHeight() const {
-		return height;
+		return _height;
 	}
 
 private:

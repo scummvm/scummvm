@@ -23,7 +23,7 @@
 #include "darkseed/darkseed.h"
 
 Darkseed::Cutscene::~Cutscene() {
-	delete titleFont;
+	delete _titleFont;
 }
 
 void Darkseed::Cutscene::play(char cutsceneId) {
@@ -78,8 +78,8 @@ void Darkseed::Cutscene::update() {
 		} else if (_cutsceneId == 'I') {
 			play('J');
 		} else if (_cutsceneId == 'J') {
-			delete titleFont;
-			titleFont = nullptr;
+			delete _titleFont;
+			_titleFont = nullptr;
 			g_engine->newGame();
 		} else if (_cutsceneId == 'Y') {
 			play('I');
@@ -102,10 +102,10 @@ bool Darkseed::Cutscene::introScene() {
 	case 3: {
 		g_engine->_screen->clear();
 		_palette.load("art/house.pal");
-		if (titleFont == nullptr) {
-			titleFont = new TitleFont();
+		if (_titleFont == nullptr) {
+			_titleFont = new TitleFont();
 		}
-		titleFont->displayString(68, 160, "DEVELOPING NEW WAYS TO AMAZE");
+		_titleFont->displayString(68, 160, "DEVELOPING NEW WAYS TO AMAZE");
 		g_engine->fadeIn(_palette);
 	}
 	break;
@@ -124,7 +124,7 @@ bool Darkseed::Cutscene::introScene() {
 		break;
 	case 7:
 		g_engine->_screen->clear();
-		titleFont->displayString(222, 160, "CYBERDREAMS");
+		_titleFont->displayString(222, 160, "CYBERDREAMS");
 		g_engine->fadeIn(_palette);
 		break;
 	case 8:
@@ -142,7 +142,7 @@ bool Darkseed::Cutscene::introScene() {
 		break;
 	case 11:
 		g_engine->_screen->clear();
-		titleFont->displayString(250, 160, "PRESENTS");
+		_titleFont->displayString(250, 160, "PRESENTS");
 		g_engine->fadeIn(_palette);
 		break;
 	case 12:
@@ -251,10 +251,10 @@ bool Darkseed::Cutscene::introScene() {
 	case 28:
 		putHouse();
 		registTime();
-		titleFont->displayString(155, 90, "EXECUTIVE PRODUCERS");
-		titleFont->displayString(200, 130, "PATRICK KETCHUM");
-		titleFont->displayString(236, 160, "ROLF KLUG");
-		titleFont->displayString(236, 190, "JEAN KLUG");
+		_titleFont->displayString(155, 90, "EXECUTIVE PRODUCERS");
+		_titleFont->displayString(200, 130, "PATRICK KETCHUM");
+		_titleFont->displayString(236, 160, "ROLF KLUG");
+		_titleFont->displayString(236, 190, "JEAN KLUG");
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 29:
@@ -265,9 +265,9 @@ bool Darkseed::Cutscene::introScene() {
 	case 30:
 		putHouse();
 		registTime();
-		titleFont->displayString(236, 95, "PRODUCERS");
-		titleFont->displayString(200, 135, "HARALD SEELEY");
-		titleFont->displayString(218, 165, "MIKE DAWSON");
+		_titleFont->displayString(236, 95, "PRODUCERS");
+		_titleFont->displayString(200, 135, "HARALD SEELEY");
+		_titleFont->displayString(218, 165, "MIKE DAWSON");
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 31:
@@ -278,9 +278,9 @@ bool Darkseed::Cutscene::introScene() {
 	case 32:
 		putHouse();
 		registTime();
-		titleFont->displayString(245, 95, "DESIGNERS");
-		titleFont->displayString(209, 135, "MIKE CRANFORD");
-		titleFont->displayString(227, 165, "MIKE DAWSON");
+		_titleFont->displayString(245, 95, "DESIGNERS");
+		_titleFont->displayString(209, 135, "MIKE CRANFORD");
+		_titleFont->displayString(227, 165, "MIKE DAWSON");
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 33:
@@ -291,10 +291,10 @@ bool Darkseed::Cutscene::introScene() {
 	case 34:
 		putHouse();
 		registTime();
-		titleFont->displayString(227, 95, "PROGRAMMERS");
-		titleFont->displayString(164, 135, "LENNARD FEDDERSEN");
-		titleFont->displayString(227, 165, "JOHN KRAUSE");
-		titleFont->displayString(245, 195, "GARY VICK");
+		_titleFont->displayString(227, 95, "PROGRAMMERS");
+		_titleFont->displayString(164, 135, "LENNARD FEDDERSEN");
+		_titleFont->displayString(227, 165, "JOHN KRAUSE");
+		_titleFont->displayString(245, 195, "GARY VICK");
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 35:
@@ -305,8 +305,8 @@ bool Darkseed::Cutscene::introScene() {
 	case 36:
 		putHouse();
 		registTime();
-		titleFont->displayString(200, 100, "MUSICAL SCORE");
-		titleFont->displayString(200, 140, "GREGORY ALPER");
+		_titleFont->displayString(200, 100, "MUSICAL SCORE");
+		_titleFont->displayString(200, 140, "GREGORY ALPER");
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 37:
@@ -317,8 +317,8 @@ bool Darkseed::Cutscene::introScene() {
 	case 38:
 		putHouse();
 		registTime();
-		titleFont->displayString(119, 100, "MUSIC AND SOUND EFFECTS");
-		titleFont->displayString(200, 140, "DAVID A. BEAN");
+		_titleFont->displayString(119, 100, "MUSIC AND SOUND EFFECTS");
+		_titleFont->displayString(200, 140, "DAVID A. BEAN");
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 39:
@@ -329,8 +329,8 @@ bool Darkseed::Cutscene::introScene() {
 	case 40:
 		putHouse();
 		registTime();
-		titleFont->displayString(218, 100, "ART DIRECTOR");
-		titleFont->displayString(236, 140, "BRUMMBAER");
+		_titleFont->displayString(218, 100, "ART DIRECTOR");
+		_titleFont->displayString(236, 140, "BRUMMBAER");
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 41:
@@ -341,8 +341,8 @@ bool Darkseed::Cutscene::introScene() {
 	case 42:
 		putHouse();
 		registTime();
-		titleFont->displayString(164, 100, "ASST. ART DIRECTOR");
-		titleFont->displayString(191, 140, "PAUL DRZEWIECKI");
+		_titleFont->displayString(164, 100, "ASST. ART DIRECTOR");
+		_titleFont->displayString(191, 140, "PAUL DRZEWIECKI");
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 43:
@@ -353,8 +353,8 @@ bool Darkseed::Cutscene::introScene() {
 	case 44:
 		putHouse();
 		registTime();
-		titleFont->displayString(200, 100, "DARK WORLD ART");
-		titleFont->displayString(245, 140, "H.R. GIGER");
+		_titleFont->displayString(200, 100, "DARK WORLD ART");
+		_titleFont->displayString(245, 140, "H.R. GIGER");
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 45:
@@ -365,10 +365,10 @@ bool Darkseed::Cutscene::introScene() {
 	case 46:
 		putHouse();
 		registTime();
-		titleFont->displayString(182, 90, "COMPUTER ARTISTS");
-		titleFont->displayString(227, 130, "JULIA ULANO");
-		titleFont->displayString(191, 160, "JOBY ROME-OTERO");
-		titleFont->displayString(236, 190, "PAUL RYAN");
+		_titleFont->displayString(182, 90, "COMPUTER ARTISTS");
+		_titleFont->displayString(227, 130, "JULIA ULANO");
+		_titleFont->displayString(191, 160, "JOBY ROME-OTERO");
+		_titleFont->displayString(236, 190, "PAUL RYAN");
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 47:
@@ -379,8 +379,8 @@ bool Darkseed::Cutscene::introScene() {
 	case 48:
 		putHouse();
 		registTime();
-		titleFont->displayString(236, 100, "GAME TEXT");
-		titleFont->displayString(209, 140, "MICHEL HORVAT");
+		_titleFont->displayString(236, 100, "GAME TEXT");
+		_titleFont->displayString(209, 140, "MICHEL HORVAT");
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 49:
@@ -482,12 +482,12 @@ bool Darkseed::Cutscene::embryoInsertedScene() {
 	case 13: {
 		g_engine->_screen->clear();
 		_palette.load("art/house.pal");
-		if (titleFont == nullptr) {
-			titleFont = new TitleFont();
+		if (_titleFont == nullptr) {
+			_titleFont = new TitleFont();
 		}
-		titleFont->displayString(80, 130, "AFTER A HORRIFYING NIGHTMARE");
-		titleFont->displayString(80, 170, "MIKE DAWSON AWAKENS TO THE");
-		titleFont->displayString(80, 210, "FIRST DAY IN HIS NEW HOUSE...");
+		_titleFont->displayString(80, 130, "AFTER A HORRIFYING NIGHTMARE");
+		_titleFont->displayString(80, 170, "MIKE DAWSON AWAKENS TO THE");
+		_titleFont->displayString(80, 210, "FIRST DAY IN HIS NEW HOUSE...");
 		g_engine->fadeIn(_palette);
 		break;
 	}

@@ -113,37 +113,36 @@ public:
 	int _fttime = 0;
 
 	uint8 _previousRoomNumber = 0;
-	uint16 targetRoomNumber = 0;
+	uint16 _targetRoomNumber = 0;
 
-	bool isPlayingAnimation_maybe = false;
-	uint16 otherNspAnimationType_maybe = 0;
-	uint16 headAcheMessageCounter = 0;
-	uint8 headacheMessageIdx = 0;
+	bool _isPlayingAnimation_maybe = false;
+	uint16 _otherNspAnimationType_maybe = 0;
+	uint16 _headAcheMessageCounter = 0;
+	uint8 _headacheMessageIdx = 0;
 
-	int sprite_y_scaling_threshold_maybe = 0xf0;
-	int scaledWalkSpeed_maybe = 0;
-	uint16 scaledSpriteWidth = 0;
-	uint16 scaledSpriteHeight = 0;
+	int _sprite_y_scaling_threshold_maybe = 0xf0;
+	int _scaledWalkSpeed_maybe = 0;
+	uint16 _scaledSpriteWidth = 0;
+	uint16 _scaledSpriteHeight = 0;
 
-	int nsp_sprite_scaling_y_position = 0;
+	int _nsp_sprite_scaling_y_position = 0;
 
-	bool player_sprite_related_2c85_82f3 = false;
+	bool _player_sprite_related_2c85_82f3 = false;
 	int _frameBottom = 0;
 	bool _ObjRestarted = false;
-	char prefsCutsceneId = 'I';
-	int animIndexTbl[30];
-	int spriteAnimCountdownTimer[30];
+	int _animIndexTbl[30];
+	int _spriteAnimCountdownTimer[30];
 
 	// Unknown variables
 	bool _doorEnabled = false;
 	bool _scaleSequence = false;
-	bool useDoorTarget = false;
+	bool _useDoorTarget = false;
 
-	int16 counter_2c85_888b = 0;
+	int16 _counter_2c85_888b = 0;
 
-	uint8 targetPlayerDirection = 0; // related to changing rooms.
+	uint8 _targetPlayerDirection = 0; // related to changing rooms.
 
-	uint8 systemTimerCounter = 0;
+	uint8 _systemTimerCounter = 0;
 
 	bool _debugShowWalkPath = false;
 	int _phoneStatus = 0;
@@ -182,11 +181,11 @@ public:
 	};
 
 	bool canLoadGameStateCurrently(Common::U32String *msg) override {
-		return !isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_herowaiting;
+		return !_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_herowaiting;
 	}
 
 	bool canSaveGameStateCurrently(Common::U32String *msg) override {
-		return !isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_herowaiting;
+		return !_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_herowaiting;
 	}
 
 	/**

@@ -56,7 +56,7 @@ void Console::addToCurrentLine(const Common::String &text) {
 }
 
 void Console::draw() {
-	if (!redrawRequired) {
+	if (!_redrawRequired) {
 		return;
 	}
 
@@ -68,7 +68,7 @@ void Console::draw() {
 		y -= 11;
 		curIdx = curIdx == 0 ? _text.size() - 1 : curIdx - 1;
 	}
-	redrawRequired = false;
+	_redrawRequired = false;
 	g_engine->_screen->addDirtyRect(consoleArea);
 }
 
@@ -116,7 +116,7 @@ Common::Array<Common::String> Console::wrapText(const Common::String &text) {
 void Console::addLine(const Common::String &line) {
 	_text[_startIdx] = line;
 	_startIdx = (_startIdx + 1) % _text.size();
-	redrawRequired = true;
+	_redrawRequired = true;
 }
 
 } // End of namespace Darkseed

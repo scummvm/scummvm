@@ -38,7 +38,7 @@ private:
 
 	Common::Array<Common::String> _text;
 	int _startIdx = 0;
-	bool redrawRequired = false;
+	bool _redrawRequired = false;
 
 public:
 	Console(TosText *tostext, Sound *sound);

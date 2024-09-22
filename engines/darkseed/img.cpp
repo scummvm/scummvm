@@ -34,7 +34,7 @@ bool Img::load(const Common::Path &filename) {
 	bool ret = load(file);
 	file.close();
 	if (ret) {
-		debug("Loaded %s (%d,%d) (%d,%d) %x", filename.toString().c_str(), x, y, width, height, mode);
+		debug("Loaded %s (%d,%d) (%d,%d) %x", filename.toString().c_str(), _x, _y, _width, _height, _mode);
 	}
 	return ret;
 }
@@ -42,8 +42,8 @@ bool Img::load(const Common::Path &filename) {
 bool Img::load(Common::SeekableReadStream &readStream) {
 	Common::Array<uint8> unpackedData;
 	unpackRLE(readStream, unpackedData);
-	x = READ_UINT16(&unpackedData.data()[0]);
-	y = READ_UINT16(&unpackedData.data()[2]);
+	_x = READ_UINT16(&unpackedData.data()[0]);
+	_y = READ_UINT16(&unpackedData.data()[2]);
 	unpackPlanarData(unpackedData, 4);
 	return true;
 }
@@ -51,8 +51,8 @@ bool Img::load(Common::SeekableReadStream &readStream) {
 bool Img::loadWithoutPosition(Common::SeekableReadStream &readStream) {
 	Common::Array<uint8> unpackedData;
 	unpackRLE(readStream, unpackedData);
-	x = 0;
-	y = 0;
+	_x = 0;
+	_y = 0;
 	unpackPlanarData(unpackedData, 0);
 	return false;
 }
@@ -86,36 +86,36 @@ bool Img::unpackRLE(Common::SeekableReadStream &readStream, Common::Array<byte> 
 }
 
 void Img::unpackPlanarData(Common::Array<uint8> &planarData, uint16 headerOffset) {
-	height = READ_UINT16(&planarData.data()[headerOffset]);
-	width = READ_UINT16(&planarData.data()[headerOffset + 2]) * 8;
-	mode = planarData.data()[headerOffset + 4];
+	_height = READ_UINT16(&planarData.data()[headerOffset]);
+	_width = READ_UINT16(&planarData.data()[headerOffset + 2]) * 8;
+	_mode = planarData.data()[headerOffset + 4];
 //	assert(mode == 0xff);
-	pixels.resize(width * height, 0);
-	for (int py = 0; py < height; py++) {
+	_pixels.resize(_width * _height, 0);
+	for (int py = 0; py < _height; py++) {
 		for (int plane = 0; plane < 4; plane++) {
-			for (int px = 0; px < width; px++) {
+			for (int px = 0; px < _width; px++) {
 				int bitPos = (7 - (px % 8));
-				int planeBit = (planarData[(headerOffset + 5) + (px / 8) + (width / 8) * plane + py * (width / 8) * 4] & (1 << bitPos)) >> bitPos;
-				pixels[px + py * width] |= planeBit << (3 - plane);
+				int planeBit = (planarData[(headerOffset + 5) + (px / 8) + (_width / 8) * plane + py * (_width / 8) * 4] & (1 << bitPos)) >> bitPos;
+				_pixels[px + py * _width] |= planeBit << (3 - plane);
 			}
 		}
 	}
 }
 
 Common::Array<uint8> &Img::getPixels() {
-	return pixels;
+	return _pixels;
 }
 
 void Img::draw(int drawMode) {
-	drawAt(x, y, drawMode);
+	drawAt(_x, _y, drawMode);
 }
 
 void Img::drawAt(uint16 xPos, uint16 yPos, int drawMode, int drawWidth) {
 	if (drawMode != 0) {
 		uint8 *screen = (uint8 *)g_engine->_screen->getBasePtr(xPos, yPos);
-		uint8 *imgPixels = pixels.data();
-		for (int sy = 0; sy < height; sy++) {
-			int w = drawWidth != 0 ? drawWidth : width;
+		uint8 *imgPixels = _pixels.data();
+		for (int sy = 0; sy < _height; sy++) {
+			int w = drawWidth != 0 ? drawWidth : _width;
 			for (int sx = 0; sx < w; sx++) {
 				if (drawMode == 1 && imgPixels[sx] != 0) {
 					screen[sx] ^= imgPixels[sx];
@@ -125,13 +125,13 @@ void Img::drawAt(uint16 xPos, uint16 yPos, int drawMode, int drawWidth) {
 					screen[sx] |= imgPixels[sx];
 				}
 			}
-			imgPixels += width;
+			imgPixels += _width;
 			screen += g_engine->_screen->pitch;
 		}
 	} else {
-		g_engine->_screen->copyRectToSurface(pixels.data(), width, xPos, yPos, width, height);
+		g_engine->_screen->copyRectToSurface(_pixels.data(), _width, xPos, yPos, _width, _height);
 	}
-	g_engine->_screen->addDirtyRect({{(int16)xPos, (int16)yPos}, (int16)width, (int16)height});
+	g_engine->_screen->addDirtyRect({{(int16)xPos, (int16)yPos}, (int16)_width, (int16)_height});
 }
 
 } // namespace Darkseed

@@ -48,33 +48,33 @@ uint16 walkFrameOffsetTbl[] = { 0,   8,  16,   8 };
 void Darkseed::Player::updateSprite() {
 	if (!_playerIsChangingDirection) {
 		if ((_direction == 3) || (_direction == 1)) {
-			g_engine->player_sprite_related_2c85_82f3 = BYTE_ARRAY_2c85_41eb[_direction];
+			g_engine->_player_sprite_related_2c85_82f3 = BYTE_ARRAY_2c85_41eb[_direction];
 		}
 		if (_position.x == _walkTarget.x && _position.y == _walkTarget.y && !_heroMoving) {
 			_frameIdx = playerSpriteIndexDirectionTbl[_direction];
 		} else {
-			_frameIdx = playerWalkFrameIdx + walkFrameOffsetTbl[_direction];
+			_frameIdx = _playerWalkFrameIdx + walkFrameOffsetTbl[_direction];
 		}
 		if (_direction == 2) {
 			if (_position.x < _walkTarget.x) {
-				g_engine->player_sprite_related_2c85_82f3 = true;
+				g_engine->_player_sprite_related_2c85_82f3 = true;
 			} else if (_walkTarget.x < _position.x) {
-				g_engine->player_sprite_related_2c85_82f3 = false;
+				g_engine->_player_sprite_related_2c85_82f3 = false;
 			}
 		}
 		if (_direction == 0) {
 			if (_walkTarget.x < _position.x) {
-				g_engine->player_sprite_related_2c85_82f3 = true;
+				g_engine->_player_sprite_related_2c85_82f3 = true;
 			} else if (_position.x < _walkTarget.x) {
-				g_engine->player_sprite_related_2c85_82f3 = false;
+				g_engine->_player_sprite_related_2c85_82f3 = false;
 			}
 		}
 	} else {
-		g_engine->player_sprite_related_2c85_82f3 = 4 < playerSpriteWalkIndex_maybe;
-		if (g_engine->player_sprite_related_2c85_82f3) {
-			_frameIdx = 0x20 - playerSpriteWalkIndex_maybe;
+		g_engine->_player_sprite_related_2c85_82f3 = 4 < _playerSpriteWalkIndex_maybe;
+		if (g_engine->_player_sprite_related_2c85_82f3) {
+			_frameIdx = 0x20 - _playerSpriteWalkIndex_maybe;
 		} else {
-			_frameIdx = playerSpriteWalkIndex_maybe + 0x18;
+			_frameIdx = _playerSpriteWalkIndex_maybe + 0x18;
 		}
 	}
 }
@@ -89,29 +89,29 @@ bool Darkseed::Player::isAtWalkTarget() const {
 void Darkseed::Player::changeDirection(int16 oldDir, int16 newDir) {
 	if (oldDir != newDir) {
 		_playerIsChangingDirection = true;
-		playerSpriteWalkIndex_maybe = (int16)(oldDir * 2);
-		playerNewFacingDirection_maybe = (int16)(newDir * 2);
-		playerWalkFrameDeltaOffset = 1;
+		_playerSpriteWalkIndex_maybe = (int16)(oldDir * 2);
+		_playerNewFacingDirection_maybe = (int16)(newDir * 2);
+		_playerWalkFrameDeltaOffset = 1;
 		if (oldDir < 4) {
 			switch (oldDir) {
 			case 0 :
 				if (newDir == 3) {
-					playerWalkFrameDeltaOffset = -1;
+					_playerWalkFrameDeltaOffset = -1;
 				}
 				break;
 			case 1 :
 				if (newDir == 0) {
-					playerWalkFrameDeltaOffset = -1;
+					_playerWalkFrameDeltaOffset = -1;
 				}
 				break;
 			case 2 :
 				if (newDir == 1) {
-					playerWalkFrameDeltaOffset = -1;
+					_playerWalkFrameDeltaOffset = -1;
 				}
 				break;
 			case 3 :
 				if (newDir == 2) {
-					playerWalkFrameDeltaOffset = -1;
+					_playerWalkFrameDeltaOffset = -1;
 				}
 				break;
 			}
@@ -153,9 +153,9 @@ void Darkseed::Player::playerFaceWalkTarget() {
 
 void Darkseed::Player::calculateWalkTarget() {
 	_heroMoving = true;
-	playerWalkFrameIdx = 0;
-	walkPathIndex = -1;
-	numConnectorsInWalkPath = 0;
+	_playerWalkFrameIdx = 0;
+	_walkPathIndex = -1;
+	_numConnectorsInWalkPath = 0;
 	int selectedObjNum = 0;
 	if (g_engine->_actionMode == PointerAction) {
 		selectedObjNum = g_engine->_room->getRoomExitAtCursor();
@@ -210,9 +210,9 @@ void Darkseed::Player::calculateWalkTarget() {
 			} else {
 				Common::Point tmpDest = _walkTarget;
 				_walkTarget = connector;
-				if (numConnectorsInWalkPath > 0 && numConnectorsInWalkPath < Room::MAX_CONNECTORS - 1 && _connectorList[numConnectorsInWalkPath - 1] != connector) {
-					_connectorList[numConnectorsInWalkPath] = connector;
-					numConnectorsInWalkPath++;
+				if (_numConnectorsInWalkPath > 0 && _numConnectorsInWalkPath < Room::MAX_CONNECTORS - 1 && _connectorList[_numConnectorsInWalkPath - 1] != connector) {
+					_connectorList[_numConnectorsInWalkPath] = connector;
+					_numConnectorsInWalkPath++;
 				}
 				_finalTarget = tmpDest;
 			}
@@ -223,11 +223,11 @@ void Darkseed::Player::calculateWalkTarget() {
 }
 
 int Darkseed::Player::getWidth() {
-	return getSprite(_frameIdx).width;
+	return getSprite(_frameIdx)._width;
 }
 
 int Darkseed::Player::getHeight() {
-	return getSprite(_frameIdx).height;
+	return getSprite(_frameIdx)._height;
 }
 
 void Darkseed::Player::updatePlayerPositionAfterRoomChange() {
@@ -249,11 +249,11 @@ void Darkseed::Player::updatePlayerPositionAfterRoomChange() {
 		}
 	} else if (_direction == 3) {
 		if (currentRoomNumber == 0x20 || currentRoomNumber == 0x1a) {
-			g_engine->scaledSpriteHeight = 5;
+			g_engine->_scaledSpriteHeight = 5;
 		} else {
-			g_engine->_room->calculateScaledSpriteDimensions(getWidth(), getHeight(), _position.y + g_engine->scaledSpriteHeight);
+			g_engine->_room->calculateScaledSpriteDimensions(getWidth(), getHeight(), _position.y + g_engine->_scaledSpriteHeight);
 		}
-		_position.y += g_engine->scaledSpriteHeight;
+		_position.y += g_engine->_scaledSpriteHeight;
 		if (_position.y > 0xee) {
 			_position.y = 0xee;
 		}
@@ -275,8 +275,8 @@ void Darkseed::Player::updatePlayerPositionAfterRoomChange() {
 			_position.y = yDown;
 		}
 	} else {
-		g_engine->_room->calculateScaledSpriteDimensions(getWidth(), getHeight(), _position.y + g_engine->scaledSpriteHeight);
-		_position.y += g_engine->scaledSpriteHeight;
+		g_engine->_room->calculateScaledSpriteDimensions(getWidth(), getHeight(), _position.y + g_engine->_scaledSpriteHeight);
+		_position.y += g_engine->_scaledSpriteHeight;
 		if (_position.y > 0xee) {
 			_position.y = 0xee;
 		}
@@ -305,7 +305,7 @@ void Darkseed::Player::createConnectorPathToDest() {
 		startPoint = _walkTarget;
 		_walkTarget = _position;
 	}
-	numConnectorsInWalkPath = 0;
+	_numConnectorsInWalkPath = 0;
 	Common::Point connector;
 	if (!g_engine->_room->canWalkAtLocation(startPoint.x, startPoint.y)) {
 		connector = getClosestUnusedConnector(startPoint.x, startPoint.y);
@@ -319,11 +319,11 @@ void Darkseed::Player::createConnectorPathToDest() {
 		return;
 	}
 
-	walkPathIndex = 0;
-	_connectorList[numConnectorsInWalkPath] = connector;
-	numConnectorsInWalkPath++;
+	_walkPathIndex = 0;
+	_connectorList[_numConnectorsInWalkPath] = connector;
+	_numConnectorsInWalkPath++;
 
-	while (numConnectorsInWalkPath < Room::MAX_CONNECTORS && connector != noConnectorFound) {
+	while (_numConnectorsInWalkPath < Room::MAX_CONNECTORS && connector != noConnectorFound) {
 		if (g_engine->_room->canWalkInLineToTarget(connector.x, connector.y, _walkTarget.x, _walkTarget.y)) {
 			break;
 		}
@@ -332,8 +332,8 @@ void Darkseed::Player::createConnectorPathToDest() {
 			break;
 		}
 		if (connector != noConnectorFound) {
-			_connectorList[numConnectorsInWalkPath] = connector;
-			numConnectorsInWalkPath++;
+			_connectorList[_numConnectorsInWalkPath] = connector;
+			_numConnectorsInWalkPath++;
 		}
 	}
 
@@ -355,7 +355,7 @@ Common::Point Darkseed::Player::getClosestUnusedConnector(int16 x, int16 y, bool
 	int closestDist = 5000;
 	for (auto &roomConnector : g_engine->_room->_connectors) {
 		bool containsPoint = false;
-		for (int i = 0; i < numConnectorsInWalkPath; i++) {
+		for (int i = 0; i < _numConnectorsInWalkPath; i++) {
 			if (_connectorList[i] == roomConnector) {
 				containsPoint = true;
 			}
@@ -374,52 +374,52 @@ Common::Point Darkseed::Player::getClosestUnusedConnector(int16 x, int16 y, bool
 }
 
 void Darkseed::Player::walkToNextConnector() {
-	if (walkPathIndex == -1) {
+	if (_walkPathIndex == -1) {
 		return;
 	}
-	if (walkPathIndex + 1 < numConnectorsInWalkPath) {
-		walkPathIndex++;
-		_walkTarget = _connectorList[walkPathIndex];
+	if (_walkPathIndex + 1 < _numConnectorsInWalkPath) {
+		_walkPathIndex++;
+		_walkTarget = _connectorList[_walkPathIndex];
 	} else {
 		_walkTarget = _finalTarget;
-		walkPathIndex = -1;
+		_walkPathIndex = -1;
 	}
 	playerFaceWalkTarget();
 }
 
 void Darkseed::Player::draw() {
 	if (g_engine->_debugShowWalkPath) {
-		if (walkPathIndex != -1) {
-			for (int i = walkPathIndex; i < numConnectorsInWalkPath; i++) {
-				if (i == walkPathIndex) {
+		if (_walkPathIndex != -1) {
+			for (int i = _walkPathIndex; i < _numConnectorsInWalkPath; i++) {
+				if (i == _walkPathIndex) {
 					g_engine->_screen->drawLine(_position.x, _position.y, _connectorList[i].x, _connectorList[i].y, 2);
 				} else {
 					g_engine->_screen->drawLine(_connectorList[i].x, _connectorList[i].y, _connectorList[i - 1].x, _connectorList[i - 1].y, 2);
 				}
 			}
-			g_engine->_screen->drawLine(_connectorList[numConnectorsInWalkPath - 1].x, _connectorList[numConnectorsInWalkPath - 1].y, _finalTarget.x, _finalTarget.y, 2);
+			g_engine->_screen->drawLine(_connectorList[_numConnectorsInWalkPath - 1].x, _connectorList[_numConnectorsInWalkPath - 1].y, _finalTarget.x, _finalTarget.y, 2);
 		}
 	}
 }
 
 void Darkseed::Player::reverseConnectorList() {
 	Common::Array<Common::Point> tempList;
-	tempList.resize(numConnectorsInWalkPath);
+	tempList.resize(_numConnectorsInWalkPath);
 
-	for (int i = 0; i < numConnectorsInWalkPath; i++) {
-		tempList[i] = _connectorList[numConnectorsInWalkPath - 1 - i];
+	for (int i = 0; i < _numConnectorsInWalkPath; i++) {
+		tempList[i] = _connectorList[_numConnectorsInWalkPath - 1 - i];
 	}
 
-	for (int i = 0; i < numConnectorsInWalkPath; i++) {
+	for (int i = 0; i < _numConnectorsInWalkPath; i++) {
 		_connectorList[i] = tempList[i];
 	}
 }
 
 void Darkseed::Player::OptimisePath() {
 	if (g_engine->_room->_roomNumber != 7 && g_engine->_room->_roomNumber != 32) {
-		while (numConnectorsInWalkPath > 1) {
-			if (g_engine->_room->canWalkInLineToTarget(_connectorList[numConnectorsInWalkPath - 2].x, _connectorList[numConnectorsInWalkPath - 2].y, _walkTarget.x, _walkTarget.y)) {
-				numConnectorsInWalkPath--;
+		while (_numConnectorsInWalkPath > 1) {
+			if (g_engine->_room->canWalkInLineToTarget(_connectorList[_numConnectorsInWalkPath - 2].x, _connectorList[_numConnectorsInWalkPath - 2].y, _walkTarget.x, _walkTarget.y)) {
+				_numConnectorsInWalkPath--;
 			} else {
 				break;
 			}
@@ -434,7 +434,7 @@ static constexpr uint8 _closerroom[10] = {
 };
 
 void Darkseed::Player::setplayertowardsbedroom() {
-	if (g_engine->isPlayingAnimation_maybe) {
+	if (g_engine->_isPlayingAnimation_maybe) {
 		return;
 	}
 	Common::Point currentCursor = g_engine->_cursor.getPosition();

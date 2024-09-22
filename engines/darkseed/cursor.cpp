@@ -24,14 +24,14 @@
 #include "darkseed/darkseed.h"
 
 void Darkseed::Cursor::setCursorType(enum CursorType newType) {
-	bool loadCursor = !hasLoadedCursor || _currentCursorType != newType;
+	bool loadCursor = !_hasLoadedCursor || _currentCursorType != newType;
 	_currentCursorType = newType;
 
 	if (loadCursor) {
 		const Sprite cursorSprite = g_engine->_baseSprites.getSpriteAt(_currentCursorType);
 		Graphics::Surface surf;
-		surf.create(cursorSprite.width, cursorSprite.height, Graphics::PixelFormat::createFormatCLUT8());
-		surf.copyRectToSurface(cursorSprite.pixels.data(), cursorSprite.pitch, 0, 0, cursorSprite.width, cursorSprite.height);
+		surf.create(cursorSprite._width, cursorSprite._height, Graphics::PixelFormat::createFormatCLUT8());
+		surf.copyRectToSurface(cursorSprite._pixels.data(), cursorSprite._pitch, 0, 0, cursorSprite._width, cursorSprite._height);
 		CursorMan.replaceCursor(surf, 0, 0, 0xf);
 	}
 }
@@ -43,11 +43,11 @@ void Darkseed::Cursor::updatePosition(int16 x, int16 y) {
 }
 
 int Darkseed::Cursor::getWidth() {
-	return g_engine->_baseSprites.getSpriteAt(_currentCursorType).width;
+	return g_engine->_baseSprites.getSpriteAt(_currentCursorType)._width;
 }
 
 int Darkseed::Cursor::getHeight() {
-	return g_engine->_baseSprites.getSpriteAt(_currentCursorType).height;
+	return g_engine->_baseSprites.getSpriteAt(_currentCursorType)._height;
 }
 
 const Darkseed::Sprite &Darkseed::Cursor::getSprite() {

@@ -28,10 +28,9 @@ namespace Darkseed {
 
 class Anm {
 private:
-//	Common::Array<Img> frames;
-	Common::File file;
-	uint16 numRecords = 0;
-	uint16 assetOffset = 0;
+	Common::File _file;
+	uint16 _numRecords = 0;
+	uint16 _assetOffset = 0;
 
 public:
 	bool load(const Common::Path &filename);

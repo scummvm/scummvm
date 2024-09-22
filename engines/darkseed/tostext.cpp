@@ -30,25 +30,25 @@ bool TosText::load() {
 	if (!tostextFile.open("tostext.bin")) {
 		return false;
 	}
-	numEntries = tostextFile.readUint16LE() / 2;
-	textArray.resize(numEntries);
+	_numEntries = tostextFile.readUint16LE() / 2;
+	_textArray.resize(_numEntries);
 
-	for (int i = 0; i < numEntries; i++) {
-		textArray[i] = loadString(tostextFile, i);
+	for (int i = 0; i < _numEntries; i++) {
+		_textArray[i] = loadString(tostextFile, i);
 	}
 	return true;
 }
 
 const Common::String &TosText::getText(uint16 textIndex) {
-	assert(textIndex < numEntries);
-	return textArray[textIndex];
+	assert(textIndex < _numEntries);
+	return _textArray[textIndex];
 }
 
 Common::String TosText::loadString(Common::File &file, uint16 index) const {
 	Common::String str;
 	file.seek(index * 2, SEEK_SET);
 	auto startOffset = file.readUint16LE();
-	uint16 strLen = index == numEntries - 1
+	uint16 strLen = index == _numEntries - 1
 						? file.size() - startOffset
 						: file.readUint16LE() - startOffset;
 	file.seek(startOffset, SEEK_SET);
@@ -59,7 +59,7 @@ Common::String TosText::loadString(Common::File &file, uint16 index) const {
 }
 
 uint16 TosText::getNumEntries() const {
-	return numEntries;
+	return _numEntries;
 }
 
 } // namespace Darkseed

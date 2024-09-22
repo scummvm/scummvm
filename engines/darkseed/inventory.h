@@ -32,8 +32,8 @@ private:
 	Common::Array<uint8> _iconList;
 	int _viewOffset = 0;
 	int _numIcons = 0;
-	bool isVisible = false;
-	bool redraw = false;
+	bool _isVisible = false;
+	bool _redraw = false;
 
 public:
 	Inventory();

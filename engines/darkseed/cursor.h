@@ -41,7 +41,7 @@ class Cursor {
 private:
 	Common::Point _position;
 	enum CursorType _currentCursorType = Pointer;
-	bool hasLoadedCursor = false;
+	bool _hasLoadedCursor = false;
 
 public:
 

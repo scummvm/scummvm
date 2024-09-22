@@ -33,7 +33,7 @@ Pal::Pal(const Pal &pal) {
 }
 
 void Pal::load(const Pal &pal) {
-	memcpy(palData, pal.palData, DARKSEED_PAL_SIZE);
+	memcpy(_palData, pal._palData, DARKSEED_PAL_SIZE);
 }
 
 bool Pal::load(const Common::Path &filename, bool shouldInstallPalette) {
@@ -41,11 +41,11 @@ bool Pal::load(const Common::Path &filename, bool shouldInstallPalette) {
 	if (!file.open(filename)) {
 		return false;
 	}
-	uint32 bytesRead = file.read(palData, DARKSEED_PAL_SIZE);
+	uint32 bytesRead = file.read(_palData, DARKSEED_PAL_SIZE);
 	assert(bytesRead == DARKSEED_PAL_SIZE);
 
 	for (int i = 0; i < DARKSEED_PAL_SIZE; i++) {
-		palData[i] = palData[i] << 2;
+		_palData[i] = _palData[i] << 2;
 	}
 	if (shouldInstallPalette) {
 		installPalette();
@@ -54,22 +54,22 @@ bool Pal::load(const Common::Path &filename, bool shouldInstallPalette) {
 }
 
 void Pal::loadFromScreen() {
-	g_system->getPaletteManager()->grabPalette(palData, 0, DARKSEED_NUM_PAL_ENTRIES);
+	g_system->getPaletteManager()->grabPalette(_palData, 0, DARKSEED_NUM_PAL_ENTRIES);
 }
 
 void Pal::clear() {
-	memset(palData, 0, DARKSEED_PAL_SIZE);
+	memset(_palData, 0, DARKSEED_PAL_SIZE);
 }
 
 void Pal::updatePalette(int delta, const Pal &targetPal, bool shouldInstallPalette) {
 	for (int i = 0; i < DARKSEED_PAL_SIZE; i++) {
-		int c = palData[i] + delta;
+		int c = _palData[i] + delta;
 		if (c < 0) {
 			c = 0;
-		} else if (delta > 0 && c > targetPal.palData[i]) {
-			c = targetPal.palData[i];
+		} else if (delta > 0 && c > targetPal._palData[i]) {
+			c = targetPal._palData[i];
 		}
-		palData[i] = (uint8)c;
+		_palData[i] = (uint8)c;
 	}
 	if (shouldInstallPalette) {
 		installPalette();
@@ -77,7 +77,7 @@ void Pal::updatePalette(int delta, const Pal &targetPal, bool shouldInstallPalet
 }
 
 void Pal::installPalette() {
-	g_system->getPaletteManager()->setPalette(palData, 0, DARKSEED_NUM_PAL_ENTRIES);
+	g_system->getPaletteManager()->setPalette(_palData, 0, DARKSEED_NUM_PAL_ENTRIES);
 }
 
 } // namespace Darkseed

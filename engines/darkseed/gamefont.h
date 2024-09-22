@@ -27,7 +27,7 @@ namespace Darkseed {
 
 class GameFont {
 private:
-	Nsp letters;
+	Nsp _letters;
 
 public:
 	GameFont();

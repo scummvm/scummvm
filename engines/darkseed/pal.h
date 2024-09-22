@@ -32,7 +32,7 @@ namespace Darkseed {
 
 class Pal {
 public:
-	byte palData[DARKSEED_PAL_SIZE];
+	byte _palData[DARKSEED_PAL_SIZE];
 
 public:
 	Pal() {};

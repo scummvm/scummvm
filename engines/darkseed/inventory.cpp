@@ -86,7 +86,7 @@ void Darkseed::Inventory::update() {
 		}
 	}
 	_numIcons = MIN(_inventoryLength + 1, 9);
-	redraw = true;
+	_redraw = true;
 }
 
 void Darkseed::Inventory::restoreFrame() {
@@ -95,20 +95,20 @@ void Darkseed::Inventory::restoreFrame() {
 }
 
 void Darkseed::Inventory::draw() {
-	if ((g_engine->_actionMode <= 4 && g_engine->_cursor.getY() > 40) || g_engine->isPlayingAnimation_maybe || (g_engine->_objectVar[141] >= 1 && g_engine->_objectVar[141] <= 3)) {
-		if (isVisible) {
+	if ((g_engine->_actionMode <= 4 && g_engine->_cursor.getY() > 40) || g_engine->_isPlayingAnimation_maybe || (g_engine->_objectVar[141] >= 1 && g_engine->_objectVar[141] <= 3)) {
+		if (_isVisible) {
 			restoreFrame();
-			isVisible = false;
+			_isVisible = false;
 		}
 		return;
 	}
 
-	if (redraw) {
+	if (_redraw) {
 		restoreFrame();
-		redraw = false;
+		_redraw = false;
 	}
 
-	isVisible = true;
+	_isVisible = true;
 	for (int i = 0; i < _numIcons; i++) {
 		int icon = _iconList[i];
 		if (icon != 42 && icon != 43) {
@@ -117,10 +117,10 @@ void Darkseed::Inventory::draw() {
 
 		if (g_engine->_actionMode == _iconList[i] && g_engine->_actionMode > 4) {
 			const Sprite &selectedSprite = g_engine->_baseSprites.getSpriteAt(95);
-			g_engine->_sprites.addSpriteToDrawList(139 + i * 37, 20 - selectedSprite.height / 2, &selectedSprite, 255, selectedSprite.width, selectedSprite.height, false);
+			g_engine->_sprites.addSpriteToDrawList(139 + i * 37, 20 - selectedSprite._height / 2, &selectedSprite, 255, selectedSprite._width, selectedSprite._height, false);
 		}
 		const Sprite &iconSprite = g_engine->_baseSprites.getSpriteAt(icon);
-		g_engine->_sprites.addSpriteToDrawList(140 + i * 37, 20 - iconSprite.height / 2, &iconSprite, 255, iconSprite.width, iconSprite.height, false);
+		g_engine->_sprites.addSpriteToDrawList(140 + i * 37, 20 - iconSprite._height / 2, &iconSprite, 255, iconSprite._width, iconSprite._height, false);
 	}
 	g_engine->_screen->addDirtyRect(drawArea);
 }
