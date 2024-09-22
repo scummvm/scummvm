@@ -52,7 +52,7 @@ bool Darkseed::Sound::isPlayingSpeech() {
 }
 
 void Darkseed::Sound::waitForSpeech() {
-	while(isPlayingSpeech()) {
+	while (isPlayingSpeech()) {
 		// TODO poll events / wait a bit here.
 	}
 }

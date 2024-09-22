@@ -38,13 +38,13 @@ void Pal::load(const Pal &pal) {
 
 bool Pal::load(const Common::Path &filename, bool shouldInstallPalette) {
 	Common::File file;
-	if(!file.open(filename)) {
+	if (!file.open(filename)) {
 		return false;
 	}
 	uint32 bytesRead = file.read(palData, DARKSEED_PAL_SIZE);
 	assert(bytesRead == DARKSEED_PAL_SIZE);
 
-	for (int i=0; i < DARKSEED_PAL_SIZE; i++) {
+	for (int i = 0; i < DARKSEED_PAL_SIZE; i++) {
 		palData[i] = palData[i] << 2;
 	}
 	if (shouldInstallPalette) {

@@ -27,7 +27,7 @@ namespace Darkseed {
 
 bool TosText::load() {
 	Common::File tostextFile;
-	if(!tostextFile.open("tostext.bin")) {
+	if (!tostextFile.open("tostext.bin")) {
 		return false;
 	}
 	numEntries = tostextFile.readUint16LE() / 2;

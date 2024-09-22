@@ -36,17 +36,37 @@ void Darkseed::Cutscene::play(char cutsceneId) {
 
 
 void Darkseed::Cutscene::update() {
-	switch(_cutsceneId) {
-	case 'B' : _movieStep = 9999; break;
-	case 'C' : _movieStep = 9999; break;
-	case 'D' : _movieStep = 9999; break;
-	case 'E' : shipLaunchScene(); break;
-	case 'G' : _movieStep = 9999; break;
-	case 'H' : _movieStep = 9999; break;
-	case 'I' : introScene(); break;
-	case 'J' : embryoInsertedScene(); break;
-	case 'Y' : alienBornScene(); break;
-	case 'Z' : _movieStep = 9999; break;
+	switch (_cutsceneId) {
+	case 'B' :
+		_movieStep = 9999;
+		break;
+	case 'C' :
+		_movieStep = 9999;
+		break;
+	case 'D' :
+		_movieStep = 9999;
+		break;
+	case 'E' :
+		shipLaunchScene();
+		break;
+	case 'G' :
+		_movieStep = 9999;
+		break;
+	case 'H' :
+		_movieStep = 9999;
+		break;
+	case 'I' :
+		introScene();
+		break;
+	case 'J' :
+		embryoInsertedScene();
+		break;
+	case 'Y' :
+		alienBornScene();
+		break;
+	case 'Z' :
+		_movieStep = 9999;
+		break;
 	}
 
 	if (_movieStep == 9999) {
@@ -71,37 +91,73 @@ static constexpr int _CREDITS_DELAY = 25;
 
 bool Darkseed::Cutscene::introScene() {
 	switch (_movieStep) {
-	case 1: g_engine->fadeOut(); break;
-	case 2: if (g_engine->fadeStep()) { return true; } break;
+	case 1:
+		g_engine->fadeOut();
+		break;
+	case 2:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
 	case 3: {
 		g_engine->_screen->clear();
 		_palette.load("art/house.pal");
 		if (titleFont == nullptr) {
 			titleFont = new TitleFont();
 		}
-		titleFont->displayString(68,160, "DEVELOPING NEW WAYS TO AMAZE");
+		titleFont->displayString(68, 160, "DEVELOPING NEW WAYS TO AMAZE");
 		g_engine->fadeIn(_palette);
 	}
+	break;
+	case 4:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
 		break;
-	case 4: if (g_engine->fadeStep()) { return true; } break;
-	case 5: g_engine->fadeOut(); break;
-	case 6: if (g_engine->fadeStep()) { return true; } break;
+	case 5:
+		g_engine->fadeOut();
+		break;
+	case 6:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
 	case 7:
 		g_engine->_screen->clear();
-		titleFont->displayString(222,160, "CYBERDREAMS");
+		titleFont->displayString(222, 160, "CYBERDREAMS");
 		g_engine->fadeIn(_palette);
 		break;
-	case 8: if (g_engine->fadeStep()) { return true; } break;
-	case 9: g_engine->fadeOut(); break;
-	case 10: if (g_engine->fadeStep()) { return true; } break;
+	case 8:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
+	case 9:
+		g_engine->fadeOut();
+		break;
+	case 10:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
 	case 11:
 		g_engine->_screen->clear();
-		titleFont->displayString(250,160, "PRESENTS");
+		titleFont->displayString(250, 160, "PRESENTS");
 		g_engine->fadeIn(_palette);
 		break;
-	case 12: if (g_engine->fadeStep()) { return true; } break;
-	case 13: g_engine->fadeOut(); break;
-	case 14: if (g_engine->fadeStep()) { return true; } break;
+	case 12:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
+	case 13:
+		g_engine->fadeOut();
+		break;
+	case 14:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
 	case 15: {
 		g_engine->_screen->clear();
 		g_engine->_screen->clearPalette();
@@ -118,9 +174,16 @@ bool Darkseed::Cutscene::introScene() {
 		i001Img.draw(1);
 		break;
 	}
-	case 16: g_engine->fadeIn(_palette); break;
-	case 17: if (g_engine->fadeStep()) { return true; } break;
-	case 18: _animation.load("art/shipin.anm");
+	case 16:
+		g_engine->fadeIn(_palette);
+		break;
+	case 17:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
+	case 18:
+		_animation.load("art/shipin.anm");
 		_animIdx = 0;
 		_animCount = 47;
 		runAnim();
@@ -140,7 +203,8 @@ bool Darkseed::Cutscene::introScene() {
 			return true;
 		}
 		break;
-	case 22: _animation.load("art/t2.anm");
+	case 22:
+		_animation.load("art/t2.anm");
 		_animIdx = 0;
 		_animCount = 50;
 		runAnim();
@@ -169,7 +233,8 @@ bool Darkseed::Cutscene::introScene() {
 		registTime();
 		break;
 	}
-	case 25: if (waitTime(_CREDITS_DELAY)) {
+	case 25:
+		if (waitTime(_CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -178,7 +243,8 @@ bool Darkseed::Cutscene::introScene() {
 		registTime();
 		g_engine->_screen->makeAllDirty();
 		break;
-	case 27: if (waitTime(_CREDITS_DELAY)) {
+	case 27:
+		if (waitTime(_CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -191,7 +257,8 @@ bool Darkseed::Cutscene::introScene() {
 		titleFont->displayString(236, 190, "JEAN KLUG");
 		g_engine->_screen->makeAllDirty();
 		break;
-	case 29: if (waitTime(_CREDITS_DELAY)) {
+	case 29:
+		if (waitTime(_CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -203,7 +270,8 @@ bool Darkseed::Cutscene::introScene() {
 		titleFont->displayString(218, 165, "MIKE DAWSON");
 		g_engine->_screen->makeAllDirty();
 		break;
-	case 31: if (waitTime(_CREDITS_DELAY)) {
+	case 31:
+		if (waitTime(_CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -215,7 +283,8 @@ bool Darkseed::Cutscene::introScene() {
 		titleFont->displayString(227, 165, "MIKE DAWSON");
 		g_engine->_screen->makeAllDirty();
 		break;
-	case 33: if (waitTime(_CREDITS_DELAY)) {
+	case 33:
+		if (waitTime(_CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -228,7 +297,8 @@ bool Darkseed::Cutscene::introScene() {
 		titleFont->displayString(245, 195, "GARY VICK");
 		g_engine->_screen->makeAllDirty();
 		break;
-	case 35: if (waitTime(_CREDITS_DELAY)) {
+	case 35:
+		if (waitTime(_CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -239,7 +309,8 @@ bool Darkseed::Cutscene::introScene() {
 		titleFont->displayString(200, 140, "GREGORY ALPER");
 		g_engine->_screen->makeAllDirty();
 		break;
-	case 37: if (waitTime(_CREDITS_DELAY)) {
+	case 37:
+		if (waitTime(_CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -250,7 +321,8 @@ bool Darkseed::Cutscene::introScene() {
 		titleFont->displayString(200, 140, "DAVID A. BEAN");
 		g_engine->_screen->makeAllDirty();
 		break;
-	case 39: if (waitTime(_CREDITS_DELAY)) {
+	case 39:
+		if (waitTime(_CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -261,7 +333,8 @@ bool Darkseed::Cutscene::introScene() {
 		titleFont->displayString(236, 140, "BRUMMBAER");
 		g_engine->_screen->makeAllDirty();
 		break;
-	case 41: if (waitTime(_CREDITS_DELAY)) {
+	case 41:
+		if (waitTime(_CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -272,7 +345,8 @@ bool Darkseed::Cutscene::introScene() {
 		titleFont->displayString(191, 140, "PAUL DRZEWIECKI");
 		g_engine->_screen->makeAllDirty();
 		break;
-	case 43: if (waitTime(_CREDITS_DELAY)) {
+	case 43:
+		if (waitTime(_CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -283,7 +357,8 @@ bool Darkseed::Cutscene::introScene() {
 		titleFont->displayString(245, 140, "H.R. GIGER");
 		g_engine->_screen->makeAllDirty();
 		break;
-	case 45: if (waitTime(_CREDITS_DELAY)) {
+	case 45:
+		if (waitTime(_CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -296,7 +371,8 @@ bool Darkseed::Cutscene::introScene() {
 		titleFont->displayString(236, 190, "PAUL RYAN");
 		g_engine->_screen->makeAllDirty();
 		break;
-	case 47: if (waitTime(_CREDITS_DELAY)) {
+	case 47:
+		if (waitTime(_CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -307,15 +383,24 @@ bool Darkseed::Cutscene::introScene() {
 		titleFont->displayString(209, 140, "MICHEL HORVAT");
 		g_engine->_screen->makeAllDirty();
 		break;
-	case 49: if (waitTime(_CREDITS_DELAY)) {
+	case 49:
+		if (waitTime(_CREDITS_DELAY)) {
 			return true;
 		}
 		break;
 	case 50: // TODO wait for music.
 		break;
-	case 51: g_engine->fadeOut(); break;
-	case 52: if (g_engine->fadeStep()) { return true; } break;
-	default: _movieStep = 9999; return false;
+	case 51:
+		g_engine->fadeOut();
+		break;
+	case 52:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
+	default:
+		_movieStep = 9999;
+		return false;
 	}
 	_movieStep++;
 	if (g_engine->_isLeftMouseClicked || g_engine->_isRightMouseClicked) {
@@ -330,7 +415,8 @@ bool Darkseed::Cutscene::introScene() {
 bool Darkseed::Cutscene::embryoInsertedScene() {
 	switch (_movieStep) {
 	case 1:
-	case 2: break;
+	case 2:
+		break;
 	case 3:
 		g_engine->_screen->clear();
 		g_engine->_screen->makeAllDirty();
@@ -358,7 +444,11 @@ bool Darkseed::Cutscene::embryoInsertedScene() {
 		registTime();
 		g_engine->fadeIn(_palette);
 		break;
-	case 7: if (g_engine->fadeStep()) { return true; } break;
+	case 7:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
 	case 8:
 		_animIdx = 0;
 		_animCount = 39;
@@ -376,38 +466,53 @@ bool Darkseed::Cutscene::embryoInsertedScene() {
 		}
 		registTime();
 		break;
-	case 10: if (waitTime(30)) {
+	case 10:
+		if (waitTime(30)) {
 			return true;
 		}
 		break;
 	case 11:
 		g_engine->fadeOut();
 		break;
-	case 12: if (g_engine->fadeStep()) { return true; } break;
+	case 12:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
 	case 13: {
 		g_engine->_screen->clear();
 		_palette.load("art/house.pal");
 		if (titleFont == nullptr) {
 			titleFont = new TitleFont();
 		}
-		titleFont->displayString(80,130, "AFTER A HORRIFYING NIGHTMARE");
-		titleFont->displayString(80,170, "MIKE DAWSON AWAKENS TO THE");
-		titleFont->displayString(80,210, "FIRST DAY IN HIS NEW HOUSE...");
+		titleFont->displayString(80, 130, "AFTER A HORRIFYING NIGHTMARE");
+		titleFont->displayString(80, 170, "MIKE DAWSON AWAKENS TO THE");
+		titleFont->displayString(80, 210, "FIRST DAY IN HIS NEW HOUSE...");
 		g_engine->fadeIn(_palette);
 		break;
 	}
-	case 14: if (g_engine->fadeStep()) { return true; }
+	case 14:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
 		registTime();
 		break;
-	case 15: if (waitTime(30)) {
+	case 15:
+		if (waitTime(30)) {
 			return true;
 		}
 		break;
 	case 16:
 		g_engine->fadeOut();
 		break;
-	case 17: if (g_engine->fadeStep()) { return true; } break;
-	default: _movieStep = 9999; return false;
+	case 17:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
+	default:
+		_movieStep = 9999;
+		return false;
 	}
 	_movieStep++;
 	if (g_engine->_isLeftMouseClicked || g_engine->_isRightMouseClicked) {
@@ -433,8 +538,14 @@ bool Darkseed::Cutscene::shipLaunchScene() {
 		g_engine->_screen->clearPalette();
 		break;
 	}
-	case 2: g_engine->fadeIn(_palette); break;
-	case 3: if (g_engine->fadeStep()) { return true; } break;
+	case 2:
+		g_engine->fadeIn(_palette);
+		break;
+	case 3:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
 	case 4:
 		// TODO play music 'launch'
 		_animIdx = 2;
@@ -458,7 +569,8 @@ bool Darkseed::Cutscene::shipLaunchScene() {
 		}
 		registTime();
 		break;
-	case 8: if (waitTime(20)) {
+	case 8:
+		if (waitTime(20)) {
 			return true;
 		}
 		break;
@@ -486,7 +598,11 @@ bool Darkseed::Cutscene::shipLaunchScene() {
 	case 13:
 		g_engine->fadeOut();
 		break;
-	case 14: if (g_engine->fadeStep()) { return true; } break;
+	case 14:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
 	default:
 		_movieStep = 9999;
 		return false;
@@ -516,7 +632,11 @@ bool Darkseed::Cutscene::alienBornScene() {
 		// TODO play alien music here.
 		g_engine->fadeIn(_palette);
 		break;
-	case 3: if (g_engine->fadeStep()) { return true; } break;
+	case 3:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
 	case 4:
 		_animIdx = 0;
 		_animCount = 31;
@@ -529,14 +649,19 @@ bool Darkseed::Cutscene::alienBornScene() {
 		}
 		registTime();
 		break;
-	case 6: if (waitTime(30)) {
+	case 6:
+		if (waitTime(30)) {
 			return true;
 		}
 		break;
 	case 7:
 		g_engine->fadeOut();
 		break;
-	case 8: if (g_engine->fadeStep()) { return true; } break;
+	case 8:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
 	case 9:
 		// TODO some logic here. stopSequence.
 		break;

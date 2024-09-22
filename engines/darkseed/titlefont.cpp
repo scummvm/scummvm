@@ -65,7 +65,7 @@ void TitleFont::displayString(uint16 x, uint16 y, const Common::String &text) {
 		Img letter;
 		int letterId = letterIndexLookupTbl[text[i] - 45];
 		letters.getImg(letterId, letterShadow, false);
-		letters.getImg(letterId+1, letter, false);
+		letters.getImg(letterId + 1, letter, false);
 
 		int w = letterWidthLookupTbl[letterId / 2];
 		letterShadow.drawAt(x, y, 2, w - 1); // TODO the original doesn't seem to need to override the width here.

@@ -27,7 +27,7 @@ bool Anm::load(const Common::Path &filename) {
 	if (file.isOpen()) {
 		file.close();
 	}
-	if(!file.open(filename)) {
+	if (!file.open(filename)) {
 		return false;
 	}
 	numRecords = file.readUint16LE();
@@ -39,7 +39,7 @@ bool Anm::load(const Common::Path &filename) {
 bool Anm::getImg(uint16 index, Img &img, bool includesPosition) {
 	file.seek(4 + index * 2);
 	int offset = file.readUint16LE();
-	file.seek((offset*16) + (4 + numRecords * 2));
+	file.seek((offset * 16) + (4 + numRecords * 2));
 	if (includesPosition) {
 		img.load(file);
 	} else {

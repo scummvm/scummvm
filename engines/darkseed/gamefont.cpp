@@ -56,19 +56,45 @@ int GameFont::stringLength(const Common::String &text) {
 const Sprite *GameFont::getCharacterSprite(char c) {
 	int letterIdx = 1000;
 	switch (c) {
-	case 0x20 : letterIdx = 0x46; break;
-	case 0x21 : letterIdx = 0x36; break;
-	case 0x22 : letterIdx = 0x3a; break;
-	case 0x27 : letterIdx = 0x45; break;
-	case 0x28 : letterIdx = 0x37; break;
-	case 0x29 : letterIdx = 0x38; break;
-	case 0x2b : letterIdx = 0xa; break;
-	case 0x2c : letterIdx = 0x34; break;
-	case 0x2d : letterIdx = 0x46; break;
-	case 0x2e : letterIdx = 0x35; break;
-	case 0x3a : letterIdx = 0x47; break;
-	case 0x3f : letterIdx = 0x39; break;
-	case 0x5e : letterIdx = 0x3a; break;
+	case 0x20 :
+		letterIdx = 0x46;
+		break;
+	case 0x21 :
+		letterIdx = 0x36;
+		break;
+	case 0x22 :
+		letterIdx = 0x3a;
+		break;
+	case 0x27 :
+		letterIdx = 0x45;
+		break;
+	case 0x28 :
+		letterIdx = 0x37;
+		break;
+	case 0x29 :
+		letterIdx = 0x38;
+		break;
+	case 0x2b :
+		letterIdx = 0xa;
+		break;
+	case 0x2c :
+		letterIdx = 0x34;
+		break;
+	case 0x2d :
+		letterIdx = 0x46;
+		break;
+	case 0x2e :
+		letterIdx = 0x35;
+		break;
+	case 0x3a :
+		letterIdx = 0x47;
+		break;
+	case 0x3f :
+		letterIdx = 0x39;
+		break;
+	case 0x5e :
+		letterIdx = 0x3a;
+		break;
 
 	default: {
 		if (c < 0x41 || c > 0x5a) {

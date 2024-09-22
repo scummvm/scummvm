@@ -24,7 +24,7 @@
 
 constexpr uint16 MAX_INVENTORY = 42;
 constexpr uint16 MAX_ICONS = 9;
-static constexpr Common::Rect drawArea = {{139,0}, 334, 40};
+static constexpr Common::Rect drawArea = {{139, 0}, 334, 40};
 
 Darkseed::Inventory::Inventory() {
 	_iconList.resize(MAX_ICONS);
@@ -50,7 +50,7 @@ void Darkseed::Inventory::removeItem(uint8 item) {
 	for (int i = 0; i < _inventoryLength; i++) {
 		if (_inventory[i] == item) {
 			for (int j = i; j < _inventoryLength - 1; j++) {
-				_inventory[j] = _inventory[j+1];
+				_inventory[j] = _inventory[j + 1];
 			}
 			_inventoryLength--;
 			update();
@@ -72,11 +72,11 @@ void Darkseed::Inventory::update() {
 	if (_inventoryLength + 1 < MAX_ICONS) {
 		_viewOffset = 0;
 		for (int i = 0; i < _inventoryLength; i++) {
-			_iconList[i+1] = _inventory[i];
+			_iconList[i + 1] = _inventory[i];
 		}
 	} else {
 		for (int i = 0; i < MAX_ICONS - 1; i++) {
-			_iconList[i+1] = _inventory[_viewOffset + i];
+			_iconList[i + 1] = _inventory[_viewOffset + i];
 		}
 		if (_viewOffset + 8 < _inventoryLength) {
 			_iconList[8] = 43;
@@ -109,7 +109,7 @@ void Darkseed::Inventory::draw() {
 	}
 
 	isVisible = true;
-	for(int i = 0; i < _numIcons; i++) {
+	for (int i = 0; i < _numIcons; i++) {
 		int icon = _iconList[i];
 		if (icon != 42 && icon != 43) {
 			icon += 42;

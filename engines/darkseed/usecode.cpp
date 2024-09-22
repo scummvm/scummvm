@@ -167,7 +167,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 		return;
 	}
 	if (objNum == 42) {
-		switch(_objectVar[42]) {
+		switch (_objectVar[42]) {
 		case 0:
 			_console->printTosText(653);
 			break;
@@ -202,10 +202,9 @@ void Darkseed::UseCode::useCode(int objNum) {
 	if (objNum == 47) {
 		_player->loadAnimations("phone.nsp");
 		if (_objectVar.getObjectRunningCode(47) == 0) {
-			g_engine->setupOtherNspAnimation(2,63);
-		}
-		else {
-			g_engine->setupOtherNspAnimation(0,8);
+			g_engine->setupOtherNspAnimation(2, 63);
+		} else {
+			g_engine->setupOtherNspAnimation(0, 8);
 		}
 		_player->_direction = 3;
 	}
@@ -256,10 +255,10 @@ void Darkseed::UseCode::useCode(int objNum) {
 		return;
 	}
 	if ((162 < objNum) && (objNum < 169)) {
-		g_engine->playSound(47,5,-1);
+		g_engine->playSound(47, 5, -1);
 	}
 	if (objNum == 175) {
-		g_engine->playSound(39,5,-1);
+		g_engine->playSound(39, 5, -1);
 		//		while (iVar2 = VOCPlaying(), iVar2 != 0) {
 		//			VOCPoll();
 		//		}
@@ -299,7 +298,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 	}
 	if (objNum == 46) {
 		if (_objectVar[46] == 1) {
-			g_engine->setupOtherNspAnimation(0,19);
+			g_engine->setupOtherNspAnimation(0, 19);
 		} else {
 			_console->printTosText(539);
 		}
@@ -345,27 +344,22 @@ void Darkseed::UseCode::useCode(int objNum) {
 				if (objNum == 108) {
 					if (_objectVar[108] == 0) {
 						_console->printTosText(383);
-					}
-					else {
+					} else {
 						_console->printTosText(385);
 					}
 					g_engine->setupOtherNspAnimation(0, 52);
-				}
-				else {
+				} else {
 					if (_objectVar[objNum] == 0) {
 						_console->printTosText(371);
-					}
-					else {
+					} else {
 						_console->printTosText(373);
 					}
-					g_engine->setupOtherNspAnimation(0,objNum - 56);
+					g_engine->setupOtherNspAnimation(0, objNum - 56);
 				}
-			}
-			else {
+			} else {
 				if (_objectVar[objNum] == 0) {
 					_console->printTosText(389);
-				}
-				else {
+				} else {
 					_console->printTosText(391);
 				}
 				_objectVar[objNum] = _objectVar[objNum] == 0 ? 1 : 0;
@@ -374,13 +368,13 @@ void Darkseed::UseCode::useCode(int objNum) {
 		}
 		if (objNum == 111) { // tap
 			_player->loadAnimations("aspirin.nsp");
-			g_engine->setupOtherNspAnimation(0,30);
+			g_engine->setupOtherNspAnimation(0, 30);
 			_console->printTosText(242);
 			return;
 		}
 		if (objNum == 112) { // mirror cabinet
 			_player->loadAnimations("aspirin.nsp");
-			g_engine->setupOtherNspAnimation(2,32);
+			g_engine->setupOtherNspAnimation(2, 32);
 			return;
 		}
 		if (objNum > 30 && objNum < 34) {
@@ -398,18 +392,18 @@ void Darkseed::UseCode::useCode(int objNum) {
 			return;
 		}
 		if (objNum == 101) {
-			switch(_objectVar[101]) {
+			switch (_objectVar[101]) {
 			case 0:
 				_player->loadAnimations("opendoor.nsp");
-				g_engine->setupOtherNspAnimation(0,65);
-				g_engine->playSound(31,5,-1);
+				g_engine->setupOtherNspAnimation(0, 65);
+				g_engine->playSound(31, 5, -1);
 				_objectVar[101] = 1;
 				_console->printTosText(733);
 				break;
 			case 1:
 				_player->loadAnimations("opendoor.nsp");
-				g_engine->setupOtherNspAnimation(0,65);
-				g_engine->playSound(31,5,-1);
+				g_engine->setupOtherNspAnimation(0, 65);
+				g_engine->playSound(31, 5, -1);
 				_objectVar[101] = 0;
 				_console->printTosText(737);
 				break;
@@ -420,15 +414,15 @@ void Darkseed::UseCode::useCode(int objNum) {
 				return;
 			case 3:
 				_player->loadAnimations("opendoor.nsp");
-				g_engine->setupOtherNspAnimation(0,65);
-				g_engine->playSound(31,5,-1);
+				g_engine->setupOtherNspAnimation(0, 65);
+				g_engine->playSound(31, 5, -1);
 				_objectVar[101] = 4;
 				_console->printTosText(737);
 				break;
 			case 4:
 				_player->loadAnimations("opendoor.nsp");
-				g_engine->setupOtherNspAnimation(0,65);
-				g_engine->playSound(31,5,-1);
+				g_engine->setupOtherNspAnimation(0, 65);
+				g_engine->playSound(31, 5, -1);
 				_objectVar[101] = 3;
 				_console->printTosText(733);
 				break;
@@ -484,7 +478,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 			}
 		} else if (objNum == 86) {
 			_objectVar[86] = _objectVar[86] == 0 ? 1 : 0;
-			g_engine->playSound(42,5,-1);
+			g_engine->playSound(42, 5, -1);
 		} else if (objNum == 22) {
 			if (_objectVar[22] < 4) {
 				_player->loadAnimations("push.nsp");
@@ -517,7 +511,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 					if (((_objectVar[49] == 0) || (1 < _objectVar[62])) || (g_engine->_currentDay != 3)) {
 						if (_objectVar[62] < 101) {
 							//							LoadModeSong(9);
-							g_engine->playSound(0,6,-1);
+							g_engine->playSound(0, 6, -1);
 							_objectVar[62] = 101;
 							_console->addTextLine("You turn on the music.");
 						} else if (_objectVar[62] == 101) {
@@ -554,8 +548,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 			if (g_engine->_room->_roomNumber == 41) {
 				g_engine->_room->_roomNumber = 44;
 				_console->printTosText(956);
-			}
-			else {
+			} else {
 				g_engine->_room->_roomNumber = 41;
 				_console->printTosText(957);
 			}
@@ -568,7 +561,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 				_player->loadAnimations("shower.nsp");
 				g_engine->setupOtherNspAnimation(0, 2);
 				_console->printTosText(193);
-				g_engine->playSound(2,4,-1);
+				g_engine->playSound(2, 4, -1);
 			} else {
 				_console->printTosText(194);
 			}
@@ -578,8 +571,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 				if (g_engine->_room->_roomNumber == 0 || g_engine->_room->_roomNumber == 9) {
 					_console->printTosText(409);
 				}
-			}
-			else {
+			} else {
 				if (g_engine->_room->_roomNumber == 0 || g_engine->_room->_roomNumber == 9) {
 					_console->printTosText(407);
 				}
@@ -591,9 +583,8 @@ void Darkseed::UseCode::useCode(int objNum) {
 				if (g_engine->_room->_roomNumber == 0 || g_engine->_room->_roomNumber == 9) {
 					_console->printTosText(409);
 				}
-			}
-			else {
-				g_engine->playSound(41,5,-1);
+			} else {
+				g_engine->playSound(41, 5, -1);
 				if (g_engine->_room->_roomNumber == 0 || g_engine->_room->_roomNumber == 9) {
 					_console->printTosText(32);
 				}
@@ -601,7 +592,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 			}
 		} else if (objNum == 139) {
 			_player->loadAnimations("ltladder.nsp");
-			g_engine->setupOtherNspAnimation(0,10);
+			g_engine->setupOtherNspAnimation(0, 10);
 		} else if (objNum == 76) {
 			//			_NoScroll = 0;
 			//			Ordinal_184(unaff_CS,(int)&_file_name,4192,(int)sg_engine->_room3.nnn_1060_31e1);
@@ -614,7 +605,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 			g_engine->setupOtherNspAnimation(0, 12);
 		} else if (objNum == 66 && _objectVar[68] == 0) {
 			if (_objectVar[12] == 2) {
-				g_engine->playSound(5,5,-1);
+				g_engine->playSound(5, 5, -1);
 				if (_objectVar[66] == 0) {
 					if (_objectVar[67] == 0 && _objectVar[68] == 0) {
 						_objectVar[66] = 1;
@@ -629,7 +620,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 			}
 		} else if (objNum == 67 && _objectVar[68] == 0) {
 			if (_objectVar[12] == 2) {
-				g_engine->playSound(5,5,-1);
+				g_engine->playSound(5, 5, -1);
 				if (_objectVar[67] == 0) {
 					if (_objectVar[66] == 1 && _objectVar[68] == 0) {
 						_objectVar[67] = 1;
@@ -646,9 +637,9 @@ void Darkseed::UseCode::useCode(int objNum) {
 			if (_objectVar[12] == 2) {
 				if (true) {
 					if ((_objectVar[66] == 1) && (_objectVar[67] == 1)) {
-						g_engine->playSound(13,5,-1);
+						g_engine->playSound(13, 5, -1);
 						_objectVar[68] = 1;
-						g_engine->setupOtherNspAnimation(0,23);
+						g_engine->setupOtherNspAnimation(0, 23);
 					} else {
 						_objectVar[68] = 2;
 					}
@@ -658,8 +649,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 			} else {
 				_console->addTextLine("You touch the surface of the ornate sigil.");
 			}
-		}
-		else if (objNum == 84) {
+		} else if (objNum == 84) {
 			_console->printTosText(566);
 		}
 		//		_NoScroll = 0;
@@ -667,8 +657,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 	}
 	if (_objectVar[138] == 0) {
 		_console->printTosText(906);
-	}
-	else {
+	} else {
 		_inventory.addItem(objNum);
 		g_engine->_room->removeObjectFromRoom(objNum);
 		_objectVar[138] = 0;
@@ -695,7 +684,7 @@ void Darkseed::UseCode::useCodeGloves(int16 targetObjNum) {
 		if (tosIdx < 979) {
 			_console->printTosText(tosIdx);
 		} else {
-			genericresponse(14,targetObjNum, tosIdx);
+			genericresponse(14, targetObjNum, tosIdx);
 		}
 	}
 	if (targetObjNum == 57) {
@@ -745,9 +734,8 @@ void Darkseed::UseCode::useCodeJournal(int16 actionObjNum, int16 targetObjNum) {
 		if (tosIdx != 0) {
 			if (tosIdx < 979) {
 				_console->printTosText(tosIdx);
-			}
-			else {
-				genericresponse(6,targetObjNum, tosIdx);
+			} else {
+				genericresponse(6, targetObjNum, tosIdx);
 			}
 		}
 	}
@@ -1011,7 +999,7 @@ void Darkseed::UseCode::useCrowBar(int16 targetObjNum) {
 		if (tosIdx < 979) {
 			_console->printTosText(tosIdx);
 		} else {
-			genericresponse(5,targetObjNum, tosIdx);
+			genericresponse(5, targetObjNum, tosIdx);
 		}
 	}
 	if (targetObjNum == 42) {
@@ -1131,11 +1119,11 @@ void UseCode::useCodeBobbyPin(int16 targetObjNum) {
 	if (targetObjNum == 190) {
 		if (_objectVar[190] == 0) {
 			_console->printTosText(882);
-			g_engine->playSound(18,5,-1);
+			g_engine->playSound(18, 5, -1);
 			_objectVar[190] = 1;
 		} else if (_objectVar[190] == 1) {
 			_console->printTosText(883);
-			g_engine->playSound(18,5,-1);
+			g_engine->playSound(18, 5, -1);
 			_objectVar[190] = 2;
 		} else {
 			_console->printTosText(963);
@@ -1263,8 +1251,7 @@ void UseCode::useCodeDelbertsCard(int16 targetObjNum) {
 	if (targetObjNum == 64) {
 		if (g_engine->_room->_roomNumber == 30) {
 			g_engine->setupOtherNspAnimation(1, 40);
-		}
-		else {
+		} else {
 			_console->printTosText(488);
 		}
 	}
@@ -1338,8 +1325,7 @@ void UseCode::useCodeMicroFilm(int16 targetObjNum) {
 		} else {
 			_console->printTosText(964);
 		}
-	}
-	else if (targetObjNum == 113) {
+	} else if (targetObjNum == 113) {
 		putobjunderpillow(24);
 	}
 }
@@ -1700,8 +1686,8 @@ void UseCode::genericresponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 					"Using the %s on the %s doesn't make any sense, it must be your headaches!",
 					_objectVar.getObjectName(useObjNum),
 					_objectVar.getObjectName(targetObjNum)
-					)
-				);
+				)
+			);
 			break;
 		case 1:
 			_console->addTextLine(
@@ -1709,7 +1695,7 @@ void UseCode::genericresponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 					"The %s will do nothing to the %s.",
 					_objectVar.getObjectName(useObjNum),
 					_objectVar.getObjectName(targetObjNum)
-						)
+				)
 			);
 			break;
 		case 2:
@@ -1718,7 +1704,7 @@ void UseCode::genericresponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 					"The %s doesn't have any effect on the %s.",
 					_objectVar.getObjectName(useObjNum),
 					_objectVar.getObjectName(targetObjNum)
-						)
+				)
 			);
 			break;
 		case 3:
@@ -1727,7 +1713,7 @@ void UseCode::genericresponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 					"The %s has nothing to do with %s.",
 					_objectVar.getObjectName(useObjNum),
 					_objectVar.getObjectName(targetObjNum)
-						)
+				)
 			);
 			break;
 		case 4:
@@ -1765,15 +1751,15 @@ static constexpr bool diggingxflipTbl[12] = {
 void UseCode::startdigging(int16 targetObjNum) {
 	if (targetObjNum == 0) {
 		_player->loadAnimations("lgravedg.nsp");
-		g_engine->setupOtherNspAnimation(0,21);
+		g_engine->setupOtherNspAnimation(0, 21);
 	} else if (diggingxflipTbl[targetObjNum]) {
 		_player->loadAnimations("lgravedg.nsp");
-		g_engine->setupOtherNspAnimation(0,4);
+		g_engine->setupOtherNspAnimation(0, 4);
 	} else {
 		_player->loadAnimations("rgravedg.nsp");
-		g_engine->setupOtherNspAnimation(0,22);
+		g_engine->setupOtherNspAnimation(0, 22);
 	}
-	g_engine->playSound(14,5,-1);
+	g_engine->playSound(14, 5, -1);
 }
 
 }

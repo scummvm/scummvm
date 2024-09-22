@@ -44,7 +44,9 @@ private:
 public:
 	virtual ~Cutscene();
 	void play(char cutsceneId);
-	bool isPlaying() { return _movieStep != 9999; }
+	bool isPlaying() {
+		return _movieStep != 9999;
+	}
 	void update();
 
 private:
@@ -53,7 +55,7 @@ private:
 	bool shipLaunchScene();
 	bool alienBornScene();
 
-	void runAnim(int direction=1);
+	void runAnim(int direction = 1);
 	bool stepAnim(int drawMode = 1);
 
 	void putHouse();

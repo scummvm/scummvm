@@ -28,7 +28,7 @@ namespace Darkseed {
 static constexpr Common::Rect consoleArea = {{0x70, 280}, 416, 44};
 
 Console::Console(TosText *tosText, Sound *sound) : _tosText(tosText), _sound(sound) {
-	if(!_font.load()) {
+	if (!_font.load()) {
 		error("Error loading tosfont.nsp");
 	}
 	_text.resize(10);

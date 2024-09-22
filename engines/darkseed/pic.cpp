@@ -26,7 +26,7 @@
 bool Darkseed::Pic::load(const Common::Path &filename) {
 	Common::File file;
 	Common::Path fullPath = g_engine->getPictureFilePath(filename);
-	if(!file.open(fullPath)) {
+	if (!file.open(fullPath)) {
 		debug("Failed to load %s", fullPath.toString().c_str());
 		return false;
 	}
@@ -41,11 +41,11 @@ bool Darkseed::Pic::load(const Common::Path &filename) {
 bool Darkseed::Pic::load(Common::SeekableReadStream &readStream) {
 	width = readStream.readUint16BE();
 	height = readStream.readUint16BE();
-	pixels.resize(width * (height+1), 0);
+	pixels.resize(width * (height + 1), 0);
 
 	int curX = 0;
 	int curY = 0;
-	while(curY < height) {
+	while (curY < height) {
 		int rleCommand = readNextNibble(readStream);
 
 		if (rleCommand < 8) {

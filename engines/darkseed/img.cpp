@@ -28,7 +28,7 @@ namespace Darkseed {
 
 bool Img::load(const Common::Path &filename) {
 	Common::File file;
-	if(!file.open(filename)) {
+	if (!file.open(filename)) {
 		return false;
 	}
 	bool ret = load(file);
@@ -60,7 +60,7 @@ bool Img::loadWithoutPosition(Common::SeekableReadStream &readStream) {
 bool Img::unpackRLE(Common::SeekableReadStream &readStream, Common::Array<byte> &buf) {
 	uint16 size = readStream.readUint16LE();
 	uint16 idx = 0;
-	buf.resize(size+1);
+	buf.resize(size + 1);
 
 	while (idx <= size) {
 		uint8 byte = readStream.readByte();
@@ -91,11 +91,11 @@ void Img::unpackPlanarData(Common::Array<uint8> &planarData, uint16 headerOffset
 	mode = planarData.data()[headerOffset + 4];
 //	assert(mode == 0xff);
 	pixels.resize(width * height, 0);
-	for (int py=0; py < height; py++) {
+	for (int py = 0; py < height; py++) {
 		for (int plane = 0; plane < 4; plane++) {
-			for (int px=0; px < width; px++) {
+			for (int px = 0; px < width; px++) {
 				int bitPos = (7 - (px % 8));
-				int planeBit = (planarData[(headerOffset + 5) + (px/8) + (width/8)*plane + py * (width/8)*4] & (1 << bitPos)) >> bitPos;
+				int planeBit = (planarData[(headerOffset + 5) + (px / 8) + (width / 8) * plane + py * (width / 8) * 4] & (1 << bitPos)) >> bitPos;
 				pixels[px + py * width] |= planeBit << (3 - plane);
 			}
 		}
