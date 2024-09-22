@@ -23,7 +23,7 @@
 #define DARKSEED_ANM_H
 
 #include "common/array.h"
-#include "img.h"
+#include "darkseed/img.h"
 namespace Darkseed {
 
 class Anm {

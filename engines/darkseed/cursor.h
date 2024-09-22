@@ -23,7 +23,7 @@
 #define DARKSEED_CURSOR_H
 
 #include "common/rect.h"
-#include "nsp.h"
+#include "darkseed/nsp.h"
 
 namespace Darkseed {
 

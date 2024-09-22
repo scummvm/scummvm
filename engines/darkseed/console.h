@@ -23,10 +23,10 @@
 #ifndef DARKSEED_CONSOLE_H
 #define DARKSEED_CONSOLE_H
 
-#include "gamefont.h"
+#include "darkseed/gamefont.h"
 #include "darkseed/sound.h"
-#include "nsp.h"
-#include "tostext.h"
+#include "darkseed/nsp.h"
+#include "darkseed/tostext.h"
 
 namespace Darkseed {
 

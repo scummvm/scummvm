@@ -26,6 +26,7 @@
 #include "common/error.h"
 #include "common/rect.h"
 #include "common/serializer.h"
+
 namespace Darkseed {
 
 enum ObjType {

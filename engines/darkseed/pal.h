@@ -23,6 +23,7 @@
 #define DARKSEED_PAL_H
 
 #include "common/path.h"
+
 namespace Darkseed {
 
 #define DARKSEED_NUM_PAL_ENTRIES 16

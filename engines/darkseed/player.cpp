@@ -19,9 +19,9 @@
 *
 */
 
-#include "player.h"
 #include "common/math.h"
-#include "darkseed.h"
+#include "darkseed/player.h"
+#include "darkseed/darkseed.h"
 
 Darkseed::Player::Player() {
 	_cPlayerSprites.load("cplayer.nsp");

@@ -34,19 +34,19 @@
 #include "engines/savestate.h"
 #include "graphics/screen.h"
 
-#include "console.h"
-#include "cursor.h"
-#include "cutscene.h"
+#include "darkseed/console.h"
+#include "darkseed/cursor.h"
+#include "darkseed/cutscene.h"
 #include "darkseed/detection.h"
-#include "inventory.h"
-#include "nsp.h"
-#include "objects.h"
-#include "player.h"
-#include "room.h"
-#include "sound.h"
-#include "sprites.h"
-#include "tostext.h"
-#include "usecode.h"
+#include "darkseed/inventory.h"
+#include "darkseed/nsp.h"
+#include "darkseed/objects.h"
+#include "darkseed/player.h"
+#include "darkseed/room.h"
+#include "darkseed/sound.h"
+#include "darkseed/sprites.h"
+#include "darkseed/tostext.h"
+#include "darkseed/usecode.h"
 
 namespace Darkseed {
 
@@ -122,8 +122,8 @@ public:
 
 	int sprite_y_scaling_threshold_maybe = 0xf0;
 	int scaledWalkSpeed_maybe = 0;
-	uint8 scaledSpriteWidth = 0;
-	uint8 scaledSpriteHeight = 0;
+	uint16 scaledSpriteWidth = 0;
+	uint16 scaledSpriteHeight = 0;
 
 	int nsp_sprite_scaling_y_position = 0;
 

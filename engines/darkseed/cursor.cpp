@@ -19,9 +19,9 @@
 *
 */
 
-#include "cursor.h"
-#include "darkseed.h"
 #include "graphics/cursorman.h"
+#include "darkseed/cursor.h"
+#include "darkseed/darkseed.h"
 
 void Darkseed::Cursor::setCursorType(enum CursorType newType) {
 	bool loadCursor = !hasLoadedCursor || _currentCursorType != newType;

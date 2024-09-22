@@ -19,8 +19,8 @@
 *
 */
 
-#include "cutscene.h"
-#include "darkseed.h"
+#include "darkseed/cutscene.h"
+#include "darkseed/darkseed.h"
 
 Darkseed::Cutscene::~Cutscene() {
 	delete titleFont;

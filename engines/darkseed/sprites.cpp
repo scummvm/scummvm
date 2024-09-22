@@ -19,15 +19,16 @@
 *
 */
 
-#include "sprites.h"
-#include "darkseed.h"
+#include "darkseed/sprites.h"
+#include "darkseed/darkseed.h"
+
 #define DARKSEED_MAX_SPRITES_ON_SCREEN 30
 
 Darkseed::Sprites::Sprites() {
 	spriteDrawList.reserve(DARKSEED_MAX_SPRITES_ON_SCREEN);
 }
 
-void Darkseed::Sprites::addSpriteToDrawList(uint16 destX, uint16 destY, const Darkseed::Sprite *sprite, uint8 order, uint8 destW, uint8 destH, bool flip) {
+void Darkseed::Sprites::addSpriteToDrawList(uint16 destX, uint16 destY, const Darkseed::Sprite *sprite, uint8 order, uint16 destW, uint16 destH, bool flip) {
 	if (spriteDrawList.size() == DARKSEED_MAX_SPRITES_ON_SCREEN || destX >= 570) {
 		return;
 	}
@@ -42,7 +43,7 @@ void Darkseed::Sprites::addSpriteToDrawList(uint16 destX, uint16 destY, const Da
 	drawInstruction.flip = flip;
 
 	if (!spriteDrawList.empty()) {
-		int insertLocation = 0;
+		uint insertLocation = 0;
 		for (; insertLocation < spriteDrawList.size(); insertLocation++) {
 			if (order < spriteDrawList[insertLocation].order) {
 				break;

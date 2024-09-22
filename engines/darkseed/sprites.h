@@ -23,7 +23,7 @@
 #define DARKSEED_SPRITES_H
 
 #include "common/scummsys.h"
-#include "nsp.h"
+#include "darkseed/nsp.h"
 
 namespace Darkseed {
 
@@ -34,8 +34,8 @@ struct SpriteDrawInstruction {
 	uint16 srcH = 0;
 	const Sprite *sprite = nullptr;
 	uint8 order = 0;
-	uint8 destW = 0;
-	uint8 destH = 0;
+	uint16 destW = 0;
+	uint16 destH = 0;
 	bool flip = false;
 };
 
@@ -44,7 +44,7 @@ private:
 	Common::Array<SpriteDrawInstruction> spriteDrawList;
 public:
 	Sprites();
-	void addSpriteToDrawList(uint16 destX, uint16 destY, const Sprite *sprite, uint8 order, uint8 destW, uint8 destH, bool flip);
+	void addSpriteToDrawList(uint16 destX, uint16 destY, const Sprite *sprite, uint8 order, uint16 destW, uint16 destH, bool flip);
 	void clearSpriteDrawList();
 
 	void drawSprites();

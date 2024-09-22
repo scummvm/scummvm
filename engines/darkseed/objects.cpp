@@ -19,7 +19,7 @@
 *
 */
 
-#include "objects.h"
+#include "darkseed/objects.h"
 
 Darkseed::Objects::Objects() {
 	_objectVar.resize(MAX_OBJECTS);

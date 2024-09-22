@@ -19,8 +19,8 @@
 *
 */
 
-#include "darkseed.h"
-#include "inventory.h"
+#include "darkseed/darkseed.h"
+#include "darkseed/inventory.h"
 
 constexpr uint16 MAX_INVENTORY = 42;
 constexpr uint16 MAX_ICONS = 9;

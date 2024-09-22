@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "common/scummsys.h"
 #include "common/file.h"
+
 namespace Darkseed {
 
 class Img {

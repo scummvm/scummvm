@@ -22,7 +22,7 @@
 #ifndef DARKSEED_TITLEFONT_H
 #define DARKSEED_TITLEFONT_H
 
-#include "anm.h"
+#include "darkseed/anm.h"
 namespace Darkseed {
 
 class TitleFont {

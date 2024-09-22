@@ -19,8 +19,8 @@
  *
  */
 
-#include "anm.h"
 #include "common/debug.h"
+#include "darkseed/anm.h"
 
 namespace Darkseed {
 bool Anm::load(const Common::Path &filename) {

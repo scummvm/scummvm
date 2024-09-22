@@ -19,8 +19,8 @@
 *
 */
 
-#include "darkseed.h"
-#include "gamefont.h"
+#include "darkseed/darkseed.h"
+#include "darkseed/gamefont.h"
 
 namespace Darkseed {
 extern DarkseedEngine *g_engine;

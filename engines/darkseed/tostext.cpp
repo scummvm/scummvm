@@ -20,8 +20,8 @@
  *
  */
 
-#include "tostext.h"
 #include "common/file.h"
+#include "darkseed/tostext.h"
 
 namespace Darkseed {
 

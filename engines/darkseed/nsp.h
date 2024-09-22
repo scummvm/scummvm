@@ -60,7 +60,7 @@ private:
 
 public:
 	bool load(const Common::Path &filename);
-	bool containsSpriteAt(int index) { return frames.size() > index; }
+	bool containsSpriteAt(int index) { return (int)frames.size() > index; }
 	const Sprite &getSpriteAt(int index);
 	const Obt &getAnimAt(int index);
 	int16 getTotalAnim() { return (int16)animations.size(); }
