@@ -904,6 +904,7 @@ Special configuration feature:
                                            ps3 for PlayStation 3
                                            psp2 for PlayStation Vita
                                            psp for PlayStation Portable
+                                           sailfish for SailfishOS
                                            samsungtv for Samsung TV
                                            switch for Nintendo Switch
                                            tvos for Apple TV (tvOS 9.0+)
@@ -1156,6 +1157,9 @@ Saved environment variables:
 AR="$SAVED_AR" AS="$SAVED_AS" ASFLAGS="$SAVED_ASFLAGS" CPPFLAGS="$SAVED_CPPFLAGS" CXX="$SAVED_CXX" CXXFLAGS="$SAVED_CXXFLAGS" DWP="$SAVED_DWP" LD="$SAVED_LD" LDFLAGS="$SAVED_LDFLAGS" PKG_CONFIG_LIBDIR="$SAVED_PKG_CONFIG_LIBDIR" RANLIB="$SAVED_RANLIB" SDL_CONFIG="$SAVED_SDL_CONFIG" STRIP="$SAVED_STRIP" WINDRES="$SAVED_WINDRES" WINDRESFLAGS="$SAVED_WINDRESFLAGS"
 EOF
 
+JPEG_LIBS=-ljpeg
+FLAC_LIBS=-lFLAC
+THEORADEC_LIBS=-ltheoradec
 
 for ac_option in $@; do
 	case "$ac_option" in
@@ -1391,7 +1395,8 @@ for ac_option in $@; do
 	--with-flac-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		FLAC_CFLAGS="-I$arg/include"
-		FLAC_LIBS="-L$arg/lib"
+		FLAC_LIBS="-L$arg/lib -lFLAC"
+		FLAC_PREFIX="$arg"
 		;;
 	--with-mad-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -1406,7 +1411,8 @@ for ac_option in $@; do
 	--with-jpeg-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		JPEG_CFLAGS="-I$arg/include"
-		JPEG_LIBS="-L$arg/lib"
+		JPEG_LIBS="-L$arg/lib -ljpeg"
+		JPEG_PREFIX="$arg"
 		;;
 	--with-png-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -1421,7 +1427,8 @@ for ac_option in $@; do
 	--with-theoradec-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		THEORADEC_CFLAGS="-I$arg/include"
-		THEORADEC_LIBS="-L$arg/lib"
+		THEORADEC_LIBS="-L$arg/lib -ltheoradec"
+		THEORADEC_PREFIX="$arg"
 		;;
 	--with-vpx-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -1835,6 +1842,28 @@ samsungtv)
 	_host_cpu=arm
 	_host_alias=arm-linux-gnueabi
 	;;
+sailfish)
+        _host_os=linux
+	test "x$prefix" = xNONE && prefix=/usr
+	datarootdir='/usr/share/org.scummvm.scummvm'
+	datadir='${datarootdir}/scummvm'
+	docdir='/usr/share/org.scummvm.scummvm/doc/scummvm'
+	# Use static libraries on Sailfish. Sailfish limits our
+	# ability to link with libraries from other packages. And if we ship
+	# dynamic library but always load it and noone else uses it, then we're
+	# no better off than using static libraries. Additionally shipping
+	# libraries is a hassle.
+	if [ -n "$JPEG_PREFIX" ]; then
+	    JPEG_LIBS="$JPEG_PREFIX/lib/libjpeg.a"
+	fi
+	if [ -n "$FLAC_PREFIX" ]; then
+	    FLAC_LIBS="$FLAC_PREFIX/lib/libFLAC.a"
+	fi
+	if [ -n "$THEORADEC_PREFIX" ]; then
+	    THEORADEC_LIBS="$THEORADEC_PREFIX/lib/libtheoradec.a"
+	fi
+
+	;;
 switch)
 	_host_os=switch
 	_host_cpu=aarch64
@@ -2167,7 +2196,9 @@ if test -n "$CXX" && test_compiler "$CXX"; then
 	# Use the compiler specified in CXX
 	echo $CXX
 else
-	if test -n "$_host"; then
+        # Sailfish is a cross-compile environment but it uses g++ name
+        # Yes, it's black magic what they do.
+	if test -n "$_host" && test "$_host" != sailfish ; then
 		compilers="$_host_alias-g++ $_host_alias-c++ $_host_alias-clang++ $_host-g++ $_host-c++ $_host-clang++"
 	else
 		compilers="g++ c++ clang++"
@@ -3865,6 +3896,14 @@ if test -n "$_host"; then
 			_seq_midi=no
 			_timidity=no
 			;;
+		sailfish)
+                        append_var DEFINES "-DSAILFISH"
+                        append_var LDFLAGS "-Wl,-rpath,/usr/share/org.scummvm.scummvm/lib"
+                        _vkeybd=yes
+                        HOSTEXEPRE=org.scummvm.
+			_backend="sailfish"
+                        add_line_to_config_mk 'SAILFISH = 1'
+                        ;;
 		samsungtv)
 			append_var DEFINES "-DSAMSUNGTV"
 			append_var DEFINES "-DDISABLE_COMMAND_LINE"
@@ -4003,7 +4042,7 @@ case $_backend in
 		append_var DEFINES "-DUSE_NULL_DRIVER"
 		_text_console=yes
 		;;
-	opendingux | miyoo | miyoomini)
+	opendingux | miyoo | miyoomini | sailfish)
 		_sdlconfig=sdl-config
 		_sdl=auto
 		append_var MODULES "backends/platform/sdl"
@@ -4414,7 +4453,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | dc | ds | ios7 | kolibrios | maemo | null | opendingux | miyoomini | miyoo | openpandora | psp | psp2 | samsungtv | sdl | switch | wii)
+	3ds | android | dc | ds | ios7 | kolibrios | maemo | null | opendingux | miyoomini | miyoo | openpandora | psp | psp2 | sailfish | samsungtv | sdl | switch | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -5161,14 +5200,14 @@ int main(void) {
 EOF
 	if test "$_ogg" = yes ; then
 		cc_check $FLAC_CFLAGS $FLAC_LIBS $OGG_CFLAGS $OGG_LIBS \
-			-lFLAC -logg && _flac=yes
+			-logg && _flac=yes
 	else
 		cc_check $FLAC_CFLAGS $FLAC_LIBS \
-			-lFLAC && _flac=yes
+			&& _flac=yes
 	fi
 fi
 if test "$_flac" = yes ; then
-	append_var LIBS "$FLAC_LIBS -lFLAC"
+	append_var LIBS "$FLAC_LIBS"
 	append_var INCLUDES "$FLAC_CFLAGS"
 fi
 define_in_config_if_yes "$_flac" 'USE_FLAC'
@@ -5235,10 +5274,10 @@ int main(void) {
   return 0;
 }
 EOF
-	cc_check $JPEG_CFLAGS $JPEG_LIBS -ljpeg && _jpeg=yes
+	cc_check $JPEG_CFLAGS $JPEG_LIBS && _jpeg=yes
 fi
 if test "$_jpeg" = yes ; then
-	append_var LIBS "$JPEG_LIBS -ljpeg"
+	append_var LIBS "$JPEG_LIBS"
 	append_var INCLUDES "$JPEG_CFLAGS"
 fi
 define_in_config_if_yes "$_jpeg" 'USE_JPEG'
@@ -5320,10 +5359,10 @@ if test "$_theoradec" = auto ; then
 #include <theora/theoradec.h>
 int main(void) { th_ycbcr_buffer yuv; th_decode_ycbcr_out(NULL, yuv);  }
 EOF
-	cc_check $THEORADEC_CFLAGS $THEORADEC_LIBS -ltheoradec && _theoradec=yes
+	cc_check $THEORADEC_CFLAGS $THEORADEC_LIBS && _theoradec=yes
 fi
 if test "$_theoradec" = yes ; then
-	append_var LIBS "$THEORADEC_LIBS -ltheoradec"
+	append_var LIBS "$THEORADEC_LIBS"
 	append_var INCLUDES "$THEORADEC_CFLAGS"
 fi
 define_in_config_if_yes "$_theoradec" 'USE_THEORADEC'
@@ -6290,6 +6329,10 @@ if test "$_opengl_mode" != none ; then
 					;;
 			esac
 			;;
+		sailfish)
+		        _opengl_mode=gles2
+		        _opengl_glad=yes
+			;;
 		switch)
 			_opengl_mode=gles2
 			_opengl_glad=yes
@@ -6681,7 +6724,7 @@ echocheck "ImGui"
 if test "$_imgui" != no ; then
 	if test "$_freetype2" = yes ; then
 		case $_backend in
-			sdl)
+			sdl | sailfish)
 				if test "$_sdlMajorVersionNumber" -ge 2 ; then
 					cat > $TMPC << EOF
 #include "SDL.h"

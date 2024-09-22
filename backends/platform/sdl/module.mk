@@ -79,6 +79,13 @@ MODULE_OBJS += \
 	psp2/psp2.o
 endif
 
+ifdef SAILFISH
+MODULE_OBJS += \
+	sailfish/sailfish-main.o \
+	sailfish/sailfish-window.o \
+	sailfish/sailfish.o
+endif
+
 ifdef SWITCH
 MODULE_OBJS += \
 	switch/switch-main.o \

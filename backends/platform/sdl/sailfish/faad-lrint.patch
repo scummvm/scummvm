@@ -1,0 +1,11 @@
+--- a/libfaad/common.h	2024-10-06 01:41:33.334820363 +0300
++++ b/libfaad/common.h	2024-10-06 01:42:58.196852018 +0300
+@@ -327,7 +327,7 @@
+         return i;
+     }
+     #endif /* HAVE_LRINTF */
+-  #elif (defined(__i386__) && defined(__GNUC__) && \
++  #elif (defined(__i386__) && 0 && defined(__GNUC__) && \
+ 	!defined(__CYGWIN__) && !defined(__MINGW32__))
+     #ifndef HAVE_LRINTF
+     #define HAS_LRINTF

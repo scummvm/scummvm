@@ -19,34 +19,26 @@
  *
  */
 
-#include "common/scummsys.h"
+#ifndef PLATFORM_SDL_SAILFISH_H
+#define PLATFORM_SDL_SAILFISH_H
 
-#if defined(POSIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(MAEMO) && !defined(OPENDINGUX) && !defined(OPENPANDORA) && !defined(PLAYSTATION3) && !defined(PSP2) && !defined(NINTENDO_SWITCH)  && !defined(__EMSCRIPTEN__) && !defined(MIYOO) && !defined(MIYOOMINI) && !defined(SAILFISH)
+#include "backends/platform/sdl/sdl.h"
 
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
+class OSystem_SDL_Sailfish : public OSystem_SDL {
+public:
+	void init() override;
+	void initBackend() override;
+	bool hasFeature(Feature f) override;
 
-int main(int argc, char *argv[]) {
+protected:
+	Common::Path getDefaultConfigFileName() override;
+	Common::Path getDefaultLogFileName() override;
 
-	// Create our OSystem instance
-	g_system = new OSystem_POSIX();
-	assert(g_system);
+private:
+	Common::Path getDefaultSavePath();
+	Common::String getAppSuffix();
 
-	// Pre initialize the backend
-	g_system->init();
-
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
-
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-
-	// Free OSystem
-	g_system->destroy();
-
-	return res;
-}
+	bool _isAuroraOS = false;
+};
 
 #endif

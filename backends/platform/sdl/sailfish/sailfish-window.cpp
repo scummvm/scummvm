@@ -19,34 +19,28 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "backends/graphics/sdl/sdl-graphics.h"
+#include "backends/platform/sdl/sailfish/sailfish-window.h"
 
-#if defined(POSIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(MAEMO) && !defined(OPENDINGUX) && !defined(OPENPANDORA) && !defined(PLAYSTATION3) && !defined(PSP2) && !defined(NINTENDO_SWITCH)  && !defined(__EMSCRIPTEN__) && !defined(MIYOO) && !defined(MIYOOMINI) && !defined(SAILFISH)
+/* Setting window size at anything other than full screen is unexpected
+   and results in a rectangle without any decorations. So always create
+   full screen window.
+ */
+bool SdlWindow_Sailfish::createOrUpdateWindow(int, int, uint32 flags) {
+	SDL_DisplayMode dm;
+	SDL_GetCurrentDisplayMode(0,&dm);
+	int width, height;
 
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
-
-int main(int argc, char *argv[]) {
-
-	// Create our OSystem instance
-	g_system = new OSystem_POSIX();
-	assert(g_system);
-
-	// Pre initialize the backend
-	g_system->init();
-
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
-
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-
-	// Free OSystem
-	g_system->destroy();
-
-	return res;
+	/* SDL assumes that composer takes care of rotation and so switches
+	   sides in landscape rotation. But Lipstick doesn't handle rotation.
+	   So put them back in correct order.
+	 */
+	if (dm.w < dm.h) {
+		width = dm.w;
+		height = dm.h;
+	} else {
+		width = dm.h;
+		height = dm.w;
+	}
+	return SdlWindow::createOrUpdateWindow(width, height, flags);
 }
-
-#endif
