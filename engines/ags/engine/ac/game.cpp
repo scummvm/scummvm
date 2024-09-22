@@ -373,8 +373,6 @@ void unload_game() {
 	pl_stop_plugins();
 
 	// Free all script instances and script modules
-	ccInstance::FreeInstanceStack();
-
 	FreeAllScriptInstances();
 	FreeGlobalScripts();
 

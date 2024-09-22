@@ -473,6 +473,7 @@ void AllocScriptModules() {
 }
 
 void FreeAllScriptInstances() {
+	ccInstance::FreeInstanceStack();
 	FreeRoomScriptInstance();
 
 	// NOTE: don't know why, but Forks must be deleted prior to primary inst,
