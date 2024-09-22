@@ -124,7 +124,8 @@ bool StdioStream::flush() {
 	return fflush((FILE *)_handle) == 0;
 }
 
-StdioStream *StdioStream::makeFromPath(const Common::String &path, bool writeMode) {
+StdioStream *StdioStream::makeFromPathHelper(const Common::String &path, bool writeMode,
+		StdioStream *(*factory)(void *handle)) {
 #if defined(WIN32) && defined(UNICODE)
 	wchar_t *wPath = Win32::stringToTchar(path);
 	FILE *handle = _wfopen(wPath, writeMode ? L"wb" : L"rb");
@@ -136,7 +137,7 @@ StdioStream *StdioStream::makeFromPath(const Common::String &path, bool writeMod
 #endif
 
 	if (handle)
-		return new StdioStream(handle);
+		return new factory(handle);
 	return nullptr;
 }
 

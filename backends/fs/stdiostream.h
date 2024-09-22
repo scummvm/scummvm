@@ -32,12 +32,19 @@ protected:
 	/** File handle to the actual file. */
 	void *_handle;
 
+	static StdioStream *makeFromPathHelper(const Common::String &path, bool writeMode,
+			StdioStream *(*factory)(void *handle));
+
 public:
 	/**
 	 * Given a path, invokes fopen on that path and wrap the result in a
 	 * StdioStream instance.
 	 */
-	static StdioStream *makeFromPath(const Common::String &path, bool writeMode);
+	static StdioStream *makeFromPath(const Common::String &path, bool writeMode) {
+		return makeFromPathHelper(path, writeMode, [](void *handle) {
+			return new StdioStream(handle);
+		});
+	}
 
 	StdioStream(void *handle);
 	~StdioStream() override;
