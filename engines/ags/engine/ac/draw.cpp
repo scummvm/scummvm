@@ -712,10 +712,11 @@ static void render_black_borders() {
 }
 
 void render_to_screen() {
-	// Stage: final plugin callback (still drawn on game screen
+	// Stage: final plugin callback (still drawn on game screen)
 	if (pl_any_want_hook(AGSE_FINALSCREENDRAW)) {
 		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(),
-										_GP(play).GetGlobalTransform(drawstate.FullFrameRedraw), (GraphicFlip)_GP(play).screen_flipped);
+										_GP(play).GetGlobalTransform(drawstate.FullFrameRedraw), (GraphicFlip)_GP(play).screen_flipped,
+										nullptr, RENDER_BATCH_POST_GAME_SCENE);
 		_G(gfxDriver)->DrawSprite(AGSE_FINALSCREENDRAW, 0, nullptr);
 		_G(gfxDriver)->EndSpriteBatch();
 	}
@@ -2107,7 +2108,8 @@ void construct_game_scene(bool full_redraw) {
 void construct_game_screen_overlay(bool draw_mouse) {
 	_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(),
 									_GP(play).GetGlobalTransform(drawstate.FullFrameRedraw),
-									(GraphicFlip)_GP(play).screen_flipped);
+									(GraphicFlip)_GP(play).screen_flipped,
+									nullptr, RENDER_BATCH_POST_GAME_SCENE);
 	if (pl_any_want_hook(AGSE_POSTSCREENDRAW)) {
 		_G(gfxDriver)->DrawSprite(AGSE_POSTSCREENDRAW, 0, nullptr);
 	}
@@ -2127,7 +2129,7 @@ void construct_game_screen_overlay(bool draw_mouse) {
 
 	// For hardware-accelerated renderers: legacy letterbox and global screen fade effect
 	if (drawstate.FullFrameRedraw) {
-		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform());
+		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform(), kFlip_None, nullptr, RENDER_BATCH_POST_GAME_SCENE);
 		// Stage: legacy letterbox mode borders
 		if (_GP(play).screen_is_faded_out == 0)
 			render_black_borders();
@@ -2140,7 +2142,7 @@ void construct_game_screen_overlay(bool draw_mouse) {
 
 void construct_engine_overlay() {
 	const Rect &viewport = RectWH(_GP(game).GetGameRes());
-	_G(gfxDriver)->BeginSpriteBatch(viewport, SpriteTransform());
+	_G(gfxDriver)->BeginSpriteBatch(viewport, SpriteTransform(), kFlip_None, nullptr, RENDER_BATCH_POST_GAME_SCENE);
 
 	if (_G(display_fps) != kFPS_Hide)
 		draw_fps(viewport);
