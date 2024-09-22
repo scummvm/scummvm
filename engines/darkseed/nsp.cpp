@@ -42,7 +42,7 @@ bool Darkseed::Sprite::loadData(Common::SeekableReadStream &readStream) {
 					return false;
 				}
 				hasReadByte = true;
-				 pixels[i] = currentDataByte >> 4;
+				pixels[i] = currentDataByte >> 4;
 			} else {
 				hasReadByte = false;
 				pixels[i] =  currentDataByte & 0xf;
@@ -59,7 +59,7 @@ void Darkseed::Sprite::draw(int x, int y, uint16 frameBottom) const {
 		clippedWidth = g_engine->_screen->w - x;
 	}
 	if (frameBottom != 0 && y + height > g_engine->_frameBottom) {
-		if ( y >= frameBottom) {
+		if (y >= frameBottom) {
 			return;
 		}
 		clippedHeight = frameBottom - y;
@@ -77,7 +77,7 @@ void Darkseed::Sprite::drawScaled(int destX, int destY, int destWidth, int destH
 	}
 	const byte *source = pixels.data();
 	const int xs = ((width - 1) << 16) / destWidth;
-	const int ys = ((height -1) << 16) / destHeight;
+	const int ys = ((height - 1) << 16) / destHeight;
 	int clipX = 0, clipY = 0;
 	const int destPitch = destSurface->pitch;
 	if (destX < 0) {
@@ -135,7 +135,7 @@ void Darkseed::Sprite::drawScaled(int destX, int destY, int destWidth, int destH
 bool Darkseed::Nsp::load(const Common::Path &filename) {
 	Common::File file;
 	Common::Path filePath = g_engine->getRoomFilePath(filename);
-	if(!file.open(filePath)) {
+	if (!file.open(filePath)) {
 		return false;
 	}
 	bool ret = load(file);
@@ -159,7 +159,7 @@ bool Darkseed::Nsp::load(Common::SeekableReadStream &readStream) {
 	}
 
 	for (int i = 0; i < 96; i++) {
-		if(!frames[i].loadData(readStream)) {
+		if (!frames[i].loadData(readStream)) {
 			return false;
 		}
 	}
@@ -176,7 +176,7 @@ const Darkseed::Sprite &Darkseed::Nsp::getSpriteAt(int index) {
 
 bool Darkseed::Nsp::loadObt(const Common::Path &filename) {
 	Common::File file;
-	if(!file.open(filename)) {
+	if (!file.open(filename)) {
 		return false;
 	}
 
@@ -187,14 +187,14 @@ bool Darkseed::Nsp::loadObt(const Common::Path &filename) {
 
 		for (int j = 0; j < 20; j++) {
 			if (file.readByte()) {
-				animations[i].deltaX.push_back(-(file.readUint16LE()/100));
+				animations[i].deltaX.push_back(-(file.readUint16LE() / 100));
 			} else {
-				animations[i].deltaX.push_back(file.readUint16LE()/100);
+				animations[i].deltaX.push_back(file.readUint16LE() / 100);
 			}
 			if (file.readByte()) {
-				animations[i].deltaY.push_back(-(file.readUint16LE()/100));
+				animations[i].deltaY.push_back(-(file.readUint16LE() / 100));
 			} else {
-				animations[i].deltaY.push_back(file.readUint16LE()/100);
+				animations[i].deltaY.push_back(file.readUint16LE() / 100);
 			}
 			animations[i].frameNo.push_back(file.readByte());
 			animations[i].frameDuration.push_back(file.readByte());

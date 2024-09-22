@@ -57,7 +57,7 @@ void Darkseed::Sprites::addSpriteToDrawList(uint16 destX, uint16 destY, const Da
 
 void Darkseed::Sprites::clearSpriteDrawList() {
 	// not using clear() here to avoid freeing array storage memory.
-	while(!spriteDrawList.empty()) {
+	while (!spriteDrawList.empty()) {
 		spriteDrawList.pop_back();
 	}
 }

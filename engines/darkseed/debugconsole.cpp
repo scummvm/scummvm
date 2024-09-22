@@ -100,7 +100,7 @@ bool DebugConsole::Cmd_enablePathfinderOverlay(int argc, const char **argv) {
 	} else if (!strcmp(argv[1], "false") || !strcmp(argv[1], "f")) {
 		g_engine->_debugShowWalkPath = false;
 	}
-		return true;
+	return true;
 }
 
 bool DebugConsole::validateObjVarIndex(int16 varIdx) {

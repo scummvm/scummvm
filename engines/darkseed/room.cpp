@@ -40,7 +40,8 @@ const static int roomDescriptionTextTbl[] = {
 	850, 860, 867, 874,
 	886, 651, 682, 701,
 	702, 701, 898, 899,
-	903};
+	903
+};
 
 Darkseed::Room::Room(int roomNumber) : _roomNumber(roomNumber) {
 	room1.resize(8);
@@ -50,7 +51,7 @@ Darkseed::Room::Room(int roomNumber) : _roomNumber(roomNumber) {
 	_locObjFrame.resize(30);
 	_locObjFrameTimer.resize(30);
 
-	if(!load()) {
+	if (!load()) {
 		error("Failed to load room %d", roomNumber);
 	}
 }
@@ -69,7 +70,7 @@ void Darkseed::Room::initRoom() {
 	g_engine->_objectVar.setMoveObjectX(45, 230);
 	if (g_engine->_objectVar[45] < 3) {
 		g_engine->_objectVar[45] = 0;
-		g_engine->_objectVar.setMoveObjectPosition(19, {230,205});
+		g_engine->_objectVar.setMoveObjectPosition(19, {230, 205});
 	}
 	if (g_engine->_objectVar[141] == 8) {
 		g_engine->_objectVar[141] = 7;
@@ -81,7 +82,7 @@ bool Darkseed::Room::load() {
 	Common::Path romFilename;
 	Common::File file;
 	romFilename = g_engine->getRoomFilePath(Common::Path(Common::String::format("%s.rom", filenameBase.c_str(), _roomNumber)));
-	if(!file.open(romFilename)) {
+	if (!file.open(romFilename)) {
 		return false;
 	}
 
@@ -154,7 +155,7 @@ bool Darkseed::Room::load() {
 	file.close();
 
 	_collisionType = 0;
-	if(!pic.load(picFilename)) {
+	if (!pic.load(picFilename)) {
 		return false;
 	}
 
@@ -373,7 +374,7 @@ void Darkseed::Room::update() {
 		if (checkCursorAndMoveableObjects() != -1 || CheckCursorAndMovedObjects() != -1) {
 			g_engine->_cursor.setCursorType(ExclamationMark);
 		} else {
-			int objIdx = checkCursorAndStaticObjects(0,0);
+			int objIdx = checkCursorAndStaticObjects(0, 0);
 			if (objIdx != -1 && _roomObj[objIdx].objNum > 7) {
 				g_engine->_cursor.setCursorType(ExclamationMark);
 			} else {
@@ -470,13 +471,12 @@ bool Darkseed::Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int de
 						srcX = srcX + -1;
 					}
 					srcY = srcY + -1;
-					iVar2 = canWalkAtLocation(srcX,srcY);
+					iVar2 = canWalkAtLocation(srcX, srcY);
 					if (iVar2 == 0) {
 						return 0;
 					}
 				}
-			}
-			else {
+			} else {
 				while (srcX != destX) {
 					iVar4 = iVar4 - destY;
 					if (-iVar4 == iVar1 || -iVar1 < iVar4) {
@@ -484,14 +484,13 @@ bool Darkseed::Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int de
 						srcY = srcY + -1;
 					}
 					srcX = srcX + -1;
-					iVar2 = canWalkAtLocation(srcX,srcY);
+					iVar2 = canWalkAtLocation(srcX, srcY);
 					if (iVar2 == 0) {
 						return 0;
 					}
 				}
 			}
-		}
-		else if ((iVar1 < 1) && (0 < destY)) {
+		} else if ((iVar1 < 1) && (0 < destY)) {
 			iVar2 = -iVar1;
 			if (-destY == iVar1 || iVar2 < destY) {
 				while (srcX != destX) {
@@ -501,13 +500,12 @@ bool Darkseed::Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int de
 						srcX = srcX + -1;
 					}
 					srcY = srcY + 1;
-					iVar2 = canWalkAtLocation(srcX,srcY);
+					iVar2 = canWalkAtLocation(srcX, srcY);
 					if (iVar2 == 0) {
 						return 0;
 					}
 				}
-			}
-			else {
+			} else {
 				while (srcX != destX) {
 					iVar4 = iVar4 + destY;
 					if (-iVar4 == iVar1 || -iVar1 < iVar4) {
@@ -515,14 +513,13 @@ bool Darkseed::Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int de
 						srcY = srcY + 1;
 					}
 					srcX = srcX + -1;
-					iVar2 = canWalkAtLocation(srcX,srcY);
+					iVar2 = canWalkAtLocation(srcX, srcY);
 					if (iVar2 == 0) {
 						return 0;
 					}
 				}
 			}
-		}
-		else {
+		} else {
 			iVar2 = iVar1;
 			if (destY < iVar1) {
 				while (srcX != destX) {
@@ -532,13 +529,12 @@ bool Darkseed::Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int de
 						srcY = srcY + 1;
 					}
 					srcX = srcX + 1;
-					iVar2 = canWalkAtLocation(srcX,srcY);
+					iVar2 = canWalkAtLocation(srcX, srcY);
 					if (iVar2 == 0) {
 						return 0;
 					}
 				}
-			}
-			else {
+			} else {
 				while (srcX != destX) {
 					iVar4 = iVar4 + iVar1;
 					if (destY <= iVar4) {
@@ -546,15 +542,14 @@ bool Darkseed::Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int de
 						srcX = srcX + 1;
 					}
 					srcY = srcY + 1;
-					iVar2 = canWalkAtLocation(srcX,srcY);
+					iVar2 = canWalkAtLocation(srcX, srcY);
 					if (iVar2 == 0) {
 						return 0;
 					}
 				}
 			}
 		}
-	}
-	else {
+	} else {
 		iVar2 = -destY;
 		if (iVar2 < iVar1) {
 			while (srcX != destX) {
@@ -564,13 +559,12 @@ bool Darkseed::Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int de
 					srcY = srcY + -1;
 				}
 				srcX = srcX + 1;
-				iVar2 = canWalkAtLocation(srcX,srcY);
+				iVar2 = canWalkAtLocation(srcX, srcY);
 				if (iVar2 == 0) {
 					return 0;
 				}
 			}
-		}
-		else {
+		} else {
 			while (srcX != destX) {
 				iVar4 = iVar4 + iVar1;
 				if (-iVar4 == destY || -destY < iVar4) {
@@ -578,7 +572,7 @@ bool Darkseed::Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int de
 					srcX = srcX + 1;
 				}
 				srcY = srcY + -1;
-				iVar2 = canWalkAtLocation(srcX,srcY);
+				iVar2 = canWalkAtLocation(srcX, srcY);
 				if (iVar2 == 0) {
 					return 0;
 				}
@@ -694,7 +688,7 @@ static const int scaleTbl[] = {
 };
 
 static const uint8 room_sprite_related_2c85_4303[] = {
-	 13,            13,            25,            25,
+	13,            13,            25,            25,
 	28,            15,            22,            18,
 	18,            13,            15,            15,
 	35,            18,            40,            45,
@@ -748,7 +742,7 @@ int Darkseed::Room::getObjectUnderCursor() {
 	if (objIdx == -1) {
 		objIdx = CheckCursorAndMovedObjects();
 		if (objIdx == -1) {
-			objIdx = checkCursorAndStaticObjects(0,0);
+			objIdx = checkCursorAndStaticObjects(0, 0);
 		}
 	}
 	return objIdx;
@@ -759,24 +753,19 @@ bool Darkseed::Room::isOutside() {
 
 	if (_roomNumber == 61) {
 		isRoomOutside = true;
-	}
-	else if (_roomNumber < 10 || _roomNumber > 14) {
+	} else if (_roomNumber < 10 || _roomNumber > 14) {
 		if (_roomNumber < 24 || _roomNumber > 27) {
 			if (_roomNumber >= 63 && _roomNumber <= 65) {
 				isRoomOutside = true;
-			}
-			else if (_roomNumber == 31 || _roomNumber == 32 || _roomNumber == 36) {
+			} else if (_roomNumber == 31 || _roomNumber == 32 || _roomNumber == 36) {
 				isRoomOutside = true;
-			}
-			else {
+			} else {
 				isRoomOutside = false;
 			}
-		}
-		else {
+		} else {
 			isRoomOutside = true;
 		}
-	}
-	else {
+	} else {
 		isRoomOutside = true;
 	}
 	return isRoomOutside;
@@ -790,7 +779,7 @@ void Darkseed::Room::runRoomObjects() {
 		auto &roomObj = _roomObj[roomObjIdx];
 		int xPos = roomObj.xOffset;
 		int yPos = roomObj.yOffset;
-		switch(roomObj.type) {
+		switch (roomObj.type) {
 		case 1:
 		case 3: {
 			//			debug("roomObj.objNum: %d", roomObj.objNum);
@@ -801,7 +790,7 @@ void Darkseed::Room::runRoomObjects() {
 			} else {
 				calculateScaledSpriteDimensions(sprite.width, sprite.height, roomObj.yOffset + sprite.height);
 			}
-			if (((roomObj.spriteNum != 7) && (roomObj.spriteNum != 36)) && ((roomObj.spriteNum != 37 && (((roomObj.spriteNum != 38 && (roomObj.spriteNum != 39)) && (roomObj.spriteNum != 40))))) ) {
+			if (((roomObj.spriteNum != 7) && (roomObj.spriteNum != 36)) && ((roomObj.spriteNum != 37 && (((roomObj.spriteNum != 38 && (roomObj.spriteNum != 39)) && (roomObj.spriteNum != 40)))))) {
 				xPos = (sprite.width / 2 + xPos) - g_engine->scaledSpriteWidth / 2;
 			}
 			if (roomObj.spriteNum == 14) { // gloves
@@ -1035,7 +1024,7 @@ void Darkseed::Room::runRoomObjects() {
 		g_engine->_sprites.addSpriteToDrawList(111, 136, &sprite, 1, sprite.width, sprite.height, false);
 	}
 	if (_roomNumber == 2 && g_engine->_player->_isAutoWalkingToBed && g_engine->_player->_position.x < 150) {
-			g_engine->_objectVar[78] = 2; // open door for player.
+		g_engine->_objectVar[78] = 2; // open door for player.
 	}
 	if (_roomNumber == 2 && g_engine->_objectVar[78] == 2) {
 		const Sprite &sprite = _locationSprites.getSpriteAt(0);
@@ -1222,7 +1211,7 @@ void Darkseed::Room::drawTrunk() {
 	int trunkXPos;
 	int trunkYPos;
 	int spriteIdx;
-  
+
 	if (g_engine->_objectVar[22] == 0) {
 		trunkXPos = 460;
 		trunkYPos = 132;
@@ -1247,8 +1236,8 @@ void Darkseed::Room::drawTrunk() {
 	g_engine->sprite_y_scaling_threshold_maybe = 211;
 	calculateScaledSpriteDimensions(sprite.width, sprite.height, trunkYPos + sprite.height);
 	g_engine->sprite_y_scaling_threshold_maybe = 240;
-	updateRoomObj(42, trunkXPos + 20,6, trunkYPos + 34,8);
-	updateRoomObj(22, trunkXPos + 60,12, trunkYPos + 46,8);
+	updateRoomObj(42, trunkXPos + 20, 6, trunkYPos + 34, 8);
+	updateRoomObj(22, trunkXPos + 60, 12, trunkYPos + 46, 8);
 	g_engine->_sprites.addSpriteToDrawList(
 		trunkXPos,
 		trunkYPos + sprite.height - g_engine->scaledSpriteHeight,
@@ -1306,7 +1295,7 @@ void Darkseed::Room::mikeStickThrowAnim() {
 void Darkseed::Room::loadRoom61AWalkableLocations() {
 	Common::File file;
 	Common::Path romFilename = g_engine->getRoomFilePath(Common::Path("room61a.rom"));
-	if(!file.open(romFilename)) {
+	if (!file.open(romFilename)) {
 		return;
 	}
 
