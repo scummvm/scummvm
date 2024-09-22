@@ -341,20 +341,27 @@ ScriptDynamicSprite *DynamicSprite_CreateFromDrawingSurface(ScriptDrawingSurface
 	if (gotSlot <= 0)
 		return nullptr;
 
+	if (width <= 0 || height <= 0) {
+		debug_script_warn("WARNING: DynamicSprite.CreateFromDrawingSurface: invalid size %d x %d, will adjust", width, height);
+		width = std::max(1, width);
+		height = std::max(1, height);
+	}
+
 	// use DrawingSurface resolution
 	sds->PointToGameResolution(&x, &y);
 	sds->SizeToGameResolution(&width, &height);
 
 	Bitmap *ds = sds->StartDrawing();
-
 	if ((x < 0) || (y < 0) || (x + width > ds->GetWidth()) || (y + height > ds->GetHeight()))
 		quit("!DynamicSprite.CreateFromDrawingSurface: requested area is outside the surface");
 
 	int colDepth = ds->GetColorDepth();
 
 	Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, colDepth);
-	if (newPic == nullptr)
+	if (newPic == nullptr) {
+		sds->FinishedDrawingReadOnly();
 		return nullptr;
+	}
 
 	newPic->Blit(ds, x, y, 0, 0, width, height);
 
@@ -366,6 +373,10 @@ ScriptDynamicSprite *DynamicSprite_CreateFromDrawingSurface(ScriptDrawingSurface
 }
 
 ScriptDynamicSprite *DynamicSprite_Create(int width, int height, int alphaChannel) {
+	int gotSlot = _GP(spriteset).GetFreeIndex();
+	if (gotSlot <= 0)
+		return nullptr;
+
 	if (width <= 0 || height <= 0) {
 		debug_script_warn("WARNING: DynamicSprite.Create: invalid size %d x %d, will adjust", width, height);
 		width = MAX(1, width);
@@ -373,10 +384,6 @@ ScriptDynamicSprite *DynamicSprite_Create(int width, int height, int alphaChanne
 	}
 
 	data_to_game_coords(&width, &height);
-
-	int gotSlot = _GP(spriteset).GetFreeIndex();
-	if (gotSlot <= 0)
-		return nullptr;
 
 	Bitmap *newPic = CreateCompatBitmap(width, height);
 	if (newPic == nullptr)
@@ -396,27 +403,35 @@ ScriptDynamicSprite *DynamicSprite_CreateFromExistingSprite_Old(int slot) {
 }
 
 ScriptDynamicSprite *DynamicSprite_CreateFromBackground(int frame, int x1, int y1, int width, int height) {
+	int gotSlot = _GP(spriteset).GetFreeIndex();
+	if (gotSlot <= 0)
+		return nullptr;
 
 	if (frame == SCR_NO_VALUE) {
 		frame = _GP(play).bg_frame;
 	} else if ((frame < 0) || ((size_t)frame >= _GP(thisroom).BgFrameCount))
 		quit("!DynamicSprite.CreateFromBackground: invalid frame specified");
 
-	if (x1 == SCR_NO_VALUE) {
+	if (x1 == SCR_NO_VALUE)
 		x1 = 0;
+	if (y1 == SCR_NO_VALUE)
 		y1 = 0;
+	if (width == SCR_NO_VALUE)
 		width = _GP(play).room_width;
+	if (height == SCR_NO_VALUE)
 		height = _GP(play).room_height;
-	} else if ((x1 < 0) || (y1 < 0) || (width < 1) || (height < 1) ||
-	           (x1 + width > _GP(play).room_width) || (y1 + height > _GP(play).room_height))
+
+	if (width <= 0 || height <= 0) {
+		debug_script_warn("WARNING: DynamicSprite.CreateFromBackground: invalid size %d x %d, will adjust", width, height);
+		width = std::max(1, width);
+		height = std::max(1, height);
+	}
+
+	if ((x1 < 0) || (y1 < 0) || (x1 + width > _GP(play).room_width) || (y1 + height > _GP(play).room_height))
 		quit("!DynamicSprite.CreateFromBackground: invalid co-ordinates specified");
 
 	data_to_game_coords(&x1, &y1);
 	data_to_game_coords(&width, &height);
-
-	int gotSlot = _GP(spriteset).GetFreeIndex();
-	if (gotSlot <= 0)
-		return nullptr;
 
 	// create a new sprite as a copy of the existing one
 	Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, _GP(thisroom).BgFrames[frame].Graphic->GetColorDepth());
