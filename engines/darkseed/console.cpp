@@ -72,8 +72,8 @@ void Console::draw() {
 	g_engine->_screen->addDirtyRect(consoleArea);
 }
 
-Common::Array<Common::String> Console::wrapText(const Common::String &text) {
-	Common::Array<Common::String> lines;
+Common::StringArray Console::wrapText(const Common::String &text) {
+	Common::StringArray lines;
 	Common::String line;
 	Common::String word;
 	int lineLength = 0;

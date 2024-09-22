@@ -31,7 +31,7 @@ namespace Darkseed {
 
 class TosText {
 private:
-	Common::Array<Common::String> _textArray;
+	Common::StringArray _textArray;
 	uint16 _numEntries = 0;
 
 public:
