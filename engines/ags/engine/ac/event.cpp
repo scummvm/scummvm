@@ -255,7 +255,6 @@ void process_event(const EventHappened *evp) {
 				}
 				_G(gfxDriver)->SetMemoryBackBuffer(saved_backbuf);
 			}
-			_GP(play).screen_is_faded_out = 0;
 		} else if (theTransition == FADE_CROSSFADE) {
 			if (_GP(game).color_depth == 1)
 				quit("!Cannot use crossfade screen transition in 256-colour games");

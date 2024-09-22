@@ -43,11 +43,11 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 void fadein_impl(PALETTE p, int speed) {
+	// reset this early to force whole game draw during fading in
+	_GP(play).screen_is_faded_out = 0;
+
 	if (_GP(game).color_depth > 1) {
 		set_palette(p);
-
-		_GP(play).screen_is_faded_out = 0;
-
 		if (_GP(play).no_hicolor_fadein) {
 			return;
 		}
@@ -75,12 +75,13 @@ void current_fade_out_effect() {
 		fadeout_impl(5);
 	} else if (theTransition == FADE_BOXOUT) {
 		_G(gfxDriver)->BoxOutEffect(true, get_fixed_pixel_size(16), 1000 / GetGameSpeed(), RENDER_SHOT_SKIP_ON_FADE);
-		_GP(play).screen_is_faded_out = 1;
 	} else {
 		get_palette(_G(old_palette));
 		const Rect &viewport = _GP(play).GetMainViewport();
 		_G(saved_viewport_bitmap) = CopyScreenIntoBitmap(viewport.GetWidth(), viewport.GetHeight(), &viewport, false /* use current resolution */, RENDER_SHOT_SKIP_ON_FADE);
 	}
+
+	_GP(play).screen_is_faded_out = 1;
 }
 
 IDriverDependantBitmap *prepare_screen_for_transition_in(bool opaque) {
