@@ -80,6 +80,8 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 
 	const Common::AchievementDescriptionList *getAchievementDescriptionList() const override;
+
+	static Common::StringArray getGameTranslations(const Common::String &domain);
 };
 
 #endif

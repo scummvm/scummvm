@@ -41,7 +41,9 @@
 #include "ags/shared/util/text_stream_reader.h"
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/string_utils.h"
+#include "ags/metaengine.h"
 #include "common/config-manager.h"
+#include "common/language.h"
 
 namespace AGS3 {
 
@@ -321,7 +323,34 @@ void apply_config(const ConfigTree &cfg) {
 
 		// Translation / localization
 		Common::String translation;
-		if (ConfMan.getActiveDomain()->tryGetVal("translation", translation) && !translation.empty())
+
+		if (!ConfMan.get("language").empty() && ConfMan.isKeyTemporary("language")) {
+			// Map the language defined in the command-line "language" option to its description
+			Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
+
+			if (lang != Common::Language::UNK_LANG) {
+				Common::String translationCode = Common::getLanguageCode(lang);
+				translationCode.toLowercase();
+				translation = Common::getLanguageDescription(lang);
+				translation.toLowercase();
+
+				// Check if the game actually has such a translation, and set it if it does
+				// The name of translation files can be anything, but in general they are one of:
+				// - English name of the language, for example French.tra or Spanish.tra (covered)
+				// - Translated name of the language, for example polsky.tra or francais.tra (not covered)
+				// - The language code, for example FR.tra or DE.tra (covered)
+				// - And these can be combined with a prefix or suffix, for example Nelly_Polish.tra, english2.tra (covered)
+				Common::StringArray traFileNames = AGSMetaEngine::getGameTranslations(ConfMan.getActiveDomainName());
+				for (Common::StringArray::iterator iter = traFileNames.begin(); iter != traFileNames.end(); ++iter) {
+					Common::String traFileName = *iter;
+					traFileName.toLowercase();
+					if (traFileName.contains(translation) || traFileName.equals(translationCode)) {
+						_GP(usetup).translation = *iter;
+						break;
+					}
+				}
+			}
+		} else if (ConfMan.getActiveDomain()->tryGetVal("translation", translation) && !translation.empty())
 			_GP(usetup).translation = translation;
 		else
 			_GP(usetup).translation = CfgReadString(cfg, "language", "translation");
