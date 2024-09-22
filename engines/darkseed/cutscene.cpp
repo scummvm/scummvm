@@ -44,7 +44,7 @@ void Darkseed::Cutscene::update() {
 	case 'G' : _movieStep = 9999; break;
 	case 'H' : _movieStep = 9999; break;
 	case 'I' : introScene(); break;
-	case 'J' : _movieStep = 9999; break;
+	case 'J' : embryoInsertedScene(); break;
 	case 'Y' : _movieStep = 9999; break;
 	case 'Z' : _movieStep = 9999; break;
 	}
@@ -56,6 +56,8 @@ void Darkseed::Cutscene::update() {
 		} else if (_cutsceneId == 'Z') {
 			g_engine->restartGame();
 		} else if (_cutsceneId == 'I') {
+			play('J');
+		} else if (_cutsceneId == 'J') {
 			delete titleFont;
 			titleFont = nullptr;
 			g_engine->newGame();
@@ -119,6 +121,7 @@ bool Darkseed::Cutscene::introScene() {
 	case 18: _animation.load("art/shipin.anm");
 		_animIdx = 0;
 		_animCount = 47;
+		runAnim();
 		break;
 	case 19:
 		if (stepAnim()) {
@@ -128,6 +131,7 @@ bool Darkseed::Cutscene::introScene() {
 	case 20:
 		_animIdx = 47;
 		_animCount = _animIdx + 29;
+		runAnim();
 		break;
 	case 21:
 		if (stepAnim()) {
@@ -137,6 +141,7 @@ bool Darkseed::Cutscene::introScene() {
 	case 22: _animation.load("art/t2.anm");
 		_animIdx = 0;
 		_animCount = 50;
+		runAnim();
 		break;
 	case 23:
 		if (stepAnim()) {
@@ -314,11 +319,99 @@ bool Darkseed::Cutscene::introScene() {
 	return true;
 }
 
+bool Darkseed::Cutscene::embryoInsertedScene() {
+	switch (_movieStep) {
+	case 1:
+	case 2: break;
+	case 3:
+		g_engine->_screen->clear();
+		g_engine->_screen->makeAllDirty();
+		_palette.load("art/ship.pal");
+		_animation.load("art/nm1.anm");
+		g_engine->_screen->clearPalette();
+		break;
+	case 4: {
+		Img tmImg;
+		tmImg.load("art/nmf0.img");
+		tmImg.draw();
+		Img nmf1Img;
+		nmf1Img.load("art/nmf1.img");
+		nmf1Img.draw();
+		break;
+	}
+	case 5: {
+		Img tmImg;
+		tmImg.load("art/nm101.img");
+		tmImg.draw(1);
+		break;
+	}
+	case 6:
+		// TODO play implant music here.
+		registTime();
+		g_engine->fadeIn(_palette);
+		break;
+	case 7: if (g_engine->fadeStep()) { return true; } break;
+	case 8:
+		_animIdx = 0;
+		_animCount = 39;
+		runAnim();
+		break;
+	case 9:
+		if (stepAnim()) {
+			return true;
+		}
+		registTime();
+		break;
+	case 10: if (waitTime(30)) {
+			return true;
+		}
+		break;
+	case 11:
+		g_engine->fadeOut();
+		break;
+	case 12: if (g_engine->fadeStep()) { return true; } break;
+	case 13: {
+		g_engine->_screen->clear();
+		_palette.load("art/house.pal");
+		if (titleFont == nullptr) {
+			titleFont = new TitleFont();
+		}
+		titleFont->displayString(80,130, "AFTER A HORRIFYING NIGHTMARE");
+		titleFont->displayString(80,170, "MIKE DAWSON AWAKENS TO THE");
+		titleFont->displayString(80,210, "FIRST DAY IN HIS NEW HOUSE...");
+		g_engine->fadeIn(_palette);
+		break;
+	}
+	case 14: if (g_engine->fadeStep()) { return true; }
+		registTime();
+		break;
+	case 15: if (waitTime(30)) {
+			return true;
+		}
+		break;
+	case 16:
+		g_engine->fadeOut();
+		break;
+	case 17: if (g_engine->fadeStep()) { return true; } break;
+	default: _movieStep = 9999; return false;
+	}
+	_movieStep++;
+	return true;
+}
+
 bool Darkseed::Cutscene::stepAnim() {
-	Img animFrame;
-	_animation.getImg(_animIdx, animFrame);
-	animFrame.draw(1);
-	_animIdx++;
+	if (_animDelayCount == 0) {
+		Img animFrame;
+		_animation.getImg(_animIdx, animFrame);
+		animFrame.draw(1);
+		_animIdx++;
+	}
+
+	_animDelayCount++;
+	if (_animDelayCount == 6) {
+		_animDelayCount = 0;
+	}
+
 	if (_animIdx < _animCount) {
 		return true;
 	}
@@ -345,3 +438,6 @@ bool Darkseed::Cutscene::waitTime(int16 duration) {
 	return g_system->getMillis() < _startTime + (duration * 100);
 }
 
+void Darkseed::Cutscene::runAnim() {
+	_animDelayCount = 0;
+}

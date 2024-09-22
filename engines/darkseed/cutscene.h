@@ -37,6 +37,7 @@ private:
 	Anm _animation;
 	int _animIdx;
 	int _animCount;
+	int _animDelayCount;
 	uint32 _startTime = 0;
 
 public:
@@ -47,6 +48,8 @@ public:
 
 private:
 	bool introScene();
+	bool embryoInsertedScene();
+	void runAnim();
 	bool stepAnim();
 
 	void putHouse();
