@@ -45,7 +45,7 @@ void Darkseed::Cutscene::update() {
 	case 'H' : _movieStep = 9999; break;
 	case 'I' : introScene(); break;
 	case 'J' : embryoInsertedScene(); break;
-	case 'Y' : _movieStep = 9999; break;
+	case 'Y' : alienBornScene(); break;
 	case 'Z' : _movieStep = 9999; break;
 	}
 
@@ -61,6 +61,8 @@ void Darkseed::Cutscene::update() {
 			delete titleFont;
 			titleFont = nullptr;
 			g_engine->newGame();
+		} else if (_cutsceneId == 'Y') {
+			play('I');
 		}
 	}
 }
@@ -316,6 +318,12 @@ bool Darkseed::Cutscene::introScene() {
 	default: _movieStep = 9999; return false;
 	}
 	_movieStep++;
+	if (g_engine->_isLeftMouseClicked || g_engine->_isRightMouseClicked) {
+		g_engine->zeromousebuttons();
+		if (_movieStep < 51) {
+			_movieStep = 51;
+		}
+	}
 	return true;
 }
 
@@ -358,6 +366,12 @@ bool Darkseed::Cutscene::embryoInsertedScene() {
 		break;
 	case 9:
 		if (stepAnim()) {
+			if (g_engine->_isLeftMouseClicked || g_engine->_isRightMouseClicked) {
+				g_engine->zeromousebuttons();
+				if (_movieStep < 16) {
+					_movieStep = 16;
+				}
+			}
 			return true;
 		}
 		registTime();
@@ -396,6 +410,12 @@ bool Darkseed::Cutscene::embryoInsertedScene() {
 	default: _movieStep = 9999; return false;
 	}
 	_movieStep++;
+	if (g_engine->_isLeftMouseClicked || g_engine->_isRightMouseClicked) {
+		g_engine->zeromousebuttons();
+		if (_movieStep < 16) {
+			_movieStep = 16;
+		}
+	}
 	return true;
 }
 
@@ -436,6 +456,7 @@ bool Darkseed::Cutscene::shipLaunchScene() {
 		if (stepAnim()) {
 			return true;
 		}
+		registTime();
 		break;
 	case 8: if (waitTime(20)) {
 			return true;
@@ -466,6 +487,59 @@ bool Darkseed::Cutscene::shipLaunchScene() {
 		g_engine->fadeOut();
 		break;
 	case 14: if (g_engine->fadeStep()) { return true; } break;
+	default:
+		_movieStep = 9999;
+		return false;
+	}
+	_movieStep++;
+	return true;
+}
+
+bool Darkseed::Cutscene::alienBornScene() {
+	switch (_movieStep) {
+	case 1: {
+		_palette.load("art/ship.pal");
+		Img left00Img;
+		left00Img.load("art/nmf0.img");
+		left00Img.draw();
+		Img left01Img;
+		left01Img.load("art/nmf1.img");
+		left01Img.draw();
+		Img born1Img;
+		born1Img.load("art/born01.img");
+		born1Img.draw(1);
+		g_engine->_screen->clearPalette();
+		break;
+	}
+	case 2:
+		_animation.load("art/born.anm");
+		// TODO play alien music here.
+		g_engine->fadeIn(_palette);
+		break;
+	case 3: if (g_engine->fadeStep()) { return true; } break;
+	case 4:
+		_animIdx = 0;
+		_animCount = 31;
+		// TODO speed = 2
+		runAnim();
+		break;
+	case 5:
+		if (stepAnim()) {
+			return true;
+		}
+		registTime();
+		break;
+	case 6: if (waitTime(30)) {
+			return true;
+		}
+		break;
+	case 7:
+		g_engine->fadeOut();
+		break;
+	case 8: if (g_engine->fadeStep()) { return true; } break;
+	case 9:
+		// TODO some logic here. stopSequence.
+		break;
 	default:
 		_movieStep = 9999;
 		return false;

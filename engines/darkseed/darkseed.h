@@ -150,6 +150,8 @@ public:
 
 	int16 _SoundTimer = 0;
 	bool _printedcomeheredawson = false;
+	void zeromousebuttons();
+
 public:
 	DarkseedEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~DarkseedEngine() override;
@@ -264,7 +266,6 @@ private:
 	void leavepackage();
 
 	void removeFullscreenPic();
-	void zeromousebuttons();
 };
 
 extern DarkseedEngine *g_engine;

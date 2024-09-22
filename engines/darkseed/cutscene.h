@@ -51,6 +51,8 @@ private:
 	bool introScene();
 	bool embryoInsertedScene();
 	bool shipLaunchScene();
+	bool alienBornScene();
+
 	void runAnim(int direction=1);
 	bool stepAnim(int drawMode = 1);
 
