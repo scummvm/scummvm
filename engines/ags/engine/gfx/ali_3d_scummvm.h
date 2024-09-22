@@ -217,10 +217,13 @@ public:
 	void RenderToBackBuffer() override;
 	void Render() override;
 	void Render(int xoff, int yoff, Shared::GraphicFlip flip) override;
-	bool GetCopyOfScreenIntoBitmap(Bitmap *destination, bool at_native_res, GraphicResolution *want_fmt) override;
-	void FadeOut(int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) override;
-	void FadeIn(int speed, PALETTE pal, int targetColourRed, int targetColourGreen, int targetColourBlue) override;
-	void BoxOutEffect(bool blackingOut, int speed, int delay) override;
+	bool GetCopyOfScreenIntoBitmap(Bitmap *destination, bool at_native_res, GraphicResolution *want_fmt,
+								   uint32_t batch_skip_filter = 0u) override;
+	void FadeOut(int speed, int targetColourRed, int targetColourGreen, int targetColourBlue,
+				 uint32_t batch_skip_filter = 0u) override;
+	void FadeIn(int speed, PALETTE pal, int targetColourRed, int targetColourGreen, int targetColourBlue,
+				uint32_t batch_skip_filter = 0u) override;
+	void BoxOutEffect(bool blackingOut, int speed, int delay, uint32_t batch_skip_filter = 0u) override;
 	bool SupportsGammaControl() override;
 	void SetGamma(int newGamma) override;
 	void UseSmoothScaling(bool /*enabled*/) override {}
