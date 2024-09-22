@@ -715,8 +715,7 @@ void render_to_screen() {
 	// Stage: final plugin callback (still drawn on game screen)
 	if (pl_any_want_hook(AGSE_FINALSCREENDRAW)) {
 		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(),
-										_GP(play).GetGlobalTransform(drawstate.FullFrameRedraw), (GraphicFlip)_GP(play).screen_flipped,
-										nullptr, RENDER_BATCH_POST_GAME_SCENE);
+										_GP(play).GetGlobalTransform(drawstate.FullFrameRedraw), (GraphicFlip)_GP(play).screen_flipped);
 		_G(gfxDriver)->DrawSprite(AGSE_FINALSCREENDRAW, 0, nullptr);
 		_G(gfxDriver)->EndSpriteBatch();
 	}
@@ -2108,28 +2107,29 @@ void construct_game_scene(bool full_redraw) {
 void construct_game_screen_overlay(bool draw_mouse) {
 	_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(),
 									_GP(play).GetGlobalTransform(drawstate.FullFrameRedraw),
-									(GraphicFlip)_GP(play).screen_flipped,
-									nullptr, RENDER_BATCH_POST_GAME_SCENE);
+									(GraphicFlip)_GP(play).screen_flipped);
 	if (pl_any_want_hook(AGSE_POSTSCREENDRAW)) {
 		_G(gfxDriver)->DrawSprite(AGSE_POSTSCREENDRAW, 0, nullptr);
 	}
 
-	// Add mouse cursor pic, and global screen tint effect
+	// Mouse cursor
 	if (_GP(play).screen_is_faded_out == 0) {
-		// Stage: mouse cursor
 		if (draw_mouse && !_GP(play).mouse_cursor_hidden) {
+			// Exclusive sub-batch for mouse cursor, to let filter it out (CHECKME later?)
+			_G(gfxDriver)->BeginSpriteBatch(Rect(), SpriteTransform(), kFlip_None, nullptr, RENDER_BATCH_MOUSE_CURSOR);
 			_G(gfxDriver)->DrawSprite(_G(mousex) - _G(hotx), _G(mousey) - _G(hoty), _G(mouseCursor));
 			invalidate_sprite(_G(mousex) - _G(hotx), _G(mousey) - _G(hoty), _G(mouseCursor), false);
+			_G(gfxDriver)->EndSpriteBatch();
 		}
-		// Stage: screen fx
-		if (_GP(play).screen_tint >= 1)
-			_G(gfxDriver)->SetScreenTint(_GP(play).screen_tint & 0xff, (_GP(play).screen_tint >> 8) & 0xff, (_GP(play).screen_tint >> 16) & 0xff);
 	}
+	// Full screen tint fx, covers everything except for fade fx(?) and engine overlay
+	if ((_GP(play).screen_tint >= 1) && (_GP(play).screen_is_faded_out == 0))
+		_G(gfxDriver)->SetScreenTint(_GP(play).screen_tint & 0xff, (_GP(play).screen_tint >> 8) & 0xff, (_GP(play).screen_tint >> 16) & 0xff);
 	_G(gfxDriver)->EndSpriteBatch();
 
 	// For hardware-accelerated renderers: legacy letterbox and global screen fade effect
 	if (drawstate.FullFrameRedraw) {
-		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform(), kFlip_None, nullptr, RENDER_BATCH_POST_GAME_SCENE);
+		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform());
 		// Stage: legacy letterbox mode borders
 		if (_GP(play).screen_is_faded_out == 0)
 			render_black_borders();
@@ -2142,7 +2142,7 @@ void construct_game_screen_overlay(bool draw_mouse) {
 
 void construct_engine_overlay() {
 	const Rect &viewport = RectWH(_GP(game).GetGameRes());
-	_G(gfxDriver)->BeginSpriteBatch(viewport, SpriteTransform(), kFlip_None, nullptr, RENDER_BATCH_POST_GAME_SCENE);
+	_G(gfxDriver)->BeginSpriteBatch(viewport, SpriteTransform(), kFlip_None, nullptr, RENDER_BATCH_ENGINE_OVERLAY);
 
 	if (_G(display_fps) != kFPS_Hide)
 		draw_fps(viewport);
