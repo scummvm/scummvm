@@ -448,7 +448,7 @@ ScriptDynamicSprite *DynamicSprite_CreateFromBackground(int frame, int x1, int y
 
 //=============================================================================
 
-void add_dynamic_sprite(int gotSlot, Bitmap *redin, bool hasAlpha) {
+void add_dynamic_sprite(int gotSlot, Bitmap *redin, bool hasAlpha, uint32_t extra_flags) {
 
 	_GP(spriteset).SetSprite(gotSlot, redin);
 
@@ -460,6 +460,8 @@ void add_dynamic_sprite(int gotSlot, Bitmap *redin, bool hasAlpha) {
 		_GP(game).SpriteInfos[gotSlot].Flags |= SPF_TRUECOLOR;
 	if (hasAlpha)
 		_GP(game).SpriteInfos[gotSlot].Flags |= SPF_ALPHACHANNEL;
+
+	_GP(game).SpriteInfos[gotSlot].Flags |= extra_flags;
 
 	_GP(game).SpriteInfos[gotSlot].Width = redin->GetWidth();
 	_GP(game).SpriteInfos[gotSlot].Height = redin->GetHeight();
