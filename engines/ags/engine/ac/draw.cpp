@@ -2066,7 +2066,7 @@ void construct_game_scene(bool full_redraw) {
 	_GP(play).UpdateViewports();
 
 	_G(gfxDriver)->UseSmoothScaling(IS_ANTIALIAS_SPRITES);
-	_G(gfxDriver)->RenderSpritesAtScreenResolution(_GP(usetup).RenderAtScreenRes, _GP(usetup).Supersampling);
+	_G(gfxDriver)->RenderSpritesAtScreenResolution(_GP(usetup).RenderAtScreenRes);
 
 	pl_run_plugin_hooks(AGSE_PRERENDER, 0);
 
