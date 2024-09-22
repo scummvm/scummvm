@@ -33,7 +33,7 @@ bool GameFont::load() {
 }
 
 void GameFont::displayString(uint16 x, uint16 y, const Common::String &text) {
-	for (int i = 0; i < text.size(); i++) {
+	for (unsigned int i = 0; i < text.size(); i++) {
 		auto letter = getCharacterSprite(text[i]);
 		if (letter) {
 			letter->draw(x, y);
@@ -44,7 +44,7 @@ void GameFont::displayString(uint16 x, uint16 y, const Common::String &text) {
 
 int GameFont::stringLength(const Common::String &text) {
 	int width = 0;
-	for (int i = 0; i < text.size(); i++) {
+	for (unsigned int i = 0; i < text.size(); i++) {
 		const Sprite *sprite = getCharacterSprite(text[i]);
 		if (sprite) {
 			width += sprite->width + 1;
