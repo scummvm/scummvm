@@ -221,7 +221,7 @@ public:
 	// drawn with additional fractional scaling will appear more detailed than
 	// the rest of the game. The effect is stronger for the low-res games being
 	// rendered in the high-res mode.
-	virtual void RenderSpritesAtScreenResolution(bool enabled, int supersampling = 1) = 0;
+	virtual void RenderSpritesAtScreenResolution(bool enabled) = 0;
 	// TODO: move fade-in/out/boxout functions out of the graphics driver!! make everything render through
 	// main drawing procedure. Since currently it does not - we need to init our own sprite batch
 	// internally to let it set up correct viewport settings instead of relying on a chance.
