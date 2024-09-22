@@ -1035,8 +1035,6 @@ void CastleEngine::drawOption() {
 	_gfx->setViewport(_viewArea);
 }
 
-extern Common::String centerAndPadString(const Common::String &x, int y);
-
 void CastleEngine::selectCharacterScreen() {
 	Common::Array<Common::String> lines;
 	uint32 color = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
