@@ -1131,6 +1131,11 @@ void UpdateCursorAndDrawables() {
 	update_objects_scale();
 }
 
+void SyncDrawablesState() {
+	// TODO: there's likely more things that could've be done here
+	update_objects_scale();
+}
+
 void update_polled_stuff() {
 	::AGS::g_events->pollEvents();
 
