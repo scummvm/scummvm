@@ -31,6 +31,7 @@ class StdioStream : public Common::SeekableReadStream, public Common::SeekableWr
 protected:
 	/** File handle to the actual file. */
 	void *_handle;
+	Common::String *_path;
 
 	static StdioStream *makeFromPathHelper(const Common::String &path, bool writeMode,
 			StdioStream *(*factory)(void *handle));
