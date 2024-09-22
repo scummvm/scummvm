@@ -87,8 +87,8 @@ bool GraphicsDriverBase::GetVsync() const {
 }
 
 void GraphicsDriverBase::BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
-	GraphicFlip flip, PBitmap surface) {
-	_spriteBatchDesc.push_back(SpriteBatchDesc(_actSpriteBatch, viewport, transform, flip, surface));
+	GraphicFlip flip, PBitmap surface, uint32_t filter_flags) {
+	_spriteBatchDesc.push_back(SpriteBatchDesc(_actSpriteBatch, viewport, transform, flip, surface, filter_flags));
 	_spriteBatchRange.push_back(std::make_pair(GetLastDrawEntryIndex(), (size_t) SIZE_MAX));
 	_actSpriteBatch = _spriteBatchDesc.size() - 1;
 	InitSpriteBatch(_actSpriteBatch, _spriteBatchDesc[_actSpriteBatch]);
