@@ -168,7 +168,7 @@ bool Darkseed::Nsp::load(Common::SeekableReadStream &readStream) {
 }
 
 const Darkseed::Sprite &Darkseed::Nsp::getSpriteAt(int index) {
-	if (index >= frames.size()) {
+	if (index >= (int) frames.size()) {
 		error("getSpriteAt: Invalid sprite index. %d", index);
 	}
 	return frames[index];

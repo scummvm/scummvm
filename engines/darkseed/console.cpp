@@ -78,7 +78,7 @@ Common::Array<Common::String> Console::wrapText(const Common::String &text) {
 	Common::String word;
 	int lineLength = 0;
 
-	for (int i = 0; i < text.size(); i++) {
+	for (unsigned int i = 0; i < text.size(); i++) {
 		if (text[i] != '\r') {
 			word += text[i];
 		}

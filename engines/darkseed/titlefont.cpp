@@ -56,7 +56,7 @@ int16 letterWidthLookupTbl[] = {
 };
 
 void TitleFont::displayString(uint16 x, uint16 y, const Common::String &text) {
-	for (int i = 0; i < text.size(); i++) {
+	for (unsigned int i = 0; i < text.size(); i++) {
 		if (text[i] == ' ') {
 			x += 0x12;
 			continue;

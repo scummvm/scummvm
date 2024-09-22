@@ -635,7 +635,7 @@ void DarkseedEngine::handleInput() {
 					}
 					_player->_heroMoving = false;
 					if (useDoorTarget || _doorEnabled) {
-						for (int i = 0; i < _room->room1.size(); i++) {
+						for (unsigned int i = 0; i < _room->room1.size(); i++) {
 							RoomExit &roomExit = _room->room1[i];
 							if (roomExit.roomNumber != 0xff
 								&& roomExit.x < scaledSpriteWidth / 2 + _player->_position.x
@@ -1117,7 +1117,7 @@ void DarkseedEngine::changeToRoom(int newRoomNumber, bool placeDirectly) { // AK
 			}
 		}
 	} else if (!placeDirectly && newRoomNumber != 0x22 && (newRoomNumber < 0x13 || newRoomNumber > 0x17)) {
-		for (int i = 0; i < _room->room1.size(); i++) {
+		for (unsigned int i = 0; i < _room->room1.size(); i++) {
 			const RoomExit &roomExit = _room->room1[i];
 			if (roomExit.roomNumber == _previousRoomNumber) {
 				_player->_position.x = roomExit.x + roomExit.width / 2;
@@ -1147,7 +1147,7 @@ void DarkseedEngine::debugTeleportToRoom(int newRoomNumber, int entranceNumber) 
 
 	updateBaseSprites();
 
-	if (entranceNumber < _room->room1.size()) {
+	if (entranceNumber < (int) _room->room1.size()) {
 		const RoomExit &roomExit = _room->room1[entranceNumber];
 		_player->_position.x = roomExit.x + roomExit.width / 2;
 		_player->_position.y = roomExit.y;
