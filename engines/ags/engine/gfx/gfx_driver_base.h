@@ -55,15 +55,19 @@ struct SpriteBatchDesc {
 	Shared::GraphicFlip      Flip = Shared::kFlip_None;
 	// Optional bitmap to draw sprites upon. Used exclusively by the software rendering mode.
 	PBitmap                  Surface;
+	// Optional filter flags; this lets to filter certain batches out during some operations,
+	// such as fading effects or making screenshots.
+	uint32_t				 FilterFlags = 0u;
 
 	SpriteBatchDesc() = default;
 	SpriteBatchDesc(uint32_t parent, const Rect viewport, const SpriteTransform & transform,
-		Shared::GraphicFlip flip = Shared::kFlip_None, PBitmap surface = nullptr)
+		Shared::GraphicFlip flip = Shared::kFlip_None, PBitmap surface = nullptr, uint32_t filter_flags = 0)
 		: Parent(parent)
 		, Viewport(viewport)
 		, Transform(transform)
 		, Flip(flip)
-		, Surface(surface) {
+		, Surface(surface)
+		, FilterFlags(filter_flags) {
 	}
 };
 
@@ -104,8 +108,9 @@ public:
 	bool		SetVsync(bool enabled) override;
 	bool		GetVsync() const override;
 
-	void        BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
-	                             Shared::GraphicFlip flip = Shared::kFlip_None, PBitmap surface = nullptr) override;
+	void 		BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
+						 		 Shared::GraphicFlip flip = Shared::kFlip_None, PBitmap surface = nullptr,
+								 uint32_t filter_flags = 0) override;
 	void        EndSpriteBatch() override;
 	void        ClearDrawLists() override;
 
@@ -178,7 +183,7 @@ protected:
 	// Sprite batch parameters
 	SpriteBatchDescs _spriteBatchDesc;
 	// The range of sprites in this sprite batch (counting nested sprites):
-	// the last of the previous batch, and the last of the current.
+	// the index of a first of the current batch, and the next index past the last one.
 	std::vector<std::pair<size_t, size_t>> _spriteBatchRange;
 	// The index of a currently filled sprite batch
 	size_t _actSpriteBatch;
