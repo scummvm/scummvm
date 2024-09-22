@@ -23,10 +23,10 @@
 #define DARKSEED_USECODE_H
 
 #include "common/scummsys.h"
-#include "console.h"
-#include "inventory.h"
-#include "objects.h"
-#include "player.h"
+#include "darkseed/console.h"
+#include "darkseed/inventory.h"
+#include "darkseed/objects.h"
+#include "darkseed/player.h"
 
 namespace Darkseed {
 class UseCode {

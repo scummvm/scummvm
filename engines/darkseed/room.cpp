@@ -19,8 +19,8 @@
 *
 */
 
-#include "room.h"
-#include "darkseed.h"
+#include "darkseed/room.h"
+#include "darkseed/darkseed.h"
 
 const static int roomDescriptionTextTbl[] = {
 	0, 138, 165, 165,
@@ -199,7 +199,7 @@ bool Darkseed::Room::load() {
 Common::String Darkseed::Room::stripSpaces(Common::String source) {
 	Common::String out;
 	const char *src = source.c_str();
-	for (int i = 0; i < source.size(); i++) {
+	for (uint i = 0; i < source.size(); i++) {
 		if (src[i] != ' ') {
 			out += src[i];
 		}
@@ -224,7 +224,7 @@ void Darkseed::Room::draw() {
 			}
 		}
 
-		for (int i = 0; i < _connectors.size(); i++) {
+		for (uint i = 0; i < _connectors.size(); i++) {
 			g_engine->_baseSprites.getSpriteAt(0).draw(_connectors[i].x, _connectors[i].y);
 		}
 	}
@@ -238,7 +238,7 @@ int Darkseed::Room::checkCursorAndMoveableObjects() {
 	bool hasObject = false;
 	int objNum = -1;
 	_collisionType = 0;
-	for (int i = 0; i < _roomObj.size(); i++) {
+	for (uint i = 0; i < _roomObj.size(); i++) {
 		if ((_roomObj[i].type == 1 || _roomObj[i].type == 3)
 			&& _roomObj[i].xOffset <= cursorSprite.width + g_engine->_cursor.getX()
 			&& g_engine->_cursor.getX() <= _roomObj[i].width + _roomObj[i].xOffset
@@ -273,7 +273,7 @@ int Darkseed::Room::checkCursorAndStaticObjects(int x, int y) {
 									 : g_engine->_cursor.getSprite();
 	bool hasObject = false;
 	_collisionType = 0;
-	for (int i = 0; i < _roomObj.size(); i++) {
+	for (uint i = 0; i < _roomObj.size(); i++) {
 		if (_roomObj[i].type == 0
 			&& _roomObj[i].xOffset <= cursorSprite.width + g_engine->_cursor.getX()
 			&& g_engine->_cursor.getX() <= _roomObj[i].width + _roomObj[i].xOffset
@@ -421,7 +421,7 @@ bool Darkseed::Room::exitRoom() {
 }
 int Darkseed::Room::getExitRoomNumberAtPoint(int x, int y) {
 	int obj = checkCursorAndStaticObjects(x, y);
-	for (int i = 0; i < room1.size(); i++) {
+	for (uint i = 0; i < room1.size(); i++) {
 		if (
 			room1[i].roomNumber != 0xff
 			&& _roomObj[obj].xOffset <= room1[i].x
@@ -635,7 +635,7 @@ void Darkseed::Room::printRoomDescriptionText() const {
 }
 
 int Darkseed::Room::getRoomExitAtCursor() {
-	for (int i = 0; i < _roomObj.size(); i++) {
+	for (uint i = 0; i < _roomObj.size(); i++) {
 		Common::Rect roomRect(_roomObj[i].xOffset, _roomObj[i].yOffset, _roomObj[i].xOffset + _roomObj[i].width, _roomObj[i].yOffset + _roomObj[i].height);
 		if (_roomObj[i].type == 0 && _roomObj[i].objNum < 6 && roomRect.contains(g_engine->_cursor.getPosition())) {
 			selectedObjIndex = i;
@@ -646,11 +646,11 @@ int Darkseed::Room::getRoomExitAtCursor() {
 }
 
 void Darkseed::Room::getWalkTargetForObjectType_maybe(int objId) {
-	for (int i = 0; i < _roomObj.size(); i++) {
+	for (uint i = 0; i < _roomObj.size(); i++) {
 		if (_roomObj[i].objNum == objId && _roomObj[i].type == 4) {
 			g_engine->_player->_walkTarget.x = _roomObj[i].xOffset;
 			g_engine->_player->_walkTarget.y = _roomObj[i].yOffset;
-			for (int j = 0; j < room1.size(); j++) {
+			for (uint j = 0; j < room1.size(); j++) {
 				if (room1[j].roomNumber != 0xff
 					&& _roomObj[selectedObjIndex].xOffset < room1[j].x
 					&& room1[j].x < _roomObj[selectedObjIndex].xOffset + _roomObj[selectedObjIndex].width
@@ -725,9 +725,9 @@ void Darkseed::Room::calculateScaledSpriteDimensions(int width, int height, int 
 }
 
 uint16 Darkseed::Room::getDoorTargetRoom(int objId) {
-	for (int i = 0; i < _roomObj.size(); i++) {
+	for (uint i = 0; i < _roomObj.size(); i++) {
 		if (_roomObj[i].objNum == objId && _roomObj[i].type == 4) {
-			for (int j = 0; j < room1.size(); j++) {
+			for (uint j = 0; j < room1.size(); j++) {
 				if (room1[j].roomNumber != 0xff
 					&& _roomObj[selectedObjIndex].xOffset < room1[j].x
 					&& room1[j].x < _roomObj[selectedObjIndex].xOffset + _roomObj[selectedObjIndex].width
@@ -786,7 +786,7 @@ void Darkseed::Room::runRoomObjects() {
 	if (_roomNumber == 61) {
 		drawTrunk();
 	}
-	for (int roomObjIdx = 0; roomObjIdx < _roomObj.size(); roomObjIdx++) {
+	for (uint roomObjIdx = 0; roomObjIdx < _roomObj.size(); roomObjIdx++) {
 		auto &roomObj = _roomObj[roomObjIdx];
 		int xPos = roomObj.xOffset;
 		int yPos = roomObj.yOffset;

@@ -22,10 +22,10 @@
 #ifndef DARKSEED_ROOM_H
 #define DARKSEED_ROOM_H
 
-#include "pal.h"
-#include "pic.h"
-#include "nsp.h"
 #include "common/rect.h"
+#include "darkseed/pal.h"
+#include "darkseed/pic.h"
+#include "darkseed/nsp.h"
 
 namespace Darkseed {
 

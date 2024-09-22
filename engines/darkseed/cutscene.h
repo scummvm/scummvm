@@ -23,8 +23,8 @@
 #define DARKSEED_CUTSCENE_H
 
 #include "common/str.h"
-#include "pal.h"
-#include "titlefont.h"
+#include "darkseed/pal.h"
+#include "darkseed/titlefont.h"
 
 namespace Darkseed {
 

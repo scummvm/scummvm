@@ -19,9 +19,9 @@
 *
 */
 
-#include "nsp.h"
+#include "darkseed/darkseed.h"
+#include "darkseed/nsp.h"
 #include "common/debug.h"
-#include "darkseed.h"
 
 Darkseed::Sprite::Sprite(uint16 width, uint16 height, uint16 pitch) : width(width), height(height), pitch(pitch) {
 	pixels.resize(pitch * height, 0);

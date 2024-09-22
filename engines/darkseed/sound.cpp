@@ -19,11 +19,11 @@
 *
 */
 
-#include "sound.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
-#include "darkseed.h"
+#include "darkseed/sound.h"
+#include "darkseed/darkseed.h"
 
 Darkseed::Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer) {
 	_didSpeech.resize(978);
@@ -58,7 +58,7 @@ void Darkseed::Sound::waitForSpeech() {
 }
 
 void Darkseed::Sound::resetSpeech() {
-	for (int i = 0; i < _didSpeech.size(); i++) {
+	for (int i = 0; i < (int)_didSpeech.size(); i++) {
 		_didSpeech[i] = 0;
 	}
 }

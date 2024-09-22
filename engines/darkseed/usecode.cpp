@@ -19,10 +19,10 @@
 *
 */
 
+#include "common/debug.h"
 #include "darkseed/darkseed.h"
 #include "darkseed/usecode.h"
 #include "darkseed/usecode_tos_tables.h"
-#include "common/debug.h"
 
 namespace Darkseed {
 

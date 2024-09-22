@@ -19,7 +19,7 @@
  *
  */
 
-#include "darkseed.h"
+#include "darkseed/darkseed.h"
 #include "darkseed/debugconsole.h"
 
 namespace Darkseed {

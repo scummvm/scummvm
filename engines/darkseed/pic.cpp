@@ -19,9 +19,9 @@
 *
 */
 
-#include "pic.h"
+#include "darkseed/pic.h"
+#include "darkseed/darkseed.h"
 #include "common/debug.h"
-#include "darkseed.h"
 
 bool Darkseed::Pic::load(const Common::Path &filename) {
 	Common::File file;

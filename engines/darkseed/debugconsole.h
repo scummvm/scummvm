@@ -24,7 +24,7 @@
 #define DARKSEED_DEBUGCONSOLE_H
 
 #include "gui/debugger.h"
-#include "tostext.h"
+#include "darkseed/tostext.h"
 
 namespace Darkseed {
 

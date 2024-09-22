@@ -19,10 +19,10 @@
  *
  */
 
-#include "img.h"
 #include "common/debug.h"
 #include "common/file.h"
-#include "darkseed.h"
+#include "darkseed/darkseed.h"
+#include "darkseed/img.h"
 
 namespace Darkseed {
 

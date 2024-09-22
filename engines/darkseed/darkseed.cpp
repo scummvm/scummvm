@@ -19,24 +19,24 @@
  *
  */
 
-#include "darkseed/darkseed.h"
-#include "anm.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/scummsys.h"
 #include "common/system.h"
+#include "engines/util.h"
+#include "darkseed/darkseed.h"
+#include "darkseed/anm.h"
 #include "darkseed/console.h"
 #include "darkseed/detection.h"
-#include "debugconsole.h"
-#include "engines/util.h"
+#include "darkseed/debugconsole.h"
 #include "graphics/palette.h"
-#include "img.h"
-#include "nsp.h"
-#include "pal.h"
-#include "pic.h"
-#include "room.h"
-#include "titlefont.h"
+#include "darkseed/img.h"
+#include "darkseed/nsp.h"
+#include "darkseed/pal.h"
+#include "darkseed/pic.h"
+#include "darkseed/room.h"
+#include "darkseed/titlefont.h"
 
 namespace Darkseed {
 

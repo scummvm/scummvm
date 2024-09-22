@@ -22,7 +22,7 @@
 #ifndef DARKSEED_GAMEFONT_H
 #define DARKSEED_GAMEFONT_H
 
-#include "nsp.h"
+#include "darkseed/nsp.h"
 namespace Darkseed {
 
 class GameFont {

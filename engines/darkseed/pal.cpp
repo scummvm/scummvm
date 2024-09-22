@@ -19,9 +19,9 @@
  *
  */
 
-#include "pal.h"
-#include "darkseed.h"
 #include "graphics/paletteman.h"
+#include "darkseed/pal.h"
+#include "darkseed/darkseed.h"
 
 namespace Darkseed {
 
