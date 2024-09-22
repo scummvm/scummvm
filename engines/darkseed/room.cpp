@@ -836,7 +836,7 @@ void Darkseed::Room::runRoomObjects() {
 					roomObj.yOffset += anim._deltaY[_locObjFrame[g_engine->_objectVar[79]]];
 				}
 				spriteNum = _locationSprites.getAnimAt(g_engine->_objectVar[79])._frameNo[_locObjFrame[g_engine->_objectVar[79]]];
-				if (g_engine->_ObjRestarted) {
+				if (g_engine->_objRestarted) {
 					if (g_engine->_objectVar[79] == 1) {
 						g_engine->_objectVar[79] = 3;
 					}
@@ -975,7 +975,7 @@ void Darkseed::Room::runRoomObjects() {
 			}
 			if (_roomNumber == 57 && g_engine->_previousRoomNumber == 54 && spriteNum < 6) {
 				g_engine->_objectVar[56] = spriteNum;
-				if (g_engine->_ObjRestarted) {
+				if (g_engine->_objRestarted) {
 					g_engine->_objectVar[56] = 6;
 				}
 			}
@@ -1065,7 +1065,7 @@ void Darkseed::Room::runRoomObjects() {
 				g_engine->_sprites.addSpriteToDrawList(334, 153, &sprite2, 255, sprite2._width, sprite2._height, false);
 			} else {
 				advanceLocAnimFrame(0);
-				if (!g_engine->_ObjRestarted) {
+				if (!g_engine->_objRestarted) {
 					const Sprite &sprite = _locationSprites.getSpriteAt(_locationSprites.getAnimAt(0)._frameNo[_locObjFrame[0]]);
 					g_engine->_sprites.addSpriteToDrawList(245, 93, &sprite, 255, sprite._width, sprite._height, false);
 				} else {
@@ -1251,38 +1251,38 @@ void Darkseed::Room::drawTrunk() {
 
 void Darkseed::Room::advanceLocAnimFrame(int roomObjIdx) {
 	const Obt &anim = _locationSprites.getAnimAt(_roomObj[roomObjIdx].spriteNum);
-	g_engine->_ObjRestarted = false;
+	g_engine->_objRestarted = false;
 	_locObjFrameTimer[roomObjIdx]--;
 	if (_locObjFrameTimer[roomObjIdx] < 1) {
 		_locObjFrame[roomObjIdx]++;
 		if (_locObjFrame[roomObjIdx] == anim._numFrames) {
 			_locObjFrame[roomObjIdx] = 0;
-			g_engine->_ObjRestarted = true;
+			g_engine->_objRestarted = true;
 		}
 		_locObjFrameTimer[roomObjIdx] = anim._frameDuration[_locObjFrame[roomObjIdx]];
 	}
 }
 
 bool Darkseed::Room::advanceFrame(int animIdx) {
-	g_engine->_FrameAdvanced = false;
+	g_engine->_frameAdvanced = false;
 	const Obt &anim = _locationSprites.getAnimAt(animIdx);
-	g_engine->_ObjRestarted = false;
+	g_engine->_objRestarted = false;
 	_locObjFrameTimer[animIdx]--;
 	if (_locObjFrameTimer[animIdx] < 1) {
-		g_engine->_FrameAdvanced = true;
+		g_engine->_frameAdvanced = true;
 		_locObjFrame[animIdx]++;
 		if (_locObjFrame[animIdx] == anim._numFrames) {
 			_locObjFrame[animIdx] = 0;
-			g_engine->_ObjRestarted = true;
+			g_engine->_objRestarted = true;
 		}
 		_locObjFrameTimer[animIdx] = anim._frameDuration[_locObjFrame[animIdx]];
 	}
-	return g_engine->_FrameAdvanced;
+	return g_engine->_frameAdvanced;
 }
 
 void Darkseed::Room::mikeStickThrowAnim() {
 	advanceFrame(2);
-	if (!g_engine->_ObjRestarted) {
+	if (!g_engine->_objRestarted) {
 		g_engine->_player->_frameIdx = _locationSprites.getAnimAt(2)._frameNo[_locObjFrame[2]];
 	} else {
 		g_engine->_objectVar[79] = 1;

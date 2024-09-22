@@ -88,7 +88,7 @@ protected:
 	Common::Error run() override;
 public:
 	Pic _frame;
-	bool _FrameAdvanced = false;
+	bool _frameAdvanced = false;
 	bool _ct_voice_status = false;
 	bool _isRightMouseClicked = false;
 	bool _isLeftMouseClicked = false;
@@ -129,7 +129,7 @@ public:
 
 	bool _player_sprite_related_2c85_82f3 = false;
 	int _frameBottom = 0;
-	bool _ObjRestarted = false;
+	bool _objRestarted = false;
 	int _animIndexTbl[30];
 	int _spriteAnimCountdownTimer[30];
 
@@ -147,7 +147,7 @@ public:
 	bool _debugShowWalkPath = false;
 	int _phoneStatus = 0;
 
-	int16 _SoundTimer = 0;
+	int16 _soundTimer = 0;
 	bool _printedcomeheredawson = false;
 	void zeromousebuttons();
 
