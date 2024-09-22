@@ -91,6 +91,8 @@ enum DgdsKeyEvent {
 	kDgdsKeyActivate,
 };
 
+// TODO: Enable keymapper for dragon arcade sequences
+/*
 enum DragonArcadeKeyEvent {
 	kDragonArcadeKeyLeft,
 	kDragonArcadeKeyRight,
@@ -103,6 +105,7 @@ enum DragonArcadeKeyEvent {
 	kDragonArcadeKeyJumpMode,
 	kDragonArcadeKeyFire,
 };
+*/
 
 
 class DgdsEngine : public Engine {

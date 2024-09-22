@@ -167,13 +167,13 @@ private:
 	int16 _shouldUpdateState;
 	int16 _finishCountdown;
 	int16 _bladeState1;
-	int16 _bladeStateOffset;
+	int16 _bladePageOffset;
 	uint16 _mouseButtonWentDown;
 	int16 _scrollXOffset;
 	int32 _nTickUpdates;
 	int16 _startDifficultyMaybe;
 	int16 _bossStateUpdateCounter;
-	int16 _someCounter40f0;
+	int16 _npcStateResetCounter;
 	int16 _scrollVelocityX;
 	uint16 _uint0a17;
 	int16 _currentYOffset;
