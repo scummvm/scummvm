@@ -751,11 +751,9 @@ bool Scene::runDragonOp(const SceneOp &op) {
 		engine->getScene()->addAndShowTiredDialog();
 		break;
 	case kSceneOpArcadeTick:
-		// TODO: Implement this properly! for now just
-		// set the global arcade state variable to the "skip" value.
-		//warning("Setting arcade global to 8 (skip)");
-		//g_system->displayMessageOnOSD(_("Skipping DGDS arcade sequence"));
-		//engine->getGameGlobals()->setGlobal(0x21, 6);
+		// TODO: Add a configuration option to skip arcade sequence?
+		// g_system->displayMessageOnOSD(_("Skipping DGDS arcade sequence"));
+		// engine->getGameGlobals()->setGlobal(0x21, 6);
 		engine->getDragonArcade()->arcadeTick();
 		break;
 	case kSceneOpDrawDragonCountdown1:

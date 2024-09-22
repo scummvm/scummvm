@@ -1011,7 +1011,7 @@ Common::Error ADSInterpreter::syncState(Common::Serializer &s) {
 
 	s.syncString(activeScript);
 	assert(activeScript.empty() || _adsTexts.contains(activeScript));
-	_adsData = &_adsTexts[activeScript];
+	_adsData = activeScript.empty() ? nullptr : &_adsTexts[activeScript];
 
 	return Common::kNoError;
 }
