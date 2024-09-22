@@ -1324,7 +1324,7 @@ void UpscaledGfxDriver::adjustCursorBuffer(uint16 newWidth, uint16 newHeight) {
 
 PC98Gfx16ColorsDriver::PC98Gfx16ColorsDriver(int textAlignX, bool cursorScaleWidth, bool cursorScaleHeight, SjisFontStyle sjisFontStyle, bool rgbRendering, bool needsUnditheringPalette) :
 	UpscaledGfxDriver(320, 200, textAlignX, cursorScaleWidth && cursorScaleHeight, rgbRendering), _textModePalette(nullptr), _fontStyle(sjisFontStyle),
-		_cursorScaleHeightOnly(!cursorScaleWidth && cursorScaleHeight), _needsUnditheringPalette(needsUnditheringPalette), _convPalette(nullptr) {
+		_cursorScaleHeightOnly(!cursorScaleWidth && cursorScaleHeight), _convPalette(nullptr) {
 	// Palette taken from driver file (identical for all versions of the
 	// driver I have seen so far, also same for SCI0 and SCI1)
 	static const byte pc98colorsV16[] = {

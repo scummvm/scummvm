@@ -273,7 +273,6 @@ private:
 	const byte *_convPalette;
 	const byte *_textModePalette;
 	const bool _cursorScaleHeightOnly;
-	const bool _needsUnditheringPalette;
 	SjisFontStyle _fontStyle;
 };
 
