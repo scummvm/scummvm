@@ -90,7 +90,6 @@ struct GameSetup {
 	bool  mouse_ctrl_enabled;
 	MouseSpeedDef mouse_speed_def;
 	bool  RenderAtScreenRes; // render sprites at screen resolution, as opposed to native one
-	int   Supersampling;
 	size_t SpriteCacheSize = DefSpriteCacheSize;  // in KB
 	size_t TextureCacheSize = DefTexCacheSize;  // in KB
 	bool  clear_cache_on_room_change; // for low-end devices: clear resource caches on room change
