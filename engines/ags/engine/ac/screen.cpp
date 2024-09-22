@@ -74,12 +74,12 @@ void current_fade_out_effect() {
 	} else if (theTransition == FADE_NORMAL) {
 		fadeout_impl(5);
 	} else if (theTransition == FADE_BOXOUT) {
-		_G(gfxDriver)->BoxOutEffect(true, get_fixed_pixel_size(16), 1000 / GetGameSpeed());
+		_G(gfxDriver)->BoxOutEffect(true, get_fixed_pixel_size(16), 1000 / GetGameSpeed(), RENDER_BATCH_POST_GAME_SCENE);
 		_GP(play).screen_is_faded_out = 1;
 	} else {
 		get_palette(_G(old_palette));
 		const Rect &viewport = _GP(play).GetMainViewport();
-		_G(saved_viewport_bitmap) = CopyScreenIntoBitmap(viewport.GetWidth(), viewport.GetHeight());
+		_G(saved_viewport_bitmap) = CopyScreenIntoBitmap(viewport.GetWidth(), viewport.GetHeight(), false /* use current resolution */, RENDER_BATCH_POST_GAME_SCENE);
 	}
 }
 

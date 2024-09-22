@@ -45,6 +45,11 @@ using namespace AGS; // FIXME later
 
 #define IS_ANTIALIAS_SPRITES _GP(usetup).enable_antialiasing && (_GP(play).disable_antialiasing == 0)
 
+// Render stage flags, for filtering out certain elements
+// during room transitions and screenshots, etc.
+// NOTE: these values are internal and purely arbitrary atm.
+#define RENDER_BATCH_POST_GAME_SCENE 0x0001
+
 /**
  * Buffer and info flags for viewport/camera pairs rendering in software mode
  */
