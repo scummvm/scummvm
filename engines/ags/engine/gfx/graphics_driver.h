@@ -207,7 +207,7 @@ public:
 	// Copies contents of the game screen into bitmap using simple blit or pixel copy.
 	// Bitmap must be of supported size and pixel format. If it's not the method will
 	// fail and optionally write wanted destination format into 'want_fmt' pointer.
-	virtual bool GetCopyOfScreenIntoBitmap(Shared::Bitmap *destination, bool at_native_res,
+	virtual bool GetCopyOfScreenIntoBitmap(Shared::Bitmap *destination, const Rect *src_rect, bool at_native_res,
 										   GraphicResolution *want_fmt = nullptr, uint32_t batch_skip_filter = 0u) = 0;
 	// Tells if the renderer supports toggling vsync after initializing the mode.
 	virtual bool DoesSupportVsyncToggle() = 0;
