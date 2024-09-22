@@ -46,7 +46,7 @@ void SetMouseBounds(int x1, int y1, int x2, int y2);
 void RefreshMouse();
 // mouse cursor functions:
 // set_mouse_cursor: changes visual appearance to specified cursor
-void set_mouse_cursor(int newcurs);
+void set_mouse_cursor(int newcurs, bool force_update = false);
 // set_default_cursor: resets visual appearance to current mode (walk, look, etc);
 void set_default_cursor();
 // set_cursor_mode: changes mode and appearance

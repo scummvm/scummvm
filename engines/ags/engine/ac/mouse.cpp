@@ -98,13 +98,12 @@ void SetMouseBounds(int x1, int y1, int x2, int y2) {
 
 // mouse cursor functions:
 // set_mouse_cursor: changes visual appearance to specified cursor
-void set_mouse_cursor(int newcurs) {
+void set_mouse_cursor(int newcurs, bool force_update) {
 	const int hotspotx = _GP(game).mcurs[newcurs].hotx, hotspoty = _GP(game).mcurs[newcurs].hoty;
 	_GP(mouse).SetHotspot(hotspotx, hotspoty);
 
 	// if it's same cursor and there's animation in progress, then don't assign a new pic just yet
-	if (newcurs == _G(cur_cursor) && _GP(game).mcurs[newcurs].view >= 0 &&
-	        (_G(mouse_frame) > 0 || _G(mouse_delay) > 0)) {
+	if (!force_update && newcurs == _G(cur_cursor) && _GP(game).mcurs[newcurs].view >= 0 && (_G(mouse_frame) > 0 || _G(mouse_delay) > 0)) {
 		return;
 	}
 
