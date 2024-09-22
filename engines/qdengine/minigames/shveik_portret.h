@@ -230,6 +230,176 @@ public:
 	bool quant(float dt) {
 		debugC(3, kDebugMinigames, "ShveikPortret::quant(%f)", dt);
 
+		if (!_doneObj->is_state_active("да")) {
+			if (checkSolution()) {
+				_doneObj->set_state("да");
+				_completePicObj->set_state("лицевая сторона");
+
+				for (int i = 1; i <= 24; i++)
+					_objArray[i].obj->set_R(mgVect3f(-1000.0, -1000.0, -100.0));
+
+				_scene->activate_personage("Швейк");
+
+				return true;
+			}
+		}
+
+		if (_exitClickObj->is_state_active("да"))
+			_exitClickObj->set_state("выход разрешен");
+
+		mgVect2i curPos = _engine->mouse_cursor_position();
+
+		if (_scene->mouse_object_interface()) {
+			if (_draggedObjectState) {
+				_objArray[_draggedObjectState].obj->set_state(_draggedInvObjectState);
+				_draggedInvObjectState = 0;
+				_draggedObjectState = 0;
+			}
+		}
+
+		int state = _clickObj->current_state_index();
+		qdMinigameObjectInterface *obj;
+
+		if (state > 24) {
+			obj = _objArray[state - 24].obj;
+
+			if (obj->is_state_active("inv на мыши 0")) {
+				obj->set_state("лежит за полем 0");
+			} else if (obj->is_state_active("inv на мыши 90")) {
+				obj->set_state("лежит за полем 90");
+			} else if (obj->is_state_active("inv на мыши 180")) {
+				obj->set_state("лежит за полем 180");
+			} else if (obj->is_state_active("inv на мыши 270")) {
+				obj->set_state("лежит за полем 270");
+			}
+
+			if (_engine->mouse_cursor_position().x > 205
+					|| _engine->mouse_cursor_position().x <= 155) {
+				if (_engine->mouse_cursor_position().x < 600
+						|| _engine->mouse_cursor_position().x >= 649) {
+					obj->set_R(_scene->screen2world_coords(_engine->mouse_cursor_position(), 0.0));
+				} else {
+					mgVect2i pos = _engine->mouse_cursor_position();
+					pos.x = 649;
+					obj->set_R(_scene->screen2world_coords(pos, 0.0));
+				}
+			} else {
+				mgVect2i pos = _engine->mouse_cursor_position();
+				pos.x = 155;
+				obj->set_R(_scene->screen2world_coords(pos, 0.0));
+			}
+
+			obj->update_screen_R();
+			_objArray[state - 24].depth = 25.0f;
+
+			setPiecesPos();
+
+			_clickObj->set_state("нет");
+			_maskOutsideObj->set_state("!маска");
+		} else if (state > 0) {
+			_currentPieceRow = getPieceNumber(curPos.x, 204, 4, 99);
+			_currentPieceCol = getPieceNumber(curPos.y, 4, 6, 99);
+
+			obj = _objArray[state].obj;
+
+			if (_fieldState[_currentPieceRow][_currentPieceCol].pieceNum == -1) {
+				if (obj->is_state_active("inv на мыши 0")) {
+					obj->set_state("лежит на поле 0");
+					_fieldState[_currentPieceRow][_currentPieceCol].angle = 0;
+				} else if (obj->is_state_active("inv на мыши 90")) {
+					obj->set_state("лежит на поле 90");
+					_fieldState[_currentPieceRow][_currentPieceCol].angle = 90;
+				} else if (obj->is_state_active("inv на мыши 180")) {
+					obj->set_state("лежит на поле 180");
+					_fieldState[_currentPieceRow][_currentPieceCol].angle = 180;
+				} else if (obj->is_state_active("inv на мыши 270")) {
+					obj->set_state("лежит на поле 270");
+					_fieldState[_currentPieceRow][_currentPieceCol].angle = 270;
+				}
+
+				mgVect2i pos;
+
+				pos.x = 99 * _currentPieceRow + 154;
+				pos.y = 99 * _currentPieceCol - 46;
+
+				obj->set_R(_scene->screen2world_coords(pos, 0.0));
+
+				_objArray[state].x = _currentPieceRow;
+				_objArray[state].y = _currentPieceCol;
+				_fieldState[_currentPieceRow][_currentPieceCol].pieceNum = state;
+			}
+
+			_clickObj->set_state("нет");
+			_maskOutsideObj->set_state("!маска");
+		}
+
+		state = _objectClickObj->current_state_index();
+
+		if (state > 0) {
+			obj = _objArray[state].obj;
+
+			if (obj->is_state_active("лежит на поле 0")
+					|| obj->is_state_active("лежит на поле 90")
+					|| obj->is_state_active("лежит на поле 180")
+					|| obj->is_state_active("лежит на поле 270")) {
+				_fieldState[_objArray[state].x][_objArray[state].y].pieceNum = -1;
+				_fieldState[_objArray[state].x][_objArray[state].y].angle = -1;
+
+				_objArray[state].x = -1;
+				_objArray[state].y = -1;
+			}
+
+			if (obj->is_state_active("лежит на поле 0")
+					|| obj->is_state_active("лежит за полем 0")) {
+				_draggedInvObjectState = obj->state_index("inv на мыши 0");
+			}
+			if (obj->is_state_active("лежит на поле 90")
+					|| obj->is_state_active("лежит за полем 90")) {
+				_draggedInvObjectState = obj->state_index("inv на мыши 90");
+			}
+			if (obj->is_state_active("лежит на поле 180")
+					|| obj->is_state_active("лежит за полем 180")) {
+				_draggedInvObjectState = obj->state_index("inv на мыши 180");
+			}
+			if (obj->is_state_active("лежит на поле 270")
+					|| obj->is_state_active("лежит за полем 270")) {
+				_draggedInvObjectState = obj->state_index("inv на мыши 270");
+			}
+
+			_draggedObjectState = state;
+
+			obj->set_state("to_inv");
+
+			_objectClickObj->set_state("нет");
+			_maskOutsideObj->set_state("Фон - маска");
+		}
+
+		if (_engine->is_mouse_event_active(qdmg::qdEngineInterfaceImpl::MOUSE_EV_RIGHT_DOWN)
+				|| _engine->is_mouse_event_active(qdmg::qdEngineInterfaceImpl::MOUSE_EV_RIGHT_DBLCLICK)) {
+			obj =_scene->mouse_object_interface();
+
+			if (obj) {
+				if (obj->has_state("удалить")) {
+					if (obj->is_state_active("inv на мыши 0")) {
+						obj->set_state("inv на мыши 90");
+						return true;
+					}
+					if (obj->is_state_active("inv на мыши 90")) {
+						obj->set_state("inv на мыши 180");
+						return true;
+					}
+					if (obj->is_state_active("inv на мыши 180")) {
+						obj->set_state("inv на мыши 270");
+						return true;
+					}
+					if (obj->is_state_active("inv на мыши 270")) {
+						obj->set_state("inv на мыши 0");
+						return true;
+					}
+				}
+			}
+		}
+
 		return true;
 	}
 
@@ -323,6 +493,14 @@ private:
 				_objArray[i].obj->set_R(_scene->screen2world_coords(_objArray[i].obj->screen_R(), 100.0 - _objArray[i].depth * 100.0));
 			}
 		}
+	}
+
+	bool checkSolution() {
+		return false;
+	}
+
+	int getPieceNumber(int left, int right, int dimSize, int step) {
+		return 0;
 	}
 
 private:
