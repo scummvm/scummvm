@@ -105,8 +105,9 @@ bool SpriteCache::SetSprite(sprkey_t index, Bitmap *sprite, int flags) {
 		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Error, "SetSprite: unable to use index %d", index);
 		return false;
 	}
-	if (!sprite) {
-		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Error, "SetSprite: attempt to assign nullptr to index %d", index);
+	if (!sprite || sprite->GetSize().IsNull() || sprite->GetColorDepth() <= 0) {
+		DisposeSprite(index); // free previous item in this slot anyway
+		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Error, "SetSprite: attempt to assign an invalid bitmap to index %d", index);
 		return false;
 	}
 
