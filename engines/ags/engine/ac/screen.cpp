@@ -79,7 +79,7 @@ void current_fade_out_effect() {
 	} else {
 		get_palette(_G(old_palette));
 		const Rect &viewport = _GP(play).GetMainViewport();
-		_G(saved_viewport_bitmap) = CopyScreenIntoBitmap(viewport.GetWidth(), viewport.GetHeight(), false /* use current resolution */, RENDER_SHOT_SKIP_ON_FADE);
+		_G(saved_viewport_bitmap) = CopyScreenIntoBitmap(viewport.GetWidth(), viewport.GetHeight(), &viewport, false /* use current resolution */, RENDER_SHOT_SKIP_ON_FADE);
 	}
 }
 

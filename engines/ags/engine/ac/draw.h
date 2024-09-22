@@ -262,7 +262,8 @@ Shared::Bitmap *PrepareSpriteForUse(Shared::Bitmap *bitmap, bool has_alpha);
 Shared::PBitmap PrepareSpriteForUse(Shared::PBitmap bitmap, bool has_alpha);
 // Makes a screenshot corresponding to the last screen render and returns it as a bitmap
 // of the requested width and height and game's native color depth.
-Shared::Bitmap *CopyScreenIntoBitmap(int width, int height, bool at_native_res = false, uint32_t batch_skip_filter = 0u);
+Shared::Bitmap *CopyScreenIntoBitmap(int width, int height, const Rect *src_rect = nullptr,
+									 bool at_native_res = false, uint32_t batch_skip_filter = 0u);
 
 } // namespace AGS3
 
