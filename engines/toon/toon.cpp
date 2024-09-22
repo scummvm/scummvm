@@ -203,7 +203,7 @@ void ToonEngine::parseInput() {
 	Common::Event event;
 	while (!breakPollEventloop && _event->pollEvent(event)) {
 
-		const bool hasModifier = (event.kbd.flags & Common::KBD_NON_STICKY) != 0;
+		//const bool hasModifier = (event.kbd.flags & Common::KBD_NON_STICKY) != 0;
 		switch (event.type) {
 		case Common::EVENT_MOUSEMOVE:
 			_mouseX = event.mouse.x;
