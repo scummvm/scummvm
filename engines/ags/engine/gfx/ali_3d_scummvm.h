@@ -228,7 +228,7 @@ public:
 	void SetGamma(int newGamma) override;
 	void UseSmoothScaling(bool /*enabled*/) override {}
 	bool DoesSupportVsyncToggle() override;
-	void RenderSpritesAtScreenResolution(bool /*enabled*/, int /*supersampling*/) override {}
+	void RenderSpritesAtScreenResolution(bool /*enabled*/) override {}
 	Bitmap *GetMemoryBackBuffer() override;
 	void SetMemoryBackBuffer(Bitmap *backBuffer) override;
 	Bitmap *GetStageBackBuffer(bool mark_dirty) override;

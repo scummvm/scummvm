@@ -310,7 +310,6 @@ void apply_config(const ConfigTree &cfg) {
 
 		_GP(usetup).RenderAtScreenRes = CfgReadBoolInt(cfg, "graphics", "render_at_screenres");
 		_GP(usetup).enable_antialiasing = CfgReadBoolInt(cfg, "graphics", "antialias");
-		_GP(usetup).Supersampling = CfgReadInt(cfg, "graphics", "supersampling", 1);
 		_GP(usetup).software_render_driver = CfgReadString(cfg, "graphics", "software_driver");
 
 #ifdef TODO
