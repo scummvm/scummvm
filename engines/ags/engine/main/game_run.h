@@ -55,6 +55,10 @@ void UpdateGameAudioOnly();
 // this function is useful when you don't want to update whole game, but only things
 // that are necessary for rendering the game screen.
 void UpdateCursorAndDrawables();
+// Syncs object drawable states with their logical states.
+// Useful after a major game state change, such as loading new room, in case we expect
+// that a render may occur before a normal game update is performed.
+void SyncDrawablesState();
 // Gets current logical game FPS, this is normally a fixed number set in script;
 // in case of "maxed fps" mode this function returns real measured FPS.
 float get_game_fps();

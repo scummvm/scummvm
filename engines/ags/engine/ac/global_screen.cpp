@@ -184,6 +184,9 @@ void FadeIn(int sppd) {
 	if (_GP(play).fast_forward)
 		return;
 
+	// Update drawables, prepare them for the transition-in
+	// in case this is called after the game state change but before any update was run
+	SyncDrawablesState();
 	// FIXME: we have to sync audio here explicitly, because FadeIn
 	// does not call any game update function while it works
 	sync_audio_playback();
