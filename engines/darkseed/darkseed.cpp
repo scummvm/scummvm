@@ -148,11 +148,11 @@ void DarkseedEngine::fadeIn(const Pal &palette) {
 }
 
 bool DarkseedEngine::fadeStep() {
-	if (_fadeStepCounter < 32) {
-		_fadeTempPalette.updatePalette(_fadeDirection == FadeDirection::OUT ? -8 : 8, _fadeTargetPalette);
+	if (_fadeStepCounter < 64) {
+		_fadeTempPalette.updatePalette(_fadeDirection == FadeDirection::OUT ? -4 : 4, _fadeTargetPalette);
 		_fadeStepCounter++;
 	}
-	return _fadeStepCounter < 32;
+	return _fadeStepCounter < 64;
 }
 
 void DarkseedEngine::gameloop() {
@@ -172,9 +172,7 @@ void DarkseedEngine::gameloop() {
 		}
 		counter_2c85_888b = (counter_2c85_888b + 1) & 0xff;
 		if (_cutscene.isPlaying()) {
-//			if (systemTimerCounter == 5) {
 				_cutscene.update();
-//			}
 		} else if (systemTimerCounter == 5) {
 			if (_objectVar[1] != 0) {
 				if (_room->_roomNumber == 30) {
