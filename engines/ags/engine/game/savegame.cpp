@@ -512,7 +512,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	_GP(mouse).SetMoveLimit(Rect(oldx1, oldy1, oldx2, oldy2));
 
 	set_cursor_mode(r_data.CursorMode);
-	set_mouse_cursor(r_data.CursorID);
+	set_mouse_cursor(r_data.CursorID, true);
 	if (r_data.CursorMode == MODE_USE)
 		SetActiveInventory(_G(playerchar)->activeinv);
 	// ensure that the current cursor is locked
