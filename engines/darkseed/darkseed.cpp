@@ -1451,7 +1451,7 @@ void DarkseedEngine::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 	_otherNspAnimationType_maybe = animId;
 
 	_player_sprite_related_2c85_82f3 = 0;
-	_ObjRestarted = false;
+	_objRestarted = false;
 
 	if (_otherNspAnimationType_maybe < 2) {
 		return;
@@ -1569,7 +1569,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 1 : // sleep wake anim
 		advanceAnimationFrame(0);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
 		} else {
 			_player->_position.x = 0xdf;
@@ -1581,7 +1581,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 2:
 		advanceAnimationFrame(0);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
 		} else {
 			_player->_position.x = 218;
@@ -1596,7 +1596,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 3:
 		advanceAnimationFrame(0);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 		} else {
 			if (_room->isGiger()) {
@@ -1618,7 +1618,7 @@ void DarkseedEngine::updateAnimation() {
 			_player->_animations.getAnimAt(0)._frameDuration[_animIndexTbl[0]] == _spriteAnimCountdownTimer[0]) {
 			playSound(14, 5, -1);
 		}
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 		} else {
 			_isPlayingAnimation_maybe = false;
@@ -1642,7 +1642,7 @@ void DarkseedEngine::updateAnimation() {
 		_player->_position.x = 135;
 		_player->_position.y = 91;
 		advanceAnimationFrame(1);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(1)._frameNo[_player->_animations.getAnimAt(1)._frameNo[_animIndexTbl[1]]];
 		} else {
 			gotonextmorning(); // TODO there might be some extra logic required from original function
@@ -1659,10 +1659,10 @@ void DarkseedEngine::updateAnimation() {
 		} else {
 			advanceAnimationFrame(2);
 		}
-		if (_FrameAdvanced && ((currentRoomNumber == 6 && _animIndexTbl[1] == 1) || (currentRoomNumber == 5 && _animIndexTbl[2] == 1))) {
+		if (_frameAdvanced && ((currentRoomNumber == 6 && _animIndexTbl[1] == 1) || (currentRoomNumber == 5 && _animIndexTbl[2] == 1))) {
 //			FUN_1208_0dac_sound_related(0xd,CONCAT11(uVar4,5));
 		}
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			if (currentRoomNumber == 6) {
 				_player->_frameIdx = _player->_animations.getAnimAt(1)._frameNo[_player->_animations.getAnimAt(1)._frameNo[_animIndexTbl[1]]];
 			} else {
@@ -1681,10 +1681,10 @@ void DarkseedEngine::updateAnimation() {
 	case 7: // stairs down
 		if (currentRoomNumber == 5) {
 			advanceAnimationFrame(3);
-			if (_FrameAdvanced && _animIndexTbl[3] == 1) {
+			if (_frameAdvanced && _animIndexTbl[3] == 1) {
 				// FUN_1208_0dac_sound_related(0xd,CONCAT11(extraout_AH_05,5));
 			}
-			if (!_ObjRestarted) {
+			if (!_objRestarted) {
 				_player->_frameIdx = _player->_animations.getAnimAt(3)._frameNo[_player->_animations.getAnimAt(3)._frameNo[_animIndexTbl[3]]];
 			} else {
 				_previousRoomNumber = 5;
@@ -1692,10 +1692,10 @@ void DarkseedEngine::updateAnimation() {
 			}
 		} else {
 			advanceAnimationFrame(0);
-			if (_FrameAdvanced && _animIndexTbl[0] == 1) {
+			if (_frameAdvanced && _animIndexTbl[0] == 1) {
 				// FUN_1208_0dac_sound_related(0xd,CONCAT11(extraout_AH_05,5));
 			}
-			if (!_ObjRestarted) {
+			if (!_objRestarted) {
 				_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
 			}
 		}
@@ -1710,7 +1710,7 @@ void DarkseedEngine::updateAnimation() {
 				_phoneStatus = 2;
 			}
 		}
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			if (_otherNspAnimationType_maybe == 8) {
 				_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
 			} else {
@@ -1739,7 +1739,7 @@ void DarkseedEngine::updateAnimation() {
 	case 9: // hang up phone
 	case 64:
 		advanceAnimationFrame(1);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(1)._frameNo[_player->_animations.getAnimAt(1)._frameNo[_animIndexTbl[1]]];
 		} else {
 			_player->_position.x = 300;
@@ -1752,7 +1752,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 11:
 		advanceAnimationFrame(1);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(1)._frameNo[_animIndexTbl[1]];
 		} else {
 			_player->_position.x = 175;
@@ -1767,7 +1767,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 12:
 		advanceAnimationFrame(0);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
 		} else {
 			_player->_position.x = 360;
@@ -1780,7 +1780,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 13:
 		advanceAnimationFrame(1);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(1)._frameNo[_animIndexTbl[1]];
 		} else {
 			_player->_position.x = 450;
@@ -1793,7 +1793,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 16: // climb down rope
 		advanceAnimationFrame(0);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
 		} else {
 			_player->_position.x = 336;
@@ -1806,10 +1806,10 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 17: // open trunk with crowbar
 		advanceAnimationFrame(0);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 		}
-		if (_animIndexTbl[0] == 5 && _FrameAdvanced) {
+		if (_animIndexTbl[0] == 5 && _frameAdvanced) {
 			playSound(31, 5, -1);
 			_console->printTosText(666);
 			if (_objectVar[42] == 0) {
@@ -1821,10 +1821,10 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 18: // push trunk
 		advanceAnimationFrame(0);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
 		}
-		if (_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]] == 3 && _FrameAdvanced) {
+		if (_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]] == 3 && _frameAdvanced) {
 			_console->printTosText(_objectVar[22] + 662);
 			_objectVar[22] = _objectVar[22] + 1;
 			if (_objectVar[22] == 3) {
@@ -1834,7 +1834,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 19: // pickup book from library
 		_player->_frameIdx = 24;
-		if (_ObjRestarted) {
+		if (_objRestarted) {
 			_isPlayingAnimation_maybe = true;
 			_objectVar[46] = 2;
 			libanim(true);
@@ -1842,7 +1842,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 20: // receive card from delbert
 		advanceAnimationFrame(3);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(3)._frameNo[_animIndexTbl[3]];
 		} else {
 			_inventory.addItem(18);
@@ -1850,7 +1850,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 23:
 		_player->_frameIdx = 24;
-		if (_ObjRestarted != 0) {
+		if (_objRestarted != 0) {
 			_isPlayingAnimation_maybe = false;
 			_objectVar[99] = 1;
 			_console->printTosText(468);
@@ -1858,7 +1858,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 10:
 		advanceAnimationFrame(0);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
 		} else {
 			_previousRoomNumber = _room->_roomNumber;
@@ -1871,7 +1871,7 @@ void DarkseedEngine::updateAnimation() {
 	case 25:
 		// Open doors
 		advanceAnimationFrame(0);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
 		} else {
 			_player->updateSprite();
@@ -1910,7 +1910,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 26: // climb up rope.
 		advanceAnimationFrame(1);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(1)._frameNo[_animIndexTbl[1]];
 		} else {
 			_previousRoomNumber = _room->_roomNumber;
@@ -1919,7 +1919,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 27:
 		advanceAnimationFrame(0);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]]; // TODO check if this is correct.
 		} else {
 			_previousRoomNumber = _room->_roomNumber;
@@ -1928,7 +1928,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 28: // step out of mirror normal world
 		advanceAnimationFrame(1);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(1)._frameNo[_animIndexTbl[1]];
 		} else {
 			_player->_position.x = 418;
@@ -1945,7 +1945,7 @@ void DarkseedEngine::updateAnimation() {
 		if (_isPlayingAnimation_maybe) {
 			_player->_frameIdx = _player->_animations.getAnimAt(animIdx)._frameNo[_animIndexTbl[animIdx]];
 		}
-		if (_ObjRestarted && _otherNspAnimationType_maybe == 30) {
+		if (_objRestarted && _otherNspAnimationType_maybe == 30) {
 			setupOtherNspAnimation(1, 31);
 		}
 		break;
@@ -1960,14 +1960,14 @@ void DarkseedEngine::updateAnimation() {
 		if (_isPlayingAnimation_maybe) {
 			_player->_frameIdx = _player->_animations.getAnimAt(animIdx)._frameNo[_animIndexTbl[animIdx]];
 		}
-		if (_ObjRestarted && (_otherNspAnimationType_maybe == 32 || _otherNspAnimationType_maybe == 33)) {
+		if (_objRestarted && (_otherNspAnimationType_maybe == 32 || _otherNspAnimationType_maybe == 33)) {
 			setupOtherNspAnimation(_otherNspAnimationType_maybe - 29, _otherNspAnimationType_maybe + 1);
 		}
 		break;
 	}
 	case 35: // pay shopkeeper
 		advanceAnimationFrame(6);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(6)._frameNo[_animIndexTbl[6]];
 		} else {
 			_objectVar[8]++;
@@ -1982,10 +1982,10 @@ void DarkseedEngine::updateAnimation() {
 	case 37: // smash mirror
 		advanceAnimationFrame(_otherNspAnimationType_maybe - 36);
 		_player->_frameIdx = _player->_animations.getAnimAt(_otherNspAnimationType_maybe - 36)._frameNo[_animIndexTbl[_otherNspAnimationType_maybe - 36]];
-		if (_FrameAdvanced && _otherNspAnimationType_maybe == 36 && _player->_frameIdx == 4) {
+		if (_frameAdvanced && _otherNspAnimationType_maybe == 36 && _player->_frameIdx == 4) {
 			playSound(28, 5, -1);
 		}
-		if (_ObjRestarted) {
+		if (_objRestarted) {
 			if (_otherNspAnimationType_maybe == 36) {
 				setupOtherNspAnimation(1, 37);
 			} else {
@@ -1997,7 +1997,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 38:
 		advanceAnimationFrame(0);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 		} else {
 			stuffPlayer();
@@ -2005,7 +2005,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 39: // Arrest Mike.
 		_room->advanceFrame(1);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _room->_locationSprites.getAnimAt(1)._frameNo[_room->_locObjFrame[1]];
 		} else {
 			throwmikeinjail();
@@ -2013,7 +2013,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 40: // give Delbert's card to cop.
 		advanceAnimationFrame(1);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(1)._frameNo[_animIndexTbl[1]];
 		} else {
 			_console->printTosText(61);
@@ -2033,7 +2033,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 41:
 		advanceAnimationFrame(0);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 		} else {
 			_previousRoomNumber = _room->_roomNumber;
@@ -2042,7 +2042,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 42: // step out of mirror giger world
 		advanceAnimationFrame(1);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(1)._frameNo[_animIndexTbl[1]];
 		} else {
 			_player->_position.x = 456;
@@ -2063,10 +2063,10 @@ void DarkseedEngine::updateAnimation() {
 		advanceAnimationFrame(iVar4);
 		_player->_frameIdx = _player->_animations.getAnimAt(iVar4)._frameNo[_player->_animations.getAnimAt(iVar4)._frameNo[_animIndexTbl[iVar4]]];
 //		_HeroSpr = (uint) * (byte *)((int)&DAT_1060_7eb8 + *(int *)((int)&_ObjFrame + iVar4 * 2) + iVar4 * 202);
-		if (!_ObjRestarted || (_otherNspAnimationType_maybe != 46 && _otherNspAnimationType_maybe != 44)) {
+		if (!_objRestarted || (_otherNspAnimationType_maybe != 46 && _otherNspAnimationType_maybe != 44)) {
 			if (_otherNspAnimationType_maybe == 45) {
 				_objectVar[117] = 1;
-			} else if (_ObjRestarted) {
+			} else if (_objRestarted) {
 				if ((_objectVar[71] == 2) && (_objectVar[44] != 0)) {
 					_console->printTosText(896);
 					_objectVar[57] = 1;
@@ -2091,7 +2091,7 @@ void DarkseedEngine::updateAnimation() {
 	case 52:
 		// open/close cupboards, oven
 		advanceAnimationFrame(0);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 		} else {
 			if (_otherNspAnimationType_maybe == 52) {
@@ -2107,7 +2107,7 @@ void DarkseedEngine::updateAnimation() {
 	case 55 :
 	case 56 :
 		advanceAnimationFrame((_otherNspAnimationType_maybe - 53) & 1);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
 		} else {
 			switch (_otherNspAnimationType_maybe) {
@@ -2135,7 +2135,7 @@ void DarkseedEngine::updateAnimation() {
 				break;
 			}
 		}
-		if (_FrameAdvanced && _animIndexTbl[0] == 1) {
+		if (_frameAdvanced && _animIndexTbl[0] == 1) {
 			// FUN_1208_0dac_sound_related(0xd,CONCAT11(extraout_AH_05,5));
 			// PlaySound(1,5,-1);
 		}
@@ -2143,7 +2143,7 @@ void DarkseedEngine::updateAnimation() {
 	case 57:
 	case 58:
 		advanceAnimationFrame((_otherNspAnimationType_maybe - 57) & 1);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]; //_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]];
 		} else if (_otherNspAnimationType_maybe == 57) {
 			_previousRoomNumber = _room->_roomNumber;
@@ -2154,19 +2154,19 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 59: // use shard on mirror
 		advanceAnimationFrame(0);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 		} else {
 			_player->_direction = 1;
 			_player->updateSprite();
 		}
-		if (_FrameAdvanced && _player->_frameIdx == 3) {
+		if (_frameAdvanced && _player->_frameIdx == 3) {
 			playSound(26, 5, -1);
 		}
 		break;
 	case 60: // turn on alien computer
 		_room->advanceFrame(0);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _room->_locationSprites.getAnimAt(0)._frameNo[_room->_locObjFrame[0]];
 		} else {
 			_isPlayingAnimation_maybe = false;
@@ -2175,7 +2175,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 61: // turn off alien computer
 		_room->advanceFrame(1);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _room->_locationSprites.getAnimAt(1)._frameNo[_room->_locObjFrame[1]];
 		} else {
 			_isPlayingAnimation_maybe = false;
@@ -2184,7 +2184,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 62: // bang cup against bars
 		advanceAnimationFrame(0);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 		} else {
 			bool bVar5 = _objectVar.getMoveObjectRoom(18) == 250;
@@ -2207,7 +2207,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	case 65:
 		advanceAnimationFrame(0);
-		if (!_ObjRestarted) {
+		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 		} else {
 			_player->updateSprite();
@@ -2224,18 +2224,18 @@ void DarkseedEngine::advanceAnimationFrame(int nspAminIdx) {
 	} else {
 		_room->calculateScaledSpriteDimensions(10, 10, _player->_position.y);
 	}
-	_ObjRestarted = false;
-	_FrameAdvanced = false;
+	_objRestarted = false;
+	_frameAdvanced = false;
 	const Obt &anim = _player->_animations.getAnimAt(nspAminIdx);
 	_spriteAnimCountdownTimer[nspAminIdx] = _spriteAnimCountdownTimer[nspAminIdx] - 1;
 	if (_spriteAnimCountdownTimer[nspAminIdx] < 1) {
-		_FrameAdvanced = true;
+		_frameAdvanced = true;
 		_animIndexTbl[nspAminIdx] = _animIndexTbl[nspAminIdx] + 1;
 		_player->_position.x += ((int16)anim._deltaX[_animIndexTbl[nspAminIdx]] * _scaledWalkSpeed_maybe) / 1000;
 		_player->_position.y += ((int16)anim._deltaY[_animIndexTbl[nspAminIdx]] * _scaledWalkSpeed_maybe) / 1000;
 		if (_animIndexTbl[nspAminIdx] == anim._numFrames) {
 			_animIndexTbl[nspAminIdx] = 0;
-			_ObjRestarted = true;
+			_objRestarted = true;
 			_isPlayingAnimation_maybe = false;
 			_player->_walkTarget.x = _player->_position.x;
 			_player->_walkTarget.y = _player->_position.y;
@@ -2383,10 +2383,10 @@ void DarkseedEngine::handleObjCollision(int targetObjNum) {
 		_player->loadAnimations("pownex.nsp");
 		_animIndexTbl[0] = 0;
 		_spriteAnimCountdownTimer[0] = _player->_animations.getAnimAt(0)._frameDuration[0];
-		_ObjRestarted = false;
+		_objRestarted = false;
 		int16 frameIdx = 0;
 		int16 prevFrameIdx = 0;
-		while (!_ObjRestarted) {
+		while (!_objRestarted) {
 			prevFrameIdx = frameIdx;
 			for (int i = 0; i < 6; i++) {
 				wait();
@@ -2408,8 +2408,8 @@ void DarkseedEngine::handleObjCollision(int targetObjNum) {
 
 		}
 
-		_ObjRestarted = false;
-		while (!_ObjRestarted) {
+		_objRestarted = false;
+		while (!_objRestarted) {
 			for (int i = 0; i < 6; i++) {
 				wait();
 			}
@@ -2743,16 +2743,16 @@ void DarkseedEngine::playSound(int16 unk, uint8 unk1, int16 unk2) {
 }
 
 void DarkseedEngine::nextFrame(int nspAminIdx) {
-	_ObjRestarted = false;
+	_objRestarted = false;
 	_spriteAnimCountdownTimer[nspAminIdx]--;
-	_FrameAdvanced = false;
+	_frameAdvanced = false;
 	if (_spriteAnimCountdownTimer[nspAminIdx] < 1) {
 		const Obt &anim = _player->_animations.getAnimAt(nspAminIdx);
 		_animIndexTbl[nspAminIdx]++;
-		_FrameAdvanced = true;
+		_frameAdvanced = true;
 		if (_animIndexTbl[nspAminIdx] == anim._numFrames) {
 			_animIndexTbl[nspAminIdx] = 0;
-			_ObjRestarted = true;
+			_objRestarted = true;
 		}
 		_spriteAnimCountdownTimer[nspAminIdx] = anim._frameDuration[_animIndexTbl[nspAminIdx]];
 	}
@@ -2860,19 +2860,19 @@ void DarkseedEngine::runObjects() {
 		g_engine->_objectVar[35]--;
 	}
 	if (((_room->_roomNumber == 46) || (_room->_roomNumber == 60)) &&
-		(((_SoundTimer & 15) == 0 && (g_engine->_objectVar[57] == 1)))) {
+		(((_soundTimer & 15) == 0 && (g_engine->_objectVar[57] == 1)))) {
 		playSound(9, 5, -1);
 	}
-	if ((_room->_roomNumber == 12) && (_SoundTimer > 5)) {
-		_SoundTimer = 0;
+	if ((_room->_roomNumber == 12) && (_soundTimer > 5)) {
+		_soundTimer = 0;
 	}
-	if (((_room->_roomNumber == 8) && (_SoundTimer > 5)) && (g_engine->_objectVar[110] != 0)) {
-		_SoundTimer = 0;
+	if (((_room->_roomNumber == 8) && (_soundTimer > 5)) && (g_engine->_objectVar[110] != 0)) {
+		_soundTimer = 0;
 	}
-	if ((_room->_roomNumber == 38) && ((_SoundTimer & 31) == 0)) {
+	if ((_room->_roomNumber == 38) && ((_soundTimer & 31) == 0)) {
 		playSound(23, 5, -1);
 	}
-	if ((_room->_roomNumber == 45) && ((_SoundTimer & 63) == 0)) {
+	if ((_room->_roomNumber == 45) && ((_soundTimer & 63) == 0)) {
 		playSound(10, 5, -1);
 	}
 
@@ -2904,10 +2904,10 @@ void DarkseedEngine::runObjects() {
 		// delbert drinks scotch
 		_room->advanceFrame(0);
 		delbertSpriteIdx = _room->_locationSprites.getAnimAt(0)._frameNo[_room->_locObjFrame[0]];
-		if (_FrameAdvanced && delbertSpriteIdx == 5) {
+		if (_frameAdvanced && delbertSpriteIdx == 5) {
 			playSound(32, 5, -1);
 		}
-		if (_ObjRestarted) {
+		if (_objRestarted) {
 			_objectVar[141] = 10;
 			_console->printTosText(910);
 			_inventory.removeItem(7);
@@ -2924,7 +2924,7 @@ void DarkseedEngine::runObjects() {
 		_room->advanceFrame(1);
 		delbertSpriteIdx = _room->_locationSprites.getAnimAt(1)._frameNo[_room->_locObjFrame[1]];
 		Common::Point delbertPos = _objectVar.getMoveObjectPosition(141);
-		if (_FrameAdvanced) {
+		if (_frameAdvanced) {
 			delbertPos.x += 10;
 			_objectVar.setMoveObjectPosition(141, delbertPos);
 		}
@@ -2965,7 +2965,7 @@ void DarkseedEngine::runObjects() {
 			_objectVar.setMoveObjectRoom(19, 100);
 			_room->advanceFrame(_objectVar[45] + 1);
 			Common::Point stickPosition = _objectVar.getMoveObjectPosition(19);
-			if (_ObjRestarted && _objectVar[45] < 2) {
+			if (_objRestarted && _objectVar[45] < 2) {
 				_objectVar[45] = (_objectVar[45] == 0) ? 1 : 0;
 				if (_objectVar[45] == 0) {
 					stickPosition = {230, 205};
@@ -2980,7 +2980,7 @@ void DarkseedEngine::runObjects() {
 			}
 			Common::Point fidoPosition = _objectVar.getMoveObjectPosition(45);
 			int16 fidoSpriteIdx = _room->_locationSprites.getAnimAt(_objectVar[45] + 1)._frameNo[_room->_locObjFrame[_objectVar[45] + 1]];
-			if (_FrameAdvanced) {
+			if (_frameAdvanced) {
 				if (_objectVar[45] == 2) {
 					fidoPosition.x += 30;
 					_objectVar.setMoveObjectPosition(45, fidoPosition);
@@ -3026,11 +3026,11 @@ void DarkseedEngine::runObjects() {
 		if (_player->_position.x == 290 && _player->_position.y == 209 && !_player->_playerIsChangingDirection && _player->_direction != 3) {
 			_player->changeDirection(_player->_direction, 3);
 		}
-		_ObjRestarted = false;
+		_objRestarted = false;
 		if (!_sound->isPlayingSpeech() && (_objectVar[141] != 2 || _delbertspeech > 64)) {
 			nextFrame(_objectVar[141] - 1);
 		}
-		if (_ObjRestarted) {
+		if (_objRestarted) {
 			_objectVar[141]++;
 			if (_objectVar[141] == 2) {
 				_delbertspeech = 63;
@@ -3041,7 +3041,7 @@ void DarkseedEngine::runObjects() {
 			} else if (_objectVar[141] == 4) {
 				_player->_herowaiting = false;
 			}
-			_ObjRestarted = false;
+			_objRestarted = false;
 		}
 		if (!_sound->isPlayingSpeech() && _objectVar[141] == 2) {
 			if (_delbertspeech < 65) {
@@ -3058,7 +3058,7 @@ void DarkseedEngine::runObjects() {
 		}
 		const Sprite &sprite = _player->_animations.getSpriteAt(_player->_animations.getAnimAt(_objectVar[141] - 1)._frameNo[_animIndexTbl[_objectVar[141] - 1]]);
 		Common::Point delbertPosition = _objectVar.getMoveObjectPosition(141);
-		if (_FrameAdvanced) {
+		if (_frameAdvanced) {
 			if (_objectVar[141] == 1) {
 				delbertPosition.x += 15;
 				delbertPosition.y -= 1;
@@ -3080,7 +3080,7 @@ void DarkseedEngine::runObjects() {
 	if (_room->_roomNumber == 32 && _currentDay == 2 && _currentTimeInSeconds > 64799 && (_objectVar[141] == 5 || _objectVar[141] == 6)) {
 		// walk delbert off into garden.
 		_room->advanceFrame(_objectVar[141] - 4);
-		if (_ObjRestarted) {
+		if (_objRestarted) {
 			_objectVar[141]++;
 			if (_objectVar[141] == 7) {
 				_player->_herowaiting = false;
@@ -3088,7 +3088,7 @@ void DarkseedEngine::runObjects() {
 		}
 		Common::Point delbertPosition = _objectVar.getMoveObjectPosition(141);
 		const Sprite &sprite = _room->_locationSprites.getSpriteAt(_room->_locationSprites.getAnimAt(_objectVar[141] - 4)._frameNo[_room->_locObjFrame[_objectVar[141] - 4]]);
-		if (_FrameAdvanced && _objectVar[141] > 5) {
+		if (_frameAdvanced && _objectVar[141] > 5) {
 			delbertPosition.x += 8;
 			_objectVar.setMoveObjectX(141, delbertPosition.x);
 		}
@@ -3133,7 +3133,7 @@ void DarkseedEngine::runObjects() {
 		if (_objectVar.getObjectRunningCode(53) == 1) {
 			int oldFrame = _animIndexTbl[0];
 			nextFrame(0);
-			if (_ObjRestarted) {
+			if (_objRestarted) {
 				_objectVar.setObjectRunningCode(53, 2);
 				_animIndexTbl[0] = oldFrame;
 			}
@@ -3279,7 +3279,7 @@ void DarkseedEngine::rundrekethsequence() {
 }
 
 void DarkseedEngine::delthrowstick(int16 spriteNum) {
-	if (_FrameAdvanced && spriteNum == 8) {
+	if (_frameAdvanced && spriteNum == 8) {
 		Common::Point stickPos = {265, 150};
 		_objectVar.setMoveObjectPosition(19, stickPos);
 		_yvec = -6;
