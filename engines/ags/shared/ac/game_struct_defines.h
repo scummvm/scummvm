@@ -220,8 +220,9 @@ enum GameGuiAlphaRenderingStyle {
 	kGuiAlphaRender_Proper
 };
 
-
-// Sprite flags (serialized as 8-bit)
+// Sprite flags
+// SERIALIZATION NOTE: serialized as 8-bit in game data and legacy saves
+//                     serialized as 32-bit in new saves (for dynamic sprites only).
 #define SPF_HIRES           0x01  // sized for high native resolution (legacy option)
 #define SPF_HICOLOR         0x02  // is 16-bit
 #define SPF_DYNAMICALLOC    0x04  // created by runtime script
@@ -229,6 +230,7 @@ enum GameGuiAlphaRenderingStyle {
 #define SPF_ALPHACHANNEL    0x10  // has alpha-channel
 #define SPF_VAR_RESOLUTION  0x20  // variable resolution (refer to SPF_HIRES)
 #define SPF_HADALPHACHANNEL 0x80  // the saved sprite on disk has one
+#define SPF_OBJECTOWNED		0x0100 // owned by a game object (not created in user script)
 
 // General information about sprite (properties, size)
 struct SpriteInfo {
