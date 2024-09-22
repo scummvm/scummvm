@@ -64,17 +64,11 @@ AGSOptionsWidget::AGSOptionsWidget(GuiObject *boss, const Common::String &name, 
 	_langPopUp = new GUI::PopUpWidget(widgetsBoss(), _dialogLayout + ".translation");
 	_langPopUp->appendEntry(_("<default>"), (uint32) - 1);
 
-	Common::Path path = ConfMan.getPath("path", _domain);
-	Common::FSDirectory dir(path);
-	Common::ArchiveMemberList traFileList;
-	dir.listMatchingMembers(traFileList, "*.tra");
+	_traFileNames = AGSMetaEngine::getGameTranslations(_domain);
 
 	int i = 0;
-	for (Common::ArchiveMemberList::iterator iter = traFileList.begin(); iter != traFileList.end(); ++iter) {
-		Common::String traFileName = (*iter)->getName();
-		traFileName.erase(traFileName.size() - 4); // remove .tra extension
-		_traFileNames.push_back(traFileName);
-		_langPopUp->appendEntry(traFileName, i++);
+	for (Common::StringArray::iterator iter = _traFileNames.begin(); iter != _traFileNames.end(); ++iter) {
+		_langPopUp->appendEntry(*iter, i++);
 	}
 
 	// Override game save management

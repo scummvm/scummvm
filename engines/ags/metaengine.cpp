@@ -166,6 +166,22 @@ const Common::AchievementDescriptionList* AGSMetaEngine::getAchievementDescripti
 	return AGS::achievementDescriptionList;
 }
 
+Common::StringArray AGSMetaEngine::getGameTranslations(const Common::String &domain) {
+	Common::Path path = ConfMan.getPath("path", domain);
+	Common::FSDirectory dir(path);
+	Common::ArchiveMemberList traFileList;
+	dir.listMatchingMembers(traFileList, "*.tra");
+	Common::StringArray traFileNames;
+
+	for (Common::ArchiveMemberList::iterator iter = traFileList.begin(); iter != traFileList.end(); ++iter) {
+		Common::String traFileName = (*iter)->getName();
+		traFileName.erase(traFileName.size() - 4); // remove .tra extension
+		traFileNames.push_back(traFileName);
+	}
+
+	return traFileNames;
+}
+
 #if PLUGIN_ENABLED_DYNAMIC(AGS)
 REGISTER_PLUGIN_DYNAMIC(AGS, PLUGIN_TYPE_ENGINE, AGSMetaEngine);
 #else
