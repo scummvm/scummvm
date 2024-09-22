@@ -153,7 +153,7 @@ public:
 	 * @param flags   SDL flags passed to SDL_CreateWindow
 	 * @return true on success, false otherwise
 	 */
-	bool createOrUpdateWindow(int width, int height, uint32 flags);
+	virtual bool createOrUpdateWindow(int width, int height, uint32 flags);
 
 	/**
 	 * Destroys the current SDL window.

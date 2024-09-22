@@ -1,0 +1,12 @@
+--- a/sdl2-config.in	2024-10-06 01:45:09.683556034 +0300
++++ b/sdl2-config.in	2024-10-06 01:56:47.497325450 +0300
+@@ -53,8 +53,8 @@
+ @ENABLE_SHARED_TRUE@      ;;
+ @ENABLE_STATIC_TRUE@@ENABLE_SHARED_TRUE@    --static-libs)
+ @ENABLE_STATIC_TRUE@@ENABLE_SHARED_FALSE@    --libs|--static-libs)
+-@ENABLE_STATIC_TRUE@      sdl_static_libs=$(echo "@SDL_LIBS@ @SDL_STATIC_LIBS@" | sed -E "s#-lSDL2[ $]#$libdir/libSDL2.a #g")
++@ENABLE_STATIC_TRUE@      sdl_static_libs=$(echo "@SDL_LIBS@ @SDL_STATIC_LIBS@" | sed "s#-lSDL2[ $]#$libdir/libSDL2.a #g")
+ @ENABLE_STATIC_TRUE@      echo -L@libdir@ $sdl_static_libs
+ @ENABLE_STATIC_TRUE@      ;;
+     *)
+       echo "${usage}" 1>&2

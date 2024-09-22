@@ -1,0 +1,24 @@
+[Desktop Entry]
+Name=ScummVM
+Comment=Interpreter for numerous adventure games and RPGs
+Comment[pl]=Interpreter graficznych gier przygodowych
+Comment[sv]=Tolk för flertalet äventyrsspel
+Comment[he]=פרשן למספר משחקי הרפתקאות
+Comment[de]=Interpreter für zahlreiche Abenteuerspiele und RPGs
+Comment[es]=Intérprete para varias aventuras gráficas
+Comment[ca]=Intèrpret per diverses aventures gràfiques
+Exec=/usr/bin/org.scummvm.scummvm
+Icon=org.scummvm.scummvm
+Type=Application
+Categories=Game;AdventureGame;
+X-Nemo-Application-Type=no-invoker
+X-Desktop-File-Install-Version=0.26
+
+[X-Application]
+Permissions=UserDirs;RemovableMedia;Internet;Audio
+OrganizationName=org.scummvm
+ApplicationName=scummvm
+
+[X-Aurora-Application]
+Orientation=Landscape;Portrait
+IconMode=Crop
