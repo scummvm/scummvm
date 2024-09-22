@@ -36,7 +36,7 @@ private:
 	GameFont _font;
 	Sound *_sound;
 
-	Common::Array<Common::String> _text;
+	Common::StringArray _text;
 	int _startIdx = 0;
 	bool _redrawRequired = false;
 
@@ -50,7 +50,7 @@ public:
 	void draw();
 
 private:
-	Common::Array<Common::String> wrapText(const Common::String &text);
+	Common::StringArray wrapText(const Common::String &text);
 	void addLine(const Common::String &line);
 };
 
