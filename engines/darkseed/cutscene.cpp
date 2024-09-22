@@ -40,7 +40,7 @@ void Darkseed::Cutscene::update() {
 	case 'B' : _movieStep = 9999; break;
 	case 'C' : _movieStep = 9999; break;
 	case 'D' : _movieStep = 9999; break;
-	case 'E' : _movieStep = 9999; break;
+	case 'E' : shipLaunchScene(); break;
 	case 'G' : _movieStep = 9999; break;
 	case 'H' : _movieStep = 9999; break;
 	case 'I' : introScene(); break;
@@ -130,7 +130,7 @@ bool Darkseed::Cutscene::introScene() {
 		break;
 	case 20:
 		_animIdx = 47;
-		_animCount = _animIdx + 29;
+		_animCount = 29;
 		runAnim();
 		break;
 	case 21:
@@ -399,12 +399,88 @@ bool Darkseed::Cutscene::embryoInsertedScene() {
 	return true;
 }
 
-bool Darkseed::Cutscene::stepAnim() {
+bool Darkseed::Cutscene::shipLaunchScene() {
+	switch (_movieStep) {
+	case 1: {
+		_palette.load("art/ship.pal");
+		_animation.load("art/left.anm");
+		Img left00Img;
+		left00Img.load("art/left00.img");
+		left00Img.draw();
+		Img left01Img;
+		left01Img.load("art/left01.img");
+		left01Img.draw();
+		g_engine->_screen->clearPalette();
+		break;
+	}
+	case 2: g_engine->fadeIn(_palette); break;
+	case 3: if (g_engine->fadeStep()) { return true; } break;
+	case 4:
+		// TODO play music 'launch'
+		_animIdx = 2;
+		_animCount = 49;
+		runAnim();
+		break;
+	case 5:
+		if (stepAnim(1)) {
+			return true;
+		}
+		break;
+	case 6:
+		_animation.load("art/shipin.anm");
+		_animIdx = 75;
+		_animCount = 29;
+		runAnim(-1);
+		break;
+	case 7:
+		if (stepAnim()) {
+			return true;
+		}
+		break;
+	case 8: if (waitTime(20)) {
+			return true;
+		}
+		break;
+	case 9:
+		_animIdx = 46;
+		_animCount = 47;
+		runAnim(-1);
+		break;
+	case 10:
+		if (stepAnim()) {
+			return true;
+		}
+		break;
+	case 11:
+		_animation.load("art/left2.anm");
+		_animIdx = 0;
+		_animCount = 23;
+		runAnim();
+		break;
+	case 12:
+		if (stepAnim()) {
+			return true;
+		}
+		break;
+	case 13:
+		g_engine->fadeOut();
+		break;
+	case 14: if (g_engine->fadeStep()) { return true; } break;
+	default:
+		_movieStep = 9999;
+		return false;
+	}
+	_movieStep++;
+	return true;
+}
+
+bool Darkseed::Cutscene::stepAnim(int drawMode) {
 	if (_animDelayCount == 0) {
 		Img animFrame;
 		_animation.getImg(_animIdx, animFrame);
-		animFrame.draw(1);
-		_animIdx++;
+		animFrame.draw(drawMode);
+		_animIdx += _animDirection;
+		_animCount--;
 	}
 
 	_animDelayCount++;
@@ -412,7 +488,7 @@ bool Darkseed::Cutscene::stepAnim() {
 		_animDelayCount = 0;
 	}
 
-	if (_animIdx < _animCount) {
+	if (_animCount > 0) {
 		return true;
 	}
 	return false;
@@ -438,6 +514,7 @@ bool Darkseed::Cutscene::waitTime(int16 duration) {
 	return g_system->getMillis() < _startTime + (duration * 100);
 }
 
-void Darkseed::Cutscene::runAnim() {
+void Darkseed::Cutscene::runAnim(int direction) {
 	_animDelayCount = 0;
+	_animDirection = direction;
 }

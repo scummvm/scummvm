@@ -38,6 +38,7 @@ private:
 	int _animIdx;
 	int _animCount;
 	int _animDelayCount;
+	int _animDirection;
 	uint32 _startTime = 0;
 
 public:
@@ -49,8 +50,9 @@ public:
 private:
 	bool introScene();
 	bool embryoInsertedScene();
-	void runAnim();
-	bool stepAnim();
+	bool shipLaunchScene();
+	void runAnim(int direction=1);
+	bool stepAnim(int drawMode = 1);
 
 	void putHouse();
 
