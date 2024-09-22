@@ -295,6 +295,8 @@ ScriptDynamicSprite *DynamicSprite_CreateFromScreenShot(int width, int height) {
 	if (gotSlot <= 0)
 		return nullptr;
 
+	// NOTE: be aware that by the historical logic AGS makes a screenshot
+	// of a "main viewport", that may be smaller in legacy "letterbox" mode.
 	const Rect &viewport = _GP(play).GetMainViewport();
 	if (width <= 0)
 		width = viewport.GetWidth();
@@ -306,7 +308,7 @@ ScriptDynamicSprite *DynamicSprite_CreateFromScreenShot(int width, int height) {
 	else
 		height = data_to_game_coord(height);
 
-	Bitmap *newPic = CopyScreenIntoBitmap(width, height);
+	Bitmap *newPic = CopyScreenIntoBitmap(width, height, &viewport);
 
 	// replace the bitmap in the sprite set
 	add_dynamic_sprite(gotSlot, newPic);

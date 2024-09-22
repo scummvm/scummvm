@@ -826,6 +826,9 @@ long write_screen_shot_for_vista(Stream *out, Bitmap *screenshot) {
 }
 
 Bitmap *create_savegame_screenshot() {
+	if ((_GP(play).screenshot_width < 16) || (_GP(play).screenshot_height < 16))
+		quit("!Invalid game.screenshot_width/height, must be from 16x16 to screen res");
+
 	// Render the view without any UI elements
 	int old_flags = _G(debug_flags);
 	_G(debug_flags) |= DBG_NOIFACE;
@@ -835,16 +838,13 @@ Bitmap *create_savegame_screenshot() {
 
 	int usewid = data_to_game_coord(_GP(play).screenshot_width);
 	int usehit = data_to_game_coord(_GP(play).screenshot_height);
+	// NOTE: be aware that by the historical logic AGS makes a screenshot
+	// of a "main viewport", that may be smaller in legacy "letterbox" mode.
 	const Rect &viewport = _GP(play).GetMainViewport();
-	if (usewid > viewport.GetWidth())
-		usewid = viewport.GetWidth();
-	if (usehit > viewport.GetHeight())
-		usehit = viewport.GetHeight();
+	usewid = std::min(usewid, viewport.GetWidth());
+	usehit = std::min(usehit, viewport.GetHeight());
 
-	if ((_GP(play).screenshot_width < 16) || (_GP(play).screenshot_height < 16))
-		quit("!Invalid game.screenshot_width/height, must be from 16x16 to screen res");
-
-	Bitmap *screenshot = CopyScreenIntoBitmap(usewid, usehit);
+	Bitmap *screenshot = CopyScreenIntoBitmap(usewid, usehit, &viewport);
 	screenshot->GetAllegroBitmap()->makeOpaque();
 
 	// Restore original screen

@@ -217,7 +217,7 @@ public:
 	void RenderToBackBuffer() override;
 	void Render() override;
 	void Render(int xoff, int yoff, Shared::GraphicFlip flip) override;
-	bool GetCopyOfScreenIntoBitmap(Bitmap *destination, bool at_native_res, GraphicResolution *want_fmt,
+	bool GetCopyOfScreenIntoBitmap(Bitmap *destination, const Rect *src_rect, bool at_native_res, GraphicResolution *want_fmt,
 								   uint32_t batch_skip_filter = 0u) override;
 	void FadeOut(int speed, int targetColourRed, int targetColourGreen, int targetColourBlue,
 				 uint32_t batch_skip_filter = 0u) override;
