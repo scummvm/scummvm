@@ -134,6 +134,7 @@ struct RestoredData {
 	};
 	std::vector<ViewportData> Viewports;
 	std::vector<CameraData> Cameras;
+	bool LegacyViewCamera = false;
 	int32_t Camera0_Flags = 0; // flags for primary camera, when data is read in legacy order
 
 	RestoredData();
