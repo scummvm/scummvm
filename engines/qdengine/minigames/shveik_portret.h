@@ -110,41 +110,41 @@ public:
 		_objArray[24].x = -1;
 		_objArray[24].y = -1;
 
-		_clickObj = _scene->object_interface("$клики объектом");
-		_maskOutsideObj = _scene->object_interface("_МАСКА место за полем");
-		_objectClickObj = _scene->object_interface("$клики по объекту");
+		_clickObj = _scene->object_interface("\x24\xea\xeb\xe8\xea\xe8\x20\xee\xe1\xfa\xe5\xea\xf2\xee\xec"); // "$клики объектом"
+		_maskOutsideObj = _scene->object_interface("\x5f\xcc\xc0\xd1\xca\xc0\x20\xec\xe5\xf1\xf2\xee\x20\xe7\xe0\x20\xef\xee\xeb\xe5\xec"); // "_МАСКА место за полем"
+		_objectClickObj = _scene->object_interface("\x24\xea\xeb\xe8\xea\xe8\x20\xef\xee\x20\xee\xe1\xfa\xe5\xea\xf2\xf3"); // "$клики по объекту"
 		_doneObj = _scene->object_interface("$done");
-		_wasStartedObj = _scene->object_interface("$запуск_был");
+		_wasStartedObj = _scene->object_interface("\x24\xe7\xe0\xef\xf3\xf1\xea\x5f\xe1\xfb\xeb"); // "$запуск_был"
 		_oneAbsentObj = _scene->object_interface("$one_absent");
-		_exitClickObj = _scene->object_interface("$клик по выходу");
-		_completePicObj = _scene->object_interface("готовая картинка");
+		_exitClickObj = _scene->object_interface("\x24\xea\xeb\xe8\xea\x20\xef\xee\x20\xe2\xfb\xf5\xee\xe4\xf3"); // "$клик по выходу"
+		_completePicObj = _scene->object_interface("\xe3\xee\xf2\xee\xe2\xe0\xff\x20\xea\xe0\xf0\xf2\xe8\xed\xea\xe0"); // "готовая картинка"
 
 		_currentPieceRow = -1;
 		_currentPieceCol = -1;
 
-		if (_wasStartedObj->is_state_active("нет")) {
+		if (_wasStartedObj->is_state_active("\xed\xe5\xf2")) { // "нет")
 			// srand(time(0))
 
 			for (int i = 1; i <= 24; i++) {
 				switch (qd_rnd(3)) {
 				case 0:
-					_objArray[i].obj->set_state("лежит за полем 0");
+					_objArray[i].obj->set_state("\xeb\xe5\xe6\xe8\xf2\x20\xe7\xe0\x20\xef\xee\xeb\xe5\xec\x20\x30"); // "лежит за полем 0")
 					break;
 				case 1:
-					_objArray[i].obj->set_state("лежит за полем 90");
+					_objArray[i].obj->set_state("\xeb\xe5\xe6\xe8\xf2\x20\xe7\xe0\x20\xef\xee\xeb\xe5\xec\x20\x39\x30"); // "лежит за полем 90")
 					break;
 				case 2:
-					_objArray[i].obj->set_state("лежит за полем 180");
+					_objArray[i].obj->set_state("\xeb\xe5\xe6\xe8\xf2\x20\xe7\xe0\x20\xef\xee\xeb\xe5\xec\x20\x31\x38\x30"); // "лежит за полем 180")
 					break;
 				case 3:
-					_objArray[i].obj->set_state("лежит за полем 270");
+					_objArray[i].obj->set_state("\xeb\xe5\xe6\xe8\xf2\x20\xe7\xe0\x20\xef\xee\xeb\xe5\xec\x20\x32\x37\x30"); // "лежит за полем 270")
 					break;
 				default:
 					break;
 				}
 			}
 
-			_wasStartedObj->set_state("да");
+			_wasStartedObj->set_state("\xe4\xe0"); // "да"
 
 			for (int i = 0; i < 7; i++)
 				for (int j = 0; j < 6; j++) {
@@ -159,7 +159,7 @@ public:
 					_fieldState[i][j].pieceNum = -1;
 				}
 
-			if (!_doneObj->is_state_active("да"))
+			if (!_doneObj->is_state_active("\xe4\xe0")) // "да"
 				processState();
 		}
 
@@ -212,16 +212,16 @@ public:
 		_solutionState[27].pieceNum = 24;
 		_solutionState[27].angle = 0;
 
-		_exitClickObj->set_state("нет");
+		_exitClickObj->set_state("\xed\xe5\xf2"); // "нет")
 		_draggedInvObjectState = 0;
 		_draggedObjectState = 0;
 
 		setPiecesDepth();
 		setPiecesPos();
 
-		if (_oneAbsentObj->is_state_active("нет")) {
+		if (_oneAbsentObj->is_state_active("\xed\xe5\xf2")) { // "нет")
 			_objArray[2].obj->set_R(_scene->screen2world_coords(mgVect2i(700, 500), 0.0));
-			_oneAbsentObj->set_state("флаг отработан");
+			_oneAbsentObj->set_state("\xf4\xeb\xe0\xe3\x20\xee\xf2\xf0\xe0\xe1\xee\xf2\xe0\xed"); // "флаг отработан"
 		}
 
 		return true;
@@ -264,23 +264,23 @@ public:
 private:
 	void processState() {
 		for (int i = 1; i <= 24; i++) {
-			if (_objArray[i].obj->is_state_active("лежит на поле 0")
-					|| _objArray[i].obj->is_state_active("лежит на поле 90")
-					|| _objArray[i].obj->is_state_active("лежит на поле 180")
-					|| _objArray[i].obj->is_state_active("лежит на поле 270")) {
+			if (_objArray[i].obj->is_state_active("\xeb\xe5\xe6\xe8\xf2\x20\xed\xe0\x20\xef\xee\xeb\xe5\x20\x30") // "лежит на поле 0"
+					|| _objArray[i].obj->is_state_active("\xeb\xe5\xe6\xe8\xf2\x20\xed\xe0\x20\xef\xee\xeb\xe5\x20\x39\x30") // "лежит на поле 90"
+					|| _objArray[i].obj->is_state_active("\xeb\xe5\xe6\xe8\xf2\x20\xed\xe0\x20\xef\xee\xeb\xe5\x20\x31\x38\x30") // "лежит на поле 180"
+					|| _objArray[i].obj->is_state_active("\xeb\xe5\xe6\xe8\xf2\x20\xed\xe0\x20\xef\xee\xeb\xe5\x20\x32\x37\x30")) { // "лежит на поле 270"
 				mgVect2i pos = _objArray[i].obj->screen_R();
 
 				_objArray[i].x = (pos.x - 204) / 99 + 1;
 				_objArray[i].y = (pos.y - 4) / 99 + 1;
 				_fieldState[_objArray[i].x][_objArray[i].y].pieceNum = i;
 
-				if (_objArray[i].obj->is_state_active("лежит на поле 0")) {
+				if (_objArray[i].obj->is_state_active("\xeb\xe5\xe6\xe8\xf2\x20\xed\xe0\x20\xef\xee\xeb\xe5\x20\x30")) { // "лежит на поле 0"
 					_fieldState[_objArray[i].x][_objArray[i].y].angle = 0;
-				} else if (_objArray[i].obj->is_state_active("лежит на поле 90")) {
+				} else if (_objArray[i].obj->is_state_active("\xeb\xe5\xe6\xe8\xf2\x20\xed\xe0\x20\xef\xee\xeb\xe5\x20\x39\x30")) { // "лежит на поле 90"
 					_fieldState[_objArray[i].x][_objArray[i].y].angle = 90;
-				} else if (_objArray[i].obj->is_state_active("лежит на поле 180")) {
+				} else if (_objArray[i].obj->is_state_active("\xeb\xe5\xe6\xe8\xf2\x20\xed\xe0\x20\xef\xee\xeb\xe5\x20\x31\x38\x30")) { // "лежит на поле 180"
 					_fieldState[_objArray[i].x][_objArray[i].y].angle = 180;
-				} else if (_objArray[i].obj->is_state_active("лежит на поле 270")) {
+				} else if (_objArray[i].obj->is_state_active("\xeb\xe5\xe6\xe8\xf2\x20\xed\xe0\x20\xef\xee\xeb\xe5\x20\x32\x37\x30")) { // "лежит на поле 270"
 					_fieldState[_objArray[i].x][_objArray[i].y].angle = 270;
 				}
 			} else {
