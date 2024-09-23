@@ -947,7 +947,7 @@ void Combat::iterateMonsters1Inner() {
 		}
 	}
 
-	byte idx = g_globals->_spellsState._resistenceIndex;
+	byte idx = g_globals->_spellsState._resistanceIndex;
 	if (affects && idx) {
 		if (--idx >= 8)
 			idx = 0;
@@ -1027,7 +1027,7 @@ void Combat::iterateMonsters2Inner() {
 				_damage >>= 1;
 		}
 
-		byte idx = g_globals->_spellsState._resistenceIndex;
+		byte idx = g_globals->_spellsState._resistanceIndex;
 		if (idx) {
 			if (--idx >= 8)
 				idx = 0;
@@ -1168,7 +1168,7 @@ void Combat::summonLightning() {
 
 		ss._damage = g_globals->_currCharacter->_level * 2 + 4;
 		ss._mmVal1++;
-		ss._resistenceIndex++;
+		ss._resistanceIndex++;
 		ss._resistanceTypeOrTargetCount = RESISTANCE_ELECTRICITY;
 		handlePartyDamage();
 
@@ -1186,7 +1186,7 @@ void Combat::summonLightning() {
 void Combat::summonLightning2() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1 = 1;
-	ss._resistenceIndex = 2;
+	ss._resistanceIndex = 2;
 	ss._resistanceTypeOrTargetCount = RESISTANCE_ELECTRICITY;
 	ss._damage = getRandomNumber(29) + 3;
 
@@ -1196,7 +1196,7 @@ void Combat::summonLightning2() {
 void Combat::fireball2() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1 = 1;
-	ss._resistenceIndex = 1;
+	ss._resistanceIndex = 1;
 	ss._resistanceTypeOrTargetCount = 5;
 	ss._damage = 0;
 
@@ -1216,7 +1216,7 @@ void Combat::paralyze() {
 	g_globals->_combat->resetDestMonster();
 
 	ss._mmVal1++;
-	ss._resistenceIndex = 6;
+	ss._resistanceIndex = 6;
 	ss._resistanceTypeOrTargetCount = _attackersCount;
 	ss._damage = BAD_CONDITION;
 
@@ -1326,7 +1326,7 @@ void Combat::fireball() {
 
 		ss._damage = g_globals->_currCharacter->_level * 2 + 4;
 		ss._mmVal1++;
-		ss._resistenceIndex++;
+		ss._resistanceIndex++;
 		ss._resistanceTypeOrTargetCount++;
 		handlePartyDamage();
 
@@ -1345,7 +1345,7 @@ void Combat::lightningBolt() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1++;
 	ss._resistanceTypeOrTargetCount = 3;
-	ss._resistenceIndex = 2;
+	ss._resistanceIndex = 2;
 
 	levelAdjust();
 }
@@ -1382,7 +1382,7 @@ bool Combat::web() {
 		return false;
 
 	ss._mmVal1++;
-	ss._resistenceIndex = 0;
+	ss._resistanceIndex = 0;
 	ss._resistanceTypeOrTargetCount = 5;
 	ss._damage = UNCONSCIOUS;
 
@@ -1400,7 +1400,7 @@ bool Combat::acidRain() {
 	monsterIndexOf();
 
 	ss._mmVal1 = 1;
-	ss._resistenceIndex = 3;
+	ss._resistanceIndex = 3;
 	ss._resistanceTypeOrTargetCount = 15;
 	ss._damage = 0;
 
