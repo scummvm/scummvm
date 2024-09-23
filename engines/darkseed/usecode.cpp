@@ -839,9 +839,9 @@ void Darkseed::UseCode::useCodeShopItems(int16 actionObjNum, int16 targetObjNum)
 		return;
 	}
 	if (actionObjNum == 38 &&
-		(((((targetObjNum == 126 || targetObjNum == 126) || targetObjNum == 197) ||
-		   ((targetObjNum == 131 || (targetObjNum == 89)))) ||
-		  targetObjNum == 171))) {
+		(targetObjNum == 126 || targetObjNum == 197 ||
+		  targetObjNum == 131 || targetObjNum == 89 ||
+		  targetObjNum == 171)) {
 		_console->printTosText(89);
 		return;
 	}
@@ -1015,7 +1015,8 @@ void Darkseed::UseCode::useCrowBar(int16 targetObjNum) {
 // All this code is unused as you cannot add the newspaper to your inventory. :( I wonder why they didn't add it. It is also missing the inventory icon image.
 void UseCode::useCodeNewspaper(int16 targetObjNum) {
 	if (targetObjNum == 124) {
-		_console->printTosText(26);
+		_console->printTosText(26); // The original logic also had this if statement repeated further down the chain
+									        // but calling _console->printTosText(268);
 	} else if (targetObjNum == 126) {
 		_console->printTosText(82);
 	} else if (targetObjNum == 127) {
@@ -1028,8 +1029,6 @@ void UseCode::useCodeNewspaper(int16 targetObjNum) {
 		_console->printTosText(207);
 	} else if (targetObjNum == 145) {
 		_console->printTosText(222);
-	} else if (targetObjNum == 124) { // Bug in the original engine. This code is never reachable
-		_console->printTosText(268); // this is a duplicate of tosId: 26
 	} else if (targetObjNum == 137) {
 		_console->printTosText(299);
 	} else if (targetObjNum == 147) {
@@ -1398,7 +1397,7 @@ void UseCode::useCodeGun(int16 targetObjNum) {
 void UseCode::useCodeMoversNote(int16 targetObjNum) {
 	if (targetObjNum == 47) {
 		_console->printTosText(57);
-	} else if (targetObjNum == 172) {
+	} else if (targetObjNum == 172) { // original logic also duplicated this if statement and called a generic response
 		_console->printTosText(93);
 	} else if (targetObjNum == 129) {
 		genericresponse(30, 129, 998);
@@ -1424,8 +1423,6 @@ void UseCode::useCodeMoversNote(int16 targetObjNum) {
 		genericresponse(30, 121, 990);
 	} else if (targetObjNum == 194) {
 		genericresponse(30, 194, 989);
-	} else if (targetObjNum == 172) {
-		genericresponse(30, 172, 988);
 	} else if (targetObjNum == 71) {
 		genericresponse(30, 71, 987);
 	} else if (targetObjNum == 101) {
