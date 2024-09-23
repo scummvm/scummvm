@@ -94,12 +94,12 @@ void Character::clear() {
 	_speed._permanent = _speed._temporary = 0;
 	_accuracy._permanent = _accuracy._temporary = 0;
 	_luck._permanent = _luck._temporary = 0;
-	_fireResistence._permanent = _fireResistence._temporary = 0;
-	_coldResistence._permanent = _coldResistence._temporary = 0;
-	_electricityResistence._permanent = _electricityResistence._temporary = 0;
-	_poisonResistence._permanent = _poisonResistence._temporary = 0;
-	_energyResistence._permanent = _energyResistence._temporary = 0;
-	_magicResistence._permanent = _magicResistence._temporary = 0;
+	_fireResistance._permanent = _fireResistance._temporary = 0;
+	_coldResistance._permanent = _coldResistance._temporary = 0;
+	_electricityResistance._permanent = _electricityResistance._temporary = 0;
+	_poisonResistance._permanent = _poisonResistance._temporary = 0;
+	_energyResistance._permanent = _energyResistance._temporary = 0;
+	_magicResistance._permanent = _magicResistance._temporary = 0;
 	_weapons.clear();
 	_armor.clear();
 	_accessories.clear();
@@ -140,12 +140,12 @@ Character &Character::operator=(const Character &src) {
 	_accessories = src._accessories;
 	_misc = src._misc;
 	_lloydSide = src._lloydSide;
-	_fireResistence = src._fireResistence;
-	_coldResistence = src._coldResistence;
-	_electricityResistence = src._electricityResistence;
-	_poisonResistence = src._poisonResistence;
-	_energyResistence = src._energyResistence;
-	_magicResistence = src._magicResistence;
+	_fireResistance = src._fireResistance;
+	_coldResistance = src._coldResistance;
+	_electricityResistance = src._electricityResistance;
+	_poisonResistance = src._poisonResistance;
+	_energyResistance = src._energyResistance;
+	_magicResistance = src._magicResistance;
 	Common::copy(&src._conditions[0], &src._conditions[16], &_conditions[0]);
 	_townUnknown = src._townUnknown;
 	_savedMazeId = src._savedMazeId;
@@ -228,12 +228,12 @@ void Character::synchronize(Common::Serializer &s) {
 		_misc[i].synchronize(s);
 
 	s.syncAsByte(_lloydSide);
-	_fireResistence.synchronize(s);
-	_coldResistence.synchronize(s);
-	_electricityResistence.synchronize(s);
-	_poisonResistence.synchronize(s);
-	_energyResistence.synchronize(s);
-	_magicResistence.synchronize(s);
+	_fireResistance.synchronize(s);
+	_coldResistance.synchronize(s);
+	_electricityResistance.synchronize(s);
+	_poisonResistance.synchronize(s);
+	_energyResistance.synchronize(s);
+	_magicResistance.synchronize(s);
 
 	for (int i = 0; i < 16; ++i)
 		s.syncAsByte(_conditions[i]);
@@ -437,22 +437,22 @@ bool Character::charSavingThrow(DamageType attackType) const {
 	} else {
 		switch (attackType) {
 		case DT_MAGICAL:
-			v = _magicResistence._permanent + _magicResistence._temporary + itemScan(16);
+			v = _magicResistance._permanent + _magicResistance._temporary + itemScan(16);
 			break;
 		case DT_FIRE:
-			v = _fireResistence._permanent + _fireResistence._temporary + itemScan(11);
+			v = _fireResistance._permanent + _fireResistance._temporary + itemScan(11);
 			break;
 		case DT_ELECTRICAL:
-			v = _electricityResistence._permanent + _electricityResistence._temporary + itemScan(12);
+			v = _electricityResistance._permanent + _electricityResistance._temporary + itemScan(12);
 			break;
 		case DT_COLD:
-			v = _coldResistence._permanent + _coldResistence._temporary + itemScan(13);
+			v = _coldResistance._permanent + _coldResistance._temporary + itemScan(13);
 			break;
 		case DT_POISON:
-			v = _poisonResistence._permanent + _poisonResistence._temporary + itemScan(14);
+			v = _poisonResistance._permanent + _poisonResistance._temporary + itemScan(14);
 			break;
 		case DT_ENERGY:
-			v = _energyResistence._permanent + _energyResistence._temporary + itemScan(15);
+			v = _energyResistance._permanent + _energyResistance._temporary + itemScan(15);
 			break;
 		default:
 			v = 0;
@@ -590,7 +590,7 @@ int Character::itemScan(int itemId) const {
 				int mIndex = item.getElementalCategory() + 11;
 
 				if (mIndex == itemId) {
-					result += Res.ELEMENTAL_RESISTENCES[item._material];
+					result += Res.ELEMENTAL_RESISTANCES[item._material];
 				}
 			}
 
@@ -622,7 +622,7 @@ int Character::itemScan(int itemId) const {
 				int mIndex = item.getElementalCategory() + 11;
 
 				if (mIndex == itemId)
-					result += Res.ELEMENTAL_RESISTENCES[item._material];
+					result += Res.ELEMENTAL_RESISTANCES[item._material];
 			}
 		}
 	}
@@ -713,7 +713,7 @@ void Character::setValue(int id, uint value) {
 		break;
 	case 17:
 		// Set party poison resistance
-		party._poisonResistence = value;
+		party._poisonResistance = value;
 		break;
 	case 18:
 		// Set condition
@@ -784,40 +784,40 @@ void Character::setValue(int id, uint value) {
 		_luck._permanent = value;
 		break;
 	case 52:
-		_fireResistence._permanent = value;
+		_fireResistance._permanent = value;
 		break;
 	case 53:
-		_electricityResistence._permanent = value;
+		_electricityResistance._permanent = value;
 		break;
 	case 54:
-		_coldResistence._permanent = value;
+		_coldResistance._permanent = value;
 		break;
 	case 55:
-		_poisonResistence._permanent = value;
+		_poisonResistance._permanent = value;
 		break;
 	case 56:
-		_energyResistence._permanent = value;
+		_energyResistance._permanent = value;
 		break;
 	case 57:
-		_magicResistence._permanent = value;
+		_magicResistance._permanent = value;
 		break;
 	case 58:
-		_fireResistence._temporary = value;
+		_fireResistance._temporary = value;
 		break;
 	case 59:
-		_electricityResistence._temporary = value;
+		_electricityResistance._temporary = value;
 		break;
 	case 60:
-		_coldResistence._temporary = value;
+		_coldResistance._temporary = value;
 		break;
 	case 61:
-		_poisonResistence._temporary = value;
+		_poisonResistance._temporary = value;
 		break;
 	case 62:
-		_energyResistence._temporary = value;
+		_energyResistance._temporary = value;
 		break;
 	case 63:
-		_magicResistence._temporary = value;
+		_magicResistance._temporary = value;
 		break;
 	case 64:
 		_level._permanent = value;
@@ -833,21 +833,21 @@ void Character::setValue(int id, uint value) {
 		party._lightCount = value;
 		break;
 	case 71:
-		party._fireResistence = value;
+		party._fireResistance = value;
 		break;
 	case 72:
-		party._electricityResistence = value;
+		party._electricityResistance = value;
 		break;
 	case 73:
-		party._coldResistence = value;
+		party._coldResistance = value;
 		break;
 	case 74:
 		party._walkOnWaterActive = value != 0;
-		party._poisonResistence = value;
+		party._poisonResistance = value;
 		party._wizardEyeActive = value != 0;
-		party._coldResistence = value;
-		party._electricityResistence = value;
-		party._fireResistence = value;
+		party._coldResistance = value;
+		party._electricityResistance = value;
+		party._fireResistance = value;
 		party._lightCount = value;
 		party._levitateCount = value;
 		break;
