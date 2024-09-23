@@ -140,12 +140,12 @@ public:
 	MiscItems _misc;
 	InventoryItemsGroup _items;
 	int _lloydSide;
-	AttributePair _fireResistence;
-	AttributePair _coldResistence;
-	AttributePair _electricityResistence;
-	AttributePair _poisonResistence;
-	AttributePair _energyResistence;
-	AttributePair _magicResistence;
+	AttributePair _fireResistance;
+	AttributePair _coldResistance;
+	AttributePair _electricityResistance;
+	AttributePair _poisonResistance;
+	AttributePair _energyResistance;
+	AttributePair _magicResistance;
 	int _conditions[16];
 	int _townUnknown;
 	int _savedMazeId;
