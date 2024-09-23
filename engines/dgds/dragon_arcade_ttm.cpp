@@ -295,7 +295,7 @@ int16 DragonArcadeTTM::runScriptPage(int16 pageNum) {
 
 	uint16 opcode = scr->readUint16LE();
 	while (opcode != 0x0ff0 && opcode) {
-		int16 ivals[4];
+		int16 ivals[4] { 0, 0, 0, 0 };
 		Common::String sval;
 		byte count = (byte)(opcode & 0xf);
 		if (count <= 4) {
