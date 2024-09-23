@@ -228,10 +228,10 @@ Party::Party(XeenEngine *vm) {
 	_food = 0;
 	_lightCount = 0;
 	_torchCount = 0;
-	_fireResistence = 0;
-	_electricityResistence = 0;
-	_coldResistence = 0;
-	_poisonResistence = 0;
+	_fireResistance = 0;
+	_electricityResistance = 0;
+	_coldResistance = 0;
+	_poisonResistance = 0;
 	_deathCount = 0;
 	_winCount = 0;
 	_lossCount = 0;
@@ -315,10 +315,10 @@ void Party::synchronize(Common::Serializer &s) {
 	s.syncAsUint16LE(_food);
 	s.syncAsUint16LE(_lightCount);
 	s.syncAsUint16LE(_torchCount);
-	s.syncAsUint16LE(_fireResistence);
-	s.syncAsUint16LE(_electricityResistence);
-	s.syncAsUint16LE(_coldResistence);
-	s.syncAsUint16LE(_poisonResistence);
+	s.syncAsUint16LE(_fireResistance);
+	s.syncAsUint16LE(_electricityResistance);
+	s.syncAsUint16LE(_coldResistance);
+	s.syncAsUint16LE(_poisonResistance);
 	s.syncAsUint16LE(_deathCount);
 	s.syncAsUint16LE(_winCount);
 	s.syncAsUint16LE(_lossCount);
@@ -553,12 +553,12 @@ void Party::resetTemps() {
 	for (int idx = 0; idx < (int)_activeParty.size(); ++idx) {
 		Character &player = _activeParty[idx];
 
-		player._magicResistence._temporary = 0;
-		player._energyResistence._temporary = 0;
-		player._poisonResistence._temporary = 0;
-		player._electricityResistence._temporary = 0;
-		player._coldResistence._temporary = 0;
-		player._fireResistence._temporary = 0;
+		player._magicResistance._temporary = 0;
+		player._energyResistance._temporary = 0;
+		player._poisonResistance._temporary = 0;
+		player._electricityResistance._temporary = 0;
+		player._coldResistance._temporary = 0;
+		player._fireResistance._temporary = 0;
 		player._ACTemp = 0;
 		player._level._temporary = 0;
 		player._luck._temporary = 0;
@@ -570,10 +570,10 @@ void Party::resetTemps() {
 		player._might._temporary = 0;
 	}
 
-	_poisonResistence = 0;
-	_coldResistence = 0;
-	_electricityResistence = 0;
-	_fireResistence = 0;
+	_poisonResistance = 0;
+	_coldResistance = 0;
+	_electricityResistance = 0;
+	_fireResistance = 0;
 	_lightCount = 0;
 	_levitateCount = 0;
 	_walkOnWaterActive = false;
@@ -926,7 +926,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		ps._experience -= takeVal;
 		break;
 	case 17:
-		_poisonResistence -= takeVal;
+		_poisonResistance -= takeVal;
 		break;
 	case 18:
 		ps._conditions[takeVal] = 0;
@@ -1047,40 +1047,40 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		ps._luck._permanent -= takeVal;
 		break;
 	case 52:
-		ps._fireResistence._permanent -= takeVal;
+		ps._fireResistance._permanent -= takeVal;
 		break;
 	case 53:
-		ps._electricityResistence._permanent -= takeVal;
+		ps._electricityResistance._permanent -= takeVal;
 		break;
 	case 54:
-		ps._coldResistence._permanent -= takeVal;
+		ps._coldResistance._permanent -= takeVal;
 		break;
 	case 55:
-		ps._poisonResistence._permanent -= takeVal;
+		ps._poisonResistance._permanent -= takeVal;
 		break;
 	case 56:
-		ps._energyResistence._permanent -= takeVal;
+		ps._energyResistance._permanent -= takeVal;
 		break;
 	case 57:
-		ps._magicResistence._permanent -= takeVal;
+		ps._magicResistance._permanent -= takeVal;
 		break;
 	case 58:
-		ps._fireResistence._temporary -= takeVal;
+		ps._fireResistance._temporary -= takeVal;
 		break;
 	case 59:
-		ps._electricityResistence._temporary -= takeVal;
+		ps._electricityResistance._temporary -= takeVal;
 		break;
 	case 60:
-		ps._coldResistence._temporary -= takeVal;
+		ps._coldResistance._temporary -= takeVal;
 		break;
 	case 61:
-		ps._poisonResistence._temporary -= takeVal;
+		ps._poisonResistance._temporary -= takeVal;
 		break;
 	case 62:
-		ps._energyResistence._temporary -= takeVal;
+		ps._energyResistance._temporary -= takeVal;
 		break;
 	case 63:
-		ps._magicResistence._temporary -= takeVal;
+		ps._magicResistance._temporary -= takeVal;
 		break;
 	case 64:
 		ps._level._permanent -= takeVal;
@@ -1096,21 +1096,21 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		_lightCount -= takeVal;
 		break;
 	case 71:
-		_fireResistence -= takeVal;
+		_fireResistance -= takeVal;
 		break;
 	case 72:
-		_electricityResistence -= takeVal;
+		_electricityResistance -= takeVal;
 		break;
 	case 73:
-		_coldResistence -= takeVal;
+		_coldResistance -= takeVal;
 		break;
 	case 74:
 		_levitateCount -= takeVal;
 		_lightCount -= takeVal;
-		_fireResistence -= takeVal;
-		_electricityResistence -= takeVal;
-		_coldResistence -= takeVal;
-		_poisonResistence -= takeVal;
+		_fireResistance -= takeVal;
+		_electricityResistance -= takeVal;
+		_coldResistance -= takeVal;
+		_poisonResistance -= takeVal;
 		_walkOnWaterActive = false;
 		break;
 	case 76:
@@ -1179,7 +1179,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		intf.spellFX(&ps);
 		break;
 	case 17:
-		_poisonResistence += giveVal;
+		_poisonResistance += giveVal;
 		break;
 	case 18:
 		if (giveVal == 16) {
@@ -1321,51 +1321,51 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		intf.spellFX(&ps);
 		break;
 	case 52:
-		ps._fireResistence._permanent = MIN(ps._fireResistence._permanent + giveVal, (uint)255);
+		ps._fireResistance._permanent = MIN(ps._fireResistance._permanent + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 53:
-		ps._electricityResistence._permanent = MIN(ps._electricityResistence._permanent + giveVal, (uint)255);
+		ps._electricityResistance._permanent = MIN(ps._electricityResistance._permanent + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 54:
-		ps._coldResistence._permanent = MIN(ps._coldResistence._permanent + giveVal, (uint)255);
+		ps._coldResistance._permanent = MIN(ps._coldResistance._permanent + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 55:
-		ps._poisonResistence._permanent = MIN(ps._poisonResistence._permanent + giveVal, (uint)255);
+		ps._poisonResistance._permanent = MIN(ps._poisonResistance._permanent + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 56:
-		ps._energyResistence._permanent = MIN(ps._energyResistence._permanent + giveVal, (uint)255);
+		ps._energyResistance._permanent = MIN(ps._energyResistance._permanent + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 57:
-		ps._magicResistence._permanent = MIN(ps._magicResistence._permanent + giveVal, (uint)255);
+		ps._magicResistance._permanent = MIN(ps._magicResistance._permanent + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 58:
-		ps._fireResistence._temporary = MIN(ps._fireResistence._temporary + giveVal, (uint)255);
+		ps._fireResistance._temporary = MIN(ps._fireResistance._temporary + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 59:
-		ps._electricityResistence._temporary = MIN(ps._electricityResistence._temporary + giveVal, (uint)255);
+		ps._electricityResistance._temporary = MIN(ps._electricityResistance._temporary + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 60:
-		ps._coldResistence._temporary = MIN(ps._coldResistence._temporary + giveVal, (uint)255);
+		ps._coldResistance._temporary = MIN(ps._coldResistance._temporary + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 61:
-		ps._poisonResistence._temporary = MIN(ps._poisonResistence._temporary + giveVal, (uint)255);
+		ps._poisonResistance._temporary = MIN(ps._poisonResistance._temporary + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 62:
-		ps._energyResistence._temporary = MIN(ps._energyResistence._temporary + giveVal, (uint)255);
+		ps._energyResistance._temporary = MIN(ps._energyResistance._temporary + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 63:
-		ps._magicResistence._temporary = MIN(ps._magicResistence._temporary + giveVal, (uint)255);
+		ps._magicResistance._temporary = MIN(ps._magicResistance._temporary + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 64:
@@ -1408,21 +1408,21 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		_lightCount += giveVal;
 		break;
 	case 71:
-		_fireResistence += giveVal;
+		_fireResistance += giveVal;
 		break;
 	case 72:
-		_electricityResistence += giveVal;
+		_electricityResistance += giveVal;
 		break;
 	case 73:
-		_coldResistence += giveVal;
+		_coldResistance += giveVal;
 		break;
 	case 74:
 		_levitateCount += giveVal;
 		_lightCount += giveVal;
-		_fireResistence += giveVal;
-		_electricityResistence += giveVal;
-		_coldResistence += giveVal;
-		_poisonResistence += giveVal;
+		_fireResistance += giveVal;
+		_electricityResistance += giveVal;
+		_coldResistance += giveVal;
+		_poisonResistance += giveVal;
 		_walkOnWaterActive = false;
 		break;
 	case 76:
