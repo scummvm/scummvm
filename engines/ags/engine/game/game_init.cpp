@@ -298,6 +298,8 @@ void LoadLipsyncData() {
 		for (int ee = 0; ee < _G(numLipLines); ee++) {
 			_GP(splipsync)[ee].numPhonemes = speechsync->ReadInt16();
 			speechsync->Read(_GP(splipsync)[ee].filename, 14);
+			if (_GP(splipsync)[ee].numPhonemes == 0)
+				continue;
 			_GP(splipsync)[ee].endtimeoffs.resize(_GP(splipsync)[ee].numPhonemes);
 			speechsync->ReadArrayOfInt32(&_GP(splipsync)[ee].endtimeoffs.front(), _GP(splipsync)[ee].numPhonemes);
 			_GP(splipsync)[ee].frame.resize(_GP(splipsync)[ee].numPhonemes);
