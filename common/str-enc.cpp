@@ -197,6 +197,8 @@ void releaseCJKTables() {
 	johabConversionTable = 0;
 	delete[] johabReverseConversionTable;
 	johabReverseConversionTable = 0;
+	delete[] traditional2SimplifiedChineseConversionTable;
+	traditional2SimplifiedChineseConversionTable = 0;
 }
 
 void U32String::decodeWindows932(const char *src, uint32 len) {
