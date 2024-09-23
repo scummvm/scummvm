@@ -68,7 +68,7 @@ SpellsMonsters::SpellsMonsters() {
 
 void SpellsMonsters::castMonsterSpell(const Common::String &monsterName, int spellNum) {
 	g_globals->_spellsState._mmVal1 = 0;
-	g_globals->_spellsState._resistenceIndex = 0;
+	g_globals->_spellsState._resistanceIndex = 0;
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_MAGIC;
 	g_globals->_spellsState._damage = 0;
 
@@ -100,7 +100,7 @@ void SpellsMonsters::spell03_fire() {
 	add(Common::String::format("%s %s",
 		STRING["monster_spells.breathes"].c_str(),
 		STRING["monster_spells.fire"].c_str()));
-	++g_globals->_spellsState._resistenceIndex;
+	++g_globals->_spellsState._resistanceIndex;
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_FIRE;
 
 	int count = _remainingMonsters[getMonsterIndex()]->_level;
@@ -113,7 +113,7 @@ void SpellsMonsters::spell04_blindness() {
 	if (casts()) {
 		add(STRING["monster_spells.blindness"]);
 		++g_globals->_spellsState._mmVal1;
-		++g_globals->_spellsState._resistenceIndex;
+		++g_globals->_spellsState._resistanceIndex;
 		g_globals->_spellsState._damage = 2;
 
 		handlePartyEffects();
@@ -122,7 +122,7 @@ void SpellsMonsters::spell04_blindness() {
 
 void SpellsMonsters::spell05_sprayPoison() {
 	add(STRING["monster_spells.sprays_poison"]);
-	++g_globals->_spellsState._resistenceIndex;
+	++g_globals->_spellsState._resistanceIndex;
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_POISON;
 	g_globals->_spellsState._damage = POISONED;
 	handlePartyEffects();
@@ -130,7 +130,7 @@ void SpellsMonsters::spell05_sprayPoison() {
 
 void SpellsMonsters::spell06_sprayAcid() {
 	add(STRING["monster_spells.sprays_acid"]);
-	++g_globals->_spellsState._resistenceIndex;
+	++g_globals->_spellsState._resistanceIndex;
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_ACID;
 	g_globals->_spellsState._damage = getRandomNumber((int)POISONED);
 	add(':');
@@ -142,7 +142,7 @@ void SpellsMonsters::spell07_sleep() {
 	if (casts()) {
 		add(STRING["monster_spells.sleep"]);
 		++g_globals->_spellsState._mmVal1;
-		++g_globals->_spellsState._resistenceIndex;
+		++g_globals->_spellsState._resistanceIndex;
 		g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_PSYCHIC;
 		g_globals->_spellsState._damage = ASLEEP;
 		handlePartyEffects();
@@ -153,7 +153,7 @@ void SpellsMonsters::spell08_paralyze() {
 	if (casts()) {
 		add(STRING["monster_spells.paralyze"]);
 		++g_globals->_spellsState._mmVal1;
-		++g_globals->_spellsState._resistenceIndex;
+		++g_globals->_spellsState._resistanceIndex;
 		g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_FEAR;
 		g_globals->_spellsState._damage = PARALYZED;
 
@@ -177,7 +177,7 @@ void SpellsMonsters::spell10_lightningBolt() {
 	if (casts()) {
 		add(STRING["monster_spells.lightning_bolt"]);
 		++g_globals->_spellsState._mmVal1;
-		++g_globals->_spellsState._resistenceIndex;
+		++g_globals->_spellsState._resistanceIndex;
 		g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_ELECTRICITY;
 		g_globals->_spellsState._damage = getRandomNumber(37) + 5;
 		damageRandomChar();
@@ -188,7 +188,7 @@ void SpellsMonsters::spell11_strangeGas() {
 	add(Common::String::format("%s %s",
 		STRING["monster_spells.breathes"].c_str(),
 		STRING["monster_spells.strange_gas"].c_str()));
-	++g_globals->_spellsState._resistenceIndex;
+	++g_globals->_spellsState._resistanceIndex;
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_POISON;
 	g_globals->_spellsState._damage = BAD_CONDITION | STONE;
 
@@ -197,7 +197,7 @@ void SpellsMonsters::spell11_strangeGas() {
 
 void SpellsMonsters::spell12_explode() {
 	add(STRING["monster_spells.explode"]);
-	++g_globals->_spellsState._resistenceIndex;
+	++g_globals->_spellsState._resistanceIndex;
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_POISON;
 	g_globals->_spellsState._damage = getRandomNumber(
 		_remainingMonsters[getMonsterIndex()]->_level);
@@ -213,7 +213,7 @@ void SpellsMonsters::spell13_fireball() {
 	if (casts()) {
 		add(STRING["monster_spells.fireball"]);
 		++g_globals->_spellsState._mmVal1;
-		++g_globals->_spellsState._resistenceIndex;
+		++g_globals->_spellsState._resistanceIndex;
 		g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_FIRE;
 
 		// This whole condition choice makes no sense
@@ -230,7 +230,7 @@ void SpellsMonsters::spell14_fireBreath() {
 	add(Common::String::format("%s %s",
 		STRING["monster_spells.breathes"].c_str(),
 		STRING["monster_spells.fire"].c_str()));
-	++g_globals->_spellsState._resistenceIndex;
+	++g_globals->_spellsState._resistanceIndex;
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_FIRE;
 
 	// This whole condition choice makes no sense
@@ -244,7 +244,7 @@ void SpellsMonsters::spell14_fireBreath() {
 
 void SpellsMonsters::spell15_gazes() {
 	add(STRING["monster_spells.gazes"]);
-	++g_globals->_spellsState._resistenceIndex;
+	++g_globals->_spellsState._resistanceIndex;
 	g_globals->_spellsState._damage = BAD_CONDITION | STONE;
 
 	chooseCharacter();
@@ -254,7 +254,7 @@ void SpellsMonsters::spell15_gazes() {
 void SpellsMonsters::spell16_acidArrow() {
 	add(STRING["monster_spells.acid_arrow"]);
 	++g_globals->_spellsState._mmVal1;
-	++g_globals->_spellsState._resistenceIndex;
+	++g_globals->_spellsState._resistanceIndex;
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_ACID;
 	g_globals->_spellsState._damage = getRandomNumber(31) + 9;
 
@@ -263,7 +263,7 @@ void SpellsMonsters::spell16_acidArrow() {
 
 void SpellsMonsters::spell17_elements() {
 	add(STRING["monster_spells.call_elements"]);
-	++g_globals->_spellsState._resistenceIndex;
+	++g_globals->_spellsState._resistanceIndex;
 	g_globals->_spellsState._damage = getRandomNumber(21) + 39;
 
 	damageRandomChar();
@@ -273,7 +273,7 @@ void SpellsMonsters::spell18_coldBeam() {
 	if (casts()) {
 		add(STRING["monster_spells.cold_beam"]);
 		++g_globals->_spellsState._mmVal1;
-		++g_globals->_spellsState._resistenceIndex;
+		++g_globals->_spellsState._resistanceIndex;
 		g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_COLD;
 		g_globals->_spellsState._damage = getRandomNumber(41) + 9;
 
@@ -308,7 +308,7 @@ void SpellsMonsters::spell21_fingerOfDeath() {
 	if (casts()) {
 		add(STRING["monster_spells.finger_of_death"]);
 		++g_globals->_spellsState._mmVal1;
-		++g_globals->_spellsState._resistenceIndex;
+		++g_globals->_spellsState._resistanceIndex;
 		g_globals->_spellsState._damage = BAD_CONDITION | DEAD;
 
 		chooseCharacter();
@@ -320,7 +320,7 @@ void SpellsMonsters::spell22_sunRay() {
 	if (casts()) {
 		add(STRING["monster_spells.sun_ray"]);
 		++g_globals->_spellsState._mmVal1;
-		++g_globals->_spellsState._resistenceIndex;
+		++g_globals->_spellsState._resistanceIndex;
 		g_globals->_spellsState._damage = getRandomNumber(51) + 49;
 
 		damageRandomChar();
@@ -331,7 +331,7 @@ void SpellsMonsters::spell23_disintegration() {
 	if (casts()) {
 		add(STRING["monster_spells.disintegration"]);
 		++g_globals->_spellsState._mmVal1;
-		++g_globals->_spellsState._resistenceIndex;
+		++g_globals->_spellsState._resistanceIndex;
 		g_globals->_spellsState._damage = ERADICATED;
 
 		chooseCharacter();
@@ -351,7 +351,7 @@ void SpellsMonsters::spell25_poison() {
 		STRING["monster_spells.poison"].c_str()));
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_POISON;
 	g_globals->_spellsState._damage = _remainingMonsters[getMonsterIndex()]->_hp;
-	++g_globals->_spellsState._resistenceIndex;
+	++g_globals->_spellsState._resistanceIndex;
 
 	add(':');
 	handlePartyDamage();
@@ -363,7 +363,7 @@ void SpellsMonsters::spell26_lightning() {
 		STRING["monster_spells.lightning"].c_str()));
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_ELECTRICITY;
 	g_globals->_spellsState._damage = _remainingMonsters[getMonsterIndex()]->_hp;
-	++g_globals->_spellsState._resistenceIndex;
+	++g_globals->_spellsState._resistanceIndex;
 
 	add(':');
 	handlePartyDamage();
@@ -375,7 +375,7 @@ void SpellsMonsters::spell27_frost() {
 		STRING["monster_spells.frost"].c_str()));
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_COLD;
 	g_globals->_spellsState._damage = _remainingMonsters[getMonsterIndex()]->_hp;
-	++g_globals->_spellsState._resistenceIndex;
+	++g_globals->_spellsState._resistanceIndex;
 
 	add(':');
 	handlePartyDamage();
@@ -387,7 +387,7 @@ void SpellsMonsters::spell28_spikes() {
 		STRING["monster_spells.spikes"].c_str()));
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_ELECTRICITY;
 	g_globals->_spellsState._damage = _remainingMonsters[getMonsterIndex()]->_hp;
-	++g_globals->_spellsState._resistenceIndex;
+	++g_globals->_spellsState._resistanceIndex;
 
 	add(':');
 	handlePartyDamage();
@@ -399,7 +399,7 @@ void SpellsMonsters::spell29_acid() {
 		STRING["monster_spells.acid"].c_str()));
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_ACID;
 	g_globals->_spellsState._damage = _remainingMonsters[getMonsterIndex()]->_hp;
-	++g_globals->_spellsState._resistenceIndex;
+	++g_globals->_spellsState._resistanceIndex;
 
 	add(':');
 	handlePartyDamage();
@@ -411,7 +411,7 @@ void SpellsMonsters::spell30_fire() {
 		STRING["monster_spells.fire"].c_str()));
 	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_FIRE;
 	g_globals->_spellsState._damage = _remainingMonsters[getMonsterIndex()]->_hp;
-	++g_globals->_spellsState._resistenceIndex;
+	++g_globals->_spellsState._resistanceIndex;
 
 	add(':');
 	handlePartyDamage();
@@ -420,7 +420,7 @@ void SpellsMonsters::spell30_fire() {
 void SpellsMonsters::spell31_energy() {
 	add(STRING["monster_spells.energy"]);
 	g_globals->_spellsState._damage = _remainingMonsters[getMonsterIndex()]->_hp;
-	++g_globals->_spellsState._resistenceIndex;
+	++g_globals->_spellsState._resistanceIndex;
 
 	add(':');
 	handlePartyDamage();
@@ -428,7 +428,7 @@ void SpellsMonsters::spell31_energy() {
 
 void SpellsMonsters::spell32_swarm() {
 	add(STRING["monster_spells.swarm"]);
-	++g_globals->_spellsState._resistenceIndex;
+	++g_globals->_spellsState._resistanceIndex;
 	g_globals->_spellsState._damage = getRandomNumber(12);
 
 	add(':');
@@ -512,7 +512,7 @@ bool SpellsMonsters::charAffected() {
 }
 
 bool SpellsMonsters::isEffective() {
-	if (g_globals->_spellsState._resistenceIndex) {
+	if (g_globals->_spellsState._resistanceIndex) {
 		proc9();
 
 		if (g_globals->_spellsState._mmVal7) {
