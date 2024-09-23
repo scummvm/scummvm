@@ -639,7 +639,8 @@ void ScummEngine_v6::o6_eq() {
 	// The player stat adjustments that should get applied in certain conditions (i.e. when two siblings are on the same team)
 	// don't get applied properly for the away (peer) team in online play. This results in each team's game using a different
 	// version of players' stats, leading to unfair play and potential desyncs. This hack ensures the away team's game doesn't
-	// exit the script before applying these stat adjustments.
+	// exit the script before applying these stat adjustments. The script checks whether the game is being played online before
+	// this, such that this code doesn't execute for offline play.
 	if (_game.id == GID_BASEBALL2001 && _currentRoom == 27 && vm.slot[_currentScript].number == 2346) {
 		int offset = _scriptPointer - _scriptOrgPointer;
 		if (offset == 196137) {
