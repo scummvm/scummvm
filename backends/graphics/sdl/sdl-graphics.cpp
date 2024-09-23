@@ -513,10 +513,6 @@ void SdlGraphicsManager::initImGui(void *glContext) {
 	assert(!_imGuiReady);
 	_imGuiInited = false;
 
-	if (!glContext) {
-		return;
-	}
-
 	IMGUI_CHECKVERSION();
 	if (!ImGui::CreateContext()) {
 		return;
