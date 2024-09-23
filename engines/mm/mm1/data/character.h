@@ -401,7 +401,7 @@ union Resistances {
 	Resistances();
 
 	/**
-	 * Handles save/loading resistences
+	 * Handles save/loading resistances
 	 */
 	void synchronize(Common::Serializer &s);
 
