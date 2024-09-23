@@ -923,6 +923,11 @@ void SurfaceSdlGraphicsManager::initGraphicsSurface() {
 	_isDoubleBuf = flags & SDL_DOUBLEBUF;
 	_isHwPalette = flags & SDL_HWPALETTE;
 #endif
+
+#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+	// Setup Dear ImGui
+	initImGui(nullptr);
+#endif
 }
 
 bool SurfaceSdlGraphicsManager::loadGFXMode() {
@@ -1526,6 +1531,11 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	_numDirtyRects = 0;
 	_forceRedraw = false;
 	_cursorNeedsRedraw = false;
+
+#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+	renderImGui();
+#endif
+
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
 	if (_isDoubleBuf)
 		SDL_Flip(_hwScreen);
@@ -2801,6 +2811,10 @@ void SurfaceSdlGraphicsManager::notifyResize(const int width, const int height) 
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 void SurfaceSdlGraphicsManager::deinitializeRenderer() {
+#ifdef USE_IMGUI
+	destroyImGui();
+#endif
+
 	if (_screenTexture)
 		SDL_DestroyTexture(_screenTexture);
 	_screenTexture = nullptr;
