@@ -157,8 +157,8 @@ void GameSetupStructBase::ReadFromFile(Stream *in, GameDataVersion game_ver, Ser
 	color_depth = in->ReadInt32();
 	target_win = in->ReadInt32();
 	dialog_bullet = in->ReadInt32();
-	hotdot = in->ReadInt16();
-	hotdotouter = in->ReadInt16();
+	hotdot = static_cast<uint16_t>(in->ReadInt16());
+	hotdotouter = static_cast<uint16_t>(in->ReadInt16());
 	uniqueid = in->ReadInt32();
 	numgui = in->ReadInt32();
 	numcursors = in->ReadInt32();
@@ -205,8 +205,8 @@ void GameSetupStructBase::WriteToFile(Stream *out, const SerializeInfo &info) co
 	out->WriteInt32(color_depth);
 	out->WriteInt32(target_win);
 	out->WriteInt32(dialog_bullet);
-	out->WriteInt16(hotdot);
-	out->WriteInt16(hotdotouter);
+	out->WriteInt16(static_cast<uint16_t>(hotdot));
+	out->WriteInt16(static_cast<uint16_t>(hotdotouter));
 	out->WriteInt32(uniqueid);
 	out->WriteInt32(numgui);
 	out->WriteInt32(numcursors);
