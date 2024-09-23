@@ -30,7 +30,7 @@ namespace MM1 {
 
 struct SpellsState {
 	byte _mmVal1 = 0;
-	byte _resistenceIndex = 0;
+	byte _resistanceIndex = 0;
 	byte _mmVal5 = 0;
 	byte _mmVal7 = 0;
 
@@ -47,7 +47,7 @@ struct SpellsState {
 	 */
 	void synchronize(Common::Serializer &s) {
 		s.syncAsByte(_mmVal1);
-		s.syncAsByte(_resistenceIndex);
+		s.syncAsByte(_resistanceIndex);
 		s.syncAsByte(_mmVal5);
 		s.syncAsByte(_mmVal7);
 		s.syncAsByte(_resistanceTypeOrTargetCount);

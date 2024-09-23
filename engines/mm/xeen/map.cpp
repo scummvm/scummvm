@@ -53,13 +53,13 @@ MonsterStruct::MonsterStruct() {
 	_hitChance = 0;
 	_rangeAttack = 0;
 	_monsterType = MONSTER_MONSTERS;
-	_fireResistence = 0;
-	_electricityResistence = 0;
-	_coldResistence = 0;
-	_poisonResistence = 0;
-	_energyResistence = 0;
-	_magicResistence = 0;
-	_phsyicalResistence = 0;
+	_fireResistance = 0;
+	_electricityResistance = 0;
+	_coldResistance = 0;
+	_poisonResistance = 0;
+	_energyResistance = 0;
+	_magicResistance = 0;
+	_phsyicalResistance = 0;
 	_field29 = 0;
 	_gold = 0;
 	_gems = 0;
@@ -75,19 +75,19 @@ MonsterStruct::MonsterStruct(Common::String name, int experience, int hp, int ar
 		int speed, int numberOfAttacks, CharacterClass hatesClass, int strikes,
 		int dmgPerStrike, DamageType attackType, SpecialAttack specialAttack,
 		int hitChance, int rangeAttack, MonsterType monsterType,
-		int fireResistence, int electricityResistence, int coldResistence,
-		int poisonResistence, int energyResistence, int magicResistence,
-		int phsyicalResistence, int field29, int gold, int gems, int itemDrop,
+		int fireResistance, int electricityResistance, int coldResistance,
+		int poisonResistance, int energyResistance, int magicResistance,
+		int phsyicalResistance, int field29, int gold, int gems, int itemDrop,
 		bool flying, int imageNumber, int loopAnimation, int animationEffect,
 		int fx, Common::String attackVoc):
 		_name(name), _experience(experience), _hp(hp), _armorClass(armorClass),
 		_speed(speed), _numberOfAttacks(numberOfAttacks), _hatesClass(hatesClass),
 		_strikes(strikes), _dmgPerStrike(dmgPerStrike), _attackType(attackType),
 		_specialAttack(specialAttack), _hitChance(hitChance), _rangeAttack(rangeAttack),
-		_monsterType(monsterType), _fireResistence(fireResistence),
-		_electricityResistence(electricityResistence), _coldResistence(coldResistence),
-		_poisonResistence(poisonResistence), _energyResistence(energyResistence),
-		_magicResistence(magicResistence), _phsyicalResistence(phsyicalResistence),
+		_monsterType(monsterType), _fireResistance(fireResistance),
+		_electricityResistance(electricityResistance), _coldResistance(coldResistance),
+		_poisonResistance(poisonResistance), _energyResistance(energyResistance),
+		_magicResistance(magicResistance), _phsyicalResistance(phsyicalResistance),
 		_field29(field29), _gold(gold), _gems(gems), _itemDrop(itemDrop),
 		_flying(flying), _imageNumber(imageNumber), _loopAnimation(loopAnimation),
 		_animationEffect(animationEffect), _fx(fx), _attackVoc(attackVoc) {
@@ -113,13 +113,13 @@ void MonsterStruct::synchronize(Common::SeekableReadStream &s) {
 	_hitChance = s.readByte();
 	_rangeAttack = s.readByte();
 	_monsterType = (MonsterType)s.readByte();
-	_fireResistence = s.readByte();
-	_electricityResistence = s.readByte();
-	_coldResistence = s.readByte();
-	_poisonResistence = s.readByte();
-	_energyResistence = s.readByte();
-	_magicResistence = s.readByte();
-	_phsyicalResistence = s.readByte();
+	_fireResistance = s.readByte();
+	_electricityResistance = s.readByte();
+	_coldResistance = s.readByte();
+	_poisonResistance = s.readByte();
+	_energyResistance = s.readByte();
+	_magicResistance = s.readByte();
+	_phsyicalResistance = s.readByte();
 	_field29 = s.readByte();
 	_gold = s.readUint16LE();
 	_gems = s.readByte();

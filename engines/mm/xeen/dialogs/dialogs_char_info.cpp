@@ -293,12 +293,12 @@ Common::String CharacterInfo::loadCharacterDetails(const Character &c) {
 	int foodVal = party._food / party._activeParty.size() / 3;
 
 	int totalResist =
-		c._fireResistence._permanent + c.itemScan(11) + c._fireResistence._temporary +
-		c._coldResistence._permanent + c.itemScan(13) + c._coldResistence._temporary +
-		c._electricityResistence._permanent + c.itemScan(12) + c._electricityResistence._temporary +
-		c._poisonResistence._permanent + c.itemScan(14) + c._poisonResistence._temporary +
-		c._energyResistence._permanent + c.itemScan(15) + c._energyResistence._temporary +
-		c._magicResistence._permanent + c.itemScan(16) + c._magicResistence._temporary;
+		c._fireResistance._permanent + c.itemScan(11) + c._fireResistance._temporary +
+		c._coldResistance._permanent + c.itemScan(13) + c._coldResistance._temporary +
+		c._electricityResistance._permanent + c.itemScan(12) + c._electricityResistance._temporary +
+		c._poisonResistance._permanent + c.itemScan(14) + c._poisonResistance._temporary +
+		c._energyResistance._permanent + c.itemScan(15) + c._energyResistance._temporary +
+		c._magicResistance._permanent + c.itemScan(16) + c._magicResistance._temporary;
 	const char **_tmpConditions = c._sex == FEMALE ? (const char **)Res.CONDITION_NAMES_F : (const char **)Res.CONDITION_NAMES_M;
 
 	return Common::String::format(Res.CHARACTER_DETAILS,
@@ -462,14 +462,14 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		break;
 
 	case 12:
-		// Resistences
-		msg = Common::String::format(Res.RESISTENCES_TEXT, Res.STAT_NAMES[attrib],
-			c._fireResistence._permanent + c.itemScan(11) + c._fireResistence._temporary,
-			c._coldResistence._permanent + c.itemScan(13) + c._coldResistence._temporary,
-			c._electricityResistence._permanent + c.itemScan(12) + c._electricityResistence._temporary,
-			c._poisonResistence._permanent + c.itemScan(14) + c._poisonResistence._temporary,
-			c._energyResistence._permanent + c.itemScan(15) + c._energyResistence._temporary,
-			c._magicResistence._permanent + c.itemScan(16) + c._magicResistence._temporary);
+		// Resistances
+		msg = Common::String::format(Res.RESISTANCES_TEXT, Res.STAT_NAMES[attrib],
+			c._fireResistance._permanent + c.itemScan(11) + c._fireResistance._temporary,
+			c._coldResistance._permanent + c.itemScan(13) + c._coldResistance._temporary,
+			c._electricityResistance._permanent + c.itemScan(12) + c._electricityResistance._temporary,
+			c._poisonResistance._permanent + c.itemScan(14) + c._poisonResistance._temporary,
+			c._energyResistance._permanent + c.itemScan(15) + c._energyResistance._temporary,
+			c._magicResistance._permanent + c.itemScan(16) + c._magicResistance._temporary);
 		bounds.setHeight(80);
 		break;
 

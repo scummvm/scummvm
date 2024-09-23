@@ -1613,7 +1613,7 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 17:
 		// Party poison resistance
-		v = party._poisonResistence;
+		v = party._poisonResistance;
 		break;
 	case 18:
 		// Condition
@@ -1753,51 +1753,51 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 52:
 		// Fire resistance (before bonus)
-		v = ps->_fireResistence._permanent;
+		v = ps->_fireResistance._permanent;
 		break;
 	case 53:
 		// Elecricity resistance (before bonus)
-		v = ps->_electricityResistence._permanent;
+		v = ps->_electricityResistance._permanent;
 		break;
 	case 54:
 		// Cold resistance (before bonus)
-		v = ps->_coldResistence._permanent;
+		v = ps->_coldResistance._permanent;
 		break;
 	case 55:
 		// Poison resistance (before bonus)
-		v = ps->_poisonResistence._permanent;
+		v = ps->_poisonResistance._permanent;
 		break;
 	case 56:
 		// Energy reistence (before bonus)
-		v = ps->_energyResistence._permanent;
+		v = ps->_energyResistance._permanent;
 		break;
 	case 57:
 		// Energy resistance (before bonus)
-		v = ps->_magicResistence._permanent;
+		v = ps->_magicResistance._permanent;
 		break;
 	case 58:
 		// Fire resistance (extra beyond base)
-		v = ps->_fireResistence._temporary;
+		v = ps->_fireResistance._temporary;
 		break;
 	case 59:
 		// Electricity resistance (extra beyond base)
-		v = ps->_electricityResistence._temporary;
+		v = ps->_electricityResistance._temporary;
 		break;
 	case 60:
 		// Cold resistance (extra beyond base)
-		v = ps->_coldResistence._temporary;
+		v = ps->_coldResistance._temporary;
 		break;
 	case 61:
 		// Poison resistance (extra beyond base)
-		v = ps->_poisonResistence._temporary;
+		v = ps->_poisonResistance._temporary;
 		break;
 	case 62:
 		// Energy resistance (extra beyond base)
-		v = ps->_energyResistence._temporary;
+		v = ps->_energyResistance._temporary;
 		break;
 	case 63:
 		// Magic resistance (extra beyond base)
-		v = ps->_magicResistence._temporary;
+		v = ps->_magicResistance._temporary;
 		break;
 	case 64:
 		// Level (before bonus)
@@ -1816,15 +1816,15 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 71:
 		// Party magical fire resistance
-		v = party._fireResistence;
+		v = party._fireResistance;
 		break;
 	case 72:
 		// Party magical electricity resistance
-		v = party._electricityResistence;
+		v = party._electricityResistance;
 		break;
 	case 73:
 		// Party magical cold resistance
-		v = party._coldResistence;
+		v = party._coldResistance;
 		break;
 	case 76:
 		// Day of the year (100 per year)

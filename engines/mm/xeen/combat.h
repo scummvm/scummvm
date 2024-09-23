@@ -143,7 +143,7 @@ private:
 	/**
 	 * Gets the current monster's damage resistance to the currently set damage type
 	 */
-	int getMonsterResistence(RangeType rangeType);
+	int getMonsterResistance(RangeType rangeType);
 
 	/**
 	 * Distribute experience between active party members

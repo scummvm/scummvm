@@ -216,10 +216,10 @@ public:
 	uint _food;
 	int _lightCount;
 	int _torchCount;
-	int _fireResistence;
-	int _electricityResistence;
-	int _coldResistence;
-	int _poisonResistence;
+	int _fireResistance;
+	int _electricityResistance;
+	int _coldResistance;
+	int _poisonResistance;
 	int _deathCount;
 	int _winCount;
 	int _lossCount;

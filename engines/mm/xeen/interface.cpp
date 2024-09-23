@@ -1516,22 +1516,22 @@ void Interface::assembleBorder() {
 	// Draw resistance indicators
 	if (!windows[10]._enabled && !windows[2]._enabled
 		&& !windows[38]._enabled) {
-		_fecpSprites.draw(0, _vm->_party->_fireResistence ? 1 : 0,
+		_fecpSprites.draw(0, _vm->_party->_fireResistance ? 1 : 0,
 			Common::Point(2, 2));
-		_fecpSprites.draw(0, _vm->_party->_electricityResistence ? 3 : 2,
+		_fecpSprites.draw(0, _vm->_party->_electricityResistance ? 3 : 2,
 			Common::Point(219, 2));
-		_fecpSprites.draw(0, _vm->_party->_coldResistence ? 5 : 4,
+		_fecpSprites.draw(0, _vm->_party->_coldResistance ? 5 : 4,
 			Common::Point(2, 134));
-		_fecpSprites.draw(0, _vm->_party->_poisonResistence ? 7 : 6,
+		_fecpSprites.draw(0, _vm->_party->_poisonResistance ? 7 : 6,
 			Common::Point(219, 134));
 	} else {
-		_fecpSprites.draw(0, _vm->_party->_fireResistence ? 9 : 8,
+		_fecpSprites.draw(0, _vm->_party->_fireResistance ? 9 : 8,
 			Common::Point(8, 8));
-		_fecpSprites.draw(0, _vm->_party->_electricityResistence ? 11 : 10,
+		_fecpSprites.draw(0, _vm->_party->_electricityResistance ? 11 : 10,
 			Common::Point(219, 8));
-		_fecpSprites.draw(0, _vm->_party->_coldResistence ? 13 : 12,
+		_fecpSprites.draw(0, _vm->_party->_coldResistance ? 13 : 12,
 			Common::Point(8, 134));
-		_fecpSprites.draw(0, _vm->_party->_poisonResistence ? 15 : 14,
+		_fecpSprites.draw(0, _vm->_party->_poisonResistance ? 15 : 14,
 			Common::Point(219, 134));
 	}
 
