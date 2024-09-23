@@ -129,19 +129,25 @@ struct SCALER_NoScale {
 			_rowEdge = _row - 1;
 #endif
 			_row += _lastIndex - (x - _sourceX);
+#ifndef RELEASE_BUILD
+
 			assert(_row > _rowEdge);
+#endif
 		} else {
 #ifndef RELEASE_BUILD
 			_rowEdge = _row + _lastIndex + 1;
 #endif
 			_row += x - _sourceX;
+#ifndef RELEASE_BUILD
 			assert(_row < _rowEdge);
+#endif
 		}
 	}
 
 	inline byte read() {
+#ifndef RELEASE_BUILD
 		assert(_row != _rowEdge);
-
+#endif
 		if (FLIP) {
 			return *_row--;
 		} else {
@@ -297,11 +303,15 @@ struct SCALER_Scale {
 			? static_cast<const byte *>( _sourceBuffer->getBasePtr(0, _valuesY[y]))
 			: _reader.getRow(_valuesY[y]);
 		_x = x;
+#ifndef RELEASE_BUILD
 		assert(_x >= _minX && _x <= _maxX);
+#endif
 	}
 
 	inline byte read() {
+#ifndef RELEASE_BUILD
 		assert(_x >= _minX && _x <= _maxX);
+#endif
 		return _row[_valuesX[_x++]];
 	}
 };
@@ -343,7 +353,9 @@ public:
 	}
 
 	inline const byte *getRow(const int16 y) const {
+#ifndef RELEASE_BUILD
 		assert(y >= 0 && y < _sourceHeight);
+#endif
 		return _pixels + y * _sourceWidth;
 	}
 };
