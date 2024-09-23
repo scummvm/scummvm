@@ -176,8 +176,9 @@ int LogicHEBasketball::u32_userGetOpenSpot(int whichPlayer, U32FltVector2D upper
 	int rectWidth = fabs(upperLeft.x - lowerRight.x);
 	int rectHeight = fabs(upperLeft.y - lowerRight.y);
 
-	float xMesh = rectWidth / (xGranularity + 1);
-	float yMesh = rectHeight / (yGranularity + 1);
+	// Integer operation cast to float, this is intended!
+	float xMesh = (float)(rectWidth / (xGranularity + 1));
+	float yMesh = (float)(rectHeight / (yGranularity + 1));
 
 	float startX = upperLeft.x + xMesh / 2;
 	float startY = upperLeft.y + yMesh / 2;
