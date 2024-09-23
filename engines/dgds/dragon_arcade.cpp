@@ -1231,12 +1231,12 @@ void DragonArcade::updateBoss() {
 
 	int16 distToBoss = _npcState[1].x - _npcState[0].x;
 	int16 absDistToBoss = abs(distToBoss);
-	bool bossIsClose = absDistToBoss < 20;
+	bool bossIsCloseY = abs(_npcState[1].y - _npcState[0].y) < 20;
 	uint16 randVal = _nextRandomVal % 16;
 
 	switch(_npcState[1].byte12 - 1) {
 	case 0:
-		if (bossIsClose && absDistToBoss < 45) {
+		if (bossIsCloseY && absDistToBoss < 45) {
 			if (_bladeState1 != 8 && _bladeState1 != 9) {
 				_npcState[1].byte12 = 5;
 				_npcState[1].ttmPage = 30;
@@ -1245,7 +1245,7 @@ void DragonArcade::updateBoss() {
 			_npcState[1].byte12 = 3;
 			_npcState[1].ttmPage = 10;
 			_bossStateUpdateCounter++;
-		} else if ((bossIsClose && distToBoss < 70 && 0 < distToBoss && randVal == 15) || (0 < _bossStateUpdateCounter && randVal == 7)) {
+		} else if ((bossIsCloseY && distToBoss < 70 && 0 < distToBoss && randVal == 15) || (0 < _bossStateUpdateCounter && randVal == 7)) {
 			_npcState[1].byte12 = 2;
 			_npcState[1].ttmPage = 3;
 			_bossStateUpdateCounter--;
@@ -1322,7 +1322,7 @@ void DragonArcade::updateBoss() {
 	case 4:
 		if (_npcState[1].ttmPage < 37) {
 			_npcState[1].ttmPage++;
-			if (bossIsClose && absDistToBoss < 50 && _uint0a17 == 0 && 33 < _npcState[1].ttmPage && _npcState[1].ttmPage < 37) {
+			if (bossIsCloseY && absDistToBoss < 50 && _uint0a17 == 0 && 33 < _npcState[1].ttmPage && _npcState[1].ttmPage < 37) {
 				_npcState[0].byte12 = 10;
 				_bladeState1 = 10;
 				_npcState[0].ttmPage = 76;
