@@ -67,13 +67,13 @@ public:
 	int _hitChance;
 	int _rangeAttack;
 	MonsterType _monsterType;
-	int _fireResistence;
-	int _electricityResistence;
-	int _coldResistence;
-	int _poisonResistence;
-	int _energyResistence;
-	int _magicResistence;
-	int _phsyicalResistence;
+	int _fireResistance;
+	int _electricityResistance;
+	int _coldResistance;
+	int _poisonResistance;
+	int _energyResistance;
+	int _magicResistance;
+	int _phsyicalResistance;
 	int _field29;
 	int _gold;
 	int _gems;
@@ -90,9 +90,9 @@ public:
 		int speed, int numberOfAttacks, CharacterClass hatesClass, int strikes,
 		int dmgPerStrike, DamageType attackType, SpecialAttack specialAttack,
 		int hitChance, int rangeAttack, MonsterType monsterType,
-		int fireResistence, int electricityResistence, int coldResistence,
-		int poisonResistence, int energyResistence, int magicResistence,
-		int phsyicalResistence, int field29, int gold, int gems, int itemDrop,
+		int fireResistance, int electricityResistance, int coldResistance,
+		int poisonResistance, int energyResistance, int magicResistance,
+		int phsyicalResistance, int field29, int gold, int gems, int itemDrop,
 		bool flying, int imageNumber, int loopAnimation, int animationEffect,
 		int field32, Common::String attackVoc);
 
