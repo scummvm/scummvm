@@ -551,7 +551,7 @@ void Room604::parser() {
 			break;
 
 		default:
-			false;
+			break;
 		}
 	} else if (player_said("SPARK PLUG TOOL", "plug") &&
 			inv_player_has("SPARK PLUG TOOL")) {
