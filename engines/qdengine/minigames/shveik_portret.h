@@ -37,6 +37,11 @@ public:
 	bool init(const qdEngineInterface *engine_interface) {
 		debugC(1, kDebugMinigames, "ShveikPortret::init()");
 
+		_engine = engine_interface;
+		_scene = engine_interface->current_scene_interface();
+		if (!_scene)
+			return false;
+
 		_objArray[1].obj = _scene->object_interface("\xee\xe1\xfa\xe5\xea\xf2\x31"); // "объект1"
 		_objArray[1].x = -1;
 		_objArray[1].y = -1;
@@ -163,55 +168,6 @@ public:
 				processState();
 		}
 
-		_solutionState[1].pieceNum = 1;
-		_solutionState[1].angle = 0;
-		_solutionState[2].pieceNum = 2;
-		_solutionState[2].angle = 0;
-		_solutionState[3].pieceNum = 3;
-		_solutionState[3].angle = 0;
-		_solutionState[4].pieceNum = 4;
-		_solutionState[4].angle = 0;
-		_solutionState[5].pieceNum = 5;
-		_solutionState[5].angle = 0;
-		_solutionState[6].pieceNum = 6;
-		_solutionState[6].angle = 0;
-		_solutionState[8].pieceNum = 7;
-		_solutionState[8].angle = 0;
-		_solutionState[9].pieceNum = 8;
-		_solutionState[9].angle = 0;
-		_solutionState[10].pieceNum = 9;
-		_solutionState[10].angle = 0;
-		_solutionState[11].pieceNum = 10;
-		_solutionState[11].angle = 0;
-		_solutionState[12].pieceNum = 11;
-		_solutionState[12].angle = 0;
-		_solutionState[13].pieceNum = 12;
-		_solutionState[13].angle = 0;
-		_solutionState[15].pieceNum = 13;
-		_solutionState[15].angle = 0;
-		_solutionState[16].pieceNum = 14;
-		_solutionState[16].angle = 0;
-		_solutionState[17].pieceNum = 15;
-		_solutionState[17].angle = 0;
-		_solutionState[18].pieceNum = 16;
-		_solutionState[18].angle = 0;
-		_solutionState[19].pieceNum = 17;
-		_solutionState[19].angle = 0;
-		_solutionState[20].pieceNum = 18;
-		_solutionState[20].angle = 0;
-		_solutionState[22].pieceNum = 19;
-		_solutionState[22].angle = 0;
-		_solutionState[23].pieceNum = 20;
-		_solutionState[23].angle = 0;
-		_solutionState[24].pieceNum = 21;
-		_solutionState[24].angle = 0;
-		_solutionState[25].pieceNum = 22;
-		_solutionState[25].angle = 0;
-		_solutionState[26].pieceNum = 23;
-		_solutionState[26].angle = 0;
-		_solutionState[27].pieceNum = 24;
-		_solutionState[27].angle = 0;
-
 		_exitClickObj->set_state("\xed\xe5\xf2"); // "нет"
 		_draggedInvObjectState = 0;
 		_draggedObjectState = 0;
@@ -229,6 +185,24 @@ public:
 
 	bool quant(float dt) {
 		debugC(3, kDebugMinigames, "ShveikPortret::quant(%f)", dt);
+
+		if (_engine->is_key_pressed(VK_F1)) {
+			for (int j = 0; j < 7; j++) {
+				for (int i = 0; i < 6; i++) {
+					debugN("%02d ", _fieldState[j][i].pieceNum);
+				}
+
+				debugN("   ");
+
+				for (int i = 0; i < 6; i++) {
+					debugN("%3d ", _fieldState[j][i].angle);
+				}
+
+				debugN("\n");
+			}
+
+			debug("\n");
+		}
 
 		if (!_doneObj->is_state_active("\xe4\xe0")) { // "да"
 			if (checkSolution()) {
@@ -496,13 +470,19 @@ private:
 	}
 
 	bool checkSolution() {
-		for (int i = 1; i <= 6; i++) {
-			for (int j = 1; j <= 4; j++) {
-				if (_fieldState[i][j].pieceNum != _solutionState[i * 4 + j].pieceNum ||
-					_fieldState[i][j].angle != _solutionState[i * 4 + j].angle)
+		int n = 1;
+
+		// The original was comparing with the static array
+		for (int j = 1; j < 6; j++)
+			for (int i = 0; i < 6; i++) {
+				if ((j == 1 && i == 0) || (j == 5 && i > 0))
+					continue;
+
+				if (_fieldState[j][i].pieceNum != n || _fieldState[j][i].angle != 0)
 					return false;
+
+				n++;
 			}
-		}
 
 		return true;
 	}
@@ -559,8 +539,6 @@ private:
 	int _currentPieceCol = 0;
 
 	PieceState _fieldState[7][6];
-	PieceState _solutionState[28];
-
 };
 
 } // namespace QDEngine
