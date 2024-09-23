@@ -31,7 +31,10 @@ Basketball::Basketball(ScummEngine_v100he *vm) {
 	_shields = new CCollisionShieldVector();
 }
 
-Basketball::~Basketball() {}
+Basketball::~Basketball() {
+	delete _court;
+	delete _shields;
+}
 
 int Basketball::u32FloatToInt(float input) {
 	int output = 0;
