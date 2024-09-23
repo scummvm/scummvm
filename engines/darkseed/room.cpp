@@ -81,7 +81,7 @@ bool Darkseed::Room::load() {
 	Common::String filenameBase = getRoomFilenameBase(_roomNumber);
 	Common::Path romFilename;
 	Common::File file;
-	romFilename = g_engine->getRoomFilePath(Common::Path(Common::String::format("%s.rom", filenameBase.c_str(), _roomNumber)));
+	romFilename = g_engine->getRoomFilePath(Common::Path(Common::String::format("%s.rom", filenameBase.c_str())));
 	if (!file.open(romFilename)) {
 		return false;
 	}
@@ -449,7 +449,7 @@ bool Darkseed::Room::canWalkAtLocation(int x, int y) {
 
 	int t = (x - 69) / 5;
 
-	return (_walkableLocationsMap[t / 8].strip[(y - 40) / 5] >> (7 - (t % 8) & 0x1f) & 1);
+	return (_walkableLocationsMap[t / 8].strip[(y - 40) / 5] >> ((7 - (t % 8)) & 0x1f) & 1);
 }
 
 bool Darkseed::Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int destY) {
