@@ -81,10 +81,8 @@ Common::HashMap<uint16, Common::String> DgdsParser::readTags(Common::SeekableRea
 
 	for (uint16 i = 0; i < count; i++) {
 		uint16 idx = stream->readUint16LE();
-		Common::String string = stream->readString();
-		debug("        %2u: %2u, \"%s\"", i, idx, string.c_str());
-
-		tags[idx] = string;
+		tags[idx] = stream->readString();
+		debug("        %2u: %2u, \"%s\"", i, idx, tags[idx].c_str());
 	}
 
 	return tags;
@@ -139,9 +137,7 @@ bool ADSParser::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
 			if (idx > scriptData->_scriptNames.size())
 				scriptData->_scriptNames.resize(idx);
 
-
-			Common::String string = chunkStream->readString();
-			scriptData->_scriptNames[idx - 1] = string;
+			scriptData->_scriptNames[idx - 1] = chunkStream->readString();
 		}
 	} break;
 	case ID_SCR:
