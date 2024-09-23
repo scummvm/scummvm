@@ -162,6 +162,12 @@ void PopUpDialog::handleMouseUp(int x, int y, int button, int clickCount) {
 	int dist = (_clickX - absX) * (_clickX - absX) + (_clickY - absY) * (_clickY - absY);
 	if (dist > 3 * 3 || g_system->getMillis() - _openTime > 300) {
 		int item = findItem(x, y);
+
+		// treat separator item as if no item was clicked
+		if (item >= 0 && _entries[item].size() == 0) {
+			item = -1;
+		}
+
 		setResult(item);
 		close();
 	}
@@ -181,6 +187,7 @@ void PopUpDialog::handleMouseMoved(int x, int y, int button) {
 	// Compute over which item the mouse is...
 	int item = findItem(x, y);
 
+	// treat separator item as if no item was moused over
 	if (item >= 0 && _entries[item].size() == 0)
 		item = -1;
 
