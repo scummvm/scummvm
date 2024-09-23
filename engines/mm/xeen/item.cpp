@@ -590,7 +590,7 @@ Common::String ArmorItems::getAttributes(XeenItem &item, const Common::String &c
 	elemResist = attrBonus = acBonus = Res.FIELD_NONE;
 
 	if (item._material < 36) {
-		int resistence = Res.ELEMENTAL_RESISTANCES[item._material];
+		int resistance = Res.ELEMENTAL_RESISTANCES[item._material];
 		if (resistance > 0) {
 			int eCategory = ELEM_FIRE;
 			while (eCategory < ELEM_MAGIC && Res.ELEMENTAL_CATEGORIES[eCategory] < item._material)
