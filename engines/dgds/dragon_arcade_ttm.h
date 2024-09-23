@@ -69,7 +69,7 @@ private:
 	int16 _frame;
 };
 
-struct ArcadeNPCState;
+class ArcadeNPCState;
 
 /** A TTM interpreter which is simpler than the main one and
    specialized to the arcade sequences. */
