@@ -122,22 +122,22 @@ public:
 		_currentPieceRow = -1;
 		_currentPieceCol = -1;
 
-		if (_wasStartedObj->is_state_active("\xed\xe5\xf2")) { // "нет")
+		if (_wasStartedObj->is_state_active("\xed\xe5\xf2")) { // "нет"
 			// srand(time(0))
 
 			for (int i = 1; i <= 24; i++) {
 				switch (qd_rnd(3)) {
 				case 0:
-					_objArray[i].obj->set_state("\xeb\xe5\xe6\xe8\xf2\x20\xe7\xe0\x20\xef\xee\xeb\xe5\xec\x20\x30"); // "лежит за полем 0")
+					_objArray[i].obj->set_state("\xeb\xe5\xe6\xe8\xf2\x20\xe7\xe0\x20\xef\xee\xeb\xe5\xec 0"); // "лежит за полем 0")
 					break;
 				case 1:
-					_objArray[i].obj->set_state("\xeb\xe5\xe6\xe8\xf2\x20\xe7\xe0\x20\xef\xee\xeb\xe5\xec\x20\x39\x30"); // "лежит за полем 90")
+					_objArray[i].obj->set_state("\xeb\xe5\xe6\xe8\xf2\x20\xe7\xe0\x20\xef\xee\xeb\xe5\xec 90"); // "лежит за полем 90")
 					break;
 				case 2:
-					_objArray[i].obj->set_state("\xeb\xe5\xe6\xe8\xf2\x20\xe7\xe0\x20\xef\xee\xeb\xe5\xec\x20\x31\x38\x30"); // "лежит за полем 180")
+					_objArray[i].obj->set_state("\xeb\xe5\xe6\xe8\xf2\x20\xe7\xe0\x20\xef\xee\xeb\xe5\xec 180"); // "лежит за полем 180")
 					break;
 				case 3:
-					_objArray[i].obj->set_state("\xeb\xe5\xe6\xe8\xf2\x20\xe7\xe0\x20\xef\xee\xeb\xe5\xec\x20\x32\x37\x30"); // "лежит за полем 270")
+					_objArray[i].obj->set_state("\xeb\xe5\xe6\xe8\xf2\x20\xe7\xe0\x20\xef\xee\xeb\xe5\xec 270"); // "лежит за полем 270")
 					break;
 				default:
 					break;
@@ -212,14 +212,14 @@ public:
 		_solutionState[27].pieceNum = 24;
 		_solutionState[27].angle = 0;
 
-		_exitClickObj->set_state("\xed\xe5\xf2"); // "нет")
+		_exitClickObj->set_state("\xed\xe5\xf2"); // "нет"
 		_draggedInvObjectState = 0;
 		_draggedObjectState = 0;
 
 		setPiecesDepth();
 		setPiecesPos();
 
-		if (_oneAbsentObj->is_state_active("\xed\xe5\xf2")) { // "нет")
+		if (_oneAbsentObj->is_state_active("\xed\xe5\xf2")) { // "нет"
 			_objArray[2].obj->set_R(_scene->screen2world_coords(mgVect2i(700, 500), 0.0));
 			_oneAbsentObj->set_state("\xf4\xeb\xe0\xe3\x20\xee\xf2\xf0\xe0\xe1\xee\xf2\xe0\xed"); // "флаг отработан"
 		}
@@ -230,22 +230,22 @@ public:
 	bool quant(float dt) {
 		debugC(3, kDebugMinigames, "ShveikPortret::quant(%f)", dt);
 
-		if (!_doneObj->is_state_active("да")) {
+		if (!_doneObj->is_state_active("\xe4\xe0")) { // "да"
 			if (checkSolution()) {
-				_doneObj->set_state("да");
-				_completePicObj->set_state("лицевая сторона");
+				_doneObj->set_state("\xe4\xe0"); // "да"
+				_completePicObj->set_state("\xeb\xe8\xf6\xe5\xe2\xe0\xff\x20\xf1\xf2\xee\xf0\xee\xed\xe0"); // "лицевая сторона"
 
 				for (int i = 1; i <= 24; i++)
 					_objArray[i].obj->set_R(mgVect3f(-1000.0, -1000.0, -100.0));
 
-				_scene->activate_personage("Швейк");
+				_scene->activate_personage("\xd8\xe2\xe5\xe9\xea"); // "Швейк"
 
 				return true;
 			}
 		}
 
-		if (_exitClickObj->is_state_active("да"))
-			_exitClickObj->set_state("выход разрешен");
+		if (_exitClickObj->is_state_active("\xe4\xe0")) // "да"
+			_exitClickObj->set_state("\xe2\xfb\xf5\xee\xe4\x20\xf0\xe0\xe7\xf0\xe5\xf8\xe5\xed"); // "выход разрешен"
 
 		mgVect2i curPos = _engine->mouse_cursor_position();
 
@@ -263,14 +263,14 @@ public:
 		if (state > 24) {
 			obj = _objArray[state - 24].obj;
 
-			if (obj->is_state_active("inv на мыши 0")) {
-				obj->set_state("лежит за полем 0");
-			} else if (obj->is_state_active("inv на мыши 90")) {
-				obj->set_state("лежит за полем 90");
-			} else if (obj->is_state_active("inv на мыши 180")) {
-				obj->set_state("лежит за полем 180");
-			} else if (obj->is_state_active("inv на мыши 270")) {
-				obj->set_state("лежит за полем 270");
+			if (obj->is_state_active("inv \xed\xe0\x20\xec\xfb\xf8\xe8 0")) { // "inv на мыши 0"
+				obj->set_state("\xeb\xe5\xe6\xe8\xf2\x20\xe7\xe0\x20\xef\xee\xeb\xe5\xec 0"); // "лежит за полем 0"
+			} else if (obj->is_state_active("inv \xed\xe0\x20\xec\xfb\xf8\xe8 90")) { // "inv на мыши 90"
+				obj->set_state("\xeb\xe5\xe6\xe8\xf2\x20\xe7\xe0\x20\xef\xee\xeb\xe5\xec 90"); // "лежит за полем 90"
+			} else if (obj->is_state_active("inv \xed\xe0\x20\xec\xfb\xf8\xe8 180")) { // "inv на мыши 180"
+				obj->set_state("\xeb\xe5\xe6\xe8\xf2\x20\xe7\xe0\x20\xef\xee\xeb\xe5\xec 180"); // "лежит за полем 180"
+			} else if (obj->is_state_active("inv \xed\xe0\x20\xec\xfb\xf8\xe8 270")) { // "inv на мыши 270"
+				obj->set_state("\xeb\xe5\xe6\xe8\xf2\x20\xe7\xe0\x20\xef\xee\xeb\xe5\xec 270"); // "лежит за полем 270"
 			}
 
 			if (_engine->mouse_cursor_position().x > 205
@@ -294,8 +294,8 @@ public:
 
 			setPiecesPos();
 
-			_clickObj->set_state("нет");
-			_maskOutsideObj->set_state("!маска");
+			_clickObj->set_state("\xed\xe5\xf2"); // "нет"
+			_maskOutsideObj->set_state("\x21\xec\xe0\xf1\xea\xe0"); // "!маска"
 		} else if (state > 0) {
 			_currentPieceRow = getPieceNumber(curPos.x, 204, 4, 99);
 			_currentPieceCol = getPieceNumber(curPos.y, 4, 6, 99);
@@ -303,17 +303,17 @@ public:
 			obj = _objArray[state].obj;
 
 			if (_fieldState[_currentPieceRow][_currentPieceCol].pieceNum == -1) {
-				if (obj->is_state_active("inv на мыши 0")) {
-					obj->set_state("лежит на поле 0");
+				if (obj->is_state_active("inv \xed\xe0\x20\xec\xfb\xf8\xe8 0")) { // "inv на мыши 0"
+					obj->set_state("\xeb\xe5\xe6\xe8\xf2\x20\xed\xe0\x20\xef\xee\xeb\xe5 0"); // "лежит на поле 0"
 					_fieldState[_currentPieceRow][_currentPieceCol].angle = 0;
-				} else if (obj->is_state_active("inv на мыши 90")) {
-					obj->set_state("лежит на поле 90");
+				} else if (obj->is_state_active("inv \xed\xe0\x20\xec\xfb\xf8\xe8 90")) { // "inv на мыши 90"
+					obj->set_state("\xeb\xe5\xe6\xe8\xf2\x20\xed\xe0\x20\xef\xee\xeb\xe5 90"); // "лежит на поле 90"
 					_fieldState[_currentPieceRow][_currentPieceCol].angle = 90;
-				} else if (obj->is_state_active("inv на мыши 180")) {
-					obj->set_state("лежит на поле 180");
+				} else if (obj->is_state_active("inv \xed\xe0\x20\xec\xfb\xf8\xe8 180")) { // "inv на мыши 180"
+					obj->set_state("\xeb\xe5\xe6\xe8\xf2\x20\xed\xe0\x20\xef\xee\xeb\xe5 180"); // "лежит на поле 180"
 					_fieldState[_currentPieceRow][_currentPieceCol].angle = 180;
-				} else if (obj->is_state_active("inv на мыши 270")) {
-					obj->set_state("лежит на поле 270");
+				} else if (obj->is_state_active("inv \xed\xe0\x20\xec\xfb\xf8\xe8 270")) { // "inv на мыши 270"
+					obj->set_state("\xeb\xe5\xe6\xe8\xf2\x20\xed\xe0\x20\xef\xee\xeb\xe5 270"); // "лежит на поле 270"
 					_fieldState[_currentPieceRow][_currentPieceCol].angle = 270;
 				}
 
@@ -329,8 +329,8 @@ public:
 				_fieldState[_currentPieceRow][_currentPieceCol].pieceNum = state;
 			}
 
-			_clickObj->set_state("нет");
-			_maskOutsideObj->set_state("!маска");
+			_clickObj->set_state("\xed\xe5\xf2"); // "нет"
+			_maskOutsideObj->set_state("\x21\xec\xe0\xf1\xea\xe0"); // "!маска"
 		}
 
 		state = _objectClickObj->current_state_index();
@@ -338,10 +338,10 @@ public:
 		if (state > 0) {
 			obj = _objArray[state].obj;
 
-			if (obj->is_state_active("лежит на поле 0")
-					|| obj->is_state_active("лежит на поле 90")
-					|| obj->is_state_active("лежит на поле 180")
-					|| obj->is_state_active("лежит на поле 270")) {
+			if (obj->is_state_active("\xeb\xe5\xe6\xe8\xf2\x20\xed\xe0\x20\xef\xee\xeb\xe5 0") // "лежит на поле 0"
+					|| obj->is_state_active("\xeb\xe5\xe6\xe8\xf2\x20\xed\xe0\x20\xef\xee\xeb\xe5 90") // "лежит на поле 90"
+					|| obj->is_state_active("\xeb\xe5\xe6\xe8\xf2\x20\xed\xe0\x20\xef\xee\xeb\xe5 180") // "лежит на поле 180"
+					|| obj->is_state_active("\xeb\xe5\xe6\xe8\xf2\x20\xed\xe0\x20\xef\xee\xeb\xe5 270")) { // "лежит на поле 270"
 				_fieldState[_objArray[state].x][_objArray[state].y].pieceNum = -1;
 				_fieldState[_objArray[state].x][_objArray[state].y].angle = -1;
 
@@ -349,29 +349,29 @@ public:
 				_objArray[state].y = -1;
 			}
 
-			if (obj->is_state_active("лежит на поле 0")
-					|| obj->is_state_active("лежит за полем 0")) {
-				_draggedInvObjectState = obj->state_index("inv на мыши 0");
+			if (obj->is_state_active("\xeb\xe5\xe6\xe8\xf2\x20\xed\xe0\x20\xef\xee\xeb\xe5 0") // "лежит на поле 0"
+					|| obj->is_state_active("\xeb\xe5\xe6\xe8\xf2\x20\xe7\xe0\x20\xef\xee\xeb\xe5\xec\x20\x30")) { // "лежит за полем 0"
+				_draggedInvObjectState = obj->state_index("inv \xed\xe0\x20\xec\xfb\xf8\xe8 0"); // "inv на мыши 0"
 			}
-			if (obj->is_state_active("лежит на поле 90")
-					|| obj->is_state_active("лежит за полем 90")) {
-				_draggedInvObjectState = obj->state_index("inv на мыши 90");
+			if (obj->is_state_active("\xeb\xe5\xe6\xe8\xf2\x20\xed\xe0\x20\xef\xee\xeb\xe5 90") // "лежит на поле 90"
+					|| obj->is_state_active("\xeb\xe5\xe6\xe8\xf2\x20\xe7\xe0\x20\xef\xee\xeb\xe5\xec\x20\x39\x30")) { // "лежит за полем 90"
+				_draggedInvObjectState = obj->state_index("inv \xed\xe0\x20\xec\xfb\xf8\xe8 90"); // "inv на мыши 90"
 			}
-			if (obj->is_state_active("лежит на поле 180")
-					|| obj->is_state_active("лежит за полем 180")) {
-				_draggedInvObjectState = obj->state_index("inv на мыши 180");
+			if (obj->is_state_active("\xeb\xe5\xe6\xe8\xf2\x20\xed\xe0\x20\xef\xee\xeb\xe5 180") // "лежит на поле 180"
+					|| obj->is_state_active("\xeb\xe5\xe6\xe8\xf2\x20\xe7\xe0\x20\xef\xee\xeb\xe5\xec\x20\x31\x38\x30")) { // "лежит за полем 180"
+				_draggedInvObjectState = obj->state_index("inv \xed\xe0\x20\xec\xfb\xf8\xe8 180"); // "inv на мыши 180"
 			}
-			if (obj->is_state_active("лежит на поле 270")
-					|| obj->is_state_active("лежит за полем 270")) {
-				_draggedInvObjectState = obj->state_index("inv на мыши 270");
+			if (obj->is_state_active("\xeb\xe5\xe6\xe8\xf2\x20\xed\xe0\x20\xef\xee\xeb\xe5 270") // "лежит на поле 270"
+					|| obj->is_state_active("\xeb\xe5\xe6\xe8\xf2\x20\xe7\xe0\x20\xef\xee\xeb\xe5\xec\x20\x32\x37\x30")) { // "лежит за полем 270"
+				_draggedInvObjectState = obj->state_index("inv \xed\xe0\x20\xec\xfb\xf8\xe8 270"); // "inv на мыши 270"
 			}
 
 			_draggedObjectState = state;
 
 			obj->set_state("to_inv");
 
-			_objectClickObj->set_state("нет");
-			_maskOutsideObj->set_state("Фон - маска");
+			_objectClickObj->set_state("\xed\xe5\xf2"); // "нет"
+			_maskOutsideObj->set_state("\xd4\xee\xed\x20\x2d\x20\xec\xe0\xf1\xea\xe0"); // Фон - маска"
 		}
 
 		if (_engine->is_mouse_event_active(qdmg::qdEngineInterfaceImpl::MOUSE_EV_RIGHT_DOWN)
@@ -379,21 +379,21 @@ public:
 			obj =_scene->mouse_object_interface();
 
 			if (obj) {
-				if (obj->has_state("удалить")) {
-					if (obj->is_state_active("inv на мыши 0")) {
-						obj->set_state("inv на мыши 90");
+				if (obj->has_state("\xf3\xe4\xe0\xeb\xe8\xf2\xfc")) { // "удалить"
+					if (obj->is_state_active("inv \xed\xe0\x20\xec\xfb\xf8\xe8 0")) { // "inv на мыши 0"
+						obj->set_state("inv \xed\xe0\x20\xec\xfb\xf8\xe8 90"); // "inv на мыши 90"
 						return true;
 					}
-					if (obj->is_state_active("inv на мыши 90")) {
-						obj->set_state("inv на мыши 180");
+					if (obj->is_state_active("inv \xed\xe0\x20\xec\xfb\xf8\xe8 90")) { // "inv на мыши 90"
+						obj->set_state("inv \xed\xe0\x20\xec\xfb\xf8\xe8 180"); // "inv на мыши 180"
 						return true;
 					}
-					if (obj->is_state_active("inv на мыши 180")) {
-						obj->set_state("inv на мыши 270");
+					if (obj->is_state_active("inv \xed\xe0\x20\xec\xfb\xf8\xe8 180")) { // "inv на мыши 180"
+						obj->set_state("inv \xed\xe0\x20\xec\xfb\xf8\xe8 270"); // "inv на мыши 270"
 						return true;
 					}
-					if (obj->is_state_active("inv на мыши 270")) {
-						obj->set_state("inv на мыши 0");
+					if (obj->is_state_active("inv \xed\xe0\x20\xec\xfb\xf8\xe8 270")) { // "inv на мыши 270"
+						obj->set_state("inv \xed\xe0\x20\xec\xfb\xf8\xe8 0"); // "inv на мыши 0"
 						return true;
 					}
 				}
@@ -496,11 +496,33 @@ private:
 	}
 
 	bool checkSolution() {
-		return false;
+		for (int i = 1; i <= 6; i++) {
+			for (int j = 1; j <= 4; j++) {
+				if (_fieldState[i][j].pieceNum != _solutionState[i * 4 + j].pieceNum ||
+					_fieldState[i][j].angle != _solutionState[i * 4 + j].angle)
+					return false;
+			}
+		}
+
+		return true;
 	}
 
 	int getPieceNumber(int left, int right, int dimSize, int step) {
-		return 0;
+		if (dimSize < 1)
+			return dimSize;
+
+		int res = dimSize;
+		int curPos = step + 204;
+
+		for (int i = 1; i <= dimSize; i++) {
+			if (right <= left && curPos > left)
+				res = i;
+
+			right += step;
+			curPos += step;
+		}
+
+		return res;
 	}
 
 private:
