@@ -38,7 +38,8 @@ private:
 	int _ripLowReach1 = 0;
 	int _ripLowReach2 = 0;
 	int _ripMedReach1 = 0;
-	int ripStartsGenerator = 0;
+	int _ripMedReach2 = 0;
+	int _ripAction = 0;
 	machine *_ripley = nullptr;
 	machine *_sparkPlugTool = nullptr;
 	machine *_sparkPlugWire = nullptr;
@@ -52,9 +53,12 @@ private:
 	machine *_generatorCord = nullptr;
 	machine *_shadow = nullptr;
 
+	void daemon1();
 	bool useWhaleBoneHorn();
 	bool takePullCord();
 	bool takeSparkPlugTool();
+	bool takeLighter();
+	bool pullCordPlug();
 
 	/**
 	 * This Ripley is no more! It has ceased to be! It's expired
@@ -65,6 +69,8 @@ private:
 	 * and joined the choir invisible. This is an ex-Ripley!
 	 */
 	void killRipley();
+
+	void takeWire();
 
 public:
 	Room604() : Room() {}

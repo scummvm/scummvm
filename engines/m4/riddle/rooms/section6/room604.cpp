@@ -172,6 +172,47 @@ void Room604::init() {
 }
 
 void Room604::daemon() {
+	daemon1();
+
+	switch (_G(kernel).trigger) {
+	case 10:
+		ws_unhide_walker();
+		ws_walk(374, 330, nullptr, 11, 10);
+		break;
+
+	case 11:
+		player_set_commands_allowed(true);
+		break;
+
+	case 12:
+		player_set_commands_allowed(true);
+		digi_play("603_s03", 2);
+		break;
+
+	case 50:
+		ws_walk(238, 339, nullptr, 52, 3);
+		break;
+
+	case 52:
+		terminateMachineAndNull(_shedDoor);
+		_shedDoor = series_play("SHED DOOR OPENS", 0xf00, 18, 12, 11);
+		break;
+
+	case 666:
+		if (_val3) {
+			if (++_val4 < 15) {
+				kernel_timing_trigger(60, 666);
+			} else {
+				Common::strcpy_s(_G(player).verb, "kill rip");
+				_G(kernel).trigger_mode = KT_PARSE;
+				kernel_timing_trigger(1, 667);
+			}
+		}
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Room604::pre_parser() {
@@ -293,7 +334,7 @@ void Room604::parser() {
 				if (_G(flags)[V203] == 8)
 					digi_preload("genshut");
 
-				ripStartsGenerator = series_load("RIP STARTS GENERATOR");
+				_ripAction = series_load("RIP STARTS GENERATOR");
 				series_play("RIP STARTS GENERATOR", 0x100, 0, 17, 5, 0, 100, 0, 0, 0, 17);
 				_shadow = series_play("SAFARI SHADOW 1", 0x200, 0, -1, 600, -1, 100,
 					_G(player_info).x, _G(player_info).y, 0, 0);
@@ -301,9 +342,9 @@ void Room604::parser() {
 
 			case 2:
 				ws_unhide_walker();
-				series_unload(ripStartsGenerator);
+				series_unload(_ripAction);
 				terminateMachineAndNull(_shadow);
-				series_unload(ripStartsGenerator);
+				series_unload(_ripAction);
 
 				if (_G(flags)[V203] == 8) {
 					kernel_timing_trigger(180, 3);
@@ -361,12 +402,374 @@ void Room604::parser() {
 			}
 		}
 	} else if (takeFlag && player_said("gas tank cap")) {
-		// TODO
-	} else if (lookFlag) {
-		// TODO
-	}
-	// TODO
-	else {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			digi_preload("604_s02");
+			_ripAction = series_load("RIP TAKES OFF GAS CAP");
+			player_update_info();
+			_ripley = series_play("RIP TAKES OFF GAS CAP", 0x100, 0, 2, 6, 0, 100, 0, 0, 0, 13);
+			_shadow = series_play("SAFARI SHADOW 1", _G(player_info).depth + 1,
+				0, -1, 600, -1, _G(player_info).scale, _G(player_info).x, _G(player_info).y, 1, 1);
+			break;
+		case 2:
+			_ripley = series_play("RIP TAKES OFF GAS CAP", 0x100, 0, 3, 6, 0, 100, 0, 0, 14, 36);
+			digi_play("604_s02", 2);
+			break;
+		case 3:
+			ws_unhide_walker();
+			series_unload(_ripAction);
+			digi_stop(2);
+			digi_unload("604_s02");
+			terminateMachineAndNull(_shadow);
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if ((takeFlag || useFlag) && player_said("power cable")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			digi_preload("wirepull");
+			_ripAction = series_load("RIP PULLS WIRE");
+			player_update_info();
+			_ripley = series_play("RIP PULLS WIRE", 0xf00, 0, 1, 6, 0, 100, 0, 0, 0, 12);
+			_shadow = series_play("SAFARI SHADOW 1", 0xf00, 0, -1, 600, -1,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y, 1, 1);
+			break;
+		case 1:
+			_ripley = series_play("RIP PULLS WIRE", 0xf00, 0, 3, 6, 0, 100, 0, 0, 13, 24);
+
+			if (_G(flags)[V203] == 8) {
+				digi_stop(3);
+				_val5 = 1;
+			}
+
+			digi_play("wirepull", 2, 255, 2);
+			break;
+		case 2:
+			digi_unload("wirepull");
+			break;
+		case 3:
+			ws_unhide_walker();
+			series_unload(_ripAction);
+			terminateMachineAndNull(_shadow);
+
+			if (_G(flags)[V203] == 8) {
+				kernel_timing_trigger(30, 5);
+			} else {
+				player_set_commands_allowed(true);
+			}
+			break;
+		case 5:
+			_ripley = series_play("BAD GUYS LOOK TO WIRE", 0, 0, 6, 6);
+			break;
+		case 6:
+			kernel_timing_trigger(30, 7);
+			break;
+		case 7:
+			digi_play("604k01", 1);
+			_val2 = 1;
+			_val3 = 1;
+			_val4 = 0;
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_timing_trigger(60, 666);
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (takeFlag && player_said("wire")) {
+		takeWire();
+	} else if (player_said("LIGHTER", " ") ||
+			player_said("LIT LIGHTER", " ")) {
+		if (_G(flags)[V203] == 8) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				ws_walk(331, 323, nullptr, 1, 10);
+				break;
+			case 1:
+				player_set_commands_allowed(false);
+				setGlobals1(_ripLowReach2, 1, 16, 16, 16);
+				sendWSMessage_110000(2);
+
+				if (player_said("LIGHTER"))
+					kernel_timing_trigger(40, 3);
+				break;
+			}
+		} else {
+			digi_play("com118", 1, 255, -1, 997);
+		}
+	} else if (takeFlag && player_said("LIGHTER") && takeLighter()) {
+		// No implementation
+	} else if (player_said("pull cord", "plug") && pullCordPlug()) {
+		// No implementation
+	} else if (player_said("plug", "pull cord  ")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			if (_G(flags)[V190])
+				ws_walk(289, 312, nullptr, 1, 11);
+			else
+				digi_play("604r12", 1);
+			break;
+
+		case 1:
+			player_set_commands_allowed(false);
+			setGlobals1(_ripLowReach1, 1, 15, 16, 16, 0, 17, 24, 24, 24, 0, 16, 1, 1, 1);
+			sendWSMessage_110000(2);
+			break;
+
+		case 2:
+			sendWSMessage_120000(4);
+			terminateMachineAndNull(_cord);
+			series_play("604TWANG", 0x300, 0, 3, 5);
+			break;
+
+		case 3:
+			_tiedWires = series_show("604 wires tied together", 0xd00, 16);
+			break;
+
+		case 4:
+			_G(flags)[V189] = 3;
+			hotspot_set_active("  ", true);
+			hotspot_set_active("pull cord   ", true);
+			hotspot_set_active("pull cord  ", false);
+			hotspot_set_active("plug", false);
+			hotspot_set_active("WIRE", false);
+			hotspot_set_active("WIRE ", true);
+			sendWSMessage_130000(5);
+			break;
+
+		case 5:
+			sendWSMessage_150000(-1);
+			kernel_load_variant("604lock1");
+			digi_play("604r48", 1);
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			false;
+		}
+	} else if (player_said("SPARK PLUG TOOL", "plug") &&
+			inv_player_has("SPARK PLUG TOOL")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			if (_G(flags)[V190])
+				digi_play("604r32a", 1);
+			else
+				kernel_timing_trigger(1, 1);
+			break;
+		case 1:
+			player_set_commands_allowed(false);
+			setGlobals1(_ripLowReach1, 1, 24, 24, 24, 0, 16, 1, 1, 1);
+			sendWSMessage_110000(2);
+			break;
+		case 2:
+			_G(flags)[V190] = 1;
+			sendWSMessage_120000(5);
+			digi_play("604r32", 1);
+			break;
+		case 5:
+			sendWSMessage_150000(-1);
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("pull cord ", "wire") && inv_object_is_here("pull cord")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			player_update_info();
+			ws_hide_walker();
+			terminateMachineAndNull(_pullCord2);
+			series_load("door wire be gone");
+
+			_shedDoor = series_show("door wire be gone", 0xe00, 16);
+			_ripAction = series_load("RIP TIES CORD AND WIRE TOGETHER");
+			_ripley = series_play("RIP TIES CORD AND WIRE TOGETHER", 0x100, 0, 2, 6);
+			_shadow = series_play("SAFARI SHADOW 3", 0x200, 128, -1, 600, -1,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y, 0, 0);
+			break;
+		case 2:
+			ws_unhide_walker();
+			series_unload(_ripAction);
+			terminateMachineAndNull(_shadow);
+			series_load("604 wires tied together");
+			_tiedWires = series_show("604 wires tied together", 0xd00, 16);
+			_G(flags)[V189] = 3;
+			hotspot_set_active("  ", true);
+			hotspot_set_active("PULL CORD ", false);
+			hotspot_set_active("PULL CORD   ", true);
+			hotspot_set_active("WIRE", false);
+			hotspot_set_active("WIRE ", true);
+			kernel_load_variant("604lock1");
+			digi_play("604r48", 1);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("pull cord", "wire") && inv_player_has("pull cord")) {
+		if (_G(flags)[V203] == 8) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				player_update_info();
+				ws_hide_walker();
+				series_load("door wire be gone");
+				_shedDoor = series_show("door wire be gone", 0xe00, 16);
+				_ripAction = series_load("RIP TIES CORDS 2");
+				_ripley = series_play("RIP TIES CORDS 2", 0x100, 0, 2);
+				_shadow = series_play("SAFARI SHADOW 3", 0x200, 128, -1, 600, -1);
+				break;
+			case 2:
+				ws_unhide_walker();
+				series_unload(_ripAction);
+				terminateMachineAndNull(_shadow);
+				series_load("604cord2");
+				_cord = series_show("604cord2", 0xc00, 16);
+				_G(flags)[V189] = 2;
+
+				inv_move_object("PULL CORD", 604);
+				hotspot_set_active("pull cord  ", true);
+				player_set_commands_allowed(true);
+				break;
+			default:
+				break;
+			}
+		} else {
+			digi_play("com017", 1, 255, -1, 997);
+		}
+	} else if (player_said("exit")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			_ripley = series_play("RIP CRAWLS THROUGH WINDOW", 0x100, 0, 1);
+			break;
+		case 1:
+			if (_G(flags)[V189] == 3 && inv_object_is_here("LIGHTER") && _val2) {
+				interface_hide();
+				disable_player_commands_and_fade_init(3);
+				_G(flags)[V191] = 1;
+			} else {
+				disable_player_commands_and_fade_init(2);
+			}
+			break;
+		case 2:
+			_G(game).setRoom(610);
+			break;
+		case 3:
+			if (_val2 == 2)
+				_G(flags)[V042] = 1;
+			_G(game).setRoom(603);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("left")) {
+		if (_G(flags)[V203] == 4) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				_ripMedReach2 = series_load("rip trek med reach pos3");
+				setGlobals1(_ripMedReach2, 1, 10, 10, 10);
+				sendWSMessage_110000(-1);
+				disable_player_commands_and_fade_init(1);
+				break;
+			case 1:
+				adv_kill_digi_between_rooms(false);
+
+				if (_G(flags)[GLB_TEMP_5]) {
+					digi_play_loop("genrun", 3);
+				} else {
+					digi_preload("950_s28");
+					digi_play_loop("950_s28", 3);
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	} else if (lookFlag && player_said("LIGHTER") &&
+			inv_object_is_here("LIGHTER")) {
+		digi_play("604r44", 1);
+	} else if (lookFlag && player_said_any("wire", "wire ")) {
+		if (_G(flags)[V203] != 8)
+			digi_play("604r01", 1);
+		else if (_G(flags)[V189] == 2 || _G(flags)[V189] == 3)
+			digi_play("604r38", 1);
+		else
+			digi_play("604r25", 1);
+	} else if (lookFlag && player_said("generator set")) {
+		digi_play(_G(flags)[V203] == 8 ? "604r26" : "604r02", 1);
+	} else if (lookFlag && player_said("gas tank")) {
+		if (_G(flags)[V189] == 1 || _G(flags)[V189] == 3)
+			digi_play("604r36", 1);
+		else
+			digi_play("604r03", 1);
+	} else if (lookFlag && player_said("gas tank cap")) {
+		digi_play("604r04", 1);
+	} else if (lookFlag && player_said("plug")) {
+		digi_play("604r05", 1);
+	} else if (lookFlag && player_said("spark plug tool") &&
+			inv_object_is_here("SPARK PLUG TOOL")) {
+		if (_G(kernel).trigger == 1) {
+			digi_play("604r27a", 1);
+			_G(flags)[V188] = 1;
+			player_set_commands_allowed(true);
+		} else if (_G(flags)[V188]) {
+			digi_play("604r27", 1);
+		} else {
+			digi_play("604r27", 1);
+			player_set_commands_allowed(false);
+		}
+	} else if (lookFlag && player_said("pull cord") &&
+			inv_object_is_here("PULL CORD")) {
+		digi_play("604r06", 1);
+	} else if (lookFlag && player_said("pull cord ")) {
+		digi_play("604r36", 1);
+	} else if (lookFlag && player_said("pull cord  ")) {
+		digi_play("604r38", 1);
+	} else if (lookFlag && player_said("pull cord   ")) {
+		digi_play("604r39", 1);
+	} else if (lookFlag && player_said("power cable")) {
+		digi_play("604r07", 1);
+	} else if (lookFlag && player_said("door")) {
+		digi_play("604r28", 1);
+	} else if (lookFlag && player_said("door ")) {
+		digi_play("604r09", 1);
+	} else if (useFlag && player_said("window")) {
+		digi_play(_G(flags)[V203] == 8 ? "604r30" : "604r47", 1);
+	} else if (lookFlag && player_said_any("window", "window ")) {
+		digi_play(_G(flags)[V203] == 8 ? "604r29" : "604r10", 1);
+	} else if (takeFlag && player_said("generator set")) {
+		digi_play(_G(flags)[V203] == 8 ? "604r31" : "604r11", 1);
+	} else if (takeFlag && player_said("generator set") &&
+			_G(flags)[V203] == 8) {
+		digi_play("604r31", 1);
+	} else if ((takeFlag || useFlag) && player_said("plug")) {
+		digi_play(_G(flags)[V190] ? "604r32a" : "604r12", 1);
+	} else if (useFlag && player_said_any("wire", "wire ")) {
+		digi_play("604r15", 1);
+	} else if (useFlag && player_said_any("window", "window ")) {
+		digi_play(_G(flags)[V190] ? "604r30" : "604r46", 1);
+	} else if (lookFlag && player_said(" ")) {
+		if (_G(flags)[V203] != 8)
+			digi_play("604r08", 1);
+		else if (_G(flags)[V189] == 3 && inv_object_is_here("LIGHTER"))
+			digi_play("604r41", 1);
+		else if (_G(flags)[V189] == 1 || _G(flags)[V189] == 2 ||
+			inv_object_is_here("LIGHTER"))
+			digi_play("604r41a", 1);
+		else if (_G(flags)[V189] == 3)
+			digi_play("604r41a", 1);
+		else
+			digi_play("604r24", 1);
+	} else {
 		return;
 	}
 
@@ -627,6 +1030,150 @@ bool Room604::takeSparkPlugTool() {
 	}
 
 	return false;
+}
+
+void Room604::takeWire() {
+	if (_G(flags)[V189] == 0 || _G(flags)[V189] == 1) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			player_update_info();
+			ws_hide_walker();
+			_ripAction = series_load("RIP PULLS DOOR WIRE");
+			_doorWireGone = series_show("door wire be gone", 0xe00, 16);
+			_ripley = series_play("RIP PULLS DOOR WIRE", 0x100, 0, 2);
+			_shadow = series_play("SAFARI SHADOW 3", 0x200, 128, -1, 600, -1,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y, 0, 0);
+			break;
+
+		case 2:
+			ws_unhide_walker();
+			series_unload(_ripAction);
+			terminateMachineAndNull(_shadow);
+			terminateMachineAndNull(_doorWireGone);
+			player_set_commands_allowed(true);
+			digi_play("604r14", 1);
+			break;
+
+		default:
+			break;
+		}
+	} else {
+		digi_play("604r14", 1);
+	}
+}
+
+bool Room604::takeLighter() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (!inv_object_is_here("LIGHTER"))
+			return false;
+
+		ws_walk(331, 323, nullptr, 1, 10);
+		break;
+
+	case 1:
+		player_set_commands_allowed(false);
+		setGlobals1(_ripLowReach2, 1, 16, 16, 16);
+		sendWSMessage_110000(2);
+		break;
+
+	case 2:
+		terminateMachineAndNull(_flame);
+		hotspot_set_active("LIGHTER", false);
+		inv_give_to_player("LIGHTER");
+		sendWSMessage_140000(5);
+		break;
+
+	case 5:
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		return false;
+	}
+
+	return true;
+}
+
+bool Room604::pullCordPlug() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (_G(flags)[V190]) {
+			if (!inv_player_has("PULL CORD"))
+				return false;
+			ws_walk(289, 312, nullptr, 1, 11);
+		} else {
+			digi_play("604r12", 1);
+		}
+		break;
+
+	case 1:
+		player_set_commands_allowed(false);
+		setGlobals1(_ripLowReach1, 1, 24, 24, 24, 0, 16, 1, 1, 1);
+		sendWSMessage_110000(2);
+		break;
+
+	case 2:
+		series_load("one frame pull cord");
+		_pullCord2 = series_show("ONE FRAME PULL CORD", 0xd00, 16);
+		_G(flags)[V189] = 1;
+		inv_move_object("PULL CORD", 604);
+		hotspot_set_active("pull cord ", true);
+		hotspot_set_active("plug", false);
+		sendWSMessage_120000(5);
+		break;
+
+	case 5:
+		sendWSMessage_150000(-1);
+		break;
+
+	default:
+		return false;
+	}
+
+	return true;
+}
+
+void Room604::daemon1() {
+	if (_val5)
+		return;
+
+	static const char *DIGI[3] = { "610_s03a", "610_s03b", "610_s03" };
+
+	switch (_G(kernel).trigger) {
+	case 126:
+		digi_play(DIGI[imath_ranged_rand(0, 2)], 3, 130);
+		kernel_timing_trigger(300, 135);
+		break;
+
+	case 135:
+		if (++_val1 >= 8)
+			_val1 = 1;
+
+		digi_play(Common::String::format("610k%.2d", _val1 + 6).c_str(), 3, 130, 136);
+		break;
+
+	case 136:
+		kernel_timing_trigger(300, 135);
+		break;
+
+	case 137:
+		kernel_timing_trigger(60, 138);
+		break;
+
+	case 138:
+		if (imath_ranged_rand(1, 2) == 1)
+			digi_play("610_s02", 3, 130);
+		else
+			digi_play("610_s02a", 3, 130);
+
+		kernel_timing_trigger(20, 126);
+		break;
+
+	default:
+		break;
+	}
 }
 
 } // namespace Rooms
