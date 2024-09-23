@@ -330,19 +330,19 @@ ERevDirection Basketball::getBestPath(const U32Circle &playerMarker, int playerI
 	if (leftPath && rightPath) {
 		*distance = MIN(leftDistance, rightDistance);
 		if (*distance == leftDistance) {
-			*wayPointQueue = leftWayPointQueue;
+			*wayPointQueue = Common::move(leftWayPointQueue);
 			return kCounterClockwise;
 		} else {
-			*wayPointQueue = rightWayPointQueue;
+			*wayPointQueue = Common::move(rightWayPointQueue);
 			return kClockwise;
 		}
 	} else if (leftPath && !rightPath) {
 		*distance = leftDistance;
-		*wayPointQueue = leftWayPointQueue;
+		*wayPointQueue = Common::move(leftWayPointQueue);
 		return kCounterClockwise;
 	} else if (!leftPath && rightPath) {
 		*distance = rightDistance;
-		*wayPointQueue = rightWayPointQueue;
+		*wayPointQueue = Common::move(rightWayPointQueue);
 		return kClockwise;
 	} else {
 		*distance = 0;

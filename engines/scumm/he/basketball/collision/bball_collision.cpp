@@ -100,7 +100,7 @@ int LogicHEBasketball::u32_userInitCourt(int courtID) {
 
 		Common::String tmp2(tmp);
 
-		_vm->_basketball->_court->_objectList[i]._description = tmp2;
+		_vm->_basketball->_court->_objectList[i]._description = Common::move(tmp2);
 
 		free(tmp);
 
