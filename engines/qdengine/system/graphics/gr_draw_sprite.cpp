@@ -388,6 +388,8 @@ void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle) {
 	const int F_PREC = 16;
 
+	debugC(4, kDebugGraphics, "grDispatcher::putSprMask_rot([%d, %d], [%d, %d], alpha: %d, mask: %d, mask_alpha: %d, mode: %d, angle: %f)", pos.x, pos.y, size.x, size.y, has_alpha, mask_color, mask_alpha, mode, angle);
+
 	int xc = pos.x + size.x / 2;
 	int yc = pos.y + size.y / 2;
 
@@ -492,6 +494,8 @@ void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 
 void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle, const Vect2f &scale) {
 	const int F_PREC = 16;
+
+	debugC(4, kDebugGraphics, "grDispatcher::putSprMask_rot([%d, %d], [%d, %d], alpha: %d, mask: %d, mask_alpha: %d, mode: %d, angle: %f, scale: [%f, %f])", pos.x, pos.y, size.x, size.y, has_alpha, mask_color, mask_alpha, mode, angle, scale.x, scale.y);
 
 	int xc = pos.x + round(float(size.x) * scale.x / 2.f);
 	int yc = pos.y + round(float(size.y) * scale.y / 2.f);
@@ -663,6 +667,8 @@ void grDispatcher::putSpr(int x, int y, int sx, int sy, const byte *p, int mode,
 }
 
 void grDispatcher::drawSprContour_a(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode) {
+	debugC(4, kDebugGraphics, "grDispatcher::drawSprContour_a([%d, %d], [%d, %d], contour: %d, mode: %d)", x, y, sx, sy, contour_color, mode);
+
 	int px = 0;
 	int py = 0;
 
@@ -730,6 +736,8 @@ void grDispatcher::drawSprContour_a(int x, int y, int sx, int sy, const byte *p,
 }
 
 void grDispatcher::drawSprContour(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode) {
+	debugC(4, kDebugGraphics, "grDispatcher::drawSprContour([%d, %d], [%d, %d], contour: %d, mode: %d)", x, y, sx, sy, contour_color, mode);
+
 	int px = 0;
 	int py = 0;
 
@@ -797,6 +805,8 @@ void grDispatcher::drawSprContour(int x, int y, int sx, int sy, const byte *p, i
 }
 
 void grDispatcher::drawSprContour(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode, float scale) {
+	debugC(4, kDebugGraphics, "grDispatcher::drawSprContour([%d, %d], [%d, %d], contour: %d, mode: %d, scale: %f)", x, y, sx, sy, contour_color, mode, scale);
+
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
 
@@ -878,6 +888,8 @@ void grDispatcher::drawSprContour(int x, int y, int sx, int sy, const byte *p, i
 }
 
 void grDispatcher::drawSprContour_a(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode, float scale) {
+	debugC(4, kDebugGraphics, "grDispatcher::drawSprContour_a([%d, %d], [%d, %d], contour: %d, mode: %d, scale: %f)", x, y, sx, sy, contour_color, mode, scale);
+
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
 
@@ -999,6 +1011,8 @@ void grDispatcher::putChar(int x, int y, uint32 color, int font_sx, int font_sy,
 }
 
 void grDispatcher::putSprMask(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode) {
+	debugC(4, kDebugGraphics, "grDispatcher::putSprMask([%d, %d], [%d, %d], mask: %d, alpha: %d, mode: %d)", x, y, sx, sy, mask_color, mask_alpha, mode);
+
 	int px = 0;
 	int py = 0;
 
@@ -1053,6 +1067,8 @@ void grDispatcher::putSprMask(int x, int y, int sx, int sy, const byte *p, uint3
 }
 
 void grDispatcher::putSprMask(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode, float scale) {
+	debugC(4, kDebugGraphics, "grDispatcher::putSprMask([%d, %d], [%d, %d], mask: %d, alpha: %d, mode: %d, scale: %f)", x, y, sx, sy, mask_color, mask_alpha, mode, scale);
+
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
 
@@ -1113,6 +1129,8 @@ void grDispatcher::putSprMask(int x, int y, int sx, int sy, const byte *p, uint3
 }
 
 void grDispatcher::putSprMask_a(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode) {
+	debugC(4, kDebugGraphics, "grDispatcher::putSprMask_a([%d, %d], [%d, %d], mask: %d, alpha: %d, mode: %d)", x, y, sx, sy, mask_color, mask_alpha, mode);
+
 	int px = 0;
 	int py = 0;
 
@@ -1170,6 +1188,8 @@ void grDispatcher::putSprMask_a(int x, int y, int sx, int sy, const byte *p, uin
 }
 
 void grDispatcher::putSprMask_a(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode, float scale) {
+	debugC(4, kDebugGraphics, "grDispatcher::putSprMask_a([%d, %d], [%d, %d], mask: %d, alpha: %d, mode: %d, scale: %f)", x, y, sx, sy, mask_color, mask_alpha, mode, scale);
+
 	int i, j, sx_dest, sy_dest;
 
 	sx_dest = round(float(sx) * scale);
