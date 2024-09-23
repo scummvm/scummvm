@@ -90,24 +90,24 @@ void InfoDialog::protectionText() {
 		_lines.push_back(Common::String::format(Res.LIGHT_COUNT_TEXT, party._lightCount));
 	}
 
-	if (party._fireResistence) {
-		_lines.push_back(Common::String::format(Res.FIRE_RESISTENCE_TEXT,
-			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._fireResistence));
+	if (party._fireResistance) {
+		_lines.push_back(Common::String::format(Res.FIRE_RESISTANCE_TEXT,
+			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._fireResistance));
 	}
 
-	if (party._electricityResistence) {
-		_lines.push_back(Common::String::format(Res.ELECRICITY_RESISTENCE_TEXT,
-			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._electricityResistence));
+	if (party._electricityResistance) {
+		_lines.push_back(Common::String::format(Res.ELECRICITY_RESISTANCE_TEXT,
+			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._electricityResistance));
 	}
 
-	if (party._coldResistence) {
-		_lines.push_back(Common::String::format(Res.COLD_RESISTENCE_TEXT,
-			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._coldResistence));
+	if (party._coldResistance) {
+		_lines.push_back(Common::String::format(Res.COLD_RESISTANCE_TEXT,
+			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._coldResistance));
 	}
 
-	if (party._poisonResistence) {
-		_lines.push_back(Common::String::format(Res.POISON_RESISTENCE_TEXT,
-			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._poisonResistence));
+	if (party._poisonResistance) {
+		_lines.push_back(Common::String::format(Res.POISON_RESISTANCE_TEXT,
+			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._poisonResistance));
 	}
 
 	if (party._clairvoyanceActive) {
