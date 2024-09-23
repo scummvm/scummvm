@@ -606,12 +606,12 @@ bool CreateCharacterDialog::saveCharacter(Character &c, int classId, Race race, 
 	c._accuracy._permanent = _attribs[ACCURACY];
 	c._luck._permanent = _attribs[LUCK];
 
-	c._magicResistence._permanent = Res.RACE_MAGIC_RESISTENCES[race];
-	c._fireResistence._permanent = Res.RACE_FIRE_RESISTENCES[race];
-	c._electricityResistence._permanent = Res.RACE_ELECTRIC_RESISTENCES[race];
-	c._coldResistence._permanent = Res.RACE_COLD_RESISTENCES[race];
-	c._energyResistence._permanent = Res.RACE_ENERGY_RESISTENCES[race];
-	c._poisonResistence._permanent = Res.RACE_POISON_RESISTENCES[race];
+	c._magicResistance._permanent = Res.RACE_MAGIC_RESISTANCES[race];
+	c._fireResistance._permanent = Res.RACE_FIRE_RESISTANCES[race];
+	c._electricityResistance._permanent = Res.RACE_ELECTRIC_RESISTANCES[race];
+	c._coldResistance._permanent = Res.RACE_COLD_RESISTANCES[race];
+	c._energyResistance._permanent = Res.RACE_ENERGY_RESISTANCES[race];
+	c._poisonResistance._permanent = Res.RACE_POISON_RESISTANCES[race];
 
 	c._birthYear = party._year - 18;
 	c._birthDay = party._day;
