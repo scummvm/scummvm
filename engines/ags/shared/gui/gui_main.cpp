@@ -37,6 +37,8 @@
 #include "ags/shared/util/string_compat.h"
 #include "ags/globals.h"
 
+#include "common/config-manager.h"
+
 namespace AGS3 {
 
 extern void wouttext_outline(Shared::Bitmap *ds, int xxp, int yyp, int usingfont, color_t text_color, const char *texx);
@@ -188,7 +190,7 @@ void GUIMain::NotifyControlState(int objid, bool mark_changed) {
 	// Update cursor-over-control state, if necessary
 	const int overctrl = MouseOverCtrl;
 	if (!_polling &&
-		(objid >= 0) && (objid == overctrl) &&
+		(objid >= 0) && (objid == overctrl) && ((size_t)objid < _controls.size()) &&
 		(!_controls[overctrl]->IsClickable() ||
 		 !_controls[overctrl]->IsVisible() ||
 		 !_controls[overctrl]->IsEnabled())) {
@@ -203,7 +205,7 @@ void GUIMain::ClearChanged() {
 }
 
 void GUIMain::ResetOverControl() {
-	if (MouseOverCtrl >= 0)
+	if ((MouseOverCtrl >= 0) && ((size_t)MouseOverCtrl < _controls.size()))
 		_controls[MouseOverCtrl]->OnMouseLeave();
 	// Force it to re-check for which control is under the mouse
 	MouseWasAt.X = -1;
@@ -411,7 +413,10 @@ void GUIMain::ResortZOrder() {
 void GUIMain::SetClickable(bool on) {
 	if (on != ((_flags & kGUIMain_Clickable) != 0)) {
 		_flags = (_flags & ~kGUIMain_Clickable) | kGUIMain_Clickable * on;
-		ResetOverControl(); // clear the cursor-over-control
+
+		//  WORKAROUND: Don't reset the GUI in Kathy Rain
+		if (ConfMan.get("gameid") != "kathyrain")
+			ResetOverControl(); // clear the cursor-over-control
 	}
 }
 
