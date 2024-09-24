@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-08-27 03:43+0000\n"
+"PO-Revision-Date: 2024-09-24 17:39+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.4\n"
+"X-Generator: Weblate 5.7.2\n"
 "X-Poedit-Language: Portuguese\n"
 "X-Poedit-Country: BRAZIL\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
@@ -8075,16 +8075,12 @@ msgid "Enable Gore Mode when available"
 msgstr "Habilita Modo Sangrento quando disponível"
 
 #: engines/hopkins/metaengine.cpp:231
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Open inventory"
-msgstr "Abrir/Fechar Inventário"
+msgstr "Abrir inventário"
 
 #: engines/hopkins/metaengine.cpp:250
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Option dialog"
-msgstr "Pular diálogo"
+msgstr "Caixa de opções"
 
 #: engines/hpl1/metaengine.cpp:76
 msgid "Forward"
@@ -10438,9 +10434,6 @@ msgid "Enable online competitive mods"
 msgstr "Habilitar mods competitivos online"
 
 #: engines/scumm/dialogs.cpp:1713
-#, fuzzy
-#| msgid ""
-#| "Enables custom-made modifications intented for online competitive play."
 msgid "Enables custom-made modifications intended for online competitive play."
 msgstr ""
 "Permite modificações personalizadas destinadas a jogo online competitivo."
@@ -11057,19 +11050,14 @@ msgstr ""
 "na introdução."
 
 #: engines/scumm/metaengine.cpp:726
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
-#| "for a more complete experience."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
 "\" for a more complete experience."
 msgstr ""
 "Permite que o jogo use a interface gráfica da engine e o menu salvar/"
-"carregar originais. Utilize em conjunto com \"Solicitar confirmação ao sair"
-"\" para uma experiência mais completa."
+"carregar originais. \t\tUtilize em conjunto com \"Solicitar confirmação ao "
+"sair\" para uma experiência mais completa."
 
 #: engines/scumm/metaengine.cpp:735
 msgid "Enable low latency audio mode"
@@ -11518,106 +11506,84 @@ msgstr ""
 "Quando a suavização de borda de fonte está ativada, o texto fica mais suave."
 
 #: engines/stark/metaengine.cpp:184
-#, fuzzy
-#| msgid "Default keymappings"
 msgid "Default keymapppings"
 msgstr "Mapeamento padrão de teclas"
 
 #. I18N: Opens in-game Diary
 #: engines/stark/metaengine.cpp:202
-#, fuzzy
-#| msgid "Game menu"
 msgid "Diary menu"
-msgstr "Menu do jogo"
+msgstr "Menu do diário"
 
 #. I18N: Opens in-game conversation log
 #: engines/stark/metaengine.cpp:219
-#, fuzzy
-#| msgid "Conversation position - Up"
 msgid "Conversation log"
-msgstr "Posição da conversa - Cima"
+msgstr "Registro de conversas"
 
 #. I18N: Opens in-game Diary
 #: engines/stark/metaengine.cpp:225
 msgid "April's diary (initially disabled)"
-msgstr ""
+msgstr "Diário de abril (inicialmente desativado)"
 
 #: engines/stark/metaengine.cpp:230
-#, fuzzy
-#| msgid "Fast replay"
 msgid "Video replay"
-msgstr "Repetição rápida"
+msgstr "Repetir vídeo"
 
 #: engines/stark/metaengine.cpp:235
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game settings"
-msgstr "Opções de Jogo"
+msgstr "Configurações de jogo"
 
 #: engines/stark/metaengine.cpp:245 engines/wintermute/keymapper_tables.h:1345
 msgid "Toggle subtitles"
 msgstr "Ativar/desativar legendas"
 
 #: engines/stark/metaengine.cpp:250
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit to menu"
-msgstr "Sair do Jogo"
+msgstr "Sair para o menu"
 
 #: engines/stark/metaengine.cpp:255
 msgid "Cycle back through inventory cursor items"
-msgstr ""
+msgstr "Voltar para os itens anteriores no inventário usando o cursor"
 
 #: engines/stark/metaengine.cpp:261
 msgid "Cycle forward through inventory cursor items"
-msgstr ""
+msgstr "Avançar para os itens posteriores no inventário usando o cursor"
 
 #. I18N: A popup on screen shows shows the exits
 #: engines/stark/metaengine.cpp:274
 msgid "Display all exits on current location"
-msgstr ""
+msgstr "Exibir todas as saídas no local atual"
 
 #: engines/stark/metaengine.cpp:292
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Scroll up in inventory"
-msgstr "Abrir/Fechar Inventário"
+msgstr "Rolar inventário para cima"
 
 #: engines/stark/metaengine.cpp:299
-#, fuzzy
-#| msgid "Show inventory"
 msgid "Scroll down in inventory"
-msgstr "Exibir inventário"
+msgstr "Rolar inventário para baixo"
 
 #: engines/stark/metaengine.cpp:306
 msgid "Scroll up in your dialogues"
-msgstr ""
+msgstr "Rolar lista de diálogos para cima"
 
 #: engines/stark/metaengine.cpp:312
 msgid "Scroll down in your dialogues"
-msgstr ""
+msgstr "Rolar lista de diálogos para baixo"
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "Highlight next dialogue"
 msgid "go to next dialogue"
-msgstr "Destacar próximo diálogo"
+msgstr "ir para o próximo diálogo"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "Go to previous index"
 msgid "go to previous dialogues"
-msgstr "Ir para o índice anterior"
+msgstr "ir para o diálogo anterior"
 
 #: engines/stark/metaengine.cpp:328
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Select dialogue"
-msgstr "Pular diálogo"
+msgstr "Selecionar diálogo"
 
 #: engines/stark/metaengine.cpp:335
 msgid "Skip video sequence or dialogue"
-msgstr ""
+msgstr "Omitir sequência de vídeo ou diálogo"
 
 #: engines/stark/stark.cpp:106
 msgid "Software renderer does not support modded assets"
@@ -11823,40 +11789,28 @@ msgstr ""
 "4:3."
 
 #: engines/tinsel/metaengine.cpp:241
-#, fuzzy
-#| msgid "Yes/No keymappings"
 msgid "Save/Load keymappings"
-msgstr "Atalhos para Sim/Não"
+msgstr "Atalhos para Salvar/Carregar"
 
 #: engines/tinsel/metaengine.cpp:306
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Options Dialog"
-msgstr "Pular diálogo"
+msgstr "Diálogo de Opções"
 
 #: engines/tinsel/metaengine.cpp:340
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Page Up in save/load menu"
-msgstr "Ir para menu de salvar/carregar"
+msgstr "Subir no menu de salvar/carregar"
 
 #: engines/tinsel/metaengine.cpp:346
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Page down in save/load menu"
-msgstr "Ir para menu de salvar/carregar"
+msgstr "Descer no menu de salvar/carregar"
 
 #: engines/tinsel/metaengine.cpp:352
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Go to start of save/load menu"
-msgstr "Ir para menu de salvar/carregar"
+msgstr "Ir para o início do menu de salvar/carregar"
 
 #: engines/tinsel/metaengine.cpp:358
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Go to end of save/load menu"
-msgstr "Ir para menu de salvar/carregar"
+msgstr "Ir para o fim do menu de salvar/carregar"
 
 #: engines/tony/tony.cpp:248
 #, c-format
@@ -12483,11 +12437,11 @@ msgstr "Pré-carrega sons. Pode melhorar o desempenho em discos rígidos lentos.
 
 #: engines/vcruise/metaengine.cpp:108
 msgid "Faster video decoder (lower quality)"
-msgstr ""
+msgstr "Decodificador de vídeo mais rápido (qualidade inferior)"
 
 #: engines/vcruise/metaengine.cpp:109
 msgid "Reduce video decoding CPU usage at the cost of quality."
-msgstr ""
+msgstr "Reduz o uso da CPU na decodificação de vídeo, sacrificando a qualidade."
 
 #: engines/vcruise/metaengine.cpp:157
 msgid "Display help screen"
