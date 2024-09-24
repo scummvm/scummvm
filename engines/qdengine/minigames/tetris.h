@@ -35,8 +35,8 @@ public:
 		_flyingObjs = _hiddenObjs = nullptr;
 	}
 	~qdTetrisMiniGame() {
-		delete _flyingObjs;
-		delete _hiddenObjs;
+		free(_flyingObjs);
+		free(_hiddenObjs);
 	}
 
 	bool init(const qdEngineInterface *engine_interface) {
