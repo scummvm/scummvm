@@ -691,7 +691,7 @@ RuntimeScriptValue Sc_sc_GetTime(const RuntimeScriptValue *params, int32_t param
 
 // char * (const char *text)
 RuntimeScriptValue Sc_get_translation(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ_POBJ(const char, _GP(myScriptStringImpl), get_translation, const char);
+	API_SCALL_OBJ_POBJ(const char, _GP(myScriptStringImpl), get_translation, const char);
 }
 
 // int  (char* buffer)

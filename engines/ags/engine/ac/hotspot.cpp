@@ -187,7 +187,7 @@ RuntimeScriptValue Sc_Hotspot_GetPropertyText(void *self, const RuntimeScriptVal
 
 // const char* (ScriptHotspot *hss, const char *property)
 RuntimeScriptValue Sc_Hotspot_GetTextProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ_POBJ(ScriptHotspot, const char, _GP(myScriptStringImpl), Hotspot_GetTextProperty, const char);
+	API_OBJCALL_OBJ_POBJ(ScriptHotspot, const char, _GP(myScriptStringImpl), Hotspot_GetTextProperty, const char);
 }
 
 RuntimeScriptValue Sc_Hotspot_SetProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -228,7 +228,7 @@ RuntimeScriptValue Sc_Hotspot_GetScriptName(void *self, const RuntimeScriptValue
 
 // const char* (ScriptHotspot *hss)
 RuntimeScriptValue Sc_Hotspot_GetName_New(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ(ScriptHotspot, const char, _GP(myScriptStringImpl), Hotspot_GetName_New);
+	API_OBJCALL_OBJ(ScriptHotspot, const char, _GP(myScriptStringImpl), Hotspot_GetName_New);
 }
 
 RuntimeScriptValue Sc_Hotspot_SetName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
