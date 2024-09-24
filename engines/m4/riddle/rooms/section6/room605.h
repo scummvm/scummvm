@@ -29,12 +29,35 @@ namespace Riddle {
 namespace Rooms {
 
 class Room605 : public Room {
+private:
+	int _trigger1 = 0;
+	bool _walkerHidden = false;
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+	int _val5 = 0;
+	int _val6 = 0;
+	int _val7 = 0;
+	int _ripHandsHips = 0;
+	int _ripHandOnChin = 0;
+	int _ripTwoHandTalk = 0;
+	int _ripTalk = 0;
+	int _605tt = 0;
+	machine *_pupil = nullptr;
+	machine *_ripley = nullptr;
+	machine *_tt = nullptr;
+	machine *_ttShadow = nullptr;
+	machine *_machine1 = nullptr;
+
 public:
 	Room605() : Room() {}
 	~Room605() override {}
 
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms

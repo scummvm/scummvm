@@ -20,6 +20,7 @@
  */
 
 #include "m4/riddle/rooms/section6/room603.h"
+#include "m4/riddle/rooms/section6/section6.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
 
@@ -30,24 +31,12 @@ namespace Rooms {
 static const int16 NORMAL_DIRS1[] = { 200, -1 };
 static const char *NORMAL_NAMES1[] = { "shen guo walker 3" };
 static const int16 SHADOW_DIRS1[] = { 210, -1 };
-static const char *SHADOW_NAMES1[] = { "shen guo shadow 3" };
+static const char *SECTION6_SHADOW_NAMES1[] = { "shen guo shadow 3" };
 
 static const int16 NORMAL_DIRS2[] = { 220, -1 };
 static const char *NORMAL_NAMES2[] = { "kuang walker 2" };
 static const int16 SHADOW_DIRS2[] = { 230, -1 };
-static const char *SHADOW_NAMES2[] = { "kuangs shadow 2" };
-
-static const int16 NORMAL_DIRS3[] = { 200, 201, 202, 203, -1 };
-static const char *NORMAL_NAMES3[] = {
-	"tt walker 1", "tt walker 2", "tt walker 3",
-	"tt walker 4", "tt walker 5"
-};
-static const int16 SHADOW_DIRS3[] = { 210, 211, 212, 213, -1 };
-static const char *SHADOW_NAMES3[] = {
-	"tt walker shadow 1", "tt walker shadow 2",
-	"tt walker shadow 3", "tt walker shadow 4",
-	"tt walker shadow 5"
-};
+static const char *SECTION6_SHADOW_NAMES2[] = { "kuangs shadow 2" };
 
 
 static const char *SAID[][2] = {
@@ -100,14 +89,14 @@ void Room603::init() {
 		_shed = series_show("653 FIRST FRAME SHED", 0xf00, 16);
 
 		ws_walk_load_walker_series(NORMAL_DIRS1, NORMAL_NAMES1);
-		ws_walk_load_shadow_series(SHADOW_DIRS1, SHADOW_NAMES1);
+		ws_walk_load_shadow_series(SHADOW_DIRS1, SECTION6_SHADOW_NAMES1);
 
 		_shenWalker = triggerMachineByHash_3000(8, 12, NORMAL_DIRS1, SHADOW_DIRS1, 525, 238, 3,
 			triggerMachineByHashCallback3000, "shen suit gun walker");
 		sendWSMessage_10000(_shenWalker, 535, 235, 3, 10, 1);
 
 		ws_walk_load_walker_series(NORMAL_DIRS2, NORMAL_NAMES2);
-		ws_walk_load_shadow_series(SHADOW_DIRS2, SHADOW_NAMES2);
+		ws_walk_load_shadow_series(SHADOW_DIRS2, SECTION6_SHADOW_NAMES2);
 
 		_kuangWalker = triggerMachineByHash_3000(8, 13, NORMAL_DIRS2, SHADOW_DIRS2, 554, 245, 2,
 			triggerMachineByHashCallback3000, "kuang suit walker");
@@ -879,8 +868,8 @@ void Room603::daemon() {
 				break;
 
 			case 16:
-				ws_walk_load_walker_series(NORMAL_DIRS3, NORMAL_NAMES3);
-				ws_walk_load_shadow_series(SHADOW_DIRS3, SHADOW_NAMES3);
+				ws_walk_load_walker_series(SECTION6_NORMAL_DIRS, SECTION6_NORMAL_NAMES);
+				ws_walk_load_shadow_series(SECTION6_SHADOW_DIRS, SECTION6_SHADOW_NAMES);
 				sendWSMessage_10000(1, _tt, _tt03, 122, 112, 402, _tt03, 112, 112, 0);
 				break;
 
@@ -900,8 +889,8 @@ void Room603::daemon() {
 				break;
 
 			case 20:
-				ws_walk_load_walker_series(NORMAL_DIRS3, NORMAL_NAMES3);
-				ws_walk_load_shadow_series(SHADOW_DIRS3, SHADOW_NAMES3);
+				ws_walk_load_walker_series(SECTION6_NORMAL_DIRS, SECTION6_NORMAL_NAMES);
+				ws_walk_load_shadow_series(SECTION6_SHADOW_DIRS, SECTION6_SHADOW_NAMES);
 				sendWSMessage_10000(1, _tt, _tt03, 122, 112, 410, _tt03, 112, 112, 0);
 				break;
 
@@ -970,7 +959,7 @@ void Room603::daemon() {
 		_trigger1 = 0;
 		terminateMachineAndNull(_ttShadow);
 
-		_tt = triggerMachineByHash_3000(8, 9, NORMAL_DIRS3, SHADOW_DIRS3,
+		_tt = triggerMachineByHash_3000(8, 9, SECTION6_NORMAL_DIRS, SECTION6_SHADOW_DIRS,
 			291, 293, 4, triggerMachineByHashCallback3000, "tt walker");
 		sendWSMessage_10000(_tt, 357, 283, 1, 405, 0);
 		conv_resume();
@@ -992,7 +981,7 @@ void Room603::daemon() {
 	case 410:
 		terminateMachineAndNull(_tt);
 		terminateMachineAndNull(_ttShadow);
-		_tt = triggerMachineByHash_3000(8, 9, NORMAL_DIRS3, SHADOW_DIRS3,
+		_tt = triggerMachineByHash_3000(8, 9, SECTION6_NORMAL_DIRS, SECTION6_SHADOW_DIRS,
 			291, 293, 4, triggerMachineByHashCallback3000, "tt walker");
 		sendWSMessage_10000(_tt, 397, 286, 2, 415, 0);
 		kernel_timing_trigger(200, 411);
@@ -1105,14 +1094,14 @@ void Room603::daemon() {
 				break;
 
 			case 20:
-				ws_walk_load_walker_series(NORMAL_DIRS3, NORMAL_NAMES3);
-				ws_walk_load_shadow_series(SHADOW_DIRS3, SHADOW_NAMES3);
+				ws_walk_load_walker_series(SECTION6_NORMAL_DIRS, SECTION6_NORMAL_NAMES);
+				ws_walk_load_shadow_series(SECTION6_SHADOW_DIRS, SECTION6_SHADOW_NAMES);
 				sendWSMessage_10000(1, _tt, _tt03, 83, 111, 510, _tt03, 111, 111, 0);
 				break;
 
 			case 21:
-				ws_walk_load_walker_series(NORMAL_DIRS3, NORMAL_NAMES3);
-				ws_walk_load_shadow_series(SHADOW_DIRS3, SHADOW_NAMES3);
+				ws_walk_load_walker_series(SECTION6_NORMAL_DIRS, SECTION6_NORMAL_NAMES);
+				ws_walk_load_shadow_series(SECTION6_SHADOW_DIRS, SECTION6_SHADOW_NAMES);
 				sendWSMessage_10000(1, _tt, _tt03, 83, 112, 530, _tt03, 112, 112, 1);
 				break;
 
@@ -1187,7 +1176,7 @@ void Room603::daemon() {
 	case 510:
 		terminateMachineAndNull(_tt);
 		_trigger1 = 0;
-		_tt = triggerMachineByHash_3000(8, 9, NORMAL_DIRS3, SHADOW_DIRS3,
+		_tt = triggerMachineByHash_3000(8, 9, SECTION6_NORMAL_DIRS, SECTION6_SHADOW_DIRS,
 			291, 293, 4, triggerMachineByHashCallback3000, "tt walker");
 		sendWSMessage_10000(_tt, 357, 283, 3, 0x200, 0);
 		kernel_timing_trigger(100, 511);
@@ -1213,7 +1202,7 @@ void Room603::daemon() {
 	case 530:
 		terminateMachineAndNull(_tt);
 		_trigger1 = 0;
-		_tt = triggerMachineByHash_3000(8, 9, NORMAL_DIRS3, SHADOW_DIRS3,
+		_tt = triggerMachineByHash_3000(8, 9, SECTION6_NORMAL_DIRS, SECTION6_SHADOW_DIRS,
 			291, 293, 4, triggerMachineByHashCallback3000, "tt walker");
 		sendWSMessage_10000(_tt, 397, 286, 2, 533, 0);
 		kernel_timing_trigger(70, 531);
