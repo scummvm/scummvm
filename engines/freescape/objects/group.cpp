@@ -99,7 +99,7 @@ void Group::assemble(int index) {
 	else if (index == 1)
 		offset = _offset1;
 	else if (index == 2)
-		offset = _offset2;
+		offset = _offset1 + _offset2;
 	else
 		error("Invalid index: %d", index);
 
