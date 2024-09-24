@@ -253,7 +253,7 @@ void ReadViews(GameSetupStruct &game, std::vector<ViewStruct> &views, Stream *in
 	} else // 2.x views
 	{
 		std::vector<ViewStruct272> oldv(game.numviews);
-		for (size_t i = 0; i < game.numviews; ++i) {
+		for (int i = 0; i < game.numviews; ++i) {
 			oldv[i].ReadFromFile(in);
 		}
 		Convert272ViewsToNew(oldv, views);
@@ -756,7 +756,7 @@ HError GameDataExtReader::ReadBlock(int /*block_id*/, const String &ext_id,
 			snprintf(chinfo.name, LEGACY_MAX_CHAR_NAME_LEN, "%s", chinfo2.name_new.GetCStr());
 		}
 		size_t num_invitems = _in->ReadInt32();
-		if (num_invitems != _ents.Game.numinvitems)
+		if (num_invitems != (size_t)_ents.Game.numinvitems)
 			return new Error(String::FromFormat("Mismatching number of inventory items: read %zu expected %zu", num_invitems, (size_t)_ents.Game.numinvitems));
 		for (int i = 0; i < _ents.Game.numinvitems; ++i) {
 			_ents.Game.invinfo[i].name = StrUtil::ReadString(_in);
