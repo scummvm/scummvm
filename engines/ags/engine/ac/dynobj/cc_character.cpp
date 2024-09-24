@@ -80,7 +80,7 @@ int16_t CCCharacter::ReadInt16(void *address, intptr_t offset) {
 
 	// Handle inventory fields
 	const int invoffset = 112;
-	if (offset >= invoffset && offset < (invoffset + MAX_INV * sizeof(short))) {
+	if (offset >= invoffset && offset < (uint)(invoffset + MAX_INV * sizeof(short))) {
 		return ci->inv[(offset - invoffset) / sizeof(short)];
 	}
 
@@ -156,7 +156,7 @@ void CCCharacter::WriteInt16(void *address, intptr_t offset, int16_t val) {
 	// and actual inventory to diverge since 2.70. Force an update of the displayed
 	// inventory for older games that rely on this behaviour.
 	const int invoffset = 112;
-	if (offset >= invoffset && offset < (invoffset + MAX_INV * sizeof(short))) {
+	if (offset >= invoffset && offset < (uint)(invoffset + MAX_INV * sizeof(short))) {
 		ci->inv[(offset - invoffset) / sizeof(short)] = val;
 		update_invorder();
 		return;
