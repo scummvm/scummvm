@@ -765,7 +765,7 @@ RuntimeScriptValue Sc_Object_GetPropertyText(void *self, const RuntimeScriptValu
 
 //const char* (ScriptObject *objj, const char *property)
 RuntimeScriptValue Sc_Object_GetTextProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ_POBJ(ScriptObject, const char, _GP(myScriptStringImpl), Object_GetTextProperty, const char);
+	API_OBJCALL_OBJ_POBJ(ScriptObject, const char, _GP(myScriptStringImpl), Object_GetTextProperty, const char);
 }
 
 RuntimeScriptValue Sc_Object_SetProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -983,7 +983,7 @@ RuntimeScriptValue Sc_Object_GetMoving(void *self, const RuntimeScriptValue *par
 
 // const char* (ScriptObject *objj)
 RuntimeScriptValue Sc_Object_GetName_New(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ(ScriptObject, const char, _GP(myScriptStringImpl), Object_GetName_New);
+	API_OBJCALL_OBJ(ScriptObject, const char, _GP(myScriptStringImpl), Object_GetName_New);
 }
 
 RuntimeScriptValue Sc_Object_SetName(void *self, const RuntimeScriptValue *params, int32_t param_count) {

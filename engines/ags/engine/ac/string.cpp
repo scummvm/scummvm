@@ -345,12 +345,12 @@ RuntimeScriptValue Sc_String_IsNullOrEmpty(const RuntimeScriptValue *params, int
 
 // const char* (const char *thisString, const char *extrabit)
 RuntimeScriptValue Sc_String_Append(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ_POBJ(const char, const char, _GP(myScriptStringImpl), String_Append, const char);
+	API_OBJCALL_OBJ_POBJ(const char, const char, _GP(myScriptStringImpl), String_Append, const char);
 }
 
 // const char* (const char *thisString, char extraOne)
 RuntimeScriptValue Sc_String_AppendChar(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ_PINT(const char, const char, _GP(myScriptStringImpl), String_AppendChar);
+	API_OBJCALL_OBJ_PINT(const char, const char, _GP(myScriptStringImpl), String_AppendChar);
 }
 
 // int (const char *thisString, const char *otherString, bool caseSensitive)
@@ -365,7 +365,7 @@ RuntimeScriptValue Sc_StrContains(void *self, const RuntimeScriptValue *params, 
 
 // const char* (const char *srcString)
 RuntimeScriptValue Sc_String_Copy(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ(const char, const char, _GP(myScriptStringImpl), String_Copy);
+	API_OBJCALL_OBJ(const char, const char, _GP(myScriptStringImpl), String_Copy);
 }
 
 // int (const char *thisString, const char *checkForString, bool caseSensitive)
@@ -381,17 +381,17 @@ RuntimeScriptValue Sc_String_Format(const RuntimeScriptValue *params, int32_t pa
 
 // const char* (const char *thisString)
 RuntimeScriptValue Sc_String_LowerCase(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ(const char, const char, _GP(myScriptStringImpl), String_LowerCase);
+	API_OBJCALL_OBJ(const char, const char, _GP(myScriptStringImpl), String_LowerCase);
 }
 
 // const char* (const char *thisString, const char *lookForText, const char *replaceWithText, bool caseSensitive)
 RuntimeScriptValue Sc_String_Replace(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ_POBJ2_PBOOL(const char, const char, _GP(myScriptStringImpl), String_Replace, const char, const char);
+	API_OBJCALL_OBJ_POBJ2_PBOOL(const char, const char, _GP(myScriptStringImpl), String_Replace, const char, const char);
 }
 
 // const char* (const char *thisString, int index, char newChar)
 RuntimeScriptValue Sc_String_ReplaceCharAt(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ_PINT2(const char, const char, _GP(myScriptStringImpl), String_ReplaceCharAt);
+	API_OBJCALL_OBJ_PINT2(const char, const char, _GP(myScriptStringImpl), String_ReplaceCharAt);
 }
 
 // int (const char *thisString, const char *checkForString, bool caseSensitive)
@@ -401,17 +401,17 @@ RuntimeScriptValue Sc_String_StartsWith(void *self, const RuntimeScriptValue *pa
 
 // const char* (const char *thisString, int index, int length)
 RuntimeScriptValue Sc_String_Substring(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ_PINT2(const char, const char, _GP(myScriptStringImpl), String_Substring);
+	API_OBJCALL_OBJ_PINT2(const char, const char, _GP(myScriptStringImpl), String_Substring);
 }
 
 // const char* (const char *thisString, int length)
 RuntimeScriptValue Sc_String_Truncate(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ_PINT(const char, const char, _GP(myScriptStringImpl), String_Truncate);
+	API_OBJCALL_OBJ_PINT(const char, const char, _GP(myScriptStringImpl), String_Truncate);
 }
 
 // const char* (const char *thisString)
 RuntimeScriptValue Sc_String_UpperCase(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ(const char, const char, _GP(myScriptStringImpl), String_UpperCase);
+	API_OBJCALL_OBJ(const char, const char, _GP(myScriptStringImpl), String_UpperCase);
 }
 
 // FLOAT_RETURN_TYPE (const char *theString);

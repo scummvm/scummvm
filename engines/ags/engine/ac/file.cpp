@@ -669,7 +669,7 @@ RuntimeScriptValue Sc_File_ReadRawLine(void *self, const RuntimeScriptValue *par
 
 // const char* (sc_File *fil)
 RuntimeScriptValue Sc_File_ReadRawLineBack(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ(sc_File, const char, _GP(myScriptStringImpl), File_ReadRawLineBack);
+	API_OBJCALL_OBJ(sc_File, const char, _GP(myScriptStringImpl), File_ReadRawLineBack);
 }
 
 // void (sc_File *fil, char *toread)
@@ -679,7 +679,7 @@ RuntimeScriptValue Sc_File_ReadString(void *self, const RuntimeScriptValue *para
 
 // const char* (sc_File *fil)
 RuntimeScriptValue Sc_File_ReadStringBack(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ(sc_File, const char, _GP(myScriptStringImpl), File_ReadStringBack);
+	API_OBJCALL_OBJ(sc_File, const char, _GP(myScriptStringImpl), File_ReadStringBack);
 }
 
 // void (sc_File *fil, int towrite)
