@@ -1520,7 +1520,7 @@ RuntimeScriptValue Sc_Game_GetFrameCountForLoop(const RuntimeScriptValue *params
 
 // const char* (int x, int y)
 RuntimeScriptValue Sc_Game_GetLocationName(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ_PINT2(const char, _GP(myScriptStringImpl), Game_GetLocationName);
+	API_SCALL_OBJ_PINT2(const char, _GP(myScriptStringImpl), Game_GetLocationName);
 }
 
 // int (int viewNumber)
@@ -1540,7 +1540,7 @@ RuntimeScriptValue Sc_Game_GetRunNextSettingForLoop(const RuntimeScriptValue *pa
 
 // const char* (int slnum)
 RuntimeScriptValue Sc_Game_GetSaveSlotDescription(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ_PINT(const char, _GP(myScriptStringImpl), Game_GetSaveSlotDescription);
+	API_SCALL_OBJ_PINT(const char, _GP(myScriptStringImpl), Game_GetSaveSlotDescription);
 }
 
 // ScriptViewFrame* (int viewNumber, int loopNumber, int frame)
@@ -1550,7 +1550,7 @@ RuntimeScriptValue Sc_Game_GetViewFrame(const RuntimeScriptValue *params, int32_
 
 // const char* (const char *msg)
 RuntimeScriptValue Sc_Game_InputBox(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ_POBJ(const char, _GP(myScriptStringImpl), Game_InputBox, const char);
+	API_SCALL_OBJ_POBJ(const char, _GP(myScriptStringImpl), Game_InputBox, const char);
 }
 
 // int (const char *newFolder)
@@ -1575,7 +1575,7 @@ RuntimeScriptValue Sc_Game_GetDialogCount(const RuntimeScriptValue *params, int3
 
 // const char *()
 RuntimeScriptValue Sc_Game_GetFileName(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ(const char, _GP(myScriptStringImpl), Game_GetFileName);
+	API_SCALL_OBJ(const char, _GP(myScriptStringImpl), Game_GetFileName);
 }
 
 // int ()
@@ -1585,12 +1585,12 @@ RuntimeScriptValue Sc_Game_GetFontCount(const RuntimeScriptValue *params, int32_
 
 // const char* (int index)
 RuntimeScriptValue Sc_Game_GetGlobalMessages(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ_PINT(const char, _GP(myScriptStringImpl), Game_GetGlobalMessages);
+	API_SCALL_OBJ_PINT(const char, _GP(myScriptStringImpl), Game_GetGlobalMessages);
 }
 
 // const char* (int index)
 RuntimeScriptValue Sc_Game_GetGlobalStrings(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ_PINT(const char, _GP(myScriptStringImpl), Game_GetGlobalStrings);
+	API_SCALL_OBJ_PINT(const char, _GP(myScriptStringImpl), Game_GetGlobalStrings);
 }
 
 // void  (int index, char *newval);
@@ -1640,7 +1640,7 @@ RuntimeScriptValue Sc_Game_GetMouseCursorCount(const RuntimeScriptValue *params,
 
 // const char *()
 RuntimeScriptValue Sc_Game_GetName(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ(const char, _GP(myScriptStringImpl), Game_GetName);
+	API_SCALL_OBJ(const char, _GP(myScriptStringImpl), Game_GetName);
 }
 
 // void (const char *newName)
@@ -1695,11 +1695,11 @@ RuntimeScriptValue Sc_Game_SetTextReadingSpeed(const RuntimeScriptValue *params,
 
 // const char* ()
 RuntimeScriptValue Sc_Game_GetTranslationFilename(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ(const char, _GP(myScriptStringImpl), Game_GetTranslationFilename);
+	API_SCALL_OBJ(const char, _GP(myScriptStringImpl), Game_GetTranslationFilename);
 }
 
 RuntimeScriptValue Sc_Game_GetSpeechVoxFilename(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ(const char, _GP(myScriptStringImpl), Game_GetSpeechVoxFilename);
+	API_SCALL_OBJ(const char, _GP(myScriptStringImpl), Game_GetSpeechVoxFilename);
 }
 
 // int ()
