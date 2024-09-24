@@ -382,6 +382,17 @@ byte AdlEngine_v4::restoreRoomState(byte room) {
 		return 0;
 	}
 
+	// WORKAROUND: Fix for bug #15379: "ADL: HIRES5: Game unsolvable after
+	// loading savegame. Save state not properly restored?".
+	// There's a problem in the original engine when a picture is set for a
+	// room that hasn't been visited yet. If the user then saves before
+	// visiting that room, the picture change will be ignored when play is
+	// resumed from that savegame.
+	if (backup.picture != 1) {
+		warning("Detected picture change for unvisited room %d in region %d", room, _state.region);
+		getRoom(room).curPicture = getRoom(room).picture = backup.picture;
+	}
+
 	return 1;
 }
 
