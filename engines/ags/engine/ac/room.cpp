@@ -1074,7 +1074,7 @@ RuntimeScriptValue Sc_Room_GetProperty(const RuntimeScriptValue *params, int32_t
 
 // const char* (const char *property)
 RuntimeScriptValue Sc_Room_GetTextProperty(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ_POBJ(const char, _GP(myScriptStringImpl), Room_GetTextProperty, const char);
+	API_SCALL_OBJ_POBJ(const char, _GP(myScriptStringImpl), Room_GetTextProperty, const char);
 }
 
 RuntimeScriptValue Sc_Room_SetProperty(const RuntimeScriptValue *params, int32_t param_count) {
@@ -1108,7 +1108,7 @@ RuntimeScriptValue Sc_Room_GetLeftEdge(const RuntimeScriptValue *params, int32_t
 
 // const char* (int index)
 RuntimeScriptValue Sc_Room_GetMessages(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ_PINT(const char, _GP(myScriptStringImpl), Room_GetMessages);
+	API_SCALL_OBJ_PINT(const char, _GP(myScriptStringImpl), Room_GetMessages);
 }
 
 // int ()

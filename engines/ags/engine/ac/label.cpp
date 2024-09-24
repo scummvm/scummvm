@@ -133,7 +133,7 @@ RuntimeScriptValue Sc_Label_SetFont(void *self, const RuntimeScriptValue *params
 
 // const char* (GUILabel *labl)
 RuntimeScriptValue Sc_Label_GetText_New(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ(GUILabel, const char, _GP(myScriptStringImpl), Label_GetText_New);
+	API_OBJCALL_OBJ(GUILabel, const char, _GP(myScriptStringImpl), Label_GetText_New);
 }
 
 // int (GUILabel *labl)

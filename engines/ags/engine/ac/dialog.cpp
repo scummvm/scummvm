@@ -1226,7 +1226,7 @@ RuntimeScriptValue Sc_Dialog_GetOptionState(void *self, const RuntimeScriptValue
 
 // const char* (ScriptDialog *sd, int option)
 RuntimeScriptValue Sc_Dialog_GetOptionText(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ_PINT(ScriptDialog, const char, _GP(myScriptStringImpl), Dialog_GetOptionText);
+	API_OBJCALL_OBJ_PINT(ScriptDialog, const char, _GP(myScriptStringImpl), Dialog_GetOptionText);
 }
 
 // int (ScriptDialog *sd, int option)

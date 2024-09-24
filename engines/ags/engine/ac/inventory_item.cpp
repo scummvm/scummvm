@@ -162,7 +162,7 @@ RuntimeScriptValue Sc_InventoryItem_GetPropertyText(void *self, const RuntimeScr
 
 // const char* (ScriptInvItem *scii, const char *property)
 RuntimeScriptValue Sc_InventoryItem_GetTextProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ_POBJ(ScriptInvItem, const char, _GP(myScriptStringImpl), InventoryItem_GetTextProperty, const char);
+	API_OBJCALL_OBJ_POBJ(ScriptInvItem, const char, _GP(myScriptStringImpl), InventoryItem_GetTextProperty, const char);
 }
 
 RuntimeScriptValue Sc_InventoryItem_SetProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -214,7 +214,7 @@ RuntimeScriptValue Sc_InventoryItem_GetScriptName(void *self, const RuntimeScrip
 
 // const char* (ScriptInvItem *invitem)
 RuntimeScriptValue Sc_InventoryItem_GetName_New(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ(ScriptInvItem, const char, _GP(myScriptStringImpl), InventoryItem_GetName_New);
+	API_OBJCALL_OBJ(ScriptInvItem, const char, _GP(myScriptStringImpl), InventoryItem_GetName_New);
 }
 
 void RegisterInventoryItemAPI() {
