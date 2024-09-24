@@ -323,7 +323,7 @@ void ccInstance::AbortAndDestroy() {
 // ASSERT_STACK_SPACE_AVAILABLE tests that we do not exceed stack limit
 #define ASSERT_STACK_SPACE_AVAILABLE(N_VALS, N_BYTES) \
 	if ((registers[SREG_SP].RValue + N_VALS - &stack[0]) >= CC_STACK_SIZE || \
-		(stackdata_ptr + N_BYTES - stackdata) >= CC_STACK_DATA_SIZE) \
+		(stackdata_ptr + N_BYTES - stackdata) >= (uint32_t)CC_STACK_DATA_SIZE) \
 	{ \
 		cc_error("stack overflow, attempted to grow from %d by %d bytes", (stackdata_ptr - stackdata), N_BYTES); \
 		return -1; \
@@ -1538,7 +1538,7 @@ void ccInstance::DumpInstruction(const ScriptOperation &op) const {
 				debugN(" %f", arg.FValue);
 				break;
 			case kScValStringLiteral:
-				debugN(" \"%s\"", arg.Ptr);
+				debugN(" \"%s\"", (char *)arg.Ptr);
 				break;
 			case kScValStackPtr:
 			case kScValGlobalVar:
