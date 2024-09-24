@@ -125,6 +125,7 @@ ImGuiImage getImageID(Common::Path filename, int frameNum) {
 			animation->redraw(sx / 2, sy / 2, 0, 0.91670f, 0);
 			grDispatcher::instance()->resetSurfaceOverride();
 		}
+		delete animation;
 	} else if (_state->_displayMode == kDisplayTGA) {
 		qdSprite *sprite = new qdSprite();
 		if (sprite->load(filename)) {
@@ -139,6 +140,7 @@ ImGuiImage getImageID(Common::Path filename, int frameNum) {
 		} else {
 			warning("Error loading TGA file '%s'", transCyrillic(filename.toString()));
 		}
+		delete sprite;
 	}
 
 	if (surface)
