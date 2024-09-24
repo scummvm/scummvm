@@ -49,6 +49,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "amandastories",		"AmandaStories" },
 	{ "amber",				"AMBER: Journeys Beyond" },
 	{ "amertailmb",			"An American Tail Interactive MovieBook" },
+	{ "animaniacsgp",		"Animaniacs Game Pack" },
 	{ "arcade",				"Classic Arcade" },
 	{ "arcadeairattack",	"Classic Arcade Air Attack" },
 	{ "arcadeboing",		"Classic Arcade Boing" },
@@ -7529,6 +7530,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("amgpremiere", "Advanced Tutorial", "ADVTUTOR.EXE", "a593079aecf5bd938ce75264cac24b2d", 3019357, 600),
 	WINDEMO1("amgpremiere", "Beginning Tutorial", "BEGTUTOR.EXE", "a593079aecf5bd938ce75264cac24b2d", 2078039, 600),
 	WINDEMO1("amgpremiere", "Director's Guide", "DIRGUIDE.EXE", "a593079aecf5bd938ce75264cac24b2d", 2070484, 600),
+
+	// Requires installation
+	MACGAME2("animaniacsgp", "", "Animaniacs Game Pack", "r:8efda43c2eac46f285b30638b366de4a",  114476,
+								 "files/baintro.dxr",	 "d:5405488cd743d4095cda80c22907cb0d",   19766, 601),
+	WINGAME2("animaniacsgp", "", "wacky.exe",			 "t:1f250b20a44eda893e41e74058ef31b0", 1562433,
+								 "FILES/BAINTRO.DXR",	 "d:5405488cd743d4095cda80c22907cb0d",   19766, 601),
 
 	MACGAME1_l("anony", "", "Anony", "65063397536553c4f6ff2a6c07194bf7", 1845815, Common::JA_JPN, 602),
 	WINGAME1t_l("anony", "", "ANONY.EXE", "83a8b0577877f3ca90ef2df6e6e287ae", 2029722, Common::JA_JPN, 602),
