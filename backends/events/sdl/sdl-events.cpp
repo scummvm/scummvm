@@ -500,7 +500,7 @@ void SdlEventSource::finishSimulatedMouseClicks() {
 	}
 }
 
-void SdlEventSource::preprocessFingerUp(SDL_Event *event) {
+bool SdlEventSource::preprocessFingerUp(SDL_Event *event, Common::Event *ev) {
 	// front (0) or back (1) panel
 	SDL_TouchID port = event->tfinger.touchId;
 	// id (for multitouch)
@@ -521,7 +521,7 @@ void SdlEventSource::preprocessFingerUp(SDL_Event *event) {
 		if (_touchPanels[port]._finger[i].id == id) {
 			_touchPanels[port]._finger[i].id = -1;
 			if (!_touchPanels[port]._multiFingerDragging) {
-				if ((event->tfinger.timestamp - _touchPanels[port]._finger[i].timeLastDown) <= MAX_TAP_TIME) {
+				if ((event->tfinger.timestamp - _touchPanels[port]._finger[i].timeLastDown) <= MAX_TAP_TIME && !_touchPanels[port]._tapMade) {
 					// short (<MAX_TAP_TIME ms) tap is interpreted as right/left mouse click depending on # fingers already down
 					// but only if the finger hasn't moved since it was pressed down by more than MAX_TAP_MOTION_DISTANCE pixels
 					Common::Point touchscreenSize = getTouchscreenSize();
@@ -529,12 +529,17 @@ void SdlEventSource::preprocessFingerUp(SDL_Event *event) {
 					float yrel = ((event->tfinger.y * (float) touchscreenSize.y) - (_touchPanels[port]._finger[i].lastDownY * (float) touchscreenSize.y));
 					float maxRSquared = (float) (MAX_TAP_MOTION_DISTANCE * MAX_TAP_MOTION_DISTANCE);
 					if ((xrel * xrel + yrel * yrel) < maxRSquared) {
-						if (numFingersDown == 2 || numFingersDown == 1) {
+						if (numFingersDown == 3) {
+							_touchPanels[port]._tapMade = true;
+							ev->type = Common::EVENT_VIRTUAL_KEYBOARD;
+							return true;
+						} else if (numFingersDown == 2 || numFingersDown == 1) {
 							Uint8 simulatedButton = 0;
 							if (numFingersDown == 2) {
 								simulatedButton = SDL_BUTTON_RIGHT;
 								// need to raise the button later
 								_touchPanels[port]._simulatedClickStartTime[1] = event->tfinger.timestamp;
+								_touchPanels[port]._tapMade = true;
 							} else if (numFingersDown == 1) {
 								simulatedButton = SDL_BUTTON_LEFT;
 								// need to raise the button later
@@ -570,6 +575,12 @@ void SdlEventSource::preprocessFingerUp(SDL_Event *event) {
 			}
 		}
 	}
+
+	if (numFingersDown == 1) {
+		_touchPanels[port]._tapMade = false;
+	}
+
+	return false;
 }
 
 void SdlEventSource::preprocessFingerMotion(SDL_Event *event) {
@@ -746,7 +757,8 @@ bool SdlEventSource::pollEvent(Common::Event &event) {
 					preprocessFingerDown(&ev);
 					break;
 				case SDL_FINGERUP:
-					preprocessFingerUp(&ev);
+					if (preprocessFingerUp(&ev, &event))
+						return true;
 					break;
 				case SDL_FINGERMOTION:
 					preprocessFingerMotion(&ev);
