@@ -36,10 +36,6 @@
 
 #include "math.h"
 
-Common::Point PSP2EventSource::getTouchscreenSize() {
-	return Common::Point(960, 544);
-}
-
 void PSP2EventSource::preprocessEvents(SDL_Event *event) {
 
 	// prevent suspend (scummvm games contain a lot of cutscenes..)
@@ -55,35 +51,6 @@ bool PSP2EventSource::isTouchPortTouchpadMode(SDL_TouchID port) {
 
 bool PSP2EventSource::isTouchPortActive(SDL_TouchID port) {
 	return port == 0 || ConfMan.getBool("touchpad_mouse_mode");
-}
-
-void PSP2EventSource::convertTouchXYToGameXY(float touchX, float touchY, int *gameX, int *gameY) {
-	int screenH = _graphicsManager->getWindowHeight();
-	int screenW = _graphicsManager->getWindowWidth();
-	Common::Point touchscreenSize = getTouchscreenSize();
-
-	const int dispW = touchscreenSize.x;
-	const int dispH = touchscreenSize.y;
-
-	int x, y, w, h;
-	float sx, sy;
-	float ratio = (float)screenW / (float)screenH;
-
-	h = dispH;
-	w = h * ratio;
-
-	x = (dispW - w) / 2;
-	y = (dispH - h) / 2;
-
-	sy = (float)h / (float)screenH;
-	sx = (float)w / (float)screenW;
-
-	// Find touch coordinates in terms of screen pixels
-	float dispTouchX = (touchX * (float)dispW);
-	float dispTouchY = (touchY * (float)dispH);
-
-	*gameX = CLIP((int)((dispTouchX - x) / sx), 0, screenW - 1);
-	*gameY = CLIP((int)((dispTouchY - y) / sy), 0, screenH - 1);
 }
 
 #endif
