@@ -345,8 +345,6 @@ void DoBeforeRestore(PreservedParams &pp) {
 	// NOTE: sprite 0 is a special constant sprite that cannot be dynamic
 	for (int i = 1; i < (int)_GP(spriteset).GetSpriteSlotCount(); ++i) {
 		if (_GP(game).SpriteInfos[i].Flags & SPF_DYNAMICALLOC) {
-			// do this early, so that it changing _GP(guibuts) doesn't
-			// affect the restored data
 			free_dynamic_sprite(i);
 		}
 	}
@@ -463,7 +461,14 @@ HSaveError DoAfterRestore(const PreservedParams &pp, RestoredData &r_data) {
 	// Remap old sound nums in case we restored a save having a different list of audio clips
 	RemapLegacySoundNums(_GP(game), _GP(views), _G(loaded_game_file_version));
 
-	// restore these to the ones retrieved from the save game
+	// Restore Overlay bitmaps (older save format, which stored them along with overlays)
+	auto &overs = get_overlays();
+	for (auto &over_im : r_data.OverlayImages) {
+		auto &over = overs[over_im._key];
+		over.SetImage(std::move(over_im._value), over.HasAlphaChannel(), over.offsetX, over.offsetY);
+	}
+
+	// Restore dynamic surfaces
 	const size_t dynsurf_num = MIN((uint)MAX_DYNAMIC_SURFACES, r_data.DynamicSurfaces.size());
 	for (size_t i = 0; i < dynsurf_num; ++i) {
 		_G(dynamicallyCreatedSurfaces)[i] = std::move(r_data.DynamicSurfaces[i]);

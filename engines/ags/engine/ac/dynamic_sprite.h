@@ -60,7 +60,7 @@ int     add_dynamic_sprite(std::unique_ptr<AGS::Shared::Bitmap> image, bool has_
 // Updates game.SpriteInfos[].
 int     add_dynamic_sprite(int slot, std::unique_ptr<AGS::Shared::Bitmap> image, bool hasAlpha = false, uint32_t extra_flags = 0u);
 // Disposes a dynamic sprite, and frees the slot
-void    free_dynamic_sprite(int slot);
+void    free_dynamic_sprite(int slot, bool notify_all = true);
 
 } // namespace AGS3
 
