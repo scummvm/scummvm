@@ -23,7 +23,9 @@
 #include "darkseed/darkseed.h"
 #include "common/debug.h"
 
-bool Darkseed::Pic::load(const Common::Path &filename) {
+namespace Darkseed {
+
+bool Pic::load(const Common::Path &filename) {
 	Common::File file;
 	Common::Path fullPath = g_engine->getPictureFilePath(filename);
 	if (!file.open(fullPath)) {
@@ -38,7 +40,7 @@ bool Darkseed::Pic::load(const Common::Path &filename) {
 	return ret;
 }
 
-bool Darkseed::Pic::load(Common::SeekableReadStream &readStream) {
+bool Pic::load(Common::SeekableReadStream &readStream) {
 	_width = readStream.readUint16BE();
 	_height = readStream.readUint16BE();
 	_pixels.resize(_width * (_height + 1), 0);
@@ -75,7 +77,7 @@ bool Darkseed::Pic::load(Common::SeekableReadStream &readStream) {
 	return true;
 }
 
-byte Darkseed::Pic::readNextNibble(Common::SeekableReadStream &readStream) {
+byte Pic::readNextNibble(Common::SeekableReadStream &readStream) {
 	if (!_hasReadByte) {
 		_currentDataByte = readStream.readByte();
 		if (readStream.eos()) {
@@ -89,15 +91,17 @@ byte Darkseed::Pic::readNextNibble(Common::SeekableReadStream &readStream) {
 	}
 }
 
-void Darkseed::Pic::draw() {
+void Pic::draw() {
 	draw(0, 0);
 }
 
-void Darkseed::Pic::draw(int xOffset, int yOffset) {
+void Pic::draw(int xOffset, int yOffset) {
 	g_engine->_screen->copyRectToSurface(getPixels().data(), getWidth(), xOffset, yOffset, getWidth(), getHeight());
 }
 
-void Darkseed::Pic::drawRect(const Common::Rect &rect) {
+void Pic::drawRect(const Common::Rect &rect) {
 	void *ptr = getPixels().data() + rect.left + (rect.top * getWidth());
 	g_engine->_screen->copyRectToSurface(ptr, getWidth(), rect.left, rect.top, rect.width(), rect.height());
 }
+
+} // End of namespace Darkseed

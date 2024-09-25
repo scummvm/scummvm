@@ -22,11 +22,13 @@
 #include "darkseed/cutscene.h"
 #include "darkseed/darkseed.h"
 
-Darkseed::Cutscene::~Cutscene() {
+namespace Darkseed {
+
+Cutscene::~Cutscene() {
 	delete _titleFont;
 }
 
-void Darkseed::Cutscene::play(char cutsceneId) {
+void Cutscene::play(char cutsceneId) {
 	_cutsceneId = cutsceneId;
 	_movieStep = 1;
 	g_engine->_sound->waitForSpeech();
@@ -35,7 +37,7 @@ void Darkseed::Cutscene::play(char cutsceneId) {
 }
 
 
-void Darkseed::Cutscene::update() {
+void Cutscene::update() {
 	switch (_cutsceneId) {
 	case 'B' :
 		_movieStep = 9999;
@@ -89,7 +91,7 @@ void Darkseed::Cutscene::update() {
 
 static constexpr int _CREDITS_DELAY = 25;
 
-bool Darkseed::Cutscene::introScene() {
+bool Cutscene::introScene() {
 	switch (_movieStep) {
 	case 1:
 		g_engine->fadeOut();
@@ -412,7 +414,7 @@ bool Darkseed::Cutscene::introScene() {
 	return true;
 }
 
-bool Darkseed::Cutscene::embryoInsertedScene() {
+bool Cutscene::embryoInsertedScene() {
 	switch (_movieStep) {
 	case 1:
 	case 2:
@@ -524,7 +526,7 @@ bool Darkseed::Cutscene::embryoInsertedScene() {
 	return true;
 }
 
-bool Darkseed::Cutscene::shipLaunchScene() {
+bool Cutscene::shipLaunchScene() {
 	switch (_movieStep) {
 	case 1: {
 		_palette.load("art/ship.pal");
@@ -611,7 +613,7 @@ bool Darkseed::Cutscene::shipLaunchScene() {
 	return true;
 }
 
-bool Darkseed::Cutscene::alienBornScene() {
+bool Cutscene::alienBornScene() {
 	switch (_movieStep) {
 	case 1: {
 		_palette.load("art/ship.pal");
@@ -673,7 +675,7 @@ bool Darkseed::Cutscene::alienBornScene() {
 	return true;
 }
 
-bool Darkseed::Cutscene::stepAnim(int drawMode) {
+bool Cutscene::stepAnim(int drawMode) {
 	if (_animDelayCount == 0) {
 		Img animFrame;
 		_animation.getImg(_animIdx, animFrame);
@@ -693,7 +695,7 @@ bool Darkseed::Cutscene::stepAnim(int drawMode) {
 	return false;
 }
 
-void Darkseed::Cutscene::putHouse() {
+void Cutscene::putHouse() {
 	Img dollImg;
 	dollImg.load("art/bdoll0.img");
 	dollImg.draw();
@@ -705,15 +707,17 @@ void Darkseed::Cutscene::putHouse() {
 	houseFrameImg.draw(1);
 }
 
-void Darkseed::Cutscene::registTime() {
+void Cutscene::registTime() {
 	_startTime = g_system->getMillis();
 }
 
-bool Darkseed::Cutscene::waitTime(int16 duration) {
+bool Cutscene::waitTime(int16 duration) {
 	return g_system->getMillis() < _startTime + (duration * 100);
 }
 
-void Darkseed::Cutscene::runAnim(int direction) {
+void Cutscene::runAnim(int direction) {
 	_animDelayCount = 0;
 	_animDirection = direction;
 }
+
+} // End of namespace Darkseed

@@ -22,31 +22,33 @@
 #include "darkseed/darkseed.h"
 #include "darkseed/inventory.h"
 
+namespace Darkseed {
+
 constexpr uint16 MAX_INVENTORY = 42;
 constexpr uint16 MAX_ICONS = 9;
 static constexpr Common::Rect drawArea = {{139, 0}, 334, 40};
 
-Darkseed::Inventory::Inventory() {
+Inventory::Inventory() {
 	_iconList.resize(MAX_ICONS);
 	_inventory.resize(MAX_INVENTORY);
 	reset();
 }
 
-void Darkseed::Inventory::reset() {
+void Inventory::reset() {
 	_viewOffset = 0;
 	_inventory[0] = 8;
 	_inventoryLength = 1;
 	update();
 }
 
-void Darkseed::Inventory::addItem(uint8 item) {
+void Inventory::addItem(uint8 item) {
 	_inventory[_inventoryLength] = item;
 	_inventoryLength++;
 	// TODO playsound(6, 5, -1);
 	update();
 }
 
-void Darkseed::Inventory::removeItem(uint8 item) {
+void Inventory::removeItem(uint8 item) {
 	for (int i = 0; i < _inventoryLength; i++) {
 		if (_inventory[i] == item) {
 			for (int j = i; j < _inventoryLength - 1; j++) {
@@ -59,7 +61,7 @@ void Darkseed::Inventory::removeItem(uint8 item) {
 	}
 }
 
-void Darkseed::Inventory::update() {
+void Inventory::update() {
 	if (_viewOffset != 0) {
 		if (_inventoryLength <= _viewOffset + (MAX_ICONS - 1)) {
 			_viewOffset = _inventoryLength - (MAX_ICONS - 1);
@@ -89,12 +91,12 @@ void Darkseed::Inventory::update() {
 	_redraw = true;
 }
 
-void Darkseed::Inventory::restoreFrame() {
+void Inventory::restoreFrame() {
 	g_engine->_frame.drawRect(drawArea);
 	g_engine->_screen->addDirtyRect(drawArea);
 }
 
-void Darkseed::Inventory::draw() {
+void Inventory::draw() {
 	if ((g_engine->_actionMode <= 4 && g_engine->_cursor.getY() > 40) || g_engine->_isPlayingAnimation_maybe || (g_engine->_objectVar[141] >= 1 && g_engine->_objectVar[141] <= 3)) {
 		if (_isVisible) {
 			restoreFrame();
@@ -125,7 +127,7 @@ void Darkseed::Inventory::draw() {
 	g_engine->_screen->addDirtyRect(drawArea);
 }
 
-void Darkseed::Inventory::handleClick() {
+void Inventory::handleClick() {
 	Common::Point clickPos = g_engine->_cursor.getPosition();
 	if (clickPos.x < 140 || clickPos.x > 140 + _numIcons * 37) {
 		return;
@@ -160,19 +162,19 @@ void Darkseed::Inventory::handleClick() {
 	}
 }
 
-void Darkseed::Inventory::leftArrowClicked() {
+void Inventory::leftArrowClicked() {
 	if (_viewOffset > 0) {
 		_viewOffset--;
 		update();
 	}
 }
 
-void Darkseed::Inventory::rightArrowClicked() {
+void Inventory::rightArrowClicked() {
 	_viewOffset++;
 	update();
 }
 
-Common::Error Darkseed::Inventory::sync(Common::Serializer &s) {
+Common::Error Inventory::sync(Common::Serializer &s) {
 	s.syncAsSint16LE(_inventoryLength);
 	for (int i = 0; i < _inventoryLength; i++) {
 		s.syncAsByte(_inventory[i]);
@@ -182,7 +184,7 @@ Common::Error Darkseed::Inventory::sync(Common::Serializer &s) {
 	return Common::kNoError;
 }
 
-void Darkseed::Inventory::endOfDayOutsideLogic() {
+void Inventory::endOfDayOutsideLogic() {
 	for (int i = 0; i < _inventoryLength; i++) {
 		g_engine->_objectVar.setMoveObjectRoom(_inventory[i], _inventory[i] == 28 ? 255 : 252);
 	}
@@ -191,7 +193,7 @@ void Darkseed::Inventory::endOfDayOutsideLogic() {
 	g_engine->_objectVar[53] = 2;
 }
 
-void Darkseed::Inventory::gotoJailLogic() {
+void Inventory::gotoJailLogic() {
 	for (int i = 0; i < _inventoryLength; i++) {
 		g_engine->_objectVar.setMoveObjectRoom(_inventory[i], 100);
 	}
@@ -201,7 +203,7 @@ void Darkseed::Inventory::gotoJailLogic() {
 	update();
 }
 
-bool Darkseed::Inventory::hasObject(uint8 objNum) {
+bool Inventory::hasObject(uint8 objNum) {
 	for (int i = 0; i < _inventoryLength; i++) {
 		if (_inventory[i] == objNum) {
 			return true;
@@ -209,3 +211,5 @@ bool Darkseed::Inventory::hasObject(uint8 objNum) {
 	}
 	return false;
 }
+
+} // End of namespace Darkseed

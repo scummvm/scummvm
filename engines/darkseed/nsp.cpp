@@ -23,11 +23,13 @@
 #include "darkseed/nsp.h"
 #include "common/debug.h"
 
-Darkseed::Sprite::Sprite(uint16 width, uint16 height, uint16 pitch) : _width(width), _height(height), _pitch(pitch) {
+namespace Darkseed {
+
+Sprite::Sprite(uint16 width, uint16 height, uint16 pitch) : _width(width), _height(height), _pitch(pitch) {
 	_pixels.resize(pitch * height, 0);
 }
 
-bool Darkseed::Sprite::loadData(Common::SeekableReadStream &readStream) {
+bool Sprite::loadData(Common::SeekableReadStream &readStream) {
 	if (_width == 1 && _height == 1) {
 		byte b = readStream.readByte();
 		_pixels[0] = b >> 4;
@@ -52,7 +54,7 @@ bool Darkseed::Sprite::loadData(Common::SeekableReadStream &readStream) {
 	return true;
 }
 
-void Darkseed::Sprite::draw(int x, int y, uint16 frameBottom) const {
+void Sprite::draw(int x, int y, uint16 frameBottom) const {
 	uint16 clippedWidth = _width;
 	uint16 clippedHeight = _height;
 	if (x + _width > g_engine->_screen->w) {
@@ -67,7 +69,7 @@ void Darkseed::Sprite::draw(int x, int y, uint16 frameBottom) const {
 	g_engine->_screen->copyRectToSurfaceWithKey(_pixels.data(), _pitch, x, y, clippedWidth, clippedHeight, 0xf);
 }
 
-void Darkseed::Sprite::drawScaled(int destX, int destY, int destWidth, int destHeight, bool flipX) const {
+void Sprite::drawScaled(int destX, int destY, int destWidth, int destHeight, bool flipX) const {
 	//TODO image isn't exactly the same when not scaling. It seems larger by about a pixel.
 	//TODO this logic is pretty messy. It should probably be re-written. It is trying to scale, clip and flip at once.
 	Graphics::ManagedSurface * destSurface = g_engine->_screen;
@@ -132,7 +134,7 @@ void Darkseed::Sprite::drawScaled(int destX, int destY, int destWidth, int destH
 	}
 }
 
-bool Darkseed::Nsp::load(const Common::Path &filename) {
+bool Nsp::load(const Common::Path &filename) {
 	Common::File file;
 	Common::Path filePath = g_engine->getRoomFilePath(filename);
 	if (!file.open(filePath)) {
@@ -149,7 +151,7 @@ bool Darkseed::Nsp::load(const Common::Path &filename) {
 	return ret;
 }
 
-bool Darkseed::Nsp::load(Common::SeekableReadStream &readStream) {
+bool Nsp::load(Common::SeekableReadStream &readStream) {
 	_frames.clear();
 	for (int i = 0; i < 96; i++) {
 		int w = readStream.readByte();
@@ -167,14 +169,14 @@ bool Darkseed::Nsp::load(Common::SeekableReadStream &readStream) {
 	return true;
 }
 
-const Darkseed::Sprite &Darkseed::Nsp::getSpriteAt(int index) {
+const Sprite &Nsp::getSpriteAt(int index) {
 	if (index >= (int)_frames.size()) {
 		error("getSpriteAt: Invalid sprite index. %d", index);
 	}
 	return _frames[index];
 }
 
-bool Darkseed::Nsp::loadObt(const Common::Path &filename) {
+bool Nsp::loadObt(const Common::Path &filename) {
 	Common::File file;
 	if (!file.open(filename)) {
 		return false;
@@ -207,11 +209,11 @@ bool Darkseed::Nsp::loadObt(const Common::Path &filename) {
 	return true;
 }
 
-const Darkseed::Obt &Darkseed::Nsp::getAnimAt(int index) {
+const Obt &Nsp::getAnimAt(int index) {
 	return _animations[index];
 }
 
-Darkseed::Obt::Obt() {
+Obt::Obt() {
 	_numFrames = 0;
 	_deltaX.reserve(20);
 	_deltaY.reserve(20);
@@ -219,9 +221,11 @@ Darkseed::Obt::Obt() {
 	_frameDuration.reserve(20);
 }
 
-Darkseed::Obt::~Obt() {
+Obt::~Obt() {
 	_deltaX.clear();
 	_deltaY.clear();
 	_frameNo.clear();
 	_frameDuration.clear();
 }
+
+} // End of namespace Darkseed
