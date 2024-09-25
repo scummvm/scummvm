@@ -109,6 +109,20 @@ static const NGIGameDescription gameDescriptions[] = {
 		GID_FULLPIPE
 	},
 
+	// Full Pipe Lithuanian version
+	{
+		{
+			"fullpipe",
+			nullptr,
+			AD_ENTRY1s("4620.sc2", "599bb585a1863733d0010cb37d838d51", 510),
+			Common::LT_LTU,
+			Common::kPlatformWindows,
+			ADGF_DROPPLATFORM,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GID_FULLPIPE
+	},
+
 	// Full Pipe English version
 	{
 		{
