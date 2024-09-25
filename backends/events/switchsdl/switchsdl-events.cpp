@@ -35,24 +35,42 @@
 #include "common/events.h"
 #include "common/config-manager.h"
 
-SwitchEventSource::SwitchEventSource() : FingerSdlEventSource() {}
-
 Common::Point SwitchEventSource::getTouchscreenSize() {
 	return Common::Point(1280, 720);
 }
 
 bool SwitchEventSource::pollEvent(Common::Event &event) {
 	((DefaultTimerManager *) g_system->getTimerManager())->handler();
-	return FingerSdlEventSource::pollEvent(event);
+	return SdlEventSource::pollEvent(event);
 }
 
+void SwitchEventSource::convertTouchXYToGameXY(float touchX, float touchY, int *gameX, int *gameY) {
+	int screenH = _graphicsManager->getWindowHeight();
+	int screenW = _graphicsManager->getWindowWidth();
+	Common::Point touchscreenSize = getTouchscreenSize();
 
-bool SwitchEventSource::isTouchpadMode(int port) {
-	return ConfMan.getBool("touchpad_mouse_mode");
-}
+	const int dispW = touchscreenSize.x;
+	const int dispH = touchscreenSize.y;
 
-bool SwitchEventSource::isPortActive(int port) {
-	return true;
+	int x, y, w, h;
+	float sx, sy;
+	float ratio = (float)screenW / (float)screenH;
+
+	h = dispH;
+	w = h * ratio;
+
+	x = (dispW - w) / 2;
+	y = (dispH - h) / 2;
+
+	sy = (float)h / (float)screenH;
+	sx = (float)w / (float)screenW;
+
+	// Find touch coordinates in terms of screen pixels
+	float dispTouchX = (touchX * (float)dispW);
+	float dispTouchY = (touchY * (float)dispH);
+
+	*gameX = CLIP((int)((dispTouchX - x) / sx), 0, screenW - 1);
+	*gameY = CLIP((int)((dispTouchY - y) / sy), 0, screenH - 1);
 }
 
 #endif

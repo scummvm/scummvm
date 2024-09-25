@@ -23,20 +23,18 @@
 #define BACKEND_EVENTS_SWITCH_H
 
 #include "backends/events/sdl/sdl-events.h"
-#include "backends/events/sdl/finger-sdl-events.h"
 
 /**
  * SDL Events manager for the SWITCH.
  */
-class SwitchEventSource : public FingerSdlEventSource {
+class SwitchEventSource : public SdlEventSource {
 public:
-	SwitchEventSource();
+	SwitchEventSource() {}
 
 protected:
 	bool pollEvent(Common::Event &event) override;
-	bool isPortActive(int port) override;
-	bool isTouchpadMode(int port) override;
 	Common::Point getTouchscreenSize() override;
+	void convertTouchXYToGameXY(float touchX, float touchY, int *gameX, int *gameY) override;
 };
 
 #endif /* BACKEND_EVENTS_SWITCH_H */

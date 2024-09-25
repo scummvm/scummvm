@@ -463,8 +463,7 @@ MODULE_OBJS += \
 	fs/posix-drives/posix-drives-fs.o \
 	fs/posix-drives/posix-drives-fs-factory.o \
 	plugins/psp2/psp2-provider.o \
-	events/psp2sdl/psp2sdl-events.o \
-	events/sdl/finger-sdl-events.o
+	events/psp2sdl/psp2sdl-events.o
 endif
 
 ifeq ($(BACKEND),samsungtv)
@@ -482,8 +481,7 @@ endif
 
 ifeq ($(BACKEND),switch)
 MODULE_OBJS += \
-	events/switchsdl/switchsdl-events.o \
-	events/sdl/finger-sdl-events.o
+	events/switchsdl/switchsdl-events.o
 endif
 
 ifdef ENABLE_EVENTRECORDER

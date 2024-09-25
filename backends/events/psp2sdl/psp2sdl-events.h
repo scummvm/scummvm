@@ -22,21 +22,20 @@
 #if !defined(DISABLE_DEFAULT_EVENTMANAGER)
 #define BACKEND_EVENTS_PSP2_H
 
-#include "backends/events/sdl/finger-sdl-events.h"
 #include "backends/events/sdl/sdl-events.h"
-#include <psp2/touch.h>
 
 /**
  * SDL Events manager for the PSP2.
  */
-class PSP2EventSource : public FingerSdlEventSource {
+class PSP2EventSource : public SdlEventSource {
 public:
-	PSP2EventSource();
+	PSP2EventSource() {}
 protected:
 	void preprocessEvents(SDL_Event *event) override;
-	bool isTouchpadMode(int port) override;
-	bool isPortActive(int port) override;
+	bool isTouchPortTouchpadMode(SDL_TouchID port) override;
+	bool isTouchPortActive(SDL_TouchID port) override;
 	Common::Point getTouchscreenSize() override;
+	void convertTouchXYToGameXY(float touchX, float touchY, int *gameX, int *gameY) override;
 };
 
 #endif /* BACKEND_EVENTS_PSP2_H */

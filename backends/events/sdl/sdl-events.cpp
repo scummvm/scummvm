@@ -99,6 +99,12 @@ SdlEventSource::SdlEventSource()
 
 		openJoystick(joystick_num);
 	}
+
+#if SDL_VERSION_ATLEAST(2,0,10)
+	// ensure that touch doesn't create double-events
+	SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS, "0");
+#endif
+
 }
 
 SdlEventSource::~SdlEventSource() {
@@ -409,9 +415,329 @@ Common::KeyCode SdlEventSource::SDLToOSystemKeycode(const SDL_Keycode key) {
 	}
 }
 
-bool SdlEventSource::pollEvent(Common::Event &event) {
-
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+void SdlEventSource::preprocessFingerDown(SDL_Event *event) {
+	// front (0) or back (1) panel
+	SDL_TouchID port = event->tfinger.touchId;
+	// id (for multitouch)
+	SDL_FingerID id = event->tfinger.fingerId;
+
+	int x = _mouseX;
+	int y = _mouseY;
+
+	if (!isTouchPortTouchpadMode(port)) {
+		convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
+	}
+
+	// make sure each finger is not reported down multiple times
+	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+		if (_touchPanels[port]._finger[i].id == id) {
+			_touchPanels[port]._finger[i].id = -1;
+		}
+	}
+
+	// we need the timestamps to decide later if the user performed a short tap (click)
+	// or a long tap (drag)
+	// we also need the last coordinates for each finger to keep track of dragging
+	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+		if (_touchPanels[port]._finger[i].id == -1) {
+			_touchPanels[port]._finger[i].id = id;
+			_touchPanels[port]._finger[i].timeLastDown = event->tfinger.timestamp;
+			_touchPanels[port]._finger[i].lastDownX = event->tfinger.x;
+			_touchPanels[port]._finger[i].lastDownY = event->tfinger.y;
+			_touchPanels[port]._finger[i].lastX = x;
+			_touchPanels[port]._finger[i].lastY = y;
+			break;
+		}
+	}
+}
+
+Common::Point SdlEventSource::getTouchscreenSize() {
+	int windowWidth, windowHeight;
+	SDL_GetWindowSize((dynamic_cast<SdlGraphicsManager*>(_graphicsManager))->getWindow()->getSDLWindow(), &windowWidth, &windowHeight);
+	return Common::Point(windowWidth, windowHeight);
+}
+
+bool SdlEventSource::isTouchPortTouchpadMode(SDL_TouchID port) {
+       return g_system->getFeatureState(OSystem::kFeatureTouchpadMode);
+}
+
+bool SdlEventSource::isTouchPortActive(SDL_TouchID port) {
+	return true;
+}
+
+void SdlEventSource::convertTouchXYToGameXY(float touchX, float touchY, int *gameX, int *gameY) {
+	int windowWidth, windowHeight;
+	SDL_GetWindowSize((dynamic_cast<SdlGraphicsManager*>(_graphicsManager))->getWindow()->getSDLWindow(), &windowWidth, &windowHeight);
+
+	*gameX = windowWidth * touchX;
+	*gameY = windowHeight * touchY;
+}
+
+void SdlEventSource::finishSimulatedMouseClicks() {
+	for (auto &panel : _touchPanels) {
+		for (int i = 0; i < 2; i++) {
+			if (panel._value._simulatedClickStartTime[i] != 0) {
+				Uint32 currentTime = SDL_GetTicks();
+				if (currentTime - panel._value._simulatedClickStartTime[i] >= SIMULATED_CLICK_DURATION) {
+					int simulatedButton;
+					if (i == 0) {
+						simulatedButton = SDL_BUTTON_LEFT;
+					} else {
+						simulatedButton = SDL_BUTTON_RIGHT;
+					}
+					SDL_Event ev;
+					ev.type = SDL_MOUSEBUTTONUP;
+					ev.button.button = simulatedButton;
+					ev.button.x = _mouseX;
+					ev.button.y = _mouseY;
+					SDL_PushEvent(&ev);
+
+					panel._value._simulatedClickStartTime[i] = 0;
+				}
+			}
+		}
+	}
+}
+
+void SdlEventSource::preprocessFingerUp(SDL_Event *event) {
+	// front (0) or back (1) panel
+	SDL_TouchID port = event->tfinger.touchId;
+	// id (for multitouch)
+	SDL_FingerID id = event->tfinger.fingerId;
+
+	// find out how many fingers were down before this event
+	int numFingersDown = 0;
+	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+		if (_touchPanels[port]._finger[i].id >= 0) {
+			numFingersDown++;
+		}
+	}
+
+	int x = _mouseX;
+	int y = _mouseY;
+
+	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+		if (_touchPanels[port]._finger[i].id == id) {
+			_touchPanels[port]._finger[i].id = -1;
+			if (!_touchPanels[port]._multiFingerDragging) {
+				if ((event->tfinger.timestamp - _touchPanels[port]._finger[i].timeLastDown) <= MAX_TAP_TIME) {
+					// short (<MAX_TAP_TIME ms) tap is interpreted as right/left mouse click depending on # fingers already down
+					// but only if the finger hasn't moved since it was pressed down by more than MAX_TAP_MOTION_DISTANCE pixels
+					Common::Point touchscreenSize = getTouchscreenSize();
+					float xrel = ((event->tfinger.x * (float) touchscreenSize.x) - (_touchPanels[port]._finger[i].lastDownX * (float) touchscreenSize.x));
+					float yrel = ((event->tfinger.y * (float) touchscreenSize.y) - (_touchPanels[port]._finger[i].lastDownY * (float) touchscreenSize.y));
+					float maxRSquared = (float) (MAX_TAP_MOTION_DISTANCE * MAX_TAP_MOTION_DISTANCE);
+					if ((xrel * xrel + yrel * yrel) < maxRSquared) {
+						if (numFingersDown == 2 || numFingersDown == 1) {
+							Uint8 simulatedButton = 0;
+							if (numFingersDown == 2) {
+								simulatedButton = SDL_BUTTON_RIGHT;
+								// need to raise the button later
+								_touchPanels[port]._simulatedClickStartTime[1] = event->tfinger.timestamp;
+							} else if (numFingersDown == 1) {
+								simulatedButton = SDL_BUTTON_LEFT;
+								// need to raise the button later
+								_touchPanels[port]._simulatedClickStartTime[0] = event->tfinger.timestamp;
+								if (!isTouchPortTouchpadMode(port)) {
+									convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
+								}
+							}
+
+							event->type = SDL_MOUSEBUTTONDOWN;
+							event->button.button = simulatedButton;
+							event->button.x = x;
+							event->button.y = y;
+						}
+					}
+				}
+			} else if (numFingersDown == 1) {
+				// when dragging, and the last finger is lifted, the drag is over
+				if (!isTouchPortTouchpadMode(port)) {
+					convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
+				}
+				Uint8 simulatedButton = 0;
+				if (_touchPanels[port]._multiFingerDragging == DRAG_THREE_FINGER)
+					simulatedButton = SDL_BUTTON_RIGHT;
+				else {
+					simulatedButton = SDL_BUTTON_LEFT;
+				}
+				event->type = SDL_MOUSEBUTTONUP;
+				event->button.button = simulatedButton;
+				event->button.x = x;
+				event->button.y = y;
+				_touchPanels[port]._multiFingerDragging = DRAG_NONE;
+			}
+		}
+	}
+}
+
+void SdlEventSource::preprocessFingerMotion(SDL_Event *event) {
+	// front (0) or back (1) panel
+	SDL_TouchID port = event->tfinger.touchId;
+	// id (for multitouch)
+	SDL_FingerID id = event->tfinger.fingerId;
+
+	// find out how many fingers were down before this event
+	int numFingersDown = 0;
+	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+		if (_touchPanels[port]._finger[i].id >= 0) {
+			numFingersDown++;
+		}
+	}
+
+	if (numFingersDown >= 1) {
+		int x = _mouseX;
+		int y = _mouseY;
+		int xMax = _graphicsManager->getWindowWidth() - 1;
+		int yMax = _graphicsManager->getWindowHeight() - 1;
+
+		if (!isTouchPortTouchpadMode(port)) {
+			convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
+		}	else {
+			// for relative mode, use the pointer speed setting
+			float speedFactor = 1.0;
+
+			switch (ConfMan.getInt("kbdmouse_speed")) {
+			// 0.25 keyboard pointer speed
+			case 0:
+				speedFactor = 0.25;
+				break;
+			// 0.5 speed
+			case 1:
+				speedFactor = 0.5;
+				break;
+			// 0.75 speed
+			case 2:
+				speedFactor = 0.75;
+				break;
+			// 1.0 speed
+			case 3:
+				speedFactor = 1.0;
+				break;
+			// 1.25 speed
+			case 4:
+				speedFactor = 1.25;
+				break;
+			// 1.5 speed
+			case 5:
+				speedFactor = 1.5;
+				break;
+			// 1.75 speed
+			case 6:
+				speedFactor = 1.75;
+				break;
+			// 2.0 speed
+			case 7:
+				speedFactor = 2.0;
+				break;
+			default:
+				speedFactor = 1.0;
+			}
+
+			// convert touch events to relative mouse pointer events
+			// track sub-pixel relative finger motion using the FINGER_SUBPIXEL_MULTIPLIER
+			_touchPanels[port]._hiresDX += (event->tfinger.dx * 1.25 * speedFactor * xMax * FINGER_SUBPIXEL_MULTIPLIER);
+			_touchPanels[port]._hiresDY += (event->tfinger.dy * 1.25 * speedFactor * yMax * FINGER_SUBPIXEL_MULTIPLIER);
+			int xRel = _touchPanels[port]._hiresDX / FINGER_SUBPIXEL_MULTIPLIER;
+			int yRel = _touchPanels[port]._hiresDY / FINGER_SUBPIXEL_MULTIPLIER;
+			x = _mouseX + xRel;
+			y = _mouseY + yRel;
+			_touchPanels[port]._hiresDX %= FINGER_SUBPIXEL_MULTIPLIER;
+			_touchPanels[port]._hiresDY %= FINGER_SUBPIXEL_MULTIPLIER;
+		}
+
+		x = CLIP(x, 0, xMax);
+		y = CLIP(y, 0, yMax);
+
+		// update the current finger's coordinates so we can track it later
+		for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+			if (_touchPanels[port]._finger[i].id == id) {
+				_touchPanels[port]._finger[i].lastX = x;
+				_touchPanels[port]._finger[i].lastY = y;
+			}
+		}
+
+		// If we are starting a multi-finger drag, start holding down the mouse button
+		if (numFingersDown >= 2) {
+			if (!_touchPanels[port]._multiFingerDragging) {
+				// only start a multi-finger drag if at least two fingers have been down long enough
+				int numFingersDownLong = 0;
+				for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+					if (_touchPanels[port]._finger[i].id >= 0) {
+						if (event->tfinger.timestamp - _touchPanels[port]._finger[i].timeLastDown > MAX_TAP_TIME) {
+							numFingersDownLong++;
+						}
+					}
+				}
+				if (numFingersDownLong >= 2) {
+					// starting drag, so push mouse down at current location (back)
+					// or location of "oldest" finger (front)
+					int mouseDownX = _mouseX;
+					int mouseDownY = _mouseY;
+					if (!isTouchPortTouchpadMode(port)) {
+						for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+							if (_touchPanels[port]._finger[i].id == id) {
+								Uint32 earliestTime = _touchPanels[port]._finger[i].timeLastDown;
+								for (int j = 0; j < MAX_NUM_FINGERS; j++) {
+									if (_touchPanels[port]._finger[j].id >= 0 && (i != j) ) {
+										if (_touchPanels[port]._finger[j].timeLastDown < earliestTime) {
+											mouseDownX = _touchPanels[port]._finger[j].lastX;
+											mouseDownY = _touchPanels[port]._finger[j].lastY;
+											earliestTime = _touchPanels[port]._finger[j].timeLastDown;
+										}
+									}
+								}
+								break;
+							}
+						}
+					}
+					Uint8 simulatedButton = 0;
+					if (numFingersDownLong == 2) {
+						simulatedButton = SDL_BUTTON_LEFT;
+						_touchPanels[port]._multiFingerDragging = DRAG_TWO_FINGER;
+					} else {
+						simulatedButton = SDL_BUTTON_RIGHT;
+						_touchPanels[port]._multiFingerDragging = DRAG_THREE_FINGER;
+					}
+					SDL_Event ev;
+					ev.type = SDL_MOUSEBUTTONDOWN;
+					ev.button.button = simulatedButton;
+					ev.button.x = mouseDownX;
+					ev.button.y = mouseDownY;
+					SDL_PushEvent(&ev);
+				}
+			}
+		}
+
+		//check if this is the "oldest" finger down (or the only finger down), otherwise it will not affect mouse motion
+		bool updatePointer = true;
+		if (numFingersDown > 1) {
+			for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+				if (_touchPanels[port]._finger[i].id == id) {
+					for (int j = 0; j < MAX_NUM_FINGERS; j++) {
+						if (_touchPanels[port]._finger[j].id >= 0 && (i != j) ) {
+							if (_touchPanels[port]._finger[j].timeLastDown < _touchPanels[port]._finger[i].timeLastDown) {
+								updatePointer = false;
+							}
+						}
+					}
+				}
+			}
+		}
+		if (updatePointer) {
+			event->type = SDL_MOUSEMOTION;
+			event->motion.x = x;
+			event->motion.y = y;
+		}
+	}
+}
+#endif
+
+bool SdlEventSource::pollEvent(Common::Event &event) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	finishSimulatedMouseClicks();
+
 	// In case we still need to send a key up event for a key down from a
 	// TEXTINPUT event we do this immediately.
 	if (_queuedFakeKeyUp) {
@@ -438,6 +764,34 @@ bool SdlEventSource::pollEvent(Common::Event &event) {
 	SDL_Event ev;
 	while (SDL_PollEvent(&ev)) {
 		preprocessEvents(&ev);
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		// Supported touch gestures:
+		// left mouse click: single finger short tap
+		// right mouse click: second finger short tap while first finger is still down
+		// pointer motion: single finger drag
+		if (ev.type == SDL_FINGERDOWN || ev.type == SDL_FINGERUP || ev.type == SDL_FINGERMOTION) {
+			// front (0) or back (1) panel
+			SDL_TouchID port = ev.tfinger.touchId;
+			// touchpad_mouse_mode off: use only front panel for direct touch control of pointer
+			// touchpad_mouse_mode on: also enable rear touch with indirect touch control
+			// where the finger can be somewhere else than the pointer and still move it
+			if (isTouchPortActive(port)) {
+				switch (ev.type) {
+				case SDL_FINGERDOWN:
+					preprocessFingerDown(&ev);
+					break;
+				case SDL_FINGERUP:
+					preprocessFingerUp(&ev);
+					break;
+				case SDL_FINGERMOTION:
+					preprocessFingerMotion(&ev);
+					break;
+				}
+			}
+		}
+#endif
+
 #if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
 		if (ImGui_ImplSDL2_Ready()) {
 			ImGui_ImplSDL2_ProcessEvent(&ev);
