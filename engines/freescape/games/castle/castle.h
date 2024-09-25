@@ -105,7 +105,7 @@ public:
 	Graphics::ManagedSurface *_endGameThroneFrame;
 	Graphics::ManagedSurface *_endGameBackgroundFrame;
 
-	int _numberKeys;
+	Common::Array<int> _keysCollected;
 	bool _useRockTravel;
 	int _spiritsDestroyed;
 	int _spiritsMeter;

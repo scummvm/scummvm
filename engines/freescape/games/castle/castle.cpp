@@ -82,7 +82,6 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_menuFxOnIndicator = nullptr;
 	_menuFxOffIndicator = nullptr;
 
-	_numberKeys = 0;
 	_spiritsDestroyed = 0;
 	_spiritsMeter = 32;
 	_spiritsToKill = 26;
@@ -349,7 +348,7 @@ void CastleEngine::initGameState() {
 	_gameStateVars[k8bitVariableShield] = 16;
 	_gameStateVars[k8bitVariableEnergy] = 1;
 	_countdown = INT_MAX;
-	_numberKeys = 0;
+	_keysCollected.clear();
 	_spiritsDestroyed = 0;
 	_spiritsMeter = 32;
 	_spiritsMeterMax = 64;
@@ -434,12 +433,19 @@ void CastleEngine::drawInfoMenu() {
 		_gfx->readFromPalette(10, r, g, b);
 		front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 		drawStringInSurface(Common::String::format("%07d", score), 166, 71, front, black, surface);
+
+		for (int  i = 0; i < int(_keysCollected.size()) ; i++) {
+			if (i % 2 == 0)
+				surface->copyRectToSurfaceWithKey(*_keysBorderFrames[i], 58, 58 + (i / 2) * 18, Common::Rect(0, 0, _keysBorderFrames[i]->w, _keysBorderFrames[i]->h), black);
+			else
+				surface->copyRectToSurfaceWithKey(*_keysBorderFrames[i], 80, 58 + (i / 2) * 18, Common::Rect(0, 0, _keysBorderFrames[i]->w, _keysBorderFrames[i]->h), black);
+		}
 	} else if (isSpectrum()) {
 		Common::Array<Common::String> lines;
 		lines.push_back(centerAndPadString("********************", 21));
 		lines.push_back(centerAndPadString("s-save l-load q-quit", 21));
 		lines.push_back("");
-		lines.push_back(centerAndPadString(Common::String::format("keys   %d collected", _numberKeys), 21));
+		lines.push_back(centerAndPadString(Common::String::format("keys   %d collected", _keysCollected.size()), 21));
 		lines.push_back(centerAndPadString(Common::String::format("spirits  %d destroyed", _spiritsDestroyed), 21));
 		lines.push_back(centerAndPadString("strength  strong", 21));
 		lines.push_back(centerAndPadString(Common::String::format("score   %07d", score), 21));
@@ -990,9 +996,11 @@ void CastleEngine::checkSensors() {
 
 void CastleEngine::tryToCollectKey() {
 	if (_gameStateVars[32] > 0) { // Key collected!
-		setGameBit(_gameStateVars[32]);
+		if (_keysCollected.size() < 10) {
+			setGameBit(_gameStateVars[32]);
+			_keysCollected.push_back(_gameStateVars[32]);
+		}
 		_gameStateVars[32] = 0;
-		_numberKeys++;
 	}
 }
 
@@ -1153,7 +1161,11 @@ void CastleEngine::selectCharacterScreen() {
 }
 
 Common::Error CastleEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
-	stream->writeUint32LE(_numberKeys);
+	stream->writeUint32LE(_keysCollected.size());
+	for (auto &it : _keysCollected) {
+		stream->writeUint32LE(it);
+	}
+
 	stream->writeUint32LE(_spiritsMeter);
 	stream->writeUint32LE(_spiritsDestroyed);
 
@@ -1166,7 +1178,12 @@ Common::Error CastleEngine::saveGameStreamExtended(Common::WriteStream *stream, 
 }
 
 Common::Error CastleEngine::loadGameStreamExtended(Common::SeekableReadStream *stream) {
-	_numberKeys = stream->readUint32LE();
+	_keysCollected.clear();
+	int numberKeys = stream->readUint32LE();
+	for (int i = 0; i < numberKeys; i++) {
+		_keysCollected.push_back(stream->readUint32LE());
+	}
+
 	_spiritsMeter = stream->readUint32LE();
 	_spiritsDestroyed = stream->readUint32LE();
 

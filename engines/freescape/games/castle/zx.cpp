@@ -237,7 +237,7 @@ void CastleEngine::drawZXUI(Graphics::Surface *surface) {
 	} else
 		drawStringInSurface(_currentArea->_name, 120, 179, front, black, surface);
 
-	for (int k = 0; k < _numberKeys; k++) {
+	for (int k = 0; k < int(_keysCollected.size()); k++) {
 		surface->copyRectToSurface((const Graphics::Surface)*_keysBorderFrames[0], 99 - k * 4, 177, Common::Rect(0, 0, 6, 11));
 	}
 

@@ -187,13 +187,13 @@ void CastleEngine::loadAssetsDOSFullGame() {
 			debug("%lx", stream->pos());
 			debug("extra: %x", stream->readByte());
 
-			for (int i = 0; i < 9; i++) {
+			for (int i = 0; i < 10; i++) {
 				Graphics::ManagedSurface *frame = loadFrameFromPlanes(stream, 8, 14);
 				frame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
 				_keysBorderFrames.push_back(frame);
 			}
 
-			for (int i = 0; i < 11; i++) {
+			for (int i = 0; i < 10; i++) {
 				Graphics::ManagedSurface *frame = loadFrameFromPlanes(stream, 8, 14);
 				frame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
 				_keysMenuFrames.push_back(frame);
@@ -432,8 +432,8 @@ void CastleEngine::drawDOSUI(Graphics::Surface *surface) {
 	} else
 		drawStringInSurface(_currentArea->_name, 97, 182, front, back, surface);
 
-	for (int k = 0; k < _numberKeys; k++) {
-		surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_keysBorderFrames[k], 76 - k * 4, 179, Common::Rect(0, 0, 6, 14), black);
+	for (int k = 0; k < int(_keysCollected.size()); k++) {
+		surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_keysBorderFrames[k], 76 - k * 3, 179, Common::Rect(0, 0, 6, 14), black);
 	}
 
 	drawEnergyMeter(surface, Common::Point(39, 157));
