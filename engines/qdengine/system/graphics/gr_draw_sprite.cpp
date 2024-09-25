@@ -1222,7 +1222,7 @@ void grDispatcher::putSprMask_a(int x, int y, int sx, int sy, const byte *p, uin
 		ix = -1;
 	}
 
-	sx <<= 1;
+	sx <<= 2;
 	byte mr, mg, mb;
 	split_rgb565u(mask_color, mr, mg, mb);
 
