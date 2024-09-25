@@ -210,7 +210,35 @@ bool OSystem_SDL::hasFeature(Feature f) {
 #if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
 	if (f == kFeatureDLC) return true;
 #endif
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (f == kFeatureTouchpadMode) {
+		return SDL_GetNumTouchDevices() > 0;
+	}
+#endif
 	return ModularGraphicsBackend::hasFeature(f);
+}
+
+
+void OSystem_SDL::setFeatureState(Feature f, bool enable) {
+	switch (f) {
+	case kFeatureTouchpadMode:
+		ConfMan.setBool("touchpad_mouse_mode", enable);
+		break;
+	default:
+		ModularGraphicsBackend::setFeatureState(f, enable);
+		break;
+	}
+}
+
+bool OSystem_SDL::getFeatureState(Feature f) {
+	switch (f) {
+	case kFeatureTouchpadMode:
+		return ConfMan.getBool("touchpad_mouse_mode");
+		break;
+	default:
+		return ModularGraphicsBackend::getFeatureState(f);
+		break;
+	}
 }
 
 void OSystem_SDL::initBackend() {

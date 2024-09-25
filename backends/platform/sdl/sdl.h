@@ -52,6 +52,8 @@ public:
 	void init() override;
 
 	bool hasFeature(Feature f) override;
+	void setFeatureState(Feature f, bool enable) override;
+	bool getFeatureState(Feature f) override;
 
 	// Override functions from ModularBackend and OSystem
 	void initBackend() override;
