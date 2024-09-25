@@ -769,8 +769,6 @@ HSaveError WriteOverlays(Stream *out) {
 			continue;
 		valid_count++;
 		over.WriteToSavegame(out);
-		if (!over.IsSpriteReference())
-			serialize_bitmap(over.GetImage(), out);
 	}
 	out->Seek(count_off, kSeekBegin);
 	out->WriteInt32(valid_count);
@@ -778,7 +776,7 @@ HSaveError WriteOverlays(Stream *out) {
 	return HSaveError::None();
 }
 
-HSaveError ReadOverlays(Stream *in, int32_t cmp_ver, soff_t cmp_size, const PreservedParams & /*pp*/, RestoredData & /*r_data*/) {
+HSaveError ReadOverlays(Stream *in, int32_t cmp_ver, soff_t cmp_size, const PreservedParams & /*pp*/, RestoredData &r_data) {
 	// Remember that overlay indexes may be non-sequential
 	// the vector may be resized during read
 	size_t over_count = in->ReadInt32();
@@ -791,11 +789,7 @@ HSaveError ReadOverlays(Stream *in, int32_t cmp_ver, soff_t cmp_size, const Pres
 		if (over.type < 0)
 			continue; // safety abort
 		if (has_bitmap)
-			over.SetImage(read_serialized_bitmap(in), over.offsetX, over.offsetY);
-		if (has_bitmap && (over.scaleWidth <= 0 || over.scaleHeight <= 0)) {
-			over.scaleWidth = over.GetImage()->GetWidth();
-			over.scaleHeight = over.GetImage()->GetHeight();
-		}
+			r_data.OverlayImages[over.type].reset(read_serialized_bitmap(in));
 		if (overs.size() <= static_cast<uint32_t>(over.type))
 			overs.resize(over.type + 1);
 		overs[over.type] = std::move(over);
