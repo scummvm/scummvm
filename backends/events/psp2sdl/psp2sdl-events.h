@@ -34,8 +34,6 @@ protected:
 	void preprocessEvents(SDL_Event *event) override;
 	bool isTouchPortTouchpadMode(SDL_TouchID port) override;
 	bool isTouchPortActive(SDL_TouchID port) override;
-	Common::Point getTouchscreenSize() override;
-	void convertTouchXYToGameXY(float touchX, float touchY, int *gameX, int *gameY) override;
 };
 
 #endif /* BACKEND_EVENTS_PSP2_H */
