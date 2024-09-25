@@ -33,8 +33,6 @@ public:
 
 protected:
 	bool pollEvent(Common::Event &event) override;
-	Common::Point getTouchscreenSize() override;
-	void convertTouchXYToGameXY(float touchX, float touchY, int *gameX, int *gameY) override;
 };
 
 #endif /* BACKEND_EVENTS_SWITCH_H */
