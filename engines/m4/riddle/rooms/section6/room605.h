@@ -43,12 +43,20 @@ private:
 	int _ripHandOnChin = 0;
 	int _ripTwoHandTalk = 0;
 	int _ripTalk = 0;
+	int _ripGetsIrisWithCloth = 0;
+	int _ripHandOnIris = 0;
 	int _605tt = 0;
 	machine *_pupil = nullptr;
 	machine *_ripley = nullptr;
 	machine *_tt = nullptr;
 	machine *_ttShadow = nullptr;
-	machine *_machine1 = nullptr;
+	machine *_shadow = nullptr;
+
+	void conv605a();
+	bool takePupilDisk();
+	bool sleeveDisk1();
+	bool sleeveDisk2();
+	bool parserMisc();
 
 public:
 	Room605() : Room() {}
