@@ -23,13 +23,15 @@
 #include "darkseed/player.h"
 #include "darkseed/darkseed.h"
 
-Darkseed::Player::Player() {
+namespace Darkseed {
+
+Player::Player() {
 	_cPlayerSprites.load("cplayer.nsp");
 	_gPlayerSprites.load("gplayer.nsp");
 	_connectorList.resize(Room::MAX_CONNECTORS);
 }
 
-const Darkseed::Sprite &Darkseed::Player::getSprite(int frameNo) {
+const Sprite &Player::getSprite(int frameNo) {
 	if (g_engine->_room->isGiger()) {
 		return _gPlayerSprites.getSpriteAt(frameNo);
 	} else {
@@ -37,7 +39,7 @@ const Darkseed::Sprite &Darkseed::Player::getSprite(int frameNo) {
 	}
 }
 
-bool Darkseed::Player::loadAnimations(const Common::Path &filename) {
+bool Player::loadAnimations(const Common::Path &filename) {
 	return _animations.load(filename);
 }
 
@@ -45,7 +47,7 @@ uint8 playerSpriteIndexDirectionTbl[] = { 24,  26,  28,  26 };
 bool BYTE_ARRAY_2c85_41eb[] = { false, false, false, true };
 uint16 walkFrameOffsetTbl[] = { 0,   8,  16,   8 };
 
-void Darkseed::Player::updateSprite() {
+void Player::updateSprite() {
 	if (!_playerIsChangingDirection) {
 		if ((_direction == 3) || (_direction == 1)) {
 			g_engine->_player_sprite_related_2c85_82f3 = BYTE_ARRAY_2c85_41eb[_direction];
@@ -78,15 +80,15 @@ void Darkseed::Player::updateSprite() {
 		}
 	}
 }
-bool Darkseed::Player::isAtPosition(int x, int y) const {
+bool Player::isAtPosition(int x, int y) const {
 	return _position.x == x && _position.y == y;
 }
 
-bool Darkseed::Player::isAtWalkTarget() const {
+bool Player::isAtWalkTarget() const {
 	return _position == _walkTarget;
 }
 
-void Darkseed::Player::changeDirection(int16 oldDir, int16 newDir) {
+void Player::changeDirection(int16 oldDir, int16 newDir) {
 	if (oldDir != newDir) {
 		_playerIsChangingDirection = true;
 		_playerSpriteWalkIndex_maybe = (int16)(oldDir * 2);
@@ -119,7 +121,7 @@ void Darkseed::Player::changeDirection(int16 oldDir, int16 newDir) {
 	}
 }
 
-void Darkseed::Player::playerFaceWalkTarget() {
+void Player::playerFaceWalkTarget() {
 	int previousDirection;
 	int xDelta;
 	int yDelta;
@@ -151,7 +153,7 @@ void Darkseed::Player::playerFaceWalkTarget() {
 	_positionLong = _position;
 }
 
-void Darkseed::Player::calculateWalkTarget() {
+void Player::calculateWalkTarget() {
 	_heroMoving = true;
 	_playerWalkFrameIdx = 0;
 	_walkPathIndex = -1;
@@ -222,15 +224,15 @@ void Darkseed::Player::calculateWalkTarget() {
 	}
 }
 
-int Darkseed::Player::getWidth() {
+int Player::getWidth() {
 	return getSprite(_frameIdx)._width;
 }
 
-int Darkseed::Player::getHeight() {
+int Player::getHeight() {
 	return getSprite(_frameIdx)._height;
 }
 
-void Darkseed::Player::updatePlayerPositionAfterRoomChange() {
+void Player::updatePlayerPositionAfterRoomChange() {
 	int currentRoomNumber = g_engine->_room->_roomNumber;
 	g_engine->_room->calculateScaledSpriteDimensions(getWidth(), getHeight(), _position.y);
 	if (currentRoomNumber == 0x29 && g_engine->_previousRoomNumber == 0x2c) {
@@ -297,7 +299,7 @@ void Darkseed::Player::updatePlayerPositionAfterRoomChange() {
 	}
 }
 
-void Darkseed::Player::createConnectorPathToDest() {
+void Player::createConnectorPathToDest() {
 	constexpr Common::Point noConnectorFound(-1, -1);
 	Common::Point origWalkTarget = _walkTarget;
 	Common::Point startPoint = _position;
@@ -350,7 +352,7 @@ void Darkseed::Player::createConnectorPathToDest() {
 	_walkTarget = _connectorList[0];
 }
 
-Common::Point Darkseed::Player::getClosestUnusedConnector(int16 x, int16 y, bool mustHaveCleanLine) {
+Common::Point Player::getClosestUnusedConnector(int16 x, int16 y, bool mustHaveCleanLine) {
 	Common::Point closestPoint = {-1, -1};
 	int closestDist = 5000;
 	for (auto &roomConnector : g_engine->_room->_connectors) {
@@ -373,7 +375,7 @@ Common::Point Darkseed::Player::getClosestUnusedConnector(int16 x, int16 y, bool
 	return closestPoint;
 }
 
-void Darkseed::Player::walkToNextConnector() {
+void Player::walkToNextConnector() {
 	if (_walkPathIndex == -1) {
 		return;
 	}
@@ -387,7 +389,7 @@ void Darkseed::Player::walkToNextConnector() {
 	playerFaceWalkTarget();
 }
 
-void Darkseed::Player::draw() {
+void Player::draw() {
 	if (g_engine->_debugShowWalkPath) {
 		if (_walkPathIndex != -1) {
 			for (int i = _walkPathIndex; i < _numConnectorsInWalkPath; i++) {
@@ -402,7 +404,7 @@ void Darkseed::Player::draw() {
 	}
 }
 
-void Darkseed::Player::reverseConnectorList() {
+void Player::reverseConnectorList() {
 	Common::Array<Common::Point> tempList;
 	tempList.resize(_numConnectorsInWalkPath);
 
@@ -415,7 +417,7 @@ void Darkseed::Player::reverseConnectorList() {
 	}
 }
 
-void Darkseed::Player::OptimisePath() {
+void Player::OptimisePath() {
 	if (g_engine->_room->_roomNumber != 7 && g_engine->_room->_roomNumber != 32) {
 		while (_numConnectorsInWalkPath > 1) {
 			if (g_engine->_room->canWalkInLineToTarget(_connectorList[_numConnectorsInWalkPath - 2].x, _connectorList[_numConnectorsInWalkPath - 2].y, _walkTarget.x, _walkTarget.y)) {
@@ -433,7 +435,7 @@ static constexpr uint8 _closerroom[10] = {
 	7, 6
 };
 
-void Darkseed::Player::setplayertowardsbedroom() {
+void Player::setplayertowardsbedroom() {
 	if (g_engine->_isPlayingAnimation_maybe) {
 		return;
 	}
@@ -469,3 +471,5 @@ void Darkseed::Player::setplayertowardsbedroom() {
 	playerFaceWalkTarget();
 	g_engine->_cursor.setPosition(currentCursor);
 }
+
+} // End of namespace Darkseed

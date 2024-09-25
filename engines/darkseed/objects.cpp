@@ -21,7 +21,9 @@
 
 #include "darkseed/objects.h"
 
-Darkseed::Objects::Objects() {
+namespace Darkseed {
+
+Objects::Objects() {
 	_objectVar.resize(MAX_OBJECTS);
 	_objectRunningCode.resize(MAX_OBJECTS);
 	_moveObjectXY.resize(MAX_OBJECTS);
@@ -29,7 +31,7 @@ Darkseed::Objects::Objects() {
 	reset();
 }
 
-void Darkseed::Objects::reset() {
+void Objects::reset() {
 	for (int i = 0; i < MAX_OBJECTS; i++) {
 		_objectVar[i] = 0;
 		_objectRunningCode[i] = 0;
@@ -43,48 +45,48 @@ void Darkseed::Objects::reset() {
 	setVar(62, 0);
 }
 
-void Darkseed::Objects::setVar(uint16 varIdx, int16 newValue) {
+void Objects::setVar(uint16 varIdx, int16 newValue) {
 	if (varIdx >= MAX_OBJECTS) {
 		error("setVar: Object Index out of range! %d", varIdx);
 	}
 	_objectVar[varIdx] = newValue;
 }
 
-int16 Darkseed::Objects::getVar(uint16 varIdx) {
+int16 Objects::getVar(uint16 varIdx) {
 	if (varIdx >= MAX_OBJECTS) {
 		error("getVar: Object Index out of range! %d", varIdx);
 	}
 	return _objectVar[varIdx];
 }
 
-Common::Point Darkseed::Objects::getMoveObjectPosition(uint8 objIdx) {
+Common::Point Objects::getMoveObjectPosition(uint8 objIdx) {
 	if (objIdx >= MAX_OBJECTS) {
 		error("getMoveObjectPosition: Object Index out of range! %d", objIdx);
 	}
 	return _moveObjectXY[objIdx];
 }
 
-void Darkseed::Objects::setMoveObjectPosition(uint8 objIdx, const Common::Point &newPoint) {
+void Objects::setMoveObjectPosition(uint8 objIdx, const Common::Point &newPoint) {
 	if (objIdx >= MAX_OBJECTS) {
 		error("setMoveObjectPosition: Object Index out of range! %d", objIdx);
 	}
 	_moveObjectXY[objIdx] = newPoint;
 }
 
-void Darkseed::Objects::setMoveObjectX(uint8 objIdx, int16 xPos) {
+void Objects::setMoveObjectX(uint8 objIdx, int16 xPos) {
 	if (objIdx >= MAX_OBJECTS) {
 		error("setMoveObjectX: Object Index out of range! %d", objIdx);
 	}
 	_moveObjectXY[objIdx].x = xPos;
 }
 
-int16 &Darkseed::Objects::operator[](uint16 varIdx) {
+int16 &Objects::operator[](uint16 varIdx) {
 	if (varIdx >= MAX_OBJECTS) {
 		error("getVar: Object Index out of range! %d", varIdx);
 	}
 	return _objectVar[varIdx];
 }
-const int16 &Darkseed::Objects::operator[](uint16 varIdx) const {
+const int16 &Objects::operator[](uint16 varIdx) const {
 	if (varIdx >= MAX_OBJECTS) {
 		error("getVar: Object Index out of range! %d", varIdx);
 	}
@@ -346,42 +348,42 @@ static constexpr char objectNameTbl[199][21] = {
 	"bed bottom",
 };
 
-int Darkseed::Objects::getEyeDescriptionTosIdx(uint16 objNum) {
+int Objects::getEyeDescriptionTosIdx(uint16 objNum) {
 	if (objNum >= MAX_OBJECTS) {
 		error("getEyeDescriptionTosIdx: Object Index out of range! %d", objNum);
 	}
 	return eyeDescriptionsTbl[objNum];
 }
 
-int Darkseed::Objects::getMoveObjectRoom(uint16 idx) {
+int Objects::getMoveObjectRoom(uint16 idx) {
 	if (idx >= MAX_OBJECTS) {
 		error("getMoveObjectRoom: index out of range.");
 	}
 	return _moveObjectRoom[idx];
 }
 
-void Darkseed::Objects::setMoveObjectRoom(uint16 idx, uint8 value) {
+void Objects::setMoveObjectRoom(uint16 idx, uint8 value) {
 	if (idx >= MAX_OBJECTS) {
 		error("setMoveObjectRoom: index out of range.");
 	}
 	_moveObjectRoom[idx] = value;
 }
 
-int16 Darkseed::Objects::getObjectRunningCode(int idx) {
+int16 Objects::getObjectRunningCode(int idx) {
 	if (idx >= MAX_OBJECTS) {
 		error("getObjectRunningCode: index out of range.");
 	}
 	return _objectRunningCode[idx];
 }
 
-void Darkseed::Objects::setObjectRunningCode(int idx, int16 value) {
+void Objects::setObjectRunningCode(int idx, int16 value) {
 	if (idx >= MAX_OBJECTS) {
 		error("setObjectRunningCode: index out of range.");
 	}
 	_objectRunningCode[idx] = value;
 }
 
-const char *Darkseed::Objects::getObjectName(int idx) {
+const char *Objects::getObjectName(int idx) {
 	if (idx < 0 || idx >= MAX_OBJECTS) {
 		error("getObjectName: index out of range.");
 	}
@@ -394,7 +396,7 @@ static inline void syncPoint(Common::Serializer &s, Common::Point &value) {
 	s.syncAsSint16LE(value.y);
 }
 
-Common::Error Darkseed::Objects::sync(Common::Serializer &s) {
+Common::Error Objects::sync(Common::Serializer &s) {
 	s.syncArray(_objectVar.data(), _objectVar.size(), Common::Serializer::Sint16LE);
 	s.syncArray(_objectRunningCode.data(), _objectRunningCode.size(), Common::Serializer::Sint16LE);
 	s.syncArray(_objectRunningCode.data(), _objectRunningCode.size(), Common::Serializer::Sint16LE);
@@ -402,3 +404,5 @@ Common::Error Darkseed::Objects::sync(Common::Serializer &s) {
 	s.syncArray(_moveObjectRoom.data(), _moveObjectRoom.size(), Common::Serializer::Byte);
 	return Common::kNoError;
 }
+
+} // End of namespace Darkseed

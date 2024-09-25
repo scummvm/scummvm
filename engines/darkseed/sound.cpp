@@ -25,12 +25,14 @@
 #include "darkseed/sound.h"
 #include "darkseed/darkseed.h"
 
-Darkseed::Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer) {
+namespace Darkseed {
+
+Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer) {
 	_didSpeech.resize(978);
 	resetSpeech();
 }
 
-void Darkseed::Sound::playTosSpeech(int tosIdx) {
+void Sound::playTosSpeech(int tosIdx) {
 	if (!g_engine->isCdVersion() || _didSpeech[tosIdx] == 1) {
 		return;
 	}
@@ -40,30 +42,32 @@ void Darkseed::Sound::playTosSpeech(int tosIdx) {
 	if (!f.open(path)) {
 		return;
 	}
-	Common::SeekableReadStream *srcStream = f.readStream(f.size());
+	Common::SeekableReadStream *srcStream = f.readStream((uint32)f.size());
 	Audio::SeekableAudioStream *stream = Audio::makeVOCStream(srcStream,
 															  Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream);
 	_didSpeech[tosIdx] = 1;
 }
 
-bool Darkseed::Sound::isPlayingSpeech() {
+bool Sound::isPlayingSpeech() {
 	return _mixer->isSoundHandleActive(_speechHandle);
 }
 
-void Darkseed::Sound::waitForSpeech() {
+void Sound::waitForSpeech() {
 	while (isPlayingSpeech()) {
 		// TODO poll events / wait a bit here.
 	}
 }
 
-void Darkseed::Sound::resetSpeech() {
+void Sound::resetSpeech() {
 	for (int i = 0; i < (int)_didSpeech.size(); i++) {
 		_didSpeech[i] = 0;
 	}
 }
 
-Common::Error Darkseed::Sound::sync(Common::Serializer &s) {
+Common::Error Sound::sync(Common::Serializer &s) {
 	s.syncArray(_didSpeech.data(), _didSpeech.size(), Common::Serializer::Byte);
 	return Common::kNoError;
 }
+
+} // End of namespace Darkseed

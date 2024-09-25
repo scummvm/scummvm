@@ -22,6 +22,8 @@
 #include "darkseed/room.h"
 #include "darkseed/darkseed.h"
 
+namespace Darkseed {
+
 const static int roomDescriptionTextTbl[] = {
 	0, 138, 165, 165,
 	181, 243, 254, 292,
@@ -43,7 +45,7 @@ const static int roomDescriptionTextTbl[] = {
 	903
 };
 
-Darkseed::Room::Room(int roomNumber) : _roomNumber(roomNumber) {
+Room::Room(int roomNumber) : _roomNumber(roomNumber) {
 	_room1.resize(8);
 	_walkableLocationsMap.resize(16);
 	_roomObj.resize(30);
@@ -56,7 +58,7 @@ Darkseed::Room::Room(int roomNumber) : _roomNumber(roomNumber) {
 	}
 }
 
-void Darkseed::Room::initRoom() {
+void Room::initRoom() {
 	for (int iVar1 = 0; iVar1 < 30; iVar1 = iVar1 + 1) {
 		_locObjFrame[iVar1] = 0;
 		g_engine->_animIndexTbl[iVar1] = 0;
@@ -77,7 +79,7 @@ void Darkseed::Room::initRoom() {
 	}
 }
 
-bool Darkseed::Room::load() {
+bool Room::load() {
 	Common::String filenameBase = getRoomFilenameBase(_roomNumber);
 	Common::Path romFilename;
 	Common::File file;
@@ -197,7 +199,7 @@ bool Darkseed::Room::load() {
 	return true;
 }
 
-Common::String Darkseed::Room::stripSpaces(Common::String source) {
+Common::String Room::stripSpaces(Common::String source) {
 	Common::String out;
 	const char *src = source.c_str();
 	for (uint i = 0; i < source.size(); i++) {
@@ -208,7 +210,7 @@ Common::String Darkseed::Room::stripSpaces(Common::String source) {
 	return out;
 }
 
-void Darkseed::Room::draw() {
+void Room::draw() {
 	if (!_palLoaded) {
 		_pal.installPalette();
 		_palLoaded = true;
@@ -231,7 +233,7 @@ void Darkseed::Room::draw() {
 	}
 }
 
-int Darkseed::Room::checkCursorAndMoveableObjects() {
+int Room::checkCursorAndMoveableObjects() {
 	int actionMode = g_engine->_actionMode;
 	const Sprite &cursorSprite = (actionMode == LookAction)
 									 ? g_engine->_cursor.getSpriteForType(ExclamationMark)
@@ -267,7 +269,7 @@ int Darkseed::Room::checkCursorAndMoveableObjects() {
 	return hasObject ? objNum : -1;
 }
 
-int Darkseed::Room::checkCursorAndStaticObjects(int x, int y) {
+int Room::checkCursorAndStaticObjects(int x, int y) {
 	int actionMode = g_engine->_actionMode;
 	const Sprite &cursorSprite = (actionMode == LookAction)
 									 ? g_engine->_cursor.getSpriteForType(ExclamationMark)
@@ -317,7 +319,7 @@ int Darkseed::Room::checkCursorAndStaticObjects(int x, int y) {
 	return -1;
 }
 
-int Darkseed::Room::CheckCursorAndMovedObjects() {
+int Room::CheckCursorAndMovedObjects() {
 	int actionMode = g_engine->_actionMode;
 	const Sprite &cursorSprite = (actionMode == LookAction)
 									 ? g_engine->_cursor.getSpriteForType(ExclamationMark)
@@ -352,7 +354,7 @@ int Darkseed::Room::CheckCursorAndMovedObjects() {
 	return -1;
 }
 
-void Darkseed::Room::update() {
+void Room::update() {
 	if (g_engine->_actionMode == HandAction || g_engine->_actionMode > 4) {
 		int moveableObj = checkCursorAndMoveableObjects();
 		if (moveableObj == -1) {
@@ -417,10 +419,10 @@ void Darkseed::Room::update() {
 	}
 }
 
-bool Darkseed::Room::exitRoom() {
+bool Room::exitRoom() {
 	return false;
 }
-int Darkseed::Room::getExitRoomNumberAtPoint(int x, int y) {
+int Room::getExitRoomNumberAtPoint(int x, int y) {
 	int obj = checkCursorAndStaticObjects(x, y);
 	for (uint i = 0; i < _room1.size(); i++) {
 		if (
@@ -435,14 +437,14 @@ int Darkseed::Room::getExitRoomNumberAtPoint(int x, int y) {
 	}
 	return -1;
 }
-Common::String Darkseed::Room::getRoomFilenameBase(int roomNumber) {
+Common::String Room::getRoomFilenameBase(int roomNumber) {
 	if (roomNumber == 20 || roomNumber == 22) {
 		return "room19";
 	}
 	return Common::String::format("room%d", roomNumber);
 }
 
-bool Darkseed::Room::canWalkAtLocation(int x, int y) {
+bool Room::canWalkAtLocation(int x, int y) {
 	if (x < 69 || x >= 570 || y < 40 || y >= 239) {
 		return false;
 	}
@@ -452,7 +454,7 @@ bool Darkseed::Room::canWalkAtLocation(int x, int y) {
 	return (_walkableLocationsMap[t / 8].strip[(y - 40) / 5] >> ((7 - (t % 8)) & 0x1f) & 1);
 }
 
-bool Darkseed::Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int destY) {
+bool Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int destY) {
 	int iVar1;
 	int iVar2;
 	int iVar4;
@@ -621,14 +623,14 @@ bool Darkseed::Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int de
 //	return false;
 }
 
-void Darkseed::Room::printRoomDescriptionText() const {
+void Room::printRoomDescriptionText() const {
 	int textId = roomDescriptionTextTbl[_roomNumber];
 	if (textId != 0) {
 		g_engine->_console->printTosText(textId);
 	}
 }
 
-int Darkseed::Room::getRoomExitAtCursor() {
+int Room::getRoomExitAtCursor() {
 	for (uint i = 0; i < _roomObj.size(); i++) {
 		Common::Rect roomRect(_roomObj[i].xOffset, _roomObj[i].yOffset, _roomObj[i].xOffset + _roomObj[i].width, _roomObj[i].yOffset + _roomObj[i].height);
 		if (_roomObj[i].type == 0 && _roomObj[i].objNum < 6 && roomRect.contains(g_engine->_cursor.getPosition())) {
@@ -639,7 +641,7 @@ int Darkseed::Room::getRoomExitAtCursor() {
 	return 0;
 }
 
-void Darkseed::Room::getWalkTargetForObjectType_maybe(int objId) {
+void Room::getWalkTargetForObjectType_maybe(int objId) {
 	for (uint i = 0; i < _roomObj.size(); i++) {
 		if (_roomObj[i].objNum == objId && _roomObj[i].type == 4) {
 			g_engine->_player->_walkTarget.x = _roomObj[i].xOffset;
@@ -708,7 +710,7 @@ static const uint8 room_sprite_related_2c85_4303[] = {
 	15
 };
 
-void Darkseed::Room::calculateScaledSpriteDimensions(int width, int height, int curYPosition) {
+void Room::calculateScaledSpriteDimensions(int width, int height, int curYPosition) {
 	int local_6 = (g_engine->_sprite_y_scaling_threshold_maybe - 2) - curYPosition;
 	if (local_6 <= 0) {
 		local_6 = 0;
@@ -718,7 +720,7 @@ void Darkseed::Room::calculateScaledSpriteDimensions(int width, int height, int 
 	g_engine->_scaledSpriteHeight = (height * g_engine->_scaledWalkSpeed_maybe) / 1000;
 }
 
-uint16 Darkseed::Room::getDoorTargetRoom(int objId) {
+uint16 Room::getDoorTargetRoom(int objId) {
 	for (uint i = 0; i < _roomObj.size(); i++) {
 		if (_roomObj[i].objNum == objId && _roomObj[i].type == 4) {
 			for (uint j = 0; j < _room1.size(); j++) {
@@ -736,7 +738,7 @@ uint16 Darkseed::Room::getDoorTargetRoom(int objId) {
 	return g_engine->_targetRoomNumber; //TODO is this a safe fallback if no door exists?
 }
 
-int Darkseed::Room::getObjectUnderCursor() {
+int Room::getObjectUnderCursor() {
 	_collisionType = 0;
 	int objIdx = checkCursorAndMoveableObjects();
 	if (objIdx == -1) {
@@ -748,7 +750,7 @@ int Darkseed::Room::getObjectUnderCursor() {
 	return objIdx;
 }
 
-bool Darkseed::Room::isOutside() {
+bool Room::isOutside() {
 	bool isRoomOutside;
 
 	if (_roomNumber == 61) {
@@ -771,7 +773,7 @@ bool Darkseed::Room::isOutside() {
 	return isRoomOutside;
 }
 
-void Darkseed::Room::runRoomObjects() {
+void Room::runRoomObjects() {
 	if (_roomNumber == 61) {
 		drawTrunk();
 	}
@@ -1165,11 +1167,11 @@ void Darkseed::Room::runRoomObjects() {
 	}
 }
 
-bool Darkseed::Room::isGiger() {
+bool Room::isGiger() {
 	return _roomNumber >= 38 && (_roomNumber <= 60 || _roomNumber >= 66);
 }
 
-void Darkseed::Room::removeObjectFromRoom(int16 objNum) {
+void Room::removeObjectFromRoom(int16 objNum) {
 	if (_collisionType == 0) {
 		for (auto &roomObj : _roomObj) {
 			if (roomObj.objNum == objNum) {
@@ -1183,7 +1185,7 @@ void Darkseed::Room::removeObjectFromRoom(int16 objNum) {
 	}
 }
 
-void Darkseed::Room::updateRoomObj(int16 objNum, int16 x, int16 width, int16 y, int16 height) {
+void Room::updateRoomObj(int16 objNum, int16 x, int16 width, int16 y, int16 height) {
 	for (auto &roomObj : _roomObj) {
 		if (roomObj.type == 0 && roomObj.objNum == objNum) {
 			roomObj.xOffset = x;
@@ -1207,7 +1209,7 @@ void Darkseed::Room::updateRoomObj(int16 objNum, int16 x, int16 width, int16 y, 
 	}
 }
 
-void Darkseed::Room::drawTrunk() {
+void Room::drawTrunk() {
 	int trunkXPos;
 	int trunkYPos;
 	int spriteIdx;
@@ -1249,7 +1251,7 @@ void Darkseed::Room::drawTrunk() {
 	return;
 }
 
-void Darkseed::Room::advanceLocAnimFrame(int roomObjIdx) {
+void Room::advanceLocAnimFrame(int roomObjIdx) {
 	const Obt &anim = _locationSprites.getAnimAt(_roomObj[roomObjIdx].spriteNum);
 	g_engine->_objRestarted = false;
 	_locObjFrameTimer[roomObjIdx]--;
@@ -1263,7 +1265,7 @@ void Darkseed::Room::advanceLocAnimFrame(int roomObjIdx) {
 	}
 }
 
-bool Darkseed::Room::advanceFrame(int animIdx) {
+bool Room::advanceFrame(int animIdx) {
 	g_engine->_frameAdvanced = false;
 	const Obt &anim = _locationSprites.getAnimAt(animIdx);
 	g_engine->_objRestarted = false;
@@ -1280,7 +1282,7 @@ bool Darkseed::Room::advanceFrame(int animIdx) {
 	return g_engine->_frameAdvanced;
 }
 
-void Darkseed::Room::mikeStickThrowAnim() {
+void Room::mikeStickThrowAnim() {
 	advanceFrame(2);
 	if (!g_engine->_objRestarted) {
 		g_engine->_player->_frameIdx = _locationSprites.getAnimAt(2)._frameNo[_locObjFrame[2]];
@@ -1292,7 +1294,7 @@ void Darkseed::Room::mikeStickThrowAnim() {
 	}
 }
 
-void Darkseed::Room::loadRoom61AWalkableLocations() {
+void Room::loadRoom61AWalkableLocations() {
 	Common::File file;
 	Common::Path romFilename = g_engine->getRoomFilePath(Common::Path("room61a.rom"));
 	if (!file.open(romFilename)) {
@@ -1306,11 +1308,11 @@ void Darkseed::Room::loadRoom61AWalkableLocations() {
 	}
 }
 
-void Darkseed::Room::restorePalette() {
+void Room::restorePalette() {
 	_palLoaded = false;
 }
 
-void Darkseed::Room::darkenSky() {
+void Room::darkenSky() {
 	if (isOutside() && g_engine->_currentTimeInSeconds / 3600 > 16) {
 		Pal workPal(_pal);
 		int timeOffset = g_engine->_currentTimeInSeconds - 61200;
@@ -1328,14 +1330,14 @@ void Darkseed::Room::darkenSky() {
 	}
 }
 
-void Darkseed::Room::loadLocationSprites(const Common::Path &path) {
+void Room::loadLocationSprites(const Common::Path &path) {
 	_locationSprites.load(path);
 	for (int i = 0; i < _locationSprites.getTotalAnim(); i++) {
 		_locObjFrameTimer[i] = _locationSprites.getAnimAt(i)._frameDuration[0];
 	}
 }
 
-Common::Point Darkseed::Room::getExitPointForRoom(uint8 roomNumber) {
+Common::Point Room::getExitPointForRoom(uint8 roomNumber) {
 	for (unsigned int i = 0; i < _room1.size(); i++) {
 		if (_room1[i].roomNumber == roomNumber) {
 			return Common::Point(_room1[i].x, _room1[i].y);
@@ -1343,3 +1345,5 @@ Common::Point Darkseed::Room::getExitPointForRoom(uint8 roomNumber) {
 	}
 	return Common::Point();
 }
+
+} // End of namespace Darkseed

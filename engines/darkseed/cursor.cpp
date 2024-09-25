@@ -23,7 +23,9 @@
 #include "darkseed/cursor.h"
 #include "darkseed/darkseed.h"
 
-void Darkseed::Cursor::setCursorType(enum CursorType newType) {
+namespace Darkseed {
+
+void Cursor::setCursorType(enum CursorType newType) {
 	bool loadCursor = !_hasLoadedCursor || _currentCursorType != newType;
 	_currentCursorType = newType;
 
@@ -36,28 +38,30 @@ void Darkseed::Cursor::setCursorType(enum CursorType newType) {
 	}
 }
 
-void Darkseed::Cursor::updatePosition(int16 x, int16 y) {
+void Cursor::updatePosition(int16 x, int16 y) {
 	_position.x = x;
 	_position.y = y;
-//	debug("mouse at (%d,%d)", _x, _y);
+	//	debug("mouse at (%d,%d)", _x, _y);
 }
 
-int Darkseed::Cursor::getWidth() {
+int Cursor::getWidth() {
 	return g_engine->_baseSprites.getSpriteAt(_currentCursorType)._width;
 }
 
-int Darkseed::Cursor::getHeight() {
+int Cursor::getHeight() {
 	return g_engine->_baseSprites.getSpriteAt(_currentCursorType)._height;
 }
 
-const Darkseed::Sprite &Darkseed::Cursor::getSprite() {
+const Sprite &Darkseed::Cursor::getSprite() {
 	return g_engine->_baseSprites.getSpriteAt(_currentCursorType);
 }
 
-const Darkseed::Sprite &Darkseed::Cursor::getSpriteForType(Darkseed::CursorType cursorType) {
+const Sprite &Darkseed::Cursor::getSpriteForType(Darkseed::CursorType cursorType) {
 	return g_engine->_baseSprites.getSpriteAt(cursorType);
 }
 
-void Darkseed::Cursor::showCursor(bool showCursor) {
+void Cursor::showCursor(bool showCursor) {
 	CursorMan.showMouse(showCursor);
 }
+
+} // End of namespace Darkseed

@@ -22,13 +22,15 @@
 #include "darkseed/sprites.h"
 #include "darkseed/darkseed.h"
 
+namespace Darkseed {
+
 #define DARKSEED_MAX_SPRITES_ON_SCREEN 30
 
-Darkseed::Sprites::Sprites() {
+Sprites::Sprites() {
 	_spriteDrawList.reserve(DARKSEED_MAX_SPRITES_ON_SCREEN);
 }
 
-void Darkseed::Sprites::addSpriteToDrawList(uint16 destX, uint16 destY, const Darkseed::Sprite *sprite, uint8 order, uint16 destW, uint16 destH, bool flip) {
+void Sprites::addSpriteToDrawList(uint16 destX, uint16 destY, const Sprite *sprite, uint8 order, uint16 destW, uint16 destH, bool flip) {
 	if (_spriteDrawList.size() == DARKSEED_MAX_SPRITES_ON_SCREEN || destX >= 570) {
 		return;
 	}
@@ -55,14 +57,14 @@ void Darkseed::Sprites::addSpriteToDrawList(uint16 destX, uint16 destY, const Da
 	}
 }
 
-void Darkseed::Sprites::clearSpriteDrawList() {
+void Sprites::clearSpriteDrawList() {
 	// not using clear() here to avoid freeing array storage memory.
 	while (!_spriteDrawList.empty()) {
 		_spriteDrawList.pop_back();
 	}
 }
 
-void Darkseed::Sprites::drawSprites() {
+void Sprites::drawSprites() {
 	for (int i = _spriteDrawList.size() - 1; i >= 0; i--) {
 		SpriteDrawInstruction &drawInstruction = _spriteDrawList[i];
 		if (drawInstruction.sprite->_width == drawInstruction.destW && drawInstruction.sprite->_height == drawInstruction.destH && !drawInstruction.flip) {
@@ -72,3 +74,5 @@ void Darkseed::Sprites::drawSprites() {
 		}
 	}
 }
+
+} // End of namespace Darkseed
