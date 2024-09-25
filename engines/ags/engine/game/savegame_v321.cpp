@@ -297,7 +297,7 @@ static void ReadOverlays_Aligned(Stream *in, std::vector<bool> &has_bitmap, size
 	}
 }
 
-static void restore_game_overlays(Stream *in) {
+static void restore_game_overlays(Stream *in, RestoredData &r_data) {
 	size_t num_overs = in->ReadInt32();
 	// Remember that overlay indexes may be not sequential,
 	// the vector may be resized during read
@@ -307,7 +307,7 @@ static void restore_game_overlays(Stream *in) {
 	ReadOverlays_Aligned(in, has_bitmap, num_overs);
 	for (size_t i = 0; i < overs.size(); ++i) {
 		if (has_bitmap[i])
-			overs[i].SetImage(read_serialized_bitmap(in), overs[i].offsetX, overs[i].offsetY);
+			r_data.OverlayImages[i].reset(read_serialized_bitmap(in));
 	}
 }
 
@@ -468,7 +468,7 @@ HSaveError restore_save_data_v321(Stream *in, GameDataVersion data_ver, const Pr
 		return err;
 	restore_game_thisroom(in, r_data);
 	restore_game_ambientsounds(in, r_data);
-	restore_game_overlays(in);
+	restore_game_overlays(in, r_data);
 	restore_game_dynamic_surfaces(in, r_data);
 	restore_game_displayed_room_status(in, data_ver, r_data);
 	err = restore_game_globalvars(in);

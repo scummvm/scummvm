@@ -450,9 +450,11 @@ int add_dynamic_sprite(int slot, std::unique_ptr<Bitmap> image, bool has_alpha, 
 	return slot;
 }
 
-void free_dynamic_sprite(int slot) {
-	assert((slot > 0) && (_GP(game).SpriteInfos[slot].Flags & SPF_DYNAMICALLOC));
-	if (slot <= 0 || (_GP(game).SpriteInfos[slot].Flags & SPF_DYNAMICALLOC) == 0)
+void free_dynamic_sprite(int slot, bool notify_all) {
+	assert((slot > 0) && (static_cast<size_t>(slot) < _GP(game).SpriteInfos.size()) &&
+		   (_GP(game).SpriteInfos[slot].Flags & SPF_DYNAMICALLOC));
+	if ((slot <= 0) || (static_cast<size_t>(slot) >= _GP(game).SpriteInfos.size()) ||
+		(_GP(game).SpriteInfos[slot].Flags & SPF_DYNAMICALLOC) == 0)
 		return;
 
 	_GP(spriteset).DisposeSprite(slot);

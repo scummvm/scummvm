@@ -2046,10 +2046,7 @@ static void construct_overlays() {
 					walkbehinds_cropout(_GP(overlaybmp)[i].get(), pos.X, pos.Y, over.zorder);
 					use_bmp = _GP(overlaybmp)[i].get();
 				}
-			} else if (over.GetSpriteNum() < 0) {
-				use_bmp = over.GetImage();
 			}
-
 			over.ddb = recycle_ddb_sprite(over.ddb, over.GetSpriteNum(), use_bmp, over.HasAlphaChannel());
 			over.ClearChanged();
 		}
