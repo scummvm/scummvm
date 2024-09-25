@@ -155,28 +155,6 @@ bool OSystem_PSP2::hasFeature(Feature f) {
 		OSystem_SDL::hasFeature(f));
 }
 
-void OSystem_PSP2::setFeatureState(Feature f, bool enable) {
-	switch (f) {
-	case kFeatureTouchpadMode:
-		ConfMan.setBool("touchpad_mouse_mode", enable);
-		break;
-	default:
-		OSystem_SDL::setFeatureState(f, enable);
-		break;
-	}
-}
-
-bool OSystem_PSP2::getFeatureState(Feature f) {
-	switch (f) {
-	case kFeatureTouchpadMode:
-		return ConfMan.getBool("touchpad_mouse_mode");
-		break;
-	default:
-		return OSystem_SDL::getFeatureState(f);
-		break;
-	}
-}
-
 void OSystem_PSP2::logMessage(LogMessageType::Type type, const char *message) {
 #if __PSP2_DEBUG__
 	psp2shell_print(message);
