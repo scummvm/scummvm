@@ -81,8 +81,7 @@ void Overlay_SetText(ScriptOverlay *scover, int width, int fontid, int text_colo
 										 width, fontid, allow_shrink, has_alpha);
 
 	// Update overlay properties
-	over->SetImage(image, adj_x - dummy_x, adj_y - dummy_y);
-	over->SetAlphaChannel(has_alpha);
+	over->SetImage(std::unique_ptr<Bitmap>(image), has_alpha, adj_x - dummy_x, adj_y - dummy_y);
 	over->ddb = nullptr; // is generated during first draw pass
 }
 
@@ -163,14 +162,14 @@ int Overlay_GetGraphicWidth(ScriptOverlay *scover) {
 	auto *over = get_overlay(scover->overlayId);
 	if (!over)
 		quit("!invalid overlay ID specified");
-	return game_to_data_coord(over->GetImage()->GetWidth());
+	return game_to_data_coord(over->GetGraphicSize().Width);
 }
 
 int Overlay_GetGraphicHeight(ScriptOverlay *scover) {
 	auto *over = get_overlay(scover->overlayId);
 	if (!over)
 		quit("!invalid overlay ID specified");
-	return game_to_data_coord(over->GetImage()->GetHeight());
+	return game_to_data_coord(over->GetGraphicSize().Height);
 }
 
 void Overlay_SetScaledSize(ScreenOverlay &over, int width, int height) {
@@ -409,11 +408,9 @@ size_t add_screen_overlay_impl(bool roomlayer, int x, int y, int type, int sprnu
 	over.type = type;
 	over.creation_id = _GP(play).overlay_creation_id++;
 	if (piccy) {
-		over.SetImage(piccy, pic_offx, pic_offy);
-		over.SetAlphaChannel(has_alpha);
+		over.SetImage(std::unique_ptr<Bitmap>(piccy), has_alpha, pic_offx, pic_offy);
 	} else {
 		over.SetSpriteNum(sprnum, pic_offx, pic_offy);
-		over.SetAlphaChannel((_GP(game).SpriteInfos[sprnum].Flags & SPF_ALPHACHANNEL) != 0);
 	}
 	over.ddb = nullptr; // is generated during first draw pass
 	over.x = x;
@@ -470,20 +467,20 @@ Point get_overlay_position(const ScreenOverlay &over) {
 		auto view = FindNearestViewport(charid);
 		const int charpic = _GP(views)[_GP(game).chars[charid].view].loops[_GP(game).chars[charid].loop].frames[0].pic;
 		const int height = (_GP(charextra)[charid].height < 1) ? _GP(game).SpriteInfos[charpic].Height : _GP(charextra)[charid].height;
-		Point screenpt = view->RoomToScreen(
+		const Point screenpt = view->RoomToScreen(
 			data_to_game_coord(_GP(game).chars[charid].x),
 			data_to_game_coord(_GP(charextra)[charid].GetEffectiveY(&_GP(game).chars[charid])) - height).first;
-		Bitmap *pic = over.GetImage();
-		int tdxp = std::max(0, screenpt.X - pic->GetWidth() / 2);
+		const Size pic_size = over.GetGraphicSize();
+		int tdxp = std::max(0, screenpt.X - pic_size.Width / 2);
 		int tdyp = screenpt.Y - get_fixed_pixel_size(5);
-		tdyp -= pic->GetHeight();
+		tdyp -= pic_size.Height;
 		tdyp = std::max(5, tdyp);
 
-		if ((tdxp + pic->GetWidth()) >= ui_view.GetWidth())
-			tdxp = (ui_view.GetWidth() - pic->GetWidth()) - 1;
+		if ((tdxp + pic_size.Width) >= ui_view.GetWidth())
+			tdxp = (ui_view.GetWidth() - pic_size.Width) - 1;
 		if (_GP(game).chars[charid].room != _G(displayed_room)) {
-			tdxp = ui_view.GetWidth() / 2 - pic->GetWidth() / 2;
-			tdyp = ui_view.GetHeight() / 2 - pic->GetHeight() / 2;
+			tdxp = ui_view.GetWidth() / 2 - pic_size.Width / 2;
+			tdyp = ui_view.GetHeight() / 2 - pic_size.Height / 2;
 		}
 		return Point(tdxp, tdyp);
 	} else {

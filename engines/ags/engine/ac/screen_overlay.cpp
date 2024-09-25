@@ -20,8 +20,10 @@
  */
 
 #include "common/std/utility.h"
+#include "ags/engine/ac/dynamic_sprite.h"
 #include "ags/engine/ac/screen_overlay.h"
 #include "ags/shared/ac/sprite_cache.h"
+#include "ags/shared/ac/game_setup_struct.h"
 #include "ags/shared/util/stream.h"
 #include "ags/globals.h"
 
@@ -29,44 +31,64 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-Bitmap *ScreenOverlay::GetImage() const {
-	return IsSpriteReference() ?
-		_GP(spriteset)[_sprnum] :
-		_pic.get();
+ScreenOverlay::ScreenOverlay(ScreenOverlay &&over) {
+	*this = std::move(over);
 }
 
-void ScreenOverlay::SetImage(Shared::Bitmap *pic, int offx, int offy) {
-	_flags &= ~kOver_SpriteReference;
-	_pic.reset(pic);
-	_sprnum = -1;
-	offsetX = offx;
-	offsetY = offy;
-	scaleWidth = scaleHeight = 0;
-	const auto *img = GetImage();
-	if (img) {
-		scaleWidth = img->GetWidth();
-		scaleHeight = img->GetHeight();
+ScreenOverlay::~ScreenOverlay() {
+	if (_sprnum > 0 && !IsSpriteShared())
+		free_dynamic_sprite(_sprnum, false);
+}
+
+// TODO: this may be avoided if we somehow make (dynamic) sprites reference counted when assigning ID too
+ScreenOverlay &ScreenOverlay::operator=(ScreenOverlay &&over) {
+	*this = over;
+	over._sprnum = 0;
+	return *this;
+}
+
+void ScreenOverlay::ResetImage() {
+	if (_sprnum > 0 && !IsSpriteShared())
+		free_dynamic_sprite(_sprnum, false);
+	_sprnum = 0;
+	_flags &= ~(kOver_SpriteShared | kOver_AlphaChannel);
+	scaleWidth = scaleHeight = offsetX = offsetY = 0;
+}
+
+Bitmap *ScreenOverlay::GetImage() const {
+	return _GP(spriteset)[_sprnum];
+}
+
+Size ScreenOverlay::GetGraphicSize() const {
+	return Size(_GP(game).SpriteInfos[_sprnum].Width, _GP(game).SpriteInfos[_sprnum].Height);
+}
+
+void ScreenOverlay::SetImage(std::unique_ptr<Shared::Bitmap> pic, bool has_alpha, int offx, int offy) {
+	ResetImage();
+	if (pic) {
+		_flags |= kOver_AlphaChannel * has_alpha;
+		offsetX = offx;
+		offsetY = offy;
+		scaleWidth = pic->GetWidth();
+		scaleHeight = pic->GetHeight();
+		_sprnum = add_dynamic_sprite(std::move(pic), has_alpha);
 	}
 	MarkChanged();
 }
 
 void ScreenOverlay::SetSpriteNum(int sprnum, int offx, int offy) {
-	_flags |= kOver_SpriteReference;
-	_pic.reset();
+	ResetImage();
+	_flags |= kOver_SpriteShared | kOver_AlphaChannel * ((_GP(game).SpriteInfos[sprnum].Flags & SPF_ALPHACHANNEL) != 0);
 	_sprnum = sprnum;
 	offsetX = offx;
 	offsetY = offy;
-	scaleWidth = scaleHeight = 0;
-	const auto *img = GetImage();
-	if (img) {
-		scaleWidth = img->GetWidth();
-		scaleHeight = img->GetHeight();
-	}
+	scaleWidth = _GP(game).SpriteInfos[sprnum].Width;
+	scaleHeight = _GP(game).SpriteInfos[sprnum].Height;
 	MarkChanged();
 }
 
 void ScreenOverlay::ReadFromSavegame(Stream *in, bool &has_bitmap, int32_t cmp_ver) {
-	_pic.reset();
+	ResetImage();
 	ddb = nullptr;
 	in->ReadInt32(); // ddb 32-bit pointer value (nasty legacy format)
 	int pic = in->ReadInt32();
@@ -101,21 +123,18 @@ void ScreenOverlay::ReadFromSavegame(Stream *in, bool &has_bitmap, int32_t cmp_v
 
 	// New saves always save overlay images as a part of the dynamicsprite set;
 	// old saves could contain images saved along with overlays
-	if ((cmp_ver >= kOverSvgVersion_36108) || (_flags & kOver_SpriteReference)) {
+	if ((cmp_ver >= kOverSvgVersion_36108) || (_flags & kOver_SpriteShared)) {
 		_sprnum = pic;
 		has_bitmap = false;
 	} else {
-		_sprnum = -1;
+		_sprnum = 0;
 		has_bitmap = pic != 0;
 	}
 }
 
 void ScreenOverlay::WriteToSavegame(Stream *out) const {
 	out->WriteInt32(0); // ddb 32-bit pointer value (nasty legacy format)
-	if (_flags & kOver_SpriteReference)
-		out->WriteInt32(_sprnum); // sprite reference
-	else
-		out->WriteInt32(_pic ? 1 : 0); // has bitmap
+	out->WriteInt32(_sprnum); // sprite id
 	out->WriteInt32(type);
 	out->WriteInt32(x);
 	out->WriteInt32(y);

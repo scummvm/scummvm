@@ -24,6 +24,7 @@
 
 #include "common/std/memory.h"
 #include "common/std/vector.h"
+#include "common/std/map.h"
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/game/room_struct.h"
 #include "ags/shared/gfx/bitmap.h"
@@ -73,6 +74,8 @@ struct RestoredData {
 	int                     FPS;
 	// Unserialized bitmaps for dynamic surfaces
 	std::vector<std::unique_ptr<Bitmap>> DynamicSurfaces;
+	// Unserialized bitmaps for overlays (old-style saves)
+	std::unordered_map<int, std::unique_ptr<Bitmap> > OverlayImages;
 	// Scripts global data
 	struct ScriptData {
 		std::vector<char>	Data;

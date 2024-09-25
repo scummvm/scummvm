@@ -19,16 +19,24 @@
  *
  */
 
- // ScreenOverlay is a simple sprite container with no advanced functions.
-// May contain owned bitmap or reference persistent sprite's id, similar to how
-// other game objects do that.
+// ScreenOverlay is a simple sprite container with no advanced functions.
+// Contains an id of a sprite, which may be either owned by overlay, or shared
+// to whole game similar to how other objects use sprites.
 // May logically exist either on UI or room layer.
+// TODO: historically overlay objects contained an actual bitmap in them.
+// This was remade into having a dynamic sprite allocated exclusively for
+// overlay. But sprites do not have any kind of a ref count of their own
+// (unless exported into script as DynamicSprite), so we have to keep an
+// overlay's flag, which tells that the sprite it references must be deleted
+// on overlay's disposal. This should be improved at some point, by devising
+// a better kind of a sprite's ownership mechanic.
 
 #ifndef AGS_ENGINE_AC_SCREEN_OVERLAY_H
 #define AGS_ENGINE_AC_SCREEN_OVERLAY_H
 
 #include "common/std/memory.h"
 #include "ags/shared/core/types.h"
+#include "ags/shared/util/geometry.h"
 
 namespace AGS3 {
 
@@ -52,7 +60,7 @@ enum OverlayFlags {
 	kOver_AlphaChannel = 0x0001,
 	kOver_PositionAtRoomXY = 0x0002, // room-relative position, may be in ui
 	kOver_RoomLayer = 0x0004,        // work in room layer (as opposed to UI)
-	kOver_SpriteReference = 0x0008   // reference persistent sprite
+	kOver_SpriteShared = 0x0008   // reference shared sprite (as opposed to exclusive)
 };
 
 enum OverlaySvgVersion {
@@ -83,11 +91,16 @@ struct ScreenOverlay {
 	int zorder = INT_MIN;
 	int transparency = 0;
 
+	ScreenOverlay() = default;
+	ScreenOverlay(ScreenOverlay &&);
+	~ScreenOverlay();
+	ScreenOverlay &operator=(ScreenOverlay &&);
+
 	bool HasAlphaChannel() const {
 		return (_flags & kOver_AlphaChannel) != 0;
 	}
-	bool IsSpriteReference() const {
-		return (_flags & kOver_SpriteReference) != 0;
+	bool IsSpriteShared() const {
+		return (_flags & kOver_SpriteShared) != 0;
 	}
 	bool IsRoomRelative() const {
 		return (_flags & kOver_PositionAtRoomXY) != 0;
@@ -107,11 +120,15 @@ struct ScreenOverlay {
 	}
 	// Gets actual overlay's image, whether owned by overlay or by a sprite reference
 	Shared::Bitmap *GetImage() const;
-	// Get sprite reference id, or -1 if none set
+	// Get sprite reference id, or 0 if none set
 	int GetSpriteNum() const {
 		return _sprnum;
 	}
-	void SetImage(Shared::Bitmap *pic, int offx = 0, int offy = 0);
+	Size GetGraphicSize() const;
+	// Assigns an exclusive image to this overlay; the image will be stored as a dynamic sprite
+    // in a sprite cache, but owned by this overlay and therefore disposed at its disposal
+	void SetImage(std::unique_ptr<Shared::Bitmap> pic, bool has_alpha = false, int offx = 0, int offy = 0);
+	// Assigns a shared sprite to this overlay
 	void SetSpriteNum(int sprnum, int offx = 0, int offy = 0);
 	// Tells if Overlay has graphically changed recently
 	bool HasChanged() const {
@@ -130,10 +147,13 @@ struct ScreenOverlay {
 	void WriteToSavegame(Shared::Stream *out) const;
 
 private:
-	int _flags = 0; // OverlayFlags
+	void ResetImage();
+	ScreenOverlay(const ScreenOverlay &) = default;
+	ScreenOverlay &operator=(const ScreenOverlay &) = default;
+
+	int _flags = 0;  // OverlayFlags
+	int _sprnum = 0; // sprite id
 	bool _hasChanged = false;
-	std::shared_ptr<Shared::Bitmap> _pic; // owned bitmap
-	int _sprnum = -1; // sprite reference
 };
 
 } // namespace AGS3
