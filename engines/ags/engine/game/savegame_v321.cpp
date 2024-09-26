@@ -112,7 +112,8 @@ static void restore_game_spriteset(Stream *in) {
 	int sprnum = in->ReadInt32();
 	while (sprnum) {
 		unsigned char spriteflag = in->ReadInt8();
-		add_dynamic_sprite(sprnum, read_serialized_bitmap(in));
+		std::unique_ptr<Bitmap> image(read_serialized_bitmap(in));
+		add_dynamic_sprite(sprnum, std::move(image));
 		_GP(game).SpriteInfos[sprnum].Flags = spriteflag;
 		sprnum = in->ReadInt32();
 	}
