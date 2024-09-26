@@ -29,6 +29,7 @@
 #include "ags/shared/gfx/allegro_bitmap.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/game/room_struct.h"
+#include "ags/engine/ac/runtime_defines.h"
 
 namespace AGS3 {
 namespace AGS {

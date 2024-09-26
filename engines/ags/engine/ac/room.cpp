@@ -271,8 +271,7 @@ void unload_old_room() {
 	_GP(play).bg_frame = 0;
 	_GP(play).bg_frame_locked = 0;
 	remove_all_overlays();
-	delete _G(raw_saved_screen);
-	_G(raw_saved_screen) = nullptr;
+	_G(raw_saved_screen).reset();
 	for (int ff = 0; ff < MAX_ROOM_BGFRAMES; ff++)
 		_GP(play).raw_modified[ff] = 0;
 	for (size_t i = 0; i < _GP(thisroom).LocalVariables.size() && i < MAX_GLOBAL_VARIABLES; ++i)

@@ -613,8 +613,8 @@ public:
 	AGS::Engine::IDriverDependantBitmap *_roomBackgroundBmp = nullptr;
 	// whether there are currently remnants of a DisplaySpeech
 	bool _screen_is_dirty = false;
-	AGS::Shared::Bitmap *_raw_saved_screen = nullptr;
-	AGS::Shared::Bitmap **_dynamicallyCreatedSurfaces = nullptr;
+	std::unique_ptr<Shared::Bitmap> _raw_saved_screen;
+	std::unique_ptr<Shared::Bitmap> *_dynamicallyCreatedSurfaces;
 	color *_palette;
 	COLOR_MAP *_maincoltable;
 

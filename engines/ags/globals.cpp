@@ -182,9 +182,9 @@ Globals::Globals() {
 	_CameraDrawData = new std::vector<RoomCameraDrawData>();
 	_sprlist = new std::vector<SpriteListEntry>();
 	_thingsToDrawList = new std::vector<SpriteListEntry>();
-	_dynamicallyCreatedSurfaces = new AGS::Shared::Bitmap *[MAX_DYNAMIC_SURFACES];
-	Common::fill(_dynamicallyCreatedSurfaces, _dynamicallyCreatedSurfaces +
-	             MAX_DYNAMIC_SURFACES, (AGS::Shared::Bitmap *)nullptr);
+	_dynamicallyCreatedSurfaces = new std::unique_ptr<AGS::Shared::Bitmap>[MAX_DYNAMIC_SURFACES];
+	for (int i = 0; i < MAX_DYNAMIC_SURFACES; i++)
+		_dynamicallyCreatedSurfaces[i].reset(nullptr);
 
 	_actsps = new std::vector<ObjTexture>();
 	_walkbehindobj = new std::vector<ObjTexture>();
