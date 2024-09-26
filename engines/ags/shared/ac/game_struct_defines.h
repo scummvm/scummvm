@@ -224,9 +224,9 @@ enum GameGuiAlphaRenderingStyle {
 // SERIALIZATION NOTE: serialized as 8-bit in game data and legacy saves
 //                     serialized as 32-bit in new saves (for dynamic sprites only).
 #define SPF_HIRES           0x01  // sized for high native resolution (legacy option)
-#define SPF_HICOLOR         0x02  // is 16-bit
+#define SPF_HICOLOR         0x02  // is 16-bit (UNUSED)
 #define SPF_DYNAMICALLOC    0x04  // created by runtime script
-#define SPF_TRUECOLOR       0x08  // is 32-bit
+#define SPF_TRUECOLOR       0x08  // is 32-bit (UNUSED)
 #define SPF_ALPHACHANNEL    0x10  // has alpha-channel
 #define SPF_VAR_RESOLUTION  0x20  // variable resolution (refer to SPF_HIRES)
 #define SPF_HADALPHACHANNEL 0x80  // the saved sprite on disk has one

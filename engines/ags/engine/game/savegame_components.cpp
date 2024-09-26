@@ -752,7 +752,8 @@ HSaveError ReadDynamicSprites(Stream *in, int32_t /*cmp_ver*/, soff_t cmp_size, 
 	for (int i = 0; i < spr_count; ++i) {
 		int id = in->ReadInt32();
 		int flags = in->ReadInt32();
-		add_dynamic_sprite(id, read_serialized_bitmap(in), (flags & SPF_ALPHACHANNEL) != 0, flags);
+		std::unique_ptr<Bitmap> image(read_serialized_bitmap(in));
+		add_dynamic_sprite(id, std::move(image), (flags & SPF_ALPHACHANNEL) != 0, flags);
 	}
 	return err;
 }
