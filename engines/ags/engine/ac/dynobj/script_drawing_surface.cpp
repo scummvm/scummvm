@@ -24,6 +24,7 @@
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/shared/ac/common.h"
+#include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/drawing_surface.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/shared/ac/game_setup_struct.h"
@@ -42,7 +43,7 @@ Bitmap *ScriptDrawingSurface::GetBitmapSurface() {
 	else if (dynamicSpriteNumber >= 0)
 		return _GP(spriteset)[dynamicSpriteNumber];
 	else if (dynamicSurfaceNumber >= 0)
-		return _G(dynamicallyCreatedSurfaces)[dynamicSurfaceNumber];
+		return _G(dynamicallyCreatedSurfaces)[dynamicSurfaceNumber].get();
 	else if (linkedBitmapOnly != nullptr)
 		return linkedBitmapOnly;
 	else if (roomMaskType > kRoomAreaNone)
