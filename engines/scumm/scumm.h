@@ -520,6 +520,7 @@ class ScummEngine : public Engine, public Common::Serializable {
 	friend class MacV5Gui;
 	friend class MacV6Gui;
 	friend class LogicHEBasketball;
+	friend class ScummEditor;
 
 public:
 	/* Put often used variables at the top.

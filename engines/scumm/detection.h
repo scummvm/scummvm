@@ -280,6 +280,7 @@ enum {
 	DEBUG_SMUSH,		// Track SMUSH
 	DEBUG_MOONBASE_AI,	// Moonbase AI
 	DEBUG_NETWORK,		// Track Networking
+	DEBUG_IMGUI,		// Show ImGui debug window (if available)
 };
 
 } // End of namespace Scumm

@@ -95,6 +95,12 @@ MODULE_OBJS := \
 	vars.o \
 	verbs.o
 
+ifdef USE_IMGUI
+MODULE_OBJS += \
+	debugger/debugtools.o \
+	debugger/editor.o
+endif
+
 ifdef USE_ARM_COSTUME_ASM
 MODULE_OBJS += \
 	proc3ARM.o

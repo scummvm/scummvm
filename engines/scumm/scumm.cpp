@@ -92,6 +92,7 @@
 #include "scumm/imuse/drivers/macintosh.h"
 #include "scumm/imuse/drivers/midi.h"
 #include "scumm/detection_steam.h"
+#include "scumm/debugger/debugtools.h"
 
 #ifdef ENABLE_HE
 #ifdef USE_ENET
@@ -2683,6 +2684,16 @@ Common::Error ScummEngine::go() {
 		}
 	}
 #endif // ENABLE_HE
+
+#ifdef USE_IMGUI
+	if (debugChannelSet(-1, DEBUG_IMGUI)) {
+		ImGuiCallbacks callbacks;
+		callbacks.init = Editor::onImGuiInit;
+		callbacks.render = Editor::onImGuiRender;
+		callbacks.cleanup = Editor::onImGuiCleanup;
+		_system->setImGuiCallbacks(callbacks);
+	}
+#endif
 
 	while (!shouldQuit()) {
 		// Determine how long to wait before the next loop iteration should start
