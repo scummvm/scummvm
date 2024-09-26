@@ -317,9 +317,9 @@ static void restore_game_dynamic_surfaces(Stream *in, RestoredData &r_data) {
 	r_data.DynamicSurfaces.resize(MAX_DYNAMIC_SURFACES);
 	for (int i = 0; i < MAX_DYNAMIC_SURFACES; ++i) {
 		if (in->ReadInt8() == 0) {
-			r_data.DynamicSurfaces[i] = nullptr;
+			r_data.DynamicSurfaces[i].reset();
 		} else {
-			r_data.DynamicSurfaces[i] = read_serialized_bitmap(in);
+			r_data.DynamicSurfaces[i].reset(read_serialized_bitmap(in));
 		}
 	}
 }
@@ -340,7 +340,7 @@ static void restore_game_displayed_room_status(Stream *in, GameDataVersion data_
 		bb = in->ReadInt32();
 
 		if (bb)
-			_G(raw_saved_screen) = read_serialized_bitmap(in);
+			_G(raw_saved_screen).reset(read_serialized_bitmap(in));
 
 		// get the current troom, in case they save in room 600 or whatever
 		_GP(troom).ReadFromSavegame_v321(in, data_ver);

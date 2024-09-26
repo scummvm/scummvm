@@ -336,8 +336,7 @@ void DoBeforeRestore(PreservedParams &pp) {
 	memcpy(pp.GameOptions, _GP(game).options, GameSetupStruct::MAX_OPTIONS * sizeof(int));
 
 	unload_old_room();
-	delete _G(raw_saved_screen);
-	_G(raw_saved_screen) = nullptr;
+	_G(raw_saved_screen).reset();
 	remove_all_overlays();
 	_GP(play).complete_overlay_on = 0;
 	_GP(play).text_overlay_on = 0;
@@ -439,7 +438,7 @@ static void CopyPreservedGameOptions(GameSetupStructBase &gs, const PreservedPar
 }
 
 // Final processing after successfully restoring from save
-HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data) {
+HSaveError DoAfterRestore(const PreservedParams &pp, RestoredData &r_data) {
 	// Use a yellow dialog highlight for older game versions
 	// CHECKME: it is dubious that this should be right here
 	if (_G(loaded_game_file_version) < kGameVersion_331)
@@ -467,7 +466,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	// restore these to the ones retrieved from the save game
 	const size_t dynsurf_num = MIN((uint)MAX_DYNAMIC_SURFACES, r_data.DynamicSurfaces.size());
 	for (size_t i = 0; i < dynsurf_num; ++i) {
-		_G(dynamicallyCreatedSurfaces)[i] = r_data.DynamicSurfaces[i];
+		_G(dynamicallyCreatedSurfaces)[i] = std::move(r_data.DynamicSurfaces[i]);
 	}
 
 	// Re-export any missing audio channel script objects, e.g. if restoring old save
