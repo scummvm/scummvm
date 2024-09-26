@@ -90,6 +90,8 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	UITapGestureRecognizer *twoFingerTapGesture;
 	UILongPressGestureRecognizer *oneFingerLongPressGesture;
 	UILongPressGestureRecognizer *twoFingerLongPressGesture;
+	UILongPressGestureRecognizer *pencilTouchGesture;
+	UILongPressGestureRecognizer *pencilThreeTapTouchGesture;
 	CGPoint touchesBegan;
 #endif
 }
@@ -228,6 +230,23 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	[twoFingerLongPressGesture setDelaysTouchesEnded:NO];
 	[twoFingerLongPressGesture setCancelsTouchesInView:NO];
 	[twoFingerLongPressGesture canPreventGestureRecognizer:twoFingerTapGesture];
+	
+	pencilTouchGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(pencilTouch:)];
+	[pencilTouchGesture setNumberOfTouchesRequired:1];
+	[pencilTouchGesture setAllowedTouchTypes:@[@(UITouchTypePencil)]];
+	[pencilTouchGesture setMinimumPressDuration:0];
+	[pencilTouchGesture setDelaysTouchesBegan:NO];
+	[pencilTouchGesture setDelaysTouchesEnded:NO];
+	[pencilTouchGesture setCancelsTouchesInView:NO];
+	
+	pencilThreeTapTouchGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(pencilThreeTapTouch:)];
+	[pencilThreeTapTouchGesture setNumberOfTouchesRequired:1];
+	[pencilThreeTapTouchGesture setNumberOfTapsRequired:2];
+	[pencilThreeTapTouchGesture setAllowedTouchTypes:@[@(UITouchTypePencil)]];
+	[pencilThreeTapTouchGesture setMinimumPressDuration:0];
+	[pencilThreeTapTouchGesture setDelaysTouchesBegan:NO];
+	[pencilThreeTapTouchGesture setDelaysTouchesEnded:NO];
+	[pencilThreeTapTouchGesture setCancelsTouchesInView:NO];
 
 	UIPinchGestureRecognizer *pinchKeyboard = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(keyboardPinch:)];
 
@@ -299,6 +318,8 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	[self addGestureRecognizer:twoFingerTapGesture];
 	[self addGestureRecognizer:oneFingerLongPressGesture];
 	[self addGestureRecognizer:twoFingerLongPressGesture];
+	[self addGestureRecognizer:pencilTouchGesture];
+	[self addGestureRecognizer:pencilThreeTapTouchGesture];
 
 	[pinchKeyboard release];
 	[swipeRight release];
@@ -314,6 +335,8 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	[twoFingerTapGesture release];
 	[oneFingerLongPressGesture release];
 	[twoFingerLongPressGesture release];
+	[pencilTouchGesture release];
+	[pencilThreeTapTouchGesture release];
 #elif TARGET_OS_TV
 	UITapGestureRecognizer *tapUpGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(threeFingersSwipeUp:)];
 	[tapUpGestureRecognizer setAllowedPressTypes:@[@(UIPressTypeUpArrow)]];
@@ -565,6 +588,8 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	[twoFingerTapGesture setEnabled:enabled];
 	[oneFingerLongPressGesture setEnabled:enabled];
 	[twoFingerLongPressGesture setEnabled:enabled];
+	[pencilTouchGesture setEnabled:enabled];
+	[pencilThreeTapTouchGesture setEnabled:enabled];
 }
 #endif
 
@@ -647,10 +672,28 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 #if TARGET_OS_IOS
 	UITouch *touch = [touches anyObject];
 	CGPoint touchesMoved = [touch locationInView:self];
-	if (touchesBegan.x != touchesMoved.x ||
-		touchesBegan.y != touchesMoved.y) {
-		[oneFingerTapGesture setState:UIGestureRecognizerStateCancelled];
-		[twoFingerTapGesture setState:UIGestureRecognizerStateCancelled];
+	int allowedPencilMovement = 10;
+	switch (touch.type) {
+		// This prevents touches automatically clicking things after
+		// moving around the screen
+		case UITouchTypePencil:
+			// Apple Pencil touches are much more precise, so this
+			// allows some pixels of movement before invalidating the gesture.
+			if (abs(touchesBegan.x - touchesMoved.x) > allowedPencilMovement ||
+				abs(touchesBegan.y - touchesMoved.y) > allowedPencilMovement) {
+				if (self.isLongPencilTouch == NO) {
+					[pencilTouchGesture setState:UIGestureRecognizerStateCancelled];
+				}
+			}
+			break;
+			
+		default:
+			if (touchesBegan.x != touchesMoved.x ||
+				touchesBegan.y != touchesMoved.y) {
+				[oneFingerTapGesture setState:UIGestureRecognizerStateCancelled];
+				[twoFingerTapGesture setState:UIGestureRecognizerStateCancelled];
+			}
+			break;
 	}
 #endif
 	for (GameController *c : _controllers) {
@@ -770,6 +813,48 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 		[self addEvent:InternalEvent(kInputLongPress, UIViewLongPressStarted, 2)];
 	} else if (recognizer.state == UIGestureRecognizerStateEnded) {
 		[self addEvent:InternalEvent(kInputLongPress, UIViewLongPressEnded, 2)];
+	}
+}
+
+- (void)pencilTouch:(UILongPressGestureRecognizer *)recognizer {
+	switch (recognizer.state) {
+		case UIGestureRecognizerStateBegan:
+			self.pencilTouchGestureStartTime = [NSDate timeIntervalSinceReferenceDate];
+			self.isLongPencilTouch = NO;
+			break;
+
+		case UIGestureRecognizerStateChanged:
+			if (self.isLongPencilTouch == NO) {
+				double longPressDuration = 0.5; // Seconds
+				double duration = [NSDate timeIntervalSinceReferenceDate] - self.pencilTouchGestureStartTime;
+				if (duration >= longPressDuration) {
+					self.isLongPencilTouch = YES;
+					// Long touch: Hold left mouse
+					[self addEvent:InternalEvent(kInputLongPress, UIViewLongPressStarted, 1)];
+				}
+			}
+			break;
+
+		case UIGestureRecognizerStateEnded:
+			if (self.isLongPencilTouch) {
+				// Long touch: Release left mouse
+				[self addEvent:InternalEvent(kInputLongPress, UIViewLongPressEnded, 1)];
+			}
+			else {
+				// Short touch: Click left mouse
+				[self addEvent:InternalEvent(kInputTap, kUIViewTapSingle, 1)];
+			}
+			break;
+
+		default:
+			break;
+	}
+}
+
+- (void)pencilThreeTapTouch:(UILongPressGestureRecognizer *)recognizer {
+	if (recognizer.state == UIGestureRecognizerStateBegan) {
+		// Mouse right-click
+		[self addEvent:InternalEvent(kInputTap, kUIViewTapSingle, 2)];
 	}
 }
 

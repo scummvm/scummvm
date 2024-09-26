@@ -49,6 +49,9 @@
 	// they are required as the Apple TV remote sends touh events
 	// but no mouse events.
 #if TARGET_OS_IOS
+	if (touch.type == UITouchTypePencil) {
+		return YES;
+	}
 	return touch != nil && touch.type == UITouchTypeDirect;
 #else
 	return YES;
