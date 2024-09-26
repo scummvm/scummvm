@@ -72,8 +72,6 @@ enum OverlaySvgVersion {
 };
 
 struct ScreenOverlay {
-	// Texture
-	Engine::IDriverDependantBitmap *ddb = nullptr;
 	// Overlay's "type" is a merged special overlay ID and internal container index
 	int type = -1;
 	// Arbitrary creation order index, meant for resolving equal z-sorting

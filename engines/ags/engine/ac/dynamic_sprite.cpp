@@ -435,8 +435,7 @@ int add_dynamic_sprite(std::unique_ptr<Bitmap> image, bool has_alpha, uint32_t e
 	if (slot <= 0)
 		return 0;
 
-	add_dynamic_sprite(slot, std::move(image), has_alpha, extra_flags);
-	return slot;
+	return add_dynamic_sprite(slot, std::move(image), has_alpha, extra_flags);
 }
 
 int add_dynamic_sprite(int slot, std::unique_ptr<Bitmap> image, bool has_alpha, uint32_t extra_flags) {
@@ -458,7 +457,8 @@ void free_dynamic_sprite(int slot, bool notify_all) {
 		return;
 
 	_GP(spriteset).DisposeSprite(slot);
-	game_sprite_deleted(slot);
+	if (notify_all)
+		game_sprite_deleted(slot);
 }
 
 //=============================================================================

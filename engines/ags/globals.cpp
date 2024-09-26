@@ -194,7 +194,7 @@ Globals::Globals() {
 	_guiobjddb = new std::vector<Engine::IDriverDependantBitmap *>();
 	_guiobjoff = new std::vector<Point>();
 	_guiobjddbref = new std::vector<int>();
-	_overlaybmp = new std::vector<std::unique_ptr<Shared::Bitmap> >();
+	_overtxs = new std::vector<ObjTexture>();
 	_debugRoomMaskObj =  new ObjTexture();
 	_debugMoveListObj = new ObjTexture();
 	_debugConsoleBuffer = new AGS::Shared::Bitmap();
@@ -255,7 +255,7 @@ Globals::Globals() {
 	_scrDialog = new std::vector<ScriptDialog>();
 	_charcache = new std::vector<ObjectCache>();
 	_objcache = new ObjectCache[MAX_ROOM_OBJECTS];
-	_screenovercache = new std::vector<Point>();
+	_overcache = new std::vector<Point>();
 	_charextra = new std::vector<CharacterExtras>();
 	_mls = new std::vector<MoveList>();
 	_views = new std::vector<ViewStruct>();
@@ -475,7 +475,7 @@ Globals::~Globals() {
 	delete _guiobjddbref;
 	delete _guiobjddb;
 	delete _guiobjoff;
-	delete _overlaybmp;
+	delete _overtxs;
 	delete _debugRoomMaskObj;
 	delete _debugMoveListObj;
 
@@ -527,7 +527,7 @@ Globals::~Globals() {
 	delete _scrDialog;
 	delete _charcache;
 	delete[] _objcache;
-	delete _screenovercache;
+	delete _overcache;
 	delete _charextra;
 	delete _mls;
 	delete _views;
