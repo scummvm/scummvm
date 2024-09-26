@@ -45,6 +45,12 @@ Sensor::Sensor(
 	_firingRange = firingRange_;
 	_axis = axis_;
 	_flags = flags_;
+
+	if (isInitiallyInvisible())
+		makeInvisible();
+	else
+		makeVisible();
+
 	_conditionSource = conditionSource_;
 	_condition = condition_;
 	_isShooting = false;

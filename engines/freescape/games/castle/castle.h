@@ -61,6 +61,7 @@ public:
 	void updateTimeVariables() override;
 
 	bool checkIfGameEnded() override;
+	void drawSensorShoot(Sensor *sensor) override;
 
 	void executePrint(FCLInstruction &instruction) override;
 	void executeMakeInvisible(FCLInstruction &instruction) override;

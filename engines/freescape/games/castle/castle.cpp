@@ -606,6 +606,8 @@ void CastleEngine::executeDestroy(FCLInstruction &instruction) {
 
 	if (!obj->isDestroyed() && obj->getType() == kSensorType && isCastle()) {
 		_spiritsDestroyed++;
+		_shootingFrames = 0;
+		_gfx->_inkColor = _currentArea->_inkColor;
 	}
 
 	if (obj->isDestroyed())
@@ -956,42 +958,63 @@ void CastleEngine::checkSensors() {
 	if (_sensors.empty())
 		return;
 
-	Sensor *sensor = (Sensor *)&_sensors[0];
-	if (isDOS()) { // Should be similar to Amiga/AtariST
-		if (sensor->getObjectID() == 125) {
-			Group *group = (Group *)_currentArea->objectWithID(195);
-			if (!group->isDestroyed() && !group->isInvisible()) {
-				group->_active = true;
-			} else
-				return;
+	for (auto &it : _sensors) {
+		Sensor *sensor = (Sensor *)it;
+		if (isDOS()) { // Should be similar to Amiga/AtariST
+			if (sensor->getObjectID() == 125) {
+				Group *group = (Group *)_currentArea->objectWithID(195);
+				if (!group->isDestroyed() && !group->isInvisible()) {
+					group->_active = true;
+				} else
+					return;
 
-			group = (Group *)_currentArea->objectWithID(212);
-			if (!group->isDestroyed() && !group->isInvisible()) {
-				group->_active = true;
-			} else
-				return;
+				group = (Group *)_currentArea->objectWithID(212);
+				if (!group->isDestroyed() && !group->isInvisible()) {
+					group->_active = true;
+				} else
+					return;
 
-		} else if (sensor->getObjectID() == 126) {
-			Group *group = (Group *)_currentArea->objectWithID(191);
-			if (!group->isDestroyed() && !group->isInvisible()) {
-				group->_active = true;
-			} else
-				return;
-		} else if (sensor->getObjectID() == 197) {
-			Group *group = (Group *)_currentArea->objectWithID(182);
-			if (!group->isDestroyed() && !group->isInvisible()) {
-				group->_active = true;
-			} else
-				return;
+			} else if (sensor->getObjectID() == 126) {
+				Group *group = (Group *)_currentArea->objectWithID(191);
+				if (!group->isDestroyed() && !group->isInvisible()) {
+					group->_active = true;
+				} else
+					return;
+			} else if (sensor->getObjectID() == 197) {
+				Group *group = (Group *)_currentArea->objectWithID(182);
+				if (!group->isDestroyed() && !group->isInvisible()) {
+					group->_active = true;
+				} else
+					return;
+			}
 		}
 	}
 
-	/*int firingInterval = 10; // This is fixed for all the ghosts?
+	bool ghostInArea = false;
+	for (auto &it : _sensors) {
+		if (it->isDestroyed() || it->isInvisible())
+			continue;
+		ghostInArea = true;
+		break;
+	}
+
+	if (!ghostInArea)
+		return;
+
+	int firingInterval = 5; // This is fixed for all the ghosts?
 	if (_ticks % firingInterval == 0) {
 		if (_underFireFrames <= 0)
-			_underFireFrames = 4;
-		takeDamageFromSensor();
-	}*/
+			_underFireFrames = 1;
+		//takeDamageFromSensor();
+	}
+}
+
+void CastleEngine::drawSensorShoot(Sensor *sensor) {
+	if (isSpectrum()) {
+		_gfx->_inkColor = 1 + (_gfx->_inkColor + 1) % 7;
+	} else {
+		/* TODO */
+	}
 }
 
 void CastleEngine::tryToCollectKey() {

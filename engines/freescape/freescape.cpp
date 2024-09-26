@@ -445,7 +445,9 @@ void FreescapeEngine::drawFrame() {
 	if (_underFireFrames > 0) {
 		for (auto &it : _sensors) {
 			Sensor *sensor = (Sensor *)it;
-			if (sensor->isShooting())
+			if (it->isDestroyed() || it->isInvisible())
+				continue;
+			if (isCastle() || sensor->isShooting())
 				drawSensorShoot(sensor);
 		}
 		_underFireFrames--;

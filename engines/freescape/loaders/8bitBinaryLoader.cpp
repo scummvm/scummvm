@@ -511,7 +511,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 				0,
 				0,
 				0,
-				0,
+				rawFlagsAndType,
 				instructions,
 				conditionSource);
 		}
