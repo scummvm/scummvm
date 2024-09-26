@@ -31,12 +31,12 @@ namespace Rooms {
 static const int16 NORMAL_DIRS1[] = { 200, -1 };
 static const char *NORMAL_NAMES1[] = { "shen guo walker 3" };
 static const int16 SHADOW_DIRS1[] = { 210, -1 };
-static const char *SECTION6_SHADOW_NAMES1[] = { "shen guo shadow 3" };
+static const char *SHADOW_NAMES1[] = { "shen guo shadow 3" };
 
 static const int16 NORMAL_DIRS2[] = { 220, -1 };
 static const char *NORMAL_NAMES2[] = { "kuang walker 2" };
 static const int16 SHADOW_DIRS2[] = { 230, -1 };
-static const char *SECTION6_SHADOW_NAMES2[] = { "kuangs shadow 2" };
+static const char *SHADOW_NAMES2[] = { "kuangs shadow 2" };
 
 
 static const char *SAID[][2] = {
@@ -89,14 +89,14 @@ void Room603::init() {
 		_shed = series_show("653 FIRST FRAME SHED", 0xf00, 16);
 
 		ws_walk_load_walker_series(NORMAL_DIRS1, NORMAL_NAMES1);
-		ws_walk_load_shadow_series(SHADOW_DIRS1, SECTION6_SHADOW_NAMES1);
+		ws_walk_load_shadow_series(SHADOW_DIRS1, SHADOW_NAMES1);
 
 		_shenWalker = triggerMachineByHash_3000(8, 12, NORMAL_DIRS1, SHADOW_DIRS1, 525, 238, 3,
 			triggerMachineByHashCallback3000, "shen suit gun walker");
 		sendWSMessage_10000(_shenWalker, 535, 235, 3, 10, 1);
 
 		ws_walk_load_walker_series(NORMAL_DIRS2, NORMAL_NAMES2);
-		ws_walk_load_shadow_series(SHADOW_DIRS2, SECTION6_SHADOW_NAMES2);
+		ws_walk_load_shadow_series(SHADOW_DIRS2, SHADOW_NAMES2);
 
 		_kuangWalker = triggerMachineByHash_3000(8, 13, NORMAL_DIRS2, SHADOW_DIRS2, 554, 245, 2,
 			triggerMachineByHashCallback3000, "kuang suit walker");
