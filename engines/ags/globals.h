@@ -598,8 +598,8 @@ public:
 	std::vector<ObjTexture> *_guiobjbg;
 	// first control texture index of each GUI
 	std::vector<int> *_guiobjddbref;
-	// Overlay's cached transformed bitmap, for software mode
-	std::vector<std::unique_ptr<Shared::Bitmap> > *_overlaybmp;
+	// Overlays textures
+	std::vector<ObjTexture> *_overtxs;
 	// For debugging room masks
 	ObjTexture *_debugRoomMaskObj;
 	ObjTexture *_debugMoveListObj;
@@ -759,7 +759,7 @@ public:
 	// whether these require texture update
 	std::vector<ObjectCache> *_charcache;
 	ObjectCache *_objcache;
-	std::vector<Point> *_screenovercache;
+	std::vector<Point> *_overcache;
 	std::vector<CharacterExtras> *_charextra;
 	// MoveLists for characters and room objects; NOTE: 1-based array!
 	// object sprites begin with index 1, characters are after MAX_ROOM_OBJECTS + 1
