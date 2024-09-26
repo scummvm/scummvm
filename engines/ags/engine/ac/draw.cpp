@@ -469,7 +469,7 @@ void clear_drawobj_cache() {
 	}
 
 	// room overlays cache
-	_GP(screenovercache).clear();
+	_GP(overcache).clear();
 
 	// cleanup Character + Room object textures
 	for (auto &o : _GP(actsps)) o = ObjTexture();
@@ -477,8 +477,7 @@ void clear_drawobj_cache() {
 	// cleanup GUI and controls textures
 	for (auto &o : _GP(guibg)) o = ObjTexture();
 	for (auto &o : _GP(guiobjbg)) o = ObjTexture();
-	// cleanup Overlay intermediate bitmaps
-	_GP(overlaybmp).clear();
+	_GP(overtxs).clear();
 
 	dispose_debug_room_drawdata();
 }
@@ -660,9 +659,10 @@ void reset_objcache_for_sprite(int sprnum, bool deleted) {
 }
 
 void reset_drawobj_for_overlay(int objnum) {
-	if (objnum > 0 && static_cast<size_t>(objnum) < _GP(overlaybmp).size()) {
-		_GP(overlaybmp)[objnum].reset();
-		_GP(screenovercache)[objnum] = Point(INT32_MIN, INT32_MIN);
+	if (objnum > 0 && static_cast<size_t>(objnum) < _GP(overtxs).size()) {
+		_GP(overtxs)[objnum] = ObjTexture();
+		if (drawstate.SoftwareRender)
+			_GP(overcache)[objnum] = Point(INT32_MIN, INT32_MIN);
 	}
 }
 
@@ -1593,7 +1593,7 @@ static void add_roomovers_for_drawing() {
 		if (!over.IsRoomLayer()) continue; // not a room layer
 		if (over.transparency == 255) continue; // skip fully transparent
 		Point pos = get_overlay_position(over);
-		add_to_sprite_list(over.ddb, pos.X, pos.Y, over.zorder, false, over.creation_id);
+		add_to_sprite_list(_GP(overtxs)[over.type].Ddb, pos.X, pos.Y, over.zorder, false, over.creation_id);
 	}
 }
 
@@ -1793,7 +1793,7 @@ void draw_gui_and_overlays() {
 		if (over.IsRoomLayer()) continue; // not a ui layer
 		if (over.transparency == 255) continue; // skip fully transparent
 		Point pos = get_overlay_position(over);
-		add_to_sprite_list(over.ddb, pos.X, pos.Y, over.zorder, false, over.creation_id);
+		add_to_sprite_list(_GP(overtxs)[over.type].Ddb, pos.X, pos.Y, over.zorder, false, over.creation_id);
 	}
 
 	// Add GUIs
@@ -2014,9 +2014,10 @@ static void construct_overlays() {
 	const bool crop_walkbehinds = (drawstate.WalkBehindMethod == DrawOverCharSprite);
 
 	auto &overs = get_overlays();
-	if (is_software_mode && _GP(overlaybmp).size() < overs.size()) {
-		_GP(overlaybmp).resize(overs.size());
-		_GP(screenovercache).resize(overs.size(), Point(INT32_MIN, INT32_MIN));
+	if ( _GP(overtxs).size() < overs.size()) {
+		_GP(overtxs).resize(overs.size());
+		if (is_software_mode)
+			_GP(overcache).resize(overs.size(), Point(INT32_MIN, INT32_MIN));
 	}
 	for (size_t i = 0; i < overs.size(); ++i) {
 		auto &over = overs[i];
@@ -2027,34 +2028,38 @@ static void construct_overlays() {
 		// If walk behinds are drawn over the cached object sprite, then check if positions were updated
 		if (crop_walkbehinds && over.IsRoomLayer()) {
 			Point pos = get_overlay_position(over);
-			has_changed |= (pos.X != _GP(screenovercache)[i].X || pos.Y != _GP(screenovercache)[i].Y);
-			_GP(screenovercache)[i].X = pos.X; _GP(screenovercache)[i].Y = pos.Y;
+			has_changed |= (pos.X != _GP(overcache)[i].X || pos.Y != _GP(overcache)[i].Y);
+			_GP(overcache)[i].X = pos.X; _GP(overcache)[i].Y = pos.Y;
 		}
 
+		auto &overtx = _GP(overtxs)[i];
 		if (has_changed) {
+			overtx.SpriteID = over.GetSpriteNum();
 			// For software mode - prepare transformed bitmap if necessary;
 			// for hardware-accelerated - use the sprite ID if possible, to avoid redundant sprite load
+			// TODO: find a way to unify this code with the character & object ObjTexture preparation;
+			// they use practically same approach, except of different fields cache.
 			Bitmap *use_bmp = nullptr;
 			if (is_software_mode) {
-				use_bmp = transform_sprite(over.GetImage(), over.HasAlphaChannel(), _GP(overlaybmp)[i], Size(over.scaleWidth, over.scaleHeight));
+				use_bmp = transform_sprite(over.GetImage(), over.HasAlphaChannel(), overtx.Bmp, Size(over.scaleWidth, over.scaleHeight));
 				if (crop_walkbehinds && over.IsRoomLayer()) {
-					if (use_bmp != _GP(overlaybmp)[i].get()) {
-						recycle_bitmap(_GP(overlaybmp)[i], use_bmp->GetColorDepth(), use_bmp->GetWidth(), use_bmp->GetHeight(), true);
-						_GP(overlaybmp)[i]->Blit(use_bmp);
+					if (use_bmp != overtx.Bmp.get()) {
+						recycle_bitmap(overtx.Bmp, use_bmp->GetColorDepth(), use_bmp->GetWidth(), use_bmp->GetHeight(), true);
+						overtx.Bmp->Blit(use_bmp);
 					}
 					Point pos = get_overlay_position(over);
-					walkbehinds_cropout(_GP(overlaybmp)[i].get(), pos.X, pos.Y, over.zorder);
-					use_bmp = _GP(overlaybmp)[i].get();
+					walkbehinds_cropout(overtx.Bmp.get(), pos.X, pos.Y, over.zorder);
+					use_bmp = overtx.Bmp.get();
 				}
 			}
-			over.ddb = recycle_ddb_sprite(over.ddb, over.GetSpriteNum(), use_bmp, over.HasAlphaChannel());
+			sync_object_texture(overtx, over.HasAlphaChannel());
 			over.ClearChanged();
 		}
 
-		assert(over.ddb); // Test for missing texture, might happen if not marked for update
-		if (!over.ddb) continue;
-		over.ddb->SetStretch(over.scaleWidth, over.scaleHeight);
-		over.ddb->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(over.transparency));
+		assert(overtx.Ddb); // Test for missing texture, might happen if not marked for update
+		if (!overtx.Ddb) continue;
+		overtx.Ddb->SetStretch(over.scaleWidth, over.scaleHeight);
+		overtx.Ddb->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(over.transparency));
 	}
 }
 
