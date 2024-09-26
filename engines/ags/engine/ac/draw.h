@@ -148,6 +148,9 @@ void on_roomcamera_changed(Camera *cam);
 void mark_object_changed(int objid);
 // Resets all object caches which reference this sprite
 void reset_objcache_for_sprite(int sprnum, bool deleted);
+// TODO: write a generic drawable/objcache system where each object
+// allocates a drawable for itself, and disposes one if being removed.
+void reset_drawobj_for_overlay(int objnum);
 
 // whether there are currently remnants of a DisplaySpeech
 void mark_screen_dirty();

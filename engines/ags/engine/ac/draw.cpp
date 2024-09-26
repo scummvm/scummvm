@@ -659,6 +659,13 @@ void reset_objcache_for_sprite(int sprnum, bool deleted) {
 	}
 }
 
+void reset_drawobj_for_overlay(int objnum) {
+	if (objnum > 0 && static_cast<size_t>(objnum) < _GP(overlaybmp).size()) {
+		_GP(overlaybmp)[objnum].reset();
+		_GP(screenovercache)[objnum] = Point(INT32_MIN, INT32_MIN);
+	}
+}
+
 void mark_screen_dirty() {
 	drawstate.ScreenIsDirty = true;
 }
@@ -2007,9 +2014,9 @@ static void construct_overlays() {
 	const bool crop_walkbehinds = (drawstate.WalkBehindMethod == DrawOverCharSprite);
 
 	auto &overs = get_overlays();
-	if (_GP(overlaybmp).size() < overs.size()) {
+	if (is_software_mode && _GP(overlaybmp).size() < overs.size()) {
 		_GP(overlaybmp).resize(overs.size());
-		_GP(screenovercache).resize(overs.size());
+		_GP(screenovercache).resize(overs.size(), Point(INT32_MIN, INT32_MIN));
 	}
 	for (size_t i = 0; i < overs.size(); ++i) {
 		auto &over = overs[i];
