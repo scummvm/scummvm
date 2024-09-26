@@ -144,7 +144,7 @@ Bitmap *SpriteCache::RemoveSprite(sprkey_t index) {
 	if (index < 0 || (size_t)index >= _spriteData.size())
 		return nullptr;
 	Bitmap *image = _spriteData[index].Image.release();
-	InitNullSpriteParams(index);
+	InitNullSprite(index);
 	SprCacheLog("RemoveSprite: %d", index);
 	return image;
 }
@@ -153,7 +153,7 @@ void SpriteCache::DisposeSprite(sprkey_t index) {
 	assert(index >= 0); // out of positive range indexes are valid to fail
 	if (index < 0 || (size_t)index >= _spriteData.size())
 		return;
-	InitNullSpriteParams(index);
+	InitNullSprite(index);
 	SprCacheLog("RemoveAndDispose: %d", index);
 }
 
@@ -365,7 +365,7 @@ size_t SpriteCache::LoadSprite(sprkey_t index, bool lock) {
 		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Warn,
 			"LoadSprite: failed to load sprite %d:\n%s\n - remapping to sprite 0.", index,
 			err ? "Sprite does not exist." : err->FullMessage().GetCStr());
-		InitNullSpriteParams(index);
+		RemapSpriteToSprite0(index);
 		return 0;
 	}
 
@@ -374,7 +374,7 @@ size_t SpriteCache::LoadSprite(sprkey_t index, bool lock) {
 	if (!image) {
 		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Warn,
 					  "LoadSprite: failed to initialize sprite %d, remapping to sprite 0.", index);
-		InitNullSpriteParams(index);
+		RemapSpriteToSprite0(index);
 		return 0;
 	}
 
@@ -401,22 +401,21 @@ size_t SpriteCache::LoadSprite(sprkey_t index, bool lock) {
 
 void SpriteCache::RemapSpriteToSprite0(sprkey_t index) {
 	assert((index > 0) && ((size_t)index < _spriteData.size()));
+	if (index <= 0)
+		return; // don't remap sprite 0 to itself
+
 	_sprInfos[index] = _sprInfos[0];
 
-	_spriteData[index].Image.reset();
+//	_spriteData[index].Image.reset();
 	_spriteData[index].Size = _spriteData[0].Size;
 	_spriteData[index].Flags |= SPRCACHEFLAG_REMAP0;
 	SprCacheLog("RemapSpriteToSprite0: %d", index);
 }
 
-void SpriteCache::InitNullSpriteParams(sprkey_t index) {
+void SpriteCache::InitNullSprite(sprkey_t index) {
 	assert(index >= 0);
-	if (index > 0) {
-		RemapSpriteToSprite0(index);
-	} else {
-		_sprInfos[index] = SpriteInfo();
-		_spriteData[index] = SpriteData();
-	}
+	_sprInfos[index] = SpriteInfo();
+	_spriteData[index] = SpriteData();
 }
 
 int SpriteCache::SaveToFile(const String &filename, int store_flags, SpriteCompression compress, SpriteFileIndex &index) {
@@ -449,8 +448,8 @@ HError SpriteCache::InitFile(const String &filename, const String &sprindex_file
 			_sprInfos[i].Width = newsz.Width;
 			_sprInfos[i].Height = newsz.Height;
 		} else {
-			// Handle empty slot: remap to sprite 0
-			InitNullSpriteParams(i);
+			// Mark as empty slot
+			InitNullSprite(i);
 		}
 	}
 	return HError::None();
