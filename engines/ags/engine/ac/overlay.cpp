@@ -374,6 +374,8 @@ void remove_screen_overlay(int type) {
 	if (type >= OVER_FIRSTFREE)
 		_GP(over_free_ids).push(type);
 
+    reset_drawobj_for_overlay(type);
+
 	// If all overlays have been removed, reset creation index (helps vs overflows)
 	_GP(play).overlay_count--;
 	if (_GP(play).overlay_count == 0)
