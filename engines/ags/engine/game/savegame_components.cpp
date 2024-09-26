@@ -810,7 +810,7 @@ HSaveError WriteDynamicSurfaces(Stream *out) {
 			out->WriteInt8(0);
 		} else {
 			out->WriteInt8(1);
-			serialize_bitmap(_G(dynamicallyCreatedSurfaces)[i], out);
+			serialize_bitmap(_G(dynamicallyCreatedSurfaces)[i].get(), out);
 		}
 	}
 	return HSaveError::None();
@@ -824,9 +824,9 @@ HSaveError ReadDynamicSurfaces(Stream *in, int32_t /*cmp_ver*/, soff_t cmp_size,
 	r_data.DynamicSurfaces.resize(MAX_DYNAMIC_SURFACES);
 	for (int i = 0; i < MAX_DYNAMIC_SURFACES; ++i) {
 		if (in->ReadInt8() == 0)
-			r_data.DynamicSurfaces[i] = nullptr;
+			r_data.DynamicSurfaces[i].reset();
 		else
-			r_data.DynamicSurfaces[i] = read_serialized_bitmap(in);
+			r_data.DynamicSurfaces[i].reset(read_serialized_bitmap(in));
 	}
 	return err;
 }
@@ -926,7 +926,7 @@ HSaveError WriteThisRoom(Stream *out) {
 	}
 	out->WriteBool(_G(raw_saved_screen) != nullptr);
 	if (_G(raw_saved_screen))
-		serialize_bitmap(_G(raw_saved_screen), out);
+		serialize_bitmap(_G(raw_saved_screen).get(), out);
 
 	// room region state
 	for (int i = 0; i < MAX_ROOM_REGIONS; ++i) {
@@ -965,7 +965,7 @@ HSaveError ReadThisRoom(Stream *in, int32_t cmp_ver, soff_t cmp_size, const Pres
 			r_data.RoomBkgScene[i] = nullptr;
 	}
 	if (in->ReadBool())
-		_G(raw_saved_screen) = read_serialized_bitmap(in);
+		_G(raw_saved_screen).reset(read_serialized_bitmap(in));
 
 	// room region state
 	for (int i = 0; i < MAX_ROOM_REGIONS; ++i) {
