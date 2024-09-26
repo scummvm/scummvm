@@ -130,6 +130,11 @@ public:
 	size_t      GetMaxCacheSize() const;
 	// Returns number of sprite slots in the bank (this includes both actual sprites and free slots)
 	size_t      GetSpriteSlotCount() const;
+	// Tells if the sprite storage still has unoccupied slots to put new sprites in
+	bool		HasFreeSlots() const;
+	// Tells if the given slot is reserved for the asset sprite, that is a "static"
+	// sprite cached from the game assets
+	bool		IsAssetSprite(sprkey_t index) const;
 	// Loads sprite using SpriteFile if such index is known,
 	// frees the space if cache size reaches the limit
 	void        PrecacheSprite(sprkey_t index);
@@ -157,7 +162,7 @@ public:
 	// Assigns new sprite for the given index; this sprite won't be auto disposed.
 	// *Deletes* the previous sprite if one was found at the same index.
 	// "flags" are SPF_* constants that define sprite's behavior in game.
-	bool        SetSprite(sprkey_t index, Bitmap *, int flags = 0);
+	bool        SetSprite(sprkey_t index, std::unique_ptr<Bitmap> image, int flags = 0);
 	// Assigns new sprite for the given index, remapping it to sprite 0;
 	// optionally marks it as an asset placeholder.
 	// *Deletes* the previous sprite if one was found at the same index.
