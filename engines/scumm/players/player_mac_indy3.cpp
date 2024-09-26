@@ -400,7 +400,7 @@ bool Indy3MacSnd::startDevices(uint32 outputRate, uint32 pcmDeviceRate, uint32 f
 		return false;
 
 	for (int i = 0; i < mdrv->numChannels(); ++i)
-		mdrv->send(LegacyMusicDriver::kChanWaveform, i, _fourToneSynthWaveForm, _fourToneSynthWaveForm);
+		mdrv->send(LegacyMusicDriver::kChanWaveform, i, _fourToneSynthWaveForm, sizeof(_fourToneSynthWaveForm));
 	_qualHi = true;
 	_16bit = internal16Bit;
 	_mdrv = mdrv;
@@ -497,7 +497,7 @@ void Indy3MacSnd::setQuality(int qual) {
 		FourToneSynthDriver *mdrv = new FourToneSynthDriver(_mixer->mutex(), _16bit);
 		assert(mdrv);
 		for (int i = 0; i < mdrv->numChannels(); ++i)
-			mdrv->send(LegacyMusicDriver::kChanWaveform, i, _fourToneSynthWaveForm, _fourToneSynthWaveForm);
+			mdrv->send(LegacyMusicDriver::kChanWaveform, i, _fourToneSynthWaveForm, sizeof(_fourToneSynthWaveForm));
 		_mdrv = mdrv;
 		_qualHi = true;
 	} else {
