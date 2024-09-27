@@ -159,10 +159,17 @@ void SoundHWChannel::reset() {
 	_smpAmplitude = 0;
 	_curSample = 0;
 	_pitchBend = 0;
+	_pbDiv = 0;
 }
 
 void SoundHWChannel::recalcSample() {
 	int freq = getFrequency();
+
+	if (freq == 0) {
+		_curSample = 0;
+		return;
+	}
+
 	_freqCount += freq;
 
 	while (_freqCount >= (_outputRate << 1))
