@@ -230,7 +230,7 @@ protected:
 		FINGER_SUBPIXEL_MULTIPLIER = 16 // multiplier for sub-pixel resolution
 	};
 
-	typedef struct {
+	typedef struct TouchFinger {
 		int id = -1; // -1: no touch
 		uint32 timeLastDown = 0;
 		int lastX = 0; // last known screen coordinates
@@ -245,7 +245,7 @@ protected:
 		DRAG_THREE_FINGER,
 	} DraggingType;
 
-	typedef struct {
+	typedef struct TouchPanelState {
 		TouchFinger _finger[MAX_NUM_FINGERS]; // keep track of finger status
 		DraggingType _multiFingerDragging = DRAG_NONE; // keep track whether we are currently drag-and-dropping
 		unsigned int _simulatedClickStartTime[2] = {0, 0}; // initiation time of last simulated left or right click (zero if no click)
