@@ -596,44 +596,8 @@ void SdlEventSource::preprocessFingerMotion(SDL_Event *event) {
 			convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
 		}	else {
 			// for relative mode, use the pointer speed setting
-			float speedFactor = 1.0;
-
-			switch (ConfMan.getInt("kbdmouse_speed")) {
-			// 0.25 keyboard pointer speed
-			case 0:
-				speedFactor = 0.25;
-				break;
-			// 0.5 speed
-			case 1:
-				speedFactor = 0.5;
-				break;
-			// 0.75 speed
-			case 2:
-				speedFactor = 0.75;
-				break;
-			// 1.0 speed
-			case 3:
-				speedFactor = 1.0;
-				break;
-			// 1.25 speed
-			case 4:
-				speedFactor = 1.25;
-				break;
-			// 1.5 speed
-			case 5:
-				speedFactor = 1.5;
-				break;
-			// 1.75 speed
-			case 6:
-				speedFactor = 1.75;
-				break;
-			// 2.0 speed
-			case 7:
-				speedFactor = 2.0;
-				break;
-			default:
-				speedFactor = 1.0;
-			}
+			const int kbdMouseSpeed = CLIP<int>(ConfMan.getInt("kbdmouse_speed"), 0, 7);
+			float speedFactor = (kbdMouseSpeed + 1) * 0.25;
 
 			// convert touch events to relative mouse pointer events
 			// track sub-pixel relative finger motion using the FINGER_SUBPIXEL_MULTIPLIER
