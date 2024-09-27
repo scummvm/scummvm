@@ -531,6 +531,10 @@ MacLowLevelPCMDriver::ChanHandle MacSndChannel::getHandle() const {
 }
 
 void MacSndChannel::playSamples(const MacLowLevelPCMDriver::PCMSound *snd) {
+	if (!snd) {
+		warning("%s(): nullptr sound argument", __FUNCTION__);
+		return;
+	}
 	setupRateConv(_drv->getStatus().deviceRate, calcNoteRateAdj(60 - snd->baseFreq), snd->rate, true);
 	setupSound(snd);
 	startSound(0);

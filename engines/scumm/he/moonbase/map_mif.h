@@ -69,7 +69,12 @@ struct MapFile {
 		memset(this, 0, sizeof(MapFile));
 
 		mapType = 1;
-		memset((void *)fourPlayerPoints, 0xFF, sizeof(PixelLoc) * 20);
+		memset(fourPlayerPoints, 0xFF, sizeof(fourPlayerPoints));
+		memset(threePlayerPoints, 0xFF, sizeof(threePlayerPoints));
+		memset(twoPlayerPoints, 0xFF, sizeof(twoPlayerPoints));
+		memset(twoVTwoPoints, 0xFF, sizeof(twoVTwoPoints));
+		memset(oneVThreePoints, 0xFF, sizeof(oneVThreePoints));
+		memset(oneVTwoPoints, 0xFF, sizeof(oneVTwoPoints));
 	}
 } PACKED_STRUCT;
 

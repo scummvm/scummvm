@@ -250,6 +250,8 @@ void Wiz::pgClippedThickLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int 
 			pgClippedWritePixel(destBM, iCurX, iCurY, clipRectPtr, value);
 		}
 	}
+
+	delete[] aScanLines;
 }
 
 int convertToFixed(int iNumber) {

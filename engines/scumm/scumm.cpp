@@ -3248,6 +3248,7 @@ void ScummEngine_v3::terminateSaveMenuScript() {
 				// --- Start of code from o5_chainScript() with arguments (119, [])...
 				int cur = _currentScript;
 
+				assert(cur != 0xFF);
 				vm.slot[cur].number = 0;
 				vm.slot[cur].status = ssDead;
 				_currentScript = 0xFF;
