@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-22 20:18+0000\n"
+"PO-Revision-Date: 2024-09-27 16:00+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
@@ -6668,40 +6668,28 @@ msgid "Move right"
 msgstr "Ruch w prawo"
 
 #: engines/asylum/metaengine.cpp:226
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle animation on/off"
-msgstr "Włącz/wyłącz muzykę"
+msgstr "Włącz/wyłącz animacje"
 
 #: engines/asylum/metaengine.cpp:232
-#, fuzzy
-#| msgid "In 2D games"
 msgid "Return to gameplay"
-msgstr "W grach 2D"
+msgstr "Wróć do gry"
 
 #: engines/asylum/metaengine.cpp:238
-#, fuzzy
-#| msgid "Previous Page"
 msgid "Previous resource"
-msgstr "Poprzednia strona"
+msgstr "Poprzedni zasób"
 
 #: engines/asylum/metaengine.cpp:245
-#, fuzzy
-#| msgid "[ Resources ]"
 msgid "Next resource"
-msgstr "[ Zasoby ]"
+msgstr "Następny zasób"
 
 #: engines/asylum/metaengine.cpp:252
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous palette"
-msgstr "Poprzednia strona"
+msgstr "Poprzednia paleta"
 
 #: engines/asylum/metaengine.cpp:259
-#, fuzzy
-#| msgid "Next page"
 msgid "Next palette"
-msgstr "Następna strona"
+msgstr "Następna paleta"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:203
@@ -6718,17 +6706,15 @@ msgstr "Wczytaj mimo to"
 
 #: engines/bagel/metaengine.cpp:41
 msgid "Wait"
-msgstr ""
+msgstr "Czekaj"
 
 #: engines/bagel/metaengine.cpp:42
 msgid "Soldier 714 Eye Cheat"
 msgstr ""
 
 #: engines/bagel/metaengine.cpp:83
-#, fuzzy
-#| msgid "General"
 msgid "General Keys"
-msgstr "Ogólne"
+msgstr "Klawisze ogólne"
 
 #: engines/bladerunner/bladerunner.cpp:405
 msgid "Failed to initialize resources"
@@ -7059,16 +7045,12 @@ msgstr ""
 "grze"
 
 #: engines/cge/metaengine.cpp:199 engines/cge2/metaengine.cpp:212
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game Keymappings"
-msgstr "Opcje gry"
+msgstr "Mapowanie klawiszy"
 
 #: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:225
-#, fuzzy
-#| msgid "Skip"
 msgid "Exit/Skip"
-msgstr "Pomiń"
+msgstr "Wyjdź/Pomiń"
 
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
 #: engines/hopkins/metaengine.cpp:238 engines/lure/metaengine.cpp:191
@@ -7091,18 +7073,14 @@ msgstr "Wczytaj grę"
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:234 engines/cge2/metaengine.cpp:248
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Info"
-msgstr "Menu gry"
+msgstr "Informacje o grze"
 
 #. I18N: This opens a Quit Prompt where you have to choose
 #. [Confirm] or [Continue Playing] lines with Left Click.
 #: engines/cge/metaengine.cpp:242 engines/cge2/metaengine.cpp:256
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit Prompt"
-msgstr "Zamknij grę"
+msgstr "Potwierdź zamknięcie"
 
 #. I18N: Here ALTered Item refers to the dice that has been altered/changed.
 #. In order to escape the dice game loop press Right/Left Alt
