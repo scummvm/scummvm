@@ -272,9 +272,9 @@ void MidiDriver_TIMIDITY::teardown() {
 }
 
 int MidiDriver_TIMIDITY::connect_to_server(const char* hostname, const char* tcp_port) {
-	int fd;
 	struct addrinfo  hints;
 	struct addrinfo *result, *rp;
+	int fd = -1;
 
 	/* get all address(es) matching host and port */
 	memset(&hints, 0, sizeof(struct addrinfo));
