@@ -33,6 +33,8 @@ private:
 	int _rp01 = 0;
 	int _rp09 = 0;
 	int _ripHandChin = 0;
+	int _ripLowReach = 0;
+	int _ripLowReach2 = 0;
 	int _ripTalker = 0;
 	int _tt01 = 0;
 	int _tt02 = 0;
@@ -50,8 +52,13 @@ private:
 	int _all5a = 0;
 	int _loop0 = 0;
 	int _loop1 = 0;
+	int _horn = 0;
+	machine *_ripley = nullptr;
+	machine *_shadow = nullptr;
+	machine *_shadow5 = nullptr;
 	machine *_tt = nullptr;
 	machine *_ol = nullptr;
+	machine *_ol2 = nullptr;
 	machine *_stump = nullptr;
 	machine *_lighter = nullptr;
 	machine *_pole = nullptr;
@@ -61,6 +68,16 @@ private:
 	int _val1 = 0;
 	int _val2 = 0;
 	int _val3 = 0;
+	int _val4 = 0;
+	int _val5 = 0;
+
+	void conv608a();
+	bool takeStump1();
+	bool takePuffin();
+	bool stumpHole();
+	bool takeStump2();
+	bool takeLighter();
+	bool hornCordWater();
 
 public:
 	Room608() : Room() {}

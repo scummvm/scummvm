@@ -239,7 +239,7 @@ void Room607::parser() {
 			if (!_G(flags)[V198])
 				terminateMachineAndNull(_mud);
 
-				ws_unhide_walker();
+			ws_unhide_walker();
 			player_set_commands_allowed(true);
 			break;
 		case 6:

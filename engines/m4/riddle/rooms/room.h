@@ -32,6 +32,9 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+#define HAS(ITEM) (player_said(ITEM) && inv_player_has(ITEM))
+#define HERE(ITEM) (player_said(ITEM) && inv_object_is_here(ITEM))
+
 class Room : public M4::Room {
 private:
 	static int _ripSketching;
