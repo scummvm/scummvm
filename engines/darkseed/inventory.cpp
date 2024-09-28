@@ -150,10 +150,10 @@ void Inventory::handleClick() {
 			   (g_engine->_actionMode == 20 && icon == 25)
 			   ) {
 		g_engine->handleObjCollision(icon);
-	} else if (g_engine->_actionMode == HandAction && icon == 35) {
+	} else if (g_engine->_actionMode == kHandAction && icon == 35) {
 		g_engine->_objectVar[35] = 0x7080;
 		g_engine->_console->printTosText(669);
-	} else if (g_engine->_actionMode == LookAction) {
+	} else if (g_engine->_actionMode == kLookAction) {
 		g_engine->lookCode(icon);
 	} else {
 		g_engine->_actionMode = icon;
