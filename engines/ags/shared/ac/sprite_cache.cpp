@@ -210,7 +210,8 @@ bool SpriteCache::SpriteData::IsLocked() const {
 }
 
 bool SpriteCache::DoesSpriteExist(sprkey_t index) const {
-	return index >= 0 && (size_t)index < _spriteData.size() && _spriteData[index].DoesSpriteExist();
+	return index >= 0 && (size_t)index < _spriteData.size() &&  // in the valid range
+		   _spriteData[index].IsValid();  // has assigned sprite
 }
 
 Size SpriteCache::GetSpriteResolution(sprkey_t index) const {
