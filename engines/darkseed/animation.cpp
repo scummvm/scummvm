@@ -191,7 +191,7 @@ void Animation::updateAnimation() {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 		} else {
 			if (g_engine->_room->isGiger()) {
-				g_engine->stuffPlayer();
+				stuffPlayer();
 			} else {
 				if (g_engine->_room->isOutside() && g_engine->_currentTimeInSeconds > 61200) {
 					g_engine->_room->restorePalette();
@@ -428,7 +428,7 @@ void Animation::updateAnimation() {
 		if (_objRestarted) {
 			_isPlayingAnimation_maybe = true;
 			_objectVar[46] = 2;
-			g_engine->libanim(true);
+			libanim(true);
 		}
 		break;
 	case 20: // receive card from delbert
@@ -591,7 +591,7 @@ void Animation::updateAnimation() {
 		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 		} else {
-			g_engine->stuffPlayer();
+			stuffPlayer();
 		}
 		break;
 	case 39: // Arrest Mike.
@@ -668,7 +668,7 @@ void Animation::updateAnimation() {
 		} else {
 			//			LoadModeSong(7); TODO
 			g_engine->playSound(0, 6, -1);
-			g_engine->stuffPlayer();
+			stuffPlayer();
 		}
 		break;
 	}
@@ -835,4 +835,359 @@ void Animation::advanceAnimationFrame(int nspAminIdx) {
 		_spriteAnimCountdownTimer[nspAminIdx] = anim._frameDuration[_animIndexTbl[nspAminIdx]];
 	}
 }
+
+static constexpr uint8 dcopList[100] = {
+	0, 1, 2, 3,
+	2, 1, 2, 3,
+	2, 1, 0, 1,
+	2, 3, 2, 3,
+	2, 3, 2, 1,
+	0, 1, 2, 1,
+	2, 1, 2, 3,
+	2, 1, 0, 1,
+	2, 3, 2, 1,
+	2, 3, 2, 1,
+	0, 1, 2, 3,
+	2, 3, 2, 3,
+	2, 1, 0, 1,
+	2, 1, 2, 1,
+	2, 3, 2, 1,
+	0, 1, 2, 1,
+	2, 1, 2, 3,
+	2, 1, 0, 1,
+	2, 3, 2, 3,
+	2, 3, 2, 1,
+	0, 1, 2, 1,
+	2, 1, 2, 3,
+	2, 1, 0, 1,
+	2, 1, 2, 1,
+	2, 3, 2, 1
+};
+
+void Animation::dcopanim() {
+	_player->loadAnimations("dcopb.nsp");
+	g_engine->showFullscreenPic("dcopb.pic");
+	_animIndexTbl[0] = 0;
+	_spriteAnimCountdownTimer[0] = _player->_animations.getAnimAt(0)._frameDuration[0];
+
+	g_engine->_sprites.clearSpriteDrawList();
+	g_engine->_console->printTosText(923);
+
+	uint8 lipsIdx = 0;
+	while (g_engine->_sound->isPlayingSpeech()) {
+		g_engine->_sprites.clearSpriteDrawList();
+
+		g_engine->drawFullscreenPic();
+
+		advanceAnimationFrame(0);
+		const Sprite &dcopSprite = _player->_animations.getSpriteAt(dcopList[lipsIdx]);
+		g_engine->_sprites.addSpriteToDrawList(310, 180, &dcopSprite, 255, dcopSprite._width, dcopSprite._height, false);
+		g_engine->_sprites.drawSprites();
+
+		g_engine->_console->draw();
+		g_engine->_screen->makeAllDirty();
+		g_engine->_screen->update();
+
+		lipsIdx++;
+		if (lipsIdx == 100) {
+			lipsIdx = 0;
+		}
+
+		for (int i = 0; i < 6; i++) {
+			g_engine->wait();
+		}
+	}
+	g_engine->removeFullscreenPic();
+}
+
+static constexpr uint8 sargoList[100] = {
+	0, 1, 2, 3,
+	4, 3, 2, 1,
+	0, 1, 0, 1,
+	2, 3, 2, 3,
+	2, 3, 2, 1,
+	0, 1, 2, 3,
+	4, 3, 4, 3,
+	2, 1, 0, 1,
+	2, 3, 4, 3,
+	2, 1, 0, 1,
+	0, 1, 2, 3,
+	2, 3, 2, 3,
+	2, 1, 0, 1,
+	2, 3, 2, 1,
+	0, 4, 3, 2,
+	1, 1, 2, 3,
+	4, 3, 2, 1,
+	0, 1, 0, 1,
+	2, 3, 2, 3,
+	2, 3, 2, 1,
+	2, 1, 0, 0,
+	1, 2, 3, 2,
+	1, 0, 1, 2,
+	3, 4, 3, 2,
+	3, 2, 1, 1
+};
+
+void Animation::sargoanim() {
+	g_engine->_cursor.showCursor(false);
+	_player->loadAnimations("sargo.nsp");
+	g_engine->showFullscreenPic("sargo.pic");
+	_animIndexTbl[0] = 0;
+	_spriteAnimCountdownTimer[0] = _player->_animations.getAnimAt(0)._frameDuration[0];
+
+	g_engine->_console->printTosText(916);
+
+	uint8 dialogIdx = 79;
+	uint8 lipsIdx = 0;
+	while (g_engine->_sound->isPlayingSpeech() || dialogIdx < 81) {
+		g_engine->_sprites.clearSpriteDrawList();
+
+		g_engine->drawFullscreenPic();
+
+		advanceAnimationFrame(0);
+		const Sprite &sargoSprite = _player->_animations.getSpriteAt(sargoList[lipsIdx]);
+		g_engine->_sprites.addSpriteToDrawList(334, 160, &sargoSprite, 255, sargoSprite._width, sargoSprite._height, false);
+		g_engine->_sprites.drawSprites();
+
+		g_engine->_console->draw();
+		g_engine->_screen->makeAllDirty();
+		g_engine->_screen->update();
+
+		lipsIdx++;
+		if (lipsIdx == 100) {
+			lipsIdx = 0;
+		}
+
+		if (!g_engine->_sound->isPlayingSpeech()) {
+			dialogIdx++;
+			if (dialogIdx == 80) {
+				g_engine->_console->printTosText(917);
+			}
+		}
+		g_engine->waitxticks(1);
+	}
+	g_engine->removeFullscreenPic();
+	g_engine->_cursor.showCursor(true);
+}
+
+static constexpr uint8 keeperList[250] = {
+	10, 11, 12, 13,
+	12, 12, 13, 10,
+	11, 10, 10, 11,
+	12, 13, 12, 12,
+	13, 10, 11, 10,
+	10, 10, 11, 11,
+	12, 12, 11, 12,
+	12, 13, 12, 12,
+	12, 13, 13, 12,
+	13, 12, 11, 12,
+	13, 12, 11, 10,
+	11, 12, 13, 10,
+	11, 10, 10, 11,
+	12, 13, 12, 12,
+	13, 10, 11, 10,
+	0, 0, 1, 1,
+	2, 2, 3, 3,
+	4, 4, 5, 5,
+	6, 6, 7, 7,
+	8, 8, 9, 9,
+	10, 10, 11, 11,
+	12, 12, 11, 12,
+	12, 13, 12, 12,
+	12, 13, 13, 12,
+	13, 12, 11, 10,
+	10, 11, 12, 13,
+	12, 12, 13, 10,
+	11, 10, 10, 11,
+	12, 13, 12, 12,
+	13, 10, 11, 10,
+	10, 11, 12, 13,
+	12, 12, 13, 10,
+	11, 10, 10, 11,
+	12, 13, 12, 12,
+	13, 10, 11, 10,
+	10, 11, 12, 13,
+	12, 12, 13, 10,
+	11, 10, 10, 10,
+	11, 11, 12, 12,
+	11, 12, 12, 13,
+	12, 12, 12, 13,
+	13, 12, 13, 12,
+	11, 10, 10, 11,
+	12, 13, 12, 12,
+	13, 10, 11, 10,
+	10, 11, 12, 13,
+	12, 12, 13, 10,
+	11, 10, 10, 11,
+	12, 13, 12, 12,
+	13, 10, 11, 10,
+	10, 10, 11, 11,
+	12, 12, 11, 12,
+	12, 13, 12, 12,
+	12, 13, 13, 12,
+	13, 12, 11, 10,
+	0, 1, 2, 3,
+	4, 5, 6, 7,
+	8, 9, 10, 11,
+	12, 13, 12, 12,
+	13, 10, 11, 10,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+	0, 0
+};
+
+void Animation::keeperanim() {
+	g_engine->_cursor.showCursor(false);
+	_player->loadAnimations("keeper.nsp");
+	g_engine->showFullscreenPic("keeper.pic");
+	_animIndexTbl[0] = 0;
+	_spriteAnimCountdownTimer[0] = _player->_animations.getAnimAt(0)._frameDuration[0];
+
+	g_engine->_console->printTosText(913);
+
+	uint8 dialogIdx = 73;
+	uint8 lipsIdx = 0;
+	while (g_engine->_sound->isPlayingSpeech() || dialogIdx < 76) {
+		g_engine->_sprites.clearSpriteDrawList();
+
+		g_engine->drawFullscreenPic();
+
+		advanceAnimationFrame(0);
+		const Sprite &keeperSprite = _player->_animations.getSpriteAt(keeperList[lipsIdx]);
+		g_engine->_sprites.addSpriteToDrawList(254, 117, &keeperSprite, 255, keeperSprite._width, keeperSprite._height, false);
+		g_engine->_sprites.drawSprites();
+
+		g_engine->_console->draw();
+		g_engine->_screen->makeAllDirty();
+		g_engine->_screen->update();
+
+		lipsIdx++;
+		if (lipsIdx == 250) {
+			lipsIdx = 0;
+		}
+
+		if (!g_engine->_sound->isPlayingSpeech()) {
+			dialogIdx++;
+			if (dialogIdx == 74) {
+				g_engine->_console->printTosText(914);
+			} else if (dialogIdx == 75) {
+				g_engine->_console->printTosText(915);
+			}
+		}
+		g_engine->waitxticks(1);
+	}
+	g_engine->removeFullscreenPic();
+	g_engine->_cursor.showCursor(true);
+}
+
+void Animation::stuffPlayer() {
+	g_engine->_cursor.showCursor(false);
+	_player->loadAnimations("labparts.nsp");
+	g_engine->showFullscreenPic("lab.pic");
+	const Sprite &alienSprite = _player->_animations.getSpriteAt(8);
+
+	bool updateCounter = false;
+	int counter = 0;
+	while (counter < 8) {
+		g_engine->_sprites.clearSpriteDrawList();
+
+		g_engine->drawFullscreenPic();
+
+		const Sprite &mikeSprite = _player->_animations.getSpriteAt(counter);
+		g_engine->_sprites.addSpriteToDrawList(103, 93, &mikeSprite, 255, mikeSprite._width, mikeSprite._height, false);
+		g_engine->_sprites.addSpriteToDrawList(226, 100, &alienSprite, 255, alienSprite._width, alienSprite._height, false);
+
+		g_engine->_sprites.drawSprites();
+
+		g_engine->_console->draw();
+		g_engine->_screen->makeAllDirty();
+		g_engine->_screen->update();
+
+		updateCounter = !updateCounter;
+		if (updateCounter) {
+			counter++;
+		}
+		g_engine->waitxticks(1);
+	}
+	g_engine->waitxticks(3);
+	g_engine->removeFullscreenPic();
+	g_engine->_sprites.clearSpriteDrawList();
+	g_engine->_cursor.showCursor(true);
+	g_engine->_cutscene.play('Z');
+}
+
+static constexpr uint8 libList[100] = {
+	5, 6, 7, 8,
+	9, 10, 9, 8,
+	7, 6, 5, 6,
+	7, 6, 7, 8,
+	7, 6, 5, 6,
+	5, 6, 7, 8,
+	9, 10, 9, 8,
+	7, 6, 5, 6,
+	7, 6, 7, 8,
+	7, 6, 5, 6,
+	5, 6, 7, 8,
+	9, 10, 9, 8,
+	7, 6, 5, 6,
+	5, 6, 7, 6,
+	7, 8, 7, 6,
+	5, 6, 7, 6,
+	7, 8, 7, 6,
+	5, 6, 5, 6,
+	5, 6, 7, 6,
+	7, 8, 7, 6,
+	5, 6, 7, 8,
+	9, 10, 9, 8,
+	7, 6, 5, 6,
+	7, 8, 9, 10,
+	9, 8, 7, 6
+};
+
+void Animation::libanim(bool pickingUpReservedBook) {
+	_player->loadAnimations("libparts.nsp");
+	g_engine->showFullscreenPic("libinlib.pic");
+
+	g_engine->_console->printTosText(pickingUpReservedBook ? 928 : 924);
+
+	_spriteAnimCountdownTimer[0] = _player->_animations.getAnimAt(0)._frameDuration[0];
+	uint8 lipsIdx = 0;
+	while (g_engine->_sound->isPlayingSpeech()) {
+		g_engine->_sprites.clearSpriteDrawList();
+		g_engine->_frame.draw();
+		g_engine->drawFullscreenPic();
+		g_engine->_console->draw();
+
+		advanceAnimationFrame(0);
+		const Sprite &eyesSprite = _player->_animations.getSpriteAt(_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]);
+		g_engine->_sprites.addSpriteToDrawList(255, 114, &eyesSprite, 255, eyesSprite._width, eyesSprite._height, false);
+		advanceAnimationFrame(1);
+
+		const Sprite &mouthSprite = _player->_animations.getSpriteAt(libList[lipsIdx]);
+		g_engine->_sprites.addSpriteToDrawList(255, 154, &mouthSprite, 255, mouthSprite._width, mouthSprite._height, false);
+
+		g_engine->_sprites.drawSprites();
+
+		g_engine->_screen->makeAllDirty();
+		g_engine->_screen->update();
+
+		lipsIdx++;
+		if (lipsIdx == 100) {
+			lipsIdx = 0;
+		}
+
+		for (int i = 0; i < 6; i++) {
+			g_engine->wait();
+		}
+	}
+
+	g_engine->removeFullscreenPic();
+
+	if (pickingUpReservedBook) {
+		_objectVar[49] = 1;
+		_objectVar[62] = 0;
+		g_engine->_cutscene.play('G');
+	}
+}
+
 } // End of namespace Darkseed

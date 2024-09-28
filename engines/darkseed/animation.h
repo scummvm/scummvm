@@ -47,6 +47,12 @@ public:
 
 	void advanceAnimationFrame(int nspAminIdx);
 
+	void dcopanim();
+	void sargoanim();
+	void keeperanim();
+	void stuffPlayer();
+	void libanim(bool pickingUpReservedBook);
+
 public:
 	explicit Animation(Player *player, Objects &objectVar) : _player(player), _objectVar(objectVar) {}
 	void setupOtherNspAnimation(int nspAnimIdx, int animId);
