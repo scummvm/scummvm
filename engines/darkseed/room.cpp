@@ -843,7 +843,7 @@ void Room::runRoomObjects() {
 						g_engine->_objectVar[79] = 3;
 					}
 					if (g_engine->_objectVar[79] == 2) {
-						g_engine->stuffPlayer();
+						g_engine->_animation->stuffPlayer();
 					}
 				}
 			} else {

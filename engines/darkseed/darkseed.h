@@ -151,6 +151,10 @@ public:
 
 	void wongame();
 
+	void removeFullscreenPic();
+
+	void wait();
+
 public:
 	DarkseedEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~DarkseedEngine() override;
@@ -221,17 +225,15 @@ public:
 	void updateDisplay();
 	void debugTeleportToRoom(int newRoomNumber, int entranceNumber);
 	void showFullscreenPic(const Common::Path &filename);
+	void drawFullscreenPic();
 	void lookCode(int objNum);
 	void handleObjCollision(int targetObjNum);
 	void playSound(int16 unk, uint8 unk1, int16 unk2);
 	void nextFrame(int nspAminIdx);
-	void stuffPlayer();
-	void dcopanim();
 
 	void throwmikeinjail();
 	void runObjects();
 	void getPackageObj(int packageType);
-	void libanim(bool pickingUpReservedBook);
 	void printTime();
 	void changeToRoom(int newRoomNumber, bool placeDirectly = false);
 	void waitxticks(int ticks);
@@ -241,12 +243,8 @@ private:
 	void gameloop();
 	void updateEvents();
 	void handleInput();
-	void wait();
 	void handlePointerAction();
 	void loadRoom(int roomNumber);
-
-	void keeperanim();
-	void sargoanim();
 
 	void gotosleepinjail();
 
@@ -257,8 +255,6 @@ private:
 	void rundrekethsequence();
 	void delthrowstick(int16 spriteNum);
 	void leavepackage();
-
-	void removeFullscreenPic();
 };
 
 extern DarkseedEngine *g_engine;

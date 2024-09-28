@@ -1098,7 +1098,7 @@ void UseCode::useCodeLibraryCard(int16 targetObjNum) {
 	if (targetObjNum == 46) {
 		g_engine->_cursor.setCursorType(Pointer);
 		_inventory.removeItem(10);
-		g_engine->libanim(false);
+		g_engine->_animation->libanim(false);
 		_objectVar[10] = 1;
 	} else if (targetObjNum == 113) {
 		putobjunderpillow(10);

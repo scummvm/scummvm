@@ -85,6 +85,8 @@ void Cutscene::update() {
 			g_engine->newGame();
 		} else if (_cutsceneId == 'Y') {
 			play('I');
+		} else if (_cutsceneId == 'G') {
+			g_engine->_cursor.showCursor(true);
 		}
 	}
 }
