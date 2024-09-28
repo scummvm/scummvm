@@ -36,6 +36,11 @@ struct PaletteMod;
 
 class GfxDriver {
 public:
+	enum DrawFlags : uint32 {
+		kHiResMode		=	1 << 0,
+		kMovieMode		=	1 << 1
+	};
+
 	GfxDriver(uint16 screenWidth, uint16 screenHeight, int numColors) : _screenW(screenWidth), _screenH(screenHeight), _numColors(numColors), _ready(false), _pixelSize(1) {}
 	virtual ~GfxDriver() {}
 	virtual void initScreen(const Graphics::PixelFormat *srcRGBFormat = nullptr) = 0; // srcRGBFormat: expect incoming data to have the specified rgb pixel format (used for Mac hicolor videos)
@@ -51,10 +56,16 @@ public:
 	virtual void copyCurrentPalette(byte *dest, int start, int num) const;
 	virtual void drawTextFontGlyph(const byte *src, int pitch, int hiresDestX, int hiresDestY, int hiresW, int hiresH, int transpColor, const PaletteMod *palMods, const byte *palModMapping) = 0; 
 	virtual byte remapTextColor(byte color) const { return color; }
+	virtual void setColorMap(const byte *colorMap) {}
+	virtual Common::Point getRealCoords(Common::Point &pos) const { return pos; }
+	virtual void setFlags(uint32 flags) {}
+	virtual void clearFlags(uint32 flags) {}
 	virtual bool supportsPalIntensity() const = 0;
+	virtual bool supportsHiResGraphics() const = 0;
 	virtual bool driverBasedTextRendering() const = 0;
 	uint16 numColors() const { return _numColors; }
 	byte pixelSize() const { return _pixelSize; }
+
 protected:
 	bool _ready;
 	static bool checkDriver(const char *const *driverNames, int listSize);
@@ -77,6 +88,7 @@ public:
 	void copyCurrentPalette(byte *dest, int start, int num) const override;
 	void drawTextFontGlyph(const byte*, int, int, int, int, int, int, const PaletteMod*, const byte*) override; // Only for HiRes fonts. Not implemented here.
 	bool supportsPalIntensity() const override { return true; }
+	bool supportsHiResGraphics() const override { return false; }
 	bool driverBasedTextRendering() const override { return false; }
 protected:
 	void updatePalette(const byte *colors, uint start, uint num);
@@ -110,6 +122,7 @@ public:
 	void drawTextFontGlyph(const byte*, int, int, int, int, int, int, const PaletteMod*, const byte*) override; // Only for HiRes fonts. Not implemented here.
 	void copyCurrentPalette(byte *dest, int start, int num) const override;
 	bool supportsPalIntensity() const override { return false; }
+	bool supportsHiResGraphics() const override { return false; }
 	bool driverBasedTextRendering() const override { return false; }
 protected:
 	void assignPalette(const byte *colors);
@@ -148,6 +161,7 @@ public:
 	void setMousePos(const Common::Point &pos) const override;
 	void setShakePos(int shakeXOffset, int shakeYOffset) const override;
 	void clearRect(const Common::Rect &r) const override;
+	Common::Point getRealCoords(Common::Point &pos) const override;
 	static bool validateMode(Common::Platform p) { return (p == Common::kPlatformDOS) && checkDriver(_driverFiles, 2); }
 private:
 	void setupRenderProc() override;
@@ -169,6 +183,7 @@ public:
 	void setMousePos(const Common::Point &pos) const override;
 	void setShakePos(int shakeXOffset, int shakeYOffset) const override;
 	void clearRect(const Common::Rect &r) const override;
+	Common::Point getRealCoords(Common::Point &pos) const override;
 	static bool validateMode(Common::Platform p) { return (p == Common::kPlatformDOS) && checkDriver(&_driverFile, 1); }
 private:
 	void setupRenderProc() override;
@@ -208,7 +223,9 @@ public:
 	void setMousePos(const Common::Point &pos) const override;
 	void setShakePos(int shakeXOffset, int shakeYOffset) const override;
 	void clearRect(const Common::Rect &r) const override;
+	Common::Point getRealCoords(Common::Point &pos) const override;
 	bool supportsPalIntensity() const override { return false; }
+	bool supportsHiResGraphics() const override { return false; }
 	bool driverBasedTextRendering() const override { return false; }
 	static bool validateMode(Common::Platform p) { return (p == Common::kPlatformDOS || p == Common::kPlatformWindows) && checkDriver(&_driverFile, 1); }
 private:
@@ -227,7 +244,7 @@ private:
 
 class UpscaledGfxDriver : public GfxDefaultDriver {
 public:
-	UpscaledGfxDriver(uint16 screenWidth, uint16 screenHeight, uint16 textAlignX, bool scaleCursor, bool rgbRendering);
+	UpscaledGfxDriver(int16 textAlignX, bool scaleCursor, bool rgbRendering);
 	~UpscaledGfxDriver() override;
 	void initScreen(const Graphics::PixelFormat *format) override;
 	void setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod *palMods, const byte *palModMapping) override;
@@ -237,9 +254,11 @@ public:
 	void setMousePos(const Common::Point &pos) const override;
 	void setShakePos(int shakeXOffset, int shakeYOffset) const override;
 	void clearRect(const Common::Rect &r) const override;
+	Common::Point getRealCoords(Common::Point &pos) const override;
 	void drawTextFontGlyph(const byte *src, int pitch, int hiresDestX, int hiresDestY, int hiresW, int hiresH, int transpColor, const PaletteMod *palMods, const byte *palModMapping) override; // For HiRes fonts. PC-98 versions bypass the video driver for this and render directly on top of the vram.
 	bool driverBasedTextRendering() const override { return true; }
 protected:
+	UpscaledGfxDriver(uint16 scaledW, uint16 scaledH, int16 textAlignX, bool scaleCursor, bool rgbRendering);
 	void updateScreen(int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping);
 	void adjustCursorBuffer(uint16 newWidth, uint16 newHeight);
 	typedef void (*GlyphRenderProc)(byte*, int, const byte*, int, int, int, int);
@@ -247,12 +266,39 @@ protected:
 	typedef void (*ScaledRenderProc)(byte*, const byte*, int, int, int);
 	ScaledRenderProc _renderScaled;
 	uint16 _textAlignX;
+	uint16 _hScaleMult;
+	uint16 _vScaleMult;
+	uint16 _vScaleDiv;
 	byte *_scaledBitmap;
 private:
+	virtual void renderBitmap(const byte *src, int pitch, int dx, int dy, int w, int h, int &realWidth, int &realHeight);
 	const bool _scaleCursor;
 	uint16 _cursorWidth;
 	uint16 _cursorHeight;
 	bool _needCursorBuffer;
+};
+
+class KQ6WinGfxDriver : public UpscaledGfxDriver {
+public:
+	KQ6WinGfxDriver(bool scaleCursor, bool smallWindow, bool rgbRendering);
+	~KQ6WinGfxDriver() override {}
+	void initScreen(const Graphics::PixelFormat *format) override;
+	void copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) override;
+	Common::Point getRealCoords(Common::Point &pos) const override;
+	void setColorMap(const byte *colorMap) { _colorMap = colorMap; }
+	void setFlags(uint32 flags) override;
+	void clearFlags(uint32 flags) override;
+	bool supportsHiResGraphics() const override { return !_smallWindow; }
+private:
+	typedef void (*LineProc)(byte*&, const byte*, int, int, int);
+	LineProc _renderLine;
+	typedef void (*LineProcSpec)(byte*&, const byte*, int, int, const byte*);
+	LineProcSpec _renderLine2;
+	void renderBitmap(const byte *src, int pitch, int dx, int dy, int w, int h, int &realWidth, int &realHeight) override;
+	uint32 _flags;
+	const byte *_colorMap;
+	const bool _smallWindow;
+	uint16 _vScaleMult2;
 };
 
 class PC98Gfx16ColorsDriver final : public UpscaledGfxDriver {

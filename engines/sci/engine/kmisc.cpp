@@ -39,6 +39,8 @@
 #ifdef ENABLE_SCI32
 #include "sci/graphics/cursor32.h"
 #include "sci/graphics/frameout.h"
+#include "sci/graphics/screen.h"
+#include "sci/graphics/gfxdrivers.h"
 #endif
 #include "sci/graphics/maciconbar.h"
 #include "sci/console.h"
@@ -771,7 +773,7 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 	enum Operation {
 		kPlatformUnknown        = 0,
 		kPlatformGetPlatform    = 4,
-		kPlatformUnknown5       = 5,
+		kPlatformIsSmallWindow  = 5,
 		kPlatformIsHiRes        = 6,
 		kPlatformWin311OrHigher = 7
 	};
@@ -803,9 +805,8 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 			return make_reg(0, kSciPlatformMacintosh);
 		else
 			return make_reg(0, kSciPlatformDOS);
-	case kPlatformUnknown5:
-		// KQ6: subop 5 needs to return the opposite of subop 6 to get hires graphics
-		return make_reg(0, !isWindows);
+	case kPlatformIsSmallWindow:
+		return make_reg(0, !g_sci->_gfxScreen->gfxDriver()->supportsHiResGraphics());
 	case kPlatformIsHiRes:
 	case kPlatformWin311OrHigher:
 		return make_reg(0, isWindows);

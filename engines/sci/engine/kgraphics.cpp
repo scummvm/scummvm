@@ -273,7 +273,7 @@ reg_t kGraphDrawLine(EngineState *s, int argc, reg_t *argv) {
 reg_t kGraphSaveBox(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect rect = getGraphRect(argv);
 	uint16 screenMask = argv[4].toUint16() & GFX_SCREEN_MASK_ALL;
-	return g_sci->_gfxPaint16->kernelGraphSaveBox(rect, screenMask);
+	return g_sci->_gfxPaint16->kernelGraphSaveBox(rect, screenMask, false);
 }
 
 reg_t kGraphRestoreBox(EngineState *s, int argc, reg_t *argv) {
@@ -309,8 +309,9 @@ reg_t kGraphUpdateBox(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect rect = getGraphRect(argv);
 	// argv[4] is the map (1 for visual, etc.)
 	// argc == 6 on upscaled hires
-	bool hiresMode = (argc > 5) ? true : false;
-	g_sci->_gfxPaint16->kernelGraphUpdateBox(rect, hiresMode);
+	// The original interpreter skips the update if either argc > 5 or argv[5] != 0.
+	if (argc <= 5 || argv[5].isNull())
+		g_sci->_gfxPaint16->kernelGraphUpdateBox(rect);
 	return s->r_acc;
 }
 
@@ -328,7 +329,9 @@ reg_t kGraphAdjustPriority(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kGraphSaveUpscaledHiresBox(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect rect = getGraphRect(argv);
-	return g_sci->_gfxPaint16->kernelGraphSaveUpscaledHiresBox(rect);
+	uint16 screenMask = argv[4].toUint16() & GFX_SCREEN_MASK_ALL;
+	s->r_acc = g_sci->_gfxScreen->gfxDriver()->supportsHiResGraphics() ? g_sci->_gfxPaint16->kernelGraphSaveBox(rect, screenMask, true) : NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {

@@ -21,6 +21,7 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
+#include "sci/graphics/gfxdrivers.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/remap.h"
@@ -828,16 +829,8 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 			}
 		}
 	} else if (upscaledHires) {
-		// UpscaledHires means view is hires and is supposed to
-		// get drawn onto lowres screen.
-		for (int y = 0; y < height; y++, bitmapData += celWidth) {
-			for (int x = 0; x < width; x++) {
-				const byte color = bitmapData[x];
-				const int x2 = clipRectTranslated.left + x;
-				const int y2 = clipRectTranslated.top + y;
-				_screen->putPixelOnDisplay(x2, y2, palette->mapping[color]);
-			}
-		}
+		// upscaledHires means view is hires and needs no scaling
+		_screen->copyHiResRectToScreen(bitmapData, celWidth, clipRect.left, clipRect.top, width, height, palette->mapping);
 	} else {
 		for (int y = 0; y < height; y++, bitmapData += celWidth) {
 			for (int x = 0; x < width; x++) {

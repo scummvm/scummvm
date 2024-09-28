@@ -49,8 +49,7 @@ public:
 
 private:
 	void init();
-	void drawBitmap(uint16 bitmapNr);
-	void bitsShow();
+	void drawBitmap(uint16 bitmapNr, bool show);
 
 	int16 raveGetTicks(Resource *resource, uint *offset);
 	uint16 raveGetID(Resource *resource, uint *offset);

@@ -704,6 +704,10 @@ void SCI0_CGABWDriver::clearRect(const Common::Rect &r) const {
 	GfxDriver::clearRect(r2);
 }
 
+Common::Point SCI0_CGABWDriver::getRealCoords(Common::Point &pos) const {
+	return Common::Point(pos.x << 1, pos.y << 1);
+}
+
 template <typename T> void cgabwRenderLine_v1(byte *&dst, const byte *src, int w, int tx, int ty, const byte *patterns, const byte *pal) {
 	const T *p = reinterpret_cast<const T*>(pal);
 	const uint16 *patterns16 = reinterpret_cast<const uint16*>(patterns);
@@ -867,6 +871,10 @@ void SCI0_HerculesDriver::setShakePos(int shakeXOffset, int shakeYOffset) const 
 void SCI0_HerculesDriver::clearRect(const Common::Rect &r) const {
 	Common::Rect r2((r.left << 1) + _centerX, (r.top & ~1) * 3 / 2 + (r.top & 1) + _centerY, (r.right << 1) + 40, (r.bottom & ~1) * 3 / 2 + (r.bottom & 1) + _centerY);
 	GfxDriver::clearRect(r2);
+}
+
+Common::Point SCI0_HerculesDriver::getRealCoords(Common::Point &pos) const {
+	return Common::Point((pos.x << 1) + _centerX, (pos.y & ~1) * 3 / 2 + (pos.y & 1) + _centerY);
 }
 
 template <typename T> void herculesRenderLine(byte *&dst, const byte *src, int w, int tx, int ty, const byte *patterns, const byte *pal) {
@@ -1171,6 +1179,10 @@ void SCI1_EGADriver::clearRect(const Common::Rect &r) const {
 	GfxDriver::clearRect(r2);
 }
 
+Common::Point SCI1_EGADriver::getRealCoords(Common::Point &pos) const {
+	return Common::Point(pos.x << 1, pos.y << 1);
+}
+
 const char *SCI1_EGADriver::_driverFile = "EGA640.DRV";
 
 template <typename T> void scale2x(byte *dst, const byte *src, int pitch, int w, int h) {
@@ -1193,11 +1205,15 @@ template <typename T> void scale2x(byte *dst, const byte *src, int pitch, int w,
 	}
 }
 
-UpscaledGfxDriver::UpscaledGfxDriver(uint16 screenWidth, uint16 screenHeight, uint16 textAlignX, bool scaleCursor, bool rgbRendering) :
-	GfxDefaultDriver(screenWidth << 1, screenHeight << 1, false, rgbRendering), _textAlignX(textAlignX), _scaleCursor(scaleCursor), _needCursorBuffer(false),
-	_scaledBitmap(nullptr), _renderScaled(nullptr), _renderGlyph(nullptr), _cursorWidth(0), _cursorHeight(0) {
-	_virtualW = screenWidth;
-	_virtualH = screenHeight;
+UpscaledGfxDriver::UpscaledGfxDriver(int16 textAlignX, bool scaleCursor, bool rgbRendering) :
+	UpscaledGfxDriver(640, 400, textAlignX, scaleCursor, rgbRendering) {
+}
+
+UpscaledGfxDriver::UpscaledGfxDriver(uint16 scaledW, uint16 scaledH, int16 textAlignX, bool scaleCursor, bool rgbRendering) :
+	GfxDefaultDriver(scaledW, scaledH, false, rgbRendering), _textAlignX(textAlignX), _scaleCursor(scaleCursor), _needCursorBuffer(false),
+	_scaledBitmap(nullptr), _renderScaled(nullptr), _renderGlyph(nullptr), _cursorWidth(0), _cursorHeight(0), _hScaleMult(2), _vScaleMult(2), _vScaleDiv(1) {
+	_virtualW = 320;
+	_virtualH = 200;
 }
 
 UpscaledGfxDriver::~UpscaledGfxDriver() {
@@ -1248,12 +1264,17 @@ void UpscaledGfxDriver::copyRectToScreen(const byte *src, int srcX, int srcY, in
 	if (src != _currentBitmap)
 		updateBitmapBuffer(_currentBitmap, _virtualW * _srcPixelSize, src, pitch, destX * _srcPixelSize, destY, w * _srcPixelSize, h);
 
+	int realWidth = 0;
+	int realHeight = 0;
+
 	// We need to scale and color convert the bitmap in separate functions, because we want
 	// to keep the scaled non-color-modified bitmap for palette updates in rgb rendering mode.
-	byte *scb = _scaledBitmap + (destY << 1) * _screenW * _srcPixelSize + (destX << 1) * _srcPixelSize;
-	_renderScaled(scb, src, pitch, w, h);
+	renderBitmap(src, pitch, destX, destY, w, h, realWidth, realHeight);
 
-	updateScreen(destX << 1, destY << 1,  w << 1, h << 1, palMods, palModMapping);
+	Common::Point p(destX, destY);
+	p = getRealCoords(p);
+
+	updateScreen(p.x, p.y, realWidth, realHeight, palMods, palModMapping);
 }
 
 void UpscaledGfxDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
@@ -1269,22 +1290,26 @@ void UpscaledGfxDriver::replaceCursor(const void *cursor, uint w, uint h, int ho
 
 Common::Point UpscaledGfxDriver::getMousePos() const {
 	Common::Point res = GfxDriver::getMousePos();
-	res.x >>= 1;
-	res.y >>= 1;
+	res.x /= _hScaleMult;
+	res.y = res.y * _vScaleDiv / _vScaleMult;
 	return res;
 }
 
 void UpscaledGfxDriver::setMousePos(const Common::Point &pos) const {
-	g_system->warpMouse(pos.x << 1, pos.y << 1);
+	g_system->warpMouse(pos.x * _hScaleMult, pos.y * _vScaleMult / _vScaleDiv);
 }
 
 void UpscaledGfxDriver::setShakePos(int shakeXOffset, int shakeYOffset) const {
-	g_system->setShakePos(shakeXOffset << 1, shakeYOffset << 1);
+	g_system->setShakePos(shakeXOffset * _hScaleMult, shakeYOffset * _vScaleMult / _vScaleDiv);
 }
 
 void UpscaledGfxDriver::clearRect(const Common::Rect &r) const {
-	Common::Rect r2(r.left << 1, r.top << 1, r.right << 1, r.bottom << 1);
+	Common::Rect r2(r.left * _hScaleMult, r.top * _vScaleMult / _vScaleDiv, r.right * _hScaleMult, r.bottom * _vScaleMult / _vScaleDiv);
 	GfxDriver::clearRect(r2);
+}
+
+Common::Point UpscaledGfxDriver::getRealCoords(Common::Point &pos) const {
+	return Common::Point(pos.x * _hScaleMult, pos.y * _vScaleMult / _vScaleDiv);
 }
 
 void UpscaledGfxDriver::drawTextFontGlyph(const byte *src, int pitch, int hiresDestX, int hiresDestY, int hiresW, int hiresH, int transpColor, const PaletteMod *palMods, const byte *palModMapping) {
@@ -1326,8 +1351,184 @@ void UpscaledGfxDriver::adjustCursorBuffer(uint16 newWidth, uint16 newHeight) {
 	}
 }
 
+void UpscaledGfxDriver::renderBitmap(const byte *src, int pitch, int dx, int dy, int w, int h, int &realWidth, int &realHeight) {
+	byte *scb = _scaledBitmap + (dy << 1) * _screenW * _srcPixelSize + (dx << 1) * _srcPixelSize;
+	_renderScaled(scb, src, pitch, w, h);
+	realWidth = w << 1;
+	realHeight = h << 1;
+}
+
+KQ6WinGfxDriver::KQ6WinGfxDriver(bool scaleCursor, bool smallWindow,bool rgbRendering) :
+	UpscaledGfxDriver(smallWindow ? 320 : 640, smallWindow ? 240 : 440, 1, scaleCursor && !smallWindow, rgbRendering), _smallWindow(smallWindow),
+		_renderLine(nullptr), _renderLine2(nullptr), _flags(0), _colorMap(nullptr), _vScaleMult2(smallWindow ? 1 : 2) {
+	_virtualW = 320;
+	_virtualH = 200;
+	if (smallWindow)
+		_hScaleMult = 1;
+	_vScaleMult = _smallWindow ? 6 : 11;
+	_vScaleDiv = 5;
+}
+
+void largeWindowRenderLine(byte *&dst, const byte *src, int pitch, int w, int ty) {
+	int dstPitch = pitch;
+	int dstPitch2 = pitch - (w << 1);
+	byte *d1 = dst;
+	byte *d2 = d1 + dstPitch;
+
+	if (ty == 5) {
+		byte *d3 = d2 + dstPitch;
+		for (int i = 0; i < w; ++i) {
+			d1[0] = d1[1] = d2[0] = d2[1] = d3[0] = d3[1] = *src++;
+			d1 += 2;
+			d2 += 2;
+			d3 += 2;
+		}
+		dst = d3 + dstPitch2;
+	} else {
+		for (int i = 0; i < w; ++i) {
+			d1[0] = d1[1] = d2[0] = d2[1] = *src++;
+			d1 += 2;
+			d2 += 2;
+		}
+		dst = d2 + dstPitch2;
+	}
+}
+
+void largeWindowRenderLineMovie(byte *&dst, const byte *src, int pitch, int w, const byte*) {
+	int dstPitch = pitch;
+	int dstPitch2 = pitch - (w << 1);
+	byte *d1 = dst;
+	byte *d2 = d1 + dstPitch;
+
+	for (int i = 0; i < w; ++i) {
+		d1[0] = d1[1] = d2[0] = d2[1] = *src++;
+		d1 += 2;
+		d2 += 2;
+	}
+	dst = d2 + dstPitch2;
+}
+
+void smallWindowRenderLine(byte *&dst, const byte *src, int pitch, int w, int ty) {
+	int dstPitch = pitch;
+	int dstPitch2 = pitch - w;
+	byte *d1 = dst;
+
+	if (ty == 5) {
+		byte *d2 = d1 + dstPitch;
+		for (int i = 0; i < w; ++i)
+			*d1++ = *d2++ = *src++;
+		dst = d2 + dstPitch2;
+	} else {
+		for (int i = 0; i < w; ++i)
+			*d1++ = *src++;
+		dst = d1 + dstPitch2;
+	}
+}
+
+void smallWindowRenderLineMovie(byte *&dst, const byte *src, int pitch, int w, const byte*) {
+	int dstPitch = pitch - w;
+	byte *d1 = dst;
+
+	for (int i = 0; i < w; ++i)
+		*d1++ = *src++;
+	dst = d1 + dstPitch;
+}
+
+void hiresRenderLine(byte *&dst, const byte *src, int pitch, int w, const byte *colorMap) {
+	if (!colorMap) {
+		memcpy(dst, src, w);
+	} else {
+		byte *d = dst;
+		for (int i = 0; i < w; ++i)
+			*d++ = colorMap[*src++];
+	}
+	dst += pitch;
+}
+
+void renderLineDummy(byte *&, const byte* , int, int, const byte*) {
+}
+
+void KQ6WinGfxDriver::initScreen(const Graphics::PixelFormat *format) {
+	UpscaledGfxDriver::initScreen(format);
+	_renderLine = _smallWindow ? &smallWindowRenderLine : &largeWindowRenderLine;
+	_renderLine2 = _smallWindow ? &renderLineDummy : &hiresRenderLine;
+}
+
+void KQ6WinGfxDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) {
+	GFXDRV_ASSERT_READY;
+	assert (h >= 0 && w >= 0);
+
+	if (!(_flags & (kHiResMode | kMovieMode))) {
+		UpscaledGfxDriver::copyRectToScreen(src, srcX, srcY, pitch, destX, destY, w, h, palMods, palModMapping);
+		return;
+	}
+
+	if (_flags & kMovieMode) {
+		destX = (_screenW >> 1) - (w & ~1) * _hScaleMult / 2;
+		destY = (_screenH >> 1) - (h & ~1) * _vScaleMult2 / 2;
+	}
+
+	src += (srcY * pitch + srcX * _srcPixelSize);
+	byte *dst = _scaledBitmap + destY * _screenW * _srcPixelSize + destX * _srcPixelSize;
+
+	for (int i = 0; i < h; ++i) {
+		_renderLine2(dst, src, _screenW, w, _colorMap);
+		src += pitch;
+	}
+
+	if (_flags & kMovieMode) {
+		w *= _hScaleMult;
+		h *= _vScaleMult2;
+	}
+
+	updateScreen(destX, destY, w, h, palMods, palModMapping);
+}
+
+Common::Point KQ6WinGfxDriver::getRealCoords(Common::Point &pos) const {
+	return Common::Point(pos.x * _hScaleMult, pos.y * _vScaleMult2 + (pos.y + 4) / 5);
+}
+
+void KQ6WinGfxDriver::setFlags(uint32 flags) {
+	flags ^= (_flags & flags);
+	if (!flags)
+		return;
+
+	if (flags & kMovieMode)
+		_renderLine2 = _smallWindow ? &smallWindowRenderLineMovie : &largeWindowRenderLineMovie;
+
+	_flags |= flags;
+}
+
+void KQ6WinGfxDriver::clearFlags(uint32 flags) {
+	flags &= _flags;
+	if (!flags)
+		return;
+
+	if (flags & kMovieMode)
+		_renderLine2 = _smallWindow ? &renderLineDummy : &hiresRenderLine;
+
+	_flags &= ~flags;
+}
+
+void KQ6WinGfxDriver::renderBitmap(const byte *src, int pitch, int dx, int dy, int w, int h, int &realWidth, int &realHeight) {
+	assert(_renderLine);
+
+	byte *dst = _scaledBitmap + (dy * _vScaleMult2 + (dy + 4) / 5) * _screenW * _srcPixelSize + dx *_hScaleMult * _srcPixelSize;
+	const byte *dstart = dst;
+	dy = (dy + 4) % 5;
+
+	while (h--) {
+		_renderLine(dst, src, _screenW, w, ++dy);
+		dy %= 5;
+		src += pitch;
+	}
+
+	realWidth = w * _hScaleMult;
+	realHeight = (dst - dstart) / _screenW;
+}
+
 PC98Gfx16ColorsDriver::PC98Gfx16ColorsDriver(int textAlignX, bool cursorScaleWidth, bool cursorScaleHeight, SjisFontStyle sjisFontStyle, bool rgbRendering, bool needsUnditheringPalette) :
-	UpscaledGfxDriver(320, 200, textAlignX, cursorScaleWidth && cursorScaleHeight, rgbRendering), _textModePalette(nullptr), _fontStyle(sjisFontStyle),
+	UpscaledGfxDriver(textAlignX, cursorScaleWidth && cursorScaleHeight, rgbRendering), _textModePalette(nullptr), _fontStyle(sjisFontStyle),
 		_cursorScaleHeightOnly(!cursorScaleWidth && cursorScaleHeight), _convPalette(nullptr) {
 	// Palette taken from driver file (identical for all versions of the
 	// driver I have seen so far, also same for SCI0 and SCI1)
@@ -1515,7 +1716,7 @@ byte PC98Gfx16ColorsDriver::remapTextColor(byte color) const {
 }
 
 SCI0_PC98Gfx8ColorsDriver::SCI0_PC98Gfx8ColorsDriver(bool cursorScaleHeight, bool useTextModeForSJISChars, bool rgbRendering) :
-	UpscaledGfxDriver(320, 200, 8, false, rgbRendering), _cursorScaleHeightOnly(cursorScaleHeight), _useTextMode(useTextModeForSJISChars), _convPalette(nullptr) {
+	UpscaledGfxDriver(8, false, rgbRendering), _cursorScaleHeightOnly(cursorScaleHeight), _useTextMode(useTextModeForSJISChars), _convPalette(nullptr) {
 	byte *col = new byte[8 * 3]();
 	_convPalette = col;
 
@@ -1616,7 +1817,7 @@ byte SCI0_PC98Gfx8ColorsDriver::remapTextColor(byte color) const {
 
 const char *SCI0_PC98Gfx8ColorsDriver::_driverFiles[2] = { "9801V8M.DRV", "9801VID.DRV" };
 
-SCI1_PC98Gfx8ColorsDriver::SCI1_PC98Gfx8ColorsDriver(bool rgbRendering) : UpscaledGfxDriver(320, 200, 1, true, rgbRendering), _ditheringTable(nullptr), _convPalette(nullptr) {
+SCI1_PC98Gfx8ColorsDriver::SCI1_PC98Gfx8ColorsDriver(bool rgbRendering) : UpscaledGfxDriver(1, true, rgbRendering), _ditheringTable(nullptr), _convPalette(nullptr) {
 	Common::File drv;
 	if (!drv.open(_driverFile))
 		error("SCI1_PC98Gfx8ColorsDriver: Failed to open '%s'", _driverFile);

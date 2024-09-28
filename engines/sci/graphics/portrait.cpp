@@ -26,6 +26,7 @@
 #include "sci/sci.h"
 #include "sci/event.h"
 #include "sci/engine/state.h"
+#include "sci/graphics/gfxdrivers.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/portrait.h"
@@ -245,8 +246,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 	_palette->set(&_portraitPalette, false, true);
 
 	// Draw base bitmap
-	drawBitmap(0);
-	bitsShow();
+	drawBitmap(0, true);
 
 	// Start playing audio...
 	_audio->stopAudio();
@@ -341,9 +341,8 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 				raveLipSyncBitmapNr--;
 
 				if (raveLipSyncBitmapNr < _bitmaps.size()) {
-					drawBitmap(0);
-					drawBitmap(raveLipSyncBitmapNr);
-					bitsShow();
+					drawBitmap(0, false);
+					drawBitmap(raveLipSyncBitmapNr, true);
 				} else {
 					warning("kPortrait: rave lip sync data tried to draw non-existent bitmap %d", raveLipSyncBitmapNr);
 				}
@@ -391,9 +390,8 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 			// Display animation bitmap
 			if (syncCue < _bitmapCount) {
 				if (syncCue)
-					drawBitmap(0); // Draw base bitmap first to get valid animation frame
-				drawBitmap(syncCue);
-				bitsShow();
+					drawBitmap(0, false); // Draw base bitmap first to get valid animation frame
+				drawBitmap(syncCue, true);
 			} else {
 				warning("kPortrait: sync information tried to draw non-existent %d", syncCue);
 			}
@@ -402,8 +400,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 #endif
 
 	// Reset the portrait bitmap to "closed mouth" state (rave.dll seems to do the same)
-	drawBitmap(0);
-	bitsShow();
+	drawBitmap(0, true);
 	if (userAbort) {
 		_audio->stopAudio();
 	}
@@ -479,28 +476,18 @@ SciSpan<const byte> Portrait::raveGetLipSyncData(const uint16 raveID) {
 	return SciSpan<const byte>();
 }
 
-void Portrait::drawBitmap(uint16 bitmapNr) {
+void Portrait::drawBitmap(uint16 bitmapNr, bool show) {
 	uint16 bitmapHeight = _bitmaps[bitmapNr].height;
 	uint16 bitmapWidth = _bitmaps[bitmapNr].width;
-	Common::Point bitmapPosition = _position;
-
-	bitmapPosition.x += _bitmaps[bitmapNr].displaceX;
-	bitmapPosition.y += _bitmaps[bitmapNr].displaceY;
+	Common::Point pos = _screen->gfxDriver()->getRealCoords(_position);
+	pos.x += _bitmaps[bitmapNr].displaceX;
+	pos.y += _bitmaps[bitmapNr].displaceY;
 
 	const byte *data = _bitmaps[bitmapNr].rawBitmap.getUnsafeDataAt(0, bitmapWidth * bitmapHeight);
-	for (int y = 0; y < bitmapHeight; y++) {
-		for (int x = 0; x < bitmapWidth; x++) {
-			_screen->putPixelOnDisplay(bitmapPosition.x + x, bitmapPosition.y + y, _portraitPalette.mapping[*data++]);
-		}
-		data += _bitmaps[bitmapNr].extraBytesPerLine;
-	}
-}
+	_screen->copyHiResRectToScreen(data, bitmapWidth + _bitmaps[bitmapNr].extraBytesPerLine, pos.x, pos.y, bitmapWidth, bitmapHeight, _portraitPalette.mapping);
 
-void Portrait::bitsShow() {
-	Common::Rect bitmapRect = Common::Rect(_width, _height);
-	bitmapRect.moveTo(_position.x, _position.y);
-	_screen->copyDisplayRectToScreen(bitmapRect);
-	g_system->updateScreen();
+	if (show)
+		g_system->updateScreen();
 }
 
 } // End of namespace Sci

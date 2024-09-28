@@ -57,8 +57,7 @@ public:
 	void frameRect(const Common::Rect &rect);
 
 	void bitsShow(const Common::Rect &r);
-	void bitsShowHires(const Common::Rect &rect);
-	reg_t bitsSave(const Common::Rect &rect, byte screenFlags);
+	reg_t bitsSave(const Common::Rect &rect, byte screenFlags, bool hiresFlag = false);
 	void bitsGetRect(reg_t memoryHandle, Common::Rect *destRect);
 	void bitsRestore(reg_t memoryHandle);
 	void bitsFree(reg_t memoryHandle);
@@ -71,10 +70,9 @@ public:
 	void kernelGraphFillBox(const Common::Rect &rect, uint16 colorMask, int16 color, int16 priority, int16 control);
 	void kernelGraphFrameBox(const Common::Rect &rect, int16 color);
 	void kernelGraphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control);
-	reg_t kernelGraphSaveBox(const Common::Rect &rect, uint16 flags);
-	reg_t kernelGraphSaveUpscaledHiresBox(const Common::Rect &rect);
+	reg_t kernelGraphSaveBox(const Common::Rect &rect, uint16 flags, bool hiresFlag);
 	void kernelGraphRestoreBox(reg_t handle);
-	void kernelGraphUpdateBox(const Common::Rect &rect, bool hiresMode);
+	void kernelGraphUpdateBox(const Common::Rect &rect);
 	void kernelGraphRedrawBox(Common::Rect rect);
 
 	reg_t kernelDisplay(const char *text, uint16 languageSplitter, int argc, reg_t *argv);
