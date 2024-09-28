@@ -915,6 +915,22 @@ public:
 	 * @param callbacks Structure containing init/render/cleanup callbacks called on screen initialization, rendering and when deinitialized.
 	 */
 	virtual void setImGuiCallbacks(const ImGuiCallbacks &callbacks) {}
+	/**
+	 * Creates a new ImGui texture from a Graphics::Surface.
+	 *
+	 * @param image The Surface to convert.
+	 * @param palette The palette to use if image is a paletized surface.
+	 * @param palCount The number of entries in the palette.
+	 *
+	 * @return An ImGui texture identifier casted to void *.
+	 */
+	virtual void *getImGuiTexture(const Graphics::Surface &image, const byte *palette = nullptr, int palCount = 0) { return nullptr; }
+	/**
+	 * Frees an ImGui texture previously obtained by getImGuiTexture.
+	 *
+	 * @param texture The texture to free.
+	 */
+	virtual void freeImGuiTexture(void *texture) {}
 #endif
 
 	/**

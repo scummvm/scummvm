@@ -51,6 +51,8 @@ public:
 	virtual int getGraphicsMode() const { return 0; }
 #if defined(USE_IMGUI)
 	virtual void setImGuiCallbacks(const ImGuiCallbacks &callbacks) { }
+	virtual void *getImGuiTexture(const Graphics::Surface &image, const byte *palette, int palCount) { return nullptr; }
+	virtual void freeImGuiTexture(void *texture) { }
 #endif
 	virtual bool setShader(const Common::Path &fileName) { return false; }
 	virtual const OSystem::GraphicsMode *getSupportedStretchModes() const {
