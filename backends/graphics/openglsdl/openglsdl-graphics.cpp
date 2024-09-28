@@ -915,3 +915,32 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		return SdlGraphicsManager::notifyEvent(event);
 	}
 }
+
+#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+void *OpenGLSdlGraphicsManager::getImGuiTexture(const Graphics::Surface &image, const byte *palette, int palCount) {
+	// Create a OpenGL texture identifier
+	GLuint image_texture;
+	glGenTextures(1, &image_texture);
+	glBindTexture(GL_TEXTURE_2D, image_texture);
+
+	// Setup filtering parameters for display
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // This is required on WebGL for non power-of-two textures
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Same
+
+	// Upload pixels into texture
+	Graphics::Surface *s = image.convertTo(Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0), palette, palCount);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, s->format.bytesPerPixel);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, s->w, s->h, 0, GL_RGB, GL_UNSIGNED_BYTE, s->getPixels());
+	s->free();
+	delete s;
+	return (void *)(intptr_t)image_texture;
+}
+
+void OpenGLSdlGraphicsManager::freeImGuiTexture(void *texture) {
+	GLuint textureID = (intptr_t)texture;
+	glDeleteTextures(1, &textureID);
+}
+#endif

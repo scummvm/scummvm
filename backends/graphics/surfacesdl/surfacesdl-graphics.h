@@ -129,6 +129,11 @@ public:
 	void notifyVideoExpose() override;
 	void notifyResize(const int width, const int height) override;
 
+#if defined(USE_IMGUI) && defined(USE_IMGUI_SDLRENDERER2)
+	void *getImGuiTexture(const Graphics::Surface &image, const byte *palette, int palCount) override;
+	void freeImGuiTexture(void *texture) override;
+#endif
+
 protected:
 #ifdef USE_OSD
 	/** Surface containing the OSD message */
