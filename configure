@@ -6726,31 +6726,42 @@ echo "$_discord"
 echocheck "ImGui"
 
 if test "$_imgui" != no ; then
-	if test "$_opengl" = yes ; then
-		if test "$_freetype2" = yes ; then
-			case $_backend in
-				sdl)
-					if test "$_sdlMajorVersionNumber" -ge 2 ; then
+	if test "$_freetype2" = yes ; then
+		case $_backend in
+			sdl)
+				if test "$_sdlMajorVersionNumber" -ge 2 ; then
+					cat > $TMPC << EOF
+#include "SDL.h"
+#if !SDL_VERSION_ATLEAST(2,0,18)
+#error Missing SDL_RenderGeometryRaw() function
+#endif
+int main(int argc, char *argv[]) { return 0; }
+EOF
+					if cc_check $LIBS $SDL_LIBS $INCLUDES $SDL_CFLAGS; then
+						define_in_config_if_yes yes 'USE_IMGUI_SDLRENDERER2'
+						_imgui=yes
+						echo "yes"
+					elif test "$_opengl" = yes; then
 						_imgui=yes
 						echo "yes"
 					else
 						_imgui=no
-						echo "no (backend unsupported)"
+						echo "no (requires OpenGL or recent SDL)"
 					fi
-					;;
-				*)
-					# For now, only SDL supports ImGui
+				else
 					_imgui=no
 					echo "no (backend unsupported)"
-					;;
-			esac
-		else
-			_imgui=no
-			echo "no (requires FreeType2)"
-		fi
+				fi
+				;;
+			*)
+				# For now, only SDL supports ImGui
+				_imgui=no
+				echo "no (backend unsupported)"
+				;;
+		esac
 	else
 		_imgui=no
-		echo "no (requires OpenGL)"
+		echo "no (requires FreeType2)"
 	fi
 else
 	echo "$_imgui"

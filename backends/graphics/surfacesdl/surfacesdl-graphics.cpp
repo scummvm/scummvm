@@ -927,11 +927,6 @@ void SurfaceSdlGraphicsManager::initGraphicsSurface() {
 	_isDoubleBuf = flags & SDL_DOUBLEBUF;
 	_isHwPalette = flags & SDL_HWPALETTE;
 #endif
-
-#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
-	// Setup Dear ImGui
-	initImGui(nullptr);
-#endif
 }
 
 bool SurfaceSdlGraphicsManager::loadGFXMode() {
@@ -1323,6 +1318,12 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	if (_isDoubleBuf && _numDirtyRects)
 		_forceRedraw = true;
 
+#if defined(USE_IMGUI) && defined(USE_IMGUI_SDLRENDERER2)
+	if (_imGuiCallbacks.render) {
+		_forceRedraw = true;
+	}
+#endif
+
 	bool doRedraw = _forceRedraw || (_prevForceRedraw && _isDoubleBuf);
 	int actualDirtyRects = _numDirtyRects;
 	if (_isDoubleBuf && _numPrevDirtyRects > 0) {
@@ -1347,6 +1348,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	}
 
 	// Only draw anything if necessary
+	bool doPresent = false;
 	if (actualDirtyRects > 0 || _cursorNeedsRedraw) {
 		SDL_Rect *r;
 		SDL_Rect dst;
@@ -1525,6 +1527,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		// Finally, blit all our changes to the screen
 		if (!_displayDisabled) {
 			updateScreen(_dirtyRectList, actualDirtyRects);
+			doPresent = true;
 		}
 	}
 
@@ -1536,11 +1539,16 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	_forceRedraw = false;
 	_cursorNeedsRedraw = false;
 
-#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+
+#if defined(USE_IMGUI) && defined(USE_IMGUI_SDLRENDERER2)
 	renderImGui();
 #endif
 
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
+	if (doPresent) {
+		SDL_RenderPresent(_renderer);
+	}
+#else
 	if (_isDoubleBuf)
 		SDL_Flip(_hwScreen);
 #endif
@@ -2815,7 +2823,7 @@ void SurfaceSdlGraphicsManager::notifyResize(const int width, const int height) 
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 void SurfaceSdlGraphicsManager::deinitializeRenderer() {
-#ifdef USE_IMGUI
+#if defined(USE_IMGUI) && defined(USE_IMGUI_SDLRENDERER2)
 	destroyImGui();
 #endif
 
@@ -2899,9 +2907,14 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 	if (!screen) {
 		deinitializeRenderer();
 		return nullptr;
-	} else {
-		return screen;
 	}
+
+#if defined(USE_IMGUI) && defined(USE_IMGUI_SDLRENDERER2)
+	// Setup Dear ImGui
+	initImGui(_renderer, nullptr);
+#endif
+
+	return screen;
 }
 
 void SurfaceSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrects, SDL_Rect *rects) {
@@ -2929,11 +2942,9 @@ void SurfaceSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrect
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (rotangle != 0)
 		SDL_RenderCopyEx(_renderer, _screenTexture, nullptr, &viewport, rotangle, nullptr, SDL_FLIP_NONE);
-	else 
+	else
 #endif
 		SDL_RenderCopy(_renderer, _screenTexture, nullptr, &viewport);
-
-	SDL_RenderPresent(_renderer);
 }
 
 int SurfaceSdlGraphicsManager::SDL_SetColors(SDL_Surface *surface, SDL_Color *colors, int firstcolor, int ncolors) {

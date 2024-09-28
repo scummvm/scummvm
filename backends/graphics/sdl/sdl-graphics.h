@@ -216,8 +216,9 @@ protected:
 	ImGuiCallbacks _imGuiCallbacks;
 	bool _imGuiReady = false;
 	bool _imGuiInited = false;
+	SDL_Renderer *_imGuiSDLRenderer = nullptr;
 
-	void initImGui(void *glContext);
+	void initImGui(SDL_Renderer *renderer, void *glContext);
 	void renderImGui();
 	void destroyImGui();
 #endif
