@@ -1640,9 +1640,6 @@ void DarkseedEngine::handleObjCollision(int targetObjNum) {
 	}
 }
 
-
-
-
 void DarkseedEngine::lookCode(int objNum) {
 	if (objNum == 71 && _objectVar[71] == 2) {
 		_console->addTextLine("You see the car keys in the ignition.");

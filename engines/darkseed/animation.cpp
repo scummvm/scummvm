@@ -73,19 +73,19 @@ void Animation::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 	case 65:
 		_scaleSequence = 1;
 		break;
-	case 6 : // stairs
+	case 6: // stairs
 		_nsp_sprite_scaling_y_position = 0xbe;
 		_scaleSequence = true;
 		break;
-	case 7 : // stairs down
+	case 7: // stairs down
 		_nsp_sprite_scaling_y_position = 0xbe;
 		_scaleSequence = true;
 		break;
-	case 8 :
+	case 8:
 		_player->_position.x = 249;
 		_player->_position.y = 92;
 		break;
-	case 16 :
+	case 16:
 		_player->_position.x = 324;
 		_player->_position.y = 50;
 		break;
@@ -158,7 +158,7 @@ void Animation::updateAnimation() {
 	switch (_otherNspAnimationType_maybe) {
 	case 0:
 		break;
-	case 1 : // sleep wake anim
+	case 1: // sleep wake anim
 		advanceAnimationFrame(0);
 		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
@@ -693,31 +693,31 @@ void Animation::updateAnimation() {
 			g_engine->playSound(42, 5, -1);
 		}
 		break;
-	case 53 :
-	case 54 :
-	case 55 :
-	case 56 :
+	case 53:
+	case 54:
+	case 55:
+	case 56:
 		advanceAnimationFrame((_otherNspAnimationType_maybe - 53) & 1);
 		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
 		} else {
 			switch (_otherNspAnimationType_maybe) {
-			case 53 :
+			case 53:
 				g_engine->_previousRoomNumber = g_engine->_room->_roomNumber;
 				g_engine->changeToRoom(6);
 				break;
-			case 54 :
+			case 54:
 				_player->_position.x = 322;
 				_player->_position.y = 220;
 				_player->_walkTarget = _player->_position;
 				_player->_direction = 2;
 				_player->updateSprite();
 				break;
-			case 55 :
+			case 55:
 				g_engine->_previousRoomNumber = g_engine->_room->_roomNumber;
 				g_engine->changeToRoom(15);
 				break;
-			case 56 :
+			case 56:
 				_player->_position.x = 162;
 				_player->_position.y = 206;
 				_player->_walkTarget = _player->_position;
