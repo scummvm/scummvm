@@ -22,6 +22,7 @@
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/config-manager.h"
+#include "common/random.h"
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
@@ -356,6 +357,8 @@ void CastleEngine::initGameState() {
 	_exploredAreas[_startArea] = true;
 	if (_useRockTravel) // Enable cheat
 		setGameBit(k8bitGameBitTravelRock);
+
+	_gfx->_shakeOffset = Common::Point();
 }
 
 bool CastleEngine::checkIfGameEnded() {
@@ -608,6 +611,7 @@ void CastleEngine::executeDestroy(FCLInstruction &instruction) {
 		_spiritsDestroyed++;
 		_shootingFrames = 0;
 		_gfx->_inkColor = _currentArea->_inkColor;
+		_gfx->_shakeOffset = Common::Point();
 	}
 
 	if (obj->isDestroyed())
@@ -1012,6 +1016,12 @@ void CastleEngine::checkSensors() {
 void CastleEngine::drawSensorShoot(Sensor *sensor) {
 	if (isSpectrum()) {
 		_gfx->_inkColor = 1 + (_gfx->_inkColor + 1) % 7;
+	} else if (isDOS()) {
+		float shakeIntensity = 10;
+		Common::Point shakeOffset;
+		shakeOffset.x = (_rnd->getRandomNumber(10) / 10.0 - 0.5f) * shakeIntensity;
+		shakeOffset.y = (_rnd->getRandomNumber(10) / 10.0 - 0.5f) * shakeIntensity;
+		_gfx->_shakeOffset = shakeOffset;
 	} else {
 		/* TODO */
 	}

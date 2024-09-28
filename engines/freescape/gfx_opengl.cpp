@@ -221,6 +221,7 @@ void OpenGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vecto
 	Math::Matrix4 lookMatrix = Math::makeLookAtMatrix(pos, interest, up_vec);
 	glMultMatrixf(lookMatrix.getData());
 	glTranslatef(-pos.x(), -pos.y(), -pos.z());
+	glTranslatef(_shakeOffset.x, _shakeOffset.y, 0);
 }
 
 void OpenGLRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d target, const Common::Rect viewArea) {
