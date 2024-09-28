@@ -274,11 +274,358 @@ void Room608::parser() {
 		digi_play("com019", 1);
 	} else if (player_said("HORN/PULL CORD", "WATER") && hornCordWater()) {
 		// No implementation
-	} else if (lookFlag || useFlag) {
-		// TODO
-	}
-	// TODO
-	else {
+	} else if (player_said("POLE", "DRIFTWOOD STUMP ") && inv_player_has("POLE")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			ws_walk(453, 311, nullptr, 1, 1);
+			break;
+		case 1:
+			player_set_commands_allowed(false);
+			player_update_info();
+			ws_hide_walker();
+			kernel_load_variant("608lock2");
+			digi_preload("608_s03");
+
+			_shadow5 = series_show("safari shadow 1", _G(player_info).depth,
+				16, -1, -1, 0, _G(player_info).scale,
+				_G(player_info).x, _G(player_info).y);
+			_horn = series_load("608rp03");
+			_ol2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+				triggerMachineByHashCallbackNegative, "ol");
+			sendWSMessage_10000(1, _ol2, _horn, 1, 24, 2, _horn, 24, 24, 0);
+			break;
+		case 2:
+			sendWSMessage_10000(1, _ol2, _horn, 25, 39, 3, _horn, 39, 39, 0);
+			digi_play("608_s03", 2);
+			break;
+		case 3:
+			digi_stop(2);
+			digi_unload("608_s03");
+			terminateMachineAndNull(_ol2);
+			series_unload(_horn);
+			terminateMachineAndNull(_shadow5);
+
+			_pole = series_show("608POLE", 0x400, 16);
+			hotspot_set_active("POLE", true);
+			ws_unhide_walker();
+			inv_move_object("POLE", 608);
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (takeFlag && player_said("POLE") && !inv_player_has("POLE")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			ws_walk(453, 311, nullptr, 1, 1);
+			break;
+		case 1:
+			player_set_commands_allowed(false);
+			player_update_info();
+			ws_hide_walker();
+			kernel_load_variant("608lock1");
+			terminateMachineAndNull(_pole);
+
+			_shadow5 = series_show("safari shadow 1", _G(player_info).depth,
+				16, -1, -1, 0, _G(player_info).scale,
+				_G(player_info).x, _G(player_info).y);
+			_horn = series_load("608rp03");
+			_ol2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+				triggerMachineByHashCallbackNegative, "ol");
+			sendWSMessage_10000(1, _ol2, _horn, 39, 1, 2, _horn, 1, 1, 0);
+			break;
+		case 2:
+			terminateMachineAndNull(_ol2);
+			series_unload(_horn);
+			terminateMachineAndNull(_shadow5);
+			hotspot_set_active("POLE", false);
+			ws_unhide_walker();
+			inv_give_to_player("POLE");
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (useFlag && HERE("POLE")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			ws_walk(453, 311, nullptr, 1, 1);
+			break;
+		case 1:
+			player_set_commands_allowed(false);
+			player_update_info();
+			ws_hide_walker();
+			kernel_load_variant("608lock1");
+			digi_preload("950_s37");
+			digi_preload("950_s37a");
+
+			_ol2 = series_stream("608rp04", 5, 0x300, 16);
+			series_stream_break_on_frame(_ol2, 25, 3);
+			break;
+		case 3:
+			series_stream_break_on_frame(_ol2, 33, 30);
+			digi_play("950_s37", 2);
+			break;
+		case 4:
+			series_stream_break_on_frame(_ol2, 76, 5);
+			digi_play("950_s37a", 2);
+			break;
+		case 5:
+			series_stream_break_on_frame(_ol2, 77, 7);
+			digi_play("950_s37", 2);
+			break;
+		case 7:
+			terminateMachineAndNull(_end1);
+			terminateMachineAndNull(_pole);
+			terminateMachineAndNull(_stump);
+			_val3 = 8;
+			digi_play("608_s01a", 1);
+			break;
+		case 10:
+			digi_unload("950_s37");
+			digi_unload("950_s37a");
+			_G(flags)[V186] = 1;
+			_end1 = series_show("608END", 0xf00, 16);
+
+			hotspot_set_active("STATUE", false);
+			hotspot_set_active("STATUE ", true);
+			hotspot_set_active("DRIFTWOOD STUMP ", false);
+			hotspot_set_active("DRIFTWOOD STUMP  ", true);
+			hotspot_set_active("POLE", false);
+			hotspot_set_active("POLE ", true);
+			hotspot_set_active("stone", false);
+
+			ws_unhide_walker();
+			player_update_info();
+			ws_walk(_G(player_info).x + 1, _G(player_info).y,
+				nullptr, 12, 4);
+			break;
+		case 12:
+			_ripLHandTalk = series_load("RIP TREK L HAND TALK POS4");
+			setGlobals1(_ripLHandTalk, 2, 6, 6, 7, 1, 6, 1, 1, 1);
+			digi_play("608r15", 1, 255, 15);
+			break;
+		case 15:
+			sendWSMessage_120000(2);
+			_val3 = 10;
+			digi_play("608o01", 1, 255, 18);
+			break;
+		case 18:
+			sendWSMessage_110000(2);
+			digi_play("608r16", 1, 255, 20);
+			break;
+		case 20:
+			sendWSMessage_140000(-1);
+			_val3 = 9;
+			digi_play("608o02", 1, 255, 22);
+			break;
+		case 22:
+			_val3 = 1;
+			kernel_timing_trigger(1, 200, KT_DAEMON, KT_PARSE);
+			kernel_timing_trigger(100, 25);
+			break;
+		case 25:
+			player_set_commands_allowed(true);
+			digi_play("608r17", 1);
+			break;
+		case 30:
+			series_stream_break_on_frame(_ol2, 44, 4);
+			digi_play("608_s01", 1);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said_any("lung", "prostate")) {
+		switch (_G(kernel).trigger) {
+		case 1:
+			player_set_commands_allowed(false);
+			player_update_info();
+			_shadow = series_show("safari shadow 3", 0xf00, 0, -1, -1, 0,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+
+			ws_hide_walker();
+			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+				triggerMachineByHashCallbackNegative, "rip");
+
+			_G(kernel).trigger_mode = KT_DAEMON;
+			sendWSMessage_10000(1, _ripley, _rp09, 1, 23, 300, _rp09, 23, 23, 0);
+			_G(kernel).trigger_mode = KT_PARSE;
+
+			_val5 = 0;
+			_val4 = 1;
+			_val3 = 6;
+			digi_play("608r70", 1, 255, 2);
+			break;
+		case 2:
+			_val3 = 5;
+			_val4 = 0;
+			digi_play("608o18", 1, 255, 3);
+			break;
+		case 3:
+			_val3 = 6;
+			kernel_timing_trigger(1, 200, KT_DAEMON, KT_PARSE);
+			_val4 = 1;
+			digi_play("608r71", 1, 255, 5);
+			break;
+		case 5:
+			_val4 = player_said("lung") ? 3 : 4;
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("obsidian disk", "old woman") &&
+			!inv_object_is_here("CLOCK FACING")) {
+		if (_G(flags)[V186]) {
+			Common::strcpy_s(_G(player).verb, "lung");
+			kernel_timing_trigger(1, 1);
+		} else {
+			digi_play(_G(flags)[GLB_TEMP_4] ? "608r04a" : "608r35a", 1);
+		}
+	} else if (player_said("clock facing", "old woman") &&
+			!inv_object_is_here("OBSIDIAN DISK")) {
+		if (_G(flags)[V186]) {
+			Common::strcpy_s(_G(player).verb, "prostate");
+			kernel_timing_trigger(1, 1);
+		} else {
+			digi_play(_G(flags)[GLB_TEMP_4] ? "608r04a" : "608r35a", 1);
+		}
+	} else if (player_said_any("bowels", "scrotum")) {
+		switch (_G(kernel).trigger) {
+		case 1:
+			player_set_commands_allowed(false);
+			player_update_info();
+			_shadow = series_show("safari shadow 3", 0xf00, 0, -1, -1, 0,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+
+			ws_hide_walker();
+			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+				triggerMachineByHashCallbackNegative, "rip");
+
+			_G(kernel).trigger_mode = KT_DAEMON;
+			sendWSMessage_10000(1, _ripley, _rp09, 1, 23, 300, _rp09, 23, 23, 0);
+			_G(kernel).trigger_mode = KT_PARSE;
+
+			_val5 = 0;
+			_val4 = 1;
+			_val3 = 6;
+			digi_play("608r67", 1, 255, 2);
+			break;
+		case 2:
+			_val3 = 5;
+			_val4 = 0;
+			digi_play("608o17", 1, 255, 3);
+			break;
+		case 3:
+			_val3 = 6;
+			kernel_timing_trigger(1, 200, KT_DAEMON, KT_PARSE);
+			_val4 = 1;
+			digi_play("608r68", 1, 255, 5);
+			break;
+		case 5:
+			_val4 = player_said("bowels") ? 5 : 6;
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("obsidian disk", "old woman") &&
+			inv_object_is_here("CLOCK FACING")) {
+		Common::strcpy_s(_G(player).verb, "bowels");
+		kernel_timing_trigger(1, 1);
+	} else if (player_said("clock facing", "old woman") &&
+			inv_object_is_here("OBSIDIAN DISK")) {
+		Common::strcpy_s(_G(player).verb, "bowels");
+		kernel_timing_trigger(1, 1);
+	} else if (lookFlag && player_said("statue")) {
+		digi_play(_G(flags)[V203] > 1 ? "608r05" : "608r36", 1);
+	} else if (lookFlag && player_said("statue ")) {
+		digi_play(_G(flags)[V203] == 1 ? "608r38" : "608r52", 1);
+	} else if (lookFlag && player_said("stone")) {
+		digi_play(_G(flags)[V186] ? "608r39" : "608r06", 1);
+	} else if (lookFlag && player_said("base")) {
+		digi_play("608r07", 1);
+	} else if (lookFlag && player_said("small hole")) {
+		digi_play("608r09", 1);
+	} else if (lookFlag && player_said("lava")) {
+		digi_play("608r08", 1);
+	} else if (lookFlag && player_said("crevice")) {
+		digi_play("608r09", 1);
+	} else if (lookFlag && player_said("large hole")) {
+		digi_play(inv_object_is_here("DRIFTWOOD STUMP") ?
+			"608r40" : "608r10", 1);
+	} else if (lookFlag && player_said(" ")) {
+		digi_play("608r11", 1);
+	} else if (lookFlag && HERE("DRIFTWOOD PUFFIN") && lookPuffin()) {
+		// No implementation
+	} else if (player_said("left")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(1);
+			break;
+		case 1:
+			digi_stop(1);
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s28b", 3, 90);
+			_G(game).setRoom(605);
+			break;
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("DRIFTWOOD STUMP") &&
+			inv_object_in_scene("DRIFTWOOD STUMP", 600)) {
+		digi_play("608r13", 1);
+	} else if (lookFlag && player_said("DRIFTWOOD STUMP ")) {
+		digi_play("608r76", 1);
+	} else if (lookFlag && player_said("DRIFTWOOD STUMP  ")) {
+		digi_play("608r41", 1);
+	} else if (lookFlag && player_said("water")) {
+		digi_play("608r73", 1);
+	} else if (player_said("POLE", "STATUE") ||
+			player_said("POLE", "STATUE ")) {
+		digi_play("608r77", 1);
+	} else if (lookFlag && player_said("old woman")) {
+		if (_G(flags)[V203] > 2) {
+			if (++_G(flags)[V181] > 3)
+				_G(flags)[V181] = 3;
+
+			switch (_G(flags)[V181]) {
+			case 1:
+				digi_play("608r14", 1);
+				break;
+			case 2:
+				digi_play("608r14a", 1);
+				break;
+			case 3:
+				digi_play("608r14b", 1);
+				break;
+			default:
+				break;
+			}
+		} else {
+			digi_play("608r37", 1);
+		}
+	} else if (lookFlag && HERE("LIGHTER")) {
+		digi_play("608r66", 1);
+	} else if (lookFlag && player_said("hole in hillside")) {
+		digi_play("608r51a", 1);
+	} else if (player_said("WHALE BONE HORN", "WATER")) {
+		digi_play("608r64", 1);
+	} else if (player_said("OBSIDIAN DISK", "STATUE") ||
+			player_said("OBSIDIAN DISK", "STATUE ") ||
+			player_said("CLOCK FACING", "STATUE") ||
+			player_said("CLOCK FACING", "STATUE ")) {
+		digi_play("com146", 1, 255, -1, 997);
+	} else if (takeFlag && player_said("pole ")) {
+		digi_play("608r18", 1);
+	} else if (takeFlag && player_said("stone")) {
+		digi_play("608r63", 1);
+	} else if (lookFlag && HERE("pole")) {
+		digi_play("608r75", 1);
+	} else if (lookFlag && HERE("pole ")) {
+		digi_play("608r42", 1);
+	} else if (takeFlag && player_said("driftwood stump  ")) {
+		digi_play("608r19", 1);
+	} else {
 		return;
 	}
 
@@ -547,6 +894,30 @@ bool Room608::hornCordWater() {
 
 		return false;
 	}
+}
+
+bool Room608::lookPuffin() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (_G(flags)[V187]) {
+			digi_play("608r12", 1);
+		} else {
+			player_set_commands_allowed(false);
+			digi_play("608r12", 1, 255, 1);
+		}
+		return true;
+
+	case 1:
+		_G(flags)[V187] = 1;
+		player_set_commands_allowed(true);
+		digi_play("608r12a", 1);
+		return true;
+
+	default:
+		break;
+	}
+
+	return false;
 }
 
 } // namespace Rooms

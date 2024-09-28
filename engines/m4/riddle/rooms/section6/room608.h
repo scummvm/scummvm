@@ -36,6 +36,7 @@ private:
 	int _ripLowReach = 0;
 	int _ripLowReach2 = 0;
 	int _ripTalker = 0;
+	int _ripLHandTalk = 0;
 	int _tt01 = 0;
 	int _tt02 = 0;
 	int _tt03 = 0;
@@ -78,6 +79,7 @@ private:
 	bool takeStump2();
 	bool takeLighter();
 	bool hornCordWater();
+	bool lookPuffin();
 
 public:
 	Room608() : Room() {}
