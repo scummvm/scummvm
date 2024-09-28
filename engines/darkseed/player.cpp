@@ -96,22 +96,22 @@ void Player::changeDirection(int16 oldDir, int16 newDir) {
 		_playerWalkFrameDeltaOffset = 1;
 		if (oldDir < 4) {
 			switch (oldDir) {
-			case 0 :
+			case 0:
 				if (newDir == 3) {
 					_playerWalkFrameDeltaOffset = -1;
 				}
 				break;
-			case 1 :
+			case 1:
 				if (newDir == 0) {
 					_playerWalkFrameDeltaOffset = -1;
 				}
 				break;
-			case 2 :
+			case 2:
 				if (newDir == 1) {
 					_playerWalkFrameDeltaOffset = -1;
 				}
 				break;
-			case 3 :
+			case 3:
 				if (newDir == 2) {
 					_playerWalkFrameDeltaOffset = -1;
 				}
