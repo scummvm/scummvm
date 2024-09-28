@@ -20,6 +20,7 @@
  */
 
 #include "common/stream.h"
+#include "common/debug.h"
 
 #include "qdengine/qd_fwd.h"
 #include "qdengine/xmath.h"
@@ -163,6 +164,8 @@ void qdScreenText::redraw(const Vect2i &owner_pos) const {
 	uint32 col = _hover_mode ? _text_format.hover_color() : _text_format.color();
 
 	const grFont *font = qdGameDispatcher::get_dispatcher()->find_font(_text_format.font_type());
+
+	debugC(1, kDebugText, "qdScreenText::redraw([%d, %d]): '%s'", x, y, transCyrillic(data()));
 
 	grDispatcher::instance()->drawAlignedText(x, y, _size.x, _size.y, col, data(), grTextAlign(_text_format.alignment()), 0, 0, font);
 	if (g_engine->_debugDraw)

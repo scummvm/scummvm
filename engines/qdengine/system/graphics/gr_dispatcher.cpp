@@ -901,6 +901,8 @@ bool grDispatcher::drawAlignedText(int x, int y, int sx, int sy, uint32 color, c
 	if (!font || !font->alpha_buffer())
 		return false;
 
+	debugC(4, kDebugText, "grDispatcher::drawAlignedText([%d, %d], [%d, %d], color: %d, '%s', align: %d, ...", x, y, sx, sy, color, transCyrillic(str), align);
+
 	const byte *str_buf = reinterpret_cast<const byte *>(str);
 
 	if (!sx)
