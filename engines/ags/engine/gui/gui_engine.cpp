@@ -51,8 +51,6 @@ using namespace AGS::Shared;
 // For engine these are defined in ac.cpp
 extern void replace_macro_tokens(const char *, String &);
 
-// in ac_runningame
-
 
 bool GUIMain::HasAlphaChannel() const {
 	if (this->BgImage > 0) {

@@ -755,6 +755,8 @@ public:
 	std::vector<ScriptDialog> *_scrDialog;
 
 	std::vector<ViewStruct> *_views;
+
+	// Draw cache: keep record of all kinds of things related to the previous drawing state
 	// Cached character and object states, used to determine
 	// whether these require texture update
 	std::vector<ObjectCache> *_charcache;

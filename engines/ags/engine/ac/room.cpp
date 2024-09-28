@@ -302,9 +302,8 @@ void unload_old_room() {
 
 	croom_ptr_clear();
 
-	// clear the _GP(actsps) buffers to save memory, since the
-	// objects/characters involved probably aren't on the
-	// new screen. this also ensures all cached data is flushed
+	// clear the draw caches to save memory, since many of the the involved
+	// objects probably aren't on the new screen
 	clear_drawobj_cache();
 
 	// if Hide Player Character was ticked, restore it to visible

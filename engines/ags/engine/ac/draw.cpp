@@ -405,6 +405,8 @@ void init_draw_method() {
 	init_room_drawdata();
 	if (_G(gfxDriver)->UsesMemoryBackBuffer())
 		_G(gfxDriver)->GetMemoryBackBuffer()->Clear();
+
+	_GP(play).spritemodified.resize(_GP(game).SpriteInfos.size());
 }
 
 void dispose_draw_method() {
@@ -478,6 +480,10 @@ void clear_drawobj_cache() {
 	for (auto &o : _GP(guibg)) o = ObjTexture();
 	for (auto &o : _GP(guiobjbg)) o = ObjTexture();
 	_GP(overtxs).clear();
+
+	// Clear "modified sprite" flags
+	_GP(play).spritemodifiedlist.clear();
+	Common::fill(_GP(play).spritemodified.begin(), _GP(play).spritemodified.end(), false);
 
 	dispose_debug_room_drawdata();
 }
@@ -634,35 +640,23 @@ void mark_object_changed(int objid) {
 	_G(objcache)[objid].y = -9999;
 }
 
-void reset_objcache_for_sprite(int sprnum, bool deleted) {
-	// Check if this sprite is assigned to any game object, and mark these for update;
-	// if the sprite was deleted, also mark texture objects as invalid.
-	// IMPORTANT!!: do NOT dispose textures themselves here.
-	// * if the next valid image is of the same size, then the texture will be reused;
-	// * BACKWARD COMPAT: keep last images during room transition out!
-	// room objects cache
-	if (_G(croom) != nullptr) {
-		for (size_t i = 0; i < (size_t)_G(croom)->numobj; ++i) {
-			if (_G(objcache)[i].sppic == sprnum)
-				_G(objcache)[i].sppic = -1;
-			if (deleted && ((int)(_GP(actsps)[i].SpriteID) == sprnum))
-				_GP(actsps)[i].SpriteID = UINT32_MAX; // invalid sprite ref
-		}
-	}
-	// character cache
-	for (size_t i = 0; i < (size_t)_GP(game).numcharacters; ++i) {
-		if (_GP(charcache)[i].sppic == sprnum)
-			_GP(charcache)[i].sppic = -1;
-		if (deleted && ((int)(_GP(actsps)[ACTSP_OBJSOFF + i].SpriteID) == sprnum))
-			_GP(actsps)[ACTSP_OBJSOFF + i].SpriteID = UINT32_MAX; // invalid sprite ref
-	}
-}
-
 void reset_drawobj_for_overlay(int objnum) {
 	if (objnum > 0 && static_cast<size_t>(objnum) < _GP(overtxs).size()) {
 		_GP(overtxs)[objnum] = ObjTexture();
 		if (drawstate.SoftwareRender)
 			_GP(overcache)[objnum] = Point(INT32_MIN, INT32_MIN);
+	}
+}
+
+void notify_sprite_changed(int sprnum, bool deleted) {
+	assert(sprnum >= 0 && sprnum < _GP(game).SpriteInfos.size());
+
+	// For software renderer we should notify drawables that currently
+	// reference this sprite.
+	if (drawstate.SoftwareRender) {
+		assert(sprnum < _GP(play).spritemodified.size());
+		_GP(play).spritemodified[sprnum] = true;
+		_GP(play).spritemodifiedlist.push_back(sprnum);
 	}
 }
 
@@ -1284,6 +1278,8 @@ static bool construct_object_gfx(const ViewFrame *vf, int pic,
 	// If we have the image cached, use it
 	if ((objsav.image != nullptr) &&
 	        (objsav.sppic == specialpic) &&
+			// not a dynamic sprite, or not sprite modified lately
+			(!_GP(play).spritemodified[pic]) &&
 			(objsav.tintamnt == tint_level) &&
 			(objsav.tintlight == tint_light) &&
 			(objsav.tintr == tint_red) &&
@@ -1292,7 +1288,7 @@ static bool construct_object_gfx(const ViewFrame *vf, int pic,
 			(objsav.lightlev == light_level) &&
 			(objsav.zoom == objsrc.zoom) &&
 			(objsav.mirrored == is_mirrored)) {
-		// the image is the same, we can use it cached!
+		// if the image is the same, we can use it cached
 		if ((drawstate.WalkBehindMethod != DrawOverCharSprite) &&
 			(actsp.Bmp != nullptr))
 			return true;
@@ -2024,7 +2020,8 @@ static void construct_overlays() {
 		if (over.type < 0) continue; // empty slot
 		if (over.transparency == 255) continue; // skip fully transparent
 
-		bool has_changed = over.HasChanged();
+		auto &overtx = _GP(overtxs)[i];
+		bool has_changed = over.HasChanged() || _GP(play).spritemodified[over.GetSpriteNum()];
 		// If walk behinds are drawn over the cached object sprite, then check if positions were updated
 		if (crop_walkbehinds && over.IsRoomLayer()) {
 			Point pos = get_overlay_position(over);
@@ -2032,7 +2029,6 @@ static void construct_overlays() {
 			_GP(overcache)[i].X = pos.X; _GP(overcache)[i].Y = pos.Y;
 		}
 
-		auto &overtx = _GP(overtxs)[i];
 		if (has_changed) {
 			overtx.SpriteID = over.GetSpriteNum();
 			// For software mode - prepare transformed bitmap if necessary;
@@ -2060,6 +2056,19 @@ static void construct_overlays() {
 		if (!overtx.Ddb) continue;
 		overtx.Ddb->SetStretch(over.scaleWidth, over.scaleHeight);
 		overtx.Ddb->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(over.transparency));
+	}
+}
+
+static void reset_spritemodified() {
+	if (_GP(play).spritemodifiedlist.size() > 0) {
+		// Sort and remove duplicates;
+		// CHECKME: or is it more optimal to just run over raw list?
+		std::sort(_GP(play).spritemodifiedlist.begin(), _GP(play).spritemodifiedlist.end());
+		_GP(play).spritemodifiedlist.erase(std::unique(_GP(play).spritemodifiedlist.begin(), _GP(play).spritemodifiedlist.end()),
+										   _GP(play).spritemodifiedlist.end());
+		for (auto sprnum : _GP(play).spritemodifiedlist)
+			_GP(play).spritemodified[sprnum] = false;
+		_GP(play).spritemodifiedlist.clear();
 	}
 }
 
@@ -2116,6 +2125,9 @@ void construct_game_scene(bool full_redraw) {
 
 	// End the parent scene node
 	_G(gfxDriver)->EndSpriteBatch();
+
+	// Clear "modified sprite" flags
+	reset_spritemodified();
 }
 
 void construct_game_screen_overlay(bool draw_mouse) {

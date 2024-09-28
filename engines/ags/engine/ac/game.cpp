@@ -1322,13 +1322,13 @@ void get_message_text(int msnum, char *buffer, char giveErr) {
 	replace_tokens(get_translation(_GP(thisroom).Messages[msnum].GetCStr()), buffer, maxlen);
 }
 
-void game_sprite_updated(int sprnum) {
-	// update the shared texture (if exists)
-	_G(gfxDriver)->UpdateSharedDDB(sprnum, _GP(spriteset)[sprnum], (_GP(game).SpriteInfos[sprnum].Flags & SPF_ALPHACHANNEL) != 0, false);
+void game_sprite_updated(int sprnum, bool deleted) {
+	// Notify draw system about dynamic sprite change
+	notify_sprite_changed(sprnum, deleted);
 
-	// character and object draw caches
-	reset_objcache_for_sprite(sprnum, false);
-
+	// GUI still have a special draw route, so cannot rely on object caches;
+	// will have to do a per-GUI and per-control check.
+	//
 	// gui backgrounds
 	for (auto &gui : _GP(guis)) {
 		if (gui.BgImage == sprnum) {
@@ -1346,12 +1346,6 @@ void game_sprite_updated(int sprnum) {
 		if ((slider.BgImage == sprnum) || (slider.HandleImage == sprnum)) {
 			slider.MarkChanged();
 		}
-	}
-	// overlays
-	auto &overs = get_overlays();
-	for (auto &over : overs) {
-		if (over.GetSpriteNum() == sprnum)
-			over.MarkChanged();
 	}
 }
 
@@ -1385,77 +1379,6 @@ void precache_view(int view, int first_loop, int last_loop, bool with_sounds) {
 	Debug::Printf("\tSprite cache: %zu -> %zu KB", spcache_before / 1024u, spcache_after / 1024u);
 }
 
-void game_sprite_deleted(int sprnum) {
-	// clear from texture cache
-	_G(gfxDriver)->ClearSharedDDB(sprnum);
-	// character and object draw caches
-	reset_objcache_for_sprite(sprnum, true);
-
-	// This is ugly, but apparently there are few games that may rely
-	// (either with or without author's intent) on newly created sprite
-	// being assigned same index as a recently deleted one, which results
-	// in new sprite "secretly" taking place of an old one on the GUI, etc.
-	// So for old games we keep only partial reset (full cleanup is 3.5.0+).
-	const bool reset_sprindex_oldstyle =
-		_G(loaded_game_file_version) < kGameVersion_350;
-
-	// room object graphics
-	if (_G(croom) != nullptr) {
-		for (size_t i = 0; i < (size_t)_G(croom)->numobj; ++i) {
-			if (_G(objs)[i].num == sprnum)
-				_G(objs)[i].num = 0;
-		}
-	}
-	// gui buttons
-	for (auto &but : _GP(guibuts)) {
-		if (but.GetCurrentImage() == sprnum)
-			but.SetCurrentImage(0);
-		if (but.GetMouseOverImage() == sprnum)
-			but.SetMouseOverImage(0);
-		if (but.GetPushedImage() == sprnum)
-			but.SetPushedImage(0);
-
-		if (but.GetCurrentImage() == sprnum) {
-			but.SetCurrentImage(0);
-			but.MarkChanged();
-		}
-	}
-
-	if (reset_sprindex_oldstyle)
-		return; // stop here for < 3.5.0 games
-
-	// gui backgrounds
-	for (size_t i = 0; i < (size_t)_GP(game).numgui; ++i) {
-		if (_GP(guis)[i].BgImage == sprnum) {
-			_GP(guis)[i].BgImage = 0;
-			_GP(guis)[i].MarkChanged();
-		}
-	}
-	// gui sliders
-	for (auto &slider : _GP(guislider)) {
-		if ((slider.BgImage == sprnum) || (slider.HandleImage == sprnum))
-			slider.MarkChanged();
-		if (slider.BgImage == sprnum)
-			slider.BgImage = 0;
-		if (slider.HandleImage == sprnum)
-			slider.HandleImage = 0;
-	}
-	// views
-	for (size_t v = 0; v < (size_t)_GP(game).numviews; ++v) {
-		for (size_t l = 0; l < (size_t)_GP(views)[v].numLoops; ++l) {
-			for (size_t f = 0; f < (size_t)_GP(views)[v].loops[l].numFrames; ++f) {
-				if (_GP(views)[v].loops[l].frames[f].pic == sprnum)
-					_GP(views)[v].loops[l].frames[f].pic = 0;
-			}
-		}
-	}
-	// overlays
-	auto &overs = get_overlays();
-	for (auto &over : overs) {
-		if (over.GetSpriteNum() == sprnum)
-			over.SetSpriteNum(0);
-	}
-}
 
 //=============================================================================
 //
