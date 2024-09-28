@@ -436,7 +436,7 @@ static constexpr uint8 _closerroom[10] = {
 };
 
 void Player::setplayertowardsbedroom() {
-	if (g_engine->_isPlayingAnimation_maybe) {
+	if (g_engine->_animation->_isPlayingAnimation_maybe) {
 		return;
 	}
 	Common::Point currentCursor = g_engine->_cursor.getPosition();

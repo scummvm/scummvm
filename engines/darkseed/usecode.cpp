@@ -202,9 +202,9 @@ void Darkseed::UseCode::useCode(int objNum) {
 	if (objNum == 47) {
 		_player->loadAnimations("phone.nsp");
 		if (_objectVar.getObjectRunningCode(47) == 0) {
-			g_engine->setupOtherNspAnimation(2, 63);
+			g_engine->_animation->setupOtherNspAnimation(2, 63);
 		} else {
-			g_engine->setupOtherNspAnimation(0, 8);
+			g_engine->_animation->setupOtherNspAnimation(0, 8);
 		}
 		_player->_direction = 3;
 	}
@@ -244,7 +244,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 			_console->printTosText(119);
 		} else {
 			_player->loadAnimations("bedsleep.nsp");
-			g_engine->setupOtherNspAnimation(1, 5);
+			g_engine->_animation->setupOtherNspAnimation(1, 5);
 		}
 		return;
 	}
@@ -268,9 +268,9 @@ void Darkseed::UseCode::useCode(int objNum) {
 	if (objNum == 187) { //keeper computer screen
 		if (_objectVar[187] == 0) {
 			_console->printTosText(856);
-			g_engine->setupOtherNspAnimation(0, 60);
+			g_engine->_animation->setupOtherNspAnimation(0, 60);
 		} else {
-			g_engine->setupOtherNspAnimation(1, 61);
+			g_engine->_animation->setupOtherNspAnimation(1, 61);
 		}
 		return;
 	}
@@ -298,7 +298,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 	}
 	if (objNum == 46) {
 		if (_objectVar[46] == 1) {
-			g_engine->setupOtherNspAnimation(0, 19);
+			g_engine->_animation->setupOtherNspAnimation(0, 19);
 		} else {
 			_console->printTosText(539);
 		}
@@ -347,14 +347,14 @@ void Darkseed::UseCode::useCode(int objNum) {
 					} else {
 						_console->printTosText(385);
 					}
-					g_engine->setupOtherNspAnimation(0, 52);
+					g_engine->_animation->setupOtherNspAnimation(0, 52);
 				} else {
 					if (_objectVar[objNum] == 0) {
 						_console->printTosText(371);
 					} else {
 						_console->printTosText(373);
 					}
-					g_engine->setupOtherNspAnimation(0, objNum - 56);
+					g_engine->_animation->setupOtherNspAnimation(0, objNum - 56);
 				}
 			} else {
 				if (_objectVar[objNum] == 0) {
@@ -368,13 +368,13 @@ void Darkseed::UseCode::useCode(int objNum) {
 		}
 		if (objNum == 111) { // tap
 			_player->loadAnimations("aspirin.nsp");
-			g_engine->setupOtherNspAnimation(0, 30);
+			g_engine->_animation->setupOtherNspAnimation(0, 30);
 			_console->printTosText(242);
 			return;
 		}
 		if (objNum == 112) { // mirror cabinet
 			_player->loadAnimations("aspirin.nsp");
-			g_engine->setupOtherNspAnimation(2, 32);
+			g_engine->_animation->setupOtherNspAnimation(2, 32);
 			return;
 		}
 		if (objNum > 30 && objNum < 34) {
@@ -388,21 +388,21 @@ void Darkseed::UseCode::useCode(int objNum) {
 		}
 		if ((objNum == 102) && (_objectVar[23] == 1)) {
 			_player->loadAnimations("slide.nsp");
-			g_engine->setupOtherNspAnimation(1, 26);
+			g_engine->_animation->setupOtherNspAnimation(1, 26);
 			return;
 		}
 		if (objNum == 101) {
 			switch (_objectVar[101]) {
 			case 0:
 				_player->loadAnimations("opendoor.nsp");
-				g_engine->setupOtherNspAnimation(0, 65);
+				g_engine->_animation->setupOtherNspAnimation(0, 65);
 				g_engine->playSound(31, 5, -1);
 				_objectVar[101] = 1;
 				_console->printTosText(733);
 				break;
 			case 1:
 				_player->loadAnimations("opendoor.nsp");
-				g_engine->setupOtherNspAnimation(0, 65);
+				g_engine->_animation->setupOtherNspAnimation(0, 65);
 				g_engine->playSound(31, 5, -1);
 				_objectVar[101] = 0;
 				_console->printTosText(737);
@@ -414,14 +414,14 @@ void Darkseed::UseCode::useCode(int objNum) {
 				return;
 			case 3:
 				_player->loadAnimations("opendoor.nsp");
-				g_engine->setupOtherNspAnimation(0, 65);
+				g_engine->_animation->setupOtherNspAnimation(0, 65);
 				g_engine->playSound(31, 5, -1);
 				_objectVar[101] = 4;
 				_console->printTosText(737);
 				break;
 			case 4:
 				_player->loadAnimations("opendoor.nsp");
-				g_engine->setupOtherNspAnimation(0, 65);
+				g_engine->_animation->setupOtherNspAnimation(0, 65);
 				g_engine->playSound(31, 5, -1);
 				_objectVar[101] = 3;
 				_console->printTosText(733);
@@ -482,7 +482,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 		} else if (objNum == 22) {
 			if (_objectVar[22] < 4) {
 				_player->loadAnimations("push.nsp");
-				g_engine->setupOtherNspAnimation(0, 18);
+				g_engine->_animation->setupOtherNspAnimation(0, 18);
 			} else {
 				_console->printTosText(665);
 			}
@@ -498,13 +498,13 @@ void Darkseed::UseCode::useCode(int objNum) {
 			_player->loadAnimations("instrshp.nsp");
 			if (_objectVar[71] == 2) {
 				_console->printTosText(4);
-				g_engine->setupOtherNspAnimation(1, 44);
+				g_engine->_animation->setupOtherNspAnimation(1, 44);
 			} else {
-				g_engine->setupOtherNspAnimation(0, 43);
+				g_engine->_animation->setupOtherNspAnimation(0, 43);
 			}
 		} else if (objNum == 117) {
 			_player->loadAnimations("obslev.nsp");
-			g_engine->setupOtherNspAnimation(1, 46);
+			g_engine->_animation->setupOtherNspAnimation(1, 46);
 		} else if (objNum == 62) {
 			if (((_objectVar[49] == 0) || (1 < _objectVar[62])) || (g_engine->_currentDay != 1)) {
 				if (((_objectVar[49] == 0) || (1 < _objectVar[62])) || (g_engine->_currentDay != 2)) {
@@ -559,7 +559,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 			//			_NoScroll = 0;
 			if (_objectVar[52] == 1) {
 				_player->loadAnimations("shower.nsp");
-				g_engine->setupOtherNspAnimation(0, 2);
+				g_engine->_animation->setupOtherNspAnimation(0, 2);
 				_console->printTosText(193);
 				g_engine->playSound(2, 4, -1);
 			} else {
@@ -592,7 +592,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 			}
 		} else if (objNum == 139) {
 			_player->loadAnimations("ltladder.nsp");
-			g_engine->setupOtherNspAnimation(0, 10);
+			g_engine->_animation->setupOtherNspAnimation(0, 10);
 		} else if (objNum == 76) {
 			//			_NoScroll = 0;
 			//			Ordinal_184(unaff_CS,(int)&_file_name,4192,(int)sg_engine->_room3.nnn_1060_31e1);
@@ -602,7 +602,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 			//			SetHeroSpriteNumber();
 		} else if (objNum == 77) {
 			_player->loadAnimations("rtladder.nsp");
-			g_engine->setupOtherNspAnimation(0, 12);
+			g_engine->_animation->setupOtherNspAnimation(0, 12);
 		} else if (objNum == 66 && _objectVar[68] == 0) {
 			if (_objectVar[12] == 2) {
 				g_engine->playSound(5, 5, -1);
@@ -639,7 +639,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 					if ((_objectVar[66] == 1) && (_objectVar[67] == 1)) {
 						g_engine->playSound(13, 5, -1);
 						_objectVar[68] = 1;
-						g_engine->setupOtherNspAnimation(0, 23);
+						g_engine->_animation->setupOtherNspAnimation(0, 23);
 					} else {
 						_objectVar[68] = 2;
 					}
@@ -689,10 +689,10 @@ void Darkseed::UseCode::useCodeGloves(int16 targetObjNum) {
 	}
 	if (targetObjNum == 57) {
 		_player->loadAnimations("instrshp.nsp");
-		g_engine->setupOtherNspAnimation(0, 43);
+		g_engine->_animation->setupOtherNspAnimation(0, 43);
 	} else if (targetObjNum == 117) {
 		_player->loadAnimations("obslev.nsp");
-		g_engine->setupOtherNspAnimation(0, 45);
+		g_engine->_animation->setupOtherNspAnimation(0, 45);
 	}
 }
 
@@ -714,7 +714,7 @@ void Darkseed::UseCode::useCodeMoney(int16 targetObjNum) {
 	}
 	if (_objectVar[138] == 0) {
 		_player->loadAnimations("givclerk.nsp");
-		g_engine->setupOtherNspAnimation(6, 35);
+		g_engine->_animation->setupOtherNspAnimation(6, 35);
 	} else {
 		_console->addTextLine("Choose an item before giving clerk more money.");
 	}
@@ -745,7 +745,7 @@ void Darkseed::UseCode::useCodeShopItems(int16 actionObjNum, int16 targetObjNum)
 	if (actionObjNum == 7) {
 		if (targetObjNum == 44) {
 			_player->loadAnimations("opendoor.nsp");
-			g_engine->setupOtherNspAnimation(0, 24);
+			g_engine->_animation->setupOtherNspAnimation(0, 24);
 			_objectVar[44] = 3600;
 			g_engine->playSound(32, 5, -1);
 			_inventory.removeItem(7);
@@ -1005,7 +1005,7 @@ void Darkseed::UseCode::useCrowBar(int16 targetObjNum) {
 	if (targetObjNum == 42) {
 		if ((_objectVar[42] == 0) || (_objectVar[42] == 4)) {
 			_player->loadAnimations("crowbar.nsp");
-			g_engine->setupOtherNspAnimation(0, 17);
+			g_engine->_animation->setupOtherNspAnimation(0, 17);
 		} else {
 			_console->printTosText(962);
 		}
@@ -1183,7 +1183,7 @@ void UseCode::useCodeMirrorShard(int16 targetObjNum) {
 		_inventory.removeItem(15);
 		_objectVar[137] = 1;
 		_player->loadAnimations("mglow.nsp");
-		g_engine->setupOtherNspAnimation(0, 59);
+		g_engine->_animation->setupOtherNspAnimation(0, 59);
 	} else if (targetObjNum == 124) {
 		_console->printTosText(20);
 	} else if (targetObjNum == 129) {
@@ -1249,7 +1249,7 @@ void UseCode::useCodeDelbertsCard(int16 targetObjNum) {
 	}
 	if (targetObjNum == 64) {
 		if (g_engine->_room->_roomNumber == 30) {
-			g_engine->setupOtherNspAnimation(1, 40);
+			g_engine->_animation->setupOtherNspAnimation(1, 40);
 		} else {
 			_console->printTosText(488);
 		}
@@ -1267,7 +1267,7 @@ void UseCode::useCodeStick(int16 targetObjNum) {
 	}
 	if (targetObjNum == 116) {
 		g_engine->_room->loadLocationSprites("mthrow.nsp");
-		g_engine->setupOtherNspAnimation(2, 47);
+		g_engine->_animation->setupOtherNspAnimation(2, 47);
 	} else if (targetObjNum == 53) {
 		g_engine->throwmikeinjail();
 	}
@@ -1299,7 +1299,7 @@ void UseCode::useCodeRope(int16 targetObjNum) {
 	if (targetObjNum == 61) {
 		_objectVar[23] = 1;
 		_player->loadAnimations("opendoor.nsp");
-		g_engine->setupOtherNspAnimation(0, 15);
+		g_engine->_animation->setupOtherNspAnimation(0, 15);
 		_inventory.removeItem(23);
 	}
 	if (targetObjNum == 53) {
@@ -1373,7 +1373,7 @@ void UseCode::useCodeSpecialHammer(int16 actionObjNum, int16 targetObjNum) {
 			_console->printTosText(301);
 		} else {
 			_player->loadAnimations("smash.nsp");
-			g_engine->setupOtherNspAnimation(0, 36);
+			g_engine->_animation->setupOtherNspAnimation(0, 36);
 		}
 	} else if (targetObjNum == 53) {
 		g_engine->throwmikeinjail();
@@ -1536,7 +1536,7 @@ void UseCode::useCodeWatch(int16 targetObjNum) {
 void UseCode::useCodeTinCup(int16 targetObjNum) {
 	if (targetObjNum == 189) {
 		_player->loadAnimations("cuphit.nsp");
-		g_engine->setupOtherNspAnimation(0, 62);
+		g_engine->_animation->setupOtherNspAnimation(0, 62);
 		_player->_frameIdx = 3;
 	} else if (targetObjNum == 113) {
 		_console->printTosText(753);
@@ -1748,13 +1748,13 @@ static constexpr bool diggingxflipTbl[12] = {
 void UseCode::startdigging(int16 targetObjNum) {
 	if (targetObjNum == 0) {
 		_player->loadAnimations("lgravedg.nsp");
-		g_engine->setupOtherNspAnimation(0, 21);
+		g_engine->_animation->setupOtherNspAnimation(0, 21);
 	} else if (diggingxflipTbl[targetObjNum]) {
 		_player->loadAnimations("lgravedg.nsp");
-		g_engine->setupOtherNspAnimation(0, 4);
+		g_engine->_animation->setupOtherNspAnimation(0, 4);
 	} else {
 		_player->loadAnimations("rgravedg.nsp");
-		g_engine->setupOtherNspAnimation(0, 22);
+		g_engine->_animation->setupOtherNspAnimation(0, 22);
 	}
 	g_engine->playSound(14, 5, -1);
 }

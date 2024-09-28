@@ -61,7 +61,7 @@ Room::Room(int roomNumber) : _roomNumber(roomNumber) {
 void Room::initRoom() {
 	for (int iVar1 = 0; iVar1 < 30; iVar1 = iVar1 + 1) {
 		_locObjFrame[iVar1] = 0;
-		g_engine->_animIndexTbl[iVar1] = 0;
+		g_engine->_animation->_animIndexTbl[iVar1] = 0;
 	}
 	if (g_engine->_objectVar[141] == 10) {
 		g_engine->_objectVar[141] = 11;
@@ -820,13 +820,13 @@ void Room::runRoomObjects() {
 		}
 		case 2: {
 			int spriteNum = 0;
-			if (_roomNumber == 17 && g_engine->_isPlayingAnimation_maybe && g_engine->_otherNspAnimationType_maybe == 19 && _locObjFrame[roomObjIdx] == 4) {
+			if (_roomNumber == 17 && g_engine->_animation->_isPlayingAnimation_maybe && g_engine->_animation->_otherNspAnimationType_maybe == 19 && _locObjFrame[roomObjIdx] == 4) {
 				advanceLocAnimFrame(roomObjIdx + 1);
 				spriteNum = _locationSprites.getAnimAt(1)._frameNo[_locObjFrame[roomObjIdx + 1]];
-			} else if (_roomNumber == 16 && g_engine->_isPlayingAnimation_maybe && g_engine->_otherNspAnimationType_maybe == 35) {
+			} else if (_roomNumber == 16 && g_engine->_animation->_isPlayingAnimation_maybe && g_engine->_animation->_otherNspAnimationType_maybe == 35) {
 				// shop
 				g_engine->nextFrame(5);
-				spriteNum = g_engine->_player->_animations.getAnimAt(5)._frameNo[g_engine->_animIndexTbl[5]];
+				spriteNum = g_engine->_player->_animations.getAnimAt(5)._frameNo[g_engine->_animation->_animIndexTbl[5]];
 			} else if (_roomNumber == 53) {
 				if (g_engine->_objectVar[79] == 4) {
 					g_engine->_objectVar[79] = 2;
@@ -838,7 +838,7 @@ void Room::runRoomObjects() {
 					roomObj.yOffset += anim._deltaY[_locObjFrame[g_engine->_objectVar[79]]];
 				}
 				spriteNum = _locationSprites.getAnimAt(g_engine->_objectVar[79])._frameNo[_locObjFrame[g_engine->_objectVar[79]]];
-				if (g_engine->_objRestarted) {
+				if (g_engine->_animation->_objRestarted) {
 					if (g_engine->_objectVar[79] == 1) {
 						g_engine->_objectVar[79] = 3;
 					}
@@ -853,7 +853,7 @@ void Room::runRoomObjects() {
 				spriteNum = _locationSprites.getAnimAt(_roomObj[roomObjIdx].spriteNum)._frameNo[_locObjFrame[roomObjIdx]];
 			}
 
-			if (_roomNumber == 16 && g_engine->_isPlayingAnimation_maybe && g_engine->_otherNspAnimationType_maybe == 35) {
+			if (_roomNumber == 16 && g_engine->_animation->_isPlayingAnimation_maybe && g_engine->_animation->_otherNspAnimationType_maybe == 35) {
 				const Sprite &sprite = g_engine->_player->_animations.getSpriteAt(spriteNum);
 				g_engine->_sprites.addSpriteToDrawList(
 					xPos,
@@ -900,7 +900,7 @@ void Room::runRoomObjects() {
 						false);
 				}
 				updateRoomObj(48, xPos, sprite._width, yPos, sprite._height);
-			} else if (_roomNumber == 5 && g_engine->_isPlayingAnimation_maybe && g_engine->_otherNspAnimationType_maybe == 7) {
+			} else if (_roomNumber == 5 && g_engine->_animation->_isPlayingAnimation_maybe && g_engine->_animation->_otherNspAnimationType_maybe == 7) {
 				const Sprite &sprite = _locationSprites.getSpriteAt(spriteNum);
 				g_engine->_sprites.addSpriteToDrawList(
 					xPos,
@@ -948,7 +948,7 @@ void Room::runRoomObjects() {
 						false);
 				} else if ((_roomNumber != 64 || g_engine->_currentTimeInSeconds < 64801 || spriteNum == 3 || spriteNum > 13) &&
 						      (
-							   g_engine->_isPlayingAnimation_maybe ||
+							   g_engine->_animation->_isPlayingAnimation_maybe ||
 							   _locationSprites.getAnimAt(roomObj.spriteNum)._numFrames > 1 ||
 							   (playerLeftXPos <= xPos + sprite._width && xPos <= playerRightXPos && g_engine->_player->_position.x <= xPos + sprite._width) ||
 							   g_engine->_objectVar[141] == 6 ||
@@ -977,7 +977,7 @@ void Room::runRoomObjects() {
 			}
 			if (_roomNumber == 57 && g_engine->_previousRoomNumber == 54 && spriteNum < 6) {
 				g_engine->_objectVar[56] = spriteNum;
-				if (g_engine->_objRestarted) {
+				if (g_engine->_animation->_objRestarted) {
 					g_engine->_objectVar[56] = 6;
 				}
 			}
@@ -1021,7 +1021,7 @@ void Room::runRoomObjects() {
 		const Sprite &sprite = _locationSprites.getSpriteAt(0);
 		g_engine->_sprites.addSpriteToDrawList(519, 80, &sprite, 255, sprite._width, sprite._height, false);
 	}
-	if (_roomNumber == 0 && g_engine->_isPlayingAnimation_maybe) {
+	if (_roomNumber == 0 && g_engine->_animation->_isPlayingAnimation_maybe) {
 		const Sprite &sprite = _locationSprites.getSpriteAt(1);
 		g_engine->_sprites.addSpriteToDrawList(111, 136, &sprite, 1, sprite._width, sprite._height, false);
 	}
@@ -1058,7 +1058,7 @@ void Room::runRoomObjects() {
 	}
 	if (_roomNumber == 14) { // tuttle tome
 		if (g_engine->_objectVar[99] == 0) {
-			if (!g_engine->_isPlayingAnimation_maybe || g_engine->_otherNspAnimationType_maybe != 23) {
+			if (!g_engine->_animation->_isPlayingAnimation_maybe || g_engine->_animation->_otherNspAnimationType_maybe != 23) {
 				const Sprite &sprite = _locationSprites.getSpriteAt(g_engine->_objectVar[66] != 0 ? 1 : 0);
 				g_engine->_sprites.addSpriteToDrawList(245, 140, &sprite, 255, sprite._width, sprite._height, false);
 				const Sprite &sprite1 = _locationSprites.getSpriteAt(g_engine->_objectVar[67] == 0 ? 2 : 3);
@@ -1067,7 +1067,7 @@ void Room::runRoomObjects() {
 				g_engine->_sprites.addSpriteToDrawList(334, 153, &sprite2, 255, sprite2._width, sprite2._height, false);
 			} else {
 				advanceLocAnimFrame(0);
-				if (!g_engine->_objRestarted) {
+				if (!g_engine->_animation->_objRestarted) {
 					const Sprite &sprite = _locationSprites.getSpriteAt(_locationSprites.getAnimAt(0)._frameNo[_locObjFrame[0]]);
 					g_engine->_sprites.addSpriteToDrawList(245, 93, &sprite, 255, sprite._width, sprite._height, false);
 				} else {
@@ -1091,7 +1091,7 @@ void Room::runRoomObjects() {
 		}
 	}
 	if (_roomNumber == 33) { // in garage
-		if (g_engine->_isPlayingAnimation_maybe && g_engine->_otherNspAnimationType_maybe == 25) {
+		if (g_engine->_animation->_isPlayingAnimation_maybe && g_engine->_animation->_otherNspAnimationType_maybe == 25) {
 			const Sprite &sprite = _locationSprites.getSpriteAt(0);
 			g_engine->_sprites.addSpriteToDrawList(370, 128, &sprite, 255, sprite._width, sprite._height, false);
 		}
@@ -1253,42 +1253,42 @@ void Room::drawTrunk() {
 
 void Room::advanceLocAnimFrame(int roomObjIdx) {
 	const Obt &anim = _locationSprites.getAnimAt(_roomObj[roomObjIdx].spriteNum);
-	g_engine->_objRestarted = false;
+	g_engine->_animation->_objRestarted = false;
 	_locObjFrameTimer[roomObjIdx]--;
 	if (_locObjFrameTimer[roomObjIdx] < 1) {
 		_locObjFrame[roomObjIdx]++;
 		if (_locObjFrame[roomObjIdx] == anim._numFrames) {
 			_locObjFrame[roomObjIdx] = 0;
-			g_engine->_objRestarted = true;
+			g_engine->_animation->_objRestarted = true;
 		}
 		_locObjFrameTimer[roomObjIdx] = anim._frameDuration[_locObjFrame[roomObjIdx]];
 	}
 }
 
 bool Room::advanceFrame(int animIdx) {
-	g_engine->_frameAdvanced = false;
+	g_engine->_animation->_frameAdvanced = false;
 	const Obt &anim = _locationSprites.getAnimAt(animIdx);
-	g_engine->_objRestarted = false;
+	g_engine->_animation->_objRestarted = false;
 	_locObjFrameTimer[animIdx]--;
 	if (_locObjFrameTimer[animIdx] < 1) {
-		g_engine->_frameAdvanced = true;
+		g_engine->_animation->_frameAdvanced = true;
 		_locObjFrame[animIdx]++;
 		if (_locObjFrame[animIdx] == anim._numFrames) {
 			_locObjFrame[animIdx] = 0;
-			g_engine->_objRestarted = true;
+			g_engine->_animation->_objRestarted = true;
 		}
 		_locObjFrameTimer[animIdx] = anim._frameDuration[_locObjFrame[animIdx]];
 	}
-	return g_engine->_frameAdvanced;
+	return g_engine->_animation->_frameAdvanced;
 }
 
 void Room::mikeStickThrowAnim() {
 	advanceFrame(2);
-	if (!g_engine->_objRestarted) {
+	if (!g_engine->_animation->_objRestarted) {
 		g_engine->_player->_frameIdx = _locationSprites.getAnimAt(2)._frameNo[_locObjFrame[2]];
 	} else {
 		g_engine->_objectVar[79] = 1;
-		g_engine->_isPlayingAnimation_maybe = false;
+		g_engine->_animation->_isPlayingAnimation_maybe = false;
 		g_engine->_inventory.removeItem(19);
 		g_engine->_objectVar.setMoveObjectRoom(19, 100);
 	}

@@ -34,6 +34,7 @@
 #include "engines/savestate.h"
 #include "graphics/screen.h"
 
+#include "darkseed/animation.h"
 #include "darkseed/console.h"
 #include "darkseed/cursor.h"
 #include "darkseed/cutscene.h"
@@ -88,7 +89,7 @@ protected:
 	Common::Error run() override;
 public:
 	Pic _frame;
-	bool _frameAdvanced = false;
+
 	bool _ct_voice_status = false;
 	bool _isRightMouseClicked = false;
 	bool _isLeftMouseClicked = false;
@@ -107,6 +108,7 @@ public:
 	Inventory _inventory;
 	UseCode *_useCode = nullptr;
 	Cutscene _cutscene;
+	Animation *_animation = nullptr;
 
 	uint8 _currentDay = 1;
 	int _currentTimeInSeconds = 0x7e8e;
@@ -115,8 +117,6 @@ public:
 	uint8 _previousRoomNumber = 0;
 	uint16 _targetRoomNumber = 0;
 
-	bool _isPlayingAnimation_maybe = false;
-	uint16 _otherNspAnimationType_maybe = 0;
 	uint16 _headAcheMessageCounter = 0;
 	uint8 _headacheMessageIdx = 0;
 
@@ -125,17 +125,11 @@ public:
 	uint16 _scaledSpriteWidth = 0;
 	uint16 _scaledSpriteHeight = 0;
 
-	int _nsp_sprite_scaling_y_position = 0;
-
 	bool _player_sprite_related_2c85_82f3 = false;
 	int _frameBottom = 0;
-	bool _objRestarted = false;
-	int _animIndexTbl[30];
-	int _spriteAnimCountdownTimer[30];
 
 	// Unknown variables
 	bool _doorEnabled = false;
-	bool _scaleSequence = false;
 	bool _useDoorTarget = false;
 
 	int16 _counter_2c85_888b = 0;
@@ -150,6 +144,12 @@ public:
 	int16 _soundTimer = 0;
 	bool _printedcomeheredawson = false;
 	void zeromousebuttons();
+
+	void gotonextmorning();
+
+	void playDayChangeCutscene();
+
+	void wongame();
 
 public:
 	DarkseedEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -181,11 +181,11 @@ public:
 	};
 
 	bool canLoadGameStateCurrently(Common::U32String *msg) override {
-		return !_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_herowaiting;
+		return !_animation->_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_herowaiting;
 	}
 
 	bool canSaveGameStateCurrently(Common::U32String *msg) override {
-		return !_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_herowaiting;
+		return !_animation->_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_herowaiting;
 	}
 
 	/**
@@ -219,7 +219,6 @@ public:
 	void newGame();
 
 	void updateDisplay();
-	void setupOtherNspAnimation(int nspAnimIdx, int animId);
 	void debugTeleportToRoom(int newRoomNumber, int entranceNumber);
 	void showFullscreenPic(const Common::Path &filename);
 	void lookCode(int objNum);
@@ -239,8 +238,6 @@ public:
 
 private:
 	void updateBaseSprites();
-	void updateAnimation();
-	void advanceAnimationFrame(int nspAminIdx);
 	void gameloop();
 	void updateEvents();
 	void handleInput();
@@ -248,15 +245,12 @@ private:
 	void handlePointerAction();
 	void loadRoom(int roomNumber);
 
-	void wongame();
 	void keeperanim();
 	void sargoanim();
 
 	void gotosleepinjail();
-	void gotonextmorning();
 
 	void updateHeadache();
-	void playDayChangeCutscene();
 	void closeShops();
 	void initDelbertAtSide();
 	void moveplayertodelbert();
