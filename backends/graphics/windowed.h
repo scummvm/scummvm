@@ -408,6 +408,17 @@ protected:
 private:
 	void populateDisplayAreaDrawRect(const frac_t displayAspect, int originalWidth, int originalHeight, Common::Rect &drawRect) const {
 		int mode = getStretchMode();
+		Common::RotationMode rotation = getRotationMode();
+		int rotatedWindowWidth;
+		int rotatedWindowHeight;
+
+		if (rotation == Common::kRotation90 || rotation == Common::kRotation270) {
+			rotatedWindowWidth = _windowHeight;
+			rotatedWindowHeight = _windowWidth;
+		} else {
+			rotatedWindowWidth = _windowWidth;
+			rotatedWindowHeight = _windowHeight;
+		}
 		// Mode Center   = use original size, or divide by an integral amount if window is smaller than game surface
 		// Mode Integral = scale by an integral amount.
 		// Mode Fit      = scale to fit the window while respecting the aspect ratio
@@ -418,30 +429,30 @@ private:
 		if (mode == STRETCH_CENTER || mode == STRETCH_INTEGRAL || mode == STRETCH_INTEGRAL_AR) {
 			width = originalWidth;
 			height = intToFrac(width) / displayAspect;
-			if (width > _windowWidth || height > _windowHeight) {
-				int fac = 1 + MAX((width - 1) / _windowWidth, (height - 1) / _windowHeight);
+			if (width > rotatedWindowWidth || height > rotatedWindowHeight) {
+				int fac = 1 + MAX((width - 1) / rotatedWindowWidth, (height - 1) / rotatedWindowHeight);
 				width /= fac;
 				height /= fac;
 			} else if (mode == STRETCH_INTEGRAL) {
-				int fac = MIN(_windowWidth / width, _windowHeight / height);
+				int fac = MIN(rotatedWindowWidth / width, rotatedWindowHeight / height);
 				width *= fac;
 				height *= fac;
 			}  else if (mode == STRETCH_INTEGRAL_AR) {
 				int targetHeight = height;
-				int horizontalFac = _windowWidth / width;
+				int horizontalFac = rotatedWindowWidth / width;
 				do {
 					width = originalWidth * horizontalFac;
 					int verticalFac = (targetHeight * horizontalFac + originalHeight / 2) / originalHeight;
 					height = originalHeight * verticalFac;
 					--horizontalFac;
-				} while (horizontalFac > 0 && height > _windowHeight);
-				if (height > _windowHeight)
+				} while (horizontalFac > 0 && height > rotatedWindowHeight);
+				if (height > rotatedWindowHeight)
 					height = targetHeight;
 			}
 		} else {
-			frac_t windowAspect = intToFrac(_windowWidth) / _windowHeight;
-			width = _windowWidth;
-			height = _windowHeight;
+			frac_t windowAspect = intToFrac(rotatedWindowWidth) / rotatedWindowHeight;
+			width = rotatedWindowWidth;
+			height = rotatedWindowHeight;
 			if (mode == STRETCH_FIT_FORCE_ASPECT) {
 				frac_t ratio = intToFrac(4) / 3;
 				if (windowAspect < ratio)
@@ -460,26 +471,26 @@ private:
 		switch (_screenAlign & SCREEN_ALIGN_XMASK) {
 			default:
 			case SCREEN_ALIGN_CENTER:
-				alignX = ((_windowWidth - width) / 2);
+				alignX = ((rotatedWindowWidth - width) / 2);
 				break;
 			case SCREEN_ALIGN_LEFT:
 				alignX = 0;
 				break;
 			case SCREEN_ALIGN_RIGHT:
-				alignX = (_windowWidth - width);
+				alignX = (rotatedWindowWidth - width);
 				break;
 		}
 
 		switch (_screenAlign & SCREEN_ALIGN_YMASK) {
 			default:
 			case SCREEN_ALIGN_MIDDLE:
-				alignY = ((_windowHeight - height) / 2);
+				alignY = ((rotatedWindowHeight - height) / 2);
 				break;
 			case SCREEN_ALIGN_TOP:
 				alignY = 0;
 				break;
 			case SCREEN_ALIGN_BOTTOM:
-				alignY = (_windowHeight - height);
+				alignY = (rotatedWindowHeight - height);
 				break;
 		}
 

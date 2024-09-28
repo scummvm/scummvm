@@ -663,7 +663,7 @@ bool LibRetroPipeline::setupFBOs() {
 		pass.shaderPass->applyScale(sourceW, sourceH, viewportW, viewportH, &sourceW, &sourceH);
 
 		// Resize FBO to fit the output of the pass.
-		if (!pass.target->setSize((uint)sourceW, (uint)sourceH)) {
+		if (!pass.target->setSize((uint)sourceW, (uint)sourceH, Common::kRotationNormal)) {
 			return false;
 		}
 

@@ -633,6 +633,15 @@ void OpenGLGraphicsManager::renderCursor() {
 }
 
 void OpenGLGraphicsManager::updateScreen() {
+	int rotation = getRotationMode();
+	int rotatedWidth = _windowWidth;
+	int rotatedHeight = _windowHeight;
+			
+	if (rotation == Common::kRotation90 || rotation == Common::kRotation270) {
+		rotatedWidth = _windowHeight;
+		rotatedHeight = _windowWidth;
+	}
+
 	if (!_gameScreen || !_pipeline) {
 		return;
 	}
@@ -726,8 +735,8 @@ void OpenGLGraphicsManager::updateScreen() {
 
 	// Third step: Draw the overlay if visible.
 	if (_overlayVisible) {
-		int dstX = (_windowWidth - _overlayDrawRect.width()) / 2;
-		int dstY = (_windowHeight - _overlayDrawRect.height()) / 2;
+		int dstX = (rotatedWidth - _overlayDrawRect.width()) / 2;
+		int dstY = (rotatedHeight - _overlayDrawRect.height()) / 2;
 		_targetBuffer->enableBlend(Framebuffer::kBlendModeTraditionalTransparency);
 		_pipeline->drawTexture(_overlay->getGLTexture(), dstX, dstY, _overlayDrawRect.width(), _overlayDrawRect.height());
 	}
@@ -762,8 +771,8 @@ void OpenGLGraphicsManager::updateScreen() {
 		// Set the OSD transparency.
 		_pipeline->setColor(1.0f, 1.0f, 1.0f, _osdMessageAlpha / 100.0f);
 
-		int dstX = (_windowWidth - _osdMessageSurface->getWidth()) / 2;
-		int dstY = (_windowHeight - _osdMessageSurface->getHeight()) / 2;
+		int dstX = (rotatedWidth - _osdMessageSurface->getWidth()) / 2;
+		int dstY = (rotatedHeight - _osdMessageSurface->getHeight()) / 2;
 
 		// Draw the OSD texture.
 		_pipeline->drawTexture(_osdMessageSurface->getGLTexture(),
@@ -783,7 +792,7 @@ void OpenGLGraphicsManager::updateScreen() {
 	}
 
 	if (_osdIconSurface) {
-		int dstX = _windowWidth - _osdIconSurface->getWidth() - kOSDIconRightMargin;
+		int dstX = rotatedWidth - _osdIconSurface->getWidth() - kOSDIconRightMargin;
 		int dstY = kOSDIconTopMargin;
 
 		// Draw the OSD icon texture.
@@ -1267,10 +1276,21 @@ void OpenGLGraphicsManager::grabPalette(byte *colors, uint start, uint num) cons
 
 void OpenGLGraphicsManager::handleResizeImpl(const int width, const int height) {
 	// Setup backbuffer size.
-	_targetBuffer->setSize(width, height);
+	_targetBuffer->setSize(width, height, getRotationMode());
 
+	int rotation = getRotationMode();
 	uint overlayWidth = width;
 	uint overlayHeight = height;
+
+	int rotatedWidth = _windowWidth;
+	int rotatedHeight = _windowHeight;
+
+	if (rotation == Common::kRotation90 || rotation == Common::kRotation270) {
+		overlayWidth = height;
+		overlayHeight = width;
+		rotatedWidth = _windowHeight;
+		rotatedHeight = _windowWidth;
+	}
 
 	// WORKAROUND: We can only support surfaces up to the maximum supported
 	// texture size. Thus, in case we encounter a physical size bigger than
@@ -1280,7 +1300,7 @@ void OpenGLGraphicsManager::handleResizeImpl(const int width, const int height) 
 	// anyway. Thus, it should not be a real issue for modern hardware.
 	if (   overlayWidth  > (uint)OpenGLContext.maxTextureSize
 	    || overlayHeight > (uint)OpenGLContext.maxTextureSize) {
-		const frac_t outputAspect = intToFrac(_windowWidth) / _windowHeight;
+		const frac_t outputAspect = intToFrac(rotatedWidth) / rotatedHeight;
 
 		if (outputAspect > (frac_t)FRAC_ONE) {
 			overlayWidth  = OpenGLContext.maxTextureSize;
@@ -1648,10 +1668,21 @@ void OpenGLGraphicsManager::recalculateDisplayAreas() {
 	// Setup drawing limitation for game graphics.
 	// This involves some trickery because OpenGL's viewport coordinate system
 	// is upside down compared to ours.
-	_targetBuffer->setScissorBox(_gameDrawRect.left,
-	                          _windowHeight - _gameDrawRect.height() - _gameDrawRect.top,
-	                          _gameDrawRect.width(),
-	                          _gameDrawRect.height());
+	switch (getRotationMode()) {
+	case Common::kRotation90:
+	case Common::kRotation180:
+		_targetBuffer->setScissorBox(_gameDrawRect.top,
+					     _gameDrawRect.left,
+					     _gameDrawRect.height(),
+					     _gameDrawRect.width());
+		break;
+	default:
+		_targetBuffer->setScissorBox(_gameDrawRect.left,
+					     _windowHeight - _gameDrawRect.height() - _gameDrawRect.top,
+					     _gameDrawRect.width(),
+					     _gameDrawRect.height());
+	}
+
 
 	_shakeOffsetScaled = Common::Point(_gameScreenShakeXOffset * _gameDrawRect.width() / (int)_currentState.gameWidth,
 		_gameScreenShakeYOffset * _gameDrawRect.height() / (int)_currentState.gameHeight);

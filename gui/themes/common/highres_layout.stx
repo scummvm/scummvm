@@ -761,6 +761,14 @@
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
+				<widget name = 'grRotationModePopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'grRotationModePopup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
 				<widget name = 'grStretchModePopupDesc'
 						type = 'OptionsLabel'
 				/>

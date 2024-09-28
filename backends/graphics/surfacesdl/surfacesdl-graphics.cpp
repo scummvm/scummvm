@@ -215,6 +215,7 @@ bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		(f == OSystem::kFeatureFullscreenToggleKeepsContext) ||
 		(f == OSystem::kFeatureStretchMode) ||
+	        (f == OSystem::kFeatureRotationMode) ||
 		(f == OSystem::kFeatureVSync) ||
 #endif
 		(f == OSystem::kFeatureCursorPalette) ||
@@ -246,6 +247,9 @@ void SurfaceSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable)
 	case OSystem::kFeatureIconifyWindow:
 		if (enable)
 			_window->iconifyWindow();
+		break;
+	case OSystem::kFeatureRotationMode:
+		notifyResize(getWindowWidth(), getWindowHeight());
 		break;
 	default:
 		break;
@@ -2908,11 +2912,27 @@ void SurfaceSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrect
 	Common::Rect &drawRect = (_overlayVisible) ? _overlayDrawRect : _gameDrawRect;
 	viewport.x = drawRect.left;
 	viewport.y = drawRect.top;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	int rotation = getRotationMode();
+	int rotangle = 0;
+	if (rotation == Common::kRotation90 || rotation == Common::kRotation270) {
+		int delta = (drawRect.width() - drawRect.height()) / 2;
+		viewport.x = drawRect.top - delta;
+		viewport.y = drawRect.left + delta;
+	}
+	rotangle = rotation;
+#endif
 	viewport.w = drawRect.width();
 	viewport.h = drawRect.height();
 
 	SDL_RenderClear(_renderer);
-	SDL_RenderCopy(_renderer, _screenTexture, nullptr, &viewport);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (rotangle != 0)
+		SDL_RenderCopyEx(_renderer, _screenTexture, nullptr, &viewport, rotangle, nullptr, SDL_FLIP_NONE);
+	else 
+#endif
+		SDL_RenderCopy(_renderer, _screenTexture, nullptr, &viewport);
+
 	SDL_RenderPresent(_renderer);
 }
 

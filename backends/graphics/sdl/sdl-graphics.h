@@ -91,6 +91,8 @@ public:
 	 */
 	virtual bool notifyMousePosition(Common::Point &mouse);
 
+	Common::RotationMode getRotationMode() const override;
+
 	virtual bool showMouse(bool visible) override;
 	bool lockMouse(bool lock) override;
 
