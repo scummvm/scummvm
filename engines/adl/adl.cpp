@@ -582,6 +582,7 @@ bool AdlEngine::playTones(const Tones &tones, bool isMusic, bool allowSkip) cons
 		}
 
 		g_system->delayMillis(16);
+		g_system->updateScreen();
 	}
 
 	return false;
