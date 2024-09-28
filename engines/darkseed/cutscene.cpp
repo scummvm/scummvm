@@ -91,7 +91,7 @@ void Cutscene::update() {
 	}
 }
 
-static constexpr int _CREDITS_DELAY = 25;
+static constexpr int CREDITS_DELAY = 25;
 
 bool Cutscene::introScene() {
 	switch (_movieStep) {
@@ -238,7 +238,7 @@ bool Cutscene::introScene() {
 		break;
 	}
 	case 25:
-		if (waitTime(_CREDITS_DELAY)) {
+		if (waitTime(CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -248,7 +248,7 @@ bool Cutscene::introScene() {
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 27:
-		if (waitTime(_CREDITS_DELAY)) {
+		if (waitTime(CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -262,7 +262,7 @@ bool Cutscene::introScene() {
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 29:
-		if (waitTime(_CREDITS_DELAY)) {
+		if (waitTime(CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -275,7 +275,7 @@ bool Cutscene::introScene() {
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 31:
-		if (waitTime(_CREDITS_DELAY)) {
+		if (waitTime(CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -288,7 +288,7 @@ bool Cutscene::introScene() {
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 33:
-		if (waitTime(_CREDITS_DELAY)) {
+		if (waitTime(CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -302,7 +302,7 @@ bool Cutscene::introScene() {
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 35:
-		if (waitTime(_CREDITS_DELAY)) {
+		if (waitTime(CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -314,7 +314,7 @@ bool Cutscene::introScene() {
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 37:
-		if (waitTime(_CREDITS_DELAY)) {
+		if (waitTime(CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -326,7 +326,7 @@ bool Cutscene::introScene() {
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 39:
-		if (waitTime(_CREDITS_DELAY)) {
+		if (waitTime(CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -338,7 +338,7 @@ bool Cutscene::introScene() {
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 41:
-		if (waitTime(_CREDITS_DELAY)) {
+		if (waitTime(CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -350,7 +350,7 @@ bool Cutscene::introScene() {
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 43:
-		if (waitTime(_CREDITS_DELAY)) {
+		if (waitTime(CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -362,7 +362,7 @@ bool Cutscene::introScene() {
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 45:
-		if (waitTime(_CREDITS_DELAY)) {
+		if (waitTime(CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -376,7 +376,7 @@ bool Cutscene::introScene() {
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 47:
-		if (waitTime(_CREDITS_DELAY)) {
+		if (waitTime(CREDITS_DELAY)) {
 			return true;
 		}
 		break;
@@ -388,7 +388,7 @@ bool Cutscene::introScene() {
 		g_engine->_screen->makeAllDirty();
 		break;
 	case 49:
-		if (waitTime(_CREDITS_DELAY)) {
+		if (waitTime(CREDITS_DELAY)) {
 			return true;
 		}
 		break;
