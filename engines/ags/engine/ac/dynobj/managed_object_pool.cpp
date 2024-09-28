@@ -310,9 +310,7 @@ int ManagedObjectPool::ReadFromDisk(Stream *in, ICCObjectCollectionReader *reade
 	}
 
 	// re-adjust next handles. (in case saved in random order)
-	while (!available_ids.empty()) {
-		available_ids.pop();
-	}
+	available_ids = std::queue<int32_t>();
 	nextHandle = 1;
 
 	for (const auto &o : objects) {

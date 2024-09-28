@@ -210,6 +210,8 @@ private:
 
 		SpriteData &operator=(SpriteData &&other) = default;
 
+		// Tells if this slot has a valid sprite assigned (not empty slot)
+		bool IsValid() const { return Flags != 0u; }
 		// Tells if there actually is a registered sprite in this slot
 		bool DoesSpriteExist() const;
 		// Tells if there's a game resource corresponding to this slot
