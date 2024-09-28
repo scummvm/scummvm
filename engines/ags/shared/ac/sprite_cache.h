@@ -96,7 +96,7 @@ public:
 	};
 
 	SpriteCache(std::vector<SpriteInfo> &sprInfos, const Callbacks &callbacks);
-	~SpriteCache();
+	~SpriteCache() = default;
 
 	// Loads sprite reference information and inits sprite stream
 	HError      InitFile(const String &filename, const String &sprindex_filename);
@@ -163,7 +163,7 @@ public:
 	// *Deletes* the previous sprite if one was found at the same index.
 	// "flags" are SPF_* constants that define sprite's behavior in game.
 	bool        SetSprite(sprkey_t index, std::unique_ptr<Bitmap> image, int flags = 0);
-	// Assigns new dummy for the given index, silently remapping it to sprite 0;
+	// Assigns new dummy for the given index, silently remapping it to placeholder;
 	// optionally marks it as an asset placeholder.
 	// *Deletes* the previous sprite if one was found at the same index.
 	void        SetEmptySprite(sprkey_t index, bool as_asset);
@@ -176,11 +176,8 @@ public:
 private:
 	// Load sprite from game resource
 	size_t      LoadSprite(sprkey_t index, bool lock = false);
-	// Remap the given index to the sprite 0
-	void        RemapSpriteToSprite0(sprkey_t index);
-	// Gets the index of a sprite which data is used for the given slot;
-	// in case of remapped sprite this will return the one given sprite is remapped to
-	sprkey_t    GetDataIndex(sprkey_t index);
+	// Remap the given index to the placeholder
+	void        RemapSpriteToPlaceholder(sprkey_t index);
 	// Delete the oldest (least recently used) image in cache
 	void        DisposeOldest();
 	// Keep disposing oldest elements until cache has at least the given free space
@@ -216,8 +213,8 @@ private:
 		bool DoesSpriteExist() const;
 		// Tells if there's a game resource corresponding to this slot
 		bool IsAssetSprite() const;
-		// Tells if a sprite is remapped to placeholder (e.g. failed to load)
-		bool IsRemapped() const;
+		// Tells if a sprite failed to load from assets, and should not be used
+		bool IsError() const;
 		// Tells if sprite was added externally, not loaded from game resources
 		bool IsExternalSprite() const;
 		// Tells if sprite is locked and should not be disposed by cache logic
@@ -228,6 +225,8 @@ private:
 	std::vector<SpriteInfo> &_sprInfos;
 	// Array of sprite references
 	std::vector<SpriteData> _spriteData;
+	// Placeholder sprite, returned from operator[] for a non-existing sprite
+	std::unique_ptr<Bitmap> _placeholder;
 
 	Callbacks _callbacks;
 	SpriteFile _file;
