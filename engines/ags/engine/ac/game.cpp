@@ -920,8 +920,11 @@ std::unique_ptr<Shared::Bitmap> read_savedgame_screenshot(const String &savedgam
 		Debug::Printf(kDbgMsg_Error, "Unable to read save's screenshot.\n%s", err->FullMessage().GetCStr());
 		return {};
 	}
-	desc.UserImage.reset(PrepareSpriteForUse(desc.UserImage.release(), false));
-	return std::move(desc.UserImage);
+	if (desc.UserImage) {
+		desc.UserImage.reset(PrepareSpriteForUse(desc.UserImage.release(), false));
+		return std::move(desc.UserImage);
+	}
+	return {};
 }
 
 
