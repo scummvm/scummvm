@@ -2977,6 +2977,32 @@ int SurfaceSdlGraphicsManager::SDL_SetColorKey(SDL_Surface *surface, Uint32 flag
 	return ::SDL_SetColorKey(surface, flag ? SDL_TRUE : SDL_FALSE, key) ? -1 : 0;
 }
 
+#if defined(USE_IMGUI) && defined(USE_IMGUI_SDLRENDERER2)
+void *SurfaceSdlGraphicsManager::getImGuiTexture(const Graphics::Surface &image, const byte *palette, int palCount) {
+
+	// Upload pixels into texture
+	SDL_Texture *texture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STATIC, image.w, image.h);
+	if (texture == nullptr) {
+		error("getImGuiTexture: errror creating tetxure: %s", SDL_GetError());
+		return nullptr;
+	}
+
+	Graphics::Surface *s = image.convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), palette, palCount);
+	SDL_UpdateTexture(texture, nullptr, s->getPixels(), s->pitch);
+	SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+	SDL_SetTextureScaleMode(texture, SDL_ScaleModeLinear);
+
+	s->free();
+	delete s;
+
+	return (void *)texture;
+}
+
+void SurfaceSdlGraphicsManager::freeImGuiTexture(void *texture) {
+	SDL_DestroyTexture((SDL_Texture *) texture);
+}
+#endif // defined(USE_IMGUI) && defined(USE_IMGUI_SDLRENDERER2)
+
 #endif // SDL_VERSION_ATLEAST(2, 0, 0)
 
 #endif
