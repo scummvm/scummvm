@@ -69,6 +69,8 @@ public:
 	int getGraphicsMode() const override;
 #if defined(USE_IMGUI)
 	void setImGuiCallbacks(const ImGuiCallbacks &callbacks) override final;
+	void *getImGuiTexture(const Graphics::Surface &image, const byte *palette, int palCount) override final;
+	void freeImGuiTexture(void *texture) override final;
 #endif
 	bool setShader(const Common::Path &name) override final;
 	const GraphicsMode *getSupportedStretchModes() const override final;

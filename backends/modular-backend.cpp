@@ -77,6 +77,12 @@ int ModularGraphicsBackend::getGraphicsMode() const {
 void ModularGraphicsBackend::setImGuiCallbacks(const ImGuiCallbacks &callbacks) {
 	_graphicsManager->setImGuiCallbacks(callbacks);
 }
+void *ModularGraphicsBackend::getImGuiTexture(const Graphics::Surface &image, const byte *palette, int palCount) {
+	return _graphicsManager->getImGuiTexture(image, palette, palCount);
+}
+void ModularGraphicsBackend::freeImGuiTexture(void *texture) {
+	_graphicsManager->freeImGuiTexture(texture);
+}
 #endif
 
 bool ModularGraphicsBackend::setShader(const Common::Path &fileName) {
