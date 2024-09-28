@@ -33,6 +33,7 @@
 #include "sci/graphics/picture.h"
 #include "sci/graphics/view.h"
 #include "sci/graphics/screen.h"
+#include "sci/graphics/gfxdrivers.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/portrait.h"
 #include "sci/graphics/text16.h"
@@ -134,55 +135,27 @@ void GfxPaint16::drawCel(GfxView *view, int16 loopNo, int16 celNo, const Common:
 // screen. Hires-cels are available only SCI 1.1+.
 void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, reg_t upscaledHiresHandle, uint16 scaleX, uint16 scaleY) {
 	GfxView *view = _cache->getView(viewId);
-	Common::Rect celRect, curPortRect, clipRect, clipRectTranslated;
-	Common::Point curPortPos;
-	bool upscaledHiresHack = false;
+	if (!view)
+		return;
 
-	if (view) {
-		if ((leftPos == 0) && (topPos == 0)) {
-			// HACK: in kq6, we get leftPos&topPos == 0 SOMETIMES, that's why we
-			// need to get coordinates from upscaledHiresHandle. I'm not sure if
-			// this is what we are supposed to do or if there is some other bug
-			// that actually makes coordinates to be 0 in the first place.
-			byte *memoryPtr = nullptr;
-			memoryPtr = _segMan->getHunkPointer(upscaledHiresHandle);
-			if (memoryPtr) {
-				Common::Rect upscaledHiresRect;
-				_screen->bitsGetRect(memoryPtr, &upscaledHiresRect);
-				leftPos = upscaledHiresRect.left;
-				topPos = upscaledHiresRect.top;
-				upscaledHiresHack = true;
-			}
-		}
+	byte *memoryPtr = _segMan->getHunkPointer(upscaledHiresHandle);
+	if (!memoryPtr)
+		error("drawHiresCelAndShow: Invalid hires handle");
 
-		celRect.left = leftPos;
-		celRect.top = topPos;
-		celRect.right = celRect.left + view->getWidth(loopNo, celNo);
-		celRect.bottom = celRect.top + view->getHeight(loopNo, celNo);
-		// adjust curPort to upscaled hires
-		clipRect = celRect;
-		curPortRect = _ports->_curPort->rect;
-		view->adjustToUpscaledCoordinates(curPortRect.top, curPortRect.left);
-		view->adjustToUpscaledCoordinates(curPortRect.bottom, curPortRect.right);
-		curPortRect.bottom++;
-		curPortRect.right++;
-		clipRect.clip(curPortRect);
-		if (clipRect.isEmpty()) // nothing to draw
-			return;
+	Common::Rect upscaledHiresRect;
+	_screen->bitsGetRect(memoryPtr, &upscaledHiresRect);
+	Common::Point topLeft(upscaledHiresRect.left, upscaledHiresRect.top);
+	Common::Point bottomRight(upscaledHiresRect.right, upscaledHiresRect.bottom);
 
-		clipRectTranslated = clipRect;
-		if (!upscaledHiresHack) {
-			curPortPos.x = _ports->_curPort->left; curPortPos.y = _ports->_curPort->top;
-			view->adjustToUpscaledCoordinates(curPortPos.y, curPortPos.x);
-			clipRectTranslated.top += curPortPos.y; clipRectTranslated.bottom += curPortPos.y;
-			clipRectTranslated.left += curPortPos.x; clipRectTranslated.right += curPortPos.x;
-		}
+	topLeft = _screen->gfxDriver()->getRealCoords(topLeft);
+	bottomRight = _screen->gfxDriver()->getRealCoords(bottomRight);
 
-		view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo, true);
-		if (!_screen->_picNotValidSci11) {
-			_screen->copyDisplayRectToScreen(clipRectTranslated);
-		}
-	}
+	Common::Rect celRect(view->getWidth(loopNo, celNo), view->getHeight(loopNo, celNo));
+	Common::Rect clipRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
+	celRect.translate(leftPos + topLeft.x, topPos + topLeft.y);
+	clipRect.clip(celRect);
+
+	view->draw(celRect, clipRect, clipRect, loopNo, celNo, priority, paletteNo, true);
 }
 
 void GfxPaint16::clearScreen(byte color) {
@@ -300,6 +273,7 @@ void GfxPaint16::frameRect(const Common::Rect &rect) {
 
 void GfxPaint16::bitsShow(const Common::Rect &rect) {
 	Common::Rect workerRect(rect.left, rect.top, rect.right, rect.bottom);
+
 	workerRect.clip(_ports->_curPort->rect);
 	if (workerRect.isEmpty()) // nothing to show
 		return;
@@ -312,29 +286,16 @@ void GfxPaint16::bitsShow(const Common::Rect &rect) {
 
 	_screen->copyRectToScreen(workerRect);
 }
-
-void GfxPaint16::bitsShowHires(const Common::Rect &rect) {
-	_screen->copyDisplayRectToScreen(rect);
-}
-
-reg_t GfxPaint16::bitsSave(const Common::Rect &rect, byte screenMask) {
+reg_t GfxPaint16::bitsSave(const Common::Rect &rect, byte screenMask, bool hiresFlag) {
 	reg_t memoryId;
 	byte *memoryPtr;
 	int size;
 
 	Common::Rect workerRect(rect.left, rect.top, rect.right, rect.bottom);
-	workerRect.clip(_ports->_curPort->rect);
-	if (workerRect.isEmpty()) // nothing to save
-		return NULL_REG;
-
-	if (screenMask == GFX_SCREEN_MASK_DISPLAY) {
-		// The coordinates we are given are actually up-to-including right/bottom - we extend accordingly
-		workerRect.bottom++;
-		workerRect.right++;
-		// Adjust rect to upscaled hires, but dont adjust according to port
-		_screen->adjustToUpscaledCoordinates(workerRect.top, workerRect.left);
-		_screen->adjustToUpscaledCoordinates(workerRect.bottom, workerRect.right);
-	} else {
+	if (!hiresFlag) { // KQ6CD Win only does this if not called from the special kGraph 15 case (= kGraphSaveUpscaledHiresBox)
+		workerRect.clip(_ports->_curPort->rect);
+		if (workerRect.isEmpty()) // nothing to save
+			return NULL_REG;
 		_ports->offsetRect(workerRect);
 	}
 
@@ -402,9 +363,8 @@ void GfxPaint16::kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, b
 }
 
 void GfxPaint16::kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY, bool hiresMode, reg_t upscaledHiresHandle) {
-	// some calls are hiresMode even under kq6 DOS, that's why we check for
-	// upscaled hires here
-	if ((!hiresMode) || (!_screen->getUpscaledHires())) {
+	// some calls are hiresMode even under kq6 DOS, that's why we check for hires caps here
+	if (!hiresMode || !_screen->gfxDriver()->supportsHiResGraphics()) {
 		drawCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo, scaleX, scaleY);
 	} else {
 		drawHiresCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo, upscaledHiresHandle);
@@ -436,25 +396,16 @@ void GfxPaint16::kernelGraphDrawLine(Common::Point startPoint, Common::Point end
 	_screen->drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, color, priority, control);
 }
 
-reg_t GfxPaint16::kernelGraphSaveBox(const Common::Rect &rect, uint16 screenMask) {
-	return bitsSave(rect, screenMask);
-}
-
-reg_t GfxPaint16::kernelGraphSaveUpscaledHiresBox(const Common::Rect &rect) {
-	return bitsSave(rect, GFX_SCREEN_MASK_DISPLAY);
+reg_t GfxPaint16::kernelGraphSaveBox(const Common::Rect &rect, uint16 screenMask, bool hiresFlag) {
+	return bitsSave(rect, screenMask, hiresFlag);
 }
 
 void GfxPaint16::kernelGraphRestoreBox(reg_t handle) {
 	bitsRestore(handle);
 }
 
-void GfxPaint16::kernelGraphUpdateBox(const Common::Rect &rect, bool hiresMode) {
-	// some calls are hiresMode even under kq6 DOS, that's why we check for
-	// upscaled hires here
-	if ((!hiresMode) || (!_screen->getUpscaledHires()))
-		bitsShow(rect);
-	else
-		bitsShowHires(rect);
+void GfxPaint16::kernelGraphUpdateBox(const Common::Rect &rect) {
+	bitsShow(rect);
 }
 
 void GfxPaint16::kernelGraphRedrawBox(Common::Rect rect) {
@@ -648,7 +599,6 @@ void GfxPaint16::kernelPortraitShow(const Common::String &resourceName, Common::
 	// adjust given coordinates to curPort (but dont adjust coordinates on upscaledHires_Save_Box and give us hires coordinates
 	//  on kDrawCel, yeah this whole stuff makes sense)
 	position.x += _ports->getPort()->left; position.y += _ports->getPort()->top;
-	_screen->adjustToUpscaledCoordinates(position.y, position.x);
 	myPortrait->doit(position, resourceId, noun, verb, cond, seq);
 	delete myPortrait;
 }
