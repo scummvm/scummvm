@@ -146,11 +146,11 @@ void detect_roomviewport_overlaps(size_t z_index);
 void on_roomcamera_changed(Camera *cam);
 // Marks particular object as need to update the texture
 void mark_object_changed(int objid);
-// Resets all object caches which reference this sprite
-void reset_objcache_for_sprite(int sprnum, bool deleted);
 // TODO: write a generic drawable/objcache system where each object
 // allocates a drawable for itself, and disposes one if being removed.
 void reset_drawobj_for_overlay(int objnum);
+// Marks all game objects which reference this sprite for redraw
+void notify_sprite_changed(int sprnum, bool deleted);
 
 // whether there are currently remnants of a DisplaySpeech
 void mark_screen_dirty();

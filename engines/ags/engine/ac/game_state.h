@@ -300,7 +300,16 @@ struct GameState {
 	// Speech portrait overlay managed handle
 	int  speech_face_schandle = 0;
 
-	int shake_screen_yoff = 0; // y offset of the shaking screen
+	 // y offset of the shaking screen
+	int shake_screen_yoff = 0;
+
+	// CHECKME: we might consider hiding these in draw unit, but then,
+	// because the drawing system still has standalone parts (GUIs...)
+	// there still may be cases when we may require these accessed elsewhere.
+	// Sprite modified flag, used to detect dynamic sprite modifications
+	std::vector<bool> spritemodified;
+	// Which sprites were modified since the recent drawing pass
+	std::vector<int> spritemodifiedlist;
 
 
 	GameState();
