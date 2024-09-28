@@ -27,6 +27,7 @@
 #include "ags/engine/ac/character.h"
 #include "ags/engine/ac/character_extras.h"
 #include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/game.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/global_character.h"
@@ -37,6 +38,7 @@
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/main/update.h"
 #include "ags/engine/ac/screen_overlay.h"
+#include "ags/shared/ac/sprite_cache.h"
 #include "ags/engine/ac/view_frame.h"
 #include "ags/engine/ac/walkable_area.h"
 #include "ags/shared/gfx/bitmap.h"
@@ -435,7 +437,7 @@ void update_sierra_speech() {
 
 			auto *face_over = get_overlay(_G(face_talking));
 			assert(face_over != nullptr);
-			Bitmap *frame_pic = face_over->GetImage();
+			Bitmap *frame_pic = _GP(spriteset)[face_over->GetSpriteNum()];
 			if (_GP(game).options[OPT_SPEECHTYPE] == 3) {
 				// QFG4-style fullscreen dialog
 				if (_G(facetalk_qfg4_override_placement_x)) {
