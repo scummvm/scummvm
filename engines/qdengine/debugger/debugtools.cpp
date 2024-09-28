@@ -50,28 +50,6 @@ const int TILES_ID = -1337;
 
 ImGuiState *_state = nullptr;
 
-static GLuint loadTextureFromSurface(Graphics::Surface *surface) {
-	// Create a OpenGL texture identifier
-	GLuint image_texture;
-	glGenTextures(1, &image_texture);
-	glBindTexture(GL_TEXTURE_2D, image_texture);
-
-	// Setup filtering parameters for display
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // This is required on WebGL for non power-of-two textures
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Same
-
-	// Upload pixels into texture
-	Graphics::Surface *s = surface->convertTo(Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0));
-	glPixelStorei(GL_UNPACK_ALIGNMENT, s->format.bytesPerPixel);
-
-	GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, s->w, s->h, 0, GL_RGB, GL_UNSIGNED_BYTE, s->getPixels()));
-	s->free();
-	delete s;
-	return image_texture;
-}
-
 ImGuiImage getImageID(Common::Path filename, int frameNum) {
 	Common::String key = Common::String::format("%s:%d", filename.toString().c_str(), frameNum);
 
@@ -144,7 +122,7 @@ ImGuiImage getImageID(Common::Path filename, int frameNum) {
 	}
 
 	if (surface)
-		_state->_frames[key] = { (ImTextureID)(intptr_t)loadTextureFromSurface(surface->surfacePtr()), sx, sy };
+		_state->_frames[key] = { (ImTextureID)g_system->getImGuiTexture(*surface->surfacePtr()), sx, sy };
 
 	delete surface;
 
