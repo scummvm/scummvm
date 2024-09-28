@@ -59,9 +59,9 @@ Room::Room(int roomNumber) : _roomNumber(roomNumber) {
 }
 
 void Room::initRoom() {
-	for (int iVar1 = 0; iVar1 < 30; iVar1 = iVar1 + 1) {
-		_locObjFrame[iVar1] = 0;
-		g_engine->_animation->_animIndexTbl[iVar1] = 0;
+	for (int i = 0; i < 30; i++) {
+		_locObjFrame[i] = 0;
+		g_engine->_animation->_animIndexTbl[i] = 0;
 	}
 	if (g_engine->_objectVar[141] == 10) {
 		g_engine->_objectVar[141] = 11;
@@ -703,7 +703,7 @@ static const uint8 room_sprite_related_2c85_4303[] = {
 	20,            15,            25,            30,
 	20,            20,            30,            40,
 	40,            60,            20,            15,
-	5,            20,            10,            35,
+	 5,            20,            10,            35,
 	40,            15,            45,            10,
 	34,            20,            25,             5,
 	15,            25,            10,            10,

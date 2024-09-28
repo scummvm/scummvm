@@ -36,7 +36,7 @@ Console::Console(TosText *tosText, Sound *sound) : _tosText(tosText), _sound(sou
 
 void Console::printTosText(int tosIndex) {
 	const Common::String &text = _tosText->getText(tosIndex);
-	debug(text.c_str());
+	debug("%s", text.c_str());
 	addLine(" ");
 	addTextLine(text);
 	_sound->playTosSpeech(tosIndex);
@@ -78,7 +78,7 @@ Common::StringArray Console::wrapText(const Common::String &text) {
 	Common::String word;
 	int lineLength = 0;
 
-	for (unsigned int i = 0; i < text.size(); i++) {
+	for (int i = 0; i < text.size(); i++) {
 		if (text[i] != '\r') {
 			word += text[i];
 		}
