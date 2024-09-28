@@ -278,8 +278,7 @@ static void restore_game_ambientsounds(Stream *in, RestoredData &r_data) {
 	}
 }
 
-static void ReadOverlays_Aligned(Stream *in, std::vector<bool> &has_bitmap, size_t num_overs) {
-	has_bitmap.resize(num_overs);
+static void ReadOverlays_Aligned(Stream *in, std::vector<int> &has_bitmap, size_t num_overs) {
 	// Remember that overlay indexes may be non-sequential
 	auto &overs = get_overlays();
 	for (size_t i = 0; i < num_overs; ++i) {
@@ -288,12 +287,11 @@ static void ReadOverlays_Aligned(Stream *in, std::vector<bool> &has_bitmap, size
 		over.ReadFromSavegame(in, has_bm, -1);
 		if (over.type < 0)
 			continue; // safety abort
-		if (overs.size() <= static_cast<uint32_t>(over.type)) {
+		if (overs.size() <= static_cast<uint32_t>(over.type))
 			overs.resize(over.type + 1);
-			has_bitmap.resize(over.type + 1);
-		}
 		overs[over.type] = std::move(over);
-		has_bitmap[over.type] = has_bm;
+		if (has_bm)
+			has_bitmap.push_back(over.type);
 	}
 }
 
@@ -303,11 +301,10 @@ static void restore_game_overlays(Stream *in, RestoredData &r_data) {
 	// the vector may be resized during read
 	auto &overs = get_overlays();
 	overs.resize(num_overs);
-	std::vector<bool> has_bitmap(num_overs);
+	std::vector<int> has_bitmap;
 	ReadOverlays_Aligned(in, has_bitmap, num_overs);
-	for (size_t i = 0; i < overs.size(); ++i) {
-		if (has_bitmap[i])
-			r_data.OverlayImages[i].reset(read_serialized_bitmap(in));
+	for (auto over_id : has_bitmap) {
+		r_data.OverlayImages[over_id].reset(read_serialized_bitmap(in));
 	}
 }
 
