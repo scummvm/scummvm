@@ -21,7 +21,8 @@ MODULE_OBJS = \
 	inventory.o \
 	sound.o \
 	usecode.o \
-	cutscene.o
+	cutscene.o \
+	animation.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_DARKSEED), DYNAMIC_PLUGIN)

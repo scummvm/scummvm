@@ -97,7 +97,7 @@ void Inventory::restoreFrame() {
 }
 
 void Inventory::draw() {
-	if ((g_engine->_actionMode <= 4 && g_engine->_cursor.getY() > 40) || g_engine->_isPlayingAnimation_maybe || (g_engine->_objectVar[141] >= 1 && g_engine->_objectVar[141] <= 3)) {
+	if ((g_engine->_actionMode <= 4 && g_engine->_cursor.getY() > 40) || g_engine->_animation->_isPlayingAnimation_maybe || (g_engine->_objectVar[141] >= 1 && g_engine->_objectVar[141] <= 3)) {
 		if (_isVisible) {
 			restoreFrame();
 			_isVisible = false;
