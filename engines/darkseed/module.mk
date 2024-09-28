@@ -1,28 +1,28 @@
 MODULE := engines/darkseed
 
 MODULE_OBJS = \
+	animation.o \
+	anm.o \
+	console.o \
+	cursor.o \
+	cutscene.o \
 	darkseed.o \
 	debugconsole.o \
-	console.o \
-	anm.o \
-	img.o \
-	nsp.o \
-	pic.o \
-	pal.o \
-	titlefont.o \
 	gamefont.o \
-	tostext.o \
-	metaengine.o \
-	room.o \
-	cursor.o \
-	player.o \
-	sprites.o \
-	objects.o \
+	img.o \
 	inventory.o \
+	metaengine.o \
+	nsp.o \
+	objects.o \
+	pal.o \
+	pic.o \
+	player.o \
+	room.o \
 	sound.o \
-	usecode.o \
-	cutscene.o \
-	animation.o
+	sprites.o \
+	titlefont.o \
+	tostext.o \
+	usecode.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_DARKSEED), DYNAMIC_PLUGIN)
