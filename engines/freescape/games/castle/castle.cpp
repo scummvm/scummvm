@@ -817,19 +817,26 @@ void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics
 	for (int i = 7 * riddle; i < 7 * (riddle + 1); i++) {
 		riddleMessages.push_back(_riddleList[i]);
 	}
-	uint32 frameColor = 0;
+	//uint32 frameColor = 0;
+	//if (isDOS()) {
+
+	int h, w, mw;
+
 	if (isDOS()) {
-		int w = 34;
-		surface->copyRectToSurface((const Graphics::Surface)*_riddleTopFrame, 40, w, Common::Rect(0, 0, _riddleTopFrame->w, _riddleTopFrame->h));
-		for (w += _riddleTopFrame->h; w < 136;) {
-			surface->copyRectToSurface((const Graphics::Surface)*_riddleBackgroundFrame, 40, w, Common::Rect(0, 0, _riddleBackgroundFrame->w, _riddleBackgroundFrame->h));
-			w += _riddleBackgroundFrame->h;
-		}
-		surface->copyRectToSurface((const Graphics::Surface)*_riddleBottomFrame, 40, 136, Common::Rect(0, 0, _riddleBottomFrame->w, _riddleBottomFrame->h - 1));
+		h = 40;
+		w = 34;
+		mw = 136;
 	} else {
-		frameColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xD8, 0xD8, 0xD8);
-		surface->fillRect(_viewArea, frameColor);
+		h = 64;
+		w = 37;
+		mw = 136;
 	}
+	surface->copyRectToSurface((const Graphics::Surface)*_riddleTopFrame, h, w, Common::Rect(0, 0, _riddleTopFrame->w, _riddleTopFrame->h));
+	for (w += _riddleTopFrame->h; w < mw;) {
+		surface->copyRectToSurface((const Graphics::Surface)*_riddleBackgroundFrame, h, w, Common::Rect(0, 0, _riddleBackgroundFrame->w, _riddleBackgroundFrame->h));
+		w += _riddleBackgroundFrame->h;
+	}
+	surface->copyRectToSurface((const Graphics::Surface)*_riddleBottomFrame, h, mw, Common::Rect(0, 0, _riddleBottomFrame->w, _riddleBottomFrame->h - 1));
 
 	int x = 0;
 	int y = 0;
@@ -839,8 +846,8 @@ void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics
 		x = 60;
 		y = 62;
 	} else if (isSpectrum() || isCPC()) {
-		x = 60;
-		y = 40;
+		x = 65;
+		y = 70;
 	}
 
 	for (int i = 0; i < numberOfLines; i++) {
