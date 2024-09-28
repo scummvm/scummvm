@@ -25,7 +25,6 @@
 #include "common/array.h"
 #include "common/file.h"
 #include "common/rect.h"
-#include "common/scummsys.h"
 
 namespace Darkseed {
 

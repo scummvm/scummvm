@@ -405,15 +405,8 @@ void Player::draw() {
 }
 
 void Player::reverseConnectorList() {
-	Common::Array<Common::Point> tempList;
-	tempList.resize(_numConnectorsInWalkPath);
-
-	for (int i = 0; i < _numConnectorsInWalkPath; i++) {
-		tempList[i] = _connectorList[_numConnectorsInWalkPath - 1 - i];
-	}
-
-	for (int i = 0; i < _numConnectorsInWalkPath; i++) {
-		_connectorList[i] = tempList[i];
+	for (int i = 0; i < _numConnectorsInWalkPath / 2; i++) {
+		SWAP(_connectorList[i], _connectorList[_numConnectorsInWalkPath - 1 - i]);
 	}
 }
 

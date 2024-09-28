@@ -1759,4 +1759,4 @@ void UseCode::startdigging(int16 targetObjNum) {
 	g_engine->playSound(14, 5, -1);
 }
 
-}
+} // End of namespace Darkseed
