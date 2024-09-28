@@ -554,7 +554,7 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 
 #ifdef USE_IMGUI
 					// Setup Dear ImGui
-					initImGui(_glContext);
+					initImGui(nullptr, _glContext);
 #endif
 				}
 			}

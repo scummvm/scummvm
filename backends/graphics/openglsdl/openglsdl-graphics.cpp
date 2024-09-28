@@ -621,7 +621,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 
 #ifdef USE_IMGUI
 	// Setup Dear ImGui
-	initImGui(_glContext);
+	initImGui(nullptr, _glContext);
 #endif
 
 	if (SDL_GL_SetSwapInterval(_vsync ? 1 : 0)) {
