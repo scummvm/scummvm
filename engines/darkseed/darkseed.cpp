@@ -497,7 +497,7 @@ void DarkseedEngine::handleInput() {
 					_player->updateSprite();
 				}
 				if (_isLeftMouseClicked && _cursor.getY() > 0x28 && !_player->_actionToPerform) { // prevLeftMouseButtonState == 0 &&
-					if (_actionMode == PointerAction) {
+					if (_actionMode == kPointerAction) {
 						_player->calculateWalkTarget();
 						_player->playerFaceWalkTarget();
 					} else {
@@ -537,12 +537,12 @@ void DarkseedEngine::handleInput() {
 							} else if (objNum == 51 || objNum == 187) {
 								_player->_sequenceRotation = 1;
 								_cursor.updatePosition(380, 211);
-							} else if (objNum == 116 && _actionMode == Unk19Action) {
+							} else if (objNum == 116 && _actionMode == kUseStickAction) {
 								_player->_sequenceRotation = 1;
 								_cursor.updatePosition(285, 233);
 							} else if (objNum == 137) {
 								_player->_sequenceRotation = 1;
-								if (_actionMode == Unk27Action) {
+								if (_actionMode == kUseHammerAction) {
 									_cursor.updatePosition(354, 175);
 								} else {
 									_cursor.updatePosition(409, 173);
@@ -567,7 +567,7 @@ void DarkseedEngine::handleInput() {
 								}
 							}
 
-							if (objNum == 102 && _objectVar[23] != 0 && _actionMode == HandAction) {
+							if (objNum == 102 && _objectVar[23] != 0 && _actionMode == kHandAction) {
 								_player->_sequenceRotation = 0;
 								_cursor.updatePosition(331, 195);
 							} else if (objNum < 104 || objNum > 108) {
@@ -608,14 +608,14 @@ void DarkseedEngine::handleInput() {
 				int yDistToTarget = ABS(_player->_walkTarget.y - _player->_position.y);
 
 				if (_isRightMouseClicked && !_player->_actionToPerform) {
-					if (_actionMode == LookAction) {
-						_actionMode = PointerAction;
-					} else if (_actionMode == PointerAction) {
-						_actionMode = HandAction;
-					} else if (_actionMode == HandAction) {
-						_actionMode = LookAction;
+					if (_actionMode == kLookAction) {
+						_actionMode = kPointerAction;
+					} else if (_actionMode == kPointerAction) {
+						_actionMode = kHandAction;
+					} else if (_actionMode == kHandAction) {
+						_actionMode = kLookAction;
 					} else {
-						_actionMode = PointerAction;
+						_actionMode = kPointerAction;
 					}
 					_cursor.setCursorType((CursorType)_actionMode);
 				}
@@ -814,12 +814,12 @@ void DarkseedEngine::handleInput() {
 					if (objIdx == -1) {
 						_console->printTosText(938);
 						if (_actionMode > 3) {
-							_actionMode = PointerAction;
+							_actionMode = kPointerAction;
 							_cursor.setCursorType((CursorType)_actionMode);
 						}
 					} else {
 						if (_actionMode > 3) {
-							_actionMode = PointerAction;
+							_actionMode = kPointerAction;
 							_cursor.setCursorType((CursorType)_actionMode);
 						}
 					}
@@ -1452,8 +1452,8 @@ void DarkseedEngine::handleObjCollision(int targetObjNum) {
 	if (targetObjNum == 35 && _objectVar[22] < 2 && _cursor.getY() > 40) {
 		targetObjNum = 22;
 	}
-	if (_actionMode == LookAction || _actionMode == HandAction || targetObjNum != 115) {
-		if (_cursor.getY() < 40 && _actionMode > LookAction) {
+	if (_actionMode == kLookAction || _actionMode == kHandAction || targetObjNum != 115) {
+		if (_cursor.getY() < 40 && _actionMode > kLookAction) {
 			if (_objectVar[80] < 2 ||
 				((_actionMode != 25 || targetObjNum != 19) && (_actionMode != 19 || targetObjNum != 25))) {
 				if ((_actionMode == 25 && targetObjNum == 20) || (_actionMode == 20 && targetObjNum == 25)) {
@@ -1477,10 +1477,10 @@ void DarkseedEngine::handleObjCollision(int targetObjNum) {
 			return;
 		} else {
 			switch (_actionMode) {
-			case HandAction:
+			case kHandAction:
 				_useCode->useCode(targetObjNum);
 				break;
-			case LookAction:
+			case kLookAction:
 				lookCode(targetObjNum);
 				break;
 			case 5:
@@ -1898,7 +1898,7 @@ void DarkseedEngine::showFullscreenPic(const Common::Path &filename) {
 	if (!_fullscreenPic->load(filename)) {
 		delete _fullscreenPic;
 		_fullscreenPic = nullptr;
-		error("Failed to load %s", filename.toString().c_str());
+		error("DarkseedEngine::showFullscreenPic(): Failed to load %s", filename.toString().c_str());
 	}
 	Common::String filePathStr = filename.toString();
 	debug("Loaded %s", filePathStr.c_str());

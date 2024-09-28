@@ -159,7 +159,7 @@ void Player::calculateWalkTarget() {
 	_walkPathIndex = -1;
 	_numConnectorsInWalkPath = 0;
 	int selectedObjNum = 0;
-	if (g_engine->_actionMode == PointerAction) {
+	if (g_engine->_actionMode == kPointerAction) {
 		selectedObjNum = g_engine->_room->getRoomExitAtCursor();
 	}
 

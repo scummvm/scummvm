@@ -235,7 +235,7 @@ void Room::draw() {
 
 int Room::checkCursorAndMoveableObjects() {
 	int actionMode = g_engine->_actionMode;
-	const Sprite &cursorSprite = (actionMode == LookAction)
+	const Sprite &cursorSprite = (actionMode == kLookAction)
 									 ? g_engine->_cursor.getSpriteForType(ExclamationMark)
 									 : g_engine->_cursor.getSprite();
 	bool hasObject = false;
@@ -271,7 +271,7 @@ int Room::checkCursorAndMoveableObjects() {
 
 int Room::checkCursorAndStaticObjects(int x, int y) {
 	int actionMode = g_engine->_actionMode;
-	const Sprite &cursorSprite = (actionMode == LookAction)
+	const Sprite &cursorSprite = (actionMode == kLookAction)
 									 ? g_engine->_cursor.getSpriteForType(ExclamationMark)
 									 : g_engine->_cursor.getSprite();
 	bool hasObject = false;
@@ -283,11 +283,11 @@ int Room::checkCursorAndStaticObjects(int x, int y) {
 			&& _roomObj[i].yOffset <= cursorSprite._height + g_engine->_cursor.getY()
 			&& g_engine->_cursor.getY() <= _roomObj[i].height + _roomObj[i].yOffset
 		) {
-			if (actionMode != PointerAction && _roomObj[i].objNum >= 5) {
+			if (actionMode != kPointerAction && _roomObj[i].objNum >= 5) {
 				hasObject = true;
 			}
 
-			if (actionMode == PointerAction && _roomObj[i].objNum < 6) {
+			if (actionMode == kPointerAction && _roomObj[i].objNum < 6) {
 				hasObject = true;
 			}
 
@@ -321,7 +321,7 @@ int Room::checkCursorAndStaticObjects(int x, int y) {
 
 int Room::CheckCursorAndMovedObjects() {
 	int actionMode = g_engine->_actionMode;
-	const Sprite &cursorSprite = (actionMode == LookAction)
+	const Sprite &cursorSprite = (actionMode == kLookAction)
 									 ? g_engine->_cursor.getSpriteForType(ExclamationMark)
 									 : g_engine->_cursor.getSprite();
 	_collisionType = 1;
@@ -355,7 +355,7 @@ int Room::CheckCursorAndMovedObjects() {
 }
 
 void Room::update() {
-	if (g_engine->_actionMode == HandAction || g_engine->_actionMode > 4) {
+	if (g_engine->_actionMode == kHandAction || g_engine->_actionMode > 4) {
 		int moveableObj = checkCursorAndMoveableObjects();
 		if (moveableObj == -1) {
 			int objectUnderCursor = checkCursorAndStaticObjects(g_engine->_cursor.getX(), g_engine->_cursor.getY());
@@ -372,7 +372,7 @@ void Room::update() {
 		} else {
 			g_engine->_cursor.setCursorType(HandPointing);
 		}
-	} else if (g_engine->_actionMode == LookAction) {
+	} else if (g_engine->_actionMode == kLookAction) {
 		if (checkCursorAndMoveableObjects() != -1 || CheckCursorAndMovedObjects() != -1) {
 			g_engine->_cursor.setCursorType(ExclamationMark);
 		} else {
@@ -384,7 +384,7 @@ void Room::update() {
 			}
 		}
 	} else {
-		if (g_engine->_actionMode != PointerAction) {
+		if (g_engine->_actionMode != kPointerAction) {
 			g_engine->_cursor.setCursorType(Pointer);
 		}
 

@@ -54,11 +54,11 @@ namespace Darkseed {
 struct DarkseedGameDescription;
 
 enum ActionMode : uint8 {
-	PointerAction = 0,
-	HandAction = 2,
-	LookAction = 3,
-	Unk19Action = 19,
-	Unk27Action = 27,
+	kPointerAction = 0,
+	kHandAction = 2,
+	kLookAction = 3,
+	kUseStickAction = 19,
+	kUseHammerAction = 27,
 };
 
 enum class FadeDirection : uint8 {
@@ -101,7 +101,7 @@ public:
 	TosText *_tosText = nullptr;
 	Console *_console = nullptr;
 	Room *_room = nullptr;
-	int _actionMode = PointerAction;
+	int _actionMode = kPointerAction;
 	Player *_player = nullptr;
 	Sprites _sprites;
 	Objects _objectVar;
