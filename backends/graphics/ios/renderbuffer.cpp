@@ -53,7 +53,7 @@ void RenderbufferTarget::activateInternal() {
 	}
 }
 
-bool RenderbufferTarget::setSize(uint width, uint height) {
+bool RenderbufferTarget::setSize(uint width, uint height, Common::RotationMode rotation) {
 	// Set viewport dimensions.
 	_viewport[0] = 0;
 	_viewport[1] = 0;

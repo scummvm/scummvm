@@ -628,6 +628,11 @@ public:
 		* Covers a wide range of platforms, Apple Macs, XBox 360, PS3, and more
 		*/
 		kFeatureCpuAltivec,
+
+		/**
+		* Graphics code is able to rotate the screen
+		*/
+		kFeatureRotationMode,
 	};
 
 	/**

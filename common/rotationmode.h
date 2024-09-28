@@ -19,37 +19,44 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_IOS_RENDERBUFFER_H
-#define BACKENDS_GRAPHICS_IOS_RENDERBUFFER_H
+#ifndef COMMON_ROTATIONMODE_H
+#define COMMON_ROTATIONMODE_H
 
-#include "backends/graphics/opengl/framebuffer.h"
+#include "common/scummsys.h"
 
-namespace OpenGL {
+namespace Common {
 
 /**
- * Render to renderbuffer framebuffer implementation.
+ * @defgroup common_rotationmode Rotation modes
+ * @ingroup common
  *
- * This target allows to render to a renderbuffer, which can then be used as
- * a rendering source like expected on iOS.
+ * @brief API for rotation modes.
+ *
+ * @{
  */
-class RenderbufferTarget : public Framebuffer {
-public:
-	RenderbufferTarget(GLuint renderbufferID);
-	~RenderbufferTarget() override;
 
-	/**
-	 * Set size of the render target.
-	 */
-	bool setSize(uint width, uint height, Common::RotationMode rotation) override;
+class String;
 
-protected:
-	void activateInternal() override;
-
-private:
-	GLuint _glRBO;
-	GLuint _glFBO;
+/**
+ * List of rotation modes.
+ *
+ */
+enum RotationMode {
+	kRotationNormal = 0,
+	kRotation90 = 90,
+	kRotation180 = 180,
+	kRotation270 = 270,
 };
 
-} // End of namespace OpenGL
+struct RotationModeDescription {
+	const char *description;
+	RotationMode id;
+};
+
+extern const RotationModeDescription g_rotationModes[];
+
+extern RotationMode parseRotationMode(int val);
+
+}
 
 #endif

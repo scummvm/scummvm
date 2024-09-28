@@ -30,6 +30,7 @@ MODULE_OBJS := \
 	random.o \
 	rational.o \
 	rendermode.o \
+	rotationmode.o \
 	str.o \
 	stream.o \
 	streamdebug.o \

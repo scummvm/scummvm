@@ -216,6 +216,7 @@ bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	case OSystem::kFeatureVSync:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	case OSystem::kFeatureFullscreenToggleKeepsContext:
+	case OSystem::kFeatureRotationMode:
 #endif
 		return true;
 
@@ -240,6 +241,10 @@ void OpenGLSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) 
 		if (enable) {
 			_window->iconifyWindow();
 		}
+		break;
+
+	case OSystem::kFeatureRotationMode:
+		notifyResize(getWindowWidth(), getWindowHeight());
 		break;
 
 	default:

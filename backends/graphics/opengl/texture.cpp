@@ -756,7 +756,7 @@ void TextureCLUT8GPU::enableLinearFiltering(bool enable) {
 void TextureCLUT8GPU::allocate(uint width, uint height) {
 	// Assure the texture can contain our user data.
 	_clut8Texture.setSize(width, height);
-	_target->setSize(width, height);
+	_target->setSize(width, height, Common::kRotationNormal);
 
 	// In case the needed texture dimension changed we will reinitialize the
 	// texture data buffer.

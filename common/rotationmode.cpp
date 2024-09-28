@@ -19,37 +19,28 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_IOS_RENDERBUFFER_H
-#define BACKENDS_GRAPHICS_IOS_RENDERBUFFER_H
+#include "common/rotationmode.h"
 
-#include "backends/graphics/opengl/framebuffer.h"
+#include "common/gui_options.h"
+#include "common/str.h"
+#include "common/translation.h"
 
-namespace OpenGL {
 
-/**
- * Render to renderbuffer framebuffer implementation.
- *
- * This target allows to render to a renderbuffer, which can then be used as
- * a rendering source like expected on iOS.
- */
-class RenderbufferTarget : public Framebuffer {
-public:
-	RenderbufferTarget(GLuint renderbufferID);
-	~RenderbufferTarget() override;
+namespace Common {
 
-	/**
-	 * Set size of the render target.
-	 */
-	bool setSize(uint width, uint height, Common::RotationMode rotation) override;
 
-protected:
-	void activateInternal() override;
-
-private:
-	GLuint _glRBO;
-	GLuint _glFBO;
+const RotationModeDescription g_rotationModes[] = {
+	{ _s("No rotation"), kRotationNormal },
+	{ _s("Clockwise"), kRotation90 },
+	{ _s("180 degress"), kRotation180 },
+	{ _s("Counter-clockwise"), kRotation270 },
+	{ nullptr, kRotationNormal}
 };
 
-} // End of namespace OpenGL
+RotationMode parseRotationMode(int val) {
+	if ((val % 90) != 0 || val < 0 || val > 270)
+		return kRotationNormal;
 
-#endif
+	return static_cast<RotationMode>(val);
+}
+}

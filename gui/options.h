@@ -170,6 +170,8 @@ private:
 	PopUpWidget *_antiAliasPopUp;
 	StaticTextWidget *_renderModePopUpDesc;
 	PopUpWidget *_renderModePopUp;
+	StaticTextWidget *_rotationModePopUpDesc;
+	PopUpWidget *_rotationModePopUp;
 
 	//
 	// Audio controls
