@@ -1767,9 +1767,11 @@ void HENetworkGameOptionsWidget::load() {
 		_sessionServerAddr->setEditString(sessionServerAddr);
 		_sessionServerAddr->setEnabled(enableSessionServer);
 
-		if (ConfMan.hasKey("generate_random_maps", _domain))
-			generateRandomMaps = ConfMan.getBool("generate_random_maps", _domain);
-		_generateRandomMaps->setState(generateRandomMaps);
+		if (_gameid == "moonbase") {
+			if (ConfMan.hasKey("generate_random_maps", _domain))
+				generateRandomMaps = ConfMan.getBool("generate_random_maps", _domain);
+			_generateRandomMaps->setState(generateRandomMaps);
+		}
 	}
 }
 
