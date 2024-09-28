@@ -132,29 +132,6 @@ Director::Breakpoint *getBreakpoint(const Common::String &handlerName, uint16 sc
 	return nullptr;
 }
 
-static GLuint loadTextureFromSurface(Graphics::Surface *surface, const byte *palette, int palCount) {
-
-	// Create a OpenGL texture identifier
-	GLuint image_texture;
-	glGenTextures(1, &image_texture);
-	glBindTexture(GL_TEXTURE_2D, image_texture);
-
-	// Setup filtering parameters for display
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // This is required on WebGL for non power-of-two textures
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Same
-
-	// Upload pixels into texture
-	Graphics::Surface *s = surface->convertTo(Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0), palette, palCount);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, s->format.bytesPerPixel);
-
-	GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, s->w, s->h, 0, GL_RGB, GL_UNSIGNED_BYTE, s->getPixels()));
-	s->free();
-	delete s;
-	return image_texture;
-}
-
 ImGuiImage getImageID(CastMember *castMember) {
 	if (castMember->_type != CastType::kCastBitmap)
 		return {};
@@ -172,7 +149,7 @@ ImGuiImage getImageID(CastMember *castMember) {
 	if (!pic)
 		return {};
 
-	ImTextureID textureID = (ImTextureID)(intptr_t)loadTextureFromSurface(&pic->_surface, pic->_palette, pic->_paletteColors);
+	ImTextureID textureID = g_system->getImGuiTexture(pic->_surface, pic->_palette, pic->_paletteColors);
 	_state->_cast._textures[bmp] = {textureID, pic->_surface.w, pic->_surface.h};
 	return _state->_cast._textures[bmp];
 }
