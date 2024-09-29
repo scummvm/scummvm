@@ -185,7 +185,6 @@ endif
 # derive from the SDL backend, and they all need the following files.
 ifdef SDL_BACKEND
 MODULE_OBJS += \
-	events/sdl/legacy-sdl-events.o \
 	events/sdl/sdl-events.o \
 	graphics/sdl/sdl-graphics.o \
 	graphics/surfacesdl/surfacesdl-graphics.o \
@@ -386,11 +385,6 @@ MODULE_OBJS += \
 	fs/devoptab/devoptab-fs-factory.o \
 	mixer/maxmod/maxmod-mixer.o \
 	plugins/ds/ds-provider.o
-endif
-
-ifeq ($(BACKEND),dingux)
-MODULE_OBJS += \
-	events/dinguxsdl/dinguxsdl-events.o
 endif
 
 ifdef IPHONE

@@ -852,7 +852,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help              display this help and exit
-  --backend=BACKEND       backend to build (3ds, atari, android, dc, dingux, ds, gcw0,
+  --backend=BACKEND       backend to build (3ds, atari, android, dc, ds,
                           ios7, maemo, n64, null, opendingux, openpandora,
                           psp, psp2, samsungtv, sdl, switch, wii) [sdl]
 
@@ -885,12 +885,10 @@ Special configuration feature:
                                            android-arm64-v8a for Android ARMv8-A (arm64-v8a)
                                            android-x86 for Android x86
                                            android-x86_64 for Android x86_64
-                                           dingux for Dingux
                                            raspberrypi for Raspberry Pi
                                            dreamcast for Sega Dreamcast
                                            ds for Nintendo DS
                                            gamecube for Nintendo GameCube
-                                           gcw0 for GCW Zero
                                            ios7 for Apple iPhone / iPad (iOS >= 7)
                                            ios7-arm64 for Apple iPhone / iPad (iOS >= 7, 64-bit)
                                            kos32 for Kolibri OS
@@ -1698,7 +1696,7 @@ raspberrypi)
 	# It may change in the future.
 	_host_alias=arm-linux-gnueabihf
 	;;
-dingux | gcw0 | opendingux-*)
+opendingux-*)
 	_host_os=linux
 	_host_cpu=mipsel
 	_host_alias=mipsel-linux
@@ -3480,29 +3478,6 @@ if test -n "$_host"; then
 			_ranlib=$_host-ranlib
 			_strip=$_host-strip
 			;;
-		dingux)
-			append_var DEFINES "-DDISABLE_DOSBOX_OPL"
-			append_var DEFINES "-DREDUCE_MEMORY_USAGE"
-			append_var CXXFLAGS "-msoft-float"
-			append_var CXXFLAGS "-mips32"
-			_backend="dingux"
-			_mt32emu=no
-			_nuked_opl=no
-			_optimization_level=-O3
-			# Disable alsa midi to get the port build on OpenDingux toolchain
-			_alsa=no
-			# Disable cloud and SDL_Net due to outdated toolchain
-			_cloud=no
-			_sdlnet=no
-			_libcurl=no
-			_vkeybd=yes
-			_build_hq_scalers=no
-			# Force disable vorbis on dingux, it has terrible performance compared to tremor
-			_vorbis=no
-			# Force disable seq on dingux, no way to use it and it would get enabled by default with configure
-			_seq_midi=no
-			_port_mk="backends/platform/dingux/dingux.mk"
-			;;
 		wasm*-emscripten)
 			_backend="sdl"
 			# Disable cloud and SDL_Net as this is handled in the browser
@@ -3599,23 +3574,6 @@ if test -n "$_host"; then
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
 			add_line_to_config_h "/* #define DEBUG_WII_GDB_NETWORK */"
 			add_line_to_config_h "#define USE_WII_DI"
-			;;
-		gcw0)
-			_sysroot=`$CXX --print-sysroot`
-			_sdlpath=$_sysroot/usr/bin
-			append_var DEFINES "-DGCW0"
-			append_var DEFINES "-DREDUCE_MEMORY_USAGE"
-			append_var CXXFLAGS "-mips32"
-			_backend="dingux"
-			_alsa=no
-			_mt32emu=no
-			_seq_midi=no
-			_timidity=no
-			_build_scalers=no
-			_optimization_level=-O3
-			_vkeybd=yes
-			_vorbis=no
-			_port_mk="backends/platform/dingux/dingux.mk"
 			;;
 		ios7*)
 			add_line_to_config_mk 'IPHONE = 1'
@@ -3995,11 +3953,6 @@ case $_backend in
 			append_var LIBS "-lronin -lm"
 			append_var LDFLAGS "-lronin -lm"
 		fi
-		;;
-	dingux)
-		append_var DEFINES "-DDINGUX"
-		_sdlconfig=sdl-config
-		_sdl=auto
 		;;
 	ds)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/ds'
@@ -4461,7 +4414,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | dingux | dc | ds | ios7 | kolibrios | maemo | null | opendingux | miyoomini | miyoo | openpandora | psp | psp2 | samsungtv | sdl | switch | wii)
+	3ds | android | dc | ds | ios7 | kolibrios | maemo | null | opendingux | miyoomini | miyoo | openpandora | psp | psp2 | samsungtv | sdl | switch | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -4477,7 +4430,7 @@ esac
 # Enable High resolution engines (>320x240) support only for backends which support it
 #
 case $_host in
-	ds | dingux | gcw0)
+	ds)
 		if test "$_highres" = yes ; then
 			_highres=yes
 		else
