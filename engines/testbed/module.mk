@@ -33,6 +33,11 @@ MODULE_OBJS += \
 	speech.o
 endif
 
+ifdef USE_IMGUI
+MODULE_OBJS += \
+	imgui.o
+endif
+
 MODULE_DIRS += \
 	engines/testbed
 

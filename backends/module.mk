@@ -499,6 +499,7 @@ endif
 ifdef USE_IMGUI
 MODULE_OBJS += \
 	imgui/imgui.o \
+	imgui/imgui_demo.o \
 	imgui/imgui_draw.o \
 	imgui/imgui_fonts.o \
 	imgui/imgui_tables.o \
