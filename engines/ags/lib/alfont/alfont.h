@@ -51,6 +51,10 @@ namespace AGS3 {
 // otherwise will search for the point size which results in pixel
 // height closest to the requested size.
 #define ALFONT_FLG_SELECT_NOMINAL_SZ  0x04
+// Precalculate maximal glyph control box, that is maximal graphical
+// extent of any glyph in the font (which may exceed font's height).
+// Note that this requires FreeType to load each glyph one by one.
+#define ALFONT_FLG_PRECALC_MAX_CBOX   0x08
 
 /* structs */
 typedef struct ALFONT_FONT ALFONT_FONT;
@@ -72,6 +76,8 @@ ALFONT_DLL_DECLSPEC int alfont_set_font_size_ex(ALFONT_FONT *f, int h, int flags
 ALFONT_DLL_DECLSPEC int alfont_get_font_height(ALFONT_FONT *f);
 /* Returns the real font graphical height */
 ALFONT_DLL_DECLSPEC int alfont_get_font_real_height(ALFONT_FONT *f);
+/* Returns the real font graphical extent (top, bottom) */
+ALFONT_DLL_DECLSPEC void alfont_get_font_real_vextent(ALFONT_FONT *f, int *top, int *bottom);
 
 ALFONT_DLL_DECLSPEC int alfont_text_mode(int mode);
 
