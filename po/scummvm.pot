@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-28 23:10+0000\n"
+"POT-Creation-Date: 2024-09-29 15:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -544,7 +544,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:164 gui/options.cpp:2070 gui/options.cpp:2251
 #: backends/graphics/atari/atari-graphics.cpp:1061
-#: backends/graphics/sdl/sdl-graphics.cpp:476
+#: backends/graphics/sdl/sdl-graphics.cpp:481
 msgid "Graphics"
 msgstr ""
 
@@ -1722,7 +1722,7 @@ msgstr ""
 msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr ""
 
-#: gui/options.cpp:1694 backends/graphics/sdl/sdl-graphics.cpp:467
+#: gui/options.cpp:1694 backends/graphics/sdl/sdl-graphics.cpp:472
 msgid "Fullscreen mode"
 msgstr ""
 
@@ -3748,7 +3748,7 @@ msgid "Choose a new folder"
 msgstr ""
 
 #: backends/graphics/atari/atari-graphics.cpp:1065
-#: backends/graphics/sdl/sdl-graphics.cpp:498
+#: backends/graphics/sdl/sdl-graphics.cpp:503
 msgid "Toggle aspect ratio correction"
 msgstr ""
 
@@ -3800,32 +3800,32 @@ msgid "Resolution: %dx%d"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:841
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2676
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2684
 msgid "Active graphics filter:"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:862
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2710
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2718
 msgid "Enabled aspect ratio correction"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:864
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2716
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2724
 msgid "Disabled aspect ratio correction"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:877
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2732
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2740
 msgid "Filtering enabled"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:879
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2734
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2742
 msgid "Filtering disabled"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:905
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2761
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2769
 msgid "Stretch mode"
 msgstr ""
 
@@ -3838,29 +3838,29 @@ msgstr ""
 msgid "SDL Surface (forced 8bpp mode)"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:407
+#: backends/graphics/sdl/sdl-graphics.cpp:412
 #, c-format
 msgid "Saved screenshot '%s'"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:422
+#: backends/graphics/sdl/sdl-graphics.cpp:427
 msgid "Could not save screenshot"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:469
+#: backends/graphics/sdl/sdl-graphics.cpp:474
 msgid "Windowed mode"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:480 engines/scumm/help.cpp:88
+#: backends/graphics/sdl/sdl-graphics.cpp:485 engines/scumm/help.cpp:88
 msgid "Toggle fullscreen"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:487 engines/scumm/help.cpp:101
+#: backends/graphics/sdl/sdl-graphics.cpp:492 engines/scumm/help.cpp:101
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:492 engines/stark/metaengine.cpp:240
+#: backends/graphics/sdl/sdl-graphics.cpp:497 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
@@ -3873,27 +3873,27 @@ msgstr ""
 msgid "Save screenshot"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:505
+#: backends/graphics/sdl/sdl-graphics.cpp:510
 msgid "Toggle linear filtered scaling"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:512
+#: backends/graphics/sdl/sdl-graphics.cpp:517
 msgid "Cycle through stretch modes"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:518
+#: backends/graphics/sdl/sdl-graphics.cpp:523
 msgid "Increase the scale factor"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:524
+#: backends/graphics/sdl/sdl-graphics.cpp:529
 msgid "Decrease the scale factor"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:531
+#: backends/graphics/sdl/sdl-graphics.cpp:536
 msgid "Switch to the next scaler"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:536
+#: backends/graphics/sdl/sdl-graphics.cpp:541
 msgid "Switch to the previous scaler"
 msgstr ""
 
