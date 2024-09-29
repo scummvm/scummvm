@@ -78,6 +78,11 @@ void ScreenOverlay::SetImage(std::unique_ptr<Shared::Bitmap> pic, bool has_alpha
 
 void ScreenOverlay::SetSpriteNum(int sprnum, int offx, int offy) {
 	ResetImage();
+
+	assert(sprnum >= 0 && sprnum < _GP(game).SpriteInfos.size());
+	if (sprnum < 0 || sprnum >= _GP(game).SpriteInfos.size())
+		return;
+
 	_flags |= kOver_SpriteShared | kOver_AlphaChannel * ((_GP(game).SpriteInfos[sprnum].Flags & SPF_ALPHACHANNEL) != 0);
 	_sprnum = sprnum;
 	offsetX = offx;
