@@ -475,296 +475,315 @@ void DarkseedEngine::handleInput() {
 		_animation->setupOtherNspAnimation(1, 5);
 	}
 
-	if (!_animation->_isPlayingAnimation_maybe) {
-		if (!_player->_playerIsChangingDirection) {
-			if (currentRoomNumber == 0x39 && _previousRoomNumber == 0x36) {
-				_player->updateSprite();
-			} else {
-				if (_player->isAtWalkTarget() && !_player->_heroMoving) {
-					_player->updateSprite();
+	if (_animation->_isPlayingAnimation_maybe) {
+		_animation->updateAnimation();
+		if (!_animation->_isPlayingAnimation_maybe && _player->_isAutoWalkingToBed) {
+			_player->setplayertowardsbedroom();
+		}
+		return;
+	}
+
+	if (_player->_playerIsChangingDirection) {
+		// turn player around.
+		_player->_playerSpriteWalkIndex_maybe = (int16)((_player->_playerSpriteWalkIndex_maybe + _player->_playerWalkFrameDeltaOffset) & 7);
+		if (_player->_playerSpriteWalkIndex_maybe == _player->_playerNewFacingDirection_maybe) {
+			_player->_playerIsChangingDirection = false;
+			_player->_direction = _player->_playerNewFacingDirection_maybe / 2;
+		}
+		_player->updateSprite();
+		return;
+	}
+
+	if (currentRoomNumber == 0x39 && _previousRoomNumber == 0x36) {
+		_player->updateSprite();
+		return;
+	}
+
+	if (_player->isAtWalkTarget() && !_player->_heroMoving) {
+		_player->updateSprite();
+	} else {
+		if (_counter_2c85_888b >= 0 && !_player->isAtWalkTarget()) {
+			_counter_2c85_888b = 0;
+			_player->_playerWalkFrameIdx = (_player->_playerWalkFrameIdx + 1) % 8;
+			if ((_player->_playerWalkFrameIdx == 0 || _player->_playerWalkFrameIdx == 4)
+				&& currentRoomNumber != 0x22 && currentRoomNumber != 0x13
+				&& currentRoomNumber != 0x14 && currentRoomNumber != 0x15
+				&& currentRoomNumber != 16) {
+				//TODO
+			//							FUN_1208_0dac_sound_related(0x5c,CONCAT11((char)(uVar7 >> 8),5));
+			}
+		}
+		_player->updateSprite();
+	}
+	if (_isLeftMouseClicked && _cursor.getY() > 0x28 && !_player->_actionToPerform) { // prevLeftMouseButtonState == 0 &&
+		if (_actionMode == kPointerAction) {
+			_player->calculateWalkTarget();
+			_player->playerFaceWalkTarget();
+		} else {
+			int roomObjIdx = _room->getObjectUnderCursor();
+			if (roomObjIdx != -1) {
+				// 2022:77ce
+				// TODO walk player to object.
+				_player->_walkToSequence = true;
+				_player->_walkToSequencePoint = _cursor.getPosition();
+				_player->_sequenceRotation = -1;
+				Common::Point currentCursorPos = _cursor.getPosition();
+				int objNum = _room->_roomObj[roomObjIdx].objNum;
+				if (walkToDirTbl[objNum] != 4) {
+					_player->_sequenceRotation = walkToDirTbl[objNum];
+					_cursor.updatePosition(walkToXTbl[objNum], walkToYTbl[objNum]);
+				}
+				if (objNum == 142 && _room->_roomNumber == 2) {
+					_player->_sequenceRotation = 0;
+					_cursor.updatePosition(347, 189);
+				} else if (objNum == 53 && _room->_roomNumber == 15) {
+					_player->_sequenceRotation = 0;
+					_cursor.updatePosition(369, 216);
+				} else if (objNum == 114) {
+					if (_cursor.getX() < 321) {
+						_player->_sequenceRotation = 3;
+						_cursor.updatePosition(169, 178);
+					} else {
+						_player->_sequenceRotation = 1;
+						_cursor.updatePosition(362, 198);
+					}
+				} else if (objNum == 189 || (objNum == 64 && _room->_roomNumber == 30)) {
+					_player->_sequenceRotation = 1;
+					_cursor.updatePosition(405, 208);
+				} else if (objNum == 50 || objNum == 85 || (objNum >= 163 && objNum <= 168)) {
+					_player->_sequenceRotation = 3;
+					_cursor.updatePosition(228, 211);
+				} else if (objNum == 51 || objNum == 187) {
+					_player->_sequenceRotation = 1;
+					_cursor.updatePosition(380, 211);
+				} else if (objNum == 116 && _actionMode == kUseStickAction) {
+					_player->_sequenceRotation = 1;
+					_cursor.updatePosition(285, 233);
+				} else if (objNum == 137) {
+					_player->_sequenceRotation = 1;
+					if (_actionMode == kUseHammerAction) {
+						_cursor.updatePosition(354, 175);
+					} else {
+						_cursor.updatePosition(409, 173);
+					}
+				} else if (objNum == 112 || objNum == 111) {
+					_player->_sequenceRotation = 1;
+					_cursor.updatePosition(464, 191);
+				} else if (objNum == 138 || objNum == 7 || objNum == 152) {
+					_player->_sequenceRotation = 1;
+					_cursor.updatePosition(292, 208);
+				} else if (objNum == 22 || objNum == 42 ||
+						   (objNum == 35 && _objectVar[22] < 2 && _cursor.getY() > 40)) {
+					_player->_sequenceRotation = 1;
+					if (_objectVar[22] == 0 || _objectVar[22] == 1) {
+						_cursor.updatePosition(437, 203);
+					}
+					if (_objectVar[22] == 2) {
+						_cursor.updatePosition(427, 196);
+					}
+					if (_objectVar[22] > 2) {
+						_cursor.updatePosition(394, 175);
+					}
+				}
+
+				if (objNum == 102 && _objectVar[23] != 0 && _actionMode == kHandAction) {
+					_player->_sequenceRotation = 0;
+					_cursor.updatePosition(331, 195);
+				} else if (objNum < 104 || objNum > 108) {
+					if (objNum == 78) {
+						if (_room->_roomNumber == 2) {
+							_player->_sequenceRotation = 3;
+							_cursor.updatePosition(152, 239);
+						} else {
+							_player->_sequenceRotation = 1;
+							_cursor.updatePosition(497, 220);
+						}
+					} else if (objNum == 59) {
+						if (_room->_roomNumber == 3) {
+							_player->_sequenceRotation = 3;
+							_cursor.updatePosition(145, 239);
+						} else {
+							_player->_sequenceRotation = 1;
+							_cursor.updatePosition(520, 229);
+						}
+					}
 				} else {
-					if (_counter_2c85_888b >= 0 && !_player->isAtWalkTarget()) {
-						_counter_2c85_888b = 0;
-						_player->_playerWalkFrameIdx = (_player->_playerWalkFrameIdx + 1) % 8;
-						if ((_player->_playerWalkFrameIdx == 0 || _player->_playerWalkFrameIdx == 4)
-							&& currentRoomNumber != 0x22 && currentRoomNumber != 0x13
-							&& currentRoomNumber != 0x14 && currentRoomNumber != 0x15
-							&& currentRoomNumber != 16) {
-							//TODO
-						//							FUN_1208_0dac_sound_related(0x5c,CONCAT11((char)(uVar7 >> 8),5));
-						}
+					_player->_sequenceRotation = 3;
+					_cursor.updatePosition(_room->_roomObj[roomObjIdx].xOffset + 30, 206);
+				}
+				if (_room->_roomNumber == 34 || (_room->_roomNumber > 18 && _room->_roomNumber < 24)) {
+					_player->_walkTarget = _player->_position;
+				} else if (_cursor.getPosition() != _player->_position) {
+					_player->calculateWalkTarget();
+				}
+
+				_cursor.updatePosition(currentCursorPos.x, currentCursorPos.y);
+				_player->playerFaceWalkTarget();
+				_player->_actionToPerform = true;
+			}
+		}
+	}
+	int xDistToTarget = ABS(_player->_walkTarget.x - _player->_position.x);
+	int yDistToTarget = ABS(_player->_walkTarget.y - _player->_position.y);
+
+	if (_isRightMouseClicked && !_player->_actionToPerform) {
+		if (_actionMode == kLookAction) {
+			_actionMode = kPointerAction;
+		} else if (_actionMode == kPointerAction) {
+			_actionMode = kHandAction;
+		} else if (_actionMode == kHandAction) {
+			_actionMode = kLookAction;
+		} else {
+			_actionMode = kPointerAction;
+		}
+		_cursor.setCursorType((CursorType)_actionMode);
+	}
+	if (_player->isAtWalkTarget() && _player->_heroMoving && _player->_walkPathIndex != -1) {
+		_player->walkToNextConnector();
+	}
+	if (_isLeftMouseClicked && _cursor.getY() < 41) {
+		_inventory.handleClick();
+	}
+	_room->calculateScaledSpriteDimensions(_player->getWidth(), _player->getHeight(), _player->_position.y);
+
+	if (_player->isAtWalkTarget() && _player->_heroMoving && !_player->_actionToPerform) {
+		if (_useDoorTarget) {
+			_player->changeDirection(_player->_direction, _targetPlayerDirection);
+			_useDoorTarget = false;
+			_doorEnabled = true;
+			return;
+		}
+		_player->_heroMoving = false;
+		if (_useDoorTarget || _doorEnabled) {
+			for (unsigned int i = 0; i < _room->_room1.size(); i++) {
+				RoomExit &roomExit = _room->_room1[i];
+				if (roomExit.roomNumber != 0xff
+					&& roomExit.x < _scaledSpriteWidth / 2 + _player->_position.x
+					&& _player->_position.x - _scaledSpriteWidth / 2 < roomExit.x + roomExit.width
+					&& roomExit.y < _player->_position.y
+					&& _player->_position.y - _scaledSpriteHeight < roomExit.y + roomExit.height
+					&& roomExit.direction == _player->_direction) {
+					bool bVar = true;
+					if (currentRoomNumber == 64 && roomExit.roomNumber == 64) {
+						bVar = false;
+						_console->printTosText(703);
 					}
-					_player->updateSprite();
-				}
-				if (_isLeftMouseClicked && _cursor.getY() > 0x28 && !_player->_actionToPerform) { // prevLeftMouseButtonState == 0 &&
-					if (_actionMode == kPointerAction) {
-						_player->calculateWalkTarget();
-						_player->playerFaceWalkTarget();
-					} else {
-						int roomObjIdx = _room->getObjectUnderCursor();
-						if (roomObjIdx != -1) {
-							// 2022:77ce
-							// TODO walk player to object.
-							_player->_walkToSequence = true;
-							_player->_walkToSequencePoint = _cursor.getPosition();
-							_player->_sequenceRotation = -1;
-							Common::Point currentCursorPos = _cursor.getPosition();
-							int objNum = _room->_roomObj[roomObjIdx].objNum;
-							if (walkToDirTbl[objNum] != 4) {
-								_player->_sequenceRotation = walkToDirTbl[objNum];
-								_cursor.updatePosition(walkToXTbl[objNum], walkToYTbl[objNum]);
-							}
-							if (objNum == 142 && _room->_roomNumber == 2) {
-								_player->_sequenceRotation = 0;
-								_cursor.updatePosition(347, 189);
-							} else if (objNum == 53 && _room->_roomNumber == 15) {
-								_player->_sequenceRotation = 0;
-								_cursor.updatePosition(369, 216);
-							} else if (objNum == 114) {
-								if (_cursor.getX() < 321) {
-									_player->_sequenceRotation = 3;
-									_cursor.updatePosition(169, 178);
-								} else {
-									_player->_sequenceRotation = 1;
-									_cursor.updatePosition(362, 198);
-								}
-							} else if (objNum == 189 || (objNum == 64 && _room->_roomNumber == 30)) {
-								_player->_sequenceRotation = 1;
-								_cursor.updatePosition(405, 208);
-							} else if (objNum == 50 || objNum == 85 || (objNum >= 163 && objNum <= 168)) {
-								_player->_sequenceRotation = 3;
-								_cursor.updatePosition(228, 211);
-							} else if (objNum == 51 || objNum == 187) {
-								_player->_sequenceRotation = 1;
-								_cursor.updatePosition(380, 211);
-							} else if (objNum == 116 && _actionMode == kUseStickAction) {
-								_player->_sequenceRotation = 1;
-								_cursor.updatePosition(285, 233);
-							} else if (objNum == 137) {
-								_player->_sequenceRotation = 1;
-								if (_actionMode == kUseHammerAction) {
-									_cursor.updatePosition(354, 175);
-								} else {
-									_cursor.updatePosition(409, 173);
-								}
-							} else if (objNum == 112 || objNum == 111) {
-								_player->_sequenceRotation = 1;
-								_cursor.updatePosition(464, 191);
-							} else if (objNum == 138 || objNum == 7 || objNum == 152) {
-								_player->_sequenceRotation = 1;
-								_cursor.updatePosition(292, 208);
-							} else if (objNum == 22 || objNum == 42 ||
-									   (objNum == 35 && _objectVar[22] < 2 && _cursor.getY() > 40)) {
-								_player->_sequenceRotation = 1;
-								if (_objectVar[22] == 0 || _objectVar[22] == 1) {
-									_cursor.updatePosition(437, 203);
-								}
-								if (_objectVar[22] == 2) {
-									_cursor.updatePosition(427, 196);
-								}
-								if (_objectVar[22] > 2) {
-									_cursor.updatePosition(394, 175);
-								}
-							}
-
-							if (objNum == 102 && _objectVar[23] != 0 && _actionMode == kHandAction) {
-								_player->_sequenceRotation = 0;
-								_cursor.updatePosition(331, 195);
-							} else if (objNum < 104 || objNum > 108) {
-								if (objNum == 78) {
-									if (_room->_roomNumber == 2) {
-										_player->_sequenceRotation = 3;
-										_cursor.updatePosition(152, 239);
-									} else {
-										_player->_sequenceRotation = 1;
-										_cursor.updatePosition(497, 220);
-									}
-								} else if (objNum == 59) {
-									if (_room->_roomNumber == 3) {
-										_player->_sequenceRotation = 3;
-										_cursor.updatePosition(145, 239);
-									} else {
-										_player->_sequenceRotation = 1;
-										_cursor.updatePosition(520, 229);
-									}
-								}
-							} else {
-								_player->_sequenceRotation = 3;
-								_cursor.updatePosition(_room->_roomObj[roomObjIdx].xOffset + 30, 206);
-							}
-							if (_room->_roomNumber == 34 || (_room->_roomNumber > 18 && _room->_roomNumber < 24)) {
-								_player->_walkTarget = _player->_position;
-							} else if (_cursor.getPosition() != _player->_position) {
-								_player->calculateWalkTarget();
-							}
-
-							_cursor.updatePosition(currentCursorPos.x, currentCursorPos.y);
-							_player->playerFaceWalkTarget();
-							_player->_actionToPerform = true;
-						}
+					if (currentRoomNumber == 67 && roomExit.roomNumber == 0) {
+						bVar = false;
+						_console->printTosText(902);
 					}
-				}
-				int xDistToTarget = ABS(_player->_walkTarget.x - _player->_position.x);
-				int yDistToTarget = ABS(_player->_walkTarget.y - _player->_position.y);
-
-				if (_isRightMouseClicked && !_player->_actionToPerform) {
-					if (_actionMode == kLookAction) {
-						_actionMode = kPointerAction;
-					} else if (_actionMode == kPointerAction) {
-						_actionMode = kHandAction;
-					} else if (_actionMode == kHandAction) {
-						_actionMode = kLookAction;
-					} else {
-						_actionMode = kPointerAction;
+					if ((currentRoomNumber == 59 && _objectVar[190] < 2) ||
+						(currentRoomNumber == 61 && _objectVar[22] < 3 && roomExit.roomNumber == 13) ||
+						(currentRoomNumber == 7 && roomExit.roomNumber == 38 && _objectVar[137] == 0) ||
+						(currentRoomNumber == 46 && roomExit.roomNumber == 60 && _objectVar[57] == 1) ||
+						(currentRoomNumber == 7 && roomExit.roomNumber == 38 && _objectVar[57] == 1) ||
+						(currentRoomNumber == 13 && roomExit.roomNumber == 31 && _objectVar[23] != 1) ||
+						(currentRoomNumber == 2 && roomExit.roomNumber == 0 && _objectVar[78] != 2) ||
+						(currentRoomNumber == 0 && roomExit.roomNumber == 2 && _objectVar[78] != 2) ||
+						(currentRoomNumber == 32 && roomExit.roomNumber == 13 && _objectVar[23] != 1) ||
+						(currentRoomNumber == 13 && roomExit.roomNumber == 32 && _objectVar[23] != 1) ||
+						(currentRoomNumber == 39 && roomExit.roomNumber == 46 && _objectVar[117] == 0) ||
+						(currentRoomNumber == 3 && roomExit.roomNumber == 9 && _objectVar[59] != 2) ||
+						(currentRoomNumber == 9 && roomExit.roomNumber == 3 && _objectVar[59] != 2)) {
+						bVar = false;
 					}
-					_cursor.setCursorType((CursorType)_actionMode);
-				}
-				if (_player->isAtWalkTarget() && _player->_heroMoving && _player->_walkPathIndex != -1) {
-					_player->walkToNextConnector();
-				}
-				if (_isLeftMouseClicked && _cursor.getY() < 41) {
-					_inventory.handleClick();
-				}
-				_room->calculateScaledSpriteDimensions(_player->getWidth(), _player->getHeight(), _player->_position.y);
-
-				if (_player->isAtWalkTarget() && _player->_heroMoving && !_player->_actionToPerform) {
-					if (_useDoorTarget) {
-						_player->changeDirection(_player->_direction, _targetPlayerDirection);
-						_useDoorTarget = false;
-						_doorEnabled = true;
+					if (_currentTimeInSeconds > 64800 &&
+						((currentRoomNumber == 11 && roomExit.roomNumber == 15) ||
+						 (currentRoomNumber == 11 && roomExit.roomNumber == 16) ||
+						 (currentRoomNumber == 12 && roomExit.roomNumber == 17))) {
+						bVar = false;
+						_console->printTosText(936);
+					}
+					if (currentRoomNumber == 7 && roomExit.roomNumber == 38 && bVar) {
+						_player->loadAnimations("mirror.nsp");
+						_animation->setupOtherNspAnimation(0, 27);
 						return;
 					}
-					_player->_heroMoving = false;
-					if (_useDoorTarget || _doorEnabled) {
-						for (unsigned int i = 0; i < _room->_room1.size(); i++) {
-							RoomExit &roomExit = _room->_room1[i];
-							if (roomExit.roomNumber != 0xff
-								&& roomExit.x < _scaledSpriteWidth / 2 + _player->_position.x
-								&& _player->_position.x - _scaledSpriteWidth / 2 < roomExit.x + roomExit.width
-								&& roomExit.y < _player->_position.y
-								&& _player->_position.y - _scaledSpriteHeight < roomExit.y + roomExit.height
-								&& roomExit.direction == _player->_direction) {
-								bool bVar = true;
-								if (currentRoomNumber == 64 && roomExit.roomNumber == 64) {
-									bVar = false;
-									_console->printTosText(703);
-								}
-								if (currentRoomNumber == 67 && roomExit.roomNumber == 0) {
-									bVar = false;
-									_console->printTosText(902);
-								}
-								if ((currentRoomNumber == 59 && _objectVar[190] < 2) ||
-									(currentRoomNumber == 61 && _objectVar[22] < 3 && roomExit.roomNumber == 13) ||
-									(currentRoomNumber == 7 && roomExit.roomNumber == 38 && _objectVar[137] == 0) ||
-									(currentRoomNumber == 46 && roomExit.roomNumber == 60 && _objectVar[57] == 1) ||
-									(currentRoomNumber == 7 && roomExit.roomNumber == 38 && _objectVar[57] == 1) ||
-									(currentRoomNumber == 13 && roomExit.roomNumber == 31 && _objectVar[23] != 1) ||
-									(currentRoomNumber == 2 && roomExit.roomNumber == 0 && _objectVar[78] != 2) ||
-									(currentRoomNumber == 0 && roomExit.roomNumber == 2 && _objectVar[78] != 2) ||
-									(currentRoomNumber == 32 && roomExit.roomNumber == 13 && _objectVar[23] != 1) ||
-									(currentRoomNumber == 13 && roomExit.roomNumber == 32 && _objectVar[23] != 1) ||
-									(currentRoomNumber == 39 && roomExit.roomNumber == 46 && _objectVar[117] == 0) ||
-									(currentRoomNumber == 3 && roomExit.roomNumber == 9 && _objectVar[59] != 2) ||
-									(currentRoomNumber == 9 && roomExit.roomNumber == 3 && _objectVar[59] != 2)) {
-									bVar = false;
-								}
-								if (_currentTimeInSeconds > 64800 &&
-									((currentRoomNumber == 11 && roomExit.roomNumber == 15) ||
-									 (currentRoomNumber == 11 && roomExit.roomNumber == 16) ||
-									 (currentRoomNumber == 12 && roomExit.roomNumber == 17))) {
-									bVar = false;
-									_console->printTosText(936);
-								}
-								if (currentRoomNumber == 7 && roomExit.roomNumber == 38 && bVar) {
-									_player->loadAnimations("mirror.nsp");
-									_animation->setupOtherNspAnimation(0, 27);
-									return;
-								}
-								if ((currentRoomNumber == 41 && roomExit.roomNumber == 44 && bVar) ||
-									(currentRoomNumber == 44 && roomExit.roomNumber == 41 && bVar)) {
-									_player->loadAnimations("beamer.nsp");
-									_animation->setupOtherNspAnimation(0, 57);
-									return;
-								}
-								if (currentRoomNumber == 10 && roomExit.roomNumber == 6 && bVar && !_player->_isAutoWalkingToBed) {
-									_player->loadAnimations("rm10strs.nsp");
-									_animation->setupOtherNspAnimation(0, 53);
-									return;
-								}
-								if (currentRoomNumber == 38 && roomExit.roomNumber == 7 && bVar) {
-									_player->loadAnimations("darkin.nsp");
-									_animation->setupOtherNspAnimation(0, 41);
-									return;
-								}
-								if (_objectVar[52] == 1 &&
-									((currentRoomNumber == 12 && roomExit.roomNumber == 17) || (currentRoomNumber == 11 && (roomExit.roomNumber == 15 || roomExit.roomNumber == 16)))
-									) {
-									_console->printTosText(437);
-									bVar = false;
-									// TODO the original sets roomExit to number 8 here.
-								} else if (currentRoomNumber == 11 && roomExit.roomNumber == 15 && bVar) {
-									_player->loadAnimations("rm11strs.nsp");
-									_animation->setupOtherNspAnimation(0, 55);
-									return;
-								}
-								if (currentRoomNumber == 14 && roomExit.roomNumber == 35 && _objectVar[99] != 1) {
-									bVar = false;
-									_console->printTosText(937);
-								}
-								if (bVar && (
-												(currentRoomNumber == 6 && roomExit.roomNumber == 10) ||
-												(currentRoomNumber == 11 && roomExit.roomNumber == 16) ||
-												(currentRoomNumber == 12 && roomExit.roomNumber == 17)
-												)
-									) {
-									_player->loadAnimations("opendoor.nsp");
-									_animation->setupOtherNspAnimation(0, 14);
-									// FUN_1208_0dac_sound_related(10,CONCAT11(extraout_AH,5));
-									return;
-								}
-								if (currentRoomNumber == 6 && roomExit.roomNumber == 5 && bVar) {
-									_player->_position.x = 346;
-									_player->_position.y = 176;
-									_player->loadAnimations("stairs.nsp");
-									_animation->setupOtherNspAnimation(1, 6);
-									return;
-								}
-								if (currentRoomNumber == 33 && roomExit.roomNumber == 34 && bVar) {
-									_player->loadAnimations("opendoor.nsp");
-									_animation->setupOtherNspAnimation(0, 25);
-									// FUN_1208_0dac_sound_related(24,CONCAT11(extraout_AH,5));
-									return;
-								}
-								if (currentRoomNumber == 5 && roomExit.roomNumber == 6 && bVar) {
-									if (_player->_position.x == 466 && _player->_position.y == 195) {
-										_player->loadAnimations("stairs.nsp");
-										_player->_position.x -= 35;
-										_animation->setupOtherNspAnimation(3, 7);
-										return;
-									}
-									bVar = false;
-								}
-								if (currentRoomNumber == 40 && roomExit.roomNumber == 41 && _objectVar[59] != 2) {
-									_console->printTosText(775);
-									bVar = false;
-								}
-								if (currentRoomNumber == 44 && roomExit.roomNumber == 43 && _objectVar[78] != 2) {
-									_console->printTosText(775);
-									bVar = false;
-								}
+					if ((currentRoomNumber == 41 && roomExit.roomNumber == 44 && bVar) ||
+						(currentRoomNumber == 44 && roomExit.roomNumber == 41 && bVar)) {
+						_player->loadAnimations("beamer.nsp");
+						_animation->setupOtherNspAnimation(0, 57);
+						return;
+					}
+					if (currentRoomNumber == 10 && roomExit.roomNumber == 6 && bVar && !_player->_isAutoWalkingToBed) {
+						_player->loadAnimations("rm10strs.nsp");
+						_animation->setupOtherNspAnimation(0, 53);
+						return;
+					}
+					if (currentRoomNumber == 38 && roomExit.roomNumber == 7 && bVar) {
+						_player->loadAnimations("darkin.nsp");
+						_animation->setupOtherNspAnimation(0, 41);
+						return;
+					}
+					if (_objectVar[52] == 1 &&
+						((currentRoomNumber == 12 && roomExit.roomNumber == 17) || (currentRoomNumber == 11 && (roomExit.roomNumber == 15 || roomExit.roomNumber == 16)))
+						) {
+						_console->printTosText(437);
+						bVar = false;
+						// TODO the original sets roomExit to number 8 here.
+					} else if (currentRoomNumber == 11 && roomExit.roomNumber == 15 && bVar) {
+						_player->loadAnimations("rm11strs.nsp");
+						_animation->setupOtherNspAnimation(0, 55);
+						return;
+					}
+					if (currentRoomNumber == 14 && roomExit.roomNumber == 35 && _objectVar[99] != 1) {
+						bVar = false;
+						_console->printTosText(937);
+					}
+					if (bVar && (
+									(currentRoomNumber == 6 && roomExit.roomNumber == 10) ||
+									(currentRoomNumber == 11 && roomExit.roomNumber == 16) ||
+									(currentRoomNumber == 12 && roomExit.roomNumber == 17)
+									)
+						) {
+						_player->loadAnimations("opendoor.nsp");
+						_animation->setupOtherNspAnimation(0, 14);
+						// FUN_1208_0dac_sound_related(10,CONCAT11(extraout_AH,5));
+						return;
+					}
+					if (currentRoomNumber == 6 && roomExit.roomNumber == 5 && bVar) {
+						_player->_position.x = 346;
+						_player->_position.y = 176;
+						_player->loadAnimations("stairs.nsp");
+						_animation->setupOtherNspAnimation(1, 6);
+						return;
+					}
+					if (currentRoomNumber == 33 && roomExit.roomNumber == 34 && bVar) {
+						_player->loadAnimations("opendoor.nsp");
+						_animation->setupOtherNspAnimation(0, 25);
+						// FUN_1208_0dac_sound_related(24,CONCAT11(extraout_AH,5));
+						return;
+					}
+					if (currentRoomNumber == 5 && roomExit.roomNumber == 6 && bVar) {
+						if (_player->_position.x == 466 && _player->_position.y == 195) {
+							_player->loadAnimations("stairs.nsp");
+							_player->_position.x -= 35;
+							_animation->setupOtherNspAnimation(3, 7);
+							return;
+						}
+						bVar = false;
+					}
+					if (currentRoomNumber == 40 && roomExit.roomNumber == 41 && _objectVar[59] != 2) {
+						_console->printTosText(775);
+						bVar = false;
+					}
+					if (currentRoomNumber == 44 && roomExit.roomNumber == 43 && _objectVar[78] != 2) {
+						_console->printTosText(775);
+						bVar = false;
+					}
 
-								if (bVar) {
-									if (currentRoomNumber != 0x22 && (currentRoomNumber < 0x13 || currentRoomNumber > 0x17)) {
-										_player->_playerIsChangingDirection = false;
-										_player->_heroMoving = false;
-										_player->updateSprite();
-										updateDisplay();
-										_previousRoomNumber = currentRoomNumber;
+					if (bVar) {
+						if (currentRoomNumber != 0x22 && (currentRoomNumber < 0x13 || currentRoomNumber > 0x17)) {
+							_player->_playerIsChangingDirection = false;
+							_player->_heroMoving = false;
+							_player->updateSprite();
+							updateDisplay();
+							_previousRoomNumber = currentRoomNumber;
 //										currentRoomNumber = *(byte *)((int)&roomExitTbl[0].roomNumber + iVar7 * 0xb);
 //										if (((isAutoWalkingToBed != False) && (DAT_2c85_8254 == 2)) && (currentRoomNumber == 10)) {
 //											FUN_171d_0c6e();
 //										}
-										changeToRoom(roomExit.roomNumber);
+							changeToRoom(roomExit.roomNumber);
 //										if ((isAutoWalkingToBed != False) &&
 //											((currentRoomNumber != 5 ||
 //											  (lVar9 = CONCAT22(playerSpriteX_long._2_2_,(uint)playerSpriteX_long),
@@ -776,224 +795,208 @@ void DarkseedEngine::handleInput() {
 //											lVar9 = CONCAT22(playerSpriteX_long._2_2_,(uint)playerSpriteX_long);
 //											lVar10 = CONCAT22(playerSpriteY_long._2_2_,(uint)playerSpriteY_long);
 //										}
-										return;
-									}
-								}
-							}
+							return;
 						}
 					}
 				}
-				if (_player->isAtWalkTarget() && _player->_actionToPerform) {
-					if (_player->_sequenceRotation != -1) {
-						_player->changeDirection(_player->_direction, _player->_sequenceRotation);
-						_player->updateSprite();
-						_player->_sequenceRotation = -1;
-						return;
-					}
-					_player->_heroMoving = false;
-					_player->_actionToPerform = false;
-					// TODO complete at final destination logic. 2022:879d
-					Common::Point currentCursorPos = _cursor.getPosition();
-					if (_player->_walkToSequence) {
-						_cursor.setPosition(_player->_walkToSequencePoint);
-						_player->_walkToSequence = false;
-					}
-					int objIdx = _room->getObjectUnderCursor();
-					_cursor.setPosition(currentCursorPos);
-					if (objIdx != -1) {
-						int objType = _room->_roomObj[objIdx].type;
-						int objNum = _room->_roomObj[objIdx].objNum;
-						if (((objType != 4 && objType != 0 && objType < 10) || objNum > 5 || _room->_collisionType != 0)) {
-							if (_room->_collisionType == 0) {
-								handleObjCollision(objNum);
-							} else {
-								handleObjCollision(objIdx); // TODO is this correct?
-							}
-						}
-					}
-					if (objIdx == -1) {
-						_console->printTosText(938);
-						if (_actionMode > 3) {
-							_actionMode = kPointerAction;
-							_cursor.setCursorType((CursorType)_actionMode);
-						}
+			}
+		}
+	}
+	if (_player->isAtWalkTarget() && _player->_actionToPerform) {
+		if (_player->_sequenceRotation != -1) {
+			_player->changeDirection(_player->_direction, _player->_sequenceRotation);
+			_player->updateSprite();
+			_player->_sequenceRotation = -1;
+			return;
+		}
+		_player->_heroMoving = false;
+		_player->_actionToPerform = false;
+		// TODO complete at final destination logic. 2022:879d
+		Common::Point currentCursorPos = _cursor.getPosition();
+		if (_player->_walkToSequence) {
+			_cursor.setPosition(_player->_walkToSequencePoint);
+			_player->_walkToSequence = false;
+		}
+		int objIdx = _room->getObjectUnderCursor();
+		_cursor.setPosition(currentCursorPos);
+		if (objIdx != -1) {
+			int objType = _room->_roomObj[objIdx].type;
+			int objNum = _room->_roomObj[objIdx].objNum;
+			if (((objType != 4 && objType != 0 && objType < 10) || objNum > 5 || _room->_collisionType != 0)) {
+				if (_room->_collisionType == 0) {
+					handleObjCollision(objNum);
+				} else {
+					handleObjCollision(objIdx); // TODO is this correct?
+				}
+			}
+		}
+		if (objIdx == -1) {
+			_console->printTosText(938);
+			if (_actionMode > 3) {
+				_actionMode = kPointerAction;
+				_cursor.setCursorType((CursorType)_actionMode);
+			}
+		} else {
+			if (_actionMode > 3) {
+				_actionMode = kPointerAction;
+				_cursor.setCursorType((CursorType)_actionMode);
+			}
+		}
+	}
+	if (!_animation->_isPlayingAnimation_maybe) {
+		// walk to destination point
+		int walkXDelta = 0;
+		int walkYDelta = 0;
+		int local_a = _scaledWalkSpeed_maybe * 16;
+		if (_player->_direction == 0 || _player->_direction == 2) {
+			local_a = local_a / 3;
+		}
+		if (local_a < 1000) {
+			local_a = 1000;
+		}
+		if (yDistToTarget < xDistToTarget) {
+			walkXDelta = local_a;
+			if (yDistToTarget == 0) {
+				walkYDelta = 0;
+			} else {
+				walkYDelta = (local_a * yDistToTarget) / xDistToTarget;
+			}
+		} else {
+			walkYDelta = local_a;
+			if (xDistToTarget == 0) {
+				walkXDelta = 0;
+			} else {
+				walkXDelta = (local_a * xDistToTarget) / yDistToTarget;
+			}
+		}
+		if (walkXDelta != 0) {
+			walkXDelta = walkXDelta / 1000;
+		}
+		if (walkYDelta != 0) {
+			walkYDelta = walkYDelta / 1000;
+		}
+		if (!_room->canWalkAtLocation(_player->_walkTarget.x, _player->_walkTarget.y) || _player->isAtWalkTarget()) {
+			bool bVar1 = false;
+			bool bVar2 = false;
+			if ((walkYDelta == 0 && _player->_position.y != _player->_walkTarget.y) ||
+				_player->_position.y == _player->_walkTarget.y) {
+				bVar2 = true;
+			}
+			if ((walkXDelta == 0 && _player->_position.x != _player->_walkTarget.x) ||
+				_player->_position.x == _player->_walkTarget.x) {
+				bVar1 = true;
+			}
+			int local_6 = 0;
+			int local_4 = 0;
+			if (_player->_walkTarget.x < _player->_position.x) {
+				if (_player->_position.x - _player->_walkTarget.x <= walkXDelta) {
+					local_6 = _player->_position.x - _player->_walkTarget.x;
+				} else {
+					local_6 = walkXDelta;
+				}
+				while (!bVar1 && local_6 > 0) {
+					if (!_room->canWalkAtLocation(_player->_position.x - local_6 - 1, _player->_position.y)) {
+						local_6--;
 					} else {
-						if (_actionMode > 3) {
-							_actionMode = kPointerAction;
-							_cursor.setCursorType((CursorType)_actionMode);
-						}
+						_player->_position.x -= local_6;
+						_player->_heroMoving = true;
+						bVar1 = true;
 					}
 				}
-				if (!_animation->_isPlayingAnimation_maybe) {
-					// walk to destination point
-					int walkXDelta = 0;
-					int walkYDelta = 0;
-					int local_a = _scaledWalkSpeed_maybe * 16;
-					if (_player->_direction == 0 || _player->_direction == 2) {
-						local_a = local_a / 3;
-					}
-					if (local_a < 1000) {
-						local_a = 1000;
-					}
-					if (yDistToTarget < xDistToTarget) {
-						walkXDelta = local_a;
-						if (yDistToTarget == 0) {
-							walkYDelta = 0;
-						} else {
-							walkYDelta = (local_a * yDistToTarget) / xDistToTarget;
-						}
+			} else if (_player->_position.x < _player->_walkTarget.x) {
+				if (_player->_walkTarget.x - _player->_position.x <= walkXDelta) {
+					local_6 = _player->_walkTarget.x - _player->_position.x;
+				} else {
+					local_6 = walkXDelta;
+				}
+				while (!bVar1 && local_6 > 0) {
+					if (!_room->canWalkAtLocation(_player->_position.x + local_6 + 1, _player->_position.y)) {
+						local_6--;
 					} else {
-						walkYDelta = local_a;
-						if (xDistToTarget == 0) {
-							walkXDelta = 0;
-						} else {
-							walkXDelta = (local_a * xDistToTarget) / yDistToTarget;
-						}
+						_player->_position.x += local_6;
+						_player->_heroMoving = true;
+						bVar1 = true;
 					}
-					if (walkXDelta != 0) {
-						walkXDelta = walkXDelta / 1000;
+				}
+			}
+			if (_player->_walkTarget.y < _player->_position.y) {
+				if (walkYDelta < _player->_position.y - _player->_walkTarget.y) {
+					local_4 = walkYDelta;
+				} else {
+					local_4 = _player->_position.y - _player->_walkTarget.y;
+				}
+				while (!bVar2 && local_4 > 0) {
+					int local_34 = (_player->_position.y - local_4) - 1;
+					if (local_34 > 0xee) {
+						local_34 = 0xee;
 					}
-					if (walkYDelta != 0) {
-						walkYDelta = walkYDelta / 1000;
+					if (!_room->canWalkAtLocation(_player->_position.x, (local_34 - local_4) - 2)) {
+						local_4--;
+					} else {
+						_player->_position.y -= local_4;
+						_player->_heroMoving = true;
+						bVar2 = true;
 					}
-					if (!_room->canWalkAtLocation(_player->_walkTarget.x, _player->_walkTarget.y) || _player->isAtWalkTarget()) {
-						bool bVar1 = false;
-						bool bVar2 = false;
-						if ((walkYDelta == 0 && _player->_position.y != _player->_walkTarget.y) ||
-							_player->_position.y == _player->_walkTarget.y) {
-							bVar2 = true;
-						}
-						if ((walkXDelta == 0 && _player->_position.x != _player->_walkTarget.x) ||
-							_player->_position.x == _player->_walkTarget.x) {
-							bVar1 = true;
-						}
-						int local_6 = 0;
-						int local_4 = 0;
-						if (_player->_walkTarget.x < _player->_position.x) {
-							if (_player->_position.x - _player->_walkTarget.x <= walkXDelta) {
-								local_6 = _player->_position.x - _player->_walkTarget.x;
-							} else {
-								local_6 = walkXDelta;
-							}
-							while (!bVar1 && local_6 > 0) {
-								if (!_room->canWalkAtLocation(_player->_position.x - local_6 - 1, _player->_position.y)) {
-									local_6--;
-								} else {
-									_player->_position.x -= local_6;
-									_player->_heroMoving = true;
-									bVar1 = true;
-								}
-							}
-						} else if (_player->_position.x < _player->_walkTarget.x) {
-							if (_player->_walkTarget.x - _player->_position.x <= walkXDelta) {
-								local_6 = _player->_walkTarget.x - _player->_position.x;
-							} else {
-								local_6 = walkXDelta;
-							}
-							while (!bVar1 && local_6 > 0) {
-								if (!_room->canWalkAtLocation(_player->_position.x + local_6 + 1, _player->_position.y)) {
-									local_6--;
-								} else {
-									_player->_position.x += local_6;
-									_player->_heroMoving = true;
-									bVar1 = true;
-								}
-							}
-						}
-						if (_player->_walkTarget.y < _player->_position.y) {
-							if (walkYDelta < _player->_position.y - _player->_walkTarget.y) {
-								local_4 = walkYDelta;
-							} else {
-								local_4 = _player->_position.y - _player->_walkTarget.y;
-							}
-							while (!bVar2 && local_4 > 0) {
-								int local_34 = (_player->_position.y - local_4) - 1;
-								if (local_34 > 0xee) {
-									local_34 = 0xee;
-								}
-								if (!_room->canWalkAtLocation(_player->_position.x, (local_34 - local_4) - 2)) {
-									local_4--;
-								} else {
-									_player->_position.y -= local_4;
-									_player->_heroMoving = true;
-									bVar2 = true;
-								}
-							}
-						} else if (_player->_position.y < _player->_walkTarget.y) {
-							if (walkYDelta < _player->_walkTarget.y - _player->_position.y) {
-								local_4 = walkYDelta;
-							} else {
-								local_4 = _player->_walkTarget.y - _player->_position.y;
-							}
-							while (!bVar2 && local_4 > 0) {
-								if (!_room->canWalkAtLocation(_player->_position.x, _player->_position.y + local_4 + 2)) {
-									local_4--;
-								} else {
-									_player->_position.y += local_4;
-									_player->_heroMoving = true;
-									bVar2 = true;
-								}
-							}
-						}
+				}
+			} else if (_player->_position.y < _player->_walkTarget.y) {
+				if (walkYDelta < _player->_walkTarget.y - _player->_position.y) {
+					local_4 = walkYDelta;
+				} else {
+					local_4 = _player->_walkTarget.y - _player->_position.y;
+				}
+				while (!bVar2 && local_4 > 0) {
+					if (!_room->canWalkAtLocation(_player->_position.x, _player->_position.y + local_4 + 2)) {
+						local_4--;
+					} else {
+						_player->_position.y += local_4;
+						_player->_heroMoving = true;
+						bVar2 = true;
+					}
+				}
+			}
 
-						if (!bVar1 || !bVar2) {
-							_player->_walkTarget = _player->_position;
-						}
-						_doorEnabled = false;
-						if (_player->_isAutoWalkingToBed && _player->isAtWalkTarget()) {
-							_player->setplayertowardsbedroom();
-						}
-					} else {
-						if (_player->_walkTarget.x < _player->_position.x) {
-							if (_player->_position.x - _player->_walkTarget.x < walkXDelta) {
-								walkXDelta = _player->_position.x - _player->_walkTarget.x;
-							}
-							_player->_positionLong.x -= walkXDelta;
-						} else if (_player->_position.x < _player->_walkTarget.x) {
-							if (_player->_walkTarget.x - _player->_position.x < walkXDelta) {
-								walkXDelta = _player->_walkTarget.x - _player->_position.x;
-							}
-							_player->_positionLong.x += walkXDelta;
-						}
-						if (_player->_walkTarget.y < _player->_position.y) {
-							if (_player->_position.y - _player->_walkTarget.y < walkYDelta) {
-								walkYDelta = _player->_position.y - _player->_walkTarget.y;
-							}
-							_player->_positionLong.y -= walkYDelta;
-						} else if (_player->_position.y < _player->_walkTarget.y) {
-							if (_player->_walkTarget.y - _player->_position.y < walkYDelta) {
-								walkYDelta = _player->_walkTarget.y - _player->_position.y;
-							}
-							_player->_positionLong.y += walkYDelta;
-						}
-						if (!_room->canWalkAtLocation(_player->_positionLong.x, _player->_positionLong.y)) {
-							_player->_walkTarget = _player->_position;
-							_player->_positionLong = _player->_position;
-						} else {
-							_player->_position = _player->_positionLong;
-						}
-					}
+			if (!bVar1 || !bVar2) {
+				_player->_walkTarget = _player->_position;
+			}
+			_doorEnabled = false;
+			if (_player->_isAutoWalkingToBed && _player->isAtWalkTarget()) {
+				_player->setplayertowardsbedroom();
+			}
+		} else {
+			if (_player->_walkTarget.x < _player->_position.x) {
+				if (_player->_position.x - _player->_walkTarget.x < walkXDelta) {
+					walkXDelta = _player->_position.x - _player->_walkTarget.x;
 				}
+				_player->_positionLong.x -= walkXDelta;
+			} else if (_player->_position.x < _player->_walkTarget.x) {
+				if (_player->_walkTarget.x - _player->_position.x < walkXDelta) {
+					walkXDelta = _player->_walkTarget.x - _player->_position.x;
+				}
+				_player->_positionLong.x += walkXDelta;
+			}
+			if (_player->_walkTarget.y < _player->_position.y) {
+				if (_player->_position.y - _player->_walkTarget.y < walkYDelta) {
+					walkYDelta = _player->_position.y - _player->_walkTarget.y;
+				}
+				_player->_positionLong.y -= walkYDelta;
+			} else if (_player->_position.y < _player->_walkTarget.y) {
+				if (_player->_walkTarget.y - _player->_position.y < walkYDelta) {
+					walkYDelta = _player->_walkTarget.y - _player->_position.y;
+				}
+				_player->_positionLong.y += walkYDelta;
+			}
+			if (!_room->canWalkAtLocation(_player->_positionLong.x, _player->_positionLong.y)) {
+				_player->_walkTarget = _player->_position;
+				_player->_positionLong = _player->_position;
+			} else {
+				_player->_position = _player->_positionLong;
+			}
+		}
+	}
 //				else if (_isLeftMouseClicked) {
 //					// TODO do actions here.
 //					handlePointerAction();
 //				}
-			}
-		} else {
-			// turn player around.
-			_player->_playerSpriteWalkIndex_maybe = (int16)((_player->_playerSpriteWalkIndex_maybe + _player->_playerWalkFrameDeltaOffset) & 7);
-			if (_player->_playerSpriteWalkIndex_maybe == _player->_playerNewFacingDirection_maybe) {
-				_player->_playerIsChangingDirection = false;
-				_player->_direction = _player->_playerNewFacingDirection_maybe / 2;
-			}
-			_player->updateSprite();
-		}
-	} else {
-		_animation->updateAnimation();
-		if (!_animation->_isPlayingAnimation_maybe && _player->_isAutoWalkingToBed) {
-			_player->setplayertowardsbedroom();
-		}
-	}
 }
 
 void DarkseedEngine::handlePointerAction() {
