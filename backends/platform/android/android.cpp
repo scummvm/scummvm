@@ -1119,7 +1119,7 @@ _s(
 "To open the virtual keyboard, long press on the controller icon at the top right of the screen, or tap on any editable text field. To hide the virtual keyboard, tap the controller icon again, or tap outside the text field.\n"
 "\n"
 "\n"
-"  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
+"  ![Keyboard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
 "\n"
 	),
 
