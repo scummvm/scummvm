@@ -181,7 +181,7 @@ Common::KeymapArray StarkMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 	using namespace Stark;
 
-	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "stark-default", _("Default keymapppings"));
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "stark-default", _("Default keymappings"));
 	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
 
 	Action *act;
