@@ -183,6 +183,8 @@ bool SdlEventSource::processMouseEvent(Common::Event &event, int x, int y, int r
 
 	event.mouse.x = x;
 	event.mouse.y = y;
+	event.rawMouse.x = x;
+	event.rawMouse.y = y;
 	event.relMouse.x = relx;
 	event.relMouse.y = rely;
 
@@ -769,6 +771,7 @@ bool SdlEventSource::pollEvent(Common::Event &event) {
 #endif
 
 #if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+		/* SDL 1.2 uses the generic event observer instead. */
 		if (ImGui_ImplSDL2_Ready()) {
 			ImGui_ImplSDL2_ProcessEvent(&ev);
 			ImGuiIO &io = ImGui::GetIO();

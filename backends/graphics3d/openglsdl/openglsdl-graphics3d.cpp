@@ -146,9 +146,7 @@ OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSour
 
 OpenGLSdlGraphics3dManager::~OpenGLSdlGraphics3dManager() {
 	closeOverlay();
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	deinitializeRenderer();
-#endif
 }
 
 bool OpenGLSdlGraphics3dManager::hasFeature(OSystem::Feature f) const {
@@ -327,6 +325,8 @@ void OpenGLSdlGraphics3dManager::setupScreen() {
 	if (needsWindowReset) {
 		_window->destroyWindow();
 	}
+#else
+	deinitializeRenderer();
 #endif
 
 	createOrUpdateScreen();
@@ -573,6 +573,10 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 
 		SDL_Surface *screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, it->bytesPerPixel, sdlflags);
 		if (screen) {
+#ifdef USE_IMGUI
+			// Setup Dear ImGui
+			initImGui(nullptr, nullptr);
+#endif
 			break;
 		}
 #endif
@@ -665,7 +669,7 @@ void OpenGLSdlGraphics3dManager::updateScreen() {
 	}
 #endif
 
-#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+#ifdef USE_IMGUI
 	renderImGui();
 #endif
 
@@ -797,16 +801,16 @@ void OpenGLSdlGraphics3dManager::showSystemMouseCursor(bool visible) {
 	// standard mouse graphic.
 }
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 void OpenGLSdlGraphics3dManager::deinitializeRenderer() {
 #ifdef USE_IMGUI
 	destroyImGui();
 #endif
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_GL_DeleteContext(_glContext);
 	_glContext = nullptr;
-}
 #endif // SDL_VERSION_ATLEAST(2, 0, 0)
+}
 
 #ifdef EMSCRIPTEN
 void OpenGLSdlGraphics3dManager::saveScreenshot() {
@@ -867,7 +871,7 @@ bool OpenGLSdlGraphics3dManager::saveScreenshot(const Common::Path &filename) co
 #endif
 }
 
-#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+#ifdef USE_IMGUI
 void *OpenGLSdlGraphics3dManager::getImGuiTexture(const Graphics::Surface &image, const byte *palette, int palCount) {
 	// Create a OpenGL texture identifier
 	GLuint image_texture;
