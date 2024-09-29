@@ -19,9 +19,12 @@
  *
  */
 
+#include "common/debug.h"
+
 #include "qdengine/qd_fwd.h"
 #include "qdengine/qdcore/qd_game_scene.h"
 #include "qdengine/qdcore/qd_game_dispatcher.h"
+#include "qdengine/qdcore/qd_game_object_state.h"
 #include "qdengine/qdcore/qd_screen_text_dispatcher.h"
 
 
@@ -45,9 +48,13 @@ static bool operator == (const qdScreenTextSet &set, int id) {
 qdScreenText *qdScreenTextDispatcher::add_text(int set_ID, const qdScreenText &txt) {
 	Std::vector<qdScreenTextSet>::iterator it = Common::find(_text_sets.begin(), _text_sets.end(), set_ID);
 
+	debugC(1, kDebugText, "qdScreenTextDispatcher::add_text(%d, '%s') for '%s'", set_ID, transCyrillic(txt.data()),
+			txt.owner() ? txt.owner()->toString().c_str() : "<none>");
+
 	if (it != _text_sets.end())
 		return it->add_text(txt);
 
+	debugC(1, kDebugText, "qdScreenTextDispatcher::add_text(): return NULL!");
 	return NULL;
 }
 
@@ -58,6 +65,8 @@ void qdScreenTextDispatcher::clear_texts() {
 }
 
 void qdScreenTextDispatcher::clear_texts(qdNamedObject *p) {
+	debugC(5, kDebugText, "qdScreenTextDispatcher::clear_texts('%s')", p->toString().c_str());
+
 	for (auto &it : _text_sets) {
 		it.clear_texts(p);
 	}

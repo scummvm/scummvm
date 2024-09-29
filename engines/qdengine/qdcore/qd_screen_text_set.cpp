@@ -19,12 +19,15 @@
  *
  */
 
+#include "common/debug.h"
+
 #include "qdengine/qd_fwd.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 #include "qdengine/parser/qdscr_parser.h"
 #include "qdengine/parser/xml_tag_buffer.h"
 #include "qdengine/qdcore/qd_screen_text_set.h"
 #include "qdengine/qdcore/qd_game_dispatcher.h"
+#include "qdengine/qdcore/qd_game_object_state.h"
 
 
 namespace QDEngine {
@@ -141,6 +144,8 @@ qdScreenText *qdScreenTextSet::get_text(int x, int y) {
 void qdScreenTextSet::clear_texts(qdNamedObject *owner) {
 	bool ret = false;
 
+	debugC(4, kDebugText, "qdScreenTextSet::clear_texts('%s')", owner->toString().c_str());
+
 	// Equivalent of
 	// texts_container_t::iterator it = std::remove_if(_texts.begin(), _texts.end(), std::bind2nd(std::mem_fun_ref(&qdScreenText::is_owned_by), owner));
 
@@ -238,6 +243,9 @@ bool qdScreenTextSet::save_script(Common::WriteStream &fh, int indent) const {
 qdScreenText *qdScreenTextSet::add_text(const qdScreenText &txt) {
 	int sy = _size.y;
 
+	debugC(2, kDebugText, "qdScreenTextSet::add_text('%s') for '%s'", transCyrillic(txt.data()),
+			txt.owner() ? txt.owner()->toString().c_str() : "<none>");
+
 	_texts.push_back(txt);
 
 	if (_max_text_width)
@@ -263,4 +271,5 @@ void qdScreenTextSet::format_texts() {
 	for (texts_container_t::iterator it = _texts.begin(); it != _texts.end(); ++it)
 		it->format_text(_max_text_width);
 }
+
 } // namespace QDEngine

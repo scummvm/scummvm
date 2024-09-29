@@ -58,6 +58,8 @@ qdInterfaceScreen::~qdInterfaceScreen() {
 }
 
 bool qdInterfaceScreen::redraw(int dx, int dy) const {
+	debugC(5, kDebugText, "qdInterfaceScreen::redraw(): %d elements", _sorted_elements.size());
+
 	for (sorted_element_list_t::const_reverse_iterator it = _sorted_elements.rbegin(); it != _sorted_elements.rend(); ++it)
 		(*it)->redraw();
 
