@@ -98,6 +98,11 @@ struct DrawState {
 	// the control block is marked as invalid and removed from the map;
 	// but certain objects may keep the shared ptr to the old block with
 	// "invalid" mark, thus they know that they must reset their texture.
+	//
+	// TODO: investigate an alternative of having a equivalent of
+	// "shared texture" with sprite ID ref in Software renderer too,
+	// which would allow to use same method of testing DDB ID for both
+	// kinds of renderers, thus saving on 1 extra notification mechanism.
 	std::unordered_map<sprkey_t, std::shared_ptr<uint32_t> >
 		SpriteNotifyMap;
 };
@@ -856,16 +861,20 @@ Engine::IDriverDependantBitmap* recycle_ddb_sprite(Engine::IDriverDependantBitma
 static void sync_object_texture(ObjTexture &obj, bool has_alpha = false, bool opaque = false) {
 	Bitmap *use_bmp = obj.Bmp.get() ? obj.Bmp.get() : _GP(spriteset)[obj.SpriteID];
 	obj.Ddb = recycle_ddb_sprite(obj.Ddb, obj.SpriteID, use_bmp, has_alpha, opaque);
-	// If this is a sprite-referencing texture, then assign a control block,
-	// let the object receive notification of sprite updates.
-	if ((obj.SpriteID != UINT32_MAX) && (!obj.IsSynced())) {
-		auto it_notify = drawstate.SpriteNotifyMap.find(obj.SpriteID);
-		if (it_notify != drawstate.SpriteNotifyMap.end()) { // assign existing
-			obj.SpriteNotify = it_notify->_value;
+	// Handle notification control block for the dynamic sprites
+	if ((obj.SpriteID != UINT32_MAX) && _GP(game).SpriteInfos[obj.SpriteID].IsDynamicSprite()) {
+		// For dynamic sprite: check and update a notification block for this drawable
+		if (!obj.SpriteNotify || (*obj.SpriteNotify != obj.SpriteID)) {
+			auto it_notify = drawstate.SpriteNotifyMap.find(obj.SpriteID);
+			if (it_notify != drawstate.SpriteNotifyMap.end()) { // assign existing
+				obj.SpriteNotify = it_notify->_value;
+			}
 		} else { // if does not exist, then create and share one
 			obj.SpriteNotify.reset(new (uint32_t)(obj.SpriteID));
 			drawstate.SpriteNotifyMap.insert(std::make_pair((int)obj.SpriteID, obj.SpriteNotify));
 		}
+	} else {
+		obj.SpriteNotify = nullptr; // reset, for static sprite or without ID
 	}
 }
 
@@ -1277,7 +1286,7 @@ static bool construct_object_gfx(const ViewFrame *vf, int pic,
 	// Hardware accelerated mode: always use original sprite and apply texture transform
 	if (use_hw_transform) {
 		// HW acceleration
-		const bool is_texture_intact = (objsav.sppic == specialpic) && actsp.IsSynced();
+		const bool is_texture_intact = (objsav.sppic == specialpic) && !actsp.IsChangeNotified();
 		objsav.sppic = specialpic;
 		objsav.tintamnt = tint_level;
 		objsav.tintr = tint_red;
@@ -1302,7 +1311,7 @@ static bool construct_object_gfx(const ViewFrame *vf, int pic,
 	if ((objsav.image != nullptr) &&
 	        (objsav.sppic == specialpic) &&
 			// not a dynamic sprite, or not sprite modified lately
-			(actsp.IsSynced()) &&
+			(!actsp.IsChangeNotified()) &&
 			(objsav.tintamnt == tint_level) &&
 			(objsav.tintlight == tint_light) &&
 			(objsav.tintr == tint_red) &&
@@ -2052,7 +2061,7 @@ static void construct_overlays() {
 			_GP(overcache)[i].X = pos.X; _GP(overcache)[i].Y = pos.Y;
 		}
 
-		if (has_changed || !overtx.IsSynced()) {
+		if (has_changed || overtx.IsChangeNotified()) {
 			overtx.SpriteID = over.GetSpriteNum();
 			// For software mode - prepare transformed bitmap if necessary;
 			// for hardware-accelerated - use the sprite ID if possible, to avoid redundant sprite load
