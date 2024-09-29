@@ -31,7 +31,7 @@ $SDK_ROOT/bin/sfdk config --push target $TARGET
 $SDK_ROOT/bin/sfdk build
 ```
 
-And finally you need to sign them with your developper key:
+And finally you need to sign them with your developer key:
 
 ``` shell
 $SDK_ROOT/bin/sfdk engine exec -tt sb2 -t $TARGET rpmsign-external sign -k $KEY_PATH/regular_key.pem -c $KEY_PATH/regular_cert.pem RPMS/*.rpm
