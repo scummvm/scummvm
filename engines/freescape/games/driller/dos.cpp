@@ -29,6 +29,7 @@ namespace Freescape {
 
 extern byte kCGAPalettePinkBlueWhiteData[4][3];
 extern byte kEGADefaultPalette[16][3];
+extern byte kHerculesPaletteGreen[2][3];
 
 byte kDrillerCGAPalettePinkBlue[4][3] = {
 	{0x00, 0x00, 0x00},
@@ -81,6 +82,8 @@ static const CGAPaletteEntry rawCGAPaletteByArea[] {
 void DrillerEngine::initDOS() {
 	if (_renderMode == Common::kRenderEGA)
 		_viewArea = Common::Rect(40, 16, 280, 117);
+	else if (_renderMode == Common::kRenderHercG)
+		_viewArea = Common::Rect(112, 64, 607, 224);
 	else if (_renderMode == Common::kRenderCGA)
 		_viewArea = Common::Rect(36, 16, 284, 117);
 	else
@@ -350,14 +353,36 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 		_border = load8bitBinImage(&file, 0x210);
 		_border->setPalette((byte*)&kCGAPalettePinkBlueWhiteData, 0, 4);
 		swapPalette(1);
+	} else if (_renderMode == Common::kRenderHercG) {
+		file.open("SCN1H.DAT");
+		if (file.isOpen()) {
+			_title = load8bitBinImage(&file, 0x0);
+			_title->setPalette((byte*)&kHerculesPaletteGreen, 0, 2);
+		}
+		file.close();
+		file.open("DRILLH.EXE");
+
+		if (!file.isOpen())
+			error("Failed to open DRILLH.EXE");
+
+		//loadSpeakerFxDOS(&file, 0x27e7 + 0x200, 0x2774 + 0x200);
+
+		//loadFonts(&file, 0x07a4a, _font);
+		loadMessagesFixedSize(&file, 0x3411, 14, 20);
+		load8bitBinary(&file, 0x89e0, 4);
+		loadGlobalObjects(&file, 0x2d02, 8);
+		_border = load8bitBinImage(&file, 0x210);
+		_border->setPalette((byte*)&kHerculesPaletteGreen, 0, 2);
 	} else
 		error("Unsupported video mode for DOS");
 
-	_indicators.push_back(loadBundledImage("driller_tank_indicator"));
-	_indicators.push_back(loadBundledImage("driller_ship_indicator"));
+	if (_renderMode != Common::kRenderHercG) {
+		_indicators.push_back(loadBundledImage("driller_tank_indicator"));
+		_indicators.push_back(loadBundledImage("driller_ship_indicator"));
 
-	_indicators[0]->convertToInPlace(_gfx->_texturePixelFormat);
-	_indicators[1]->convertToInPlace(_gfx->_texturePixelFormat);
+		_indicators[0]->convertToInPlace(_gfx->_texturePixelFormat);
+		_indicators[1]->convertToInPlace(_gfx->_texturePixelFormat);
+	}
 }
 
 void DrillerEngine::loadAssetsDOSDemo() {
@@ -398,6 +423,9 @@ void DrillerEngine::loadAssetsDOSDemo() {
 }
 
 void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
+
+	if (_renderMode == Common::kRenderHercG)
+		return;
 	uint32 color = _renderMode == Common::kRenderCGA ? 1 : 14;
 	uint8 r, g, b;
 

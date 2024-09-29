@@ -70,6 +70,9 @@ void FreescapeEngine::titleScreen() {
 }
 
 Graphics::Surface *FreescapeEngine::drawStringsInSurface(const Common::Array<Common::String> &lines, Graphics::Surface *surface) {
+	if (!_fontLoaded)
+		return surface;
+
 	uint32 color = 0;
 	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
 

@@ -202,7 +202,7 @@ void Renderer::scaleStipplePattern(byte originalPattern[128], byte newPattern[12
 
 void Renderer::setColorMap(ColorMap *colorMap_) {
 	_colorMap = colorMap_;
-	if (_renderMode == Common::kRenderZX) {
+	if (_renderMode == Common::kRenderZX || _renderMode == Common::kRenderHercG) {
 		for (int i = 0; i < 15; i++) {
 			byte *entry = (*_colorMap)[i];
 			for (int j = 0; j < 128; j++)
@@ -380,6 +380,30 @@ bool Renderer::getRGBAtZX(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r
 	return true;
 }
 
+bool Renderer::getRGBAtHercules(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2, byte *&stipple) {
+	if (index == _keyColor)
+		return false;
+
+	byte *entry = (*_colorMap)[index - 1];
+	if (entry[0] == 0 && entry[1] == 0 && entry[2] == 0 && entry[3] == 0) {
+		readFromPalette(0, r1, g1, b1);
+		readFromPalette(0, r2, g2, b2);
+		return true;
+	}
+
+	if (entry[0] == 0xff && entry[1] == 0xff && entry[2] == 0xff && entry[3] == 0xff) {
+		readFromPalette(1, r1, g1, b1);
+		readFromPalette(1, r2, g2, b2);
+		return true;
+	}
+
+	stipple = (byte *)_stipples[index - 1];
+	readFromPalette(0, r1, g1, b1);
+	readFromPalette(1, r2, g2, b2);
+	return true;
+}
+
+
 void Renderer::selectColorFromFourColorPalette(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1) {
 	if (index == 0) {
 		r1 = 0;
@@ -517,6 +541,8 @@ bool Renderer::getRGBAt(uint8 index, uint8 ecolor, uint8 &r1, uint8 &g1, uint8 &
 		return getRGBAtCPC(index, r1, g1, b1, r2, g2, b2, stipple);
 	else if (_renderMode == Common::kRenderZX)
 		return getRGBAtZX(index, r1, g1, b1, r2, g2, b2, stipple);
+	else if (_renderMode == Common::kRenderHercG)
+		return getRGBAtHercules(index, r1, g1, b1, r2, g2, b2, stipple);
 
 
 	error("Invalid or unsupported render mode");

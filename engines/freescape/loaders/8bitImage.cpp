@@ -26,6 +26,8 @@ namespace Freescape {
 void FreescapeEngine::renderPixels8bitBinImage(Graphics::ManagedSurface *surface, int row, int column, int pixels, int bit) {
 	int mask = 0x80;
 	for (int i = 0; i < 8; i++) {
+		if (column + i >= _screenW)
+			continue;
 		if ((pixels & mask) > 0) {
 			int sample = surface->getPixel(column + i, row) | bit;
 			surface->setPixel(column + i, row, sample);
@@ -63,7 +65,7 @@ int FreescapeEngine::execute8bitBinImageCommand(Common::SeekableReadStream *file
 
 void FreescapeEngine::load8bitBinImageRowIteration(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int row, int bit) {
 	int pixels = 0;
-	while (pixels < 320) {
+	while (pixels < surface->w) {
 		pixels += execute8bitBinImageCommand(file, surface, row, pixels, bit);
 	}
 }
@@ -75,6 +77,8 @@ void FreescapeEngine::load8bitBinImageRow(Common::SeekableReadStream *file, Grap
 		nBits = 2;
 	else if (_renderMode == Common::kRenderEGA)
 		nBits = 4;
+	else if (_renderMode == Common::kRenderHercG)
+		nBits = 1;
 	else
 		error("Unimplemented render mode for reading images");
 
@@ -87,13 +91,13 @@ void FreescapeEngine::load8bitBinImageRow(Common::SeekableReadStream *file, Grap
 Graphics::ManagedSurface *FreescapeEngine::load8bitBinImage(Common::SeekableReadStream *file, int offset) {
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
 	surface->create(_screenW, _screenH, Graphics::PixelFormat::createFormatCLUT8());
-	surface->fillRect(Common::Rect(0, 0, 320, 200), 0);
+	surface->fillRect(Common::Rect(0, 0, _screenW, _screenH), 0);
 
 	file->seek(offset);
 	int imageSize = file->readUint16BE();
 	int startImage = file->pos();
 
-	for (int row = 0; row < 200; row++)
+	for (int row = 0; row < surface->h; row++)
 		load8bitBinImageRow(file, surface, row);
 
 	assert(startImage + imageSize == file->pos());
