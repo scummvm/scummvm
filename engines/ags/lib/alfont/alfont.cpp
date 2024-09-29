@@ -94,6 +94,8 @@ struct ALFONT_FONT {
 	int face_h;             /* face height */
 	int real_face_h;        /* real face height */
 	int face_ascender;      /* face ascender */
+	int real_face_extent_asc;  /* calculated max extent of glyphs (ascender) */
+	int real_face_extent_desc; /* calculated max extent of glyphs (descender) */
 	char *data;             /* if loaded from memory, the data chunk */
 	int data_size;          /* and its size */
 	int ch_spacing;         /* extra spacing */
@@ -498,6 +500,27 @@ static void _alfont_new_cache_glyph(ALFONT_FONT *f) {
 	}
 }
 
+static void _alfont_calculate_max_cbox(ALFONT_FONT *f) {
+	int i;
+	int max_box_top = 0, min_box_bottom = 0;
+	FT_Glyph glyph;
+	FT_BBox box;
+	for (i = 0; i < f->face->num_glyphs; i++) {
+		// CHECKME: is FT_LOAD_DEFAULT optimal here? there are various load modes
+		FT_Load_Glyph(f->face, i, FT_LOAD_DEFAULT);
+		FT_Get_Glyph(f->face->glyph, &glyph);
+		FT_Glyph_Get_CBox(glyph, ft_glyph_bbox_pixels, &box);
+		if (max_box_top < box.yMax) {
+			max_box_top = box.yMax;
+		}
+		if (min_box_bottom > box.yMin) {
+			min_box_bottom = box.yMin;
+		}
+		FT_Done_Glyph(glyph);
+	}
+	f->real_face_extent_asc = max_box_top;
+	f->real_face_extent_desc = -min_box_bottom;
+}
 
 /* API */
 
@@ -572,7 +595,11 @@ int alfont_set_font_size_ex(ALFONT_FONT *f, int h, int flags) {
 		f->real_face_h = real_height;
 		f->face_ascender = f->face->size->metrics.ascender >> 6;
 
-		// AGS COMPAT HACK: set ascender to the formal font height
+		/* Precalculate actual glyphs vertical extent */
+		if ((flags & ALFONT_FLG_PRECALC_MAX_CBOX) != 0) {
+			_alfont_calculate_max_cbox(f);
+		}
+		/* AGS COMPAT HACK: set ascender to the formal font height */
 		if ((flags & ALFONT_FLG_ASCENDER_EQ_HEIGHT) != 0) {
 			f->face_ascender = test_h;
 			f->real_face_h = test_h + abs(f->face->size->metrics.descender >> 6);
@@ -593,6 +620,11 @@ int alfont_get_font_height(ALFONT_FONT *f) {
 /* Return font height based on ascender + descender summation */
 int alfont_get_font_real_height(ALFONT_FONT *f) {
 	return f->real_face_h;
+}
+
+ALFONT_DLL_DECLSPEC void alfont_get_font_real_vextent(ALFONT_FONT *f, int *top, int *bottom) {
+	*top = f->face_ascender - f->real_face_extent_asc; // may be negative
+	*bottom = f->face_ascender + f->real_face_extent_desc;
 }
 
 void alfont_exit(void) {
