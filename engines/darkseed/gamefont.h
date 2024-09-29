@@ -22,20 +22,28 @@
 #ifndef DARKSEED_GAMEFONT_H
 #define DARKSEED_GAMEFONT_H
 
+#include "graphics/font.h"
 #include "darkseed/nsp.h"
+#include "graphics/surface.h"
+
 namespace Darkseed {
 
-class GameFont {
+class GameFont : public Graphics::Font {
 private:
 	Nsp _letters;
+	int _maxWidth = 0;
 
 public:
 	GameFont();
 	bool load();
-	void displayString(uint16 x, uint16 y, const Common::String &text);
-	int stringLength(const Common::String &text);
+
+	int getFontHeight() const override;
+	int getMaxCharWidth() const override;
+	int getCharWidth(uint32 chr) const override;
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
+
 private:
-	const Sprite *getCharacterSprite(char c);
+	const Sprite *getCharacterSprite(char c) const;
 };
 
 } // namespace Darkseed

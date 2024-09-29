@@ -49,7 +49,6 @@ public:
 	void draw();
 
 private:
-	Common::StringArray wrapText(const Common::String &text);
 	void addLine(const Common::String &line);
 };
 

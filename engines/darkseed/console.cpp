@@ -43,7 +43,8 @@ void Console::printTosText(int tosIndex) {
 }
 
 void Console::addTextLine(const Common::String &text) {
-	auto lines = wrapText(text);
+	Common::StringArray lines;
+	_font.wordWrapText(text, consoleArea.width(), lines);
 	for (auto &line : lines) {
 		addLine(line);
 	}
@@ -64,53 +65,12 @@ void Console::draw() {
 	int curIdx = _startIdx == 0 ? _text.size() - 1 : _startIdx - 1;
 	int y = 0x139;
 	for (int i = 0; i < 4 && curIdx != _startIdx && !_text[curIdx].empty(); i++) {
-		_font.displayString(0x70, y, _text[curIdx]);
+		_font.drawString(g_engine->_screen, _text[curIdx], 0x70, y, consoleArea.width(), 0);
 		y -= 11;
 		curIdx = curIdx == 0 ? _text.size() - 1 : curIdx - 1;
 	}
 	_redrawRequired = false;
 	g_engine->_screen->addDirtyRect(consoleArea);
-}
-
-Common::StringArray Console::wrapText(const Common::String &text) {
-	Common::StringArray lines;
-	Common::String line;
-	Common::String word;
-	int lineLength = 0;
-
-	for (int i = 0; i < text.size(); i++) {
-		if (text[i] != '\r') {
-			word += text[i];
-		}
-		if (text[i] == ' ' || text[i] == '\r') {
-			int wordLength = _font.stringLength(word);
-			if (lineLength + wordLength > consoleArea.width()) {
-				lines.push_back(line);
-				line = word;
-				lineLength = wordLength;
-			} else {
-				line += word;
-				lineLength += wordLength;
-			}
-			word = "";
-		}
-		if (text[i] == '\r') {
-			break;
-		}
-	}
-
-	if (!line.empty() || !word.empty()) {
-		int wordLength = _font.stringLength(word);
-		if (lineLength + wordLength > consoleArea.width()) {
-			lines.push_back(line);
-			lines.push_back(word);
-		} else {
-			line += word;
-			lines.push_back(line);
-		}
-	}
-
-	return lines;
 }
 
 void Console::addLine(const Common::String &line) {

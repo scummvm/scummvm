@@ -54,19 +54,32 @@ bool Sprite::loadData(Common::SeekableReadStream &readStream) {
 	return true;
 }
 
-void Sprite::draw(int x, int y, uint16 frameBottom) const {
-	uint16 clippedWidth = _width;
-	uint16 clippedHeight = _height;
+void Sprite::clipToScreen(int x, int y, uint16 frameBottom, uint16 *clippedWidth, uint16 *clippedHeight) const {
+	*clippedWidth = _width;
+	*clippedHeight = _height;
 	if (x + _width > g_engine->_screen->w) {
-		clippedWidth = g_engine->_screen->w - x;
+		*clippedWidth = g_engine->_screen->w - x;
 	}
 	if (frameBottom != 0 && y + _height > g_engine->_frameBottom) {
 		if (y >= frameBottom) {
 			return;
 		}
-		clippedHeight = frameBottom - y;
+		*clippedHeight = frameBottom - y;
 	}
+}
+
+void Sprite::draw(int x, int y, uint16 frameBottom) const {
+	uint16 clippedWidth = _width;
+	uint16 clippedHeight = _height;
+	clipToScreen(x, y, frameBottom, &clippedWidth, &clippedHeight);
 	g_engine->_screen->copyRectToSurfaceWithKey(_pixels.data(), _pitch, x, y, clippedWidth, clippedHeight, 0xf);
+}
+
+void Sprite::draw(Graphics::Surface *dst, int x, int y, uint16 frameBottom) const {
+	uint16 clippedWidth = _width;
+	uint16 clippedHeight = _height;
+	clipToScreen(x, y, frameBottom, &clippedWidth, &clippedHeight);
+	dst->copyRectToSurfaceWithKey(_pixels.data(), _pitch, x, y, clippedWidth, clippedHeight, 0xf);
 }
 
 void Sprite::drawScaled(int destX, int destY, int destWidth, int destHeight, bool flipX) const {
@@ -169,7 +182,7 @@ bool Nsp::load(Common::SeekableReadStream &readStream) {
 	return true;
 }
 
-const Sprite &Nsp::getSpriteAt(int index) {
+const Sprite &Nsp::getSpriteAt(int index) const {
 	if (index >= (int)_frames.size()) {
 		error("getSpriteAt: Invalid sprite index. %d", index);
 	}
@@ -211,6 +224,16 @@ bool Nsp::loadObt(const Common::Path &filename) {
 
 const Obt &Nsp::getAnimAt(int index) {
 	return _animations[index];
+}
+
+int16 Nsp::getMaxSpriteWidth() {
+	int maxWidth = 0;
+	for (auto &frame : _frames) {
+		if (frame._width > maxWidth) {
+			maxWidth = frame._width;
+		}
+	}
+	return maxWidth;
 }
 
 Obt::Obt() {
