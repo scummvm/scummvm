@@ -621,7 +621,6 @@ uint Versailles_Documentation::docAreaHandleRecords(const Common::String &record
 			error("Invalid case %d when displaying doc record", action);
 		}
 	}
-	error("shouldn't be there");
 }
 
 void Versailles_Documentation::docAreaPrepareNavigation() {
