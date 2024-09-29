@@ -393,12 +393,6 @@ MODULE_OBJS += \
 	events/dinguxsdl/dinguxsdl-events.o
 endif
 
-ifeq ($(BACKEND),gph)
-MODULE_OBJS += \
-	events/gph/gph-events.o \
-	graphics/gph/gph-graphics.o
-endif
-
 ifdef IPHONE
 MODULE_OBJS += \
 	mutex/pthread/pthread-mutex.o \

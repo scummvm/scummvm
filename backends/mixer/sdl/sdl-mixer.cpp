@@ -29,9 +29,7 @@
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 
-#if defined(GP2X)
-#define SAMPLES_PER_SEC 11025
-#elif defined(PLAYSTATION3) || defined(PSP2) || defined(NINTENDO_SWITCH)
+#if defined(PLAYSTATION3) || defined(PSP2) || defined(NINTENDO_SWITCH)
 #define SAMPLES_PER_SEC 48000
 #elif defined(__MINT__)
 #define SAMPLES_PER_SEC 49170

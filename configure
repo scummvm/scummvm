@@ -1887,7 +1887,7 @@ else
 fi
 
 case $_host in
-arm-*riscos | ds | gp2x | gp2xwiz | openpandora | psp | psp2 | switch)
+arm-*riscos | ds | openpandora | psp | psp2 | switch)
 	if test "$_debug_build" = auto; then
 		# If you want to debug one of these platforms, use '--disable-optimizations --enable-debug'
 		_debug_build=no

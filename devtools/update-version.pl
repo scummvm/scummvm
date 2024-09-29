@@ -45,8 +45,6 @@ my @subs_files = qw(
 	dists/openpandora/README-OPENPANDORA
 	dists/openpandora/README-PND.txt
 	dists/openpandora/index.html
-	dists/gph/README-GPH
-	dists/gph/scummvm.ini
 	dists/riscos/!Boot,feb
 	dists/amigaos/md2ag.rexx
 	backends/platform/psp/README.PSP
