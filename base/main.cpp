@@ -650,7 +650,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 				"\n"
 				"Repeat steps 1 and 6 for each game."
 				), _("Ok"),
-				// I18N: A button caption to dismiss amessage and read it later
+				// I18N: A button caption to dismiss a message and read it later
 				_("Read Later"), Graphics::kTextAlignLeft);
 
 			if (alert.runModal() != GUI::kMessageOK)
