@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-29 15:04+0000\n"
+"POT-Creation-Date: 2024-09-29 19:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1453,7 +1453,6 @@ msgid "~G~ame Opts..."
 msgstr ""
 
 #. I18N: List grouping when no engine is specified
-#. I18N: List grouping when no enginr is specified
 #: gui/launcher.cpp:1212 gui/launcher.cpp:1408
 msgid "Unknown Engine"
 msgstr ""
@@ -1470,7 +1469,6 @@ msgstr ""
 msgid "No Series"
 msgstr ""
 
-#. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
 #: gui/launcher.cpp:1260 gui/launcher.cpp:1456
 msgid "Language not detected"
@@ -2776,7 +2774,6 @@ msgstr ""
 msgid "Ok"
 msgstr ""
 
-#. I18N: A button caption to dismiss amessage and read it later
 #. I18N: A button caption to dismiss a message and read it later
 #: base/main.cpp:654 base/main.cpp:679
 msgid "Read Later"
@@ -4546,7 +4543,7 @@ msgid ""
 "keyboard, tap the controller icon again, or tap outside the text field.\n"
 "\n"
 "\n"
-"  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
+"  ![Keyboard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
 "\n"
 msgstr ""
 
@@ -4819,7 +4816,7 @@ msgid ""
 "field.\n"
 "\n"
 "\n"
-"  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
+"  ![Keyboard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
 "\n"
 msgstr ""
 
@@ -6459,8 +6456,8 @@ msgstr ""
 
 #: engines/cine/metaengine.cpp:258 engines/hopkins/metaengine.cpp:208
 #: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:102
-#: engines/mads/metaengine.cpp:274 engines/tinsel/metaengine.cpp:239
-#: engines/trecision/metaengine.cpp:120
+#: engines/mads/metaengine.cpp:274 engines/stark/metaengine.cpp:184
+#: engines/tinsel/metaengine.cpp:239 engines/trecision/metaengine.cpp:120
 msgid "Default keymappings"
 msgstr ""
 
@@ -6750,7 +6747,7 @@ msgid "Automatic drilling"
 msgstr ""
 
 #: engines/freescape/metaengine.cpp:65
-msgid "Allow to succefully drill in any part of the area in Driller"
+msgid "Allow to successfully drill in any part of the area in Driller"
 msgstr ""
 
 #: engines/freescape/metaengine.cpp:75
@@ -10083,22 +10080,22 @@ msgstr ""
 msgid "Random Map Options"
 msgstr ""
 
-#. I18N: Map generator algorthims
+#. I18N: Map generator algorithms
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:59
 msgid "Algorithm"
 msgstr ""
 
-#. I18N: Spiff algorthim
+#. I18N: Spiff algorithm
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:63
 msgid "Spiff"
 msgstr ""
 
-#. I18N: Katton algorthim
+#. I18N: Katton algorithm
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:65
 msgid "Katton"
 msgstr ""
 
-#. I18N: Random algorthim
+#. I18N: Random algorithm
 #. I18N: Random map size
 #. I18N: Random tileset
 #. I18N: Random percentage of energy pools
@@ -10327,10 +10324,6 @@ msgstr ""
 
 #: engines/stark/metaengine.cpp:64 engines/ultima/metaengine.cpp:141
 msgid "When font anti-aliasing is enabled, the text is smoother."
-msgstr ""
-
-#: engines/stark/metaengine.cpp:184
-msgid "Default keymapppings"
 msgstr ""
 
 #. I18N: Opens in-game Diary
