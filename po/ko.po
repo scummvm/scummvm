@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2023-12-14 14:28+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2024-09-29 13:31+0000\n"
+"Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
 "Language: ko\n"
@@ -17,18 +17,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.4\n"
+"X-Generator: Weblate 5.7.2\n"
 "X-Language-name: Korean\n"
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
 #, c-format
 msgid "(built on %s with %s)"
-msgstr "(빌드 일자: %s, 컴파일러: %s)"
+msgstr "(%s에서 %s로 빌드됨)"
 
 #: gui/about.cpp:110
 msgid "Features compiled in:"
-msgstr "포함된 기능:"
+msgstr "다음과 같은 기능이 있습니다:"
 
 #: gui/about.cpp:118
 #, fuzzy
@@ -37,8 +37,6 @@ msgid "not supported"
 msgstr "게임 ID가 지원되지 않습니다"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "disabled"
 msgstr "비활성화"
 
@@ -217,10 +215,8 @@ msgid "Quick Mode: Success"
 msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:303 gui/cloudconnectionwizard.cpp:404
-#, fuzzy
-#| msgid "Connect your cloud storage account"
 msgid "Your cloud storage has been connected!"
-msgstr "클라우드 스토리지 계정을 연결"
+msgstr "클라우드 저장소가 연결되었습니다!"
 
 #: gui/cloudconnectionwizard.cpp:304 gui/cloudconnectionwizard.cpp:405
 msgid "Finish"
@@ -392,10 +388,8 @@ msgstr "잘못된 rs 파일."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
 #: gui/cloudconnectionwizard.cpp:565
-#, fuzzy
-#| msgid "Interact"
 msgid "Interrupted."
-msgstr "상호작용"
+msgstr "중단되었습니다."
 
 #: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3454
 msgid ""
@@ -412,10 +406,8 @@ msgstr ""
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:637
-#, fuzzy
-#| msgid "Failed to upload the file!"
 msgid "Failed to load JSON file"
-msgstr "파일 업로드에 실패했습니다!"
+msgstr "JSON 파일을 로드하는 데 실패함"
 
 #: gui/dlcsdialog.cpp:41
 msgid "Download Freeware Games and Demos"
@@ -525,9 +517,9 @@ msgstr "에러 %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:189 gui/downloadpacksdialog.cpp:245
-#, fuzzy, c-format
+#, c-format
 msgid "Downloading %S list..."
-msgstr "아이콘 목록을 다운로드하는 중..."
+msgstr "%S 목록을 다운로드하는 중..."
 
 #: gui/downloadpacksdialog.cpp:203
 #, fuzzy
@@ -535,9 +527,9 @@ msgid "Clear Cache"
 msgstr "값 제거"
 
 #: gui/downloadpacksdialog.cpp:255
-#, fuzzy, c-format
+#, c-format
 msgid "Downloading %S list... %d entries"
-msgstr "아이콘 목록을 다운로드하는 중... %d개 항목"
+msgstr "%S 목록을 다운로드하는 중... %d 개 항목"
 
 #: gui/downloadpacksdialog.cpp:265
 #, c-format
@@ -547,9 +539,7 @@ msgstr "%d개의 새 팩을 발견했습니다, %s %S"
 #: gui/downloadpacksdialog.cpp:291
 #, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
-msgstr ""
-"다운로드 완료.\n"
-"%d팩을 다운로드했습니다, %s %S."
+msgstr "다운로드 완료, %d 개의 팩 다운로드, %s %S"
 
 #: gui/downloadpacksdialog.cpp:395 gui/downloadpacksdialog.cpp:440
 msgid "ERROR: No icons path set"
@@ -557,9 +547,9 @@ msgstr "에러: 아이콘 경로가 설정되지 않음"
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:428
-#, fuzzy, c-format
+#, c-format
 msgid "No new %S available"
-msgstr "사용 가능한 새 아이콘 팩 없음"
+msgstr "새 %S을(를) 사용할 수 없음"
 
 #: gui/downloadpacksdialog.cpp:464
 #, c-format
@@ -874,10 +864,8 @@ msgid "Launch Email Client"
 msgstr ""
 
 #: gui/integrity-dialog.cpp:174
-#, fuzzy
-#| msgid "Scan complete!"
 msgid "Calculation complete"
-msgstr "검색 완료!"
+msgstr "계산 완료"
 
 #: gui/integrity-dialog.cpp:263
 #, fuzzy, c-format
@@ -1783,9 +1771,8 @@ msgid "Scaler:"
 msgstr "크기조절:"
 
 #: gui/options.cpp:1632
-#, fuzzy
 msgid "Shader:"
-msgstr "셰이더"
+msgstr "셰이더:"
 
 #: gui/options.cpp:1632 gui/options.cpp:1634 gui/options.cpp:1635
 #, fuzzy
@@ -1811,9 +1798,8 @@ msgid "Download Shaders"
 msgstr "게임 파일 다운로드"
 
 #: gui/options.cpp:1640
-#, fuzzy
 msgid "Check on the scummvm.org website for updates of shader packs"
-msgstr "업데이트 확인 중..."
+msgstr "셰이더 팩 업데이트는 scummvm.org 웹사이트에서 확인"
 
 #: gui/options.cpp:1646 backends/graphics/sdl/sdl-graphics.cpp:433
 msgid "Fullscreen mode"
@@ -2209,11 +2195,12 @@ msgid "Return to the launcher when leaving a game"
 msgstr "게임 종료 시 항상 런처로 복귀"
 
 #: gui/options.cpp:2597
-#, fuzzy
 msgid ""
 "Return to the launcher when leaving a game instead of closing ScummVM\n"
 "(this feature is not supported by all games)."
-msgstr "게임 종료 시 ScummVM을 종료하지 않고 항상 런처로 돌아옵니다."
+msgstr ""
+"게임 종료 시 ScummVM을 닫는 대신 런처로 돌아갑니다\n"
+"(이 기능은 모든 게임에서 지원되지 않음)."
 
 #: gui/options.cpp:2604
 msgid "Ask for confirmation on exit"
@@ -2274,9 +2261,8 @@ msgid "Download Icons"
 msgstr "다운로드"
 
 #: gui/options.cpp:2665
-#, fuzzy
 msgid "Check on the scummvm.org website for updates of icon packs"
-msgstr "업데이트 확인 중..."
+msgstr "아이콘 팩 업데이트는 scummvm.org 웹사이트에서 확인"
 
 #: gui/options.cpp:2671
 msgid "Autosave:"
@@ -2296,10 +2282,8 @@ msgid "Seed for initializing all random number generators"
 msgstr ""
 
 #: gui/options.cpp:2692
-#, fuzzy
-#| msgid "Debug Menu"
 msgid "Debug level:"
-msgstr "디버그 메뉴"
+msgstr "디버그 수준:"
 
 #. I18N: Debug level -1, no messages
 #: gui/options.cpp:2696 gui/options.cpp:2835
@@ -2459,18 +2443,13 @@ msgid "Stop using this storage on this device"
 msgstr "이 장치에서 스토리지 사용을 중단"
 
 #: gui/options.cpp:2777
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "This storage is not connected yet! To connect,"
 msgctxt "lowres"
 msgid "This storage is not connected yet!"
-msgstr "이 스토리지에 아직 연결되지 않았습니다! 연결하려면,"
+msgstr "이 저장소는 아직 연결되지 않았습니다!"
 
 #: gui/options.cpp:2779
-#, fuzzy
-#| msgid "This storage is not connected yet! To connect,"
 msgid "This storage is not connected yet!"
-msgstr "이 스토리지에 아직 연결되지 않았습니다! 연결하려면,"
+msgstr "이 저장소는 아직 연결되지 않았습니다!"
 
 #: gui/options.cpp:2780
 #, fuzzy
@@ -3205,20 +3184,16 @@ msgid "Unable to read ScummVM config file or create a new one!"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:39
-#, fuzzy
-#| msgid "Save Path:"
 msgid "Save Path Error"
-msgstr "저장 경로:"
+msgstr "저장 경로 오류"
 
 #: dists/android.strings.xml.cpp:40
 msgid "Unable to create or access default save path!"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:41
-#, fuzzy
-#| msgid "Icon Path:"
 msgid "Icons Path Error"
-msgstr "/icon/ 경로:"
+msgstr "아이콘 경로 오류"
 
 #: dists/android.strings.xml.cpp:42
 msgid "Unable to create or access default icons and shaders path!"
@@ -3457,10 +3432,8 @@ msgstr ""
 
 #: engines/dialogs.cpp:193 engines/ags/ags.cpp:349
 #: engines/glk/magnetic/magnetic.cpp:197 engines/scumm/saveload.cpp:167
-#, fuzzy
-#| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support saving from the menu. Use in-game interface"
-msgstr "이 게임은 런처에서 불러오기를 지원하지 않습니다."
+msgstr "이 게임은 메뉴에서 저장을 지원하지 않습니다. 게임 내 인터페이스 사용"
 
 #: engines/dialogs.cpp:202
 msgid "This game cannot be saved at this time. Please try again later"
@@ -3477,10 +3450,8 @@ msgstr ""
 
 #: engines/dialogs.cpp:234 engines/ags/ags.cpp:334
 #: engines/glk/magnetic/magnetic.cpp:187 engines/scumm/saveload.cpp:99
-#, fuzzy
-#| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support loading from the menu. Use in-game interface"
-msgstr "이 게임은 런처에서 불러오기를 지원하지 않습니다."
+msgstr "이 게임은 메뉴에서 로딩을 지원하지 않습니다. 게임 내 인터페이스 사용"
 
 #: engines/dialogs.cpp:243
 msgid "This game cannot be loaded at this time. Please try again later"
@@ -3563,7 +3534,7 @@ msgid "Skip autosave"
 msgstr "비어있는 자동 저장"
 
 #: engines/engine.cpp:616
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "WARNING: The autosave slot contains a saved game named %S, and an autosave "
 "is pending.\n"
@@ -3571,9 +3542,10 @@ msgid ""
 "needed.\n"
 "Alternatively, you can skip the autosave (will prompt again in 5 minutes)."
 msgstr ""
-"경고: 이 자동 저장 슬롯에는 '%S' 자동 저장 데이터가 존재합니다. 기존 저장 데"
-"이터를 새로운 슬롯으로 이동하거나 덮어씌우거나 자동 저장을 취소할 수 있습니"
-"다. (재시작 전까지 다시 알리지 않음)"
+"경고: 자동 저장 슬롯에는 %S라는 이름의 저장된 게임이 포함되어 있으며 자동 "
+"저장이 보류 중입니다.\n"
+"이 저장된 게임을 새 슬롯으로 옮기거나 더 이상 필요하지 않으면 삭제하세요.\n"
+"또는 자동 저장을 건너뛸 수 있습니다 (5분 후에 다시 묻습니다)."
 
 #: engines/engine.cpp:626
 msgid "ERROR: Could not copy the savegame to a new slot"
@@ -4819,10 +4791,8 @@ msgstr ""
 #: backends/platform/android/android.cpp:1126
 #: backends/platform/ios7/ios7_osys_misc.mm:336
 #: backends/platform/ios7/ios7_osys_misc.mm:380
-#, fuzzy
-#| msgid "~A~dd Game..."
 msgid "Adding Games"
-msgstr "게임 추가(~A~)..."
+msgstr "게임 추가"
 
 #: backends/platform/android/android.cpp:1129
 msgid ""
@@ -5210,16 +5180,12 @@ msgid "(check '? > Libretro playlist' for detailed info)"
 msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:48
-#, fuzzy
-#| msgid "Plugins Path:"
 msgid "Playlists Path"
-msgstr "플러그인 경로:"
+msgstr "재생목록 경로"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:49
-#, fuzzy
-#| msgid "Specifies where your saved games are put"
 msgid "Specifies where your playlist will be saved."
-msgstr "게임 저장 파일이 있을 경로를 지정"
+msgstr "재생목록이 저장될 위치를 지정합니다."
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:52
 #, fuzzy
@@ -5228,10 +5194,8 @@ msgid "Playlist format:"
 msgstr "플랫폼:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:57
-#, fuzzy
-#| msgid "Next location"
 msgid "Hooks location:"
-msgstr "다음 위치"
+msgstr "후크 위치:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:59
 msgid "All in save folder"
@@ -5250,16 +5214,12 @@ msgid "Generate playlist"
 msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:66
-#, fuzzy
-#| msgid "Status:"
 msgid "Status: "
-msgstr "상태:"
+msgstr "상태: "
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:148
-#, fuzzy
-#| msgid "Failed to save game to file."
 msgid "Failed, can't access playlist file"
-msgstr "게임을 파일에 저장하는데 실패했습니다."
+msgstr "실패함, 재생목록 파일에 접근할 수 없음"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:224
 #, fuzzy
@@ -5268,10 +5228,8 @@ msgid "cleaning failed"
 msgstr "데이터 읽기 실패"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:226
-#, fuzzy
-#| msgid "Failed to read the file!"
 msgid "Failed, can't create hook files"
-msgstr "파일 읽기에 실패했습니다!"
+msgstr "실패함, 후크 파일을 생성할 수 없음"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:236
 #, fuzzy
@@ -5869,18 +5827,14 @@ msgstr ""
 #: engines/agi/metaengine.cpp:408 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "This game does not support loading"
-msgstr "이 게임은 지원되지 않습니다."
+msgstr "이 게임은 로딩을 지원하지 않음"
 
 #: engines/agi/metaengine.cpp:431 engines/asylum/asylum.cpp:666
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "This game does not support saving"
-msgstr "이 게임은 지원되지 않습니다."
+msgstr "이 게임은 저장을 지원하지 않음"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:271
@@ -6065,10 +6019,8 @@ msgid "Music volume down"
 msgstr "음악 볼륨을 높임 / 줄임"
 
 #: engines/agos/metaengine.cpp:262 engines/vcruise/metaengine.cpp:203
-#, fuzzy
-#| msgid "Music volume: "
 msgid "Music volume up"
-msgstr "음악 볼륨: "
+msgstr "음악 볼륨 높이기"
 
 #: engines/agos/metaengine.cpp:268 engines/vcruise/metaengine.cpp:188
 #, fuzzy
@@ -6149,10 +6101,8 @@ msgstr "효과음 볼륨"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:347
-#, fuzzy
-#| msgid "Switching characters:"
 msgid "Switch characters"
-msgstr "캐릭터 전환:"
+msgstr "캐릭터 전환"
 
 #: engines/agos/metaengine.cpp:353
 #, fuzzy
@@ -6189,40 +6139,33 @@ msgid ""
 "General MIDI ones. It is still possible that\n"
 "some tracks sound incorrect."
 msgstr ""
-"General MIDI 장치를 사용하시는 것으로 보입니다.\n"
-"하지만 이 게임은 Roland MT32 MIDI만 지원합니다.\n"
-"Roland MT32 악기를 General MIDI로 변환하는 경우\n"
-"일부 음악이 올바르지 않게 들릴 수 있습니다."
+"일반 미디 장치를 사용하는 것 같지만,\n"
+"게임은 롤랜드 MT32 미디만 지원합니다.\n"
+"롤랜드 MT32 악기를 일반 미디 악기에\n"
+"매핑하려고 합니다. 일부 트랙이 잘못\n"
+"들릴 가능성도 있습니다."
 
 #: engines/agos/midi.cpp:316
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find AdLib instrument definition files\n"
-#| "%s and %s. Without these files,\n"
-#| "the music will not sound the same as the original game."
+#, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
 "%s. Without this file,\n"
 "the music will not sound the same as the original game."
 msgstr ""
-"%s 및 %s AdLib 기기 정의 파일을 찾을 수 없습니다.\n"
+"AdLib 악기 정의 파일 %s을(를) 찾을 수 없습니다.\n"
 "이 파일들이 없다면,\n"
-"음악은 원래의 게임과 똑같이 들리지 않을 것이다."
+"음악이 원래 게임과 같은 소리가 나지 않습니다."
 
 #: engines/agos/midi.cpp:374
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find AdLib instrument definition files\n"
-#| "%s and %s. Without these files,\n"
-#| "the music will not sound the same as the original game."
+#, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
 "%s. Without this file,\n"
 "the sound effects will not sound the same as the original game."
 msgstr ""
-"%s 및 %s AdLib 기기 정의 파일을 찾을 수 없습니다.\n"
+"AdLib 악기 정의 파일 %s을(를) 찾을 수 없습니다.\n"
 "이 파일들이 없다면,\n"
-"음악은 원래의 게임과 똑같이 들리지 않을 것이다."
+"사운드 효과가 원래 게임과 동일하게 들리지 않습니다."
 
 #: engines/agos/midi.cpp:453
 #, fuzzy, c-format
@@ -7185,20 +7128,20 @@ msgid ""
 msgstr "이대로 진행하면 게임이 종료됩니다. 계속하시겠습니까?"
 
 #: engines/dragons/dragons.cpp:1884
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"
 "Please refer to the wiki page\n"
 "%s for details on how to properly extract the DTSPEECH.XA and *.STR files "
 "from your game disc."
 msgstr ""
-"오류: '%s' 파일이 올바르게 추출되지 않았습니다.\n"
-"다음의 위키 페이지\n"
-"https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos 를 참조하"
-"여 DTSPEECH.XA와 *.STR 파일을 게임 디스크에서 추출하는 방법을 확인하십시오."
+"오류: 파일 '%s' 파일이 제대로 추출되지 않았습니다.\n"
+"게임 디스크에서 DTSPEECH.XA 및 *.STR 파일을 올바르게 추출하는 방법에 대한 "
+"자세한 내용은\n"
+"위키 페이지 %s을(를) 참조하세요."
 
 #: engines/dragons/metaengine.cpp:121
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: It appears that the game data files were extracted incorrectly.\n"
 "\n"
@@ -7209,10 +7152,10 @@ msgid ""
 msgstr ""
 "오류: 게임 데이터 파일이 잘못 추출된 것 같습니다.\n"
 "\n"
-"특별한 방법을 사용하여 STR 및 XA 파일만 추출해야합니다. 나머지는 게임 CD에서 "
-"정상적으로 복사해야합니다.\n"
+"STR 및 XA 파일만 특수 방법을 사용하여 추출해야 합니다. 나머지는 게임 CD에서 "
+"정상적으로 복사해야 합니다.\n"
 "\n"
-" https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons 참조"
+" %s 참조"
 
 #. I18N: Perform action on object where cursor points
 #: engines/dragons/metaengine.cpp:136 engines/tinsel/metaengine.cpp:293
@@ -7648,16 +7591,15 @@ msgstr ""
 "%s"
 
 #: engines/grim/md5check.cpp:613
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Could not open the file %s for checking.\n"
 "It may be missing or you may not have the rights to open it.\n"
 "Go to %s to see a list of the needed files."
 msgstr ""
-"'%s' 파일을 검사하기 위해 열 수 없습니다.\n"
-"파일이 없거나, 파일에 접근한 권한이 없을 수 있습니다.\n"
-"https://wiki.scummvm.org/index.php/Datafiles 에서 필요한 파일을 확인할 수 있"
-"습니다."
+"%s 파일을 열 수 없습니다.\n"
+"파일이 없거나 열 권한이 없을 수 있습니다.\n"
+"%s로 이동하여 필요한 파일 목록을 확인하세요."
 
 #: engines/grim/md5checkdialog.cpp:41
 msgid ""
@@ -7688,20 +7630,20 @@ msgid "Escape from Monkey Island support is not compiled in"
 msgstr "원숭이섬 탈출 지원이 컴파일 되지 않음"
 
 #: engines/grim/resource.cpp:102
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The original patch of Grim Fandango\n"
 "is missing. Please download it from\n"
 "%s\n"
 "and put it in the game data files directory"
 msgstr ""
-"원본 Grim Fandango 패치를 찾을 수 없습니다.\n"
-"아래의 URL에서 패치를 다운로드하여\n"
-"게임 데이터 디렉토리에 넣어 주세요.\n"
-"https://downloads.scummvm.org/frs/extras/patches/gfupd101.exe"
+"그림 판당고의 원본 패치가 없습니다.\n"
+"다음에서 다운로드하고\n"
+"%s\n"
+"게임 데이터 파일 디렉토리에 넣기"
 
 #: engines/grim/resource.cpp:107
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The original patch of Escape from Monkey Island is missing. \n"
 "Please download it from %s\n"
@@ -7709,10 +7651,10 @@ msgid ""
 "Pay attention to download the correct version according to the game's "
 "language!"
 msgstr ""
-"원본 Grim Fandango 패치를 찾을 수 없습니다.\n"
-"https://downloads.scummvm.org/frs/extras/patches/ 에서\n"
-"패치를 다운로드하여, 게임 데이터 디렉토리에 넣어 주세요.\n"
-"게임의 언어와 맞는 정확한 버전을 다운로드해야 합니다"
+"원숭이 섬의 탈출의 원본 패치가 없습니다.\n"
+"%s에서 다운로드하고\n"
+"게임 데이터 파일 디렉토리에 넣으세요.\n"
+"게임 언어에 맞는 올바른 버전을 다운로드하는 데 주의하세요!"
 
 #: engines/grim/emi/sound/emisound.cpp:655
 msgid ""
@@ -7782,10 +7724,8 @@ msgid "GroovieV2 support is not compiled in"
 msgstr "GroovieV2 지원이 컴파일 되지 않음"
 
 #: engines/groovie/metaengine.cpp:201
-#, fuzzy
-#| msgid "Available engines:"
 msgid "Groovie engine"
-msgstr "사용 가능한 엔진:"
+msgstr "그루비 엔진"
 
 #: engines/groovie/metaengine.cpp:217
 #, fuzzy
@@ -8235,14 +8175,7 @@ msgid "Choose Spell"
 msgstr "주문 선택"
 
 #: engines/kyra/gui/saveload_eob.cpp:601
-#, fuzzy, c-format
-#| msgid ""
-#| "The following original saved game file has been found in your game path:\n"
-#| "\n"
-#| "%s %s\n"
-#| "\n"
-#| "Do you wish to use this saved game file with ScummVM?\n"
-#| "\n"
+#, c-format
 msgid ""
 "The following original saved game file has been found in your game path:\n"
 "\n"
@@ -8251,11 +8184,11 @@ msgid ""
 "Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
-"다음의 원본 게임 저장 파일이 게임 폴더에서 발견되었습니다:\n"
+"다음의 원본 저장된 게임 파일이 게임 경로에서 발견되었습니다:\n"
 "\n"
-"%s %s\n"
+"%s %S\n"
 "\n"
-"ScummVM에서 게임 저장 파일로 사용하시겠습니까?\n"
+"ScummVM에서 게임 저장 파일로 사용하겠습니까?\n"
 "\n"
 
 #: engines/kyra/gui/saveload_eob.cpp:634
@@ -8385,16 +8318,12 @@ msgid "Yes/No keymappings"
 msgstr "게임 옵션"
 
 #: engines/lure/metaengine.cpp:197 engines/mads/metaengine.cpp:311
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restore game"
-msgstr "게임 불러오기:"
+msgstr "게임 복원"
 
 #: engines/lure/metaengine.cpp:203
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restart game"
-msgstr "게임 불러오기:"
+msgstr "게임 재시작"
 
 #. I18N: Shift Cursor during fight to top left
 #: engines/lure/metaengine.cpp:233
@@ -8542,16 +8471,12 @@ msgid "Scroll bar down"
 msgstr "아래로 스크롤"
 
 #: engines/mads/metaengine.cpp:331
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Start game"
-msgstr "게임 불러오기:"
+msgstr "게임 시작"
 
 #: engines/mads/metaengine.cpp:337
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Resume game"
-msgstr "게임 불러오기:"
+msgstr "게임 재개"
 
 #: engines/mads/metaengine.cpp:343
 #, fuzzy
@@ -8576,10 +8501,8 @@ msgid "Exit game"
 msgstr "게임 종료"
 
 #: engines/mads/metaengine.cpp:368
-#, fuzzy
-#| msgid "Transitions:"
 msgid "Restart animation"
-msgstr "전환효과:"
+msgstr "애니메이션 재시작"
 
 #: engines/mm/metaengine.cpp:57
 msgid "Show item costs in standard inventory mode"
@@ -8700,10 +8623,8 @@ msgstr ""
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:111
-#, fuzzy
-#| msgid "Search:"
 msgid "Search"
-msgstr "검색:"
+msgstr "검색"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:113
@@ -9090,9 +9011,8 @@ msgid "Start with debugger"
 msgstr "디버거를 시작"
 
 #: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:65
-#, fuzzy
 msgid "Starts with the debugger dashboard active."
-msgstr "디버거를 시작"
+msgstr "디버거 대시보드가 활성화 상태에서 시작."
 
 #: engines/mtropolis/metaengine.cpp:160
 #, fuzzy
@@ -9104,9 +9024,8 @@ msgid "Force any playing movies to end"
 msgstr ""
 
 #: engines/mtropolis/saveload.cpp:142
-#, fuzzy
 msgid "Failed to read version information from save file"
-msgstr "파일에서 저장된 게임을 불러오는데 실패했습니다."
+msgstr "저장 파일에서 버전 정보를 읽기 실패함"
 
 #: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:362
 msgid ""
@@ -9166,7 +9085,7 @@ msgid "Enable widescreen rendering in fullscreen mode."
 msgstr "전체 화면 모드에서 와이드 스크린 렌더링을 사용합니다."
 
 #: engines/myst3/myst3.cpp:363
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "This version of Myst III has not been updated with the latest official "
 "patch.\n"
@@ -9174,10 +9093,10 @@ msgid ""
 "The updates can be downloaded from:\n"
 "%s"
 msgstr ""
-"현재 구동 중인 Myst III는 최신 공식 패치로 업데이트되지 않았습니다.\n"
-"게임 언어에 해당하는 공식 업데이트를 설치하십시오.\n"
-"업데이트는 다음에서 다운로드 할 수 있습니다:\n"
-"https://www.scummvm.org/frs/extras/patches/"
+"이 버전의 미스트 III는 최신 공식 패치로 업데이트되지 않았습니다.\n"
+"게임 언어에 해당하는 공식 업데이트를 설치하세요.\n"
+"업데이트는 다음에서 다운로드할 수 있습니다:\n"
+"%s"
 
 #: engines/myst3/myst3.cpp:1591 engines/pegasus/pegasus.cpp:749
 msgid "Invalid file name for saving"
@@ -9294,9 +9213,8 @@ msgstr ""
 
 #. I18N: NHC is a file extension
 #: engines/neverhood/dialogs.cpp:89
-#, fuzzy
 msgid "NHC replacement:"
-msgstr "대체 폰트 사용"
+msgstr "NHC 교체:"
 
 #: engines/neverhood/dialogs.cpp:95
 #, fuzzy
@@ -9967,14 +9885,6 @@ msgstr ""
 "\n"
 
 #: engines/scumm/detection_internal.h:384
-#, fuzzy
-#| msgid ""
-#| "This version of Monkey Island can't be played, because Limited Run Games "
-#| "provided corrupted DISK04.LEC and 903.LFL files.\n"
-#| "\n"
-#| "Please contact their technical support for replacement files, or look "
-#| "online for some guides which can help you recover valid files from the "
-#| "KryoFlux dumps that Limited Run Games also provided."
 msgid ""
 "This version of Monkey Island can't be played, because Limited Run Games "
 "provided corrupted DISK03.LEC, DISK04.LEC and 903.LFL files.\n"
@@ -9983,11 +9893,12 @@ msgid ""
 "for some guides which can help you recover valid files from the KryoFlux "
 "dumps that Limited Run Games also provided."
 msgstr ""
-"Limited Run Games에서 제공한 DISK04.LEC 및 903.LFL 파일이 손상되었기 때문에 "
-"이 버전의 Monkey Island는 플레이할 수 없습니다.\n"
-"기술 지원에 문의하여 교체 파일을 받거나, Limited Run Games에서 제공한 "
-"KryoFlux 덤프에서 유효한 파일을 복구하는 데 도움이 되는 가이드를 온라인으로 "
-"찾아보십시오."
+"Limited Run Games에서 손상된 DISK03.LEC, DISK04.LEC, 903.LFL 파일을 제공했기 "
+"때문에, 이 버전의 원숭이 섬의 비밀은 플레이할 수 없습니다.\n"
+"\n"
+"교체 파일에 대해서는 기술 지원팀에 문의하거나, Limited Run Games에서 제공한 "
+"KryoFlux 덤프에서 유효한 파일을 복구하는 데 도움이 되는 가이드를 온라인에서 "
+"찾아보세요."
 
 #. I18N: Creates new online session for multiplayer
 #: engines/scumm/dialog-createsession.cpp:37
@@ -9998,10 +9909,8 @@ msgstr "새로운 게임 저장 파일을 생성합니다"
 
 #. I18N: Name of the online game session
 #: engines/scumm/dialog-createsession.cpp:40
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Name:"
-msgstr "게임 메뉴"
+msgstr "게임 이름:"
 
 #. I18N: The user's name for online
 #: engines/scumm/dialog-createsession.cpp:44
@@ -10030,9 +9939,9 @@ msgstr ""
 
 #. I18N: Online multiplayer games were found
 #: engines/scumm/dialog-sessionselector.cpp:118
-#, fuzzy, c-format
+#, c-format
 msgid "Found %d available games."
-msgstr "사용 가능한 새 아이콘 팩 없음"
+msgstr "사용 가능한 게임 %d 개를 찾았습니다."
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:285
@@ -10207,9 +10116,8 @@ msgid "Quality Selection: %s"
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1499
-#, fuzzy
 msgid "Playback Adjust:"
-msgstr "재생"
+msgstr "재생 조정:"
 
 #: engines/scumm/dialogs.cpp:1503
 msgid ""
@@ -10945,9 +10853,8 @@ msgid "Up Right"
 msgstr "오른쪽"
 
 #: engines/scumm/metaengine.cpp:922
-#, fuzzy
 msgid "Switch weapon"
-msgstr "캐릭터 전환:"
+msgstr "무기 전환"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/metaengine.cpp:936
@@ -11419,7 +11326,7 @@ msgstr ""
 
 #: engines/stark/stark.cpp:106
 msgid "Software renderer does not support modded assets"
-msgstr "소프트웨어 렌더러는 모드 애셋을 지원하지 않습니다."
+msgstr "소프트웨어 렌더러는 수정된 자산을 지원하지 않음"
 
 #: engines/stark/stark.cpp:292
 msgid "You are missing recommended data files:"
@@ -11939,10 +11846,8 @@ msgid "Voices: German"
 msgstr ""
 
 #: engines/twp/dialogs.cpp:32
-#, fuzzy
-#| msgid "Video"
 msgid "Video:"
-msgstr "비디오"
+msgstr "비디오:"
 
 #. I18N: Setting to switch toiled paper to be shown as "over".
 #: engines/twp/dialogs.cpp:37
@@ -11969,10 +11874,8 @@ msgid ""
 msgstr ""
 
 #: engines/twp/dialogs.cpp:44
-#, fuzzy
-#| msgid "Control"
 msgid "Controls:"
-msgstr "조작"
+msgstr "제어:"
 
 #. I18N: Setting to invert verb colors or keep the original verb colors.
 #: engines/twp/dialogs.cpp:48
@@ -12262,16 +12165,12 @@ msgid ""
 msgstr ""
 
 #: engines/vcruise/metaengine.cpp:53
-#, fuzzy
-#| msgid "Transitions:"
 msgid "Faster animations"
-msgstr "전환효과:"
+msgstr "더 빠른 애니메이션"
 
 #: engines/vcruise/metaengine.cpp:54
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Speeds up animations."
-msgstr "음성 옵션"
+msgstr "애니메이션 속도가 빨라집니다."
 
 #: engines/vcruise/metaengine.cpp:75
 #, fuzzy
@@ -12290,10 +12189,8 @@ msgid "Use 16-color graphics"
 msgstr "컬러 그래픽"
 
 #: engines/vcruise/metaengine.cpp:87
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Uses 16-color graphics."
-msgstr "컬러 그래픽"
+msgstr "16 색 그래픽을 사용합니다."
 
 #: engines/vcruise/metaengine.cpp:97
 msgid "Preload sounds"
@@ -12380,9 +12277,8 @@ msgid "Failed to read version information from save file."
 msgstr "파일에서 저장된 게임을 불러오는데 실패했습니다."
 
 #: engines/vcruise/vcruise.cpp:377
-#, fuzzy
 msgid "An unknown error occurred while attempting to load the saved game."
-msgstr ", 공유 폴더 활성화 중 오류 발생"
+msgstr "저장된 게임을 불러오는 동안 알 수 없는 오류가 발생했습니다."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
