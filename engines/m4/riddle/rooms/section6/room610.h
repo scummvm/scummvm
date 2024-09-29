@@ -29,12 +29,43 @@ namespace Riddle {
 namespace Rooms {
 
 class Room610 : public Room {
+private:
+	int _ripPeerAroundHut = 0;
+	int _rp04 = 0;
+	int _k00 = 0;
+	int _k01 = 0;
+	int _sgSlapsTt1 = 0;
+	int _sgSlapsTt2 = 0;
+	int _sgPullsGun = 0;
+	machine *_spleen = nullptr;
+	machine *_k = nullptr;
+	machine *_sgTt = nullptr;
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+	int _val5 = 0;
+	int _val6 = 0;
+	int _val7 = 0;
+	int _val8 = 0;
+	bool _flag1 = false;
+	bool _flag2 = false;
+
+	static void triggerMachineByHashCallback610(frac16 myMessage, machine *sender);
+	void setup();
+	void talkKuangShenGuo();
+	void talkSamantha();
+	bool useHorn();
+	void useWindow();
+
 public:
 	Room610() : Room() {}
 	~Room610() override {}
 
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms

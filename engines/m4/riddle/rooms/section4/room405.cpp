@@ -148,7 +148,6 @@ void Room405::daemon() {
 	case 23:
 		sendWSMessage_10000(1, _baronWalker, _baronShakeSit, 48, 100, 24,
 			_baronShakeSit, 100, 100, 0);
-		break;
 		digi_play("405b01a", 1, 255, 25);
 		break;
 
