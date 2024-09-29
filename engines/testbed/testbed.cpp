@@ -50,6 +50,9 @@
 #ifdef USE_TTS
 #include "testbed/speech.h"
 #endif
+#ifdef USE_IMGUI
+#include "testbed/imgui.h"
+#endif
 
 namespace Testbed {
 
@@ -165,6 +168,11 @@ void TestbedEngine::pushTestsuites(Common::Array<Testsuite *> &testsuiteList) {
 #ifdef USE_SDL_NET
 	// Webserver
 	ts = new WebserverTestSuite();
+	testsuiteList.push_back(ts);
+#endif
+#ifdef USE_IMGUI
+	// ImGui
+	ts = new ImGuiTestSuite();
 	testsuiteList.push_back(ts);
 #endif
 	// Video decoder
