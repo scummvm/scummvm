@@ -24,6 +24,7 @@
 #include "common/std/vector.h"
 #include "ags/shared/ac/common.h" // set_our_eip
 #include "ags/shared/ac/game_struct_defines.h"
+#include "ags/shared/debugging/out.h"
 #include "ags/shared/font/fonts.h"
 #include "ags/shared/font/ttf_font_renderer.h"
 #include "ags/shared/font/wfn_font_renderer.h"
@@ -465,22 +466,28 @@ bool load_font_size(size_t fontNumber, const FontInfo &font_info) {
 	params.LoadMode = (font_info.Flags & FFLG_LOADMODEMASK);
 	FontMetrics metrics;
 
-	if (_GP(ttfRenderer).LoadFromDiskEx(fontNumber, font_info.Size, &params, &metrics)) {
-		_GP(fonts)[fontNumber].Renderer = &_GP(ttfRenderer);
-		_GP(fonts)[fontNumber].Renderer2 = &_GP(ttfRenderer);
-		_GP(fonts)[fontNumber].RendererInt = &_GP(ttfRenderer);
-	} else if (_GP(wfnRenderer).LoadFromDiskEx(fontNumber, font_info.Size, &params, &metrics)) {
-		_GP(fonts)[fontNumber].Renderer = &_GP(wfnRenderer);
-		_GP(fonts)[fontNumber].Renderer2 = &_GP(wfnRenderer);
-		_GP(fonts)[fontNumber].RendererInt = &_GP(wfnRenderer);
+	Font &font = _GP(fonts)[fontNumber];
+	String src_filename;
+	if (_GP(ttfRenderer).LoadFromDiskEx(fontNumber, font_info.Size, &src_filename, &params, &metrics)) {
+		font.Renderer = &_GP(ttfRenderer);
+		font.Renderer2 = &_GP(ttfRenderer);
+		font.RendererInt = &_GP(ttfRenderer);
+	} else if (_GP(wfnRenderer).LoadFromDiskEx(fontNumber, font_info.Size, &src_filename, &params, &metrics)) {
+		font.Renderer = &_GP(wfnRenderer);
+		font.Renderer2 = &_GP(wfnRenderer);
+		font.RendererInt = &_GP(wfnRenderer);
 	}
 
-	if (!_GP(fonts)[fontNumber].Renderer)
+	if (!font.Renderer)
 		return false;
 
-	_GP(fonts)[fontNumber].Info = font_info;
-	_GP(fonts)[fontNumber].Metrics = metrics;
+	font.Info = font_info;
+	font.Metrics = metrics;
 	font_post_init(fontNumber);
+
+	Debug::Printf("Loaded font %d: %s, req size: %d; nominal h: %d, real h: %d, extent: %d,%d",
+				  fontNumber, src_filename.GetCStr(), font_info.Size, font.Metrics.NominalHeight, font.Metrics.RealHeight,
+				  font.Metrics.VExtent.first, font.Metrics.VExtent.second);
 	return true;
 }
 

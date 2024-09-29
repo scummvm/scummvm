@@ -109,15 +109,15 @@ static int RenderChar(Bitmap *ds, const int at_x, const int at_y, Rect clip,
 }
 
 bool WFNFontRenderer::LoadFromDisk(int fontNumber, int fontSize) {
-	return LoadFromDiskEx(fontNumber, fontSize, nullptr, nullptr);
+	return LoadFromDiskEx(fontNumber, fontSize, nullptr, nullptr, nullptr);
 }
 
 bool WFNFontRenderer::IsBitmapFont() {
 	return true;
 }
 
-bool WFNFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
-		const FontRenderParams *params, FontMetrics *metrics) {
+bool WFNFontRenderer::LoadFromDiskEx(int fontNumber, int /*fontSize*/, String *src_filename,
+									 const FontRenderParams *params, FontMetrics *metrics) {
 	String file_name;
 	Stream *ffi = nullptr;
 
@@ -125,6 +125,8 @@ bool WFNFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
 	ffi = _GP(AssetMgr)->OpenAsset(file_name);
 	if (ffi == nullptr) {
 		// actual font not found, try font 0 instead
+		// FIXME: this should not be done here in this font renderer implementation,
+		// but somewhere outside, when whoever calls this method
 		file_name = "agsfnt0.wfn";
 		ffi = _GP(AssetMgr)->OpenAsset(file_name);
 		if (ffi == nullptr)
@@ -142,6 +144,8 @@ bool WFNFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
 	}
 	_fontData[fontNumber].Font = font;
 	_fontData[fontNumber].Params = params ? *params : FontRenderParams();
+	if (src_filename)
+		*src_filename = file_name;
 	if (metrics)
 		*metrics = FontMetrics();
 	return true;
