@@ -78,6 +78,9 @@ struct ObjTexture {
 	std::unique_ptr<Shared::Bitmap> Bmp;
 	// Corresponding texture, created by renderer
 	Engine::IDriverDependantBitmap *Ddb = nullptr;
+	// Sprite notification block: becomes invalid to notify an updated
+	// or deleted sprtie
+	std::shared_ptr<uint32_t> SpriteNotify;
 	// Sprite's position
 	Point Pos;
 	// Texture's offset, *relative* to the logical sprite's position;
@@ -92,6 +95,12 @@ struct ObjTexture {
 	~ObjTexture();
 
 	ObjTexture &operator =(ObjTexture &&o);
+
+	// Tests the sprite notification block to ensure that the texture
+	// is synchronized with the latest sprite version
+	inline bool IsSynced() const {
+		return SpriteNotify && (*SpriteNotify == SpriteID);
+	}
 };
 
 // ObjectCache stores cached object data, used to determine
