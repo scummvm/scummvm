@@ -32,7 +32,7 @@ namespace Common {
 const RotationModeDescription g_rotationModes[] = {
 	{ _s("No rotation"), kRotationNormal },
 	{ _s("Clockwise"), kRotation90 },
-	{ _s("180 degress"), kRotation180 },
+	{ _s("180 degrees"), kRotation180 },
 	{ _s("Counter-clockwise"), kRotation270 },
 	{ nullptr, kRotationNormal}
 };
