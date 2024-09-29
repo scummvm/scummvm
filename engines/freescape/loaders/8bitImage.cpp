@@ -52,21 +52,13 @@ int FreescapeEngine::execute8bitBinImageMultiCommand(Common::SeekableReadStream 
 
 int FreescapeEngine::execute8bitBinImageCommand(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int row, int column, int bit) {
 	int code = file->readByte();
-	if (code >= 0xD0) {
-		int count;
-		if (code >= 0xF0) {
-			count = 17 - (code & 0x0F);
-		} else if (code >= 0xE0) {
-			count = 33 - (code & 0x0F);
-		} else {
-			count = 34 + (0xDF - code);
-		}
+	if (code >= 0x80) {
+		int count = 257 - code;
 		return execute8bitBinImageSingleCommand(file, surface, row, column, bit, count);
-	} else if ((code & 0x80) == 0) {
+	} else {
 		int count = code + 1;
 		return execute8bitBinImageMultiCommand(file, surface, row, column, bit, count);
 	}
-	error("Unknown code %d", code);
 }
 
 void FreescapeEngine::load8bitBinImageRowIteration(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int row, int bit) {
