@@ -96,10 +96,9 @@ struct ObjTexture {
 
 	ObjTexture &operator =(ObjTexture &&o);
 
-	// Tests the sprite notification block to ensure that the texture
-	// is synchronized with the latest sprite version
-	inline bool IsSynced() const {
-		return SpriteNotify && (*SpriteNotify == SpriteID);
+	// Tests if the sprite change was notified
+	inline bool IsChangeNotified() const {
+		return SpriteNotify && (*SpriteNotify != SpriteID);
 	}
 };
 
