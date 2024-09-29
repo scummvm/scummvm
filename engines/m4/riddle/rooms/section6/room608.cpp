@@ -31,7 +31,7 @@ namespace Rooms {
 
 static const int16 NORMAL_DIRS1[] = { 220, 221, -1 };
 static const char *NORMAL_NAMES1[] = { "oldwk1", "oldwk3" };
-static const int16 SHADOW_DIRS1[] = { 220, 231, -1 };
+static const int16 SHADOW_DIRS1[] = { 230, 231, -1 };
 static const char *SHADOW_NAMES1[] = { "tt walker shadow 1", "oldwk3s" };
 
 
@@ -44,21 +44,21 @@ void Room608::init() {
 		else
 			kernel_load_variant("608lock2");
 
-		_old01 = series_load("608old01");
-		_old02 = series_load("608old02");
-		_old05 = series_load("608old05");
-		_old08 = series_load("608old08");
-		_old05a = series_load("608old05a");
-		_old05b = series_load("608old05b");
-		_old05c = series_load("608old05c");
-		_old05d = series_load("608old05d");
-		_old05f = series_load("608old05f");
+		_old1 = series_load("608old01");
+		_old2 = series_load("608old02");
+		_old5 = series_load("608old05");
+		_old8 = series_load("608old08");
+		_old5a = series_load("608old5a");
+		_old5b = series_load("608old5b");
+		_old5c = series_load("608old5c");
+		_old5d = series_load("608old5d");
+		_old5f = series_load("608old5f");
 
 		ws_walk_load_walker_series(NORMAL_DIRS1, NORMAL_NAMES1);
 		ws_walk_load_shadow_series(SHADOW_DIRS1, SHADOW_NAMES1);
 		_ol = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x200, 0,
 			triggerMachineByHashCallbackNegative, "ol");
-		sendWSMessage_10000(1, _ol, _old01, 1, 1, 200, _old01, 1, 1, 0);
+		sendWSMessage_10000(1, _ol, _old1, 1, 1, 200, _old1, 1, 1, 0);
 		_val1 = 0;
 		_val2 = 0;
 		_val3 = 0;
@@ -200,6 +200,1110 @@ void Room608::init() {
 }
 
 void Room608::daemon() {
+	int frame;
+
+	switch (_G(kernel).trigger) {
+	case 1:
+		player_set_commands_allowed(true);
+		break;
+
+	case 18:
+		player_update_info();
+		ws_hide_walker();
+
+		_shadow = series_show("safari shadow 3", 0xf00, 0, -1, -1, 0,
+			_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+			triggerMachineByHashCallbackNegative, "rip talker");
+		sendWSMessage_10000(1, _ripley, _rp01, 1, 13, -1, _rp01, 20, 20, 0);
+
+	case 20:
+		player_update_info(_tt, &_G(player_info));
+		ws_hide_walker();
+
+		_ttShadow = series_show("tt walker shadow 5", 0xf00, 0, -1, -1, 0,
+			_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+		_ttTalker = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+			triggerMachineByHashCallbackNegative, "tt talker");
+		sendWSMessage_10000(1, _ttTalker, _tt01, 63, 54, 22, _tt01, 54, 54, 0);
+		break;
+
+	case 22:
+		sendWSMessage_10000(1, _ttTalker, _tt01, 40, 45, -1, _tt01, 46, 53, 4);
+		sendWSMessage_1a0000(_ttTalker, 11);
+		digi_play("608t01", 1, 255, 23);
+		break;
+
+	case 23:
+		sendWSMessage_10000(1, _ttTalker, _tt01, 45, 40, 26, _tt01, 40, 40, 0);
+		break;
+
+	case 26:
+		sendWSMessage_10000(1, _ttTalker, _tt01, 9, 39, -1, _tt01, 39, 39, 0);
+		sendWSMessage_190000(_ttTalker, 7);
+		digi_play("608t01a", 1, 255, 30);
+		break;
+
+	case 30:
+		sendWSMessage_10000(1, _ripley, _rp01, 20, 20, -1, _rp01, 20, 23, 1);
+		sendWSMessage_1a0000(_ripley, 11);
+		digi_play("608r01", 1, 255, 34);
+		break;
+
+	case 34:
+		sendWSMessage_10000(1, _ripley, _rp01, 20, 20, -1, _rp01, 20, 20, 0);
+		sendWSMessage_10000(1, _ttTalker, _tt01, 40, 45, -1, _tt01, 46, 53, 4);
+		sendWSMessage_1a0000(_ttTalker, 11);
+		digi_play("608t02", 1, 255, 39);
+		kernel_timing_trigger(60, 35);
+		break;
+
+	case 35:
+		sendWSMessage_10000(1, _ripley, _rp01, 14, 19, 36, _rp01, 20, 20, 0);
+		break;
+
+	case 36:
+		sendWSMessage_10000(1, _ripley, _rp01, 14, 19, 37, _rp01, 20, 20, 0);
+		break;
+
+	case 37:
+		kernel_timing_trigger(60, 38);
+		break;
+
+	case 38:
+		sendWSMessage_10000(1, _ripley, _rp01, 24, 61, 40, _rp01, 20, 20, 0);
+		sendWSMessage_190000(_ripley, 6);
+		break;
+
+	case 39:
+		sendWSMessage_10000(1, _ripley, _rp01, 20, 20, -1, _rp01, 20, 23, 1);
+		sendWSMessage_1a0000(_ripley, 11);
+		sendWSMessage_10000(1, _ttTalker, _tt01, 46, 46, -1, _tt01, 46, 46, 0);
+		digi_play("608r02", 1, 255, 42);
+		break;
+
+	case 40:
+		kernel_timing_trigger(120, 41);
+		break;
+
+	case 41:
+		sendWSMessage_10000(1, _ripley, _rp01, 61, 24, -1, _rp01, 20, 20, 0);
+		sendWSMessage_190000(_ripley, 6);
+		break;
+
+	case 42:
+		sendWSMessage_10000(1, _ripley, _rp01, 20, 20, -1, _rp01, 20, 20, 0);
+		sendWSMessage_10000(1, _ttTalker, _tt01, 46, 46, -1, _tt01, 46, 53, 4);
+		sendWSMessage_1a0000(_ttTalker, 11);
+		digi_play("608t03", 1, 255, 49);
+		kernel_timing_trigger(60, 43);
+		break;
+
+	case 43:
+		sendWSMessage_10000(1, _ripley, _rp01, 24, 39, 44, _rp01, 20, 20, 0);
+		sendWSMessage_190000(_ripley, 6);
+		break;
+
+	case 44:
+		sendWSMessage_10000(1, _ripley, _rp01, 24, 39, 45, _rp01, 20, 20, 0);
+		sendWSMessage_190000(_ripley, 6);
+		break;
+
+	case 45:
+		kernel_timing_trigger(60, 46);
+		break;
+
+	case 46:
+		sendWSMessage_10000(1, _ripley, _rp01, 14, 14, -1, _rp01, 14, 19, 4);
+		sendWSMessage_1a0000(_ripley, 11);
+		kernel_timing_trigger(180, 47);
+		break;
+
+	case 47:
+		sendWSMessage_10000(1, _ripley, _rp01, 20, 20, -1, _rp01, 20, 20, 4);
+		break;
+
+	case 49:
+		sendWSMessage_10000(1, _ttTalker, _tt01, 45, 40, 50, _tt01, 40, 40, 0);
+		break;
+
+	case 50:
+		sendWSMessage_10000(1, _ttTalker, _tt01, 54, 63, 55, _tt01, 63, 63, 0);
+		break;
+
+	case 55:
+		terminateMachineAndNull(_ttTalker);
+		ws_unhide_walker();
+		terminateMachineAndNull(_ttShadow);
+		sendWSMessage_10000(_tt, -30, 324, 9, 60, 1);
+		_G(flags)[V203] = 3;
+		break;
+
+	case 57:
+		sendWSMessage_10000(1, _ripley, _rp01, 82, 71, 61, _rp01, 71, 71, 0);
+		digi_play("608r03", 1);
+		_G(flags)[V203] = 4;
+		break;
+
+	case 60:
+		sendWSMessage_60000(_tt);
+		sendWSMessage_10000(1, _ripley, _rp01, 62, 82, 57, _rp01, 82, 82, 0);
+		break;
+
+	case 61:
+		series_unload(200);
+		series_unload(201);
+		series_unload(202);
+		series_unload(203);
+		series_unload(204);
+		series_unload(211);
+		series_unload(212);
+		series_unload(213);
+		series_unload(214);
+		series_unload(_tt01);
+		series_unload(_rp01);
+		terminateMachineAndNull(_ripley);
+		terminateMachineAndNull(_shadow);
+		ws_unhide_walker();
+		_G(player).disable_hyperwalk = false;
+		player_set_commands_allowed(true);
+		break;
+
+	case 200:
+		kernel_trigger_dispatchx(kernel_trigger_create(201));
+		break;
+
+	case 201:
+		switch (_val2) {
+		case 0:
+			switch (_val3) {
+			case 0:
+				sendWSMessage_10000(1, _ol, _old1, 1, 1, 200, _old1, 1, 1, 0);
+				break;
+
+			case 1:
+				if (imath_ranged_rand(10, 30) <= ++_val1) {
+					_val1 = 0;
+
+					if (imath_ranged_rand(1, 2) == 1) {
+						sendWSMessage_10000(1, _ol, _old1, 1, 1, 200, _old1, 1, 1, 0);
+						break;
+					} else {
+						sendWSMessage_10000(1, _ol, _old1, 1, 3, 200, _old1, 3, 3, 0);
+						_val2 = 2;
+					}
+				} else {
+					kernel_timing_trigger(10, 200);
+				}
+				break;
+
+			case 8:
+			case 9:
+			case 10:
+			case 11:
+				sendWSMessage_10000(1, _ol, _old2, 1, 38, 200, _old2, 38, 38, 0);
+				_val2 = 8;
+				break;
+
+			case 13:
+				player_update_info();
+				ws_hide_walker();
+				_shadow = series_show("safari shadow 3", 0xf00, 0, -1, -1, 0,
+					_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+				sendWSMessage_10000(1, _ol, _old5, 1, 40, 250, _old5, 40, 40, 0);
+				break;
+
+			case 14:
+				player_update_info();
+				ws_hide_walker();
+				_shadow = series_show("safari shadow 3", 0xf00, 0, -1, -1, 0,
+					_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+				sendWSMessage_10000(1, _ol, _old5, 1, 40, 202, _old5, 40, 40, 0);
+				break;
+
+			case 15:
+				player_update_info();
+				ws_hide_walker();
+				_shadow = series_show("safari shadow 3", 0xf00, 0, -1, -1, 0,
+					_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+				sendWSMessage_10000(1, _ol, _old5, 1, 40, 280, _old5, 40, 40, 0);
+				break;
+
+			case 16:
+				player_update_info();
+				ws_hide_walker();
+				_shadow = series_show("safari shadow 3", 0xf00, 0, -1, -1, 0,
+					_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+				sendWSMessage_10000(1, _ol, _old5, 1, 40, 270, _old5, 40, 40, 0);
+				break;
+
+			default:
+				sendWSMessage_10000(1, _ol, _old1, 1, 3, 200, _old1, 3, 3, 0);
+				_val2 = 2;
+				break;
+			}
+			break;
+
+		case 2:
+			switch (_val3) {
+			case 1:
+				if (imath_ranged_rand(10, 30) <= ++_val1) {
+					_val1 = 0;
+
+					switch (imath_ranged_rand(1, 3)) {
+					case 1:
+						sendWSMessage_10000(1, _ol, _old1, 3, 3, 200, _old1, 3, 3, 0);
+						break;
+					case 2:
+						sendWSMessage_10000(1, _ol, _old1, 3, 1, 200, _old1, 1, 1, 0);
+						sendWSMessage_190000(_ol, 7);
+						break;
+					case 3:
+						sendWSMessage_10000(1, _ol, _old1, 4, 5, 200, _old1, 5, 5, 0);
+						sendWSMessage_190000(_ol, 7);
+						break;
+					default:
+						break;
+					}
+				} else {
+					kernel_timing_trigger(10, 200);
+				}
+				break;
+
+			case 5:
+			case 6:
+			case 7:
+			case 12:
+				sendWSMessage_10000(1, _ol, _old1, 4, 5, 200, _old1, 5, 5, 0);
+				sendWSMessage_190000(_ol, 7);
+				break;
+
+			default:
+				sendWSMessage_10000(1, _ol, _old1, 3, 1, 200, _old1, 1, 1, 0);
+				sendWSMessage_190000(_ol, 7);
+				break;
+			}
+			break;
+
+		case 3:
+			switch (_val3) {
+			case 1:
+				if (imath_ranged_rand(10, 30) <= ++_val1) {
+					_val1 = 0;
+
+					switch (imath_ranged_rand(1, 3)) {
+					case 1:
+						sendWSMessage_10000(1, _ol, _old1, 5, 5, 200, _old1, 5, 5, 0);
+						break;
+					case 2:
+						sendWSMessage_10000(1, _ol, _old1, 5, 4, 200, _old1, 3, 3, 0);
+						_val2 = 2;
+						sendWSMessage_190000(_ol, 7);
+						break;
+					case 3:
+						sendWSMessage_10000(1, _ol, _old1, 6, 7, 200, _old1, 7, 7, 0);
+						sendWSMessage_190000(_ol, 7);
+						break;
+					default:
+						break;
+					}
+				} else {
+					kernel_timing_trigger(10, 200);
+				}
+				break;
+
+			case 5:
+			case 6:
+			case 7:
+			case 12:
+				sendWSMessage_10000(1, _ol, _old1, 6, 7, 200, _old1, 7, 7, 0);
+				sendWSMessage_190000(_ol, 7);
+				break;
+
+			default:
+				sendWSMessage_10000(1, _ol, _old1, 5, 4, 200, _old1, 3, 3, 0);
+				sendWSMessage_190000(_ol, 7);
+				break;
+			}
+			break;
+
+		case 4:
+			switch (_val3) {
+			case 1:
+				if (imath_ranged_rand(10, 30) <= ++_val1) {
+					_val1 = 0;
+
+					if (imath_ranged_rand(1, 2) == 1) {
+						sendWSMessage_10000(1, _ol, _old1, 7, 7, 200, _old1, 7, 7, 0);
+					} else {
+						sendWSMessage_10000(1, _ol, _old1, 7, 6, 200, _old1, 5, 5, 0);
+						sendWSMessage_190000(_ol, 7);
+					}
+				} else {
+					kernel_timing_trigger(10, 200);
+				}
+				break;
+
+			case 7:
+			case 12:
+				sendWSMessage_10000(1, _ol, _old1, 8, 14, 200, _old1, 26, 26, 0);
+				_val2 = 6;
+				break;
+
+			default:
+				sendWSMessage_10000(1, _ol, _old1, 7, 6, 200, _old1, 5, 5, 0);
+				_val2 = 3;
+				break;
+			}
+			break;
+
+		case 6:
+			switch (_val3) {
+			case 5:
+				sendWSMessage_10000(1, _ol, _old1, 26, 26, -1, _old1, 26, 42, 4);
+				sendWSMessage_1a0000(_ol, 11);
+				break;
+
+			case 6:
+				sendWSMessage_10000(1, _ol, _old1, 26, 26, 200, _old1, 26, 26, 0);
+				break;
+
+			case 7:
+				sendWSMessage_10000(1, _ol, _old1, 61, 74, 200, _old1, 74, 74, 0);
+				_val2 = 7;
+				_val3 = 5;
+				break;
+
+			case 12:
+				sendWSMessage_10000(1, _ol, _old1, 15, 28, 200, _old1, 26, 26, 0);
+				_val3 = 5;
+				break;
+
+			default:
+				sendWSMessage_10000(1, _ol, _old1, 14, 8, 200, _old1, 7, 7, 0);
+				_val2 = 4;
+				break;
+			}
+			break;
+
+		case 7:
+			switch (_val3) {
+			case 7:
+				sendWSMessage_10000(1, _ol, _old1, 74, 74, 200, _old1, 74, 74, 0);
+				break;
+
+			default:
+				sendWSMessage_10000(1, _ol, _old1, 74, 61, 200, _old1, 26, 26, 0);
+				_val2 = 6;
+				break;
+			}
+			break;
+
+		case 8:
+			switch (_val3) {
+			case 8:
+				sendWSMessage_10000(1, _ol, _old2, 38, 38, 200, _old2, 38, 38, 0);
+				break;
+
+			case 9:
+				sendWSMessage_10000(1, _ol, _old2, 39, 39, -1, _old2, 39, 48, 4);
+				sendWSMessage_1a0000(_ol, 15);
+				break;
+
+			case 10:
+			case 11:
+				sendWSMessage_10000(1, _ol, _old2, 49, 57, 200, _old2, 57, 57, 0);
+				_val2 = 11;
+				break;
+
+			default:
+				sendWSMessage_10000(1, _ol, _old2, 38, 1, 200, _old1, 1, 1, 0);
+				_val2 = 0;
+				break;
+			}
+			break;
+
+		case 11:
+			switch (_val3) {
+			case 10:
+				sendWSMessage_10000(1, _ol, _old2, 57, 49, 200, _old2, 38, 38, 0);
+				_val2 = 8;
+				_val3 = 8;
+				break;
+
+			case 11:
+				sendWSMessage_10000(1, _ol, _old2, 57, 57, 200, _old2, 57, 57, 0);
+				break;
+
+			default:
+				sendWSMessage_10000(1, _ol, _old2, 57, 49, 200, _old2, 38, 38, 0);
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 202:
+		sendWSMessage_10000(1, _ol, _old5a, 1, 8, 205, _old5a, 8, 8, 0);
+		break;
+
+	case 205:
+		sendWSMessage_10000(1, _ol, _old5a, 9, 19, 208, _old5a, 19, 19, 0);
+		inv_move_object("OBSIDIAN DISK", 608);
+		break;
+
+	case 208:
+		sendWSMessage_10000(1, _ol, _old5a, 16, 19, -1, _old5a, 16, 19, 1);
+		digi_play("608o06", 1, 255, 211);
+		break;
+
+	case 211:
+		sendWSMessage_10000(1, _ol, _old5a, 20, 22, -1, _old5a, 20, 22, 1);
+		digi_play("6084r43", 1, 255, 213);
+		break;
+
+	case 213:
+		sendWSMessage_10000(1, _ol, _old5a, 16, 19, -1, _old5a, 16, 19, 1);
+		digi_play("608o07", 1, 255, 216);
+		break;
+
+	case 216:
+		sendWSMessage_10000(1, _ol, _old5a, 23, 54, -1, _old5a, 54, 54, 1);
+		sendWSMessage_190000(_ol, 8);
+		digi_play("608o08", 1, 255, 220);
+		break;
+
+	case 220:
+		sendWSMessage_10000(1, _ol, _old5, 40, 1, 225, _old1, 1, 1, 0);
+		break;
+
+	case 225:
+		sendWSMessage_10000(1, _ol, _old1, 1, 1, 200, _old1, 1, 1, 0);
+		_val2 = 0;
+		_val3 = 1;
+		_ol2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+			triggerMachineByHashCallbackNegative, "rip talker");
+		sendWSMessage_10000(1, _ol2, _old5f, 1, 1, -1, _old5f, 1, 4, 1);
+		sendWSMessage_1a0000(_ol2, 11);
+		digi_play("608r44", 1, 255, 226);
+		break;
+
+	case 226:
+	case 268:
+		terminateMachineAndNull(_ol2);
+		terminateMachineAndNull(_shadow);
+		ws_unhide_walker();
+		player_set_commands_allowed(true);
+		break;
+
+	case 250:
+		sendWSMessage_10000(1, _ol, _old5b, 1, 11, 254, _old5b, 11, 11, 0);
+		break;
+
+	case 254:
+		sendWSMessage_10000(1, _ol, _old5b, 12, 49, -1, _old5b, 50, 53, 1);
+		sendWSMessage_1a0000(_ol, 11);
+		inv_move_object("CLOCK FACING", 608);
+		digi_play("608o06", 1, 255, 256);
+		break;
+
+	case 256:
+		digi_play("608r43", 1, 255, 260);
+		break;
+
+	case 260:
+		digi_play("608o07", 1, 255, 263);
+		break;
+
+	case 263:
+		digi_play("608o08", 1, 255, 265);
+		break;
+
+	case 265:
+		sendWSMessage_10000(1, _ol, _old5, 40, 1, 267, _old1, 1, 1, 0);
+		break;
+
+	case 267:
+		sendWSMessage_10000(1, _ol, _old1, 1, 1, 200, _old1, 1, 1, 0);
+		_val2 = 0;
+		_val3 = 1;
+		_ol2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+			triggerMachineByHashCallbackNegative, "rip talker");
+		sendWSMessage_10000(1, _ol2, _old5f, 1, 1, -1, _old5f, 1, 4, 1);
+		sendWSMessage_1a0000(_ol2, 11);
+		digi_play("608r44", 1, 255, 268);
+		break;
+
+	case 270:
+		sendWSMessage_10000(1, _ol, _old5d, 1, 11, 272, _old5d, 11, 11, 1);
+		break;
+
+	case 272:
+		sendWSMessage_10000(1, _ol, _old5d, 11, 23, -1, _old5d, 24, 30, 4);
+		sendWSMessage_1a0000(_ol, 11);
+		inv_move_object("CLOCK FACING", 608);
+		digi_play("608o09", 1, 255, 275);
+		break;
+
+	case 275:
+		digi_play("608o09a", 1, 255, 277);
+		break;
+
+	case 277:
+		sendWSMessage_10000(1, _ol, _old5d, 39, 45, 500, _old5d, 45, 45, 4);
+		digi_play("608r46", 1);
+		break;
+
+	case 280:
+		sendWSMessage_10000(1, _ol, _old5c, 1, 13, 282, _old5c, 13, 13, 1);
+		break;
+
+	case 282:
+		sendWSMessage_10000(1, _ol, _old5c, 14, 27, -1, _old5c, 28, 32, 4);
+		sendWSMessage_1a0000(_ol, 11);
+		inv_move_object("OBSIDIAN DISK", 608);
+		digi_play("608o09", 1, 255, 285);
+		break;
+
+	case 285:
+		digi_play("608o09a", 1, 255, 287);
+		break;
+
+	case 287:
+		sendWSMessage_10000(1, _ol, _old5c, 33, 47, -1, _old5c, 47, 47, 4);
+		digi_play("608r46", 1, 255, 500);
+		break;
+
+	case 300:
+		kernel_trigger_dispatchx(kernel_trigger_create(301));
+		break;
+
+	case 301:
+		if (!_val5) {
+			switch (_val4) {
+			case 0:
+				sendWSMessage_10000(1, _ripley, _rp09, 23, 23, 300, _rp09, 23, 23, 0);
+				break;
+
+			case 1:
+				frame = imath_ranged_rand(23, 25);
+				sendWSMessage_10000(1, _ripley, _rp09, frame, frame, 300, _rp09, frame, frame, 0);
+				sendWSMessage_190000(_ripley, 13);
+				sendWSMessage_1a0000(_ripley, 13);
+				break;
+
+			case 2:
+				sendWSMessage_10000(1, _ripley, _rp09, 23, 1, 302, _rp09, 1, 1, 0);
+				break;
+
+			case 3:
+				sendWSMessage_10000(1, _ripley, _rp09, 23, 1, 305, _rp09, 1, 1, 0);
+				break;
+
+			case 4:
+				sendWSMessage_10000(1, _ripley, _rp09, 23, 1, 306, _rp09, 1, 1, 0);
+				break;
+
+			case 5:
+				sendWSMessage_10000(1, _ripley, _rp09, 23, 1, 307, _rp09, 1, 1, 0);
+				break;
+
+			case 6:
+				sendWSMessage_10000(1, _ripley, _rp09, 23, 1, 308, _rp09, 1, 1, 0);
+				break;
+
+			default:
+				break;
+			}
+		}
+		break;
+
+	case 302:
+		terminateMachineAndNull(_shadow);
+		terminateMachineAndNull(_ripley);
+		ws_unhide_walker();
+		player_set_commands_allowed(true);
+		break;
+
+	case 305:
+		terminateMachineAndNull(_shadow);
+		terminateMachineAndNull(_ripley);
+		ws_unhide_walker();
+		_val3 = 14;
+		break;
+
+	case 306:
+		terminateMachineAndNull(_shadow);
+		terminateMachineAndNull(_ripley);
+		ws_unhide_walker();
+		_val3 = 13;
+		break;
+
+	case 307:
+		terminateMachineAndNull(_shadow);
+		terminateMachineAndNull(_ripley);
+		ws_unhide_walker();
+		_val3 = 15;
+		break;
+
+	case 308:
+		terminateMachineAndNull(_shadow);
+		terminateMachineAndNull(_ripley);
+		ws_unhide_walker();
+		_val3 = 16;
+		break;
+
+	case 500:
+		terminateMachineAndNull(_ol);
+		_ol = triggerMachineByHash_3000(8, 15, NORMAL_DIRS1, SHADOW_DIRS1,
+			499, 318, 9, triggerMachineByHashCallback3000, "ow walker");
+		sendWSMessage_10000(_ol, 487, 290, 11, -1, 1);
+		kernel_timing_trigger(60, 501);
+		ws_unhide_walker();
+		break;
+
+	case 501:
+		ws_walk(465, 284, nullptr, 503, 1);
+		break;
+
+	case 503:
+		sendWSMessage_60000(_ol);
+		ws_hide_walker();
+		ws_hide_walker(_ol);
+		digi_preload("608o10");
+		digi_preload("608r47");
+		digi_preload("608o11");
+		digi_preload("608r48");
+		digi_preload("608o12");
+		digi_preload("608o13");
+		digi_preload("608r49");
+		digi_preload("608o14");
+		digi_preload("608_s04");
+		digi_preload("608_s04a");
+		digi_preload("608_s05");
+		digi_preload("608_s05a");
+		digi_preload("608o19");
+
+		kernel_load_variant("608lock0");
+		_ol2 = series_stream("608all0", 5, 0x600, 530);
+		series_stream_break_on_frame(_ol2, 3, 504);
+		break;
+
+	case 504:
+		series_stream_break_on_frame(_ol2, 49, 505);
+		digi_play("608o10", 1, 255, 507);
+		break;
+
+	case 505:
+		series_stream_check_series(_ol2, 240);
+		series_stream_break_on_frame(_ol2, 50, 506);
+		break;
+
+	case 506:
+		series_stream_check_series(_ol2, 7);
+		series_stream_break_on_frame(_ol2, 53, 508);
+		break;
+
+	case 507:
+		series_stream_check_series(_ol2, 13);
+		digi_play("608r47", 1);
+		break;
+
+	case 508:
+		series_stream_break_on_frame(_ol2, 137, 509);
+		digi_play("608o11", 1);
+		break;
+
+	case 509:
+		series_stream_break_on_frame(_ol2, 150, 559);
+		digi_play("608_s05", 2);
+		break;
+
+	case 511:
+		series_stream_break_on_frame(_ol2, 256, 512);
+		digi_play("608_s04", 2);
+		break;
+
+	case 512:
+		series_stream_break_on_frame(_ol2, 270, 513);
+		digi_play("608_s04a", 2);
+		break;
+
+	case 513:
+		series_stream_break_on_frame(_ol2, 274, 514);
+		break;
+
+	case 514:
+		series_stream_check_series(_ol2, 300);
+		kernel_timing_trigger(60, 555);
+		series_stream_break_on_frame(_ol2, 275, 515);
+		break;
+
+	case 515:
+		series_stream_check_series(_ol2, 7);
+		series_stream_break_on_frame(_ol2, 290, 516);
+		break;
+
+	case 516:
+		series_stream_break_on_frame(_ol2, 330, 558);
+		digi_play("608_s05a", 2);
+		break;
+
+	case 517:
+		series_stream_break_on_frame(_ol2, 367, 519);
+		break;
+
+	case 519:
+		series_stream_break_on_frame(_ol2, 409, 521);
+		break;
+
+	case 521:
+		series_stream_break_on_frame(_ol2, 429, 524);
+		digi_play("608r49", 1);
+		break;
+
+	case 524:
+		series_stream_break_on_frame(_ol2, 483, 525);
+		digi_play("608o14", 1);
+		break;
+
+	case 525:
+		series_stream_break_on_frame(_ol2, 487, 560);
+		digi_play("608_s05", 2);
+		break;
+
+	case 527:
+		digi_play("608_s05a", 2);
+		break;
+
+	case 530:
+		digi_unload("608o10");
+		digi_unload("608r47");
+		digi_unload("608o11");
+		digi_unload("608r48");
+		digi_unload("608o12");
+		digi_unload("608o13");
+		digi_unload("608r49");
+		digi_unload("608o14");
+		digi_unload("608_s04");
+		digi_unload("608_s04a");
+		digi_unload("608_s05");
+		digi_unload("608_s05a");
+		digi_unload("608o19");
+		hotspot_set_active("hole in hillside", true);
+
+		_ripHandTalk3 = series_load("RIP TREK HAND TALK POS3");
+		_end2 = series_show("608END2", 0xe00, 16);
+		ws_unhide_walker();
+		ws_demand_location(494, 276, 3);
+
+		sendWSMessage_10000(_G(my_walker), 524, 296, 9, 532, 1);
+		_ol = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x200, 0,
+			triggerMachineByHashCallbackNegative, "ol");
+		sendWSMessage_10000(1, _ol, _old8, 1, 1, -1, _old8, 1, 1, 1);
+		break;
+
+	case 532:
+		sendWSMessage_10000(1, _ol, _old8, 1, 11, 534, _old8, 12, 17, 1);
+		sendWSMessage_1a0000(_ol, 11);
+		break;
+
+	case 534:
+		digi_play("608o15", 1, 255, 536);
+		break;
+
+	case 536:
+		sendWSMessage_10000(1, _ol, _old8, 48, 46, 538, _old8, 47, 50, 1);
+		sendWSMessage_1a0000(_ol, 11);
+		break;
+
+	case 538:
+		digi_play("608o15a", 1, 255, 540);
+		break;
+
+	case 540:
+		sendWSMessage_10000(1, _ol, _old8, 47, 47, -1, _old8, 47, 47, 1);
+		setGlobals1(_ripHandTalk3, 1, 16, 16, 16);
+		sendWSMessage_110000(546);
+		digi_play("608r50", 1, 255, 544);
+		break;
+
+	case 543:
+		sendWSMessage_10000(1, _ol, _old8, 26, 45, 545, _old8, 45, 45, 1);
+		break;
+
+	case 544:
+		sendWSMessage_10000(1, _ol, _old8, 47, 50, -1, _old8, 47, 50, 1);
+		digi_play("608o16", 1, 255, 543);
+		break;
+
+	case 545:
+		sendWSMessage_10000(1, _ol, _old8, 51, 72, 548, _old8, 72, 72, 1);
+		break;
+
+	case 546:
+		sendWSMessage_150000(-1);
+		break;
+
+	case 548:
+		terminateMachineAndNull(_ol);
+		_ol = triggerMachineByHash_3000(8, 15, NORMAL_DIRS1, SHADOW_DIRS1,
+			487, 293, 9, triggerMachineByHashCallback3000, "ow walker");
+		sendWSMessage_10000(_ol, 417, 295, 9, 549, 0);
+		kernel_timing_trigger(300, 551);
+		midi_play("eastiswo", 255, 1, -1, 949);
+		_G(player).disable_hyperwalk = true;
+		break;
+
+	case 549:
+		sendWSMessage_10000(_ol, 150, 330, 9, 550, 0);
+		break;
+
+	case 550:
+		hotspot_set_active("old woman", false);
+		sendWSMessage_10000(_ol, -30, 324, 9, 552, 1);
+		player_set_commands_allowed(true);
+		break;
+
+	case 551:
+		sendWSMessage_10000(_G(my_walker), 503, 296, 9, -1, 1);
+		digi_play("608r51", 1);
+		_G(flags)[V186] = 2;
+		break;
+
+	case 552:
+		sendWSMessage_60000(_ol);
+		midi_fade_volume(0, 120);
+		kernel_timing_trigger(120, 553);
+		_G(player).disable_hyperwalk = false;
+		break;
+
+	case 553:
+		midi_stop();
+		break;
+
+	case 555:
+		digi_play("608r48", 1);
+		break;
+
+	case 558:
+		series_stream_break_on_frame(_ol2, 343, 517);
+		digi_play("608o13", 1);
+		break;
+
+	case 559:
+		series_stream_break_on_frame(_ol2, 216, 511);
+		digi_play("950_s37", 1);
+		break;
+
+	case 560:
+		series_stream_break_on_frame(_ol2, 572, 570);
+		digi_play("950_s37", 2);
+		break;
+
+	case 570:
+		series_stream_break_on_frame(_ol2, 639, 527);
+		digi_play("608o19", 1);
+		break;
+
+	case 698:
+		kernel_timing_trigger(60, 699);
+		break;
+
+	case 699:
+		ws_walk(43, 345, nullptr, -1, 3);
+		break;
+
+	case 700:
+		player_update_info(_tt, &_G(player_info));
+		ws_hide_walker();
+		_ttShadow = series_show("tt walker shadow 3", 0xf00, 0, -1, -1, 0,
+			_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+		_ttTalker = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+			triggerMachineByHashCallbackNegative, "tt walker");
+		sendWSMessage_10000(1, _ttTalker, _tt02, 1, 11, 703, _tt02, 11, 11, 0);
+		break;
+
+	case 703:
+		sendWSMessage_10000(1, _ttTalker, _tt02, 12, 12, -1, _tt02, 12, 34, 4);
+		sendWSMessage_1a0000(_ttTalker, 13);
+		digi_play("608t04", 1, 255, 704);
+		break;
+
+	case 704:
+		sendWSMessage_10000(1, _ttTalker, _tt02, 12, 12, -1, _tt02, 12, 12, 4);
+		kernel_timing_trigger(60, 706);
+		break;
+
+	case 706:
+		sendWSMessage_10000(1, _ttTalker, _tt02, 35, 35, -1, _tt02, 35, 51, 4);
+		sendWSMessage_1a0000(_ttTalker, 13);
+		digi_play("608t05", 1, 255, 708);
+		break;
+
+	case 708:
+		sendWSMessage_10000(1, _ttTalker, _tt02, 51, 51, -1, _tt02, 51, 51, 0);
+		kernel_timing_trigger(20, 709);
+		break;
+
+	case 709:
+		setGlobals1(_ripHandChin, 1, 14, 14, 14);
+		sendWSMessage_110000(713);
+		digi_play("608r53", 1);
+		break;
+
+	case 713:
+		sendWSMessage_10000(1, _ttTalker, _tt02, 55, 64, 714, _tt02, 64, 64, 0);
+		digi_play("608r53a", 1);
+		kernel_timing_trigger(60, 717);
+		break;
+
+	case 714:
+		terminateMachineAndNull(_ttTalker);
+		ws_unhide_walker(_tt);
+		terminateMachineAndNull(_ttShadow);
+		sendWSMessage_10000(_tt, 238, 322, 3, 715, 0);
+		break;
+
+	case 715:
+		sendWSMessage_10000(_tt, 459, 277, 3, -1, 1);
+		break;
+
+	case 717:
+		sendWSMessage_140000(718);
+		break;
+
+	case 718:
+		sendWSMessage_10000(_G(my_walker), 248, 328, 3, 719, 0);
+		break;
+
+	case 719:
+		sendWSMessage_10000(_G(my_walker), 466, 292, 3, 721, 1);
+		break;
+
+	case 721:
+		ws_hide_walker(_tt);
+		series_unload(200);
+		series_unload(201);
+		series_unload(203);
+		series_unload(204);
+
+		_ttTalker = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xd00, 0,
+			triggerMachineByHashCallbackNegative, "tt walker");
+		sendWSMessage_10000(1, _ttTalker, _tt03, 1, 60, -1, _tt03, 60, 60, 0);
+		digi_play("608t06", 1, 255, 726);
+		break;
+
+	case 726:
+		sendWSMessage_10000(_G(my_walker), 495, 277, 9, 729, 1);
+		digi_play("608r54", 1);
+		break;
+
+	case 729:
+		terminateMachineAndNull(_ttTalker);
+		ws_hide_walker();
+		digi_preload("950_s37");
+		digi_preload("608r55");
+		digi_preload("604_s01");
+		digi_preload("608t08");
+		digi_preload("608_s11");
+		digi_preload("608_s05");
+		digi_preload("608_s05a");
+		digi_preload("608_s09");
+		digi_preload("608_s10");
+		digi_preload("608_s07");
+		digi_preload("608t07");
+		digi_preload("608_s06");
+		digi_preload("608r56");
+
+		_ol2 = series_stream("608all5", 5, 0x600, 750);
+		series_stream_break_on_frame(_ol2, 21, 783);
+		series_stream_check_series(_ol2, 10);
+		break;
+
+	case 731:
+		series_stream_break_on_frame(_ol2, 45, 787);
+		digi_play("608r55", 1);
+		break;
+
+	case 733:
+		series_stream_break_on_frame(_ol2, 64, 734);
+		digi_play("608t08", 1);
+		break;
+
+	case 734:
+		series_stream_check_series(_ol2, 7);
+		series_stream_break_on_frame(_ol2, 107, 792);
+		break;
+
+	case 735:
+		series_stream_break_on_frame(_ol2, 177, 782);
+		break;
+
+	case 736:
+		series_stream_break_on_frame(_ol2, 193, 739);
+		digi_play("608_s06", 2);
+		break;
+
+	case 739:
+		series_stream_break_on_frame(_ol2, 290, 747);
+		digi_play("608r56", 2);
+		break;
+
+	case 747:
+		ws_unhide_walker();
+		ws_demand_location(461, 293, 3);
+		sendWSMessage_10000(_G(my_walker), 432, 297, 3, 738, 1);
+		break;
+
+	case 750:
+		_lighter = series_show("608LITER", 0xf00, 16);
+		hotspot_set_active("LIGHTER", true);
+		ws_hide_walker();
+
+		digi_unload("950_s37");
+		digi_unload("608r55");
+		digi_unload("604_s01");
+		digi_unload("608t08");
+		digi_unload("608_s11");
+		digi_unload("608_s05");
+		digi_unload("608_s05a");
+		digi_unload("608_s09");
+		digi_unload("608_s10");
+		digi_unload("608_s07");
+		digi_unload("608t07");
+		digi_unload("608_s06");
+		digi_unload("608r56");
+
+		series_unload(_tt02);
+		series_unload(_tt03);
+		series_unload(_ripHandChin);
+		series_unload(_ripTalker);
+
+		series_load(SECTION6_NORMAL_NAMES[0], SECTION6_NORMAL_DIRS[0]);
+		series_load(SECTION6_NORMAL_NAMES[1], SECTION6_NORMAL_DIRS[1]);
+		series_load(SECTION6_NORMAL_NAMES[3], SECTION6_NORMAL_DIRS[3]);
+		series_load(SECTION6_NORMAL_NAMES[4], SECTION6_NORMAL_DIRS[4]);
+		ws_hide_walker(_tt);
+
+		_ttTalker = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+			triggerMachineByHashCallbackNegative, "tt walker");
+		sendWSMessage_10000(1, _ttTalker, _all5a, 1, 1, -1, _all5a, 1, 6, 4);
+		digi_play("608r58", 2, 255, 752);
+		break;
+
+	case 752:
+		sendWSMessage_10000(1, _ttTalker, _all5a, 7, 7, -1, _all5a, 7, 12, 4);
+		digi_play("608t10", 2, 255, 755);
+		break;
+
+	// TODO
+	default:
+		break;
+	}
 }
 
 void Room608::pre_parser() {
