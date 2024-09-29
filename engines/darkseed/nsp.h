@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "common/scummsys.h"
 #include "common/file.h"
+#include "graphics/surface.h"
 
 namespace Darkseed {
 
@@ -39,7 +40,10 @@ public:
 	Sprite(uint16 width, uint16 height, uint16 pitch);
 	bool loadData(Common::SeekableReadStream &readStream);
 	void draw(int x, int y, uint16 frameBottom = 0) const;
+	void draw(Graphics::Surface *dst, int x, int y, uint16 frameBottom = 0) const;
 	void drawScaled(int x, int y, int destWidth, int destHeight, bool flipX) const;
+private:
+	void clipToScreen(int x, int y, uint16 frameBottom, uint16 *clippedWidth, uint16 *clippedHeight) const;
 };
 
 class Obt {
@@ -63,11 +67,12 @@ public:
 	bool containsSpriteAt(int index) {
 		return (int)_frames.size() > index;
 	}
-	const Sprite &getSpriteAt(int index);
+	const Sprite &getSpriteAt(int index) const;
 	const Obt &getAnimAt(int index);
 	int16 getTotalAnim() {
 		return (int16)_animations.size();
 	}
+	int16 getMaxSpriteWidth();
 
 private:
 	bool load(Common::SeekableReadStream &readStream);

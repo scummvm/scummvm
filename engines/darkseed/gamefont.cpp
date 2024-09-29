@@ -29,31 +29,14 @@ Darkseed::GameFont::GameFont() {
 }
 
 bool GameFont::load() {
-	return _letters.load("tosfont.nsp");
-}
-
-void GameFont::displayString(uint16 x, uint16 y, const Common::String &text) {
-	for (uint i = 0; i < text.size(); i++) {
-		auto letter = getCharacterSprite(text[i]);
-		if (letter) {
-			letter->draw(x, y);
-			x += letter->_width + 1;
-		}
+	if (_letters.load("tosfont.nsp")) {
+		_maxWidth = _letters.getMaxSpriteWidth() + 1;
+		return true;
 	}
+    return false;
 }
 
-int GameFont::stringLength(const Common::String &text) {
-	int width = 0;
-	for (uint i = 0; i < text.size(); i++) {
-		const Sprite *sprite = getCharacterSprite(text[i]);
-		if (sprite) {
-			width += sprite->_width + 1;
-		}
-	}
-	return width;
-}
-
-const Sprite *GameFont::getCharacterSprite(char c) {
+const Sprite *GameFont::getCharacterSprite(char c) const {
 	int letterIdx = 1000;
 	switch (c) {
 	case 0x20 :
@@ -117,6 +100,26 @@ const Sprite *GameFont::getCharacterSprite(char c) {
 	}
 
 	return nullptr;
+}
+
+int GameFont::getFontHeight() const {
+	return 10;
+}
+
+int GameFont::getMaxCharWidth() const {
+	return _maxWidth;
+}
+
+int GameFont::getCharWidth(uint32 chr) const {
+	auto letter = getCharacterSprite((char)chr);
+	return letter ? letter->_width + 1 : 0;
+}
+
+void GameFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
+	auto letter = getCharacterSprite((char)chr);
+	if (letter) {
+	    letter->draw(dst, x, y);
+	}
 }
 
 } // namespace Darkseed
