@@ -94,6 +94,11 @@ struct ScreenOverlay {
 	~ScreenOverlay();
 	ScreenOverlay &operator=(ScreenOverlay &&);
 
+	// FIXME: These are private in the upstream repo,
+	// but Windows CI complains
+	ScreenOverlay(const ScreenOverlay &) = default;
+	ScreenOverlay &operator=(const ScreenOverlay &) = default;
+
 	bool HasAlphaChannel() const {
 		return (_flags & kOver_AlphaChannel) != 0;
 	}
@@ -146,8 +151,6 @@ struct ScreenOverlay {
 
 private:
 	void ResetImage();
-	ScreenOverlay(const ScreenOverlay &) = default;
-	ScreenOverlay &operator=(const ScreenOverlay &) = default;
 
 	int _flags = 0;  // OverlayFlags
 	int _sprnum = 0; // sprite id
