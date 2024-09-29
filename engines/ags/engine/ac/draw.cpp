@@ -656,7 +656,7 @@ void notify_sprite_changed(int sprnum, bool deleted) {
 
 	// For software renderer we should notify drawables that currently
 	// reference this sprite.
-	if (drawstate.SoftwareRender) {
+	if (drawstate.SoftwareRender && !_GP(play).spritemodified.empty()) {
 		assert(sprnum < _GP(play).spritemodified.size());
 		_GP(play).spritemodified[sprnum] = true;
 		_GP(play).spritemodifiedlist.push_back(sprnum);
