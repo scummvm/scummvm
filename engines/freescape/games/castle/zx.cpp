@@ -114,7 +114,6 @@ void CastleEngine::loadAssetsZXFullGame() {
 	switch (_language) {
 		case Common::ES_ESP:
 			loadRiddles(&file, 0x1470 - 4 - 2 - 9 * 2, 9);
-			assert(0);
 			loadMessagesVariableSize(&file, 0xf3d, 71);
 			load8bitBinary(&file, 0x6aab - 2, 16);
 			loadSpeakerFxZX(&file, 0xca0, 0xcdc);
