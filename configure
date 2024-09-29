@@ -5544,7 +5544,7 @@ echo "$_a52"
 #
 case $_host_os in
 	darwin*)
-		echocheck "Sparkle"
+		echocheck "Sparkle >= 2.0"
 		if test "$_updates" = no; then
 			_sparkle=no
 		else
@@ -5558,7 +5558,7 @@ case $_host_os in
 				cat > $TMPC << EOF
 #include <Cocoa/Cocoa.h>
 #include <Sparkle/Sparkle.h>
-int main(void) { SUUpdater *updater = [SUUpdater sharedUpdater]; return 0; }
+int main(void) { SPUStandardUpdaterController *updater = [[SPUStandardUpdaterController alloc] initWithUpdaterDelegate:nil userDriverDelegate:nil]; return 0; }
 EOF
 				cc_check $SPARKLE_CFLAGS $SPARKLE_LIBS -framework Sparkle -ObjC++ -lobjc && _sparkle=yes
 			fi
