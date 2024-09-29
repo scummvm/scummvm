@@ -90,6 +90,16 @@ struct DrawState {
 	WalkBehindMethodEnum WalkBehindMethod = DrawAsSeparateSprite;
 	// Whether there are currently remnants of a on-screen effect
 	bool ScreenIsDirty = false;
+
+	// A map of shared "control blocks" per each sprite used
+	// when preparing object textures. "Control block" is currently just
+	// an integer which lets to check whether the object texture is in sync
+	// with the sprite. When the dynamic sprite is updated or deleted,
+	// the control block is marked as invalid and removed from the map;
+	// but certain objects may keep the shared ptr to the old block with
+	// "invalid" mark, thus they know that they must reset their texture.
+	std::unordered_map<sprkey_t, std::shared_ptr<uint32_t> >
+		SpriteNotifyMap;
 };
 
 DrawState drawstate;
@@ -433,8 +443,6 @@ void init_game_drawdata() {
 		guio_num += gui.GetControlCount();
 	}
 	_GP(guiobjbg).resize(guio_num);
-
-	_GP(play).spritemodified.resize(_GP(game).SpriteInfos.size());
 }
 
 void dispose_game_drawdata() {
@@ -447,9 +455,6 @@ void dispose_game_drawdata() {
 	_GP(guibg).clear();
 	_GP(guiobjbg).clear();
 	_GP(guiobjddbref).clear();
-
-	_GP(play).spritemodified.clear();
-	_GP(play).spritemodifiedlist.clear();
 }
 
 static void dispose_debug_room_drawdata() {
@@ -484,9 +489,8 @@ void clear_drawobj_cache() {
 	for (auto &o : _GP(guiobjbg)) o = ObjTexture();
 	_GP(overtxs).clear();
 
-	// Clear "modified sprite" flags
-	_GP(play).spritemodifiedlist.clear();
-	Common::fill(_GP(play).spritemodified.begin(), _GP(play).spritemodified.end(), false);
+	// Clear sprite update notification blocks
+	drawstate.SpriteNotifyMap.clear();
 
 	dispose_debug_room_drawdata();
 }
@@ -654,12 +658,17 @@ void reset_drawobj_for_overlay(int objnum) {
 void notify_sprite_changed(int sprnum, bool deleted) {
 	assert(sprnum >= 0 && sprnum < _GP(game).SpriteInfos.size());
 
-	// For software renderer we should notify drawables that currently
-	// reference this sprite.
-	if (drawstate.SoftwareRender && !_GP(play).spritemodified.empty()) {
-		assert(sprnum < _GP(play).spritemodified.size());
-		_GP(play).spritemodified[sprnum] = true;
-		_GP(play).spritemodifiedlist.push_back(sprnum);
+	// software renderer
+	// will need to know to redraw active cached sprite for objects.
+	// We have this notification for both kinds of renderers though,
+	// because it makes the code simpler, and also it makes it simpler to
+	// notify texture-based ones in a specific case when a deleted sprite
+	// was replaced by another of same ID.
+
+	auto it_notify = drawstate.SpriteNotifyMap.find(sprnum);
+	if (it_notify != drawstate.SpriteNotifyMap.end()) {
+		*it_notify->_value = UINT32_MAX;
+		drawstate.SpriteNotifyMap.erase(sprnum);
 	}
 }
 
@@ -847,6 +856,17 @@ Engine::IDriverDependantBitmap* recycle_ddb_sprite(Engine::IDriverDependantBitma
 static void sync_object_texture(ObjTexture &obj, bool has_alpha = false, bool opaque = false) {
 	Bitmap *use_bmp = obj.Bmp.get() ? obj.Bmp.get() : _GP(spriteset)[obj.SpriteID];
 	obj.Ddb = recycle_ddb_sprite(obj.Ddb, obj.SpriteID, use_bmp, has_alpha, opaque);
+	// If this is a sprite-referencing texture, then assign a control block,
+	// let the object receive notification of sprite updates.
+	if ((obj.SpriteID != UINT32_MAX) && (!obj.IsSynced())) {
+		auto it_notify = drawstate.SpriteNotifyMap.find(obj.SpriteID);
+		if (it_notify != drawstate.SpriteNotifyMap.end()) { // assign existing
+			obj.SpriteNotify = it_notify->_value;
+		} else { // if does not exist, then create and share one
+			obj.SpriteNotify.reset(new (uint32_t)(obj.SpriteID));
+			drawstate.SpriteNotifyMap.insert(std::make_pair((int)obj.SpriteID, obj.SpriteNotify));
+		}
+	}
 }
 
 //------------------------------------------------------------------------
@@ -1257,7 +1277,7 @@ static bool construct_object_gfx(const ViewFrame *vf, int pic,
 	// Hardware accelerated mode: always use original sprite and apply texture transform
 	if (use_hw_transform) {
 		// HW acceleration
-		const bool is_texture_intact = objsav.sppic == specialpic;
+		const bool is_texture_intact = (objsav.sppic == specialpic) && actsp.IsSynced();
 		objsav.sppic = specialpic;
 		objsav.tintamnt = tint_level;
 		objsav.tintr = tint_red;
@@ -1282,7 +1302,7 @@ static bool construct_object_gfx(const ViewFrame *vf, int pic,
 	if ((objsav.image != nullptr) &&
 	        (objsav.sppic == specialpic) &&
 			// not a dynamic sprite, or not sprite modified lately
-			(!_GP(play).spritemodified[pic]) &&
+			(actsp.IsSynced()) &&
 			(objsav.tintamnt == tint_level) &&
 			(objsav.tintlight == tint_light) &&
 			(objsav.tintr == tint_red) &&
@@ -2024,7 +2044,7 @@ static void construct_overlays() {
 		if (over.transparency == 255) continue; // skip fully transparent
 
 		auto &overtx = _GP(overtxs)[i];
-		bool has_changed = over.HasChanged() || _GP(play).spritemodified[over.GetSpriteNum()];
+		bool has_changed = over.HasChanged();
 		// If walk behinds are drawn over the cached object sprite, then check if positions were updated
 		if (crop_walkbehinds && over.IsRoomLayer()) {
 			Point pos = get_overlay_position(over);
@@ -2032,7 +2052,7 @@ static void construct_overlays() {
 			_GP(overcache)[i].X = pos.X; _GP(overcache)[i].Y = pos.Y;
 		}
 
-		if (has_changed) {
+		if (has_changed || !overtx.IsSynced()) {
 			overtx.SpriteID = over.GetSpriteNum();
 			// For software mode - prepare transformed bitmap if necessary;
 			// for hardware-accelerated - use the sprite ID if possible, to avoid redundant sprite load
@@ -2059,19 +2079,6 @@ static void construct_overlays() {
 		if (!overtx.Ddb) continue;
 		overtx.Ddb->SetStretch(over.scaleWidth, over.scaleHeight);
 		overtx.Ddb->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(over.transparency));
-	}
-}
-
-static void reset_spritemodified() {
-	if (_GP(play).spritemodifiedlist.size() > 0) {
-		// Sort and remove duplicates;
-		// CHECKME: or is it more optimal to just run over raw list?
-		std::sort(_GP(play).spritemodifiedlist.begin(), _GP(play).spritemodifiedlist.end());
-		_GP(play).spritemodifiedlist.erase(std::unique(_GP(play).spritemodifiedlist.begin(), _GP(play).spritemodifiedlist.end()),
-										   _GP(play).spritemodifiedlist.end());
-		for (auto sprnum : _GP(play).spritemodifiedlist)
-			_GP(play).spritemodified[sprnum] = false;
-		_GP(play).spritemodifiedlist.clear();
 	}
 }
 
@@ -2128,9 +2135,6 @@ void construct_game_scene(bool full_redraw) {
 
 	// End the parent scene node
 	_G(gfxDriver)->EndSpriteBatch();
-
-	// Clear "modified sprite" flags
-	reset_spritemodified();
 }
 
 void construct_game_screen_overlay(bool draw_mouse) {
