@@ -1197,11 +1197,14 @@ bool ScriptExecutor::LoadNextScript() {
 		if (candidateObject && IsRelevantObject(candidateObject)) {
 			if (candidateObject->Script.size() != 0) {
 				_stream = candidateObject->GetScriptStream();
+				_executingScriptObjectID = candidateObject->Index;
 				debug("----- Switching execution to script for object: %.4x", candidateObject->Index);
 				return true;
 			}
 		}
 	} while (candidateObject != nullptr);
+
+	_executingScriptObjectID = 0;
 
 	// We are done executing all relevant objects
 	if (IsSceneInitRun) {
@@ -2107,6 +2110,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		// Scene initialization run
 		// TODO: Need to better encapsulate this down the road
 		// TODO: Not sure which order is really right, need to check in SIS logs
+		_executingScriptObjectID = 0;
 		IsRepeatRun = false;
 		IsSceneInitRun = firstRun;
 		_state = ExecutorState::Executing;
