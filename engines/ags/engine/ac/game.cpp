@@ -918,13 +918,13 @@ std::unique_ptr<Shared::Bitmap> read_savedgame_screenshot(const String &savedgam
 	HSaveError err = OpenSavegame(savedgame, desc, kSvgDesc_UserImage);
 	if (!err) {
 		Debug::Printf(kDbgMsg_Error, "Unable to read save's screenshot.\n%s", err->FullMessage().GetCStr());
-		return {};
+		return nullptr;
 	}
 	if (desc.UserImage) {
 		desc.UserImage.reset(PrepareSpriteForUse(desc.UserImage.release(), false));
 		return std::move(desc.UserImage);
 	}
-	return {};
+	return nullptr;
 }
 
 
