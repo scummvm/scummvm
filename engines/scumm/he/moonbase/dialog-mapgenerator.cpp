@@ -55,15 +55,15 @@ MapGeneratorDialog::MapGeneratorDialog(bool demo) : Dialog("MapGenerator"), _ref
 	_dialogTitle = new GUI::StaticTextWidget(this, "MapGenerator.Title", _("Random Map Options"));
 	_dialogTitle->setAlign(Graphics::kTextAlignCenter);
 
-	// I18N: Map generator algorthims
+	// I18N: Map generator algorithms
 	_algorDesc = new GUI::StaticTextWidget(this, "MapGenerator.Algorithm", _("Algorithm"));
 	_algorDesc->setAlign(Graphics::kTextAlignLeft);
 	_algorGroup = new GUI::RadiobuttonGroup(this, kAlgorCmd);
-	// I18N: Spiff algorthim
+	// I18N: Spiff algorithm
 	_algorSpiff = new GUI::RadiobuttonWidget(this, "MapGenerator.AlgorithmSpiff", _algorGroup, SPIFF_GEN, _("Spiff"));
-	// I18N: Katton algorthim
+	// I18N: Katton algorithm
 	_algorSpiff = new GUI::RadiobuttonWidget(this, "MapGenerator.AlgorithmKatton", _algorGroup, KATTON_GEN, _("Katton"));
-	// I18N: Random algorthim
+	// I18N: Random algorithm
 	_algorRandom = new GUI::CheckboxWidget(this, "MapGenerator.AlgorithmRandom", _("Random"), _("Picks the map algorithm randomly."), kAlgorRandCmd);
 
 	// I18N: Map sizes
