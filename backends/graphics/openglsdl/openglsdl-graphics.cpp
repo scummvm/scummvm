@@ -229,11 +229,13 @@ void OpenGLSdlGraphicsManager::deinitOpenGLContext() {
 	if (!_glContext) {
 		return;
 	}
+#endif
 
 #ifdef USE_IMGUI
 	destroyImGui();
 #endif
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	notifyContextDestroy();
 	sdlGLDestroyContext(_glContext);
 
@@ -388,7 +390,7 @@ void OpenGLSdlGraphicsManager::updateScreen() {
 		--_ignoreResizeEvents;
 	}
 
-#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+#ifdef USE_IMGUI
 	if (_imGuiCallbacks.render) {
 		_forceRedraw = true;
 	}
@@ -561,7 +563,7 @@ void OpenGLSdlGraphicsManager::refreshScreen() {
 	}
 #endif
 
-#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+#ifdef USE_IMGUI
 	renderImGui();
 #endif
 
@@ -856,6 +858,11 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		notifyContextCreate(_glContextType, new OpenGL::Backbuffer(), it[0], it[1]);
 		handleResize(_hwScreen->w, _hwScreen->h);
 
+#ifdef USE_IMGUI
+		// Setup Dear ImGui
+		initImGui(nullptr, nullptr);
+#endif
+
 		// Ignore resize events (from SDL) for a few frames, if this isn't
 		// caused by a notification from SDL. This avoids bad resizes to a
 		// (former) resolution for which we haven't processed an event yet.
@@ -1085,7 +1092,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	}
 }
 
-#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+#ifdef USE_IMGUI
 void *OpenGLSdlGraphicsManager::getImGuiTexture(const Graphics::Surface &image, const byte *palette, int palCount) {
 	// Create a OpenGL texture identifier
 	GLuint image_texture;
