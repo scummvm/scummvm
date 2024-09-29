@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-29 13:55+0000\n"
+"PO-Revision-Date: 2024-09-29 14:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -465,7 +465,7 @@ msgid ""
 "Do you really want to download files into that directory?"
 msgstr ""
 "지정된 디렉토리에 \"%s\" 파일이 이미 존재합니다.\n"
-"정말로 해당 디렉토리에 파일을 다운로드하시겠습니까?"
+"정말 해당 디렉토리에 파일을 다운로드하겠습니까?"
 
 #: gui/downloaddialog.cpp:198 gui/downloaddlcsdialog.cpp:70
 #: gui/downloadpacksdialog.cpp:368
@@ -474,26 +474,22 @@ msgid "Downloaded %s %S / %s %S"
 msgstr "%s %S / %s %S 다운로드 됨"
 
 #: gui/downloaddialog.cpp:204 gui/downloadpacksdialog.cpp:374
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %S/s"
-msgstr "다운로드 속도: %s %S"
+msgstr "다운로드 속도: %s %S/s"
 
 #: gui/downloaddlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download game files"
 msgid "Currently Downloading Games"
-msgstr "게임 파일 다운로드"
+msgstr "현재 게임 다운로드하는 중"
 
 #: gui/downloaddlcsdialog.cpp:55
-#, fuzzy
-#| msgid "Download"
 msgid "Pending Downloads"
-msgstr "다운로드"
+msgstr "보류 중인 다운로드"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
 msgid "ERROR %d: %s"
-msgstr "에러 %d: %s"
+msgstr "오류 %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:189 gui/downloadpacksdialog.cpp:245
@@ -502,9 +498,8 @@ msgid "Downloading %S list..."
 msgstr "%S 목록을 다운로드하는 중..."
 
 #: gui/downloadpacksdialog.cpp:203
-#, fuzzy
 msgid "Clear Cache"
-msgstr "값 제거"
+msgstr "캐시 지우기"
 
 #: gui/downloadpacksdialog.cpp:255
 #, c-format
@@ -514,7 +509,7 @@ msgstr "%S 목록을 다운로드하는 중... %d 개 항목"
 #: gui/downloadpacksdialog.cpp:265
 #, c-format
 msgid "Detected %d new packs, %s %S"
-msgstr "%d개의 새 팩을 발견했습니다, %s %S"
+msgstr "%d 개의 새 팩이 감지되었음, %s %S"
 
 #: gui/downloadpacksdialog.cpp:291
 #, c-format
@@ -523,7 +518,7 @@ msgstr "다운로드 완료, %d 개의 팩 다운로드, %s %S"
 
 #: gui/downloadpacksdialog.cpp:395 gui/downloadpacksdialog.cpp:440
 msgid "ERROR: No icons path set"
-msgstr "에러: 아이콘 경로가 설정되지 않음"
+msgstr "오류: 아이콘 경로가 설정 안 됨"
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:428
@@ -536,7 +531,8 @@ msgstr "새 %S을(를) 사용할 수 없음"
 msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
-msgstr ""
+msgstr "%s %S의 데이터를 제거하고, 이전에 다운로드한 %S을(를) 모두 삭제합니다. "
+"계속하겠습니까?"
 
 #: gui/downloadpacksdialog.cpp:464 gui/updates-dialog.cpp:115
 msgid "Proceed"
@@ -544,11 +540,11 @@ msgstr "진행"
 
 #: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3298
 msgid "icon packs"
-msgstr ""
+msgstr "아이콘 팩"
 
 #: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3309
 msgid "shader packs"
-msgstr ""
+msgstr "셰이더 팩"
 
 #: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:713
 msgid "Pick the game:"
@@ -570,12 +566,12 @@ msgstr "그래픽"
 
 #: gui/editgamedialog.cpp:170
 msgid "Override global graphic settings"
-msgstr "전역 그래픽 설정 무시"
+msgstr "글로벌 그래픽 설정 재정의"
 
 #: gui/editgamedialog.cpp:172
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr "전역 그래픽 설정 무시"
+msgstr "글로벌 그래픽 설정 재정의"
 
 #: gui/editgamedialog.cpp:185 gui/options.cpp:2233 engines/dialogs.cpp:346
 msgid "Keymaps"
@@ -587,12 +583,12 @@ msgstr "백엔드"
 
 #: gui/editgamedialog.cpp:204
 msgid "Override global backend settings"
-msgstr "전역 백엔드 설정 무시"
+msgstr "글로벌 백엔드 설정 재정의"
 
 #: gui/editgamedialog.cpp:206
 msgctxt "lowres"
 msgid "Override global backend settings"
-msgstr "전역 백엔드 설정 무시"
+msgstr "글로벌 백엔드 설정 재정의"
 
 #: gui/editgamedialog.cpp:220 gui/options.cpp:2263 engines/dialogs.cpp:321
 msgid "Audio"
@@ -600,12 +596,12 @@ msgstr "오디오"
 
 #: gui/editgamedialog.cpp:223
 msgid "Override global audio settings"
-msgstr "전역 오디오 설정 무시"
+msgstr "글로벌 오디오 설정 재정의"
 
 #: gui/editgamedialog.cpp:225
 msgctxt "lowres"
 msgid "Override global audio settings"
-msgstr "전역 오디오 설정 무시"
+msgstr "글로벌 오디오 설정 재정의"
 
 #: gui/editgamedialog.cpp:234 gui/options.cpp:2268
 msgid "Volume"
@@ -618,25 +614,25 @@ msgstr "볼륨"
 
 #: gui/editgamedialog.cpp:239
 msgid "Override global volume settings"
-msgstr "전역 볼륨 설정 무시"
+msgstr "글로벌 볼륨 설정 재정의"
 
 #: gui/editgamedialog.cpp:241
 msgctxt "lowres"
 msgid "Override global volume settings"
-msgstr "전역 볼륨 설정 무시"
+msgstr "글로벌 볼륨 설정 재정의"
 
 #: gui/editgamedialog.cpp:252 gui/options.cpp:2278
 msgid "MIDI"
-msgstr "MIDI"
+msgstr "미디"
 
 #: gui/editgamedialog.cpp:255
 msgid "Override global MIDI settings"
-msgstr "전역 MIDI 설정 무시"
+msgstr "글로벌 미디 설정 재정의"
 
 #: gui/editgamedialog.cpp:257
 msgctxt "lowres"
 msgid "Override global MIDI settings"
-msgstr "전역 MIDI 설정 무시"
+msgstr "글로벌 미디 설정 재정의"
 
 #: gui/editgamedialog.cpp:267 gui/options.cpp:2284
 msgid "MT-32"
@@ -644,12 +640,12 @@ msgstr "MT-32"
 
 #: gui/editgamedialog.cpp:270
 msgid "Override global MT-32 settings"
-msgstr "전역 MT-32 설정 무시"
+msgstr "글로벌 MT-32 설정 재정의"
 
 #: gui/editgamedialog.cpp:272
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
-msgstr "전역 MT-32 설정 무시"
+msgstr "글로벌 MT-32 설정 재정의"
 
 #: gui/editgamedialog.cpp:281 gui/options.cpp:2291
 msgid "Paths"
@@ -662,11 +658,11 @@ msgstr "경로"
 
 #: gui/editgamedialog.cpp:291
 msgid "Check Integrity"
-msgstr ""
+msgstr "무결성 확인"
 
 #: gui/editgamedialog.cpp:291
 msgid "Perform integrity check for all game files"
-msgstr ""
+msgstr "모든 게임 파일에 대한 무결성 검사를 수행"
 
 #: gui/editgamedialog.cpp:296
 msgid "Game Path:"
@@ -705,7 +701,7 @@ msgstr "저장 경로:"
 #: gui/editgamedialog.cpp:312 gui/editgamedialog.cpp:314
 #: gui/editgamedialog.cpp:315 gui/options.cpp:2466 gui/options.cpp:2468
 msgid "Specifies where your saved games are put"
-msgstr "게임 저장 파일이 있을 경로를 지정"
+msgstr "저장된 게임이 저장되는 위치를 지정"
 
 #: gui/editgamedialog.cpp:314 gui/options.cpp:2468
 msgctxt "lowres"
@@ -719,7 +715,7 @@ msgstr "기본값"
 
 #: gui/editgamedialog.cpp:326 engines/dialogs.cpp:377
 msgid "Achievements"
-msgstr "업적"
+msgstr "도전과제"
 
 #: gui/editgamedialog.cpp:330 engines/dialogs.cpp:381
 msgid "Statistics"
@@ -734,7 +730,8 @@ msgstr "ID:"
 msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
-msgstr "게임 저장에 참조하거나 명령줄에서 실행하는데 사용하는 짧은 게임 식별자"
+msgstr "저장된 게임을 참조하고 명령줄에서 게임을 실행하는 데 사용되는 짧은 게임 "
+"식별자"
 
 #: gui/editgamedialog.cpp:349
 msgctxt "lowres"
@@ -743,7 +740,7 @@ msgstr "ID:"
 
 #: gui/editgamedialog.cpp:354 gui/editrecorddialog.cpp:58
 msgid "Name:"
-msgstr "제목:"
+msgstr "이름:"
 
 #: gui/editgamedialog.cpp:354 gui/editgamedialog.cpp:356
 #: gui/editgamedialog.cpp:357
@@ -753,7 +750,7 @@ msgstr "게임의 전체 제목"
 #: gui/editgamedialog.cpp:356
 msgctxt "lowres"
 msgid "Name:"
-msgstr "제목:"
+msgstr "이름:"
 
 #: gui/editgamedialog.cpp:363 engines/mohawk/dialogs.cpp:158
 #: engines/mohawk/dialogs.cpp:377
@@ -764,7 +761,7 @@ msgstr "언어:"
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
-msgstr "게임의 언어. 선택한 언어로 게임이 번역되지는 않음"
+msgstr "게임 언어입니다. 이렇게 하면 스페인어 게임 버전이 영어로 바뀌지 않음"
 
 #: gui/editgamedialog.cpp:365 gui/editgamedialog.cpp:380 gui/options.cpp:1575
 #: gui/options.cpp:1590 gui/options.cpp:1607 gui/options.cpp:1621
@@ -796,7 +793,7 @@ msgstr "플랫폼:"
 
 #: gui/editgamedialog.cpp:558 gui/options.cpp:3365
 msgid "Select SoundFont"
-msgstr "SoundFont 선택"
+msgstr "사운드폰트 선택"
 
 #: gui/editgamedialog.cpp:597
 msgid "Select additional game directory"
@@ -804,54 +801,52 @@ msgstr "추가 게임 디렉토리를 선택"
 
 #: gui/editgamedialog.cpp:610 gui/options.cpp:3212
 msgid "Select directory for saved games"
-msgstr "세이브 파일 저장 경로를 선택"
+msgstr "저장된 게임을 위한 디렉토리를 선택"
 
 #: gui/editgamedialog.cpp:617 gui/options.cpp:3219
 msgid "The chosen directory cannot be written to. Please select another one."
-msgstr "선택한 디렉토리에는 기록할 수 없습니다. 다른 디렉토리를 선택해 주세요."
+msgstr "선택한 디렉토리에 기록할 수 없습니다. 다른 디렉토리를 선택하세요."
 
 #: gui/editgamedialog.cpp:622
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
-msgstr ""
-"세이브 파일 동기화 기능은 기본값 이외의 디렉토리에서는 동작하지 않습니다. 게"
-"임 세이브 파일이 동기화되기를 원하면 기본 디렉토리를 사용하세요."
+msgstr "저장된 게임 동기화 기능은 기본이 아닌 디렉토리에서는 작동하지 않습니다. "
+"저장된 게임을 동기화하려면 기본 디렉토리를 사용하세요."
 
 #: gui/editgamedialog.cpp:656
 msgid "This game ID is already taken. Please choose another one."
-msgstr "이 게임 ID는 이미 사용 중입니다. 다른 ID를 선택해 주세요."
+msgstr "이 게임 ID는 이미 사용 중입니다. 다른 ID를 선택하세요."
 
 #: gui/editrecorddialog.cpp:57
 msgid "Author:"
-msgstr "작성자:"
+msgstr "원작자:"
 
 #: gui/editrecorddialog.cpp:59
 msgid "Notes:"
-msgstr "메모:"
+msgstr "참고:"
 
 #: gui/integrity-dialog.cpp:100
 msgid ""
 "Verifying file integrity may take a long time to complete. Please wait...\n"
-msgstr ""
+msgstr "파일 무결성을 확인하는 데 시간이 오래 걸릴 수 있습니다. 기다려 주세요...\n"
 
 #: gui/integrity-dialog.cpp:107 gui/integrity-dialog.cpp:168
 msgid "Calculating file checksums..."
-msgstr ""
+msgstr "파일 체크섬 계산 중..."
 
 #: gui/integrity-dialog.cpp:120
 msgid "Launch Email Client"
-msgstr ""
+msgstr "이메일 클라이언트 실행"
 
 #: gui/integrity-dialog.cpp:174
 msgid "Calculation complete"
 msgstr "계산 완료"
 
 #: gui/integrity-dialog.cpp:263
-#, fuzzy, c-format
-#| msgid "Downloaded %s %S / %s %S"
+#, c-format
 msgid "Calculated %s %S / %s %S"
-msgstr "%s %S / %s %S 다운로드 됨"
+msgstr "%s %S / %s %S 계산됨"
 
 #: gui/integrity-dialog.cpp:513
 msgid ""
@@ -861,25 +856,31 @@ msgid ""
 "If you are sure that this is a valid unknown variant, please send the "
 "following e-mail to integrity@scummvm.org"
 msgstr ""
+"### 결과\n"
+"보유한 게임 파일 세트는 우리에게 알려지지 않은 것 같습니다.\n"
+"\n"
+"이것이 유효한 알려지지 않은 변형이라고 확신하는 경우 다음 이메일을 integrity@"
+"scummvm.org로 보내주세요"
 
 #: gui/integrity-dialog.cpp:537
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
-msgstr ""
+msgstr "게임에 파일이 없는 것 같습니다. 경로가 올바른지 확인하였습니까?"
 
 #: gui/integrity-dialog.cpp:542
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
-msgstr ""
+msgstr "이 게임에는 연관된 메타데이터가 없는 듯하므로, 매치할 수 없습니다. 게임에 "
+"대한 올바른 메타데이터를 입력해 주세요."
 
 #: gui/integrity-dialog.cpp:569
 msgid "Files all OK"
-msgstr ""
+msgstr "모든 파일 정상"
 
 #: gui/filebrowser-dialog.cpp:53
 msgid "Choose file for loading"
-msgstr "불러올 파일을 선택"
+msgstr "로딩할 파일을 선택"
 
 #: gui/filebrowser-dialog.cpp:53
 msgid "Enter filename for saving"
@@ -887,7 +888,7 @@ msgstr "저장할 파일명을 입력"
 
 #: gui/filebrowser-dialog.cpp:135
 msgid "Do you really want to overwrite the file?"
-msgstr "파일을 덮어쓰겠습니까?"
+msgstr "정말 파일을 덮어쓰겠습니까?"
 
 #: gui/fluidsynth-dialog.cpp:68
 msgid "Reverb"
@@ -907,11 +908,11 @@ msgstr "감쇠:"
 
 #: gui/fluidsynth-dialog.cpp:86
 msgid "Width:"
-msgstr "좌우 분리도:"
+msgstr "너비:"
 
 #: gui/fluidsynth-dialog.cpp:93 gui/fluidsynth-dialog.cpp:111
 msgid "Level:"
-msgstr "레벨:"
+msgstr "수준:"
 
 #: gui/fluidsynth-dialog.cpp:100
 msgid "Chorus"
@@ -931,11 +932,11 @@ msgstr "깊이:"
 
 #: gui/fluidsynth-dialog.cpp:132
 msgid "Type:"
-msgstr "종류:"
+msgstr "유형:"
 
 #: gui/fluidsynth-dialog.cpp:135
 msgid "Sine"
-msgstr "Sine"
+msgstr "사인"
 
 #: gui/fluidsynth-dialog.cpp:136 backends/platform/sdl/ps3/ps3.cpp:43
 #: backends/platform/sdl/psp2/psp2.cpp:46 engines/dragons/metaengine.cpp:189
