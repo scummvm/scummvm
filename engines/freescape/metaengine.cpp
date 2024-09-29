@@ -62,7 +62,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_AUTOMATIC_DRILLING,
 		{
 			_s("Automatic drilling"),
-			_s("Allow to succefully drill in any part of the area in Driller"),
+			_s("Allow to successfully drill in any part of the area in Driller"),
 			"automatic_drilling",
 			false,
 			0,
