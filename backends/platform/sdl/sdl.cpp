@@ -43,7 +43,6 @@
 
 #include "backends/mixer/null/null-mixer.h"
 #include "backends/events/default/default-events.h"
-#include "backends/events/sdl/legacy-sdl-events.h"
 #include "backends/keymapper/hardware-input.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"

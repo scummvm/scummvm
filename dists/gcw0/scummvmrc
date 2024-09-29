@@ -1,9 +1,0 @@
-[scummvm]
-fullscreen=true
-gfx_mode=1x
-aspect_ratio=true
-themepath=./themes
-browser_lastpath=/media
-extrapath=./engine-data
-pluginspath=./plugins
-joystick_num=0
