@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-29 13:31+0000\n"
+"PO-Revision-Date: 2024-09-29 13:55+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -31,25 +31,21 @@ msgid "Features compiled in:"
 msgstr "다음과 같은 기능이 있습니다:"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "not supported"
-msgstr "게임 ID가 지원되지 않습니다"
+msgstr "지원되지 않음"
 
 #: gui/about.cpp:118
 msgid "disabled"
-msgstr "비활성화"
+msgstr "비활성화됨"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "enabled"
-msgstr "비활성화"
+msgstr "활성화됨"
 
 #. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
 #: gui/about.cpp:142
 msgid "CPU extensions support:"
-msgstr ""
+msgstr "CPU 확장 지원:"
 
 #: gui/about.cpp:155
 msgid "Available engines:"
@@ -69,11 +65,11 @@ msgstr "닫기"
 
 #: gui/browser.cpp:74 backends/dialogs/macosx/macosx-dialogs.mm:90
 msgid "Show hidden files"
-msgstr "숨김 파일 표시"
+msgstr "숨긴 파일 표시"
 
 #: gui/browser.cpp:74
 msgid "Show files marked with the hidden attribute"
-msgstr "숨김 속성이 있는 파일을 표시합니다"
+msgstr "숨김 속성이 있는 파일 표시"
 
 #: gui/browser.cpp:78 gui/remotebrowser.cpp:56
 msgid "Go up"
@@ -82,7 +78,7 @@ msgstr "위로"
 #: gui/browser.cpp:78 gui/browser.cpp:80 gui/remotebrowser.cpp:56
 #: gui/remotebrowser.cpp:58
 msgid "Go to previous directory level"
-msgstr "상위 디렉토리로 이동합니다"
+msgstr "상위 디렉토리로 이동"
 
 #: gui/browser.cpp:80 gui/remotebrowser.cpp:58
 msgctxt "lowres"
@@ -136,40 +132,36 @@ msgid "Cloud Connection Wizard"
 msgstr "클라우드 연결 마법사"
 
 #: gui/cloudconnectionwizard.cpp:183
-#, fuzzy
-#| msgid "Quick load"
 msgid "Quick mode"
-msgstr "빠른 불러오기"
+msgstr "빠른 모드"
 
 #: gui/cloudconnectionwizard.cpp:184
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Manual mode"
-msgstr "고속 모드"
+msgstr "수동 모드"
 
 #: gui/cloudconnectionwizard.cpp:187
 msgid "Will ask you to run the Local Webserver"
-msgstr "로컬 웹서버를 실행할지 물어봅니다"
+msgstr "로컬 웹서버를 실행하도록 요청"
 
 #: gui/cloudconnectionwizard.cpp:189
-#, fuzzy
-#| msgid "Run local webserver"
 msgid "Requires the Local Webserver feature"
-msgstr "로컬 웹 서버를 실행"
+msgstr "로컬 웹서버 기능이 필요"
 
 #: gui/cloudconnectionwizard.cpp:205
 msgid "Quick Mode: Step 1"
-msgstr ""
+msgstr "빠른 모드: 1 단계"
 
 #: gui/cloudconnectionwizard.cpp:210
 msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
 msgstr ""
+"이 모드에서는 로컬 웹서버가 실행 중이어야,\n"
+"브라우저가 ScummVM으로 데이터를 전달할 수 있음"
 
 #: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3761
 msgid "Stop server"
-msgstr "서버 정지"
+msgstr "서버 중지"
 
 #: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:2789
 msgid "Run server"
@@ -177,23 +169,23 @@ msgstr "서버 실행"
 
 #: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:3762
 msgid "Stop local webserver"
-msgstr "내부 웹서버를 정지합니다"
+msgstr "로컬 웹서버 중지"
 
 #: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:2789
 msgid "Run local webserver"
-msgstr "로컬 웹 서버를 실행"
+msgstr "로컬 웹서버 실행"
 
 #: gui/cloudconnectionwizard.cpp:248 gui/options.cpp:2790 gui/options.cpp:3769
 msgid "Not running"
-msgstr "실행되지 않음"
+msgstr "실행 중 아님"
 
 #: gui/cloudconnectionwizard.cpp:263
 msgid "Quick Mode: Step 2"
-msgstr ""
+msgstr "빠른 모드 : 2 단계"
 
 #: gui/cloudconnectionwizard.cpp:267
 msgid "Now, open this link in your browser:"
-msgstr ""
+msgstr "이제, 브라우저에서 이 링크를 열어보세요:"
 
 #: gui/cloudconnectionwizard.cpp:268 gui/cloudconnectionwizard.cpp:323
 #: gui/message.cpp:246 gui/message.cpp:250
@@ -205,14 +197,16 @@ msgid ""
 "It will automatically pass the data to ScummVM,\n"
 "and warn you should there be any errors."
 msgstr ""
+"ScummVM에 자동으로 데이터가 전달되고,\n"
+"오류가 있으면 경고합니다."
 
 #: gui/cloudconnectionwizard.cpp:283
 msgid "Local Webserver address: "
-msgstr ""
+msgstr "로컬 웹서버 주소: "
 
 #: gui/cloudconnectionwizard.cpp:299
 msgid "Quick Mode: Success"
-msgstr ""
+msgstr "빠른 모드: 성공"
 
 #: gui/cloudconnectionwizard.cpp:303 gui/cloudconnectionwizard.cpp:404
 msgid "Your cloud storage has been connected!"
@@ -220,17 +214,15 @@ msgstr "클라우드 저장소가 연결되었습니다!"
 
 #: gui/cloudconnectionwizard.cpp:304 gui/cloudconnectionwizard.cpp:405
 msgid "Finish"
-msgstr ""
+msgstr "완료"
 
 #: gui/cloudconnectionwizard.cpp:317
 msgid "Manual Mode: Step 1"
-msgstr ""
+msgstr "수동 모드: 1 단계"
 
 #: gui/cloudconnectionwizard.cpp:322
-#, fuzzy
-#| msgid "1. Open this link:"
 msgid "Open this link in your browser:"
-msgstr "1. 다음 링크를 엽니다:"
+msgstr "브라우저에서 이 링크 열기:"
 
 #: gui/cloudconnectionwizard.cpp:325
 msgid ""
@@ -238,14 +230,17 @@ msgid ""
 "find it on the Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
+"ScummVM에 JSON 코드를 전달하지 못하는 경우,\n"
+"해당 페이지의 문제 해결 섹션에서 해당 코드를 찾은 후,\n"
+"다음 단계로 이동합니다."
 
 #: gui/cloudconnectionwizard.cpp:354
 msgid "Manual Mode: Step 2"
-msgstr ""
+msgstr "수동 모드: 2 단계"
 
 #: gui/cloudconnectionwizard.cpp:359
 msgid "Copy the JSON code from the browser here and press Next:"
-msgstr ""
+msgstr "브라우저에서 JSON 코드를 여기 복사하고 다음을 누름:"
 
 #: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:258
 #: gui/gui-manager.cpp:273
@@ -254,7 +249,7 @@ msgstr "붙여넣기"
 
 #: gui/cloudconnectionwizard.cpp:361
 msgid "Paste code from clipboard"
-msgstr "클립보드에서 코드를 붙여넣기"
+msgstr "클립보드에서 코드 붙여넣기"
 
 #: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:317
 #: engines/dialogs.cpp:94 engines/engine.cpp:932 engines/mm/xeen/saves.cpp:259
@@ -263,46 +258,40 @@ msgstr "클립보드에서 코드를 붙여넣기"
 #: engines/tinsel/metaengine.cpp:328 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:736
 msgid "Load"
-msgstr "불러오기"
+msgstr "로드"
 
 #: gui/cloudconnectionwizard.cpp:362
-#, fuzzy
-#| msgid "Load file"
 msgid "Load code from file"
-msgstr "파일 불러오기"
+msgstr "파일에서 코드 로드"
 
 #: gui/cloudconnectionwizard.cpp:379
 msgid "Manual Mode: Something went wrong"
-msgstr ""
+msgstr "수동 모드: 오류 발생"
 
 #: gui/cloudconnectionwizard.cpp:383
-#, fuzzy
-#| msgid "Storage connected."
 msgid "Cloud storage was not connected."
-msgstr "스토리지가 연결되었습니다."
+msgstr "클라우드 저장소가 연결되지 않았습니다."
 
 #: gui/cloudconnectionwizard.cpp:384
 msgid "Make sure the JSON code was copied correctly and retry."
-msgstr ""
+msgstr "JSON 코드가 올바르게 복사되었는지 확인하고 다시 시도하세요."
 
 #: gui/cloudconnectionwizard.cpp:385
 msgid "If that doesn't work, try again from the beginning."
-msgstr ""
+msgstr "문제가 해결되지 않으면, 처음부터 다시 시도해 보세요."
 
 #: gui/cloudconnectionwizard.cpp:386
 msgid "Error message: "
-msgstr ""
+msgstr "오류 메세지: "
 
 #: gui/cloudconnectionwizard.cpp:400
 msgid "Manual Mode: Success"
-msgstr ""
+msgstr "수동 모드: 성공"
 
 #: gui/cloudconnectionwizard.cpp:428 gui/dlcsdialog.cpp:59
 #: gui/downloaddlcsdialog.cpp:60 engines/crab/input/input.cpp:175
-#, fuzzy
-#| msgid "Backend"
 msgid "Back"
-msgstr "백엔드"
+msgstr "뒤로"
 
 #: gui/cloudconnectionwizard.cpp:436 gui/imagealbum-dialog.cpp:104
 #: gui/saveload-dialog.cpp:825 engines/crab/input/input.cpp:181
@@ -310,10 +299,8 @@ msgid "Next"
 msgstr "다음"
 
 #: gui/cloudconnectionwizard.cpp:499
-#, fuzzy
-#| msgid "Another Storage is working now. Do you want to interrupt it?"
 msgid "Another Storage is working right now. Do you want to interrupt it?"
-msgstr "다른 스토리지가 현재 동작 중입니다. 중단할까요?"
+msgstr "다른 저장소가 지금 작동 중입니다. 중단할까요?"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
@@ -343,15 +330,13 @@ msgid "No"
 msgstr "아니오"
 
 #: gui/cloudconnectionwizard.cpp:508
-#, fuzzy
-#| msgid "Wait until current Storage finishes up and try again."
 msgid "Wait until current Storage finishes and try again."
-msgstr "현재 스토리지 작업이 완료될 때까지 기다린 후 다시 시도해 주세요."
+msgstr "현재 저장소 작업이 완료될 때까지 기다린 후 다시 시도하세요."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:536
 msgid "JSON code contents are malformed."
-msgstr ""
+msgstr "JSON 코드 내용이 잘못되었습니다."
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:341 gui/editrecorddialog.cpp:67
@@ -381,10 +366,8 @@ msgid "OK"
 msgstr "확인"
 
 #: gui/cloudconnectionwizard.cpp:558
-#, fuzzy
-#| msgid "Incorrect rs file."
 msgid "Incorrect JSON."
-msgstr "잘못된 rs 파일."
+msgstr "잘못된 JSON입니다."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
 #: gui/cloudconnectionwizard.cpp:565
@@ -397,12 +380,12 @@ msgid ""
 "Please navigate to this page manually."
 msgstr ""
 "URL을 여는데 실패했습니다!\n"
-"해당 페이지로 직접 이동해 주세요."
+"해당 페이지로 직접 이동하세요."
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:631
 msgid "Select JSON file copied from scummvm.org site"
-msgstr ""
+msgstr "scummvm.org 사이트에서 복사한 JSON 파일을 선택"
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:637
@@ -411,17 +394,15 @@ msgstr "JSON 파일을 로드하는 데 실패함"
 
 #: gui/dlcsdialog.cpp:41
 msgid "Download Freeware Games and Demos"
-msgstr ""
+msgstr "무료 게임 및 데모 다운로드"
 
 #: gui/dlcsdialog.cpp:52
 msgid "Fetching DLCs..."
-msgstr ""
+msgstr "DLC를 가져오는 중..."
 
 #: gui/dlcsdialog.cpp:60
-#, fuzzy
-#| msgid "Download"
 msgid "All Downloads"
-msgstr "다운로드"
+msgstr "모두 다운로드"
 
 #: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:267
 msgid "Download"
@@ -438,11 +419,11 @@ msgstr "게임 데이터가 있는 디렉토리를 선택"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:209
 msgid "From: "
-msgstr "리모트: "
+msgstr "다음에서: "
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:210
 msgid "To: "
-msgstr "로컬: "
+msgstr "다음으로: "
 
 #: gui/downloaddialog.cpp:63 gui/downloadpacksdialog.cpp:201
 #: gui/downloadpacksdialog.cpp:246 gui/downloadpacksdialog.cpp:256
@@ -464,7 +445,7 @@ msgstr "숨김"
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
-msgstr "인터넷 연결에 제한이 있는 것 같습니다. 다운로드를 계속하시겠습니까?"
+msgstr "연결이 제한된 것 같습니다. 정말 파일을 다운로드하겠습니까?"
 
 #: gui/downloaddialog.cpp:136 gui/launcher.cpp:662
 msgid "ScummVM couldn't open the specified directory!"
@@ -474,9 +455,8 @@ msgstr "ScummVM이 지정된 디렉토리를 열 수 없습니다!"
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
-msgstr ""
-"다운로드를 위한 디렉토리를 생성할 수 없습니다 - 지정된 디렉토리와 같은 이름"
-"의 파일이 이미 존재합니다."
+msgstr "다운로드할 디렉토리를 만들 수 없습니다. 지정된 디렉토리에 동일한 이름의 "
+"파일이 있습니다."
 
 #: gui/downloaddialog.cpp:151
 #, c-format
