@@ -784,7 +784,8 @@ void CastleEngine::drawFullscreenRiddleAndWait(uint16 riddle) {
 }
 
 void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics::Surface *surface) {
-	int x, y;
+	int x = 0;
+	int y = 0;
 	int maxWidth = 136;
 
 	if (isDOS()) {
