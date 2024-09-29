@@ -475,6 +475,12 @@ int main(int argc, char *argv[]) {
 		setup.defines.push_back("USE_GLAD");
 	}
 
+	// HACK: Add IMGUI SDL Renderer support
+	// This needs SDL 2.0.18+
+	if (getFeatureBuildState("imgui", setup.features)) {
+		setup.defines.push_back("USE_IMGUI_SDLRENDERER2");
+	}
+
 	// List of global warnings and map of project-specific warnings
 	// FIXME: As shown below these two structures have different behavior for
 	// Code::Blocks and MSVC. In Code::Blocks this is used to enable *and*
