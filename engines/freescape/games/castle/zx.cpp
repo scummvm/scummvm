@@ -113,14 +113,15 @@ void CastleEngine::loadAssetsZXFullGame() {
 	loadMessagesVariableSize(&file, 0x4bd, 71);
 	switch (_language) {
 		case Common::ES_ESP:
-			loadRiddles(&file, 0x1470 - 4, 8);
+			loadRiddles(&file, 0x1470 - 4 - 2 - 9 * 2, 9);
+			assert(0);
 			loadMessagesVariableSize(&file, 0xf3d, 71);
 			load8bitBinary(&file, 0x6aab - 2, 16);
 			loadSpeakerFxZX(&file, 0xca0, 0xcdc);
 			loadFonts(&file, 0x1218 + 16, _font);
 			break;
 		case Common::EN_ANY:
-			loadRiddles(&file, 0x145c, 9);
+			loadRiddles(&file, 0x145c - 2 - 9 * 2, 9);
 			load8bitBinary(&file, 0x6a3b, 16);
 			loadSpeakerFxZX(&file, 0xc91, 0xccd);
 			loadFonts(&file, 0x1219, _font);

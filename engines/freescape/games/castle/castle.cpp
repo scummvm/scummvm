@@ -653,26 +653,30 @@ void CastleEngine::loadAssets() {
 
 void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int number) {
 	file->seek(offset);
+
+	Common::Array<Common::Point> origins;
+	for (int i = 0; i < number; i++) {
+		Common::Point origin;
+		origin.x = file->readByte();
+		origin.y = file->readByte();
+		debugC(1, kFreescapeDebugParser, "riddle %d origin: %d, %d", i, origin.x, origin.y);
+		origins.push_back(origin);
+	}
+
 	debugC(1, kFreescapeDebugParser, "Riddle table:");
-	int maxLineSize = isSpectrum() ? 20 : 23;
+	int maxLineSize = isSpectrum() ? 20 : 24;
 
 	for (int i = 0; i < number; i++) {
-		int header = file->readByte();
-		debugC(1, kFreescapeDebugParser, "riddle %d header: %x", i, header);
-		int numberLines = 6;
-		if (header == 0x18)
-			numberLines = 8;
-		else if (header == 0x15 || header == 0x1a || header == 0x1b || header == 0x1c || header == 0x1e)
-			numberLines = 7;
-		else if (header == 0x1d)
-			numberLines = 6;
-		else if (header == 0x27)
-			numberLines = 5;
+		Riddle riddle;
+		riddle._origin = origins[i];
+		int numberLines = file->readByte();
+		debugC(1, kFreescapeDebugParser, "riddle %d number of lines: %d", i, numberLines);
 
-		if (isSpectrum())
-			--numberLines;
-
+		int8 x, y;
 		for (int j = 0; j < numberLines; j++) {
+
+			x = file->readByte();
+			y = file->readByte();
 			int size = file->readByte();
 			debugC(1, kFreescapeDebugParser, "size: %d (max %d?)", size, maxLineSize);
 
@@ -682,63 +686,31 @@ void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int
 				while (size-- > 0)
 					message = message + "*";
 
-				//debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
-				debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
-				debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
-				debugC(1, kFreescapeDebugParser, "'%s'", message.c_str());
-				_riddleList.push_back(message);
+				debugC(1, kFreescapeDebugParser, "'%s' with offset: %d, %d", message.c_str(), x, y);
+				riddle._lines.push_back(RiddleText(x, y, message));
 				continue;
 			} else if (size > maxLineSize) {
-				for (int k = j; k < numberLines; k++)
-					_riddleList.push_back(message);
-
-				if (isSpectrum()) {
-					debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
-					debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
-				}
-
-				debugC(1, kFreescapeDebugParser, "'%s'", message.c_str());
-				break;
+				assert(0);
 			} else if (size == 0) {
-				size = 20;
+				assert(0);
 			}
 
-			int padSpaces = (22 - size) / 2;
 			debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
-
-			int k = padSpaces;
-
-			if (size > 0) {
-				while (k-- > 0)
-					message = message + " ";
-
-				while (size-- > 0) {
-					byte c = file->readByte();
-					if (c != 0)
-						message = message + c;
-				}
-
-				k = padSpaces;
-				while (k-- > 0)
-					message = message + " ";
+			while (size-- > 0) {
+				byte c = file->readByte();
+				if (c != 0)
+					message = message + c;
 			}
 
-
-			if (isAmiga() || isAtariST())
+			/*if (isAmiga() || isAtariST())
 				debug("extra byte: %x", file->readByte());
 			debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
-			debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
-			debugC(1, kFreescapeDebugParser, "'%s'", message.c_str());
+			debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());*/
+			debugC(1, kFreescapeDebugParser, "'%s' with offset: %d, %d", message.c_str(), x, y);
 
-			_riddleList.push_back(message);
+			riddle._lines.push_back(RiddleText(x, y, message));
 		}
-
-		if (numberLines < 7)
-			for (int j = numberLines; j < 7; j++) {
-				_riddleList.push_back("");
-				debugC(1, kFreescapeDebugParser, "Padded with ''");
-			}
-
+		_riddleList.push_back(riddle);
 	}
 	debugC(1, kFreescapeDebugParser, "End of riddles at %" PRIx64, file->pos());
 }
@@ -812,47 +784,39 @@ void CastleEngine::drawFullscreenRiddleAndWait(uint16 riddle) {
 }
 
 void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics::Surface *surface) {
-
-	Common::StringArray riddleMessages;
-	for (int i = 7 * riddle; i < 7 * (riddle + 1); i++) {
-		riddleMessages.push_back(_riddleList[i]);
-	}
-	//uint32 frameColor = 0;
-	//if (isDOS()) {
-
-	int h, w, mw;
+	int x, y;
+	int maxWidth = 136;
 
 	if (isDOS()) {
-		h = 40;
-		w = 34;
-		mw = 136;
-	} else {
-		h = 64;
-		w = 37;
-		mw = 136;
+		x = 40;
+		y = 34;
+	} else if (isSpectrum()) {
+		x = 64;
+		y = 37;
 	}
-	surface->copyRectToSurface((const Graphics::Surface)*_riddleTopFrame, h, w, Common::Rect(0, 0, _riddleTopFrame->w, _riddleTopFrame->h));
-	for (w += _riddleTopFrame->h; w < mw;) {
-		surface->copyRectToSurface((const Graphics::Surface)*_riddleBackgroundFrame, h, w, Common::Rect(0, 0, _riddleBackgroundFrame->w, _riddleBackgroundFrame->h));
-		w += _riddleBackgroundFrame->h;
+	surface->copyRectToSurface((const Graphics::Surface)*_riddleTopFrame, x, y, Common::Rect(0, 0, _riddleTopFrame->w, _riddleTopFrame->h));
+	for (y += _riddleTopFrame->h; y < maxWidth;) {
+		surface->copyRectToSurface((const Graphics::Surface)*_riddleBackgroundFrame, x, y, Common::Rect(0, 0, _riddleBackgroundFrame->w, _riddleBackgroundFrame->h));
+		y += _riddleBackgroundFrame->h;
 	}
-	surface->copyRectToSurface((const Graphics::Surface)*_riddleBottomFrame, h, mw, Common::Rect(0, 0, _riddleBottomFrame->w, _riddleBottomFrame->h - 1));
+	surface->copyRectToSurface((const Graphics::Surface)*_riddleBottomFrame, x, maxWidth, Common::Rect(0, 0, _riddleBottomFrame->w, _riddleBottomFrame->h - 1));
 
-	int x = 0;
-	int y = 0;
-	int numberOfLines = 7;
+	Common::Array<RiddleText> riddleMessages = _riddleList[riddle]._lines;
+	x = _riddleList[riddle]._origin.x;
+	y = _riddleList[riddle]._origin.y;
 
 	if (isDOS()) {
-		x = 60;
-		y = 62;
-	} else if (isSpectrum() || isCPC()) {
-		x = 65;
-		y = 70;
+		x = 38;
+		y = 33;
+	} else if (isSpectrum()) {
+		x = 64;
+		y = 36;
 	}
 
-	for (int i = 0; i < numberOfLines; i++) {
-		drawStringInSurface(riddleMessages[i], x, y, front, back, surface);
-		y = y + 10;
+	for (int i = 0; i < int(riddleMessages.size()); i++) {
+		x = x + riddleMessages[i]._dx;
+		y = y + riddleMessages[i]._dy;
+		drawStringInSurface(riddleMessages[i]._text, x, y, front, back, surface);
 	}
 	drawFullscreenSurface(surface);
 }
