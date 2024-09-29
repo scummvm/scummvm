@@ -1256,7 +1256,7 @@ void LauncherSimple::groupEntries(const Common::Array<LauncherEntry> &metadata) 
 			attrs.push_back(language);
 		}
 		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
-		// I18N: List group when no languageis specified
+		// I18N: List group when no language is specified
 		metadataNames[""] = _("Language not detected");
 		const Common::LanguageDescription *l = Common::g_languages;
 		for (; l->code; ++l) {
@@ -1404,7 +1404,7 @@ void LauncherGrid::groupEntries(const Common::Array<LauncherEntry> &metadata) {
 			attrs.push_back(iter->engineid);
 		}
 		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
-		// I18N: List grouping when no enginr is specified
+		// I18N: List grouping when no engine is specified
 		metadataNames[""] = _("Unknown Engine");
 		Common::HashMap<Common::String, MetadataEngine, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._engineInfo.begin();
 		for (; i != _metadataParser._engineInfo.end(); ++i) {
