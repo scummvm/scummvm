@@ -2986,7 +2986,7 @@ void *SurfaceSdlGraphicsManager::getImGuiTexture(const Graphics::Surface &image,
 		return nullptr;
 	}
 
-	Graphics::Surface *s = image.convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), palette, palCount);
+	Graphics::Surface *s = image.convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), palette, palCount);
 	SDL_UpdateTexture(texture, nullptr, s->getPixels(), s->pitch);
 	SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 	SDL_SetTextureScaleMode(texture, SDL_ScaleModeLinear);
