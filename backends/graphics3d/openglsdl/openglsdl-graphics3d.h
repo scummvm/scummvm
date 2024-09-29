@@ -114,7 +114,7 @@ public:
 
 	void showSystemMouseCursor(bool visible) override;
 
-#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+#ifdef USE_IMGUI
 	void *getImGuiTexture(const Graphics::Surface &image, const byte *palette, int palCount) override;
 	void freeImGuiTexture(void *texture) override;
 #endif
@@ -123,8 +123,8 @@ protected:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	int _glContextProfileMask, _glContextMajor, _glContextMinor;
 	SDL_GLContext _glContext;
-	void deinitializeRenderer();
 #endif
+	void deinitializeRenderer();
 
 	OpenGL::ContextType _glContextType;
 

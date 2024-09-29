@@ -685,6 +685,7 @@ bool SdlEventSource::pollEvent(Common::Event &event) {
 		}
 
 #if defined(USE_IMGUI)
+		/* SDL 1.2 uses the generic event observer instead. */
 		if (ImGui_ImplSDL2_Ready()) {
 			ImGui_ImplSDL2_ProcessEvent(&ev);
 			ImGuiIO &io = ImGui::GetIO();

@@ -224,12 +224,11 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, 
 }
 
 OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-
 #ifdef USE_IMGUI
 	destroyImGui();
 #endif
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	notifyContextDestroy();
 	sdlGLDestroyContext(_glContext);
 #else
@@ -363,7 +362,7 @@ void OpenGLSdlGraphicsManager::updateScreen() {
 		--_ignoreResizeEvents;
 	}
 
-#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+#ifdef USE_IMGUI
 	if (_imGuiCallbacks.render) {
 		_forceRedraw = true;
 	}
@@ -525,7 +524,7 @@ void OpenGLSdlGraphicsManager::refreshScreen() {
 	}
 #endif
 
-#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+#ifdef USE_IMGUI
 	renderImGui();
 #endif
 
@@ -729,6 +728,9 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		// We do this because on Windows SDL_SetVideoMode can destroy and
 		// recreate the OpenGL context.
 		notifyContextDestroy();
+#ifdef USE_IMGUI
+		destroyImGui();
+#endif
 	}
 
 	SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, _vsync ? 1 : 0);
@@ -747,6 +749,11 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	_lastVideoModeLoad = SDL_GetTicks();
 
 	if (_hwScreen) {
+#ifdef USE_IMGUI
+		// Setup Dear ImGui
+		initImGui(nullptr, nullptr);
+#endif
+
 		notifyContextCreate(_glContextType, new OpenGL::Backbuffer(), rgba8888, rgba8888);
 		handleResize(_hwScreen->w, _hwScreen->h);
 	}
@@ -966,7 +973,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	}
 }
 
-#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+#ifdef USE_IMGUI
 void *OpenGLSdlGraphicsManager::getImGuiTexture(const Graphics::Surface &image, const byte *palette, int palCount) {
 	// Create a OpenGL texture identifier
 	GLuint image_texture;

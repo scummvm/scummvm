@@ -42,6 +42,8 @@ bool SdlEventSource::processMouseEvent(Common::Event &event, int x, int y, int r
 
 	event.mouse.x = x;
 	event.mouse.y = y;
+	event.rawMouse.x = x;
+	event.rawMouse.y = y;
 	event.relMouse.x = relx;
 	event.relMouse.y = rely;
 
