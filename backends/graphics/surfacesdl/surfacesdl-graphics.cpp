@@ -2925,7 +2925,7 @@ void SurfaceSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrect
 	Common::Rect &drawRect = (_overlayVisible) ? _overlayDrawRect : _gameDrawRect;
 	viewport.x = drawRect.left;
 	viewport.y = drawRect.top;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+
 	int rotation = getRotationMode();
 	int rotangle = 0;
 	if (rotation == Common::kRotation90 || rotation == Common::kRotation270) {
@@ -2934,16 +2934,15 @@ void SurfaceSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrect
 		viewport.y = drawRect.left + delta;
 	}
 	rotangle = rotation;
-#endif
+
 	viewport.w = drawRect.width();
 	viewport.h = drawRect.height();
 
 	SDL_RenderClear(_renderer);
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+
 	if (rotangle != 0)
 		SDL_RenderCopyEx(_renderer, _screenTexture, nullptr, &viewport, rotangle, nullptr, SDL_FLIP_NONE);
 	else
-#endif
 		SDL_RenderCopy(_renderer, _screenTexture, nullptr, &viewport);
 }
 
