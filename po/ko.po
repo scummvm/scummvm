@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-29 15:58+0000\n"
+"PO-Revision-Date: 2024-09-30 00:16+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -1479,7 +1479,7 @@ msgstr "게임 로드:"
 
 #: gui/launcher.cpp:409
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr "이 디렉토리는 아직 사용할 수 없습니다. 다운로드 중입니다!"
+msgstr "이 디렉토리는 아직 사용할 수 없고, 다운로드 중입니다!"
 
 #: gui/launcher.cpp:420
 msgid ""
@@ -1508,7 +1508,7 @@ msgstr "ScummVM이 선택한 게임을 실행할 수 있는 엔진을 찾을 수
 msgid ""
 "Did you add this directory to the SAF? Press the help button [?] on the top "
 "for detailed instructions"
-msgstr "이 디렉토리를 SAF에 추가했나요? 자세한 지침은 상단의 도움말 버튼 [?] 누름"
+msgstr "이 디렉토리를 SAF에 추가했나요? 자세한 지침은 상단의 도움말 [?] 버튼 누름"
 
 #: gui/launcher.cpp:686
 msgid "ScummVM could not find any game in the specified directory!"
@@ -1517,7 +1517,7 @@ msgstr "ScummVM은 선택한 디렉토리에서 아무 게임도 찾지 못했�
 #. I18N: Unknown game variant
 #: gui/launcher.cpp:707
 msgid "Unknown variant"
-msgstr "알려지지 않은 버전"
+msgstr "알 수 없는 변종 게임"
 
 #: gui/launcher.cpp:938 gui/saveload-dialog.cpp:381
 msgid "List view"
@@ -1525,7 +1525,7 @@ msgstr "목록 표시"
 
 #: gui/launcher.cpp:939 gui/saveload-dialog.cpp:382
 msgid "Grid view"
-msgstr "그리드로 표시"
+msgstr "격자 표시"
 
 #: gui/launcher.cpp:1103
 msgid "~S~tart"
@@ -1533,7 +1533,7 @@ msgstr "시작(~S~)"
 
 #: gui/launcher.cpp:1103
 msgid "Start selected game"
-msgstr "선택한 게임을 시작합니다"
+msgstr "선택한 게임을 시작"
 
 #: gui/launcher.cpp:1106
 msgid "~L~oad..."
@@ -1541,7 +1541,7 @@ msgstr "불러오기(~L~)..."
 
 #: gui/launcher.cpp:1106
 msgid "Load saved game for selected game"
-msgstr "선택된 게임의 저장 데이터를 불러옵니다"
+msgstr "선택된 게임의 저장된 게임을 불러옴"
 
 #: gui/launcher.cpp:1108
 msgid "Record..."
@@ -1553,10 +1553,9 @@ msgstr "게임 옵션(~G~)..."
 
 #: gui/launcher.cpp:1114
 msgid "Change game options"
-msgstr "게임 옵션을 변경합니다"
+msgstr "게임 옵션 변경"
 
 #: gui/launcher.cpp:1114
-#, fuzzy
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "게임 옵션(~G~)..."
@@ -1565,7 +1564,7 @@ msgstr "게임 옵션(~G~)..."
 #. I18N: List grouping when no enginr is specified
 #: gui/launcher.cpp:1212 gui/launcher.cpp:1408
 msgid "Unknown Engine"
-msgstr "알려지지 않은 엔진"
+msgstr "알 수 없는 엔진"
 
 #. I18N: List grouping when no publisher is specified
 #. I18N: List group when no publisher is specified
@@ -1583,19 +1582,17 @@ msgstr "시리즈 없음"
 #. I18N: List group when no language is specified
 #: gui/launcher.cpp:1260 gui/launcher.cpp:1456
 msgid "Language not detected"
-msgstr "언어가 감지되지 않음"
+msgstr "언어가 감지되지 않았음"
 
 #. I18N: List group when no platform is specified
 #: gui/launcher.cpp:1274 gui/launcher.cpp:1470
 msgid "Platform not detected"
-msgstr "플랫폼이 감지되지 않음"
+msgstr "플랫폼이 감지되지 않았음"
 
 #. I18N: List group when no year is specified
 #: gui/launcher.cpp:1291 gui/launcher.cpp:1487
-#, fuzzy
-#| msgid "Unknown error"
 msgid "Unknown Year"
-msgstr "알 수 없는 에러"
+msgstr "알 수 없는 연도"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1494 gui/widgets/groupedlist.cpp:81
@@ -1604,7 +1601,7 @@ msgstr "모두"
 
 #: gui/launcher.cpp:1649
 msgid "Icons per row:"
-msgstr ""
+msgstr "열당 아이콘:"
 
 #: gui/massadd.cpp:77 gui/massadd.cpp:80
 msgid "... progress ..."
@@ -1612,34 +1609,30 @@ msgstr "... 진행 중 ..."
 
 #: gui/massadd.cpp:283
 msgid "Scan complete!"
-msgstr "검색 완료!"
+msgstr "스캔이 완료되었습니다!"
 
 #: gui/massadd.cpp:286
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
-msgstr ""
-"%d 개의 새로운 게임을 찾았습니다. 그리고 %d 개의 기존 추가된 게임을 무시했습"
-"니다."
+msgstr "새로운 게임 %d 개를 발견하였고, 이전에 추가된 게임 %d 개를 무시했습니다."
 
 #: gui/massadd.cpp:290
 #, c-format
 msgid "Scanned %d directories ..."
-msgstr "%d 개의 디렉토리를 탐색했습니다..."
+msgstr "%d 개의 디렉토리를 스캔했습니다..."
 
 #: gui/massadd.cpp:293
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
-msgstr ""
-"%d 개의 새로운 게임을 찾았습니다. 그리고 %d 개의 기존 추가된 게임을 무시했습"
-"니다 ..."
+msgstr "새로운 게임 %d 개를 발견하였고, 이전에 추가된 게임 %d 개를 무시했습니다..."
 
 #: gui/onscreendialog.cpp:95 gui/onscreendialog.cpp:97
 msgid "Stop"
-msgstr "정지"
+msgstr "중지"
 
 #: gui/onscreendialog.cpp:100
 msgid "Edit record description"
-msgstr "녹화 정보 수정"
+msgstr "녹화 설명 편집"
 
 #: gui/onscreendialog.cpp:102
 msgid "Switch to Game"
@@ -1655,77 +1648,69 @@ msgstr "사용하지 않음"
 
 #: gui/options.cpp:150
 msgid "Every 5 mins"
-msgstr "5분마다"
+msgstr "5 분마다"
 
 #: gui/options.cpp:150
 msgid "Every 10 mins"
-msgstr "10분마다"
+msgstr "10 분마다"
 
 #: gui/options.cpp:150
 msgid "Every 15 mins"
-msgstr "15분마다"
+msgstr "15 분마다"
 
 #: gui/options.cpp:150
 msgid "Every 30 mins"
-msgstr "30분마다"
+msgstr "30 분마다"
 
 #. I18N: Extremely large GUI scale
 #: gui/options.cpp:155
-#, fuzzy, c-format
-#| msgid "Very large"
+#, c-format
 msgid "200% - Extremely large"
-msgstr "아주 크게"
+msgstr "200% - 극도로 큼"
 
 #. I18N: Very very large GUI scale
 #: gui/options.cpp:157
-#, fuzzy
-#| msgid "Very large"
 msgid "175% - Very large"
-msgstr "아주 크게"
+msgstr "175% - 매우 큼"
 
 #. I18N: Very large GUI scale
 #: gui/options.cpp:159
 #, c-format
 msgid "150% - Larger"
-msgstr ""
+msgstr "150% - 더 큼"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:161
 #, c-format
 msgid "125% - Large"
-msgstr ""
+msgstr "125% - 큼"
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:163
-#, fuzzy
-#| msgid "Medium"
 msgid "100% - Medium"
-msgstr "중간"
+msgstr "100% - 중간"
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:165
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "75% - Small"
-msgstr "작게"
+msgstr "75% - 작음"
 
 #. I18N: Smaller GUI scale
 #: gui/options.cpp:167
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "50% - Smaller"
-msgstr "작게"
+msgstr "50% - 더 작음"
 
 #. I18N: Smallest GUI scale
 #: gui/options.cpp:169
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "25% - Smallest"
-msgstr "작게"
+msgstr "25% - 매우 작음"
 
 #: gui/options.cpp:816
 msgid "Failed to apply some of the graphic options changes:"
-msgstr "일부 그래픽 옵션 변경사항을 적용하지 못했습니다:"
+msgstr "일부 그래픽 옵션 변경 사항 적용에 실패함:"
 
 #: gui/options.cpp:828
 msgid "the video mode could not be changed"
@@ -1733,11 +1718,11 @@ msgstr "비디오 모드를 변경할 수 없음"
 
 #: gui/options.cpp:841
 msgid "the stretch mode could not be changed"
-msgstr "확대 모드를 변경할 수 없음"
+msgstr "늘리기 모드를 변경할 수 없음"
 
 #: gui/options.cpp:847
 msgid "the aspect ratio setting could not be changed"
-msgstr "화면 종횡비 설정을 변경할 수 없음"
+msgstr "화면비 설정을 변경할 수 없음"
 
 #: gui/options.cpp:853
 msgid "the fullscreen setting could not be changed"
@@ -1748,14 +1733,12 @@ msgid "the filtering setting could not be changed"
 msgstr "필터링 설정을 변경할 수 없음"
 
 #: gui/options.cpp:865
-#, fuzzy
 msgid "the vsync setting could not be changed"
-msgstr "전체 화면 설정을 변경할 수 없음"
+msgstr "수직동기화 설정을 변경할 수 없음"
 
 #: gui/options.cpp:879
-#, fuzzy
 msgid "the shader could not be changed"
-msgstr "확대 모드를 변경할 수 없음"
+msgstr "셰이더를 변경할 수 없음"
 
 #: gui/options.cpp:1403
 msgid "Touchpad mouse mode"
@@ -1790,12 +1773,12 @@ msgstr "조이스틱 데드존:"
 #: gui/options.cpp:1519
 #, c-format
 msgid "%d hidden achievements remaining"
-msgstr "%d 개의 숨겨진 업적이 남음"
+msgstr "숨겨진 도전과제 %d 개 남음"
 
 #: gui/options.cpp:1524
 #, c-format
 msgid "Achievements unlocked: %d/%d"
-msgstr "업적 언락: %d/%d"
+msgstr "잠금 해제된 도전과제: %d/%d"
 
 #: gui/options.cpp:1570
 msgid "Graphics mode:"
@@ -1811,38 +1794,33 @@ msgstr "일부 게임에서 지원하는 특수 디더링 모드"
 
 #: gui/options.cpp:1602
 msgid "Stretch mode:"
-msgstr "확대 모드:"
+msgstr "늘리기 모드:"
 
 #: gui/options.cpp:1618
 msgid "Scaler:"
-msgstr "크기조절:"
+msgstr "크기 조절:"
 
 #: gui/options.cpp:1632
 msgid "Shader:"
 msgstr "셰이더:"
 
 #: gui/options.cpp:1632 gui/options.cpp:1634 gui/options.cpp:1635
-#, fuzzy
 msgid "Specifies path to the shader used for scaling the game screen"
-msgstr "게임에서 사용하는 추가 데이터 경로를 지정"
+msgstr "게임 화면 크기 조정에 사용되는 셰이더 경로를 지정"
 
 #: gui/options.cpp:1634
-#, fuzzy
 msgctxt "lowres"
 msgid "Shader Path:"
-msgstr "저장 경로:"
+msgstr "셰이더 경로:"
 
 #: gui/options.cpp:1635
-#, fuzzy
 msgctxt "shader"
 msgid "None"
 msgstr "없음"
 
 #: gui/options.cpp:1640
-#, fuzzy
-#| msgid "Download game files"
 msgid "Download Shaders"
-msgstr "게임 파일 다운로드"
+msgstr "셰이더 다운로드"
 
 #: gui/options.cpp:1640
 msgid "Check on the scummvm.org website for updates of shader packs"
@@ -1850,18 +1828,17 @@ msgstr "셰이더 팩 업데이트는 scummvm.org 웹사이트에서 확인"
 
 #: gui/options.cpp:1646 backends/graphics/sdl/sdl-graphics.cpp:433
 msgid "Fullscreen mode"
-msgstr "전체 화면 모드"
+msgstr "전체화면 모드"
 
 #: gui/options.cpp:1649
 msgid "V-Sync"
-msgstr "Vsync"
+msgstr "수직동기화"
 
 #: gui/options.cpp:1649
 msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
-msgstr ""
-"수직 동기화가 화면을 새로 고칠 때까지 기다리면 아티팩트가 찢어지지 않습니다"
+msgstr "수직동기화가 화면을 새로 고쳐서 아티팩트가 찢어지는 것을 방지할 때까지 기다림"
 
 #: gui/options.cpp:1654
 msgid "Game 3D Renderer:"
@@ -1874,11 +1851,11 @@ msgstr "게임 3D 렌더러:"
 
 #: gui/options.cpp:1673
 msgid "3D Anti-aliasing:"
-msgstr "3D 안티 앨리어싱:"
+msgstr "3D 안티 에일리어싱:"
 
 #: gui/options.cpp:1677 engines/mohawk/dialogs.cpp:364
 msgid "Disabled"
-msgstr "비활성화"
+msgstr "비활성화됨"
 
 #: gui/options.cpp:1685
 msgid "Filter graphics"
@@ -1886,15 +1863,15 @@ msgstr "그래픽 필터"
 
 #: gui/options.cpp:1685
 msgid "Use linear filtering when scaling graphics"
-msgstr "화면 크기를 조절할 때 선형 필터링을 사용"
+msgstr "그래픽 크기 조정 시 선형 필터링을 사용"
 
 #: gui/options.cpp:1689
 msgid "Aspect ratio correction"
-msgstr "화면 종횡비 보정"
+msgstr "화면비 교정"
 
 #: gui/options.cpp:1689
 msgid "Correct aspect ratio for games"
-msgstr "게임의 화면 종횡비 보정"
+msgstr "게임에 적합한 화면비"
 
 #: gui/options.cpp:1706
 msgid "Preferred device:"
@@ -1906,11 +1883,11 @@ msgstr "음악 장치:"
 
 #: gui/options.cpp:1706 gui/options.cpp:1708
 msgid "Specifies preferred sound device or sound card emulator"
-msgstr "선호하는 사운드 장치나 사운드 카드 에뮬레이터를 지정합니다"
+msgstr "선호하는 사운드 장치 또는 사운드 카드 에뮬레이터를 지정"
 
 #: gui/options.cpp:1706 gui/options.cpp:1708 gui/options.cpp:1709
 msgid "Specifies output sound device or sound card emulator"
-msgstr "소리를 출력할 사운드 장치나 사운드 카드 에뮬레이터를 지정합니다"
+msgstr "출력 사운드 장치 또는 사운드 카드 에뮬레이터를 지정"
 
 #: gui/options.cpp:1708
 msgctxt "lowres"
@@ -1928,7 +1905,7 @@ msgstr "AdLib 에뮬레이터:"
 
 #: gui/options.cpp:1735 gui/options.cpp:1738
 msgid "AdLib is used for music in many games"
-msgstr "AdLib은 많은 게임에서 음악 재생에 사용됩니다"
+msgstr "AdLib은 많은 게임에서 음악 재생에 사용됨"
 
 #: gui/options.cpp:1751
 msgid "GM device:"
@@ -1936,11 +1913,11 @@ msgstr "GM 장치:"
 
 #: gui/options.cpp:1751
 msgid "Specifies default sound device for General MIDI output"
-msgstr "General MIDI 출력에 사용할 기본 사운드 장치를 지정합니다"
+msgstr "일반 미디 출력을 위한 기본 사운드 장치를 지정"
 
 #: gui/options.cpp:1762
 msgid "Don't use General MIDI music"
-msgstr "General MIDI 음악을 사용하지 않음"
+msgstr "일반 미디 음악을 사용하지 않음"
 
 #: gui/options.cpp:1773 gui/options.cpp:1842
 msgid "Use first available device"
@@ -1948,16 +1925,16 @@ msgstr "사용 가능한 첫 번째 장치 사용"
 
 #: gui/options.cpp:1785
 msgid "SoundFont:"
-msgstr "SoundFont:"
+msgstr "사운드폰트:"
 
 #: gui/options.cpp:1785 gui/options.cpp:1787 gui/options.cpp:1795
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
-msgstr "SoundFont는 일부 사운드 카드, FluidSynth, Timidity에서 지원됩니다"
+msgstr "사운드폰트는 일부 오디오 카드, FluidSynth, Timidity 지원함"
 
 #: gui/options.cpp:1787
 msgctxt "lowres"
 msgid "SoundFont:"
-msgstr "SoundFont:"
+msgstr "사운드폰트:"
 
 #: gui/options.cpp:1793
 msgctxt "soundfont"
@@ -1966,15 +1943,15 @@ msgstr "없음"
 
 #: gui/options.cpp:1800
 msgid "Mixed AdLib/MIDI mode"
-msgstr "AdLib/MIDI 혼합 모드"
+msgstr "AdLib/미디 믹스 모드"
 
 #: gui/options.cpp:1800
 msgid "Use both MIDI and AdLib sound generation"
-msgstr "사운드 생성에 MIDI와 AdLib을 동시에 사용"
+msgstr "사운드 생성에 미디와 AdLib을 동시에 사용"
 
 #: gui/options.cpp:1803
 msgid "MIDI gain:"
-msgstr "MIDI 게인:"
+msgstr "미디 게인:"
 
 #: gui/options.cpp:1813
 msgid "MT-32 Device:"
@@ -1982,38 +1959,36 @@ msgstr "MT-32 장치:"
 
 #: gui/options.cpp:1813
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
-msgstr "Roland MT-32/LAPC1/CM32l/CM64 출력에 사용할 기본 장치를 선택"
+msgstr "롤랜드 MT-32/LAPC1/CM32l/CM64 출력을 위한 기본 사운드 장치를 선택"
 
 #: gui/options.cpp:1818
 msgid "True Roland MT-32 (disable GM emulation)"
-msgstr "실제 Roland MT-32 사용 (GM 에뮬레이션을 비활성화)"
+msgstr "실기 롤랜드 MT-32 (GM 에뮬레이션 비활성화)"
 
 #: gui/options.cpp:1818 gui/options.cpp:1820
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
-msgstr ""
-"컴퓨터에 Roland MT-32와 호환되는 사운드 장치가 연결되어 있다면 선택하세요"
+msgstr "컴퓨터에 연결된 실기 하드웨어 롤랜드 호환 사운드 장치를 사용할지 확인"
 
 #: gui/options.cpp:1820
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
-msgstr "실제 Roland MT-32 사용 (GM 에뮬레이션을 비활성화)"
+msgstr "실기 롤랜드 MT-32(GM 에뮬레이션 없음)"
 
 #: gui/options.cpp:1823
 msgid "Roland GS device (enable MT-32 mappings)"
-msgstr "Roland GS 장치 (MT-32 맵핑을 활성화)"
+msgstr "롤랜드 GS 장치 (MT-32 매핑 활성화)"
 
 #: gui/options.cpp:1823
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
-msgstr ""
-"Roland GS 장치에서 MT-32를 에뮬레이트하는 패치 맵핑을 활성화하려면 선택하세요"
+msgstr "롤랜드 GS 장치에서 MT-32를 에뮬레이션하기 위해 패치 매핑을 활성화할지 확인"
 
 #: gui/options.cpp:1832
 msgid "Don't use Roland MT-32 music"
-msgstr "Roland MT-32 음악을 사용하지 않음"
+msgstr "롤랜드 MT-32 음악을 사용하지 않음"
 
 #: gui/options.cpp:1859
 msgid "Text and speech:"
@@ -2081,7 +2056,7 @@ msgstr "효과음 볼륨:"
 
 #: gui/options.cpp:1913 gui/options.cpp:1915 gui/options.cpp:1918
 msgid "Special sound effects volume"
-msgstr "효과음 볼륨"
+msgstr "특수 사운드 효과 볼륨"
 
 #: gui/options.cpp:1915
 msgctxt "lowres"
@@ -2126,7 +2101,7 @@ msgstr "접근성"
 
 #: gui/options.cpp:2363
 msgid "Discard changes and close the dialog"
-msgstr "변경 사항을 버리고 창을 닫음"
+msgstr "변경 사항을 취소하고 대화 상자를 닫음"
 
 #: gui/options.cpp:2364
 msgid "Apply"
@@ -2134,11 +2109,11 @@ msgstr "적용"
 
 #: gui/options.cpp:2364
 msgid "Apply changes without closing the dialog"
-msgstr "창을 닫지 않고 변경 사항을 적용"
+msgstr "대화 상자를 닫지 않고 변경 사항을 적용"
 
 #: gui/options.cpp:2365
 msgid "Apply changes and close the dialog"
-msgstr "변경 사항을 적용하고 창을 닫음"
+msgstr "변경 사항을 적용하고 대화 상자를 닫음"
 
 #: gui/options.cpp:2455
 msgid "FluidSynth Settings"
@@ -2148,7 +2123,8 @@ msgstr "FluidSynth 설정"
 msgid ""
 "Specifies where your saved games are put. A red coloring indicates the value "
 "is temporary and will not get saved"
-msgstr ""
+msgstr "저장된 게임이 저장되는 위치를 지정합니다. 빨간색은 값이 임시적이며 저장되지 "
+"않음을 나타냄"
 
 #: gui/options.cpp:2474
 msgid "Theme Path:"
@@ -2161,35 +2137,30 @@ msgstr "테마 경로:"
 
 #: gui/options.cpp:2482
 msgid "Icon Path:"
-msgstr "/icon/ 경로:"
+msgstr "아이콘 경로:"
 
 #: gui/options.cpp:2484
 msgctxt "lowres"
 msgid "Icon Path:"
-msgstr "/icon/ 경로:"
+msgstr "아이콘 경로:"
 
 #: gui/options.cpp:2485 gui/options.cpp:2495
-#, fuzzy
 msgctxt "path"
 msgid "Default"
 msgstr "기본값"
 
 #: gui/options.cpp:2492
-#, fuzzy
-#| msgid "Game Path:"
 msgid "DLC Path:"
-msgstr "게임 경로:"
+msgstr "DLC 경로:"
 
 #: gui/options.cpp:2494
-#, fuzzy
-#| msgid "Game Path:"
 msgctxt "lowres"
 msgid "DLC Path:"
-msgstr "게임 경로:"
+msgstr "DLC 경로:"
 
 #: gui/options.cpp:2502 gui/options.cpp:2504 gui/options.cpp:2505
 msgid "Specifies path to additional data used by all games or ScummVM"
-msgstr "ScummVM과 게임에서 사용하는 추가 데이터 경로"
+msgstr "모든 게임 또는 ScummVM에서 사용되는 추가 데이터의 경로를 지정"
 
 #: gui/options.cpp:2511
 msgid "Plugins Path:"
@@ -2202,17 +2173,15 @@ msgstr "플러그인 경로:"
 
 #: gui/options.cpp:2523
 msgid "ScummVM config path: "
-msgstr "ScummVM 설정 경로: "
+msgstr "ScummVM 구성 경로: "
 
 #: gui/options.cpp:2537
-#, fuzzy
-#| msgid "ScummVM config path: "
 msgid "ScummVM log path: "
-msgstr "ScummVM 설정 경로: "
+msgstr "ScummVM 로그 경로: "
 
 #: gui/options.cpp:2542
 msgid "View"
-msgstr ""
+msgstr "보기"
 
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2552 gui/options.cpp:3341
@@ -2230,16 +2199,15 @@ msgstr "GUI 크기:"
 #: gui/options.cpp:2579
 #, c-format
 msgid "%d%% - Custom"
-msgstr ""
+msgstr "%d%% - 커스텀"
 
 #: gui/options.cpp:2583
 msgid "GUI renderer:"
 msgstr "GUI 렌더러:"
 
 #: gui/options.cpp:2596
-#, fuzzy
 msgid "Return to the launcher when leaving a game"
-msgstr "게임 종료 시 항상 런처로 복귀"
+msgstr "게임 종료 시 런처로 돌아가기"
 
 #: gui/options.cpp:2597
 msgid ""
@@ -2251,22 +2219,22 @@ msgstr ""
 
 #: gui/options.cpp:2604
 msgid "Ask for confirmation on exit"
-msgstr "종료 시 확인"
+msgstr "나갈 시 확인 요청"
 
 #: gui/options.cpp:2605
 msgid "Ask for permission when closing ScummVM or leaving a game."
-msgstr "ScummVM 또는 게임 종료 시 다시 확인합니다."
+msgstr "ScummVM을 닫거나 게임을 나갈 시 권한을 요청합니다."
 
 #: gui/options.cpp:2611
-#, fuzzy
 msgid "Disable fixed font scaling"
-msgstr "저장 메뉴 비활성화"
+msgstr "고정된 글꼴 크기 조정 비활성화"
 
 #: gui/options.cpp:2612
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
-msgstr ""
+msgstr "GUI에서 고정 크기 글꼴을 업스케일하지 마세요. 이렇게 하면 저해상도 화면에서 "
+"아티팩트가 줄어듬"
 
 #: gui/options.cpp:2618
 msgid "GUI language:"
@@ -2286,12 +2254,13 @@ msgid ""
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
 "same language as the game."
 msgstr ""
-"게임을 시작할 때 ScummVM GUI 언어를 게임 언어로 전환합니다. 이렇게 하면 "
-"ScummVM 저장/불러오기 창이 게임과 동일한 언어로 표시됩니다."
+"게임을 시작 시, ScummVM GUI 언어를 게임 언어로 변경합니다. 이렇게 하면, "
+"게임에서 ScummVM 저장 및 로드 대화 상자를 사용하는 경우 게임과 동일한 언어로 "
+"표시됩니다."
 
 #: gui/options.cpp:2657
 msgid "Use native system file browser"
-msgstr "시스템 파일 브라우저 사용"
+msgstr "기본 시스템 파일 브라우저 사용"
 
 #: gui/options.cpp:2658
 msgid ""
@@ -10584,7 +10553,7 @@ msgstr "저장 / 불러오기 / 옵션"
 
 #: engines/scumm/help.cpp:261
 msgid "Other game controls:"
-msgstr "다른 게임 컨트롤:"
+msgstr "다른 게임 조작:"
 
 #: engines/scumm/help.cpp:263 engines/scumm/help.cpp:273
 msgid "Inventory:"
@@ -10656,7 +10625,7 @@ msgstr "  실제로는 마우스 전투 켜기/끄기입니다"
 
 #: engines/scumm/help.cpp:309
 msgid "Fighting controls (numpad):"
-msgstr "전투 조작 (숫자 패드):"
+msgstr "격투게임 조작 (숫자 패드):"
 
 #: engines/scumm/help.cpp:310 engines/scumm/help.cpp:311
 #: engines/scumm/help.cpp:312
