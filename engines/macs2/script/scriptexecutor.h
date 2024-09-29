@@ -207,8 +207,11 @@ class GameObject;
 			void BeginBuffering();
 			void EndBuffering(bool shouldMark = false);
 			void SIS_Debug(const char *format, ...);
-			
 
+			// Global [0F92h], seems to be 0 if we execute the script of the scene
+			// and the object ID if we execute the script of another object
+			// TODO: Confirm that this covers all uses
+			uint16 _executingScriptObjectID;
 			
 
 			
