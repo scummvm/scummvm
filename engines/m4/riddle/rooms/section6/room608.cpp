@@ -216,6 +216,7 @@ void Room608::daemon() {
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
 			triggerMachineByHashCallbackNegative, "rip talker");
 		sendWSMessage_10000(1, _ripley, _rp01, 1, 13, -1, _rp01, 20, 20, 0);
+		break;
 
 	case 20:
 		player_update_info(_tt, &_G(player_info));
@@ -1300,7 +1301,136 @@ void Room608::daemon() {
 		digi_play("608t10", 2, 255, 755);
 		break;
 
-	// TODO
+	case 755:
+		sendWSMessage_10000(1, _ttTalker, _all5a, 1, 1, -1, _all5a, 1, 6, 4);
+		digi_play("608r59", 2, 255, 758);
+		break;
+
+	case 758:
+		sendWSMessage_10000(1, _ttTalker, _all5a, 760, 7, -1, _all5a, 1, 12, 4);
+		digi_play("608t11", 2, 255, 760);
+		break;
+
+	case 760:
+		sendWSMessage_10000(1, _ttTalker, _all5a, 13, 50, 763, _all5a, 50, 50, 4);
+		break;
+
+	case 763:
+		inv_give_to_player("STICK AND SHELL MAP");
+		inv_give_to_player("WHALE BONE HORN");
+		kernel_examine_inventory_object("PING STICK AND SHELL MAP",
+			5, 1, 350, 224, 764);
+		break;
+
+	case 764:
+		kernel_timing_trigger(1, 765);
+		break;
+
+	case 765:
+		kernel_examine_inventory_object("PING WHALE BONE HORN",
+			5, 1, 350, 224, 766);
+		break;
+
+	case 766:
+		terminateMachineAndNull(_ttTalker);
+		_ttTalker = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+			triggerMachineByHashCallbackNegative, "tt talker");
+		sendWSMessage_10000(1, _ttTalker, _loop0, 1, 1, -1, _loop0, 1, 6, 4);
+
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+			triggerMachineByHashCallbackNegative, "rip talker");
+		sendWSMessage_10000(1, _ripley, _loop1, 1, 1, -1, _loop1, 1, 1, 0);
+		digi_play("608t11a", 2, 255, 767);
+		break;
+
+	case 767:
+		sendWSMessage_10000(1, _ttTalker, _loop0, 1, 1, -1, _loop0, 1, 6, 4);
+		digi_play("608t12", 2, 255, 768);
+		break;
+
+	case 768:
+		sendWSMessage_10000(1, _ttTalker, _loop0, 1, 1, -1, _loop0, 1, 1, 0);
+		sendWSMessage_10000(1, _ripley, _loop1, 1, 1, -1, _loop1, 1, 11, 0);
+		digi_play("608r60", 2, 255, 769);
+		break;
+
+	case 769:
+		terminateMachineAndNull(_ripley);
+		ws_unhide_walker();
+		sendWSMessage_10000(1, _ttTalker, _tt05, 1, 23, 770, _tt05, 23, 23, 1);
+		digi_play("608t13", 2, 255, 771);
+		break;
+
+	case 770:
+		sendWSMessage_10000(1, _ttTalker, _all5a, 23, 1, 773, _all5a, 1, 1, 1);
+		break;
+
+	case 771:
+		midi_play("thelook", 255, 0, -1, 949);
+		break;
+
+	case 773:
+		terminateMachineAndNull(_ttTalker);
+		ws_unhide_walker(_tt);
+		ws_demand_location(_tt, 480, 294, 9);
+		sendWSMessage_10000(_tt, 415, 287, 9, 775, 0);
+		break;
+
+	case 775:
+		sendWSMessage_10000(_tt, 239, 325, 9, 778, 0);
+		_G(player).disable_hyperwalk = true;
+		player_set_commands_allowed(true);
+		_G(flags)[V203] = 7;
+		break;
+
+	case 778:
+		sendWSMessage_10000(_tt, -30, 325, 9, 779, 1);
+		break;
+
+	case 779:
+		_G(player).disable_hyperwalk = false;
+		break;
+
+	case 780:
+		digi_play("608_s09", 2);
+		series_stream_break_on_frame(_ol2, 160, 781);
+		break;
+
+	case 781:
+		digi_play("608_s10", 2);
+		series_stream_break_on_frame(_ol2, 171, 735);
+		break;
+
+	case 782:
+		series_stream_break_on_frame(_ol2, 184, 736);
+		digi_play("608_s07", 1);
+		break;
+
+	case 783:
+		series_stream_break_on_frame(_ol2, 34, 731);
+		digi_play("950_s37", 2);
+		break;
+
+	case 784:
+		series_stream_break_on_frame(_ol2, 135, 785);
+		digi_play("608_s05", 2);
+		break;
+
+	case 785:
+		series_stream_break_on_frame(_ol2, 154, 780);
+		digi_play("608_s05a", 2);
+		break;
+
+	case 787:
+		series_stream_break_on_frame(_ol2, 53, 733);
+		digi_play("604_s01", 2);
+		break;
+
+	case 792:
+		series_stream_break_on_frame(_ol2, 120, 784);
+		digi_play("608_s11", 2);
+		break;
+
 	default:
 		break;
 	}
