@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-29 14:22+0000\n"
+"PO-Revision-Date: 2024-09-29 15:58+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -941,7 +941,7 @@ msgstr "사인"
 #: gui/fluidsynth-dialog.cpp:136 backends/platform/sdl/ps3/ps3.cpp:43
 #: backends/platform/sdl/psp2/psp2.cpp:46 engines/dragons/metaengine.cpp:189
 msgid "Triangle"
-msgstr "Triangle"
+msgstr "삼각형"
 
 #: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:2311
 msgid "Misc"
@@ -957,29 +957,29 @@ msgstr "없음 (가장 빠름)"
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "Linear"
-msgstr "Linear"
+msgstr "선형"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Fourth-order"
-msgstr "Fourth-order"
+msgstr "4 차"
 
 #: gui/fluidsynth-dialog.cpp:146
 msgid "Seventh-order"
-msgstr "Seventh-order"
+msgstr "7 차"
 
 #. I18N: Button to reset keymap mappings to defaults
 #: gui/fluidsynth-dialog.cpp:150 backends/keymapper/remap-widget.cpp:327
 msgid "Reset"
-msgstr "초기화"
+msgstr "재설정"
 
 #: gui/fluidsynth-dialog.cpp:150
 msgid "Reset all FluidSynth settings to their default values."
-msgstr "FluidSynth의 모든 설정을 기본값으로 되돌립니다."
+msgstr "모든 FluidSynth 설정을 기본값으로 재설정합니다."
 
 #: gui/fluidsynth-dialog.cpp:209
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
-msgstr "FluidSynth의 모든 설정을 기본값으로 되돌리겠습니까?"
+msgstr "모든 FluidSynth 설정을 기본값으로 재설정하겠습니까?"
 
 #: gui/gui-manager.cpp:161 gui/options.cpp:2302
 msgid "GUI"
@@ -1005,7 +1005,7 @@ msgstr "상호작용"
 #: engines/wintermute/keymapper_tables.h:1920
 #: engines/wintermute/keymapper_tables.h:2154
 msgid "Up"
-msgstr "위"
+msgstr "위쪽"
 
 #: gui/gui-manager.cpp:182 engines/metaengine.cpp:123
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
@@ -1020,7 +1020,7 @@ msgstr "위"
 #: engines/wintermute/keymapper_tables.h:1926
 #: engines/wintermute/keymapper_tables.h:2160
 msgid "Down"
-msgstr "아래"
+msgstr "아래쪽"
 
 #: gui/gui-manager.cpp:188 engines/metaengine.cpp:129
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
@@ -1053,44 +1053,36 @@ msgid "Right"
 msgstr "오른쪽"
 
 #: gui/gui-manager.cpp:200
-#, fuzzy
-#| msgid "Backend"
 msgid "Backspace"
-msgstr "백엔드"
+msgstr "백스페이스"
 
 #: gui/gui-manager.cpp:206
-#, fuzzy
-#| msgid "Delete char"
 msgid "Delete Character"
 msgstr "문자 삭제"
 
 #: gui/gui-manager.cpp:212
 msgid "Go to end of line"
-msgstr ""
+msgstr "줄의 끝으로 이동"
 
 #: gui/gui-manager.cpp:222
-#, fuzzy
-#| msgid "Select SoundFont"
 msgid "Select to end of line"
-msgstr "SoundFont 선택"
+msgstr "줄의 끝까지 선택"
 
 #: gui/gui-manager.cpp:232
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select to start of line"
-msgstr "플러그인 디렉토리를 선택"
+msgstr "줄의 시작을 선택"
 
 #: gui/gui-manager.cpp:242
 msgid "Go to start of line"
-msgstr ""
+msgstr "줄의 시작으로 이동"
 
 #: gui/gui-manager.cpp:253 gui/gui-manager.cpp:268
 msgid "Cut"
-msgstr ""
+msgstr "잘라내기"
 
 #: gui/gui-manager.cpp:263 gui/gui-manager.cpp:278
 msgid "Copy"
-msgstr ""
+msgstr "복사하기"
 
 #: gui/gui-manager.cpp:284 engines/pegasus/pegasus.cpp:2819
 #: engines/wintermute/keymapper_tables.h:305
@@ -1163,6 +1155,42 @@ msgid ""
 "eBay, Game Trading Zone, or other auction sites. Be cautious of faulty games "
 "and illegal game copies.\n"
 msgstr ""
+"## ScummVM 개요\n"
+"\n"
+"ScummVM은 다양한 게임 엔진을 현대적으로 재구현한 것입니다. 원래 게임 "
+"데이터를 기기로 전송하면, 원래 게임 경험을 충실하게 재현하기 위해 이를 "
+"사용합니다. \n"
+"\n"
+"ScummVM은 일반적인 DOS, Windows 또는 일부 콘솔 에뮬레이터가 아닙니다. 모든 "
+"것에 맞는 단일 방식이 아니라, 지원하는 각 특정 타이틀이나 엔진에 대한 정확한 "
+"게임 로직을 구현하는 세심한 경로를 취합니다. ScummVM은 지원하지 않는 게임 "
+"엔진에서는 작동하지 않습니다.\n"
+"\n"
+"ScummVM은 자원봉사자 팀에서 개발했으며 무료 소프트웨어입니다. 광범위한 "
+"테스트 팀이 없고, 제한된 범위의 기기만 보유하고 있으며, 항상 모든 요청을 "
+"처리할 수는 없습니다. 또한 광고를 게재하거나 아무것도 판매하지 않습니다. "
+"불만이나 버그 보고서를 제출할 때 이 점을 유의하십시오.\n"
+"\n"
+"## 게임 구입처\n"
+"\n"
+"지원되는 게임의 자세한 목록과 구입처는 [위키](https://wiki.scummvm.org/index."
+"php?title=Where_to_get_the_games)에서 확인하세요.\n"
+"\n"
+"대체로, 다양한 [프리웨어 게임](https://scummvm.org/games)과 "
+"[데모](https://www.scummvm.org/demos/)를 우리 웹사이트에서 직접 다운로드할 "
+"수 있습니다.\n"
+"\n"
+"ScummVM 팀은 특정 게임 공급업체를 지지하지 않습니다. 그러나 이 프로젝트는 "
+"제휴 추천 링크를 통해 [ZOOM-Platform](https://www.zoom-platform.com/"
+"?affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53)에서 이루어지는 모든 구매에 "
+"대해 수수료를 받습니다.\n"
+"\n"
+"추가적으로, ZOOM-Platform에서 이용할 수 없는 게임은 GOG.com 및 스팀과 같은 "
+"다른 공급업체에서 찾을 수 있습니다.\n"
+"\n"
+"다른 (절판된) 게임의 경우 아마존, 이베이, 게임 트레이딩 존 또는 기타 경매 "
+"사이트와 같은 플랫폼을 확인하는 것을 고려하세요. 결함이 있는 게임과 불법 "
+"게임 사본에 주의하세요.\n"
 
 #: gui/helpdialog.cpp:68 gui/options.cpp:2323
 msgid "Cloud"
@@ -1219,27 +1247,70 @@ msgid ""
 "see our [Cloud documentation](https://docs.scummvm.org/en/latest/use_scummvm/"
 "connect_cloud.html) "
 msgstr ""
+"## 클라우드 서비스 연결 - 빠른 모드\n"
+"\n"
+"1. 런처에서, **글로벌 옵션**을 선택한 다음 **클라우드** 탭을 선택합니다.\n"
+"\n"
+"2. **활성 저장소** 드롭다운에서 선호하는 클라우드 저장소 서비스를 선택한 "
+"다음 **연결**을 선택합니다.\n"
+"\n"
+"\t  ![클라우드 서비스 선택](choose_storage.png \"클라우드 서비스 선택\""
+"){w=70%}\n"
+"\n"
+"3. **빠른 모드**를 선택합니다.\n"
+"\n"
+"\t  ![빠른 모드](quick_mode.png \"빠른 모드\"){w=70%}\n"
+"\n"
+"4. **서버 실행**을 선택한 후 **다음**을 선택\n"
+"\n"
+"\t  ![서버 실행](run_server.png \"서버 실행\"){w=70%}\n"
+"\n"
+"  ![다음 단계](server_next.png \"다음 단계\"){w=70%}\n"
+"\n"
+"5. 링크를 엽니다.\n"
+"\n"
+"\t  ![링크 열기](open_link.png \"링크 열기\"){w=70%}\n"
+"\n"
+"6. 열리는 브라우저 창에서 연결할 클라우드 서비스를 선택합니다. \n"
+"\n"
+"\t  ![클라우드 서비스 선택](cloud_browser.png \"클라우드 서비스 선택\""
+"){w=70%}\n"
+"\n"
+"7. 선택한 클라우드 서비스에 로그인합니다. 완료되면, ScummVM.xt**로 "
+"돌아갑니다.\n"
+"\n"
+"8. 성공 화면에서 **마침**을 선택하여 종료합니다. \n"
+"\n"
+"\t  ![성공](cloud_success.png \"성공\"){w=70%}\n"
+"9. 메인 클라우드 탭으로 돌아가서 **저장소 사용**을 선택합니다.\n"
+"\n"
+"\t  ![저장소 활성화](enable_storage.png \"저장소 활성화\"){w=70%}\n"
+"\n"
+"10. 이제 시작할 준비가 되었습니다! 클라우드 기능을 사용하여 저장된 게임이나 "
+"게임 파일을 기기 간에 동기화하세요.\n"
+"\n"
+"\t  ![클라우드 기능](cloud_functions.png \"클라우드 기능\"){w=70%}\n"
+"\n"
+"   자세한 내용은, 수동 연결 마법사를 사용하는 방법을 포함하여 [클라우드 "
+"설명서](https://docs.scummvm.org/en/latest/use_scummvm/connect_cloud.html) "
+"참조 "
 
 #: gui/imagealbum-dialog.cpp:103 gui/saveload-dialog.cpp:828
 msgid "Prev"
 msgstr "이전"
 
 #: gui/imagealbum-dialog.cpp:129
-#, fuzzy
-#| msgid "Saving game..."
 msgid "Save Image..."
-msgstr "게임 저장 중..."
+msgstr "이미지 저장..."
 
 #: gui/imagealbum-dialog.cpp:263
 #, c-format
 msgid "%u of %u"
-msgstr ""
+msgstr "%u / %u"
 
 #: gui/imagealbum-dialog.cpp:376
-#, fuzzy
-#| msgid "Save Game"
 msgid "Save Image"
-msgstr "게임 저장"
+msgstr "이미지 저장"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:106
@@ -1256,7 +1327,7 @@ msgstr "첫 글자"
 #: gui/launcher.cpp:108
 msgctxt "group"
 msgid "Initial"
-msgstr ""
+msgstr "초기"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:110
@@ -1292,16 +1363,15 @@ msgstr "플랫폼"
 #: gui/launcher.cpp:120
 msgctxt "year"
 msgid "Year"
-msgstr ""
+msgstr "연도"
 
 #: gui/launcher.cpp:230
 msgid "Select Group by"
 msgstr "그룹 선택 기준"
 
 #: gui/launcher.cpp:234 gui/launcher.cpp:898
-#, fuzzy
 msgid "Group:"
-msgstr "그룹화 기준:"
+msgstr "그룹:"
 
 #: gui/launcher.cpp:236
 msgid "Select a criteria to group the entries"
@@ -1309,21 +1379,21 @@ msgstr "항목을 그룹화할 기준을 선택"
 
 #: gui/launcher.cpp:263
 msgid "Click here to see Help"
-msgstr ""
+msgstr "도움말을 보려면 여기를 클릭"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
 #: gui/launcher.cpp:267 engines/dialogs.cpp:91
 msgid "~Q~uit"
-msgstr "종료(~Q~)"
+msgstr "나가기(~Q~)"
 
 #: gui/launcher.cpp:267 backends/platform/sdl/macosx/appmenu_osx.mm:302
 msgid "Quit ScummVM"
-msgstr "ScummVM 종료"
+msgstr "ScummVM 나가기"
 
 #. I18N: Button About ScummVM program. b is the shortcut, Ctrl+b, put it in parens for non-latin (~b~)
 #: gui/launcher.cpp:271
 msgid "A~b~out"
-msgstr "프로그램 정보(~b~)"
+msgstr "정보(~b~)"
 
 #: gui/launcher.cpp:271 backends/platform/sdl/macosx/appmenu_osx.mm:296
 msgid "About ScummVM"
@@ -1332,27 +1402,24 @@ msgstr "ScummVM 정보"
 #. I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
 #: gui/launcher.cpp:273
 msgid "Global ~O~ptions..."
-msgstr "전역 옵션(~O~)..."
+msgstr "글로벌 옵션(~O~)..."
 
 #: gui/launcher.cpp:273
 msgid "Change global ScummVM options"
-msgstr "전역 ScummVM 설정을 수정합니다"
+msgstr "글로벌 ScummVM 옵션 변경"
 
 #: gui/launcher.cpp:273
-#, fuzzy
 msgctxt "lowres"
 msgid "Global ~O~pts..."
-msgstr "전역 옵션(~O~)..."
+msgstr "글로벌 옵션(~O~)..."
 
 #: gui/launcher.cpp:277
-#, fuzzy
-#| msgid "Download game files"
 msgid "Download Games"
-msgstr "게임 파일 다운로드"
+msgstr "게임 다운로드"
 
 #: gui/launcher.cpp:277
 msgid "Download freeware games for ScummVM"
-msgstr ""
+msgstr "ScummVM용 프리웨어 게임 다운로드"
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
 #: gui/launcher.cpp:284
@@ -1361,7 +1428,7 @@ msgstr "게임 추가(~A~)..."
 
 #: gui/launcher.cpp:284
 msgid "Add games to the list"
-msgstr "게임을 목록에 추가합니다"
+msgstr "게임을 목록에 추가"
 
 #: gui/launcher.cpp:284
 msgctxt "lowres"
@@ -1375,7 +1442,7 @@ msgstr "게임 제거(~R~)"
 
 #: gui/launcher.cpp:288
 msgid "Remove game from the list. The game data files stay intact"
-msgstr "목록에서 게임을 제거합니다. 게임 데이터 파일은 남겨둡니다"
+msgstr "목록에서 게임을 제거합니다. 게임 데이터 파일은 남겨둠"
 
 #: gui/launcher.cpp:288
 msgctxt "lowres"
@@ -1385,18 +1452,18 @@ msgstr "게임 제거(~R~)"
 #. I18N: Button caption. Mass add games
 #: gui/launcher.cpp:291
 msgid "Mass Add..."
-msgstr "대량 추가..."
+msgstr "일괄 추가..."
 
 #. I18N: Button caption for lower resolution GUI. Mass add games
 #: gui/launcher.cpp:294
 msgctxt "lowres"
 msgid "Mass Add..."
-msgstr "대량 추가..."
+msgstr "일괄 추가..."
 
 #: gui/launcher.cpp:302 gui/launcher.cpp:868 gui/shaderbrowser-dialog.cpp:61
 #: gui/shaderbrowser-dialog.cpp:97
 msgid "Search in game list"
-msgstr "게임 리스트에서 검색"
+msgstr "게임 목록에서 검색"
 
 #: gui/launcher.cpp:306 gui/launcher.cpp:889 gui/shaderbrowser-dialog.cpp:65
 #: gui/shaderbrowser-dialog.cpp:107
@@ -1408,41 +1475,40 @@ msgstr "검색:"
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:638
 #: engines/wage/saveload.cpp:736
 msgid "Load game:"
-msgstr "게임 불러오기:"
+msgstr "게임 로드:"
 
 #: gui/launcher.cpp:409
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr "이 디렉토리는 아직 사용할 수 없습니다. 여기로 다운로드 중입니다!"
+msgstr "이 디렉토리는 아직 사용할 수 없습니다. 다운로드 중입니다!"
 
 #: gui/launcher.cpp:420
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
-msgstr ""
-"대량 추가 탐지기를 실행하겠습니까? 매우 많은 수의 게임이 추가될 수도 있습니"
-"다."
+msgstr "정말 일괄 게임 탐지기를 실행하겠습니까? 이렇게 하면 엄청난 수의 게임이 "
+"추가될 가능성이 있습니다."
 
 #: gui/launcher.cpp:450
 msgid "Do you really want to remove this game configuration?"
-msgstr "이 게임의 설정을 제거하겠습니까?"
+msgstr "정말 이 게임 구성을 제거하겠습니까?"
 
 #: gui/launcher.cpp:501
 msgid "Do you want to load saved game?"
-msgstr "세이브 파일을 불러오겠습니까?"
+msgstr "저장된 게임을 불러오겠습니까?"
 
 #: gui/launcher.cpp:558
 msgid "This game does not support loading games from the launcher."
-msgstr "이 게임은 런처에서 불러오기를 지원하지 않습니다."
+msgstr "이 게임은 런처에서 게임을 로딩하는 것을 지원하지 않습니다."
 
 #: gui/launcher.cpp:562
 msgid "ScummVM could not find any engine capable of running the selected game!"
-msgstr "ScummVM은 선택한 게임을 실행할 수 있는 엔진을 찾지 못했습니다!"
+msgstr "ScummVM이 선택한 게임을 실행할 수 있는 엔진을 찾을 수 없습니다!"
 
 #: gui/launcher.cpp:665 gui/launcher.cpp:689
 msgid ""
 "Did you add this directory to the SAF? Press the help button [?] on the top "
 "for detailed instructions"
-msgstr ""
+msgstr "이 디렉토리를 SAF에 추가했나요? 자세한 지침은 상단의 도움말 버튼 [?] 누름"
 
 #: gui/launcher.cpp:686
 msgid "ScummVM could not find any game in the specified directory!"
@@ -1455,7 +1521,7 @@ msgstr "알려지지 않은 버전"
 
 #: gui/launcher.cpp:938 gui/saveload-dialog.cpp:381
 msgid "List view"
-msgstr "리스트로 표시"
+msgstr "목록 표시"
 
 #: gui/launcher.cpp:939 gui/saveload-dialog.cpp:382
 msgid "Grid view"
@@ -2508,10 +2574,10 @@ msgid ""
 "List of games:\n"
 msgstr ""
 "경고: 자동 저장이 활성화되었습니다. 일부 게임의 자동 저장 슬롯에 이미 저장된 "
-"게임이 있습니다. 기존 저장 데이터를 새로운 슬롯으로 옮기거나 자동 저장을 비활"
-"성화하거나 이 경고를 무시할 수 있습니다 (덮어쓰기 전에 메시지가 표시됩니"
-"다).\n"
-"대상 게임:\n"
+"게임이 있습니다. 기존 저장 데이터를 새로운 슬롯으로 옮기거나 자동 저장을 "
+"비활성화하거나 이 경고를 무시할 수 있습니다 (덮어쓰기 전에 메시지가 "
+"표시됩니다).\n"
+"게임 목록:\n"
 
 #: gui/options.cpp:2914
 msgid ""
@@ -2754,7 +2820,7 @@ msgstr "세이브 %d의 설명을 입력하세요:"
 
 #: gui/shaderbrowser-dialog.cpp:52
 msgid "Choose shader from the list below (or pick a file instead)"
-msgstr ""
+msgstr "아래 목록에서 셰이더 선택 (또는 대신 파일을 선택)"
 
 #: gui/shaderbrowser-dialog.cpp:70
 msgid "Pick file instead..."
@@ -3507,7 +3573,7 @@ msgstr ""
 "게임의 음악을 듣기 위해서는 적절한 \n"
 "CD 오디오 추출 도구를 사용해 디스크에서 \n"
 "트랙을 추출해야 합니다.\n"
-"문서(CD Audio)에서 추가 정보를 확인해 주세요."
+"문서(CD 오디오)에서 추가 정보를 확인해 주세요."
 
 #: engines/engine.cpp:614
 #, fuzzy
@@ -4419,7 +4485,7 @@ msgstr "상위 디렉토리"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:214
 msgid "ScummVM couldn't list the directory you specified."
-msgstr "ScummVM이 선택한 디렉토리 내용을 표시할 수 없습니다."
+msgstr "ScummVM이 선택한 디렉토리 내용을 나열할 수 없습니다."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
 msgid "Index of"
@@ -5154,11 +5220,11 @@ msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:46
 msgid "LIBRETRO PLAYLIST GENERATOR"
-msgstr ""
+msgstr "LIBRETRO 재생목록 생성기"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:47
 msgid "(check '? > Libretro playlist' for detailed info)"
-msgstr ""
+msgstr "(자세한 정보는 '? > Libretro 재생목록'에서 확인)"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:48
 msgid "Playlists Path"
@@ -5169,10 +5235,8 @@ msgid "Specifies where your playlist will be saved."
 msgstr "재생목록이 저장될 위치를 지정합니다."
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:52
-#, fuzzy
-#| msgid "Platform:"
 msgid "Playlist format:"
-msgstr "플랫폼:"
+msgstr "재생목록 형식:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:57
 msgid "Hooks location:"
@@ -5192,7 +5256,7 @@ msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:64
 msgid "Generate playlist"
-msgstr ""
+msgstr "재생목록 생성"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:66
 msgid "Status: "
@@ -5213,14 +5277,12 @@ msgid "Failed, can't create hook files"
 msgstr "실패함, 후크 파일을 생성할 수 없음"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:236
-#, fuzzy
-#| msgid "Select additional game directory"
 msgid "Select Playlist directory"
-msgstr "추가 게임 디렉토리를 선택"
+msgstr "재생목록 디렉토리 선택"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:173
 msgid "Libretro playlist"
-msgstr ""
+msgstr "Libretro 재생목록"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:176
 msgid ""
@@ -5237,6 +5299,17 @@ msgid ""
 "\n"
 "The core also supports dedicated per game **hook** plain text files with **."
 msgstr ""
+"## ScummVM 코어용 Libretro 재생목록\n"
+"Libretro 프런트엔드(예: Retroarch)에서 사용되는 재생목록은 사용자 "
+"인터페이스에서 특정 코어로 게임을 직접 시작하는 데 사용되는 일반 텍스트 "
+"목록입니다. 이러한 목록은 로드할 특정 콘텐츠 파일(예: ROM)의 경로를 코어에 "
+"전달하도록 구조화되어 있습니다.\n"
+"\n"
+"ScummVM 코어는 유효한 게임 폴더 내의 모든 파일에 대한 경로를 콘텐츠로 허용할 "
+"수 있으며, 감지 시스템은 콘텐츠 파일 부모 폴더에서 게임을 자동으로 감지하고 "
+"기본 ScummVM 옵션으로 게임을 실행합니다.\n"
+"\n"
+"코어는 또한 **를 포함한 게임별 **후크** 일반 텍스트 파일을 지원합니다."
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
@@ -6236,6 +6309,10 @@ msgid ""
 "or\n"
 "2. Any .sav file inside the QfG2 Remake game directory"
 msgstr ""
+"이제 게임은 시에라 게임에서 내보낸 캐릭터를 나열하여 가져올 수 있습니다.\n"
+"1. ScummVM 저장 디렉토리 내에 qfg1*.sav 또는 qfg1vga*.sav라는 이름의 저장 "
+"파일, 또는\n"
+"2. QfG2 리메이크 게임 디렉토리 내의 모든 .sav 파일"
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
@@ -10515,11 +10592,11 @@ msgstr "인벤토리:"
 
 #: engines/scumm/help.cpp:264 engines/scumm/help.cpp:280
 msgid "Scroll list up"
-msgstr "리스트 위로 스크롤"
+msgstr "목록 위로 스크롤"
 
 #: engines/scumm/help.cpp:265 engines/scumm/help.cpp:281
 msgid "Scroll list down"
-msgstr "리스트 아래로 스크롤"
+msgstr "목록 아래로 스크롤"
 
 #: engines/scumm/help.cpp:266 engines/scumm/help.cpp:274
 msgid "Upper left item"
