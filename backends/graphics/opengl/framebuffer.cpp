@@ -221,7 +221,7 @@ bool Backbuffer::setSize(uint width, uint height, Common::RotationMode rotation)
 	default:
 		_projectionMatrix(0, 0) =  2.0f / width;
 		_projectionMatrix(0, 1) =  0.0f;
-	       	_projectionMatrix(1, 0) =  0.0f;
+		_projectionMatrix(1, 0) =  0.0f;
 		_projectionMatrix(1, 1) = -2.0f / height;
 		_projectionMatrix(3, 0) = -1.0f;
 		_projectionMatrix(3, 1) =  1.0f;
@@ -237,7 +237,7 @@ bool Backbuffer::setSize(uint width, uint height, Common::RotationMode rotation)
 	case Common::kRotation180:
 		_projectionMatrix(0, 0) =  -2.0f / width;
 		_projectionMatrix(0, 1) =  0.0f;
-	       	_projectionMatrix(1, 0) =  0.0f;
+		_projectionMatrix(1, 0) =  0.0f;
 		_projectionMatrix(1, 1) =  2.0f / height;
 		_projectionMatrix(3, 0) =  1.0f;
 		_projectionMatrix(3, 1) = -1.0f;

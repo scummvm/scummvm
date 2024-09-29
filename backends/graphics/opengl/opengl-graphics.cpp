@@ -636,7 +636,7 @@ void OpenGLGraphicsManager::updateScreen() {
 	int rotation = getRotationMode();
 	int rotatedWidth = _windowWidth;
 	int rotatedHeight = _windowHeight;
-			
+
 	if (rotation == Common::kRotation90 || rotation == Common::kRotation270) {
 		rotatedWidth = _windowHeight;
 		rotatedHeight = _windowWidth;

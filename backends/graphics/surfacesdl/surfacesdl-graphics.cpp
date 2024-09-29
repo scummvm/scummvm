@@ -215,7 +215,7 @@ bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		(f == OSystem::kFeatureFullscreenToggleKeepsContext) ||
 		(f == OSystem::kFeatureStretchMode) ||
-	        (f == OSystem::kFeatureRotationMode) ||
+		(f == OSystem::kFeatureRotationMode) ||
 		(f == OSystem::kFeatureVSync) ||
 #endif
 		(f == OSystem::kFeatureCursorPalette) ||
