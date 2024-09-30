@@ -106,6 +106,8 @@ public:
 	static GameObject *GetProtagonistObject();
 
 	static GameObject *GetObjectByIndex(uint16 index);
+
+	static class Common::MemoryReadStream *ReadGameObjectStrings(uint16 index, Common::MemoryReadStream *fileStream);
 };
 
 } // namespace Macs2
