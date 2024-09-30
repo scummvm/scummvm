@@ -528,10 +528,14 @@ int EndCutscene() {
 	return retval;
 }
 
-void sc_inputbox(const char *msg, char *bufr) {
+void ShowInputBox(const char *msg, char *bufr) {
 	VALIDATE_STRING(bufr);
+	ShowInputBoxImpl(msg, bufr, MAX_MAXSTRLEN);
+}
+
+void ShowInputBoxImpl(const char *msg, char *bufr, size_t buf_len) {
 	setup_for_dialog();
-	enterstringwindow(get_translation(msg), bufr);
+	enterstringwindow(get_translation(msg), bufr, buf_len);
 	restore_after_dialog();
 }
 

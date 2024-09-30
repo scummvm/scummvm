@@ -602,7 +602,7 @@ int Game_GetColorFromRGB(int red, int grn, int blu) {
 
 const char *Game_InputBox(const char *msg) {
 	char buffer[STD_BUFFER_SIZE];
-	sc_inputbox(msg, buffer);
+	ShowInputBoxImpl(msg, buffer, STD_BUFFER_SIZE);
 	return CreateNewScriptString(buffer);
 }
 

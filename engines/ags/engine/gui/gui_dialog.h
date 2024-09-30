@@ -45,7 +45,7 @@ void refresh_gui_screen();
 int  loadgamedialog();
 int  savegamedialog();
 void preparesavegamelist(int ctrllist);
-void enterstringwindow(const char *prompttext, char *stouse);
+void enterstringwindow(const char *prompttext, char *dst_buf, size_t dst_sz);
 int  enternumberwindow(char *prompttext);
 int  roomSelectorWindow(int currentRoom, int numRooms,
 	const std::vector<int> &roomNumbers, const std::vector<AGS::Shared::String> &roomNames);

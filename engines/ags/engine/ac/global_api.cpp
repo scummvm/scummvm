@@ -742,8 +742,8 @@ RuntimeScriptValue Sc_HideMouseCursor(const RuntimeScriptValue *params, int32_t 
 }
 
 // void (const char*msg,char*bufr)
-RuntimeScriptValue Sc_sc_inputbox(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_VOID_POBJ2(sc_inputbox, const char, char);
+RuntimeScriptValue Sc_ShowInputBox(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_VOID_POBJ2(ShowInputBox, const char, char);
 }
 
 // void (int ifn)
@@ -2028,7 +2028,7 @@ void RegisterGlobalAPI() {
 		{"GiveScore", API_FN_PAIR(GiveScore)},
 		{"HasPlayerBeenInRoom", API_FN_PAIR(HasPlayerBeenInRoom)},
 		{"HideMouseCursor", API_FN_PAIR(HideMouseCursor)},
-		{"InputBox", API_FN_PAIR(sc_inputbox)},
+		{"InputBox", API_FN_PAIR(ShowInputBox)},
 		{"InterfaceOff", API_FN_PAIR(InterfaceOff)},
 		{"InterfaceOn", API_FN_PAIR(InterfaceOn)},
 		{"IntToFloat", API_FN_PAIR(IntToFloat)},
