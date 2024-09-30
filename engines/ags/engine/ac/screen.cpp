@@ -66,9 +66,9 @@ void current_fade_out_effect() {
 	// was a temporary transition selected? if so, use it
 	if (_GP(play).next_screen_transition >= 0)
 		theTransition = _GP(play).next_screen_transition;
-	const bool ignore_transition = _GP(play).screen_tint > 0;
-
-	if ((theTransition == FADE_INSTANT) || ignore_transition) {
+	const bool instant_transition = (theTransition == FADE_INSTANT) ||
+									_GP(play).screen_tint > 0; // for some reason we do not play fade if screen is tinted
+	if (instant_transition) {
 		if (!_GP(play).keep_screen_during_instant_transition)
 			set_palette_range(_G(black_palette), 0, 255, 0);
 	} else if (theTransition == FADE_NORMAL) {
@@ -81,7 +81,8 @@ void current_fade_out_effect() {
 		_G(saved_viewport_bitmap) = CopyScreenIntoBitmap(viewport.GetWidth(), viewport.GetHeight(), &viewport, false /* use current resolution */, RENDER_SHOT_SKIP_ON_FADE);
 	}
 
-	_GP(play).screen_is_faded_out = 1;
+	// NOTE: the screen could have been faded out prior to transition out
+	_GP(play).screen_is_faded_out |= (!instant_transition);
 }
 
 IDriverDependantBitmap *prepare_screen_for_transition_in(bool opaque) {
