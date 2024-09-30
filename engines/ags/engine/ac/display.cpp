@@ -484,15 +484,15 @@ void wouttextxy_AutoOutline(Bitmap *ds, size_t font, int32_t color, const char *
 
 	// WORKAROUND: Clifftop's Spritefont plugin returns a wrong font height for font 2 in Kathy Rain, which causes a partial outline
 	// for some letters. Unfortunately fixing the value on the plugin side breaks the line spacing, so let's just correct it here.
-	size_t const t_width = get_text_width(texx, font);
+	const int t_width = get_text_width(texx, font);
 	const auto t_extent = get_font_surface_extent(font);
-	size_t const t_height = t_extent.second - t_extent.first + ((strcmp(_GP(game).guid, "{d6795d1c-3cfe-49ec-90a1-85c313bfccaf}") == 0) && (font == 2) ? 1 : 0);
+	const int t_height = t_extent.second - t_extent.first + ((strcmp(_GP(game).guid, "{d6795d1c-3cfe-49ec-90a1-85c313bfccaf}") == 0) && (font == 2) ? 1 : 0);
 
 	if (t_width == 0 || t_height == 0)
 		return;
 
 	// Prepare stencils
-	size_t const t_yoff = t_extent.first;
+	const int t_yoff = t_extent.first;
 	Bitmap *texx_stencil, *outline_stencil;
 	alloc_font_outline_buffers(font, &texx_stencil, &outline_stencil,
 		t_width, t_height, stencil_cd);
