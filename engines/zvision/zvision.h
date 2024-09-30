@@ -69,19 +69,27 @@ class Subtitle;
 class MidiManager;
 
 enum {
-	WINDOW_WIDTH = 640,
-	WINDOW_HEIGHT = 480,
+	WINDOW_WIDTH = 640,//640,
+	WINDOW_HEIGHT = 480,//480,
+	WINDOW_WIDTH_WIDE = 854,
+	WINDOW_HEIGHT_WIDE = 480,
 
 	HIRES_WINDOW_WIDTH = 800,
 	HIRES_WINDOW_HEIGHT = 600,
 
 	// Zork Nemesis working window sizes
-	ZNM_WORKING_WINDOW_WIDTH = 512,
-	ZNM_WORKING_WINDOW_HEIGHT = 320,
+	ZNM_WORKING_WINDOW_WIDTH = 512, //Original 512
+	ZNM_WORKING_WINDOW_HEIGHT = 320,  //Original 320
+	
+	ZNM_SUBTITLE_HEIGHT = 80, //Original 80
+	ZNM_MENU_HEIGHT = 40,  //Original 80
 
 	// ZGI working window sizes
-	ZGI_WORKING_WINDOW_WIDTH = 640,
-	ZGI_WORKING_WINDOW_HEIGHT = 344,
+	ZGI_WORKING_WINDOW_WIDTH = 640, //Original 640
+	ZGI_WORKING_WINDOW_HEIGHT = 320,  //Original 320
+	
+  ZGI_SUBTITLE_HEIGHT = 68, //Original 68
+	ZGI_MENU_HEIGHT = 34,  //Original 68
 
 	ROTATION_SCREEN_EDGE_OFFSET = 60,
 	MAX_ROTATION_SPEED = 400, // Pixels per second
@@ -160,6 +168,7 @@ private:
 	int16 _mouseVelocity;
 	int16 _keyboardVelocity;
 	bool _doubleFPS;
+	bool _widescreen;
 	bool _videoIsPlaying;
 
 	uint8 _cheatBuffer[KEYBUF_SIZE];
