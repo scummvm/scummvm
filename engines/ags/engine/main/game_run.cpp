@@ -339,49 +339,46 @@ bool run_service_key_controls(KeyInput &out_key) {
 		return false;
 	}
 
+	// FIXME: review this command! - practically inconvenient
 	if ((agskey == eAGSKeyCodeCtrlD) && (_GP(play).debug_mode > 0)) {
 		// ctrl+D - show info
-		char infobuf[900];
-		size_t ln = 0;
-		ln += Common::sprintf_s(infobuf, "In room %d %s[Player at %d, %d (view %d, loop %d, frame %d)%s%s%s",
-		        _G(displayed_room), (_G(noWalkBehindsAtAll) ? "(has no walk-behinds)" : ""), _G(playerchar)->x, _G(playerchar)->y,
-		        _G(playerchar)->view + 1, _G(playerchar)->loop, _G(playerchar)->frame,
-		        (IsGamePaused() == 0) ? "" : "[Game paused.",
-		        (_GP(play).ground_level_areas_disabled == 0) ? "" : "[Ground areas disabled.",
-		        (IsInterfaceEnabled() == 0) ? "[Game in Wait state" : "");
+		String buffer = String::FromFormat("In room %d %s[Player at %d, %d (view %d, loop %d, frame %d)%s%s%s",
+										   _G(displayed_room), (_G(noWalkBehindsAtAll) ? "(has no walk-behinds)" : ""),
+										   _G(playerchar)->x, _G(playerchar)->y,
+										   _G(playerchar)->view + 1, _G(playerchar)->loop, _G(playerchar)->frame,
+										   (IsGamePaused() == 0) ? "" : "[Game paused.",
+										   (_GP(play).ground_level_areas_disabled == 0) ? "" : "[Ground areas disabled.",
+										   (IsInterfaceEnabled() == 0) ? "[Game in Wait state" : "");
 		for (uint32_t ff = 0; ff < _G(croom)->numobj; ff++) {
-			if (ff >= 8) break; // buffer not big enough for more than 7
-			ln += Common::sprintf_s(&infobuf[ln], sizeof(infobuf) - ln,
-			        "[Object %d: (%d,%d) size (%d x %d) on:%d moving:%s animating:%d slot:%d trnsp:%d clkble:%d",
-			        ff, _G(objs)[ff].x, _G(objs)[ff].y,
-			        (_GP(spriteset).DoesSpriteExist(_G(objs)[ff].num) ? _GP(game).SpriteInfos[_G(objs)[ff].num].Width : 0),
-			        (_GP(spriteset).DoesSpriteExist(_G(objs)[ff].num) ? _GP(game).SpriteInfos[_G(objs)[ff].num].Height : 0),
-			        _G(objs)[ff].on,
-			        (_G(objs)[ff].moving > 0) ? "yes" : "no", _G(objs)[ff].cycling,
-			        _G(objs)[ff].num, _G(objs)[ff].transparent,
-			        ((_G(objs)[ff].flags & OBJF_NOINTERACT) != 0) ? 0 : 1);
+			if (ff >= 8) break; // FIXME: measure graphical size instead?
+			buffer.AppendFmt("[Object %d: (%d,%d) size (%d x %d) on:%d moving:%s animating:%d slot:%d trnsp:%d clkble:%d",
+							 ff, _G(objs)[ff].x, _G(objs)[ff].y,
+							 (_GP(spriteset).DoesSpriteExist(_G(objs)[ff].num) ? _GP(game).SpriteInfos[_G(objs)[ff].num].Width : 0),
+							 (_GP(spriteset).DoesSpriteExist(_G(objs)[ff].num) ? _GP(game).SpriteInfos[_G(objs)[ff].num].Height : 0),
+							 _G(objs)[ff].on,
+							 (_G(objs)[ff].moving > 0) ? "yes" : "no", _G(objs)[ff].cycling,
+							 _G(objs)[ff].num, _G(objs)[ff].transparent,
+							 ((_G(objs)[ff].flags & OBJF_NOINTERACT) != 0) ? 0 : 1);
 		}
-		DisplayMB(infobuf);
+		DisplayMB(buffer.GetCStr());
 		int chd = _GP(game).playercharacter;
-		char bigbuffer[STD_BUFFER_SIZE] = "CHARACTERS IN THIS ROOM:[";
+		buffer = "CHARACTERS IN THIS ROOM:[";
 		for (int ff = 0; ff < _GP(game).numcharacters; ff++) {
-			if (_GP(game).chars[ff].room != _G(displayed_room)) continue;
-			if (strlen(bigbuffer) > 430) {
-				Common::strcat_s(bigbuffer, "and more...");
-				DisplayMB(bigbuffer);
-				Common::strcpy_s(bigbuffer, "CHARACTERS IN THIS ROOM (cont'd):[");
+			if (_GP(game).chars[ff].room != _G(displayed_room))	continue;
+			if (buffer.GetLength() > 430) { // FIXME: why 430? measure graphical size instead?
+				buffer.Append("and more...");
+				DisplayMB(buffer.GetCStr());
+				buffer = "CHARACTERS IN THIS ROOM (cont'd):[";
 			}
 			chd = ff;
-			ln = strlen(bigbuffer);
-			Common::sprintf_s(&bigbuffer[ln], sizeof(bigbuffer) - ln,
-			        "%s (view/loop/frm:%d,%d,%d  x/y/z:%d,%d,%d  idleview:%d,time:%d,left:%d walk:%d anim:%d follow:%d flags:%X wait:%d zoom:%d)[",
-			        _GP(game).chars[chd].scrname, _GP(game).chars[chd].view + 1, _GP(game).chars[chd].loop, _GP(game).chars[chd].frame,
-			        _GP(game).chars[chd].x, _GP(game).chars[chd].y, _GP(game).chars[chd].z,
-			        _GP(game).chars[chd].idleview, _GP(game).chars[chd].idletime, _GP(game).chars[chd].idleleft,
-			        _GP(game).chars[chd].walking, _GP(game).chars[chd].animating, _GP(game).chars[chd].following,
-			        _GP(game).chars[chd].flags, _GP(game).chars[chd].wait, _GP(charextra)[chd].zoom);
+			buffer.AppendFmt("%s (view/loop/frm:%d,%d,%d  x/y/z:%d,%d,%d  idleview:%d,time:%d,left:%d walk:%d anim:%d follow:%d flags:%X wait:%d zoom:%d)[",
+							 _GP(game).chars[chd].scrname, _GP(game).chars[chd].view + 1, _GP(game).chars[chd].loop, _GP(game).chars[chd].frame,
+							 _GP(game).chars[chd].x, _GP(game).chars[chd].y, _GP(game).chars[chd].z,
+							 _GP(game).chars[chd].idleview, _GP(game).chars[chd].idletime, _GP(game).chars[chd].idleleft,
+							 _GP(game).chars[chd].walking, _GP(game).chars[chd].animating, _GP(game).chars[chd].following,
+							 _GP(game).chars[chd].flags, _GP(game).chars[chd].wait, _GP(charextra)[chd].zoom);
 		}
-		DisplayMB(bigbuffer);
+		DisplayMB(buffer.GetCStr());
 		return false;
 	}
 
