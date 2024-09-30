@@ -204,9 +204,9 @@ void process_event(const EventHappened *evp) {
 		if (_GP(play).fast_forward)
 			return;
 
-		const bool ignore_transition = (_GP(play).screen_tint > 0);
+		const bool instant_transition = (theTransition == FADE_INSTANT) || (_GP(play).screen_tint > 0);
 		if (((theTransition == FADE_CROSSFADE) || (theTransition == FADE_DISSOLVE)) &&
-		        (_G(saved_viewport_bitmap) == nullptr) && !ignore_transition) {
+		        (_G(saved_viewport_bitmap) == nullptr) && !instant_transition) {
 			// transition type was not crossfade/dissolve when the screen faded out,
 			// but it is now when the screen fades in (Eg. a save game was restored
 			// with a different setting). Therefore just fade normally.
@@ -217,7 +217,7 @@ void process_event(const EventHappened *evp) {
 		// TODO: use normal coordinates instead of "native_size" and multiply_up_*?
 		const Rect &viewport = _GP(play).GetMainViewport();
 
-		if ((theTransition == FADE_INSTANT) || ignore_transition)
+		if (instant_transition)
 			set_palette_range(_G(palette), 0, 255, 0);
 		else if (theTransition == FADE_NORMAL) {
 			fadein_impl(_G(palette), 5);
