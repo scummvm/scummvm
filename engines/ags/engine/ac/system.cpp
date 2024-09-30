@@ -361,7 +361,7 @@ RuntimeScriptValue Sc_System_Log(const RuntimeScriptValue *params, int32_t param
 //
 //=============================================================================
 
-void ScPl_System_Log(CharacterInfo *chaa, int message_type, const char *texx, ...) {
+void ScPl_System_Log(int message_type, const char *texx, ...) {
 	API_PLUGIN_SCRIPT_SPRINTF_PURE(texx);
 	Debug::Printf(kDbgGroup_Script, (MessageType)message_type, scsf_buffer);
 }
