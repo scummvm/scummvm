@@ -204,7 +204,7 @@ void display_switch_out_suspend();
 // Called when the game gets input focus and should resume
 void display_switch_in_resume();
 
-void replace_tokens(const char *srcmes, char *destm, int maxlen = 99999);
+void replace_tokens(const char *srcmes, char *destm, size_t maxlen);
 const char *get_global_message(int msnum);
 void get_message_text(int msnum, char *buffer, char giveErr = 1);
 
