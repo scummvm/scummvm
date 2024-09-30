@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 03:42+0000\n"
+"PO-Revision-Date: 2024-09-30 09:09+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -4376,15 +4376,15 @@ msgid ""
 "The page is not available without the resources. Make sure file wwwroot.zip "
 "from ScummVM distribution is available in 'themepath'."
 msgstr ""
-"이 페이지는 리소스 없이 제공되지 않습니다. ScummVM 배포판의 wwwroot.zip 파일"
-"이 'themepath'에 존재하는지 확인해 주세요."
+"이 페이지는 리소스 없이 사용할 수 없습니다. ScummVM 배포판의 파일 "
+"wwwroot.zip이 'themepath'에서 사용 가능한지 확인하세요."
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:66
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:67
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:219
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:220
 msgid "Create directory"
-msgstr "디렉토리 생성"
+msgstr "디렉토리 만들기"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:69
@@ -4406,15 +4406,15 @@ msgstr "업로드할 파일을 선택:"
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:72
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:227
 msgid "Or select a directory (works in Chrome only):"
-msgstr "혹은 디렉토리를 선택 (Chrome에서만 동작):"
+msgstr "또는 디렉토리를 선택 (Chrome에서만 작동):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:73
 msgid "Index of "
-msgstr "인덱스 "
+msgstr "다음의 색인 "
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
 msgid "Error occurred"
-msgstr "에러 발생"
+msgstr "오류 발생함"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:80
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:44
@@ -4424,7 +4424,7 @@ msgstr "파일 시스템 루트"
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:81
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:45
 msgid "Saved games"
-msgstr "세이브 파일"
+msgstr "저장된 게임"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:116
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:82
@@ -4433,19 +4433,19 @@ msgstr "상위 디렉토리"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:214
 msgid "ScummVM couldn't list the directory you specified."
-msgstr "ScummVM이 선택한 디렉토리 내용을 나열할 수 없습니다."
+msgstr "ScummVM이 지정한 디렉토리를 나열할 수 없습니다."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
 msgid "Index of"
-msgstr "인덱스"
+msgstr "다음의 색인"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:41
 msgid "This is a local webserver index page."
-msgstr "로컬 웹서버의 초기 화면입니다."
+msgstr "이것은 로컬 웹서버 색인 페이지입니다."
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "Open Files manager"
-msgstr "파일 매니저 열기"
+msgstr "파일 관리자 열기"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:66
 msgid "The parent directory doesn't exist!"
@@ -4457,7 +4457,7 @@ msgstr "파일을 업로드할 수 없습니다!"
 
 #: backends/networking/sdl_net/handlerutils.cpp:204
 msgid "Back to the files manager"
-msgstr "파일 매니저로 돌아가기"
+msgstr "파일 관리자로 돌아가기"
 
 #: backends/networking/sdl_net/localwebserver.cpp:131
 msgid ""
@@ -4478,11 +4478,11 @@ msgstr "파일 업로드에 실패했습니다!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:180
 msgid "No file was passed!"
-msgstr "통과한 파일 없음!"
+msgstr "파일이 전달되지 않았습니다!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:198
 msgid "Uploaded successfully!"
-msgstr "업로드 성공!"
+msgstr "성공적으로 업로드되었습니다!"
 
 #: backends/platform/3ds/options.cpp:64
 msgid "Show mouse cursor"
@@ -4498,17 +4498,17 @@ msgstr "화면에 맞게 늘림"
 
 #: backends/platform/3ds/options.cpp:68
 msgid "Use Screen:"
-msgstr "화면 선택:"
+msgstr "화면 사용:"
 
 #: backends/platform/3ds/options.cpp:70
 msgctxt "3ds-screen"
 msgid "Top"
-msgstr "위"
+msgstr "위쪽"
 
 #: backends/platform/3ds/options.cpp:71
 msgctxt "3ds-screen"
 msgid "Bottom"
-msgstr "아래"
+msgstr "아래쪽"
 
 #: backends/platform/3ds/options.cpp:72
 msgctxt "3ds-screen"
@@ -4523,7 +4523,7 @@ msgstr "둘 다"
 #: backends/platform/sdl/opendingux/opendingux.cpp:49
 #: backends/platform/sdl/switch/switch.cpp:38
 msgid "A"
-msgstr "A"
+msgstr "A 버튼"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:47
@@ -4533,7 +4533,7 @@ msgstr "A"
 #: backends/platform/sdl/opendingux/opendingux.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:40
 msgid "X"
-msgstr "X"
+msgstr "X 버튼"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:48
@@ -4543,7 +4543,7 @@ msgstr "X"
 #: backends/platform/sdl/opendingux/opendingux.cpp:55
 #: backends/platform/sdl/switch/switch.cpp:39
 msgid "Y"
-msgstr "Y"
+msgstr "Y 버튼"
 
 #. I18N: Hardware key
 #. I18N: Return key
@@ -4556,7 +4556,7 @@ msgstr "Y"
 #: backends/platform/sdl/ps3/ps3.cpp:44 backends/platform/sdl/psp2/psp2.cpp:47
 #: engines/mm/mm1/metaengine.cpp:49 engines/mm/mm1/metaengine.cpp:92
 msgid "Select"
-msgstr "Select"
+msgstr "선택 버튼"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:50
@@ -4566,17 +4566,17 @@ msgstr "Select"
 #: backends/platform/sdl/opendingux/opendingux.cpp:59
 #: backends/platform/sdl/ps3/ps3.cpp:46 backends/platform/sdl/psp2/psp2.cpp:48
 msgid "Start"
-msgstr "Start"
+msgstr "시작 버튼"
 
 #: backends/platform/3ds/osystem-events.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:56
 msgid "ZL"
-msgstr "ZL"
+msgstr "ZL 버튼"
 
 #: backends/platform/3ds/osystem-events.cpp:52
 #: backends/platform/sdl/switch/switch.cpp:57
 msgid "ZR"
-msgstr "ZR"
+msgstr "ZR 버튼"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:53
@@ -4587,7 +4587,7 @@ msgstr "ZR"
 #: backends/platform/sdl/psp2/psp2.cpp:49
 #: backends/platform/sdl/switch/switch.cpp:46
 msgid "L"
-msgstr "L"
+msgstr "L 버튼"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:54
@@ -4598,7 +4598,7 @@ msgstr "L"
 #: backends/platform/sdl/psp2/psp2.cpp:50
 #: backends/platform/sdl/switch/switch.cpp:47
 msgid "R"
-msgstr "R"
+msgstr "R 버튼"
 
 #: backends/platform/3ds/osystem-events.cpp:63
 msgid "C-Pad X"
@@ -4626,12 +4626,12 @@ msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
 msgstr ""
-"돋보기 모드 끔. 드래그 모드를 재활성화.\n"
-"런처로 돌아갑니다..."
+"돋보기 모드 끔. 드래그 모드를 재활성화합니다.\n"
+"런처로 돌아가는 중..."
 
 #: backends/platform/3ds/osystem-events.cpp:351
 msgid "Magnify Mode Off. Returning to Launcher..."
-msgstr "돋보기 모드 끔. 런처로 돌아갑니다..."
+msgstr "돋보기 모드 끔. 런처로 돌아가는 중..."
 
 #: backends/platform/3ds/osystem-events.cpp:385
 msgid "Hover Mode"
@@ -4643,7 +4643,7 @@ msgstr "드래그 모드"
 
 #: backends/platform/3ds/osystem-events.cpp:391
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
-msgstr "돋보기 모드가 켜진 동안에는 드래그 모드로 전환할 수 없습니다"
+msgstr "돋보기 모드가 켜져있는 동안에는 드래그 모드로 전환할 수 없음"
 
 #: backends/platform/3ds/osystem-events.cpp:398
 msgid "Magnify Mode cannot be activated in menus."
@@ -4654,16 +4654,16 @@ msgid ""
 "Magnify Mode can only be activated\n"
 " when both screens are enabled."
 msgstr ""
-"돋보기 모드는 두 화면이 모두\n"
-"활성화되었을 때만 켤 수 있습니다."
+"두 화면이 모두 활성화된 경우에만\n"
+" 돋보기 모드가 활성화될 수 있습니다."
 
 #: backends/platform/3ds/osystem-events.cpp:403
 msgid "In-game resolution too small to magnify."
-msgstr "돋보기를 사용하기에는 게임 해상도가 너무 작습니다."
+msgstr "돋보기를 사용하기에는 게임 내 해상도가 너무 작습니다."
 
 #: backends/platform/3ds/osystem-events.cpp:409
 msgid "Magnify Mode On. Switching to Hover Mode..."
-msgstr "돋보기 모드 켬. 호버 모드로 전환합니다..."
+msgstr "돋보기 모드 켬. 호버 모드로 전환 중..."
 
 #: backends/platform/3ds/osystem-events.cpp:411
 msgid "Magnify Mode On"
@@ -4671,7 +4671,7 @@ msgstr "돋보기 모드 켬"
 
 #: backends/platform/3ds/osystem-events.cpp:418
 msgid "Magnify Mode Off. Reactivating Drag Mode..."
-msgstr "돋보기 모드 끔. 드래그 모드를 재활성화합니다..."
+msgstr "돋보기 모드 끔. 드래그 모드를 재활성화 중..."
 
 #: backends/platform/3ds/osystem-events.cpp:420
 msgid "Magnify Mode Off"
@@ -4679,10 +4679,8 @@ msgstr "돋보기 모드 끔"
 
 #: backends/platform/android/android.cpp:1055
 #: backends/platform/ios7/ios7_osys_misc.mm:249
-#, fuzzy
-#| msgid "Settings"
 msgid "Getting help"
-msgstr "설정"
+msgstr "도움 받기"
 
 #: backends/platform/android/android.cpp:1058
 msgid ""
@@ -4705,14 +4703,30 @@ msgid ""
 "sometimes mind-bogglingly so. If you're stuck in a game, think about "
 "checking out a game walkthrough. Good luck!\n"
 msgstr ""
+"## 도와주세요, 길을 잃었어요!\n"
+"\n"
+"먼저 게임과 필요한 게임 파일을 준비했는지 확인하세요. **일반** 탭 아래의 **"
+"게임을 얻는 곳** 섹션을 확인하세요. 게임을 얻으면 **게임 추가** 탭에 설명된 "
+"단계에 따라 이 기기에 게임을 추가하는 것을 완료하세요. 최근 안드로이드 변경 "
+"사항으로 인해 일부 사용자가 여기에서 문제에 직면했으므로 이 프로세스를 주의 "
+"깊게 검토하는 데 잠시 시간을 내세요.\n"
+"\n"
+"더 많은 도움이 필요한가요? [안드로이드용 온라인 설명서](https://docs.scummvm."
+"org/en/latest/other_platforms/android.html)를 참조하세요. 질문이 있나요? ["
+"지원 포럼](https://forums.scummvm.org/viewforum.php?f=17)에 들러보거나 ["
+"안드로이드 지원 채널](https://discord.com/channels/581224060529148060/"
+"1135579923185139862)이 포함된 [디스코드 서버](https://discord.com/channels/"
+"581224060529148060/1135579923185139862)에 접속해 보세요.\n"
+"\n"
+"아, 그리고 주의하세요. 지원하는 게임 중 다수는 의도적으로 까다롭고, 때로는 "
+"정신이 아찔할 정도로 까다롭습니다. 게임에 막혔다면 게임 연습을 확인해 "
+"보세요. 행운을 빕니다!\n"
 
 #: backends/platform/android/android.cpp:1067
 #: backends/platform/ios7/ios7_osys_misc.mm:261
 #: backends/platform/ios7/ios7_osys_misc.mm:357
-#, fuzzy
-#| msgid "Control"
 msgid "Touch Controls"
-msgstr "조작"
+msgstr "터치 조작"
 
 #: backends/platform/android/android.cpp:1070
 msgid ""
@@ -4826,24 +4840,56 @@ msgid ""
 "See our [Android documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/android.html) for more information.\n"
 msgstr ""
+"## 게임 추가 \n"
+"\n"
+"1. 런처에서 **게임 추가...**를 선택합니다. \n"
+"\n"
+"2. ScummVM 파일 브라우저에서 **<새 폴더 추가>** 옵션이 있는 루트 폴더에 "
+"도달할 때까지 **위로 이동**을 선택합니다. \n"
+"\n"
+"  ![ScummVM 파일 브라우저 루트](browser-root.png \"ScummVM 파일 브라우저 "
+"루트\"){w=70%}\n"
+"\n"
+"3. **<새 폴더 추가>**를 두 번 탭합니다. 기기의 파일 브라우저에서 모든 게임 "
+"폴더가 있는 폴더로 이동합니다. 예를 들어, **SD 카드 > ScummVMgames**. \n"
+"\n"
+"4. **이 폴더 사용**을 선택합니다. \n"
+"\n"
+"  ![OS 선택 가능 폴더](fs-folder.png \"OS 선택 가능 폴더\"){w=70%}\n"
+"\n"
+"5. **허용**을 선택하여 ScummVM에 폴더에 접속할 수 있는 권한을 부여합니다. \n"
+"\n"
+"  ![OS 접속 권한 대화 상자](fs-permission.png \"OS 접속 권한 대화 상자\""
+"){w=70%}\n"
+"\n"
+"6. ScummVM 파일 브라우저에서 두 번 탭하여 추가한 폴더를 탐색합니다. 게임 "
+"파일이 들어 있는 하위 폴더를 선택하여 게임을 추가한 다음 **선택**을 "
+"탭합니다. \n"
+"\n"
+"  ![SAF 폴더 추가됨](browser-folder-in-list.png \"SAF 폴더 추가됨\"){w=70%}\n"
+"\n"
+"2단계와 3단계는 한 번만 수행합니다. 게임을 더 추가하려면 1단계와 6단계를 "
+"반복합니다. \n"
+"\n"
+"자세한 내용은 [안드로이드 설명서](https://docs.scummvm.org/en/latest/"
+"other_platforms/android.html)를 참조하세요.\n"
 
 #: backends/platform/android/options.cpp:131
 #: backends/platform/ios7/ios7_options.mm:165
 msgid "Show On-screen control"
-msgstr "화면상 컨트롤을 표시"
+msgstr "화면상 조작 표시"
 
 #: backends/platform/android/options.cpp:132
 #: backends/platform/ios7/ios7_options.mm:112
 msgid "Choose the preferred touch mode:"
-msgstr ""
+msgstr "선호하는 터치 모드를 선택:"
 
 #: backends/platform/android/options.cpp:134
 #: backends/platform/android/options.cpp:165
 #: backends/platform/ios7/ios7_options.mm:117
 #: backends/platform/ios7/ios7_options.mm:144
-#, fuzzy
 msgid "In menus"
-msgstr "비너스 활성화"
+msgstr "메뉴에서"
 
 #: backends/platform/android/options.cpp:136
 #: backends/platform/android/options.cpp:154
@@ -4852,9 +4898,8 @@ msgstr "비너스 활성화"
 #: backends/platform/ios7/ios7_options.mm:136
 #: backends/platform/ios7/ios7_options.mm:137
 #: backends/platform/ios7/ios7_osys_events.cpp:344
-#, fuzzy
 msgid "Touchpad emulation"
-msgstr "TV 에뮬레이션"
+msgstr "터치패드 에뮬레이션"
 
 #: backends/platform/android/options.cpp:137
 #: backends/platform/android/options.cpp:157
@@ -4863,40 +4908,34 @@ msgstr "TV 에뮬레이션"
 #: backends/platform/ios7/ios7_options.mm:139
 #: backends/platform/ios7/ios7_options.mm:140
 #: backends/platform/ios7/ios7_osys_events.cpp:346
-#, fuzzy
 msgid "Direct mouse"
-msgstr "가상 마우스 위"
+msgstr "직접 마우스"
 
 #: backends/platform/android/options.cpp:138
 #: backends/platform/android/options.cpp:160
 #: backends/platform/android/options.cpp:161
-#, fuzzy
 msgid "Gamepad emulation"
-msgstr "TV 에뮬레이션"
+msgstr "게임패드 에뮬레이션"
 
 #: backends/platform/android/options.cpp:144
 #: backends/platform/ios7/ios7_options.mm:126
-#, fuzzy
 msgid "In 2D games"
-msgstr "3D 게임에서 수직 동기화 사용"
+msgstr "2D 게임에서"
 
 #: backends/platform/android/options.cpp:146
 #: backends/platform/ios7/ios7_options.mm:128
-#, fuzzy
 msgid "In 3D games"
-msgstr "3D 게임에서 수직 동기화 사용"
+msgstr "3D 게임에서"
 
 #: backends/platform/android/options.cpp:163
 #: backends/platform/ios7/ios7_options.mm:142
 msgid "Select the orientation:"
-msgstr ""
+msgstr "방향을 선택:"
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
 #: backends/platform/ios7/ios7_options.mm:146
 #: backends/platform/ios7/ios7_options.mm:161
-#, fuzzy
-#| msgid "Auto"
 msgid "Automatic"
 msgstr "자동"
 
@@ -4905,76 +4944,69 @@ msgstr "자동"
 #: backends/platform/ios7/ios7_options.mm:147
 #: backends/platform/ios7/ios7_options.mm:162
 msgid "Portrait"
-msgstr ""
+msgstr "세로 방향"
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
 #: backends/platform/ios7/ios7_options.mm:148
 #: backends/platform/ios7/ios7_options.mm:163
-#, fuzzy
-#| msgid "Escape"
 msgid "Landscape"
-msgstr "탈출"
+msgstr "가로 방향"
 
 #: backends/platform/android/options.cpp:175
 #: backends/platform/ios7/ios7_options.mm:154
-#, fuzzy
 msgid "In games"
-msgstr "3D 게임에서 수직 동기화 사용"
+msgstr "게임에서"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:189
 msgid "Remove folder authorizations..."
-msgstr ""
+msgstr "폴더 권한을 제거합니다..."
 
 #: backends/platform/android/options.cpp:493
-#, fuzzy
 msgid "Remove"
-msgstr "게임 제거(~R~)"
+msgstr "제거"
 
 #: backends/platform/ds/ds-graphics.cpp:281
 msgid "Unscaled"
-msgstr "크기조절 안함"
+msgstr "크기 조정 안 함"
 
 #: backends/platform/ds/ds-graphics.cpp:282
 msgid "Hardware scale (fast, but low quality)"
-msgstr "하드웨어 크기조절 (빠름, 저화질)"
+msgstr "하드웨어 크기조절 (빠름, 저품질)"
 
 #: backends/platform/ds/ds-graphics.cpp:283
 msgid "Software scale (good quality, but slower)"
-msgstr "소프트웨어 크기조절 (느림, 고화질)"
+msgstr "소프트웨어 크기 조정 (좋은 품질, 느림)"
 
 #: backends/platform/ios7/ios7_options.mm:97
-#, fuzzy
-#| msgid "Show On-screen control"
 msgid "Show Gamepad Controller (iOS 15 and later)"
-msgstr "화면상 컨트롤을 표시"
+msgstr "게임패드 컨트롤러 표시 (iOS 15 이상)"
 
 #: backends/platform/ios7/ios7_options.mm:98
 #: backends/platform/ios7/ios7_options.mm:99
-#, fuzzy
 msgid "Gamepad opacity"
-msgstr "TV 에뮬레이션"
+msgstr "게임패드 불투명도"
 
 #: backends/platform/ios7/ios7_options.mm:103
 msgid "Directional button:"
-msgstr ""
+msgstr "방향 버튼:"
 
 #: backends/platform/ios7/ios7_options.mm:105
 msgid "Thumbstick"
-msgstr ""
+msgstr "엄지스틱"
 
 #: backends/platform/ios7/ios7_options.mm:106
 msgid "Dpad"
-msgstr ""
+msgstr "십자 패드"
 
 #: backends/platform/ios7/ios7_options.mm:107
 msgid "Use minimal gamepad layout"
-msgstr ""
+msgstr "최소한의 게임패드 레이아웃을 사용"
 
 #: backends/platform/ios7/ios7_options.mm:109
 msgid "Show keyboard function bar"
-msgstr ""
+msgstr "키보드 기능바 표시"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:252
 msgid ""
@@ -4996,6 +5028,21 @@ msgid ""
 "sometimes mind-bogglingly so. If you're stuck in a game, think about "
 "checking out a game walkthrough. Good luck!\n"
 msgstr ""
+"## 도와주세요, 길을 잃었어요!\n"
+"\n"
+"먼저, 게임과 필요한 게임 파일을 준비했는지 확인하세요. **일반** 탭 아래의 **"
+"게임을 얻는 곳** 섹션을 확인하세요. 게임을 얻으면 **게임 추가** 탭에 설명된 "
+"단계에 따라 이 기기에 게임을 추가합니다.\n"
+"\n"
+"더 많은 도움이 필요한가요? [iOS용 온라인 설명서](https://docs.scummvm.org/en/"
+"latest/other_platforms/ios.html)를 참조하세요. 궁금한 점이 있나요? [지원 "
+"포럼](https://forums.scummvm.org/viewforum.php?f=15)에 들르거나 [디스코드 "
+"서버](https://discord.com/channels/581224060529148060/1149456560922316911)에 "
+"접속하세요.\n"
+"\n"
+"아, 그리고 알려드리자면, 우리가 지원하는 게임 중 다수는 의도적으로 까다롭고, "
+"때로는 정신이 아찔할 정도로 까다롭습니다. 게임에 막혔다면 게임 연습을 확인해 "
+"보세요. 행운을 빕니다!\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:264
 msgid ""
@@ -5072,10 +5119,8 @@ msgid ""
 msgstr ""
 
 #: backends/platform/ios7/ios7_osys_misc.mm:314
-#, fuzzy
-#| msgid "Virtual keyboard"
 msgid "External keyboard"
-msgstr "가상 키보드"
+msgstr "외부 키보드"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:317
 msgid ""
@@ -5101,6 +5146,26 @@ msgid ""
 "| `CMD + RIGHT`     | END               \n"
 "\n"
 msgstr ""
+"## 키보드 사용\n"
+"외부 키보드가 지원되고 iOS 13.4부터 대부분의 특수 키(예: 기능 키, Home 및 "
+"End)가 매핑됩니다. \n"
+"특수 키가 없는 외부 키보드 (예: iPad용 애플 매직 키보드)의 경우 다음 키 "
+"조합을 사용하여 특수 키를 트리거할 수 있습니다: \n"
+"\n"
+"\n"
+"| 키 조합   | 작동            \n"
+"| ------------------|-------------------\n"
+"| `CMD + 1`         | F1                \n"
+"| `CMD + 2`         | F2                \n"
+"| `...`             | ...               \n"
+"| `CMD + 0`         | F10               \n"
+"| `CMD + SHIFT + 1` | F11               \n"
+"| `CMD + SHIFT + 2` | F12               \n"
+"| `CMD + UP`        | PAGE UP           \n"
+"| `CMD + DOWN`      | PAGE DOWN         \n"
+"| `CMD + LEFT`      | HOME              \n"
+"| `CMD + RIGHT`     | END               \n"
+"\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:339
 msgid ""
@@ -5122,6 +5187,22 @@ msgid ""
 "See our [iOS documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/ios.html) for more information.\n"
 msgstr ""
+"## 게임 추가 \n"
+"\n"
+"1. 필요한 게임 파일을 ScummVM 애플리케이션에 복사합니다. 여러 가지 방법이 "
+"있습니다. 자세한 내용은 [게임 파일 전송 설명서](https://docs.scummvm.org/en/"
+"latest/other_platforms/ios.html#transferring-game-files)를 참조하세요.\n"
+"\n"
+"2. 런처에서 **게임 추가...**를 선택합니다. \n"
+"\n"
+"3.ScummVM 파일 브라우저에서 두 번 탭하여 추가한 폴더를 탐색합니다. 게임 "
+"파일이 들어 있는 하위 폴더를 선택하여 게임을 추가한 다음 **선택**을 "
+"탭합니다. \n"
+"\n"
+"더 많은 게임을 추가하려면 위의 단계를 반복합니다. \n"
+"\n"
+"자세한 내용은 [iOS 설명서](https://docs.scummvm.org/en/latest/"
+"other_platforms/ios.html)를 참조하세요.\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:360
 msgid ""
@@ -5144,6 +5225,24 @@ msgid ""
 "the virtual keyboard, press the Back/Menu button.\n"
 "\n"
 msgstr ""
+"## 터치 동작 \n"
+"\n"
+"### 터치 영역 누르기 \n"
+"\n"
+"터치 영역을 눌러 왼쪽 마우스 클릭을 수행\n"
+"### 재생/일시 정지\n"
+"\n"
+"재생/일시 정지를 눌러 오른쪽 마우스 클릭을 수행\n"
+"\n"
+"### 글로벌 메인 메뉴\n"
+"\n"
+"글로벌 메인 메뉴를 열려면 뒤로/메뉴 버튼을 누릅니다.\n"
+"\n"
+"## 가상 키보드\n"
+"\n"
+"가상 키보드를 열려면 재생/일시 정지 버튼을 길게 누릅니다. 가상 키보드를 "
+"숨기려면 뒤로/메뉴 버튼을 누릅니다.\n"
+"\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:383
 msgid ""
@@ -5165,6 +5264,22 @@ msgid ""
 "See our [tvOS documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/tvos.html) for more information.\n"
 msgstr ""
+"## 게임 추가 \n"
+"\n"
+"1. 필요한 게임 파일을 ScummVM 애플리케이션에 복사합니다. 여러 가지 방법이 "
+"있습니다. 자세한 내용은 [게임 파일 전송 설명서](https://docs.scummvm.org/en/"
+"latest/other_platforms/tvos.html#transferring-game-files)를 참조하세요.\n"
+"\n"
+"2. 런처에서 **게임 추가...**를 선택합니다. \n"
+"\n"
+"3. ScummVM 파일 브라우저에서 두 번 탭하여 추가한 폴더를 찾습니다. 게임 "
+"파일이 들어 있는 하위 폴더를 선택하여 게임을 추가한 다음 **선택**을 "
+"탭합니다. \n"
+"\n"
+"더 많은 게임을 추가하려면 위의 단계를 반복합니다. \n"
+"\n"
+"자세한 내용은 [tvOS 설명서](https://docs.scummvm.org/en/latest/"
+"other_platforms/tvos.html)를 참조하세요.\n"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:46
 msgid "LIBRETRO PLAYLIST GENERATOR"
@@ -5192,15 +5307,15 @@ msgstr "후크 위치:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:59
 msgid "All in save folder"
-msgstr ""
+msgstr "모두 저장 폴더에 있음"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:60
 msgid "One in each game folder"
-msgstr ""
+msgstr "각 게임 폴더에 하나씩"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:62
 msgid "Clear existing hooks"
-msgstr ""
+msgstr "기존 후크 지우기"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:64
 msgid "Generate playlist"
@@ -5215,10 +5330,8 @@ msgid "Failed, can't access playlist file"
 msgstr "실패함, 재생목록 파일에 접근할 수 없음"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:224
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "cleaning failed"
-msgstr "데이터 읽기 실패"
+msgstr "지우기 실패함"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:226
 msgid "Failed, can't create hook files"
@@ -5265,7 +5378,7 @@ msgstr "클릭 모드"
 
 #: backends/platform/sdl/sdl.cpp:1012
 msgid "Keyboard"
-msgstr ""
+msgstr "키보드"
 
 #: backends/platform/sdl/sdl.cpp:1015
 msgid ""
@@ -5284,22 +5397,35 @@ msgid ""
 "| --------------|------------------\n"
 "| `Ctrl+F5` | Displays the Global Main Menu\n"
 msgstr ""
+"## 키보드 단축키\n"
+"\n"
+"ScummVM은 다양한 게임 내 키보드 및 마우스 단축키를 지원하며, 버전 2.2.0부터 "
+"**키맵 탭** 또는 **구성 파일**에서 수동으로 구성할 수 있습니다.\n"
+"\n"
+"게임별 컨트롤은 플레이 중인 게임의 [위키 항목](https://wiki.scummvm.org/index"
+".php?title=Category:Supported_Games)을 참조하세요.\n"
+"\n"
+"기본 단축키는 표에 나와 있습니다.\n"
+"\n"
+"| 단축키      | 설명      \n"
+"| --------------|------------------\n"
+"| `Ctrl+F5` | 글로벌 메인 메뉴 표시\n"
 
 #: backends/platform/sdl/sdl.cpp:1027
 msgid "| `Cmd+q`    | Quit (macOS)\n"
-msgstr ""
+msgstr "| `Cmd+q`    | 나가기 (macOS)\n"
 
 #: backends/platform/sdl/sdl.cpp:1029
 msgid "| `Alt+F4`  | Quit (Windows)\n"
-msgstr ""
+msgstr "| `Alt+F4`  | 나가기 (윈도우즈)\n"
 
 #: backends/platform/sdl/sdl.cpp:1031
 msgid "| `Ctrl+q`  | Quit (Linux/Unix)\n"
-msgstr ""
+msgstr "| `Ctrl+q`  | 나가기 (리눅스/유닉스)\n"
 
 #: backends/platform/sdl/sdl.cpp:1032
 msgid "| `Ctrl+z`  | Quit (other platforms)\n"
-msgstr ""
+msgstr "| `Ctrl+z`  | 나가기 (기타 플랫폼)\n"
 
 #: backends/platform/sdl/sdl.cpp:1035
 msgid ""
@@ -5318,18 +5444,31 @@ msgid ""
 "opened with a long press of the middle mouse button or wheel.\n"
 "| `Ctrl+Alt+d` | Opens the ScummVM debugger\n"
 msgstr ""
+"| `Ctrl+u`  | 모든 사운드 음소거\n"
+"| `Ctrl+m`  | 마우스 캡처 전환\n"
+"| `Ctrl+Alt` 및 `9` 또는 `0` | 그래픽 필터 사이를 앞뒤로 순환\n"
+"| `Ctrl+Alt` 및 `+` 또는 `-` | 스케일 팩터 증가/감소\n"
+"| `Ctrl+Alt+a` | 화면비 교정 켜기/끄기\n"
+"| `Ctrl+Alt+f` | 최근접 보간과 이중선형 보간 사이 전환 (그래픽 필터링 "
+"켜기/끄기) \n"
+"| `Ctrl+Alt+s` | 눌리기 모드 순환\n"
+"| `Alt+Enter`   | 전체 화면/창 모드 전환\n"
+"| `Alt+s`          | 스크린샷 찍기\n"
+"| `Ctrl+F7`       | 가상 키보드 열기(활성화된 경우). 마우스 가운데 버튼이나 "
+"휠을 길게 눌러서 열 수도 있습니다.\n"
+"| `Ctrl+Alt+d` | ScummVM 디버거 열기\n"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:298
 msgid "Hide ScummVM"
-msgstr "ScummVM 가리기"
+msgstr "ScummVM 숨기기"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:299
 msgid "Hide Others"
-msgstr "기타 가리기"
+msgstr "기타 숨기기"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:300
 msgid "Show All"
-msgstr "모두 보기"
+msgstr "모두 표시"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:305
 msgid "Window"
@@ -5385,78 +5524,58 @@ msgid "BSD License"
 msgstr "BSD 라이선스"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:329
-#, fuzzy
-#| msgid "GPL License"
 msgid "Apache License"
-msgstr "GPL 라이선스"
+msgstr "아파치 라이선스"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:330
-#, fuzzy
-#| msgid "BSD License"
 msgid "BSL License"
-msgstr "BSD 라이선스"
+msgstr "BSL 라이선스"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:331
-#, fuzzy
-#| msgid "GPL License"
 msgid "GLAD License"
-msgstr "GPL 라이선스"
+msgstr "GLAD 라이선스"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:332
-#, fuzzy
-#| msgid "BSD License"
 msgid "ISC License"
-msgstr "BSD 라이선스"
+msgstr "ISC 라이선스"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:333
-#, fuzzy
-#| msgid "GPL License"
 msgid "Lua License"
-msgstr "GPL 라이선스"
+msgstr "Lua 라이선스"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:334
-#, fuzzy
-#| msgid "GPL License"
 msgid "MIT License"
-msgstr "GPL 라이선스"
+msgstr "MIT 라이선스"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:335
-#, fuzzy
-#| msgid "GPL License"
 msgid "MKV License"
-msgstr "GPL 라이선스"
+msgstr "MKV 라이선스"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:336
-#, fuzzy
-#| msgid "GPL License"
 msgid "MPL License"
-msgstr "GPL 라이선스"
+msgstr "MPL 라이선스"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:337
-#, fuzzy
-#| msgid "GPL License"
 msgid "TinyGL License"
-msgstr "GPL 라이선스"
+msgstr "TinyGL 라이선스"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:338
-#, fuzzy
-#| msgid "Freefont License"
 msgid "Catharon License"
-msgstr "Freefont 라이선스"
+msgstr "Catharon 라이선스"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:79
 #: backends/platform/sdl/miyoo/miyoo.cpp:106
 #: backends/platform/sdl/ps3/ps3.cpp:59
 msgid "L2"
-msgstr "L2"
+msgstr "L2 버튼"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:81
 #: backends/platform/sdl/miyoo/miyoo.cpp:108
 #: backends/platform/sdl/ps3/ps3.cpp:60
 msgid "R2"
-msgstr "R2"
+msgstr "R2 버튼"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:83
@@ -5472,29 +5591,29 @@ msgstr "메뉴"
 #: backends/platform/sdl/ps3/ps3.cpp:47
 #: backends/platform/sdl/switch/switch.cpp:44
 msgid "L3"
-msgstr "L3"
+msgstr "L3 버튼"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:112
 #: backends/platform/sdl/ps3/ps3.cpp:48
 #: backends/platform/sdl/switch/switch.cpp:45
 msgid "R3"
-msgstr "R3"
+msgstr "R3 버튼"
 
 #: backends/platform/sdl/ps3/ps3.cpp:40 backends/platform/sdl/psp2/psp2.cpp:43
 #: engines/dragons/metaengine.cpp:201
 msgid "Cross"
-msgstr "Cross"
+msgstr "엑스 버튼"
 
 #: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:44
 #: engines/dragons/metaengine.cpp:195
 msgid "Circle"
-msgstr "Circle"
+msgstr "원 버튼"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:45
 #: engines/dragons/metaengine.cpp:183
 msgid "Square"
-msgstr "Square"
+msgstr "네모 버튼"
 
 #: backends/platform/sdl/ps3/ps3.cpp:45
 msgid "PS"
@@ -5502,20 +5621,20 @@ msgstr "PS"
 
 #: backends/platform/sdl/ps3/ps3.cpp:49
 msgid "L1"
-msgstr "L1"
+msgstr "L1 버튼"
 
 #: backends/platform/sdl/ps3/ps3.cpp:50
 msgid "R1"
-msgstr "R1"
+msgstr "R1 버튼"
 
 #: backends/platform/sdl/switch/switch.cpp:41
 msgid "Minus"
-msgstr "Minus"
+msgstr "마이너스 버튼"
 
 #: backends/platform/sdl/switch/switch.cpp:42
 #: backends/platform/sdl/switch/switch.cpp:43
 msgid "Plus"
-msgstr "Plus"
+msgstr "플러스 버튼"
 
 #: backends/platform/wii/options.cpp:50
 msgid "Video"
@@ -5543,11 +5662,11 @@ msgstr "입력"
 
 #: backends/platform/wii/options.cpp:73
 msgid "GC Pad sensitivity:"
-msgstr "GC 패드 감도:"
+msgstr "게임큐브 패드 감도:"
 
 #: backends/platform/wii/options.cpp:79
 msgid "GC Pad acceleration:"
-msgstr "GC 패드 가속:"
+msgstr "게임큐브 패드 가속:"
 
 #: backends/platform/wii/options.cpp:85
 msgid "DVD"
@@ -5607,11 +5726,11 @@ msgstr "DVD를 마운트 하는데 오류 발생"
 
 #: backends/platform/wii/options.cpp:147
 msgid "DVD not mounted"
-msgstr "DVD 마운트 안됨"
+msgstr "DVD 마운트 안 됨"
 
 #: backends/platform/wii/options.cpp:160
 msgid "Network up, share mounted"
-msgstr "네트워크 연결, 공유 폴더 활성화됨"
+msgstr "네트워크 연결, 공유 폴더 마운트됨"
 
 #: backends/platform/wii/options.cpp:162
 msgid "Network up"
@@ -5619,11 +5738,11 @@ msgstr "네트워크 연결"
 
 #: backends/platform/wii/options.cpp:165
 msgid ", error while mounting the share"
-msgstr ", 공유 폴더 활성화 중 오류 발생"
+msgstr ", 공유 폴더 마운트 중 오류 발생"
 
 #: backends/platform/wii/options.cpp:167
 msgid ", share not mounted"
-msgstr ", 공유 폴더가 마운트되지 않음"
+msgstr ", 공유 폴더 마운트되지 않음"
 
 #: backends/platform/wii/options.cpp:173
 msgid "Network down"
@@ -5640,7 +5759,7 @@ msgstr "네트워크 초기화 시간 초과"
 #: backends/platform/wii/options.cpp:185
 #, c-format
 msgid "Network not initialized (%d)"
-msgstr "네트워크 초기화 안됨 (%d)"
+msgstr "네트워크 초기화 안 됨 (%d)"
 
 #: backends/presence/discord/discord.cpp:46
 msgid "Launcher"
@@ -5658,7 +5777,7 @@ msgstr "업데이트 확인 중..."
 #: engines/ultima/ultima8/ultima8.cpp:187
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
-msgstr "'%s' 엔진의 데이터 파일을 찾을 수 없습니다."
+msgstr "'%s' 엔진 데이터 파일을 찾을 수 없습니다."
 
 #: engines/access/resources.cpp:51 engines/drascula/drascula.cpp:956
 #: engines/hugo/hugo.cpp:439 engines/lure/lure.cpp:66
@@ -5666,7 +5785,7 @@ msgstr "'%s' 엔진의 데이터 파일을 찾을 수 없습니다."
 #: engines/tony/tony.cpp:200 engines/toon/toon.cpp:5431
 #, c-format
 msgid "The '%s' engine data file is corrupt."
-msgstr "'%s' 엔진의 데이터 파일이 손상되었습니다."
+msgstr "'%s' 엔진 데이터 파일이 손상되었습니다."
 
 #: engines/access/resources.cpp:60 engines/drascula/drascula.cpp:967
 #: engines/hugo/hugo.cpp:449 engines/lure/lure.cpp:69
@@ -5676,9 +5795,8 @@ msgstr "'%s' 엔진의 데이터 파일이 손상되었습니다."
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
 "%d.%d."
-msgstr ""
-"'%s' 엔진의 데이터 파일 버전이 잘못되었습니다. 필요한 버전: %d.%d, 실제 버"
-"전: %d.%d."
+msgstr "'%s' 엔진 데이터 파일 버전이 잘못되었습니다. 필요한 버전: %d.%d, 실제 버전: "
+"%d.%d."
 
 #: engines/adl/metaengine.cpp:44
 msgid "TV emulation"
@@ -5686,7 +5804,7 @@ msgstr "TV 에뮬레이션"
 
 #: engines/adl/metaengine.cpp:45
 msgid "Emulate composite output to an NTSC TV"
-msgstr "NTSC TV로의 컴포지트 출력을 에뮬레이트합니다"
+msgstr "NTSC TV로의 컴포지트 출력을 에뮬레이트"
 
 #: engines/adl/metaengine.cpp:56 engines/adl/metaengine.cpp:68
 msgid "Color graphics"
@@ -5702,7 +5820,7 @@ msgstr "스캔라인 표시"
 
 #: engines/adl/metaengine.cpp:81
 msgid "Darken every other scanline to mimic the look of a CRT"
-msgstr "두 줄에 한 번씩 어두운 스캔라인을 그려 CRT 스타일을 모방합니다"
+msgstr "CRT의 화면 출력을 모방하기 위해 모든 스캔라인을 어둡게 함"
 
 #: engines/adl/metaengine.cpp:92
 msgid "Always use sharp monochrome text"
@@ -5710,21 +5828,19 @@ msgstr "항상 또렷한 흑백 텍스트를 사용"
 
 #: engines/adl/metaengine.cpp:93
 msgid "Do not emulate NTSC artifacts for text"
-msgstr "텍스트에 대해서 NTSC 효과를 에뮬레이트하지 않습니다"
+msgstr "텍스트에 NTSC 아티팩트를 에뮬레이션하지 않음"
 
 #: engines/adl/metaengine.cpp:104
-#, fuzzy
-#| msgid "Use silver cursors"
 msgid "Use checkered cursor"
-msgstr "실버 커서 사용"
+msgstr "체크무늬 커서 사용"
 
 #: engines/adl/metaengine.cpp:105
 msgid "Use the checkered cursor from later Apple II models"
-msgstr ""
+msgstr "후기 애플 II 모델의 체크 무늬 커서를 사용"
 
 #: engines/agi/detection_tables.h:261
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
-msgstr ""
+msgstr "탠디 컬러 컴퓨터용 초기 AGI 게임은 아직 지원되지 않습니다."
 
 #: engines/agi/font.cpp:680
 msgid ""
@@ -5732,9 +5848,8 @@ msgid ""
 "If you have such file in other AGI (Sierra) game, you can copy it to the "
 "game directory"
 msgstr ""
-"Hercules 고해상도 폰트에 필요한 'hgc_font' 파일을 사용할 수 없습니다.\n"
-"다른 AGI (Sierra) 게임에서 이런 파일을 가지고 있다면, 게임 디렉토리로 복사하"
-"십시오"
+"허큘리스 고해상도 글꼴에 대한 파일 'hgc_font'를 열거나 사용할 수 없습니다.\n"
+"다른 AGI(시에라) 게임에 해당 파일이 있는 경우, 게임 디렉토리에 복사할 수 있음"
 
 #: engines/agi/metaengine.cpp:111 engines/bagel/metaengine.cpp:50
 #: engines/chewy/metaengine.cpp:36 engines/cine/metaengine.cpp:46
@@ -5756,7 +5871,7 @@ msgstr "원본 저장/불러오기 화면 사용"
 #: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:42
 #: engines/ultima/metaengine.cpp:53 engines/zvision/metaengine.cpp:47
 msgid "Use the original save/load screens instead of the ScummVM ones"
-msgstr "ScummVM의 화면 대신 원본 저장/불러오기 화면을 사용합니다"
+msgstr "ScummVM의 화면 대신 원본 저장/불러오기 화면을 사용"
 
 #: engines/agi/metaengine.cpp:123
 msgid "Use an alternative palette"
@@ -5766,8 +5881,8 @@ msgstr "대체 팔레트 사용"
 msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
-msgstr ""
-"아미가 게임에서 자주 쓰인 대체 팔레트를 사용합니다. 이전의 동작 방식입니다"
+msgstr "모든 아미가 게임에서, 공통적인 대체 팔레트를 사용합니다. 이것은 이전의 동작 "
+"방식임"
 
 #: engines/agi/metaengine.cpp:135
 msgid "Mouse support"
@@ -5776,29 +5891,27 @@ msgstr "마우스 지원"
 #: engines/agi/metaengine.cpp:136
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
-msgstr ""
-"마우스 지원을 활성화합니다. 이동시와 인게임 메뉴에서 마우스를 사용할 수 있습"
-"니다."
+msgstr "마우스 지원을 활성화합니다. 마우스를 사용하여 이동하고 게임 내 메뉴를 사용할 "
+"수 있습니다."
 
 #: engines/agi/metaengine.cpp:147
 msgid "Use Hercules hires font"
-msgstr "Hercules 고해상도 폰트 사용"
+msgstr "허큘리스 고해상도 글꼴 사용"
 
 #: engines/agi/metaengine.cpp:148
 msgid "Uses Hercules hires font, when font file is available."
-msgstr "폰트 파일이 존재하는 경우 Hercules 고해상도 폰트를 사용합니다."
+msgstr "글꼴 파일을 사용할 수 있는 경우, 허큘리스 고해상도 글꼴을 사용합니다."
 
 #: engines/agi/metaengine.cpp:159
 msgid "Pause when entering commands"
-msgstr "커맨드 입력시 일시 정지"
+msgstr "명령어 입력시 일시 정지"
 
 #: engines/agi/metaengine.cpp:160
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
-msgstr ""
-"실시간 입력 대신 커맨드 입력 창을 표시하고 게임을 일시 정지합니다 (SCI와 유"
-"사)."
+msgstr "실시간 프롬프트 대신 명령어 프롬프트 창을 표시하고 게임을 일시 정지합니다 ("
+"SCI와 유사)."
 
 #: engines/agi/metaengine.cpp:171
 msgid "Add speed menu"
@@ -5813,10 +5926,8 @@ msgstr "속도 메뉴를 추가합니다. (PC 버전과 유사)"
 #: engines/mads/metaengine.cpp:51 engines/mm/metaengine.cpp:46
 #: engines/saga/metaengine.cpp:52 engines/scumm/dialogs.cpp:1188
 #: engines/scumm/metaengine.cpp:755
-#, fuzzy
-#| msgid "Enable Discord integration"
 msgid "Enable copy protection"
-msgstr "Discord 통합 사용"
+msgstr "복사 방지 기능 활성화"
 
 #: engines/agi/metaengine.cpp:184 engines/agos/metaengine.cpp:45
 #: engines/dreamweb/metaengine.cpp:37 engines/lure/metaengine.cpp:42
@@ -5824,7 +5935,7 @@ msgstr "Discord 통합 사용"
 #: engines/saga/metaengine.cpp:53 engines/scumm/dialogs.cpp:1189
 #: engines/scumm/metaengine.cpp:756
 msgid "Enable any copy protection that would otherwise be bypassed by default."
-msgstr ""
+msgstr "기본적으로 우회되는 모든 복사 방지 기능을 활성화합니다."
 
 #: engines/agi/metaengine.cpp:408 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
@@ -5855,7 +5966,7 @@ msgstr "이 게임은 저장을 지원하지 않음"
 #: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3907
 #: engines/zvision/file/save_manager.cpp:61
 msgid "Restore game:"
-msgstr "게임 불러오기:"
+msgstr "게임 복원:"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:271
@@ -5875,11 +5986,11 @@ msgstr "게임 불러오기:"
 #: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3907
 #: engines/zvision/file/save_manager.cpp:61 engines/zvision/metaengine.cpp:267
 msgid "Restore"
-msgstr "불러오기"
+msgstr "복원"
 
 #: engines/agos/saveload.cpp:139
 msgid "Quick load or save game isn't supported in this location"
-msgstr "빠른 저장과 불러오기는 여기서는 지원되지 않습니다"
+msgstr "이 위치에서는 빠른 게임 로드 또는 저장이 지원되지 않음"
 
 #: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:3027
 #, c-format
@@ -5888,7 +5999,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"세이브 파일을 불러오는 데 실패했습니다:\n"
+"파일에서 저장된 게임을 로드하는 데 실패함:\n"
 "\n"
 "%s"
 
@@ -5899,7 +6010,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"파일에 저장하는데 실패했습니다:\n"
+"게임을 파일에 저장하는 데 실패함:\n"
 "\n"
 "%s"
 
@@ -5910,18 +6021,18 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"게임을 성공적으로 저장했습니다:\n"
+"게임을 파일에 성공적으로 저장함:\n"
 "\n"
 "%s"
 
 #: engines/agos/animation.cpp:576
 #, c-format
 msgid "Cutscene file '%s' not found!"
-msgstr "컷씬 파일 '%s' 을 찾을 수 없습니다!"
+msgstr "'%s' 컷신 파일을 찾을 수 없습니다!"
 
 #: engines/agos/metaengine.cpp:55
 msgid "AdLib OPL3 mode"
-msgstr ""
+msgstr "AdLib OPL3 모드"
 
 #: engines/agos/metaengine.cpp:56
 msgid ""
@@ -5929,10 +6040,12 @@ msgid ""
 "this will prevent cut-off notes, add extra notes or instruments and/or add "
 "stereo."
 msgstr ""
+"AdLib을 선택하면 OPL3 기능이 사용됩니다. 게임에 따라 음표가 끊어지는 것을 "
+"방지하고, 추가 음표나 악기를 추가하고, 스테레오를 추가할 수 있습니다."
 
 #: engines/agos/metaengine.cpp:66 engines/agos/metaengine.cpp:77
 msgid "Use DOS version music tempos"
-msgstr ""
+msgstr "도스 버전 음악 템포 사용"
 
 #: engines/agos/metaengine.cpp:67 engines/agos/metaengine.cpp:78
 msgid ""
@@ -5940,6 +6053,8 @@ msgid ""
 "version of the game. Otherwise, the faster tempos of the Windows version "
 "will be used."
 msgstr ""
+"이 옵션을 선택하면 도스 버전의 게임에서 사용하는 템포를 사용하여 음악이 "
+"재생됩니다. 그렇지 않으면 윈도우즈 버전의 더 빠른 템포가 사용됩니다."
 
 #: engines/agos/metaengine.cpp:88 engines/sci/detection_options.h:95
 msgid "Prefer digital sound effects"
@@ -5947,42 +6062,37 @@ msgstr "디지털 사운드 효과 선호"
 
 #: engines/agos/metaengine.cpp:89 engines/sci/detection_options.h:96
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr "합성 음원 대신 디지털 사운드 이펙트 선호"
+msgstr "합성 음원 대신 디지털 사운드 효과 선호"
 
 #: engines/agos/metaengine.cpp:99
-#, fuzzy
 msgid "Disable fade-out effects"
-msgstr "자동 저장 비활성화"
+msgstr "페이드아웃 효과 비활성화"
 
 #: engines/agos/metaengine.cpp:100
 msgid "Don't fade every screen to black when leaving a room."
-msgstr ""
+msgstr "방을 나갈 때 모든 화면이 어두워지지 않도록 하세요."
 
 #: engines/agos/metaengine.cpp:179
 msgid "AGOS 2 support is not compiled in"
-msgstr "AGOS 2 지원은 컴파일 되지 않음"
+msgstr "AGOS 2 지원은 컴파일되지 않았음"
 
 #. I18N: "AGOS main" refers to the main keymappings for the agos engine.
 #. It is never disabled and it is not game specific
 #: engines/agos/metaengine.cpp:227
 msgid "AGOS main"
-msgstr ""
+msgstr "AGOS 메인"
 
 #: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
 #: engines/hopkins/metaengine.cpp:209 engines/lure/metaengine.cpp:169
 #: engines/made/metaengine.cpp:103 engines/mads/metaengine.cpp:275
 #: engines/stark/metaengine.cpp:185 engines/tinsel/metaengine.cpp:240
 #: engines/trecision/metaengine.cpp:121
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game keymappings"
-msgstr "게임 옵션"
+msgstr "게임 키맵핑"
 
 #: engines/agos/metaengine.cpp:229
-#, fuzzy
-#| msgid "Game Options"
 msgid "Yes/No keymapping"
-msgstr "게임 옵션"
+msgstr "예/아니요 키맵핑"
 
 #: engines/agos/metaengine.cpp:232 engines/cge/metaengine.cpp:203
 #: engines/cge2/metaengine.cpp:216 engines/cine/metaengine.cpp:265
@@ -5991,8 +6101,6 @@ msgstr "게임 옵션"
 #: engines/mads/metaengine.cpp:280 engines/saga/metaengine.cpp:278
 #: engines/stark/metaengine.cpp:189 engines/tinsel/metaengine.cpp:245
 #: engines/trecision/metaengine.cpp:125
-#, fuzzy
-#| msgid "Left Click"
 msgid "Left click"
 msgstr "왼쪽 클릭"
 
@@ -6003,44 +6111,32 @@ msgstr "왼쪽 클릭"
 #: engines/mads/metaengine.cpp:286 engines/saga/metaengine.cpp:289
 #: engines/stark/metaengine.cpp:195 engines/tinsel/metaengine.cpp:251
 #: engines/trecision/metaengine.cpp:131
-#, fuzzy
-#| msgid "Right Click"
 msgid "Right click"
 msgstr "오른쪽 클릭"
 
 #: engines/agos/metaengine.cpp:244
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Exit cutscene"
-msgstr "컷씬을 건너뜀"
+msgstr "컷신 나가기"
 
 #: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:198
-#, fuzzy
-#| msgid "Music volume up / down"
 msgid "Music volume down"
-msgstr "음악 볼륨을 높임 / 줄임"
+msgstr "음악 볼륨 낮추기"
 
 #: engines/agos/metaengine.cpp:262 engines/vcruise/metaengine.cpp:203
 msgid "Music volume up"
 msgstr "음악 볼륨 높이기"
 
 #: engines/agos/metaengine.cpp:268 engines/vcruise/metaengine.cpp:188
-#, fuzzy
-#| msgid "Toggle fullscreen"
 msgid "Toggle music on/off"
-msgstr "전체화면 전환"
+msgstr "음악 켜기/끄기 전환"
 
 #: engines/agos/metaengine.cpp:273
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Toggle sound effect on/off"
-msgstr "효과음 볼륨"
+msgstr "사운드 효과 켜기/끄기 전환"
 
 #: engines/agos/metaengine.cpp:278
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fast mode on/off"
-msgstr "빠른 모드 토글"
+msgstr "빠른 모드 켜기/끄기 전환"
 
 #: engines/agos/metaengine.cpp:290 engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
