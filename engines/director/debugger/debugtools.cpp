@@ -20,7 +20,6 @@
  */
 
 #include "backends/imgui/IconsMaterialSymbols.h"
-#include "graphics/opengl/shader.h"
 
 #include "director/director.h"
 #include "director/lingo/lingodec/context.h"
