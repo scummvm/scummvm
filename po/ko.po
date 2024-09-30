@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 13:19+0000\n"
+"PO-Revision-Date: 2024-09-30 13:34+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -11139,31 +11139,31 @@ msgstr ""
 #. I18N: Water slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:132
 msgid "Driest - Wettest"
-msgstr ""
+msgstr "가장 건조 - 가장 습함"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:136
 msgid "Picks the random amount of water."
-msgstr ""
+msgstr "물의 양을 무작위로 선택합니다."
 
 #. I18N: Generate new map
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:140
-#, fuzzy
-#| msgid "General"
 msgid "Generate"
-msgstr "일반"
+msgstr "생성"
 
 #: engines/scumm/he/sound_he.cpp:1555
 msgid ""
 "Unimplemented development codepath encountered within the sound engine,\n"
 "please file a ticket at https://bugs.scummvm.org."
 msgstr ""
+"사운드 엔진 내에서 구현되지 않은 개발 코드 경로가 발견되었습니다,\n"
+"https://bugs.scummvm.org에서 티켓을 제출하세요."
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
 "This AMIGA version is missing (at least) the following file(s):\n"
 "\n"
 msgstr ""
-"이 AMIGA 버전에는 (최소한) 다음 파일들이 빠져 있습니다.\n"
+"이 아미가 버전에는 (최소한) 다음 파일이 누락되었습니다:\n"
 "\n"
 
 #: engines/scumm/imuse/drivers/amiga.cpp:665
@@ -11178,25 +11178,25 @@ msgstr ""
 
 #: engines/sherlock/metaengine.cpp:51
 msgid "Pixellated scene transitions"
-msgstr "픽셀화된 씬 트랜지션"
+msgstr "픽셀화된 장면 전환"
 
 #: engines/sherlock/metaengine.cpp:52
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr "신을 변경할 때, 랜덤화된 픽셀 전환효과가 실행됩니다"
+msgstr "장면을 변경할 때 무작위 픽셀 전환 수행"
 
 #: engines/sherlock/metaengine.cpp:63
 msgid "Don't show hotspots when moving mouse"
-msgstr "마우스를 이동할 때 핫스팟을 보여주지 않음"
+msgstr "마우스를 움직일 때 핫스팟을 표시 안 함"
 
 #: engines/sherlock/metaengine.cpp:64
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
-msgstr "핫스팟이나 액션 버튼을 실제로 클릭한 뒤에만 핫스팟의 이름을 보여줍니다"
+msgstr "핫스팟이나 작업 버튼을 실제로 클릭한 후에만 핫스팟 이름을 표시함"
 
 #: engines/sherlock/metaengine.cpp:75
 msgid "Show character portraits"
-msgstr "캐릭터 초상을 보이기"
+msgstr "캐릭터 세로 방향 표시"
 
 #: engines/sherlock/metaengine.cpp:76
 msgid "Show portraits for the characters when conversing"
