@@ -169,7 +169,6 @@ const char *Room_GetMessages(int index) {
 		return nullptr;
 	}
 	char buffer[STD_BUFFER_SIZE];
-	buffer[0] = 0;
 	replace_tokens(get_translation(_GP(thisroom).Messages[index].GetCStr()), buffer, STD_BUFFER_SIZE);
 	return CreateNewScriptString(buffer);
 }
