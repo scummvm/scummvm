@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 11:31+0000\n"
+"PO-Revision-Date: 2024-09-30 11:50+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -1384,11 +1384,11 @@ msgstr "도움말을 보려면 여기를 클릭"
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
 #: gui/launcher.cpp:267 engines/dialogs.cpp:91
 msgid "~Q~uit"
-msgstr "나가기(~Q~)"
+msgstr "종료(~Q~)"
 
 #: gui/launcher.cpp:267 backends/platform/sdl/macosx/appmenu_osx.mm:302
 msgid "Quit ScummVM"
-msgstr "ScummVM 나가기"
+msgstr "ScummVM 종료"
 
 #. I18N: Button About ScummVM program. b is the shortcut, Ctrl+b, put it in parens for non-latin (~b~)
 #: gui/launcher.cpp:271
@@ -3184,7 +3184,7 @@ msgstr "그래픽 고급 게임 엔진"
 #: engines/tinsel/metaengine.cpp:334 engines/zvision/metaengine.cpp:272
 #: engines/zvision/metaengine.cpp:290
 msgid "Quit"
-msgstr "나가기"
+msgstr "종료"
 
 #: dists/android.strings.xml.cpp:35
 msgid "Log File Error"
@@ -3909,7 +3909,7 @@ msgid ""
 "Do you really want to quit?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"정말 나가겠습니까?\n"
+"정말 종료하겠습니까?\n"
 "저장되지 않은 진행 상황은 모두 사라집니다."
 
 #: backends/events/default/default-events.cpp:332
@@ -5413,19 +5413,19 @@ msgstr ""
 
 #: backends/platform/sdl/sdl.cpp:1027
 msgid "| `Cmd+q`    | Quit (macOS)\n"
-msgstr "| `Cmd+q`    | 나가기 (macOS)\n"
+msgstr "| `Cmd+q`    | 종료 (macOS)\n"
 
 #: backends/platform/sdl/sdl.cpp:1029
 msgid "| `Alt+F4`  | Quit (Windows)\n"
-msgstr "| `Alt+F4`  | 나가기 (윈도우즈)\n"
+msgstr "| `Alt+F4`  | 종료 (윈도우즈)\n"
 
 #: backends/platform/sdl/sdl.cpp:1031
 msgid "| `Ctrl+q`  | Quit (Linux/Unix)\n"
-msgstr "| `Ctrl+q`  | 나가기 (리눅스/유닉스)\n"
+msgstr "| `Ctrl+q`  | 종료 (리눅스/유닉스)\n"
 
 #: backends/platform/sdl/sdl.cpp:1032
 msgid "| `Ctrl+z`  | Quit (other platforms)\n"
-msgstr "| `Ctrl+z`  | 나가기 (기타 플랫폼)\n"
+msgstr "| `Ctrl+z`  | 종료 (기타 플랫폼)\n"
 
 #: backends/platform/sdl/sdl.cpp:1035
 msgid ""
@@ -6028,7 +6028,7 @@ msgstr ""
 #: engines/agos/animation.cpp:576
 #, c-format
 msgid "Cutscene file '%s' not found!"
-msgstr "'%s' 컷신 파일을 찾을 수 없습니다!"
+msgstr "'%s' 컷씬 파일을 찾을 수 없습니다!"
 
 #: engines/agos/metaengine.cpp:55
 msgid "AdLib OPL3 mode"
@@ -6116,7 +6116,7 @@ msgstr "오른쪽 클릭"
 
 #: engines/agos/metaengine.cpp:244
 msgid "Exit cutscene"
-msgstr "컷신 나가기"
+msgstr "컷씬 나가기"
 
 #: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:198
 msgid "Music volume down"
@@ -6542,9 +6542,7 @@ msgstr "초당 최대 프레임 제한"
 msgid ""
 "This mode targets a maximum of 120 fps. When disabled, the game targets 60 "
 "fps"
-msgstr ""
-"이 모드는 최대 120 fps를 목표로합니다. 옵션이 비활성화되면 60 fps를 목표로하"
-"게됩니다"
+msgstr "이 모드는 최대 120fps를 목표로 합니다. 비활성화하면 게임은 60fps를 목표로 함"
 
 #: engines/bladerunner/metaengine.cpp:89
 msgid "Disable McCoy's quick stamina drain"
@@ -6554,27 +6552,24 @@ msgstr "McCoy의 빠른 스태미나 감소를 비활성화"
 msgid ""
 "When running, McCoy won't start slowing down as soon as the player stops "
 "clicking the mouse"
-msgstr ""
-"달리기 상태에서 플레이어가 마우스 클릭을 중단하자마자 McCoy가 느려지지 않게 "
-"합니다"
+msgstr "실행 중 플레이어가 마우스 클릭을 멈추더라도 McCoy의 속도가 느려지지 않음"
 
 #: engines/bladerunner/metaengine.cpp:100
-#, fuzzy
 msgid "Show subtitles during text crawl"
-msgstr "자막을 표시하고 음성을 재생"
+msgstr "텍스트 크롤링 중 자막 표시"
 
 #: engines/bladerunner/metaengine.cpp:101
 msgid "During the intro cutscene, show subtitles during the text crawl"
-msgstr ""
+msgstr "인트로 컷씬 중 텍스트 크롤링 중에 자막을 표시"
 
 #: engines/bladerunner/metaengine.cpp:111
 msgid "Fix credits for voice actors"
-msgstr ""
+msgstr "성우들의 크레딧 수정"
 
 #: engines/bladerunner/metaengine.cpp:112
 msgid ""
 "Updates the end credits with corrected credits for the Spanish voice actors"
-msgstr ""
+msgstr "스페인어 성우들의 수정된 크레딧으로 엔딩 크레딧을 업데이트"
 
 #. I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.
 #: engines/bladerunner/metaengine.cpp:199
@@ -6584,7 +6579,7 @@ msgstr "공통 단축키"
 #. I18N: These are keymaps which work only in the main gameplay and not within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:201
 msgid "main game shortcuts"
-msgstr "주 게임 단축키"
+msgstr "메인 게임 단축키"
 
 #. I18N: These are keymaps that work only within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:203
@@ -6610,7 +6605,7 @@ msgstr "전투 전환"
 #: engines/scumm/metaengine.cpp:929 engines/twp/metaengine.cpp:162
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
-msgstr "컷씬을 건너뜀"
+msgstr "컷씬 건너뛰기"
 
 #. I18N: This keymap allows skipping the current line of dialogue.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -6618,7 +6613,7 @@ msgstr "컷씬을 건너뜀"
 #. SKIP PAST CURRENT LINE OF DIALOGUE
 #: engines/bladerunner/metaengine.cpp:242
 msgid "Skip dialogue"
-msgstr "대사 건너뛰기"
+msgstr "대화 건너뛰기"
 
 #. I18N: This keymap toggles between opening the KIA in the Game Options tab, and closing the KIA.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -6641,7 +6636,7 @@ msgstr "KIA 데이터베이스 열기"
 #. and allows submitting a selected existing save game for deletion.
 #: engines/bladerunner/metaengine.cpp:282
 msgid "Delete Selected Saved Game"
-msgstr ""
+msgstr "선택한 저장된 게임 삭제"
 
 #. I18N: This keymap allows scrolling texts and lists upwards
 #: engines/bladerunner/metaengine.cpp:296
@@ -6656,9 +6651,8 @@ msgstr "아래로 스크롤"
 #. I18N: This keymap allows (in KIA only) for a clue to be set as private or public
 #. (only when the KIA is upgraded).
 #: engines/bladerunner/metaengine.cpp:311
-#, fuzzy
 msgid "Toggle Clue Privacy"
-msgstr "음소거 전환"
+msgstr "단서 개인 정보 보호 전환"
 
 #. I18N: This keymap opens KIA's SAVE GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -6718,22 +6712,21 @@ msgstr "게임 종료"
 
 #: engines/buried/buried.cpp:590
 msgid "Are you sure you want to quit?"
-msgstr "정말로 종료하겠습니까?"
+msgstr "정말 종료하겠습니까?"
 
 #: engines/buried/buried.cpp:600
 msgid "Your game is now Paused.  Click OK to continue."
-msgstr "게임이 일시 중지되었습니다. OK를 눌러 다시 시작합니다."
+msgstr "이제 게임이 일시 중지되었습니다.  계속하려면 확인을 클릭하세요."
 
 #. I18N: This option allows the user to skip cutscenes.
 #. I18N: This option allows the user to skip text and cutscenes.
 #: engines/buried/metaengine.cpp:40 engines/kyra/metaengine.cpp:61
 msgid "Skip support"
-msgstr "건너뛰기 지원"
+msgstr "지원 건너뛰기"
 
 #: engines/buried/metaengine.cpp:41
-#, fuzzy
 msgid "Allow cutscenes to be skipped"
-msgstr "텍스트와 컷씬을 건너뛸 수 있게 됩니다"
+msgstr "컷씬 건너뛰기 허용"
 
 #: engines/buried/saveload.cpp:80
 msgid ""
@@ -8946,7 +8939,7 @@ msgstr "새 게임"
 #: engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
-msgstr "정말로 종료하겠습니까? 저장되지 않은 진행 사항은 사라지게 됩니다."
+msgstr "정말 종료하겠습니까? 저장되지 않은 진행 사항은 사라지게 됩니다."
 
 #: engines/mohawk/myst_stacks/preview.cpp:89
 msgid "You can't leave the library in the demo."
@@ -9456,10 +9449,8 @@ msgid "Load panel keymapping"
 msgstr "패널 키맵핑 불러오기"
 
 #: engines/saga/metaengine.cpp:272
-#, fuzzy
-#| msgid "Game Options"
 msgid "Quit panel keymapping"
-msgstr "게임 옵션"
+msgstr "패널 키맵핑 종료"
 
 #: engines/saga/metaengine.cpp:273
 msgid "Converse panel keymapping"
@@ -9599,16 +9590,12 @@ msgstr "계속"
 
 #: engines/saga/metaengine.cpp:436 engines/trecision/metaengine.cpp:156
 #: engines/vcruise/metaengine.cpp:177
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit game"
 msgstr "게임 종료"
 
 #: engines/saga/metaengine.cpp:453
-#, fuzzy
-#| msgid "Cancel input"
 msgid "Cancel quit"
-msgstr "입력 취소"
+msgstr "종료 취소"
 
 #: engines/saga/metaengine.cpp:458
 msgid "Okay"
@@ -11348,10 +11335,8 @@ msgid "Toggle subtitles"
 msgstr "자막 표시 전환"
 
 #: engines/stark/metaengine.cpp:250
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit to menu"
-msgstr "게임 종료"
+msgstr "메뉴 종료"
 
 #: engines/stark/metaengine.cpp:255
 msgid "Cycle back through inventory cursor items"
