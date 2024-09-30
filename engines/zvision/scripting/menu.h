@@ -104,7 +104,7 @@ private:
 	int mouseOnItem;
 
 	bool scrolled;
-	int16 scrollPos;
+	int16 scrollPos;  //Offset of scrolling menu from its fully visible position
 
 	bool redraw;
 

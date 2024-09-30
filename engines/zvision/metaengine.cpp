@@ -100,6 +100,19 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+	{
+		GAMEOPTION_ENABLE_WIDESCREEN,
+		{
+			_s("Enable widescreen support"),
+			_s("Enlarge panoramic playfield & alter game resolution to better utilise wide aspect ratio displays"),
+			"widescreen",
+			true,
+			0,
+			0
+		}
+	},
+
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

@@ -358,12 +358,12 @@ void MenuZGI::process(uint32 deltatime) {
 		if (menuBarFlag & kMenubarItems)
 			if (!scrolled[kMenuItem]) {
 				redraw = true;
-				float scrl = 600.0 * (deltatime / 1000.0);
+				float dScrl = 600.0 * (deltatime / 1000.0);
 
-				if (scrl == 0)
-					scrl = 1.0;
+				if (dScrl == 0)
+					dScrl = 1.0;
 
-				scrollPos[kMenuItem] += (int)scrl;
+				scrollPos[kMenuItem] += (int)dScrl;
 
 				if (scrollPos[kMenuItem] >= 0) {
 					scrolled[kMenuItem] = true;
@@ -427,12 +427,12 @@ void MenuZGI::process(uint32 deltatime) {
 		if (menuBarFlag & kMenubarMagic)
 			if (!scrolled[kMenuMagic]) {
 				redraw = true;
-				float scrl = 600.0 * (deltatime / 1000.0);
+				float dScrl = 600.0 * (deltatime / 1000.0);
 
-				if (scrl == 0)
-					scrl = 1.0;
+				if (dScrl == 0)
+					dScrl = 1.0;
 
-				scrollPos[kMenuMagic] += (int)scrl;
+				scrollPos[kMenuMagic] += (int)dScrl;
 
 				if (scrollPos[kMenuMagic] >= 600) {
 					scrolled[kMenuMagic] = true;
@@ -492,12 +492,12 @@ void MenuZGI::process(uint32 deltatime) {
 	case kMenuMain:
 		if (!scrolled[kMenuMain]) {
 			redraw = true;
-			float scrl = 32.0 * 2.0 * (deltatime / 1000.0);
+			float dScrl = 32.0 * 2.0 * (deltatime / 1000.0);
 
-			if (scrl == 0)
-				scrl = 1.0;
+			if (dScrl == 0)
+				dScrl = 1.0;
 
-			scrollPos[kMenuMain] += (int)scrl;
+			scrollPos[kMenuMain] += (int)dScrl;
 
 			if (scrollPos[kMenuMain] >= 0) {
 				scrolled[kMenuMain] = true;
@@ -505,7 +505,7 @@ void MenuZGI::process(uint32 deltatime) {
 			}
 		}
 		if (redraw) {
-			_engine->getRenderManager()->blitSurfaceToMenu(menuBack[kMenuMain][0], 30, scrollPos[kMenuMain]);
+			_engine->getRenderManager()->blitSurfaceToMenu(menuBack[kMenuMain][0], 30, scrollPos[kMenuMain]); //TODO - experiment with adding colorkey here for overlaying playfield in widescreen.
 
 			if (menuBarFlag & kMenubarExit) {
 				if (mouseOnItem == kMainMenuExit)
@@ -560,6 +560,7 @@ MenuNemesis::MenuNemesis(ZVision *engine) :
 	redraw = false;
 	delay = 0;
 
+  //Buffer button images
 	char buf[24];
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 6; j++) {
@@ -567,6 +568,7 @@ MenuNemesis::MenuNemesis(ZVision *engine) :
 			_engine->getRenderManager()->readImageToSurface(buf, but[i][j], false);
 		}
 
+  //Buffer menubar image
 	_engine->getRenderManager()->readImageToSurface("bar.tga", menuBar, false);
 
 	frm = 0;
@@ -580,38 +582,42 @@ MenuNemesis::~MenuNemesis() {
 	menuBar.free();
 }
 
-static const int16 buts[4][2] = { {120 , 64}, {144, 184}, {128, 328}, {120, 456} };
+//Widths & X positions of buttons; {Save, Restore, Prefs, Exit}
+static const int16 wxButs[4][2] = { {120 , 64}, {144, 184}, {128, 328}, {120, 456} };
+//Height of menu bar & buttons
+static const int16 hMenu[2] = {32,40};  //{graphics height, trigger boundary height}
+static const int16 wxMenu[2] = {512,64}; //Width, X position
 
 void MenuNemesis::onMouseUp(const Common::Point &Pos) {
-	if (Pos.y < 40) {
+	if (Pos.y < hMenu[1]) {
 		// Exit
 		if (menuBarFlag & kMenubarExit)
-			if (Common::Rect(buts[3][1],
+			if (Common::Rect(wxButs[3][1],
 			                 scrollPos,
-			                 buts[3][0] + buts[3][1],
-			                 scrollPos + 32).contains(Pos)) {
+			                 wxButs[3][0] + wxButs[3][1],
+			                 scrollPos + hMenu[0]).contains(Pos)) {
 				_engine->ifQuit();
 				frm = 5;
 				redraw = true;
 			}
 
-		// Settings
+		// Prefs
 		if (menuBarFlag & kMenubarSettings)
-			if (Common::Rect(buts[2][1],
+			if (Common::Rect(wxButs[2][1],
 			                 scrollPos,
-			                 buts[2][0] + buts[2][1],
-			                 scrollPos + 32).contains(Pos)) {
+			                 wxButs[2][0] + wxButs[2][1],
+			                 scrollPos + hMenu[0]).contains(Pos)) {
 				_engine->getScriptManager()->changeLocation('g', 'j', 'p', 'e', 0);
 				frm = 5;
 				redraw = true;
 			}
 
-		// Load
+		// Restore
 		if (menuBarFlag & kMenubarRestore)
-			if (Common::Rect(buts[1][1],
+			if (Common::Rect(wxButs[1][1],
 			                 scrollPos,
-			                 buts[1][0] + buts[1][1],
-			                 scrollPos + 32).contains(Pos)) {
+			                 wxButs[1][0] + wxButs[1][1],
+			                 scrollPos + hMenu[0]).contains(Pos)) {
 				_engine->getScriptManager()->changeLocation('g', 'j', 'r', 'e', 0);
 				frm = 5;
 				redraw = true;
@@ -619,10 +625,10 @@ void MenuNemesis::onMouseUp(const Common::Point &Pos) {
 
 		// Save
 		if (menuBarFlag & kMenubarSave)
-			if (Common::Rect(buts[0][1],
+			if (Common::Rect(wxButs[0][1],
 			                 scrollPos,
-			                 buts[0][0] + buts[0][1],
-			                 scrollPos + 32).contains(Pos)) {
+			                 wxButs[0][0] + wxButs[0][1],
+			                 scrollPos + hMenu[0]).contains(Pos)) {
 				_engine->getScriptManager()->changeLocation('g', 'j', 's', 'e', 0);
 				frm = 5;
 				redraw = true;
@@ -631,7 +637,7 @@ void MenuNemesis::onMouseUp(const Common::Point &Pos) {
 }
 
 void MenuNemesis::onMouseMove(const Common::Point &Pos) {
-	if (Pos.y < 40) {
+	if (Pos.y < hMenu[1]) {
 
 		inMenu = true;
 
@@ -643,37 +649,37 @@ void MenuNemesis::onMouseMove(const Common::Point &Pos) {
 
 		// Exit
 		if (menuBarFlag & kMenubarExit)
-			if (Common::Rect(buts[3][1],
+			if (Common::Rect(wxButs[3][1],
 			                 scrollPos,
-			                 buts[3][0] + buts[3][1],
-			                 scrollPos + 32).contains(Pos)) {
+			                 wxButs[3][0] + wxButs[3][1],
+			                 scrollPos + hMenu[0]).contains(Pos)) {
 				mouseOnItem = kMainMenuExit;
 			}
 
-		// Settings
+		// Prefs
 		if (menuBarFlag & kMenubarSettings)
-			if (Common::Rect(buts[2][1],
+			if (Common::Rect(wxButs[2][1],
 			                 scrollPos,
-			                 buts[2][0] + buts[2][1],
-			                 scrollPos + 32).contains(Pos)) {
+			                 wxButs[2][0] + wxButs[2][1],
+			                 scrollPos + hMenu[0]).contains(Pos)) {
 				mouseOnItem = kMainMenuPrefs;
 			}
 
-		// Load
+		// Restore
 		if (menuBarFlag & kMenubarRestore)
-			if (Common::Rect(buts[1][1],
+			if (Common::Rect(wxButs[1][1],
 			                 scrollPos,
-			                 buts[1][0] + buts[1][1],
-			                 scrollPos + 32).contains(Pos)) {
+			                 wxButs[1][0] + wxButs[1][1],
+			                 scrollPos + hMenu[0]).contains(Pos)) {
 				mouseOnItem = kMainMenuLoad;
 			}
 
 		// Save
 		if (menuBarFlag & kMenubarSave)
-			if (Common::Rect(buts[0][1],
+			if (Common::Rect(wxButs[0][1],
 			                 scrollPos,
-			                 buts[0][0] + buts[0][1],
-			                 scrollPos + 32).contains(Pos)) {
+			                 wxButs[0][0] + wxButs[0][1],
+			                 scrollPos + hMenu[0]).contains(Pos)) {
 				mouseOnItem = kMainMenuSave;
 			}
 
@@ -693,12 +699,12 @@ void MenuNemesis::onMouseMove(const Common::Point &Pos) {
 void MenuNemesis::process(uint32 deltatime) {
 	if (inMenu) {
 		if (!scrolled) {
-			float scrl = 32.0 * 2.0 * (deltatime / 1000.0);
+			float dScrl = hMenu[0] * 2.0 * (deltatime / 1000.0);
 
-			if (scrl == 0)
-				scrl = 1.0;
+			if (dScrl == 0)
+				dScrl = 1.0;
 
-			scrollPos += (int)scrl;
+			scrollPos += (int)dScrl;
 			redraw = true;
 		}
 
@@ -717,44 +723,44 @@ void MenuNemesis::process(uint32 deltatime) {
 		}
 
 		if (redraw) {
-			_engine->getRenderManager()->blitSurfaceToMenu(menuBar, 64, scrollPos);
+			_engine->getRenderManager()->blitSurfaceToMenu(menuBar, wxMenu[1], scrollPos);
 
 			if (menuBarFlag & kMenubarExit)
 				if (mouseOnItem == kMainMenuExit)
-					_engine->getRenderManager()->blitSurfaceToMenu(but[3][frm], buts[3][1], scrollPos);
+					_engine->getRenderManager()->blitSurfaceToMenu(but[3][frm], wxButs[3][1], scrollPos);
 
 			if (menuBarFlag & kMenubarSettings)
 				if (mouseOnItem == kMainMenuPrefs)
-					_engine->getRenderManager()->blitSurfaceToMenu(but[2][frm], buts[2][1], scrollPos);
+					_engine->getRenderManager()->blitSurfaceToMenu(but[2][frm], wxButs[2][1], scrollPos);
 
 			if (menuBarFlag & kMenubarRestore)
 				if (mouseOnItem == kMainMenuLoad)
-					_engine->getRenderManager()->blitSurfaceToMenu(but[1][frm], buts[1][1], scrollPos);
+					_engine->getRenderManager()->blitSurfaceToMenu(but[1][frm], wxButs[1][1], scrollPos);
 
 			if (menuBarFlag & kMenubarSave)
 				if (mouseOnItem == kMainMenuSave)
-					_engine->getRenderManager()->blitSurfaceToMenu(but[0][frm], buts[0][1], scrollPos);
+					_engine->getRenderManager()->blitSurfaceToMenu(but[0][frm], wxButs[0][1], scrollPos);
 
 			redraw = false;
 		}
 	} else {
 		scrolled = false;
-		if (scrollPos > -32) {
-			float scrl = 32.0 * 2.0 * (deltatime / 1000.0);
+		if (scrollPos > -hMenu[0]) {
+			float dScrl = hMenu[0] * 2.0 * (deltatime / 1000.0);
 
-			if (scrl == 0)
-				scrl = 1.0;
+			if (dScrl == 0)
+				dScrl = 1.0;
 
-			Common::Rect cl(64, (int16)(32 + scrollPos - scrl), 64 + 512, 32 + scrollPos + 1);
+			Common::Rect cl(wxMenu[1], (int16)(hMenu[0] + scrollPos - dScrl), wxMenu[1] + wxMenu[0], hMenu[0] + scrollPos + 1);
 			_engine->getRenderManager()->clearMenuSurface(cl);
 
-			scrollPos -= (int)scrl;
+			scrollPos -= (int)dScrl;
 			redraw = true;
 		} else
-			scrollPos = -32;
+			scrollPos = -hMenu[0];
 
 		if (redraw) {
-			_engine->getRenderManager()->blitSurfaceToMenu(menuBar, 64, scrollPos);
+			_engine->getRenderManager()->blitSurfaceToMenu(menuBar, wxMenu[1], scrollPos);
 			redraw = false;
 		}
 	}
