@@ -98,6 +98,8 @@ struct FontMetrics {
 	// have individual glyphs exceeding these bounds, in both directions.
 	// Note that "top" may be negative!
 	std::pair<int, int> VExtent;
+
+	inline int ExtentHeight() const { return VExtent.second - VExtent.first; }
 };
 
 // The strictly internal font renderer interface, not to use in plugin API.

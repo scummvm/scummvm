@@ -485,19 +485,22 @@ void wouttextxy_AutoOutline(Bitmap *ds, size_t font, int32_t color, const char *
 	// WORKAROUND: Clifftop's Spritefont plugin returns a wrong font height for font 2 in Kathy Rain, which causes a partial outline
 	// for some letters. Unfortunately fixing the value on the plugin side breaks the line spacing, so let's just correct it here.
 	size_t const t_width = get_text_width(texx, font);
-	size_t const t_height = get_font_surface_height(font) + ((strcmp(_GP(game).guid, "{d6795d1c-3cfe-49ec-90a1-85c313bfccaf}") == 0) && (font == 2) ? 1 : 0);
+	const auto t_extent = get_font_surface_extent(font);
+	size_t const t_height = t_extent.second - t_extent.first + ((strcmp(_GP(game).guid, "{d6795d1c-3cfe-49ec-90a1-85c313bfccaf}") == 0) && (font == 2) ? 1 : 0);
 
 	if (t_width == 0 || t_height == 0)
 		return;
 
 	// Prepare stencils
+	size_t const t_yoff = t_extent.first;
 	Bitmap *texx_stencil, *outline_stencil;
 	alloc_font_outline_buffers(font, &texx_stencil, &outline_stencil,
 		t_width, t_height, stencil_cd);
 	texx_stencil->ClearTransparent();
 	outline_stencil->ClearTransparent();
 	// Ready text stencil
-	wouttextxy(texx_stencil, 0, 0, font, color, texx);
+	// Note we are drawing with y off, in case some font's glyphs exceed font's ascender
+	wouttextxy(texx_stencil, 0, -t_yoff, font, color, texx);
 
 	// Anti-aliased TTFs require to be alpha-blended, not blit,
 	// or the alpha values will be plain copied and final image will be broken.
@@ -511,7 +514,7 @@ void wouttextxy_AutoOutline(Bitmap *ds, size_t font, int32_t color, const char *
 
 	// move start of text so that the outline doesn't drop off the bitmap
 	xxp += thickness;
-	int const outline_y = yyp;
+	int const outline_y = yyp + t_yoff;
 	yyp += thickness;
 
 	// What we do here: first we paint text onto outline_stencil offsetting vertically;
