@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 11:13+0000\n"
+"PO-Revision-Date: 2024-09-30 11:31+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -6359,24 +6359,23 @@ msgstr "빠른 저장"
 
 #: engines/asylum/metaengine.cpp:130
 msgid "Switch to Sarah"
-msgstr "Sarah에게 전환"
+msgstr "Sarah로 전환"
 
 #: engines/asylum/metaengine.cpp:135
 msgid "Switch to Grimwall"
-msgstr "Grimwall에게 전환"
+msgstr "Grimwall로 전환"
 
 #: engines/asylum/metaengine.cpp:140
 msgid "Switch to Olmec"
-msgstr "Olmec에게 전환"
+msgstr "Olmec으로 전환"
 
 #: engines/asylum/metaengine.cpp:145
 msgid "Bring up the In-Game Menu"
-msgstr ""
+msgstr "게임 내 메뉴 불러오기"
 
 #: engines/asylum/metaengine.cpp:152
-#, fuzzy
 msgid "Open character inventory"
-msgstr "인벤토리 열기/닫기"
+msgstr "캐릭터 인벤토리 열기"
 
 #. I18N: Move Actor to upwards direction
 #: engines/asylum/metaengine.cpp:171 engines/asylum/metaengine.cpp:198
@@ -6411,37 +6410,28 @@ msgid "Move right"
 msgstr "오른쪽으로 이동"
 
 #: engines/asylum/metaengine.cpp:226
-#, fuzzy
-#| msgid "Toggle fullscreen"
 msgid "Toggle animation on/off"
-msgstr "전체화면 전환"
+msgstr "애니메이션 켜기/끄기 전환"
 
 #: engines/asylum/metaengine.cpp:232
-#, fuzzy
 msgid "Return to gameplay"
-msgstr "3D 게임에서 수직 동기화 사용"
+msgstr "게임 플레이로 돌아가기"
 
 #: engines/asylum/metaengine.cpp:238
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous resource"
-msgstr "이전 페이지"
+msgstr "이전 리소스"
 
 #: engines/asylum/metaengine.cpp:245
 msgid "Next resource"
-msgstr ""
+msgstr "다음 리소스"
 
 #: engines/asylum/metaengine.cpp:252
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous palette"
-msgstr "이전 페이지"
+msgstr "이전 팔레트"
 
 #: engines/asylum/metaengine.cpp:259
-#, fuzzy
-#| msgid "Next page"
 msgid "Next palette"
-msgstr "다음 페이지"
+msgstr "다음 팔레트"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:203
@@ -6457,25 +6447,23 @@ msgstr "무시하고 불러오기"
 
 #: engines/bagel/metaengine.cpp:41
 msgid "Wait"
-msgstr ""
+msgstr "대기"
 
 #: engines/bagel/metaengine.cpp:42
 msgid "Soldier 714 Eye Cheat"
-msgstr ""
+msgstr "Soldier 714 Eye 치트"
 
 #: engines/bagel/metaengine.cpp:83
-#, fuzzy
-#| msgid "General"
 msgid "General Keys"
-msgstr "일반"
+msgstr "일반 키"
 
 #: engines/bladerunner/bladerunner.cpp:405
 msgid "Failed to initialize resources"
-msgstr "리소스 초기화 실패"
+msgstr "리소스 초기화에 실패함"
 
 #: engines/bladerunner/bladerunner.cpp:1177
 msgid "A required game resource was not found"
-msgstr "필요한 게임 리소스를 찾을 수 없습니다"
+msgstr "필요한 게임 리소스를 찾을 수 없음"
 
 #: engines/bladerunner/bladerunner.cpp:2764
 msgid ""
@@ -6483,9 +6471,9 @@ msgid ""
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
-"경고: 이 게임은 Restored Cut Content 모드로 저장되었습니다. 하지만 현재 "
-"Original Content 모드로 플레이 중입니다. 게임을 완전히 종료하기 전까지 "
-"Restored Cut Content 모드가 활성화됩니다."
+"경고: 이 게임은 복원된 컷 콘텐츠 모드로 저장되었지만, 오리지널 콘텐츠 모드로 "
+"플레이하고 있습니다. 이 모드는 게임을 완전히 종료할 때까지 이 세션에 대해 "
+"복원된 컷 콘텐츠로 조정됩니다."
 
 #: engines/bladerunner/bladerunner.cpp:2766
 msgid ""
@@ -6493,9 +6481,9 @@ msgid ""
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
-"경고: 이 게임은 Original Content 모드로 저장되었습니다. 하지만 현재 Restored "
-"Cut Content 모드로 플레이 중입니다. 게임을 완전히 종료하기 전까지 Original "
-"Content 모드가 활성화됩니다."
+"경고: 이 게임은 오리지널 콘텐츠 모드로 저장되었지만, 복원된 잘라낸 콘텐츠 "
+"모드로 플레이하고 있습니다. 게임을 완전히 종료할 때까지 이 세션의 모드는 "
+"오리지널 콘텐츠 모드로 조정됩니다."
 
 #: engines/bladerunner/bladerunner.cpp:2768
 msgid "Continue"
@@ -6509,7 +6497,7 @@ msgstr "계속"
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
-msgstr "패치 제작자가 번역물이 ScummVM에서 구동되길 원하지 않습니다."
+msgstr "팬 번역가는 자신의 번역이 ScummVM에 통합되는 것을 원하지 않습니다."
 
 #. I18N: Blade Runner Enhanced Edition is a trademark, so please keep the capitalization
 #. for Enhanced Edition as is.
@@ -6517,7 +6505,7 @@ msgstr "패치 제작자가 번역물이 ScummVM에서 구동되길 원하지 �
 msgid ""
 "Enhanced Edition not supported. Please, use the original files which are "
 "part of the release."
-msgstr ""
+msgstr "강화판은 지원되지 않습니다. 릴리스의 일부인 원본 파일을 사용하세요."
 
 #: engines/bladerunner/metaengine.cpp:45
 msgid "Sitcom mode"
@@ -6525,30 +6513,30 @@ msgstr "시트콤 모드"
 
 #: engines/bladerunner/metaengine.cpp:46
 msgid "Game will add laughter after actor's line or narration"
-msgstr "배우의 대사 혹은 나레이션 후에 웃음소리가 추가됩니다"
+msgstr "게임은 배우의 대사나 내레이션 이후에 웃음을 더해줌"
 
 #: engines/bladerunner/metaengine.cpp:56
 msgid "Shorty mode"
-msgstr "Shorty 모드"
+msgstr "쇼티 모드"
 
 #: engines/bladerunner/metaengine.cpp:57
 msgid "Game will shrink the actors and make their voices high pitched"
-msgstr "배우를 작게 줄이고 음성 피치를 높게 만듭니다"
+msgstr "게임에서는 배우들이 작아지고 목소리가 높아짐"
 
 #: engines/bladerunner/metaengine.cpp:67
 msgid "Frame limiter high performance mode"
-msgstr "프레임 리미터 고성능 모드"
+msgstr "프레임 제한 고성능 모드"
 
 #: engines/bladerunner/metaengine.cpp:68
 msgid ""
 "This mode may result in high CPU usage! It avoids use of delayMillis() "
 "function."
-msgstr ""
-"CPU 사용량이 높아질 수 있습니다! delayMillis() 함수를 사용하지 않게 됩니다."
+msgstr "이 모드는 CPU 사용량이 높아질 수 있습니다! delayMillis() 함수 사용을 "
+"피합니다."
 
 #: engines/bladerunner/metaengine.cpp:78
 msgid "Max frames per second limit"
-msgstr "최대 초당 프레임 제한"
+msgstr "초당 최대 프레임 제한"
 
 #: engines/bladerunner/metaengine.cpp:79
 msgid ""
@@ -11629,16 +11617,12 @@ msgid "Page down in save/load menu"
 msgstr "저장/불러오기 메뉴에서 페이지 아래로"
 
 #: engines/tinsel/metaengine.cpp:352
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Go to start of save/load menu"
-msgstr "저장/불러오기 메뉴로 이동"
+msgstr "저장/불러오기 메뉴 시작으로 이동"
 
 #: engines/tinsel/metaengine.cpp:358
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Go to end of save/load menu"
-msgstr "저장/불러오기 메뉴로 이동"
+msgstr "저장/불러오기 메뉴 끝으로 이동"
 
 #: engines/tony/tony.cpp:248
 #, c-format
@@ -11658,12 +11642,12 @@ msgstr "#%d 슬롯에 빠른 저장하지 못함"
 #: engines/toon/toon.cpp:290
 #, c-format
 msgid "Saved game #%d quick loaded"
-msgstr "#%d 게임을 불러옴"
+msgstr "저장된 게임 #%d 빠르게 불러옴"
 
 #: engines/toon/toon.cpp:294
 #, c-format
 msgid "Could not quick load the saved game #%d"
-msgstr "#%d 게임을 빠른 불러오기 하지 못함"
+msgstr "저장된 게임 #%d 빠르게 불러올 수 없음"
 
 #: engines/toon/toon.cpp:1543
 #, fuzzy
@@ -12192,7 +12176,7 @@ msgstr "올바른 ultima.dat 데이터 파일을 찾지 못 했습니다"
 #: engines/ultima/nuvie/nuvie.cpp:375
 #, c-format
 msgid "loading quick save %d"
-msgstr "빠른 저장 %d번을 불러옵니다"
+msgstr "빠른 저장 %d 불러오기 중"
 
 #: engines/ultima/nuvie/nuvie.cpp:380
 #, c-format
@@ -12285,11 +12269,12 @@ msgstr "16 색 그래픽을 사용합니다."
 
 #: engines/vcruise/metaengine.cpp:97
 msgid "Preload sounds"
-msgstr ""
+msgstr "사전 불러오기 사운드"
 
 #: engines/vcruise/metaengine.cpp:98
 msgid "Preload sounds. May improve performance on slow hard drives."
-msgstr ""
+msgstr "사전 불러오기 사운드입니다. 느린 하드 드라이브에서 성능을 향상시킬 수 "
+"있습니다."
 
 #: engines/vcruise/metaengine.cpp:108
 msgid "Faster video decoder (lower quality)"
@@ -12357,10 +12342,8 @@ msgid ""
 msgstr ""
 
 #: engines/vcruise/vcruise.cpp:352
-#, fuzzy
 msgid "Failed to load save, the save data appears to be damaged."
-msgstr ""
-"저장된 게임은 최신 버전의 ScummVM으로 생성되었습니다. 로드할 수 없습니다."
+msgstr "저장 데이터를 불러오는 데 실패했습니다, 저장 데이터가 손상된 것 같습니다."
 
 #: engines/vcruise/vcruise.cpp:357
 #, fuzzy
@@ -13071,13 +13054,12 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
-"게임을 플레이하기 전에 필요한 글꼴을 ScummVM의 추가 디렉토리 또는 게임 디렉토"
-"리에 복사해야 합니다. Windows에서는 Windows 글꼴 디렉토리에 있는 Times New "
-"Roman, Century Schoolbook, Garamond, Courier New 및 Arial의 글꼴 파일이 필요"
-"합니다. 또는 Liberation Fonts 또는 GNU FreeFont 패키지를 다운로드할 수 있습니"
-"다. 선택한 글꼴 패키지의 모든 글꼴이 필요할 수 있습니다. 예: LiberationMono, "
-"LiberationSans 및 LiberationSerif 또는 FreeMono, FreeSans 및 FreeSerif가 각"
-"각 필요함."
+"이 게임을 하기 전에 필요한 글꼴을 ScummVM의 extras 디렉토리나 게임 "
+"디렉토리에 복사해야 합니다. 윈도우즈에서는 윈도우즈 글꼴 디렉토리에서 Times "
+"New Roman, Century Schoolbook, Garamond, Courier New, Arial 등의 글꼴 파일이 "
+"필요합니다. 또는 Liberation Fonts나 GNU FreeFont 패키지를 다운로드할 수 "
+"있습니다. 선택한 글꼴 패키지의 모든 글꼴, 즉 LiberationMono, LiberationSans, "
+"LiberationSerif 또는 FreeMono, FreeSans, FreeSerif가 필요합니다."
 
 #~ msgid "Enable audio CD"
 #~ msgstr "오디오 CD 사용"
