@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 10:58+0000\n"
+"PO-Revision-Date: 2024-09-30 11:01+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -9341,12 +9341,12 @@ msgid ""
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
-"변환이 필요한 이전 Nippon Safes 세이브 파일을 사용하는 것을 감지했습니다.\n"
-"이전 세이브 파일은 더 이상 지원되지 않으며, 변환 작업을 거쳐야 불러올 수 있습"
-"니다.\n"
+"ScummVM에서 이름을 바꿔야 하는 Nippon Safes에 대한 오래된 저장된 게임이 "
+"있음을 발견했습니다.\n"
+"이전 이름은 더 이상 지원되지 않으므로, 변환하지 않으면 게임을 불러올 수 "
+"없습니다.\n"
 "\n"
-"확인 버튼을 눌러 변환을 진행하십시오. 그렇지 않으면 다음 실행시 현재 창이 다"
-"시 표시됩니다.\n"
+"지금 변환하려면 확인을 누르세요. 그렇지 않으면 다음에 묻습니다.\n"
 
 #: engines/parallaction/saveload.cpp:315
 msgid "ScummVM successfully converted all your saved games."
@@ -9464,10 +9464,8 @@ msgid "Save panel keymapping"
 msgstr "게임 옵션"
 
 #: engines/saga/metaengine.cpp:271
-#, fuzzy
-#| msgid "Game Options"
 msgid "Load panel keymapping"
-msgstr "게임 옵션"
+msgstr "패널 키맵핑 불러오기"
 
 #: engines/saga/metaengine.cpp:272
 #, fuzzy
@@ -9629,10 +9627,8 @@ msgid "Okay"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:463
-#, fuzzy
-#| msgid "Cancel download"
 msgid "Cancel load"
-msgstr "다운로드 취소"
+msgstr "불러오기 취소"
 
 #: engines/saga/metaengine.cpp:473
 #, fuzzy
@@ -9653,7 +9649,7 @@ msgstr ""
 
 #: engines/saga/saga.cpp:404
 msgid "Error loading game resources."
-msgstr "게임 리소스 불러오기 오류."
+msgstr "게임 리소스를 불러오는 중에 오류가 발생했습니다."
 
 #: engines/sci/detection_options.h:33
 msgid "Skip EGA dithering pass (full color backgrounds)"
@@ -9828,7 +9824,7 @@ msgstr ""
 
 #: engines/sci/engine/savegame.cpp:1455
 msgid "The format of this saved game is obsolete, unable to load it"
-msgstr "게임 저장 방식이 오래되어 로드할 수 없습니다"
+msgstr "이 저장된 게임의 형식은 오래되어서 불러올 수 없음"
 
 #: engines/sci/engine/savegame.cpp:1457
 #, c-format
@@ -9839,7 +9835,7 @@ msgstr "저장된 게임 버전 : %d, 최대 지원 가능 : %0d"
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
-msgstr "이 저장 파일은 다른 버전의 게임으로부터 생성되어 로드할 수 없습니다"
+msgstr "이 저장된 게임은 다른 버전의 게임으로 생성되었으므로 불러올 수 없음"
 
 #: engines/sci/graphics/video32.cpp:68
 #, c-format
