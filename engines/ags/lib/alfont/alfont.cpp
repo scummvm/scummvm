@@ -500,12 +500,16 @@ static void _alfont_new_cache_glyph(ALFONT_FONT *f) {
 	}
 }
 
-static void _alfont_calculate_max_cbox(ALFONT_FONT *f) {
+static void _alfont_calculate_max_cbox(ALFONT_FONT *f, int max_glyphs) {
 	int i;
 	int max_box_top = 0, min_box_bottom = 0;
 	FT_Glyph glyph;
 	FT_BBox box;
-	for (i = 0; i < f->face->num_glyphs; i++) {
+
+	if (max_glyphs <= 0)
+		max_glyphs = f->face->num_glyphs;
+
+	for (i = 0; (i < f->face->num_glyphs) && (max_glyphs > 0); i++, max_glyphs--) {
 		// CHECKME: is FT_LOAD_DEFAULT optimal here? there are various load modes
 		FT_Load_Glyph(f->face, i, FT_LOAD_DEFAULT);
 		FT_Get_Glyph(f->face->glyph, &glyph);
@@ -597,7 +601,7 @@ int alfont_set_font_size_ex(ALFONT_FONT *f, int h, int flags) {
 
 		/* Precalculate actual glyphs vertical extent */
 		if ((flags & ALFONT_FLG_PRECALC_MAX_CBOX) != 0) {
-			_alfont_calculate_max_cbox(f);
+			_alfont_calculate_max_cbox(f, 128);
 		}
 		/* AGS COMPAT HACK: set ascender to the formal font height */
 		if ((flags & ALFONT_FLG_ASCENDER_EQ_HEIGHT) != 0) {
