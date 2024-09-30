@@ -852,6 +852,9 @@ Bitmap *create_savegame_screenshot() {
 }
 
 void save_game(int slotn, const char *descript) {
+
+	VALIDATE_STRING(descript);
+
 	// dont allow save in rep_exec_always, because we dont save
 	// the state of blocked scripts
 	can_run_delayed_command();
@@ -862,12 +865,11 @@ void save_game(int slotn, const char *descript) {
 		return;
 	}
 
-	if (_G(platform)->GetDiskFreeSpaceMB() < 2) {
+	if (_G(platform)->GetDiskFreeSpaceMB(get_save_game_directory()) < 2) {
 		Display("ERROR: There is not enough disk space free to save the game. Clear some disk space and try again.");
 		return;
 	}
 
-	VALIDATE_STRING(descript);
 	String nametouse = get_save_game_path(slotn);
 	std::unique_ptr<Bitmap> screenShot;
 
