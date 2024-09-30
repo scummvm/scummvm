@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 09:09+0000\n"
+"PO-Revision-Date: 2024-09-30 09:53+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -5634,7 +5634,7 @@ msgstr "마이너스 버튼"
 #: backends/platform/sdl/switch/switch.cpp:42
 #: backends/platform/sdl/switch/switch.cpp:43
 msgid "Plus"
-msgstr "플러스 버튼"
+msgstr "+ 버튼"
 
 #: backends/platform/wii/options.cpp:50
 msgid "Video"
@@ -6120,11 +6120,11 @@ msgstr "컷신 나가기"
 
 #: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:198
 msgid "Music volume down"
-msgstr "음악 볼륨 낮추기"
+msgstr "음악 볼륨 줄임"
 
 #: engines/agos/metaengine.cpp:262 engines/vcruise/metaengine.cpp:203
 msgid "Music volume up"
-msgstr "음악 볼륨 높이기"
+msgstr "음악 볼륨 높임"
 
 #: engines/agos/metaengine.cpp:268 engines/vcruise/metaengine.cpp:188
 msgid "Toggle music on/off"
@@ -6143,13 +6143,11 @@ msgstr "빠른 모드 켜기/끄기 전환"
 #: engines/wintermute/keymapper_tables.h:2116
 #: engines/wintermute/keymapper_tables.h:2216
 msgid "Walk forward"
-msgstr "앞으로 걷기"
+msgstr "앞으로 가기"
 
 #: engines/agos/metaengine.cpp:296
-#, fuzzy
-#| msgid "Run backward"
 msgid "Turn backward"
-msgstr "뒤로 달리기"
+msgstr "뒤로 돌아가기"
 
 #: engines/agos/metaengine.cpp:302 engines/mohawk/riven.cpp:901
 #: engines/wintermute/keymapper_tables.h:161
