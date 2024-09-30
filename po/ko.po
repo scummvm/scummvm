@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 01:36+0000\n"
+"PO-Revision-Date: 2024-09-30 02:49+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -2901,6 +2901,23 @@ msgid ""
 "\n"
 "Repeat steps 1 and 6 for each game."
 msgstr ""
+"안드로이드용 ScummVM의 이 새 버전에서는 최신 버전의 안드로이드 운영 체제를 "
+"지원하기 위해 파일 접속 시스템에 상당한 변경이 이루어졌습니다.\n"
+"기존에 추가한 게임이나 커스텀 경로가 더 이상 작동하지 않는 경우 해당 경로 "
+"편집:\n"
+"  1. 런처에서 **게임 옵션 > 경로**로 이동합니다. 필요에 따라 **게임 경로** "
+"또는 **추가 경로**를 선택합니다. \n"
+"  2. ScummVM 파일 브라우저에서 **<새 폴더 추가>** 옵션이 있는 루트 폴더에 "
+"도달할 때까지 **위로 이동**을 선택합니다.\n"
+"  3. **<새 폴더 추가>**를 두 번 탭합니다. 장치의 파일 브라우저에서, 모든 "
+"게임 폴더가 들어 있는 폴더로 이동합니다. 예를 들어, **SD 카드 > "
+"ScummVMgames** \n"
+"  4. **이 폴더 사용**을 선택합니다. \n"
+"  5. **허용**을 선택하여 ScummVM에 폴더에 대한 접속 권한을 부여합니다. \n"
+"  6. ScummVM 파일 브라우저에서, 두 번 탭하여 추가한 폴더를 탐색. 게임 파일이 "
+"있는 폴더를 선택한 다음 **선택**을 탭합니다. \n"
+"\n"
+"각 게임에 대해 1~6 단계를 반복합니다."
 
 #: base/main.cpp:652 base/main.cpp:677
 #: engines/director/lingo/lingo-builtins.cpp:1374
@@ -2913,7 +2930,7 @@ msgstr "확인"
 #. I18N: A button caption to dismiss a message and read it later
 #: base/main.cpp:654 base/main.cpp:679
 msgid "Read Later"
-msgstr ""
+msgstr "나중에 읽기"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:661
@@ -2936,52 +2953,66 @@ msgid ""
 "**Choose**.\n"
 "Repeat steps 1 and 6 for each game."
 msgstr ""
+"안드로이드용 ScummVM의 이 새 버전에서는 최신 버전의 안드로이드 운영 체제를 "
+"지원할 수 있도록 파일 접속 시스템에 상당한 변경이 이루어졌습니다.\n"
+"게임을 추가하려면:\n"
+"\n"
+"  1.런처에서 **게임 추가...**를 선택합니다. \n"
+"  2. ScummVM 파일 브라우저에서 **<새 폴더 추가>** 옵션이 있는 루트 폴더에 "
+"도달할 때까지 **위로 이동**을 선택합니다.\n"
+"  3. **<새 폴더 추가>**를 두 번 탭합니다. 장치의 파일 브라우저에서 모든 게임 "
+"폴더가 있는 폴더로 이동합니다. 예를 들어, **SD 카드 > ScummVMgames** \n"
+"  4. **이 폴더 사용**을 선택합니다. \n"
+"  5. **허용**을 선택하여 ScummVM에 폴더에 대한 액세스 권한을 부여합니다. \n"
+"  6. ScummVM 파일 브라우저에서 두 번 탭하여 추가한 폴더를 탐색합니다. 게임 "
+"파일이 들어 있는 하위 폴더를 선택한 다음 **선택**을 탭합니다.\n"
+"각 게임마다 1~ 6 단계를 반복합니다."
 
 #: base/main.cpp:822
 msgid "Error running game:"
-msgstr "게임 실행 에러:"
+msgstr "게임 실행 중 오류:"
 
 #: base/main.cpp:871
 msgid "Could not find any engine capable of running the selected game"
-msgstr "선택된 게임을 실행할 수 있는 엔진을 찾지 못 했습니다"
+msgstr "선택한 게임을 실행할 수 있는 엔진을 찾을 수 없음"
 
 #: common/engine_data.cpp:279 engines/ultima/shared/engine/data_archive.cpp:88
 #, c-format
 msgid "Could not locate engine data %s"
-msgstr "엔진 데이터 %s 을(를) 찾을 수 없습니다"
+msgstr "엔진 데이터 %s을(를) 찾을 수 없음"
 
 #: common/engine_data.cpp:297 engines/ultima/shared/engine/data_archive.cpp:106
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
-msgstr "구 엔진 데이터 입니다. 필요한 버전: %d.%d, 실제 버전: %d.%d"
+msgstr "오래된 엔진 데이터 입니다. 필요한 버전: %d.%d, 실제 버전: %d.%d"
 
 #: common/error.cpp:37
 msgid "No error"
-msgstr "에러 없음"
+msgstr "오류 없음"
 
 #: common/error.cpp:39
 msgid "Game data not found"
-msgstr "게임 데이터를 찾을 수 없습니다"
+msgstr "게임 데이터를 찾을 수 없음"
 
 #: common/error.cpp:41
 msgid "Game id not supported"
-msgstr "게임 ID가 지원되지 않습니다"
+msgstr "게임 ID가 지원되지 않음"
 
 #: common/error.cpp:43
 msgid "Unsupported color mode"
-msgstr "지원되지 않는 컬러 모드"
+msgstr "지원되지 않는 색상 모드"
 
 #: common/error.cpp:45
 msgid "Audio device initialization failed"
-msgstr "오디오 장치 초기화 실패"
+msgstr "오디오 장치 초기화에 실패함"
 
 #: common/error.cpp:48
 msgid "Read permission denied"
-msgstr "읽기 권한이 없음"
+msgstr "읽기 권한이 거부되었음"
 
 #: common/error.cpp:50
 msgid "Write permission denied"
-msgstr "쓰기 권한이 없음"
+msgstr "쓰기 권한이 거부되었음"
 
 #: common/error.cpp:53
 msgid "Path does not exist"
@@ -2997,15 +3028,15 @@ msgstr "경로가 파일이 아님"
 
 #: common/error.cpp:60
 msgid "Cannot create file"
-msgstr "파일 생성 실패"
+msgstr "파일을 만들 수 없음"
 
 #: common/error.cpp:62
 msgid "Reading data failed"
-msgstr "데이터 읽기 실패"
+msgstr "데이터 읽기에 실패함"
 
 #: common/error.cpp:64
 msgid "Writing data failed"
-msgstr "데이터 쓰기 실패"
+msgstr "데이터 쓰기에 실패함"
 
 #: common/error.cpp:67
 msgid "Could not find suitable engine plugin"
@@ -3013,7 +3044,7 @@ msgstr "적합한 엔진 플러그인을 찾을 수 없음"
 
 #: common/error.cpp:69
 msgid "Engine plugin does not support saved games"
-msgstr "이 엔진 플러그인이 세이브 파일을 지원하지 않음"
+msgstr "엔진 플러그인은 저장된 게임을 지원하지 않음"
 
 #: common/error.cpp:72
 msgid "User canceled"
@@ -3021,50 +3052,48 @@ msgstr "사용자가 취소함"
 
 #: common/error.cpp:76
 msgid "Unknown error"
-msgstr "알 수 없는 에러"
+msgstr "알 수 없는 오류"
 
 #. I18N: Hercules is a graphics card name, Green is color
 #: common/rendermode.cpp:34
 msgid "Hercules Green"
-msgstr "Hercules Green"
+msgstr "허큘리스 녹색"
 
 #. I18N: Hercules is a graphics card name, Amber is color
 #: common/rendermode.cpp:36
 msgid "Hercules Amber"
-msgstr "Hercules Amber"
+msgstr "허큘리스 등색"
 
 #: common/rendermode.cpp:46
 msgid "PC-9821 (256 Colors)"
-msgstr "PC-9821 (256색)"
+msgstr "PC-9821 (256 색)"
 
 #: common/rendermode.cpp:47
 msgid "PC-9801 (16 Colors)"
-msgstr "PC-9801 (16색)"
+msgstr "PC-9801 (16 색)"
 
 #: common/rendermode.cpp:48
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "PC-9801 (8 Colors)"
-msgstr "PC-9801 (16색)"
+msgstr "PC-9801 (8 색)"
 
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:53
 msgid "Macintosh b/w"
-msgstr "Macintosh 흑백"
+msgstr "매킨토시 흑백"
 
 #: common/rendermode.cpp:57
 msgid "VGA Grey Scale"
-msgstr ""
+msgstr "VGA 회색 스케일"
 
 #: common/rendermode.cpp:92
 msgctxt "lowres"
 msgid "Hercules Green"
-msgstr "Hercules Green"
+msgstr "허큘리스 녹색"
 
 #: common/rendermode.cpp:93
 msgctxt "lowres"
 msgid "Hercules Amber"
-msgstr "Hercules Amber"
+msgstr "허큘리스 등색"
 
 #: common/updates.cpp:57
 msgid "Daily"
@@ -3115,39 +3144,35 @@ msgstr "TB"
 
 #: common/formats/formatinfo.cpp:102
 msgid "Bitmap Image File"
-msgstr ""
+msgstr "비트맵 이미지 파일"
 
 #: common/formats/formatinfo.cpp:104
 msgid "PNG Image File"
-msgstr ""
+msgstr "PNG 이미지 파일"
 
 #: common/formats/formatinfo.cpp:106
 msgid "JPEG Image File"
-msgstr ""
+msgstr "JPEG 이미지 파일"
 
 #: common/formats/formatinfo.cpp:108
 msgid "QuickDraw PICT Image File"
-msgstr ""
+msgstr "퀵드로우 PICT 이미지 파일"
 
 #: common/formats/formatinfo.cpp:111
 msgid "Data File"
-msgstr ""
+msgstr "데이터 파일"
 
 #: dists/android.strings.xml.cpp:30
-#, fuzzy
-#| msgid "Quit ScummVM"
 msgid "ScummVM"
-msgstr "ScummVM 종료"
+msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
-#, fuzzy
-#| msgid "Quit ScummVM"
 msgid "ScummVM (debug)"
-msgstr "ScummVM 종료"
+msgstr "ScummVM (디버그)"
 
 #: dists/android.strings.xml.cpp:32
 msgid "Graphic adventure game engine"
-msgstr ""
+msgstr "그래픽 고급 게임 엔진"
 
 #: dists/android.strings.xml.cpp:34
 #: backends/events/default/default-events.cpp:217
@@ -3159,25 +3184,23 @@ msgstr ""
 #: engines/tinsel/metaengine.cpp:334 engines/zvision/metaengine.cpp:272
 #: engines/zvision/metaengine.cpp:290
 msgid "Quit"
-msgstr "종료"
+msgstr "나가기"
 
 #: dists/android.strings.xml.cpp:35
-#, fuzzy
-#| msgid "No error"
 msgid "Log File Error"
-msgstr "에러 없음"
+msgstr "로그 파일 오류"
 
 #: dists/android.strings.xml.cpp:36
 msgid "Unable to read ScummVM log file or create a new one!"
-msgstr ""
+msgstr "ScummVM 로그 파일을 읽을 수 없거나 새 로그 파일을 만들 수 없습니다!"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Config File Error"
-msgstr ""
+msgstr "구성 파일 오류"
 
 #: dists/android.strings.xml.cpp:38
 msgid "Unable to read ScummVM config file or create a new one!"
-msgstr ""
+msgstr "ScummVM 구성 파일을 읽거나 새 파일을 만들 수 없습니다!"
 
 #: dists/android.strings.xml.cpp:39
 msgid "Save Path Error"
@@ -3185,7 +3208,7 @@ msgstr "저장 경로 오류"
 
 #: dists/android.strings.xml.cpp:40
 msgid "Unable to create or access default save path!"
-msgstr ""
+msgstr "기본 저장 경로를 만들거나 접근할 수 없습니다!"
 
 #: dists/android.strings.xml.cpp:41
 msgid "Icons Path Error"
@@ -3193,106 +3216,95 @@ msgstr "아이콘 경로 오류"
 
 #: dists/android.strings.xml.cpp:42
 msgid "Unable to create or access default icons and shaders path!"
-msgstr ""
+msgstr "기본 아이콘과 셰이더 경로를 만들거나 접근할 수 없습니다!"
 
 #: dists/android.strings.xml.cpp:43
 msgid ""
 "Unable to access the globally set save path! Please revert to default from "
 "ScummVM Options"
-msgstr ""
+msgstr "글로벌적으로 설정된 저장 경로에 접속할 수 없습니다! ScummVM 옵션에서 "
+"기본값으로 되돌려주세요"
 
 #: dists/android.strings.xml.cpp:44
-#, fuzzy
-#| msgid "Virtual keyboard"
 msgid "Toggle virtual keyboard"
-msgstr "가상 키보드"
+msgstr "가상 키보드 전환"
 
 #: dists/android.strings.xml.cpp:45 engines/scumm/help.cpp:82
 #: engines/scumm/help.cpp:86 engines/scumm/help.cpp:88
 #: engines/scumm/help.cpp:102 engines/scumm/help.cpp:103
 #: engines/scumm/help.cpp:104
 msgid "Alt"
-msgstr "Alt"
+msgstr "알트"
 
 #: dists/android.strings.xml.cpp:48
 #: backends/platform/libretro/src/libretro-options-widget.cpp:222
 msgid "Done"
-msgstr ""
+msgstr "완료"
 
 #: dists/android.strings.xml.cpp:49
 msgid "Mode change"
-msgstr ""
+msgstr "모드 변경"
 
 #: dists/android.strings.xml.cpp:50
-#, fuzzy
-#| msgid "Shift key"
 msgid "Shift"
-msgstr "시프트 키"
+msgstr "시프트"
 
 #: dists/android.strings.xml.cpp:51 engines/dragons/metaengine.cpp:153
 #: engines/scumm/help.cpp:88 engines/scumm/help.cpp:91
 msgid "Enter"
-msgstr "Enter"
+msgstr "엔터"
 
 #: dists/android.strings.xml.cpp:52
-#, fuzzy
-#| msgid "Close"
 msgid "Close popup"
-msgstr "닫기"
+msgstr "팝업 닫기"
 
 #: dists/android.strings.xml.cpp:53
 msgid ""
 "Please select the *root* of your external (physical) SD card. This is "
 "required for ScummVM to access this path: "
-msgstr ""
+msgstr "외부(물리적) SD 카드의 *루트*를 선택하세요. 이는 ScummVM이 이 경로에 "
+"접속하는 데 필요합니다: "
 
 #: dists/android.strings.xml.cpp:54
 msgid "Storage Access Framework Permissions for ScummVM were revoked!"
-msgstr ""
+msgstr "ScummVM에 대한 저장소 접속 프레임워크 권한이 취소되었습니다!"
 
 #: dists/android.strings.xml.cpp:55
-#, fuzzy
-#| msgid "the video mode could not be changed"
 msgid "Configuration file could not be parsed"
-msgstr "비디오 모드를 변경할 수 없음"
+msgstr "구성 파일을 구문 분석할 수 없음"
 
 #: dists/android.strings.xml.cpp:56
-#, fuzzy
 msgid "Run a game"
-msgstr "3D 게임에서 수직 동기화 사용"
+msgstr "게임 실행"
 
 #: dists/android.strings.xml.cpp:57
-#, fuzzy
-#| msgid "Search in game list"
 msgid "Search a game"
-msgstr "게임 리스트에서 검색"
+msgstr "게임 검색"
 
 #: dists/android.strings.xml.cpp:58
 msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
 msgstr ""
+"(아직) 게임 없음\n"
+"ScummVM을 열고 여기에 게임을 추가하세요."
 
 #: dists/android.strings.xml.cpp:59
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game icon"
-msgstr "게임 옵션"
+msgstr "게임 아이콘"
 
 #: dists/android.strings.xml.cpp:60
-#, fuzzy
-#| msgid "Show object labels"
 msgid "Shortcut label"
-msgstr "오브젝트 이름 표시"
+msgstr "바로가기 레이블"
 
 #: dists/android.strings.xml.cpp:61
 msgid "Shortcut icon"
-msgstr ""
+msgstr "바로가기 아이콘"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:32
 msgid "Interpreter for numerous adventure games and role-playing games"
-msgstr "여러 어드벤처 게임과 RPG를 위한 인터프리터"
+msgstr "다양한 어드벤처 게임과 롤플레잉 게임 통역기"
 
 #. I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:37
@@ -3303,10 +3315,10 @@ msgid ""
 "replaces the executables shipped with the game, allowing you to play them on "
 "systems for which they were never designed!"
 msgstr ""
-"ScummVM은 데이터 파일을 가진 경우 다양한 고전 그래픽 포인트 앤 클릭 어드벤처 "
-"게임과 롤플레잉 게임을 실행할 수 있게 하는 프로그램입니다. ScummVM은 게임과 "
-"함께 제공된 실행파일을 대체하기 때문에 원래 게임이 실행되도록 설계되지 않은 "
-"시스템에서도 실행할 수 있습니다!"
+"ScummVM은 다양한 클래식 그래픽 포인트 앤 클릭 어드벤처 게임과 롤플레잉 "
+"게임을 실행할 수 있는 프로그램으로, 해당 데이터 파일이 이미 있는 경우에 "
+"한합니다. 이 프로그램의 똑똑한 점은 ScummVM이 게임과 함께 제공된 실행 파일을 "
+"대체하여 원래 설계되지 않은 시스템에서도 플레이할 수 있다는 것입니다!"
 
 #. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:45
@@ -3316,9 +3328,10 @@ msgid ""
 "like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
 "Studios."
 msgstr ""
-"현재 ScummVM은 합계 4000개를 넘는 수많은 어드벤처 게임을 지원합니다. "
-"LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc., 그리고 Westwood "
-"Studios 같은 전설적인 스튜디오에서 발표된 많은 고전을 지원합니다."
+"현재 ScummVM은 총 4,000개가 넘는 게임으로 구성된 방대한 어드벤처 "
+"라이브러리를 지원합니다. 루카스아츠, 시에라 온라인, 레볼루션 소프트웨어, "
+"사이언, 웨스트우드 스튜디오스와 같은 전설적인 스튜디오에서 발매한 많은 고전 "
+"게임을 지원합니다."
 
 #. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:51
@@ -3327,22 +3340,21 @@ msgid ""
 "Myst, Blade Runner and countless other games you will find some really "
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
-"Monkey Island 시리즈, Broken Sword, Myst, Blade Runner와 같이 획기적인 타이틀"
-"을 비롯해, 잘 알려지지 않은 어드벤처 게임과 진정한 숨겨진 보석을 찾아볼 수 있"
-"습니다."
+"원숭이 섬 시리즈, 브로큰 소드, 미스트, 블레이드 런너 등 획기적인 타이틀과 그 "
+"외 수많은 게임 외에도 잘 알려지지 않은 모험과 탐험할 만한 숨겨진 보석을 찾을 "
+"수 있습니다."
 
 #: engines/achievements.cpp:242
 msgid "Achievement unlocked!"
-msgstr "업적 달성!"
+msgstr "도전과제가 잠금 해제되었습니다!"
 
 #: engines/advancedDetector.cpp:237
 msgid "Illegitimate game copy detected. We provide no support in such cases"
-msgstr ""
-"불법복제된 게임이 감지되었습니다. 이 경우 어떤 지원도 제공하지 않습니다"
+msgstr "불법복제된 게임이 감지되었습니다. 이 경우 어떤 지원도 제공하지 않음"
 
 #: engines/dialogs.cpp:68
 msgid "~R~esume"
-msgstr "계속(~R~)"
+msgstr "재개(~R~)"
 
 #: engines/dialogs.cpp:70
 msgid "~L~oad"
@@ -3423,8 +3435,8 @@ msgid ""
 "the README for basic information, and for instructions on how to obtain "
 "further assistance."
 msgstr ""
-"이 게임은 현재 게임 내 도움말을 제공하지 않습니다. 기본적인 정보와 추가 지원"
-"을 얻기 위한 방법은 README 파일에서 참조해 주세요."
+"죄송합니다, 이 엔진은 현재 게임 내 도움말을 제공하지 않습니다. 기본 정보와 "
+"추가 지원을 받는 방법에 대한 지침은 README를 참조하세요."
 
 #: engines/dialogs.cpp:193 engines/ags/ags.cpp:349
 #: engines/glk/magnetic/magnetic.cpp:197 engines/scumm/saveload.cpp:167
@@ -3433,16 +3445,15 @@ msgstr "이 게임은 메뉴에서 저장을 지원하지 않습니다. 게임 �
 
 #: engines/dialogs.cpp:202
 msgid "This game cannot be saved at this time. Please try again later"
-msgstr ""
+msgstr "이 게임은 현재 저장할 수 없습니다. 나중에 다시 시도"
 
 #: engines/dialogs.cpp:221 engines/pegasus/pegasus.cpp:418
 #, c-format
 msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
-msgstr ""
-"게임 (%s)을 저장하는데 실패했습니다! 기본적인 정보와 추가 지원을 얻기 위한 방"
-"법은 README 파일에서 참조해 주세요."
+msgstr "(%s) 게임 저장에 실패했습니다! 기본 정보와 추가 지원을 받는 방법에 대한 "
+"지침은 README를 참조하세요."
 
 #: engines/dialogs.cpp:234 engines/ags/ags.cpp:334
 #: engines/glk/magnetic/magnetic.cpp:187 engines/scumm/saveload.cpp:99
@@ -3451,7 +3462,7 @@ msgstr "이 게임은 메뉴에서 로딩을 지원하지 않습니다. 게임 �
 
 #: engines/dialogs.cpp:243
 msgid "This game cannot be loaded at this time. Please try again later"
-msgstr ""
+msgstr "이 게임은 현재 로드할 수 없습니다. 나중에 다시 시도"
 
 #: engines/dialogs.cpp:392
 msgid "~O~K"
@@ -3464,25 +3475,25 @@ msgstr "취소(~C~)"
 #: engines/engine.cpp:383
 #, c-format
 msgid "Could not switch to resolution '%dx%d'."
-msgstr "해상도를 '%dx%d'로 변경할 수 없습니다."
+msgstr "'%dx%d' 해상도로 전환할 수 없습니다."
 
 #: engines/engine.cpp:392
 msgid "Could not initialize color format."
-msgstr "컬러 포맷을 초기화할 수 없습니다."
+msgstr "색상 형식을 초기화할 수 없습니다."
 
 #: engines/engine.cpp:401
 #, c-format
 msgid "Could not switch to video mode '%s'."
-msgstr "비디오 모드 '%s'로 전환할 수 없습니다."
+msgstr "'%s' 비디오 모드로 전환할 수 없습니다."
 
 #: engines/engine.cpp:409
 #, c-format
 msgid "Could not switch to stretch mode '%s'."
-msgstr "확대 모드 '%s'로 전환할 수 없습니다."
+msgstr "'%s' 늘리기 모드로 전환할 수 없습니다."
 
 #: engines/engine.cpp:416
 msgid "Could not apply aspect ratio setting."
-msgstr "종횡비 설정을 적용할 수 없습니다."
+msgstr "화면비 설정을 적용할 수 없습니다."
 
 #: engines/engine.cpp:421
 msgid "Could not apply fullscreen setting."
@@ -3508,7 +3519,7 @@ msgstr ""
 "보입니다. 이 경우 문제가 발생할 수 있으므로,\n"
 "게임 데이터 파일을 하드 디스크에 저장하는\n"
 "것을 권장합니다.\n"
-"문서(CD Audio)에서 추가 정보를 확인해 주세요."
+"문서(CD 오디오)에서 추가 정보를 확인해 주세요."
 
 #: engines/engine.cpp:586
 msgid ""
@@ -3518,16 +3529,15 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the documentation (CD audio) for details."
 msgstr ""
-"현재 게임은 CD에 오디오 트랙을 포함합니다.\n"
-"게임의 음악을 듣기 위해서는 적절한 \n"
-"CD 오디오 추출 도구를 사용해 디스크에서 \n"
-"트랙을 추출해야 합니다.\n"
-"문서(CD 오디오)에서 추가 정보를 확인해 주세요."
+"이 게임의 CD에는 오디오 트랙이 있습니다.\n"
+"게임의 음악을 듣기 위해서는 적절한 CD 오디오\n"
+"추출 도구를 사용하여 CD에서 이러한 트랙을\n"
+"추출해야 합니다.\n"
+"자세한 내용은 설명서(CD 오디오)를 참조하세요."
 
 #: engines/engine.cpp:614
-#, fuzzy
 msgid "Skip autosave"
-msgstr "비어있는 자동 저장"
+msgstr "자동 저장 건너뛰기"
 
 #: engines/engine.cpp:616
 #, c-format
@@ -3541,11 +3551,11 @@ msgstr ""
 "경고: 자동 저장 슬롯에는 %S라는 이름의 저장된 게임이 포함되어 있으며 자동 "
 "저장이 보류 중입니다.\n"
 "이 저장된 게임을 새 슬롯으로 옮기거나 더 이상 필요하지 않으면 삭제하세요.\n"
-"또는 자동 저장을 건너뛸 수 있습니다 (5분 후에 다시 묻습니다)."
+"그 대신에, 자동 저장을 건너뛸 수 있습니다 (5 분 후에 다시 메세지 표시)."
 
 #: engines/engine.cpp:626
 msgid "ERROR: Could not copy the savegame to a new slot"
-msgstr "오류: 저장 데이터를 새로운 슬롯으로 복사하지 못했습니다"
+msgstr "오류: 저장 게임을 새 슬롯에 복사할 수 없음"
 
 #: engines/engine.cpp:653 engines/savestate.cpp:98
 #: backends/platform/ios7/ios7_osys_main.cpp:294 engines/mm/xeen/saves.cpp:293
@@ -3555,16 +3565,15 @@ msgstr "자동 저장"
 
 #: engines/engine.cpp:661
 msgid "Error occurred making autosave"
-msgstr "자동 저장시 에러가 발생함"
+msgstr "자동 저장을 하는 중 오류가 발생함"
 
 #: engines/engine.cpp:736
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
-msgstr ""
-"세이브 파일 (%s)을 불러오는데 실패했습니다! 기본적인 정보와 추가 지원을 얻기 "
-"위한 방법은 README 파일에서 참조해 주세요."
+msgstr "저장된 게임 (%s)을 로드하는 데 실패했습니다! 기본 정보와 추가 지원을 받는 "
+"방법에 대한 지침은 README를 참조하세요."
 
 #: engines/engine.cpp:760
 msgid "WARNING: "
@@ -3586,7 +3595,7 @@ msgstr ""
 
 #: engines/engine.cpp:764 engines/wintermute/wintermute.cpp:182
 msgid "Start anyway"
-msgstr "확인"
+msgstr "무시하고 시작"
 
 #: engines/engine.cpp:782
 msgid "This game is not supported."
@@ -3597,16 +3606,16 @@ msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
 msgstr ""
-"이 게임은 다음 이유로 지원되지 않습니다:\n"
+"이 게임은 다음과 같은 이유로 지원되지 않습니다:\n"
 "\n"
 
 #: engines/engine.cpp:928
 msgid "Loading game is currently unavailable"
-msgstr "현재는 게임을 불러올 수 없습니다"
+msgstr "현재는 게임을 불러올 수 없음"
 
 #: engines/engine.cpp:957
 msgid "Saving game is currently unavailable"
-msgstr "현재는 게임을 저장할 수 없습니다"
+msgstr "현재는 게임을 저장할 수 없음"
 
 #: engines/game.cpp:203
 #, c-format
@@ -3616,21 +3625,19 @@ msgid ""
 "Please report the following data to the ScummVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
-"'%s' 에 있는 게임은 아직 알려지지 않은 버전으로 보입니다.\n"
+"'%s'의 게임은 알 수 없는 게임 변형인 것 같습니다.\n"
 "\n"
-"게임 이름, 버전, 언어 등의 정보와 함께 ScummVM 팀 '%s' 에게 다음의 데이터를 "
-"알려주십시오:"
+"추가하려고 했던 게임의 이름, 버전, 언어 등과 함께 다음 데이터를 %s의 ScummVM "
+"팀에 보고해 주세요:"
 
 #: engines/game.cpp:207
 #, c-format
 msgid "Matched game IDs for the %s engine:"
-msgstr "%s 엔진에서 매칭된 게임 ID:"
+msgstr "%s 엔진에 일치하는 게임 ID:"
 
 #: engines/metaengine.cpp:39
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "Game not implemented"
-msgstr "게임 ID가 지원되지 않습니다"
+msgstr "게임이 구현되지 않았음"
 
 #: engines/metaengine.cpp:58 engines/saga/metaengine.cpp:267
 msgid "Default game keymap"
@@ -3664,7 +3671,7 @@ msgstr "오른쪽 클릭"
 #: engines/mohawk/riven.cpp:876 engines/sky/metaengine.cpp:126
 #: engines/twine/metaengine.cpp:220 engines/wintermute/keymapper_tables.h:1608
 msgid "Pause"
-msgstr "일시정지"
+msgstr "일시 정지"
 
 #: engines/metaengine.cpp:85 engines/parallaction/metaengine.cpp:137
 msgid "Game menu"
@@ -3688,7 +3695,7 @@ msgstr "대사 건너뛰기"
 
 #: engines/metaengine.cpp:106
 msgid "Predictive input dialog"
-msgstr "예측 입력 창"
+msgstr "예측 입력 대화 상자"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows confirming popup dialogue prompts (eg. for save game deletion or overwriting)
@@ -3701,14 +3708,12 @@ msgid "Confirm"
 msgstr "확인"
 
 #: engines/metaengine.cpp:414
-#, fuzzy
 msgid "Autosave on"
-msgstr "자동 저장"
+msgstr "자동 저장 켬"
 
 #: engines/metaengine.cpp:414
-#, fuzzy
 msgid "Autosave off"
-msgstr "자동 저장"
+msgstr "자동 저장 끔"
 
 #: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:179
 msgid "OpenGL"
@@ -3716,12 +3721,12 @@ msgstr "OpenGL"
 
 #: graphics/renderer.cpp:36
 msgid "OpenGL with shaders"
-msgstr "OpenGL 셰이더"
+msgstr "셰이더를 사용한 OpenGL"
 
 #: graphics/renderer.cpp:44
 msgctxt "lowres"
 msgid "OpenGL with shaders"
-msgstr "OpenGL 셰이더"
+msgstr "셰이더를 사용한 OpenGL"
 
 #: audio/adlib.cpp:2301
 msgid "AdLib emulator"
@@ -3729,19 +3734,19 @@ msgstr "AdLib 에뮬레이터"
 
 #: audio/fmopl.cpp:82
 msgid "MAME OPL emulator"
-msgstr "MAME OPL 에뮬레이터"
+msgstr "마메 OPL 에뮬레이터"
 
 #: audio/fmopl.cpp:84
 msgid "DOSBox OPL emulator"
-msgstr "DOSBox OPL 에뮬레이터"
+msgstr "도스박스 OPL 에뮬레이터"
 
 #: audio/fmopl.cpp:87
 msgid "Nuked OPL emulator"
-msgstr "Nuked OPL 에뮬레이터"
+msgstr "누크드 OPL 에뮬레이터"
 
 #: audio/fmopl.cpp:90
 msgid "ALSA Direct FM"
-msgstr "ALSA Direct FM"
+msgstr "ALSA 다이렉트 FM"
 
 #: audio/fmopl.cpp:93
 msgid "OPL2LPT"
@@ -3753,56 +3758,52 @@ msgstr "OPL3LPT"
 
 #: audio/fmopl.cpp:97
 msgid "RetroWave OPL3"
-msgstr "RetroWave OPL3"
+msgstr "레트로웨이브 OPL3"
 
 #: audio/mididrv.cpp:225
 #, c-format
 msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
-msgstr ""
-"선택한 오디오 장치 (%s)를 찾을 수 없습니다. 장치가 꺼져 있거나 연결이 끊어졌"
-"을 수 있습니다."
+msgstr "선택한 오디오 장치 '%s'을(를) 찾을 수 없습니다 (예: 꺼져 있거나 연결이 "
+"끊어졌을 수 있음)."
 
 #: audio/mididrv.cpp:226 audio/mididrv.cpp:240 audio/mididrv.cpp:277
 #: audio/mididrv.cpp:294
 msgid "Attempting to fall back to the next available device..."
-msgstr "다음 사용 가능한 장치로 폴백을 시도합니다."
+msgstr "사용 가능한 다음 장치로 돌아가려고 시도 중입니다..."
 
 #: audio/mididrv.cpp:239
 #, c-format
 msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information."
-msgstr ""
-"선택한 오디오 장치 (%s)를 사용할 수 없습니다. 추가 정보는 로그 파일을 참조해 "
-"주세요."
+msgstr "선택한 오디오 장치 '%s'를 사용할 수 없습니다. 자세한 내용은 로그 파일을 "
+"참조하세요."
 
 #: audio/mididrv.cpp:276
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
-msgstr ""
-"선호하는 오디오 장치 (%s)를 찾을 수 없습니다. 장치가 꺼져 있거나 연결이 끊어"
-"졌을 수 있습니다."
+msgstr "기본 오디오 장치 '%s'을(를) 찾을 수 없습니다 (예: 꺼져 있거나 연결이 "
+"끊어졌을 수 있음)."
 
 #: audio/mididrv.cpp:293
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information."
-msgstr ""
-"선호하는 오디오 장치 (%s)를 사용할 수 없습니다. 추가 정보는 로그 파일을 참조"
-"해 주세요."
+msgstr "선호하는 오디오 장치 '%s'를 사용할 수 없습니다. 자세한 내용은 로그 파일을 "
+"참조하세요."
 
 #: audio/mididrv.cpp:461
 msgid "Starting MIDI dump"
-msgstr "MIDI 덤프를 시작합니다"
+msgstr "미디 덤프 시작"
 
 #: audio/mods/paula.cpp:314
 msgid "Amiga Audio emulator"
-msgstr "Amiga Audio 에뮬레이터"
+msgstr "아미가 오디오 에뮬레이터"
 
 #: audio/null.cpp:27
 msgid "No music"
@@ -3810,28 +3811,29 @@ msgstr "음악 없음"
 
 #: audio/softsynth/appleiigs.cpp:34
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
-msgstr "Apple II GS 에뮬레이터 (미구현)"
+msgstr "애플 II GS 에뮬레이터 (구현되지 않음)"
 
 #: audio/softsynth/cms.cpp:372
 msgid "Creative Music System emulator"
-msgstr "Creative Music System 에뮬레이터"
+msgstr "크레이티브 뮤직 시스템 에뮬레이터"
 
 #: audio/softsynth/fluidsynth.cpp:338
 msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off."
 msgstr ""
-"FluidSynth는 SoundFont 설정이 필요합니다. ScummVM GUI의 MIDI 탭에서 설정해 주"
-"세요. 음악이 꺼집니다."
+"FluidSynth에는 '사운드폰트' 설정이 필요합니다. ScummVM GUI의 미디 탭에서 "
+"지정해 주세요. 음악은 꺼져 있습니다."
 
 #: audio/softsynth/fluidsynth.cpp:485
 #, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
-msgstr "FluidSynth: SoundFont '%s'를 불러오는데 실패했습니다. 음악이 꺼집니다."
+msgstr "FluidSynth: 커스텀 사운드폰트 '%s'을(를) 로드하는 데 실패했습니다. 음악이 "
+"꺼져 있습니다."
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:31
 msgid "FM-Towns Audio"
-msgstr "FM-Towns Audio"
+msgstr "FM-타운 오디오"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:56
 msgid "PC-98 Audio"
