@@ -1773,7 +1773,14 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 
 			View1 *currentView = (View1 *)_engine->findView("View1");
 
-			Common::Array<Common::String> strings = g_engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, offset, numLines);
+			Common::Array<Common::String> strings;
+			if (_executingScriptObjectID == 0) {
+				strings = g_engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, offset, numLines);
+			} else {
+				Common::MemoryReadStream *s = GameObjects::ReadGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
+				strings = g_engine->DecodeStrings(s, offset, numLines);
+			}
+			
 			currentView->ShowSpeechAct(objectID, strings, Common::Point(x, y), side);
 			isAwaitingCallback = true;
 			// TODO: Could be special for me with the short timer times, but it can happen
