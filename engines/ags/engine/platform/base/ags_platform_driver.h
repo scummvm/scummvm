@@ -109,6 +109,10 @@ struct AGSPlatformDriver
 	virtual FSLocation GetAppOutputDirectory() {
 		return FSLocation(".");
 	}
+	// Tells whether it's not permitted to write to the local directory (cwd, or game dir),
+	// and only specified user/app directories should be used.
+	// FIXME: this is a part of a hotfix, review uses of this function later.
+	virtual bool IsLocalDirRestricted() { return true; }
 	// Returns array of characters illegal to use in file names
 	virtual const char *GetIllegalFileChars() {
 		return "\\/";

@@ -91,18 +91,29 @@ static const char *OutputMsgBufID = "buffer";
 static const char *OutputFileID = "file";
 static const char *OutputSystemID = "stdout";
 
-PDebugOutput create_log_output(const String &name, const String &path = "", LogFile::OpenMode open_mode = LogFile::kLogFile_Overwrite) {
+// Create a new log output by ID
+
+PDebugOutput create_log_output(const String &name, const String &dir = "", const String &filename = "", LogFile::OpenMode open_mode = LogFile::kLogFile_Overwrite) {
 	// Else create new one, if we know this ID
 	if (name.CompareNoCase(OutputSystemID) == 0) {
 		return _GP(DbgMgr).RegisterOutput(OutputSystemID, AGSPlatformDriver::GetDriver(), kDbgMsg_None);
 	} else if (name.CompareNoCase(OutputFileID) == 0) {
 		_GP(DebugLogFile).reset(new LogFile());
-		String logfile_path = path;
-		if (logfile_path.IsEmpty()) {
+		String logfile_dir = dir;
+		if (dir.IsEmpty()) {
 			FSLocation fs = _G(platform)->GetAppOutputDirectory();
 			CreateFSDirs(fs);
-			logfile_path = Path::ConcatPaths(fs.FullDir, "ags.log");
+			logfile_dir = fs.FullDir;
+		} else if (Path::IsRelativePath(dir) && _G(platform)->IsLocalDirRestricted()) {
+			FSLocation fs = GetGameUserDataDir();
+			CreateFSDirs(fs);
+			logfile_dir = fs.FullDir;
 		}
+		String logfilename = filename.IsEmpty() ? "ags.log" : filename;
+#if AGS_PLATFORM_SCUMMVM
+		logfile_dir = "";  // ignore path
+#endif
+		String logfile_path = Path::ConcatPaths(logfile_dir, logfilename);
 		if (!_GP(DebugLogFile)->OpenFile(logfile_path, open_mode))
 			return nullptr;
 		Debug::Printf(kDbgMsg_Info, "Logging to %s", logfile_path.GetCStr());
@@ -241,7 +252,7 @@ void apply_debug_config(const ConfigTree &cfg) {
 	// If the game was compiled in Debug mode *and* there's no regular file log,
 	// then open "warnings.log" for printing script warnings.
 	if (_GP(game).options[OPT_DEBUGMODE] != 0 && !_GP(DebugLogFile)) {
-		auto dbgout = create_log_output(OutputFileID, "warnings.log", LogFile::kLogFile_OverwriteAtFirstMessage);
+		auto dbgout = create_log_output(OutputFileID, "./", "warnings.log", LogFile::kLogFile_OverwriteAtFirstMessage);
 		if (dbgout)
 			dbgout->SetGroupFilter(kDbgGroup_Game, kDbgMsg_Warn);
 	}
