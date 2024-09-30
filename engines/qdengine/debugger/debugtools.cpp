@@ -32,7 +32,6 @@
 #include "common/stack.h"
 #include "common/system.h"
 
-#include "graphics/opengl/shader.h"
 #include "graphics/managed_surface.h"
 
 #include "qdengine/debugger/dt-internal.h"
