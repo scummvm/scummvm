@@ -14,7 +14,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 #include "backends/graphics/opengl/opengl-graphics.h"
 #include "backends/graphics/opengl/framebuffer.h"
 #include "graphics/opengl/debug.h"
@@ -24,6 +23,8 @@
 #include "backends/platform/libretro/include/libretro-os.h"
 #include "backends/platform/libretro/include/libretro-timer.h"
 #include "backends/platform/libretro/include/libretro-graphics-opengl.h"
+
+#include "gui/gui-manager.h"
 
 LibretroOpenGLGraphics::LibretroOpenGLGraphics(OpenGL::ContextType contextType) {
 	resetContext(contextType);
@@ -38,7 +39,7 @@ void LibretroOpenGLGraphics::setMousePosition(int x, int y){
 }
 
 void LibretroOpenGLGraphics::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
-	/* Workaround to fix a cursor glich (e.g. GUI with Classic theme) occurring when any overlay is activated from retroarch (e.g. keyboard overlay).
+	/* Workaround to fix a cursor glitch (e.g. GUI with Classic theme) occurring when any overlay is activated from retroarch (e.g. keyboard overlay).
 	   Currently no feedback is available from frontend to detect if overlays are toggled to delete _cursor only if needed.
 	   @TODO: root cause to be investigated. */
 	delete _cursor;
@@ -46,8 +47,16 @@ void LibretroOpenGLGraphics::setMouseCursor(const void *buf, uint w, uint h, int
 	OpenGL::OpenGLGraphicsManager::setMouseCursor(buf, w, h, hotspotX, hotspotY, keycolor, dontScale, format, mask);
 }
 
-Common::Point LibretroOpenGLGraphics::convertWindowToVirtual(int x, int y) const {
-	return OpenGL::OpenGLGraphicsManager::convertWindowToVirtual(x, y);
+void LibretroOpenGLGraphics::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
+	/* Override for ScummVM Launcher */
+	if (nullptr == ConfMan.getActiveDomain()){
+		width = RES_W_OVERLAY;
+		height = RES_H_OVERLAY;
+	}
+	retro_set_size(width, height);
+	handleResize(width, height);
+	OpenGL::OpenGLGraphicsManager::initSize(width, height, format);
+	LIBRETRO_G_SYSTEM->refreshRetroSettings();
 }
 
 void LibretroHWFramebuffer::activateInternal(){
@@ -63,5 +72,7 @@ void LibretroOpenGLGraphics::resetContext(OpenGL::ContextType contextType) {
 #endif
 	notifyContextDestroy();
 	notifyContextCreate(contextType, new LibretroHWFramebuffer(), rgba8888, rgba8888);
-	handleResize(RES_W_OVERLAY, RES_H_OVERLAY);
+
+	if (_overlayInGUI)
+		g_gui.scheduleFullRedraw();
 }

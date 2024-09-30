@@ -83,17 +83,16 @@ char cmd_params_num;
 
 static uint8 video_hw_mode = 0;
 
-static unsigned base_width = RES_W;
-static unsigned base_height = RES_H;
-static unsigned max_width = RES_W;
-static unsigned max_height = RES_H;
+static unsigned base_width = RES_W_OVERLAY;
+static unsigned base_height = RES_H_OVERLAY;
+static unsigned max_width = RES_W_OVERLAY;
+static unsigned max_height = RES_H_OVERLAY;
 
 static uint32 current_frame = 0;
 static uint8 frameskip_no;
 static uint8 frameskip_type;
 static uint8 frameskip_threshold;
 static uint32 frameskip_counter = 0;
-static uint8 frameskip_events = 0;
 
 static uint8 audio_status = AUDIO_STATUS_MUTE;
 
@@ -144,7 +143,7 @@ static void setup_hw_rendering(void) {
 			retro_log_cb(RETRO_LOG_WARN, "RETRO_PIXEL_FORMAT_XRGB8888 not supported.\n");
 		hw_render.context_reset = context_reset;
 		hw_render.context_destroy = context_destroy;
-		hw_render.cache_context = true;
+		hw_render.cache_context = false;
 		hw_render.bottom_left_origin = true;
 #if defined(HAVE_OPENGL)
 		hw_render.context_type = RETRO_HW_CONTEXT_OPENGL;
@@ -842,7 +841,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info) {
 	info->geometry.base_height = base_height;
 	info->geometry.max_width = max_width;
 	info->geometry.max_height = max_height;
-	info->geometry.aspect_ratio = 4.0f / 3.0f;
+	info->geometry.aspect_ratio = (float)base_width / (float)base_height;
 	info->timing.fps = frame_rate;
 	info->timing.sample_rate = sample_rate;
 }
@@ -1067,10 +1066,12 @@ void retro_run(void) {
 			environ_cb(RETRO_ENVIRONMENT_SET_GEOMETRY, &info);
 			audio_status &= ~AUDIO_STATUS_UPDATE_GEOMETRY;
 		} else {
-			printf("\retro_run\n");
 			environ_cb(RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO, &info);
 			audio_status &= ~AUDIO_STATUS_UPDATE_AV_INFO;
 		}
+#ifdef USE_OPENGL
+			context_reset();
+#endif
 	}
 
 	if (audio_status & AUDIO_STATUS_UPDATE_LATENCY) {

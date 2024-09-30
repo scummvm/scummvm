@@ -19,6 +19,11 @@
 #define BACKENDS_LIBRETRO_GRAPHICS_OPENGL_H
 
 #include "backends/graphics/opengl/opengl-graphics.h"
+#include "backends/graphics/opengl/texture.h"
+
+namespace OpenGL {
+	class Surface;
+}
 
 class LibretroOpenGLGraphics : public OpenGL::OpenGLGraphicsManager {
 public:
@@ -27,11 +32,12 @@ public:
 	void refreshScreen() override;
 	void setSystemMousePosition(const int x, const int y) override {};
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) override;
-
+	void initSize(uint width, uint height, const Graphics::PixelFormat *format) override;
 	bool isOverlayInGUI(void){ return _overlayInGUI; }
 	void setMousePosition(int x, int y);
-	Common::Point convertWindowToVirtual(int x, int y) const;
 	void resetContext(OpenGL::ContextType contextType);
+protected:
+	bool gameNeedsAspectRatioCorrection() const override { return false; }
 };
 
 class LibretroHWFramebuffer : public OpenGL::Backbuffer {
