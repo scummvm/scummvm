@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 11:01+0000\n"
+"PO-Revision-Date: 2024-09-30 11:13+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -9898,9 +9898,8 @@ msgstr "패치 다운로드"
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
-msgstr ""
-"(혹은 '패치 다운로드' 버튼을 클릭합니다. 다만 다운로드 이후의 작업은 직접 해"
-"야 합니다)\n"
+msgstr "(또는 '패치 다운로드' 버튼을 클릭하세요. 하지만 참고 - 다운로드만 가능하며, "
+"거기서 계속 진행해야 합니다)\n"
 
 #: engines/sci/sci.cpp:548
 msgid ""
@@ -9911,7 +9910,7 @@ msgid ""
 "- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 msgstr ""
-"GK2에는 SierraHelp에서 제작한 비공식 자막이 존재합니다.\n"
+"GK2에는 SierraHelp에서 팬이 제작한 비공식 자막이 존재합니다.\n"
 "\n"
 "설치:\n"
 "- http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip 을 "
@@ -10119,6 +10118,8 @@ msgid ""
 "Activates some modern comforts; e.g it removes the fake sound loading screen "
 "in Sam&Max, and makes early save menus snappier."
 msgstr ""
+"몇 가지 현대적인 편의 시설이 활성화되었습니다. 예를 들어, 샘&맥스에서 가짜 "
+"사운드 로딩 화면을 제거하고 초기 저장 메뉴를 더욱 빠르게 만듭니다."
 
 #: engines/scumm/dialogs.cpp:1181 engines/scumm/metaengine.cpp:725
 #, fuzzy
@@ -10131,6 +10132,9 @@ msgid ""
 "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
 "for a more complete experience."
 msgstr ""
+"게임에서 엔진 내 그래픽 인터페이스와 원래 저장/불러오기 메뉴를 사용하도록 "
+"허용합니다. \"종료 시 확인 요청\"과 함께 사용하면 더욱 완벽한 경험을 할 수 "
+"있습니다."
 
 #: engines/scumm/dialogs.cpp:1300
 msgid "Overture Timing:"
@@ -10230,9 +10234,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:716
-#, fuzzy
 msgid "Load modded audio"
-msgstr "모드 애셋을 불러오기"
+msgstr "개조된 오디오 불러오기"
 
 #: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:717
 msgid ""
@@ -10301,7 +10304,7 @@ msgstr "자주 사용되는 키보드 명령:"
 
 #: engines/scumm/help.cpp:73
 msgid "Save / Load dialog"
-msgstr "저장/불러오기 창"
+msgstr "저장 / 불러오기 대화 상자"
 
 #: engines/scumm/help.cpp:77
 #, fuzzy
@@ -10332,7 +10335,7 @@ msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:81
 msgid "Load saved game 1-10"
-msgstr "세이브 파일 1~10번을 불러옴"
+msgstr "저장된 게임 1-10 번 불러오기"
 
 #: engines/scumm/help.cpp:82
 msgid "Save game 1-10"
@@ -10881,6 +10884,9 @@ msgid ""
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
 "\" for a more complete experience."
 msgstr ""
+"게임에서 엔진 내 그래픽 인터페이스와 원래 저장/불러오기 메뉴를 사용하도록 "
+"허용합니다. \t\t\"종료 시 확인 요청\"과 함께 사용하면 더욱 완벽한 경험을 할 "
+"수 있습니다."
 
 #: engines/scumm/metaengine.cpp:735
 #, fuzzy
@@ -10956,6 +10962,14 @@ msgid ""
 "Please change the audio configuration accordingly in order to properly load "
 "this save file."
 msgstr ""
+"경고: 현재 구성과 이 저장된 게임 간에 호환되지 않는 사운드 설정이 "
+"감지되었습니다.\n"
+"\n"
+"현재 음악 장치: %s (id %d)\n"
+"저장 파일 음악 장치: %s (id %d)\n"
+"\n"
+"불러오기를 시도하지만 게임이 제대로 작동하지 않거나 충돌할 수 있습니다.\n"
+"이 저장 파일을 제대로 불러오려면 오디오 구성을 적절히 변경하세요."
 
 #: engines/scumm/scumm.cpp:293
 msgid ""
@@ -11278,11 +11292,11 @@ msgstr "경고: 자동 저장 슬롯 삭제는 이 엔진에서 지원되지 않
 
 #: engines/stark/metaengine.cpp:41
 msgid "Load modded assets"
-msgstr "모드 애셋을 불러오기"
+msgstr "개조된 자산 불러오기"
 
 #: engines/stark/metaengine.cpp:42
 msgid "Enable loading of external replacement assets."
-msgstr "대체용 외부 애셋을 불러오는 것을 활성화합니다."
+msgstr "외부 대체 자산의 불러오기를 활성화합니다."
 
 #: engines/stark/metaengine.cpp:52
 msgid "Enable linear filtering of the backgrounds images"
@@ -11470,7 +11484,7 @@ msgstr ""
 
 #: engines/supernova/supernova.cpp:833
 msgid "Failed to load temporary game state."
-msgstr "임시 게임 상태저장 파일을 불러오는데 실패했습니다."
+msgstr "임시 게임 상태를 불러오는 데 실패했습니다."
 
 #: engines/supernova/metaengine.cpp:37
 msgid "Improved mode"
@@ -11508,12 +11522,13 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"변환이 필요한 이전 Broken Sword 1 세이브 파일을 사용하는 것을 감지했습니다.\n"
-"이전 세이브 파일은 더 이상 지원되지 않으며, 변환 작업을 거쳐야 불러올 수 있습"
-"니다.\n"
+"ScummVM에서 브로큰 소드 1에 대한 오래된 저장된 게임이 변환되어야 한다는 것을 "
+"발견했습니다.\n"
+"오래된 저장된 게임 형식은 더 이상 지원되지 않으므로 변환하지 않으면 게임을 "
+"불러올 수 없습니다.\n"
 "\n"
-"확인 버튼을 눌러 변환을 진행하십시오. 그렇지 않으면 다음 실행시 현재 창이 다"
-"시 표시됩니다.\n"
+"확인을 눌러 지금 변환하세요. 그렇지 않으면 다음에 게임을 시작할 때 다시 "
+"묻습니다.\n"
 
 #: engines/sword1/control.cpp:2997
 #, c-format
@@ -11596,10 +11611,8 @@ msgid ""
 msgstr ""
 
 #: engines/tinsel/metaengine.cpp:241
-#, fuzzy
-#| msgid "Game Options"
 msgid "Save/Load keymappings"
-msgstr "게임 옵션"
+msgstr "키맵핑 저장/불러오기"
 
 #: engines/tinsel/metaengine.cpp:306
 #, fuzzy
@@ -11608,16 +11621,12 @@ msgid "Options Dialog"
 msgstr "대사 건너뛰기"
 
 #: engines/tinsel/metaengine.cpp:340
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Page Up in save/load menu"
-msgstr "저장/불러오기 메뉴로 이동"
+msgstr "저장/불러오기 메뉴에서 페이지 위로"
 
 #: engines/tinsel/metaengine.cpp:346
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Page down in save/load menu"
-msgstr "저장/불러오기 메뉴로 이동"
+msgstr "저장/불러오기 메뉴에서 페이지 아래로"
 
 #: engines/tinsel/metaengine.cpp:352
 #, fuzzy
