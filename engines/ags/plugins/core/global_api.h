@@ -163,7 +163,7 @@ public:
 	void GiveScore(ScriptMethodParams &params);
 	void HasPlayerBeenInRoom(ScriptMethodParams &params);
 	void HideMouseCursor(ScriptMethodParams &params);
-	void sc_inputbox(ScriptMethodParams &params);
+	void ShowInputBox(ScriptMethodParams &params);
 	void InterfaceOff(ScriptMethodParams &params);
 	void InterfaceOn(ScriptMethodParams &params);
 	void IntToFloat(ScriptMethodParams &params);

@@ -207,7 +207,7 @@ void GlobalAPI::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(GiveScore, GlobalAPI::GiveScore);
 	SCRIPT_METHOD(HasPlayerBeenInRoom, GlobalAPI::HasPlayerBeenInRoom);
 	SCRIPT_METHOD(HideMouseCursor, GlobalAPI::HideMouseCursor);
-	SCRIPT_METHOD(InputBox, GlobalAPI::sc_inputbox);
+	SCRIPT_METHOD(InputBox, GlobalAPI::ShowInputBox);
 	SCRIPT_METHOD(InterfaceOff, GlobalAPI::InterfaceOff);
 	SCRIPT_METHOD(InterfaceOn, GlobalAPI::InterfaceOn);
 	SCRIPT_METHOD(IntToFloat, GlobalAPI::IntToFloat);
@@ -1078,9 +1078,9 @@ void GlobalAPI::HideMouseCursor(ScriptMethodParams &params) {
 	AGS3::HideMouseCursor();
 }
 
-void GlobalAPI::sc_inputbox(ScriptMethodParams &params) {
+void GlobalAPI::ShowInputBox(ScriptMethodParams &params) {
 	PARAMS2(const char *, msg, char *, bufr);
-	AGS3::sc_inputbox(msg, bufr);
+	AGS3::ShowInputBox(msg, bufr);
 }
 
 void GlobalAPI::InterfaceOff(ScriptMethodParams &params) {
