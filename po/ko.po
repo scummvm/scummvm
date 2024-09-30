@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 15:52+0000\n"
+"PO-Revision-Date: 2024-09-30 15:59+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -12010,15 +12010,15 @@ msgstr "핫스팟 표시"
 #: engines/twp/twp.cpp:829
 msgid ""
 "You selected Ransome *unbeeped* (DLC) but the DLC has not been detected!"
-msgstr ""
+msgstr "랜섬 *신호음 없음* (DLC)을 선택했었지만 DLC가 감지되지 않았습니다!"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
-msgstr "프레임 스킵 활성화"
+msgstr "프레임 건너뛰기 활성화"
 
 #: engines/ultima/metaengine.cpp:64
 msgid "Allow the game to skip animation frames when running too slow."
-msgstr "게임이 너무 느린 경우 애니메이션 프레임을 건너뛸 수 있게 합니다."
+msgstr "게임이 너무 느리게 실행될 때 애니메이션 프레임을 건너뛸 수 있도록 허용합니다."
 
 #: engines/ultima/metaengine.cpp:74
 msgid "Enable frame limiting"
@@ -12026,7 +12026,7 @@ msgstr "프레임 제한 활성화"
 
 #: engines/ultima/metaengine.cpp:75
 msgid "Limits the speed of the game to prevent running too fast."
-msgstr "게임 속도를 제한해 너무 빨라지지 않게 합니다."
+msgstr "게임 속도를 제한하여 너무 빨리 실행되는 것을 방지합니다."
 
 #: engines/ultima/metaengine.cpp:85
 msgid "Enable cheats"
@@ -12034,7 +12034,7 @@ msgstr "치트 활성화"
 
 #: engines/ultima/metaengine.cpp:86
 msgid "Allow cheats by commands and a menu when player is clicked."
-msgstr "플레이어를 클릭했을 때 명령어나 메뉴에서 치트를 허용합니다."
+msgstr "플레이어를 클릭하면 명령어와 메뉴를 통한 치트를 허용합니다."
 
 #: engines/ultima/metaengine.cpp:107
 msgid "Play foot step sounds"
@@ -12042,7 +12042,7 @@ msgstr "발자국 사운드 재생"
 
 #: engines/ultima/metaengine.cpp:108
 msgid "Plays sound when the player moves."
-msgstr "플레이어가 이동할 때 소리를 재생합니다."
+msgstr "플레이어가 움직이면 소리가 재생됩니다."
 
 #: engines/ultima/metaengine.cpp:118
 msgid "Enable jump to mouse position"
@@ -12056,11 +12056,11 @@ msgstr ""
 
 #: engines/ultima/metaengine.cpp:129
 msgid "Enable font replacement"
-msgstr "대체 폰트 사용"
+msgstr "대체 글꼴 사용"
 
 #: engines/ultima/metaengine.cpp:130
 msgid "Replaces game fonts with rendered fonts"
-msgstr "게임 폰트를 렌더링된 폰트로 교체"
+msgstr "게임 글꼴을 렌더링된 글꼴로 대체"
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
 #: engines/ultima/metaengine.cpp:152
