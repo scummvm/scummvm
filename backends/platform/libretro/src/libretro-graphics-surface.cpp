@@ -171,9 +171,8 @@ void LibretroGraphics::setMouseCursor(const void *buf, uint w, uint h, int hotsp
 
 	const Graphics::PixelFormat mformat = format ? *format : Graphics::PixelFormat::createFormatCLUT8();
 
-	if (_mouseImage.w != w || _mouseImage.h != h || _mouseImage.format != mformat){
+	if (_mouseImage.w != w || _mouseImage.h != h || _mouseImage.format != mformat)
 		_mouseImage.create(w, h, mformat);
-	}
 
 	_mouseImage.copyRectToSurface(buf, _mouseImage.pitch, 0, 0, w, h);
 

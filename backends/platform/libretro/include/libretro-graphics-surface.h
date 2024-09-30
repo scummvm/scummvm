@@ -33,8 +33,6 @@ public:
 	Graphics::Palette _gamePalette;
 
 private:
-	//bool _overlayInGUI;
-	bool _overlayVisible;
 	bool _mouseDontScale;
 	bool _mousePaletteEnabled;
 	bool _mouseVisible;

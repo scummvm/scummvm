@@ -160,7 +160,7 @@ void OSystem_libretro::processInputs(void) {
 		ev.relMouse.x = _cursorStatus & CURSOR_STATUS_DOING_X ? _relMouseX : 0;
 		ev.relMouse.y = _cursorStatus & CURSOR_STATUS_DOING_Y ? _relMouseY : 0;
 		_events.push_back(ev);
-		setMousePosition(_mouseX,_mouseY);
+		setMousePosition(_mouseX, _mouseY);
 	}
 
 	// Handle special functions
@@ -241,7 +241,7 @@ void OSystem_libretro::processInputs(void) {
 		ev.mouse.x = _mouseX;
 		ev.mouse.y = _mouseY;
 		_events.push_back(ev);
-		setMousePosition(_mouseX,_mouseY);
+		setMousePosition(_mouseX, _mouseY);
 	}
 
 	if (ptrhold > 10 && _ptrmouseButton == 0) {
@@ -306,7 +306,7 @@ void OSystem_libretro::processInputs(void) {
 		ev.relMouse.x = _cursorStatus & CURSOR_STATUS_DOING_X ? _relMouseX : 0;
 		ev.relMouse.y = _cursorStatus & CURSOR_STATUS_DOING_Y ? _relMouseY : 0;
 		_events.push_back(ev);
-		setMousePosition(_mouseX,_mouseY);
+		setMousePosition(_mouseX, _mouseY);
 	}
 
 	for (int i = 0; i < 2; i++) {
