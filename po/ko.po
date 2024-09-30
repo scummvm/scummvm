@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 14:21+0000\n"
+"PO-Revision-Date: 2024-09-30 14:48+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -3833,7 +3833,7 @@ msgstr "FluidSynth: 커스텀 사운드폰트 '%s'을(를) 불러오는 데 실�
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:31
 msgid "FM-Towns Audio"
-msgstr "FM-타운 오디오"
+msgstr "FM-TOWNS 오디오"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:56
 msgid "PC-98 Audio"
@@ -8103,9 +8103,8 @@ msgstr "Lands of Lore 지원은 컴파일 되지 않음"
 msgid ""
 "EOB II FM-TOWNS requires support of 16bit color modes which has not been "
 "activated in your ScummVM build"
-msgstr ""
-"EOB II FM-TOWNS는 16비트 컬러모드 지원이 필요한데 현재 ScummVM 빌드에는 활성"
-"화되지 않았습니다"
+msgstr "EOB II FM-TOWNS는 ScummVM 빌드에서 활성화되지 않은 16비트 색상 모드 지원이 "
+"필요함"
 
 #: engines/kyra/metaengine.cpp:267
 msgid "Eye of Beholder support is not compiled in"
@@ -10359,7 +10358,7 @@ msgstr "확대 비율을 늘리기 / 줄이기"
 
 #: engines/scumm/help.cpp:104
 msgid "Toggle aspect-ratio correction"
-msgstr "화면 종횡비 보정을 전환"
+msgstr "화면비 교정 전환"
 
 #: engines/scumm/help.cpp:109
 msgid "* Note that using ctrl-f and"
@@ -10790,15 +10789,14 @@ msgstr "NES 클래식 버전을 재현하는 더 자연스러운 컬러 팔레�
 
 #: engines/scumm/metaengine.cpp:663
 msgid "Trim FM-TOWNS games to 200 pixels height"
-msgstr "FM-TOWNS 게임을 200픽셀 높이로 잘라냄"
+msgstr "FM-TOWNS 게임을 200 픽셀 높이로 잘라냄"
 
 #: engines/scumm/metaengine.cpp:664
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
-msgstr ""
-"화면 아래쪽의 40픽셀을 잘라내 표준 200픽셀에 맞춤으로써 '종횡비 보정' 기능을 "
-"사용할 수 있게 함"
+msgstr "화면 하단의 추가 40픽셀을 잘라내어 표준 높이인 200픽셀로 만들고, '화면비 "
+"교정'을 사용할 수 있도록 함"
 
 #: engines/scumm/metaengine.cpp:672
 msgid "Run in original 640 x 480 resolution"
@@ -10942,9 +10940,9 @@ msgid ""
 "Aspect ratio correction can be achieved by trimming the resolution to "
 "320x200, under 'engine' tab."
 msgstr ""
-"'종횡비 보정'이 활성화되었습니다. 하지만 FM-TOWNS의 해상도는 320x240이기 때문"
-"에 종횡비 보정을 지원하지 않습니다.\n"
-"'엔진' 탭에서 해상도를 320x200으로 잘라내면 종횡비 보정이 가능합니다."
+"'화면비 교정'을 활성화했습니다. 그러나, FM-TOWNS의 자연스러운 해상도는 "
+"320x240으로 화면비 교정을 허용하지 않습니다.\n"
+"화면비 교정은 '엔진' 탭에서 해상도를 320x200으로 잘라내어 달성할 수 있습니다."
 
 #: engines/scumm/scumm.cpp:1224
 msgid "This game requires the 'Indy' Macintosh executable for its fonts."
@@ -11502,7 +11500,7 @@ msgstr "개체 레이블 표시"
 
 #: engines/sword2/metaengine.cpp:44
 msgid "Show labels for objects on mouse hover"
-msgstr "마우스 호버 시 개체 이름을 표시"
+msgstr "마우스 호버 시 개체 레이블을 표시"
 
 #: engines/sword25/metaengine.cpp:35
 msgid "Use English speech"
@@ -11511,13 +11509,11 @@ msgstr "영어 음성 사용"
 #: engines/sword25/metaengine.cpp:36
 msgid ""
 "Use English speech instead of German for every language other than German"
-msgstr "독일어 이외의 모든 언어에서 독일어 대신 영어 음성을 사용합니다"
+msgstr "독일어를 제외한 모든 언어에서는 독일어 대신 영어 음성을 사용"
 
 #: engines/tetraedge/metaengine.cpp:32
-#, fuzzy
-#| msgid "Correct aspect ratio for games"
 msgid "Correct movie aspect ratio"
-msgstr "게임의 화면 종횡비 보정"
+msgstr "올바른 영화 화면비"
 
 #: engines/tetraedge/metaengine.cpp:33
 msgid "Play Syberia cutscenes in 16:9, rather than stretching to full screen"
@@ -11525,21 +11521,19 @@ msgstr "전체 화면으로 늘리는 대신, 16:9로 사이베리아 컷씬을 
 
 #: engines/tetraedge/metaengine.cpp:43
 msgid "Restore missing scenes"
-msgstr ""
+msgstr "누락된 장면 복원"
 
 #: engines/tetraedge/metaengine.cpp:44
 msgid "Restore some scenes originally in the Windows edition"
-msgstr ""
+msgstr "원래 윈도우즈 버전에서 일부 장면을 복원"
 
 #: engines/tinsel/detection_tables.h:481
 msgid "Saturn CD version is not yet supported"
-msgstr "새턴 CD 버전은 아직 지원되지 않습니다"
+msgstr "새턴 CD 버전은 아직 지원 안 함"
 
 #: engines/tinsel/metaengine.cpp:43
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Remove Black Bars"
-msgstr "뒤로 이동"
+msgstr "검은색 바 제거"
 
 #: engines/tinsel/metaengine.cpp:44
 msgid ""
@@ -11547,16 +11541,17 @@ msgid ""
 "at 640x480. Enabling this option removes the forced letterbox effect, so "
 "that the game fits better on screens with an aspect ratio wider than 4:3."
 msgstr ""
+"게임은 원래 640x432로 렌더링한 다음 640x480으로 레터박스로 표시됩니다. 이 "
+"옵션을 활성화하면 강제 레터박스 효과가 제거되어 게임이 화면비가 4:3보다 넓은 "
+"화면에 더 잘 맞습니다."
 
 #: engines/tinsel/metaengine.cpp:241
 msgid "Save/Load keymappings"
 msgstr "키맵핑 저장/불러오기"
 
 #: engines/tinsel/metaengine.cpp:306
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Options Dialog"
-msgstr "대사 건너뛰기"
+msgstr "대화 옵션"
 
 #: engines/tinsel/metaengine.cpp:340
 msgid "Page Up in save/load menu"
@@ -11577,17 +11572,17 @@ msgstr "저장/불러오기 메뉴 끝으로 이동"
 #: engines/tony/tony.cpp:248
 #, c-format
 msgid "Font variant not present in '%s' engine data file."
-msgstr "'%s' 엔진 데이터 파일에 폰트 종류가 존재하지 않습니다."
+msgstr "'%s' 엔진 데이터 파일에 글꼴 변형이 없습니다."
 
 #: engines/toon/toon.cpp:273
 #, c-format
 msgid "Saved game in slot #%d "
-msgstr "#%d 슬롯에 게임 저장됨 "
+msgstr "슬롯 #%d에 게임 저장됨 "
 
 #: engines/toon/toon.cpp:277
 #, c-format
 msgid "Could not quick save into slot #%d"
-msgstr "#%d 슬롯에 빠른 저장하지 못함"
+msgstr "슬롯 #%d에 빠른 저장하지 못함"
 
 #: engines/toon/toon.cpp:290
 #, c-format
@@ -11600,9 +11595,8 @@ msgid "Could not quick load the saved game #%d"
 msgstr "저장된 게임 #%d 빠르게 불러올 수 없음"
 
 #: engines/toon/toon.cpp:1543
-#, fuzzy
 msgid "Are you sure you want to exit?"
-msgstr "정말로 종료하겠습니까?"
+msgstr "정말 종료하겠습니까?"
 
 #: engines/toon/toon.cpp:1953
 #, c-format
@@ -11610,26 +11604,21 @@ msgid "Unable to locate the '%s' data file."
 msgstr "'%s' 데이터 파일을 찾을 수 없습니다."
 
 #: engines/trecision/metaengine.cpp:137
-#, fuzzy
-#| msgid "Skip line"
 msgid "Skip video"
-msgstr "대사 건너뛰기"
+msgstr "비디오 건너뛰기"
 
 #. I18N: Toggles walking speed of actor
 #: engines/trecision/metaengine.cpp:144
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fast walk"
-msgstr "빠른 모드 토글"
+msgstr "빠른 대화 전환"
 
 #: engines/trecision/metaengine.cpp:163
-#, fuzzy
 msgid "Open system menu"
-msgstr "게임 메뉴"
+msgstr "시스템 메뉴 열기"
 
 #: engines/twine/detection.cpp:175
 msgid "This version requires Giflib which was not compiled into ScummVM"
-msgstr "이 버전은 ScummVM에 컴파일되어 포함되지 않은 Giflib을 필요로 합니다"
+msgstr "이 버전에는 ScummVM에 컴파일되지 않은 Giflib이 필요함"
 
 #: engines/twine/metaengine.cpp:44
 msgid "Enable wall collisions"
