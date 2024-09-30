@@ -36,6 +36,8 @@
 
 #include "image/tga.h"
 
+#include "graphics/blit.h"
+
 namespace ZVision {
 
 RenderManager::RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect &workingWindow, const Graphics::PixelFormat &pixelFormat, bool doubleFPS)
@@ -123,6 +125,8 @@ void RenderManager::renderSceneToScreen() {
 		out = in;
 		outWndDirtyRect = _backgroundSurfaceDirtyRect;
 	}
+
+  //TODO - add widescreen menu buffer about here?
 
 	if (!outWndDirtyRect.isEmpty()) {
 		Common::Rect rect(
@@ -412,14 +416,7 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 
 	byte *dstBuffer = (byte *)dst.getBasePtr(xx, yy);
 
-	int32 w = srcRect.width();
-	int32 h = srcRect.height();
-
-	for (int32 y = 0; y < h; y++) {
-		memcpy(dstBuffer, srcBuffer, w * srcAdapted->format.bytesPerPixel);
-		srcBuffer += srcAdapted->pitch;
-		dstBuffer += dst.pitch;
-	}
+	Graphics::copyBlit(dstBuffer,srcBuffer,dst.pitch,srcAdapted->pitch,srcRect.width(),srcRect.height(),srcAdapted->format.bytesPerPixel);
 
 	srcAdapted->free();
 	delete srcAdapted;
@@ -458,53 +455,7 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 
 	byte *dstBuffer = (byte *)dst.getBasePtr(xx, yy);
 
-	int32 w = srcRect.width();
-	int32 h = srcRect.height();
-
-	for (int32 y = 0; y < h; y++) {
-		switch (srcAdapted->format.bytesPerPixel) {
-		case 1: {
-			const uint *srcTemp = (const uint *)srcBuffer;
-			uint *dstTemp = (uint *)dstBuffer;
-			for (int32 x = 0; x < w; x++) {
-				if (*srcTemp != keycolor)
-					*dstTemp = *srcTemp;
-				srcTemp++;
-				dstTemp++;
-			}
-		}
-		break;
-
-		case 2: {
-			const uint16 *srcTemp = (const uint16 *)srcBuffer;
-			uint16 *dstTemp = (uint16 *)dstBuffer;
-			for (int32 x = 0; x < w; x++) {
-				if (*srcTemp != keycolor)
-					*dstTemp = *srcTemp;
-				srcTemp++;
-				dstTemp++;
-			}
-		}
-		break;
-
-		case 4: {
-			const uint32 *srcTemp = (const uint32 *)srcBuffer;
-			uint32 *dstTemp = (uint32 *)dstBuffer;
-			for (int32 x = 0; x < w; x++) {
-				if (*srcTemp != keycolor)
-					*dstTemp = *srcTemp;
-				srcTemp++;
-				dstTemp++;
-			}
-		}
-		break;
-
-		default:
-			break;
-		}
-		srcBuffer += srcAdapted->pitch;
-		dstBuffer += dst.pitch;
-	}
+  Graphics::keyBlit(dstBuffer,srcBuffer,dst.pitch,srcAdapted->pitch,srcRect.width(),srcRect.height(),srcAdapted->format.bytesPerPixel,keycolor);
 
 	srcAdapted->free();
 	delete srcAdapted;
@@ -539,10 +490,13 @@ void RenderManager::blitSurfaceToBkgScaled(const Graphics::Surface &src, const C
 
 void RenderManager::blitSurfaceToMenu(const Graphics::Surface &src, int x, int y, int32 colorkey) {
 	Common::Rect empt;
+  Graphics::Surface *dstSurface = &_menuSurface;  //Add code to change this to background in widescreen mode if test works.
 	if (colorkey >= 0)
-		blitSurfaceToSurface(src, empt, _menuSurface, x, y, colorkey);
+		//blitSurfaceToSurface(src, empt, _menuSurface, x, y, colorkey);
+    blitSurfaceToSurface(src, empt, *dstSurface, x, y, colorkey);
 	else
-		blitSurfaceToSurface(src, empt, _menuSurface, x, y);
+		//blitSurfaceToSurface(src, empt, _menuSurface, x, y);
+		blitSurfaceToSurface(src, empt, *dstSurface, x, y);
 	Common::Rect dirty(src.w, src.h);
 	dirty.translate(x, y);
 	if (_menuSurfaceDirtyRect.isEmpty())
