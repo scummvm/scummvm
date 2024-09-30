@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 15:20+0000\n"
+"PO-Revision-Date: 2024-09-30 15:52+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -11433,7 +11433,7 @@ msgstr "향상된 모드"
 #: engines/supernova/metaengine.cpp:38
 msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
-msgstr "일부 반복적인 작업을 제거하고,키보드로 명령어를 변경할 수 있는 기능을 추가함"
+msgstr "일부 반복적인 작업을 제거하고,키보드로 버브를 변경할 수 있는 기능을 추가함"
 
 #: engines/sword1/animation.cpp:532
 #, c-format
@@ -11761,15 +11761,15 @@ msgstr "신중한 동작"
 
 #: engines/twine/metaengine.cpp:326
 msgid "Behaviour Action"
-msgstr "행동 실행"
+msgstr "동작 작업"
 
 #: engines/twine/metaengine.cpp:332
 msgid "Change Behaviour"
-msgstr "행동방식 변경"
+msgstr "동작 변경"
 
 #: engines/twine/metaengine.cpp:344
 msgid "Options Menu"
-msgstr "설정"
+msgstr "옵션 메뉴"
 
 #: engines/twine/metaengine.cpp:356
 msgid "Use Selected Object"
@@ -11793,16 +11793,16 @@ msgstr "홀로맵을 열기"
 
 #: engines/twine/metaengine.cpp:415
 msgid "Special Action"
-msgstr "스페셜 액션"
+msgstr "특수 작업"
 
 #: engines/twine/metaengine.cpp:421
 msgid "Scenery Zoom"
-msgstr ""
+msgstr "풍경 확대/축소"
 
 #: engines/twine/metaengine.cpp:459 engines/twine/metaengine.cpp:511
 #: engines/twine/metaengine.cpp:527
 msgid "Abort"
-msgstr "취소"
+msgstr "중단"
 
 #: engines/twine/metaengine.cpp:564
 msgid "Previous location"
@@ -11833,31 +11833,29 @@ msgid "Wall collision off"
 msgstr "벽 충돌 끔"
 
 #: engines/twine/parser/text.cpp:38
-#, fuzzy
-#| msgid "Language not detected"
 msgctxt "Options menu"
 msgid "Language selection"
-msgstr "언어가 감지되지 않음"
+msgstr "언어 선택"
 
 #: engines/twine/parser/text.cpp:39
 msgctxt "Options menu"
 msgid "Voices: None"
-msgstr ""
+msgstr "음성: 없음"
 
 #: engines/twine/parser/text.cpp:40
 msgctxt "Options menu"
 msgid "Voices: English"
-msgstr ""
+msgstr "음성: 영어"
 
 #: engines/twine/parser/text.cpp:41
 msgctxt "Options menu"
 msgid "Voices: French"
-msgstr ""
+msgstr "음성: 프랑스어"
 
 #: engines/twine/parser/text.cpp:42
 msgctxt "Options menu"
 msgid "Voices: German"
-msgstr ""
+msgstr "음성: 독일어"
 
 #: engines/twp/dialogs.cpp:32
 msgid "Video:"
@@ -11866,18 +11864,20 @@ msgstr "비디오:"
 #. I18N: Setting to switch toiled paper to be shown as "over".
 #: engines/twp/dialogs.cpp:37
 msgid "Toilet paper over"
-msgstr ""
+msgstr "용지 걸림 표시"
 
 #: engines/twp/dialogs.cpp:38
 msgid ""
 "The toilet paper in some toilets will be shown \"over\".\n"
 "It's a joke option that has no effects on the gameplay."
 msgstr ""
+"일부 화장실의 종이가 \"over\"로 표시됩니다.\n"
+"게임 플레이에 아무런 영향을 미치지 않는 농담 옵션입니다."
 
 #. I18N: Setting to enable or disable additional jokes in the game.
 #: engines/twp/dialogs.cpp:41
 msgid "Annoying in-jokes"
-msgstr ""
+msgstr "짜증나는 사적 농담"
 
 #: engines/twp/dialogs.cpp:42
 msgid ""
@@ -11886,9 +11886,9 @@ msgid ""
 "There is a game achievement that can be obtained only if the in-jokes option "
 "is switched on."
 msgstr ""
-"이 게임에는 대화와 개체의 형태로 과거 어드벤처 게임에 대한 내부 농담과 "
+"이 게임에는 대화와 개체의 형태로 과거 어드벤처 게임에 대한 사적 농담과 "
 "참조가 포함됩니다.\n"
-"내부 농담 옵션이 켜져 있어야만 얻을 수 있는 게임 업적이 있습니다."
+"사적 농담 옵션이 켜져 있어야만 얻을 수 있는 게임 도전과제가 있습니다."
 
 #: engines/twp/dialogs.cpp:44
 msgid "Controls:"
@@ -11897,32 +11897,31 @@ msgstr "제어:"
 #. I18N: Setting to invert verb colors or keep the original verb colors.
 #: engines/twp/dialogs.cpp:48
 msgid "Invert verb colors"
-msgstr ""
+msgstr "버브 색상 반전"
 
 #. I18N: Setting to use retro or modern fonts.
 #: engines/twp/dialogs.cpp:50
 msgid "Retro Fonts"
-msgstr ""
+msgstr "레트로 글꼴"
 
 #. I18N: Setting to use retro or modern verbs.
 #: engines/twp/dialogs.cpp:52
 msgid "Retro Verbs"
-msgstr ""
+msgstr "레트로 버브"
 
 #. I18N: Setting to use classic sentence or modern sentence.
 #: engines/twp/dialogs.cpp:54
 msgid "Classic Sentence"
-msgstr ""
+msgstr "고전적인 문장"
 
 #. I18N: Settings to enable or disable Ransome unbeeped DLC.
 #: engines/twp/dialogs.cpp:57
 msgid "Ransome *unbeeped* (DLC)"
-msgstr ""
+msgstr "랜섬 *삐 소리 없음* (DLC)"
 
 #: engines/twp/metaengine.cpp:151
-#, fuzzy
 msgid "Select highlighted verb"
-msgstr "테마 선택"
+msgstr "강조된 버브를 선택"
 
 #: engines/twp/metaengine.cpp:156
 msgid "Go to previous object"
@@ -11934,105 +11933,79 @@ msgstr "다음 개체로 이동"
 
 #: engines/twp/metaengine.cpp:158
 msgid "Select verb/item Left"
-msgstr ""
+msgstr "왼쪽 버브/아이템 선택"
 
 #: engines/twp/metaengine.cpp:159
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Select verb/item Right"
-msgstr "오른쪽으로"
+msgstr "오른쪽 버브/아이템 선택"
 
 #: engines/twp/metaengine.cpp:160
 msgid "Select verb/item Up"
-msgstr ""
+msgstr "위쪽 버브/아이템 선택"
 
 #: engines/twp/metaengine.cpp:161
 msgid "Select verb/item Down"
-msgstr ""
+msgstr "아래쪽 버브/아이템 선택"
 
 #: engines/twp/metaengine.cpp:163
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 1"
-msgstr "그룹 선택 기준"
+msgstr "배우 1 선택"
 
 #: engines/twp/metaengine.cpp:164
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 2"
-msgstr "그룹 선택 기준"
+msgstr "배우 2 선택"
 
 #: engines/twp/metaengine.cpp:165
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 3"
-msgstr "그룹 선택 기준"
+msgstr "배우 3 선택"
 
 #: engines/twp/metaengine.cpp:166
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 4"
-msgstr "그룹 선택 기준"
+msgstr "배우 4 선택"
 
 #: engines/twp/metaengine.cpp:167
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 5"
-msgstr "그룹 선택 기준"
+msgstr "배우 5 선택"
 
 #: engines/twp/metaengine.cpp:168
-#, fuzzy
 msgid "Select Choice 1"
-msgstr "테마 선택"
+msgstr "선택 1 선택"
 
 #: engines/twp/metaengine.cpp:169
-#, fuzzy
 msgid "Select Choice 2"
-msgstr "테마 선택"
+msgstr "선택 2 선택"
 
 #: engines/twp/metaengine.cpp:170
-#, fuzzy
 msgid "Select Choice 3"
-msgstr "테마 선택"
+msgstr "선택 3 선택"
 
 #: engines/twp/metaengine.cpp:171
-#, fuzzy
 msgid "Select Choice 4"
-msgstr "테마 선택"
+msgstr "선택 4 선택"
 
 #: engines/twp/metaengine.cpp:172
-#, fuzzy
 msgid "Select Choice 5"
-msgstr "테마 선택"
+msgstr "선택 5 선택"
 
 #: engines/twp/metaengine.cpp:173
-#, fuzzy
 msgid "Select Choice 6"
-msgstr "테마 선택"
+msgstr "선택 6 선택"
 
 #: engines/twp/metaengine.cpp:174
-#, fuzzy
-#| msgid "Select next music record"
 msgid "Select Next Actor"
-msgstr "다음 음악을 선택"
+msgstr "다음 배우 선택"
 
 #: engines/twp/metaengine.cpp:175
-#, fuzzy
-#| msgid "Previous action"
 msgid "Select Previous Actor"
-msgstr "이전 행동"
+msgstr "이전 배우 선택"
 
 #: engines/twp/metaengine.cpp:176
-#, fuzzy
-#| msgid "Skip text"
 msgid "Skip Text"
-msgstr "대사 건너뜀"
+msgstr "대사 건너뛰기"
 
 #: engines/twp/metaengine.cpp:177
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show hotspots"
-msgstr "힌트 표시"
+msgstr "핫스팟 표시"
 
 #: engines/twp/twp.cpp:829
 msgid ""
