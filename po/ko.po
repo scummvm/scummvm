@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 14:48+0000\n"
+"PO-Revision-Date: 2024-09-30 15:12+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -900,7 +900,7 @@ msgstr "활성화"
 
 #: gui/fluidsynth-dialog.cpp:72
 msgid "Room:"
-msgstr "공간 크기:"
+msgstr "룸:"
 
 #: gui/fluidsynth-dialog.cpp:79
 msgid "Damp:"
@@ -6070,7 +6070,7 @@ msgstr "페이드아웃 효과 비활성화"
 
 #: engines/agos/metaengine.cpp:100
 msgid "Don't fade every screen to black when leaving a room."
-msgstr "방을 나갈 때 모든 화면이 어두워지지 않도록 하세요."
+msgstr "룸을 나갈 때 모든 화면이 어두워지지 않도록 하세요."
 
 #: engines/agos/metaengine.cpp:179
 msgid "AGOS 2 support is not compiled in"
@@ -7620,7 +7620,7 @@ msgstr "개체 아래로 순환"
 
 #: engines/grim/grim.cpp:597
 msgid "Quick Room Exit"
-msgstr "빠른 방 나가기"
+msgstr "빠른 룸 나가기"
 
 #: engines/grim/grim.cpp:602
 msgid "Examine/Look"
@@ -11626,7 +11626,7 @@ msgstr "벽 충돌 활성화"
 
 #: engines/twine/metaengine.cpp:45
 msgid "Enable the original wall collision damage"
-msgstr "벽 충돌시 받는 피해를 활성화합니다"
+msgstr "벽 충돌시 받는 손상 활성화"
 
 #: engines/twine/metaengine.cpp:56
 msgid "Disable save menu"
@@ -11641,11 +11641,11 @@ msgstr ""
 
 #: engines/twine/metaengine.cpp:67
 msgid "Enable debug mode"
-msgstr "디버그 모드 사용"
+msgstr "디버그 모드 활성화"
 
 #: engines/twine/metaengine.cpp:68
 msgid "Enable the debug mode"
-msgstr "디버그 모드를 활성화합니다"
+msgstr "디버그 모드를 활성화"
 
 #: engines/twine/metaengine.cpp:78
 msgid "Enable sound"
@@ -11653,7 +11653,7 @@ msgstr "사운드 활성화"
 
 #: engines/twine/metaengine.cpp:79
 msgid "Enable the sound for the game"
-msgstr "게임의 사운드를 활성화합니다"
+msgstr "게임의 사운드를 활성화"
 
 #: engines/twine/metaengine.cpp:89
 msgid "Enable text"
@@ -11661,11 +11661,11 @@ msgstr "텍스트 활성화"
 
 #: engines/twine/metaengine.cpp:90
 msgid "Enable the text for the game"
-msgstr "게임의 텍스트를 활성화합니다"
+msgstr "게임의 텍스트를 활성화"
 
 #: engines/twine/metaengine.cpp:100
 msgid "Enable movies"
-msgstr "영상 활성화"
+msgstr "동영상 활성화"
 
 #: engines/twine/metaengine.cpp:101
 msgid "Enable the cutscenes for the game"
@@ -11677,23 +11677,23 @@ msgstr "마우스 활성화"
 
 #: engines/twine/metaengine.cpp:112
 msgid "Enable the mouse for the UI"
-msgstr "UI에 마우스를 활성화합니다"
+msgstr "UI에 마우스를 활성화"
 
 #: engines/twine/metaengine.cpp:122
 msgid "Use the USA version"
-msgstr "USA 버전 사용"
+msgstr "미국 버전 사용"
 
 #: engines/twine/metaengine.cpp:123
 msgid "Enable the USA specific version flags"
-msgstr "USA 버전 플래그를 활성화합니다"
+msgstr "미국 특정 버전 플래그를 활성화"
 
 #: engines/twine/metaengine.cpp:133 engines/ultima/metaengine.cpp:96
 msgid "Enable high resolution"
-msgstr "고해상도 사용"
+msgstr "고해상도 활성화"
 
 #: engines/twine/metaengine.cpp:134 engines/ultima/metaengine.cpp:97
 msgid "Enable a higher resolution for the game"
-msgstr "게임의 고해상도 지원을 활성화합니다"
+msgstr "게임의 고해상도 지원을 활성화"
 
 #: engines/twine/metaengine.cpp:225
 msgid "Debug Next Room"
@@ -11705,35 +11705,35 @@ msgstr "이전 룸을 디버그"
 
 #: engines/twine/metaengine.cpp:235
 msgid "Debug Apply Celling Grid"
-msgstr "셀 그리드를 적용"
+msgstr "셀 격자 적용 디버그"
 
 #: engines/twine/metaengine.cpp:240
 msgid "Debug Increase Celling Grid Index"
-msgstr "디버그 셀 그리드 인덱스를 증가"
+msgstr "셀 격자 색인 증가 디버그"
 
 #: engines/twine/metaengine.cpp:245
 msgid "Debug Decrease Celling Grid Index"
-msgstr "디버그 셀 그리드 인덱스를 감소"
+msgstr "셀 격자 색인 감소 디버그"
 
 #: engines/twine/metaengine.cpp:250
 msgid "Debug Grid Camera Up"
-msgstr "디버그 그리드 카메라를 올림"
+msgstr "격자 카메라 위 디버그"
 
 #: engines/twine/metaengine.cpp:255
 msgid "Debug Grid Camera Down"
-msgstr "디버그 그리드 카메라를 내림"
+msgstr "격자 카메라 내림 디버그"
 
 #: engines/twine/metaengine.cpp:260
 msgid "Debug Grid Camera Left"
-msgstr "디버그 그리드 카메라를 왼쪽으로 이동"
+msgstr "격자 카메라 왼쪽 디버그"
 
 #: engines/twine/metaengine.cpp:266
 msgid "Debug Grid Camera Right"
-msgstr "디버그 그리드 카메라를 오른쪽으로 이동"
+msgstr "격자 카메라 오른쪽 디버그"
 
 #: engines/twine/metaengine.cpp:271
 msgid "Place actor at center of screen"
-msgstr "액터를 화면 중앙에 배치"
+msgstr "화면 중앙에 배우 배치"
 
 #: engines/twine/metaengine.cpp:276
 msgid "Debug Menu"
