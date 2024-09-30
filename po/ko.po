@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 02:49+0000\n"
+"PO-Revision-Date: 2024-09-30 03:42+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -3837,11 +3837,11 @@ msgstr "FM-타운 오디오"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:56
 msgid "PC-98 Audio"
-msgstr "PC-98 Audio"
+msgstr "PC-98 오디오"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:81
 msgid "SegaCD Audio"
-msgstr "SegaCD Audio"
+msgstr "세가CD 오디오"
 
 #: audio/softsynth/mt32.cpp:168
 msgid "Initializing MT-32 Emulator"
@@ -3861,7 +3861,7 @@ msgstr "IBM PCjr 에뮬레이터"
 
 #: audio/softsynth/sid.cpp:1435
 msgid "C64 Audio emulator"
-msgstr "C64 Audio 에뮬레이터"
+msgstr "C64 오디오 에뮬레이터"
 
 #: backends/cloud/cloudmanager.cpp:156
 msgid "<syncing...>"
@@ -3869,15 +3869,15 @@ msgstr "<동기화 중...>"
 
 #: backends/cloud/storage.cpp:246
 msgid "Saved games sync was cancelled."
-msgstr "세이브 파일 동기화가 취소되었습니다."
+msgstr "저장된 게임 동기화가 취소되었습니다."
 
 #: backends/cloud/storage.cpp:248
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
-"세이브 파일 동기화에 실패했습니다.\n"
-"인터넷 연결을 확인해 주세요."
+"저장된 게임 동기화에 실패했습니다.\n"
+"인터넷 연결을 확인하세요."
 
 #: backends/cloud/storage.cpp:352
 #, c-format
@@ -3885,41 +3885,41 @@ msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
-"다운로드 완료.\n"
-"%u개 파일 다운로드에 실패했습니다."
+"다운로드 완료하였습니다.\n"
+"%u 개 파일 다운로드 실패하였습니다."
 
 #: backends/cloud/storage.cpp:354
 msgid "Download complete."
-msgstr "다운로드 완료."
+msgstr "다운로드 완료하였습니다."
 
 #: backends/cloud/storage.cpp:364
 msgid "Download failed."
-msgstr "다운로드 실패."
+msgstr "다운로드 실패하였습니다."
 
 #: backends/events/default/default-events.cpp:193
 msgid ""
 "Do you really want to return to the Launcher?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"런처로 돌아가시겠습니까?\n"
-"저장하지 않은 진행사항은 사라지게 됩니다."
+"정말 런처로 돌아가겠습니까?\n"
+"저장하지 않은 진행 사항은 모두 사라집니다."
 
 #: backends/events/default/default-events.cpp:217
 msgid ""
 "Do you really want to quit?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"정말로 종료하시겠습니까?\n"
-"저장되지 않은 진행사항은 사라지게 됩니다."
+"정말 나가겠습니까?\n"
+"저장되지 않은 진행 상황은 모두 사라집니다."
 
 #: backends/events/default/default-events.cpp:332
 msgid "Global"
-msgstr "전역"
+msgstr "글로벌"
 
 #: backends/events/default/default-events.cpp:335
 #: engines/twine/metaengine.cpp:339
 msgid "Global Main Menu"
-msgstr "전역 메인 메뉴"
+msgstr "글로벌 메인 메뉴"
 
 #: backends/events/default/default-events.cpp:345
 msgid "Display keyboard"
@@ -3955,24 +3955,23 @@ msgstr "터치스크린 '탭 모드' - 호버 (클릭 아님)"
 
 #: backends/events/openpandora/op-events.cpp:162
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
-msgstr "터치스크린 '탭 모드' - 호버 (D패드 클릭)"
+msgstr "터치스크린 '탭 모드' - 호버 (십자 패드 클릭)"
 
 #. I18N: This is displayed in the file browser to let the user choose a new folder for Android Storage Attached Framework
 #: backends/fs/android/android-saf-fs.cpp:694
 #: backends/fs/android/android-saf-fs.cpp:698
 msgid "Add a new folder"
-msgstr ""
+msgstr "새 폴더 추가"
 
 #. I18N: This may be displayed in the Android UI used to add a Storage Attach Framework authorization
 #: backends/fs/android/android-saf-fs.cpp:810
-#, fuzzy
 msgid "Choose a new folder"
-msgstr "불러올 파일을 선택"
+msgstr "새 폴더를 선택"
 
 #: backends/graphics/atari/atari-graphics.cpp:1065
 #: backends/graphics/sdl/sdl-graphics.cpp:464
 msgid "Toggle aspect ratio correction"
-msgstr "화면 종횡비 보정 전환"
+msgstr "화면비 교정 전환"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:258
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
@@ -3987,13 +3986,13 @@ msgstr "중앙"
 #: backends/graphics3d/ios/ios-graphics3d.cpp:357
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:242
 msgid "Pixel-perfect scaling"
-msgstr "픽셀 맞춤 크기조절"
+msgstr "픽셀 단위의 완벽한 크기 조정"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:260
 #: backends/graphics3d/ios/ios-graphics3d.cpp:358
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:243
 msgid "Even pixels scaling"
-msgstr "균일 픽셀 크기조절"
+msgstr "픽셀 크기 조정"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:261
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
@@ -4007,7 +4006,7 @@ msgstr "창 크기에 맞춤"
 #: backends/graphics3d/ios/ios-graphics3d.cpp:360
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:245
 msgid "Stretch to window"
-msgstr "창에 맞게 늘림"
+msgstr "창에 맞게 늘리기"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:263
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
@@ -4029,12 +4028,12 @@ msgstr "활성 그래픽 필터:"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:857
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2696
 msgid "Enabled aspect ratio correction"
-msgstr "화면 종횡비 보정 활성화"
+msgstr "화면비 교정 활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:859
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2702
 msgid "Disabled aspect ratio correction"
-msgstr "화면 종횡비 보정 비활성화"
+msgstr "화면비 교정 비활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:872
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2718
@@ -4049,25 +4048,25 @@ msgstr "필터링 비활성화"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:900
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2747
 msgid "Stretch mode"
-msgstr "확대 모드"
+msgstr "늘리기 모드"
 
 #: backends/graphics/riscossdl/riscossdl-graphics.cpp:30
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:66
 msgid "SDL Surface"
-msgstr "SDL Surface"
+msgstr "SDL 표면"
 
 #: backends/graphics/riscossdl/riscossdl-graphics.cpp:31
 msgid "SDL Surface (forced 8bpp mode)"
-msgstr ""
+msgstr "SDL 표면 (강제 8bpp 모드)"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:373
 #, c-format
 msgid "Saved screenshot '%s'"
-msgstr "'%s' 스크린샷을 저장했습니다"
+msgstr "'%s' 스크린샷 저장되었음"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:388
 msgid "Could not save screenshot"
-msgstr "스크린샷 저장에 실패했습니다"
+msgstr "스크린샷을 저장할 수 없음"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:435
 msgid "Windowed mode"
@@ -4097,27 +4096,27 @@ msgstr "스크린샷 저장"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:471
 msgid "Toggle linear filtered scaling"
-msgstr "선형 필터링 전환"
+msgstr "선형 필터 크기 조정 전환"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:478
 msgid "Cycle through stretch modes"
-msgstr "확대 모드간 순환"
+msgstr "늘리기 모드간 순환"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:484
 msgid "Increase the scale factor"
-msgstr "확대 비율 증가"
+msgstr "확대/축소 비율 증가"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:490
 msgid "Decrease the scale factor"
-msgstr "확대 비율 감소"
+msgstr "확대/축소 비율 감소"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:497
 msgid "Switch to the next scaler"
-msgstr "다음 크기조절로 전환"
+msgstr "다음 크기 조정 전환"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:502
 msgid "Switch to the previous scaler"
-msgstr "이전 크기조절로 전환"
+msgstr "이전 크기 조정 전환"
 
 #: backends/keymapper/hardware-input.cpp:244
 msgid "Left Mouse Button"
@@ -4149,31 +4148,31 @@ msgstr "X2 마우스 버튼"
 
 #: backends/keymapper/hardware-input.cpp:255
 msgid "Joy A"
-msgstr "조이패드 A"
+msgstr "조이패드 A 버튼"
 
 #: backends/keymapper/hardware-input.cpp:256
 msgid "Joy B"
-msgstr "조이패드 B"
+msgstr "조이패드 B 버튼"
 
 #: backends/keymapper/hardware-input.cpp:257
 msgid "Joy X"
-msgstr "조이패드 X"
+msgstr "조이패드 X 버튼"
 
 #: backends/keymapper/hardware-input.cpp:258
 msgid "Joy Y"
-msgstr "조이패드 Y"
+msgstr "조이패드 Y 버튼"
 
 #: backends/keymapper/hardware-input.cpp:259
 msgid "Joy Back"
-msgstr "조이패드 Back"
+msgstr "조이패드 백 버튼"
 
 #: backends/keymapper/hardware-input.cpp:260
 msgid "Joy Guide"
-msgstr "조이패드 Guide"
+msgstr "조이패드 가이드 버튼"
 
 #: backends/keymapper/hardware-input.cpp:261
 msgid "Joy Start"
-msgstr "조이패드 Start"
+msgstr "조이패드 시작 버튼"
 
 #: backends/keymapper/hardware-input.cpp:262
 msgid "Left Stick"
@@ -4185,11 +4184,11 @@ msgstr "오른쪽 스틱"
 
 #: backends/keymapper/hardware-input.cpp:264 engines/dragons/metaengine.cpp:207
 msgid "Left Shoulder"
-msgstr "왼쪽 숄더"
+msgstr "왼쪽 숄더 버튼"
 
 #: backends/keymapper/hardware-input.cpp:265 engines/dragons/metaengine.cpp:213
 msgid "Right Shoulder"
-msgstr "오른쪽 숄더"
+msgstr "오른쪽 숄더 버튼"
 
 #: backends/keymapper/hardware-input.cpp:266
 #: backends/platform/3ds/osystem-events.cpp:55
@@ -4200,7 +4199,7 @@ msgstr "오른쪽 숄더"
 #: backends/platform/sdl/ps3/ps3.cpp:51 backends/platform/sdl/psp2/psp2.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:48
 msgid "D-pad Up"
-msgstr "D-패드 Up"
+msgstr "십자 패드 위쪽"
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:56
@@ -4211,7 +4210,7 @@ msgstr "D-패드 Up"
 #: backends/platform/sdl/ps3/ps3.cpp:52 backends/platform/sdl/psp2/psp2.cpp:52
 #: backends/platform/sdl/switch/switch.cpp:49
 msgid "D-pad Down"
-msgstr "D-패드 Down"
+msgstr "십자 패드 아래쪽"
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:57
@@ -4222,7 +4221,7 @@ msgstr "D-패드 Down"
 #: backends/platform/sdl/ps3/ps3.cpp:53 backends/platform/sdl/psp2/psp2.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:50
 msgid "D-pad Left"
-msgstr "D-패드 Left"
+msgstr "십자 패드 왼쪽"
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:58
@@ -4233,21 +4232,19 @@ msgstr "D-패드 Left"
 #: backends/platform/sdl/ps3/ps3.cpp:54 backends/platform/sdl/psp2/psp2.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:51
 msgid "D-pad Right"
-msgstr "D-패드 Right"
+msgstr "십자 패드 오른쪽"
 
 #: backends/keymapper/hardware-input.cpp:270
-#, fuzzy
-#| msgid "D-pad Left"
 msgid "D-pad Center"
-msgstr "D-패드 Left"
+msgstr "십자 패드 중앙"
 
 #: backends/keymapper/hardware-input.cpp:275
 msgid "Left Trigger"
-msgstr "왼쪽 트리거"
+msgstr "왼쪽 트리거 버튼"
 
 #: backends/keymapper/hardware-input.cpp:276
 msgid "Right Trigger"
-msgstr "오른쪽 트리거"
+msgstr "오른쪽 트리거 버튼"
 
 #: backends/keymapper/hardware-input.cpp:277
 #: backends/platform/sdl/opendingux/opendingux.cpp:78
@@ -4277,16 +4274,16 @@ msgstr "오른쪽 스틱 Y"
 
 #: backends/keymapper/hardware-input.cpp:281
 msgid "Hat X"
-msgstr ""
+msgstr "햇 X"
 
 #: backends/keymapper/hardware-input.cpp:282
 msgid "Hat Y"
-msgstr ""
+msgstr "햇 Y"
 
 #: backends/keymapper/remap-widget.cpp:298
 #: backends/keymapper/remap-widget.cpp:328
 msgid "Reset to defaults"
-msgstr "기본값으로 초기화"
+msgstr "기본값으로 재설정"
 
 #: backends/keymapper/remap-widget.cpp:299
 msgid "Clear mapping"
@@ -4294,11 +4291,11 @@ msgstr "맵핑 지우기"
 
 #: backends/keymapper/virtual-mouse.cpp:156
 msgid "Virtual mouse up"
-msgstr "가상 마우스 위"
+msgstr "가상 마우스 위쪽"
 
 #: backends/keymapper/virtual-mouse.cpp:161
 msgid "Virtual mouse down"
-msgstr "가상 마우스 아래"
+msgstr "가상 마우스 아래쪽"
 
 #: backends/keymapper/virtual-mouse.cpp:166
 msgid "Virtual mouse left"
@@ -4314,11 +4311,11 @@ msgstr "가상 마우스 속도 감소"
 
 #: backends/midi/windows.cpp:168
 msgid "Windows MIDI"
-msgstr "Windows MIDI"
+msgstr "윈도우즈 미디"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:58
 msgid "Can't create directory here!"
-msgstr "이 곳에 디렉토리를 생성할 수 없습니다!"
+msgstr "여기에 디렉토리를 만들 수 없습니다!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:64
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:72
@@ -4341,21 +4338,21 @@ msgstr "상위 디렉토리가 존재하지 않습니다!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:87
 msgid "Can't create a directory within a file!"
-msgstr "파일 내부에 디렉토리를 생성할 수 없습니다!"
+msgstr "파일 내에 디렉토리를 만들 수 없습니다!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:95
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:137
 msgid "There is a file with that name in the parent directory!"
-msgstr "상위 디렉토리에 동일한 이름을 가진 파일이 존재합니다!"
+msgstr "상위 디렉토리에 해당 이름의 파일이 있습니다!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:101
 msgid "Failed to create the directory!"
-msgstr "디렉토리 생성에 실패했습니다!"
+msgstr "디렉토리 만들기에 실패했습니다!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:108
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:117
 msgid "Directory created successfully!"
-msgstr "디렉토리 생성에 성공했습니다!"
+msgstr "디렉토리 만들기에 성공했습니다!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:119
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:200
