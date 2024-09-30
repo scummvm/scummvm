@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 10:27+0000\n"
+"PO-Revision-Date: 2024-09-30 10:35+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -6252,34 +6252,28 @@ msgstr ""
 "사운드 효과가 원래 게임과 동일하게 들리지 않습니다."
 
 #: engines/agos/midi.cpp:453
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find AdLib instrument definition files\n"
-#| "%s and %s. Without these files,\n"
-#| "the music will not sound the same as the original game."
+#, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
 "%s or %s. Without one of these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
-"%s 및 %s AdLib 기기 정의 파일을 찾을 수 없습니다.\n"
-"이 파일들이 없다면,\n"
-"음악은 원래의 게임과 똑같이 들리지 않을 것이다."
+"AdLib 악기 정의 파일 %s 또는 %s을(를) 찾을 수 없습니다.\n"
+"이 파일 중 하나가 없으면,\n"
+"음악이 원래 게임과 같은 소리가 나지 않습니다."
 
 #: engines/ags/ags.cpp:152
 msgid ""
 "The selected game uses a pre-2.5 version of the AGS engine, which is not "
 "supported."
-msgstr ""
-"이 게임은 ScummVM에서 지원되지 않는, v2.5 이전의 AGS 엔진을 사용합니다."
+msgstr "선택한 게임은 지원되지 않는 AGS 엔진 2.5 이전 버전을 사용합니다."
 
 #: engines/ags/ags.cpp:160
 msgid ""
 "The selected game has a data file greater than 2Gb, which isn't supported by "
 "your version of ScummVM yet."
-msgstr ""
-"선택된 게임은 2GB를 초과하는 게임 데이터 파일이 포함되어 있으며, 현재 ScummVM"
-"에서는 지원되지 않습니다."
+msgstr "선택한 게임의 데이터 파일이 2GB보다 크며, 해당 버전은 아직 ScummVM에서 "
+"지원하지 않습니다."
 
 #: engines/ags/ags.cpp:338
 msgid ""
@@ -6287,6 +6281,9 @@ msgid ""
 "game interface.\n"
 "You can, however, override this setting in Game Options."
 msgstr ""
+"원래 경험을 보존하려면, 이 게임은 게임 내 인터페이스를 사용하여 로드해야 "
+"합니다.\n"
+"그러나, 게임 옵션에서 이 설정을 재정의할 수 있습니다."
 
 #: engines/ags/ags.cpp:353
 msgid ""
@@ -6294,6 +6291,9 @@ msgid ""
 "game interface.\n"
 "You can, however, override this setting in Game Options."
 msgstr ""
+"원래 경험을 보존하려면, 이 게임은 게임 내 인터페이스를 사용하여 저장해야 "
+"합니다.\n"
+"그러나, 게임 옵션에서 이 설정을 재정의할 수 있습니다."
 
 #: engines/ags/dialogs.cpp:61
 msgid "Game language:"
