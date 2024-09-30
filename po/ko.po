@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 15:12+0000\n"
+"PO-Revision-Date: 2024-09-30 15:20+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -11705,31 +11705,31 @@ msgstr "이전 룸을 디버그"
 
 #: engines/twine/metaengine.cpp:235
 msgid "Debug Apply Celling Grid"
-msgstr "셀 격자 적용 디버그"
+msgstr "디버그 셀 격자 적용"
 
 #: engines/twine/metaengine.cpp:240
 msgid "Debug Increase Celling Grid Index"
-msgstr "셀 격자 색인 증가 디버그"
+msgstr "디버그 셀 격자 색인 증가"
 
 #: engines/twine/metaengine.cpp:245
 msgid "Debug Decrease Celling Grid Index"
-msgstr "셀 격자 색인 감소 디버그"
+msgstr "디버그 셀 격자 색인 감소"
 
 #: engines/twine/metaengine.cpp:250
 msgid "Debug Grid Camera Up"
-msgstr "격자 카메라 위 디버그"
+msgstr "디버그 격자 카메라 위"
 
 #: engines/twine/metaengine.cpp:255
 msgid "Debug Grid Camera Down"
-msgstr "격자 카메라 내림 디버그"
+msgstr "디버그 격자 카메라 아래"
 
 #: engines/twine/metaengine.cpp:260
 msgid "Debug Grid Camera Left"
-msgstr "격자 카메라 왼쪽 디버그"
+msgstr "디버그 격자 카메라 왼쪽"
 
 #: engines/twine/metaengine.cpp:266
 msgid "Debug Grid Camera Right"
-msgstr "격자 카메라 오른쪽 디버그"
+msgstr "디버그 격자 카메라 오른쪽"
 
 #: engines/twine/metaengine.cpp:271
 msgid "Place actor at center of screen"
@@ -11745,19 +11745,19 @@ msgstr "디버그 메뉴 실행"
 
 #: engines/twine/metaengine.cpp:286 engines/twine/metaengine.cpp:306
 msgid "Normal Behaviour"
-msgstr "보통 행동방식"
+msgstr "기본 동작"
 
 #: engines/twine/metaengine.cpp:291 engines/twine/metaengine.cpp:311
 msgid "Athletic Behaviour"
-msgstr "스포츠 행동방식"
+msgstr "육상 동작"
 
 #: engines/twine/metaengine.cpp:296 engines/twine/metaengine.cpp:316
 msgid "Aggressive Behaviour"
-msgstr "공격적 행동방식"
+msgstr "공격적인 동작"
 
 #: engines/twine/metaengine.cpp:301 engines/twine/metaengine.cpp:321
 msgid "Discreet Behaviour"
-msgstr "신중한 행동방식"
+msgstr "신중한 동작"
 
 #: engines/twine/metaengine.cpp:326
 msgid "Behaviour Action"
