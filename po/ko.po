@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 15:59+0000\n"
+"PO-Revision-Date: 2024-09-30 16:30+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -12065,24 +12065,24 @@ msgstr "게임 글꼴을 렌더링된 글꼴로 대체"
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
 #: engines/ultima/metaengine.cpp:152
 msgid "Camera moves with Silencer"
-msgstr "Silencer를 따라 카메라 이동"
+msgstr "카메라는 사일런서와 이동"
 
 #: engines/ultima/metaengine.cpp:153
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
-msgstr "카메라가 미리 지정된 위치에 고정되지 않고 플레이어를 따라 이동합니다."
+msgstr "카메라는 정의된 위치에 고정되지 않고 플레이어의 움직임을 추적합니다."
 
 #: engines/ultima/metaengine.cpp:163
 msgid "Always enable Christmas easter-egg"
-msgstr "항상 크리스마스 에스터에그 활성화"
+msgstr "항상 크리스마스 이스터에그를 활성화"
 
 #: engines/ultima/metaengine.cpp:164
 msgid "Enable the Christmas music at any time of year."
-msgstr "연중 언제든지 크리스마스 음악을 활성화하십시오."
+msgstr "일년 중 언제든지 크리스마스 음악을 활성화하세요."
 
 #: engines/ultima/shared/early/ultima_early.cpp:70
 msgid "Could not find correct ultima.dat datafile"
-msgstr "올바른 ultima.dat 데이터 파일을 찾지 못 했습니다"
+msgstr "올바른 ultima.dat 데이터 파일을 찾을 수 없음"
 
 #: engines/ultima/nuvie/nuvie.cpp:375
 #, c-format
