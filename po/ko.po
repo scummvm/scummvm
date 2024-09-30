@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 09:53+0000\n"
+"PO-Revision-Date: 2024-09-30 10:27+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -5629,7 +5629,7 @@ msgstr "R1 버튼"
 
 #: backends/platform/sdl/switch/switch.cpp:41
 msgid "Minus"
-msgstr "마이너스 버튼"
+msgstr "- 버튼"
 
 #: backends/platform/sdl/switch/switch.cpp:42
 #: backends/platform/sdl/switch/switch.cpp:43
@@ -6155,7 +6155,7 @@ msgstr "뒤로 돌아가기"
 #: engines/wintermute/keymapper_tables.h:2122
 #: engines/wintermute/keymapper_tables.h:2223
 msgid "Turn left"
-msgstr "왼쪽으로 회전"
+msgstr "왼쪽으로"
 
 #: engines/agos/metaengine.cpp:308 engines/mohawk/riven.cpp:907
 #: engines/wintermute/keymapper_tables.h:167
@@ -6163,37 +6163,27 @@ msgstr "왼쪽으로 회전"
 #: engines/wintermute/keymapper_tables.h:2128
 #: engines/wintermute/keymapper_tables.h:2230
 msgid "Turn right"
-msgstr "오른쪽으로 회전"
+msgstr "오른쪽으로"
 
 #: engines/agos/metaengine.cpp:316
-#, fuzzy
-#| msgid "Text speed slower / faster"
 msgid "Text speed - Fast"
-msgstr "문장 속도를 느리게 / 빠르게"
+msgstr "문장 속도 - 빠름"
 
 #: engines/agos/metaengine.cpp:321
-#, fuzzy
-#| msgid "Walking speed: Medium"
 msgid "Text speed - Medium"
-msgstr "걷기 속도: 중간"
+msgstr "문장 속도 - 중간"
 
 #: engines/agos/metaengine.cpp:326
-#, fuzzy
-#| msgid "Text speed slower / faster"
 msgid "Text speed - Slow"
-msgstr "문장 속도를 느리게 / 빠르게"
+msgstr "문장 속도 - 느림"
 
 #: engines/agos/metaengine.cpp:331
-#, fuzzy
-#| msgid "Show Object Line"
 msgid "Show objects to interact"
-msgstr "오브젝트 이름 표시"
+msgstr "상호 작용할 개체 표시"
 
 #: engines/agos/metaengine.cpp:338
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Toggle background sounds on/off"
-msgstr "효과음 볼륨"
+msgstr "배경음 켜기/끄기 전환"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:347
@@ -6201,31 +6191,29 @@ msgid "Switch characters"
 msgstr "캐릭터 전환"
 
 #: engines/agos/metaengine.cpp:353
-#, fuzzy
-#| msgid "Toggle fullscreen"
 msgid "Toggle hitbox names on/off"
-msgstr "전체화면 전환"
+msgstr "히트박스 이름 켜기/끄기 전환"
 
 #: engines/agos/metaengine.cpp:360
 msgid "Switches between speech only and combined speech and subtitles"
-msgstr ""
+msgstr "음성만 또는 음성과 자막을 합친 것을 전환"
 
 #: engines/agos/metaengine.cpp:366
 msgid "Switches between subtitles only and combined speech and subtitles"
-msgstr ""
+msgstr "자막만 또는 음성과 자막을 합친 형태로 전환"
 
 #: engines/agos/metaengine.cpp:376
 msgid "High speed mode on/off in Swampy Adventures"
-msgstr ""
+msgstr "Swampy Adventures에서 고속 모드 켜기/끄기"
 
 #: engines/agos/metaengine.cpp:382 engines/lure/metaengine.cpp:295
 #: engines/trecision/metaengine.cpp:181
 msgid "Press \"Yes\" key"
-msgstr ""
+msgstr "\"예\" 키를 누름"
 
 #: engines/agos/metaengine.cpp:387 engines/lure/metaengine.cpp:310
 msgid "Press \"No\" key"
-msgstr ""
+msgstr "\"아니오\" 키를 누름"
 
 #: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
