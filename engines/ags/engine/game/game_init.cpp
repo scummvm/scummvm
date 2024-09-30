@@ -239,7 +239,6 @@ HError InitAndRegisterGameEntities(GameSetupStruct &game) {
 	InitAndRegisterHotspots();
 	InitAndRegisterRegions();
 	InitAndRegisterRoomObjects();
-	_GP(play).CreatePrimaryViewportAndCamera();
 
 	RegisterStaticArrays(game);
 
@@ -483,6 +482,9 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 
 	update_gui_zorder();
 	calculate_reserved_channel_count();
+	// Default viewport and camera, draw data, etc, should be created when resolution is set
+	_GP(play).CreatePrimaryViewportAndCamera();
+	init_game_drawdata();
 
 	//
 	// 6. Register engine API exports
