@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 14:19+0000\n"
+"PO-Revision-Date: 2024-09-30 14:21+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -12982,7 +12982,7 @@ msgstr "스코어"
 
 #: engines/zvision/metaengine.cpp:250
 msgid "Put away object"
-msgstr "오브젝트를 정리"
+msgstr "개체 정리 및 보관"
 
 #: engines/zvision/metaengine.cpp:256
 msgid "Extract coin"
