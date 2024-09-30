@@ -124,7 +124,330 @@ void Room610::init() {
 }
 
 void Room610::daemon() {
-	// TODO
+	daemonPreprocess();
+
+	switch (_G(kernel).trigger) {
+	case 1:
+		player_set_commands_allowed(1);
+		break;
+
+	case 10:
+		_pu01 = series_stream("610pu01", 5, 0, 103);
+		series_stream_break_on_frame(_pu01, 6, 102);
+		ws_demand_location(272, 273, 7);
+		ws_hide_walker();
+
+		_ripAction = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+			triggerMachineByHashCallback610, "spleen");
+		sendWSMessage_10000(1, _ripAction, _ripPeerAroundHut, 1, 65, -1,
+			_ripPeerAroundHut, 65, 65, 1);
+		break;
+
+	case 102:
+		digi_play("610k01", 1);
+		break;
+
+	case 103:
+		digi_play("610k02", 1, 255, 104);
+		break;
+
+	case 104:
+		digi_play("610k03", 1, 255, 107);
+		break;
+
+	case 107:
+		sendWSMessage_10000(1, _sgTt, _sgSlapsTt1, 1, 36, 108,
+			_sgSlapsTt1, 36, 36, 1);
+		break;
+
+	case 108:
+		digi_play("610k04", 1, 255, 112);
+		sendWSMessage_10000(1, _ripAction, _ripPeerAroundHut, 65, 53, 109,
+			_ripPeerAroundHut, 53, 53, 1);
+		sendWSMessage_190000(_ripAction, 10);
+		break;
+
+	case 109:
+		kernel_timing_trigger(200, 110);
+		break;
+
+	case 110:
+		sendWSMessage_10000(1, _ripAction, _ripPeerAroundHut, 53, 65, -1,
+			_ripPeerAroundHut, 65, 65, 1);
+		break;
+
+	case 112:
+		sendWSMessage_10000(1, _sgTt, _sgSlapsTt1, 37, 68, 115,
+			_sgSlapsTt1, 68, 68, 1);
+		digi_play("610t01", 1);
+		break;
+
+	case 115:
+		sendWSMessage_10000(1, _sgTt, _sgSlapsTt1, 69, 81, 117,
+			_sgSlapsTt1, 81, 81, 1);
+		digi_play("610s01", 1, 255, 116);
+		break;
+
+	case 116:
+		_val7 = 1;
+		break;
+
+	case 117:
+		if (_val7)
+			kernel_timing_trigger(1, 120);
+		else
+			kernel_timing_trigger(30, 117);
+		break;
+
+	case 120:
+		sendWSMessage_10000(1, _k, _k00, 59, 60, -1, _k00, 60, 60, 1);
+		sendWSMessage_10000(1, _ripAction, _ripPeerAroundHut, 65, 53, 122,
+			_ripPeerAroundHut, 53, 53, 1);
+		sendWSMessage_190000(_ripAction, 10);
+		digi_play("610k05", 1, 255, 124);
+		break;
+
+	case 121:
+		kernel_timing_trigger(50, 122);
+		break;
+
+	case 122:
+		sendWSMessage_10000(1, _ripAction, _ripPeerAroundHut, 53, 65, 123,
+			_ripPeerAroundHut, 65, 65, 1);
+		break;
+
+	case 123:
+		terminateMachineAndNull(_ripAction);
+		ws_unhide_walker();
+		break;
+
+	case 124:
+		sendWSMessage_10000(1, _sgTt, _sgSlapsTt1, 82, 90, 125,
+			_sgSlapsTt1, 90, 90, 1);
+		break;
+
+	case 125:
+		sendWSMessage_10000(1, _sgTt, _sgSlapsTt1, 91, 110, 128,
+			_sgSlapsTt1, 110, 110, 1);
+		digi_play(imath_ranged_rand(1, 2) == 1 ? "610_s02" : "610_s02a", 2);
+		break;
+
+	case 126:
+		switch (imath_ranged_rand(1, 3)) {
+		case 1:
+			digi_play("610_s03", 2);
+			break;
+		case 2:
+			digi_play("610_s03a", 2);
+			break;
+		case 3:
+			digi_play("610_s03b", 2);
+			break;
+		default:
+			break;
+		}
+		break;
+
+	case 128:
+		sendWSMessage_10000(1, _k, _k00, 50, 60, -1, _k00, 50, 60, 4);
+		sendWSMessage_190000(_k, 11);
+		sendWSMessage_1a0000(_k, 11);
+		sendWSMessage_10000(1, _sgTt, _sgSlapsTt2, 1, 1, -1,
+			_sgSlapsTt2, 1, 1, 1);
+		digi_play("610k06", 1, 255, 130);
+		break;
+
+	case 130:
+		sendWSMessage_10000(1, _sgTt, _sgSlapsTt2, 1, 1, 200,
+			_sgSlapsTt2, 1, 1, 1);
+		_val1 = 1;
+		_val2 = 0;
+		_val3 = 0;
+		sendWSMessage_10000(1, _k, _k00, 50, 50, 400, _k00, 50, 60, 4);
+		sendWSMessage_190000(_k, 11);
+		sendWSMessage_1a0000(_k, 11);
+		_val4 = 0;
+		_val5 = 1;
+		_val6 = 0;
+		_flag2 = 1;
+		player_set_commands_allowed(true);
+		kernel_timing_trigger(300, 135);
+		break;
+
+	case 200:
+		kernel_trigger_dispatchx(kernel_trigger_create(201));
+		break;
+
+	case 201:
+		switch (_val1) {
+		case 1:
+			switch (_val2) {
+			case 0:
+				if (imath_ranged_rand(1, 40) == 1) {
+					sendWSMessage_10000(1, _sgTt, _sgSlapsTt2, 1, 46, 200,
+						_sgSlapsTt2, 46, 46, 0);
+					_val1 = 2;
+				} else {
+					sendWSMessage_10000(1, _sgTt, _sgSlapsTt2, 1, 1, 200,
+						_sgSlapsTt2, 1, 1, 0);
+				}
+				break;
+
+			case 1:
+				sendWSMessage_10000(1, _sgTt, _sgSlapsTt2, 1, 1, 200,
+					_sgSlapsTt2, 1, 1, 0);
+				break;
+
+			case 3:
+				sendWSMessage_10000(1, _sgTt, _sgSlapsTt2, 1, 46, 200,
+					_sgSlapsTt2, 46, 46, 0);
+				_val1 = 2;
+				break;
+
+			case 4:
+				sendWSMessage_10000(1, _sgTt, _sgPullsGun, 1, 36, -1,
+					_sgPullsGun, 36, 36, 0);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 2:
+			switch (_val2) {
+			case 0:
+				if (imath_ranged_rand(1, 40) == 1) {
+					sendWSMessage_10000(1, _sgTt, _sgSlapsTt2, 46, 1, 200,
+						_sgSlapsTt2, 1, 1, 0);
+					_val1 = 1;
+				} else {
+					sendWSMessage_10000(1, _sgTt, _sgSlapsTt2, 46, 46, 200,
+						_sgSlapsTt2, 46, 46, 0);
+				}
+				break;
+
+			case 2:
+				sendWSMessage_10000(1, _sgTt, _sgSlapsTt2, 46, 46, 200,
+					_sgSlapsTt2, 46, 46, 0);
+				break;
+
+			case 3:
+				sendWSMessage_10000(1, _sgTt, _sgSlapsTt2, 47, 48, 202,
+					_sgSlapsTt2, 48, 48, 0);
+				_val1 = 1;
+				_val2 = 0;
+				break;
+
+			default:
+				sendWSMessage_10000(1, _sgTt, _sgSlapsTt2, 47, 48, 202,
+					_sgSlapsTt2, 48, 48, 0);
+				_val1 = 1;
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 202:
+		sendWSMessage_10000(1, _sgTt, _sgSlapsTt2, 49, 62, 200,
+			_sgSlapsTt2, 1, 1, 0);
+
+		digi_play(imath_ranged_rand(1, 2) == 1 ? "610_s02" : "610_s02a", 2);
+		kernel_timing_trigger(20, 126);
+		break;
+
+	case 400:
+		kernel_trigger_dispatchx(kernel_trigger_create(401));
+		break;
+
+	case 401:
+		switch (_val4) {
+		case 0:
+			sendWSMessage_10000(1, _k, _k00, 54, 54, 400, _k00, 54, 54, 0);
+			break;
+
+		case 1:
+			if (imath_ranged_rand(5, 10) < ++_val6) {
+				_val6 = 0;
+
+				if (imath_ranged_rand(1, 2) == 1) {
+					kernel_timing_trigger(50, 400);
+				} else {
+					sendWSMessage_10000(1, _k, _k00, 1, 53, 400, _k00, 54, 60, 4);
+					sendWSMessage_1a0000(_k, 11);
+				}
+			} else {
+				kernel_timing_trigger(50, 400);
+			}
+			break;
+
+		case 2:
+			digi_stop(2);
+			sendWSMessage_10000(1, _k, _k01, 1, 29, 665, _k01, 29, 29, 0);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 665:
+		if (!player_said("talk to", "KUANG") &&
+				!player_said("talk to", "SHEN GUO") &&
+				!player_said("talk to", "SAMANTHA")) {
+			if (player_said("gear", "WHALE BONE HORN")) {
+				disable_player_commands_and_fade_init(700);
+				interface_hide();
+			} else {
+				digi_play("610K14", 1, 255, 667);
+			}
+		}
+		break;
+
+	case 666:
+		ws_hide_walker();
+		_ripAction = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+			triggerMachineByHashCallback610, "spleen");
+		sendWSMessage_10000(1, _ripAction, _rp04, 1, 21, -1, _rp04, 21, 11, 4);
+		sendWSMessage_1a0000(_ripAction, 50);
+		break;
+
+	case 667:
+		digi_play("610R10", 1, 255, 668);
+		break;
+
+	case 668:
+		disable_player_commands_and_fade_init(669);
+		interface_hide();
+		break;
+
+	case 669:
+		kernel_timing_trigger(30, 670);
+		break;
+
+	case 670:
+		digi_play("950_s14", 1, 255, 671);
+		break;
+
+	case 671:
+		_flag1 = true;
+		other_save_game_for_resurrection();
+		_G(game).setRoom(413);
+		break;
+
+	case 700:
+		digi_play("610R11", 1, 255, 669);
+		break;
+
+	default:
+		break;
+	}
+
+	daemonPostprocess();
 }
 
 void Room610::pre_parser() {
@@ -226,10 +549,10 @@ void Room610::talkKuangShenGuo() {
 
 	case 1:
 		ws_hide_walker();
-		_spleen = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+		_ripAction = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
 			triggerMachineByHashCallback610, "spleen");
-		sendWSMessage_10000(1, _spleen, _rp04, 1, 21, 2, _rp04, 21, 11, 4);
-		sendWSMessage_1a0000(_spleen, 50);
+		sendWSMessage_10000(1, _ripAction, _rp04, 1, 21, 2, _rp04, 21, 11, 4);
+		sendWSMessage_1a0000(_ripAction, 50);
 		break;
 
 	case 2:
@@ -272,10 +595,10 @@ void Room610::talkSamantha() {
 
 	case 1:
 		ws_hide_walker();
-		_spleen = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+		_ripAction = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
 			triggerMachineByHashCallback610, "spleen");
-		sendWSMessage_10000(1, _spleen, _rp04, 1, 21, 2, _rp04, 21, 11, 4);
-		sendWSMessage_1a0000(_spleen, 50);
+		sendWSMessage_10000(1, _ripAction, _rp04, 1, 21, 2, _rp04, 21, 11, 4);
+		sendWSMessage_1a0000(_ripAction, 50);
 		break;
 
 	case 2:
@@ -326,7 +649,7 @@ void Room610::useWindow() {
 			kernel_timing_trigger(1, 1);
 		} else {
 			ws_hide_walker();
-			_spleen = series_play("610rp02", 0, 0, 3, 5, 0, 100, 0, 0, 0, 32);
+			_ripAction = series_play("610rp02", 0, 0, 3, 5, 0, 100, 0, 0, 0, 32);
 		}
 		break;
 
@@ -339,7 +662,7 @@ void Room610::useWindow() {
 		break;
 
 	case 3:
-		_spleen = series_play("610rp02", 0, 0, 4, 5, 0, 100, 0, 0, 33, 64);
+		_ripAction = series_play("610rp02", 0, 0, 4, 5, 0, 100, 0, 0, 33, 64);
 		digi_play("610_s01", 2);
 		hotspot_set_active("window", false);
 		hotspot_set_active("window ", true);
@@ -354,6 +677,77 @@ void Room610::useWindow() {
 
 	default:
 		break;
+	}
+}
+
+void Room610::daemonPreprocess() {
+	switch (_G(kernel).trigger) {
+	case 135:
+		if (!_flag1) {
+			if (++_val8 >= 8)
+				_val8 = 1;
+
+			switch (_val8) {
+			case 1:
+				digi_play("610k07", 2, 150);
+				kernel_timing_trigger(400, 135);
+				break;
+			case 2:
+				digi_play("610k08", 2, 150);
+				kernel_timing_trigger(400, 135);
+				break;
+			case 3:
+				digi_play("610k09", 2, 150);
+				kernel_timing_trigger(400, 135);
+				break;
+			case 4:
+				digi_play("610k10", 2, 150);
+				kernel_timing_trigger(400, 135);
+				break;
+			case 5:
+				digi_play("610k11", 2, 150);
+				kernel_timing_trigger(400, 135);
+				break;
+			case 6:
+				digi_play("610k12", 2, 150, 137);
+				kernel_timing_trigger(400, 135);
+				break;
+			case 7:
+				digi_play("610k13", 2, 150);
+				kernel_timing_trigger(500, 135);
+				break;
+			default:
+				break;
+			}
+		}
+		break;
+
+	case 137:
+		_val2 = 3;
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room610::daemonPostprocess() {
+	if (!_flag1 && _flag2) {
+		player_update_info();
+
+		if (_G(player_info).x <= 222)
+			player_set_commands_allowed(false);
+
+		if (!player_said("talk to", "KUANG") &&
+				!player_said("talk to", "SHEN GUO") &&
+				!player_said("talk to", "SAMANTHA") &&
+				_G(player_info).x <= 222) {
+			intr_cancel_sentence();
+			ws_walk(202, 244, nullptr, 666, 11);
+			_flag1 = true;
+			_val5 = 2;
+			_val2 = 4;
+		}
 	}
 }
 

@@ -37,9 +37,10 @@ private:
 	int _sgSlapsTt1 = 0;
 	int _sgSlapsTt2 = 0;
 	int _sgPullsGun = 0;
-	machine *_spleen = nullptr;
+	machine *_ripAction = nullptr;
 	machine *_k = nullptr;
 	machine *_sgTt = nullptr;
+	machine *_pu01 = nullptr;
 	int _val1 = 0;
 	int _val2 = 0;
 	int _val3 = 0;
@@ -57,6 +58,8 @@ private:
 	void talkSamantha();
 	bool useHorn();
 	void useWindow();
+	void daemonPreprocess();
+	void daemonPostprocess();
 
 public:
 	Room610() : Room() {}
