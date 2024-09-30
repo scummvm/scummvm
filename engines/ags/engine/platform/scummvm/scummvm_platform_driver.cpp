@@ -47,6 +47,7 @@ struct ScummVMPlatformDriver : AGSPlatformDriver {
 	FSLocation GetUserConfigDirectory() override;
 	FSLocation GetUserGlobalConfigDirectory() override;
 	FSLocation GetAppOutputDirectory() override;
+	bool IsLocalDirRestricted() override;
 	uint64_t GetDiskFreeSpaceMB(const AGS::Shared::String &path) override;
 	const char *GetNoMouseErrorString() override;
 	const char *GetAllegroFailUserHint() override;
@@ -103,6 +104,11 @@ FSLocation ScummVMPlatformDriver::GetUserGlobalConfigDirectory() {
 
 FSLocation ScummVMPlatformDriver::GetAppOutputDirectory() {
 	return FSLocation(".");
+}
+
+bool ScummVMPlatformDriver::IsLocalDirRestricted() {
+	// Let them to create temp files in the current working dir
+	return false;
 }
 
 uint64_t ScummVMPlatformDriver::GetDiskFreeSpaceMB(const String &path) {
