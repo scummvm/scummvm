@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 11:50+0000\n"
+"PO-Revision-Date: 2024-09-30 11:52+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -11471,19 +11471,17 @@ msgstr "일부 반복 조작을 제거하고, 키보드로 명령어를 변경�
 #: engines/sword1/animation.cpp:532
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr "PSX 스트림 영상 '%s'는 팔레트 모드에서 재생할 수 없습니다"
+msgstr "'%s' PSX 스트림 컷씬은 팔레트 모드에서 재생할 수 없음"
 
 #: engines/sword1/animation.cpp:563 engines/sword2/animation.cpp:456
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
-msgstr ""
-"MPEG-2 영상을 발견했지만 ScummVM이 MPEG-2가 포함되지 않은 상태로 빌드되었습니"
-"다"
+msgstr "MPEG-2 컷씬이 발견되었지만 ScummVM은 MPEG-2 지원 없이 빌드되었음"
 
 #: engines/sword1/animation.cpp:570 engines/sword2/animation.cpp:465
 #, c-format
 msgid "Cutscene '%s' not found"
-msgstr "'%s' 컷씬을 찾지 못함"
+msgstr "'%s' 컷씬을 찾지 못 함"
 
 #: engines/sword1/control.cpp:2811
 msgid ""
@@ -11527,9 +11525,7 @@ msgstr "Broken Sword 1 데모는 여기서 끝납니다"
 #: engines/sword2/animation.cpp:426
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
-msgstr ""
-"PSX 영상을 발견했지만 ScummVM이 RGB 색상 지원이 포함되지 않은 상태로 빌드되었"
-"습니다"
+msgstr "PSX 컷씬이 발견되었지만 ScummVM은 RGB 색상 지원 없이 빌드되었음"
 
 #: engines/sword2/metaengine.cpp:43
 msgid "Show object labels"
