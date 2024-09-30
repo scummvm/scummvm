@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 13:56+0000\n"
+"PO-Revision-Date: 2024-09-30 14:19+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -7256,7 +7256,7 @@ msgstr "게임 그래픽을 밝은 팔레트로 표시"
 
 #: engines/dreamweb/metaengine.cpp:73
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
-msgstr "물체, 옵션 및 성경 인용문에 대해 TTS를 활성화"
+msgstr "개체, 옵션, 성경 인용문에 대해 TTS를 활성화"
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Prerecorded sounds"
@@ -7612,11 +7612,11 @@ msgstr "대사 건너뛰기"
 
 #: engines/grim/grim.cpp:582
 msgid "Cycle Objects Up"
-msgstr "개체 위로 전환"
+msgstr "개체 위로 순환"
 
 #: engines/grim/grim.cpp:587
 msgid "Cycle Objects Down"
-msgstr "개체 아래로 전환"
+msgstr "개체 아래로 순환"
 
 #: engines/grim/grim.cpp:597
 msgid "Quick Room Exit"
@@ -8489,7 +8489,7 @@ msgstr "쉬운 마우스 인터페이스"
 
 #: engines/mads/metaengine.cpp:64
 msgid "Shows object names when hovering the mouse over them"
-msgstr "마우스 커서를 올리면 대상의 이름을 표시"
+msgstr "마우스 커서를 올리면 개체 이름을 표시"
 
 #: engines/mads/metaengine.cpp:75 engines/mads/metaengine.cpp:76
 msgid "Animated inventory items"
@@ -10538,7 +10538,7 @@ msgstr "걷기"
 
 #: engines/scumm/help.cpp:230
 msgid "Object"
-msgstr "오브젝트"
+msgstr "개체"
 
 #: engines/scumm/help.cpp:233
 msgid "Black and White / Color"
@@ -10774,11 +10774,11 @@ msgstr "SCUMM v7-8 지원이 컴파일 되지 않음"
 
 #: engines/scumm/metaengine.cpp:645
 msgid "Show Object Line"
-msgstr "오브젝트 이름 표시"
+msgstr "개체 줄 표시"
 
 #: engines/scumm/metaengine.cpp:646
 msgid "Show the names of objects at the bottom of the screen"
-msgstr "오브젝트의 이름을 화면 하단에 표시합니다"
+msgstr "개체의 이름을 화면 하단에 표시"
 
 #: engines/scumm/metaengine.cpp:654
 msgid "Use NES Classic Palette"
@@ -11377,53 +11377,52 @@ msgid ""
 "designed. The Steam release is known to be missing it. You can get the fonts "
 "from the demo version of the game."
 msgstr ""
-"텍스트를 의도된 스타일대로 표시하기 위해서는 'fonts' 폴더가 필요합니다. "
-"Steam 판에는 이 폴더가 존재하지 않지만, 데모 버전에서 가져올 수 있습니다."
+"'fonts' 폴더는 디자인된 대로 텍스트 스타일을 경험하는 데 필요합니다. 스팀 "
+"버전에는 없는 것으로 알려져 있습니다. 게임의 데모 버전에서 글꼴을 얻을 수 "
+"있습니다."
 
 #: engines/stark/stark.cpp:313
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
-msgstr ""
-"게임 현지화에 필요한 글꼴 설정을 얻어오기 위해서 'gui.ini'가 필요합니다."
+msgstr "게임 현지화에 적합한 글꼴 설정을 얻으려면 'gui.ini'를 사용하는 것이 좋습니다."
 
 #: engines/stark/stark.cpp:319
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
-msgstr "현지화된 확인 창을 사용하기 위해서 'language.ini'가 필요합니다."
+msgstr "현지화된 확인 대화 상자를 얻으려면 'language.ini'를 사용하는 것이 좋습니다."
 
 #: engines/stark/stark.cpp:325
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
-msgstr "스타일이 적용된 확인창을 사용하기 위해서 'game.exe'가 필요합니다."
+msgstr "스타일이 적용된 확인 대화 상자를 얻으려면 'game.exe'를 사용하는 것이 "
+"좋습니다."
 
 #: engines/supernova/supernova.cpp:191
 #, c-format
 msgid "Unable to locate the text for %s language in engine data file."
-msgstr "엔진 데이터 파일에서 %s 언어를 찾을 수 없습니다."
+msgstr "엔진 데이터 파일에서 %s 언어에 대한 텍스트를 찾을 수 없습니다."
 
 #: engines/supernova/supernova.cpp:475
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
-msgstr ""
-"'%s' 엔진의 데이터 파일 버전이 잘못되었습니다. 필요한 버전:%d, 실제 버전: %d."
+msgstr "'%s' 엔진 데이터 파일 버전이 잘못되었습니다. 필요한 버전:%d, 실제 버전: %d."
 
 #: engines/supernova/supernova.cpp:485
 #, c-format
 msgid "Unable to find block for part %d"
-msgstr "파트 %d에 해당하는 블록을 찾을 수 없습니다"
+msgstr "%d 부분에 대한 블록을 찾을 수 없음"
 
 #: engines/supernova/supernova.cpp:528
 #, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
-msgstr "게임 폴더나 엔진 데이터 파일에서 '%s' 을(를) 찾을 수 없습니다."
+msgstr "게임 폴더나 엔진 데이터 파일에서 '%s'을(를) 찾을 수 없습니다."
 
 #: engines/supernova/supernova.cpp:832
 msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
-msgstr ""
-"게임 임시 저장에 실패했습니다. 게임 저장 디렉토리가 ScummVM에 설정되어 있는"
-"지, 쓰기 가능한지 확인해 주세요."
+msgstr "임시 게임 상태 저장에 실패하였습니다. ScummVM에서 저장 게임 디렉토리가 "
+"설정되어 있고 여기에 쓸 수 있는지 확인하세요."
 
 #: engines/supernova/supernova.cpp:833
 msgid "Failed to load temporary game state."
@@ -11436,7 +11435,7 @@ msgstr "향상된 모드"
 #: engines/supernova/metaengine.cpp:38
 msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
-msgstr "일부 반복 조작을 제거하고, 키보드로 명령어를 변경할 수 있게 함"
+msgstr "일부 반복적인 작업을 제거하고,키보드로 명령어를 변경할 수 있는 기능을 추가함"
 
 #: engines/sword1/animation.cpp:532
 #, c-format
@@ -11477,20 +11476,20 @@ msgid ""
 "Target new saved game already exists!\n"
 "Would you like to keep the old saved game (%s) or the new one (%s)?\n"
 msgstr ""
-"이미 게임 저장 파일이 존재합니다!\n"
-"이전 저장 파일 (%s)과 신규 저장 파일 (%s) 중 어느 것을 남기겠습니까?\n"
+"새로 저장된 게임이 이미 존재합니다!\n"
+"이전에 저장된 게임 (%s)와(과) 새 게임 (%s) 중 어느 것을 유지하겠습니까?\n"
 
 #: engines/sword1/control.cpp:3000
 msgid "Keep the old one"
-msgstr "이전 파일을 남김"
+msgstr "이전 것을 유지"
 
 #: engines/sword1/control.cpp:3000
 msgid "Keep the new one"
-msgstr "신규 파일을 남김"
+msgstr "새 것을 유지"
 
 #: engines/sword1/logic.cpp:1732
 msgid "This is the end of the Broken Sword 1 Demo"
-msgstr "Broken Sword 1 데모는 여기서 끝납니다"
+msgstr "이 브로큰 소드 1 데모는 끝났음"
 
 #: engines/sword2/animation.cpp:426
 msgid ""
@@ -11499,11 +11498,11 @@ msgstr "PSX 컷씬이 발견되었지만 ScummVM은 RGB 색상 지원 없이 빌
 
 #: engines/sword2/metaengine.cpp:43
 msgid "Show object labels"
-msgstr "오브젝트 이름 표시"
+msgstr "개체 레이블 표시"
 
 #: engines/sword2/metaengine.cpp:44
 msgid "Show labels for objects on mouse hover"
-msgstr "마우스 호버시 오브젝트 이름을 표시합니다"
+msgstr "마우스 호버 시 개체 이름을 표시"
 
 #: engines/sword25/metaengine.cpp:35
 msgid "Use English speech"
@@ -11785,7 +11784,7 @@ msgstr "설정"
 
 #: engines/twine/metaengine.cpp:356
 msgid "Use Selected Object"
-msgstr "선택한 오브젝트를 사용"
+msgstr "선택한 개체를 사용"
 
 #: engines/twine/metaengine.cpp:362
 msgid "Throw Magic Ball"
@@ -11898,6 +11897,9 @@ msgid ""
 "There is a game achievement that can be obtained only if the in-jokes option "
 "is switched on."
 msgstr ""
+"이 게임에는 대화와 개체의 형태로 과거 어드벤처 게임에 대한 내부 농담과 "
+"참조가 포함됩니다.\n"
+"내부 농담 옵션이 켜져 있어야만 얻을 수 있는 게임 업적이 있습니다."
 
 #: engines/twp/dialogs.cpp:44
 msgid "Controls:"
@@ -11934,16 +11936,12 @@ msgid "Select highlighted verb"
 msgstr "테마 선택"
 
 #: engines/twp/metaengine.cpp:156
-#, fuzzy
-#| msgid "Go to previous directory level"
 msgid "Go to previous object"
-msgstr "상위 디렉토리로 이동합니다"
+msgstr "이전 개체로 이동"
 
 #: engines/twp/metaengine.cpp:157
-#, fuzzy
-#| msgid "Go to setup menu"
 msgid "Go to next object"
-msgstr "셋업 메뉴로 이동"
+msgstr "다음 개체로 이동"
 
 #: engines/twp/metaengine.cpp:158
 msgid "Select verb/item Left"
