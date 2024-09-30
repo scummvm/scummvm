@@ -101,6 +101,7 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	  _searchManager(nullptr),
 	  _textRenderer(nullptr),
 	  _doubleFPS(false),
+	  _widescreen(false),
 	  _audioId(0),
 	  _frameRenderDelay(2),
 	  _keyboardVelocity(0),
@@ -193,8 +194,12 @@ void ZVision::initialize() {
 		}
 	}
 
+	_widescreen = ConfMan.getBool("widescreen");
+
 	Graphics::ModeList modes;
 	modes.push_back(Graphics::Mode(WINDOW_WIDTH, WINDOW_HEIGHT));
+  if (_widescreen)
+	  modes.push_back(Graphics::Mode(WINDOW_WIDTH_WIDE, WINDOW_HEIGHT_WIDE));    
 #if defined(USE_MPEG2) && defined(USE_A52)
 	// For the DVD version of ZGI we can play high resolution videos
 	if (getGameId() == GID_GRANDINQUISITOR && (getFeatures() & ADGF_DVD))
@@ -329,9 +334,9 @@ Common::Error ZVision::run() {
 
 		// Render the backBuffer to the screen
 		_renderManager->prepareBackground();
-		_renderManager->renderMenuToScreen();
-		_renderManager->processSubs(deltaTime);
-		_renderManager->renderSceneToScreen();
+		_renderManager->renderMenuToScreen(); //TODO - disable in widescreen mode.
+		_renderManager->processSubs(deltaTime); //TODO - alter to blit subs to intermediate buffer, then handle this buffer in renderscenetoscreen()?
+		_renderManager->renderSceneToScreen();  //TODO - add code to composite menu surface into scene in this function in widescreen mode.
 
 		// Update the screen
 		if (canRender()) {
