@@ -70,15 +70,15 @@ namespace AGS3 {
 #define OPT_PORTRAITSIDE    31
 #define OPT_STRICTSCRIPTING 32  // don't allow MoveCharacter-style commands
 #define OPT_LEFTTORIGHTEVAL 33  // left-to-right operator evaluation
-#define OPT_COMPRESSSPRITES 34  // [DEPRECATED]
+#define OPT_COMPRESSSPRITES 34  // sprite compression type (None, RLE, LZW, Deflate)
 #define OPT_STRICTSTRINGS   35  // don't allow old-style strings, for reference only
-#define OPT_NEWGUIALPHA     36
+#define OPT_NEWGUIALPHA     36  // alpha blending method when drawing GUI and controls
 #define OPT_RUNGAMEDLGOPTS  37
 #define OPT_NATIVECOORDINATES 38 // defines coordinate relation between game logic and game screen
 #define OPT_GLOBALTALKANIMSPD 39
 #define OPT_HIGHESTOPTION_321 39
-#define OPT_SPRITEALPHA     40
-#define OPT_SAFEFILEPATHS   41
+#define OPT_SPRITEALPHA     40  // alpha blending method when drawing images on DrawingSurface
+#define OPT_SAFEFILEPATHS   41  // restricted file path in script (not writing to the game dir, etc)
 #define OPT_DIALOGOPTIONSAPI 42 // version of dialog options API (-1 for pre-3.4.0 API)
 #define OPT_BASESCRIPTAPI   43 // version of the Script API (ScriptAPIVersion) used to compile game script
 #define OPT_SCRIPTCOMPATLEV 44 // level of API compatibility (ScriptAPIVersion) used to compile game script
