@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 13:34+0000\n"
+"PO-Revision-Date: 2024-09-30 13:56+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -11196,27 +11196,27 @@ msgstr "핫스팟이나 작업 버튼을 실제로 클릭한 후에만 핫스팟
 
 #: engines/sherlock/metaengine.cpp:75
 msgid "Show character portraits"
-msgstr "캐릭터 세로 방향 표시"
+msgstr "캐릭터 인물 표시"
 
 #: engines/sherlock/metaengine.cpp:76
 msgid "Show portraits for the characters when conversing"
-msgstr "대화시 캐릭터 얼굴을 표시합니다"
+msgstr "대화 시 캐릭터 인물 표시"
 
 #: engines/sherlock/metaengine.cpp:87
 msgid "Slide dialogs into view"
-msgstr "대화창을 슬라이드 표시"
+msgstr "대화 상자 슬라이드 보기"
 
 #: engines/sherlock/metaengine.cpp:88
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
-msgstr "UI 대화창을 즉시 표시하지 않고 슬라이드하여 표시합니다"
+msgstr "UI 대화 상자를 바로 보여주는 대신, 슬라이드로 표시"
 
 #: engines/sherlock/metaengine.cpp:99
 msgid "Transparent windows"
-msgstr "투명 창"
+msgstr "투명한 창"
 
 #: engines/sherlock/metaengine.cpp:100
 msgid "Show windows with a partially transparent background"
-msgstr "창화면의 배경을 일부 투명하게 합니다"
+msgstr "부분적으로 투명한 배경을 가진 창 표시"
 
 #: engines/sky/compact.cpp:140
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
@@ -11236,11 +11236,11 @@ msgstr "제어판 열기"
 
 #: engines/sky/metaengine.cpp:131
 msgid "Toggle fast mode"
-msgstr "빠른 모드 토글"
+msgstr "빠른 모드 전환"
 
 #: engines/sky/metaengine.cpp:136
 msgid "Toggle really fast mode"
-msgstr "매우 빠른 모드 토글"
+msgstr "매우 빠른 모드 전환"
 
 #: engines/sky/metaengine.cpp:156
 msgid "Floppy intro"
@@ -11248,7 +11248,7 @@ msgstr "플로피 버전 인트로"
 
 #: engines/sky/metaengine.cpp:157
 msgid "Use the floppy version's intro (CD version only)"
-msgstr "플로피 버전의 인트로를 사용합니다 (CD 버전에서만)"
+msgstr "플로피 버전의 인트로를 사용 (CD 버전만)"
 
 #: engines/sky/metaengine.cpp:235
 msgid "WARNING: Deleting the autosave slot is not supported by this engine"
@@ -11270,17 +11270,16 @@ msgstr "백그라운드 이미지의 선형 필터링 활성화"
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
-msgstr ""
-"선형 필터링이 활성화되면 전체 화면에서 백그라운드 그래픽이 더 부드럽게 표시됩"
-"니다. 다만 디테일이 조금 낮아집니다."
+msgstr "선형 필터링을 활성화하면 전체 화면 모드에서 백그라운드 그래픽이 더 "
+"부드러워지지만, 일부 디테일이 손실됩니다."
 
 #: engines/stark/metaengine.cpp:63 engines/ultima/metaengine.cpp:140
 msgid "Enable font anti-aliasing"
-msgstr "폰트 안티 앨리어싱 활성화"
+msgstr "글꼴 안티 에일리어싱 활성화"
 
 #: engines/stark/metaengine.cpp:64 engines/ultima/metaengine.cpp:141
 msgid "When font anti-aliasing is enabled, the text is smoother."
-msgstr "폰트 안티 앨리어싱을 활성화하면 텍스트가 부드럽게 표시됩니다."
+msgstr "글꼴 안티 에일리어싱을 활성화하면, 텍스트가 더 부드러워집니다."
 
 #: engines/stark/metaengine.cpp:184
 #, fuzzy
@@ -11290,38 +11289,30 @@ msgstr "기본 게임 키설정"
 
 #. I18N: Opens in-game Diary
 #: engines/stark/metaengine.cpp:202
-#, fuzzy
-#| msgid "Game menu"
 msgid "Diary menu"
-msgstr "게임 메뉴"
+msgstr "일기 메뉴"
 
 #. I18N: Opens in-game conversation log
 #: engines/stark/metaengine.cpp:219
-#, fuzzy
-#| msgid "Next location"
 msgid "Conversation log"
-msgstr "다음 위치"
+msgstr "대화 로그"
 
 #. I18N: Opens in-game Diary
 #: engines/stark/metaengine.cpp:225
 msgid "April's diary (initially disabled)"
-msgstr ""
+msgstr "4 월 일기 (초기에는 비활성화됨)"
 
 #: engines/stark/metaengine.cpp:230
-#, fuzzy
-#| msgid "Fast replay"
 msgid "Video replay"
-msgstr "빠른 리플레이"
+msgstr "비디오 리플레이"
 
 #: engines/stark/metaengine.cpp:235
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game settings"
-msgstr "게임 옵션"
+msgstr "게임 설정"
 
 #: engines/stark/metaengine.cpp:245 engines/wintermute/keymapper_tables.h:1345
 msgid "Toggle subtitles"
-msgstr "자막 표시 전환"
+msgstr "자막 전환"
 
 #: engines/stark/metaengine.cpp:250
 msgid "Quit to menu"
@@ -11329,58 +11320,48 @@ msgstr "메뉴 종료"
 
 #: engines/stark/metaengine.cpp:255
 msgid "Cycle back through inventory cursor items"
-msgstr ""
+msgstr "인벤토리 커서 아이템 뒤로 순환"
 
 #: engines/stark/metaengine.cpp:261
 msgid "Cycle forward through inventory cursor items"
-msgstr ""
+msgstr "인벤토리 커서 아이템을 앞으로 순환"
 
 #. I18N: A popup on screen shows shows the exits
 #: engines/stark/metaengine.cpp:274
 msgid "Display all exits on current location"
-msgstr ""
+msgstr "현재 위치의 모든 나가기 표시"
 
 #: engines/stark/metaengine.cpp:292
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Scroll up in inventory"
-msgstr "인벤토리 열기/닫기"
+msgstr "인벤토리에서 위로 스크롤"
 
 #: engines/stark/metaengine.cpp:299
-#, fuzzy
-#| msgid "Show inventory"
 msgid "Scroll down in inventory"
-msgstr "인벤토리 보이기"
+msgstr "인벤토리에서 아래로 스크롤"
 
 #: engines/stark/metaengine.cpp:306
 msgid "Scroll up in your dialogues"
-msgstr ""
+msgstr "대화에서 위로 스크롤"
 
 #: engines/stark/metaengine.cpp:312
 msgid "Scroll down in your dialogues"
-msgstr ""
+msgstr "대화에서 아래로 스크롤"
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "Highlight next dialogue"
 msgid "go to next dialogue"
-msgstr "다음 대사를 강조"
+msgstr "다음 대화로 이동"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "Go to previous directory level"
 msgid "go to previous dialogues"
-msgstr "상위 디렉토리로 이동합니다"
+msgstr "이전 대화로 이동"
 
 #: engines/stark/metaengine.cpp:328
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Select dialogue"
-msgstr "대사 건너뛰기"
+msgstr "대화 선택"
 
 #: engines/stark/metaengine.cpp:335
 msgid "Skip video sequence or dialogue"
-msgstr ""
+msgstr "비디오 시퀀스 또는 대화 건너뛰기"
 
 #: engines/stark/stark.cpp:106
 msgid "Software renderer does not support modded assets"
@@ -11388,7 +11369,7 @@ msgstr "소프트웨어 렌더러는 수정된 자산을 지원하지 않음"
 
 #: engines/stark/stark.cpp:292
 msgid "You are missing recommended data files:"
-msgstr "권장 데이터 파일이 빠져 있습니다:"
+msgstr "권장되는 데이터 파일이 없음:"
 
 #: engines/stark/stark.cpp:306
 msgid ""
