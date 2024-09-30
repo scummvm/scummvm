@@ -266,7 +266,7 @@ int get_font_height_outlined(size_t fontNumber) {
 int get_font_surface_height(size_t fontNumber) {
 	if (fontNumber >= _GP(fonts).size() || !_GP(fonts)[fontNumber].Renderer)
 		return 0;
-	return _GP(fonts)[fontNumber].Metrics.VExtent.second - _GP(fonts)[fontNumber].Metrics.VExtent.first;
+	return _GP(fonts)[fontNumber].Metrics.ExtentHeight();
 }
 
 std::pair<int, int> get_font_surface_extent(size_t fontNumber) {
