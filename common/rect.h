@@ -296,7 +296,7 @@ struct Rect {
 	}
 
 	/**
-	 * Clip this rectangle with another rectangle @p r.
+	 * Clip this rectangle to within the bounds of another rectangle @p r.
 	 */
 	void clip(const Rect &r) {
 		assert(isValidRect());
