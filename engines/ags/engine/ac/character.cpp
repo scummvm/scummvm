@@ -140,7 +140,8 @@ void Character_AddInventory(CharacterInfo *chaa, ScriptInvItem *invi, int addInd
 void Character_AddWaypoint(CharacterInfo *chaa, int x, int y) {
 
 	if (chaa->room != _G(displayed_room))
-		quit("!MoveCharacterPath: specified character not in current room");
+		quitprintf("!MoveCharacterPath: character %s is not in current room %d (it is in room %d)",
+				   chaa->scrname, _G(displayed_room), chaa->room);
 
 	// not already walking, so just do a normal move
 	if (chaa->walking <= 0) {
@@ -424,7 +425,8 @@ void Character_FaceCharacter(CharacterInfo *char1, CharacterInfo *char2, int blo
 		quit("!FaceCharacter: invalid character specified");
 
 	if (char1->room != char2->room)
-		quit("!FaceCharacter: characters are in different rooms");
+		quitprintf("!FaceCharacter: characters %s and %s are in different rooms (room %d and room %d respectively)",
+				   char1->scrname, char2->scrname, char1->room, char2->room);
 
 	FaceLocationXY(char1, char2->x, char2->y, blockingStyle);
 }
@@ -436,7 +438,8 @@ void Character_FollowCharacter(CharacterInfo *chaa, CharacterInfo *tofollow, int
 
 	if ((chaa->index_id == _GP(game).playercharacter) && (tofollow != nullptr) &&
 	        (tofollow->room != chaa->room))
-		quit("!FollowCharacterEx: you cannot tell the player character to follow a character in another room");
+		quitprintf("!FollowCharacterEx: you cannot tell the player character %s, who is in room %d, to follow a character %s who is in another room %d",
+				   chaa->scrname, chaa->room, tofollow->scrname, tofollow->room);
 
 	if (tofollow != nullptr) {
 		debug_script_log("%s: Start following %s (dist %d, eager %d)", chaa->scrname, tofollow->scrname, distaway, eagerness);
@@ -970,7 +973,8 @@ void Character_Move(CharacterInfo *chaa, int x, int y, int blocking, int direct)
 void Character_WalkStraight(CharacterInfo *chaa, int xx, int yy, int blocking) {
 
 	if (chaa->room != _G(displayed_room))
-		quit("!MoveCharacterStraight: specified character not in current room");
+		quitprintf("!MoveCharacterStraight: character %s is not in current room %d (it is in room %d)",
+				   chaa->scrname, _G(displayed_room), chaa->room);
 
 	int movetox = xx, movetoy = yy;
 
@@ -1600,7 +1604,8 @@ int turnlooporder[8] = {0, 6, 1, 7, 3, 5, 2, 4};
 void walk_character(int chac, int tox, int toy, int ignwal, bool autoWalkAnims) {
 	CharacterInfo *chin = &_GP(game).chars[chac];
 	if (chin->room != _G(displayed_room))
-		quit("!MoveCharacter: character not in current room");
+		quitprintf("!MoveCharacter: character %s is not in current room %d (it is in room %d)",
+				   chin->scrname, _G(displayed_room), chin->room);
 
 	chin->flags &= ~CHF_MOVENOTWALK;
 
