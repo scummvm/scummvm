@@ -1398,7 +1398,7 @@ public:
 	int _walkBehindLeft[MAX_WALK_BEHINDS], _walkBehindTop[MAX_WALK_BEHINDS];
 	int _walkBehindRight[MAX_WALK_BEHINDS], _walkBehindBottom[MAX_WALK_BEHINDS];
 	AGS::Engine::IDriverDependantBitmap *_walkBehindBitmap[MAX_WALK_BEHINDS];
-	int _walkBehindsCachedForBgNum = 0;
+	int _walkBehindsCachedForBgNum = -1;
 	int _walk_behind_baselines_changed = 0;
 	Rect _walkBehindAABB[MAX_WALK_BEHINDS]; // WB bounding box
 	std::vector<WalkBehindColumn> _walkBehindCols; // precalculated WB positions
