@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-01 00:18+0000\n"
+"PO-Revision-Date: 2024-10-01 00:52+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -9387,9 +9387,8 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "다른 버전의 게임 인트로를 사용합니다 (CD 버전에서만)"
 
 #: engines/queen/metaengine.cpp:47
-#, fuzzy
 msgid "Improved font"
-msgstr "향상된 모드"
+msgstr "개선된 모드"
 
 #: engines/queen/metaengine.cpp:48
 msgid "Use an easier to read custom font"
@@ -9710,7 +9709,7 @@ msgstr "리소스별 변경된 팔레트 사용"
 
 #: engines/sci/detection_options.h:198
 msgid "Use custom per-resource palettes to improve visuals"
-msgstr "비주얼 향상을 위해 리소스별 커스텀 팔레트 사용"
+msgstr "비주얼 개선을 위해 리소스별 커스텀 팔레트 사용"
 
 #: engines/sci/detection_options.h:210
 msgid "Enable bearded musicians"
@@ -11428,7 +11427,7 @@ msgstr "임시 게임 상태를 불러오는 데 실패했습니다."
 
 #: engines/supernova/metaengine.cpp:37
 msgid "Improved mode"
-msgstr "향상된 모드"
+msgstr "개선된 모드"
 
 #: engines/supernova/metaengine.cpp:38
 msgid ""
@@ -12104,11 +12103,11 @@ msgstr "울티마 VI"
 
 #: engines/ultima/nuvie/metaengine.cpp:208
 msgid "Martian Dreams"
-msgstr "화성의 꿈"
+msgstr "Martian Dreams"
 
 #: engines/ultima/nuvie/metaengine.cpp:210
 msgid "The Savage Empire"
-msgstr ""
+msgstr "The Savage Empire"
 
 #: engines/ultima/nuvie/save/save_game.cpp:207
 msgid "Transfer Character"
@@ -12136,10 +12135,13 @@ msgid ""
 "directories have been copied from the CD.  More instructions are on the "
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
+"크루세이더 인트로 무비 파일이 없습니다. CD에서 FLICS 및 SOUND 디렉토리가 "
+"복사되었는지 확인하세요.  자세한 지침은 위키에서 확인하세요: https://wiki."
+"scummvm.org/index.php?title=Crusader:_No_Remorse."
 
 #: engines/vcruise/metaengine.cpp:42
 msgid "Improved click sensitivity"
-msgstr ""
+msgstr "클릭 감도 개선"
 
 #: engines/vcruise/metaengine.cpp:43
 msgid ""
@@ -12147,6 +12149,9 @@ msgid ""
 "interactions.  If this is off, any mouse movement while the mouse button is "
 "held cancels a click interaction."
 msgstr ""
+"클릭 상호작용을 취소하지 않고 마우스를 짧은 거리만큼 움직일 수 있게 합니다.  "
+"이 기능이 꺼져 있으면 마우스 버튼을 누른 상태에서 마우스를 움직이면 클릭 "
+"상호작용이 취소됩니다."
 
 #: engines/vcruise/metaengine.cpp:53
 msgid "Faster animations"
@@ -12157,20 +12162,16 @@ msgid "Speeds up animations."
 msgstr "애니메이션 속도가 빨라집니다."
 
 #: engines/vcruise/metaengine.cpp:75
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Skip main menu"
-msgstr "메인 메뉴 열기"
+msgstr "메인 메뉴 건너뛰기"
 
 #: engines/vcruise/metaengine.cpp:76
 msgid "Starts a new game upon launching instead of going to the main menu."
-msgstr ""
+msgstr "게임을 실행하면 메인 메뉴로 이동하는 대신 새로운 게임이 시작됩니다."
 
 #: engines/vcruise/metaengine.cpp:86
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Use 16-color graphics"
-msgstr "컬러 그래픽"
+msgstr "16 색 그래픽을 사용"
 
 #: engines/vcruise/metaengine.cpp:87
 msgid "Uses 16-color graphics."
@@ -12182,82 +12183,72 @@ msgstr "사전 불러오기 사운드"
 
 #: engines/vcruise/metaengine.cpp:98
 msgid "Preload sounds. May improve performance on slow hard drives."
-msgstr "사전 불러오기 사운드입니다. 느린 하드 드라이브에서 성능을 향상시킬 수 "
+msgstr "사전 불러오기 사운드입니다. 느린 하드 드라이브에서 성능을 개선 시킬 수 "
 "있습니다."
 
 #: engines/vcruise/metaengine.cpp:108
 msgid "Faster video decoder (lower quality)"
-msgstr ""
+msgstr "더 빠른 비디오 디코더 (낮은 품질)"
 
 #: engines/vcruise/metaengine.cpp:109
 msgid "Reduce video decoding CPU usage at the cost of quality."
-msgstr ""
+msgstr "품질을 낮추고 비디오 디코딩 CPU 사용량을 줄이세요."
 
 #: engines/vcruise/metaengine.cpp:157
-#, fuzzy
-#| msgid "Display/Hide Info Screen"
 msgid "Display help screen"
-msgstr "정보 화면 표시/숨김"
+msgstr "도움말 화면 표시"
 
 #: engines/vcruise/metaengine.cpp:172
-#, fuzzy
-#| msgid "Open 3DS Settings"
 msgid "Open sound settings"
 msgstr "3DS 설정 열기"
 
 #: engines/vcruise/metaengine.cpp:193
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Toggle sound effects on/off"
-msgstr "효과음 볼륨"
+msgstr "사운드 효과 켜기/끄기 전환"
 
 #: engines/vcruise/metaengine.cpp:208
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume down"
-msgstr "효과음 볼륨"
+msgstr "사운드 효과 볼륨 줄임"
 
 #: engines/vcruise/metaengine.cpp:213
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume up"
-msgstr "효과음 볼륨"
+msgstr "사운드 효과 볼륨 높임"
 
 #: engines/vcruise/metaengine.cpp:218
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Skip current animation"
-msgstr "음성 옵션"
+msgstr "현재 애니메이션 건너뛰기"
 
 #: engines/vcruise/metaengine.cpp:222
 msgid "Cycle item in scene (debug cheat)"
-msgstr ""
+msgstr "장면에서 아이템 순환 (디버그 치트)"
 
 #: engines/vcruise/vcruise.cpp:92
-#, fuzzy
 msgid "This game requires JPEG support, which was not compiled in."
-msgstr "이 게임은 현재 빌드에 포함되지 않은 HeroCraft 서브엔진이 필요합니다."
+msgstr "이 게임은 JPEG 지원이 필요하지만, 컴파일되지 않았습니다."
 
 #: engines/vcruise/vcruise.cpp:99
 msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
+"이 게임의 음악은 Ogg Vorbis 지원이 필요하지만, 컴파일되지 않았습니다.\n"
+"게임은 계속 플레이되지만, 음악은 없습니다."
 
 #: engines/vcruise/vcruise.cpp:109
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
+"이 게임의 음악은 MP3 지원이 필요하지만, 컴파일되지 않았습니다.\n"
+"게임은 계속 플레이되지만, 음악은 없습니다."
 
 #: engines/vcruise/vcruise.cpp:352
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr "저장 데이터를 불러오는 데 실패했습니다, 저장 데이터가 손상된 것 같습니다."
 
 #: engines/vcruise/vcruise.cpp:357
-#, fuzzy
 msgid "Failed to read version information from save file."
-msgstr "파일에서 저장된 게임을 불러오는데 실패했습니다."
+msgstr "저장 파일에서 버전 정보를 읽는데 실패하였습니다."
 
 #: engines/vcruise/vcruise.cpp:377
 msgid "An unknown error occurred while attempting to load the saved game."
@@ -12265,39 +12256,39 @@ msgstr "저장된 게임을 불러오는 동안 알 수 없는 오류가 발생�
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
-msgstr "FPS 표시"
+msgstr "FPS 카운터 표시"
 
 #: engines/wintermute/metaengine.cpp:43
 msgid "Show the current number of frames per second in the upper left corner"
-msgstr "현재 초당 프레임을 좌상단에 표시"
+msgstr "왼쪽 상단 모서리에 초당 현재 프레임 수를 표시"
 
 #: engines/wintermute/metaengine.cpp:54
 msgid "Sprite bilinear filtering (SLOW)"
-msgstr "스프라이트 이중 선형 필터링 (느림)"
+msgstr "스프라이트 이중선형 필터링 (느림)"
 
 #: engines/wintermute/metaengine.cpp:55
 msgid "Apply bilinear filtering to individual sprites"
-msgstr "각 스프라이트에 이중 선형 필터링을 적용합니다"
+msgstr "개별 스프라이트에 이중선형 필터링을 적용"
 
 #: engines/wintermute/metaengine.cpp:67
 msgid "Force to use 2D renderer (2D games only)"
-msgstr ""
+msgstr "2D 렌더러 사용 강제 (2D 게임에만)"
 
 #: engines/wintermute/metaengine.cpp:68
 msgid "This setting forces ScummVM to use 2D renderer while running 2D games"
-msgstr ""
+msgstr "이 설정은 2D 게임을 실행하는 동안 ScummVM이 2D 렌더러를 사용하도록 강제함"
 
 #: engines/wintermute/metaengine.cpp:110
 msgid "FoxTail support is not compiled in"
-msgstr "FoxTail 지원이 컴파일 되지 않음"
+msgstr "FoxTail 지원은 컴파일되지 않았음"
 
 #: engines/wintermute/metaengine.cpp:116
 msgid "Hero Craft support is not compiled in"
-msgstr "Hero Craft 지원이 컴파일 되지 않음"
+msgstr "Hero Craft 지원이 컴파일되지 않았음"
 
 #: engines/wintermute/metaengine.cpp:122
 msgid "Wintermute3D support is not compiled in"
-msgstr "Wintermute3D 지원이 컴파일 되지 않음"
+msgstr "Wintermute3D 지원이 컴파일되지 않았음"
 
 #: engines/wintermute/wintermute.cpp:148
 msgid "This game requires PNG, JPEG and Vorbis support."
@@ -12305,11 +12296,13 @@ msgstr "이 게임은 PNG, JPEG, Vorbis 지원을 필요로 합니다."
 
 #: engines/wintermute/wintermute.cpp:159
 msgid "This game requires the FoxTail subengine, which is not compiled in."
-msgstr "이 게임은 현재 빌드에 포함되지 않은 FoxTail 서브엔진이 필요합니다."
+msgstr "이 게임을 하려면 FoxTail 서브엔진이 필요한데, 이 엔진은 컴파일되지 "
+"않았습니다."
 
 #: engines/wintermute/wintermute.cpp:170
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
-msgstr "이 게임은 현재 빌드에 포함되지 않은 HeroCraft 서브엔진이 필요합니다."
+msgstr "이 게임을 하려면 HeroCraft 서브엔진이 필요한데, 이 엔진은 컴파일되지 "
+"않았습니다."
 
 #: engines/wintermute/wintermute.cpp:181
 msgid ""
