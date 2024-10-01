@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-01 01:44+0000\n"
+"PO-Revision-Date: 2024-10-01 07:29+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -7487,20 +7487,20 @@ msgstr "AdvSys 게임을 시작하지 못함"
 
 #: engines/glk/advsys/advsys.cpp:47 engines/glk/advsys/vm.cpp:319
 msgid "Sorry, the savegame couldn't be restored"
-msgstr "죄송합니다, 게임저장을 되돌리지 못했습니다"
+msgstr "죄송합니다, 저장 게임을 복구할 수 없음"
 
 #: engines/glk/advsys/vm.cpp:314
 msgid "Sorry, the savegame couldn't be created"
-msgstr "죄송합니다, 게임저장을 생성하지 못했습니다"
+msgstr "죄송합니다, 저장 게임을 생성할 수 없음"
 
 #: engines/glk/advsys/vm.cpp:560
 msgid "Speak up! I can't hear you!\n"
-msgstr "크게 말해!안들리잖아!\n"
+msgstr "더 크게 말하세요! 들리지 않습니다!\n"
 
 #: engines/glk/advsys/vm.cpp:596
 #, c-format
 msgid "I don't know the word \"%s\".\n"
-msgstr "\"%s\" 단어는 모르는 단어입니다.\n"
+msgstr "\"%s\" 단어를 모릅니다.\n"
 
 #: engines/glk/advsys/vm.cpp:682
 msgid "I don't understand.\n"
@@ -7508,11 +7508,11 @@ msgstr "이해하지 못했습니다.\n"
 
 #: engines/glk/alan2/alan2.cpp:75
 msgid "This is too short to be a valid Alan2 file."
-msgstr "올바른 Alan2 파일로 보기에 너무 짧습니다."
+msgstr "이 파일은 유효한 Alan2 파일이라기에는 너무 짧습니다."
 
 #: engines/glk/alan2/alan2.cpp:81
 msgid "This is not a valid Alan2 file."
-msgstr "올바른 Alan2 파일이 아닙니다."
+msgstr "유효한 Alan2 파일이 아닙니다."
 
 #: engines/glk/comprehend/game.cpp:321
 msgid "Savegame"
@@ -7520,27 +7520,27 @@ msgstr "게임저장"
 
 #: engines/glk/comprehend/game.cpp:860
 msgid "Picture window toggled\n"
-msgstr "이미지 창 토글\n"
+msgstr "사진 창 전환됨\n"
 
 #: engines/glk/glulx/glulx.cpp:81
 msgid "This is too short to be a valid Glulx file."
-msgstr "올바른 Glulx 파일이기에 너무 짧습니다."
+msgstr "이 파일은 유효한 Glulx 파일이라기에는 너무 짧습니다."
 
 #: engines/glk/glulx/glulx.cpp:86
 msgid "This is not a valid Glulx file."
-msgstr "올바른 Glulx 파일이 아닙니다."
+msgstr "유효한 Glulx 파일이 아닙니다."
 
 #: engines/glk/glulx/glulx.cpp:93
 msgid "This Glulx file is too old a version to execute."
-msgstr "Glulx 파일이 구버전이어서 실행할 수 없습니다."
+msgstr "이 Glulx 파일은 실행하기에 너무 오래된 버전입니다."
 
 #: engines/glk/glulx/glulx.cpp:97
 msgid "This Glulx file is too new a version to execute."
-msgstr "Glulx 파일이 신버전이어서 실행할 수 없습니다."
+msgstr "이 Glulx 파일은 실행하기에 너무 새로운 버전입니다."
 
 #: engines/glk/quest/quest.cpp:44
 msgid "Could not start Quest game"
-msgstr "Quest 게임을 시작하지 못함"
+msgstr "Quest 게임을 시작할 수 없음"
 
 #: engines/glk/scott/scott.cpp:681
 msgid "Saved.\n"
@@ -7552,11 +7552,11 @@ msgstr "저장 파일 기록 오류\n"
 
 #: engines/glk/hugo/hugo.cpp:182
 msgid "Incorrect rs file."
-msgstr "잘못된 rs 파일."
+msgstr "잘못된 rs 파일입니다."
 
 #: engines/glk/hugo/hugo.cpp:189
 msgid "Save file created by different version."
-msgstr "다른 버전에서 만들어진 저장 파일입니다."
+msgstr "다른 버전으로 만들어진 파일을 저장합니다."
 
 #: engines/gob/inter_geisha.cpp:237 engines/gob/inter_playtoons.cpp:265
 #: engines/gob/inter_v2.cpp:1512 engines/tinsel/saveload.cpp:590
@@ -7578,7 +7578,7 @@ msgstr "메뉴 / 건너뛰기"
 
 #: engines/griffon/metaengine.cpp:159
 msgid "Speed Up Cutscene"
-msgstr "컷씬을 빠르게 재생"
+msgstr "컷씬 속도 높임"
 
 #: engines/grim/grim.cpp:361
 #, c-format
@@ -7587,9 +7587,9 @@ msgid ""
 "Running ScummVM nevertheless may cause game bugs or even crashes.\n"
 "Do you still want to run %s?"
 msgstr ""
-"ScummVM이 게임 데이터 파일에 문제가 있음을 발견했습니다.\n"
-"ScummVM을 그대로 실행하면 게임에 버그나 크래시가 발생할 수 있습니다.\n"
-"그래도 '%s' 게임을 실행하시겠습니까?"
+"ScummVM이 게임 데이터 파일에서 몇 가지 문제를 발견했습니다.\n"
+"그럼에도 불구하고 ScummVM을 실행하면 게임 버그나 충돌이 발생할 수 있습니다.\n"
+"%s를 계속 실행하겠습니까?"
 
 #. I18N: Action in In Cold Blood
 #: engines/grim/grim.cpp:501 engines/grim/grim.cpp:592
