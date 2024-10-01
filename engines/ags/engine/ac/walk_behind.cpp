@@ -159,6 +159,7 @@ void walkbehinds_recalc() {
 			}
 		}
 	}
+	_G(walkBehindsCachedForBgNum) = -1;
 }
 
 } // namespace AGS3
