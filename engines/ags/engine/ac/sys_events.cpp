@@ -88,7 +88,7 @@ int ags_iskeydown(eAGSKeyCode ags_key) {
 	return ::AGS::g_events->isKeyPressed(ags_key, _GP(game).options[OPT_KEYHANDLEAPI] == 0);
 }
 
-void ags_simulate_keypress(eAGSKeyCode ags_key) {
+void ags_simulate_keypress(eAGSKeyCode ags_key, bool old_keyhandle) {
 	Common::KeyCode keycode[3];
 	if (!::AGS::EventsManager::ags_key_to_scancode(ags_key, keycode))
 		return;
