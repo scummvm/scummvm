@@ -261,7 +261,7 @@ Bitmap *CopyScreenIntoBitmap(int width, int height, const Rect *src_rect, bool a
 	// Otherwise we might need to copy between few bitmaps...
 	// Get screenshot in the suitable format
 	std::unique_ptr<Bitmap> buf_screenfmt(new Bitmap(want_fmt.Width, want_fmt.Height, want_fmt.ColorDepth));
-	_G(gfxDriver)->GetCopyOfScreenIntoBitmap(buf_screenfmt.get(), src_rect, at_native_res);
+	_G(gfxDriver)->GetCopyOfScreenIntoBitmap(buf_screenfmt.get(), src_rect, at_native_res, nullptr, batch_skip_filter);
 	// If color depth does not match, and we must stretch-blit, then we need another helper bmp,
 	// because Allegro does not support stretching with mismatching color depths
 	std::unique_ptr<Bitmap> buf_fixdepth;
