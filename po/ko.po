@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-01 11:05+0000\n"
+"PO-Revision-Date: 2024-10-01 13:55+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -8993,7 +8993,8 @@ msgstr "저장 파일을 불러오는 데 실패했습니다. 저장 파일에 �
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
-msgstr "저장된 게임은 최신 버전의 ScummVM으로 생성되었습니다. 불러올 수 없습니다."
+msgstr "저장된 게임은 이전의 호환되지 않는 ScummVM 버전으로 생성되었습니다. 불러올 "
+"수 없습니다."
 
 #: engines/mtropolis/saveload.cpp:174
 msgid "Failed to load save, an error occurred when reading the save game data."
@@ -9002,12 +9003,11 @@ msgstr "저장 데이터를 불러오는 데 실패했습니다. 저장 게임 �
 
 #: engines/mtropolis/saveload.cpp:234
 msgid "An internal error occurred while attempting to write save game data"
-msgstr ""
+msgstr "게임 저장 데이터를 쓰는 중 내부 오류가 발생함"
 
 #: engines/mtropolis/saveload.cpp:242
-#, fuzzy
 msgid "An error occurred while writing the save game"
-msgstr ", 공유 폴더 활성화 중 오류 발생"
+msgstr "저장 게임을 쓰는 동안 오류가 발생함"
 
 #: engines/mtropolis/mtropolis.cpp:111
 msgid ""
@@ -9015,6 +9015,9 @@ msgid ""
 "content but MPEG video support was not compiled in.\n"
 "The game will still play, but MPEG videos will not work."
 msgstr ""
+"이 게임은 일부 콘텐츠에 대해 MPEG 비디오 지원이 필요하지만\n"
+"MPEG 비디오 지원이 컴파일되지 않았습니다.\n"
+"게임은 계속 플레이되지만 MPEG 비디오는 작동하지 않습니다."
 
 #: engines/mtropolis/mtropolis.cpp:121
 msgid ""
@@ -9022,15 +9025,18 @@ msgid ""
 "content but MPEG audio support was not compiled in.\n"
 "The game will still play, but some audio will not work."
 msgstr ""
+"이 게임은 일부 콘텐츠에 대해 MPEG 오디오 지원이 필요하지만\n"
+"MPEG 오디오 지원이 컴파일되지 않았습니다.\n"
+"게임은 계속 플레이되지만 일부 오디오는 작동하지 않습니다."
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
 msgid "Unable to locate the '%s' engine data file"
-msgstr "'%s' 엔진 데이터 파일을 찾을 수 없습니다"
+msgstr "'%s' 엔진 데이터 파일을 찾을 수 없음"
 
 #: engines/myst3/detection.cpp:181 engines/myst3/detection.cpp:195
 msgid "PS2 version is not yet supported"
-msgstr "PS2 버전은 아직 지원되지 않습니다"
+msgstr "PS2 버전은 아직 지원되지 않았음"
 
 #: engines/myst3/metaengine.cpp:40
 msgid "Widescreen mod"
@@ -9038,7 +9044,7 @@ msgstr "와이드 스크린 개조"
 
 #: engines/myst3/metaengine.cpp:41
 msgid "Enable widescreen rendering in fullscreen mode."
-msgstr "전체 화면 모드에서 와이드 스크린 렌더링을 사용합니다."
+msgstr "전체 화면 모드에서 와이드 스크린 렌더링을 활성화합니다."
 
 #: engines/myst3/myst3.cpp:363
 #, c-format
@@ -9056,11 +9062,11 @@ msgstr ""
 
 #: engines/myst3/myst3.cpp:1591 engines/pegasus/pegasus.cpp:749
 msgid "Invalid file name for saving"
-msgstr "잘못된 저장 파일 이름"
+msgstr "저장할 파일 이름이 잘못되었음"
 
 #: engines/nancy/input.cpp:178
 msgid "Nancy Drew"
-msgstr ""
+msgstr "낸시 드류"
 
 #: engines/nancy/input.cpp:181
 msgid "Left Click Interact"
@@ -9072,17 +9078,15 @@ msgstr "오른쪽 클릭 상호 작용"
 
 #: engines/nancy/input.cpp:219
 msgid "Fast move modifier"
-msgstr "빠른 이동 변경"
+msgstr "빠른 이동 수정기"
 
 #: engines/nancy/input.cpp:234
 msgid "Nancy Drew - Maze"
-msgstr ""
+msgstr "낸시 드류 - 미로"
 
 #: engines/nancy/input.cpp:236
-#, fuzzy
-#| msgid "Show map"
 msgid "Show/hide maze map"
-msgstr "지도 보이기"
+msgstr "미로지도 표시/숨기기"
 
 #: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
@@ -9106,42 +9110,41 @@ msgstr ""
 "NPC 음성을 활성화합니다. 오디오 설정에서 음성이 활성화된 경우만 동작합니다."
 
 #: engines/nancy/metaengine.cpp:60
-#, fuzzy
-#| msgid "Autosave"
 msgid "Auto Move"
-msgstr "자동 저장"
+msgstr "자동 이동"
 
 #: engines/nancy/metaengine.cpp:61
 msgid "Automatically rotate the viewport when the mouse reaches an edge."
-msgstr ""
+msgstr "마우스가 가장자리에 도달하면 자동으로 뷰포트를 회전합니다."
 
 #: engines/nancy/metaengine.cpp:71
 msgid "Fix softlocks"
-msgstr ""
+msgstr "소프트락 수정"
 
 #: engines/nancy/metaengine.cpp:72
 msgid ""
 "Fix instances where missing something earlier in the game blocks you from "
 "progressing any further."
-msgstr ""
+msgstr "게임 초반에 뭔가를 놓쳐 더 이상 진행할 수 없는 상황을 해결합니다."
 
 #: engines/nancy/metaengine.cpp:82
 msgid "Fix annoyances"
-msgstr ""
+msgstr "불편한 것 수정"
 
 #: engines/nancy/metaengine.cpp:83
 msgid "Fix various minor annoyances."
-msgstr ""
+msgstr "다양하고 사소한 불편한 것 수정합니다."
 
 #: engines/nancy/metaengine.cpp:93
 msgid "Extend endgame timer"
-msgstr ""
+msgstr "엔드게임 타이머 연장"
 
 #: engines/nancy/metaengine.cpp:94
 msgid ""
 "Get a little more time before failing the final puzzle. This is an official "
 "patch by HeR Interactive."
-msgstr ""
+msgstr "마지막 퍼즐에 실패하기 전에 조금 더 시간을 가지세요. 이것은 HeR "
+"Interactive의 공식 패치입니다."
 
 #: engines/neverhood/dialogs.cpp:52
 msgid "Skip the Hall of Records storyboard scenes"
@@ -9149,23 +9152,23 @@ msgstr "Hall of Records 스토리 보드 장면 건너뛰기"
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-msgstr "플레이어가 Hall of Records 스토리 보드 장면을 건너 뛰게 합니다"
+msgstr "플레이어가 Hall of Records 스토리 보드 장면을 건너뛸 수 있도록 허용"
 
 #: engines/neverhood/dialogs.cpp:57
 msgid "Scale the making of videos to full screen"
-msgstr "제작 영상을 전체 화면으로 확장"
+msgstr "제작 비디오를 전체 화면으로 크기 조절"
 
 #: engines/neverhood/dialogs.cpp:58
 msgid "Scale the making of videos, so that they use the whole screen"
-msgstr "제작 영상이 전체 화면을 사용하도록 크기 조절합니다"
+msgstr "제작 영상이 전체 화면을 사용하도록 크기 조절"
 
 #: engines/neverhood/dialogs.cpp:62
 msgid "Repeat useful Willie's hint"
-msgstr ""
+msgstr "유용한 Willie의 힌트를 반복"
 
 #: engines/neverhood/dialogs.cpp:63
 msgid "Repeat actual useful hint by Willie"
-msgstr ""
+msgstr "Willie의 실제 유용한 힌트를 반복"
 
 #. I18N: NHC is a file extension
 #: engines/neverhood/dialogs.cpp:89
@@ -9173,9 +9176,8 @@ msgid "NHC replacement:"
 msgstr "NHC 교체:"
 
 #: engines/neverhood/dialogs.cpp:95
-#, fuzzy
 msgid "<original>"
-msgstr "오리지널 저장"
+msgstr "<원본>"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -9183,7 +9185,7 @@ msgid ""
 "Can't save game in slot %i\n"
 "\n"
 msgstr ""
-"%i 슬롯에 게임을 저장하지 못했습니다\n"
+"슬롯 %i에서 게임을 저장할 수 없음\n"
 "\n"
 
 #: engines/parallaction/saveload.cpp:193
@@ -9220,7 +9222,7 @@ msgstr ""
 
 #: engines/parallaction/saveload.cpp:315
 msgid "ScummVM successfully converted all your saved games."
-msgstr "ScummVM이 모든 게임 저장파일을 성공적으로 변환했습니다."
+msgstr "ScummVM이 저장된 모든 게임을 성공적으로 변환했습니다."
 
 #: engines/parallaction/saveload.cpp:317
 msgid ""
@@ -9229,14 +9231,14 @@ msgid ""
 "\n"
 "Please report to the team."
 msgstr ""
-"ScummVM은 모든 파일이 변환되었는지 보증할 수 없으며 콘솔 창에 경고사항을 표시"
-"했습니다.\n"
+"ScummVM이 콘솔 창에 몇 가지 경고를 인쇄했으며 모든 파일이 변환되었는지 "
+"보장할 수 없습니다.\n"
 "\n"
-"개발 팀에 보고해 주십시오."
+"개발 팀에 보고해 주세요."
 
 #: engines/pegasus/pegasus.cpp:2724
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr "위로/확대/앞으로/문 열기"
+msgstr "위로/확대/앞으로 이동/문 열기"
 
 #: engines/pegasus/pegasus.cpp:2732
 msgid "Down/Zoom Out"
@@ -9244,40 +9246,40 @@ msgstr "아래로/축소"
 
 #: engines/pegasus/pegasus.cpp:2754
 msgid "Action/Select"
-msgstr "액션/선택"
+msgstr "동작/선택"
 
 #: engines/pegasus/pegasus.cpp:2774
 msgid "Display/Hide Inventory Tray"
-msgstr "인벤토리 표시/숨김"
+msgstr "인벤토리 트레이 표시/숨기기"
 
 #: engines/pegasus/pegasus.cpp:2781
 msgid "Display/Hide Biochip Tray"
-msgstr "바이오칩 표시/숨김"
+msgstr "바이오칩 트레이 표시/숨기기"
 
 #: engines/pegasus/pegasus.cpp:2789
 msgid "Toggle Center Data Display"
-msgstr "중앙 데이터 디스플레이 토글"
+msgstr "중앙 데이터 표시 전환"
 
 #: engines/pegasus/pegasus.cpp:2796
 msgid "Display/Hide Info Screen"
-msgstr "정보 화면 표시/숨김"
+msgstr "정보 화면 표시/숨기기"
 
 #: engines/pegasus/pegasus.cpp:2803
 msgid "Display/Hide Pause Menu"
-msgstr "정지 메뉴 표시/숨김"
+msgstr "일시 정지 메뉴 표시/숨기기"
 
 #: engines/pegasus/pegasus.cpp:2810
 msgid "Toggle Chatty AI"
-msgstr "말 많은 AI 토글"
+msgstr "말 많은 AI 전환"
 
 #: engines/pink/gui.cpp:291
 msgid "This menu item is not yet implemented"
-msgstr "현재 메뉴 항목은 아직 구현되지 않았습니다"
+msgstr "이 메뉴 항목은 아직 구현되지 않았음"
 
 #. I18N: Plumbers is the title of the game. 3DO is the name of platform
 #: engines/plumbers/metaengine.cpp:51
 msgid "3DO Plumbers requires RGB support."
-msgstr ""
+msgstr "3DO Plumbers에는 RGB 지원이 필요합니다."
 
 #: engines/queen/metaengine.cpp:36
 msgid "Alternative intro"
@@ -9285,34 +9287,34 @@ msgstr "대체 인트로"
 
 #: engines/queen/metaengine.cpp:37
 msgid "Use an alternative game intro (CD version only)"
-msgstr "다른 버전의 게임 인트로를 사용합니다 (CD 버전에서만)"
+msgstr "대체 게임 인트로 사용 (CD 버전에서만)"
 
 #: engines/queen/metaengine.cpp:47
 msgid "Improved font"
-msgstr "개선된 모드"
+msgstr "개선된 글꼴"
 
 #: engines/queen/metaengine.cpp:48
 msgid "Use an easier to read custom font"
-msgstr ""
+msgstr "읽기 쉬운 커스텀 글꼴을 사용"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:875
 msgid "Windows Trial version is not supported"
-msgstr "윈도우즈 평가판 버전은 아직 지원되지 않습니다"
+msgstr "윈도우즈 체험판은 지원되지 않았음"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:902
 msgid "macOS Trial version is not supported"
-msgstr "macOS 평가판 버전은 아직 지원되지 않습니다"
+msgstr "macOS 체험판은 지원되지 않았음"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:928
 msgid "Pocket PC Trial version is not supported"
-msgstr "포켓 PC 평가판 버전은 아직 지원되지 않습니다"
+msgstr "포켓 PC 체험판은 지원되지 않았음"
 
 #: engines/saga/metaengine.cpp:137
 msgid "I Have No Mouth support not compiled in"
-msgstr "I Have No Mouth 지원이 컴파일되지 않음"
+msgstr "I Have No Mouth 지원이 컴파일되지 않았음"
 
 #: engines/saga/metaengine.cpp:268
 msgid "Game keymapping"
@@ -9339,8 +9341,6 @@ msgid "Converse panel keymapping"
 msgstr "패널 키맵핑 정반대"
 
 #: engines/saga/metaengine.cpp:284
-#, fuzzy
-#| msgid "Middle Click"
 msgid "Middle click"
 msgstr "중간 클릭"
 
@@ -9349,27 +9349,23 @@ msgstr "중간 클릭"
 #. typically to avoid detection if someone, like a boss, walks by while they are playing.
 #: engines/saga/metaengine.cpp:298
 msgid "Boss key"
-msgstr ""
+msgstr "보스 키"
 
 #: engines/saga/metaengine.cpp:303
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Show options"
-msgstr "음성 옵션"
+msgstr "옵션 표시"
 
 #: engines/saga/metaengine.cpp:311
-#, fuzzy
-#| msgid "Next location"
 msgid "Exit conversation"
-msgstr "다음 위치"
+msgstr "대화 나가기"
 
 #: engines/saga/metaengine.cpp:316
 msgid "Conversation position - Up"
-msgstr ""
+msgstr "대화 위치 - 위쪽"
 
 #: engines/saga/metaengine.cpp:321
 msgid "Conversation position - Down"
-msgstr ""
+msgstr "대화 위치 - 아래쪽"
 
 #: engines/saga/metaengine.cpp:333 engines/scumm/help.cpp:80
 #: engines/stark/metaengine.cpp:286 engines/trecision/metaengine.cpp:150
@@ -9378,16 +9374,12 @@ msgid "Pause game"
 msgstr "게임 일시 정지"
 
 #: engines/saga/metaengine.cpp:339
-#, fuzzy
-#| msgid "Speech"
 msgid "Abort speech"
-msgstr "음성"
+msgstr "음성 중단"
 
 #: engines/saga/metaengine.cpp:344
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Show dialogue"
-msgstr "대사 건너뛰기"
+msgstr "대화 표시"
 
 #. I18N: Walk to where cursor points
 #: engines/saga/metaengine.cpp:349 engines/scumm/help.cpp:144
@@ -9404,8 +9396,6 @@ msgid "Look at"
 msgstr "보기"
 
 #: engines/saga/metaengine.cpp:359
-#, fuzzy
-#| msgid "Pick up"
 msgid "Pickup"
 msgstr "줍기"
 
@@ -9438,37 +9428,27 @@ msgstr "밀기"
 
 #: engines/saga/metaengine.cpp:399
 msgid "Swallow"
-msgstr ""
+msgstr "삼키기"
 
 #: engines/saga/metaengine.cpp:406
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "Reading speed"
-msgstr "데이터 읽기 실패"
+msgstr "읽기 속도"
 
 #: engines/saga/metaengine.cpp:411
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change music"
-msgstr "폰트 크기 변경"
+msgstr "음악 변경"
 
 #: engines/saga/metaengine.cpp:416
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change sound"
-msgstr "변경 명령"
+msgstr "사운드 변경"
 
 #: engines/saga/metaengine.cpp:421
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change voices"
-msgstr "변경 명령"
+msgstr "음성 변경"
 
 #: engines/saga/metaengine.cpp:426
-#, fuzzy
-#| msgid "Continue"
 msgid "Continue game"
-msgstr "계속"
+msgstr "게임 계속하기"
 
 #: engines/saga/metaengine.cpp:436 engines/trecision/metaengine.cpp:156
 #: engines/vcruise/metaengine.cpp:177
@@ -9481,17 +9461,15 @@ msgstr "종료 취소"
 
 #: engines/saga/metaengine.cpp:458
 msgid "Okay"
-msgstr ""
+msgstr "확인"
 
 #: engines/saga/metaengine.cpp:463
 msgid "Cancel load"
 msgstr "불러오기 취소"
 
 #: engines/saga/metaengine.cpp:473
-#, fuzzy
-#| msgid "Cancel autosave"
 msgid "Cancel save"
-msgstr "자동 저장 취소"
+msgstr "자동 취소"
 
 #: engines/saga/music.cpp:98
 #, c-format
