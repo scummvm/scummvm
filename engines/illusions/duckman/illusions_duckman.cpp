@@ -446,6 +446,7 @@ void IllusionsEngine_Duckman::loadSpecialCode(uint32 resId) {
 
 void IllusionsEngine_Duckman::unloadSpecialCode(uint32 resId) {
 	delete _specialCode;
+	_specialCode = nullptr;
 }
 
 void IllusionsEngine_Duckman::notifyThreadId(uint32 &threadId) {

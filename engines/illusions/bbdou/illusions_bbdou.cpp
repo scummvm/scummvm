@@ -229,6 +229,8 @@ Common::Error IllusionsEngine_BBDOU::run() {
 		updateEvents();
 	}
 
+	unloadSpecialCode(0);
+
 	delete _stack;
 	delete _scriptOpcodes;
 
