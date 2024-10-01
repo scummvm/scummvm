@@ -53,6 +53,7 @@ struct InventorySlot {
 class InventoryBag {
 public:
 	InventoryBag(IllusionsEngine_BBDOU *vm, uint32 sceneId);
+	~InventoryBag();
 	void registerInventorySlot(uint32 namedPointId);
 	bool addInventoryItem(InventoryItem *inventoryItem, InventorySlot *inventorySlot);
 	void removeInventoryItem(InventoryItem *inventoryItem);
@@ -75,6 +76,7 @@ public:
 class BbdouInventory {
 public:
 	BbdouInventory(IllusionsEngine_BBDOU *vm, BbdouSpecialCode *bbdou);
+	~BbdouInventory();
 	void registerInventoryBag(uint32 sceneId);
 	void registerInventoryItem(uint32 objectId, uint32 sequenceId);
 	void registerInventorySlot(uint32 namedPointId);

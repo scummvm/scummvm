@@ -51,6 +51,12 @@ InventoryBag::InventoryBag(IllusionsEngine_BBDOU *vm, uint32 sceneId)
 	: _vm(vm), _sceneId(sceneId), _isActive(false), _fieldA(0) {
 }
 
+InventoryBag::~InventoryBag() {
+	for (uint i = 0; i < _inventorySlots.size(); ++i) {
+		delete _inventorySlots[i];
+	}
+}
+
 void InventoryBag::registerInventorySlot(uint32 namedPointId) {
 	_inventorySlots.push_back(new InventorySlot(namedPointId));
 }
@@ -138,6 +144,15 @@ InventorySlot *InventoryBag::findClosestSlot(Common::Point putPos, int index) {
 
 BbdouInventory::BbdouInventory(IllusionsEngine_BBDOU *vm, BbdouSpecialCode *bbdou)
 	: _vm(vm), _bbdou(bbdou), _activeInventorySceneId(0) {
+}
+
+BbdouInventory::~BbdouInventory() {
+	for (uint i = 0; i < _inventoryBags.size(); ++i) {
+		delete _inventoryBags[i];
+	}
+	for (uint i = 0; i < _inventoryItems.size(); ++i) {
+		delete _inventoryItems[i];
+	}
 }
 
 void BbdouInventory::registerInventoryBag(uint32 sceneId) {
