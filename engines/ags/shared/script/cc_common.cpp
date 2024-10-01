@@ -54,6 +54,10 @@ const ScriptError &cc_get_error() {
 	return _GP(ccError);
 }
 
+String cc_get_err_callstack(int max_lines) {
+	return cc_has_error() ? _GP(ccError).CallStack : cc_get_callstack(max_lines);
+}
+
 void cc_error(const char *descr, ...) {
 	_GP(ccError).IsUserError = false;
 	if (descr[0] == '!') {
