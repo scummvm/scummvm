@@ -197,6 +197,10 @@ void set_game_speed(int new_fps) {
 		setTimerFps(new_fps);
 }
 
+float get_game_speed() {
+	return _G(frames_per_second);
+}
+
 void setup_for_dialog() {
 	_G(cbuttfont) = _GP(play).normal_font;
 	_G(acdialog_font) = _GP(play).normal_font;

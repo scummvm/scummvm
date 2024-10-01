@@ -150,7 +150,10 @@ bool Game_ChangeSpeechVox(const char *newFilename);
 //=============================================================================
 
 void set_debug_mode(bool on);
+// Sets logical game FPS, telling how often the game should update
 void set_game_speed(int new_fps);
+// Gets strictly logical game FPS, regardless of whether this is real FPS right now or not.
+float get_game_speed();
 void setup_for_dialog();
 void restore_after_dialog();
 Shared::String get_save_game_directory();
