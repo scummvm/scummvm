@@ -426,13 +426,23 @@ int GetTextDisplayLength(const char *text) {
 	return static_cast<int>(strlen(text));
 }
 
+// Calculates lipsync frame duration (or duration per character) in game loops.
+// NOTE: historical formula was this:
+//   loops_per_character = (((text_len / play.lipsync_speed) + 1) * fps) / text_len;
+// But because of a precision loss due integer division this resulted in "jumping" values.
+// The new formula uses float division, and coefficent found experimentally to make
+// results match the old formula in certain key text lengths, for backwards compatibility.
+int CalcLipsyncFrameDuration(int text_len, int fps) {
+	return static_cast<int>((((static_cast<float>(text_len) / _GP(play).lipsync_speed) + 0.75f) * fps) / text_len);
+}
+
 int GetTextDisplayTime(const char *text, int canberel) {
 	int uselen = 0;
 	auto fpstimer = ::lround(get_game_fps());
 
 	// if it's background speech, make it stay relative to game speed
 	if ((canberel == 1) && (_GP(play).bgspeech_game_speed == 1))
-		fpstimer = 40;
+		fpstimer = 40; // NOTE: should be a fixed constant here, not game speed value
 
 	if (_G(source_text_length) >= 0) {
 		// sync to length of original text, to make sure any animations
@@ -450,10 +460,7 @@ int GetTextDisplayTime(const char *text, int canberel) {
 		quit("!Text speed is zero; unable to display text. Check your _GP(game).text_speed settings.");
 
 	// Store how many game loops per character of text
-	// This is calculated using a hard-coded 15 for the text speed,
-	// so that it's always the same no matter how fast the user
-	// can read.
-	_G(loops_per_character) = (((uselen / _GP(play).lipsync_speed) + 1) * fpstimer) / uselen;
+	_G(loops_per_character) = CalcLipsyncFrameDuration(uselen, fpstimer);
 
 	int textDisplayTimeInMS = ((uselen / (_GP(play).text_speed + _GP(play).text_speed_modifier)) + 1) * 1000;
 	if (textDisplayTimeInMS < _GP(play).text_min_display_time_ms)
