@@ -207,7 +207,7 @@ private:
 	static const char *_driverFile;
 };
 
-class SCI1_EGADriver final : public GfxDriver {
+class SCI1_EGADriver : public GfxDriver {
 public:
 	SCI1_EGADriver(bool rgbRendering);
 	~SCI1_EGADriver() override;
@@ -228,17 +228,22 @@ public:
 	bool supportsHiResGraphics() const override { return false; }
 	bool driverBasedTextRendering() const override { return false; }
 	static bool validateMode(Common::Platform p) { return (p == Common::kPlatformDOS || p == Common::kPlatformWindows) && checkDriver(&_driverFile, 1); }
-private:
-	byte *_compositeBuffer;
-	byte *_currentBitmap;
-	byte *_currentPalette;
+protected:
+	typedef void (*LineProc)(byte*&, const byte*, int, const byte*, const byte*, bool);
+	LineProc _renderLine;
+	const byte *_convPalette;
+	uint16 _vScaleMult, _vScaleDiv;
+	const byte *_egaMatchTable;
 	byte *_egaColorPatterns;
+	byte *_compositeBuffer;
+	byte *_currentPalette;
+private:
+	virtual void loadData();
+	virtual void renderBitmap(byte *dst, const byte *src, int pitch, int y, int w, int h, const byte *patterns, const byte *palette, uint16 &realWidth, uint16 &realHeight);
+	byte *_currentBitmap;
 	uint8 _colAdjust;
 	const byte *_internalPalette;
-	const byte *_egaMatchTable;
 	const bool _requestRGBMode;
-	typedef void (*LineProc)(byte*&, const byte*, int, const byte*, const byte*);
-	LineProc _renderLine;
 	static const char *_driverFile;
 };
 
@@ -278,27 +283,48 @@ private:
 	bool _needCursorBuffer;
 };
 
-class KQ6WinGfxDriver : public UpscaledGfxDriver {
+class KQ6WinGfxDriver final : public UpscaledGfxDriver {
 public:
-	KQ6WinGfxDriver(bool scaleCursor, bool smallWindow, bool rgbRendering);
+	KQ6WinGfxDriver(bool dosStyleCursors, bool smallWindow, bool rgbRendering);
 	~KQ6WinGfxDriver() override {}
 	void initScreen(const Graphics::PixelFormat *format) override;
 	void copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) override;
+	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	Common::Point getRealCoords(Common::Point &pos) const override;
 	void setColorMap(const byte *colorMap) { _colorMap = colorMap; }
 	void setFlags(uint32 flags) override;
 	void clearFlags(uint32 flags) override;
 	bool supportsHiResGraphics() const override { return !_smallWindow; }
-private:
+protected:
 	typedef void (*LineProc)(byte*&, const byte*, int, int, int);
 	LineProc _renderLine;
+private:
 	typedef void (*LineProcSpec)(byte*&, const byte*, int, int, const byte*);
 	LineProcSpec _renderLine2;
 	void renderBitmap(const byte *src, int pitch, int dx, int dy, int w, int h, int &realWidth, int &realHeight) override;
 	uint32 _flags;
 	const byte *_colorMap;
 	const bool _smallWindow;
+	const bool _dosStyleCursors;
 	uint16 _vScaleMult2;
+};
+
+class KQ6WinGfx16ColorsDriver final : public SCI1_EGADriver {
+public:
+	// The original does not take into account the extra lines required for the 200->440 vertical scaling. There is a noticeable dithering glitch every 11th line, as the
+	// two pixels of the checkerbox pattern appear in the wrong order. I have implemented a fix for this which can be activated with the fixDithering parameter.
+	KQ6WinGfx16ColorsDriver(bool altCursor, bool fixDithering, bool rgbRendering);
+	~KQ6WinGfx16ColorsDriver() override;
+	void initScreen(const Graphics::PixelFormat *format) override;
+	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
+	Common::Point getRealCoords(Common::Point &pos) const override;
+private:
+	void loadData() override;
+	void renderBitmap(byte *dst, const byte *src, int pitch, int y, int w, int h, const byte *patterns, const byte *palette, uint16 &realWidth, uint16 &realHeight) override;
+	LineProc _renderLine2;
+	const bool _enhancedDithering;
+	const bool _altCursor;
+	static const byte _win16ColorsDitherPatterns[512];
 };
 
 class PC98Gfx16ColorsDriver final : public UpscaledGfxDriver {
