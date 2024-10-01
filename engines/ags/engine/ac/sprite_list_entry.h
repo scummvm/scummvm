@@ -28,14 +28,12 @@ namespace AGS3 {
 
 // Describes a texture or node description, for sorting and passing into renderer
 struct SpriteListEntry {
-	int id = -1; // user identifier, for any custom purpose
+	// Optional sprite identifier; used as a second factor when sorting
+	int id = -1;
 	Engine::IDriverDependantBitmap *ddb = nullptr;
 	AGS::Shared::Bitmap *pic = nullptr;
 	int x = 0, y = 0;
 	int zorder = 0;
-	// Tells if this item should take priority during sort if z1 == z2
-	// TODO: this is some compatibility feature - find out if may be omitted and done without extra struct?
-	bool takesPriorityIfEqual = false;
 	// Mark for the render stage callback (if >= 0 other fields are ignored)
 	int renderStage = -1;
 };
