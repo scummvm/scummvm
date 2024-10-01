@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-01 07:29+0000\n"
+"PO-Revision-Date: 2024-10-01 07:50+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -7608,7 +7608,7 @@ msgstr "줍기/내려놓기"
 
 #: engines/grim/grim.cpp:526 engines/grim/grim.cpp:622
 msgid "Skip dialog lines"
-msgstr "대사 건너뛰기"
+msgstr "대화 줄 건너뛰기"
 
 #: engines/grim/grim.cpp:582
 msgid "Cycle Objects Up"
@@ -7643,9 +7643,9 @@ msgid ""
 "version (i.e. dvd-box or jewelcase):\n"
 "%s"
 msgstr ""
-"게임 데이터 파일 '%s' 이 손상되었을 수 있습니다.\n"
-"확실치 않다면 ScummVM 팀에 아래 코드와 파일 이름, 언어와 게임 버전에 대한 정"
-"보 (DVD 박스, 주얼 케이스 등) 를 알려주세요.\n"
+"게임 데이터 파일 %s이(가) 손상되었을 수 있습니다.\n"
+"손상되지 않았다고 확신하는 경우 ScummVM 팀에 다음 코드와 파일 이름, 언어, "
+"게임 버전에 대한 설명(예: DVD 박스 또는 보석 케이스)을 제공해 주세요.\n"
 "%s"
 
 #: engines/grim/md5check.cpp:613
@@ -7666,10 +7666,9 @@ msgid ""
 "This may take a while, please wait.\n"
 "Successive runs will not check them again."
 msgstr ""
-"최고의 게임 경험을 보장하기 위해 ScummVM이 게임 데이터 파일을 검사할 것입니"
-"다.\n"
-"시간이 조금 걸립니다. 기다려 주세요.\n"
-"다음 실행시에는 다시 검사하지 않을 것입니다."
+"ScummVM은 이제 게임 데이터 파일을 확인하여 최상의 게임 경험을 보장합니다.\n"
+"시간이 좀 걸릴 수 있으니 기다려 주세요.\n"
+"연속 실행해도 다시 확인하지 않습니다."
 
 #: engines/grim/metaengine.cpp:37
 msgid "Load user patch (unsupported)"
@@ -7684,7 +7683,7 @@ msgstr "사용자 패치를 불러옵니다. ScummVM 팀은 이런 패치를 사
 
 #: engines/grim/metaengine.cpp:87
 msgid "Escape from Monkey Island support is not compiled in"
-msgstr "원숭이섬 탈출 지원이 컴파일 되지 않음"
+msgstr "원숭이섬 탈출 지원이 컴파일 되지 않았음"
 
 #: engines/grim/resource.cpp:102
 #, c-format
@@ -7724,26 +7723,26 @@ msgid ""
 "\n"
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt"
 msgstr ""
-"오류: 음악 트랙이 부족합니다!\n"
-"Escape from Monkey Island에는 두 가지 버전의 FullMonkeyMap.imt가 있습니다.\n"
-"두 버전의 파일을 모두 Textures/에 복사한 뒤\n"
-"아래와 같이 이름을 변경해야 음악이 지원됩니다: \n"
+"오류: 음악 트랙이 충분하지 않습니다!\n"
+"원숭이 섬의 탈출에는 두 가지 버전의 FullMonkeyMap.imt가 있고,\n"
+"두 CD에서 두 파일을 모두 Textures/로 복사하고 다음과 같이 이름을 변경하여\n"
+"게임 내에서 음악 지원을 받아야 합니다:\n"
 "CD 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
 "CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
 "\n"
-"혹은, Steam이나 GOG 버전의 통합된 FullMonkeyMap.imt을 사용해도 됩니다"
+"그렇지 않으면, 스팀 또는 GOG 사본에는 결합된 FullMonkeyMap.imt가 있습니다"
 
 #: engines/groovie/metaengine.cpp:41
 msgid "Fast movie speed"
-msgstr "동영상 빠르게 재생"
+msgstr "빠른 동영상 속도"
 
 #: engines/groovie/metaengine.cpp:42
 msgid "Play movies at an increased speed"
-msgstr "동영상을 빠른 속도로 재생합니다"
+msgstr "동영상을 더 빠른 속도로 재생"
 
 #: engines/groovie/metaengine.cpp:65 engines/groovie/metaengine.cpp:77
 msgid "Easier AI"
-msgstr "더 쉬운 AI"
+msgstr "더 쉬워진 AI"
 
 #: engines/groovie/metaengine.cpp:66 engines/groovie/metaengine.cpp:78
 msgid "Decrease the difficulty of AI puzzles"
@@ -7756,53 +7755,47 @@ msgstr "업데이트된 크레딧 음악"
 #: engines/groovie/metaengine.cpp:90
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
-msgstr ""
-"크레딧 도중 MIDI 음악을 재사용하는 대신 'The Final Hour' 음악을 재생합니다"
+msgstr "미디 노래를 재사용하는 대신 크레딧 중에 The Final Hour 노래를 재생"
 
 #: engines/groovie/metaengine.cpp:101
 msgid "Slim Left/Right Hotspots"
-msgstr ""
+msgstr "슬림한 왼쪽/오른쪽 핫스팟"
 
 #: engines/groovie/metaengine.cpp:102
 msgid "Shrinks the hotspots on the left and right sides for exiting puzzles"
-msgstr ""
+msgstr "퍼즐을 종료하기 위해 왼쪽과 오른쪽의 핫스팟을 줄임"
 
 #: engines/groovie/metaengine.cpp:113
-#, fuzzy
 msgid "Speedrun Mode"
-msgstr "호버 모드"
+msgstr "스피드런 모드"
 
 #: engines/groovie/metaengine.cpp:114
 msgid "Affects the controls for fast forwarding the game"
-msgstr ""
+msgstr "게임을 빠르게 전달하는 조작에 영향을 미침"
 
 #: engines/groovie/metaengine.cpp:150
 msgid "GroovieV2 support is not compiled in"
-msgstr "GroovieV2 지원이 컴파일 되지 않음"
+msgstr "GroovieV2 지원은 컴파일되지 않았음"
 
 #: engines/groovie/metaengine.cpp:201
 msgid "Groovie engine"
 msgstr "그루비 엔진"
 
 #: engines/groovie/metaengine.cpp:217
-#, fuzzy
-#| msgid "Skip the Hall of Records storyboard scenes"
 msgid "Skip or fast forward scene"
-msgstr "Hall of Records 스토리 보드 장면 건너뛰기"
+msgstr "장면 건너뛰기 또는 빨리 감기"
 
 #: engines/groovie/saveload.cpp:52
-#, fuzzy
-#| msgid "Run server"
 msgid "Reserved"
-msgstr "서버 실행"
+msgstr "예약됨"
 
 #: engines/groovie/script.cpp:665
 msgid "Failed to save game"
-msgstr "게임 저장 실패"
+msgstr "게임 저장에 실패함"
 
 #: engines/groovie/script.cpp:854 engines/lab/savegame.cpp:237
 msgid "Would you like to save or restore a game?"
-msgstr "게임을 저장하거나 불러오시겠습니까?"
+msgstr "게임을 저장하거나 복원하겠습니까?"
 
 #: engines/hadesch/rooms/daedalus.cpp:213
 msgid "The Minotaur minigame is not supported yet. Skipping"
@@ -7810,11 +7803,11 @@ msgstr "미노타우르스 미니 게임은 아직 지원되지 않습니다. �
 
 #: engines/hadesch/rooms/medisle.cpp:647
 msgid "The Medusa minigame is not supported yet. Skipping"
-msgstr "메두사 미니게임은 아직 지원되지 않습니다. 건너뛰기"
+msgstr "메두사 미니 게임은 아직 지원되지 않습니다. 건너뛰기"
 
 #: engines/hadesch/rooms/troy.cpp:505
 msgid "The Troy minigame is not supported yet. Skipping"
-msgstr "트로이 미니게임은 아직 지원하지 않습니다. 건너뛰기"
+msgstr "트로이 미니 게임은 아직 지원하지 않습니다. 건너뛰기"
 
 #: engines/hdb/metaengine.cpp:44
 msgid "Enable cheat mode"
@@ -7822,11 +7815,11 @@ msgstr "치트 모드 활성화"
 
 #: engines/hdb/metaengine.cpp:45
 msgid "Debug info and level selection becomes available"
-msgstr "디버그 정보와 레벨 선택이 가능해집니다"
+msgstr "디버그 정보 및 레벨 선택이 가능함"
 
 #: engines/hdb/metaengine.cpp:244
 msgid "Clear waypoints"
-msgstr "웨이포인트 지우기"
+msgstr "변침점 지우기"
 
 #: engines/hdb/metaengine.cpp:270
 msgid "Debug"
@@ -7838,36 +7831,27 @@ msgstr "고어 모드"
 
 #: engines/hopkins/metaengine.cpp:48 engines/hopkins/metaengine.cpp:60
 msgid "Enable Gore Mode when available"
-msgstr "가능한 경우 고어 모드를 활성화합니다"
+msgstr "사용 가능한 경우 고어 모드를 활성화"
 
 #: engines/hopkins/metaengine.cpp:231
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Open inventory"
-msgstr "인벤토리 열기/닫기"
+msgstr "인벤토리 열기"
 
 #: engines/hopkins/metaengine.cpp:250
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Option dialog"
-msgstr "대사 건너뛰기"
+msgstr "대화 옵션"
 
 #: engines/hpl1/metaengine.cpp:76
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forward"
-msgstr "앞으로 이동"
+msgstr "앞으로"
 
 #: engines/hpl1/metaengine.cpp:77
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Backward"
-msgstr "뒤로 이동"
+msgstr "뒤로"
 
 #: engines/hpl1/metaengine.cpp:80
-#, fuzzy
 msgid "Lean Left"
-msgstr "D-패드 Left"
+msgstr "십자패드 왼쪽"
 
 #: engines/hpl1/metaengine.cpp:81
 #, fuzzy
