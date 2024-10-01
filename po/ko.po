@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-01 07:50+0000\n"
+"PO-Revision-Date: 2024-10-01 10:06+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -2799,11 +2799,11 @@ msgstr "GFX 비활성화"
 
 #: gui/ThemeEngine.cpp:271
 msgid "Standard renderer"
-msgstr "표준 렌더러"
+msgstr "일반 렌더러"
 
 #: gui/ThemeEngine.cpp:271 engines/scumm/dialogs.cpp:1030
 msgid "Standard"
-msgstr "표준"
+msgstr "일반"
 
 #: gui/ThemeEngine.cpp:273
 msgid "Antialiased renderer"
@@ -6931,16 +6931,12 @@ msgid "Default keymappings"
 msgstr "기본 게임 키설정"
 
 #: engines/cine/metaengine.cpp:260
-#, fuzzy
-#| msgid "Game Options"
 msgid "Key to mouse keymappings"
-msgstr "게임 옵션"
+msgstr "마우스 키맵핑 키"
 
 #: engines/cine/metaengine.cpp:261
-#, fuzzy
-#| msgid "Game Options"
 msgid "Exit screen keymappings"
-msgstr "게임 옵션"
+msgstr "나가기 화면 키맵핑"
 
 #: engines/cine/metaengine.cpp:277
 msgid "Exit Sony intro screen"
@@ -7851,93 +7847,81 @@ msgstr "뒤로"
 
 #: engines/hpl1/metaengine.cpp:80
 msgid "Lean Left"
-msgstr "십자패드 왼쪽"
+msgstr "십자 패드 왼쪽"
 
 #: engines/hpl1/metaengine.cpp:81
-#, fuzzy
 msgid "Lean Right"
-msgstr "D-패드 Right"
+msgstr "십자 패드 오른쪽"
 
 #: engines/hpl1/metaengine.cpp:83
 msgid "Jump"
-msgstr ""
+msgstr "점프"
 
 #. I18N: Action in In Cold Blood
 #: engines/hpl1/metaengine.cpp:84 engines/icb/icb.cpp:119
 #: engines/icb/icb.cpp:185
-#, fuzzy
-#| msgid "Touch"
 msgid "Crouch"
-msgstr "터치"
+msgstr "웅크리기"
 
 #: engines/hpl1/metaengine.cpp:87
-#, fuzzy
-#| msgid "Interact"
 msgid "Interact Mode"
-msgstr "상호작용"
+msgstr "상호작용 모드"
 
 #: engines/hpl1/metaengine.cpp:88
-#, fuzzy
-#| msgid "Gore Mode"
 msgid "Look Mode"
-msgstr "고어 모드"
+msgstr "보기 모드"
 
 #: engines/hpl1/metaengine.cpp:89
 msgid "Holster"
-msgstr ""
+msgstr "홀스터"
 
 #: engines/hpl1/metaengine.cpp:95 engines/tinsel/metaengine.cpp:317
 msgid "Notebook"
-msgstr ""
+msgstr "노트북"
 
 #: engines/hpl1/metaengine.cpp:96
 msgid "Personal Notes"
-msgstr ""
+msgstr "개인 노트"
 
 #: engines/hpl1/metaengine.cpp:97
-#, fuzzy
-#| msgid "Fly straight"
 msgid "Flashlight"
-msgstr "정면으로 비행"
+msgstr "손전등"
 
 #: engines/hpl1/metaengine.cpp:98
 msgid "Glowstick"
-msgstr ""
+msgstr "야광막대"
 
 #: engines/hypno/metaengine.cpp:33
-#, fuzzy
 msgid "Enable original cheats"
-msgstr "치트 활성화"
+msgstr "원본 치트 활성화"
 
 #: engines/hypno/metaengine.cpp:34
 msgid "Allow cheats using the C key."
 msgstr "C 키를 사용하여 치트를 허용합니다."
 
 #: engines/hypno/metaengine.cpp:44
-#, fuzzy
 msgid "Enable infinite health cheat"
-msgstr "대체 폰트 사용"
+msgstr "무한 체력 치트 활성화"
 
 #: engines/hypno/metaengine.cpp:45
 msgid "Player health will never decrease (except for game over scenes)."
-msgstr ""
+msgstr "플레이어의 체력은 (게임 종료 장면을 제외하고) 결코 감소하지 않습니다."
 
 #: engines/hypno/metaengine.cpp:55
-#, fuzzy
 msgid "Enable infinite ammo cheat"
-msgstr "치트 활성화"
+msgstr "무한 탄약 치트 활성화"
 
 #: engines/hypno/metaengine.cpp:56
 msgid "Player ammo will never decrease."
-msgstr ""
+msgstr "플레이어의 탄약은 감소하지 않습니다."
 
 #: engines/hypno/metaengine.cpp:66
 msgid "Unlock all levels"
-msgstr ""
+msgstr "모든 레벨 잠금 해제"
 
 #: engines/hypno/metaengine.cpp:67
 msgid "All levels will be available to play."
-msgstr ""
+msgstr "모든 레벨에서 플레이할 수 있습니다."
 
 #: engines/hypno/metaengine.cpp:77
 msgid "Enable restored content"
@@ -7945,57 +7929,53 @@ msgstr "복원된 컨텐츠 활성화"
 
 #: engines/hypno/metaengine.cpp:78
 msgid "Add additional content that is not enabled the original implementation."
-msgstr "원본 구현에서 활성화되지 않았던 컨텐츠를 추가합니다."
+msgstr "원래 구현에서 활성화되지 않은 추가 콘텐츠를 추가합니다."
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:89
 msgid "Fire"
-msgstr ""
+msgstr "발사"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:107
 msgid "Arm"
-msgstr ""
+msgstr "무기"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:113
-#, fuzzy
 msgid "Remora"
-msgstr "게임 제거(~R~)"
+msgstr "레모라"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:125 engines/icb/icb.cpp:191
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Side Step"
-msgstr "왼쪽으로"
+msgstr "사이드 스텝"
 
 #: engines/kyra/detection_tables.h:75
 msgid "Missing language specific game code and/or resources."
-msgstr "언어 고유의 게임 코드나 리소스가 없습니다."
+msgstr "언어별 게임 코드나 리소스가 없습니다."
 
 #: engines/kyra/detection_tables.h:76
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
-msgstr "이 비공식 번역에 언어 고유의 게임 코드나 리소스가 없습니다."
+msgstr "이 팬 번역에는 언어별 게임 코드나 리소스가 없습니다."
 
 #: engines/kyra/detection_tables.h:78
 msgid "Demo plays simple animations without using Westwood's Engine."
-msgstr "데모는 Westwood의 엔진을 사용하지 않고 간단한 애니메이션을 재생합니다."
+msgstr "데모는 웨스트우드의 엔진을 사용하지 않고 간단한 애니메이션을 재생합니다."
 
 #: engines/kyra/detection_tables.h:1369
 msgid "You added the game incorrectly. Please add the root folder of the game."
-msgstr "게임을 잘못 추가했습니다. 게임의 루트 폴더를 추가해 주십시오."
+msgstr "게임을 잘못 추가했습니다. 게임의 루트 폴더를 추가해 주세요."
 
 #. I18N: The file in the game directory needs to be extracted
 #: engines/kyra/detection_tables.h:1385
 msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
-msgstr ""
-"게임을 잘못 추가했습니다. GAME.DAT는 ISO 이미지로 여기서 게임 데이터 파일을 "
-"추출해야 합니다."
+msgstr "게임을 잘못 추가했습니다. GAME.DAT 파일은 ISO 이미지이고 여기에서 게임 "
+"데이터 파일을 추출해야 합니다."
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
@@ -8005,11 +7985,11 @@ msgstr "스튜디오 관객"
 
 #: engines/kyra/metaengine.cpp:49
 msgid "Enable studio audience"
-msgstr "스튜디오 관객을 활성화합니다"
+msgstr "스튜디오 관객을 활성화"
 
 #: engines/kyra/metaengine.cpp:62
 msgid "Allow text and cutscenes to be skipped"
-msgstr "텍스트와 컷씬을 건너뛸 수 있게 됩니다"
+msgstr "텍스트와 컷신을 건너뛸 수 있도록 허용"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/metaengine.cpp:74
@@ -8018,7 +7998,7 @@ msgstr "헬륨 모드"
 
 #: engines/kyra/metaengine.cpp:75
 msgid "Enable helium mode"
-msgstr "헬륨 모드를 활성화합니다"
+msgstr "헬륨 모드를 활성화"
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
@@ -8028,28 +8008,28 @@ msgstr "부드러운 스크롤"
 
 #: engines/kyra/metaengine.cpp:91
 msgid "Enable smooth scrolling when walking"
-msgstr "걸을 때 부드러운 스크롤을 활성화합니다"
+msgstr "걸을 때 부드러운 스크롤을 활성화"
 
 #. I18N: When enabled, this option changes the cursor when it floats to the
 #. edge of the screen to a directional arrow. The player can then click to
 #. walk towards that direction.
 #: engines/kyra/metaengine.cpp:105
 msgid "Floating cursors"
-msgstr "이동 커서"
+msgstr "플로팅 커서"
 
 #: engines/kyra/metaengine.cpp:106
 msgid "Enable floating cursors"
-msgstr "이동 커서를 활성합니다"
+msgstr "플로팅 커서를 활성화"
 
 #. I18N: When enabled, this option will fill in an autogenerated savegame
 #. description into the input prompt where.
 #: engines/kyra/metaengine.cpp:119
 msgid "Suggest save names"
-msgstr "세이브 파일 이름 제안"
+msgstr "저장 파일 이름 제안"
 
 #: engines/kyra/metaengine.cpp:120
 msgid "Autogenerated naming suggestions for savegames"
-msgstr "자동 생성된 세이브 파일 이름을 제안합니다"
+msgstr "저장 게임에 대한 자동 생성된 이름 제안"
 
 #. I18N: HP stands for Hit Points
 #: engines/kyra/metaengine.cpp:134
@@ -8058,12 +8038,12 @@ msgstr "HP 바 그래프"
 
 #: engines/kyra/metaengine.cpp:135
 msgid "Enable hit point bar graphs"
-msgstr "HP 바 그래프를 활성화합니다"
+msgstr "히트 포인트 바 그래프를 활성화"
 
 #. I18N: L/R stands for Left/Right
 #: engines/kyra/metaengine.cpp:147
 msgid "Fight Button L/R Swap"
-msgstr "전투시 왼쪽/오른쪽 버튼을 서로 바꾸기"
+msgstr "싸움 버튼 L/R 바꾸기"
 
 #: engines/kyra/metaengine.cpp:148
 msgid "Left button to attack, right button to pick up items"
@@ -8071,28 +8051,28 @@ msgstr "왼쪽 버튼으로 공격, 오른쪽 버튼으로 아이템 습득"
 
 #: engines/kyra/metaengine.cpp:159
 msgid "Faithful AD&D rules"
-msgstr ""
+msgstr "충실한 AD&D 규칙"
 
 #: engines/kyra/metaengine.cpp:160
 msgid ""
 "Make implementation of AD&D rules more compliant with the AD&D 2nd edition "
 "handbook"
-msgstr ""
+msgstr "AD&D 2차 수정판 핸드북을 통해 AD&D 규칙 구현을 보다 준수하도록 함"
 
 #: engines/kyra/metaengine.cpp:251
 msgid "Lands of Lore support is not compiled in"
-msgstr "Lands of Lore 지원은 컴파일 되지 않음"
+msgstr "Lands of Lore 지원은 컴파일되지 않았음"
 
 #: engines/kyra/metaengine.cpp:261
 msgid ""
 "EOB II FM-TOWNS requires support of 16bit color modes which has not been "
 "activated in your ScummVM build"
-msgstr "EOB II FM-TOWNS는 ScummVM 빌드에서 활성화되지 않은 16비트 색상 모드 지원이 "
+msgstr "EOB II FM-TOWNS는 ScummVM 빌드에서 활성화되지 않은 16 비트 색상 모드 지원이 "
 "필요함"
 
 #: engines/kyra/metaengine.cpp:267
 msgid "Eye of Beholder support is not compiled in"
-msgstr "주시자의 눈 지원이 컴파일 되지 않음"
+msgstr "주시자의 눈 지원이 컴파일되지 않았음"
 
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:502
 #: engines/ultima/ultima4/metaengine.cpp:224
@@ -8155,27 +8135,27 @@ msgstr "주문 시전"
 
 #: engines/kyra/engine/eobcommon.cpp:383
 msgid "Spell Level 1"
-msgstr "주문 레벨 1"
+msgstr "주문 수준 1"
 
 #: engines/kyra/engine/eobcommon.cpp:384
 msgid "Spell Level 2"
-msgstr "주문 레벨 2"
+msgstr "주문 수준 2"
 
 #: engines/kyra/engine/eobcommon.cpp:385
 msgid "Spell Level 3"
-msgstr "주문 레벨 3"
+msgstr "주문 수준 3"
 
 #: engines/kyra/engine/eobcommon.cpp:386
 msgid "Spell Level 4"
-msgstr "주문 레벨 4"
+msgstr "주문 수준 4"
 
 #: engines/kyra/engine/eobcommon.cpp:387
 msgid "Spell Level 5"
-msgstr "주문 레벨 5"
+msgstr "주문 수준 5"
 
 #: engines/kyra/engine/eobcommon.cpp:389
 msgid "Spell Level 6"
-msgstr "주문 레벨 6"
+msgstr "주문 수준 6"
 
 #: engines/kyra/engine/lol.cpp:506
 msgid "Attack 1"
@@ -8191,15 +8171,15 @@ msgstr "공격 3"
 
 #: engines/kyra/engine/lol.cpp:509 engines/mm/mm1/metaengine.cpp:103
 msgid "Show Map"
-msgstr "지도 보이기"
+msgstr "지도 표시"
 
 #: engines/kyra/engine/lol.cpp:512
 msgid "Slide Left"
-msgstr "왼쪽으로"
+msgstr "왼쪽으로 슬라이드"
 
 #: engines/kyra/engine/lol.cpp:513
 msgid "Slide Right"
-msgstr "오른쪽으로"
+msgstr "오른쪽으로 슬라이드"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/kyra/engine/lol.cpp:516 engines/mm/mm1/metaengine.cpp:109
@@ -8228,7 +8208,7 @@ msgstr ""
 "\n"
 "%s %S\n"
 "\n"
-"ScummVM에서 게임 저장 파일로 사용하겠습니까?\n"
+"이 저장된 게임 파일을 ScummVM에서 사용하겠습니까?\n"
 "\n"
 
 #: engines/kyra/gui/saveload_eob.cpp:634
@@ -8237,7 +8217,7 @@ msgid ""
 "A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
-"저장된 게임 파일이 지정한 %d슬롯에서 발견되었습니다. 덮어씌우시겠습니까?\n"
+"지정된 슬롯 %d에서 저장된 게임 파일이 발견되었습니다. 덮어쓰겠습니까?\n"
 "\n"
 
 #: engines/kyra/gui/saveload_eob.cpp:667
@@ -8249,9 +8229,9 @@ msgid ""
 "'import_savefile'.\n"
 "\n"
 msgstr ""
-"%d개의 원본 게임 저장 파일을 성공적으로 ScummVM에 가져왔습니다. \n"
-"나중에 원본 게임 저장 파일을 수동으로 가져오려면 ScummVM \n"
-"디버그 콘솔을 열고 'import_savefile'명령을 사용해야 합니다.\n"
+"%d 개의 원본 저장된 게임이 성공적으로 ScummVM에 가져왔습니다.\n"
+"나중에 원본 저장된 게임을 수동으로 가져오려면 ScummVM 디버그 콘솔을\n"
+"열고 'import_savefile' 명령을 사용해야 합니다.\n"
 "\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:279
@@ -8267,16 +8247,16 @@ msgid ""
 "should be located in the AmigaDOS system 'Fonts/' folder.\n"
 "Please copy them into the EOB game data directory.\n"
 msgstr ""
-"현재 AMIGA 버전에는 다음의 글꼴 파일이 필요합니다:\n"
+"이 아미가 버전에는 다음 글꼴 파일이 필요합니다:\n"
 "\n"
 "EOBF6.FONT\n"
 "EOBF6 / 6\n"
 "EOBF8.FONT\n"
 "EOBF8 / 8\n"
 "\n"
-"원본 설치 프로그램을 이용해 설치했다면 위 파일들은\n"
-"AmigaDOS 시스템의 'Fonts/' 폴더에 있습니다.\n"
-"해당 파일을 EOB 게임 데이터 디렉토리에 복사하십시오.\n"
+"설치에 원래 설치 프로그램을 사용한 경우 이 파일은\n"
+"AmigaDOS 시스템 'Fonts/' 폴더에 있어야 합니다.\n"
+"EOB 게임 데이터 디렉토리에 복사하세요.\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:287
 msgid ""
@@ -8299,40 +8279,38 @@ msgid ""
 "Please copy the correct font files into your EOB II game data directory.\n"
 "\n"
 msgstr ""
-"현재 AMIGA 버전에는 다음의 글꼴 파일이 필요합니다:\n"
+"이 아미가 버전에는 다음 글꼴 파일이 필요합니다:\n"
 "\n"
 "EOBF6.FONT\n"
 "EOBF6 / 6\n"
 "EOBF8.FONT\n"
 "EOBF8 / 8\n"
 "\n"
-"이 게임은 EOB II의 번역된(영어가 아닌) 버전으로 게임과 함께 제공된 \n"
-"특정 글꼴파일이 포함된 해당 언어의 문자를 사용합니다.\n"
-"따라서 영문판 또는 다른 EOB I 게임의 글꼴 파일을 사용할 수는 없습니다.\n"
+"이것은 게임과 함께 제공된 특정 글꼴 파일에만 포함된 언어별 문자를\n"
+"사용하는 EOB II의 현지화된 (영어가 아닌) 버전입니다. 영어 버전이나\n"
+"EOB I 게임의 글꼴 파일을 사용할 수 없습니다.\n"
 "\n"
-"게임은 실행되지만, 특정 언어의 문자는 표시되지 않게 됩니다.\n"
-"올바른 글꼴 파일을 EOB II 게임 데이터 디렉토리에 복사해주세요.\n"
+"게임은 계속되지만, 언어별 문자는 표시되지 않습니다.\n"
+"올바른 글꼴 파일을 EOB II 게임 데이터 디렉토리에 복사하세요.\n"
 "\n"
 
 #: engines/lab/engine.cpp:124
 msgid ""
 "This is a trial Windows version of the game. To play the full version, you "
 "will need to use the original interpreter and purchase a key from Wyrmkeep"
-msgstr ""
-"현재 게임은 평가판 Windows 버전입니다. 정식 버전을 플레이하려면 원본 인터프리"
-"터를 사용하고 Wyrmkeep에서 시리얼 키를 구입해야 합니다"
+msgstr "이것은 윈도우즈용 체험판 게임입니다. 정식 버전을 플레이하려면 원본 해석기를 "
+"사용하고 Wyrmkeep에서 키를 구매해야 함"
 
 #: engines/lab/processroom.cpp:329
 msgid ""
 "This is the end of the trial version. You can play the full game using the "
 "original interpreter from Wyrmkeep"
-msgstr ""
-"평가판이 종료되었습니다. Wyrmkeep의 오리지널 인터프리터를 사용하여 전체 게임"
-"을 플레이 할 수 있습니다"
+msgstr "체험판이 종료되었습니다. Wyrmkeep의 원본 해석기를 사용하여 정식 게임을 "
+"플레이 할 수 있음"
 
 #: engines/lab/speciallocks.cpp:148
 msgid "This puzzle is not available in the trial version of the game"
-msgstr "게임 평가판에서는 현재 퍼즐을 이용할 수 없습니다"
+msgstr "이 퍼즐은 체험판 게임에서 사용할 수 없음"
 
 #: engines/lure/metaengine.cpp:53 engines/mads/metaengine.cpp:124
 #: engines/sherlock/metaengine.cpp:112 engines/twine/metaengine.cpp:145
@@ -8340,22 +8318,16 @@ msgid "TTS Narrator"
 msgstr "TTS 나레이터"
 
 #: engines/lure/metaengine.cpp:170
-#, fuzzy
-#| msgid "Game Options"
 msgid "Fight sequence keymappings"
-msgstr "게임 옵션"
+msgstr "싸움 시퀀스 키맵핑"
 
 #: engines/lure/metaengine.cpp:171
-#, fuzzy
-#| msgid "Game Options"
 msgid "Index keymappings"
-msgstr "게임 옵션"
+msgstr "색인 키맵핑"
 
 #: engines/lure/metaengine.cpp:172
-#, fuzzy
-#| msgid "Game Options"
 msgid "Yes/No keymappings"
-msgstr "게임 옵션"
+msgstr "예/아니요 키맵핑"
 
 #: engines/lure/metaengine.cpp:197 engines/mads/metaengine.cpp:311
 msgid "Restore game"
@@ -8367,104 +8339,80 @@ msgstr "게임 재시작"
 
 #. I18N: Shift Cursor during fight to top left
 #: engines/lure/metaengine.cpp:233
-#, fuzzy
-#| msgid "Turn Left"
 msgid "Shift Cursor - Top left"
-msgstr "왼쪽으로 회전"
+msgstr "커서 이동 - 왼쪽 상단"
 
 #. I18N: Shift Cursor during fight to middle left
 #: engines/lure/metaengine.cpp:239
 msgid "Shift Cursor -  Middle left"
-msgstr ""
+msgstr "커서 이동 -  왼쪽 중간"
 
 #. I18N: Shift Cursor during fight to bottom left
 #: engines/lure/metaengine.cpp:245
 msgid "Shift Cursor - Bottom left"
-msgstr ""
+msgstr "커서 이동 - 왼쪽 하단"
 
 #. I18N: Shift Cursor during fight to top right
 #: engines/lure/metaengine.cpp:251
-#, fuzzy
-#| msgid "Turn Right"
 msgid "Shift Cursor - Top right"
-msgstr "오른쪽으로 회전"
+msgstr "커서 이동 - 오른쪽 상단"
 
 #. I18N: Shift Cursor during fight to middle right
 #: engines/lure/metaengine.cpp:257
-#, fuzzy
-#| msgid "Turn Right"
 msgid "Shift Cursor - Middle right"
-msgstr "오른쪽으로 회전"
+msgstr "커서 이동 - 오른쪽으로 중간"
 
 #. I18N: Shift Cursor during fight to bottom right
 #: engines/lure/metaengine.cpp:263
-#, fuzzy
-#| msgid "Turn Right"
 msgid "Shift Cursor - Bottom right"
-msgstr "오른쪽으로 회전"
+msgstr "커서 이동 - 오른쪽 하단"
 
 #: engines/lure/metaengine.cpp:270
-#, fuzzy
-#| msgid "Go to setup menu"
 msgid "Go to next index"
-msgstr "셋업 메뉴로 이동"
+msgstr "다음 색인으로 이동"
 
 #: engines/lure/metaengine.cpp:277
-#, fuzzy
-#| msgid "Go to previous directory level"
 msgid "Go to previous index"
-msgstr "상위 디렉토리로 이동합니다"
+msgstr "이전 색인으로 이동"
 
 #: engines/lure/metaengine.cpp:284
-#, fuzzy
 msgid "Select index"
-msgstr "테마 선택"
+msgstr "색인 선택"
 
 #: engines/made/detection_tables.h:445 engines/made/detection_tables.h:462
 msgid "The game is using unsupported engine"
-msgstr "게임이 지원되지 않는 엔진을 사용합니다"
+msgstr "게임이 지원되지 않는 엔진을 사용하고 있음"
 
 #: engines/made/metaengine.cpp:38
 msgid "Play a digital soundtrack during the opening movie"
-msgstr "시작 동영상 중에 디지털 사운드 트랙 재생"
+msgstr "오프닝 동영상 중에 디지털 사운드트랙을 재생"
 
 #: engines/made/metaengine.cpp:39
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
-msgstr ""
-"선택하면 도입 중에 디지털 사운드트랙을 사용합니다. 그렇지 않으면 MIDI 음악이 "
-"재생됩니다."
+msgstr "선택하면 게임은 인트로에서 디지털 사운드트랙을 사용합니다. 그렇지 않으면, "
+"미디 음악을 재생합니다."
 
 #: engines/made/metaengine.cpp:128
-#, fuzzy
-#| msgid "Scroll Down"
 msgid "Cursor up"
-msgstr "아래로 스크롤"
+msgstr "커서 위"
 
 #: engines/made/metaengine.cpp:135
-#, fuzzy
-#| msgid "Scroll Down"
 msgid "Cursor down"
-msgstr "아래로 스크롤"
+msgstr "커서 아래"
 
 #: engines/made/metaengine.cpp:142
-#, fuzzy
-#| msgid "Turn Left"
 msgid "Cursor left"
-msgstr "왼쪽으로 회전"
+msgstr "커서 왼쪽"
 
 #: engines/made/metaengine.cpp:149
-#, fuzzy
-#| msgid "Turn Right"
 msgid "Cursor right"
-msgstr "오른쪽으로 회전"
+msgstr "커서 오른쪽"
 
 #: engines/made/metaengine.cpp:174
-#, fuzzy
-#| msgid "Reload last save"
 msgid "Repeat last message"
-msgstr "마지막 저장을 다시 불러오기"
+msgstr "마지막 메시지 반복"
 
 #: engines/mads/metaengine.cpp:63
 msgid "Easy mouse interface"
@@ -8472,43 +8420,35 @@ msgstr "쉬운 마우스 인터페이스"
 
 #: engines/mads/metaengine.cpp:64
 msgid "Shows object names when hovering the mouse over them"
-msgstr "마우스 커서를 올리면 개체 이름을 표시"
+msgstr "마우스를 올려놓으면 개체 이름이 표시"
 
 #: engines/mads/metaengine.cpp:75 engines/mads/metaengine.cpp:76
 msgid "Animated inventory items"
-msgstr "움직이는 인벤토리 아이템"
+msgstr "애니메이션 인벤토리 항목"
 
 #: engines/mads/metaengine.cpp:87 engines/mads/metaengine.cpp:88
 msgid "Animated game interface"
-msgstr "움직이는 게임 인터페이스"
+msgstr "애니메이션 게임 인터페이스"
 
 #: engines/mads/metaengine.cpp:99 engines/mads/metaengine.cpp:100
 msgid "Naughty game mode"
 msgstr "꾸러기 게임 모드"
 
 #: engines/mads/metaengine.cpp:276
-#, fuzzy
-#| msgid "Game Options"
 msgid "Start menu keymappings"
-msgstr "게임 옵션"
+msgstr "시작 메뉴 키맵핑"
 
 #: engines/mads/metaengine.cpp:299
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open game menu"
-msgstr "메인 메뉴 열기"
+msgstr "게임 메뉴 열기"
 
 #: engines/mads/metaengine.cpp:317
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Scroll bar up"
-msgstr "위로 스크롤"
+msgstr "스크롤바를 위로"
 
 #: engines/mads/metaengine.cpp:323
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Scroll bar down"
-msgstr "아래로 스크롤"
+msgstr "스크롤바를 아래로"
 
 #: engines/mads/metaengine.cpp:331
 msgid "Start game"
@@ -8519,26 +8459,20 @@ msgid "Resume game"
 msgstr "게임 재개"
 
 #: engines/mads/metaengine.cpp:343
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show intro"
-msgstr "힌트 표시"
+msgstr "인트로 표시"
 
 #: engines/mads/metaengine.cpp:349
 msgid "Show credits"
 msgstr "크레딧 표시"
 
 #: engines/mads/metaengine.cpp:355
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Show quotes"
-msgstr "음성 옵션"
+msgstr "인용문 표시"
 
 #: engines/mads/metaengine.cpp:361 engines/stark/metaengine.cpp:280
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Exit game"
-msgstr "게임 종료"
+msgstr "게임 나가기"
 
 #: engines/mads/metaengine.cpp:368
 msgid "Restart animation"
@@ -8546,120 +8480,107 @@ msgstr "애니메이션 재시작"
 
 #: engines/mm/metaengine.cpp:57
 msgid "Show item costs in standard inventory mode"
-msgstr "일반 인벤토리 모드에서 아이템 가격을 표시"
+msgstr "일반 인벤토리 모드에서 아이템 비용 표시"
 
 #: engines/mm/metaengine.cpp:58
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
-msgstr ""
-"일반 인벤토리 모드에서 아이템 가격을 표시해 가치를 비교할 수 있게 합니다"
+msgstr "일반 인벤토리 모드에서 아이템 비용을 표시하여 품목 가치를 비교할 수 있음"
 
 #: engines/mm/metaengine.cpp:68
 msgid "More durable armor"
-msgstr "방어구 내구력을 증가"
+msgstr "더욱 내구성 있는 갑옷"
 
 #: engines/mm/metaengine.cpp:69
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
-msgstr "방어구가 부서지는 캐릭터 HP를 -10에서 -80으로 변경합니다"
+msgstr "캐릭터가 -10 HP가 아닌 -80 HP가 될 때까지, 방어구가 부숴지지 않음"
 
 #: engines/mm/metaengine.cpp:79
-#, fuzzy
-#| msgid "Enable hit point bar graphs"
 msgid "Hitpoint bars"
-msgstr "HP 바 그래프를 활성화합니다"
+msgstr "히트포인트 바"
 
 #: engines/mm/metaengine.cpp:80
 msgid "Replace a colored gem with bars for hit points and spell points."
-msgstr ""
+msgstr "색깔 있는 보석을 히트 포인트와 주문 포인트를 나타내는 바로 대체합니다."
 
 #: engines/mm/mm1/metaengine.cpp:54
 msgid "View Party Member 1"
-msgstr ""
+msgstr "파티 멤버 1 보기"
 
 #: engines/mm/mm1/metaengine.cpp:55
 msgid "View Party Member 2"
-msgstr ""
+msgstr "파티 멤버 2 보기"
 
 #: engines/mm/mm1/metaengine.cpp:56
 msgid "View Party Member 3"
-msgstr ""
+msgstr "파티 멤버 3 보기"
 
 #: engines/mm/mm1/metaengine.cpp:57
 msgid "View Party Member 4"
-msgstr ""
+msgstr "파티 멤버 4 보기"
 
 #: engines/mm/mm1/metaengine.cpp:58
 msgid "View Party Member 5"
-msgstr ""
+msgstr "파티 멤버 5 보기"
 
 #: engines/mm/mm1/metaengine.cpp:59
 msgid "View Party Member 6"
-msgstr ""
+msgstr "파티 멤버 6 보기"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:69
 msgid "Cast"
-msgstr ""
+msgstr "시전"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:71
 msgid "Exchange"
-msgstr ""
+msgstr "교환"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:73
-#, fuzzy
-#| msgid "Right"
 msgid "Fight"
-msgstr "오른쪽"
+msgstr "전투"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:75 engines/mm/mm1/metaengine.cpp:116
-#, fuzzy
-#| msgid "Preferences"
 msgid "Quick Reference"
-msgstr "환경설정"
+msgstr "빠른 참조"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:77
 msgid "Retreat"
-msgstr ""
+msgstr "철수"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:84
 msgid "Delay"
-msgstr ""
+msgstr "지연"
 
 #. I18N: Combat command in Might & Magic 1
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:86 engines/mm/mm1/metaengine.cpp:107
 msgid "Protect"
-msgstr ""
+msgstr "보호"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:94
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forwards"
-msgstr "앞으로 이동"
+msgstr "앞으로"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:96
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Backwards"
-msgstr "뒤로 이동"
+msgstr "뒤로"
 
 #: engines/mm/mm1/metaengine.cpp:104
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle Minimap"
-msgstr "전투 전환"
+msgstr "미니맵 전환"
 
 #: engines/mm/mm1/metaengine.cpp:105
 msgid "Reorder Party"
-msgstr ""
+msgstr "파티 재편성"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:111
@@ -8669,7 +8590,7 @@ msgstr "검색"
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:113
 msgid "Bash"
-msgstr ""
+msgstr "강타"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:115 engines/scumm/help.cpp:148
@@ -8677,35 +8598,33 @@ msgid "Unlock"
 msgstr "잠금 해제"
 
 #: engines/mm/mm1/metaengine.cpp:122
-#, fuzzy
-#| msgid "Next location"
 msgid "Goto location"
-msgstr "다음 위치"
+msgstr "위치로 이동"
 
 #: engines/mm/mm1/metaengine.cpp:133 engines/mm/mm1/metaengine.cpp:143
 msgid "Might and Magic 1 - Menus"
-msgstr ""
+msgstr "마이트 앤 매직 1 - 메뉴"
 
 #: engines/mm/mm1/metaengine.cpp:138
 msgid "Might and Magic 1 - Minimal Keys"
-msgstr ""
+msgstr "마이트 앤 매직 1 - 최소한의 키"
 
 #: engines/mm/mm1/metaengine.cpp:144 engines/mm/mm1/metaengine.cpp:150
 #: engines/mm/mm1/metaengine.cpp:156
 msgid "Might and Magic 1 - Party"
-msgstr ""
+msgstr "마이트 앤 매직 1 - 파티"
 
 #: engines/mm/mm1/metaengine.cpp:149
 msgid "Might and Magic 1 - Combat"
-msgstr ""
+msgstr "마이트 앤 매직 1 - 전투"
 
 #: engines/mm/mm1/metaengine.cpp:155
 msgid "Might and Magic 1"
-msgstr ""
+msgstr "마이트 앤 매직 1"
 
 #: engines/mm/mm1/metaengine.cpp:157
 msgid "Might and Magic 1 - Cheats"
-msgstr ""
+msgstr "마이트 앤 매직 - 치트"
 
 #: engines/mm/mm1/mm1.cpp:56
 msgid ""
@@ -8713,6 +8632,8 @@ msgid ""
 "will automatically be available if you detect the original game and select "
 "Enhanced mode."
 msgstr ""
+"그래픽 오버홀 모드에서 직접 게임을 실행할 수 없습니다. 대신 원래 게임을 "
+"감지하고 강화 모드를 선택하면 자동으로 사용할 수 있습니다."
 
 #: engines/mm/mm1/mm1.cpp:108
 msgid ""
@@ -9398,22 +9319,16 @@ msgid "I Have No Mouth support not compiled in"
 msgstr "I Have No Mouth 지원이 컴파일되지 않음"
 
 #: engines/saga/metaengine.cpp:268
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game keymapping"
-msgstr "게임 옵션"
+msgstr "게임 키맵핑"
 
 #: engines/saga/metaengine.cpp:269
-#, fuzzy
-#| msgid "Game Options"
 msgid "Option panel keymapping"
-msgstr "게임 옵션"
+msgstr "옵션 패널 키맵핑"
 
 #: engines/saga/metaengine.cpp:270
-#, fuzzy
-#| msgid "Game Options"
 msgid "Save panel keymapping"
-msgstr "게임 옵션"
+msgstr "패널 키맵핑 저장"
 
 #: engines/saga/metaengine.cpp:271
 msgid "Load panel keymapping"
@@ -9425,7 +9340,7 @@ msgstr "패널 키맵핑 종료"
 
 #: engines/saga/metaengine.cpp:273
 msgid "Converse panel keymapping"
-msgstr ""
+msgstr "패널 키맵핑 정반대"
 
 #: engines/saga/metaengine.cpp:284
 #, fuzzy
@@ -9717,7 +9632,7 @@ msgstr ""
 
 #: engines/sci/detection_options.h:245
 msgid "Standard (GM / MT-32)"
-msgstr "표준 (GM / MT-32)"
+msgstr "일반 (GM / MT-32)"
 
 #: engines/sci/detection_options.h:249
 msgid "Roland D-110 / D-10 / D-20"
@@ -10778,7 +10693,7 @@ msgstr "FM-TOWNS 게임을 200 픽셀 높이로 잘라냄"
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
-msgstr "화면 하단의 추가 40픽셀을 잘라내어 표준 높이인 200픽셀로 만들고, '화면비 "
+msgstr "화면 하단의 추가 40 픽셀을 잘라내어 일반 높이인 200 픽셀로 만들고, '화면비 "
 "교정'을 사용할 수 있도록 함"
 
 #: engines/scumm/metaengine.cpp:672
@@ -12572,11 +12487,11 @@ msgstr "뒤로 달리기"
 
 #: engines/wintermute/keymapper_tables.h:761
 msgid "Turn left fast"
-msgstr "빠르게 좌회전"
+msgstr "왼쪽으로 빠르게 회전"
 
 #: engines/wintermute/keymapper_tables.h:766
 msgid "Turn right fast"
-msgstr "빠르게 우회전"
+msgstr "오른쪽으로 빠르게 회전"
 
 #. I18N: Displays a blueprint with robot parts
 #: engines/wintermute/keymapper_tables.h:772
