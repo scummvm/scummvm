@@ -221,9 +221,8 @@ enum eAGSKeyCode {
 	// not certain if necessary anymore (and not certain what was the origin of this value)
 	eAGSKeyCodeAltTab = AGS_EXT_KEY_SHIFT + 99,
 
-	// These keys are not defined in the script eAGSKey enum but are in the manual
-	// https://adventuregamestudio.github.io/ags-manual/ASCIIcodes.html
-	// *Probably* made-up numbers not derived from allegro scan codes.
+	// Mod-key codes
+	// *probably* made-up numbers, not derived from allegro scan codes.
 	eAGSKeyCodeLShift = 403,
 	eAGSKeyCodeRShift = 404,
 	eAGSKeyCodeLCtrl = 405,
