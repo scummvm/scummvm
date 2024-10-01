@@ -47,6 +47,8 @@ struct CharInfo {
 };
 
 struct CharRange {
+	CharRange();
+	~CharRange();
 	uint16 _firstChar;
 	uint16 _lastChar;
 	CharInfo *_charInfos;
