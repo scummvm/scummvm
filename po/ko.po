@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-01 00:52+0000\n"
+"PO-Revision-Date: 2024-10-01 01:23+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -12309,8 +12309,8 @@ msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
 msgstr ""
-"이 게임은 현재 빌드에 포함되지 않은 3D 기능이 필요합니다. 따라서, 일부 또는 "
-"전부를 플레이할 수 없을 수도 있습니다."
+"이 게임은 3D 기능을 필요로 하는데, 이는 컴파일되어 있지 않습니다. 따라서 "
+"전체 또는 부분적으로 플레이가 불가능할 가능성이 높습니다."
 
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
@@ -12323,7 +12323,7 @@ msgstr "뒤로 걷기"
 #: engines/wintermute/keymapper_tables.h:685
 #: engines/wintermute/keymapper_tables.h:1855
 msgid "Show scene geometry"
-msgstr "씬 지오메트리 표시"
+msgstr "장면 지오메트리 표시"
 
 #: engines/wintermute/keymapper_tables.h:183
 #: engines/wintermute/keymapper_tables.h:199
@@ -12384,7 +12384,7 @@ msgstr "힌트 표시"
 #: engines/wintermute/keymapper_tables.h:1688
 #: engines/wintermute/keymapper_tables.h:1950
 msgid "Show inventory"
-msgstr "인벤토리 보이기"
+msgstr "인벤토리 표시"
 
 #: engines/wintermute/keymapper_tables.h:269
 #: engines/wintermute/keymapper_tables.h:332
@@ -12395,7 +12395,7 @@ msgstr "인벤토리 보이기"
 #: engines/wintermute/keymapper_tables.h:1932
 #: engines/wintermute/keymapper_tables.h:1990
 msgid "GUI variant A"
-msgstr "GUI 종류 A"
+msgstr "GUI 변형 A"
 
 #: engines/wintermute/keymapper_tables.h:276
 #: engines/wintermute/keymapper_tables.h:339
@@ -12406,7 +12406,7 @@ msgstr "GUI 종류 A"
 #: engines/wintermute/keymapper_tables.h:1938
 #: engines/wintermute/keymapper_tables.h:1996
 msgid "GUI variant B"
-msgstr "GUI 종류 B"
+msgstr "GUI 변형 B"
 
 #: engines/wintermute/keymapper_tables.h:283
 #: engines/wintermute/keymapper_tables.h:414
@@ -12433,7 +12433,7 @@ msgstr "전화: 아래 버튼"
 #. It may result in actor saying different text or item being decomposed to it's parts
 #: engines/wintermute/keymapper_tables.h:360
 msgid "Alternative action"
-msgstr "대체 액션"
+msgstr "대체 작업"
 
 #: engines/wintermute/keymapper_tables.h:431
 #: engines/wintermute/keymapper_tables.h:564
@@ -12514,7 +12514,7 @@ msgstr "전화: # 버튼"
 #: engines/wintermute/keymapper_tables.h:1366
 #: engines/wintermute/keymapper_tables.h:1422
 msgid "Show help"
-msgstr "도움말 보기"
+msgstr "도움말 표시"
 
 #: engines/wintermute/keymapper_tables.h:670
 #: engines/wintermute/keymapper_tables.h:871
@@ -12546,7 +12546,7 @@ msgstr "아래로 스크롤"
 
 #: engines/wintermute/keymapper_tables.h:690
 msgid "Change shadow type"
-msgstr "그림자 형식 변경"
+msgstr "그림자 유형 변경"
 
 #: engines/wintermute/keymapper_tables.h:700
 #: engines/wintermute/keymapper_tables.h:819
@@ -12571,7 +12571,7 @@ msgstr "디버그 프린트"
 #: engines/wintermute/keymapper_tables.h:720
 #: engines/wintermute/keymapper_tables.h:1849
 msgid "Exit"
-msgstr "종료"
+msgstr "나가기"
 
 #. I18N: Displays a debug interface that changes light settings
 #: engines/wintermute/keymapper_tables.h:726
@@ -12588,11 +12588,11 @@ msgstr "뒤로 달리기"
 
 #: engines/wintermute/keymapper_tables.h:761
 msgid "Turn left fast"
-msgstr "왼쪽으로 빠르게 회전"
+msgstr "빠르게 좌회전"
 
 #: engines/wintermute/keymapper_tables.h:766
 msgid "Turn right fast"
-msgstr "오른쪽으로 빠르게 회전"
+msgstr "빠르게 우회전"
 
 #. I18N: Displays a blueprint with robot parts
 #: engines/wintermute/keymapper_tables.h:772
@@ -12617,11 +12617,11 @@ msgstr "이전 행동"
 
 #: engines/wintermute/keymapper_tables.h:826
 msgid "Volume off"
-msgstr "음소거"
+msgstr "볼륨 끄기"
 
 #: engines/wintermute/keymapper_tables.h:840
 msgid "Change font size"
-msgstr "폰트 크기 변경"
+msgstr "글꼴 크기 변경"
 
 #: engines/wintermute/keymapper_tables.h:935
 msgid "Walking speed: Low"
@@ -12660,39 +12660,39 @@ msgstr "게임 크레딧 표시"
 
 #: engines/wintermute/keymapper_tables.h:999
 msgid "Play selected music record"
-msgstr "선택된 음악을 재생"
+msgstr "선택한 음악 레코드 재생"
 
 #: engines/wintermute/keymapper_tables.h:1004
 msgid "Select next music record"
-msgstr "다음 음악을 선택"
+msgstr "다음 음악 레코드 선택"
 
 #: engines/wintermute/keymapper_tables.h:1009
 msgid "Play note 1: A"
-msgstr "노트 1 연주: A"
+msgstr "음 1 연주: A"
 
 #: engines/wintermute/keymapper_tables.h:1014
 msgid "Play note 2: F#"
-msgstr "노트 2 연주: F#"
+msgstr "음 2 연주: F#"
 
 #: engines/wintermute/keymapper_tables.h:1019
 msgid "Play note 3: D#"
-msgstr "노트 3 연주: D#"
+msgstr "음 3 연주: D#"
 
 #: engines/wintermute/keymapper_tables.h:1024
 msgid "Play note 4: C#"
-msgstr "노트 4 연주: C#"
+msgstr "음 4 연주: C#"
 
 #: engines/wintermute/keymapper_tables.h:1029
 msgid "Play note 5: E"
-msgstr "노트 5 연주: E"
+msgstr "음 5 연주: E"
 
 #: engines/wintermute/keymapper_tables.h:1034
 msgid "Play note 6: G#"
-msgstr "노트 6 연주: G#"
+msgstr "음 6 연주: G#"
 
 #: engines/wintermute/keymapper_tables.h:1039
 msgid "Play note 7: B"
-msgstr "노트 7 연주: B"
+msgstr "음 7 연주: B"
 
 #: engines/wintermute/keymapper_tables.h:1052
 msgid "Ability: Telekinesis"
@@ -12751,9 +12751,8 @@ msgid "Cancel input"
 msgstr "입력 취소"
 
 #: engines/wintermute/keymapper_tables.h:1409
-#, fuzzy
 msgid "Hide hints"
-msgstr "기타 가리기"
+msgstr "힌트 숨기기"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1464
@@ -12774,29 +12773,29 @@ msgstr "설정"
 
 #: engines/wintermute/keymapper_tables.h:1619
 msgid "Dialogue answer 1"
-msgstr "다이얼로그 답변 1"
+msgstr "대화 답변 1"
 
 #: engines/wintermute/keymapper_tables.h:1624
 msgid "Dialogue answer 2"
-msgstr "다이얼로그 답변 2"
+msgstr "대화 답변 2"
 
 #: engines/wintermute/keymapper_tables.h:1629
 msgid "Dialogue answer 3"
-msgstr "다이얼로그 답변 3"
+msgstr "대화 답변 3"
 
 #: engines/wintermute/keymapper_tables.h:1634
 msgid "Dialogue answer 4"
-msgstr "다이얼로그 답변 4"
+msgstr "대화 답변 4"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1645
 msgid "Spin wheel slower"
-msgstr "돌림판을 천천히 돌림"
+msgstr "핸들을 천천히 돌림"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1653
 msgid "Spin wheel faster"
-msgstr "돌림판을 빠르게 돌림"
+msgstr "핸들을 빠르게 돌림"
 
 #: engines/wintermute/keymapper_tables.h:1731
 msgid "Zoom out"
