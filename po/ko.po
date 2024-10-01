@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-09-30 16:30+0000\n"
+"PO-Revision-Date: 2024-10-01 00:18+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -12074,11 +12074,11 @@ msgstr "카메라는 정의된 위치에 고정되지 않고 플레이어의 움
 
 #: engines/ultima/metaengine.cpp:163
 msgid "Always enable Christmas easter-egg"
-msgstr "항상 크리스마스 이스터에그를 활성화"
+msgstr "항상 크리스마스 이스터 에그를 활성화"
 
 #: engines/ultima/metaengine.cpp:164
 msgid "Enable the Christmas music at any time of year."
-msgstr "일년 중 언제든지 크리스마스 음악을 활성화하세요."
+msgstr "일 년 중 언제든지 크리스마스 음악을 활성화하세요."
 
 #: engines/ultima/shared/early/ultima_early.cpp:70
 msgid "Could not find correct ultima.dat datafile"
@@ -12092,21 +12092,19 @@ msgstr "빠른 저장 %d 불러오기 중"
 #: engines/ultima/nuvie/nuvie.cpp:380
 #, c-format
 msgid "saving quick save %d"
-msgstr "빠른 저장 %d번을 저장합니다"
+msgstr "빠른 저장 %d 저장 중"
 
 #: engines/ultima/nuvie/metaengine.cpp:41
 msgid "Original Save"
-msgstr "오리지널 저장"
+msgstr "원본 저장"
 
 #: engines/ultima/nuvie/metaengine.cpp:206
-#, fuzzy
-#| msgid "Ultima VIII"
 msgid "Ultima VI"
-msgstr "울티마 VIII"
+msgstr "울티마 VI"
 
 #: engines/ultima/nuvie/metaengine.cpp:208
 msgid "Martian Dreams"
-msgstr ""
+msgstr "화성의 꿈"
 
 #: engines/ultima/nuvie/metaengine.cpp:210
 msgid "The Savage Empire"
