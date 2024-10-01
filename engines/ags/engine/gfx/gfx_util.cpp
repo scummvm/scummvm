@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/std/memory.h"
 #include "ags/shared/core/platform.h"
 #include "ags/engine/gfx/gfx_util.h"
 #include "ags/engine/gfx/blender.h"
@@ -105,10 +106,11 @@ void DrawSpriteWithTransparency(Bitmap *ds, Bitmap *sprite, int x, int y, int al
 
 	// Allegro does not support masked blit or blend between different formats
 	// *except* when drawing 8-bit sprites onto a higher dest.
-	Bitmap conv_bm;
+	std::unique_ptr<Bitmap> conv_bm;
 	if ((surface_depth != sprite_depth) && (sprite_depth > 8)) {
-		conv_bm.CreateCopy(sprite, surface_depth);
-		sprite = &conv_bm;
+		// use ConvertBitmap in order to keep mask pixels
+		conv_bm.reset(ConvertBitmap(sprite, surface_depth));
+		sprite = conv_bm.get();
 	}
 
 	if ((alpha < 0xFF) && (surface_depth > 8) && (sprite_depth > 8)) {
