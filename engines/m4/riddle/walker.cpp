@@ -35,18 +35,19 @@ namespace Riddle {
 #define SHADOW_SERIES_HASH 8
 #define NUM_SHADOW_SERIES  5
 
+const int16 RIPLEY_SERIES_DIRS[] = {
+	0, 1, 2, 3, 4, -4
+};
+const int16 RIPLEY_SHADOWS_DIRS[6] = {
+	10, 11, 12, 13, 14, -1
+};
+
 static const char *RIPLEY_SERIES[5] = {
 	"test1", "test2", "test3", "test4", "test5"
-};
-static const int16 RIPLEY_SERIES_DIRS[] = {
-	0, 1, 2, 3, 4, -4
 };
 
 static const char *RIPLEY_SHADOWS[5] = {
 	"ripsh1", "ripsh2", "ripsh3", "ripsh4", "ripsh5"
-};
-static const int16 RIPLEY_SHADOWS_DIRS[6] = {
-	10, 11, 12, 13, 14, -1
 };
 
 static const char *SAFARI_SERIES[4] = {
