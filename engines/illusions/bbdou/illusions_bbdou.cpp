@@ -250,6 +250,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	delete _actorInstances;
 	delete _input;
 	delete _screenText;
+	delete _screenPalette;
 	delete _screen;
 	delete _resSys;
 	delete _resReader;
