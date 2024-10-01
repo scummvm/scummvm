@@ -117,7 +117,7 @@ QuitReason quit_check_for_error_state(const char *qmsg, String &errmsg, String &
 			               "(Engine version %s)\n\n", _G(EngineVersion).LongString.GetCStr());
 		}
 
-		alertis.Append(cc_get_error().CallStack);
+		alertis.Append(cc_get_err_callstack());
 
 		if (qreason != kQuit_UserAbort) {
 			alertis.AppendFmt("\nError: %s", qmsg);
@@ -129,7 +129,7 @@ QuitReason quit_check_for_error_state(const char *qmsg, String &errmsg, String &
 		qmsg++;
 		alertis.Format("A warning has been generated. This is not normally fatal, but you have selected "
 		               "to treat warnings as errors.\n"
-		               "(Engine version %s)\n\n%s\n%s", _G(EngineVersion).LongString.GetCStr(), cc_get_error().CallStack.GetCStr(), qmsg);
+		               "(Engine version %s)\n\n%s\n%s", _G(EngineVersion).LongString.GetCStr(), cc_get_err_callstack().GetCStr(), qmsg);
 		errmsg = qmsg;
 		return kQuit_GameWarning;
 	} else {
