@@ -45,6 +45,7 @@ using Shared::Bitmap;
 
 namespace GfxUtil {
 // Creates a COPY of the source bitmap, converted to the given format.
+// Keeps mask pixels intact, only converting mask color value if necessary.
 Bitmap *ConvertBitmap(Bitmap *src, int dst_color_depth);
 
 // Considers the given information about source and destination surfaces,
