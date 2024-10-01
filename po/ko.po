@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-01 10:06+0000\n"
+"PO-Revision-Date: 2024-10-01 11:05+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -8632,7 +8632,7 @@ msgid ""
 "will automatically be available if you detect the original game and select "
 "Enhanced mode."
 msgstr ""
-"그래픽 오버홀 모드에서 직접 게임을 실행할 수 없습니다. 대신 원래 게임을 "
+"그래픽 오버홀 개조에서 직접 게임을 실행할 수 없습니다. 대신 원래 게임을 "
 "감지하고 강화 모드를 선택하면 자동으로 사용할 수 있습니다."
 
 #: engines/mm/mm1/mm1.cpp:108
@@ -8641,10 +8641,12 @@ msgid ""
 "of Xeen\n"
 "or Clouds of Xeen to your Might and Magic 1 game folder"
 msgstr ""
+"강화 모드로 실행하려면,  World of Xeen 또는 Clouds of Xeen의 복사본에서\n"
+"xeen.cc를 마이트 앤 매직 1 게임 폴더로 복사"
 
 #: engines/mm/xeen/saves.cpp:294
 msgid "Failed to autosave"
-msgstr "자동 저장 실패"
+msgstr "자동 저장 실패함"
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:112 engines/mohawk/dialogs.cpp:357
@@ -8657,13 +8659,13 @@ msgid ""
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
 msgstr ""
-"활성화되면 라이트닝 볼트 커서로 아이템이나 영역을 클릭했을 때, 중간 화면을 생"
-"략하고 그 곳으로 즉시 이동합니다. 이미 이동했던 적이 있는 장소로만 'Zip' 가능"
-"합니다."
+"활성화되면, 라이트닝 볼트 커서로 아이템이나 영역을 클릭했을 때, 중간 화면을 "
+"건너뛰고 그 곳으로 즉시 이동합니다. 이미 이동했던 적이 있는 장소로만 'Zip' "
+"가능합니다."
 
 #: engines/mohawk/dialogs.cpp:116
 msgid "~T~ransitions Enabled"
-msgstr "번역 사용함(~T~)"
+msgstr "번역 활성화함(~T~)"
 
 #: engines/mohawk/dialogs.cpp:117
 msgid ""
@@ -8675,11 +8677,11 @@ msgstr ""
 
 #: engines/mohawk/dialogs.cpp:120
 msgid "Play the Myst fly by movie"
-msgstr "Myst 근접 통과 영상 재생"
+msgstr "The Myst fly 동영상 재생"
 
 #: engines/mohawk/dialogs.cpp:121
 msgid "The Myst fly by movie was not played by the original engine."
-msgstr "원본 게임 엔진에서는 Myst 근접 통과 영상이 재생되지 않았습니다."
+msgstr "원본 게임 엔진에서는 The Myst fly 동영상이 재생되지 않았습니다."
 
 #. I18N:
 #. This Option is for hard-of-hearing.
@@ -8694,11 +8696,11 @@ msgstr "Selenitic Age 퍼즐의 접근성을 개선(~a~)"
 
 #: engines/mohawk/dialogs.cpp:134
 msgid "Allow solving Selenitic Age audio puzzles with more error margin."
-msgstr "Selenitic Age 오디오 퍼즐의 답변에 더 많은 오차를 허용합니다."
+msgstr "더 많은 오차 범위로 Selenitic Age 오디오 퍼즐을 풀 수 있도록 허용합니다."
 
 #: engines/mohawk/dialogs.cpp:137
 msgid "Simulate loading times of old CD drives"
-msgstr "오래된 CD 드라이브의 로딩 시간을 재현"
+msgstr "오래된 CD 드라이브의 로딩 시간을 시뮬레이션"
 
 #: engines/mohawk/dialogs.cpp:138
 msgid ""
@@ -8710,7 +8712,7 @@ msgstr "장면 전환 중에 무작위 지연을 추가하여 오래된 CD-ROM �
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:145
 msgid "~D~rop Page"
-msgstr "페이지 되돌리기(~D~)"
+msgstr "페이지 삭제(~D~)"
 
 #: engines/mohawk/dialogs.cpp:149
 msgid "Show ~M~ap"
@@ -8722,7 +8724,7 @@ msgstr "메인 메뉴(~U~)"
 
 #: engines/mohawk/dialogs.cpp:286
 msgid "The new language will be applied after restarting the game."
-msgstr "새로운 언어 설정은 게임 재시작 후 적용됩니다."
+msgstr "새 언어는 게임을 재시작 후 적용됩니다."
 
 #: engines/mohawk/dialogs.cpp:358
 msgid "~W~ater Effect Enabled"
@@ -8732,25 +8734,23 @@ msgstr "물결효과 활성화됨(~W~)"
 msgid ""
 "Toggles the use of QuickTime videos for visual effects related to water "
 "surfaces (ripples, waves, etc.)."
-msgstr ""
-"물 표면 (물방울, 파도 등)과 관련된 시각 효과를 위해 QuickTime 비디오를 사용할"
-"지 여부를 전환합니다."
+msgstr "물 표면 (잔물결, 파도 등)과 관련된 시각 효과를 위해 QuickTime 비디오를 "
+"사용할지 여부를 전환합니다."
 
 #: engines/mohawk/dialogs.cpp:360
 msgid "Transitions:"
-msgstr "전환효과:"
+msgstr "전환:"
 
 #: engines/mohawk/dialogs.cpp:360
 msgid ""
 "Adjusts the speed of screen transitions. Disabling screen transitions will "
 "enable you to navigate more quickly through the game."
-msgstr ""
-"화면 전환 속도를 조절합니다. 화면 전환 효과를 끌 경우 게임 내를 더욱 빠르게 "
-"다닐 수 있습니다."
+msgstr "화면 전환 속도를 조절합니다. 화면 전환을 끌 경우 게임 내를 더욱 빠르게 다닐 "
+"수 있습니다."
 
 #: engines/mohawk/dialogs.cpp:365
 msgid "Fastest"
-msgstr "빠르게"
+msgstr "가장 빠름"
 
 #: engines/mohawk/dialogs.cpp:366
 msgid "Normal"
@@ -8758,27 +8758,27 @@ msgstr "보통"
 
 #: engines/mohawk/dialogs.cpp:367 engines/scumm/dialogs.cpp:1484
 msgid "Best"
-msgstr "고품질"
+msgstr "최고"
 
 #: engines/mohawk/metaengine.cpp:290
 msgid "Myst ME support not compiled in"
-msgstr "Myst ME 지원이 컴파일 되지 않음"
+msgstr "Myst ME 지원이 컴파일되지 않았음"
 
 #: engines/mohawk/metaengine.cpp:295
 msgid "Myst support not compiled in"
-msgstr "Myst 지원이 컴파일 되지 않음"
+msgstr "Myst 지원이 컴파일 되지 않았음"
 
 #: engines/mohawk/metaengine.cpp:302
 msgid "Riven support not compiled in"
-msgstr "Riven 지원이 컴파일 되지 않음"
+msgstr "Riven 지원이 컴파일 되지 않았음"
 
 #: engines/mohawk/metaengine.cpp:316
 msgid "CSTime support not compiled in"
-msgstr "CSTime 지원이 컴파일 되지 않음"
+msgstr "CSTime 지원이 컴파일되지 않았음"
 
 #: engines/mohawk/mohawk.cpp:51
 msgid "The game is paused. Press any key to continue."
-msgstr "게임이 일시 중지되었습니다. 아무 키나 눌러 다시 시작합니다."
+msgstr "게임이 일시 정지되었습니다. 계속하려면 아무 키나 누르세요."
 
 #: engines/mohawk/myst.cpp:554 engines/mohawk/riven.cpp:835
 #: engines/nancy/input.cpp:225
@@ -8791,15 +8791,15 @@ msgstr "게임 상태 불러오기"
 
 #: engines/mohawk/myst.cpp:583 engines/mohawk/riven.cpp:864
 msgid "Save game state"
-msgstr "게임 상태저장 저장하기"
+msgstr "게임 상태 저장하기"
 
 #: engines/mohawk/myst.cpp:588 engines/mohawk/riven.cpp:869
 msgid "Show options menu"
-msgstr "옵션 메뉴 보이기"
+msgstr "옵션 메뉴 표시"
 
 #: engines/mohawk/myst.cpp:600
 msgid "Drop page"
-msgstr "페이지 되돌리기"
+msgstr "페이지 삭제"
 
 #: engines/mohawk/myst.cpp:606 engines/wintermute/keymapper_tables.h:1526
 #: engines/wintermute/keymapper_tables.h:1673
@@ -8808,7 +8808,7 @@ msgstr "페이지 되돌리기"
 #: engines/wintermute/keymapper_tables.h:1764
 #: engines/wintermute/keymapper_tables.h:1797
 msgid "Show map"
-msgstr "지도 보이기"
+msgstr "지도 표시"
 
 #: engines/mohawk/myst_stacks/menu.cpp:282
 #: engines/mohawk/riven_stacks/aspit.cpp:348
@@ -8821,8 +8821,7 @@ msgstr "저장된 게임을 불러오겠습니까? 저장되지 않은 모든 �
 #: engines/mohawk/riven_stacks/aspit.cpp:370
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
-msgstr ""
-"새로운 게임을 시작하시겠습니까? 저장되지 않은 진행 사항은 사라지게 됩니다."
+msgstr "새 게임을 시작하겠습니까? 저장되지 않은 진행 사항은 사라지게 됩니다."
 
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/riven_stacks/aspit.cpp:371
@@ -8842,8 +8841,7 @@ msgstr "데모에서는 도서관을 벗어날 수 없습니다."
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
-msgstr ""
-"Riven 실행 파일을 찾을 수 없습니다. 윈도우즈용 실행 파일은 'riven.exe' 또는 "
+msgstr "Riven 실행 파일이 없습니다. 윈도우즈용 실행 파일은 'riven.exe' 또는 "
 "'rivendmo.exe'입니다. "
 
 #: engines/mohawk/riven.cpp:156
@@ -8851,20 +8849,19 @@ msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
 msgstr ""
-"'arcriven.z' 설치 파일도 사용 가능합니다. 추가로 맥용 'Riven' 실행 파일도 사"
-"용 가능합니다."
+"'arcriven.z' 설치 프로그램 파일을 사용하는 것도 효과적입니다. 추가로 맥용 "
+"'Riven' 실행 파일을 사용할 수 있습니다."
 
 #: engines/mohawk/riven.cpp:168
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
-msgstr ""
-"'extras.mhk' 파일을 찾을 수 없습니다. 'arcriven.z' 설치 파일도 사용 가능합니"
-"다."
+msgstr "'extras.mhk' 파일이 없습니다. 'arcriven.z' 설치 프로그램 파일을 사용해도 "
+"됩니다."
 
 #: engines/mohawk/riven.cpp:509
 msgid "You are missing the following required Riven data files:\n"
-msgstr "다음 필수 Riven 데이터 파일이 부족합니다:\n"
+msgstr "다음의 필수 Riven 데이터 파일이 없습니다:\n"
 
 #: engines/mohawk/riven.cpp:881
 msgid "Move forward"
@@ -8884,15 +8881,15 @@ msgstr "뒤로 이동"
 
 #: engines/mohawk/riven.cpp:913
 msgid "Look up"
-msgstr "위를 바라보기"
+msgstr "위를 보기"
 
 #: engines/mohawk/riven.cpp:918
 msgid "Look down"
-msgstr "아래를 바라보기"
+msgstr "아래를 보기"
 
 #: engines/mohawk/riven.cpp:924
 msgid "Play intro videos"
-msgstr "인트로 영상 재생"
+msgstr "인트로 비디오 재생"
 
 #: engines/mohawk/riven_stack.cpp:203
 msgid ""
@@ -8910,78 +8907,77 @@ msgid ""
 "the game. ScummVM cannot do that and\n"
 "the site no longer exists."
 msgstr ""
-"현 시점에서 Riven 데모는 게임 구매를\n"
-"위해 웹 브라우저를 열어 Red Orb \n"
-"상점으로 이동할지를 물어봅니다.\n"
-"ScummVM은 그렇게 할 수도 없고\n"
-"해당 사이트도 지금은 존재하지 않습니다."
+"현 시점에서 Riven 데모는 게임을\n"
+"구매하기 위해 웹 브라우저를 열어\n"
+"Red Orb 스토어로 이동할지 묻습니다.\n"
+"ScummVM은 이를 수행할 수 없으며 \n"
+"해당 사이트는 더 이상 존재하지 않습니다."
 
 #: engines/mtropolis/metaengine.cpp:52
-#, fuzzy
 msgid "16:9 widescreen mod"
-msgstr "와이드 스크린 개조"
+msgstr "16:9 와이드스크린 개조"
 
 #: engines/mtropolis/metaengine.cpp:53
 msgid ""
 "Removes letterboxing and moves some display elements, improving coverage on "
 "widescreen displays"
-msgstr ""
+msgstr "레터박싱을 제거하고 일부 디스플레이 요소를 이동하여 와이드스크린 "
+"디스플레이의 적용 범위를 개선함"
 
 #: engines/mtropolis/metaengine.cpp:63
 msgid "Improved music mixing"
-msgstr ""
+msgstr "개선된 음악 믹싱"
 
 #: engines/mtropolis/metaengine.cpp:64
 msgid ""
 "Enables dynamic MIDI mixer, improving quality, but behaving less like "
 "mTropolis Player."
-msgstr ""
+msgstr "다이내믹 미디 믹서를 활성화하여, 품질을 향상시키지만, mTropolis 플레이어와는 "
+"다르게 작동합니다."
 
 #: engines/mtropolis/metaengine.cpp:74
 msgid "Autosave at progress points"
-msgstr ""
+msgstr "진행 지점에서 자동 저장"
 
 #: engines/mtropolis/metaengine.cpp:75
 msgid "Automatically saves the game after completing puzzles and chapters."
-msgstr ""
+msgstr "퍼즐과 챕터를 완료한 후 자동으로 게임을 저장합니다."
 
 #: engines/mtropolis/metaengine.cpp:85
-#, fuzzy
 msgid "Enable short transitions"
-msgstr "Discord 통합 사용"
+msgstr "짧은 전환을 활성화"
 
 #: engines/mtropolis/metaengine.cpp:86
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
-msgstr ""
+msgstr "건너뛰지 않고 최대 속도로 설정된 전환을 활성화합니다."
 
 #: engines/mtropolis/metaengine.cpp:96
 msgid "Enable subtitles for important sound effects"
-msgstr ""
+msgstr "중요한 사운드 효과에 자막을 활성화"
 
 #: engines/mtropolis/metaengine.cpp:97
 msgid ""
 "Enables subtitles for important sound effects.  This may reduce the "
 "difficulty of sound recognition puzzles and minigames."
-msgstr ""
+msgstr "중요한 사운드 효과에 대한 자막을 활성화합니다.  이렇게 하면 사운드 인식 "
+"퍼즐과 미니게임의 난이도가 낮아질 수 있습니다."
 
 #: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:64
-#, fuzzy
 msgid "Start with debugger"
-msgstr "디버거를 시작"
+msgstr "디버거로 시작"
 
 #: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:65
 msgid "Starts with the debugger dashboard active."
-msgstr "디버거 대시보드가 활성화 상태에서 시작."
+msgstr "디버거 대시보드가 활성화된 상태에서 시작합니다."
 
 #: engines/mtropolis/metaengine.cpp:160
-#, fuzzy
 msgid "Toggle debug overlay"
-msgstr "음소거 전환"
+msgstr "디버그 오버레이 전환"
 
 #: engines/mtropolis/metaengine.cpp:165
 msgid "Force any playing movies to end"
-msgstr ""
+msgstr "재생 중인 동영상 강제로 종료"
 
 #: engines/mtropolis/saveload.cpp:142
 msgid "Failed to read version information from save file"
