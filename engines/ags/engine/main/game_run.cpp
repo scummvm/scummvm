@@ -188,7 +188,7 @@ static void toggle_mouse_lock() {
 static void check_mouse_controls() {
 	int mongu = -1;
 
-	mongu = gui_on_mouse_move();
+	mongu = gui_on_mouse_move(_G(mousex), _G(mousey));
 
 	_G(mouse_on_iface) = mongu;
 	if ((_G(ifacepopped) >= 0) && (_G(mousey) >= _GP(guis)[_G(ifacepopped)].Y + _GP(guis)[_G(ifacepopped)].Height))
@@ -200,7 +200,7 @@ static void check_mouse_controls() {
 	} else if ((_G(wasbutdown) > kMouseNone) && (!ags_misbuttondown(_G(wasbutdown)))) {
 		eAGSMouseButton mouse_btn_up = _G(wasbutdown);
 		_G(wasbutdown) = kMouseNone; // reset before event, avoid recursive call of "mouse up"
-		gui_on_mouse_up(_G(wasongui), mouse_btn_up);
+		gui_on_mouse_up(_G(wasongui), mouse_btn_up, _G(mousex), _G(mousey));
 	}
 
 	eAGSMouseButton mbut;
@@ -223,7 +223,7 @@ static void check_mouse_controls() {
 			debug_script_log("Plugin handled mouse button %d", mbut);
 		} else if (mongu >= 0) {
 			if (_G(wasbutdown) == kMouseNone) {
-				gui_on_mouse_down(mongu, mbut);
+				gui_on_mouse_down(mongu, mbut, _G(mousex), _G(mousey));
 			}
 			_G(wasongui) = mongu;
 			_G(wasbutdown) = mbut;
