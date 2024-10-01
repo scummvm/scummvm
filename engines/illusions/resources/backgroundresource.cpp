@@ -384,6 +384,10 @@ BackgroundInstance::BackgroundInstance(IllusionsEngine *vm)
 	: _vm(vm), _sceneId(0), _pauseCtr(0), _bgRes(nullptr), _savedPalette(nullptr) {
 }
 
+BackgroundInstance::~BackgroundInstance() {
+	delete[] _savedPalette;
+}
+
 void BackgroundInstance::load(Resource *resource) {
 	debug(1, "BackgroundResourceLoader::load() Loading background %08X from %s...", resource->_resId, resource->_filename.c_str());
 

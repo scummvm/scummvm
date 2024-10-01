@@ -183,6 +183,7 @@ const uint kMaxBackgroundItemSurfaces = 3;
 class BackgroundInstance : public ResourceInstance {
 public:
 	BackgroundInstance(IllusionsEngine *vm);
+	~BackgroundInstance();
 	void load(Resource *resource) override;
 	void unload() override;
 	void pause() override;
