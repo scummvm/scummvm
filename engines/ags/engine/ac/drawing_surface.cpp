@@ -124,7 +124,13 @@ void DrawingSurface_DrawImageImpl(ScriptDrawingSurface *sds, Bitmap *src,
 	Bitmap *ds = sds->GetBitmapSurface();
 	if (src == ds) {
 	} // ignore for now; bitmap lib supports, and may be used for effects
-/* debug_script_warn("DrawingSurface.DrawImage: drawing onto itself"); */
+	/* debug_script_warn("DrawingSurface.DrawImage: drawing onto itself"); */
+	if (src->GetColorDepth() != ds->GetColorDepth()) {
+		if (sprite_id >= 0)
+			debug_script_warn("DrawImage: Sprite %d colour depth %d-bit not same as destination depth %d-bit", sprite_id, src->GetColorDepth(), ds->GetColorDepth());
+		else
+			debug_script_warn("DrawImage: Source image colour depth %d-bit not same as destination depth %d-bit", src->GetColorDepth(), ds->GetColorDepth());
+	}
 	if ((trans < 0) || (trans > 100))
 		debug_script_warn("DrawingSurface.DrawImage: invalid transparency %d, range is %d - %d", trans, 0, 100);
 	trans = Math::Clamp(trans, 0, 100);
@@ -164,6 +170,8 @@ void DrawingSurface_DrawImageImpl(ScriptDrawingSurface *sds, Bitmap *src,
 		sds->SizeToGameResolution(&src_height);
 	}
 
+	sds->PointToGameResolution(&dst_x, &dst_y);
+
 	if (dst_x >= ds->GetWidth() || dst_x + dst_width <= 0 || dst_y >= ds->GetHeight() || dst_y + dst_height <= 0 ||
 		src_x >= src->GetWidth() || src_x + src_width <= 0 || src_y >= src->GetHeight() || src_y + src_height <= 0)
 		return; // source or destination rects lie completely off surface
@@ -173,36 +181,24 @@ void DrawingSurface_DrawImageImpl(ScriptDrawingSurface *sds, Bitmap *src,
 
 	// TODO: possibly optimize by not making a stretched intermediate bitmap
 	// if simpler blit/draw_sprite could be called (no translucency with alpha channel).
-	bool needToFreeBitmap = false;
+	std::unique_ptr<Bitmap> conv_src;
 	if (dst_width != src->GetWidth() || dst_height != src->GetHeight() ||
 		src_width != src->GetWidth() || src_height != src->GetHeight()) {
 		// Resize and/or partial copy specified
-		Bitmap *newPic = BitmapHelper::CreateBitmap(dst_width, dst_height, src->GetColorDepth());
-		newPic->StretchBlt(src,
+		conv_src.reset(BitmapHelper::CreateBitmap(dst_width, dst_height, src->GetColorDepth()));
+		conv_src->StretchBlt(src,
 			RectWH(src_x, src_y, src_width, src_height),
 			RectWH(0, 0, dst_width, dst_height));
 
-		src = newPic;
-		needToFreeBitmap = true;
+		src = conv_src.get();
 	}
 
 	ds = sds->StartDrawing();
-	sds->PointToGameResolution(&dst_x, &dst_y);
-
-	if (src->GetColorDepth() != ds->GetColorDepth()) {
-		if (sprite_id >= 0)
-			debug_script_warn("DrawImage: Sprite %d colour depth %d-bit not same as destination depth %d-bit", sprite_id, src->GetColorDepth(), ds->GetColorDepth());
-		else
-			debug_script_warn("DrawImage: Source image colour depth %d-bit not same as destination depth %d-bit", src->GetColorDepth(), ds->GetColorDepth());
-	}
 
 	draw_sprite_support_alpha(ds, sds->hasAlphaChannel != 0, dst_x, dst_y, src, src_has_alpha,
 		kBlendMode_Alpha, GfxDef::Trans100ToAlpha255(trans));
 
 	sds->FinishedDrawing();
-
-	if (needToFreeBitmap)
-		delete src;
 }
 
 void DrawingSurface_DrawImage(ScriptDrawingSurface *sds,
