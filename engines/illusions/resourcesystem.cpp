@@ -125,6 +125,13 @@ void ResourceSystem::unloadSceneResources(uint32 sceneId1, uint32 sceneId2) {
 	}
 }
 
+void ResourceSystem::unloadAllResources() {
+	for (ResourcesArrayIterator it = _resources.begin(); it != _resources.end(); ++it) {
+		delete (*it);
+	}
+	_resources.clear();
+}
+
 BaseResourceLoader *ResourceSystem::getResourceLoader(uint32 resId) {
 	ResourceLoadersMapIterator it = _resourceLoaders.find(ResourceTypeId(resId));
 	if (it != _resourceLoaders.end())

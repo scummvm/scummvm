@@ -231,6 +231,8 @@ Common::Error IllusionsEngine_BBDOU::run() {
 
 	unloadSpecialCode(0);
 
+	_resSys->unloadAllResources();
+
 	delete _stack;
 	delete _scriptOpcodes;
 
