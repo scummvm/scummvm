@@ -215,7 +215,7 @@ int get_walkable_area_at_location(int xx, int yy) {
 			onarea = 0;
 	}
 
-	return onarea;
+	return (onarea >= 0 && onarea < MAX_WALK_AREAS) ? onarea : 0;
 }
 
 int get_walkable_area_at_character(int charnum) {
