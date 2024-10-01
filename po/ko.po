@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-01 01:23+0000\n"
+"PO-Revision-Date: 2024-10-01 01:34+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -12790,20 +12790,20 @@ msgstr "대화 답변 4"
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1645
 msgid "Spin wheel slower"
-msgstr "핸들을 천천히 돌림"
+msgstr "돌림판을 천천히 돌림"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1653
 msgid "Spin wheel faster"
-msgstr "핸들을 빠르게 돌림"
+msgstr "돌림판을 빠르게 돌림"
 
 #: engines/wintermute/keymapper_tables.h:1731
 msgid "Zoom out"
-msgstr "줌 아웃"
+msgstr "축소"
 
 #: engines/wintermute/keymapper_tables.h:1738
 msgid "Zoom in"
-msgstr "줌 인"
+msgstr "확대"
 
 #: engines/wintermute/keymapper_tables.h:1751
 #: engines/wintermute/keymapper_tables.h:1957
@@ -12813,7 +12813,7 @@ msgstr "일기 표시"
 #. I18N: Displays a debug interface with Bezier curves
 #: engines/wintermute/keymapper_tables.h:1884
 msgid "Bezier window"
-msgstr "베지어 디버그 창"
+msgstr "베지어 창"
 
 #. I18N: Use droid to perform an action
 #: engines/wintermute/keymapper_tables.h:1901
@@ -12832,23 +12832,23 @@ msgstr "떨어뜨리기"
 
 #: engines/wintermute/keymapper_tables.h:2043
 msgid "Player 1: Up"
-msgstr "플레이어 1:위"
+msgstr "플레이어 1: 위쪽"
 
 #: engines/wintermute/keymapper_tables.h:2048
 msgid "Player 1: Left"
-msgstr "플레이어 1:왼쪽"
+msgstr "플레이어 1: 왼쪽"
 
 #: engines/wintermute/keymapper_tables.h:2053
 msgid "Player 1: Down"
-msgstr "플레이어 1:아래"
+msgstr "플레이어 1: 아래쪽"
 
 #: engines/wintermute/keymapper_tables.h:2058
 msgid "Player 1: Right"
-msgstr "플레이어 1:오른쪽"
+msgstr "플레이어 1: 오른쪽"
 
 #: engines/wintermute/keymapper_tables.h:2063
 msgid "Player 2: Up"
-msgstr "플레이어 2: 위"
+msgstr "플레이어 2: 위쪽"
 
 #: engines/wintermute/keymapper_tables.h:2068
 msgid "Player 2: Left"
@@ -12865,7 +12865,7 @@ msgstr "플레이어 2: 오른쪽"
 #. I18N: Displays a debug FPS counter
 #: engines/wintermute/keymapper_tables.h:2084
 msgid "Debug FPS"
-msgstr "디버그 FPS 표시"
+msgstr "FPS 디버그"
 
 #: engines/wintermute/keymapper_tables.h:2181
 msgid "F1"
@@ -12881,12 +12881,12 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
-"이 저장 파일은 버전 %u을(를) 사용합니다. 하지만 이 엔진은 버전 %d 까지만 지원"
-"합니다. 엔진을 업데이트해 주세요."
+"이 저장된 게임은 버전 %u 사용하지만, 이 엔진은 버전 %d까지만 지원합니다. 이 "
+"저장된 게임을 사용하려면 업데이트 된 버전의 엔진이 필요합니다."
 
 #: engines/zvision/metaengine.cpp:58
 msgid "Double FPS"
-msgstr "FPS 확장"
+msgstr "더블 FPS"
 
 #: engines/zvision/metaengine.cpp:59
 msgid "Increase framerate from 30 to 60 FPS"
