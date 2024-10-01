@@ -108,7 +108,7 @@ void DarkEngine::loadAssetsDOSDemo() {
 		loadSpeakerFxDOS(&file, 0x4837 + 0x200, 0x46e8 + 0x200);
 		loadMessagesFixedSize(&file, 0x4525, 16, 27);
 		loadMessagesFixedSize(&file, 0x993f - 2, 308, 5);
-		loadFonts(&file, 0xa598, _font);
+		loadFonts(&file, 0xa598);
 		loadGlobalObjects(&file, 0x3d04, 23);
 		load8bitBinary(&file, 0xa700, 16);
 		_border = load8bitBinImage(&file, 0x210);
@@ -135,7 +135,7 @@ void DarkEngine::loadAssetsDOSDemo() {
 			error("Failed to open DSIDEC.EXE");
 
 		loadSpeakerFxDOS(&file, 0x3077 + 0x200, 0x2f28 + 0x200);
-		loadFonts(&file, 0x8907, _font);
+		loadFonts(&file, 0x8907);
 		loadMessagesFixedSize(&file, 0x2d65, 16, 27);
 		loadMessagesFixedSize(&file, 0x7c3a, 308, 5);
 		loadGlobalObjects(&file, 0x2554, 23);
@@ -163,7 +163,7 @@ void DarkEngine::loadAssetsDOSFullGame() {
 			error("Failed to open DSIDEE.EXE");
 
 		loadSpeakerFxDOS(&file, 0x4837 + 0x200, 0x46e8 + 0x200);
-		loadFonts(&file, 0xa113, _font);
+		loadFonts(&file, 0xa113);
 		loadMessagesFixedSize(&file, 0x4525, 16, 27);
 		loadGlobalObjects(&file, 0x3d04, 23);
 		load8bitBinary(&file, 0xa280, 16);
@@ -191,7 +191,7 @@ void DarkEngine::loadAssetsDOSFullGame() {
 			error("Failed to open DSIDEC.EXE");
 
 		loadSpeakerFxDOS(&file, 0x3077 + 0x200, 0x2f28 + 0x200);
-		loadFonts(&file, 0x8496, _font);
+		loadFonts(&file, 0x8496);
 		loadMessagesFixedSize(&file, 0x2d65, 16, 27);
 		loadGlobalObjects(&file, 0x2554, 23);
 		load8bitBinary(&file, 0x8600, 16);

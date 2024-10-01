@@ -942,38 +942,21 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	_binaryBits = 8;
 }
 
-void FreescapeEngine::loadFonts(byte *font, int charNumber) {
-	if (isDOS() || isSpectrum() || isCPC() || isC64()) {
-		_font.set_size(64 * charNumber);
-		_font.set_bits(font);
-	} else if (isAmiga() || isAtariST()) {
-		error("Not implemented yet");
-	}
+void FreescapeEngine::loadFonts(Common::SeekableReadStream *file, int offset) {
+	Common::Array<Graphics::ManagedSurface *> chars;
+
+	if (isAmiga() || isAtariST())
+		chars = getCharsAmigaAtari(file, offset, 85);
+	else
+		chars = getChars(file, offset, 85);
+
+	_font = Font(chars);
+	if (isCastle())
+		_font.setKernelingOffset(4);
+	else
+		_font.setKernelingOffset(0);
+
 	_fontLoaded = true;
-}
-
-void FreescapeEngine::loadFonts(Common::SeekableReadStream *file, int offset, Common::BitArray &font) {
-	file->seek(offset);
-	int charNumber = 85;
-	byte *fontBuffer = nullptr;
-	if (isDOS() || isSpectrum() || isCPC() || isC64()) {
-		fontBuffer = (byte *)malloc(6 * charNumber);
-		file->read(fontBuffer, 6 * charNumber);
-
-		font.set_size(48 * charNumber);
-		font.set_bits(fontBuffer);
-	} else if (isAmiga() || isAtariST()) {
-		int fontSize = 4654; // Driller
-		fontBuffer = (byte *)malloc(fontSize);
-		file->read(fontBuffer, fontSize);
-
-		font.set_size(fontSize * 8);
-		font.set_bits(fontBuffer);
-	} else {
-		_fontLoaded = false;
-	}
-	_fontLoaded = true;
-	free(fontBuffer);
 }
 
 void FreescapeEngine::loadMessagesFixedSize(Common::SeekableReadStream *file, int offset, int size, int number) {

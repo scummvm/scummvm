@@ -3,6 +3,7 @@ MODULE := engines/freescape
 MODULE_OBJS := \
 	area.o \
 	assets.o \
+	font.o \
 	events.o \
 	demo.o \
 	freescape.o \

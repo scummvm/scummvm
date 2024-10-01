@@ -964,58 +964,6 @@ bool FreescapeEngine::hasFeature(EngineFeature f) const {
 		   (f == kSupportsArbitraryResolutions && !softRenderer);
 }
 
-void FreescapeEngine::drawStringInSurface(const Common::String &str, int x, int y, uint32 fontColor, uint32 backColor, Graphics::Surface *surface, int offset) {
-	if (!_fontLoaded)
-		return;
-	Common::String ustr = str;
-	uint32 transparent = _gfx->_texturePixelFormat.ARGBToColor(0, 0, 0, 0);
-	ustr.toUppercase();
-
-	int sizeX = 8;
-	int sizeY = isCastle() ? 8 : 6;
-	int sep = isCastle() ? 9 : 8;
-	int additional = isCastle() || isEclipse() ? 0 : 1;
-
-	for (uint32 c = 0; c < ustr.size(); c++) {
-		assert(ustr[c] >= 32);
-		int position = sizeX * sizeY * (offset + ustr[c] - 32);
-		for (int j = 0; j < sizeY; j++) {
-			for (int i = 0; i < sizeX; i++) {
-				if (_font.get(position + additional + j * 8 + i) && fontColor != transparent)
-					surface->setPixel(x + 8 - i + sep * c, y + j, fontColor);
-				else if (backColor != transparent)
-					surface->setPixel(x + 8 - i + sep * c, y + j, backColor);
-			}
-		}
-	}
-}
-
-void FreescapeEngine::drawStringInSurface(const Common::String &str, int x, int y, uint32 primaryColor, uint32 secondaryColor, uint32 backColor, Graphics::Surface *surface, int offset) {
-	if (!_fontLoaded)
-		return;
-	Common::String ustr = str;
-	ustr.toUppercase();
-
-	int multiplier1 = isDriller() ? 33 : 16;
-	int multiplier2 = isDriller() ? 32 : 16;
-
-	for (uint32 c = 0; c < ustr.size(); c++) {
-		assert(ustr[c] >= 32);
-		int position = 8 * (multiplier1*(offset + ustr[c] - 32) + 1);
-		for (int j = 0; j < 8; j++) {
-			for (int i = 0; i < 8; i++) {
-				if (_font.get(position + j * multiplier2 + i + 8)) {
-					surface->setPixel(x + 8 - i + 8 * c, y + j, secondaryColor);
-				} else if (_font.get(position + j * multiplier2 + i)) {
-					surface->setPixel(x + 8 - i + 8 * c, y + j, primaryColor);
-				} else {
-					surface->setPixel(x + 8 - i + 8 * c, y + j, backColor);
-				}
-			}
-		}
-	}
-}
-
 Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 	uint16 areaID = stream->readUint16LE();

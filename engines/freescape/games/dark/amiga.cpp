@@ -99,7 +99,7 @@ void DarkEngine::initAmigaAtari() {
 void DarkEngine::drawString(const DarkFontSize size, const Common::String &str, int x, int y, uint32 primaryColor, uint32 secondaryColor, uint32 backColor, Graphics::Surface *surface) {
 	if (!_fontLoaded)
 		return;
-	Common::String ustr = str;
+	/*Common::String ustr = str;
 	ustr.toUppercase();
 
 	int multiplier1 = 0;
@@ -145,14 +145,14 @@ void DarkEngine::drawString(const DarkFontSize size, const Common::String &str, 
 			for (int i = 0; i < sizeX; i++) {
 				if (_font.get(position + j * multiplier2 + i)) {
 					surface->setPixel(x + 8 - i + sep * c, y + j, primaryColor);
-				} /*else if (_font.get(position + j * multiplier2 + i)) {
+				}*/ /*else if (_font.get(position + j * multiplier2 + i)) {
 					surface->setPixel(x + 8 - i + 8 * c, y + j, primaryColor);
-				}*/ else {
+				}*/ /*else {
 					surface->setPixel(x + 8 - i + sep * c, y + j, backColor);
 				}
 			}
 		}
-	}
+	}*/
 }
 
 } // End of namespace Freescape

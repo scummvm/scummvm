@@ -321,7 +321,7 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 
 		loadSpeakerFxDOS(&file, 0x4397 + 0x200, 0x4324 + 0x200);
 		loadMessagesFixedSize(&file, 0x4135, 14, 20);
-		loadFonts(&file, 0x99dd, _font);
+		loadFonts(&file, 0x99dd);
 		loadGlobalObjects(&file, 0x3b42, 8);
 		load8bitBinary(&file, 0x9b40, 16);
 		_border = load8bitBinImage(&file, 0x210);
@@ -346,7 +346,7 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 
 		loadSpeakerFxDOS(&file, 0x27e7 + 0x200, 0x2774 + 0x200);
 
-		loadFonts(&file, 0x07a4a, _font);
+		loadFonts(&file, 0x07a4a);
 		loadMessagesFixedSize(&file, 0x2585, 14, 20);
 		load8bitBinary(&file, 0x7bb0, 4);
 		loadGlobalObjects(&file, 0x1fa2, 8);
@@ -367,7 +367,7 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 
 		//loadSpeakerFxDOS(&file, 0x27e7 + 0x200, 0x2774 + 0x200);
 
-		//loadFonts(&file, 0x07a4a, _font);
+		loadFonts(&file, 0x8871);
 		loadMessagesFixedSize(&file, 0x3411, 14, 20);
 		load8bitBinary(&file, 0x89e0, 4);
 		loadGlobalObjects(&file, 0x2d02, 8);
@@ -402,7 +402,7 @@ void DrillerEngine::loadAssetsDOSDemo() {
 	if (!file.isOpen())
 		error("Failed to open 'd2' file");
 
-	loadFonts(&file, 0x4eb0, _font);
+	loadFonts(&file, 0x4eb0);
 	loadMessagesFixedSize(&file, 0x636, 14, 20);
 	load8bitBinary(&file, 0x55b0, 4);
 	loadGlobalObjects(&file, 0x8c, 5);
@@ -423,10 +423,7 @@ void DrillerEngine::loadAssetsDOSDemo() {
 }
 
 void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
-
-	if (_renderMode == Common::kRenderHercG)
-		return;
-	uint32 color = _renderMode == Common::kRenderCGA ? 1 : 14;
+	uint32 color = _renderMode == Common::kRenderCGA || _renderMode == Common::kRenderHercG ? 1 : 14;
 	uint8 r, g, b;
 
 	_gfx->readFromPalette(color, r, g, b);
@@ -496,12 +493,14 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 		surface->fillRect(shieldBar, front);
 	}
 
-	if (!_flyMode)
-		surface->copyRectToSurface(*_indicators[0], 132, 128, Common::Rect(_indicators[0]->w, _indicators[0]->h));
-	else
-		surface->copyRectToSurface(*_indicators[1], 132, 128, Common::Rect(_indicators[1]->w, _indicators[1]->h));
+	if (_indicators.size() >= 2) {
+		if (!_flyMode)
+			surface->copyRectToSurface(*_indicators[0], 132, 128, Common::Rect(_indicators[0]->w, _indicators[0]->h));
+		else
+			surface->copyRectToSurface(*_indicators[1], 132, 128, Common::Rect(_indicators[1]->w, _indicators[1]->h));
+	}
 
-	color = 2;
+	color = _renderMode == Common::kRenderHercG ? 1 : 2;
 	_gfx->readFromPalette(color, r, g, b);
 	uint32 other = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 

@@ -68,7 +68,7 @@ void DrillerEngine::loadAssetsAtariFullGame() {
 		_border = loadAndConvertNeoImage(stream, 0x14b96);
 		_title = loadAndConvertNeoImage(stream, 0x1c916);
 
-		loadFonts(stream, 0x8a92, _font);
+		loadFonts(stream, 0x8a92);
 		loadMessagesFixedSize(stream, 0xda22, 14, 20);
 		loadGlobalObjects(stream, 0xd116, 8);
 		load8bitBinary(stream, 0x2afb8, 16);
@@ -91,7 +91,7 @@ void DrillerEngine::loadAssetsAtariFullGame() {
 			}
 			_title = loadAndConvertNeoImage(&file, 0x10, palette);
 
-			loadFonts(&file, 0x8a32 - 0x1d6, _font);
+			loadFonts(&file, 0x8a32 - 0x1d6);
 			loadMessagesFixedSize(&file, 0xc5d8 - 0x1da, 14, 20);
 			loadGlobalObjects(&file, 0xbccc - 0x1da, 8);
 			load8bitBinary(&file, 0x29b3c - 0x1d6, 16);
@@ -107,7 +107,7 @@ void DrillerEngine::loadAssetsAtariFullGame() {
 			}
 			_title = loadAndConvertNeoImage(&file, 0x10, palette);
 
-			loadFonts(&file, 0x8a32, _font);
+			loadFonts(&file, 0x8a32);
 			loadMessagesFixedSize(&file, 0xc5d8, 14, 20);
 			loadGlobalObjects(&file, 0xbccc, 8);
 			load8bitBinary(&file, 0x29b3c, 16);
@@ -161,11 +161,11 @@ void DrillerEngine::loadAssetsAtariDemo() {
 	}
 
 	if (_variant & GF_ATARI_MAGAZINE_DEMO) {
-		loadFonts(&file, 0x7ee, _font);
+		loadFonts(&file, 0x7ee);
 		loadMessagesFixedSize(&file, 0x40d2, 14, 20);
 		loadGlobalObjects(&file, 0x3e88, 8);
 	} else {
-		loadFonts(&file, 0x7bc, _font);
+		loadFonts(&file, 0x7bc);
 		loadMessagesFixedSize(&file, 0x3b90, 14, 20);
 		loadGlobalObjects(&file, 0x3946, 8);
 	}

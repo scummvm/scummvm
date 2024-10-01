@@ -53,7 +53,7 @@ extern byte kEGADefaultPalette[16][3];
 extern Common::MemoryReadStream *unpackEXE(Common::File &ms);
 
 void CastleEngine::loadDOSFonts(Common::SeekableReadStream *file, int pos) {
-	file->seek(pos);
+	/*file->seek(pos);
 	byte *bufferPlane1 = (byte *)malloc(sizeof(byte) * 59 * 8);
 	byte *bufferPlane2 = (byte *)malloc(sizeof(byte) * 59 * 8);
 	byte *bufferPlane3 = (byte *)malloc(sizeof(byte) * 59 * 8);
@@ -85,7 +85,7 @@ void CastleEngine::loadDOSFonts(Common::SeekableReadStream *file, int pos) {
 	_fontLoaded = true;
 	free(bufferPlane1);
 	free(bufferPlane2);
-	free(bufferPlane3);
+	free(bufferPlane3);*/
 }
 
 Graphics::ManagedSurface *CastleEngine::loadFrameFromPlanes(Common::SeekableReadStream *file, int widthInBytes, int height) {
@@ -240,6 +240,14 @@ void CastleEngine::loadAssetsDOSFullGame() {
 			// No header
 			_thunderFrame = loadFrameFromPlanes(stream, 16, 128);
 			_thunderFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+
+			stream->seek(0x29696);
+			Common::Array<Graphics::ManagedSurface *> chars;
+			for (int i = 0; i < 90; i++) {
+				chars.push_back(loadFrameFromPlanes(stream, 8, 8));
+				chars[i]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+			}
+			_font = Font(chars);
 
 			// No header
 			// Another thunder frame?

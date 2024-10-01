@@ -91,6 +91,7 @@ Graphics::ManagedSurface *CastleEngine::loadFrame(Common::SeekableReadStream *fi
 void CastleEngine::loadAssetsZXFullGame() {
 	Common::File file;
 	uint8 r, g, b;
+	Common::Array<Graphics::ManagedSurface *> chars;
 
 	file.open("castlemaster.zx.title");
 	if (file.isOpen()) {
@@ -117,13 +118,31 @@ void CastleEngine::loadAssetsZXFullGame() {
 			loadMessagesVariableSize(&file, 0xf3d, 71);
 			load8bitBinary(&file, 0x6aab - 2, 16);
 			loadSpeakerFxZX(&file, 0xca0, 0xcdc);
-			loadFonts(&file, 0x1218 + 16, _font);
+			//loadFonts(&file, 0x1218 + 16);
+
+			file.seek(0x1218 + 16);
+			for (int i = 0; i < 90; i++) {
+				Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
+				surface->create(8, 8, Graphics::PixelFormat::createFormatCLUT8());
+				chars.push_back(loadFrame(&file, surface, 1, 8, 1));
+			}
+			_font = Font(chars);
+
 			break;
 		case Common::EN_ANY:
 			loadRiddles(&file, 0x145c - 2 - 9 * 2, 9);
 			load8bitBinary(&file, 0x6a3b, 16);
 			loadSpeakerFxZX(&file, 0xc91, 0xccd);
-			loadFonts(&file, 0x1219, _font);
+			//loadFonts(&file, 0x1219);
+
+			file.seek(0x1219);
+			for (int i = 0; i < 90; i++) {
+				Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
+				surface->create(8, 8, Graphics::PixelFormat::createFormatCLUT8());
+				chars.push_back(loadFrame(&file, surface, 1, 8, 1));
+			}
+			_font = Font(chars);
+
 			break;
 		default:
 			error("Language not supported");

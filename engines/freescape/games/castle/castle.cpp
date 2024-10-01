@@ -822,7 +822,7 @@ void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics
 	drawFullscreenSurface(surface);
 }
 
-void CastleEngine::drawStringInSurface(const Common::String &str, int x, int y, uint32 fontColor, uint32 backColor, Graphics::Surface *surface, int offset) {
+/*void CastleEngine::drawStringInSurface(const Common::String &str, int x, int y, uint32 fontColor, uint32 backColor, Graphics::Surface *surface, int offset) {
 	if (isSpectrum() || isCPC()) {
 		FreescapeEngine::drawStringInSurface(str, x, y, fontColor, backColor, surface, offset);
 		return;
@@ -841,7 +841,7 @@ void CastleEngine::drawStringInSurface(const Common::String &str, int x, int y, 
 	_font = Common::BitArray();
 	//_font = _fontPlane3;
 	//FreescapeEngine::drawStringInSurface(str, x, y, transparent, green, surface, offset);
-}
+}*/
 
 void CastleEngine::drawEnergyMeter(Graphics::Surface *surface, Common::Point origin) {
 	if (!_strenghtBackgroundFrame)

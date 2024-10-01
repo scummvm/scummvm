@@ -53,9 +53,9 @@ void DarkEngine::loadAssetsAtariFullGame() {
 	parseAmigaAtariHeader(stream);
 
 	_border = loadAndConvertNeoImage(stream, 0xd710);
-	loadFonts(stream, 0xd06b, _fontBig);
+	/*loadFonts(stream, 0xd06b, _fontBig);
 	loadFonts(stream, 0xd49a, _fontMedium);
-	loadFonts(stream, 0xd49b, _fontSmall);
+	loadFonts(stream, 0xd49b, _fontSmall);*/
 
 	load8bitBinary(stream, 0x20918, 16);
 	loadMessagesVariableSize(stream, 0x3f6f, 66);
