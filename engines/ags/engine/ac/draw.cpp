@@ -908,7 +908,7 @@ static void clear_sprite_list() {
 	_GP(sprlist).clear();
 }
 
-static void add_to_sprite_list(IDriverDependantBitmap *ddb, int x, int y, int zorder, bool isWalkBehind, int id = -1) {
+static void add_to_sprite_list(IDriverDependantBitmap *ddb, int x, int y, int zorder, int id = -1) {
 	assert(ddb);
 	// completely invisible, so don't draw it at all
 	if (ddb->GetAlpha() == 0)
@@ -921,11 +921,6 @@ static void add_to_sprite_list(IDriverDependantBitmap *ddb, int x, int y, int zo
 	sprite.x = x;
 	sprite.y = y;
 
-	if (drawstate.WalkBehindMethod == DrawAsSeparateSprite)
-		sprite.takesPriorityIfEqual = !isWalkBehind;
-	else
-		sprite.takesPriorityIfEqual = isWalkBehind;
-
 	_GP(sprlist).push_back(sprite);
 }
 
@@ -936,21 +931,9 @@ static bool spritelistentry_less(const SpriteListEntry &e1, const SpriteListEntr
 		   ((e1.zorder == e2.zorder) && (e1.id < e2.id));
 }
 
-// Room-specialized function to sort the sprites into baseline order;
-// does not account for IDs, but has special handling for walk-behinds.
-static bool spritelistentry_room_less(const SpriteListEntry &e1, const SpriteListEntry &e2) {
-	if (e1.zorder == e2.zorder) {
-		if (e1.takesPriorityIfEqual)
-			return false;
-		if (e2.takesPriorityIfEqual)
-			return true;
-	}
-	return e1.zorder < e2.zorder;
-}
-
 // copy the sorted sprites into the Things To Draw list
-static void draw_sprite_list(bool is_room) {
-	std::sort(_GP(sprlist).begin(), _GP(sprlist).end(), is_room ? spritelistentry_room_less : spritelistentry_less);
+static void draw_sprite_list() {
+	std::sort(_GP(sprlist).begin(), _GP(sprlist).end(), spritelistentry_less);
 	_GP(thingsToDrawList).insert(_GP(thingsToDrawList).end(),
 		_GP(sprlist).begin(), _GP(sprlist).end());
 }
@@ -1489,7 +1472,7 @@ void prepare_objects_for_drawing() {
 								   Size(obj.last_width, obj.last_height), atx, aty, usebasel,
 								   (obj.flags & OBJF_NOWALKBEHINDS) == 0, obj.transparent, hw_accel);
 		// Finally, add the texture to the draw list
-		add_to_sprite_list(actsp.Ddb, atx, aty, usebasel, false);
+		add_to_sprite_list(actsp.Ddb, atx, aty, usebasel);
 	}
 }
 
@@ -1597,7 +1580,7 @@ void prepare_characters_for_drawing() {
             Size(chex.width, chex.height), atx, aty, usebasel,
             (chin.flags & CHF_NOWALKBEHINDS) == 0, chin.transparency, hw_accel);
         // Finally, add the texture to the draw list
-        add_to_sprite_list(actsp.Ddb, atx, aty, usebasel, false);
+        add_to_sprite_list(actsp.Ddb, atx, aty, usebasel);
 	}
 }
 
@@ -1625,7 +1608,7 @@ static void add_roomovers_for_drawing() {
 		if (!over.IsRoomLayer()) continue; // not a room layer
 		if (over.transparency == 255) continue; // skip fully transparent
 		Point pos = get_overlay_position(over);
-		add_to_sprite_list(_GP(overtxs)[over.type].Ddb, pos.X, pos.Y, over.zorder, false, over.creation_id);
+		add_to_sprite_list(_GP(overtxs)[over.type].Ddb, pos.X, pos.Y, over.zorder, over.creation_id);
 	}
 }
 
@@ -1664,8 +1647,8 @@ void prepare_room_sprites() {
 					(wb < MAX_WALK_BEHINDS) && (wb < (size_t)_GP(walkbehindobj).size()); ++wb) {
 					const auto &wbobj = _GP(walkbehindobj)[wb];
 					if (wbobj.Ddb) {
-						add_to_sprite_list(wbobj.Ddb, wbobj.Pos.X, wbobj.Pos.Y,
-							_G(croom)->walkbehind_base[wb], true);
+						// when baselines are equal, walk-behinds must be sorted back, so tag as INT32_MIN
+						add_to_sprite_list(wbobj.Ddb, wbobj.Pos.X, wbobj.Pos.Y, _G(croom)->walkbehind_base[wb], INT32_MIN);
 					}
 				}
 			}
@@ -1673,7 +1656,7 @@ void prepare_room_sprites() {
 			if (pl_any_want_hook(AGSE_PRESCREENDRAW))
 				add_render_stage(AGSE_PRESCREENDRAW);
 
-			draw_sprite_list(true);
+			draw_sprite_list();
 		}
 	}
 	set_our_eip(36);
@@ -1834,7 +1817,7 @@ void draw_gui_and_overlays() {
 		if (over.IsRoomLayer()) continue; // not a ui layer
 		if (over.transparency == 255) continue; // skip fully transparent
 		Point pos = get_overlay_position(over);
-		add_to_sprite_list(_GP(overtxs)[over.type].Ddb, pos.X, pos.Y, over.zorder, false, over.creation_id);
+		add_to_sprite_list(_GP(overtxs)[over.type].Ddb, pos.X, pos.Y, over.zorder, over.creation_id);
 	}
 
 	// Add GUIs
@@ -1904,14 +1887,14 @@ void draw_gui_and_overlays() {
 			assert(gui_ddb); // Test for missing texture, might happen if not marked for update
 			if (!gui_ddb) continue;
 			gui_ddb->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(gui.Transparency));
-			add_to_sprite_list(gui_ddb, gui.X, gui.Y, gui.ZOrder, false, index);
+			add_to_sprite_list(gui_ddb, gui.X, gui.Y, gui.ZOrder, index);
 		}
 	}
 
 	// If not adding gui controls as textures, simply move the resulting sprlist to render
 	if (!draw_controls_as_textures ||
 		(_G(all_buttons_disabled >= 0) && (GUI::Options.DisabledStyle == kGuiDis_Blackout))) {
-		draw_sprite_list(false);
+		draw_sprite_list();
 		put_sprite_list_on_screen(false);
 		return;
 	}
