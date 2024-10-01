@@ -196,6 +196,8 @@ libretro-build-ios9:
     
 # tvOS
 libretro-build-tvos-arm64:
+  tags:
+    - macosx-packaging
   extends:
     - .libretro-tvos-arm64-make-default
     - .core-defs
