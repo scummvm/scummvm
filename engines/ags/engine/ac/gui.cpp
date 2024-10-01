@@ -285,10 +285,10 @@ void GUI_Click(ScriptGUI *scgui, int mbut) {
 
 void GUI_ProcessClick(int x, int y, int mbut) {
 	int guiid = gui_get_interactable(x, y);
-	if (guiid >= 0) {
+	if (guiid >= 0) { // simulate mouse click at the given coordinates
 		_GP(guis)[guiid].Poll(x, y);
-		gui_on_mouse_down(guiid, mbut);
-		gui_on_mouse_up(guiid, mbut);
+		gui_on_mouse_down(guiid, mbut, x, y);
+		gui_on_mouse_up(guiid, mbut, x, y);
 	}
 }
 
@@ -513,7 +513,7 @@ int gui_get_interactable(int x, int y) {
 	return GetGUIAt(x, y);
 }
 
-int gui_on_mouse_move() {
+int gui_on_mouse_move(const int mx, const int my) {
 	int mouse_over_gui = -1;
 	// If all GUIs are off, skip the loop
 	if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) && (_G(all_buttons_disabled) >= 0));
@@ -523,7 +523,7 @@ int gui_on_mouse_move() {
 		// CHECKME: not sure why, but we're testing forward draw order here -
 		// from farthest to nearest (this was in original code?)
 		for (int guin : _GP(play).gui_draw_order) {
-			if (_GP(guis)[guin].IsInteractableAt(_G(mousex), _G(mousey))) mouse_over_gui = guin;
+			if (_GP(guis)[guin].IsInteractableAt(mx, my)) mouse_over_gui = guin;
 
 			if (_GP(guis)[guin].PopupStyle != kGUIPopupMouseY) continue;
 			if (_GP(play).complete_overlay_on > 0) break;  // interfaces disabled			//    if (_GP(play).disabled_user_interface>0) break;
@@ -556,7 +556,7 @@ void gui_on_mouse_hold(const int wasongui, const int wasbutdown) {
 	}
 }
 
-void gui_on_mouse_up(const int wasongui, const int wasbutdown) {
+void gui_on_mouse_up(const int wasongui, const int wasbutdown, const int mx, const int my) {
 	_GP(guis)[wasongui].OnMouseButtonUp();
 
 	for (int i = 0; i < _GP(guis)[wasongui].GetControlCount(); i++) {
@@ -569,8 +569,8 @@ void gui_on_mouse_up(const int wasongui, const int wasbutdown) {
 		if ((cttype == kGUIButton) || (cttype == kGUISlider) || (cttype == kGUIListBox)) {
 			force_event(EV_IFACECLICK, wasongui, i, wasbutdown);
 		} else if (cttype == kGUIInvWindow) {
-			_G(mouse_ifacebut_xoffs) = _G(mousex) - (guio->X) - _GP(guis)[wasongui].X;
-			_G(mouse_ifacebut_yoffs) = _G(mousey) - (guio->Y) - _GP(guis)[wasongui].Y;
+			_G(mouse_ifacebut_xoffs) = mx - (guio->X) - _GP(guis)[wasongui].X;
+			_G(mouse_ifacebut_yoffs) = my - (guio->Y) - _GP(guis)[wasongui].Y;
 			int iit = offset_over_inv((GUIInvWindow *)guio);
 			if (iit >= 0) {
 				_GP(play).used_inv_on = iit;
@@ -594,9 +594,9 @@ void gui_on_mouse_up(const int wasongui, const int wasbutdown) {
 	run_on_event(GE_GUI_MOUSEUP, RuntimeScriptValue().SetInt32(wasongui));
 }
 
-void gui_on_mouse_down(const int guin, const int mbut) {
+void gui_on_mouse_down(const int guin, const int mbut, const int mx, const int my) {
 	debug_script_log("Mouse click over GUI %d", guin);
-	_GP(guis)[guin].OnMouseButtonDown(_G(mousex), _G(mousey));
+	_GP(guis)[guin].OnMouseButtonDown(mx, my);
 	// run GUI click handler if not on any control
 	if ((_GP(guis)[guin].MouseDownCtrl < 0) && (!_GP(guis)[guin].OnClickHandler.IsEmpty()))
 		force_event(EV_IFACECLICK, guin, -1, mbut);
