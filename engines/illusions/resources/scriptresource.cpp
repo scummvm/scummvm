@@ -278,11 +278,12 @@ void SceneInfo::fixupSceneInfosDuckman() {
 // ScriptResource
 
 ScriptResource::ScriptResource()
-	: _codeOffsets(nullptr), _objectMap(nullptr) {
+	: _codeOffsets(nullptr), _sceneInfos(nullptr), _objectMap(nullptr)  {
 }
 
 ScriptResource::~ScriptResource() {
 	delete[] _codeOffsets;
+	delete[] _sceneInfos;
 	delete[] _objectMap;
 }
 
