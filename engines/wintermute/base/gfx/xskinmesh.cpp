@@ -713,8 +713,7 @@ static void destroyMaterials(struct MeshData *meshData) {
 static bool parseMaterialList(XFileData &fileData, struct MeshData *meshData) {
 	XFileData child;
 	XClassType type;
-	uint nbChildren;
-	uint32 materialCount, i;
+	uint32 nbChildren, materialCount, i;
 
 	destroyMaterials(meshData);
 
