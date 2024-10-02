@@ -312,8 +312,24 @@ View1::View1() : UIElement("View1") {
 	}
 
 	void View1::drawPathfindingPoints(Graphics::ManagedSurface &s) {
+		GlyphData xData;
+		g_engine->FindGlyph('x', xData);
+		int numLines = 0;
 		for (int i = 0; i < 16; i++) {
-			renderString(g_engine->_pathfindingPoints[2 * i], g_engine->_pathfindingPoints[2 * i + 1], "x");
+			PathfindingPoint &current = g_engine->pathfindingPoints[i];
+			renderString(current.Position.x - xData.Width * 0.5, current.Position.y - xData.Height * 0.5, "x");
+
+			Common::String number = Common::String::format("%u", i);
+			renderString(current.Position.x - xData.Width * 0.5 + 10, current.Position.y - xData.Height * 0.5 + 10, number.c_str());
+
+			for (uint8 adjacentIndex : current.adjacentPoints) {
+				if (adjacentIndex >= g_engine->pathfindingPoints.size()) {
+					continue;
+				}
+				PathfindingPoint &other = g_engine->pathfindingPoints[adjacentIndex - 1];
+				s.drawLine(current.Position.x, current.Position.y, other.Position.x, other.Position.y, 0xFFFFFFFF);
+				numLines++;
+			}
 		}
 	}
 
@@ -516,6 +532,7 @@ void View1::draw() {
 	s.blitFrom(_backgroundSurface);
 	// Handle highlighting
 
+	/*
 	for (int x = 0; x < s.w; x++) {
 		for (int y = 0; y < s.h; y++) {
 			if (g_engine->_map.getPixel(x, y) == 0x2) {
@@ -523,6 +540,7 @@ void View1::draw() {
 			}
 		}
 	}
+	*/
 
 	drawBackgroundAnimations(s);
 	DrawCharacters(s);
@@ -613,9 +631,9 @@ void View1::draw() {
 		DrawSprite(0x00, 0x00, icon->Width, icon->Height, icon->Data, s, false);
 	}
 
-	// drawPathfindingPoints(s);
-	// drawPath(s);
-	drawBackgroundAnimationNumbers(s);
+	drawPathfindingPoints(s);
+	drawPath(s);
+	// drawBackgroundAnimationNumbers(s);
 
 	// Get mouse position
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();

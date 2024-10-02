@@ -99,6 +99,12 @@ enum DebugFlag {
 	DEBUG_SV = 1 << 11
 };
 
+struct PathfindingPoint {
+	uint8 Index;
+	Common::Point Position;
+	Common::Array<uint8> adjacentPoints;
+};
+
 class Macs2Engine : public Engine, public Events {
 private:
 	const ADGameDescription *_gameDescription;
@@ -150,6 +156,7 @@ public:
 	bool isPathWalkable(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 
 	uint16 _pathfindingPoints[32];
+	Common::Array<PathfindingPoint> pathfindingPoints;
 
 	Common::Array<Common::Point> _path;
 
