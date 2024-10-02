@@ -146,7 +146,7 @@ RenderSdlGraphicsManager::RenderSdlGraphicsManager(SdlEventSource *sdlEventSourc
 	_screen(nullptr), _tmpscreen(nullptr),
 	_screenFormat(Graphics::PixelFormat::createFormatCLUT8()),
 	_cursorFormat(Graphics::PixelFormat::createFormatCLUT8()),
-	_useOldSrc(false), _isHwPalette(false),
+	_useOldSrc(false),
 	_overlayTexture(nullptr), _overlaySurface(nullptr),
 	_screenChangeCount(0),
 	_mouseTexture(nullptr), _mouseScaler(nullptr), _mouseSurface(nullptr),
@@ -157,7 +157,6 @@ RenderSdlGraphicsManager::RenderSdlGraphicsManager(SdlEventSource *sdlEventSourc
 	_displayDisabled(false),
 	_transactionMode(kTransactionNone),
 	_scalerPlugins(ScalerMan.getPlugins()), _scalerPlugin(nullptr), _scaler(nullptr),
-	_isDoubleBuf(false), _prevForceRedraw(false), _numPrevDirtyRects(0),
 	_mouseKeyColor(0), _disableMouseKeyColor(false) {
 
 	// allocate palette storage
@@ -214,7 +213,7 @@ bool RenderSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 		(f == OSystem::kFeatureVSync) ||
 #endif
 		(f == OSystem::kFeatureCursorPalette) ||
-		(f == OSystem::kFeatureCursorAlpha && !_isHwPalette) ||
+		(f == OSystem::kFeatureCursorAlpha) ||
 		(f == OSystem::kFeatureIconifyWindow) ||
 		(f == OSystem::kFeatureCursorMask);
 }
@@ -540,59 +539,57 @@ void RenderSdlGraphicsManager::detectSupportedFormats() {
 		format = hwFormat;
 	}
 
-	if (!_isHwPalette) {
-		// Some tables with standard formats that we always list
-		// as "supported". If frontend code tries to use one of
-		// these, we will perform the necessary format
-		// conversion in the background. Of course this incurs a
-		// performance hit, but on desktop ports this should not
-		// matter. We still push the currently active format to
-		// the front, so if frontend code just uses the first
-		// available format, it will get one that is "cheap" to
-		// use.
-		const Graphics::PixelFormat RGBList[] = {
-			// RGBA8888, ARGB8888, RGB888
-			Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
-			Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24),
-			Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),
-			// RGB565, XRGB1555, RGB555, RGBA4444, ARGB4444
-			Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
-			Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15),
-			Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),
-			Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),
-			Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12)
-		};
-		const Graphics::PixelFormat BGRList[] = {
-			// ABGR8888, BGRA8888, BGR888
-			Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24),
-			Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0),
-			Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0),
-			// BGR565, XBGR1555, BGR555, ABGR4444, BGRA4444
-			Graphics::PixelFormat(2, 5, 6, 5, 0, 0, 5, 11, 0),
-			Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15),
-			Graphics::PixelFormat(2, 5, 5, 5, 0, 0, 5, 10, 0),
-			Graphics::PixelFormat(2, 4, 4, 4, 4, 0, 4, 8, 12),
-			Graphics::PixelFormat(2, 4, 4, 4, 4, 4, 8, 12, 0)
-		};
+	// Some tables with standard formats that we always list
+	// as "supported". If frontend code tries to use one of
+	// these, we will perform the necessary format
+	// conversion in the background. Of course this incurs a
+	// performance hit, but on desktop ports this should not
+	// matter. We still push the currently active format to
+	// the front, so if frontend code just uses the first
+	// available format, it will get one that is "cheap" to
+	// use.
+	const Graphics::PixelFormat RGBList[] = {
+		// RGBA8888, ARGB8888, RGB888
+		Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
+		Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24),
+		Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),
+		// RGB565, XRGB1555, RGB555, RGBA4444, ARGB4444
+		Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
+		Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15),
+		Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),
+		Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),
+		Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12)
+	};
+	const Graphics::PixelFormat BGRList[] = {
+		// ABGR8888, BGRA8888, BGR888
+		Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24),
+		Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0),
+		Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0),
+		// BGR565, XBGR1555, BGR555, ABGR4444, BGRA4444
+		Graphics::PixelFormat(2, 5, 6, 5, 0, 0, 5, 11, 0),
+		Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15),
+		Graphics::PixelFormat(2, 5, 5, 5, 0, 0, 5, 10, 0),
+		Graphics::PixelFormat(2, 4, 4, 4, 4, 0, 4, 8, 12),
+		Graphics::PixelFormat(2, 4, 4, 4, 4, 4, 8, 12, 0)
+	};
 
-		// TODO: prioritize matching alpha masks
-		int i;
+	// TODO: prioritize matching alpha masks
+	int i;
 
-		// Push some RGB formats
-		for (i = 0; i < ARRAYSIZE(RGBList); i++) {
-			if (_hwScreen && (RGBList[i].bytesPerPixel > format.bytesPerPixel))
-				continue;
-			if (RGBList[i] != format)
-				_supportedFormats.push_back(RGBList[i]);
-		}
+	// Push some RGB formats
+	for (i = 0; i < ARRAYSIZE(RGBList); i++) {
+		if (_hwScreen && (RGBList[i].bytesPerPixel > format.bytesPerPixel))
+			continue;
+		if (RGBList[i] != format)
+			_supportedFormats.push_back(RGBList[i]);
+	}
 
-		// Push some BGR formats
-		for (i = 0; i < ARRAYSIZE(BGRList); i++) {
-			if (_hwScreen && (BGRList[i].bytesPerPixel > format.bytesPerPixel))
-				continue;
-			if (BGRList[i] != format)
-				_supportedFormats.push_back(BGRList[i]);
-		}
+	// Push some BGR formats
+	for (i = 0; i < ARRAYSIZE(BGRList); i++) {
+		if (_hwScreen && (BGRList[i].bytesPerPixel > format.bytesPerPixel))
+			continue;
+		if (BGRList[i] != format)
+			_supportedFormats.push_back(BGRList[i]);
 	}
 
 	// Finally, we always supposed 8 bit palette graphics
@@ -839,13 +836,6 @@ void RenderSdlGraphicsManager::initGraphicsSurface() {
 		flags |= SDL_FULLSCREEN;
 
 	_hwScreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 16, flags);
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	_isDoubleBuf = false;
-	_isHwPalette = false;
-#else
-	_isDoubleBuf = flags & SDL_DOUBLEBUF;
-	_isHwPalette = flags & SDL_HWPALETTE;
-#endif
 }
 
 bool RenderSdlGraphicsManager::loadGFXMode() {
@@ -1113,14 +1103,6 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 		SDL_SetColors(_screen, _currentPalette + _paletteDirtyStart,
 			_paletteDirtyStart,
 			_paletteDirtyEnd - _paletteDirtyStart);
-		if (_isHwPalette)
-			SDL_SetColors(_tmpscreen, _currentPalette + _paletteDirtyStart,
-				      _paletteDirtyStart,
-				      _paletteDirtyEnd - _paletteDirtyStart);
-		if (_isHwPalette)
-			SDL_SetColors(_hwScreen, _currentPalette + _paletteDirtyStart,
-				       _paletteDirtyStart,
-				       _paletteDirtyEnd - _paletteDirtyStart);
 
 		_paletteDirtyEnd = 0;
 
@@ -1139,46 +1121,28 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 	updateOSD();
 #endif
 
-	// In case of double buferring partially good version may be on another page,
-	// so we need to fully redraw
-	if (_isDoubleBuf && _numDirtyRects)
-		_forceRedraw = true;
-
 #if defined(USE_IMGUI) && (defined(USE_IMGUI_SDLRENDERER2) || defined(USE_IMGUI_SDLRENDERER3))
 	if (_imGuiCallbacks.render) {
 		_forceRedraw = true;
 	}
 #endif
 
-	bool doRedraw = _forceRedraw || (_prevForceRedraw && _isDoubleBuf);
-	int actualDirtyRects = _numDirtyRects;
-	if (_isDoubleBuf && _numPrevDirtyRects > 0) {
-		memcpy(_dirtyRectList + _numDirtyRects, _prevDirtyRectList, _numPrevDirtyRects * sizeof(_dirtyRectList[0]));
-		actualDirtyRects += _numPrevDirtyRects;
-	}
-
 	// Force a full redraw if requested.
 	// If _useOldSrc, the scaler will do its own partial updates.
-	if (doRedraw) {
-		actualDirtyRects = 1;
+	if (_forceRedraw) {
+		_numDirtyRects = 1;
 		_dirtyRectList[0].x = 0;
 		_dirtyRectList[0].y = 0;
 		_dirtyRectList[0].w = width;
 		_dirtyRectList[0].h = height;
 	}
 
-	_prevForceRedraw = _forceRedraw;
-	if (!_prevForceRedraw && _numDirtyRects && _isDoubleBuf) {
-		memcpy(_prevDirtyRectList, _dirtyRectList, _numDirtyRects * sizeof(_dirtyRectList[0]));
-		_numPrevDirtyRects = _numDirtyRects;
-	}
-
 	// Only draw anything if necessary
-	if (actualDirtyRects > 0) {
+	if (_numDirtyRects > 0) {
 		SDL_Rect *r;
 		SDL_Rect dst;
 		uint32 bpp, srcPitch, dstPitch;
-		SDL_Rect *lastRect = _dirtyRectList + actualDirtyRects;
+		SDL_Rect *lastRect = _dirtyRectList + _numDirtyRects;
 
 		for (r = _dirtyRectList; r != lastRect; ++r) {
 			dst = *r;
@@ -1262,7 +1226,7 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 
 		// Finally, blit all our changes to the screen
 		if (!_displayDisabled) {
-			updateScreen(_dirtyRectList, actualDirtyRects);
+			updateScreen(_dirtyRectList, _numDirtyRects);
 		}
 	}
 
@@ -1289,9 +1253,6 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 #endif
 
 	SDL_RenderPresent(_renderer);
-#else
-	if (_isDoubleBuf)
-		SDL_Flip(_hwScreen);
 #endif
 }
 
@@ -1870,7 +1831,7 @@ void RenderSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, i
 	}
 
 #ifdef USE_RGB_COLOR
-	if (mask && format && format->bytesPerPixel > 1 && !_isHwPalette) {
+	if (mask && format && format->bytesPerPixel > 1) {
 		const uint numPixels = w * h;
 		const uint inBPP = format->bytesPerPixel;
 
@@ -1925,8 +1886,6 @@ void RenderSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, i
 	bool formatChanged = false;
 
 	if (format) {
-		assert(format->bytesPerPixel == 1 || !_isHwPalette);
-
 		if (format->bytesPerPixel != _cursorFormat.bytesPerPixel) {
 			formatChanged = true;
 		}
