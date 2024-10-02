@@ -274,14 +274,32 @@ void Macs2Engine::readResourceFile() {
 	// TODO: Figure out how the game knows the length of this data
 	_fileStream->seek(0x0024BF72);
 	// TODO: Obviously not nice to assume a certain endianness, need to read values invividually
+
+	for (int i = 0; i < 16; i++) {
+		PathfindingPoint current;
+		current.Position.x = _fileStream->readUint16LE();
+		current.Position.y = _fileStream->readUint16LE();
+		_fileStream->seek(4, SEEK_CUR);
+		uint16 numConnections = _fileStream->readUint16LE();
+		_fileStream->seek(-6, SEEK_CUR);
+		for (int j = 0; j < numConnections; j++) {
+			current.adjacentPoints.push_back(_fileStream->readByte());
+		}
+		_fileStream->seek(4 - numConnections + 2, SEEK_CUR);
+		pathfindingPoints.push_back(current);
+	}
+	_fileStream->seek(0x0024BF72);
 	for (int i = 0; i < 16; i++) {
 		_pathfindingPoints[i*2] = _fileStream->readUint16LE();
 		_pathfindingPoints[i*2 + 1] = _fileStream->readUint16LE();
 		// Need to read 6 more bytes of unknown purpose
 		// TODO: Add them when I know what they do
-		for (int j = 0; j < 3; j++) {
-			_fileStream->readUint16LE();
+		Common::Array<uint8> indices;
+
+		for (int j = 0; j < 4; j++) {
+			indices.push_back(_fileStream->readByte());
 		}
+		uint16 numConnections = _fileStream->readUint16LE();
 	}
 	
 
