@@ -98,7 +98,7 @@ void FrameNode::setTransformation(int slot, Math::Vector3d pos, Math::Vector3d s
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool FrameNode::loadFromXData(const Common::String &filename, XModel *model, XFileData *xobj, Common::Array<MaterialReference> &materialReferences) {
+bool FrameNode::loadFromXData(const Common::String &filename, XModel *model, XFileData *xobj) {
 	_gameRef->miniUpdate();
 
 	bool res = true;
@@ -109,7 +109,7 @@ bool FrameNode::loadFromXData(const Common::String &filename, XModel *model, XFi
 
 	if (objectType == kXClassMesh) { // load a child mesh
 		XMesh *mesh = _gameRef->_renderer3D->createXMesh();
-		res = mesh->loadFromXData(filename, xobj, materialReferences);
+		res = mesh->loadFromXData(filename, xobj);
 		if (res) {
 			_meshes.add(mesh);
 			return true;
@@ -167,7 +167,7 @@ bool FrameNode::loadFromXData(const Common::String &filename, XModel *model, XFi
 			XFileData xchildData;
 			res = xobj->getChild(i, xchildData);
 			if (res)
-				res = childFrame->loadFromXData(filename, model, &xchildData, materialReferences);
+				res = childFrame->loadFromXData(filename, model, &xchildData);
 		}
 		if (res)
 			_frames.add(childFrame);

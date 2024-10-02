@@ -51,8 +51,8 @@ XMeshOpenGLShader::~XMeshOpenGLShader() {
 	glDeleteBuffers(1, &_indexBuffer);
 }
 
-bool XMeshOpenGLShader::loadFromXData(const Common::String &filename, XFileData *xobj, Common::Array<MaterialReference> &materialReferences) {
-	if (XMesh::loadFromXData(filename, xobj, materialReferences)) {
+bool XMeshOpenGLShader::loadFromXData(const Common::String &filename, XFileData *xobj) {
+	if (XMesh::loadFromXData(filename, xobj)) {
 		auto indexData = _skinMesh->_mesh->_indexData;
 		float *vertexData = _skinMesh->_mesh->_vertexData;
 		uint32 vertexCount = _skinMesh->_mesh->_vertexCount;

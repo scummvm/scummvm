@@ -55,7 +55,7 @@ public:
 	bool renderFlatShadowModel();
 	bool updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth);
 
-	bool loadFromXData(const Common::String &filename, XModel *model, XFileData *xobj, Common::Array<MaterialReference> &materialReferences);
+	bool loadFromXData(const Common::String &filename, XModel *model, XFileData *xobj);
 	bool mergeFromXData(const Common::String &filename, XModel *model, XFileData *xobj);
 	bool findBones(FrameNode *rootFrame);
 	FrameNode *findFrame(const char *frameName);

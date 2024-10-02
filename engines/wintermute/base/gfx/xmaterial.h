@@ -38,42 +38,6 @@ class BaseSurface;
 class VideoTheoraPlayer;
 class XFileData;
 
-struct ColorValue {
-	float &r() {
-		return data[0];
-	}
-
-	float r() const {
-		return data[0];
-	}
-
-	float &g() {
-		return data[1];
-	}
-
-	float g() const {
-		return data[1];
-	}
-
-	float &b() {
-		return data[2];
-	}
-
-	float b() const {
-		return data[2];
-	}
-
-	float &a() {
-		return data[3];
-	}
-
-	float a() const {
-		return data[3];
-	}
-
-	float data[4];
-};
-
 class Material : public BaseNamedObject {
 public:
 	Material(BaseGame *inGame);

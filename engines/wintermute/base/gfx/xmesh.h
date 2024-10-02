@@ -51,7 +51,7 @@ public:
 	XMesh(BaseGame *inGame);
 	virtual ~XMesh();
 
-	virtual bool loadFromXData(const Common::String &filename, XFileData *xobj, Common::Array<MaterialReference> &materialReferences);
+	virtual bool loadFromXData(const Common::String &filename, XFileData *xobj);
 	bool findBones(FrameNode *rootFrame);
 	virtual bool update(FrameNode *parentFrame);
 	virtual bool render(XModel *model) = 0;

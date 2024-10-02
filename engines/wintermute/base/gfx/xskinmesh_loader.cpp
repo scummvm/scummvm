@@ -56,7 +56,7 @@ XSkinMeshLoader::~XSkinMeshLoader() {
 	delete[] _vertexNormalData;
 }
 
-void XSkinMeshLoader::loadMesh(const Common::String &filename, XFileData *xobj, Common::Array<MaterialReference> &materialReferences) {
+void XSkinMeshLoader::loadMesh(const Common::String &filename, XFileData *xobj) {
 	auto fvf = _dxmesh->getFVF();
 	uint32 vertexSize = DXGetFVFVertexSize(fvf) / sizeof(float);
 	float *vertexBuffer = (float *)_dxmesh->getVertexBuffer().ptr();

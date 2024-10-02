@@ -57,7 +57,7 @@ XMesh::~XMesh() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj, Common::Array<MaterialReference> &materialReferences) {
+bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 	// get name
 	if (!XModel::loadName(this, xobj)) {
 		BaseEngine::LOG(0, "Error loading mesh name");
@@ -86,7 +86,7 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj, Commo
 	}
 
 	XSkinMeshLoader *meshLoader = new XSkinMeshLoader(this, meshObject, mesh, skinInfo);
-	meshLoader->loadMesh(filename, xobj, materialReferences);
+	meshLoader->loadMesh(filename, xobj);
 
 	_skinMesh = new SkinMeshHelper(meshLoader, mesh, skinInfo);
 

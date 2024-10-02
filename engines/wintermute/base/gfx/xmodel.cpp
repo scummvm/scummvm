@@ -105,11 +105,6 @@ void XModel::cleanup(bool complete) {
 	}
 	_matSprites.clear();
 
-	for (uint i = 0; i < _materialReferences.size(); ++i) {
-		delete _materialReferences[i]._material;
-	}
-	_materialReferences.clear();
-
 	// remove root frame
 	delete _rootFrame;
 	_rootFrame = nullptr;
@@ -148,7 +143,7 @@ bool XModel::loadFromFile(const Common::String &filename, XModel *parentModel) {
 		if (!resLoop)
 			break;
 
-		res = _rootFrame->loadFromXData(filename, this, &xobj, _materialReferences);
+		res = _rootFrame->loadFromXData(filename, this, &xobj);
 		if (!res) {
 			BaseEngine::LOG(0, "Error loading top level object from '%s'", filename.c_str());
 			break;

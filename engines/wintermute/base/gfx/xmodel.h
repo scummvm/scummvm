@@ -48,11 +48,6 @@ class Material;
 class ShadowVolume;
 class XFileData;
 
-struct MaterialReference {
-	Common::String _name;
-	Material *_material;
-};
-
 #define X_NUM_ANIMATION_CHANNELS 10
 
 class XModel : public BaseObject {
@@ -199,8 +194,6 @@ private:
 
 	Math::Vector3d _BBoxStart;
 	Math::Vector3d _BBoxEnd;
-
-	Common::Array<MaterialReference> _materialReferences;
 
 protected:
 	BaseArray<const char*> _mergedModels;

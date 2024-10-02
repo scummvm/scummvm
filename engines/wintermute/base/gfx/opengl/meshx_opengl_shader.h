@@ -41,7 +41,7 @@ public:
 	XMeshOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader, OpenGL::Shader *flatShadowShader);
 	~XMeshOpenGLShader() override;
 
-	bool loadFromXData(const Common::String &filename, XFileData *xobj, Common::Array<MaterialReference> &materialReferences) override;
+	bool loadFromXData(const Common::String &filename, XFileData *xobj) override;
 	bool render(XModel *model) override;
 	bool renderFlatShadowModel() override;
 	bool update(FrameNode *parentFrame) override;

@@ -55,7 +55,7 @@ class XSkinMeshLoader {
 public:
 	XSkinMeshLoader(XMesh *mesh, XMeshObject *meshObject, DXMesh *dxmesh, DXSkinInfo *skinInfo);
 	virtual ~XSkinMeshLoader();
-	void loadMesh(const Common::String &filename, XFileData *xobj, Common::Array<MaterialReference> &materialReferences);
+	void loadMesh(const Common::String &filename, XFileData *xobj);
 
 protected:
 	static const int kVertexComponentCount = 8;
