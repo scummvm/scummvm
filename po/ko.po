@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-02 14:11+0000\n"
+"PO-Revision-Date: 2024-10-02 14:15+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -10230,19 +10230,19 @@ msgstr "  게임 작동에 문제를 일으킬 수"
 
 #: engines/scumm/help.cpp:111
 msgid "  since they may cause crashes"
-msgstr "  권장하지 않음"
+msgstr "  사용하지 않는 것이"
 
 #: engines/scumm/help.cpp:112
 msgid "  or incorrect game behavior."
-msgstr "  권장하지 않습니다."
+msgstr "  좋습니다."
 
 #: engines/scumm/help.cpp:116
 msgid "Spinning drafts on the keyboard:"
-msgstr "키보드로 드래프트를 짓기:"
+msgstr "키보드에서 드래프트를 회전:"
 
 #: engines/scumm/help.cpp:118
 msgid "Main game controls:"
-msgstr "주 게임 조작:"
+msgstr "메인 게임 조작:"
 
 #: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
 #: engines/scumm/help.cpp:164 engines/twp/metaengine.cpp:185
