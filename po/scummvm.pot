@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-10-01 18:22+0000\n"
+"POT-Creation-Date: 2024-10-02 12:59+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -6928,16 +6928,16 @@ msgstr ""
 msgid "Sorry, the savegame couldn't be created"
 msgstr ""
 
-#: engines/glk/advsys/vm.cpp:560
+#: engines/glk/advsys/vm.cpp:564
 msgid "Speak up! I can't hear you!\n"
 msgstr ""
 
-#: engines/glk/advsys/vm.cpp:596
+#: engines/glk/advsys/vm.cpp:600
 #, c-format
 msgid "I don't know the word \"%s\".\n"
 msgstr ""
 
-#: engines/glk/advsys/vm.cpp:682
+#: engines/glk/advsys/vm.cpp:686
 msgid "I don't understand.\n"
 msgstr ""
 
