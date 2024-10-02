@@ -37,6 +37,8 @@ class XSkinMeshLoader;
 class XMesh;
 class XMeshOpenGL;
 class XMeshOpenGLShader;
+class DXMesh;
+class DXSkinInfo;
 
 class SkinMeshHelper {
 	friend class XMesh;
@@ -44,9 +46,9 @@ class SkinMeshHelper {
 	friend class XMeshOpenGLShader;
 
 public:
-	SkinMeshHelper(XSkinMeshLoader *mesh);
+	SkinMeshHelper(XSkinMeshLoader *meshLoader, DXMesh *mesh, DXSkinInfo *skinInfo);
 	virtual ~SkinMeshHelper();
-	
+
 	uint getNumFaces();
 	uint getNumBones();
 	bool getOriginalMesh(XSkinMeshLoader **mesh);
@@ -57,6 +59,8 @@ public:
 	
 private:
 	XSkinMeshLoader *_mesh;
+	DXMesh *_dxmesh;
+	DXSkinInfo *_skinInfo;
 };
 
 } // namespace Wintermute

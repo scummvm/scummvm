@@ -36,6 +36,8 @@ class ShadowVolume;
 class SkinMeshHelper;
 class VideoTheoraPlayer;
 struct XMeshObject;
+class DXMesh;
+class DXSkinInfo;
 
 struct SkinWeights {
 	Common::String _boneName;
@@ -51,7 +53,7 @@ class XSkinMeshLoader {
 	friend class SkinMeshHelper;
 
 public:
-	XSkinMeshLoader(XMesh *mesh, XMeshObject *meshObject);
+	XSkinMeshLoader(XMesh *mesh, XMeshObject *meshObject, DXMesh *dxmesh, DXSkinInfo *skinInfo);
 	virtual ~XSkinMeshLoader();
 	void loadMesh(const Common::String &filename, XFileData *xobj, Common::Array<MaterialReference> &materialReferences);
 
@@ -68,15 +70,10 @@ protected:
 	bool adjacentEdge(uint16 index1, uint16 index2, uint16 index3, uint16 index4);
 
 public:
-	bool parsePositionCoords(XMeshObject *mesh);
-	bool parseFaces(XMeshObject *mesh, int faceCount, Common::Array<int> &indexCountPerFace);
-	bool parseTextureCoords(XFileData *xobj);
-	bool parseNormalCoords(XFileData *xobj);
-	bool parseMaterials(XFileData *xobj, BaseGame *inGame, int faceCount, const Common::String &filename,
-                            Common::Array<MaterialReference> &materialReferences, const Common::Array<int> &indexCountPerFace);
-	bool parseSkinWeights(XFileData *xobj);
-	bool parseVertexDeclaration(XFileData *xobj);
 	
+	BaseArray<int> _indexRanges;
+	BaseArray<int> _materialIndices;
+
 protected:
 
 	float *_vertexData;
@@ -84,15 +81,14 @@ protected:
 	float *_vertexNormalData;
 	uint32 _vertexCount;
 	Common::Array<uint16> _indexData;
-	
+
 	BaseArray<Math::Matrix4 *> _boneMatrices;
 	BaseArray<SkinWeights> _skinWeightsList;
-	
-	BaseArray<int> _indexRanges;
-	BaseArray<int> _materialIndices;
 
 	XMesh *_mesh;
 	XMeshObject *_meshObject;
+	DXMesh *_dxmesh;
+	DXSkinInfo *_skinInfo;
 };
 
 } // namespace Wintermute

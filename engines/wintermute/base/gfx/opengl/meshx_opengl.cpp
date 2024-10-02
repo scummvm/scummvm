@@ -58,11 +58,11 @@ bool XMeshOpenGL::render(XModel *model) {
 
 	for (uint32 i = 0; i < _numAttrs; i++) {
 		int materialIndex = materialIndices[i];
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, _materials[materialIndex]->_diffuse.data);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, _materials[materialIndex]->_diffuse.data);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, _materials[materialIndex]->_specular.data);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, _materials[materialIndex]->_emissive.data);
-		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, _materials[materialIndex]->_shininess);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, _materials[materialIndex]->_material._diffuse._data);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, _materials[materialIndex]->_material._diffuse._data);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, _materials[materialIndex]->_material._specular._data);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, _materials[materialIndex]->_material._emissive._data);
+		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, _materials[materialIndex]->_material._power);
 
 		bool textureEnable = false;
 		if (_materials[materialIndex]->getSurface()) {

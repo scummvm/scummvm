@@ -43,6 +43,7 @@ namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 Material::Material(BaseGame *inGame) : BaseNamedObject(inGame) {
+	memset(&_material, 0, sizeof(_material));
 	_surface = nullptr;
 	_ownedSurface = false;
 	_sprite = nullptr;
@@ -139,47 +140,6 @@ BaseSurface *Material::getSurface() {
 	} else {
 		return _surface;
 	}
-}
-
-bool Material::loadFromX(XFileData *xobj, const Common::String &filename) {
-	XMaterialObject *material = xobj->getXMaterialObject();
-	if (!material)
-		return false;
-
-	_diffuse.r() = material->_colorR;
-	_diffuse.g() = material->_colorG;
-	_diffuse.b() = material->_colorB;
-	_diffuse.a() = material->_colorA;
-
-	_shininess = material->_power;
-
-	_specular.r() = material->_specularR;
-	_specular.g() = material->_specularG;
-	_specular.b() = material->_specularB;
-	_specular.a() = 1.0f;
-
-	_emissive.r() = material->_emissiveR;
-	_emissive.g() = material->_emissiveG;
-	_emissive.b() = material->_emissiveB;
-	_emissive.a() = 1.0f;
-
-	uint numChildren = 0;
-	xobj->getChildren(numChildren);
-
-	for (uint32 i = 0; i < numChildren; i++) {
-		XFileData xchildData;
-		XClassType objectType;
-		bool res = xobj->getChild(i, xchildData);
-		if (res) {
-			res = xchildData.getType(objectType);
-			if (res && objectType == kXClassTextureFilename) {
-				Common::String textureFilename = xchildData.getXTextureFilenameObject()->_filename;
-				setTexture(PathUtil::getDirectoryName(filename) + textureFilename);
-			}
-		}
-	}
-
-	return true;
 }
 
 } // namespace Wintermute

@@ -29,6 +29,7 @@
 #define WINTERMUTE_XMATERIAL_H
 
 #include "engines/wintermute/base/base_named_object.h"
+#include "engines/wintermute/base/gfx/xskinmesh.h"
 
 namespace Wintermute {
 
@@ -78,18 +79,12 @@ public:
 	Material(BaseGame *inGame);
 	virtual ~Material();
 
-	ColorValue _diffuse;
-	ColorValue _ambient;
-	ColorValue _specular;
-	ColorValue _emissive;
-	float _shininess;
+	DXMaterial _material;
 
 	bool setTexture(const Common::String &filename, bool adoptName = false);
 	bool setSprite(BaseSprite *sprite, bool adoptName = false);
 	bool setTheora(VideoTheoraPlayer *theora, bool adoptName = false);
 	BaseSurface *getSurface();
-
-	bool loadFromX(XFileData *xobj, const Common::String &filename);
 
 	bool invalidateDeviceObjects();
 	bool restoreDeviceObjects();

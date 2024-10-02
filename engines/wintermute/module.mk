@@ -174,8 +174,10 @@ MODULE_OBJS += \
 	base/gfx/xfile_loader.o \
 	base/gfx/xframe_node.o \
 	base/gfx/xmaterial.o \
+	base/gfx/xmath.o \
 	base/gfx/xmesh.o \
 	base/gfx/xmodel.o \
+	base/gfx/xskinmesh.o \
 	base/gfx/xskinmesh_loader.o \
 	base/gfx/opengl/base_surface_opengl3d.o \
 	base/gfx/opengl/base_render_opengl3d.o \

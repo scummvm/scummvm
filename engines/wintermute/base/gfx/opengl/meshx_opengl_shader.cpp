@@ -98,7 +98,7 @@ bool XMeshOpenGLShader::render(XModel *model) {
 		}
 
 		// wme does not seem to care about specular or emissive light values
-		Math::Vector4d diffuse(_materials[materialIndex]->_diffuse.data);
+		Math::Vector4d diffuse(_materials[materialIndex]->_material._diffuse._data);
 		_shader->setUniform("diffuse", diffuse);
 		_shader->setUniform("ambient", diffuse);
 

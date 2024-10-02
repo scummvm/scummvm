@@ -182,13 +182,6 @@ bool FrameNode::loadFromXData(const Common::String &filename, XModel *model, XFi
 			model->_ticksPerSecond = xobj->getXAnimTicksPerSecondObject()->_animTicksPerSecond;
 			return true;
 		}
-	} else if (objectType == kXClassMaterial) {
-		MaterialReference materialReference;
-		xobj->getName(materialReference._name);
-		materialReference._material = new Material(_gameRef);
-		materialReference._material->loadFromX(xobj, filename);
-		materialReferences.push_back(materialReference);
-		return true;
 	}
 
 	return true;

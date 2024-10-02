@@ -28,23 +28,28 @@
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/gfx/skin_mesh_helper.h"
 #include "engines/wintermute/base/gfx/xskinmesh_loader.h"
+#include "engines/wintermute/base/gfx/xskinmesh.h"
 #include "engines/wintermute/base/gfx/xfile_loader.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-SkinMeshHelper::SkinMeshHelper(XSkinMeshLoader *mesh) {
-	_mesh = mesh;
+SkinMeshHelper::SkinMeshHelper(XSkinMeshLoader *meshLoader, DXMesh *mesh, DXSkinInfo *skinInfo) {
+	_mesh = meshLoader;
+	_dxmesh = mesh;
+	_skinInfo = skinInfo;
 }
 
 //////////////////////////////////////////////////////////////////////////
 SkinMeshHelper::~SkinMeshHelper() {
 	delete _mesh;
+	delete _dxmesh;
+	delete _skinInfo;
 }
 
 //////////////////////////////////////////////////////////////////////////
 uint SkinMeshHelper::getNumFaces() {
-	return _mesh->_meshObject->_numFaces;
+	return _dxmesh->getNumFaces();
 }
 
 //////////////////////////////////////////////////////////////////////////
