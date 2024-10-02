@@ -81,6 +81,8 @@ const struct GameOpt {
 	{ GUIO_RENDERC64,			"c64" },
 	{ GUIO_RENDERVGAGREY,		"vgaGray" },
 	{ GUIO_RENDERPC98_8C,		"pc98-8c" },
+	{ GUIO_RENDERWIN_256C,		"win256c" },
+	{ GUIO_RENDERWIN_16C,		"win16c" },
 
 	{ GUIO_GAMEOPTIONS1, "gameOption1" },
 	{ GUIO_GAMEOPTIONS2, "gameOption2" },

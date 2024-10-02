@@ -55,6 +55,8 @@ const RenderModeDescription g_renderModes[] = {
 	{ "zx", "ZX Spectrum", kRenderZX },
 	{ "c64", "Commodore 64", kRenderC64 },
 	{ "vgaGrey", _s("VGA Grey Scale"), kRenderVGAGrey },
+	{ "win256c", _s("Windows (256 Colors)"), kRenderWin256c},
+	{ "win16c", _s("Windows (16 Colors)"), kRenderWin16c},
 	{nullptr, nullptr, kRenderDefault}
 };
 
@@ -87,6 +89,8 @@ static const RenderGUIOMapping s_renderGUIOMapping[] = {
 	{ kRenderC64,			GUIO_RENDERC64 },
 	{ kRenderVGAGrey,		GUIO_RENDERVGAGREY },
 	{ kRenderPC98_8c,		GUIO_RENDERPC98_8C },
+	{ kRenderWin256c,		GUIO_RENDERWIN_16C },
+	{ kRenderWin16c,		GUIO_RENDERWIN_256C },
 };
 
 DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Hercules Green", "lowres")
