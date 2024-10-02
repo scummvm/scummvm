@@ -10226,7 +10226,7 @@ msgstr "* Ctrl+F와 Ctrl+G는 충돌이나"
 
 #: engines/scumm/help.cpp:110
 msgid "  ctrl-g are not recommended"
-msgstr "  충돌을 일으킬 수 있으므로"
+msgstr "  게임 작동에 문제를 일으킬 수"
 
 #: engines/scumm/help.cpp:111
 msgid "  since they may cause crashes"
