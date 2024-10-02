@@ -172,15 +172,15 @@ void DrillerEngine::drawCPCUI(Graphics::Surface *surface) {
 
 	int score = _gameStateVars[k8bitVariableScore];
 	drawStringInSurface(_currentArea->_name, 200, 185, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 150, 145, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 150, 153, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 150, 161, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 151, 145, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 151, 153, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 151, 161, front, back, surface);
 	if (_playerHeightNumber >= 0)
 		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 54, 161, front, back, surface);
 	else
 		drawStringInSurface(Common::String::format("%s", "J"), 54, 161, front, back, surface);
 
-	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 46, 145, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 47, 145, front, back, surface);
 	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 44, 153, front, back, surface);
 	drawStringInSurface(Common::String::format("%07d", score), 239, 129, front, back, surface);
 
@@ -188,7 +188,7 @@ void DrillerEngine::drawCPCUI(Graphics::Surface *surface) {
 	getTimeFromCountdown(seconds, minutes, hours);
 	drawStringInSurface(Common::String::format("%02d", hours), 209, 8, front, back, surface);
 	drawStringInSurface(Common::String::format("%02d", minutes), 232, 8, front, back, surface);
-	drawStringInSurface(Common::String::format("%02d", seconds), 254, 8, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", seconds), 255, 8, front, back, surface);
 
 	Common::String message;
 	int deadline;
