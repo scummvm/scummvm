@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-01 14:21+0000\n"
+"PO-Revision-Date: 2024-10-02 14:10+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -1054,7 +1054,7 @@ msgstr "오른쪽"
 
 #: gui/gui-manager.cpp:200
 msgid "Backspace"
-msgstr "백스페이스"
+msgstr "Backspace 키"
 
 #: gui/gui-manager.cpp:206
 msgid "Delete Character"
@@ -3234,7 +3234,7 @@ msgstr "가상 키보드 전환"
 #: engines/scumm/help.cpp:102 engines/scumm/help.cpp:103
 #: engines/scumm/help.cpp:104
 msgid "Alt"
-msgstr "알트"
+msgstr "Alt 키"
 
 #: dists/android.strings.xml.cpp:48
 #: backends/platform/libretro/src/libretro-options-widget.cpp:222
@@ -6226,8 +6226,8 @@ msgstr ""
 "일반 미디 장치를 사용하는 것 같지만,\n"
 "게임은 롤랜드 MT32 미디만 지원합니다.\n"
 "롤랜드 MT32 악기를 일반 미디 악기에\n"
-"매핑하려고 합니다. 일부 트랙이 잘못\n"
-"들릴 가능성도 있습니다."
+"매핑하려고 합니다. 일부 트랙 사운드가\n"
+"잘못 들릴 가능성도 있습니다."
 
 #: engines/agos/midi.cpp:316
 #, c-format
@@ -6238,7 +6238,7 @@ msgid ""
 msgstr ""
 "AdLib 악기 정의 파일 %s을(를) 찾을 수 없습니다.\n"
 "이 파일들이 없다면,\n"
-"음악이 원래 게임과 같은 소리가 나지 않습니다."
+"음악이 원래 게임과 같은 사운드가 나오지 않습니다."
 
 #: engines/agos/midi.cpp:374
 #, c-format
@@ -6260,7 +6260,7 @@ msgid ""
 msgstr ""
 "AdLib 악기 정의 파일 %s 또는 %s을(를) 찾을 수 없습니다.\n"
 "이 파일 중 하나가 없으면,\n"
-"음악이 원래 게임과 같은 소리가 나지 않습니다."
+"음악이 원래 게임과 같은 사운드가 나오지 않습니다."
 
 #: engines/ags/ags.cpp:152
 msgid ""
@@ -6943,10 +6943,8 @@ msgid "Exit Sony intro screen"
 msgstr ""
 
 #: engines/cine/metaengine.cpp:283
-#, fuzzy
-#| msgid "Select SoundFont"
 msgid "Select option / Click in game"
-msgstr "SoundFont 선택"
+msgstr "옵션 선택 / 게임 내 클릭"
 
 #: engines/cine/metaengine.cpp:290
 #, fuzzy
@@ -7256,11 +7254,11 @@ msgstr "개체, 옵션, 성경 인용문에 대해 TTS를 활성화"
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Prerecorded sounds"
-msgstr ""
+msgstr "미리 녹음된 사운드"
 
 #: engines/freescape/metaengine.cpp:43
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
-msgstr ""
+msgstr "PC 스피커 에뮬레이션 대신 고품질 사전 녹음된 사운드를 사용"
 
 #: engines/freescape/metaengine.cpp:53
 msgid "Extended timer"
@@ -7390,10 +7388,8 @@ msgstr "메뉴"
 
 #: engines/freescape/games/dark/dark.cpp:203
 #: engines/freescape/games/driller/driller.cpp:139
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Sound"
-msgstr "음소거 전환"
+msgstr "사운드 전환"
 
 #: engines/freescape/games/dark/dark.cpp:209
 #: engines/freescape/games/driller/driller.cpp:145
@@ -8391,7 +8387,7 @@ msgstr "오프닝 동영상 중에 디지털 사운드트랙을 재생"
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
-msgstr "선택하면 게임은 인트로에서 디지털 사운드트랙을 사용합니다. 그렇지 않으면, "
+msgstr "선택하면, 게임은 인트로에서 디지털 사운드트랙을 사용합니다. 그렇지 않으면, "
 "미디 음악을 재생합니다."
 
 #: engines/made/metaengine.cpp:128
@@ -9480,7 +9476,7 @@ msgid ""
 msgstr ""
 "AdLib 악기 정의 파일 %s 및 %s를 찾을 수 없습니다.\n"
 "이 파일이 없으면,\n"
-"음악이 원래 게임과 같은 소리가 나지 않습니다."
+"음악이 원래 게임과 같은 사운드가 나오지 않습니다."
 
 #: engines/saga/saga.cpp:404
 msgid "Error loading game resources."
@@ -9492,7 +9488,7 @@ msgstr "EGA 디더링 패스 건너뛰기 (풀컬러 배경화면)"
 
 #: engines/sci/detection_options.h:34
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
-msgstr "EGA게임의 디더링 패스를 건너뛰고 그래픽이 풀 컬러로 표시됩니다"
+msgstr "EGA 게임에서 디더링 패스를 건너뛰고, 그래픽은 풀컬러로 표시"
 
 #: engines/sci/detection_options.h:45
 msgid "Enable high resolution graphics"
@@ -9500,31 +9496,31 @@ msgstr "고해상도 그래픽 사용"
 
 #: engines/sci/detection_options.h:46
 msgid "Enable high resolution graphics/content"
-msgstr "고해상도 그래픽/컨텐츠를 사용합니다"
+msgstr "고해상도 그래픽/컨텐츠를 활성화"
 
 #: engines/sci/detection_options.h:57
 msgid "Enable black-lined video"
-msgstr "비디오에 검은 선 표시"
+msgstr "비디오에 검은 선 활성화"
 
 #: engines/sci/detection_options.h:58
 msgid "Draw black lines over videos to increase their apparent sharpness"
-msgstr "선명도를 높이기 위해 비디오 위에 검은 선을 그립니다"
+msgstr "선명도를 높이기 위해 비디오 위에 검은 선을 그림"
 
 #: engines/sci/detection_options.h:70
 msgid "Use high-quality video scaling"
-msgstr "고품질 비디오 크기조절 사용"
+msgstr "고품질 비디오 크기 조정 사용"
 
 #: engines/sci/detection_options.h:71
 msgid "Use linear interpolation when upscaling videos, where possible"
-msgstr "비디오 크기조절 할때 가능하면 선형 필터링을 사용"
+msgstr "비디오 크기 조정 시, 가능하면 선형 필터링을 사용"
 
 #: engines/sci/detection_options.h:83
 msgid "Use high-quality \"LarryScale\" cel scaling"
-msgstr "고품질 \"래리스케일\" 셀 크기조절 사용"
+msgstr "고품질 \"래리스케일\" 셀 크기 조정 사용"
 
 #: engines/sci/detection_options.h:84
 msgid "Use special cartoon scaler for drawing character sprites"
-msgstr "캐릭터를 표시할 때 특별한 카툰 크기조절 방식을 사용합니다"
+msgstr "캐릭터 스프라이트를 그리기 위해 때 특별한 카툰 크기 조정 방식을 사용"
 
 #: engines/sci/detection_options.h:119
 msgid "Use CD audio"
@@ -9532,7 +9528,7 @@ msgstr "CD 오디오 사용"
 
 #: engines/sci/detection_options.h:120
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr "사용 가능할 경우 게임 오디오 대신 CD 오디오를 사용합니다"
+msgstr "사용 가능할 경우, 게임 오디오 대신 CD 오디오를 사용"
 
 #: engines/sci/detection_options.h:132
 msgid "Use Windows cursors"
@@ -9541,24 +9537,24 @@ msgstr "윈도우즈 커서 사용"
 #: engines/sci/detection_options.h:133
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
-msgstr "도스 커서 대신에 윈도우즈 커서(작은 크기, 흑백)를 사용합니다"
+msgstr "도스 커서 대신에 윈도우즈 커서 (작고 흑백)를 사용"
 
 #: engines/sci/detection_options.h:145
 msgid "Use silver cursors"
-msgstr "실버 커서 사용"
+msgstr "은색 커서 사용"
 
 #: engines/sci/detection_options.h:146
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
-msgstr "금색 커서 대신에 은색 대체 커서 세트를 사용합니다"
+msgstr "일반적인 금색 커서 대신 대체 은색 커서 세트를 사용"
 
 #: engines/sci/detection_options.h:158
 msgid "Enable content censoring"
-msgstr "컨텐츠 검열 사용"
+msgstr "컨텐츠 검열 활성화"
 
 #: engines/sci/detection_options.h:159
 msgid "Enable the game's built-in optional content censoring"
-msgstr "컨텐츠 검열에 대한 내장 게임 옵션을 사용합니다"
+msgstr "게임 내장 옵션 콘텐츠 검열 활성화"
 
 #: engines/sci/detection_options.h:171
 msgid "Upscale videos"
@@ -9566,7 +9562,7 @@ msgstr "비디오 업스케일"
 
 #: engines/sci/detection_options.h:172
 msgid "Upscale videos to double their size"
-msgstr "실제 사이즈의 두 배 크기로 비디오를 업스케일합니다"
+msgstr "실제 사이즈의 두 배 크기로 비디오를 업스케일"
 
 #: engines/sci/detection_options.h:184
 msgid "Use RGB rendering"
@@ -9574,35 +9570,33 @@ msgstr "RGB 렌더링 사용"
 
 #: engines/sci/detection_options.h:185
 msgid "Use RGB rendering to improve screen transitions"
-msgstr "화면 전환효과를 개선하기위해 RGB 렌더링을 사용합니다"
+msgstr "RGB 렌더링을 사용하여 화면 전환을 개선"
 
 #: engines/sci/detection_options.h:197
 msgid "Use per-resource modified palettes"
-msgstr "리소스별 변경된 팔레트 사용"
+msgstr "리소스별 수정된 팔레트 사용"
 
 #: engines/sci/detection_options.h:198
 msgid "Use custom per-resource palettes to improve visuals"
-msgstr "비주얼 개선을 위해 리소스별 커스텀 팔레트 사용"
+msgstr "커스텀 리소스별 팔레트를 사용하여 시각적 효과를 개선"
 
 #: engines/sci/detection_options.h:210
 msgid "Enable bearded musicians"
-msgstr "턱수염이 난 음악가를 활성화"
+msgstr "수염을 기른 음악가를 활성화"
 
 #: engines/sci/detection_options.h:211
 msgid "Enable graphics that were disabled for legal reasons"
-msgstr "법적인 문제로 비활성화되었던 그래픽을 활성화"
+msgstr "법적 이유로 비활성화된 그래픽을 활성화"
 
 #: engines/sci/detection_options.h:239
 msgid "MIDI mode:"
-msgstr "MIDI 모드:"
+msgstr "미디 모드:"
 
 #: engines/sci/detection_options.h:240
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
-msgstr ""
-"외장 MIDI 장치를 사용하는 경우 (USB-MIDI 등), 여기서 사용하는 장치를 선택하십"
-"시오"
+msgstr "외부 미디 장치(예: USB-미디)를 사용하는 경우, 여기에서 장치를 선택"
 
 #: engines/sci/detection_options.h:245
 msgid "Standard (GM / MT-32)"
@@ -9610,34 +9604,31 @@ msgstr "일반 (GM / MT-32)"
 
 #: engines/sci/detection_options.h:249
 msgid "Roland D-110 / D-10 / D-20"
-msgstr "Roland D-110 / D-10 / D-20"
+msgstr "롤랜드 D-110 / D-10 / D-20"
 
 #: engines/sci/detection_options.h:253
 msgid "Yamaha FB-01"
-msgstr "Yamaha FB-01"
+msgstr "야마하 FB-01"
 
 #: engines/sci/detection_options.h:257
 msgid "Casio MT-540"
-msgstr ""
+msgstr "카시오 MT-540"
 
 #: engines/sci/detection_options.h:261
 msgid "Casio CT-460 / CSM-1"
-msgstr ""
+msgstr "카시오 CT-460 / CSM-1"
 
 #: engines/sci/detection_tables.h:1419 engines/sci/detection_tables.h:1430
-#, fuzzy
-#| msgid "Failed to initialize resources"
 msgid "Game does not contain menu resources"
-msgstr "리소스 초기화 실패"
+msgstr "게임에는 메뉴 리소스가 포함되어 있지 않음"
 
 #: engines/sci/detection_tables.h:4594
 msgid "This demo uses an unimplemented version of Robot videos"
-msgstr ""
+msgstr "이 데모에서는 구현되지 않은 버전의 로봇 비디오를 사용"
 
 #: engines/sci/detection_tables.h:4649
 msgid "Incomplete game detected. You have to copy data from all the CDs."
-msgstr ""
-"불완전한 게임이 감지되었습니다. 모든 CD로부터 데이터를 복사해야 합니다."
+msgstr "완료되지 않은 게임이 감지되었습니다. 모든 CD에서 데이터를 복사해야 합니다."
 
 #: engines/sci/engine/kfile.cpp:491 engines/sci/metaengine.cpp:283
 msgid "(Autosave)"
@@ -9646,7 +9637,7 @@ msgstr "(자동 저장)"
 #: engines/sci/engine/kgraphics32.cpp:361
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
-msgstr "외부 뷰어를 사용해 게임 도움말 파일을 열어 주세요: %s"
+msgstr "게임의 도움말 파일을 열려면 외부 뷰어를 사용: %s"
 
 #: engines/sci/engine/kmisc.cpp:894
 msgid ""
@@ -9654,12 +9645,12 @@ msgid ""
 "There exists some dummy logic for now, where opponent actions are chosen "
 "randomly"
 msgstr ""
-"The Poker 로직은 외부 DLL에 하드코딩되어 있으며, 아직 구현되지 않았습니다. 현"
-"재는 무작위로 상대 동작을 정하는 임시 로직이 존재합니다"
+"포커 로직은 외부 DLL에 하드코딩되어 있으며 아직 구현되지 않았습니다. 지금은 "
+"상대의 행동이 무작위로 선택되는 더미 로직이 존재"
 
 #: engines/sci/engine/savegame.cpp:1455
 msgid "The format of this saved game is obsolete, unable to load it"
-msgstr "이 저장된 게임의 형식은 오래되어서 불러올 수 없음"
+msgstr "이 저장된 게임의 형식은 오래되어서, 불러올 수 없음"
 
 #: engines/sci/engine/savegame.cpp:1457
 #, c-format
@@ -9676,11 +9667,11 @@ msgstr "이 저장된 게임은 다른 버전의 게임으로 생성되었으므
 #, c-format
 msgid ""
 "Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
-msgstr "최대 색상이 8비트인 시스템에서 %d비트 색상 영상을 재생할 수 없습니다"
+msgstr "최대 색심도가 8 bpp인 시스템에서 %d bpp 비디오를 재생할 수 없음"
 
 #: engines/sci/metaengine.cpp:212
 msgid "SCI32 support not compiled in"
-msgstr "SCI32 지원이 컴파일 되지 않음"
+msgstr "SCI32 지원이 컴파일 되지 않았음"
 
 #: engines/sci/resource/resource.cpp:858
 msgid ""
@@ -9688,9 +9679,9 @@ msgid ""
 "not work properly. Please check the console for more information, and verify "
 "that your game files are valid."
 msgstr ""
-"일부 게임 리소스가 존재하지 않거나 손상된 것을 감지했습니다. 일부 게임 기능"
-"이 정상적으로 동작하지 않을 수 있습니다. 콘솔 창을 확인해 추가 정보를 확인하"
-"고 게임 파일이 정상인지 확인해 주십시오."
+"누락되거나 손상된 게임 리소스가 감지되었습니다. 일부 게임 기능이 제대로 "
+"작동하지 않을 수 있습니다. 자세한 내용은 콘솔 창을 확인하고 게임 파일이 "
+"유효한지 확인하세요."
 
 #: engines/sci/sci.cpp:424
 msgid ""
@@ -9700,10 +9691,11 @@ msgid ""
 "not always render properly or reflect the actual game speech. This is not a "
 "ScummVM bug -- it is a problem with the game's assets."
 msgstr ""
-"King's Quest 7의 자막 기능은 미완성이며 제품 버전에 포함되지 않았습니다. "
-"ScummVM은 자막을 활성화할 수 있지만, 정상적으로 렌더링되지 않거나 실제 게임 "
-"음성과 차이가 발생할 수 있습니다. 이것은 ScummVM의 버그가 아니며 게임 애셋 파"
-"일의 문제입니다."
+"자막은 활성화되었지만 킹스 퀘스트 7의 자막은 미완성 상태였고 게임의 정식 "
+"버전에서는 비활성화되었습니다. ScummVM은 자막을 다시 활성화할 수 있게 "
+"해주지만, 원래 게임에서 제거되었기 때문에 항상 제대로 렌더링되지 않거나 실제 "
+"게임 음성을 반영하지 않습니다. 이것은 ScummVM 버그가 아니라 게임 자산의 "
+"문제입니다."
 
 #: engines/sci/sci.cpp:448
 msgid ""
@@ -9717,13 +9709,13 @@ msgid ""
 "place it in the game folder. Without this patch, General MIDI music for this "
 "game will sound badly distorted."
 msgstr ""
-"사운드 장치로 General MIDI를 선택했습니다. Sierra는 \"General MIDI Utility\" "
-"패치를 통해 이 게임의 General MIDI를 지원합니다. 이 게임에서 MIDI 음악을 즐기"
-"기 위해서는 이 패치를 적용해 주십시오. 포함된 *.PAT 파일을 모두 ScummVM의 "
-"Extras 폴더에 압축 해제하면 자동적으로 알맞은 패치가 적용됩니다. 또는 패치에 "
-"포함된 READ.ME 파일의 설명에 따라 알맞은 *.PAT 파일을 4.PAT로 이름을 변경한 "
-"뒤 게임 폴더에 넣을 수도 있습니다. 이 패치를 사용하지 않으면 이 게임의 "
-"General MIDI 음악이 심하게 왜곡되어 들립니다."
+"일반 미디를 사운드 장치로 선택했습니다. 시에라는 \"일반 미디 유틸리티\"에서 "
+"이 게임의 일반 미디에 대한 사후 마켓 지원을 제공했습니다. 이 패치를 적용하여 "
+"이 게임에서 미디 음악을 즐기세요. 패치를 받으면 포함된 모든 *.PAT 파일을 "
+"ScummVM extras 폴더에 압축 해제하면 ScummVM에서 자동으로 해당 패치를 "
+"추가합니다. 또는 패치에 포함된 READ.ME 파일의 지침에 따라 연관된 *.PAT "
+"파일의 이름을 4.PAT로 변경하여 게임 폴더에 넣을 수 있습니다. 이 패치가 "
+"없으면 이 게임의 일반 미디 음악이 심하게 왜곡된 사운드가 들립니다."
 
 #: engines/sci/sci.cpp:540
 msgid "Download patch"
@@ -9734,7 +9726,7 @@ msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
 msgstr "(또는 '패치 다운로드' 버튼을 클릭하세요. 하지만 참고 - 다운로드만 가능하며, "
-"거기서 계속 진행해야 합니다)\n"
+"거기서 계속 진행해야 함)\n"
 
 #: engines/sci/sci.cpp:548
 msgid ""
@@ -9759,10 +9751,10 @@ msgid ""
 "was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
 "Example: 'qfg2-thief.sav'."
 msgstr ""
-"ScummVM에 저장된 캐릭터는 자동으로 표시됩니다. 원본 인터프리터에서 저장한 캐"
-"릭터는 ScummVM의 저장 파일 디렉토리에 넣어야 합니다. 이 때 저장한 게임에 따"
-"라 접두사를 붙여야 합니다. Quest for Glory 1의 경우 'qfg1-', Quest for Glory "
-"2의 경우 'qfg2-' 입니다. 예: 'qfg2-thief.sav'."
+"ScummVM에 저장된 캐릭터는 자동으로 표시됩니다. 원래 해석기에 저장된 캐릭터 "
+"파일은 ScummVM의 저장된 게임 디렉토리에 넣어야 하며 저장된 게임에 따라 "
+"접두사를 추가해야 합니다. Quest for Glory 1의 경우 'qfg1-', Quest for Glory "
+"2의 경우 'qfg2-'. 예: 'qfg2-thief.sav'."
 
 #: engines/sci/sound/music.cpp:173
 msgid ""
@@ -9789,15 +9781,15 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Sierra가 일부 게임 용 추가 패치로 배포한 몇몇 오디오\n"
-"드라이버는 원본 게임을 설치할 때 함께 설치되지\n"
-"않았을 수 있습니다.\n"
+"일부 오디오 드라이버(적어도 일부 게임의 경우)는 시에라에서\n"
+"사후 시장 패치로 제공되었으므로 원래 게임 설정의 일부로\n"
+"설치되지 않았을 수 있습니다.\n"
 "\n"
-"이 파일들을 게임 데이터 디렉토리로 복사해 주십시오.\n"
+"이 파일을 게임 데이터 디렉토리에 복사하세요.\n"
 "\n"
-"다만 이 파일들은 패치 후의 리소스 번들 내부에만\n"
-"포함되어 있을 가능성이 있습니다.\n"
-"이 경우 원본 Sierra 패치를 적용해야 할 수도 있습니다.\n"
+"하지만 해당 파일은 개별적으로 사용할 수 없고 (패치된)\n"
+"리소스 번들의 콘텐츠로만 사용할 수 있습니다.\n"
+"그런 경우 원래 시에라 패치를 적용해야 할 수도 있습니다.\n"
 "\n"
 
 #: engines/scumm/detection_internal.h:384
@@ -9818,10 +9810,8 @@ msgstr ""
 
 #. I18N: Creates new online session for multiplayer
 #: engines/scumm/dialog-createsession.cpp:37
-#, fuzzy
-#| msgid "Create a new saved game"
 msgid "Create a new game session"
-msgstr "새로운 게임 저장 파일을 생성합니다"
+msgstr "새 게임 세션을 만들기"
 
 #. I18N: Name of the online game session
 #: engines/scumm/dialog-createsession.cpp:40
@@ -9831,27 +9821,23 @@ msgstr "게임 이름:"
 #. I18N: The user's name for online
 #: engines/scumm/dialog-createsession.cpp:44
 #: engines/scumm/dialog-sessionselector.cpp:60
-#, fuzzy
-#| msgid "Name:"
 msgid "Your Name:"
-msgstr "제목:"
+msgstr "사용자 이름:"
 
 #. I18N: Button, start hosting online multiplayer game
 #: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4064
 msgid "Host"
-msgstr ""
+msgstr "호스트"
 
 #. I18N: Retrieving list of online multiplayer games
 #: engines/scumm/dialog-sessionselector.cpp:51
-#, fuzzy
-#| msgid "Saving game..."
 msgid "Querying games..."
-msgstr "게임 저장 중..."
+msgstr "게임 쿼리 중..."
 
 #. I18N: Join online multiplayer game
 #: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4064
 msgid "Join"
-msgstr ""
+msgstr "참여"
 
 #. I18N: Online multiplayer games were found
 #: engines/scumm/dialog-sessionselector.cpp:118
@@ -9892,11 +9878,11 @@ msgstr "음성과 자막"
 
 #: engines/scumm/dialogs.cpp:1025
 msgid "Select a Proficiency Level."
-msgstr "숙련도 레벨을 고르세요."
+msgstr "숙련도를 선택하세요."
 
 #: engines/scumm/dialogs.cpp:1027
 msgid "Refer to your Loom(TM) manual for help."
-msgstr "도움이 필요하시면 Loom(TM) 매뉴얼을 참조해 주세요."
+msgstr "도움이 필요하면 Loom(TM) 매뉴얼을 참조하세요."
 
 #: engines/scumm/dialogs.cpp:1031
 msgid "Practice"
@@ -9908,45 +9894,42 @@ msgstr "전문가"
 
 #: engines/scumm/dialogs.cpp:1139
 msgid "Enhancements:"
-msgstr ""
+msgstr "강화:"
 
 #: engines/scumm/dialogs.cpp:1144
-#, fuzzy
-#| msgid "Use original menus"
 msgid "Fix original bugs"
-msgstr "원본 메뉴 사용"
+msgstr "원본 버그 수정"
 
 #: engines/scumm/dialogs.cpp:1145
 msgid ""
 "Fixes bugs which were present in the original release, and noticeable "
 "graphical/audio glitches."
-msgstr ""
+msgstr "원래 릴리스에 존재했던 버그와 눈에 띄는 그래픽/오디오 문제를 수정했습니다."
 
 #: engines/scumm/dialogs.cpp:1148
 msgid "Audio-visual improvements"
-msgstr ""
+msgstr "시청각적 개선"
 
 #: engines/scumm/dialogs.cpp:1149
 msgid ""
 "Makes adjustments not related to bugs for certain audio and graphics "
 "elements (e.g. version consistency changes)."
-msgstr ""
+msgstr "특정 오디오 및 그래픽 요소(예: 버전 일관성 변경)에 대한 버그와 관련 없는 "
+"조정을 수행합니다."
 
 #: engines/scumm/dialogs.cpp:1152
-#, fuzzy
-#| msgid "Enable restored content"
 msgid "Restored content"
-msgstr "복원된 컨텐츠 활성화"
+msgstr "복원된 콘텐츠"
 
 #: engines/scumm/dialogs.cpp:1153
 msgid ""
 "Restores dialogs, graphics, and audio elements which were originally cut in "
 "the original release."
-msgstr ""
+msgstr "원래 릴리스에서 삭제된 대화, 그래픽, 오디오 요소를 복원합니다."
 
 #: engines/scumm/dialogs.cpp:1156
 msgid "Modern UI/UX adjustments"
-msgstr ""
+msgstr "현대 UI/UX 조정"
 
 #: engines/scumm/dialogs.cpp:1157
 msgid ""
@@ -9957,9 +9940,8 @@ msgstr ""
 "사운드 로딩 화면을 제거하고 초기 저장 메뉴를 더욱 빠르게 만듭니다."
 
 #: engines/scumm/dialogs.cpp:1181 engines/scumm/metaengine.cpp:725
-#, fuzzy
 msgid "Enable the original GUI and Menu"
-msgstr "원본 오디오 CD 트랙을 활성화합니다"
+msgstr "원본 GUI 및 메뉴 활성화"
 
 #: engines/scumm/dialogs.cpp:1182
 msgid ""
@@ -9979,18 +9961,17 @@ msgstr "서곡 타이밍:"
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
-msgstr ""
-"대체 음악을 사용할 때 Lucasfilm 및 Loom 로고 유형을 사용하여 서곡이 장면으로 "
-"바뀌는 시간을 조정합니다."
+msgstr "대체 음악을 사용할 경우, 서곡이 루카스필름과 룸 로고가 있는 장면으로 바뀌는 "
+"시간을 조정합니다."
 
 #: engines/scumm/dialogs.cpp:1391
 msgid "Music Quality:"
-msgstr ""
+msgstr "음악 품질:"
 
 #: engines/scumm/dialogs.cpp:1395
 msgid ""
 "Select music quality. The original lets you choose this from the Game menu."
-msgstr ""
+msgstr "음악 품질을 선택하세요. 원본은 게임 메뉴에서 선택할 수 있습니다."
 
 #: engines/scumm/dialogs.cpp:1396
 msgid ""
@@ -9998,43 +9979,43 @@ msgid ""
 "detection and speed tests, but also allows changes through the Game menu to "
 "some degree."
 msgstr ""
+"음악 품질을 선택합니다. 원본은 하드웨어 감지 및 속도 테스트를 통해 기본 "
+"설정을 결정하지만 게임 메뉴를 통해 어느 정도 변경할 수도 있습니다."
 
 #: engines/scumm/dialogs.cpp:1483 engines/scumm/dialogs.cpp:1484
 msgid "auto"
-msgstr ""
+msgstr "자동"
 
 #: engines/scumm/dialogs.cpp:1483
 msgid "Low"
-msgstr ""
+msgstr "낮음"
 
 #: engines/scumm/dialogs.cpp:1483
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:75
-#, fuzzy
-#| msgid "Medium"
 msgid "Medium"
 msgstr "중간"
 
 #: engines/scumm/dialogs.cpp:1483
 msgid "High"
-msgstr ""
+msgstr "높은"
 
 #: engines/scumm/dialogs.cpp:1484
 msgid "Good"
-msgstr ""
+msgstr "좋음"
 
 #: engines/scumm/dialogs.cpp:1484
 msgid "Better"
-msgstr ""
+msgstr "더 좋음"
 
 #: engines/scumm/dialogs.cpp:1485
 #, c-format
 msgid "Hardware Rating: %s   -   "
-msgstr ""
+msgstr "하드웨어 등급: %s   -   "
 
 #: engines/scumm/dialogs.cpp:1485
 #, c-format
 msgid "Quality Selection: %s"
-msgstr ""
+msgstr "품질 선택: %s"
 
 #: engines/scumm/dialogs.cpp:1499
 msgid "Playback Adjust:"
@@ -10045,10 +10026,12 @@ msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
 msgstr ""
+"CD 오디오 트랙에서 사운드를 재생할 때, 사운드의 시작 위치를 이만큼 "
+"조정합니다. 잘못된 사운드의 비트를 자주 듣는 경우 이 옵션을 사용합니다."
 
 #: engines/scumm/dialogs.cpp:1583
 msgid "Intro Adjust:"
-msgstr ""
+msgstr "인트로 조정:"
 
 #: engines/scumm/dialogs.cpp:1587
 msgid ""
@@ -10056,10 +10039,12 @@ msgid ""
 "music gets cut off prematurely, or if you are unhappy with the way the music "
 "syncs up with the intro."
 msgstr ""
+"인트로 트랙을 재생할 때는 이 지점부터 재생합니다. 음악이 일찍 끊어지거나, "
+"음악이 인트로와 동기화되는 방식에 만족하지 못하는 경우 이 옵션을 사용합니다."
 
 #: engines/scumm/dialogs.cpp:1596
 msgid "Outlook Adjust:"
-msgstr ""
+msgstr "전망 조정:"
 
 #: engines/scumm/dialogs.cpp:1600
 msgid ""
@@ -10067,6 +10052,9 @@ msgid ""
 "track at which it starts playing. Use this if the music is cut off, or if "
 "you hear part of the previous music."
 msgstr ""
+"전망 음악은 인트로 트랙의 일부입니다. 트랙에서 재생이 시작되는 위치를 "
+"조정합니다. 음악이 끊어지거나 이전 음악의 일부가 들리는 경우 이 기능을 "
+"사용합니다."
 
 #: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:716
 msgid "Load modded audio"
@@ -10076,75 +10064,75 @@ msgstr "개조된 오디오 불러오기"
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
-msgstr ""
+msgstr "가능하다면, 음악, 사운드 효과, 음성 클립을 수정된 오디오 파일로 교체하세요."
 
 #: engines/scumm/dialogs.cpp:1704
 msgid "Multiplayer Server:"
-msgstr ""
+msgstr "멀티플레이어 서버:"
 
 #: engines/scumm/dialogs.cpp:1710
-#, fuzzy
 msgid "Online Server:"
-msgstr "서버:"
+msgstr "온라인 서버:"
 
 #: engines/scumm/dialogs.cpp:1711
 msgid ""
 "Address of the server to connect to for online play.  It must start with "
 "either \"https://\" or \"http://\" schemas."
-msgstr ""
+msgstr "온라인 플레이를 위해 연결할 서버의 주소입니다.  \"https://\" 또는 \"http://\""
+" 스키마로 시작해야 합니다."
 
 #: engines/scumm/dialogs.cpp:1713
 msgid "Enable online competitive mods"
-msgstr ""
+msgstr "온라인 경쟁 개조 활성화"
 
 #: engines/scumm/dialogs.cpp:1713
 msgid "Enables custom-made modifications intended for online competitive play."
-msgstr ""
+msgstr "온라인 경쟁 플레이에 맞춰 맞춤형 수정이 가능합니다."
 
 #: engines/scumm/dialogs.cpp:1717
 msgid "Enable connection to Multiplayer Server"
-msgstr ""
+msgstr "멀티플레이어 서버 연결 활성화"
 
 #: engines/scumm/dialogs.cpp:1717
 msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
-msgstr ""
+msgstr "인터넷을 통해 온라인 멀티플레이어 게임을 호스팅하고 참여할 수 있는 서버와의 "
+"연결을 전환합니다."
 
 #: engines/scumm/dialogs.cpp:1718
 msgid "Host games over LAN"
-msgstr ""
+msgstr "LAN을 통한 게임 호스팅"
 
 #: engines/scumm/dialogs.cpp:1718
 msgid "Allows the game sessions to be discovered over your local area network."
-msgstr ""
+msgstr "로컬 영역 네트워크를 통해 게임 세션을 검색할 수 있습니다."
 
 #: engines/scumm/dialogs.cpp:1721
 msgid "Generate random maps"
-msgstr ""
+msgstr "무작위 지도 생성"
 
 #: engines/scumm/dialogs.cpp:1721
 msgid "Allow random map generation (Based from Moonbase Console)."
-msgstr ""
+msgstr "무작위 맵 생성을 허용합니다. (Moonbase 콘솔 기반)"
 
 #: engines/scumm/dialogs.cpp:1723
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."
-msgstr ""
+msgstr "온라인 게임 세션을 호스팅하고 참여하기 위해 연결할 서버의 주소입니다."
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
-msgstr "자주 사용되는 키보드 명령:"
+msgstr "공통적으로 사용되는 키보드 명령:"
 
 #: engines/scumm/help.cpp:73
 msgid "Save / Load dialog"
 msgstr "저장 / 불러오기 대화 상자"
 
 #: engines/scumm/help.cpp:77
-#, fuzzy
 msgid "Selection screen"
-msgstr "테마 선택"
+msgstr "선택 화면"
 
 #: engines/scumm/help.cpp:78
 msgid "Skip line of text"
@@ -10152,11 +10140,11 @@ msgstr "대사 한 줄을 건너뜀"
 
 #: engines/scumm/help.cpp:79
 msgid "Esc"
-msgstr "Esc"
+msgstr "Esc 키"
 
 #: engines/scumm/help.cpp:80 engines/wintermute/keymapper_tables.h:2136
 msgid "Space"
-msgstr "Space"
+msgstr "Space 키"
 
 #. I18N: Drafts is set of notes in Loom to invoke spells
 #: engines/scumm/help.cpp:81 engines/scumm/help.cpp:86
@@ -10166,23 +10154,23 @@ msgstr "Space"
 #: engines/scumm/help.cpp:103 engines/scumm/help.cpp:104
 #: engines/scumm/help.cpp:190
 msgid "Ctrl"
-msgstr "Ctrl"
+msgstr "Ctrl 키"
 
 #: engines/scumm/help.cpp:81
 msgid "Load saved game 1-10"
-msgstr "저장된 게임 1-10 번 불러오기"
+msgstr "저장된 게임 1-10 번에서 불러오기"
 
 #: engines/scumm/help.cpp:82
 msgid "Save game 1-10"
-msgstr "1~10번에 저장"
+msgstr "게임 1-10 번에 저장"
 
 #: engines/scumm/help.cpp:89
 msgid "Music volume up / down"
-msgstr "음악 볼륨을 높임 / 줄임"
+msgstr "음악 볼륨 높임 / 줄임"
 
 #: engines/scumm/help.cpp:90
 msgid "Text speed slower / faster"
-msgstr "문장 속도를 느리게 / 빠르게"
+msgstr "대사 속도 느리게 / 빠르게"
 
 #: engines/scumm/help.cpp:91
 msgid "Simulate left mouse button"
@@ -10190,7 +10178,7 @@ msgstr "왼쪽 마우스 버튼을 시뮬레이트"
 
 #: engines/scumm/help.cpp:92 engines/wintermute/keymapper_tables.h:2191
 msgid "Tab"
-msgstr "Tab"
+msgstr "Tab 키"
 
 #: engines/scumm/help.cpp:92
 msgid "Simulate right mouse button"
@@ -10222,11 +10210,11 @@ msgstr "매우 빠른 모드 (*)로 실행"
 
 #: engines/scumm/help.cpp:102
 msgid "Switch between graphics filters"
-msgstr "그래픽 필터를 변경"
+msgstr "그래픽 필터 간 전환"
 
 #: engines/scumm/help.cpp:103
 msgid "Increase / Decrease scale factor"
-msgstr "확대 비율을 늘리기 / 줄이기"
+msgstr "크기 조정 요소를 늘리기 / 줄이기"
 
 #: engines/scumm/help.cpp:104
 msgid "Toggle aspect-ratio correction"
@@ -10234,15 +10222,15 @@ msgstr "화면비 교정 전환"
 
 #: engines/scumm/help.cpp:109
 msgid "* Note that using ctrl-f and"
-msgstr "* Ctrl+F와 Ctrl+G를 사용하는"
+msgstr "* Ctrl+F와 Ctrl+G를 사용은 것은"
 
 #: engines/scumm/help.cpp:110
 msgid "  ctrl-g are not recommended"
-msgstr "  것은 잘못된 게임 동작이나"
+msgstr "  충돌을 일으킬 수 있으므로"
 
 #: engines/scumm/help.cpp:111
 msgid "  since they may cause crashes"
-msgstr "  충돌을 발생시킬 수 있으므로"
+msgstr "  권장하지 않음"
 
 #: engines/scumm/help.cpp:112
 msgid "  or incorrect game behavior."
@@ -10733,6 +10721,9 @@ msgid ""
 "\tIt is recommended to enable this feature only if you incur in audio "
 "latency issues during normal gameplay."
 msgstr ""
+"게임에서 낮은 지연 오디오를 사용할 수 있게 하지만, 사운드 정확도는 "
+"떨어집니다. \t\t일반 게임 플레이 중에 오디오 지연 문제가 발생하는 경우에만 "
+"이 기능을 활성화하는 것이 좋습니다."
 
 #: engines/scumm/metaengine.cpp:745
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
@@ -10880,9 +10871,8 @@ msgstr ""
 "하며, ScummVM에도 추가되어야 합니다."
 
 #: engines/scumm/scumm.cpp:4064
-#, fuzzy
 msgid "Would you like to host or join a network play session?"
-msgstr "게임을 저장하거나 불러오시겠습니까?"
+msgstr "네트워크 플레이 세션을 호스팅하거나 참여하고 싶습니까?"
 
 #. I18N: Random map generator for Moonbase Commander
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:55
@@ -11914,7 +11904,7 @@ msgstr "발자국 사운드 재생"
 
 #: engines/ultima/metaengine.cpp:108
 msgid "Plays sound when the player moves."
-msgstr "플레이어가 움직이면 소리가 재생됩니다."
+msgstr "플레이어가 움직이면 사운드가 재생됩니다."
 
 #: engines/ultima/metaengine.cpp:118
 msgid "Enable jump to mouse position"
@@ -12009,8 +11999,8 @@ msgid ""
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
 "크루세이더 인트로 무비 파일이 없습니다. CD에서 FLICS 및 SOUND 디렉토리가 "
-"복사되었는지 확인하세요.  자세한 지침은 위키에서 확인하세요: https://wiki."
-"scummvm.org/index.php?title=Crusader:_No_Remorse."
+"복사되었는지 확인하세요.  자세한 내용은 위키에 나와 있습니다: https://wiki."
+"scummvm.org/index.php?title=Crusader:_No_Remorse"
 
 #: engines/vcruise/metaengine.cpp:42
 msgid "Improved click sensitivity"
@@ -12073,7 +12063,7 @@ msgstr "도움말 화면 표시"
 
 #: engines/vcruise/metaengine.cpp:172
 msgid "Open sound settings"
-msgstr "3DS 설정 열기"
+msgstr "사운드 설정 열기"
 
 #: engines/vcruise/metaengine.cpp:193
 msgid "Toggle sound effects on/off"
@@ -12589,7 +12579,7 @@ msgstr "어빌리티: 바람"
 
 #: engines/wintermute/keymapper_tables.h:1077
 msgid "Ability: Sound"
-msgstr "어빌리티: 소리"
+msgstr "어빌리티: 사운드"
 
 #: engines/wintermute/keymapper_tables.h:1082
 msgid "Ability: Esence"
