@@ -438,30 +438,30 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	int score = _gameStateVars[k8bitVariableScore];
-	drawStringInSurface(_currentArea->_name, 196, 185, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 150, 145, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 150, 153, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 150, 161, front, back, surface);
+	drawStringInSurface(_currentArea->_name, 197, 185, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 151, 145, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 151, 153, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 151, 161, front, back, surface);
 	if (_playerHeightNumber >= 0)
 		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 57, 161, front, back, surface);
 	else
 		drawStringInSurface(Common::String::format("%s", "J"), 57, 161, front, back, surface);
 
-	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 46, 145, front, back, surface);
-	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), _renderMode == Common::kRenderCGA ? 44 : 46, 153, front, back, surface);
-	drawStringInSurface(Common::String::format("%07d", score), 238, 129, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 47, 145, front, back, surface);
+	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), _renderMode == Common::kRenderCGA ? 44 : 47, 153, front, back, surface);
+	drawStringInSurface(Common::String::format("%07d", score), 239, 129, front, back, surface);
 
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
 	drawStringInSurface(Common::String::format("%02d", hours), 208, 8, front, back, surface);
-	drawStringInSurface(Common::String::format("%02d", minutes), 230, 8, front, back, surface);
-	drawStringInSurface(Common::String::format("%02d", seconds), 254, 8, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", minutes), 231, 8, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", seconds), 255, 8, front, back, surface);
 
 	Common::String message;
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
-		drawStringInSurface(message, 190, 177, back, front, surface);
+		drawStringInSurface(message, 191, 177, back, front, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else {
