@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-02 14:10+0000\n"
+"PO-Revision-Date: 2024-10-02 14:11+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -10222,7 +10222,7 @@ msgstr "화면비 교정 전환"
 
 #: engines/scumm/help.cpp:109
 msgid "* Note that using ctrl-f and"
-msgstr "* Ctrl+F와 Ctrl+G를 사용은 것은"
+msgstr "* Ctrl+F와 Ctrl+G는 충돌이나"
 
 #: engines/scumm/help.cpp:110
 msgid "  ctrl-g are not recommended"
