@@ -138,17 +138,22 @@ void DarkEngine::drawZXUI(Graphics::Surface *surface) {
 
 	_gfx->readFromPalette(color, r, g, b);
 	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+	uint32 transparent = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
 
 	int score = _gameStateVars[k8bitVariableScore];
 	int ecds = _gameStateVars[kVariableActiveECDs];
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 191, 141, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 191, 149, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 191, 157, front, back, surface);
+	surface->fillRect(Common::Rect(193, 140, 223, 163), back);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 191, 141, front, transparent, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 191, 149, front, transparent, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 191, 157, front, transparent, surface);
 
-	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 78, 165, front, back, surface);
-	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 78, 173, front, back, surface);
-	drawStringInSurface(Common::String::format("%07d", score), 94, 13, front, back, surface);
-	drawStringInSurface(Common::String::format("%3d%%", ecds), 190, 13, front, back, surface);
+	surface->fillRect(Common::Rect(80, 165, 95, 171), back);
+	surface->fillRect(Common::Rect(80, 172, 102, 178), back);
+	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 79, 165, front, transparent, surface);
+	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 79, 173, front, transparent, surface);
+	surface->fillRect(Common::Rect(96, 12, 151, 18), back);
+	drawStringInSurface(Common::String::format("%07d", score), 95, 13, front, transparent, surface);
+	drawStringInSurface(Common::String::format("%3d%%", ecds), 191, 13, front, back, surface);
 
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);

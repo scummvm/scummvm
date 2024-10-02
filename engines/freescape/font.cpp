@@ -25,70 +25,75 @@
 namespace Freescape {
 
 Font::Font() {
-    _backgroundColor = 0;
-    _secondaryColor = 0;
-    _kerningOffset = 0;
-    _chars.clear();
+	_backgroundColor = 0;
+	_secondaryColor = 0;
+	_kerningOffset = 0;
+	_chars.clear();
 }
 
 Font::Font(Common::Array<Graphics::ManagedSurface *> &chars) {
-    _chars = chars;
-    _backgroundColor = 0;
-    _secondaryColor = 0;
-    _kerningOffset = 0;
+	_chars = chars;
+	_backgroundColor = 0;
+	_secondaryColor = 0;
+	_kerningOffset = 0;
 }
 
 Font::~Font() {
-    /*for (Graphics::ManagedSurface *surface : _chars) {
-        surface->free();
-        delete surface;
-    }*/
+	/*for (Graphics::ManagedSurface *surface : _chars) {
+		surface->free();
+		delete surface;
+	}*/
 }
 
 int Font::getCharWidth(uint32 chr) const {
-    return 8;
+	return 8;
 }
 
 int Font::getMaxCharWidth() const {
-    return getCharWidth(0);
+	return getCharWidth(0);
 }
 
 int Font::getFontHeight() const {
-    return _chars[0]->h + 1;
+	return _chars[0]->h + 1;
 }
 
 void Font::setSecondaryColor(uint32 color) {
-    _secondaryColor = color;
+	_secondaryColor = color;
 }
 
 void Font::setBackground(uint32 color) {
-    _backgroundColor = color;
+	_backgroundColor = color;
 }
 
 void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
-    assert(chr >= 32);
-    chr -= 32;
+	assert(chr >= 32);
+	chr -= 32;
 
-    Graphics::ManagedSurface surface = Graphics::ManagedSurface();
-    surface.copyFrom(*_chars[chr]);
+	Graphics::ManagedSurface surface = Graphics::ManagedSurface();
+	surface.copyFrom(*_chars[chr]);
 
-    uint8 rb, gb, bb;
-    uint8 rp, gp, bp;
-    uint8 rs, gs, bs;
+	uint8 rb, gb, bb;
+	uint8 rp, gp, bp;
+	uint8 rs, gs, bs;
 
-    dst->format.colorToRGB(color, rp, gp, bp);
-    dst->format.colorToRGB(_secondaryColor, rs, gs, bs);
-    dst->format.colorToRGB(_backgroundColor, rb, gb, bb);
+	dst->format.colorToRGB(color, rp, gp, bp);
+	dst->format.colorToRGB(_secondaryColor, rs, gs, bs);
+	dst->format.colorToRGB(_backgroundColor, rb, gb, bb);
 
-    byte palette[3][3] = {
-        { rb, gb, bb },
-        { rp, gp, bp },
-        { rs, gs, bs },
-    };
+	byte palette[3][3] = {
+		{ rb, gb, bb },
+		{ rp, gp, bp },
+		{ rs, gs, bs },
+	};
 
-    surface.convertToInPlace(dst->format, (byte *)palette, 3);
-    dst->copyRectToSurfaceWithKey(surface, x, y, Common::Rect(0, 0, 8, surface.h), surface.getTransparentColor());
-    surface.free();
+	surface.convertToInPlace(dst->format, (byte *)palette, 3);
+
+	if (_backgroundColor == 0 )
+		dst->copyRectToSurfaceWithKey(surface, x, y, Common::Rect(0, 0, 8, surface.h), dst->format.ARGBToColor(0xFF, 0x00, 0x00, 0x00));
+	else
+		dst->copyRectToSurface(surface, x, y, Common::Rect(0, 0, 8, surface.h));
+
+	surface.free();
 }
 
 Common::Array<Graphics::ManagedSurface *> FreescapeEngine::getChars(Common::SeekableReadStream *file, int offset, int charsNumber) {
@@ -172,6 +177,7 @@ void FreescapeEngine::drawStringInSurface(const Common::String &str, int x, int 
 void FreescapeEngine::drawStringInSurface(const Common::String &str, int x, int y, uint32 primaryColor, uint32 secondaryColor, uint32 backColor, Graphics::Surface *surface, int offset) {
 	Common::String ustr = str;
 	ustr.toUppercase();
+	_font.setBackground(backColor);
 	_font.setSecondaryColor(secondaryColor);
 	_font.drawString(surface, ustr, x, y, _screenW, primaryColor);
 }
