@@ -655,8 +655,7 @@ static bool parseTextureFilename(XFileData &fileData, char *filenameOut) {
 static bool parseMaterial(XFileData &fileData, DXMaterial *material) {
 	XFileData child;
 	XClassType type;
-	uint nbChildren;
-	uint32 i;
+	uint32 nbChildren, i;
 
 	auto materialObj = fileData.getXMaterialObject();
 	if (!materialObj) {

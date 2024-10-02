@@ -161,7 +161,7 @@ bool FrameNode::loadFromXData(const Common::String &filename, XModel *model, XFi
 
 		// Enumerate child objects.
 		res = false;
-		uint numChildren = 0;
+		uint32 numChildren = 0;
 		xobj->getChildren(numChildren);
 		for (uint32 i = 0; i < numChildren; i++) {
 			XFileData xchildData;
@@ -204,7 +204,7 @@ bool FrameNode::mergeFromXData(const Common::String &filename, XModel *model, XF
 		// Enumerate child objects.
 		res = false;
 
-		uint numChildren = 0;
+		uint32 numChildren = 0;
 		xobj->getChildren(numChildren);
 		for (uint32 i = 0; i < numChildren; i++) {
 			XFileData xchildData;

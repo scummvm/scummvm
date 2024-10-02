@@ -480,7 +480,7 @@ public:
 		return false;
 	}
 
-	bool getChildren(uint &num) {
+	bool getChildren(uint32 &num) {
 		if (_xobject) {
 			num = _xobject->_children.size();
 			return true;
@@ -559,7 +559,7 @@ public:
 		return false;
 	}
 
-	bool getChildren(uint &num) {
+	bool getChildren(uint32 &num) {
 		if (_file) {
 			num = _file->_xobjects.size();
 			return true;

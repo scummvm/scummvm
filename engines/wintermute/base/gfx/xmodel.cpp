@@ -141,7 +141,7 @@ bool XModel::loadFromFile(const Common::String &filename, XModel *parentModel) {
 
 	_rootFrame = new FrameNode(_gameRef);
 
-	uint numChildren = 0;
+	uint32 numChildren = 0;
 	xfile->getEnum().getChildren(numChildren);
 	for (uint i = 0; i < numChildren; i++) {
 		resLoop = xfile->getEnum().getChild(i, xobj);
@@ -196,7 +196,7 @@ bool XModel::mergeFromFile(const Common::String &filename) {
 	XFileData xobj;
 	bool resLoop = false;
 
-	uint numChildren = 0;
+	uint32 numChildren = 0;
 	xfile->getEnum().getChildren(numChildren);
 	for (uint i = 0; i < numChildren; i++) {
 		resLoop = xfile->getEnum().getChild(i, xobj);
@@ -251,7 +251,7 @@ bool XModel::loadAnimationSet(const Common::String &filename, XFileData *xobj) {
 	XFileData xchildData;
 	XClassType objectType;
 
-	uint numChildren = 0;
+	uint32 numChildren = 0;
 	xobj->getChildren(numChildren);
 
 	for (uint32 i = 0; i < numChildren; i++) {
@@ -296,7 +296,7 @@ bool XModel::loadAnimation(const Common::String &filename, XFileData *xobj, Anim
 	// create the new object
 	Animation *anim = new Animation(_gameRef);
 
-	uint numChildren = 0;
+	uint32 numChildren = 0;
 	xobj->getChildren(numChildren);
 
 	for (uint32 i = 0; i < numChildren; i++) {
