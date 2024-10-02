@@ -470,7 +470,40 @@ void Room615::daemon() {
 		}
 		break;
 
-	// TODO
+	case 133:
+		if (_ctr1 >= 1) {
+			_ctr1 = 0;
+			series_stream_break_on_frame(_untie, 94, 135);
+			digi_play("615r15", 1);
+		} else {
+			++_ctr1;
+		}
+		break;
+
+	case 135:
+		series_stream_check_series(_untie, 400);
+		kernel_timing_trigger(60, 140);
+		break;
+
+	case 140:
+		disable_player_commands_and_fade_init(141);
+		break;
+
+	case 141:
+		inv_move_object("SPARK PLUG TOOL", NOWHERE);
+		_G(flags)[V203] = 9;
+		_G(flags)[V191] = 0;
+		_G(flags)[V129] = 4;
+		_G(game).setRoom(495);
+		break;
+
+	case 150:
+		if (!_val2) {
+			series_stream_check_series(_untie, 30000);
+			kernel_timing_trigger(10, 151);
+		}
+		break;
+
 	case 151:
 		if (_val2) {
 			series_stream_check_series(_untie, 6);
@@ -480,7 +513,6 @@ void Room615::daemon() {
 		}
 		break;
 
-	// TODO
 	default:
 		break;
 	}
