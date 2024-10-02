@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-02 14:27+0000\n"
+"PO-Revision-Date: 2024-10-02 15:28+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -8039,7 +8039,7 @@ msgstr "히트 포인트 바 그래프를 활성화"
 #. I18N: L/R stands for Left/Right
 #: engines/kyra/metaengine.cpp:147
 msgid "Fight Button L/R Swap"
-msgstr "싸움 버튼 L/R 바꾸기"
+msgstr "대결 버튼 L/R 바꾸기"
 
 #: engines/kyra/metaengine.cpp:148
 msgid "Left button to attack, right button to pick up items"
@@ -8315,7 +8315,7 @@ msgstr "TTS 나레이터"
 
 #: engines/lure/metaengine.cpp:170
 msgid "Fight sequence keymappings"
-msgstr "싸움 시퀀스 키맵핑"
+msgstr "대결 시퀀스 키맵핑"
 
 #: engines/lure/metaengine.cpp:171
 msgid "Index keymappings"
@@ -8537,7 +8537,7 @@ msgstr "교환"
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:73
 msgid "Fight"
-msgstr "전투"
+msgstr "대결"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:75 engines/mm/mm1/metaengine.cpp:116
@@ -10379,7 +10379,7 @@ msgstr "KeyUp"
 
 #: engines/scumm/help.cpp:221
 msgid "Highlight prev dialogue"
-msgstr "이전 대사를 강조"
+msgstr "이전 대화를 강조"
 
 #: engines/scumm/help.cpp:222
 msgid "KeyDown"
@@ -10387,7 +10387,7 @@ msgstr "KeyDown"
 
 #: engines/scumm/help.cpp:222
 msgid "Highlight next dialogue"
-msgstr "다음 대사를 강조"
+msgstr "다음 대화를 강조"
 
 #: engines/scumm/help.cpp:226
 msgid "Walk"
@@ -10448,19 +10448,19 @@ msgstr "목록 아래로 스크롤"
 
 #: engines/scumm/help.cpp:266 engines/scumm/help.cpp:274
 msgid "Upper left item"
-msgstr "왼쪽 위 아이템"
+msgstr "왼쪽 상단 아이템"
 
 #: engines/scumm/help.cpp:267 engines/scumm/help.cpp:276
 msgid "Lower left item"
-msgstr "왼쪽 아래 아이템"
+msgstr "왼쪽 하단 아이템"
 
 #: engines/scumm/help.cpp:268 engines/scumm/help.cpp:277
 msgid "Upper right item"
-msgstr "오른쪽 위 아이템"
+msgstr "오른쪽 상단 아이템"
 
 #: engines/scumm/help.cpp:269 engines/scumm/help.cpp:279
 msgid "Lower right item"
-msgstr "오른쪽 아래 아이템"
+msgstr "오른쪽 하단 아이템"
 
 #: engines/scumm/help.cpp:275
 msgid "Middle left item"
@@ -10488,19 +10488,19 @@ msgstr "인벤토리/IQ 포인트 표시를 전환"
 
 #: engines/scumm/help.cpp:298
 msgid "Toggle Keyboard/Mouse Fighting (*)"
-msgstr "키보드/마우스 전투 전환 (*)"
+msgstr "격투게임 키보드/마우스 전환 (*)"
 
 #: engines/scumm/help.cpp:300
 msgid "* Keyboard Fighting is always on,"
-msgstr "* 키보드 전투는 항상 켜져 있기 때문에,"
+msgstr "* 키보드 싸움은 항상 켜져 있으므로,"
 
 #: engines/scumm/help.cpp:301
 msgid "  so despite the in-game message this"
-msgstr "  인게임 설명과는 달리"
+msgstr "  게임 내 메시지와 상관없이"
 
 #: engines/scumm/help.cpp:302
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr "  실제로는 마우스 전투 켜기/끄기입니다"
+msgstr "  실제로 마우스 싸움 끄기/켜기 전환"
 
 #: engines/scumm/help.cpp:309
 msgid "Fighting controls (numpad):"
@@ -10545,7 +10545,7 @@ msgstr "인디가 왼쪽에 있을 때 기준입니다."
 
 #: engines/scumm/help.cpp:324
 msgid "When Indy is on the right,"
-msgstr "인디가 오른쪽에 있을 경우"
+msgstr "인디가 오른쪽에 있을 경우,"
 
 #: engines/scumm/help.cpp:325
 msgid "7, 4, and 1 are switched with"
@@ -10561,7 +10561,7 @@ msgstr "비행기 조작 (숫자 패드):"
 
 #: engines/scumm/help.cpp:336
 msgid "Fly to upper left"
-msgstr "왼쪽 위로 비행"
+msgstr "왼쪽 상단 비행"
 
 #: engines/scumm/help.cpp:337
 msgid "Fly to left"
@@ -10569,7 +10569,7 @@ msgstr "왼쪽으로 비행"
 
 #: engines/scumm/help.cpp:338
 msgid "Fly to lower left"
-msgstr "왼쪽 아래로 비행"
+msgstr "왼쪽 하단 비행"
 
 #: engines/scumm/help.cpp:339
 msgid "Fly upwards"
@@ -10585,7 +10585,7 @@ msgstr "아래로 비행"
 
 #: engines/scumm/help.cpp:342
 msgid "Fly to upper right"
-msgstr "오른쪽 위로 비행"
+msgstr "오른쪽 상단 비행"
 
 #: engines/scumm/help.cpp:343
 msgid "Fly to right"
@@ -10593,7 +10593,7 @@ msgstr "오른쪽으로 비행"
 
 #: engines/scumm/help.cpp:344
 msgid "Fly to lower right"
-msgstr "오른쪽 아래로 비행"
+msgstr "오른쪽 하단 비행"
 
 #: engines/scumm/input.cpp:1366
 msgid "Snap scroll on"
@@ -10617,17 +10617,17 @@ msgid ""
 "piracy.\n"
 "The full version is available for purchase from the iTunes Store."
 msgstr ""
-"불법복제를 막기 위해 Putt-Putt Saves the Zoo iOS 라이트 버전은 지원되지 않습"
-"니다.\n"
-"풀 버전은 iTunes Store에서 구매 가능합니다."
+"Putt-Putt Saves the Zoo iOS의 Lite 버전은 불법 복제를 방지하기 위해 지원되지 "
+"않습니다.\n"
+"풀 버전은 아이튠즈 스토어에서 구매할 수 있습니다."
 
 #: engines/scumm/metaengine.cpp:475
 msgid "HE v71+ support is not compiled in"
-msgstr "HE v71+ 지원이 컴파일 되지 않음"
+msgstr "HE v71+ 지원이 컴파일 되지 않았음"
 
 #: engines/scumm/metaengine.cpp:499
 msgid "SCUMM v7-8 support is not compiled in"
-msgstr "SCUMM v7-8 지원이 컴파일 되지 않음"
+msgstr "SCUMM v7-8 지원이 컴파일 되지 않았음"
 
 #: engines/scumm/metaengine.cpp:645
 msgid "Show Object Line"
@@ -10643,7 +10643,7 @@ msgstr "NES 클래식 팔레트"
 
 #: engines/scumm/metaengine.cpp:655
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
-msgstr "NES 클래식 버전을 재현하는 더 자연스러운 컬러 팔레트를 사용합니다"
+msgstr "NES 클래식 버전을 재현하는 더 자연스러운 컬러 팔레트를 사용"
 
 #: engines/scumm/metaengine.cpp:663
 msgid "Trim FM-TOWNS games to 200 pixels height"
@@ -10658,26 +10658,22 @@ msgstr "화면 하단의 추가 40 픽셀을 잘라내어 일반 높이인 200 �
 
 #: engines/scumm/metaengine.cpp:672
 msgid "Run in original 640 x 480 resolution"
-msgstr ""
+msgstr "원본 640 x 480 해상도로 실행"
 
 #: engines/scumm/metaengine.cpp:673
 msgid ""
 "This allows more accurate pause/restart banners, but might impact "
 "performance or shader/scaler usage."
-msgstr ""
+msgstr "이를 통해 더 정확한 일시 정지/재시작 배너가 가능하지만 성능이나 셰이더/"
+"스케일러 사용에 영향을 미칠 수 있습니다."
 
 #: engines/scumm/metaengine.cpp:680
 msgid "Play simplified music"
 msgstr "단순화된 음악을 재생"
 
 #: engines/scumm/metaengine.cpp:681
-#, fuzzy
-#| msgid ""
-#| "This music was presumably intended for low-end Macs, and uses only one "
-#| "channel."
 msgid "This music was intended for low-end Macs, and uses only one channel."
-msgstr ""
-"이 음악은 저사양 Mac에서 사용될 것을 가정했으므로, 한 채널만 사용합니다."
+msgstr "이 음악은 저사양 Mac용으로 제작되었으며, 한 채널만 사용합니다."
 
 #: engines/scumm/metaengine.cpp:689
 msgid "Enable smooth scrolling"
@@ -10685,18 +10681,17 @@ msgstr "부드러운 스크롤 활성화"
 
 #: engines/scumm/metaengine.cpp:690
 msgid "(instead of the normal 8-pixels steps scrolling)"
-msgstr "(일반적인 8 픽셀 단위 스크롤을 대신해 사용)"
+msgstr "(일반적인 8 픽셀 단계 스크롤 대신)"
 
 #: engines/scumm/metaengine.cpp:698
-#, fuzzy
 msgid "Allow semi-smooth scrolling"
-msgstr "부드러운 스크롤 활성화"
+msgstr "약간 부드러운 스크롤을 허용"
 
 #: engines/scumm/metaengine.cpp:699
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
-msgstr ""
+msgstr "인트로에서 카메라가 빠르게 움직이는 동안 스크롤이 덜 부드럽도록 허용합니다."
 
 #: engines/scumm/metaengine.cpp:726
 msgid ""
@@ -10709,9 +10704,8 @@ msgstr ""
 "수 있습니다."
 
 #: engines/scumm/metaengine.cpp:735
-#, fuzzy
 msgid "Enable low latency audio mode"
-msgstr "디버그 모드를 활성화합니다"
+msgstr "저지연 오디오 모드 활성화"
 
 #: engines/scumm/metaengine.cpp:736
 msgid ""
@@ -10719,13 +10713,13 @@ msgid ""
 "\tIt is recommended to enable this feature only if you incur in audio "
 "latency issues during normal gameplay."
 msgstr ""
-"게임에서 낮은 지연 오디오를 사용할 수 있게 하지만, 사운드 정확도는 "
-"떨어집니다. \t\t일반 게임 플레이 중에 오디오 지연 문제가 발생하는 경우에만 "
-"이 기능을 활성화하는 것이 좋습니다."
+"게임에서 저지연 오디오를 사용할 수 있게 하지만, 사운드 정확도는 떨어집니다. "
+"\t\t일반 게임 플레이 중에 오디오 지연 문제가 발생하는 경우에만 이 기능을 "
+"활성화하는 것이 좋습니다."
 
 #: engines/scumm/metaengine.cpp:745
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
-msgstr ""
+msgstr "\"A Pirate I Was Meant To Be\" 노래 활성화"
 
 #: engines/scumm/metaengine.cpp:746
 msgid ""
@@ -10733,35 +10727,33 @@ msgid ""
 "Meant To Be\", \t\twhich was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
 msgstr ""
+"게임 3부 시작 부분에서 삭제된 노래 \"A Pirate I Was Meant To Be\"를, \t"
+"\t인터내셔널 출시 버전에서는 활성화합니다. 하지만 자막이 완전히 번역되지 "
+"않았을 수 있으니 주의하세요."
 
 #: engines/scumm/metaengine.cpp:764
-#, fuzzy
 msgid "Enable demo/kiosk mode"
-msgstr "디버그 모드 사용"
+msgstr "데모/키오스크 모드 활성화"
 
 #: engines/scumm/metaengine.cpp:765
 msgid "Enable demo/kiosk mode in the full retail version of Maniac Mansion."
-msgstr ""
+msgstr "매니악 맨션의 정식 버전에서 데모/키오스크 모드를 활성화하세요."
 
 #: engines/scumm/metaengine.cpp:864
-#, fuzzy
 msgid "Down Left"
-msgstr "왼쪽으로 회전"
+msgstr "왼쪽 아래"
 
 #: engines/scumm/metaengine.cpp:877
-#, fuzzy
 msgid "Down Right"
-msgstr "오른쪽으로 회전"
+msgstr "오른쪽 아래"
 
 #: engines/scumm/metaengine.cpp:897
-#, fuzzy
 msgid "Up Left"
-msgstr "왼쪽"
+msgstr "왼쪽 위"
 
 #: engines/scumm/metaengine.cpp:910
-#, fuzzy
 msgid "Up Right"
-msgstr "오른쪽"
+msgstr "오른쪽 위"
 
 #: engines/scumm/metaengine.cpp:922
 msgid "Switch weapon"
@@ -10770,7 +10762,7 @@ msgstr "무기 전환"
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/metaengine.cpp:936
 msgid "Win the bike fight cheat"
-msgstr ""
+msgstr "자전거 대결에서 승리하는 치트"
 
 #: engines/scumm/saveload.cpp:1970
 #, c-format
@@ -10807,30 +10799,30 @@ msgstr ""
 
 #: engines/scumm/scumm.cpp:1224
 msgid "This game requires the 'Indy' Macintosh executable for its fonts."
-msgstr ""
+msgstr "이 게임의 글꼴을 설치하려면 '인디아나 존스' 매킨토시 실행 파일이 필요합니다."
 
 #: engines/scumm/scumm.cpp:1249
 msgid ""
 "This game requires the 'Loom' Macintosh executable for its music and fonts."
-msgstr ""
+msgstr "이 게임의 음악과 글꼴을 사용하려면 '룸' 매킨토시 실행 파일이 필요합니다."
 
 #: engines/scumm/scumm.cpp:1269
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
-"악기가 포함된 'Monkey Island' 매킨토시 실행 파일을 찾을 수 없습니다.\n"
+"악기가 포함된 '원숭이 섬' 매킨토시 실행 파일을 찾을 수 없습니다.\n"
 "음악이 비활성화됩니다."
 
 #: engines/scumm/scumm.cpp:1277
 #, c-format
 msgid "Could not open Macintosh resource file %s"
-msgstr ""
+msgstr "매킨토시 리소스 파일 %s을(를) 열 수 없음"
 
 #: engines/scumm/scumm.cpp:1280
 #, c-format
 msgid "Could not find resource fork in Macintosh resource file %s"
-msgstr ""
+msgstr "매킨토시 리소스 파일 %s에서 리소스 포크를 찾을 수 없음"
 
 #: engines/scumm/scumm.cpp:1640
 msgid ""
@@ -10838,10 +10830,9 @@ msgid ""
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please copy the game from the original media without compression."
 msgstr ""
-"ScummVM Tools로 압축된 오디오 파일이 탐지되었습니다. 이 게임에 대해 *.BUN/*."
-"SOU\n"
-"압축이 더 이상 지원되지 않습니다. 오디오가 비활성화됩니다..\n"
-"게임을 압축하지 않고 원본 미디어에서 복사하십시오."
+"ScummVM 도구로 압축된 오디오 파일이 감지되었습니다; *.BUN/*.SOU\n"
+"압축은 이 게임에서 더 이상 지원되지 않으므로 오디오가 비활성화됩니다.\n"
+"게임을 압축하지 않고 원본 미디어에서 복사하세요."
 
 #: engines/scumm/scumm.cpp:2129
 #, c-format
@@ -10849,14 +10840,16 @@ msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
 msgstr ""
-"MIDI 지원은 LucasArts에서 제공하는 Roland Upgrade가 필요합니다.\n"
-"하지만 %s 파일이 없습니다. AdLib을 대신 사용합니다."
+"실기 미디 지원에는 루카스아츠의 롤랜드 업그레이드가 필요하지만,\n"
+"%s가 없습니다. 대신 AdLib을 사용합니다."
 
 #: engines/scumm/scumm.cpp:2145
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
 msgstr ""
+"이 특정 버전의 원숭이 섬 1은 MT-32에 필요한 리소스가 일부\n"
+"빠진 것으로 알려져 있습니다. 대신 AdLib을 사용합니다."
 
 #: engines/scumm/scumm.cpp:3953
 msgid ""
@@ -10864,9 +10857,9 @@ msgid ""
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
-"보통 Maniac Mansion이 여기서 시작됩니다. 하지만 이것을 지원하려면 Maniac "
-"Mansion의 게임 파일이 Tentacle 게임 디렉토리 하위의 Maniac 디렉토리에 있어야 "
-"하며, ScummVM에도 추가되어야 합니다."
+"보통, 매니악 맨션은 지금 시작해야 합니다. 하지만 그렇게 하려면 매니악 맨션의 "
+"게임 파일이 Tentacle 게임 디렉토리 내의 'Maniac' 디렉토리에 있어야 하고, "
+"게임을 ScummVM에 추가해야 합니다."
 
 #: engines/scumm/scumm.cpp:4064
 msgid "Would you like to host or join a network play session?"
@@ -10874,25 +10867,23 @@ msgstr "네트워크 플레이 세션을 호스팅하거나 참여하고 싶습�
 
 #. I18N: Random map generator for Moonbase Commander
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:55
-#, fuzzy
-#| msgid "Game Options"
 msgid "Random Map Options"
-msgstr "게임 옵션"
+msgstr "무작위 지도 옵션"
 
 #. I18N: Map generator algorthims
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:59
 msgid "Algorithm"
-msgstr ""
+msgstr "알고리즘"
 
 #. I18N: Spiff algorthim
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:63
 msgid "Spiff"
-msgstr ""
+msgstr "스피프"
 
 #. I18N: Katton algorthim
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:65
 msgid "Katton"
-msgstr ""
+msgstr "캣튼"
 
 #. I18N: Random algorthim
 #. I18N: Random map size
@@ -10907,20 +10898,18 @@ msgstr ""
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:124
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:136
 msgid "Random"
-msgstr ""
+msgstr "무작위"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:67
 msgid "Picks the map algorithm randomly."
-msgstr ""
+msgstr "지도 알고리즘을 무작위로 선택합니다."
 
 #. I18N: Map sizes
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:70
 msgid "Size"
-msgstr ""
+msgstr "크기"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:74
-#, fuzzy
-#| msgid "Small"
 msgid "Small"
 msgstr "작게"
 
@@ -10930,46 +10919,42 @@ msgstr "크게"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:77
 msgid "Huge"
-msgstr ""
+msgstr "거대"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:78
 msgid "SAI"
-msgstr ""
+msgstr "SAI"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:79
 msgid "Ridiculous"
-msgstr ""
+msgstr "터무니없는"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:80
-#, fuzzy
-#| msgid "Map"
 msgid "Max"
-msgstr "맵"
+msgstr "최대"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:82
 msgid "Picks the map size randomly."
-msgstr ""
+msgstr "지도 크기를 무작위로 선택합니다."
 
 #. I18N: Map tilesets
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:85
-#, fuzzy
-#| msgid "Reset"
 msgid "Tileset"
-msgstr "초기화"
+msgstr "타일셋"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:99
 msgid "Picks the map tileset randomly."
-msgstr ""
+msgstr "지도 타일셋을 무작위로 선택합니다."
 
 #. I18N: Percentage of energy pools
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:102
 msgid "Energy"
-msgstr ""
+msgstr "에너지"
 
 #. I18N: Energy slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:107
 msgid "Scarce - Lots"
-msgstr ""
+msgstr "희소 - 다수"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:112
 msgid "Picks the random amount of energy pools."
