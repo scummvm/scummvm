@@ -99,15 +99,15 @@ void DrillerEngine::drawZXUI(Graphics::Surface *surface) {
 
 	int score = _gameStateVars[k8bitVariableScore];
 	drawStringInSurface(_currentArea->_name, 174, 188, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 150, 149, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 150, 157, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 150, 165, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 151, 149, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 151, 157, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 151, 165, front, back, surface);
 	if (_playerHeightNumber >= 0)
 		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 72, 165, front, back, surface);
 	else
 		drawStringInSurface(Common::String::format("%s", "J"), 72, 165, front, back, surface);
 
-	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 62, 149, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 63, 149, front, back, surface);
 	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 63, 157, front, back, surface);
 	drawStringInSurface(Common::String::format("%07d", score), 215, 133, white, back, surface);
 
@@ -115,13 +115,13 @@ void DrillerEngine::drawZXUI(Graphics::Surface *surface) {
 	getTimeFromCountdown(seconds, minutes, hours);
 	drawStringInSurface(Common::String::format("%02d", hours), 185, 12, front, back, surface);
 	drawStringInSurface(Common::String::format("%02d", minutes), 207, 12, front, back, surface);
-	drawStringInSurface(Common::String::format("%02d", seconds), 230, 12, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", seconds), 231, 12, front, back, surface);
 
 	Common::String message;
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
-		drawStringInSurface(message, 167, 181, back, front, surface);
+		drawStringInSurface(message, 168, 181, back, front, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else {
@@ -132,7 +132,7 @@ void DrillerEngine::drawZXUI(Graphics::Surface *surface) {
 		else
 			message = _messagesList[1];
 
-		drawStringInSurface(message, 167, 181, front, back, surface);
+		drawStringInSurface(message, 168, 181, front, back, surface);
 	}
 
 	int energy = _gameStateVars[k8bitVariableEnergy];
