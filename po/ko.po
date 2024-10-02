@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-02 15:28+0000\n"
+"PO-Revision-Date: 2024-10-02 16:41+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -1901,11 +1901,11 @@ msgstr "음악 장치:"
 
 #: gui/options.cpp:1735
 msgid "AdLib emulator:"
-msgstr "AdLib 에뮬레이터:"
+msgstr "애드립 에뮬레이터:"
 
 #: gui/options.cpp:1735 gui/options.cpp:1738
 msgid "AdLib is used for music in many games"
-msgstr "AdLib은 많은 게임에서 음악 재생에 사용됨"
+msgstr "애드립은 많은 게임에서 음악 재생에 사용됨"
 
 #: gui/options.cpp:1751
 msgid "GM device:"
@@ -1943,11 +1943,11 @@ msgstr "없음"
 
 #: gui/options.cpp:1800
 msgid "Mixed AdLib/MIDI mode"
-msgstr "AdLib/미디 믹스 모드"
+msgstr "애드립/미디 믹스 모드"
 
 #: gui/options.cpp:1800
 msgid "Use both MIDI and AdLib sound generation"
-msgstr "사운드 생성에 미디와 AdLib을 동시에 사용"
+msgstr "사운드 생성에 미디와 애드립을 동시에 사용"
 
 #: gui/options.cpp:1803
 msgid "MIDI gain:"
@@ -3730,7 +3730,7 @@ msgstr "셰이더를 사용한 OpenGL"
 
 #: audio/adlib.cpp:2301
 msgid "AdLib emulator"
-msgstr "AdLib 에뮬레이터"
+msgstr "애드립 에뮬레이터"
 
 #: audio/fmopl.cpp:82
 msgid "MAME OPL emulator"
@@ -6032,7 +6032,7 @@ msgstr "'%s' 컷씬 파일을 찾을 수 없습니다!"
 
 #: engines/agos/metaengine.cpp:55
 msgid "AdLib OPL3 mode"
-msgstr "AdLib OPL3 모드"
+msgstr "애드립 OPL3 모드"
 
 #: engines/agos/metaengine.cpp:56
 msgid ""
@@ -6040,7 +6040,7 @@ msgid ""
 "this will prevent cut-off notes, add extra notes or instruments and/or add "
 "stereo."
 msgstr ""
-"AdLib을 선택하면 OPL3 기능이 사용됩니다. 게임에 따라 음표가 끊어지는 것을 "
+"애드립을 선택하면 OPL3 기능이 사용됩니다. 게임에 따라 음표가 끊어지는 것을 "
 "방지하고, 추가 음표나 악기를 추가하고, 스테레오를 추가할 수 있습니다."
 
 #: engines/agos/metaengine.cpp:66 engines/agos/metaengine.cpp:77
@@ -6236,7 +6236,7 @@ msgid ""
 "%s. Without this file,\n"
 "the music will not sound the same as the original game."
 msgstr ""
-"AdLib 악기 정의 파일 %s을(를) 찾을 수 없습니다.\n"
+"애드립 악기 정의 파일 %s을(를) 찾을 수 없습니다.\n"
 "이 파일들이 없다면,\n"
 "음악이 원래 게임과 같은 사운드가 나오지 않습니다."
 
@@ -6247,7 +6247,7 @@ msgid ""
 "%s. Without this file,\n"
 "the sound effects will not sound the same as the original game."
 msgstr ""
-"AdLib 악기 정의 파일 %s을(를) 찾을 수 없습니다.\n"
+"애드립 악기 정의 파일 %s을(를) 찾을 수 없습니다.\n"
 "이 파일들이 없다면,\n"
 "사운드 효과가 원래 게임과 동일하게 들리지 않습니다."
 
@@ -6258,7 +6258,7 @@ msgid ""
 "%s or %s. Without one of these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
-"AdLib 악기 정의 파일 %s 또는 %s을(를) 찾을 수 없습니다.\n"
+"애드립 악기 정의 파일 %s 또는 %s을(를) 찾을 수 없습니다.\n"
 "이 파일 중 하나가 없으면,\n"
 "음악이 원래 게임과 같은 사운드가 나오지 않습니다."
 
@@ -6815,35 +6815,35 @@ msgstr "ALTered 아이템"
 
 #: engines/cge/metaengine.cpp:257
 msgid "Inventory Item 1 (Select/Deselect)"
-msgstr "인벤토리 아이템 1 (선택/선택 해제)"
+msgstr "인벤토리 아이템 1 (선택/해제)"
 
 #: engines/cge/metaengine.cpp:262
 msgid "Inventory Item 2 (Select/Deselect)"
-msgstr "인벤토리 아이템 2 (선택/선택 해제)"
+msgstr "인벤토리 아이템 2 (선택/해제)"
 
 #: engines/cge/metaengine.cpp:267
 msgid "Inventory Item 3 (Select/Deselect)"
-msgstr "인벤토리 아이템 3 (선택/선택 해제)"
+msgstr "인벤토리 아이템 3 (선택/해제)"
 
 #: engines/cge/metaengine.cpp:272
 msgid "Inventory Item 4 (Select/Deselect)"
-msgstr "인벤토리 아이템 4 (선택/선택 해제)"
+msgstr "인벤토리 아이템 4 (선택/해제)"
 
 #: engines/cge/metaengine.cpp:277
 msgid "Inventory Item 5 (Select/Deselect)"
-msgstr "인벤토리 아이템 5 (선택/선택 해제)"
+msgstr "인벤토리 아이템 5 (선택/해제)"
 
 #: engines/cge/metaengine.cpp:282
 msgid "Inventory Item 6 (Select/Deselect)"
-msgstr "인벤토리 아이템 6 (선택/선택 해제)"
+msgstr "인벤토리 아이템 6 (선택/해제)"
 
 #: engines/cge/metaengine.cpp:287
 msgid "Inventory Item 7 (Select/Deselect)"
-msgstr "인벤토리 아이템 7 (선택/선택 해제)"
+msgstr "인벤토리 아이템 7 (선택/해제)"
 
 #: engines/cge/metaengine.cpp:292
 msgid "Inventory Item 8 (Select/Deselect)"
-msgstr "인벤토리 아이템 8 (선택/선택 해제)"
+msgstr "인벤토리 아이템 8 (선택/해제)"
 
 #. I18N: There are 24 single-room/screen locations in the game.
 #. You switch between them from numbered buttons on interface.
@@ -6925,10 +6925,8 @@ msgstr "비어있는 자동 저장"
 #: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:102
 #: engines/mads/metaengine.cpp:274 engines/tinsel/metaengine.cpp:239
 #: engines/trecision/metaengine.cpp:120
-#, fuzzy
-#| msgid "Default game keymap"
 msgid "Default keymappings"
-msgstr "기본 게임 키설정"
+msgstr "기본 키맵핑"
 
 #: engines/cine/metaengine.cpp:260
 msgid "Key to mouse keymappings"
@@ -6940,35 +6938,27 @@ msgstr "나가기 화면 키맵핑"
 
 #: engines/cine/metaengine.cpp:277
 msgid "Exit Sony intro screen"
-msgstr ""
+msgstr "소니 인트로 화면 종료"
 
 #: engines/cine/metaengine.cpp:283
 msgid "Select option / Click in game"
 msgstr "옵션 선택 / 게임 내 클릭"
 
 #: engines/cine/metaengine.cpp:290
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open action menu / Close menu"
-msgstr "메인 메뉴 열기"
+msgstr "동작 메뉴 열기 / 메뉴 닫기"
 
 #: engines/cine/metaengine.cpp:295
-#, fuzzy
-#| msgid "Default game keymap"
 msgid "Default game speed"
-msgstr "기본 게임 키설정"
+msgstr "기본 게임 속도"
 
 #: engines/cine/metaengine.cpp:300
-#, fuzzy
-#| msgid "Show game credits"
 msgid "Slower game speed"
-msgstr "게임 크레딧 표시"
+msgstr "더 느린 게임 속도"
 
 #: engines/cine/metaengine.cpp:307
-#, fuzzy
-#| msgid "Fast movie speed"
 msgid "Faster game speed"
-msgstr "동영상 빠르게 재생"
+msgstr "더 빠른 게임 속도"
 
 #: engines/cine/metaengine.cpp:315 engines/grim/grim.cpp:506
 #: engines/hpl1/metaengine.cpp:90 engines/scumm/help.cpp:243
@@ -6977,10 +6967,8 @@ msgid "Examine"
 msgstr "조사"
 
 #: engines/cine/metaengine.cpp:320 engines/saga/metaengine.cpp:394
-#, fuzzy
-#| msgid "Take off"
 msgid "Take"
-msgstr "벗기"
+msgstr "잡기"
 
 #. I18N: Action in In Cold Blood
 #: engines/cine/metaengine.cpp:325 engines/crab/input/input.cpp:251
@@ -7008,68 +6996,53 @@ msgid "Use"
 msgstr "사용하기"
 
 #: engines/cine/metaengine.cpp:335
-#, fuzzy
-#| msgid "Active"
 msgid "Activate"
 msgstr "활성화"
 
 #: engines/cine/metaengine.cpp:340
 msgid "Speak"
-msgstr ""
+msgstr "말하기"
 
 #: engines/cine/metaengine.cpp:345
-#, fuzzy
-#| msgid "Action"
 msgid "Action menu"
-msgstr "액션"
+msgstr "동작 메뉴"
 
 #: engines/cine/metaengine.cpp:351
-#, fuzzy
 msgid "System menu"
-msgstr "게임 메뉴"
+msgstr "시스템 메뉴"
 
 #. I18N: Opens collision map of where the actor can freely move
 #: engines/cine/metaengine.cpp:358
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Show collisions"
-msgstr "음성 옵션"
+msgstr "충돌 표시"
 
 #. I18N: Move Actor to top-left direction
 #: engines/cine/metaengine.cpp:393
-#, fuzzy
-#| msgid "Move left"
 msgid "Move up-left"
-msgstr "왼쪽으로 이동"
+msgstr "왼쪽 위로 이동"
 
 #. I18N: Move Actor to top-right direction
 #: engines/cine/metaengine.cpp:399
-#, fuzzy
-#| msgid "Move right"
 msgid "Move up-right"
-msgstr "오른쪽으로 이동"
+msgstr "오른쪽 위로 이동"
 
 #. I18N: Move Actor to bottom-left direction
 #: engines/cine/metaengine.cpp:405
-#, fuzzy
-#| msgid "Move down"
 msgid "Move down-left"
-msgstr "아래로 이동"
+msgstr "왼쪽 아래로 이동"
 
 #. I18N: Move Actor to bottom-right direction
 #: engines/cine/metaengine.cpp:411
-#, fuzzy
-#| msgid "Move right"
 msgid "Move down-right"
-msgstr "오른쪽으로 이동"
+msgstr "오른쪽 아래로 이동"
 
 #: engines/cine/metaengine.cpp:416
 msgid "Menu option up"
-msgstr ""
+msgstr "메뉴 옵션 위로"
 
 #: engines/cine/metaengine.cpp:421
 msgid "Menu option down"
-msgstr ""
+msgstr "메뉴 옵션 아래로"
 
 #: engines/cine/saveload.cpp:860
 msgid ""
@@ -7082,10 +7055,8 @@ msgstr ""
 "Stealth를 시작하는 것을 고려해 보세요."
 
 #: engines/crab/input/input.cpp:119
-#, fuzzy
-#| msgid "Interact"
 msgid "Talk/Interact"
-msgstr "상호작용"
+msgstr "대화/상호작용"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
@@ -7095,52 +7066,46 @@ msgstr "공격"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:130 engines/mm/mm1/metaengine.cpp:67
-#, fuzzy
-#| msgid "Unlock"
 msgid "Block"
-msgstr "잠금 해제"
+msgstr "차단"
 
 #: engines/crab/input/input.cpp:169 engines/twine/metaengine.cpp:451
 msgid "Accept"
 msgstr "확인"
 
 #: engines/crab/input/input.cpp:186
-#, fuzzy
-#| msgid "~P~revious"
 msgid "Previous"
-msgstr "이전(~P~)"
+msgstr "이전"
 
 #: engines/crab/input/input.cpp:191
 msgid "Reply 1"
-msgstr ""
+msgstr "리플 1"
 
 #: engines/crab/input/input.cpp:196
 msgid "Reply 2"
-msgstr ""
+msgstr "리플 2"
 
 #: engines/crab/input/input.cpp:201
 msgid "Reply 3"
-msgstr ""
+msgstr "리플 3"
 
 #: engines/crab/input/input.cpp:206
 msgid "Reply 4"
-msgstr ""
+msgstr "리플 4"
 
 #: engines/crab/input/input.cpp:211
 msgid "Reply 5"
-msgstr ""
+msgstr "리플 5"
 
 #: engines/crab/input/input.cpp:216
 msgid "Reply 6"
-msgstr ""
+msgstr "리플 6"
 
 #: engines/crab/input/input.cpp:221 engines/twine/metaengine.cpp:497
 msgid "Next Page"
 msgstr "다음 페이지"
 
 #: engines/crab/input/input.cpp:226
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous Page"
 msgstr "이전 페이지"
 
@@ -7149,18 +7114,14 @@ msgid "Map"
 msgstr "맵"
 
 #: engines/crab/input/input.cpp:246
-#, fuzzy
-#| msgid "Show journal"
 msgid "Journal"
-msgstr "일기 표시"
+msgstr "일기"
 
 #: engines/crab/input/input.cpp:256
 msgid "Traits"
-msgstr ""
+msgstr "특성"
 
 #: engines/crab/input/input.cpp:266
-#, fuzzy
-#| msgid "Quick save"
 msgid "Quick Save"
 msgstr "빠른 저장"
 
@@ -7262,114 +7223,95 @@ msgstr "PC 스피커 에뮬레이션 대신 고품질 사전 녹음된 사운드
 
 #: engines/freescape/metaengine.cpp:53
 msgid "Extended timer"
-msgstr ""
+msgstr "확장 타이머"
 
 #: engines/freescape/metaengine.cpp:54
 msgid "Start the game timer at 99:59:59"
-msgstr ""
+msgstr "게임 타이머를 99:59:59에 시작"
 
 #: engines/freescape/metaengine.cpp:64
 msgid "Automatic drilling"
-msgstr ""
+msgstr "자동 드릴링"
 
 #: engines/freescape/metaengine.cpp:65
 msgid "Allow to succefully drill in any part of the area in Driller"
 msgstr ""
 
 #: engines/freescape/metaengine.cpp:75
-#, fuzzy
 msgid "Disable demo mode"
-msgstr "디버그 모드 사용"
+msgstr "데모 모드 비활성화"
 
 #: engines/freescape/metaengine.cpp:76
 msgid "Never activate demo mode"
-msgstr ""
+msgstr "데모 모드를 절대 활성화하지 않음"
 
 #: engines/freescape/metaengine.cpp:86
-#, fuzzy
 msgid "Disable sensors"
-msgstr "저장 메뉴 비활성화"
+msgstr "센서 비활성화"
 
 #: engines/freescape/metaengine.cpp:87
 msgid "Sensors will not shoot the player"
-msgstr ""
+msgstr "센서는 플레이어를 쏘지 않음"
 
 #: engines/freescape/metaengine.cpp:97
-#, fuzzy
 msgid "Disable falling"
-msgstr "저장 메뉴 비활성화"
+msgstr "낙하 비활성화"
 
 #: engines/freescape/metaengine.cpp:98
 msgid "Player cannot fall over edges"
-msgstr ""
+msgstr "플레이어는 가장자리에서 떨어질 수 없음"
 
 #: engines/freescape/metaengine.cpp:108
 msgid "Invert Y-axis on mouse"
-msgstr ""
+msgstr "마우스에서 Y축 반전"
 
 #: engines/freescape/metaengine.cpp:109
-#, fuzzy
-#| msgid "Use an alternative palette"
 msgid "Use alternative camera controls"
-msgstr "대체 팔레트 사용"
+msgstr "대체 카메라 조작 사용"
 
 #: engines/freescape/metaengine.cpp:119
-#, fuzzy
-#| msgid "Filter graphics"
 msgid "Authentic graphics"
-msgstr "그래픽 필터"
+msgstr "모사 그래픽"
 
 #: engines/freescape/metaengine.cpp:120
 msgid "Keep graphics as close as possible to the original"
-msgstr ""
+msgstr "그래픽을 최대한 원본에 가깝게 유지"
 
 #: engines/freescape/metaengine.cpp:130
-#, fuzzy
-#| msgid "Enable storage"
 msgid "Enable rock travel"
-msgstr "스토리지 활성화"
+msgstr "암석 여행을 활성화"
 
 #: engines/freescape/metaengine.cpp:131
 msgid "Enable traveling using a rock shoot at start"
-msgstr ""
+msgstr "시작 시 암석 사격을 사용하여 여행 가능"
 
 #: engines/freescape/movement.cpp:49 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Strafe Left"
-msgstr "왼쪽으로"
+msgstr "왼쪽으로 폭겨"
 
 #: engines/freescape/movement.cpp:56 engines/hpl1/metaengine.cpp:79
 #: engines/mm/mm1/metaengine.cpp:100
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Strafe Right"
-msgstr "오른쪽으로"
+msgstr "오른쪽으로 폭격"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
-msgstr ""
+msgstr "사격"
 
 #: engines/freescape/movement.cpp:72
-#, fuzzy
-#| msgid "Rotate"
 msgid "Rotate up"
-msgstr "회전"
+msgstr "위로 회전"
 
 #: engines/freescape/movement.cpp:77
-#, fuzzy
-#| msgid "Rotate"
 msgid "Rotate down"
-msgstr "회전"
+msgstr "아래로 회전"
 
 #. I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
 #: engines/freescape/movement.cpp:90
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change mode"
-msgstr "변경 명령"
+msgstr "모드 변경"
 
 #. I18N: ESC key
 #: engines/freescape/movement.cpp:96 engines/lure/metaengine.cpp:209
@@ -7381,10 +7323,8 @@ msgid "Escape"
 msgstr "탈출"
 
 #: engines/freescape/movement.cpp:101
-#, fuzzy
-#| msgid "Menu"
 msgid "Info Menu"
-msgstr "메뉴"
+msgstr "정보 메뉴"
 
 #: engines/freescape/games/dark/dark.cpp:203
 #: engines/freescape/games/driller/driller.cpp:139
@@ -7393,61 +7333,49 @@ msgstr "사운드 전환"
 
 #: engines/freescape/games/dark/dark.cpp:209
 #: engines/freescape/games/driller/driller.cpp:145
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Rotate Left"
-msgstr "왼쪽으로"
+msgstr "왼쪽으로 회전"
 
 #: engines/freescape/games/dark/dark.cpp:214
 #: engines/freescape/games/driller/driller.cpp:150
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Rotate Right"
-msgstr "오른쪽으로"
+msgstr "오른쪽으로 회전"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:220
 #: engines/freescape/games/driller/driller.cpp:156
-#, fuzzy
-#| msgid "Increase the scale factor"
 msgid "Increase Step Size"
-msgstr "확대 비율 증가"
+msgstr "단계 크기 증가"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:226
 #: engines/freescape/games/driller/driller.cpp:162
-#, fuzzy
-#| msgid "Decrease the scale factor"
 msgid "Decrease Step Size"
-msgstr "확대 비율 감소"
+msgstr "단계 크기 감소"
 
 #: engines/freescape/games/dark/dark.cpp:231
 #: engines/freescape/games/driller/driller.cpp:167
 msgid "Rise/Fly up"
-msgstr ""
+msgstr "상승/급상승"
 
 #: engines/freescape/games/dark/dark.cpp:237
 #: engines/freescape/games/driller/driller.cpp:173
-#, fuzzy
-#| msgid "Fly down"
 msgid "Lower/Fly down"
-msgstr "아래로 비행"
+msgstr "하강/급강하"
 
 #: engines/freescape/games/dark/dark.cpp:243
 msgid "Enable/Disable Jetpack"
-msgstr ""
+msgstr "제트팩 활성화/비활성화"
 
 #. I18N: drilling rig is an in game item
 #: engines/freescape/games/driller/driller.cpp:180
-#, fuzzy
-#| msgid "Debug Apply Celling Grid"
 msgid "Deploy drilling rig"
-msgstr "셀 그리드를 적용"
+msgstr "드릴링 장비 배치"
 
 #. I18N: drilling rig is an in game item
 #: engines/freescape/games/driller/driller.cpp:187
 msgid "Collect drilling rig"
-msgstr ""
+msgstr "드릴링 장비를 수집"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -9474,7 +9402,7 @@ msgid ""
 "%s and %s. Without these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
-"AdLib 악기 정의 파일 %s 및 %s를 찾을 수 없습니다.\n"
+"애드립 악기 정의 파일 %s 및 %s를 찾을 수 없습니다.\n"
 "이 파일이 없으면,\n"
 "음악이 원래 게임과 같은 사운드가 나오지 않습니다."
 
@@ -10114,7 +10042,7 @@ msgstr "무작위 지도 생성"
 
 #: engines/scumm/dialogs.cpp:1721
 msgid "Allow random map generation (Based from Moonbase Console)."
-msgstr "무작위 맵 생성을 허용합니다. (Moonbase 콘솔 기반)"
+msgstr "무작위 맵 생성을 허용합니다 (Moonbase 콘솔 기반)."
 
 #: engines/scumm/dialogs.cpp:1723
 msgid ""
@@ -10375,7 +10303,7 @@ msgstr "끄기"
 
 #: engines/scumm/help.cpp:221
 msgid "KeyUp"
-msgstr "KeyUp"
+msgstr "↑ 키"
 
 #: engines/scumm/help.cpp:221
 msgid "Highlight prev dialogue"
@@ -10383,7 +10311,7 @@ msgstr "이전 대화를 강조"
 
 #: engines/scumm/help.cpp:222
 msgid "KeyDown"
-msgstr "KeyDown"
+msgstr "↓ 키"
 
 #: engines/scumm/help.cpp:222
 msgid "Highlight next dialogue"
@@ -10841,7 +10769,7 @@ msgid ""
 "but %s is missing. Using AdLib instead."
 msgstr ""
 "실기 미디 지원에는 루카스아츠의 롤랜드 업그레이드가 필요하지만,\n"
-"%s가 없습니다. 대신 AdLib을 사용합니다."
+"%s가 없습니다. 대신 애드립을 사용합니다."
 
 #: engines/scumm/scumm.cpp:2145
 msgid ""
@@ -10849,7 +10777,7 @@ msgid ""
 "required resources for MT-32. Using AdLib instead."
 msgstr ""
 "이 특정 버전의 원숭이 섬 1은 MT-32에 필요한 리소스가 일부\n"
-"빠진 것으로 알려져 있습니다. 대신 AdLib을 사용합니다."
+"빠진 것으로 알려져 있습니다. 대신 애드립을 사용합니다."
 
 #: engines/scumm/scumm.cpp:3953
 msgid ""
@@ -10958,26 +10886,26 @@ msgstr "희소 - 다수"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:112
 msgid "Picks the random amount of energy pools."
-msgstr ""
+msgstr "에너지 풀의 양을 무작위로 선택합니다."
 
 #. I18N: Percentage of terrain
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:115
 msgid "Terrain"
-msgstr ""
+msgstr "지형"
 
 #. I18N: Terrain slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:120
 msgid "Barren - Rough"
-msgstr ""
+msgstr "척박 - 거침"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:124
 msgid "Picks the random amount of terrain level."
-msgstr ""
+msgstr "지형 레벨을 무작위로 선택합니다."
 
 #. I18N: Percentage of water
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:127
 msgid "Water"
-msgstr ""
+msgstr "물"
 
 #. I18N: Water slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:132
