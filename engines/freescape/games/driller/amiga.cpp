@@ -174,11 +174,11 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	}
 
 	drawStringInSurface(_currentArea->_name, 188, 185, primaryFontColor, secondaryFontColor, black, surface);
-	drawStringInSurface(Common::String::format("%07d", score), 240, 129, primaryFontColor, secondaryFontColor, black, surface);
+	drawStringInSurface(Common::String::format("%07d", score), 241, 129, primaryFontColor, secondaryFontColor, black, surface);
 
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
-	drawStringInSurface(Common::String::format("%02d:", hours), 208, 7, primaryFontColor, secondaryFontColor, black, surface);
+	drawStringInSurface(Common::String::format("%02d:", hours), 210, 7, primaryFontColor, secondaryFontColor, black, surface);
 	drawStringInSurface(Common::String::format("%02d:", minutes), 230, 7, primaryFontColor, secondaryFontColor, black, surface);
 	drawStringInSurface(Common::String::format("%02d", seconds), 254, 7, primaryFontColor, secondaryFontColor, black, surface);
 
