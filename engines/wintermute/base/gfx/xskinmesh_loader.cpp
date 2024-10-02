@@ -60,7 +60,7 @@ void XSkinMeshLoader::loadMesh(const Common::String &filename, XFileData *xobj, 
 	auto fvf = _dxmesh->getFVF();
 	uint32 vertexSize = DXGetFVFVertexSize(fvf) / sizeof(float);
 	float *vertexBuffer = (float *)_dxmesh->getVertexBuffer().ptr();
-	uint32 offset = 0, normalOffset, /*diffuseOffset, */textureOffset;
+	uint32 offset = 0, normalOffset = 0, /*diffuseOffset, */textureOffset = 0;
 
 	if (fvf & DXFVF_XYZ) {
 		offset += sizeof(DXVector3) / sizeof(float);
