@@ -318,6 +318,7 @@ public:
 	void initScreen(const Graphics::PixelFormat *format) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	Common::Point getRealCoords(Common::Point &pos) const override;
+	static bool validateMode(Common::Platform p) { return (p == Common::kPlatformDOS || p == Common::kPlatformWindows); }
 private:
 	void loadData() override;
 	void renderBitmap(byte *dst, const byte *src, int pitch, int y, int w, int h, const byte *patterns, const byte *palette, uint16 &realWidth, uint16 &realHeight) override;
