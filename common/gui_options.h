@@ -72,6 +72,8 @@
 #define GUIO_RENDERC64	    	"\x29"
 #define GUIO_RENDERVGAGREY    	"\x2A"
 #define GUIO_RENDERPC98_8C   	"\x2B"
+#define GUIO_RENDERWIN_256C   	"\x2C"
+#define GUIO_RENDERWIN_16C   	"\x2D"
 
 #define GUIO_LINKSPEECHTOSFX "\x30"
 #define GUIO_LINKMUSICTOSFX  "\x31"

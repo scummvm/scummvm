@@ -1500,7 +1500,11 @@ void KQ6WinGfxDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int 
 }
 
 byte findColorInPalette(uint32 rgbTriplet, const byte *palette, int numColors) {
-	byte color[3] = { (rgbTriplet >> 16) & 0xFF, (rgbTriplet >> 8) & 0xFF, rgbTriplet & 0xFF };
+	byte color[3];
+	for (int i = 2; i >= 0; --i) {
+		color[i] = rgbTriplet & 0xFF;
+		rgbTriplet >>= 8;
+	}
 	int min = 65025;
 	byte match = 0;
 	for (int i = 0; i < numColors && min; ++i) {
