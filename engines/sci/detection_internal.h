@@ -23,6 +23,7 @@
 #define SCI_DETECTION_INTERNAL_H
 
 #include "common/path.h"
+#include "common/platform.h"
 
 #include "sci/detection.h"
 
@@ -38,7 +39,7 @@ struct GameIdStrToEnum {
 
 extern const GameIdStrToEnum gameIdStrToEnum[];
 
-Common::String customizeGuiOptions(Common::Path gamePath, Common::String guiOptions, SciVersion version);
+Common::String customizeGuiOptions(Common::Path gamePath, Common::String guiOptions, Common::Platform platform, Common::String idStr, SciVersion version);
 
 } // End of namespace Sci
 

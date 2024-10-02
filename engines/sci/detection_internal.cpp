@@ -110,7 +110,7 @@ const GameIdStrToEnum gameIdStrToEnum[] = {
 	{ nullptr,           nullptr,           GID_ALL,              false, SCI_VERSION_NONE }
 };
 
-Common::String customizeGuiOptions(Common::Path gamePath, Common::String guiOptions, SciVersion version) {
+Common::String customizeGuiOptions(Common::Path gamePath, Common::String guiOptions, Common::Platform platform, Common::String idStr, SciVersion version) {
 	struct RMode {
 		SciVersion min;
 		SciVersion max;
@@ -130,8 +130,11 @@ Common::String customizeGuiOptions(Common::Path gamePath, Common::String guiOpti
 		{ SCI_VERSION_01,		SCI_VERSION_01,				"9801VID.DRV",		GUIO_RENDERPC98_16C },
 		{ SCI_VERSION_1_LATE,	SCI_VERSION_1_LATE,			"9801V8.DRV",		GUIO_RENDERPC98_8C },
 		{ SCI_VERSION_01,		SCI_VERSION_01,				"9801V8M.DRV",		GUIO_RENDERPC98_8C },
-		{ SCI_VERSION_01,		SCI_VERSION_01,				"9801VID.DRV",		GUIO_RENDERPC98_8C },
+		{ SCI_VERSION_01,		SCI_VERSION_01,				"9801VID.DRV",		GUIO_RENDERPC98_8C }
 	};
+
+	if (idStr.equals("kq6") && platform == Common::kPlatformWindows)
+		return guiOptions + GUIO_RENDERWIN_256C + GUIO_RENDERWIN_16C;
 
 	Common::FSNode node(gamePath);
 

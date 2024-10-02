@@ -159,14 +159,14 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 		_gfxDrv = new SCI0_HerculesDriver(renderMode == Common::kRenderHercG ? 0x66ff66 : 0xffbf66, requestRGB, false);
 		break;
 	case Common::kRenderEGA:
-		// No support for this mode in the Korean version yet.
-		if (getSciVersion() > SCI_VERSION_1_EGA_ONLY && g_sci->getLanguage() != Common::KO_KOR)
+		if (getSciVersion() > SCI_VERSION_1_EGA_ONLY)
 			_gfxDrv = new SCI1_EGADriver(requestRGB);
 		break;
 	case Common::kRenderVGAGrey:
-		// No support for this mode in the Korean version yet.
-		if (g_sci->getLanguage() != Common::KO_KOR)
-			_gfxDrv = new SCI1_VGAGreyScaleDriver(requestRGB);
+		_gfxDrv = new SCI1_VGAGreyScaleDriver(requestRGB);
+		break;
+	case Common::kRenderWin16c:
+		_gfxDrv = new KQ6WinGfx16ColorsDriver(ConfMan.getBool("windows_cursors") == false, true, requestRGB);
 		break;
 	case Common::kRenderPC98_8c:
 		if (g_sci->getGameId() == GID_PQ2)

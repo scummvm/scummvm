@@ -336,7 +336,9 @@ Common::Error SciEngine::run() {
 			((renderMode == Common::kRenderHercA || renderMode == Common::kRenderHercG) && !SCI0_HerculesDriver::validateMode(p)) ||
 			(renderMode == Common::kRenderPC98_8c && ((getSciVersion() <= SCI_VERSION_01 && !SCI0_PC98Gfx8ColorsDriver::validateMode(p)) ||
 			(getSciVersion() > SCI_VERSION_01 && !SCI1_PC98Gfx8ColorsDriver::validateMode(p)))) ||
-			(renderMode == Common::kRenderPC98_16c && undither))
+			(getSciVersion() > SCI_VERSION_1_LATE && !KQ6WinGfx16ColorsDriver::validateMode(p)) ||
+			(renderMode == Common::kRenderPC98_16c && undither) ||
+			(getLanguage() == Common::KO_KOR)) // No extra modes supported for the Korean fan-patched games
 				renderMode = Common::kRenderDefault;
 
 		// Disable undithering for CGA, Hercules and other unsuitable video modes

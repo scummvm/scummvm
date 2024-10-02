@@ -215,7 +215,7 @@ Common::Error SciMetaEngine::createInstance(OSystem *syst, Engine **engine, cons
 			*engine = new SciEngine(syst, desc, g->gameidEnum);
 
 			// If the GUI options were updated, we catch this here and update them in the users config file transparently.
-			Common::updateGameGUIOptions(customizeGuiOptions(ConfMan.getPath("path"), desc->guiOptions, g->version), getGameGUIOptionsDescriptionLanguage(desc->language));
+			Common::updateGameGUIOptions(customizeGuiOptions(ConfMan.getPath("path"), desc->guiOptions, desc->platform, g->gameidStr, g->version), getGameGUIOptionsDescriptionLanguage(desc->language));
 
 			return Common::kNoError;
 		}
