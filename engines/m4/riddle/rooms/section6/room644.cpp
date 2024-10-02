@@ -30,7 +30,24 @@ namespace Rooms {
 void Room644::init() {
 }
 
-void Room644::daemon() {
+void Room644::parser() {
+	Maze::parser();
+
+	if (player_said("journal", "SCALLOP")) {
+		if (_G(flags)[V207]) {
+			digi_play("203r54", 1);
+		} else {
+			if (_G(kernel).trigger == 6)
+				_G(flags)[V207] = 1;
+			sendWSMessage_multi(0);
+		}
+
+		_G(player).command_ready = false;
+	} else {
+		checkExitLeft(643);
+		checkExitRight(645);
+		checkExitDown(638);
+	}
 }
 
 } // namespace Rooms

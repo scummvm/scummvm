@@ -30,7 +30,24 @@ namespace Rooms {
 void Room626::init() {
 }
 
-void Room626::daemon() {
+void Room626::parser() {
+	Maze::parser();
+
+	if (player_said("journal", "SEAHORSE")) {
+		if (_G(flags)[V209]) {
+			digi_play("203r54", 1);
+		} else {
+			if (_G(kernel).trigger == 6)
+				_G(flags)[V209] = 1;
+			sendWSMessage_multi(0);
+		}
+
+		_G(player).command_ready = false;
+	} else {
+		checkExitRight(627);
+		checkExitUp(631);
+		checkExitDown(620);
+	}
 }
 
 } // namespace Rooms

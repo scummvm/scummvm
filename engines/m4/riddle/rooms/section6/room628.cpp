@@ -30,7 +30,13 @@ namespace Rooms {
 void Room628::init() {
 }
 
-void Room628::daemon() {
+void Room628::parser() {
+	Maze::parser();
+
+	checkExitLeft(627);
+	checkExitRight(629);
+	checkExitUp(633);
+	checkExitDown(622);
 }
 
 } // namespace Rooms

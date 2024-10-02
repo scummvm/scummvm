@@ -15,30 +15,48 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/ },.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
-#include "m4/riddle/rooms/section6/room627.h"
-#include "m4/graphics/gr_series.h"
-#include "m4/riddle/vars.h"
+#ifndef M4_RIDDLE_ROOMS_SECTION6_MAZE_H
+#define M4_RIDDLE_ROOMS_SECTION6_MAZE_H
+
+#include "m4/riddle/rooms/room.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-void Room627::init() {
-}
+class Maze : public Room {
+private:
+	void checkExit(const char *action, int newRoom);
 
-void Room627::parser() {
-	Maze::parser();
+protected:
+	void checkExitLeft(int newRoom) {
+		checkExit("exit left", newRoom);
+	}
+	void checkExitRight(int newRoom) {
+		checkExit("exit right", newRoom);
+	}
+	void checkExitUp(int newRoom) {
+		checkExit("exit up", newRoom);
+	}
+	void checkExitDown(int newRoom) {
+		checkExit("exit down", newRoom);
+	}
 
-	checkExitLeft(626);
-	checkExitRight(628);
-	checkExitUp(632);
-	checkExitDown(621);
-}
+public:
+	Maze() : Room() {}
+	~Maze() override {}
+
+	void preload() override;
+	void daemon() override;
+	void parser() override;
+};
 
 } // namespace Rooms
 } // namespace Riddle
 } // namespace M4
+
+#endif

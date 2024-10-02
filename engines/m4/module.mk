@@ -224,6 +224,7 @@ MODULE_OBJS = \
 	riddle/rooms/section5/room509.o \
 	riddle/rooms/section5/room510.o \
 	riddle/rooms/section6/section6.o \
+	riddle/rooms/section6/section6_maze.o \
 	riddle/rooms/section6/room603.o \
 	riddle/rooms/section6/room604.o \
 	riddle/rooms/section6/room605.o \

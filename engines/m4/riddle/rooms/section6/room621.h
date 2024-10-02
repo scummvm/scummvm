@@ -22,19 +22,19 @@
 #ifndef M4_RIDDLE_ROOMS_SECTION6_ROOM621_H
 #define M4_RIDDLE_ROOMS_SECTION6_ROOM621_H
 
-#include "m4/riddle/rooms/room.h"
+#include "m4/riddle/rooms/section6/section6_maze.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-class Room621 : public Room {
+class Room621 : public Maze {
 public:
-	Room621() : Room() {}
+	Room621() : Maze() {}
 	~Room621() override {}
 
 	void init() override;
-	void daemon() override;
+	void parser() override;
 };
 
 } // namespace Rooms

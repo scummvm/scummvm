@@ -30,7 +30,23 @@ namespace Rooms {
 void Room651::init() {
 }
 
-void Room651::daemon() {
+void Room651::parser() {
+	Maze::parser();
+
+	if (player_said("journal", "SHARK'S TOOTH")) {
+		if (_G(flags)[V201]) {
+			digi_play("203r54", 1);
+		} else {
+			if (_G(kernel).trigger == 6)
+				_G(flags)[V201] = 1;
+			sendWSMessage_multi(0);
+		}
+
+		_G(player).command_ready = false;
+	} else {
+		checkExitLeft(650);
+		checkExitDown(647);
+	}
 }
 
 } // namespace Rooms

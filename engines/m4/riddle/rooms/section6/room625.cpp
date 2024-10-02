@@ -30,7 +30,22 @@ namespace Rooms {
 void Room625::init() {
 }
 
-void Room625::daemon() {
+void Room625::parser() {
+	Maze::parser();
+
+	if (player_said("journal", "STARFISH")) {
+		if (_G(flags)[V208]) {
+			digi_play("203r54", 1);
+		} else {
+			if (_G(kernel).trigger == 6)
+				_G(flags)[V208] = 1;
+			sendWSMessage_multi(0);
+		}
+
+		_G(player).command_ready = false;
+	} else {
+		checkExitLeft(624);
+	}
 }
 
 } // namespace Rooms
