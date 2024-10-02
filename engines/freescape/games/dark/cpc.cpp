@@ -91,13 +91,13 @@ void DarkEngine::drawCPCUI(Graphics::Surface *surface) {
 
 	int score = _gameStateVars[k8bitVariableScore];
 	int ecds = _gameStateVars[kVariableActiveECDs];
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 199, 137, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 199, 145, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 199, 153, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 200, 137, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 200, 145, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 200, 153, front, back, surface);
 
 	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 72, 168, front, back, surface);
 	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 72, 177, front, back, surface);
-	drawStringInSurface(Common::String::format("%07d", score), 94, 8, front, back, surface);
+	drawStringInSurface(Common::String::format("%07d", score), 95, 8, front, back, surface);
 	drawStringInSurface(Common::String::format("%3d%%", ecds), 191, 8, front, back, surface);
 
 	int seconds, minutes, hours;
@@ -116,21 +116,24 @@ void DarkEngine::drawCPCUI(Graphics::Surface *surface) {
 	int energy = _gameStateVars[k8bitVariableEnergy]; // called fuel in this game
 	int shield = _gameStateVars[k8bitVariableShield];
 
+	_gfx->readFromPalette(_gfx->_inkColor, r, g, b);
+	uint32 inkColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+
 	if (shield >= 0) {
 		Common::Rect shieldBar;
-		shieldBar = Common::Rect(72, 140, 143 - (_maxShield - shield), 148);
-		surface->fillRect(shieldBar, back);
+		shieldBar = Common::Rect(72, 141 - 1, 143 - (_maxShield - shield), 146);
+		surface->fillRect(shieldBar, inkColor);
 
-		shieldBar = Common::Rect(72, 141, 143 - (_maxShield - shield), 147);
+		shieldBar = Common::Rect(72, 143 - 1, 143 - (_maxShield - shield), 144);
 		surface->fillRect(shieldBar, front);
 	}
 
 	if (energy >= 0) {
 		Common::Rect energyBar;
-		energyBar = Common::Rect(72, 147, 143 - (_maxEnergy - energy), 155);
-		surface->fillRect(energyBar, back);
+		energyBar = Common::Rect(72, 147 + 1, 143 - (_maxEnergy - energy), 155 - 1);
+		surface->fillRect(energyBar, inkColor);
 
-		energyBar = Common::Rect(72, 148, 143 - (_maxEnergy - energy), 154);
+		energyBar = Common::Rect(72, 148 + 2, 143 - (_maxEnergy - energy), 154 - 2);
 		surface->fillRect(energyBar, front);
 	}
 	drawBinaryClock(surface, 300, 124, front, back);
