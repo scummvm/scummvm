@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-02 14:15+0000\n"
+"PO-Revision-Date: 2024-10-02 14:26+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -10238,7 +10238,7 @@ msgstr "  좋습니다."
 
 #: engines/scumm/help.cpp:116
 msgid "Spinning drafts on the keyboard:"
-msgstr "키보드에서 드래프트를 회전:"
+msgstr "키보드에서 초안을 회전:"
 
 #: engines/scumm/help.cpp:118
 msgid "Main game controls:"
@@ -10323,41 +10323,39 @@ msgstr "헨리에게 / 인디에게"
 #. I18N: These are different musical notes
 #: engines/scumm/help.cpp:181
 msgid "play C minor on distaff"
-msgstr "지팡이로 C를 연주"
+msgstr "실패로 C 단조를 연주"
 
 #: engines/scumm/help.cpp:182
 msgid "play D on distaff"
-msgstr "지팡이로 D를 연주"
+msgstr "실패로 D를 연주"
 
 #: engines/scumm/help.cpp:183
 msgid "play E on distaff"
-msgstr "지팡이로 E를 연주"
+msgstr "실패로 E를 연주"
 
 #: engines/scumm/help.cpp:184
 msgid "play F on distaff"
-msgstr "지팡이로 F를 연주"
+msgstr "실패로 F를 연주"
 
 #: engines/scumm/help.cpp:185
 msgid "play G on distaff"
-msgstr "지팡이로 G를 연주"
+msgstr "실패로 G를 연주"
 
 #: engines/scumm/help.cpp:186
 msgid "play A on distaff"
-msgstr "지팡이로 A를 연주"
+msgstr "실패로 A를 연주"
 
 #: engines/scumm/help.cpp:187
 msgid "play B on distaff"
-msgstr "지팡이로 B를 연주"
+msgstr "실패로 B를 연주"
 
 #: engines/scumm/help.cpp:188
 msgid "play C major on distaff"
-msgstr "지팡이로 높은 C를 연주"
+msgstr "실패로 C 장조를 연주"
 
 #: engines/scumm/help.cpp:190
-#, fuzzy
-#| msgid "Show inventory"
 msgid "Shows the drafts inventory"
-msgstr "인벤토리 보이기"
+msgstr "임시 인벤토리를 표시"
 
 #: engines/scumm/help.cpp:196 engines/scumm/help.cpp:218
 msgid "puSh"
