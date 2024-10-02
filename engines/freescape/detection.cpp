@@ -798,6 +798,22 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"castlemaster",
+		"CD release",
+		{
+			{"CASTLE.EXE", 0, "7601f74572b3c99bfc8d3f6d9d43d356", 29804},
+			{"CMC.EXE", 0, "c7f651402307693048604e0f47c5c9e9", 57216},
+			{"CME.EXE", 0, "e01f1561cbdc48d0a20823fdb852bdf1", 89296},
+			{"CMH.EXE", 0, "76ac58ed66451689e84823706e000b6e", 60016},
+			{"CMT.EXE", 0, "8c8621b5927d090bb7a4dca8d39cbfcf", 78816},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSUPPORTED,
+		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDEREGA, GUIO_RENDERCGA)
+	},
+	{
+		"castlemaster",
 		"",
 		{
 			{"CASTLE.EXE", 0, "42a7d46b418d68e75e31c1cb9d89af14", 2678},
@@ -812,7 +828,6 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDEREGA, GUIO_RENDERCGA)
 	},
-
 	// 3D Construction Kit games
 	{
 		"3dkit",
