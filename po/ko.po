@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-02 14:26+0000\n"
+"PO-Revision-Date: 2024-10-02 14:27+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -10363,7 +10363,7 @@ msgstr "밀기"
 
 #: engines/scumm/help.cpp:197 engines/scumm/help.cpp:219
 msgid "pull (Yank)"
-msgstr "당기기"
+msgstr "당기기 (잡아당김)"
 
 #: engines/scumm/help.cpp:204
 msgid "turn oN"
