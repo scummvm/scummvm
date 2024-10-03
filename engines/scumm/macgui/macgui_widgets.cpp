@@ -902,8 +902,8 @@ Common::Rect MacGuiImpl::MacSlider::getHandleRect(int value) {
 
 void MacGuiImpl::MacSlider::fill(Common::Rect r, bool inverted) {
 	Color pattern[2][4] = {
-		{ kBlack, kWhite, kWhite, kWhite },
-		{ kWhite, kWhite, kBlack, kWhite }
+		{ kWhite, kWhite, kBlack, kWhite },
+		{ kBlack, kWhite, kWhite, kWhite }
 	};
 
 	Graphics::Surface *s = _window->innerSurface();

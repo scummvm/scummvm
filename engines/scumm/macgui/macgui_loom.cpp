@@ -488,22 +488,23 @@ void MacLoomGui::runDraftsInventory() {
 // make something that just looks similar to one.
 
 bool MacLoomGui::runOpenDialog(int &saveSlotToHandle) {
-	Common::Rect bounds(88, 28, 448, 208);
+	Common::Rect bounds(88, 28, 448, 210);
 
 	MacDialogWindow *window = createWindow(bounds);
 
-	window->addButton(Common::Rect(254, 135, 334, 155), "Open", true);
-	window->addButton(Common::Rect(254, 104, 334, 124), "Cancel", true);
-	window->addButton(Common::Rect(254, 59, 334, 79), "Delete", true);
+	window->addButton(Common::Rect(254, 137, 334, 157), "Open", true);
+	window->addButton(Common::Rect(254, 106, 334, 126), "Cancel", true);
+	window->addButton(Common::Rect(254, 62, 334, 82), "Desktop", false);
+	window->addButton(Common::Rect(254, 34, 334, 54), "Eject", false);
 
-	window->drawDottedHLine(253, 91, 334);
+	window->drawDottedHLine(253, 93, 334);
 
 	bool availSlots[100];
 	int slotIds[100];
 	Common::StringArray savegameNames;
 	prepareSaveLoad(savegameNames, availSlots, slotIds, ARRAYSIZE(availSlots));
 
-	window->addListBox(Common::Rect(14, 13, 217, 159), savegameNames, true);
+	window->addListBox(Common::Rect(14, 31, 232, 161), savegameNames, true);
 
 	window->setDefaultWidget(0);
 
@@ -540,9 +541,11 @@ bool MacLoomGui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 
 	MacDialogWindow *window = createWindow(bounds);
 
-	window->addButton(Common::Rect(254, 159, 334, 179), "Save", true);
-	window->addButton(Common::Rect(254, 128, 334, 148), "Cancel", true);
-	window->addButton(Common::Rect(254, 83, 334, 103), "Delete", false);
+	window->addButton(Common::Rect(254, 163, 334, 183), "Save", true);
+	window->addButton(Common::Rect(254, 132, 334, 152), "Cancel", true);
+	window->addButton(Common::Rect(254, 90, 334, 110), "New", false);
+	window->addButton(Common::Rect(254, 62, 334, 82), "Desktop", false);
+	window->addButton(Common::Rect(254, 34, 334, 54), "Eject", false);
 
 	bool busySlots[100];
 	int slotIds[100];
@@ -557,18 +560,18 @@ bool MacLoomGui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 		}
 	}
 
-	window->addListBox(Common::Rect(14, 9, 217, 139), savegameNames, true, true);
+	window->addListBox(Common::Rect(14, 31, 232, 129), savegameNames, true, true);
 
-	MacGuiImpl::MacEditText *editText = window->addEditText(Common::Rect(16, 164, 229, 180), "Game file", true);
+	MacGuiImpl::MacEditText *editText = window->addEditText(Common::Rect(16, 159, 229, 175), "Game file", true);
 
 	Graphics::Surface *s = window->innerSurface();
 	const Graphics::Font *font = getFont(kSystemFont);
 
-	s->frameRect(Common::Rect(14, 161, 232, 183), kBlack);
+	s->frameRect(Common::Rect(14, 156, 232, 178), kBlack);
 
-	window->drawDottedHLine(253, 115, 334);
+	window->drawDottedHLine(253, 121, 334);
 
-	font->drawString(s, "Save Game File as...", 14, 143, 218, kBlack, Graphics::kTextAlignLeft, 4);
+	font->drawString(s, "Save Game File as...", 14, 138, 218, kBlack, Graphics::kTextAlignLeft, 4);
 
 	window->setDefaultWidget(0);
 	editText->selectAll();
