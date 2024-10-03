@@ -716,6 +716,11 @@ void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int
 }
 
 void CastleEngine::drawFullscreenRiddleAndWait(uint16 riddle) {
+	if (_savedScreen) {
+		_savedScreen->free();
+		delete _savedScreen;
+	}
+
 	_savedScreen = _gfx->getScreenshot();
 	int frontColor = 6;
 	switch (_renderMode) {
@@ -770,6 +775,7 @@ void CastleEngine::drawFullscreenRiddleAndWait(uint16 riddle) {
 
 	_savedScreen->free();
 	delete _savedScreen;
+	_savedScreen = nullptr;
 	surface->free();
 	delete surface;
 }
