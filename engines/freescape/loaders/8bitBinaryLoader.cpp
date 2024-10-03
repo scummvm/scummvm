@@ -951,11 +951,6 @@ void FreescapeEngine::loadFonts(Common::SeekableReadStream *file, int offset) {
 		chars = getChars(file, offset, 85);
 
 	_font = Font(chars);
-	if (isCastle())
-		_font.setKernelingOffset(4);
-	else
-		_font.setKernelingOffset(0);
-
 	_fontLoaded = true;
 }
 
