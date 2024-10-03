@@ -1130,12 +1130,7 @@ bool DXLoadSkinMesh(XFileData *fileData, DXBuffer &adjacencyOut, DXBuffer &mater
 	}
 	memcpy(materials.ptr(), meshData._materials, meshData._numMaterials * sizeof(DXMaterial));
 
-	if (meshData._numTriFaces== 0) {
-		materials.free();
-		cleanupMeshData(&meshData);
-		delete mesh;
-		return false;
-	}
+
 	DXBuffer adjacency = DXBuffer(meshData._numTriFaces * 3 * sizeof(uint32));
 	if (!adjacency.ptr()) {
 		materials.free();
@@ -1150,6 +1145,7 @@ bool DXLoadSkinMesh(XFileData *fileData, DXBuffer &adjacencyOut, DXBuffer &mater
 		delete mesh;
 		return false;
 	}
+
 
 	*meshOut = mesh;
 	adjacencyOut = adjacency;
