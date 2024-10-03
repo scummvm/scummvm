@@ -97,8 +97,8 @@ void OneDriveTokenRefresher::finishJson(const Common::JSONValue *json) {
 				irrecoverable = false;
 
 			if (irrecoverable) {
-				Common::String errorContents = "<irrecoverable> " + json->stringify(true);
-				finishError(Networking::ErrorResponse(this, false, true, errorContents, httpResponseCode));
+				Common::String errorContents = json->stringify(true);
+				finishErrorIrrecoverable(Networking::ErrorResponse(this, false, true, errorContents, httpResponseCode));
 				delete json;
 				return;
 			}
@@ -134,7 +134,12 @@ void OneDriveTokenRefresher::finishError(const Networking::ErrorResponse &error,
 		}
 	}
 
-	Request::finishError(error); //call closest base class's method
+	Request::finishError(error, state); //call closest base class's method
+}
+
+void OneDriveTokenRefresher::finishErrorIrrecoverable(const Networking::ErrorResponse &error, Networking::RequestState state) {
+	// don't try to fix JSON as this is irrecoverable version
+	Request::finishError(error, state); // call closest base class's method
 }
 
 void OneDriveTokenRefresher::setHeaders(const Common::Array<Common::String> &headers) {
