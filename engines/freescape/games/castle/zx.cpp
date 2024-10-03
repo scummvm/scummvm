@@ -118,7 +118,6 @@ void CastleEngine::loadAssetsZXFullGame() {
 			loadMessagesVariableSize(&file, 0xf3d, 71);
 			load8bitBinary(&file, 0x6aab - 2, 16);
 			loadSpeakerFxZX(&file, 0xca0, 0xcdc);
-			//loadFonts(&file, 0x1218 + 16);
 
 			file.seek(0x1218 + 16);
 			for (int i = 0; i < 90; i++) {
@@ -127,6 +126,7 @@ void CastleEngine::loadAssetsZXFullGame() {
 				chars.push_back(loadFrame(&file, surface, 1, 8, 1));
 			}
 			_font = Font(chars);
+			_font.setCharWidth(9);
 			_fontLoaded = true;
 
 			break;
@@ -134,7 +134,6 @@ void CastleEngine::loadAssetsZXFullGame() {
 			loadRiddles(&file, 0x145c - 2 - 9 * 2, 9);
 			load8bitBinary(&file, 0x6a3b, 16);
 			loadSpeakerFxZX(&file, 0xc91, 0xccd);
-			//loadFonts(&file, 0x1219);
 
 			file.seek(0x1219);
 			for (int i = 0; i < 90; i++) {
@@ -143,6 +142,7 @@ void CastleEngine::loadAssetsZXFullGame() {
 				chars.push_back(loadFrame(&file, surface, 1, 8, 1));
 			}
 			_font = Font(chars);
+			_font.setCharWidth(9);
 			_fontLoaded = true;
 
 			break;
@@ -190,7 +190,7 @@ void CastleEngine::loadAssetsZXFullGame() {
 
 	_strenghtWeightsFrames = loadFramesWithHeader(&file, _language == Common::ES_ESP ? 0xf92 : 0xf83, 4, yellow, black);
 
-	_flagFrames = loadFramesWithHeader(&file, 0x10e4, 4, green, black);
+	_flagFrames = loadFramesWithHeader(&file, (_language == Common::ES_ESP ? 0x10e4 + 15 : 0x10e4), 4, green, black);
 
 	int thunderWidth = 4;
 	int thunderHeight = 43;

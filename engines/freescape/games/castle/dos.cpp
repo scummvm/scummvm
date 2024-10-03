@@ -238,12 +238,10 @@ void CastleEngine::loadAssetsDOSFullGame() {
 				charsRiddle[i]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGARiddleFontPalette, 16);
 			}
 			_font = Font(chars);
-			_font.setCharWidth(8 + 1);
-			//_font.setTransparentColor(_gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00));
+			_font.setCharWidth(9);
 
 			_fontRiddle = Font(charsRiddle);
-			_fontRiddle.setCharWidth(8 + 1);
-			//_fontRiddle.setTransparentColor(_gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00));
+			_fontRiddle.setCharWidth(9);
 			_fontLoaded = true;
 
 			// No header
@@ -271,7 +269,7 @@ void CastleEngine::loadAssetsDOSFullGame() {
 		switch (_language) {
 			case Common::ES_ESP:
 				stream = decryptFile("CMLS");
-				loadRiddles(stream, 0xaae, 20);
+				loadRiddles(stream, 0xaae - 2 - 20 * 2, 20);
 				break;
 			case Common::FR_FRA:
 				stream = decryptFile("CMLF");
@@ -323,7 +321,6 @@ void CastleEngine::loadAssetsDOSDemo() {
 		stream = unpackEXE(file);
 		if (stream) {
 			loadSpeakerFxDOS(stream, 0x636d + 0x200, 0x63ed + 0x200);
-			//loadDOSFonts(stream, 0x293f6);
 
 			stream->seek(0x197c0 - 0x2a0);
 			_endGameBackgroundFrame = loadFrameFromPlanes(stream, 112, 108);
@@ -379,6 +376,27 @@ void CastleEngine::loadAssetsDOSDemo() {
 			// No header
 			_thunderFrame = loadFrameFromPlanes(stream, 16, 128);
 			_thunderFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+
+			stream->seek(0x293f6); // TODO: check this
+			Common::Array<Graphics::ManagedSurface *> chars;
+			Common::Array<Graphics::ManagedSurface *> charsRiddle;
+			for (int i = 0; i < 90; i++) {
+				Graphics::ManagedSurface *img = loadFrameFromPlanes(stream, 8, 8);
+				Graphics::ManagedSurface *imgRiddle = new Graphics::ManagedSurface();
+				imgRiddle->copyFrom(*img);
+
+				chars.push_back(img);
+				chars[i]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+
+				charsRiddle.push_back(imgRiddle);
+				charsRiddle[i]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGARiddleFontPalette, 16);
+			}
+			_font = Font(chars);
+			_font.setCharWidth(9);
+
+			_fontRiddle = Font(charsRiddle);
+			_fontRiddle.setCharWidth(9);
+			_fontLoaded = true;
 		}
 
 		delete stream;
@@ -401,7 +419,7 @@ void CastleEngine::loadAssetsDOSDemo() {
 
 		stream = decryptFile("CMLD"); // Only english
 		loadMessagesVariableSize(stream, 0x11, 164);
-		loadRiddles(stream, 0xaae, 21);
+		loadRiddles(stream, 0xaae - 2 - 21 * 2, 21);
 		delete stream;
 
 		stream = decryptFile("CDEDF");
