@@ -81,6 +81,10 @@ namespace Macs2 {
 		// [225Ah] - TODO: Initial value?
 		uint16 g225A;
 
+		// Array at [222Ch] - accessed with byte values
+		// TODO: Initialization, access pattern
+		Common::Array<uint8> gArray222C;
+
 		bool g229A;
 
 		// [229Bh] - seems to contain song byte - TODO: Initial value?
