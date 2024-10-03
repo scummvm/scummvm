@@ -38,6 +38,8 @@ class OneDriveTokenRefresher: public Networking::CurlJsonRequest {
 
 	void finishJson(const Common::JSONValue *json) override;
 	void finishError(const Networking::ErrorResponse &error, Networking::RequestState state = Networking::FINISHED) override;
+	void finishErrorIrrecoverable(const Networking::ErrorResponse &error, Networking::RequestState state = Networking::FINISHED);
+
 public:
 	OneDriveTokenRefresher(OneDriveStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url);
 	~OneDriveTokenRefresher() override;
