@@ -33,26 +33,13 @@
 
 // Include this after windows.h so we don't get a warning for redefining ARRAYSIZE
 #include "backends/fs/stdiostream.h"
-#include "common/textconsole.h"
 
-StdioStream::StdioStream(void *handle) : _handle(handle), _path(nullptr) {
+StdioStream::StdioStream(void *handle) : _handle(handle) {
 	assert(handle);
 }
 
 StdioStream::~StdioStream() {
 	fclose((FILE *)_handle);
-
-	if (!_path) {
-		return;
-	}
-
-	Common::String tmpPath(*_path);
-	tmpPath += ".tmp";
-	if (rename(tmpPath.c_str(), _path->c_str())) {
-		warning("Couldn't save file %s", _path->c_str());
-	}
-
-	delete _path;
 }
 
 bool StdioStream::err() const {
@@ -139,30 +126,19 @@ bool StdioStream::flush() {
 
 StdioStream *StdioStream::makeFromPathHelper(const Common::String &path, bool writeMode,
 		StdioStream *(*factory)(void *handle)) {
-	Common::String tmpPath(path);
-	if (writeMode) {
-		tmpPath += ".tmp";
-	}
 #if defined(WIN32) && defined(UNICODE)
-	wchar_t *wPath = Win32::stringToTchar(tmpPath);
+	wchar_t *wPath = Win32::stringToTchar(path);
 	FILE *handle = _wfopen(wPath, writeMode ? L"wb" : L"rb");
 	free(wPath);
 #elif defined(HAS_FOPEN64)
-	FILE *handle = fopen64(tmpPath.c_str(), writeMode ? "wb" : "rb");
+	FILE *handle = fopen64(path.c_str(), writeMode ? "wb" : "rb");
 #else
-	FILE *handle = fopen(tmpPath.c_str(), writeMode ? "wb" : "rb");
+	FILE *handle = fopen(path.c_str(), writeMode ? "wb" : "rb");
 #endif
 
-	if (!handle) {
-		return nullptr;
-	}
-
-	StdioStream *stream = factory(handle);
-	if (writeMode) {
-		stream->_path = new Common::String(path);
-	}
-
-	return stream;
+	if (handle)
+		return new factory(handle);
+	return nullptr;
 }
 
 #endif

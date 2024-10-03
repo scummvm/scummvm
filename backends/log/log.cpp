@@ -56,11 +56,8 @@ void Log::close() {
 		// Output a message to indicate that the log was closed successfully
 		print("--- Log closed successfully.\n");
 
-		// This avoids a segfault if a warning is issued when deleting the stream
-		Common::WriteStream *stream = _stream;
+		delete _stream;
 		_stream = nullptr;
-
-		delete stream;
 	}
 }
 
