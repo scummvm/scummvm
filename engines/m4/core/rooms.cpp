@@ -453,6 +453,10 @@ void Sections::camera_shift_xy(int32 x, int32 y) {
 	_cameraShift_vert_Amount = -sc->y1 - y + _G(kernel).letter_box_y;
 }
 
+void Sections::adv_camera_pan_step(int32 step) {
+	camera_pan_step = step;
+}
+
 /*------------------------------------------------------------------------*/
 
 Room *Section::operator[](uint roomNum) {

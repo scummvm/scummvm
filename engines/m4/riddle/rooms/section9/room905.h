@@ -36,6 +36,14 @@ public:
 	void preload() override;
 	void init() override;
 	void daemon() override;
+
+	void shutdown() override;
+
+
+private:
+	int _roomStates_field4;
+	static void escapePressed(void *, void *);
+	machine *_roomStates_tt = nullptr;
 };
 
 } // namespace Rooms
