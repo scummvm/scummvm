@@ -73,8 +73,6 @@ protected:
 
 	void updateBoundingBox();
 
-	uint32 _numAttrs;
-
 	// Wintermute3D used the ID3DXSKININFO interface
 	// we will only store, whether this mesh is skinned at all
 	// and factor out the necessary computations into some functions

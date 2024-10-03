@@ -42,8 +42,6 @@
 namespace Wintermute {
 
 XMesh::XMesh(Wintermute::BaseGame *inGame) : BaseNamedObject(inGame) {
-	_numAttrs = 0;
-
 	_skinMesh = nullptr;
 	_skinnedMesh = false;
 
@@ -102,7 +100,6 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 		mat->_material._ambient = mat->_material._diffuse;
 
 		_materials.add(mat);
-		_numAttrs = 1;
 
 		meshLoader->_indexRanges.push_back(0);
 		meshLoader->_indexRanges.push_back(meshLoader->_indexData.size());
@@ -121,9 +118,6 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 		}
 
 		auto atribTable = mesh->getAttributeTable();
-		assert (atribTable);
-		_numAttrs = atribTable->_size;
-
 		for (uint i = 0; i < atribTable->_size; i++) {
 			meshLoader->_materialIndices.push_back(atribTable->_ptr[i]._attribId);
 			meshLoader->_indexRanges.push_back(atribTable->_ptr[i]._faceStart * 3);

@@ -78,6 +78,25 @@ bool XMeshOpenGLShader::render(XModel *model) {
 		return false;
 	}
 
+	bool noAttrs = false;
+	auto attrsTable = _skinMesh->_mesh->_dxmesh->getAttributeTable();
+	uint32 numAttrs = attrsTable->_size;
+	DXAttributeRange *attrs;
+	if (numAttrs == 0) {
+		noAttrs = true;
+		numAttrs = 1;
+		attrs = new DXAttributeRange[numAttrs];
+	} else {
+		attrs = attrsTable->_ptr;
+	}
+
+	if (noAttrs) {
+		attrs[0]._attribId = 0;
+		attrs[0]._vertexStart = attrs[0]._faceStart = 0;
+		attrs[0]._vertexCount = _skinMesh->_mesh->_dxmesh->getNumVertices();
+		attrs[0]._faceCount = _skinMesh->_mesh->_dxmesh->getNumFaces();
+	}
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
 
 	_shader->enableVertexAttribute("position", _vertexBuffer, 3, GL_FLOAT, false, 4 * XSkinMeshLoader::kVertexComponentCount, 4 * XSkinMeshLoader::kPositionOffset);
@@ -86,8 +105,8 @@ bool XMeshOpenGLShader::render(XModel *model) {
 
 	_shader->use(true);
 
-	for (uint32 i = 0; i < _numAttrs; i++) {
-		int materialIndex = materialIndices[i];
+	for (uint32 i = 0; i < numAttrs; i++) {
+		int materialIndex = attrs[i]._attribId;
 
 		if (_materials[materialIndex]->getSurface()) {
 			glEnable(GL_TEXTURE_2D);
@@ -111,6 +130,10 @@ bool XMeshOpenGLShader::render(XModel *model) {
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	if (noAttrs) {
+		delete[] attrs;
+	}
 
 	return true;
 }
