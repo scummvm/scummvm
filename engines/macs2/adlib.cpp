@@ -660,8 +660,7 @@ void Adlib::OnTimer() {
 							// original does
 							if (g2291 > bp8) {
 								// l0017_1BF3:
-								// TODO: Need to handle a comparison with 222Ch
-								if (true) {
+								if (gArray222C[bp8] == 0) {
 									// l0017_1BFD:
 									// TODO: Need to handle another comparison of not yet implemented
 									// data structure
