@@ -52,6 +52,25 @@ Common::SeekableReadStream *CastleEngine::decryptFile(const Common::Path &filena
 extern byte kEGADefaultPalette[16][3];
 extern Common::MemoryReadStream *unpackEXE(Common::File &ms);
 
+byte kEGARiddleFontPalette[16][3] = {
+	{0x00, 0x00, 0x00},
+	{0xaa, 0x55, 0x00},
+	{0xaa, 0x55, 0x00},
+	{0xaa, 0x55, 0x00},
+	{0xaa, 0x55, 0x00},
+	{0xaa, 0x55, 0x00},
+	{0xaa, 0x55, 0x00},
+	{0xaa, 0x55, 0x00},
+	{0xaa, 0x55, 0x00},
+	{0xaa, 0x55, 0x00},
+	{0xaa, 0x55, 0x00},
+	{0xaa, 0x55, 0x00},
+	{0xaa, 0x55, 0x00},
+	{0xaa, 0x55, 0x00},
+	{0xaa, 0x55, 0x00},
+	{0xaa, 0x55, 0x00}
+};
+
 Graphics::ManagedSurface *CastleEngine::loadFrameFromPlanes(Common::SeekableReadStream *file, int widthInBytes, int height) {
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
 	surface->create(widthInBytes * 8 / 4, height, Graphics::PixelFormat::createFormatCLUT8());
@@ -206,12 +225,25 @@ void CastleEngine::loadAssetsDOSFullGame() {
 
 			stream->seek(0x29696);
 			Common::Array<Graphics::ManagedSurface *> chars;
+			Common::Array<Graphics::ManagedSurface *> charsRiddle;
 			for (int i = 0; i < 90; i++) {
-				chars.push_back(loadFrameFromPlanes(stream, 8, 8));
+				Graphics::ManagedSurface *img = loadFrameFromPlanes(stream, 8, 8);
+				Graphics::ManagedSurface *imgRiddle = new Graphics::ManagedSurface();
+				imgRiddle->copyFrom(*img);
+
+				chars.push_back(img);
 				chars[i]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+
+				charsRiddle.push_back(imgRiddle);
+				charsRiddle[i]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGARiddleFontPalette, 16);
 			}
 			_font = Font(chars);
 			_font.setCharWidth(8 + 1);
+			//_font.setTransparentColor(_gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00));
+
+			_fontRiddle = Font(charsRiddle);
+			_fontRiddle.setCharWidth(8 + 1);
+			//_fontRiddle.setTransparentColor(_gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00));
 			_fontLoaded = true;
 
 			// No header

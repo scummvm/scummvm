@@ -718,26 +718,17 @@ void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int
 void CastleEngine::drawFullscreenRiddleAndWait(uint16 riddle) {
 	_savedScreen = _gfx->getScreenshot();
 	int frontColor = 6;
-	int backColor = 0;
 	switch (_renderMode) {
-		case Common::kRenderCPC:
-			backColor = 14;
-			break;
-		case Common::kRenderCGA:
-			backColor = 1;
-			break;
 		case Common::kRenderZX:
-			backColor = 0;
 			frontColor = 7;
 			break;
 		default:
-			backColor = 14;
+			break;
 	}
 	uint8 r, g, b;
 	_gfx->readFromPalette(frontColor, r, g, b);
 	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
-	_gfx->readFromPalette(backColor, r, g, b);
-	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+	uint32 transparent = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
 
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
@@ -771,7 +762,7 @@ void CastleEngine::drawFullscreenRiddleAndWait(uint16 riddle) {
 		drawBorder();
 		if (_currentArea)
 			drawUI();
-		drawRiddle(riddle, front, back, surface);
+		drawRiddle(riddle, front, transparent, surface);
 		_gfx->flipBuffer();
 		g_system->updateScreen();
 		g_system->delayMillis(15); // try to target ~60 FPS
@@ -817,31 +808,22 @@ void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics
 	for (int i = 0; i < int(riddleMessages.size()); i++) {
 		x = x + riddleMessages[i]._dx;
 		y = y + riddleMessages[i]._dy;
-		drawStringInSurface(riddleMessages[i]._text, x, y, front, back, surface);
+		drawRiddleStringInSurface(riddleMessages[i]._text, x, y, front, back, surface);
 	}
 	drawFullscreenSurface(surface);
 }
 
-/*void CastleEngine::drawStringInSurface(const Common::String &str, int x, int y, uint32 fontColor, uint32 backColor, Graphics::Surface *surface, int offset) {
-	if (isSpectrum() || isCPC()) {
-		FreescapeEngine::drawStringInSurface(str, x, y, fontColor, backColor, surface, offset);
-		return;
+void CastleEngine::drawRiddleStringInSurface(const Common::String &str, int x, int y, uint32 fontColor, uint32 backColor, Graphics::Surface *surface) {
+	Common::String ustr = str;
+	ustr.toUppercase();
+	if (isDOS()) {
+		_fontRiddle.setBackground(backColor);
+		_fontRiddle.drawString(surface, ustr, x, y, _screenW, fontColor);
+	} else {
+		_font.setBackground(backColor);
+		_font.drawString(surface, ustr, x, y, _screenW, fontColor);
 	}
-
-	uint32 transparent = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
-	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0x00);
-	//uint32 green = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x80, 0x00);
-
-	_font = _fontPlane1;
-	FreescapeEngine::drawStringInSurface(str, x, y, fontColor, backColor, surface, offset);
-
-	_font = _fontPlane2;
-	FreescapeEngine::drawStringInSurface(str, x, y, yellow, transparent, surface, offset);
-
-	_font = Common::BitArray();
-	//_font = _fontPlane3;
-	//FreescapeEngine::drawStringInSurface(str, x, y, transparent, green, surface, offset);
-}*/
+}
 
 void CastleEngine::drawEnergyMeter(Graphics::Surface *surface, Common::Point origin) {
 	if (!_strenghtBackgroundFrame)
