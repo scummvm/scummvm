@@ -23,6 +23,7 @@
 #define MACS2_ADLIB_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 
 namespace Common {
 class MemoryReadStream;
