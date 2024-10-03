@@ -54,37 +54,40 @@ uint SkinMeshHelper::getNumFaces() {
 
 //////////////////////////////////////////////////////////////////////////
 uint SkinMeshHelper::getNumBones() {
-	return 0;//_mesh->getNumBones();
+	return _skinInfo->getNumBones();
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool SkinMeshHelper::getOriginalMesh(XSkinMeshLoader **mesh) {
-	return true;//_mesh->cloneMeshFVF(_mesh->getOptions(), _mesh->getFVF(), mesh);
+bool SkinMeshHelper::getOriginalMesh(DXMesh **mesh) {
+	return _dxmesh->cloneMesh(mesh);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool SkinMeshHelper::generateSkinnedMesh(uint32 options, float minWeight, uint32 *adjacencyOut, XSkinMeshLoader **mesh) {
+bool SkinMeshHelper::generateSkinnedMesh(uint32 options, float minWeight, uint32 *adjacencyOut, DXMesh **mesh) {
 	bool res = getOriginalMesh(mesh);
-	/*	if (res) {
-	 (*mesh)->generateAdjacency(adjacencyOut);
-	 }*/
-	
+	if (res) {
+	 	(*mesh)->generateAdjacency(adjacencyOut);
+	}
+
 	return res;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool SkinMeshHelper::updateSkinnedMesh(const Math::Matrix4 *boneTransforms, XSkinMeshLoader *mesh) {
-	return true;//_mesh->updateSkinnedMesh(boneTransforms);
+bool SkinMeshHelper::updateSkinnedMesh(const DXMatrix *boneTransforms, DXMesh *mesh) {
+	void *sourceVerts = reinterpret_cast<void *>(_dxmesh->getVertexBuffer().ptr());
+	void *targetVerts = reinterpret_cast<void *>(mesh->getVertexBuffer().ptr());
+
+	return _skinInfo->updateSkinnedMesh(boneTransforms, sourceVerts, targetVerts);
 }
 
 //////////////////////////////////////////////////////////////////////////
 const char *SkinMeshHelper::getBoneName(uint boneIndex) {
-	return "";//_mesh->getBoneName(boneIndex);
+	return _skinInfo->getBoneName(boneIndex);
 }
 
 //////////////////////////////////////////////////////////////////////////
-Math::Matrix4 SkinMeshHelper::getBoneOffsetMatrix(uint boneIndex) {
-	return Math::Matrix4();//_mesh->getBoneOffsetMatrix(boneIndex);
+DXMatrix *SkinMeshHelper::getBoneOffsetMatrix(uint boneIndex) {
+	return _skinInfo->getBoneOffsetMatrix(boneIndex);
 }
 
 } // namespace Wintermute
