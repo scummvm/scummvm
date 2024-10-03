@@ -130,7 +130,6 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 		}
 
 		meshLoader->_indexRanges.push_back((atribTable->_ptr[atribTable->_size - 1]._faceStart + atribTable->_ptr[atribTable->_size - 1]._faceCount) * 3);
-
 	}
 
 	_skinnedMesh = false;
@@ -145,28 +144,28 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 			int weightCount = bone->_numInfluences;
 			currSkinWeights._vertexIndices.resize(weightCount);
 			currSkinWeights._vertexWeights.resize(weightCount);
-			
+
 			for (int i = 0; i < weightCount; ++i) {
 				currSkinWeights._vertexIndices[i] = bone->_vertices[i];
 			}
-			
+
 			for (int i = 0; i < weightCount; ++i) {
 				currSkinWeights._vertexWeights[i] = bone->_weights[i];
 			}
-			
+
 			for (int r = 0; r < 4; ++r) {
 				for (int c = 0; c < 4; ++c) {
 					currSkinWeights._offsetMatrix(c, r) = bone->_transform._m4x4[r * 4 + c];
 				}
 			}
-			
+
 			// mirror at orign
 			currSkinWeights._offsetMatrix(2, 3) *= -1.0f;
-			
+
 			// mirror base vectors
 			currSkinWeights._offsetMatrix(2, 0) *= -1.0f;
 			currSkinWeights._offsetMatrix(2, 1) *= -1.0f;
-			
+
 			// change handedness
 			currSkinWeights._offsetMatrix(0, 2) *= -1.0f;
 			currSkinWeights._offsetMatrix(1, 2) *= -1.0f;

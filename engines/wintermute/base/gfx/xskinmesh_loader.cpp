@@ -60,7 +60,7 @@ void XSkinMeshLoader::loadMesh(const Common::String &filename, XFileData *xobj) 
 	auto fvf = _dxmesh->getFVF();
 	uint32 vertexSize = DXGetFVFVertexSize(fvf) / sizeof(float);
 	float *vertexBuffer = (float *)_dxmesh->getVertexBuffer().ptr();
-	uint32 offset = 0, normalOffset = 0, /*diffuseOffset, */textureOffset = 0;
+	uint32 offset = 0, normalOffset = 0, /*diffuseOffset = 0, */textureOffset = 0;
 
 	if (fvf & DXFVF_XYZ) {
 		offset += sizeof(DXVector3) / sizeof(float);
@@ -112,12 +112,8 @@ void XSkinMeshLoader::loadMesh(const Common::String &filename, XFileData *xobj) 
 	}
 
 
-	uint numFaces = _meshObject->_numFaces;
-
-	Common::Array<int> indexCountPerFace;
-
 	uint32 *indexPtr = (uint32 *)_dxmesh->getIndexBuffer().ptr();
-
+	uint numFaces = _meshObject->_numFaces;
 	for (uint i = 0; i < numFaces; ++i) {
 		XMeshFace *face = &_meshObject->_faces[i];
 		int indexCount = face->_numFaceVertexIndices;
@@ -129,7 +125,6 @@ void XSkinMeshLoader::loadMesh(const Common::String &filename, XFileData *xobj) 
 			_indexData.push_back(index3);
 			_indexData.push_back(index2);
 			_indexData.push_back(index1);
-			indexCountPerFace.push_back(3);
 		} else {
 			index1 = *indexPtr++;
 			index2 = *indexPtr++;
@@ -143,7 +138,6 @@ void XSkinMeshLoader::loadMesh(const Common::String &filename, XFileData *xobj) 
 			_indexData.push_back(index6);
 			_indexData.push_back(index5);
 			_indexData.push_back(index4);
-			indexCountPerFace.push_back(6);
 		}
 	}
 }
