@@ -35,6 +35,7 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Added "authentic graphics" mode.
   - Fixed several glitches in the different render modes.
   - Refactored sound handling for different games.
+  - Refactored font handling to use common classes.
   - Improved keymapper support coverage.
 
  MM:
