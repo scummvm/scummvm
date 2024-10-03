@@ -54,6 +54,8 @@ void Room622::init() {
 		ws_demand_location(313, 290, 5);
 		break;
 	}
+
+	digi_play_loop("950_s28c", 3);
 }
 
 void Room622::parser() {

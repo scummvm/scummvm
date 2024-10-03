@@ -28,6 +28,38 @@ namespace Riddle {
 namespace Rooms {
 
 void Room635::init() {
+	switch (_G(game).previous_room) {
+	case KERNEL_RESTORING_GAME:
+		digi_preload("950_s28c");
+		break;
+
+	case 630:
+		ws_demand_location(308, 340, 1);
+		break;
+
+	case 634:
+		ws_demand_location(-30, 321, 3);
+		ws_walk(30, 321, nullptr, 1, 3);
+		player_set_commands_allowed(false);
+		break;
+
+	case 636:
+		ws_demand_location(670, 316, 9);
+		ws_walk(605, 316, nullptr, 1, 9);
+		player_set_commands_allowed(false);
+		break;
+
+	case 641:
+		ws_demand_location(90, 250, 5);
+		break;
+
+	default:
+		digi_preload("950_s28c");
+		ws_demand_location(308, 340, 1);
+		break;
+	}
+
+	digi_play_loop("950_28c", 3);
 }
 
 void Room635::parser() {
