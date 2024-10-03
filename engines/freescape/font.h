@@ -42,6 +42,7 @@ public:
 	int getCharWidth(uint32 chr) const override;
 	int getKerningOffset(uint32 left, uint32 right) const override { return _kerningOffset; }
 	void setKernelingOffset(int offset) { _kerningOffset = offset; }
+	void setCharWidth(int width) { _charWidth = width; }
 
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
@@ -51,6 +52,7 @@ private:
 	uint32 _backgroundColor;
 	uint32 _secondaryColor;
 	int _kerningOffset;
+	int _charWidth;
 };
 
 } // End of namespace Freescape

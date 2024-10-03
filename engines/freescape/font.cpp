@@ -28,6 +28,7 @@ Font::Font() {
 	_backgroundColor = 0;
 	_secondaryColor = 0;
 	_kerningOffset = 0;
+	_charWidth = 0;
 	_chars.clear();
 }
 
@@ -36,6 +37,7 @@ Font::Font(Common::Array<Graphics::ManagedSurface *> &chars) {
 	_backgroundColor = 0;
 	_secondaryColor = 0;
 	_kerningOffset = 0;
+	_charWidth = 8;
 }
 
 Font::~Font() {
@@ -46,7 +48,7 @@ Font::~Font() {
 }
 
 int Font::getCharWidth(uint32 chr) const {
-	return 8;
+	return _charWidth;
 }
 
 int Font::getMaxCharWidth() const {

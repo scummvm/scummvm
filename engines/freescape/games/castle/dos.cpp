@@ -52,42 +52,6 @@ Common::SeekableReadStream *CastleEngine::decryptFile(const Common::Path &filena
 extern byte kEGADefaultPalette[16][3];
 extern Common::MemoryReadStream *unpackEXE(Common::File &ms);
 
-void CastleEngine::loadDOSFonts(Common::SeekableReadStream *file, int pos) {
-	/*file->seek(pos);
-	byte *bufferPlane1 = (byte *)malloc(sizeof(byte) * 59 * 8);
-	byte *bufferPlane2 = (byte *)malloc(sizeof(byte) * 59 * 8);
-	byte *bufferPlane3 = (byte *)malloc(sizeof(byte) * 59 * 8);
-
-	for (int i = 0; i < 59 * 8; i++) {
-		//debug("%lx", file->pos());
-		for (int j = 0; j < 4; j++) {
-			uint16 c = readField(file, 16);
-			assert(c < 256);
-			if (j == 1) {
-				bufferPlane1[i] = c;
-			} else if (j == 2) {
-				bufferPlane2[i] = c;
-			} else if (j == 3) {
-				bufferPlane3[i] = c;
-			}
-		}
-		//debugN("\n");
-	}
-	//debug("%" PRIx64, file->pos());
-	_fontPlane1.set_size(64 * 59);
-	_fontPlane1.set_bits(bufferPlane1);
-
-	_fontPlane2.set_size(64 * 59);
-	_fontPlane2.set_bits(bufferPlane2);
-
-	_fontPlane3.set_size(64 * 59);
-	_fontPlane3.set_bits(bufferPlane3);
-	_fontLoaded = true;
-	free(bufferPlane1);
-	free(bufferPlane2);
-	free(bufferPlane3);*/
-}
-
 Graphics::ManagedSurface *CastleEngine::loadFrameFromPlanes(Common::SeekableReadStream *file, int widthInBytes, int height) {
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
 	surface->create(widthInBytes * 8 / 4, height, Graphics::PixelFormat::createFormatCLUT8());
@@ -170,7 +134,6 @@ void CastleEngine::loadAssetsDOSFullGame() {
 		stream = unpackEXE(file);
 		if (stream) {
 			loadSpeakerFxDOS(stream, 0x636d + 0x200, 0x63ed + 0x200);
-			loadDOSFonts(stream, 0x29696);
 
 			stream->seek(0x197c0);
 			_endGameBackgroundFrame = loadFrameFromPlanes(stream, 112, 108);
@@ -248,6 +211,8 @@ void CastleEngine::loadAssetsDOSFullGame() {
 				chars[i]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
 			}
 			_font = Font(chars);
+			_font.setCharWidth(8 + 1);
+			_fontLoaded = true;
 
 			// No header
 			// Another thunder frame?
@@ -326,7 +291,7 @@ void CastleEngine::loadAssetsDOSDemo() {
 		stream = unpackEXE(file);
 		if (stream) {
 			loadSpeakerFxDOS(stream, 0x636d + 0x200, 0x63ed + 0x200);
-			loadDOSFonts(stream, 0x293f6);
+			//loadDOSFonts(stream, 0x293f6);
 
 			stream->seek(0x197c0 - 0x2a0);
 			_endGameBackgroundFrame = loadFrameFromPlanes(stream, 112, 108);

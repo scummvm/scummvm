@@ -127,6 +127,7 @@ void CastleEngine::loadAssetsZXFullGame() {
 				chars.push_back(loadFrame(&file, surface, 1, 8, 1));
 			}
 			_font = Font(chars);
+			_fontLoaded = true;
 
 			break;
 		case Common::EN_ANY:
@@ -142,6 +143,7 @@ void CastleEngine::loadAssetsZXFullGame() {
 				chars.push_back(loadFrame(&file, surface, 1, 8, 1));
 			}
 			_font = Font(chars);
+			_fontLoaded = true;
 
 			break;
 		default:
