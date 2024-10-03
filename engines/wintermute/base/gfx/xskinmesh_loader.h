@@ -69,11 +69,6 @@ protected:
 	bool generateAdjacency(Common::Array<uint32> &adjacency);
 	bool adjacentEdge(uint16 index1, uint16 index2, uint16 index3, uint16 index4);
 
-public:
-	
-	BaseArray<int> _indexRanges;
-	BaseArray<int> _materialIndices;
-
 protected:
 
 	float *_vertexData;

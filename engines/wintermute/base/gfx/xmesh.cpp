@@ -98,11 +98,7 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 		mat->_material._diffuse.color._b = 0.5f;
 		mat->_material._specular = mat->_material._diffuse;
 		mat->_material._ambient = mat->_material._diffuse;
-
 		_materials.add(mat);
-
-		meshLoader->_indexRanges.push_back(0);
-		meshLoader->_indexRanges.push_back(meshLoader->_indexData.size());
 	} else {
 		// load the materials
 		DXMaterial *fileMats = (DXMaterial *)bufMaterials.ptr();
@@ -113,17 +109,8 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 			if (fileMats[i]._textureFilename[0] != '\0') {
 				mat->setTexture(PathUtil::getDirectoryName(filename) + fileMats[i]._textureFilename, true);
 			}
-
 			_materials.add(mat);
 		}
-
-		auto atribTable = mesh->getAttributeTable();
-		for (uint i = 0; i < atribTable->_size; i++) {
-			meshLoader->_materialIndices.push_back(atribTable->_ptr[i]._attribId);
-			meshLoader->_indexRanges.push_back(atribTable->_ptr[i]._faceStart * 3);
-		}
-
-		meshLoader->_indexRanges.push_back((atribTable->_ptr[atribTable->_size - 1]._faceStart + atribTable->_ptr[atribTable->_size - 1]._faceCount) * 3);
 	}
 
 	_skinnedMesh = false;

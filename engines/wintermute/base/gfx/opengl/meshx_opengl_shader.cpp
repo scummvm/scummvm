@@ -72,8 +72,6 @@ bool XMeshOpenGLShader::loadFromXData(const Common::String &filename, XFileData 
 //////////////////////////////////////////////////////////////////////////
 bool XMeshOpenGLShader::render(XModel *model) {
 	float *vertexData = _skinMesh->_mesh->_vertexData;
-	auto indexRanges = _skinMesh->_mesh->_indexRanges;
-	auto materialIndices = _skinMesh->_mesh->_materialIndices;
 	if (vertexData == nullptr) {
 		return false;
 	}
@@ -121,8 +119,8 @@ bool XMeshOpenGLShader::render(XModel *model) {
 		_shader->setUniform("diffuse", diffuse);
 		_shader->setUniform("ambient", diffuse);
 
-		size_t offset = 2 * indexRanges[i];
-		glDrawElements(GL_TRIANGLES, indexRanges[i + 1] - indexRanges[i], GL_UNSIGNED_SHORT, (void *)offset);
+		size_t offset = 2 * attrsTable->_ptr[i]._faceStart * 3;
+		glDrawElements(GL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, GL_UNSIGNED_SHORT, (void *)offset);
 	}
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -140,7 +138,6 @@ bool XMeshOpenGLShader::render(XModel *model) {
 
 bool XMeshOpenGLShader::renderFlatShadowModel() {
 	float *vertexData = _skinMesh->_mesh->_vertexData;
-	auto indexRanges = _skinMesh->_mesh->_indexRanges;
 	if (vertexData == nullptr) {
 		return false;
 	}
@@ -150,7 +147,7 @@ bool XMeshOpenGLShader::renderFlatShadowModel() {
 	_flatShadowShader->enableVertexAttribute("position", _vertexBuffer, 3, GL_FLOAT, false, 4 * XSkinMeshLoader::kVertexComponentCount, 4 * XSkinMeshLoader::kPositionOffset);
 	_flatShadowShader->use(true);
 
-	glDrawElements(GL_TRIANGLES, indexRanges.back(), GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, _skinMesh->_mesh->_dxmesh->getNumFaces() * 3, GL_UNSIGNED_SHORT, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
