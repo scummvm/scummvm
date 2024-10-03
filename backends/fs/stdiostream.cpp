@@ -137,7 +137,7 @@ StdioStream *StdioStream::makeFromPathHelper(const Common::String &path, bool wr
 #endif
 
 	if (handle)
-		return new factory(handle);
+		return factory(handle);
 	return nullptr;
 }
 
