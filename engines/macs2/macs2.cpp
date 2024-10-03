@@ -627,6 +627,9 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	Graphics::ManagedSurface bgMap = readRLEImage(_fileStream->pos(), _fileStream);
 	_map = bgMap;
 
+	// Pretty sure that this is the pathfinding points. We address them starting
+	// at 1, and add 5019 to the address, and we multiply by 0xA to get the data
+	// of the specific point
 	array5023.clear();
 	// We will address this array as words, so we are not using a byte array but a word array
 	array5023.resize(0xa0);
@@ -642,7 +645,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// TODO: Remove the now superfluous one
 	ReadBackgroundAnimations(_fileStream);
 
-
+	numPathfindingPoints = _fileStream->readUint16LE();
 	
 
 
