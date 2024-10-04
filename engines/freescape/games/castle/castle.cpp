@@ -990,6 +990,7 @@ void CastleEngine::drawSensorShoot(Sensor *sensor) {
 void CastleEngine::tryToCollectKey() {
 	if (_gameStateVars[32] > 0) { // Key collected!
 		if (_keysCollected.size() < 10) {
+			_gameStateVars[31]++;
 			setGameBit(_gameStateVars[32]);
 			_keysCollected.push_back(_gameStateVars[32]);
 		}

@@ -316,10 +316,10 @@ void FreescapeEngine::executeExecute(FCLInstruction &instruction) {
 			obj = _areaMap[255]->entranceWithID(objId);
 			assert(obj);
 			executeEntranceConditions((Entrance *)obj);
+			return;
 		}
-	} else
-		executeObjectConditions((GeometricObject *)obj, true, false, false);
-
+	}
+	executeObjectConditions((GeometricObject *)obj, true, false, false);
 }
 
 void FreescapeEngine::executeSound(FCLInstruction &instruction) {
