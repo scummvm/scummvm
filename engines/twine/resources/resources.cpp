@@ -188,7 +188,7 @@ void Resources::initResources() {
 		f24.read(_sjisFontPtr, kMinSjisSize);
 	}
 
-	_engine->_text->setFontParameters(2, 8);
+	_engine->_text->setFont(INTER_LEAVE, INTER_SPACE);
 	_engine->_text->setFontColor(COLOR_14);
 	_engine->_text->setTextCrossColor(136, 143, 2);
 

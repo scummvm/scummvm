@@ -152,7 +152,7 @@ void Interface::blitBox(const Common::Rect &rect, const Graphics::ManagedSurface
 	dest.blitFrom(source, r, Common::Point(rect.left, rect.top));
 }
 
-void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
+void Interface::shadeBox(const Common::Rect &rect, int32 colorAdj) {
 	Common::Rect r = rect;
 	r.clip(_engine->rect());
 	if (r.isEmpty()) {

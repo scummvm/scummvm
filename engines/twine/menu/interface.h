@@ -63,7 +63,7 @@ public:
 	 * Draws inside buttons transparent area
 	 * @param colorAdj index to adjust the transparent box color
 	 */
-	void drawTransparentBox(const Common::Rect &rect, int32 colorAdj);
+	void shadeBox(const Common::Rect &rect, int32 colorAdj);
 
 	void drawFilledRect(const Common::Rect &rect, uint8 colorIndex);
 

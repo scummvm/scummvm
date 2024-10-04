@@ -85,7 +85,7 @@ private:
 		_engine->_resources->_fontPtr = (uint8 *)malloc(_engine->_resources->_fontBufSize);
 		font.read(_engine->_resources->_fontPtr, _engine->_resources->_fontBufSize);
 
-		_engine->_text->setFontParameters(4, 8);
+		_engine->_text->setFont(4, 8);
 		return true;
 	}
 

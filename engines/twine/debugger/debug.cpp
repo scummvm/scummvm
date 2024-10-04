@@ -69,7 +69,7 @@ void Debug::debugDrawWindow(int32 w) {
 	const Common::Rect &rect = window.rect;
 	const int32 alpha = window.alpha;
 
-	_engine->_interface->drawTransparentBox(rect, alpha);
+	_engine->_interface->shadeBox(rect, alpha);
 	_engine->_menu->drawRectBorders(rect);
 
 	if (window.numLines > 0) {

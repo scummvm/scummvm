@@ -676,7 +676,7 @@ void HolomapV1::holoMap() {
 	}
 
 	_engine->_screens->clearScreen();
-	_engine->_text->_drawTextBoxBackground = true;
+	_engine->_text->_flagMessageShade = true;
 	_engine->setPalette(_engine->_screens->_paletteRGBA);
 	_engine->_scene->_alphaLight = alphaLightTmp;
 	_engine->_scene->_betaLight = betaLightTmp;

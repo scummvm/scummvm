@@ -332,7 +332,7 @@ Common::Error TwinEEngine::run() {
 			debug("Boot parameter: %i", sceneIndex);
 			_gameState->initEngineVars();
 			_text->normalWinDial();
-			_text->_drawTextBoxBackground = true;
+			_text->_flagMessageShade = true;
 			_text->_renderTextTriangle = false;
 			_scene->_needChangeScene = sceneIndex;
 			_scene->_heroPositionType = ScenePositionType::kScene;
@@ -355,7 +355,7 @@ Common::Error TwinEEngine::run() {
 			}
 			_text->_renderTextTriangle = false;
 			_text->normalWinDial();
-			_text->_drawTextBoxBackground = true;
+			_text->_flagMessageShade = true;
 			_state = EngineState::GameLoop;
 			break;
 		case EngineState::GameLoop:
@@ -702,7 +702,7 @@ void TwinEEngine::processBookOfBu() {
 	_screens->fadeToBlack(_screens->_paletteRGBA);
 	_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 15, 16));
 	_text->initDial(TextBankId::Inventory_Intro_and_Holomap);
-	_text->_drawTextBoxBackground = false;
+	_text->_flagMessageShade = false;
 	_text->bigWinDial();
 	_text->setFontCrossColor(COLOR_WHITE);
 	const bool tmpFlagDisplayText = _cfgfile.FlagDisplayText;
@@ -710,7 +710,7 @@ void TwinEEngine::processBookOfBu() {
 	_text->drawTextProgressive(TextId::kBookOfBu);
 	_cfgfile.FlagDisplayText = tmpFlagDisplayText;
 	_text->normalWinDial();
-	_text->_drawTextBoxBackground = true;
+	_text->_flagMessageShade = true;
 	_text->initSceneTextBank();
 	_screens->fadeToBlack(_screens->_paletteRGBACustom);
 	_screens->clearScreen();
@@ -734,7 +734,7 @@ void TwinEEngine::processBonusList() {
 void TwinEEngine::processInventoryAction() {
 	ScopedEngineFreeze scoped(this);
 	extInitSvga();
-	_menu->processInventoryMenu();
+	_menu->inventory();
 
 	switch (_loopInventoryItem) {
 	case kiHolomap:

@@ -251,7 +251,7 @@ public:
 	int32 newGameClassicMenu();
 
 	/** Process in-game inventory menu */
-	void processInventoryMenu();
+	void inventory();
 };
 
 } // namespace TwinE

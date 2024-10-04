@@ -54,7 +54,7 @@ GameState::GameState(TwinEEngine *engine) : _engine(engine) {
 	clearGameFlags();
 	Common::fill(&_inventoryFlags[0], &_inventoryFlags[NUM_INVENTORY_ITEMS], 0);
 	Common::fill(&_holomapFlags[0], &_holomapFlags[MAX_HOLO_POS_2], 0);
-	Common::fill(&_gameChoices[0], &_gameChoices[10], TextId::kNone);
+	Common::fill(&_gameListChoice[0], &_gameListChoice[10], TextId::kNone);
 }
 
 void GameState::init3DGame() {
@@ -377,7 +377,7 @@ void GameState::doFoundObj(InventoryItems item) {
 
 	_engine->_interface->unsetClip();
 	_engine->_text->initItemFoundText(item);
-	_engine->_text->initDialogueBox();
+	_engine->_text->initDialWindow();
 
 	ProgressiveTextState textState = ProgressiveTextState::ContinueRunning;
 
@@ -401,7 +401,7 @@ void GameState::doFoundObj(InventoryItems item) {
 		_engine->_interface->unsetClip();
 		_engine->_redraw->_currNumOfRedrawBox = 0;
 		_engine->_redraw->blitBackgroundAreas();
-		_engine->_interface->drawTransparentBox(boxRect, 4);
+		_engine->_interface->shadeBox(boxRect, 4);
 
 		_engine->_interface->setClip(boxRect);
 
@@ -474,25 +474,25 @@ void GameState::doFoundObj(InventoryItems item) {
 	_engine->_interface->unsetClip();
 }
 
-void GameState::processGameChoices(TextId choiceIdx) {
+void GameState::gameAskChoice(TextId choiceIdx) {
 	_engine->saveFrontBuffer();
 
 	_gameChoicesSettings.reset();
 	_gameChoicesSettings.setTextBankId((TextBankId)((int)_engine->_scene->_sceneTextBank + (int)TextBankId::Citadel_Island));
 
 	// filled via script
-	for (int32 i = 0; i < _numChoices; i++) {
-		_gameChoicesSettings.addButton(_gameChoices[i], 0);
+	for (int32 i = 0; i < _gameNbChoices; i++) {
+		_gameChoicesSettings.addButton(_gameListChoice[i], 0);
 	}
 
 	_engine->_text->drawAskQuestion(choiceIdx);
 
 	_engine->_menu->doGameMenu(&_gameChoicesSettings);
 	const int16 activeButton = _gameChoicesSettings.getActiveButton();
-	_choiceAnswer = _gameChoices[activeButton];
+	_gameChoice = _gameListChoice[activeButton];
 
 	// get right VOX entry index
-	if (_engine->_text->initVoxToPlayTextId(_choiceAnswer)) {
+	if (_engine->_text->initVoxToPlayTextId(_gameChoice)) {
 		while (_engine->_text->playVoxSimple(_engine->_text->_currDialTextEntry)) {
 			FrameMarker frame(_engine);
 			if (_engine->shouldQuit()) {

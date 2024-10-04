@@ -64,19 +64,19 @@ private:
 	 * @param color character color
 	 */
 	void drawCharacterShadow(int32 x, int32 y, uint16 character, int32 color, Common::Rect& dirtyRect);
-	void initProgressiveTextBuffer();
+	void initEndPage();
 	struct WordSize {
-		int32 inChar = 0;
-		int32 inPixel = 0;
+		int32 lenWord = 0;
+		int32 sizeWord = 0;
 	};
 	struct LineCharacter {
 		int16 chr = 0;
-		int16 x = 0;
+		int16 width = 0;
 	};
 	WordSize getNextWord(const char *completeText, char *wordBuf, int32 wordBufSize);
 	uint16 getNextChar(const char *&dialogue);
 	void getNextLine();
-	void appendProgressiveTextBuffer(const char *s, int &x, uint &i);
+	void appendText(const char *s, uint &i);
 	// draw next page arrow polygon
 	void renderContinueReadingTriangle();
 	/**
@@ -92,26 +92,30 @@ private:
 
 	TextBankId _currentBankIdx = TextBankId::None;
 
-	LineCharacter _progressiveTextBuffer[256];
-	const char *_currentTextPosition = nullptr;
+	LineCharacter _bufLine[256];
+	const char *_ptDial = nullptr;
 
-	int32 _dialTextBaseXPos = 0;
-	int32 _dialTextYPos = 0;
+	int32 _xDial = 0;
+	int32 _yDial = 0;
 
 	/** Current position of in the buffer of characters that are currently faded in */
-	const LineCharacter *_progressiveTextBufferPtr = nullptr;
+	const LineCharacter *_ptLine = nullptr;
 
 	int32 _nbLineDial = 0;
-	struct BlendInCharacter {
+	struct BlendInCharacter { // T_STACKCAR
 		int16 chr = 0;
 		int16 x = 0;
 		int16 y = 0;
 	};
 	BlendInCharacter _stackChar[TEXT_MAX_FADE_IN_CHR]; // StackCar
 	int32 _nbChar = 0; // NbCar
+	int32 _sizeLine = 0;
+	int32 _nbSpace = 0;
+	int32 _nbBigSpace = 0;
+	int32 _sizeSpace = 0;
 
 	/** Current dialogue text pointer */
-	const char *_currDialTextPtr = nullptr;
+	const char *_ptText = nullptr;
 	/** Current dialogue text size */
 	int32 _currDialTextSize = 0;
 
@@ -120,9 +124,9 @@ private:
 	TextId _currMenuTextIndex = TextId::kNone;
 
 	/** Pixel size between dialogue text */
-	int32 _dialSpaceBetween = 0;
+	int32 _interLeave = 0;
 	/** Pixel size of the space character - recalculated per per line */
-	int32 _sizeSpace = 0;
+	int32 _interSpace = 0;
 	/** Dialogue text color */
 	int32 _dialTextColor = 0;
 
@@ -148,18 +152,19 @@ private:
 	bool _isShiftJIS = false;
 	bool _isVisualRTL = false;
 
-	bool displayText(TextId index, bool showText, bool playVox, bool loop);
+	bool displayText(TextId index, bool showText, bool playVox, bool loop); // MyDial
 public:
 	Text(TwinEEngine *engine);
 	~Text();
 
 	static const int32 lineHeight = INTER_LINE;
 
-	// TODO: refactor all this variables and related functions
-	bool _hasValidTextHandle = false;
+	bool _flagRunningDial = false;
+	bool _flagEndDial = false;
+	bool _flagEnd3Line = false;
 	// renders a triangle if the next side of the text can get activated
 	bool _renderTextTriangle = false;
-	bool _drawTextBoxBackground = false;
+	bool _flagMessageShade = false;
 	bool _hasHiddenVox = false;
 	int32 _voxHiddenIndex = 0;
 	// ---
@@ -180,7 +185,7 @@ public:
 	inline TextBankId textBank() const {
 		return _currentBankIdx;
 	}
-
+	void closeDial();
 	/**
 	 * Display a certain dialogue text in the screen
 	 * @param x X coordinate in screen
@@ -199,10 +204,10 @@ public:
 	int32 getCharWidth(uint16 chr) const;
 	int32 getCharHeight(uint16 chr) const;
 
-	void initDialogueBox();
-	void initInventoryDialogueBox();
+	void initDialWindow();
+	void secondInitDialWindow();
 
-	void initText(TextId index);
+	void commonOpenDial(TextId index);
 	void initLine();
 	void initInventoryText(InventoryItems index);
 	void initItemFoundText(InventoryItems index);
@@ -211,10 +216,10 @@ public:
 
 	/**
 	 * Set font type parameters
-	 * @param spaceBetween number in pixels of space between characters
-	 * @param charSpace number in pixels of the character space
+	 * @param interLeave number in pixels of space between characters
+	 * @param interSpace number in pixels of the character space
 	 */
-	void setFontParameters(int32 spaceBetween, int32 charSpace);
+	void setFont(int32 interLeave, int32 interSpace);
 
 	/**
 	 * Set the font cross color

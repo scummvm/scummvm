@@ -375,7 +375,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 	case kcCHOICE:
 		debugCN(3, kDebugLevels::kDebugScripts, "choice(");
 		conditionValueSize = ReturnType::RET_S16;
-		engine->_scene->_currentScriptValue = (int16)engine->_gameState->_choiceAnswer;
+		engine->_scene->_currentScriptValue = (int16)engine->_gameState->_gameChoice;
 		break;
 	case kcFUEL:
 		debugCN(3, kDebugLevels::kDebugScripts, "fuel(");
@@ -1554,7 +1554,7 @@ int32 ScriptLife::lSET_USED_INVENTORY(TwinEEngine *engine, LifeScriptContext &ct
 int32 ScriptLife::lADD_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const TextId choiceIdx = (TextId)ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ADD_CHOICE(%i)", (int)choiceIdx);
-	engine->_gameState->_gameChoices[engine->_gameState->_numChoices++] = choiceIdx;
+	engine->_gameState->_gameListChoice[engine->_gameState->_gameNbChoices++] = choiceIdx;
 	return 0;
 }
 
@@ -1572,8 +1572,8 @@ int32 ScriptLife::lASK_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
 		engine->_redraw->drawBubble(ctx.actorIdx);
 	}
 	engine->_text->setFontCrossColor(ctx.actor->_talkColor);
-	engine->_gameState->processGameChoices(choiceIdx);
-	engine->_gameState->_numChoices = 0;
+	engine->_gameState->gameAskChoice(choiceIdx);
+	engine->_gameState->_gameNbChoices = 0;
 	engine->_redraw->redrawEngineActions(true);
 
 	return 0;
@@ -1866,8 +1866,8 @@ int32 ScriptLife::lASK_CHOICE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 		engine->_redraw->drawBubble(otherActorIdx);
 	}
 	engine->_text->setFontCrossColor(engine->_scene->getActor(otherActorIdx)->_talkColor);
-	engine->_gameState->processGameChoices(choiceIdx);
-	engine->_gameState->_numChoices = 0;
+	engine->_gameState->gameAskChoice(choiceIdx);
+	engine->_gameState->_gameNbChoices = 0;
 	engine->_redraw->redrawEngineActions(true);
 
 	return 0;
@@ -1905,12 +1905,12 @@ int32 ScriptLife::lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) 
 	engine->_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 25, 26));
 	engine->_text->bigWinDial();
 	engine->_text->setFontCrossColor(COLOR_WHITE);
-	engine->_text->_drawTextBoxBackground = false;
+	engine->_text->_flagMessageShade = false;
 	const bool tmpFlagDisplayText = engine->_cfgfile.FlagDisplayText;
 	engine->_cfgfile.FlagDisplayText = true;
 	engine->_text->drawTextProgressive(TextId::kSendell);
 	engine->_cfgfile.FlagDisplayText = tmpFlagDisplayText;
-	engine->_text->_drawTextBoxBackground = true;
+	engine->_text->_flagMessageShade = true;
 	engine->_text->normalWinDial();
 	engine->_screens->fadeToBlack(engine->_screens->_paletteRGBACustom);
 	engine->_screens->clearScreen();

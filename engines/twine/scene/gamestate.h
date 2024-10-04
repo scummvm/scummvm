@@ -135,9 +135,9 @@ public:
 
 	char _sceneName[30] {};
 
-	TextId _gameChoices[10];  // inGameMenuData
-	int32 _numChoices = 0;   // numOfOptionsInChoice
-	TextId _choiceAnswer = TextId::kNone; // inGameMenuAnswer
+	TextId _gameListChoice[10];  // inGameMenuData
+	int32 _gameNbChoices = 0;   // numOfOptionsInChoice
+	TextId _gameChoice = TextId::kNone; // inGameMenuAnswer
 
 	void setDarts(int16 value) {
 		setGameFlag(InventoryItems::kiDart, value);
@@ -210,7 +210,7 @@ public:
 	bool loadGame(Common::SeekableReadStream *file);
 	bool saveGame(Common::WriteStream *file);
 
-	void processGameChoices(TextId choiceIdx);
+	void gameAskChoice(TextId choiceIdx);
 
 	void processGameoverAnimation();
 };

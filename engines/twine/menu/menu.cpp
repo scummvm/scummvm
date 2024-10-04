@@ -59,6 +59,9 @@ static const uint32 kPlasmaEffectFilesize = 262176;
 #define HEIGHT_STANDARD 50
 #define MENU_SPACE 6
 
+#define	SIZE_INV_OBJ_X	75
+#define	SIZE_INV_OBJ_Y	65
+
 namespace MenuButtonTypes {
 enum MenuButtonTypesEnum {
 	kMusicVolume = 1,
@@ -278,10 +281,10 @@ void Menu::processPlasmaEffect(const Common::Rect &rect, int32 color) {
 }
 
 void Menu::drawRectBorders(const Common::Rect &rect, int32 colorLeftTop, int32 colorRightBottom) {
-	_engine->_interface->drawLine(rect.left, rect.top, rect.right, rect.top, colorLeftTop);               // top line
-	_engine->_interface->drawLine(rect.left, rect.top, rect.left, rect.bottom, colorLeftTop);             // left line
-	_engine->_interface->drawLine(rect.right, rect.top + 1, rect.right, rect.bottom, colorRightBottom);   // right line
-	_engine->_interface->drawLine(rect.left + 1, rect.bottom, rect.right, rect.bottom, colorRightBottom); // bottom line
+	_engine->_interface->drawLine(rect.left, rect.top, rect.right, rect.top, colorLeftTop);                   // top line
+	_engine->_interface->drawLine(rect.left, rect.top + 1, rect.left, rect.bottom, colorLeftTop);             // left line
+	_engine->_interface->drawLine(rect.right, rect.top + 1, rect.right, rect.bottom, colorRightBottom);       // right line
+	_engine->_interface->drawLine(rect.left + 1, rect.bottom, rect.right - 1, rect.bottom, colorRightBottom); // bottom line
 }
 
 void Menu::drawRectBorders(int32 left, int32 top, int32 right, int32 bottom, int32 colorLeftTop, int32 colorRightBottom) {
@@ -328,13 +331,13 @@ void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &r
 		}
 	} else {
 		_engine->blitWorkToFront(rect);
-		_engine->_interface->drawTransparentBox(rect, 4);
+		_engine->_interface->shadeBox(rect, 4);
 	}
 
 	drawRectBorders(rect);
 
 	_engine->_text->setFontColor(COLOR_WHITE);
-	_engine->_text->setFontParameters(2, 8);
+	_engine->_text->setFont(INTER_LEAVE, INTER_SPACE);
 	const int32 textSize = _engine->_text->sizeFont(dialText);
 	_engine->_text->drawText((_engine->width() / 2) - (textSize / 2), rect.top + 7, dialText);
 }
@@ -1178,7 +1181,7 @@ void Menu::drawBehaviourMenu(int32 left, int32 top, int32 angle) {
 
 	Common::Rect boxRect(titleRect);
 	boxRect.grow(-1);
-	_engine->_interface->drawTransparentBox(boxRect, 2);
+	_engine->_interface->shadeBox(boxRect, 2);
 
 	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kNormal);
 	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kAthletic);
@@ -1290,8 +1293,8 @@ void Menu::processBehaviourMenu(bool behaviourMenu) {
 }
 
 Common::Rect Menu::calcItemRect(int32 left, int32 top, int32 item, int32 *centerX, int32 *centerY) const {
-	const int32 itemWidth = 74;
-	const int32 itemHeight = 64;
+	const int32 itemWidth = SIZE_INV_OBJ_X;
+	const int32 itemHeight = SIZE_INV_OBJ_Y;
 	const int32 itemPadding = 11;
 	const int32 itemWidthHalf = itemWidth / 2;
 	const int32 itemHeightHalf = itemHeight / 2;
@@ -1329,8 +1332,10 @@ void Menu::drawOneInventory(int32 left, int32 top, int32 item) {
 }
 
 void Menu::drawListInventory(int32 left, int32 top) {
-	const Common::Rect rect(left, top, left + 605, top + 310);
-	_engine->_interface->drawTransparentBox(rect, 4);
+	constexpr int w = (SIZE_INV_OBJ_X + 10) * 7 + 10;
+	constexpr int h = (SIZE_INV_OBJ_Y + 10) * 4 + 10;
+	const Common::Rect rect(left, top, left + w, top + h);
+	_engine->_interface->shadeBox(rect, 4);
 	drawRectBorders(rect);
 	for (int32 item = 0; item < NUM_INVENTORY_ITEMS; item++) {
 		drawOneInventory(left, top, item);
@@ -1338,7 +1343,7 @@ void Menu::drawListInventory(int32 left, int32 top) {
 	_engine->_interface->unsetClip();
 }
 
-void Menu::processInventoryMenu() {
+void Menu::inventory() {
 	int32 tmpAlphaLight = _engine->_scene->_alphaLight;
 	int32 tmpBetaLight = _engine->_scene->_betaLight;
 
@@ -1361,7 +1366,7 @@ void Menu::processInventoryMenu() {
 	_engine->_text->initDial(TextBankId::Inventory_Intro_and_Holomap);
 
 	_engine->_text->setFontCrossColor(COLOR_BRIGHT_BLUE);
-	_engine->_text->initDialogueBox();
+	_engine->_text->initDialWindow();
 
 	ProgressiveTextState dialstate = ProgressiveTextState::ContinueRunning;
 	bool updateItemText = true;
@@ -1423,20 +1428,18 @@ void Menu::processInventoryMenu() {
 		}
 
 		if (updateItemText) {
-			_engine->_text->initInventoryDialogueBox();
+			_engine->_text->secondInitDialWindow();
 			if (_inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)_inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
 				_engine->_text->initInventoryText((InventoryItems)_inventorySelectedItem);
 			} else {
 				_engine->_text->initInventoryText(InventoryItems::MaxInventoryItems);
 			}
-			dialstate = ProgressiveTextState::ContinueRunning;
+			dialstate = ProgressiveTextState::End;
 			updateItemText = false;
 		}
 
-		if (dialstate == ProgressiveTextState::ContinueRunning) {
+		if (dialstate != ProgressiveTextState::NextPage) {
 			dialstate = _engine->_text->nextDialChar();
-		} else {
-			_engine->_text->fadeInRemainingChars();
 		}
 
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UINextPage)) {
@@ -1445,7 +1448,7 @@ void Menu::processInventoryMenu() {
 				updateItemText = true;
 			}
 			if (dialstate == ProgressiveTextState::NextPage) {
-				_engine->_text->initInventoryDialogueBox();
+				_engine->_text->secondInitDialWindow();
 				dialstate = ProgressiveTextState::ContinueRunning;
 			}
 		}
@@ -1460,7 +1463,7 @@ void Menu::processInventoryMenu() {
 		}
 	}
 
-	_engine->_text->_hasValidTextHandle = false;
+	_engine->_text->closeDial();
 
 	_engine->_scene->_alphaLight = tmpAlphaLight;
 	_engine->_scene->_betaLight = tmpBetaLight;
