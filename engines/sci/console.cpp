@@ -2280,8 +2280,6 @@ bool Console::cmdSavedBits(int argc, const char **argv) {
 					debugPrintf(" priority");
 				if (mask & GFX_SCREEN_MASK_CONTROL)
 					debugPrintf(" control");
-				if (mask & GFX_SCREEN_MASK_DISPLAY)
-					debugPrintf(" display");
 				debugPrintf("\n");
 			}
 		}
@@ -2361,8 +2359,6 @@ bool Console::cmdShowSavedBits(int argc, const char **argv) {
 		debugPrintf(" priority");
 	if (mask & GFX_SCREEN_MASK_CONTROL)
 		debugPrintf(" control");
-	if (mask & GFX_SCREEN_MASK_DISPLAY)
-		debugPrintf(" display");
 	debugPrintf("\n");
 
 	if (!_engine->_gfxPaint16 || !_engine->_gfxScreen)
