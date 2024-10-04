@@ -362,7 +362,11 @@ void CastleEngine::initGameState() {
 }
 
 bool CastleEngine::checkIfGameEnded() {
-	return FreescapeEngine::checkIfGameEnded();
+	if (getGameBit(31)) { // Escaped!
+		_gameStateControl = kFreescapeGameStateEnd;
+		return true;
+	} else
+		return FreescapeEngine::checkIfGameEnded();
 }
 
 void CastleEngine::endGame() {
