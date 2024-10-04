@@ -73,6 +73,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed Ultima VIII item splitting & merging on game map.
    - Fixed Ultima VIII animation, audio, and scene transition issues.
 
+ macOS port:
+   - Autoupdates now use Sparkle 2.x.
+
 
 #### 2.8.1 (2024-03-31)
 
