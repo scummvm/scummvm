@@ -618,13 +618,6 @@ int GfxScreen::bitsGetDataSize(Common::Rect rect, byte mask) {
 	if (mask & GFX_SCREEN_MASK_CONTROL) {
 		byteCount += pixels; // _controlScreen
 	}
-	if (mask & GFX_SCREEN_MASK_DISPLAY) {
-		//if (!_upscaledHires)
-		//	error("bitsGetDataSize() called w/o being in upscaled hires mode");
-		byteCount += pixels; // _displayScreen (coordinates actually are given to us for hires displayScreen)
-		if (_paletteMapScreen)
-			byteCount += pixels; // _paletteMapScreen
-	}
 	return byteCount;
 }
 
@@ -643,13 +636,6 @@ void GfxScreen::bitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
 	}
 	if (mask & GFX_SCREEN_MASK_CONTROL) {
 		bitsSaveScreen(rect, _controlScreen, _width, memoryPtr);
-	}
-	if (mask & GFX_SCREEN_MASK_DISPLAY) {
-		//if (!_upscaledHires)
-		//	error("bitsSave() called w/o being in upscaled hires mode");
-		bitsSaveScreen(rect, _displayScreen, _displayWidth, memoryPtr);
-		if (_paletteMapScreen)
-			bitsSaveScreen(rect, _paletteMapScreen, _displayWidth, memoryPtr);
 	}
 }
 
@@ -707,19 +693,6 @@ void GfxScreen::bitsRestore(const byte *memoryPtr) {
 	}
 	if (mask & GFX_SCREEN_MASK_CONTROL) {
 		bitsRestoreScreen(rect, memoryPtr, _controlScreen, _width);
-	}
-	if (mask & GFX_SCREEN_MASK_DISPLAY) {
-		//if (!_upscaledHires)
-		//	error("bitsRestore() called w/o being in upscaled hires mode");
-		bitsRestoreScreen(rect, memoryPtr, _displayScreen, _displayWidth);
-		if (_paletteMapScreen)
-			bitsRestoreScreen(rect, memoryPtr, _paletteMapScreen, _displayWidth);
-
-		// WORKAROUND - we are not sure what sierra is doing. If we don't do this here, portraits won't get fully removed
-		//  from screen. Some lowres showBits() call is used for that and it's not covering the whole area
-		//  We would need to find out inside the kq6 windows interpreter, but this here works already and seems not to have
-		//  any side-effects. The whole hires is hacked into the interpreter, so maybe this is even right.
-		//copyDisplayRectToScreen(rect);
 	}
 }
 
