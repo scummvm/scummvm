@@ -274,11 +274,25 @@ void GfxPaint16::frameRect(const Common::Rect &rect) {
 void GfxPaint16::bitsShow(const Common::Rect &rect) {
 	Common::Rect workerRect(rect.left, rect.top, rect.right, rect.bottom);
 
+	// WORKAROUND for vertically misplaced hires portraits in mixed speech/text mode in KQ6CD.
+	// See comment for the _activeHiresGfx flag in GfxScreen. Another solution would be to
+	// improve the script patches that implement the speech/text mode for better vertical
+	// placement of the portrait frames (inside the port rect).
+	bool needsOffsetRect = true;
+	if (_screen->hasActiveHiresView() && rect.left < 0 && rect.top < 0) {
+		_ports->offsetRect(workerRect);
+		_screen->toggleActiveHiresView(false);
+		needsOffsetRect = false;
+	}
+
 	workerRect.clip(_ports->_curPort->rect);
 	if (workerRect.isEmpty()) // nothing to show
 		return;
 
-	_ports->offsetRect(workerRect);
+	// WORKAROUND, see comment above. Normally, the call to
+	// _ports->offsetRect(workerRect) would be unconditional here.
+	if (needsOffsetRect || rect.left >= 0 || rect.top >= 0)
+		_ports->offsetRect(workerRect);	
 
 	// We adjust the left/right coordinates to even coordinates
 	workerRect.left &= 0xFFFE; // round down
