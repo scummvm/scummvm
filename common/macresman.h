@@ -241,6 +241,14 @@ public:
 	String getResName(uint32 typeID, uint16 resID) const;
 
 	/**
+	 * Get the length in bytes of a given resource
+	 * @param typeID FourCC of the type
+	 * @param resID Resource ID to fetch
+	 * @return The length in bytes of a given resource
+	 */
+	uint32 getResLength(uint32 typeID, uint16 resID);
+
+	/**
 	 * Get the size of the data portion of the resource fork
 	 * @return The size of the data portion of the resource fork
 	 */

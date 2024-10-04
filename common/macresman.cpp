@@ -948,6 +948,34 @@ SeekableReadStream *MacResManager::getResource(uint32 typeID, const String &file
 	return nullptr;
 }
 
+uint32 MacResManager::getResLength(uint32 typeID, uint16 resID) {
+	int typeNum = -1;
+	int resNum = -1;
+
+	for (int i = 0; i < _resMap.numTypes; i++)
+		if (_resTypes[i].id == typeID) {
+			typeNum = i;
+			break;
+		}
+
+	if (typeNum == -1)
+		return 0;
+
+	for (int i = 0; i < _resTypes[typeNum].items; i++)
+		if (_resLists[typeNum][i].id == resID) {
+			resNum = i;
+			break;
+		}
+
+	if (resNum == -1)
+		return 0;
+
+	_stream->seek(_dataOffset + _resLists[typeNum][resNum].dataOffset);
+	uint32 len = _stream->readUint32BE();
+
+	return len;
+}
+
 void MacResManager::readMap() {
 	_stream->seek(_mapOffset + 22);
 
