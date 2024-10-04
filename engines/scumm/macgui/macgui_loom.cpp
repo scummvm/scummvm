@@ -609,6 +609,9 @@ bool MacLoomGui::runOpenDialog(int &saveSlotToHandle) {
 	Common::StringArray savegameNames;
 	prepareSaveLoad(savegameNames, availSlots, slotIds, ARRAYSIZE(availSlots));
 
+	drawFakePathList(window, Common::Rect(14, 8, 232, 26), _folderIcon, "Loom", Graphics::kTextAlignLeft);
+	drawFakeDriveLabel(window, Common::Rect(242, 10, 340, 28), _hardDriveIcon, "ScummVM", Graphics::kTextAlignLeft);
+
 	window->addListBox(Common::Rect(14, 31, 232, 161), savegameNames, true);
 
 	window->setDefaultWidget(0);
@@ -662,6 +665,9 @@ bool MacLoomGui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 			break;
 		}
 	}
+
+	drawFakePathList(window, Common::Rect(14, 8, 232, 26), _folderIcon, "Loom", Graphics::kTextAlignLeft);
+	drawFakeDriveLabel(window, Common::Rect(242, 10, 340, 28), _hardDriveIcon, "ScummVM", Graphics::kTextAlignLeft);
 
 	window->addListBox(Common::Rect(14, 31, 232, 129), savegameNames, true, true);
 

@@ -1476,7 +1476,9 @@ bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 	Common::StringArray savegameNames;
 	prepareSaveLoad(savegameNames, availSlots, slotIds, ARRAYSIZE(availSlots));
 
-	MacGuiImpl::MacListBox *listBox = window->addListBox(Common::Rect(14, 41, 248, 187), savegameNames, true);
+	drawFakePathList(window, Common::Rect(14, 18, 231, 36), _folderIcon, "Indy and The Last Crusade", Graphics::kTextAlignLeft);
+
+	MacGuiImpl::MacListBox *listBox = window->addListBox(Common::Rect(14, 41, 232, 187), savegameNames, true);
 
 	// When quitting, the default action is to not open a saved game
 	bool ret = false;
@@ -1526,6 +1528,8 @@ bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 	int slotIds[100];
 	Common::StringArray savegameNames;
 	prepareSaveLoad(savegameNames, busySlots, slotIds, ARRAYSIZE(busySlots));
+
+	drawFakePathList(window, Common::Rect(16, 8, 198, 26), _folderIcon, "Indy and The Last ...", Graphics::kTextAlignLeft);
 
 	int firstAvailableSlot = -1;
 	for (int i = 0; i < ARRAYSIZE(busySlots); i++) {

@@ -675,8 +675,11 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 
 				// Skip drive label box and listbox
 				bool doNotDraw = (isOpenDialog && (i == 6 || i == 7)) || ((isOpenDialog || isSaveDialog) && i == 3);
-				if (!doNotDraw)
+				if (!doNotDraw) {
 					window->innerSurface()->frameRect(r, kBlack);
+				} else if (_vm->_game.id == GID_INDY3 && i == 3) {
+					drawFakeDriveLabel(window, Common::Rect(r.left + 9, r.top, r.right, r.bottom), _hardDriveIcon, "ScummVM", Graphics::kTextAlignLeft);
+				}
 
 				break;
 			}
@@ -804,6 +807,44 @@ bool MacGuiImpl::runOkCancelDialog(Common::String text) {
 
 	delete window;
 	return ret;
+}
+
+void MacGuiImpl::drawFakePathList(MacDialogWindow *window, Common::Rect r, byte *icon, const char *text, Graphics::TextAlign alignment) {
+	// Draw the text...
+	window->addStaticText(Common::Rect(r.left + 22, r.top + 2, r.right - 21, r.bottom - 1), text, true, alignment);
+
+	// Draw the icon...
+	Graphics::Surface *iconSurf = new Graphics::Surface();
+	iconSurf->create(16, 16, Graphics::PixelFormat::createFormatCLUT8());
+	iconSurf->setPixels(icon);
+	window->drawSprite(iconSurf, r.left + 4, r.top + 1);
+	delete iconSurf;
+
+	// Draw the arrow...
+	Graphics::Surface *arrowSurf = new Graphics::Surface();
+	arrowSurf->create(16, 16, Graphics::PixelFormat::createFormatCLUT8());
+	arrowSurf->setPixels(_arrowDownIcon);
+	window->drawSprite(arrowSurf, r.right - 19, r.top + 1);
+	delete arrowSurf;
+
+	// Draw the black frame...
+	window->innerSurface()->frameRect(r, kBlack);
+
+	// Draw the shadows...
+	window->innerSurface()->hLine(r.left + 3, r.bottom, r.right, kBlack);
+	window->innerSurface()->vLine(r.right, r.top + 3, r.bottom, kBlack);
+}
+
+void MacGuiImpl::drawFakeDriveLabel(MacDialogWindow *window, Common::Rect r, byte *icon, const char *text, Graphics::TextAlign alignment) {
+	// Draw the text...
+	window->addStaticText(Common::Rect(r.left + 25, r.top, r.right, r.bottom), text, true, alignment);
+
+	// Draw the icon...
+	Graphics::Surface *surf = new Graphics::Surface();
+	surf->create(16, 16, Graphics::PixelFormat::createFormatCLUT8());
+	surf->setPixels(icon);
+	window->drawSprite(surf, r.left + 6, r.top);
+	delete surf;
 }
 
 bool MacGuiImpl::runQuitDialog() {

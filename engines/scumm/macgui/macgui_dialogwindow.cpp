@@ -170,8 +170,8 @@ MacGuiImpl::MacCheckbox *MacGuiImpl::MacDialogWindow::addCheckbox(Common::Rect b
 	return checkbox;
 }
 
-MacGuiImpl::MacStaticText *MacGuiImpl::MacDialogWindow::addStaticText(Common::Rect bounds, Common::String text, bool enabled) {
-	MacGuiImpl::MacStaticText *staticText = new MacStaticText(this, bounds, text, enabled);
+MacGuiImpl::MacStaticText *MacGuiImpl::MacDialogWindow::addStaticText(Common::Rect bounds, Common::String text, bool enabled, Graphics::TextAlign alignment) {
+	MacGuiImpl::MacStaticText *staticText = new MacStaticText(this, bounds, text, enabled, alignment);
 	_widgets.push_back(staticText);
 	return staticText;
 }
