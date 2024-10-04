@@ -98,8 +98,9 @@ int16 Globals::getGlobal(uint16 num) {
 		return 0;
 	}
 
+	// This happens in a couple of places in RotD
 	if (num)
-		error("getGlobal: requested non-existing global %d", num);
+		warning("getGlobal: requested non-existing global %d", num);
 
 	// Bug in HoC?
 	//warning("getGlobal: requested global 0");
