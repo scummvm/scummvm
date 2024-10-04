@@ -55,6 +55,7 @@ public:
 	void playSFX(uint num);
 
 	void stopSfx(byte channel);
+	void stopSfxByNum(uint num);
 	void stopAllSfx();
 
 	bool playPCM(const byte *data, uint32 size);
@@ -70,9 +71,11 @@ private:
 
 	Common::Array<uint32> _musicSizes;
 	Common::Array<byte *> _musicData;
+	Common::HashMap<uint16, uint16> _musicIdMap;
 
 	Common::Array<uint32> _sfxSizes;
 	Common::Array<byte *> _sfxData;
+
 
 	Audio::Mixer *_mixer;
 	DgdsMidiPlayer *_midiMusicPlayer;

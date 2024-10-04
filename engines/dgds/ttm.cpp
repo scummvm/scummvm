@@ -139,10 +139,14 @@ static const char *ttmOpName(uint16 op) {
 	case 0x0080: return "FREE SHAPE";
 	case 0x0090: return "FREE FONT";
 	case 0x00B0: return "NULLOP";
+	case 0x00C0: return "FREE BACKGROUND";
 	case 0x0110: return "PURGE";
-	case 0x0400: return "PALETTE RESET ?";
-	case 0x0500: return "UNKNOWN 0x0500 (flip mode ?)";
-	case 0x0510: return "UNKNOWN 0x0510 (flip mode off?)";
+	case 0x0210: return "song something?";
+	case 0x0220: return "STOP CURRENT MUSIC";
+	case 0x0230: return "FADE CURRENT MUSIC";
+	case 0x0400: return "PALETTE RESET / STOP PAL BLOCK SWAP";
+	case 0x0500: return "UNKNOWN 0x0500 (flip mode ON?)";
+	case 0x0510: return "UNKNOWN 0x0510 (flip mode OFF?)";
 	case 0x0ff0: return "FINISH FRAME / DRAW";
 	case 0x1020: return "SET DELAY";
 	case 0x1030: return "SET BRUSH";
@@ -156,6 +160,7 @@ static const char *ttmOpName(uint16 op) {
 	case 0x1120: return "SET GETPUT NUM";
 	case 0x1200: return "GOTO";
 	case 0x1300: return "PLAY SFX";
+	case 0x1310: return "STOP SFX";
 	case 0x2000: return "SET DRAW COLORS";
 	case 0x2010: return "SET FRAME";
 	case 0x2020: return "SET RANDOM DELAY";
@@ -165,7 +170,7 @@ static const char *ttmOpName(uint16 op) {
 	case 0x2320: return "PAL SET BLOCK SWAP 2";
 	case 0x2400: return "PAL DO BLOCK SWAP";
 	case 0x3000: return "GOSUB";
-	case 0x3100: return "SCROLL 3100??";
+	case 0x3100: return "SCROLL";
 	case 0x4000: return "SET CLIP WINDOW";
 	case 0x4110: return "FADE OUT";
 	case 0x4120: return "FADE IN";
@@ -227,11 +232,6 @@ static const char *ttmOpName(uint16 op) {
 	case 0xf170: return "SET STRING 7";
 	case 0xf180: return "SET STRING 8";
 	case 0xf190: return "SET STRING 9";
-	case 0x0220: return "STOP CURRENT MUSIC";
-
-	case 0x00C0: return "FREE BACKGROUND";
-	case 0x0230: return "reset current music?";
-	case 0x1310: return "STOP SFX";
 
 	case 0xc020: return "LOAD SAMPLE";
 	case 0xc030: return "SELECT SAMPLE";
@@ -314,6 +314,56 @@ static void _dissolveToScreen(const Graphics::ManagedSurface &src, const Common:
 	g_system->unlockScreen();
 }
 
+static void _doScroll(Graphics::ManagedSurface &compBuf, int16 dir, int16 steps, int16 offset) {
+	// Scroll the contents of the composition buffer on to the screen
+	// Dir 0/1 means y (scroll toward bottom / top)
+	// Dir 2 means x (scroll toward right)
+	//
+	// This is not at all how the original does it, but we have a bit
+	// more memory and cpu to play with so an extra 64k screen buffer
+	// and more copies is ok for simpler code.
+	//
+	Graphics::Surface *screen = g_system->lockScreen();
+	Graphics::Surface screenCopy;
+
+	screenCopy.copyFrom(*screen);
+	steps = CLIP(steps, (int16)1, offset);
+	const Common::Rect screenRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	for (int16 i = 1; i <= steps; i++) {
+		int stepval = ((int)i * offset) / steps;
+		int xoff = (dir == 2 ? stepval : 0);
+		int yoff = (dir == 2 ? 0 : (dir == 1 ? stepval : -stepval));
+		Common::Rect srcRectFromOrigScreen(Common::Point(xoff, yoff), SCREEN_WIDTH, SCREEN_HEIGHT);
+		srcRectFromOrigScreen.clip(screenRect);
+		screen->copyRectToSurface(screenCopy, MAX(0, -xoff), MAX(0, -yoff), srcRectFromOrigScreen);
+
+		switch (dir) {
+		case 0: {
+			// Draw composition buf to the top of screen buf
+			error("TODO: Implement TTM scroll direction 0");
+			break;
+		}
+		case 1: {
+			// Draw composition buf below the screen buf
+			error("TODO: Implement TTM scroll direction 1");
+			break;
+		}
+		case 2: {
+			// Draw composition buf to right of screen buf
+			Common::Rect rectFromCompBuf(0, 0, SCREEN_WIDTH - srcRectFromOrigScreen.width(), SCREEN_HEIGHT);
+			screen->copyRectToSurface(compBuf, srcRectFromOrigScreen.width(), 0, rectFromCompBuf);
+			break;
+		}
+		default:
+			error("TTM scroll invalid scroll direction: %d", dir);
+			break;
+		}
+		g_system->unlockScreen();
+		g_system->updateScreen();
+		screen = g_system->lockScreen();
+	}
+	g_system->unlockScreen();
+}
 
 void TTMInterpreter::doWipeOp(uint16 code, TTMEnviro &env, TTMSeq &seq, const Common::Rect &r) {
 	//
@@ -331,7 +381,6 @@ void TTMInterpreter::doWipeOp(uint16 code, TTMEnviro &env, TTMSeq &seq, const Co
 	//
 	switch(code) {
 	case 0xa010:
-		warning("TODO: Implement TTM 0xa010 wipe (dissolve) op");
 		_dissolveToScreen(_vm->_compositionBuffer, r);
 		break;
 
@@ -571,7 +620,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	case 0x0400: // RESET PALETTE?
 		if (seq._executed) // this is a one-shot op
 			break;
-		warning("TODO: 0x0400 Reset palette");
+		warning("TODO: 0x0400 Reset palette / stop pal cycle");
 		break;
 	case 0x0500: // FLIP MODE ON
 		DgdsEngine::getInstance()->setFlipMode(true);
@@ -626,9 +675,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	case 0x1310: // STOP SFX    i:int   eg [107]
 		if (seq._executed) // this is a one-shot op.
 			break;
-		warning("TODO: Implement TTM 0x1310 stop SFX %d", ivals[0]);
-		// Implement this:
-		//_vm->_soundPlayer->stopSfxById(ivals[0])
+		_vm->_soundPlayer->stopSfxByNum(ivals[0]);
 		break;
 	case 0x2000: // SET (DRAW) COLORS: fgcol,bgcol:int [0..255]
 		seq._drawColFG = static_cast<byte>(ivals[0]);
@@ -678,7 +725,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 			break;
 		warning("TODO: 0x%04x Palette do block swaps 0x%x, 0x%x", op, ivals[0], ivals[1]);
 		break;
-	case 0x3000: { // GOSUB ??,??,frame
+	case 0x3000: { // GOSUB xoff,yoff,frame
 		_stackDepth++;
 		bool prevHitOp0110Val = _vm->adsInterpreter()->getHitTTMOp0110();
 		int32 target = findGOTOTarget(env, seq, ivals[2]);
@@ -699,10 +746,16 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		_stackDepth--;
 		break;
 	}
-	case 0x3100: { // SCROLL ??,??,??
+	case 0x3100: { // SCROLL dir,steps,distance eg (2, 100, 185) in beamish intro
 		if (seq._executed) // this is a one-shot op.
 			break;
-		warning("TODO: TTM 0x3100 SCROLL %d %d %d", ivals[0], ivals[1], ivals[2]);
+		_doScroll(_vm->_compositionBuffer, ivals[0], ivals[1], ivals[2]);
+		// After scroll, we need to store the screen contents into the
+		// stored area buffer, and copy the background to the front?
+		Graphics::Surface *screen = g_system->lockScreen();
+		_vm->getStoredAreaBuffer().blitFrom(*screen);
+		g_system->unlockScreen();
+		_vm->_compositionBuffer.blitFrom(_vm->getBackgroundBuffer());
 		break;
 	}
 	case 0x4000: // SET CLIP WINDOW x,y,x2,y2:int	[0..320,0..200]
@@ -988,7 +1041,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 			break;
 		if (!env._soundRaw)
 			warning("TODO: Trying to play raw SFX but nothing loaded");
-		env._soundRaw->play();
+		else
+			env._soundRaw->play();
 		break;
 	}
 	case 0xf010: { // LOAD SCR:	filename:str
@@ -1059,18 +1113,6 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		env._strings[strnum] = sval;
 		break;
 	}
-
-	// Unimplemented / unknown
-	case 0x0010: // (one-shot) ??
-	case 0x0230: // (one-shot) reset current music? (0 args) - found in HoC intro.  Sets params about current music.
-	case 0x1040: // Sets some global? i:int
-	case 0x10B0: // null op?
-	case 0x2010: // SET FRAME?? x,y
-	case 0xa400: // DRAW FILLED CIRCLE
-	case 0xa420: // DRAW EMPTY CIRCLE
-	case 0xc040: // DESELECT_SAMPLE				// SQ5 demo onward
-	case 0xc060: // STOP_SAMPLE					// SQ5 demo onward
-	case 0xc0e0: // FADE SONG songnum, destvol, ticks (1/60th sec)
 
 	default:
 		if (count < 15)

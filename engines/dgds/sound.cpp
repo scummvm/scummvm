@@ -276,10 +276,11 @@ void Sound::loadMacMusic(const Common::String &filename) {
 			uint16 type = stream->readUint16LE();
 			uint16 count = stream->readUint16LE();
 
-			debug("        %u [%u]:", type, count);
+			debug("  SX INF %u [%u]:  (%s)", type, count, filename.c_str());
 			for (uint16 k = 0; k < count; k++) {
 				uint16 idx = stream->readUint16LE();
 				debug("        %2u: %u", k, idx);
+				_musicIdMap[idx] = k;
 			}
 		} else if (chunk.isSection(ID_TAG) || chunk.isSection(ID_FNM)) {
 			_readStrings(stream);
@@ -336,7 +337,7 @@ void Sound::loadPCSound(const Common::String &filename, Common::Array<uint32> &s
 			dataArray.push_back(data);
 		} else if (chunk.isSection(ID_INF)) {
 			uint32 count = stream->size() / 2;
-			debug("        [%u]", count);
+			debug("  SNG INF [%u]", count);
 			for (uint32 k = 0; k < count; k++) {
 				uint16 idx = stream->readUint16LE();
 				debug("        %2u: %u", k, idx);
@@ -352,11 +353,18 @@ void Sound::playSFX(uint num) {
 	playPCSound(num, _sfxSizes, _sfxData, _midiSoundPlayer);
 }
 
+void Sound::stopSfxByNum(uint num) {
+	warning("TODO: Implement me! Sound::stopSfxById(%d)", num);
+}
+
 void Sound::playMusic(uint num) {
 	playPCSound(num, _musicSizes, _musicData, _midiMusicPlayer);
 }
 
 void Sound::playPCSound(uint num, const Common::Array<uint32> &sizeArray, const Common::Array<byte *> &dataArray, DgdsMidiPlayer *midiPlayer) {
+	if (_musicIdMap.size()) {
+		num = _musicIdMap[num];
+	}
 	if (num < dataArray.size()) {
 		uint32 tracks = _availableSndTracks(dataArray[num], sizeArray[num]);
 		if (midiPlayer && (tracks & TRACK_MT32))
