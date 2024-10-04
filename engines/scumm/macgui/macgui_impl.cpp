@@ -203,7 +203,9 @@ void MacGuiImpl::initialize() {
 
 		switch (_vm->_game.id) {
 		case GID_INDY3:
+		case GID_LOOM:
 			aboutMenuDef = _strsStrings[11].c_str();
+			break;
 		default:
 			aboutMenuDef = "About " + name() + "...<B;(-";
 		}
@@ -599,6 +601,11 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 	case GID_INDY3:
 		saveGameFileAsResStr = _strsStrings[18].c_str();
 		gameFileResStr = _strsStrings[19].c_str();
+		break;
+	case GID_LOOM:
+		saveGameFileAsResStr = _strsStrings[17].c_str();
+		gameFileResStr = _strsStrings[18].c_str();
+		break;
 	default:
 		saveGameFileAsResStr = "Save Game File as...";
 		gameFileResStr = "Game file";
@@ -803,7 +810,9 @@ bool MacGuiImpl::runQuitDialog() {
 	Common::String quitString;
 	switch (_vm->_game.id) {
 	case GID_INDY3:
+	case GID_LOOM:
 		quitString = _strsStrings[15].c_str();
+		break;
 	default:
 		quitString = "Are you sure you want to quit?";
 	}
@@ -815,7 +824,9 @@ bool MacGuiImpl::runRestartDialog() {
 	Common::String restartString;
 	switch (_vm->_game.id) {
 	case GID_INDY3:
+	case GID_LOOM:
 		restartString = _strsStrings[14].c_str();
+		break;
 	default:
 		restartString = "Are you sure you want to restart this game from the beginning?";
 	}

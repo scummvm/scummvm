@@ -29,6 +29,7 @@
 #include "scumm/scumm_v4.h"
 #include "scumm/actor.h"
 #include "scumm/charset.h"
+#include "scumm/dialogs.h"
 #include "scumm/macgui/macgui_impl.h"
 #include "scumm/macgui/macgui_indy3.h"
 #include "scumm/sound.h"
@@ -1254,7 +1255,9 @@ void MacIndy3Gui::runAboutDialog() {
 	int trolleyWaitFrames = 20;	// ~2 seconds
 	int waitFrames = 0;
 
-	Common::String version = Common::String::format(_strsStrings[95].c_str(), "Mac 1.7 8/17/90, ", '5', '1', '6');
+	const char *subVers = (const char *)_vm->getStringAddress(24);
+
+	Common::String version = Common::String::format(_strsStrings[95].c_str(), subVers, '5', '1', '6');
 
 	const TextLine page1[] = {
 		{ 0, 4, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[93].c_str() }, // "Indiana Jones and the Last Crusade"

@@ -58,6 +58,8 @@ protected:
 	bool runSaveDialog(int &saveSlotToHandle, Common::String &name);
 	bool runOptionsDialog();
 
+	void readStrings() override;
+
 private:
 	Graphics::Surface *_practiceBox = nullptr;
 	Common::Point _practiceBoxPos;
