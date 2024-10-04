@@ -310,9 +310,10 @@ public:
 	bool runPreTickOps() { return runOps(_preTickOps); }
 	bool runPostTickOps() { return runOps(_postTickOps); }
 
-	bool runOps(const Common::Array<SceneOp> &ops, int16 addMinutes = 0);
+	static bool runOps(const Common::Array<SceneOp> ops, int16 addMinutes = 0);
 	virtual Common::Error syncState(Common::Serializer &s) = 0;
 	virtual void enableTrigger(uint16 numm, bool enable = true) {}
+	virtual void showDialog(uint16 fileNum, uint16 dlgNum) {}
 
 protected:
 	bool readConditionList(Common::SeekableReadStream *s, Common::Array<SceneConditions> &list) const;
@@ -327,19 +328,16 @@ protected:
 	bool readDialogActionList(Common::SeekableReadStream *s, Common::Array<DialogAction> &list) const;
 	bool readConditionalSceneOpList(Common::SeekableReadStream *s, Common::Array<ConditionalSceneOp> &list) const;
 
-	bool checkConditions(const Common::Array<SceneConditions> &cond) const;
+	static void segmentStateOps(const Common::Array<uint16> &args);
+	static void setItemAttrOp(const Common::Array<uint16> &args);
+	static void setDragItemOp(const Common::Array<uint16> &args);
 
-	virtual void showDialog(uint16 fileNum, uint16 dlgNum) {}
-	virtual void globalOps(const Common::Array<uint16> &args) {}
-	virtual void segmentStateOps(const Common::Array<uint16> &args);
-
-	void setItemAttrOp(const Common::Array<uint16> &args);
-	void setDragItemOp(const Common::Array<uint16> &args);
-
-	bool runSceneOp(const SceneOp &op);
-	bool runDragonOp(const SceneOp &op);
-	bool runChinaOp(const SceneOp &op);
-	bool runBeamishOp(const SceneOp &op);
+	// These are all static as they are potentially run over scene changes.
+	static bool checkConditions(const Common::Array<SceneConditions> &cond);
+	static bool runSceneOp(const SceneOp &op, bool sceneChanged);
+	static bool runDragonOp(const SceneOp &op, bool sceneChanged);
+	static bool runChinaOp(const SceneOp &op, bool sceneChanged);
+	static bool runBeamishOp(const SceneOp &op, bool sceneChanged);
 
 	uint32 _magic;
 	Common::String _version;
@@ -366,7 +364,7 @@ public:
 	void runStartGameOps() { runOps(_startGameOps); }
 	void runQuitGameOps() { runOps(_quitGameOps); }
 	void runChangeSceneOps() { runOps(_onChangeSceneOps); }
-	void globalOps(const Common::Array<uint16> &args) override;
+	void globalOps(const Common::Array<uint16> &args);
 	int16 getGlobal(uint16 num);
 	int16 setGlobal(uint16 num, int16 val);
 
@@ -426,8 +424,6 @@ public:
 	bool drawAndUpdateDialogs(Graphics::ManagedSurface *dst);
 	bool checkForClearedDialogs();
 
-	void globalOps(const Common::Array<uint16> &args) override;
-
 	void mouseMoved(const Common::Point &pt);
 	void mouseLDown(const Common::Point &pt);
 	void mouseLUp(const Common::Point &pt);
@@ -472,12 +468,13 @@ public:
 	bool isTriggerEnabled(uint16 num);
 	bool isLButtonDown() const { return _lbuttonDown; }
 	bool isRButtonDown() const { return _rbuttonDown; }
+	void showDialog(uint16 fileNum, uint16 dlgNum) override;
+	const Common::Array<ConditionalSceneOp> &getConditionalOps() { return _conditionalOps; }
 
 protected:
 	HotArea *findAreaUnderMouse(const Common::Point &pt);
 
 private:
-	void showDialog(uint16 fileNum, uint16 dlgNum) override;
 	Dialog *getVisibleDialog();
 	bool readTalkData(Common::SeekableReadStream *s, TalkData &dst);
 	void updateHead(TalkDataHead &head);

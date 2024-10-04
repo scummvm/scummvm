@@ -621,37 +621,37 @@ static void _drawDragonCountdown(FontManager::FontType fontType, int16 x, int16 
 }
 
 
-bool Scene::runSceneOp(const SceneOp &op) {
+bool Scene::runSceneOp(const SceneOp &op, bool sceneChanged) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	switch (op._opCode) {
 	case kSceneOpChangeScene:
 		if (engine->changeScene(op._args[0]))
-			// This probably reset the list - stop now.
-			return false;
+			return true;
 		break;
 	case kSceneOpNoop:
 		break;
 	case kSceneOpGlobal:
-		globalOps(op._args);
+		// The globals are held by the GDS scene
+		engine->getGDSScene()->globalOps(op._args);
 		break;
 	case kSceneOpSegmentStateOps:
-		segmentStateOps(op._args);
+		SDSScene::segmentStateOps(op._args);
 		break;
 	case kSceneOpSetItemAttr:
-		setItemAttrOp(op._args);
+		SDSScene::setItemAttrOp(op._args);
 		break;
 	case kSceneOpSetDragItem:
-		setDragItemOp(op._args);
+		SDSScene::setDragItemOp(op._args);
 		break;
 	case kSceneOpOpenInventory:
 		engine->getInventory()->open();
 		// This implicitly changes scene num
-		return false;
+		return true;
 	case kSceneOpShowDlg:
 		if (op._args.size() == 1)
-			showDialog(0, op._args[0]);
+			engine->getScene()->showDialog(0, op._args[0]);
 		else if (op._args.size() > 1)
-			showDialog(op._args[0], op._args[1]);
+			engine->getScene()->showDialog(op._args[0], op._args[1]);
 		break;
 	case kSceneOpShowInvButton:
 		engine->getScene()->addInvButtonToHotAreaList();
@@ -660,13 +660,12 @@ bool Scene::runSceneOp(const SceneOp &op) {
 		engine->getScene()->removeInvButtonFromHotAreaList();
 		break;
 	case kSceneOpEnableTrigger:
-		enableTrigger(op._args[0]);
+		engine->getScene()->enableTrigger(op._args[0]);
 		break;
 	case kSceneOpChangeSceneToStored: {
 		uint16 sceneNo = engine->getGameGlobals()->getGlobal(0x61);
 		if (engine->changeScene(sceneNo))
-			// This probably reset the list - stop now.
-			return false;
+			return true;
 		break;
 	}
 	case kSceneOpAddFlagToDragItem: {
@@ -683,7 +682,7 @@ bool Scene::runSceneOp(const SceneOp &op) {
 	case kSceneOpOpenInventoryZoom:
 		engine->getInventory()->setShowZoomBox(true);
 		engine->getInventory()->open();
-		return false;
+		return true;
 	case kSceneOpMoveItemsBetweenScenes: {
 		int16 fromScene = engine->getGameGlobals()->getGlobal(0x55);
 		int16 toScene = engine->getGameGlobals()->getGlobal(0x54);
@@ -729,10 +728,11 @@ bool Scene::runSceneOp(const SceneOp &op) {
 		warning("TODO: Implement generic scene op %d", op._opCode);
 		break;
 	}
-	return true;
+	return false;
 }
 
-bool Scene::runDragonOp(const SceneOp &op) {
+/*static*/
+bool Scene::runDragonOp(const SceneOp &op, bool sceneChanged) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	switch (op._opCode) {
 	case kSceneOpPasscode:
@@ -772,11 +772,11 @@ bool Scene::runDragonOp(const SceneOp &op) {
 		error("Unexpected Dragon scene opcode %d", op._opCode);
 		break;
 	}
-	return true;
+	return false;
 }
 
-
-bool Scene::runChinaOp(const SceneOp &op) {
+/*static*/
+bool Scene::runChinaOp(const SceneOp &op, bool sceneChanged) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	switch (op._opCode) {
 	case kSceneOpOpenChinaOpenGameOverMenu:
@@ -798,26 +798,28 @@ bool Scene::runChinaOp(const SceneOp &op) {
 	case kSceneOpOpenChinaStartIntro:
 		// The game first jumps to scene 100, and then to 98
 		engine->changeScene(98);
-		return false;
+		return true;
 	default:
 		warning("TODO: Implement china-specific scene opcode %d", op._opCode);
 		break;
 	}
-	return true;
+	return false;
 }
 
-bool Scene::runBeamishOp(const SceneOp &op) {
+bool Scene::runBeamishOp(const SceneOp &op, bool sceneChanged) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
+
 	if (op._opCode & 0x8000) {
 		uint16 opcode = op._opCode & 0x7fff;
-		for (const ConditionalSceneOp &cop : _conditionalOps) {
+		for (const ConditionalSceneOp &cop : engine->getScene()->getConditionalOps()) {
 			if (cop._opCode == opcode && checkConditions(cop._conditionList)) {
 				if (!runOps(cop._opList))
-					return false;
+					return true;
 			}
 		}
-		return true;
+		return false;
 	}
+
 	switch (op._opCode) {
 	case kSceneOpOpenBeamishGameOverMenu:
 		engine->setMenuToTrigger(kMenuGameOver);
@@ -829,11 +831,21 @@ bool Scene::runBeamishOp(const SceneOp &op) {
 		warning("TODO: Implement beamish-specific scene opcode %d", op._opCode);
 		break;
 	}
-	return true;
+	return false;
 }
 
-bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 */) {
+//
+// Note: ops list here is not a reference on purpose, it must be copied.
+// The underlying list might be freed during execution if the scene changes, but
+// we have to finish executing the whole list.
+//
+// Scene change can also invalidate the `this` pointer, which is why
+// this is static and the runOp functions fetch the scene through the engine.
+//
+/*static*/
+bool Scene::runOps(const Common::Array<SceneOp> ops, int16 addMinuites /* = 0 */) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
+	bool sceneChanged = false;
 	for (const SceneOp &op : ops) {
 		if (!checkConditions(op._conditionList))
 			continue;
@@ -842,32 +854,31 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 *
 			engine->getClock().addGameTime(addMinuites);
 			addMinuites = 0;
 		}
-		bool keepGoing = true;
 		if (op._opCode < 100) {
-			keepGoing = runSceneOp(op);
+			sceneChanged |= runSceneOp(op, sceneChanged);
+			// NOTE: After executing op, `this` may no longer be valid.
 		} else {
 			// Game-specific opcode
 			switch (engine->getGameId()) {
 			case GID_DRAGON:
-				keepGoing = runDragonOp(op);
+				sceneChanged |= runDragonOp(op, sceneChanged);
 				break;
 			case GID_HOC:
-				keepGoing = runChinaOp(op);
+				sceneChanged |= runChinaOp(op, sceneChanged);
 				break;
 			case GID_WILLY:
-				keepGoing = runBeamishOp(op);
+				sceneChanged |= runBeamishOp(op, sceneChanged);
 				break;
 			default:
 				error("TODO: Implement game-specific scene op for this game");
 			}
 		}
-		if (!keepGoing)
-			return false;
 	}
-	return true;
+	return !sceneChanged;
 }
 
-bool Scene::checkConditions(const Common::Array<SceneConditions> &conds) const {
+/*static*/
+bool Scene::checkConditions(const Common::Array<SceneConditions> &conds) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 
 	uint cnum = 0;
@@ -1653,11 +1664,6 @@ bool SDSScene::drawAndUpdateDialogs(Graphics::ManagedSurface *dst) {
 	return retval;
 }
 
-void SDSScene::globalOps(const Common::Array<uint16> &args) {
-	// The globals are held by the GDS scene
-	DgdsEngine::getInstance()->getGDSScene()->globalOps(args);
-}
-
 void SDSScene::mouseMoved(const Common::Point &pt) {
 	Dialog *dlg = getVisibleDialog();
 	const HotArea *area = findAreaUnderMouse(pt);
@@ -1849,11 +1855,6 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 			const ObjectInteraction *i = _findInteraction(scene->getObjInteractions1(), dragItem->_num, area._num);
 			if (i) {
 				debug(" --> exec %d drag ops for area %d", i->opList.size(), area._num);
-				if (engine->getGameId() == GID_HOC && dragItem->_num == 98 && area._num == 25 && gdsScene->getGlobal(355) == 0) {
-					// FIXME: Why is that not executed by the runOps() call below?
-					warning("HACK for giving money to the ticket agent");
-					gdsScene->setGlobal(355, 1);
-				}
 				if (!runOps(i->opList, globals->getGameMinsToAddOnObjInteraction()))
 					return;
 			}
