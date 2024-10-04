@@ -61,6 +61,8 @@ protected:
 	bool _cursorWasVisible = false;
 
 	Common::HashMap<int, const Graphics::Font *> _fonts;
+	Common::Array<Common::String> _strsStrings;
+
 	int _gameFontId = -1;
 
 	byte _unicodeToMacRoman[96];
@@ -151,6 +153,8 @@ protected:
 	void prepareSaveLoad(Common::StringArray &savegameNames, bool *availSlots, int *slotIds, int size);
 
 	bool runOkCancelDialog(Common::String text);
+
+	virtual void readStrings() {}
 
 public:
 	class MacGuiObject {
@@ -598,6 +602,9 @@ public:
 	Graphics::Surface *surface() { return _surface; }
 
 	virtual const Common::String name() const = 0;
+
+	Common::String readCString(uint8 *&data);
+	Common::String readPascalString(uint8 *&data);
 
 	int toMacRoman(int unicode) const;
 

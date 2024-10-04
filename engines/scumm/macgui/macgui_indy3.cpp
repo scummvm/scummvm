@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 #include "common/config-manager.h"
+#include "common/macresman.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 
@@ -925,12 +926,113 @@ MacIndy3Gui::MacIndy3Gui(ScummEngine *vm, const Common::Path &resourceFile) :
 
 	_dirtyRects.clear();
 	_textArea.create(448, 47, Graphics::PixelFormat::createFormatCLUT8());
+
+	readStrings();
 }
 
 MacIndy3Gui::~MacIndy3Gui() {
 	for (auto &it: _widgets)
 		delete it._value;
 	_textArea.free();
+}
+
+
+void MacIndy3Gui::readStrings() {
+	Common::MacResManager resource;
+	resource.open(_resourceFile);
+	uint32 strsLen = resource.getResLength(MKTAG('S', 'T', 'R', 'S'), 0);
+	Common::SeekableReadStream *strsStream = resource.getResource(MKTAG('S', 'T', 'R', 'S'), 0);
+	uint8 *strsBlock = (uint8 *)malloc(strsLen);
+	strsStream->read(strsBlock, strsLen);
+
+	uint8 *strsData = strsBlock;
+
+	// Most of these are debug strings. We parse the entire STRS block anyway,
+	// for any future need.
+
+	// Debug strings
+	for (int i = 0; i < 6; i++) {
+		_strsStrings.emplace_back(readCString(strsData));
+	}
+
+	_strsStrings.emplace_back(readPascalString(strsData));
+	_strsStrings.emplace_back(readPascalString(strsData));
+
+	_strsStrings.emplace_back(readCString(strsData));
+	_strsStrings.emplace_back(readCString(strsData));
+
+	// "\x14", "About Indy...<B;(-", "MacScumm", "MacScumm"
+	for (int i = 0; i < 4; i++) {
+		_strsStrings.emplace_back(readPascalString(strsData));
+	}
+
+	// "Are you sure you want to restart this game from the beginning?"
+	_strsStrings.emplace_back(readCString(strsData));
+
+	// "Are you sure you want to quit?"
+	_strsStrings.emplace_back(readCString(strsData));
+
+	// "Open Game File...", "Open Game File...", "Save Game File as..."
+	// "Game file", "Save Game File as...", "Game file"
+	for (int i = 0; i < 6; i++) {
+		_strsStrings.emplace_back(readPascalString(strsData));
+	}
+
+	// "An error occured while saving.  The game was not saved."
+	_strsStrings.emplace_back(readCString(strsData));
+
+	// "Select a color"
+	_strsStrings.emplace_back(readPascalString(strsData));
+
+	// Debug strings
+	for (int i = 0; i < 67; i++) {
+		_strsStrings.emplace_back(readCString(strsData));
+	}
+
+	// "About", "about", "Indiana Jones and the Last Crusade", "The Graphic Adventure"
+	for (int i = 0; i < 4; i++) {
+		_strsStrings.emplace_back(readPascalString(strsData));
+	}
+
+	// "%sInterpreter version %c.%c.%c"
+	_strsStrings.emplace_back(readCString(strsData));
+
+	// All the other "About" dialog strings
+	for (int i = 0; i < 31; i++) {
+		_strsStrings.emplace_back(readPascalString(strsData));
+	}
+
+	// "ERROR #%d"
+	_strsStrings.emplace_back(readCString(strsData));
+
+	// Other debug strings...
+	for (int i = 0; i < 4; i++) {
+		_strsStrings.emplace_back(readPascalString(strsData));
+	}
+
+	for (int i = 0; i < 3; i++) {
+		_strsStrings.emplace_back(readCString(strsData));
+	}
+
+	_strsStrings.emplace_back(readPascalString(strsData));
+	_strsStrings.emplace_back(readPascalString(strsData));
+
+	// "Copyright (c) 1989 Lucasfilm Ltd. All Rights Reserved.", "rb, "wb", "wb"
+	for (int i = 0; i < 4; i++) {
+		_strsStrings.emplace_back(readCString(strsData));
+	}
+
+	// Other debug strings...
+	_strsStrings.emplace_back(readPascalString(strsData));
+
+	_strsStrings.emplace_back(readCString(strsData));
+
+	for (int i = 0; i < 5; i++) {
+		_strsStrings.emplace_back(readPascalString(strsData));
+	}
+
+	free(strsBlock);
+	delete strsStream;
 }
 
 void MacIndy3Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
@@ -1152,72 +1254,71 @@ void MacIndy3Gui::runAboutDialog() {
 	int trolleyWaitFrames = 20;	// ~2 seconds
 	int waitFrames = 0;
 
-	// TODO: These strings are part of the STRS resource, but I don't know
-	// how to safely read them from there yet. So hard-coded it is for now.
+	Common::String version = Common::String::format(_strsStrings[95].c_str(), "Mac 1.7 8/17/90, ", '5', '1', '6');
 
 	const TextLine page1[] = {
-		{ 0, 4, kStyleHeader, Graphics::kTextAlignCenter, "Indiana Jones and the Last Crusade" },
-		{ 0, 22, kStyleBold, Graphics::kTextAlignCenter, "The Graphic Adventure" },
-		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, "Mac 1.7 8/17/90, Interpreter version 5.1.6" },
-		{ 1, 82, kStyleRegular, Graphics::kTextAlignCenter, "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved." },
+		{ 0, 4, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[93].c_str() }, // "Indiana Jones and the Last Crusade"
+		{ 0, 22, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[94].c_str() }, // "The Graphic Adventure"
+		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, version.c_str() }, // "Mac 1.7 8/17/90, Interpreter version 5.1.6"
+		{ 1, 82, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[96].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved."
 		TEXT_END_MARKER
 	};
 
 	const TextLine page2[] = {
-		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, "Macintosh version by" },
-		{ 70, 21, kStyleHeader, Graphics::kTextAlignLeft, "Eric Johnston" },
-		{ 194, 32, kStyleBold, Graphics::kTextAlignLeft, "and" },
-		{ 216, 41, kStyleHeader, Graphics::kTextAlignLeft, "Dan Filner" },
+		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[97].c_str() }, // "Macintosh version by"
+		{ 70, 21, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[99].c_str() }, // "Eric Johnston"
+		{ 194, 32, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[98].c_str() }, // "and"
+		{ 216, 41, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[100].c_str() }, // "Dan Filner"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page3[] = {
-		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, "Macintosh scripting by" },
-		{ 75, 21, kStyleHeader, Graphics::kTextAlignLeft, "Ron Baldwin" },
-		{ 186, 32, kStyleBold, Graphics::kTextAlignLeft, "and" },
-		{ 214, 41, kStyleHeader, Graphics::kTextAlignLeft, "David Fox" },
+		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[101].c_str() }, // "Macintosh scripting by"
+		{ 75, 21, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[103].c_str() }, // "Ron Baldwin"
+		{ 186, 32, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[102].c_str() }, // "and"
+		{ 214, 41, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[104].c_str() }, // "David Fox"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page4[] = {
-		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, "Designed and scripted by" },
-		{ 77, 24, kStyleHeader, Graphics::kTextAlignLeft, "Noah Falstein" },
-		{ 134, 44, kStyleHeader, Graphics::kTextAlignLeft, "David Fox" },
-		{ 167, 64, kStyleHeader, Graphics::kTextAlignLeft, "Ron Gilbert" },
+		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[105].c_str() }, // "Designed and scripted by"
+		{ 77, 24, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[106].c_str() }, // "Noah Falstein"
+		{ 134, 44, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[107].c_str() }, // "David Fox"
+		{ 167, 64, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[108].c_str() }, // "Ron Gilbert"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page5[] = {
-		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, "SCUMM Story System" },
-		{ 1, 17, kStyleBold, Graphics::kTextAlignCenter, "created by" },
-		{ 107, 36, kStyleHeader, Graphics::kTextAlignLeft, "Ron Gilbert" },
-		{ 170, 52, kStyleBold, Graphics::kTextAlignLeft, "and" },
-		{ 132, 66, kStyleHeader, Graphics::kTextAlignLeft, "Aric Wilmunder" },
+		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[109].c_str() }, // "SCUMM Story System"
+		{ 1, 17, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[110].c_str() }, // "created by"
+		{ 107, 36, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[112].c_str() }, // "Ron Gilbert"
+		{ 170, 52, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[111].c_str() }, // "and"
+		{ 132, 66, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[113].c_str() }, // "Aric Wilmunder"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page6[] = {
-		{ 1, 19, kStyleBold, Graphics::kTextAlignCenter, "Stumped?  Indy hint books are available!" },
-		{ 86, 36, kStyleRegular, Graphics::kTextAlignLeft, "In the U.S. call" },
-		{ 160, 37, kStyleBold, Graphics::kTextAlignLeft, "1 (800) STAR-WARS" },
-		{ 160, 46, kStyleRegular, Graphics::kTextAlignLeft, "that\xD5s  1 (800) 782-7927" },
-		{ 90, 66, kStyleRegular, Graphics::kTextAlignLeft, "In Canada call" },
-		{ 160, 67, kStyleBold, Graphics::kTextAlignLeft, "1 (800) 828-7927" },
+		{ 1, 19, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[114].c_str() }, // "Stumped?  Indy hint books are available!"
+		{ 86, 36, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[117].c_str() }, // "In the U.S. call"
+		{ 160, 37, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[115].c_str() }, // "1 (800) STAR-WARS"
+		{ 160, 46, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[119].c_str() }, // "that\xD5s  1 (800) 782-7927"
+		{ 90, 66, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[118].c_str() }, // "In Canada call"
+		{ 160, 67, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[116].c_str() }, // "1 (800) 828-7927"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page7[] = {
-		{ 1, 17, kStyleBold, Graphics::kTextAlignCenter, "Need a hint NOW?  Having problems?" },
-		{ 53, 31, kStyleRegular, Graphics::kTextAlignLeft, "For hints or technical support call" },
-		{ 215, 32, kStyleBold, Graphics::kTextAlignLeft, "1 (900) 740-JEDI" },
-		{ 1, 46, kStyleRegular, Graphics::kTextAlignCenter, "The charge is 75\xA2 per minute." },
-		{ 1, 56, kStyleRegular, Graphics::kTextAlignCenter, "(You must have your parents\xD5 permission to" },
-		{ 1, 66, kStyleRegular, Graphics::kTextAlignCenter, "call this number if you are under 18.)" },
+		{ 1, 17, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[120].c_str() }, // "Need a hint NOW?  Having problems?"
+		{ 53, 31, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[122].c_str() }, // "For hints or technical support call"
+		{ 215, 32, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[121].c_str() }, // "1 (900) 740-JEDI"
+		{ 1, 46, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[123].c_str() }, // "The charge is 75\xA2 per minute."
+		{ 1, 56, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[124].c_str() }, // "(You must have your parents\xD5 permission to"
+		{ 1, 66, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[125].c_str() }, // "call this number if you are under 18.)"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page8[] = {
-		{ 1, 1, kStyleBold, Graphics::kTextAlignCenter, "Click to continue" },
+		{ 1, 1, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[126].c_str() }, // "Click to continue"
 		TEXT_END_MARKER
 	};
 

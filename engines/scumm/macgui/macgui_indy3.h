@@ -83,6 +83,8 @@ protected:
 	bool runOptionsDialog();
 	bool runIqPointsDialog();
 
+	void readStrings() override;
+
 private:
 	int _verbGuiTop = 0;
 	Graphics::Surface _verbGuiSurface;

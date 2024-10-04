@@ -43,6 +43,7 @@ namespace Scumm {
 
 MacGuiImpl::MacGuiImpl(ScummEngine *vm, const Common::Path &resourceFile) : _vm(vm), _system(_vm->_system), _surface(_vm->_macScreen), _resourceFile(resourceFile) {
 	_fonts.clear();
+	_strsStrings.clear();
 
 	// kMacRomanConversionTable is a conversion table from Mac Roman
 	// 128-255 to unicode. What we need, however, is a mapping from
@@ -62,6 +63,28 @@ MacGuiImpl::MacGuiImpl(ScummEngine *vm, const Common::Path &resourceFile) : _vm(
 MacGuiImpl::~MacGuiImpl() {
 	delete _bannerWindow;
 	delete _windowManager;
+}
+
+Common::String MacGuiImpl::readCString(uint8 *&data) {
+	Common::String result(reinterpret_cast<const char *>(data));
+	data += result.size() + 1;
+
+	while (data[0] == '\0') {
+		data++;
+	}
+
+	return result;
+}
+
+Common::String MacGuiImpl::readPascalString(uint8 *&data) {
+	Common::String result(reinterpret_cast<const char *>(&data[1]), (uint32)data[0]);
+	data += (uint32)data[0] + 1;
+
+	while (data[0] == '\0') {
+		data++;
+	}
+
+	return result;
 }
 
 int MacGuiImpl::toMacRoman(int unicode) const {
@@ -173,11 +196,17 @@ void MacGuiImpl::initialize() {
 		// Add the Apple menu
 
 		const Graphics::MacMenuData menuSubItems[] = {
-			{ 0, NULL, 0, 0, false }
+			{ 0, nullptr, 0, 0, false }
 		};
 
-		// TODO: This can be found in the STRS resource
-		Common::String aboutMenuDef = "About " + name() + "...<B;(-";
+		Common::String aboutMenuDef;
+
+		switch (_vm->_game.id) {
+		case GID_INDY3:
+			aboutMenuDef = _strsStrings[11].c_str();
+		default:
+			aboutMenuDef = "About " + name() + "...<B;(-";
+		}
 
 		if (_vm->_game.id == GID_LOOM) {
 			aboutMenuDef += ";";
@@ -565,6 +594,16 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 	Common::MacResManager resource;
 	Common::SeekableReadStream *res;
 
+	Common::String saveGameFileAsResStr, gameFileResStr;
+	switch (_vm->_game.id) {
+	case GID_INDY3:
+		saveGameFileAsResStr = _strsStrings[18].c_str();
+		gameFileResStr = _strsStrings[19].c_str();
+	default:
+		saveGameFileAsResStr = "Save Game File as...";
+		gameFileResStr = "Game file";
+	}
+
 	resource.open(_resourceFile);
 
 	Common::Rect bounds;
@@ -653,7 +692,7 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 				// Static text
 				str = getDialogString(res, len);
 				if (isSaveDialog && i == 2)
-					str = "Save Game File as...";
+					str = saveGameFileAsResStr;
 
 				window->addStaticText(r, str, enabled);
 				break;
@@ -665,7 +704,7 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 				// Adjust for pixel accuracy...
 				r.left -= 1;
 
-				MacGuiImpl::MacEditText *editText = window->addEditText(r, "Game file", enabled);
+				MacGuiImpl::MacEditText *editText = window->addEditText(r, gameFileResStr, enabled);
 				editText->selectAll();
 
 				window->innerSurface()->frameRect(Common::Rect(r.left - 2, r.top - 3, r.right + 3, r.bottom + 3), kBlack);
@@ -761,11 +800,27 @@ bool MacGuiImpl::runOkCancelDialog(Common::String text) {
 }
 
 bool MacGuiImpl::runQuitDialog() {
-	return runOkCancelDialog("Are you sure you want to quit?");
+	Common::String quitString;
+	switch (_vm->_game.id) {
+	case GID_INDY3:
+		quitString = _strsStrings[15].c_str();
+	default:
+		quitString = "Are you sure you want to quit?";
+	}
+
+	return runOkCancelDialog(quitString);
 }
 
 bool MacGuiImpl::runRestartDialog() {
-	return runOkCancelDialog("Are you sure you want to restart this game from the beginning?");
+	Common::String restartString;
+	switch (_vm->_game.id) {
+	case GID_INDY3:
+		restartString = _strsStrings[14].c_str();
+	default:
+		restartString = "Are you sure you want to restart this game from the beginning?";
+	}
+
+	return runOkCancelDialog(restartString);
 }
 
 void MacGuiImpl::drawBanner(char *message) {
