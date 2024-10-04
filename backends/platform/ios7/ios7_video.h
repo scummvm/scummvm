@@ -63,8 +63,6 @@ uint getSizeNextPOT(uint size);
 
 @property (nonatomic, assign) BOOL isInGame;
 @property (nonatomic, assign) UIInterfaceOrientationMask supportedScreenOrientations;
-@property (nonatomic) NSTimeInterval pencilTouchGestureStartTime;
-@property (nonatomic) BOOL isLongPencilTouch;
 
 - (id)initWithFrame:(struct CGRect)frame;
 
