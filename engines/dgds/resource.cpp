@@ -55,7 +55,7 @@ ResourceManager::ResourceManager() {
 		return;
 	}
 
-	indexFile.skip(4); // salt for file hash, TODO
+	indexFile.readUint32LE(); // salt for file hash, TODO
 	int nvolumes = indexFile.readUint16LE();
 
 	char fnbuf[FILENAME_LENGTH + 1];
@@ -70,7 +70,7 @@ ResourceManager::ResourceManager() {
 		if (!_volumes[i].isOpen())
 			error("Couldn't open volume data %s", volumeName.toString().c_str());
 
-		indexFile.skip(1); // unknown
+		indexFile.readSByte(); // unknown byte
 		int entries = indexFile.readUint16LE();
 
 		for (int j = 0; j < entries; j++) {
@@ -86,12 +86,16 @@ ResourceManager::ResourceManager() {
 			Common::String fileName(fnbuf);
 			fileName.toLowercase();
 
-			_volumes[i].skip(1); // unknown
+			_volumes[i].readSByte(); // unknown byte
 			res.size = _volumes[i].readUint32LE();
 
-			// Some sounds in Beamish FDD have size -1, which I think just means they don't exist.
-			if (res.size > (uint32)1 << 31 || fileName.empty() || res.size == 0)
+			if (fileName.empty() || res.size == 0)
 				continue;
+
+			// Some sounds in Beamish have size -1 but are needed for the game.. where are they?
+			if (res.size > (uint32)1 << 31) {
+				warning("Res %s : %s at pos %d has negative size??", volumeName.toString().c_str(), fileName.c_str(), res.pos);
+			}
 
 			_resources[fileName] = res;
 		}
