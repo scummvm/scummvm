@@ -388,7 +388,7 @@ int32 Debug::debugProcessButton(int32 x, int32 y) {
 
 void Debug::debugPlasmaWindow(const char *text, int32 color) {
 	_engine->_menu->processPlasmaEffect(Common::Rect(0, 0, PLASMA_WIDTH, PLASMA_HEIGHT), color);
-	const int32 textSize = _engine->_text->getTextSize(text);
+	const int32 textSize = _engine->_text->sizeFont(text);
 	_engine->_text->drawText((_engine->width() / 2) - (textSize / 2), 10, text);
 	const Common::Rect rect(5, 5, _engine->width() - 5, 50);
 	_engine->_menu->drawRectBorders(rect);

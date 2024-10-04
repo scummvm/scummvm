@@ -299,7 +299,7 @@ void Text::drawText(int32 x, int32 y, const char *dialogue, bool shadow) {
 		}
 
 		if (currChar == ' ') {
-			x += _dialCharSpace;
+			x += _sizeSpace;
 		} else {
 			const int32 dialTextSize = getCharWidth(currChar);
 			if (shadow) {
@@ -316,7 +316,7 @@ void Text::drawText(int32 x, int32 y, const char *dialogue, bool shadow) {
 	} while (1);
 }
 
-int32 Text::getTextSize(const char *dialogue) {
+int32 Text::sizeFont(const char *dialogue) {
 	int32 dialTextSize = 0;
 
 	do {
@@ -326,7 +326,7 @@ int32 Text::getTextSize(const char *dialogue) {
 		}
 
 		if (currChar == ' ') {
-			dialTextSize += _dialCharSpace;
+			dialTextSize += _sizeSpace;
 		} else {
 			dialTextSize += _dialSpaceBetween;
 			dialTextSize += getCharWidth(currChar);
@@ -375,7 +375,7 @@ void Text::initText(TextId index) {
 
 	_hasValidTextHandle = true;
 
-	_dialTextBoxCurrentLine = 0;
+	_nbLineDial = 0;
 	_progressiveTextBuffer[0].chr = '\0';
 	_progressiveTextBuffer[0].x = 0;
 	_nbChar = 0;
@@ -387,13 +387,13 @@ void Text::initText(TextId index) {
 	setFontParameters(2, 7);
 
 	// fetch the first line
-	processTextLine();
+	getNextLine();
 }
 
 void Text::initProgressiveTextBuffer() {
 	for (uint i = 0; i < ARRAYSIZE(_progressiveTextBuffer); i++) {
 		_progressiveTextBuffer[i].chr = ' ';
-		_progressiveTextBuffer[i].x = (_dialCharSpace + 1) * i;
+		_progressiveTextBuffer[i].x = (_sizeSpace + 1) * i;
 	}
 	// the end of the buffer defines how fast the next page is shown - as the
 	// whitespaces are handled in the fade in process, too. But we need at least 32 chars,
@@ -401,7 +401,7 @@ void Text::initProgressiveTextBuffer() {
 	_progressiveTextBuffer[ARRAYSIZE(_progressiveTextBuffer) - 1].chr = '\0';
 	_progressiveTextBuffer[ARRAYSIZE(_progressiveTextBuffer) - 1].x = 0;
 	_progressiveTextBufferPtr = _progressiveTextBuffer;
-	_dialTextBoxCurrentLine = 0;
+	_nbLineDial = 0;
 }
 
 void Text::pushChar(int16 baseX, int16 y, const LineCharacter &chr) {
@@ -421,13 +421,13 @@ void Text::pushChar(int16 baseX, int16 y, const LineCharacter &chr) {
 	_stackChar[TEXT_MAX_FADE_IN_CHR - 1].y = y;
 }
 
-Text::WordSize Text::getWordSize(const char *completeText, char *wordBuf, int32 wordBufSize) {
+Text::WordSize Text::getNextWord(const char *completeText, char *dst, int32 wordBufSize) {
 	int32 temp = 0;
-	const char *arg2Save = wordBuf;
+	const char *arg2Save = dst;
 
 	while (*completeText != '\0' && *completeText != '\1' && *completeText != ' ') {
 		temp++;
-		*wordBuf++ = *completeText++;
+		*dst++ = *completeText++;
 		if (temp >= wordBufSize - 1) {
 			break;
 		}
@@ -435,8 +435,8 @@ Text::WordSize Text::getWordSize(const char *completeText, char *wordBuf, int32 
 
 	WordSize size;
 	size.inChar = temp;
-	*wordBuf = '\0';
-	size.inPixel = getTextSize(arg2Save);
+	*dst = '\0';
+	size.inPixel = sizeFont(arg2Save);
 	return size;
 }
 
@@ -452,20 +452,19 @@ void Text::appendProgressiveTextBuffer(const char *s, int &x, uint &i) {
 		i++;
 
 		if (chr == ' ') {
-			x += _dialCharSpace + 1;
+			x += _sizeSpace + 1;
 		} else {
 			x += getCharWidth(chr) + 2;
 		}
 	}
 }
 
-
-void Text::processTextLine() {
+void Text::getNextLine() {
 	const char *buffer = _currentTextPosition;
-	_dialCharSpace = 7;
-	bool moreWordsFollowing = true;
+	_sizeSpace = INTER_SPACE;
+	bool flag = true;
 
-	int32 lineBreakX = 0;
+	int32 _sizeLine = 0;
 	int32 spaceCharCount = 0;
 	int x = 0;
 	uint i = 0;
@@ -482,41 +481,41 @@ void Text::processTextLine() {
 		}
 
 		_currentTextPosition = buffer;
-		char wordBuf[256] = "";
-		WordSize wordSize = getWordSize(buffer, wordBuf, sizeof(wordBuf));
-		if (lineBreakX + _dialCharSpace + wordSize.inPixel >= _dialTextBoxMaxX) {
+		char ptDial[256] = "";
+		WordSize _sizeWord = getNextWord(buffer, ptDial, sizeof(ptDial));
+		if (_sizeLine + _sizeSpace + _sizeWord.inPixel >= _dialMaxSize) {
 			break;
 		}
 
-		if (*wordBuf == '\1') {
-			moreWordsFollowing = false;
+		if (*ptDial == '\1') {
+			flag = false;
 			buffer++;
 			break;
 		}
 
 		// @ is a line break
-		if (*wordBuf == '@') {
-			moreWordsFollowing = false;
+		if (*ptDial == '@') {
+			flag = false;
 			buffer++;
-			if (lineBreakX == 0) {
-				lineBreakX = 7;
+			if (_sizeLine == 0) {
+				_sizeLine = INTER_SPACE;
 				appendProgressiveTextBuffer(" ", x, i);
 			}
 			// new page?
-			if (wordBuf[1] == 'P') {
-				_dialTextBoxCurrentLine = _dialTextBoxLines;
+			if (ptDial[1] == 'P') {
+				_nbLineDial = _maxLineDial;
 				buffer++;
 			}
 			break;
 		}
 
-		buffer += wordSize.inChar;
+		buffer += _sizeWord.inChar;
 		_currentTextPosition = buffer;
-		appendProgressiveTextBuffer(wordBuf, x, i);
+		appendProgressiveTextBuffer(ptDial, x, i);
 		appendProgressiveTextBuffer(" ", x, i);
 		spaceCharCount++;
 
-		lineBreakX += wordSize.inPixel + _dialCharSpace;
+		_sizeLine += _sizeWord.inPixel + _sizeSpace;
 		if (*_currentTextPosition != '\0') {
 			_currentTextPosition++;
 			continue;
@@ -539,12 +538,12 @@ void Text::processTextLine() {
 		spaceCharCount--;
 	}
 
-	if (*_currentTextPosition != '\0' && moreWordsFollowing) {
+	if (*_currentTextPosition != '\0' && flag) {
 		if (spaceCharCount <= 0) {
 			spaceCharCount = 1;
 		}
 		// split the remaining space between the words
-		_dialCharSpace += (_dialTextBoxMaxX - lineBreakX) / spaceCharCount;
+		_sizeSpace += (_dialMaxSize - _sizeLine) / spaceCharCount;
 	}
 
 	_currentTextPosition = buffer;
@@ -584,7 +583,7 @@ void Text::renderContinueReadingTriangle() { // AffFleche
 	_engine->copyBlockPhys(left, top, right, bottom);
 }
 
-void Text::fadeInCharacters(int32 counter, int32 fontColor) {
+void Text::fadeInCharacters(int32 counter, int32 fontColor) { // AffAllCar
 	Common::Rect dirtyRect;
 	while (--counter >= 0) {
 		const BlendInCharacter *ptr = &_stackChar[counter];
@@ -638,7 +637,7 @@ ProgressiveTextState Text::nextDialChar() { // NextDialCar
 
 	if (_progressiveTextBufferPtr->chr == '\0') {
 		initProgressiveTextBuffer();
-		processTextLine();
+		getNextLine();
 		initDialogueBox();
 		_dialTextBaseXPos = _dialTextBox.left + PADDING;
 		_dialTextYPos = _dialTextBox.top + PADDING;
@@ -660,17 +659,17 @@ ProgressiveTextState Text::nextDialChar() { // NextDialCar
 	}
 
 	// reached a new line that is about get faded in
-	_dialTextBoxCurrentLine++;
+	_nbLineDial++;
 
 	_dialTextYPos += lineHeight;
 	_dialTextBaseXPos = _dialTextBox.left + PADDING;
 
-	if (_dialTextBoxCurrentLine >= _dialTextBoxLines) {
+	if (_nbLineDial >= _maxLineDial) {
 		renderContinueReadingTriangle();
 		return ProgressiveTextState::NextPage;
 	}
 
-	processTextLine();
+	getNextLine();
 
 	return ProgressiveTextState::ContinueRunning;
 }
@@ -761,7 +760,7 @@ bool Text::drawTextProgressive(TextId index, bool playVox, bool loop) { // Dial
 
 void Text::setFontParameters(int32 spaceBetween, int32 charSpace) {
 	_dialSpaceBetween = spaceBetween;
-	_dialCharSpace = charSpace;
+	_sizeSpace = charSpace;
 }
 
 void Text::setTextCrossColor(int32 stopColor, int32 startColor, int32 stepSize) { // CoulDial
@@ -830,21 +829,21 @@ void Text::bigWinDial() {
 	_dialTextBox.right = _engine->width() - margin;
 	_dialTextBox.bottom = _engine->height() - margin;
 
-	_dialTextBoxLines = (int32)(_dialTextBox.height() / lineHeight) - 1;
-	_dialTextBoxMaxX = _engine->width() - 2 * margin - 2 * PADDING;
+	_maxLineDial = (int32)(_dialTextBox.height() / lineHeight) - 1;
+	_dialMaxSize = _engine->width() - 2 * margin - 2 * PADDING;
 }
 
 void Text::normalWinDial() {
 	const int32 margin = 16;
-	_dialTextBoxLines = 3;
-	const int32 textHeight = _dialTextBoxLines * lineHeight;
+	_maxLineDial = 3;
+	const int32 textHeight = _maxLineDial * lineHeight;
 
 	_dialTextBox.left = margin;
 	_dialTextBox.top = _engine->height() - textHeight - margin - PADDING;
 	_dialTextBox.right = _engine->width() - margin;
 	_dialTextBox.bottom = _engine->height() - margin;
 
-	_dialTextBoxMaxX = _engine->width() - 2 * margin - 2 * PADDING;
+	_dialMaxSize = _engine->width() - 2 * margin - 2 * PADDING;
 }
 
 void Text::drawAskQuestion(TextId index) {

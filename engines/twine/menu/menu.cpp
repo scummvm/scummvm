@@ -335,7 +335,7 @@ void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &r
 
 	_engine->_text->setFontColor(COLOR_WHITE);
 	_engine->_text->setFontParameters(2, 8);
-	const int32 textSize = _engine->_text->getTextSize(dialText);
+	const int32 textSize = _engine->_text->sizeFont(dialText);
 	_engine->_text->drawText((_engine->width() / 2) - (textSize / 2), rect.top + 7, dialText);
 }
 
@@ -1151,7 +1151,7 @@ void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int
 		char dialText[256];
 		_engine->_text->getMenuText(_engine->_actor->getTextIdForBehaviour(), dialText, sizeof(dialText));
 
-		_engine->_text->drawText(titleBoxCenter - _engine->_text->getTextSize(dialText) / 2, titleBoxTop + 1, dialText);
+		_engine->_text->drawText(titleBoxCenter - _engine->_text->sizeFont(dialText) / 2, titleBoxTop + 1, dialText);
 	} else {
 		_engine->_interface->drawFilledRect(boxRect, COLOR_BLACK);
 	}

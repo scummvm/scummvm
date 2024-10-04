@@ -111,7 +111,7 @@ private:
 		if (!params.empty()) {
 			_pal[255] = _pal[15] = 0xffffffff;
 			_engine->setPalette(_pal);
-			const int32 length = _engine->_text->getTextSize(params.c_str());
+			const int32 length = _engine->_text->sizeFont(params.c_str());
 			const int x = 0;
 			_engine->_text->drawText(x, _textY, params.c_str());
 			_engine->_frontVideoBuffer.addDirtyRect(Common::Rect(x, _textY, x + length, _textY + _lineHeight));
@@ -123,7 +123,7 @@ private:
 		if (!params.empty()) {
 			_pal[255] = _pal[15] = 0xffffffff;
 			_engine->setPalette(_pal);
-			const int32 length = _engine->_text->getTextSize(params.c_str());
+			const int32 length = _engine->_text->sizeFont(params.c_str());
 			const int x = _engine->width() - length;
 			_engine->_text->drawText(x, _textY, params.c_str());
 			_engine->_frontVideoBuffer.update();
@@ -136,7 +136,7 @@ private:
 		if (!params.empty()) {
 			_pal[255] = _pal[15] = 0xffffffff;
 			_engine->setPalette(_pal);
-			const int32 length = _engine->_text->getTextSize(params.c_str());
+			const int32 length = _engine->_text->sizeFont(params.c_str());
 			const int x = _engine->width() / 2 - length / 2;
 			_engine->_text->drawText(x, _textY, params.c_str());
 			_engine->_frontVideoBuffer.addDirtyRect(Common::Rect(x, _textY, x + length, _textY + _lineHeight));

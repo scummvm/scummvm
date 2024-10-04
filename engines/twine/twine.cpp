@@ -984,7 +984,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			if (_redraw->_flagMCGA) {
 				_text->drawText(_redraw->_sceneryViewX + 5, _redraw->_sceneryViewY, PauseString);
 			} else {
-				const int width = _text->getTextSize(PauseString);
+				const int width = _text->sizeFont(PauseString);
 				const int bottom = height() - _text->lineHeight;
 				_text->drawText(5, bottom, PauseString);
 				copyBlockPhys(5, bottom, 5 + width, bottom + _text->lineHeight);

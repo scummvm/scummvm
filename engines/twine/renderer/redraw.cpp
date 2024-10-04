@@ -746,7 +746,7 @@ void Redraw::renderOverlays() {
 			char text[10];
 			snprintf(text, sizeof(text), "%d", overlay->num);
 
-			const int32 textLength = _engine->_text->getTextSize(text);
+			const int32 textLength = _engine->_text->sizeFont(text);
 			const int32 textHeight = 48;
 
 			Common::Rect renderRect;
@@ -772,7 +772,7 @@ void Redraw::renderOverlays() {
 			char text[10];
 			Common::sprintf_s(text, "%d", range);
 
-			const int32 textLength = _engine->_text->getTextSize(text);
+			const int32 textLength = _engine->_text->sizeFont(text);
 			const int32 textHeight = 48;
 
 			Common::Rect renderRect;
@@ -811,7 +811,7 @@ void Redraw::renderOverlays() {
 			char text[256];
 			_engine->_text->getMenuText((TextId)overlay->num, text, sizeof(text));
 
-			const int32 textLength = _engine->_text->getTextSize(text);
+			const int32 textLength = _engine->_text->sizeFont(text);
 			const int32 textHeight = 48;
 
 			Common::Rect renderRect;
@@ -865,7 +865,7 @@ void Redraw::renderText() {
 	const int x = padding;
 	const int height = _engine->_text->lineHeight;
 	const int y = _engine->height() - height - padding;
-	const int width = _engine->_text->getTextSize(_text.c_str());
+	const int width = _engine->_text->sizeFont(_text.c_str());
 	_engine->_text->drawText(x, y, _text.c_str(), true);
 	_engine->copyBlockPhys(x, y, x + width, y + height);
 	const Common::Rect redraw(x, y, x + width, y + height);

@@ -2033,7 +2033,7 @@ int32 ScriptLife::lTEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 		char textStr[256];
 		engine->_text->getMenuText(textIdx, textStr, sizeof(textStr));
-		const int32 textSize = engine->_text->getTextSize(textStr);
+		const int32 textSize = engine->_text->sizeFont(textStr);
 		int32 textBoxRight = textSize;
 		const int32 textBoxBottom = lTextYPos + textHeight;
 		engine->_text->setFontColor(COLOR_WHITE);

@@ -33,6 +33,9 @@ class TextEntry;
 
 // MAX_CAR
 #define TEXT_MAX_FADE_IN_CHR 32
+#define INTER_LINE      38
+#define INTER_SPACE     7
+#define INTER_LEAVE     2
 
 enum class ProgressiveTextState {
 	End = 0,				/**< Text has reached its end and we are waiting for user input */
@@ -70,9 +73,9 @@ private:
 		int16 chr = 0;
 		int16 x = 0;
 	};
-	WordSize getWordSize(const char *completeText, char *wordBuf, int32 wordBufSize);
+	WordSize getNextWord(const char *completeText, char *wordBuf, int32 wordBufSize);
 	uint16 getNextChar(const char *&dialogue);
-	void processTextLine();
+	void getNextLine();
 	void appendProgressiveTextBuffer(const char *s, int &x, uint &i);
 	// draw next page arrow polygon
 	void renderContinueReadingTriangle();
@@ -98,7 +101,7 @@ private:
 	/** Current position of in the buffer of characters that are currently faded in */
 	const LineCharacter *_progressiveTextBufferPtr = nullptr;
 
-	int32 _dialTextBoxCurrentLine = 0;
+	int32 _nbLineDial = 0;
 	struct BlendInCharacter {
 		int16 chr = 0;
 		int16 x = 0;
@@ -119,7 +122,7 @@ private:
 	/** Pixel size between dialogue text */
 	int32 _dialSpaceBetween = 0;
 	/** Pixel size of the space character - recalculated per per line */
-	int32 _dialCharSpace = 0;
+	int32 _sizeSpace = 0;
 	/** Dialogue text color */
 	int32 _dialTextColor = 0;
 
@@ -139,8 +142,8 @@ private:
 	// Dial_X1, Dial_Y1
 	Common::Rect _dialTextBox { 0, 0, 0, 0};
 
-	int32 _dialTextBoxLines = 0; // dialogueBoxParam1
-	int32 _dialTextBoxMaxX = 0; // dialogueBoxParam2
+	int32 _maxLineDial = 0;
+	int32 _dialMaxSize = 0;
 
 	bool _isShiftJIS = false;
 	bool _isVisualRTL = false;
@@ -150,7 +153,7 @@ public:
 	Text(TwinEEngine *engine);
 	~Text();
 
-	static const int32 lineHeight = 38;
+	static const int32 lineHeight = INTER_LINE;
 
 	// TODO: refactor all this variables and related functions
 	bool _hasValidTextHandle = false;
@@ -192,7 +195,7 @@ public:
 	 * Gets dialogue text width size
 	 * @param dialogue ascii text to display
 	 */
-	int32 getTextSize(const char *dialogue);
+	int32 sizeFont(const char *dialogue);
 	int32 getCharWidth(uint16 chr) const;
 	int32 getCharHeight(uint16 chr) const;
 

@@ -213,7 +213,7 @@ void MenuOptions::drawInputText(int32 centerx, int32 top, int32 type, const char
 	_engine->_menu->drawRectBorders(rect);
 	_engine->_interface->drawTransparentBox(rectBox, 3);
 
-	_engine->_text->drawText(centerx - _engine->_text->getTextSize(text) / 2, top + 6, text);
+	_engine->_text->drawText(centerx - _engine->_text->sizeFont(text) / 2, top + 6, text);
 	_engine->copyBlockPhys(rect);
 }
 
@@ -243,7 +243,7 @@ bool MenuOptions::enterText(TextId textIdx, char *textTargetBuf, size_t bufSize)
 	_engine->_text->getMenuText(textIdx, buffer, sizeof(buffer));
 	_engine->_text->setFontColor(COLOR_WHITE);
 	const int halfScreenWidth = (_engine->width() / 2);
-	_engine->_text->drawText(halfScreenWidth - (_engine->_text->getTextSize(buffer) / 2), 20, buffer);
+	_engine->_text->drawText(halfScreenWidth - (_engine->_text->sizeFont(buffer) / 2), 20, buffer);
 	_engine->copyBlockPhys(0, 0, _engine->width() - 1, 99);
 
 	Common::fill(&_onScreenKeyboardDirty[0], &_onScreenKeyboardDirty[ARRAYSIZE(_onScreenKeyboardDirty)], 1);

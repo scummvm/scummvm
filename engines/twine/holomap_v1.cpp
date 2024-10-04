@@ -282,7 +282,7 @@ void HolomapV1::drawHoloMap(uint8 *holomapImage, uint32 holomapImageSize) {
 }
 
 void HolomapV1::drawHolomapText(int32 centerx, int32 top, const char *title) {
-	const int32 size = _engine->_text->getTextSize(title);
+	const int32 size = _engine->_text->sizeFont(title);
 	const int32 x = centerx - size / 2;
 	const int32 y = top;
 	_engine->_text->setFontColor(COLOR_WHITE);
