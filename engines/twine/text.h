@@ -31,6 +31,7 @@ namespace TwinE {
 
 class TextEntry;
 
+// MAX_CAR
 #define TEXT_MAX_FADE_IN_CHR 32
 
 enum class ProgressiveTextState {
@@ -78,12 +79,11 @@ private:
 	/**
 	 * @see fadeInCharacters
 	 */
-	void fillFadeInBuffer(int16 baseX, int16 y, const LineCharacter &chr);
+	void pushChar(int16 baseX, int16 y, const LineCharacter &chr); // PushCar
 	/**
 	 * Blend in characters for a text scrolling in
 	 *
-	 * @see fillFadeInBuffer
-	 * @param counter The amount of characters to handle - max 32
+	 * @see pushChar()
 	 */
 	void fadeInCharacters(int32 counter, int32 fontColor);
 
@@ -104,8 +104,8 @@ private:
 		int16 x = 0;
 		int16 y = 0;
 	};
-	BlendInCharacter _fadeInCharacters[TEXT_MAX_FADE_IN_CHR];
-	int32 _fadeInCharactersPos = 0;
+	BlendInCharacter _stackChar[TEXT_MAX_FADE_IN_CHR]; // StackCar
+	int32 _nbChar = 0; // NbCar
 
 	/** Current dialogue text pointer */
 	const char *_currDialTextPtr = nullptr;
@@ -124,18 +124,19 @@ private:
 	int32 _dialTextColor = 0;
 
 	/** Dialogue text start color for cross coloring dialogues */
-	int32 _dialTextStartColor = 0;
+	int32 _maxDegrade = 0;
 	/** Dialogue text stop color for cross coloring dialogues */
-	int32 _dialTextStopColor = 0;
+	int32 _minDegrade = 0;
 	/**
 	 * Dialogue text step size for cross coloring dialogues
 	 *
 	 * The speed in which the color reaches it's destination color while fading in.
 	 */
-	int32 _dialTextStepSize = 0;
+	int32 _stepDegrade = 0;
 	/** Dialogue text buffer size for cross coloring dialogues */
-	int32 _dialTextBufferSize = 0;
+	int32 _nbDegrade = 0;
 
+	// Dial_X1, Dial_Y1
 	Common::Rect _dialTextBox { 0, 0, 0, 0};
 
 	int32 _dialTextBoxLines = 0; // dialogueBoxParam1
@@ -156,7 +157,7 @@ public:
 	// renders a triangle if the next side of the text can get activated
 	bool _renderTextTriangle = false;
 	bool _drawTextBoxBackground = false;
-	bool _hasHiddenVox = false; // printTextVar5
+	bool _hasHiddenVox = false;
 	int32 _voxHiddenIndex = 0;
 	// ---
 
@@ -203,7 +204,7 @@ public:
 	void initInventoryText(InventoryItems index);
 	void initItemFoundText(InventoryItems index);
 	void fadeInRemainingChars();
-	ProgressiveTextState updateProgressiveText();
+	ProgressiveTextState nextDialChar();
 
 	/**
 	 * Set font type parameters

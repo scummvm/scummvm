@@ -1363,7 +1363,7 @@ void Menu::processInventoryMenu() {
 	_engine->_text->setFontCrossColor(COLOR_BRIGHT_BLUE);
 	_engine->_text->initDialogueBox();
 
-	ProgressiveTextState textState = ProgressiveTextState::ContinueRunning;
+	ProgressiveTextState dialstate = ProgressiveTextState::ContinueRunning;
 	bool updateItemText = true;
 
 	ScopedCursor scopedCursor(_engine);
@@ -1429,24 +1429,24 @@ void Menu::processInventoryMenu() {
 			} else {
 				_engine->_text->initInventoryText(InventoryItems::MaxInventoryItems);
 			}
-			textState = ProgressiveTextState::ContinueRunning;
+			dialstate = ProgressiveTextState::ContinueRunning;
 			updateItemText = false;
 		}
 
-		if (textState == ProgressiveTextState::ContinueRunning) {
-			textState = _engine->_text->updateProgressiveText();
+		if (dialstate == ProgressiveTextState::ContinueRunning) {
+			dialstate = _engine->_text->nextDialChar();
 		} else {
 			_engine->_text->fadeInRemainingChars();
 		}
 
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UINextPage)) {
 			// restart the item description to appear from the beginning
-			if (textState == ProgressiveTextState::End) {
+			if (dialstate == ProgressiveTextState::End) {
 				updateItemText = true;
 			}
-			if (textState == ProgressiveTextState::NextPage) {
+			if (dialstate == ProgressiveTextState::NextPage) {
 				_engine->_text->initInventoryDialogueBox();
-				textState = ProgressiveTextState::ContinueRunning;
+				dialstate = ProgressiveTextState::ContinueRunning;
 			}
 		}
 

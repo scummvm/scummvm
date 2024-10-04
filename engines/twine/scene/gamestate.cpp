@@ -428,7 +428,7 @@ void GameState::doFoundObj(InventoryItems item) {
 
 		if (textState == ProgressiveTextState::ContinueRunning) {
 			_engine->_interface->unsetClip();
-			textState = _engine->_text->updateProgressiveText();
+			textState = _engine->_text->nextDialChar();
 		} else {
 			_engine->_text->fadeInRemainingChars();
 		}

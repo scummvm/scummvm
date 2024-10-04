@@ -177,7 +177,7 @@ void Text::initSceneTextBank() {
 	initDial((TextBankId)(textBankId + (int)TextBankId::Citadel_Island));
 }
 
-void Text::drawCharacter(int32 x, int32 y, uint16 character) {
+void Text::drawCharacter(int32 x, int32 y, uint16 character) { // CarFont
 	const uint8 usedColor = _dialTextColor;
 
 	if (_isShiftJIS && character > 0x100 && _engine->_resources->_sjisFontPtr) {
@@ -257,7 +257,7 @@ void Text::drawCharacter(int32 x, int32 y, uint16 character) {
 	}
 }
 
-void Text::drawCharacterShadow(int32 x, int32 y, uint16 character, int32 color, Common::Rect &dirtyRect) {
+void Text::drawCharacterShadow(int32 x, int32 y, uint16 character, int32 color, Common::Rect &dirtyRect) { // AffOneCar
 	if (character == ' ') {
 		return;
 	}
@@ -346,14 +346,14 @@ void Text::initDialogueBox() {
 		_engine->_interface->drawTransparentBox(rect, 3);
 	}
 
-	_fadeInCharactersPos = 0;
+	_nbChar = 0;
 	_engine->blitFrontToWork(_dialTextBox);
 }
 
 // TODO: this blits a few pixels too much when switching an item in the inventory menu.
 void Text::initInventoryDialogueBox() { // SecondInitDialWindow
 	_engine->blitWorkToFront(_dialTextBox);
-	_fadeInCharactersPos = 0;
+	_nbChar = 0;
 }
 
 void Text::initInventoryText(InventoryItems index) { // OpenDialNoWindow
@@ -378,7 +378,7 @@ void Text::initText(TextId index) {
 	_dialTextBoxCurrentLine = 0;
 	_progressiveTextBuffer[0].chr = '\0';
 	_progressiveTextBuffer[0].x = 0;
-	_fadeInCharactersPos = 0;
+	_nbChar = 0;
 	_dialTextBaseXPos = _dialTextBox.left + PADDING;
 	_dialTextYPos = _dialTextBox.top + PADDING;
 	_currentTextPosition = _currDialTextPtr;
@@ -404,24 +404,21 @@ void Text::initProgressiveTextBuffer() {
 	_dialTextBoxCurrentLine = 0;
 }
 
-void Text::fillFadeInBuffer(int16 baseX, int16 y, const LineCharacter &chr) {
-	if (_fadeInCharactersPos < TEXT_MAX_FADE_IN_CHR) {
-		_fadeInCharacters[_fadeInCharactersPos].chr = chr.chr;
-		_fadeInCharacters[_fadeInCharactersPos].x = baseX + chr.x;
-		_fadeInCharacters[_fadeInCharactersPos].y = y;
-		_fadeInCharactersPos++;
+void Text::pushChar(int16 baseX, int16 y, const LineCharacter &chr) {
+	if (_nbChar < TEXT_MAX_FADE_IN_CHR) {
+		_stackChar[_nbChar].chr = chr.chr;
+		_stackChar[_nbChar].x = baseX + chr.x;
+		_stackChar[_nbChar].y = y;
+		_nbChar++;
 		return;
 	}
-	int32 counter2 = 0;
-	while (counter2 < TEXT_MAX_FADE_IN_CHR - 1) {
-		const int32 var1 = (counter2 + 1);
-		const int32 var2 = counter2;
-		_fadeInCharacters[var2] = _fadeInCharacters[var1];
-		counter2++;
+	int32 i = 0;
+	for (i = 0; i < TEXT_MAX_FADE_IN_CHR - 1; ++i) {
+		_stackChar[i] = _stackChar[i + 1];
 	}
-	_fadeInCharacters[TEXT_MAX_FADE_IN_CHR - 1].chr = chr.chr;
-	_fadeInCharacters[TEXT_MAX_FADE_IN_CHR - 1].x = baseX + chr.x;
-	_fadeInCharacters[TEXT_MAX_FADE_IN_CHR - 1].y = y;
+	_stackChar[TEXT_MAX_FADE_IN_CHR - 1].chr = chr.chr;
+	_stackChar[TEXT_MAX_FADE_IN_CHR - 1].x = baseX + chr.x;
+	_stackChar[TEXT_MAX_FADE_IN_CHR - 1].y = y;
 }
 
 Text::WordSize Text::getWordSize(const char *completeText, char *wordBuf, int32 wordBufSize) {
@@ -455,7 +452,7 @@ void Text::appendProgressiveTextBuffer(const char *s, int &x, uint &i) {
 		i++;
 
 		if (chr == ' ') {
-		        x += _dialCharSpace + 1;
+			x += _dialCharSpace + 1;
 		} else {
 			x += getCharWidth(chr) + 2;
 		}
@@ -580,7 +577,7 @@ void Text::renderContinueReadingTriangle() { // AffFleche
 
 	CmdRenderPolygon polygon;
 	polygon.numVertices = ARRAYSIZE(vertices);
-	polygon.colorIndex = _dialTextStopColor;
+	polygon.colorIndex = _minDegrade;
 	polygon.renderType = POLYGONTYPE_FLAT;
 	_engine->_renderer->renderPolygons(polygon, vertices);
 
@@ -590,12 +587,12 @@ void Text::renderContinueReadingTriangle() { // AffFleche
 void Text::fadeInCharacters(int32 counter, int32 fontColor) {
 	Common::Rect dirtyRect;
 	while (--counter >= 0) {
-		const BlendInCharacter *ptr = &_fadeInCharacters[counter];
+		const BlendInCharacter *ptr = &_stackChar[counter];
 		setFontColor(fontColor);
 		drawCharacterShadow(ptr->x, ptr->y, ptr->chr, fontColor, dirtyRect);
-		fontColor -= _dialTextStepSize;
-		if (fontColor > _dialTextStopColor) {
-			fontColor = _dialTextStopColor;
+		fontColor -= _stepDegrade;
+		if (fontColor > _minDegrade) {
+			fontColor = _minDegrade;
 		}
 	}
 	if (dirtyRect.isEmpty()) {
@@ -627,14 +624,14 @@ int32 Text::getCharHeight(uint16 chr) const {
 }
 
 void Text::fadeInRemainingChars() {
-	if (_fadeInCharactersPos <= 0) {
+	if (_nbChar <= 0) {
 		return;
 	}
-	fadeInCharacters(_fadeInCharactersPos, _dialTextStopColor);
-	--_fadeInCharactersPos;
+	fadeInCharacters(_nbChar, _minDegrade);
+	--_nbChar;
 }
 
-ProgressiveTextState Text::updateProgressiveText() { // NextDialCar
+ProgressiveTextState Text::nextDialChar() { // NextDialCar
 	if (!_hasValidTextHandle) {
 		return ProgressiveTextState::End;
 	}
@@ -648,8 +645,8 @@ ProgressiveTextState Text::updateProgressiveText() { // NextDialCar
 	}
 	LineCharacter currentChar = *_progressiveTextBufferPtr++;
 	assert(currentChar.chr != '\0');
-	fillFadeInBuffer(_dialTextBaseXPos, _dialTextYPos, currentChar);
-	fadeInCharacters(_fadeInCharactersPos, _dialTextStartColor);
+	pushChar(_dialTextBaseXPos, _dialTextYPos, currentChar);
+	fadeInCharacters(_nbChar, _maxDegrade);
 
 	// reaching 0-byte means a new line - as we are fading in per line
 	if (_progressiveTextBufferPtr->chr != '\0') {
@@ -700,7 +697,7 @@ bool Text::displayText(TextId index, bool showText, bool playVox, bool loop) {
 			FrameMarker frame(_engine, 66);
 			_engine->readKeys();
 			if (textState == ProgressiveTextState::ContinueRunning) {
-				textState = updateProgressiveText();
+				textState = nextDialChar();
 			} else {
 				fadeInRemainingChars();
 			}
@@ -767,22 +764,22 @@ void Text::setFontParameters(int32 spaceBetween, int32 charSpace) {
 	_dialCharSpace = charSpace;
 }
 
-void Text::setFontCrossColor(int32 color) { // TestCoulDial
-	_dialTextStepSize = -1;
-	_dialTextBufferSize = 14;
-	_dialTextStartColor = color * 16;
-	_dialTextStopColor = _dialTextStartColor + 12;
-}
-
-void Text::setFontColor(int32 color) {
-	_dialTextColor = color;
-}
-
 void Text::setTextCrossColor(int32 stopColor, int32 startColor, int32 stepSize) { // CoulDial
-	_dialTextStartColor = startColor;
-	_dialTextStopColor = stopColor;
-	_dialTextStepSize = stepSize;
-	_dialTextBufferSize = ((startColor - stopColor) + 1) / stepSize;
+	_maxDegrade = startColor;
+	_minDegrade = stopColor;
+	_stepDegrade = stepSize;
+	_nbDegrade = ((startColor - stopColor) + 1) / stepSize;
+}
+
+void Text::setFontCrossColor(int32 color) { // TestCoulDial
+	_stepDegrade = -1;
+	_nbDegrade = 14;
+	_maxDegrade = color * 16;
+	_minDegrade = _maxDegrade + 12;
+}
+
+void Text::setFontColor(int32 color) { // CoulFont
+	_dialTextColor = color;
 }
 
 bool Text::getText(TextId index) {
