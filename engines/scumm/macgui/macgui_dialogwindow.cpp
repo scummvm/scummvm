@@ -222,7 +222,9 @@ void MacGuiImpl::MacDialogWindow::drawBeamCursor() {
 	int x1 = x0 + _beamCursor->w;
 	int y1 = y0 + _beamCursor->h;
 
-	_beamCursor->copyRectToSurface(*(_gui->surface()), 0, 0, Common::Rect(x0, y0, x1, y1));
+	Graphics::Surface *screen = _gui->surface();
+
+	_beamCursor->copyRectToSurface(*screen, 0, 0, Common::Rect(x0, y0, x1, y1));
 
 	const byte beam[] = {
 		0,  0,  1,  0,  5,  0,  6,  0,  2,  1,  4,  1,  3,  2,  3,  3,
@@ -256,14 +258,14 @@ void MacGuiImpl::MacDialogWindow::drawBeamCursor() {
 		x0 = 0;
 	}
 
-	x1 = MIN(x1, 640);
+	x1 = MIN<int>(x1, screen->w);
 
 	if (y0 < 0) {
 		srcY = -y0;
 		y0 = 0;
 	}
 
-	y1 = MIN(y1, 400);
+	y1 = MIN<int>(y1, screen->h);
 
 	_system->copyRectToScreen(_beamCursor->getBasePtr(srcX, srcY), _beamCursor->pitch, x0, y0, x1 - x0, y1 - y0);
 }
@@ -274,12 +276,12 @@ void MacGuiImpl::MacDialogWindow::undrawBeamCursor() {
 		int x1 = x0 + _beamCursor->w;
 		int y1 = y0 + _beamCursor->h;
 
-		x0 = MAX(x0, 0);
-		x1 = MIN(x1, 640);
-		y0 = MAX(y0, 0);
-		y1 = MIN(y1, 400);
-
 		Graphics::Surface *screen = _gui->surface();
+
+		x0 = MAX(x0, 0);
+		x1 = MIN<int>(x1, screen->w);
+		y0 = MAX(y0, 0);
+		y1 = MIN<int>(y1, screen->h);
 
 		_system->copyRectToScreen(screen->getBasePtr(x0, y0), screen->pitch, x0, y0, x1 - x0, y1 - y0);
 }
