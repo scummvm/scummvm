@@ -2531,7 +2531,7 @@ void DragonArcade::runThenDrawBulletsInFlight() {
 		int16 y = _bullets[i]._y;
 		if (_bullets[i]._state == kBulletHittingBlade) {
 			drawBulletHitCircles(x, y, false);
-		} else if (_bullets[i]._state == kBulletHittingBlade) {
+		} else if (_bullets[i]._state == kBulletHittingEnemy) {
 			drawBulletHitCircles(x, y, true);
 		} else if (_bullets[i]._state == kBulletFlying) {
 			int16 frameno;
