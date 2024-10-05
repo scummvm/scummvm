@@ -142,6 +142,9 @@ bool Interface::drawLine(int32 x0, int32 y0, int32 x1, int32 y1, uint8 color) {
 			}
 		} while (--x1);
 	}
+
+	_engine->_frontVideoBuffer.addDirtyRect(Common::Rect(MIN<int16>(x0, x1), MIN<int16>(y0, y1), MAX<int16>(x0, x1), MAX<int16>(x0, x1)));
+
 	return true;
 }
 
