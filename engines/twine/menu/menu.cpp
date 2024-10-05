@@ -1009,6 +1009,7 @@ void Menu::drawHealthBar(int32 left, int32 right, int32 top, int32 barLeftPaddin
 	const int32 healthBarRight = _engine->_screens->lerp(barLeft, right, 50, _engine->_scene->_sceneHero->_lifePoint);
 	const int32 barBottom = top + barHeight;
 	_engine->_interface->box(Common::Rect(barLeft, top, healthBarRight, barBottom), COLOR_91);
+	_engine->_interface->box(Common::Rect(healthBarRight, top, left + 325, barBottom), COLOR_BLACK);
 	drawRectBorders(Common::Rect(barLeft, top, right, barBottom));
 }
 
@@ -1044,7 +1045,14 @@ void Menu::drawMagicPointsBar(int32 left, int32 right, int32 top, int32 barLeftP
 	const int32 barRight = _engine->_screens->lerp(barLeft, right, maxMagicPoints, _engine->_gameState->_magicPoint);
 	const Common::Rect pointsRect(barLeft, top, barRight, barBottom);
 	_engine->_interface->box(pointsRect, COLOR_75);
-	drawRectBorders(barLeft, top, barLeft + _engine->_gameState->_magicLevelIdx * 80, barBottom);
+
+	for (int32 l = 0; l < _engine->_gameState->_magicLevelIdx; l++) {
+		const int32 x1 = _engine->_screens->lerp(barLeft, right, 40, _engine->_gameState->_magicLevelIdx * 10);
+		_engine->_interface->drawLine(x1, top + barHeight, x1, top + 35 + 15 - 1, 0);
+	}
+
+	const int32 rectRight = _engine->_screens->lerp(barLeft, right, 40, _engine->_gameState->_magicLevelIdx * 10);
+	drawRectBorders(barLeft, top, rectRight, barBottom);
 }
 
 void Menu::drawSpriteAndString(int32 left, int32 top, const SpriteData &spriteData, const Common::String &str, int32 color) {
