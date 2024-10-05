@@ -1360,7 +1360,7 @@ void Menu::inventory() {
 	}
 
 	const int32 left = _engine->width() / 2 - 303;
-	const int32 top = _engine->height() / 2 - 210;
+	const int32 top = _engine->height() / 2 - 230;
 	drawListInventory(left, top);
 
 	_engine->_text->initDial(TextBankId::Inventory_Intro_and_Holomap);
