@@ -107,6 +107,7 @@ void Room907::daemon() {
 }
 
 void Room907::escapePressed(void *, void *) {
+	_G(kernel).trigger_mode = KT_DAEMON;
 	disable_player_commands_and_fade_init(56);
 }
 
