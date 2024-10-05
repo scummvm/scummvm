@@ -35,6 +35,25 @@ void DarkEngine::initCPC() {
 extern byte kCPCPaletteTitleData[4][3];
 extern byte kCPCPaletteBorderData[4][3];
 
+byte kCPCPaletteDarkTitle[16][3] = {
+	{0x00, 0x00, 0x00}, // 0: X
+	{0xff, 0xff, 0xff}, // 1: ?
+	{0x80, 0x80, 0x80}, // 2: X
+	{0xff, 0x00, 0xff}, // 3: X
+	{0x80, 0x80, 0x80}, // 4: X
+	{0xff, 0xff, 0x00}, // 5: X
+	{0x80, 0x00, 0x00}, // 6: X
+	{0xff, 0x00, 0x00}, // 7: X
+	{0x00, 0x80, 0x80}, // 8: X
+	{0xff, 0x00, 0x80}, // 9: X
+	{0xff, 0x80, 0x00}, // 10: X
+	{0xff, 0x80, 0x80}, // 11: X
+	{0x00, 0xff, 0x00}, // 12: X
+	{0x00, 0x00, 0x80}, // 13: X
+	{0x00, 0x00, 0xff}, // 14: X
+	{0x00, 0x80, 0x00}, // 15: X
+};
+
 extern Graphics::ManagedSurface *readCPCImage(Common::SeekableReadStream *file, bool mode0);
 
 void DarkEngine::loadAssetsCPCFullGame() {
@@ -45,7 +64,7 @@ void DarkEngine::loadAssetsCPCFullGame() {
 		error("Failed to open DARK1.SCR");
 
 	_title = readCPCImage(&file, false);
-	_title->setPalette((byte*)&kCPCPaletteTitleData, 0, 4);
+	_title->setPalette((byte*)&kCPCPaletteDarkTitle, 0, 16);
 
 	file.close();
 	file.open("DARK2.SCR");

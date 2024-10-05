@@ -46,7 +46,7 @@ byte kCPCPaletteBorderData[4][3] = {
 	{0x00, 0x80, 0x00},
 };
 
-byte getCPCPixelMode0(byte cpc_byte, int index) {
+byte getCPCPixelMode1(byte cpc_byte, int index) {
 	if (index == 0)
 		return ((cpc_byte & 0x08) >> 2) | ((cpc_byte & 0x80) >> 7);
 	else if (index == 1)
@@ -59,24 +59,34 @@ byte getCPCPixelMode0(byte cpc_byte, int index) {
 		error("Invalid index %d requested", index);
 }
 
-byte getCPCPixelMode1(byte cpc_byte, int index) {
-	if (index == 0)
-		return ((cpc_byte & 0x08) >> 0) | ((cpc_byte & 0x80) >> 5) |
-	           ((cpc_byte & 0x20) >> 4) | ((cpc_byte & 0x02) >> 1);
-	else if (index == 2)
-		return ((cpc_byte & 0x04) >> 1) | ((cpc_byte & 0x40) >> 6);
-	else
-		return 0;//error("Invalid index %d requested", index);
+byte getCPCPixelMode0(byte cpc_byte, int index) {
+    if (index == 0) {
+        // Extract Pixel 0 from the byte
+        return ((cpc_byte & 0x02) >> 1) |  // Bit 1 -> Bit 3 (MSB)
+               ((cpc_byte & 0x20) >> 4) |  // Bit 5 -> Bit 2
+               ((cpc_byte & 0x08) >> 1) |  // Bit 3 -> Bit 1
+               ((cpc_byte & 0x80) >> 7);   // Bit 7 -> Bit 0 (LSB)
+    }
+    else if (index == 2) {
+        // Extract Pixel 1 from the byte
+        return ((cpc_byte & 0x01) << 3) |  // Bit 0 -> Bit 3 (MSB)
+               ((cpc_byte & 0x10) >> 2) |  // Bit 4 -> Bit 2
+               ((cpc_byte & 0x04) >> 1) |  // Bit 2 -> Bit 1
+               ((cpc_byte & 0x40) >> 6);   // Bit 6 -> Bit 0 (LSB)
+    }
+    else {
+        error("Invalid index %d requested", index);
+    }
 }
 
-byte getCPCPixel(byte cpc_byte, int index, bool mode0) {
-	if (mode0)
-		return getCPCPixelMode0(cpc_byte, index);
-	else
+byte getCPCPixel(byte cpc_byte, int index, bool mode1) {
+	if (mode1)
 		return getCPCPixelMode1(cpc_byte, index);
+	else
+		return getCPCPixelMode0(cpc_byte, index);
 }
 
-Graphics::ManagedSurface *readCPCImage(Common::SeekableReadStream *file, bool mode0) {
+Graphics::ManagedSurface *readCPCImage(Common::SeekableReadStream *file, bool mode1) {
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
 	surface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	surface->fillRect(Common::Rect(0, 0, 320, 200), 0);
@@ -89,7 +99,7 @@ Graphics::ManagedSurface *readCPCImage(Common::SeekableReadStream *file, bool mo
 				byte cpc_byte = file->readByte(); // Get CPC byte
 
 				// Process first pixel
-				int pixel_0 = getCPCPixel(cpc_byte, 0, mode0); // %Aa
+				int pixel_0 = getCPCPixel(cpc_byte, 0, mode1); // %Aa
 				y = line * 8 + block ; // Coord Y for the pixel
 				x = 4 * offset + 0; // Coord X for the pixel
 				surface->setPixel(x, y, pixel_0);
@@ -97,14 +107,14 @@ Graphics::ManagedSurface *readCPCImage(Common::SeekableReadStream *file, bool mo
 				// Process second pixel
 				y = line * 8 + block ; // Coord Y for the pixel
 				x = 4 * offset + 1; // Coord X for the pixel
-				if (mode0) {
-					int pixel_1 = getCPCPixel(cpc_byte, 1, mode0); // %Bb
+				if (mode1) {
+					int pixel_1 = getCPCPixel(cpc_byte, 1, mode1); // %Bb
 					surface->setPixel(x, y, pixel_1);
 				} else
 					surface->setPixel(x, y, pixel_0);
 
 				// Process third pixel
-				int pixel_2 = getCPCPixel(cpc_byte, 2, mode0); // %Cc
+				int pixel_2 = getCPCPixel(cpc_byte, 2, mode1); // %Cc
 				y = line * 8 + block ; // Coord Y for the pixel
 				x = 4 * offset + 2; // Coord X for the pixel
 				surface->setPixel(x, y, pixel_2);
@@ -112,8 +122,8 @@ Graphics::ManagedSurface *readCPCImage(Common::SeekableReadStream *file, bool mo
 				// Process fourth pixel
 				y = line * 8 + block ; // Coord Y for the pixel
 				x = 4 * offset + 3; // Coord X for the pixel
-				if (mode0) {
-					int pixel_3 = getCPCPixel(cpc_byte, 3, mode0); // %Dd
+				if (mode1) {
+					int pixel_3 = getCPCPixel(cpc_byte, 3, mode1); // %Dd
 					surface->setPixel(x, y, pixel_3);
 				} else
 					surface->setPixel(x, y, pixel_2);
