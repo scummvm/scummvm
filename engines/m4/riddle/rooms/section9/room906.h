@@ -19,30 +19,34 @@
  *
  */
 
-#include "m4/riddle/rooms/section9/section9.h"
-#include "m4/riddle/vars.h"
+#ifndef M4_RIDDLE_ROOMS_SECTION9_ROOM906_H
+#define M4_RIDDLE_ROOMS_SECTION9_ROOM906_H
+
+#include "m4/core/rooms.h"
+#include "m4/wscript/ws_machine.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-Section9::Section9() : Rooms::Section() {
-	add(901, &_room901);
-	add(902, &_room902);
-	add(903, &_room903);
-	add(905, &_room905);
-	add(906, &_room906);
-	add(907, &_room907);
-	add(908, &_room908);
-	add(917, &_room917);
-	add(918, &_room918);
-	add(996, &_room996);
-}
+class Room906 : public Room {
+public:
+	Room906() : Room() {}
+	~Room906() override {}
 
-void Section9::daemon() {
-	_G(kernel).continue_handling_trigger = true;
-}
+	void preload() override;
+	void init() override;
+	void daemon() override;
+
+private:
+	static void escapePressed(void *, void *);
+	int _roomStates_pu;
+	machine *_roomStates_field4;
+	bool buttonDown = false;
+};
 
 } // namespace Rooms
 } // namespace Riddle
 } // namespace M4
+
+#endif
