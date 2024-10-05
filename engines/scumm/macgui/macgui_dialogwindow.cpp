@@ -451,7 +451,6 @@ int MacGuiImpl::MacDialogWindow::runDialog(Common::Array<int> &deferredActionIds
 
 			case Common::EVENT_LBUTTONUP:
 				buttonPressed = false;
-				updateCursor();
 
 				// Only the focused widget receives the button
 				// up event. If the widget handles the event,
@@ -461,8 +460,6 @@ int MacGuiImpl::MacDialogWindow::runDialog(Common::Array<int> &deferredActionIds
 
 				if (_focusedWidget) {
 					MacWidget *widget = _focusedWidget;
-
-					updateCursor();
 
 					if (widget->findWidget(event.mouse.x, event.mouse.y)) {
 						widgetId = widget->getId();
@@ -475,6 +472,7 @@ int MacGuiImpl::MacDialogWindow::runDialog(Common::Array<int> &deferredActionIds
 					clearFocusedWidget();
 				}
 
+				updateCursor();
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
