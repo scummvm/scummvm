@@ -110,10 +110,10 @@ protected:
 
 	void generateSamples(int16 *buf, int len) override;
 
-	Common::Path getSoundFontPath() const;
-
 public:
 	MidiDriver_FluidSynth(Audio::Mixer *mixer);
+
+	static Common::Path getSoundFontPath();
 
 	int open() override;
 	void close() override;
@@ -280,7 +280,7 @@ static long SoundFontMemLoader_tell(void *handle) {
 
 #endif // USE_FLUIDLITE
 
-Common::Path MidiDriver_FluidSynth::getSoundFontPath() const {
+Common::Path MidiDriver_FluidSynth::getSoundFontPath() {
 	Common::Path path = ConfMan.getPath("soundfont");
 	if (path.empty())
 		return path;
@@ -592,6 +592,7 @@ public:
 	}
 
 	MusicDevices getDevices() const override;
+	bool checkDevice(MidiDriver::DeviceHandle, int flags, bool quiet) const override;
 	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const override;
 };
 
@@ -599,6 +600,19 @@ MusicDevices FluidSynthMusicPlugin::getDevices() const {
 	MusicDevices devices;
 	devices.push_back(MusicDevice(this, "", MT_GM));
 	return devices;
+}
+
+bool FluidSynthMusicPlugin::checkDevice(MidiDriver::DeviceHandle, int flags, bool quiet) const {
+#ifdef FS_HAS_STREAM_SUPPORT
+	if (flags & MDCK_SUPPLIED_SOUND_FONT)
+		return true;
+#endif
+
+	Common::Path sfPath = MidiDriver_FluidSynth::getSoundFontPath();
+	if (sfPath.empty())
+		return false;
+
+	return Common::FSNode(sfPath).exists();
 }
 
 Common::Error FluidSynthMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
