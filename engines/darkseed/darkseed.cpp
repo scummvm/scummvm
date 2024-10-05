@@ -1194,7 +1194,7 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 						&playerSprite,
 						240 - _player->_position.y,
 						_scaledSpriteWidth,
-						_scaledSpriteHeight, _player_sprite_related_2c85_82f3);
+						_scaledSpriteHeight, _player->_flipSprite);
 				}
 			} else {
 				if (_animation->_otherNspAnimationType_maybe == 37) {
@@ -1206,7 +1206,7 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 						&playerSprite,
 						240 - _player->_position.y,
 						_scaledSpriteWidth,
-						_scaledSpriteHeight, _player_sprite_related_2c85_82f3);
+						_scaledSpriteHeight, _player->_flipSprite);
 				}
 				if (_animation->_otherNspAnimationType_maybe == 39 || _animation->_otherNspAnimationType_maybe == 59 ||
 					_animation->_otherNspAnimationType_maybe == 60 || _animation->_otherNspAnimationType_maybe == 61) {
@@ -1218,7 +1218,7 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 						&playerSprite,
 						240 - _player->_position.y,
 						_scaledSpriteWidth,
-						_scaledSpriteHeight, _player_sprite_related_2c85_82f3);
+						_scaledSpriteHeight, _player->_flipSprite);
 					if (_animation->_otherNspAnimationType_maybe == 60 || _animation->_otherNspAnimationType_maybe == 61) {
 						_sprite_y_scaling_threshold_maybe = 240;
 //						DrawObjectsMenu(); TODO do we need this logic?
@@ -1259,7 +1259,7 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 				} else if (!_animation->_scaleSequence) {
 					if (_animation->_otherNspAnimationType_maybe == 17) { // open trunk
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
-						_sprites.addSpriteToDrawList(_player->_position.x - animSprite._width / 2, _player->_position.y - animSprite._height, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player_sprite_related_2c85_82f3);
+						_sprites.addSpriteToDrawList(_player->_position.x - animSprite._width / 2, _player->_position.y - animSprite._height, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
 					} else if (_animation->_otherNspAnimationType_maybe == 5 || _animation->_otherNspAnimationType_maybe == 1) {
 						int x = 0xa6;
 						int y = 0x69;
@@ -1276,25 +1276,25 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 
 						/* bed wake sequence is played here. */
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
-						_sprites.addSpriteToDrawList(x, y, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player_sprite_related_2c85_82f3);
+						_sprites.addSpriteToDrawList(x, y, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
 					} else if (_animation->_otherNspAnimationType_maybe == 43 || _animation->_otherNspAnimationType_maybe == 44) {
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
-						_sprites.addSpriteToDrawList(303, 105, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player_sprite_related_2c85_82f3);
+						_sprites.addSpriteToDrawList(303, 105, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
 					} else if (_animation->_otherNspAnimationType_maybe == 62) { // sargent approaches jail cell.
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
-						_sprites.addSpriteToDrawList(_player->_position.x - animSprite._width / 2, _player->_position.y - animSprite._height, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player_sprite_related_2c85_82f3);
+						_sprites.addSpriteToDrawList(_player->_position.x - animSprite._width / 2, _player->_position.y - animSprite._height, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
 					} else if (_animation->_otherNspAnimationType_maybe == 45 || _animation->_otherNspAnimationType_maybe == 46) { // pull lever
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
-						_sprites.addSpriteToDrawList(446, 124, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player_sprite_related_2c85_82f3);
+						_sprites.addSpriteToDrawList(446, 124, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
 					} else if (_animation->_otherNspAnimationType_maybe == 36) {
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
-						_sprites.addSpriteToDrawList(339, 78, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player_sprite_related_2c85_82f3);
+						_sprites.addSpriteToDrawList(339, 78, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
 					} else if (_animation->_otherNspAnimationType_maybe == 59) {
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
-						_sprites.addSpriteToDrawList(433, 91, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player_sprite_related_2c85_82f3);
+						_sprites.addSpriteToDrawList(433, 91, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
 					} else if (_animation->_otherNspAnimationType_maybe == 37) {
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
-						_sprites.addSpriteToDrawList(428, 78, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player_sprite_related_2c85_82f3);
+						_sprites.addSpriteToDrawList(428, 78, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
 					} else if (_animation->_otherNspAnimationType_maybe == 10 || _animation->_otherNspAnimationType_maybe == 11) {
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
 						_sprites.addSpriteToDrawList(118, 62, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, false);
@@ -1303,41 +1303,41 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 						_sprites.addSpriteToDrawList(407, 73, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, false);
 					} else if (_animation->_otherNspAnimationType_maybe == 20) {
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
-						_sprites.addSpriteToDrawList((_player->_position.x - animSprite._width / 2) - 4, _player->_position.y - animSprite._height, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player_sprite_related_2c85_82f3);
+						_sprites.addSpriteToDrawList((_player->_position.x - animSprite._width / 2) - 4, _player->_position.y - animSprite._height, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
 					} else if (_animation->_otherNspAnimationType_maybe < 30 || _animation->_otherNspAnimationType_maybe > 34) {
 						if (_animation->_otherNspAnimationType_maybe == 40) {
 							const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
-							_sprites.addSpriteToDrawList(373, 99, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player_sprite_related_2c85_82f3);
+							_sprites.addSpriteToDrawList(373, 99, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
 							const Sprite &legsSprite = _player->_animations.getSpriteAt(12);
-							_sprites.addSpriteToDrawList(373, 99 + animSprite._height, &legsSprite, 240 - _player->_position.y, legsSprite._width, legsSprite._height, _player_sprite_related_2c85_82f3);
+							_sprites.addSpriteToDrawList(373, 99 + animSprite._height, &legsSprite, 240 - _player->_position.y, legsSprite._width, legsSprite._height, _player->_flipSprite);
 						} else if (_animation->_otherNspAnimationType_maybe < 48 || _animation->_otherNspAnimationType_maybe > 52) {
 							if (_animation->_otherNspAnimationType_maybe == 35) {
 								const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
-								_sprites.addSpriteToDrawList(_player->_position.x - 10, _player->_position.y - animSprite._height, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player_sprite_related_2c85_82f3);
+								_sprites.addSpriteToDrawList(_player->_position.x - 10, _player->_position.y - animSprite._height, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
 							} else if (_animation->_otherNspAnimationType_maybe >= 53 && _animation->_otherNspAnimationType_maybe <= 56) {
 								const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
-								_sprites.addSpriteToDrawList(_player->_position.x, _player->_position.y, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player_sprite_related_2c85_82f3);
+								_sprites.addSpriteToDrawList(_player->_position.x, _player->_position.y, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
 							} else if (_animation->_otherNspAnimationType_maybe == 57 || _animation->_otherNspAnimationType_maybe == 58) {
 								const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
 								Common::Point spritePos = {344, 57};
 								if (_room->_roomNumber == 41) {
 									spritePos = {295, 46};
 								}
-								_sprites.addSpriteToDrawList(spritePos.x, spritePos.y, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player_sprite_related_2c85_82f3);
+								_sprites.addSpriteToDrawList(spritePos.x, spritePos.y, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
 							} else {
 								const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
-								_sprites.addSpriteToDrawList(_player->_position.x, _player->_position.y, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player_sprite_related_2c85_82f3);
+								_sprites.addSpriteToDrawList(_player->_position.x, _player->_position.y, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
 							}
 						} else {
 							const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
-							_sprites.addSpriteToDrawList(_player->_position.x - animSprite._width / 2, _player->_position.y - animSprite._height, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player_sprite_related_2c85_82f3);
+							_sprites.addSpriteToDrawList(_player->_position.x - animSprite._width / 2, _player->_position.y - animSprite._height, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
 						}
 					} else {
 						// drinking water in bathroom
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
-						_sprites.addSpriteToDrawList(448, 97, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player_sprite_related_2c85_82f3);
+						_sprites.addSpriteToDrawList(448, 97, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
 						const Sprite &legsSprite = _player->_animations.getSpriteAt(0);
-						_sprites.addSpriteToDrawList(451, 160, &legsSprite, 240 - _player->_position.y, legsSprite._width, legsSprite._height, _player_sprite_related_2c85_82f3);
+						_sprites.addSpriteToDrawList(451, 160, &legsSprite, 240 - _player->_position.y, legsSprite._width, legsSprite._height, _player->_flipSprite);
 
 					}
 				} else if (_animation->_otherNspAnimationType_maybe == 6) {
@@ -1349,7 +1349,7 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 						0xff,
 						_scaledSpriteWidth,
 						_scaledSpriteHeight,
-						_player_sprite_related_2c85_82f3);
+						_player->_flipSprite);
 				} else if (_animation->_otherNspAnimationType_maybe == 22) { // dig grave
 					_sprites.addSpriteToDrawList(
 						_player->_position.x - ((_scaledWalkSpeed_maybe * 30) / 1000),
@@ -1358,7 +1358,7 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 						240 - _player->_position.y,
 						_scaledSpriteWidth,
 						_scaledSpriteHeight,
-						_player_sprite_related_2c85_82f3);
+						_player->_flipSprite);
 				} else if (_animation->_otherNspAnimationType_maybe == 4 || _animation->_otherNspAnimationType_maybe == 21) { // dig grave
 					_sprites.addSpriteToDrawList(
 						_player->_position.x - ((_scaledWalkSpeed_maybe * 95) / 1000),
@@ -1367,7 +1367,7 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 						240 - _player->_position.y,
 						_scaledSpriteWidth,
 						_scaledSpriteHeight,
-						_player_sprite_related_2c85_82f3);
+						_player->_flipSprite);
 				} else if (_animation->_otherNspAnimationType_maybe == 39) {
 					int16 spriteX = 110;
 					int16 spriteY = _player->_position.y;
@@ -1387,7 +1387,7 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 						240 - _player->_position.y,
 						_scaledSpriteWidth,
 						_scaledSpriteHeight,
-						_player_sprite_related_2c85_82f3);
+						_player->_flipSprite);
 				} else if (_animation->_otherNspAnimationType_maybe == 47) {
 					const Sprite &sprite = _room->_locationSprites.getSpriteAt(_player->_frameIdx);
 					_room->calculateScaledSpriteDimensions(
@@ -1401,7 +1401,7 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 						240 - _player->_position.y,
 						_scaledSpriteWidth,
 						_scaledSpriteHeight,
-						_player_sprite_related_2c85_82f3);
+						_player->_flipSprite);
 				} else {
 					_sprites.addSpriteToDrawList(
 						_player->_position.x - _scaledSpriteWidth / 2,
@@ -1410,26 +1410,26 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 						240 - _player->_position.y,
 						_scaledSpriteWidth,
 						_scaledSpriteHeight,
-						_player_sprite_related_2c85_82f3);
+						_player->_flipSprite);
 				}
 				if (_animation->_isPlayingAnimation_maybe && _animation->_otherNspAnimationType_maybe == 14 && _animation->_animIndexTbl[0] > 1) {
 					if (_objectVar.getObjectRunningCode(140) == 0 || _room->_roomNumber != 6) {
 						if (_room->_roomNumber == 6 && _player->_isAutoWalkingToBed) {
 							const Sprite &animSprite = _player->_animations.getSpriteAt(8);
-							_sprites.addSpriteToDrawList(132, 70, &animSprite, 255, animSprite._width, animSprite._height, _player_sprite_related_2c85_82f3);
+							_sprites.addSpriteToDrawList(132, 70, &animSprite, 255, animSprite._width, animSprite._height, _player->_flipSprite);
 						} else if (_room->_roomNumber == 6) {
 							const Sprite &animSprite = _player->_animations.getSpriteAt(2);
-							_sprites.addSpriteToDrawList(132, 70, &animSprite, 255, animSprite._width, animSprite._height, _player_sprite_related_2c85_82f3);
+							_sprites.addSpriteToDrawList(132, 70, &animSprite, 255, animSprite._width, animSprite._height, _player->_flipSprite);
 						} else if (_room->_roomNumber == 11) {
 							const Sprite &animSprite = _player->_animations.getSpriteAt(6);
-							_sprites.addSpriteToDrawList(369, 119, &animSprite, 255, animSprite._width, animSprite._height, _player_sprite_related_2c85_82f3);
+							_sprites.addSpriteToDrawList(369, 119, &animSprite, 255, animSprite._width, animSprite._height, _player->_flipSprite);
 						} else if (_room->_roomNumber == 12) {
 							const Sprite &animSprite = _player->_animations.getSpriteAt(6);
-							_sprites.addSpriteToDrawList(252, 121, &animSprite, 255, animSprite._width, animSprite._height, _player_sprite_related_2c85_82f3);
+							_sprites.addSpriteToDrawList(252, 121, &animSprite, 255, animSprite._width, animSprite._height, _player->_flipSprite);
 						}
 					} else {
 						const Sprite &animSprite = _player->_animations.getSpriteAt(3);
-						_sprites.addSpriteToDrawList(132, 70, &animSprite, 255, animSprite._width, animSprite._height, _player_sprite_related_2c85_82f3);
+						_sprites.addSpriteToDrawList(132, 70, &animSprite, 255, animSprite._width, animSprite._height, _player->_flipSprite);
 					}
 				}
 			}

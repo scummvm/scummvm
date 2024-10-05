@@ -56,6 +56,7 @@ public:
 	int16 _sequenceRotation = -1;
 	bool _walkToSequence = false;
 	Common::Point _walkToSequencePoint;
+	bool _flipSprite = false;
 
 public:
 	Player();

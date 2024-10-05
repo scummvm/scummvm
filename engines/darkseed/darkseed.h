@@ -125,7 +125,6 @@ public:
 	uint16 _scaledSpriteWidth = 0;
 	uint16 _scaledSpriteHeight = 0;
 
-	bool _player_sprite_related_2c85_82f3 = false;
 	int _frameBottom = 0;
 
 	// Unknown variables
