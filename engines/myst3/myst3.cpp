@@ -1518,7 +1518,7 @@ Common::Error Myst3Engine::loadGameState(int slot) {
 	// Get the Save List index for the selected slot
 	int listIndex = (slot == 0) ? slot : slot - 1;
 	// Sanity check
-	if (listIndex >= filenames.size()) {
+	if (listIndex >= (int)filenames.size()) {
 		return Common::kReadingFailed;
 	}
 
