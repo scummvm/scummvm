@@ -664,11 +664,8 @@ void Adlib::OnTimer() {
 									// l0017_1BFD:
 									// TODO: Need to handle another comparison of not yet implemented
 									// data structure
-									//	mov	di,[bp-8h]
-									//mov al, [di + 227Fh]
-									// cmp al, [bp - 3h]
-									// jnz 1C15h
-									if (true) {
+									uint8 v = gArray227F[bp8];
+									if (v == bp3) {
 										// l0017_1C09:
 										// TODO: And another comparison with an unimplemented
 										// structure
