@@ -19,15 +19,16 @@
  *
  */
 
-#include "m4/burger/gui/gui_cheapo.h"
-#include "m4/burger/vars.h"
+#include "m4/riddle/gui/gui_cheapo.h"
+#include "m4/riddle/vars.h"
 #include "m4/core/errors.h"
 #include "m4/graphics/gr_line.h"
 #include "m4/graphics/gr_series.h"
+#include "m4/gui/gui_vmng_core.h"
 #include "m4/gui/gui_vmng_screen.h"
 
 namespace M4 {
-namespace Burger {
+namespace Riddle {
 namespace GUI {
 
 Inventory::Inventory(const RectClass &r, int32 sprite, int16 cells_h, int16 cells_v, int16 cell_w, int16 cell_h, int16 tag)
@@ -88,7 +89,7 @@ bool Inventory::add(const Common::String &name, const Common::String &verb, int3
 
 	_must_redraw_all = true;
 
-	if (_GI(visible))
+	if (INTERFACE_VISIBLE)
 		_G(interface).show();
 
 	return true;
@@ -123,7 +124,7 @@ bool Inventory::remove(const Common::String &name) {
 			_must_redraw_all = true;
 			_scroll = 0;
 
-			if (_GI(visible))
+			if (INTERFACE_VISIBLE)
 				_G(interface).show();
 
 			return true;
@@ -172,7 +173,7 @@ void Inventory::highlight_part(int16 index) {
 }
 
 void Inventory::draw(GrBuff *myBuffer) {
-	if (!_GI(visible))
+	if (!INTERFACE_VISIBLE)
 		return;
 
 	if (!_must_redraw1 && !_must_redraw2 && !_must_redraw_all)
@@ -233,7 +234,7 @@ void Inventory::draw(GrBuff *myBuffer) {
 }
 
 ControlStatus Inventory::track(int32 eventType, int16 x, int16 y) {
-	if (!_GI(visible))
+	if (!INTERFACE_VISIBLE)
 		return NOTHING;
 
 	ControlStatus result = NOTHING;
@@ -287,5 +288,5 @@ ControlStatus Inventory::track(int32 eventType, int16 x, int16 y) {
 }
 
 } // namespace GUI
-} // namespace Burger
+} // namespace Riddle
 } // namespace M4

@@ -49,6 +49,7 @@ MODULE_OBJS = \
 	graphics/krn_pal.o \
 	graphics/rend.o \
 	gui/gui_buffer.o \
+	gui/gui_cheapo.o \
 	gui/gui_dialog.o \
 	gui/gui_item.o \
 	gui/gui_mouse.o \
@@ -180,6 +181,7 @@ MODULE_OBJS = \
 	burger/series_player.o \
 	burger/vars.o \
 	burger/walker.o \
+	riddle/gui/gui_cheapo.o \
 	riddle/gui/interface.o \
 	riddle/rooms/room.o \
 	riddle/rooms/section.o \

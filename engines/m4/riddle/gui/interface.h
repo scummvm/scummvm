@@ -27,14 +27,13 @@
 #include "m4/adv_r/adv_hotspot.h"
 #include "m4/graphics/graphics.h"
 #include "m4/graphics/gr_buff.h"
+#include "m4/gui/gui_cheapo.h"
 
 namespace M4 {
 namespace Riddle {
 namespace GUI {
 
-enum ControlStatus {
-	NOTHING, IN_CONTROL, OVER_CONTROL, SELECTED, TRACKING
-};
+using M4::GUI::ControlStatus;
 
 struct Interface : public M4::Interface {
 private:

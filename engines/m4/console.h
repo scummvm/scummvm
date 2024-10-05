@@ -27,7 +27,7 @@
 
 namespace M4 {
 
-class Console : public GUI::Debugger {
+class Console : public ::GUI::Debugger {
 private:
 	bool cmdTeleport(int argc, const char **argv);
 	bool cmdItem(int argc, const char **argv);

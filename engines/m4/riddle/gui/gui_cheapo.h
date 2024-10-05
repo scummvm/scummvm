@@ -20,13 +20,13 @@
  *
  */
 
-#ifndef M4_BURGER_GUI_CHEAPO_H
-#define M4_BURGER_GUI_CHEAPO_H
+#ifndef M4_RIDDLE_GUI_CHEAPO_H
+#define M4_RIDDLE_GUI_CHEAPO_H
 
 #include "m4/gui/gui_cheapo.h"
 
 namespace M4 {
-namespace Burger {
+namespace Riddle {
 namespace GUI {
 
 using namespace M4::GUI;
@@ -93,7 +93,7 @@ public:
 };
 
 } // namespace GUI
-} // namespace Burger
+} // namespace Riddle
 } // namespace M4
 
 #endif

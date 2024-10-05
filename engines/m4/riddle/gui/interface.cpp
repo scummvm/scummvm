@@ -432,7 +432,7 @@ ControlStatus Interface::trackHotspots(int event, int x, int y) {
 		return IN_CONTROL;
 	}
 #endif
-	return NOTHING;
+	return ControlStatus::NOTHING;
 }
 
 void Interface::dispatch_command() {
