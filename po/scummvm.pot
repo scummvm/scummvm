@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-10-04 19:58+0000\n"
+"POT-Creation-Date: 2024-10-05 22:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -8936,11 +8936,11 @@ msgstr ""
 msgid "Game does not contain menu resources"
 msgstr ""
 
-#: engines/sci/detection_tables.h:4611
+#: engines/sci/detection_tables.h:4610
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr ""
 
-#: engines/sci/detection_tables.h:4666
+#: engines/sci/detection_tables.h:4665
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 
