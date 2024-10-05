@@ -150,7 +150,7 @@ void MenuOptions::drawSelectableCharacter(int32 x, int32 y) {
 
 	const bool selected = _onScreenKeyboardX == x && _onScreenKeyboardY == y;
 	if (selected) {
-		_engine->_interface->drawFilledRect(rect, COLOR_91);
+		_engine->_interface->box(rect, COLOR_91);
 	} else {
 		_engine->blitWorkToFront(rect);
 		_engine->_interface->shadeBox(rect, 4);

@@ -248,7 +248,7 @@ void Movies::processFrame() {
 		}
 		case kBlackFrame: {
 			const Common::Rect rect(0, 0, FLASCREEN_WIDTH - 1, FLASCREEN_HEIGHT - 1);
-			_engine->_interface->drawFilledRect(rect, 0);
+			_engine->_interface->box(rect, 0);
 			break;
 		}
 		case kCopy:

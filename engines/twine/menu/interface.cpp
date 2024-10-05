@@ -179,7 +179,7 @@ void Interface::shadeBox(const Common::Rect &rect, int32 colorAdj) {
 	_engine->_frontVideoBuffer.addDirtyRect(r);
 }
 
-void Interface::drawFilledRect(const Common::Rect &rect, uint8 colorIndex) { // Box
+void Interface::box(const Common::Rect &rect, uint8 colorIndex) { // Box
 	if (!rect.isValidRect()) {
 		return;
 	}

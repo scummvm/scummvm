@@ -65,7 +65,7 @@ public:
 	 */
 	void shadeBox(const Common::Rect &rect, int32 colorAdj);
 
-	void drawFilledRect(const Common::Rect &rect, uint8 colorIndex);
+	void box(const Common::Rect &rect, uint8 colorIndex);
 
 	bool setClip(const Common::Rect &rect);
 	void memoClip(); // saveTextWindow

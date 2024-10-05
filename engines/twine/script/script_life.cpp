@@ -2057,7 +2057,7 @@ int32 ScriptLife::lCLEAR_TEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::CLEAR_TEXT()");
 	lTextYPos = 0;
 	const Common::Rect rect(0, 0, engine->width() - 1, engine->height() / 2);
-	engine->_interface->drawFilledRect(rect, COLOR_BLACK);
+	engine->_interface->box(rect, COLOR_BLACK);
 	return 0;
 }
 

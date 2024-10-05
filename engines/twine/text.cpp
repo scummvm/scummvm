@@ -868,7 +868,7 @@ void Text::drawAskQuestion(TextId index) {
 void Text::drawHolomapLocation(TextId index) {
 	normalWinDial();
 	setFontCrossColor(COLOR_WHITE);
-	_engine->_interface->drawFilledRect(_dialTextBox, COLOR_BLACK);
+	_engine->_interface->box(_dialTextBox, COLOR_BLACK);
 	const bool displayText = _engine->_cfgfile.FlagDisplayText;
 	_engine->_cfgfile.FlagDisplayText = true;
 	drawTextProgressive(index, false, false);

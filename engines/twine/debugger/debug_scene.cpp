@@ -154,7 +154,7 @@ bool DebugScene::displayActors() {
 		const int lineHeight = 14;
 		const int boxheight = 2 * lineHeight;
 		const Common::Rect filledRect(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, positions.frontTopRightPoint2D.x + boxwidth, positions.frontTopRightPoint2D.y + boxheight);
-		_engine->_interface->drawFilledRect(filledRect, COLOR_WHITE);
+		_engine->_interface->box(filledRect, COLOR_WHITE);
 		_engine->_menu->drawRectBorders(filledRect);
 		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, Common::String::format("Actor: %i", a), true, true, boxwidth);
 		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y + lineHeight, Common::String::format("pos: %i:%i:%i", pos.x, pos.y, pos.z), true, true, boxwidth);
@@ -200,7 +200,7 @@ bool DebugScene::displayZones() {
 		const int lineHeight = 14;
 		const int boxheight = 2 * lineHeight;
 		const Common::Rect filledRect(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, positions.frontTopRightPoint2D.x + boxwidth, positions.frontTopRightPoint2D.y + boxheight);
-		_engine->_interface->drawFilledRect(filledRect, COLOR_WHITE);
+		_engine->_interface->box(filledRect, COLOR_WHITE);
 		_engine->_menu->drawRectBorders(filledRect);
 		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, Common::String::format("Type: %i (%i)", (int)zonePtr->type, i), true, false, boxwidth);
 		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y + lineHeight, Common::String::format("pos: %i:%i:%i", positions.frontTopRightPoint.x, positions.frontTopRightPoint.y, positions.frontTopRightPoint.z), true, false, boxwidth);

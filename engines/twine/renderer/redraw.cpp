@@ -795,7 +795,7 @@ void Redraw::renderOverlays() {
 			const int32 item = overlay->num;
 			const Common::Rect rect(10, 10, 79, 79);
 
-			_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
+			_engine->_interface->box(rect, COLOR_BLACK);
 			_engine->_interface->setClip(rect);
 
 			const BodyData &bodyPtr = _engine->_resources->_inventoryTable[item];
