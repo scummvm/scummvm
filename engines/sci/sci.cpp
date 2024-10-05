@@ -136,7 +136,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	_console(nullptr),
 	_tts(nullptr),
 	_rng("sci"),
-	_forceHiresGraphics(false),
+	_useHiresGraphics(false),
 	_inErrorString(false) {
 
 	assert(g_sci == nullptr);
@@ -312,10 +312,10 @@ Common::Error SciEngine::run() {
 		// so read the user option now.
 		// We need to do this, because the option's default is "true", but we don't want "true"
 		// for any game that does not have this option.
-		_forceHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
+		_useHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
 	} else if (hasMacFonts()) {
 		// Default to using hires Mac fonts if GUI option isn't present, as it was added later.
-		_forceHiresGraphics = true;
+		_useHiresGraphics = true;
 	}
 
 	if (getSciVersion() < SCI_VERSION_2) {
@@ -894,8 +894,8 @@ bool SciEngine::isCD() const {
 	return _gameDescription->flags & ADGF_CD;
 }
 
-bool SciEngine::forceHiresGraphics() const {
-	return _forceHiresGraphics;
+bool SciEngine::useHiresGraphics() const {
+	return _useHiresGraphics;
 }
 
 bool SciEngine::isBE() const{

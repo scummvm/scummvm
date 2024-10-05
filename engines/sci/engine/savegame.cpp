@@ -1380,7 +1380,7 @@ void gamestate_afterRestoreFixUp(EngineState *s, int savegameId) {
 			// will result in some graphics being incorrect (lowres).
 			// That's why we are setting the global after restoring a saved game depending on hires/lowres state.
 			// The CD demo of KQ6 does the same and uses the exact same global.
-			if ((g_sci->getPlatform() == Common::kPlatformWindows) || (g_sci->forceHiresGraphics())) {
+			if ((g_sci->getPlatform() == Common::kPlatformWindows) || (g_sci->useHiresGraphics())) {
 				s->variables[VAR_GLOBAL][0xA9].setOffset(1);
 			} else {
 				s->variables[VAR_GLOBAL][0xA9].setOffset(0);

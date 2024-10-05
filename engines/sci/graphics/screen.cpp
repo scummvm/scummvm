@@ -58,7 +58,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 	// allow to be optionally enabled in the DOS version.
 	if (g_sci->getGameId() == GID_KQ6) {
 		if ((g_sci->getPlatform() == Common::kPlatformWindows) ||
-			(g_sci->getPlatform() == Common::kPlatformDOS && g_sci->forceHiresGraphics())) {
+			(g_sci->getPlatform() == Common::kPlatformDOS && g_sci->useHiresGraphics())) {
 			_upscaledHires = GFX_SCREEN_UPSCALED_640x440;
 		}
 	}
@@ -71,7 +71,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 			_height = 300; // regular visual, priority and control map are 480x300 (this is different than other upscaled SCI games)
 		} else {
 			// Macintosh SCI1/1.1 games use hi-res native fonts if hi-res graphics are enabled
-			if (g_sci->hasMacFonts() && g_sci->forceHiresGraphics()) {
+			if (g_sci->hasMacFonts() && g_sci->useHiresGraphics()) {
 				_upscaledHires = GFX_SCREEN_UPSCALED_640x400;
 			}
 		}

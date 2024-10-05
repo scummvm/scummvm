@@ -671,6 +671,14 @@ void SciMetaEngine::registerDefaultSettings(const Common::String &target) const 
 
 	for (const PopUpOptionsMap *entry = popUpOptionsList; entry->guioFlag; ++entry)
 		ConfMan.registerDefault(entry->configOption, entry->defaultState);
+
+	// enable_high_resolution_graphics is normally enabled by default,
+	// except for KQ6 where it overrides the DOS platform with Windows.
+	// If it were enabled by default for KQ6, then the DOS platform
+	// would produce the Windows experience by default instead of DOS.
+	if (ConfMan.get("gameid", target) == "kq6" && ConfMan.get("platform", target) == "pc") {
+		ConfMan.registerDefault("enable_high_resolution_graphics", false);
+	}
 }
 
 GUI::OptionsContainerWidget *SciMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
