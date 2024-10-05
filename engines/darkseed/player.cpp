@@ -44,13 +44,13 @@ bool Player::loadAnimations(const Common::Path &filename) {
 }
 
 uint8 playerSpriteIndexDirectionTbl[] = { 24,  26,  28,  26 };
-bool BYTE_ARRAY_2c85_41eb[] = { false, false, false, true };
+static constexpr bool DIRECTION_FLIP_SPRITE_TBL[] = { false, false, false, true };
 uint16 walkFrameOffsetTbl[] = { 0,   8,  16,   8 };
 
 void Player::updateSprite() {
 	if (!_playerIsChangingDirection) {
 		if ((_direction == 3) || (_direction == 1)) {
-			g_engine->_player_sprite_related_2c85_82f3 = BYTE_ARRAY_2c85_41eb[_direction];
+			_flipSprite = DIRECTION_FLIP_SPRITE_TBL[_direction];
 		}
 		if (_position.x == _walkTarget.x && _position.y == _walkTarget.y && !_heroMoving) {
 			_frameIdx = playerSpriteIndexDirectionTbl[_direction];
@@ -59,21 +59,21 @@ void Player::updateSprite() {
 		}
 		if (_direction == 2) {
 			if (_position.x < _walkTarget.x) {
-				g_engine->_player_sprite_related_2c85_82f3 = true;
+				_flipSprite = true;
 			} else if (_walkTarget.x < _position.x) {
-				g_engine->_player_sprite_related_2c85_82f3 = false;
+				_flipSprite = false;
 			}
 		}
 		if (_direction == 0) {
 			if (_walkTarget.x < _position.x) {
-				g_engine->_player_sprite_related_2c85_82f3 = true;
+				_flipSprite = true;
 			} else if (_position.x < _walkTarget.x) {
-				g_engine->_player_sprite_related_2c85_82f3 = false;
+				_flipSprite = false;
 			}
 		}
 	} else {
-		g_engine->_player_sprite_related_2c85_82f3 = 4 < _playerSpriteWalkIndex_maybe;
-		if (g_engine->_player_sprite_related_2c85_82f3) {
+		_flipSprite = (4 < _playerSpriteWalkIndex_maybe);
+		if (_flipSprite) {
 			_frameIdx = 0x20 - _playerSpriteWalkIndex_maybe;
 		} else {
 			_frameIdx = _playerSpriteWalkIndex_maybe + 0x18;

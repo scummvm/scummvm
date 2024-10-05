@@ -41,7 +41,7 @@ void Animation::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 	_isPlayingAnimation_maybe = true;
 	_otherNspAnimationType_maybe = animId;
 
-	g_engine->_player_sprite_related_2c85_82f3 = 0;
+	g_engine->_player->_flipSprite = false;
 	_objRestarted = false;
 
 	if (_otherNspAnimationType_maybe < 2) {
