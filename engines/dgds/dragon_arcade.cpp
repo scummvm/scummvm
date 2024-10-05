@@ -251,7 +251,7 @@ int16 DragonArcade::checkBulletCollision(int16 num) {
 					} else {
 						_flag40ef = false;
 					}
-					_npcState[i].byte12 = 0xf8;
+					_npcState[i].byte12 = -8;
 					_npcState[i].ttmPage = 33;
 					break;
 				case 3:
@@ -677,7 +677,7 @@ void DragonArcade::arcade4085() {
 				if (isNpcInsideXRange(i))
 					playSfx(0x1d);
 			}
-			_npcState[i].byte12 = 0xfb;
+			_npcState[i].byte12 = -5;
 			if (_npcState[0].health && _npcState[i].xx - 0x10 <= _npcState[0].xx &&
 				_npcState[0].xx <= _npcState[i].xx + 0x37) {
 				bladeTakeHit();
@@ -1087,7 +1087,7 @@ void DragonArcade::arcade3e96() {
 			if (_npcState[i].ttmPage == 2 && isNpcInsideXRange(i)) {
 				playSfx(0x5a);
 			}
-			_npcState[i].byte12 = 0xfc;
+			_npcState[i].byte12 = -4;
 			if (_npcState[i].ttmPage < 15 &&
 				_npcState[i].xx - 16 <= _npcState[0].xx &&
 				_npcState[0].xx <= _npcState[i].xx + 12 && _npcState[0].health != 0 &&
