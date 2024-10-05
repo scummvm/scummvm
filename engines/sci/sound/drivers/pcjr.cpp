@@ -22,7 +22,8 @@
 #include "sci/sound/drivers/mididriver.h"
 #include "sci/resource/resource.h"
 
-#include "audio/softsynth/emumidi.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 #include "common/debug.h"
 #include "common/system.h"
@@ -334,7 +335,7 @@ void SoundChannel_PCJr_SCI1::reset() {
 	_ctrlVolume = _envVolume = 15;
 	_envData = nullptr;
 	_pbDiv = 170;
-	updateChannelVolume();	
+	updateChannelVolume();
 }
 
 void SoundChannel_PCJr_SCI1::updateChannelVolume() {
@@ -412,7 +413,7 @@ void SoundChannel_PCJr_SCI1::processInstrument() {
 	}
 }
 
-class MidiDriver_PCJr : public MidiDriver_Emulated {
+class MidiDriver_PCJr : public MidiDriver, public Audio::AudioStream {
 public:
 	friend class MidiPlayer_PCJr;
 	enum Properties {
@@ -431,17 +432,20 @@ public:
 	MidiChannel *getPercussionChannel() override { return nullptr; }
 	uint32 property(int prop, uint32 value) override;
 	void initTrack(SciSpan<const byte> &header);
-	
+
 	// AudioStream
+	int readBuffer(int16 *buf, const int len) override { return generateSamples(buf, len); }
+	bool endOfData() const override { return false; }
 	bool isStereo() const override { return false; }
 	int getRate() const override { return _mixer->getOutputRate(); }
 
-	// MidiDriver_Emulated
-	void generateSamples(int16 *buf, int len) override;
+	// MidiDriver
+	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) override;
+	bool isOpen() const override { return _isOpen; }
+	uint32 getBaseTempo() override { return 16666; }
 
 private:
 	bool loadInstruments(Resource &resource);
-	void processEnvelopes();
 
 	void noteOn(byte part, byte note, byte velocity);
 	void noteOff(byte part, byte note);
@@ -455,6 +459,9 @@ private:
 	void dropChannels(byte part, byte num);
 	void assignFreeChannels(byte part);
 	byte allocateChannel(byte part);
+
+	int generateSamples(int16 *buf, int len);
+	void nextTick();
 
 	byte _masterVolume;
 	byte *_chanMapping;
@@ -475,120 +482,16 @@ private:
 	const SciVersion _version;
 	const byte _numChannels;
 	const bool _pcsMode;
+
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _mixerSoundHandle;
+	Common::TimerManager::TimerProc _timerProc;
+	void *_timerProcPara;
+	bool _isOpen;
 };
 
-void MidiDriver_PCJr::send(uint32 b) {
-	byte command = b & 0xff;
-	byte op1 = (b >> 8) & 0xff;
-	byte op2 = (b >> 16) & 0xff;
-	byte part = command & 0x0f;
-
-	switch (command & 0xf0) {
-	case 0x80:
-		noteOff(part, op1);
-		break;
-	case 0x90:
-		if (!op2)
-			noteOff(part, op1);
-		else 
-			noteOn(part, op1, op2);	
-		break;
-	case 0xb0:
-		controlChange(part, op1, op2);
-		break;
-	case 0xc0:
-		programChange(part, op1);
-		break;
-	case 0xe0:
-		pitchBend(part, (op1 & 0x7f) | ((op2 & 0x7f) << 7));
-		break;
-	default:
-		debug(2, "Unused MIDI command %02x %02x %02x", command, op1, op2);
-		break;
-	}
-
-	if (!_pcsMode) {
-		_sndUpdateCountDown = 1;
-		_sndUpdateCountDownRem = 0;
-	}
-}
-
-uint32 MidiDriver_PCJr::property(int prop, uint32 value) {
-	uint32 res = 0;
-	value &= 0xffff;
-
-	switch (prop) {
-	case kPropVolume:
-		res = _masterVolume;
-		if (value != 0xffff) {
-			_masterVolume = value;
-			for (int i = 0; i < _numChannels; ++i)
-				_channels[i]->updateChannelVolume();
-		}
-		break;
-	default:
-		break;
-	}
-
-	return res;
-}
-
-void MidiDriver_PCJr::initTrack(SciSpan<const byte> &header) {
-	if (!_isOpen || _version > SCI_VERSION_0_LATE)
-		return;
-
-	uint8 readPos = 0;
-	uint8 caps = header.getInt8At(readPos++);
-	if (caps != 0 && caps != 2)
-		return;
-
-	for (int i = 0; i < _numChannels; ++i)
-		_channels[i]->reset();
-
-	if (_version == SCI_VERSION_0_EARLY) {
-		byte chanFlag = _pcsMode ? 0x04 : 0x02;
-		for (int i = 0, numAssigned = 0; i < 16 && numAssigned < _numChannels; ++i) {
-			uint8 f = header.getInt8At(++readPos);
-			if ((!(f & 8) || (f & 1)) && (f & chanFlag))
-				_channels[numAssigned++]->setPart(i);
-		}
-	} else {
-		byte chanFlag = _pcsMode ? 0x20 : 0x10;
-		for (int i = 0, numAssigned = 0; i < 16 && numAssigned < _numChannels; ++i) {
-			uint8 f = header.getInt8At(++readPos);
-			readPos++;
-			if (f & chanFlag)
-				_channels[numAssigned++]->setPart(i);
-		}
-	}
-}
-
-void MidiDriver_PCJr::generateSamples(int16 *data, int len) {
-	for (int i = 0; i < len; i++) {
-		if (!--_sndUpdateCountDown) {
-			_sndUpdateCountDown = _sndUpdateSmpQty;
-			_sndUpdateCountDownRem += _sndUpdateSmpQtyRem;
-			while (_sndUpdateCountDownRem >= (_sndUpdateSmpQty << 16)) {
-				_sndUpdateCountDownRem -= (_sndUpdateSmpQty << 16);
-				++_sndUpdateCountDown;
-			}
-			processEnvelopes();
-		}
-
-		int16 result = 0;
-
-		for (int chan = 0; chan < _numChannels; chan++) {
-			if (!_channels[chan]->isPlaying())
-				continue;
-			_channels[chan]->recalcSample();
-			result += _channels[chan]->currentSample();
-		}
-		data[i] = result;
-	}
-}
-
-MidiDriver_PCJr::MidiDriver_PCJr(Audio::Mixer *mixer, SciVersion version, bool pcsMode) : MidiDriver_Emulated(mixer), _version(version), _pcsMode(pcsMode), _numChannels(pcsMode ? 1 : 3),
-	_masterVolume(0), _channels(nullptr), _instrumentOffsets(nullptr), _instrumentData(nullptr) {
+MidiDriver_PCJr::MidiDriver_PCJr(Audio::Mixer *mixer, SciVersion version, bool pcsMode) : _mixer(mixer), _version(version), _pcsMode(pcsMode), _numChannels(pcsMode ? 1 : 3),
+	_masterVolume(0), _channels(nullptr), _instrumentOffsets(nullptr), _instrumentData(nullptr), _isOpen(false) {
 
 	uint16 *smpVolTable = new uint16[16]();
 	for (int i = 0; i < 15; ++i) // The last entry is left at zero.
@@ -644,6 +547,92 @@ MidiDriver_PCJr::~MidiDriver_PCJr() {
 	delete[] _sustain;
 }
 
+void MidiDriver_PCJr::send(uint32 b) {
+	byte command = b & 0xff;
+	byte op1 = (b >> 8) & 0xff;
+	byte op2 = (b >> 16) & 0xff;
+	byte part = command & 0x0f;
+
+	switch (command & 0xf0) {
+	case 0x80:
+		noteOff(part, op1);
+		break;
+	case 0x90:
+		if (!op2)
+			noteOff(part, op1);
+		else
+			noteOn(part, op1, op2);
+		break;
+	case 0xb0:
+		controlChange(part, op1, op2);
+		break;
+	case 0xc0:
+		programChange(part, op1);
+		break;
+	case 0xe0:
+		pitchBend(part, (op1 & 0x7f) | ((op2 & 0x7f) << 7));
+		break;
+	default:
+		debug(2, "Unused MIDI command %02x %02x %02x", command, op1, op2);
+		break;
+	}
+}
+
+uint32 MidiDriver_PCJr::property(int prop, uint32 value) {
+	uint32 res = 0;
+	value &= 0xffff;
+
+	switch (prop) {
+	case kPropVolume:
+		res = _masterVolume;
+		if (value != 0xffff) {
+			_masterVolume = value;
+			for (int i = 0; i < _numChannels; ++i)
+				_channels[i]->updateChannelVolume();
+		}
+		break;
+	default:
+		break;
+	}
+
+	return res;
+}
+
+void MidiDriver_PCJr::initTrack(SciSpan<const byte> &header) {
+	if (!_isOpen || _version > SCI_VERSION_0_LATE)
+		return;
+
+	uint8 readPos = 0;
+	uint8 caps = header.getInt8At(readPos++);
+	if (caps != 0 && caps != 2)
+		return;
+
+	for (int i = 0; i < _numChannels; ++i)
+		_channels[i]->reset();
+
+	if (_version == SCI_VERSION_0_EARLY) {
+		byte chanFlag = _pcsMode ? 0x04 : 0x02;
+		for (int i = 0, numAssigned = 0; i < 16 && numAssigned < _numChannels; ++i) {
+			uint8 f = header.getInt8At(++readPos);
+			if ((!(f & 8) || (f & 1)) && (f & chanFlag))
+				_channels[numAssigned++]->setPart(i);
+		}
+	} else {
+		byte chanFlag = _pcsMode ? 0x20 : 0x10;
+		for (int i = 0, numAssigned = 0; i < 16 && numAssigned < _numChannels; ++i) {
+			uint8 f = header.getInt8At(++readPos);
+			readPos++;
+			if (f & chanFlag)
+				_channels[numAssigned++]->setPart(i);
+		}
+	}
+}
+
+void MidiDriver_PCJr::setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) {
+	_timerProc = timer_proc;
+	_timerProcPara = timer_param;
+}
+
 int MidiDriver_PCJr::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
@@ -661,11 +650,11 @@ int MidiDriver_PCJr::open() {
 			return MERR_CANNOT_CONNECT;
 	}
 
-	int res = MidiDriver_Emulated::open();
-
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, _mixer->kMaxChannelVolume, 0, DisposeAfterUse::NO);
 
-	return res;
+	_isOpen = true;
+
+	return 0;
 }
 
 void MidiDriver_PCJr::close() {
@@ -697,7 +686,7 @@ bool MidiDriver_PCJr::loadInstruments(Resource &resource) {
 	for (int i = 0; i < 40; ++i) {
 		for (uint8 in = 0; writePos < 770 && in != 0xFF; ) {
 			in = resource.getUint8At(readPos++);
-			instrumentData[writePos++] = in;			
+			instrumentData[writePos++] = in;
 		}
 	}
 
@@ -705,13 +694,6 @@ bool MidiDriver_PCJr::loadInstruments(Resource &resource) {
 	_instrumentData = instrumentData;
 
 	return true;
-}
-
-void MidiDriver_PCJr::processEnvelopes() {
-	for (int i = 0; i < _numChannels; i++) {
-		if (_channels[i]->isPlaying())
-			_channels[i]->processEnvelope();
-	}
 }
 
 void MidiDriver_PCJr::noteOn(byte part, byte note, byte velocity) {
@@ -747,7 +729,7 @@ void MidiDriver_PCJr::noteOff(byte part, byte note) {
 		if (!_channels[i]->isMappedToPart(part) || !_channels[i]->hasNote(note))
 			continue;
 		_channels[i]->noteOff(_sustain[part]);
-	}	
+	}
 }
 
 void MidiDriver_PCJr::controlChange(byte part, byte controller, byte value) {
@@ -939,7 +921,7 @@ byte MidiDriver_PCJr::allocateChannel(byte part) {
 			continue;
 
 		res = c;
-		oldest = ct;		
+		oldest = ct;
 	}
 
 	if (oldest != 0) {
@@ -948,6 +930,39 @@ byte MidiDriver_PCJr::allocateChannel(byte part) {
 	}
 
 	return res;
+}
+
+int MidiDriver_PCJr::generateSamples(int16 *data, int len) {
+	for (int i = 0; i < len; i++) {
+		if (!--_sndUpdateCountDown) {
+			_sndUpdateCountDown = _sndUpdateSmpQty;
+			_sndUpdateCountDownRem += _sndUpdateSmpQtyRem;
+			while (_sndUpdateCountDownRem >= (_sndUpdateSmpQty << 16)) {
+				_sndUpdateCountDownRem -= (_sndUpdateSmpQty << 16);
+				++_sndUpdateCountDown;
+			}
+			nextTick();
+		}
+
+		int16 smp = 0;
+
+		for (int chan = 0; chan < _numChannels; chan++) {
+			if (!_channels[chan]->isPlaying())
+				continue;
+			_channels[chan]->recalcSample();
+			smp += _channels[chan]->currentSample();
+		}
+		data[i] = smp;
+	}
+	return len;
+}
+
+void MidiDriver_PCJr::nextTick() {
+	_timerProc(_timerProcPara);
+	for (int i = 0; i < _numChannels; i++) {
+		if (_channels[i]->isPlaying())
+			_channels[i]->processEnvelope();
+	}
 }
 
 class MidiPlayer_PCJr : public MidiPlayer {
