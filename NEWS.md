@@ -37,6 +37,7 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Refactored sound handling for different games.
   - Refactored font handling to use common classes.
   - Improved keymapper support coverage.
+  - Correctly implement aspect ratio correction following dosbox implementation.
 
  MM:
    - Added MT32/LAPC-1 support for Xeen engine.
