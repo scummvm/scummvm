@@ -438,30 +438,58 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	int score = _gameStateVars[k8bitVariableScore];
-	drawStringInSurface(_currentArea->_name, 197, 185, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 151, 145, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 151, 153, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 151, 161, front, back, surface);
-	if (_playerHeightNumber >= 0)
-		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 57, 161, front, back, surface);
-	else
-		drawStringInSurface(Common::String::format("%s", "J"), 57, 161, front, back, surface);
+	Common::Point currentAreaPos = _renderMode == Common::kRenderHercG ? Common::Point(437, 293) : Common::Point(197, 185);
+	drawStringInSurface(_currentArea->_name, currentAreaPos.x, currentAreaPos.y, front, back, surface);
 
-	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 47, 145, front, back, surface);
-	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), _renderMode == Common::kRenderCGA ? 44 : 47, 153, front, back, surface);
-	drawStringInSurface(Common::String::format("%07d", score), 239, 129, front, back, surface);
+	Common::Point coordinateXPos = _renderMode == Common::kRenderHercG ? Common::Point(345, 253) : Common::Point(151, 145);
+	Common::Point coordinateYPos = _renderMode == Common::kRenderHercG ? Common::Point(345, 261) : Common::Point(151, 153);
+	Common::Point coordinateZPos = _renderMode == Common::kRenderHercG ? Common::Point(345, 269) : Common::Point(151, 161);
+
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), coordinateXPos.x, coordinateXPos.y, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), coordinateYPos.x, coordinateYPos.y, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), coordinateZPos.x, coordinateZPos.y, front, back, surface);
+
+	Common::Point playerHeightPos = _renderMode == Common::kRenderHercG ? Common::Point(157, 269) : Common::Point(57, 161);
+	if (_playerHeightNumber >= 0)
+		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), playerHeightPos.x, playerHeightPos.y, front, back, surface);
+	else
+		drawStringInSurface(Common::String::format("%s", "J"), playerHeightPos.x, playerHeightPos.y, front, back, surface);
+
+	Common::Point anglePos = _renderMode == Common::kRenderHercG ? Common::Point(141, 253) : Common::Point(47, 145);
+	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), anglePos.x, anglePos.y, front, back, surface);
+
+	Common::Point playerStepsPos;
+
+	if (_renderMode == Common::kRenderHercG)
+		playerStepsPos = Common::Point(130, 261);
+	else if (_renderMode == Common::kRenderCGA)
+		playerStepsPos = Common::Point(44, 153);
+	else
+		playerStepsPos = Common::Point(47, 153);
+
+	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), playerStepsPos.x, playerStepsPos.y, front, back, surface);
+
+	Common::Point scorePos = _renderMode == Common::kRenderHercG ? Common::Point(522, 237) : Common::Point(238, 129);
+	drawStringInSurface(Common::String::format("%07d", score), scorePos.x, scorePos.y, front, back, surface);
 
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
-	drawStringInSurface(Common::String::format("%02d", hours), 208, 8, front, back, surface);
-	drawStringInSurface(Common::String::format("%02d", minutes), 231, 8, front, back, surface);
-	drawStringInSurface(Common::String::format("%02d", seconds), 255, 8, front, back, surface);
+
+	Common::Point hoursPos = _renderMode == Common::kRenderHercG ? Common::Point(462, 56) : Common::Point(208, 8);
+	drawStringInSurface(Common::String::format("%02d", hours), hoursPos.x, hoursPos.y, front, back, surface);
+
+	Common::Point minutesPos = _renderMode == Common::kRenderHercG ? Common::Point(506, 56) : Common::Point(231, 8);
+	drawStringInSurface(Common::String::format("%02d", minutes), minutesPos.x, minutesPos.y, front, back, surface);
+
+	Common::Point secondsPos = _renderMode == Common::kRenderHercG ? Common::Point(554, 56) : Common::Point(255, 8);
+	drawStringInSurface(Common::String::format("%02d", seconds), secondsPos.x, secondsPos.y, front, back, surface);
 
 	Common::String message;
 	int deadline;
 	getLatestMessages(message, deadline);
+	Common::Point messagePos = _renderMode == Common::kRenderHercG ? Common::Point(424, 285) : Common::Point(191, 177);
 	if (deadline <= _countdown) {
-		drawStringInSurface(message, 191, 177, back, front, surface);
+		drawStringInSurface(message, messagePos.x, messagePos.y, back, front, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else {
@@ -472,25 +500,27 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 		else
 			message = _messagesList[1];
 
-		drawStringInSurface(message, 191, 177, front, back, surface);
+		drawStringInSurface(message, messagePos.x, messagePos.y, front, back, surface);
 	}
 
 	int energy = _gameStateVars[k8bitVariableEnergy];
 	int shield = _gameStateVars[k8bitVariableShield];
 
-	if (energy >= 0) {
-		Common::Rect backBar(20, 185, 88 - energy, 191);
-		surface->fillRect(backBar, back);
-		Common::Rect energyBar(87 - energy, 185, 88, 191);
-		surface->fillRect(energyBar, front);
-	}
+	if (_renderMode != Common::kRenderHercG) {
+		if (energy >= 0) {
+			Common::Rect backBar(20, 185, 88 - energy, 191);
+			surface->fillRect(backBar, back);
+			Common::Rect energyBar(87 - energy, 185, 88, 191);
+			surface->fillRect(energyBar, front);
+		}
 
-	if (shield >= 0) {
-		Common::Rect backBar(20, 177, 88 - shield, 183);
-		surface->fillRect(backBar, back);
+		if (shield >= 0) {
+			Common::Rect backBar(20, 177, 88 - shield, 183);
+			surface->fillRect(backBar, back);
 
-		Common::Rect shieldBar(87 - shield, 177, 88, 183);
-		surface->fillRect(shieldBar, front);
+			Common::Rect shieldBar(87 - shield, 177, 88, 183);
+			surface->fillRect(shieldBar, front);
+		}
 	}
 
 	if (_indicators.size() >= 2) {
@@ -504,8 +534,10 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 	_gfx->readFromPalette(color, r, g, b);
 	uint32 other = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
-	drawCompass(surface, 87, 156, _yaw, 10, other);
-	drawCompass(surface, 230, 156, _pitch - 30, 10, other);
+	Common::Point compassYawPos = _renderMode == Common::kRenderHercG ? Common::Point(214, 264) : Common::Point(87, 156);
+	drawCompass(surface, compassYawPos.x, compassYawPos.y, _yaw, 10, other);
+	Common::Point compassPitchPos = _renderMode == Common::kRenderHercG ? Common::Point(502, 264) : Common::Point(230, 156);
+	drawCompass(surface, compassPitchPos.x, compassPitchPos.y, _pitch - 30, 10, other);
 }
 
 } // End of namespace Freescape

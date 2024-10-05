@@ -951,6 +951,9 @@ void FreescapeEngine::loadFonts(Common::SeekableReadStream *file, int offset) {
 		chars = getChars(file, offset, 85);
 
 	_font = Font(chars);
+	if (_renderMode == Common::kRenderHercG) {
+		_font.setCharWidth(16);
+	}
 	_fontLoaded = true;
 }
 

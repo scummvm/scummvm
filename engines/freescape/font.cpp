@@ -92,9 +92,9 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
 		surface.convertToInPlace(dst->format, (byte *)palette, 3);
 
 	if (_backgroundColor == dst->format.ARGBToColor(0x00, 0x00, 0x00, 0x00))
-		dst->copyRectToSurfaceWithKey(surface, x, y, Common::Rect(0, 0, 8, surface.h), dst->format.ARGBToColor(0xFF, 0x00, 0x00, 0x00));
+		dst->copyRectToSurfaceWithKey(surface, x, y, Common::Rect(0, 0, _charWidth, surface.h), dst->format.ARGBToColor(0xFF, 0x00, 0x00, 0x00));
 	else
-		dst->copyRectToSurface(surface, x, y, Common::Rect(0, 0, 8, surface.h));
+		dst->copyRectToSurface(surface, x, y, Common::Rect(0, 0, _charWidth, surface.h));
 
 	surface.free();
 }
@@ -118,13 +118,17 @@ Common::Array<Graphics::ManagedSurface *> FreescapeEngine::getChars(Common::Seek
 		int position = sizeX * sizeY * c;
 
 		Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
-		surface->create(sizeX, sizeY, Graphics::PixelFormat::createFormatCLUT8());
+		surface->create(_renderMode == Common::kRenderHercG ? 16 : 8, sizeY, Graphics::PixelFormat::createFormatCLUT8());
 		for (int j = 0; j < sizeY; j++) {
 			for (int i = 0; i < sizeX; i++) {
-				if (font.get(position + additional + j * 8 + i))
-					surface->setPixel(7 - i, j, 1);
-				else
-					surface->setPixel(7 - i, j, 0);
+				if (font.get(position + additional + j * 8 + i)) {
+					if (_renderMode != Common::kRenderHercG) {
+						surface->setPixel(7 - i, j, 1);
+					} else {
+						surface->setPixel(2 * (7 - i), j, 1);
+						surface->setPixel(2 * (7 - i) + 1, j, 1);
+					}
+				}
 			}
 		}
 		chars.push_back(surface);

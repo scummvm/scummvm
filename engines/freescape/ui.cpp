@@ -78,6 +78,7 @@ Graphics::Surface *FreescapeEngine::drawStringsInSurface(const Common::Array<Com
 
 	switch (_renderMode) {
 		case Common::kRenderCGA:
+		case Common::kRenderHercG:
 			color = 1;
 			break;
 		case Common::kRenderZX:
