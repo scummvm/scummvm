@@ -39,7 +39,7 @@ public:
 
 private:
 	machine *_roomStates_field4 = nullptr;
-	bool buttonDown = false;
+	bool _buttonDown = false;
 	static void escapePressed(void *, void *);
 };
 

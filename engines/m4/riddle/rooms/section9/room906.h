@@ -40,9 +40,9 @@ public:
 
 private:
 	static void escapePressed(void *, void *);
-	int _roomStates_pu;
-	machine *_roomStates_field4;
-	bool buttonDown = false;
+	int _roomStates_pu = -1;
+	machine *_roomStates_field4 = nullptr;
+	bool _buttonDown = false;
 };
 
 } // namespace Rooms

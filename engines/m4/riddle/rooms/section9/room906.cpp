@@ -93,9 +93,9 @@ void Room906::daemon() {
 	}
 
 	if (_G(MouseState).ButtonState)
-		buttonDown = true;
-	else if (buttonDown) {
-		buttonDown = false;
+		_buttonDown = true;
+	else if (_buttonDown) {
+		_buttonDown = false;
 		disable_player_commands_and_fade_init(55);
 	}
 }

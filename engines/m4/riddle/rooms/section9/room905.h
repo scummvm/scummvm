@@ -41,7 +41,7 @@ public:
 
 
 private:
-	int _roomStates_field4;
+	int _roomStates_field4 = -1;
 	static void escapePressed(void *, void *);
 	machine *_roomStates_tt = nullptr;
 };
