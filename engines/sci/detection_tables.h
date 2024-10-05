@@ -2263,10 +2263,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 						  GAMEOPTION_MIDI_MODE,                \
 						  GAMEOPTION_RGB_RENDERING)
 
-#define GUIO_KQ6_CD_WINDOWS GUIO7(GUIO_NOASPECT,                       \
+#define GUIO_KQ6_CD_WINDOWS GUIO6(GUIO_NOASPECT,                       \
 								  GAMEOPTION_WINDOWS_CURSORS,          \
-								  GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, \
-						          GAMEOPTION_PREFER_DIGITAL_SFX,       \
+								  GAMEOPTION_PREFER_DIGITAL_SFX,       \
 								  GAMEOPTION_ORIGINAL_SAVELOAD,        \
 								  GAMEOPTION_MIDI_MODE,                \
 								  GAMEOPTION_RGB_RENDERING)

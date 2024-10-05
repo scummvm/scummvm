@@ -785,9 +785,9 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	// treat DOS with hires graphics as Windows so that hires graphics are enabled
+	// treat KQ6 DOS with hires graphics as Windows so that hires graphics are enabled
 	bool isWindows = (g_sci->getPlatform() == Common::kPlatformWindows) ||
-		             (g_sci->getPlatform() == Common::kPlatformDOS && g_sci->forceHiresGraphics());
+	                 (g_sci->getGameId() == GID_KQ6 && g_sci->getPlatform() == Common::kPlatformDOS && g_sci->useHiresGraphics());
 
 	uint16 operation = argv[0].toUint16();
 	switch (operation) {
@@ -804,7 +804,7 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 		else
 			return make_reg(0, kSciPlatformDOS);
 	case kPlatformUnknown5:
-		// This case needs to return the opposite of case 6 to get hires graphics
+		// KQ6: subop 5 needs to return the opposite of subop 6 to get hires graphics
 		return make_reg(0, !isWindows);
 	case kPlatformIsHiRes:
 	case kPlatformWin311OrHigher:
