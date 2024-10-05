@@ -93,6 +93,17 @@ MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, G
 			r.grow(-2);
 		}
 	}
+
+	// The menu bar isn't part of the Mac screen. We copy it to the Mac
+	// screen so that the beam cursor is correctly drawn if it ever moves
+	// that far up. There's no reason for it to, but it can happen.
+
+	Graphics::Surface *screen = _gui->surface();
+	Graphics::Surface *realScreen = _system->lockScreen();
+
+	screen->copyRectToSurface(*realScreen, 0, 0, Common::Rect(0, 0, 640, 19));
+
+	_system->unlockScreen();
 }
 
 MacGuiImpl::MacDialogWindow::~MacDialogWindow() {
