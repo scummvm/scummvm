@@ -583,8 +583,8 @@ bool Renderer::computeScreenViewport() {
 	Common::Rect viewport;
 	if (g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection)) {
 			// Aspect ratio correction
-			int32 viewportWidth = MIN<int32>(screenWidth, screenHeight * float(_screenW) / _screenH);
-			int32 viewportHeight = MIN<int32>(screenHeight, screenWidth * float(_screenH) / _screenW);
+			int32 viewportWidth = MIN<int32>(screenWidth, screenHeight * float(4) / 3);
+			int32 viewportHeight = MIN<int32>(screenHeight, screenWidth * float(3) / 3);
 			viewport = Common::Rect(viewportWidth, viewportHeight);
 
 			// Pillarboxing
