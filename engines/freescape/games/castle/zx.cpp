@@ -38,7 +38,7 @@ void CastleEngine::initZX() {
 	_soundIndexClimb = -1;
 	_soundIndexMenu = -1;
 	_soundIndexStart = 6;
-	_soundIndexAreaChange = 5;
+	_soundIndexAreaChange = 7;
 }
 
 Graphics::ManagedSurface *CastleEngine::loadFrameWithHeader(Common::SeekableReadStream *file, int pos, uint32 front, uint32 back) {

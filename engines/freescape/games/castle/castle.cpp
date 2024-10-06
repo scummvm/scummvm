@@ -36,9 +36,11 @@
 namespace Freescape {
 
 CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
-
 	if (!Common::parseBool(ConfMan.get("rock_travel"), _useRockTravel))
 		error("Failed to parse bool from rock_travel option");
+
+	_soundIndexStart = 9;
+	_soundIndexAreaChange = 5;
 
 	if (isSpectrum())
 		initZX();
@@ -86,10 +88,6 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_spiritsDestroyed = 0;
 	_spiritsMeter = 32;
 	_spiritsToKill = 26;
-
-	_soundIndexStart = 9;
-	_soundIndexAreaChange = 5;
-
 }
 
 CastleEngine::~CastleEngine() {
@@ -311,9 +309,16 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (areaID == _startArea && entranceID == _startEntrance) {
 		_yaw = 310;
 		_pitch = 0;
-		playSound(_soundIndexStart, false);
+		if (getGameBit(31))
+			playSound(13, true);
+		else
+			playSound(_soundIndexStart, false);
 	} else {
-		playSound(_soundIndexAreaChange, true);
+		// If escaped, play a different sound
+		if (getGameBit(31))
+			playSound(13, true);
+		else
+			playSound(_soundIndexAreaChange, true);
 	}
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
