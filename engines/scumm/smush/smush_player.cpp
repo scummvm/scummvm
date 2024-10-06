@@ -1272,7 +1272,18 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 		_vm->parseEvents();
 		_vm->processInput();
 		if (_palDirtyMax >= _palDirtyMin) {
-			_vm->_system->getPaletteManager()->setPalette(_pal + _palDirtyMin * 3, _palDirtyMin, _palDirtyMax - _palDirtyMin + 1);
+			// Apply gamma correction for Mac versions
+			if (_vm->_game.platform == Common::kPlatformMacintosh) {
+				byte palette[768];
+				memcpy(palette, _pal, 768);
+				for (int i = 0; i < ARRAYSIZE(palette); i++) {
+					palette[i] = _vm->_macGammaCorrectionLookUp[_pal[i]];
+				}
+
+				_vm->_system->getPaletteManager()->setPalette(palette + _palDirtyMin * 3, _palDirtyMin, _palDirtyMax - _palDirtyMin + 1);
+			} else {
+				_vm->_system->getPaletteManager()->setPalette(_pal + _palDirtyMin * 3, _palDirtyMin, _palDirtyMax - _palDirtyMin + 1);
+			}
 
 			_palDirtyMax = -1;
 			_palDirtyMin = 256;
