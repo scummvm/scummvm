@@ -376,7 +376,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	} else if (_game.platform == Common::kPlatformNES) {
 		_screenWidth = 256;
 		_screenHeight = 240;
-	} else if (!isSteamVersion && _useMacScreenCorrectHeight && _game.platform == Common::kPlatformMacintosh && _game.version == 3) {
+	} else if (!isSteamVersion && _useMacScreenCorrectHeight && _game.platform == Common::kPlatformMacintosh && _game.version >= 3) {
 		_screenWidth = 320;
 		_screenHeight = 240;
 		_screenDrawOffset = 20;
@@ -1250,6 +1250,11 @@ Common::Error ScummEngine::init() {
 			for (int i = 0; i < ARRAYSIZE(monkeyIslandFileNames); i++) {
 				if (resource.exists(monkeyIslandFileNames[i])) {
 					macResourceFile = monkeyIslandFileNames[i];
+
+					_macScreen = new Graphics::Surface();
+					_macScreen->create(640, _useMacScreenCorrectHeight ? 480 : 400, Graphics::PixelFormat::createFormatCLUT8());
+					_macGui = new MacGui(this, macResourceFile);
+					break;
 				}
 			}
 
@@ -1286,6 +1291,11 @@ Common::Error ScummEngine::init() {
 	} else {
 		int screenWidth = _screenWidth * _textSurfaceMultiplier;
 		int screenHeight = _screenHeight * _textSurfaceMultiplier;
+
+		if (_macScreen && _game.platform == Common::kPlatformMacintosh && _game.version > 3) {
+			screenWidth *= 2;
+			screenHeight *= 2;
+		}
 
 		if (_game.features & GF_16BIT_COLOR
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
@@ -1890,7 +1900,7 @@ void ScummEngine::resetScumm() {
 	_nextTop = 0;
 
 	_currentCursor = 0;
-	_cursor.state = 0;
+	_cursor.state = (_game.id == GID_MONKEY && _game.platform == Common::kPlatformMacintosh) ? 1 : 0;
 	_userPut = 0;
 
 	_newEffect = 129;
