@@ -345,7 +345,6 @@ void Interface::dispatch_command() {
 }
 
 void Interface::handleState(ControlStatus status) {
-#ifdef TODO
 	int highlight = _inventory->_highlight;
 	int index = _inventory->_scroll + highlight;
 
@@ -407,7 +406,6 @@ void Interface::handleState(ControlStatus status) {
 	default:
 		break;
 	}
-#endif
 }
 
 void Interface::l_cb() {
