@@ -12,6 +12,7 @@ MODULE_OBJS = \
 	img.o \
 	inventory.o \
 	metaengine.o \
+	morph.o \
 	nsp.o \
 	objects.o \
 	pal.o \
