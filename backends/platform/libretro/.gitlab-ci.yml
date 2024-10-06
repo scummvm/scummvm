@@ -184,6 +184,8 @@ android-x86:
 
 # iOS
 libretro-build-ios-arm64:
+  tags:
+    - macosx-packaging
   extends:
     - .libretro-ios-arm64-make-default
     - .core-defs
