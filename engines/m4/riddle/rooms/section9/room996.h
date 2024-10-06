@@ -22,7 +22,8 @@
 #ifndef M4_RIDDLE_ROOMS_SECTION9_ROOM996_H
 #define M4_RIDDLE_ROOMS_SECTION9_ROOM996_H
 
-#include "m4/core/rooms.h"
+#include "m4/riddle/rooms/room.h"
+#include "m4/wscript/ws_machine.h"
 
 namespace M4 {
 namespace Riddle {
@@ -35,7 +36,21 @@ public:
 
 	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+
+private:
+	int32 _flag = 0;
+	int32 _flagArray[13];
+	int32 _moveValue = 0;
+
+	machine *_roomStates_loop0 = nullptr;
+	machine * _roomStates_untie = nullptr;
+	machine * _roomStates_pu = nullptr;
+	machine * _roomStates_field8 = nullptr;
+	machine * _roomStates_field4 = nullptr;
+	machine * _roomStates_tt = nullptr;
 };
 
 } // namespace Rooms
