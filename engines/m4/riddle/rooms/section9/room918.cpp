@@ -203,6 +203,7 @@ void Room918::daemon() {
 	case 320:
 		disable_player_commands_and_fade_init(true);
 		break;
+
 	case 325:
 		digi_play("908f01", 1, 255, 340, 908);
 		break;

@@ -57,17 +57,21 @@ void Room905::init() {
 void Room905::daemon() {
 	switch (_G(kernel).trigger) {
 	case 3:
-		series_plain_play("905 hold frame", -1, 0, 100, 256, 3000);
+		g_engine->camera_shift_xy(0, 0);
+		kernel_timing_trigger(120, 4, nullptr);
+		digi_play("INTMOAN", 1, 255, -1, 901);
+		kernel_timing_trigger(60, 100, nullptr);
 		break;
 
 	case 4:
-		_G(game).new_room = 494;
-		_G(game).new_section = 4;
+		if (g_engine->game_camera_panning())
+			kernel_timing_trigger(120, 4, nullptr);
+		else
+			kernel_timing_trigger(150, 20, nullptr);
 		break;
 
 	case 20:
-		_G(game).new_room = 304;
-		_G(game).new_section = 3;
+		disable_player_commands_and_fade_init(30);
 		break;
 
 	case 30:
@@ -82,21 +86,21 @@ void Room905::daemon() {
 		break;
 
 	case 55:
-		disable_player_commands_and_fade_init(30);
+		_G(game).new_room = 304;
+		_G(game).new_section = 3;
 		break;
 
 	case 56:
-		if (g_engine->game_camera_panning())
-			kernel_timing_trigger(120, 4, nullptr);
-		else
-			kernel_timing_trigger(150, 20, nullptr);
+		_G(game).new_room = 494;
+		_G(game).new_section = 4;
 		break;
 
 	case 666:
-		g_engine->camera_shift_xy(0, 0);
-		kernel_timing_trigger(120, 4, nullptr);
-		digi_play("INTMOAN", 1, 255, -1, 901);
-		kernel_timing_trigger(60, 100, nullptr);
+		series_plain_play("905 hold frame", -1, 0, 100, 256, 3000);
+		break;
+
+	case 1000:
+		digi_stop(2);
 		break;
 
 	default:
