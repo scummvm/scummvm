@@ -52,10 +52,8 @@ void Vars::main_cold_data_init() {
 	_kernel.first_fade = 0;
 	_kernel.first_non_walker_cel_hash = 32;
 	_i_just_hyperwalked = false;
-	// val1 = 15;
 
 	conv_set_default_hv(6, 4);
-	// val2 = 1
 	_game.previous_room = 0;
 	_game.room_id = 0;
 

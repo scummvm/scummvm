@@ -32,6 +32,7 @@ class Console : public M4::Console {
 private:
 	bool cmdGlobal(int argc, const char **argv);
 	bool cmdKittyScreaming(int argc, const char **argv);
+	bool cmdStart(int argc, const char **argv);
 
 public:
 	Console();

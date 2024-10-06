@@ -28,7 +28,8 @@ namespace Riddle {
 
 Console::Console() : M4::Console() {
 	registerCmd("global", WRAP_METHOD(Console, cmdGlobal));
-	registerCmd("kitty", WRAP_METHOD(Console, cmdKittyScreaming));
+	registerCmd("kitty",  WRAP_METHOD(Console, cmdKittyScreaming));
+	registerCmd("start",  WRAP_METHOD(Console, cmdStart));
 }
 
 bool Console::cmdGlobal(int argc, const char **argv) {
@@ -56,6 +57,13 @@ bool Console::cmdKittyScreaming(int argc, const char **argv) {
 
 	debugPrintf("Kitty screaming is %s\n", _G(kittyScreaming) ? "on" : "off");
 	return true;
+}
+
+bool Console::cmdStart(int argc, const char **argv) {
+	_G(game).setRoom(303);
+	interface_show();
+	mouse_show();
+	return false;
 }
 
 } // End of namespace Riddle
