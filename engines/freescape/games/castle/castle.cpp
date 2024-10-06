@@ -349,7 +349,7 @@ void CastleEngine::initGameState() {
 	FreescapeEngine::initGameState();
 	_playerHeightNumber = 1;
 
-	_gameStateVars[k8bitVariableShield] = 16;
+	_gameStateVars[k8bitVariableShield] = 20;
 	_gameStateVars[k8bitVariableEnergy] = 1;
 	_countdown = INT_MAX;
 	_keysCollected.clear();
@@ -854,31 +854,31 @@ void CastleEngine::drawEnergyMeter(Graphics::Surface *surface, Common::Point ori
 	int frameIdx = -1;
 
 	weightPoint = Common::Point(origin.x + 10, origin.y);
-	frameIdx = 3 - _gameStateVars[k8bitVariableShield] % 4;
-	frameIdx++;
-	frameIdx = frameIdx % 4;
+	frameIdx = 4 - _gameStateVars[k8bitVariableShield] % 5;
 
 	if (_strenghtWeightsFrames.empty())
 		return;
 
-	surface->copyRectToSurface((const Graphics::Surface)*_strenghtWeightsFrames[frameIdx], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[frameIdx]->h));
-	weightPoint += Common::Point(3, 0);
+	if (frameIdx != 4) {
+		surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_strenghtWeightsFrames[frameIdx], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[frameIdx]->h), black);
+		weightPoint += Common::Point(3, 0);
+	}
 
-	for (int i = 0; i < _gameStateVars[k8bitVariableShield] / 4 - 1; i++) {
-		surface->copyRectToSurface((const Graphics::Surface)*_strenghtWeightsFrames[0], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[0]->h));
+	for (int i = 0; i < _gameStateVars[k8bitVariableShield] / 5; i++) {
+		surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_strenghtWeightsFrames[0], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[0]->h), black);
 		weightPoint += Common::Point(3, 0);
 	}
 
 	weightPoint = Common::Point(origin.x + 62, origin.y);
-	frameIdx = 3 - _gameStateVars[k8bitVariableShield] % 4;
-	frameIdx++;
-	frameIdx = frameIdx % 4;
+	frameIdx = 4 - _gameStateVars[k8bitVariableShield] % 5;
 
-	surface->copyRectToSurface((const Graphics::Surface)*_strenghtWeightsFrames[frameIdx], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[frameIdx]->h));
-	weightPoint += Common::Point(-3, 0);
+	if (frameIdx != 4) {
+		surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_strenghtWeightsFrames[frameIdx], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[frameIdx]->h), black);
+		weightPoint += Common::Point(-3, 0);
+	}
 
-	for (int i = 0; i < _gameStateVars[k8bitVariableShield] / 4 - 1; i++) {
-		surface->copyRectToSurface((const Graphics::Surface)*_strenghtWeightsFrames[0], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[0]->h));
+	for (int i = 0; i < _gameStateVars[k8bitVariableShield] / 5; i++) {
+		surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_strenghtWeightsFrames[0], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[0]->h), black);
 		weightPoint += Common::Point(-3, 0);
 	}
 }
