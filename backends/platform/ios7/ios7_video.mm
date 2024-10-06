@@ -535,9 +535,10 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 			newFrame = CGRectMake(screenSize.origin.x + inset.left, screenSize.origin.y, screenSize.size.width - inset.left, height);
 		}
 
-		// The onscreen control buttons have to be moved accordingly
-		[_menuButton setFrame:CGRectMake(newFrame.size.width - _menuButton.imageView.image.size.width, 0, _menuButton.imageView.image.size.width, _menuButton.imageView.image.size.height)];
-		[_toggleTouchModeButton setFrame:CGRectMake(newFrame.size.width - _toggleTouchModeButton.imageView.image.size.width - _toggleTouchModeButton.imageView.image.size.width, 0, _toggleTouchModeButton.imageView.image.size.width, _toggleTouchModeButton.imageView.image.size.height)];
+		// Touch mode button on top
+		[_toggleTouchModeButton setFrame:CGRectMake(self.frame.size.width - _toggleTouchModeButton.imageView.image.size.width, 0, _toggleTouchModeButton.imageView.image.size.width, _toggleTouchModeButton.imageView.image.size.height)];
+		// Burger menu button below
+		[_menuButton setFrame:CGRectMake(self.frame.size.width - _menuButton.imageView.image.size.width, _toggleTouchModeButton.imageView.image.size.height, _menuButton.imageView.image.size.width, _menuButton.imageView.image.size.height)];
 #endif
 		self.frame = newFrame;
 	}
@@ -622,9 +623,11 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 		screenOrientation = kScreenOrientationFlippedLandscape;
 	}
 
-	// The onscreen control buttons have to be moved accordingly
-	[_menuButton setFrame:CGRectMake(self.frame.size.width - _menuButton.imageView.image.size.width, 0, _menuButton.imageView.image.size.width, _menuButton.imageView.image.size.height)];
-	[_toggleTouchModeButton setFrame:CGRectMake(self.frame.size.width - _menuButton.imageView.image.size.width - _toggleTouchModeButton.imageView.image.size.width, 0, _toggleTouchModeButton.imageView.image.size.width, _toggleTouchModeButton.imageView.image.size.height)];
+	// Touch mode button on top
+	[_toggleTouchModeButton setFrame:CGRectMake(self.frame.size.width - _toggleTouchModeButton.imageView.image.size.width, 0, _toggleTouchModeButton.imageView.image.size.width, _toggleTouchModeButton.imageView.image.size.height)];
+	// Burger menu button below
+	[_menuButton setFrame:CGRectMake(self.frame.size.width - _menuButton.imageView.image.size.width, _toggleTouchModeButton.imageView.image.size.height, _menuButton.imageView.image.size.width, _menuButton.imageView.image.size.height)];
+
 
 	[self addEvent:InternalEvent(kInputOrientationChanged, screenOrientation, 0)];
 	if (UIInterfaceOrientationIsLandscape(orientation)) {
