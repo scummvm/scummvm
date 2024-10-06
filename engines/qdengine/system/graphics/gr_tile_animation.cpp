@@ -129,7 +129,7 @@ grTileSprite grTileAnimation::getTile(int tile_index) const {
 	case TILE_UNCOMPRESSED:
 		return grTileSprite(&*_tileData.begin() + _tileOffsets[tile_index]);
 	default:
-		if (tile_index >= _tileOffsets.size()) {
+		if (tile_index >= (int)_tileOffsets.size()) {
 			warning("grTileAnimation::getTile(): Too big tile index %d >= %d", tile_index, _tileOffsets.size());
 			break;
 		}
@@ -611,7 +611,7 @@ Graphics::ManagedSurface *grTileAnimation::dumpFrameTiles(int frame_index, float
 
 	for (int i = 0; i < frameTileSize.y; i++) {
 		for (int j = 0; j < frameTileSize.x; j++) {
-			if (idx >= _frameIndex.size()) {
+			if (idx >= (int)_frameIndex.size()) {
 				warning("grTileAnimation::dumpFrameTiles(): overflow of frame index (%d > %d)", idx, _frameIndex.size());
 				break;
 			}
@@ -650,11 +650,11 @@ Graphics::ManagedSurface *grTileAnimation::dumpTiles(int tilesPerRow) const {
 			grDispatcher::instance()->putTileSpr(x, y, getTile(index++), _hasAlpha, 0, dstSurf, false);
 			x += GR_TILE_SPRITE_SIZE_X + 1;
 
-			if (index >= _tileOffsets.size())
+			if (index >= (int)_tileOffsets.size())
 				break;
 		}
 
-		if (index >= _tileOffsets.size())
+		if (index >= (int)_tileOffsets.size())
 			break;
 
 		y += GR_TILE_SPRITE_SIZE_X + 1;

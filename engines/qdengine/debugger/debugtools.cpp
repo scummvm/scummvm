@@ -176,7 +176,7 @@ void populateFileList() {
 	treeStack.push(&_state->_files);
 
 	int id = 0;
-	for (int f = 0; f < files.size(); f++) {
+	for (unsigned int f = 0; f < files.size(); f++) {
 		// Skip duplicates between the archives
 		if (f && files[f] == files[f - 1])
 			continue;
@@ -193,13 +193,13 @@ void populateFileList() {
 			if (newArr.back().empty())
 				newArr.pop_back();
 
-			int pos = 0;
+			unsigned int pos = 0;
 			while (pos < curArr.size() && pos < newArr.size() && curArr[pos] == newArr[pos])
 				pos++;
 
 			// if we need to close directories
 			if (pos < curArr.size()) {
-				for (int i = pos; i < curArr.size(); i++)
+				for (unsigned int i = pos; i < curArr.size(); i++)
 					(void)treeStack.pop();
 			}
 
@@ -438,7 +438,7 @@ void onImGuiRender() {
 	if (!_state)
 		return;
 
-	if (_state->_qdaIsPlaying && g_system->getMillis() > _state->_qdaNextFrameTimestamp) {
+	if (_state->_qdaIsPlaying && (int)g_system->getMillis() > _state->_qdaNextFrameTimestamp) {
 		_state->_qdaToDisplayFrame++;
 		_state->_qdaToDisplayFrame %= _state->_qdaToDisplayFrameCount;
 
