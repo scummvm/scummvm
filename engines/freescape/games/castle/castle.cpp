@@ -842,12 +842,15 @@ void CastleEngine::drawEnergyMeter(Graphics::Surface *surface, Common::Point ori
 	if (!_strenghtBackgroundFrame)
 		return;
 
-
 	surface->copyRectToSurface((const Graphics::Surface)*_strenghtBackgroundFrame, origin.x, origin.y, Common::Rect(0, 0, _strenghtBackgroundFrame->w, _strenghtBackgroundFrame->h));
 	if (!_strenghtBarFrame)
 		return;
 
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+	uint32 back = 0;
+
+	if (isDOS())
+		back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 	surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_strenghtBarFrame, origin.x + 5, origin.y + 8, Common::Rect(0, 0, _strenghtBarFrame->w, _strenghtBarFrame->h), black);
 
 	Common::Point weightPoint;
@@ -860,12 +863,12 @@ void CastleEngine::drawEnergyMeter(Graphics::Surface *surface, Common::Point ori
 		return;
 
 	if (frameIdx != 4) {
-		surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_strenghtWeightsFrames[frameIdx], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[frameIdx]->h), black);
+		surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_strenghtWeightsFrames[frameIdx], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[frameIdx]->h), back);
 		weightPoint += Common::Point(3, 0);
 	}
 
 	for (int i = 0; i < _gameStateVars[k8bitVariableShield] / 5; i++) {
-		surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_strenghtWeightsFrames[0], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[0]->h), black);
+		surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_strenghtWeightsFrames[0], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[0]->h), back);
 		weightPoint += Common::Point(3, 0);
 	}
 
@@ -873,12 +876,12 @@ void CastleEngine::drawEnergyMeter(Graphics::Surface *surface, Common::Point ori
 	frameIdx = 4 - _gameStateVars[k8bitVariableShield] % 5;
 
 	if (frameIdx != 4) {
-		surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_strenghtWeightsFrames[frameIdx], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[frameIdx]->h), black);
+		surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_strenghtWeightsFrames[frameIdx], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[frameIdx]->h), back);
 		weightPoint += Common::Point(-3, 0);
 	}
 
 	for (int i = 0; i < _gameStateVars[k8bitVariableShield] / 5; i++) {
-		surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_strenghtWeightsFrames[0], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[0]->h), black);
+		surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_strenghtWeightsFrames[0], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[0]->h), back);
 		weightPoint += Common::Point(-3, 0);
 	}
 }

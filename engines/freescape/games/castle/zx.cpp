@@ -158,7 +158,7 @@ void CastleEngine::loadAssetsZXFullGame() {
 	_gfx->readFromPalette(7, r, g, b);
 	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
-	_keysBorderFrames.push_back(loadFrameWithHeader(&file, 0xdf7, white, red));
+	_keysBorderFrames.push_back(loadFrameWithHeader(&file, 0xdf7, red, white));
 
 	uint32 green = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0, 0xff, 0);
 	_spiritsMeterIndicatorFrame = loadFrameWithHeader(&file, _language == Common::ES_ESP ? 0xe5e : 0xe4f, green, white);
@@ -279,7 +279,8 @@ void CastleEngine::drawZXUI(Graphics::Surface *surface) {
 	surface->copyRectToSurface((const Graphics::Surface)*_spiritsMeterIndicatorFrame, 140 + _spiritsMeterPosition, 156, Common::Rect(0, 0, 15, 8));
 	drawEnergyMeter(surface, Common::Point(63, 154));
 
-	int flagFrameIndex = (_ticks / 10) % 4;
+	int ticks = g_system->getMillis() / 20;
+	int flagFrameIndex = (ticks / 10) % 4;
 	surface->copyRectToSurface(*_flagFrames[flagFrameIndex], 264, 9, Common::Rect(0, 0, _flagFrames[flagFrameIndex]->w, _flagFrames[flagFrameIndex]->h));
 }
 
