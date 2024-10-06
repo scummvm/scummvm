@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-10-05 22:25+0000\n"
+"POT-Creation-Date: 2024-10-06 20:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -6297,12 +6297,12 @@ msgid "Enable Color Blind Mode by default"
 msgstr ""
 
 #: engines/cge/metaengine.cpp:56 engines/glk/metaengine.cpp:193
-#: engines/griffon/metaengine.cpp:40 engines/sci/detection_options.h:223
-#: engines/supernova/metaengine.cpp:49
+#: engines/griffon/metaengine.cpp:40 engines/mortevielle/metaengine.cpp:37
+#: engines/sci/detection_options.h:223 engines/supernova/metaengine.cpp:49
 msgid "Enable Text to Speech"
 msgstr ""
 
-#: engines/cge/metaengine.cpp:57
+#: engines/cge/metaengine.cpp:57 engines/mortevielle/metaengine.cpp:38
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr ""
 
