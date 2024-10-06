@@ -55,6 +55,9 @@ class Inventory : public RectClass {
 		int16 _cursor = -1;
 	};
 private:
+	GUI::ButtonClass *_btnScrollLeft = nullptr;
+	GUI::ButtonClass *_btnScrollRight = nullptr;
+
 	int32 _sprite = 0;
 	int16 _tag = 0;
 	int16 _num_cells = 0;
@@ -78,6 +81,7 @@ public:
 public:
 	Inventory(const RectClass &r, int32 sprite, int16 cells_h, int16 cells_v, int16 cell_w, int16 cell_h, int16 tag);
 	~Inventory();
+	void addToInterfaceBox(InterfaceBox *box);
 
 	void draw(GrBuff *interface_buffer);
 
@@ -90,6 +94,12 @@ public:
 
 	bool need_left() const;
 	bool need_right() const;
+	void refresh_right_arrow();
+	void refresh_left_arrow();
+	void refresh_scrollbars();
+	void check_left();
+	void check_right();
+
 	void set_scroll(int32 new_scroll);
 	void toggleFlag();
 };

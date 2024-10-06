@@ -33,8 +33,6 @@ namespace M4 {
 namespace Burger {
 namespace GUI {
 
-#define INTERFACE_SPRITES 22
-
 Interface::Interface() : M4::Interface() {
 	_x1 = 0;
 	_y1 = 374;

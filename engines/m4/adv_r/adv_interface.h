@@ -27,6 +27,8 @@
 
 namespace M4 {
 
+#define INTERFACE_SPRITES 22
+
 class Interface {
 public:
 	bool _shown = false;

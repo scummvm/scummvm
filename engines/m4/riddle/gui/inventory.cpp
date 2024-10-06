@@ -59,9 +59,19 @@ Inventory::Inventory(const RectClass &r, int32 sprite, int16 cells_h, int16 cell
 	_must_redraw2 = -1;
 	_scroll = 0;
 	_right_arrow_visible = false;
+
+	_btnScrollLeft = new ButtonClass(RectClass(178, -8, 198, 101), "scroll left", 9, 129, 130, 131, INTERFACE_SPRITES);
+	_btnScrollRight = new ButtonClass(RectClass(551, -8, 571, 10), "scroll right", 9, 133, 134, 135, INTERFACE_SPRITES);
 }
 
 Inventory::~Inventory() {
+	delete _btnScrollLeft;
+	delete _btnScrollRight;
+}
+
+void Inventory::addToInterfaceBox(InterfaceBox *box) {
+	box->add(_btnScrollLeft);
+	box->add(_btnScrollRight);
 }
 
 bool Inventory::add(const Common::String &name, const Common::String &verb, int32 invSprite, int32 cursor) {
@@ -200,9 +210,9 @@ void Inventory::draw(GrBuff *myBuffer) {
 		int16 topOffset = top + _cell_h;
 
 		if (_must_redraw1 == cell_iter || _must_redraw2 == cell_iter || _must_redraw_all) {
-			// This does the button update....
-			_G(interface).refresh_right_arrow();
-			_G(interface).refresh_left_arrow();
+			// This does the scroll buttons update....
+			refresh_right_arrow();
+			refresh_left_arrow();
 
 			// Draw icon here
 			gr_color_set(__BLACK);
@@ -288,6 +298,80 @@ ControlStatus Inventory::track(int32 eventType, int16 x, int16 y) {
 		return TRACKING;
 
 	return result;
+}
+
+
+void Inventory::refresh_right_arrow() {
+	if (need_right() || need_left()) {
+		_btnScrollRight->unhide();
+
+		if (need_right()) {
+			_btnScrollRight->set_sprite_relaxed(133);
+			_btnScrollRight->set_sprite_picked(135);
+			_btnScrollRight->set_sprite_over(134);
+		} else {
+			_btnScrollRight->set_sprite_relaxed(136);
+			_btnScrollRight->set_sprite_picked(136);
+			_btnScrollRight->set_sprite_over(136);
+		}
+	} else {
+		_btnScrollRight->hide();
+		_btnScrollLeft->hide();
+	}
+}
+
+void Inventory::refresh_left_arrow() {
+	if (need_right() || need_left()) {
+		_btnScrollLeft->unhide();
+
+		if (need_left()) {
+			_btnScrollLeft->set_sprite_relaxed(129);
+			_btnScrollLeft->set_sprite_picked(131);
+			_btnScrollLeft->set_sprite_over(130);
+		} else {
+			_btnScrollLeft->set_sprite_relaxed(132);
+			_btnScrollLeft->set_sprite_picked(132);
+			_btnScrollLeft->set_sprite_over(132);
+		}
+	} else {
+		_btnScrollRight->hide();
+		_btnScrollLeft->hide();
+	}
+}
+
+void Inventory::refresh_scrollbars() {
+	if (_btnScrollRight->is_hidden())
+		refresh_right_arrow();
+	else
+		_btnScrollRight->hide();
+
+	if (_btnScrollLeft->is_hidden())
+		refresh_left_arrow();
+	else
+		_btnScrollLeft->hide();
+}
+
+void Inventory::check_left() {
+	if (!_btnScrollLeft->is_hidden()) {
+		if (need_left()) {
+			_scroll = (_scroll <= 0) ? 0 : _scroll - _cells_v;
+		}
+
+		refresh_right_arrow();
+		refresh_left_arrow();
+		_must_redraw_all = true;
+	}
+}
+
+void Inventory::check_right() {
+	if (!_btnScrollRight->is_hidden()) {
+		if (need_right())
+			_scroll += _cells_v;
+
+		refresh_right_arrow();
+		refresh_left_arrow();
+		_must_redraw_all = true;
+	}
 }
 
 } // namespace GUI

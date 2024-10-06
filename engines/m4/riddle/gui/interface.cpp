@@ -35,8 +35,6 @@ namespace M4 {
 namespace Riddle {
 namespace GUI {
 
-#define INTERFACE_SPRITES 22
-
 Interface::Interface() : M4::Interface() {
 	_x1 = 0;
 	_y1 = 374;
@@ -73,8 +71,6 @@ Interface::~Interface() {
 	delete _btnHandle;
 	delete _btnBackpack;
 	delete _btnBinky;
-	delete _btnScrollLeft;
-	delete _btnScrollRight;
 }
 
 void Interface::show() {
@@ -89,6 +85,7 @@ void Interface::setup() {
 	_interfaceBox = new InterfaceBox(RectClass(10, 10, SCREEN_WIDTH - 11, 101));
 	_inventory = new GUI::Inventory(RectClass(207, 2, 557, 74),
 		_sprite, 4, 2, 35, 35, 3);
+	_inventory->addToInterfaceBox(_interfaceBox);
 	_textField = new TextField(13, 2, 189, 20);
 
 	_btnTake = new ButtonClass(RectClass(2, 10, 40, 50), "take", 4,3, 5, 4, INTERFACE_SPRITES);
@@ -102,11 +99,6 @@ void Interface::setup() {
 	_btnBinky = new ButtonClass(RectClass(582, 10, 629, 50), "binky", 8, 11, 13, 12, INTERFACE_SPRITES);
 	_interfaceBox->add(_btnBackpack);
 	_interfaceBox->add(_btnBinky);
-
-	_btnScrollLeft = new ButtonClass(RectClass(178, -8, 198, 101), "scroll left", 9, 129, 130, 131, INTERFACE_SPRITES);
-	_btnScrollRight = new ButtonClass(RectClass(551, -8, 571, 10), "scroll right", 9, 133, 134, 135, INTERFACE_SPRITES);
-	_interfaceBox->add(_btnScrollLeft);
-	_interfaceBox->add(_btnScrollRight);
 }
 
 void Interface::cancel_sentence() {
@@ -236,44 +228,6 @@ bool Interface::eventHandler(void *bufferPtr, int32 eventType, int32 event, int3
 	return true;
 }
 
-void Interface::refresh_right_arrow() {
-	if (_inventory->need_right() || _inventory->need_left()) {
-		_btnScrollRight->unhide();
-
-		if (_inventory->need_right()) {
-			_btnScrollRight->set_sprite_relaxed(133);
-			_btnScrollRight->set_sprite_picked(135);
-			_btnScrollRight->set_sprite_over(134);
-		} else {
-			_btnScrollRight->set_sprite_relaxed(136);
-			_btnScrollRight->set_sprite_picked(136);
-			_btnScrollRight->set_sprite_over(136);
-		}
-	} else {
-		_btnScrollRight->hide();
-		_btnScrollLeft->hide();
-	}
-}
-
-void Interface::refresh_left_arrow() {
-	if (_inventory->need_right() || _inventory->need_left()) {
-		_btnScrollLeft->unhide();
-
-		if (_inventory->need_left()) {
-			_btnScrollLeft->set_sprite_relaxed(129);
-			_btnScrollLeft->set_sprite_picked(131);
-			_btnScrollLeft->set_sprite_over(130);
-		} else {
-			_btnScrollLeft->set_sprite_relaxed(132);
-			_btnScrollLeft->set_sprite_picked(132);
-			_btnScrollLeft->set_sprite_over(132);
-		}
-	} else {
-		_btnScrollRight->hide();
-		_btnScrollLeft->hide();
-	}
-}
-
 void Interface::trackIcons() {
 	switch (_interfaceBox->_highlight_index) {
 	case 4:
@@ -288,16 +242,7 @@ void Interface::trackIcons() {
 		mouse_set_sprite(_arrow);
 		_iconSelected = false;
 		_inventory->toggleFlag();
-
-		if (_btnScrollRight->is_hidden())
-			refresh_right_arrow();
-		else
-			_btnScrollRight->hide();
-
-		if (_btnScrollLeft->is_hidden())
-			refresh_left_arrow();
-		else
-			_btnScrollLeft->hide();
+		_inventory->refresh_scrollbars();
 		break;
 
 	case 7:
@@ -310,27 +255,11 @@ void Interface::trackIcons() {
 		break;
 
 	case 9:
-		if (!_btnScrollLeft->is_hidden()) {
-			if (_inventory->need_left()) {
-				_inventory->_scroll = (_inventory->_scroll <= 0) ? 0 :
-					_inventory->_scroll - _inventory->_cells_v;
-			}
-
-			refresh_right_arrow();
-			refresh_left_arrow();
-			_inventory->_must_redraw_all = true;
-		}
+		_inventory->check_left();
 		break;
 
 	case 10:
-		if (!_btnScrollRight->is_hidden()) {
-			if (_inventory->need_right())
-				_inventory->_scroll += _inventory->_cells_v;
-
-			refresh_right_arrow();
-			refresh_left_arrow();
-			_inventory->_must_redraw_all = true;
-		}
+		_inventory->check_right();
 		break;
 
 	default:

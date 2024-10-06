@@ -64,8 +64,6 @@ public:
 	GUI::ButtonClass *_btnHandle = nullptr;
 	BackpackClass *_btnBackpack = nullptr;
 	GUI::ButtonClass *_btnBinky = nullptr;
-	GUI::ButtonClass *_btnScrollLeft = nullptr;
-	GUI::ButtonClass *_btnScrollRight = nullptr;
 
 	int _sprite = 22; // main_interface_sprite;
 	bool _shown = false;
@@ -93,9 +91,6 @@ public:
 	bool eventHandler(void *bufferPtr, int32 eventType, int32 event, int32 x, int32 y, bool *z) override;
 
 	void show() override;
-
-	void refresh_right_arrow();
-	void refresh_left_arrow();
 
 	void l_cb();
 	void u_cb();
