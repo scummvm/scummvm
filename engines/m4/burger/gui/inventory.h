@@ -20,13 +20,13 @@
  *
  */
 
-#ifndef M4_RIDDLE_GUI_CHEAPO_H
-#define M4_RIDDLE_GUI_CHEAPO_H
+#ifndef M4_BURGER_GUI_INVENTORY_H
+#define M4_BURGER_GUI_INVENTORY_H
 
 #include "m4/gui/gui_cheapo.h"
 
 namespace M4 {
-namespace Riddle {
+namespace Burger {
 namespace GUI {
 
 using namespace M4::GUI;
@@ -47,17 +47,6 @@ constexpr int16 RIGHT_ARROW_TAG_DOWN = 136;
 constexpr int16 LEFT_ARROW_TAG_NONFUNC = 133;
 constexpr int16 RIGHT_ARROW_TAG_NONFUNC = 137;
 
-class BackpackClass : public ButtonClass {
-private:
-	int _field32 = 0;
-
-public:
-	BackpackClass(const RectClass &r, const Common::String &btnName, int16 tag,
-		int16 relaxed, int16 over, int16 picked, int sprite) :
-		ButtonClass(r, btnName, tag, relaxed, over, picked, sprite) {}
-	~BackpackClass() override {}
-};
-
 class Inventory : public RectClass {
 	struct Entry {
 		Common::String _name;
@@ -70,7 +59,6 @@ private:
 	int16 _tag = 0;
 	int16 _num_cells = 0;
 	bool _right_arrow_visible = false;
-	bool _flag1 = false;
 
 	int16 cell_pos_x(int16 index);
 	int16 cell_pos_y(int16 index);
@@ -102,11 +90,10 @@ public:
 	bool need_left() const;
 	bool need_right() const;
 	void set_scroll(int32 new_scroll);
-	void toggleFlag();
 };
 
 } // namespace GUI
-} // namespace Riddle
+} // namespace Burger
 } // namespace M4
 
 #endif

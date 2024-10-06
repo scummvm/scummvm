@@ -23,7 +23,7 @@
 #define M4_BURGER_ROOMS_SECTION5_ROOM510_H
 
 #include "m4/burger/rooms/section5/section5_room.h"
-#include "m4/burger/gui/gui_cheapo.h"
+#include "m4/burger/gui/inventory.h"
 
 namespace M4 {
 namespace Burger {

@@ -27,7 +27,7 @@
 #include "m4/adv_r/adv_hotspot.h"
 #include "m4/graphics/graphics.h"
 #include "m4/graphics/gr_buff.h"
-#include "m4/burger/gui/gui_cheapo.h"
+#include "m4/burger/gui/inventory.h"
 
 namespace M4 {
 namespace Burger {

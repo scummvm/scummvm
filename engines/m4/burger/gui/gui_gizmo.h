@@ -27,7 +27,7 @@
 #include "m4/m4_types.h"
 #include "m4/gui/gui_vmng_core.h"
 #include "m4/graphics/gr_buff.h"
-#include "m4/burger/gui/gui_cheapo.h"
+#include "m4/burger/gui/inventory.h"
 
 namespace M4 {
 namespace Burger {

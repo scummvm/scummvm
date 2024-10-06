@@ -19,7 +19,7 @@
  *
  */
 
-#include "m4/burger/gui/gui_cheapo.h"
+#include "m4/burger/gui/inventory.h"
 #include "m4/burger/vars.h"
 #include "m4/core/errors.h"
 #include "m4/graphics/gr_line.h"

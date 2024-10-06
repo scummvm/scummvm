@@ -21,7 +21,7 @@
 
 #include "m4/riddle/gui/interface.h"
 #include "m4/riddle/gui/game_menu.h"
-#include "m4/riddle/gui/gui_cheapo.h"
+#include "m4/riddle/gui/inventory.h"
 #include "m4/riddle/riddle.h"
 #include "m4/riddle/vars.h"
 #include "m4/adv_r/other.h"

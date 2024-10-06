@@ -19,8 +19,8 @@
  *
  */
 
-#include "m4/riddle/gui/gui_cheapo.h"
-#include "m4/riddle/gui/gui_cheapo.h"
+#include "m4/riddle/gui/inventory.h"
+#include "m4/riddle/gui/inventory.h"
 #include "m4/riddle/vars.h"
 #include "m4/core/errors.h"
 #include "m4/graphics/gr_line.h"

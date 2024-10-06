@@ -80,7 +80,7 @@ MODULE_OBJS = \
 	burger/core/release_trigger.o \
 	burger/core/stream_break.o \
 	burger/gui/game_menu.o \
-	burger/gui/gui_cheapo.o \
+	burger/gui/inventory.o \
 	burger/gui/gui_gizmo.o \
 	burger/gui/interface.o \
 	burger/rooms/room.o \
@@ -182,7 +182,7 @@ MODULE_OBJS = \
 	burger/vars.o \
 	burger/walker.o \
 	riddle/gui/game_menu.o \
-	riddle/gui/gui_cheapo.o \
+	riddle/gui/inventory.o \
 	riddle/gui/interface.o \
 	riddle/rooms/room.o \
 	riddle/rooms/section.o \
