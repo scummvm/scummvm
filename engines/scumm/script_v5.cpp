@@ -853,7 +853,7 @@ void ScummEngine_v5::o5_cursorCommand() {
 		verbMouseOver(0);
 		break;
 	case 2:			// SO_CURSOR_OFF
-		_cursor.state = 0;
+		_cursor.state = (_game.id == GID_MONKEY && _game.platform == Common::kPlatformMacintosh) ? 1 : 0;
 		verbMouseOver(0);
 		break;
 	case 3:			// SO_USERPUT_ON
@@ -868,6 +868,8 @@ void ScummEngine_v5::o5_cursorCommand() {
 		break;
 	case 6:			// SO_CURSOR_SOFT_OFF
 		_cursor.state--;
+		if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformMacintosh && _cursor.state == 0)
+			_cursor.state = 1;
 		verbMouseOver(0);
 		break;
 	case 7:			// SO_USERPUT_SOFT_ON
@@ -2250,7 +2252,7 @@ void ScummEngine_v5::o5_roomOps() {
 		}
 
 		// Mac version, draw the screens 20 pixels lower to account for the extra 40 pixels
-		if (_game.platform == Common::kPlatformMacintosh && _game.version == 3 && _useMacScreenCorrectHeight) {
+		if (_game.platform == Common::kPlatformMacintosh && _game.version >= 3 && _useMacScreenCorrectHeight) {
 			a += _screenDrawOffset;
 			b += _screenDrawOffset;
 		}
