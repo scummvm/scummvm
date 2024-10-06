@@ -237,33 +237,41 @@ bool Interface::eventHandler(void *bufferPtr, int32 eventType, int32 event, int3
 }
 
 void Interface::refresh_right_arrow() {
-#ifdef TODO
 	if (_inventory->need_right() || _inventory->need_left()) {
-		_btnScrollRight->set_sprite_unknown(63);
-		_btnScrollRight->set_sprite_relaxed(64);
-		_btnScrollRight->set_sprite_picked(66);
-		_btnScrollRight->set_sprite_over(65);
 		_btnScrollRight->unhide();
+
+		if (_inventory->need_right()) {
+			_btnScrollRight->set_sprite_relaxed(133);
+			_btnScrollRight->set_sprite_picked(135);
+			_btnScrollRight->set_sprite_over(134);
+		} else {
+			_btnScrollRight->set_sprite_relaxed(136);
+			_btnScrollRight->set_sprite_picked(136);
+			_btnScrollRight->set_sprite_over(136);
+		}
 	} else {
 		_btnScrollRight->hide();
 		_btnScrollLeft->hide();
 	}
-#endif
 }
 
 void Interface::refresh_left_arrow() {
-#ifdef TODO
 	if (_inventory->need_right() || _inventory->need_left()) {
-		_btnScrollLeft->set_sprite_unknown(59);
-		_btnScrollLeft->set_sprite_relaxed(60);
-		_btnScrollLeft->set_sprite_picked(62);
-		_btnScrollLeft->set_sprite_over(61);
 		_btnScrollLeft->unhide();
+
+		if (_inventory->need_left()) {
+			_btnScrollLeft->set_sprite_relaxed(129);
+			_btnScrollLeft->set_sprite_picked(131);
+			_btnScrollLeft->set_sprite_over(130);
+		} else {
+			_btnScrollLeft->set_sprite_relaxed(132);
+			_btnScrollLeft->set_sprite_picked(132);
+			_btnScrollLeft->set_sprite_over(132);
+		}
 	} else {
 		_btnScrollRight->hide();
 		_btnScrollLeft->hide();
 	}
-#endif
 }
 
 void Interface::trackIcons() {

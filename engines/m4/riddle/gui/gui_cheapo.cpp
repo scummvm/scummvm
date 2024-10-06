@@ -20,6 +20,7 @@
  */
 
 #include "m4/riddle/gui/gui_cheapo.h"
+#include "m4/riddle/gui/gui_cheapo.h"
 #include "m4/riddle/vars.h"
 #include "m4/core/errors.h"
 #include "m4/graphics/gr_line.h"
@@ -178,9 +179,6 @@ void Inventory::highlight_part(int16 index) {
 }
 
 void Inventory::draw(GrBuff *myBuffer) {
-	if (!INTERFACE_VISIBLE)
-		return;
-
 	if (!_must_redraw1 && !_must_redraw2 && !_must_redraw_all)
 		return;
 
