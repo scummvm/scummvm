@@ -444,8 +444,8 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 
 	[_toggleTouchModeButton setEnabled:isEnabled];
 	[_toggleTouchModeButton setHidden:!isEnabled];
-	[_menuButton setEnabled:isEnabled];
-	[_menuButton setHidden:!isEnabled];
+	[_menuButton setEnabled:isEnabled && [self isInGame]];
+	[_menuButton setHidden:!isEnabled || ![self isInGame]];
 }
 
 - (BOOL)isiOSAppOnMac {
