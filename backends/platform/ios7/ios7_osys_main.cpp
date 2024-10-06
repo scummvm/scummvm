@@ -445,7 +445,9 @@ void iOS7_buildSharedOSystemInstance() {
 TouchMode iOS7_getCurrentTouchMode() {
 	OSystem_iOS7 *sys = dynamic_cast<OSystem_iOS7 *>(g_system);
 	if (!sys) {
-		abort();
+		// If the system has not finished loading, just return a
+		// default value.
+		return kTouchModeDirect;
 	}
 	return sys->getCurrentTouchMode();
 }
