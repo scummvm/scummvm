@@ -660,7 +660,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	if (width <= 0 || height <= 0)
 		return;
 
-	if (_macScreen) {
+	if (_macScreen && _game.version == 3) {
 		mac_drawStripToScreen(vs, top, x, y, width, height);
 		return;
 	}
@@ -800,8 +800,87 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		}
 	}
 
-	// Finally blit the whole thing to the screen
-	_system->copyRectToScreen(src, pitch, x, y, width, height);
+	if (_macScreen && _game.platform == Common::kPlatformMacintosh && _game.version > 3) {
+		const byte *pixels = (const byte *)src;
+		byte *mac = (byte *)_macScreen->getBasePtr(x * 2, y * 2);
+
+		int pixelsPitch = pitch;
+		int macPitch = _macScreen->pitch;
+
+		int originalScreenWidth = 320;
+		int originalScreenHeight = 240;
+
+		// Composite the dirty rectangle into _completeScreen
+		for (int h = 0; h < height; h++) {
+			for (int w = 0; w < width; w++) {
+				// Calculate absolute coordinates in the complete screen
+				int absX = x + w;
+				int absY = y + h;
+
+				// Update the complete screen buffer
+				_completeScreenBuffer[absY * originalScreenWidth + absX] = pixels[w];
+			}
+
+			pixels += pixelsPitch;
+		}
+
+		// Reset pixels pointer for processing
+		pixels = (const byte *)src;
+
+		if (_useMacGraphicsSmoothing) {
+			// Apply the EPX/Scale2x algorithm
+			for (int h = 0; h < height; h++) {
+				for (int w = 0; w < width; w++) {
+					// Center pixel
+					byte P = pixels[w];
+
+					// Calculate absolute screen coordinates of the current pixel
+					int absX = x + w;
+					int absY = y + h;
+
+					// Top neighbor (A)
+					byte A = (absY > 0) ? _completeScreenBuffer[(absY - 1) * originalScreenWidth + absX] : P;
+
+					// Right neighbor (B)
+					byte B = (absX < originalScreenWidth - 1) ? _completeScreenBuffer[absY * originalScreenWidth + (absX + 1)] : P;
+
+					// Left neighbor (C)
+					byte C = (absX > 0) ? _completeScreenBuffer[absY * originalScreenWidth + (absX - 1)] : P;
+
+					// Bottom neighbor (D)
+					byte D = (absY < originalScreenHeight - 1) ? _completeScreenBuffer[(absY + 1) * originalScreenWidth + absX] : P;
+
+					// Actually scale the pixel
+					mac[2 * w] = (C == A && C != D && A != B) ? A : P;                // Top-left
+					mac[2 * w + 1] = (A == B && A != C && B != D) ? B : P;            // Top-right
+					mac[2 * w + macPitch] = (D == C && D != B && C != A) ? C : P;     // Bottom-left
+					mac[2 * w + macPitch + 1] = (B == D && B != A && D != C) ? D : P; // Bottom-right
+				}
+
+				pixels += pixelsPitch;
+				mac += macPitch * 2;
+			}
+		} else {
+			// Just double the resolution
+			for (int h = 0; h < height; h++) {
+				for (int w = 0; w < width; w++) {
+					mac[2 * w] = pixels[w];
+					mac[2 * w + 1] = pixels[w];
+					mac[2 * w + macPitch] = pixels[w];
+					mac[2 * w + macPitch + 1] = pixels[w];
+				}
+
+				pixels += pixelsPitch;
+
+				mac += macPitch * 2;
+			}
+		}
+
+		_system->copyRectToScreen(_macScreen->getBasePtr(x * 2, y * 2), _macScreen->pitch, x * 2, y * 2, width * 2, height * 2);
+	} else {
+		// Finally blit the whole thing to the screen
+		_system->copyRectToScreen(src, pitch, x, y, width, height);
+	}
 }
 
 const byte *ScummEngine::postProcessDOSGraphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const {
@@ -1627,7 +1706,8 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 }
 
 void ScummEngine::drawLine(int x1, int y1, int x2, int y2, int color) {
-	if (_game.platform == Common::kPlatformFMTowns && _game.version == 5) {
+	if ((_game.platform == Common::kPlatformFMTowns && _game.version == 5) ||
+		(_game.platform == Common::kPlatformMacintosh && _game.version > 3)) {
 		drawBox(x1, y1, x2, y2, color);
 		return;
 	}
@@ -1641,7 +1721,7 @@ void ScummEngine::drawLine(int x1, int y1, int x2, int y2, int color) {
 
 	VirtScreen *vs;
 
-	if ((vs = findVirtScreen(y1)) == nullptr)
+	if ((vs = findVirtScreen(y1 + _screenDrawOffset)) == nullptr)
 		return;
 
 	black = getPaletteColorFromRGB(_currentPalette, 0x00, 0x00, 0x00);
@@ -4697,7 +4777,7 @@ void ScummEngine::dissolveEffect(int width, int height) {
 			towns_drawStripToScreen(vs, x, y + vs->topline, x, y, width, height);
 		else
 #endif
-		if (_macScreen)
+		if (_macScreen && _game.version == 3)
 			mac_drawStripToScreen(vs, y, x, y + vs->topline, width, height);
 		else if (IS_ALIGNED(width, 4))
 			drawStripToScreen(vs, x, width, y, y + height);

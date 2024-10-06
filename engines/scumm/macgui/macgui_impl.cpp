@@ -398,8 +398,11 @@ void MacGuiImpl::updateWindowManager() {
 	Graphics::MacMenuItem *loadMenu = menu->getSubMenuItem(gameMenu, 0);
 	Graphics::MacMenuItem *saveMenu = menu->getSubMenuItem(gameMenu, 1);
 
-	loadMenu->enabled = canLoad;
-	saveMenu->enabled = canSave;
+	if (loadMenu)
+		loadMenu->enabled = canLoad;
+
+	if (saveMenu)
+		saveMenu->enabled = canSave;
 
 	if (isActive) {
 		if (!_menuIsActive) {

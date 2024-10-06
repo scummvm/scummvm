@@ -524,6 +524,7 @@ class ScummEngine : public Engine, public Common::Serializable {
 	friend class MacGuiImpl;
 	friend class MacIndy3Gui;
 	friend class MacLoomGui;
+	friend class MacMI1Gui;
 	friend class LogicHEBasketball;
 
 public:
@@ -1618,6 +1619,8 @@ public:
 
 	Graphics::Surface *_macScreen = nullptr;
 	MacGui *_macGui = nullptr;
+	bool _useMacGraphicsSmoothing = true;
+	byte _completeScreenBuffer[320 * 240];
 
 protected:
 	byte _charsetColor = 0;

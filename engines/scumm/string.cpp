@@ -971,7 +971,7 @@ void ScummEngine::displayDialog() {
 		int s;
 
 		_string[0].xpos = a->getPos().x - _virtscr[kMainVirtScreen].xstart;
-		_string[0].ypos = a->getPos().y - a->getElevation() - _screenTop - _screenDrawOffset;
+		_string[0].ypos = a->getPos().y - a->getElevation() - _screenTop;
 
 		if (_game.version <= 5) {
 			if (VAR(VAR_V5_TALK_STRING_Y) < 0) {
@@ -1235,6 +1235,11 @@ void ScummEngine::drawString(int a, const byte *msg) {
 
 	VirtScreen *vs = findVirtScreen(_charset->_top);
 	bool shadowModeFlag = (vs && vs->number == kMainVirtScreen);
+
+	if (_game.version > 3 && _game.platform == Common::kPlatformMacintosh) {
+		if (vs && vs->number == kVerbVirtScreen)
+			_charset->_top -= _screenDrawOffset;
+	}
 
 	if (_game.version >= 5)
 		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], _game.id == GID_DIG ? sizeof(_charsetColorMap) : 4);

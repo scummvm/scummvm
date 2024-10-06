@@ -1426,7 +1426,7 @@ void ScummEngine::saveSurfacesPreGUI() {
 					if (_tempTextSurface[x + y * _screenWidth] != 0xFD) {
 						if (x < _virtscr[kMainVirtScreen].pitch && y < _virtscr[kMainVirtScreen].h)
 							_virtscr[kMainVirtScreen].setPixel((_virtscr[kMainVirtScreen].xstart + x) % _virtscr[kMainVirtScreen].pitch,
-								y + (_virtscr[kMainVirtScreen].xstart + x) / _virtscr[kMainVirtScreen].pitch, _tempTextSurface[x + y * _screenWidth]);
+								y - _screenDrawOffset + (_virtscr[kMainVirtScreen].xstart + x) / _virtscr[kMainVirtScreen].pitch, _tempTextSurface[x + y * _screenWidth]);
 					}
 				}
 			}
@@ -2603,7 +2603,7 @@ void ScummEngine::showMainMenu() {
 		!(_game.platform == Common::kPlatformSegaCD && hasLoadedState)) {
 		restoreCursorPostMenu();
 	} else if (_saveLoadFlag == 2) {
-		_cursor.state = 0;
+		_cursor.state = (_game.id == GID_MONKEY && _game.platform == Common::kPlatformMacintosh) ? 1 : 0;
 	}
 
 	// Run the exit savescreen script, if available
