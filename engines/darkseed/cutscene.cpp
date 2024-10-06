@@ -46,7 +46,7 @@ void Cutscene::update() {
 		_movieStep = 9999;
 		break;
 	case 'D' :
-		_movieStep = 9999;
+		babyDollScene();
 		break;
 	case 'E' :
 		shipLaunchScene();
@@ -87,6 +87,9 @@ void Cutscene::update() {
 			play('I');
 		} else if (_cutsceneId == 'G') {
 			g_engine->_cursor.showCursor(true);
+		} else if (_cutsceneId == 'D') {
+			g_engine->_cursor.showCursor(true);
+			g_engine->_room->restorePalette();
 		}
 	}
 }
@@ -668,6 +671,93 @@ bool Cutscene::alienBornScene() {
 		break;
 	case 9:
 		// TODO some logic here. stopSequence.
+		break;
+	default:
+		_movieStep = 9999;
+		return false;
+	}
+	_movieStep++;
+	return true;
+}
+
+bool Cutscene::babyDollScene() {
+	switch (_movieStep) {
+	case 1: {
+		delete _morph;
+		_morph = new Morph({73, 46, 472, 240});
+		_palette.load("art/norm.pal");
+		Img left00Img;
+		left00Img.load("art/bdoll0.img");
+		left00Img.draw();
+		Img left01Img;
+		left01Img.load("art/bdoll1.img");
+		left01Img.draw();
+		_morph->loadSrcFromScreen();
+
+		Img born1Img;
+		born1Img.load("art/embryo.img");
+		born1Img.draw(1);
+		_morph->loadDestFromScreen();
+
+		g_engine->_screen->clear();
+		left00Img.draw();
+		left01Img.draw();
+		g_engine->_screen->clearPalette();
+		break;
+	}
+	case 2:
+		break;
+	case 3:
+		// TODO play doll music here.
+		g_engine->fadeIn(_palette);
+		break;
+	case 4:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
+	case 5:
+		_morph->start(MorphDirection::Forward);
+		registTime();
+		break;
+	case 6:
+		if (waitTime(50)) {
+			return true;
+		}
+		break;
+	case 7: {
+		if (_morph->morphStep()) {
+			return true;
+		}
+		registTime();
+		break;
+	}
+	case 8:
+		if (waitTime(40)) {
+			return true;
+		}
+		_morph->start(MorphDirection::Backward);
+		break;
+	case 9:
+		if (_morph->morphStep()) {
+			return true;
+		}
+		registTime();
+		break;
+	case 10:
+		if (waitTime(30)) {
+			return true;
+		}
+		break;
+	case 11:
+		g_engine->fadeOut();
+		break;
+	case 12:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		delete _morph;
+		_morph = nullptr;
 		break;
 	default:
 		_movieStep = 9999;
