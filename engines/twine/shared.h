@@ -794,7 +794,8 @@ inline constexpr T bits(T value, uint8 offset, uint8 bits) {
 
 enum kDebugLevels {
 	kDebugScripts =   1 << 0,
-	kDebugTime    =   1 << 1
+	kDebugTime    =   1 << 1,
+	kDebugImGui   =   1 << 2
 };
 
 }

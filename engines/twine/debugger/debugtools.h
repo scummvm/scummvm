@@ -19,15 +19,13 @@
  *
  */
 
-#include "twine/debugger/debug.h"
-#include "twine/debugger/debug_grid.h"
-#include "twine/twine.h"
+#ifndef TWINE_DEBUGGER_DEBUGTOOLS_H
+#define TWINE_DEBUGGER_DEBUGTOOLS_H
 
 namespace TwinE {
-
-void Debug::processDebug() {
-	_engine->_debugGrid->changeGridCamera();
-	_engine->_debugGrid->applyCellingGrid();
-}
-
+void onImGuiInit();
+void onImGuiRender();
+void onImGuiCleanup();
 } // namespace TwinE
+
+#endif

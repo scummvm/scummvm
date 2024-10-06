@@ -61,6 +61,11 @@ MODULE_OBJS := \
 	text.o \
 	twine.o
 
+ifdef USE_IMGUI
+MODULE_OBJS += \
+	debugger/debugtools.o
+endif
+
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWINE), DYNAMIC_PLUGIN)
 PLUGIN := 1

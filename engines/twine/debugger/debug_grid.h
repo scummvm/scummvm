@@ -36,13 +36,10 @@ public:
 	DebugGrid(TwinEEngine *engine);
 
 	bool _useFreeCamera = false;
-	bool _canChangeScenes = false;
 	bool _disableGridRendering = false;
 
 	/** Change scenario camera positions */
 	void changeGridCamera();
-	/** Change grid index */
-	void changeGrid();
 	/** Apply and change disappear celling grid */
 	void applyCellingGrid();
 };

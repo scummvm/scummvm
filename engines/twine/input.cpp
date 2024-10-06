@@ -130,11 +130,6 @@ void Input::processCustomEngineEventStart(const Common::Event &event) {
 		case TwinEActionType::DebugGridCameraPressDown:
 		case TwinEActionType::DebugGridCameraPressLeft:
 		case TwinEActionType::DebugGridCameraPressRight:
-		case TwinEActionType::DebugPlaceActorAtCenterOfScreen:
-		case TwinEActionType::DebugMenu:
-		case TwinEActionType::DebugMenuActivate:
-		case TwinEActionType::NextRoom:
-		case TwinEActionType::PreviousRoom:
 		case TwinEActionType::ApplyCellingGrid:
 		case TwinEActionType::IncreaseCellingGridIndex:
 		case TwinEActionType::DecreaseCellingGridIndex:

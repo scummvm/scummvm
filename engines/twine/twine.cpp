@@ -76,7 +76,9 @@
 #include "twine/shared.h"
 #include "twine/slideshow.h"
 #include "twine/text.h"
-
+#ifdef USE_IMGUI
+#include "twine/debugger/debugtools.h"
+#endif
 namespace TwinE {
 
 ScopedEngineFreeze::ScopedEngineFreeze(TwinEEngine *engine, bool pause) : _engine(engine) {
@@ -340,6 +342,15 @@ Common::Error TwinEEngine::run() {
 		}
 	}
 
+#ifdef USE_IMGUI
+	ImGuiCallbacks callbacks;
+	bool drawImGui = debugChannelSet(-1, kDebugImGui);
+	callbacks.init = TwinE::onImGuiInit;
+	callbacks.render = drawImGui ? TwinE::onImGuiRender : nullptr;
+	callbacks.cleanup = TwinE::onImGuiCleanup;
+	_system->setImGuiCallbacks(callbacks);
+#endif
+
 	bool quitGame = false;
 	while (!quitGame && !shouldQuit()) {
 		readKeys();
@@ -381,6 +392,14 @@ Common::Error TwinEEngine::run() {
 #endif
 			break;
 		}
+#ifdef USE_IMGUI
+		// For performance reasons, disable the renderer callback if the ImGui debug flag isn't set
+		if (debugChannelSet(-1, kDebugImGui) != drawImGui) {
+			drawImGui = !drawImGui;
+			callbacks.render = drawImGui ? TwinE::onImGuiRender : nullptr;
+			_system->setImGuiCallbacks(callbacks);
+		}
+#endif
 	}
 
 	ConfMan.setBool("combatauto", _actor->_combatAuto);

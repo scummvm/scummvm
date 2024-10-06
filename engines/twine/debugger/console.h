@@ -60,7 +60,6 @@ private:
 	bool doToggleGodMode(int argc, const char **argv);
 	bool doToggleEnhancements(int argc, const char **argv);
 	bool doToggleFreeCamera(int argc, const char **argv);
-	bool doToggleSceneChanges(int argc, const char **argv);
 	bool doToggleSceneRendering(int argc, const char **argv);
 	bool doSetTrackObject(int argc, const char **argv);
 	bool doChangeChapter(int argc, const char **argv);

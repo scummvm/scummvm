@@ -45,26 +45,7 @@ void DebugScene::projectBoundingBoxPoints(IVec3 *pPoint3d, IVec3 *pPoint3dProjec
 }
 
 bool DebugScene::checkZoneType(ZoneType type) const {
-	switch (type) {
-	case ZoneType::kCube:
-		return (_typeZones & 0x01) != 0;
-	case ZoneType::kCamera:
-		return (_typeZones & 0x02) != 0;
-	case ZoneType::kSceneric:
-		return (_typeZones & 0x04) != 0;
-	case ZoneType::kGrid:
-		return (_typeZones & 0x08) != 0;
-	case ZoneType::kObject:
-		return (_typeZones & 0x10) != 0;
-	case ZoneType::kText:
-		return (_typeZones & 0x20) != 0;
-	case ZoneType::kLadder:
-		return (_typeZones & 0x40) != 0;
-	default:
-		return true;
-	}
-
-	return false;
+	return (_typeZones & (1u << (uint32)type)) != 0u;
 }
 
 DebugScene::ScenePositionsProjected DebugScene::calculateBoxPositions(const IVec3 &mins, const IVec3 &maxs) {
@@ -157,7 +138,6 @@ bool DebugScene::displayActors() {
 		_engine->_interface->box(filledRect, COLOR_WHITE);
 		_engine->_menu->drawRectBorders(filledRect);
 		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, Common::String::format("Actor: %i", a), true, true, boxwidth);
-		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y + lineHeight, Common::String::format("pos: %i:%i:%i", pos.x, pos.y, pos.z), true, true, boxwidth);
 		const int16 rleft = positions.frontTopLeftPoint2D.x;
 		const int16 rtop = positions.backTopLeftPoint2D.y;
 		const int16 rright = positions.backTopRightPoint2D.x;

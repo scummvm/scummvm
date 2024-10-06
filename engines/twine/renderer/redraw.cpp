@@ -909,9 +909,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // AffScene
 	correctZLevels(drawList, drawListPos);
 	processDrawList(drawList, drawListPos, bgRedraw);
 
-	if (_engine->_cfgfile.Debug) {
-		_engine->_debugScene->renderDebugView();
-	}
+	_engine->_debugScene->renderDebugView();
 
 	renderOverlays();
 	renderText();

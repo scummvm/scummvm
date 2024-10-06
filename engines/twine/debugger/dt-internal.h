@@ -19,15 +19,20 @@
  *
  */
 
-#include "twine/debugger/debug.h"
-#include "twine/debugger/debug_grid.h"
-#include "twine/twine.h"
+#ifndef TWINE_DEBUGGER_DT_INTERNAL_H
+#define TWINE_DEBUGGER_DT_INTERNAL_H
+
+#define IMGUI_DEFINE_MATH_OPERATORS
+
+#include "graphics/surface.h"
+
+#include "backends/imgui/imgui.h"
+#include "backends/imgui/imgui_fonts.h"
 
 namespace TwinE {
 
-void Debug::processDebug() {
-	_engine->_debugGrid->changeGridCamera();
-	_engine->_debugGrid->applyCellingGrid();
-}
+ImFont *_tinyFont = nullptr;
 
 } // namespace TwinE
+
+#endif

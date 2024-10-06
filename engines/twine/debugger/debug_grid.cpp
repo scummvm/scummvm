@@ -30,7 +30,6 @@
 namespace TwinE {
 
 DebugGrid::DebugGrid(TwinEEngine *engine) : _engine(engine) {
-	_canChangeScenes = _engine->_cfgfile.Debug;
 }
 
 void DebugGrid::changeGridCamera() {
@@ -53,32 +52,6 @@ void DebugGrid::changeGridCamera() {
 		redraw->_firstTime = true;
 	} else if (input->isActionActive(TwinEActionType::DebugGridCameraPressRight)) {
 		grid->_newCamera.x++;
-		redraw->_firstTime = true;
-	}
-}
-
-void DebugGrid::changeGrid() {
-	if (!_canChangeScenes) {
-		return;
-	}
-	Scene *scene = _engine->_scene;
-	Redraw *redraw = _engine->_redraw;
-	Input *input = _engine->_input;
-	if (input->toggleActionIfActive(TwinEActionType::NextRoom)) {
-		scene->_currentSceneIdx++;
-		if (scene->_currentSceneIdx >= LBA1SceneId::SceneIdMax) {
-			scene->_currentSceneIdx = LBA1SceneId::Citadel_Island_Prison;
-		}
-		scene->_needChangeScene = scene->_currentSceneIdx;
-		redraw->_firstTime = true;
-	}
-
-	if (input->toggleActionIfActive(TwinEActionType::PreviousRoom)) {
-		scene->_currentSceneIdx--;
-		if (scene->_currentSceneIdx < LBA1SceneId::Citadel_Island_Prison) {
-			scene->_currentSceneIdx = LBA1SceneId::SceneIdMax - 1;
-		}
-		scene->_needChangeScene = scene->_currentSceneIdx;
 		redraw->_firstTime = true;
 	}
 }

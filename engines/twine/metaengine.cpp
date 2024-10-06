@@ -222,16 +222,6 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("p");
 		gameKeyMap->addAction(act);
 
-		act = new Action("NEXTROOM", _("Debug Next Room"));
-		act->setCustomEngineActionEvent(TwinEActionType::NextRoom);
-		act->addDefaultInputMapping("r");
-		gameKeyMap->addAction(act);
-
-		act = new Action("PREVIOUSROOM", _("Debug Previous Room"));
-		act->setCustomEngineActionEvent(TwinEActionType::PreviousRoom);
-		act->addDefaultInputMapping("f");
-		gameKeyMap->addAction(act);
-
 		act = new Action("APPLYCELLINGGRID", _("Debug Apply Celling Grid"));
 		act->setCustomEngineActionEvent(TwinEActionType::ApplyCellingGrid);
 		act->addDefaultInputMapping("t");
@@ -266,21 +256,6 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act = new Action("DEBUGGRIDCAMERAPRESSRIGHT", _("Debug Grid Camera Right"));
 		act->setCustomEngineActionEvent(TwinEActionType::DebugGridCameraPressRight);
 		act->addDefaultInputMapping("c");
-		gameKeyMap->addAction(act);
-
-		act = new Action("DEBUGPLACEACTORATCENTEROFSCREEN", _("Place actor at center of screen"));
-		act->setCustomEngineActionEvent(TwinEActionType::DebugPlaceActorAtCenterOfScreen);
-		act->addDefaultInputMapping("v");
-		gameKeyMap->addAction(act);
-
-		act = new Action("DEBUGMENU", _("Debug Menu"));
-		act->setCustomEngineActionEvent(TwinEActionType::DebugMenu);
-		act->addDefaultInputMapping("MOUSE_RIGHT");
-		gameKeyMap->addAction(act);
-
-		act = new Action("DEBUGMENUEXEC", _("Debug Menu Execute"));
-		act->setCustomEngineActionEvent(TwinEActionType::DebugMenuActivate);
-		act->addDefaultInputMapping("MOUSE_LEFT");
 		gameKeyMap->addAction(act);
 
 		act = new Action("CHANGETONORMALBEHAVIOUR", _("Normal Behaviour"));

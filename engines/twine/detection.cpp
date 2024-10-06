@@ -35,8 +35,9 @@ static const PlainGameDescriptor twineGames[] = {
 };
 
 static const DebugChannelDef debugFlagList[] = {
-	{TwinE::kDebugScripts, "Scripts", "Scripts debugging"},
-	{TwinE::kDebugTime, "Time", "Time debugging"},
+	{TwinE::kDebugScripts, "scripts", "Scripts debugging"},
+	{TwinE::kDebugTime, "time", "Time debugging"},
+	{TwinE::kDebugImGui, "imgui", "UI for debugging"},
 	DEBUG_CHANNEL_END
 };
 
