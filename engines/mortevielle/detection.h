@@ -26,6 +26,8 @@
 
 namespace Mortevielle {
 
+#define GAMEOPTION_TTS		GUIO_GAMEOPTIONS1
+
 enum {
 	kUseOriginalData = 0,
 	kUseEngineDataFile = 1

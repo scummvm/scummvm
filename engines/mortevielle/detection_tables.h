@@ -32,7 +32,7 @@ static const MortevielleGameDescription MortevielleGameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GAMEOPTION_TTS)
 		}, Common::FR_FRA, kUseOriginalData
 	},
 	// German
@@ -45,7 +45,7 @@ static const MortevielleGameDescription MortevielleGameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GAMEOPTION_TTS)
 		}, Common::DE_DEU, kUseOriginalData
 	},
 
@@ -59,7 +59,7 @@ static const MortevielleGameDescription MortevielleGameDescriptions[] = {
 //			Common::DE_DEU,
 //			Common::kPlatformDOS,
 //			ADGF_NO_FLAGS,
-//			GUIO1(GUIO_NOMIDI)
+//			GUIO2(GUIO_NOMIDI, GAMEOPTION_TTS)
 //		}, Common::DE_DEU, kUseEngineDataFile
 //	},
 
@@ -76,7 +76,7 @@ static const MortevielleGameDescription MortevielleGameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GAMEOPTION_TTS)
 		}, Common::FR_FRA, kUseEngineDataFile
 	},
 
@@ -90,7 +90,7 @@ static const MortevielleGameDescription MortevielleGameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GAMEOPTION_TTS)
 		}, Common::DE_DEU, kUseEngineDataFile
 	},
 
@@ -104,7 +104,7 @@ static const MortevielleGameDescription MortevielleGameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GAMEOPTION_TTS)
 		}, Common::FR_FRA, kUseEngineDataFile
 	},
 
