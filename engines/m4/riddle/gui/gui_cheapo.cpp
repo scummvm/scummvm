@@ -111,6 +111,11 @@ void Inventory::set_scroll(int32 new_scroll) {
 	_must_redraw_all = true;
 }
 
+void Inventory::toggleFlag() {
+	_flag1 = !_flag1;
+	_must_redraw_all = true;
+}
+
 bool Inventory::remove(const Common::String &name) {
 	int iter;
 	for (iter = 0; iter < _num_cells; iter++) {

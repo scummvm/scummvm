@@ -70,6 +70,7 @@ private:
 	int16 _tag = 0;
 	int16 _num_cells = 0;
 	bool _right_arrow_visible = false;
+	bool _flag1 = false;
 
 	int16 cell_pos_x(int16 index);
 	int16 cell_pos_y(int16 index);
@@ -101,6 +102,7 @@ public:
 	bool need_left() const;
 	bool need_right() const;
 	void set_scroll(int32 new_scroll);
+	void toggleFlag();
 };
 
 } // namespace GUI

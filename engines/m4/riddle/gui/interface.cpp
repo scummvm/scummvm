@@ -20,6 +20,7 @@
  */
 
 #include "m4/riddle/gui/interface.h"
+#include "m4/riddle/gui/game_menu.h"
 #include "m4/riddle/gui/gui_cheapo.h"
 #include "m4/riddle/riddle.h"
 #include "m4/riddle/vars.h"
@@ -266,10 +267,6 @@ void Interface::refresh_left_arrow() {
 }
 
 void Interface::trackIcons() {
-#ifdef TODO
-	KernelTriggerType oldMode = _G(kernel).trigger_mode;
-	_G(kernel).trigger_mode = KT_DAEMON;
-
 	switch (_interfaceBox->_highlight_index) {
 	case 4:
 		t_cb();
@@ -282,6 +279,7 @@ void Interface::trackIcons() {
 	case 6:
 		mouse_set_sprite(_arrow);
 		_iconSelected = false;
+		_inventory->toggleFlag();
 
 		if (_btnScrollRight->is_hidden())
 			refresh_right_arrow();
@@ -299,6 +297,11 @@ void Interface::trackIcons() {
 		break;
 
 	case 8:
+		// Game menu
+		GUI::CreateGameMenu(_G(master_palette));
+		break;
+
+	case 9:
 		if (!_btnScrollLeft->is_hidden()) {
 			if (_inventory->need_left()) {
 				_inventory->_scroll = (_inventory->_scroll <= 0) ? 0 :
@@ -308,12 +311,10 @@ void Interface::trackIcons() {
 			refresh_right_arrow();
 			refresh_left_arrow();
 			_inventory->_must_redraw_all = true;
-		} else {
-			return;
 		}
 		break;
 
-	case 9:
+	case 10:
 		if (!_btnScrollRight->is_hidden()) {
 			if (_inventory->need_right())
 				_inventory->_scroll += _inventory->_cells_v;
@@ -321,37 +322,12 @@ void Interface::trackIcons() {
 			refresh_right_arrow();
 			refresh_left_arrow();
 			_inventory->_must_redraw_all = true;
-		} else {
-			return;
 		}
 		break;
 
-	case 10:
-		term_message("Abduct/Fail Button Pressed");
-
-		if (_G(game).section_id == 1) {
-			term_message("Abduct me now!");
-			_G(wilbur_should) = 10017;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
-		} else if (_G(game).section_id == 7) {
-			_G(walker).wilbur_speech("999w023");
-		} else {
-			term_message("Fail me now!");
-			_G(wilbur_should) = 10015;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
-		}
+	default:
 		break;
-
-	case 11:
-		// Game menu
-		other_save_game_for_resurrection();
-		CreateGameMenu(_G(master_palette));
-		break;
-
 	}
-
-	_G(kernel).trigger_mode = oldMode;
-#endif
 }
 
 ControlStatus Interface::trackHotspots(int event, int x, int y) {

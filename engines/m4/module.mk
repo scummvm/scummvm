@@ -181,6 +181,7 @@ MODULE_OBJS = \
 	burger/series_player.o \
 	burger/vars.o \
 	burger/walker.o \
+	riddle/gui/game_menu.o \
 	riddle/gui/gui_cheapo.o \
 	riddle/gui/interface.o \
 	riddle/rooms/room.o \
