@@ -139,15 +139,21 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 	}
 
 	_pitch = rotation.x();
-	if (rotation.y() > 0 && rotation.y() <= 45)
-		_yaw = rotation.y();
-	else if (rotation.y() <= 0 || (rotation.y() >= 180 && rotation.y() < 270))
-		_yaw = rotation.y() + 90;
+	float y = rotation.y();
+
+	// Adjust _yaw based on normalized angle
+	if (y >= 0 && y < 90)
+		_yaw = 90 - y;			// 0 to 90 maps to 90 to 0 (yaw should be 90 to 0)
+	else if (y >= 90 && y <= 180)
+		_yaw = 450 - y;			// 90 to 180 maps to 360 to 270 (yaw should be 360 to 270)
+	else if (y > 180 && y <= 225)
+		_yaw = y;				// 180 to 225 maps to 180 to 225 (yaw should be 180 to 225)
+	else if (y > 225 && y < 270)
+		_yaw = y - 90;			// 180 to 270 maps to 90 to 0 (yaw should be 90 to 0)
 	else
-		_yaw = rotation.y() - 90;
+		_yaw = 360 + 90 - y;	// 270 to 360 maps to 90 to 180 (yaw should be 90 to 180)
 
 	debugC(1, kFreescapeDebugMove, "entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
-
 	// Set the player height
 	_playerHeight = 0;
 	changePlayerHeight(_playerHeightNumber);

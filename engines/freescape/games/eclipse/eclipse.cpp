@@ -220,7 +220,7 @@ void EclipseEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *in
 	act->addDefaultInputMapping("w");
 	engineKeyMap->addAction(act);
 
-	// I18N: Illustrates the angle at which you turn left or right. 
+	// I18N: Illustrates the angle at which you turn left or right.
 	act = new Common::Action("CHNGANGLE", _("Change Angle"));
 	act->setCustomEngineActionEvent(kActionChangeAngle);
 	act->addDefaultInputMapping("a");
@@ -268,12 +268,8 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 	_lastPosition = _position;
 
 	if (areaID == _startArea && entranceID == _startEntrance) {
-		_yaw = 180;
-		_pitch = 0;
-
 		playSound(_soundIndexStart, true);
 		if (isEclipse2()) {
-			_yaw = 120;
 			_gameStateControl = kFreescapeGameStateStart;
 		}
 

@@ -307,8 +307,6 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	_gameStateVars[0x1f] = 0;
 
 	if (areaID == _startArea && entranceID == _startEntrance) {
-		_yaw = 310;
-		_pitch = 0;
 		if (getGameBit(31))
 			playSound(13, true);
 		else

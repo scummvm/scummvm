@@ -242,12 +242,9 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	_gameStateVars[0x1f] = 0;
 
 	if (areaID == _startArea && entranceID == _startEntrance) {
-		_yaw = 280;
-		_pitch = 0;
 		playSound(_soundIndexStart, true);
 	} else if (areaID == 127) {
 		assert(entranceID == 0);
-		_yaw = 90;
 		_pitch = 335;
 		_flyMode = true; // Avoid falling
 		// Show the number of completed areas
