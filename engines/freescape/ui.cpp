@@ -23,6 +23,60 @@
 
 namespace Freescape {
 
+void FreescapeEngine::waitInLoop(int maxWait) {
+	for (int i = 0; i < maxWait; i++ ) {
+		Common::Event event;
+		while (_eventManager->pollEvent(event)) {
+			Common::Point mousePos;
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				quitGame();
+				return;
+
+			case Common::EVENT_MOUSEMOVE:
+				if (_hasFallen)
+					break;
+				mousePos = event.mouse;
+
+				if (_demoMode)
+					break;
+
+				if (_shootMode) {;
+					break;
+				} else {
+					// Mouse pointer is locked into the the middle of the screen
+					// since we only need the relative movements. This will not affect any touchscreen device
+					// so on-screen controls are still accesible
+					mousePos.x = g_system->getWidth() * ( _viewArea.left + _viewArea.width() / 2) / _screenW;
+					mousePos.y = g_system->getHeight() * (_viewArea.top + _viewArea.height() / 2) / _screenW;
+					if (_invertY)
+						event.relMouse.y = -event.relMouse.y;
+
+					g_system->warpMouse(mousePos.x, mousePos.y);
+					_eventManager->purgeMouseEvents();
+				}
+
+				rotate(event.relMouse.x * _mouseSensitivity, event.relMouse.y * _mouseSensitivity);
+				break;
+
+			case Common::EVENT_SCREEN_CHANGED:
+				_gfx->computeScreenViewport();
+				_gfx->clear(0, 0, 0, true);
+				break;
+			default:
+				break;
+			}
+		}
+		_gfx->clear(0, 0, 0, true);
+		drawFrame();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(15); // try to target ~60 FPS
+	}
+	_gfx->clear(0, 0, 0, true);
+}
+
 void FreescapeEngine::titleScreen() {
 	if (!_title)
 		return;

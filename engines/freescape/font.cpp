@@ -92,9 +92,9 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
 		surface.convertToInPlace(dst->format, (byte *)palette, 3);
 
 	if (_backgroundColor == dst->format.ARGBToColor(0x00, 0x00, 0x00, 0x00))
-		dst->copyRectToSurfaceWithKey(surface, x, y, Common::Rect(0, 0, _charWidth, surface.h), dst->format.ARGBToColor(0xFF, 0x00, 0x00, 0x00));
+		dst->copyRectToSurfaceWithKey(surface, x, y, Common::Rect(0, 0, MIN(int(surface.w), _charWidth), surface.h), dst->format.ARGBToColor(0xFF, 0x00, 0x00, 0x00));
 	else
-		dst->copyRectToSurface(surface, x, y, Common::Rect(0, 0, _charWidth, surface.h));
+		dst->copyRectToSurface(surface, x, y, Common::Rect(0, 0, MIN(int(surface.w), _charWidth), surface.h));
 
 	surface.free();
 }

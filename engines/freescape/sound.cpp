@@ -303,14 +303,16 @@ void FreescapeEngine::playSound(int index, bool sync) {
 		return;
 	}
 
+	if (_syncSound)
+		waitForSounds();
+
+	_syncSound = sync;
+
 	debugC(1, kFreescapeDebugMedia, "Playing sound %d with sync: %d", index, sync);
 	if (isAmiga() || isAtariST()) {
 		playSoundFx(index, sync);
-		_syncSound = sync;
 		return;
 	}
-	if (_syncSound)
-		waitForSounds();
 
 	if (isDOS()) {
 		soundSpeakerFx *speakerFxInfo = _soundsSpeakerFx[index];

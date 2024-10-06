@@ -185,6 +185,7 @@ public:
 	void drawFullscreenSurface(Graphics::Surface *surface);
 	virtual void loadBorder();
 	virtual void processBorder();
+	void waitInLoop(int maxWait);
 	void drawBorder();
 	void drawTitle();
 	virtual void drawBackground();

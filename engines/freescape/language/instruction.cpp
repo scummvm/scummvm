@@ -291,16 +291,7 @@ bool FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 
 void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {
 	debugC(1, kFreescapeDebugCode, "Redrawing screen");
-	drawFrame();
-	_gfx->flipBuffer();
-	g_system->updateScreen();
-	g_system->delayMillis(10);
-
-	drawFrame();
-	_gfx->flipBuffer();
-	g_system->updateScreen();
-	g_system->delayMillis(isCPC() ? 100 : 10);
-
+	waitInLoop((100 / 15) + 1);
 	if (_syncSound) {
 		waitForSounds();
 	}
@@ -335,7 +326,7 @@ void FreescapeEngine::executeSound(FCLInstruction &instruction) {
 void FreescapeEngine::executeDelay(FCLInstruction &instruction) {
 	uint16 delay = instruction._source;
 	debugC(1, kFreescapeDebugCode, "Delaying %d * 1/50 seconds", delay);
-	g_system->delayMillis(20 * delay);
+	waitInLoop(((20 * delay) / 15) + 1);
 }
 
 void FreescapeEngine::executePrint(FCLInstruction &instruction) {

@@ -313,7 +313,7 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 		_pitch = 0;
 		playSound(_soundIndexStart, false);
 	} else {
-		playSound(_soundIndexAreaChange, false);
+		playSound(_soundIndexAreaChange, true);
 	}
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
