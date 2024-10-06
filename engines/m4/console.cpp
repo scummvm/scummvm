@@ -34,6 +34,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("trigger",   WRAP_METHOD(Console, cmdTrigger));
 	registerCmd("cels",      WRAP_METHOD(Console, cmdCels));
 	registerCmd("cel",       WRAP_METHOD(Console, cmdCel));
+	registerCmd("interface", WRAP_METHOD(Console, cmdInterface));
 }
 
 bool Console::cmdTeleport(int argc, const char **argv) {
@@ -127,6 +128,22 @@ bool Console::cmdCel(int argc, const char **argv) {
 	}
 
 	return true;
+}
+
+bool Console::cmdInterface(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("interface ['show', 'hide']\n");
+		return true;
+	} else {
+		Common::String param(argv[1]);
+
+		if (param == "hide" || param == "off" || param == "false")
+			interface_hide();
+		else
+			interface_show();
+
+		return false;
+	}
 }
 
 } // End of namespace M4

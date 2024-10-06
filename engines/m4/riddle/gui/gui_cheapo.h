@@ -47,6 +47,17 @@ constexpr int16 RIGHT_ARROW_TAG_DOWN = 136;
 constexpr int16 LEFT_ARROW_TAG_NONFUNC = 133;
 constexpr int16 RIGHT_ARROW_TAG_NONFUNC = 137;
 
+class BackpackClass : public ButtonClass {
+private:
+	int _field32 = 0;
+
+public:
+	BackpackClass(const RectClass &r, const Common::String &btnName, int16 tag,
+		int16 relaxed, int16 over, int16 picked, int sprite) :
+		ButtonClass(r, btnName, tag, relaxed, over, picked, sprite) {}
+	~BackpackClass() override {}
+};
+
 class Inventory : public RectClass {
 	struct Entry {
 		Common::String _name;

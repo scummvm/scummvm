@@ -23,7 +23,9 @@
 #include "common/events.h"
 #include "m4/riddle/vars.h"
 #include "m4/riddle/inventory.h"
+#include "m4/gui/gui_sys.h"
 #include "m4/gui/gui_vmng.h"
+#include "m4/platform/keys.h"
 
 namespace M4 {
 namespace Riddle {
@@ -66,14 +68,12 @@ void Vars::main_cold_data_init() {
 }
 
 void Vars::global_menu_system_init() {
-/*
 	AddSystemHotkey(KEY_ESCAPE, escape_key_pressed);
 	AddSystemHotkey(KEY_F2, cb_F2);
 	AddSystemHotkey(KEY_F3, cb_F3);
 
 	if (_interface.init(0, 5, 6, 8, 9))
 		static_cast<Inventory *>(_inventory)->init();
-		*/
 }
 
 void Vars::initialize_game() {

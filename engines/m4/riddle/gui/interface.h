@@ -23,11 +23,11 @@
 #ifndef M4_RIDDLE_INTERFACE_H
 #define M4_RIDDLE_INTERFACE_H
 
+#include "m4/riddle/gui/gui_cheapo.h"
 #include "m4/adv_r/adv_interface.h"
 #include "m4/adv_r/adv_hotspot.h"
 #include "m4/graphics/graphics.h"
 #include "m4/graphics/gr_buff.h"
-#include "m4/gui/gui_cheapo.h"
 
 namespace M4 {
 namespace Riddle {
@@ -45,6 +45,17 @@ private:
 	void handleState(ControlStatus status);
 
 public:
+	GUI::InterfaceBox *_interfaceBox = nullptr;
+	GUI::Inventory *_inventory = nullptr;
+	GUI::TextField *_textField = nullptr;
+	GUI::ButtonClass *_btnTake = nullptr;
+	GUI::ButtonClass *_btnManipulate = nullptr;
+	GUI::ButtonClass *_btnHandle = nullptr;
+	GUI::BackpackClass *_btnBackpack = nullptr;
+	GUI::ButtonClass *_btnBinky = nullptr;
+	GUI::ButtonClass *_btnScrollLeft = nullptr;
+	GUI::ButtonClass *_btnScrollRight = nullptr;
+
 	int _sprite = 22; // main_interface_sprite;
 	bool _shown = false;
 	const HotSpotRec *_hotspot = nullptr;
