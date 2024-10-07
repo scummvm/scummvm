@@ -330,8 +330,10 @@ reg_t kGraphAdjustPriority(EngineState *s, int argc, reg_t *argv) {
 reg_t kGraphSaveUpscaledHiresBox(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect rect = getGraphRect(argv);
 	uint16 screenMask = argv[4].toUint16() & GFX_SCREEN_MASK_ALL;
-	s->r_acc = g_sci->_gfxScreen->gfxDriver()->supportsHiResGraphics() ? g_sci->_gfxPaint16->kernelGraphSaveBox(rect, screenMask, true) : NULL_REG;
-	return s->r_acc;
+	if (g_sci->_gfxScreen->gfxDriver()->supportsHiResGraphics())
+		return g_sci->_gfxPaint16->kernelGraphSaveBox(rect, screenMask, true);
+	else
+		return NULL_REG;
 }
 
 reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
