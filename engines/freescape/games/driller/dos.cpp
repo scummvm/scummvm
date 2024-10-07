@@ -157,7 +157,7 @@ Graphics::ManagedSurface *DrillerEngine::load8bitTitleImage(Common::SeekableRead
 	for (int y = 0; y < 200; ++y) {
 		if (file->eos ()) break;
 		
-		//Start of line data (0x02) or [premature] end of data (0x00)
+		// Start of line data (0x02) or [premature] end of data (0x00)
 		int sol = file->readByte();
 		if (sol == 0) break;
 		assert(sol == 2);
@@ -166,14 +166,14 @@ Graphics::ManagedSurface *DrillerEngine::load8bitTitleImage(Common::SeekableRead
 		while (x < 320) {
 			int command = file->readByte();
 			if (command & 0x80) {
-				//Copy 2*N bytes verbatim
+				// Copy 2*N bytes verbatim
 				int repeat = (257 - command) * 2;
 				for (int i = 0; i < repeat; ++i) {
 					int pixels = file->readByte();
 					renderPixels8bitTitleImage(surface, x, y, pixels);
 				}
 			} else {
-				//Repeat 2 bytes of the input N times
+				// Repeat 2 bytes of the input N times
 				int repeat = command + 1;
 				int pixels1 = file->readByte();
 				int pixels2 = file->readByte();
