@@ -40,7 +40,7 @@ void Cutscene::play(char cutsceneId) {
 void Cutscene::update() {
 	switch (_cutsceneId) {
 	case 'B' :
-		_movieStep = 9999;
+		nightmare2Scene();
 		break;
 	case 'C' :
 		_movieStep = 9999;
@@ -52,7 +52,7 @@ void Cutscene::update() {
 		shipLaunchScene();
 		break;
 	case 'G' :
-		_movieStep = 9999;
+		bookScene();
 		break;
 	case 'H' :
 		_movieStep = 9999;
@@ -85,10 +85,8 @@ void Cutscene::update() {
 			g_engine->newGame();
 		} else if (_cutsceneId == 'Y') {
 			play('I');
-		} else if (_cutsceneId == 'G') {
-			g_engine->_cursor.showCursor(true);
-		} else if (_cutsceneId == 'D') {
-			g_engine->_cursor.showCursor(true);
+		} else if (_cutsceneId == 'B' || _cutsceneId == 'D' || _cutsceneId == 'G') {
+			g_engine->_cursor.showCursor(true); // TODO fade in here
 			g_engine->_room->restorePalette();
 		}
 	}
@@ -758,6 +756,220 @@ bool Cutscene::babyDollScene() {
 		}
 		delete _morph;
 		_morph = nullptr;
+		break;
+	default:
+		_movieStep = 9999;
+		return false;
+	}
+	_movieStep++;
+	return true;
+}
+
+bool Cutscene::bookScene() {
+	switch (_movieStep) {
+	case 1:
+		g_engine->fadeOut();
+		break;
+	case 2:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
+	case 3: {
+		delete _morph;
+		_morph = new Morph({136, 41, 423, 239});
+		_palette.load("art/norm.pal");
+		Img left00Img;
+		left00Img.load("art/bdoll0.img");
+		left00Img.draw();
+		Img left01Img;
+		left01Img.load("art/bdoll1.img");
+		left01Img.draw();
+		Img book1Img;
+		book1Img.load("art/book1.img");
+		book1Img.draw(1);
+		_morph->loadSrcFromScreen();
+
+		Img book2Img;
+		book2Img.load("art/book2.img");
+		book2Img.draw(1);
+		_morph->loadDestFromScreen();
+
+		g_engine->_screen->clear();
+		left00Img.draw();
+		left01Img.draw();
+		book1Img.draw(1);
+		g_engine->_screen->clearPalette();
+		break;
+	}
+	case 4:
+		break;
+	case 5:
+		g_engine->fadeIn(_palette);
+		break;
+	case 6:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
+	case 7:
+		// TODO play book music
+		registTime();
+		break;
+	case 8:
+		if (waitTime(70)) {
+			return true;
+		}
+		_morph->start(MorphDirection::Forward);
+		break;
+	case 9:
+		if (_morph->morphStep()) {
+			return true;
+		}
+		registTime();
+		break;
+	case 10:
+		if (waitTime(70)) {
+			return true;
+		}
+		break;
+	case 11:
+		registTime();
+		_morph->start(MorphDirection::Backward);
+		break;
+	case 12:
+		if (_morph->morphStep()) {
+			return true;
+		}
+		registTime();
+		break;
+	case 13:
+		if (waitTime(40)) {
+			return true;
+		}
+		break;
+	case 14:
+		delete _morph;
+		g_engine->fadeOut();
+		break;
+	case 15:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
+	case 16:
+		// TODO stop audio
+		break;
+	default:
+		_movieStep = 9999;
+		return false;
+	}
+	_movieStep++;
+	return true;
+}
+
+bool Cutscene::nightmare2Scene() {
+	switch (_movieStep) {
+	case 1: {
+		delete _morph;
+		_morph = new Morph({264, 85, 515, 267});
+		_palette.load("art/ship.pal");
+		Img left00Img;
+		left00Img.load("art/nmf0.img");
+		left00Img.draw();
+		Img left01Img;
+		left01Img.load("art/nmf1.img");
+		left01Img.draw();
+		_morph->loadSrcFromScreen();
+
+		Img book2Img;
+		book2Img.load("art/dmik.img");
+		book2Img.draw(1);
+		_morph->loadDestFromScreen();
+
+		g_engine->_screen->clear();
+		left00Img.draw();
+		left01Img.draw();
+		g_engine->_screen->clearPalette();
+		break;
+	}
+	case 2:
+		break;
+	case 3:
+		// TODO play night2 music
+		break;
+	case 4:
+		g_engine->fadeIn(_palette);
+		break;
+	case 5:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
+	case 6:
+		registTime();
+		break;
+	case 7:
+		if (waitTime(20)) {
+			return true;
+		}
+		_morph->start(MorphDirection::Forward);
+		break;
+	case 8:
+		if (_morph->morphStep()) {
+			return true;
+		}
+		registTime();
+		break;
+	case 9:
+		if (waitTime(10)) {
+			return true;
+		}
+		_morph->start(MorphDirection::Backward);
+		break;
+	case 10:
+		if (_morph->morphStep()) {
+			return true;
+		}
+		registTime();
+		break;
+	case 11:
+		if (waitTime(40)) {
+			return true;
+		}
+		_morph->start(MorphDirection::Forward);
+		break;
+	case 12:
+		if (_morph->morphStep()) {
+			return true;
+		}
+		registTime();
+		break;
+	case 13:
+		if (waitTime(10)) {
+			return true;
+		}
+		_morph->start(MorphDirection::Backward);
+		break;
+	case 14:
+		if (_morph->morphStep()) {
+			return true;
+		}
+		registTime();
+		break;
+	case 15:
+		if (waitTime(40)) {
+			return true;
+		}
+		break;
+	case 16:
+		delete _morph;
+		g_engine->fadeOut();
+		break;
+	case 17:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
 		break;
 	default:
 		_movieStep = 9999;

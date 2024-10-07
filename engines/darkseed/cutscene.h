@@ -59,6 +59,8 @@ private:
 	bool shipLaunchScene();
 	bool alienBornScene();
 	bool babyDollScene();
+	bool bookScene();
+	bool nightmare2Scene();
 
 	void runAnim(int direction = 1);
 	bool stepAnim(int drawMode = 1);
