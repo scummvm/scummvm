@@ -153,41 +153,33 @@ Graphics::ManagedSurface *DrillerEngine::load8bitTitleImage(Common::SeekableRead
 	surface->create(_screenW, _screenH, Graphics::PixelFormat::createFormatCLUT8());
 	surface->fillRect(Common::Rect(0, 0, 320, 200), 0);
 
-	int x = 0;
-	int y = 0;
 	file->seek(offset);
-	while (!file->eos()) {
-		int command = file->readByte();
-		if (command & 0x80) {
-			//Copy 2*N bytes verbatim
-			int repeat = (257 - command) * 2;
-			while (repeat--) {
-				int pixels = file->readByte();
-				renderPixels8bitTitleImage(surface, x, y, pixels);
-				if (x == 320) {
-					x = 0;
-					y++;
-					if (y == 200)
-						return surface;
-					int eol = file->readByte();
-					assert(eol == 2);
+	for (int y = 0; y < 200; ++y) {
+		if (file->eos ()) break;
+		
+		//Start of line data (0x02) or [premature] end of data (0x00)
+		int sol = file->readByte();
+		if (sol == 0) break;
+		assert(sol == 2);
+		
+		int x = 0;
+		while (x < 320) {
+			int command = file->readByte();
+			if (command & 0x80) {
+				//Copy 2*N bytes verbatim
+				int repeat = (257 - command) * 2;
+				for (int i = 0; i < repeat; ++i) {
+					int pixels = file->readByte();
+					renderPixels8bitTitleImage(surface, x, y, pixels);
 				}
-			}
-		} else {
-			//Repeat 2 bytes of the input N times
-			int repeat = command + 1;
-			int pixels1 = file->readByte();
-			int pixels2 = file->readByte();
-			while (repeat--) {
-				renderPixels8bitTitleImage(surface, x, y, pixels1);
-				renderPixels8bitTitleImage(surface, x, y, pixels2);
-				if (x == 320) {
-					y = 0;
-					y++;
-					if (y == 200)
-						return surface;
-					int eol = file->readByte();
-					assert(eol == 2);
+			} else {
+				//Repeat 2 bytes of the input N times
+				int repeat = command + 1;
+				int pixels1 = file->readByte();
+				int pixels2 = file->readByte();
+				for (int i = 0; i < repeat; ++i) {
+					renderPixels8bitTitleImage(surface, x, y, pixels1);
+					renderPixels8bitTitleImage(surface, x, y, pixels2);
 				}
 			}
 		}
@@ -262,7 +254,7 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 		file.close();
 		file.open("EGATITLE.RL");
 		if (file.isOpen()) {
-			_title = load8bitTitleImage(&file, 0x1b3);
+			_title = load8bitTitleImage(&file, 0x1b2);
 			_title->setPalette((byte*)&kEGADefaultPalette, 0, 16);
 		}
 		file.close();
@@ -288,7 +280,7 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 		file.close();
 		file.open("CGATITLE.RL");
 		if (file.isOpen()) {
-			_title = load8bitTitleImage(&file, 0x1b3);
+			_title = load8bitTitleImage(&file, 0x1b2);
 			_title->setPalette((byte*)&kCGAPalettePinkBlueWhiteData, 0, 4);
 		}
 		file.close();
