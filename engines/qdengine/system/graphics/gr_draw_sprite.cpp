@@ -633,7 +633,7 @@ void grDispatcher::putSpr(int x, int y, int sx, int sy, const byte *p, int mode,
 			const byte *data_line = data_ptr + px;
 
 			for (int j = 0; j < psx; j++) {
-				if (*data_line)
+				if (data_line[0] || data_line[1] || data_line[2])
 					*scr_buf = make_rgb565u(data_line[2], data_line[1], data_line[0]);
 				scr_buf += dx;
 				data_line += 3;
