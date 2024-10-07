@@ -43,7 +43,7 @@ bool Morph::morphStep() {
 		return false;
 	}
 	draw(_direction == MorphDirection::Forward ? _stepCount : 16 - _stepCount);
-	_stepCount += 2;
+	_stepCount += 1;
 	return _stepCount < 17;
 }
 
