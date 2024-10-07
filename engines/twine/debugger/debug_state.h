@@ -82,6 +82,7 @@ public:
 	bool _godMode = false;
 	unsigned int _typeZones = 127; // all zones on as default
 	int16 _onlyLoadActor = -1;
+	const char *_openPopup = nullptr;
 
 	bool _useFreeCamera = false;
 	bool _disableGridRendering = false;
