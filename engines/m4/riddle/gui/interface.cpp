@@ -231,21 +231,25 @@ bool Interface::eventHandler(void *bufferPtr, int32 eventType, int32 event, int3
 void Interface::trackIcons() {
 	switch (_interfaceBox->_highlight_index) {
 	case 4:
+		// Take
 		t_cb();
 		break;
 
 	case 5:
+		// Look
 		l_cb();
 		break;
 
 	case 6:
+		// Backpack
 		mouse_set_sprite(_arrow);
 		_iconSelected = false;
-		_inventory->toggleFlag();
+		_inventory->toggleHidden();
 		_inventory->refresh_scrollbars();
 		break;
 
 	case 7:
+		// Use
 		u_cb();
 		break;
 
@@ -255,10 +259,12 @@ void Interface::trackIcons() {
 		break;
 
 	case 9:
+		// Scroll inventory left
 		_inventory->check_left();
 		break;
 
 	case 10:
+		// Scroll inventory right
 		_inventory->check_right();
 		break;
 

@@ -33,7 +33,7 @@ using namespace M4::GUI;
 
 constexpr int16 INVENTORY_CELLS_COUNT = 128;
 constexpr int16 ARROW_WIDTH = 8;
-constexpr int16 MAX_INVENTORY = 9;
+constexpr int16 MAX_INVENTORY = 20;
 
 constexpr int16 LEFT_ARROW_TAG = 128;
 constexpr int16 RIGHT_ARROW_TAG = 129;
@@ -62,7 +62,7 @@ private:
 	int16 _tag = 0;
 	int16 _num_cells = 0;
 	bool _right_arrow_visible = false;
-	bool _flag1 = false;
+	bool _hidden = false;
 
 	int16 cell_pos_x(int16 index);
 	int16 cell_pos_y(int16 index);
@@ -101,7 +101,11 @@ public:
 	void check_right();
 
 	void set_scroll(int32 new_scroll);
-	void toggleFlag();
+
+	/**
+	 * Toggles whether the inventory is visible
+	 */
+	void toggleHidden();
 };
 
 } // namespace GUI

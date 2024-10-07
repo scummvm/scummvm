@@ -122,8 +122,8 @@ void Inventory::set_scroll(int32 new_scroll) {
 	_must_redraw_all = true;
 }
 
-void Inventory::toggleFlag() {
-	_flag1 = !_flag1;
+void Inventory::toggleHidden() {
+	_hidden = !_hidden;
 	_must_redraw_all = true;
 }
 
@@ -196,46 +196,41 @@ void Inventory::draw(GrBuff *myBuffer) {
 
 	Buffer *myBuff = myBuffer->get_buffer();
 
-	if (_must_redraw_all) {
+	if (_must_redraw_all || _hidden) {
 		gr_color_set(__BLACK);
 		gr_buffer_rect_fill(myBuff, _x1, _y1, _x2 - _x1, _y2 - _y1);
 	}
 
-	_right_arrow_visible = false;
+	if (!_hidden) {
+		_right_arrow_visible = false;
+		const int X_BORDER = 2, Y_BORDER = 2;
 
-	for (cell_iter = 0; (cell_iter + _scroll < _num_cells) && (cell_iter < MAX_INVENTORY); cell_iter++) {
-		int16 left = (int16)(_x1 + cell_pos_x(cell_iter));
-		int16 top = (int16)(_y1 + cell_pos_y(cell_iter));
-		int16 leftOffset = left + _cell_w;
-		int16 topOffset = top + _cell_h;
+		for (cell_iter = 0; (cell_iter + _scroll < _num_cells) && (cell_iter < MAX_INVENTORY); cell_iter++) {
+			int16 left =_x1 + X_BORDER + cell_pos_x(cell_iter);
+			int16 top = _y1 + Y_BORDER + cell_pos_y(cell_iter);
+			int16 leftOffset = left + _cell_w;
+			int16 topOffset = top + _cell_h;
 
-		if (_must_redraw1 == cell_iter || _must_redraw2 == cell_iter || _must_redraw_all) {
-			// This does the scroll buttons update....
-			refresh_right_arrow();
-			refresh_left_arrow();
+			if (_must_redraw1 == cell_iter || _must_redraw2 == cell_iter || _must_redraw_all) {
+				// Update the scroll buttons
+				refresh_right_arrow();
+				refresh_left_arrow();
 
-			// Draw icon here
-			gr_color_set(__BLACK);
-			gr_buffer_rect_fill(myBuff, left, top, leftOffset - left, topOffset - top);
-			series_show_frame(_sprite, _items[cell_iter + _scroll]._cell, myBuff,
-				left + (_cell_w - 31) / 2, top + (_cell_h - 31) / 2);
+				// Draw icon here
+				gr_color_set(__BLACK);
+				gr_buffer_rect_fill(myBuff, left, top, leftOffset - left, topOffset - top);
+				series_show_frame(_sprite, _items[cell_iter + _scroll]._cell,
+					myBuff, left - 3, top - 3);
 
-			// Draw box around icon
-			if (_highlight == cell_iter) {
-				left += 2;
-				top += 20;
-				gr_line(left, top, left + 35, top, __GREEN, myBuff);
-				gr_line(left + 35, top, left + 35, top + 35, __GREEN, myBuff);
-				gr_line(left, top, left, top + 35, __GREEN, myBuff);
-				gr_line(left, top + 35, left + 35, top + 35, __GREEN, myBuff);
+				// Draw box around icon
+				if (_highlight == cell_iter) {
+					gr_line(left, top, left + _cell_w - 2, top, __LTGRAY, myBuff);
+					gr_line(left, top + _cell_h - 2, left + _cell_w - 2, top + _cell_h - 2, __LTGRAY, myBuff);
+					gr_line(left, top, left, top + _cell_w - 2, __LTGRAY, myBuff);
+					gr_line(left + _cell_w - 2, top, left + _cell_w - 2, top + 35, __LTGRAY, myBuff);
+				}
 			}
 		}
-	}
-
-	// Draw inventory slot frames
-	for (cell_iter = 0; cell_iter < MAX_INVENTORY; ++cell_iter) {
-		series_show_frame(_sprite, 67, myBuff, cell_iter * 39 + 188, 22);
-		series_show_frame(_sprite, 68, myBuff, cell_iter * 39 + 188, 92);
 	}
 
 	ScreenContext *iC = vmng_screen_find(_G(gameInterfaceBuff), nullptr);
