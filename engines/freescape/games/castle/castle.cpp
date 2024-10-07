@@ -447,6 +447,15 @@ void CastleEngine::drawInfoMenu() {
 		_gfx->readFromPalette(10, r, g, b);
 		front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 		drawStringInSurface(Common::String::format("%07d", score), 166, 71, front, black, surface);
+		drawStringInSurface(centerAndPadString(Common::String::format("%s", _messagesList[134 + shield / 6].c_str()), 10), 151, 102,  front, black, surface);
+
+		Common::String keysCollected = _messagesList[141];
+		Common::replace(keysCollected, "X", Common::String::format("%d", _keysCollected.size()));
+		drawStringInSurface(keysCollected, 103, 41,  front, black, surface);
+
+		Common::String spiritsDestroyed = _messagesList[133];
+		Common::replace(spiritsDestroyed, "X", Common::String::format("%d", _spiritsDestroyed));
+		drawStringInSurface(spiritsDestroyed, 145 , 132,  front, black, surface);
 
 		for (int  i = 0; i < int(_keysCollected.size()) ; i++) {
 			if (i % 2 == 0)
