@@ -48,15 +48,7 @@
 
 namespace Sci {
 
-struct MovieConfig {
-	MovieConfig() : x(0), y(0), w(0), h(0), mode(0), pauseToken(), playFrom(0), playTo(0) {}
-	Common::String filename;
-	reg_t pauseToken;
-	int16 x, y, w, h;
-	uint16 mode, playFrom, playTo;
-};
-
-void playVideo(Video::VideoDecoder &videoDecoder, MovieConfig *conf) {
+void playVideo(Video::VideoDecoder &videoDecoder) {
 	videoDecoder.start();
 
 	Common::SpanOwner<SciSpan<byte> > scaleBuffer;
@@ -77,21 +69,6 @@ void playVideo(Video::VideoDecoder &videoDecoder, MovieConfig *conf) {
 
 	uint16 x = (screenWidth - width) / 2;
 	uint16 y = (screenHeight - height) / 2;
-
-	if (conf) {
-		// This is only for documentary purposes, since the original KQ6 Win interpreter does that.
-		// But the videos will be centered on the screen anyway, without actually using these.
-		x = conf->x;
-		y = conf->y;
-		if (conf->w > 0 && conf->h > 0) {
-			width = conf->w;
-			height = conf->h;
-		}
-		if (conf->playFrom)
-			videoDecoder.seek(Audio::Timestamp(conf->playFrom, 1000));
-		if (conf->playTo)
-			videoDecoder.setEndTime(Audio::Timestamp(conf->playTo, 1000));
-	}
 
 	bool skipVideo = false;
 
@@ -135,13 +112,6 @@ void playVideo(Video::VideoDecoder &videoDecoder, MovieConfig *conf) {
 		g_system->delayMillis(10);
 	}
 }
-
-void playVideo(Video::VideoDecoder &videoDecoder) { // For the debugger
-	playVideo(videoDecoder, nullptr);
-}
-
-MovieConfig *_movieConf = nullptr;
-
 reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	reg_t retval = s->r_acc;
 
@@ -200,59 +170,34 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	} else {
 		// Windows AVI: Only used by KQ6 CD for the Sierra logo and intro cartoon.
 		// The first parameter is a subop. Some of the subops set the accumulator.
-		// The interpreter implements subops 0-6. KQ6 only calls 0, 1, 2, 3, 6.
-
+		// The interpreter implements subops 0-6. KQ6 only calls 0, 1, 2, 6.
+		// Subop 0: Open movie file
+		// Subop 1: Setup movie playback rectangle
+		// Subop 2: Play movie
+		// Subop 6: Close movie file
+		// We just play it on opcode 0, since the config parameters that are passed
+		// to opcodes 1 and 2 aren't properly used anyway (the video will be centered,
+		// regardless of any x, y, width and height settings).
+		// Using any other opcode than 0 would also require unblocking the engine
+		// after the movie playback like this (with <pauseToken> being the second
+		// argument passed to opcode 2):
+		// invokeSelector(s, <pauseToken>, g_sci->getKernel()->findSelector("cue"), argc, argv);
 		switch (argv[0].toUint16()) {
 		case 0: {
-			_movieConf = new MovieConfig();
-			_movieConf->filename = s->_segMan->getString(argv[1]);
-			retval = NULL_REG;
-			break;
-		}
-		case 1:
-			if (_movieConf) {
-				int16 *dest[4] = { &_movieConf->x, &_movieConf->y, &_movieConf->w, &_movieConf->h };
-				for (int i = 1; i < argc; ++i)
-					*dest[i - 1] = argv[i].toSint16();
-			}
-			retval = NULL_REG;
-			break;
-		case 2:
-			if (_movieConf) {
-				switch (argc) {
-				case 5:
-					_movieConf->playTo = argv[4].toUint16();
-					// fallthrough
-				case 4:
-					_movieConf->playFrom = argv[3].toUint16();
-					// fallthrough
-				case 3:
-					_movieConf->pauseToken = argv[2];
-					// fallthrough
-				case 2:
-					_movieConf->mode = argv[1].toUint16();
-					break;
-				default:
-					break;
-				}
-			}
-
+			Common::String filename = s->_segMan->getString(argv[1]);
 			// For KQ6, this changes the vertical 200/440 upscaling to 200/400, since this is the expected behavior. Also,
 			// the calculation of the scaled x/y coordinates works slightly differently compared to the normal gfx rendering.
 			g_sci->_gfxScreen->gfxDriver()->setFlags(GfxDriver::kMovieMode);
-
 			videoDecoder.reset(new Video::AVIDecoder());
-			if (!videoDecoder->loadFile(_movieConf->filename.c_str())) {
-				warning("Failed to open movie file %s", _movieConf->filename.c_str());
+			if (!videoDecoder->loadFile(filename.c_str())) {
+				warning("Failed to open movie file %s", filename.c_str());
 				videoDecoder.reset();
 			}
-
 			syncLastFrame = false;
-			retval = NULL_REG;
-
+			retval = TRUE_REG;
 			break;
+		}
 		default:
-			// This will trigger on case 6 which is the close/deinit function. We don't need that.
 			debug(kDebugLevelVideo, "Unhandled kShowMovie subop %d", argv[0].toUint16());
 		}
 	}
@@ -261,7 +206,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		if (videoDecoder->getPixelFormat().bytesPerPixel > 1)
 			syncLastFrame = false;
 
-		playVideo(*videoDecoder, _movieConf);
+		playVideo(*videoDecoder);
 
 		// HACK: Switch back to 8bpp if we played a true color video.
 		// We also won't be copying the screen to the SCI screen...
@@ -273,17 +218,6 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		}
 
 		g_sci->_gfxScreen->gfxDriver()->clearFlags(GfxDriver::kMovieMode);
-
-		if (_movieConf) {
-			// Unfreeze the engine. KQ6 Windows does not run the video modally, since it happens via OS functions.
-			// So the engine is put into a waiting state until signalled to continue. The orignal interpreter does
-			// that from the window proc after receiving the mci finishing message. We can/should do it here, since we
-			// do play the video modally.
-			if (!_movieConf->pauseToken.isNull())
-				invokeSelector(s, _movieConf->pauseToken, g_sci->getKernel()->findSelector("cue"), argc, argv);
-			delete _movieConf;
-			_movieConf = nullptr;
-		}
 	}
 
 	if (reshowCursor)
