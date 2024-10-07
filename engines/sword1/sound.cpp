@@ -1193,7 +1193,7 @@ void Sound::updateMusicStreaming() {
 
 					if (_musicStreamFading[i] < 0) {
 						if (!SwordEngine::_systemVars.useWindowsAudioMode) {
-							debug("Sound::updateMusicStreaming(): Fading %s to %d", _musicFile[i].getName(),
+							debug(5, "Sound::updateMusicStreaming(): Fading %s to %d", _musicFile[i].getName(),
 								2 * (((0 - _musicStreamFading[i]) * 3 * (_volMusic[0] + _volMusic[1])) / 16));
 							_mixer->setChannelVolume(_hSampleMusic[i],
 								clampVolume(2 * (((0 - _musicStreamFading[i]) * 3 * (_volMusic[0] + _volMusic[1])) / 16)));
@@ -1217,7 +1217,7 @@ void Sound::updateMusicStreaming() {
 								pan = 0;
 							}
 
-							debug("Sound::updateMusicStreaming(): Fading %s to %d (pan %d)", _musicFile[i].getName(), vol, getWindowsPanValue(pan));
+							debug(5, "Sound::updateMusicStreaming(): Fading %s to %d (pan %d)", _musicFile[i].getName(), vol, getWindowsPanValue(pan));
 							_mixer->setChannelVolume(_hSampleMusic[i], vol);
 							_mixer->setChannelBalance(_hSampleMusic[i], getWindowsPanValue(pan));
 						}
@@ -1233,7 +1233,7 @@ void Sound::updateMusicStreaming() {
 							_musicStreamPlaying[i] = false;
 						}
 					} else if (!SwordEngine::_systemVars.useWindowsAudioMode) { // The Windows driver doesn't fade-in
-						debug("Sound::updateMusicStreaming(): Fading %s to %d", _musicFile[i].getName(),
+						debug(5, "Sound::updateMusicStreaming(): Fading %s to %d", _musicFile[i].getName(),
 							2 * ((_musicStreamFading[i] * 3 * (_volMusic[0] + _volMusic[1])) / 16));
 						_mixer->setChannelVolume(_hSampleMusic[i],
 							clampVolume(2 * ((_musicStreamFading[i] * 3 * (_volMusic[0] + _volMusic[1])) / 16)));
