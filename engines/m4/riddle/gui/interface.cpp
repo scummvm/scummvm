@@ -85,7 +85,6 @@ void Interface::setup() {
 	_interfaceBox = new InterfaceBox(RectClass(10, 10, SCREEN_WIDTH - 11, 101));
 	_inventory = new GUI::Inventory(RectClass(207, 2, 557, 74),
 		_sprite, 4, 2, 35, 35, 3);
-	_inventory->addToInterfaceBox(_interfaceBox);
 	_textField = new TextField(13, 2, 189, 20);
 
 	_btnTake = new ButtonClass(RectClass(2, 10, 40, 50), "take", 4,3, 5, 4, INTERFACE_SPRITES);
@@ -99,6 +98,8 @@ void Interface::setup() {
 	_btnBinky = new ButtonClass(RectClass(582, 10, 629, 50), "binky", 8, 11, 13, 12, INTERFACE_SPRITES);
 	_interfaceBox->add(_btnBackpack);
 	_interfaceBox->add(_btnBinky);
+
+	_inventory->addToInterfaceBox(_interfaceBox);
 }
 
 void Interface::cancel_sentence() {
