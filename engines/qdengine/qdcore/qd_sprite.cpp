@@ -273,7 +273,15 @@ bool qdSprite::load() {
 	}
 
 	_data = new byte[widthNB * height];
-	memcpy(_data, tgaSurface->getPixels(), widthNB * height);
+
+	byte *dataPtr = _data;
+
+	for (int i = 0; i < height; i++) {
+		byte *ptr = (byte *)tgaSurface->getBasePtr(0, i);
+
+		memcpy(dataPtr, ptr, widthNB);
+		dataPtr += widthNB;
+	}
 
 	delete fh;
 
