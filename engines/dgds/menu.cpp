@@ -33,7 +33,6 @@
 #include "dgds/font.h"
 #include "dgds/globals.h"
 #include "dgds/menu.h"
-#include "dgds/music.h"
 #include "dgds/request.h"
 #include "dgds/scene.h"
 #include "dgds/sound.h"
@@ -546,7 +545,6 @@ void Menu::handleClickOptionsMenu(const Common::Point &mouse) {
 	Gadget *gadget = getClickedMenuItem(mouse);
 	int16 clickedMenuItem = gadget->_gadgetNo;
 	Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType;
-	DgdsMidiPlayer *midiPlayer = engine->_soundPlayer->getMidiPlayer();
 
 	switch (clickedMenuItem) {
 	case kMenuOptionsJoystickOnOff:
@@ -563,12 +561,14 @@ void Menu::handleClickOptionsMenu(const Common::Point &mouse) {
 	case kMenuOptionsMusicOnOffHoC:
 		if (!mixer->isSoundTypeMuted(soundType)) {
 			mixer->muteSoundType(soundType, true);
-			midiPlayer->syncVolume();
-			midiPlayer->pause();
+			warning("TODO: Sync volume and pause music");
+			//midiPlayer->syncVolume();
+			//midiPlayer->pause();
 		} else {
 			mixer->muteSoundType(soundType, false);
-			midiPlayer->syncVolume();
-			midiPlayer->resume();
+			warning("TODO: Sync volume and resume music");
+			//midiPlayer->syncVolume();
+			//midiPlayer->resume();
 		}
 
 		updateOptionsGadget(gadget);

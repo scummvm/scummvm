@@ -19,27 +19,26 @@
  *
  */
 
-#ifndef DGDS_MUSIC_H
-#define DGDS_MUSIC_H
+// Resource library
 
-#include "audio/midiplayer.h"
+#include "common/file.h"
+#include "common/fs.h"
+
+#include "dgds/sound/resource/sci_resource.h"
+#include "dgds/sound/scispan.h"
 
 namespace Dgds {
 
-class DgdsMidiPlayer : public Audio::MidiPlayer {
-public:
-	DgdsMidiPlayer(bool isSfx);
+// A cut-down version of SciResource so we don't have to change
+// the midi code too much.
+SciResource::SciResource(const byte *data, int dataSz, int16 id)
+: SciSpan<const byte>(data, dataSz, Common::String::format("%d", id)) {
+}
 
-	void play(byte *data, uint32 size);
-	void stop();
+SciResource::~SciResource() {
+}
 
-private:
-	/** like MidiPlyer::syncVolume, syncs sfx/music volume depending on isSfx */
-	void syncVolumeForChannel();
-	bool _isSfx;
-};
+void SciResource::unalloc() {
+}
 
 } // End of namespace Dgds
-
-#endif // DGDS_MUSIC_H
-

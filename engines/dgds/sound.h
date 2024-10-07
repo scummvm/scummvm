@@ -31,6 +31,9 @@ namespace Dgds {
 class ResourceManager;
 class Decompressor;
 class DgdsMidiPlayer;
+class SciMusic;
+class MusicEntry;
+class AudioPlayer;
 
 struct Channel {
 	Audio::AudioStream *stream;
@@ -54,20 +57,23 @@ public:
 
 	void playSFX(uint num);
 
-	void stopSfx(byte channel);
+	void stopSfxForChannel(byte channel);
 	void stopSfxByNum(uint num);
 	void stopAllSfx();
 
 	bool playPCM(const byte *data, uint32 size);
 
-	DgdsMidiPlayer *getMidiPlayer() { return _midiMusicPlayer; }
-
 private:
 	void loadPCSound(const Common::String &filename, Common::Array<uint32> &sizeArray, Common::Array<byte *> &dataArray);
-	void playPCSound(uint num, const Common::Array<uint32> &sizeArray, const Common::Array<byte *> &dataArray, DgdsMidiPlayer *midiPlayer);
+	void playPCSound(uint num, const Common::Array<uint32> &sizeArray, const Common::Array<byte *> &dataArray, Audio::Mixer::SoundType soundType);
+
+	void processInitSound(uint num, const byte *data, int dataSz, Audio::Mixer::SoundType soundType);
+	void processDisposeSound(uint32 obj);
+	void processStopSound(uint32 obj, bool sampleFinishedPlaying);
+	void processPlaySound(uint32 obj, bool playBed, bool restoring, const byte *data, int dataSz);
+	void initSoundResource(MusicEntry *newSound, const byte *data, int dataSz, Audio::Mixer::SoundType soundType);
 
 	struct Channel _channels[2];
-	Common::SeekableReadStream *_soundData = nullptr;
 
 	Common::Array<uint32> _musicSizes;
 	Common::Array<byte *> _musicData;
@@ -76,10 +82,9 @@ private:
 	Common::Array<uint32> _sfxSizes;
 	Common::Array<byte *> _sfxData;
 
+	SciMusic *_music;
 
 	Audio::Mixer *_mixer;
-	DgdsMidiPlayer *_midiMusicPlayer;
-	DgdsMidiPlayer *_midiSoundPlayer;
 	ResourceManager *_resource;
 	Decompressor *_decompressor;
 };
@@ -90,8 +95,6 @@ enum {
 	TRACK_GM      = 1 << 2,
 	TRACK_MT32    = 1 << 3
 };
-
-byte loadSndTrack(uint32 track, const byte** trackPtr, uint16* trackSiz, const byte *data, uint32 size);
 
 } // End of namespace Dgds
 

@@ -31,12 +31,17 @@
 
 #include "dgds/decompress.h"
 #include "dgds/includes.h"
-#include "dgds/music.h"
 #include "dgds/parser.h"
 #include "dgds/resource.h"
 #include "dgds/sound.h"
+#include "dgds/sound/music.h"
+#include "dgds/sound/resource/sci_resource.h"
 
 namespace Dgds {
+
+static const uint16 SIGNAL_OFFSET = 0xffff;
+static const int SND_RESOURCE_OFFSET = 4096;
+static const int MUSIC_RESOURCE_OFFSET = 8192;
 
 static void _readHeader(const byte* &pos, uint32 &sci_header) {
 	sci_header = 0;
@@ -132,11 +137,58 @@ static uint32 _availableSndTracks(const byte *data, uint32 size) {
 }
 
 
+static byte _loadSndTrack(uint32 track, const byte** trackPtr, uint16* trackSiz, const byte *data, uint32 size) {
+	byte matchDrv;
+	switch (track) {
+	case DIGITAL_PCM:
+	case TRACK_ADLIB: matchDrv = 0;    break;
+	case TRACK_GM:	  matchDrv = 7;    break;
+	case TRACK_MT32:  matchDrv = 12;   break;
+	default:			   return 0;
+	}
+
+	const byte *pos = data;
+
+	uint32 sci_header;
+	_readHeader(pos, sci_header);
+
+	while (pos[0] != 0xFF) {
+		byte drv = *pos++;
+
+		byte part;
+		const byte *ptr;
+
+		part = 0;
+		for (ptr = pos; *ptr != 0xFF; _skipPartHeader(ptr))
+			part++;
+
+		if (matchDrv == drv) {
+			part = 0;
+			while (pos[0] != 0xFF) {
+				uint16 off, siz;
+				_readPartHeader(pos, off, siz);
+				off += sci_header;
+
+				trackPtr[part] = data + off;
+				trackSiz[part] = siz;
+				part++;
+			}
+			debug("- (%d) Play parts = %d", drv, part);
+			return part;
+		} else {
+			pos = ptr;
+		}
+		pos++;
+	}
+	pos++;
+	return 0;
+}
+
+
 Sound::Sound(Audio::Mixer *mixer, ResourceManager *resource, Decompressor *decompressor) :
-	_mixer(mixer), _resource(resource), _decompressor(decompressor) {
-	_midiMusicPlayer = new DgdsMidiPlayer(false);
-	//_midiSoundPlayer = new DgdsMidiPlayer(true);	// FIXME: Can't have multiple instances of OPL players
-	_midiSoundPlayer = nullptr;
+	_mixer(mixer), _resource(resource), _decompressor(decompressor), _music(nullptr) {
+	_music = new SciMusic(true);
+	_music->init();
 }
 
 Sound::~Sound() {
@@ -144,9 +196,6 @@ Sound::~Sound() {
 
 	for (auto *data: _sfxData)
 		delete [] data;
-
-	delete _midiMusicPlayer;
-	delete _midiSoundPlayer;
 }
 
 void Sound::playAmigaSfx(const Common::String &filename, byte channel, byte volume) {
@@ -161,26 +210,25 @@ void Sound::playAmigaSfx(const Common::String &filename, byte channel, byte volu
 
 	byte *dest = new byte[sfxStream->size()];
 	sfxStream->read(dest, sfxStream->size());
-	_soundData = new Common::MemoryReadStream(dest, sfxStream->size(), DisposeAfterUse::YES);
+	Common::MemoryReadStream *soundData = new Common::MemoryReadStream(dest, sfxStream->size(), DisposeAfterUse::YES);
 	delete sfxStream;
 
-	stopSfx(channel);
+	stopSfxForChannel(channel);
 
-	if (_soundData) {
+	if (soundData) {
 		Channel *ch = &_channels[channel];
-		Audio::AudioStream *input = Audio::makeAIFFStream(_soundData, DisposeAfterUse::YES);
+		Audio::AudioStream *input = Audio::makeAIFFStream(soundData, DisposeAfterUse::YES);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
-		_soundData = 0;
 	}
 }
 
 void Sound::stopAllSfx() {
+	_music->stopSFX();
 	for (uint i = 0; i < ARRAYSIZE(_channels); i++)
-		stopSfx(i);
-	//_midiSoundPlayer->stop();
+		stopSfxForChannel(i);
 }
 
-void Sound::stopSfx(byte channel) {
+void Sound::stopSfxForChannel(byte channel) {
 	if (_mixer->isSoundHandleActive(_channels[channel].handle)) {
 		_mixer->stopHandle(_channels[channel].handle);
 		_channels[channel].stream = 0;
@@ -195,7 +243,7 @@ bool Sound::playPCM(const byte *data, uint32 size) {
 
 	const byte *trackPtr[0xFF];
 	uint16 trackSiz[0xFF];
-	byte numParts = loadSndTrack(DIGITAL_PCM, trackPtr, trackSiz, data, size);
+	byte numParts = _loadSndTrack(DIGITAL_PCM, trackPtr, trackSiz, data, size);
 	if (numParts == 0)
 		return false;
 
@@ -213,7 +261,6 @@ bool Sound::playPCM(const byte *data, uint32 size) {
 
 		uint16 rate, length, first, last;
 		rate = READ_LE_UINT16(ptr);
-
 		length = READ_LE_UINT16(ptr + 2);
 		first = READ_LE_UINT16(ptr + 4);
 		last = READ_LE_UINT16(ptr + 6);
@@ -226,7 +273,7 @@ bool Sound::playPCM(const byte *data, uint32 size) {
 		trackSiz[part] = length;
 
 		Channel *ch = &_channels[part];
-		byte volume = 255;
+		byte volume = 127;
 		Audio::AudioStream *input = Audio::makeRawStream(trackPtr[part], trackSiz[part],
 														 rate, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume, 0, DisposeAfterUse::YES);
@@ -276,7 +323,7 @@ void Sound::loadMacMusic(const Common::String &filename) {
 			uint16 type = stream->readUint16LE();
 			uint16 count = stream->readUint16LE();
 
-			debug("  SX INF %u [%u]:  (%s)", type, count, filename.c_str());
+			debug("  SX INF %u [%u entries]:  (%s)", type, count, filename.c_str());
 			for (uint16 k = 0; k < count; k++) {
 				uint16 idx = stream->readUint16LE();
 				debug("        %2u: %u", k, idx);
@@ -295,12 +342,9 @@ void Sound::loadMacMusic(const Common::String &filename) {
 	}
 
 	delete musicStream;
-
-	stopMusic();
 }
 
 void Sound::loadMusic(const Common::String &filename) {
-	stopMusic();
 	unloadMusic();
 	loadPCSound(filename, _musicSizes, _musicData);
 }
@@ -330,55 +374,191 @@ void Sound::loadPCSound(const Common::String &filename, Common::Array<uint32> &s
 
 		Common::SeekableReadStream *stream = chunk.getContent();
 		if (chunk.isSection(ID_SNG)) {
-			int32 musicSize = stream->size();
-			byte *data = new byte[musicSize];
-			stream->read(data, musicSize);
-			sizeArray.push_back(musicSize);
+			int32 chunkSize = stream->size();
+			byte *data = new byte[chunkSize];
+			stream->read(data, chunkSize);
+			sizeArray.push_back(chunkSize);
 			dataArray.push_back(data);
 		} else if (chunk.isSection(ID_INF)) {
 			uint32 count = stream->size() / 2;
-			debug("  SNG INF [%u]", count);
+			debug("  SNG INF [%u entries]", count);
 			for (uint32 k = 0; k < count; k++) {
 				uint16 idx = stream->readUint16LE();
-				debug("        %2u: %u", k, idx);
+				debug("        %2u: 0x%04x", k, idx);
 			}
+		} else {
+			warning("loadPCSound: skip unused chunk %s in %s", chunk.getIdStr(), filename.c_str());
 		}
 	}
 
 	delete musicStream;
-
 }
 
 void Sound::playSFX(uint num) {
-	playPCSound(num, _sfxSizes, _sfxData, _midiSoundPlayer);
+	playPCSound(num, _sfxSizes, _sfxData, Audio::Mixer::kSFXSoundType);
 }
 
 void Sound::stopSfxByNum(uint num) {
-	warning("TODO: Implement me! Sound::stopSfxById(%d)", num);
+	MusicEntry *musicSlot = _music->getSlot(num + SND_RESOURCE_OFFSET);
+	if (!musicSlot) {
+		warning("stopSfxByNum: Slot not found (%08x)", num);
+		return;
+	}
+
+	musicSlot->dataInc = 0;
+	musicSlot->signal = SIGNAL_OFFSET;
+	_music->soundStop(musicSlot);
 }
 
 void Sound::playMusic(uint num) {
-	playPCSound(num, _musicSizes, _musicData, _midiMusicPlayer);
+	playPCSound(num, _musicSizes, _musicData, Audio::Mixer::kMusicSoundType);
 }
 
-void Sound::playPCSound(uint num, const Common::Array<uint32> &sizeArray, const Common::Array<byte *> &dataArray, DgdsMidiPlayer *midiPlayer) {
+void Sound::processInitSound(uint num, const byte *data, int dataSz, Audio::Mixer::SoundType soundType) {
+	// Check if a track with the same sound object is already playing
+	MusicEntry *oldSound = _music->getSlot(num);
+	if (oldSound) {
+		processDisposeSound(num);
+	}
+
+	MusicEntry *newSound = new MusicEntry();
+	newSound->resourceId = num;
+	newSound->soundObj = num;
+	newSound->loop = 1; // Default to one loop
+	newSound->overridePriority = false;
+	newSound->priority = 255; // TODO: Priority?
+	newSound->volume = MUSIC_VOLUME_DEFAULT;
+	newSound->reverb = -1;	// initialize to SCI invalid, it'll be set correctly in soundInitSnd() below
+
+	debugC(kDebugLevelSound, "kDoSound(init): %08x number %d, loop %d, prio %d, vol %d", num,
+			num, newSound->loop, newSound->priority, newSound->volume);
+
+	initSoundResource(newSound, data, dataSz, soundType);
+
+	_music->pushBackSlot(newSound);
+}
+
+void Sound::initSoundResource(MusicEntry *newSound, const byte *data, int dataSz, Audio::Mixer::SoundType soundType) {
+	if (newSound->resourceId) {
+		newSound->soundRes = new SoundResource(newSound->resourceId, data, dataSz);
+		if (!newSound->soundRes->exists()) {
+			delete newSound->soundRes;
+			newSound->soundRes = nullptr;
+		}
+	} else {
+		newSound->soundRes = nullptr;
+	}
+
+	if (!newSound->isSample && newSound->soundRes)
+		_music->soundInitSnd(newSound);
+
+	newSound->soundType = soundType;
+}
+
+void Sound::processDisposeSound(uint32 obj) {
+	// Mostly copied from SCI soundcmd.
+	MusicEntry *musicSlot = _music->getSlot(obj);
+	if (!musicSlot) {
+		warning("processDisposeSound: Slot not found (%08x)", obj);
+		return;
+	}
+
+	processStopSound(obj, false);
+
+	_music->soundKill(musicSlot);
+}
+
+void Sound::processStopSound(uint32 obj, bool sampleFinishedPlaying) {
+	// Mostly copied from SCI soundcmd.
+	MusicEntry *musicSlot = _music->getSlot(obj);
+	if (!musicSlot) {
+		warning("processStopSound: Slot not found (%08x)", obj);
+		return;
+	}
+
+	musicSlot->dataInc = 0;
+	musicSlot->signal = SIGNAL_OFFSET;
+	_music->soundStop(musicSlot);
+}
+
+void Sound::processPlaySound(uint32 obj, bool playBed, bool restoring, const byte *data, int dataSz) {
+	// Mostly copied from SCI soundcmd.
+	MusicEntry *musicSlot = _music->getSlot(obj);
+
+	if (!musicSlot) {
+		error("kDoSound(play): Slot not found (%08x)", obj);
+	}
+
+	int32 resourceId;
+	if (!restoring)
+		resourceId = obj;
+	else
+		// Handle cases where a game was saved while track A was playing, but track B was initialized, waiting to be played later.
+		// In such cases, musicSlot->resourceId contains the actual track that was playing (A), while getSoundResourceId(obj)
+		// contains the track that's waiting to be played later (B) - bug #10907.
+		resourceId = musicSlot->resourceId;
+
+	if (musicSlot->resourceId != resourceId) { // another sound loaded into struct
+		processDisposeSound(obj);
+		processInitSound(obj, data, dataSz, Audio::Mixer::kSFXSoundType);
+		// Find slot again :)
+		musicSlot = _music->getSlot(obj);
+	}
+
+	musicSlot->loop = 1; // Play once by default?
+
+	// Get song priority from either obj or soundRes
+	byte resourcePriority = 0xFF;
+	if (musicSlot->soundRes)
+		resourcePriority = musicSlot->soundRes->getSoundPriority();
+	if (!musicSlot->overridePriority && resourcePriority != 0xFF) {
+		musicSlot->priority = resourcePriority;
+	} else {
+		musicSlot->priority = 0xff; // todo: priority?
+	}
+
+	// Reset hold when starting a new song. kDoSoundSetHold is always called after
+	// kDoSoundPlay to set it properly, if needed. Fixes bug #5851.
+	musicSlot->hold = -1;
+	musicSlot->playBed = playBed;
+	musicSlot->volume = MUSIC_VOLUME_DEFAULT;
+
+	debugC(kDebugLevelSound, "kDoSound(play): %08x number %d, loop %d, prio %d, vol %d, bed %d", obj,
+			resourceId, musicSlot->loop, musicSlot->priority, musicSlot->volume, playBed ? 1 : 0);
+
+	_music->soundPlay(musicSlot, restoring);
+
+	// Reset any left-over signals
+	musicSlot->signal = 0;
+	musicSlot->fadeStep = 0;
+}
+
+void Sound::playPCSound(uint num, const Common::Array<uint32> &sizeArray, const Common::Array<byte *> &dataArray, Audio::Mixer::SoundType soundType) {
 	if (_musicIdMap.size()) {
 		num = _musicIdMap[num];
 	}
+
 	if (num < dataArray.size()) {
 		uint32 tracks = _availableSndTracks(dataArray[num], sizeArray[num]);
-		if (midiPlayer && (tracks & TRACK_MT32))
-			midiPlayer->play(dataArray[num], sizeArray[num]);
-		else if (tracks & DIGITAL_PCM)
+		if (tracks & DIGITAL_PCM) {
 			playPCM(dataArray[num], sizeArray[num]);
+		} else {
+			int size = sizeArray[num];
+			const byte *data = dataArray[num];
+			uint32 hdrsize = 0;
+			_readHeader(data, hdrsize);
+			size -= hdrsize;
+			int offset = soundType == Audio::Mixer::kSFXSoundType ? SND_RESOURCE_OFFSET : MUSIC_RESOURCE_OFFSET;
+			processInitSound(num + offset, data, size, soundType);
+			processPlaySound(num + offset, false, false, data, size);
+		}
 	} else {
 		warning("Sound: Requested to play %d but only have %d tracks", num, dataArray.size());
 	}
 }
 
 void Sound::stopMusic() {
-	_midiMusicPlayer->stop();
-	_mixer->stopAll();
+	_music->stopMusic();
 }
 
 void Sound::unloadMusic() {
@@ -388,58 +568,9 @@ void Sound::unloadMusic() {
 		delete [] data;
 	_musicData.clear();
 
-	// Don't unload the sfx data.
-
-	delete _soundData;
-	_soundData = nullptr;
+	// Don't unload sfxData.
 }
 
-byte loadSndTrack(uint32 track, const byte** trackPtr, uint16* trackSiz, const byte *data, uint32 size) {
-	byte matchDrv;
-	switch (track) {
-	case DIGITAL_PCM:
-	case TRACK_ADLIB: matchDrv = 0;    break;
-	case TRACK_GM:	  matchDrv = 7;    break;
-	case TRACK_MT32:  matchDrv = 12;   break;
-	default:			   return 0;
-	}
-
-	const byte *pos = data;
-
-	uint32 sci_header;
-	_readHeader(pos, sci_header);
-
-	while (pos[0] != 0xFF) {
-		byte drv = *pos++;
-
-		byte part;
-		const byte *ptr;
-
-		part = 0;
-		for (ptr = pos; *ptr != 0xFF; _skipPartHeader(ptr))
-			part++;
-
-		if (matchDrv == drv) {
-			part = 0;
-			while (pos[0] != 0xFF) {
-				uint16 off, siz;
-				_readPartHeader(pos, off, siz);
-				off += sci_header;
-
-				trackPtr[part] = data + off;
-				trackSiz[part] = siz;
-				part++;
-			}
-			debug("- (%d) Play parts = %d", drv, part);
-			return part;
-		} else {
-			pos = ptr;
-		}
-		pos++;
-	}
-	pos++;
-	return 0;
-}
 
 } // End of namespace Dgds
 

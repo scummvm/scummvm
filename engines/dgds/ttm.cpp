@@ -1087,6 +1087,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	case 0xf060: // LOAD SONG:	filename:str
 		if (seq._executed) // this is a one-shot op
 			break;
+
+		_vm->_soundPlayer->stopMusic();
 		if (_vm->_platform == Common::kPlatformAmiga) {
 			// TODO: remove hard-coded stuff..
 			_vm->_soundPlayer->playAmigaSfx("DYNAMIX.INS", 0, 255);

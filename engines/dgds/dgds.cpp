@@ -366,6 +366,7 @@ void DgdsEngine::loadGameFiles() {
 		reqParser.parse(&vcrRequestData, "DVCR.REQ");
 		break;
 	case GID_HOC:
+		_soundPlayer->loadSFX("SOUNDS1.SNG");
 		_gameGlobals = new HocGlobals(_clock);
 		_gamePals->loadPalette("HOC.PAL");
 		_gdsScene->load("HOC.GDS", _resource, _decompressor);

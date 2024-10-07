@@ -177,7 +177,8 @@ public:
 
 	void restartGame();
 
-	DgdsGameId getGameId() { return _gameId; }
+	DgdsGameId getGameId() const { return _gameId; }
+	Common::Platform getPlatform() const { return _platform; }
 
 	Graphics::ManagedSurface &getBackgroundBuffer() { return _backgroundBuffer; }
 	Graphics::ManagedSurface &getStoredAreaBuffer() { return _storedAreaBuffer; }

@@ -18,7 +18,6 @@ MODULE_OBJS := \
 	inventory.o \
 	menu.o \
 	metaengine.o \
-	music.o \
 	parser.o \
 	request.o \
 	resource.o \
@@ -27,7 +26,15 @@ MODULE_OBJS := \
 	sound_raw.o \
 	ttm.o \
 	scene.o \
-	sound.o
+	sound.o \
+	sound/midiparser_sci.o \
+	sound/music.o \
+	sound/drivers/adlib.o \
+	sound/drivers/amigamac1.o \
+	sound/drivers/midi.o \
+	sound/drivers/midipatch.o \
+	sound/resource/sci_resource.o \
+	sound/resource/resource_audio.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_DGDS), DYNAMIC_PLUGIN)

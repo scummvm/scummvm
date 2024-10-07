@@ -124,6 +124,9 @@ Common::SeekableReadStream *ResourceManager::getResource(Common::String name, bo
 
 	Resource res = _resources[name];
 
+	if (res.size == 0xffffffff) // In willy beamish??
+		return nullptr;
+
 	return new Common::SeekableSubReadStream(&_volumes[res.volume], res.pos, res.pos + res.size);
 }
 
@@ -228,6 +231,12 @@ bool DgdsChunkReader::isPacked() const {
 		else if (strcmp(_idStr, "003:") == 0)
 			packed = true;
 		else if (strcmp(_idStr, "004:") == 0)
+			packed = true;
+		else if (strcmp(_idStr, "005:") == 0)
+			packed = true;
+		else if (strcmp(_idStr, "007:") == 0)
+			packed = true;
+		else if (strcmp(_idStr, "009:") == 0)
 			packed = true;
 		else if (strcmp(_idStr, "101:") == 0)
 			packed = true;

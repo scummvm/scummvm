@@ -125,15 +125,18 @@ bool Console::cmdFileDump(int argc, const char **argv) {
 				continue;
 			}
 
-			chunk.readContent(_vm->getDecompressor());
+			bool readSuccess = chunk.readContent(_vm->getDecompressor());
+			if (readSuccess) {
+				memcpy(ptr, chunk.getIdStr(), 4);
+				ptr += 4;
 
-			memcpy(ptr, chunk.getIdStr(), 4);
-			ptr += 4;
+				chunk.getContent()->read(ptr, chunk.getContent()->size());
+				ptr += chunk.getContent()->size();
 
-			chunk.getContent()->read(ptr, chunk.getContent()->size());
-			ptr += chunk.getContent()->size();
-
-			size += 4 + chunk.getContent()->size();
+				size += 4 + chunk.getContent()->size();
+			} else {
+				warning("Failed to read content for chunk with id %s", chunk.getIdStr());
+			}
 		}
 
 	}
