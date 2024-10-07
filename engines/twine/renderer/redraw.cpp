@@ -26,7 +26,7 @@
 #include "common/util.h"
 #include "graphics/surface.h"
 #include "twine/audio/sound.h"
-#include "twine/debugger/debug_scene.h"
+#include "twine/debugger/debug_state.h"
 #include "twine/input.h"
 #include "twine/menu/interface.h"
 #include "twine/menu/menu.h"
@@ -394,7 +394,7 @@ void Redraw::processDrawListShadows(const DrawListStruct &drawCmd) {
 
 		addRedrawArea(_engine->_interface->_clip);
 
-		_engine->_debugScene->drawClip(renderRect);
+		_engine->_debugState->drawClip(renderRect);
 	}
 	_engine->_interface->unsetClip();
 }
@@ -438,7 +438,7 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 			_engine->blitFrontToWork(_engine->_interface->_clip);
 		}
 
-		_engine->_debugScene->drawClip(_engine->_interface->_clip);
+		_engine->_debugState->drawClip(_engine->_interface->_clip);
 	}
 	_engine->_interface->unsetClip();
 }
@@ -499,7 +499,7 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 			_engine->blitFrontToWork(_engine->_interface->_clip);
 		}
 
-		_engine->_debugScene->drawClip(renderRect);
+		_engine->_debugState->drawClip(renderRect);
 		_engine->_interface->unsetClip();
 	}
 }
@@ -909,7 +909,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // AffScene
 	correctZLevels(drawList, drawListPos);
 	processDrawList(drawList, drawListPos, bgRedraw);
 
-	_engine->_debugScene->renderDebugView();
+	_engine->_debugState->renderDebugView();
 
 	renderOverlays();
 	renderText();

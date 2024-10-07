@@ -22,7 +22,7 @@
 #include "twine/script/script_life.h"
 #include "common/memstream.h"
 #include "common/stream.h"
-#include "twine/debugger/debug_scene.h"
+#include "twine/debugger/debug_state.h"
 #include "twine/scene/actor.h"
 #include "twine/scene/animations.h"
 #include "twine/audio/music.h"

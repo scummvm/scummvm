@@ -22,10 +22,8 @@
 #include "backends/imgui/IconsMaterialSymbols.h"
 
 #include "backends/imgui/imgui.h"
-#include "backends/imgui/imgui_internal.h"
 #include "common/util.h"
-#include "twine/debugger/debug_grid.h"
-#include "twine/debugger/debug_scene.h"
+#include "twine/debugger/debug_state.h"
 #include "twine/debugger/debugtools.h"
 #include "twine/debugger/dt-internal.h"
 #include "twine/holomap.h"
@@ -45,6 +43,8 @@ namespace TwinE {
 #define HOLOMAP_FLAGS_TITLE "Holomap flags"
 #define GAME_FLAGS_TITLE "Game flags"
 #define ACTOR_DETAILS_TITLE "Actor"
+#define GRID_TITLE "Grid"
+#define MENU_TEXT_TITLE "Menu texts"
 
 void onImGuiInit() {
 	ImGuiIO &io = ImGui::GetIO();
@@ -70,17 +70,17 @@ static void mainWindow(int &currentActor, TwinEEngine *engine) {
 		ImGui::Text("Scene: %i", scene->_currentSceneIdx);
 		ImGui::Text("Scene name: %s", gameState->_sceneName);
 
-		if (ImGui::Checkbox("Bounding boxes", &engine->_debugScene->_showingActors)) {
+		if (ImGui::Checkbox("Bounding boxes", &engine->_debugState->_showingActors)) {
 			engine->_redraw->_firstTime = true;
 		}
-		if (ImGui::Checkbox("Clipping", &engine->_debugScene->_showingClips)) {
+		if (ImGui::Checkbox("Clipping", &engine->_debugState->_showingClips)) {
 			engine->_redraw->_firstTime = true;
 		}
-		if (ImGui::Checkbox("Zones", &engine->_debugScene->_showingZones)) {
+		if (ImGui::Checkbox("Zones", &engine->_debugState->_showingZones)) {
 			engine->_redraw->_firstTime = true;
 		}
 
-		if (engine->_debugScene->_showingZones) {
+		if (engine->_debugState->_showingZones) {
 			if (ImGui::CollapsingHeader("Zones")) {
 				static const struct ZonesDesc {
 					const char *name;
@@ -99,7 +99,7 @@ static void mainWindow(int &currentActor, TwinEEngine *engine) {
 					{"Rail", ZoneType::kRail, nullptr}};
 
 				for (int i = 0; i < ARRAYSIZE(d); ++i) {
-					ImGui::CheckboxFlags(d[i].name, &engine->_debugScene->_typeZones, (1u << (uint32)d[i].type));
+					ImGui::CheckboxFlags(d[i].name, &engine->_debugState->_typeZones, (1u << (uint32)d[i].type));
 					if (d[i].desc) {
 						ImGui::SetTooltip(d[i].desc);
 					}
@@ -202,6 +202,65 @@ static void gameFlags(TwinEEngine *engine) {
 	ImGui::End();
 }
 
+static void grid(TwinEEngine *engine) {
+	if (ImGui::Begin(GRID_TITLE)) {
+		ImGui::Text("World cube %i %i %i", engine->_grid->_worldCube.x, engine->_grid->_worldCube.y, engine->_grid->_worldCube.z);
+		ImGui::Text("World cube %i %i %i", engine->_grid->_worldCube.x, engine->_grid->_worldCube.y, engine->_grid->_worldCube.z);
+
+		Grid *grid = engine->_grid;
+		// Increase celling grid index
+		if (ImGui::Button(ICON_MS_PLUS_ONE)) {
+			grid->_cellingGridIdx++;
+			if (grid->_cellingGridIdx > 133) {
+				grid->_cellingGridIdx = 133;
+			}
+		}
+		// Decrease celling grid index
+		if (ImGui::Button(ICON_MS_EV_SHADOW_MINUS)) {
+			grid->_cellingGridIdx--;
+			if (grid->_cellingGridIdx < 0) {
+				grid->_cellingGridIdx = 0;
+			}
+		}
+		// Enable/disable celling grid
+		if (ImGui::Button("Apply ceiling grid")) {
+			if (grid->_useCellingGrid == -1) {
+				grid->_useCellingGrid = 1;
+				// grid->createGridMap();
+				grid->initCellingGrid(grid->_cellingGridIdx);
+				debug("Enable Celling Grid index: %d", grid->_cellingGridIdx);
+				engine->_scene->_needChangeScene = SCENE_CEILING_GRID_FADE_2; // tricky to make the fade
+			} else if (grid->_useCellingGrid == 1) {
+				grid->_useCellingGrid = -1;
+				grid->copyMapToCube();
+				engine->_redraw->_firstTime = true;
+				debug("Disable Celling Grid index: %d", grid->_cellingGridIdx);
+				engine->_scene->_needChangeScene = SCENE_CEILING_GRID_FADE_2; // tricky to make the fade
+			}
+		}
+	}
+	ImGui::End();
+}
+
+static void menuTexts(TwinEEngine *engine) {
+	if (ImGui::Begin(MENU_TEXT_TITLE)) {
+		int id = (int)engine->_debugState->_textBankId;
+		if (ImGui::InputInt("Text bank", &id)) {
+			engine->_debugState->_textBankId = (TextBankId)id;
+		}
+		const TextBankId oldTextBankId = engine->_text->textBank();
+		engine->_text->initDial(engine->_debugState->_textBankId);
+		for (int32 i = 0; i < 1000; ++i) {
+			char buf[256];
+			if (engine->_text->getMenuText((TextId)i, buf, sizeof(buf))) {
+				ImGui::Text("%4i: %s\n", i, buf);
+			}
+		}
+		engine->_text->initDial(oldTextBankId);
+	}
+	ImGui::End();
+}
+
 static void actorDetails(int actorIdx, TwinEEngine *engine) {
 	if (ActorStruct *actor = engine->_scene->getActor(actorIdx)) {
 		if (ImGui::Begin(ACTOR_DETAILS_TITLE)) {
@@ -249,8 +308,8 @@ void onImGuiRender() {
 
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("Debugger")) {
-			ImGui::Checkbox("Free camera", &engine->_debugGrid->_useFreeCamera);
-			ImGui::Checkbox("God mode", &engine->_debugScene->_godMode);
+			ImGui::Checkbox("Free camera", &engine->_debugState->_useFreeCamera);
+			ImGui::Checkbox("God mode", &engine->_debugState->_godMode);
 
 			if (ImGui::MenuItem("Center actor")) {
 				ActorStruct *actor = engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX);
@@ -264,6 +323,8 @@ void onImGuiRender() {
 
 	mainWindow(currentActor, engine);
 	gameState(engine);
+	grid(engine);
+	menuTexts(engine);
 
 	// TODO: combine them
 	holomapFlags(engine);

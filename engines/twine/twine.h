@@ -92,8 +92,6 @@ struct ConfigFile {
 	int32 _languageId = 0;
 	/** Enable/Disable game dialogues */
 	bool FlagDisplayText = false;
-	/** Flag to display game debug */
-	bool Debug = false;
 	/** Type of music file to be used */
 	MidiFileType MidiType = MIDIFILE_NONE;
 	/** Game version */
@@ -145,7 +143,7 @@ class Text;
 class DebugGrid;
 struct Keyboard;
 class Debug;
-class DebugScene;
+class DebugState;
 
 // lba2
 class Buggy;
@@ -299,14 +297,12 @@ public:
 	Holomap *_holomap;
 	Sound *_sound;
 	Text *_text;
-	DebugGrid *_debugGrid;
 	Input *_input;
-	Debug *_debug;
 	Buggy *_buggy; // lba2
 	Dart *_dart; // lba2
 	Rain *_rain; // lba2
 	Wagon *_wagon; // lba2
-	DebugScene *_debugScene;
+	DebugState *_debugState;
 
 	/** Configuration file structure
 	 * Contains all the data used in the engine to configurate the game in particularly ways. */

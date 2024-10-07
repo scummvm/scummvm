@@ -41,9 +41,7 @@
 #include "twine/audio/music.h"
 #include "twine/audio/sound.h"
 #include "twine/debugger/console.h"
-#include "twine/debugger/debug.h"
-#include "twine/debugger/debug_grid.h"
-#include "twine/debugger/debug_scene.h"
+#include "twine/debugger/debug_state.h"
 #include "twine/detection.h"
 #include "twine/holomap_v1.h"
 #include "twine/holomap_v2.h"
@@ -225,10 +223,8 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 	}
 	_sound = new Sound(this);
 	_text = new Text(this);
-	_debugGrid = new DebugGrid(this);
 	_input = new Input(this);
-	_debug = new Debug(this);
-	_debugScene = new DebugScene(this);
+	_debugState = new DebugState(this);
 	setDebugger(new TwinEConsole(this));
 }
 
@@ -256,10 +252,8 @@ TwinEEngine::~TwinEEngine() {
 	delete _holomap;
 	delete _sound;
 	delete _text;
-	delete _debugGrid;
 	delete _input;
-	delete _debug;
-	delete _debugScene;
+	delete _debugState;
 }
 
 void TwinEEngine::pushMouseCursorVisible() {
@@ -533,7 +527,6 @@ void TwinEEngine::initConfigurations() {
 
 	_cfgfile.Sound = ConfGetBoolOrDefault("sound", true);
 	_cfgfile.Fps = ConfGetIntOrDefault("fps", DEFAULT_FRAMES_PER_SECOND);
-	_cfgfile.Debug = ConfGetBoolOrDefault("debug", false);
 	_cfgfile.Mouse = ConfGetBoolOrDefault("mouse", true);
 
 	_cfgfile.UseAutoSaving = ConfGetBoolOrDefault("useautosaving", false);
@@ -551,7 +544,6 @@ void TwinEEngine::initConfigurations() {
 	debug(1, "Sound:          %s", (_cfgfile.Sound ? "true" : "false"));
 	debug(1, "Movie:          %i", _cfgfile.Movie);
 	debug(1, "Fps:            %i", _cfgfile.Fps);
-	debug(1, "Debug:          %s", (_cfgfile.Debug ? "true" : "false"));
 	debug(1, "UseAutoSaving:  %s", (_cfgfile.UseAutoSaving ? "true" : "false"));
 	debug(1, "WallCollision:  %s", (_cfgfile.WallCollision ? "true" : "false"));
 	debug(1, "AutoAggressive: %s", (_actor->_combatAuto ? "true" : "false"));
@@ -887,7 +879,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 	_movements->update();
 
-	_debug->processDebug();
+	_debugState->update();
 
 	if (_menuOptions->flagCredits) {
 		if (isLBA1()) {

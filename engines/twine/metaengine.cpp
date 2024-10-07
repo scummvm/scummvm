@@ -222,21 +222,6 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("p");
 		gameKeyMap->addAction(act);
 
-		act = new Action("APPLYCELLINGGRID", _("Debug Apply Celling Grid"));
-		act->setCustomEngineActionEvent(TwinEActionType::ApplyCellingGrid);
-		act->addDefaultInputMapping("t");
-		gameKeyMap->addAction(act);
-
-		act = new Action("INCREASECELLINGGRIDINDEX", _("Debug Increase Celling Grid Index"));
-		act->setCustomEngineActionEvent(TwinEActionType::IncreaseCellingGridIndex);
-		act->addDefaultInputMapping("g");
-		gameKeyMap->addAction(act);
-
-		act = new Action("DECREASECELLINGGRIDINDEX", _("Debug Decrease Celling Grid Index"));
-		act->setCustomEngineActionEvent(TwinEActionType::DecreaseCellingGridIndex);
-		act->addDefaultInputMapping("b");
-		gameKeyMap->addAction(act);
-
 		act = new Action("DEBUGGRIDCAMERAPRESSUP", _("Debug Grid Camera Up"));
 		act->setCustomEngineActionEvent(TwinEActionType::DebugGridCameraPressUp);
 		act->addDefaultInputMapping("s");

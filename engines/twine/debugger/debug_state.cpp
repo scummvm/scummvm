@@ -19,7 +19,7 @@
  *
  */
 
-#include "twine/debugger/debug_scene.h"
+#include "twine/debugger/debug_state.h"
 #include "twine/menu/interface.h"
 #include "twine/menu/menu.h"
 #include "twine/renderer/redraw.h"
@@ -31,24 +31,28 @@
 
 namespace TwinE {
 
-DebugScene::DebugScene(TwinEEngine *engine) : _engine(engine) {}
+DebugState::DebugState(TwinEEngine *engine) : _engine(engine) {}
 
-void DebugScene::drawClip(const Common::Rect &rect) {
+void DebugState::update() {
+	changeGridCamera();
+}
+
+void DebugState::drawClip(const Common::Rect &rect) {
 	if (!_showingClips) {
 		return;
 	}
 	_engine->_menu->drawRectBorders(rect);
 }
 
-void DebugScene::projectBoundingBoxPoints(IVec3 *pPoint3d, IVec3 *pPoint3dProjected) {
+void DebugState::projectBoundingBoxPoints(IVec3 *pPoint3d, IVec3 *pPoint3dProjected) {
 	*pPoint3dProjected = _engine->_renderer->projectPoint(*pPoint3d);
 }
 
-bool DebugScene::checkZoneType(ZoneType type) const {
+bool DebugState::checkZoneType(ZoneType type) const {
 	return (_typeZones & (1u << (uint32)type)) != 0u;
 }
 
-DebugScene::ScenePositionsProjected DebugScene::calculateBoxPositions(const IVec3 &mins, const IVec3 &maxs) {
+DebugState::ScenePositionsProjected DebugState::calculateBoxPositions(const IVec3 &mins, const IVec3 &maxs) {
 	ScenePositionsProjected positions;
 	// compute the points in 3D
 	positions.frontBottomLeftPoint.x = mins.x - _engine->_grid->_worldCube.x;
@@ -92,7 +96,7 @@ DebugScene::ScenePositionsProjected DebugScene::calculateBoxPositions(const IVec
 	return positions;
 }
 
-bool DebugScene::drawBox(const ScenePositionsProjected &positions, uint8 color) {
+bool DebugState::drawBox(const ScenePositionsProjected &positions, uint8 color) {
 	bool state = false;
 	// draw front part
 	state |= _engine->_interface->drawLine(positions.frontBottomLeftPoint2D.x, positions.frontBottomLeftPoint2D.y, positions.frontTopLeftPoint2D.x, positions.frontTopLeftPoint2D.y, color);
@@ -121,7 +125,31 @@ bool DebugScene::drawBox(const ScenePositionsProjected &positions, uint8 color) 
 	return state;
 }
 
-bool DebugScene::displayActors() {
+void DebugState::changeGridCamera() {
+	if (!_useFreeCamera) {
+		return;
+	}
+
+	Grid *grid = _engine->_grid;
+	Redraw *redraw = _engine->_redraw;
+	Input *input = _engine->_input;
+	if (input->isActionActive(TwinEActionType::DebugGridCameraPressUp)) {
+		grid->_newCamera.z--;
+		redraw->_firstTime = true;
+	} else if (input->isActionActive(TwinEActionType::DebugGridCameraPressDown)) {
+		grid->_newCamera.z++;
+		redraw->_firstTime = true;
+	}
+	if (input->isActionActive(TwinEActionType::DebugGridCameraPressLeft)) {
+		grid->_newCamera.x--;
+		redraw->_firstTime = true;
+	} else if (input->isActionActive(TwinEActionType::DebugGridCameraPressRight)) {
+		grid->_newCamera.x++;
+		redraw->_firstTime = true;
+	}
+}
+
+bool DebugState::displayActors() {
 	bool state = false;
 	for (int32 a = 0; a < _engine->_scene->_nbObjets; a++) {
 		const ActorStruct *actorPtr = _engine->_scene->getActor(a);
@@ -151,7 +179,7 @@ bool DebugScene::displayActors() {
 }
 
 // TODO: implement the rendering points of all tracks as a dot with the id
-bool DebugScene::displayTracks() {
+bool DebugState::displayTracks() {
 #if 0
 	for (int i = 0; i < _engine->_scene->sceneNumTracks; i++) {
 		const Vec3 *trackPoint = &_engine->_scene->sceneTracks[i];
@@ -161,7 +189,7 @@ bool DebugScene::displayTracks() {
 	return false;
 }
 
-bool DebugScene::displayZones() {
+bool DebugState::displayZones() {
 	bool state = false;
 	for (int i = 0; i < _engine->_scene->_sceneNumZones; i++) {
 		const ZoneStruct *zonePtr = &_engine->_scene->_sceneZones[i];
@@ -189,7 +217,7 @@ bool DebugScene::displayZones() {
 	return state;
 }
 
-void DebugScene::renderDebugView() {
+void DebugState::renderDebugView() {
 	if (_showingZones) {
 		displayZones();
 	}

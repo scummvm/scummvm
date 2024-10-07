@@ -5,9 +5,7 @@ MODULE_OBJS := \
 	audio/sound.o \
 	\
 	debugger/console.o \
-	debugger/debug.o \
-	debugger/debug_grid.o \
-	debugger/debug_scene.o \
+	debugger/debug_state.o \
 	\
 	menu/interface.o \
 	menu/menu.o \

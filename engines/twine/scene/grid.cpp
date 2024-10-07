@@ -23,7 +23,7 @@
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
-#include "twine/debugger/debug_grid.h"
+#include "twine/debugger/debug_state.h"
 #include "twine/menu/interface.h"
 #include "twine/parser/blocklibrary.h"
 #include "twine/renderer/redraw.h"
@@ -67,7 +67,7 @@ void Grid::init(int32 w, int32 h) {
 }
 
 void Grid::copyMask(int32 index, int32 x, int32 y, const Graphics::ManagedSurface &buffer) {
-	if (_engine->_debugGrid->_disableGridRendering) {
+	if (_engine->_debugState->_disableGridRendering) {
 		return;
 	}
 	uint8 *ptr = _brickMaskTable[index];
@@ -498,7 +498,7 @@ bool Grid::drawSprite(int32 posX, int32 posY, const SpriteData &ptr, int spriteI
 
 // WARNING: Rewrite this function to have better performance
 bool Grid::drawBrickSprite(int32 posX, int32 posY, const uint8 *ptr, bool isSprite) {
-	if (_engine->_debugGrid->_disableGridRendering) {
+	if (_engine->_debugState->_disableGridRendering) {
 		return false;
 	}
 	if (!_engine->_interface->_clip.isValidRect()) {
@@ -841,7 +841,7 @@ void Grid::centerScreenOnActor() {
 	if (_engine->_disableScreenRecenter) {
 		return;
 	}
-	if (_engine->_debugGrid->_useFreeCamera) {
+	if (_engine->_debugState->_useFreeCamera) {
 		return;
 	}
 

@@ -22,8 +22,7 @@
 #include "twine/debugger/console.h"
 #include "common/scummsys.h"
 #include "common/util.h"
-#include "twine/debugger/debug_grid.h"
-#include "twine/debugger/debug_scene.h"
+#include "twine/debugger/debug_state.h"
 #include "twine/holomap.h"
 #include "twine/renderer/redraw.h"
 #include "twine/resources/hqr.h"
@@ -50,8 +49,6 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("toggle_scenery_view", WRAP_METHOD(TwinEConsole, doToggleSceneryView));
 	registerCmd("magic_points", WRAP_METHOD(TwinEConsole, doAddMagicPoints));
 	registerCmd("dumpfile", WRAP_METHOD(TwinEConsole, doDumpFile));
-	registerCmd("list_menutext", WRAP_METHOD(TwinEConsole, doListMenuText));
-	registerCmd("toggle_debug", WRAP_METHOD(TwinEConsole, doToggleDebug));
 	registerCmd("toggle_darkpal", WRAP_METHOD(TwinEConsole, doToggleDarkPal));
 	registerCmd("toggle_zones", WRAP_METHOD(TwinEConsole, doToggleZoneRendering));
 	registerCmd("toggle_tracks", WRAP_METHOD(TwinEConsole, doToggleTrackRendering));
@@ -95,28 +92,25 @@ void TwinEConsole::postEnter() {
 	} else {                                   \
 		debugPrintf("Enabling " description);  \
 		(var) = true;                          \
-	}                                          \
-	if ((var) && !_engine->_cfgfile.Debug) {    \
-		doToggleDebug(0, nullptr);             \
 	}
 
 bool TwinEConsole::doToggleZoneRendering(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->_showingZones, "zone rendering\n")
+	TOGGLE_DEBUG(_engine->_debugState->_showingZones, "zone rendering\n")
 	return true;
 }
 
 bool TwinEConsole::doToggleActorRendering(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->_showingActors, "actor rendering\n")
+	TOGGLE_DEBUG(_engine->_debugState->_showingActors, "actor rendering\n")
 	return true;
 }
 
 bool TwinEConsole::doToggleTrackRendering(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->_showingTracks, "tracks rendering\n")
+	TOGGLE_DEBUG(_engine->_debugState->_showingTracks, "tracks rendering\n")
 	return true;
 }
 
 bool TwinEConsole::doToggleGodMode(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->_godMode, "god mode\n")
+	TOGGLE_DEBUG(_engine->_debugState->_godMode, "god mode\n")
 	return true;
 }
 
@@ -126,7 +120,7 @@ bool TwinEConsole::doToggleEnhancements(int argc, const char **argv) {
 }
 
 bool TwinEConsole::doToggleClipRendering(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->_showingClips, "clip rendering\n")
+	TOGGLE_DEBUG(_engine->_debugState->_showingClips, "clip rendering\n")
 	return true;
 }
 
@@ -158,12 +152,12 @@ bool TwinEConsole::doSkipSceneActorsBut(int argc, const char **argv) {
 	}
 	const int16 actorIdx = atoi(argv[1]);
 	debugPrintf("Only load actor %d in the next scene\n", actorIdx);
-	_engine->_debugScene->_onlyLoadActor = actorIdx;
+	_engine->_debugState->_onlyLoadActor = actorIdx;
 	return true;
 }
 
 bool TwinEConsole::doToggleFreeCamera(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugGrid->_useFreeCamera, "free camera movement\n")
+	TOGGLE_DEBUG(_engine->_debugState->_useFreeCamera, "free camera movement\n")
 	return true;
 }
 
@@ -180,7 +174,7 @@ bool TwinEConsole::doSetTrackObject(int argc, const char **argv) {
 }
 
 bool TwinEConsole::doToggleSceneRendering(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugGrid->_disableGridRendering, "scene rendering\n")
+	TOGGLE_DEBUG(_engine->_debugState->_disableGridRendering, "scene rendering\n")
 	return true;
 }
 
@@ -331,34 +325,6 @@ bool TwinEConsole::doToggleDarkPal(int argc, const char **argv) {
 		debugPrintf("Enabling dark palette\n");
 		_engine->_screens->setDarkPal();
 	}
-	return true;
-}
-
-bool TwinEConsole::doToggleDebug(int argc, const char **argv) {
-	if (_engine->_cfgfile.Debug) {
-		debugPrintf("Disabling debug mode\n");
-		_engine->_cfgfile.Debug = false;
-	} else {
-		debugPrintf("Enabling debug mode\n");
-		_engine->_cfgfile.Debug = true;
-	}
-	return true;
-}
-
-bool TwinEConsole::doListMenuText(int argc, const char **argv) {
-	TextBankId textBankId = TextBankId::Inventory_Intro_and_Holomap;
-	if (argc >= 2) {
-		textBankId = (TextBankId)atoi(argv[1]);
-	}
-	const TextBankId oldTextBankId = _engine->_text->textBank();
-	_engine->_text->initDial(textBankId);
-	for (int32 i = 0; i < 1000; ++i) {
-		char buf[256];
-		if (_engine->_text->getMenuText((TextId)i, buf, sizeof(buf))) {
-			debugPrintf("%4i: %s\n", i, buf);
-		}
-	}
-	_engine->_text->initDial(oldTextBankId);
 	return true;
 }
 

@@ -26,8 +26,7 @@
 #include "common/util.h"
 #include "twine/audio/music.h"
 #include "twine/audio/sound.h"
-#include "twine/debugger/debug_grid.h"
-#include "twine/debugger/debug_scene.h"
+#include "twine/debugger/debug_state.h"
 #include "twine/holomap.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/renderer.h"
@@ -277,7 +276,7 @@ bool Scene::loadSceneLBA2() {
 		act->_lifeScript = _currentScene + stream.pos();
 		stream.skip(act->_lifeScriptSize);
 
-		if (_engine->_debugScene->_onlyLoadActor != -1 && _engine->_debugScene->_onlyLoadActor != cnt) {
+		if (_engine->_debugState->_onlyLoadActor != -1 && _engine->_debugState->_onlyLoadActor != cnt) {
 			_nbObjets--;
 			a--;
 		}
@@ -407,7 +406,7 @@ bool Scene::loadSceneLBA1() {
 		act->_lifeScript = _currentScene + stream.pos();
 		stream.skip(act->_lifeScriptSize);
 
-		if (_engine->_debugScene->_onlyLoadActor != -1 && _engine->_debugScene->_onlyLoadActor != cnt) {
+		if (_engine->_debugState->_onlyLoadActor != -1 && _engine->_debugState->_onlyLoadActor != cnt) {
 			_nbObjets--;
 			a--;
 		}
@@ -783,7 +782,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 				}
 				break;
 			case ZoneType::kCamera:
-				if (_currentlyFollowedActor == actorIdx && !_engine->_debugGrid->_useFreeCamera) {
+				if (_currentlyFollowedActor == actorIdx && !_engine->_debugState->_useFreeCamera) {
 					_engine->_disableScreenRecenter = true;
 					if (_engine->_grid->_newCamera.x != zone->infoData.CameraView.x || _engine->_grid->_newCamera.y != zone->infoData.CameraView.y || _engine->_grid->_newCamera.z != zone->infoData.CameraView.z) {
 						_engine->_grid->_newCamera.x = zone->infoData.CameraView.x;

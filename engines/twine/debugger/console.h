@@ -46,8 +46,6 @@ private:
 	bool doSetLife(int argc, const char **argv);
 	bool doGiveAllItems(int argc, const char **argv);
 	bool doChangeScene(int argc, const char **argv);
-	bool doListMenuText(int argc, const char **argv);
-	bool doToggleDebug(int argc, const char **argv);
 	bool doToggleDarkPal(int argc, const char **argv);
 	bool doToggleAutoAggressive(int argc, const char **argv);
 	bool doGiveKey(int argc, const char **argv);

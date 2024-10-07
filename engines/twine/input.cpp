@@ -34,7 +34,7 @@ const char *uiKeyMapId = "uiKeyMap";
 const char *cutsceneKeyMapId = "cutsceneKeyMap";
 const char *holomapKeyMapId = "holomapKeyMap";
 
-ScopedKeyMap::ScopedKeyMap(TwinEEngine* engine, const char *id) : _engine(engine) {
+ScopedKeyMap::ScopedKeyMap(TwinEEngine *engine, const char *id) : _engine(engine) {
 	_changed = _engine->_input->enableAdditionalKeyMap(id, true);
 	_keymap = id;
 }
@@ -114,7 +114,7 @@ void Input::enableKeyMap(const char *id) {
 	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 	const Common::KeymapArray &keymaps = keymapper->getKeymaps();
 	for (Common::Keymap *keymap : keymaps) {
-		const Common::String& keymapId = keymap->getId();
+		const Common::String &keymapId = keymap->getId();
 		if (keymapId == mainKeyMapId || keymapId == uiKeyMapId || keymapId == cutsceneKeyMapId || keymapId == holomapKeyMapId) {
 			keymap->setEnabled(keymapId == id);
 		}
@@ -124,23 +124,7 @@ void Input::enableKeyMap(const char *id) {
 }
 
 void Input::processCustomEngineEventStart(const Common::Event &event) {
-	if (!_engine->_cfgfile.Debug) {
-		switch (event.customType) {
-		case TwinEActionType::DebugGridCameraPressUp:
-		case TwinEActionType::DebugGridCameraPressDown:
-		case TwinEActionType::DebugGridCameraPressLeft:
-		case TwinEActionType::DebugGridCameraPressRight:
-		case TwinEActionType::ApplyCellingGrid:
-		case TwinEActionType::IncreaseCellingGridIndex:
-		case TwinEActionType::DecreaseCellingGridIndex:
-			break;
-		default:
-			_actionStates[event.customType] = 1 + event.kbdRepeat;
-			break;
-		}
-	} else {
-		_actionStates[event.customType] = 1 + event.kbdRepeat;
-	}
+	_actionStates[event.customType] = 1 + event.kbdRepeat;
 	debug(3, "twine custom event type start: %i", event.customType);
 }
 

@@ -24,7 +24,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "twine/audio/sound.h"
-#include "twine/debugger/debug_scene.h"
+#include "twine/debugger/debug_state.h"
 #include "twine/parser/entity.h"
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
@@ -373,7 +373,7 @@ void Actor::hitObj(int32 actorIdx, int32 actorIdxAttacked, int32 hitforce, int32
 		return;
 	}
 
-	if (IS_HERO(actorIdxAttacked) && _engine->_debugScene->_godMode) {
+	if (IS_HERO(actorIdxAttacked) && _engine->_debugState->_godMode) {
 		return;
 	}
 

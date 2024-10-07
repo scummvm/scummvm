@@ -39,9 +39,6 @@ extern const char *holomapKeyMapId;
 
 enum TwinEActionType {
 	Pause,
-	ApplyCellingGrid,
-	IncreaseCellingGridIndex,
-	DecreaseCellingGridIndex,
 	DebugGridCameraPressUp,
 	DebugGridCameraPressDown,
 	DebugGridCameraPressLeft,
