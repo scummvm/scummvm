@@ -229,7 +229,7 @@ void Inventory::draw(GrBuff *myBuffer) {
 					gr_line(left, top, left + _cell_w - 2, top, __LTGRAY, myBuff);
 					gr_line(left, top + _cell_h - 2, left + _cell_w - 2, top + _cell_h - 2, __LTGRAY, myBuff);
 					gr_line(left, top, left, top + _cell_w - 2, __LTGRAY, myBuff);
-					gr_line(left + _cell_w - 2, top, left + _cell_w - 2, top + 35, __LTGRAY, myBuff);
+					gr_line(left + _cell_w - 2, top, left + _cell_w - 2, top + _cell_h - 2, __LTGRAY, myBuff);
 				}
 			}
 		}
