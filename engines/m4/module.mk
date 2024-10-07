@@ -314,6 +314,7 @@ MODULE_OBJS = \
 	riddle/flags.o \
 	riddle/hotkeys.o \
 	riddle/inventory.o \
+	riddle/triggers.o \
 	riddle/vars.o \
 	riddle/walker.o
 

@@ -21,8 +21,10 @@
 
 #include "common/debug.h"
 #include "m4/riddle/riddle.h"
+#include "m4/riddle/triggers.h"
 #include "m4/riddle/console.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/other.h"
 #include "m4/core/errors.h"
 #include "m4/console.h"
 
@@ -177,12 +179,132 @@ void RiddleEngine::global_parser() {
 			
 			sendWSMessage_multi("COM028");
 		}
+	} else if ((player_said("journal", " ") || player_said("journal", "temple")) &&
+			!takeFlag && !lookFlag && !inv_player_has(_G(player).noun) &&
+			_G(game).room_id >= 702 && _G(game).room_id <= 799) {
+		if (_G(flags)[kTempleCartoon]) {
+			digi_play("com033", 1);
+		} else {
+			if (_G(kernel).trigger == 6) {
+				_G(flags)[kTempleCartoon] = 1;
+				_G(flags)[V089] = 1;
+			}
+
+			sendWSMessage_multi("com032");
+		}
+	} else if (player_said("journal") && player_said_any(" ", "lava") &&
+			!takeFlag && !lookFlag && !inv_player_has(_G(player).noun) &&
+			_G(game).room_id >= 601 && _G(game).room_id <= 699) {
+		if (_G(flags)[kEasterIslandCartoon]) {
+			digi_play("203r54", 1);
+		} else {
+			if (_G(kernel).trigger == 6) {
+				_G(flags)[kEasterIslandCartoon] = 1;
+				_G(flags)[V089] = 1;
+			}
+
+			sendWSMessage_multi("605r13");
+		}
+	} else if ((player_said("journal", "romanov emerald") ||
+			player_said("journal", "emerald/cork")) &&
+			!takeFlag && !lookFlag) {
+		if (_G(flags)[kEmeraldCartoon]) {
+			digi_play("407r33", 1);
+		} else {
+			if (_G(kernel).trigger == 6) {
+				_G(flags)[kEmeraldCartoon] = 1;
+				_G(flags)[V089] = 1;
+			}
+
+			sendWSMessage_multi(nullptr);
+		}
+	} else if (player_said("journal", "rongorongo tablet") &&
+			!takeFlag && !lookFlag) {
+		if (_G(flags)[V288]) {
+			digi_play("com086", 1, 255, -1, 997);
+		} else {
+			if (_G(kernel).trigger == 6) {
+				_G(flags)[V288] = 1;
+			}
+
+			sendWSMessage_multi(nullptr);
+		}
+
+	} else if (lookFlag && player_said("JOURNAL")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(1111);
+			break;
+		case 1111:
+			other_save_game_for_resurrection();
+			_G(game).setRoom(996);
+			break;
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("MEI CHEN")) {
+		digi_play("com043", 1);
+	} else if (lookFlag && player_said("feng li")) {
+		digi_play("com139", 1, 255, -1, 997);
+	} else if ((player_said("SHRUNKEN HEAD") ||
+			player_said("INCENSE BURNER") ||
+			player_said("CRYSTAL SKULL") ||
+			player_said("WHALE BONE HORN") ||
+			player_said("WHEELED TOY") ||
+			player_said("SILVER BUTTERFLY") ||
+			player_said("REBUS AMULET") ||
+			player_said("CHISEL") ||
+			player_said("GERMAN BANKNOTE") ||
+			player_said("POSTAGE STAMP") ||
+			player_said("STICK AND SHELL MAP") ||
+			player_said("ROMANOV EMERALD")) &&
+			player_said("agent")) {
+		digi_play("com021", 1, 255, -1, 997);
+	} else if (!lookFlag && !takeFlag && !useFlag && !talkFlag &&
+			player_said("AGENT")) {
+		if (player_said_any("US DOLLARS", "CHINESE YUAN", "POMERANIAN MARKS",
+			"PERUVIAN INTI", "GERMAN BANKNOTE", "SIKKIMESE RUPEE")) {
+			digi_play("COM012", 1, 255, -1, 997);
+		} else {
+			digi_play("COM017", 1, 255, -1, 997);
+		}
+	} else if ((lookFlag || useFlag) && player_said("MESSAGE LOG")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			showMessageLog(7777);
+			break;
+		case 1:
+			player_update_info();
+			_ripReadTelegram = series_load("RIP TREK READS TELEGRAM POS5");
+			setGlobals1(_ripReadTelegram, 1, 20, 20, 31, 2);
+			sendWSMessage_110000(2);
+			break;
+		case 2:
+			if (_G(player).walker_in_this_scene && _G(flags)[V292])
+				sendWSMessage_190000(12);
+
+			if (_G(flags)[V349] < 14) {
+				static const char *DIGI[14] = {
+					"201r26", "301r18", "301r19", "301r20", "301r21",
+					"201r61c","401R31", "401R37", "401r38", "401r39",
+					"501R02", "501R03", "701R39", "401R36"
+				};
+				digi_play(DIGI[_G(flags)[V349]], 1, 255, 3);
+			}
+			break;
+		case 3:
+			if (_G(player).walker_in_this_scene) {
+				// TODO
+			}
+			break;
+		default:
+			break;
+		}
 	}
+
 
 	// TODO: More stuff
-	else if (talkFlag) {
-
-	}
 }
 
 void RiddleEngine::combineItems(const char *newItem) {
@@ -197,9 +319,9 @@ void RiddleEngine::splitItems(const char *item1, const char *item2) {
 	inv_give_to_player(item2);
 }
 
-void RiddleEngine::sendWSMessage_multi(const char *name) {
-	Rooms::Room *room = static_cast<Rooms::Room *>(_activeRoom);
-	room->sendWSMessage_multi(name);
+void RiddleEngine::showMessageLog(int trigger) {
+	// TODO
+	warning("TODO: showMessageLog");
 }
 
 } // namespace Riddle

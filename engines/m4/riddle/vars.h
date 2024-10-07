@@ -56,6 +56,7 @@ public:
 	Common::String _string1;
 	Common::String _string2;
 	Common::String _string3;
+	int _ripSketching = 0;
 
 public:
 	Vars();

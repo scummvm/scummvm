@@ -46,6 +46,7 @@ private:
 	Rooms::Section7 _section7;
 	Rooms::Section8 _section8;
 	Rooms::Section9 _section9;
+	int _ripReadTelegram = 0;
 
 	/**
 	 * Combines the items in the player _verb and _noun,
@@ -60,7 +61,7 @@ private:
 	*/
 	void splitItems(const char *item1, const char *item2);
 
-	void sendWSMessage_multi(const char *name);
+	void showMessageLog(int trigger);
 
 protected:
 	/**
