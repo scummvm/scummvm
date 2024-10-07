@@ -155,3 +155,26 @@ diff --color -ru ./imgui.h ../scummvm/scummvm/backends/imgui/imgui.h
  #else
  #define IM_FMTARGS(FMT)
  #define IM_FMTLIST(FMT)
+diff --color -ru ./backends/imgui_impl_sdlrenderer2.cpp ../scummvm/backends/imgui/backends/imgui_impl_sdlrenderer2.cpp
+--- ./backends/imgui_impl_sdlrenderer2.cpp	2024-05-22 17:43:07
++++ ../scummvm/scummvm/backends/imgui/backends/imgui_impl_sdlrenderer2.cpp	2024-09-29 17:04:07
+@@ -30,7 +30,7 @@
+ //  2021-10-06: Backup and restore modified ClipRect/Viewport.
+ //  2021-09-21: Initial version.
+
+-#include "imgui.h"
++#include "backends/imgui/imgui.h"
+ #ifndef IMGUI_DISABLE
+ #include "imgui_impl_sdlrenderer2.h"
+ #include <stdint.h>     // intptr_t
+--- ./backends/imgui_impl_sdlrenderer2.h	2024-10-07 18:05:03
++++ ..//scummvm/scummvm/backends/imgui/backends/imgui_impl_sdlrenderer2.h	2024-09-29 17:04:07
+@@ -22,8 +22,8 @@
+ // - Introduction, links and more at the top of imgui.cpp
+
+ #pragma once
++#include "backends/imgui/imgui.h"      // IMGUI_IMPL_API
+ #ifndef IMGUI_DISABLE
+-#include "imgui.h"      // IMGUI_IMPL_API
+
+ struct SDL_Renderer;
