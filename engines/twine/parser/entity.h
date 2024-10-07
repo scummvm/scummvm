@@ -95,6 +95,20 @@ public:
 	const Common::Array<EntityAnim::Action> *getActions(AnimationTypes animation) const;
 	const EntityBody *getBody(const int index) const;
 	int32 getAnimIndex(AnimationTypes animation) const;
+
+	const Common::Array<EntityBody> &getBodies() const {
+		return _bodies;
+	}
+	const Common::Array<EntityAnim> &getAnimations() const {
+		return _animations;
+	}
+
+	Common::Array<EntityBody> &getBodies() {
+		return _bodies;
+	}
+	Common::Array<EntityAnim> &getAnimations() {
+		return _animations;
+	}
 };
 
 } // End of namespace TwinE

@@ -19,13 +19,17 @@
  *
  */
 
+#include "twine/debugger/debugtools.h"
+#include "backends/imgui/imgui.h"
 #include "backends/imgui/imgui_utils.h"
+#include "common/str.h"
 #include "common/util.h"
 #include "twine/debugger/debug_state.h"
-#include "twine/debugger/debugtools.h"
 #include "twine/debugger/dt-internal.h"
 #include "twine/holomap.h"
+#include "twine/parser/entity.h"
 #include "twine/renderer/redraw.h"
+#include "twine/resources/resources.h"
 #include "twine/scene/actor.h"
 #include "twine/scene/gamestate.h"
 #include "twine/scene/grid.h"
@@ -57,11 +61,29 @@ bool InputAngle(const char *label, int32 *v, int step = 1, int step_fast = 100, 
 	return false;
 }
 
+bool InputBoundingBox(ImGuiID id, const char *prefixLabel, TwinE::BoundingBox &bbox) {
+	TwinE::BoundingBox copy = bbox;
+	Common::String idStr = Common::String::format("%s mins##mins%u", prefixLabel, id);
+	if (ImGuiEx::InputIVec3(idStr.c_str(), copy.mins, ImGuiInputTextFlags_EnterReturnsTrue)) {
+		if (copy.isValid()) {
+			bbox.mins = copy.mins;
+		}
+		return true;
+	}
+	idStr = Common::String::format("%s maxs##maxs%u", prefixLabel, id);
+	if (ImGuiEx::InputIVec3(idStr.c_str(), copy.maxs, ImGuiInputTextFlags_EnterReturnsTrue)) {
+		if (copy.isValid()) {
+			bbox.maxs = copy.maxs;
+		}
+		return true;
+	}
+	return false;
+}
+
 } // namespace ImGuiEx
 
 namespace TwinE {
 
-#define MAIN_WINDOW_TITLE "Debug window"
 #define HOLOMAP_FLAGS_TITLE "Holomap flags"
 #define GAME_FLAGS_TITLE "Game flags"
 #define ACTOR_DETAILS_TITLE "Actor"
@@ -123,22 +145,29 @@ void onImGuiInit() {
 	_tinyFont = ImGui::addTTFFontFromArchive("FreeSans.ttf", 10.0f, nullptr, nullptr);
 }
 
-static void holomapFlagsPopup(TwinEEngine *engine) {
-	if (ImGui::BeginPopup(HOLOMAP_FLAGS_TITLE)) {
+static void holomapFlagsWindow(TwinEEngine *engine) {
+	if (!engine->_debugState->_holomapFlagsWindow) {
+		return;
+	}
+	if (ImGui::Begin(HOLOMAP_FLAGS_TITLE, &engine->_debugState->_holomapFlagsWindow)) {
 		if (ImGui::BeginTable("###holomapflags", 8)) {
 			for (int i = 0; i < engine->numHoloPos(); ++i) {
 				ImGui::TableNextColumn();
 				Common::String id = Common::String::format("[%03d]", i);
 				ImGuiEx::InputInt(id.c_str(), &engine->_gameState->_holomapFlags[i]);
+				ImGui::SetItemTooltip("%s", engine->_holomap->getLocationName(i));
 			}
 			ImGui::EndTable();
 		}
-		ImGui::EndPopup();
 	}
+	ImGui::End();
 }
 
-static void gameFlagsPopup(TwinEEngine *engine) {
-	if (ImGui::BeginPopup(GAME_FLAGS_TITLE)) {
+static void gameFlagsWindow(TwinEEngine *engine) {
+	if (!engine->_debugState->_gameFlagsWindow) {
+		return;
+	}
+	if (ImGui::Begin(GAME_FLAGS_TITLE, &engine->_debugState->_gameFlagsWindow)) {
 		ImGui::Text("Chapter %i", engine->_gameState->getChapter());
 		if (ImGui::BeginTable("###gameflags", 8)) {
 			for (int i = 0; i < NUM_GAME_FLAGS; ++i) {
@@ -151,12 +180,15 @@ static void gameFlagsPopup(TwinEEngine *engine) {
 			}
 			ImGui::EndTable();
 		}
-		ImGui::EndPopup();
 	}
+	ImGui::End();
 }
 
-static void menuTextsPopup(TwinEEngine *engine) {
-	if (ImGui::BeginPopup(MENU_TEXT_TITLE)) {
+static void menuTextsWindow(TwinEEngine *engine) {
+	if (!engine->_debugState->_menuTextWindow) {
+		return;
+	}
+	if (ImGui::Begin(MENU_TEXT_TITLE, &engine->_debugState->_menuTextWindow)) {
 		int id = (int)engine->_debugState->_textBankId;
 		if (ImGui::InputInt("Text bank", &id)) {
 			engine->_debugState->_textBankId = (TextBankId)id;
@@ -170,8 +202,8 @@ static void menuTextsPopup(TwinEEngine *engine) {
 			}
 		}
 		engine->_text->initDial(oldTextBankId);
-		ImGui::EndPopup();
 	}
+	ImGui::End();
 }
 
 static void actorDetailsWindow(int &actorIdx, TwinEEngine *engine) {
@@ -179,6 +211,7 @@ static void actorDetailsWindow(int &actorIdx, TwinEEngine *engine) {
 	if (actor == nullptr) {
 		return;
 	}
+
 	if (ImGui::Begin(ACTOR_DETAILS_TITLE)) {
 		if (actorIdx < 0 || actorIdx > engine->_scene->_nbObjets) {
 			actorIdx = 0;
@@ -202,8 +235,7 @@ static void actorDetailsWindow(int &actorIdx, TwinEEngine *engine) {
 		ImGuiEx::InputInt("Speed", &actor->_speed);
 		ImGuiEx::InputInt("Life", &actor->_lifePoint);
 		ImGuiEx::InputInt("Armor", &actor->_armor);
-		ImGuiEx::InputIVec3("Bounding box mins", actor->_boundingBox.mins);
-		ImGuiEx::InputIVec3("Bounding box maxs", actor->_boundingBox.maxs);
+		ImGuiEx::InputBoundingBox(actorIdx, "Bounding box", actor->_boundingBox);
 
 		if (ImGui::BeginTable("Properties", 2)) {
 			ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed);
@@ -247,6 +279,10 @@ static void actorDetailsWindow(int &actorIdx, TwinEEngine *engine) {
 			ImGui::TableNextColumn();
 			ImGui::Text("%i", actor->_objCol);
 			ImGui::TableNextColumn();
+			ImGui::Text("Talk color");
+			ImGui::TableNextColumn();
+			ImGui::Text("%i", actor->_talkColor);
+			ImGui::TableNextColumn();
 			ImGui::Text("Body");
 			ImGui::TableNextColumn();
 			ImGui::Text("%i", actor->_body); // TODO: link to resources
@@ -280,6 +316,38 @@ static void actorDetailsWindow(int &actorIdx, TwinEEngine *engine) {
 			ImGui::Text("%i %i %i", actor->A3DS.Num, actor->A3DS.Deb, actor->A3DS.Fin);
 
 			ImGui::EndTable();
+		}
+
+		if (actor->_body != -1) {
+			ImGui::SeparatorText("Body");
+			BodyData &bodyData = engine->_resources->_bodyData[actor->_body];
+			ImGuiEx::InputBoundingBox(actor->_body, "Bounding box", bodyData.bbox);
+		}
+
+		ImGui::SeparatorText("Entity");
+		EntityData &entityData = actor->_entityData;
+		Common::Array<EntityBody> &bodies = entityData.getBodies();
+		ImGui::Text("Bodies: %i", (int)bodies.size());
+		for (EntityBody &body : bodies) {
+			ImGui::Text("%s index: %i", Resources::HQR_FILE3D_FILE, body.index);
+			ImGui::Indent();
+			ImGui::Text("%s index: %i", Resources::HQR_BODY_FILE, body.hqrBodyIndex);
+			Common::String id = Common::String::format("Has bounding box##%i", body.index);
+			ImGui::Checkbox(id.c_str(), &body.actorBoundingBox.hasBoundingBox);
+			ImGuiEx::InputBoundingBox(body.index, "Bounding box", body.actorBoundingBox.bbox);
+			ImGui::Unindent();
+		}
+		Common::Array<EntityAnim> &animations = entityData.getAnimations();
+		ImGui::Text("Animations: %i", (int)animations.size());
+		for (EntityAnim &animation : animations) {
+			ImGui::Text("Animation type: %i", (int)animation.animation);
+			ImGui::Indent();
+			ImGui::Text("Body animation index: %i", (int)animation.animIndex);
+			ImGui::Text("actions: %i", (int)animation._actions.size());
+			for (EntityAnim::Action &action : animation._actions) {
+				ImGui::BulletText("%i", (int)action.type);
+			}
+			ImGui::Unindent();
 		}
 	}
 	ImGui::End();
@@ -365,13 +433,13 @@ static void gridMenu(TwinEEngine *engine) {
 static void debuggerMenu(TwinEEngine *engine) {
 	if (ImGui::BeginMenu("Debugger")) {
 		if (ImGui::MenuItem("Texts")) {
-			engine->_debugState->_openPopup = MENU_TEXT_TITLE;
+			engine->_debugState->_menuTextWindow = true;
 		}
 		if (ImGui::MenuItem("Holomap flags")) {
-			engine->_debugState->_openPopup = HOLOMAP_FLAGS_TITLE;
+			engine->_debugState->_holomapFlagsWindow = true;
 		}
 		if (ImGui::MenuItem("Game flags")) {
-			engine->_debugState->_openPopup = GAME_FLAGS_TITLE;
+			engine->_debugState->_gameFlagsWindow = true;
 		}
 
 		ImGui::SeparatorText("Actions");
@@ -469,9 +537,9 @@ void onImGuiRender() {
 
 	actorDetailsWindow(currentActor, engine);
 
-	menuTextsPopup(engine);
-	holomapFlagsPopup(engine);
-	gameFlagsPopup(engine);
+	menuTextsWindow(engine);
+	holomapFlagsWindow(engine);
+	gameFlagsWindow(engine);
 
 	if (engine->_debugState->_openPopup) {
 		ImGui::OpenPopup(engine->_debugState->_openPopup);

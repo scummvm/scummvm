@@ -188,6 +188,10 @@ int32 getDistance3D(const IVec3 &v1, const IVec3 &v2);
 struct BoundingBox {
 	IVec3 mins;
 	IVec3 maxs;
+
+	bool isValid() const {
+		return mins.x <= maxs.x && mins.y <= maxs.y && mins.z <= maxs.z;
+	}
 };
 
 struct ActorBoundingBox {
