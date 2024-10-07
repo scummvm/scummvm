@@ -25,6 +25,7 @@
 
 #include "engines/metaengine.h"
 #include "graphics/surface.h"
+#include "image/tga.h"
 
 #include "qdengine/qdengine.h"
 #include "qdengine/qd_fwd.h"
@@ -205,9 +206,6 @@ bool qdSprite::load() {
 
 	debugC(3, kDebugLoad, "qdSprite::load(%s)", transCyrillic(_file.toString()));
 
-	int sx, sy, flags, ssx, colors;
-	byte header[18];
-
 	Common::SeekableReadStream *fh;
 
 	if (_file.isRelativeTo("scummvm")) {
@@ -243,127 +241,49 @@ bool qdSprite::load() {
 		return false;
 	}
 
-	fh->read(header, 18);
+	Image::TGADecoder tgaDecoder;
+	tgaDecoder.loadStream(*fh);
+	const Graphics::Surface *tgaSurface = tgaDecoder.getSurface();
 
-	if (header[0]) { // Length of Image ID field
-		fh->seek(header[0], SEEK_CUR);
-	}
-
-	// ColorMapType. 0 - цветовой таблицы нет. 1 - есть. Остальное не соотв. стандарту.
-	// Изображения с цветовой таблицей не обрабатываем.
-	if (header[1]) {
-		warning("qdSprite::load(): Bad file format: '%s'", transCyrillic(_file.toString()));
-		return false;
-	}
-
-	// ImageType. 2 - truecolor без сжатия, 10 - truecolor со сжатием (RLE).
-	if ((header[2] != 2) && (header[2] != 10)) {
-		warning("qdSprite::load(): Bad file format: '%s'", transCyrillic(_file.toString()));
-		return false;
-	}
-
-	sx = _picture_size.x = header[12] + (header[13] << 8);
-	sy = _picture_size.y = header[14] + (header[15] << 8);
+	int width = _picture_size.x = tgaSurface->w;	///< width of the sprite. number of pixels in width
+	int height = _picture_size.y = tgaSurface->h;	///< height of the sprite. number of pixels in height
 
 	_size = _picture_size;
 
-	colors = header[16];
-	flags = header[17];
+	int bytesPerPixel = tgaSurface->format.bytesPerPixel;
+	int widthNB = width * bytesPerPixel;	///< width in bytes
 
-	ssx = sx * colors / 8;
-
-	switch (colors / 8) {
-	//! Режим 16 бит не реализован
+	switch (bytesPerPixel) {
+	//! 16 bit mode is not implemented
 	//case 2:
 	//  format_ = GR_ARGB1555;
 	//  break;
 	case 3:
+		drop_flag(ALPHA_FLAG);
 		_format = GR_RGB888;
 		break;
 	case 4:
+		set_flag(ALPHA_FLAG);
 		_format = GR_ARGB8888;
 		break;
-	// Иначе неверный формат файла
-	default: {
-		warning("qdSprite::load(): Bad file format: '%s'", transCyrillic(_file.toString()));
+	// otherwise the file format is incorrect
+	default: 
+		warning("qdSprite::load(): Bad file format3: '%s'", transCyrillic(_file.toString()));
 		return false;
 	}
-	}
 
-	_data = new byte[ssx * sy];
-
-	// RLE
-	if (10 == header[2]) {
-		int cur = 0; // В какую ячейку считываем сейчас
-		int i, j;    // Для циклов далее (теор. ускорение)
-		byte info, fl, len;
-		byte pixel[4];
-		byte col_bytes = colors / 8;
-		while (cur < ssx * sy) {
-			info = fh->readByte();
-			fl = (info >> 7) & 0x01;
-			len = (info & 0x7F) + 1;
-			// Пакет со сжатием
-			if (1 == fl) {
-				fh->read(&pixel, col_bytes);
-				for (i = 0; i < len; i++)
-					for (j = 0; j < col_bytes; j++) {
-						_data[cur] = pixel[j];
-						cur++;
-					}
-			}
-			// Пакет без сжатия
-			else
-				for (i = 0; i < len; i++) {
-					fh->read(&pixel, col_bytes);
-					for (j = 0; j < col_bytes; j++) {
-						_data[cur] = pixel[j];
-						cur++;
-					}
-				}
-
-		} // while
-	}
-	// Загрузка изображения без сжатия
-	else
-		fh->read(_data, ssx * sy);
-
-	// Если 3 и 4 биты ImageDescriptor (fl) нули, то начало изображения - левый нижний угол
-	// экрана и изображение нужно инвертировать. Иначе предполагаем, что изображение корректно.
-	// Xотя не факт, что это так, но иное маловероятно + другие значения не документированы...
-	if (!(flags & 0x20)) {
-		int y;
-
-		byte *str_buf = new byte[ssx];
-		byte *str0, *str1;
-
-		str0 = _data;
-		str1 = _data + ssx * (sy - 1);
-
-		for (y = 0; y < sy / 2; y++) {
-			memcpy(str_buf, str0, ssx);
-			memcpy(str0, str1, ssx);
-			memcpy(str1, str_buf, ssx);
-
-			str0 += ssx;
-			str1 -= ssx;
-		}
-
-		delete [] str_buf;
-	}
+	_data = new byte[widthNB * height];
+	memcpy(_data, tgaSurface->getPixels(), widthNB * height);
 
 	delete fh;
 
+	const byte min_color = 8;
 	if (_format == GR_ARGB8888) {
-		set_flag(ALPHA_FLAG);
 		for (int i = 0; i < _picture_size.x * _picture_size.y; i++) {
-			uint16 r, g, b, a;
-			const uint32 min_color = 8;
-
-			b = _data[i * 4 + 0];
-			g = _data[i * 4 + 1];
-			r = _data[i * 4 + 2];
-			a = _data[i * 4 + 3];
+			byte b = _data[i * 4 + 0];
+			byte g = _data[i * 4 + 1];
+			byte r = _data[i * 4 + 2];
+			byte a = _data[i * 4 + 3];
 
 			if (a >= 250 && r < min_color && g < min_color && b < min_color) {
 				r = g = b = min_color;
@@ -376,11 +296,9 @@ bool qdSprite::load() {
 		}
 	} else {
 		for (int i = 0; i < _picture_size.x * _picture_size.y; i++) {
-			const uint32 min_color = 8;
-
-			uint32 b = _data[i * 3 + 0];
-			uint32 g = _data[i * 3 + 1];
-			uint32 r = _data[i * 3 + 2];
+			byte b = _data[i * 3 + 0];
+			byte g = _data[i * 3 + 1];
+			byte r = _data[i * 3 + 2];
 
 			if ((r || g || b) && (r < min_color && g < min_color && b < min_color))
 				_data[i * 3 + 0] = _data[i * 3 + 1] = _data[i * 3 + 2] = min_color;
