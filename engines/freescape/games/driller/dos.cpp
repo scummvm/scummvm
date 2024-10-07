@@ -112,40 +112,40 @@ uint32 DrillerEngine::getPixel8bitTitleImage(int index) {
 	return index / 4;
 }
 
-void DrillerEngine::renderPixels8bitTitleImage(Graphics::ManagedSurface *surface, int &i, int &j, int pixels) {
+void DrillerEngine::renderPixels8bitTitleImage(Graphics::ManagedSurface *surface, int &x, int &y, int pixels) {
 	int c1 = pixels >> 4;
 	int c2 = pixels & 0xf;
 
-	if (i == 320) {
+	if (x == 320) {
 		return;
 	}
 
 	if (_renderMode == Common::kRenderCGA) {
-		surface->setPixel(i, j, getPixel8bitTitleImage(c1 / 4));
-		i++;
-		if (i == 320) {
+		surface->setPixel(x, y, getPixel8bitTitleImage(c1 / 4));
+		x++;
+		if (x == 320) {
 			return;
 		}
 	}
 
-	surface->setPixel(i, j, getPixel8bitTitleImage(c1));
-	i++;
+	surface->setPixel(x, y, getPixel8bitTitleImage(c1));
+	x++;
 
-	if (i == 320) {
+	if (x == 320) {
 		return;
 	}
 
 	if (_renderMode == Common::kRenderCGA) {
-		surface->setPixel(i, j, getPixel8bitTitleImage(c2 / 4));
-		i++;
+		surface->setPixel(x, y, getPixel8bitTitleImage(c2 / 4));
+		x++;
 
-		if (i == 320) {
+		if (x == 320) {
 			return;
 		}
 	}
 
-	surface->setPixel(i, j, getPixel8bitTitleImage(c2));
-	i++;
+	surface->setPixel(x, y, getPixel8bitTitleImage(c2));
+	x++;
 }
 
 Graphics::ManagedSurface *DrillerEngine::load8bitTitleImage(Common::SeekableReadStream *file, int offset) {
@@ -153,21 +153,21 @@ Graphics::ManagedSurface *DrillerEngine::load8bitTitleImage(Common::SeekableRead
 	surface->create(_screenW, _screenH, Graphics::PixelFormat::createFormatCLUT8());
 	surface->fillRect(Common::Rect(0, 0, 320, 200), 0);
 
-	int i = 0;
-	int j = 0;
+	int x = 0;
+	int y = 0;
 	file->seek(offset);
 	while (!file->eos()) {
 		int command = file->readByte();
 		if (command & 0x80) {
-			//Copy N bytes verbatim
-			int repeat = (0xFF - command + 2) * 2;
+			//Copy 2*N bytes verbatim
+			int repeat = (257 - command) * 2;
 			while (repeat--) {
 				int pixels = file->readByte();
-				renderPixels8bitTitleImage(surface, i, j, pixels);
-				if (i == 320) {
-					i = 0;
-					j++;
-					if (j == 200)
+				renderPixels8bitTitleImage(surface, x, y, pixels);
+				if (x == 320) {
+					x = 0;
+					y++;
+					if (y == 200)
 						return surface;
 					int eol = file->readByte();
 					assert(eol == 2);
@@ -179,12 +179,12 @@ Graphics::ManagedSurface *DrillerEngine::load8bitTitleImage(Common::SeekableRead
 			int pixels1 = file->readByte();
 			int pixels2 = file->readByte();
 			while (repeat--) {
-				renderPixels8bitTitleImage(surface, i, j, pixels1);
-				renderPixels8bitTitleImage(surface, i, j, pixels2);
-				if (i == 320) {
-					i = 0;
-					j++;
-					if (j == 200)
+				renderPixels8bitTitleImage(surface, x, y, pixels1);
+				renderPixels8bitTitleImage(surface, x, y, pixels2);
+				if (x == 320) {
+					y = 0;
+					y++;
+					if (y == 200)
 						return surface;
 					int eol = file->readByte();
 					assert(eol == 2);
