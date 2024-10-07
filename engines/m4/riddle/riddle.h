@@ -47,6 +47,21 @@ private:
 	Rooms::Section8 _section8;
 	Rooms::Section9 _section9;
 
+	/**
+	 * Combines the items in the player _verb and _noun,
+	 * removing them from the player's inventory and replacing
+	 * them with the new combined item.
+	 * @param newItem	New item to give to player
+	 */
+	void combineItems(const char *newItem);
+
+	/**
+	 * Splits apart a combined item
+	*/
+	void splitItems(const char *item1, const char *item2);
+
+	void sendWSMessage_multi(const char *name);
+
 protected:
 	/**
 	 * Creates the structure that holds all the global variables
@@ -70,7 +85,6 @@ public:
 	void syncFlags(Common::Serializer &s) override;
 
 	void global_daemon() override;
-	void global_pre_parser() override;
 	void global_parser() override;
 };
 

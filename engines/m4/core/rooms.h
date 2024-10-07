@@ -165,7 +165,7 @@ public:
 	}
 
 	virtual void global_daemon() = 0;
-	virtual void global_pre_parser() = 0;
+	virtual void global_pre_parser() {}
 	virtual void global_parser() = 0;
 
 	void global_error_code() {

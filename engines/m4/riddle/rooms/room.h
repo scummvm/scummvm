@@ -114,7 +114,6 @@ protected:
 
 	void sendWSMessage_29a0000(machine *recv, int val1);
 	void sendWSMessage_29a0000(int val1);
-	void sendWSMessage_multi(const char *name);
 
 	/**
 	 * Get the number of key items placed in room 305 (display room)
@@ -141,6 +140,8 @@ public:
 	~Room() override {}
 
 	void preload() override;
+
+	void sendWSMessage_multi(const char *name);
 };
 
 } // namespace Rooms
