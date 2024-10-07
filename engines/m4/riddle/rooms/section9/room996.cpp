@@ -135,7 +135,7 @@ void Room996::pre_parser() {
 		--_flagArray[12];
 	}
 
-	_flagArray[12] = CLIP(_flagArray[12], 1, 5);
+	_flagArray[12] = CLIP(_flagArray[12], (int32)1, (int32)5);
 
 	_G(player).need_to_walk = false;
 	_G(player).ready_to_walk = true;
