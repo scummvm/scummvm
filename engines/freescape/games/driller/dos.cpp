@@ -155,86 +155,39 @@ Graphics::ManagedSurface *DrillerEngine::load8bitTitleImage(Common::SeekableRead
 
 	int i = 0;
 	int j = 0;
-	int command = -1;
-	int singlePixelsToProcess = 0;
-	bool repeatedPixelsToProcess = false;
 	file->seek(offset);
 	while (!file->eos()) {
-		assert(i <= 320);
-		int pixels = -1;
-		int repetition = -1;
-
-		if (singlePixelsToProcess == 0 && !repeatedPixelsToProcess) {
-			if (command < 0)
-				command = file->readByte();
-
-			//debug("reading command: %x at %lx", command, file->pos() - 1);
-
-			assert(command >= 0x7f);
-			singlePixelsToProcess = (0xff - command + 2) * 2;
-			//debug("single Pixels to process: %d", singlePixelsToProcess);
-
-			repeatedPixelsToProcess = true;
-			if (i == 320) {
-				j++;
-				i = 0;
+		int command = file->readByte();
+		if (command & 0x80) {
+			//Copy N bytes verbatim
+			int repeat = (0xFF - command + 2) * 2;
+			while (repeat--) {
+				int pixels = file->readByte();
+				renderPixels8bitTitleImage(surface, i, j, pixels);
+				if (i == 320) {
+					i = 0;
+					j++;
+					if (j == 200)
+						return surface;
+					int eol = file->readByte();
+					assert(eol == 2);
+				}
 			}
-			command = -1;
-			continue;
-		}
-
-		if (singlePixelsToProcess > 0) {
-			singlePixelsToProcess--;
-			pixels = file->readByte();
-			//debug("reading pixels: %x at %d, %d", pixels, i, j);
-			renderPixels8bitTitleImage(surface, i, j, pixels);
-		} else if (repeatedPixelsToProcess) {
-			repetition = file->readByte() + 1;
-			//debug("reading repetition: %x", repetition - 1);
-			assert(repetition > 0);
-			if (repetition >= 0x80) {
-				command = repetition - 1;
-				repeatedPixelsToProcess = false;
-				continue;
-			}
-
-			if (i == 320) {
-				j++;
-				i = 0;
-				continue;
-			}
-
+		} else {
+			//Repeat 2 bytes of the input N times
+			int repeat = command + 1;
 			int pixels1 = file->readByte();
-			//debug("reading pixels: %x", pixels1);
-
 			int pixels2 = file->readByte();
-			//debug("reading pixels: %x", pixels2);
-
-			if (repetition >= 1) {
-				while (repetition > 0) {
-					repetition--;
-
-					if (i == 320) {
-						j++;
-						i = 0;
-					}
-
+			while (repeat--) {
+				renderPixels8bitTitleImage(surface, i, j, pixels1);
+				renderPixels8bitTitleImage(surface, i, j, pixels2);
+				if (i == 320) {
+					i = 0;
+					j++;
 					if (j == 200)
 						return surface;
-
-					//sdebug("repeating pixels: %x at %d, %d", pixels1, i, j);
-					renderPixels8bitTitleImage(surface, i, j, pixels1);
-
-					if (i == 320) {
-						j++;
-						i = 0;
-					}
-
-					if (j == 200)
-						return surface;
-
-					//debug("repeating pixels: %x at %d, %d", pixels2, i, j);
-					renderPixels8bitTitleImage(surface, i, j, pixels2);
+					int eol = file->readByte();
+					assert(eol == 2);
 				}
 			}
 		}
