@@ -75,7 +75,7 @@ public:
 	bool _showingTracks = false;
 	bool _showingClips = false;
 	bool _godMode = false;
-	uint32 _typeZones = 127; // all zones on as default
+	unsigned int _typeZones = 127; // all zones on as default
 	int16 _onlyLoadActor = -1;
 
 	void renderDebugView();
