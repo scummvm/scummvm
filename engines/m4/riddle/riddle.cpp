@@ -59,11 +59,14 @@ void RiddleEngine::showEngineInfo() {
 }
 
 void RiddleEngine::syncFlags(Common::Serializer &s) {
-	//g_vars->_flags.sync(s);
+	g_vars->_flags.sync(s);
 }
 
 void RiddleEngine::global_daemon() {
-	// TODO
+	_G(i_just_hyperwalked) = false;
+
+	if (_G(kernel).trigger == kGOTO_MAIN_MENU)
+		_G(game).setRoom(494);
 }
 
 void RiddleEngine::global_pre_parser() {
