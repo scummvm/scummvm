@@ -231,7 +231,10 @@ void CastleEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *inf
 
 	act = new Common::Action("LOAD", _("Load Game"));
 	act->setCustomEngineActionEvent(kActionLoad);
-	act->addDefaultInputMapping("l");
+	if (_language == Common::ES_ESP)
+		act->addDefaultInputMapping("c");
+	else
+		act->addDefaultInputMapping("l");
 	infoScreenKeyMap->addAction(act);
 
 	act = new Common::Action("QUIT", _("Quit Game"));
@@ -239,7 +242,7 @@ void CastleEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *inf
 	if (isDOS() || isCPC())
 		act->addDefaultInputMapping("ESCAPE");
 	else if (isSpectrum())
-		act->addDefaultInputMapping("1");
+		act->addDefaultInputMapping("q");
 
 	infoScreenKeyMap->addAction(act);
 
@@ -435,6 +438,7 @@ void CastleEngine::drawInfoMenu() {
 	surface->fillRect(_viewArea, black);
 
 	int score = _gameStateVars[k8bitVariableScore];
+	int shield = _gameStateVars[k8bitVariableShield];
 	if (isDOS()) {
 		g_system->lockMouse(false);
 		g_system->showMouse(true);
@@ -453,12 +457,25 @@ void CastleEngine::drawInfoMenu() {
 	} else if (isSpectrum()) {
 		Common::Array<Common::String> lines;
 		lines.push_back(centerAndPadString("********************", 21));
-		lines.push_back(centerAndPadString("s-save l-load q-quit", 21));
-		lines.push_back("");
-		lines.push_back(centerAndPadString(Common::String::format("keys   %d collected", _keysCollected.size()), 21));
-		lines.push_back(centerAndPadString(Common::String::format("spirits  %d destroyed", _spiritsDestroyed), 21));
-		lines.push_back(centerAndPadString("strength  strong", 21));
-		lines.push_back(centerAndPadString(Common::String::format("score   %07d", score), 21));
+
+		if (_language == Common::EN_ANY) {
+			lines.push_back(centerAndPadString("s-save l-load q-quit", 21));
+			lines.push_back("");
+			lines.push_back(centerAndPadString(Common::String::format("keys   %d collected", _keysCollected.size()), 21));
+			lines.push_back(centerAndPadString(Common::String::format("spirits  %d destroyed", _spiritsDestroyed), 21));
+			lines.push_back(centerAndPadString(Common::String::format("strength  %s", _messagesList[62 + shield / 6].c_str()), 21));
+			lines.push_back(centerAndPadString(Common::String::format("score   %07d", score), 21));
+		} else if (_language == Common::ES_ESP) {
+			lines.push_back(centerAndPadString("s-salv c-carg q-quit", 21));
+			lines.push_back("");
+			lines.push_back(centerAndPadString(Common::String::format("llaves %d recogidas", _keysCollected.size()), 21));
+			lines.push_back(centerAndPadString(Common::String::format("espirit %d destruidos", _spiritsDestroyed), 21));
+			lines.push_back(centerAndPadString(Common::String::format("fuerza  %s", _messagesList[62 + shield / 6].c_str()), 21));
+			lines.push_back(centerAndPadString(Common::String::format("puntos   %07d", score), 21));
+		} else {
+			error("Language not supported");
+		}
+
 		lines.push_back("");
 		lines.push_back(centerAndPadString("********************", 21));
 		surface = drawStringsInSurface(lines, surface);
