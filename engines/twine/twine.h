@@ -209,9 +209,6 @@ private:
 	EngineState _state = EngineState::Menu;
 	Common::String _queuedFlaMovie;
 
-	ScriptLife *_scriptLife;
-	ScriptMove *_scriptMove;
-
 	Common::RandomSource _rnd;
 	Common::Language _gameLang;
 
@@ -303,6 +300,9 @@ public:
 	Rain *_rain; // lba2
 	Wagon *_wagon; // lba2
 	DebugState *_debugState;
+
+	ScriptLife *_scriptLife;
+	ScriptMove *_scriptMove;
 
 	/** Configuration file structure
 	 * Contains all the data used in the engine to configurate the game in particularly ways. */

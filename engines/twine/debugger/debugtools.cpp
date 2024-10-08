@@ -31,6 +31,7 @@
 #include "twine/holomap.h"
 #include "twine/parser/entity.h"
 #include "twine/renderer/redraw.h"
+#include "twine/renderer/screens.h"
 #include "twine/resources/resources.h"
 #include "twine/scene/actor.h"
 #include "twine/scene/gamestate.h"
@@ -729,6 +730,40 @@ static void debuggerMenu(TwinEEngine *engine) {
 			ActorStruct *actor = engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX);
 			actor->_posObj = engine->_grid->_worldCube;
 			actor->_posObj.y += 1000;
+		}
+		if (ImGui::BeginMenu("Palettes")) {
+			if (ImGui::MenuItem("Dark palette")) {
+				engine->_screens->setDarkPal();
+			}
+			if (ImGui::MenuItem("Normal palette")) {
+				engine->_screens->setNormalPal();
+			}
+#if 0
+			// TODO: the fade functions are blocking and break the imgui begin/end cycle
+			LifeScriptContext fakeCtx(0, engine->_scene->_sceneHero);
+			if (ImGui::MenuItem("lFADE_PAL_RED")) {
+				engine->_scriptLife->lFADE_PAL_RED(engine, fakeCtx);
+			}
+			if (ImGui::MenuItem("lFADE_ALARM_RED")) {
+				engine->_scriptLife->lFADE_ALARM_RED(engine, fakeCtx);
+			}
+			if (ImGui::MenuItem("lFADE_ALARM_PAL")) {
+				engine->_scriptLife->lFADE_ALARM_PAL(engine, fakeCtx);
+			}
+			if (ImGui::MenuItem("lFADE_RED_PAL")) {
+				engine->_scriptLife->lFADE_RED_PAL(engine, fakeCtx);
+			}
+			if (ImGui::MenuItem("lFADE_RED_ALARM")) {
+				engine->_scriptLife->lFADE_RED_ALARM(engine, fakeCtx);
+			}
+			if (ImGui::MenuItem("lFADE_PAL_ALARM")) {
+				engine->_scriptLife->lFADE_PAL_ALARM(engine, fakeCtx);
+			}
+#endif
+			ImGui::EndMenu();
+		}
+		if (ImGui::MenuItem("Force Redraw")) {
+			engine->_redraw->_firstTime = true;
 		}
 
 		ImGui::SeparatorText("Options");
