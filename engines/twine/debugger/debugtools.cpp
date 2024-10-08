@@ -324,20 +324,20 @@ static void actorDetailsWindow(int &actorIdx, TwinEEngine *engine) {
 		if (actor->_body != -1) {
 			ImGui::SeparatorText("Body");
 			BodyData &bodyData = actor->_entityDataPtr->getBody(actor->_body);
-			ImGuiEx::InputBoundingBox(actor->_body, "Bounding box", bodyData.bbox);
+			ImGuiEx::InputBoundingBox((int)(uintptr)&bodyData, "Bounding box", bodyData.bbox);
 		}
 
 		ImGui::SeparatorText("Entity");
 		EntityData &entityData = actor->_entityData;
-		Common::Array<EntityBody> &bodies = entityData.getBodies();
-		ImGui::Text("Bodies: %i", (int)bodies.size());
-		for (EntityBody &body : bodies) {
-			ImGui::Text("%s index: %i", Resources::HQR_FILE3D_FILE, body.index);
+		Common::Array<EntityBody> &entityBodies = entityData.getBodies();
+		ImGui::Text("Bodies: %i", (int)entityBodies.size());
+		for (EntityBody &entityBody : entityBodies) {
+			ImGui::Text("%s index: %i", Resources::HQR_FILE3D_FILE, entityBody.index);
 			ImGui::Indent();
-			ImGui::Text("%s index: %i", Resources::HQR_BODY_FILE, body.hqrBodyIndex);
-			Common::String id = Common::String::format("Has bounding box##%i", body.index);
-			ImGui::Checkbox(id.c_str(), &body.actorBoundingBox.hasBoundingBox);
-			ImGuiEx::InputBoundingBox(body.index, "Bounding box", body.actorBoundingBox.bbox);
+			ImGui::Text("%s index: %i", Resources::HQR_BODY_FILE, entityBody.hqrBodyIndex);
+			Common::String id = Common::String::format("Has bounding box##%i", entityBody.index);
+			ImGui::Checkbox(id.c_str(), &entityBody.actorBoundingBox.hasBoundingBox);
+			ImGuiEx::InputBoundingBox((int)(uintptr)&entityBody, "Bounding box", entityBody.actorBoundingBox.bbox);
 			ImGui::Unindent();
 		}
 		Common::Array<EntityAnim> &animations = entityData.getAnimations();
