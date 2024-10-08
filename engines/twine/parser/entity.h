@@ -93,7 +93,7 @@ public:
 	bool loadFromStream(Common::SeekableReadStream &stream, bool lba1) override;
 
 	const Common::Array<EntityAnim::Action> *getActions(AnimationTypes animation) const;
-	const EntityBody *getBody(const int index) const;
+	const EntityBody *getEntityBody(const int index) const;
 	int32 getAnimIndex(AnimationTypes animation) const;
 
 	const Common::Array<EntityBody> &getBodies() const {

@@ -307,7 +307,7 @@ const Common::Array<EntityAnim::Action> *EntityData::getActions(AnimationTypes a
 	return nullptr;
 }
 
-const EntityBody *EntityData::getBody(const int index) const {
+const EntityBody *EntityData::getEntityBody(const int index) const {
 	for (const EntityBody &body : _bodies) {
 		if (body.index == index) {
 			return &body;

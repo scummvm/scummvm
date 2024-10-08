@@ -233,7 +233,7 @@ int32 Actor::searchBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &acto
 		return -1;
 	}
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	const EntityBody *body = actor->_entityDataPtr->getBody((int)bodyIdx);
+	const EntityBody *body = actor->_entityDataPtr->getEntityBody((int)bodyIdx);
 	if (body == nullptr) {
 		warning("Failed to get entity body for body idx %i", (int)bodyIdx);
 		return -1;
