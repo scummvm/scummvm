@@ -220,6 +220,9 @@ static void actorDetailsWindow(int &actorIdx, TwinEEngine *engine) {
 		if (ImGui::BeginCombo("Actor", currentActorLabel.c_str())) {
 			for (int i = 0; i < engine->_scene->_nbObjets; ++i) {
 				Common::String label = Common::String::format("Actor %i", i);
+				if (engine->_scene->_mecaPenguinIdx == i) {
+					label += " (Penguin)";
+				}
 				const bool selected = i == actorIdx;
 				if (ImGui::Selectable(label.c_str(), selected)) {
 					actorIdx = i;
