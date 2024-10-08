@@ -31,6 +31,7 @@ namespace TwinE {
 
 class Parser {
 protected:
+	int _hqrIndex = -1;
 	virtual void reset() {}
 public:
 	virtual ~Parser() {
@@ -40,6 +41,10 @@ public:
 
 	bool loadFromBuffer(const uint8 *buf, uint32 size, bool lba1);
 	bool loadFromHQR(const char *name, int index, bool lba1);
+
+	int hqrIndex() const {
+		return _hqrIndex;
+	}
 
 	inline bool loadFromHQR(const TwineResource &resource, bool lba1) {
 		return loadFromHQR(resource.hqr, resource.index, lba1);

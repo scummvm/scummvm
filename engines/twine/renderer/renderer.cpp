@@ -1730,7 +1730,7 @@ bool Renderer::affObjetIso(int32 x, int32 y, int32 z, int32 alpha, int32 beta, i
 		RenderCommand* renderCmds = _renderCmds;
 		return renderModelElements(numOfPrimitives, bodyData, &renderCmds, &_modelData, modelRect);
 #else
-		error("Unsupported unanimated model render!");
+		error("Unsupported unanimated model render for model index %i!", bodyData.hqrIndex());
 #endif
 	}
 	// restart at the beginning of the renderTable
