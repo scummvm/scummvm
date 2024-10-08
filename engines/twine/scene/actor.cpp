@@ -406,10 +406,7 @@ void Actor::hitObj(int32 actorIdx, int32 actorIdxAttacked, int32 hitforce, int32
 			_engine->_movements->_lastJoyFlag = true;
 		}
 
-		actor->_lifePoint -= hitforce;
-		if (actor->_lifePoint < 0) {
-			actor->_lifePoint = 0;
-		}
+		actor->addLife(-hitforce);
 	} else {
 		_engine->_animations->initAnim(AnimationTypes::kHit, AnimType::kAnimationInsert, AnimationTypes::kAnimInvalid, actorIdxAttacked);
 	}

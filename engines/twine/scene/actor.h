@@ -263,6 +263,8 @@ inline void ActorStruct::setLife(int32 val) {
 	_lifePoint = val;
 	if (_lifePoint > _maxLife) {
 		_lifePoint = _maxLife;
+	} else if (_lifePoint < 0) {
+		_lifePoint = 0;
 	}
 }
 
