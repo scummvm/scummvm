@@ -66,7 +66,7 @@ public:
 
 	// AbstractFSNode API
 	Common::SeekableReadStream *createReadStream() override;
-	Common::SeekableWriteStream *createWriteStream() override;
+	Common::SeekableWriteStream *createWriteStream(bool atomic) override;
 	AbstractFSNode *getChild(const Common::String &n) const override;
 	bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const override;
 	AbstractFSNode *getParent() const override;

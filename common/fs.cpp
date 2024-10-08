@@ -263,7 +263,7 @@ SeekableReadStream *FSNode::createReadStreamForAltStream(AltStreamType altStream
 	return _realNode->createReadStreamForAltStream(altStreamType);
 }
 
-SeekableWriteStream *FSNode::createWriteStream() const {
+SeekableWriteStream *FSNode::createWriteStream(bool atomic) const {
 	if (_realNode == nullptr)
 		return nullptr;
 
@@ -272,7 +272,7 @@ SeekableWriteStream *FSNode::createWriteStream() const {
 		return nullptr;
 	}
 
-	return _realNode->createWriteStream();
+	return _realNode->createWriteStream(atomic);
 }
 
 bool FSNode::createDirectory() const {

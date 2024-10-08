@@ -208,7 +208,7 @@ Common::SeekableReadStream *WiiFilesystemNode::createReadStream() {
 	return readStream;
 }
 
-Common::SeekableWriteStream *WiiFilesystemNode::createWriteStream() {
+Common::SeekableWriteStream *WiiFilesystemNode::createWriteStream(bool atomic) {
 	StdioStream *writeStream = StdioStream::makeFromPath(getPath(), true);
 
 	// disable newlib's buffering, the device libraries handle caching

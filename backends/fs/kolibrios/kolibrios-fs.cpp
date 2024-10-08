@@ -218,7 +218,7 @@ Common::SeekableReadStream *KolibriOSFilesystemNode::createReadStream() {
 	return PosixIoStream::makeFromPath(getPath(), false);
 }
 
-Common::SeekableWriteStream *KolibriOSFilesystemNode::createWriteStream() {
+Common::SeekableWriteStream *KolibriOSFilesystemNode::createWriteStream(bool atomic) {
 	return PosixIoStream::makeFromPath(getPath(), true);
 }
 

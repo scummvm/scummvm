@@ -226,7 +226,7 @@ Common::SeekableReadStream *WindowsFilesystemNode::createReadStream() {
 	return StdioStream::makeFromPath(getPath(), false);
 }
 
-Common::SeekableWriteStream *WindowsFilesystemNode::createWriteStream() {
+Common::SeekableWriteStream *WindowsFilesystemNode::createWriteStream(bool atomic) {
 	return StdioStream::makeFromPath(getPath(), true);
 }
 
