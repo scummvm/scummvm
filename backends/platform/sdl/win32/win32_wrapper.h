@@ -63,6 +63,11 @@ void getProcessDirectory(TCHAR *processDirectory, DWORD size);
 bool confirmWindowsVersion(int majorVersion, int minorVersion);
 
 /**
+ * Moves a file within the same volume. Replaces any existing file.
+ */
+bool moveFile(const Common::String &src, const Common::String &dst);
+
+/**
  * Returns true if the drive letter is a CDROM
  *
  * @param driveLetter The drive letter to test
