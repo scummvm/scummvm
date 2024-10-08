@@ -144,20 +144,85 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		debugCN(3, kDebugLevels::kDebugScripts, "distance(%i, ", actorIdx);
 		conditionValueSize = ReturnType::RET_S16;
 		ActorStruct *otherActor = engine->_scene->getActor(actorIdx);
-		if (!otherActor->_workFlags.bIsDead) {
-			if (ABS(ctx.actor->_posObj.y - otherActor->_posObj.y) >= 1500) {
+		if (otherActor->_workFlags.bIsDead) {
+			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
+			break;
+		}
+		if (ABS(ctx.actor->_posObj.y - otherActor->_posObj.y) < 1500) {
+			// Returns int32, so we check for integer overflow
+			int32 distance = getDistance2D(ctx.actor->posObj(), otherActor->posObj());
+			if (ABS(distance) > MAX_TARGET_ACTOR_DISTANCE) {
 				engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 			} else {
-				// Returns int32, so we check for integer overflow
-				int32 distance = getDistance2D(ctx.actor->posObj(), otherActor->posObj());
-				if (ABS(distance) > MAX_TARGET_ACTOR_DISTANCE) {
-					engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
-				} else {
-					engine->_scene->_currentScriptValue = distance;
-				}
+				engine->_scene->_currentScriptValue = distance;
 			}
 		} else {
 			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
+		}
+		break;
+	}
+	case kcDISTANCE_3D: {
+		int32 targetActorIdx = ctx.stream.readByte();
+		debugCN(3, kDebugLevels::kDebugScripts, "distance_3d(%i, ", targetActorIdx);
+		ActorStruct *targetActor = engine->_scene->getActor(targetActorIdx);
+
+		conditionValueSize = ReturnType::RET_S16;
+
+		if (targetActor->_workFlags.bIsDead) {
+			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
+			break;
+		}
+		// Returns int32, so we check for integer overflow
+		int32 distance = getDistance3D(ctx.actor->posObj(), targetActor->posObj());
+		if (ABS(distance) > MAX_TARGET_ACTOR_DISTANCE) {
+			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
+		} else {
+			engine->_scene->_currentScriptValue = distance;
+		}
+		break;
+	}
+	case kcCONE_VIEW: {
+		int32 newAngle = 0;
+		int32 targetActorIdx = ctx.stream.readByte();
+		debugCN(3, kDebugLevels::kDebugScripts, "cone_view(%i, ", targetActorIdx);
+		ActorStruct *targetActor = engine->_scene->getActor(targetActorIdx);
+
+		conditionValueSize = ReturnType::RET_S16;
+
+		if (targetActor->_workFlags.bIsDead) {
+			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
+			break;
+		}
+
+		if (ABS(targetActor->_posObj.y - ctx.actor->_posObj.y) < 1500) {
+			newAngle = engine->_movements->getAngle(ctx.actor->posObj(), targetActor->posObj());
+			if (ABS(engine->_movements->_targetActorDistance) > MAX_TARGET_ACTOR_DISTANCE) {
+				engine->_movements->_targetActorDistance = MAX_TARGET_ACTOR_DISTANCE;
+			}
+		} else {
+			engine->_movements->_targetActorDistance = MAX_TARGET_ACTOR_DISTANCE;
+		}
+
+		if (IS_HERO(targetActorIdx)) {
+			if (engine->_actor->_heroBehaviour == HeroBehaviourType::kDiscrete) {
+				int32 heroAngle = ClampAngle((ctx.actor->_beta + LBAAngles::ANGLE_360 + LBAAngles::ANGLE_45) - (newAngle + LBAAngles::ANGLE_360));
+
+				if (ABS(heroAngle) <= LBAAngles::ANGLE_90) {
+					engine->_scene->_currentScriptValue = engine->_movements->_targetActorDistance;
+				} else {
+					engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
+				}
+			} else {
+				engine->_scene->_currentScriptValue = engine->_movements->_targetActorDistance;
+			}
+		} else {
+			int32 heroAngle = ClampAngle((ctx.actor->_beta + LBAAngles::ANGLE_360 + LBAAngles::ANGLE_45) - (newAngle + LBAAngles::ANGLE_360));
+
+			if (ABS(heroAngle) <= LBAAngles::ANGLE_90) {
+				engine->_scene->_currentScriptValue = engine->_movements->_targetActorDistance;
+			} else {
+				engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
+			}
 		}
 		break;
 	}
@@ -207,51 +272,6 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		debugCN(3, kDebugLevels::kDebugScripts, "flag_cube(%i, ", flagIdx);
 		conditionValueSize = ReturnType::RET_U8;
 		engine->_scene->_currentScriptValue = engine->_scene->_listFlagCube[flagIdx];
-		break;
-	}
-	case kcCONE_VIEW: {
-		int32 newAngle = 0;
-		int32 targetActorIdx = ctx.stream.readByte();
-		debugCN(3, kDebugLevels::kDebugScripts, "cone_view(%i, ", targetActorIdx);
-		ActorStruct *targetActor = engine->_scene->getActor(targetActorIdx);
-
-		conditionValueSize = ReturnType::RET_S16;
-
-		if (targetActor->_workFlags.bIsDead) {
-			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
-			break;
-		}
-
-		if (ABS(targetActor->_posObj.y - ctx.actor->_posObj.y) < 1500) {
-			newAngle = engine->_movements->getAngle(ctx.actor->posObj(), targetActor->posObj());
-			if (ABS(engine->_movements->_targetActorDistance) > MAX_TARGET_ACTOR_DISTANCE) {
-				engine->_movements->_targetActorDistance = MAX_TARGET_ACTOR_DISTANCE;
-			}
-		} else {
-			engine->_movements->_targetActorDistance = MAX_TARGET_ACTOR_DISTANCE;
-		}
-
-		if (IS_HERO(targetActorIdx)) {
-			if (engine->_actor->_heroBehaviour == HeroBehaviourType::kDiscrete) {
-				int32 heroAngle = ClampAngle(ctx.actor->_beta + LBAAngles::ANGLE_360 + LBAAngles::ANGLE_45 - newAngle + LBAAngles::ANGLE_360);
-
-				if (ABS(heroAngle) <= LBAAngles::ANGLE_90) {
-					engine->_scene->_currentScriptValue = engine->_movements->_targetActorDistance;
-				} else {
-					engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
-				}
-			} else {
-				engine->_scene->_currentScriptValue = engine->_movements->_targetActorDistance;
-			}
-		} else {
-			int32 heroAngle = ClampAngle(ctx.actor->_beta + LBAAngles::ANGLE_360 + LBAAngles::ANGLE_45 - newAngle + LBAAngles::ANGLE_360);
-
-			if (ABS(heroAngle) <= LBAAngles::ANGLE_90) {
-				engine->_scene->_currentScriptValue = engine->_movements->_targetActorDistance;
-			} else {
-				engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
-			}
-		}
 		break;
 	}
 	case kcHIT_BY:
@@ -318,29 +338,6 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		debugCN(3, kDebugLevels::kDebugScripts, "chapter(");
 		engine->_scene->_currentScriptValue = engine->_gameState->getChapter();
 		break;
-	case kcDISTANCE_3D: {
-		int32 targetActorIdx;
-		ActorStruct *targetActor;
-
-		targetActorIdx = ctx.stream.readByte();
-		debugCN(3, kDebugLevels::kDebugScripts, "distance_3d(%i, ", targetActorIdx);
-		targetActor = engine->_scene->getActor(targetActorIdx);
-
-		conditionValueSize = ReturnType::RET_S16;
-
-		if (!targetActor->_workFlags.bIsDead) {
-			// Returns int32, so we check for integer overflow
-			int32 distance = getDistance3D(ctx.actor->posObj(), targetActor->posObj());
-			if (ABS(distance) > MAX_TARGET_ACTOR_DISTANCE) {
-				engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
-			} else {
-				engine->_scene->_currentScriptValue = distance;
-			}
-		} else {
-			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
-		}
-		break;
-	}
 	case kcMAGIC_LEVEL:
 		debugCN(3, kDebugLevels::kDebugScripts, "magic_level(");
 		engine->_scene->_currentScriptValue = engine->_gameState->_magicLevelIdx;
