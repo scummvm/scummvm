@@ -158,11 +158,12 @@ AbstractFSNode *LibRetroFilesystemNode::getParent() const {
 }
 
 Common::SeekableReadStream *LibRetroFilesystemNode::createReadStream() {
-	return StdioStream::makeFromPath(getPath(), false);
+	return StdioStream::makeFromPath(getPath(), StdioStream::WriteMode_Read);
 }
 
 Common::SeekableWriteStream *LibRetroFilesystemNode::createWriteStream(bool atomic) {
-	return StdioStream::makeFromPath(getPath(), true);
+	return StdioStream::makeFromPath(getPath(), atomic ?
+			StdioStream::WriteMode_WriteAtomic : StdioStream::WriteMode_Write);
 }
 
 bool LibRetroFilesystemNode::createDirectory() {

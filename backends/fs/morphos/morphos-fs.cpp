@@ -343,7 +343,7 @@ AbstractFSList MorphOSFilesystemNode::listVolumes() const {
 }
 
 Common::SeekableReadStream *MorphOSFilesystemNode::createReadStream() {
-	StdioStream *readStream = StdioStream::makeFromPath(getPath(), false);
+	StdioStream *readStream = StdioStream::makeFromPath(getPath(), StdioStream::WriteMode_Read);
 
 	if (readStream) {
 		readStream->setBufferSize(8192);
@@ -353,7 +353,8 @@ Common::SeekableReadStream *MorphOSFilesystemNode::createReadStream() {
 }
 
 Common::SeekableWriteStream *MorphOSFilesystemNode::createWriteStream(bool atomic) {
-	return StdioStream::makeFromPath(getPath(), true);
+	return StdioStream::makeFromPath(getPath(), atomic ?
+			StdioStream::WriteMode_WriteAtomic : StdioStream::WriteMode_Write);
 }
 
 bool MorphOSFilesystemNode::createDirectory() {

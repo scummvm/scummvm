@@ -29,7 +29,7 @@
  */
 class PosixIoStream final : public StdioStream {
 public:
-	static StdioStream *makeFromPath(const Common::String &path, bool writeMode) {
+	static StdioStream *makeFromPath(const Common::String &path, StdioStream::WriteMode writeMode) {
 		return StdioStream::makeFromPathHelper(path, writeMode, [](void *handle) -> StdioStream * {
 			return new PosixIoStream(handle);
 		});

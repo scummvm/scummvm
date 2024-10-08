@@ -28,11 +28,19 @@
 #include "common/str.h"
 
 class StdioStream : public Common::SeekableReadStream, public Common::SeekableWriteStream, public Common::NonCopyable {
+public:
+	enum WriteMode {
+		WriteMode_Read = 0,
+		WriteMode_Write = 1,
+		WriteMode_WriteAtomic = 2,
+	};
+
 protected:
 	/** File handle to the actual file. */
 	void *_handle;
+	Common::String *_path;
 
-	static StdioStream *makeFromPathHelper(const Common::String &path, bool writeMode,
+	static StdioStream *makeFromPathHelper(const Common::String &path, WriteMode writeMode,
 			StdioStream *(*factory)(void *handle));
 
 public:
@@ -40,7 +48,7 @@ public:
 	 * Given a path, invokes fopen on that path and wrap the result in a
 	 * StdioStream instance.
 	 */
-	static StdioStream *makeFromPath(const Common::String &path, bool writeMode) {
+	static StdioStream *makeFromPath(const Common::String &path, WriteMode writeMode) {
 		return makeFromPathHelper(path, writeMode, [](void *handle) {
 			return new StdioStream(handle);
 		});

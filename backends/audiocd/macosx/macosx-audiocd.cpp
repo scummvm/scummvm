@@ -223,7 +223,7 @@ bool MacOSXAudioCDManager::play(int track, int numLoops, int startFrame, int dur
 
 	// Now load the AIFF track from the name
 	Common::Path fileName = _trackMap[track];
-	Common::SeekableReadStream *stream = StdioStream::makeFromPath(fileName.toString(Common::Path::kNativeSeparator).c_str(), false);
+	Common::SeekableReadStream *stream = StdioStream::makeFromPath(fileName.toString(Common::Path::kNativeSeparator).c_str(), StdioStream::WriteMode_Read);
 
 	if (!stream) {
 		warning("Failed to open track '%s'", fileName.toString(Common::Path::kNativeSeparator).c_str());

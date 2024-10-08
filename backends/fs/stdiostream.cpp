@@ -33,13 +33,37 @@
 
 // Include this after windows.h so we don't get a warning for redefining ARRAYSIZE
 #include "backends/fs/stdiostream.h"
+#include "common/textconsole.h"
 
-StdioStream::StdioStream(void *handle) : _handle(handle) {
+StdioStream::StdioStream(void *handle) : _handle(handle), _path(nullptr) {
 	assert(handle);
 }
 
 StdioStream::~StdioStream() {
 	fclose((FILE *)_handle);
+
+	if (!_path) {
+		return;
+	}
+
+	// _path is set: recreate the temporary file name and rename the file to
+	// its real name
+	Common::String tmpPath(*_path);
+	tmpPath += ".tmp";
+
+	if (!rename(tmpPath.c_str(), _path->c_str())) {
+		// Success
+		delete _path;
+		return;
+	}
+
+	// Error: try to delete the file first
+	(void)remove(_path->c_str());
+	if (rename(tmpPath.c_str(), _path->c_str())) {
+		warning("Couldn't save file %s", _path->c_str());
+	}
+
+	delete _path;
 }
 
 bool StdioStream::err() const {
@@ -124,21 +148,36 @@ bool StdioStream::flush() {
 	return fflush((FILE *)_handle) == 0;
 }
 
-StdioStream *StdioStream::makeFromPathHelper(const Common::String &path, bool writeMode,
+StdioStream *StdioStream::makeFromPathHelper(const Common::String &path, WriteMode writeMode,
 		StdioStream *(*factory)(void *handle)) {
+	Common::String tmpPath(path);
+	// In atomic mode we create a temporary file and rename it when closing the file descriptor
+	if (writeMode == WriteMode_WriteAtomic) {
+		tmpPath += ".tmp";
+	}
 #if defined(WIN32) && defined(UNICODE)
-	wchar_t *wPath = Win32::stringToTchar(path);
-	FILE *handle = _wfopen(wPath, writeMode ? L"wb" : L"rb");
+	wchar_t *wPath = Win32::stringToTchar(tmpPath);
+	FILE *handle = _wfopen(wPath, writeMode == WriteMode_Read ? L"rb" : L"wb");
 	free(wPath);
 #elif defined(HAS_FOPEN64)
-	FILE *handle = fopen64(path.c_str(), writeMode ? "wb" : "rb");
+	FILE *handle = fopen64(tmpPath.c_str(), writeMode == WriteMode_Read ? "rb" : "wb");
 #else
-	FILE *handle = fopen(path.c_str(), writeMode ? "wb" : "rb");
+	FILE *handle = fopen(tmpPath.c_str(), writeMode == WriteMode_Read ? "rb" : "wb");
 #endif
 
-	if (handle)
-		return factory(handle);
-	return nullptr;
+	if (!handle) {
+		return nullptr;
+	}
+
+	StdioStream *stream = factory(handle);
+	// Store the final path alongside the stream
+	// If _path is not nullptr, it will be used to rename the file
+	// when closing it
+	if (writeMode == WriteMode_WriteAtomic) {
+		stream->_path = new Common::String(path);
+	}
+
+	return stream;
 }
 
 #endif
