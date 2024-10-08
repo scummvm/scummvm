@@ -677,19 +677,11 @@ void Animations::doAnim(int32 actorIdx) {
 			col1 |= collision->doCornerReajustTwinkel(actor, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 4);
 			col1 |= collision->doCornerReajustTwinkel(actor, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 8);
 		} else {
-			// TODO: hack to fix tank-not-moving bug https://bugs.scummvm.org/ticket/13177
-			// remove processActorSave
-			const IVec3 processActorSave = processActor;
-
 			// check other actors collisions with bricks
 			col1 |= collision->doCornerReajust(actor, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 1);
 			col1 |= collision->doCornerReajust(actor, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 2);
 			col1 |= collision->doCornerReajust(actor, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 4);
 			col1 |= collision->doCornerReajust(actor, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 8);
-			// TODO: hack to fix tank-not-moving bug https://bugs.scummvm.org/ticket/13177
-			if (actorIdx == 1 && _engine->_scene->_currentSceneIdx == LBA1SceneId::Hamalayi_Mountains_2nd_fighting_scene) {
-				processActor = processActorSave;
-			}
 		}
 
 		// process wall hit while running
