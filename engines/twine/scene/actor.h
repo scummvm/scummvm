@@ -70,7 +70,7 @@ struct StaticFlagsStruct {
 	uint32 bUnk0100 : 1;                    // 0x000100
 	uint32 bIsInvisible : 1;                // 0x000200 INVISIBLE - not drawn but all computed
 	uint32 bSprite3D : 1;                   // 0x000400 SPRITE_3D - a sprite not a 3D object
-	uint32 bObjFallable : 1;                    // 0x000800 OBJ_FALLABLE
+	uint32 bObjFallable : 1;                // 0x000800 OBJ_FALLABLE
 	uint32 bNoShadow : 1;                   // 0x001000 NO_SHADOW - no auto shadow
 	uint32 bIsBackgrounded : 1;             // 0x002000 OBJ_BACKGROUND - is embedded in the decor the 1st time
 	uint32 bIsCarrierActor : 1;             // 0x004000 OBJ_CARRIER - can carry and move an obj
