@@ -1420,12 +1420,12 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsUint16LE(camera._movingToActor, VER(8));
 	s.syncAsByte(_cameraIsFrozen, VER(108));
 
-	// For Mac versions...
+	// Old stuff for Mac versions, see below...
 	s.skip(2, VER(112), VER(121)); // Old _screenDrawOffset
 	s.syncAsByte(_useMacScreenCorrectHeight, VER(112));
 
-	// If this is an older version without Mac screen
-	// offset correction, bring it up to date...
+	// Post-load fix for some savegame versions which offset the engine elements
+	// instead of offsetting the final screen texture and the mouse coordinates...
 	if (s.isLoading()) {
 		if (_game.version == 3 && _game.platform == Common::kPlatformMacintosh && s.getVersion() >= VER(112) && s.getVersion() < VER(121)) {
 			camera._cur.y -= 20;
@@ -1588,7 +1588,8 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsUint16LE(_screenB, VER(8));
 	s.syncAsUint16LE(_screenH, VER(8));
 
-	// Other screen offset corrections for Mac games savestates...
+	// Post-load fix for some savegame versions which offset the engine elements
+	// instead of offsetting the final screen texture and the mouse coordinates...
 	if (s.isLoading()) {
 		if (_game.version == 3 && _game.platform == Common::kPlatformMacintosh && s.getVersion() >= VER(112) && s.getVersion() < VER(121)) {
 			_screenB -= 20;
