@@ -329,7 +329,13 @@ reg_t kGraphAdjustPriority(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kGraphSaveUpscaledHiresBox(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect rect = getGraphRect(argv);
-	uint16 screenMask = argv[4].toUint16() & GFX_SCREEN_MASK_ALL;
+	// There seems to be a mismatch between the function call the original interpreter expects and the call
+	// that the scripts actually make. The scripts never actually push argv[4] for kGraph sub op 15, but
+	// the interpreter will still pass on the (thus undefined) argument to kernelGraphSaveBox(). Apparently,
+	// the argument is not needed. From a technical point of view this would make sense, since the hires
+	// graphics never overwrite the engine bitmap buffers, so it should not be necessary to recover any pixel
+	// data. We pretend to check argc here, but we know it will always be 4...
+	uint16 screenMask = argc > 4 ? (argv[4].toUint16() & GFX_SCREEN_MASK_ALL) : 0;
 	if (g_sci->_gfxScreen->gfxDriver()->supportsHiResGraphics())
 		return g_sci->_gfxPaint16->kernelGraphSaveBox(rect, screenMask, true);
 	else

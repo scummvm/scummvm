@@ -263,7 +263,7 @@ static const SciKernelMapSubEntry kGraph_subops[] = {
 	{ SIG_SCIALL,         12, MAP_CALL(GraphUpdateBox),            "iiii(i)",              kGraphUpdateBox_workarounds },
 	{ SIG_SCIALL,         13, MAP_CALL(GraphRedrawBox),            "iiii",                 kGraphRedrawBox_workarounds },
 	{ SIG_SCIALL,         14, MAP_CALL(GraphAdjustPriority),       "ii",                   NULL },
-	{ SIG_SCI11,          15, MAP_CALL(GraphSaveUpscaledHiresBox), "iiii",                 NULL }, // kq6 hires
+	{ SIG_SCI11,          15, MAP_CALL(GraphSaveUpscaledHiresBox), "iiii(i)",              NULL }, // kq6 hires
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
