@@ -46,7 +46,7 @@ void ConfigParams::initLogging(const Common::Path &dirname, const char *filename
 	setLogDirectory(dirname);
 	setLogFilename(filename);
 	if (enable) {
-		_ws = Common::FSNode(_logDirectory).getChild(_logFilename).createWriteStream();
+		_ws = Common::FSNode(_logDirectory).getChild(_logFilename).createWriteStream(false);
 	} else {
 		_ws = 0;
 	}

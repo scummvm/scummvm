@@ -280,7 +280,7 @@ Common::SeekableReadStream *POSIXFilesystemNode::createReadStreamForAltStream(Co
 	return nullptr;
 }
 
-Common::SeekableWriteStream *POSIXFilesystemNode::createWriteStream() {
+Common::SeekableWriteStream *POSIXFilesystemNode::createWriteStream(bool atomic) {
 	return PosixIoStream::makeFromPath(getPath(), true);
 }
 

@@ -197,9 +197,14 @@ public:
 	 * referred by this node. This assumes that the node actually refers
 	 * to a readable file. If this is not the case, 0 is returned.
 	 *
+	 * When an atomic write stream is requested, the backend will write
+	 * the data in a temporary file before moving it to its final destination.
+	 *
+	 * @param atomic Request for an atomic file write when closing.
+	 *
 	 * @return pointer to the stream object, 0 in case of a failure
 	 */
-	virtual Common::SeekableWriteStream *createWriteStream() = 0;
+	virtual Common::SeekableWriteStream *createWriteStream(bool atomic) = 0;
 
 	/**
 	* Creates a directory referred by this node.

@@ -352,7 +352,7 @@ Common::SeekableReadStream *MorphOSFilesystemNode::createReadStream() {
 	return readStream;
 }
 
-Common::SeekableWriteStream *MorphOSFilesystemNode::createWriteStream() {
+Common::SeekableWriteStream *MorphOSFilesystemNode::createWriteStream(bool atomic) {
 	return StdioStream::makeFromPath(getPath(), true);
 }
 

@@ -269,7 +269,7 @@ Common::WriteStream *OSystem_3DS::createLogFile() {
 		return nullptr;
 
 	Common::FSNode file(logFile);
-	Common::WriteStream *stream = file.createWriteStream();
+	Common::WriteStream *stream = file.createWriteStream(false);
 	if (stream)
 		_logFilePath = logFile;
 	return stream;

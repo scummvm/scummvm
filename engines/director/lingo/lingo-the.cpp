@@ -1228,7 +1228,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 			Common::Path logPath = ConfMan.getPath("path").appendComponent(d.asString());
 			Common::FSNode out(logPath);
 			if (!out.exists())
-				out.createWriteStream();
+				out.createWriteStream(false);
 			if (out.isWritable())
 				g_director->_traceLogFile = logPath;
 			else

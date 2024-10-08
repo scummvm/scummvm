@@ -161,7 +161,7 @@ Common::SeekableReadStream *LibRetroFilesystemNode::createReadStream() {
 	return StdioStream::makeFromPath(getPath(), false);
 }
 
-Common::SeekableWriteStream *LibRetroFilesystemNode::createWriteStream() {
+Common::SeekableWriteStream *LibRetroFilesystemNode::createWriteStream(bool atomic) {
 	return StdioStream::makeFromPath(getPath(), true);
 }
 

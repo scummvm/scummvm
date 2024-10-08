@@ -230,9 +230,10 @@ Common::SeekableReadStream *PSPFilesystemNode::createReadStream() {
 	return Common::wrapBufferedSeekableReadStream(stream, READ_BUFFER_SIZE, DisposeAfterUse::YES);
 }
 
-Common::SeekableWriteStream *PSPFilesystemNode::createWriteStream() {
+Common::SeekableWriteStream *PSPFilesystemNode::createWriteStream(bool atomic) {
 	const uint32 WRITE_BUFFER_SIZE = 1024;
 
+	// TODO: Add atomic support if possible
 	Common::SeekableWriteStream *stream = PspIoStream::makeFromPath(getPath(), true);
 
 	return Common::wrapBufferedWriteStream(stream, WRITE_BUFFER_SIZE);

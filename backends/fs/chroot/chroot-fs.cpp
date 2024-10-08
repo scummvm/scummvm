@@ -100,8 +100,8 @@ Common::SeekableReadStream *ChRootFilesystemNode::createReadStream() {
 	return _realNode->createReadStream();
 }
 
-Common::SeekableWriteStream *ChRootFilesystemNode::createWriteStream() {
-	return _realNode->createWriteStream();
+Common::SeekableWriteStream *ChRootFilesystemNode::createWriteStream(bool atomic) {
+	return _realNode->createWriteStream(atomic);
 }
 
 bool ChRootFilesystemNode::createDirectory() {

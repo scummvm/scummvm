@@ -450,7 +450,7 @@ Common::SeekableReadStream *AndroidSAFFilesystemNode::createReadStream() {
 	return new PosixIoStream(f);
 }
 
-Common::SeekableWriteStream *AndroidSAFFilesystemNode::createWriteStream() {
+Common::SeekableWriteStream *AndroidSAFFilesystemNode::createWriteStream(bool atomic) {
 	assert(_safTree != nullptr);
 
 	JNIEnv *env = JNI::getEnv();
@@ -459,6 +459,7 @@ Common::SeekableWriteStream *AndroidSAFFilesystemNode::createWriteStream() {
 		assert(_safParent);
 		jstring name = env->NewStringUTF(_newName.c_str());
 
+		// TODO: Add atomic support if possible
 		jobject child = env->CallObjectMethod(_safTree, _MID_createFile, _safParent, name);
 
 		env->DeleteLocalRef(name);

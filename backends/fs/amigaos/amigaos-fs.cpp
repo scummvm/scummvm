@@ -350,7 +350,7 @@ Common::SeekableReadStream *AmigaOSFilesystemNode::createReadStream() {
 }
 
 
-Common::SeekableWriteStream *AmigaOSFilesystemNode::createWriteStream() {
+Common::SeekableWriteStream *AmigaOSFilesystemNode::createWriteStream(bool atomic) {
 	return StdioStream::makeFromPath(getPath(), true);
 }
 
