@@ -552,7 +552,80 @@ void RiddleEngine::showMessageLog(int trigger) {
 }
 
 void RiddleEngine::lookAtInventoryItem() {
-	// TODO
+	if (_G(kernel).trigger != -1)
+		return;
+
+	const int f201 = _G(flags)[V201];
+	const int f207 = _G(flags)[V207];
+	const int f208 = _G(flags)[V208];
+	const int f209 = _G(flags)[V209];
+
+	Common::String str = "PING ";
+	str += _G(player).noun;
+	const char *digi = nullptr;
+
+	if (player_said("HORN/PULL CORD"))
+		digi = "COM117";
+	else if (player_said("HORN/PULL CORD/WATER"))
+		digi = "COM116";
+	else if (player_said("MENENDEZ'S LETTER"))
+		digi = "407r41";
+	else if (player_said("VON SELTSAM'S LETTER"))
+		digi = "303r10";
+	else if (player_said("VON SELTSAM'S NOTE"))
+		digi = "406R18";
+	else if (player_said("POSTAGE STAMP"))
+		digi = "406R19";
+	else if (player_said("TOMB MESSAGE")) {
+		if (_G(flags)[V031]) {
+			digi = "406R18";
+		} else {
+			digi = "406R18C";
+			_G(flags)[V031] = 1;
+		}
+	} else if (player_said("TWELVETREES' MAP")) {
+		if (!_G(flags)[V037]) {
+			_G(flags)[V037] = 1;
+			digi = player_been_here(623) ? "603r30" : "603r31";
+		}
+
+		str = "PING OBJ1";
+
+		if (!f201 && !f207 && !f209 && !f208)
+			str += "36";
+		else if (f201 && !f207 && !f209 && !f208)
+			str += "22";
+		else if (!f201 && f207 && !f209 && !f208)
+			str += "23";
+		else if (!f201 && !f207 && f209 && !f208)
+			str += "24";
+		else if (!f201 && !f207 && !f209 && f208)
+			str += "25";
+		else if (f201 && f207 && !f209 && !f208)
+			str += "26";
+		else if (f201 && !f207 && !f209 && f208)
+			str += "27";
+		else if (f201 && !f207 && f209 && !f208)
+			str += "28";
+		else if (!f201 && f207 && f209 && !f208)
+			str += "29";
+		else if (!f201 && f207 && !f209 && f208)
+			str += "30";
+		else if (!f201 && !f207 && f209 && f208)
+			str += "31";
+		else if (f201 && f207 && !f209 && f208)
+			str += "32";
+		else if (f201 && !f207 && f209 && f208)
+			str += "33";
+		else if (f201 && f207 && f209 && !f208)
+			str += "34";
+		else if (!f201 && f207 && f209 && f208)
+			str += "35";
+		else if (f201 && f207 && f209 && f208)
+			str = "PING TWELVETREES' MAP";
+	}
+
+	kernel_examine_inventory_object(str.c_str(), 5, 1, 270, 150, 990, digi);
 }
 
 } // namespace Riddle
