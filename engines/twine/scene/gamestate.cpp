@@ -516,7 +516,7 @@ void GameState::processGameoverAnimation() {
 	_engine->_scene->_sceneHero->_staticFlags.bIsInvisible = 0;
 
 	// TODO: inSceneryView
-	_engine->setPalette(_engine->_screens->_paletteRGBA);
+	_engine->setPalette(_engine->_screens->_ptrPal);
 	_engine->saveFrontBuffer();
 	BodyData gameOverPtr;
 	if (!gameOverPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_GAMEOVERMDL, _engine->isLBA1())) {

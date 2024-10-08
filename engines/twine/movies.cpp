@@ -201,8 +201,8 @@ void Movies::processFrame() {
 				// FLA movies don't use cross fade
 				// fade out tricky
 				if (_fadeOut != 1) {
-					_engine->_screens->convertPalToRGBA(_engine->_screens->_palette, _engine->_screens->_paletteRGBACustom);
-					_engine->_screens->fadeToBlack(_engine->_screens->_paletteRGBACustom);
+					_engine->_screens->convertPalToRGBA(_engine->_screens->_palette, _engine->_screens->_palettePcx);
+					_engine->_screens->fadeToBlack(_engine->_screens->_palettePcx);
 					_fadeOut = 1;
 				}
 				break;
@@ -305,7 +305,7 @@ void Movies::prepareGIF(int index) {
 	debug(2, "Show gif with id %i from %s", index, Resources::HQR_FLAGIF_FILE);
 	delete stream;
 	_engine->delaySkip(5000);
-	_engine->setPalette(_engine->_screens->_paletteRGBA);
+	_engine->setPalette(_engine->_screens->_ptrPal);
 }
 
 void Movies::playGIFMovie(const char *flaName) {
@@ -424,19 +424,19 @@ bool Movies::playMovie(const char *name) { // PlayAnimFla
 
 			// Only blit to screen if isn't a fade
 			if (_fadeOut == -1) {
-				_engine->_screens->convertPalToRGBA(_engine->_screens->_palette, _engine->_screens->_paletteRGBACustom);
+				_engine->_screens->convertPalToRGBA(_engine->_screens->_palette, _engine->_screens->_palettePcx);
 				if (currentFrame == 0) {
 					// fade in the first frame
-					_engine->_screens->fadeIn(_engine->_screens->_paletteRGBACustom);
+					_engine->_screens->fadeIn(_engine->_screens->_palettePcx);
 				} else {
-					_engine->setPalette(_engine->_screens->_paletteRGBACustom);
+					_engine->setPalette(_engine->_screens->_palettePcx);
 				}
 			}
 
 			// TRICKY: fade in tricky
 			if (_fadeOutFrames >= 2) {
-				_engine->_screens->convertPalToRGBA(_engine->_screens->_palette, _engine->_screens->_paletteRGBACustom);
-				_engine->_screens->fadeToPal(_engine->_screens->_paletteRGBACustom);
+				_engine->_screens->convertPalToRGBA(_engine->_screens->_palette, _engine->_screens->_palettePcx);
+				_engine->_screens->fadeToPal(_engine->_screens->_palettePcx);
 				_fadeOut = -1;
 				_fadeOutFrames = 0;
 			}
@@ -447,7 +447,7 @@ bool Movies::playMovie(const char *name) { // PlayAnimFla
 		warning("Unsupported fla version: %u, %s", version, fileNamePath.c_str());
 	}
 
-	_engine->_screens->fadeToBlack(_engine->_screens->_paletteRGBACustom);
+	_engine->_screens->fadeToBlack(_engine->_screens->_palettePcx);
 
 	_engine->_sound->stopSamples();
 	return finished;

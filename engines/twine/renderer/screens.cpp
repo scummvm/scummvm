@@ -71,7 +71,7 @@ void Screens::loadCustomPalette(const TwineResource &resource) {
 		warning("Unexpected palette size %s:%i", resource.hqr, resource.index);
 	}
 	debug(3, "palette %s:%i with size %i", resource.hqr, resource.index, size);
-	convertPalToRGBA(_palette, _paletteRGBACustom);
+	convertPalToRGBA(_palette, _palettePcx);
 }
 
 void Screens::convertPalToRGBA(const uint8 *in, uint32 *out) {
@@ -95,10 +95,10 @@ void Screens::loadImage(TwineImage image, bool fadeIn) {
 	debug(0, "Load image: %i", image.image.index);
 	Graphics::ManagedSurface& target = _engine->_frontVideoBuffer;
 	target.transBlitFrom(src, src.getBounds(), target.getBounds(), 0, false, 0, 0xff, nullptr, true);
-	const uint32 *pal = _paletteRGBA;
+	const uint32 *pal = _ptrPal;
 	if (image.palette.index != -1) {
 		loadCustomPalette(image.palette);
-		pal = _paletteRGBACustom;
+		pal = _palettePcx;
 	}
 	if (fadeIn) {
 		fadeToPal(pal);
@@ -110,10 +110,10 @@ void Screens::loadImage(TwineImage image, bool fadeIn) {
 bool Screens::loadImageDelay(TwineImage image, int32 seconds) {
 	loadImage(image);
 	if (_engine->delaySkip(1000 * seconds)) {
-		adjustPalette(0, 0, 0, _paletteRGBACustom, 100);
+		adjustPalette(0, 0, 0, _palettePcx, 100);
 		return true;
 	}
-	fadeOut(_paletteRGBACustom);
+	fadeOut(_palettePcx);
 	return false;
 }
 
@@ -229,15 +229,15 @@ void Screens::adjustPalette(uint8 r, uint8 g, uint8 b, const uint32 *rgbaPal, in
 	_engine->_frontVideoBuffer.update();
 }
 
-void Screens::adjustCrossPalette(const uint32 *pal1, const uint32 *pal2) {
-	uint32 pal[NUMOFCOLORS];
+void Screens::fadePalToPal(const uint32 *ptrpal, const uint32 *ptrpal2) {
+	uint32 workpal[NUMOFCOLORS];
 
 	int32 counter = 0;
 	int32 intensity = 0;
 
-	const uint8 *pal1p = (const uint8 *)pal1;
-	const uint8 *pal2p = (const uint8 *)pal2;
-	uint8 *paletteOut = (uint8 *)pal;
+	const uint8 *pal1p = (const uint8 *)ptrpal;
+	const uint8 *pal2p = (const uint8 *)ptrpal2;
+	uint8 *paletteOut = (uint8 *)workpal;
 	do {
 		FrameMarker frame(_engine, DEFAULT_HZ);
 		counter = 0;
@@ -261,7 +261,7 @@ void Screens::adjustCrossPalette(const uint32 *pal1, const uint32 *pal2) {
 			counter += 4;
 		}
 
-		_engine->setPalette(pal);
+		_engine->setPalette(workpal);
 		intensity++;
 		_engine->_frontVideoBuffer.update();
 	} while (intensity <= 100);
@@ -305,39 +305,39 @@ void Screens::blackToWhite() {
 void Screens::setDarkPal() {
 	ScopedEngineFreeze scoped(_engine);
 	HQR::getEntry(_palette, Resources::HQR_RESS_FILE, RESSHQR_DARKPAL);
-	convertPalToRGBA(_palette, _paletteRGBA);
-	if (!_fadePalette) {
+	convertPalToRGBA(_palette, _ptrPal);
+	if (!_flagFade) {
 		// set the palette hard if it should not get faded
-		_engine->setPalette(_paletteRGBA);
+		_engine->setPalette(_ptrPal);
 	}
-	_useAlternatePalette = true;
+	_flagPalettePcx = true;
 }
 
 void Screens::setNormalPal() {
-	_useAlternatePalette = false;
-	if (!_fadePalette) {
+	_flagPalettePcx = false;
+	if (!_flagFade) {
 		// reset the palette hard if it should not get faded
 		_engine->setPalette(_mainPaletteRGBA);
 	}
 }
 
-void Screens::setBackPal() {
+void Screens::setBlackPal() {
 	memset(_palette, 0, sizeof(_palette));
-	memset(_paletteRGBA, 0, sizeof(_paletteRGBA));
+	memset(_ptrPal, 0, sizeof(_ptrPal));
 
-	_engine->setPalette(_paletteRGBA);
+	_engine->setPalette(_ptrPal);
 
 	_palResetted = true;
 }
 
-void Screens::fadePalRed(const uint32 *pal) {
+void Screens::fadeToRed(const uint32 *pal) {
 	for (int32 i = 100; i >= 0; i -= 2) {
 		FrameMarker frame(_engine, DEFAULT_HZ);
 		adjustPalette(0xFF, 0, 0, pal, i);
 	}
 }
 
-void Screens::fadeRedPal(const uint32 *pal) {
+void Screens::fadeRedToPal(const uint32 *pal) {
 	for (int32 i = 0; i <= 100; i += 2) {
 		FrameMarker frame(_engine, DEFAULT_HZ);
 		adjustPalette(0xFF, 0, 0, pal, i);

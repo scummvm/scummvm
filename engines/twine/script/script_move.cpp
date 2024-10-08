@@ -539,7 +539,7 @@ int32 ScriptMove::mPLAY_FLA(TwinEEngine *engine, MoveScriptContext &ctx) {
 
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::PLAY_FLA(%s)", movie);
 	engine->_movie->playMovie(movie);
-	engine->setPalette(engine->_screens->_paletteRGBA);
+	engine->setPalette(engine->_screens->_ptrPal);
 	engine->_screens->clearScreen();
 	return 0;
 }

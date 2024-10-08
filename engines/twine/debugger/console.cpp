@@ -318,7 +318,7 @@ bool TwinEConsole::doGiveKashes(int argc, const char **argv) {
 }
 
 bool TwinEConsole::doToggleDarkPal(int argc, const char **argv) {
-	if (_engine->_screens->_useAlternatePalette) {
+	if (_engine->_screens->_flagPalettePcx) {
 		debugPrintf("Disabling dark palette\n");
 		_engine->_screens->setNormalPal();
 	} else {

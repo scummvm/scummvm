@@ -338,7 +338,7 @@ void HolomapV1::drawHolomapTrajectory(int32 trajectoryIndex) {
 	_engine->_screens->clearScreen();
 
 	initHoloDatas();
-	_engine->setPalette(_engine->_screens->_paletteRGBACustom);
+	_engine->setPalette(_engine->_screens->_palettePcx);
 
 	ScopedEngineFreeze timeFreeze(_engine);
 	const int32 cameraPosX = _engine->width() / 2 + 80;
@@ -422,7 +422,7 @@ void HolomapV1::drawHolomapTrajectory(int32 trajectoryIndex) {
 	}
 
 	_engine->_screens->clearScreen();
-	_engine->setPalette(_engine->_screens->_paletteRGBA);
+	_engine->setPalette(_engine->_screens->_ptrPal);
 	_engine->_gameState->init3DGame();
 	_engine->_interface->restoreClip();
 
@@ -527,11 +527,11 @@ void HolomapV1::holoMap() {
 
 	_engine->_gameState->init3DGame();
 
-	_engine->_screens->fadeToBlack(_engine->_screens->_paletteRGBA);
+	_engine->_screens->fadeToBlack(_engine->_screens->_ptrPal);
 	_engine->_sound->stopSamples();
 	_engine->_interface->unsetClip();
 	_engine->_screens->clearScreen();
-	_engine->_screens->fadeToBlack(_engine->_screens->_paletteRGBA);
+	_engine->_screens->fadeToBlack(_engine->_screens->_ptrPal);
 
 	initHoloDatas();
 
@@ -671,13 +671,13 @@ void HolomapV1::holoMap() {
 
 		if (flagpal) {
 			flagpal = false;
-			_engine->_screens->fadeToPal(_engine->_screens->_paletteRGBACustom);
+			_engine->_screens->fadeToPal(_engine->_screens->_palettePcx);
 		}
 	}
 
 	_engine->_screens->clearScreen();
 	_engine->_text->_flagMessageShade = true;
-	_engine->setPalette(_engine->_screens->_paletteRGBA);
+	_engine->setPalette(_engine->_screens->_ptrPal);
 	_engine->_scene->_alphaLight = alphaLightTmp;
 	_engine->_scene->_betaLight = betaLightTmp;
 

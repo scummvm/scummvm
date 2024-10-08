@@ -710,7 +710,7 @@ void TwinEEngine::processActorSamplePosition(int32 actorIdx) {
 }
 
 void TwinEEngine::processBookOfBu() {
-	_screens->fadeToBlack(_screens->_paletteRGBA);
+	_screens->fadeToBlack(_screens->_ptrPal);
 	_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 15, 16));
 	_text->initDial(TextBankId::Inventory_Intro_and_Holomap);
 	_text->_flagMessageShade = false;
@@ -723,11 +723,11 @@ void TwinEEngine::processBookOfBu() {
 	_text->normalWinDial();
 	_text->_flagMessageShade = true;
 	_text->initSceneTextBank();
-	_screens->fadeToBlack(_screens->_paletteRGBACustom);
+	_screens->fadeToBlack(_screens->_palettePcx);
 	_screens->clearScreen();
 	// TODO: the palette handling here looks wrong
-	setPalette(_screens->_paletteRGBA);
-	_screens->_fadePalette = true;
+	setPalette(_screens->_ptrPal);
+	_screens->_flagFade = true;
 }
 
 void TwinEEngine::processBonusList() {
@@ -750,7 +750,7 @@ void TwinEEngine::processInventoryAction() {
 	switch (_loopInventoryItem) {
 	case kiHolomap:
 		_holomap->holoMap();
-		_screens->_fadePalette = true;
+		_screens->_flagFade = true;
 		break;
 	case kiMagicBall:
 		if (_gameState->_usingSabre) {
@@ -983,7 +983,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			// unfreeze here - the redrawEngineActions is also doing a freeze
 			// see https://bugs.scummvm.org/ticket/14808
 			unfreezeTime();
-			_screens->_fadePalette = true;
+			_screens->_flagFade = true;
 			_redraw->redrawEngineActions(true);
 		}
 
@@ -1140,7 +1140,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 						_scene->_sceneHero->setLife(getMaxLife());
 						_redraw->_firstTime = true;
-						_screens->_fadePalette = true;
+						_screens->_flagFade = true;
 						_gameState->addLeafs(-1);
 						_actor->_cropBottomScreen = 0;
 					} else { // game over
@@ -1197,7 +1197,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 bool TwinEEngine::gameEngineLoop() {
 	_redraw->_firstTime = true;
-	_screens->_fadePalette = true;
+	_screens->_flagFade = true;
 	_movements->setActorAngle(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_90, LBAAngles::ANGLE_1, &_loopMovePtr);
 
 	while (_sceneLoopState == SceneLoopState::Continue) {

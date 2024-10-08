@@ -203,9 +203,9 @@ int32 ScriptLifeV2::lPALETTE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::PALETTE(%i)", palIndex);
 	ScopedEngineFreeze scoped(engine);
 	HQR::getEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, palIndex);
-	engine->_screens->convertPalToRGBA(engine->_screens->_palette, engine->_screens->_paletteRGBA);
-	engine->setPalette(engine->_screens->_paletteRGBA);
-	engine->_screens->_useAlternatePalette = true;
+	engine->_screens->convertPalToRGBA(engine->_screens->_palette, engine->_screens->_ptrPal);
+	engine->setPalette(engine->_screens->_ptrPal);
+	engine->_screens->_flagPalettePcx = true;
 	return 0;
 }
 
@@ -567,7 +567,7 @@ int32 ScriptLifeV2::lPLAY_ACF(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 	engine->_movie->playMovie(movie);
 	// TODO: lba2 is doing more stuff here - reset the cinema mode, init the scene and palette stuff
-	engine->setPalette(engine->_screens->_paletteRGBA);
+	engine->setPalette(engine->_screens->_ptrPal);
 	engine->_redraw->_firstTime = true;
 
 	return -1;

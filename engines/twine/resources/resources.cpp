@@ -56,8 +56,8 @@ void Resources::initPalettes() {
 
 	memcpy(_engine->_screens->_palette, mainPalette, NUMOFCOLORS * 3);
 
-	_engine->_screens->convertPalToRGBA(_engine->_screens->_palette, _engine->_screens->_paletteRGBA);
-	_engine->setPalette(_engine->_screens->_paletteRGBA);
+	_engine->_screens->convertPalToRGBA(_engine->_screens->_palette, _engine->_screens->_ptrPal);
+	_engine->setPalette(_engine->_screens->_ptrPal);
 	free(mainPalette);
 }
 

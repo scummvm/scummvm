@@ -53,19 +53,19 @@ public:
 	int32 mapLba2Palette(int32 palIndex);
 
 	/** converted in-game palette */
-	uint32 _paletteRGBA[NUMOFCOLORS]{0};
+	uint32 _ptrPal[NUMOFCOLORS]{0};
 
 	/** converted custom palette */
-	uint32 _paletteRGBACustom[NUMOFCOLORS]{0};
+	uint32 _palettePcx[NUMOFCOLORS]{0};
 
 	/** flag to check in the game palette was changed */
 	bool _palResetted = false;
 
 	/** flag to check if the main flag is locked */
-	bool _fadePalette = false;
+	bool _flagFade = false;
 
 	/** flag to check if we are using a different palette than the main one */
-	bool _useAlternatePalette = false;
+	bool _flagPalettePcx = false;
 
 	/** converted in-game palette */
 	uint32 _mainPaletteRGBA[NUMOFCOLORS]{0};
@@ -141,7 +141,7 @@ public:
 	 * @param pal1 palette from adjust
 	 * @param pal2 palette to adjust
 	 */
-	void adjustCrossPalette(const uint32 *pal1, const uint32 *pal2);
+	void fadePalToPal(const uint32 *pal1, const uint32 *pal2);
 
 	/**
 	 * Fade image to black
@@ -159,19 +159,19 @@ public:
 	void blackToWhite();
 
 	/** Resets both in-game and sdl palettes */
-	void setBackPal();
+	void setBlackPal();
 
 	/**
 	 * Fade palette to red palette
 	 * @param palette current palette to fade
 	 */
-	void fadePalRed(const uint32 *palette);
+	void fadeToRed(const uint32 *palette);
 
 	/**
 	 * Fade red to palette
 	 * @param palette current palette to fade
 	 */
-	void fadeRedPal(const uint32 *palette);
+	void fadeRedToPal(const uint32 *palette);
 
 	/**
 	 * Copy a determinate screen buffer to another

@@ -881,7 +881,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // AffScene
 	if (bgRedraw) {
 		_engine->freezeTime(false);
 		if (_engine->_scene->_needChangeScene != SCENE_CEILING_GRID_FADE_1 && _engine->_scene->_needChangeScene != SCENE_CEILING_GRID_FADE_2) {
-			_engine->_screens->fadeOut(_engine->_screens->_paletteRGBA);
+			_engine->_screens->fadeOut(_engine->_screens->_ptrPal);
 		}
 		_engine->_screens->clearScreen();
 
@@ -894,7 +894,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // AffScene
 		_engine->saveFrontBuffer();
 
 		if (_engine->_scene->_needChangeScene != SCENE_CEILING_GRID_FADE_1 && _engine->_scene->_needChangeScene != SCENE_CEILING_GRID_FADE_2) {
-			_engine->_screens->fadeIn(_engine->_screens->_paletteRGBA);
+			_engine->_screens->fadeIn(_engine->_screens->_ptrPal);
 		}
 	} else {
 		blitBackgroundAreas();
@@ -928,13 +928,13 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // AffScene
 		flipRedrawAreas();
 	}
 
-	if (_engine->_screens->_fadePalette) {
-		if (_engine->_screens->_useAlternatePalette) {
-			_engine->_screens->fadeToPal(_engine->_screens->_paletteRGBA);
+	if (_engine->_screens->_flagFade) {
+		if (_engine->_screens->_flagPalettePcx) {
+			_engine->_screens->fadeToPal(_engine->_screens->_ptrPal);
 		} else {
 			_engine->_screens->fadeToPal(_engine->_screens->_mainPaletteRGBA);
 		}
-		_engine->_screens->_fadePalette = false;
+		_engine->_screens->_flagFade = false;
 	}
 }
 
