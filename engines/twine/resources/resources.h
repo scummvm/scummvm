@@ -151,6 +151,8 @@ private:
 	TextData _textData;
 	Anim3DSData _anim3DSData;
 
+	/** Actors 3D body table - size of NUM_BODIES */
+	BodyData _bodyData[NUM_BODIES];
 public:
 	Resources(TwinEEngine *engine) : _engine(engine) {}
 	~Resources();
@@ -172,8 +174,7 @@ public:
 
 	AnimData _animData[NUM_ANIMS];
 
-	/** Actors 3D body table - size of NUM_BODIES */
-	BodyData _bodyData[NUM_BODIES];
+	BodyData &getBodyData(int index);
 
 	/** Table with all loaded samples */
 	uint8 *_samplesTable[NUM_SAMPLES]{nullptr};

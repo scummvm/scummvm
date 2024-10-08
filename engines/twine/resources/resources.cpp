@@ -252,6 +252,10 @@ void Resources::initResources() {
 	debug("Loaded %i text banks", textEntryCount / 2);
 }
 
+BodyData &Resources::getBodyData(int index) {
+	return _bodyData[index];
+}
+
 const TextEntry *Resources::getText(TextBankId textBankId, TextId index) const {
 	return _textData.getText(textBankId, index);
 }

@@ -275,7 +275,7 @@ void Actor::initBody(BodyType bodyIdx, int16 actorIdx) {
 	if (actorBoundingBox.hasBoundingBox) {
 		localActor->_boundingBox = actorBoundingBox.bbox;
 	} else {
-		const BodyData &bd = _engine->_resources->_bodyData[localActor->_body];
+		const BodyData &bd = _engine->_resources->getBodyData(localActor->_body);
 		localActor->_boundingBox = bd.bbox;
 
 		int32 size = 0;
@@ -298,7 +298,7 @@ void Actor::initBody(BodyType bodyIdx, int16 actorIdx) {
 		localActor->_boundingBox.maxs.z = size;
 	}
 	if (oldBody != -1 && localActor->_anim != -1) {
-		copyInterAnim(_engine->_resources->_bodyData[oldBody], _engine->_resources->_bodyData[localActor->_body]);
+		copyInterAnim(_engine->_resources->getBodyData(oldBody), _engine->_resources->getBodyData(localActor->_body));
 	}
 }
 
