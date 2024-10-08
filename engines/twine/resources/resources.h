@@ -193,6 +193,9 @@ public:
 	void initResources();
 
 	const Trajectory *getTrajectory(int index) const;
+	const TrajectoryData &getTrajectories() const {
+		return _trajectories;
+	}
 	void loadEntityData(EntityData &entityData, int32 &index);
 
 	const TextEntry *getText(TextBankId textBankId, TextId index) const;

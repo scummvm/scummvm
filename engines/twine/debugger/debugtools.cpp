@@ -163,6 +163,24 @@ static void holomapFlagsWindow(TwinEEngine *engine) {
 	ImGui::End();
 }
 
+static void sceneFlagsWindow(TwinEEngine *engine) {
+	if (!engine->_debugState->_sceneFlagsWindow) {
+		return;
+	}
+
+	if (ImGui::Begin("Scene flags", &engine->_debugState->_sceneFlagsWindow)) {
+		if (ImGui::BeginTable("###sceneflags", 8)) {
+			for (int i = 0; i < NUM_SCENES_FLAGS; ++i) {
+				ImGui::TableNextColumn();
+				Common::String id = Common::String::format("[%03d]", i);
+				ImGuiEx::InputInt(id.c_str(), &engine->_scene->_listFlagCube[i]);
+			}
+			ImGui::EndTable();
+		}
+	}
+	ImGui::End();
+}
+
 static void gameFlagsWindow(TwinEEngine *engine) {
 	if (!engine->_debugState->_gameFlagsWindow) {
 		return;
@@ -262,15 +280,92 @@ static void sceneDetailsWindows(TwinEEngine *engine) {
 		// 	engine->_redraw->_firstTime = true;
 		// }
 		if (engine->_debugState->_showingZones) {
-			if (ImGui::CollapsingHeader("Zones")) {
+			if (ImGui::CollapsingHeader("Show zone types")) {
 				for (int i = 0; i < ARRAYSIZE(ZoneDescriptions); ++i) {
-					ImGui::CheckboxFlags(ZoneDescriptions[i].name, &engine->_debugState->_typeZones, (1u << (uint32)ZoneDescriptions[i].type));
+					if (ImGui::CheckboxFlags(ZoneDescriptions[i].name, &engine->_debugState->_typeZones, (1u << (uint32)ZoneDescriptions[i].type))) {
+						engine->_redraw->_firstTime = true;
+					}
 					if (ZoneDescriptions[i].desc) {
-						ImGui::SetTooltip(ZoneDescriptions[i].desc);
+						ImGui::SetItemTooltip(ZoneDescriptions[i].desc);
 					}
 				}
 			}
 		}
+
+		if (ImGui::CollapsingHeader("Zones##zonesheader")) {
+			for (int i = 0; i < scene->_sceneNumZones; ++i) {
+				ZoneStruct *zone = &scene->_sceneZones[i];
+				ImGui::Text("Zone idx: %i", i);
+				ImGui::Indent();
+				const ZonesDesc &zoneDesc = ZoneDescriptions[(int)zone->type];
+				ImGui::Text("Type: %s", zoneDesc.name);
+				if (zoneDesc.desc != nullptr) {
+					ImGui::SameLine();
+					ImGui::Text("%s", zoneDesc.desc);
+				}
+				ImGui::PushID(i);
+				ImGuiEx::InputIVec3("Mins", zone->mins);
+				ImGuiEx::InputIVec3("Maxs", zone->maxs);
+				ImGui::PopID();
+
+				ImGui::Text("Num: %i", zone->num);
+				ImGui::Text("Info0: %i", zone->infoData.generic.info0);
+				ImGui::Text("Info1: %i", zone->infoData.generic.info1);
+				ImGui::Text("Info2: %i", zone->infoData.generic.info2);
+				ImGui::Text("Info3: %i", zone->infoData.generic.info3);
+				ImGui::Text("Info4: %i", zone->infoData.generic.info4);
+				ImGui::Text("Info5: %i", zone->infoData.generic.info5);
+				ImGui::Text("Info6: %i", zone->infoData.generic.info6);
+				ImGui::Text("Info7: %i", zone->infoData.generic.info7);
+				ImGui::Unindent();
+			}
+		}
+
+		if (ImGui::CollapsingHeader("Tracks##tracksheader")) {
+			for (int i = 0; i < scene->_sceneNumTracks; ++i) {
+				ImGui::Text("Track %i: %i %i %i", i, scene->_sceneTracks[i].x, scene->_sceneTracks[i].y, scene->_sceneTracks[i].z);
+			}
+		}
+
+		if (ImGui::CollapsingHeader("Trajectories##trajectoriesheader")) {
+			const TrajectoryData &trajectories = engine->_resources->getTrajectories();
+			for (int i = 0; i < (int)trajectories.getTrajectories().size(); ++i) {
+				const Trajectory *trajectory = trajectories.getTrajectory(i);
+				ImGui::Text("Trajectory %i", i);
+				ImGui::SameLine();
+				Common::String buttonId = Common::String::format("Activate##activateTrajectory%i", i);
+				if (ImGui::Button(buttonId.c_str())) {
+					scene->_holomapTrajectory = i;
+					scene->reloadCurrentScene();
+				}
+				ImGui::Indent();
+				ImGui::Text("location: %i", trajectory->locationIdx);
+				ImGui::Text("trajectory location: %i", trajectory->trajLocationIdx);
+				ImGui::Text("vehicle: %i", trajectory->vehicleIdx);
+				ImGui::Text("pos: %i %i %i", trajectory->pos.x, trajectory->pos.y, trajectory->pos.z);
+				ImGui::Text("num anim frames: %i", trajectory->numAnimFrames);
+				ImGui::Unindent();
+			}
+		}
+		ImGuiEx::InputInt("Previous scene index", &scene->_previousSceneIdx);
+		ImGuiEx::InputInt("Need change scene index", &scene->_needChangeScene);
+
+		ImGui::Text("Climbing flag");
+		ImGui::SameLine();
+		ImGuiEx::Boolean(scene->_flagClimbing);
+
+		ImGuiEx::InputInt("Currently followed actor", &scene->_currentlyFollowedActor);
+
+		ImGui::Checkbox("Enable enhancements", &scene->_enableEnhancements);
+		ImGui::Checkbox("Render grid tiles", &scene->_enableGridTileRendering);
+		ImGuiEx::InputInt("Current script value", &scene->_currentScriptValue);
+		ImGuiEx::InputInt("Talking actor", &scene->_talkingActor);
+		ImGuiEx::InputInt("Cube jingle", &scene->_cubeJingle);
+		ImGuiEx::InputIVec3("New hero pos", scene->_newHeroPos);
+		ImGui::InputInt("Alpha light", &scene->_alphaLight);
+		ImGui::InputInt("Beta light", &scene->_betaLight);
+		ImGuiEx::InputInt("Fall Y position", &scene->_startYFalling);
+		ImGui::Text("Hero position type: %i", (int)scene->_heroPositionType);
 	}
 	ImGui::End();
 }
@@ -519,6 +614,9 @@ static void debuggerMenu(TwinEEngine *engine) {
 		if (ImGui::MenuItem("Scene details")) {
 			engine->_debugState->_sceneDetailsWindow = true;
 		}
+		if (ImGui::MenuItem("Scene flags")) {
+			engine->_debugState->_sceneFlagsWindow = true;
+		}
 		if (ImGui::MenuItem("Actor details")) {
 			engine->_debugState->_actorDetailsWindow = true;
 		}
@@ -567,6 +665,7 @@ void onImGuiRender() {
 	menuTextsWindow(engine);
 	holomapFlagsWindow(engine);
 	gameFlagsWindow(engine);
+	sceneFlagsWindow(engine);
 
 	if (engine->_debugState->_openPopup) {
 		ImGui::OpenPopup(engine->_debugState->_openPopup);

@@ -88,6 +88,7 @@ public:
 	bool _menuTextWindow = false;
 	bool _sceneDetailsWindow = false;
 	bool _actorDetailsWindow = true;
+	bool _sceneFlagsWindow = false;
 
 	bool _useFreeCamera = false;
 	bool _disableGridRendering = false;
