@@ -412,7 +412,7 @@ void Actor::hitObj(int32 actorIdx, int32 actorIdxAttacked, int32 hitforce, int32
 	}
 }
 
-void Actor::processActorCarrier(int32 actorIdx) {
+void Actor::checkCarrier(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (!actor->_staticFlags.bIsCarrierActor) {
 		return;

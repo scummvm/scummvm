@@ -370,7 +370,7 @@ public:
 	void hitObj(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit, int32 angle);
 
 	/** Process actor carrier */
-	void processActorCarrier(int32 actorIdx); // CheckCarrier
+	void checkCarrier(int32 actorIdx); // CheckCarrier
 
 	/** Process actor extra bonus */
 	void giveExtraBonus(int32 actorIdx);

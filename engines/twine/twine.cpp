@@ -1156,7 +1156,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 					}
 				}
 			} else {
-				_actor->processActorCarrier(a);
+				_actor->checkCarrier(a);
 				actor->_workFlags.bIsDead = 1;
 				actor->_body = -1;
 				actor->_zoneSce = -1;

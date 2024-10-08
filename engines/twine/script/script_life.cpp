@@ -1075,7 +1075,7 @@ int32 ScriptLife::lKILL_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lKILL_OBJ(%i)", (int)otherActorIdx);
 
-	engine->_actor->processActorCarrier(otherActorIdx);
+	engine->_actor->checkCarrier(otherActorIdx);
 	ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
 	otherActor->_workFlags.bIsDead = 1;
 	otherActor->_body = -1;
@@ -1091,7 +1091,7 @@ int32 ScriptLife::lKILL_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 int32 ScriptLife::lSUICIDE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SUICIDE()");
-	engine->_actor->processActorCarrier(ctx.actorIdx);
+	engine->_actor->checkCarrier(ctx.actorIdx);
 	ctx.actor->_workFlags.bIsDead = 1;
 	ctx.actor->_body = -1;
 	ctx.actor->_zoneSce = -1;

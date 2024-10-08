@@ -967,7 +967,7 @@ int32 ScriptLifeV2::lINVERSE_BETA(TwinEEngine *engine, LifeScriptContext &ctx) {
 	}
 
 	// To tell an object that it is no longer being carried by me
-	engine->_actor->processActorCarrier(ctx.actorIdx);
+	engine->_actor->checkCarrier(ctx.actorIdx);
 	return -1;
 }
 
