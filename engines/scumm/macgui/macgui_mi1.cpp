@@ -69,25 +69,28 @@ void MacMI1Gui::readStrings() {
 	// for any future need.
 
 	// Debug strings
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 93; i++) {
 		_strsStrings.emplace_back(readCString(strsData));
 	}
 
-	_strsStrings.emplace_back(readPascalString(strsData));
-	_strsStrings.emplace_back(readPascalString(strsData));
-
-	_strsStrings.emplace_back(readCString(strsData));
-	_strsStrings.emplace_back(readCString(strsData));
-
-	// "\x14", "About Loom...<B;(-", "MacScumm", "MacScumm"
-	for (int i = 0; i < 4; i++) {
+	// "\x14", "About Monkey Island...<B;(-"
+	for (int i = 0; i < 2; i++) {
 		_strsStrings.emplace_back(readPascalString(strsData));
 	}
 
-	// "Are you sure you want to restart this game from the beginning?"
-	_strsStrings.emplace_back(readCString(strsData));
-
+	// "Are you sure you want to quit?", "Are you sure you want to quit?",
+	// "Are you sure you want to restart this game from the beginning?",
 	// "Are you sure you want to quit?"
+	for (int i = 0; i < 4; i++) {
+		_strsStrings.emplace_back(readCString(strsData));
+	}
+
+	// "macPixHead is NULL", "Monkey Island"
+	for (int i = 0; i < 2; i++) {
+		_strsStrings.emplace_back(readPascalString(strsData));
+	}
+
+	// "CopyBits error:"
 	_strsStrings.emplace_back(readCString(strsData));
 
 	// "Open Game File...", "Save Game File as..." "Game file"
@@ -101,57 +104,25 @@ void MacMI1Gui::readStrings() {
 	// "An error occured while saving.  The game was not saved.  Please try saving the game to another disk."
 	_strsStrings.emplace_back(readCString(strsData));
 
-	// "Select a color"
-	_strsStrings.emplace_back(readPascalString(strsData));
+	// "At this size, you will not be able to fit the whole game on your screen."
+	_strsStrings.emplace_back(readCString(strsData));
 
 	// Debug strings
-	for (int i = 0; i < 67; i++) {
-		_strsStrings.emplace_back(readCString(strsData));
-	}
-
-	// "About", "PRESENTS"
-	for (int i = 0; i < 2; i++) {
-		_strsStrings.emplace_back(readPascalString(strsData));
-	}
-
-	// "%s Interpreter version %c.%c.%c"
-	_strsStrings.emplace_back(readCString(strsData));
-
-	// All the other "About" dialog strings
-	for (int i = 0; i < 30; i++) {
-		_strsStrings.emplace_back(readPascalString(strsData));
-	}
-
-	// "ERROR #%d"
-	_strsStrings.emplace_back(readCString(strsData));
-
-	// Other debug strings...
-	for (int i = 0; i < 4; i++) {
-		_strsStrings.emplace_back(readPascalString(strsData));
-	}
-
 	for (int i = 0; i < 3; i++) {
 		_strsStrings.emplace_back(readCString(strsData));
 	}
 
-	_strsStrings.emplace_back(readPascalString(strsData));
-	_strsStrings.emplace_back(readPascalString(strsData));
-
-	// "Copyright (c) 1989 Lucasfilm Ltd. All Rights Reserved.", "rb, "wb", "wb"
-	for (int i = 0; i < 4; i++) {
-		_strsStrings.emplace_back(readCString(strsData));
-	}
-
-	// Other debug strings...
-	_strsStrings.emplace_back(readPascalString(strsData));
-
-	_strsStrings.emplace_back(readCString(strsData));
-
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 2; i++) {
 		_strsStrings.emplace_back(readPascalString(strsData));
 	}
 
-	for (int i = 0; i < 7; i++) {
+	// All the "About" dialog strings
+	for (int i = 0; i < 32; i++) {
+		_strsStrings.emplace_back(readPascalString(strsData));
+	}
+
+	// Remaining debug strings
+	for (int i = 0; i < 75; i++) {
 		_strsStrings.emplace_back(readCString(strsData));
 	}
 
@@ -170,42 +141,7 @@ const Graphics::Font *MacMI1Gui::getFontByScummId(int32 id) {
 }
 
 bool MacMI1Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) const {
-	if (MacGuiImpl::getFontParams(fontId, id, size, slant))
-		return true;
-
-	// Loom uses only font size 13 for in-game text, but size 12 is used
-	// for system messages, e.g. the original pause dialog.
-	//
-	// Special characters:
-	//
-	// 16-23 are the note names c through c'.
-	// 60 is an upside-down note, i.e. the one used for c'.
-	// 95 is a used for the rest of the notes.
-
-	switch (fontId) {
-	case kLoomFontSmall:
-		id = _gameFontId;
-		size = 9;
-		slant = Graphics::kMacFontRegular;
-		return true;
-
-	case kLoomFontMedium:
-		id = _gameFontId;
-		size = 12;
-		slant = Graphics::kMacFontRegular;
-		return true;
-
-	case kLoomFontLarge:
-		id = _gameFontId;
-		size = 13;
-		slant = Graphics::kMacFontRegular;
-		return true;
-
-	default:
-		error("MacMI1Gui: getFontParams: Unknown font id %d", (int)fontId);
-	}
-
-	return false;
+	return MacGuiImpl::getFontParams(fontId, id, size, slant);
 }
 
 void MacMI1Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
@@ -217,11 +153,14 @@ bool MacMI1Gui::handleMenu(int id, Common::String &name) {
 		return true;
 
 	switch (id) {
-	case 204:	// Options
+	case 204:   // Fix color map
+		break; // Do a no-op
+
+	case 205:   // Options
 		runOptionsDialog();
 		break;
 
-	case 205:	// Quit
+	case 206:   // Quit
 		if (runQuitDialog())
 			_vm->quitGame();
 		break;
@@ -235,246 +174,7 @@ bool MacMI1Gui::handleMenu(int id, Common::String &name) {
 }
 
 void MacMI1Gui::runAboutDialog() {
-	// The About window is not a a dialog resource. Its size appears to be
-	// hard-coded (416x166), and it's drawn centered. The graphics are in
-	// PICT 5000 and 5001.
-
-	int width = 416;
-	int height = 166;
-	int x = (640 - width) / 2;
-	int y = (400 - height) / 2;
-
-	Common::Rect bounds(x, y, x + width, y + height);
-	MacDialogWindow *window = createWindow(bounds);
-	Graphics::Surface *lucasFilm = loadPict(5000);
-	Graphics::Surface *loom = loadPict(5001);
-
-	const char *subVers = (const char *)_vm->getStringAddress(5);
-	Common::String version = Common::String::format(_strsStrings[91].c_str(), subVers, '5', '1', '6');
-
-	const TextLine page1[] = {
-		{ 0, 23, kStyleExtraBold, Graphics::kTextAlignCenter, _strsStrings[90].c_str() }, // "PRESENTS"
-		TEXT_END_MARKER
-	};
-
-	const TextLine page2[] = {
-		{ 1, 59, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[92].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved."
-		{ 0, 70, kStyleRegular, Graphics::kTextAlignCenter, version.c_str() }, // "Release Version 1.2  25-JAN-91 Interpreter version 5.1.6"
-		TEXT_END_MARKER
-	};
-
-	const TextLine page3[] = {
-		{ 1, 11, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[93].c_str() }, // "Macintosh version by"
-		{ 0, 25, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[95].c_str() }, // "Eric Johnston"
-		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[94].c_str() }, // "Macintosh scripting by"
-		{ 1, 63, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[96].c_str() }, // "Ron Baldwin"
-		TEXT_END_MARKER
-	};
-
-	const TextLine page4[] = {
-		{ 0, 26, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[97].c_str() }, // "Original game created by"
-		{ 1, 40, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[98].c_str() }, // "Brian Moriarty"
-		TEXT_END_MARKER
-	};
-
-	const TextLine page5[] = {
-		{ 1, 11, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[99].c_str() }, // "Produced by"
-		{ 0, 25, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[101].c_str() }, // "Gregory D. Hammond"
-		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[100].c_str() }, // "Macintosh Version Produced by"
-		{ 1, 63, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[102].c_str() }, // "David Fox"
-		TEXT_END_MARKER
-	};
-
-	const TextLine page6[] = {
-		{ 1, 6, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[103].c_str() }, // "SCUMM Story System"
-		{ 1, 16, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[104].c_str() }, // "created by"
-		{ 97, 35, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[106].c_str() }, // "Ron Gilbert"
-		{ 1, 51, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[105].c_str() }, // "and"
-		{ 122, 65, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[107].c_str() }, // "Aric Wilmunder"
-		TEXT_END_MARKER
-	};
-
-	const TextLine page7[] = {
-		{ 1, 16, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[108].c_str() }, // "Stumped?  Loom hint books are available!"
-		{ 76, 33, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[111].c_str() }, // "In the U.S. call"
-		{ 150, 34, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[109].c_str() }, // "1 (800) STAR-WARS"
-		{ 150, 43, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[113].c_str() }, // "that\xD5s  1 (800) 782-7927"
-		{ 80, 63, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[112].c_str() }, // "In Canada call"
-		{ 150, 64, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[110].c_str() }, // "1 (800) 828-7927"
-		TEXT_END_MARKER
-	};
-
-	const TextLine page8[] = {
-		{ 1, 11, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[114].c_str() }, // "Need a hint NOW?  Having problems?"
-		{ 81, 25, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[117].c_str() }, // "For technical support call"
-		{ 205, 26, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[115].c_str() }, // "1 (415) 721-3333"
-		{ 137, 35, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[118].c_str() }, // "For hints call"
-
-		{ 205, 36, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[116].c_str() }, // "1 (900) 740-JEDI"
-		{ 1, 50, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[119].c_str() }, // "The charge for the hint line is 75\xA2 per minute."
-		{ 1, 60, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[120].c_str() }, // "(You must have your parents\xD5 permission to"
-		{ 1, 70, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[121].c_str() }, // "call this number if you are under 18.)"
-		TEXT_END_MARKER
-	};
-
-	struct AboutPage {
-		const TextLine *text;
-		int waitFrames;
-	};
-
-	AboutPage aboutPages[] = {
-		{ nullptr,  60 },	// ~3 seconds
-		{ page1,    40 },	// ~2 seconds
-		{ page2,   130 },	// ~6.5 seconds
-		{ page3,    80 },	// ~4 seconds
-		{ page4,    80 },
-		{ page5,    80 },
-		{ page6,    80 },
-		{ page7,   260 },	// ~13 seconds
-		{ page8,     0 }
-	};
-
-	int page = 0;
-
-	// I've based the animation speed on what it looks like when Mini vMac
-	// emulates an old black-and-white Mac at normal speed. It looks a bit
-	// different in Basilisk II, but that's probably because it emulates a
-	// much faster Mac.
-	//
-	// The animation is either either growing or shrinking, depending on
-	// if growth is positive or negative. During each scene, the animation
-	// may reach its smallest point, at which time it bounces back. When
-	// it reaches its outer limit, the scene ends.
-
-	window->show();
-
-	int scene = 0;
-	DelayStatus status = kDelayDone;
-
-	Common::Rect r(0, 0, 404, 154);
-	int growth = -2;
-	int pattern;
-	bool darkenOnly = false;
-	int waitFrames = 0;
-
-	int innerBounce = 72;
-	int targetTop = 48;
-	int targetGrowth = 2;
-
-	bool changeScene = false;
-	bool fastForward = false;
-
-	while (!_vm->shouldQuit()) {
-		if ((scene % 2) == 0) {
-			// This appears to be pixel perfect or at least nearly
-			// so for the outer layers, but breaks down slightly
-			// near the middle.
-			//
-			// Also, the original does an inexplicable skip in the
-			// first animation that I haven't bothered to
-			// implement. I don't know if it was intentional or
-			// not, but I think it looks awkward. And I wasn't able
-			// to get it quite right anyway.
-
-			pattern = (r.top / 2) % 8;
-
-			if (pattern > 4)
-				darkenOnly = false;
-
-			Graphics::drawRoundRect(r, 7, pattern, true, darkenOnly ? MacDialogWindow::plotPatternDarkenOnly : MacDialogWindow::plotPattern, window);
-
-			if (!fastForward)
-				window->markRectAsDirty(r);
-
-			if (r.top == targetTop && growth == targetGrowth) {
-				changeScene = true;
-			} else {
-				r.grow(growth);
-
-				if (growth < 0 && r.top >= innerBounce)
-					growth = -growth;
-			}
-		} else {
-			if (--waitFrames <= 0)
-				changeScene = true;
-		}
-
-		if (!fastForward) {
-			window->update();
-			status = delay(50);
-		}
-
-		if (status == kDelayInterrupted)
-			fastForward = true;
-
-		if (status == kDelayAborted)
-			break;
-
-		if (changeScene) {
-			changeScene = false;
-			scene++;
-
-			// Animations happen on even-numbered scenes. All
-			// animations start in an inwards direction.
-			//
-			// Odd-numbered scenes are the text pages where it
-			// waits for a bit before continuing. This is where
-			// fast-forwarding (by clicking) stops. Unlike Last
-			// Crusade, we can't just skip the animation because
-			// everything has to be drawn. (Well, some could
-			// probably be skipped, but I doubt it's worth the
-			// trouble to do so.)
-
-			if ((scene % 2) == 0)
-				growth = -2;
-			else {
-				fastForward = false;
-				darkenOnly = true;
-
-				if (aboutPages[page].text)
-					window->drawTexts(r, aboutPages[page].text);
-
-				waitFrames = aboutPages[page].waitFrames;
-				page++;
-			}
-
-			switch (scene) {
-			case 1:
-				window->drawSprite(lucasFilm, 134, 61);
-				break;
-
-			case 4:
-				// All subsequent text pages are larger, which
-				// we compensate by making the inner bounce
-				// happen earlier.
-
-				innerBounce -= 8;
-				targetTop -= 16;
-				break;
-
-			case 5:
-				window->drawSprite(loom, 95, 38);
-				break;
-			}
-
-			window->update(true);
-
-			if (scene >= 17)
-				break;
-		}
-	}
-
-	if (status != kDelayAborted)
-		delay();
-
-	_windowManager->popCursor();
-
-	lucasFilm->free();
-	loom->free();
-
-	delete lucasFilm;
-	delete loom;
-	delete window;
+	// TODO
 }
 
 // A standard file picker dialog doesn't really make sense in ScummVM, so we
@@ -497,7 +197,7 @@ bool MacMI1Gui::runOpenDialog(int &saveSlotToHandle) {
 	Common::StringArray savegameNames;
 	prepareSaveLoad(savegameNames, availSlots, slotIds, ARRAYSIZE(availSlots));
 
-	drawFakePathList(window, Common::Rect(14, 8, 232, 26), _folderIcon, "Loom", Graphics::kTextAlignLeft);
+	drawFakePathList(window, Common::Rect(14, 8, 232, 26), _folderIcon, "Monkey Island", Graphics::kTextAlignLeft);
 	drawFakeDriveLabel(window, Common::Rect(242, 10, 340, 28), _hardDriveIcon, "ScummVM", Graphics::kTextAlignLeft);
 
 	window->addListBox(Common::Rect(14, 31, 232, 161), savegameNames, true);
@@ -543,8 +243,8 @@ bool MacMI1Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 	Common::StringArray savegameNames;
 	prepareSaveLoad(savegameNames, busySlots, slotIds, ARRAYSIZE(busySlots));
 
-	Common::String saveGameFileAsResStr = _strsStrings[17].c_str();
-	Common::String gameFileResStr = _strsStrings[18].c_str();
+	Common::String saveGameFileAsResStr = _strsStrings[103].c_str();
+	Common::String gameFileResStr = _strsStrings[104].c_str();
 
 	int firstAvailableSlot = -1;
 	for (int i = 1; i < ARRAYSIZE(busySlots); i++) { // Skip the autosave slot
@@ -554,7 +254,7 @@ bool MacMI1Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 		}
 	}
 
-	drawFakePathList(window, Common::Rect(14, 8, 232, 26), _folderIcon, "Loom", Graphics::kTextAlignLeft);
+	drawFakePathList(window, Common::Rect(14, 8, 232, 26), _folderIcon, "Monkey Island", Graphics::kTextAlignLeft);
 	drawFakeDriveLabel(window, Common::Rect(242, 10, 340, 28), _hardDriveIcon, "ScummVM", Graphics::kTextAlignLeft);
 
 	window->addListBox(Common::Rect(14, 31, 232, 129), savegameNames, true, true);
