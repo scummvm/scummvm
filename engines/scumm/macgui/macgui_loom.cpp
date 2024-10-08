@@ -48,7 +48,7 @@ MacLoomGui::MacLoomGui(ScummEngine *vm, const Common::Path &resourceFile) : MacG
 	// The practice box can be moved, but this is its default position on
 	// a large screen, and it's not saved.
 
-	_practiceBoxPos = Common::Point(215, 376 + 2 * _vm->_screenDrawOffset);
+	_practiceBoxPos = Common::Point(215, 376 + 2 * _vm->_macScreenDrawOffset);
 	readStrings();
 }
 
@@ -1014,8 +1014,8 @@ bool MacLoomGui::handleEvent(Common::Event event) {
 			// Also, things get weird if you move the box into the
 			// menu hotzone, so don't allow that.
 
-			int maxY = _surface->h - _practiceBox->h - 2 * _vm->_screenDrawOffset;
-			int minY = 2 * _vm->_screenDrawOffset;
+			int maxY = _surface->h - _practiceBox->h - 2 * _vm->_macScreenDrawOffset;
+			int minY = 2 * _vm->_macScreenDrawOffset;
 
 			if (_vm->isUsingOriginalGUI() && minY < 23)
 				minY = 23;

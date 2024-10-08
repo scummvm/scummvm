@@ -880,7 +880,7 @@ MacIndy3Gui::MacIndy3Gui(ScummEngine *vm, const Common::Path &resourceFile) :
 	MacGuiImpl(vm, resourceFile), _visible(false) {
 
 	Common::Rect verbGuiArea(640, 112);
-	verbGuiArea.translate(0, 288 + 2 * _vm->_screenDrawOffset);
+	verbGuiArea.translate(0, 288 + _vm->_macScreenDrawOffset * 2);
 
 	_verbGuiTop = verbGuiArea.top;
 	_verbGuiSurface = _surface->getSubArea(verbGuiArea);
@@ -1711,7 +1711,7 @@ bool MacIndy3Gui::isVerbGuiAllowed() const {
 	// really seems to be all that's needed.
 
 	VirtScreen *vs = &_vm->_virtscr[kVerbVirtScreen];
-	if (vs->topline != 144 + _vm->_screenDrawOffset || vs->h != 56 + _vm->_screenDrawOffset)
+	if (vs->topline != 144 || vs->h != 56)
 		return false;
 
 	// HACK: Don't allow the GUI during fist fights. Usually this is not a

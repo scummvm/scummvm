@@ -378,8 +378,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_screenHeight = 240;
 	} else if (!isSteamVersion && _useMacScreenCorrectHeight && _game.platform == Common::kPlatformMacintosh && _game.version >= 3) {
 		_screenWidth = 320;
-		_screenHeight = 240;
-		_screenDrawOffset = 20;
+		_screenHeight = 200;
 	} else {
 		_screenWidth = 320;
 		_screenHeight = 200;
@@ -1264,6 +1263,9 @@ Common::Error ScummEngine::init() {
 "instruments from. Music will be disabled."), _("OK"));
 				dialog.runModal();
 			}
+		} else {
+			_macScreen = new Graphics::Surface();
+			_macScreen->create(640, _useMacScreenCorrectHeight ? 480 : 400, Graphics::PixelFormat::createFormatCLUT8());
 		}
 
 		if (!macResourceFile.empty()) {
@@ -1279,6 +1281,8 @@ Common::Error ScummEngine::init() {
 		if (!_macScreen && _renderMode == Common::kRenderMacintoshBW)
 			_renderMode = Common::kRenderDefault;
 
+		memset(_completeScreenBuffer, 0, 320 * 200);
+
 		if (_macGui)
 			_macGui->initialize();
 	}
@@ -1289,12 +1293,16 @@ Common::Error ScummEngine::init() {
 	} else if (_renderMode == Common::kRenderCGA_BW || (_renderMode == Common::kRenderEGA && _supportsEGADithering)) {
 		initGraphics(_screenWidth * 2, _screenHeight * 2);
 	} else {
-		int screenWidth = _screenWidth * _textSurfaceMultiplier;
-		int screenHeight = _screenHeight * _textSurfaceMultiplier;
+		int screenWidth = _screenWidth;
+		int screenHeight = _screenHeight;
 
-		if (_macScreen && _game.platform == Common::kPlatformMacintosh && _game.version > 3) {
+		if (_macScreen && _game.platform == Common::kPlatformMacintosh && _game.version >= 3 && _game.heversion == 0) {
 			screenWidth *= 2;
 			screenHeight *= 2;
+			screenHeight += 2 * 2 * _macScreenDrawOffset;
+		} else {
+			screenWidth *= _textSurfaceMultiplier;
+			screenHeight *= _textSurfaceMultiplier;
 		}
 
 		if (_game.features & GF_16BIT_COLOR

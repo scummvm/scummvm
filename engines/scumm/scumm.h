@@ -1312,7 +1312,7 @@ public:
 	// ScummVM GUI; but currently I'm not taking that responsibility, after all the
 	// work done on ensuring that old savegames translate correctly to the new setting... :-P
 	bool _useMacScreenCorrectHeight = true;
-	int _screenDrawOffset = 0;
+	int _macScreenDrawOffset = 20;
 
 	Common::RenderMode _renderMode;
 	uint8 _bytesPerPixel = 1;

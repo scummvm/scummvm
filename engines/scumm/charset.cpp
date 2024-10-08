@@ -1276,7 +1276,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 		}
 
 		if (!ignoreCharsetMask && vs->hasTwoBuffers) {
-			drawTop = _top - _vm->_screenTop - _vm->_screenDrawOffset;
+			drawTop = _top - _vm->_screenTop;
 		}
 
 		if (is2byte && _vm->_game.platform != Common::kPlatformFMTowns)
@@ -1744,7 +1744,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	// If this is the beginning of a line, assume the position will be
 	// correct without any padding.
 
-	if (_firstChar || (_top - _vm->_screenDrawOffset) != _lastTop) {
+	if (_firstChar || _top != _lastTop) {
 		_pad = false;
 	}
 
@@ -1801,7 +1801,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	bool drawToTextBox = (vs->number == kTextVirtScreen && _vm->_game.id == GID_INDY3);
 
 	if (drawToTextBox)
-		_vm->_macGui->printCharToTextArea(chr, macLeft, macTop - 2 * (_vm->_screenDrawOffset), color);
+		_vm->_macGui->printCharToTextArea(chr, macLeft, macTop, color);
 	else
 		printCharInternal(chr, color, enableShadow, macLeft, macTop);
 
@@ -1881,7 +1881,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 		_pad = true;
 
 	_left = macLeft / 2;
-	_lastTop = _top - _vm->_screenDrawOffset;
+	_lastTop = _top;
 }
 
 byte CharsetRendererMac::getTextColor() {
