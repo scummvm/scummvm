@@ -496,8 +496,12 @@ static void actorDetailsWindow(int &actorIdx, TwinEEngine *engine) {
 
 		if (actor->_body != -1) {
 			ImGui::SeparatorText("Body");
-			BodyData &bodyData = actor->_entityDataPtr->getBody(actor->_body);
-			ImGuiEx::InputBoundingBox((int)(uintptr)&bodyData, "Bounding box", bodyData.bbox);
+			if (actor->_entityDataPtr != nullptr) {
+				BodyData &bodyData = actor->_entityDataPtr->getBody(actor->_body);
+				ImGuiEx::InputBoundingBox((int)(uintptr)&bodyData, "Bounding box", bodyData.bbox);
+			} else {
+				ImGui::Text("No entity data");
+			}
 		}
 
 		ImGui::SeparatorText("Entity");
