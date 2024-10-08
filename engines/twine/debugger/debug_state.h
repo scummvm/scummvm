@@ -86,6 +86,8 @@ public:
 	bool _holomapFlagsWindow = false;
 	bool _gameFlagsWindow = false;
 	bool _menuTextWindow = false;
+	bool _sceneDetailsWindow = false;
+	bool _actorDetailsWindow = true;
 
 	bool _useFreeCamera = false;
 	bool _disableGridRendering = false;

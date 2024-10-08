@@ -206,13 +206,85 @@ static void menuTextsWindow(TwinEEngine *engine) {
 	ImGui::End();
 }
 
+static void sceneSelectionCombo(TwinEEngine *engine) {
+	Scene *scene = engine->_scene;
+	GameState *gameState = engine->_gameState;
+	if (ImGui::BeginCombo("Scene", gameState->_sceneName)) {
+		for (int i = 0; i < engine->numHoloPos(); ++i) {
+			Common::String name = Common::String::format("[%03d] %s", i, engine->_holomap->getLocationName(i));
+			if (ImGui::Selectable(name.c_str(), i == engine->_scene->_currentSceneIdx)) {
+				scene->_currentSceneIdx = i;
+				scene->_needChangeScene = scene->_currentSceneIdx;
+				engine->_redraw->_firstTime = true;
+			}
+		}
+		ImGui::EndCombo();
+	}
+}
+
+static const struct ZonesDesc {
+	const char *name;
+	ZoneType type;
+	const char *desc;
+} ZoneDescriptions[] = {
+	{"Cube", ZoneType::kCube, "Change to another scene"},
+	{"Camera", ZoneType::kCamera, "Binds camera view"},
+	{"Sceneric", ZoneType::kSceneric, "For use in Life Script"},
+	{"Grid", ZoneType::kGrid, "Set disappearing Grid fragment"},
+	{"Object", ZoneType::kObject, "Give bonus"},
+	{"Text", ZoneType::kText, "Displays text message"},
+	{"Ladder", ZoneType::kLadder, "Hero can climb on it"},
+	{"Escalator", ZoneType::kEscalator, nullptr},
+	{"Hit", ZoneType::kHit, nullptr},
+	{"Rail", ZoneType::kRail, nullptr}};
+
+static void sceneDetailsWindows(TwinEEngine *engine) {
+	if (!engine->_debugState->_sceneDetailsWindow) {
+		return;
+	}
+	if (ImGui::Begin("Scene", &engine->_debugState->_sceneDetailsWindow)) {
+		Scene *scene = engine->_scene;
+		GameState *gameState = engine->_gameState;
+		ImGui::Text("Scene: %i", scene->_currentSceneIdx);
+		ImGui::Text("Scene name: %s", gameState->_sceneName);
+		sceneSelectionCombo(engine);
+
+		if (ImGui::Checkbox("Bounding boxes", &engine->_debugState->_showingActors)) {
+			engine->_redraw->_firstTime = true;
+		}
+		if (ImGui::Checkbox("Clipping", &engine->_debugState->_showingClips)) {
+			engine->_redraw->_firstTime = true;
+		}
+		if (ImGui::Checkbox("Zones", &engine->_debugState->_showingZones)) {
+			engine->_redraw->_firstTime = true;
+		}
+		// if (ImGui::Checkbox("Tracks", &engine->_debugState->_showingTracks)) {
+		// 	engine->_redraw->_firstTime = true;
+		// }
+		if (engine->_debugState->_showingZones) {
+			if (ImGui::CollapsingHeader("Zones")) {
+				for (int i = 0; i < ARRAYSIZE(ZoneDescriptions); ++i) {
+					ImGui::CheckboxFlags(ZoneDescriptions[i].name, &engine->_debugState->_typeZones, (1u << (uint32)ZoneDescriptions[i].type));
+					if (ZoneDescriptions[i].desc) {
+						ImGui::SetTooltip(ZoneDescriptions[i].desc);
+					}
+				}
+			}
+		}
+	}
+	ImGui::End();
+}
+
 static void actorDetailsWindow(int &actorIdx, TwinEEngine *engine) {
+	if (!engine->_debugState->_actorDetailsWindow) {
+		return;
+	}
 	ActorStruct *actor = engine->_scene->getActor(actorIdx);
 	if (actor == nullptr) {
 		return;
 	}
 
-	if (ImGui::Begin(ACTOR_DETAILS_TITLE)) {
+	if (ImGui::Begin(ACTOR_DETAILS_TITLE, &engine->_debugState->_actorDetailsWindow)) {
 		if (actorIdx < 0 || actorIdx > engine->_scene->_nbObjets) {
 			actorIdx = 0;
 		}
@@ -444,6 +516,12 @@ static void debuggerMenu(TwinEEngine *engine) {
 		if (ImGui::MenuItem("Game flags")) {
 			engine->_debugState->_gameFlagsWindow = true;
 		}
+		if (ImGui::MenuItem("Scene details")) {
+			engine->_debugState->_sceneDetailsWindow = true;
+		}
+		if (ImGui::MenuItem("Actor details")) {
+			engine->_debugState->_actorDetailsWindow = true;
+		}
 
 		ImGui::SeparatorText("Actions");
 
@@ -453,66 +531,12 @@ static void debuggerMenu(TwinEEngine *engine) {
 			actor->_posObj.y += 1000;
 		}
 
-		ImGui::SeparatorText("Scene");
-
-		Scene *scene = engine->_scene;
-		GameState *gameState = engine->_gameState;
-		ImGui::Text("Scene: %i", scene->_currentSceneIdx);
-		ImGui::Text("Scene name: %s", gameState->_sceneName);
-
 		ImGui::SeparatorText("Options");
 
 		ImGui::Checkbox("Free camera", &engine->_debugState->_useFreeCamera);
 		ImGui::Checkbox("God mode", &engine->_debugState->_godMode);
 
-		if (ImGui::Checkbox("Bounding boxes", &engine->_debugState->_showingActors)) {
-			engine->_redraw->_firstTime = true;
-		}
-		if (ImGui::Checkbox("Clipping", &engine->_debugState->_showingClips)) {
-			engine->_redraw->_firstTime = true;
-		}
-		if (ImGui::Checkbox("Zones", &engine->_debugState->_showingZones)) {
-			engine->_redraw->_firstTime = true;
-		}
-
-		if (engine->_debugState->_showingZones) {
-			if (ImGui::CollapsingHeader("Zones")) {
-				static const struct ZonesDesc {
-					const char *name;
-					ZoneType type;
-					const char *desc;
-				} d[] = {
-					{"Cube", ZoneType::kCube, "Change to another scene"},
-					{"Camera", ZoneType::kCamera, "Binds camera view"},
-					{"Sceneric", ZoneType::kSceneric, "For use in Life Script"},
-					{"Grid", ZoneType::kGrid, "Set disappearing Grid fragment"},
-					{"Object", ZoneType::kObject, "Give bonus"},
-					{"Text", ZoneType::kText, "Displays text message"},
-					{"Ladder", ZoneType::kLadder, "Hero can climb on it"},
-					{"Escalator", ZoneType::kEscalator, nullptr},
-					{"Hit", ZoneType::kHit, nullptr},
-					{"Rail", ZoneType::kRail, nullptr}};
-
-				for (int i = 0; i < ARRAYSIZE(d); ++i) {
-					ImGui::CheckboxFlags(d[i].name, &engine->_debugState->_typeZones, (1u << (uint32)d[i].type));
-					if (d[i].desc) {
-						ImGui::SetTooltip(d[i].desc);
-					}
-				}
-			}
-		}
-
-		if (ImGui::BeginCombo("Scene", gameState->_sceneName)) {
-			for (int i = 0; i < engine->numHoloPos(); ++i) {
-				Common::String name = Common::String::format("[%03d] %s", i, engine->_holomap->getLocationName(i));
-				if (ImGui::Selectable(name.c_str(), i == engine->_scene->_currentSceneIdx)) {
-					scene->_currentSceneIdx = i;
-					scene->_needChangeScene = scene->_currentSceneIdx;
-					engine->_redraw->_firstTime = true;
-				}
-			}
-			ImGui::EndCombo();
-		}
+		sceneSelectionCombo(engine);
 
 		ImGui::EndMenu();
 	}
@@ -539,7 +563,7 @@ void onImGuiRender() {
 	}
 
 	actorDetailsWindow(currentActor, engine);
-
+	sceneDetailsWindows(engine);
 	menuTextsWindow(engine);
 	holomapFlagsWindow(engine);
 	gameFlagsWindow(engine);
