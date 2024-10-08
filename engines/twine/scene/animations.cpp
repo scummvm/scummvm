@@ -434,10 +434,10 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType flag, AnimationTypes 
 
 	if (actor->_anim == -1) {
 		// if no previous animation
-		setAnimObjet(0, _engine->_resources->_animData[newanim], _engine->_resources->getBodyData(actor->_body), &actor->_animTimerData);
+		setAnimObjet(0, _engine->_resources->_animData[newanim], actor->_entityDataPtr->getBody(actor->_body), &actor->_animTimerData);
 	} else {
 		// interpolation between animations
-		stockInterAnim(_engine->_resources->getBodyData(actor->_body), &actor->_animTimerData);
+		stockInterAnim(actor->_entityDataPtr->getBody(actor->_body), &actor->_animTimerData);
 	}
 
 	actor->_anim = newanim;
@@ -562,7 +562,7 @@ void Animations::doAnim(int32 actorIdx) {
 			const AnimData &animData = _engine->_resources->_animData[actor->_anim];
 
 			bool keyFramePassed = false;
-			if (_engine->_resources->getBodyData(actor->_body).isAnimated()) {
+			if (actor->_entityDataPtr->getBody(actor->_body).isAnimated()) {
 				keyFramePassed = setInterDepObjet(actor->_frame, animData, &actor->_animTimerData);
 			}
 

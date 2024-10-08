@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "common/memstream.h"
 #include "common/stream.h"
+#include "twine/parser/body.h"
 #include "twine/parser/parser.h"
 #include "twine/shared.h"
 
@@ -34,6 +35,7 @@ struct EntityBody {
 	int index; /**< index in file3d.hqr */
 	ActorBoundingBox actorBoundingBox;
 	int hqrBodyIndex; /**< index in body.hqr */
+	BodyData body;
 };
 
 struct EntityAnim {
@@ -94,6 +96,7 @@ public:
 
 	const Common::Array<EntityAnim::Action> *getActions(AnimationTypes animation) const;
 	const EntityBody *getEntityBody(const int index) const;
+	BodyData &getBody(int index);
 	int32 getAnimIndex(AnimationTypes animation) const;
 
 	const Common::Array<EntityBody> &getBodies() const {

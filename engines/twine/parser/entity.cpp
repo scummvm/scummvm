@@ -21,6 +21,7 @@
 
 #include "twine/parser/entity.h"
 #include "common/stream.h"
+#include "twine/resources/resources.h"
 #include "twine/shared.h"
 
 namespace TwinE {
@@ -31,6 +32,9 @@ bool EntityData::loadBody(Common::SeekableReadStream &stream, bool lba1) {
 	const int64 pos = stream.pos();
 	uint8 size = stream.readByte();
 	body.hqrBodyIndex = (int16)stream.readUint16LE();
+	if (!body.body.loadFromHQR(TwineResource(Resources::HQR_BODY_FILE, body.hqrBodyIndex), lba1)) {
+		error("Failed to load body with index: %i", body.hqrBodyIndex);
+	}
 	const uint8 numActions = stream.readByte();
 	for (uint8 i = 0U; i < numActions; ++i) {
 		if ((ActionType)stream.readByte() == ActionType::ACTION_ZV) {
@@ -305,6 +309,15 @@ const Common::Array<EntityAnim::Action> *EntityData::getActions(AnimationTypes a
 		}
 	}
 	return nullptr;
+}
+
+BodyData &EntityData::getBody(int index) {
+	for (EntityBody &body : _bodies) {
+		if (body.index == index) {
+			return body.body;
+		}
+	}
+	error("Could not find body for index: %i", index);
 }
 
 const EntityBody *EntityData::getEntityBody(const int index) const {

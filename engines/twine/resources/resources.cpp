@@ -230,17 +230,6 @@ void Resources::initResources() {
 	preloadSamples();
 	preloadInventoryItems();
 
-	const int32 bodyCount = HQR::numEntries(Resources::HQR_BODY_FILE);
-	const int32 maxBodies = _engine->isLBA1() ? 200 : NUM_BODIES;
-	if (bodyCount > maxBodies) {
-		error("Max body count exceeded: %i", bodyCount);
-	}
-	for (int32 i = 0; i < bodyCount; ++i) {
-		if (!_bodyData[i].loadFromHQR(TwineResource(Resources::HQR_BODY_FILE, i), _engine->isLBA1())) {
-			error("HQR ERROR: Parsing body entity for model %i failed", i);
-		}
-	}
-
 	loadMovieInfo();
 
 	const int32 textEntryCount = _engine->isLBA1() ? 28 : 30;
@@ -250,10 +239,6 @@ void Resources::initResources() {
 		}
 	}
 	debug("Loaded %i text banks", textEntryCount / 2);
-}
-
-BodyData &Resources::getBodyData(int index) {
-	return _bodyData[index];
 }
 
 const TextEntry *Resources::getText(TextBankId textBankId, TextId index) const {

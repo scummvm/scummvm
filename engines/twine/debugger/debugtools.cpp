@@ -320,7 +320,7 @@ static void actorDetailsWindow(int &actorIdx, TwinEEngine *engine) {
 
 		if (actor->_body != -1) {
 			ImGui::SeparatorText("Body");
-			BodyData &bodyData = engine->_resources->getBodyData(actor->_body);
+			BodyData &bodyData = actor->_entityDataPtr->getBody(actor->_body);
 			ImGuiEx::InputBoundingBox(actor->_body, "Bounding box", bodyData.bbox);
 		}
 
