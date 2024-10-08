@@ -79,6 +79,20 @@ public:
 	 * @return success or failure
 	 */
 	bool setBufferSize(uint32 bufferSize);
+
+private:
+	/**
+	 * Move the file from src to dst.
+	 * This must succeed even if the destination file already exists.
+	 *
+	 * This function cannot be overridden as it's called from the destructor.
+	 *
+	 * @param src The file to move
+	 * @param dst The path where the file is to be moved.
+	 *
+	 * @returns Wether the renaming succeeded or not.
+	 */
+	bool moveFile(const Common::String &src, const Common::String &dst);
 };
 
 #endif

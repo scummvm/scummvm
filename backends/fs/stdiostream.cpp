@@ -24,8 +24,8 @@
 // Disable symbol overrides so that we can use FILE, fopen etc.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-// for Windows unicode fopen(): _wfopen()
-#if defined(WIN32) && defined(UNICODE)
+// for Windows unicode fopen(): _wfopen() and for Win32::moveFile()
+#if defined(WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include "backends/platform/sdl/win32/win32_wrapper.h"
@@ -51,19 +51,27 @@ StdioStream::~StdioStream() {
 	Common::String tmpPath(*_path);
 	tmpPath += ".tmp";
 
-	if (!rename(tmpPath.c_str(), _path->c_str())) {
-		// Success
-		delete _path;
-		return;
-	}
-
-	// Error: try to delete the file first
-	(void)remove(_path->c_str());
-	if (rename(tmpPath.c_str(), _path->c_str())) {
+	if (!moveFile(tmpPath, *_path)) {
 		warning("Couldn't save file %s", _path->c_str());
 	}
 
 	delete _path;
+}
+
+bool StdioStream::moveFile(const Common::String &src, const Common::String &dst) {
+	// This piece of code can't be in a subclass override, as moveFile is called from the destructor.
+	// In this case, the vtable is reset to the StdioStream one before calling moveFile.
+#if defined(WIN32)
+	return Win32::moveFile(src, dst);
+#else
+	if (!rename(src.c_str(), dst.c_str())) {
+		return true;
+	}
+
+	// Error: try to delete the file first
+	(void)remove(dst.c_str());
+	return !rename(src.c_str(), dst.c_str());
+#endif
 }
 
 bool StdioStream::err() const {
