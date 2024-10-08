@@ -1600,6 +1600,11 @@ void KQ6WinGfxDriver::replaceCursor(const void *cursor, uint w, uint h, int hots
 		UpscaledGfxDriver::replaceCursor(cursor, w, h, hotspotX, hotspotY, keycolor);
 		return;
 	}
+	adjustCursorBuffer(w << 1, h << 1);
+
+	if (_pixelSize == 1)
+		copyCurrentPalette(_currentPalette, 0, _numColors);
+
 	byte col1 = findColorInPalette(0x00000000, _currentPalette, _numColors);
 	byte col2 = findColorInPalette(0x00FFFFFF, _currentPalette, _numColors);
 	renderWinMonochromeCursor(_compositeBuffer, cursor, _currentPalette, w, h, hotspotX, hotspotY, col1, col2, keycolor);
