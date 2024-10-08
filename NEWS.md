@@ -10,6 +10,9 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Added support for The Space Bar.
   - Added support for Moonbase Commander.
 
+ New platforms:
+  - Added SailfishOS port.
+
  General:
   - Fixed GLSL version parsing on some OpenGL ES2 platforms.
   - Added optional dependency for libopenmpt for sound.
