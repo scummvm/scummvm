@@ -155,7 +155,7 @@ AbstractFSNode *RoninCDFileNode::getParent() const {
 
 
 Common::SeekableReadStream *RoninCDFileNode::createReadStream() {
-	return StdioStream::makeFromPath(getPath().c_str(), false);
+	return StdioStream::makeFromPath(getPath().c_str(), StdioStream::WriteMode_Read);
 }
 
 AbstractFSNode *OSystem_Dreamcast::makeRootFileNode() const {

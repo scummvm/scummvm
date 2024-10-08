@@ -223,11 +223,12 @@ AbstractFSNode *WindowsFilesystemNode::getParent() const {
 }
 
 Common::SeekableReadStream *WindowsFilesystemNode::createReadStream() {
-	return StdioStream::makeFromPath(getPath(), false);
+	return StdioStream::makeFromPath(getPath(), StdioStream::WriteMode_Read);
 }
 
 Common::SeekableWriteStream *WindowsFilesystemNode::createWriteStream(bool atomic) {
-	return StdioStream::makeFromPath(getPath(), true);
+	return StdioStream::makeFromPath(getPath(), atomic ?
+			StdioStream::WriteMode_WriteAtomic : StdioStream::WriteMode_Write);
 }
 
 bool WindowsFilesystemNode::createDirectory() {

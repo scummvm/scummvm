@@ -198,7 +198,7 @@ AbstractFSNode *WiiFilesystemNode::getParent() const {
 }
 
 Common::SeekableReadStream *WiiFilesystemNode::createReadStream() {
-	StdioStream *readStream = StdioStream::makeFromPath(getPath(), false);
+	StdioStream *readStream = StdioStream::makeFromPath(getPath(), StdioStream::WriteMode_Read);
 
 	// disable newlib's buffering, the device libraries handle caching
 	if (readStream) {
@@ -209,7 +209,8 @@ Common::SeekableReadStream *WiiFilesystemNode::createReadStream() {
 }
 
 Common::SeekableWriteStream *WiiFilesystemNode::createWriteStream(bool atomic) {
-	StdioStream *writeStream = StdioStream::makeFromPath(getPath(), true);
+	StdioStream *writeStream = StdioStream::makeFromPath(getPath(), atomic ?
+			StdioStream::WriteMode_WriteAtomic : StdioStream::WriteMode_Write);
 
 	// disable newlib's buffering, the device libraries handle caching
 	if (writeStream) {
