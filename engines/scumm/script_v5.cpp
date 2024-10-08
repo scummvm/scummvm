@@ -2251,12 +2251,6 @@ void ScummEngine_v5::o5_roomOps() {
 			b = getVarOrDirectWord(PARAM_2);
 		}
 
-		// Mac version, draw the screens 20 pixels lower to account for the extra 40 pixels
-		if (_game.platform == Common::kPlatformMacintosh && _game.version >= 3 && _useMacScreenCorrectHeight) {
-			a += _screenDrawOffset;
-			b += _screenDrawOffset;
-		}
-
 		initScreens(a, b);
 		break;
 	case 4:		// SO_ROOM_PALETTE
@@ -2970,7 +2964,7 @@ void ScummEngine_v5::o5_verbOps() {
 			break;
 		case 5:		// SO_VERB_AT
 			vs->curRect.left = getVarOrDirectWord(PARAM_1);
-			vs->curRect.top = getVarOrDirectWord(PARAM_2) + _screenDrawOffset;
+			vs->curRect.top = getVarOrDirectWord(PARAM_2);
 			if (_game.platform == Common::kPlatformFMTowns && ConfMan.getBool("trim_fmtowns_to_200_pixels")) {
 				if (_game.id == GID_ZAK && verb == 116)
 					// WORKAROUND: FM-TOWNS Zak used the extra 40 pixels at the bottom to increase the inventory to 10 items

@@ -248,6 +248,11 @@ void ScummEngine::parseEvent(Common::Event event) {
 			_mouse.x >>= 1;
 			_mouse.y >>= 1;
 		}
+
+		if (_useMacScreenCorrectHeight && _macScreen) {
+			_mouse.y -= _macScreenDrawOffset;
+		}
+
 		break;
 	case Common::EVENT_LBUTTONUP:
 		_leftBtnPressed &= ~msDown;
