@@ -37,6 +37,8 @@ class Actor;
 class MacGuiImpl;
 
 class MacGui {
+	friend class ScummEngine;
+
 private:
 	MacGuiImpl *_impl = nullptr;
 

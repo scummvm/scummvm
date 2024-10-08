@@ -111,7 +111,7 @@ void ScummEngine::mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, i
 		}
 	}
 
-	_system->copyRectToScreen(_macScreen->getBasePtr(x * 2, y * 2), _macScreen->pitch, x * 2, y * 2, width * 2, height * 2);
+	_system->copyRectToScreen(_macScreen->getBasePtr(x * 2, y * 2), _macScreen->pitch, x * 2, y * 2 + _macScreenDrawOffset * 2, width * 2, height * 2);
 }
 
 void ScummEngine::mac_drawIndy3TextBox() {
@@ -121,7 +121,7 @@ void ScummEngine::mac_drawIndy3TextBox() {
 	// They are not drawn to the screen.
 
 	int x = 96;
-	int y = 32 + _screenDrawOffset * 2;
+	int y = 32;
 	int w = s->w;
 	int h = s->h - 2;
 
@@ -142,7 +142,7 @@ void ScummEngine::mac_undrawIndy3TextBox() {
 	Graphics::Surface *s = _macGui->textArea();
 
 	int x = 96;
-	int y = 32 + _screenDrawOffset * 2;
+	int y = 32;
 	int w = s->w;
 	int h = s->h - 2;
 

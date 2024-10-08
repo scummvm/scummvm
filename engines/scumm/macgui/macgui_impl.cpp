@@ -593,7 +593,7 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createWindow(Common::Rect bounds, MacDi
 	// 640x400 pixels, but that may not be a bad thing if we want to keep
 	// support for that resolution later.
 
-	bounds.translate(0, 2 * _vm->_screenDrawOffset);
+	bounds.translate(0, 2 * _vm->_macScreenDrawOffset);
 
 	return new MacDialogWindow(this, _system, _surface, bounds, style);
 }

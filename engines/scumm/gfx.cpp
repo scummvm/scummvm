@@ -808,9 +808,9 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		int macPitch = _macScreen->pitch;
 
 		int originalScreenWidth = 320;
-		int originalScreenHeight = 240;
+		int originalScreenHeight = 200;
 
-		// Composite the dirty rectangle into _completeScreen
+		// Composite the dirty rectangle into _completeScreenBuffer
 		for (int h = 0; h < height; h++) {
 			for (int w = 0; w < width; w++) {
 				// Calculate absolute coordinates in the complete screen
@@ -824,7 +824,6 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 			pixels += pixelsPitch;
 		}
 
-		// Reset pixels pointer for processing
 		pixels = (const byte *)src;
 
 		if (_useMacGraphicsSmoothing) {
@@ -851,9 +850,9 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 					byte D = (absY < originalScreenHeight - 1) ? _completeScreenBuffer[(absY + 1) * originalScreenWidth + absX] : P;
 
 					// Actually scale the pixel
-					mac[2 * w] = (C == A && C != D && A != B) ? A : P;                // Top-left
-					mac[2 * w + 1] = (A == B && A != C && B != D) ? B : P;            // Top-right
-					mac[2 * w + macPitch] = (D == C && D != B && C != A) ? C : P;     // Bottom-left
+					mac[2 * w]                = (C == A && C != D && A != B) ? A : P; // Top-left
+					mac[2 * w + 1]            = (A == B && A != C && B != D) ? B : P; // Top-right
+					mac[2 * w + macPitch]     = (D == C && D != B && C != A) ? C : P; // Bottom-left
 					mac[2 * w + macPitch + 1] = (B == D && B != A && D != C) ? D : P; // Bottom-right
 				}
 
@@ -876,7 +875,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 			}
 		}
 
-		_system->copyRectToScreen(_macScreen->getBasePtr(x * 2, y * 2), _macScreen->pitch, x * 2, y * 2, width * 2, height * 2);
+		_system->copyRectToScreen(_macScreen->getBasePtr(x * 2, y * 2), _macScreen->pitch, x * 2, y * 2 + _macScreenDrawOffset * 2, width * 2, height * 2);
 	} else {
 		// Finally blit the whole thing to the screen
 		_system->copyRectToScreen(src, pitch, x, y, width, height);
@@ -1315,7 +1314,7 @@ void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 			} else
 #endif
 			{
-				byte *mask = (byte *)_textSurface.getBasePtr(rect.left, rect.top - _screenTop - _screenDrawOffset);
+				byte *mask = (byte *)_textSurface.getBasePtr(rect.left, rect.top - _screenTop);
 				fill(mask, _textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width * _textSurfaceMultiplier, height * _textSurfaceMultiplier, _textSurface.format.bytesPerPixel);
 			}
 		}
@@ -1342,7 +1341,7 @@ void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 
 void ScummEngine::restoreCharsetBg() {
 	_nextLeft = _string[0].xpos;
-	_nextTop = _string[0].ypos + _screenTop + _screenDrawOffset;
+	_nextTop = _string[0].ypos + _screenTop;
 
 	if (_charset->_hasMask || _postGUICharMask) {
 		_postGUICharMask = false;
@@ -1510,7 +1509,7 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	VirtScreen *vs;
 	byte *backbuff, *bgbuff;
 
-	if ((vs = findVirtScreen(y + _screenDrawOffset)) == nullptr)
+	if ((vs = findVirtScreen(y)) == nullptr)
 		return;
 
 	if (_game.version == 8) {
@@ -1552,8 +1551,8 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	y2++;
 
 	// Adjust for the topline of the VirtScreen
-	y -= vs->topline - _screenDrawOffset;
-	y2 -= vs->topline - _screenDrawOffset;
+	y -= vs->topline;
+	y2 -= vs->topline;
 
 	// Clip the coordinates
 	if (x < 0)
@@ -1721,7 +1720,7 @@ void ScummEngine::drawLine(int x1, int y1, int x2, int y2, int color) {
 
 	VirtScreen *vs;
 
-	if ((vs = findVirtScreen(y1 + _screenDrawOffset)) == nullptr)
+	if ((vs = findVirtScreen(y1)) == nullptr)
 		return;
 
 	black = getPaletteColorFromRGB(_currentPalette, 0x00, 0x00, 0x00);
@@ -4861,6 +4860,10 @@ void ScummEngine::scrollEffect(int dir) {
 
 	byte *src;
 	int m = _textSurfaceMultiplier;
+
+	if (m == 1 && _game.platform == Common::kPlatformMacintosh)
+		m = 2;
+
 	int vsPitch = vs->pitch;
 
 	switch (dir) {
