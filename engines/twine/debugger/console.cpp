@@ -65,10 +65,10 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("set_game_flag", WRAP_METHOD(TwinEConsole, doSetGameFlag));
 	registerCmd("show_game_flag", WRAP_METHOD(TwinEConsole, doPrintGameFlag));
 	registerCmd("set_inventory_flag", WRAP_METHOD(TwinEConsole, doSetInventoryFlag));
-	registerCmd("show_inventory_flag", WRAP_METHOD(TwinEConsole, doPrintGameFlag));
+	registerCmd("show_inventory_flag", WRAP_METHOD(TwinEConsole, doPrintInventoryFlag));
 	registerCmd("set_holomap_flag", WRAP_METHOD(TwinEConsole, doSetHolomapFlag));
 	registerCmd("set_holomap_trajectory", WRAP_METHOD(TwinEConsole, doSetHolomapTrajectory));
-	registerCmd("show_holomap_flag", WRAP_METHOD(TwinEConsole, doPrintGameFlag));
+	registerCmd("show_holomap_flag", WRAP_METHOD(TwinEConsole, doPrintHolomapFlag));
 	registerCmd("toggle_enhancements", WRAP_METHOD(TwinEConsole, doToggleEnhancements));
 }
 

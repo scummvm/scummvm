@@ -22,6 +22,8 @@
 #include "twine/debugger/debugtools.h"
 #include "backends/imgui/imgui.h"
 #include "backends/imgui/imgui_utils.h"
+#include "common/scummsys.h"
+#include "common/str-enc.h"
 #include "common/str.h"
 #include "common/util.h"
 #include "twine/debugger/debug_state.h"
@@ -227,9 +229,13 @@ static void menuTextsWindow(TwinEEngine *engine) {
 static void sceneSelectionCombo(TwinEEngine *engine) {
 	Scene *scene = engine->_scene;
 	GameState *gameState = engine->_gameState;
-	if (ImGui::BeginCombo("Scene", gameState->_sceneName)) {
+	Common::U32String originalSceneName(gameState->_sceneName, Common::kDos850);
+	const Common::String sceneName = originalSceneName.encode(Common::kUtf8);
+	if (ImGui::BeginCombo("Scene", sceneName.c_str())) {
 		for (int i = 0; i < engine->numHoloPos(); ++i) {
-			Common::String name = Common::String::format("[%03d] %s", i, engine->_holomap->getLocationName(i));
+			Common::U32String originalLocationName(engine->_holomap->getLocationName(i), Common::kDos850);
+			const Common::String locationName = originalLocationName.encode(Common::kUtf8);
+			Common::String name = Common::String::format("[%03d] %s", i, locationName.c_str());
 			if (ImGui::Selectable(name.c_str(), i == engine->_scene->_currentSceneIdx)) {
 				scene->_currentSceneIdx = i;
 				scene->_needChangeScene = scene->_currentSceneIdx;
@@ -557,6 +563,24 @@ static void gameStateMenu(TwinEEngine *engine) {
 		if (ImGui::InputInt("Gas", &gas)) {
 			engine->_gameState->setGas(gas);
 		}
+		const TextBankId oldTextBankId = engine->_text->textBank();
+		engine->_text->initDial(TextBankId::Inventory_Intro_and_Holomap);
+
+		for (int i = 0; i < NUM_INVENTORY_ITEMS; ++i) {
+			Common::String label;
+			if (engine->_text->getText((TextId)(100 + i))) {
+				Common::U32String original(engine->_text->_currDialTextEntry->string, Common::kDos850);
+				label = original.encode(Common::kUtf8).substr(0, 30);
+			} else {
+				label = Common::String::format("Item %i", i);
+			}
+			uint8 &value = engine->_gameState->_inventoryFlags[i];
+			bool hasItem = value != 0;
+			if (ImGui::Checkbox(label.c_str(), &hasItem)) {
+				value = hasItem == 0 ? 0 : 1;
+			}
+		}
+		engine->_text->initDial(oldTextBankId);
 		ImGui::EndMenu();
 	}
 }
