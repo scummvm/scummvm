@@ -937,7 +937,7 @@ int32 ScriptLife::lMESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 int32 ScriptLife::lFALLABLE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 flag = ctx.stream.readByte();
-	ctx.actor->_staticFlags.bCanFall = flag & 1;
+	ctx.actor->_staticFlags.bObjFallable = flag & 1;
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::FALLABLE(%i)", (int)flag);
 	return 0;
 }

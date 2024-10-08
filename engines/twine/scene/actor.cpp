@@ -52,9 +52,9 @@ void Actor::restartHeroScene() {
 
 	sceneHero->_staticFlags.bComputeCollisionWithObj = 1;
 	sceneHero->_staticFlags.bComputeCollisionWithBricks = 1;
-	sceneHero->_staticFlags.bIsZonable = 1;
+	sceneHero->_staticFlags.bCheckZone = 1;
 	sceneHero->_staticFlags.bCanDrown = 1;
-	sceneHero->_staticFlags.bCanFall = 1;
+	sceneHero->_staticFlags.bObjFallable = 1;
 
 	sceneHero->_armor = 1;
 	sceneHero->_offsetTrack = -1;

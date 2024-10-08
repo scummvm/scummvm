@@ -742,7 +742,7 @@ void Animations::doAnim(int32 actorIdx) {
 
 			actor->_workFlags.bIsFalling = 0;
 		} else {
-			if (actor->_staticFlags.bCanFall && actor->_carryBy == -1) {
+			if (actor->_staticFlags.bObjFallable && actor->_carryBy == -1) {
 				col = _engine->_grid->worldColBrick(processActor.x, processActor.y - 1, processActor.z);
 
 				if (col != ShapeType::kNone) {

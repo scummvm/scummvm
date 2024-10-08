@@ -1045,10 +1045,20 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			continue;
 		}
 
-		if (actor->_lifePoint == 0) {
+		if (actor->_lifePoint <= 0) {
 			if (IS_HERO(a)) {
 				_animations->initAnim(AnimationTypes::kLandDeath, AnimType::kAnimationSet, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 				actor->_controlMode = ControlMode::kNoMove;
+#if 0 // TODO: enable me - found in the lba1 community release source code
+				// Disable collisions on Twinsen to allow other objects to continue their tracks
+				// while the death animation is playing
+				actor->_staticFlags.bObjFallable = 1;
+				actor->_staticFlags.bCheckZone = 0;
+				actor->_staticFlags.bComputeCollisionWithObj = 0;
+				actor->_staticFlags.bComputeCollisionWithBricks = 0;
+				actor->_staticFlags.bCanDrown = 1;
+				actor->_workFlags.bIsHitting = 0;
+#endif
 			} else {
 				_sound->playSample(Samples::Explode, 1, actor->posObj(), a);
 
@@ -1072,7 +1082,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		_animations->doAnim(a);
 
-		if (actor->_staticFlags.bIsZonable) {
+		if (actor->_staticFlags.bCheckZone) {
 			_scene->checkZoneSce(a);
 		}
 

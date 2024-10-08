@@ -61,7 +61,7 @@ struct AnimTimerDataStruct {
 struct StaticFlagsStruct {
 	uint32 bComputeCollisionWithObj : 1;    // 0x000001 CHECK_OBJ_COL
 	uint32 bComputeCollisionWithBricks : 1; // 0x000002 CHECK_BRICK_COL
-	uint32 bIsZonable : 1;                  // 0x000004 CHECK_ZONE - testing of scenaric areas
+	uint32 bCheckZone : 1;                  // 0x000004 CHECK_ZONE - testing of scenaric areas
 	uint32 bSpriteClip : 1;                 // 0x000008 SPRITE_CLIP - (doors) fixed clip area
 	uint32 bCanBePushed : 1;                // 0x000010 PUSHABLE
 	uint32 bComputeLowCollision : 1;        // 0x000020 COL_BASSE
@@ -70,7 +70,7 @@ struct StaticFlagsStruct {
 	uint32 bUnk0100 : 1;                    // 0x000100
 	uint32 bIsInvisible : 1;                // 0x000200 INVISIBLE - not drawn but all computed
 	uint32 bSprite3D : 1;                   // 0x000400 SPRITE_3D - a sprite not a 3D object
-	uint32 bCanFall : 1;                    // 0x000800 OBJ_FALLABLE
+	uint32 bObjFallable : 1;                    // 0x000800 OBJ_FALLABLE
 	uint32 bNoShadow : 1;                   // 0x001000 NO_SHADOW - no auto shadow
 	uint32 bIsBackgrounded : 1;             // 0x002000 OBJ_BACKGROUND - is embedded in the decor the 1st time
 	uint32 bIsCarrierActor : 1;             // 0x004000 OBJ_CARRIER - can carry and move an obj

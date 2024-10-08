@@ -55,7 +55,7 @@ void Scene::setActorStaticFlags(ActorStruct *act, uint32 staticFlags) {
 		act->_staticFlags.bComputeCollisionWithBricks = 1;
 	}
 	if (staticFlags & 0x4) {
-		act->_staticFlags.bIsZonable = 1;
+		act->_staticFlags.bCheckZone = 1;
 	}
 	if (staticFlags & 0x8) {
 		act->_staticFlags.bSpriteClip = 1;
@@ -83,7 +83,7 @@ void Scene::setActorStaticFlags(ActorStruct *act, uint32 staticFlags) {
 		act->_staticFlags.bSprite3D = 1;
 	}
 	if (staticFlags & 0x800) {
-		act->_staticFlags.bCanFall = 1;
+		act->_staticFlags.bObjFallable = 1;
 	}
 	if (staticFlags & 0x1000) {
 		act->_staticFlags.bNoShadow = 1;
