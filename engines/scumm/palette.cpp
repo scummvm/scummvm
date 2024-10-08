@@ -1742,6 +1742,9 @@ void ScummEngine::updatePalette() {
 	}
 
 	_system->getPaletteManager()->setPalette(paletteColors, first, num);
+
+	if (_macGui)
+		_macGui->setPalette(paletteColors, 256);
 }
 
 } // End of namespace Scumm

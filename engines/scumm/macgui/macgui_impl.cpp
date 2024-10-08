@@ -73,6 +73,7 @@ Common::String MacGuiImpl::readCString(uint8 *&data) {
 		data++;
 	}
 
+	debug(8, "MacGuiImpl::readCString(): %s", result.c_str());
 	return result;
 }
 
@@ -84,6 +85,7 @@ Common::String MacGuiImpl::readPascalString(uint8 *&data) {
 		data++;
 	}
 
+	debug(8, "MacGuiImpl::readPascalString(): %s", result.c_str());
 	return result;
 }
 
@@ -205,6 +207,9 @@ void MacGuiImpl::initialize() {
 		case GID_INDY3:
 		case GID_LOOM:
 			aboutMenuDef = _strsStrings[11].c_str();
+			break;
+		case GID_MONKEY:
+			aboutMenuDef = _strsStrings[94].c_str();
 			break;
 		default:
 			aboutMenuDef = "About " + name() + "...<B;(-";
@@ -335,8 +340,12 @@ bool MacGuiImpl::handleMenu(int id, Common::String &name) {
 		return true;
 
 	case 203:	// Pause
-		if (!_vm->_messageBannerActive)
-			_vm->mac_showOldStyleBannerAndPause(_vm->getGUIString(gsPause), -1);
+		if (!_vm->_messageBannerActive) {
+			if (_vm->_game.version == 3)
+				_vm->mac_showOldStyleBannerAndPause(_vm->getGUIString(gsPause), -1);
+			else
+				_vm->showBannerAndPause(0, -1, _vm->getGUIString(gsPause));
+		}
 		return true;
 
 	// In the original, the Edit menu is active during save dialogs, though
@@ -376,7 +385,7 @@ void MacGuiImpl::updateWindowManager() {
 		// or disable saving and loading during normal gameplay.
 		saveCondition = (_vm->VAR(58) & 0x01) && !(_vm->VAR(94) & 0x10);
 		loadCondition = (_vm->VAR(58) & 0x02) && !(_vm->VAR(94) & 0x10);
-	} else {
+	} else if (_vm->_game.id == GID_LOOM) {
 		// TODO: Complete LOOM with the rest of the proper code from disasm,
 		// for now we only have the copy protection code and a best guess in place...
 		//
@@ -389,6 +398,9 @@ void MacGuiImpl::updateWindowManager() {
 			!(_vm->VAR(221) & 0x4000) &&
 			(_vm->VAR(_vm->VAR_VERB_SCRIPT) == 5) &&
 			(_vm->_userPut > 0);
+	} else {
+		saveCondition = true;
+		loadCondition = true;
 	}
 
 	bool canLoad = _vm->canLoadGameStateCurrently() && loadCondition;
@@ -608,6 +620,10 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 	case GID_LOOM:
 		saveGameFileAsResStr = _strsStrings[17].c_str();
 		gameFileResStr = _strsStrings[18].c_str();
+		break;
+	case GID_MONKEY:
+		saveGameFileAsResStr = _strsStrings[103].c_str();
+		gameFileResStr = _strsStrings[104].c_str();
 		break;
 	default:
 		saveGameFileAsResStr = "Save Game File as...";
@@ -857,6 +873,9 @@ bool MacGuiImpl::runQuitDialog() {
 	case GID_LOOM:
 		quitString = _strsStrings[15].c_str();
 		break;
+	case GID_MONKEY:
+		quitString = _strsStrings[96].c_str();
+		break;
 	default:
 		quitString = "Are you sure you want to quit?";
 	}
@@ -870,6 +889,9 @@ bool MacGuiImpl::runRestartDialog() {
 	case GID_INDY3:
 	case GID_LOOM:
 		restartString = _strsStrings[14].c_str();
+		break;
+	case GID_MONKEY:
+		restartString = _strsStrings[97].c_str();
 		break;
 	default:
 		restartString = "Are you sure you want to restart this game from the beginning?";
