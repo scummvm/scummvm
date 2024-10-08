@@ -159,13 +159,12 @@ bool DebugState::displayActors() {
 		if (!drawBox(positions, COLOR_WHITE)) {
 			continue;
 		}
-		const int boxwidth = 150;
+		const int boxwidth = 75;
 		const int lineHeight = 14;
-		const int boxheight = 2 * lineHeight;
-		const Common::Rect filledRect(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, positions.frontTopRightPoint2D.x + boxwidth, positions.frontTopRightPoint2D.y + boxheight);
+		const Common::Rect filledRect(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, positions.frontTopRightPoint2D.x + boxwidth, positions.frontTopRightPoint2D.y + lineHeight);
 		_engine->_interface->box(filledRect, COLOR_WHITE);
 		_engine->_menu->drawRectBorders(filledRect);
-		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, Common::String::format("Actor: %i", a), true, true, boxwidth);
+		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, Common::String::format("Actor: %i", a), true, false, boxwidth);
 		const int16 rleft = positions.frontTopLeftPoint2D.x;
 		const int16 rtop = positions.backTopLeftPoint2D.y;
 		const int16 rright = positions.backTopRightPoint2D.x;
@@ -204,14 +203,12 @@ bool DebugState::displayZones() {
 			continue;
 		}
 
-		const int boxwidth = 150;
+		const int boxwidth = 50;
 		const int lineHeight = 14;
-		const int boxheight = 2 * lineHeight;
-		const Common::Rect filledRect(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, positions.frontTopRightPoint2D.x + boxwidth, positions.frontTopRightPoint2D.y + boxheight);
+		const Common::Rect filledRect(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, positions.frontTopRightPoint2D.x + boxwidth, positions.frontTopRightPoint2D.y + lineHeight);
 		_engine->_interface->box(filledRect, COLOR_WHITE);
 		_engine->_menu->drawRectBorders(filledRect);
-		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, Common::String::format("Type: %i (%i)", (int)zonePtr->type, i), true, false, boxwidth);
-		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y + lineHeight, Common::String::format("pos: %i:%i:%i", positions.frontTopRightPoint.x, positions.frontTopRightPoint.y, positions.frontTopRightPoint.z), true, false, boxwidth);
+		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, Common::String::format("ID: %i", i), true, false, boxwidth);
 		state = true;
 	}
 	return state;
