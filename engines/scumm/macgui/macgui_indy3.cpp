@@ -1487,7 +1487,7 @@ bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 	while (!_vm->shouldQuit()) {
 		int clicked = window->runDialog(deferredActionsIds);
 
-		if (clicked == 0 || clicked == 10) {
+		if (clicked == 0 || clicked == 12) {
 			ret = true;
 			saveSlotToHandle =
 				listBox->getValue() < ARRAYSIZE(slotIds) ? slotIds[listBox->getValue()] : -1;
@@ -1550,7 +1550,7 @@ bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 
 		if (clicked == 0) {
 			ret = true;
-			name = window->getWidget(5)->getText(); // Edit text widget
+			name = window->getWidget(6)->getText(); // Edit text widget
 			saveSlotToHandle = firstAvailableSlot;
 			break;
 		}
