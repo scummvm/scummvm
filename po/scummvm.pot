@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-10-07 09:46+0000\n"
+"POT-Creation-Date: 2024-10-09 05:35+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2918,12 +2918,20 @@ msgstr ""
 msgid "VGA Grey Scale"
 msgstr ""
 
-#: common/rendermode.cpp:92
+#: common/rendermode.cpp:58
+msgid "Windows (256 Colors)"
+msgstr ""
+
+#: common/rendermode.cpp:59
+msgid "Windows (16 Colors)"
+msgstr ""
+
+#: common/rendermode.cpp:96
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr ""
 
-#: common/rendermode.cpp:93
+#: common/rendermode.cpp:97
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr ""
@@ -8936,11 +8944,11 @@ msgstr ""
 msgid "Game does not contain menu resources"
 msgstr ""
 
-#: engines/sci/detection_tables.h:4610
+#: engines/sci/detection_tables.h:4611
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr ""
 
-#: engines/sci/detection_tables.h:4665
+#: engines/sci/detection_tables.h:4666
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 
@@ -8953,7 +8961,7 @@ msgstr ""
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
 
-#: engines/sci/engine/kmisc.cpp:894
+#: engines/sci/engine/kmisc.cpp:895
 msgid ""
 "The Poker logic is hardcoded in an external DLL, and is not implemented yet. "
 "There exists some dummy logic for now, where opponent actions are chosen "
@@ -8992,7 +9000,7 @@ msgid ""
 "that your game files are valid."
 msgstr ""
 
-#: engines/sci/sci.cpp:424
+#: engines/sci/sci.cpp:426
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -9001,7 +9009,7 @@ msgid ""
 "ScummVM bug -- it is a problem with the game's assets."
 msgstr ""
 
-#: engines/sci/sci.cpp:448
+#: engines/sci/sci.cpp:450
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI "
@@ -9014,17 +9022,17 @@ msgid ""
 "for this game will sound badly distorted."
 msgstr ""
 
-#: engines/sci/sci.cpp:540
+#: engines/sci/sci.cpp:542
 msgid "Download patch"
 msgstr ""
 
-#: engines/sci/sci.cpp:541
+#: engines/sci/sci.cpp:543
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
 msgstr ""
 
-#: engines/sci/sci.cpp:548
+#: engines/sci/sci.cpp:550
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -9034,7 +9042,7 @@ msgid ""
 "GK2Subtitles.zip\n"
 msgstr ""
 
-#: engines/sci/sci.cpp:981
+#: engines/sci/sci.cpp:983
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
