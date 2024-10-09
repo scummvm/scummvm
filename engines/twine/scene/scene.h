@@ -129,7 +129,7 @@ private:
 	/** Initialize new scene */
 	bool initScene(int32 index);
 	/** Reset scene */
-	void resetScene();
+	void clearScene();
 
 	// the first actor is the own hero
 	ActorStruct _sceneActors[NUM_MAX_ACTORS]; // ListObjet

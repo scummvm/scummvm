@@ -494,9 +494,10 @@ bool Scene::initScene(int32 index) {
 	return false;
 }
 
-void Scene::resetScene() {
+void Scene::clearScene() {
 	_engine->_extra->resetExtras();
 
+	// ClearFlagsCube
 	for (int32 i = 0; i < ARRAYSIZE(_listFlagCube); i++) {
 		_listFlagCube[i] = 0;
 	}
@@ -576,7 +577,7 @@ void Scene::changeCube() {
 
 	_engine->_sound->stopSamples();
 
-	resetScene();
+	clearScene();
 	_engine->_actor->loadHeroEntities();
 
 	_sceneHero->_controlMode = ControlMode::kManual;
