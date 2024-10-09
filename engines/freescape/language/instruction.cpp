@@ -496,7 +496,7 @@ void FreescapeEngine::executeIncrementVariable(FCLInstruction &instruction) {
 		else if (_gameStateVars[variable] < 0)
 			_gameStateVars[variable] = 0;
 
-		if (increment < 0)
+		if (increment < 0 && !isCastle())
 			flashScreen(_renderMode == Common::kRenderCGA ? 1 :_currentArea->_underFireBackgroundColor);
 
 		debugC(1, kFreescapeDebugCode, "Shield incremented by %d up to %d", increment, _gameStateVars[variable]);
