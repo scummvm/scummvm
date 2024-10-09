@@ -491,7 +491,7 @@ private:
 };
 
 MidiDriver_PCJr::MidiDriver_PCJr(Audio::Mixer *mixer, SciVersion version, bool pcsMode) : _mixer(mixer), _version(version), _pcsMode(pcsMode), _numChannels(pcsMode ? 1 : 3),
-	_masterVolume(0), _channels(nullptr), _instrumentOffsets(nullptr), _instrumentData(nullptr), _isOpen(false) {
+	_masterVolume(0), _channels(nullptr), _instrumentOffsets(nullptr), _instrumentData(nullptr), _timerProc(nullptr), _timerProcPara(nullptr), _isOpen(false) {
 
 	uint16 *smpVolTable = new uint16[16]();
 	for (int i = 0; i < 15; ++i) // The last entry is left at zero.

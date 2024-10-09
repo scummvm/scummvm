@@ -36,7 +36,18 @@ namespace Sci {
 //#define DEBUG_PICTURE_DRAW
 
 GfxPicture::GfxPicture(ResourceManager *resMan, GfxCoordAdjuster16 *coordAdjuster, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize)
-	: _resMan(resMan), _coordAdjuster(coordAdjuster), _ports(ports), _screen(screen), _palette(palette), _resourceId(resourceId), _EGAdrawingVisualize(EGAdrawingVisualize) {
+	: _resMan(resMan),
+	_coordAdjuster(coordAdjuster),
+	_ports(ports), _screen(screen),
+	_palette(palette),
+	_resourceId(resourceId),
+	_resourceType(SCI_PICTURE_TYPE_REGULAR),
+	_mirroredFlag(false),
+	_addToFlag(false),
+	_EGApaletteNo(0),
+	_priority(0),
+	_EGAdrawingVisualize(EGAdrawingVisualize) {
+	
 	assert(resourceId != -1);
 	initData(resourceId);
 }

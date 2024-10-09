@@ -50,6 +50,7 @@ Plane::Plane(const Common::Rect &gameRect, PlanePictureCodes pictureId) :
 _creationId(_nextCreationId++),
 _pictureId(pictureId),
 _mirrored(false),
+_pictureChanged(false),
 _type(kPlaneTypeColored),
 _back(0),
 _priorityChanged(false),

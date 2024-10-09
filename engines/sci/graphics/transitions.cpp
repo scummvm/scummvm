@@ -109,6 +109,8 @@ void GfxTransitions::init() {
 	// setup default transition
 	_number = SCI_TRANSITIONS_HORIZONTALROLL_FROMCENTER;
 	_blackoutFlag = false;
+
+	_transitionStartTime = 0;
 }
 
 void GfxTransitions::setup(int16 number, bool blackoutFlag) {

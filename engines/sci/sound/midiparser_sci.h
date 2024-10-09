@@ -127,7 +127,6 @@ protected:
 	};
 
 	ChannelState _channelState[16];
-
 };
 
 } // End of namespace Sci

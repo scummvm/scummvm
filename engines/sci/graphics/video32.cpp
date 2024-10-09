@@ -590,6 +590,7 @@ VMDPlayer::VMDPlayer(EventManager *eventMan, SegManager *segMan) :
 
 	_plane(nullptr),
 	_screenItem(nullptr),
+	_bitmapId(NULL_REG),
 	_planeIsOwned(true),
 	_priority(0),
 	_doublePixels(false),
@@ -598,6 +599,7 @@ VMDPlayer::VMDPlayer(EventManager *eventMan, SegManager *segMan) :
 	_leaveScreenBlack(false),
 	_leaveLastFrame(false),
 	_ignorePalettes(false),
+	_isComposited(false),
 
 	_blackoutPlane(nullptr),
 
@@ -1179,7 +1181,9 @@ DuckPlayer::DuckPlayer(EventManager *eventMan, SegManager *segMan) :
 	_plane(nullptr),
 	_status(kDuckClosed),
 	_volume(Audio::Mixer::kMaxChannelVolume),
-	_doFrameOut(false) {
+	_doFrameOut(false),
+	_doublePixels(false),
+	_blackLines(false) {
 	_decoder->setSoundType(Audio::Mixer::kSFXSoundType);
 }
 

@@ -214,9 +214,14 @@ struct List {
 	 * The current level of recursion of kListEachElementDo for this list.
 	 */
 	int numRecursions;
-
-	List() : numRecursions(0), first(NULL_REG), last(NULL_REG) {}
 #endif
+
+	List() : first(NULL_REG), last(NULL_REG) {
+#ifdef ENABLE_SCI32
+		memset(nextNodes, 0, sizeof(nextNodes));
+		numRecursions = 0;
+#endif
+	}
 };
 
 struct Hunk {

@@ -1025,6 +1025,8 @@ MusicEntry::MusicEntry() {
 	volume = MUSIC_VOLUME_DEFAULT;
 	hold = -1;
 	reverb = -1;
+	playBed = false;
+	overridePriority = false;
 
 	pauseCounter = 0;
 	sampleLoopCounter = 0;
@@ -1051,6 +1053,7 @@ MusicEntry::MusicEntry() {
 		_chan[i]._prio = 127;
 		_chan[i]._voices = 0;
 		_chan[i]._dontRemap = false;
+		_chan[i]._dontMap = false;
 		_chan[i]._mute = false;
 	}
 }

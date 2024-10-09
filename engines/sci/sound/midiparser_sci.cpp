@@ -51,11 +51,13 @@ MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion, SciMusic *music) :
 	_ppqn = 1;
 	setTempo(16667);
 
+	_track = nullptr;
+	_pSnd = nullptr;
+	_loopTick = 0;
 	_masterVolume = 15;
 	_volume = 127;
 
 	_resetOnPause = false;
-	_pSnd = nullptr;
 
 	_mainThreadCalled = false;
 

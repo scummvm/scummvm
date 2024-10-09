@@ -46,6 +46,10 @@ extern void deDPCM16Mono(int16 *out, const byte *in, const uint32 numBytes, int1
 RobotAudioStream::RobotAudioStream(const int32 bufferSize) :
 	_loopBuffer((byte *)malloc(bufferSize)),
 	_loopBufferSize(bufferSize),
+	_readHead(0),
+	_readHeadAbs(0),
+	_maxWriteAbs(0),
+	_writeHeadAbs(0),
 	_decompressionBuffer(nullptr),
 	_decompressionBufferSize(0),
 	_decompressionBufferPosition(-1),

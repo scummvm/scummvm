@@ -36,7 +36,8 @@ enum {
 
 GfxCursor32::GfxCursor32() :
 	_hideCount(0),
-	_position(0, 0),
+	_width(0),
+	_height(0),
 	_needsPaint(false) {
 }
 
