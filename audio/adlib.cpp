@@ -1440,7 +1440,7 @@ int MidiDriver_ADLIB::open() {
 		_opl = OPL::Config::create(OPL::Config::kOpl3);
 	}
 
-	// Initialize plain OPL2 when no OPL3 is intiailized already.
+	// Initialize plain OPL2 when no OPL3 is initialized already.
 	if (!_opl) {
 #endif
 		_opl = OPL::Config::create();
