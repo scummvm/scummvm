@@ -1199,17 +1199,13 @@ Common::Error ScummEngine::init() {
 					macResourceFile = indyFileNames[i];
 
 					_textSurfaceMultiplier = 2;
-					_macScreen = new Graphics::Surface();
-					_macScreen->create(640, _useMacScreenCorrectHeight ? 480 : 400, Graphics::PixelFormat::createFormatCLUT8());
-
 					_macGui = new MacGui(this, macResourceFile);
 					break;
 				}
 			}
 
 			if (macResourceFile.empty()) {
-				return Common::Error(Common::kReadingFailed, _(
-"This game requires the 'Indy' Macintosh executable for its fonts."));
+				return Common::Error(Common::kReadingFailed, _("This game requires the 'Indy' Macintosh executable for its fonts."));
 			}
 
 		} else if (_game.id == GID_LOOM) {
@@ -1225,16 +1221,13 @@ Common::Error ScummEngine::init() {
 					macResourceFile = loomFileNames[i];
 
 					_textSurfaceMultiplier = 2;
-					_macScreen = new Graphics::Surface();
-					_macScreen->create(640, _useMacScreenCorrectHeight ? 480 : 400, Graphics::PixelFormat::createFormatCLUT8());
 					_macGui = new MacGui(this, macResourceFile);
 					break;
 				}
 			}
 
 			if (macResourceFile.empty()) {
-				return Common::Error(Common::kReadingFailed, _(
-"This game requires the 'Loom' Macintosh executable for its music and fonts."));
+				return Common::Error(Common::kReadingFailed, _("This game requires the 'Loom' Macintosh executable for its music and fonts."));
 			}
 		} else if (_game.id == GID_MONKEY) {
 			// Try both with and without underscore in the
@@ -1249,23 +1242,62 @@ Common::Error ScummEngine::init() {
 			for (int i = 0; i < ARRAYSIZE(monkeyIslandFileNames); i++) {
 				if (resource.exists(monkeyIslandFileNames[i])) {
 					macResourceFile = monkeyIslandFileNames[i];
-
-					_macScreen = new Graphics::Surface();
-					_macScreen->create(640, _useMacScreenCorrectHeight ? 480 : 400, Graphics::PixelFormat::createFormatCLUT8());
-					_macGui = new MacGui(this, macResourceFile);
 					break;
 				}
 			}
 
 			if (macResourceFile.empty()) {
-				GUI::MessageDialog dialog(_(
-"Could not find the 'Monkey Island' Macintosh executable to read the\n"
-"instruments from. Music will be disabled."), _("OK"));
+				GUI::MessageDialog dialog(_("Could not find the 'Monkey Island' Macintosh executable to read resources\n"
+											"and instruments from. Music and Mac GUI will be disabled."), _("OK"));
 				dialog.runModal();
+			} else {
+				_macGui = new MacGui(this, macResourceFile);
 			}
-		} else {
-			_macScreen = new Graphics::Surface();
-			_macScreen->create(640, _useMacScreenCorrectHeight ? 480 : 400, Graphics::PixelFormat::createFormatCLUT8());
+		} else if (_game.id == GID_INDY4 && _language != Common::JA_JPN) {
+			static const char *indy4FileNames[] = {
+				"Fate of Atlantis",
+				"Fate_of_Atlantis",
+				"Fate of Atlantis 1.1",
+				"Fate_of_Atlantis_1.1",
+				"Indy Fate",
+				"Indy_Fate"
+			};
+
+			for (int i = 0; i < ARRAYSIZE(indy4FileNames); i++) {
+				if (resource.exists(indy4FileNames[i])) {
+					macResourceFile = indy4FileNames[i];
+					break;
+				}
+			}
+
+			if (macResourceFile.empty()) {
+				GUI::MessageDialog dialog(_("Could not find the 'Fate of Atlantis' Macintosh executable.\n"
+											"Mac GUI will not be shown."),
+										_("OK"));
+				dialog.runModal();
+			} else {
+				_macGui = new MacGui(this, macResourceFile);
+			}
+		} else if (_game.id == GID_MONKEY2) {
+			static const char *monkeyIsland2FileNames[] = {
+				"LeChuck's Revenge",
+				"LeChuck's_Revenge"};
+
+			for (int i = 0; i < ARRAYSIZE(monkeyIsland2FileNames); i++) {
+				if (resource.exists(monkeyIsland2FileNames[i])) {
+					macResourceFile = monkeyIsland2FileNames[i];
+					break;
+				}
+			}
+
+			if (macResourceFile.empty()) {
+				GUI::MessageDialog dialog(_("Could not find the 'LeChuck's Revenge' Macintosh executable.\n"
+											"Mac GUI will not be shown."),
+										  _("OK"));
+				dialog.runModal();
+			} else {
+				_macGui = new MacGui(this, macResourceFile);
+			}
 		}
 
 		if (!macResourceFile.empty()) {
@@ -1277,6 +1309,9 @@ Common::Error ScummEngine::init() {
 
 			resource.close();
 		}
+
+		_macScreen = new Graphics::Surface();
+		_macScreen->create(640, _useMacScreenCorrectHeight ? 480 : 400, Graphics::PixelFormat::createFormatCLUT8());
 
 		if (!_macScreen && _renderMode == Common::kRenderMacintoshBW)
 			_renderMode = Common::kRenderDefault;
