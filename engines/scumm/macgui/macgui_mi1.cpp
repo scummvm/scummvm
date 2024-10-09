@@ -145,7 +145,29 @@ bool MacMI1Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) con
 }
 
 void MacMI1Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
-	_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
+	if (_vm->_game.id == GID_MONKEY) {
+		_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
+	} else {
+		Common::MacResManager resource;
+		Graphics::MacCursor macCursor;
+
+		resource.open(_resourceFile);
+
+		Common::SeekableReadStream *curs = resource.getResource(MKTAG('C', 'U', 'R', 'S'), 128);
+
+		if (macCursor.readFromStream(*curs)) {
+			width = macCursor.getWidth();
+			height = macCursor.getHeight();
+			hotspotX = macCursor.getHotspotX();
+			hotspotY = macCursor.getHotspotY();
+			animate = 0;
+
+			_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorCustom, &macCursor);
+		}
+
+		delete curs;
+		resource.close();
+	}
 }
 
 bool MacMI1Gui::handleMenu(int id, Common::String &name) {
