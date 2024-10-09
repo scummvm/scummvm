@@ -369,8 +369,8 @@ static void sceneDetailsWindows(TwinEEngine *engine) {
 		ImGuiEx::InputInt("Talking actor", &scene->_talkingActor);
 		ImGuiEx::InputInt("Cube jingle", &scene->_cubeJingle);
 		ImGuiEx::InputIVec3("New hero pos", scene->_newHeroPos);
-		ImGui::InputInt("Alpha light", &scene->_alphaLight);
-		ImGui::InputInt("Beta light", &scene->_betaLight);
+		ImGuiEx::InputInt("Alpha light", &scene->_alphaLight);
+		ImGuiEx::InputInt("Beta light", &scene->_betaLight);
 		ImGuiEx::InputInt("Fall Y position", &scene->_startYFalling);
 		ImGui::Text("Hero position type: %i", (int)scene->_heroPositionType);
 	}
