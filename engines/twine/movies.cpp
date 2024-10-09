@@ -160,7 +160,7 @@ void Movies::scaleFla2x() {
 	}
 }
 
-void Movies::processFrame() {
+void Movies::drawNextFrameFla() {
 	FLASampleStruct sample;
 
 	_frameData.nbFrames = _file.readSint16LE();
@@ -207,7 +207,7 @@ void Movies::processFrame() {
 				}
 				break;
 			case 3:
-				_flaPaletteVar = true;
+				_flagFirst = true;
 				break;
 			case 4:
 				// TODO: fade out for 1 second before we stop it
@@ -407,7 +407,7 @@ bool Movies::playMovie(const char *name) { // PlayAnimFla
 
 		ScopedKeyMap scopedKeyMap(_engine, cutsceneKeyMapId);
 
-		_flaPaletteVar = true;
+		_flagFirst = true;
 		do {
 			FrameMarker frame(_engine, _flaHeaderData.speed);
 			_engine->readKeys();
@@ -418,7 +418,7 @@ bool Movies::playMovie(const char *name) { // PlayAnimFla
 				finished = true;
 				break;
 			}
-			processFrame();
+			drawNextFrameFla();
 			scaleFla2x();
 			_engine->_frontVideoBuffer.blitFrom(_engine->_imageBuffer, _engine->_imageBuffer.getBounds(), _engine->_frontVideoBuffer.getBounds());
 
