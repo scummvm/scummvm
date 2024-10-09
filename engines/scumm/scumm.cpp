@@ -1181,6 +1181,9 @@ Common::Error ScummEngine::init() {
 	if (_game.platform == Common::kPlatformMacintosh) {
 		Common::MacResManager resource;
 
+		_macScreen = new Graphics::Surface();
+		_macScreen->create(640, _useMacScreenCorrectHeight ? 480 : 400, Graphics::PixelFormat::createFormatCLUT8());
+
 		// \xAA is a trademark glyph in Mac OS Roman. We try that, but
 		// also the Windows version, the UTF-8 version, and just plain
 		// without in case the file system can't handle exotic
@@ -1309,9 +1312,6 @@ Common::Error ScummEngine::init() {
 
 			resource.close();
 		}
-
-		_macScreen = new Graphics::Surface();
-		_macScreen->create(640, _useMacScreenCorrectHeight ? 480 : 400, Graphics::PixelFormat::createFormatCLUT8());
 
 		if (!_macScreen && _renderMode == Common::kRenderMacintoshBW)
 			_renderMode = Common::kRenderDefault;
