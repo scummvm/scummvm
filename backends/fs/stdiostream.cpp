@@ -59,6 +59,7 @@ StdioStream::~StdioStream() {
 }
 
 bool StdioStream::moveFile(const Common::String &src, const Common::String &dst) {
+#ifndef STDIOSTREAM_NO_ATOMIC_SUPPORT
 	// This piece of code can't be in a subclass override, as moveFile is called from the destructor.
 	// In this case, the vtable is reset to the StdioStream one before calling moveFile.
 #if defined(WIN32)
@@ -71,6 +72,9 @@ bool StdioStream::moveFile(const Common::String &src, const Common::String &dst)
 	// Error: try to delete the file first
 	(void)remove(dst.c_str());
 	return !rename(src.c_str(), dst.c_str());
+#endif
+#else // STDIOSTREAM_NO_ATOMIC_SUPPORT
+	return false;
 #endif
 }
 
@@ -159,10 +163,14 @@ bool StdioStream::flush() {
 StdioStream *StdioStream::makeFromPathHelper(const Common::String &path, WriteMode writeMode,
 		StdioStream *(*factory)(void *handle)) {
 	Common::String tmpPath(path);
+
+#ifndef STDIOSTREAM_NO_ATOMIC_SUPPORT
 	// In atomic mode we create a temporary file and rename it when closing the file descriptor
 	if (writeMode == WriteMode_WriteAtomic) {
 		tmpPath += ".tmp";
 	}
+#endif
+
 #if defined(WIN32) && defined(UNICODE)
 	wchar_t *wPath = Win32::stringToTchar(tmpPath);
 	FILE *handle = _wfopen(wPath, writeMode == WriteMode_Read ? L"rb" : L"wb");
@@ -178,12 +186,15 @@ StdioStream *StdioStream::makeFromPathHelper(const Common::String &path, WriteMo
 	}
 
 	StdioStream *stream = factory(handle);
+
+#ifndef STDIOSTREAM_NO_ATOMIC_SUPPORT
 	// Store the final path alongside the stream
 	// If _path is not nullptr, it will be used to rename the file
 	// when closing it
 	if (writeMode == WriteMode_WriteAtomic) {
 		stream->_path = new Common::String(path);
 	}
+#endif
 
 	return stream;
 }
