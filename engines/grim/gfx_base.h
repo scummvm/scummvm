@@ -28,6 +28,7 @@
 #include "common/str.h"
 #include "common/rect.h"
 
+#include "graphics/pixelformat.h"
 #include "graphics/renderer.h"
 
 #include "engines/grim/material.h"
@@ -58,16 +59,6 @@ class Sprite;
 class Texture;
 class Overlay;
 
-/**
- * The Color-formats used for bitmaps in Grim Fandango/Escape From Monkey Island
- */
-enum colorFormat {
-	BM_RGB565 = 1,    // Grim Fandango
-	BM_RGB1555 = 2,   // EMI-PS2
-	BM_RGBA = 3,      // EMI-PC (Also internal Material-format for Grim)
-	BM_BGR888 = 4,    // EMI-TGA-materials (888)
-	BM_BGRA = 5       // EMI-TGA-materials with alpha
-};
 class GfxBase {
 public:
 	GfxBase();
@@ -230,6 +221,8 @@ public:
 	virtual void drawPolygon(const PrimitiveObject *primitive) = 0;
 	virtual void drawDimPlane() {};
 
+	virtual const Graphics::PixelFormat getMovieFormat() const = 0;
+
 	/**
 	 * Prepare a movie-frame for drawing
 	 * performing any necessary conversion
@@ -241,6 +234,7 @@ public:
 	 * @see releaseMovieFrame
 	 */
 	virtual void prepareMovieFrame(Graphics::Surface *frame) = 0;
+	virtual void prepareMovieFrame(Graphics::Surface *frame, const byte *palette);
 	virtual void drawMovieFrame(int offsetX, int offsetY) = 0;
 
 	/**
