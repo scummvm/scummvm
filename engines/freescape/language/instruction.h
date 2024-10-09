@@ -46,7 +46,7 @@ public:
 	bool isConditional() const {
 		Token::Type type = getType();
 		return 	type == Token::Type::BITNOTEQ || type == Token::Type::VARNOTEQ || \
-				type == Token::Type::IFGTEQ || type == Token::Type::IFGLEQ || \
+				type == Token::Type::IFGTEQ || type == Token::Type::IFLTEQ || \
 				type == Token::Type::VAREQ || _type == Token::Type::INVISQ;
 	}
 

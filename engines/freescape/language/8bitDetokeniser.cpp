@@ -434,7 +434,7 @@ Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition
 
 		case 47:
 			detokenisedStream += "IFLTE (v";
-			currentInstruction = FCLInstruction(Token::IFGTEQ);
+			currentInstruction = FCLInstruction(Token::IFLTEQ);
 			break;
 
 		case 48:

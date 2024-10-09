@@ -213,6 +213,13 @@ bool FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 				skipDepth = conditionalDepth - 1;
 			break;
 
+		case Token::IFLTEQ:
+			skip = !checkIfLessOrEqual(instruction);
+			if (skip)
+				skipDepth = conditionalDepth - 1;
+			break;
+
+
 		case Token::ELSE:
 			skip = !skip;
 			if (skip)
@@ -465,6 +472,13 @@ bool FreescapeEngine::checkIfGreaterOrEqual(FCLInstruction &instruction) {
 	uint16 value = instruction._destination;
 	debugC(1, kFreescapeDebugCode, "Check if variable %d is greater than equal to %d!", variable, value);
 	return (_gameStateVars[variable] >= value);
+}
+
+bool FreescapeEngine::checkIfLessOrEqual(FCLInstruction &instruction) {
+	uint16 variable = instruction._source;
+	uint16 value = instruction._destination;
+	debugC(1, kFreescapeDebugCode, "Check if variable %d is less than equal to %d!", variable, value);
+	return (_gameStateVars[variable] <= value);
 }
 
 

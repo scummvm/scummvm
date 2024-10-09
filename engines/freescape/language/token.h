@@ -79,7 +79,7 @@ public:
 		UPDATEI,
 		VAREQ,
 		IFGTEQ,
-		IFGLEQ,
+		IFLTEQ,
 		VISQ,
 		VIS,
 		WAIT,
