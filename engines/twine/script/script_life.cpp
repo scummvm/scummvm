@@ -922,7 +922,7 @@ int32 ScriptLife::lMESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 	engine->_text->drawTextProgressive(textIdx);
 	if (engine->isLBA1()) {
-		if (engine->_scene->_currentSceneIdx == LBA1SceneId::Principal_Island_Library && engine->_scene->_talkingActor == 8 && textIdx == TextId::kStarWarsFanBoy) {
+		if (engine->_scene->_numCube == LBA1SceneId::Principal_Island_Library && engine->_scene->_talkingActor == 8 && textIdx == TextId::kStarWarsFanBoy) {
 			engine->unlockAchievement("LBA_ACH_008");
 		}
 	}
@@ -1314,7 +1314,7 @@ int32 ScriptLife::lGIVE_BONUS(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLife::lCHANGE_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 sceneIdx = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::CHANGE_CUBE(%i)", (int)sceneIdx);
-	engine->_scene->_needChangeScene = sceneIdx;
+	engine->_scene->_newCube = sceneIdx;
 	engine->_scene->_heroPositionType = ScenePositionType::kScene;
 	return 0;
 }
@@ -1415,7 +1415,7 @@ int32 ScriptLife::lPOS_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 trackIdx = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::POS_POINT(%i)", (int)trackIdx);
 	if (engine->_scene->_enableEnhancements) {
-		if (IS_HERO(ctx.actorIdx) && engine->_scene->_currentSceneIdx == LBA1SceneId::Citadel_Island_Harbor && trackIdx == 8) {
+		if (IS_HERO(ctx.actorIdx) && engine->_scene->_numCube == LBA1SceneId::Citadel_Island_Harbor && trackIdx == 8) {
 			ctx.stream.rewind(2);
 			ctx.stream.writeByte(0x34); // CHANGE_CUBE
 			ctx.stream.writeByte(LBA1SceneId::Principal_Island_Harbor);
@@ -1935,8 +1935,8 @@ int32 ScriptLife::lANIM_SET(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x60
  */
 int32 ScriptLife::lHOLOMAP_TRAJ(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_scene->_holomapTrajectory = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::HOLOMAP_TRAJ(%i)", (int)engine->_scene->_holomapTrajectory);
+	engine->_scene->_numHolomapTraj = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::HOLOMAP_TRAJ(%i)", (int)engine->_scene->_numHolomapTraj);
 	return 0;
 }
 
@@ -1963,7 +1963,7 @@ int32 ScriptLife::lTHE_END(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_scene->_sceneHero->setLife(engine->getMaxLife());
 	engine->_gameState->setMagicPoints(80);
 	// TODO: lba2 has a different ending
-	engine->_scene->_currentSceneIdx = LBA1SceneId::Polar_Island_Final_Battle;
+	engine->_scene->_numCube = LBA1SceneId::Polar_Island_Final_Battle;
 	engine->_actor->_heroBehaviour = engine->_actor->_previousHeroBehaviour;
 	engine->_scene->_newHeroPos.x = -1;
 	engine->_scene->_sceneHero->_beta = engine->_actor->_previousHeroAngle;

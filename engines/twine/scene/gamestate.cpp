@@ -116,8 +116,8 @@ void GameState::initEngineVars() {
 	_engine->_scene->_newHeroPos.y = 24 * SIZE_BRICK_Y;
 	_engine->_scene->_newHeroPos.z = 16 * SIZE_BRICK_XZ;
 
-	_engine->_scene->_currentSceneIdx = SCENE_CEILING_GRID_FADE_1;
-	_engine->_scene->_needChangeScene = LBA1SceneId::Citadel_Island_Prison;
+	_engine->_scene->_numCube = SCENE_CEILING_GRID_FADE_1;
+	_engine->_scene->_newCube = LBA1SceneId::Citadel_Island_Prison;
 	_engine->_sceneLoopState = SceneLoopState::Continue;
 	_engine->_scene->_mecaPenguinIdx = -1;
 	_engine->_menuOptions->flagCredits = false;
@@ -185,7 +185,7 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 	for (uint8 i = 0; i < numGameFlags; ++i) {
 		setGameFlag(i, file->readByte());
 	}
-	_engine->_scene->_needChangeScene = file->readByte(); // scene index
+	_engine->_scene->_newCube = file->readByte(); // scene index
 	setChapter(file->readByte());
 
 	_engine->_actor->_heroBehaviour = (HeroBehaviourType)file->readByte();
@@ -227,7 +227,7 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 		file->readUint32LE();
 	}
 
-	_engine->_scene->_currentSceneIdx = SCENE_CEILING_GRID_FADE_1;
+	_engine->_scene->_numCube = SCENE_CEILING_GRID_FADE_1;
 	_engine->_scene->_heroPositionType = ScenePositionType::kReborn;
 	return true;
 }
@@ -242,7 +242,7 @@ bool GameState::saveGame(Common::WriteStream *file) {
 		Common::strlcpy(_engine->_menuOptions->_saveGameName, "TwinEngineSave", sizeof(_engine->_menuOptions->_saveGameName));
 	}
 
-	int32 sceneIdx = _engine->_scene->_currentSceneIdx;
+	int32 sceneIdx = _engine->_scene->_numCube;
 	if (sceneIdx == Polar_Island_end_scene || sceneIdx == Citadel_Island_end_sequence_1 || sceneIdx == Citadel_Island_end_sequence_2 || sceneIdx == Credits_List_Sequence) {
 		/* inventoryMagicPoints = 0x50 */
 		/* herobehaviour = 0 */

@@ -441,7 +441,7 @@ bool Scene::loadSceneLBA1() {
 	}
 
 	if (_enableEnhancements) {
-		switch (_currentSceneIdx) {
+		switch (_numCube) {
 		case LBA1SceneId::Hamalayi_Mountains_landing_place:
 			_sceneActors[21]._posObj.x = _sceneActors[21]._oldPos.x = 6656 + 256;
 			_sceneActors[21]._posObj.z = _sceneActors[21]._oldPos.z = 768;
@@ -475,7 +475,7 @@ bool Scene::loadSceneLBA1() {
 	return true;
 }
 
-bool Scene::initScene(int32 index) {
+bool Scene::loadScene(int32 index) {
 	// load scene from file
 	if (_engine->isLBA2()) {
 		index++;
@@ -510,11 +510,11 @@ void Scene::clearScene() {
 }
 
 void Scene::reloadCurrentScene() {
-	_needChangeScene = _currentSceneIdx;
+	_newCube = _numCube;
 }
 
 void Scene::dumpSceneScript(const char *type, int actorIdx, const uint8* script, int size) const {
-	Common::String fname = Common::String::format("./dumps/%i-%i.%s", _currentSceneIdx, actorIdx, type);
+	Common::String fname = Common::String::format("./dumps/%i-%i.%s", _numCube, actorIdx, type);
 	Common::DumpFile out;
 	if (!out.open(fname.c_str(), true)) {
 		warning("Scene::dumpSceneScript(): Can not open dump file %s", fname.c_str());
@@ -536,7 +536,7 @@ void Scene::dumpSceneScripts() const {
 void Scene::changeCube() {
 	if (_engine->isLBA1()) {
 		if (_enableEnhancements) {
-			if (_currentSceneIdx == LBA1SceneId::Citadel_Island_Harbor && _needChangeScene == LBA1SceneId::Principal_Island_Harbor) {
+			if (_numCube == LBA1SceneId::Citadel_Island_Harbor && _newCube == LBA1SceneId::Principal_Island_Harbor) {
 				if (_sceneNumZones >= 15 && _sceneNumTracks >= 8) {
 					const ZoneStruct *zone = &_sceneZones[15];
 					const IVec3 &track = _sceneTracks[8];
@@ -551,26 +551,26 @@ void Scene::changeCube() {
 		}
 
 		// change twinsen house destroyed hard-coded
-		if (_needChangeScene == LBA1SceneId::Citadel_Island_near_twinsens_house && _engine->_gameState->hasOpenedFunfrocksSafe()) {
-			_needChangeScene = LBA1SceneId::Citadel_Island_Twinsens_house_destroyed;
+		if (_newCube == LBA1SceneId::Citadel_Island_near_twinsens_house && _engine->_gameState->hasOpenedFunfrocksSafe()) {
+			_newCube = LBA1SceneId::Citadel_Island_Twinsens_house_destroyed;
 		}
 	}
 
 	// local backup previous scene
-	_previousSceneIdx = _currentSceneIdx;
-	_currentSceneIdx = _needChangeScene;
+	_oldcube = _numCube;
+	_numCube = _newCube;
 
-	snprintf(_engine->_gameState->_sceneName, sizeof(_engine->_gameState->_sceneName), "%i %s", _currentSceneIdx, _engine->_holomap->getLocationName(_currentSceneIdx));
-	debug(2, "Entering scene %s (came from %i)", _engine->_gameState->_sceneName, _previousSceneIdx);
+	snprintf(_engine->_gameState->_sceneName, sizeof(_engine->_gameState->_sceneName), "%i %s", _numCube, _engine->_holomap->getLocationName(_numCube));
+	debug(2, "Entering scene %s (came from %i)", _engine->_gameState->_sceneName, _oldcube);
 
 	if (_engine->isLBA1()) {
-		if (_needChangeScene == LBA1SceneId::Polar_Island_end_scene) {
+		if (_newCube == LBA1SceneId::Polar_Island_end_scene) {
 			_engine->unlockAchievement("LBA_ACH_001");
 			// if you finish the game in less than 4 hours
 			if (_engine->getTotalPlayTime() <= 1000 * 60 * 60 * 4) {
 				_engine->unlockAchievement("LBA_ACH_005");
 			}
-		} else if (_needChangeScene == LBA1SceneId::Brundle_Island_Secret_room) {
+		} else if (_newCube == LBA1SceneId::Brundle_Island_Secret_room) {
 			_engine->unlockAchievement("LBA_ACH_006");
 		}
 	}
@@ -586,23 +586,23 @@ void Scene::changeCube() {
 	_sceneHero->_offsetTrack = -1;
 	_sceneHero->_labelTrack = -1;
 
-	initScene(_needChangeScene);
+	loadScene(_newCube);
 	if (ConfMan.getBool("dump_scripts")) {
 		dumpSceneScripts();
 	}
 
-	if (_holomapTrajectory != -1) {
+	if (_numHolomapTraj != -1) {
 		_engine->testRestoreModeSVGA(false);
-		_engine->_holomap->drawHolomapTrajectory(_holomapTrajectory);
-		_holomapTrajectory = -1;
+		_engine->_holomap->drawHolomapTrajectory(_numHolomapTraj);
+		_numHolomapTraj = -1;
 	}
 
-	if (_needChangeScene == LBA1SceneId::Citadel_Island_end_sequence_1 || _needChangeScene == LBA1SceneId::Citadel_Island_end_sequence_2) {
+	if (_newCube == LBA1SceneId::Citadel_Island_end_sequence_1 || _newCube == LBA1SceneId::Citadel_Island_end_sequence_2) {
 		_sceneTextBank = TextBankId::Tippet_Island;
 	}
 
 	_engine->_text->initSceneTextBank();
-	_engine->_grid->initGrid(_needChangeScene);
+	_engine->_grid->initGrid(_newCube);
 
 	if (_heroPositionType == ScenePositionType::kZone) {
 		_newHeroPos = _zoneHeroPos;
@@ -615,7 +615,7 @@ void Scene::changeCube() {
 
 	_engine->_renderer->setLightVector(_alphaLight, _betaLight, LBAAngles::ANGLE_0);
 
-	if (_previousSceneIdx != SCENE_CEILING_GRID_FADE_1 && _previousSceneIdx != _needChangeScene) {
+	if (_oldcube != SCENE_CEILING_GRID_FADE_1 && _oldcube != _newCube) {
 		_engine->_actor->_previousHeroBehaviour = _engine->_actor->_heroBehaviour;
 		_engine->_actor->_previousHeroAngle = _sceneHero->_beta;
 		_engine->autoSave();
@@ -640,13 +640,13 @@ void Scene::changeCube() {
 	_engine->_screens->_flagFade = false;
 	_engine->_renderer->setLightVector(_alphaLight, _betaLight, LBAAngles::ANGLE_0);
 
-	_needChangeScene = SCENE_CEILING_GRID_FADE_1;
+	_newCube = SCENE_CEILING_GRID_FADE_1;
 	_enableGridTileRendering = true;
 	_heroPositionType = ScenePositionType::kNoPosition;
 	_zoneHeroPos = IVec3();
 	_sampleAmbienceTime = 0;
 
-	debug(2, "Scene %i music track id: %i", _currentSceneIdx, _cubeJingle);
+	debug(2, "Scene %i music track id: %i", _numCube, _cubeJingle);
 	if (_cubeJingle != 255) {
 		_engine->_music->playMusic(_cubeJingle);
 	}
@@ -683,7 +683,7 @@ void Scene::initSceneVars() {
 
 void Scene::playSceneMusic() {
 	if (_engine->isLBA1()) {
-		if (_currentSceneIdx == LBA1SceneId::Tippet_Island_Twinsun_Cafe && _engine->_gameState->hasArrivedHamalayi()) {
+		if (_numCube == LBA1SceneId::Tippet_Island_Twinsun_Cafe && _engine->_gameState->hasArrivedHamalayi()) {
 			if (_engine->isCDROM()) {
 				_engine->_music->playCdTrack(8);
 			} else {
@@ -775,7 +775,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 				error("lba2 zone types not yet implemented");
 			case ZoneType::kCube:
 				if (IS_HERO(actorIdx) && actor->_lifePoint > 0) {
-					_needChangeScene = zone->num;
+					_newCube = zone->num;
 					_zoneHeroPos.x = actor->_posObj.x - zone->mins.x + zone->infoData.ChangeScene.x;
 					_zoneHeroPos.y = actor->_posObj.y - zone->mins.y + zone->infoData.ChangeScene.y;
 					_zoneHeroPos.z = actor->_posObj.z - zone->mins.z + zone->infoData.ChangeScene.z;

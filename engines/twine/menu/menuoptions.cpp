@@ -102,8 +102,8 @@ void MenuOptions::showCredits() {
 	const int32 tmpShadowMode = _engine->_cfgfile.ShadowMode;
 	_engine->_cfgfile.ShadowMode = 0;
 	_engine->_gameState->initEngineVars();
-	_engine->_scene->_currentSceneIdx = LBA1SceneId::Credits_List_Sequence;
-	_engine->_scene->_needChangeScene = LBA1SceneId::Credits_List_Sequence;
+	_engine->_scene->_numCube = LBA1SceneId::Credits_List_Sequence;
+	_engine->_scene->_newCube = LBA1SceneId::Credits_List_Sequence;
 
 	flagCredits = true;
 	_engine->gameEngineLoop();

@@ -237,9 +237,9 @@ static void sceneSelectionCombo(TwinEEngine *engine) {
 			Common::U32String originalLocationName(engine->_holomap->getLocationName(i), Common::kDos850);
 			const Common::String locationName = originalLocationName.encode(Common::kUtf8);
 			Common::String name = Common::String::format("[%03d] %s", i, locationName.c_str());
-			if (ImGui::Selectable(name.c_str(), i == engine->_scene->_currentSceneIdx)) {
-				scene->_currentSceneIdx = i;
-				scene->_needChangeScene = scene->_currentSceneIdx;
+			if (ImGui::Selectable(name.c_str(), i == engine->_scene->_numCube)) {
+				scene->_numCube = i;
+				scene->_newCube = scene->_numCube;
 				engine->_redraw->_firstTime = true;
 			}
 		}
@@ -270,7 +270,7 @@ static void sceneDetailsWindows(TwinEEngine *engine) {
 	if (ImGui::Begin("Scene", &engine->_debugState->_sceneDetailsWindow)) {
 		Scene *scene = engine->_scene;
 		GameState *gameState = engine->_gameState;
-		ImGui::Text("Scene: %i", scene->_currentSceneIdx);
+		ImGui::Text("Scene: %i", scene->_numCube);
 		ImGui::Text("Scene name: %s", gameState->_sceneName);
 		sceneSelectionCombo(engine);
 
@@ -342,7 +342,7 @@ static void sceneDetailsWindows(TwinEEngine *engine) {
 				ImGui::SameLine();
 				Common::String buttonId = Common::String::format("Activate##activateTrajectory%i", i);
 				if (ImGui::Button(buttonId.c_str())) {
-					scene->_holomapTrajectory = i;
+					scene->_numHolomapTraj = i;
 					scene->reloadCurrentScene();
 				}
 				ImGui::Indent();
@@ -354,8 +354,8 @@ static void sceneDetailsWindows(TwinEEngine *engine) {
 				ImGui::Unindent();
 			}
 		}
-		ImGuiEx::InputInt("Previous scene index", &scene->_previousSceneIdx);
-		ImGuiEx::InputInt("Need change scene index", &scene->_needChangeScene);
+		ImGuiEx::InputInt("Previous scene index", &scene->_oldcube);
+		ImGuiEx::InputInt("Need change scene index", &scene->_newCube);
 
 		ImGui::Text("Climbing flag");
 		ImGui::SameLine();

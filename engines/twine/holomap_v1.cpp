@@ -461,7 +461,7 @@ int32 HolomapV1::searchPrevArrow(int32 num) const {
 void HolomapV1::drawListPos(int calpha, int cbeta, int cgamma, bool pos) {
 	int nbobjets = 0;
 	DrawListStruct listTri[MAX_HOLO_POS_2];
-	const int numCube = _engine->_scene->_currentSceneIdx;
+	const int numCube = _engine->_scene->_numCube;
 	const int maxHoloPos = _engine->numHoloPos();
 	for (int n = 0; n < maxHoloPos; ++n) {
 		if (!(_engine->_gameState->_holomapFlags[n] & HOLOMAP_CAN_FOCUS) && n != numCube) {
@@ -549,7 +549,7 @@ void HolomapV1::holoMap() {
 		error("Failed to load holomap image");
 	}
 
-	int32 current = _engine->_scene->_currentSceneIdx;
+	int32 current = _engine->_scene->_numCube;
 	_engine->_text->drawHolomapLocation(_listHoloPos[current].mess);
 
 	int32 otimer = _engine->timerRef;
@@ -575,7 +575,7 @@ void HolomapV1::holoMap() {
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapPrev)) {
 			current = searchPrevArrow(current);
 			if (current == -1) {
-				current = _engine->_scene->_currentSceneIdx;
+				current = _engine->_scene->_numCube;
 			}
 			_engine->_text->drawHolomapLocation(_listHoloPos[current].mess);
 			oalpha = calpha;
@@ -588,7 +588,7 @@ void HolomapV1::holoMap() {
 		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapNext)) {
 			current = searchNextArrow(current);
 			if (current == -1) {
-				current = _engine->_scene->_currentSceneIdx;
+				current = _engine->_scene->_numCube;
 			}
 			_engine->_text->drawHolomapLocation(_listHoloPos[current].mess);
 			oalpha = calpha;

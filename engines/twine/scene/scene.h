@@ -127,7 +127,7 @@ private:
 	bool loadSceneLBA2();
 
 	/** Initialize new scene */
-	bool initScene(int32 index);
+	bool loadScene(int32 index);
 	/** Reset scene */
 	void clearScene();
 
@@ -163,13 +163,13 @@ public:
 	Scene(TwinEEngine *engine) : _engine(engine) {}
 	~Scene();
 
-	int32 _needChangeScene = LBA1SceneId::Citadel_Island_Prison;
-	int32 _currentSceneIdx = LBA1SceneId::Citadel_Island_Prison; // NumCube
-	int32 _previousSceneIdx = LBA1SceneId::Citadel_Island_Prison;
+	int32 _newCube = LBA1SceneId::Citadel_Island_Prison;
+	int32 _numCube = LBA1SceneId::Citadel_Island_Prison; // NumCube
+	int32 _oldcube = LBA1SceneId::Citadel_Island_Prison;
 
 	int32 _planet = -1;
 
-	int32 _holomapTrajectory = -1;
+	int32 _numHolomapTraj = -1;
 
 	TextBankId _sceneTextBank = TextBankId::None;
 	int32 _alphaLight = 0;

@@ -120,7 +120,7 @@ void Dart::CheckDartCol(ActorStruct *ptrobj) {
 	ptrd = ListDart;
 
 	for (n = 0; n < MAX_DARTS; n++, ptrd++) {
-		if (ptrd->NumCube == _engine->_scene->_currentSceneIdx && !(ptrd->Flags & DART_TAKEN)) {
+		if (ptrd->NumCube == _engine->_scene->_numCube && !(ptrd->Flags & DART_TAKEN)) {
 			xt0 = ptrd->PosX + ptrd->XMin;
 			xt1 = ptrd->PosX + ptrd->XMax;
 			yt0 = ptrd->PosY + ptrd->YMin;

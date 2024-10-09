@@ -792,7 +792,7 @@ ShapeType Grid::worldColBrickFull(int32 x, int32 y, int32 z, int32 y2, int32 act
 					const BlockDataEntry *blockPtr = getAdrBlock(block, 0);
 					if (blockPtr->brickType == WATER_BRICK) {
 						// Special check mount funfrock
-						if (_engine->_scene->_currentSceneIdx != LBA1SceneId::Polar_Island_on_the_rocky_peak) {
+						if (_engine->_scene->_numCube != LBA1SceneId::Polar_Island_on_the_rocky_peak) {
 							// full collision
 							return ShapeType::kSolid;
 						}

@@ -185,7 +185,7 @@ int32 ScriptMove::mLABEL(TwinEEngine *engine, MoveScriptContext &ctx) {
 	ctx.actor->_labelTrack = ctx.stream.readByte();
 	ctx.actor->_offsetLabelTrack = ctx.stream.pos() - 2;
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::LABEL(%i)", (int)ctx.actor->_labelTrack);
-	if (engine->_scene->_currentSceneIdx == LBA1SceneId::Proxima_Island_Museum && ctx.actor->_actorIdx == 2 &&
+	if (engine->_scene->_numCube == LBA1SceneId::Proxima_Island_Museum && ctx.actor->_actorIdx == 2 &&
 		(ctx.actor->_labelTrack == 0 || ctx.actor->_labelTrack == 1)) {
 		engine->unlockAchievement("LBA_ACH_004");
 	}
@@ -414,7 +414,7 @@ int32 ScriptMove::mOPEN_GENERIC(TwinEEngine *engine, MoveScriptContext &ctx, int
 		ctx.actor->_speed = 1000;
 		engine->_movements->setActorAngle(LBAAngles::ANGLE_0, LBAAngles::ANGLE_351, LBAAngles::ANGLE_17, &ctx.actor->realAngle);
 	}
-	if (engine->_scene->_currentSceneIdx == LBA1SceneId::Proxima_Island_Museum && ctx.actor->_actorIdx == 16) {
+	if (engine->_scene->_numCube == LBA1SceneId::Proxima_Island_Museum && ctx.actor->_actorIdx == 16) {
 		engine->unlockAchievement("LBA_ACH_009");
 	}
 	return 0;

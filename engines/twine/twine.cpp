@@ -330,7 +330,7 @@ Common::Error TwinEEngine::run() {
 			_text->normalWinDial();
 			_text->_flagMessageShade = true;
 			_text->_renderTextTriangle = false;
-			_scene->_needChangeScene = sceneIndex;
+			_scene->_newCube = sceneIndex;
 			_scene->_heroPositionType = ScenePositionType::kScene;
 			_state = EngineState::GameLoop;
 		}
@@ -866,10 +866,10 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		_queuedFlaMovie.clear();
 	}
 
-	if (_scene->_needChangeScene > -1) {
+	if (_scene->_newCube > -1) {
 		if (!isMod() && isDemo() && isLBA1()) {
 			// the demo only has these scenes
-			if (_scene->_needChangeScene != LBA1SceneId::Citadel_Island_Prison && _scene->_needChangeScene != LBA1SceneId::Citadel_Island_outside_the_citadel && _scene->_needChangeScene != LBA1SceneId::Citadel_Island_near_the_tavern) {
+			if (_scene->_newCube != LBA1SceneId::Citadel_Island_Prison && _scene->_newCube != LBA1SceneId::Citadel_Island_outside_the_citadel && _scene->_newCube != LBA1SceneId::Citadel_Island_near_the_tavern) {
 				_music->playMidiFile(6);
 				return true;
 			}
@@ -1131,7 +1131,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 					if (_gameState->_inventoryNumLeafs > 0) { // use clover leaf automaticaly
 						_scene->_sceneHero->_posObj = _scene->_newHeroPos;
 
-						_scene->_needChangeScene = _scene->_currentSceneIdx;
+						_scene->_newCube = _scene->_numCube;
 						_gameState->setMaxMagicPoints();
 
 						_grid->centerOnActor(_scene->_sceneHero);
@@ -1151,11 +1151,11 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 						actor->_beta = _actor->_previousHeroAngle;
 						actor->setLife(getMaxLife());
 
-						if (_scene->_previousSceneIdx != _scene->_currentSceneIdx) {
+						if (_scene->_oldcube != _scene->_numCube) {
 							_scene->_newHeroPos.x = -1;
 							_scene->_newHeroPos.y = -1;
 							_scene->_newHeroPos.z = -1;
-							_scene->_currentSceneIdx = _scene->_previousSceneIdx;
+							_scene->_numCube = _scene->_oldcube;
 							_scene->stopRunningGame();
 						}
 
@@ -1173,7 +1173,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			}
 		}
 
-		if (_scene->_needChangeScene != -1) {
+		if (_scene->_newCube != -1) {
 			return false;
 		}
 	}
@@ -1189,7 +1189,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		_scene->_sceneHero->_staticFlags.bIsInvisible = 0;
 	}
 
-	_scene->_needChangeScene = SCENE_CEILING_GRID_FADE_1;
+	_scene->_newCube = SCENE_CEILING_GRID_FADE_1;
 	_redraw->_firstTime = false;
 
 	return false;

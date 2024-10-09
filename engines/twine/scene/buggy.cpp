@@ -51,7 +51,7 @@ void Buggy::initBuggy(uint8 numobj, uint32 flaginit) {
 		|| (flaginit && !NumBuggy)) // first initialization
 									// because the empty buggy cannot be Twinsen
 	{
-		ptb->Cube = _engine->_scene->_currentSceneIdx; // Port-Ludo (Desert)
+		ptb->Cube = _engine->_scene->_numCube; // Port-Ludo (Desert)
 
 		ptb->X = ptrobj->_posObj.x;
 		ptb->Y = ptrobj->_posObj.y;
@@ -66,7 +66,7 @@ void Buggy::initBuggy(uint8 numobj, uint32 flaginit) {
 		if (_engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX)->_controlMode != ControlMode::kBuggyManual && _engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX)->_controlMode != ControlMode::kBuggy) {
 			int32 x, y;
 
-			if (_engine->_scene->_currentSceneIdx == ptb->Cube) {
+			if (_engine->_scene->_numCube == ptb->Cube) {
 				ptrobj->_posObj.x = ptb->X;
 				ptrobj->_posObj.y = ptb->Y;
 				ptrobj->_posObj.z = ptb->Z;
@@ -192,7 +192,7 @@ void Buggy::leaveBuggy(HeroBehaviourType behaviour) {
 	ptb->Y = ptrobj->_posObj.y;
 	ptb->Z = ptrobj->_posObj.z;
 	ptb->Beta = ptrobj->_beta;
-	ptb->Cube = _engine->_scene->_currentSceneIdx;
+	ptb->Cube = _engine->_scene->_numCube;
 
 	// TODO: ObjectClear(ptrobj);
 
