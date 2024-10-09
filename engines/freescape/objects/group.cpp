@@ -106,9 +106,9 @@ void Group::assemble(int index) {
 	offset = 32 * offset / _scale;*/
 	position = 32 * position / _scale;
 
-	debugC(1, kFreescapeDebugCode, "Group %d: Assembling object %d originally at %f, %f, %f", _objectID, gobj->getObjectID(), gobj->getOrigin().x(), gobj->getOrigin().y(), gobj->getOrigin().z());
+	debugC(1, kFreescapeDebugGroup, "Group %d: Assembling object %d originally at %f, %f, %f", _objectID, gobj->getObjectID(), gobj->getOrigin().x(), gobj->getOrigin().y(), gobj->getOrigin().z());
 	gobj->offsetOrigin(position + offset);
-	debugC(1, kFreescapeDebugCode, "Group %d: Assembling object %d originally at %f, %f, %f", _objectID, gobj->getObjectID(), gobj->getOrigin().x(), gobj->getOrigin().y(), gobj->getOrigin().z());
+	debugC(1, kFreescapeDebugGroup, "Group %d: Assembling object %d originally at %f, %f, %f", _objectID, gobj->getObjectID(), gobj->getOrigin().x(), gobj->getOrigin().y(), gobj->getOrigin().z());
 }
 
 void Group::run() {
@@ -116,14 +116,14 @@ void Group::run() {
 		return;
 
 	int opcode = _operations[_step]->opcode;
-	debugC(1, kFreescapeDebugCode, "Executing opcode 0x%x at step %d", opcode, _step);
+	debugC(1, kFreescapeDebugGroup, "Executing opcode 0x%x at step %d", opcode, _step);
 	if (opcode == 0x80 || opcode == 0xff) {
-		debugC(1, kFreescapeDebugCode, "Executing group rewind");
+		debugC(1, kFreescapeDebugGroup, "Executing group rewind");
 		_active = true;
 		_step = -1;
 		//reset();
 	} else if (opcode == 0x01) {
-		debugC(1, kFreescapeDebugCode, "Executing group condition %s", _operations[_step]->conditionSource.c_str());
+		debugC(1, kFreescapeDebugGroup, "Executing group condition %s", _operations[_step]->conditionSource.c_str());
 		g_freescape->executeCode(_operations[_step]->condition, false, true, false, false);
 	} else if (opcode == 0x10) {
 		uint32 groupSize = _objects.size();
@@ -132,7 +132,7 @@ void Group::run() {
 		_active = false;
 		_step++;
 	} else if (opcode == 0x0) {
-		debugC(1, kFreescapeDebugCode, "Executing group assemble");
+		debugC(1, kFreescapeDebugGroup, "Executing group assemble");
 		uint32 groupSize = _objects.size();
 		for (uint32 i = 0; i < groupSize ; i++)
 			assemble(i);
@@ -184,7 +184,7 @@ void Group::step() {
 	if (!_active)
 		return;
 
-	debugC(1, kFreescapeDebugCode, "Stepping group %d", _objectID);
+	debugC(1, kFreescapeDebugGroup, "Stepping group %d", _objectID);
 	if (_step < int(_operations.size() - 1))
 		_step++;
 	else {

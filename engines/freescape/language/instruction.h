@@ -41,7 +41,15 @@ public:
 	void setAdditional(int32 additional);
 	void setDestination(int32 destination);
 
-	Token::Type getType();
+	Token::Type getType() const;
+
+	bool isConditional() const {
+		Token::Type type = getType();
+		return 	type == Token::Type::BITNOTEQ || type == Token::Type::VARNOTEQ || \
+				type == Token::Type::IFGTEQ || type == Token::Type::IFGLEQ || \
+				type == Token::Type::VAREQ || _type == Token::Type::INVISQ;
+	}
+
 	void setBranches(FCLInstructionVector *thenBranch, FCLInstructionVector *elseBranch);
 
 	FCLInstruction duplicate();
