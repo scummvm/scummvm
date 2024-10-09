@@ -33,7 +33,7 @@ struct InvObject {
 	int16 _scene, _cel, _cursor;
 };
 
-static const InvObject INVENTORY_ITEMS[123] = {
+static const InvObject INVENTORY_ITEMS[] = {
 	{ "SOLDIER'S HELMET",       203,  14,  10 },
 	{ "BUCKET",					203,  15,  11 },
 	{ "RIPLEY PHOTO",			998,  16,  12 },
@@ -156,7 +156,8 @@ static const InvObject INVENTORY_ITEMS[123] = {
 	{ "MESSAGE LOG",			999,  94,  90 },
 	{ "WITHERED BROWN VINE",	999,  68,  64 },
 	{ "TOMB MESSAGE",			409, 128, 124 },
-	{ "FAUCET PIPE/TUBE",		999, 137, 125 }
+	{ "FAUCET PIPE/TUBE",		999, 137, 125 },
+	{ nullptr,                    0,   0,   0 }
 };
 
 void Inventory::init() {
