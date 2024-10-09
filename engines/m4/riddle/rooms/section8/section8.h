@@ -47,6 +47,12 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+extern const int16 S8_SHADOW_DIRS1[];
+extern const char *S8_SHADOW_NAMES1[];
+
+extern const int16 S8_SHADOW_DIRS2[];
+extern const char *S8_SHADOW_NAMES2[];
+
 class Section8 : public Section {
 private:
 	Room801 _room801;
