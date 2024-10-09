@@ -291,9 +291,9 @@ void BlueForceGame::rightClick() {
 }
 
 void BlueForceGame::processEvent(Event &event) {
-	if (event.eventType == EVENT_KEYPRESS) {
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_F1:
+	if (event.eventType == EVENT_CUSTOM_ACTIONSTART) {
+		switch (event.customType) {
+		case kActionHelp:
 			// F1 - Help
 			int tmp;
 			tmp = BF_GLOBALS._dialogCenter.y;
@@ -306,30 +306,30 @@ void BlueForceGame::processEvent(Event &event) {
 			BF_GLOBALS._dialogCenter.y = tmp;
 			break;
 
-		case Common::KEYCODE_F2:
+		case kActionSoundOptions:
 			// F2 - Sound Options
 			SoundDialog::execute();
 			break;
 
-		case Common::KEYCODE_F3:
+		case kActionQuitGame:
 			// F3 - Quit
 			quitGame();
 			event.handled = false;
 			break;
 
-		case Common::KEYCODE_F4:
+		case kActionRestartGame:
 			// F4 - Restart
 			restartGame();
 			g_globals->_events.setCursorFromFlag();
 			break;
 
-		case Common::KEYCODE_F7:
+		case kActionRestoreGame:
 			// F7 - Restore
 			restoreGame();
 			g_globals->_events.setCursorFromFlag();
 			break;
 
-		case Common::KEYCODE_F10:
+		case kActionPauseGame:
 			// F10 - Pause
 			GfxDialog::setPalette();
 			if (g_vm->getLanguage() == Common::ES_ESP) {
@@ -1421,7 +1421,7 @@ void SceneMessage::signal() {
 
 void SceneMessage::process(Event &event) {
 	if ((event.eventType == EVENT_BUTTON_DOWN) ||
-		((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_RETURN))) {
+		((event.eventType == EVENT_CUSTOM_ACTIONSTART) && (event.customType == kActionReturn))) {
 		signal();
 	}
 }

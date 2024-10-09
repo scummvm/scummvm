@@ -1770,7 +1770,7 @@ void Scene1337::Action10::signal() {
 
 					// Wait for a mouse or keypress
 					Event event;
-					while (!g_globals->_events.getEvent(event, EVENT_BUTTON_DOWN | EVENT_KEYPRESS) && !g_vm->shouldQuit()) {
+					while (!g_globals->_events.getEvent(event, EVENT_CUSTOM_ACTIONSTART | EVENT_BUTTON_DOWN | EVENT_KEYPRESS) && !g_vm->shouldQuit()) {
 						g_globals->_scenePalette.signalListeners();
 						R2_GLOBALS._sceneObjects->draw();
 						g_globals->_events.delay(g_globals->_sceneHandler->_delayTicks);
@@ -1967,7 +1967,7 @@ void Scene1337::Action11::signal() {
 					}
 
 					Event event;
-					while (!g_globals->_events.getEvent(event, EVENT_BUTTON_DOWN | EVENT_KEYPRESS) && !g_vm->shouldQuit()) {
+					while (!g_globals->_events.getEvent(event, EVENT_CUSTOM_ACTIONSTART | EVENT_BUTTON_DOWN | EVENT_KEYPRESS) && !g_vm->shouldQuit()) {
 						g_globals->_scenePalette.signalListeners();
 						R2_GLOBALS._sceneObjects->draw();
 						g_globals->_events.delay(g_globals->_sceneHandler->_delayTicks);
@@ -2115,7 +2115,7 @@ void Scene1337::Action12::signal() {
 					}
 
 					Event event;
-					while (!g_globals->_events.getEvent(event, EVENT_BUTTON_DOWN | EVENT_KEYPRESS) && !g_vm->shouldQuit()) {
+					while (!g_globals->_events.getEvent(event,EVENT_CUSTOM_ACTIONSTART | EVENT_BUTTON_DOWN | EVENT_KEYPRESS) && !g_vm->shouldQuit()) {
 						g_globals->_scenePalette.signalListeners();
 						R2_GLOBALS._sceneObjects->draw();
 						g_globals->_events.delay(g_globals->_sceneHandler->_delayTicks);
@@ -2397,8 +2397,8 @@ void Scene1337::process(Event &event) {
 			(this->*tmpFctPtr)();
 			event.handled = true;
 		}
-	} else if (event.eventType == EVENT_KEYPRESS) {
-		if (event.kbd.keycode == Common::KEYCODE_SPACE) {
+	} else if (event.eventType == EVENT_CUSTOM_ACTIONSTART) {
+		if (event.customType == kActionDrawCards) {
 			if (_delayedFunction) {
 				FunctionPtrType tmpFctPtr = _delayedFunction;
 				_delayedFunction = nullptr;
@@ -4191,7 +4191,7 @@ void Scene1337::handlePlayer2() {
 	bool found;
 	for (;;) {
 		if ( ((g_globals->_events.getEvent(event, EVENT_BUTTON_DOWN)) && (event.btnState == BTNSHIFT_RIGHT))
-			|| (g_globals->_events.getEvent(event, EVENT_KEYPRESS)) ){
+			|| (g_globals->_events.getEvent(event, EVENT_CUSTOM_ACTIONSTART | EVENT_KEYPRESS)) ){
 			_selectedCard._stationPos = g_globals->_events._mousePos;
 			found = false;
 
@@ -4680,7 +4680,7 @@ GfxButton *Scene1337::OptionsDialog::execute(GfxButton *defaultButton) {
 				breakFlag = true;
 				break;
 			} else if (!event.handled) {
-				if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+				if ((event.eventType == EVENT_CUSTOM_ACTIONSTART) && (event.customType == kActionEscape)) {
 					selectedButton = NULL;
 					breakFlag = true;
 					break;

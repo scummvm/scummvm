@@ -30,8 +30,8 @@
 
 namespace TsAGE {
 
-enum EventType {EVENT_NONE = 0, EVENT_BUTTON_DOWN = 1, EVENT_BUTTON_UP = 2, EVENT_KEYPRESS = 4,
-	EVENT_MOUSE_MOVE = 8, EVENT_UNK27 = 27};
+enum EventType {EVENT_NONE = 0, EVENT_BUTTON_DOWN = 1, EVENT_BUTTON_UP = 2, EVENT_KEYPRESS = 4, 
+	EVENT_MOUSE_MOVE = 8, EVENT_CUSTOM_ACTIONSTART = 16, EVENT_UNK27 = 27};
 
 enum ButtonShiftFlags {BTNSHIFT_LEFT = 0, BTNSHIFT_RIGHT = 3, BTNSHIFT_MIDDLE = 4};
 
@@ -50,6 +50,7 @@ public:
 	Common::Point mousePos;
 	int btnState;
 	Common::KeyState kbd;
+	Common::CustomEventType customType;
 	int ctr;
 	GfxManager *gfxMan;
 	bool handled;
@@ -142,7 +143,7 @@ public:
 	bool isCursorVisible() const;
 
 	bool pollEvent();
-	void waitForPress(int eventMask = EVENT_BUTTON_DOWN | EVENT_KEYPRESS);
+	void waitForPress(int eventMask = EVENT_BUTTON_DOWN | EVENT_CUSTOM_ACTIONSTART | EVENT_KEYPRESS);
 
 	bool getEvent(Event &evt, int eventMask = ~EVENT_MOUSE_MOVE);
 	Common::Event event() { return _event; }
