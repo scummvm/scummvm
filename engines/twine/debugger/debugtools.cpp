@@ -26,6 +26,7 @@
 #include "common/str-enc.h"
 #include "common/str.h"
 #include "common/util.h"
+#include "graphics/palette.h"
 #include "twine/debugger/debug_state.h"
 #include "twine/debugger/dt-internal.h"
 #include "twine/holomap.h"
@@ -161,6 +162,58 @@ static void holomapFlagsWindow(TwinEEngine *engine) {
 				ImGui::SetItemTooltip("%s", engine->_holomap->getLocationName(i));
 			}
 			ImGui::EndTable();
+		}
+	}
+	ImGui::End();
+}
+
+static void addColor(float startingPosX, uint index, const Graphics::Palette &palette) {
+	uint8 r, g, b;
+	palette.get(index, r, g, b);
+	const float borderWidth = 1.0f;
+	ImDrawList *drawList = ImGui::GetWindowDrawList();
+	const ImDrawListFlags backupFlags = drawList->Flags;
+	drawList->Flags &= ~ImDrawListFlags_AntiAliasedLines;
+	const ImVec2 available = ImGui::GetContentRegionAvail();
+	const float contentRegionWidth = available.x + ImGui::GetCursorPosX();
+	const ImVec2 colorButtonSize(ImGui::GetFrameHeight(), ImGui::GetFrameHeight());
+	ImVec2 globalCursorPos = ImGui::GetCursorScreenPos();
+	const ImVec2 &windowPos = ImGui::GetWindowPos();
+	const ImVec2 v1(globalCursorPos.x + borderWidth, globalCursorPos.y + borderWidth);
+	const ImVec2 v2(globalCursorPos.x + colorButtonSize.x, globalCursorPos.y + colorButtonSize.y);
+	drawList->AddRectFilled(v1, v2, IM_COL32(r, g, b, 255));
+
+	ImGui::PushID((int)index);
+	if (ImGui::InvisibleButton("", colorButtonSize)) {
+	}
+	ImGui::SetItemTooltip("Index: %i, R(%d), G(%d), B(%d)", (int)index, (int)r, (int)g, (int)b);
+	ImGui::PopID();
+
+	globalCursorPos.x += colorButtonSize.x;
+	if (globalCursorPos.x > windowPos.x + contentRegionWidth - colorButtonSize.x) {
+		globalCursorPos.x = startingPosX;
+		globalCursorPos.y += colorButtonSize.y;
+	}
+	ImGui::SetCursorScreenPos(globalCursorPos);
+	// restore the draw list flags from above
+	drawList->Flags = backupFlags;
+}
+
+static void paletteWindow(TwinEEngine *engine) {
+	if (!engine->_debugState->_paletteWindow) {
+		return;
+	}
+
+	const ImVec2 available = ImGui::GetContentRegionAvail();
+	const float contentRegionHeight = available.y + ImGui::GetCursorPosY();
+	const ImVec2 windowSize(10.0f * ImGui::GetFrameHeight(), contentRegionHeight);
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
+
+	if (ImGui::Begin("Palette", &engine->_debugState->_paletteWindow)) {
+		const Graphics::Palette &palette = engine->_frontVideoBuffer.getPalette();
+		const ImVec2 &pos = ImGui::GetCursorScreenPos();
+		for (uint palettePanelIdx = 0; palettePanelIdx < palette.size(); ++palettePanelIdx) {
+			addColor(pos.x, palettePanelIdx, palette);
 		}
 	}
 	ImGui::End();
@@ -732,6 +785,9 @@ static void debuggerMenu(TwinEEngine *engine) {
 			actor->_posObj.y += 1000;
 		}
 		if (ImGui::BeginMenu("Palettes")) {
+			if (ImGui::MenuItem("Show palette")) {
+				engine->_debugState->_paletteWindow = true;
+			}
 			if (ImGui::MenuItem("Dark palette")) {
 				engine->_screens->setDarkPal();
 			}
@@ -802,6 +858,7 @@ void onImGuiRender() {
 	menuTextsWindow(engine);
 	holomapFlagsWindow(engine);
 	gameFlagsWindow(engine);
+	paletteWindow(engine);
 	sceneFlagsWindow(engine);
 
 	if (engine->_debugState->_openPopup) {

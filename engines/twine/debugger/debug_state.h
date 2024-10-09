@@ -89,6 +89,7 @@ public:
 	bool _sceneDetailsWindow = false;
 	bool _actorDetailsWindow = true;
 	bool _sceneFlagsWindow = false;
+	bool _paletteWindow = false;
 
 	bool _useFreeCamera = false;
 	bool _disableGridRendering = false;
