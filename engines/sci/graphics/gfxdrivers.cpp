@@ -1266,9 +1266,16 @@ void UpscaledGfxDriver::initScreen(const Graphics::PixelFormat *format) {
 }
 
 void UpscaledGfxDriver::setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod *palMods, const byte *palModMapping) {
-	GfxDefaultDriver::setPalette(colors, start, num, update, palMods, palModMapping);
-	if (_pixelSize > 1 && update)
-		updateScreen(0, 0, _screenW * _srcPixelSize, _screenH, palMods, palModMapping);
+	GFXDRV_ASSERT_READY;
+	if (_pixelSize == 1) {
+		GfxDefaultDriver::setPalette(colors, start, num, update, palMods, palModMapping);
+		return;
+	}
+	updatePalette(colors, start, num);
+	if (update) 
+		updateScreen(0, 0, _screenW, _screenH, palMods, palModMapping);
+	if (_cursorUsesScreenPalette)
+		CursorMan.replaceCursorPalette(_currentPalette, 0, 256);
 }
 
 void UpscaledGfxDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) {
