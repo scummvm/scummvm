@@ -244,7 +244,7 @@ void ScummEngine::parseEvent(Common::Event event) {
 				_mouse.y = _mouse.y * 4 / 7;
 			}
 
-		} else if ((_textSurfaceMultiplier == 2 || _game.version > 3 && _macScreen) || _renderMode == Common::kRenderCGA_BW || _enableEGADithering) {
+		} else if ((_textSurfaceMultiplier == 2 || _macScreen) || _renderMode == Common::kRenderCGA_BW || _enableEGADithering) {
 			_mouse.x >>= 1;
 			_mouse.y >>= 1;
 		}
