@@ -827,15 +827,50 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		pixels = (const byte *)src;
 
 		if (_useMacGraphicsSmoothing) {
-			// Apply the EPX/Scale2x algorithm
-			for (int h = 0; h < height; h++) {
-				for (int w = 0; w < width; w++) {
-					// Center pixel
-					byte P = pixels[w];
+			// This is a piecewise version of EPX/Scale2x.
+			//
+			// Just like the original, it applies EPX not on the entire screen but just on the
+			// interested "dirty" rectangle areas. This is easy: with each new rectangle we iteratively
+			// piece together a representation of the entire 320x200 screen buffer (_completeScreenBuffer),
+			// and for each pixel to scale, we look for its neighbors in that buffer, so that neighbors
+			// outside the rectangle area will be accounted for correctly.
+			//
+			// So to summarize, the algorithm is applied iteratively on the rectangle areas in the queue,
+			// in isolation. Unfortunately this can cause an interesting edge case:
+			// consider a black screen, and two big adjacent white rectangles with the same dimensions
+			// being drawn, the first one on the left and the second one on its right:
+			//
+			// 1. The first one gets drawn, and because of the EPX filter it exhibits rounded corners
+			//    (e.g. the lower right corner);
+			// 
+			// 2. The second one gets drawn next to the other but has no rounded corners on its left side,
+			//    because the cumulative 320x200 screen buffer being pieced together already has the
+			//    previously drawn rectangle in it;
+			//
+			// We end up with two white rectangles and a line of a couple black pixels e.g. down in the middle.
+			// 
+			// How do we solve that? I don't know how the original executable did this, but what works great
+			// here is to just expand the considered area one pixel outwards on every rectangle dimension,
+			// so that the algorithm can update previously drawn edges, preventing the issue explained above.
 
+			// Rectangle expansion
+			int x1 = (x > 0) ? x - 1 : 0;
+			int y1 = (y > 0) ? y - 1 : 0;
+			int x2 = (x + width < originalScreenWidth) ? x + width + 1 : originalScreenWidth;
+			int y2 = (y + height < originalScreenHeight) ? y + height + 1 : originalScreenHeight;
+
+			// Adjust output buffer accordingly
+			byte *macBufExp = (byte *)_macScreen->getBasePtr(x1 * 2, y1 * 2);
+
+			// Apply the EPX/Scale2x algorithm
+			for (int h = y1; h < y2; h++) {
+				for (int w = x1; w < x2; w++) {
 					// Calculate absolute screen coordinates of the current pixel
-					int absX = x + w;
-					int absY = y + h;
+					int absX = w;
+					int absY = h;
+
+					// Center pixel
+					byte P = _completeScreenBuffer[absY * originalScreenWidth + absX];
 
 					// Top neighbor (A)
 					byte A = (absY > 0) ? _completeScreenBuffer[(absY - 1) * originalScreenWidth + absX] : P;
@@ -849,16 +884,23 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 					// Bottom neighbor (D)
 					byte D = (absY < originalScreenHeight - 1) ? _completeScreenBuffer[(absY + 1) * originalScreenWidth + absX] : P;
 
+					// Save the absolute X and Y position coordinates for the expanded rectangle
+					int macExpAbsX = (w - x1) * 2;
+					int macExpAbsY = (h - y1) * 2;
+
 					// Actually scale the pixel
-					mac[2 * w]                = (C == A && C != D && A != B) ? A : P; // Top-left
-					mac[2 * w + 1]            = (A == B && A != C && B != D) ? B : P; // Top-right
-					mac[2 * w + macPitch]     = (D == C && D != B && C != A) ? C : P; // Bottom-left
-					mac[2 * w + macPitch + 1] = (B == D && B != A && D != C) ? D : P; // Bottom-right
+					if (macExpAbsX >= 0 && macExpAbsX + 1 < (x2 - x1) * 2 && macExpAbsY >= 0 && macExpAbsY + 1 < (y2 - y1) * 2) {
+						macBufExp[macExpAbsX] = (C == A && C != D && A != B) ? A : P;                // Top-left
+						macBufExp[macExpAbsX + 1] = (A == B && A != C && B != D) ? B : P;            // Top-right
+						macBufExp[macExpAbsX + macPitch] = (D == C && D != B && C != A) ? C : P;     // Bottom-left
+						macBufExp[macExpAbsX + macPitch + 1] = (B == D && B != A && D != C) ? D : P; // Bottom-right
+					}
 				}
 
-				pixels += pixelsPitch;
-				mac += macPitch * 2;
+				macBufExp += macPitch * 2;
 			}
+
+			_system->copyRectToScreen(_macScreen->getBasePtr(x1 * 2, y1 * 2), _macScreen->pitch, x1 * 2, y1 * 2 + _macScreenDrawOffset * 2, (x2 - x1) * 2, (y2 - y1) * 2);
 		} else {
 			// Just double the resolution
 			for (int h = 0; h < height; h++) {
@@ -873,9 +915,9 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 
 				mac += macPitch * 2;
 			}
-		}
 
-		_system->copyRectToScreen(_macScreen->getBasePtr(x * 2, y * 2), _macScreen->pitch, x * 2, y * 2 + _macScreenDrawOffset * 2, width * 2, height * 2);
+			_system->copyRectToScreen(_macScreen->getBasePtr(x * 2, y * 2), _macScreen->pitch, x * 2, y * 2 + _macScreenDrawOffset * 2, width * 2, height * 2);
+		}	
 	} else {
 		// Finally blit the whole thing to the screen
 		_system->copyRectToScreen(src, pitch, x, y, width, height);
