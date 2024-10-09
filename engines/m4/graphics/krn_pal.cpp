@@ -38,13 +38,14 @@ namespace M4 {
 
 #define BACKGROUND_HEIGHT  (int32)639
 
-#define GREY_START   32
-#define NUM_GREYS    32					// gotta have 32 greys to fade to (hardcoded algorithm) 
-#define GREY_END     GREY_START+NUM_GREYS      		
+#define IS_RIDDLE   g_engine->getGameType() == GType_Riddle
+#define GREY_START	(IS_RIDDLE ? 21 : 32)
+#define NUM_GREYS	(IS_RIDDLE ? 64 : 32)
+#define GREY_END	(IS_RIDDLE ? 58 : 63)
 
-#define FREE_START   GREY_END+1
-#define FREE_END     255
-#define NUM_FREE     FREE_END-(FREE_START)+1
+#define FREE_START	(IS_RIDDLE ? 59 : 64)
+#define FREE_END	255
+#define NUM_FREE	(IS_RIDDLE ? 255 - 59 + 1 : 255 - 64 + 1)
 
 static HotkeyCB remember_esc_key;
 static HotSpotRec *exam_saved_hotspots;
@@ -302,8 +303,8 @@ void kernel_examine_inventory_object(const char *picName, RGB8 *pal, int steps, 
 
 	krn_fade_to_grey(pal, steps, delay);
 
-	_GP(seriesHash) = series_load(picName, -1, pal);                    // preload sprite so we can unload it
-	gr_pal_set_range(pal, FREE_START, 197);                                  // set that series colors into VGA
+	_GP(seriesHash) = series_load(picName, -1, pal);	// Preload sprite so we can unload it
+	gr_pal_set_range(pal, FREE_START, NUM_FREE);		// Set that series colors into VGA
 	RestoreScreens(MIN_VIDEO_X, MIN_VIDEO_Y, MAX_VIDEO_X, MAX_VIDEO_Y);
 
 	Buffer *grey_screen = _G(gameDrawBuff)->get_buffer();
