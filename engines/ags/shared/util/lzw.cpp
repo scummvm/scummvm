@@ -28,6 +28,7 @@
 #include "ags/shared/util/lzw.h"
 #include "ags/shared/ac/common.h" // quit
 #include "ags/shared/util/bbop.h"
+#include "ags/shared/util/memory.h"
 #include "ags/shared/util/stream.h"
 #include "ags/globals.h"
 
@@ -222,7 +223,7 @@ bool lzwexpand(const uint8_t *src, size_t src_sz, uint8_t *dst, size_t dst_sz) {
 					break;
 
 				short jshort = 0;
-				jshort = BBOp::Int16FromLE(*(reinterpret_cast<const int16_t *>(src_ptr)));
+				jshort = Memory::ReadInt16LE(src_ptr);
 				src_ptr += sizeof(int16_t);
 				j = jshort;
 
