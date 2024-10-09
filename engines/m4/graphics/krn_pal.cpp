@@ -48,7 +48,6 @@ namespace M4 {
 #define NUM_FREE	(IS_RIDDLE ? 255 - 59 + 1 : 255 - 64 + 1)
 
 static HotkeyCB remember_esc_key;
-static HotSpotRec *exam_saved_hotspots;
 
 void krn_pal_game_task() {
 	g_engine->pal_game_task();
@@ -296,7 +295,7 @@ void kernel_examine_inventory_object(const char *picName, RGB8 *pal, int steps, 
 
 	interface_hide();
 
-	exam_saved_hotspots = _G(currentSceneDef).hotspots;
+	_GP(exam_saved_hotspots) = _G(currentSceneDef).hotspots;
 	_G(currentSceneDef).hotspots = nullptr;
 
 	_GP(myFadeTrigger) = kernel_trigger_create(triggerNum);
@@ -371,10 +370,8 @@ void kernel_unexamine_inventory_object(RGB8 *pal, int steps, int delay) {
 
 	krn_pal_game_task();
 
-	// set in kernel_examine_inventory_object (above)
+	// Set in kernel_examine_inventory_object (above)
 	kernel_trigger_dispatchx(_GP(myFadeTrigger));
-
-	//	gr_pal_set(master_palette);
 
 	RestoreScreens(0, 0, MAX_VIDEO_X, MAX_VIDEO_Y);
 

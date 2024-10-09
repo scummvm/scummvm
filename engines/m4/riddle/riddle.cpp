@@ -416,7 +416,7 @@ void RiddleEngine::global_parser() {
 		default:
 			break;
 		}
-	} else if (_G(kernel).trigger == 990) {
+	} else if (_G(kernel).trigger == kINVENTORY_CLOSEUP_END) {
 		if (player_said_any("MENENDEZ'S LETTER", "VON SELTSAM'S LETTER",
 				"ENVELOPE", "VON SELTSAM'S NOTE"))
 			digi_stop(1);
@@ -625,7 +625,7 @@ void RiddleEngine::lookAtInventoryItem() {
 			str = "PING TWELVETREES' MAP";
 	}
 
-	kernel_examine_inventory_object(str.c_str(), 5, 1, 270, 150, 990, digi);
+	kernel_examine_inventory_object(str.c_str(), 5, 1, 270, 150, kINVENTORY_CLOSEUP_END, digi);
 }
 
 } // namespace Riddle

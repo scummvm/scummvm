@@ -99,7 +99,7 @@ bool kernel_trigger_dispatchx(int32 trigger_num) {
 		g_engine->room_parser();
 
 		if (_G(player).command_ready) {
-			g_engine->parser_code();
+			g_engine->global_parser();
 		}
 		result = true;
 		break;

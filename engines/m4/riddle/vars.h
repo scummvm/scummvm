@@ -33,8 +33,7 @@ namespace M4 {
 namespace Riddle {
 
 enum global_triggers {
-	gFIRST_GLOBAL_TRIGGER = 10000,
-
+	kINVENTORY_CLOSEUP_END = 990,
 	kCALLED_EACH_LOOP = 32764,
 	kGOTO_MAIN_MENU = 32766
 };
