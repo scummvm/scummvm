@@ -31,7 +31,7 @@ namespace Rooms {
 
 class Room996 : public Room {
 public:
-	Room996() : Room() {}
+	Room996();
 	~Room996() override {}
 
 	void preload() override;
@@ -44,13 +44,31 @@ private:
 	int32 _flag = 0;
 	int32 _flagArray[13];
 	int32 _moveValue = 0;
+	bool _check201Fl = false;
+	bool _check207Fl = false;
+	bool _check208Fl = false;
+	bool _check209Fl = false;
 
+	machine *_roomStates_ear2 = nullptr;
+	machine *_roomStates_field4 = nullptr;
+	machine *_roomStates_field8 = nullptr;
+	machine *_roomStates_field18 = nullptr;
+	machine *_roomStates_field24 = nullptr;
+	machine *_roomStates_field4C = nullptr;
 	machine *_roomStates_loop0 = nullptr;
-	machine * _roomStates_untie = nullptr;
-	machine * _roomStates_pu = nullptr;
-	machine * _roomStates_field8 = nullptr;
-	machine * _roomStates_field4 = nullptr;
-	machine * _roomStates_tt = nullptr;
+	machine *_roomStates_loop1 = nullptr;
+	machine *_roomStates_loop2 = nullptr;
+	machine *_roomStates_loop3 = nullptr;
+	machine *_roomStates_loop4 = nullptr;
+	machine *_roomStates_loop5 = nullptr;
+	machine *_roomStates_loop6 = nullptr;
+	machine *_roomStates_loop7 = nullptr;
+	machine *_roomStates_pu = nullptr;
+	machine *_roomStates_ripTalk = nullptr;
+	machine *_roomStates_ripTalker = nullptr;
+	machine *_roomStates_ripTalking = nullptr;
+	machine *_roomStates_tt = nullptr;
+	machine *_roomStates_untie = nullptr;
 };
 
 } // namespace Rooms
