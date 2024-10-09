@@ -58,6 +58,7 @@
  * - Adiboud'chou sur la banquise
  * - Adiboud'chou a la campagne
  * - Adiboud'chou dans la jungle et la savane
+ * - English Fever
  * - Gobliiins
  * - Gobliins 2
  * - Goblins 3
