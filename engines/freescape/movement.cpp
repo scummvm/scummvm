@@ -172,7 +172,7 @@ void FreescapeEngine::activate() {
 
 	Math::Vector3d direction = directionToVector(_pitch - yoffset, _yaw - xoffset, false);
 	Math::Ray ray(_position, direction);
-	Object *interacted = _currentArea->checkCollisionRay(ray, 8192);
+	Object *interacted = _currentArea->checkCollisionRay(ray, 1250.0 / _currentArea->getScale());
 	if (interacted) {
 		GeometricObject *gobj = (GeometricObject *)interacted;
 		debugC(1, kFreescapeDebugMove, "Interact with object %d with flags %x", gobj->getObjectID(), gobj->getObjectFlags());
