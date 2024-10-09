@@ -202,17 +202,20 @@ void MacGuiImpl::initialize() {
 		};
 
 		Common::String aboutMenuDef;
-
+		int maxMenu = -1;
 		switch (_vm->_game.id) {
 		case GID_INDY3:
 		case GID_LOOM:
 			aboutMenuDef = _strsStrings[11].c_str();
+			maxMenu = 130;
 			break;
 		case GID_MONKEY:
 			aboutMenuDef = _strsStrings[94].c_str();
+			maxMenu = 131;
 			break;
 		default:
 			aboutMenuDef = "About " + name() + "...<B;(-";
+			maxMenu = 132;
 		}
 
 		if (_vm->_game.id == GID_LOOM) {
@@ -229,7 +232,7 @@ void MacGuiImpl::initialize() {
 
 		menu->setCommandsCallback(menuCallback, this);
 
-		for (int i = 129; i <= 130; i++) {
+		for (int i = 129; i <= maxMenu; i++) {
 			Common::SeekableReadStream *res = resource.getResource(MKTAG('M', 'E', 'N', 'U'), i);
 
 			if (!res)
@@ -239,6 +242,16 @@ void MacGuiImpl::initialize() {
 			Common::String name = menuDef->operator[](0);
 			Common::String string = menuDef->operator[](1);
 			int id = menu->addMenuItem(nullptr, name);
+
+			if ((_vm->_game.id == GID_MONKEY || _vm->_game.id == GID_MONKEY2) && id == 3) {
+				string += ";(-;Smooth Graphics";
+			}
+
+			// Floppy version
+			if (_vm->_game.id == GID_INDY4 && !string.contains("Smooth Graphics") && id == 3) {
+				string += ";(-;Smooth Graphics";
+			}
+
 			menu->createSubMenuFromString(id, string.c_str(), 0);
 
 			delete menuDef;
@@ -357,6 +370,22 @@ bool MacGuiImpl::handleMenu(int id, Common::String &name) {
 	case 303:	// Paste
 	case 304:	// Clear
 		return true;
+
+	// Window menu
+	case 402: // Tiny
+	case 403: // Medium
+	case 404: // Large
+		return true;
+
+	case 405: // Graphics Smoothing
+		_vm->_useMacGraphicsSmoothing = !_vm->_useMacGraphicsSmoothing;
+
+		// Allow the engine to update the graphics mode
+		_vm->markRectAsDirty(kBannerVirtScreen, 0, 320, 0, 200);
+		_vm->markRectAsDirty(kTextVirtScreen, 0, 320, 0, 200);
+		_vm->markRectAsDirty(kVerbVirtScreen, 0, 320, 0, 200);
+		_vm->markRectAsDirty(kMainVirtScreen, 0, 320, 0, 200);
+		return true;
 	}
 
 	return false;
@@ -427,6 +456,25 @@ void MacGuiImpl::updateWindowManager() {
 				_windowManager->popCursor();
 			CursorMan.showMouse(_cursorWasVisible);
 		}
+	}
+
+	if (_vm->_game.version > 3) {
+		Graphics::MacMenuItem *windowMenu = menu->getMenuItem("Window");
+		Graphics::MacMenuItem *hideDesktopMenu = menu->getSubMenuItem(windowMenu, 0);
+		Graphics::MacMenuItem *hideBarMenu = menu->getSubMenuItem(windowMenu, 1);
+
+		hideDesktopMenu->enabled = false;
+		hideBarMenu->enabled = false;
+
+		// "Fix color map"
+		menu->getSubMenuItem(gameMenu, 5)->enabled = false;
+
+		// Window mode
+		menu->getSubMenuItem(windowMenu, 3)->enabled = false;
+		menu->getSubMenuItem(windowMenu, 4)->enabled = false;
+		menu->getSubMenuItem(windowMenu, 5)->enabled = false;
+
+		menu->getSubMenuItem(windowMenu, 7)->checked = _vm->_useMacGraphicsSmoothing;
 	}
 
 	_menuIsActive = isActive;
