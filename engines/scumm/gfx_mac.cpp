@@ -160,6 +160,138 @@ void ScummEngine::mac_undrawIndy3CreditsText() {
 	restoreCharsetBg();
 }
 
+void ScummEngine::mac_drawBufferToScreen(const byte *buffer, int pitch, int x, int y, int width, int height) {
+	// Composite the dirty rectangle into _completeScreenBuffer
+	mac_updateCompositeBuffer(buffer, pitch, x, y, width, height);
+
+	if (_useMacGraphicsSmoothing) {
+		// Apply the EPX scaling algorithm to produce a 640x480 image...
+		mac_applyEPXAndBlit(buffer, pitch, x, y, width, height);
+	} else {
+		// ...otherwise just double the resolution.
+		mac_applyDoubleResolutionAndBlit(buffer, pitch, x, y, width, height);
+	}
+}
+
+void ScummEngine::mac_updateCompositeBuffer(const byte *buffer, int pitch, int x, int y, int width, int height) {
+	const byte *pixels = buffer;
+
+	assert(width <= _screenWidth && height <= _screenHeight);
+
+	for (int h = 0; h < height; h++) {
+		for (int w = 0; w < width; w++) {
+			// Calculate absolute coordinates
+			int absX = x + w;
+			int absY = y + h;
+
+			// Update the complete screen buffer
+			_completeScreenBuffer[absY * _screenWidth + absX] = pixels[w];
+		}
+
+		pixels += pitch;
+	}
+}
+
+void ScummEngine::mac_applyDoubleResolutionAndBlit(const byte *buffer, int pitch, int x, int y, int width, int height) {
+	byte *mac = (byte *)_macScreen->getBasePtr(x * 2, y * 2);
+	const byte *pixels = buffer;
+	int macPitch = _macScreen->pitch;
+
+	for (int h = 0; h < height; h++) {
+		for (int w = 0; w < width; w++) {
+			mac[2 * w] = pixels[w];
+			mac[2 * w + 1] = pixels[w];
+			mac[2 * w + macPitch] = pixels[w];
+			mac[2 * w + macPitch + 1] = pixels[w];
+		}
+
+		pixels += pitch;
+
+		mac += macPitch * 2;
+	}
+
+	_system->copyRectToScreen(_macScreen->getBasePtr(x * 2, y * 2), _macScreen->pitch, x * 2, y * 2 + _macScreenDrawOffset * 2, width * 2, height * 2);
+}
+
+void ScummEngine::mac_applyEPXAndBlit(const byte *buffer, int pitch, int x, int y, int width, int height) {
+	// This is a piecewise version of EPX/Scale2x.
+	//
+	// Just like the original, it applies EPX not on the entire screen but just on the
+	// interested "dirty" rectangle areas. This is easy: with each new rectangle we iteratively
+	// piece together a representation of the entire 320x200 screen buffer (_completeScreenBuffer),
+	// and for each pixel to scale, we look for its neighbors in that buffer, so that neighbors
+	// outside the rectangle area will be accounted for correctly.
+	//
+	// So to summarize, the algorithm is applied iteratively on the rectangle areas in the queue,
+	// in isolation. Unfortunately this can cause an interesting edge case:
+	// consider a black screen, and two big adjacent white rectangles with the same dimensions
+	// being drawn, the first one on the left and the second one on its right:
+	//
+	// 1. The first one gets drawn, and because of the EPX filter it exhibits rounded corners
+	//    (e.g. the lower right corner);
+	//
+	// 2. The second one gets drawn next to the other but has no rounded corners on its left side,
+	//    because the cumulative 320x200 screen buffer being pieced together already has the
+	//    previously drawn rectangle in it;
+	//
+	// We end up with two white rectangles and a line of a couple black pixels e.g. down in the middle.
+	//
+	// How do we solve that? We expand the considered area one pixel outwards on every rectangle dimension,
+	// so that the algorithm can update previously drawn edges, preventing the issue explained above.
+	//
+	// I have later found out that this is the same strategy employed on Aaron Giles' 2002 re-releases,
+	// which supposedly use most of the same EPX code from the Macintosh interpreters.
+
+	// Rectangle expansion
+	int x1 = (x > 0) ? x - 1 : 0;
+	int y1 = (y > 0) ? y - 1 : 0;
+	int x2 = (x + width < _screenWidth) ? x + width + 1 : _screenWidth;
+	int y2 = (y + height < _screenHeight) ? y + height + 1 : _screenHeight;
+
+	// Adjust output buffer accordingly
+	byte *targetScreenBuf = (byte *)_macScreen->getBasePtr(x1 * 2, y1 * 2);
+
+	// Apply the EPX/Scale2x algorithm
+	for (int h = y1; h < y2; h++) {
+		for (int w = x1; w < x2; w++) {
+			// Calculate absolute screen coordinates of the current pixel
+			int absX = w;
+			int absY = h;
+
+			// Center pixel
+			byte P = _completeScreenBuffer[absY * _screenWidth + absX];
+
+			// Top neighbor (A)
+			byte A = (absY > 0) ? _completeScreenBuffer[(absY - 1) * _screenWidth + absX] : P;
+
+			// Right neighbor (B)
+			byte B = (absX < _screenWidth - 1) ? _completeScreenBuffer[absY * _screenWidth + (absX + 1)] : P;
+
+			// Left neighbor (C)
+			byte C = (absX > 0) ? _completeScreenBuffer[absY * _screenWidth + (absX - 1)] : P;
+
+			// Bottom neighbor (D)
+			byte D = (absY < _screenHeight - 1) ? _completeScreenBuffer[(absY + 1) * _screenWidth + absX] : P;
+
+			// Keep track of the coordinates for the expanded rectangle
+			int expandedAbsX = (w - x1) * 2;
+			int expandedAbsY = (h - y1) * 2;
+
+			// Actually scale the pixel
+			if (expandedAbsX >= 0 && expandedAbsX + 1 < (x2 - x1) * 2 && expandedAbsY >= 0 && expandedAbsY + 1 < (y2 - y1) * 2) {
+				targetScreenBuf[expandedAbsX] = (C == A && C != D && A != B) ? A : P;                          // Top-left
+				targetScreenBuf[expandedAbsX + 1] = (A == B && A != C && B != D) ? B : P;                      // Top-right
+				targetScreenBuf[expandedAbsX + _macScreen->pitch] = (D == C && D != B && C != A) ? C : P;      // Bottom-left
+				targetScreenBuf[expandedAbsX + _macScreen->pitch + 1] = (B == D && B != A && D != C) ? D : P;  // Bottom-right
+			}
+		}
+
+		targetScreenBuf += _macScreen->pitch * 2;
+	}
+
+	_system->copyRectToScreen(_macScreen->getBasePtr(x1 * 2, y1 * 2), _macScreen->pitch, x1 * 2, y1 * 2 + _macScreenDrawOffset * 2, (x2 - x1) * 2, (y2 - y1) * 2);
+}
+
 Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, int32 waitTime) {
 	char bannerMsg[512];
 
