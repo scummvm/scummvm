@@ -1448,6 +1448,10 @@ protected:
 	void mac_drawIndy3TextBox();
 	void mac_undrawIndy3TextBox();
 	void mac_undrawIndy3CreditsText();
+	void mac_drawBufferToScreen(const byte *buffer, int pitch, int x, int y, int width, int height);
+	void mac_updateCompositeBuffer(const byte *buffer, int pitch, int x, int y, int width, int height);
+	void mac_applyDoubleResolutionAndBlit(const byte *buffer, int pitch, int x, int y, int width, int height);
+	void mac_applyEPXAndBlit(const byte *buffer, int pitch, int x, int y, int width, int height);
 	Common::KeyState mac_showOldStyleBannerAndPause(const char *msg, int32 waitTime);
 
 	const byte *postProcessDOSGraphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const;
@@ -1620,7 +1624,7 @@ public:
 	Graphics::Surface *_macScreen = nullptr;
 	MacGui *_macGui = nullptr;
 	bool _useMacGraphicsSmoothing = true;
-	byte _completeScreenBuffer[320 * 240];
+	byte _completeScreenBuffer[320 * 200];
 
 protected:
 	byte _charsetColor = 0;
