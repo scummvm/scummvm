@@ -51,6 +51,9 @@
 #include "qdengine/minigames/shveik_shkatulka.h"
 #include "qdengine/minigames/shveik_portret.h"
 
+// 3mice2
+#include "qdengine/minigames/3mice2_sbor_karty.h"
+
 
 namespace QDEngine {
 
