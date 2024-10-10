@@ -337,6 +337,16 @@ int32 getVoxEntry(uint8 *ptr, const char *filename, int32 index, int32 hiddenInd
 	return realSize;
 }
 
+bool getPaletteEntry(Graphics::Palette &palette, const char *filename, int32 index) {
+	byte paletteBuffer[NUMOFCOLORS * 3];
+	int32 size = HQR::getEntry(paletteBuffer, filename, index);
+	if (size <= 0) {
+		return false;
+	}
+	palette = Graphics::Palette(paletteBuffer, size / 3);
+	return true;
+}
+
 int32 getAllocVoxEntry(uint8 **ptr, const char *filename, int32 index, int32 hiddenIndex) {
 	const int32 size = voxEntrySize(filename, index, hiddenIndex);
 	if (size == 0) {
