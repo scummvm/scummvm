@@ -92,6 +92,10 @@ public:
 		return _texts.empty();
 	}
 
+	int size() const {
+		return _texts.size();
+	}
+
 	void set_max_text_width(int width) {
 		_max_text_width = width;
 		format_texts();

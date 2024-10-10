@@ -144,7 +144,7 @@ qdScreenText *qdScreenTextSet::get_text(int x, int y) {
 void qdScreenTextSet::clear_texts(qdNamedObject *owner) {
 	bool ret = false;
 
-	debugC(4, kDebugText, "qdScreenTextSet::clear_texts('%s')", owner->toString().c_str());
+	debugC(5, kDebugText, "qdScreenTextSet::clear_texts('%s') for ID: %d, size was: %d", owner->toString().c_str(), _ID, _texts.size());
 
 	// Equivalent of
 	// texts_container_t::iterator it = std::remove_if(_texts.begin(), _texts.end(), std::bind2nd(std::mem_fun_ref(&qdScreenText::is_owned_by), owner));
@@ -176,6 +176,8 @@ void qdScreenTextSet::clear_texts(qdNamedObject *owner) {
 		arrange_texts();
 		toggle_changed(true);
 	}
+
+	debugC(5, kDebugText, "qdScreenTextSet::clear_texts(): size: %d", _texts.size());
 }
 
 bool qdScreenTextSet::pre_redraw() const {
@@ -243,7 +245,7 @@ bool qdScreenTextSet::save_script(Common::WriteStream &fh, int indent) const {
 qdScreenText *qdScreenTextSet::add_text(const qdScreenText &txt) {
 	int sy = _size.y;
 
-	debugC(2, kDebugText, "qdScreenTextSet::add_text('%s') for '%s'", transCyrillic(txt.data()),
+	debugC(2, kDebugText, "qdScreenTextSet::add_text('%s') for ID: %d, '%s'", transCyrillic(txt.data()), _ID,
 			txt.owner() ? txt.owner()->toString().c_str() : "<none>");
 
 	_texts.push_back(txt);
@@ -255,6 +257,8 @@ qdScreenText *qdScreenTextSet::add_text(const qdScreenText &txt) {
 	toggle_changed(true);
 
 	_new_texts_height += _size.y - sy;
+
+	debugC(3, kDebugText, "qdScreenTextSet::add_text(): size: %d", _texts.size());
 
 	return &_texts.back();
 }

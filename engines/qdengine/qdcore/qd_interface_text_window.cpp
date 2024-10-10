@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/debug.h"
+
 #include "qdengine/qd_fwd.h"
 #include "qdengine/parser/qdscr_parser.h"
 #include "qdengine/parser/xml_tag_buffer.h"
@@ -141,6 +143,8 @@ bool qdInterfaceTextWindow::mouse_handler(int x, int y, mouseDispatcher::mouseEv
 				if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
 					dp->set_flag(qdGameDispatcher::DIALOG_CLICK_FLAG);
 					dp->set_mouse_click_state(p->owner());
+
+					debugC(2, kDebugText, "qdInterfaceTextWindow::mouse_handler(): click [%d, %d], ev: %d", x, y, ev);
 				}
 				return true;
 			}
@@ -371,7 +375,9 @@ bool qdInterfaceTextWindow::redraw() const {
 	qdInterfaceElement::redraw();
 
 	if (_windowType == WINDOW_DIALOGS) {
+		debugC(3, kDebugText, "qdInterfaceTextWindow::redraw(): DIALOGS");
 		if (_text_set) {
+			debugC(3, kDebugText, "qdInterfaceTextWindow::redraw(): text_set");
 			int l_clip, t_clip, r_clip, b_clip;
 			grDispatcher::instance()->getClip(l_clip, t_clip, r_clip, b_clip);
 
@@ -396,6 +402,7 @@ bool qdInterfaceTextWindow::redraw() const {
 				grDispatcher::instance()->rectangle(ar.x - _text_size.x / 2, ar.y - _text_size.y / 2, _text_size.x, _text_size.y, 0xFFFFFF, 0, GR_OUTLINED, 3);
 		}
 	} else if (_windowType == WINDOW_EDIT || _windowType == WINDOW_TEXT) {
+			debugC(3, kDebugText, "qdInterfaceTextWindow::redraw(): text_edit (%d)", _windowType);
 		if (_has_background_color) {
 			Vect2i ar = r();
 			if (!_background_alpha)
@@ -429,6 +436,9 @@ bool qdInterfaceTextWindow::need_redraw() const {
 bool qdInterfaceTextWindow::quant(float dt) {
 	qdInterfaceElement::quant(dt);
 
+	debugC(1, kDebugText, "*********** qdInterfaceTextWindow::quant()");
+	debugC(1, kDebugQuant, "*********** qdInterfaceTextWindow::quant()");
+
 	if (_isEditing) {
 		_caretTimer -= dt;
 		if (_caretTimer < 0.f) {
@@ -438,10 +448,14 @@ bool qdInterfaceTextWindow::quant(float dt) {
 	}
 
 	if (_windowType == WINDOW_DIALOGS) {
+		debugC(2, kDebugText, "** qdInterfaceTextWindow::quant(): DIALOGS");
+
 		if (is_visible() && _text_set && _text_set->was_changed())
 			update_text_position();
 
 		if (_text_set) {
+			debugC(2, kDebugText,"** qdInterfaceTextWindow::quant(): text_set, id: %d", _text_set->ID());
+
 			if (fabs(_scrolling_position) > FLT_EPS) {
 				float delta = _scrolling_speed * dt;
 				if (fabs(_scrolling_position) > delta)
@@ -455,6 +469,8 @@ bool qdInterfaceTextWindow::quant(float dt) {
 			}
 
 			if (_text_set->is_empty()) {
+				debugC(2, kDebugText,"** qdInterfaceTextWindow::quant(): text_set->empty, vis: %d", is_visible());
+
 				if (is_visible()) {
 					hide();
 					if (qdInterfaceScreen * sp = dynamic_cast<qdInterfaceScreen * >(owner()))
@@ -463,6 +479,8 @@ bool qdInterfaceTextWindow::quant(float dt) {
 					qdGameDispatcher::get_dispatcher()->toggle_full_redraw();
 				}
 			} else {
+				debugC(2, kDebugText, "** qdInterfaceTextWindow::quant(): text_set->empty NOT, vis: %d", is_visible());
+
 				if (!is_visible()) {
 					show();
 					if (qdInterfaceScreen * sp = dynamic_cast<qdInterfaceScreen * >(owner()))

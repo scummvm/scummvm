@@ -58,7 +58,7 @@ qdInterfaceScreen::~qdInterfaceScreen() {
 }
 
 bool qdInterfaceScreen::redraw(int dx, int dy) const {
-	debugC(5, kDebugText, "qdInterfaceScreen::redraw(): %d elements", _sorted_elements.size());
+	debugC(6, kDebugText, "qdInterfaceScreen::redraw(): %d elements", _sorted_elements.size());
 
 	for (sorted_element_list_t::const_reverse_iterator it = _sorted_elements.rbegin(); it != _sorted_elements.rend(); ++it)
 		(*it)->redraw();
@@ -200,6 +200,8 @@ bool qdInterfaceScreen::load_script(const xml::tag *p) {
 }
 
 bool qdInterfaceScreen::add_element(qdInterfaceElement *p) {
+	debugC(3, kDebugText, "qdInterfaceScreen::add_element('%s')", transCyrillic(p->name()));
+
 	if (_elements.add_object(p)) {
 		_sorted_elements.push_back(p);
 		sort_elements();
@@ -233,6 +235,9 @@ bool qdInterfaceScreen::mouse_handler(int x, int y, mouseDispatcher::mouseEvent 
 	if (qdInterfaceDispatcher *dp = dynamic_cast<qdInterfaceDispatcher* >(owner())) {
 		for (auto &it : _sorted_elements) {
 			if (it->hit_test(x, y)) {
+				if (ev != mouseDispatcher::EV_MOUSE_MOVE)
+					debugC(2, kDebugInput, "qdInterfaceScreen::mouse_handler(): [%d, %d], ev: %d", x, y, ev);
+
 				dp->toggle_mouse_hover();
 				if (it->get_element_type() != qdInterfaceElement::EL_TEXT_WINDOW)
 					dp->disable_autohide();
@@ -329,6 +334,8 @@ bool qdInterfaceScreen::show_element(const char *element_name) {
 
 bool qdInterfaceScreen::show_element(qdInterfaceElement *p) {
 	p->show();
+
+	debugC(2, kDebugText, "qdInterfaceScreen::show_element('%s')", transCyrillic(p->name()));
 
 	sorted_element_list_t::iterator it = Common::find(_sorted_elements.begin(), _sorted_elements.end(), p);
 	if (it == _sorted_elements.end()) {
