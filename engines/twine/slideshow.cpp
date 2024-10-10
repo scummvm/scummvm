@@ -102,8 +102,8 @@ private:
 
 	void scriptText(const Common::String &params) {
 		if (!params.empty()) {
-			_pal.set(255, 0, 0, 0);
-			_pal.set(15, 0, 0, 0);
+			_pal.set(255, 255, 255, 255);
+			_pal.set(15, 255, 255, 255);
 			_engine->setPalette(_pal);
 			const int32 length = _engine->_text->sizeFont(params.c_str());
 			const int x = 0;
@@ -115,8 +115,8 @@ private:
 
 	void scriptRText(const Common::String &params) {
 		if (!params.empty()) {
-			_pal.set(255, 0, 0, 0);
-			_pal.set(15, 0, 0, 0);
+			_pal.set(255, 255, 255, 255);
+			_pal.set(15, 255, 255, 255);
 			_engine->setPalette(_pal);
 			const int32 length = _engine->_text->sizeFont(params.c_str());
 			const int x = _engine->width() - length;
@@ -129,8 +129,8 @@ private:
 
 	void scriptTitle(const Common::String &params) {
 		if (!params.empty()) {
-			_pal.set(255, 0, 0, 0);
-			_pal.set(15, 0, 0, 0);
+			_pal.set(255, 255, 255, 255);
+			_pal.set(15, 255, 255, 255);
 			_engine->setPalette(_pal);
 			const int32 length = _engine->_text->sizeFont(params.c_str());
 			const int x = _engine->width() / 2 - length / 2;
