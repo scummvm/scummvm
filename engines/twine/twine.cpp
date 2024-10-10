@@ -639,10 +639,18 @@ void TwinEEngine::playIntro() {
 
 void TwinEEngine::extInitMcga() {
 	_redraw->_flagMCGA = true;
+	if (_screens->_flagPalettePcx)
+		setPalette(_screens->_palettePcx);
+	else
+		setPalette(_screens->_ptrPal);
 }
 
 void TwinEEngine::extInitSvga() {
 	_redraw->_flagMCGA = false;
+	if (_screens->_flagPalettePcx)
+		setPalette(_screens->_palettePcx);
+	else
+		setPalette(_screens->_ptrPal);
 }
 
 void TwinEEngine::testRestoreModeSVGA(bool redraw) {
