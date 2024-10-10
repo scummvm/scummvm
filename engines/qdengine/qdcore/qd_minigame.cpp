@@ -53,6 +53,7 @@
 
 // 3mice2
 #include "qdengine/minigames/3mice2_sbor_karty.h"
+#include "qdengine/minigames/3mice2_kovrik.h"
 
 
 namespace QDEngine {
@@ -338,6 +339,9 @@ bool qdMiniGame::load_interface() {
 		// 3Mice2_raskr4.dll
 		} else if (_dll_name == "DLL\\3Mice2_sbor_karty.dll") {
 			_interface = new qd3mice2SborKartyMiniGame();
+			return true;
+		} else if (_dll_name == "DLL\\3Mice2_kovrik.dll") {
+			_interface = new qd3mice2KovrikMiniGame();
 			return true;
 		// 3Mice2_states.dll
 		// 3Mice2_sudoku.dll
