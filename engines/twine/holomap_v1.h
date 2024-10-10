@@ -68,8 +68,8 @@ private:
 	int32 _numHoloPos = 0;
 	Location _listHoloPos[MAX_HOLO_POS];
 
-	int32 _holomapPaletteIndex = 0;
-	uint8 _paletteHolomap[NUMOFCOLORS * 3]{0};
+	int32 _rotPalPos = 0;
+	uint8 _rotPal[NUMOFCOLORS * 3]{0};
 
 	void drawTitle(int32 centerx, int32 top, const char *title);
 	int32 searchNextArrow(int32 num) const;

@@ -127,23 +127,20 @@ void HolomapV1::initHoloDatas() {
 	constexpr TwineResource resource(Resources::HQR_RESS_FILE, RESSHQR_HOLOPAL);
 	_engine->_screens->loadCustomPalette(resource);
 
-	int32 j = HOLOMAP_PALETTE_INDEX;
-	const int32 n = NUM_HOLOMAPCOLORS * 3;
-	for (int32 i = 0; i < n; i += 3, j++) {
+	for (int32 n = 0; n < NUM_HOLOMAPCOLORS; n++) {
 		byte r, g, b;
-		_engine->_screens->_palettePcx.get(j, r, g, b);
-		_paletteHolomap[i + 0] = r;
-		_paletteHolomap[i + 1] = g;
-		_paletteHolomap[i + 2] = b;
+		_engine->_screens->_palettePcx.get(HOLOMAP_PALETTE_INDEX + n, r, g, b);
+		_rotPal[n * 3 + 0] = r;
+		_rotPal[n * 3 + 1] = g;
+		_rotPal[n * 3 + 2] = b;
 	}
 
-	j = HOLOMAP_PALETTE_INDEX;
-	for (int32 i = n; i < 2 * n - 3; i += 3, j++) {
+	for (int32 n = 0; n < NUM_HOLOMAPCOLORS - 1; n++) {
 		byte r, g, b;
-		_engine->_screens->_palettePcx.get(j, r, g, b);
-		_paletteHolomap[i + 0] = r;
-		_paletteHolomap[i + 1] = g;
-		_paletteHolomap[i + 2] = b;
+		_engine->_screens->_palettePcx.get(HOLOMAP_PALETTE_INDEX + n, r, g, b);
+		_rotPal[(NUM_HOLOMAPCOLORS + n) * 3 + 0] = r;
+		_rotPal[(NUM_HOLOMAPCOLORS + n) * 3 + 1] = g;
+		_rotPal[(NUM_HOLOMAPCOLORS + n) * 3 + 2] = b;
 	}
 
 	computeCoorMapping();
@@ -154,7 +151,7 @@ void HolomapV1::initHoloDatas() {
 	}
 	computeCoorGlobe(surfaceStream);
 	delete surfaceStream;
-	_holomapPaletteIndex = 0;
+	_rotPalPos = 0;
 }
 
 void HolomapV1::computeCoorGlobe(Common::SeekableReadStream *holomapSurfaceStream) {
@@ -384,9 +381,10 @@ void HolomapV1::holoTraj(int32 trajectoryIndex) {
 
 		if (!flagpal && waterPaletteChangeTimer < _engine->timerRef) {
 			// animate the water surface
-			_engine->setPalette(HOLOMAP_PALETTE_INDEX, NUM_HOLOMAPCOLORS, &_paletteHolomap[3 * _holomapPaletteIndex++]);
-			if (_holomapPaletteIndex == NUM_HOLOMAPCOLORS) {
-				_holomapPaletteIndex = 0;
+			_engine->setPalette(HOLOMAP_PALETTE_INDEX, NUM_HOLOMAPCOLORS, &_rotPal[3 * _rotPalPos]);
+			_rotPalPos++;
+			if (_rotPalPos == NUM_HOLOMAPCOLORS) {
+				_rotPalPos = 0;
 			}
 			waterPaletteChangeTimer = _engine->timerRef + 3;
 		}
@@ -635,9 +633,10 @@ void HolomapV1::holoMap() {
 
 		if (!flagpal && waterPaletteChangeTimer < _engine->timerRef) {
 			// animate the water surface
-			_engine->setPalette(HOLOMAP_PALETTE_INDEX, NUM_HOLOMAPCOLORS, &_paletteHolomap[3 * _holomapPaletteIndex++]);
-			if (_holomapPaletteIndex == NUM_HOLOMAPCOLORS) {
-				_holomapPaletteIndex = 0;
+			_engine->setPalette(HOLOMAP_PALETTE_INDEX, NUM_HOLOMAPCOLORS, &_rotPal[3 * _rotPalPos]);
+			_rotPalPos++;
+			if (_rotPalPos == NUM_HOLOMAPCOLORS) {
+				_rotPalPos = 0;
 			}
 			waterPaletteChangeTimer = _engine->timerRef + 3;
 			flagredraw = true;
