@@ -207,11 +207,13 @@ void Screens::fadeToBlack(const Graphics::Palette &ptrpal) {
 }
 
 void Screens::whiteFade() {
-	uint32 workpal[NUMOFCOLORS];
+	Graphics::Palette workpal{NUMOFCOLORS};
 
-	for (int32 n = 0; n < 255; n += 3) {
+	for (int32 n = 0; n <= 255; n++) {
 		FrameMarker frame(_engine, DEFAULT_HZ); // VSync()
-		memset(workpal, n, sizeof(workpal));
+		for (int i = 0; i < NUMOFCOLORS; i++) {
+			workpal.set(i, n, n, n);
+		}
 
 		_engine->setPalette(workpal);
 		_engine->_frontVideoBuffer.update();
