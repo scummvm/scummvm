@@ -544,7 +544,6 @@ void HolomapV1::holoMap() {
 
 	initHoloDatas();
 
-	// TODO: not visible
 	drawTitle(_engine->width() / 2, 25, "HoloMap");
 
 	const int32 cameraPosX = _engine->width() / 2;
