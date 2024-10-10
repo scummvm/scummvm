@@ -32,20 +32,18 @@ class Room304 : public Room {
 private:
 	bool _flag1 = false;
 	int _val1 = 0;
-	int _val2 = 0;
-	int _val3 = 0;
+	bool _useSword = false;
+	bool _useHandlingStick = false;
 	int _val4 = 0;
 	machine *_sword = nullptr;
 	machine *_trunk = nullptr;
 	machine *_stick = nullptr;
-	machine *_handle = nullptr;
 	int _smoke = -1;
 	machine *_machine1 = nullptr;
 	machine *_machine2 = nullptr;
 	machine *_machine3 = nullptr;
 	machine *_pu = nullptr;
 	machine *_cobraKills = nullptr;
-	machine *_field64 = nullptr;
 	machine *_field60 = nullptr;
 	int _cutSnake = -1;
 	int _mei1 = -1;
