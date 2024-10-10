@@ -377,7 +377,6 @@ public:
 	 * Set a new palette in the SDL screen buffer
 	 * @param palette palette to set in RGBA
 	 */
-	void setPalette(const uint32 *palette);
 	void setPalette(const Graphics::Palette &palette, uint startColor = 0u);
 
 	/**

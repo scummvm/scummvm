@@ -1255,20 +1255,6 @@ void TwinEEngine::blitFrontToWork(const Common::Rect &rect) {
 	_interface->blitBox(rect, _frontVideoBuffer, _workVideoBuffer);
 }
 
-void TwinEEngine::setPalette(const uint32 *palette) {
-	uint8 pal[NUMOFCOLORS * 3];
-	uint8 *out = pal;
-	const uint8 *in = (const uint8 *)palette;
-	for (int i = 0; i < NUMOFCOLORS; i++) {
-		out[0] = in[0];
-		out[1] = in[1];
-		out[2] = in[2];
-		out += 3;
-		in += 4;
-	}
-	setPalette(0, NUMOFCOLORS, pal);
-}
-
 void TwinEEngine::setPalette(const Graphics::Palette &palette, uint startColor) {
 	_frontVideoBuffer.setPalette(palette, startColor);
 }
