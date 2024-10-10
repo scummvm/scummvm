@@ -930,9 +930,9 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // AffScene
 
 	if (_engine->_screens->_flagFade) {
 		if (_engine->_screens->_flagPalettePcx) {
-			_engine->_screens->fadeToPal(_engine->_screens->_ptrPal);
+			_engine->_screens->fadeToPal(_engine->_screens->_palettePcx);
 		} else {
-			_engine->_screens->fadeToPal(_engine->_screens->_mainPaletteRGBA);
+			_engine->_screens->fadeToPal(_engine->_screens->_ptrPal);
 		}
 		_engine->_screens->_flagFade = false;
 	}

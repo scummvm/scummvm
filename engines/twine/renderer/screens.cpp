@@ -64,15 +64,15 @@ void Screens::loadMenuImage(bool fadeIn) {
 }
 
 void Screens::loadCustomPalette(const TwineResource &resource) {
-	if (!HQR::getPaletteEntry(_palette, resource)) {
+	if (!HQR::getPaletteEntry(_palettePcx, resource)) {
 		error("Failed to get palette entry for custom palette: %s:%d", resource.hqr, resource.index);
 	}
 
 	if (_palette.size() != NUMOFCOLORS) {
 		warning("Unexpected palette size %s:%i", resource.hqr, resource.index);
 	}
-	debug(3, "palette %s:%i with %u colors", resource.hqr, resource.index, _palette.size());
-	convertPalToRGBA(_palette.data(), _palettePcx);
+	debug(3, "palette %s:%i with %u colors", resource.hqr, resource.index, _palettePcx.size());
+	_palette = _palettePcx;
 }
 
 void Screens::loadImage(TwineImage image, bool fadeIn) {
@@ -84,15 +84,15 @@ void Screens::loadImage(TwineImage image, bool fadeIn) {
 	debug(0, "Load image: %i", image.image.index);
 	Graphics::ManagedSurface& target = _engine->_frontVideoBuffer;
 	target.transBlitFrom(src, src.getBounds(), target.getBounds(), 0, false, 0, 0xff, nullptr, true);
-	const uint32 *pal = _ptrPal;
+	const Graphics::Palette *pal = &_ptrPal;
 	if (image.palette.index != -1) {
 		loadCustomPalette(image.palette);
-		pal = _palettePcx;
+		pal = &_palettePcx;
 	}
 	if (fadeIn) {
-		fadeToPal(pal);
+		fadeToPal(*pal);
 	} else {
-		_engine->setPalette(pal);
+		_engine->setPalette(*pal);
 	}
 }
 
@@ -178,26 +178,15 @@ int32 Screens::lerp(int32 val1, int32 val2, int32 nbstep, int32 step) {  // Regl
 	return (((val2 - val1) * step) / nbstep) + val1;
 }
 
-void Screens::convertPalToRGBA(const uint8 *in, uint32 *out) {
-	uint8 *paletteOut = (uint8 *)out;
-	for (int i = 0; i < NUMOFCOLORS; i++) {
-		paletteOut[0] = in[0];
-		paletteOut[1] = in[1];
-		paletteOut[2] = in[2];
-		paletteOut[3] = 0xFF;
-		paletteOut += 4;
-		in += 3;
-	}
-}
-
-void Screens::fadePal(uint8 r, uint8 g, uint8 b, const uint32 *rgbaPal, int32 intensity) {
+void Screens::fadePal(uint8 r, uint8 g, uint8 b, const Graphics::Palette &rgbaPal, int32 intensity) {
 	Graphics::Palette pal{NUMOFCOLORS};
 
-	const uint8 *paletteIn = (const uint8 *)rgbaPal;
 	for (int32 i = 0; i < NUMOFCOLORS; i++) {
-		const byte newR = lerp(r, paletteIn[i * 4 + 0], 100, intensity);
-		const byte newG = lerp(g, paletteIn[i * 4 + 1], 100, intensity);
-		const byte newB = lerp(b, paletteIn[i * 4 + 2], 100, intensity);
+		byte rIn, gIn, bIn;
+		rgbaPal.get(i, rIn, gIn, bIn);
+		const byte newR = lerp(r, rIn, 100, intensity);
+		const byte newG = lerp(g, gIn, 100, intensity);
+		const byte newB = lerp(b, bIn, 100, intensity);
 		pal.set(i, newR, newG, newB);
 	}
 
@@ -205,7 +194,7 @@ void Screens::fadePal(uint8 r, uint8 g, uint8 b, const uint32 *rgbaPal, int32 in
 	_engine->_frontVideoBuffer.update();
 }
 
-void Screens::fadeToBlack(const uint32 *ptrpal) {
+void Screens::fadeToBlack(const Graphics::Palette &ptrpal) {
 	if (_flagBlackPal) {
 		return;
 	}
@@ -230,14 +219,14 @@ void Screens::whiteFade() {
 	}
 }
 
-void Screens::fadeWhiteToPal(const uint32 *ptrpal) {
+void Screens::fadeWhiteToPal(const Graphics::Palette &ptrpal) {
 	for (int32 n = 0; n <= 100; ++n) {
 		FrameMarker frame(_engine, DEFAULT_HZ); // VSync()
 		fadePal(255, 255, 255, ptrpal, n);
 	}
 }
 
-void Screens::fadeToPal(const uint32 *ptrpal) {
+void Screens::fadeToPal(const Graphics::Palette &ptrpal) {
 	for (int32 i = 0; i <= 100; i += 3) {
 		FrameMarker frame(_engine, DEFAULT_HZ); // VSync()
 		fadePal(0, 0, 0, ptrpal, i);
@@ -250,24 +239,28 @@ void Screens::fadeToPal(const uint32 *ptrpal) {
 
 void Screens::setBlackPal() {
 	_palette.clear();
-	memset(_ptrPal, 0, sizeof(_ptrPal));
+	_ptrPal.clear();
 
 	_engine->setPalette(_ptrPal);
 
 	_flagBlackPal = true;
 }
 
-void Screens::fadePalToPal(const uint32 *ptrpal, const uint32 *ptrpal2) {
+void Screens::fadePalToPal(const Graphics::Palette &ptrpal, const Graphics::Palette &ptrpal2) {
 	Graphics::Palette workpal{NUMOFCOLORS};
 
-	const uint8 *pal1p = (const uint8 *)ptrpal;
-	const uint8 *pal2p = (const uint8 *)ptrpal2;
 	for (int m = 0; m < 100; ++m) {
 		FrameMarker frame(_engine, DEFAULT_HZ); // VSync()
 		for (int32 i = 0; i < NUMOFCOLORS; i++) {
-			byte newR = lerp(pal1p[i * 4 + 0], pal2p[i * 4 + 0], 100, m);
-			byte newG = lerp(pal1p[i * 4 + 1], pal2p[i * 4 + 1], 100, m);
-			byte newB = lerp(pal1p[i * 4 + 2], pal2p[i * 4 + 2], 100, m);
+			byte r1, g1, b1;
+			ptrpal.get(i, r1, g1, b1);
+
+			byte r2, g2, b2;
+			ptrpal2.get(i, r2, g2, b2);
+
+			byte newR = lerp(r1, r2, 100, m);
+			byte newG = lerp(g1, g2, 100, m);
+			byte newB = lerp(b1, b2, 100, m);
 			workpal.set(i, newR, newG, newB);
 		}
 
@@ -276,14 +269,14 @@ void Screens::fadePalToPal(const uint32 *ptrpal, const uint32 *ptrpal2) {
 	}
 }
 
-void Screens::fadeToRed(const uint32 *ptrpal) {
+void Screens::fadeToRed(const Graphics::Palette &ptrpal) {
 	for (int32 i = 100; i >= 0; i -= 2) {
 		FrameMarker frame(_engine, DEFAULT_HZ);
 		fadePal(255, 0, 0, ptrpal, i);
 	}
 }
 
-void Screens::fadeRedToPal(const uint32 *ptrpal) {
+void Screens::fadeRedToPal(const Graphics::Palette &ptrpal) {
 	for (int32 i = 0; i <= 100; i += 2) {
 		FrameMarker frame(_engine, DEFAULT_HZ);
 		fadePal(255, 0, 0, ptrpal, i);
@@ -292,13 +285,13 @@ void Screens::fadeRedToPal(const uint32 *ptrpal) {
 
 void Screens::setDarkPal() {
 	ScopedEngineFreeze scoped(_engine);
-	if (!HQR::getPaletteEntry(_palette, Resources::HQR_RESS_FILE, RESSHQR_DARKPAL)) {
+	if (!HQR::getPaletteEntry(_palettePcx, Resources::HQR_RESS_FILE, RESSHQR_DARKPAL)) {
 		error("Failed to get palette entry for dark palette");
 	}
-	convertPalToRGBA(_palette.data(), _ptrPal);
+	_palette = _palettePcx;
 	if (!_flagFade) {
 		// set the palette hard if it should not get faded
-		_engine->setPalette(_ptrPal);
+		_engine->setPalette(_palettePcx);
 	}
 	_flagPalettePcx = true;
 }
@@ -307,7 +300,7 @@ void Screens::setNormalPal() {
 	_flagPalettePcx = false;
 	if (!_flagFade) {
 		// reset the palette hard if it should not get faded
-		_engine->setPalette(_mainPaletteRGBA);
+		_engine->setPalette(_ptrPal);
 	}
 }
 

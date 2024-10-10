@@ -22,6 +22,7 @@
 #include "twine/slideshow.h"
 #include "common/file.h"
 #include "common/tokenizer.h"
+#include "graphics/palette.h"
 #include "image/pcx.h"
 #include "twine/movies.h"
 #include "twine/renderer/screens.h"
@@ -37,18 +38,10 @@ private:
 	int _textY = 0;
 	bool _aborted = false;
 	int _lineHeight = 40;
-	uint32 _pal[NUMOFCOLORS]{};
+	Graphics::Palette _pal{0};
 
 	void setPalette(const uint8 *in, int colors) {
-		uint8 *paletteOut = (uint8 *)_pal;
-		for (int i = 0; i < colors; i++) {
-			paletteOut[0] = in[0];
-			paletteOut[1] = in[1];
-			paletteOut[2] = in[2];
-			paletteOut[3] = 0xFF;
-			paletteOut += 4;
-			in += 3;
-		}
+		_pal = Graphics::Palette(in, colors);
 		_engine->setPalette(_pal);
 	}
 
@@ -109,7 +102,8 @@ private:
 
 	void scriptText(const Common::String &params) {
 		if (!params.empty()) {
-			_pal[255] = _pal[15] = 0xffffffff;
+			_pal.set(255, 0, 0, 0);
+			_pal.set(15, 0, 0, 0);
 			_engine->setPalette(_pal);
 			const int32 length = _engine->_text->sizeFont(params.c_str());
 			const int x = 0;
@@ -121,7 +115,8 @@ private:
 
 	void scriptRText(const Common::String &params) {
 		if (!params.empty()) {
-			_pal[255] = _pal[15] = 0xffffffff;
+			_pal.set(255, 0, 0, 0);
+			_pal.set(15, 0, 0, 0);
 			_engine->setPalette(_pal);
 			const int32 length = _engine->_text->sizeFont(params.c_str());
 			const int x = _engine->width() - length;
@@ -134,7 +129,8 @@ private:
 
 	void scriptTitle(const Common::String &params) {
 		if (!params.empty()) {
-			_pal[255] = _pal[15] = 0xffffffff;
+			_pal.set(255, 0, 0, 0);
+			_pal.set(15, 0, 0, 0);
 			_engine->setPalette(_pal);
 			const int32 length = _engine->_text->sizeFont(params.c_str());
 			const int x = _engine->width() / 2 - length / 2;

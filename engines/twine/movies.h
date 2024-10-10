@@ -25,6 +25,7 @@
 #include "common/memstream.h"
 #include "common/scummsys.h"
 #include "common/file.h"
+#include "graphics/palette.h"
 
 namespace TwinE {
 
@@ -66,6 +67,7 @@ private:
 	/** Auxiliar FLA fade out variable to count frames between the fade */
 	int32 _fadeOutFrames = 0;
 	bool _flagFirst = false;
+	Graphics::Palette _paletteOrg{0};
 
 	/** FLA movie file buffer */
 	uint8 _flaBuffer[FLASCREEN_WIDTH * FLASCREEN_HEIGHT] {0};

@@ -43,23 +43,19 @@ private:
 	 * @param palette palette to adjust
 	 * @param intensity intensity value to adjust
 	 */
-	void fadePal(uint8 r, uint8 g, uint8 b, const uint32 *palette, int32 intensity);
+	void fadePal(uint8 r, uint8 g, uint8 b, const Graphics::Palette &palette, int32 intensity);
 
 public:
 	Screens(TwinEEngine *engine) : _engine(engine) {}
 
-	Graphics::Palette _palette{0};
-
 	int32 mapLba2Palette(int32 palIndex);
 
-	/** converted in-game palette */
-	uint32 _ptrPal[NUMOFCOLORS]{0};
+	/** main palette */
+	Graphics::Palette _ptrPal{0};
+	Graphics::Palette _palettePcx{0};
 
-	/** converted custom palette */
-	uint32 _palettePcx[NUMOFCOLORS]{0};
-
-	/** converted in-game palette */
-	uint32 _mainPaletteRGBA[NUMOFCOLORS]{0};
+	// TODO: remove me
+	Graphics::Palette _palette{0};
 
 	/** flag to check in the game palette was changed */
 	bool _flagBlackPal = false;
@@ -72,8 +68,6 @@ public:
 
 	/** Load and display Adeline Logo */
 	bool adelineLogo();
-
-	void convertPalToRGBA(const uint8 *in, uint32 *out);
 
 	/**
 	 * @sa setNormalPal
@@ -129,20 +123,20 @@ public:
 	 * @param pal1 palette from adjust
 	 * @param pal2 palette to adjust
 	 */
-	void fadePalToPal(const uint32 *pal1, const uint32 *pal2);
+	void fadePalToPal(const Graphics::Palette &pal1, const Graphics::Palette &pal2);
 
 	/**
 	 * Fade image to black
 	 * @param palette current palette to fade
 	 */
-	void fadeToBlack(const uint32 *palette);
-	void fadeWhiteToPal(const uint32 *ptrpal);
+	void fadeToBlack(const Graphics::Palette &palette);
+	void fadeWhiteToPal(const Graphics::Palette &ptrpal);
 
 	/**
 	 * Fade image with another palette source
 	 * @param palette current palette to fade
 	 */
-	void fadeToPal(const uint32 *palette);
+	void fadeToPal(const Graphics::Palette &palette);
 
 	/** Fade black palette to white palette */
 	void whiteFade();
@@ -154,13 +148,13 @@ public:
 	 * Fade palette to red palette
 	 * @param palette current palette to fade
 	 */
-	void fadeToRed(const uint32 *palette);
+	void fadeToRed(const Graphics::Palette &palette);
 
 	/**
 	 * Fade red to palette
 	 * @param palette current palette to fade
 	 */
-	void fadeRedToPal(const uint32 *palette);
+	void fadeRedToPal(const Graphics::Palette &palette);
 
 	/**
 	 * Copy a determinate screen buffer to another
