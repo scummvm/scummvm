@@ -1304,57 +1304,7 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 				int frameHeight = MIN(_height, _vm->_screenHeight);
 
 				if (_vm->_macScreen) {
-					const byte *pixels = (const byte *)_dst;
-					byte *mac = (byte *)_vm->_macScreen->getPixels();
-
-					int pixelsPitch = frameWidth;
-					int macPitch = frameWidth * 2;
-					if (_vm->_useMacGraphicsSmoothing) {
-						// Apply the EPX/Scale2x algorithm on the SMUSH frame
-						for (int h = 0; h < frameHeight; h++) {
-							for (int w = 0; w < frameWidth; w++) {
-								// Center pixel
-								byte P = pixels[w];
-
-								// Top neighbor (A)
-								byte A = (h > 0) ? _dst[(h - 1) * _vm->_screenWidth + w] : P;
-
-								// Right neighbor (B)
-								byte B = (w < _vm->_screenWidth - 1) ? _dst[h * _vm->_screenWidth + (w + 1)] : P;
-
-								// Left neighbor (C)
-								byte C = (w > 0) ? _dst[h * _vm->_screenWidth + (w - 1)] : P;
-
-								// Bottom neighbor (D)
-								byte D = (h < _vm->_screenHeight - 1) ? _dst[(h + 1) * _vm->_screenWidth + w] : P;
-	
-								// Scale the pixel
-								mac[2 * w] =                (C == A && C != D && A != B) ? A : P; // Top-left
-								mac[2 * w + 1] =            (A == B && A != C && B != D) ? B : P; // Top-right
-								mac[2 * w + macPitch] =     (D == C && D != B && C != A) ? C : P; // Bottom-left
-								mac[2 * w + macPitch + 1] = (B == D && B != A && D != C) ? D : P; // Bottom-right
-							}
-
-							pixels += pixelsPitch;
-							mac += macPitch * 2;
-						}
-					} else {
-						// Just double the resolution
-						for (int h = 0; h < frameHeight; h++) {
-							for (int w = 0; w < frameWidth; w++) {
-								mac[2 * w] = pixels[w];
-								mac[2 * w + 1] = pixels[w];
-								mac[2 * w + macPitch] = pixels[w];
-								mac[2 * w + macPitch + 1] = pixels[w];
-							}
-
-							pixels += pixelsPitch;
-
-							mac += macPitch * 2;
-						}
-					}
-
-					_vm->_system->copyRectToScreen(_vm->_macScreen->getPixels(), _width * 2, 0, _vm->_macScreenDrawOffset * 2, frameWidth * 2, frameHeight * 2);
+					_vm->mac_drawBufferToScreen(_dst, frameWidth, 0, 0, frameWidth, frameHeight);
 				} else {
 					_vm->_system->copyRectToScreen(_dst, _width, 0, 0, frameWidth, frameHeight);
 				}
