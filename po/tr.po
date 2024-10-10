@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
 "PO-Revision-Date: 2024-10-10 12:33+0000\n"
-"Last-Translator: Ahmet Furkan <ahmetkocaoglu34@gmail.com>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/tr/>\n"
 "Language: tr\n"
@@ -134,14 +134,12 @@ msgid "Cloud Connection Wizard"
 msgstr "Bulut Bağlantı Sihirbazı"
 
 #: gui/cloudconnectionwizard.cpp:183
-#, fuzzy
 msgid "Quick mode"
 msgstr "Çekiştirme modu:"
 
 #: gui/cloudconnectionwizard.cpp:184
-#, fuzzy
 msgid "Manual mode"
-msgstr "Grafik modu:"
+msgstr "Manuel Mod"
 
 #: gui/cloudconnectionwizard.cpp:187
 msgid "Will ask you to run the Local Webserver"
