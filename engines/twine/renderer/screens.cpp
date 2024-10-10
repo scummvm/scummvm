@@ -231,33 +231,22 @@ void Screens::fadePal(uint8 r, uint8 g, uint8 b, const uint32 *rgbaPal, int32 in
 }
 
 void Screens::fadePalToPal(const uint32 *ptrpal, const uint32 *ptrpal2) {
-	uint32 workpal[NUMOFCOLORS];
+	Graphics::Palette workpal{NUMOFCOLORS};
 
 	int32 counter = 0;
 	int32 intensity = 0;
 
 	const uint8 *pal1p = (const uint8 *)ptrpal;
 	const uint8 *pal2p = (const uint8 *)ptrpal2;
-	uint8 *paletteOut = (uint8 *)workpal;
 	do {
 		FrameMarker frame(_engine, DEFAULT_HZ);
 		counter = 0;
 
-		uint8 *newR = &paletteOut[counter];
-		uint8 *newG = &paletteOut[counter + 1];
-		uint8 *newB = &paletteOut[counter + 2];
-		uint8 *newA = &paletteOut[counter + 3];
-
 		for (int32 i = 0; i < NUMOFCOLORS; i++) {
-			*newR = lerp(pal1p[counter + 0], pal2p[counter + 0], 100, intensity);
-			*newG = lerp(pal1p[counter + 1], pal2p[counter + 1], 100, intensity);
-			*newB = lerp(pal1p[counter + 2], pal2p[counter + 2], 100, intensity);
-			*newA = 0xFF;
-
-			newR += 4;
-			newG += 4;
-			newB += 4;
-			newA += 4;
+			byte newR = lerp(pal1p[counter + 0], pal2p[counter + 0], 100, intensity);
+			byte newG = lerp(pal1p[counter + 1], pal2p[counter + 1], 100, intensity);
+			byte newB = lerp(pal1p[counter + 2], pal2p[counter + 2], 100, intensity);
+			workpal.set(i, newR, newG, newB);
 
 			counter += 4;
 		}
