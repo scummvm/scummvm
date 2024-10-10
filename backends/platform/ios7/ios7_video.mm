@@ -444,8 +444,8 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 
 	[_toggleTouchModeButton setEnabled:isEnabled];
 	[_toggleTouchModeButton setHidden:!isEnabled];
-	[_menuButton setEnabled:isEnabled];
-	[_menuButton setHidden:!isEnabled];
+	[_menuButton setEnabled:isEnabled && [self isInGame]];
+	[_menuButton setHidden:!isEnabled || ![self isInGame]];
 }
 
 - (BOOL)isiOSAppOnMac {
@@ -535,9 +535,19 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 			newFrame = CGRectMake(screenSize.origin.x + inset.left, screenSize.origin.y, screenSize.size.width - inset.left, height);
 		}
 
-		// The onscreen control buttons have to be moved accordingly
-		[_menuButton setFrame:CGRectMake(newFrame.size.width - _menuButton.imageView.image.size.width, 0, _menuButton.imageView.image.size.width, _menuButton.imageView.image.size.height)];
-		[_toggleTouchModeButton setFrame:CGRectMake(newFrame.size.width - _toggleTouchModeButton.imageView.image.size.width - _toggleTouchModeButton.imageView.image.size.width, 0, _toggleTouchModeButton.imageView.image.size.width, _toggleTouchModeButton.imageView.image.size.height)];
+		// Add margins to respect the iPhone and iPad safe areas. Use the right
+		// safe area inset if available since the position of the buttons are
+		// on the right hand side. The iPhone corners on the later models have
+		// the form of squircles rather than circles which cause button images
+		// to become cropped if placed too close to the corner.
+		// iPads has a more rectangular screen form. The inset margin on iPads
+		// is 0, however due to the rounding of the corners images gets cropped
+		// if placed too close to the corners. Use a constant margin for those.
+		const CGFloat margin = inset.right > 0 ? inset.right/4 : 10;
+		// Touch mode button on top
+		[_toggleTouchModeButton setFrame:CGRectMake(self.frame.size.width - _toggleTouchModeButton.imageView.image.size.width - margin, margin, _toggleTouchModeButton.imageView.image.size.width, _toggleTouchModeButton.imageView.image.size.height)];
+		// Burger menu button below
+		[_menuButton setFrame:CGRectMake(self.frame.size.width - _menuButton.imageView.image.size.width - margin, _toggleTouchModeButton.imageView.image.size.height + margin, _menuButton.imageView.image.size.width, _menuButton.imageView.image.size.height)];
 #endif
 		self.frame = newFrame;
 	}
@@ -622,9 +632,13 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 		screenOrientation = kScreenOrientationFlippedLandscape;
 	}
 
-	// The onscreen control buttons have to be moved accordingly
-	[_menuButton setFrame:CGRectMake(self.frame.size.width - _menuButton.imageView.image.size.width, 0, _menuButton.imageView.image.size.width, _menuButton.imageView.image.size.height)];
-	[_toggleTouchModeButton setFrame:CGRectMake(self.frame.size.width - _menuButton.imageView.image.size.width - _toggleTouchModeButton.imageView.image.size.width, 0, _toggleTouchModeButton.imageView.image.size.width, _toggleTouchModeButton.imageView.image.size.height)];
+	// This function is executed also on older device models. The screens
+	// have sharp corners and no safe area insets. Use a constant margin.
+	const CGFloat margin = 10;
+	// Touch mode button on top
+	[_toggleTouchModeButton setFrame:CGRectMake(self.frame.size.width - _toggleTouchModeButton.imageView.image.size.width - margin, margin, _toggleTouchModeButton.imageView.image.size.width, _toggleTouchModeButton.imageView.image.size.height)];
+	// Burger menu button below
+	[_menuButton setFrame:CGRectMake(self.frame.size.width - _menuButton.imageView.image.size.width - margin, _toggleTouchModeButton.imageView.image.size.height + margin, _menuButton.imageView.image.size.width, _menuButton.imageView.image.size.height)];
 
 	[self addEvent:InternalEvent(kInputOrientationChanged, screenOrientation, 0)];
 	if (UIInterfaceOrientationIsLandscape(orientation)) {

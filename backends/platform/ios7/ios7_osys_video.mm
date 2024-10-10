@@ -96,6 +96,7 @@ void OSystem_iOS7::engineInit() {
 
 #if TARGET_OS_IOS
 	applyOrientationSettings();
+	updateTouchMode();
 
 	// Automatically open the keyboard when starting a game and in portrait mode.
 	// This is preferred for text input games and there's a lot of screen space to
@@ -119,6 +120,7 @@ void OSystem_iOS7::engineDone() {
 
 #if TARGET_OS_IOS
 	applyOrientationSettings();
+	updateTouchMode();
 
 	// Hide keyboard when going back to launcher
 	execute_on_main_thread(^ {
