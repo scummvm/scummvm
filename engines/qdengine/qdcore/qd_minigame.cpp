@@ -336,7 +336,9 @@ bool qdMiniGame::load_interface() {
 		// 3Mice2_raskr2.dll
 		// 3Mice2_raskr3.dll
 		// 3Mice2_raskr4.dll
-		// 3Mice2_sbor_karty.dll
+		} else if (_dll_name == "DLL\\3Mice2_sbor_karty.dll") {
+			_interface = new qd3mince2SborKartyMiniGame();
+			return true;
 		// 3Mice2_states.dll
 		// 3Mice2_sudoku.dll
 		// 3Mice2_testo.dll

@@ -58,6 +58,97 @@ public:
 	bool quant(float dt) {
 		debugC(3, kDebugMinigames, "3mince2SborKarty::quant(%f)", dt);
 
+		char tmp[20];
+
+		_timePassed += dt;
+
+		qdMinigameObjectInterface *obj = _scene->mouse_click_object_interface();
+
+		if (obj) {
+			const char *name = obj->name();
+
+			if (strstr(name, "object@") && obj->is_state_active("base") && !_scene->mouse_object_interface()) {
+				const char *from = strstr(name, "@");
+				const char *to = strstr(name, "#");
+
+				Common::strlcpy(tmp, from + 1, to - from);
+
+				obj->set_state("hide");
+
+				int num = atol(tmp);
+				debugC(4, kDebugMinigames, "to_inv: num is: %d  tmp: '%s' for name: '%s'", num, tmp, name);
+				_objects[num + 11]->set_state("to_inv");
+			}
+
+			_scene->release_object_interface(obj);
+		}
+
+		if (_engine->is_mouse_event_active(qdmg::qdEngineInterfaceImpl::MOUSE_EV_RIGHT_DOWN) || !_objDrop->is_state_active("\xed\xe5\xf2")) { // "нет"
+			obj = _scene->mouse_object_interface();
+
+			if (obj) {
+				const char *name = obj->name();
+				const char *from = strstr(name, "@");
+				const char *to = strstr(name, "#");
+
+				Common::strlcpy(tmp, from + 1, to - from);
+
+				obj->set_state("del");
+
+				int num = atol(tmp);
+				debugC(4, kDebugMinigames, "base: num is: %d  tmp: '%s' for name: '%s'", num, tmp, name);
+
+				_objects[num]->set_state("base");
+
+				_objDrop->set_state("\xed\xe5\xf2"); // "нет"
+				_scene->release_object_interface(obj);
+			}
+		}
+
+		if (_engine->is_mouse_event_active(qdmg::qdEngineInterfaceImpl::MOUSE_EV_LEFT_DOWN)) {
+			obj = _scene->mouse_object_interface();
+
+			if (obj) {
+				qdMinigameObjectInterface *obj2 = _scene->mouse_hover_object_interface();
+
+				if (obj2) {
+					const char *name = obj->name();
+					const char *from = strstr(name, "@");
+
+					if (from) {
+						const char *to = strstr(name, "#");
+
+						Common::strlcpy(tmp, from + 1, to - from);
+
+						int num = atol(tmp);
+						debugC(4, kDebugMinigames, "part1: num is: %d  tmp: '%s' for name: '%s'", num, tmp, name);
+
+						name = obj2->name();
+						from = strstr(name, "@");
+						to = strstr(name, "#");
+
+						Common::strlcpy(tmp, from + 1, to - from);
+
+						int num2 = atol(tmp);
+						debugC(4, kDebugMinigames, "part2: num2 is: %d  tmp: '%s' for name: '%s'", num2, tmp, name);
+
+						if (num == num2) {
+							obj->set_state("del");
+							_objects[num]->set_state("karta");
+						}
+
+						_scene->release_object_interface(obj);
+					}
+				}
+			}
+		}
+
+		if (_timePassed > 1.0) {
+			if (checkSolution())
+				_objDone->set_state("\xe4\xe0");	// "да"
+
+			_timePassed = 0.0;
+		}
 
 		return true;
 	}
@@ -92,6 +183,9 @@ public:
 
 private:
 	bool checkSolution() {
+		for (int i = 1; i <= 10; i++)
+			if (!_objects[i]->is_state_active("kovrik"))
+				return false;
 
 		return true;
 	}
