@@ -128,12 +128,12 @@ Common::KeymapArray SkyMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("p");
 	shortcutsKeymap->addAction(act);
 
-	act = new Action("FAST", _("Toggle fast mode"));
+	act = new Action("FAST", _("Toggle fast mode on/off"));
 	act->setCustomEngineActionEvent(kSkyActionToggleFastMode);
 	act->addDefaultInputMapping("C+f");
 	shortcutsKeymap->addAction(act);
 
-	act = new Action("RFAST", _("Toggle really fast mode"));
+	act = new Action("RFAST", _("Toggle really fast mode on/off"));
 	act->setCustomEngineActionEvent(kSkyActionToggleReallyFastMode);
 	act->addDefaultInputMapping("C+g");
 	shortcutsKeymap->addAction(act);
