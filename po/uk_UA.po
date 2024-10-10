@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-10 12:04+0000\n"
+"PO-Revision-Date: 2024-10-10 12:33+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -4717,7 +4717,7 @@ msgstr "Режим збільнення вимкнено. Повертаюся �
 
 #: backends/platform/3ds/osystem-events.cpp:385
 msgid "Hover Mode"
-msgstr "Режим огляду"
+msgstr "Режим наведення"
 
 #: backends/platform/3ds/osystem-events.cpp:389
 msgid "Drag Mode"
