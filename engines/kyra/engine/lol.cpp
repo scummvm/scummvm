@@ -508,7 +508,7 @@ Common::KeymapArray LoLEngine::initKeymaps() {
 	addKeymapAction(keyMap2, "AT3", _("Attack 3"), Common::KeyState(Common::KEYCODE_F3, Common::ASCII_F3), "F3", "JOY_LEFT_SHOULDER");
 	addKeymapAction(keyMap2, "MAP", _("Show Map"), Common::KeyState(Common::KEYCODE_m, 'm'), "m", "");
 	addKeymapAction(keyMap2, "MVF", _("Move Forward"), Common::KeyState(Common::KEYCODE_UP), "UP", "JOY_UP");
-	addKeymapAction(keyMap2, "MVB", _("Move Back"), Common::KeyState(Common::KEYCODE_DOWN), "DOWN", "JOY_DOWN");
+	addKeymapAction(keyMap2, "MVB", _("Move Backwards"), Common::KeyState(Common::KEYCODE_DOWN), "DOWN", "JOY_DOWN");
 	addKeymapAction(keyMap2, "SLL", _("Slide Left"), Common::KeyState(Common::KEYCODE_LEFT), "LEFT", "JOY_LEFT_TRIGGER");
 	addKeymapAction(keyMap2, "SLR", _("Slide Right"), Common::KeyState(Common::KEYCODE_RIGHT), "RIGHT", "JOY_RIGHT_TRIGGER");
 	addKeymapAction(keyMap2, "TL", _("Turn Left"), Common::KeyState(Common::KEYCODE_HOME), "HOME", "JOY_LEFT");
@@ -704,7 +704,7 @@ uint8 *LoLEngine::getItemIconShapePtr(int index) {
 int LoLEngine::mainMenu() {
 	bool hasSave = false;
 	for (int i = 0; i < 20 && !hasSave; ++i) {
-		if (saveFileLoadable(i)) 
+		if (saveFileLoadable(i))
 			hasSave = true;
 	}
 
@@ -1049,7 +1049,7 @@ void LoLEngine::update() {
 			"Lora a quitte le groupe. Ses objets sont par terre.",
 			"Lora hat die Gruppe verlassen. Ihre Sachen sind auf dem Boden.",
 			"Lora has left the party. Her items are on the floor.", // TODO: Translate to Japanese
-			"Lora ha abandonado el grupo. Sus articulos estan en el suelo.",	
+			"Lora ha abandonado el grupo. Sus articulos estan en el suelo.",
 			"Lora has left the party. Her items are on the floor."	// TODO: Translate to Traditional Chinese
 		};
 
@@ -1199,7 +1199,7 @@ bool LoLEngine::addCharacter(int id) {
 		} else {
 			return false;
 		}
-	}	
+	}
 
 	int i = 0;
 	for (; i < _charDefaultsSize; i++) {
