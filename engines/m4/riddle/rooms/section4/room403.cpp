@@ -1227,7 +1227,7 @@ void Room403::daemon() {
 		break;
 
 	case 310:
-		_wolfWalker = triggerMachineByHash_3000(8, 8, S4_NORMAL_DIRS, S4_SHADOW_DIRS,
+		_wolfWalker = triggerMachineByHash_3000(8, 8, *S4_NORMAL_DIRS, *S4_SHADOW_DIRS,
 			620, 313, 3, triggerMachineByHashCallbackNegative, "wolf_walker");
 		DisposePath(_wolfWalker->walkPath);
 		_wolfWalker->walkPath = CreateCustomPath(1067, 313, -1);
@@ -1303,7 +1303,7 @@ void Room403::daemon() {
 		sendWSMessage_120000(-1);
 		terminateMachineAndNull(_wolfie);
 
-		_wolfWalker = triggerMachineByHash_3000(8, 8, S4_NORMAL_DIRS, S4_SHADOW_DIRS,
+		_wolfWalker = triggerMachineByHash_3000(8, 8, *S4_NORMAL_DIRS, *S4_SHADOW_DIRS,
 			1067, 313, 3, triggerMachineByHashCallback3000, "wolf_walker");
 		sendWSMessage_10000(_wolfWalker, 620, 313, 3, 324, 0);
 		break;
@@ -1908,7 +1908,7 @@ void Room403::edgerBell() {
 		if (_G(flags)[V119] >= 7) {
 			ws_walk_load_shadow_series(S4_SHADOW_DIRS, S4_SHADOW_NAMES);
 			ws_walk_load_walker_series(S4_NORMAL_DIRS, S4_NORMAL_NAMES);
-			_wolfWalker = triggerMachineByHash_3000(8, 8, S4_NORMAL_DIRS, S4_SHADOW_DIRS, 620, 323, 3,
+			_wolfWalker = triggerMachineByHash_3000(8, 8, *S4_NORMAL_DIRS, *S4_SHADOW_DIRS, 620, 323, 3,
 				triggerMachineByHashCallback3000, "wolf_walker");
 			_wolfAdmonish = series_load("WOLF ADMONISHES RIP");
 			kernel_timing_trigger(120, 4);
@@ -1955,7 +1955,7 @@ void Room403::edgerBell() {
 	case 9:
 		terminateMachineAndNull(_wolfie);
 		_wolfWalker = triggerMachineByHash_3000(8, 8,
-			S4_NORMAL_DIRS, S4_SHADOW_DIRS, 687, 323, 3,
+			*S4_NORMAL_DIRS, *S4_SHADOW_DIRS, 687, 323, 3,
 			triggerMachineByHashCallback3000, "wolf_walker");
 		sendWSMessage_10000(_wolfWalker, 620, 323, 3, 10, 0);
 		playNum2(_G(flags)[V119]);

@@ -41,12 +41,6 @@ private:
 	static int _ripSketching;
 
 protected:
-	static void intrMsgNull(frac16 myMessage, machine *sender) {}
-	static void triggerMachineByHashCallback(frac16 myMessage, machine *sender = nullptr);
-	static void triggerMachineByHashCallbackNegative(frac16 myMessage, machine *sender = nullptr);
-	static void triggerMachineByHashCallback3000(frac16 myMessage, machine *sender = nullptr);
-	static void triggerMachineByHashCallbackAlways(frac16 myMessage, machine *sender = nullptr);
-
 	void restoreAutosave();
 
 	/**

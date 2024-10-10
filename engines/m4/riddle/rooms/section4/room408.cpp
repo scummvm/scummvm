@@ -439,7 +439,7 @@ void Room408::daemon() {
 		break;
 
 	case 300:
-		_wolfWalker = triggerMachineByHash_3000(8, 8, S4_NORMAL_DIRS, S4_SHADOW_DIRS,
+		_wolfWalker = triggerMachineByHash_3000(8, 8, *S4_NORMAL_DIRS, *S4_SHADOW_DIRS,
 			-20, 345, 3, triggerMachineByHashCallback3000, "WOLF_WALKER");
 		sendWSMessage_10000(_wolfWalker, 660, 345, 9, -1, 0);
 		kernel_timing_trigger(400, 302);

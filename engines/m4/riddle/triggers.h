@@ -45,9 +45,9 @@ extern void sendWSMessage_10000(int val1, machine *recv, int val2, int val3,
 extern void sendWSMessage_10000(machine *recv, int val1, int val2, int val3,
 	int trigger, int val4);
 
-machine *triggerMachineByHash_3000(int val1, int val2, const int16 *normalDirs,
-	const int16 *shadowDirs, int val3, int val4, int val5,
-	MessageCB intrMsg, const char *machName);
+machine *triggerMachineByHash_3000(int myHash, int dataHash,
+	int normalDir, int shadowDir, int param1, int param2,
+	int index, MessageCB intrMsg, const char *machName);
 extern void sendWSMessage_60000(machine *mach);
 extern void sendWSMessage_80000(machine *mach);
 extern void sendWSMessage_B0000(machine *mach, int trigger);
@@ -87,6 +87,11 @@ extern void sendWSMessage_210000(machine *recv, int trigger);
 extern void sendWSMessage_29a0000(machine *recv, int val1);
 extern void sendWSMessage_29a0000(int val1);
 
+extern void intrMsgNull(frac16 myMessage, machine *sender);
+extern void triggerMachineByHashCallback(frac16 myMessage, machine *sender = nullptr);
+extern void triggerMachineByHashCallbackNegative(frac16 myMessage, machine *sender = nullptr);
+extern void triggerMachineByHashCallback3000(frac16 myMessage, machine *sender = nullptr);
+extern void triggerMachineByHashCallbackAlways(frac16 myMessage, machine *sender = nullptr);
 
 } // namespace Riddle
 } // namespace M4

@@ -86,7 +86,7 @@ void Room605::init() {
 
 			ws_walk_load_walker_series(SECTION6_NORMAL_DIRS, SECTION6_NORMAL_NAMES);
 			ws_walk_load_shadow_series(SECTION6_SHADOW_DIRS, SECTION6_SHADOW_NAMES);
-			_tt = triggerMachineByHash_3000(8, 9, SECTION6_NORMAL_DIRS, SECTION6_SHADOW_DIRS,
+			_tt = triggerMachineByHash_3000(8, 9, *SECTION6_NORMAL_DIRS, *SECTION6_SHADOW_DIRS,
 				450, 339, 1, triggerMachineByHashCallback3000, "tt walker");
 			sendWSMessage_10000(_tt, 476, 290, 5, 10, 1);
 
@@ -280,7 +280,7 @@ void Room605::daemon() {
 	case 203:
 		terminateMachineAndNull(_tt);
 		terminateMachineAndNull(_ttShadow);
-		_tt = triggerMachineByHash_3000(8, 9, SECTION6_NORMAL_DIRS, SECTION6_SHADOW_DIRS,
+		_tt = triggerMachineByHash_3000(8, 9, *SECTION6_NORMAL_DIRS, *SECTION6_SHADOW_DIRS,
 			476, 290, 5, triggerMachineByHashCallback3000, "tt walker");
 		sendWSMessage_10000(_tt, 485, 199, 2, 208, 0);
 		digi_play("19_07n04", 1, 255, 206);

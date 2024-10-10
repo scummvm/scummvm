@@ -148,7 +148,7 @@ void Room303::init() {
 
 			ws_walk_load_walker_series(S3_NORMAL_DIRS, S3_NORMAL_NAMES);
 			ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
-			_machine1 = triggerMachineByHash_3000(8, 2, S3_NORMAL_DIRS, S3_SHADOW_DIRS,
+			_machine1 = triggerMachineByHash_3000(8, 2, *S3_NORMAL_DIRS, *S3_SHADOW_DIRS,
 				470, 226, 9, triggerMachineByHashCallback3000, "fl");
 			_val13 = 1;
 
@@ -159,7 +159,7 @@ void Room303::init() {
 			ws_walk_load_walker_series(S3_NORMAL_DIRS2, S3_NORMAL_NAMES2);
 			ws_walk_load_shadow_series(S3_SHADOW_DIRS2, S3_SHADOW_NAMES2);
 
-			_hands4 = triggerMachineByHash_3000(8, 3, S3_NORMAL_DIRS2, S3_SHADOW_DIRS2,
+			_hands4 = triggerMachineByHash_3000(8, 3, *S3_NORMAL_DIRS2, *S3_SHADOW_DIRS2,
 				445, 215, 7, triggerMachineByHashCallback3000, "mc");
 			_gestTalk4 = series_load("mei ny lft hand gest talk pos4");
 			kernel_timing_trigger(1, 107);
@@ -1034,10 +1034,10 @@ void Room303::daemon() {
 				terminateMachineAndNull(_machine1);
 
 				if (_val13)
-					_machine1 = triggerMachineByHash_3000(8, 2, S3_NORMAL_DIRS, S3_SHADOW_DIRS,
+					_machine1 = triggerMachineByHash_3000(8, 2, *S3_NORMAL_DIRS, *S3_SHADOW_DIRS,
 						480, 256, 7, triggerMachineByHashCallback3000, "fl walker");
 				else
-					_machine1 = triggerMachineByHash_3000(8, 2, S3_NORMAL_DIRS, S3_SHADOW_DIRS,
+					_machine1 = triggerMachineByHash_3000(8, 2, *S3_NORMAL_DIRS, *S3_SHADOW_DIRS,
 						706, 256, 5, triggerMachineByHashCallback3000, "fl walker");
 
 				_G(kernel).trigger_mode = KT_PARSE;

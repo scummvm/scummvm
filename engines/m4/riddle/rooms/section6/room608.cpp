@@ -141,7 +141,7 @@ void Room608::init() {
 		ws_walk_load_walker_series(SECTION6_NORMAL_DIRS, SECTION6_NORMAL_NAMES);
 		ws_walk_load_shadow_series(SECTION6_SHADOW_DIRS, SECTION6_SHADOW_NAMES);
 
-		_tt = triggerMachineByHash_3000(8, 9, SECTION6_NORMAL_DIRS, SECTION6_SHADOW_DIRS,
+		_tt = triggerMachineByHash_3000(8, 9, *SECTION6_NORMAL_DIRS, *SECTION6_SHADOW_DIRS,
 			-30, 324, 3, triggerMachineByHashCallback3000, "tt walker");
 		sendWSMessage_10000(_tt, 105, 324, 5, 20, 1);
 	} else if (_G(flags)[V203] == 6) {
@@ -162,7 +162,7 @@ void Room608::init() {
 		ws_walk_load_walker_series(SECTION6_NORMAL_DIRS, SECTION6_NORMAL_NAMES);
 		ws_walk_load_shadow_series(SECTION6_SHADOW_DIRS, SECTION6_SHADOW_NAMES);
 
-		_tt = triggerMachineByHash_3000(8, 9, SECTION6_NORMAL_DIRS, SECTION6_SHADOW_DIRS,
+		_tt = triggerMachineByHash_3000(8, 9, *SECTION6_NORMAL_DIRS, *SECTION6_SHADOW_DIRS,
 			-30, 324, 3, triggerMachineByHashCallback3000, "tt walker");
 		sendWSMessage_10000(_tt, 103, 318, 3, 700, 1);
 	}
@@ -859,7 +859,7 @@ void Room608::daemon() {
 
 	case 500:
 		terminateMachineAndNull(_ol);
-		_ol = triggerMachineByHash_3000(8, 15, NORMAL_DIRS1, SHADOW_DIRS1,
+		_ol = triggerMachineByHash_3000(8, 15, *NORMAL_DIRS1, *SHADOW_DIRS1,
 			499, 318, 9, triggerMachineByHashCallback3000, "ow walker");
 		sendWSMessage_10000(_ol, 487, 290, 11, -1, 1);
 		kernel_timing_trigger(60, 501);
@@ -1051,7 +1051,7 @@ void Room608::daemon() {
 
 	case 548:
 		terminateMachineAndNull(_ol);
-		_ol = triggerMachineByHash_3000(8, 15, NORMAL_DIRS1, SHADOW_DIRS1,
+		_ol = triggerMachineByHash_3000(8, 15, *NORMAL_DIRS1, *SHADOW_DIRS1,
 			487, 293, 9, triggerMachineByHashCallback3000, "ow walker");
 		sendWSMessage_10000(_ol, 417, 295, 9, 549, 0);
 		kernel_timing_trigger(300, 551);

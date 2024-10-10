@@ -820,7 +820,7 @@ void Room504::daemon() {
 		series_unload(_mzMenancesClimbs);
 		digi_unload("504_S02D");
 
-		_menendez = triggerMachineByHash_3000(8, 16, NORMAL_DIRS, SHADOW_DIRS,
+		_menendez = triggerMachineByHash_3000(8, 16, *NORMAL_DIRS, *SHADOW_DIRS,
 			1005, 155, 9, triggerMachineByHashCallback3000, "Emilio Menendez Walker");
 		sendWSMessage_10000(_menendez, -_G(game_buff_ptr)->x1 - 30,
 			155, 9, 536, 1);

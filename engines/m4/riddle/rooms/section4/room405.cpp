@@ -99,7 +99,7 @@ void Room405::init() {
 	} else {
 		ws_walk_load_shadow_series(SHADOW_DIRS, SHADOW_NAMES);
 		ws_walk_load_walker_series(NORMAL_DIRS, NORMAL_NAMES);
-		_baron = triggerMachineByHash_3000(8, 11, NORMAL_DIRS, SHADOW_DIRS, 185, 365, 1,
+		_baron = triggerMachineByHash_3000(8, 11, *NORMAL_DIRS, *SHADOW_DIRS, 185, 365, 1,
 			triggerMachineByHashCallback3000, "BARON_walker");
 		ws_walk(329, 320, nullptr, 20, 9);
 	}

@@ -237,7 +237,7 @@ void Room402::init() {
 					_G(flags)[V131] = 408;
 					ws_demand_location(517, 239, 3);
 
-					_wolfWalker = triggerMachineByHash_3000(8, 8, S4_NORMAL_DIRS, S4_SHADOW_DIRS,
+					_wolfWalker = triggerMachineByHash_3000(8, 8, *S4_NORMAL_DIRS, *S4_SHADOW_DIRS,
 						475, 300, 11, triggerMachineByHashCallback3000, "wolf_walker");
 					sendWSMessage_10000(_wolfWalker, 549, 239, 9, 42, 0);
 					kernel_timing_trigger(90, 40);
@@ -1268,7 +1268,7 @@ void Room402::daemon() {
 
 	case 302:
 		terminateMachineAndNull(_wolfieMach);
-		_wolfWalker = triggerMachineByHash_3000(8, 8, S4_NORMAL_DIRS, S4_SHADOW_DIRS,
+		_wolfWalker = triggerMachineByHash_3000(8, 8, *S4_NORMAL_DIRS, *S4_SHADOW_DIRS,
 			484, 315, 11, triggerMachineByHashCallback3000, "wolf_walker");
 		sendWSMessage_10000(_wolfWalker, 517, 239, 9, -1, 0);
 
@@ -1343,7 +1343,7 @@ void Room402::daemon() {
 	case 357:
 		digi_play("402w11", 1);
 		terminateMachineAndNull(_wolfieMach);
-		_wolfWalker = triggerMachineByHash_3000(8, 8, S4_NORMAL_DIRS, S4_SHADOW_DIRS,
+		_wolfWalker = triggerMachineByHash_3000(8, 8, *S4_NORMAL_DIRS, *S4_SHADOW_DIRS,
 			484, 315, 11, triggerMachineByHashCallback3000, "wolf_walker");
 		sendWSMessage_10000(_wolfWalker, 517, 239, 9, -1, 0);
 		kernel_timing_trigger(150, 358);

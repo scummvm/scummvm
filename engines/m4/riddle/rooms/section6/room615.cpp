@@ -192,7 +192,7 @@ void Room615::daemon() {
 			series_load("SAFARI SHADOW 1", 11);
 			series_load("SAFARI SHADOW 1", 12);
 
-			_pu = triggerMachineByHash_3000(8, 0, RIPLEY_SERIES_DIRS, RIPLEY_SHADOWS_DIRS,
+			_pu = triggerMachineByHash_3000(8, 0, *RIPLEY_SERIES_DIRS, *RIPLEY_SHADOWS_DIRS,
 				392, 361, 10, triggerMachineByHashCallback3000, "rip");
 			sendWSMessage_10000(_pu, 426, 347, 9, 50, 1);
 

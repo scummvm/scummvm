@@ -499,7 +499,7 @@ void Room304::handlingStick() {
 		_headUp1 = series_load("fl returns to head up");
 		_headUp2 = series_ranged_play("fl returns to head up",
 			1, 0, 0, 0, 100, 0x100, 250, 31);
-		_machine1 = triggerMachineByHash_3000(8, 3, S3_NORMAL_DIRS2, S3_SHADOW_DIRS2,
+		_machine1 = triggerMachineByHash_3000(8, 3, *S3_NORMAL_DIRS2, *S3_SHADOW_DIRS2,
 			464, 283, 8, triggerMachineByHashCallback3000, "mc");
 		ws_demand_facing(8);
 		kernel_timing_trigger(1, 74);

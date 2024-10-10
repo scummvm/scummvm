@@ -47,52 +47,6 @@ void Room::restoreAutosave() {
 	}
 }
 
-void Room::triggerMachineByHashCallback(frac16 myMessage, machine *) {
-	int32 hi = myMessage >> 16;
-
-	if (hi >= 0)
-		kernel_trigger_dispatch_now(hi);
-}
-
-void Room::triggerMachineByHashCallbackNegative(frac16 myMessage, machine *) {
-	int32 hi = myMessage >> 16;
-
-	if (hi < 0)
-		kernel_trigger_dispatchx(hi);
-}
-
-void Room::triggerMachineByHashCallbackAlways(frac16 myMessage, machine *sender) {
-	kernel_trigger_dispatchx(myMessage);
-}
-
-void Room::triggerMachineByHashCallback3000(frac16 myMessage, machine *sender) {
-	int triggerType = _G(globals)[GLB_TEMP_1] >> 16;
-	int param = _G(globals)[GLB_TEMP_2] >> 16;
-	int msg = myMessage >> 16;
-
-	switch (triggerType) {
-	case 0:
-		break;
-
-	case 1:
-	case 3:
-		if (msg >= 0)
-			kernel_trigger_dispatchx(myMessage);
-		break;
-
-	case 2:
-		if (param)
-			sendWSMessage(0x30000, triggerType, sender, 0, nullptr, 1);
-		else if(msg >= 0)
-			kernel_trigger_dispatchx(myMessage);
-		break;
-
-	default:
-		error("spawn walker callback with triggerType = %d", triggerType);
-		break;
-	}
-}
-
 int Room::checkFlags(bool flag) {
 	int count = 0;
 

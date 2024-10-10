@@ -105,7 +105,7 @@ void Room404::init() {
 		ws_walk_load_walker_series(NORMAL_DIRS, NORMAL_NAMES);
 		ws_demand_location(340, 480, 2);
 
-		_machine1 = triggerMachineByHash_3000(8, 10, NORMAL_DIRS, SHADOW_DIRS,
+		_machine1 = triggerMachineByHash_3000(8, 10, *NORMAL_DIRS, *SHADOW_DIRS,
 			380, 421, 1, triggerMachineByHashCallback3000, "BUTLER_walker");
 
 		if (!_G(kittyScreaming) || !player_been_here(404)) {
@@ -183,7 +183,7 @@ void Room404::daemon() {
 
 	case 32:
 		terminateMachineAndNull(_butlerTalks);
-		_machine1 = triggerMachineByHash_3000(8, 10, NORMAL_DIRS, SHADOW_DIRS,
+		_machine1 = triggerMachineByHash_3000(8, 10, *NORMAL_DIRS, *SHADOW_DIRS,
 			390, 332, 9, triggerMachineByHashCallback3000, "BUTLER_walker");
 		kernel_timing_trigger(270, 33);
 		break;

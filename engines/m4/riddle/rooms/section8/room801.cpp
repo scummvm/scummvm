@@ -107,7 +107,7 @@ void Room801::init() {
 		_roomStates_field60 = series_load("shadow of de plane", -1, nullptr);
 		ws_walk_load_shadow_series(S8_SHADOW_DIRS1, S8_SHADOW_NAMES1);
 		ws_walk_load_walker_series(S8_SHADOW_DIRS2, S8_SHADOW_NAMES2);
-		_roomStates_field9Eh = triggerMachineByHash_3000(8, 4, S8_SHADOW_DIRS2, S8_SHADOW_DIRS1,
+		_roomStates_field9Eh = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1,
 														 20, 310, 3, triggerMachineByHashCallback3000, "mc_trek");
 		kernel_timing_trigger(60, 1, nullptr);
 	} else if (_G(game).previous_room < 850 || _G(game).previous_room != -2) {

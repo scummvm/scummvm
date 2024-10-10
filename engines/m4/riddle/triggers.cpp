@@ -101,20 +101,25 @@ void sendWSMessage_10000(machine *recv, int val1, int val2, int val3,
 	sendWSMessage(0x10000, 0, recv, 0, nullptr, 1);
 }
 
-machine *triggerMachineByHash_3000(int val1, int val2, const int16 *normalDirs,
-	const int16 *shadowDirs, int val3, int val4, int val5,
-	MessageCB intrMsg, const char *machName) {
-#if 0
+machine *triggerMachineByHash_3000(int myHash, int dataHash, int normalDir, int shadowDir,
+		int param1, int param2, int index, MessageCB intrMsg, const char *machName) {
 	static const byte NUMS[14] = { 0, 0, 1, 2, 3, 4, 4, 5, 6, 7, 8, 9, 9, 0 };
-	byte  nums[14];
-	Common::copy(NUMS, NUMS + 14, nums);
 
-	_G(globals)[GLB_TEMP_1] = val2 << 16;
-	_G(globals)[GLB_TEMP_2] = val1 << 24;
-	_G(globals)[GLB_TEMP_3] = val3
-#else
-	error("sendWSMessage_3000");
-#endif
+	_G(globals)[GLB_TEMP_1] = dataHash << 16;
+	_G(globals)[GLB_TEMP_2] = normalDir << 24;
+	_G(globals)[GLB_TEMP_3] = shadowDir << 24;
+	_G(globals)[GLB_TEMP_4] = param1 << 16;
+	_G(globals)[GLB_TEMP_5] = param2 << 16;
+	_G(globals)[GLB_TEMP_6] = ((param2 << 16) - _G(globals)[V002])
+		* _G(globals)[V006] + _G(globals)[V004];
+	_G(globals)[GLB_TEMP_7] = NUMS[index] << 16;
+
+	machine *result = TriggerMachineByHash(myHash, nullptr, dataHash, 0,
+		intrMsg ? intrMsg : &triggerMachineByHashCallback3000,
+		false, machName);
+	_G(inverse_pal)->release();
+
+	return result;
 }
 
 void sendWSMessage_60000(machine *mach) {
@@ -415,6 +420,55 @@ void sendWSMessage_multi(const char *name) {
 		break;
 
 	default:
+		break;
+	}
+}
+
+void intrMsgNull(frac16 myMessage, machine *sender) {
+}
+
+void triggerMachineByHashCallback(frac16 myMessage, machine *) {
+	int32 hi = myMessage >> 16;
+
+	if (hi >= 0)
+		kernel_trigger_dispatch_now(hi);
+}
+
+void triggerMachineByHashCallbackNegative(frac16 myMessage, machine *) {
+	int32 hi = myMessage >> 16;
+
+	if (hi < 0)
+		kernel_trigger_dispatchx(hi);
+}
+
+void triggerMachineByHashCallbackAlways(frac16 myMessage, machine *sender) {
+	kernel_trigger_dispatchx(myMessage);
+}
+
+void triggerMachineByHashCallback3000(frac16 myMessage, machine *sender) {
+	int triggerType = _G(globals)[GLB_TEMP_1] >> 16;
+	int param = _G(globals)[GLB_TEMP_2] >> 16;
+	int msg = myMessage >> 16;
+
+	switch (triggerType) {
+	case 0:
+		break;
+
+	case 1:
+	case 3:
+		if (msg >= 0)
+			kernel_trigger_dispatchx(myMessage);
+		break;
+
+	case 2:
+		if (param)
+			sendWSMessage(0x30000, triggerType, sender, 0, nullptr, 1);
+		else if (msg >= 0)
+			kernel_trigger_dispatchx(myMessage);
+		break;
+
+	default:
+		error("spawn walker callback with triggerType = %d", triggerType);
 		break;
 	}
 }
