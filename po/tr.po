@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2023-12-14 14:28+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2024-10-10 12:33+0000\n"
+"Last-Translator: Ahmet Furkan <ahmetkocaoglu34@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/tr/>\n"
 "Language: tr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.4\n"
+"X-Generator: Weblate 5.7.2\n"
 "X-Language-name: Türkçe\n"
 
 #. I18N: built on <build date> with <compiler>
@@ -31,10 +31,8 @@ msgid "Features compiled in:"
 msgstr "Özellikler derlenmiştir:"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "not supported"
-msgstr "Oyun ID si desteklenmiyor"
+msgstr "desteklenmiyor"
 
 #: gui/about.cpp:118
 #, fuzzy
@@ -43,19 +41,17 @@ msgid "disabled"
 msgstr "Pasifleşmiş"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "enabled"
-msgstr "Pasifleşmiş"
+msgstr "Aktifleşmiş"
 
 #. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
 #: gui/about.cpp:142
 msgid "CPU extensions support:"
-msgstr ""
+msgstr "İşlemci uzantıları şunları destekler:"
 
 #: gui/about.cpp:155
 msgid "Available engines:"
-msgstr "Desteklenen motorlar:"
+msgstr "Etkin motorlar:"
 
 #. I18N: Close dialog button
 #: gui/about.cpp:523 gui/downloadpacksdialog.cpp:297
@@ -135,7 +131,7 @@ msgstr "Seç"
 
 #: gui/cloudconnectionwizard.cpp:180
 msgid "Cloud Connection Wizard"
-msgstr ""
+msgstr "Bulut Bağlantı Sihirbazı"
 
 #: gui/cloudconnectionwizard.cpp:183
 #, fuzzy
@@ -149,23 +145,23 @@ msgstr "Grafik modu:"
 
 #: gui/cloudconnectionwizard.cpp:187
 msgid "Will ask you to run the Local Webserver"
-msgstr ""
+msgstr "Yerel Ağ Sunucusunu Çalıştırmak için Size Soracaktır"
 
 #: gui/cloudconnectionwizard.cpp:189
-#, fuzzy
-#| msgid "Run local webserver"
 msgid "Requires the Local Webserver feature"
-msgstr "Lokal web sunucusunu çalıştır"
+msgstr "Yerel web sunucusunu çalıştır"
 
 #: gui/cloudconnectionwizard.cpp:205
 msgid "Quick Mode: Step 1"
-msgstr ""
+msgstr "Çekiştirme modu: 1. Adım"
 
 #: gui/cloudconnectionwizard.cpp:210
 msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
 msgstr ""
+"Bu modda, Yerel Web Sunucusu çalışıyor olmalıdır,\n"
+" bu nedenle tarayıcınız verileri ScummVM'ye iletemez"
 
 #: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3761
 msgid "Stop server"
@@ -177,11 +173,11 @@ msgstr "Sunucuyu çalıştır"
 
 #: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:3762
 msgid "Stop local webserver"
-msgstr "Web sunucusunu durdur"
+msgstr "Yerel Web sunucusunu durdur"
 
 #: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:2789
 msgid "Run local webserver"
-msgstr "Lokal web sunucusunu çalıştır"
+msgstr "Yerel web sunucusunu çalıştır"
 
 #: gui/cloudconnectionwizard.cpp:248 gui/options.cpp:2790 gui/options.cpp:3769
 msgid "Not running"
@@ -189,11 +185,11 @@ msgstr "Çalışmıyor"
 
 #: gui/cloudconnectionwizard.cpp:263
 msgid "Quick Mode: Step 2"
-msgstr ""
+msgstr "Çekiştirme modu: 2. Adım"
 
 #: gui/cloudconnectionwizard.cpp:267
 msgid "Now, open this link in your browser:"
-msgstr ""
+msgstr "Şimdi, Bu Linki Tarayıcınızda Açınız:"
 
 #: gui/cloudconnectionwizard.cpp:268 gui/cloudconnectionwizard.cpp:323
 #: gui/message.cpp:246 gui/message.cpp:250
@@ -205,34 +201,32 @@ msgid ""
 "It will automatically pass the data to ScummVM,\n"
 "and warn you should there be any errors."
 msgstr ""
+"Verileri otomatik olarak ScummVM'ye aktaracak, \n"
+"ve herhangi bir hata olması durumunda sizi uyaracaktır."
 
 #: gui/cloudconnectionwizard.cpp:283
 msgid "Local Webserver address: "
-msgstr ""
+msgstr "Yerel Web Sunucu Adresi: "
 
 #: gui/cloudconnectionwizard.cpp:299
 msgid "Quick Mode: Success"
-msgstr ""
+msgstr "Çekiştirme modu: Başarılı"
 
 #: gui/cloudconnectionwizard.cpp:303 gui/cloudconnectionwizard.cpp:404
-#, fuzzy
-#| msgid "Connect your cloud storage account"
 msgid "Your cloud storage has been connected!"
-msgstr "Bulut depolama hesabınıza bağlanın"
+msgstr "Bulut depolama hesabınıza bağlanıldı"
 
 #: gui/cloudconnectionwizard.cpp:304 gui/cloudconnectionwizard.cpp:405
 msgid "Finish"
-msgstr ""
+msgstr "Bitir"
 
 #: gui/cloudconnectionwizard.cpp:317
 msgid "Manual Mode: Step 1"
-msgstr ""
+msgstr "Elle Müdahale Modu: 1. Adım"
 
 #: gui/cloudconnectionwizard.cpp:322
-#, fuzzy
-#| msgid "1. Open this link:"
 msgid "Open this link in your browser:"
-msgstr "1.Bu linki aç:"
+msgstr "Bu linki aç:"
 
 #: gui/cloudconnectionwizard.cpp:325
 msgid ""
@@ -240,14 +234,19 @@ msgid ""
 "find it on the Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
+"JSON kodunu ScummVM'ye geçirmede başarısız olduğunda,\n"
+"sayfanın Sorun Giderme bölümünde durumu bulun,\n"
+"ve buradan bir sonraki adıma geçin."
 
 #: gui/cloudconnectionwizard.cpp:354
 msgid "Manual Mode: Step 2"
-msgstr ""
+msgstr "Elle Müdahale Modu: 2. Adım"
 
 #: gui/cloudconnectionwizard.cpp:359
 msgid "Copy the JSON code from the browser here and press Next:"
 msgstr ""
+"Buraya Gezginden JSON Kodunu Kopyalayın, ve ardından Sonraki Butonuna "
+"Tıklayın:"
 
 #: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:258
 #: gui/gui-manager.cpp:273
@@ -256,7 +255,7 @@ msgstr "Yapıştır"
 
 #: gui/cloudconnectionwizard.cpp:361
 msgid "Paste code from clipboard"
-msgstr "Tampondan kodu yapıştır"
+msgstr "Bellekten kodu yapıştır"
 
 #: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:317
 #: engines/dialogs.cpp:94 engines/engine.cpp:932 engines/mm/xeen/saves.cpp:259
@@ -265,43 +264,38 @@ msgstr "Tampondan kodu yapıştır"
 #: engines/tinsel/metaengine.cpp:328 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:736
 msgid "Load"
-msgstr "Yükleme"
+msgstr "Yükle"
 
 #: gui/cloudconnectionwizard.cpp:362
-#, fuzzy
 msgid "Load code from file"
-msgstr "Oyun yükle:"
+msgstr "Dosyadan Oyun yükle"
 
 #: gui/cloudconnectionwizard.cpp:379
 msgid "Manual Mode: Something went wrong"
-msgstr ""
+msgstr "Elle Müdahale Modu: Bir Şeyler Ters Gitti"
 
 #: gui/cloudconnectionwizard.cpp:383
-#, fuzzy
-#| msgid "Storage connected."
 msgid "Cloud storage was not connected."
-msgstr "Depolama bağlandı."
+msgstr "Depolama bağlanamadı."
 
 #: gui/cloudconnectionwizard.cpp:384
 msgid "Make sure the JSON code was copied correctly and retry."
-msgstr ""
+msgstr "Doğru JSON Kodunun Kopyalandığından Emin Olun ve Tekrar Deneyin."
 
 #: gui/cloudconnectionwizard.cpp:385
 msgid "If that doesn't work, try again from the beginning."
-msgstr ""
+msgstr "Eğer Program Çalışamazsa, Baştan Tekrar Deneyin."
 
 #: gui/cloudconnectionwizard.cpp:386
 msgid "Error message: "
-msgstr ""
+msgstr "Hata Mesajı: "
 
 #: gui/cloudconnectionwizard.cpp:400
 msgid "Manual Mode: Success"
-msgstr ""
+msgstr "Elle Müdahale Modu: Başarılı"
 
 #: gui/cloudconnectionwizard.cpp:428 gui/dlcsdialog.cpp:59
 #: gui/downloaddlcsdialog.cpp:60 engines/crab/input/input.cpp:175
-#, fuzzy
-#| msgid "Backend"
 msgid "Back"
 msgstr "Altyapı"
 
@@ -352,7 +346,7 @@ msgstr "Depolama işini bitirene kadar bekleyin ve tekrar deneyin."
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:536
 msgid "JSON code contents are malformed."
-msgstr ""
+msgstr "JSON kod içerikleri hatalı."
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:341 gui/editrecorddialog.cpp:67
@@ -379,18 +373,16 @@ msgstr ""
 #: engines/vcruise/vcruise.cpp:101 engines/vcruise/vcruise.cpp:111
 #: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
-msgstr "OK"
+msgstr "Tamam"
 
 #: gui/cloudconnectionwizard.cpp:558
 msgid "Incorrect JSON."
-msgstr ""
+msgstr "Yanlış JSON Kodu."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
 #: gui/cloudconnectionwizard.cpp:565
-#, fuzzy
-#| msgid "Interact"
 msgid "Interrupted."
-msgstr "Etkileşim"
+msgstr "İşlem Yarıda Kesildi."
 
 #: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3454
 msgid ""
@@ -403,31 +395,28 @@ msgstr ""
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:631
 msgid "Select JSON file copied from scummvm.org site"
-msgstr ""
+msgstr "scummvm.org adresinden Kopyalanan JSON Dosyasını Seç"
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:637
-#, fuzzy
 msgid "Failed to load JSON file"
-msgstr "Oyunun tam ismi"
+msgstr "JSON Dosyayını Yükleme Başarısız Oldu."
 
 #: gui/dlcsdialog.cpp:41
 msgid "Download Freeware Games and Demos"
-msgstr ""
+msgstr "Ücretsiz Oyun ve Demo Yazılımlarını İndir"
 
 #: gui/dlcsdialog.cpp:52
 msgid "Fetching DLCs..."
-msgstr ""
+msgstr "İndirilebilir İçerikler Getiriliyor…"
 
 #: gui/dlcsdialog.cpp:60
-#, fuzzy
 msgid "All Downloads"
-msgstr "Aşağı"
+msgstr "Tüm İndirilenler"
 
 #: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:267
-#, fuzzy
 msgid "Download"
-msgstr "Aşağı"
+msgstr "İndir"
 
 #: gui/downloaddialog.cpp:48
 msgid "Select directory where to download game data"
@@ -477,7 +466,7 @@ msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
-"İndirmek istediğin klasör yaratılamıyor - belirtilen klasör aynı isimde "
+"İndirmek istediğin klasör oluşturulamıyor - belirtilen klasör aynı isimde "
 "dosya içeriyor."
 
 #: gui/downloaddialog.cpp:151
@@ -493,64 +482,60 @@ msgstr ""
 #: gui/downloadpacksdialog.cpp:368
 #, c-format
 msgid "Downloaded %s %S / %s %S"
-msgstr "%s %S / %s %S indirildi."
+msgstr "%s %S / %s %S indirildi"
 
 #: gui/downloaddialog.cpp:204 gui/downloadpacksdialog.cpp:374
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %S/s"
-msgstr "İndirme hızı: %s %S"
+msgstr "İndirme hızı: %s %S/s"
 
 #: gui/downloaddlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download game files"
 msgid "Currently Downloading Games"
-msgstr "Oyun dosyalarını indir"
+msgstr "Şu Anlık İndirilen Oyunlar"
 
 #: gui/downloaddlcsdialog.cpp:55
-#, fuzzy
 msgid "Pending Downloads"
-msgstr "Aşağı"
+msgstr "Bekleyen İndirmeler"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
 msgid "ERROR %d: %s"
-msgstr ""
+msgstr "HATA %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:189 gui/downloadpacksdialog.cpp:245
-#, fuzzy, c-format
+#, c-format
 msgid "Downloading %S list..."
-msgstr "Kayıtları indiriyor..."
+msgstr "%S Kayıtları indiriyor..."
 
 #: gui/downloadpacksdialog.cpp:203
-#, fuzzy
 msgid "Clear Cache"
-msgstr "Değeri sil"
+msgstr "Belleği Temizle"
 
 #: gui/downloadpacksdialog.cpp:255
-#, fuzzy, c-format
+#, c-format
 msgid "Downloading %S list... %d entries"
-msgstr "Kayıtları indiriyor..."
+msgstr "%S Kayıt Listesi indiriyor... %d Kayıt Kaldı"
 
 #: gui/downloadpacksdialog.cpp:265
 #, c-format
 msgid "Detected %d new packs, %s %S"
-msgstr ""
+msgstr "Yeni %d Paketleri Bulundu, %s %S"
 
 #: gui/downloadpacksdialog.cpp:291
 #, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
-msgstr ""
+msgstr "İndirme İşlemi Tamamlandı, %d Paket İndirildi, %s %S"
 
 #: gui/downloadpacksdialog.cpp:395 gui/downloadpacksdialog.cpp:440
 msgid "ERROR: No icons path set"
-msgstr ""
+msgstr "HATA: Simge Klasör Yolu Belirlenemedi."
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:428
 #, c-format
 msgid "No new %S available"
-msgstr ""
+msgstr "Yeni %S Bulunamadı"
 
 #: gui/downloadpacksdialog.cpp:464
 #, c-format
@@ -558,18 +543,20 @@ msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
 msgstr ""
+"Verinin %s %S kısmını Kaldırmak İstiyorsunuz, Bu işlem Önceki İndirilen %S "
+"paketini Silecek. İşlemi Gerçekleştirmek İster Misiniz?"
 
 #: gui/downloadpacksdialog.cpp:464 gui/updates-dialog.cpp:115
 msgid "Proceed"
-msgstr "İlerle"
+msgstr "Kabul"
 
 #: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3298
 msgid "icon packs"
-msgstr ""
+msgstr "Simge paketleri"
 
 #: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3309
 msgid "shader packs"
-msgstr ""
+msgstr "gölgelendirici paketleri"
 
 #: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:713
 msgid "Pick the game:"
@@ -633,12 +620,12 @@ msgstr "Global ses ayarlarını bastırma"
 
 #: gui/editgamedialog.cpp:234 gui/options.cpp:2268
 msgid "Volume"
-msgstr "Ses"
+msgstr "Ses Ayarı"
 
 #: gui/editgamedialog.cpp:236 gui/options.cpp:2270
 msgctxt "lowres"
 msgid "Volume"
-msgstr "Ses"
+msgstr "Ses Ayarı"
 
 #: gui/editgamedialog.cpp:239
 msgid "Override global volume settings"
@@ -687,11 +674,11 @@ msgstr "Yollar"
 
 #: gui/editgamedialog.cpp:291
 msgid "Check Integrity"
-msgstr ""
+msgstr "Bütünlüğü Kontrol Et"
 
 #: gui/editgamedialog.cpp:291
 msgid "Perform integrity check for all game files"
-msgstr ""
+msgstr "Tüm Oyun Dosyaları için Bütünlüğü Kontrol Et"
 
 #: gui/editgamedialog.cpp:296
 msgid "Game Path:"
