@@ -736,12 +736,6 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 		tag = stream->readUint32BE();
 		size = bigEndian ? stream->readUint32BE() : stream->readUint32LE();
 
-		// endianness issue, swap size and continue
-		if (size > stream->pos()) {
-			bigEndian = !bigEndian;
-			size = SWAP_BYTES_32(size);
-		}
-
 		Common::Path path = toSafePath(arr[i]);
 
 		debugC(1, kDebugLoading, "Entry: %s offset %lX (%ld) tag %s size %d", path.toString().c_str(), long(stream->pos() - 8), long(stream->pos() - 8), tag2str(tag), size);

@@ -43,6 +43,7 @@ Common::String unixToMacPath(const Common::String &path);
 Common::String getPath(const Common::String &path, const Common::String &cwd);
 
 Common::Path resolveFSPath(const Common::String &path, const Common::Path &base, bool directory);
+Common::Path resolvePathInner(const Common::String &path, const Common::Path &base, bool directory, const char *ext);
 Common::Path resolvePath(const Common::String &path, const Common::Path &base, bool directory, const char **exts);
 Common::Path resolvePartialPath(const Common::String &path, const Common::Path &base, bool directory, const char **exts);
 Common::Path resolvePathWithFuzz(const Common::String &path, const Common::Path &base, bool directory, const char **exts);

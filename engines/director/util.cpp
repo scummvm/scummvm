@@ -688,20 +688,10 @@ Common::Path resolveFSPath(const Common::String &path, const Common::Path &base,
 	return Common::Path();
 }
 
-Common::Path resolvePath(const Common::String &path, const Common::Path &base, bool directory, const char **exts) {
+Common::Path resolvePathInner(const Common::String &path, const Common::Path &base, bool directory) {
 	Common::Path result = resolveFSPath(path, base, directory);
 	if (!result.empty()) {
 		return result;
-	} else if (result.empty() && !directory && exts) {
-		Common::String fileBase = path;
-		if (hasExtension(fileBase))
-			fileBase = fileBase.substr(0, fileBase.size() - 4);
-		for (int i = 0; exts[i]; i++) {
-			Common::String fileExt = fileBase + exts[i];
-			result = resolveFSPath(fileExt, base, directory);
-			if (!result.empty())
-				return result;
-		}
 	}
 
 	// No filesystem match, check caches
@@ -758,6 +748,22 @@ Common::Path resolvePath(const Common::String &path, const Common::Path &base, b
 	debugN(9, "%s", recIndent());
 	debug(9, "resolvePath(): No match found for %s", path.c_str());
 	return Common::Path();
+}
+
+Common::Path resolvePath(const Common::String &path, const Common::Path &base, bool directory, const char **exts) {
+	Common::Path result = resolvePathInner(path, base, directory);
+	if (result.empty() && !directory && exts) {
+		Common::String fileBase = path;
+		if (hasExtension(fileBase))
+			fileBase = fileBase.substr(0, fileBase.size() - 4);
+		for (int i = 0; exts[i]; i++) {
+			Common::String fileExt = fileBase + exts[i];
+			result = resolvePathInner(fileExt, base, directory);
+			if (!result.empty())
+				break;
+		}
+	}
+	return result;
 }
 
 Common::Path resolvePartialPath(const Common::String &path, const Common::Path &base, bool directory, const char **exts) {
