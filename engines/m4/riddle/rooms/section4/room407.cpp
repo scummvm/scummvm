@@ -1108,7 +1108,7 @@ void Room407::daemon() {
 
 	case 302:
 		_ripHiHand1 = series_load("rip trek hi 1 hand");
-		setGlobals1(1, _ripHiHand1, 12, 12, 12, 0, 12, 1, 1, 1);
+		setGlobals1(_ripHiHand1, 1, 12, 12, 12, 0, 12, 1, 1, 1);
 		sendWSMessage_110000(303);
 		break;
 
