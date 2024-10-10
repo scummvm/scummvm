@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-06-05 08:44+0000\n"
+"PO-Revision-Date: 2024-10-10 12:54+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -15,9 +15,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.4\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 5.7.2\n"
 "X-Language-name: Русский\n"
 
 #. I18N: built on <build date> with <compiler>
@@ -848,10 +848,8 @@ msgid "Launch Email Client"
 msgstr ""
 
 #: gui/integrity-dialog.cpp:174
-#, fuzzy
-#| msgid "Scan complete!"
 msgid "Calculation complete"
-msgstr "Поиск закончен!"
+msgstr "Вычисления закончены"
 
 #: gui/integrity-dialog.cpp:263
 #, fuzzy, c-format
@@ -6454,10 +6452,8 @@ msgstr "Вкл/выкл звуковые эффекты"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:347
-#, fuzzy
-#| msgid "Switching characters:"
 msgid "Switch characters"
-msgstr "Смена героя:"
+msgstr "Смена героя"
 
 #: engines/agos/metaengine.cpp:353
 #, fuzzy
@@ -8051,10 +8047,8 @@ msgid "GroovieV2 support is not compiled in"
 msgstr "Поддержка для версии GroovieV2 не скомпилирована"
 
 #: engines/groovie/metaengine.cpp:201
-#, fuzzy
-#| msgid "Available engines:"
 msgid "Groovie engine"
-msgstr "Доступные движки:"
+msgstr "Движок Groovie"
 
 #: engines/groovie/metaengine.cpp:217
 #, fuzzy
@@ -8634,16 +8628,12 @@ msgid "Yes/No keymappings"
 msgstr "Раскладки клавиш игры"
 
 #: engines/lure/metaengine.cpp:197 engines/mads/metaengine.cpp:311
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restore game"
-msgstr "Восстановить игру:"
+msgstr "Восстановить игру"
 
 #: engines/lure/metaengine.cpp:203
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restart game"
-msgstr "Восстановить игру:"
+msgstr "Перезапустить игру"
 
 #. I18N: Shift Cursor during fight to top left
 #: engines/lure/metaengine.cpp:233
@@ -8792,16 +8782,12 @@ msgid "Scroll bar down"
 msgstr "Прокрутить вниз"
 
 #: engines/mads/metaengine.cpp:331
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Start game"
-msgstr "Восстановить игру:"
+msgstr "Начать игру"
 
 #: engines/mads/metaengine.cpp:337
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Resume game"
-msgstr "Восстановить игру:"
+msgstr "Продолжить игру"
 
 #: engines/mads/metaengine.cpp:343
 #, fuzzy
