@@ -73,6 +73,7 @@ Common::String MacGuiImpl::readCString(uint8 *&data) {
 		data++;
 	}
 
+	debug(8, "MacGuiImpl::readCString(): %s", result.c_str());
 	return result;
 }
 
@@ -84,6 +85,7 @@ Common::String MacGuiImpl::readPascalString(uint8 *&data) {
 		data++;
 	}
 
+	debug(8, "MacGuiImpl::readPascalString(): %s", result.c_str());
 	return result;
 }
 
@@ -200,14 +202,20 @@ void MacGuiImpl::initialize() {
 		};
 
 		Common::String aboutMenuDef;
-
+		int maxMenu = -1;
 		switch (_vm->_game.id) {
 		case GID_INDY3:
 		case GID_LOOM:
 			aboutMenuDef = _strsStrings[11].c_str();
+			maxMenu = 130;
+			break;
+		case GID_MONKEY:
+			aboutMenuDef = _strsStrings[94].c_str();
+			maxMenu = 131;
 			break;
 		default:
 			aboutMenuDef = "About " + name() + "...<B;(-";
+			maxMenu = 132;
 		}
 
 		if (_vm->_game.id == GID_LOOM) {
@@ -224,7 +232,7 @@ void MacGuiImpl::initialize() {
 
 		menu->setCommandsCallback(menuCallback, this);
 
-		for (int i = 129; i <= 130; i++) {
+		for (int i = 129; i <= maxMenu; i++) {
 			Common::SeekableReadStream *res = resource.getResource(MKTAG('M', 'E', 'N', 'U'), i);
 
 			if (!res)
@@ -234,6 +242,16 @@ void MacGuiImpl::initialize() {
 			Common::String name = menuDef->operator[](0);
 			Common::String string = menuDef->operator[](1);
 			int id = menu->addMenuItem(nullptr, name);
+
+			if ((_vm->_game.id == GID_MONKEY || _vm->_game.id == GID_MONKEY2) && id == 3) {
+				string += ";(-;Smooth Graphics";
+			}
+
+			// Floppy version
+			if (_vm->_game.id == GID_INDY4 && !string.contains("Smooth Graphics") && id == 3) {
+				string += ";(-;Smooth Graphics";
+			}
+
 			menu->createSubMenuFromString(id, string.c_str(), 0);
 
 			delete menuDef;
@@ -335,8 +353,12 @@ bool MacGuiImpl::handleMenu(int id, Common::String &name) {
 		return true;
 
 	case 203:	// Pause
-		if (!_vm->_messageBannerActive)
-			_vm->mac_showOldStyleBannerAndPause(_vm->getGUIString(gsPause), -1);
+		if (!_vm->_messageBannerActive) {
+			if (_vm->_game.version == 3)
+				_vm->mac_showOldStyleBannerAndPause(_vm->getGUIString(gsPause), -1);
+			else
+				_vm->showBannerAndPause(0, -1, _vm->getGUIString(gsPause));
+		}
 		return true;
 
 	// In the original, the Edit menu is active during save dialogs, though
@@ -347,6 +369,22 @@ bool MacGuiImpl::handleMenu(int id, Common::String &name) {
 	case 302:	// Copy
 	case 303:	// Paste
 	case 304:	// Clear
+		return true;
+
+	// Window menu
+	case 402: // Tiny
+	case 403: // Medium
+	case 404: // Large
+		return true;
+
+	case 405: // Graphics Smoothing
+		_vm->_useMacGraphicsSmoothing = !_vm->_useMacGraphicsSmoothing;
+
+		// Allow the engine to update the graphics mode
+		_vm->markRectAsDirty(kBannerVirtScreen, 0, 320, 0, 200);
+		_vm->markRectAsDirty(kTextVirtScreen, 0, 320, 0, 200);
+		_vm->markRectAsDirty(kVerbVirtScreen, 0, 320, 0, 200);
+		_vm->markRectAsDirty(kMainVirtScreen, 0, 320, 0, 200);
 		return true;
 	}
 
@@ -376,7 +414,7 @@ void MacGuiImpl::updateWindowManager() {
 		// or disable saving and loading during normal gameplay.
 		saveCondition = (_vm->VAR(58) & 0x01) && !(_vm->VAR(94) & 0x10);
 		loadCondition = (_vm->VAR(58) & 0x02) && !(_vm->VAR(94) & 0x10);
-	} else {
+	} else if (_vm->_game.id == GID_LOOM) {
 		// TODO: Complete LOOM with the rest of the proper code from disasm,
 		// for now we only have the copy protection code and a best guess in place...
 		//
@@ -389,6 +427,9 @@ void MacGuiImpl::updateWindowManager() {
 			!(_vm->VAR(221) & 0x4000) &&
 			(_vm->VAR(_vm->VAR_VERB_SCRIPT) == 5) &&
 			(_vm->_userPut > 0);
+	} else {
+		saveCondition = true;
+		loadCondition = true;
 	}
 
 	bool canLoad = _vm->canLoadGameStateCurrently() && loadCondition;
@@ -398,8 +439,11 @@ void MacGuiImpl::updateWindowManager() {
 	Graphics::MacMenuItem *loadMenu = menu->getSubMenuItem(gameMenu, 0);
 	Graphics::MacMenuItem *saveMenu = menu->getSubMenuItem(gameMenu, 1);
 
-	loadMenu->enabled = canLoad;
-	saveMenu->enabled = canSave;
+	if (loadMenu)
+		loadMenu->enabled = canLoad;
+
+	if (saveMenu)
+		saveMenu->enabled = canSave;
 
 	if (isActive) {
 		if (!_menuIsActive) {
@@ -412,6 +456,25 @@ void MacGuiImpl::updateWindowManager() {
 				_windowManager->popCursor();
 			CursorMan.showMouse(_cursorWasVisible);
 		}
+	}
+
+	if (_vm->_game.version > 3) {
+		Graphics::MacMenuItem *windowMenu = menu->getMenuItem("Window");
+		Graphics::MacMenuItem *hideDesktopMenu = menu->getSubMenuItem(windowMenu, 0);
+		Graphics::MacMenuItem *hideBarMenu = menu->getSubMenuItem(windowMenu, 1);
+
+		hideDesktopMenu->enabled = false;
+		hideBarMenu->enabled = false;
+
+		// "Fix color map"
+		menu->getSubMenuItem(gameMenu, 5)->enabled = false;
+
+		// Window mode
+		menu->getSubMenuItem(windowMenu, 3)->enabled = false;
+		menu->getSubMenuItem(windowMenu, 4)->enabled = false;
+		menu->getSubMenuItem(windowMenu, 5)->enabled = false;
+
+		menu->getSubMenuItem(windowMenu, 7)->checked = _vm->_useMacGraphicsSmoothing;
 	}
 
 	_menuIsActive = isActive;
@@ -578,7 +641,7 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createWindow(Common::Rect bounds, MacDi
 	// 640x400 pixels, but that may not be a bad thing if we want to keep
 	// support for that resolution later.
 
-	bounds.translate(0, 2 * _vm->_screenDrawOffset);
+	bounds.translate(0, 2 * _vm->_macScreenDrawOffset);
 
 	return new MacDialogWindow(this, _system, _surface, bounds, style);
 }
@@ -605,6 +668,10 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 	case GID_LOOM:
 		saveGameFileAsResStr = _strsStrings[17].c_str();
 		gameFileResStr = _strsStrings[18].c_str();
+		break;
+	case GID_MONKEY:
+		saveGameFileAsResStr = _strsStrings[103].c_str();
+		gameFileResStr = _strsStrings[104].c_str();
 		break;
 	default:
 		saveGameFileAsResStr = "Save Game File as...";
@@ -854,6 +921,9 @@ bool MacGuiImpl::runQuitDialog() {
 	case GID_LOOM:
 		quitString = _strsStrings[15].c_str();
 		break;
+	case GID_MONKEY:
+		quitString = _strsStrings[96].c_str();
+		break;
 	default:
 		quitString = "Are you sure you want to quit?";
 	}
@@ -867,6 +937,9 @@ bool MacGuiImpl::runRestartDialog() {
 	case GID_INDY3:
 	case GID_LOOM:
 		restartString = _strsStrings[14].c_str();
+		break;
+	case GID_MONKEY:
+		restartString = _strsStrings[97].c_str();
 		break;
 	default:
 		restartString = "Are you sure you want to restart this game from the beginning?";

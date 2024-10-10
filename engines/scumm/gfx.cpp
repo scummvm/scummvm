@@ -660,7 +660,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	if (width <= 0 || height <= 0)
 		return;
 
-	if (_macScreen) {
+	if (_macScreen && _game.version == 3) {
 		mac_drawStripToScreen(vs, top, x, y, width, height);
 		return;
 	}
@@ -800,8 +800,15 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		}
 	}
 
-	// Finally blit the whole thing to the screen
-	_system->copyRectToScreen(src, pitch, x, y, width, height);
+	if (_macScreen && _game.platform == Common::kPlatformMacintosh && _game.version > 3) {
+		// Instead of using mac_drawStripToScreen(), we draw the entire already processed
+		// video buffer to screen with the following routine, because for newer games we
+		// need the text overlay to be already stamped on top of the buffer.
+		mac_drawBufferToScreen((const byte *)src, pitch, x, y, width, height);
+	} else {
+		// Finally blit the whole thing to the screen
+		_system->copyRectToScreen(src, pitch, x, y, width, height);
+	}
 }
 
 const byte *ScummEngine::postProcessDOSGraphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const {
@@ -1236,7 +1243,7 @@ void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 			} else
 #endif
 			{
-				byte *mask = (byte *)_textSurface.getBasePtr(rect.left, rect.top - _screenTop - _screenDrawOffset);
+				byte *mask = (byte *)_textSurface.getBasePtr(rect.left, rect.top - _screenTop);
 				fill(mask, _textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width * _textSurfaceMultiplier, height * _textSurfaceMultiplier, _textSurface.format.bytesPerPixel);
 			}
 		}
@@ -1263,7 +1270,7 @@ void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 
 void ScummEngine::restoreCharsetBg() {
 	_nextLeft = _string[0].xpos;
-	_nextTop = _string[0].ypos + _screenTop + _screenDrawOffset;
+	_nextTop = _string[0].ypos + _screenTop;
 
 	if (_charset->_hasMask || _postGUICharMask) {
 		_postGUICharMask = false;
@@ -1431,7 +1438,7 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	VirtScreen *vs;
 	byte *backbuff, *bgbuff;
 
-	if ((vs = findVirtScreen(y + _screenDrawOffset)) == nullptr)
+	if ((vs = findVirtScreen(y)) == nullptr)
 		return;
 
 	if (_game.version == 8) {
@@ -1473,8 +1480,8 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	y2++;
 
 	// Adjust for the topline of the VirtScreen
-	y -= vs->topline - _screenDrawOffset;
-	y2 -= vs->topline - _screenDrawOffset;
+	y -= vs->topline;
+	y2 -= vs->topline;
 
 	// Clip the coordinates
 	if (x < 0)
@@ -1627,7 +1634,8 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 }
 
 void ScummEngine::drawLine(int x1, int y1, int x2, int y2, int color) {
-	if (_game.platform == Common::kPlatformFMTowns && _game.version == 5) {
+	if ((_game.platform == Common::kPlatformFMTowns && _game.version == 5) ||
+		(_game.platform == Common::kPlatformMacintosh && _game.version > 3)) {
 		drawBox(x1, y1, x2, y2, color);
 		return;
 	}
@@ -4697,7 +4705,7 @@ void ScummEngine::dissolveEffect(int width, int height) {
 			towns_drawStripToScreen(vs, x, y + vs->topline, x, y, width, height);
 		else
 #endif
-		if (_macScreen)
+		if (_macScreen && _game.version == 3)
 			mac_drawStripToScreen(vs, y, x, y + vs->topline, width, height);
 		else if (IS_ALIGNED(width, 4))
 			drawStripToScreen(vs, x, width, y, y + height);
@@ -4781,6 +4789,10 @@ void ScummEngine::scrollEffect(int dir) {
 
 	byte *src;
 	int m = _textSurfaceMultiplier;
+
+	if (m == 1 && _game.platform == Common::kPlatformMacintosh)
+		m = 2;
+
 	int vsPitch = vs->pitch;
 
 	switch (dir) {

@@ -244,10 +244,15 @@ void ScummEngine::parseEvent(Common::Event event) {
 				_mouse.y = _mouse.y * 4 / 7;
 			}
 
-		} else if (_textSurfaceMultiplier == 2 || _renderMode == Common::kRenderCGA_BW || _enableEGADithering) {
+		} else if ((_textSurfaceMultiplier == 2 || _macScreen) || _renderMode == Common::kRenderCGA_BW || _enableEGADithering) {
 			_mouse.x >>= 1;
 			_mouse.y >>= 1;
 		}
+
+		if (_useMacScreenCorrectHeight && _macScreen) {
+			_mouse.y -= _macScreenDrawOffset;
+		}
+
 		break;
 	case Common::EVENT_LBUTTONUP:
 		_leftBtnPressed &= ~msDown;
@@ -977,7 +982,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			} else {
 				// Force the cursor OFF...
 				int8 oldCursorState = _cursor.state;
-				_cursor.state = 0;
+				_cursor.state = (_game.id == GID_MONKEY && _game.platform == Common::kPlatformMacintosh) ? 1 : 0;
 				CursorMan.showMouse(_cursor.state > 0);
 				// "Game Paused.  Press SPACE to Continue."
 				if (_game.version > 4)

@@ -19,63 +19,44 @@
  *
  */
 
-#ifndef SCUMM_MACGUI_MACGUI_H
-#define SCUMM_MACGUI_MACGUI_H
+#ifndef SCUMM_MACGUI_MACGUI_MI1_H
+#define SCUMM_MACGUI_MACGUI_MI1_H
 
 #include "common/events.h"
+#include "common/rect.h"
 #include "common/str.h"
-
-namespace Graphics {
-class Font;
-struct Surface;
-}
 
 namespace Scumm {
 
-class ScummEngine;
-class Actor;
 class MacGuiImpl;
 
-class MacGui {
-	friend class ScummEngine;
-
-private:
-	MacGuiImpl *_impl = nullptr;
-
+class MacMI1Gui : public MacGuiImpl {
 public:
-	MacGui(ScummEngine *vm, const Common::Path &resourceFile);
-	~MacGui();
+	MacMI1Gui(ScummEngine *vm, const Common::Path &resourceFile);
+	~MacMI1Gui();
 
-	void initialize();
-	void reset();
-	void update(int delta);
-	void updateWindowManager();
+	const Common::String name() const { return "game"; }
 
-	void resetAfterLoad();
 	bool handleEvent(Common::Event event);
-
-	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate);
-
-	void setPalette(const byte *palette, uint size);
 
 	const Graphics::Font *getFontByScummId(int32 id);
 
-	void drawBanner(char *message);
-	void undrawBanner();
+	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate);
 
-	bool runQuitDialog();
-	bool runRestartDialog();
+	void resetAfterLoad();
+	void update(int delta) {}
 
-	// Indiana Jones and the Last Crusade
-	bool isVerbGuiActive() const;
+protected:
+	bool getFontParams(FontId fontId, int &id, int &size, int &slant) const;
 
-	Graphics::Surface *textArea() const;
-	void clearTextArea();
-	void initTextAreaForActor(Actor *a, byte color);
-	void printCharToTextArea(int chr, int x, int y, int color);
+	bool handleMenu(int id, Common::String &name);
 
-	// Loom
-	void runDraftsInventory();
+	void runAboutDialog();
+	bool runOpenDialog(int &saveSlotToHandle);
+	bool runSaveDialog(int &saveSlotToHandle, Common::String &name);
+	bool runOptionsDialog();
+
+	void readStrings() override;
 };
 
 } // End of namespace Scumm

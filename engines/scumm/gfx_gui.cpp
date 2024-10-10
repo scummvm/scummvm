@@ -2603,7 +2603,7 @@ void ScummEngine::showMainMenu() {
 		!(_game.platform == Common::kPlatformSegaCD && hasLoadedState)) {
 		restoreCursorPostMenu();
 	} else if (_saveLoadFlag == 2) {
-		_cursor.state = 0;
+		_cursor.state = (_game.id == GID_MONKEY && _game.platform == Common::kPlatformMacintosh) ? 1 : 0;
 	}
 
 	// Run the exit savescreen script, if available

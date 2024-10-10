@@ -1266,13 +1266,24 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 		_vm->scummLoop_handleSound();
 
 		if (_warpNeeded) {
-			_vm->_system->warpMouse(_warpX, _warpY);
+			_vm->_system->warpMouse(_vm->_macScreen ? _warpX * 2 : _warpX, _vm->_macScreen ? (_warpY * 2 + 2 * _vm->_macScreenDrawOffset) : _warpY);
 			_warpNeeded = false;
 		}
 		_vm->parseEvents();
 		_vm->processInput();
 		if (_palDirtyMax >= _palDirtyMin) {
-			_vm->_system->getPaletteManager()->setPalette(_pal + _palDirtyMin * 3, _palDirtyMin, _palDirtyMax - _palDirtyMin + 1);
+			// Apply gamma correction for Mac versions
+			if (_vm->_macScreen) {
+				byte palette[768];
+				memcpy(palette, _pal, 768);
+				for (int i = 0; i < ARRAYSIZE(palette); i++) {
+					palette[i] = _vm->_macGammaCorrectionLookUp[_pal[i]];
+				}
+
+				_vm->_system->getPaletteManager()->setPalette(palette + _palDirtyMin * 3, _palDirtyMin, _palDirtyMax - _palDirtyMin + 1);
+			} else {
+				_vm->_system->getPaletteManager()->setPalette(_pal + _palDirtyMin * 3, _palDirtyMin, _palDirtyMax - _palDirtyMin + 1);
+			}
 
 			_palDirtyMax = -1;
 			_palDirtyMin = 256;
@@ -1289,10 +1300,15 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 			if (!skipFrame) {
 				// WORKAROUND for bug #2415: "FT DEMO: assertion triggered
 				// when playing movie". Some frames there are 384 x 224
-				int w = MIN(_width, _vm->_screenWidth);
-				int h = MIN(_height, _vm->_screenHeight);
+				int frameWidth = MIN(_width, _vm->_screenWidth);
+				int frameHeight = MIN(_height, _vm->_screenHeight);
 
-				_vm->_system->copyRectToScreen(_dst, _width, 0, 0, w, h);
+				if (_vm->_macScreen) {
+					_vm->mac_drawBufferToScreen(_dst, frameWidth, 0, 0, frameWidth, frameHeight);
+				} else {
+					_vm->_system->copyRectToScreen(_dst, _width, 0, 0, frameWidth, frameHeight);
+				}
+
 				_vm->_system->updateScreen();
 				_updateNeeded = false;
 			}
