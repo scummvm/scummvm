@@ -1224,6 +1224,10 @@ Common::Error CastleEngine::loadGameStreamExtended(Common::SeekableReadStream *s
 
 	if (_useRockTravel) // Enable cheat
 		setGameBit(k8bitGameBitTravelRock);
+
+	for (auto &it : _areaMap) {
+		it._value->resetAreaGroups();
+	}
 	return Common::kNoError;
 }
 

@@ -158,7 +158,7 @@ void Group::run() {
 }
 
 void Group::reset() {
-	/*uint32 groupSize = _objects.size();
+	uint32 groupSize = _objects.size();
 	for (uint32 i = 0; i < groupSize ; i++) {
 		GeometricObject *gobj = (GeometricObject *)_objects[i];
 		if (GeometricObject::isPolygon(_objects[i]->getType())) {
@@ -166,7 +166,7 @@ void Group::reset() {
 			gobj->restoreOrdinates();
 			//gobj->makeInvisible();
 		}
-	}*/
+	}
 }
 
 void Group::draw(Renderer *gfx, float offset) {

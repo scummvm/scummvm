@@ -67,6 +67,7 @@ public:
 	void addStructure(Area *global);
 	void removeObject(int16 id);
 	void resetArea();
+	void resetAreaGroups();
 	bool isOutside();
 	bool hasActiveGroups();
 

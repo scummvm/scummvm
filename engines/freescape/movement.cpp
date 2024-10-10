@@ -447,7 +447,9 @@ bool FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, 
 	Math::Vector3d direction = newPosition - lastPosition;
 	direction.normalize();
 	int rayLenght = 45;
-	if (_currentArea->getScale() >= 5)
+	if (_currentArea->getScale() == 16)
+		rayLenght = 200;
+	else if (_currentArea->getScale() >= 5)
 		rayLenght = MAX(5, 45 / (2 * _currentArea->getScale()));
 
 	for (int i = 0; i <= 2; i++) {

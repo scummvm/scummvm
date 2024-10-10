@@ -192,8 +192,20 @@ void Area::unremapColor(int index) {
 	_colorRemaps.clear(index);
 }
 
+void Area::resetAreaGroups() {
+	debugC(1, kFreescapeDebugMove, "Resetting groups from area: %s", _name.c_str());
+	if (_objectsByID) {
+		for (auto &it : *_objectsByID) {
+			Object *obj = it._value;
+
+			if (obj->getType() == ObjectType::kGroupType)
+				((Group *)obj)->reset();
+		}
+	}
+}
+
 void Area::resetArea() {
-	debugC(1, kFreescapeDebugMove, "Resetting area name: %s", _name.c_str());
+	debugC(1, kFreescapeDebugMove, "Resetting objects from area: %s", _name.c_str());
 	_colorRemaps.clear();
 	if (_objectsByID) {
 		for (auto &it : *_objectsByID) {
