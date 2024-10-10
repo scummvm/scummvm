@@ -29,13 +29,13 @@
 
 namespace QDEngine {
 
-class qd3mince2SborKartyMiniGame : public qdMiniGameInterface {
+class qd3mice2SborKartyMiniGame : public qdMiniGameInterface {
 public:
-	qd3mince2SborKartyMiniGame() {}
-	~qd3mince2SborKartyMiniGame() {}
+	qd3mice2SborKartyMiniGame() {}
+	~qd3mice2SborKartyMiniGame() {}
 
 	bool init(const qdEngineInterface *engine_interface) {
-		debugC(1, kDebugMinigames, "3mince2SborKarty::init()");
+		debugC(1, kDebugMinigames, "3mice2SborKarty::init()");
 
 		_engine = engine_interface;
 		_scene = engine_interface->current_scene_interface();
@@ -56,7 +56,7 @@ public:
 	}
 
 	bool quant(float dt) {
-		debugC(3, kDebugMinigames, "3mince2SborKarty::quant(%f)", dt);
+		debugC(3, kDebugMinigames, "3mice2SborKarty::quant(%f)", dt);
 
 		char tmp[20];
 
@@ -154,7 +154,7 @@ public:
 	}
 
 	bool finit() {
-		debugC(1, kDebugMinigames, "3mince2SborKarty::finit()");
+		debugC(1, kDebugMinigames, "3mice2SborKarty::finit()");
 
 		if (_scene)  {
 			_engine->release_scene_interface(_scene);
