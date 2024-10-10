@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-10-10 12:44+0000\n"
+"POT-Creation-Date: 2024-10-10 12:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5720,7 +5720,7 @@ msgstr ""
 msgid "Toggle sound effects on/off"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:278
+#: engines/agos/metaengine.cpp:278 engines/sky/metaengine.cpp:131
 msgid "Toggle fast mode on/off"
 msgstr ""
 
@@ -10287,12 +10287,8 @@ msgstr ""
 msgid "Open control panel"
 msgstr ""
 
-#: engines/sky/metaengine.cpp:131
-msgid "Toggle fast mode"
-msgstr ""
-
 #: engines/sky/metaengine.cpp:136
-msgid "Toggle really fast mode"
+msgid "Toggle really fast mode on/off"
 msgstr ""
 
 #: engines/sky/metaengine.cpp:156
