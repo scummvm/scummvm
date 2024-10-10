@@ -144,6 +144,25 @@ void TwineScreen::update() {
 	Super::update();
 }
 
+int32 boundRuleThree(int32 val1, int32 val2, int32 nbstep, int32 step) { // BoundRegleTrois
+	if (step <= 0) {
+		return val1;
+	}
+
+	if (step >= nbstep) {
+		return val2;
+	}
+
+	return val1 + (((val2 - val1) * step) / nbstep);
+}
+
+int32 lerp(int32 val1, int32 val2, int32 nbstep, int32 step) {  // RegleTrois32
+	if (nbstep < 0) {
+		return val2;
+	}
+	return (((val2 - val1) * step) / nbstep) + val1;
+}
+
 TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flags, Common::Platform platform, TwineGameType gameType)
 	: Engine(system), _gameType(gameType), _gameLang(language), _frontVideoBuffer(this), _gameFlags(flags), _platform(platform), _rnd("twine") {
 	// Add default file directories

@@ -188,7 +188,7 @@ void HolomapV1::computeCoorMapping() {
 	int projectedIndex = 0;
 	for (int32 alpha = -LBAAngles::ANGLE_90; alpha <= LBAAngles::ANGLE_90; alpha += LBAAngles::ANGLE_11_25) {
 		for (int32 beta = 0; beta < LBAAngles::ANGLE_360; beta += LBAAngles::ANGLE_11_25) {
-			_projectedSurfacePositions[projectedIndex].x2 = _engine->_screens->lerp(0, 255 * LBAAngles::ANGLE_90 + 255, LBAAngles::ANGLE_360 - 1, beta);
+			_projectedSurfacePositions[projectedIndex].x2 = lerp(0, 255 * LBAAngles::ANGLE_90 + 255, LBAAngles::ANGLE_360 - 1, beta);
 			if (alpha == LBAAngles::ANGLE_90) {
 				_projectedSurfacePositions[projectedIndex].y2 = 255 * LBAAngles::ANGLE_90 + 255;
 			} else {
@@ -632,8 +632,8 @@ void HolomapV1::holoMap() {
 
 		if (automove) {
 			const int32 dt = _engine->timerRef - otimer;
-			calpha = _engine->_collision->boundRuleThree(oalpha, dalpha, 75, dt);
-			cbeta = _engine->_collision->boundRuleThree(obeta, dbeta, 75, dt);
+			calpha = boundRuleThree(oalpha, dalpha, 75, dt);
+			cbeta = boundRuleThree(obeta, dbeta, 75, dt);
 			flagredraw = true;
 		}
 

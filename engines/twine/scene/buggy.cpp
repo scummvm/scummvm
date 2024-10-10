@@ -587,17 +587,17 @@ void Buggy::moveBuggy(ActorStruct *ptrobj) {
 
 		switch (Gear) {
 		case -1:
-			pitch = _engine->_collision->boundRuleThree(3000, MAX_SAMPLE_PITCH2, MAX_SPEED, ABS(ptb->Speed));
+			pitch = boundRuleThree(3000, MAX_SAMPLE_PITCH2, MAX_SPEED, ABS(ptb->Speed));
 			break;
 
 		case 0:
-			pitch = _engine->_collision->boundRuleThree(3000, MAX_SAMPLE_PITCH, MAX_SPEED, ABS(ptb->Speed));
+			pitch = boundRuleThree(3000, MAX_SAMPLE_PITCH, MAX_SPEED, ABS(ptb->Speed));
 			if (pitch >= MAX_SAMPLE_PITCH)
 				TimerGear = 1;
 			break;
 
 		case 1:
-			pitch = _engine->_collision->boundRuleThree(MAX_SAMPLE_PITCH2, MIN_SAMPLE_PITCH2, TEMPO_GEAR, TimerGear - TimerRefHR);
+			pitch = boundRuleThree(MAX_SAMPLE_PITCH2, MIN_SAMPLE_PITCH2, TEMPO_GEAR, TimerGear - TimerRefHR);
 			break;
 
 		default:

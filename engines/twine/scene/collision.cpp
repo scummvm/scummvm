@@ -82,18 +82,6 @@ bool Collision::checkZvOnZv(int32 actorIdx1, int32 actorIdx2) const {
 	return true;
 }
 
-int32 Collision::boundRuleThree(int32 val1, int32 val2, int32 nbstep, int32 step) const { // BoundRegleTrois
-	if (step <= 0) {
-		return val1;
-	}
-
-	if (step >= nbstep) {
-		return val2;
-	}
-
-	return val1 + (((val2 - val1) * step) / nbstep);
-}
-
 void Collision::reajustPos(IVec3 &processActor, ShapeType brickShape) const {
 	if (brickShape <= ShapeType::kSolid) {
 		return;

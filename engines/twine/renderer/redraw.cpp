@@ -767,7 +767,7 @@ void Redraw::renderOverlays() {
 			break;
 		}
 		case OverlayType::koNumberRange: {
-			const int32 range = _engine->_collision->boundRuleThree(overlay->info, overlay->num, 100, overlay->timerEnd - _engine->timerRef - _engine->toSeconds(1));
+			const int32 range = boundRuleThree(overlay->info, overlay->num, 100, overlay->timerEnd - _engine->timerRef - _engine->toSeconds(1));
 
 			char text[10];
 			Common::sprintf_s(text, "%d", range);

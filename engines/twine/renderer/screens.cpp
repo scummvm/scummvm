@@ -171,13 +171,6 @@ bool Screens::loadBitmapDelay(const char *image, int32 seconds) {
 	return false;
 }
 
-int32 Screens::lerp(int32 val1, int32 val2, int32 nbstep, int32 step) {  // RegleTrois32
-	if (nbstep < 0) {
-		return val2;
-	}
-	return (((val2 - val1) * step) / nbstep) + val1;
-}
-
 void Screens::fadePal(uint8 r, uint8 g, uint8 b, const Graphics::Palette &rgbaPal, int32 intensity) {
 	Graphics::Palette pal{NUMOFCOLORS};
 

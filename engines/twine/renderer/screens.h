@@ -95,17 +95,6 @@ public:
 	bool loadBitmapDelay(const char *image, int32 seconds);
 
 	/**
-	 * Linear interpolation of the given value between start and end
-	 * @param value color component
-	 * @param start lower range
-	 * @param end upper range
-	 * @param t the location in given range
-	 * @return the lerped value
-	 * @note Doesn't clamp
-	 */
-	int32 lerp(int32 value, int32 start, int32 end, int32 t);
-
-	/**
 	 * Adjust between two palettes
 	 * @param pal1 palette from adjust
 	 * @param pal2 palette to adjust

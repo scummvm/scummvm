@@ -198,6 +198,20 @@ public:
 	void update() override;
 };
 
+
+int32 boundRuleThree(int32 val1, int32 val2, int32 nbstep, int32 step);
+
+/**
+ * Linear interpolation of the given value between start and end
+ * @param value color component
+ * @param start lower range
+ * @param end upper range
+ * @param t the location in given range
+ * @return the lerped value
+ * @note Doesn't clamp
+ */
+int32 lerp(int32 value, int32 start, int32 end, int32 t);
+
 class TwinEEngine : public Engine {
 private:
 	int32 _isTimeFreezed = 0;

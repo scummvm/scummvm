@@ -73,7 +73,7 @@ void Sound::setSamplePosition(int32 channelIdx, int32 x, int32 y, int32 z) {
 	const int32 camY = _engine->_grid->_newCamera.y * SIZE_BRICK_Y;
 	const int32 camZ = _engine->_grid->_newCamera.z * SIZE_BRICK_XZ;
 	int32 distance = getDistance3D(camX, camY, camZ, x, y, z);
-	distance = _engine->_collision->boundRuleThree(0, distance, 10000, 255);
+	distance = boundRuleThree(0, distance, 10000, 255);
 	byte targetVolume = 0;
 	if (distance < 255) {
 		targetVolume = 255 - distance;

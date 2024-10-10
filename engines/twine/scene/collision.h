@@ -51,8 +51,6 @@ public:
 	 */
 	bool checkZvOnZv(int32 actorIdx1, int32 actorIdx2) const;
 
-	int32 boundRuleThree(int32 start, int32 end, int32 maxDelay, int32 delay) const;
-
 	/**
 	 * Reajust actor position in scene according with brick shape bellow actor
 	 * @param brickShape Shape of brick bellow the actor
