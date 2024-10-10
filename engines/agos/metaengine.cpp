@@ -270,7 +270,7 @@ Common::KeymapArray AgosMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("m");
 	gameKeyMap->addAction(act);
 
-	act = new Action("SNDEFFECT", _("Toggle sound effect on/off"));
+	act = new Action("SNDEFFECT", _("Toggle sound effects on/off"));
 	act->setCustomEngineActionEvent(kActionToggleSoundEffects);
 	act->addDefaultInputMapping("s");
 	gameKeyMap->addAction(act);
