@@ -60,7 +60,7 @@ public:
 	uint32 _palettePcx[NUMOFCOLORS]{0};
 
 	/** flag to check in the game palette was changed */
-	bool _palResetted = false;
+	bool _fadeBlackPal = false;
 
 	/** flag to check if the main flag is locked */
 	bool _flagFade = false;
@@ -149,6 +149,7 @@ public:
 	 * @param palette current palette to fade
 	 */
 	void fadeToBlack(const uint32 *palette);
+	void fadeWhiteToPal(const uint32 *ptrpal);
 
 	/**
 	 * Fade image with another palette source
@@ -157,7 +158,7 @@ public:
 	void fadeToPal(const uint32 *palette);
 
 	/** Fade black palette to white palette */
-	void blackToWhite();
+	void whiteFade();
 
 	/** Resets both in-game and sdl palettes */
 	void setBlackPal();
