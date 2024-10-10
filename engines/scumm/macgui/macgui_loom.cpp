@@ -261,7 +261,7 @@ bool MacLoomGui::handleMenu(int id, Common::String &name) {
 }
 
 void MacLoomGui::runAboutDialog() {
-	// The About window is not a a dialog resource. Its size appears to be
+	// The About window is not a dialog resource. Its size appears to be
 	// hard-coded (416x166), and it's drawn centered. The graphics are in
 	// PICT 5000 and 5001.
 
