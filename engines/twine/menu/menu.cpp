@@ -1204,7 +1204,6 @@ void Menu::drawBehaviourMenu(int32 left, int32 top, int32 angle) {
 }
 
 void Menu::processBehaviourMenu(bool behaviourMenu) {
-	_engine->extInitSvga();
 	if (_engine->_actor->_heroBehaviour == HeroBehaviourType::kProtoPack) {
 		_engine->_sound->stopSamples();
 		_engine->_actor->setBehaviour(HeroBehaviourType::kNormal);

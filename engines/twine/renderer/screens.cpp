@@ -55,6 +55,7 @@ int32 Screens::mapLba2Palette(int32 palIndex) {
 bool Screens::adelineLogo() {
 	_engine->_music->playMidiFile(31);
 
+	// TODO: whiteFade and fadeWhiteToPal
 	return loadImageDelay(_engine->_resources->adelineLogo(), 7);
 }
 

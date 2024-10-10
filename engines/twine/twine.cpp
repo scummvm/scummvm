@@ -720,6 +720,7 @@ void TwinEEngine::processActorSamplePosition(int32 actorIdx) {
 void TwinEEngine::processBookOfBu() {
 	_screens->fadeToBlack(_screens->_ptrPal);
 	_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 15, 16));
+	_screens->fadeToPal(_screens->_palettePcx);
 	_text->initDial(TextBankId::Inventory_Intro_and_Holomap);
 	_text->_flagMessageShade = false;
 	_text->bigWinDial();
@@ -733,8 +734,6 @@ void TwinEEngine::processBookOfBu() {
 	_text->initSceneTextBank();
 	_screens->fadeToBlack(_screens->_palettePcx);
 	_screens->clearScreen();
-	// TODO: the palette handling here looks wrong
-	setPalette(_screens->_ptrPal);
 	_screens->_flagFade = true;
 }
 
@@ -752,7 +751,7 @@ void TwinEEngine::processBonusList() {
 
 void TwinEEngine::processInventoryAction() {
 	ScopedEngineFreeze scoped(this);
-	extInitSvga();
+	testRestoreModeSVGA(true) ;
 	_menu->inventory();
 
 	switch (_loopInventoryItem) {

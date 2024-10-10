@@ -23,6 +23,7 @@
 #include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/memstream.h"
+#include "common/scummsys.h"
 #include "common/stream.h"
 #include "common/types.h"
 #include "graphics/palette.h"
@@ -283,12 +284,17 @@ void HolomapV1::drawHoloMap(uint8 *holomapImage, uint32 holomapImageSize) {
 	}
 }
 
-void HolomapV1::drawTitle(int32 centerx, int32 top, const char *title) {
+void HolomapV1::drawTitle(int32 x, int32 y, const char *title) {
 	const int32 size = _engine->_text->sizeFont(title);
-	const int32 x = centerx - size / 2;
-	const int32 y = top;
+	const int32 textx = x - size / 2;
+	const int32 texty = y - 18;
 	_engine->_text->setFontColor(COLOR_WHITE);
-	_engine->_text->drawText(x, y, title);
+	_engine->_text->drawText(textx, texty, title);
+	int32 x0 = x - 630 / 2;
+	int32 x1 = x + 630 / 2;
+	int32 y0 = y - 40 / 2;
+	int32 y1 = y + 40 / 2;
+	_engine->copyBlockPhys(x0, y0, x1, y1);
 }
 
 void HolomapV1::drawHoloObj(const IVec3 &angle, int32 alpha, int32 beta) {
@@ -373,7 +379,6 @@ void HolomapV1::holoTraj(int32 trajectoryIndex) {
 	int32 frameTime = _engine->timerRef;
 	int16 trajAnimFrameIdx = 0;
 
-	int32 waterPaletteChangeTimer = 0;
 	bool flagpal = true;
 	_engine->_input->enableKeyMap(holomapKeyMapId);
 	for (;;) {
@@ -383,14 +388,13 @@ void HolomapV1::holoTraj(int32 trajectoryIndex) {
 			break;
 		}
 
-		if (!flagpal && waterPaletteChangeTimer < _engine->timerRef) {
+		if (!flagpal) {
 			// animate the water surface
 			_engine->setPalette(HOLOMAP_PALETTE_INDEX, NUM_HOLOMAPCOLORS, &_rotPal[3 * _rotPalPos]);
 			_rotPalPos++;
 			if (_rotPalPos == NUM_HOLOMAPCOLORS) {
 				_rotPalPos = 0;
 			}
-			waterPaletteChangeTimer = _engine->timerRef + 3;
 		}
 
 		renderHolomapVehicle(frameNumber, move, animTimerData, bodyData, animData);
@@ -569,7 +573,6 @@ void HolomapV1::holoMap() {
 	bool automove = false;
 	bool flagredraw = true;
 	bool dialstat = true;
-	int waterPaletteChangeTimer = 0;
 	bool flagpal = true;
 	_engine->_input->enableKeyMap(holomapKeyMapId);
 	for (;;) {
@@ -635,20 +638,19 @@ void HolomapV1::holoMap() {
 			flagredraw = true;
 		}
 
-		if (!flagpal && waterPaletteChangeTimer < _engine->timerRef) {
+		if (!flagpal) {
 			// animate the water surface
 			_engine->setPalette(HOLOMAP_PALETTE_INDEX, NUM_HOLOMAPCOLORS, &_rotPal[3 * _rotPalPos]);
 			_rotPalPos++;
 			if (_rotPalPos == NUM_HOLOMAPCOLORS) {
 				_rotPalPos = 0;
 			}
-			waterPaletteChangeTimer = _engine->timerRef + 3;
 			flagredraw = true;
 		}
 
 		if (flagredraw) {
 			flagredraw = false;
-			const Common::Rect &rect = _engine->centerOnScreenX(scale(300), 0, scale(330));
+			const Common::Rect &rect = _engine->centerOnScreenX(scale(300), 50, scale(280));
 			// clip reduces the bad effect of https://bugs.scummvm.org/ticket/12074
 			// but it's not part of the original code
 			_engine->_interface->memoClip();
@@ -664,7 +666,7 @@ void HolomapV1::holoMap() {
 			_engine->_interface->restoreClip();
 			if (automove) {
 				// draw cursor
-				const Common::Rect &targetRect = _engine->centerOnScreen(SIZE_CURSOR * 2, SIZE_CURSOR * 2);
+				const Common::Rect &targetRect = _engine->centerOnScreenX(SIZE_CURSOR * 2, 170, SIZE_CURSOR * 2);
 				_engine->_menu->drawRectBorders(targetRect.left, cameraPosY - 20, targetRect.right, cameraPosY + 20, 15, 15);
 			}
 		}
@@ -687,14 +689,12 @@ void HolomapV1::holoMap() {
 		}
 	}
 
-	_engine->_screens->clearScreen();
 	_engine->_text->_flagMessageShade = true;
-	_engine->setPalette(_engine->_screens->_ptrPal);
+	_engine->_screens->fadeToBlack(_engine->_screens->_palettePcx);
 	_engine->_scene->_alphaLight = alphaLightTmp;
 	_engine->_scene->_betaLight = betaLightTmp;
 
 	_engine->_gameState->init3DGame();
-	_engine->_interface->restoreClip();
 
 	_engine->_input->enableKeyMap(mainKeyMapId);
 	_engine->_text->initSceneTextBank();

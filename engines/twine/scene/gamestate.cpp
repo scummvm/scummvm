@@ -333,7 +333,6 @@ void GameState::doFoundObj(InventoryItems item) {
 	ScopedEngineFreeze freeze(_engine);
 	_engine->_grid->centerOnActor(_engine->_scene->_sceneHero);
 
-	_engine->extInitSvga();
 	// Hide hero in scene
 	_engine->_scene->_sceneHero->_staticFlags.bIsInvisible = 1;
 	_engine->_redraw->redrawEngineActions(true);
