@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-10-10 12:01+0000\n"
+"POT-Creation-Date: 2024-10-10 12:35+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5716,8 +5716,8 @@ msgstr ""
 msgid "Toggle music on/off"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:273
-msgid "Toggle sound effect on/off"
+#: engines/agos/metaengine.cpp:273 engines/vcruise/metaengine.cpp:193
+msgid "Toggle sound effects on/off"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:278
@@ -11188,10 +11188,6 @@ msgstr ""
 
 #: engines/vcruise/metaengine.cpp:172
 msgid "Open sound settings"
-msgstr ""
-
-#: engines/vcruise/metaengine.cpp:193
-msgid "Toggle sound effects on/off"
 msgstr ""
 
 #: engines/vcruise/metaengine.cpp:208
