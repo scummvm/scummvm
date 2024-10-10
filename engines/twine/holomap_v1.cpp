@@ -297,9 +297,9 @@ void HolomapV1::drawTitle(int32 x, int32 y, const char *title) {
 	_engine->copyBlockPhys(x0, y0, x1, y1);
 }
 
-void HolomapV1::drawHoloObj(const IVec3 &angle, int32 alpha, int32 beta) {
+void HolomapV1::drawHoloObj(const IVec3 &angle, int32 alpha, int32 beta, int16 size) {
 	_engine->_renderer->setAngleCamera(alpha, beta, 0);
-	const IVec3 &m = _engine->_renderer->worldRotatePoint(IVec3(0, 0, 1000));
+	const IVec3 &m = _engine->_renderer->worldRotatePoint(IVec3(0, 0, 1000 + size));
 	_engine->_renderer->setFollowCamera(0, 0, 0, angle.x, angle.y, angle.z, distance(zDistanceTrajectory));
 	_engine->_interface->unsetClip();
 	Common::Rect dirtyRect;
@@ -308,25 +308,25 @@ void HolomapV1::drawHoloObj(const IVec3 &angle, int32 alpha, int32 beta) {
 }
 
 void HolomapV1::renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, AnimTimerDataStruct &animTimerData, BodyData &bodyData, AnimData &animData) {
-	const int16 newAngle = move.getRealAngle(_engine->timerRef);
+	const int16 vbeta = move.getRealAngle(_engine->timerRef);
 	if (move.timeValue == 0) {
 		_engine->_movements->initRealAngle(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_90, 500, &move);
 	}
 
-	if (_engine->_animations->doSetInterAnimObjet(frameNumber, animData, bodyData, &animTimerData)) {
+	if (_engine->_animations->setInterAnimObjet(frameNumber, animData, bodyData, &animTimerData)) {
 		frameNumber++;
-		if (frameNumber >= animData.getNumKeyframes()) {
+		if (frameNumber >= animData.getNbFramesAnim()) {
 			frameNumber = animData.getLoopFrame();
 		}
 	}
-	const Common::Rect rect(0, _engine->height() - 280, 200, _engine->height() - 1);
-	_engine->_renderer->setProjection(rect.width() / 2, _engine->height() - 80, 128, 900, 900);
+	_engine->_renderer->setProjection(100, 100 + 300, 128, 900, 900);
 	_engine->_renderer->setFollowCamera(0, 0, 0, 60, 128, 0, distance(30000));
 	_engine->_renderer->setLightVector(-60, 128, 0);
 	// background of the vehicle
+	const Common::Rect rect(0, _engine->height() - 180, 200, _engine->height());
 	_engine->_interface->box(rect, COLOR_BLACK);
 	Common::Rect dummy;
-	_engine->_renderer->affObjetIso(0, 0, 0, LBAAngles::ANGLE_0, newAngle, LBAAngles::ANGLE_0, bodyData, dummy);
+	_engine->_renderer->affObjetIso(0, 0, 0, LBAAngles::ANGLE_0, vbeta, LBAAngles::ANGLE_0, bodyData, dummy);
 	_engine->copyBlockPhys(rect);
 }
 
@@ -356,7 +356,7 @@ void HolomapV1::holoTraj(int32 trajectoryIndex) {
 	const int32 cameraPosX = _engine->width() / 2 + 80;
 	const int32 cameraPosY = _engine->height() / 2;
 	_engine->_renderer->setProjection(cameraPosX, cameraPosY, 128, 1024, 1024);
-	_engine->_renderer->setFollowCamera(0, 0, 0, data->pos.x, data->pos.y, data->pos.z, distance(zDistanceTrajectory));
+	_engine->_renderer->setFollowCamera(0, 0, 0, data->angle.x, data->angle.y, data->angle.z, distance(zDistanceTrajectory));
 
 	constexpr TwineResource holomapImageRes(Resources::HQR_RESS_FILE, RESSHQR_HOLOIMG);
 	uint8 *holomapImagePtr = nullptr;
@@ -367,7 +367,7 @@ void HolomapV1::holoTraj(int32 trajectoryIndex) {
 	drawHoloMap(holomapImagePtr, holomapImageSize);
 
 	const Location &loc = _listHoloPos[data->locationIdx];
-	drawHoloObj(data->pos, loc.alpha, loc.beta);
+	drawHoloObj(data->angle, loc.alpha, loc.beta, 0);
 
 	ActorMoveStruct move;
 	AnimTimerDataStruct animTimerData;
@@ -401,26 +401,26 @@ void HolomapV1::holoTraj(int32 trajectoryIndex) {
 
 		// now render the holomap path
 		_engine->_renderer->setProjection(cameraPosX, cameraPosY, 128, 1024, 1024);
-		_engine->_renderer->setFollowCamera(0, 0, 0, data->pos.x, data->pos.y, data->pos.z, distance(zDistanceTrajectory));
-		_engine->_renderer->setLightVector(data->pos.x, data->pos.y, 0);
+		_engine->_renderer->setFollowCamera(0, 0, 0, data->angle.x, data->angle.y, data->angle.z, distance(zDistanceTrajectory));
+		_engine->_renderer->setLightVector(data->angle.x, data->angle.y, 0);
 
 		// animate the path from point 1 to point 2 by rendering a point model on each position
 		// on the globe every 40 timeunits
 		if (frameTime + 40 <= _engine->timerRef) {
 			frameTime = _engine->timerRef;
-			int32 modelX;
-			int32 modelY;
+			int32 alpha;
+			int32 beta;
 			if (trajAnimFrameIdx < data->numAnimFrames) {
-				modelX = data->positions[trajAnimFrameIdx].x;
-				modelY = data->positions[trajAnimFrameIdx].y;
+				alpha = data->positions[trajAnimFrameIdx].x;
+				beta = data->positions[trajAnimFrameIdx].y;
 			} else {
 				if (data->numAnimFrames < trajAnimFrameIdx) {
 					break;
 				}
-				modelX = loc.alpha;
-				modelY = loc.beta;
+				alpha = loc.alpha;
+				beta = loc.beta;
 			}
-			drawHoloObj(data->pos, modelX, modelY);
+			drawHoloObj(data->angle, alpha, beta, 0);
 			++trajAnimFrameIdx;
 		}
 

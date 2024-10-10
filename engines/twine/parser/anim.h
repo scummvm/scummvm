@@ -73,12 +73,12 @@ public:
 
 	const KeyFrame *getKeyframe(uint index) const;
 	const Common::Array<KeyFrame> &getKeyframes() const;
-	uint getNumKeyframes() const;
+	uint getNbFramesAnim() const;
 	uint16 getLoopFrame() const;
 	uint16 getNumBoneframes() const;
 };
 
-inline uint AnimData::getNumKeyframes() const {
+inline uint AnimData::getNbFramesAnim() const {
 	return getKeyframes().size();
 }
 

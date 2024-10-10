@@ -95,7 +95,7 @@ int16 Animations::patchInterStep(int32 deltaTime, int32 keyFrameLength, int16 ne
 	return computedPos;
 }
 
-bool Animations::doSetInterAnimObjet(int32 keyframeIdx, const AnimData &animData, BodyData &bodyData, AnimTimerDataStruct *animTimerDataPtr) {
+bool Animations::setInterAnimObjet(int32 keyframeIdx, const AnimData &animData, BodyData &bodyData, AnimTimerDataStruct *animTimerDataPtr) {
 	if (!bodyData.isAnimated()) {
 		return false;
 	}
@@ -595,7 +595,7 @@ void Animations::doAnim(int32 actorIdx) {
 				processAnimActions(actorIdx);
 
 				int16 numKeyframe = actor->_frame;
-				if (numKeyframe == (int16)animData.getNumKeyframes()) {
+				if (numKeyframe == (int16)animData.getNbFramesAnim()) {
 					actor->_workFlags.bIsHitting = 0;
 
 					if (actor->_flagAnim == AnimType::kAnimationTypeRepeat) {

@@ -80,7 +80,7 @@ private:
 	/**
 	 * Renders a holomap path with single path points appearing slowly one after another
 	 */
-	void drawHoloObj(const IVec3 &angle, int32 x, int32 y);
+	void drawHoloObj(const IVec3 &angle, int32 x, int32 y, int16 size);
 	void computeCoorGlobe(Common::SeekableReadStream *holomapSurfaceStream);
 	void computeCoorMapping();
 	void computeGlobeProj();

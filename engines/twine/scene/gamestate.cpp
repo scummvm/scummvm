@@ -413,9 +413,9 @@ void GameState::doFoundObj(InventoryItems item) {
 		_engine->_interface->unsetClip();
 		init3DGame();
 
-		if (_engine->_animations->doSetInterAnimObjet(currentAnimState, currentAnimData, bodyData, &_engine->_scene->_sceneHero->_animTimerData)) {
+		if (_engine->_animations->setInterAnimObjet(currentAnimState, currentAnimData, bodyData, &_engine->_scene->_sceneHero->_animTimerData)) {
 			currentAnimState++; // keyframe
-			if (currentAnimState >= currentAnimData.getNumKeyframes()) {
+			if (currentAnimState >= currentAnimData.getNbFramesAnim()) {
 				currentAnimState = currentAnimData.getLoopFrame();
 			}
 		}

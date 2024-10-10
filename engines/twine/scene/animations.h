@@ -81,7 +81,7 @@ public:
 	 * @param bodyData Body model data
 	 * @param animTimerDataPtr Animation time data
 	 */
-	bool doSetInterAnimObjet(int32 keyframeIdx, const AnimData &animData, BodyData &bodyData, AnimTimerDataStruct *animTimerDataPtr);
+	bool setInterAnimObjet(int32 keyframeIdx, const AnimData &animData, BodyData &bodyData, AnimTimerDataStruct *animTimerDataPtr);
 
 	/**
 	 * Get entity anim index (This is taken from File3D entities)

@@ -367,7 +367,7 @@ static void sceneDetailsWindows(TwinEEngine *engine) {
 				ImGui::Text("location: %i", trajectory->locationIdx);
 				ImGui::Text("trajectory location: %i", trajectory->trajLocationIdx);
 				ImGui::Text("vehicle: %i", trajectory->vehicleIdx);
-				ImGui::Text("pos: %i %i %i", trajectory->pos.x, trajectory->pos.y, trajectory->pos.z);
+				ImGui::Text("pos: %i %i %i", trajectory->angle.x, trajectory->angle.y, trajectory->angle.z);
 				ImGui::Text("num anim frames: %i", trajectory->numAnimFrames);
 				ImGui::Unindent();
 			}
