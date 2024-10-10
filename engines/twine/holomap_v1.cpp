@@ -286,7 +286,7 @@ void HolomapV1::drawHoloMap(uint8 *holomapImage, uint32 holomapImageSize) {
 	}
 }
 
-void HolomapV1::drawHolomapText(int32 centerx, int32 top, const char *title) {
+void HolomapV1::drawTitle(int32 centerx, int32 top, const char *title) {
 	const int32 size = _engine->_text->sizeFont(title);
 	const int32 x = centerx - size / 2;
 	const int32 y = top;
@@ -529,17 +529,17 @@ void HolomapV1::drawListPos(int calpha, int cbeta, int cgamma, bool pos) {
 void HolomapV1::holoMap() {
 	const int32 alphaLightTmp = _engine->_scene->_alphaLight;
 	const int32 betaLightTmp = _engine->_scene->_betaLight;
-
-	_engine->_gameState->init3DGame();
+	const Graphics::Palette savepalette = _engine->_screens->_palettePcx;
 
 	_engine->_screens->fadeToBlack(_engine->_screens->_ptrPal);
 	_engine->_sound->stopSamples();
 	_engine->_interface->unsetClip();
 	_engine->_screens->clearScreen();
 
-	const Graphics::Palette savepalette = _engine->_screens->_palettePcx;
-
 	initHoloDatas();
+
+	// TODO: not visible
+	drawTitle(_engine->width() / 2, 25, "HoloMap");
 
 	const int32 cameraPosX = _engine->width() / 2;
 	const int32 cameraPosY = scale(190);
@@ -556,8 +556,6 @@ void HolomapV1::holoMap() {
 	}
 
 	int32 current = _engine->_scene->_numCube;
-	_engine->_text->drawHolomapLocation(_listHoloPos[current].mess);
-
 	int32 otimer = _engine->timerRef;
 	int32 dalpha = ClampAngle(_listHoloPos[current].alpha);
 	int32 dbeta = ClampAngle(_listHoloPos[current].beta);
@@ -568,6 +566,7 @@ void HolomapV1::holoMap() {
 	int32 obeta = dbeta;
 	bool automove = false;
 	bool flagredraw = true;
+	bool dialstat = true;
 	int waterPaletteChangeTimer = 0;
 	bool flagpal = true;
 	_engine->_input->enableKeyMap(holomapKeyMapId);
@@ -583,7 +582,7 @@ void HolomapV1::holoMap() {
 			if (current == -1) {
 				current = _engine->_scene->_numCube;
 			}
-			_engine->_text->drawHolomapLocation(_listHoloPos[current].mess);
+			dialstat = true;
 			oalpha = calpha;
 			obeta = cbeta;
 			otimer = _engine->timerRef;
@@ -596,7 +595,7 @@ void HolomapV1::holoMap() {
 			if (current == -1) {
 				current = _engine->_scene->_numCube;
 			}
-			_engine->_text->drawHolomapLocation(_listHoloPos[current].mess);
+			dialstat = true;
 			oalpha = calpha;
 			obeta = cbeta;
 			otimer = _engine->timerRef;
@@ -660,7 +659,6 @@ void HolomapV1::holoMap() {
 			drawHoloMap(holomapImagePtr, holomapImageSize);
 			drawListPos(calpha, cbeta, cgamma, true);
 			_engine->_interface->restoreClip();
-			drawHolomapText(_engine->width() / 2, 25, "HoloMap");
 			if (automove) {
 				// draw cursor
 				const Common::Rect &targetRect = _engine->centerOnScreen(SIZE_CURSOR * 2, SIZE_CURSOR * 2);
@@ -670,6 +668,11 @@ void HolomapV1::holoMap() {
 
 		if (automove && dalpha == calpha && dbeta == cbeta) {
 			automove = false;
+		}
+
+		if (dialstat) {
+			_engine->_text->drawHolomapLocation(_listHoloPos[current].mess);
+			dialstat = false;
 		}
 
 		++_engine->timerRef;
