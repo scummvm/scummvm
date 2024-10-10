@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2023-12-14 14:28+0000\n"
-"Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
+"PO-Revision-Date: 2024-10-10 12:33+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
 "Language: he\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
 "n % 10 == 0) ? 2 : 3));\n"
-"X-Generator: Weblate 4.4\n"
+"X-Generator: Weblate 5.7.2\n"
 "X-Language-name: Hebrew\n"
 
 #. I18N: built on <build date> with <compiler>
@@ -657,11 +657,11 @@ msgstr "נתיבים"
 
 #: gui/editgamedialog.cpp:291
 msgid "Check Integrity"
-msgstr ""
+msgstr "בדוק שלמות"
 
 #: gui/editgamedialog.cpp:291
 msgid "Perform integrity check for all game files"
-msgstr ""
+msgstr "בצע בדיקת שלמות לכל קבצי המשחק"
 
 #: gui/editgamedialog.cpp:296
 msgid "Game Path:"
@@ -829,7 +829,7 @@ msgstr "הערות:"
 #: gui/integrity-dialog.cpp:100
 msgid ""
 "Verifying file integrity may take a long time to complete. Please wait...\n"
-msgstr ""
+msgstr "בדיקת שלמותם של הקבצים עלולה לקחת זמן רב. אנא המתן בסבלנות...\n"
 
 #: gui/integrity-dialog.cpp:107 gui/integrity-dialog.cpp:168
 msgid "Calculating file checksums..."
@@ -863,7 +863,7 @@ msgstr ""
 #: gui/integrity-dialog.cpp:537
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
-msgstr ""
+msgstr "לא נראה שלמשחק ישנם קבצים כלשהם. האם אתה בטוח שהנתיב נכון?"
 
 #: gui/integrity-dialog.cpp:542
 msgid ""
@@ -873,7 +873,7 @@ msgstr ""
 
 #: gui/integrity-dialog.cpp:569
 msgid "Files all OK"
-msgstr ""
+msgstr "כל הקבצים בסדר"
 
 #: gui/filebrowser-dialog.cpp:53
 msgid "Choose file for loading"
@@ -1283,11 +1283,11 @@ msgstr "שנה"
 
 #: gui/launcher.cpp:230
 msgid "Select Group by"
-msgstr "נא לבחור קיבוץ לפי"
+msgstr "נא לבחור קבוצה לפי"
 
 #: gui/launcher.cpp:234 gui/launcher.cpp:898
 msgid "Group:"
-msgstr "קיבוץ לפי:"
+msgstr "קבוצה:"
 
 #: gui/launcher.cpp:236
 msgid "Select a criteria to group the entries"
@@ -1295,7 +1295,7 @@ msgstr "בחירת קריטריון לקיבוץ הרשומות על פיו"
 
 #: gui/launcher.cpp:263
 msgid "Click here to see Help"
-msgstr ""
+msgstr "הקש כאן לעזרה"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
 #: gui/launcher.cpp:267 engines/dialogs.cpp:91
@@ -1309,16 +1309,16 @@ msgstr "סגירת ScummVM"
 #. I18N: Button About ScummVM program. b is the shortcut, Ctrl+b, put it in parens for non-latin (~b~)
 #: gui/launcher.cpp:271
 msgid "A~b~out"
-msgstr "על ~א~ודות"
+msgstr "~א~ודות"
 
 #: gui/launcher.cpp:271 backends/platform/sdl/macosx/appmenu_osx.mm:296
 msgid "About ScummVM"
-msgstr "על אודות ScummVM"
+msgstr "אודות ScummVM"
 
 #. I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
 #: gui/launcher.cpp:273
 msgid "Global ~O~ptions..."
-msgstr "א~פ~שרויות מקיפות..."
+msgstr "אפשרויות מקיפות..."
 
 #: gui/launcher.cpp:273
 msgid "Change global ScummVM options"
@@ -3196,7 +3196,7 @@ msgstr "אלט"
 #: dists/android.strings.xml.cpp:48
 #: backends/platform/libretro/src/libretro-options-widget.cpp:222
 msgid "Done"
-msgstr ""
+msgstr "בוצע"
 
 #: dists/android.strings.xml.cpp:49
 msgid "Mode change"
