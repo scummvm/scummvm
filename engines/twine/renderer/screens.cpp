@@ -201,29 +201,14 @@ void Screens::fadeOut(const uint32 *pal) {
 }
 
 void Screens::fadePal(uint8 r, uint8 g, uint8 b, const uint32 *rgbaPal, int32 intensity) {
-	uint32 pal[NUMOFCOLORS];
-
-	int32 counter = 0;
+	Graphics::Palette pal{NUMOFCOLORS};
 
 	const uint8 *paletteIn = (const uint8 *)rgbaPal;
-	uint8 *paletteOut = (uint8 *)pal;
-	uint8 *newR = &paletteOut[0];
-	uint8 *newG = &paletteOut[1];
-	uint8 *newB = &paletteOut[2];
-	uint8 *newA = &paletteOut[3];
-
 	for (int32 i = 0; i < NUMOFCOLORS; i++) {
-		*newR = lerp(r, paletteIn[counter], 100, intensity);
-		*newG = lerp(g, paletteIn[counter + 1], 100, intensity);
-		*newB = lerp(b, paletteIn[counter + 2], 100, intensity);
-		*newA = 0xFF;
-
-		newR += 4;
-		newG += 4;
-		newB += 4;
-		newA += 4;
-
-		counter += 4;
+		const byte newR = lerp(r, paletteIn[i * 4 + 0], 100, intensity);
+		const byte newG = lerp(g, paletteIn[i * 4 + 1], 100, intensity);
+		const byte newB = lerp(b, paletteIn[i * 4 + 2], 100, intensity);
+		pal.set(i, newR, newG, newB);
 	}
 
 	_engine->setPalette(pal);
@@ -231,7 +216,7 @@ void Screens::fadePal(uint8 r, uint8 g, uint8 b, const uint32 *rgbaPal, int32 in
 }
 
 void Screens::fadeToBlack(const uint32 *ptrpal) {
-	if (_fadeBlackPal) {
+	if (_flagBlackPal) {
 		return;
 	}
 
@@ -240,7 +225,7 @@ void Screens::fadeToBlack(const uint32 *ptrpal) {
 		fadePal(0, 0, 0, ptrpal, n);
 	}
 
-	_fadeBlackPal = true;
+	_flagBlackPal = true;
 }
 
 void Screens::whiteFade() {
@@ -270,7 +255,7 @@ void Screens::fadeToPal(const uint32 *pal) {
 
 	_engine->setPalette(pal);
 
-	_fadeBlackPal = false;
+	_flagBlackPal = false;
 }
 
 void Screens::setBlackPal() {
@@ -279,34 +264,26 @@ void Screens::setBlackPal() {
 
 	_engine->setPalette(_ptrPal);
 
-	_fadeBlackPal = true;
+	_flagBlackPal = true;
 }
 
 void Screens::fadePalToPal(const uint32 *ptrpal, const uint32 *ptrpal2) {
 	Graphics::Palette workpal{NUMOFCOLORS};
 
-	int32 counter = 0;
-	int32 intensity = 0;
-
 	const uint8 *pal1p = (const uint8 *)ptrpal;
 	const uint8 *pal2p = (const uint8 *)ptrpal2;
-	do {
-		FrameMarker frame(_engine, DEFAULT_HZ);
-		counter = 0;
-
+	for (int m = 0; m < 100; ++m) {
+		FrameMarker frame(_engine, DEFAULT_HZ); // VSync()
 		for (int32 i = 0; i < NUMOFCOLORS; i++) {
-			byte newR = lerp(pal1p[counter + 0], pal2p[counter + 0], 100, intensity);
-			byte newG = lerp(pal1p[counter + 1], pal2p[counter + 1], 100, intensity);
-			byte newB = lerp(pal1p[counter + 2], pal2p[counter + 2], 100, intensity);
+			byte newR = lerp(pal1p[i * 4 + 0], pal2p[i * 4 + 0], 100, m);
+			byte newG = lerp(pal1p[i * 4 + 1], pal2p[i * 4 + 1], 100, m);
+			byte newB = lerp(pal1p[i * 4 + 2], pal2p[i * 4 + 2], 100, m);
 			workpal.set(i, newR, newG, newB);
-
-			counter += 4;
 		}
 
 		_engine->setPalette(workpal);
-		intensity++;
 		_engine->_frontVideoBuffer.update();
-	} while (intensity <= 100);
+	}
 }
 
 void Screens::fadeToRed(const uint32 *pal) {

@@ -48,7 +48,6 @@ private:
 public:
 	Screens(TwinEEngine *engine) : _engine(engine) {}
 
-	/** In-game palette (should not be used, except in special case. otherwise use other images functions instead) */
 	Graphics::Palette _palette{0};
 
 	int32 mapLba2Palette(int32 palIndex);
@@ -59,17 +58,17 @@ public:
 	/** converted custom palette */
 	uint32 _palettePcx[NUMOFCOLORS]{0};
 
+	/** converted in-game palette */
+	uint32 _mainPaletteRGBA[NUMOFCOLORS]{0};
+
 	/** flag to check in the game palette was changed */
-	bool _fadeBlackPal = false;
+	bool _flagBlackPal = false;
 
 	/** flag to check if the main flag is locked */
 	bool _flagFade = false;
 
 	/** flag to check if we are using a different palette than the main one */
 	bool _flagPalettePcx = false;
-
-	/** converted in-game palette */
-	uint32 _mainPaletteRGBA[NUMOFCOLORS]{0};
 
 	/** Load and display Adeline Logo */
 	bool adelineLogo();
