@@ -128,6 +128,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Tucker:
   - Added keymapper support.
 
+ TwinE:
+  - Several collision related fixes
+
  Ultima:
    - Alter Ultima VIII default gamepad bindings.
    - Improved Ultima VIII keybind player movement.
