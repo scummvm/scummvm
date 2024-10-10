@@ -114,15 +114,13 @@ public:
 					const char *name = obj->name();
 					const char *from = strstr(name, "@");
 
-					if (from && !_objSound->is_state_active("\xed\xe5\xf2") // "нет"
-							 && !_objSound->is_state_active("\xed\xe5\xf2\x31")) { // "нет1"
-
+					if (from && strstr(obj2->name(), "@")) {
 						const char *to = strstr(name, "#");
 
 						Common::strlcpy(tmp, from + 1, to - from);
 
 						int num = atol(tmp);
-						debugC(4, kDebugMinigames, "part1: num is: %d  tmp: '%s' for name: '%s'", num, tmp, name);
+						debugC(2, kDebugMinigames, "part1: num is: %d  tmp: '%s' for name: '%s'", num, tmp, name);
 
 						name = obj2->name();
 						from = strstr(name, "@");
@@ -131,19 +129,20 @@ public:
 						Common::strlcpy(tmp, from + 1, to - from);
 
 						int num2 = atol(tmp);
-						debugC(4, kDebugMinigames, "part2: num2 is: %d  tmp: '%s' for name: '%s'", num2, tmp, name);
+						debugC(2, kDebugMinigames, "part2: num2 is: %d  tmp: '%s' for name: '%s'", num2, tmp, name);
 
 						if (num == num2) {
 							obj->set_state("del");
 							_objects[num]->set_state("kovrik");
 						}
 
-						if ((num == 29 && num2 == 31) || (num == 31 && num2 == 29) ||
-							(num == 26 && (num2 == 31 || num2 == 29)) ||
-							(num == 3  && num2 == 4) ||
-							(num == 21 && num2 == 22) ||
-							(num == 1  && num2 == 2) ||
-							(num == 37 && (num2 == 35 || num2 == 32 || num2 == 34 || num2 == 38))) {
+						if ((num2 == 29 && num == 31) ||
+							(num2 == 31 && num == 29) ||
+							(num2 == 26 && (num == 31 || num == 29)) ||
+							(num2 == 3  && num == 4) ||
+							(num2 == 22 && num == 21) ||
+							(num2 == 1  && num == 2) ||
+							(num2 == 37 && (num == 35 || num == 32 || num == 34 || num == 38))) {
 							obj->set_state("del");
 							_objects[num]->set_state("kovrik");
 						}
