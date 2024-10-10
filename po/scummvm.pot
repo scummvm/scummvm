@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-10-10 12:35+0000\n"
+"POT-Creation-Date: 2024-10-10 12:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5724,10 +5724,7 @@ msgstr ""
 msgid "Toggle fast mode on/off"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:290 engines/wintermute/keymapper_tables.h:149
-#: engines/wintermute/keymapper_tables.h:731
-#: engines/wintermute/keymapper_tables.h:2116
-#: engines/wintermute/keymapper_tables.h:2216
+#: engines/agos/metaengine.cpp:290
 msgid "Walk forward"
 msgstr ""
 
@@ -7504,12 +7501,20 @@ msgid "Interact via Right Click"
 msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:510
-#: engines/twine/metaengine.cpp:334
+#: engines/mohawk/riven.cpp:881 engines/twine/metaengine.cpp:334
+#: engines/wintermute/keymapper_tables.h:149
+#: engines/wintermute/keymapper_tables.h:731
+#: engines/wintermute/keymapper_tables.h:2116
+#: engines/wintermute/keymapper_tables.h:2216
 msgid "Move Forward"
 msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:372 engines/kyra/engine/lol.cpp:511
-msgid "Move Back"
+#: engines/mohawk/riven.cpp:895 engines/twine/metaengine.cpp:341
+#: engines/wintermute/keymapper_tables.h:155
+#: engines/wintermute/keymapper_tables.h:736
+#: engines/wintermute/keymapper_tables.h:2238
+msgid "Move Backwards"
 msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:373
@@ -8223,20 +8228,12 @@ msgstr ""
 msgid "You are missing the following required Riven data files:\n"
 msgstr ""
 
-#: engines/mohawk/riven.cpp:881
-msgid "Move forward"
-msgstr ""
-
 #: engines/mohawk/riven.cpp:887
 msgid "Move forward left"
 msgstr ""
 
 #: engines/mohawk/riven.cpp:891
 msgid "Move forward right"
-msgstr ""
-
-#: engines/mohawk/riven.cpp:895
-msgid "Move backwards"
 msgstr ""
 
 #: engines/mohawk/riven.cpp:913
@@ -10779,10 +10776,6 @@ msgstr ""
 msgid "Throw Magic Ball"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:341
-msgid "Move Backward"
-msgstr ""
-
 #: engines/twine/metaengine.cpp:362
 msgid "Use Protopack"
 msgstr ""
@@ -11286,12 +11279,6 @@ msgstr ""
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
-msgstr ""
-
-#: engines/wintermute/keymapper_tables.h:155
-#: engines/wintermute/keymapper_tables.h:736
-#: engines/wintermute/keymapper_tables.h:2238
-msgid "Walk backward"
 msgstr ""
 
 #. I18N: Debug feature to draw lines of scene geometry: walls, walking areas, etc
