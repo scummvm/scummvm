@@ -68,11 +68,10 @@ void Screens::loadCustomPalette(const TwineResource &resource) {
 		error("Failed to get palette entry for custom palette: %s:%d", resource.hqr, resource.index);
 	}
 
-	if (_palette.size() != NUMOFCOLORS) {
+	if (_palettePcx.size() != NUMOFCOLORS) {
 		warning("Unexpected palette size %s:%i", resource.hqr, resource.index);
 	}
 	debug(3, "palette %s:%i with %u colors", resource.hqr, resource.index, _palettePcx.size());
-	_palette = _palettePcx;
 }
 
 void Screens::loadImage(TwineImage image, bool fadeIn) {
@@ -238,7 +237,6 @@ void Screens::fadeToPal(const Graphics::Palette &ptrpal) {
 }
 
 void Screens::setBlackPal() {
-	_palette.clear();
 	_ptrPal.clear();
 
 	_engine->setPalette(_ptrPal);

@@ -203,7 +203,6 @@ int32 ScriptLifeV2::lPALETTE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::PALETTE(%i)", palIndex);
 	ScopedEngineFreeze scoped(engine);
 	HQR::getPaletteEntry(engine->_screens->_ptrPal, Resources::HQR_RESS_FILE, palIndex);
-	engine->_screens->_palette = engine->_screens->_ptrPal;
 	engine->setPalette(engine->_screens->_ptrPal);
 	engine->_screens->_flagPalettePcx = true;
 	return 0;

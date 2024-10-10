@@ -28,6 +28,7 @@
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
 #include "graphics/managed_surface.h"
+#include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "twine/achievements_tables.h"
 #include "twine/detection.h"
@@ -195,7 +196,11 @@ void TwinEMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	TwinEEngine *engine = (TwinEEngine *)g_engine;
 	const Graphics::ManagedSurface &managedSurface = engine->_workVideoBuffer;
 	const Graphics::Surface &screenSurface = managedSurface.rawSurface();
-	::createThumbnail(&thumb, (const uint8 *)screenSurface.getPixels(), screenSurface.w, screenSurface.h, engine->_screens->_palette.data());
+	Graphics::Palette *pal = &engine->_screens->_ptrPal;
+	if (engine->_screens->_flagPalettePcx) {
+		pal = &engine->_screens->_palettePcx;
+	}
+	::createThumbnail(&thumb, (const uint8 *)screenSurface.getPixels(), screenSurface.w, screenSurface.h, pal->data());
 }
 
 //

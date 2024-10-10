@@ -25,6 +25,7 @@
 #include "common/memstream.h"
 #include "common/stream.h"
 #include "common/types.h"
+#include "graphics/palette.h"
 #include "twine/audio/sound.h"
 #include "twine/menu/interface.h"
 #include "twine/parser/anim.h"
@@ -130,7 +131,7 @@ void HolomapV1::initHoloDatas() {
 	const int32 n = NUM_HOLOMAPCOLORS * 3;
 	for (int32 i = 0; i < n; i += 3, j++) {
 		byte r, g, b;
-		_engine->_screens->_palette.get(j, r, g, b);
+		_engine->_screens->_palettePcx.get(j, r, g, b);
 		_paletteHolomap[i + 0] = r;
 		_paletteHolomap[i + 1] = g;
 		_paletteHolomap[i + 2] = b;
@@ -139,7 +140,7 @@ void HolomapV1::initHoloDatas() {
 	j = HOLOMAP_PALETTE_INDEX;
 	for (int32 i = n; i < 2 * n - 3; i += 3, j++) {
 		byte r, g, b;
-		_engine->_screens->_palette.get(j, r, g, b);
+		_engine->_screens->_palettePcx.get(j, r, g, b);
 		_paletteHolomap[i + 0] = r;
 		_paletteHolomap[i + 1] = g;
 		_paletteHolomap[i + 2] = b;
@@ -372,7 +373,7 @@ void HolomapV1::drawHolomapTrajectory(int32 trajectoryIndex) {
 	int16 trajAnimFrameIdx = 0;
 
 	int32 waterPaletteChangeTimer = 0;
-	bool fadeInPalette = true;
+	bool flagpal = true;
 	_engine->_input->enableKeyMap(holomapKeyMapId);
 	for (;;) {
 		FrameMarker frame(_engine);
@@ -381,7 +382,7 @@ void HolomapV1::drawHolomapTrajectory(int32 trajectoryIndex) {
 			break;
 		}
 
-		if (!fadeInPalette && waterPaletteChangeTimer < _engine->timerRef) {
+		if (!flagpal && waterPaletteChangeTimer < _engine->timerRef) {
 			// animate the water surface
 			_engine->setPalette(HOLOMAP_PALETTE_INDEX, NUM_HOLOMAPCOLORS, &_paletteHolomap[3 * _holomapPaletteIndex++]);
 			if (_holomapPaletteIndex == NUM_HOLOMAPCOLORS) {
@@ -417,16 +418,16 @@ void HolomapV1::drawHolomapTrajectory(int32 trajectoryIndex) {
 			++trajAnimFrameIdx;
 		}
 
-		if (fadeInPalette) {
-			fadeInPalette = false;
-			//_engine->_screens->fadeToPal(_engine->_screens->_paletteRGBACustom);
+		if (flagpal) {
+			flagpal = false;
+			_engine->_screens->fadeToPal(_engine->_screens->_palettePcx);
 		}
 		++_engine->timerRef;
 		debugC(3, kDebugLevels::kDebugTime, "Holomap time: %i", _engine->timerRef);
 	}
 
 	_engine->_screens->clearScreen();
-	_engine->setPalette(_engine->_screens->_ptrPal);
+	_engine->_screens->fadeToBlack(_engine->_screens->_palettePcx);
 	_engine->_gameState->init3DGame();
 	_engine->_interface->restoreClip();
 
@@ -535,7 +536,8 @@ void HolomapV1::holoMap() {
 	_engine->_sound->stopSamples();
 	_engine->_interface->unsetClip();
 	_engine->_screens->clearScreen();
-	_engine->_screens->fadeToBlack(_engine->_screens->_ptrPal);
+
+	const Graphics::Palette savepalette = _engine->_screens->_palettePcx;
 
 	initHoloDatas();
 
@@ -690,6 +692,8 @@ void HolomapV1::holoMap() {
 
 	_engine->_input->enableKeyMap(mainKeyMapId);
 	_engine->_text->initSceneTextBank();
+
+	_engine->_screens->_palettePcx = savepalette;
 
 	free(holomapImagePtr);
 }

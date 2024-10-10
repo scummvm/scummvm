@@ -54,9 +54,6 @@ public:
 	Graphics::Palette _ptrPal{0};
 	Graphics::Palette _palettePcx{0};
 
-	// TODO: remove me
-	Graphics::Palette _palette{0};
-
 	/** flag to check in the game palette was changed */
 	bool _flagBlackPal = false;
 

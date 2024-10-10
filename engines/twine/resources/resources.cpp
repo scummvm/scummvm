@@ -49,10 +49,9 @@ Resources::~Resources() {
 }
 
 void Resources::initPalettes() {
-	if (!HQR::getPaletteEntry(_engine->_screens->_palette, Resources::HQR_RESS_FILE, RESSHQR_MAINPAL)) {
+	if (!HQR::getPaletteEntry(_engine->_screens->_ptrPal, Resources::HQR_RESS_FILE, RESSHQR_MAINPAL)) {
 		error("Failed to load main palette");
 	}
-	_engine->_screens->_ptrPal = _engine->_screens->_palette;
 	_engine->setPalette(_engine->_screens->_ptrPal);
 }
 
