@@ -336,11 +336,15 @@ void HolomapV1::holoTraj(int32 trajectoryIndex) {
 		return;
 	}
 
+	if (_engine->_screens->_flagPalettePcx)
+		_engine->_screens->fadeToBlack(_engine->_screens->_palettePcx);
+	else
+		_engine->_screens->fadeToBlack(_engine->_screens->_ptrPal);
+
 	_engine->_interface->unsetClip();
 	_engine->_screens->clearScreen();
 
 	initHoloDatas();
-	_engine->setPalette(_engine->_screens->_palettePcx);
 
 	ScopedEngineFreeze timeFreeze(_engine);
 	const int32 cameraPosX = _engine->width() / 2 + 80;

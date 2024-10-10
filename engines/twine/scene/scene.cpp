@@ -593,6 +593,7 @@ void Scene::changeCube() {
 
 	if (_numHolomapTraj != -1) {
 		_engine->testRestoreModeSVGA(false);
+		_engine->_screens->setBlackPal();
 		_engine->_holomap->holoTraj(_numHolomapTraj);
 		_numHolomapTraj = -1;
 	}
