@@ -964,7 +964,7 @@ EngineState Menu::run() {
 	return EngineState::Menu;
 }
 
-int32 Menu::giveupMenu() {
+int32 Menu::quitMenu() {
 	_engine->saveFrontBuffer();
 	_engine->_sound->pauseSamples();
 

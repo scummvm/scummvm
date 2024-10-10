@@ -238,7 +238,7 @@ public:
 	EngineState run();
 
 	/** Used to run the in-game give-up menu */
-	int32 giveupMenu();
+	int32 quitMenu();
 
 	void inGameOptionsMenu();
 

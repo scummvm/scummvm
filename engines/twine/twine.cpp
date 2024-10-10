@@ -871,7 +871,7 @@ int32 TwinEEngine::toSeconds(int x) const {
 
 void TwinEEngine::processOptionsMenu() {
 	ScopedEngineFreeze scoped(this);
-	extInitSvga();
+	testRestoreModeSVGA(true) ;
 	_sound->pauseSamples();
 	_menu->inGameOptionsMenu();
 	_scene->playSceneMusic();
@@ -924,8 +924,8 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		// Process give up menu - Press ESC
 		if (_input->toggleAbortAction() && _scene->_sceneHero->_lifePoint > 0 && _scene->_sceneHero->_body != -1 && !_scene->_sceneHero->_staticFlags.bIsInvisible) {
 			ScopedEngineFreeze scopedFreeze(this);
-			extInitSvga();
-			const int giveUp = _menu->giveupMenu();
+			testRestoreModeSVGA(true) ;
+			const int giveUp = _menu->quitMenu();
 			if (giveUp == kQuitEngine) {
 				return false;
 			}
