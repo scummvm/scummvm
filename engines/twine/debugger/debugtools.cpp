@@ -178,8 +178,21 @@ static void paletteWindow(TwinEEngine *engine) {
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Palettes", &engine->_debugState->_paletteWindow)) {
-		const Graphics::Palette &palette = engine->_frontVideoBuffer.getPalette();
-		ImGuiEx::Palette(palette);
+		if (engine->_screens->_flagPalettePcx) {
+			ImGui::Text("palettepcx is active");
+		} else {
+			ImGui::Text("ptrpal is active");
+		}
+
+		ImGui::SeparatorText("Front buffer palette");
+		const Graphics::Palette &frontBufferPalette = engine->_frontVideoBuffer.getPalette();
+		ImGuiEx::Palette(frontBufferPalette);
+
+		ImGui::SeparatorText("PalettePCX");
+		ImGuiEx::Palette(engine->_screens->_palettePcx);
+
+		ImGui::SeparatorText("Palette");
+		ImGuiEx::Palette(engine->_screens->_ptrPal);
 	}
 	ImGui::End();
 }
