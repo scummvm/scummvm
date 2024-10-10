@@ -373,6 +373,7 @@ public:
 	void setPalette(const byte*, uint, uint, bool, const PaletteMod*, const byte*) override {}
 	void copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
+	byte remapTextColor(byte) const override;
 	static bool validateMode(Common::Platform p) { return (p == Common::kPlatformPC98) && checkDriver(&_driverFile, 1); }
 private:
 	const byte *_ditheringTable;

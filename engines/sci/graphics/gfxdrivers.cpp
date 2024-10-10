@@ -1950,8 +1950,11 @@ void PC98Gfx16ColorsDriver::replaceCursor(const void *cursor, uint w, uint h, in
 }
 
 byte PC98Gfx16ColorsDriver::remapTextColor(byte color) const {
+	// Always black for QFG and SCI1. For QFG, this is on purpose. The code just copies the inverted glyph data
+	// into all 4 vmem planes. For SCI1 the driver opcode actually has a pen color argument, but it isn't put
+	// to any use. Not sure if it is intended.
 	if (_fontStyle != kFontStyleTextMode)
-		return color;
+		return 0;
 
 	color &= 7;
 	// This seems to be a bug in the original PQ2 interpreter, which I replicate, so that we get the same colors.
@@ -2066,8 +2069,9 @@ void SCI0_PC98Gfx8ColorsDriver::replaceCursor(const void *cursor, uint w, uint h
 }
 
 byte SCI0_PC98Gfx8ColorsDriver::remapTextColor(byte color) const {
+	// Always black. For QFG, this is on purpose. The code just copies the inverted glyph data into all 4 vmem planes.
 	if (!_useTextMode)
-		return color;
+		return 0;
 
 	color &= 7;
 	// This seems to be a bug in the original PQ2 interpreter, which I replicate, so that we get the same colors.
@@ -2250,6 +2254,10 @@ void SCI1_PC98Gfx8ColorsDriver::replaceCursor(const void *cursor, uint w, uint h
 	CursorMan.replaceCursor(_compositeBuffer, w << 1, h << 1, hotspotX << 1, hotspotY << 1, newKeyColor);
 }
 
+byte SCI1_PC98Gfx8ColorsDriver::remapTextColor(byte) const {
+	// Always black. The driver opcode actually has a pen color argument, but it isn't put to any use. Not sure if it is intended.
+	return 0;
+}
 const char *SCI1_PC98Gfx8ColorsDriver::_driverFile = "9801V8.DRV";
 
 #undef GFXDRV_ASSERT_READY
