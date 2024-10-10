@@ -70,16 +70,6 @@ public:
 	bool adelineLogo();
 
 	/**
-	 * @sa setNormalPal
-	 */
-	void setDarkPal();
-	/**
-	 * @sa setDarkPal()
-	 * Reset the palette to the main palette after the script changed it via @c setDarkPal()
-	 */
-	void setNormalPal();
-
-	/**
 	 * Load a custom palette
 	 * @param index \a RESS.HQR entry index (starting from 0)
 	 */

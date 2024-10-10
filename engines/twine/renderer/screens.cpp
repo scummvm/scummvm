@@ -283,27 +283,6 @@ void Screens::fadeRedToPal(const Graphics::Palette &ptrpal) {
 	}
 }
 
-void Screens::setDarkPal() {
-	ScopedEngineFreeze scoped(_engine);
-	if (!HQR::getPaletteEntry(_palettePcx, Resources::HQR_RESS_FILE, RESSHQR_DARKPAL)) {
-		error("Failed to get palette entry for dark palette");
-	}
-	_palette = _palettePcx;
-	if (!_flagFade) {
-		// set the palette hard if it should not get faded
-		_engine->setPalette(_palettePcx);
-	}
-	_flagPalettePcx = true;
-}
-
-void Screens::setNormalPal() {
-	_flagPalettePcx = false;
-	if (!_flagFade) {
-		// reset the palette hard if it should not get faded
-		_engine->setPalette(_ptrPal);
-	}
-}
-
 void Screens::copyScreen(const Graphics::ManagedSurface &source, Graphics::ManagedSurface &destination) {
 	destination.blitFrom(source);
 }

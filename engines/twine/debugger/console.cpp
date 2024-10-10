@@ -49,7 +49,6 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("toggle_scenery_view", WRAP_METHOD(TwinEConsole, doToggleSceneryView));
 	registerCmd("magic_points", WRAP_METHOD(TwinEConsole, doAddMagicPoints));
 	registerCmd("dumpfile", WRAP_METHOD(TwinEConsole, doDumpFile));
-	registerCmd("toggle_darkpal", WRAP_METHOD(TwinEConsole, doToggleDarkPal));
 	registerCmd("toggle_zones", WRAP_METHOD(TwinEConsole, doToggleZoneRendering));
 	registerCmd("toggle_tracks", WRAP_METHOD(TwinEConsole, doToggleTrackRendering));
 	registerCmd("toggle_godmode", WRAP_METHOD(TwinEConsole, doToggleGodMode));
@@ -314,17 +313,6 @@ bool TwinEConsole::doGiveKashes(int argc, const char **argv) {
 		amount = atoi(argv[1]);
 	}
 	_engine->_gameState->addKashes(amount);
-	return true;
-}
-
-bool TwinEConsole::doToggleDarkPal(int argc, const char **argv) {
-	if (_engine->_screens->_flagPalettePcx) {
-		debugPrintf("Disabling dark palette\n");
-		_engine->_screens->setNormalPal();
-	} else {
-		debugPrintf("Enabling dark palette\n");
-		_engine->_screens->setDarkPal();
-	}
 	return true;
 }
 

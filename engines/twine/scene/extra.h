@@ -113,7 +113,7 @@ public:
 	}
 
 	/** Reset all used extras */
-	void resetExtras();
+	void clearExtra();
 
 	int32 initSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type);
 	int32 addExtraBonus(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle, int32 type, int32 bonusAmount);

@@ -495,7 +495,7 @@ bool Scene::loadScene(int32 index) {
 }
 
 void Scene::clearScene() {
-	_engine->_extra->resetExtras();
+	_engine->_extra->clearExtra();
 
 	// ClearFlagsCube
 	for (int32 i = 0; i < ARRAYSIZE(_listFlagCube); i++) {
@@ -506,7 +506,7 @@ void Scene::clearScene() {
 		_engine->_redraw->overlayList[i].num = -1;
 	}
 
-	_engine->_screens->setNormalPal();
+	_engine->_screens->_flagPalettePcx = false;
 }
 
 void Scene::reloadCurrentScene() {

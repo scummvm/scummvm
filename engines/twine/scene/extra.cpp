@@ -122,7 +122,7 @@ int32 Extra::addExtraExplode(int32 x, int32 y, int32 z) {
 	return -1;
 }
 
-void Extra::resetExtras() {
+void Extra::clearExtra() {
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &_extraList[i];
 		extra->sprite = -1;

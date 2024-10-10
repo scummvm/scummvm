@@ -66,7 +66,7 @@ void GameState::init3DGame() {
 
 void GameState::initGameStateVars() {
 	debug(2, "Init game state variables");
-	_engine->_extra->resetExtras();
+	_engine->_extra->clearExtra();
 
 	for (int32 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
 		_engine->_redraw->overlayList[i].num = -1;

@@ -1876,7 +1876,16 @@ int32 ScriptLife::lASK_CHOICE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 int32 ScriptLife::lSET_DARK_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DARK_PAL()");
-	engine->_screens->setDarkPal();
+	ScopedEngineFreeze scoped(engine);
+	if (!HQR::getPaletteEntry(engine->_screens->_palettePcx, Resources::HQR_RESS_FILE, RESSHQR_DARKPAL)) {
+		error("Failed to get palette entry for dark palette");
+	}
+	engine->_screens->_palette = engine->_screens->_palettePcx;
+	if (!engine->_screens->_flagFade) {
+		// set the palette hard if it should not get faded
+		engine->setPalette(engine->_screens->_palettePcx);
+	}
+	engine->_screens->_flagPalettePcx = true;
 	return 0;
 }
 
@@ -1886,7 +1895,11 @@ int32 ScriptLife::lSET_DARK_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 int32 ScriptLife::lSET_NORMAL_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_NORMAL_PAL()");
-	engine->_screens->setNormalPal();
+	engine->_screens->_flagPalettePcx = false;
+	if (!engine->_screens->_flagFade) {
+		// reset the palette hard if it should not get faded
+		engine->setPalette(engine->_screens->_ptrPal);
+	}
 	return 0;
 }
 

@@ -180,9 +180,6 @@ static void paletteWindow(TwinEEngine *engine) {
 	if (ImGui::Begin("Palettes", &engine->_debugState->_paletteWindow)) {
 		const Graphics::Palette &palette = engine->_frontVideoBuffer.getPalette();
 		ImGuiEx::Palette(palette);
-
-		ImGui::SeparatorText("Last loaded palette");
-		ImGuiEx::Palette(engine->_screens->_palette);
 	}
 	ImGui::End();
 }
@@ -753,18 +750,18 @@ static void debuggerMenu(TwinEEngine *engine) {
 			actor->_posObj.y += 1000;
 		}
 		if (ImGui::BeginMenu("Palettes")) {
+			LifeScriptContext fakeCtx(0, engine->_scene->_sceneHero);
 			if (ImGui::MenuItem("Show palette")) {
 				engine->_debugState->_paletteWindow = true;
 			}
 			if (ImGui::MenuItem("Dark palette")) {
-				engine->_screens->setDarkPal();
+				engine->_scriptLife->lSET_DARK_PAL(engine, fakeCtx);
 			}
 			if (ImGui::MenuItem("Normal palette")) {
-				engine->_screens->setNormalPal();
+				engine->_scriptLife->lSET_NORMAL_PAL(engine, fakeCtx);
 			}
 #if 0
 			// TODO: the fade functions are blocking and break the imgui begin/end cycle
-			LifeScriptContext fakeCtx(0, engine->_scene->_sceneHero);
 			if (ImGui::MenuItem("lFADE_PAL_RED")) {
 				engine->_scriptLife->lFADE_PAL_RED(engine, fakeCtx);
 			}
