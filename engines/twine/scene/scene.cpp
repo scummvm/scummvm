@@ -638,7 +638,7 @@ void Scene::changeCube() {
 	_engine->_movements->_lastJoyFlag = true;
 	_engine->_grid->_useCellingGrid = -1;
 	_engine->_grid->_cellingGridIdx = -1;
-	_engine->_screens->_flagFade = false;
+	_engine->_screens->_flagFade = true;
 	_engine->_renderer->setLightVector(_alphaLight, _betaLight, LBAAngles::ANGLE_0);
 
 	_newCube = SCENE_CEILING_GRID_FADE_1;
