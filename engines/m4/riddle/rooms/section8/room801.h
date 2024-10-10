@@ -62,19 +62,26 @@ private:
 	int32 _roomStates_loop6 = 0;
 	int32 _roomStates_loop7 = 0;
 	int32 _roomStates_pu = 0;
+	int32 _roomStates_pu2 = 0;
 	int32 _roomStates_ripTalk = 0;
 	int32 _roomStates_ripTalker = 0;
+	int32 _roomStates_ripTalker2 = 0;
+	int32 _roomStates_ripTalking = 0;
 	int32 _roomStates_tt = 0;
+	int32 _roomStates_untie2 = 0;
 	int32 _roomStates_val1 = 0;
 	int32 _roomStates_val2 = 0;
 	int32 _roomStates_val3 = 0;
+	int32 _var1 = 0;
 
 	machine *_roomStates_field86h = nullptr;
+	machine *_roomStates_field8Ah = nullptr;
+	machine *_roomStates_field8Eh = nullptr;
 	machine *_roomStates_field96h = nullptr;
 	machine *_roomStates_field9Ah = nullptr;
-	machine *_roomStates_fieldA6h = nullptr;
 	machine *_roomStates_field9Eh = nullptr;
 	machine *_roomStates_fieldA2h = nullptr;
+	machine *_roomStates_fieldA6h = nullptr;
 	machine *_roomStates_fieldAAh = nullptr;
 };
 
