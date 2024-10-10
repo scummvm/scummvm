@@ -202,8 +202,8 @@ int32 ScriptLifeV2::lPALETTE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 palIndex = engine->_screens->mapLba2Palette(ctx.stream.readByte());
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::PALETTE(%i)", palIndex);
 	ScopedEngineFreeze scoped(engine);
-	HQR::getEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, palIndex);
-	engine->_screens->convertPalToRGBA(engine->_screens->_palette, engine->_screens->_ptrPal);
+	HQR::getPaletteEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, palIndex);
+	engine->_screens->convertPalToRGBA(engine->_screens->_palette.data(), engine->_screens->_ptrPal);
 	engine->setPalette(engine->_screens->_ptrPal);
 	engine->_screens->_flagPalettePcx = true;
 	return 0;

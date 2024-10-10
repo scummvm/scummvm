@@ -180,6 +180,9 @@ static void paletteWindow(TwinEEngine *engine) {
 	if (ImGui::Begin("Palettes", &engine->_debugState->_paletteWindow)) {
 		const Graphics::Palette &palette = engine->_frontVideoBuffer.getPalette();
 		ImGuiEx::Palette(palette);
+
+		ImGui::SeparatorText("Last loaded palette");
+		ImGuiEx::Palette(engine->_screens->_palette);
 	}
 	ImGui::End();
 }

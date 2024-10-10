@@ -126,19 +126,23 @@ void HolomapV1::initHoloDatas() {
 	constexpr TwineResource resource(Resources::HQR_RESS_FILE, RESSHQR_HOLOPAL);
 	_engine->_screens->loadCustomPalette(resource);
 
-	int32 j = HOLOMAP_PALETTE_INDEX * 3;
+	int32 j = HOLOMAP_PALETTE_INDEX;
 	const int32 n = NUM_HOLOMAPCOLORS * 3;
-	for (int32 i = 0; i < n; i += 3, j += 3) {
-		_paletteHolomap[i + 0] = _engine->_screens->_palette[j + 0];
-		_paletteHolomap[i + 1] = _engine->_screens->_palette[j + 1];
-		_paletteHolomap[i + 2] = _engine->_screens->_palette[j + 2];
+	for (int32 i = 0; i < n; i += 3, j++) {
+		byte r, g, b;
+		_engine->_screens->_palette.get(j, r, g, b);
+		_paletteHolomap[i + 0] = r;
+		_paletteHolomap[i + 1] = g;
+		_paletteHolomap[i + 2] = b;
 	}
 
-	j = HOLOMAP_PALETTE_INDEX * 3;
-	for (int32 i = n; i < 2 * n - 3; i += 3, j += 3) {
-		_paletteHolomap[i + 0] = _engine->_screens->_palette[j + 0];
-		_paletteHolomap[i + 1] = _engine->_screens->_palette[j + 1];
-		_paletteHolomap[i + 2] = _engine->_screens->_palette[j + 2];
+	j = HOLOMAP_PALETTE_INDEX;
+	for (int32 i = n; i < 2 * n - 3; i += 3, j++) {
+		byte r, g, b;
+		_engine->_screens->_palette.get(j, r, g, b);
+		_paletteHolomap[i + 0] = r;
+		_paletteHolomap[i + 1] = g;
+		_paletteHolomap[i + 2] = b;
 	}
 
 	computeCoorMapping();

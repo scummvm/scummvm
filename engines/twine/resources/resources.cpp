@@ -23,6 +23,7 @@
 #include "common/file.h"
 #include "common/tokenizer.h"
 #include "common/util.h"
+#include "graphics/palette.h"
 #include "twine/audio/sound.h"
 #include "twine/parser/anim3ds.h"
 #include "twine/renderer/renderer.h"
@@ -30,6 +31,7 @@
 #include "twine/resources/hqr.h"
 #include "twine/scene/animations.h"
 #include "twine/scene/scene.h"
+#include "twine/shared.h"
 #include "twine/text.h"
 #include "twine/twine.h"
 
@@ -47,18 +49,12 @@ Resources::~Resources() {
 }
 
 void Resources::initPalettes() {
-	uint8 *mainPalette = nullptr;
-	const int32 size = HQR::getAllocEntry(&mainPalette, Resources::HQR_RESS_FILE, RESSHQR_MAINPAL);
-	if (size == 0) {
+	if (!HQR::getPaletteEntry(_engine->_screens->_palette, Resources::HQR_RESS_FILE, RESSHQR_MAINPAL)) {
 		error("Failed to load main palette");
 	}
-	_engine->_screens->convertPalToRGBA(mainPalette, _engine->_screens->_mainPaletteRGBA);
-
-	memcpy(_engine->_screens->_palette, mainPalette, NUMOFCOLORS * 3);
-
-	_engine->_screens->convertPalToRGBA(_engine->_screens->_palette, _engine->_screens->_ptrPal);
+	_engine->_screens->convertPalToRGBA(_engine->_screens->_palette.data(), _engine->_screens->_mainPaletteRGBA);
+	_engine->_screens->convertPalToRGBA(_engine->_screens->_palette.data(), _engine->_screens->_ptrPal);
 	_engine->setPalette(_engine->_screens->_ptrPal);
-	free(mainPalette);
 }
 
 void Resources::preloadAnim3DS() {

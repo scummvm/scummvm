@@ -25,6 +25,7 @@
 #include "common/system.h"
 #include "common/util.h"
 #include "graphics/managed_surface.h"
+#include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "image/bmp.h"
@@ -33,6 +34,7 @@
 #include "twine/audio/music.h"
 #include "twine/resources/hqr.h"
 #include "twine/resources/resources.h"
+#include "twine/shared.h"
 #include "twine/twine.h"
 
 namespace TwinE {
@@ -62,16 +64,15 @@ void Screens::loadMenuImage(bool fadeIn) {
 }
 
 void Screens::loadCustomPalette(const TwineResource &resource) {
-	const int32 size = HQR::getEntry(_palette, resource.hqr, resource.index);
-	if (size == 0) {
-		warning("Failed to load custom palette %s:%i", resource.hqr, resource.index);
-		return;
+	if (!HQR::getPaletteEntry(_palette, resource)) {
+		error("Failed to get palette entry for custom palette: %s:%d", resource.hqr, resource.index);
 	}
-	if (size != (int32)sizeof(_palette)) {
+
+	if (_palette.size() != NUMOFCOLORS) {
 		warning("Unexpected palette size %s:%i", resource.hqr, resource.index);
 	}
-	debug(3, "palette %s:%i with size %i", resource.hqr, resource.index, size);
-	convertPalToRGBA(_palette, _palettePcx);
+	debug(3, "palette %s:%i with %u colors", resource.hqr, resource.index, _palette.size());
+	convertPalToRGBA(_palette.data(), _palettePcx);
 }
 
 void Screens::convertPalToRGBA(const uint8 *in, uint32 *out) {
@@ -304,8 +305,10 @@ void Screens::blackToWhite() {
 
 void Screens::setDarkPal() {
 	ScopedEngineFreeze scoped(_engine);
-	HQR::getEntry(_palette, Resources::HQR_RESS_FILE, RESSHQR_DARKPAL);
-	convertPalToRGBA(_palette, _ptrPal);
+	if (!HQR::getPaletteEntry(_palette, Resources::HQR_RESS_FILE, RESSHQR_DARKPAL)) {
+		error("Failed to get palette entry for dark palette");
+	}
+	convertPalToRGBA(_palette.data(), _ptrPal);
 	if (!_flagFade) {
 		// set the palette hard if it should not get faded
 		_engine->setPalette(_ptrPal);
@@ -322,7 +325,7 @@ void Screens::setNormalPal() {
 }
 
 void Screens::setBlackPal() {
-	memset(_palette, 0, sizeof(_palette));
+	_palette.clear();
 	memset(_ptrPal, 0, sizeof(_ptrPal));
 
 	_engine->setPalette(_ptrPal);

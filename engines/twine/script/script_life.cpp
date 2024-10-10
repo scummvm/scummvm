@@ -1770,8 +1770,8 @@ int32 ScriptLife::lFADE_PAL_RED(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLife::lFADE_ALARM_RED(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::FADE_ALARM_RED()");
 	ScopedEngineFreeze scoped(engine);
-	HQR::getEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
-	engine->_screens->convertPalToRGBA(engine->_screens->_palette, engine->_screens->_ptrPal);
+	HQR::getPaletteEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
+	engine->_screens->convertPalToRGBA(engine->_screens->_palette.data(), engine->_screens->_ptrPal);
 	engine->_screens->fadeToRed(engine->_screens->_ptrPal);
 	engine->_screens->_flagPalettePcx = true;
 	return 0;
@@ -1784,8 +1784,8 @@ int32 ScriptLife::lFADE_ALARM_RED(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLife::lFADE_ALARM_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::FADE_ALARM_PAL()");
 	ScopedEngineFreeze scoped(engine);
-	HQR::getEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
-	engine->_screens->convertPalToRGBA(engine->_screens->_palette, engine->_screens->_ptrPal);
+	HQR::getPaletteEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
+	engine->_screens->convertPalToRGBA(engine->_screens->_palette.data(), engine->_screens->_ptrPal);
 	engine->_screens->fadePalToPal(engine->_screens->_ptrPal, engine->_screens->_mainPaletteRGBA);
 	engine->_screens->_flagPalettePcx = false;
 	return 0;
@@ -1810,8 +1810,8 @@ int32 ScriptLife::lFADE_RED_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLife::lFADE_RED_ALARM(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::FADE_RED_ALARM()");
 	ScopedEngineFreeze scoped(engine);
-	HQR::getEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
-	engine->_screens->convertPalToRGBA(engine->_screens->_palette, engine->_screens->_ptrPal);
+	HQR::getPaletteEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
+	engine->_screens->convertPalToRGBA(engine->_screens->_palette.data(), engine->_screens->_ptrPal);
 	engine->_screens->fadeRedToPal(engine->_screens->_ptrPal);
 	engine->_screens->_flagPalettePcx = true;
 	return 0;
@@ -1824,8 +1824,8 @@ int32 ScriptLife::lFADE_RED_ALARM(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLife::lFADE_PAL_ALARM(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::FADE_PAL_ALARM()");
 	ScopedEngineFreeze scoped(engine);
-	HQR::getEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
-	engine->_screens->convertPalToRGBA(engine->_screens->_palette, engine->_screens->_ptrPal);
+	HQR::getPaletteEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
+	engine->_screens->convertPalToRGBA(engine->_screens->_palette.data(), engine->_screens->_ptrPal);
 	engine->_screens->fadePalToPal(engine->_screens->_mainPaletteRGBA, engine->_screens->_ptrPal);
 	engine->_screens->_flagPalettePcx = true;
 	return 0;

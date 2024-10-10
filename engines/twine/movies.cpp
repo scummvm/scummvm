@@ -26,6 +26,7 @@
 #include "common/str.h"
 #include "common/system.h"
 #include "graphics/managed_surface.h"
+#include "graphics/palette.h"
 #include "image/gif.h"
 #include "twine/audio/music.h"
 #include "twine/audio/sound.h"
@@ -187,8 +188,17 @@ void Movies::drawNextFrameFla() {
 		case kLoadPalette: {
 			int16 numOfColor = stream.readSint16LE();
 			int16 startColor = stream.readSint16LE();
-			uint8 *dest = _engine->_screens->_palette + (startColor * 3);
-			stream.read(dest, numOfColor * 3);
+			if (_engine->_screens->_palette.size() < (uint)(numOfColor + startColor)) {
+				Graphics::Palette palette(numOfColor + startColor);
+				palette.set(_engine->_screens->_palette, 0, _engine->_screens->_palette.size());
+				_engine->_screens->_palette = palette;
+			}
+			for (int16 i = 0; i < numOfColor; ++i) {
+				const byte r = stream.readByte();
+				const byte g = stream.readByte();
+				const byte b = stream.readByte();
+				_engine->_screens->_palette.set(i + startColor, r, g, b);
+			}
 			break;
 		}
 		case kInfo: {
@@ -201,7 +211,7 @@ void Movies::drawNextFrameFla() {
 				// FLA movies don't use cross fade
 				// fade out tricky
 				if (_fadeOut != 1) {
-					_engine->_screens->convertPalToRGBA(_engine->_screens->_palette, _engine->_screens->_palettePcx);
+					_engine->_screens->convertPalToRGBA(_engine->_screens->_palette.data(), _engine->_screens->_palettePcx);
 					_engine->_screens->fadeToBlack(_engine->_screens->_palettePcx);
 					_fadeOut = 1;
 				}
@@ -424,7 +434,7 @@ bool Movies::playMovie(const char *name) { // PlayAnimFla
 
 			// Only blit to screen if isn't a fade
 			if (_fadeOut == -1) {
-				_engine->_screens->convertPalToRGBA(_engine->_screens->_palette, _engine->_screens->_palettePcx);
+				_engine->_screens->convertPalToRGBA(_engine->_screens->_palette.data(), _engine->_screens->_palettePcx);
 				if (currentFrame == 0) {
 					// fade in the first frame
 					_engine->_screens->fadeIn(_engine->_screens->_palettePcx);
@@ -435,7 +445,7 @@ bool Movies::playMovie(const char *name) { // PlayAnimFla
 
 			// TRICKY: fade in tricky
 			if (_fadeOutFrames >= 2) {
-				_engine->_screens->convertPalToRGBA(_engine->_screens->_palette, _engine->_screens->_palettePcx);
+				_engine->_screens->convertPalToRGBA(_engine->_screens->_palette.data(), _engine->_screens->_palettePcx);
 				_engine->_screens->fadeToPal(_engine->_screens->_palettePcx);
 				_fadeOut = -1;
 				_fadeOutFrames = 0;

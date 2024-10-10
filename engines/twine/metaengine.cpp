@@ -195,7 +195,7 @@ void TwinEMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	TwinEEngine *engine = (TwinEEngine *)g_engine;
 	const Graphics::ManagedSurface &managedSurface = engine->_workVideoBuffer;
 	const Graphics::Surface &screenSurface = managedSurface.rawSurface();
-	::createThumbnail(&thumb, (const uint8 *)screenSurface.getPixels(), screenSurface.w, screenSurface.h, engine->_screens->_palette);
+	::createThumbnail(&thumb, (const uint8 *)screenSurface.getPixels(), screenSurface.w, screenSurface.h, engine->_screens->_palette.data());
 }
 
 //
