@@ -881,7 +881,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // AffScene
 	if (bgRedraw) {
 		_engine->freezeTime(false);
 		if (_engine->_scene->_newCube != SCENE_CEILING_GRID_FADE_1 && _engine->_scene->_newCube != SCENE_CEILING_GRID_FADE_2) {
-			_engine->_screens->fadeOut(_engine->_screens->_ptrPal);
+			_engine->_screens->fadeToBlack(_engine->_screens->_ptrPal);
 		}
 		_engine->_screens->clearScreen();
 
@@ -894,7 +894,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // AffScene
 		_engine->saveFrontBuffer();
 
 		if (_engine->_scene->_newCube != SCENE_CEILING_GRID_FADE_1 && _engine->_scene->_newCube != SCENE_CEILING_GRID_FADE_2) {
-			_engine->_screens->fadeIn(_engine->_screens->_ptrPal);
+			_engine->_screens->fadeToPal(_engine->_screens->_ptrPal);
 		}
 	} else {
 		blitBackgroundAreas();

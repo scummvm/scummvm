@@ -114,18 +114,6 @@ public:
 	bool loadBitmapDelay(const char *image, int32 seconds);
 
 	/**
-	 * Fade image in
-	 * @param palette current palette to fade in
-	 */
-	void fadeIn(const uint32 *palette);
-
-	/**
-	 * Fade image out
-	 * @param palette current palette to fade out
-	 */
-	void fadeOut(const uint32 *palette);
-
-	/**
 	 * Linear interpolation of the given value between start and end
 	 * @param value color component
 	 * @param start lower range

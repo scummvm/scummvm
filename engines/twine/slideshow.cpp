@@ -145,11 +145,11 @@ private:
 	}
 
 	void scriptFadeIn() {
-		_engine->_screens->fadeIn(_pal);
+		_engine->_screens->fadeToPal(_pal);
 	}
 
 	void scriptFadeOut() {
-		_engine->_screens->fadeOut(_pal);
+		_engine->_screens->fadeToBlack(_pal);
 	}
 
 	void scriptPCX(const Common::String &params) {

@@ -437,7 +437,7 @@ bool Movies::playMovie(const char *name) { // PlayAnimFla
 				_engine->_screens->convertPalToRGBA(_engine->_screens->_palette.data(), _engine->_screens->_palettePcx);
 				if (currentFrame == 0) {
 					// fade in the first frame
-					_engine->_screens->fadeIn(_engine->_screens->_palettePcx);
+					_engine->_screens->fadeToPal(_engine->_screens->_palettePcx);
 				} else {
 					_engine->setPalette(_engine->_screens->_palettePcx);
 				}
