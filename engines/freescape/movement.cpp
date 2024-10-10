@@ -448,11 +448,11 @@ bool FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, 
 	direction.normalize();
 	int rayLenght = 45;
 	if (_currentArea->getScale() == 16)
-		rayLenght = 200;
+		rayLenght = 20;
 	else if (_currentArea->getScale() >= 5)
 		rayLenght = MAX(5, 45 / (2 * _currentArea->getScale()));
 
-	for (int i = 0; i <= 2; i++) {
+	for (int i = 0; i <= 4; i++) {
 		Math::Vector3d rayPosition = lastPosition;
 		rayPosition.y() = rayPosition.y() - _playerHeight * (i / 4.0);
 		ray = Math::Ray(rayPosition, direction);
@@ -461,7 +461,7 @@ bool FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, 
 			gobj = (GeometricObject *)collided;
 			debugC(1, kFreescapeDebugMove, "Collided with object id %d of size %f %f %f", gobj->getObjectID(), gobj->getSize().x(), gobj->getSize().y(), gobj->getSize().z());
 			executed |= executeObjectConditions(gobj, false, true, false);
-			break;
+			//break;
 		}
 	}
 
