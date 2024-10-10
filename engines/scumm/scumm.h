@@ -1341,6 +1341,7 @@ protected:
 	// HACK Double the array size to handle 16-bit images.
 	// this should be dynamically allocated based on game depth instead.
 	byte _grabbedCursor[16384];
+	byte _macGrabbedCursor[16384 * 4]; // Double resolution cursor
 	byte _currentCursor = 0;
 
 	byte _newEffect = 0, _switchRoomEffect2 = 0, _switchRoomEffect = 0;
@@ -1448,8 +1449,12 @@ protected:
 	void mac_undrawIndy3CreditsText();
 	void mac_drawBufferToScreen(const byte *buffer, int pitch, int x, int y, int width, int height);
 	void mac_updateCompositeBuffer(const byte *buffer, int pitch, int x, int y, int width, int height);
-	void mac_applyDoubleResolutionAndBlit(const byte *buffer, int pitch, int x, int y, int width, int height);
-	void mac_applyEPXAndBlit(const byte *buffer, int pitch, int x, int y, int width, int height);
+	void mac_blitDoubleResImage(const byte *buffer, int pitch, int x, int y, int width, int height);
+	void mac_applyDoubleResToBuffer(const byte *inputBuffer, byte *outputBuffer, int width, int height, int inputPitch, int outputPitch);
+	void mac_blitEPXImage(const byte *buffer, int pitch, int x, int y, int width, int height);
+	void mac_applyEPXToBuffer(const byte *inputBuffer, byte *outputBuffer, int width, int height, int inputPitch, int outputPitch, int xOffset, int yOffset, int bufferWidth, int bufferHeight);
+	void mac_scaleCursor(byte *&outCursor, int &outHotspotX, int &outHotspotY, int &outWidth, int &outHeight);
+
 	Common::KeyState mac_showOldStyleBannerAndPause(const char *msg, int32 waitTime);
 
 	const byte *postProcessDOSGraphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const;

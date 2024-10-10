@@ -166,10 +166,10 @@ void ScummEngine::mac_drawBufferToScreen(const byte *buffer, int pitch, int x, i
 
 	if (_useMacGraphicsSmoothing) {
 		// Apply the EPX scaling algorithm to produce a 640x480 image...
-		mac_applyEPXAndBlit(buffer, pitch, x, y, width, height);
+		mac_blitEPXImage(buffer, pitch, x, y, width, height);
 	} else {
 		// ...otherwise just double the resolution.
-		mac_applyDoubleResolutionAndBlit(buffer, pitch, x, y, width, height);
+		mac_blitDoubleResImage(buffer, pitch, x, y, width, height);
 	}
 }
 
@@ -192,28 +192,32 @@ void ScummEngine::mac_updateCompositeBuffer(const byte *buffer, int pitch, int x
 	}
 }
 
-void ScummEngine::mac_applyDoubleResolutionAndBlit(const byte *buffer, int pitch, int x, int y, int width, int height) {
+void ScummEngine::mac_blitDoubleResImage(const byte *buffer, int pitch, int x, int y, int width, int height) {
 	byte *mac = (byte *)_macScreen->getBasePtr(x * 2, y * 2);
-	const byte *pixels = buffer;
-	int macPitch = _macScreen->pitch;
 
-	for (int h = 0; h < height; h++) {
-		for (int w = 0; w < width; w++) {
-			mac[2 * w] = pixels[w];
-			mac[2 * w + 1] = pixels[w];
-			mac[2 * w + macPitch] = pixels[w];
-			mac[2 * w + macPitch + 1] = pixels[w];
-		}
-
-		pixels += pitch;
-
-		mac += macPitch * 2;
-	}
+	mac_applyDoubleResToBuffer(buffer, mac, width, height, pitch, _macScreen->pitch);
 
 	_system->copyRectToScreen(_macScreen->getBasePtr(x * 2, y * 2), _macScreen->pitch, x * 2, y * 2 + _macScreenDrawOffset * 2, width * 2, height * 2);
 }
 
-void ScummEngine::mac_applyEPXAndBlit(const byte *buffer, int pitch, int x, int y, int width, int height) {
+void ScummEngine::mac_applyDoubleResToBuffer(const byte *inputBuffer, byte *outputBuffer, int width, int height, int inputPitch, int outputPitch) {
+	const byte *pixels = inputBuffer;
+	byte *outPixels = outputBuffer;
+
+	for (int h = 0; h < height; h++) {
+		for (int w = 0; w < width; w++) {
+			outPixels[2 * w] = pixels[w];
+			outPixels[2 * w + 1] = pixels[w];
+			outPixels[2 * w + outputPitch] = pixels[w];
+			outPixels[2 * w + outputPitch + 1] = pixels[w];
+		}
+
+		pixels += inputPitch;
+		outPixels += outputPitch * 2;
+	}
+}
+
+void ScummEngine::mac_blitEPXImage(const byte *buffer, int pitch, int x, int y, int width, int height) {
 	// This is a piecewise version of EPX/Scale2x.
 	//
 	// Just like the original, it applies EPX not on the entire screen but just on the
@@ -252,44 +256,88 @@ void ScummEngine::mac_applyEPXAndBlit(const byte *buffer, int pitch, int x, int 
 	byte *targetScreenBuf = (byte *)_macScreen->getBasePtr(x1 * 2, y1 * 2);
 
 	// Apply the EPX/Scale2x algorithm
-	for (int h = y1; h < y2; h++) {
-		for (int w = x1; w < x2; w++) {
-			// Calculate absolute screen coordinates of the current pixel
-			int absX = w;
-			int absY = h;
-
-			// Center pixel
-			byte P = _completeScreenBuffer[absY * _screenWidth + absX];
-
-			// Top neighbor (A)
-			byte A = (absY > 0) ? _completeScreenBuffer[(absY - 1) * _screenWidth + absX] : P;
-
-			// Right neighbor (B)
-			byte B = (absX < _screenWidth - 1) ? _completeScreenBuffer[absY * _screenWidth + (absX + 1)] : P;
-
-			// Left neighbor (C)
-			byte C = (absX > 0) ? _completeScreenBuffer[absY * _screenWidth + (absX - 1)] : P;
-
-			// Bottom neighbor (D)
-			byte D = (absY < _screenHeight - 1) ? _completeScreenBuffer[(absY + 1) * _screenWidth + absX] : P;
-
-			// Keep track of the coordinates for the expanded rectangle
-			int expandedAbsX = (w - x1) * 2;
-			int expandedAbsY = (h - y1) * 2;
-
-			// Actually scale the pixel
-			if (expandedAbsX >= 0 && expandedAbsX + 1 < (x2 - x1) * 2 && expandedAbsY >= 0 && expandedAbsY + 1 < (y2 - y1) * 2) {
-				targetScreenBuf[expandedAbsX] = (C == A && C != D && A != B) ? A : P;                          // Top-left
-				targetScreenBuf[expandedAbsX + 1] = (A == B && A != C && B != D) ? B : P;                      // Top-right
-				targetScreenBuf[expandedAbsX + _macScreen->pitch] = (D == C && D != B && C != A) ? C : P;      // Bottom-left
-				targetScreenBuf[expandedAbsX + _macScreen->pitch + 1] = (B == D && B != A && D != C) ? D : P;  // Bottom-right
-			}
-		}
-
-		targetScreenBuf += _macScreen->pitch * 2;
-	}
+	mac_applyEPXToBuffer(_completeScreenBuffer, targetScreenBuf, x2 - x1, y2 - y1, _screenWidth, _macScreen->pitch, x1, y1, _screenWidth, _screenHeight);
 
 	_system->copyRectToScreen(_macScreen->getBasePtr(x1 * 2, y1 * 2), _macScreen->pitch, x1 * 2, y1 * 2 + _macScreenDrawOffset * 2, (x2 - x1) * 2, (y2 - y1) * 2);
+}
+
+void ScummEngine::mac_applyEPXToBuffer(const byte *inputBuffer, byte *outputBuffer, int width, int height, int inputPitch, int outputPitch, int xOffset, int yOffset, int bufferWidth, int bufferHeight) {
+	// The EPX/Scale2x algorithm scales a single pixel to
+	// four pixels based on the original pixel's neighbors.
+	//
+	//                +---+---+
+	//    A           | 1 | 2 |
+	//  C P B   -->   +---+---+
+	//    D           | 3 | 4 |
+	//                +---+---+
+	// 
+	// Let P be the pixel, and A,B,C,D its neighbors,
+	// then the new 1,2,3,4 pixels are defined as follows:
+	// 
+	// 1=P; 2=P; 3=P; 4=P;
+	// 
+	// IF C==A => 1=A
+	// IF A==B => 2=B
+	// IF D==C => 3=C
+	// IF B==D => 4=D
+	// 
+	// IF of A, B, C, D, three or more are identical: 1=2=3=4=P
+
+	for (int h = 0; h < height; h++) {
+		for (int w = 0; w < width; w++) {
+			// Calculate absolute screen coordinates of the current pixel
+			int absX = w + xOffset;
+			int absY = h + yOffset;
+
+			if (absX < 0 || absX >= bufferWidth || absY < 0 || absY >= bufferHeight)
+				continue; // Skip out-of-bounds pixels
+
+			// Center pixel
+			byte P = inputBuffer[absY * inputPitch + absX];
+
+			// Top neighbor (A)
+			byte A = (absY > 0) ? inputBuffer[(absY - 1) * inputPitch + absX] : P;
+
+			// Right neighbor (B)
+			byte B = (absX < bufferWidth - 1) ? inputBuffer[absY * inputPitch + (absX + 1)] : P;
+
+			// Left neighbor (C)
+			byte C = (absX > 0) ? inputBuffer[absY * inputPitch + (absX - 1)] : P;
+
+			// Bottom neighbor (D)
+			byte D = (absY < bufferHeight - 1) ? inputBuffer[(absY + 1) * inputPitch + absX] : P;
+
+			int expW = w * 2;
+			int expH = h * 2;
+
+			// Actually scale the pixel
+			if (expW >= 0 && expW + 1 < width * 2 && expH >= 0 && expH + 1 < height * 2) {
+				outputBuffer[expH * outputPitch + expW]           = (C == A && C != D && A != B) ? A : P; // Top-left
+				outputBuffer[expH * outputPitch + expW + 1]       = (A == B && A != C && B != D) ? B : P; // Top-right
+				outputBuffer[(expH + 1) * outputPitch + expW]     = (D == C && D != B && C != A) ? C : P; // Bottom-left
+				outputBuffer[(expH + 1) * outputPitch + expW + 1] = (B == D && B != A && D != C) ? D : P; // Bottom-right
+			}
+		}
+	}
+}
+
+void ScummEngine::mac_scaleCursor(byte *&outCursor, int &outHotspotX, int &outHotspotY, int &outWidth, int &outHeight) {
+	int newWidth = _cursor.width * 2;
+	int newHeight = _cursor.height * 2;
+
+	memset(_macGrabbedCursor, 0, ARRAYSIZE(_macGrabbedCursor));
+
+	if (_useMacGraphicsSmoothing) {
+		mac_applyEPXToBuffer(_grabbedCursor, _macGrabbedCursor, _cursor.width, _cursor.height, _cursor.width, newWidth, 0, 0, _cursor.width, _cursor.height);
+	} else {
+		mac_applyDoubleResToBuffer(_grabbedCursor, _macGrabbedCursor, _cursor.width, _cursor.height, _cursor.width, newWidth);
+	}
+
+	outWidth = newWidth;
+	outHeight = newHeight;
+	outCursor = _macGrabbedCursor;
+	outHotspotX = _cursor.hotspotX * 2;
+	outHotspotY = _cursor.hotspotY * 2;
 }
 
 Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, int32 waitTime) {
