@@ -327,13 +327,13 @@ void HolomapV1::renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, A
 	_engine->copyBlockPhys(rect);
 }
 
-void HolomapV1::drawHolomapTrajectory(int32 trajectoryIndex) {
+void HolomapV1::holoTraj(int32 trajectoryIndex) {
 	if (_engine->isDemo()) {
 		return;
 	}
 	debug("Draw trajectory index %i", trajectoryIndex);
 
-	const Trajectory *data = _engine->_resources->getTrajectory(trajectoryIndex);
+	const Trajectory *data = _engine->_resources->giveTrajPtr(trajectoryIndex);
 	if (data == nullptr) {
 		warning("Failed to load trajectory data for index %i", trajectoryIndex);
 		return;

@@ -74,7 +74,7 @@ public:
 	 */
 	void clrHoloPos(int32 locationIdx) override;
 
-	void drawHolomapTrajectory(int32 trajectoryIndex) override;
+	void holoTraj(int32 trajectoryIndex) override;
 
 	/** Load Holomap content */
 	void initHoloDatas() override;

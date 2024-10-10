@@ -44,7 +44,7 @@ const char *HolomapV2::getLocationName(int index) const {
 void HolomapV2::clrHoloPos(int32 locationIdx) {
 }
 
-void HolomapV2::drawHolomapTrajectory(int32 trajectoryIndex) {
+void HolomapV2::holoTraj(int32 trajectoryIndex) {
 }
 
 void HolomapV2::initHoloDatas() {

@@ -192,7 +192,7 @@ public:
 	/** Initialize resource pointers */
 	void initResources();
 
-	const Trajectory *getTrajectory(int index) const;
+	const Trajectory *giveTrajPtr(int index) const;
 	const TrajectoryData &getTrajectories() const {
 		return _trajectories;
 	}

@@ -66,7 +66,7 @@ public:
 	 */
 	virtual void clrHoloPos(int32 locationIdx) = 0;
 
-	virtual void drawHolomapTrajectory(int32 trajectoryIndex) = 0;
+	virtual void holoTraj(int32 trajectoryIndex) = 0;
 
 	/** Load Holomap content */
 	virtual void initHoloDatas() = 0;

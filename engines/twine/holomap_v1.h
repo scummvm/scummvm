@@ -25,7 +25,7 @@
 #include "twine/holomap.h"
 
 #define NUM_HOLOMAPCOLORS 32
-#define HOLOMAP_PALETTE_INDEX 192
+#define HOLOMAP_PALETTE_INDEX (12*16)
 
 namespace TwinE {
 
@@ -113,7 +113,7 @@ public:
 	 */
 	void clrHoloPos(int32 locationIdx) override;
 
-	void drawHolomapTrajectory(int32 trajectoryIndex) override;
+	void holoTraj(int32 trajectoryIndex) override;
 
 	/** Load Holomap content */
 	void initHoloDatas() override;

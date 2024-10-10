@@ -239,7 +239,7 @@ const TextEntry *Resources::getText(TextBankId textBankId, TextId index) const {
 	return _textData.getText(textBankId, index);
 }
 
-const Trajectory *Resources::getTrajectory(int index) const {
+const Trajectory *Resources::giveTrajPtr(int index) const {
 	return _trajectories.getTrajectory(index);
 }
 
