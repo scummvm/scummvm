@@ -105,10 +105,7 @@ enum RoomFlags {
 #define MAX_ROOM_OBJECTS_v300 40 // for some legacy logic support
 #define MAX_ROOM_OBJECTS   256 // v3.6.0: 40 -> 256 (now limited by room format)
 #define MAX_ROOM_REGIONS   16
-// TODO: this is remains of the older code, MAX_WALK_AREAS = real number - 1, where
-// -1 is for the solid wall. When fixing this you need to be careful, because some
-// walk-area indexes are 0-based and some 1-based (and some arrays have MAX_WALK_AREAS + 1 size)
-#define MAX_WALK_AREAS     15
+#define MAX_WALK_AREAS     16
 #define MAX_WALK_BEHINDS   16
 
 #define MAX_MESSAGES       100
@@ -125,8 +122,10 @@ typedef std::shared_ptr<Bitmap> PBitmap;
 // Various room options
 struct RoomOptions {
 	// Index of the startup music in the room
+	// this is a deprecated option, used before 3.2.* with old audio API.
 	int  StartupMusic;
-	// If saving and loading game is disabled in the room
+	// If saving and loading game is disabled in the room;
+	// this is a deprecated option that affects only built-in save/load dialogs
 	bool SaveLoadDisabled;
 	// If player character is turned off in the room
 	bool PlayerCharOff;
@@ -134,7 +133,7 @@ struct RoomOptions {
 	int  PlayerView;
 	// Room's music volume modifier
 	RoomVolumeMod MusicVolume;
-	// A collection of boolean options
+	// A collection of RoomFlags
 	int  Flags;
 
 	RoomOptions();
@@ -354,7 +353,7 @@ public:
 	size_t                  RegionCount;
 	RoomRegion              Regions[MAX_ROOM_REGIONS];
 	size_t                  WalkAreaCount;
-	WalkArea                WalkAreas[MAX_WALK_AREAS + 1];
+	WalkArea                WalkAreas[MAX_WALK_AREAS];
 	size_t                  WalkBehindCount;
 	WalkBehind              WalkBehinds[MAX_WALK_BEHINDS];
 

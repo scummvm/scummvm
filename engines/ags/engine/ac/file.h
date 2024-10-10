@@ -28,6 +28,7 @@
 #ifndef AGS_ENGINE_AC_FILE_H
 #define AGS_ENGINE_AC_FILE_H
 
+#include "common/std/memory.h"
 #include "ags/engine/ac/dynobj/script_file.h"
 #include "ags/engine/ac/runtime_defines.h"
 
@@ -38,6 +39,7 @@ using AGS::Shared::Stream;
 int     File_Exists(const char *fnmm);
 int     File_Delete(const char *fnmm);
 void *sc_OpenFile(const char *fnmm, int mode);
+const char *File_ResolvePath(const char *fnmm);
 void    File_Close(sc_File *fil);
 void    File_WriteString(sc_File *fil, const char *towrite);
 void    File_WriteInt(sc_File *fil, int towrite);
@@ -57,8 +59,8 @@ int     File_GetError(sc_File *fil);
 int     File_GetPosition(sc_File *fil);
 
 struct ScriptFileHandle {
-	Stream *stream;
-	int32_t  handle;
+	std::unique_ptr<Stream> stream;
+	int32_t  handle = 0;
 };
 extern ScriptFileHandle valid_handles[MAX_OPEN_SCRIPT_FILES + 1];
 extern int num_open_script_files;

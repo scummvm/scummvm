@@ -26,6 +26,7 @@
 #include "ags/engine/ac/region.h"
 #include "ags/engine/ac/room.h"
 #include "ags/engine/ac/room_status.h"
+#include "ags/engine/ac/dynobj/cc_region.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/game/room_struct.h"
 #include "ags/shared/gfx/bitmap.h"
@@ -143,24 +144,16 @@ void RunRegionInteraction(int regnum, int mood) {
 	if ((mood < 0) || (mood > 2))
 		quit("!RunRegionInteraction: invalid event specified");
 
-	// We need a backup, because region interactions can run
-	// while another interaction (eg. hotspot) is in a Wait
-	// command, and leaving our basename would call the wrong
-	// script later on
-	const char *oldbasename = _G(evblockbasename);
-	int   oldblocknum = _G(evblocknum);
+	// NOTE: for Regions the mode has specific meanings (NOT verbs):
+	// 0 - stands on region, 1 - walks onto region, 2 - walks off region
+	const auto obj_evt = ObjectEvent("region%d", regnum,
+									 RuntimeScriptValue().SetScriptObject(&_G(scrRegion)[regnum], &_GP(ccDynamicRegion)), mood);
 
-	_G(evblockbasename) = "region%d";
-	_G(evblocknum) = regnum;
-
-	if (_GP(thisroom).Regions[regnum].EventHandlers != nullptr) {
-		run_interaction_script(_GP(thisroom).Regions[regnum].EventHandlers.get(), mood);
+	if (_G(loaded_game_file_version) > kGameVersion_272) {
+		run_interaction_script(obj_evt, _GP(thisroom).Regions[regnum].EventHandlers.get(), mood);
 	} else {
-		run_interaction_event(&_G(croom)->intrRegion[regnum], mood);
+		run_interaction_event(obj_evt, &_G(croom)->intrRegion[regnum], mood);
 	}
-
-	_G(evblockbasename) = oldbasename;
-	_G(evblocknum) = oldblocknum;
 }
 
 } // namespace AGS3

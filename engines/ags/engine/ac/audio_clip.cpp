@@ -25,8 +25,11 @@
 #include "ags/engine/ac/audio_channel.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/string.h"
 #include "ags/shared/core/asset_manager.h"
 #include "ags/engine/ac/dynobj/cc_audio_channel.h"
+#include "ags/engine/ac/dynobj/cc_audio_clip.h"
+#include "ags/engine/ac/dynobj/script_string.h"
 #include "ags/engine/script/runtime_script_value.h"
 #include "ags/globals.h"
 
@@ -36,6 +39,10 @@ using namespace AGS::Shared;
 
 int AudioClip_GetID(ScriptAudioClip *clip) {
 	return clip->id;
+}
+
+const char *AudioClip_GetScriptName(ScriptAudioClip *clip) {
+	return CreateNewScriptString(clip->scriptName);
 }
 
 int AudioClip_GetFileType(ScriptAudioClip *clip) {
@@ -90,8 +97,20 @@ ScriptAudioChannel *AudioClip_PlayOnChannel(ScriptAudioClip *clip, int chan, int
 //
 //=============================================================================
 
+ScriptAudioClip *AudioClip_GetByName(const char *name) {
+	return static_cast<ScriptAudioClip *>(ccGetScriptObjectAddress(name, _GP(ccDynamicAudioClip).GetType()));
+}
+
+RuntimeScriptValue Sc_AudioClip_GetByName(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_OBJ_POBJ(ScriptAudioClip, _GP(ccDynamicAudioClip), AudioClip_GetByName, const char);
+}
+
 RuntimeScriptValue Sc_AudioClip_GetID(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptAudioClip, AudioClip_GetID);
+}
+
+RuntimeScriptValue Sc_AudioClip_GetScriptName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_OBJ(ScriptAudioClip, const char, _GP(myScriptStringImpl), AudioClip_GetScriptName);
 }
 
 // int | ScriptAudioClip *clip
@@ -134,15 +153,21 @@ RuntimeScriptValue Sc_AudioClip_PlayOnChannel(void *self, const RuntimeScriptVal
 }
 
 void RegisterAudioClipAPI() {
-	ccAddExternalObjectFunction("AudioClip::Play^2", Sc_AudioClip_Play);
-	ccAddExternalObjectFunction("AudioClip::PlayFrom^3", Sc_AudioClip_PlayFrom);
-	ccAddExternalObjectFunction("AudioClip::PlayQueued^2", Sc_AudioClip_PlayQueued);
-	ccAddExternalObjectFunction("AudioClip::PlayOnChannel^3", Sc_AudioClip_PlayOnChannel);
-	ccAddExternalObjectFunction("AudioClip::Stop^0", Sc_AudioClip_Stop);
-	ccAddExternalObjectFunction("AudioClip::get_ID", Sc_AudioClip_GetID);
-	ccAddExternalObjectFunction("AudioClip::get_FileType", Sc_AudioClip_GetFileType);
-	ccAddExternalObjectFunction("AudioClip::get_IsAvailable", Sc_AudioClip_GetIsAvailable);
-	ccAddExternalObjectFunction("AudioClip::get_Type", Sc_AudioClip_GetType);
+	ScFnRegister audioclip_api[] = {
+		{"AudioClip::GetByName", API_FN_PAIR(AudioClip_GetByName)},
+		{"AudioClip::Play^2", API_FN_PAIR(AudioClip_Play)},
+		{"AudioClip::PlayFrom^3", API_FN_PAIR(AudioClip_PlayFrom)},
+		{"AudioClip::PlayQueued^2", API_FN_PAIR(AudioClip_PlayQueued)},
+		{"AudioClip::PlayOnChannel^3", API_FN_PAIR(AudioClip_PlayOnChannel)},
+		{"AudioClip::Stop^0", API_FN_PAIR(AudioClip_Stop)},
+		{"AudioClip::get_ID", API_FN_PAIR(AudioClip_GetID)},
+		{"AudioClip::get_FileType", API_FN_PAIR(AudioClip_GetFileType)},
+		{"AudioClip::get_IsAvailable", API_FN_PAIR(AudioClip_GetIsAvailable)},
+		{"AudioClip::get_ScriptName", API_FN_PAIR(AudioClip_GetScriptName)},
+		{"AudioClip::get_Type", API_FN_PAIR(AudioClip_GetType)},
+	};
+
+	ccAddExternalFunctions361(audioclip_api);
 }
 
 } // namespace AGS3

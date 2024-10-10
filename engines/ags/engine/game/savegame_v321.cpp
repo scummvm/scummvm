@@ -45,6 +45,7 @@
 #include "ags/engine/ac/room_status.h"
 #include "ags/shared/ac/view.h"
 #include "ags/engine/ac/dynobj/cc_serializer.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/game/savegame.h"
 #include "ags/engine/game/savegame_components.h"
 #include "ags/engine/game/savegame_internal.h"
@@ -57,11 +58,9 @@
 #include "ags/shared/gui/gui_slider.h"
 #include "ags/shared/gui/gui_textbox.h"
 #include "ags/engine/media/audio/audio.h"
-#include "ags/plugins/ags_plugin.h"
 #include "ags/plugins/plugin_engine.h"
 #include "ags/engine/script/script.h"
 #include "ags/shared/script/cc_common.h"
-#include "ags/shared/util/aligned_stream.h"
 #include "ags/shared/util/string_utils.h"
 
 namespace AGS3 {
@@ -112,8 +111,9 @@ static void restore_game_spriteset(Stream *in) {
 	// get serialized dynamic sprites
 	int sprnum = in->ReadInt32();
 	while (sprnum) {
-		unsigned char spriteflag = in->ReadByte();
-		add_dynamic_sprite(sprnum, read_serialized_bitmap(in));
+		unsigned char spriteflag = in->ReadInt8();
+		std::unique_ptr<Bitmap> image(read_serialized_bitmap(in));
+		add_dynamic_sprite(sprnum, std::move(image));
 		_GP(game).SpriteInfos[sprnum].Flags = spriteflag;
 		sprnum = in->ReadInt32();
 	}
@@ -147,23 +147,18 @@ static HSaveError restore_game_scripts(Stream *in, const PreservedParams &pp, Re
 	return HSaveError::None();
 }
 
-static void ReadRoomStatus_Aligned(RoomStatus *roomstat, Stream *in, GameDataVersion data_ver) {
-	AlignedStream align_s(in, Shared::kAligned_Read);
-	roomstat->ReadFromFile_v321(&align_s, data_ver);
-}
-
 static void restore_game_room_state(Stream *in, GameDataVersion data_ver) {
 	_G(displayed_room) = in->ReadInt32();
 
 	// read the room state for all the rooms the player has been in
 	for (int vv = 0; vv < MAX_ROOMS; vv++) {
-		int beenhere = in->ReadByte();
+		int beenhere = in->ReadInt8();
 		if (beenhere) {
 			RoomStatus *roomstat = getRoomStatus(vv);
 			roomstat->beenhere = beenhere;
 
 			if (roomstat->beenhere) {
-				ReadRoomStatus_Aligned(roomstat, in, data_ver);
+				roomstat->ReadFromSavegame_v321(in, data_ver);
 				if (roomstat->tsdatasize > 0) {
 					roomstat->tsdata.resize(roomstat->tsdatasize);
 					in->Read(roomstat->tsdata.data(), roomstat->tsdatasize);
@@ -173,53 +168,24 @@ static void restore_game_room_state(Stream *in, GameDataVersion data_ver) {
 	}
 }
 
-static void ReadGameState_Aligned(Stream *in, GameDataVersion data_ver, RestoredData &r_data) {
-	AlignedStream align_s(in, Shared::kAligned_Read);
-	_GP(play).ReadFromSavegame(&align_s, data_ver, kGSSvgVersion_OldFormat, r_data);
-}
-
-static void restore_game_play_ex_data(Stream *in) {
-	char rbuffer[200];
-	for (size_t i = 0; i < _GP(play).do_once_tokens.size(); ++i) {
-		StrUtil::ReadCStr(rbuffer, in, sizeof(rbuffer));
-		_GP(play).do_once_tokens[i] = rbuffer;
-	}
-
-	in->Seek(_GP(game).numgui * sizeof(int32_t)); // gui_draw_order
-}
-
 static void restore_game_play(Stream *in, GameDataVersion data_ver, RestoredData &r_data) {
 	int screenfadedout_was = _GP(play).screen_is_faded_out;
 	int roomchanges_was = _GP(play).room_changes;
 
-	ReadGameState_Aligned(in, data_ver, r_data);
+	_GP(play).ReadFromSavegame(in, data_ver, kGSSvgVersion_OldFormat, r_data);
 	r_data.Cameras[0].Flags = r_data.Camera0_Flags;
 
 	_GP(play).screen_is_faded_out = screenfadedout_was;
 	_GP(play).room_changes = roomchanges_was;
 
-	restore_game_play_ex_data(in);
-}
-
-static void ReadMoveList_Aligned(Stream *in) {
-	AlignedStream align_s(in, Shared::kAligned_Read);
-	for (int i = 0; i < _GP(game).numcharacters + MAX_ROOM_OBJECTS_v300 + 1; ++i) {
-		_GP(mls)[i].ReadFromFile_Legacy(&align_s);
-		align_s.Reset();
+	char rbuffer[200]; // old doonceonly token length
+	for (size_t i = 0; i < r_data.DoOnceCount; ++i) {
+		StrUtil::ReadCStr(rbuffer, in, sizeof(rbuffer));
+		_GP(play).do_once_tokens.insert(rbuffer);
 	}
-}
 
-static void ReadGameSetupStructBase_Aligned(Stream *in, GameDataVersion data_ver) {
-	AlignedStream align_s(in, Shared::kAligned_Read);
-	_GP(game).GameSetupStructBase::ReadFromFile(&align_s, data_ver);
-}
-
-static void ReadCharacterExtras_Aligned(Stream *in) {
-	AlignedStream align_s(in, Shared::kAligned_Read);
-	for (int i = 0; i < _GP(game).numcharacters; ++i) {
-		_GP(charextra)[i].ReadFromSavegame(&align_s, 0);
-		align_s.Reset();
-	}
+	// Skip gui_draw_order (no longer applied from saves)
+	in->Seek(_GP(game).numgui * sizeof(int32_t));
 }
 
 static void restore_game_palette(Stream *in) {
@@ -237,16 +203,6 @@ static void restore_game_more_dynamic_values(Stream *in) {
 	in->ReadInt32(); // mouse_pushed_iface
 	_G(ifacepopped) = in->ReadInt32();
 	_G(game_paused) = in->ReadInt32();
-}
-
-void ReadAnimatedButtons_Aligned(Stream *in, int num_abuts) {
-	AlignedStream align_s(in, Shared::kAligned_Read);
-	for (int i = 0; i < num_abuts; ++i) {
-		AnimatingGUIButton abtn;
-		abtn.ReadFromSavegame(&align_s, 0);
-		AddButtonAnimation(abtn);
-		align_s.Reset();
-	}
 }
 
 static HSaveError restore_game_gui(Stream *in) {
@@ -278,11 +234,14 @@ static HSaveError restore_game_gui(Stream *in) {
 
 		return err;
 	GUI::RebuildGUI(); // rebuild guis in case they were copied from reserved game data
-
 	_GP(game).numgui = _GP(guis).size();
-	RemoveAllButtonAnimations();
+
 	int anim_count = in->ReadInt32();
-	ReadAnimatedButtons_Aligned(in, anim_count);
+	for (int i = 0; i < anim_count; ++i) {
+		AnimatingGUIButton abtn;
+		abtn.ReadFromSavegame(in, 0);
+		AddButtonAnimation(abtn);
+	}
 	return HSaveError::None();
 }
 
@@ -300,8 +259,8 @@ static HSaveError restore_game_audiocliptypes(Stream *in) {
 static void restore_game_thisroom(Stream *in, RestoredData &r_data) {
 	in->ReadArrayOfInt16(r_data.RoomLightLevels, MAX_ROOM_REGIONS);
 	in->ReadArrayOfInt32(r_data.RoomTintLevels, MAX_ROOM_REGIONS);
-	in->ReadArrayOfInt16(r_data.RoomZoomLevels1, MAX_WALK_AREAS + 1);
-	in->ReadArrayOfInt16(r_data.RoomZoomLevels2, MAX_WALK_AREAS + 1);
+	in->ReadArrayOfInt16(r_data.RoomZoomLevels1, MAX_WALK_AREAS);
+	in->ReadArrayOfInt16(r_data.RoomZoomLevels2, MAX_WALK_AREAS);
 }
 
 static void restore_game_ambientsounds(Stream *in, RestoredData &r_data) {
@@ -319,25 +278,33 @@ static void restore_game_ambientsounds(Stream *in, RestoredData &r_data) {
 	}
 }
 
-static void ReadOverlays_Aligned(Stream *in, std::vector<bool> &has_bitmap, size_t num_overs) {
-	AlignedStream align_s(in, Shared::kAligned_Read);
-	has_bitmap.resize(num_overs);
+static void ReadOverlays_Aligned(Stream *in, std::vector<int> &has_bitmap, size_t num_overs) {
+	// Remember that overlay indexes may be non-sequential
+	auto &overs = get_overlays();
 	for (size_t i = 0; i < num_overs; ++i) {
 		bool has_bm;
-		_GP(screenover)[i].ReadFromFile(&align_s, has_bm, 0);
-		has_bitmap[i] = has_bm;
-		align_s.Reset();
+		ScreenOverlay over;
+		over.ReadFromSavegame(in, has_bm, -1);
+		if (over.type < 0)
+			continue; // safety abort
+		if (overs.size() <= static_cast<uint32_t>(over.type))
+			overs.resize(over.type + 1);
+		overs[over.type] = std::move(over);
+		if (has_bm)
+			has_bitmap.push_back(over.type);
 	}
 }
 
-static void restore_game_overlays(Stream *in) {
+static void restore_game_overlays(Stream *in, RestoredData &r_data) {
 	size_t num_overs = in->ReadInt32();
-	_GP(screenover).resize(num_overs);
-	std::vector<bool> has_bitmap;
+	// Remember that overlay indexes may be not sequential,
+	// the vector may be resized during read
+	auto &overs = get_overlays();
+	overs.resize(num_overs);
+	std::vector<int> has_bitmap;
 	ReadOverlays_Aligned(in, has_bitmap, num_overs);
-	for (size_t i = 0; i < num_overs; ++i) {
-		if (has_bitmap[i])
-			_GP(screenover)[i].SetImage(read_serialized_bitmap(in), _GP(screenover)[i].offsetX, _GP(screenover)[i].offsetY);
+	for (auto over_id : has_bitmap) {
+		r_data.OverlayImages[over_id].reset(read_serialized_bitmap(in));
 	}
 }
 
@@ -347,9 +314,9 @@ static void restore_game_dynamic_surfaces(Stream *in, RestoredData &r_data) {
 	r_data.DynamicSurfaces.resize(MAX_DYNAMIC_SURFACES);
 	for (int i = 0; i < MAX_DYNAMIC_SURFACES; ++i) {
 		if (in->ReadInt8() == 0) {
-			r_data.DynamicSurfaces[i] = nullptr;
+			r_data.DynamicSurfaces[i].reset();
 		} else {
-			r_data.DynamicSurfaces[i] = read_serialized_bitmap(in);
+			r_data.DynamicSurfaces[i].reset(read_serialized_bitmap(in));
 		}
 	}
 }
@@ -370,10 +337,10 @@ static void restore_game_displayed_room_status(Stream *in, GameDataVersion data_
 		bb = in->ReadInt32();
 
 		if (bb)
-			_G(raw_saved_screen) = read_serialized_bitmap(in);
+			_G(raw_saved_screen).reset(read_serialized_bitmap(in));
 
 		// get the current troom, in case they save in room 600 or whatever
-		ReadRoomStatus_Aligned(&_GP(troom), in, data_ver);
+		_GP(troom).ReadFromSavegame_v321(in, data_ver);
 
 		if (_GP(troom).tsdatasize > 0) {
 			_GP(troom).tsdata.resize(_GP(troom).tsdatasize);
@@ -456,16 +423,10 @@ HSaveError restore_save_data_v321(Stream *in, GameDataVersion data_ver, const Pr
 		return err;
 	restore_game_room_state(in, data_ver);
 	restore_game_play(in, data_ver, r_data);
-	ReadMoveList_Aligned(in);
-
-	// save pointer members before reading
-	char *gswas = _GP(game).globalscript;
-	ccScript *compsc = _GP(game).compiled_script;
-	CharacterInfo *chwas = _GP(game).chars;
-	WordsDictionary *olddict = _GP(game).dict;
-	std::vector<String> mesbk(MAXGLOBALMES);
-	for (size_t i = 0; i < MAXGLOBALMES; ++i)
-		mesbk[i] = _GP(game).messages[i];
+	// Global character movelists
+	for (int i = 0; i < _GP(game).numcharacters + MAX_ROOM_OBJECTS_v300 + 1; ++i) {
+		_GP(mls)[i].ReadFromSavegame_Legacy(in);
+	}
 
 	// List of game objects, used to compare with the save contents
 	struct ObjectCounts {
@@ -475,12 +436,8 @@ HSaveError restore_save_data_v321(Stream *in, GameDataVersion data_ver, const Pr
 		int ViewCount = _GP(game).numviews;
 	} objwas;
 
-	ReadGameSetupStructBase_Aligned(in, data_ver);
-
-	// Delete unneeded data
-	// TODO: reorganize this (may be solved by optimizing safe format too)
-	delete[] _GP(game).load_messages;
-	_GP(game).load_messages = nullptr;
+	GameSetupStruct::SerializeInfo info;
+	_GP(game).GameSetupStructBase::ReadFromFile(in, data_ver, info);
 
 	if (!AssertGameContent(err, objwas.CharacterCount, _GP(game).numcharacters, "Characters") ||
 		!AssertGameContent(err, objwas.DialogCount, _GP(game).numdialog, "Dialogs") ||
@@ -488,12 +445,15 @@ HSaveError restore_save_data_v321(Stream *in, GameDataVersion data_ver, const Pr
 		!AssertGameContent(err, objwas.ViewCount, _GP(game).numviews, "Views"))
 		return err;
 
-	_GP(game).ReadFromSaveGame_v321(in, data_ver, gswas, compsc, chwas, olddict, mesbk);
+	_GP(game).ReadFromSaveGame_v321(in);
 
 	// Modified custom properties are read separately to keep existing save format
 	_GP(play).ReadCustomProperties_v340(in, data_ver);
 
-	ReadCharacterExtras_Aligned(in);
+	// Character extras (runtime only data)
+	for (int i = 0; i < _GP(game).numcharacters; ++i) {
+		_GP(charextra)[i].ReadFromSavegame(in, kCharSvgVersion_Initial);
+	}
 	restore_game_palette(in);
 	restore_game_dialogs(in);
 	restore_game_more_dynamic_values(in);
@@ -505,7 +465,7 @@ HSaveError restore_save_data_v321(Stream *in, GameDataVersion data_ver, const Pr
 		return err;
 	restore_game_thisroom(in, r_data);
 	restore_game_ambientsounds(in, r_data);
-	restore_game_overlays(in);
+	restore_game_overlays(in, r_data);
 	restore_game_dynamic_surfaces(in, r_data);
 	restore_game_displayed_room_status(in, data_ver, r_data);
 	err = restore_game_globalvars(in);
@@ -523,10 +483,7 @@ HSaveError restore_save_data_v321(Stream *in, GameDataVersion data_ver, const Pr
 	if (!err)
 		return err;
 
-	auto pluginFileHandle = AGSE_RESTOREGAME;
-	pl_set_file_handle(pluginFileHandle, in);
-	pl_run_plugin_hooks(AGSE_RESTOREGAME, pluginFileHandle);
-	pl_clear_file_handle();
+	ReadPluginSaveData(in, kPluginSvgVersion_Initial, SIZE_MAX);
 	if (static_cast<uint32_t>(in->ReadInt32()) != MAGICNUMBER)
 		return new SavegameError(kSvgErr_InconsistentPlugin);
 

@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/std/algorithm.h"
 #include "ags/shared/util/data_stream.h"
 
 namespace AGS3 {
@@ -125,6 +126,77 @@ size_t DataStream::WriteAndConvertArrayOfInt64(const int64_t *buffer, size_t cou
 		}
 	}
 	return elem;
+}
+
+DataStreamSection::DataStreamSection(Stream *base, soff_t start, soff_t end)
+	: _base(base) {
+	_start = std::max((soff_t)0, std::min(start, end));
+	_end = std::min(std::max((soff_t)0, end), base->GetLength());
+	soff_t pos = base->Seek(_start, kSeekBegin);
+	if (pos >= 0)
+		_position = pos;
+	else
+		_position = base->GetPosition();
+}
+
+size_t DataStreamSection::Read(void *buffer, size_t len) {
+	if (_position >= _end)
+		return 0;
+	len = std::min(len, static_cast<size_t>(_end - _position));
+	_position += _base->Read(buffer, len);
+	return len;
+}
+
+int32_t DataStreamSection::ReadByte() {
+	if (_position >= _end)
+		return -1;
+	int32_t b = _base->ReadByte();
+	if (b >= 0)
+		_position++;
+	return b;
+}
+
+size_t DataStreamSection::Write(const void *buffer, size_t len) {
+	len = _base->Write(buffer, len);
+	_position += len;
+	_end = std::max(_end, _position); // we might be overwriting after seeking back
+	return len;
+}
+
+int32_t DataStreamSection::WriteByte(uint8_t b) {
+	int32_t rb = _base->WriteByte(b);
+	if (rb == b) {
+		_position++;
+		_end = std::max(_end, _position); // we might be overwriting after seeking back
+	}
+	return rb;
+}
+
+soff_t DataStreamSection::Seek(soff_t offset, StreamSeek origin) {
+	soff_t want_pos = -1;
+	switch (origin) {
+	case StreamSeek::kSeekCurrent:
+		want_pos = _position + offset;
+		break;
+	case StreamSeek::kSeekBegin:
+		want_pos = _start + offset;
+		break;
+	case StreamSeek::kSeekEnd:
+		want_pos = _end + offset;
+		break;
+	default:
+		return -1;
+	}
+	want_pos = std::min(std::max(want_pos, _start), _end);
+	soff_t new_pos = _base->Seek(want_pos, kSeekBegin);
+	if (new_pos >= 0) // the position remains in case of seek error
+		_position = want_pos;
+	return _position - _start; // convert to a stream section pos
+}
+
+void DataStreamSection::Close() {
+	// We do not close nor delete the base stream, but release it from use
+	_base = nullptr;
 }
 
 } // namespace Shared

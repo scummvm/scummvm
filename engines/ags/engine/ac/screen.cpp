@@ -28,9 +28,10 @@
 #include "ags/engine/ac/screen.h"
 #include "ags/engine/ac/dynobj/script_viewport.h"
 #include "ags/engine/ac/dynobj/script_user_object.h"
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
-#include "ags/plugins/ags_plugin.h"
+#include "ags/plugins/ags_plugin_evts.h"
 #include "ags/plugins/plugin_engine.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/graphics_driver.h"
@@ -42,11 +43,11 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 void fadein_impl(PALETTE p, int speed) {
+	// reset this early to force whole game draw during fading in
+	_GP(play).screen_is_faded_out = 0;
+
 	if (_GP(game).color_depth > 1) {
 		set_palette(p);
-
-		_GP(play).screen_is_faded_out = 0;
-
 		if (_GP(play).no_hicolor_fadein) {
 			return;
 		}
@@ -56,6 +57,7 @@ void fadein_impl(PALETTE p, int speed) {
 }
 
 void current_fade_out_effect() {
+	debug_script_log("Transition-out in room %d", _G(displayed_room));
 	if (pl_run_plugin_hooks(AGSE_TRANSITIONOUT, 0))
 		return;
 
@@ -64,24 +66,26 @@ void current_fade_out_effect() {
 	// was a temporary transition selected? if so, use it
 	if (_GP(play).next_screen_transition >= 0)
 		theTransition = _GP(play).next_screen_transition;
-	const bool ignore_transition = _GP(play).screen_tint > 0;
-
-	if ((theTransition == FADE_INSTANT) || ignore_transition) {
+	const bool instant_transition = (theTransition == FADE_INSTANT) ||
+									_GP(play).screen_tint > 0; // for some reason we do not play fade if screen is tinted
+	if (instant_transition) {
 		if (!_GP(play).keep_screen_during_instant_transition)
 			set_palette_range(_G(black_palette), 0, 255, 0);
 	} else if (theTransition == FADE_NORMAL) {
 		fadeout_impl(5);
 	} else if (theTransition == FADE_BOXOUT) {
-		_G(gfxDriver)->BoxOutEffect(true, get_fixed_pixel_size(16), 1000 / GetGameSpeed());
-		_GP(play).screen_is_faded_out = 1;
+		_G(gfxDriver)->BoxOutEffect(true, get_fixed_pixel_size(16), 1000 / GetGameSpeed(), RENDER_SHOT_SKIP_ON_FADE);
 	} else {
 		get_palette(_G(old_palette));
 		const Rect &viewport = _GP(play).GetMainViewport();
-		_G(saved_viewport_bitmap) = CopyScreenIntoBitmap(viewport.GetWidth(), viewport.GetHeight());
+		_G(saved_viewport_bitmap) = CopyScreenIntoBitmap(viewport.GetWidth(), viewport.GetHeight(), &viewport, false /* use current resolution */, RENDER_SHOT_SKIP_ON_FADE);
 	}
+
+	// NOTE: the screen could have been faded out prior to transition out
+	_GP(play).screen_is_faded_out |= (!instant_transition);
 }
 
-IDriverDependantBitmap *prepare_screen_for_transition_in() {
+IDriverDependantBitmap *prepare_screen_for_transition_in(bool opaque) {
 	if (_G(saved_viewport_bitmap) == nullptr)
 		quit("Crossfade: buffer is null attempting transition");
 
@@ -97,8 +101,7 @@ IDriverDependantBitmap *prepare_screen_for_transition_in() {
 		delete _G(saved_viewport_bitmap);
 		_G(saved_viewport_bitmap) = clippedBuffer;
 	}
-	IDriverDependantBitmap *ddb = _G(gfxDriver)->CreateDDBFromBitmap(_G(saved_viewport_bitmap), false);
-	return ddb;
+	return _G(gfxDriver)->CreateDDBFromBitmap(_G(saved_viewport_bitmap), false, opaque);
 }
 
 //=============================================================================
@@ -146,6 +149,10 @@ ScriptUserObject *Screen_ScreenToRoomPoint(int scrx, int scry, bool restrict) {
 	return ScriptStructHelpers::CreatePoint(vpt.first.X, vpt.first.Y);
 }
 
+ScriptUserObject *Screen_ScreenToRoomPoint2(int scrx, int scry) {
+	return Screen_ScreenToRoomPoint(scrx, scry, true);
+}
+
 ScriptUserObject *Screen_RoomToScreenPoint(int roomx, int roomy) {
 	data_to_game_coords(&roomx, &roomy);
 	Point pt = _GP(play).RoomToScreen(roomx, roomy);
@@ -182,13 +189,11 @@ RuntimeScriptValue Sc_Screen_GetAnyViewport(const RuntimeScriptValue *params, in
 }
 
 RuntimeScriptValue Sc_Screen_ScreenToRoomPoint2(const RuntimeScriptValue *params, int32_t param_count) {
-	ASSERT_PARAM_COUNT(FUNCTION, 2);
-	ScriptUserObject* obj = Screen_ScreenToRoomPoint(params[0].IValue, params[1].IValue, true);
-	return RuntimeScriptValue().SetDynamicObject(obj, obj);
+	API_SCALL_OBJAUTO_PINT2(ScriptUserObject, Screen_ScreenToRoomPoint2);
 }
 
-RuntimeScriptValue Sc_Screen_ScreenToRoomPoint3(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_OBJAUTO_PINT3(ScriptUserObject, Screen_ScreenToRoomPoint);
+RuntimeScriptValue Sc_Screen_ScreenToRoomPoint(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_OBJAUTO_PINT2_PBOOL(ScriptUserObject, Screen_ScreenToRoomPoint);
 }
 
 RuntimeScriptValue Sc_Screen_RoomToScreenPoint(const RuntimeScriptValue *params, int32_t param_count) {
@@ -196,16 +201,20 @@ RuntimeScriptValue Sc_Screen_RoomToScreenPoint(const RuntimeScriptValue *params,
 }
 
 void RegisterScreenAPI() {
-	ccAddExternalStaticFunction("Screen::get_Height", Sc_Screen_GetScreenHeight);
-	ccAddExternalStaticFunction("Screen::get_Width", Sc_Screen_GetScreenWidth);
-	ccAddExternalStaticFunction("Screen::get_AutoSizeViewportOnRoomLoad", Sc_Screen_GetAutoSizeViewport);
-	ccAddExternalStaticFunction("Screen::set_AutoSizeViewportOnRoomLoad", Sc_Screen_SetAutoSizeViewport);
-	ccAddExternalStaticFunction("Screen::get_Viewport", Sc_Screen_GetViewport);
-	ccAddExternalStaticFunction("Screen::get_ViewportCount", Sc_Screen_GetViewportCount);
-	ccAddExternalStaticFunction("Screen::geti_Viewports", Sc_Screen_GetAnyViewport);
-	ccAddExternalStaticFunction("Screen::ScreenToRoomPoint^2", Sc_Screen_ScreenToRoomPoint2);
-	ccAddExternalStaticFunction("Screen::ScreenToRoomPoint^3", Sc_Screen_ScreenToRoomPoint3);
-	ccAddExternalStaticFunction("Screen::RoomToScreenPoint", Sc_Screen_RoomToScreenPoint);
+	ScFnRegister screen_api[] = {
+		{"Screen::get_Height", API_FN_PAIR(Screen_GetScreenHeight)},
+		{"Screen::get_Width", API_FN_PAIR(Screen_GetScreenWidth)},
+		{"Screen::get_AutoSizeViewportOnRoomLoad", API_FN_PAIR(Screen_GetAutoSizeViewport)},
+		{"Screen::set_AutoSizeViewportOnRoomLoad", API_FN_PAIR(Screen_SetAutoSizeViewport)},
+		{"Screen::get_Viewport", API_FN_PAIR(Screen_GetViewport)},
+		{"Screen::get_ViewportCount", API_FN_PAIR(Screen_GetViewportCount)},
+		{"Screen::geti_Viewports", API_FN_PAIR(Screen_GetAnyViewport)},
+		{"Screen::ScreenToRoomPoint^2", API_FN_PAIR(Screen_ScreenToRoomPoint2)},
+		{"Screen::ScreenToRoomPoint^3", API_FN_PAIR(Screen_ScreenToRoomPoint)},
+		{"Screen::RoomToScreenPoint", API_FN_PAIR(Screen_RoomToScreenPoint)},
+	};
+
+	ccAddExternalFunctions361(screen_api);
 }
 
 } // namespace AGS3

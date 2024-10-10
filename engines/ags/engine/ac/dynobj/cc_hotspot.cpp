@@ -21,6 +21,7 @@
 
 #include "ags/engine/ac/dynobj/cc_hotspot.h"
 #include "ags/engine/ac/dynobj/script_hotspot.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/game/room_struct.h"
 #include "ags/shared/util/stream.h"
@@ -35,14 +36,14 @@ const char *CCHotspot::GetType() {
 	return "Hotspot";
 }
 
-size_t CCHotspot::CalcSerializeSize() {
+size_t CCHotspot::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t);
 }
 
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
-void CCHotspot::Serialize(const char *address, Stream *out) {
-	const ScriptHotspot *shh = (const ScriptHotspot *)address;
+void CCHotspot::Serialize(const void *address, Stream *out) {
+	const ScriptHotspot *shh = static_cast<const ScriptHotspot *>(address);
 	out->WriteInt32(shh->id);
 }
 

@@ -59,21 +59,21 @@ struct QueuedScript {
 };
 
 struct ExecutingScript {
-	ccInstance *inst;
-	PostScriptAction postScriptActions[MAX_QUEUED_ACTIONS];
-	const char *postScriptActionNames[MAX_QUEUED_ACTIONS];
-	ScriptPosition  postScriptActionPositions[MAX_QUEUED_ACTIONS];
-	char postScriptSaveSlotDescription[MAX_QUEUED_ACTIONS][MAX_QUEUED_ACTION_DESC];
-	int  postScriptActionData[MAX_QUEUED_ACTIONS];
-	int  numPostScriptActions;
-	QueuedScript ScFnQueue[MAX_QUEUED_SCRIPTS];
-	int  numanother;
-	int8 forked;
+	ccInstance *inst = nullptr;
+	// owned fork; CHECKME: this seem unused in the current engine
+	std::unique_ptr<ccInstance> forkedInst{};
+	PostScriptAction postScriptActions[MAX_QUEUED_ACTIONS]{};
+	const char *postScriptActionNames[MAX_QUEUED_ACTIONS]{};
+	ScriptPosition postScriptActionPositions[MAX_QUEUED_ACTIONS]{};
+	char postScriptSaveSlotDescription[MAX_QUEUED_ACTIONS][MAX_QUEUED_ACTION_DESC]{};
+	int postScriptActionData[MAX_QUEUED_ACTIONS]{};
+	int numPostScriptActions = 0;
+	QueuedScript ScFnQueue[MAX_QUEUED_SCRIPTS]{};
+	int numanother = 0;
 
+	ExecutingScript() = default;
 	int queue_action(PostScriptAction act, int data, const char *aname);
 	void run_another(const char *namm, ScriptInstType scinst, size_t param_count, const RuntimeScriptValue *params);
-	void init();
-	ExecutingScript();
 };
 
 } // namespace AGS3

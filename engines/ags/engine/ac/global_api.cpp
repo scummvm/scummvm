@@ -107,23 +107,23 @@ RuntimeScriptValue Sc_AnimateButton(const RuntimeScriptValue *params, int32_t pa
 }
 
 // void  (int chh, int loopn, int sppd, int rept)
-RuntimeScriptValue Sc_scAnimateCharacter(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_VOID_PINT4(scAnimateCharacter);
+RuntimeScriptValue Sc_AnimateCharacter4(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_VOID_PINT4(AnimateCharacter4);
 }
 
 // void (int chh, int loopn, int sppd, int rept, int direction, int blocking)
-RuntimeScriptValue Sc_AnimateCharacterEx(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_VOID_PINT6(AnimateCharacterEx);
+RuntimeScriptValue Sc_AnimateCharacter6(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_VOID_PINT6(AnimateCharacter6);
 }
 
 // void (int obn,int loopn,int spdd,int rept)
-RuntimeScriptValue Sc_AnimateObject(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_VOID_PINT4(AnimateObject);
+RuntimeScriptValue Sc_AnimateObject4(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_VOID_PINT4(AnimateObject4);
 }
 
 // void (int obn,int loopn,int spdd,int rept, int direction, int blocking)
-RuntimeScriptValue Sc_AnimateObjectEx(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_VOID_PINT6(AnimateObjectEx);
+RuntimeScriptValue Sc_AnimateObject6(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_VOID_PINT6(AnimateObject6);
 }
 
 // int (int cchar1,int cchar2)
@@ -246,7 +246,9 @@ RuntimeScriptValue Sc_DisplayAt(const RuntimeScriptValue *params, int32_t param_
 
 // void  (int ypos, char *texx)
 RuntimeScriptValue Sc_DisplayAtY(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_VOID_PINT_POBJ(DisplayAtY, const char);
+	API_SCALL_SCRIPT_SPRINTF(DisplayAtY, 2);
+	DisplayAtY(params[0].IValue, scsf_buffer);
+	return RuntimeScriptValue((int32_t)0);
 }
 
 // void (int msnum)
@@ -291,7 +293,7 @@ RuntimeScriptValue Sc_DisplayThought(const RuntimeScriptValue *params, int32_t p
 // void (int ypos, int ttexcol, int backcol, char *title, char*texx, ...)
 RuntimeScriptValue Sc_DisplayTopBar(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_SCRIPT_SPRINTF(DisplayTopBar, 5);
-	DisplayTopBar(params[0].IValue, params[1].IValue, params[2].IValue, params[3].Ptr, scsf_buffer);
+	DisplayTopBar(params[0].IValue, params[1].IValue, params[2].IValue, params[3].CStr, scsf_buffer);
 	return RuntimeScriptValue((int32_t)0);
 }
 
@@ -689,7 +691,7 @@ RuntimeScriptValue Sc_sc_GetTime(const RuntimeScriptValue *params, int32_t param
 
 // char * (const char *text)
 RuntimeScriptValue Sc_get_translation(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ_POBJ(const char, _GP(myScriptStringImpl), get_translation, const char);
+	API_SCALL_OBJ_POBJ(const char, _GP(myScriptStringImpl), get_translation, const char);
 }
 
 // int  (char* buffer)
@@ -717,15 +719,11 @@ RuntimeScriptValue Sc_GetWalkableAreaAtScreen(const RuntimeScriptValue *params, 
 }
 
 RuntimeScriptValue Sc_GetDrawingSurfaceForWalkableArea(const RuntimeScriptValue *params, int32_t param_count) {
-	(void)params; (void)param_count;
-	ScriptDrawingSurface *ret_obj = Room_GetDrawingSurfaceForMask(kRoomAreaWalkable);
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj);
+	API_SCALL_OBJAUTO(ScriptDrawingSurface, GetDrawingSurfaceForWalkableArea);
 }
 
 RuntimeScriptValue Sc_GetDrawingSurfaceForWalkbehind(const RuntimeScriptValue *params, int32_t param_count) {
-	(void)params; (void)param_count;
-	ScriptDrawingSurface *ret_obj = Room_GetDrawingSurfaceForMask(kRoomAreaWalkBehind);
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj);
+	API_SCALL_OBJAUTO(ScriptDrawingSurface, GetDrawingSurfaceForWalkbehind);
 }
 
 // void (int amnt)
@@ -744,8 +742,8 @@ RuntimeScriptValue Sc_HideMouseCursor(const RuntimeScriptValue *params, int32_t 
 }
 
 // void (const char*msg,char*bufr)
-RuntimeScriptValue Sc_sc_inputbox(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_VOID_POBJ2(sc_inputbox, const char, char);
+RuntimeScriptValue Sc_ShowInputBox(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_VOID_POBJ2(ShowInputBox, const char, char);
 }
 
 // void (int ifn)
@@ -1023,7 +1021,7 @@ RuntimeScriptValue Sc_PlayAmbientSound(const RuntimeScriptValue *params, int32_t
 }
 
 // void (int numb,int playflags)
-RuntimeScriptValue Sc_play_flc_file(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_PlayFlic(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_VOID_PINT2(PlayFlic);
 }
 
@@ -1058,7 +1056,7 @@ RuntimeScriptValue Sc_PlaySoundEx(const RuntimeScriptValue *params, int32_t para
 }
 
 // void (const char* name, int skip, int flags)
-RuntimeScriptValue Sc_scrPlayVideo(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_PlayVideo(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_VOID_POBJ_PINT2(PlayVideo, const char);
 }
 
@@ -1802,7 +1800,7 @@ RuntimeScriptValue Sc_sc_strcpy(const RuntimeScriptValue *params, int32_t param_
 // void (char*destt, const char*texx, ...);
 RuntimeScriptValue Sc_sc_sprintf(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_SCRIPT_SPRINTF(_sc_sprintf, 2);
-	_sc_strcpy(params[0].Ptr, scsf_buffer);
+	_sc_strcpy(params[0].CStr, scsf_buffer);
 	return params[0];
 }
 
@@ -1891,379 +1889,383 @@ RuntimeScriptValue Sc_SkipWait(const RuntimeScriptValue *params, int32_t param_c
 }
 
 void RegisterGlobalAPI() {
-	ccAddExternalStaticFunction("AbortGame",                Sc_sc_AbortGame);
-	ccAddExternalStaticFunction("AddInventory",             Sc_add_inventory);
-	ccAddExternalStaticFunction("AddInventoryToCharacter",  Sc_AddInventoryToCharacter);
-	ccAddExternalStaticFunction("AnimateButton",            Sc_AnimateButton);
-	ccAddExternalStaticFunction("AnimateCharacter",         Sc_scAnimateCharacter);
-	ccAddExternalStaticFunction("AnimateCharacterEx",       Sc_AnimateCharacterEx);
-	ccAddExternalStaticFunction("AnimateObject",            Sc_AnimateObject);
-	ccAddExternalStaticFunction("AnimateObjectEx",          Sc_AnimateObjectEx);
-	ccAddExternalStaticFunction("AreCharactersColliding",   Sc_AreCharactersColliding);
-	ccAddExternalStaticFunction("AreCharObjColliding",      Sc_AreCharObjColliding);
-	ccAddExternalStaticFunction("AreObjectsColliding",      Sc_AreObjectsColliding);
-	ccAddExternalStaticFunction("AreThingsOverlapping",     Sc_AreThingsOverlapping);
-	ccAddExternalStaticFunction("CallRoomScript",           Sc_CallRoomScript);
-	ccAddExternalStaticFunction("CDAudio",                  Sc_cd_manager);
-	ccAddExternalStaticFunction("CentreGUI",                Sc_CentreGUI);
-	ccAddExternalStaticFunction("ChangeCharacterView",      Sc_ChangeCharacterView);
-	ccAddExternalStaticFunction("ChangeCursorGraphic",      Sc_ChangeCursorGraphic);
-	ccAddExternalStaticFunction("ChangeCursorHotspot",      Sc_ChangeCursorHotspot);
-	ccAddExternalStaticFunction("ClaimEvent",               Sc_ClaimEvent);
-	ccAddExternalStaticFunction("CreateGraphicOverlay",     Sc_CreateGraphicOverlay);
-	ccAddExternalStaticFunction("CreateTextOverlay",        Sc_CreateTextOverlay);
-	ccAddExternalStaticFunction("CyclePalette",             Sc_CyclePalette);
-	ccAddExternalStaticFunction("Debug",                    Sc_script_debug);
-	ccAddExternalStaticFunction("DeleteSaveSlot",           Sc_DeleteSaveSlot);
-	ccAddExternalStaticFunction("DeleteSprite",             Sc_free_dynamic_sprite);
-	ccAddExternalStaticFunction("DisableCursorMode",        Sc_disable_cursor_mode);
-	ccAddExternalStaticFunction("DisableGroundLevelAreas",  Sc_DisableGroundLevelAreas);
-	ccAddExternalStaticFunction("DisableHotspot",           Sc_DisableHotspot);
-	ccAddExternalStaticFunction("DisableInterface",         Sc_DisableInterface);
-	ccAddExternalStaticFunction("DisableRegion",            Sc_DisableRegion);
-	ccAddExternalStaticFunction("Display",                  Sc_Display);
-	ccAddExternalStaticFunction("DisplayAt",                Sc_DisplayAt);
-	ccAddExternalStaticFunction("DisplayAtY",               Sc_DisplayAtY);
-	ccAddExternalStaticFunction("DisplayMessage",           Sc_DisplayMessage);
-	ccAddExternalStaticFunction("DisplayMessageAtY",        Sc_DisplayMessageAtY);
-	ccAddExternalStaticFunction("DisplayMessageBar",        Sc_DisplayMessageBar);
-	ccAddExternalStaticFunction("DisplaySpeech",            Sc_sc_displayspeech);
-	ccAddExternalStaticFunction("DisplaySpeechAt",          Sc_DisplaySpeechAt);
-	ccAddExternalStaticFunction("DisplaySpeechBackground",  Sc_DisplaySpeechBackground);
-	ccAddExternalStaticFunction("DisplayThought",           Sc_DisplayThought);
-	ccAddExternalStaticFunction("DisplayTopBar",            Sc_DisplayTopBar);
-	ccAddExternalStaticFunction("EnableCursorMode",         Sc_enable_cursor_mode);
-	ccAddExternalStaticFunction("EnableGroundLevelAreas",   Sc_EnableGroundLevelAreas);
-	ccAddExternalStaticFunction("EnableHotspot",            Sc_EnableHotspot);
-	ccAddExternalStaticFunction("EnableInterface",          Sc_EnableInterface);
-	ccAddExternalStaticFunction("EnableRegion",             Sc_EnableRegion);
-	ccAddExternalStaticFunction("EndCutscene",              Sc_EndCutscene);
-	ccAddExternalStaticFunction("FaceCharacter",            Sc_FaceCharacter);
-	ccAddExternalStaticFunction("FaceLocation",             Sc_FaceLocation);
-	ccAddExternalStaticFunction("FadeIn",                   Sc_FadeIn);
-	ccAddExternalStaticFunction("FadeOut",                  Sc_FadeOut);
-	ccAddExternalStaticFunction("FileClose",                Sc_FileClose);
-	ccAddExternalStaticFunction("FileIsEOF",                Sc_FileIsEOF);
-	ccAddExternalStaticFunction("FileIsError",              Sc_FileIsError);
-	// NOTE: FileOpenCMode is a backwards-compatible replacement for old-style global script function FileOpen
-	ccAddExternalStaticFunction("FileOpen",                 Sc_FileOpenCMode);
-	ccAddExternalStaticFunction("FileRead",                 Sc_FileRead);
-	ccAddExternalStaticFunction("FileReadInt",              Sc_FileReadInt);
-	ccAddExternalStaticFunction("FileReadRawChar",          Sc_FileReadRawChar);
-	ccAddExternalStaticFunction("FileReadRawInt",           Sc_FileReadRawInt);
-	ccAddExternalStaticFunction("FileWrite",                Sc_FileWrite);
-	ccAddExternalStaticFunction("FileWriteInt",             Sc_FileWriteInt);
-	ccAddExternalStaticFunction("FileWriteRawChar",         Sc_FileWriteRawChar);
-	ccAddExternalStaticFunction("FileWriteRawLine",         Sc_FileWriteRawLine);
-	ccAddExternalStaticFunction("FindGUIID",                Sc_FindGUIID);
-	ccAddExternalStaticFunction("FlipScreen",               Sc_FlipScreen);
-	ccAddExternalStaticFunction("FloatToInt",               Sc_FloatToInt);
-	ccAddExternalStaticFunction("FollowCharacter",          Sc_FollowCharacter);
-	ccAddExternalStaticFunction("FollowCharacterEx",        Sc_FollowCharacterEx);
-	ccAddExternalStaticFunction("GetBackgroundFrame",       Sc_GetBackgroundFrame);
-	ccAddExternalStaticFunction("GetButtonPic",             Sc_GetButtonPic);
-	ccAddExternalStaticFunction("GetCharacterAt",           Sc_GetCharIDAtScreen);
-	ccAddExternalStaticFunction("GetCharacterProperty",     Sc_GetCharacterProperty);
-	ccAddExternalStaticFunction("GetCharacterPropertyText", Sc_GetCharacterPropertyText);
-	ccAddExternalStaticFunction("GetCurrentMusic",          Sc_GetCurrentMusic);
-	ccAddExternalStaticFunction("GetCursorMode",            Sc_GetCursorMode);
-	ccAddExternalStaticFunction("GetDialogOption",          Sc_GetDialogOption);
-	ccAddExternalStaticFunction("GetGameOption",            Sc_GetGameOption);
-	ccAddExternalStaticFunction("GetGameParameter",         Sc_GetGameParameter);
-	ccAddExternalStaticFunction("GetGameSpeed",             Sc_GetGameSpeed);
-	ccAddExternalStaticFunction("GetGlobalInt",             Sc_GetGlobalInt);
-	ccAddExternalStaticFunction("GetGlobalString",          Sc_GetGlobalString);
-	ccAddExternalStaticFunction("GetGraphicalVariable",     Sc_GetGraphicalVariable);
-	ccAddExternalStaticFunction("GetGUIAt",                 Sc_GetGUIAt);
-	ccAddExternalStaticFunction("GetGUIObjectAt",           Sc_GetGUIObjectAt);
-	ccAddExternalStaticFunction("GetHotspotAt",             Sc_GetHotspotIDAtScreen);
-	ccAddExternalStaticFunction("GetHotspotName",           Sc_GetHotspotName);
-	ccAddExternalStaticFunction("GetHotspotPointX",         Sc_GetHotspotPointX);
-	ccAddExternalStaticFunction("GetHotspotPointY",         Sc_GetHotspotPointY);
-	ccAddExternalStaticFunction("GetHotspotProperty",       Sc_GetHotspotProperty);
-	ccAddExternalStaticFunction("GetHotspotPropertyText",   Sc_GetHotspotPropertyText);
-	ccAddExternalStaticFunction("GetInvAt",                 Sc_GetInvAt);
-	ccAddExternalStaticFunction("GetInvGraphic",            Sc_GetInvGraphic);
-	ccAddExternalStaticFunction("GetInvName",               Sc_GetInvName);
-	ccAddExternalStaticFunction("GetInvProperty",           Sc_GetInvProperty);
-	ccAddExternalStaticFunction("GetInvPropertyText",       Sc_GetInvPropertyText);
-	//ccAddExternalStaticFunction("GetLanguageString",      Sc_GetLanguageString);
-	ccAddExternalStaticFunction("GetLocationName",          Sc_GetLocationName);
-	ccAddExternalStaticFunction("GetLocationType",          Sc_GetLocationType);
-	ccAddExternalStaticFunction("GetMessageText",           Sc_GetMessageText);
-	ccAddExternalStaticFunction("GetMIDIPosition",          Sc_GetMIDIPosition);
-	ccAddExternalStaticFunction("GetMP3PosMillis",          Sc_GetMP3PosMillis);
-	ccAddExternalStaticFunction("GetObjectAt",              Sc_GetObjectIDAtScreen);
-	ccAddExternalStaticFunction("GetObjectBaseline",        Sc_GetObjectBaseline);
-	ccAddExternalStaticFunction("GetObjectGraphic",         Sc_GetObjectGraphic);
-	ccAddExternalStaticFunction("GetObjectName",            Sc_GetObjectName);
-	ccAddExternalStaticFunction("GetObjectProperty",        Sc_GetObjectProperty);
-	ccAddExternalStaticFunction("GetObjectPropertyText",    Sc_GetObjectPropertyText);
-	ccAddExternalStaticFunction("GetObjectX",               Sc_GetObjectX);
-	ccAddExternalStaticFunction("GetObjectY",               Sc_GetObjectY);
-	//  ccAddExternalStaticFunction("GetPalette",           Sc_scGetPal);
-	ccAddExternalStaticFunction("GetPlayerCharacter",       Sc_GetPlayerCharacter);
-	ccAddExternalStaticFunction("GetRawTime",               Sc_GetRawTime);
-	ccAddExternalStaticFunction("GetRegionAt",              Sc_GetRegionIDAtRoom);
-	ccAddExternalStaticFunction("GetRoomProperty",          Sc_Room_GetProperty);
-	ccAddExternalStaticFunction("GetRoomPropertyText",      Sc_GetRoomPropertyText);
-	ccAddExternalStaticFunction("GetSaveSlotDescription",   Sc_GetSaveSlotDescription);
-	ccAddExternalStaticFunction("GetScalingAt",             Sc_GetScalingAt);
-	ccAddExternalStaticFunction("GetSliderValue",           Sc_GetSliderValue);
-	ccAddExternalStaticFunction("GetTextBoxText",           Sc_GetTextBoxText);
-	ccAddExternalStaticFunction("GetTextHeight",            Sc_GetTextHeight);
-	ccAddExternalStaticFunction("GetTextWidth",             Sc_GetTextWidth);
-	ccAddExternalStaticFunction("GetFontHeight",            Sc_GetFontHeight);
-	ccAddExternalStaticFunction("GetFontLineSpacing",       Sc_GetFontLineSpacing);
-	ccAddExternalStaticFunction("GetTime",                  Sc_sc_GetTime);
-	ccAddExternalStaticFunction("GetTranslation",           Sc_get_translation);
-	ccAddExternalStaticFunction("GetTranslationName",       Sc_GetTranslationName);
-	ccAddExternalStaticFunction("GetViewportX",             Sc_GetViewportX);
-	ccAddExternalStaticFunction("GetViewportY",             Sc_GetViewportY);
-	ccAddExternalStaticFunction("GetWalkableAreaAtRoom",    Sc_GetWalkableAreaAtRoom);
-	ccAddExternalStaticFunction("GetWalkableAreaAt",        Sc_GetWalkableAreaAtScreen);
-	ccAddExternalStaticFunction("GetWalkableAreaAtScreen",  Sc_GetWalkableAreaAtScreen);
-	ccAddExternalStaticFunction("GetDrawingSurfaceForWalkableArea", Sc_GetDrawingSurfaceForWalkableArea);
-	ccAddExternalStaticFunction("GetDrawingSurfaceForWalkbehind", Sc_GetDrawingSurfaceForWalkbehind);
-	ccAddExternalStaticFunction("GiveScore",                Sc_GiveScore);
-	ccAddExternalStaticFunction("HasPlayerBeenInRoom",      Sc_HasPlayerBeenInRoom);
-	ccAddExternalStaticFunction("HideMouseCursor",          Sc_HideMouseCursor);
-	ccAddExternalStaticFunction("InputBox",                 Sc_sc_inputbox);
-	ccAddExternalStaticFunction("InterfaceOff",             Sc_InterfaceOff);
-	ccAddExternalStaticFunction("InterfaceOn",              Sc_InterfaceOn);
-	ccAddExternalStaticFunction("IntToFloat",               Sc_IntToFloat);
-	ccAddExternalStaticFunction("InventoryScreen",          Sc_sc_invscreen);
-	ccAddExternalStaticFunction("IsButtonDown",             Sc_IsButtonDown);
-	ccAddExternalStaticFunction("IsChannelPlaying",         Sc_IsChannelPlaying);
-	ccAddExternalStaticFunction("IsGamePaused",             Sc_IsGamePaused);
-	ccAddExternalStaticFunction("IsGUIOn",                  Sc_IsGUIOn);
-	ccAddExternalStaticFunction("IsInteractionAvailable",   Sc_IsInteractionAvailable);
-	ccAddExternalStaticFunction("IsInventoryInteractionAvailable", Sc_IsInventoryInteractionAvailable);
-	ccAddExternalStaticFunction("IsInterfaceEnabled",       Sc_IsInterfaceEnabled);
-	ccAddExternalStaticFunction("IsKeyPressed",             Sc_IsKeyPressed);
-	ccAddExternalStaticFunction("IsMusicPlaying",           Sc_IsMusicPlaying);
-	ccAddExternalStaticFunction("IsMusicVoxAvailable",      Sc_IsMusicVoxAvailable);
-	ccAddExternalStaticFunction("IsObjectAnimating",        Sc_IsObjectAnimating);
-	ccAddExternalStaticFunction("IsObjectMoving",           Sc_IsObjectMoving);
-	ccAddExternalStaticFunction("IsObjectOn",               Sc_IsObjectOn);
-	ccAddExternalStaticFunction("IsOverlayValid",           Sc_IsOverlayValid);
-	ccAddExternalStaticFunction("IsSoundPlaying",           Sc_IsSoundPlaying);
-	ccAddExternalStaticFunction("IsTimerExpired",           Sc_IsTimerExpired);
-	ccAddExternalStaticFunction("IsTranslationAvailable",   Sc_IsTranslationAvailable);
-	ccAddExternalStaticFunction("IsVoxAvailable",           Sc_IsVoxAvailable);
-	ccAddExternalStaticFunction("ListBoxAdd",               Sc_ListBoxAdd);
-	ccAddExternalStaticFunction("ListBoxClear",             Sc_ListBoxClear);
-	ccAddExternalStaticFunction("ListBoxDirList",           Sc_ListBoxDirList);
-	ccAddExternalStaticFunction("ListBoxGetItemText",       Sc_ListBoxGetItemText);
-	ccAddExternalStaticFunction("ListBoxGetNumItems",       Sc_ListBoxGetNumItems);
-	ccAddExternalStaticFunction("ListBoxGetSelected",       Sc_ListBoxGetSelected);
-	ccAddExternalStaticFunction("ListBoxRemove",            Sc_ListBoxRemove);
-	ccAddExternalStaticFunction("ListBoxSaveGameList",      Sc_ListBoxSaveGameList);
-	ccAddExternalStaticFunction("ListBoxSetSelected",       Sc_ListBoxSetSelected);
-	ccAddExternalStaticFunction("ListBoxSetTopItem",        Sc_ListBoxSetTopItem);
-	ccAddExternalStaticFunction("LoadImageFile",            Sc_LoadImageFile);
-	ccAddExternalStaticFunction("LoadSaveSlotScreenshot",   Sc_LoadSaveSlotScreenshot);
-	ccAddExternalStaticFunction("LoseInventory",            Sc_lose_inventory);
-	ccAddExternalStaticFunction("LoseInventoryFromCharacter", Sc_LoseInventoryFromCharacter);
-	ccAddExternalStaticFunction("MergeObject",              Sc_MergeObject);
-	ccAddExternalStaticFunction("MoveCharacter",            Sc_MoveCharacter);
-	ccAddExternalStaticFunction("MoveCharacterBlocking",    Sc_MoveCharacterBlocking);
-	ccAddExternalStaticFunction("MoveCharacterDirect",      Sc_MoveCharacterDirect);
-	ccAddExternalStaticFunction("MoveCharacterPath",        Sc_MoveCharacterPath);
-	ccAddExternalStaticFunction("MoveCharacterStraight",    Sc_MoveCharacterStraight);
-	ccAddExternalStaticFunction("MoveCharacterToHotspot",   Sc_MoveCharacterToHotspot);
-	ccAddExternalStaticFunction("MoveCharacterToObject",    Sc_MoveCharacterToObject);
-	ccAddExternalStaticFunction("MoveObject",               Sc_MoveObject);
-	ccAddExternalStaticFunction("MoveObjectDirect",         Sc_MoveObjectDirect);
-	ccAddExternalStaticFunction("MoveOverlay",              Sc_MoveOverlay);
-	ccAddExternalStaticFunction("MoveToWalkableArea",       Sc_MoveToWalkableArea);
-	ccAddExternalStaticFunction("NewRoom",                  Sc_NewRoom);
-	ccAddExternalStaticFunction("NewRoomEx",                Sc_NewRoomEx);
-	ccAddExternalStaticFunction("NewRoomNPC",               Sc_NewRoomNPC);
-	ccAddExternalStaticFunction("ObjectOff",                Sc_ObjectOff);
-	ccAddExternalStaticFunction("ObjectOn",                 Sc_ObjectOn);
-	ccAddExternalStaticFunction("ParseText",                Sc_ParseText);
-	ccAddExternalStaticFunction("PauseGame",                Sc_PauseGame);
-	ccAddExternalStaticFunction("PlayAmbientSound",         Sc_PlayAmbientSound);
-	ccAddExternalStaticFunction("PlayFlic",                 Sc_play_flc_file);
-	ccAddExternalStaticFunction("PlayMP3File",              Sc_PlayMP3File);
-	ccAddExternalStaticFunction("PlayMusic",                Sc_PlayMusicResetQueue);
-	ccAddExternalStaticFunction("PlayMusicQueued",          Sc_PlayMusicQueued);
-	ccAddExternalStaticFunction("PlaySilentMIDI",           Sc_PlaySilentMIDI);
-	ccAddExternalStaticFunction("PlaySound",                Sc_play_sound);
-	ccAddExternalStaticFunction("PlaySoundEx",              Sc_PlaySoundEx);
-	ccAddExternalStaticFunction("PlayVideo",                Sc_scrPlayVideo);
-	ccAddExternalStaticFunction("QuitGame",                 Sc_QuitGame);
-	ccAddExternalStaticFunction("Random",                   Sc_Rand);
-	ccAddExternalStaticFunction("RawClearScreen",           Sc_RawClear);
-	ccAddExternalStaticFunction("RawDrawCircle",            Sc_RawDrawCircle);
-	ccAddExternalStaticFunction("RawDrawFrameTransparent",  Sc_RawDrawFrameTransparent);
-	ccAddExternalStaticFunction("RawDrawImage",             Sc_RawDrawImage);
-	ccAddExternalStaticFunction("RawDrawImageOffset",       Sc_RawDrawImageOffset);
-	ccAddExternalStaticFunction("RawDrawImageResized",      Sc_RawDrawImageResized);
-	ccAddExternalStaticFunction("RawDrawImageTransparent",  Sc_RawDrawImageTransparent);
-	ccAddExternalStaticFunction("RawDrawLine",              Sc_RawDrawLine);
-	ccAddExternalStaticFunction("RawDrawRectangle",         Sc_RawDrawRectangle);
-	ccAddExternalStaticFunction("RawDrawTriangle",          Sc_RawDrawTriangle);
-	ccAddExternalStaticFunction("RawPrint",                 Sc_RawPrint);
-	ccAddExternalStaticFunction("RawPrintMessageWrapped",   Sc_RawPrintMessageWrapped);
-	ccAddExternalStaticFunction("RawRestoreScreen",         Sc_RawRestoreScreen);
-	ccAddExternalStaticFunction("RawRestoreScreenTinted",   Sc_RawRestoreScreenTinted);
-	ccAddExternalStaticFunction("RawSaveScreen",            Sc_RawSaveScreen);
-	ccAddExternalStaticFunction("RawSetColor",              Sc_RawSetColor);
-	ccAddExternalStaticFunction("RawSetColorRGB",           Sc_RawSetColorRGB);
-	ccAddExternalStaticFunction("RefreshMouse",             Sc_RefreshMouse);
-	ccAddExternalStaticFunction("ReleaseCharacterView",     Sc_ReleaseCharacterView);
-	ccAddExternalStaticFunction("ReleaseViewport",          Sc_ReleaseViewport);
-	ccAddExternalStaticFunction("RemoveObjectTint",         Sc_RemoveObjectTint);
-	ccAddExternalStaticFunction("RemoveOverlay",            Sc_RemoveOverlay);
-	ccAddExternalStaticFunction("RemoveWalkableArea",       Sc_RemoveWalkableArea);
-	ccAddExternalStaticFunction("ResetRoom",                Sc_ResetRoom);
-	ccAddExternalStaticFunction("RestartGame",              Sc_restart_game);
-	ccAddExternalStaticFunction("RestoreGameDialog",        Sc_restore_game_dialog);
-	ccAddExternalStaticFunction("RestoreGameSlot",          Sc_RestoreGameSlot);
-	ccAddExternalStaticFunction("RestoreWalkableArea",      Sc_RestoreWalkableArea);
-	ccAddExternalStaticFunction("RunAGSGame",               Sc_RunAGSGame);
-	ccAddExternalStaticFunction("RunCharacterInteraction",  Sc_RunCharacterInteraction);
-	ccAddExternalStaticFunction("RunDialog",                Sc_RunDialog);
-	ccAddExternalStaticFunction("RunHotspotInteraction",    Sc_RunHotspotInteraction);
-	ccAddExternalStaticFunction("RunInventoryInteraction",  Sc_RunInventoryInteraction);
-	ccAddExternalStaticFunction("RunObjectInteraction",     Sc_RunObjectInteraction);
-	ccAddExternalStaticFunction("RunRegionInteraction",     Sc_RunRegionInteraction);
-	ccAddExternalStaticFunction("Said",                     Sc_Said);
-	ccAddExternalStaticFunction("SaidUnknownWord",          Sc_SaidUnknownWord);
-	ccAddExternalStaticFunction("SaveCursorForLocationChange", Sc_SaveCursorForLocationChange);
-	ccAddExternalStaticFunction("SaveGameDialog",           Sc_save_game_dialog);
-	ccAddExternalStaticFunction("SaveGameSlot",             Sc_save_game);
-	ccAddExternalStaticFunction("SaveScreenShot",           Sc_SaveScreenShot);
-	ccAddExternalStaticFunction("SeekMIDIPosition",         Sc_SeekMIDIPosition);
-	ccAddExternalStaticFunction("SeekMODPattern",           Sc_SeekMODPattern);
-	ccAddExternalStaticFunction("SeekMP3PosMillis",         Sc_SeekMP3PosMillis);
-	ccAddExternalStaticFunction("SetActiveInventory",       Sc_SetActiveInventory);
-	ccAddExternalStaticFunction("SetAmbientTint",           Sc_SetAmbientTint);
-	ccAddExternalStaticFunction("SetAmbientLightLevel",     Sc_SetAmbientLightLevel);
-	ccAddExternalStaticFunction("SetAreaLightLevel",        Sc_SetAreaLightLevel);
-	ccAddExternalStaticFunction("SetAreaScaling",           Sc_SetAreaScaling);
-	ccAddExternalStaticFunction("SetBackgroundFrame",       Sc_SetBackgroundFrame);
-	ccAddExternalStaticFunction("SetButtonPic",             Sc_SetButtonPic);
-	ccAddExternalStaticFunction("SetButtonText",            Sc_SetButtonText);
-	ccAddExternalStaticFunction("SetChannelVolume",         Sc_SetChannelVolume);
-	ccAddExternalStaticFunction("SetCharacterBaseline",     Sc_SetCharacterBaseline);
-	ccAddExternalStaticFunction("SetCharacterClickable",    Sc_SetCharacterClickable);
-	ccAddExternalStaticFunction("SetCharacterFrame",        Sc_SetCharacterFrame);
-	ccAddExternalStaticFunction("SetCharacterIdle",         Sc_SetCharacterIdle);
-	ccAddExternalStaticFunction("SetCharacterIgnoreLight",  Sc_SetCharacterIgnoreLight);
-	ccAddExternalStaticFunction("SetCharacterIgnoreWalkbehinds", Sc_SetCharacterIgnoreWalkbehinds);
-	ccAddExternalStaticFunction("SetCharacterProperty",     Sc_SetCharacterProperty);
-	ccAddExternalStaticFunction("SetCharacterBlinkView",    Sc_SetCharacterBlinkView);
-	ccAddExternalStaticFunction("SetCharacterSpeechView",   Sc_SetCharacterSpeechView);
-	ccAddExternalStaticFunction("SetCharacterSpeed",        Sc_SetCharacterSpeed);
-	ccAddExternalStaticFunction("SetCharacterSpeedEx",      Sc_SetCharacterSpeedEx);
-	ccAddExternalStaticFunction("SetCharacterTransparency", Sc_SetCharacterTransparency);
-	ccAddExternalStaticFunction("SetCharacterView",         Sc_SetCharacterView);
-	ccAddExternalStaticFunction("SetCharacterViewEx",       Sc_SetCharacterViewEx);
-	ccAddExternalStaticFunction("SetCharacterViewOffset",   Sc_SetCharacterViewOffset);
-	ccAddExternalStaticFunction("SetCursorMode",            Sc_set_cursor_mode);
-	ccAddExternalStaticFunction("SetDefaultCursor",         Sc_set_default_cursor);
-	ccAddExternalStaticFunction("SetDialogOption",          Sc_SetDialogOption);
-	ccAddExternalStaticFunction("SetDigitalMasterVolume",   Sc_SetDigitalMasterVolume);
-	ccAddExternalStaticFunction("SetFadeColor",             Sc_SetFadeColor);
-	ccAddExternalStaticFunction("SetFrameSound",            Sc_SetFrameSound);
-	ccAddExternalStaticFunction("SetGameOption",            Sc_SetGameOption);
-	ccAddExternalStaticFunction("SetGameSpeed",             Sc_SetGameSpeed);
-	ccAddExternalStaticFunction("SetGlobalInt",             Sc_SetGlobalInt);
-	ccAddExternalStaticFunction("SetGlobalString",          Sc_SetGlobalString);
-	ccAddExternalStaticFunction("SetGraphicalVariable",     Sc_SetGraphicalVariable);
-	ccAddExternalStaticFunction("SetGUIBackgroundPic",      Sc_SetGUIBackgroundPic);
-	ccAddExternalStaticFunction("SetGUIClickable",          Sc_SetGUIClickable);
-	ccAddExternalStaticFunction("SetGUIObjectEnabled",      Sc_SetGUIObjectEnabled);
-	ccAddExternalStaticFunction("SetGUIObjectPosition",     Sc_SetGUIObjectPosition);
-	ccAddExternalStaticFunction("SetGUIObjectSize",         Sc_SetGUIObjectSize);
-	ccAddExternalStaticFunction("SetGUIPosition",           Sc_SetGUIPosition);
-	ccAddExternalStaticFunction("SetGUISize",               Sc_SetGUISize);
-	ccAddExternalStaticFunction("SetGUITransparency",       Sc_SetGUITransparency);
-	ccAddExternalStaticFunction("SetGUIZOrder",             Sc_SetGUIZOrder);
-	ccAddExternalStaticFunction("SetInvItemName",           Sc_SetInvItemName);
-	ccAddExternalStaticFunction("SetInvItemPic",            Sc_set_inv_item_pic);
-	ccAddExternalStaticFunction("SetInvDimensions",         Sc_SetInvDimensions);
-	ccAddExternalStaticFunction("SetLabelColor",            Sc_SetLabelColor);
-	ccAddExternalStaticFunction("SetLabelFont",             Sc_SetLabelFont);
-	ccAddExternalStaticFunction("SetLabelText",             Sc_SetLabelText);
-	ccAddExternalStaticFunction("SetMouseBounds",           Sc_SetMouseBounds);
-	ccAddExternalStaticFunction("SetMouseCursor",           Sc_set_mouse_cursor);
-	ccAddExternalStaticFunction("SetMousePosition",         Sc_SetMousePosition);
-	ccAddExternalStaticFunction("SetMultitaskingMode",      Sc_SetMultitasking);
-	ccAddExternalStaticFunction("SetMusicMasterVolume",     Sc_SetMusicMasterVolume);
-	ccAddExternalStaticFunction("SetMusicRepeat",           Sc_SetMusicRepeat);
-	ccAddExternalStaticFunction("SetMusicVolume",           Sc_SetMusicVolume);
-	ccAddExternalStaticFunction("SetNextCursorMode",        Sc_SetNextCursor);
-	ccAddExternalStaticFunction("SetNextScreenTransition",  Sc_SetNextScreenTransition);
-	ccAddExternalStaticFunction("SetNormalFont",            Sc_SetNormalFont);
-	ccAddExternalStaticFunction("SetObjectBaseline",        Sc_SetObjectBaseline);
-	ccAddExternalStaticFunction("SetObjectClickable",       Sc_SetObjectClickable);
-	ccAddExternalStaticFunction("SetObjectFrame",           Sc_SetObjectFrame);
-	ccAddExternalStaticFunction("SetObjectGraphic",         Sc_SetObjectGraphic);
-	ccAddExternalStaticFunction("SetObjectIgnoreWalkbehinds", Sc_SetObjectIgnoreWalkbehinds);
-	ccAddExternalStaticFunction("SetObjectPosition",        Sc_SetObjectPosition);
-	ccAddExternalStaticFunction("SetObjectTint",            Sc_SetObjectTint);
-	ccAddExternalStaticFunction("SetObjectTransparency",    Sc_SetObjectTransparency);
-	ccAddExternalStaticFunction("SetObjectView",            Sc_SetObjectView);
-	//  ccAddExternalStaticFunction("SetPalette",           scSetPal);
-	ccAddExternalStaticFunction("SetPalRGB",                Sc_SetPalRGB);
-	ccAddExternalStaticFunction("SetPlayerCharacter",       Sc_SetPlayerCharacter);
-	ccAddExternalStaticFunction("SetRegionTint",            Sc_SetRegionTint);
-	ccAddExternalStaticFunction("SetRestartPoint",          Sc_SetRestartPoint);
-	ccAddExternalStaticFunction("SetScreenTransition",      Sc_SetScreenTransition);
-	ccAddExternalStaticFunction("SetSkipSpeech",            Sc_SetSkipSpeech);
-	ccAddExternalStaticFunction("SetSliderValue",           Sc_SetSliderValue);
-	ccAddExternalStaticFunction("SetSoundVolume",           Sc_SetSoundVolume);
-	ccAddExternalStaticFunction("SetSpeechFont",            Sc_SetSpeechFont);
-	ccAddExternalStaticFunction("SetSpeechStyle",           Sc_SetSpeechStyle);
-	ccAddExternalStaticFunction("SetSpeechVolume",          Sc_SetSpeechVolume);
-	ccAddExternalStaticFunction("SetTalkingColor",          Sc_SetTalkingColor);
-	ccAddExternalStaticFunction("SetTextBoxFont",           Sc_SetTextBoxFont);
-	ccAddExternalStaticFunction("SetTextBoxText",           Sc_SetTextBoxText);
-	ccAddExternalStaticFunction("SetTextOverlay",           Sc_SetTextOverlay);
-	ccAddExternalStaticFunction("SetTextWindowGUI",         Sc_SetTextWindowGUI);
-	ccAddExternalStaticFunction("SetTimer",                 Sc_script_SetTimer);
-	ccAddExternalStaticFunction("SetViewport",              Sc_SetViewport);
-	ccAddExternalStaticFunction("SetVoiceMode",             Sc_SetVoiceMode);
-	ccAddExternalStaticFunction("SetWalkBehindBase",        Sc_SetWalkBehindBase);
-	ccAddExternalStaticFunction("ShakeScreen",              Sc_ShakeScreen);
-	ccAddExternalStaticFunction("ShakeScreenBackground",    Sc_ShakeScreenBackground);
-	ccAddExternalStaticFunction("ShowMouseCursor",          Sc_ShowMouseCursor);
-	ccAddExternalStaticFunction("SkipCutscene",             Sc_SkipCutscene);
-	ccAddExternalStaticFunction("SkipUntilCharacterStops",  Sc_SkipUntilCharacterStops);
-	ccAddExternalStaticFunction("StartCutscene",            Sc_StartCutscene);
-	ccAddExternalStaticFunction("StartRecording",           Sc_scStartRecording);
-	ccAddExternalStaticFunction("StopAmbientSound",         Sc_StopAmbientSound);
-	ccAddExternalStaticFunction("StopChannel",              Sc_stop_and_destroy_channel);
-	ccAddExternalStaticFunction("StopDialog",               Sc_StopDialog);
-	ccAddExternalStaticFunction("StopMoving",               Sc_StopMoving);
-	ccAddExternalStaticFunction("StopMusic",                Sc_scr_StopMusic);
-	ccAddExternalStaticFunction("StopObjectMoving",         Sc_StopObjectMoving);
-	ccAddExternalStaticFunction("StrCat",                   Sc_sc_strcat);
-	ccAddExternalStaticFunction("StrCaseComp",              Sc_stricmp);
-	ccAddExternalStaticFunction("StrComp",                  Sc_strcmp);
-	ccAddExternalStaticFunction("StrContains",              Sc_StrContains);
-	ccAddExternalStaticFunction("StrCopy",                  Sc_sc_strcpy);
-	ccAddExternalStaticFunction("StrFormat",                Sc_sc_sprintf);
-	ccAddExternalStaticFunction("StrGetCharAt",             Sc_StrGetCharAt);
-	ccAddExternalStaticFunction("StringToInt",              Sc_StringToInt);
-	ccAddExternalStaticFunction("StrLen",                   Sc_strlen);
-	ccAddExternalStaticFunction("StrSetCharAt",             Sc_StrSetCharAt);
-	ccAddExternalStaticFunction("StrToLowerCase",           Sc_sc_strlower);
-	ccAddExternalStaticFunction("StrToUpperCase",           Sc_sc_strupper);
-	ccAddExternalStaticFunction("TintScreen",               Sc_TintScreen);
-	ccAddExternalStaticFunction("UnPauseGame",              Sc_UnPauseGame);
-	ccAddExternalStaticFunction("UpdateInventory",          Sc_update_invorder);
-	ccAddExternalStaticFunction("UpdatePalette",            Sc_UpdatePalette);
-	ccAddExternalStaticFunction("Wait",                     Sc_scrWait);
-	ccAddExternalStaticFunction("WaitKey",                  Sc_WaitKey);
-	ccAddExternalStaticFunction("WaitMouse",                Sc_WaitMouse);
-	ccAddExternalStaticFunction("WaitMouseKey",             Sc_WaitMouseKey);
-	ccAddExternalStaticFunction("WaitInput",                Sc_WaitInput);
-	ccAddExternalStaticFunction("SkipWait",                 Sc_SkipWait);
+	ScFnRegister global_api[] = {
+		{"AbortGame", Sc_sc_AbortGame},
+		{"AddInventory", API_FN_PAIR(add_inventory)},
+		{"AddInventoryToCharacter", API_FN_PAIR(AddInventoryToCharacter)},
+		{"AnimateButton", API_FN_PAIR(AnimateButton)},
+		{"AnimateCharacter", API_FN_PAIR(AnimateCharacter4)},
+		{"AnimateCharacterEx", API_FN_PAIR(AnimateCharacter6)},
+		{"AnimateObject", API_FN_PAIR(AnimateObject4)},
+		{"AnimateObjectEx", API_FN_PAIR(AnimateObject6)},
+		{"AreCharactersColliding", API_FN_PAIR(AreCharactersColliding)},
+		{"AreCharObjColliding", API_FN_PAIR(AreCharObjColliding)},
+		{"AreObjectsColliding", API_FN_PAIR(AreObjectsColliding)},
+		{"AreThingsOverlapping", API_FN_PAIR(AreThingsOverlapping)},
+		{"CallRoomScript", API_FN_PAIR(CallRoomScript)},
+		{"CDAudio", API_FN_PAIR(cd_manager)},
+		{"CentreGUI", API_FN_PAIR(CentreGUI)},
+		{"ChangeCharacterView", API_FN_PAIR(ChangeCharacterView)},
+		{"ChangeCursorGraphic", API_FN_PAIR(ChangeCursorGraphic)},
+		{"ChangeCursorHotspot", API_FN_PAIR(ChangeCursorHotspot)},
+		{"ClaimEvent", API_FN_PAIR(ClaimEvent)},
+		{"CreateGraphicOverlay", API_FN_PAIR(CreateGraphicOverlay)},
+		{"CreateTextOverlay", Sc_CreateTextOverlay},
+		{"CyclePalette", API_FN_PAIR(CyclePalette)},
+		{"Debug", API_FN_PAIR(script_debug)},
+		{"DeleteSaveSlot", API_FN_PAIR(DeleteSaveSlot)},
+		{"DeleteSprite", API_FN_PAIR(free_dynamic_sprite)},
+		{"DisableCursorMode", API_FN_PAIR(disable_cursor_mode)},
+		{"DisableGroundLevelAreas", API_FN_PAIR(DisableGroundLevelAreas)},
+		{"DisableHotspot", API_FN_PAIR(DisableHotspot)},
+		{"DisableInterface", API_FN_PAIR(DisableInterface)},
+		{"DisableRegion", API_FN_PAIR(DisableRegion)},
+		{"Display", Sc_Display},
+		{"DisplayAt", Sc_DisplayAt},
+		// CHECKME: this function was non-variadic prior to 3.6.1, but AGS compiler does
+		// not produce "name^argnum" symbol id for non-member functions for some reason :/
+		// do we have to do anything about this here? like, test vs script API version...
+		{"DisplayAtY", Sc_DisplayAtY},
+		{"DisplayMessage", API_FN_PAIR(DisplayMessage)},
+		{"DisplayMessageAtY", API_FN_PAIR(DisplayMessageAtY)},
+		{"DisplayMessageBar", API_FN_PAIR(DisplayMessageBar)},
+		{"DisplaySpeech", Sc_sc_displayspeech},
+		{"DisplaySpeechAt", API_FN_PAIR(DisplaySpeechAt)},
+		{"DisplaySpeechBackground", API_FN_PAIR(DisplaySpeechBackground)},
+		{"DisplayThought", Sc_DisplayThought},
+		{"DisplayTopBar", Sc_DisplayTopBar},
+		{"EnableCursorMode", API_FN_PAIR(enable_cursor_mode)},
+		{"EnableGroundLevelAreas", API_FN_PAIR(EnableGroundLevelAreas)},
+		{"EnableHotspot", API_FN_PAIR(EnableHotspot)},
+		{"EnableInterface", API_FN_PAIR(EnableInterface)},
+		{"EnableRegion", API_FN_PAIR(EnableRegion)},
+		{"EndCutscene", API_FN_PAIR(EndCutscene)},
+		{"FaceCharacter", API_FN_PAIR(FaceCharacter)},
+		{"FaceLocation", API_FN_PAIR(FaceLocation)},
+		{"FadeIn", API_FN_PAIR(FadeIn)},
+		{"FadeOut", API_FN_PAIR(FadeOut)},
+		{"FileClose", API_FN_PAIR(FileClose)},
+		{"FileIsEOF", API_FN_PAIR(FileIsEOF)},
+		{"FileIsError", API_FN_PAIR(FileIsError)},
+		// NOTE: FileOpenCMode is a backwards-compatible replacement for old-style global script function FileOpen
+		{"FileOpen", API_FN_PAIR(FileOpenCMode)},
+		{"FileRead", API_FN_PAIR(FileRead)},
+		{"FileReadInt", API_FN_PAIR(FileReadInt)},
+		{"FileReadRawChar", API_FN_PAIR(FileReadRawChar)},
+		{"FileReadRawInt", API_FN_PAIR(FileReadRawInt)},
+		{"FileWrite", API_FN_PAIR(FileWrite)},
+		{"FileWriteInt", API_FN_PAIR(FileWriteInt)},
+		{"FileWriteRawChar", API_FN_PAIR(FileWriteRawChar)},
+		{"FileWriteRawLine", API_FN_PAIR(FileWriteRawLine)},
+		{"FindGUIID", API_FN_PAIR(FindGUIID)},
+		{"FlipScreen", API_FN_PAIR(FlipScreen)},
+		{"FloatToInt", API_FN_PAIR(FloatToInt)},
+		{"FollowCharacter", API_FN_PAIR(FollowCharacter)},
+		{"FollowCharacterEx", API_FN_PAIR(FollowCharacterEx)},
+		{"GetBackgroundFrame", API_FN_PAIR(GetBackgroundFrame)},
+		{"GetButtonPic", API_FN_PAIR(GetButtonPic)},
+		{"GetCharacterAt", API_FN_PAIR(GetCharIDAtScreen)},
+		{"GetCharacterProperty", API_FN_PAIR(GetCharacterProperty)},
+		{"GetCharacterPropertyText", API_FN_PAIR(GetCharacterPropertyText)},
+		{"GetCurrentMusic", API_FN_PAIR(GetCurrentMusic)},
+		{"GetCursorMode", API_FN_PAIR(GetCursorMode)},
+		{"GetDialogOption", API_FN_PAIR(GetDialogOption)},
+		{"GetGameOption", API_FN_PAIR(GetGameOption)},
+		{"GetGameParameter", API_FN_PAIR(GetGameParameter)},
+		{"GetGameSpeed", API_FN_PAIR(GetGameSpeed)},
+		{"GetGlobalInt", API_FN_PAIR(GetGlobalInt)},
+		{"GetGlobalString", API_FN_PAIR(GetGlobalString)},
+		{"GetGraphicalVariable", API_FN_PAIR(GetGraphicalVariable)},
+		{"GetGUIAt", API_FN_PAIR(GetGUIAt)},
+		{"GetGUIObjectAt", API_FN_PAIR(GetGUIObjectAt)},
+		{"GetHotspotAt", API_FN_PAIR(GetHotspotIDAtScreen)},
+		{"GetHotspotName", API_FN_PAIR(GetHotspotName)},
+		{"GetHotspotPointX", API_FN_PAIR(GetHotspotPointX)},
+		{"GetHotspotPointY", API_FN_PAIR(GetHotspotPointY)},
+		{"GetHotspotProperty", API_FN_PAIR(GetHotspotProperty)},
+		{"GetHotspotPropertyText", API_FN_PAIR(GetHotspotPropertyText)},
+		{"GetInvAt", API_FN_PAIR(GetInvAt)},
+		{"GetInvGraphic", API_FN_PAIR(GetInvGraphic)},
+		{"GetInvName", API_FN_PAIR(GetInvName)},
+		{"GetInvProperty", API_FN_PAIR(GetInvProperty)},
+		{"GetInvPropertyText", API_FN_PAIR(GetInvPropertyText)},
+		{"GetLocationName", API_FN_PAIR(GetLocationName)},
+		{"GetLocationType", API_FN_PAIR(GetLocationType)},
+		{"GetMessageText", API_FN_PAIR(GetMessageText)},
+		{"GetMIDIPosition", API_FN_PAIR(GetMIDIPosition)},
+		{"GetMP3PosMillis", API_FN_PAIR(GetMP3PosMillis)},
+		{"GetObjectAt", API_FN_PAIR(GetObjectIDAtScreen)},
+		{"GetObjectBaseline", API_FN_PAIR(GetObjectBaseline)},
+		{"GetObjectGraphic", API_FN_PAIR(GetObjectGraphic)},
+		{"GetObjectName", API_FN_PAIR(GetObjectName)},
+		{"GetObjectProperty", API_FN_PAIR(GetObjectProperty)},
+		{"GetObjectPropertyText", API_FN_PAIR(GetObjectPropertyText)},
+		{"GetObjectX", API_FN_PAIR(GetObjectX)},
+		{"GetObjectY", API_FN_PAIR(GetObjectY)},
+		{"GetPlayerCharacter", API_FN_PAIR(GetPlayerCharacter)},
+		{"GetRawTime", API_FN_PAIR(GetRawTime)},
+		{"GetRegionAt", API_FN_PAIR(GetRegionIDAtRoom)},
+		{"GetRoomProperty", API_FN_PAIR(Room_GetProperty)},
+		{"GetRoomPropertyText", API_FN_PAIR(GetRoomPropertyText)},
+		{"GetSaveSlotDescription", API_FN_PAIR(GetSaveSlotDescription)},
+		{"GetScalingAt", API_FN_PAIR(GetScalingAt)},
+		{"GetSliderValue", API_FN_PAIR(GetSliderValue)},
+		{"GetTextBoxText", API_FN_PAIR(GetTextBoxText)},
+		{"GetTextHeight", API_FN_PAIR(GetTextHeight)},
+		{"GetTextWidth", API_FN_PAIR(GetTextWidth)},
+		{"GetFontHeight", API_FN_PAIR(GetFontHeight)},
+		{"GetFontLineSpacing", API_FN_PAIR(GetFontLineSpacing)},
+		{"GetTime", API_FN_PAIR(sc_GetTime)},
+		{"GetTranslation", API_FN_PAIR(get_translation)},
+		{"GetTranslationName", API_FN_PAIR(GetTranslationName)},
+		{"GetViewportX", API_FN_PAIR(GetViewportX)},
+		{"GetViewportY", API_FN_PAIR(GetViewportY)},
+		{"GetWalkableAreaAtRoom", API_FN_PAIR(GetWalkableAreaAtRoom)},
+		{"GetWalkableAreaAt", API_FN_PAIR(GetWalkableAreaAtScreen)},
+		{"GetWalkableAreaAtScreen", API_FN_PAIR(GetWalkableAreaAtScreen)},
+		{"GetDrawingSurfaceForWalkableArea", API_FN_PAIR(GetDrawingSurfaceForWalkableArea)},
+		{"GetDrawingSurfaceForWalkbehind", API_FN_PAIR(GetDrawingSurfaceForWalkbehind)},
+		{"GiveScore", API_FN_PAIR(GiveScore)},
+		{"HasPlayerBeenInRoom", API_FN_PAIR(HasPlayerBeenInRoom)},
+		{"HideMouseCursor", API_FN_PAIR(HideMouseCursor)},
+		{"InputBox", API_FN_PAIR(ShowInputBox)},
+		{"InterfaceOff", API_FN_PAIR(InterfaceOff)},
+		{"InterfaceOn", API_FN_PAIR(InterfaceOn)},
+		{"IntToFloat", API_FN_PAIR(IntToFloat)},
+		{"InventoryScreen", API_FN_PAIR(sc_invscreen)},
+		{"IsButtonDown", API_FN_PAIR(IsButtonDown)},
+		{"IsChannelPlaying", API_FN_PAIR(IsChannelPlaying)},
+		{"IsGamePaused", API_FN_PAIR(IsGamePaused)},
+		{"IsGUIOn", API_FN_PAIR(IsGUIOn)},
+		{"IsInteractionAvailable", API_FN_PAIR(IsInteractionAvailable)},
+		{"IsInventoryInteractionAvailable", API_FN_PAIR(IsInventoryInteractionAvailable)},
+		{"IsInterfaceEnabled", API_FN_PAIR(IsInterfaceEnabled)},
+		{"IsKeyPressed", API_FN_PAIR(IsKeyPressed)},
+		{"IsMusicPlaying", API_FN_PAIR(IsMusicPlaying)},
+		{"IsMusicVoxAvailable", API_FN_PAIR(IsMusicVoxAvailable)},
+		{"IsObjectAnimating", API_FN_PAIR(IsObjectAnimating)},
+		{"IsObjectMoving", API_FN_PAIR(IsObjectMoving)},
+		{"IsObjectOn", API_FN_PAIR(IsObjectOn)},
+		{"IsOverlayValid", API_FN_PAIR(IsOverlayValid)},
+		{"IsSoundPlaying", API_FN_PAIR(IsSoundPlaying)},
+		{"IsTimerExpired", API_FN_PAIR(IsTimerExpired)},
+		{"IsTranslationAvailable", API_FN_PAIR(IsTranslationAvailable)},
+		{"IsVoxAvailable", API_FN_PAIR(IsVoxAvailable)},
+		{"ListBoxAdd", API_FN_PAIR(ListBoxAdd)},
+		{"ListBoxClear", API_FN_PAIR(ListBoxClear)},
+		{"ListBoxDirList", API_FN_PAIR(ListBoxDirList)},
+		{"ListBoxGetItemText", API_FN_PAIR(ListBoxGetItemText)},
+		{"ListBoxGetNumItems", API_FN_PAIR(ListBoxGetNumItems)},
+		{"ListBoxGetSelected", API_FN_PAIR(ListBoxGetSelected)},
+		{"ListBoxRemove", API_FN_PAIR(ListBoxRemove)},
+		{"ListBoxSaveGameList", API_FN_PAIR(ListBoxSaveGameList)},
+		{"ListBoxSetSelected", API_FN_PAIR(ListBoxSetSelected)},
+		{"ListBoxSetTopItem", API_FN_PAIR(ListBoxSetTopItem)},
+		{"LoadImageFile", API_FN_PAIR(LoadImageFile)},
+		{"LoadSaveSlotScreenshot", API_FN_PAIR(LoadSaveSlotScreenshot)},
+		{"LoseInventory", API_FN_PAIR(lose_inventory)},
+		{"LoseInventoryFromCharacter", API_FN_PAIR(LoseInventoryFromCharacter)},
+		{"MergeObject", API_FN_PAIR(MergeObject)},
+		{"MoveCharacter", API_FN_PAIR(MoveCharacter)},
+		{"MoveCharacterBlocking", API_FN_PAIR(MoveCharacterBlocking)},
+		{"MoveCharacterDirect", API_FN_PAIR(MoveCharacterDirect)},
+		{"MoveCharacterPath", API_FN_PAIR(MoveCharacterPath)},
+		{"MoveCharacterStraight", API_FN_PAIR(MoveCharacterStraight)},
+		{"MoveCharacterToHotspot", API_FN_PAIR(MoveCharacterToHotspot)},
+		{"MoveCharacterToObject", API_FN_PAIR(MoveCharacterToObject)},
+		{"MoveObject", API_FN_PAIR(MoveObject)},
+		{"MoveObjectDirect", API_FN_PAIR(MoveObjectDirect)},
+		{"MoveOverlay", API_FN_PAIR(MoveOverlay)},
+		{"MoveToWalkableArea", API_FN_PAIR(MoveToWalkableArea)},
+		{"NewRoom", API_FN_PAIR(NewRoom)},
+		{"NewRoomEx", API_FN_PAIR(NewRoomEx)},
+		{"NewRoomNPC", API_FN_PAIR(NewRoomNPC)},
+		{"ObjectOff", API_FN_PAIR(ObjectOff)},
+		{"ObjectOn", API_FN_PAIR(ObjectOn)},
+		{"ParseText", API_FN_PAIR(ParseText)},
+		{"PauseGame", API_FN_PAIR(PauseGame)},
+		{"PlayAmbientSound", API_FN_PAIR(PlayAmbientSound)},
+		{"PlayFlic", API_FN_PAIR(PlayFlic)},
+		{"PlayMP3File", API_FN_PAIR(PlayMP3File)},
+		{"PlayMusic", API_FN_PAIR(PlayMusicResetQueue)},
+		{"PlayMusicQueued", API_FN_PAIR(PlayMusicQueued)},
+		{"PlaySilentMIDI", API_FN_PAIR(PlaySilentMIDI)},
+		{"PlaySound", API_FN_PAIR(play_sound)},
+		{"PlaySoundEx", API_FN_PAIR(PlaySoundEx)},
+		{"PlayVideo", API_FN_PAIR(PlayVideo)},
+		{"QuitGame", API_FN_PAIR(QuitGame)},
+		{"Random", Sc_Rand},
+		{"RawClearScreen", API_FN_PAIR(RawClear)},
+		{"RawDrawCircle", API_FN_PAIR(RawDrawCircle)},
+		{"RawDrawFrameTransparent", API_FN_PAIR(RawDrawFrameTransparent)},
+		{"RawDrawImage", API_FN_PAIR(RawDrawImage)},
+		{"RawDrawImageOffset", API_FN_PAIR(RawDrawImageOffset)},
+		{"RawDrawImageResized", API_FN_PAIR(RawDrawImageResized)},
+		{"RawDrawImageTransparent", API_FN_PAIR(RawDrawImageTransparent)},
+		{"RawDrawLine", API_FN_PAIR(RawDrawLine)},
+		{"RawDrawRectangle", API_FN_PAIR(RawDrawRectangle)},
+		{"RawDrawTriangle", API_FN_PAIR(RawDrawTriangle)},
+		{"RawPrint", Sc_RawPrint},
+		{"RawPrintMessageWrapped", API_FN_PAIR(RawPrintMessageWrapped)},
+		{"RawRestoreScreen", API_FN_PAIR(RawRestoreScreen)},
+		{"RawRestoreScreenTinted", API_FN_PAIR(RawRestoreScreenTinted)},
+		{"RawSaveScreen", API_FN_PAIR(RawSaveScreen)},
+		{"RawSetColor", API_FN_PAIR(RawSetColor)},
+		{"RawSetColorRGB", API_FN_PAIR(RawSetColorRGB)},
+		{"RefreshMouse", API_FN_PAIR(RefreshMouse)},
+		{"ReleaseCharacterView", API_FN_PAIR(ReleaseCharacterView)},
+		{"ReleaseViewport", API_FN_PAIR(ReleaseViewport)},
+		{"RemoveObjectTint", API_FN_PAIR(RemoveObjectTint)},
+		{"RemoveOverlay", API_FN_PAIR(RemoveOverlay)},
+		{"RemoveWalkableArea", API_FN_PAIR(RemoveWalkableArea)},
+		{"ResetRoom", API_FN_PAIR(ResetRoom)},
+		{"RestartGame", API_FN_PAIR(restart_game)},
+		{"RestoreGameDialog", API_FN_PAIR(restore_game_dialog)},
+		{"RestoreGameSlot", API_FN_PAIR(RestoreGameSlot)},
+		{"RestoreWalkableArea", API_FN_PAIR(RestoreWalkableArea)},
+		{"RunAGSGame", API_FN_PAIR(RunAGSGame)},
+		{"RunCharacterInteraction", API_FN_PAIR(RunCharacterInteraction)},
+		{"RunDialog", API_FN_PAIR(RunDialog)},
+		{"RunHotspotInteraction", API_FN_PAIR(RunHotspotInteraction)},
+		{"RunInventoryInteraction", API_FN_PAIR(RunInventoryInteraction)},
+		{"RunObjectInteraction", API_FN_PAIR(RunObjectInteraction)},
+		{"RunRegionInteraction", API_FN_PAIR(RunRegionInteraction)},
+		{"Said", API_FN_PAIR(Said)},
+		{"SaidUnknownWord", API_FN_PAIR(SaidUnknownWord)},
+		{"SaveCursorForLocationChange", API_FN_PAIR(SaveCursorForLocationChange)},
+		{"SaveGameDialog", API_FN_PAIR(save_game_dialog)},
+		{"SaveGameSlot", API_FN_PAIR(save_game)},
+		{"SaveScreenShot", API_FN_PAIR(SaveScreenShot)},
+		{"SeekMIDIPosition", API_FN_PAIR(SeekMIDIPosition)},
+		{"SeekMODPattern", API_FN_PAIR(SeekMODPattern)},
+		{"SeekMP3PosMillis", API_FN_PAIR(SeekMP3PosMillis)},
+		{"SetActiveInventory", API_FN_PAIR(SetActiveInventory)},
+		{"SetAmbientTint", API_FN_PAIR(SetAmbientTint)},
+		{"SetAmbientLightLevel", API_FN_PAIR(SetAmbientLightLevel)},
+		{"SetAreaLightLevel", API_FN_PAIR(SetAreaLightLevel)},
+		{"SetAreaScaling", API_FN_PAIR(SetAreaScaling)},
+		{"SetBackgroundFrame", API_FN_PAIR(SetBackgroundFrame)},
+		{"SetButtonPic", API_FN_PAIR(SetButtonPic)},
+		{"SetButtonText", API_FN_PAIR(SetButtonText)},
+		{"SetChannelVolume", API_FN_PAIR(SetChannelVolume)},
+		{"SetCharacterBaseline", API_FN_PAIR(SetCharacterBaseline)},
+		{"SetCharacterClickable", API_FN_PAIR(SetCharacterClickable)},
+		{"SetCharacterFrame", API_FN_PAIR(SetCharacterFrame)},
+		{"SetCharacterIdle", API_FN_PAIR(SetCharacterIdle)},
+		{"SetCharacterIgnoreLight", API_FN_PAIR(SetCharacterIgnoreLight)},
+		{"SetCharacterIgnoreWalkbehinds", API_FN_PAIR(SetCharacterIgnoreWalkbehinds)},
+		{"SetCharacterProperty", API_FN_PAIR(SetCharacterProperty)},
+		{"SetCharacterBlinkView", API_FN_PAIR(SetCharacterBlinkView)},
+		{"SetCharacterSpeechView", API_FN_PAIR(SetCharacterSpeechView)},
+		{"SetCharacterSpeed", API_FN_PAIR(SetCharacterSpeed)},
+		{"SetCharacterSpeedEx", API_FN_PAIR(SetCharacterSpeedEx)},
+		{"SetCharacterTransparency", API_FN_PAIR(SetCharacterTransparency)},
+		{"SetCharacterView", API_FN_PAIR(SetCharacterView)},
+		{"SetCharacterViewEx", API_FN_PAIR(SetCharacterViewEx)},
+		{"SetCharacterViewOffset", API_FN_PAIR(SetCharacterViewOffset)},
+		{"SetCursorMode", API_FN_PAIR(set_cursor_mode)},
+		{"SetDefaultCursor", API_FN_PAIR(set_default_cursor)},
+		{"SetDialogOption", API_FN_PAIR(SetDialogOption)},
+		{"SetDigitalMasterVolume", API_FN_PAIR(SetDigitalMasterVolume)},
+		{"SetFadeColor", API_FN_PAIR(SetFadeColor)},
+		{"SetFrameSound", API_FN_PAIR(SetFrameSound)},
+		{"SetGameOption", API_FN_PAIR(SetGameOption)},
+		{"SetGameSpeed", API_FN_PAIR(SetGameSpeed)},
+		{"SetGlobalInt", API_FN_PAIR(SetGlobalInt)},
+		{"SetGlobalString", API_FN_PAIR(SetGlobalString)},
+		{"SetGraphicalVariable", API_FN_PAIR(SetGraphicalVariable)},
+		{"SetGUIBackgroundPic", API_FN_PAIR(SetGUIBackgroundPic)},
+		{"SetGUIClickable", API_FN_PAIR(SetGUIClickable)},
+		{"SetGUIObjectEnabled", API_FN_PAIR(SetGUIObjectEnabled)},
+		{"SetGUIObjectPosition", API_FN_PAIR(SetGUIObjectPosition)},
+		{"SetGUIObjectSize", API_FN_PAIR(SetGUIObjectSize)},
+		{"SetGUIPosition", API_FN_PAIR(SetGUIPosition)},
+		{"SetGUISize", API_FN_PAIR(SetGUISize)},
+		{"SetGUITransparency", API_FN_PAIR(SetGUITransparency)},
+		{"SetGUIZOrder", API_FN_PAIR(SetGUIZOrder)},
+		{"SetInvItemName", API_FN_PAIR(SetInvItemName)},
+		{"SetInvItemPic", API_FN_PAIR(set_inv_item_pic)},
+		{"SetInvDimensions", API_FN_PAIR(SetInvDimensions)},
+		{"SetLabelColor", API_FN_PAIR(SetLabelColor)},
+		{"SetLabelFont", API_FN_PAIR(SetLabelFont)},
+		{"SetLabelText", API_FN_PAIR(SetLabelText)},
+		{"SetMouseBounds", API_FN_PAIR(SetMouseBounds)},
+		{"SetMouseCursor", API_FN_PAIR(set_mouse_cursor)},
+		{"SetMousePosition", API_FN_PAIR(SetMousePosition)},
+		{"SetMultitaskingMode", API_FN_PAIR(SetMultitasking)},
+		{"SetMusicMasterVolume", API_FN_PAIR(SetMusicMasterVolume)},
+		{"SetMusicRepeat", API_FN_PAIR(SetMusicRepeat)},
+		{"SetMusicVolume", API_FN_PAIR(SetMusicVolume)},
+		{"SetNextCursorMode", API_FN_PAIR(SetNextCursor)},
+		{"SetNextScreenTransition", API_FN_PAIR(SetNextScreenTransition)},
+		{"SetNormalFont", API_FN_PAIR(SetNormalFont)},
+		{"SetObjectBaseline", API_FN_PAIR(SetObjectBaseline)},
+		{"SetObjectClickable", API_FN_PAIR(SetObjectClickable)},
+		{"SetObjectFrame", API_FN_PAIR(SetObjectFrame)},
+		{"SetObjectGraphic", API_FN_PAIR(SetObjectGraphic)},
+		{"SetObjectIgnoreWalkbehinds", API_FN_PAIR(SetObjectIgnoreWalkbehinds)},
+		{"SetObjectPosition", API_FN_PAIR(SetObjectPosition)},
+		{"SetObjectTint", API_FN_PAIR(SetObjectTint)},
+		{"SetObjectTransparency", API_FN_PAIR(SetObjectTransparency)},
+		{"SetObjectView", API_FN_PAIR(SetObjectView)},
+		{"SetPalRGB", API_FN_PAIR(SetPalRGB)},
+		{"SetPlayerCharacter", API_FN_PAIR(SetPlayerCharacter)},
+		{"SetRegionTint", API_FN_PAIR(SetRegionTint)},
+		{"SetRestartPoint", API_FN_PAIR(SetRestartPoint)},
+		{"SetScreenTransition", API_FN_PAIR(SetScreenTransition)},
+		{"SetSkipSpeech", API_FN_PAIR(SetSkipSpeech)},
+		{"SetSliderValue", API_FN_PAIR(SetSliderValue)},
+		{"SetSoundVolume", API_FN_PAIR(SetSoundVolume)},
+		{"SetSpeechFont", API_FN_PAIR(SetSpeechFont)},
+		{"SetSpeechStyle", API_FN_PAIR(SetSpeechStyle)},
+		{"SetSpeechVolume", API_FN_PAIR(SetSpeechVolume)},
+		{"SetTalkingColor", API_FN_PAIR(SetTalkingColor)},
+		{"SetTextBoxFont", API_FN_PAIR(SetTextBoxFont)},
+		{"SetTextBoxText", API_FN_PAIR(SetTextBoxText)},
+		{"SetTextOverlay", Sc_SetTextOverlay},
+		{"SetTextWindowGUI", API_FN_PAIR(SetTextWindowGUI)},
+		{"SetTimer", API_FN_PAIR(script_SetTimer)},
+		{"SetViewport", API_FN_PAIR(SetViewport)},
+		{"SetVoiceMode", API_FN_PAIR(SetVoiceMode)},
+		{"SetWalkBehindBase", API_FN_PAIR(SetWalkBehindBase)},
+		{"ShakeScreen", API_FN_PAIR(ShakeScreen)},
+		{"ShakeScreenBackground", API_FN_PAIR(ShakeScreenBackground)},
+		{"ShowMouseCursor", API_FN_PAIR(ShowMouseCursor)},
+		{"SkipCutscene", API_FN_PAIR(SkipCutscene)},
+		{"SkipUntilCharacterStops", API_FN_PAIR(SkipUntilCharacterStops)},
+		{"StartCutscene", API_FN_PAIR(StartCutscene)},
+		{"StartRecording", API_FN_PAIR(scStartRecording)},
+		{"StopAmbientSound", API_FN_PAIR(StopAmbientSound)},
+		{"StopChannel", API_FN_PAIR(stop_and_destroy_channel)},
+		{"StopDialog", API_FN_PAIR(StopDialog)},
+		{"StopMoving", API_FN_PAIR(StopMoving)},
+		{"StopMusic", API_FN_PAIR(scr_StopMusic)},
+		{"StopObjectMoving", API_FN_PAIR(StopObjectMoving)},
+		{"StrCat", Sc_sc_strcat},
+		{"StrCaseComp", Sc_stricmp},
+		{"StrComp", API_FN_PAIR(strcmp)},
+		{"StrContains", API_FN_PAIR(StrContains)},
+		{"StrCopy", Sc_sc_strcpy},
+		{"StrFormat", Sc_sc_sprintf},
+		{"StrGetCharAt", API_FN_PAIR(StrGetCharAt)},
+		{"StringToInt", API_FN_PAIR(StringToInt)},
+		{"StrLen", API_FN_PAIR(strlen)},
+		{"StrSetCharAt", API_FN_PAIR(StrSetCharAt)},
+		{"StrToLowerCase", Sc_sc_strlower},
+		{"StrToUpperCase", Sc_sc_strupper},
+		{"TintScreen", API_FN_PAIR(TintScreen)},
+		{"UnPauseGame", API_FN_PAIR(UnPauseGame)},
+		{"UpdateInventory", API_FN_PAIR(update_invorder)},
+		{"UpdatePalette", API_FN_PAIR(UpdatePalette)},
+		{"Wait", API_FN_PAIR(scrWait)},
+		{"WaitKey", API_FN_PAIR(WaitKey)},
+		{"WaitMouse", API_FN_PAIR(WaitMouse)},
+		{"WaitMouseKey", API_FN_PAIR(WaitMouseKey)},
+		{"WaitInput", API_FN_PAIR(WaitInput)},
+		{"SkipWait", API_FN_PAIR(SkipWait)},
+	};
+
+	ccAddExternalFunctions361(global_api);
 }
 
 } // namespace AGS3

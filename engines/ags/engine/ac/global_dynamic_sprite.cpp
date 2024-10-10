@@ -35,6 +35,8 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 int LoadImageFile(const char *filename) {
+	if (!_GP(spriteset).HasFreeSlots())
+		return 0;
 	ResolvedPath rp;
 	if (!ResolveScriptPath(filename, true, rp))
 		return 0;
@@ -54,13 +56,10 @@ int LoadImageFile(const char *filename) {
 	if (!loadedFile)
 		return 0;
 
-	int gotSlot = _GP(spriteset).GetFreeIndex();
-	if (gotSlot <= 0)
+	std::unique_ptr<Bitmap> image(loadedFile);
+	if (!image)
 		return 0;
-
-	add_dynamic_sprite(gotSlot, PrepareSpriteForUse(loadedFile, false));
-
-	return gotSlot;
+	return add_dynamic_sprite(std::unique_ptr<Bitmap>(PrepareSpriteForUse(image.release(), false)));
 }
 
 } // namespace AGS3

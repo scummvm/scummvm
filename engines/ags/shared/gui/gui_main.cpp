@@ -21,6 +21,7 @@
 
 #include "common/std/algorithm.h"
 #include "ags/shared/gui/gui_main.h"
+#include "ags/shared/ac/common.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/shared/debugging/out.h"
@@ -35,6 +36,8 @@
 #include "ags/shared/util/string_utils.h"
 #include "ags/shared/util/string_compat.h"
 #include "ags/globals.h"
+
+#include "common/config-manager.h"
 
 namespace AGS3 {
 
@@ -65,6 +68,7 @@ void GUIMain::InitDefaults() {
 	_flags = kGUIMain_DefFlags;
 	_hasChanged = true;
 	_hasControlsChanged = true;
+	_polling = false;
 
 	X = 0;
 	Y = 0;
@@ -149,18 +153,6 @@ const std::vector<int> &GUIMain::GetControlsDrawOrder() const {
 	return _ctrlDrawOrder;
 }
 
-bool GUIMain::IsClickable() const {
-	return (_flags & kGUIMain_Clickable) != 0;
-}
-
-bool GUIMain::IsConcealed() const {
-	return (_flags & kGUIMain_Concealed) != 0;
-}
-
-bool GUIMain::IsDisplayed() const {
-	return IsVisible() && !IsConcealed();
-}
-
 bool GUIMain::IsInteractableAt(int x, int y) const {
 	if (!IsDisplayed())
 		return false;
@@ -176,31 +168,35 @@ bool GUIMain::IsInteractableAt(int x, int y) const {
 	return false;
 }
 
-bool GUIMain::IsTextWindow() const {
-	return (_flags & kGUIMain_TextWindow) != 0;
-}
-
-bool GUIMain::IsVisible() const {
-	return (_flags & kGUIMain_Visible) != 0;
-}
-
-bool GUIMain::HasChanged() const {
-	return _hasChanged;
-}
-
-bool GUIMain::HasControlsChanged() const {
-	return _hasControlsChanged;
-}
-
 void GUIMain::MarkChanged() {
 	_hasChanged = true;
 }
 
-void GUIMain::MarkControlsChanged() {
+void GUIMain::MarkControlChanged() {
 	_hasControlsChanged = true;
-	// force it to re-check for which control is under the mouse
+}
+
+void GUIMain::NotifyControlPosition() {
+	// Force it to re-check for which control is under the mouse
 	MouseWasAt.X = -1;
 	MouseWasAt.Y = -1;
+	_hasControlsChanged = true; // for software render, and in case of shape change
+}
+
+void GUIMain::NotifyControlState(int objid, bool mark_changed) {
+	MouseWasAt.X = -1;
+	MouseWasAt.Y = -1;
+	_hasControlsChanged |= mark_changed;
+	// Update cursor-over-control state, if necessary
+	const int overctrl = MouseOverCtrl;
+	if (!_polling &&
+		(objid >= 0) && (objid == overctrl) && ((size_t)objid < _controls.size()) &&
+		(!_controls[overctrl]->IsClickable() ||
+		 !_controls[overctrl]->IsVisible() ||
+		 !_controls[overctrl]->IsEnabled())) {
+		MouseOverCtrl = -1;
+		_controls[overctrl]->OnMouseLeave();
+	}
 }
 
 void GUIMain::ClearChanged() {
@@ -209,7 +205,7 @@ void GUIMain::ClearChanged() {
 }
 
 void GUIMain::ResetOverControl() {
-	if (MouseOverCtrl >= 0)
+	if ((MouseOverCtrl >= 0) && ((size_t)MouseOverCtrl < _controls.size()))
 		_controls[MouseOverCtrl]->OnMouseLeave();
 	// Force it to re-check for which control is under the mouse
 	MouseWasAt.X = -1;
@@ -232,12 +228,12 @@ bool GUIMain::BringControlToFront(int32_t index) {
 }
 
 void GUIMain::DrawSelf(Bitmap *ds) {
-	SET_EIP(375);
+	set_our_eip(375);
 
 	if ((Width < 1) || (Height < 1))
 		return;
 
-	SET_EIP(376);
+	set_our_eip(376);
 	// stop border being transparent, if the whole GUI isn't
 	if ((FgColor == 0) && (BgColor != 0))
 		FgColor = 16;
@@ -245,7 +241,7 @@ void GUIMain::DrawSelf(Bitmap *ds) {
 	if (BgColor != 0)
 		ds->Fill(ds->GetCompatibleColor(BgColor));
 
-	SET_EIP(377);
+	set_our_eip(377);
 
 	color_t draw_color;
 	if (FgColor != BgColor) {
@@ -255,12 +251,12 @@ void GUIMain::DrawSelf(Bitmap *ds) {
 			ds->DrawRect(Rect(1, 1, ds->GetWidth() - 2, ds->GetHeight() - 2), draw_color);
 	}
 
-	SET_EIP(378);
+	set_our_eip(378);
 
-	if (BgImage > 0 && _GP(spriteset)[BgImage] != nullptr)
+	if (BgImage > 0 && _GP(spriteset).DoesSpriteExist(BgImage))
 		draw_gui_sprite(ds, BgImage, 0, 0, false);
 
-	SET_EIP(379);
+	set_our_eip(379);
 }
 
 void GUIMain::DrawWithControls(Bitmap *ds) {
@@ -275,8 +271,9 @@ void GUIMain::DrawWithControls(Bitmap *ds) {
 		set_eip_guiobj(_ctrlDrawOrder[ctrl_index]);
 
 		GUIObject *objToDraw = _controls[_ctrlDrawOrder[ctrl_index]];
+		Size obj_size = objToDraw->GetSize();
 
-		if (!objToDraw->IsVisible() || (objToDraw->Width <= 0 || objToDraw->Height <= 0))
+		if (!objToDraw->IsVisible() || (obj_size.Width <= 0 || obj_size.Height <= 0))
 			continue;
 		if (!objToDraw->IsEnabled() && (GUI::Options.DisabledStyle == kGuiDis_Blackout))
 			continue;
@@ -284,7 +281,7 @@ void GUIMain::DrawWithControls(Bitmap *ds) {
 		// Depending on draw properties - draw directly on the gui surface, or use a buffer
 		if (objToDraw->GetTransparency() == 0) {
 			if (GUI::Options.ClipControls && objToDraw->IsContentClipped())
-				ds->SetClip(RectWH(objToDraw->X, objToDraw->Y, objToDraw->Width, objToDraw->Height));
+				ds->SetClip(RectWH(objToDraw->X, objToDraw->Y, obj_size.Width, obj_size.Height));
 			else
 				ds->ResetClip();
 			objToDraw->Draw(ds, objToDraw->X, objToDraw->Y);
@@ -303,27 +300,27 @@ void GUIMain::DrawWithControls(Bitmap *ds) {
 			if (GUI::Options.OutlineControls)
 				selectedColour = 13;
 			color_t draw_color = ds->GetCompatibleColor(selectedColour);
-			DrawBlob(ds, objToDraw->X + objToDraw->Width - get_fixed_pixel_size(1) - 1, objToDraw->Y, draw_color);
-			DrawBlob(ds, objToDraw->X, objToDraw->Y + objToDraw->Height - get_fixed_pixel_size(1) - 1, draw_color);
+			DrawBlob(ds, objToDraw->X + obj_size.Width - get_fixed_pixel_size(1) - 1, objToDraw->Y, draw_color);
+			DrawBlob(ds, objToDraw->X, objToDraw->Y + obj_size.Height - get_fixed_pixel_size(1) - 1, draw_color);
 			DrawBlob(ds, objToDraw->X, objToDraw->Y, draw_color);
-			DrawBlob(ds, objToDraw->X + objToDraw->Width - get_fixed_pixel_size(1) - 1,
-				objToDraw->Y + objToDraw->Height - get_fixed_pixel_size(1) - 1, draw_color);
+			DrawBlob(ds, objToDraw->X + obj_size.Width - get_fixed_pixel_size(1) - 1,
+				objToDraw->Y + obj_size.Height - get_fixed_pixel_size(1) - 1, draw_color);
 		}
 		if (GUI::Options.OutlineControls) {
 			// draw a dotted outline round all objects
 			color_t draw_color = ds->GetCompatibleColor(selectedColour);
-			for (int i = 0; i < objToDraw->Width; i += 2) {
+			for (int i = 0; i < obj_size.Width; i += 2) {
 				ds->PutPixel(i + objToDraw->X, objToDraw->Y, draw_color);
-				ds->PutPixel(i + objToDraw->X, objToDraw->Y + objToDraw->Height - 1, draw_color);
+				ds->PutPixel(i + objToDraw->X, objToDraw->Y + obj_size.Height - 1, draw_color);
 			}
-			for (int i = 0; i < objToDraw->Height; i += 2) {
+			for (int i = 0; i < obj_size.Height; i += 2) {
 				ds->PutPixel(objToDraw->X, i + objToDraw->Y, draw_color);
-				ds->PutPixel(objToDraw->X + objToDraw->Width - 1, i + objToDraw->Y, draw_color);
+				ds->PutPixel(objToDraw->X + obj_size.Width - 1, i + objToDraw->Y, draw_color);
 			}
 		}
 	}
 
-	SET_EIP(380);
+	set_our_eip(380);
 }
 
 void GUIMain::DrawBlob(Bitmap *ds, int x, int y, color_t draw_color) {
@@ -331,6 +328,7 @@ void GUIMain::DrawBlob(Bitmap *ds, int x, int y, color_t draw_color) {
 }
 
 void GUIMain::Poll(int mx, int my) {
+	_polling = true;
 	mx -= X, my -= Y; // translate to GUI's local coordinates
 	if (mx != MouseWasAt.X || my != MouseWasAt.Y) {
 		int ctrl_index = FindControlAtLocal(mx, my, 0, true);
@@ -361,6 +359,7 @@ void GUIMain::Poll(int mx, int my) {
 
 	MouseWasAt.X = mx;
 	MouseWasAt.Y = my;
+	_polling = false;
 }
 
 HError GUIMain::RebuildArray() {
@@ -412,17 +411,20 @@ void GUIMain::ResortZOrder() {
 }
 
 void GUIMain::SetClickable(bool on) {
-	if (on)
-		_flags |= kGUIMain_Clickable;
-	else
-		_flags &= ~kGUIMain_Clickable;
+	if (on != ((_flags & kGUIMain_Clickable) != 0)) {
+		_flags = (_flags & ~kGUIMain_Clickable) | kGUIMain_Clickable * on;
+
+		//  WORKAROUND: Don't reset the GUI in Kathy Rain
+		if (ConfMan.get("gameid") != "kathyrain")
+			ResetOverControl(); // clear the cursor-over-control
+	}
 }
 
 void GUIMain::SetConceal(bool on) {
-	if (on)
-		_flags |= kGUIMain_Concealed;
-	else
-		_flags &= ~kGUIMain_Concealed;
+	if (on != ((_flags & kGUIMain_Concealed) != 0)) {
+		_flags = (_flags & ~kGUIMain_Concealed) | kGUIMain_Concealed * on;
+		ResetOverControl(); // clear the cursor-over-control
+	}
 }
 
 bool GUIMain::SendControlToBack(int32_t index) {
@@ -454,15 +456,12 @@ bool GUIMain::SetControlZOrder(int32_t index, int zorder) {
 		}
 	}
 	ResortZOrder();
-	MarkControlsChanged();
+	NotifyControlPosition();
 	return true;
 }
 
 void GUIMain::SetTextWindow(bool on) {
-	if (on)
-		_flags |= kGUIMain_TextWindow;
-	else
-		_flags &= ~kGUIMain_TextWindow;
+	_flags = (_flags & ~kGUIMain_TextWindow) | kGUIMain_TextWindow * on;
 }
 
 void GUIMain::SetTransparencyAsPercentage(int percent) {
@@ -470,10 +469,10 @@ void GUIMain::SetTransparencyAsPercentage(int percent) {
 }
 
 void GUIMain::SetVisible(bool on) {
-	if (on)
-		_flags |= kGUIMain_Visible;
-	else
-		_flags &= ~kGUIMain_Visible;
+	if (on != ((_flags & kGUIMain_Visible) != 0)) {
+		_flags = (_flags & ~kGUIMain_Visible) | kGUIMain_Visible * on;
+		ResetOverControl(); // clear the cursor-over-control
+	}
 }
 
 void GUIMain::OnMouseButtonDown(int mx, int my) {
@@ -658,12 +657,13 @@ GuiVersion GameGuiVersion = kGuiVersion_Initial;
 
 Line CalcFontGraphicalVExtent(int font) {
 	// Following factors are affecting the graphical vertical metrics:
+	// * font's real graphical extent (top and bottom offsets relative to the "pen")
 	// * custom vertical offset set by user (if non-zero),
-	// * font's real graphical height
-	int font_yoffset = get_fontinfo(font).YOffset;
-	int yoff = std::min(0, font_yoffset);       // only if yoff is negative
-	int height_off = std::max(0, font_yoffset); // only if yoff is positive
-	return Line(0, yoff, 0, get_font_surface_height(font) + height_off);
+	const auto finfo = get_fontinfo(font);
+	const auto fextent = get_font_surface_extent(font);
+	int top = fextent.first + std::min(0, finfo.YOffset);     // apply YOffset only if negative
+	int bottom = fextent.second + std::max(0, finfo.YOffset); // apply YOffset only if positive
+	return Line(0, top, 0, bottom);
 }
 
 Point CalcTextPosition(const char *text, int font, const Rect &frame, FrameAlignment align, Rect *gr_rect) {

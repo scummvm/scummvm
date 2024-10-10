@@ -19,16 +19,17 @@
  *
  */
 
+#include "ags/engine/gui/my_push_button.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/sys_events.h"
-#include "ags/shared/font/fonts.h"
-#include "ags/engine/gui/my_push_button.h"
-#include "ags/engine/gui/gui_dialog.h"
-#include "ags/engine/gui/gui_dialog_internal_defs.h"
-#include "ags/engine/main/game_run.h"
-#include "ags/shared/gfx/bitmap.h"
-#include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/engine/ac/timer.h"
+#include "ags/shared/font/fonts.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/engine/gui/gui_dialog.h"
+#include "ags/engine/gui/gui_dialog_defines.h"
+#include "ags/engine/main/game_run.h"
+
+#include "ags/engine/platform/base/ags_platform_driver.h"
 
 namespace AGS3 {
 

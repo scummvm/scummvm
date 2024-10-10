@@ -24,6 +24,7 @@
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/character.h"
+#include "ags/engine/ac/game.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_object.h"
 #include "ags/engine/ac/global_translation.h"
@@ -56,7 +57,7 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-AGS_INLINE bool is_valid_object(int obj_id) {
+bool is_valid_object(int obj_id) {
 	return (obj_id >= 0) && (static_cast<uint32_t>(obj_id) < _G(croom)->numobj);
 }
 
@@ -94,7 +95,7 @@ void Object_RemoveTint(ScriptObject *objj) {
 }
 
 void Object_SetView(ScriptObject *objj, int view, int loop, int frame) {
-	SetObjectFrame(objj->id, view, loop, frame);
+	SetObjectFrameSimple(objj->id, view, loop, frame);
 }
 
 void Object_SetTransparency(ScriptObject *objj, int trans) {
@@ -108,6 +109,15 @@ int Object_GetTransparency(ScriptObject *objj) {
 	return GfxDef::LegacyTrans255ToTrans100(_G(objs)[objj->id].transparent);
 }
 
+int Object_GetAnimationVolume(ScriptObject *objj) {
+	return _G(objs)[objj->id].anim_volume;
+}
+
+void Object_SetAnimationVolume(ScriptObject *objj, int newval) {
+
+	_G(objs)[objj->id].anim_volume = Math::Clamp(newval, 0, 100);
+}
+
 void Object_SetBaseline(ScriptObject *objj, int basel) {
 	SetObjectBaseline(objj->id, basel);
 }
@@ -116,16 +126,16 @@ int Object_GetBaseline(ScriptObject *objj) {
 	return GetObjectBaseline(objj->id);
 }
 
-void Object_AnimateEx(ScriptObject *objj, int loop, int delay, int repeat,
-	int blocking, int direction, int sframe, int volume = 100) {
-
-	ValidateViewAnimParams("Object.Animate", repeat, blocking, direction);
-
+void Object_Animate(ScriptObject *objj, int loop, int delay, int repeat, int blocking, int direction, int sframe, int volume) {
 	AnimateObjectImpl(objj->id, loop, delay, repeat, direction, blocking, sframe, volume);
 }
 
-void Object_Animate(ScriptObject *objj, int loop, int delay, int repeat, int blocking, int direction) {
-	Object_AnimateEx(objj, loop, delay, repeat, blocking, direction, 0, 100 /* full volume */);
+void Object_Animate5(ScriptObject *objj, int loop, int delay, int repeat, int blocking, int direction) {
+	Object_Animate(objj, loop, delay, repeat, blocking, direction, 0 /* frame */, 100 /* full volume */);
+}
+
+void Object_Animate6(ScriptObject *objj, int loop, int delay, int repeat, int blocking, int direction, int sframe) {
+	Object_Animate(objj, loop, delay, repeat, blocking, direction, sframe, 100 /* full volume */);
 }
 
 void Object_StopAnimating(ScriptObject *objj) {
@@ -386,6 +396,10 @@ int Object_GetID(ScriptObject *objj) {
 	return objj->id;
 }
 
+const char *Object_GetScriptName(ScriptObject *objj) {
+	return CreateNewScriptString(_GP(thisroom).Objects[objj->id].ScriptName);
+}
+
 void Object_SetIgnoreWalkbehinds(ScriptObject *chaa, int clik) {
 	SetObjectIgnoreWalkbehinds(chaa->id, clik);
 }
@@ -458,6 +472,47 @@ bool Object_SetTextProperty(ScriptObject *objj, const char *property, const char
 	return set_text_property(_G(croom)->objProps[objj->id], property, value);
 }
 
+void update_object_scale(int &res_zoom, int &res_width, int &res_height,
+						 int objx, int objy, int sprnum, int own_zoom, bool use_region_scaling) {
+	int zoom = own_zoom;
+	if (use_region_scaling) {
+		// Only apply area zoom if we're on a a valid area:
+		// * either area is > 0, or
+		// * area 0 has valid scaling property (<> 0)
+		int onarea = get_walkable_area_at_location(objx, objy);
+		if ((onarea > 0) || (_GP(thisroom).WalkAreas[0].ScalingFar != 0)) {
+			zoom = get_area_scaling(onarea, objx, objy);
+		}
+	}
+
+	if (zoom == 0)
+		zoom = 100; // safety fix
+
+	int sprwidth = _GP(game).SpriteInfos[sprnum].Width;
+	int sprheight = _GP(game).SpriteInfos[sprnum].Height;
+	if (zoom != 100) {
+		scale_sprite_size(sprnum, zoom, &sprwidth, &sprheight);
+	}
+
+	res_zoom = zoom;
+	res_width = sprwidth;
+	res_height = sprheight;
+}
+
+void update_object_scale(int objid) {
+	RoomObject &obj = _G(objs)[objid];
+	if (obj.on == 0)
+		return; // not enabled
+
+	int zoom, scale_width, scale_height;
+	update_object_scale(zoom, scale_width, scale_height,
+						obj.x, obj.y, obj.num, obj.zoom, (obj.flags & OBJF_USEROOMSCALING) != 0);
+
+	obj.zoom = zoom;
+	obj.last_width = scale_width;
+	obj.last_height = scale_height;
+}
+
 void get_object_blocking_rect(int objid, int *x1, int *y1, int *width, int *y2) {
 	RoomObject *tehobj = &_G(objs)[objid];
 	int cwidth, fromx;
@@ -499,8 +554,9 @@ int isposinbox(int mmx, int mmy, int lf, int tp, int rt, int bt) {
 }
 
 // xx,yy is the position in room co-ordinates that we are checking
-// arx,ary is the sprite x/y co-ordinates
-int is_pos_in_sprite(int xx, int yy, int arx, int ary, Bitmap *sprit, int spww, int sphh, int flipped) {
+// arx,ary,spww,sphh are the sprite's bounding box
+// bitmap_original tells whether bitmap is an original sprite, or transformed version
+int is_pos_in_sprite(int xx, int yy, int arx, int ary, Bitmap *sprit, int spww, int sphh, int flipped, bool bitmap_original) {
 	if (spww == 0) spww = game_to_data_coord(sprit->GetWidth()) - 1;
 	if (sphh == 0) sphh = game_to_data_coord(sprit->GetHeight()) - 1;
 
@@ -512,10 +568,9 @@ int is_pos_in_sprite(int xx, int yy, int arx, int ary, Bitmap *sprit, int spww, 
 		int xpos = data_to_game_coord(xx - arx);
 		int ypos = data_to_game_coord(yy - ary);
 
-		if (_G(gfxDriver)->HasAcceleratedTransform()) {
-			// hardware acceleration, so the sprite in memory will not have
-			// been stretched, it will be original size. Thus, adjust our
-			// calculations to compensate
+		if (bitmap_original) {
+			// Bitmap has original sprite's resolution,
+			// thus adjust our calculations to compensate
 			data_to_game_coords(&spww, &sphh);
 
 			if (spww != sprit->GetWidth())
@@ -554,9 +609,9 @@ void ValidateViewAnimParams(const char *apiname, int &repeat, int &blocking, int
 	else if (direction == BACKWARDS)
 		direction = 1;
 
-	if ((repeat < 0) || (repeat > 1)) {
+	if ((repeat < ANIM_ONCE) || (repeat > ANIM_ONCERESET)) {
 		debug_script_warn("%s: invalid repeat value %d, will treat as REPEAT (1).", apiname, repeat);
-		repeat = 1;
+		repeat = ANIM_REPEAT;
 	}
 	if ((blocking < 0) || (blocking > 1)) {
 		debug_script_warn("%s: invalid blocking value %d, will treat as BLOCKING (1)", apiname, blocking);
@@ -566,6 +621,33 @@ void ValidateViewAnimParams(const char *apiname, int &repeat, int &blocking, int
 		debug_script_warn("%s: invalid direction value %d, will treat as BACKWARDS (1)", apiname, direction);
 		direction = 1;
 	}
+}
+
+void ValidateViewAnimVLF(const char *apiname, int view, int loop, int &sframe) {
+	// NOTE: we assume that the view is already in an internal 0-based range.
+	// but when printing an error we will use (view + 1) for compliance with the script API.
+	AssertLoop(apiname, view, loop);
+
+	if (_GP(views)[view].loops[loop].numFrames < 1)
+		debug_script_warn("%s: view %d loop %d does not have any frames, will use a frame placeholder.",
+						  apiname, view + 1, loop);
+	else if (sframe < 0 || sframe >= _GP(views)[view].loops[loop].numFrames)
+		debug_script_warn("%s: invalid starting frame number %d for view %d loop %d (range is 0..%d)",
+						  apiname, sframe, view + 1, loop, _GP(views)[view].loops[loop].numFrames - 1);
+	// NOTE: there's always frame 0 allocated for safety
+	sframe = std::max(0, std::min(sframe, _GP(views)[view].loops[loop].numFrames - 1));
+}
+
+int SetFirstAnimFrame(int view, int loop, int sframe, int direction) {
+	if (_GP(views)[view].loops[loop].numFrames <= 1)
+		return 0;
+	// reverse animation starts at the *previous frame*
+	if (direction != 0) {
+		sframe--;
+		if (sframe < 0)
+			sframe = _GP(views)[view].loops[loop].numFrames - (-sframe);
+	}
+	return sframe;
 }
 
 // General view animation algorithm: find next loop and frame, depending on anim settings
@@ -640,17 +722,25 @@ bool CycleViewAnim(int view, uint16_t &o_loop, uint16_t &o_frame, bool forwards,
 //
 //=============================================================================
 
+ScriptObject *Object_GetByName(const char *name) {
+	return static_cast<ScriptObject *>(ccGetScriptObjectAddress(name, _GP(ccDynamicObject).GetType()));
+}
+
+RuntimeScriptValue Sc_Object_GetByName(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_OBJ_POBJ(ScriptObject, _GP(ccDynamicObject), Object_GetByName, const char);
+}
+
 // void (ScriptObject *objj, int loop, int delay, int repeat, int blocking, int direction)
-RuntimeScriptValue Sc_Object_Animate(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_VOID_PINT5(ScriptObject, Object_Animate);
+RuntimeScriptValue Sc_Object_Animate5(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_VOID_PINT5(ScriptObject, Object_Animate5);
 }
 
 RuntimeScriptValue Sc_Object_Animate6(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_VOID_PINT6(ScriptObject, Object_AnimateEx);
+	API_OBJCALL_VOID_PINT6(ScriptObject, Object_Animate6);
 }
 
-RuntimeScriptValue Sc_Object_Animate7(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_VOID_PINT7(ScriptObject, Object_AnimateEx);
+RuntimeScriptValue Sc_Object_Animate(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_VOID_PINT7(ScriptObject, Object_Animate);
 }
 
 // int (ScriptObject *objj, ScriptObject *obj2)
@@ -675,7 +765,7 @@ RuntimeScriptValue Sc_Object_GetPropertyText(void *self, const RuntimeScriptValu
 
 //const char* (ScriptObject *objj, const char *property)
 RuntimeScriptValue Sc_Object_GetTextProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ_POBJ(ScriptObject, const char, _GP(myScriptStringImpl), Object_GetTextProperty, const char);
+	API_OBJCALL_OBJ_POBJ(ScriptObject, const char, _GP(myScriptStringImpl), Object_GetTextProperty, const char);
 }
 
 RuntimeScriptValue Sc_Object_SetProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -785,6 +875,14 @@ RuntimeScriptValue Sc_Object_GetAnimating(void *self, const RuntimeScriptValue *
 	API_OBJCALL_INT(ScriptObject, Object_GetAnimating);
 }
 
+RuntimeScriptValue Sc_Object_GetAnimationVolume(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_INT(ScriptObject, Object_GetAnimationVolume);
+}
+
+RuntimeScriptValue Sc_Object_SetAnimationVolume(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_VOID_PINT(ScriptObject, Object_SetAnimationVolume);
+}
+
 // int (ScriptObject *objj)
 RuntimeScriptValue Sc_Object_GetBaseline(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptObject, Object_GetBaseline);
@@ -845,6 +943,10 @@ RuntimeScriptValue Sc_Object_GetID(void *self, const RuntimeScriptValue *params,
 	API_OBJCALL_INT(ScriptObject, Object_GetID);
 }
 
+RuntimeScriptValue Sc_Object_GetScriptName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_OBJ(ScriptObject, const char, _GP(myScriptStringImpl), Object_GetScriptName);
+}
+
 // int (ScriptObject *objj)
 RuntimeScriptValue Sc_Object_GetIgnoreScaling(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptObject, Object_GetIgnoreScaling);
@@ -881,7 +983,7 @@ RuntimeScriptValue Sc_Object_GetMoving(void *self, const RuntimeScriptValue *par
 
 // const char* (ScriptObject *objj)
 RuntimeScriptValue Sc_Object_GetName_New(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ(ScriptObject, const char, _GP(myScriptStringImpl), Object_GetName_New);
+	API_OBJCALL_OBJ(ScriptObject, const char, _GP(myScriptStringImpl), Object_GetName_New);
 }
 
 RuntimeScriptValue Sc_Object_SetName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -951,81 +1053,84 @@ RuntimeScriptValue Sc_Object_SetY(void *self, const RuntimeScriptValue *params, 
 	API_OBJCALL_VOID_PINT(ScriptObject, Object_SetY);
 }
 
-
-
 void RegisterObjectAPI() {
-	ccAddExternalObjectFunction("Object::Animate^5", Sc_Object_Animate);
-	ccAddExternalObjectFunction("Object::Animate^6", Sc_Object_Animate6);
-	ccAddExternalObjectFunction("Object::Animate^7", Sc_Object_Animate7);
-	ccAddExternalObjectFunction("Object::IsCollidingWithObject^1", Sc_Object_IsCollidingWithObject);
-	ccAddExternalObjectFunction("Object::GetName^1", Sc_Object_GetName);
-	ccAddExternalObjectFunction("Object::GetProperty^1", Sc_Object_GetProperty);
-	ccAddExternalObjectFunction("Object::GetPropertyText^2", Sc_Object_GetPropertyText);
-	ccAddExternalObjectFunction("Object::GetTextProperty^1", Sc_Object_GetTextProperty);
-	ccAddExternalObjectFunction("Object::SetProperty^2", Sc_Object_SetProperty);
-	ccAddExternalObjectFunction("Object::SetTextProperty^2", Sc_Object_SetTextProperty);
-	ccAddExternalObjectFunction("Object::IsInteractionAvailable^1", Sc_Object_IsInteractionAvailable);
-	ccAddExternalObjectFunction("Object::MergeIntoBackground^0", Sc_Object_MergeIntoBackground);
-	ccAddExternalObjectFunction("Object::Move^5", Sc_Object_Move);
-	ccAddExternalObjectFunction("Object::RemoveTint^0", Sc_Object_RemoveTint);
-	ccAddExternalObjectFunction("Object::RunInteraction^1", Sc_Object_RunInteraction);
-	ccAddExternalObjectFunction("Object::SetLightLevel^1", Sc_Object_SetLightLevel);
-	ccAddExternalObjectFunction("Object::SetPosition^2", Sc_Object_SetPosition);
-	ccAddExternalObjectFunction("Object::SetView^3", Sc_Object_SetView);
-	ccAddExternalObjectFunction("Object::StopAnimating^0", Sc_Object_StopAnimating);
-	ccAddExternalObjectFunction("Object::StopMoving^0", Sc_Object_StopMoving);
-	ccAddExternalObjectFunction("Object::Tint^5", Sc_Object_Tint);
+	ScFnRegister object_api[] = {
+		{"Object::GetAtRoomXY^2", API_FN_PAIR(GetObjectAtRoom)},
+		{"Object::GetAtScreenXY^2", API_FN_PAIR(GetObjectAtScreen)},
+		{"Object::GetByName", API_FN_PAIR(Object_GetByName)},
 
-	// static
-	ccAddExternalStaticFunction("Object::GetAtRoomXY^2", Sc_GetObjectAtRoom);
-	ccAddExternalStaticFunction("Object::GetAtScreenXY^2", Sc_GetObjectAtScreen);
+		{"Object::Animate^5", API_FN_PAIR(Object_Animate5)},
+		{"Object::Animate^6", API_FN_PAIR(Object_Animate6)},
+		{"Object::Animate^7", API_FN_PAIR(Object_Animate)},
+		{"Object::IsCollidingWithObject^1", API_FN_PAIR(Object_IsCollidingWithObject)},
+		{"Object::GetName^1", API_FN_PAIR(Object_GetName)},
+		{"Object::GetProperty^1", API_FN_PAIR(Object_GetProperty)},
+		{"Object::GetPropertyText^2", API_FN_PAIR(Object_GetPropertyText)},
+		{"Object::GetTextProperty^1", API_FN_PAIR(Object_GetTextProperty)},
+		{"Object::SetProperty^2", API_FN_PAIR(Object_SetProperty)},
+		{"Object::SetTextProperty^2", API_FN_PAIR(Object_SetTextProperty)},
+		{"Object::IsInteractionAvailable^1", API_FN_PAIR(Object_IsInteractionAvailable)},
+		{"Object::MergeIntoBackground^0", API_FN_PAIR(Object_MergeIntoBackground)},
+		{"Object::Move^5", API_FN_PAIR(Object_Move)},
+		{"Object::RemoveTint^0", API_FN_PAIR(Object_RemoveTint)},
+		{"Object::RunInteraction^1", API_FN_PAIR(Object_RunInteraction)},
+		{"Object::SetLightLevel^1", API_FN_PAIR(Object_SetLightLevel)},
+		{"Object::SetPosition^2", API_FN_PAIR(Object_SetPosition)},
+		{"Object::SetView^3", API_FN_PAIR(Object_SetView)},
+		{"Object::StopAnimating^0", API_FN_PAIR(Object_StopAnimating)},
+		{"Object::StopMoving^0", API_FN_PAIR(Object_StopMoving)},
+		{"Object::Tint^5", API_FN_PAIR(Object_Tint)},
+		{"Object::get_Animating", API_FN_PAIR(Object_GetAnimating)},
+		{"Object::get_AnimationVolume", API_FN_PAIR(Object_GetAnimationVolume)},
+		{"Object::set_AnimationVolume", API_FN_PAIR(Object_SetAnimationVolume)},
+		{"Object::get_Baseline", API_FN_PAIR(Object_GetBaseline)},
+		{"Object::set_Baseline", API_FN_PAIR(Object_SetBaseline)},
+		{"Object::get_BlockingHeight", API_FN_PAIR(Object_GetBlockingHeight)},
+		{"Object::set_BlockingHeight", API_FN_PAIR(Object_SetBlockingHeight)},
+		{"Object::get_BlockingWidth", API_FN_PAIR(Object_GetBlockingWidth)},
+		{"Object::set_BlockingWidth", API_FN_PAIR(Object_SetBlockingWidth)},
+		{"Object::get_Clickable", API_FN_PAIR(Object_GetClickable)},
+		{"Object::set_Clickable", API_FN_PAIR(Object_SetClickable)},
+		{"Object::get_Frame", API_FN_PAIR(Object_GetFrame)},
+		{"Object::get_Graphic", API_FN_PAIR(Object_GetGraphic)},
+		{"Object::set_Graphic", API_FN_PAIR(Object_SetGraphic)},
+		{"Object::get_ID", API_FN_PAIR(Object_GetID)},
+		{"Object::get_IgnoreScaling", API_FN_PAIR(Object_GetIgnoreScaling)},
+		{"Object::set_IgnoreScaling", API_FN_PAIR(Object_SetIgnoreScaling)},
+		{"Object::get_IgnoreWalkbehinds", API_FN_PAIR(Object_GetIgnoreWalkbehinds)},
+		{"Object::set_IgnoreWalkbehinds", API_FN_PAIR(Object_SetIgnoreWalkbehinds)},
+		{"Object::get_Loop", API_FN_PAIR(Object_GetLoop)},
+		{"Object::get_ManualScaling", API_FN_PAIR(Object_GetIgnoreScaling)},
+		{"Object::set_ManualScaling", API_FN_PAIR(Object_SetManualScaling)},
+		{"Object::get_Moving", API_FN_PAIR(Object_GetMoving)},
+		{"Object::get_Name", API_FN_PAIR(Object_GetName_New)},
+		{"Object::set_Name", API_FN_PAIR(Object_SetName)},
+		{"Object::get_Scaling", API_FN_PAIR(Object_GetScaling)},
+		{"Object::set_Scaling", API_FN_PAIR(Object_SetScaling)},
+		{"Object::get_ScriptName", API_FN_PAIR(Object_GetScriptName)},
+		{"Object::get_Solid", API_FN_PAIR(Object_GetSolid)},
+		{"Object::set_Solid", API_FN_PAIR(Object_SetSolid)},
+		{"Object::get_Transparency", API_FN_PAIR(Object_GetTransparency)},
+		{"Object::set_Transparency", API_FN_PAIR(Object_SetTransparency)},
+		{"Object::get_View", API_FN_PAIR(Object_GetView)},
+		{"Object::get_Visible", API_FN_PAIR(Object_GetVisible)},
+		{"Object::set_Visible", API_FN_PAIR(Object_SetVisible)},
+		{"Object::get_X", API_FN_PAIR(Object_GetX)},
+		{"Object::set_X", API_FN_PAIR(Object_SetX)},
+		{"Object::get_Y", API_FN_PAIR(Object_GetY)},
+		{"Object::set_Y", API_FN_PAIR(Object_SetY)},
+		{"Object::get_HasExplicitLight", API_FN_PAIR(Object_HasExplicitLight)},
+		{"Object::get_HasExplicitTint", API_FN_PAIR(Object_HasExplicitTint)},
+		{"Object::get_LightLevel", API_FN_PAIR(Object_GetLightLevel)},
+		{"Object::set_LightLevel", API_FN_PAIR(Object_SetLightLevel)},
+		{"Object::get_TintBlue", API_FN_PAIR(Object_GetTintBlue)},
+		{"Object::get_TintGreen", API_FN_PAIR(Object_GetTintGreen)},
+		{"Object::get_TintRed", API_FN_PAIR(Object_GetTintRed)},
+		{"Object::get_TintSaturation", API_FN_PAIR(Object_GetTintSaturation)},
+		{"Object::get_TintLuminance", API_FN_PAIR(Object_GetTintLuminance)},
+	};
 
-	ccAddExternalObjectFunction("Object::get_Animating", Sc_Object_GetAnimating);
-	ccAddExternalObjectFunction("Object::get_Baseline", Sc_Object_GetBaseline);
-	ccAddExternalObjectFunction("Object::set_Baseline", Sc_Object_SetBaseline);
-	ccAddExternalObjectFunction("Object::get_BlockingHeight", Sc_Object_GetBlockingHeight);
-	ccAddExternalObjectFunction("Object::set_BlockingHeight", Sc_Object_SetBlockingHeight);
-	ccAddExternalObjectFunction("Object::get_BlockingWidth", Sc_Object_GetBlockingWidth);
-	ccAddExternalObjectFunction("Object::set_BlockingWidth", Sc_Object_SetBlockingWidth);
-	ccAddExternalObjectFunction("Object::get_Clickable", Sc_Object_GetClickable);
-	ccAddExternalObjectFunction("Object::set_Clickable", Sc_Object_SetClickable);
-	ccAddExternalObjectFunction("Object::get_Frame", Sc_Object_GetFrame);
-	ccAddExternalObjectFunction("Object::get_Graphic", Sc_Object_GetGraphic);
-	ccAddExternalObjectFunction("Object::set_Graphic", Sc_Object_SetGraphic);
-	ccAddExternalObjectFunction("Object::get_ID", Sc_Object_GetID);
-	ccAddExternalObjectFunction("Object::get_IgnoreScaling", Sc_Object_GetIgnoreScaling);
-	ccAddExternalObjectFunction("Object::set_IgnoreScaling", Sc_Object_SetIgnoreScaling);
-	ccAddExternalObjectFunction("Object::get_IgnoreWalkbehinds", Sc_Object_GetIgnoreWalkbehinds);
-	ccAddExternalObjectFunction("Object::set_IgnoreWalkbehinds", Sc_Object_SetIgnoreWalkbehinds);
-	ccAddExternalObjectFunction("Object::get_Loop", Sc_Object_GetLoop);
-	ccAddExternalObjectFunction("Object::get_ManualScaling", Sc_Object_GetIgnoreScaling);
-	ccAddExternalObjectFunction("Object::set_ManualScaling", Sc_Object_SetManualScaling);
-	ccAddExternalObjectFunction("Object::get_Moving", Sc_Object_GetMoving);
-	ccAddExternalObjectFunction("Object::get_Name", Sc_Object_GetName_New);
-	ccAddExternalObjectFunction("Object::set_Name", Sc_Object_SetName);
-	ccAddExternalObjectFunction("Object::get_Scaling", Sc_Object_GetScaling);
-	ccAddExternalObjectFunction("Object::set_Scaling", Sc_Object_SetScaling);
-	ccAddExternalObjectFunction("Object::get_Solid", Sc_Object_GetSolid);
-	ccAddExternalObjectFunction("Object::set_Solid", Sc_Object_SetSolid);
-	ccAddExternalObjectFunction("Object::get_Transparency", Sc_Object_GetTransparency);
-	ccAddExternalObjectFunction("Object::set_Transparency", Sc_Object_SetTransparency);
-	ccAddExternalObjectFunction("Object::get_View", Sc_Object_GetView);
-	ccAddExternalObjectFunction("Object::get_Visible", Sc_Object_GetVisible);
-	ccAddExternalObjectFunction("Object::set_Visible", Sc_Object_SetVisible);
-	ccAddExternalObjectFunction("Object::get_X", Sc_Object_GetX);
-	ccAddExternalObjectFunction("Object::set_X", Sc_Object_SetX);
-	ccAddExternalObjectFunction("Object::get_Y", Sc_Object_GetY);
-	ccAddExternalObjectFunction("Object::set_Y", Sc_Object_SetY);
-
-	ccAddExternalObjectFunction("Object::get_HasExplicitLight", Sc_Object_HasExplicitLight);
-	ccAddExternalObjectFunction("Object::get_HasExplicitTint", Sc_Object_HasExplicitTint);
-	ccAddExternalObjectFunction("Object::get_LightLevel", Sc_Object_GetLightLevel);
-	ccAddExternalObjectFunction("Object::set_LightLevel", Sc_Object_SetLightLevel);
-	ccAddExternalObjectFunction("Object::get_TintBlue", Sc_Object_GetTintBlue);
-	ccAddExternalObjectFunction("Object::get_TintGreen", Sc_Object_GetTintGreen);
-	ccAddExternalObjectFunction("Object::get_TintRed", Sc_Object_GetTintRed);
-	ccAddExternalObjectFunction("Object::get_TintSaturation", Sc_Object_GetTintSaturation);
-	ccAddExternalObjectFunction("Object::get_TintLuminance", Sc_Object_GetTintLuminance);
+	ccAddExternalFunctions361(object_api);
 }
 
 } // namespace AGS3

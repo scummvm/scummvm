@@ -30,10 +30,13 @@
 #include "ags/engine/ac/gui.h"
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/screen.h"
+#include "ags/engine/ac/dynobj/script_hotspot.h"
+#include "ags/engine/ac/dynobj/cc_hotspot.h"
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/main/game_run.h"
 #include "ags/shared/script/cc_common.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
-#include "ags/plugins/ags_plugin.h"
+#include "ags/plugins/ags_plugin_evts.h"
 #include "ags/plugins/plugin_engine.h"
 #include "ags/engine/script/script.h"
 #include "ags/shared/gfx/bitmap.h"
@@ -59,7 +62,7 @@ int run_claimable_event(const char *tsname, bool includeRoom, int numParams, con
 	int toret;
 
 	if (includeRoom && _G(roominst)) {
-		toret = RunScriptFunction(_G(roominst), tsname, numParams, params);
+		toret = RunScriptFunction(_G(roominst).get(), tsname, numParams, params);
 		if (_G(abort_engine))
 			return -1;
 
@@ -71,7 +74,7 @@ int run_claimable_event(const char *tsname, bool includeRoom, int numParams, con
 
 	// run script modules
 	for (auto &module_inst : _GP(moduleInst)) {
-		toret = RunScriptFunction(module_inst, tsname, numParams, params);
+		toret = RunScriptFunction(module_inst.get(), tsname, numParams, params);
 
 		if (_G(eventClaimed) == EVENT_CLAIMED) {
 			_G(eventClaimed) = eventClaimedOldValue;
@@ -91,23 +94,13 @@ void run_on_event(int evtype, RuntimeScriptValue &wparam) {
 }
 
 void run_room_event(int id) {
-	_G(evblockbasename) = "room";
+	auto obj_evt = ObjectEvent("room");
 
 	if (_GP(thisroom).EventHandlers != nullptr) {
-		run_interaction_script(_GP(thisroom).EventHandlers.get(), id);
+		run_interaction_script(obj_evt, _GP(thisroom).EventHandlers.get(), id);
 	} else {
-		run_interaction_event(&_G(croom)->intrRoom, id);
+		run_interaction_event(obj_evt, &_G(croom)->intrRoom, id);
 	}
-}
-
-void run_event_block_inv(int invNum, int event) {
-	_G(evblockbasename) = "inventory%d";
-	if (_G(loaded_game_file_version) > kGameVersion_272) {
-		run_interaction_script(_GP(game).invScripts[invNum].get(), event);
-	} else {
-		run_interaction_event(_GP(game).intrInv[invNum].get(), event);
-	}
-
 }
 
 // event list functions
@@ -147,19 +140,18 @@ void process_event(const EventHappened *evp) {
 	} else if (evp->type == EV_RUNEVBLOCK) {
 		Interaction *evpt = nullptr;
 		PInteractionScripts scriptPtr = nullptr;
-		const char *oldbasename = _G(evblockbasename);
-		int   oldblocknum = _G(evblocknum);
+		ObjectEvent obj_evt;
 
 		if (evp->data1 == EVB_HOTSPOT) {
-
-			if (_GP(thisroom).Hotspots[evp->data2].EventHandlers != nullptr)
-				scriptPtr = _GP(thisroom).Hotspots[evp->data2].EventHandlers;
+			const int hotspot_id = evp->data2;
+			if (_GP(thisroom).Hotspots[hotspot_id].EventHandlers != nullptr)
+				scriptPtr = _GP(thisroom).Hotspots[hotspot_id].EventHandlers;
 			else
-				evpt = &_G(croom)->intrHotspot[evp->data2];
+				evpt = &_G(croom)->intrHotspot[hotspot_id];
 
-			_G(evblockbasename) = "hotspot%d";
-			_G(evblocknum) = evp->data2;
-			//Debug::Printf("Running hotspot interaction for hotspot %d, event %d", evp->data2, evp->data3);
+			obj_evt = ObjectEvent("hotspot%d", hotspot_id,
+								  RuntimeScriptValue().SetScriptObject(&_G(scrHotspot)[hotspot_id], &_GP(ccDynamicHotspot)));
+			// Debug::Printf("Running hotspot interaction for hotspot %d, event %d", evp->data2, evp->data3);
 		} else if (evp->data1 == EVB_ROOM) {
 
 			if (_GP(thisroom).EventHandlers != nullptr)
@@ -167,7 +159,7 @@ void process_event(const EventHappened *evp) {
 			else
 				evpt = &_G(croom)->intrRoom;
 
-			_G(evblockbasename) = "room";
+			obj_evt = ObjectEvent("room");
 			if (evp->data3 == EVROM_BEFOREFADEIN) {
 				_G(in_enters_screen)++;
 				run_on_event(GE_ENTER_ROOM, RuntimeScriptValue().SetInt32(_G(displayed_room)));
@@ -175,24 +167,24 @@ void process_event(const EventHappened *evp) {
 				run_on_event(GE_ENTER_ROOM_AFTERFADE, RuntimeScriptValue().SetInt32(_G(displayed_room)));
 			}
 			//Debug::Printf("Running room interaction, event %d", evp->data3);
+		} else {
+			quit("process_event: RunEvBlock: unknown evb type");
 		}
 
+		assert(scriptPtr || evpt);
 		if (scriptPtr != nullptr) {
-			run_interaction_script(scriptPtr.get(), evp->data3);
-		} else if (evpt != nullptr) {
-			run_interaction_event(evpt, evp->data3);
-		} else
-			quit("process_event: RunEvBlock: unknown evb type");
+			run_interaction_script(obj_evt, scriptPtr.get(), evp->data3);
+		} else {
+			run_interaction_event(obj_evt, evpt, evp->data3);
+		}
 
 		if (_G(abort_engine))
 			return;
 
-		_G(evblockbasename) = oldbasename;
-		_G(evblocknum) = oldblocknum;
-
 		if ((evp->data1 == EVB_ROOM) && (evp->data3 == EVROM_BEFOREFADEIN))
 			_G(in_enters_screen)--;
 	} else if (evp->type == EV_FADEIN) {
+		debug_script_log("Transition-in in room %d", _G(displayed_room));
 		// if they change the transition type before the fadein, make
 		// sure the screen doesn't freeze up
 		_GP(play).screen_is_faded_out = 0;
@@ -212,9 +204,9 @@ void process_event(const EventHappened *evp) {
 		if (_GP(play).fast_forward)
 			return;
 
-		const bool ignore_transition = (_GP(play).screen_tint > 0);
+		const bool instant_transition = (theTransition == FADE_INSTANT) || (_GP(play).screen_tint > 0);
 		if (((theTransition == FADE_CROSSFADE) || (theTransition == FADE_DISSOLVE)) &&
-		        (_G(saved_viewport_bitmap) == nullptr) && !ignore_transition) {
+		        (_G(saved_viewport_bitmap) == nullptr) && !instant_transition) {
 			// transition type was not crossfade/dissolve when the screen faded out,
 			// but it is now when the screen fades in (Eg. a save game was restored
 			// with a different setting). Therefore just fade normally.
@@ -225,7 +217,7 @@ void process_event(const EventHappened *evp) {
 		// TODO: use normal coordinates instead of "native_size" and multiply_up_*?
 		const Rect &viewport = _GP(play).GetMainViewport();
 
-		if ((theTransition == FADE_INSTANT) || ignore_transition)
+		if (instant_transition)
 			set_palette_range(_G(palette), 0, 255, 0);
 		else if (theTransition == FADE_NORMAL) {
 			fadein_impl(_G(palette), 5);
@@ -263,12 +255,16 @@ void process_event(const EventHappened *evp) {
 				}
 				_G(gfxDriver)->SetMemoryBackBuffer(saved_backbuf);
 			}
-			_GP(play).screen_is_faded_out = 0;
 		} else if (theTransition == FADE_CROSSFADE) {
 			if (_GP(game).color_depth == 1)
 				quit("!Cannot use crossfade screen transition in 256-colour games");
 
-			IDriverDependantBitmap *ddb = prepare_screen_for_transition_in();
+			const bool fullredraw = _G(gfxDriver)->RequiresFullRedrawEachFrame();
+			const SpriteTransform spr_trans = _GP(play).GetGlobalTransform(fullredraw);
+			// TODO: crossfade does not need a screen with transparency, it should be opaque;
+			// but Software renderer cannot alpha-blend non-masked sprite at the moment,
+			// see comment to drawing opaque sprite in SDLRendererGraphicsDriver!
+			IDriverDependantBitmap *ddb = prepare_screen_for_transition_in(false /* transparent */);
 
 			for (int alpha = 254; alpha > 0; alpha -= 16) {
 				// do the crossfade
@@ -278,7 +274,7 @@ void process_event(const EventHappened *evp) {
 				construct_game_screen_overlay(false);
 				// draw old screen on top while alpha > 16
 				if (alpha > 16) {
-					_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform());
+					_G(gfxDriver)->BeginSpriteBatch(viewport, spr_trans);
 					_G(gfxDriver)->DrawSprite(0, 0, ddb);
 					_G(gfxDriver)->EndSpriteBatch();
 				}
@@ -296,7 +292,9 @@ void process_event(const EventHappened *evp) {
 			int aa, bb, cc;
 			RGB interpal[256];
 
-			IDriverDependantBitmap *ddb = prepare_screen_for_transition_in();
+			const bool fullredraw = _G(gfxDriver)->RequiresFullRedrawEachFrame();
+			const SpriteTransform spr_trans = _GP(play).GetGlobalTransform(fullredraw);
+			IDriverDependantBitmap *ddb = prepare_screen_for_transition_in(false /* transparent */);
 			for (aa = 0; aa < 16; aa++) {
 				// merge the palette while dithering
 				if (_GP(game).color_depth == 1) {
@@ -313,7 +311,7 @@ void process_event(const EventHappened *evp) {
 				_G(gfxDriver)->UpdateDDBFromBitmap(ddb, _G(saved_viewport_bitmap), false);
 				construct_game_scene(true);
 				construct_game_screen_overlay(false);
-				_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform());
+				_G(gfxDriver)->BeginSpriteBatch(viewport, spr_trans);
 				_G(gfxDriver)->DrawSprite(0, 0, ddb);
 				_G(gfxDriver)->EndSpriteBatch();
 				render_to_screen();

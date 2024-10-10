@@ -18,10 +18,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+//=============================================================================
+//
+// CharacterExtras is a separate runtime character data. Historically it was
+// separated from the design-time CharacterInfo, because the latter is exposed
+// to script API and plugin API in such way that its memory layout could not
+// be changed at all. Although, today this is less of an issue (see comment
+// to CharacterInfo).
+//
+// TODO: in the long run it will be beneficial to remake this into a more
+// explicit runtime Character class, while perhaps keeping CharacterInfo only
+// to load design-time data.
+//
+//=============================================================================
 
 #ifndef AGS_ENGINE_AC_CHARACTER_EXTRAS_H
 #define AGS_ENGINE_AC_CHARACTER_EXTRAS_H
 
+#include "ags/shared/ac/character_info.h"
 #include "ags/engine/ac/runtime_defines.h"
 
 namespace AGS3 {
@@ -43,7 +57,7 @@ struct CharacterExtras {
 	// TODO: consider having both fixed AABB and volatile one that changes with animation frame (unless you change how anims work)
 	short width = 0;
 	short height = 0;
-	short zoom = 0;
+	short zoom = 100;
 	short xwas = 0;
 	short ywas = 0;
 	short tint_r = 0;
@@ -57,8 +71,23 @@ struct CharacterExtras {
 	int   anim_volume = 100; // default animation volume (relative factor)
 	int   cur_anim_volume = 100; // current animation sound volume (relative factor)
 
-	void ReadFromSavegame(Shared::Stream *in, int save_ver);
-	void WriteToSavegame(Shared::Stream *out);
+	// Following fields are deriatives of the above (calculated from these
+	// and other factors), and hence are not serialized.
+	//
+	// zoom factor of sprite offsets, fixed at 100 in backwards compatible mode
+	int zoom_offs = 100;
+
+	int GetEffectiveY(CharacterInfo *chi) const; // return Y - Z
+
+	// Calculate wanted frame sound volume based on multiple factors
+	int GetFrameSoundVolume(CharacterInfo *chi) const;
+	// Process the current animation frame for the character:
+	// play linked sounds, and so forth.
+	void CheckViewFrame(CharacterInfo *chi);
+
+	// Read character extra data from saves.
+	void ReadFromSavegame(Shared::Stream *in, CharacterSvgVersion save_ver);
+	void WriteToSavegame(Shared::Stream *out) const;
 };
 
 } // namespace AGS3

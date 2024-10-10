@@ -27,8 +27,7 @@
 
 namespace AGS3 {
 
-struct ICCDynamicObject;
-struct ICCStaticObject;
+struct IScriptObject;
 
 using AGS::Shared::String;
 

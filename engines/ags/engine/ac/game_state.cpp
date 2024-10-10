@@ -28,6 +28,7 @@
 #include "ags/engine/ac/dynobj/script_camera.h"
 #include "ags/engine/ac/dynobj/script_system.h"
 #include "ags/engine/ac/dynobj/script_viewport.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/device/mouse_w32.h"
 #include "ags/shared/game/custom_properties.h"
@@ -35,7 +36,6 @@
 #include "ags/engine/game/savegame_internal.h"
 #include "ags/engine/main/engine.h"
 #include "ags/engine/media/audio/audio_system.h"
-#include "ags/shared/util/aligned_stream.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/globals.h"
 
@@ -45,33 +45,6 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 GameState::GameState() {
-	Common::fill(&globalvars[0], &globalvars[MAXGLOBALVARS], 0);
-	Common::fill(&reserved[0], &reserved[GAME_STATE_RESERVED_INTS], 0);
-	Common::fill(&globalscriptvars[0], &globalscriptvars[MAXGSVALUES], 0);
-	Common::fill(&walkable_areas_on[0], &walkable_areas_on[MAX_WALK_AREAS + 1], 0);
-	Common::fill(&script_timers[0], &script_timers[MAX_TIMERS], 0);
-	Common::fill(&parsed_words[0], &parsed_words[MAX_PARSED_WORDS], 0);
-	Common::fill(&bad_parsed_word[0], &bad_parsed_word[100], 0);
-	Common::fill(&raw_modified[0], &raw_modified[MAX_ROOM_BGFRAMES], 0);
-	Common::fill(&filenumbers[0], &filenumbers[MAXSAVEGAMES], 0);
-	Common::fill(&music_queue[0], &music_queue[MAX_QUEUED_MUSIC], 0);
-	Common::fill(&takeover_from[0], &takeover_from[50], 0);
-	Common::fill(&playmp3file_name[0], &playmp3file_name[PLAYMP3FILE_MAX_FILENAME_LEN], 0);
-	Common::fill(&globalstrings[0][0], &globalstrings[MAXGLOBALSTRINGS - 1][MAX_MAXSTRLEN], 0);
-	Common::fill(&lastParserEntry[0], &lastParserEntry[MAX_MAXSTRLEN], 0);
-	Common::fill(&game_name[0], &game_name[100], 0);
-	Common::fill(&default_audio_type_volumes[0], &default_audio_type_volumes[MAX_AUDIO_TYPES], 0);
-
-	_isAutoRoomViewport = true;
-	_mainViewportHasChanged = false;
-}
-
-void GameState::Free() {
-	_GP(play).FreeProperties();
-	_GP(play).FreeViewportsAndCameras();
-	do_once_tokens.clear();
-	raw_drawing_surface.reset();
-	gui_draw_order.clear();
 }
 
 bool GameState::IsAutoRoomViewport() const {
@@ -412,9 +385,11 @@ bool GameState::ShouldPlayVoiceSpeech() const {
 		(_GP(play).speech_mode != kSpeech_TextOnly) && (_GP(play).voice_avail);
 }
 
-void GameState::ReadFromSavegame(Shared::Stream *in, GameDataVersion data_ver, GameStateSvgVersion svg_ver, RestoredData &r_data) {
+void GameState::ReadFromSavegame(Stream *in, GameDataVersion data_ver, GameStateSvgVersion svg_ver, RestoredData &r_data) {
 	const bool old_save = svg_ver < kGSSvgVersion_Initial;
 	const bool extended_old_save = old_save && (data_ver >= kGameVersion_340_4);
+	const bool do_align_pad = old_save;
+
 	score = in->ReadInt32();
 	usedmode = in->ReadInt32();
 	disabled_user_interface = in->ReadInt32();
@@ -425,7 +400,7 @@ void GameState::ReadFromSavegame(Shared::Stream *in, GameDataVersion data_ver, G
 	usedinv = in->ReadInt32();
 	inv_top = in->ReadInt32();
 	inv_numdisp = in->ReadInt32();
-	obsolete_inv_numorder = in->ReadInt32();
+	inv_numorder = in->ReadInt32();
 	inv_numinline = in->ReadInt32();
 	text_speed = in->ReadInt32();
 	sierra_inv_color = in->ReadInt32();
@@ -508,6 +483,7 @@ void GameState::ReadFromSavegame(Shared::Stream *in, GameDataVersion data_ver, G
 		in->ReadInt32(); // recording
 		in->ReadInt32(); // playback
 		in->ReadInt16(); // gamestep
+		in->ReadInt16(); // alignment padding to int32
 	}
 	randseed = in->ReadInt32();    // random seed
 	player_on_region = in->ReadInt32();    // player's current region
@@ -522,6 +498,8 @@ void GameState::ReadFromSavegame(Shared::Stream *in, GameDataVersion data_ver, G
 	mboundx2 = in->ReadInt16();
 	mboundy1 = in->ReadInt16();
 	mboundy2 = in->ReadInt16();
+	if (do_align_pad)
+		in->ReadInt16(); // alignment padding to int32
 	fade_effect = in->ReadInt32();
 	bg_frame_locked = in->ReadInt32();
 	in->ReadArrayOfInt32(globalscriptvars, MAXGSVALUES);
@@ -529,7 +507,7 @@ void GameState::ReadFromSavegame(Shared::Stream *in, GameDataVersion data_ver, G
 	music_repeat = in->ReadInt32();
 	music_master_volume = in->ReadInt32();
 	digital_master_volume = in->ReadInt32();
-	in->Read(walkable_areas_on, MAX_WALK_AREAS + 1);
+	in->Read(walkable_areas_on, MAX_WALK_AREAS);
 	screen_flipped = in->ReadInt16();
 	if (svg_ver < kGSSvgVersion_350_10) {
 		short offsets_locked = in->ReadInt16();
@@ -547,6 +525,8 @@ void GameState::ReadFromSavegame(Shared::Stream *in, GameDataVersion data_ver, G
 	normal_font = in->ReadInt32();
 	speech_font = in->ReadInt32();
 	key_skip_wait = in->ReadInt8();
+	if (do_align_pad)
+		in->Seek(3); // alignment padding to int32
 	swap_portrait_lastchar = in->ReadInt32();
 	separate_music_lib = in->ReadInt32() != 0;
 	in_conversation = in->ReadInt32();
@@ -554,6 +534,8 @@ void GameState::ReadFromSavegame(Shared::Stream *in, GameDataVersion data_ver, G
 	num_parsed_words = in->ReadInt32();
 	in->ReadArrayOfInt16(parsed_words, MAX_PARSED_WORDS);
 	in->Read(bad_parsed_word, 100);
+	if (do_align_pad)
+		in->ReadInt16(); // alignment padding to int32 (15 int16 + 100 int8 = 65 int16 -> 66)
 	raw_color = in->ReadInt32();
 	if (old_save)
 		in->ReadArrayOfInt32(raw_modified, MAX_ROOM_BGFRAMES);
@@ -572,10 +554,13 @@ void GameState::ReadFromSavegame(Shared::Stream *in, GameDataVersion data_ver, G
 	rtint_blue = in->ReadInt32();
 	rtint_level = in->ReadInt32();
 	rtint_light = in->ReadInt32();
-	if (!old_save || extended_old_save)
+	if (!old_save || extended_old_save) {
 		rtint_enabled = in->ReadBool();
-	else
+		if (do_align_pad)
+			in->Seek(3); // alignment padding to int32
+	} else {
 		rtint_enabled = rtint_level > 0;
+	}
 	end_cutscene_music = in->ReadInt32();
 	skip_until_char_stops = in->ReadInt32();
 	get_loc_name_last_time = in->ReadInt32();
@@ -587,7 +572,7 @@ void GameState::ReadFromSavegame(Shared::Stream *in, GameDataVersion data_ver, G
 	new_music_queue_size = in->ReadInt16();
 	if (!old_save) {
 		for (int i = 0; i < MAX_QUEUED_MUSIC; ++i) {
-			new_music_queue[i].ReadFromFile(in);
+			new_music_queue[i].ReadFromSavegame(in);
 		}
 	}
 
@@ -599,14 +584,21 @@ void GameState::ReadFromSavegame(Shared::Stream *in, GameDataVersion data_ver, G
 	crossfade_in_volume_per_step = in->ReadInt16();
 	crossfade_final_volume_in = in->ReadInt16();
 
-	if (old_save)
-		ReadQueuedAudioItems_Aligned(in);
+	if (old_save) {
+		in->ReadInt16(); // alignment padding to int32 (before array of structs)
+		for (int i = 0; i < MAX_QUEUED_MUSIC; ++i) {
+			new_music_queue[i].ReadFromSavegame_v321(in);
+		}
+	}
 
 	in->Read(takeover_from, 50);
-	in->Read(playmp3file_name, PLAYMP3FILE_MAX_FILENAME_LEN);
+	playmp3file_name.ReadCount(in, PLAYMP3FILE_MAX_FILENAME_LEN);
 	in->Read(globalstrings, MAXGLOBALSTRINGS * MAX_MAXSTRLEN);
 	in->Read(lastParserEntry, MAX_MAXSTRLEN);
-	StrUtil::ReadCStrCount(game_name, in, MAX_GAME_STATE_NAME_LENGTH);
+	if (svg_ver < kGSSvgVersion_361_14)
+		game_name.ReadCount(in, LEGACY_GAMESTATE_GAMENAMELENGTH);
+	else
+		game_name = StrUtil::ReadString(in);
 	ground_level_areas_disabled = in->ReadInt32();
 	next_screen_transition = in->ReadInt32();
 	in->ReadInt32(); // gamma_adjustment -- do not apply gamma level from savegame
@@ -616,11 +608,10 @@ void GameState::ReadFromSavegame(Shared::Stream *in, GameDataVersion data_ver, G
 		in->ReadInt32(); // gui_draw_order
 		in->ReadInt32(); // do_once_tokens;
 	}
-	int num_do_once_tokens = in->ReadInt32();
-	do_once_tokens.resize(num_do_once_tokens);
+	r_data.DoOnceCount = static_cast<uint32_t>(in->ReadInt32());
 	if (!old_save) {
-		for (int i = 0; i < num_do_once_tokens; ++i) {
-			StrUtil::ReadString(do_once_tokens[i], in);
+		for (size_t i = 0; i < r_data.DoOnceCount; ++i) {
+			do_once_tokens.insert(StrUtil::ReadString(in));
 		}
 	}
 	text_min_display_time_ms = in->ReadInt32();
@@ -636,7 +627,7 @@ void GameState::ReadFromSavegame(Shared::Stream *in, GameDataVersion data_ver, G
 	}
 }
 
-void GameState::WriteForSavegame(Shared::Stream *out) const {
+void GameState::WriteForSavegame(Stream *out) const {
 	// NOTE: following parameters are never saved:
 	// recording, playback, gamestep, screen_is_faded_out, room_changes
 	out->WriteInt32(score);
@@ -649,7 +640,7 @@ void GameState::WriteForSavegame(Shared::Stream *out) const {
 	out->WriteInt32(usedinv);
 	out->WriteInt32(inv_top);
 	out->WriteInt32(inv_numdisp);
-	out->WriteInt32(obsolete_inv_numorder);
+	out->WriteInt32(inv_numorder);
 	out->WriteInt32(inv_numinline);
 	out->WriteInt32(text_speed);
 	out->WriteInt32(sierra_inv_color);
@@ -738,7 +729,7 @@ void GameState::WriteForSavegame(Shared::Stream *out) const {
 	out->WriteInt32(music_repeat);
 	out->WriteInt32(music_master_volume);
 	out->WriteInt32(digital_master_volume);
-	out->Write(walkable_areas_on, MAX_WALK_AREAS + 1);
+	out->Write(walkable_areas_on, MAX_WALK_AREAS);
 	out->WriteInt16(screen_flipped);
 	out->WriteInt32(entered_at_x);
 	out->WriteInt32(entered_at_y);
@@ -783,7 +774,7 @@ void GameState::WriteForSavegame(Shared::Stream *out) const {
 	out->WriteArrayOfInt16(music_queue, MAX_QUEUED_MUSIC);
 	out->WriteInt16(new_music_queue_size);
 	for (int i = 0; i < MAX_QUEUED_MUSIC; ++i) {
-		new_music_queue[i].WriteToFile(out);
+		new_music_queue[i].WriteToSavegame(out);
 	}
 
 	out->WriteInt16(crossfading_out_channel);
@@ -795,18 +786,18 @@ void GameState::WriteForSavegame(Shared::Stream *out) const {
 	out->WriteInt16(crossfade_final_volume_in);
 
 	out->Write(takeover_from, 50);
-	out->Write(playmp3file_name, PLAYMP3FILE_MAX_FILENAME_LEN);
+	playmp3file_name.WriteCount(out, PLAYMP3FILE_MAX_FILENAME_LEN);
 	out->Write(globalstrings, MAXGLOBALSTRINGS * MAX_MAXSTRLEN);
 	out->Write(lastParserEntry, MAX_MAXSTRLEN);
-	out->Write(game_name, MAX_GAME_STATE_NAME_LENGTH);
+	StrUtil::WriteString(game_name, out);
 	out->WriteInt32(ground_level_areas_disabled);
 	out->WriteInt32(next_screen_transition);
 	out->WriteInt32(gamma_adjustment);
 	out->WriteInt16(temporarily_turned_off_character);
 	out->WriteInt16(inv_backwards_compatibility);
-	out->WriteInt32(do_once_tokens.size());
-	for (int i = 0; i < (int)do_once_tokens.size(); ++i) {
-		StrUtil::WriteString(do_once_tokens[i], out);
+	out->WriteInt32(static_cast<uint32_t>(do_once_tokens.size()));
+	for (const auto &token : do_once_tokens) {
+		StrUtil::WriteString(token, out);
 	}
 	out->WriteInt32(text_min_display_time_ms);
 	out->WriteInt32(ignore_user_input_after_text_timeout_ms);
@@ -815,14 +806,6 @@ void GameState::WriteForSavegame(Shared::Stream *out) const {
 	if (speech_voice_blocking)
 		voice_speech_flags |= 0x02;
 	out->WriteInt32(voice_speech_flags);
-}
-
-void GameState::ReadQueuedAudioItems_Aligned(Shared::Stream *in) {
-	AlignedStream align_s(in, Shared::kAligned_Read);
-	for (int i = 0; i < MAX_QUEUED_MUSIC; ++i) {
-		new_music_queue[i].ReadFromFile(&align_s);
-		align_s.Reset();
-	}
 }
 
 void GameState::FreeProperties() {
@@ -854,7 +837,7 @@ void GameState::FreeViewportsAndCameras() {
 	_scCameraHandles.clear();
 }
 
-void GameState::ReadCustomProperties_v340(Shared::Stream *in, GameDataVersion data_ver) {
+void GameState::ReadCustomProperties_v340(Stream *in, GameDataVersion data_ver) {
 	if (data_ver >= kGameVersion_340_4) {
 		// After runtime property values were read we also copy missing default,
 		// because we do not keep defaults in the saved game, and also in case
@@ -867,7 +850,7 @@ void GameState::ReadCustomProperties_v340(Shared::Stream *in, GameDataVersion da
 	}
 }
 
-void GameState::WriteCustomProperties_v340(Shared::Stream *out, GameDataVersion data_ver) const {
+void GameState::WriteCustomProperties_v340(Stream *out, GameDataVersion data_ver) const {
 	if (data_ver >= kGameVersion_340_4) {
 		// We temporarily remove properties that kept default values
 		// just for the saving data time to avoid getting lots of

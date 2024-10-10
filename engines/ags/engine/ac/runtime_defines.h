@@ -57,7 +57,6 @@ namespace AGS3 {
 #define GLED_INTERACTION 1
 #define GLED_EFFECTS     2
 #define QUEUED_MUSIC_REPEAT 10000
-#define PLAYMP3FILE_MAX_FILENAME_LEN 50
 #define MAX_AUDIO_TYPES  30
 
 // Legacy (pre 3.5.0) alignment types used in the script API
@@ -70,14 +69,19 @@ enum LegacyScriptAlignment {
 const int LegacyMusicMasterVolumeAdjustment = 60;
 const int LegacyRoomVolumeFactor = 30;
 
-// These numbers were chosen arbitrarily -- the idea is
+// Common command arguments
+// HISTORICAL NOTE: These numbers were chosen arbitrarily -- the idea is
 // to make sure that the user gets the parameters the right way round
+// Walk (pathfinding) modes
 #define ANYWHERE       304
 #define WALKABLE_AREAS 305
+// Blocking / non-blocking action
 #define BLOCKING       919
 #define IN_BACKGROUND  920
+// Direction of animation
 #define FORWARDS       1062
 #define BACKWARDS      1063
+// Stop / don't stop when changing a view
 #define STOP_MOVING    1
 #define KEEP_MOVING    0
 
@@ -85,46 +89,44 @@ const int LegacyRoomVolumeFactor = 30;
 #define SCR_COLOR_TRANSPARENT -1
 
 
-
-#define NUM_DIGI_VOICES     16
-#define NUM_MOD_DIGI_VOICES 12
-
-#define DEBUG_CONSOLE_NUMLINES 6
 #define TXT_SCOREBAR        29
 #define MAXSCORE _GP(play).totalscore
-#define CHANIM_REPEAT    2
-#define CHANIM_BACKWARDS 4
-#define ANIM_BACKWARDS 10
-// Animates once and stops at the *last* frame
-#define ANIM_ONCE      1
-// Animates infinitely until stopped by command
-#define ANIM_REPEAT    2
-// Animates once and stops, resetting to the very first frame
-#define ANIM_ONCERESET 3
+
 #define FONT_STATUSBAR  0
 #define FONT_NORMAL     _GP(play).normal_font
 //#define FONT_SPEECHBACK 1
 #define FONT_SPEECH     _GP(play).speech_font
-#define MODE_WALK 0
-#define MODE_LOOK 1
-#define MODE_HAND 2
-#define MODE_TALK 3
-#define MODE_USE  4
-#define MODE_PICKUP 5
-#define CURS_ARROW  6
-#define CURS_WAIT   7
-#define MODE_CUSTOM1 8
-#define MODE_CUSTOM2 9
 
+// Standard interaction verbs (aka cursor modes)
+#define MODE_NONE	   -1
+#define MODE_WALK		0
+#define MODE_LOOK		1
+#define MODE_HAND		2
+#define MODE_TALK		3
+#define MODE_USE		4
+#define MODE_PICKUP 	5
+// aka MODE_POINTER
+#define CURS_ARROW		6
+// aka MODE_WAIT
+#define CURS_WAIT		7
+#define MODE_CUSTOM1	8
+#define MODE_CUSTOM2	9
+#define NUM_STANDARD_VERBS 10
+
+// Fixed Overlay IDs
 #define OVER_TEXTMSG  1
 #define OVER_COMPLETE 2
 #define OVER_PICTURE  3
 #define OVER_TEXTSPEECH 4
-#define OVER_CUSTOM   100
+#define OVER_FIRSTFREE 5
+#define OVER_CUSTOM   -1
+// Overlay parameters
 #define OVR_AUTOPLACE 30000
+
 #define FOR_ANIMATION 1
 #define FOR_SCRIPT    2
 #define FOR_EXITLOOP  3
+
 // an actsps index offset for characters
 #define ACTSP_OBJSOFF (MAX_ROOM_OBJECTS)
 // a 1-based movelist index offset for characters
@@ -151,10 +153,10 @@ const int LegacyRoomVolumeFactor = 30;
 
 #define STD_BUFFER_SIZE 3000
 
+// NOTE: these flags are merged with the MoveList index;
+// but this means that the number of MoveList users will be limited by 1000
 #define TURNING_AROUND     1000
 #define TURNING_BACKWARDS 10000
-
-#define MAX_PLUGIN_OBJECT_READERS 50
 
 #define LOCTYPE_HOTSPOT 1
 #define LOCTYPE_CHAR 2

@@ -19,16 +19,17 @@
  *
  */
 
+#include "ags/engine/gui/my_textbox.h"
 #include "ags/shared/ac/keycode.h"
 #include "ags/shared/font/fonts.h"
-#include "ags/engine/gui/my_textbox.h"
-#include "ags/engine/gui/gui_dialog_internal_defs.h"
 #include "ags/shared/gfx/bitmap.h"
+#include "ags/engine/gui/gui_dialog_defines.h"
+
 #include "ags/globals.h"
 
 namespace AGS3 {
 
-using AGS::Shared::Bitmap;
+using namespace AGS::Shared;
 
 MyTextBox::MyTextBox(int xx, int yy, int wii, const char *tee) {
 	x = xx;
@@ -43,6 +44,7 @@ MyTextBox::MyTextBox(int xx, int yy, int wii, const char *tee) {
 }
 
 void MyTextBox::draw(Bitmap *ds) {
+	ds->SetClip(RectWH(x, y, wid + 1, hit + 1));
 	color_t draw_color = ds->GetCompatibleColor(_G(windowbackgroundcolor));
 	ds->FillRect(Rect(x, y, x + wid, y + hit), draw_color);
 	draw_color = ds->GetCompatibleColor(0);
@@ -52,6 +54,7 @@ void MyTextBox::draw(Bitmap *ds) {
 
 	char tbu[2] = "_";
 	wouttextxy(ds, x + 2 + get_text_width(text, _G(cbuttfont)), y + 1, _G(cbuttfont), text_color, tbu);
+	ds->ResetClip();
 }
 
 int MyTextBox::pressedon(int /*mx*/, int /*my*/) {

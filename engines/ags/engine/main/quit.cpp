@@ -32,6 +32,7 @@
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/route_finder.h"
 #include "ags/engine/ac/translation.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/debugging/ags_editor_debugger.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/debugging/debugger.h"
@@ -73,19 +74,20 @@ void quit_stop_cd() {
 }
 
 void quit_check_dynamic_sprites(QuitReason qreason) {
-	if ((qreason & kQuitKind_NormalExit) && (_G(check_dynamic_sprites_at_exit)) &&
-	        (_GP(game).options[OPT_DEBUGMODE] != 0)) {
-		// game exiting normally -- make sure the dynamic sprites
-		// have been deleted
+	if ((qreason & kQuitKind_NormalExit) && _G(check_dynamic_sprites_at_exit) && (_GP(game).options[OPT_DEBUGMODE] != 0)) {
+		// Check that the dynamic sprites have been deleted;
+		// ignore those that are owned by the game objects.
 		for (size_t i = 1; i < _GP(spriteset).GetSpriteSlotCount(); i++) {
-			if (_GP(game).SpriteInfos[i].Flags & SPF_DYNAMICALLOC)
+			if ((_GP(game).SpriteInfos[i].Flags & SPF_DYNAMICALLOC) &&
+				((_GP(game).SpriteInfos[i].Flags & SPF_OBJECTOWNED) == 0)) {
 				debug_script_warn("Dynamic sprite %d was never deleted", i);
+			}
 		}
 	}
 }
 
 void quit_shutdown_audio() {
-	_G(our_eip) = 9917;
+	set_our_eip(9917);
 	_GP(game).options[OPT_CROSSFADEMUSIC] = 0;
 	shutdown_sound();
 }
@@ -115,7 +117,7 @@ QuitReason quit_check_for_error_state(const char *qmsg, String &errmsg, String &
 			               "(Engine version %s)\n\n", _G(EngineVersion).LongString.GetCStr());
 		}
 
-		alertis.Append(cc_get_error().CallStack);
+		alertis.Append(cc_get_err_callstack());
 
 		if (qreason != kQuit_UserAbort) {
 			alertis.AppendFmt("\nError: %s", qmsg);
@@ -127,7 +129,7 @@ QuitReason quit_check_for_error_state(const char *qmsg, String &errmsg, String &
 		qmsg++;
 		alertis.Format("A warning has been generated. This is not normally fatal, but you have selected "
 		               "to treat warnings as errors.\n"
-		               "(Engine version %s)\n\n%s\n%s", _G(EngineVersion).LongString.GetCStr(), cc_get_error().CallStack.GetCStr(), qmsg);
+		               "(Engine version %s)\n\n%s\n%s", _G(EngineVersion).LongString.GetCStr(), cc_get_err_callstack().GetCStr(), qmsg);
 		errmsg = qmsg;
 		return kQuit_GameWarning;
 	} else {
@@ -185,31 +187,31 @@ void quit_free() {
 
 	quit_tell_editor_debugger(errmsg, qreason);
 
-	_G(our_eip) = 9900;
+	set_our_eip(9900);
 
 	quit_stop_cd();
 
-	_G(our_eip) = 9020;
+	set_our_eip(9020);
 
 	// Be sure to unlock mouse on exit, or users will hate us
 	sys_window_lock_mouse(false);
 
-	_G(our_eip) = 9016;
+	set_our_eip(9016);
 
 	quit_check_dynamic_sprites(qreason);
 
 	if (_G(use_cdplayer))
 		_G(platform)->ShutdownCDPlayer();
 
-	_G(our_eip) = 9019;
+	set_our_eip(9019);
 
 	quit_shutdown_audio();
 
-	_G(our_eip) = 9901;
+	set_our_eip(9901);
 
 	_GP(spriteset).Reset();
 
-	_G(our_eip) = 9908;
+	set_our_eip(9908);
 
 	shutdown_pathfinder();
 
@@ -233,7 +235,7 @@ void quit_free() {
 
 	_G(platform)->PostAllegroExit();
 
-	_G(our_eip) = 9903;
+	set_our_eip(9903);
 
 	quit_delete_temp_files();
 
@@ -243,7 +245,7 @@ void quit_free() {
 
 	shutdown_debug();
 
-	_G(our_eip) = 9904;
+	set_our_eip(9904);
 }
 
 } // namespace AGS3

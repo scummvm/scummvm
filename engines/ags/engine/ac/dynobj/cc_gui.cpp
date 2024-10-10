@@ -21,6 +21,7 @@
 
 #include "ags/engine/ac/dynobj/cc_gui.h"
 #include "ags/engine/ac/dynobj/script_gui.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/util/stream.h"
 #include "ags/globals.h"
 
@@ -33,20 +34,20 @@ const char *CCGUI::GetType() {
 	return "GUI";
 }
 
-size_t CCGUI::CalcSerializeSize() {
+size_t CCGUI::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t);
 }
 
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
-void CCGUI::Serialize(const char *address, Stream *out) {
-	const ScriptGUI *shh = (const ScriptGUI *)address;
+void CCGUI::Serialize(const void *address, Stream *out) {
+	const ScriptGUI *shh = static_cast<const ScriptGUI *>(address);
 	out->WriteInt32(shh->id);
 }
 
 void CCGUI::Unserialize(int index, Stream *in, size_t data_sz) {
 	int num = in->ReadInt32();
-	ccRegisterUnserializedObject(index, &_G(scrGui)[num], this);
+	ccRegisterUnserializedObject(index, &_GP(scrGui)[num], this);
 }
 
 } // namespace AGS3

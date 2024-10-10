@@ -23,6 +23,7 @@
 #include "ags/engine/ac/gui_control.h"
 #include "ags/engine/ac/global_gui.h"
 #include "ags/engine/ac/mouse.h"
+#include "ags/engine/ac/string.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/gui/gui_button.h"
 #include "ags/shared/gui/gui_inv.h"
@@ -34,6 +35,7 @@
 #include "ags/engine/script/runtime_script_value.h"
 #include "ags/engine/ac/dynobj/cc_gui.h"
 #include "ags/engine/ac/dynobj/cc_gui_object.h"
+#include "ags/engine/ac/dynobj/script_string.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
@@ -65,9 +67,6 @@ void GUIControl_SetVisible(GUIObject *guio, int visible) {
 	const bool on = visible != 0;
 	if (on != guio->IsVisible()) {
 		guio->SetVisible(on);
-		// Make sure that the overpic is turned off when the GUI goes off
-		if (!on && (_GP(guis)[guio->ParentId].MouseOverCtrl == guio->Id))
-			_GP(guis)[guio->ParentId].ResetOverControl();
 	}
 }
 
@@ -78,13 +77,10 @@ int GUIControl_GetClickable(GUIObject *guio) {
 }
 
 void GUIControl_SetClickable(GUIObject *guio, int enabled) {
-	if (enabled)
-		guio->SetClickable(true);
-	else
-		guio->SetClickable(false);
-
-	// clickable property may change control behavior under mouse
-	_GP(guis)[guio->ParentId].MarkControlsChanged();
+	const bool on = enabled != 0;
+	if (on != guio->IsClickable()) {
+		guio->SetClickable(on);
+	}
 }
 
 int GUIControl_GetEnabled(GUIObject *guio) {
@@ -103,8 +99,12 @@ int GUIControl_GetID(GUIObject *guio) {
 	return guio->Id;
 }
 
+const char *GUIControl_GetScriptName(GUIObject *guio) {
+	return CreateNewScriptString(guio->Name);
+}
+
 ScriptGUI *GUIControl_GetOwningGUI(GUIObject *guio) {
-	return &_G(scrGui)[guio->ParentId];
+	return &_GP(scrGui)[guio->ParentId];
 }
 
 GUIButton *GUIControl_GetAsButton(GUIObject *guio) {
@@ -155,7 +155,7 @@ int GUIControl_GetX(GUIObject *guio) {
 
 void GUIControl_SetX(GUIObject *guio, int xx) {
 	guio->X = data_to_game_coord(xx);
-	_GP(guis)[guio->ParentId].MarkControlsChanged(); // update control under cursor
+	_GP(guis)[guio->ParentId].NotifyControlPosition(); // update control under cursor
 }
 
 int GUIControl_GetY(GUIObject *guio) {
@@ -164,7 +164,7 @@ int GUIControl_GetY(GUIObject *guio) {
 
 void GUIControl_SetY(GUIObject *guio, int yy) {
 	guio->Y = data_to_game_coord(yy);
-	_GP(guis)[guio->ParentId].MarkControlsChanged(); // update control under cursor
+	_GP(guis)[guio->ParentId].NotifyControlPosition(); // update control under cursor
 }
 
 int GUIControl_GetZOrder(GUIObject *guio) {
@@ -182,21 +182,19 @@ void GUIControl_SetPosition(GUIObject *guio, int xx, int yy) {
 
 
 int GUIControl_GetWidth(GUIObject *guio) {
-	return game_to_data_coord(guio->Width);
+	return game_to_data_coord(guio->GetWidth());
 }
 
 void GUIControl_SetWidth(GUIObject *guio, int newwid) {
-	guio->Width = data_to_game_coord(newwid);
-	guio->OnResized();
+	guio->SetWidth(data_to_game_coord(newwid));
 }
 
 int GUIControl_GetHeight(GUIObject *guio) {
-	return game_to_data_coord(guio->Height);
+	return game_to_data_coord(guio->GetHeight());
 }
 
 void GUIControl_SetHeight(GUIObject *guio, int newhit) {
-	guio->Height = data_to_game_coord(newhit);
-	guio->OnResized();
+	guio->SetHeight(data_to_game_coord(newhit));
 }
 
 void GUIControl_SetSize(GUIObject *guio, int newwid, int newhit) {
@@ -231,6 +229,14 @@ void GUIControl_SetTransparency(GUIObject *guio, int trans) {
 // Script API Functions
 //
 //=============================================================================
+
+GUIObject *GUIControl_GetByName(const char *name) {
+	return static_cast<GUIObject *>(ccGetScriptObjectAddress(name, _GP(ccDynamicGUIObject).GetType()));
+}
+
+RuntimeScriptValue Sc_GUIControl_GetByName(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_OBJ_POBJ(GUIObject, _GP(ccDynamicGUIObject), GUIControl_GetByName, const char);
+}
 
 // void (GUIObject *guio)
 RuntimeScriptValue Sc_GUIControl_BringToFront(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -322,6 +328,10 @@ RuntimeScriptValue Sc_GUIControl_GetID(void *self, const RuntimeScriptValue *par
 	API_OBJCALL_INT(GUIObject, GUIControl_GetID);
 }
 
+RuntimeScriptValue Sc_GUIControl_GetScriptName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_OBJ(GUIObject, const char, _GP(myScriptStringImpl), GUIControl_GetScriptName);
+}
+
 // ScriptGUI* (GUIObject *guio)
 RuntimeScriptValue Sc_GUIControl_GetOwningGUI(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_OBJ(GUIObject, ScriptGUI, _GP(ccDynamicGUI), GUIControl_GetOwningGUI);
@@ -383,39 +393,45 @@ RuntimeScriptValue Sc_GUIControl_SetTransparency(void *self, const RuntimeScript
 	API_OBJCALL_VOID_PINT(GUIObject, GUIControl_SetTransparency);
 }
 
-
 void RegisterGUIControlAPI() {
-	ccAddExternalObjectFunction("GUIControl::BringToFront^0", Sc_GUIControl_BringToFront);
-	ccAddExternalStaticFunction("GUIControl::GetAtScreenXY^2", Sc_GetGUIControlAtLocation);
-	ccAddExternalObjectFunction("GUIControl::SendToBack^0", Sc_GUIControl_SendToBack);
-	ccAddExternalObjectFunction("GUIControl::SetPosition^2", Sc_GUIControl_SetPosition);
-	ccAddExternalObjectFunction("GUIControl::SetSize^2", Sc_GUIControl_SetSize);
-	ccAddExternalObjectFunction("GUIControl::get_AsButton", Sc_GUIControl_GetAsButton);
-	ccAddExternalObjectFunction("GUIControl::get_AsInvWindow", Sc_GUIControl_GetAsInvWindow);
-	ccAddExternalObjectFunction("GUIControl::get_AsLabel", Sc_GUIControl_GetAsLabel);
-	ccAddExternalObjectFunction("GUIControl::get_AsListBox", Sc_GUIControl_GetAsListBox);
-	ccAddExternalObjectFunction("GUIControl::get_AsSlider", Sc_GUIControl_GetAsSlider);
-	ccAddExternalObjectFunction("GUIControl::get_AsTextBox", Sc_GUIControl_GetAsTextBox);
-	ccAddExternalObjectFunction("GUIControl::get_Clickable", Sc_GUIControl_GetClickable);
-	ccAddExternalObjectFunction("GUIControl::set_Clickable", Sc_GUIControl_SetClickable);
-	ccAddExternalObjectFunction("GUIControl::get_Enabled", Sc_GUIControl_GetEnabled);
-	ccAddExternalObjectFunction("GUIControl::set_Enabled", Sc_GUIControl_SetEnabled);
-	ccAddExternalObjectFunction("GUIControl::get_Height", Sc_GUIControl_GetHeight);
-	ccAddExternalObjectFunction("GUIControl::set_Height", Sc_GUIControl_SetHeight);
-	ccAddExternalObjectFunction("GUIControl::get_ID", Sc_GUIControl_GetID);
-	ccAddExternalObjectFunction("GUIControl::get_OwningGUI", Sc_GUIControl_GetOwningGUI);
-	ccAddExternalObjectFunction("GUIControl::get_Visible", Sc_GUIControl_GetVisible);
-	ccAddExternalObjectFunction("GUIControl::set_Visible", Sc_GUIControl_SetVisible);
-	ccAddExternalObjectFunction("GUIControl::get_Width", Sc_GUIControl_GetWidth);
-	ccAddExternalObjectFunction("GUIControl::set_Width", Sc_GUIControl_SetWidth);
-	ccAddExternalObjectFunction("GUIControl::get_X", Sc_GUIControl_GetX);
-	ccAddExternalObjectFunction("GUIControl::set_X", Sc_GUIControl_SetX);
-	ccAddExternalObjectFunction("GUIControl::get_Y", Sc_GUIControl_GetY);
-	ccAddExternalObjectFunction("GUIControl::set_Y", Sc_GUIControl_SetY);
-	ccAddExternalObjectFunction("GUIControl::get_ZOrder", Sc_GUIControl_GetZOrder);
-	ccAddExternalObjectFunction("GUIControl::set_ZOrder", Sc_GUIControl_SetZOrder);
-	ccAddExternalObjectFunction("GUIControl::get_Transparency", Sc_GUIControl_GetTransparency);
-	ccAddExternalObjectFunction("GUIControl::set_Transparency", Sc_GUIControl_SetTransparency);
+	ScFnRegister guicontrol_api[] = {
+		{"GUIControl::GetAtScreenXY^2", API_FN_PAIR(GetGUIControlAtLocation)},
+		{"GUIControl::GetByName", API_FN_PAIR(GUIControl_GetByName)},
+
+		{"GUIControl::BringToFront^0", API_FN_PAIR(GUIControl_BringToFront)},
+		{"GUIControl::SendToBack^0", API_FN_PAIR(GUIControl_SendToBack)},
+		{"GUIControl::SetPosition^2", API_FN_PAIR(GUIControl_SetPosition)},
+		{"GUIControl::SetSize^2", API_FN_PAIR(GUIControl_SetSize)},
+		{"GUIControl::get_AsButton", API_FN_PAIR(GUIControl_GetAsButton)},
+		{"GUIControl::get_AsInvWindow", API_FN_PAIR(GUIControl_GetAsInvWindow)},
+		{"GUIControl::get_AsLabel", API_FN_PAIR(GUIControl_GetAsLabel)},
+		{"GUIControl::get_AsListBox", API_FN_PAIR(GUIControl_GetAsListBox)},
+		{"GUIControl::get_AsSlider", API_FN_PAIR(GUIControl_GetAsSlider)},
+		{"GUIControl::get_AsTextBox", API_FN_PAIR(GUIControl_GetAsTextBox)},
+		{"GUIControl::get_Clickable", API_FN_PAIR(GUIControl_GetClickable)},
+		{"GUIControl::set_Clickable", API_FN_PAIR(GUIControl_SetClickable)},
+		{"GUIControl::get_Enabled", API_FN_PAIR(GUIControl_GetEnabled)},
+		{"GUIControl::set_Enabled", API_FN_PAIR(GUIControl_SetEnabled)},
+		{"GUIControl::get_Height", API_FN_PAIR(GUIControl_GetHeight)},
+		{"GUIControl::set_Height", API_FN_PAIR(GUIControl_SetHeight)},
+		{"GUIControl::get_ID", API_FN_PAIR(GUIControl_GetID)},
+		{"GUIControl::get_OwningGUI", API_FN_PAIR(GUIControl_GetOwningGUI)},
+		{"GUIControl::get_ScriptName", API_FN_PAIR(GUIControl_GetScriptName)},
+		{"GUIControl::get_Visible", API_FN_PAIR(GUIControl_GetVisible)},
+		{"GUIControl::set_Visible", API_FN_PAIR(GUIControl_SetVisible)},
+		{"GUIControl::get_Width", API_FN_PAIR(GUIControl_GetWidth)},
+		{"GUIControl::set_Width", API_FN_PAIR(GUIControl_SetWidth)},
+		{"GUIControl::get_X", API_FN_PAIR(GUIControl_GetX)},
+		{"GUIControl::set_X", API_FN_PAIR(GUIControl_SetX)},
+		{"GUIControl::get_Y", API_FN_PAIR(GUIControl_GetY)},
+		{"GUIControl::set_Y", API_FN_PAIR(GUIControl_SetY)},
+		{"GUIControl::get_ZOrder", API_FN_PAIR(GUIControl_GetZOrder)},
+		{"GUIControl::set_ZOrder", API_FN_PAIR(GUIControl_SetZOrder)},
+		{"GUIControl::get_Transparency", API_FN_PAIR(GUIControl_GetTransparency)},
+		{"GUIControl::set_Transparency", API_FN_PAIR(GUIControl_SetTransparency)},
+	};
+
+	ccAddExternalFunctions361(guicontrol_api);
 }
 
 } // namespace AGS3

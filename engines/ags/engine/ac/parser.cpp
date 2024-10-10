@@ -324,7 +324,7 @@ RuntimeScriptValue Sc_ParseText(const RuntimeScriptValue *params, int32_t param_
 
 // const char* ()
 RuntimeScriptValue Sc_Parser_SaidUnknownWord(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ(const char, _GP(myScriptStringImpl), Parser_SaidUnknownWord);
+	API_SCALL_OBJ(const char, _GP(myScriptStringImpl), Parser_SaidUnknownWord);
 }
 
 // int  (char*checkwords)
@@ -334,10 +334,14 @@ RuntimeScriptValue Sc_Said(const RuntimeScriptValue *params, int32_t param_count
 
 
 void RegisterParserAPI() {
-	ccAddExternalStaticFunction("Parser::FindWordID^1", Sc_Parser_FindWordID);
-	ccAddExternalStaticFunction("Parser::ParseText^1", Sc_ParseText);
-	ccAddExternalStaticFunction("Parser::SaidUnknownWord^0", Sc_Parser_SaidUnknownWord);
-	ccAddExternalStaticFunction("Parser::Said^1", Sc_Said);
+	ScFnRegister parser_api[] = {
+		{"Parser::FindWordID^1", API_FN_PAIR(Parser_FindWordID)},
+		{"Parser::ParseText^1", API_FN_PAIR(ParseText)},
+		{"Parser::SaidUnknownWord^0", API_FN_PAIR(Parser_SaidUnknownWord)},
+		{"Parser::Said^1", API_FN_PAIR(Said)},
+	};
+
+	ccAddExternalFunctions361(parser_api);
 }
 
 } // namespace AGS3

@@ -23,15 +23,16 @@
 #include "ags/engine/ac/dynobj/cc_serializer.h"
 #include "ags/engine/ac/dynobj/all_dynamic_classes.h"
 #include "ags/engine/ac/dynobj/all_script_classes.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
+#include "ags/engine/ac/dynobj/cc_dynamic_array.h"
+#include "ags/engine/ac/dynobj/script_user_object.h"
 #include "ags/engine/ac/dynobj/script_camera.h"
 #include "ags/engine/ac/dynobj/script_containers.h"
 #include "ags/engine/ac/dynobj/script_file.h"
-#include "ags/engine/ac/dynobj/script_user_object.h"
 #include "ags/engine/ac/dynobj/script_viewport.h"
 #include "ags/engine/ac/game.h"
 #include "ags/engine/debugging/debug_log.h"
-#include "ags/plugins/ags_plugin.h"
-#include "ags/plugins/plugin_object_reader.h"
+#include "ags/plugins/plugin_engine.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -49,9 +50,22 @@ void AGSDeSerializer::Unserialize(int index, const char *objectType, const char 
 	// classes registered by plugin cannot, because streams are not (yet)
 	// part of the plugin API.
 	size_t data_sz = static_cast<size_t>(dataSize);
+	assert(data_sz <= INT32_MAX); // dynamic object API does not support size > int32
 	MemoryStream mems(reinterpret_cast<const uint8_t *>(serializedData), dataSize);
 
-	if (strcmp(objectType, "GUIObject") == 0) {
+	// TODO: consider this: there are object types that are part of the
+	// script's foundation, because they are created by the bytecode ops:
+	// such as DynamicArray and UserObject. *Maybe* these should be moved
+	// to certain "base serializer" class which guarantees their restoration.
+	//
+	// TODO: should we support older save versions here (DynArray, UserObj)?
+	// might have to use older class names to distinguish save formats
+	if (strcmp(objectType, CCDynamicArray::TypeName) == 0) {
+		_GP(globalDynamicArray).Unserialize(index, &mems, data_sz);
+	} else if (strcmp(objectType, ScriptUserObject::TypeName) == 0) {
+		ScriptUserObject *suo = new ScriptUserObject();
+		suo->Unserialize(index, &mems, data_sz);
+	} else if (strcmp(objectType, "GUIObject") == 0) {
 		_GP(ccDynamicGUIObject).Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "Character") == 0) {
 		_GP(ccDynamicCharacter).Unserialize(index, &mems, data_sz);
@@ -68,8 +82,7 @@ void AGSDeSerializer::Unserialize(int index, const char *objectType, const char 
 	} else if (strcmp(objectType, "Object") == 0) {
 		_GP(ccDynamicObject).Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "String") == 0) {
-		ScriptString *scf = new ScriptString();
-		scf->Unserialize(index, &mems, data_sz);
+		_GP(myScriptStringImpl).Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "File") == 0) {
 		// files cannot be restored properly -- so just recreate
 		// the object; attempting any operations on it will fail
@@ -104,14 +117,15 @@ void AGSDeSerializer::Unserialize(int index, const char *objectType, const char 
 		Viewport_Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "Camera2") == 0) {
 		Camera_Unserialize(index, &mems, data_sz);
-	} else if (strcmp(objectType, "UserObject") == 0) {
-		ScriptUserObject *suo = new ScriptUserObject();
-		suo->Unserialize(index, &mems, data_sz);
-	} else if (!unserialize_audio_script_object(index, objectType, &mems, data_sz)) {
+	} else if (strcmp(objectType, "AudioChannel") == 0) {
+		_GP(ccDynamicAudio).Unserialize(index, &mems, data_sz);
+	} else if (strcmp(objectType, "AudioClip") == 0) {
+		_GP(ccDynamicAudioClip).Unserialize(index, &mems, data_sz);
+	} else {
 		// check if the type is read by a plugin
-		for (int ii = 0; ii < _G(numPluginReaders); ii++) {
-			if (strcmp(objectType, _G(pluginReaders)[ii].type) == 0) {
-				_G(pluginReaders)[ii].reader->Unserialize(index, serializedData, dataSize);
+		for (const auto &pr : _GP(pluginReaders)) {
+			if (pr.Type == objectType) {
+				pr.Reader->Unserialize(index, serializedData, dataSize);
 				return;
 			}
 		}

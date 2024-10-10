@@ -38,9 +38,13 @@ using namespace AGS;
 #define INSTF_ABORTED       2
 #define INSTF_FREE          4
 #define INSTF_RUNNING       8   // set by main code to confirm script isn't stuck
-#define CC_STACK_SIZE       250
-#define CC_STACK_DATA_SIZE  (1000 * sizeof(int32_t))
-#define MAX_CALL_STACK      100
+
+// Size of stack in RuntimeScriptValues (aka distinct variables)
+#define CC_STACK_SIZE		256
+// Size of stack in bytes (raw data storage)
+#define CC_STACK_DATA_SIZE	(1024 * sizeof(int32_t))
+#define MAX_CALL_STACK		128
+#define MAX_FUNCTION_PARAMS	20
 
 // 256 because we use 8 bits to hold instance number
 #define MAX_LOADED_INSTANCES 256
@@ -49,24 +53,34 @@ using namespace AGS;
 #define INSTANCE_ID_MASK  0x00000000000000ffLL
 #define INSTANCE_ID_REMOVEMASK 0x0000000000ffffffLL
 
-struct ScriptInstruction {
-	ScriptInstruction() {
-		Code = 0;
-		InstanceId = 0;
-	}
+// Script executor debugging flag:
+// enables mistake checks, but slows things down!
+#ifndef DEBUG_CC_EXEC
+#define DEBUG_CC_EXEC (AGS_PLATFORM_DEBUG)
+#endif
 
-	int32_t Code;
-	int32_t InstanceId;
+struct ScriptInstruction {
+	ScriptInstruction() = default;
+	ScriptInstruction(int code, int instid) : Code(code), InstanceId(instid) {}
+
+	int32_t Code = 0;
+	int32_t InstanceId = 0;
 };
 
 struct ScriptOperation {
-	ScriptOperation() {
-		ArgCount = 0;
-	}
-
 	ScriptInstruction   Instruction;
 	RuntimeScriptValue  Args[MAX_SCMD_ARGS];
-	int                 ArgCount;
+	int                 ArgCount = 0;
+
+	// Helper functions for clarity of intent:
+	// returns argN, 1-based
+	inline const RuntimeScriptValue &Arg1() const { return Args[0]; }
+	inline const RuntimeScriptValue &Arg2() const { return Args[1]; }
+	inline const RuntimeScriptValue &Arg3() const { return Args[2]; }
+	// returns argN as a integer literal
+	inline int Arg1i() const { return Args[0].IValue; }
+	inline int Arg2i() const { return Args[1].IValue; }
+	inline int Arg3i() const { return Args[2].IValue; }
 };
 
 struct ScriptVariable {
@@ -94,6 +108,7 @@ struct ScriptPosition {
 	Shared::String  Section;
 	int32_t         Line;
 };
+
 
 // Running instance of the script
 struct ccInstance {
@@ -148,7 +163,7 @@ public:
 	static void FreeInstanceStack();
 	// create a runnable instance of the supplied script
 	static ccInstance *CreateFromScript(PScript script);
-	static ccInstance *CreateEx(PScript scri, ccInstance *joined);
+	static ccInstance *CreateEx(PScript scri, const ccInstance *joined);
 	static void SetExecTimeout(unsigned sys_poll_ms, unsigned abort_ms, unsigned abort_loops);
 
 	ccInstance();
@@ -185,7 +200,7 @@ public:
 	bool    ResolveImportFixups(const ccScript *scri);
 
 private:
-	bool    _Create(PScript scri, ccInstance *joined);
+	bool    _Create(PScript scri, const ccInstance *joined);
 	// free the memory associated with the instance
 	void    Free();
 
@@ -193,12 +208,9 @@ private:
 	bool    AddGlobalVar(const ScriptVariable &glvar);
 	ScriptVariable *FindGlobalVar(int32_t var_addr);
 	bool    CreateRuntimeCodeFixups(const ccScript *scri);
-	//bool    ReadOperation(ScriptOperation &op, int32_t at_pc);
 
 	// Begin executing script starting from the given bytecode index
 	int     Run(int32_t curpc);
-	// Runtime fixups
-	//bool    FixupArgument(intptr_t code_value, char fixup_type, RuntimeScriptValue &argument);
 
 	// Stack processing
 	// Push writes new value and increments stack ptr;
@@ -211,9 +223,6 @@ private:
 	// helper function to pop & dump several values
 	void    PopValuesFromStack(int32_t num_entries);
 	void    PopDataFromStack(int32_t num_bytes);
-	// Return stack ptr at given offset from stack head;
-	// Offset is in data bytes; program stack ptr is __not__ changed
-	RuntimeScriptValue GetStackPtrOffsetFw(int32_t fw_offset);
 	// Return stack ptr at given offset from stack tail;
 	// Offset is in data bytes; program stack ptr is __not__ changed
 	RuntimeScriptValue GetStackPtrOffsetRw(int32_t rw_offset);

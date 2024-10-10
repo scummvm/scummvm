@@ -67,7 +67,7 @@ void TTFFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *desti
 }
 
 bool TTFFontRenderer::LoadFromDisk(int fontNumber, int fontSize) {
-	return LoadFromDiskEx(fontNumber, fontSize, nullptr, nullptr);
+	return LoadFromDiskEx(fontNumber, fontSize, nullptr, nullptr, nullptr);
 }
 
 bool TTFFontRenderer::IsBitmapFont() {
@@ -82,6 +82,8 @@ static int GetAlfontFlags(int load_mode) {
 	if (((load_mode & FFLG_ASCENDERFIXUP) != 0) &&
 		!(ShouldAntiAliasText() && (_G(loaded_game_file_version) < kGameVersion_341)))
 		flags |= ALFONT_FLG_ASCENDER_EQ_HEIGHT;
+	// Precalculate real glyphs extent (will make loading fonts relatively slower)
+	flags |= ALFONT_FLG_PRECALC_MAX_CBOX;
 	return flags;
 }
 
@@ -105,13 +107,17 @@ static ALFONT_FONT *LoadTTF(const String &filename, int fontSize, int alfont_fla
 
 // Fill the FontMetrics struct from the given ALFONT
 static void FillMetrics(ALFONT_FONT *alfptr, FontMetrics *metrics) {
-	metrics->Height = alfont_get_font_height(alfptr);
+	metrics->NominalHeight  = alfont_get_font_height(alfptr);
 	metrics->RealHeight = alfont_get_font_real_height(alfptr);
-	metrics->CompatHeight = metrics->Height; // just set to default here
+	metrics->CompatHeight = metrics->NominalHeight; // just set to default here
+	alfont_get_font_real_vextent(alfptr, &metrics->VExtent.first, &metrics->VExtent.second);
+	// fixup vextent to be *not less* than realheight
+	metrics->VExtent.first = std::min(0, metrics->VExtent.first);
+	metrics->VExtent.second = std::max(metrics->RealHeight, metrics->VExtent.second);
 }
 
-bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
-	const FontRenderParams *params, FontMetrics *metrics) {
+bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize, String *src_filename,
+									 const FontRenderParams *params, FontMetrics *metrics) {
 	String filename = String::FromFormat("agsfnt%d.ttf", fontNumber);
 	if (fontSize <= 0)
 		fontSize = 8; // compatibility fix
@@ -127,6 +133,8 @@ bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
 
 	_fontData[fontNumber].AlFont = alfptr;
 	_fontData[fontNumber].Params = f_params;
+	if (src_filename)
+		*src_filename = filename;
 	if (metrics)
 		FillMetrics(alfptr, metrics);
 	return true;

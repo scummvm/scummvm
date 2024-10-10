@@ -52,7 +52,7 @@ namespace AGS3 {
 // 3.4.0      (118): Removed GUI limits
 // 3.5.0      (119): Game data contains GUI properties that previously
 //                   could be set only at runtime.
-//
+// Since then format value is defined as AGS version represented as NN,NN,NN,NN
 //=============================================================================
 
 enum GuiVersion {
@@ -142,7 +142,7 @@ enum GUIControlFlags {
 	kGUICtrl_Translated = 0x0080, // 3.3.0.1132
 	kGUICtrl_Deleted = 0x8000, // unused (probably remains from the old editor?)
 
-	kGUICtrl_DefFlags = kGUICtrl_Enabled | kGUICtrl_Visible | kGUICtrl_Clickable,
+	kGUICtrl_DefFlags = kGUICtrl_Enabled | kGUICtrl_Visible | kGUICtrl_Clickable | kGUICtrl_Translated,
 	// flags that had inverse meaning in old formats
 	kGUICtrl_OldFmtXorMask = kGUICtrl_Enabled | kGUICtrl_Visible | kGUICtrl_Clickable
 };

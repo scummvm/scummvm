@@ -109,7 +109,7 @@ void DialogOptionsRendering_SetParserTextboxWidth(ScriptDialogOptionsRendering *
 }
 
 ScriptDialog *DialogOptionsRendering_GetDialogToRender(ScriptDialogOptionsRendering *dlgOptRender) {
-	return &_G(scrDialog)[dlgOptRender->dialogID];
+	return &_GP(scrDialog)[dlgOptRender->dialogID];
 }
 
 ScriptDrawingSurface *DialogOptionsRendering_GetSurface(ScriptDialogOptionsRendering *dlgOptRender) {
@@ -122,7 +122,7 @@ int DialogOptionsRendering_GetActiveOptionID(ScriptDialogOptionsRendering *dlgOp
 }
 
 void DialogOptionsRendering_SetActiveOptionID(ScriptDialogOptionsRendering *dlgOptRender, int activeOptionID) {
-	int optionCount = _G(dialog)[_G(scrDialog)[dlgOptRender->dialogID].id].numoptions;
+	int optionCount = _G(dialog)[_GP(scrDialog)[dlgOptRender->dialogID].id].numoptions;
 	if ((activeOptionID < 0) || (activeOptionID > optionCount))
 		quitprintf("DialogOptionsRenderingInfo.ActiveOptionID: invalid ID specified for this dialog (specified %d, valid range: 1..%d)", activeOptionID, optionCount);
 
@@ -246,28 +246,32 @@ RuntimeScriptValue Sc_DialogOptionsRendering_SetHasAlphaChannel(void *self, cons
 
 
 void RegisterDialogOptionsRenderingAPI() {
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::Update^0", Sc_DialogOptionsRendering_Update);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::RunActiveOption^0", Sc_DialogOptionsRendering_RunActiveOption);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_ActiveOptionID", Sc_DialogOptionsRendering_GetActiveOptionID);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_ActiveOptionID", Sc_DialogOptionsRendering_SetActiveOptionID);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_DialogToRender", Sc_DialogOptionsRendering_GetDialogToRender);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_Height", Sc_DialogOptionsRendering_GetHeight);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_Height", Sc_DialogOptionsRendering_SetHeight);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_ParserTextBoxX", Sc_DialogOptionsRendering_GetParserTextboxX);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_ParserTextBoxX", Sc_DialogOptionsRendering_SetParserTextboxX);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_ParserTextBoxY", Sc_DialogOptionsRendering_GetParserTextboxY);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_ParserTextBoxY", Sc_DialogOptionsRendering_SetParserTextboxY);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_ParserTextBoxWidth", Sc_DialogOptionsRendering_GetParserTextboxWidth);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_ParserTextBoxWidth", Sc_DialogOptionsRendering_SetParserTextboxWidth);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_Surface", Sc_DialogOptionsRendering_GetSurface);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_Width", Sc_DialogOptionsRendering_GetWidth);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_Width", Sc_DialogOptionsRendering_SetWidth);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_X", Sc_DialogOptionsRendering_GetX);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_X", Sc_DialogOptionsRendering_SetX);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_Y", Sc_DialogOptionsRendering_GetY);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_Y", Sc_DialogOptionsRendering_SetY);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_HasAlphaChannel", Sc_DialogOptionsRendering_GetHasAlphaChannel);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_HasAlphaChannel", Sc_DialogOptionsRendering_SetHasAlphaChannel);
+	ScFnRegister dialogopt_api[] = {
+		{"DialogOptionsRenderingInfo::Update^0", API_FN_PAIR(DialogOptionsRendering_Update)},
+		{"DialogOptionsRenderingInfo::RunActiveOption^0", API_FN_PAIR(DialogOptionsRendering_RunActiveOption)},
+		{"DialogOptionsRenderingInfo::get_ActiveOptionID", API_FN_PAIR(DialogOptionsRendering_GetActiveOptionID)},
+		{"DialogOptionsRenderingInfo::set_ActiveOptionID", API_FN_PAIR(DialogOptionsRendering_SetActiveOptionID)},
+		{"DialogOptionsRenderingInfo::get_DialogToRender", API_FN_PAIR(DialogOptionsRendering_GetDialogToRender)},
+		{"DialogOptionsRenderingInfo::get_Height", API_FN_PAIR(DialogOptionsRendering_GetHeight)},
+		{"DialogOptionsRenderingInfo::set_Height", API_FN_PAIR(DialogOptionsRendering_SetHeight)},
+		{"DialogOptionsRenderingInfo::get_ParserTextBoxX", API_FN_PAIR(DialogOptionsRendering_GetParserTextboxX)},
+		{"DialogOptionsRenderingInfo::set_ParserTextBoxX", API_FN_PAIR(DialogOptionsRendering_SetParserTextboxX)},
+		{"DialogOptionsRenderingInfo::get_ParserTextBoxY", API_FN_PAIR(DialogOptionsRendering_GetParserTextboxY)},
+		{"DialogOptionsRenderingInfo::set_ParserTextBoxY", API_FN_PAIR(DialogOptionsRendering_SetParserTextboxY)},
+		{"DialogOptionsRenderingInfo::get_ParserTextBoxWidth", API_FN_PAIR(DialogOptionsRendering_GetParserTextboxWidth)},
+		{"DialogOptionsRenderingInfo::set_ParserTextBoxWidth", API_FN_PAIR(DialogOptionsRendering_SetParserTextboxWidth)},
+		{"DialogOptionsRenderingInfo::get_Surface", API_FN_PAIR(DialogOptionsRendering_GetSurface)},
+		{"DialogOptionsRenderingInfo::get_Width", API_FN_PAIR(DialogOptionsRendering_GetWidth)},
+		{"DialogOptionsRenderingInfo::set_Width", API_FN_PAIR(DialogOptionsRendering_SetWidth)},
+		{"DialogOptionsRenderingInfo::get_X", API_FN_PAIR(DialogOptionsRendering_GetX)},
+		{"DialogOptionsRenderingInfo::set_X", API_FN_PAIR(DialogOptionsRendering_SetX)},
+		{"DialogOptionsRenderingInfo::get_Y", API_FN_PAIR(DialogOptionsRendering_GetY)},
+		{"DialogOptionsRenderingInfo::set_Y", API_FN_PAIR(DialogOptionsRendering_SetY)},
+		{"DialogOptionsRenderingInfo::get_HasAlphaChannel", API_FN_PAIR(DialogOptionsRendering_GetHasAlphaChannel)},
+		{"DialogOptionsRenderingInfo::set_HasAlphaChannel", API_FN_PAIR(DialogOptionsRendering_SetHasAlphaChannel)},
+	};
+
+	ccAddExternalFunctions361(dialogopt_api);
 }
 
 } // namespace AGS3

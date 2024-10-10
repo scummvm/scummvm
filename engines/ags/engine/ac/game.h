@@ -98,6 +98,13 @@ const char *Game_GetSaveSlotDescription(int slnum);
 
 const char *Game_GetGlobalStrings(int index);
 
+// View, loop, frame parameter assertions.
+// WARNING: these functions assume that view is already in an internal 0-based range.
+void AssertView(const char *apiname, int view);
+void AssertViewHasLoops(const char *apiname, int view);
+void AssertLoop(const char *apiname, int view, int loop);
+void AssertFrame(const char *apiname, int view, int loop, int frame);
+
 int Game_GetInventoryItemCount();
 int Game_GetFontCount();
 int Game_GetMouseCursorCount();
@@ -143,7 +150,10 @@ bool Game_ChangeSpeechVox(const char *newFilename);
 //=============================================================================
 
 void set_debug_mode(bool on);
+// Sets logical game FPS, telling how often the game should update
 void set_game_speed(int new_fps);
+// Gets strictly logical game FPS, regardless of whether this is real FPS right now or not.
+float get_game_speed();
 void setup_for_dialog();
 void restore_after_dialog();
 Shared::String get_save_game_directory();
@@ -166,7 +176,7 @@ void free_do_once_tokens();
 void unload_game();
 void save_game(int slotn, const char *descript);
 bool read_savedgame_description(const Shared::String &savedgame, Shared::String &description);
-bool read_savedgame_screenshot(const Shared::String &savedgame, int &want_shot);
+std::unique_ptr<Shared::Bitmap> read_savedgame_screenshot(const Shared::String &savedgame);
 // Tries to restore saved game and displays an error on failure; if the error occurred
 // too late, when the game data was already overwritten, shuts engine down.
 bool try_restore_save(int slot);
@@ -188,7 +198,7 @@ void stop_fast_forwarding();
 
 int __GetLocationType(int xxx, int yyy, int allowHotspot0);
 
-// Called whenever game looses input focus
+// Called whenever game loses input focus
 void display_switch_out();
 // Called whenever game gets input focus
 void display_switch_in();
@@ -197,19 +207,15 @@ void display_switch_out_suspend();
 // Called when the game gets input focus and should resume
 void display_switch_in_resume();
 
-void replace_tokens(const char *srcmes, char *destm, int maxlen = 99999);
+void replace_tokens(const char *srcmes, char *destm, size_t maxlen);
 const char *get_global_message(int msnum);
 void get_message_text(int msnum, char *buffer, char giveErr = 1);
 
-bool unserialize_audio_script_object(int index, const char *objectType, AGS::Shared::Stream *in, size_t data_sz);
-
 // Notifies the game objects that certain sprite was updated.
 // This make them update their render states, caches, and so on.
-void game_sprite_updated(int sprnum);
-// Notifies the game objects that certain sprite was deleted.
-// Those which used that sprite will reset to dummy sprite 0, update their render states and caches.
-void game_sprite_deleted(int sprnum);
-
+void game_sprite_updated(int sprnum, bool deleted = false);
+// Precaches sprites for a view, within a selected range of loops.
+void precache_view(int view, int first_loop = 0, int last_loop = INT32_MAX, bool with_sounds = false);
 
 extern void set_loop_counter(unsigned int new_counter);
 

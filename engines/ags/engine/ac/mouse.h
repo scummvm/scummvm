@@ -29,7 +29,8 @@ namespace AGS3 {
 void Mouse_SetVisible(int isOn);
 int Mouse_GetVisible();
 int Mouse_GetModeGraphic(int curs);
-void Mouse_ChangeModeView(int curs, int newview);
+void Mouse_ChangeModeView(int curs, int newview, int delay);
+void Mouse_ChangeModeView2(int curs, int newview);
 // The Mouse:: functions are static so the script doesn't pass
 // in an object parameter
 void SetMousePosition(int newx, int newy);
@@ -45,7 +46,7 @@ void SetMouseBounds(int x1, int y1, int x2, int y2);
 void RefreshMouse();
 // mouse cursor functions:
 // set_mouse_cursor: changes visual appearance to specified cursor
-void set_mouse_cursor(int newcurs);
+void set_mouse_cursor(int newcurs, bool force_update = false);
 // set_default_cursor: resets visual appearance to current mode (walk, look, etc);
 void set_default_cursor();
 // set_cursor_mode: changes mode and appearance
@@ -55,6 +56,7 @@ void disable_cursor_mode(int modd);
 
 // Try to enable or disable mouse speed control by the engine
 void Mouse_EnableControl(bool on);
+void SimulateMouseClick(int button_id);
 
 //=============================================================================
 

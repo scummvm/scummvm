@@ -45,7 +45,7 @@ void WFNChar::RestrictToBytes(size_t bytes) {
 		Height = static_cast<uint16_t>(bytes / GetRowByteCount());
 }
 
-const WFNChar &WFNFont::GetChar(uint8_t code) const {
+const WFNChar &WFNFont::GetChar(uint16_t code) const {
 	return code < _refs.size() ? *_refs[code] : _G(emptyChar);
 }
 
@@ -89,13 +89,16 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 	//    referenced by many characters.
 	WFNError err = kWFNErr_NoError;
 
+	if (total_char_data == 0u || char_count == 0u)
+		return kWFNErr_NoError; // no items
+
 	// Read character data array
-	uint8_t *raw_data = new uint8_t[total_char_data];
-	in->Read(raw_data, total_char_data);
+	std::vector<uint8_t> raw_data; raw_data.resize(total_char_data);
+	in->Read(&raw_data.front(), total_char_data);
 
 	// Read offset table
-	uint16_t *offset_table = new uint16_t[char_count];
-	in->ReadArrayOfInt16((int16_t *)offset_table, char_count);
+	std::vector<uint16_t> offset_table;	offset_table.resize(char_count);
+	in->ReadArrayOfInt16(reinterpret_cast<int16_t *>(&offset_table.front()), char_count);
 
 	// Read all referenced offsets in an unsorted vector
 	std::vector<uint16_t> offs;
@@ -124,7 +127,7 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 	_items.resize(offs.size());
 	size_t total_pixel_size = 0;
 	for (size_t i = 0; i < _items.size(); ++i) {
-		const uint8_t *p_data = raw_data + offs[i] - raw_data_offset;
+		const uint8_t *p_data = &raw_data[offs[i] - raw_data_offset];
 		init_ch.Width = Memory::ReadInt16LE(p_data);
 		init_ch.Height = Memory::ReadInt16LE(p_data + sizeof(uint16_t));
 		total_pixel_size += init_ch.GetRequiredPixelSize();
@@ -161,7 +164,7 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 		_items[i].RestrictToBytes(src_size);
 
 		assert(pixel_it + pixel_data_size <= _pixelData.end()); // should not normally fail
-		Common::copy(raw_data + raw_off, raw_data + raw_off + src_size, pixel_it);
+		Common::copy(raw_data.begin() + raw_off, raw_data.begin() + (raw_off + src_size), pixel_it);
 		_items[i].Data = &(*pixel_it);
 		pixel_it += pixel_data_size;
 	}
@@ -187,8 +190,6 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 		}
 	}
 
-	delete[] raw_data;
-	delete[] offset_table;
 	return err;
 }
 

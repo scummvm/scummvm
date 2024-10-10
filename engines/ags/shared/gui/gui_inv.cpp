@@ -84,10 +84,10 @@ void GUIInvWindow::ReadFromFile(Stream *in, GuiVersion gui_version) {
 
 	if (_G(loaded_game_file_version) >= kGameVersion_270) {
 		// ensure that some items are visible
-		if (ItemWidth > Width)
-			ItemWidth = Width;
-		if (ItemHeight > Height)
-			ItemHeight = Height;
+		if (ItemWidth > _width)
+			ItemWidth = _width;
+		if (ItemHeight > _height)
+			ItemHeight = _height;
 	}
 
 	CalculateNumCells();
@@ -115,11 +115,11 @@ void GUIInvWindow::CalculateNumCells() {
 		ColCount = 0;
 		RowCount = 0;
 	} else if (_G(loaded_game_file_version) >= kGameVersion_270) {
-		ColCount = Width / data_to_game_coord(ItemWidth);
-		RowCount = Height / data_to_game_coord(ItemHeight);
+		ColCount = _width / data_to_game_coord(ItemWidth);
+		RowCount = _height / data_to_game_coord(ItemHeight);
 	} else {
-		ColCount = floor((float)Width / (float)data_to_game_coord(ItemWidth) + 0.5f);
-		RowCount = floor((float)Height / (float)data_to_game_coord(ItemHeight) + 0.5f);
+		ColCount = floor((float)_width / (float)data_to_game_coord(ItemWidth) + 0.5f);
+		RowCount = floor((float)_height / (float)data_to_game_coord(ItemHeight) + 0.5f);
 	}
 }
 

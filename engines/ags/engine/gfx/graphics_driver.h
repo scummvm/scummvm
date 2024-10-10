@@ -101,6 +101,17 @@ public:
 	virtual const char *GetDriverID() = 0;
 	// Gets graphic driver's "friendly name"
 	virtual const char *GetDriverName() = 0;
+
+	// Tells if this gfx driver has to redraw whole scene each time
+	virtual bool RequiresFullRedrawEachFrame() = 0;
+	// Tells if this gfx driver uses GPU to transform sprites
+	virtual bool HasAcceleratedTransform() = 0;
+	// Tells if this gfx driver draws on a virtual screen before rendering on real screen.
+	virtual bool UsesMemoryBackBuffer() = 0;
+	// Tells if this gfx driver requires releasing render targets
+	// in case of display mode change or reset.
+	virtual bool ShouldReleaseRenderTargets() = 0;
+
 	virtual void SetTintMethod(TintMethod method) = 0;
 	// Initialize given display mode
 	virtual bool SetDisplayMode(const DisplayMode &mode) = 0;
@@ -135,23 +146,29 @@ public:
 	// Gets closest recommended bitmap format (currently - only color depth) for the given original format.
 	// Engine needs to have game bitmaps brought to the certain range of formats, easing conversion into the video bitmaps.
 	virtual int  GetCompatibleBitmapFormat(int color_depth) = 0;
+	// Returns available texture memory, or 0 if this query is not supported
+	virtual size_t GetAvailableTextureMemory() = 0;
 
 	// Creates a "raw" DDB, without pixel initialization
 	virtual IDriverDependantBitmap *CreateDDB(int width, int height, int color_depth, bool opaque = false) = 0;
 	// Creates DDB, initializes from the given bitmap.
-	virtual IDriverDependantBitmap *CreateDDBFromBitmap(Shared::Bitmap *bitmap, bool hasAlpha, bool opaque = false) = 0;
+	virtual IDriverDependantBitmap *CreateDDBFromBitmap(Shared::Bitmap *bitmap, bool has_alpha, bool opaque = false) = 0;
 	// Creates DDB intended to be used as a render target (allow render other DDBs on it).
 	virtual IDriverDependantBitmap *CreateRenderTargetDDB(int width, int height, int color_depth, bool opaque = false) = 0;
 	// Updates DBB using the given bitmap; bitmap must have same size and format
 	// as the one that this DDB was initialized with.
-	virtual void UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Shared::Bitmap *bitmap, bool hasAlpha) = 0;
+	virtual void UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Shared::Bitmap *bitmap, bool has_alpha) = 0;
 	// Destroy the DDB.
 	virtual void DestroyDDB(IDriverDependantBitmap *bitmap) = 0;
 
 	// Get shared texture from cache, or create from bitmap and assign ID
+	// FIXME: opaque should be either texture data's flag, - in which case same sprite_id
+	// will be either opaque or not opaque, - or DDB's flag, but in that case it cannot
+	// be applied to the shared texture data. Currently it's possible to share same
+	// texture data, but update it with different "opaque" values, which breaks logic.
 	virtual IDriverDependantBitmap *GetSharedDDB(uint32_t sprite_id,
-		Shared::Bitmap *bitmap = nullptr, bool hasAlpha = true, bool opaque = false) = 0;
-	virtual void UpdateSharedDDB(uint32_t sprite_id, Shared::Bitmap *bitmap = nullptr, bool hasAlpha = true, bool opaque = false) = 0;
+		Shared::Bitmap *bitmap = nullptr, bool has_alpha = true, bool opaque = false) = 0;
+	virtual void UpdateSharedDDB(uint32_t sprite_id, Shared::Bitmap *bitmap = nullptr, bool has_alpha = true, bool opaque = false) = 0;
 	// Removes the shared texture reference, will force the texture to recreate next time
 	virtual void ClearSharedDDB(uint32_t sprite_id) = 0;
 
@@ -160,8 +177,10 @@ public:
 	// sprites to this batch's list.
 	// Beginning a batch while the previous was not ended will create a sub-batch
 	// (think of it as of a child scene node).
+	// Optionally you can assign "filter flags" to this batch; this lets to filter certain
+	// batches out during some operations, such as fading effects or making screenshots.
 	virtual void BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform = SpriteTransform(),
-		Shared::GraphicFlip flip = Shared::kFlip_None, PBitmap surface = nullptr) = 0;
+		Shared::GraphicFlip flip = Shared::kFlip_None, PBitmap surface = nullptr, uint32_t filter_flags = 0) = 0;
 	// Ends current sprite batch
 	virtual void EndSpriteBatch() = 0;
 	// Adds sprite to the active batch
@@ -188,7 +207,8 @@ public:
 	// Copies contents of the game screen into bitmap using simple blit or pixel copy.
 	// Bitmap must be of supported size and pixel format. If it's not the method will
 	// fail and optionally write wanted destination format into 'want_fmt' pointer.
-	virtual bool GetCopyOfScreenIntoBitmap(Shared::Bitmap *destination, bool at_native_res, GraphicResolution *want_fmt = nullptr) = 0;
+	virtual bool GetCopyOfScreenIntoBitmap(Shared::Bitmap *destination, const Rect *src_rect, bool at_native_res,
+										   GraphicResolution *want_fmt = nullptr, uint32_t batch_skip_filter = 0u) = 0;
 	// Tells if the renderer supports toggling vsync after initializing the mode.
 	virtual bool DoesSupportVsyncToggle() = 0;
 	// Toggles vertical sync mode, if renderer supports one; returns the *new state*.
@@ -201,16 +221,18 @@ public:
 	// drawn with additional fractional scaling will appear more detailed than
 	// the rest of the game. The effect is stronger for the low-res games being
 	// rendered in the high-res mode.
-	virtual void RenderSpritesAtScreenResolution(bool enabled, int supersampling = 1) = 0;
+	virtual void RenderSpritesAtScreenResolution(bool enabled) = 0;
 	// TODO: move fade-in/out/boxout functions out of the graphics driver!! make everything render through
 	// main drawing procedure. Since currently it does not - we need to init our own sprite batch
 	// internally to let it set up correct viewport settings instead of relying on a chance.
 	// Runs fade-out animation in a blocking manner.
-	virtual void FadeOut(int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) = 0;
+	virtual void FadeOut(int speed, int targetColourRed, int targetColourGreen, int targetColourBlue,
+						 uint32_t batch_skip_filter = 0u) = 0;
 	// Runs fade-in animation in a blocking manner.
-	virtual void FadeIn(int speed, PALETTE p, int targetColourRed, int targetColourGreen, int targetColourBlue) = 0;
+	virtual void FadeIn(int speed, PALETTE p, int targetColourRed, int targetColourGreen, int targetColourBlue,
+						uint32_t batch_skip_filter = 0u) = 0;
 	// Runs box-out animation in a blocking manner.
-	virtual void BoxOutEffect(bool blackingOut, int speed, int delay) = 0;
+	virtual void BoxOutEffect(bool blackingOut, int speed, int delay, uint32_t batch_skip_filter = 0u) = 0;
 	virtual void UseSmoothScaling(bool enabled) = 0;
 	virtual bool SupportsGammaControl() = 0;
 	virtual void SetGamma(int newGamma) = 0;
@@ -232,9 +254,7 @@ public:
 	// These matrixes will be filled in accordance to the renderer's compatible format;
 	// returns false if renderer does not use matrixes (not a 3D renderer).
 	virtual bool GetStageMatrixes(RenderMatrixes &rm) = 0;
-	virtual bool RequiresFullRedrawEachFrame() = 0;
-	virtual bool HasAcceleratedTransform() = 0;
-	virtual bool UsesMemoryBackBuffer() = 0;
+
 	virtual ~IGraphicsDriver() {}
 };
 

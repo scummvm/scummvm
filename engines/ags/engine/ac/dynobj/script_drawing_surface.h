@@ -24,14 +24,10 @@
 
 #include "ags/engine/ac/dynobj/cc_ags_dynamic_object.h"
 #include "ags/shared/game/room_struct.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
-
-namespace AGS {
-namespace Shared {
-class Bitmap;
-} // namespace Shared
-} // namespace AGS
 
 struct ScriptDrawingSurface final : AGSCCDynamicObject {
 	// These numbers and types are used to determine the source of this drawing surface;
@@ -41,7 +37,7 @@ struct ScriptDrawingSurface final : AGSCCDynamicObject {
 	int dynamicSpriteNumber;
 	int dynamicSurfaceNumber;
 	bool isLinkedBitmapOnly;
-	Shared::Bitmap *linkedBitmapOnly;
+	AGS::Shared::Bitmap *linkedBitmapOnly;
 	int currentColour;
 	int currentColourScript;
 	int highResCoordinates;
@@ -49,11 +45,11 @@ struct ScriptDrawingSurface final : AGSCCDynamicObject {
 	int hasAlphaChannel;
 	//Shared::Bitmap* abufBackup;
 
-	int Dispose(const char *address, bool force) override;
+	int Dispose(void *address, bool force) override;
 	const char *GetType() override;
 	void Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz) override;
-	Shared::Bitmap *GetBitmapSurface();
-	Shared::Bitmap *StartDrawing();
+	AGS::Shared::Bitmap *GetBitmapSurface();
+	AGS::Shared::Bitmap *StartDrawing();
 	void PointToGameResolution(int *xcoord, int *ycoord);
 	void SizeToGameResolution(int *width, int *height);
 	void SizeToGameResolution(int *adjustValue);
@@ -65,9 +61,9 @@ struct ScriptDrawingSurface final : AGSCCDynamicObject {
 
 protected:
 	// Calculate and return required space for serialization, in bytes
-	size_t CalcSerializeSize() override;
+	size_t CalcSerializeSize(const void *address) override;
 	// Write object data into the provided stream
-	void Serialize(const char *address, AGS::Shared::Stream *out) override;
+	void Serialize(const void *address, AGS::Shared::Stream *out) override;
 };
 
 } // namespace AGS3

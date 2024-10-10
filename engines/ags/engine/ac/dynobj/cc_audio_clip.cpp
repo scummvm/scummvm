@@ -21,6 +21,7 @@
 
 #include "ags/engine/ac/dynobj/cc_audio_clip.h"
 #include "ags/shared/ac/dynobj/script_audio_clip.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/shared/util/stream.h"
 
@@ -32,12 +33,12 @@ const char *CCAudioClip::GetType() {
 	return "AudioClip";
 }
 
-size_t CCAudioClip::CalcSerializeSize() {
+size_t CCAudioClip::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t);
 }
 
-void CCAudioClip::Serialize(const char *address, Stream *out) {
-	const ScriptAudioClip *ach = (const ScriptAudioClip *)address;
+void CCAudioClip::Serialize(const void *address, Stream *out) {
+	const ScriptAudioClip *ach = static_cast<const ScriptAudioClip *>(address);
 	out->WriteInt32(ach->id);
 }
 

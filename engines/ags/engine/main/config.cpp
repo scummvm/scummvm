@@ -24,7 +24,6 @@
 //
 #include "ags/engine/ac/game_setup.h"
 #include "ags/shared/ac/game_setup_struct.h"
-#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_translation.h"
 #include "ags/engine/ac/path_helper.h"
 #include "ags/shared/ac/sprite_cache.h"
@@ -262,6 +261,13 @@ static void read_legacy_graphics_config(const ConfigTree &cfg) {
 	}
 
 	_GP(usetup).Screen.Params.RefreshRate = CfgReadInt(cfg, "misc", "refresh");
+	_GP(usetup).enable_antialiasing = CfgReadBoolInt(cfg, "misc", "antialias");
+}
+
+static void read_legacy_config(const ConfigTree &cfg) {
+	read_legacy_graphics_config(cfg);
+
+	_GP(usetup).SpriteCacheSize = CfgReadInt(cfg, "misc", "cachemax", _GP(usetup).SpriteCacheSize);
 }
 
 void override_config_ext(ConfigTree &cfg) {
@@ -269,9 +275,9 @@ void override_config_ext(ConfigTree &cfg) {
 }
 
 void apply_config(const ConfigTree &cfg) {
-	// Legacy graphics settings has to be translated into new options;
+	// Legacy settings have to be translated into new options;
 	// they must be read first, to let newer options override them, if ones are present
-	read_legacy_graphics_config(cfg);
+	read_legacy_config(cfg);
 
 	{
 		// Audio options
@@ -303,7 +309,7 @@ void apply_config(const ConfigTree &cfg) {
 			_GP(usetup).Screen.Params.VSync = CfgReadBoolInt(cfg, "graphics", "vsync");
 
 		_GP(usetup).RenderAtScreenRes = CfgReadBoolInt(cfg, "graphics", "render_at_screenres");
-		_GP(usetup).Supersampling = CfgReadInt(cfg, "graphics", "supersampling", 1);
+		_GP(usetup).enable_antialiasing = CfgReadBoolInt(cfg, "graphics", "antialias");
 		_GP(usetup).software_render_driver = CfgReadString(cfg, "graphics", "software_driver");
 
 #ifdef TODO
@@ -313,7 +319,6 @@ void apply_config(const ConfigTree &cfg) {
 			rotation_str, CstrArr<kNumScreenRotationOptions>{ "unlocked", "portrait", "landscape" },
 			_GP(usetup).rotation);
 #endif
-		_GP(usetup).enable_antialiasing = CfgReadBoolInt(cfg, "misc", "antialias");
 
 		// Custom paths
 		_GP(usetup).load_latest_save = CfgReadBoolInt(cfg, "misc", "load_latest_save", _GP(usetup).load_latest_save);
@@ -357,9 +362,8 @@ void apply_config(const ConfigTree &cfg) {
 
 		// Resource caches and options
 		_GP(usetup).clear_cache_on_room_change = CfgReadBoolInt(cfg, "misc", "clear_cache_on_room_change", _GP(usetup).clear_cache_on_room_change);
-		int cache_size_kb = CfgReadInt(cfg, "misc", "cachemax", DEFAULTCACHESIZE_KB);
-		if (cache_size_kb > 0)
-			_GP(usetup).SpriteCacheSize = cache_size_kb * 1024;
+		_GP(usetup).SpriteCacheSize = CfgReadInt(cfg, "graphics", "sprite_cache_size", _GP(usetup).SpriteCacheSize);
+		_GP(usetup).TextureCacheSize = CfgReadInt(cfg, "graphics", "texture_cache_size", _GP(usetup).TextureCacheSize);
 
 		// Mouse options
 		_GP(usetup).mouse_auto_lock = CfgReadBoolInt(cfg, "mouse", "auto_lock");

@@ -20,8 +20,8 @@
  */
 
 #include "ags/engine/ac/date_time.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
-#include "ags/engine/script/runtime_script_value.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
@@ -118,14 +118,19 @@ RuntimeScriptValue Sc_DateTime_GetRawTime(void *self, const RuntimeScriptValue *
 }
 
 void RegisterDateTimeAPI() {
-	ccAddExternalStaticFunction("DateTime::get_Now", Sc_DateTime_Now);
-	ccAddExternalObjectFunction("DateTime::get_DayOfMonth", Sc_DateTime_GetDayOfMonth);
-	ccAddExternalObjectFunction("DateTime::get_Hour", Sc_DateTime_GetHour);
-	ccAddExternalObjectFunction("DateTime::get_Minute", Sc_DateTime_GetMinute);
-	ccAddExternalObjectFunction("DateTime::get_Month", Sc_DateTime_GetMonth);
-	ccAddExternalObjectFunction("DateTime::get_RawTime", Sc_DateTime_GetRawTime);
-	ccAddExternalObjectFunction("DateTime::get_Second", Sc_DateTime_GetSecond);
-	ccAddExternalObjectFunction("DateTime::get_Year", Sc_DateTime_GetYear);
+	ScFnRegister datetime_api[] = {
+		{"DateTime::get_Now", API_FN_PAIR(DateTime_Now)},
+
+		{"DateTime::get_DayOfMonth", API_FN_PAIR(DateTime_GetDayOfMonth)},
+		{"DateTime::get_Hour", API_FN_PAIR(DateTime_GetHour)},
+		{"DateTime::get_Minute", API_FN_PAIR(DateTime_GetMinute)},
+		{"DateTime::get_Month", API_FN_PAIR(DateTime_GetMonth)},
+		{"DateTime::get_RawTime", API_FN_PAIR(DateTime_GetRawTime)},
+		{"DateTime::get_Second", API_FN_PAIR(DateTime_GetSecond)},
+		{"DateTime::get_Year", API_FN_PAIR(DateTime_GetYear)},
+	};
+
+	ccAddExternalFunctions361(datetime_api);
 }
 
 } // namespace AGS3

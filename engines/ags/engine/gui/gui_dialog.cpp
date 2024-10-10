@@ -81,7 +81,7 @@ void clear_gui_screen() {
 
 void refresh_gui_screen() {
 	_G(gfxDriver)->UpdateDDBFromBitmap(_G(dialogDDB), _G(windowBuffer), false);
-	update_cursor_and_dependent();
+	UpdateCursorAndDrawables();
 	render_graphics(_G(dialogDDB), _G(windowPosX), _G(windowPosY));
 }
 
@@ -297,7 +297,7 @@ void preparesavegamelist(int ctrllist) {
 	CSCISendControlMessage(ctrllist, CLB_SETCURSEL, 0, 0);
 }
 
-void enterstringwindow(const char *prompttext, char *stouse) {
+void enterstringwindow(const char *prompttext, char *dst_buf, size_t dst_sz) {
 	const int wnd_width = 200;
 	const int wnd_height = 40;
 	const int boxleft = 60, boxtop = 80;
@@ -333,17 +333,12 @@ void enterstringwindow(const char *prompttext, char *stouse) {
 	if (wantCancel)
 		CSCIDeleteControl(ctrlcancel);
 	CSCIEraseWindow(handl);
-	/* FIXME: Function should take a length parameter
-	 * It is called with a 200 bytes buffer below
-	 * but also called with a STD_BUFFER_SIZE (3000) buffer
-	 * and undetermined size buffer in the API
-	 * Using STD_BUFFER_SIZE as we don't want to break too much stuff */
-	Common::strcpy_s(stouse, STD_BUFFER_SIZE, _G(buffer2));
+	snprintf(dst_buf, dst_sz, "%s", _G(buffer2));
 }
 
 int enternumberwindow(char *prompttext) {
 	char ourbuf[200];
-	enterstringwindow(prompttext, ourbuf);
+	enterstringwindow(prompttext, ourbuf, sizeof(ourbuf));
 	if (ourbuf[0] == 0)
 		return -9999;
 	return atoi(ourbuf);

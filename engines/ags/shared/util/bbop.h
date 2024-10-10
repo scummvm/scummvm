@@ -50,7 +50,34 @@ enum DataEndianess {
 	#endif
 };
 
+
+//
+// Various bit flags operations
+//
+// Converts from one flag into another:
+// sets flag2 if flag1 IS set
+// TODO: find more optimal way, using bitwise ops?
+inline int FlagToFlag(int value, int flag1, int flag2) {
+	return ((value & flag1) != 0) * flag2;
+}
+// Sets flag2 if flag1 is NOT set
+inline int FlagToNoFlag(int value, int flag1, int flag2) {
+	return ((value & flag1) == 0) * flag2;
+}
+
+
 namespace BitByteOperations {
+
+struct IntFloatSwap {
+	union {
+		float f;
+		int32_t i32;
+	} val;
+
+	explicit IntFloatSwap(int32_t i) { val.i32 = i; }
+	explicit IntFloatSwap(float f) { val.f = f; }
+};
+
 inline int16_t SwapBytesInt16(const int16_t val) {
 	return ((val >> 8) & 0xFF) | ((val << 8) & 0xFF00);
 }
@@ -66,14 +93,9 @@ inline int64_t SwapBytesInt64(const int64_t val) {
 }
 
 inline float SwapBytesFloat(const float val) {
-	// (c) SDL2
-	union {
-		float f;
-		uint32_t ui32;
-	} swapper;
-	swapper.f = val;
-	swapper.ui32 = SwapBytesInt32(swapper.ui32);
-	return swapper.f;
+	IntFloatSwap swap(val);
+	swap.val.i32 = SwapBytesInt32(swap.val.i32);
+	return swap.val.f;
 }
 
 inline int16_t Int16FromLE(const int16_t val) {

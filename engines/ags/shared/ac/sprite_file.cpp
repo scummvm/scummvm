@@ -140,7 +140,7 @@ static inline SpriteFormat PaletteFormatForBPP(int bpp) {
 	case 2: return kSprFmt_PaletteRgb565;
 	case 4: return kSprFmt_PaletteArgb8888;
 	default: return kSprFmt_Undefined;
-	}	
+	}
 }
 
 static inline uint8_t GetPaletteBPP(SpriteFormat fmt) {
@@ -149,7 +149,7 @@ static inline uint8_t GetPaletteBPP(SpriteFormat fmt) {
 	case kSprFmt_PaletteArgb8888: return 4;
 	case kSprFmt_PaletteRgb565: return 2;
 	default: return 0; // means no palette
-	}	
+	}
 }
 
 SpriteFile::SpriteFile() {
@@ -371,7 +371,7 @@ HError SpriteFile::LoadSprite(sprkey_t index, Shared::Bitmap *&sprite) {
 	ReadSprHeader(hdr, _stream.get(), _version, _compress);
 	if (hdr.BPP == 0) return HError::None(); // empty slot, this is normal
 	int bpp = hdr.BPP, w = hdr.Width, h = hdr.Height;
-	Bitmap *image = BitmapHelper::CreateBitmap(w, h, bpp * 8);
+	std::unique_ptr<Bitmap> image(BitmapHelper::CreateBitmap(w, h, bpp * 8));
 	if (image == nullptr) {
 		return new Error(String::FromFormat("LoadSprite: failed to allocate bitmap %d (%dx%d%d).",
 			index, w, h, bpp * 8));
@@ -401,18 +401,25 @@ HError SpriteFile::LoadSprite(sprkey_t index, Shared::Bitmap *&sprite) {
 		((_version >= kSprfVersion_StorageFormats) || _compress != kSprCompress_None) ?
 		(uint32_t)_stream->ReadInt32() : (w * h * bpp);
 	if (hdr.Compress != kSprCompress_None) {
+		// TODO: rewrite this to only make a choice once the SpriteFile is initialized
+		// and use either function ptr or a decompressing stream class object
 		if (in_data_size == 0) {
-			delete image;
 			return new Error(String::FromFormat("LoadSprite: bad compressed data for sprite %d.", index));
 		}
+		bool result;
 		switch (hdr.Compress) {
-		case kSprCompress_RLE: rle_decompress(im_data.Buf, im_data.Size, im_data.BPP, _stream.get());
+		case kSprCompress_RLE: result = rle_decompress(im_data.Buf, im_data.Size, im_data.BPP, _stream.get());
 			break;
-		case kSprCompress_LZW: lzw_decompress(im_data.Buf, im_data.Size, im_data.BPP, _stream.get(), in_data_size);
+		case kSprCompress_LZW: result = lzw_decompress(im_data.Buf, im_data.Size, im_data.BPP, _stream.get(), in_data_size);
 			break;
-		default: assert(!"Unsupported compression type!"); break;
+		case kSprCompress_Deflate: result = inflate_decompress(im_data.Buf, im_data.Size, im_data.BPP, _stream.get(), in_data_size);
+			break;
+		default: assert(!"Unsupported compression type!"); result = false; break;
 		}
 		// TODO: test that not more than data_size was read!
+		if (!result) {
+			return new Error(String::FromFormat("LoadSprite: failed to decompress pixel array for sprite %d.", index));
+		}
 	}
 	// Otherwise (no compression) read directly
 	else {
@@ -430,10 +437,10 @@ HError SpriteFile::LoadSprite(sprkey_t index, Shared::Bitmap *&sprite) {
 	}
 	// Finally revert storage options
 	if (pal_bpp > 0) {
-		UnpackIndexedBitmap(image, im_data.Buf, im_data.Size, palette, hdr.PalCount);
+		UnpackIndexedBitmap(image.get(), im_data.Buf, im_data.Size, palette, hdr.PalCount);
 	}
 
-	sprite = image;
+	sprite = image.release(); // FIXME: pass unique_ptr in this function
 	_curPos = index + 1; // mark correct pos
 	return HError::None();
 }
@@ -505,7 +512,6 @@ int SaveSpriteFile(const String &save_to_file,
 
 	std::unique_ptr<Bitmap> temp_bmp; // for disposing temp sprites
 	std::vector<uint8_t> membuf; // for loading raw sprite data
-	std::vector<uint32_t> palette;
 
 	const bool diff_compress =
 		read_from_file &&
@@ -615,32 +621,46 @@ void SpriteFileWriter::WriteBitmap(Bitmap *image) {
 	int w = image->GetWidth();
 	int h = image->GetHeight();
 	ImBufferCPtr im_data(image->GetData(), w * h * bpp, bpp);
+
 	// (Optional) Handle storage options
 	std::vector<uint8_t> indexed_buf;
 	uint32_t palette[256];
 	uint32_t pal_count = 0;
 	SpriteFormat sformat = kSprFmt_Undefined;
-	SpriteCompression compress = kSprCompress_None;
+
 	if ((_storeFlags & kSprStore_OptimizeForSize) != 0 && (image->GetBPP() > 1)) { // Try to store this sprite as an indexed bitmap
-		if (CreateIndexedBitmap(image, indexed_buf, palette, pal_count) && pal_count > 0) {
-			sformat = PaletteFormatForBPP(image->GetBPP());
+		uint32_t gen_pal_count;
+		if (CreateIndexedBitmap(image, indexed_buf, palette, gen_pal_count) && gen_pal_count > 0) { // Test the resulting size, and switch if the paletted image is less
+			if (im_data.Size > (indexed_buf.size() + gen_pal_count * image->GetBPP())) {
 			im_data = ImBufferCPtr(&indexed_buf[0], indexed_buf.size(), 1);
+			sformat = PaletteFormatForBPP(image->GetBPP());
+			pal_count = gen_pal_count;
+			}
 		}
 	}
 	// (Optional) Compress the image data into the temp buffer
-	if (_compress != kSprCompress_None) {
+	SpriteCompression compress = kSprCompress_None;
+	if (_compress != kSprCompress_Deflate)
+		warning("TODO: Deflate not implemented, writing uncompressed BMP");
+	else if (_compress != kSprCompress_None) {
+		// TODO: rewrite this to only make a choice once the SpriteFile is initialized
+		// and use either function ptr or a decompressing stream class object
 		compress = _compress;
 		VectorStream mems(_membuf, kStream_Write);
+		bool result;
 		switch (compress) {
-		case kSprCompress_RLE: rle_compress(im_data.Buf, im_data.Size, im_data.BPP, &mems);
+		case kSprCompress_RLE: result = rle_compress(im_data.Buf, im_data.Size, im_data.BPP, &mems);
 			break;
-		case kSprCompress_LZW: lzw_compress(im_data.Buf, im_data.Size, im_data.BPP, &mems);
+		case kSprCompress_LZW: result = lzw_compress(im_data.Buf, im_data.Size, im_data.BPP, &mems);
 			break;
-		default: assert(!"Unsupported compression type!"); break;
+		case kSprCompress_Deflate: result = deflate_compress(im_data.Buf, im_data.Size, im_data.BPP, &mems);
+			break;
+		default: assert(!"Unsupported compression type!"); result = false; break;
 		}
 		// mark to write as a plain byte array
-		im_data = ImBufferCPtr(&_membuf[0], _membuf.size(), 1);
+		im_data = result ? ImBufferCPtr(&_membuf[0], _membuf.size(), 1) : ImBufferCPtr();
 	}
+
 	// Write the final data
 	SpriteDatHeader hdr(bpp, sformat, pal_count, compress, w, h);
 	WriteSpriteData(hdr, im_data.Buf, im_data.Size, im_data.BPP, palette);

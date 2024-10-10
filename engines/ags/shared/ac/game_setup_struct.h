@@ -19,9 +19,16 @@
  *
  */
 
+//=============================================================================
+//
+// GameSetupStruct is a contemporary main game data.
+//
+//=============================================================================
+
 #ifndef AGS_SHARED_AC_GAME_SETUP_STRUCT_H
 #define AGS_SHARED_AC_GAME_SETUP_STRUCT_H
 
+#include "common/std/array.h"
 #include "common/std/vector.h"
 #include "ags/shared/ac/audio_clip_type.h"
 #include "ags/shared/ac/character_info.h" // TODO: constants to separate header
@@ -78,7 +85,7 @@ struct GameSetupStruct : public GameSetupStructBase {
 	char              guid[MAX_GUID_LENGTH];
 	char              saveGameFileExtension[MAX_SG_EXT_LENGTH];
 	// NOTE: saveGameFolderName is generally used to create game subdirs in common user directories
-	char              saveGameFolderName[MAX_SG_FOLDER_LEN];
+	Shared::String    saveGameFolderName;
 	int               roomCount;
 	std::vector<int>  roomNumbers;
 	std::vector<Shared::String> roomNames;
@@ -111,7 +118,10 @@ struct GameSetupStruct : public GameSetupStructBase {
 
 
 	GameSetupStruct();
+	GameSetupStruct(GameSetupStruct &&gss) = default;
 	~GameSetupStruct();
+
+	GameSetupStruct &operator=(GameSetupStruct &&gss) = default;
 
 	void Free();
 
@@ -137,30 +147,29 @@ struct GameSetupStruct : public GameSetupStructBase {
 	void read_interaction_scripts(Shared::Stream *in, GameDataVersion data_ver);
 	void read_words_dictionary(Shared::Stream *in);
 
-	void ReadInvInfo_Aligned(Shared::Stream *in);
-	void WriteInvInfo_Aligned(Shared::Stream *out);
-	void ReadMouseCursors_Aligned(Shared::Stream *in);
-	void WriteMouseCursors_Aligned(Shared::Stream *out);
+	void ReadInvInfo(Shared::Stream *in);
+	void WriteInvInfo(Shared::Stream *out);
+	void ReadMouseCursors(Shared::Stream *in);
+	void WriteMouseCursors(Shared::Stream *out);
 	//------------------------------
 	// Part 2
 	void read_characters(Shared::Stream *in);
 	void read_lipsync(Shared::Stream *in, GameDataVersion data_ver);
-	void read_messages(Shared::Stream *in, GameDataVersion data_ver);
+	void read_messages(Shared::Stream *in, const std::array<int> &load_messages, GameDataVersion data_ver);
 
-	void ReadCharacters_Aligned(Shared::Stream *in, bool is_save);
-	void WriteCharacters_Aligned(Shared::Stream *out);
+	void ReadCharacters(Shared::Stream *in);
+	void WriteCharacters(Shared::Stream *out);
 	//------------------------------
 	// Part 3
 	HGameFileError read_customprops(Shared::Stream *in, GameDataVersion data_ver);
 	HGameFileError read_audio(Shared::Stream *in, GameDataVersion data_ver);
 	void read_room_names(Shared::Stream *in, GameDataVersion data_ver);
 
-	void ReadAudioClips_Aligned(Shared::Stream *in, size_t count);
+	void ReadAudioClips(Shared::Stream *in, size_t count);
 	//--------------------------------------------------------------------
 
 	// Functions for reading and writing appropriate data from/to save game
-	void ReadFromSaveGame_v321(Shared::Stream *in, GameDataVersion data_ver, char *gswas, ccScript *compsc, CharacterInfo *chwas,
-							   WordsDictionary *olddict, std::vector<String> &mesbk);
+	void ReadFromSaveGame_v321(Shared::Stream *in);
 
 	void ReadFromSavegame(Shared::Stream *in);
 	void WriteForSavegame(Shared::Stream *out);

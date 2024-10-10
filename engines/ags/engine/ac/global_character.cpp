@@ -41,10 +41,12 @@
 #include "ags/engine/ac/properties.h"
 #include "ags/engine/ac/screen_overlay.h"
 #include "ags/engine/ac/string.h"
+#include "ags/engine/ac/dynobj/cc_character.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/game/room_struct.h"
 #include "ags/engine/main/game_run.h"
 #include "ags/engine/script/script.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -115,8 +117,8 @@ int GetCharacterWidth(int ww) {
 
 	if (_GP(charextra)[ww].width < 1) {
 		if ((char1->view < 0) ||
-		        (char1->loop >= _GP(views)[char1->view].numLoops) ||
-		        (char1->frame >= _GP(views)[char1->view].loops[char1->loop].numFrames)) {
+			(char1->loop >= _GP(views)[char1->view].numLoops) ||
+			(char1->frame >= _GP(views)[char1->view].loops[char1->loop].numFrames)) {
 			debug_script_warn("GetCharacterWidth: Character %s has invalid frame: view %d, loop %d, frame %d", char1->scrname, char1->view + 1, char1->loop, char1->frame);
 			return data_to_game_coord(4);
 		}
@@ -133,7 +135,8 @@ int GetCharacterHeight(int charid) {
 		if ((char1->view < 0) ||
 		        (char1->loop >= _GP(views)[char1->view].numLoops) ||
 		        (char1->frame >= _GP(views)[char1->view].loops[char1->loop].numFrames)) {
-			debug_script_warn("GetCharacterHeight: Character %s has invalid frame: view %d, loop %d, frame %d", char1->scrname, char1->view + 1, char1->loop, char1->frame);
+			debug_script_warn("GetCharacterHeight: Character %s has invalid frame: view %d, loop %d, frame %d",
+							  char1->scrname, char1->view + 1, char1->loop, char1->frame);
 			return data_to_game_coord(2);
 		}
 
@@ -158,33 +161,16 @@ void SetCharacterTransparency(int obn, int trans) {
 	Character_SetTransparency(&_GP(game).chars[obn], trans);
 }
 
-void scAnimateCharacter(int chh, int loopn, int sppd, int rept) {
+void AnimateCharacter4(int chh, int loopn, int sppd, int rept) {
+	AnimateCharacter6(chh, loopn, sppd, rept, FORWARDS, IN_BACKGROUND);
+}
+
+void AnimateCharacter6(int chh, int loopn, int sppd, int rept, int direction, int blocking) {
 	if (!is_valid_character(chh))
 		quit("AnimateCharacter: invalid character");
 
-	animate_character(&_GP(game).chars[chh], loopn, sppd, rept);
+	Character_Animate5(&_GP(game).chars[chh], loopn, sppd, rept, blocking, direction);
 }
-
-void AnimateCharacterEx(int chh, int loopn, int sppd, int rept, int direction, int blocking) {
-	if ((direction < 0) || (direction > 1))
-		quit("!AnimateCharacterEx: invalid direction");
-	if (!is_valid_character(chh))
-		quit("AnimateCharacter: invalid character");
-
-	if (direction)
-		direction = BACKWARDS;
-	else
-		direction = FORWARDS;
-
-	if (blocking)
-		blocking = BLOCKING;
-	else
-		blocking = IN_BACKGROUND;
-
-	Character_Animate(&_GP(game).chars[chh], loopn, sppd, rept, blocking, direction);
-
-}
-
 
 void SetPlayerCharacter(int newchar) {
 	if (!is_valid_character(newchar))
@@ -385,28 +371,38 @@ void RunCharacterInteraction(int cc, int mood) {
 	if (!is_valid_character(cc))
 		quit("!RunCharacterInteraction: invalid character");
 
-	int passon = -1, cdata = -1;
-	if (mood == MODE_LOOK) passon = 0;
-	else if (mood == MODE_HAND) passon = 1;
-	else if (mood == MODE_TALK) passon = 2;
-	else if (mood == MODE_USE) {
-		passon = 3;
-		cdata = _G(playerchar)->activeinv;
-		_GP(play).usedinv = cdata;
-	} else if (mood == MODE_PICKUP) passon = 5;
-	else if (mood == MODE_CUSTOM1) passon = 6;
-	else if (mood == MODE_CUSTOM2) passon = 7;
+	// convert cursor mode to event index (in character event table)
+	// TODO: probably move this conversion table elsewhere? should be a global info
+	int evnt;
+	switch (mood) {
+		case MODE_LOOK:	evnt = 0; break;
+		case MODE_HAND:	evnt = 1; break;
+		case MODE_TALK:	evnt = 2; break;
+		case MODE_USE: evnt = 3; break;
+		case MODE_PICKUP: evnt = 5;	break;
+		case MODE_CUSTOM1: evnt = 6; break;
+		case MODE_CUSTOM2: evnt = 7; break;
+		default: evnt = -1;	break;
+	}
+	const int anyclick_evt = 4; // TODO: make global constant (character any-click evt)
 
-	_G(evblockbasename) = "character%d";
-	_G(evblocknum) = cc;
+	// For USE verb: remember active inventory
+	if (mood == MODE_USE) {
+		_GP(play).usedinv = _G(playerchar)->activeinv;
+	}
+
+	const auto obj_evt = ObjectEvent("character%d", cc,
+									 RuntimeScriptValue().SetScriptObject(&_GP(game).chars[cc], &_GP(ccDynamicCharacter)), mood);
 	if (_G(loaded_game_file_version) > kGameVersion_272) {
-		if (passon >= 0)
-			run_interaction_script(_GP(game).charScripts[cc].get(), passon, 4);
-		run_interaction_script(_GP(game).charScripts[cc].get(), 4);  // any click on char
+		if ((evnt >= 0) &&
+			run_interaction_script(obj_evt, _GP(game).charScripts[cc].get(), evnt, anyclick_evt) < 0)
+			return; // game state changed, don't do "any click"
+		run_interaction_script(obj_evt, _GP(game).charScripts[cc].get(), anyclick_evt); // any click on char
 	} else {
-		if (passon >= 0)
-			run_interaction_event(_GP(game).intrChar[cc].get(), passon, 4, (passon == 3));
-		run_interaction_event(_GP(game).intrChar[cc].get(), 4);  // any click on char
+		if ((evnt >= 0) &&
+			run_interaction_event(obj_evt, _GP(game).intrChar[cc].get(), evnt, anyclick_evt, (mood == MODE_USE)) < 0)
+			return; // game state changed, don't do "any click"
+		run_interaction_event(obj_evt, _GP(game).intrChar[cc].get(), anyclick_evt); // any click on char
 	}
 }
 
@@ -484,7 +480,7 @@ void update_invorder() {
 		}
 	}
 	// backwards compatibility
-	_GP(play).obsolete_inv_numorder = _GP(charextra)[_GP(game).playercharacter].invorder_count;
+	_GP(play).inv_numorder = _GP(charextra)[_GP(game).playercharacter].invorder_count;
 	GUI::MarkInventoryForUpdate(_GP(game).playercharacter, true);
 }
 
@@ -494,7 +490,7 @@ void add_inventory(int inum) {
 
 	Character_AddInventory(_G(playerchar), &_G(scrInv)[inum], SCR_NO_VALUE);
 
-	_GP(play).obsolete_inv_numorder = _GP(charextra)[_GP(game).playercharacter].invorder_count;
+	_GP(play).inv_numorder = _GP(charextra)[_GP(game).playercharacter].invorder_count;
 }
 
 void lose_inventory(int inum) {
@@ -503,7 +499,7 @@ void lose_inventory(int inum) {
 
 	Character_LoseInventory(_G(playerchar), &_G(scrInv)[inum]);
 
-	_GP(play).obsolete_inv_numorder = _GP(charextra)[_GP(game).playercharacter].invorder_count;
+	_GP(play).inv_numorder = _GP(charextra)[_GP(game).playercharacter].invorder_count;
 }
 
 void AddInventoryToCharacter(int charid, int inum) {
@@ -548,19 +544,21 @@ void DisplaySpeechAt(int xx, int yy, int wii, int aschar, const char *spch) {
 
 int DisplaySpeechBackground(int charid, const char *speel) {
 	// remove any previous background speech for this character
-	for (size_t i = 0; i < _GP(screenover).size();) {
-		if (_GP(screenover)[i].bgSpeechForChar == charid)
-			remove_screen_overlay_index(i);
-		else
-			i++;
+	// TODO: have a map character -> bg speech over?
+	const auto &overs = get_overlays();
+	for (size_t i = 0; i < overs.size(); ++i) {
+		if (overs[i].bgSpeechForChar == charid) {
+			remove_screen_overlay(i);
+			break;
+		}
 	}
 
 	int ovrl = CreateTextOverlay(OVR_AUTOPLACE, charid, _GP(play).GetUIViewport().GetWidth() / 2, FONT_SPEECH,
 	                             -_GP(game).chars[charid].talkcolor, get_translation(speel), DISPLAYTEXT_NORMALOVERLAY);
 
-	int scid = find_overlay_of_type(ovrl);
-	_GP(screenover)[scid].bgSpeechForChar = charid;
-	_GP(screenover)[scid].timeout = GetTextDisplayTime(speel, 1);
+	auto *over = get_overlay(ovrl);
+	over->bgSpeechForChar = charid;
+	over->timeout = GetTextDisplayTime(speel, 1);
 	return ovrl;
 }
 

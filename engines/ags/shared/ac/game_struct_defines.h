@@ -70,15 +70,15 @@ namespace AGS3 {
 #define OPT_PORTRAITSIDE    31
 #define OPT_STRICTSCRIPTING 32  // don't allow MoveCharacter-style commands
 #define OPT_LEFTTORIGHTEVAL 33  // left-to-right operator evaluation
-#define OPT_COMPRESSSPRITES 34  // [DEPRECATED]
+#define OPT_COMPRESSSPRITES 34  // sprite compression type (None, RLE, LZW, Deflate)
 #define OPT_STRICTSTRINGS   35  // don't allow old-style strings, for reference only
-#define OPT_NEWGUIALPHA     36
+#define OPT_NEWGUIALPHA     36  // alpha blending method when drawing GUI and controls
 #define OPT_RUNGAMEDLGOPTS  37
 #define OPT_NATIVECOORDINATES 38 // defines coordinate relation between game logic and game screen
 #define OPT_GLOBALTALKANIMSPD 39
 #define OPT_HIGHESTOPTION_321 39
-#define OPT_SPRITEALPHA     40
-#define OPT_SAFEFILEPATHS   41
+#define OPT_SPRITEALPHA     40  // alpha blending method when drawing images on DrawingSurface
+#define OPT_SAFEFILEPATHS   41  // restricted file path in script (not writing to the game dir, etc)
 #define OPT_DIALOGOPTIONSAPI 42 // version of dialog options API (-1 for pre-3.4.0 API)
 #define OPT_BASESCRIPTAPI   43 // version of the Script API (ScriptAPIVersion) used to compile game script
 #define OPT_SCRIPTCOMPATLEV 44 // level of API compatibility (ScriptAPIVersion) used to compile game script
@@ -89,7 +89,8 @@ namespace AGS3 {
 #define OPT_GAMETEXTENCODING 49 // how the text in the game data should be interpreted
 #define OPT_KEYHANDLEAPI    50 // key handling mode (old/new)
 #define OPT_CUSTOMENGINETAG 51 // custom engine tag (for overriding behavior)
-#define OPT_HIGHESTOPTION   OPT_CUSTOMENGINETAG
+#define OPT_SCALECHAROFFSETS 52 // apply character scaling to the sprite offsets (z, locked offs)
+#define OPT_HIGHESTOPTION   OPT_SCALECHAROFFSETS
 #define OPT_NOMODMUSIC      98 // [DEPRECATED]
 #define OPT_LIPSYNCTEXT     99
 
@@ -135,11 +136,12 @@ namespace AGS3 {
 
 #define DIALOG_OPTIONS_HIGHLIGHT_COLOR_DEFAULT  14 // Yellow
 
-#define MAXVIEWNAMELENGTH 15
+// MAXVIEWNAMELENGTH comes from unknown old engine version
+#define LEGACY_MAXVIEWNAMELENGTH 15
 #define MAXLIPSYNCFRAMES  20
 #define MAX_GUID_LENGTH   40
 #define MAX_SG_EXT_LENGTH 20
-#define MAX_SG_FOLDER_LEN 50
+#define LEGACY_MAX_SG_FOLDER_LEN 50
 
 enum GameResolutionType {
 	kGameResolution_Undefined = -1,
@@ -191,7 +193,8 @@ enum ScriptAPIVersion {
 	kScriptAPI_v351 = 8,
 	kScriptAPI_v360 = 3060000,
 	kScriptAPI_v36026 = 3060026,
-	kScriptAPI_Current = kScriptAPI_v36026
+	kScriptAPI_v361 = 3060100,
+	kScriptAPI_Current = kScriptAPI_v361
 };
 
 extern const char *GetScriptAPIName(ScriptAPIVersion v);
@@ -217,23 +220,30 @@ enum GameGuiAlphaRenderingStyle {
 	kGuiAlphaRender_Proper
 };
 
-
-// Sprite flags (serialized as 8-bit)
+// Sprite flags
+// SERIALIZATION NOTE: serialized as 8-bit in game data and legacy saves
+//                     serialized as 32-bit in new saves (for dynamic sprites only).
 #define SPF_HIRES           0x01  // sized for high native resolution (legacy option)
-#define SPF_HICOLOR         0x02  // is 16-bit
+#define SPF_HICOLOR         0x02  // is 16-bit (UNUSED)
 #define SPF_DYNAMICALLOC    0x04  // created by runtime script
-#define SPF_TRUECOLOR       0x08  // is 32-bit
+#define SPF_TRUECOLOR       0x08  // is 32-bit (UNUSED)
 #define SPF_ALPHACHANNEL    0x10  // has alpha-channel
 #define SPF_VAR_RESOLUTION  0x20  // variable resolution (refer to SPF_HIRES)
 #define SPF_HADALPHACHANNEL 0x80  // the saved sprite on disk has one
+#define SPF_OBJECTOWNED		0x0100 // owned by a game object (not created in user script)
 
 // General information about sprite (properties, size)
 struct SpriteInfo {
-	uint32_t Flags;
-	int      Width;
-	int      Height;
+	int Width  = 0;
+	int Height = 0;
+	uint32_t Flags = 0u; // SPF_* flags
 
-	SpriteInfo();
+	SpriteInfo() = default;
+	SpriteInfo(int w, int h, uint32_t flags) : Width(w), Height(h), Flags(flags) {}
+
+	inline Size GetResolution() const { return Size(Width, Height); }
+	// Gets if sprite is created at runtime (by engine, or a script command)
+	inline bool IsDynamicSprite() const { return (Flags & SPF_DYNAMICALLOC) != 0; }
 
 	//
 	// Legacy game support

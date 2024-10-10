@@ -21,6 +21,7 @@
 
 #include "ags/engine/ac/move_list.h"
 #include "ags/shared/ac/common.h"
+#include "ags/shared/util/bbop.h"
 #include "ags/shared/util/stream.h"
 
 namespace AGS3 {
@@ -28,61 +29,108 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-void MoveList::ReadFromFile_Legacy(Stream *in) {
-	in->ReadArrayOfInt32(pos, MAXNEEDSTAGES_LEGACY);
+float MoveList::GetStepLength() const {
+	assert(numstage > 0);
+	float permove_x = fixtof(xpermove[onstage]);
+	float permove_y = fixtof(ypermove[onstage]);
+	return sqrt(permove_x * permove_x + permove_y * permove_y);
+}
+
+float MoveList::GetPixelUnitFraction() const {
+	assert(numstage > 0);
+	float distance = GetStepLength() * onpart;
+	return distance - floor(distance);
+}
+
+void MoveList::SetPixelUnitFraction(float frac) {
+	assert(numstage > 0);
+	float permove_dist = GetStepLength();
+	onpart = permove_dist > 0.f ? (1.f / permove_dist) * frac : 0.f;
+}
+
+void MoveList::ReadFromSavegame_Legacy(Stream *in) {
+	*this = MoveList(); // reset struct
+	for (int i = 0; i < MAXNEEDSTAGES_LEGACY; ++i) {
+		// X & Y was packed as high/low shorts, and hence reversed in lo-end
+		pos[i].Y = in->ReadInt16();
+		pos[i].X = in->ReadInt16();
+	}
 	numstage = in->ReadInt32();
 	in->ReadArrayOfInt32(xpermove, MAXNEEDSTAGES_LEGACY);
 	in->ReadArrayOfInt32(ypermove, MAXNEEDSTAGES_LEGACY);
-	fromx = in->ReadInt32();
-	fromy = in->ReadInt32();
+	from.X = in->ReadInt32();
+	from.Y = in->ReadInt32();
 	onstage = in->ReadInt32();
-	onpart = in->ReadInt32();
-	lastx = in->ReadInt32();
-	lasty = in->ReadInt32();
+	onpart = static_cast<float>(in->ReadInt32());
+	in->ReadInt32(); // UNUSED
+	in->ReadInt32(); // UNUSED
 	doneflag = in->ReadInt8();
 	direct = in->ReadInt8();
+	in->ReadInt16(); // alignment padding to int32 (finalize struct)
 }
 
-HSaveError MoveList::ReadFromFile(Stream *in, int32_t cmp_ver) {
-	if (cmp_ver < 1) {
-		ReadFromFile_Legacy(in);
-		return HSaveError::None();
+HSaveError MoveList::ReadFromSavegame(Stream *in, int32_t cmp_ver) {
+	if (cmp_ver < kMoveSvgVersion_350) {
+		return new SavegameError(kSvgErr_UnsupportedComponentVersion,
+								 String::FromFormat("Movelist format %d is no longer supported", cmp_ver));
 	}
 
+	*this = MoveList(); // reset struct
 	numstage = in->ReadInt32();
+	if ((numstage == 0) && cmp_ver >= kMoveSvgVersion_36109) {
+		return HSaveError::None();
+	}
 	// TODO: reimplement MoveList stages as vector to avoid these limits
 	if (numstage > MAXNEEDSTAGES) {
 		return new SavegameError(kSvgErr_IncompatibleEngine,
 		                         String::FromFormat("Incompatible number of movelist steps (count: %d, max : %d).", numstage, MAXNEEDSTAGES));
 	}
 
-	fromx = in->ReadInt32();
-	fromy = in->ReadInt32();
+	from.X = in->ReadInt32();
+	from.Y = in->ReadInt32();
 	onstage = in->ReadInt32();
-	onpart = in->ReadInt32();
-	lastx = in->ReadInt32();
-	lasty = in->ReadInt32();
+	BBOp::IntFloatSwap onpart_u(in->ReadInt32());
+	in->ReadInt32(); // UNUSED
+	in->ReadInt32(); // UNUSED
 	doneflag = in->ReadInt8();
 	direct = in->ReadInt8();
 
-	in->ReadArrayOfInt32(pos, numstage);
+	for (int i = 0; i < numstage; ++i) {
+		// X & Y was packed as high/low shorts, and hence reversed in lo-end
+		pos[i].Y = in->ReadInt16();
+		pos[i].X = in->ReadInt16();
+	}
 	in->ReadArrayOfInt32(xpermove, numstage);
 	in->ReadArrayOfInt32(ypermove, numstage);
+
+	// Some variables require conversion depending on a save version
+	if (cmp_ver < kMoveSvgVersion_36109)
+		onpart = static_cast<float>(onpart_u.val.i32);
+	else
+		onpart = onpart_u.val.f;
+
 	return HSaveError::None();
 }
 
-void MoveList::WriteToFile(Stream *out) {
+void MoveList::WriteToSavegame(Stream *out) const {
 	out->WriteInt32(numstage);
-	out->WriteInt32(fromx);
-	out->WriteInt32(fromy);
+	if (numstage == 0)
+		return;
+
+	out->WriteInt32(from.X);
+	out->WriteInt32(from.Y);
 	out->WriteInt32(onstage);
-	out->WriteInt32(onpart);
-	out->WriteInt32(lastx);
-	out->WriteInt32(lasty);
+	out->WriteInt32(BBOp::IntFloatSwap(onpart).val.i32);
+	out->WriteInt32(0); // UNUSED
+	out->WriteInt32(0); // UNUSED
 	out->WriteInt8(doneflag);
 	out->WriteInt8(direct);
 
-	out->WriteArrayOfInt32(pos, numstage);
+	for (int i = 0; i < numstage; ++i) {
+		// X & Y was packed as high/low shorts, and hence reversed in lo-end
+		out->WriteInt16(pos[i].Y);
+		out->WriteInt16(pos[i].X);
+	}
 	out->WriteArrayOfInt32(xpermove, numstage);
 	out->WriteArrayOfInt32(ypermove, numstage);
 }

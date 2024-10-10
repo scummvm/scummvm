@@ -30,6 +30,7 @@
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/plugins/ags_plugin.h"
 #include "ags/shared/util/string.h"
+#include "gui/message.h"
 
 namespace AGS3 {
 
@@ -40,12 +41,14 @@ struct ScummVMPlatformDriver : AGSPlatformDriver {
 
 	int  CDPlayerCommand(int cmdd, int datt) override;
 	void DisplayAlert(const char *, ...) override;
+	void DisplayMessageBox(const char *) override;
 	FSLocation GetAllUsersDataDirectory() override;
 	FSLocation GetUserSavedgamesDirectory() override;
 	FSLocation GetUserConfigDirectory() override;
 	FSLocation GetUserGlobalConfigDirectory() override;
 	FSLocation GetAppOutputDirectory() override;
-	unsigned long GetDiskFreeSpaceMB() override;
+	bool IsLocalDirRestricted() override;
+	uint64_t GetDiskFreeSpaceMB(const AGS::Shared::String &path) override;
 	const char *GetNoMouseErrorString() override;
 	const char *GetAllegroFailUserHint() override;
 	eScriptSystemOSID GetSystemOSID() override;
@@ -77,6 +80,12 @@ void ScummVMPlatformDriver::DisplayAlert(const char *text, ...) {
 		::AGS::g_vm->GUIError(msg);
 }
 
+void ScummVMPlatformDriver::DisplayMessageBox(const char *text) {
+	Common::U32String msg(text);
+	GUI::MessageDialog dialog(msg);
+	dialog.runModal();
+}
+
 FSLocation ScummVMPlatformDriver::GetAllUsersDataDirectory() {
 	return FSLocation(".");
 }
@@ -97,7 +106,12 @@ FSLocation ScummVMPlatformDriver::GetAppOutputDirectory() {
 	return FSLocation(".");
 }
 
-unsigned long ScummVMPlatformDriver::GetDiskFreeSpaceMB() {
+bool ScummVMPlatformDriver::IsLocalDirRestricted() {
+	// Let them to create temp files in the current working dir
+	return false;
+}
+
+uint64_t ScummVMPlatformDriver::GetDiskFreeSpaceMB(const String &path) {
 	// placeholder
 	return 100;
 }

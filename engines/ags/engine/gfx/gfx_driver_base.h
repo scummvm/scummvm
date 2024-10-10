@@ -55,15 +55,19 @@ struct SpriteBatchDesc {
 	Shared::GraphicFlip      Flip = Shared::kFlip_None;
 	// Optional bitmap to draw sprites upon. Used exclusively by the software rendering mode.
 	PBitmap                  Surface;
+	// Optional filter flags; this lets to filter certain batches out during some operations,
+	// such as fading effects or making screenshots.
+	uint32_t				 FilterFlags = 0u;
 
 	SpriteBatchDesc() = default;
 	SpriteBatchDesc(uint32_t parent, const Rect viewport, const SpriteTransform & transform,
-		Shared::GraphicFlip flip = Shared::kFlip_None, PBitmap surface = nullptr)
+		Shared::GraphicFlip flip = Shared::kFlip_None, PBitmap surface = nullptr, uint32_t filter_flags = 0)
 		: Parent(parent)
 		, Viewport(viewport)
 		, Transform(transform)
 		, Flip(flip)
-		, Surface(surface) {
+		, Surface(surface)
+		, FilterFlags(filter_flags) {
 	}
 };
 
@@ -104,8 +108,9 @@ public:
 	bool		SetVsync(bool enabled) override;
 	bool		GetVsync() const override;
 
-	void        BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
-	                             Shared::GraphicFlip flip = Shared::kFlip_None, PBitmap surface = nullptr) override;
+	void 		BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
+						 		 Shared::GraphicFlip flip = Shared::kFlip_None, PBitmap surface = nullptr,
+								 uint32_t filter_flags = 0) override;
 	void        EndSpriteBatch() override;
 	void        ClearDrawLists() override;
 
@@ -125,9 +130,9 @@ public:
 
 protected:
 	// Special internal values, applied to DrawListEntry
-	static const intptr_t DRAWENTRY_STAGECALLBACK = 0x0;
-	static const intptr_t DRAWENTRY_FADE = 0x1;
-	static const intptr_t DRAWENTRY_TINT = 0x2;
+	static const uintptr_t DRAWENTRY_STAGECALLBACK = 0x0;
+	static const uintptr_t DRAWENTRY_FADE = 0x1;
+	static const uintptr_t DRAWENTRY_TINT = 0x2;
 
 	// Called after graphics driver was initialized for use for the first time
 	virtual void OnInit();
@@ -178,7 +183,7 @@ protected:
 	// Sprite batch parameters
 	SpriteBatchDescs _spriteBatchDesc;
 	// The range of sprites in this sprite batch (counting nested sprites):
-	// the last of the previous batch, and the last of the current.
+	// the index of a first of the current batch, and the next index past the last one.
 	std::vector<std::pair<size_t, size_t>> _spriteBatchRange;
 	// The index of a currently filled sprite batch
 	size_t _actSpriteBatch;
@@ -228,6 +233,8 @@ protected:
 struct TextureTile {
 	int x = 0, y = 0;
 	int width = 0, height = 0;
+	// allocWidth and allocHeight tell the actual allocated texture size
+	int allocWidth = 0, allocHeight = 0;
 };
 
 
@@ -239,7 +246,13 @@ public:
 	VideoMemoryGraphicsDriver();
 	~VideoMemoryGraphicsDriver() override;
 
-	bool UsesMemoryBackBuffer() override;
+	bool RequiresFullRedrawEachFrame() override { return true; }
+	bool HasAcceleratedTransform() override { return true; }
+	// NOTE: although we do use ours, we do not let engine draw upon it;
+	// only plugin handling are allowed to request our mem buffer
+	// for compatibility reasons.
+	bool UsesMemoryBackBuffer() override { return false; }
+
 	Bitmap *GetMemoryBackBuffer() override;
 	void SetMemoryBackBuffer(Bitmap *backBuffer) override;
 	Bitmap *GetStageBackBuffer(bool mark_dirty) override;
@@ -248,13 +261,13 @@ public:
 	// Creates new texture using given parameters
 	IDriverDependantBitmap *CreateDDB(int width, int height, int color_depth, bool opaque) override = 0;
 	// Creates new texture and copy bitmap contents over
-	IDriverDependantBitmap *CreateDDBFromBitmap(Bitmap *bitmap, bool hasAlpha, bool opaque = false) override;
+	IDriverDependantBitmap *CreateDDBFromBitmap(Bitmap *bitmap, bool has_alpha, bool opaque = false) override;
 	// Get shared texture from cache, or create from bitmap and assign ID
-	IDriverDependantBitmap *GetSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) override;
+	IDriverDependantBitmap *GetSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool has_alpha, bool opaque) override;
 	// Removes the shared texture reference, will force the texture to recreate next time
 	void ClearSharedDDB(uint32_t sprite_id) override;
 	// Updates shared texture data, but only if it is present in the cache
-	void UpdateSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) override;
+	void UpdateSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool has_alpha, bool opaque) override;
 	void DestroyDDB(IDriverDependantBitmap* ddb) override;
 
 	// Sets stage screen parameters for the current batch.
@@ -264,7 +277,7 @@ protected:
 	// Create texture data with the given parameters
 	virtual TextureData *CreateTextureData(int width, int height, bool opaque, bool as_render_target = false) = 0;
 	// Update texture data from the given bitmap
-	virtual void UpdateTextureData(TextureData *txdata, Bitmap *bmp, bool opaque, bool hasAlpha) = 0;
+	virtual void UpdateTextureData(TextureData *txdata, Bitmap *bmp, bool has_alpha, bool opaque) = 0;
 	// Create DDB using preexisting texture data
 	virtual IDriverDependantBitmap *CreateDDB(std::shared_ptr<TextureData> txdata,
 		  int width, int height, int color_depth, bool opaque) = 0;
@@ -299,10 +312,10 @@ protected:
 
 	// Prepares bitmap to be applied to the texture, copies pixels to the provided buffer
 	void BitmapToVideoMem(const Bitmap *bitmap, const bool has_alpha, const TextureTile *tile,
-		char *dst_ptr, const int dst_pitch, const bool usingLinearFiltering);
+						  uint8_t *dst_ptr, const int dst_pitch, const bool usingLinearFiltering);
 	// Same but optimized for opaque source bitmaps which ignore transparent "mask color"
-	void BitmapToVideoMemOpaque(const Bitmap *bitmap, const bool has_alpha, const TextureTile *tile,
-		char *dst_ptr, const int dst_pitch);
+	void BitmapToVideoMemOpaque(const Bitmap *bitmap, const TextureTile *tile,
+								uint8_t *dst_ptr, const int dst_pitch);
 
 	// Stage virtual screen is used to let plugins draw custom graphics
 	// in between render stages (between room and GUI, after GUI, and so on)
@@ -343,6 +356,16 @@ private:
 	};
 	std::vector<ScreenFx> _fxPool;
 	size_t _fxIndex; // next free pool item
+
+	// specialized method to convert bitmap to video memory depending on bit depth
+	template<typename T, bool HasAlpha>
+	void BitmapToVideoMemImpl(const Bitmap *bitmap, const TextureTile *tile, uint8_t *dst_ptr, const int dst_pitch);
+
+	template<typename T>
+	void BitmapToVideoMemOpaqueImpl(const Bitmap *bitmap, const TextureTile *tile, uint8_t *dst_ptr, const int dst_pitch);
+
+	template<typename T, bool HasAlpha>
+	void BitmapToVideoMemLinearImpl(const Bitmap *bitmap, const TextureTile *tile, uint8_t *dst_ptr, const int dst_pitch);
 
 	// Texture short-term cache:
 	// - caches textures while they are in the immediate use;

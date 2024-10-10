@@ -98,6 +98,12 @@ size_t ustrsize(const char *s) {
 	return strlen(s);
 }
 
+static int utf8_validate(int c) {
+	if (c < 0 || c > 0x10FFFF || (0xD800 <= c && c <= 0xDFFF))
+		return 0xFFFD;
+	return c;
+}
+
 int utf8_getc(const char *s) {
 	int c = *((const unsigned char *)(s++));
 	int n, t;
@@ -119,7 +125,7 @@ int utf8_getc(const char *s) {
 		}
 	}
 
-	return c;
+	return utf8_validate(c);
 }
 
 int utf8_getx(char **s) {
@@ -145,12 +151,13 @@ int utf8_getx(char **s) {
 		}
 	}
 
-	return c;
+	return utf8_validate(c);
 }
 
 int utf8_setc(char *s, int c) {
 	int size, bits, b, i;
 
+	c = utf8_validate(c);
 	if (c < 128) {
 		*s = c;
 		return 1;
@@ -197,6 +204,7 @@ int utf8_width(const char *s) {
 int utf8_cwidth(int c) {
 	int size, bits, b;
 
+	c = utf8_validate(c);
 	if (c < 128)
 		return 1;
 
@@ -216,7 +224,7 @@ int utf8_cwidth(int c) {
 }
 
 int utf8_isok(int c) {
-	return true;
+	return utf8_validate(c) == c;
 }
 
 

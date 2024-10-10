@@ -32,7 +32,6 @@
 //include <stdarg.h>
 #include "ags/shared/core/types.h"
 #include "ags/engine/ac/runtime_defines.h"
-#include "ags/engine/ac/statobj/ags_static_object.h"
 #include "ags/shared/debugging/out.h"
 
 namespace AGS3 {
@@ -58,6 +57,11 @@ inline const char *ScriptVSprintf(char *buffer, size_t buf_length, const char *f
 	return ScriptSprintf(buffer, buf_length, format, nullptr, 0, &arg_ptr);
 }
 
+// Helper macro for registering an API function for both script and plugin,
+// for the common case where they have similar names: the script's "translator"
+// function's name is derived from the real one by adding a "Sc_" prefix.
+#define API_FN_PAIR(FN_NAME) Sc_##FN_NAME, (void *)FN_NAME
+
 // Helper macros for script functions;
 // asserting for internal mistakes; suppressing "unused param" warnings
 #define ASSERT_SELF(METHOD) \
@@ -74,29 +78,17 @@ inline const char *ScriptVSprintf(char *buffer, size_t buf_length, const char *f
     ASSERT_PARAM_COUNT(METHOD, X)
 
 //-----------------------------------------------------------------------------
-// Get/set variables
-
-#define API_VARGET_INT(VARIABLE) \
-	(void)params; (void)param_count; \
-	return RuntimeScriptValue().SetInt32(VARIABLE)
-
-#define API_VARSET_PINT(VARIABLE) \
-	ASSERT_VARIABLE_VALUE(VARIABLE); \
-	VARIABLE = params[0].IValue; \
-	return RuntimeScriptValue()
-
-//-----------------------------------------------------------------------------
 // Calls to ScriptSprintf with automatic translation
 
 #define API_SCALL_SCRIPT_SPRINTF(FUNCTION, PARAM_COUNT) \
 	ASSERT_PARAM_COUNT(FUNCTION, PARAM_COUNT); \
 	char ScSfBuffer[STD_BUFFER_SIZE]; \
-	const char *scsf_buffer = ScriptSprintf(ScSfBuffer, STD_BUFFER_SIZE, get_translation(params[PARAM_COUNT - 1].Ptr), params + PARAM_COUNT, param_count - PARAM_COUNT)
+	const char *scsf_buffer = ScriptSprintf(ScSfBuffer, STD_BUFFER_SIZE, get_translation(params[PARAM_COUNT - 1].CStr), params + PARAM_COUNT, param_count - PARAM_COUNT)
 
 #define API_OBJCALL_SCRIPT_SPRINTF(METHOD, PARAM_COUNT) \
 	ASSERT_OBJ_PARAM_COUNT(METHOD, PARAM_COUNT); \
 	char ScSfBuffer[STD_BUFFER_SIZE]; \
-	const char *scsf_buffer = ScriptSprintf(ScSfBuffer, STD_BUFFER_SIZE, get_translation(params[PARAM_COUNT - 1].Ptr), params + PARAM_COUNT, param_count - PARAM_COUNT)
+	const char *scsf_buffer = ScriptSprintf(ScSfBuffer, STD_BUFFER_SIZE, get_translation(params[PARAM_COUNT - 1].CStr), params + PARAM_COUNT, param_count - PARAM_COUNT)
 
 //-----------------------------------------------------------------------------
 // Calls to ScriptSprintf without translation
@@ -104,7 +96,7 @@ inline const char *ScriptVSprintf(char *buffer, size_t buf_length, const char *f
 #define API_SCALL_SCRIPT_SPRINTF_PURE(FUNCTION, PARAM_COUNT) \
     ASSERT_PARAM_COUNT(FUNCTION, PARAM_COUNT); \
     char ScSfBuffer[STD_BUFFER_SIZE]; \
-    const char *scsf_buffer = ScriptSprintf(ScSfBuffer, STD_BUFFER_SIZE, params[PARAM_COUNT - 1].Ptr, params + PARAM_COUNT, param_count - PARAM_COUNT)
+    const char *scsf_buffer = ScriptSprintf(ScSfBuffer, STD_BUFFER_SIZE, params[PARAM_COUNT - 1].CStr, params + PARAM_COUNT, param_count - PARAM_COUNT)
 
 
 //-----------------------------------------------------------------------------
@@ -115,6 +107,13 @@ inline const char *ScriptVSprintf(char *buffer, size_t buf_length, const char *f
 	va_start(args, FORMAT_STR); \
 	char ScSfBuffer[STD_BUFFER_SIZE]; \
 	const char *scsf_buffer = ScriptVSprintf(ScSfBuffer, STD_BUFFER_SIZE, get_translation(FORMAT_STR), args); \
+	va_end(args)
+
+#define API_PLUGIN_SCRIPT_SPRINTF_PURE(FORMAT_STR) \
+	va_list args; \
+	va_start(args, FORMAT_STR); \
+	char ScSfBuffer[STD_BUFFER_SIZE]; \
+	const char *scsf_buffer = ScriptVSprintf(ScSfBuffer, STD_BUFFER_SIZE, FORMAT_STR, args); \
 	va_end(args)
 
 //-----------------------------------------------------------------------------
@@ -307,92 +306,107 @@ inline const char *ScriptVSprintf(char *buffer, size_t buf_length, const char *f
 
 #define API_SCALL_OBJ(RET_CLASS, RET_MGR, FUNCTION) \
 	(void)params; (void)param_count; \
-	return RuntimeScriptValue().SetDynamicObject((void*)(RET_CLASS*)FUNCTION(), &RET_MGR)
-
-#define API_CONST_SCALL_OBJ(RET_CLASS, RET_MGR, FUNCTION) \
-	return RuntimeScriptValue().SetDynamicObject(const_cast<void *>((const void *)(RET_CLASS*)FUNCTION()), &RET_MGR)
-
+	return RuntimeScriptValue().SetScriptObject(const_cast<void *>((const void *)(RET_CLASS*)FUNCTION()), &RET_MGR)
+/*
+	#define API_CONST_SCALL_OBJ(RET_CLASS, RET_MGR, FUNCTION) \
+	return RuntimeScriptValue().SetScriptObject(const_cast<void *>((const void *)(RET_CLASS*)FUNCTION()), &RET_MGR)
+*/
 #define API_SCALL_OBJ_PINT(RET_CLASS, RET_MGR, FUNCTION) \
 	ASSERT_PARAM_COUNT(FUNCTION, 1); \
-	return RuntimeScriptValue().SetDynamicObject((void*)(RET_CLASS*)FUNCTION(params[0].IValue), &RET_MGR)
-
+	return RuntimeScriptValue().SetScriptObject(const_cast<void *>((const void *)(RET_CLASS*)FUNCTION(params[0].IValue)), &RET_MGR)
+/*
 #define API_CONST_SCALL_OBJ_PINT(RET_CLASS, RET_MGR, FUNCTION) \
 	ASSERT_PARAM_COUNT(FUNCTION, 1); \
-	return RuntimeScriptValue().SetDynamicObject(const_cast<void *>((const void *)(RET_CLASS*)FUNCTION(params[0].IValue)), &RET_MGR)
-
+	return RuntimeScriptValue().SetScriptObject(const_cast<void *>((const void *)(RET_CLASS*)FUNCTION(params[0].IValue)), &RET_MGR)
+*/
 #define API_SCALL_OBJ_POBJ_PINT_PBOOL(RET_CLASS, RET_MGR, FUNCTION, P1CLASS) \
 	ASSERT_PARAM_COUNT(FUNCTION, 3); \
-	return RuntimeScriptValue().SetDynamicObject((void*)(RET_CLASS*)FUNCTION((P1CLASS*)params[0].Ptr, params[1].IValue, params[2].GetAsBool()), &RET_MGR)
+	return RuntimeScriptValue().SetScriptObject((void*)(RET_CLASS*)FUNCTION((P1CLASS*)params[0].Ptr, params[1].IValue, params[2].GetAsBool()), &RET_MGR)
 
 #define API_SCALL_OBJ_PINT2(RET_CLASS, RET_MGR, FUNCTION) \
 	ASSERT_PARAM_COUNT(FUNCTION, 2); \
-	return RuntimeScriptValue().SetDynamicObject((void*)(RET_CLASS*)FUNCTION(params[0].IValue, params[1].IValue), &RET_MGR)
-
+	return RuntimeScriptValue().SetScriptObject(const_cast<void *>((const void *)(RET_CLASS*)FUNCTION(params[0].IValue, params[1].IValue)), &RET_MGR)
+/*
 #define API_CONST_SCALL_OBJ_PINT2(RET_CLASS, RET_MGR, FUNCTION) \
 	ASSERT_PARAM_COUNT(FUNCTION, 2); \
-	return RuntimeScriptValue().SetDynamicObject(const_cast<void *>((const void *)(RET_CLASS*)FUNCTION(params[0].IValue, params[1].IValue)), &RET_MGR)
-
+	return RuntimeScriptValue().SetScriptObject(const_cast<void *>((const void *)(RET_CLASS*)FUNCTION(params[0].IValue, params[1].IValue)), &RET_MGR)
+*/
 #define API_SCALL_OBJ_PINT3_POBJ(RET_CLASS, RET_MGR, FUNCTION, P1CLASS) \
 	ASSERT_PARAM_COUNT(FUNCTION, 4); \
-	return RuntimeScriptValue().SetDynamicObject((void*)(RET_CLASS*)FUNCTION(params[0].IValue, params[1].IValue, params[2].IValue, (P1CLASS*)params[3].Ptr), &RET_MGR)
+	return RuntimeScriptValue().SetScriptObject((void*)(RET_CLASS*)FUNCTION(params[0].IValue, params[1].IValue, params[2].IValue, (P1CLASS*)params[3].Ptr), &RET_MGR)
 
 #define API_SCALL_OBJ_POBJ(RET_CLASS, RET_MGR, FUNCTION, P1CLASS) \
 	ASSERT_PARAM_COUNT(FUNCTION, 1); \
-	return RuntimeScriptValue().SetDynamicObject((void*)(RET_CLASS*)FUNCTION((P1CLASS*)params[0].Ptr), &RET_MGR)
-
+	return RuntimeScriptValue().SetScriptObject(const_cast<void *>((const void *)(RET_CLASS*)FUNCTION((P1CLASS*)params[0].Ptr)), &RET_MGR)
+/*
 #define API_CONST_SCALL_OBJ_POBJ(RET_CLASS, RET_MGR, FUNCTION, P1CLASS) \
 	ASSERT_PARAM_COUNT(FUNCTION, 1); \
-	return RuntimeScriptValue().SetDynamicObject(const_cast<void *>((const void *)(RET_CLASS*)FUNCTION((P1CLASS*)params[0].Ptr)), &RET_MGR)
-
+	return RuntimeScriptValue().SetScriptObject(const_cast<void *>((const void *)(RET_CLASS*)FUNCTION((P1CLASS*)params[0].Ptr)), &RET_MGR)
+*/
 #define API_SCALL_OBJAUTO(RET_CLASS, FUNCTION) \
 	(void)params; (void)param_count; \
 	RET_CLASS* ret_obj = FUNCTION(); \
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj)
+	return RuntimeScriptValue().SetScriptObject(ret_obj, ret_obj)
 
 #define API_SCALL_OBJAUTO_PINT(RET_CLASS, FUNCTION) \
 	ASSERT_PARAM_COUNT(FUNCTION, 1); \
 	RET_CLASS* ret_obj = FUNCTION(params[0].IValue); \
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj)
+	return RuntimeScriptValue().SetScriptObject(ret_obj, ret_obj)
 
 #define API_SCALL_OBJAUTO_PINT2(RET_CLASS, FUNCTION) \
 	ASSERT_PARAM_COUNT(FUNCTION, 2); \
 	RET_CLASS* ret_obj = FUNCTION(params[0].IValue, params[1].IValue); \
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj)
+	return RuntimeScriptValue().SetScriptObject(ret_obj, ret_obj)
 
 #define API_SCALL_OBJAUTO_PINT3(RET_CLASS, FUNCTION) \
 	ASSERT_PARAM_COUNT(FUNCTION, 3); \
 	RET_CLASS* ret_obj = FUNCTION(params[0].IValue, params[1].IValue, params[2].IValue); \
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj)
+	return RuntimeScriptValue().SetScriptObject(ret_obj, ret_obj)
 
 #define API_SCALL_OBJAUTO_PINT4(RET_CLASS, FUNCTION) \
 	ASSERT_PARAM_COUNT(FUNCTION, 4); \
 	RET_CLASS* ret_obj = FUNCTION(params[0].IValue, params[1].IValue, params[2].IValue, params[3].IValue); \
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj)
+	return RuntimeScriptValue().SetScriptObject(ret_obj, ret_obj)
 
 #define API_SCALL_OBJAUTO_PINT5(RET_CLASS, FUNCTION) \
 	ASSERT_PARAM_COUNT(FUNCTION, 5); \
 	RET_CLASS* ret_obj = FUNCTION(params[0].IValue, params[1].IValue, params[2].IValue, params[3].IValue, params[4].IValue); \
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj)
+	return RuntimeScriptValue().SetScriptObject(ret_obj, ret_obj)
+
+#define API_SCALL_OBJAUTO_PINT2_PBOOL(RET_CLASS, FUNCTION) \
+	ASSERT_PARAM_COUNT(FUNCTION, 3); \
+	RET_CLASS *ret_obj = FUNCTION(params[0].IValue, params[1].IValue, params[2].GetAsBool()); \
+	return RuntimeScriptValue().SetScriptObject(ret_obj, ret_obj)
+
+#define API_SCALL_OBJAUTO_PINT3_PBOOL(RET_CLASS, FUNCTION) \
+	ASSERT_PARAM_COUNT(FUNCTION, 4); \
+	RET_CLASS *ret_obj = FUNCTION(params[0].IValue, params[1].IValue, params[2].IValue, params[3].GetAsBool()); \
+	return RuntimeScriptValue().SetScriptObject(ret_obj, ret_obj)
+
+#define API_SCALL_OBJAUTO_PINT3_PBOOL2(RET_CLASS, FUNCTION) \
+	ASSERT_PARAM_COUNT(FUNCTION, 5); \
+	RET_CLASS *ret_obj = FUNCTION(params[0].IValue, params[1].IValue, params[2].IValue, params[3].GetAsBool(), params[4].GetAsBool()); \
+	return RuntimeScriptValue().SetScriptObject(ret_obj, ret_obj)
 
 #define API_SCALL_OBJAUTO_PBOOL2(RET_CLASS, FUNCTION) \
 	ASSERT_PARAM_COUNT(FUNCTION, 2); \
 	RET_CLASS* ret_obj = FUNCTION(params[0].GetAsBool(), params[1].GetAsBool()); \
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj)
+	return RuntimeScriptValue().SetScriptObject(ret_obj, ret_obj)
 
 #define API_SCALL_OBJAUTO_POBJ(RET_CLASS, FUNCTION, P1CLASS) \
 	ASSERT_PARAM_COUNT(FUNCTION, 1); \
 	RET_CLASS* ret_obj = FUNCTION((P1CLASS*)params[0].Ptr); \
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj)
+	return RuntimeScriptValue().SetScriptObject(ret_obj, ret_obj)
 
 #define API_SCALL_OBJAUTO_POBJ_PINT(RET_CLASS, FUNCTION, P1CLASS) \
 	ASSERT_PARAM_COUNT(FUNCTION, 2); \
 	RET_CLASS* ret_obj = (RET_CLASS*)FUNCTION((P1CLASS*)params[0].Ptr, params[1].IValue); \
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj)
+	return RuntimeScriptValue().SetScriptObject(ret_obj, ret_obj)
 
 #define API_SCALL_OBJAUTO_POBJ_PINT4(RET_CLASS, FUNCTION, P1CLASS) \
 	ASSERT_PARAM_COUNT(FUNCTION, 5); \
 	RET_CLASS* ret_obj = FUNCTION((P1CLASS*)params[0].Ptr, params[1].IValue, params[2].IValue, params[3].IValue, params[4].IValue); \
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj)
+	return RuntimeScriptValue().SetScriptObject(ret_obj, ret_obj)
 
 
 #define API_SCALL_STOBJ_POBJ2(RET_CLASS, FUNCTION, P1CLASS, P2CLASS) \
@@ -513,7 +527,7 @@ inline const char *ScriptVSprintf(char *buffer, size_t buf_length, const char *f
 
 #define API_OBJCALL_INT_PINT_POBJ(CLASS, METHOD, P1CLASS) \
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 2); \
-	return RuntimeScriptValue().SetInt32(METHOD((CLASS*)self, params[0].IValue, params[1].Ptr))
+	return RuntimeScriptValue().SetInt32(METHOD((CLASS*)self, params[0].IValue, params[1].CStr))
 
 #define API_OBJCALL_INT_PINT2(CLASS, METHOD) \
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 2); \
@@ -561,70 +575,70 @@ inline const char *ScriptVSprintf(char *buffer, size_t buf_length, const char *f
 
 #define API_OBJCALL_OBJ_PINT_POBJ(CLASS, RET_CLASS, RET_MGR, METHOD, P1CLASS) \
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 2); \
-	return RuntimeScriptValue().SetDynamicObject((void*)METHOD((CLASS*)self, params[0].IValue, (P1CLASS*)params[1].Ptr), &RET_MGR)
+	return RuntimeScriptValue().SetScriptObject((void*)METHOD((CLASS*)self, params[0].IValue, (P1CLASS*)params[1].Ptr), &RET_MGR)
 
 #define API_OBJCALL_OBJ_POBJ2_PINT(CLASS, RET_CLASS, RET_MGR, METHOD, P1CLASS, P2CLASS) \
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 3); \
-	return RuntimeScriptValue().SetDynamicObject((void*)METHOD((CLASS*)self, (P1CLASS*)params[0].Ptr, (P2CLASS*)params[1].Ptr, params[2].IValue), &RET_MGR)
+	return RuntimeScriptValue().SetScriptObject((void*)METHOD((CLASS*)self, (P1CLASS*)params[0].Ptr, (P2CLASS*)params[1].Ptr, params[2].IValue), &RET_MGR)
 
 #define API_OBJCALL_OBJ_POBJ2_PBOOL(CLASS, RET_CLASS, RET_MGR, METHOD, P1CLASS, P2CLASS) \
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 3); \
-	return RuntimeScriptValue().SetDynamicObject((void*)METHOD((CLASS*)self, (P1CLASS*)params[0].Ptr, (P2CLASS*)params[1].Ptr, params[2].GetAsBool()), &RET_MGR)
-
+	return RuntimeScriptValue().SetScriptObject(const_cast<void *>((const void *)METHOD((CLASS*)self, (P1CLASS*)params[0].Ptr, (P2CLASS*)params[1].Ptr, params[2].GetAsBool())), &RET_MGR)
+/*
 #define API_CONST_OBJCALL_OBJ_POBJ2_PBOOL(CLASS, RET_CLASS, RET_MGR, METHOD, P1CLASS, P2CLASS) \
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 3); \
-	return RuntimeScriptValue().SetDynamicObject(const_cast<void *>((const void *)METHOD((CLASS*)self, (P1CLASS*)params[0].Ptr, (P2CLASS*)params[1].Ptr, params[2].GetAsBool())), &RET_MGR)
-
+	return RuntimeScriptValue().SetScriptObject(const_cast<void *>((const void *)METHOD((CLASS*)self, (P1CLASS*)params[0].Ptr, (P2CLASS*)params[1].Ptr, params[2].GetAsBool())), &RET_MGR)
+*/
 #define API_OBJCALL_OBJ(CLASS, RET_CLASS, RET_MGR, METHOD) \
 	ASSERT_SELF(METHOD); \
-	return RuntimeScriptValue().SetDynamicObject((void*)(RET_CLASS*)METHOD((CLASS*)self), &RET_MGR)
-
+	return RuntimeScriptValue().SetScriptObject(const_cast<void *>((const void *)(RET_CLASS*)METHOD((CLASS*)self)), &RET_MGR)
+/*
 #define API_CONST_OBJCALL_OBJ(CLASS, RET_CLASS, RET_MGR, METHOD) \
 	ASSERT_SELF(METHOD); \
-	return RuntimeScriptValue().SetDynamicObject(const_cast<void *>((const void *)(RET_CLASS*)METHOD((CLASS*)self)), &RET_MGR)
-
+	return RuntimeScriptValue().SetScriptObject(const_cast<void *>((const void *)(RET_CLASS*)METHOD((CLASS*)self)), &RET_MGR)
+*/
 #define API_OBJCALL_OBJ_PINT(CLASS, RET_CLASS, RET_MGR, METHOD) \
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 1); \
-	return RuntimeScriptValue().SetDynamicObject((void*)(RET_CLASS*)METHOD((CLASS*)self, params[0].IValue), &RET_MGR)
-
+	return RuntimeScriptValue().SetScriptObject(const_cast<void *>((const void *)(RET_CLASS*)METHOD((CLASS*)self, params[0].IValue)), &RET_MGR)
+/*
 #define API_CONST_OBJCALL_OBJ_PINT(CLASS, RET_CLASS, RET_MGR, METHOD) \
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 1); \
-	return RuntimeScriptValue().SetDynamicObject(const_cast<void *>((const void *)(RET_CLASS*)METHOD((CLASS*)self, params[0].IValue)), &RET_MGR)
-
+	return RuntimeScriptValue().SetScriptObject(const_cast<void *>((const void *)(RET_CLASS*)METHOD((CLASS*)self, params[0].IValue)), &RET_MGR)
+*/
 #define API_OBJCALL_OBJ_PINT2(CLASS, RET_CLASS, RET_MGR, METHOD) \
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 2); \
-	return RuntimeScriptValue().SetDynamicObject((void*)(RET_CLASS*)METHOD((CLASS*)self, params[0].IValue, params[1].IValue), &RET_MGR)
-
+	return RuntimeScriptValue().SetScriptObject(const_cast<void *>((const void *)(RET_CLASS*)METHOD((CLASS*)self, params[0].IValue, params[1].IValue)), &RET_MGR)
+/*
 #define API_CONST_OBJCALL_OBJ_PINT2(CLASS, RET_CLASS, RET_MGR, METHOD) \
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 2); \
-	return RuntimeScriptValue().SetDynamicObject(const_cast<void *>((const void *)(RET_CLASS*)METHOD((CLASS*)self, params[0].IValue, params[1].IValue)), &RET_MGR)
-
+	return RuntimeScriptValue().SetScriptObject(const_cast<void *>((const void *)(RET_CLASS*)METHOD((CLASS*)self, params[0].IValue, params[1].IValue)), &RET_MGR)
+*/
 #define API_OBJCALL_OBJ_PINT3(CLASS, RET_CLASS, RET_MGR, METHOD) \
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 3); \
-	return RuntimeScriptValue().SetDynamicObject((void*)(RET_CLASS*)METHOD((CLASS*)self, params[0].IValue, params[1].IValue, params[2].IValue), &RET_MGR)
+	return RuntimeScriptValue().SetScriptObject((void*)(RET_CLASS*)METHOD((CLASS*)self, params[0].IValue, params[1].IValue, params[2].IValue), &RET_MGR)
 
 #define API_OBJCALL_OBJ_POBJ(CLASS, RET_CLASS, RET_MGR, METHOD, P1CLASS) \
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 1); \
-	return RuntimeScriptValue().SetDynamicObject((void*)(RET_CLASS*)METHOD((CLASS*)self, (P1CLASS*)params[0].Ptr), &RET_MGR)
-
+	return RuntimeScriptValue().SetScriptObject(const_cast<void *>((const void *)(RET_CLASS*)METHOD((CLASS*)self, (P1CLASS*)params[0].Ptr)), &RET_MGR)
+/*
 #define API_CONST_OBJCALL_OBJ_POBJ(CLASS, RET_CLASS, RET_MGR, METHOD, P1CLASS) \
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 1); \
-	return RuntimeScriptValue().SetDynamicObject(const_cast<void *>((const void *)(RET_CLASS*)METHOD((CLASS*)self, (P1CLASS*)params[0].Ptr)), &RET_MGR)
-
+	return RuntimeScriptValue().SetScriptObject(const_cast<void *>((const void *)(RET_CLASS*)METHOD((CLASS*)self, (P1CLASS*)params[0].Ptr)), &RET_MGR)
+*/
 #define API_OBJCALL_OBJAUTO(CLASS, RET_CLASS, METHOD) \
 	ASSERT_SELF(METHOD); \
 	RET_CLASS* ret_obj = METHOD((CLASS*)self); \
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj)
+	return RuntimeScriptValue().SetScriptObject(ret_obj, ret_obj)
 
 #define API_OBJCALL_OBJAUTO_PINT2_PBOOL(CLASS, RET_CLASS, METHOD) \
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 3); \
 	RET_CLASS* ret_obj = METHOD((CLASS*)self, params[0].IValue, params[1].IValue, params[2].GetAsBool()); \
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj)
+	return RuntimeScriptValue().SetScriptObject(ret_obj, ret_obj)
 
 #define API_OBJCALL_OBJAUTO_POBJ(CLASS, RET_CLASS, METHOD, P1CLASS) \
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 1); \
 	RET_CLASS* ret_obj = METHOD((CLASS*)self, (P1CLASS*)params[0].Ptr); \
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj)
+	return RuntimeScriptValue().SetScriptObject(ret_obj, ret_obj)
 
 } // namespace AGS3
 

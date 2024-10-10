@@ -37,10 +37,10 @@ public:
 	void add_inventory(ScriptMethodParams &params);
 	void AddInventoryToCharacter(ScriptMethodParams &params);
 	void AnimateButton(ScriptMethodParams &params);
-	void scAnimateCharacter(ScriptMethodParams &params);
-	void AnimateCharacterEx(ScriptMethodParams &params);
-	void AnimateObject(ScriptMethodParams &params);
-	void AnimateObjectEx(ScriptMethodParams &params);
+	void AnimateCharacter4(ScriptMethodParams &params);
+	void AnimateCharacter6(ScriptMethodParams &params);
+	void AnimateObject4(ScriptMethodParams &params);
+	void AnimateObject6(ScriptMethodParams &params);
 	void AreCharactersColliding(ScriptMethodParams &params);
 	void AreCharObjColliding(ScriptMethodParams &params);
 	void AreObjectsColliding(ScriptMethodParams &params);
@@ -163,7 +163,7 @@ public:
 	void GiveScore(ScriptMethodParams &params);
 	void HasPlayerBeenInRoom(ScriptMethodParams &params);
 	void HideMouseCursor(ScriptMethodParams &params);
-	void sc_inputbox(ScriptMethodParams &params);
+	void ShowInputBox(ScriptMethodParams &params);
 	void InterfaceOff(ScriptMethodParams &params);
 	void InterfaceOn(ScriptMethodParams &params);
 	void IntToFloat(ScriptMethodParams &params);

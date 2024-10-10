@@ -49,12 +49,16 @@ struct HotspotState {
 };
 
 // Savegame data format for RoomStatus
-// TODO: fill in other versions (lookup the code history)
 enum RoomStatSvgVersion {
-	kRoomStatSvgVersion_Initial = 0,
-	kRoomStatSvgVersion_36025 = 3,
-	kRoomStatSvgVersion_36041 = 4,
-	kRoomStatSvgVersion_Current = kRoomStatSvgVersion_36041
+	kRoomStatSvgVersion_Initial = 0, // [UNSUPPORTED] from 3.5.0 pre-alpha
+	// NOTE: in 3.5.0 "Room States" had lower index than "Loaded Room State" by mistake
+	kRoomStatSvgVersion_350_Mismatch = 0, // an incorrect "Room States" version from 3.5.0
+	kRoomStatSvgVersion_350     = 1, // new movelist format (along with pathfinder)
+	kRoomStatSvgVersion_36016   = 2, // hotspot and object names
+	kRoomStatSvgVersion_36025   = 3, // object animation volume
+	kRoomStatSvgVersion_36041   = 4, // room state's contentFormat
+	kRoomStatSvgVersion_36109   = 5, // removed movelists, save externally
+	kRoomStatSvgVersion_Current = kRoomStatSvgVersion_36109
 };
 
 // RoomStatus contains everything about a room that could change at runtime.
@@ -98,8 +102,7 @@ struct RoomStatus {
 	void FreeScriptData();
 	void FreeProperties();
 
-	void ReadFromFile_v321(Shared::Stream *in, GameDataVersion data_ver);
-	void ReadRoomObjects_Aligned(Shared::Stream *in);
+	void ReadFromSavegame_v321(Shared::Stream *in, GameDataVersion data_ver);
 	void ReadFromSavegame(Shared::Stream *in, GameDataVersion data_ver, RoomStatSvgVersion save_ver);
 	void WriteToSavegame(Shared::Stream *out, GameDataVersion data_ver) const;
 };

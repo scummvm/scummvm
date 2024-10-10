@@ -249,18 +249,18 @@ IDriverDependantBitmap *ScummVMRendererGraphicsDriver::CreateDDB(int width, int 
 	return new ALSoftwareBitmap(width, height, color_depth, opaque);
 }
 
-IDriverDependantBitmap *ScummVMRendererGraphicsDriver::CreateDDBFromBitmap(Bitmap *bitmap, bool hasAlpha, bool opaque) {
-	return new ALSoftwareBitmap(bitmap, opaque, hasAlpha);
+IDriverDependantBitmap *ScummVMRendererGraphicsDriver::CreateDDBFromBitmap(Bitmap *bitmap, bool has_alpha, bool opaque) {
+	return new ALSoftwareBitmap(bitmap, has_alpha, opaque);
 }
 
 IDriverDependantBitmap *ScummVMRendererGraphicsDriver::CreateRenderTargetDDB(int width, int height, int color_depth, bool opaque) {
 	return new ALSoftwareBitmap(width, height, color_depth, opaque);
 }
 
-void ScummVMRendererGraphicsDriver::UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Bitmap *bitmap, bool hasAlpha) {
+void ScummVMRendererGraphicsDriver::UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Bitmap *bitmap, bool has_alpha) {
 	ALSoftwareBitmap *alSwBmp = (ALSoftwareBitmap *)bitmapToUpdate;
 	alSwBmp->_bmp = bitmap;
-	alSwBmp->_hasAlpha = hasAlpha;
+	alSwBmp->_hasAlpha = has_alpha;
 }
 
 void ScummVMRendererGraphicsDriver::DestroyDDB(IDriverDependantBitmap *bitmap) {
@@ -679,21 +679,21 @@ void ScummVMRendererGraphicsDriver::SetStageBackBuffer(Bitmap *backBuffer) {
 		_stageVirtualScreen = cur_stage;
 }
 
-bool ScummVMRendererGraphicsDriver::GetCopyOfScreenIntoBitmap(Bitmap *destination, bool at_native_res, GraphicResolution *want_fmt) {
+bool ScummVMRendererGraphicsDriver::GetCopyOfScreenIntoBitmap(Bitmap *destination, const Rect *src_rect, bool at_native_res,
+															  GraphicResolution *want_fmt, uint32_t /*batch_skip_filter*/) {
 	(void)at_native_res; // software driver always renders at native resolution at the moment
-	// software filter is taught to copy to any size
+	// software filter is taught to copy to any size, so only check color depth
 	if (destination->GetColorDepth() != _srcColorDepth) {
 		if (want_fmt)
 			*want_fmt = GraphicResolution(destination->GetWidth(), destination->GetHeight(), _srcColorDepth);
 		return false;
 	}
 
-	if (destination->GetSize() == virtualScreen->GetSize()) {
-		destination->Blit(virtualScreen, 0, 0, 0, 0, virtualScreen->GetWidth(), virtualScreen->GetHeight());
+	Rect copy_from = src_rect ? *src_rect : _srcRect;
+	if (destination->GetSize() == copy_from.GetSize()) {
+		destination->Blit(virtualScreen, copy_from.Left, copy_from.Top, 0, 0, copy_from.GetWidth(), copy_from.GetHeight());
 	} else {
-		destination->StretchBlt(virtualScreen,
-		                        RectWH(0, 0, virtualScreen->GetWidth(), virtualScreen->GetHeight()),
-		                        RectWH(0, 0, destination->GetWidth(), destination->GetHeight()));
+		destination->StretchBlt(virtualScreen, copy_from, RectWH(destination->GetSize()));
 	}
 	return true;
 }
@@ -817,7 +817,7 @@ void ScummVMRendererGraphicsDriver::__fade_out_range(int speed, int from, int to
 	__fade_from_range(temp, faded_out_palette, speed, from, to);
 }
 
-void ScummVMRendererGraphicsDriver::FadeOut(int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) {
+void ScummVMRendererGraphicsDriver::FadeOut(int speed, int targetColourRed, int targetColourGreen, int targetColourBlue, uint32_t /*batch_skip_filter*/) {
 	if (_srcColorDepth > 8) {
 		highcolor_fade_out(virtualScreen, _drawPostScreenCallback, speed * 4, targetColourRed, targetColourGreen, targetColourBlue);
 	} else {
@@ -825,7 +825,7 @@ void ScummVMRendererGraphicsDriver::FadeOut(int speed, int targetColourRed, int 
 	}
 }
 
-void ScummVMRendererGraphicsDriver::FadeIn(int speed, PALETTE p, int targetColourRed, int targetColourGreen, int targetColourBlue) {
+void ScummVMRendererGraphicsDriver::FadeIn(int speed, PALETTE p, int targetColourRed, int targetColourGreen, int targetColourBlue, uint32_t /*batch_skip_filter*/) {
 	if (_drawScreenCallback) {
 		_drawScreenCallback();
 		RenderToBackBuffer();
@@ -838,7 +838,7 @@ void ScummVMRendererGraphicsDriver::FadeIn(int speed, PALETTE p, int targetColou
 	}
 }
 
-void ScummVMRendererGraphicsDriver::BoxOutEffect(bool blackingOut, int speed, int delay) {
+void ScummVMRendererGraphicsDriver::BoxOutEffect(bool blackingOut, int speed, int delay, uint32_t /*batch_skip_filter*/) {
 	if (blackingOut) {
 		int yspeed = _srcRect.GetHeight() / (_srcRect.GetWidth() / speed);
 		int boxwid = speed, boxhit = yspeed;

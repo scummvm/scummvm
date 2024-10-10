@@ -33,8 +33,7 @@
 #include "ags/engine/ac/move_list.h"
 #include "ags/engine/ac/dynobj/all_dynamic_classes.h"
 #include "ags/engine/ac/dynobj/all_script_classes.h"
-#include "ags/engine/ac/statobj/ags_static_object.h"
-#include "ags/engine/ac/statobj/static_array.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/ac/view.h"
 #include "ags/shared/core/asset_manager.h"
 #include "ags/engine/debugging/debug_log.h"
@@ -45,6 +44,7 @@
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/ddb.h"
 #include "ags/shared/gui/gui_label.h"
+#include "ags/shared/gui/gui_inv.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/plugins/plugin_engine.h"
@@ -75,8 +75,6 @@ String GetGameInitErrorText(GameInitErrorType err) {
 		return "Too many audio types for this engine to handle.";
 	case kGameInitErr_EntityInitFail:
 		return "Failed to initialize game entities.";
-	case kGameInitErr_TooManyPlugins:
-		return "Too many plugins for this engine to handle.";
 	case kGameInitErr_PluginNameInvalid:
 		return "Plugin name is invalid.";
 	case kGameInitErr_NoGlobalScript:
@@ -100,7 +98,7 @@ void InitAndRegisterAudioObjects(GameSetupStruct &game) {
 		// between game versions, for now.
 		game.audioClips[i].id = i;
 		ccRegisterManagedObject(&game.audioClips[i], &_GP(ccDynamicAudioClip));
-		ccAddExternalDynamicObject(game.audioClips[i].scriptName, &game.audioClips[i], &_GP(ccDynamicAudioClip));
+		ccAddExternalScriptObject(game.audioClips[i].scriptName, &game.audioClips[i], &_GP(ccDynamicAudioClip));
 	}
 }
 
@@ -123,20 +121,20 @@ void InitAndRegisterCharacters(GameSetupStruct &game) {
 		ccRegisterManagedObject(&game.chars[i], &_GP(ccDynamicCharacter));
 
 		// export the character's script object
-		ccAddExternalDynamicObject(game.chars[i].scrname, &game.chars[i], &_GP(ccDynamicCharacter));
+		ccAddExternalScriptObject(game.chars2[i].scrname_new, &game.chars[i], &_GP(ccDynamicCharacter));
 	}
 }
 
 // Initializes dialog and registers them in the script system
 void InitAndRegisterDialogs(GameSetupStruct &game) {
-	_G(scrDialog) = new ScriptDialog[game.numdialog];
+	_GP(scrDialog).resize(MAX(1, game.numdialog)); // ensure at least 1 element, we must register buffer
 	for (int i = 0; i < game.numdialog; ++i) {
-		_G(scrDialog)[i].id = i;
-		_G(scrDialog)[i].reserved = 0;
-		ccRegisterManagedObject(&_G(scrDialog)[i], &_GP(ccDynamicDialog));
+		_GP(scrDialog)[i].id = i;
+		_GP(scrDialog)[i].reserved = 0;
+		ccRegisterManagedObject(&_GP(scrDialog)[i], &_GP(ccDynamicDialog));
 
 		if (!game.dialogScriptNames[i].IsEmpty())
-			ccAddExternalDynamicObject(game.dialogScriptNames[i], &_G(scrDialog)[i], &_GP(ccDynamicDialog));
+			ccAddExternalScriptObject(game.dialogScriptNames[i], &_GP(scrDialog)[i], &_GP(ccDynamicDialog));
 	}
 }
 
@@ -152,9 +150,9 @@ void InitAndRegisterDialogOptions() {
 
 // Initializes gui and registers them in the script system
 HError InitAndRegisterGUI(GameSetupStruct &game) {
-	_G(scrGui) = new ScriptGUI[game.numgui];
+	_GP(scrGui).resize(MAX(1, game.numgui)); // ensure at least 1 element, we must register buffer
 	for (int i = 0; i < game.numgui; ++i) {
-		_G(scrGui)[i].id = -1;
+		_GP(scrGui)[i].id = -1;
 	}
 
 	for (int i = 0; i < game.numgui; ++i) {
@@ -164,9 +162,9 @@ HError InitAndRegisterGUI(GameSetupStruct &game) {
 			return err;
 		// export all the GUI's controls
 		export_gui_controls(i);
-		_G(scrGui)[i].id = i;
-		ccAddExternalDynamicObject(_GP(guis)[i].Name, &_G(scrGui)[i], &_GP(ccDynamicGUI));
-		ccRegisterManagedObject(&_G(scrGui)[i], &_GP(ccDynamicGUI));
+		_GP(scrGui)[i].id = i;
+		ccAddExternalScriptObject(_GP(guis)[i].Name, &_GP(scrGui)[i], &_GP(ccDynamicGUI));
+		ccRegisterManagedObject(&_GP(scrGui)[i], &_GP(ccDynamicGUI));
 	}
 	return HError::None();
 }
@@ -179,7 +177,7 @@ void InitAndRegisterInvItems(GameSetupStruct &game) {
 		ccRegisterManagedObject(&_G(scrInv)[i], &_GP(ccDynamicInv));
 
 		if (!game.invScriptNames[i].IsEmpty())
-			ccAddExternalDynamicObject(game.invScriptNames[i], &_G(scrInv)[i], &_GP(ccDynamicInv));
+			ccAddExternalScriptObject(game.invScriptNames[i], &_G(scrInv)[i], &_GP(ccDynamicInv));
 	}
 }
 
@@ -220,11 +218,11 @@ void RegisterStaticArrays(GameSetupStruct &game) {
 
 	ccAddExternalStaticArray("character", &game.chars[0], &_GP(StaticCharacterArray));
 	ccAddExternalStaticArray("object", &_G(scrObj)[0], &_GP(StaticObjectArray));
-	ccAddExternalStaticArray("gui", &_G(scrGui)[0], &_GP(StaticGUIArray));
+	ccAddExternalStaticArray("gui", &_GP(scrGui)[0], &_GP(StaticGUIArray));
 	ccAddExternalStaticArray("hotspot", &_G(scrHotspot)[0], &_GP(StaticHotspotArray));
 	ccAddExternalStaticArray("region", &_G(scrRegion)[0], &_GP(StaticRegionArray));
 	ccAddExternalStaticArray("inventory", &_G(scrInv)[0], &_GP(StaticInventoryArray));
-	ccAddExternalStaticArray("dialog", &_G(scrDialog)[0], &_GP(StaticDialogArray));
+	ccAddExternalStaticArray("dialog", &_GP(scrDialog)[0], &_GP(StaticDialogArray));
 }
 
 // Initializes various game entities and registers them in the script system
@@ -241,13 +239,12 @@ HError InitAndRegisterGameEntities(GameSetupStruct &game) {
 	InitAndRegisterHotspots();
 	InitAndRegisterRegions();
 	InitAndRegisterRoomObjects();
-	_GP(play).CreatePrimaryViewportAndCamera();
 
 	RegisterStaticArrays(game);
 
 	setup_player_character(game.playercharacter);
 	if (_G(loaded_game_file_version) >= kGameVersion_270)
-		ccAddExternalStaticObject("player", &_G(sc_PlayerCharPtr), &_GP(GlobalStaticManager));
+		ccAddExternalScriptObject("player", &_G(sc_PlayerCharPtr), &_GP(GlobalStaticManager));
 	return HError::None();
 }
 
@@ -296,36 +293,109 @@ void LoadLipsyncData() {
 		Debug::Printf(kDbgMsg_Info, "Unknown speech lip sync format (%d).\nLip sync disabled.", lipsync_fmt);
 	} else {
 		_G(numLipLines) = speechsync->ReadInt32();
-		_G(splipsync) = (SpeechLipSyncLine *)malloc(sizeof(SpeechLipSyncLine) * _G(numLipLines));
+		_GP(splipsync).resize(_G(numLipLines));
 		for (int ee = 0; ee < _G(numLipLines); ee++) {
-			_G(splipsync)[ee].numPhonemes = speechsync->ReadInt16();
-			speechsync->Read(_G(splipsync)[ee].filename, 14);
-			_G(splipsync)[ee].endtimeoffs = (int32_t *)malloc(_G(splipsync)[ee].numPhonemes * sizeof(int));
-			speechsync->ReadArrayOfInt32(_G(splipsync)[ee].endtimeoffs, _G(splipsync)[ee].numPhonemes);
-			_G(splipsync)[ee].frame = (short *)malloc(_G(splipsync)[ee].numPhonemes * sizeof(short));
-			speechsync->ReadArrayOfInt16(_G(splipsync)[ee].frame, _G(splipsync)[ee].numPhonemes);
+			_GP(splipsync)[ee].numPhonemes = speechsync->ReadInt16();
+			speechsync->Read(_GP(splipsync)[ee].filename, 14);
+			if (_GP(splipsync)[ee].numPhonemes == 0)
+				continue;
+			_GP(splipsync)[ee].endtimeoffs.resize(_GP(splipsync)[ee].numPhonemes);
+			speechsync->ReadArrayOfInt32(&_GP(splipsync)[ee].endtimeoffs.front(), _GP(splipsync)[ee].numPhonemes);
+			_GP(splipsync)[ee].frame.resize(_GP(splipsync)[ee].numPhonemes);
+			speechsync->ReadArrayOfInt16(&_GP(splipsync)[ee].frame.front(), _GP(splipsync)[ee].numPhonemes);
 		}
 	}
 	Debug::Printf(kDbgMsg_Info, "Lipsync data found and loaded");
 }
 
-void AllocScriptModules() {
-	_GP(moduleInst).resize(_G(numScriptModules), nullptr);
-	_GP(moduleInstFork).resize(_G(numScriptModules), nullptr);
-	_GP(moduleRepExecAddr).resize(_G(numScriptModules));
-	_GP(repExecAlways).moduleHasFunction.resize(_G(numScriptModules), true);
-	_GP(lateRepExecAlways).moduleHasFunction.resize(_G(numScriptModules), true);
-	_GP(getDialogOptionsDimensionsFunc).moduleHasFunction.resize(_G(numScriptModules), true);
-	_GP(renderDialogOptionsFunc).moduleHasFunction.resize(_G(numScriptModules), true);
-	_GP(getDialogOptionUnderCursorFunc).moduleHasFunction.resize(_G(numScriptModules), true);
-	_GP(runDialogOptionMouseClickHandlerFunc).moduleHasFunction.resize(_G(numScriptModules), true);
-	_GP(runDialogOptionKeyPressHandlerFunc).moduleHasFunction.resize(_G(numScriptModules), true);
-	_GP(runDialogOptionTextInputHandlerFunc).moduleHasFunction.resize(_G(numScriptModules), true);
-	_GP(runDialogOptionRepExecFunc).moduleHasFunction.resize(_G(numScriptModules), true);
-	_GP(runDialogOptionCloseFunc).moduleHasFunction.resize(_G(numScriptModules), true);
-	for (auto &val : _GP(moduleRepExecAddr)) {
-		val.Invalidate();
+// Convert guis position and size to proper game resolution.
+// Necessary for pre 3.1.0 games only to sync with modern engine.
+static void ConvertGuiToGameRes(GameSetupStruct &game, GameDataVersion data_ver) {
+	if (data_ver >= kGameVersion_310)
+		return;
+
+	const int mul = game.GetDataUpscaleMult();
+	for (int i = 0; i < game.numcursors; ++i) {
+		game.mcurs[i].hotx *= mul;
+		game.mcurs[i].hoty *= mul;
 	}
+
+	for (int i = 0; i < game.numinvitems; ++i) {
+		game.invinfo[i].hotx *= mul;
+		game.invinfo[i].hoty *= mul;
+	}
+
+	for (int i = 0; i < game.numgui; ++i) {
+		GUIMain *cgp = &_GP(guis)[i];
+		cgp->X *= mul;
+		cgp->Y *= mul;
+		if (cgp->Width < 1)
+			cgp->Width = 1;
+		if (cgp->Height < 1)
+			cgp->Height = 1;
+		// This is probably a way to fix GUIs meant to be covering whole screen
+		if (cgp->Width == game.GetDataRes().Width - 1)
+			cgp->Width = game.GetDataRes().Width;
+
+		cgp->Width *= mul;
+		cgp->Height *= mul;
+
+		cgp->PopupAtMouseY *= mul;
+
+		for (int j = 0; j < cgp->GetControlCount(); ++j) {
+			GUIObject *guio = cgp->GetControl(j);
+			guio->X *= mul;
+			guio->Y *= mul;
+			Size sz = guio->GetSize() * mul;
+			guio->SetSize(sz.Width, sz.Height);
+			guio->IsActivated = false;
+			guio->OnResized();
+		}
+	}
+}
+
+// Convert certain coordinates to data resolution (only if it's different from game resolution).
+// Necessary for 3.1.0 and above games with legacy "low-res coordinates" setting.
+static void ConvertObjectsToDataRes(GameSetupStruct &game, GameDataVersion data_ver) {
+	if (data_ver < kGameVersion_310 || game.GetDataUpscaleMult() == 1)
+		return;
+
+	const int mul = game.GetDataUpscaleMult();
+	for (int i = 0; i < game.numcharacters; ++i) {
+		game.chars[i].x /= mul;
+		game.chars[i].y /= mul;
+	}
+
+	for (auto &inv : _GP(guiinv)) {
+		inv.ItemWidth /= mul;
+		inv.ItemHeight /= mul;
+		inv.OnResized();
+	}
+}
+
+void InitGameResolution(GameSetupStruct &game, GameDataVersion data_ver) {
+	Debug::Printf("Initializing resolution settings");
+	const Size game_size = game.GetGameRes();
+	_GP(usetup).textheight = get_font_height_outlined(0) + 1;
+
+	Debug::Printf(kDbgMsg_Info, "Game native resolution: %d x %d (%d bit)%s", game_size.Width, game_size.Height, game.color_depth * 8,
+				  game.IsLegacyLetterbox() ? " letterbox-by-design" : "");
+
+	// Backwards compatible resolution conversions
+	ConvertGuiToGameRes(game, data_ver);
+	ConvertObjectsToDataRes(game, data_ver);
+
+	// Assign general game viewports
+	Rect viewport = RectWH(game_size);
+	_GP(play).SetMainViewport(viewport);
+	_GP(play).SetUIViewport(viewport);
+
+	// Assign ScriptSystem's resolution variables
+	_GP(scsystem).width = game.GetGameRes().Width;
+	_GP(scsystem).height = game.GetGameRes().Height;
+	_GP(scsystem).coldepth = game.GetColorDepth();
+	_GP(scsystem).viewport_width = game_to_data_coord(_GP(play).GetMainViewport().GetWidth());
+	_GP(scsystem).viewport_height = game_to_data_coord(_GP(play).GetMainViewport().GetHeight());
 }
 
 HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion data_ver) {
@@ -401,6 +471,7 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	//
 	// 5. Initialize runtime state of certain game objects
 	//
+	InitGameResolution(game, data_ver);
 	for (auto &label : _GP(guilabels)) {
 		// labels are not clickable by default
 		label.SetClickable(false);
@@ -411,6 +482,9 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 
 	update_gui_zorder();
 	calculate_reserved_channel_count();
+	// Default viewport and camera, draw data, etc, should be created when resolution is set
+	_GP(play).CreatePrimaryViewportAndCamera();
+	init_game_drawdata();
 
 	//
 	// 6. Register engine API exports
@@ -418,7 +492,6 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	// require access to script API at initialization time.
 	//
 	ccSetScriptAliveTimer(1000 / 60u, 1000u, 150000u);
-	ccSetStringClassImpl(&_GP(myScriptStringImpl));
 	setup_script_exports(base_api, compat_api);
 
 	//

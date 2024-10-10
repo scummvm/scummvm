@@ -20,6 +20,7 @@
  */
 
 #include "ags/engine/ac/dynobj/script_overlay.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/util/stream.h"
 #include "ags/engine/ac/overlay.h"
@@ -32,13 +33,15 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-int ScriptOverlay::Dispose(const char *address, bool force) {
+int ScriptOverlay::Dispose(void * /*address*/, bool force) {
 	// since the managed object is being deleted, remove the
 	// reference so it doesn't try and dispose something else
 	// with that handle later
-	int overlayIndex = find_overlay_of_type(overlayId);
-	if (overlayIndex >= 0) {
-		_GP(screenover)[overlayIndex].associatedOverlayHandle = 0;
+	if (overlayId >= 0) {
+		auto *over = get_overlay(overlayId);
+		if (over) {
+			over->associatedOverlayHandle = 0;
+		}
 	}
 
 	// if this is being removed voluntarily (ie. pointer out of
@@ -56,11 +59,11 @@ const char *ScriptOverlay::GetType() {
 	return "Overlay";
 }
 
-size_t ScriptOverlay::CalcSerializeSize() {
+size_t ScriptOverlay::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t) * 4;
 }
 
-void ScriptOverlay::Serialize(const char *address, Stream *out) {
+void ScriptOverlay::Serialize(const void * /*address*/, Stream *out) {
 	out->WriteInt32(overlayId);
 	out->WriteInt32(0); // unused (was text window x padding)
 	out->WriteInt32(0); // unused (was text window y padding)
@@ -76,12 +79,11 @@ void ScriptOverlay::Unserialize(int index, Stream *in, size_t data_sz) {
 }
 
 void ScriptOverlay::Remove() {
-	int overlayIndex = find_overlay_of_type(overlayId);
-	if (overlayIndex < 0) {
+	if (overlayId < 0) {
 		debug_script_warn("Overlay.Remove: overlay is invalid, could have been removed earlier.");
 		return;
 	}
-	remove_screen_overlay_index(overlayIndex);
+	remove_screen_overlay(overlayId);
 	overlayId = -1;
 }
 

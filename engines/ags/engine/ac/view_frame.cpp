@@ -107,14 +107,20 @@ int ViewFrame_GetFrame(ScriptViewFrame *svf) {
 
 //=============================================================================
 
-void precache_view(int view) {
-	if (view < 0)
-		return;
-
-	for (int i = 0; i < _GP(views)[view].numLoops; i++) {
-		for (int j = 0; j < _GP(views)[view].loops[i].numFrames; j++)
-			_GP(spriteset).Precache(_GP(views)[view].loops[i].frames[j].pic);
-	}
+int CalcFrameSoundVolume(int obj_vol, int anim_vol, int scale) {
+	// We view the audio property relation as the relation of the entities:
+	// system -> audio type -> audio emitter (object, character) -> animation's audio
+	// therefore the sound volume is a multiplication of factors.
+	int frame_vol = 100; // default to full volume
+	// Object's animation volume property
+	frame_vol = frame_vol * obj_vol / 100;
+	// Active animation volume
+	frame_vol = frame_vol * anim_vol / 100;
+	// Zoom volume scaling (optional)
+	// NOTE: historically scales only in 0-100 range :/
+	scale = Math::Clamp(scale, 0, 100);
+	frame_vol = frame_vol * scale / 100;
+	return frame_vol;
 }
 
 // Handle the new animation frame (play linked sounds, etc)
@@ -139,7 +145,7 @@ void CheckViewFrame(int view, int loop, int frame, int sound_volume) {
 			channel = play_audio_clip_by_index(_GP(views)[view].loops[loop].frames[frame].sound);
 		}
 	}
-	if (channel && (sound_volume >= 0)) {
+	if (channel) {
 		sound_volume = Math::Clamp(sound_volume, 0, 100);
 		auto *ch = AudioChans::GetChannel(channel->id);
 		if (ch)
@@ -151,8 +157,8 @@ void CheckViewFrame(int view, int loop, int frame, int sound_volume) {
 void DrawViewFrame(Bitmap *ds, const ViewFrame *vframe, int x, int y, bool alpha_blend) {
 	// NOTE: DrawViewFrame supports alpha blending only since OPT_SPRITEALPHA;
 	// this is why there's no sense in blending if it's not set (will do no good anyway).
+	Bitmap *vf_bmp = _GP(spriteset)[vframe->pic];
 	if (alpha_blend && _GP(game).options[OPT_SPRITEALPHA] == kSpriteAlphaRender_Proper) {
-		Bitmap *vf_bmp = _GP(spriteset)[vframe->pic];
 		Bitmap *src = vf_bmp;
 		if (vframe->flags & VFLG_FLIPSPRITE) {
 			src = new Bitmap(vf_bmp->GetWidth(), vf_bmp->GetHeight(), vf_bmp->GetColorDepth());
@@ -163,9 +169,9 @@ void DrawViewFrame(Bitmap *ds, const ViewFrame *vframe, int x, int y, bool alpha
 			delete src;
 	} else {
 		if (vframe->flags & VFLG_FLIPSPRITE)
-			ds->FlipBlt(_GP(spriteset)[vframe->pic], x, y, Shared::kFlip_Horizontal);
+			ds->FlipBlt(vf_bmp, x, y, Shared::kFlip_Horizontal);
 		else
-			ds->Blit(_GP(spriteset)[vframe->pic], x, y, Shared::kBitmap_Transparency);
+			ds->Blit(vf_bmp, x, y, Shared::kBitmap_Transparency);
 	}
 }
 
@@ -231,17 +237,21 @@ RuntimeScriptValue Sc_ViewFrame_GetView(void *self, const RuntimeScriptValue *pa
 
 
 void RegisterViewFrameAPI() {
-	ccAddExternalObjectFunction("ViewFrame::get_Flipped", Sc_ViewFrame_GetFlipped);
-	ccAddExternalObjectFunction("ViewFrame::get_Frame", Sc_ViewFrame_GetFrame);
-	ccAddExternalObjectFunction("ViewFrame::get_Graphic", Sc_ViewFrame_GetGraphic);
-	ccAddExternalObjectFunction("ViewFrame::set_Graphic", Sc_ViewFrame_SetGraphic);
-	ccAddExternalObjectFunction("ViewFrame::get_LinkedAudio", Sc_ViewFrame_GetLinkedAudio);
-	ccAddExternalObjectFunction("ViewFrame::set_LinkedAudio", Sc_ViewFrame_SetLinkedAudio);
-	ccAddExternalObjectFunction("ViewFrame::get_Loop", Sc_ViewFrame_GetLoop);
-	ccAddExternalObjectFunction("ViewFrame::get_Sound", Sc_ViewFrame_GetSound);
-	ccAddExternalObjectFunction("ViewFrame::set_Sound", Sc_ViewFrame_SetSound);
-	ccAddExternalObjectFunction("ViewFrame::get_Speed", Sc_ViewFrame_GetSpeed);
-	ccAddExternalObjectFunction("ViewFrame::get_View", Sc_ViewFrame_GetView);
+	ScFnRegister viewframe_api[] = {
+		{"ViewFrame::get_Flipped", API_FN_PAIR(ViewFrame_GetFlipped)},
+		{"ViewFrame::get_Frame", API_FN_PAIR(ViewFrame_GetFrame)},
+		{"ViewFrame::get_Graphic", API_FN_PAIR(ViewFrame_GetGraphic)},
+		{"ViewFrame::set_Graphic", API_FN_PAIR(ViewFrame_SetGraphic)},
+		{"ViewFrame::get_LinkedAudio", API_FN_PAIR(ViewFrame_GetLinkedAudio)},
+		{"ViewFrame::set_LinkedAudio", API_FN_PAIR(ViewFrame_SetLinkedAudio)},
+		{"ViewFrame::get_Loop", API_FN_PAIR(ViewFrame_GetLoop)},
+		{"ViewFrame::get_Sound", API_FN_PAIR(ViewFrame_GetSound)},
+		{"ViewFrame::set_Sound", API_FN_PAIR(ViewFrame_SetSound)},
+		{"ViewFrame::get_Speed", API_FN_PAIR(ViewFrame_GetSpeed)},
+		{"ViewFrame::get_View", API_FN_PAIR(ViewFrame_GetView)},
+	};
+
+	ccAddExternalFunctions361(viewframe_api);
 }
 
 } // namespace AGS3

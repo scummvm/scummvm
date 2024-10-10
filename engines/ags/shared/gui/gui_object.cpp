@@ -34,8 +34,8 @@ GUIObject::GUIObject() {
 	Flags = kGUICtrl_DefFlags;
 	X = 0;
 	Y = 0;
-	Width = 0;
-	Height = 0;
+	_width = 0;
+	_height = 0;
 	ZOrder = -1;
 	IsActivated = false;
 	_transparency = 0;
@@ -63,64 +63,50 @@ String GUIObject::GetEventArgs(int event) const {
 	return _scEventArgs[event];
 }
 
-bool GUIObject::IsDeleted() const {
-	return (Flags & kGUICtrl_Deleted) != 0;
-}
-
-bool GUIObject::IsEnabled() const {
-	return (Flags & kGUICtrl_Enabled) != 0;
-}
-
 bool GUIObject::IsOverControl(int x, int y, int leeway) const {
-	return x >= X && y >= Y && x < (X + Width + leeway) && y < (Y + Height + leeway);
-}
-
-bool GUIObject::IsTranslated() const {
-	return (Flags & kGUICtrl_Translated) != 0;
-}
-
-bool GUIObject::IsVisible() const {
-	return (Flags & kGUICtrl_Visible) != 0;
+	return x >= X && y >= Y && x < (X + _width + leeway) && y < (Y + _height + leeway);
 }
 
 void GUIObject::SetClickable(bool on) {
-	if (on)
-		Flags |= kGUICtrl_Clickable;
-	else
-		Flags &= ~kGUICtrl_Clickable;
+	if (on != ((Flags & kGUICtrl_Clickable) != 0)) {
+		Flags = (Flags & ~kGUICtrl_Clickable) | kGUICtrl_Clickable * on;
+		MarkStateChanged(false, false); // update cursor-over-control only
+	}
 }
 
 void GUIObject::SetEnabled(bool on) {
-	if (on != ((Flags & kGUICtrl_Enabled) != 0))
-		MarkChanged();
-	if (on)
-		Flags |= kGUICtrl_Enabled;
-	else
-		Flags &= ~kGUICtrl_Enabled;
+	if (on != ((Flags & kGUICtrl_Enabled) != 0)) {
+		Flags = (Flags & ~kGUICtrl_Enabled) | kGUICtrl_Enabled * on;
+		MarkStateChanged(true, true); // may change looks, and update cursor-over-control
+	}
+}
+
+void GUIObject::SetSize(int width, int height) {
+	if (_width != width || _height != height) {
+		_width = width;
+		_height = height;
+		OnResized();
+	}
 }
 
 void GUIObject::SetTranslated(bool on) {
-	if (on != ((Flags & kGUICtrl_Translated) != 0))
+	if (on != ((Flags & kGUICtrl_Translated) != 0)) {
+		Flags = (Flags & ~kGUICtrl_Translated) | kGUICtrl_Translated * on;
 		MarkChanged();
-	if (on)
-		Flags |= kGUICtrl_Translated;
-	else
-		Flags &= ~kGUICtrl_Translated;
+	}
 }
 
 void GUIObject::SetVisible(bool on) {
-	if (on != ((Flags & kGUICtrl_Visible) != 0))
-		NotifyParentChanged(); // for software mode
-	if (on)
-		Flags |= kGUICtrl_Visible;
-	else
-		Flags &= ~kGUICtrl_Visible;
+	if (on != ((Flags & kGUICtrl_Visible) != 0)) {
+		Flags = (Flags & ~kGUICtrl_Visible) | kGUICtrl_Visible * on;
+		MarkStateChanged(false, true); // for software mode, and to update cursor-over-control
+	}
 }
 
 void GUIObject::SetTransparency(int trans) {
 	if (_transparency != trans) {
 		_transparency = trans;
-		NotifyParentChanged(); // for software mode
+		MarkParentChanged(); // for software mode
 	}
 }
 
@@ -130,8 +116,8 @@ void GUIObject::WriteToFile(Stream *out) const {
 	out->WriteInt32(Flags);
 	out->WriteInt32(X);
 	out->WriteInt32(Y);
-	out->WriteInt32(Width);
-	out->WriteInt32(Height);
+	out->WriteInt32(_width);
+	out->WriteInt32(_height);
 	out->WriteInt32(ZOrder);
 	Name.Write(out);
 	out->WriteInt32(_scEventCount);
@@ -146,8 +132,8 @@ void GUIObject::ReadFromFile(Stream *in, GuiVersion gui_version) {
 		Flags ^= kGUICtrl_OldFmtXorMask;
 	X = in->ReadInt32();
 	Y = in->ReadInt32();
-	Width = in->ReadInt32();
-	Height = in->ReadInt32();
+	_width = in->ReadInt32();
+	_height = in->ReadInt32();
 	ZOrder = in->ReadInt32();
 	if (gui_version < kGuiVersion_350) { // NOTE: reading into actual variables only for old savegame support
 		IsActivated = in->ReadInt32() != 0;
@@ -180,8 +166,8 @@ void GUIObject::ReadFromSavegame(Stream *in, GuiSvgVersion svg_ver) {
 		Flags ^= kGUICtrl_OldFmtXorMask;
 	X = in->ReadInt32();
 	Y = in->ReadInt32();
-	Width = in->ReadInt32();
-	Height = in->ReadInt32();
+	_width = in->ReadInt32();
+	_height = in->ReadInt32();
 	ZOrder = in->ReadInt32();
 	// Dynamic state
 	IsActivated = in->ReadBool() ? 1 : 0;
@@ -198,8 +184,8 @@ void GUIObject::WriteToSavegame(Stream *out) const {
 	out->WriteInt32(Flags);
 	out->WriteInt32(X);
 	out->WriteInt32(Y);
-	out->WriteInt32(Width);
-	out->WriteInt32(Height);
+	out->WriteInt32(_width);
+	out->WriteInt32(_height);
 	out->WriteInt32(ZOrder);
 	// Dynamic state
 	out->WriteBool(IsActivated != 0);

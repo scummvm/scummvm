@@ -122,6 +122,39 @@ public:
 	}
 };
 
+//
+// DataStreamSection wraps another stream and restricts its access
+// to a particular range of offsets of the base stream.
+// StreamSection does NOT own the base stream, and closing
+// a "stream section" does NOT close the base stream.
+// Base stream must stay in memory for as long as there are
+// "stream sections" refering it.
+class DataStreamSection : public DataStream {
+public:
+	// Constructs a StreamSection over a base stream,
+	// restricting working range to [start, end), i.e. end offset is
+	// +1 past allowed position.
+	DataStreamSection(Stream *base, soff_t start, soff_t end);
+	const char *GetPath() const { return _base->GetPath().GetCStr(); }
+	bool EOS() const override { return _position >= _end; }
+	bool GetError() const override { return _base->GetError(); }
+	soff_t GetLength() const override { return _end - _start; }
+	soff_t GetPosition() const override { return _position - _start; }
+	size_t Read(void *buffer, size_t len) override;
+	int32_t ReadByte() override;
+	size_t Write(const void *buffer, size_t len) override;
+	int32_t WriteByte(uint8_t b) override;
+	soff_t Seek(soff_t offset, StreamSeek origin = kSeekCurrent) override;
+	bool Flush() override { return _base->Flush(); }
+	void Close() override;
+
+private:
+	Stream *_base = nullptr;
+	soff_t _start = 0;
+	soff_t _end = 0;
+	soff_t _position = 0;
+};
+
 } // namespace Shared
 } // namespace AGS
 } // namespace AGS3

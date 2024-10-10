@@ -49,7 +49,9 @@ public:
 
 	FileWorkMode GetWorkMode() const { return _workMode; }
 
-	bool HasErrors() const override;
+	// Tells if there were errors during previous io operation(s);
+	// the call to GetError() *resets* the error record.
+	bool GetError() const override;
 	void Close() override;
 	bool Flush() override;
 
@@ -70,7 +72,7 @@ public:
 	size_t Write(const void *buffer, size_t size) override;
 	int32_t WriteByte(uint8_t b) override;
 
-	bool Seek(soff_t offset, StreamSeek origin) override;
+	soff_t Seek(soff_t offset, StreamSeek origin) override;
 
 private:
 	void Open(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode);
@@ -79,7 +81,6 @@ private:
 
 	Common::Stream *_file;
 	const FileWorkMode  _workMode;
-	String _fileName;
 };
 
 } // namespace Shared
