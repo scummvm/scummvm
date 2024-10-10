@@ -20,10 +20,7 @@
  */
 
 #include "m4/riddle/rooms/section8/room801.h"
-
-#include "section8.h"
-#include "glk/zcode/glk_interface.h"
-#include "m4/core/cstring.h"
+#include "m4/riddle/rooms/section8/section8.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
 
