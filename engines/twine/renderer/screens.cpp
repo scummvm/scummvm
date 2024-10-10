@@ -111,7 +111,7 @@ void Screens::loadImage(TwineImage image, bool fadeIn) {
 bool Screens::loadImageDelay(TwineImage image, int32 seconds) {
 	loadImage(image);
 	if (_engine->delaySkip(1000 * seconds)) {
-		adjustPalette(0, 0, 0, _palettePcx, 100);
+		fadePal(0, 0, 0, _palettePcx, 100);
 		return true;
 	}
 	fadeOut(_palettePcx);
@@ -200,7 +200,7 @@ int32 Screens::lerp(int32 val1, int32 val2, int32 nbstep, int32 step) {  // Regl
 	return (((val2 - val1) * step) / nbstep) + val1;
 }
 
-void Screens::adjustPalette(uint8 r, uint8 g, uint8 b, const uint32 *rgbaPal, int32 intensity) {
+void Screens::fadePal(uint8 r, uint8 g, uint8 b, const uint32 *rgbaPal, int32 intensity) {
 	uint32 pal[NUMOFCOLORS];
 
 	int32 counter = 0;
@@ -275,7 +275,7 @@ void Screens::fadeToBlack(const uint32 *pal) {
 
 	for (int32 i = 100; i >= 0; i -= 3) {
 		FrameMarker frame(_engine, DEFAULT_HZ);
-		adjustPalette(0, 0, 0, pal, i);
+		fadePal(0, 0, 0, pal, i);
 	}
 
 	_palResetted = true;
@@ -284,7 +284,7 @@ void Screens::fadeToBlack(const uint32 *pal) {
 void Screens::fadeToPal(const uint32 *pal) {
 	for (int32 i = 0; i <= 100; i += 3) {
 		FrameMarker frame(_engine, DEFAULT_HZ);
-		adjustPalette(0, 0, 0, pal, i);
+		fadePal(0, 0, 0, pal, i);
 	}
 
 	_engine->setPalette(pal);
@@ -336,14 +336,14 @@ void Screens::setBlackPal() {
 void Screens::fadeToRed(const uint32 *pal) {
 	for (int32 i = 100; i >= 0; i -= 2) {
 		FrameMarker frame(_engine, DEFAULT_HZ);
-		adjustPalette(0xFF, 0, 0, pal, i);
+		fadePal(0xFF, 0, 0, pal, i);
 	}
 }
 
 void Screens::fadeRedToPal(const uint32 *pal) {
 	for (int32 i = 0; i <= 100; i += 2) {
 		FrameMarker frame(_engine, DEFAULT_HZ);
-		adjustPalette(0xFF, 0, 0, pal, i);
+		fadePal(0xFF, 0, 0, pal, i);
 	}
 }
 

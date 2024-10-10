@@ -43,7 +43,7 @@ private:
 	 * @param palette palette to adjust
 	 * @param intensity intensity value to adjust
 	 */
-	void adjustPalette(uint8 r, uint8 g, uint8 b, const uint32 *palette, int32 intensity);
+	void fadePal(uint8 r, uint8 g, uint8 b, const uint32 *palette, int32 intensity);
 
 public:
 	Screens(TwinEEngine *engine) : _engine(engine) {}
