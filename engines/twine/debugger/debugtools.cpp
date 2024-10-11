@@ -760,6 +760,7 @@ static void gridMenu(TwinEEngine *engine) {
 
 static void debuggerMenu(TwinEEngine *engine) {
 	if (ImGui::BeginMenu("Debugger")) {
+		ImGui::Text("Timer: %i", (int)engine->timerRef);
 		if (ImGui::MenuItem("Logs")) {
 			engine->_debugState->_loggerWindow = true;
 		}
