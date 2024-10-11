@@ -158,6 +158,7 @@ struct AltInput {
 	const char *_input;
 	const char *_replacement;
 	uint32 _inputLength;
+	uint32 _replacementLength;
 	bool _prefix;
 };
 

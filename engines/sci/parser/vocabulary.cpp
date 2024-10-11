@@ -373,6 +373,7 @@ bool Vocabulary::loadAltInputs() {
 		if (l == maxSize) {
 			error("Alt input replacement from %s appears truncated at %d", resource->name().c_str(), it - resource->cbegin());
 		}
+		t._replacementLength = l;
 		it += l + 1;
 
 		if (it < end && strncmp((const char *)&*it, t._input, t._inputLength) == 0)
@@ -424,11 +425,10 @@ bool Vocabulary::checkAltInput(Common::String &text, uint16 &cursorPos) {
 					continue;
 				if (strncmp(i->_input, t+p, i->_inputLength) == 0) {
 					// replace
-					const uint32 maxSize = text.size() - cursorPos;
 					if (cursorPos > p + i->_inputLength) {
-						cursorPos += Common::strnlen(i->_replacement, maxSize) - i->_inputLength;
+						cursorPos += i->_replacementLength - i->_inputLength;
 					} else if (cursorPos > p) {
-						cursorPos = p + Common::strnlen(i->_replacement, text.size());
+						cursorPos = p + i->_replacementLength;
 					}
 
 					for (uint32 j = 0; j < i->_inputLength; ++j)
