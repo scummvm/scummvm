@@ -24,10 +24,9 @@
 #include "common/debug-channels.h"
 #include "common/debug.h"
 
-#include "director/debugger/dt-logger.h"
+#include "backends/imgui/components/imgui_logger.h"
 
-namespace Director {
-namespace DT {
+namespace ImGuiEx {
 
 ImGuiLogger::ImGuiLogger() {
 	clear();
@@ -250,5 +249,4 @@ void ImGuiLogger::drawColorOptions() {
 	ImGui::ColorEdit4("Debug Button", &_colors._logger_debug_b.x);
 }
 
-} // namespace DT
-} // namespace Director
+} // namespace ImGuiEx

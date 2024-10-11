@@ -19,13 +19,16 @@
  *
  */
 
-#ifndef DIRECTOR_DEBUGER_DT_LOGGER_H
-#define DIRECTOR_DEBUGER_DT_LOGGER_H
+#ifndef BACKENDS_IMGUI_COMPONENTS_IMGUI_LOGGER_H
+#define BACKENDS_IMGUI_COMPONENTS_IMGUI_LOGGER_H
+
+#ifndef IMGUI_DEFINE_MATH_OPERATORS
+#define IMGUI_DEFINE_MATH_OPERATORS
+#endif
 
 #include "backends/imgui/imgui.h"
 
-namespace Director {
-namespace DT {
+namespace ImGuiEx {
 
 class ImGuiLogger {
 	char _inputBuf[256];
@@ -61,7 +64,6 @@ public:
 	void draw(const char *title, bool *p_open);
 };
 
-} // namespace DT
-} // namespace Director
+} // namespace ImGuiEx
 
 #endif

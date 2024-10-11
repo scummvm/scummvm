@@ -493,6 +493,7 @@ MODULE_OBJS += \
 	imgui/imgui_tables.o \
 	imgui/imgui_widgets.o \
 	imgui/imgui_utils.o \
+	imgui/components/imgui_logger.o \
 	imgui/misc/freetype/imgui_freetype.o
 endif
 

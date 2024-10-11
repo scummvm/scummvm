@@ -30,9 +30,9 @@
 
 #include "backends/imgui/imgui.h"
 #include "backends/imgui/imgui_fonts.h"
+#include "backends/imgui/components/imgui_logger.h"
 
 #include "director/debugger/imgui_memory_editor.h"
-#include "director/debugger/dt-logger.h"
 
 #include "director/types.h"
 #include "director/lingo/lingo.h"
@@ -40,10 +40,7 @@
 #include "director/lingo/lingodec/handler.h"
 
 namespace Director {
-
 namespace DT {
-
-class ImGuiLogger;
 
 #define kMaxColumnsInTable 512
 
@@ -180,7 +177,7 @@ typedef struct ImGuiState {
 		MemoryEditor memEdit;
 	} _archive;
 
-	ImGuiLogger *_logger = nullptr;
+	ImGuiEx::ImGuiLogger *_logger = nullptr;
 } ImGuiState;
 
 // debugtools.cpp

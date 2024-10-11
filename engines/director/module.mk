@@ -176,7 +176,6 @@ MODULE_OBJS += \
 	debugger/dt-cast.o \
 	debugger/dt-controlpanel.o \
 	debugger/dt-lists.o \
-	debugger/dt-logger.o \
 	debugger/dt-score.o \
 	debugger/dt-script-d2.o \
 	debugger/dt-script-d4.o \

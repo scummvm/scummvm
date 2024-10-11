@@ -310,7 +310,7 @@ void onImGuiInit() {
 
 	_state->_archive.memEdit.ReadOnly = true;
 
-	_state->_logger = new ImGuiLogger;
+	_state->_logger = new ImGuiEx::ImGuiLogger;
 
 	Common::setLogWatcher(onLog);
 }
