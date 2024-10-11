@@ -1454,6 +1454,7 @@ protected:
 	void mac_blitEPXImage(const byte *buffer, int pitch, int x, int y, int width, int height);
 	void mac_applyEPXToBuffer(const byte *inputBuffer, byte *outputBuffer, int width, int height, int inputPitch, int outputPitch, int xOffset, int yOffset, int bufferWidth, int bufferHeight);
 	void mac_scaleCursor(byte *&outCursor, int &outHotspotX, int &outHotspotY, int &outWidth, int &outHeight);
+	void mac_toggleSmoothing();
 
 	Common::KeyState mac_showOldStyleBannerAndPause(const char *msg, int32 waitTime);
 

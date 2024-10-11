@@ -147,7 +147,7 @@ bool MacMI1Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) con
 void MacMI1Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
 	if (_vm->_game.id == GID_MONKEY) {
 		_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
-	} else {
+	} else if (_vm->_game.version == 5) {
 		Common::MacResManager resource;
 		Graphics::MacCursor macCursor;
 

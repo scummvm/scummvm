@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/system.h"
 
 #include "graphics/macega.h"
@@ -338,6 +339,22 @@ void ScummEngine::mac_scaleCursor(byte *&outCursor, int &outHotspotX, int &outHo
 	outCursor = _macGrabbedCursor;
 	outHotspotX = _cursor.hotspotX * 2;
 	outHotspotY = _cursor.hotspotY * 2;
+}
+
+void ScummEngine::mac_toggleSmoothing() {
+	_useMacGraphicsSmoothing = !_useMacGraphicsSmoothing;
+
+	ConfMan.setBool("mac_graphics_smoothing", _useMacGraphicsSmoothing);
+	ConfMan.flushToDisk();
+
+	// Allow the engine to update the graphics mode
+	markRectAsDirty(kBannerVirtScreen, 0, 320, 0, 200);
+	markRectAsDirty(kTextVirtScreen, 0, 320, 0, 200);
+	markRectAsDirty(kVerbVirtScreen, 0, 320, 0, 200);
+	markRectAsDirty(kMainVirtScreen, 0, 320, 0, 200);
+
+	if (_game.version > 5)
+		updateCursor();
 }
 
 Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, int32 waitTime) {
