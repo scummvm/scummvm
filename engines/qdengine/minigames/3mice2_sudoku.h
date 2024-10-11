@@ -92,7 +92,7 @@ public:
 		_objLoading = _scene->object_interface("$загрузка");
 
 		if (_objLoading->is_state_active("no")) {
-			memset(_someArray, 0xFFu, sizeof(_someArray));
+			memset(_pieceTargets, 0xFFu, sizeof(_pieceTargets));
 
 			_objLoading->set_state("yes");
 
@@ -105,14 +105,16 @@ public:
 
 					_pieceCoords[i] = _objTarget->screen_R();
 
-					_someArray[i] = -1;
+					_pieceTargets[i] = -1;
 				}
 
-				for (int i = 0; i < 13; i++) {
-					if (_figures[i]->screen_R().x != _pieceCoords[i].x &&
-						_figures[i]->screen_R().y != _pieceCoords[i].y)
-						_someArray[i] = i;
-				}
+				for (int j = 0; j < 13; j++) {
+					for (int i = 0; i < 13; i++) {
+						if (_figures[i]->screen_R().x - _pieceCoords[j].x < 2 &&
+							_figures[i]->screen_R().y - _pieceCoords[j].y < 2)
+							_pieceTargets[i] = j;
+					}
+					}
 			}
 		}
 
@@ -121,6 +123,99 @@ public:
 
 	bool quant(float dt) {
 		debugC(3, kDebugMinigames, "3mice2Sudoku::quant(%f)", dt);
+
+		if (_objReset->is_state_active("да")) {
+			for (int i = 0; i < 13; i++) {
+				_pieceTargets[i] = -1;
+				_figures[i]->set_state("base");
+			}
+
+			_objReset->set_state("нет");
+		}
+
+		if (checkSolution()) {
+			_objDone->set_state("да");
+			_objResult->set_state("правильно");
+		} else {
+			_objDone->set_state("нет");
+			_objResult->set_state("не правильно");
+		}
+
+		if (checkInitPos())
+			_objSettled->set_state("да");
+		else
+			_objSettled->set_state("нет");
+
+		qdMinigameObjectInterface *mouseObj = _scene->mouse_object_interface();
+		qdMinigameObjectInterface *clickObj = _scene->mouse_click_object_interface();
+		qdMinigameObjectInterface *hoverObj = _scene->mouse_hover_object_interface();
+
+		if (mouseObj) {
+			int num = getObjNum(mouseObj->name());
+
+			if (hoverObj) {
+				int num2 = -1;
+
+				if (strstr(hoverObj->name(), "zone@"))
+					num2 = getObjNum(hoverObj->name());
+
+				if (num2 == -1 || posIsSet(num2 - 1))
+					_figures[num + 12]->set_state("inv");
+				else
+					_figures[num + 12]->set_state("inv_active");
+
+			} else {
+				_figures[num + 12]->set_state("inv");
+			}
+		}
+
+		if (_engine->is_mouse_event_active(qdmg::qdEngineInterfaceImpl::MOUSE_EV_LEFT_DOWN) && clickObj && !mouseObj) {
+			int num = -1;
+
+			if (strstr(clickObj->name(), "figure")) {
+				num = getObjNum(clickObj->name());
+
+				if (num > -1) {
+					_figures[num]->set_state("hide");
+					_figures[num + 12]->set_state("to_inv");
+				}
+			}
+
+			resetFigure(num - 1);
+		}
+
+		if (_engine->is_mouse_event_active(qdmg::qdEngineInterfaceImpl::MOUSE_EV_LEFT_DOWN) &&
+			mouseObj &&
+			clickObj &&
+			strstr(mouseObj->name(), "figure") &&
+			strstr(mouseObj->name(), "inv") &&
+			strstr(clickObj->name(), "zone@")) {
+
+			int num = getObjNum(clickObj->name());
+			int num2 =getObjNum(mouseObj->name());
+
+			if (num > -1 && num2 > -1 && !posIsSet(num - 1)) {
+				_objTarget->set_state(Common::String::format("%d", num).c_str());
+				_objTarget->update_screen_R();
+
+				_figures[num2 + 12]->set_state("del");
+				_figures[num2]->set_state("target");
+
+				mgVect2i pos = _objTarget->screen_R();
+				pos.y += _pos[num2 - 1];
+
+				_figures[num2 - 1]->set_R(_scene->screen2world_coords(pos, 0));
+
+				_pos[num + 12] = num2 - 1;
+			}
+		}
+
+		if (_engine->is_mouse_event_active(qdmg::qdEngineInterfaceImpl::MOUSE_EV_RIGHT_DOWN) && mouseObj) {
+			int num = getObjNum(mouseObj->name());
+
+			_figures[num]->set_state("base");
+			_figures[num + 12]->set_state("del");
+		}
 
 		return true;
 	}
@@ -154,13 +249,50 @@ public:
 	}
 
 private:
+	bool checkSolution() {
+		for (int i = 0; i < 13; i++)
+			if (_pieceTargets[i] != i)
+				return false;
+
+		return true;
+	}
+
+	bool checkInitPos() {
+		for (int i = 0; i < 13; i++)
+			if (_pieceTargets[i] == -1)
+				return false;
+
+		return true;
+	}
+
+	void resetFigure(int pos) {
+		for (int i = 0; i < 13; i++)
+			if (_pieceTargets[i] == pos)
+				_pieceTargets[i] = -1;
+	}
+
+	bool posIsSet(int pos) {
+		return _pieceTargets[pos] != -1;
+	}
+
+	int getObjNum(const char *name) {
+		const char *from = strstr(name, "@");
+		const char *to = strstr(name, "#");
+		char tmp[20];
+
+		Common::strlcpy(tmp, from + 1, to - from);
+
+		return atol(tmp);
+	}
+
+private:
 	const qdEngineInterface *_engine = nullptr;
 	qdMinigameSceneInterface *_scene = nullptr;
 
 	qdMinigameObjectInterface *_figures[26];
 	int _pos[13];
 	mgVect2i _pieceCoords[13];
-	int _someArray[13];
+	int _pieceTargets[13];
 
 	qdMinigameObjectInterface *_objDone = nullptr;
 	qdMinigameObjectInterface *_objResult = nullptr;
