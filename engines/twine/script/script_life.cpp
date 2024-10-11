@@ -136,12 +136,12 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		} else {
 			engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_objCol;
 		}
-		debugCN(3, kDebugLevels::kDebugScripts, "col_obj(%i, ", actorIdx);
+		debugCN(3, kDebugLevels::kDebugScripts, "col_obj(%i", actorIdx);
 		break;
 	}
 	case kcDISTANCE: {
 		int32 actorIdx = ctx.stream.readByte();
-		debugCN(3, kDebugLevels::kDebugScripts, "distance(%i, ", actorIdx);
+		debugCN(3, kDebugLevels::kDebugScripts, "distance(%i", actorIdx);
 		conditionValueSize = ReturnType::RET_S16;
 		ActorStruct *otherActor = engine->_scene->getActor(actorIdx);
 		if (otherActor->_workFlags.bIsDead) {
@@ -163,7 +163,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 	}
 	case kcDISTANCE_3D: {
 		int32 targetActorIdx = ctx.stream.readByte();
-		debugCN(3, kDebugLevels::kDebugScripts, "distance_3d(%i, ", targetActorIdx);
+		debugCN(3, kDebugLevels::kDebugScripts, "distance_3d(%i", targetActorIdx);
 		ActorStruct *targetActor = engine->_scene->getActor(targetActorIdx);
 
 		conditionValueSize = ReturnType::RET_S16;
@@ -184,7 +184,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 	case kcCONE_VIEW: {
 		int32 newAngle = 0;
 		int32 targetActorIdx = ctx.stream.readByte();
-		debugCN(3, kDebugLevels::kDebugScripts, "cone_view(%i, ", targetActorIdx);
+		debugCN(3, kDebugLevels::kDebugScripts, "cone_view(%i", targetActorIdx);
 		ActorStruct *targetActor = engine->_scene->getActor(targetActorIdx);
 
 		conditionValueSize = ReturnType::RET_S16;
@@ -232,7 +232,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		break;
 	case kcZONE_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
-		debugCN(3, kDebugLevels::kDebugScripts, "zone_obj(%i, ", actorIdx);
+		debugCN(3, kDebugLevels::kDebugScripts, "zone_obj(%i", actorIdx);
 		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_zoneSce;
 		break;
 	}
@@ -242,7 +242,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		break;
 	case kcBODY_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
-		debugCN(3, kDebugLevels::kDebugScripts, "body_obj(%i, ", actorIdx);
+		debugCN(3, kDebugLevels::kDebugScripts, "body_obj(%i", actorIdx);
 		engine->_scene->_currentScriptValue = (int16)engine->_scene->getActor(actorIdx)->_genBody;
 		break;
 	}
@@ -252,7 +252,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		break;
 	case kcANIM_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
-		debugCN(3, kDebugLevels::kDebugScripts, "anim_obj(%i, ", actorIdx);
+		debugCN(3, kDebugLevels::kDebugScripts, "anim_obj(%i", actorIdx);
 		engine->_scene->_currentScriptValue = (int16)engine->_scene->getActor(actorIdx)->_genAnim;
 		break;
 	}
@@ -263,13 +263,13 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		break;
 	case kcL_TRACK_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
-		debugCN(3, kDebugLevels::kDebugScripts, "track_obj(%i, ", actorIdx);
+		debugCN(3, kDebugLevels::kDebugScripts, "track_obj(%i", actorIdx);
 		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_labelTrack;
 		break;
 	}
 	case kcFLAG_CUBE: {
 		int32 flagIdx = ctx.stream.readByte();
-		debugCN(3, kDebugLevels::kDebugScripts, "flag_cube(%i, ", flagIdx);
+		debugCN(3, kDebugLevels::kDebugScripts, "flag_cube(%i", flagIdx);
 		conditionValueSize = ReturnType::RET_U8;
 		engine->_scene->_currentScriptValue = engine->_scene->_listFlagCube[flagIdx];
 		break;
@@ -281,7 +281,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 	case kcHIT_OBJ_BY: {
 		int32 actorIdx = ctx.stream.readByte();
 		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_hitBy;
-		debugCN(3, kDebugLevels::kDebugScripts, "hit_by(%i, ", actorIdx);
+		debugCN(3, kDebugLevels::kDebugScripts, "hit_by(%i", actorIdx);
 		break;
 	}
 	case kcACTION:
@@ -290,7 +290,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		break;
 	case kcFLAG_GAME: {
 		int32 flagIdx = ctx.stream.readByte();
-		debugCN(3, kDebugLevels::kDebugScripts, "flag_game(%i, ", flagIdx);
+		debugCN(3, kDebugLevels::kDebugScripts, "flag_game(%i", flagIdx);
 		if (!engine->_gameState->inventoryDisabled() ||
 		    (engine->_gameState->inventoryDisabled() && flagIdx >= MaxInventoryItems)) {
 			engine->_scene->_currentScriptValue = engine->_gameState->hasGameFlag(flagIdx);
@@ -313,7 +313,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		break;
 	case kcLIFE_POINT_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
-		debugCN(3, kDebugLevels::kDebugScripts, "life_point_obj(%i, ", actorIdx);
+		debugCN(3, kDebugLevels::kDebugScripts, "life_point_obj(%i", actorIdx);
 		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_lifePoint;
 		break;
 	}
@@ -348,7 +348,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		break;
 	case kcUSE_INVENTORY: {
 		int32 item = ctx.stream.readByte();
-		debugCN(3, kDebugLevels::kDebugScripts, "use_inventory(%i, ", item);
+		debugCN(3, kDebugLevels::kDebugScripts, "use_inventory(%i", item);
 
 		if (engine->_gameState->inventoryDisabled()) {
 			engine->_scene->_currentScriptValue = 0;
@@ -393,13 +393,13 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 	case kcCARRY_OBJ_BY: {
 		int32 actorIdx = ctx.stream.readByte();
 		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_carryBy;
-		debugCN(3, kDebugLevels::kDebugScripts, "carried_by(%i, ", actorIdx);
+		debugCN(3, kDebugLevels::kDebugScripts, "carried_by(%i", actorIdx);
 		break;
 	}
 	case kcRND: {
 		int32 val = ctx.stream.readByte();
 		engine->_scene->_currentScriptValue = engine->getRandomNumber(val);
-		debugCN(3, kDebugLevels::kDebugScripts, "rand(%i, ", val);
+		debugCN(3, kDebugLevels::kDebugScripts, "rand(%i", val);
 		conditionValueSize = ReturnType::RET_U8;
 		break;
 	}
@@ -605,37 +605,37 @@ static int32 processLifeOperators(TwinEEngine *engine, LifeScriptContext &ctx, R
 
 	switch (operatorCode) {
 	case kEqualTo:
-		debugCN(3, kDebugLevels::kDebugScripts, "%i == %i)", engine->_scene->_currentScriptValue, conditionValue);
+		debugCN(3, kDebugLevels::kDebugScripts, ")[%i] == %i)", engine->_scene->_currentScriptValue, conditionValue);
 		if (engine->_scene->_currentScriptValue == conditionValue) {
 			return 1;
 		}
 		break;
 	case kGreaterThan:
-		debugCN(3, kDebugLevels::kDebugScripts, "%i > %i)", engine->_scene->_currentScriptValue, conditionValue);
+		debugCN(3, kDebugLevels::kDebugScripts, ")[%i] > %i)", engine->_scene->_currentScriptValue, conditionValue);
 		if (engine->_scene->_currentScriptValue > conditionValue) {
 			return 1;
 		}
 		break;
 	case kLessThan:
-		debugCN(3, kDebugLevels::kDebugScripts, "%i < %i)", engine->_scene->_currentScriptValue, conditionValue);
+		debugCN(3, kDebugLevels::kDebugScripts, ")[%i] < %i)", engine->_scene->_currentScriptValue, conditionValue);
 		if (engine->_scene->_currentScriptValue < conditionValue) {
 			return 1;
 		}
 		break;
 	case kGreaterThanOrEqualTo:
-		debugCN(3, kDebugLevels::kDebugScripts, "%i >= %i)", engine->_scene->_currentScriptValue, conditionValue);
+		debugCN(3, kDebugLevels::kDebugScripts, ")[%i] >= %i)", engine->_scene->_currentScriptValue, conditionValue);
 		if (engine->_scene->_currentScriptValue >= conditionValue) {
 			return 1;
 		}
 		break;
 	case kLessThanOrEqualTo:
-		debugCN(3, kDebugLevels::kDebugScripts, "%i <= %i)", engine->_scene->_currentScriptValue, conditionValue);
+		debugCN(3, kDebugLevels::kDebugScripts, ")[%i] <= %i)", engine->_scene->_currentScriptValue, conditionValue);
 		if (engine->_scene->_currentScriptValue <= conditionValue) {
 			return 1;
 		}
 		break;
 	case kNotEqualTo:
-		debugCN(3, kDebugLevels::kDebugScripts, "%i != %i)", engine->_scene->_currentScriptValue, conditionValue);
+		debugCN(3, kDebugLevels::kDebugScripts, ")[%i] != %i)", engine->_scene->_currentScriptValue, conditionValue);
 		if (engine->_scene->_currentScriptValue != conditionValue) {
 			return 1;
 		}
