@@ -20,7 +20,6 @@
  */
 
 #include "twine/scene/gamestate.h"
-#include "common/file.h"
 #include "common/rect.h"
 #include "common/str.h"
 #include "common/system.h"

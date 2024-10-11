@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "common/language.h"
 #include "common/translation.h"
 #include "engines/advancedDetector.h"

@@ -22,7 +22,6 @@
 #include "twine/input.h"
 #include "backends/keymapper/keymapper.h"
 #include "common/events.h"
-#include "common/keyboard.h"
 #include "common/system.h"
 #include "twine/scene/actor.h"
 #include "twine/twine.h"

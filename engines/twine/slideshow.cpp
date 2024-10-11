@@ -21,7 +21,6 @@
 
 #include "twine/slideshow.h"
 #include "common/file.h"
-#include "common/tokenizer.h"
 #include "graphics/palette.h"
 #include "image/pcx.h"
 #include "twine/movies.h"

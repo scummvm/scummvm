@@ -22,7 +22,6 @@
 #ifndef TWINE_TWINE_H
 #define TWINE_TWINE_H
 
-#include "backends/keymapper/keymap.h"
 #include "common/platform.h"
 #include "common/random.h"
 #include "common/rect.h"
@@ -32,7 +31,6 @@
 #include "engines/metaengine.h"
 #include "graphics/managed_surface.h"
 #include "graphics/screen.h"
-#include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "twine/detection.h"
 #include "twine/input.h"

@@ -20,9 +20,9 @@
  */
 
 #include "twine/scene/scene.h"
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/memstream.h"
-#include "common/stream.h"
 #include "common/util.h"
 #include "twine/audio/music.h"
 #include "twine/audio/sound.h"

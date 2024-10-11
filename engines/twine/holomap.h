@@ -22,7 +22,6 @@
 #ifndef TWINE_HOLOMAP_H
 #define TWINE_HOLOMAP_H
 
-#include "twine/shared.h"
 #include "common/scummsys.h"
 
 namespace Common {

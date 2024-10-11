@@ -23,7 +23,6 @@
 #define TWINE_SCENE_SCENE_H
 
 #include "common/scummsys.h"
-#include "common/util.h"
 #include "twine/scene/actor.h"
 #include "twine/shared.h"
 

@@ -20,7 +20,6 @@
  */
 
 #include "twine/scene/extra.h"
-#include "common/memstream.h"
 #include "common/util.h"
 #include "twine/audio/sound.h"
 #include "twine/input.h"

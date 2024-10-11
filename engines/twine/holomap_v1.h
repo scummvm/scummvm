@@ -23,6 +23,7 @@
 #define TWINE_HOLOMAPV1_H
 
 #include "twine/holomap.h"
+#include "twine/shared.h"
 
 #define NUM_HOLOMAPCOLORS 32
 #define HOLOMAP_PALETTE_INDEX (12*16)

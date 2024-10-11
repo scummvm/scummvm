@@ -21,7 +21,7 @@
 
 #include "twine/text.h"
 #include "common/algorithm.h"
-#include "common/endian.h"
+#include "common/config-manager.h"
 #include "common/memstream.h"
 #include "common/scummsys.h"
 #include "common/str.h"

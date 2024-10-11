@@ -22,7 +22,6 @@
 #ifndef TWINE_SCENE_GAMESTATE_H
 #define TWINE_SCENE_GAMESTATE_H
 
-#include "common/savefile.h"
 #include "common/scummsys.h"
 #include "twine/menu/menu.h"
 #include "twine/shared.h"

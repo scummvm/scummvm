@@ -20,8 +20,6 @@
  */
 
 #include "twine/scene/actor.h"
-#include "common/memstream.h"
-#include "common/system.h"
 #include "common/textconsole.h"
 #include "twine/audio/sound.h"
 #include "twine/debugger/debug_state.h"

@@ -27,7 +27,6 @@
 #include "common/debug.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "twine/detection.h"
 #include "twine/resources/hqr.h"
 #include "twine/resources/resources.h"
 #include "twine/twine.h"

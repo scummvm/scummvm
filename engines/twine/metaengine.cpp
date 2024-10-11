@@ -20,10 +20,8 @@
  */
 
 #include "backends/keymapper/action.h"
-#include "backends/keymapper/standard-actions.h"
+#include "backends/keymapper/keymap.h"
 #include "base/plugins.h"
-#include "common/fs.h"
-#include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
