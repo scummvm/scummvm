@@ -428,7 +428,7 @@ bool Vocabulary::checkAltInput(Common::String &text, uint16 &cursorPos) {
 					if (cursorPos > p + i->_inputLength) {
 						cursorPos += Common::strnlen(i->_replacement, maxSize) - i->_inputLength;
 					} else if (cursorPos > p) {
-						cursorPos = p + Common::strnlen(i->_replacement, maxSize);
+						cursorPos = p + Common::strnlen(i->_replacement, text.size());
 					}
 
 					for (uint32 j = 0; j < i->_inputLength; ++j)
