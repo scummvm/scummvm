@@ -2905,6 +2905,10 @@ load_game:
 			playActorSounds();
 	}
 
+	scummLoop_handleSound();
+
+	camera._last = camera._cur;
+
 	// It's verified from FT and DIG disasms that this is where
 	// these two functions should be called; this will delay the
 	// scripts executions between checkExecVerbs() and runAllScripts()
@@ -2913,10 +2917,6 @@ load_game:
 		processInput();
 		checkExecVerbs();
 	}
-
-	scummLoop_handleSound();
-
-	camera._last = camera._cur;
 
 	_res->increaseExpireCounter();
 
