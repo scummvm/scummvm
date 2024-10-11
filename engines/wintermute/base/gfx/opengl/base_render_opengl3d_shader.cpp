@@ -57,9 +57,7 @@ struct SpriteVertexShader {
 	float a;
 };
 
-BaseRenderOpenGL3DShader::BaseRenderOpenGL3DShader(BaseGame *inGame)
-	: BaseRenderer3D(inGame), _flatShadowMaskShader(nullptr) {
-	(void)_spriteBatchMode; // silence warning
+BaseRenderOpenGL3DShader::BaseRenderOpenGL3DShader(BaseGame *inGame) : BaseRenderer3D(inGame) {
 }
 
 BaseRenderOpenGL3DShader::~BaseRenderOpenGL3DShader() {

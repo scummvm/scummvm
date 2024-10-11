@@ -100,7 +100,7 @@ public:
 #ifdef ENABLE_WME3D
 	bool transferVector3d(const char *name, Math::Vector3d *val);
 	bool transferMatrix4(const char *name, Math::Matrix4 *val);
-	bool transferAngle(const char *name, Math::Angle *val);
+	bool transferAngle(const char *name, float *val);
 #endif
 	BasePersistenceManager(const Common::String &savePrefix = "", bool deleteSingleton = false);
 	virtual ~BasePersistenceManager();

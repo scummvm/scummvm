@@ -30,6 +30,7 @@
 
 
 #include "engines/wintermute/base/base_script_holder.h"
+#include "engines/wintermute/base/gfx/xmath.h"
 #include "engines/wintermute/persistent.h"
 #include "common/events.h"
 #include "graphics/transform_struct.h"
@@ -145,7 +146,7 @@ public:
 	bool _nonIntMouseEvents;
 
 #ifdef ENABLE_WME3D
-	Math::Angle _angle;
+	float _angle;
 	XModel *_xmodel;
 	XModel *_shadowModel;
 	Math::Matrix4 _worldMatrix;

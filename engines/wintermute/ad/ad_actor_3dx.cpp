@@ -48,11 +48,13 @@
 #include "engines/wintermute/base/gfx/3dshadow_volume.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/xmodel.h"
+#include "engines/wintermute/base/gfx/xmath.h"
 #include "engines/wintermute/base/particles/part_emitter.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/sound/base_sound.h"
+#include "engines/wintermute/math/math_util.h"
 #include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/utils/utils.h"
 
@@ -173,13 +175,13 @@ bool AdActor3DX::update() {
 			if (_directTurnMode == DIRECT_TURN_CW) {
 				// we have a right handed coordinate system now, so we subtract
 				_angle -= turnVel * (float)_gameRef->_deltaTime / 1000.f;
-				_angle.normalize(0.0f);
+				_angle = BaseUtils::normalizeAngle(_angle);
 			}
 
 			if (_directTurnMode == DIRECT_TURN_CCW) {
 				// we have a right handed coordinate system now, so we add
 				_angle += turnVel * (float)_gameRef->_deltaTime / 1000.f;
-				_angle.normalize(0.0f);
+				_angle = BaseUtils::normalizeAngle(_angle);
 			}
 
 			float walkVel = _directWalkVelocity == 0.0f ? _velocity : _directWalkVelocity;
@@ -187,14 +189,14 @@ bool AdActor3DX::update() {
 			if (_directWalkMode == DIRECT_WALK_FW) {
 				// we add the direction vector since in a right handed coordinate system
 				// angles turn counter-clockwise (wme uses a left handed coordinate system, so there it's a subtraction)
-				newPos.x() += sinf(_angle.getRadians()) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
-				newPos.z() += cosf(_angle.getRadians()) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+				newPos.x() += sinf(degToRad(_angle)) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+				newPos.z() += cosf(degToRad(_angle)) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
 			}
 
 			if (_directWalkMode == DIRECT_WALK_BK) {
 				// but here we subtract
-				newPos.x() -= sinf(_angle.getRadians()) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
-				newPos.z() -= cosf(_angle.getRadians()) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+				newPos.x() -= sinf(degToRad(_angle)) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+				newPos.z() -= cosf(degToRad(_angle)) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
 			}
 
 			AdScene *scene = ((AdGame *)_gameRef)->_scene;
@@ -626,8 +628,8 @@ void AdActor3DX::getNextStep3D() {
 	Math::Vector3d newPos = _posVector;
 	// we add the direction vector since in a right handed coordinate system
 	// angles turn counter-clockwise (wme uses a left handed coordinate system, so there it's a subtraction)
-	newPos.x() += sinf(_targetAngle.getRadians()) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
-	newPos.z() += cosf(_targetAngle.getRadians()) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+	newPos.x() += sinf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+	newPos.z() += cosf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
 
 	Math::Vector3d origVec, newVec;
 	Math::Vector3d *currentPos = _path3D->getCurrent();
@@ -665,9 +667,9 @@ void AdActor3DX::initLine3D(Math::Vector3d startPt, Math::Vector3d endPt, bool f
 		// wme subtracted 90 dregrees from the angle, so that the angle zero points downwards
 		// and the angle 90 goes left
 		// now we have a right handed coordinate system, so we add 90 degrees instead
-		turnTo(Math::rad2deg(-atan2(endPt.z() - startPt.z(), endPt.x() - startPt.x())) + 90);
+		turnTo(radToDeg(-atan2(endPt.z() - startPt.z(), endPt.x() - startPt.x())) + 90);
 	} else {
-		_turningLeft = prepareTurn(Math::rad2deg(-atan2(endPt.z() - startPt.z(), endPt.x() - startPt.x())) + 90);
+		_turningLeft = prepareTurn(radToDeg(-atan2(endPt.z() - startPt.z(), endPt.x() - startPt.x())) + 90);
 	}
 }
 
@@ -688,8 +690,8 @@ void AdActor3DX::getNextStep2D() {
 	Math::Vector3d newPos = _posVector;
 	// we add the direction vector since in a right handed coordinate system
 	// angles turn counter-clockwise (wme uses a left handed coordinate system, so there it's a subtraction)
-	newPos.x() += sinf(_targetAngle.getRadians()) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
-	newPos.z() += cosf(_targetAngle.getRadians()) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+	newPos.x() += sinf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+	newPos.z() += cosf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
 
 	Math::Vector3d currentPoint;
 	adGame->_scene->_sceneGeometry->convert2Dto3DTolerant(_path2D->getCurrent()->x,
@@ -758,11 +760,11 @@ void AdActor3DX::followPath2D() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdActor3DX::prepareTurn(Math::Angle targetAngle) {
+bool AdActor3DX::prepareTurn(float targetAngle) {
 	bool turnLeft;
 
-	_angle.normalize(0.0f);
-	targetAngle.normalize(0.0f);
+	_angle = BaseUtils::normalizeAngle(_angle);
+	targetAngle = BaseUtils::normalizeAngle(targetAngle);
 
 	if (_angle == targetAngle) {
 		_targetAngle = _angle;
@@ -771,9 +773,9 @@ bool AdActor3DX::prepareTurn(Math::Angle targetAngle) {
 
 	float delta1, delta2, delta3, delta;
 
-	delta1 = (targetAngle - _angle).getDegrees();
-	delta2 = (targetAngle + 360 - _angle).getDegrees();
-	delta3 = (targetAngle - 360 - _angle).getDegrees();
+	delta1 = targetAngle - _angle;
+	delta2 = targetAngle + 360 - _angle;
+	delta3 = targetAngle - 360 - _angle;
 
 	delta1 = (fabs(delta1) <= fabs(delta2)) ? delta1 : delta2;
 	delta = (fabs(delta1) <= fabs(delta3)) ? delta1 : delta3;
@@ -800,7 +802,7 @@ bool AdActor3DX::turnToStep(float velocity) {
 
 	// done turning?
 	if (_angle == _targetAngle) {
-		_angle.normalize(0.0f);
+		_angle = BaseUtils::normalizeAngle(_angle);
 		_targetAngle = _angle;
 		return true;
 	} else {
@@ -952,7 +954,7 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 			float tmpAngle;
 			parser.scanStr((char *)params, "%f", &tmpAngle);
 			_angle = tmpAngle;
-			_angle.normalize(0.0f);
+			BaseUtils::normalizeAngle(_angle);
 			break;
 
 		case TOKEN_SHADOW_SIZE:
@@ -1647,7 +1649,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			BaseObject *obj = (BaseObject *)val->getNative();
 			Math::Vector3d objPos;
 			((AdGame *)_gameRef)->_scene->_sceneGeometry->convert2Dto3D(obj->_posX, obj->_posY, &objPos);
-			angle = Math::rad2deg(-atan2(objPos.z() - _posVector.z(), objPos.x() - _posVector.x())) + 90;
+			angle = radToDeg(-atan2(objPos.z() - _posVector.z(), objPos.x() - _posVector.x())) + 90;
 		} else {
 			// otherwise turn to direction
 			dir = val->getInt();
@@ -2074,7 +2076,7 @@ ScValue *AdActor3DX::scGetProperty(const Common::String &name) {
 	// DirectionAngle / DirAngle
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "DirectionAngle" || name == "DirAngle") {
-		_scValue->setFloat(_angle.getDegrees());
+		_scValue->setFloat(_angle);
 		return _scValue;
 	}
 
@@ -2082,7 +2084,7 @@ ScValue *AdActor3DX::scGetProperty(const Common::String &name) {
 	// Direction
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "Direction") {
-		_scValue->setInt(angleToDir(_angle.getDegrees()));
+		_scValue->setInt(angleToDir(_angle));
 		return _scValue;
 	}
 
@@ -2193,7 +2195,7 @@ bool AdActor3DX::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DirectionAngle") == 0 || strcmp(name, "DirAngle") == 0) {
 		_angle = value->getFloat();
-		_angle.normalize(0.0f);
+		BaseUtils::normalizeAngle(_angle);
 		return true;
 	}
 

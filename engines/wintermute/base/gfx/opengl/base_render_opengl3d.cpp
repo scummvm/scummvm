@@ -174,8 +174,9 @@ void BaseRenderOpenGL3D::displayShadow(BaseObject *object, const Math::Vector3d 
 	scale(1, 1) = 1.0f;
 	scale(2, 2) = object->_shadowSize * object->_scale3D;
 
-	float sinOfAngle = object->_angle.getSine();
-	float cosOfAngle = object->_angle.getCosine();
+	Math::Angle angle = object->_angle;
+	float sinOfAngle = angle.getSine();
+	float cosOfAngle = angle.getCosine();
 	Math::Matrix4 rotation;
 	rotation.setToIdentity();
 	rotation(0, 0) = cosOfAngle;

@@ -395,8 +395,8 @@ bool AdSceneGeometry::storeDrawingParams() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::render(bool render) {
-	//	store values
-	//	StoreDrawingParams();
+	// store values
+	// storeDrawingParams();
 	if (render) {
 		_gameRef->_renderer3D->renderSceneGeometry(_planes, _blocks, _generics, _lights, getActiveCamera());
 	}
@@ -454,9 +454,6 @@ float AdSceneGeometry::getHeightAt(Math::Vector3d pos, float tolerance, bool *in
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::directPathExists(Math::Vector3d *p1, Math::Vector3d *p2) {
-	// pretty sure this stuff can be somewhat simplified by factoring it out
-	// into some functions but let's leave this to a later point
-
 	// test walkplanes
 	for (uint i = 0; i < _planes.size(); i++) {
 		for (int j = 0; j < _planes[i]->_mesh->faceCount(); j++) {

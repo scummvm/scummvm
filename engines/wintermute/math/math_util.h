@@ -41,6 +41,11 @@ public:
 };
 
 #ifdef ENABLE_WME3D
+
+#define DX_PI    ((float)3.141592654)
+#define degToRad(_val) (_val * DX_PI * (1.0f / 180.0f))
+#define radToDeg(_val) (_val * (180.0f / DX_PI))
+
 bool lineIntersectsTriangle(const Math::Vector3d &origin, const Math::Vector3d &direction,
 							const Math::Vector3d &v0, const Math::Vector3d &v1, const Math::Vector3d &v2,
 							float &t, float &u, float &v);

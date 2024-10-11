@@ -1378,8 +1378,9 @@ bool BaseObject::getMatrix(Math::Matrix4 *modelMatrix, Math::Vector3d *posVect) 
 	scale(1, 1) = _scale3D;
 	scale(2, 2) = _scale3D;
 
-	float sinOfAngle = _angle.getSine();
-	float cosOfAngle = _angle.getCosine();
+	Math::Angle angle = _angle;
+	float sinOfAngle = angle.getSine();
+	float cosOfAngle = angle.getCosine();
 	Math::Matrix4 rotation;
 	rotation.setToIdentity();
 	rotation(0, 0) = cosOfAngle;

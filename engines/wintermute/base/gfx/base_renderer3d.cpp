@@ -30,7 +30,7 @@ BaseRenderer3D::BaseRenderer3D(Wintermute::BaseGame *inGame) : BaseRenderer(inGa
 	_camera = nullptr;
 
 	_state = RSTATE_NONE;
-	_fov = M_PI / 4;
+	_fov = (float)M_PI / 4;
 
 	_nearClipPlane = DEFAULT_NEAR_PLANE;
 	_farClipPlane = DEFAULT_FAR_PLANE;

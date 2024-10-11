@@ -97,7 +97,7 @@ public:
 	bool turnTo(float angle);
 	Math::Vector3d _targetPoint3D;
 	BasePoint *_targetPoint2D;
-	Math::Angle _targetAngle;
+	float _targetAngle;
 	bool display() override;
 	bool update() override;
 	AdActor3DX(BaseGame *inGame);
@@ -122,7 +122,7 @@ private:
 	bool parseEffect(byte *buffer);
 	BaseArray<AdAttach3DX *> _attachments;
 	bool turnToStep(float velocity);
-	bool prepareTurn(Math::Angle targetAngle);
+	bool prepareTurn(float targetAngle);
 	bool mergeAnimations(const char *filename);
 	bool mergeAnimations2(const char *filename);
 	bool unloadAnimation(const char *animName);

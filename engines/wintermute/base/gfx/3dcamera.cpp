@@ -44,7 +44,7 @@ Camera3D::Camera3D(BaseGame *inGame) : BaseNamedObject(inGame) {
 	_position = Math::Vector3d(0.0f, 0.0f, 0.0f);
 	_target = Math::Vector3d(0.0f, 0.0f, 0.0f);
 	_bank = 0.0f;
-	_fov = _origFov = Math::Angle(45.0f).getRadians();
+	_fov = _origFov = degToRad(45.0f);
 	_nearClipPlane = _farClipPlane = -1.0f;
 }
 
@@ -69,9 +69,9 @@ bool Camera3D::loadFrom3DS(Common::MemoryReadStream &fileStream) {
 	float lens = fileStream.readFloatLE();
 
 	if (lens > 0.0f) {
-		_fov = Math::Angle(1900.0f / lens).getRadians();
+		_fov = degToRad(1900.0f / lens);
 	} else {
-		_fov = Math::Angle(45.0f).getRadians();
+		_fov = degToRad(45.0f);
 	}
 
 	_origFov = _fov;
