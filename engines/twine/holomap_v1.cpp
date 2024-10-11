@@ -188,7 +188,7 @@ void HolomapV1::computeCoorMapping() {
 	int projectedIndex = 0;
 	for (int32 alpha = -LBAAngles::ANGLE_90; alpha <= LBAAngles::ANGLE_90; alpha += LBAAngles::ANGLE_11_25) {
 		for (int32 beta = 0; beta < LBAAngles::ANGLE_360; beta += LBAAngles::ANGLE_11_25) {
-			_projectedSurfacePositions[projectedIndex].x2 = lerp(0, 255 * LBAAngles::ANGLE_90 + 255, LBAAngles::ANGLE_360 - 1, beta);
+			_projectedSurfacePositions[projectedIndex].x2 = ruleThree32(0, 255 * LBAAngles::ANGLE_90 + 255, LBAAngles::ANGLE_360 - 1, beta);
 			if (alpha == LBAAngles::ANGLE_90) {
 				_projectedSurfacePositions[projectedIndex].y2 = 255 * LBAAngles::ANGLE_90 + 255;
 			} else {

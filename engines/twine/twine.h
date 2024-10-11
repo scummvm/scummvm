@@ -210,7 +210,7 @@ int32 boundRuleThree(int32 val1, int32 val2, int32 nbstep, int32 step);
  * @return the lerped value
  * @note Doesn't clamp
  */
-int32 lerp(int32 value, int32 start, int32 end, int32 t);
+int32 ruleThree32(int32 value, int32 start, int32 end, int32 t);
 
 class TwinEEngine : public Engine {
 private:

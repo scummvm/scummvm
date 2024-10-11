@@ -156,7 +156,7 @@ int32 boundRuleThree(int32 val1, int32 val2, int32 nbstep, int32 step) { // Boun
 	return val1 + (((val2 - val1) * step) / nbstep);
 }
 
-int32 lerp(int32 val1, int32 val2, int32 nbstep, int32 step) {  // RegleTrois32
+int32 ruleThree32(int32 val1, int32 val2, int32 nbstep, int32 step) {  // RegleTrois32
 	if (nbstep < 0) {
 		return val2;
 	}

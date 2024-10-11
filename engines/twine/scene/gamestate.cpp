@@ -539,7 +539,7 @@ void GameState::processGameoverAnimation() {
 		}
 
 		zoom = boundRuleThree(40000, 3200, _engine->toSeconds(10), _engine->timerRef - startLbaTime);
-		const int32 angle = lerp(1, LBAAngles::ANGLE_360, _engine->toSeconds(2), (_engine->timerRef - startLbaTime) % _engine->toSeconds(2));
+		const int32 angle = ruleThree32(1, LBAAngles::ANGLE_360, _engine->toSeconds(2), (_engine->timerRef - startLbaTime) % _engine->toSeconds(2));
 
 		_engine->blitWorkToFront(rect);
 		_engine->_renderer->setFollowCamera(0, 0, 0, 0, -angle, 0, zoom);

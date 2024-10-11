@@ -177,9 +177,9 @@ void Screens::fadePal(uint8 r, uint8 g, uint8 b, const Graphics::Palette &rgbaPa
 	for (int32 i = 0; i < NUMOFCOLORS; i++) {
 		byte rIn, gIn, bIn;
 		rgbaPal.get(i, rIn, gIn, bIn);
-		const byte newR = lerp(r, rIn, 100, intensity);
-		const byte newG = lerp(g, gIn, 100, intensity);
-		const byte newB = lerp(b, bIn, 100, intensity);
+		const byte newR = ruleThree32(r, rIn, 100, intensity);
+		const byte newG = ruleThree32(g, gIn, 100, intensity);
+		const byte newB = ruleThree32(b, bIn, 100, intensity);
 		pal.set(i, newR, newG, newB);
 	}
 
@@ -252,9 +252,9 @@ void Screens::fadePalToPal(const Graphics::Palette &ptrpal, const Graphics::Pale
 			byte r2, g2, b2;
 			ptrpal2.get(i, r2, g2, b2);
 
-			byte newR = lerp(r1, r2, 100, m);
-			byte newG = lerp(g1, g2, 100, m);
-			byte newB = lerp(b1, b2, 100, m);
+			byte newR = ruleThree32(r1, r2, 100, m);
+			byte newG = ruleThree32(g1, g2, 100, m);
+			byte newB = ruleThree32(b1, b2, 100, m);
 			workpal.set(i, newR, newG, newB);
 		}
 
