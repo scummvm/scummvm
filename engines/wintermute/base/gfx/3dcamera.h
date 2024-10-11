@@ -50,7 +50,7 @@ public:
 	Math::Vector3d _target;
 	float _bank;
 	float _fov;
-	float _originalFOV;
+	float _origFov;
 	float _nearClipPlane;
 	float _farClipPlane;
 

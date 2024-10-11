@@ -44,7 +44,6 @@ namespace Wintermute {
 
 BaseRenderer3D *makeOpenGL3DShaderRenderer(BaseGame *inGame) {
 	return new BaseRenderOpenGL3DShader(inGame);
-
 }
 
 struct SpriteVertexShader {
@@ -59,11 +58,13 @@ struct SpriteVertexShader {
 };
 
 BaseRenderOpenGL3DShader::BaseRenderOpenGL3DShader(BaseGame *inGame)
-	: BaseRenderer3D(inGame), _spriteBatchMode(false), _flatShadowMaskShader(nullptr) {
+	: BaseRenderer3D(inGame), _flatShadowMaskShader(nullptr) {
 	(void)_spriteBatchMode; // silence warning
 }
 
 BaseRenderOpenGL3DShader::~BaseRenderOpenGL3DShader() {
+	_camera = nullptr;
+
 	glDeleteBuffers(1, &_spriteVBO);
 	glDeleteTextures(1, &_flatShadowRenderTexture);
 	glDeleteRenderbuffers(1, &_flatShadowDepthBuffer);
@@ -96,7 +97,7 @@ void BaseRenderOpenGL3DShader::setAmbientLight() {
 	byte g = RGBCOLGetG(_ambientLightColor);
 	byte b = RGBCOLGetB(_ambientLightColor);
 
-	if (!_overrideAmbientLightColor) {
+	if (!_ambientLightOverride) {
 		uint32 color = _gameRef->getAmbientLightColor();
 
 		a = RGBCOLGetA(color);
@@ -441,9 +442,9 @@ bool BaseRenderOpenGL3DShader::setProjection() {
 
 	float scaleMod = _height / viewportHeight;
 
-	float top = _nearPlane * tanf(verticalViewAngle * 0.5f);
+	float top = _nearClipPlane * tanf(verticalViewAngle * 0.5f);
 
-	_projectionMatrix3d = Math::makeFrustumMatrix(-top * aspectRatio, top * aspectRatio, -top, top, _nearPlane, _farPlane);
+	_projectionMatrix3d = Math::makeFrustumMatrix(-top * aspectRatio, top * aspectRatio, -top, top, _nearClipPlane, _farClipPlane);
 
 	_projectionMatrix3d(0, 0) *= scaleMod;
 	_projectionMatrix3d(1, 1) *= scaleMod;
@@ -533,8 +534,8 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	_width = width;
 	_height = height;
 
-	_nearPlane = 90.0f;
-	_farPlane = 10000.0f;
+	_nearClipPlane = 90.0f;
+	_farClipPlane = 10000.0f;
 
 	setViewport(0, 0, width, height);
 
@@ -592,8 +593,8 @@ bool BaseRenderOpenGL3DShader::forcedFlip() {
 }
 
 bool BaseRenderOpenGL3DShader::setup2D(bool force) {
-	if (_renderState != RSTATE_2D || force) {
-		_renderState = RSTATE_2D;
+	if (_state != RSTATE_2D || force) {
+		_state = RSTATE_2D;
 
 		// some states are still missing here
 
@@ -614,8 +615,8 @@ bool BaseRenderOpenGL3DShader::setup2D(bool force) {
 }
 
 bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
-	if (_renderState != RSTATE_3D || force) {
-		_renderState = RSTATE_3D;
+	if (_state != RSTATE_3D || force) {
+		_state = RSTATE_3D;
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
@@ -626,11 +627,11 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 			_fov = camera->_fov;
 
 			if (camera->_nearClipPlane >= 0.0f) {
-				_nearPlane = camera->_nearClipPlane;
+				_nearClipPlane = camera->_nearClipPlane;
 			}
 
 			if (camera->_farClipPlane >= 0.0f) {
-				_farPlane = camera->_farClipPlane;
+				_farClipPlane = camera->_farClipPlane;
 			}
 
 			Math::Matrix4 viewMatrix;
@@ -683,8 +684,8 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 }
 
 bool BaseRenderOpenGL3DShader::setupLines() {
-	if (_renderState != RSTATE_LINES) {
-		_renderState = RSTATE_LINES;
+	if (_state != RSTATE_LINES) {
+		_state = RSTATE_LINES;
 
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);

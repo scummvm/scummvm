@@ -255,8 +255,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 	createLights();
 
 	if (_lights.size() > 0) {
-		uint activeLight = 0;
-		setActiveLight(activeLight);
+		setActiveLight(0);
 	}
 
 	delete geomExt;
@@ -293,7 +292,7 @@ bool AdSceneGeometry::setActiveCamera(int camera, float fov, float nearClipPlane
 		if (fov >= 0.0f) {
 			_cameras[camera]->_fov = fov;
 		} else {
-			_cameras[camera]->_fov = _cameras[camera]->_originalFOV;
+			_cameras[camera]->_fov = _cameras[camera]->_origFov;
 		}
 
 		_cameras[camera]->_nearClipPlane = nearClipPlane;
@@ -691,8 +690,7 @@ bool AdSceneGeometry::getPath(Math::Vector3d source, Math::Vector3d target, AdPa
 		_PFRerun = rerun;
 
 		// prepare working path
-		uint i;
-		uint j;
+		uint i, j;
 
 		for (i = 0; i < _PFPath.size(); i++) {
 			delete _PFPath[i];

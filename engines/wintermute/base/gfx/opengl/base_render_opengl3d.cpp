@@ -46,13 +46,11 @@ BaseRenderer3D *makeOpenGL3DRenderer(BaseGame *inGame) {
 	return new BaseRenderOpenGL3D(inGame);
 }
 
-BaseRenderOpenGL3D::BaseRenderOpenGL3D(BaseGame *inGame) : BaseRenderer3D(inGame),
-                                                           _spriteBatchMode(false) {
+BaseRenderOpenGL3D::BaseRenderOpenGL3D(BaseGame *inGame) : BaseRenderer3D(inGame) {
 	setDefaultAmbientLightColor();
 
 	_lightPositions.resize(maximumLightsCount());
 	_lightDirections.resize(maximumLightsCount());
-	(void)_spriteBatchMode; // silence warning
 }
 
 BaseRenderOpenGL3D::~BaseRenderOpenGL3D() {
@@ -84,7 +82,7 @@ void BaseRenderOpenGL3D::setAmbientLight() {
 	byte g = 0;
 	byte b = 0;
 
-	if (_overrideAmbientLightColor) {
+	if (_ambientLightOverride) {
 		a = RGBCOLGetA(_ambientLightColor);
 		r = RGBCOLGetR(_ambientLightColor);
 		g = RGBCOLGetG(_ambientLightColor);
@@ -339,13 +337,13 @@ bool BaseRenderOpenGL3D::setProjection() {
 
 	float verticalViewAngle = _fov;
 	float aspectRatio = viewportWidth / viewportHeight;
-	float top = _nearPlane * tanf(verticalViewAngle * 0.5f);
+	float top = _nearClipPlane * tanf(verticalViewAngle * 0.5f);
 
 	float scaleMod = _height / viewportHeight;
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glFrustum(-top * aspectRatio, top * aspectRatio, -top, top, _nearPlane, _farPlane);
+	glFrustum(-top * aspectRatio, top * aspectRatio, -top, top, _nearClipPlane, _farClipPlane);
 	glGetFloatv(GL_PROJECTION_MATRIX, _projectionMatrix3d.getData());
 
 	_projectionMatrix3d(0, 0) *= scaleMod;
@@ -387,8 +385,8 @@ bool BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
 	_width = width;
 	_height = height;
 
-	_nearPlane = 90.0f;
-	_farPlane = 10000.0f;
+	_nearClipPlane = 90.0f;
+	_farClipPlane = 10000.0f;
 
 	setViewport(0, 0, width, height);
 
@@ -451,8 +449,8 @@ bool BaseRenderOpenGL3D::forcedFlip() {
 }
 
 bool BaseRenderOpenGL3D::setup2D(bool force) {
-	if (_renderState != RSTATE_2D || force) {
-		_renderState = RSTATE_2D;
+	if (_state != RSTATE_2D || force) {
+		_state = RSTATE_2D;
 
 		// some states are still missing here
 
@@ -477,8 +475,8 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 }
 
 bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
-	if (_renderState != RSTATE_3D || force) {
-		_renderState = RSTATE_3D;
+	if (_state != RSTATE_3D || force) {
+		_state = RSTATE_3D;
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LIGHTING);
@@ -495,11 +493,11 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 			_fov = camera->_fov;
 
 			if (camera->_nearClipPlane >= 0.0f) {
-				_nearPlane = camera->_nearClipPlane;
+				_nearClipPlane = camera->_nearClipPlane;
 			}
 
 			if (camera->_farClipPlane >= 0.0f) {
-				_farPlane = camera->_farClipPlane;
+				_farClipPlane = camera->_farClipPlane;
 			}
 
 			Math::Matrix4 viewMatrix;
@@ -545,8 +543,8 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 }
 
 bool BaseRenderOpenGL3D::setupLines() {
-	if (_renderState != RSTATE_LINES) {
-		_renderState = RSTATE_LINES;
+	if (_state != RSTATE_LINES) {
+		_state = RSTATE_LINES;
 
 		glDisable(GL_LIGHTING);
 		glDisable(GL_DEPTH_TEST);

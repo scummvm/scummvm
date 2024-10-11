@@ -133,10 +133,10 @@ bool AnimationChannel::update(bool debug) {
 				return _anim[0]->update();
 			}
 		} else {
-			float LerpValue = float(_gameRef->_currentTime - _transitionStart) / float(_transtitionTime);
+			float lerpValue = float(_gameRef->_currentTime - _transitionStart) / float(_transtitionTime);
 
 			if (_anim[0]) {
-				_anim[0]->update(0, true, LerpValue);
+				_anim[0]->update(0, true, lerpValue);
 			}
 
 			if (_anim[1]) {

@@ -129,12 +129,6 @@ private:
 
 	Common::Array<Math::Matrix4> _transformStack;
 
-	float _fov;
-	float _nearPlane;
-	float _farPlane;
-	TRendererState _renderState;
-	bool _spriteBatchMode;
-
 	Math::Vector4d _flatShadowColor;
 	int _shadowTextureWidth;
 	int _shadowTextureHeight;

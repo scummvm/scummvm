@@ -51,6 +51,9 @@ class Mesh3DS;
 class XMesh;
 class ShadowVolume;
 
+#define DEFAULT_NEAR_PLANE 90.0f
+#define DEFAULT_FAR_PLANE  10000.0f
+
 class BaseRenderer3D : public BaseRenderer {
 public:
 	BaseRenderer3D(BaseGame *inGame = nullptr);
@@ -61,7 +64,7 @@ public:
 	virtual void setAmbientLight() = 0;
 
 	uint32 _ambientLightColor;
-	bool _overrideAmbientLightColor;
+	bool _ambientLightOverride;
 
 	virtual int maximumLightsCount() = 0;
 	virtual void enableLight(int index) = 0;
@@ -96,6 +99,8 @@ public:
 		return _projectionMatrix3d;
 	}
 
+	Camera3D *_camera;
+
 	virtual Mesh3DS *createMesh3DS() = 0;
 	virtual XMesh *createXMesh() = 0;
 	virtual ShadowVolume *createShadowVolume() = 0;
@@ -115,6 +120,11 @@ protected:
 	Math::Matrix4 _lastViewMatrix;
 	Math::Matrix4 _projectionMatrix3d;
 	Rect32 _viewport3dRect;
+	float _fov;
+	float _nearClipPlane;
+	float _farClipPlane;
+	TRendererState _state;
+	bool _spriteBatchMode;
 
 	void flipVertical(Graphics::Surface *s);
 };

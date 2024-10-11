@@ -20,12 +20,25 @@
  */
 
 #include "engines/wintermute/base/gfx/base_renderer3d.h"
+#include "engines/wintermute/base/base_game.h"
 
 #include "math/glmath.h"
 
 namespace Wintermute {
 
-BaseRenderer3D::BaseRenderer3D(Wintermute::BaseGame *inGame) : BaseRenderer(inGame), _overrideAmbientLightColor(false) {
+BaseRenderer3D::BaseRenderer3D(Wintermute::BaseGame *inGame) : BaseRenderer(inGame) {
+	_camera = nullptr;
+
+	_state = RSTATE_NONE;
+	_fov = M_PI / 4;
+
+	_nearClipPlane = DEFAULT_NEAR_PLANE;
+	_farClipPlane = DEFAULT_FAR_PLANE;
+
+	_spriteBatchMode = false;
+
+	_ambientLightColor = 0x00000000;
+	_ambientLightOverride = false;
 }
 
 BaseRenderer3D::~BaseRenderer3D() {
@@ -33,14 +46,14 @@ BaseRenderer3D::~BaseRenderer3D() {
 
 bool BaseRenderer3D::setAmbientLightColor(uint32 color) {
 	_ambientLightColor = color;
-	_overrideAmbientLightColor = true;
+	_ambientLightOverride = true;
 	setAmbientLight();
 	return true;
 }
 
 bool BaseRenderer3D::setDefaultAmbientLightColor() {
 	_ambientLightColor = 0x00000000;
-	_overrideAmbientLightColor = false;
+	_ambientLightOverride = false;
 	setAmbientLight();
 	return true;
 }

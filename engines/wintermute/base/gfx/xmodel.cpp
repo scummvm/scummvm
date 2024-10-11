@@ -130,8 +130,8 @@ bool XModel::loadFromFile(const Common::String &filename, XModel *parentModel) {
 	bool res = xfile->openFile(filename);
 	if (!res) {
 		delete xfile;
-		//return false;
-		error("XModel: Error loading X file: %s", filename.c_str());
+		BaseEngine::LOG(0, "Error loading X file: %s", filename.c_str());
+		return false;
 	}
 
 	_rootFrame = new FrameNode(_gameRef);
@@ -390,7 +390,6 @@ bool XModel::playAnim(int channel, const Common::String &name, uint32 transition
 
 	// find animation set by name
 	AnimationSet *anim = getAnimationSetByName(name);
-
 	if (anim) {
 		char *currentAnim = _channels[channel]->getName();
 		if (_owner && currentAnim) {

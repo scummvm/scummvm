@@ -107,16 +107,16 @@ public:
 	bool drawShaderQuad() override {
 		return STATUS_FAILED;
 	}
-
+	
 	float getScaleRatioX() const override {
 		return 1.0f;
 	}
 	float getScaleRatioY() const override {
 		return 1.0f;
 	}
-
+	
 	BaseSurface *createSurface() override;
-
+	
 	bool startSpriteBatch() override {
 		return STATUS_OK;
 	};
@@ -128,7 +128,7 @@ public:
 					  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) override;
 
 	void renderSceneGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
-	                         const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) override;
+							 const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) override;
 	void renderShadowGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks, const BaseArray<AdGeneric *> &generics, Camera3D *camera) override;
 
 	Mesh3DS *createMesh3DS() override;
@@ -139,11 +139,6 @@ private:
 	SimpleShadowVertex _simpleShadow[4];
 	Common::Array<Math::Vector4d> _lightPositions;
 	Common::Array<Math::Vector3d> _lightDirections;
-	float _fov;
-	float _nearPlane;
-	float _farPlane;
-	TRendererState _renderState;
-	bool _spriteBatchMode;
 };
 
 } // wintermute namespace

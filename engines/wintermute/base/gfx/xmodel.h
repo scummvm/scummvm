@@ -52,11 +52,6 @@ class XFileData;
 
 class XModel : public BaseObject {
 private:
-	// the D3DX effect stuff is missing here
-	// at the moment I am not aware of whether this is used
-	// in Alpha Polaris or any other WME game
-	// if it is, then this would mean a decent amount of work
-	// since we would need to parse and emulate D3DX effects in OpenGL
 	class XModelMatSprite {
 	public:
 		char *_matName;
@@ -118,10 +113,7 @@ private:
 	};
 
 public:
-	// default ticks per second for .X models seems to be 4800
-	// not sure if this is truly documented anywhere, though
-	// on the other hand, wme chooses the same value,
-	// so should be fine for our purposes
+
 	const static int kDefaultTicksPerSecond = 4800;
 
 	DECLARE_PERSISTENT(XModel, BaseObject)

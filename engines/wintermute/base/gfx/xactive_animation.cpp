@@ -79,7 +79,7 @@ bool ActiveAnimation::update(int slot, bool prevFrameOnly, float lerpValue, bool
 	}
 
 	uint32 localTime = 0;
-	//_gameRef->LOG(0, "%s %d %d %f %d", m_Animation->m_Name, Slot, PrevFrameOnly, LerpValue, ForceStartFrame);
+	//_gameRef->LOG(0, "%s %d %d %f %d", _animation->_name, slot, prevFrameOnly, lerpValue, forceStartFrame);
 	if (prevFrameOnly) {
 		localTime = _lastLocalTime;
 	} else {
@@ -122,7 +122,7 @@ bool ActiveAnimation::update(int slot, bool prevFrameOnly, float lerpValue, bool
 
 		_currentFrame = frame;
 	}
-	//_gameRef->LOG(0, "%s %d %f", m_Animation->m_Name, LocalTime, LerpValue);
+	//_gameRef->LOG(0, "%s %d %f", _animation->_name, localTime, lerpValue);
 	return _animation->update(slot, localTime, lerpValue);
 }
 

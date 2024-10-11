@@ -49,10 +49,7 @@ class BaseScriptHolder;
 class ScValue;
 class ScStack;
 class ScScript;
-
-#ifdef ENABLE_WME3D
 class XModel;
-#endif
 
 class BaseObject : public BaseScriptHolder {
 protected:
