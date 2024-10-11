@@ -1047,12 +1047,12 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 	}
 
-	_stepFalling = _loopMovePtr.getRealValueFromTime(timerRef);
+	_stepFalling = _realFalling.getRealValueFromTime(timerRef);
 	if (!_stepFalling) {
 		_stepFalling = 1;
 	}
 
-	_movements->setActorAngle(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_90, LBAAngles::ANGLE_1, &_loopMovePtr);
+	_movements->initRealValue(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_90, LBAAngles::ANGLE_1, &_realFalling);
 	_disableScreenRecenter = false;
 
 	_scene->processEnvironmentSound();
@@ -1224,7 +1224,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 bool TwinEEngine::gameEngineLoop() {
 	_redraw->_firstTime = true;
 	_screens->_flagFade = true;
-	_movements->setActorAngle(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_90, LBAAngles::ANGLE_1, &_loopMovePtr);
+	_movements->initRealValue(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_90, LBAAngles::ANGLE_1, &_realFalling);
 
 	while (_sceneLoopState == SceneLoopState::Continue) {
 		if (runGameEngine()) {

@@ -34,7 +34,7 @@ namespace TwinE {
 class TwinEEngine;
 class BodyData;
 class AnimData;
-struct ActorMoveStruct;
+struct RealValue;
 struct Vertex;
 struct AnimTimerDataStruct;
 

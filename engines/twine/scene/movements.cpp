@@ -56,7 +56,7 @@ IVec3 Movements::getShadow(const IVec3 &pos) { // GetShadow
 	return shadowCoord;
 }
 
-void Movements::initRealAngle(int16 startAngle, int16 endAngle, int16 stepAngle, ActorMoveStruct *movePtr) {
+void Movements::initRealAngle(int16 startAngle, int16 endAngle, int16 stepAngle, RealValue *movePtr) {
 	movePtr->startValue = ClampAngle(startAngle);
 	movePtr->endValue = ClampAngle(endAngle);
 	movePtr->timeValue = ClampAngle(stepAngle);
@@ -67,7 +67,7 @@ void Movements::clearRealAngle(ActorStruct *actorPtr) {
 	initRealAngle(actorPtr->_beta, actorPtr->_beta, LBAAngles::ANGLE_0, &actorPtr->realAngle);
 }
 
-void Movements::setActorAngle(int16 startAngle, int16 endAngle, int16 stepAngle, ActorMoveStruct *movePtr) {
+void Movements::initRealValue(int16 startAngle, int16 endAngle, int16 stepAngle, RealValue *movePtr) {
 	movePtr->startValue = startAngle;
 	movePtr->endValue = endAngle;
 	movePtr->timeValue = stepAngle;
@@ -182,7 +182,7 @@ int32 Movements::getAngle(int32 x0, int32 z0, int32 x1, int32 z1) {
 #endif
 }
 
-void Movements::initRealAngleConst(int32 start, int32 end, int32 duration, ActorMoveStruct *movePtr) const { // ManualRealAngle
+void Movements::initRealAngleConst(int32 start, int32 end, int32 duration, RealValue *movePtr) const { // ManualRealAngle
 	const int16 cstart = ClampAngle(start);
 	const int16 cend = ClampAngle(end);
 

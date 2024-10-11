@@ -497,7 +497,7 @@ void Animations::doAnim(int32 actorIdx) {
 				processActor.x = actor->_posObj.x + destPos.x;
 				processActor.z = actor->_posObj.z + destPos.y;
 
-				_engine->_movements->setActorAngle(LBAAngles::ANGLE_0, actor->_speed, LBAAngles::ANGLE_17, &actor->realAngle);
+				_engine->_movements->initRealValue(LBAAngles::ANGLE_0, actor->_speed, LBAAngles::ANGLE_17, &actor->realAngle);
 
 				if (actor->_workFlags.bIsSpriteMoving) {
 					if (actor->_doorWidth) { // open door

@@ -217,7 +217,7 @@ private:
 	int32 _isTimeFreezed = 0;
 	int32 _saveFreezedTime = 0;
 	int32 _mouseCursorState = 0;
-	ActorMoveStruct _loopMovePtr; // mainLoopVar1
+	RealValue _realFalling; // mainLoopVar1
 	PauseToken _pauseToken;
 	TwineGameType _gameType;
 	EngineState _state = EngineState::Menu;

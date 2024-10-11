@@ -1748,7 +1748,7 @@ bool Renderer::affObjetIso(int32 x, int32 y, int32 z, int32 alpha, int32 beta, i
 	return true;
 }
 
-void Renderer::drawObj3D(const Common::Rect &rect, int32 y, int32 angle, const BodyData &bodyData, ActorMoveStruct &move) {
+void Renderer::drawObj3D(const Common::Rect &rect, int32 y, int32 angle, const BodyData &bodyData, RealValue &move) {
 	int32 boxLeft = rect.left;
 	int32 boxTop = rect.top;
 	int32 boxRight = rect.right;

@@ -163,7 +163,7 @@ private:
 	// objectRotation
 	int16 _itemAngle[NUM_INVENTORY_ITEMS];
 	/** Behaviour menu move pointer */
-	ActorMoveStruct _moveMenu;
+	RealValue _moveMenu;
 
 	/**
 	 * Draws main menu button

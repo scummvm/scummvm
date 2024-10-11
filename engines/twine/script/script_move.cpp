@@ -319,7 +319,7 @@ int32 ScriptMove::mSPEED(TwinEEngine *engine, MoveScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::SPEED(%i)", (int)ctx.actor->_speed);
 
 	if (ctx.actor->_staticFlags.bSprite3D) {
-		engine->_movements->setActorAngle(LBAAngles::ANGLE_0, ctx.actor->_speed, LBAAngles::ANGLE_17, &ctx.actor->realAngle);
+		engine->_movements->initRealValue(LBAAngles::ANGLE_0, ctx.actor->_speed, LBAAngles::ANGLE_17, &ctx.actor->realAngle);
 	}
 
 	return 0;
@@ -412,7 +412,7 @@ int32 ScriptMove::mOPEN_GENERIC(TwinEEngine *engine, MoveScriptContext &ctx, int
 		ctx.actor->_doorWidth = doorStatus;
 		ctx.actor->_workFlags.bIsSpriteMoving = 1;
 		ctx.actor->_speed = 1000;
-		engine->_movements->setActorAngle(LBAAngles::ANGLE_0, LBAAngles::ANGLE_351, LBAAngles::ANGLE_17, &ctx.actor->realAngle);
+		engine->_movements->initRealValue(LBAAngles::ANGLE_0, LBAAngles::ANGLE_351, LBAAngles::ANGLE_17, &ctx.actor->realAngle);
 	}
 	if (engine->_scene->_numCube == LBA1SceneId::Proxima_Island_Museum && ctx.actor->_actorIdx == 16) {
 		engine->unlockAchievement("LBA_ACH_009");
@@ -464,7 +464,7 @@ int32 ScriptMove::mCLOSE(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->_doorWidth = 0;
 		ctx.actor->_workFlags.bIsSpriteMoving = 1;
 		ctx.actor->_speed = -1000;
-		engine->_movements->setActorAngle(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_351, LBAAngles::ANGLE_17, &ctx.actor->realAngle);
+		engine->_movements->initRealValue(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_351, LBAAngles::ANGLE_17, &ctx.actor->realAngle);
 	}
 	return 0;
 }

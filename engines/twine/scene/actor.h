@@ -37,7 +37,7 @@ namespace TwinE {
 #define NUM_BODIES 469 // 131 for lba1
 
 /** Actors move structure */
-struct ActorMoveStruct {
+struct RealValue {
 	int16 startValue = 0;
 	int16 endValue = 0;
 	int16 timeValue = 0;
@@ -247,7 +247,7 @@ public:
 	int16 SizeSHit; // lba2 - always square
 
 	BoundingBox _boundingBox; // Xmin, YMin, Zmin, Xmax, Ymax, Zmax
-	ActorMoveStruct realAngle;
+	RealValue realAngle;
 	AnimTimerDataStruct _animTimerData;
 };
 

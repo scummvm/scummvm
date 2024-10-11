@@ -67,7 +67,7 @@ struct ExtraListStruct {
 	IVec3 lastPos;
 	IVec3 destPos;
 
-	ActorMoveStruct trackActorMove;
+	RealValue trackActorMove;
 
 	uint16 type = 0; /**< ExtraType bitmask */
 	int16 angle = 0; // weight

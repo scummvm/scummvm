@@ -85,7 +85,7 @@ private:
 	void computeCoorMapping();
 	void computeGlobeProj();
 	void drawHoloMap(uint8 *holomapImage, uint32 holomapImageSize);
-	void renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, AnimTimerDataStruct &animTimerData, BodyData &bodyData, AnimData &animData);
+	void renderHolomapVehicle(uint &frameNumber, RealValue &move, AnimTimerDataStruct &animTimerData, BodyData &bodyData, AnimData &animData);
 
 	/**
 	 * Controls the size/zoom of the holomap planet

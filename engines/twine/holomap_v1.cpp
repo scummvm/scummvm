@@ -307,10 +307,10 @@ void HolomapV1::drawHoloObj(const IVec3 &angle, int32 alpha, int32 beta, int16 s
 	_engine->copyBlockPhys(dirtyRect);
 }
 
-void HolomapV1::renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, AnimTimerDataStruct &animTimerData, BodyData &bodyData, AnimData &animData) {
-	const int16 vbeta = move.getRealAngle(_engine->timerRef);
-	if (move.timeValue == 0) {
-		_engine->_movements->initRealAngle(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_90, 500, &move);
+void HolomapV1::renderHolomapVehicle(uint &frameNumber, RealValue &realRot, AnimTimerDataStruct &animTimerData, BodyData &bodyData, AnimData &animData) {
+	const int16 vbeta = realRot.getRealAngle(_engine->timerRef);
+	if (realRot.timeValue == 0) {
+		_engine->_movements->initRealAngle(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_90, 500, &realRot);
 	}
 
 	if (_engine->_animations->setInterAnimObjet(frameNumber, animData, bodyData, &animTimerData)) {
@@ -369,7 +369,7 @@ void HolomapV1::holoTraj(int32 trajectoryIndex) {
 	const Location &loc = _listHoloPos[data->locationIdx];
 	drawHoloObj(data->angle, loc.alpha, loc.beta, 0);
 
-	ActorMoveStruct move;
+	RealValue move;
 	AnimTimerDataStruct animTimerData;
 	AnimData animData;
 	animData.loadFromHQR(Resources::HQR_RESS_FILE, data->getAnimation(), _engine->isLBA1());

@@ -29,7 +29,7 @@ namespace TwinE {
 
 class TwinEEngine;
 class ActorStruct;
-struct ActorMoveStruct;
+struct RealValue;
 
 class Movements {
 private:
@@ -148,7 +148,7 @@ public:
 	 * @param stepAngle number of steps
 	 * @param movePtr time pointer to update
 	 */
-	void initRealAngle(int16 startAngle, int16 endAngle, int16 stepAngle, ActorMoveStruct *movePtr);
+	void initRealAngle(int16 startAngle, int16 endAngle, int16 stepAngle, RealValue *movePtr);
 
 	/**
 	 * Clear actors safe angle
@@ -163,7 +163,7 @@ public:
 	 * @param stepAngle number of steps
 	 * @param movePtr time pointer to update
 	 */
-	void setActorAngle(int16 startAngle, int16 endAngle, int16 stepAngle, ActorMoveStruct *movePtr);
+	void initRealValue(int16 startAngle, int16 endAngle, int16 stepAngle, RealValue *movePtr);
 
 	/**
 	 * Get actor angle
@@ -185,7 +185,7 @@ public:
 	 * @param duration Rotate speed
 	 * @param movePtr Pointer to process movements
 	 */
-	void initRealAngleConst(int32 start, int32 end, int32 duration, ActorMoveStruct *movePtr) const;
+	void initRealAngleConst(int32 start, int32 end, int32 duration, RealValue *movePtr) const;
 
 	void doDir(int32 actorIdx);
 };

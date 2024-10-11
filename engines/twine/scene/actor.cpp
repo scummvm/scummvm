@@ -493,7 +493,7 @@ void Actor::posObjectAroundAnother(uint8 numsrc, uint8 numtopos) {
 #endif
 }
 
-int16 ActorMoveStruct::getRealValueFromTime(int32 time) {
+int16 RealValue::getRealValueFromTime(int32 time) {
 	if (timeValue) {
 		const int32 delta = time - memoTicks;
 
@@ -511,7 +511,7 @@ int16 ActorMoveStruct::getRealValueFromTime(int32 time) {
 	return endValue;
 }
 
-int16 ActorMoveStruct::getRealAngle(int32 time) {
+int16 RealValue::getRealAngle(int32 time) {
 	if (timeValue) {
 		int32 delta = time - memoTicks;
 		if (delta < timeValue) {
