@@ -22,7 +22,9 @@
 #ifndef DIRECTOR_DEBUGER_DT_INTERNAL_H
 #define DIRECTOR_DEBUGER_DT_INTERNAL_H
 
+#ifndef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS
+#endif
 
 #include "graphics/surface.h"
 
@@ -30,6 +32,7 @@
 #include "backends/imgui/imgui_fonts.h"
 
 #include "director/debugger/imgui_memory_editor.h"
+#include "director/debugger/dt-logger.h"
 
 #include "director/types.h"
 #include "director/lingo/lingo.h"
@@ -137,16 +140,6 @@ typedef struct ImGuiState {
 		ImVec4 _script_ref = ImColor(IM_COL32(0x7f, 0x7f, 0xff, 0xfff));
 		ImVec4 _var_ref = ImColor(IM_COL32(0xe6, 0xe6, 0x00, 0xff));
 		ImVec4 _var_ref_changed = ImColor(IM_COL32(0xFF, 0x00, 0x00, 0xFF));
-
-		ImVec4 _logger_error_b = ImVec4(1.f, 0.f, 0.f, 1.f);
-		ImVec4 _logger_warning_b = ImVec4(1.f, 1.f, 0.f, 1.f);
-		ImVec4 _logger_info_b = ImVec4(1.f, 1.f, 1.f, 1.f);
-		ImVec4 _logger_debug_b = ImVec4(0.8f, 0.8f, 0.8f, 1.f);
-
-		ImVec4 _logger_error = ImVec4(1.0f, 0.4f, 0.4f, 1.0f);
-		ImVec4 _logger_warning = ImVec4(1.0f, 1.0f, 0.4f, 1.0f);
-		ImVec4 _logger_info = ImVec4(1.0f, 0.8f, 0.6f, 1.0f);
-		ImVec4 _logger_debug = ImVec4(0.8f, 0.8f, 0.8f, 1.0f);
 	} _colors;
 
 	struct {
@@ -190,30 +183,7 @@ typedef struct ImGuiState {
 	ImGuiLogger *_logger = nullptr;
 } ImGuiState;
 
-// dt-logger.cpp
-class ImGuiLogger {
-	char _inputBuf[256];
-	ImVector<char *> _items;
-	ImVector<char *> _history;
-	int _historyPos; // -1: new line, 0.._history.Size-1 browsing history.
-	ImGuiTextFilter _filter;
-	bool _autoScroll;
-	bool _scrollToBottom;
-	bool _showError = true;
-	bool _showWarn = true;
-	bool _showInfo = true;
-	bool _showdebug = true;
-
-public:
-	ImGuiLogger();
-	~ImGuiLogger();
-	void clear();
-	void addLog(const char *fmt, ...) IM_FMTARGS(2);
-	void draw(const char *title, bool *p_open);
-};
-
 // debugtools.cpp
-bool toggleButton(const char *label, bool *p_value, bool inverse = false);
 ImGuiScript toImGuiScript(ScriptType scriptType, CastMemberID id, const Common::String &handlerId);
 void setScriptToDisplay(const ImGuiScript &script);
 Director::Breakpoint *getBreakpoint(const Common::String &handlerName, uint16 scriptId, uint pc);

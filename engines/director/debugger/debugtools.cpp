@@ -39,21 +39,6 @@ namespace DT {
 
 ImGuiState *_state = nullptr;
 
-bool toggleButton(const char *label, bool *p_value, bool inverse) {
-	int pop = 0;
-	if (*p_value != inverse) {
-		ImVec4 hovered = ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered];
-		ImGui::PushStyleColor(ImGuiCol_Button, hovered);
-		pop = 1;
-	}
-	bool result = ImGui::Button(label);
-	if (result) {
-		*p_value = !*p_value;
-	}
-	ImGui::PopStyleColor(pop);
-	return result;
-}
-
 const LingoDec::Handler *getHandler(const Cast *cast, CastMemberID id, const Common::String &handlerId) {
 	if (!cast)
 		return nullptr;
@@ -283,15 +268,7 @@ static void showSettings() {
 		ImGui::ColorEdit4("Variable", &_state->_colors._var_ref.x);
 		ImGui::ColorEdit4("Variable changed", &_state->_colors._var_ref_changed.x);
 
-		ImGui::SeparatorText("Logger");
-		ImGui::ColorEdit4("Error", &_state->_colors._logger_error.x);
-		ImGui::ColorEdit4("Error Button", &_state->_colors._logger_error_b.x);
-		ImGui::ColorEdit4("Warning", &_state->_colors._logger_warning.x);
-		ImGui::ColorEdit4("Warning Button", &_state->_colors._logger_warning_b.x);
-		ImGui::ColorEdit4("Info", &_state->_colors._logger_info.x);
-		ImGui::ColorEdit4("Info Button", &_state->_colors._logger_info_b.x);
-		ImGui::ColorEdit4("Debug", &_state->_colors._logger_debug.x);
-		ImGui::ColorEdit4("Debug Button", &_state->_colors._logger_debug_b.x);
+		_state->_logger->drawColorOptions();
 	}
 	ImGui::End();
 }

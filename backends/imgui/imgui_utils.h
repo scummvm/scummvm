@@ -21,6 +21,10 @@
 
 #include "backends/imgui/IconsMaterialSymbols.h"
 
+#ifndef IMGUI_DEFINE_MATH_OPERATORS
+#define IMGUI_DEFINE_MATH_OPERATORS
+#endif
+
 #include "backends/imgui/imgui.h"
 #include "graphics/palette.h"
 
@@ -38,5 +42,6 @@ bool InputInt(const char *label, INT *v, int step = 1, int step_fast = 100, ImGu
 
 void Boolean(bool val);
 void Palette(const Graphics::Palette &palette);
+bool toggleButton(const char *label, bool *p_value, bool inverse = false);
 
 } // namespace ImGuiEx

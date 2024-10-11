@@ -20,6 +20,7 @@
  */
 
 #include "backends/imgui/IconsMaterialSymbols.h"
+#include "backends/imgui/imgui_utils.h"
 #include "director/director.h"
 #include "director/debugger/dt-internal.h"
 
@@ -221,11 +222,11 @@ void showScripts() {
 
 		if (!_state->_functions._scripts[_state->_functions._current].oldAst) {
 			ImGui::SameLine(0, 20);
-			toggleButton(ICON_MS_PACKAGE_2, &_state->_functions._showByteCode, true); // Lingo
+			ImGuiEx::toggleButton(ICON_MS_PACKAGE_2, &_state->_functions._showByteCode, true); // Lingo
 			ImGui::SetItemTooltip("Lingo");
 			ImGui::SameLine();
 
-			toggleButton(ICON_MS_STACKS, &_state->_functions._showByteCode); // Bytecode
+			ImGuiEx::toggleButton(ICON_MS_STACKS, &_state->_functions._showByteCode); // Bytecode
 			ImGui::SetItemTooltip("Bytecode");
 		}
 

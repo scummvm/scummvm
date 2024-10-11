@@ -66,4 +66,19 @@ void Palette(const Graphics::Palette &palette) {
 	drawList->Flags = backupFlags;
 }
 
+bool toggleButton(const char *label, bool *p_value, bool inverse) {
+	int pop = 0;
+	if (*p_value != inverse) {
+		ImVec4 hovered = ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered];
+		ImGui::PushStyleColor(ImGuiCol_Button, hovered);
+		pop = 1;
+	}
+	bool result = ImGui::Button(label);
+	if (result) {
+		*p_value = !*p_value;
+	}
+	ImGui::PopStyleColor(pop);
+	return result;
+}
+
 } // namespace ImGuiEx

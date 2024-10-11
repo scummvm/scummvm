@@ -20,6 +20,7 @@
  */
 
 #include "backends/imgui/IconsMaterialSymbols.h"
+#include "backends/imgui/imgui_utils.h"
 #include "director/director.h"
 #include "director/debugger/dt-internal.h"
 
@@ -114,10 +115,10 @@ void showCast() {
 
 	if (ImGui::Begin("Cast", &_state->_w.cast)) {
 		// display a toolbar with: grid/list/filters buttons + name filter
-		toggleButton(ICON_MS_LIST, &_state->_cast._listView);
+		ImGuiEx::toggleButton(ICON_MS_LIST, &_state->_cast._listView);
 		ImGui::SetItemTooltip("List");
 		ImGui::SameLine();
-		toggleButton(ICON_MS_GRID_VIEW, &_state->_cast._listView, true);
+		ImGuiEx::toggleButton(ICON_MS_GRID_VIEW, &_state->_cast._listView, true);
 		ImGui::SetItemTooltip("Grid");
 		ImGui::SameLine();
 
