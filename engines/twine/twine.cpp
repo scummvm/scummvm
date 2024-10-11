@@ -490,9 +490,9 @@ static int getLanguageTypeIndex(const char *languageName) {
 		*ptr = '\0';
 	}
 
-	const int32 length = ARRAYSIZE(LanguageTypes);
+	const int32 length = ARRAYSIZE(ListLanguage);
 	for (int32 i = 0; i < length; i++) {
-		if (!strcmp(LanguageTypes[i].name, buffer)) {
+		if (!strcmp(ListLanguage[i].name, buffer)) {
 			return i;
 		}
 	}
@@ -512,7 +512,7 @@ void TwinEEngine::initConfigurations() {
 
 	const char *lng = Common::getLanguageDescription(_gameLang);
 	_cfgfile._languageId = getLanguageTypeIndex(lng);
-	ConfMan.registerDefault("audio_language", LanguageTypes[_cfgfile._languageId].voice);
+	ConfMan.registerDefault("audio_language", ListLanguage[_cfgfile._languageId].voice);
 
 	_cfgfile.FlagDisplayText = ConfGetBoolOrDefault("displaytext", true); // TODO: use subtitles
 	const Common::String midiType = ConfGetOrDefault("miditype", "auto");

@@ -59,7 +59,7 @@ static const struct TwinELanguage {
 	const char *name;
 	const char *id;
 	const int voice;
-} LanguageTypes[] = {
+} ListLanguage[] = { // TabLanguage
 	{"English", "EN_", 1},
 	{"French", "FR_", 2},
 	{"German", "DE_", 3},

@@ -61,7 +61,7 @@ Text::~Text() {
 }
 
 void Text::initVoxBank(TextBankId bankIdx) {
-	static const char *LanguageSuffixTypes[] = {
+	static const char *ListFileText[] = {
 	    "sys",
 	    "cre",
 	    "gam", // global game voices (e.g. inventory descriptions)
@@ -78,19 +78,19 @@ void Text::initVoxBank(TextBankId bankIdx) {
 	    "010", // Polar Island voices
 	    "011"  //
 	};
-	if ((int)bankIdx < 0 || (int)bankIdx >= ARRAYSIZE(LanguageSuffixTypes)) {
+	if ((int)bankIdx < 0 || (int)bankIdx >= ARRAYSIZE(ListFileText)) {
 		error("bankIdx is out of bounds: %i", (int)bankIdx);
 	}
 	// get the correct vox hqr file - english is the default
-	_currentVoxBankFile = Common::String::format("%s%s" VOX_EXT, LanguageTypes[0].id, LanguageSuffixTypes[(int)bankIdx]);
-	_currentOggBaseFile = Common::String::format("%s%s_", LanguageTypes[0].id, LanguageSuffixTypes[(int)bankIdx]);
+	_currentVoxBankFile = Common::String::format("%s%s" VOX_EXT, ListLanguage[0].id, ListFileText[(int)bankIdx]);
+	_currentOggBaseFile = Common::String::format("%s%s_", ListLanguage[0].id, ListFileText[(int)bankIdx]);
 
 	const int voice = ConfMan.getInt("audio_language");
-	const int32 length = ARRAYSIZE(LanguageTypes);
+	const int32 length = ARRAYSIZE(ListLanguage);
 	for (int32 i = 0; i < length; i++) {
-		if (LanguageTypes[i].voice == voice) {
-			_currentVoxBankFile = Common::String::format("%s%s" VOX_EXT, LanguageTypes[i].id, LanguageSuffixTypes[(int)bankIdx]);
-			_currentOggBaseFile = Common::String::format("%s%s_", LanguageTypes[i].id, LanguageSuffixTypes[(int)bankIdx]);
+		if (ListLanguage[i].voice == voice) {
+			_currentVoxBankFile = Common::String::format("%s%s" VOX_EXT, ListLanguage[i].id, ListFileText[(int)bankIdx]);
+			_currentOggBaseFile = Common::String::format("%s%s_", ListLanguage[i].id, ListFileText[(int)bankIdx]);
 			return;
 		}
 	}
