@@ -70,11 +70,11 @@ public:
 		_objNoDough = _scene->object_interface("notesto");
 		_objNoDoughFake = _scene->object_interface("notesto_fake");
 		_objDone = _scene->object_interface("$done");
-		_objLoadPassed = _scene->object_interface("$загрузка была");
+		_objLoadPassed = _scene->object_interface("$\xE7\xE0\xE3\xF0\xF3\xE7\xEA\xE0 \xE1\xFB\xEB\xE0"); // "$загрузка была"
 
 #if 0
 		for (int i = 0; i < 1088; i++) {
-			debugN("{ %3d, %3d }, ", _figurePos[i].x, _figurePos[i].y);
+			debugN("{ %3d, %3d }, ", _figureVerts[i].x, _figureVerts[i].y);
 
 			if ((i + 1) % 8 == 0)
 				debugN("// %d\n", i - 7);
@@ -83,67 +83,59 @@ public:
 
 		_noDoughX = 1000;
 
-		_someArray[0] = 66;
-		_someArray[1] = 94;
-		_someArray[2] = 136;
-		_someArray[3] = 136;
-		_someArray[4] = 68;
-		_someArray[5] = 68;
-		_someArray[6] = 112;
-		_someArray[7] = 112;
+		_numVerts[0] = 66;
+		_numVerts[1] = 94;
+		_numVerts[2] = 136;
+		_numVerts[3] = 136;
+		_numVerts[4] = 68;
+		_numVerts[5] = 68;
+		_numVerts[6] = 112;
+		_numVerts[7] = 112;
 
 #if 0
-		v6 = &_somePosArray[1];
-		p_y = (mgVect2i_s1 *)&_figurePos[0].y;
+		v6 = &_figureBboxes[1];
+		p_y = (mgVect2i_s1 *)&_figureVerts[0].y;
 		v33 = 8;
 		do {
-			v8 = *_someArray;
-			v9 = 0;
-			v10 = *_someArray <= 0;
-			v30 = 0;
-			v29 = 0;
-			v31 = 0;
-			y = 0;
-			if (!v10) {
-				figurePos_ = p_y;
+			v8 = *numVerts;
+			maxX = 0;
+			minX = 0;
+			minY = 0;
+			maxY = 0;
+
+			if (*numVerts > 0) {
+				figureVerts_ = p_y;
 				v32.x = v8;
 				do {
-					x = figurePos_[-1].x;
-					if (x < v29)
-						v29 = figurePos_[-1].x;
-					if (x > v30)
-						v30 = figurePos_[-1].x;
-					if (figurePos_->y < y)
-						y = figurePos_->y;
-					v9 = v31;
-					if (figurePos_->y > v31) {
-						v9 = figurePos_->y;
-						v31 = figurePos_->y;
-					}
+					x = figureVerts_[-1].x;
+					if (x < minX)
+						minX = figureVerts_[-1].x;
+					if (x > maxX)
+						maxX = figureVerts_[-1].x;
+					if (figureVerts_->y < minY)
+						minY = figureVerts_->y;
+					if (figureVerts_->y > maxY)
+						maxY = figureVerts_->y;
 
-					figurePos_ += 8;
+					figureVerts_ += 8;
 					--v32.x;
 				} while (v32.x);
 			}
-			++someArray;
-			v6->y = y;
-			v6->x = v9;
-			v6[-1].y = v29;
-			++p_y;
-			v6[-1].x = v30;
+			++numVerts;
+			v6[-1].x = maxX;
+			v6[-1].y = minX;
+			v6->x = maxY;
+			v6->y = minY;
 			v6 += 2;
+			++p_y;
 			--v33;
 		} while (v33);
 
-		v12 = _noDoughX + _objNoDough->screen_R(_objNoDough, &v32)->x;
-		v13 = _objNoDough->screen_R(_objNoDough, &v31)->y;
-		objNotesFake = _objNoDoughFake;
-		scene = _scene;
-		v33 = v12;
-		v34 = v13;
-		vmt = objNotesFake->vmt;
-		v17 = scene->screen2world_coords(scene, &v35, (const mgVect2i *)&v33, -100.0);
-		set_R(_objNoDoughFake, v17);
+		mgVect2i pos = _objNoDough->screen_R();
+
+		pos.x += _noDoughX;
+
+		_objNoDoughFake->set_R(_scene->screen2world_coords(pos, -100.0));
 #endif
 		_targetCoords[0].x = 75;
 		_targetCoords[0].y = 80;
@@ -232,7 +224,7 @@ private:
 
 	qdMinigameObjectInterface *_figures[24];
 
-	int _someArray[8];
+	int _numVerts[8];
 
 	qdMinigameObjectInterface *_objNoDough = nullptr;
 	qdMinigameObjectInterface *_objNoDoughFake = nullptr;
@@ -241,10 +233,10 @@ private:
 
 	mgVect2i _targetCoords[8];
 	int _noDoughX = 0;
-	mgVect2i _somePosArray[16];
+	mgVect2i _figureBboxes[16];
 
 
-	const mgVect2i _figurePos[1088] = {
+	const mgVect2i _figureVerts[1088] = {
 		{ -66,   0 }, { -86,   0 }, { -73,   0 }, { -54,   0 }, { -65,   0 }, { -22,   0 }, { -83,   0 }, { -62,   0 }, // 0
 		{ -66, -10 }, { -86, -11 }, { -68,  -3 }, { -50,  -2 }, { -65, -10 }, { -22,  -3 }, { -83,  -6 }, { -62,  -5 }, // 8
 		{ -65, -20 }, { -85, -20 }, { -63,  -6 }, { -47,  -4 }, { -65, -17 }, { -22,  -6 }, { -80,  -9 }, { -60,  -7 }, // 16
