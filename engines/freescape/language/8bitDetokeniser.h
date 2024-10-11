@@ -28,13 +28,13 @@ namespace Freescape {
 
 enum {
 	k8bitGameBitTravelRock = 30,
-	k8bitVariableShield = 63,
 	k8bitVariableEnergy = 62,
 	k8bitVariableScore = 61,
 	k8bitVariableShieldDrillerTank = 60,
 	k8bitVariableEnergyDrillerTank = 59,
 	k8bitVariableShieldDrillerJet = 58,
-	k8bitVariableEnergyDrillerJet = 57
+	k8bitVariableEnergyDrillerJet = 57,
+	k8bitMaxVariable = 64
 };
 
 enum {
@@ -44,7 +44,7 @@ enum {
 	kConditionalActivated = 1 << 3,
 };
 
-extern uint8 k8bitMaxVariable;
+extern uint8 k8bitVariableShield;
 
 Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition, FCLInstructionVector &instructions, bool enableActivated);
 

@@ -212,6 +212,9 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	ConfMan.setInt("gamepad_controller_directional_input", 1 /* kDirectionalInputDpad */, gameDomain);
 #endif
 
+	if (isCastle())
+		k8bitVariableShield = 29;
+
 	g_freescape = this;
 }
 
