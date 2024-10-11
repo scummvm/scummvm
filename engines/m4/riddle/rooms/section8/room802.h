@@ -33,8 +33,34 @@ public:
 	Room802() : Room() {}
 	~Room802() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+
+
+private:
+	int32 _802Sack2 = 0;
+	int32 _handInWall = 0;
+	int32 _handInWallPartlyDug = 0;
+	int32 _holeInWall = 0;
+	int32 _lookWithMatch = 0;
+	int32 _ripArmXPos3 = 0;
+	int32 _ripDigsWall = 0;
+	int32 _ripDownStairs = 0;
+	int32 _ripDragsSack = 0;
+	int32 _ripLooksAtHand = 0;
+	int32 _ripTalkOffTd33 = 0;
+	int32 _ripTugsBeforeDigging = 0;
+	int32 _ripTugsOnArm = 0;
+	int32 _ripUpStairs = 0;
+	int32 _sackAgainstWall = 0;
+	
+	machine *_handInWallMach = nullptr;
+	machine *_holeInWallMach = nullptr;
+	machine *_ripWalksDownstairsMach = nullptr;
+	machine *_sackAgainstWallMach = nullptr;
 };
 
 } // namespace Rooms
