@@ -399,34 +399,41 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 	case kcRND: {
 		int32 val = ctx.stream.readByte();
 		engine->_scene->_currentScriptValue = engine->getRandomNumber(val);
+		debugCN(3, kDebugLevels::kDebugScripts, "rand(%i, ", val);
 		conditionValueSize = ReturnType::RET_U8;
 		break;
 	}
 	case kcBETA:
 		engine->_scene->_currentScriptValue = ctx.actor->_beta;
+		debugCN(3, kDebugLevels::kDebugScripts, "beta(");
 		conditionValueSize = ReturnType::RET_S16;
 		break;
 	case kcBETA_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
+		debugCN(3, kDebugLevels::kDebugScripts, "beta_obj(%i", actorIdx);
 		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_beta;
 		conditionValueSize = ReturnType::RET_S16;
 		break;
 	}
 	case kcDEMO:
+		debugCN(3, kDebugLevels::kDebugScripts, "isdemo(");
 		engine->_scene->_currentScriptValue = engine->isDemo() ? 1 : 0; // TODO: slide demo is 2
 		break;
 	case kcOBJECT_DISPLAYED: {
 		int32 actorIdx = ctx.stream.readByte();
+		debugCN(3, kDebugLevels::kDebugScripts, "drawn_obj(%i", actorIdx);
 		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_workFlags.bWasDrawn ? 1 : 0;
 		break;
 	}
 	case kcPROCESSOR:
 		// TODO psx = 2, pentium = 0, 486 = 1
+		debugCN(3, kDebugLevels::kDebugScripts, "processor(");
 		engine->_scene->_currentScriptValue = 0;
 		break;
 	case kcANGLE: {
 		conditionValueSize = ReturnType::RET_S16;
 		int32 actorIdx = ctx.stream.readByte();
+		debugCN(3, kDebugLevels::kDebugScripts, "angle(%i, %i", ctx.actorIdx, actorIdx);
 		ActorStruct *otherActor = engine->_scene->getActor(actorIdx);
 		if (otherActor->_workFlags.bIsDead) {
 			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
@@ -442,6 +449,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 	case kcANGLE_OBJ: {
 		conditionValueSize = ReturnType::RET_S16;
 		int32 actorIdx = ctx.stream.readByte();
+		debugCN(3, kDebugLevels::kDebugScripts, "angle_obj(%i, %i", actorIdx, ctx.actorIdx);
 		ActorStruct *otherActor = engine->_scene->getActor(actorIdx);
 		if (otherActor->_workFlags.bIsDead) {
 			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
@@ -457,6 +465,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 	case kcREAL_ANGLE: {
 		conditionValueSize = ReturnType::RET_S16;
 		int32 actorIdx = ctx.stream.readByte();
+		debugCN(3, kDebugLevels::kDebugScripts, "real_angle(%i", actorIdx);
 		ActorStruct *otherActor = engine->_scene->getActor(actorIdx);
 		if (otherActor->_workFlags.bIsDead) {
 			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
@@ -472,6 +481,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		break;
 	}
 	case kcCOL_DECORS:
+		debugCN(3, kDebugLevels::kDebugScripts, "col_decors(");
 		if (ctx.actor->_workFlags.bIsDead) {
 			engine->_scene->_currentScriptValue = 255;
 			break;
@@ -481,6 +491,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		break;
 	case kcCOL_DECORS_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
+		debugCN(3, kDebugLevels::kDebugScripts, "col_decors_obj(%i", actorIdx);
 		ActorStruct *otherActor = engine->_scene->getActor(actorIdx);
 		if (otherActor->_workFlags.bIsDead) {
 			engine->_scene->_currentScriptValue = 255;
@@ -492,6 +503,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 	}
 	case kcLADDER: {
 		int32 num = ctx.stream.readByte();
+		debugCN(3, kDebugLevels::kDebugScripts, "ladder(%i", num);
 		int n = 0;
 		engine->_scene->_currentScriptValue = 2;
 		while (engine->_scene->_currentScriptValue == 2 && n < engine->_scene->_sceneNumZones) {
