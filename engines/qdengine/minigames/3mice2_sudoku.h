@@ -85,14 +85,15 @@ public:
 		_pos[12] = 18;
 
 		_objDone = _scene->object_interface("$done");
-		_objResult = _scene->object_interface("$результат");
-		_objSettled = _scene->object_interface("$разложено");
-		_objReset = _scene->object_interface("$обнулить");
+		_objResult = _scene->object_interface("$\xf0\xe5\xe7\xf3\xeb\xfc\xf2\xe0\xf2"); // "$результат"
+		_objSettled = _scene->object_interface("$\xf0\xe0\xe7\xeb\xee\xe6\xe5\xed\xee"); // "$разложено"
+		_objReset = _scene->object_interface("$\xee\xe1\xed\xf3\xeb\xe8\xf2\xfc"); // "$обнулить"
 		_objTarget = _scene->object_interface("target");
-		_objLoading = _scene->object_interface("$загрузка");
+		_objLoading = _scene->object_interface("$\xe7\xe0\xe3\xf0\xf3\xe7\xea\xe0"); // "$загрузка"
 
 		if (_objLoading->is_state_active("no")) {
-			memset(_pieceTargets, 0xFFu, sizeof(_pieceTargets));
+			for (int i = 0; i < 13; i++)
+				_pieceTargets[i] = -1;
 
 			_objLoading->set_state("yes");
 
@@ -124,27 +125,27 @@ public:
 	bool quant(float dt) {
 		debugC(3, kDebugMinigames, "3mice2Sudoku::quant(%f)", dt);
 
-		if (_objReset->is_state_active("да")) {
+		if (_objReset->is_state_active("\xe4\xe0")) {	// "да"
 			for (int i = 0; i < 13; i++) {
 				_pieceTargets[i] = -1;
 				_figures[i]->set_state("base");
 			}
 
-			_objReset->set_state("нет");
+			_objReset->set_state("\xed\xe5\xf2"); // "нет"
 		}
 
 		if (checkSolution()) {
-			_objDone->set_state("да");
-			_objResult->set_state("правильно");
+			_objDone->set_state("\xe4\xe0");	// "да"
+			_objResult->set_state("\xef\xf0\xe0\xe2\xe8\xeb\xfc\xed\xee"); // "правильно"
 		} else {
-			_objDone->set_state("нет");
-			_objResult->set_state("не правильно");
+			_objDone->set_state("\xed\xe5\xf2"); // "нет"
+			_objResult->set_state("\xed\xe5\x20\xef\xf0\xe0\xe2\xe8\xeb\xfc\xed\xee"); // "не правильно"
 		}
 
 		if (checkInitPos())
-			_objSettled->set_state("да");
+			_objSettled->set_state("\xe4\xe0");	// "да"
 		else
-			_objSettled->set_state("нет");
+			_objSettled->set_state("\xed\xe5\xf2"); // "нет"
 
 		qdMinigameObjectInterface *mouseObj = _scene->mouse_object_interface();
 		qdMinigameObjectInterface *clickObj = _scene->mouse_click_object_interface();
@@ -174,9 +175,10 @@ public:
 
 			if (strstr(clickObj->name(), "figure")) {
 				num = getObjNum(clickObj->name());
+				debugC(2, kDebugMinigames, "clickObj: zone is: %d for name: '%s'", num, clickObj->name());
 
 				if (num > -1) {
-					_figures[num]->set_state("hide");
+					_figures[num - 1]->set_state("hide");
 					_figures[num + 12]->set_state("to_inv");
 				}
 			}
@@ -194,12 +196,15 @@ public:
 			int num = getObjNum(clickObj->name());
 			int num2 =getObjNum(mouseObj->name());
 
+			debugC(2, kDebugMinigames, "clickObj: zone is: %d for name: '%s'", num, clickObj->name());
+			debugC(2, kDebugMinigames, "mouseObj: zone is: %d for name: '%s'", num2, mouseObj->name());
+
 			if (num > -1 && num2 > -1 && !posIsSet(num - 1)) {
 				_objTarget->set_state(Common::String::format("%d", num).c_str());
 				_objTarget->update_screen_R();
 
 				_figures[num2 + 12]->set_state("del");
-				_figures[num2]->set_state("target");
+				_figures[num2 - 1]->set_state("target");
 
 				mgVect2i pos = _objTarget->screen_R();
 				pos.y += _pos[num2 - 1];
@@ -213,7 +218,9 @@ public:
 		if (_engine->is_mouse_event_active(qdmg::qdEngineInterfaceImpl::MOUSE_EV_RIGHT_DOWN) && mouseObj) {
 			int num = getObjNum(mouseObj->name());
 
-			_figures[num]->set_state("base");
+			debugC(2, kDebugMinigames, "mouseObj: zone is: %d for name: '%s'", num, mouseObj->name());
+
+			_figures[num - 1]->set_state("base");
 			_figures[num + 12]->set_state("del");
 		}
 

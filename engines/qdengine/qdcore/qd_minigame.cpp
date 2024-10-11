@@ -331,6 +331,15 @@ bool qdMiniGame::load_interface() {
 		// puzzle.dll
 
 		// 3mice2
+		} else if (_dll_name == "DLL\\3Mice2_sbor_karty.dll") {
+			_interface = new qd3mice2SborKartyMiniGame();
+			return true;
+		} else if (_dll_name == "DLL\\3Mice2_kovrik.dll") {
+			_interface = new qd3mice2KovrikMiniGame();
+			return true;
+		} else if (_dll_name == "DLL\\3Mice2_sudoku.dll") {
+			_interface = new qd3mice2SudokuMiniGame();
+			return true;
 		// 3Mice2_babochka.dll
 		// 3Mice2_kovrik.dll
 		// 3Mice2_plate.dll
@@ -338,14 +347,7 @@ bool qdMiniGame::load_interface() {
 		// 3Mice2_raskr2.dll
 		// 3Mice2_raskr3.dll
 		// 3Mice2_raskr4.dll
-		} else if (_dll_name == "DLL\\3Mice2_sbor_karty.dll") {
-			_interface = new qd3mice2SborKartyMiniGame();
-			return true;
-		} else if (_dll_name == "DLL\\3Mice2_kovrik.dll") {
-			_interface = new qd3mice2KovrikMiniGame();
-			return true;
 		// 3Mice2_states.dll
-		// 3Mice2_sudoku.dll
 		// 3Mice2_testo.dll
 
 		// dogncat
