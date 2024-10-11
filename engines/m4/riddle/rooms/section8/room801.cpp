@@ -1133,6 +1133,52 @@ void Room801::daemon() {
 }
 
 void Room801::room801_conv801a() {
+	int32 entry = conv_current_entry();
+	int32 node = conv_current_node();
+
+	if (_G(kernel).trigger == 1) {
+		int32 who = conv_whos_talking();
+		if (who <= 0) {
+			_roomStates_pu = 1;
+			_roomStates_field18 = 1;
+			if (node == 3 && entry == 0) {
+				inv_give_to_player("MATCH");
+				_roomStates_field18 = 4;
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_timing_trigger(90, 310, nullptr);
+				_G(kernel).trigger_mode = KT_PARSE;
+				return;
+			}
+		} else if (who == 1) {
+			_roomStates_ripTalker = 1;
+		}
+
+		conv_resume(conv_get_handle());
+		return;
+	}
+
+	if (conv_sound_to_play() == nullptr) {
+		conv_resume(conv_get_handle());
+		return;
+	}
+
+	int32 who = conv_whos_talking();
+	if (who <= 0) {
+		if ((node == 1 && entry == 0) || (node == 1 && entry == 1) || (node == 1 && entry == 2) || (node == 4 && entry == 2))
+			_roomStates_pu = 3;
+
+		if ((node == 2 && entry == 1) || (node == 2 && entry == 2) || (node == 4 && entry == 1))
+			_roomStates_pu = 2;
+
+		if ((node == 4 && entry == 0) || (node == 2 && entry == 0) || (node == 3 && entry == 0))
+			_roomStates_pu = 2;
+
+	} else if (who == 1) {
+		if (node != 1 || entry != 3)
+			_roomStates_field18 = 2;
+	}
+
+	digi_play(conv_sound_to_play(), 1, 255, 1, -1);
 }
 
 } // namespace Rooms
