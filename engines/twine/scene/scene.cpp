@@ -545,7 +545,7 @@ void Scene::changeCube() {
 					pos.y = zone->infoData.ChangeScene.y - zone->mins.y + track.y;
 					pos.z = zone->infoData.ChangeScene.z - zone->mins.z + track.z;
 					_engine->_scene->_heroPositionType = ScenePositionType::kZone;
-					debug(3, "Using zone position %i:%i:%i", pos.x, pos.y, pos.z);
+					debug(2, "Using zone position %i:%i:%i", pos.x, pos.y, pos.z);
 				}
 			}
 		}

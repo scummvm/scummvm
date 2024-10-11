@@ -200,7 +200,7 @@ static const ScriptLifeFunction function_map[] = {
 
 int32 ScriptLifeV2::lPALETTE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 palIndex = engine->_screens->mapLba2Palette(ctx.stream.readByte());
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::PALETTE(%i)", palIndex);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::PALETTE(%i)", palIndex);
 	ScopedEngineFreeze scoped(engine);
 	HQR::getPaletteEntry(engine->_screens->_ptrPal, Resources::HQR_RESS_FILE, palIndex);
 	engine->setPalette(engine->_screens->_ptrPal);
@@ -210,13 +210,13 @@ int32 ScriptLifeV2::lPALETTE(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 int32 ScriptLifeV2::lFADE_TO_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 palIndex = engine->_screens->mapLba2Palette(ctx.stream.readByte());
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::FADE_TO_PAL(%i)", palIndex);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::FADE_TO_PAL(%i)", palIndex);
 	// TODO: implement
 	return -1;
 }
 
 int32 ScriptLifeV2::lPLAY_MUSIC(TwinEEngine *engine, LifeScriptContext &ctx) {
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lPLAY_MUSIC()");
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lPLAY_MUSIC()");
 	const int32 val = lPLAY_CD_TRACK(engine, ctx);
 	if (engine->isLBA2()) {
 		engine->_scene->_cubeJingle = 255;
@@ -230,7 +230,7 @@ int32 ScriptLifeV2::lPLAY_MUSIC(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 int32 ScriptLifeV2::lTRACK_TO_VAR_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 num = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lTRACK_TO_VAR_GAME(%i)", (int)num);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lTRACK_TO_VAR_GAME(%i)", (int)num);
 	engine->_gameState->setGameFlag(num, MAX<int32>(0, ctx.actor->_labelTrack));
 	return 0;
 }
@@ -426,7 +426,7 @@ int32 ScriptLifeV2::lVAR_GAME_TO_TRACK(TwinEEngine *engine, LifeScriptContext &c
 	cleanTrack(ctx.actor);
 
 	const uint8 num = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lVAR_GAME_TO_TRACK(%i)", (int)num);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lVAR_GAME_TO_TRACK(%i)", (int)num);
 	ctx.actor->_offsetTrack = searchOffsetTrack(ctx.actor,
 											engine->_gameState->hasGameFlag(num));
 
@@ -439,27 +439,27 @@ int32 ScriptLifeV2::lVAR_GAME_TO_TRACK(TwinEEngine *engine, LifeScriptContext &c
 
 int32 ScriptLifeV2::lANIM_TEXTURE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_interface->_animateTexture = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lANIM_TEXTURE(%i)", (int)engine->_interface->_animateTexture);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lANIM_TEXTURE(%i)", (int)engine->_interface->_animateTexture);
 	return 0;
 }
 
 int32 ScriptLifeV2::lADD_MESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lADD_MESSAGE_OBJ(%i)", (int)textIdx);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lADD_MESSAGE_OBJ(%i)", (int)textIdx);
 	// TODO: implement me
 	return -1;
 }
 
 int32 ScriptLifeV2::lADD_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lADD_MESSAGE(%i)", (int)textIdx);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lADD_MESSAGE(%i)", (int)textIdx);
 	// TODO: implement me
 	return -1;
 }
 
 int32 ScriptLifeV2::lCAMERA_CENTER(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 angle = ClampAngle(ToAngle(ctx.stream.readByte() * 1024));
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lCAMERA_CENTER(%i)", (int)angle);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lCAMERA_CENTER(%i)", (int)angle);
 	// TODO: implement me - see centerOnActor in grid
 	// AddBetaCam = num ;
 	// CameraCenter( 2 ) ;
@@ -469,26 +469,26 @@ int32 ScriptLifeV2::lCAMERA_CENTER(TwinEEngine *engine, LifeScriptContext &ctx) 
 
 int32 ScriptLifeV2::lBUBBLE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_text->_showDialogueBubble = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::BUBBLE(%s)", engine->_text->_showDialogueBubble ? "true" : "false");
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::BUBBLE(%s)", engine->_text->_showDialogueBubble ? "true" : "false");
 	return 0;
 }
 
 int32 ScriptLifeV2::lNO_CHOC(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 val = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lNO_CHOC(%i)", (int)val);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lNO_CHOC(%i)", (int)val);
 	ctx.actor->_staticFlags.bNoElectricShock = val;
 	return 0;
 }
 
 int32 ScriptLifeV2::lCINEMA_MODE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 val = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lCINEMA_MODE(%i)", (int)val);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lCINEMA_MODE(%i)", (int)val);
 	// TODO: implement me
 	return -1;
 }
 
 int32 ScriptLifeV2::lSAVE_HERO(TwinEEngine *engine, LifeScriptContext &ctx) {
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SAVE_HERO()");
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::SAVE_HERO()");
 	engine->_actor->_saveHeroBehaviour = engine->_actor->_heroBehaviour;
 	ActorStruct *actor = engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX);
 	actor->_saveGenBody = actor->_genBody;
@@ -496,7 +496,7 @@ int32 ScriptLifeV2::lSAVE_HERO(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lRESTORE_HERO(TwinEEngine *engine, LifeScriptContext &ctx) {
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::RESTORE_HERO()");
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::RESTORE_HERO()");
 	engine->_actor->setBehaviour(engine->_actor->_saveHeroBehaviour);
 	ActorStruct *actor = engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX);
 	engine->_actor->initBody(actor->_saveGenBody, OWN_ACTOR_SCENE_INDEX);
@@ -505,7 +505,7 @@ int32 ScriptLifeV2::lRESTORE_HERO(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 int32 ScriptLifeV2::lRAIN(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 num = (int)ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lRAIN(%i)", (int)num);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lRAIN(%i)", (int)num);
 	int32 n = engine->_redraw->addOverlay(OverlayType::koRain, 0, 0, 0, 0, OverlayPosType::koNormal, 1);
 	if (n != -1) {
 		// Rain n/10s
@@ -519,7 +519,7 @@ int32 ScriptLifeV2::lRAIN(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lESCALATOR(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 num = ctx.stream.readByte();
 	const uint8 info1 = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lESCALATOR(%i, %i)", (int)num, (int)info1);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lESCALATOR(%i, %i)", (int)num, (int)info1);
 	for (int n = 0; n < engine->_scene->_sceneNumZones; n++) {
 		ZoneStruct &zone = engine->_scene->_sceneZones[n];
 		if (zone.type == ZoneType::kEscalator && zone.num == num) {
@@ -532,7 +532,7 @@ int32 ScriptLifeV2::lESCALATOR(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lSET_CAMERA(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 num = ctx.stream.readByte();
 	const uint8 info7 = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_CAMERA(%i, %i)", (int)num, (int)info7);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSET_CAMERA(%i, %i)", (int)num, (int)info7);
 	for (int n = 0; n < engine->_scene->_sceneNumZones; n++) {
 		ZoneStruct &zone = engine->_scene->_sceneZones[n];
 		if (zone.type == ZoneType::kCamera && zone.num == num) {
@@ -562,7 +562,7 @@ int32 ScriptLifeV2::lPLAY_ACF(TwinEEngine *engine, LifeScriptContext &ctx) {
 			error("Max string size exceeded for acf name");
 		}
 	} while (true);
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lPLAY_ACF(%s)", movie);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lPLAY_ACF(%s)", movie);
 
 	engine->_movie->playMovie(movie);
 	// TODO: lba2 is doing more stuff here - reset the cinema mode, init the scene and palette stuff
@@ -575,7 +575,7 @@ int32 ScriptLifeV2::lPLAY_ACF(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lSHADOW_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int actorIdx = ctx.stream.readByte();
 	const bool castShadow = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SHADOW_OBJ(%i, %s)", actorIdx, castShadow ? "true" : "false");
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::SHADOW_OBJ(%i, %s)", actorIdx, castShadow ? "true" : "false");
 	ActorStruct *actor = engine->_scene->getActor(actorIdx);
 	if (actor->_lifePoint > 0) {
 		actor->_staticFlags.bNoShadow = !castShadow;
@@ -585,7 +585,7 @@ int32 ScriptLifeV2::lSHADOW_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 int32 ScriptLifeV2::lECLAIR(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 num = (int)ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lECLAIR(%i)", (int)num);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lECLAIR(%i)", (int)num);
 	int32 n = engine->_redraw->addOverlay(OverlayType::koFlash, 0, 0, 0, 0, OverlayPosType::koNormal, 1);
 	if (n != -1) {
 		// Eclair n/10s
@@ -596,14 +596,14 @@ int32 ScriptLifeV2::lECLAIR(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 int32 ScriptLifeV2::lINIT_BUGGY(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 num = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lINIT_BUGGY(%i)", (int)num);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lINIT_BUGGY(%i)", (int)num);
 	engine->_buggy->initBuggy(ctx.actorIdx, num);
 	return 0;
 }
 
 int32 ScriptLifeV2::lMEMO_ARDOISE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 num = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lMEMO_ARDOISE(%i)", (int)num);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lMEMO_ARDOISE(%i)", (int)num);
 	if (engine->_gameState->hasGameFlag(GAMEFLAG_ARDOISE)) {
 		// TODO: implement me
 	}
@@ -613,7 +613,7 @@ int32 ScriptLifeV2::lMEMO_ARDOISE(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lSET_CHANGE_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 num = ctx.stream.readByte();
 	const uint8 info = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_CHANGE_CUBE(%i, %i)", (int)num, (int)info);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSET_CHANGE_CUBE(%i, %i)", (int)num, (int)info);
 	int n = 0;
 	while (n < engine->_scene->_sceneNumZones) {
 		ZoneStruct &zone = engine->_scene->_sceneZones[n];
@@ -631,20 +631,20 @@ int32 ScriptLifeV2::lSET_CHANGE_CUBE(TwinEEngine *engine, LifeScriptContext &ctx
 
 int32 ScriptLifeV2::lMESSAGE_ZOE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int16 textIdx = ctx.stream.readSint16LE();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lMESSAGE_ZOE(%i)", (int)textIdx);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lMESSAGE_ZOE(%i)", (int)textIdx);
 	// TODO: implement me
 	return -1;
 }
 
 int32 ScriptLifeV2::lACTION(TwinEEngine *engine, LifeScriptContext &ctx) {
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ACTION()");
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::ACTION()");
 	engine->_movements->setActionNormal(true);
 	return 0;
 }
 
 int32 ScriptLifeV2::lSET_FRAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int frame = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_FRAME(%i)", (int)frame);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSET_FRAME(%i)", (int)frame);
 	if (!ctx.actor->_staticFlags.bSprite3D) {
 		// TODO: ObjectSetFrame(ctx.actorIdx, frame);
 	}
@@ -653,7 +653,7 @@ int32 ScriptLifeV2::lSET_FRAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 int32 ScriptLifeV2::lSET_SPRITE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int16 num = ctx.stream.readSint16LE();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_SPRITE(%i)", (int)num);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSET_SPRITE(%i)", (int)num);
 	if (ctx.actor->_staticFlags.bSprite3D) {
 		engine->_actor->initSprite(num, ctx.actorIdx);
 	}
@@ -662,7 +662,7 @@ int32 ScriptLifeV2::lSET_SPRITE(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 int32 ScriptLifeV2::lSET_FRAME_3DS(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int sprite = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_FRAME_3DS(%i)", (int)sprite);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSET_FRAME_3DS(%i)", (int)sprite);
 	if (ctx.actor->_staticFlags.bHasSpriteAnim3D) {
 		const T_ANIM_3DS *anim = engine->_resources->getAnim(ctx.actor->A3DS.Num);
 		if (sprite >= anim->Fin - anim->Deb) {
@@ -678,7 +678,7 @@ int32 ScriptLifeV2::lIMPACT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 num = ctx.stream.readByte();
 	const uint16 n = ctx.stream.readUint16LE();
 	const int16 y = ctx.stream.readSint16LE();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lIMPACT_OBJ(%i, %i, %i)", (int)num, (int)n, (int)y);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lIMPACT_OBJ(%i, %i, %i)", (int)num, (int)n, (int)y);
 	ActorStruct *otherActor = engine->_scene->getActor(num);
 	if (otherActor->_lifePoint > 0) {
 		// TODO: DoImpact(n, otherActor->_pos.x, otherActor->_pos.y + y, otherActor->_pos.z, num);
@@ -689,7 +689,7 @@ int32 ScriptLifeV2::lIMPACT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lIMPACT_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 brickTrackId = ctx.stream.readByte();
 	const uint16 n = ctx.stream.readUint16LE();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lIMPACT_POINT(%i, %i)", (int)brickTrackId, (int)n);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lIMPACT_POINT(%i, %i)", (int)brickTrackId, (int)n);
 	// const IVec3 &pos = engine->_scene->_sceneTracks[brickTrackId];
 	// int16 x0 = pos.x;
 	// int16 y0 = pos.y;
@@ -702,7 +702,7 @@ int32 ScriptLifeV2::lIMPACT_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lLADDER(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 num = ctx.stream.readByte();
 	const uint8 info = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lLADDER(%i, %i)", (int)num, (int)info);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lLADDER(%i, %i)", (int)num, (int)info);
 	int n = 0;
 	while (n < engine->_scene->_sceneNumZones) {
 		ZoneStruct &zone = engine->_scene->_sceneZones[n];
@@ -717,7 +717,7 @@ int32 ScriptLifeV2::lLADDER(TwinEEngine *engine, LifeScriptContext &ctx) {
 // SET_ARMURE
 int32 ScriptLifeV2::lSET_ARMOR(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int8 armor = ctx.stream.readSByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_ARMOR(%i)", (int)armor);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSET_ARMOR(%i)", (int)armor);
 	ctx.actor->_armor = (int32)armor;
 	return 0;
 }
@@ -726,7 +726,7 @@ int32 ScriptLifeV2::lSET_ARMOR(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lSET_ARMOR_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 num = ctx.stream.readByte();
 	const int8 armor = ctx.stream.readSByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_ARMOR_OBJ(%i, %i)", (int)num, (int)armor);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSET_ARMOR_OBJ(%i, %i)", (int)num, (int)armor);
 	if (ActorStruct *actor = engine->_scene->getActor(num)) {
 		actor->_armor = (int32)armor;
 	}
@@ -749,7 +749,7 @@ int32 ScriptLifeV2::lADD_LIFE_POINT_OBJ(TwinEEngine *engine, LifeScriptContext &
 int32 ScriptLifeV2::lSTATE_INVENTORY(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 num = ctx.stream.readByte(); // num vargame
 	const uint8 idObj3D = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSTATE_INVENTORY(%i, %i)", (int)num, (int)idObj3D);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSTATE_INVENTORY(%i, %i)", (int)num, (int)idObj3D);
 	// TODO: TabInv[num].IdObj3D = idObj3D;
 	return -1;
 }
@@ -785,7 +785,7 @@ int32 ScriptLifeV2::lEND_SWITCH(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lSET_HIT_ZONE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 num = ctx.stream.readByte();
 	const uint8 info1 = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_HIT_ZONE(%i, %i)", (int)num, (int)info1);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSET_HIT_ZONE(%i, %i)", (int)num, (int)info1);
 	for (int n = 0; n < engine->_scene->_sceneNumZones; n++) {
 		ZoneStruct &zone = engine->_scene->_sceneZones[n];
 		if (zone.type == ZoneType::kHit && zone.num == num) {
@@ -796,41 +796,41 @@ int32 ScriptLifeV2::lSET_HIT_ZONE(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lSAVE_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx) {
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSAVE_COMPORTEMENT()");
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSAVE_COMPORTEMENT()");
 	ctx.actor->_saveOffsetLife = ctx.actor->_offsetLife;
 	return 0;
 }
 
 int32 ScriptLifeV2::lRESTORE_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx) {
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lRESTORE_COMPORTEMENT()");
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lRESTORE_COMPORTEMENT()");
 	ctx.actor->_offsetLife = ctx.actor->_saveOffsetLife;
 	return 0;
 }
 
 int32 ScriptLifeV2::lSAMPLE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int16 sample = ctx.stream.readSint16LE();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSAMPLE(%i)", (int)sample);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSAMPLE(%i)", (int)sample);
 	// TODO: HQ_3D_MixSample(sample, 0x1000, 0, 1, ctx.actor->posObj());
 	return -1;
 }
 
 int32 ScriptLifeV2::lSAMPLE_RND(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int16 sample = ctx.stream.readSint16LE();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSAMPLE_RND(%i)", (int)sample);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSAMPLE_RND(%i)", (int)sample);
 	// TODO: HQ_3D_MixSample(sample, 0x800, 0x1000, 1, ctx.actor->posObj());
 	return -1;
 }
 
 int32 ScriptLifeV2::lSAMPLE_ALWAYS(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int16 sample = ctx.stream.readSint16LE();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSAMPLE_ALWAYS(%i)", (int)sample);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSAMPLE_ALWAYS(%i)", (int)sample);
 	// TODO:
 	return -1;
 }
 
 int32 ScriptLifeV2::lSAMPLE_STOP(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int16 sample = ctx.stream.readSint16LE();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSAMPLE_STOP(%i)", (int)sample);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSAMPLE_STOP(%i)", (int)sample);
 	// TODO:
 	return -1;
 }
@@ -838,7 +838,7 @@ int32 ScriptLifeV2::lSAMPLE_STOP(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lREPEAT_SAMPLE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int16 sample = ctx.stream.readSint16LE();
 	uint8 repeat = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lREPEAT_SAMPLE(%i, %i)", (int)sample, (int)repeat);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lREPEAT_SAMPLE(%i, %i)", (int)sample, (int)repeat);
 	// TODO: HQ_3D_MixSample(sample, 0x1000, 0, repeat, ctx.actor->posObj());
 	return -1;
 }
@@ -850,7 +850,7 @@ int32 ScriptLifeV2::lBACKGROUND(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lSET_FLAG_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 num = ctx.stream.readByte();
 	const int16 val = ctx.stream.readSint16LE();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_FLAG_GAME(%i, %i)", (int)num, (int)val);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::SET_FLAG_GAME(%i, %i)", (int)num, (int)val);
 	engine->_gameState->setGameFlag(num, val);
 
 	if (num == GAMEFLAG_MONEY) {
@@ -867,7 +867,7 @@ int32 ScriptLifeV2::lSET_FLAG_GAME(TwinEEngine *engine, LifeScriptContext &ctx) 
 int32 ScriptLifeV2::lADD_VAR_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 num = ctx.stream.readByte();
 	const int16 val = ctx.stream.readSint16LE();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lADD_VAR_GAME(%i, %i)", (int)num, (int)val);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lADD_VAR_GAME(%i, %i)", (int)num, (int)val);
 	int16 currentVal = engine->_gameState->hasGameFlag(num);
 	if ((int)currentVal + (int)val < 32767) {
 		currentVal += val;
@@ -889,7 +889,7 @@ int32 ScriptLifeV2::lADD_VAR_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lSUB_VAR_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 num = ctx.stream.readByte();
 	const int16 val = ctx.stream.readSint16LE();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lADD_VAR_GAME(%i, %i)", (int)num, (int)val);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lADD_VAR_GAME(%i, %i)", (int)num, (int)val);
 	int16 currentVal = engine->_gameState->hasGameFlag(num);
 	if ((int)currentVal - (int)val > -32768) {
 		currentVal -= val;
@@ -911,7 +911,7 @@ int32 ScriptLifeV2::lSUB_VAR_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lADD_VAR_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 num = ctx.stream.readByte();
 	const uint8 amount = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lADD_VAR_CUBE(%i, %i)", (int)num, (int)amount);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lADD_VAR_CUBE(%i, %i)", (int)num, (int)amount);
 	uint8 &current = engine->_scene->_listFlagCube[num];
 	if ((int16)current + (int16)amount < 255) {
 		current += amount;
@@ -924,7 +924,7 @@ int32 ScriptLifeV2::lADD_VAR_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lSUB_VAR_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 num = ctx.stream.readByte();
 	const uint8 amount = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSUB_VAR_CUBE(%i, %i)", (int)num, (int)amount);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSUB_VAR_CUBE(%i, %i)", (int)num, (int)amount);
 	uint8 &current = engine->_scene->_listFlagCube[num];
 	if ((int16)current - (int16)amount > 0) {
 		current -= amount;
@@ -937,7 +937,7 @@ int32 ScriptLifeV2::lSUB_VAR_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lSET_RAIL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 num = ctx.stream.readByte();
 	const uint8 info1 = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_RAIL(%i, %i)", (int)num, (int)info1);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSET_RAIL(%i, %i)", (int)num, (int)info1);
 	for (int n = 0; n < engine->_scene->_sceneNumZones; n++) {
 		ZoneStruct &zone = engine->_scene->_sceneZones[n];
 		if (zone.type == ZoneType::kRail && zone.num == num) {
@@ -971,7 +971,7 @@ int32 ScriptLifeV2::lINVERSE_BETA(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lNO_BODY(TwinEEngine *engine, LifeScriptContext &ctx) {
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lNO_BODY()");
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lNO_BODY()");
 	engine->_actor->initBody(BodyType::btNone, ctx.actorIdx);
 	return 0;
 }
@@ -1005,7 +1005,7 @@ int32 ScriptLifeV2::lDEBUG_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lPOPCORN(TwinEEngine *engine, LifeScriptContext &ctx) {
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lPOPCORN()");
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lPOPCORN()");
 	// empty on purpose
 	return 0;
 }
@@ -1027,14 +1027,14 @@ int32 ScriptLifeV2::lPCX(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lEND_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lEND_MESSAGE()");
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lEND_MESSAGE()");
 	// empty on purpose
 	return 0;
 }
 
 int32 ScriptLifeV2::lEND_MESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 num = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lEND_MESSAGE_OBJ(%i)", (int)num);
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lEND_MESSAGE_OBJ(%i)", (int)num);
 	return 0;
 }
 

@@ -31,7 +31,7 @@
 /** Number of colors used in the game */
 #define NUMOFCOLORS 256
 
-#define MAX_HOLO_POS 150 /* lba1 */
+#define MAX_HOLO_POS 150   /* lba1 */
 #define MAX_HOLO_POS_2 334 /* lba2 */
 
 #define NUM_INVENTORY_ITEMS 28
@@ -106,13 +106,13 @@ struct IVec2 {
 	int32 x;
 	int32 y;
 
-	inline IVec2& operator+=(const IVec2 &other) {
+	inline IVec2 &operator+=(const IVec2 &other) {
 		x += other.x;
 		y += other.y;
 		return *this;
 	}
 
-	inline IVec2& operator-=(const IVec2 &other) {
+	inline IVec2 &operator-=(const IVec2 &other) {
 		x -= other.x;
 		y -= other.y;
 		return *this;
@@ -126,21 +126,21 @@ struct IVec3 {
 	int32 y;
 	int32 z;
 
-	inline IVec3 &operator=(const I16Vec3& other) {
+	inline IVec3 &operator=(const I16Vec3 &other) {
 		x = other.x;
 		y = other.y;
 		z = other.z;
 		return *this;
 	}
 
-	inline IVec3& operator+=(const IVec3 &other) {
+	inline IVec3 &operator+=(const IVec3 &other) {
 		x += other.x;
 		y += other.y;
 		z += other.z;
 		return *this;
 	}
 
-	inline IVec3& operator-=(const IVec3 &other) {
+	inline IVec3 &operator-=(const IVec3 &other) {
 		x -= other.x;
 		y -= other.y;
 		z -= other.z;
@@ -347,11 +347,11 @@ enum class AnimType {
  * @note The values must match the @c TextId indices
  */
 enum class HeroBehaviourType {
-	kNormal = 0,          // C_NORMAL
-	kAthletic = 1,        // C_SPORTIF
-	kAggressive = 2,      // C_AGRESSIF
-	kDiscrete = 3,        // C_DISCRET
-	kProtoPack = 4,       // C_PROTOPACK
+	kNormal = 0,     // C_NORMAL
+	kAthletic = 1,   // C_SPORTIF
+	kAggressive = 2, // C_AGRESSIF
+	kDiscrete = 3,   // C_DISCRET
+	kProtoPack = 4,  // C_PROTOPACK
 #if 0
 	kDOUBLE = 5,          // C_DOUBLE Twinsen + Zoé
 	kCONQUE = 6,          // C_CONQUE Conque
@@ -367,8 +367,8 @@ enum class HeroBehaviourType {
 };
 
 // lba2
-#define CUBE_INTERIEUR	0
-#define	CUBE_EXTERIEUR	1
+#define CUBE_INTERIEUR 0
+#define CUBE_EXTERIEUR 1
 
 /**
  * 0: tunic + medallion
@@ -599,7 +599,7 @@ enum class TextId : int16 {
 	kVolumeSettings = 30,
 	kDetailsPolygonsHigh = 31,
 	kDetailsShadowHigh = 32,
-	//kSceneryZoomOn = 33, // duplicate with 133 - TODO check if this is the same in all languages
+	// kSceneryZoomOn = 33, // duplicate with 133 - TODO check if this is the same in all languages
 	kCreateNewPlayer = 40,
 	kCreateSaveGame = 41,
 	kEnterYourName = 42,
@@ -783,11 +783,11 @@ inline constexpr T bits(T value, uint8 offset, uint8 bits) {
 // color 20 - 24 = orange to yellow
 // color 25 orange
 // color 26 - 30 = bright gray or white
-#define COlOR_31 31 // green dark
-#define COlOR_47 47 // green bright
-#define COLOR_48 48 // brown dark
-#define COLOR_63 63 // brown bright
-#define COLOR_64 64 // blue dark
+#define COlOR_31 31          // green dark
+#define COlOR_47 47          // green bright
+#define COLOR_48 48          // brown dark
+#define COLOR_63 63          // brown bright
+#define COLOR_64 64          // blue dark
 #define COLOR_SELECT_MENU 68 // blue
 // TODO #define COLOR_SELECT_MENU 166 // blue lba2
 #define COLOR_73 73 // blue
@@ -801,11 +801,16 @@ inline constexpr T bits(T value, uint8 offset, uint8 bits) {
 #define COLOR_158 158
 
 enum kDebugLevels {
-	kDebugScripts =   1 << 0,
-	kDebugTime    =   1 << 1,
-	kDebugImGui   =   1 << 2
+	kDebugScriptsMove = 1 << 0,
+	kDebugScriptsLife = 1 << 1,
+	kDebugTimers = 1 << 2,
+	kDebugResources = 1 << 3,
+	kDebugImGui = 1 << 4,
+	kDebugInput = 1 << 5,
+	kDebugMovies = 1 << 6,
+	kDebugPalette = 1 << 7
 };
 
-}
+} // namespace TwinE
 
 #endif

@@ -72,7 +72,6 @@ void Screens::loadCustomPalette(const TwineResource &resource) {
 	if (_palettePcx.size() != NUMOFCOLORS) {
 		warning("Unexpected palette size %s:%i", resource.hqr, resource.index);
 	}
-	debug(3, "palette %s:%i with %u colors", resource.hqr, resource.index, _palettePcx.size());
 }
 
 void Screens::loadImage(TwineImage image, bool fadeIn) {
@@ -81,7 +80,7 @@ void Screens::loadImage(TwineImage image, bool fadeIn) {
 		warning("Failed to load image with index %i", image.image.index);
 		return;
 	}
-	debug(0, "Load image: %i", image.image.index);
+	debugC(1, TwinE::kDebugResources, "Load image: %i", image.image.index);
 	Graphics::ManagedSurface& target = _engine->_frontVideoBuffer;
 	target.transBlitFrom(src, src.getBounds(), target.getBounds(), 0, false, 0, 0xff, nullptr, true);
 	const Graphics::Palette *pal = &_ptrPal;

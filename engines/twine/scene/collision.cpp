@@ -20,8 +20,6 @@
  */
 
 #include "twine/scene/collision.h"
-#include "common/debug.h"
-#include "common/memstream.h"
 #include "common/util.h"
 #include "twine/debugger/debug_state.h"
 #include "twine/renderer/renderer.h"

@@ -120,17 +120,17 @@ void Input::enableKeyMap(const char *id) {
 		}
 	}
 	_currentKeyMap = id;
-	debug("enable keymap %s", id);
+	debugC(1, TwinE::kDebugInput, "enable keymap %s", id);
 }
 
 void Input::processCustomEngineEventStart(const Common::Event &event) {
 	_actionStates[event.customType] = 1 + event.kbdRepeat;
-	debug(3, "twine custom event type start: %i", event.customType);
+	debugC(2, TwinE::kDebugInput, "twine custom event type start: %i", event.customType);
 }
 
 void Input::processCustomEngineEventEnd(const Common::Event &event) {
 	_actionStates[event.customType] = 0;
-	debug(3, "twine custom event type end: %i", event.customType);
+	debugC(2, TwinE::kDebugInput, "twine custom event type end: %i", event.customType);
 }
 
 void Input::readKeys() {

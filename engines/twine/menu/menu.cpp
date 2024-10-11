@@ -1288,7 +1288,7 @@ void Menu::processBehaviourMenu(bool behaviourMenu) {
 
 			// increase the timer to play the animations
 			_engine->timerRef++;
-			debugC(3, kDebugLevels::kDebugTime, "Behaviour time: %i", _engine->timerRef);
+			debugC(3, kDebugLevels::kDebugTimers, "Behaviour time: %i", _engine->timerRef);
 		}
 
 		_engine->timerRef = tmpTime;

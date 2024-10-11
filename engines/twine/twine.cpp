@@ -710,20 +710,20 @@ int TwinEEngine::getRandomNumber(uint max) {
 void TwinEEngine::freezeTime(bool pause) {
 	if (_isTimeFreezed == 0) {
 		_saveFreezedTime = timerRef;
-		debugC(3, kDebugLevels::kDebugTime, "freezeTime: timer %i", timerRef);
+		debugC(3, kDebugLevels::kDebugTimers, "freezeTime: timer %i", timerRef);
 		if (pause)
 			_pauseToken = pauseEngine();
 	}
 	_isTimeFreezed++;
-	debugC(3, kDebugLevels::kDebugTime, "freezeTime: %i", _isTimeFreezed);
+	debugC(3, kDebugLevels::kDebugTimers, "freezeTime: %i", _isTimeFreezed);
 }
 
 void TwinEEngine::unfreezeTime() {
 	--_isTimeFreezed;
-	debugC(3, kDebugLevels::kDebugTime, "unfreezeTime: %i", _isTimeFreezed);
+	debugC(3, kDebugLevels::kDebugTimers, "unfreezeTime: %i", _isTimeFreezed);
 	if (_isTimeFreezed == 0) {
 		timerRef = _saveFreezedTime;
-		debugC(3, kDebugLevels::kDebugTime, "unfreezeTime: time %i", timerRef);
+		debugC(3, kDebugLevels::kDebugTimers, "unfreezeTime: time %i", timerRef);
 		if (_pauseToken.isActive()) {
 			_pauseToken.clear();
 		}
@@ -1274,6 +1274,7 @@ void TwinEEngine::blitFrontToWork(const Common::Rect &rect) {
 }
 
 void TwinEEngine::setPalette(const Graphics::Palette &palette, uint startColor) {
+	debugC(1, TwinE::kDebugPalette, "Change palette (%i colors, starting at %i)", (int)palette.size(), (int)startColor);
 	_frontVideoBuffer.setPalette(palette, startColor);
 }
 
@@ -1282,6 +1283,7 @@ void TwinEEngine::setPalette(uint startColor, uint numColors, const byte *palett
 		warning("Could not set palette");
 		return;
 	}
+	debugC(1, TwinE::kDebugPalette, "Change palette (%i colors, starting at %i)", (int)numColors, (int)startColor);
 	_frontVideoBuffer.setPalette(palette, startColor, numColors);
 }
 

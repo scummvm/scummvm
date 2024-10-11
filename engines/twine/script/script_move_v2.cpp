@@ -84,7 +84,7 @@ static const ScriptMoveFunction function_map[] = {
 int32 ScriptMoveV2::mWAIT_NB_DIZIEME(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int32 numSeconds = ctx.stream.readByte();
 	int32 currentTime = ctx.stream.readSint32LE();
-	debugC(3, kDebugLevels::kDebugScripts, "MOVE::WAIT_NB_DIZIEME(%i, %i)", (int)numSeconds, currentTime);
+	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::WAIT_NB_DIZIEME(%i, %i)", (int)numSeconds, currentTime);
 
 	if (currentTime == 0) {
 		currentTime = engine->timerRef + engine->toSeconds(numSeconds) / 10;
@@ -106,7 +106,7 @@ int32 ScriptMoveV2::mWAIT_NB_DIZIEME(TwinEEngine *engine, MoveScriptContext &ctx
 int32 ScriptMoveV2::mWAIT_NB_DIZIEME_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int32 numSeconds = engine->getRandomNumber(ctx.stream.readByte());
 	int32 currentTime = ctx.stream.readSint32LE();
-	debugC(3, kDebugLevels::kDebugScripts, "MOVE::WAIT_NB_DIZIEME(%i, %i)", (int)numSeconds, currentTime);
+	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::WAIT_NB_DIZIEME(%i, %i)", (int)numSeconds, currentTime);
 
 	if (currentTime == 0) {
 		currentTime = engine->timerRef + engine->toSeconds(numSeconds) / 10;
@@ -128,7 +128,7 @@ int32 ScriptMoveV2::mWAIT_NB_DIZIEME_RND(TwinEEngine *engine, MoveScriptContext 
 int32 ScriptMoveV2::mWAIT_NB_SECOND_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int32 numSeconds = engine->getRandomNumber(ctx.stream.readByte());
 	int32 currentTime = ctx.stream.readSint32LE();
-	debugC(3, kDebugLevels::kDebugScripts, "MOVE::WAIT_NB_SECOND_RND(%i, %i)", (int)numSeconds, currentTime);
+	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::WAIT_NB_SECOND_RND(%i, %i)", (int)numSeconds, currentTime);
 
 	if (currentTime == 0) {
 		currentTime = engine->timerRef + engine->toSeconds(numSeconds);

@@ -20,6 +20,7 @@
  */
 
 #include "twine/movies.h"
+#include "common/debug.h"
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/language.h"
@@ -311,7 +312,7 @@ void Movies::prepareGIF(int index) {
 	Graphics::ManagedSurface& target = _engine->_frontVideoBuffer;
 	const Common::Rect surfaceBounds(0, 0, surface->w, surface->h);
 	target.transBlitFrom(*surface, surfaceBounds, target.getBounds(), 0, false, 0, 0xff, nullptr, true);
-	debug(2, "Show gif with id %i from %s", index, Resources::HQR_FLAGIF_FILE);
+	debugC(1, TwinE::kDebugMovies, "Show gif with id %i from %s", index, Resources::HQR_FLAGIF_FILE);
 	delete stream;
 	_engine->delaySkip(5000);
 	_engine->setPalette(_engine->_screens->_ptrPal);
@@ -326,7 +327,7 @@ void Movies::playGIFMovie(const char *flaName) {
 	Common::String name(flaName);
 	name.toLowercase();
 
-	debug(1, "Play gif %s", name.c_str());
+	debugC(1, TwinE::kDebugMovies, "Play gif %s", name.c_str());
 	// TODO: use the HQR 23th entry (movies informations)
 	// TODO: there are gifs [1-18]
 	if (name == FLA_INTROD) {
@@ -412,7 +413,7 @@ bool Movies::playMovie(const char *name) { // PlayAnimFla
 	if (version == MKTAG('V', '1', '.', '3')) {
 		int32 currentFrame = 0;
 
-		debug("Play fla: %s", name);
+		debugC(1, TwinE::kDebugMovies, "Play fla: %s", name);
 
 		ScopedKeyMap scopedKeyMap(_engine, cutsceneKeyMapId);
 
@@ -508,10 +509,10 @@ bool Movies::playSmkMovie(const char *name, int index) {
 			}
 		}
 		const int speechVolume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
-		debug(3, "Play additional speech track: %i (of %i tracks)", additionalAudioTrack, decoder.getAudioTrackCount());
+		debugC(1, TwinE::kDebugMovies, "Play additional speech track: %i (of %i tracks)", additionalAudioTrack, decoder.getAudioTrackCount());
 		decoder.enableLanguage(additionalAudioTrack, speechVolume);
 	} else {
-		debug(3, "Disabled smacker speech");
+		debugC(1, TwinE::kDebugMovies, "Disabled smacker speech");
 	}
 
 	for (;;) {

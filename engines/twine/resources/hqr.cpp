@@ -153,7 +153,7 @@ int32 getEntry(uint8 *ptr, const char *filename, int32 index) {
 		decompressEntry(ptr, compDataPtr, compSize, realSize, mode);
 		free(compDataPtr);
 	}
-
+	debugC(1, TwinE::kDebugResources, "Loaded entry from %s for index %i with %i bytes", filename, index, realSize);
 	return realSize;
 }
 
@@ -239,7 +239,7 @@ Common::SeekableReadStream *makeReadStream(const char *filename, int index) {
 	if (mode != 0) {
 		stream = new LzssReadStream(stream, mode, realSize);
 	}
-
+	debugC(1, TwinE::kDebugResources, "Loaded entry from %s for index %i with %i bytes", filename, index, realSize);
 	return stream;
 }
 
@@ -333,7 +333,7 @@ int32 getVoxEntry(uint8 *ptr, const char *filename, int32 index, int32 hiddenInd
 		decompressEntry(ptr, compDataPtr, compSize, realSize, mode);
 		free(compDataPtr);
 	}
-
+	debugC(1, TwinE::kDebugResources, "Loaded vox entry from %s for index %i with %i bytes", filename, index, realSize);
 	return realSize;
 }
 
@@ -341,9 +341,12 @@ bool getPaletteEntry(Graphics::Palette &palette, const char *filename, int32 ind
 	byte paletteBuffer[NUMOFCOLORS * 3];
 	int32 size = HQR::getEntry(paletteBuffer, filename, index);
 	if (size <= 0) {
+		debugC(1, TwinE::kDebugResources, "Failed to load palette from %s for index %i", filename, index);
 		return false;
 	}
 	palette = Graphics::Palette(paletteBuffer, size / 3);
+	debugC(1, TwinE::kDebugResources, "Loaded palette from %s for index %i with %i color entries", filename, index, (int)palette.size());
+	debugC(1, TwinE::kDebugPalette, "Loaded palette from %s for index %i with %i color entries", filename, index, (int)palette.size());
 	return true;
 }
 

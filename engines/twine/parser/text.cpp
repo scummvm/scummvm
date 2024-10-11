@@ -79,7 +79,7 @@ bool TextData::loadFromHQR(const char *name, TextBankId textBankId, int language
 			result += c;
 		}
 		add(textBankId, TextEntry{result, entry, textIdx});
-		debug(5, "index: %i (bank %i), text: %s", (int)textIdx, (int)textBankId, result.c_str());
+		debugC(2, TwinE::kDebugResources, "index: %i (bank %i), text: %s", (int)textIdx, (int)textBankId, result.c_str());
 		offsetStream->seek(offsetPos);
 		if (end >= offsetStream->size()) {
 			break;
@@ -99,7 +99,7 @@ const TextEntry *TextData::getText(TextBankId textBankId, TextId textIndex) cons
 			return &entries[i];
 		}
 	}
-	debug(1, "Failed to find text entry for bank id %i with text index %i", (int)textBankId, (int)textIndex);
+	debugC(1, TwinE::kDebugResources, "Failed to find text entry for bank id %i with text index %i", (int)textBankId, (int)textIndex);
 	return nullptr;
 }
 
