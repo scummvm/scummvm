@@ -58,8 +58,6 @@ public:
 	bool quant(float dt) {
 		debugC(3, kDebugMinigames, "3mice2Kovrik::quant(%f)", dt);
 
-		char tmp[20];
-
 		_timePassed += dt;
 
 		qdMinigameObjectInterface *obj = _scene->mouse_click_object_interface();
@@ -68,15 +66,10 @@ public:
 			const char *name = obj->name();
 
 			if (strstr(name, "object@") && obj->is_state_active("base") && !_scene->mouse_object_interface()) {
-				const char *from = strstr(name, "@");
-				const char *to = strstr(name, "#");
-
-				Common::strlcpy(tmp, from + 1, to - from);
-
 				obj->set_state("hide");
 
-				int num = atol(tmp);
-				debugC(4, kDebugMinigames, "to_inv: num is: %d  tmp: '%s' for name: '%s'", num, tmp, name);
+				int num = getObjNum(name);
+				debugC(4, kDebugMinigames, "to_inv: num is: %d for name: '%s'", num, name);
 				_objects[num + 42]->set_state("to_inv");
 			}
 
@@ -88,15 +81,10 @@ public:
 
 			if (obj) {
 				const char *name = obj->name();
-				const char *from = strstr(name, "@");
-				const char *to = strstr(name, "#");
-
-				Common::strlcpy(tmp, from + 1, to - from);
-
 				obj->set_state("del");
 
-				int num = atol(tmp);
-				debugC(4, kDebugMinigames, "base: num is: %d  tmp: '%s' for name: '%s'", num, tmp, name);
+				int num = getObjNum(name);
+				debugC(4, kDebugMinigames, "base: num is: %d for name: '%s'", num, name);
 
 				_objects[num]->set_state("base");
 
@@ -112,24 +100,14 @@ public:
 
 				if (obj2) {
 					const char *name = obj->name();
-					const char *from = strstr(name, "@");
 
-					if (from && strstr(obj2->name(), "@")) {
-						const char *to = strstr(name, "#");
-
-						Common::strlcpy(tmp, from + 1, to - from);
-
-						int num = atol(tmp);
-						debugC(2, kDebugMinigames, "part1: num is: %d  tmp: '%s' for name: '%s'", num, tmp, name);
+					if (strstr(name, "@") && strstr(obj2->name(), "@")) {
+						int num = getObjNum(name);
+						debugC(2, kDebugMinigames, "part1: num is: %d for name: '%s'", num, name);
 
 						name = obj2->name();
-						from = strstr(name, "@");
-						to = strstr(name, "#");
-
-						Common::strlcpy(tmp, from + 1, to - from);
-
-						int num2 = atol(tmp);
-						debugC(2, kDebugMinigames, "part2: num2 is: %d  tmp: '%s' for name: '%s'", num2, tmp, name);
+						int num2 = getObjNum(name);
+						debugC(2, kDebugMinigames, "part2: num2 is: %d for name: '%s'", num2, name);
 
 						if (num == num2) {
 							obj->set_state("del");
@@ -202,6 +180,16 @@ private:
 				return false;
 
 		return true;
+	}
+
+	int getObjNum(const char *name) {
+		const char *from = strstr(name, "@");
+		const char *to = strstr(name, "#");
+		char tmp[20];
+
+		Common::strlcpy(tmp, from + 1, to - from);
+
+		return atol(tmp);
 	}
 
 private:
