@@ -293,6 +293,15 @@ void TwinEEngine::popMouseCursorVisible() {
 }
 
 Common::Error TwinEEngine::run() {
+#ifdef USE_IMGUI
+	ImGuiCallbacks callbacks;
+	bool drawImGui = debugChannelSet(-1, kDebugImGui);
+	callbacks.init = TwinE::onImGuiInit;
+	callbacks.render = drawImGui ? TwinE::onImGuiRender : nullptr;
+	callbacks.cleanup = TwinE::onImGuiCleanup;
+	_system->setImGuiCallbacks(callbacks);
+#endif
+
 	debug("Based on TwinEngine v0.2.2");
 	debug("(c) 2002 The TwinEngine team.");
 	debug("(c) 2020-2022 The ScummVM team.");
@@ -354,15 +363,6 @@ Common::Error TwinEEngine::run() {
 			_state = EngineState::GameLoop;
 		}
 	}
-
-#ifdef USE_IMGUI
-	ImGuiCallbacks callbacks;
-	bool drawImGui = debugChannelSet(-1, kDebugImGui);
-	callbacks.init = TwinE::onImGuiInit;
-	callbacks.render = drawImGui ? TwinE::onImGuiRender : nullptr;
-	callbacks.cleanup = TwinE::onImGuiCleanup;
-	_system->setImGuiCallbacks(callbacks);
-#endif
 
 	bool quitGame = false;
 	while (!quitGame && !shouldQuit()) {
