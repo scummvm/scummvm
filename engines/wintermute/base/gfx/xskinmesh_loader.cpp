@@ -113,32 +113,8 @@ void XSkinMeshLoader::loadMesh(const Common::String &filename, XFileData *xobj) 
 
 
 	uint32 *indexPtr = (uint32 *)_dxmesh->getIndexBuffer().ptr();
-	uint numFaces = _meshObject->_numFaces;
-	for (uint i = 0; i < numFaces; ++i) {
-		XMeshFace *face = &_meshObject->_faces[i];
-		int indexCount = face->_numFaceVertexIndices;
-		uint16 index1, index2, index3, index4, index5, index6;
-		if (indexCount == 3) {
-			index1 = *indexPtr++;
-			index2 = *indexPtr++;
-			index3 = *indexPtr++;
-			_indexData.push_back(index3);
-			_indexData.push_back(index2);
-			_indexData.push_back(index1);
-		} else {
-			index1 = *indexPtr++;
-			index2 = *indexPtr++;
-			index3 = *indexPtr++;
-			index4 = *indexPtr++;
-			index5 = *indexPtr++;
-			index6 = *indexPtr++;
-			_indexData.push_back(index3);
-			_indexData.push_back(index2);
-			_indexData.push_back(index1);
-			_indexData.push_back(index6);
-			_indexData.push_back(index5);
-			_indexData.push_back(index4);
-		}
+	for (uint i = 0; i < _dxmesh->getIndexBuffer().size() / sizeof(uint32); ++i) {
+		_indexData.push_back(indexPtr[i]);
 	}
 }
 
