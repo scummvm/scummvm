@@ -55,6 +55,9 @@ public:
 	const byte *getPalette() const {
 		return _palette;
 	}
+	uint16 getPaletteCount() const {
+		return _paletteCount;
+	}
 	byte getAlphaAt(int x, int y) const;
 	bool writeBMPToStream(Common::WriteStream *stream) const;
 	bool resize(int newWidth, int newHeight);
@@ -67,6 +70,7 @@ private:
 	const Graphics::Surface *_surface;
 	Graphics::Surface *_deletableSurface;
 	const byte *_palette;
+	uint16 _paletteCount;
 	BaseFileManager *_fileManager;
 };
 

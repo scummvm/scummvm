@@ -127,7 +127,7 @@ bool BaseSurfaceOSystem::finishLoad() {
 		if (!image->getPalette()) {
 			error("Missing palette while loading 8bit image %s", _filename.c_str());
 		}
-		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
+		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette(), image->getPaletteCount());
 	} else if (image->getSurface()->format != g_system->getScreenFormat()) {
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat());
 	} else {

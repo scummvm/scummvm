@@ -45,6 +45,7 @@ namespace Wintermute {
 BaseImage::BaseImage() {
 	_fileManager = BaseFileManager::getEngineInstance();
 	_palette = nullptr;
+	_paletteCount = 0;
 	_surface = nullptr;
 	_decoder = nullptr;
 	_deletableSurface = nullptr;
@@ -83,6 +84,7 @@ bool BaseImage::loadFile(const Common::String &filename) {
 	_decoder->loadStream(*file);
 	_surface = _decoder->getSurface();
 	_palette = _decoder->getPalette();
+	_paletteCount = _decoder->getPaletteColorCount();
 	_fileManager->closeFile(file);
 
 	return true;
