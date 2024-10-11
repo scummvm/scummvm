@@ -83,7 +83,7 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 		return false;
 	}
 
-	XSkinMeshLoader *meshLoader = new XSkinMeshLoader(this, meshObject, mesh, skinInfo);
+	XSkinMeshLoader *meshLoader = new XSkinMeshLoader(this, meshObject, mesh);
 	meshLoader->loadMesh(filename, xobj);
 
 	_skinMesh = new SkinMeshHelper(meshLoader, mesh, skinInfo);

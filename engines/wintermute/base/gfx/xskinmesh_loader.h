@@ -53,7 +53,7 @@ class XSkinMeshLoader {
 	friend class SkinMeshHelper;
 
 public:
-	XSkinMeshLoader(XMesh *mesh, XMeshObject *meshObject, DXMesh *dxmesh, DXSkinInfo *skinInfo);
+	XSkinMeshLoader(XMesh *mesh, XMeshObject *meshObject, DXMesh *dxmesh);
 	virtual ~XSkinMeshLoader();
 	void loadMesh(const Common::String &filename, XFileData *xobj);
 
@@ -81,9 +81,7 @@ protected:
 	BaseArray<SkinWeights> _skinWeightsList;
 
 	XMesh *_mesh;
-	XMeshObject *_meshObject;
 	DXMesh *_dxmesh;
-	DXSkinInfo *_skinInfo;
 };
 
 } // namespace Wintermute

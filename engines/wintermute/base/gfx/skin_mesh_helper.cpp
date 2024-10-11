@@ -63,10 +63,10 @@ bool SkinMeshHelper::getOriginalMesh(DXMesh **mesh) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool SkinMeshHelper::generateSkinnedMesh(uint32 options, float minWeight, uint32 *adjacencyOut, DXMesh **mesh) {
+bool SkinMeshHelper::generateSkinnedMesh(uint32 *adjacencyOut, DXMesh **mesh) {
 	bool res = getOriginalMesh(mesh);
 	if (res) {
-	 	(*mesh)->generateAdjacency(adjacencyOut);
+		(*mesh)->generateAdjacency(adjacencyOut);
 	}
 
 	return res;
@@ -81,12 +81,12 @@ bool SkinMeshHelper::updateSkinnedMesh(const DXMatrix *boneTransforms, DXMesh *m
 }
 
 //////////////////////////////////////////////////////////////////////////
-const char *SkinMeshHelper::getBoneName(uint boneIndex) {
+const char *SkinMeshHelper::getBoneName(uint32 boneIndex) {
 	return _skinInfo->getBoneName(boneIndex);
 }
 
 //////////////////////////////////////////////////////////////////////////
-DXMatrix *SkinMeshHelper::getBoneOffsetMatrix(uint boneIndex) {
+DXMatrix *SkinMeshHelper::getBoneOffsetMatrix(uint32 boneIndex) {
 	return _skinInfo->getBoneOffsetMatrix(boneIndex);
 }
 
