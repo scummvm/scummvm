@@ -56,7 +56,7 @@
 #include "qdengine/minigames/3mice2_kovrik.h"
 #include "qdengine/minigames/3mice2_sudoku.h"
 #include "qdengine/minigames/3mice2_states.h"
-
+#include "qdengine/minigames/3mice2_testo.h"
 
 namespace QDEngine {
 
