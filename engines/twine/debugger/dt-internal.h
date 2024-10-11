@@ -22,16 +22,12 @@
 #ifndef TWINE_DEBUGGER_DT_INTERNAL_H
 #define TWINE_DEBUGGER_DT_INTERNAL_H
 
-#define IMGUI_DEFINE_MATH_OPERATORS
-
-#include "graphics/surface.h"
-
-#include "backends/imgui/imgui.h"
-#include "backends/imgui/imgui_fonts.h"
+#include "backends/imgui/components/imgui_logger.h"
 
 namespace TwinE {
 
 ImFont *_tinyFont = nullptr;
+ImGuiEx::ImGuiLogger *_logger = nullptr;
 
 } // namespace TwinE
 

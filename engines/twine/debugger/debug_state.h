@@ -90,6 +90,7 @@ public:
 	bool _actorDetailsWindow = true;
 	bool _sceneFlagsWindow = false;
 	bool _paletteWindow = false;
+	bool _loggerWindow = false;
 
 	bool _useFreeCamera = false;
 	bool _disableGridRendering = false;

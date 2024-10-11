@@ -20,8 +20,11 @@
  */
 
 #include "twine/debugger/debugtools.h"
+#include "backends/imgui/components/imgui_logger.h"
 #include "backends/imgui/imgui.h"
+#include "backends/imgui/imgui_fonts.h"
 #include "backends/imgui/imgui_utils.h"
+#include "common/log.h"
 #include "common/scummsys.h"
 #include "common/str-enc.h"
 #include "common/str.h"
@@ -132,6 +135,23 @@ static const char *toString(ShapeType type) {
 	}
 }
 
+static void onLog(LogMessageType::Type type, int level, uint32 debugChannels, const char *message) {
+	switch (type) {
+	case LogMessageType::kError:
+		_logger->addLog("[error]%s", message);
+		break;
+	case LogMessageType::kWarning:
+		_logger->addLog("[warn]%s", message);
+		break;
+	case LogMessageType::kInfo:
+		_logger->addLog("%s", message);
+		break;
+	case LogMessageType::kDebug:
+		_logger->addLog("[debug]%s", message);
+		break;
+	}
+}
+
 void onImGuiInit() {
 	ImGuiIO &io = ImGui::GetIO();
 	io.Fonts->AddFontDefault();
@@ -147,6 +167,10 @@ void onImGuiInit() {
 	ImGui::addTTFFontFromArchive("MaterialSymbolsSharp.ttf", 16.f, &icons_config, icons_ranges);
 
 	_tinyFont = ImGui::addTTFFontFromArchive("FreeSans.ttf", 10.0f, nullptr, nullptr);
+
+	_logger = new ImGuiEx::ImGuiLogger;
+
+	Common::setLogWatcher(onLog);
 }
 
 static void holomapFlagsWindow(TwinEEngine *engine) {
@@ -736,6 +760,9 @@ static void gridMenu(TwinEEngine *engine) {
 
 static void debuggerMenu(TwinEEngine *engine) {
 	if (ImGui::BeginMenu("Debugger")) {
+		if (ImGui::MenuItem("Logs")) {
+			engine->_debugState->_loggerWindow = true;
+		}
 		if (ImGui::MenuItem("Texts")) {
 			engine->_debugState->_menuTextWindow = true;
 		}
@@ -838,6 +865,8 @@ void onImGuiRender() {
 	gameFlagsWindow(engine);
 	paletteWindow(engine);
 	sceneFlagsWindow(engine);
+	_logger->draw("Logger", &engine->_debugState->_loggerWindow);
+
 
 	if (engine->_debugState->_openPopup) {
 		ImGui::OpenPopup(engine->_debugState->_openPopup);
@@ -846,6 +875,11 @@ void onImGuiRender() {
 }
 
 void onImGuiCleanup() {
+	delete _logger;
+	_logger = nullptr;
+
+	delete _tinyFont;
+	_tinyFont = nullptr;
 }
 
 } // namespace TwinE
