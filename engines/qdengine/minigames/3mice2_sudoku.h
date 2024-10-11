@@ -211,7 +211,7 @@ public:
 
 				_figures[num2 - 1]->set_R(_scene->screen2world_coords(pos, 0));
 
-				_pos[num + 12] = num2 - 1;
+				_pieceTargets[num - 1] = num2 - 1;
 			}
 		}
 
