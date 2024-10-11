@@ -193,6 +193,13 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		}
 	}
 
+	if (_game.platform == Common::kPlatformMacintosh) {
+		ConfMan.registerDefault("mac_graphics_smoothing", true);
+		if (ConfMan.hasKey("mac_graphics_smoothing", _targetName)) {
+			_useMacGraphicsSmoothing = ConfMan.getBool("mac_graphics_smoothing");
+		}
+	}
+
 	setTimerAndShakeFrequency();
 
 	camera.reset();

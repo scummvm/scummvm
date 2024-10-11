@@ -244,12 +244,12 @@ void MacGuiImpl::initialize() {
 			int id = menu->addMenuItem(nullptr, name);
 
 			if ((_vm->_game.id == GID_MONKEY || _vm->_game.id == GID_MONKEY2) && id == 3) {
-				string += ";(-;Smooth Graphics";
+				string += ";(-;Smooth Graphics/G";
 			}
 
 			// Floppy version
 			if (_vm->_game.id == GID_INDY4 && !string.contains("Smooth Graphics") && id == 3) {
-				string += ";(-;Smooth Graphics";
+				string += ";(-;Smooth Graphics/G";
 			}
 
 			menu->createSubMenuFromString(id, string.c_str(), 0);
@@ -378,13 +378,22 @@ bool MacGuiImpl::handleMenu(int id, Common::String &name) {
 		return true;
 
 	case 405: // Graphics Smoothing
-		_vm->_useMacGraphicsSmoothing = !_vm->_useMacGraphicsSmoothing;
+		_vm->mac_toggleSmoothing();
 
-		// Allow the engine to update the graphics mode
-		_vm->markRectAsDirty(kBannerVirtScreen, 0, 320, 0, 200);
-		_vm->markRectAsDirty(kTextVirtScreen, 0, 320, 0, 200);
-		_vm->markRectAsDirty(kVerbVirtScreen, 0, 320, 0, 200);
-		_vm->markRectAsDirty(kMainVirtScreen, 0, 320, 0, 200);
+	case 500: // Voice Only
+		_vm->_voiceMode = 0;
+		_vm->_v5VoiceMode = 0;
+		_vm->syncSoundSettings();
+		return true;
+	case 501: // Text Only
+		_vm->_voiceMode = 2;
+		_vm->_v5VoiceMode = 2;
+		_vm->syncSoundSettings();
+		return true;
+	case 502: // Voice and Text
+		_vm->_voiceMode = 1;
+		_vm->_v5VoiceMode = 1;
+		_vm->syncSoundSettings();
 		return true;
 	}
 
@@ -475,6 +484,28 @@ void MacGuiImpl::updateWindowManager() {
 		menu->getSubMenuItem(windowMenu, 5)->enabled = false;
 
 		menu->getSubMenuItem(windowMenu, 7)->checked = _vm->_useMacGraphicsSmoothing;
+
+		Graphics::MacMenuItem *speechMenu = menu->getMenuItem("Speech");
+
+		if (speechMenu) {
+			menu->getSubMenuItem(speechMenu, 0)->checked = false; // Voice Only
+			menu->getSubMenuItem(speechMenu, 1)->checked = false; // Text Only
+			menu->getSubMenuItem(speechMenu, 2)->checked = false; // Voice and Text
+
+			switch (_vm->_voiceMode) {
+			case 0: // Voice Only
+				menu->getSubMenuItem(speechMenu, 0)->checked = true;
+				break;
+			case 1: // Voice and Text
+				menu->getSubMenuItem(speechMenu, 2)->checked = true;
+				break;
+			case 2: // Text Only
+				menu->getSubMenuItem(speechMenu, 1)->checked = true;
+				break;
+			default:
+				warning("MacGuiImpl::updateWindowManager(): Invalid voice mode");
+			}
+		}
 	}
 
 	_menuIsActive = isActive;

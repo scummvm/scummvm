@@ -941,6 +941,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 	bool isSegaCD = _game.platform == Common::kPlatformSegaCD;
 	bool isNES = _game.platform == Common::kPlatformNES;
 	bool inSaveRoom = false;
+	bool canToggleSmoothing = _macScreen && _game.version > 3 && _game.heversion == 0;
 
 	// The following check is used by v3 games which have writable savegame names
 	// and also support some key combinations which in our case are mapped to SHIFT-<letter>
@@ -1409,6 +1410,8 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		if (VAR_CHARINC != 0xFF)
 			VAR(VAR_CHARINC) = 9 - _defaultTextSpeed;
 
+	} else if (canToggleSmoothing && (lastKeyHit.keycode == Common::KEYCODE_g && lastKeyHit.hasFlags(Common::KBD_ALT))) {
+		mac_toggleSmoothing();
 	} else {
 
 		if (lastKeyHit.keycode >= Common::KEYCODE_F1 &&
