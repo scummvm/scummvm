@@ -556,7 +556,7 @@ static void actorDetailsWindow(int &actorIdx, TwinEEngine *engine) {
 			}
 		}
 
-		if (ImGui::CollapsingHeader("Work Flags", ImGuiTreeNodeFlags_DefaultOpen)) {
+		if (ImGui::CollapsingHeader("Work Flags")) {
 			static const char *Names[] = {
 				"WAIT_HIT_FRAME",
 				"OK_HIT",
@@ -590,7 +590,7 @@ static void actorDetailsWindow(int &actorIdx, TwinEEngine *engine) {
 				ImGui::EndTable();
 			}
 		}
-		if (ImGui::CollapsingHeader("Flags", ImGuiTreeNodeFlags_DefaultOpen)) {
+		if (ImGui::CollapsingHeader("Flags")) {
 			static const char *Names[] = {
 				"CHECK_OBJ_COL",
 				"CHECK_BRICK_COL",
