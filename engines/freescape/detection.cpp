@@ -782,6 +782,22 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"castlemaster",
+		"Virtual Worlds",
+		{
+			{"CASTLE.EXE", 0, "ee80b083151fb1d70e3045a02f0de7fd", 2688},
+			{"CMC.EXE", 0, "9015c244dc8a97fe55df7b235b31e00c", 57168},
+			{"CME.EXE", 0, "d563ae1475752e6a9a81b1350abebef3", 89248},
+			{"CMH.EXE", 0, "cc68c42d254b3aa0f208cd08731c6805", 59968},
+			{"CMT.EXE", 0, "5814e68a175f74ebce0773a73e7488c7", 78768},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDEREGA, GUIO_RENDERCGA)
+	},
+	{
+		"castlemaster",
 		"Domark PC Collection",
 		{
 			{"X.EXE", 0, "d51d7db1e06814cbf763c43f411df616", 2157},
