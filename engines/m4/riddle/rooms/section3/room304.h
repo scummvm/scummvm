@@ -39,7 +39,7 @@ private:
 	machine *_trunk = nullptr;
 	machine *_stick = nullptr;
 	int _smoke = -1;
-	machine *_machine1 = nullptr;
+	machine *_mei = nullptr;
 	machine *_machine2 = nullptr;
 	machine *_machine3 = nullptr;
 	machine *_pu = nullptr;

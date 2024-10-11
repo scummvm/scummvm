@@ -114,7 +114,7 @@ machine *triggerMachineByHash_3000(int myHash, int dataHash, int normalDir, int 
 		* _G(globals)[V006] + _G(globals)[V004];
 	_G(globals)[GLB_TEMP_7] = NUMS[index] << 16;
 
-	machine *result = TriggerMachineByHash(myHash, nullptr, dataHash, 0,
+	machine *result = TriggerMachineByHash(myHash, nullptr, dataHash + 8, 0,
 		intrMsg ? intrMsg : &triggerMachineByHashCallback3000,
 		false, machName);
 	_G(inverse_pal)->release();
