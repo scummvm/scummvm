@@ -57,6 +57,11 @@ public:
 	bool init(const qdEngineInterface *engine_interface) {
 		debugC(1, kDebugMinigames, "3mice2States::init()");
 
+		_engine = engine_interface;
+		_scene = engine_interface->current_scene_interface();
+		if (!_scene)
+			return false;
+
 		_objScene = _scene->object_interface("$\xF1\xF6\xE5\xED\xE0"); // "$сцена"
 		_objSelectedSet = _scene->object_interface("$select_nabor");
 
