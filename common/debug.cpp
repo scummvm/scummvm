@@ -197,7 +197,7 @@ static void debugHelper(const char *s, va_list va, int level, uint32 debugChanne
 
 	Common::LogWatcher logWatcher = Common::getLogWatcher();
 	if (logWatcher)
-   		(*logWatcher)(LogMessageType::kDebug, level, debugChannels, buf.c_str());
+		(*logWatcher)(LogMessageType::kDebug, level, debugChannels, buf.c_str());
 
 	if (g_system)
 		g_system->logMessage(LogMessageType::kDebug, buf.c_str());
