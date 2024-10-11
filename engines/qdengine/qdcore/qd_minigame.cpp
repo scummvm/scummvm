@@ -55,6 +55,7 @@
 #include "qdengine/minigames/3mice2_sbor_karty.h"
 #include "qdengine/minigames/3mice2_kovrik.h"
 #include "qdengine/minigames/3mice2_sudoku.h"
+#include "qdengine/minigames/3mice2_states.h"
 
 
 namespace QDEngine {
