@@ -769,7 +769,7 @@ void TwinEEngine::processBonusList() {
 }
 
 void TwinEEngine::processInventoryAction() {
-	ScopedEngineFreeze scoped(this);
+	freezeTime(false);
 	testRestoreModeSVGA(true) ;
 	_menu->inventory();
 
@@ -843,7 +843,9 @@ void TwinEEngine::processInventoryAction() {
 		break;
 	}
 	case kiBonusList: {
+		unfreezeTime();
 		_redraw->redrawEngineActions(true);
+		freezeTime(false);
 		processBonusList();
 		break;
 	}
@@ -859,6 +861,7 @@ void TwinEEngine::processInventoryAction() {
 		break;
 	}
 
+	unfreezeTime();
 	_redraw->redrawEngineActions(true);
 }
 
@@ -974,9 +977,10 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			} else if (_input->isActionActive(TwinEActionType::QuickBehaviourDiscreet, false)) {
 				_actor->_heroBehaviour = HeroBehaviourType::kDiscrete;
 			}
-			ScopedEngineFreeze scopedFreeze(this);
+			freezeTime(false);
 			testRestoreModeSVGA(true);
 			_menu->processBehaviourMenu(behaviourMenu);
+			unfreezeTime();
 			_redraw->redrawEngineActions(true);
 		}
 
@@ -1015,7 +1019,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		// Process Pause
 		if (_input->toggleActionIfActive(TwinEActionType::Pause)) {
-			ScopedEngineFreeze scopedFreeze(this, true);
+			freezeTime(true);
 			const char *PauseString = "Pause";
 			_text->setFontColor(COLOR_WHITE);
 			if (_redraw->_flagMCGA) {
@@ -1033,6 +1037,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 					break;
 				}
 			} while (!_input->toggleActionIfActive(TwinEActionType::Pause));
+			unfreezeTime();
 			_redraw->redrawEngineActions(true);
 		}
 
