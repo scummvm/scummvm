@@ -70,7 +70,6 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 
 	// load mesh
 	DXBuffer bufMaterials;
-	//DXBuffer bufBoneOffset;
 	//uint32 numFaces;
 	uint32 numMaterials;
 	DXMesh *mesh;
@@ -190,7 +189,6 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 	}
 
 	bufMaterials.free();
-	//bufBoneOffset.free();
 
 	return true;
 }
