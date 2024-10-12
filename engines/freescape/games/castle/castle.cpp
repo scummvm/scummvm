@@ -732,7 +732,10 @@ void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int
 			debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
 			while (size-- > 0) {
 				byte c = file->readByte();
-				if (c != 0)
+				if (c > 0x7F) {
+					file->seek(-1, SEEK_CUR);
+					break;
+				} else if (c != 0)
 					message = message + c;
 			}
 
