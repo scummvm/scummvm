@@ -1081,49 +1081,39 @@ void CastleEngine::selectCharacterScreen() {
 	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
 	surface->fillRect(_fullscreenViewArea, color);
 
-	switch (_language) {
-		case Common::ES_ESP:
-			// No accent in "príncipe" since it is not supported by the font
-			if (isDOS()) {
-				lines.push_back("Elija su personaje");
-				lines.push_back("");
-				lines.push_back("");
-				lines.push_back("            1. Principe");
-				lines.push_back("            2. Princesa");
-			} else if (isSpectrum()) {
-				lines.push_back(centerAndPadString("*******************", 21));
-				lines.push_back(centerAndPadString("Seleccion el ", 21));
-				lines.push_back(centerAndPadString("personaje que quiera", 21));
-				lines.push_back(centerAndPadString("ser y precione enter", 21));
-				lines.push_back("");
-				lines.push_back(centerAndPadString("1. Principe", 21));
-				lines.push_back(centerAndPadString("2. Princesa", 21));
-				lines.push_back("");
-				lines.push_back(centerAndPadString("*******************", 21));
-			}
-			break;
-		default: //case Common::EN_ANY:
-			if (isDOS()) {
-				lines.push_back("Select your character");
-				lines.push_back("");
-				lines.push_back("");
-				lines.push_back("            1. Prince");
-				lines.push_back("            2. Princess");
-			} else if (isSpectrum()) {
-				lines.push_back(centerAndPadString("*******************", 21));
-				lines.push_back(centerAndPadString("Select your character", 21));
-				lines.push_back(centerAndPadString("you wish to play", 21));
-				lines.push_back(centerAndPadString("and press enter", 21));
-				lines.push_back("");
-				lines.push_back(centerAndPadString("1. Prince  ", 21));
-				lines.push_back(centerAndPadString("2. Princess", 21));
-				lines.push_back("");
-				lines.push_back(centerAndPadString("*******************", 21));
-			}
-			break;
+	if (_language != Common::ES_ESP) {
+		int x = 0;
+		int y = 0;
+
+		Common::Array<RiddleText> selectMessage = _riddleList[21]._lines;
+		for (int i = 0; i < int(selectMessage.size()); i++) {
+			x = x + selectMessage[i]._dx;
+			y = y + selectMessage[i]._dy;
+			drawStringInSurface(selectMessage[i]._text, x, y, color, color, surface);
+		}
+		drawFullscreenSurface(surface);
+	} else {
+		// No accent in "príncipe" since it is not supported by the font
+		if (isDOS()) {
+			lines.push_back("Elija su personaje");
+			lines.push_back("");
+			lines.push_back("");
+			lines.push_back("            1. Principe");
+			lines.push_back("            2. Princesa");
+		} else if (isSpectrum()) {
+			lines.push_back(centerAndPadString("*******************", 21));
+			lines.push_back(centerAndPadString("Seleccion el ", 21));
+			lines.push_back(centerAndPadString("personaje que quiera", 21));
+			lines.push_back(centerAndPadString("ser y precione enter", 21));
+			lines.push_back("");
+			lines.push_back(centerAndPadString("1. Principe", 21));
+			lines.push_back(centerAndPadString("2. Princesa", 21));
+			lines.push_back("");
+			lines.push_back(centerAndPadString("*******************", 21));
+		}
+		drawStringsInSurface(lines, surface);
 	}
 
-	drawStringsInSurface(lines, surface);
 	_system->lockMouse(false);
 	_system->showMouse(true);
 	Common::Rect princeSelector(82, 100, 163, 109);
