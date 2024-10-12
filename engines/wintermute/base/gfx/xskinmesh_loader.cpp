@@ -33,15 +33,13 @@
 namespace Wintermute {
 
 XSkinMeshLoader::XSkinMeshLoader(DXMesh *dxmesh) {
-	_dxmesh = dxmesh;
-	
 	_vertexCount = dxmesh->getNumVertices();
 	// vertex format for .X meshes will be position + normals + textures
 	_vertexData = new float[kVertexComponentCount * _vertexCount]();
-	
-	auto fvf = _dxmesh->getFVF();
+
+	auto fvf = dxmesh->getFVF();
 	uint32 vertexSize = DXGetFVFVertexSize(fvf) / sizeof(float);
-	float *vertexBuffer = (float *)_dxmesh->getVertexBuffer().ptr();
+	float *vertexBuffer = (float *)dxmesh->getVertexBuffer().ptr();
 	uint32 offset = 0, normalOffset = 0, textureOffset = 0;
 
 	if (fvf & DXFVF_XYZ) {

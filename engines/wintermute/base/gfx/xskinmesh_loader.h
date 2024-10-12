@@ -69,8 +69,6 @@ protected:
 
 	BaseArray<Math::Matrix4 *> _boneMatrices;
 	BaseArray<SkinWeights> _skinWeightsList;
-
-	DXMesh *_dxmesh;
 };
 
 } // namespace Wintermute
