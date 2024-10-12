@@ -161,6 +161,7 @@ public:
 
 bool DXLoadSkinMesh(XFileData *fileData, DXBuffer &materialsOut, uint32 &numMaterialsOut, DXSkinInfo **skinInfoOut, DXMesh **meshOut);
 uint32 DXGetFVFVertexSize(uint32 fvf);
+bool DXComputeBoundingBox(DXVector3 *pfirstposition, uint32 numvertices, uint32 dwstride, DXVector3 *pmin, DXVector3 *pmax);
 
 } // namespace Wintermute
 

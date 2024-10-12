@@ -72,6 +72,38 @@ uint32 DXGetFVFVertexSize(uint32 fvf) {
 	return size;
 }
 
+bool DXComputeBoundingBox(DXVector3 *pfirstposition, uint32 numvertices, uint32 dwstride, DXVector3 *pmin, DXVector3 *pmax) {
+	DXVector3 vec;
+	uint32 i;
+
+	if (!pfirstposition || !pmin || !pmax )
+		return false;
+
+	*pmin = *pfirstposition;
+	*pmax = *pmin;
+
+	for (i = 0; i < numvertices; i++) {
+		vec = *((DXVector3 *)((byte *)pfirstposition + dwstride * i));
+
+		if (vec._x < pmin->_x)
+			pmin->_x = vec._x;
+		if (vec._x > pmax->_x)
+			pmax->_x = vec._x;
+
+		if (vec._y < pmin->_y)
+			pmin->_y = vec._y;
+		if (vec._y > pmax->_y)
+			pmax->_y = vec._y;
+
+		if (vec._z < pmin->_z)
+			pmin->_z = vec._z;
+		if (vec._z > pmax->_z)
+			pmax->_z = vec._z;
+	}
+
+	return true;
+}
+
 static bool createMesh(uint32 numFaces, uint32 numVertices, uint32 fvf, DXMesh **mesh) {
 	if (!mesh)
 		return false;
