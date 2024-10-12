@@ -30,6 +30,7 @@ namespace Rooms {
 
 void Section::global_room_init() {
 	digi_preload("950_s51", 950);
+	_GINT().show();
 }
 
 void Section::tick() {
