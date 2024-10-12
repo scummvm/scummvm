@@ -475,6 +475,23 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 void SciMusic::soundPlay(MusicEntry *pSnd, bool restoring) {
 	_mutex.lock();
 
+	if (DgdsEngine::getInstance()->getGameId() == GID_DRAGON && pSnd->playBed) {
+		// If pSnd->playBed, and version <= SCI1_EARLY, then kill
+		// existing sounds with playBed enabled.
+
+		uint playListCount = _playList.size();
+		for (uint i = 0; i < playListCount; i++) {
+			if (_playList[i] != pSnd && _playList[i]->playBed) {
+				debugC(2, kDebugLevelSound, "Automatically stopping old playBed song from soundPlay");
+				MusicEntry *old = _playList[i];
+				_mutex.unlock();
+				soundStop(old);
+				_mutex.lock();
+				break;
+			}
+		}
+	}
+
 	uint playListCount = _playList.size();
 	uint playListNo = playListCount;
 	MusicEntry *alreadyPlaying = nullptr;
@@ -846,6 +863,8 @@ MusicEntry::MusicEntry() {
 	volume = MUSIC_VOLUME_DEFAULT;
 	hold = -1;
 	reverb = -1;
+	playBed = false;
+	overridePriority = false;
 
 	pauseCounter = 0;
 	sampleLoopCounter = 0;
@@ -872,6 +891,7 @@ MusicEntry::MusicEntry() {
 		_chan[i]._prio = 127;
 		_chan[i]._voices = 0;
 		_chan[i]._dontRemap = false;
+		_chan[i]._dontMap = false;
 		_chan[i]._mute = false;
 	}
 }
@@ -989,6 +1009,8 @@ int ChannelRemapping::lowestPrio() const {
 void SciMusic::remapChannels(bool mainThread) {
 	// NB: This function should only be called with _mutex locked
 	// Make sure to set the mainThread argument correctly.
+
+
 	ChannelRemapping *map = determineChannelMap();
 
 	DeviceChannelUsage currentMap[16];
@@ -1289,7 +1311,7 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 				// would not be skipped even if some channels couldn't be
 				// mapped due to voice limits. So, we treat all channels as
 				// non-essential here for playBed songs.
-				if (prio > 0) {
+				if (prio > 0 || (song->playBed && DgdsEngine::getInstance()->getGameId() == GID_DRAGON)) {
 #ifdef DEBUG_REMAP
 					debug("   not enough voices; need %d, have %d. Skipping this channel.", neededVoices, map->_freeVoices);
 #endif

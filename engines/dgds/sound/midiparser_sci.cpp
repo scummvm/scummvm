@@ -45,11 +45,13 @@ MidiParser_SCI::MidiParser_SCI(SciMusic *music) :
 	_ppqn = 1;
 	setTempo(16667);
 
+	_track = nullptr;
+	_pSnd = nullptr;
+	_loopTick = 0;
 	_masterVolume = 15;
 	_volume = 127;
 
 	_resetOnPause = false;
-	_pSnd = nullptr;
 
 	_mainThreadCalled = false;
 
@@ -313,7 +315,7 @@ void MidiParser_SCI::sendFromScriptToDriver(uint32 midi) {
 		return;
 	}
 
-	if ((midi & 0xFFF0) == 0x4EB0) {
+	if ((midi & 0xFFF0) == 0x4EB0 && DgdsEngine::getInstance()->getGameId() != GID_DRAGON) {
 		// We have to handle this here instead of inside the trackState() method (which handles the input from
 		// the actual midi data). The mute command when sent from the script is independent from the mute
 		// command sent by the actual midi data. The script mute is stacked on the high nibble, while the midi
@@ -331,7 +333,7 @@ void MidiParser_SCI::sendFromScriptToDriver(uint32 midi) {
 		if (_pSnd->_chan[channel]._mute != m) {
 			// CHECKME: Should we directly call remapChannels() if _mainThreadCalled?
 			_music->needsRemap();
-			debugC(2, "Dynamic mute change (arg = %d, mainThread = %d)", m, _mainThreadCalled);
+			debugC(2, kDebugLevelSound, "Dynamic mute change (arg = %d, mainThread = %d)", m, _mainThreadCalled);
 		}
 
 		return;
@@ -347,7 +349,7 @@ void MidiParser_SCI::sendToDriver(uint32 midi) {
 	if (!_pSnd->_chan[midiChannel]._dontMap)
 		trackState(midi);
 
-	if ((midi & 0xFFF0) == 0x4EB0) {
+	if ((midi & 0xFFF0) == 0x4EB0 && DgdsEngine::getInstance()->getGameId() != GID_DRAGON) {
 		// Mute. Handled in trackState()/sendFromScriptToDriver().
 		return;
 	}
@@ -427,27 +429,27 @@ void MidiParser_SCI::trackState(uint32 b) {
 		case 0x4B: // voices
 			if (s._voices != op2) {
 				// CHECKME: Should we directly call remapChannels() if _mainThreadCalled?
-				debugC(2, "Dynamic voice change (%d to %d)", s._voices, op2);
+				debugC(2, kDebugLevelSound, "Dynamic voice change (%d to %d)", s._voices, op2);
 				_music->needsRemap();
 			}
 			s._voices = op2;
 			_pSnd->_chan[channel]._voices = op2; // Also sync our MusicEntry
 			break;
-		case 0x4E: {// mute
-			// This is channel mute only for sci1.
-
-			// This is handled slightly differently than what we do in sendFromScriptToDriver(). The script mute is stacked
-			// on the high nibble, while the midi data mute (this one here) is stored on the low nibble. So the script cannot
-			// undo a mute set by the midi data and vice versa.
-			uint8 m = (_pSnd->_chan[channel]._mute & 0xf0) | (op2 & 1);
-			if (_pSnd->_chan[channel]._mute != m) {
-				_pSnd->_chan[channel]._mute = m;
-				// CHECKME: Should we directly call remapChannels() if _mainThreadCalled?
-				_music->needsRemap();
-				debugC(2, "Dynamic mute change (arg = %d, mainThread = %d)", m, _mainThreadCalled);
+		case 0x4E: // mute
+			// This is channel mute only for HOC+.
+			if (DgdsEngine::getInstance()->getGameId() != GID_DRAGON) {
+				// This is handled slightly differently than what we do in sendFromScriptToDriver(). The script mute is stacked
+				// on the high nibble, while the midi data mute (this one here) is stored on the low nibble. So the script cannot
+				// undo a mute set by the midi data and vice versa.
+				uint8 m = (_pSnd->_chan[channel]._mute & 0xf0) | (op2 & 1);
+				if (_pSnd->_chan[channel]._mute != m) {
+					_pSnd->_chan[channel]._mute = m;
+					// CHECKME: Should we directly call remapChannels() if _mainThreadCalled?
+					_music->needsRemap();
+					debugC(2, kDebugLevelSound, "Dynamic mute change (arg = %d, mainThread = %d)", m, _mainThreadCalled);
+				}
 			}
 			break;
-		}
 		default:
 			break;
 		}
@@ -588,7 +590,7 @@ bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 			if (!skipSignal) {
 				if (!_jumpingToTick) {
 					_pSnd->setSignal(info.basic.param1);
-					debugC(4, "signal %04x", info.basic.param1);
+					debugC(4, kDebugLevelSound, "signal %04x", info.basic.param1);
 				}
 			}
 
@@ -689,7 +691,7 @@ bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 			} else {
 				_pSnd->setSignal(0xffff); // SIGNAL_OFFSET
 
-				debugC(4, "signal EOT");
+				debugC(4, kDebugLevelSound, "signal EOT");
 			}
 		}
 
@@ -770,7 +772,6 @@ void MidiParser_SCI::setVolume(byte volume) {
 	for (int i = 0; i < 15; i++)
 		if (_channelRemap[i] != -1)
 			sendToDriver(0xB0 + i, 7, _channelVolume[i]);
-	
 }
 
 void MidiParser_SCI::remapChannel(int channel, int devChannel) {

@@ -119,13 +119,6 @@ public:
 				_driver->send(0xb0 + i, SCI_MIDI_CHANNEL_NOTES_OFF, 0);
 		}
 	}
-
-	// Prepares the driver for the playback of SCI0 midi tracks.
-	// The main purpose is the assignment of voices ("hardware" sound channels) to the 16 midi parts.
-	// This is basically the predecessor of the 0x4B midi event.
-	// Some drivers also do other things in here.
-	virtual void initTrack(SciSpan<const byte> &) {}
-
 };
 
 class SciResource;

@@ -57,7 +57,6 @@ public:
 	int openAdLib();
 	void close() override;
 	void send(uint32 b) override;
-	void initTrack(SciSpan<const byte> &header);
 
 	MidiChannel *allocateChannel() override { return nullptr; }
 	MidiChannel *getPercussionChannel() override { return nullptr; }
@@ -190,7 +189,6 @@ public:
 	bool hasRhythmChannel() const override { return false; }
 	void setVolume(byte volume) override { static_cast<MidiDriver_AdLib *>(_driver)->setVolume(volume); }
 	void playSwitch(bool play) override { static_cast<MidiDriver_AdLib *>(_driver)->playSwitch(play); }
-	void initTrack(SciSpan<const byte> &header) override { static_cast<MidiDriver_AdLib *>(_driver)->initTrack(header); }
 	int getLastChannel() const override { return (static_cast<const MidiDriver_AdLib *>(_driver)->useRhythmChannel() ? 8 : 15); }
 };
 
@@ -343,46 +341,6 @@ void MidiDriver_AdLib::send(uint32 b) {
 		break;
 	default:
 		warning("ADLIB: Unknown event %02x", command);
-	}
-}
-
-void MidiDriver_AdLib::initTrack(SciSpan<const byte> &header) {
-	if (!_isOpen || !_isSCI0)
-		return;
-
-	uint8 readPos = 0;
-	uint8 caps = header.getInt8At(readPos++);
-	if (caps != 0 && caps != 2)
-		return;
-
-	for (int i = 0; i < kVoices; ++i) {
-		_voices[i].channel = _voices[i].mappedChannel = _voices[i].note = -1;
-		_voices[i].isSustained = false;
-		_voices[i].patch = 13;
-		_voices[i].velocity = 0;
-		_voices[i].age = 0;
-	}
-
-	int numVoices = 0;
-	for (int i = 0; i < 16; ++i) {
-		_channels[i].patch = 13;
-		_channels[i].extraVoices = 0;
-		_channels[i].mappedVoices = 0;
-
-		uint8 val = header.getInt8At(readPos++);
-		if (val & 0x01) {
-			uint8 num = val >> 4;
-			if (!(val & 0x08) && num && num != 0x0F) {
-				while (num--) {
-					if (numVoices >= _numVoiceMax)
-						continue;
-					_voices[numVoices++].mappedChannel = i;
-					_channels[i].mappedVoices++;
-				}
-			}
-		} else if (val & 0x08) {
-			debugC(9, kDebugLevelSound, "MidiDriver_AdLib::initTrack(): Control channel found: 0x%.02x", i);
-		}
 	}
 }
 

@@ -69,7 +69,6 @@ public:
 	int getVolume() override;
 	void setReverb(int8 reverb) override;
 	void playSwitch(bool play) override;
-	void initTrack(SciSpan<const byte> &) override;
 
 private:
 	bool isMt32GmPatch(const SciSpan<const byte> &data);
@@ -421,10 +420,6 @@ void MidiPlayer_Midi::playSwitch(bool play) {
 		for (uint i = 1; i < 10; i++)
 			_driver->send(0xb0 | i, 7, 0);
 	}
-}
-
-void MidiPlayer_Midi::initTrack(SciSpan<const byte> &header) {
-	return;
 }
 
 bool MidiPlayer_Midi::isMt32GmPatch(const SciSpan<const byte> &data) {
