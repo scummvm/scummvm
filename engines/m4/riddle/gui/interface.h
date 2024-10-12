@@ -38,7 +38,7 @@ using M4::GUI::ControlStatus;
 struct Interface : public M4::Interface {
 	class BackpackClass : public ButtonClass {
 	private:
-		int _field32 = 0;
+		//int _field32 = 0;
 
 	public:
 		BackpackClass(const RectClass &r, const Common::String &btnName, int16 tag,

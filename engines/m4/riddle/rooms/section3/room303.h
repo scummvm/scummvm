@@ -38,7 +38,7 @@ private:
 	int _val6 = 0;
 	int _val7 = 0;
 	int _val8 = 0;
-	int _val9 = 0;
+	//int _val9 = 0;
 	int _val10 = 0;
 	int _val11 = 0;
 	KernelTriggerType _val12 = KT_DAEMON;
