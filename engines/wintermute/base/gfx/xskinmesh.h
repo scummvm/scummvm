@@ -141,6 +141,7 @@ class DXMesh {
 	};
 
 	static int compareVertexKeys(const void *a, const void *b);
+	bool adjacentEdge(uint32 index1, uint32 index2, uint32 index3, uint32 index4);
 
 public:
 	~DXMesh() { destroy(); }
@@ -155,6 +156,7 @@ public:
 	DXBuffer getAtribBuffer() { return _attribBuffer; }
 	DXAttributeRangeTable *getAttributeTable() { return &_attribTable; }
 	bool generateAdjacency(uint32 *adjacency);
+	bool generateAdjacency(Common::Array<uint32> &adjacency);
 };
 
 bool DXLoadSkinMesh(XFileData *fileData, DXBuffer &adjacencyOut, DXBuffer &materialsOut, uint32 &numMaterialsOut, DXSkinInfo **skinInfoOut, DXMesh **meshOut);

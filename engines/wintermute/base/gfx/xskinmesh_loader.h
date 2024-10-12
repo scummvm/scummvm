@@ -62,12 +62,6 @@ protected:
 	static const int kPositionOffset = 5;
 	static const int kTextureCoordOffset = 0;
 	static const int kNormalOffset = 2;
-	
-	// anything which does not fit into 16 bits would we fine
-	static const uint32 kNullIndex = 0xFFFFFFFF;
-	
-	bool generateAdjacency(Common::Array<uint32> &adjacency);
-	bool adjacentEdge(uint16 index1, uint16 index2, uint16 index3, uint16 index4);
 
 protected:
 

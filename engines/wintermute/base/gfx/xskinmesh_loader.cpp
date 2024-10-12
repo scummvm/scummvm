@@ -32,9 +32,6 @@
 
 namespace Wintermute {
 
-// define constant to make it available to the linker
-const uint32 XSkinMeshLoader::kNullIndex;
-
 XSkinMeshLoader::XSkinMeshLoader(XMesh *mesh, XMeshObject *meshObject, DXMesh *dxmesh) {
 	_mesh = mesh;
 	_dxmesh = dxmesh;
@@ -114,50 +111,6 @@ void XSkinMeshLoader::loadMesh(const Common::String &filename, XFileData *xobj) 
 	for (uint i = 0; i < _dxmesh->getIndexBuffer().size() / sizeof(uint32); ++i) {
 		_indexData.push_back(indexPtr[i]);
 	}
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool XSkinMeshLoader::generateAdjacency(Common::Array<uint32> &adjacency) {
-	adjacency = Common::Array<uint32>(_indexData.size(), XSkinMeshLoader::kNullIndex);
-
-	for (uint32 i = 0; i < _indexData.size() / 3; ++i) {
-		for (uint32 j = i + 1; j < _indexData.size() / 3; ++j) {
-			for (int edge1 = 0; edge1 < 3; ++edge1) {
-				uint16 index1 = _indexData[i * 3 + edge1];
-				uint16 index2 = _indexData[i * 3 + (edge1 + 1) % 3];
-
-				for (int edge2 = 0; edge2 < 3; ++edge2) {
-					uint16 index3 = _indexData[j * 3 + edge2];
-					uint16 index4 = _indexData[j * 3 + (edge2 + 1) % 3];
-
-					if (adjacency[i * 3 + edge1] == XSkinMeshLoader::kNullIndex && adjacency[j * 3 + edge2] == XSkinMeshLoader::kNullIndex && adjacentEdge(index1, index2, index3, index4)) {
-						adjacency[i * 3 + edge1] = j;
-						adjacency[j * 3 + edge2] = i;
-						break;
-					}
-				}
-			}
-		}
-	}
-
-	return true;
-}
-
-bool XSkinMeshLoader::adjacentEdge(uint16 index1, uint16 index2, uint16 index3, uint16 index4) {
-	Math::Vector3d vertex1(_vertexPositionData + 3 * index1);
-	Math::Vector3d vertex2(_vertexPositionData + 3 * index2);
-	Math::Vector3d vertex3(_vertexPositionData + 3 * index3);
-	Math::Vector3d vertex4(_vertexPositionData + 3 * index4);
-
-	// wme uses a function from the D3DX library, which takes in an epsilon for floating point comparison
-	// wme passes in zero, so we just do a direct comparison
-	if (vertex1 == vertex3 && vertex2 == vertex4) {
-		return true;
-	} else if (vertex1 == vertex4 && vertex2 == vertex3) {
-		return true;
-	}
-
-	return false;
 }
 
 } // namespace Wintermute

@@ -155,7 +155,7 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 		}
 	}
 
-	meshLoader->generateAdjacency(_adjacency);
+	mesh->generateAdjacency(_adjacency);
 
 	bufAdjacency.free();
 	bufMaterials.free();
@@ -330,19 +330,19 @@ bool XMesh::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const
 			uint32 adjacent1 = _adjacency[3 * i + 1];
 			uint32 adjacent2 = _adjacency[3 * i + 2];
 
-			if (adjacent0 == XSkinMeshLoader::kNullIndex || isFront[adjacent0] == false) {
+			if (adjacent0 == 0xFFFFFFFF || isFront[adjacent0] == false) {
 				//	add edge v0-v1
 				edges[2 * numEdges + 0] = wFace0;
 				edges[2 * numEdges + 1] = wFace1;
 				numEdges++;
 			}
-			if (adjacent1 == XSkinMeshLoader::kNullIndex || isFront[adjacent1] == false) {
+			if (adjacent1 == 0xFFFFFFFF || isFront[adjacent1] == false) {
 				//	add edge v1-v2
 				edges[2 * numEdges + 0] = wFace1;
 				edges[2 * numEdges + 1] = wFace2;
 				numEdges++;
 			}
-			if (adjacent2 == XSkinMeshLoader::kNullIndex || isFront[adjacent2] == false) {
+			if (adjacent2 == 0xFFFFFFFF || isFront[adjacent2] == false) {
 				//	add edge v2-v0
 				edges[2 * numEdges + 0] = wFace2;
 				edges[2 * numEdges + 1] = wFace0;
@@ -442,7 +442,7 @@ bool XMesh::restoreDeviceObjects() {
 	}
 
 	if (_skinnedMesh) {
-		return _skinMesh->_mesh->generateAdjacency(_adjacency);
+		return _skinMesh->_dxmesh->generateAdjacency(_adjacency);
 	} else {
 		return true;
 	}
