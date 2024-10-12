@@ -157,7 +157,6 @@ DXVector4 *DXVec3Transform(DXVector4 *pout, const DXVector3 *pv, const DXMatrix 
 DXVector3 *DXVec3TransformCoord(DXVector3 *pout, const DXVector3 *pv, const DXMatrix *pm);
 DXVector3 *DXVec3TransformNormal(DXVector3 *pout, const DXVector3 *pv, const DXMatrix *pm);
 DXMatrix *DXMatrixMultiply(DXMatrix *pout, const DXMatrix *pm1, const DXMatrix *pm2);
-DXMatrix *DXMatrixScaling(DXMatrix *pout, float sx, float sy, float sz);
 DXVector3 *DXVec3Project(DXVector3 *pout, const DXVector3 *pv, const Rect32 *pviewport,
                          const DXMatrix *pprojection, const DXMatrix *pview, const DXMatrix *pworld);
 DXMatrix *DXMatrixTranspose(DXMatrix *pout, const DXMatrix *pm);
