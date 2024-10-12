@@ -57,6 +57,13 @@ protected:
 	bool runOptionsDialog();
 
 	void readStrings() override;
+
+private:
+	void runAboutDialogMI1();
+	void runAboutDialogMI2();
+	void runAboutDialogIndy4();
+
+	void drawShadow(Graphics::Surface *s, int x, int y, int h, Common::Pair<int, int> *drawData);
 };
 
 } // End of namespace Scumm

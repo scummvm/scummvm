@@ -346,11 +346,18 @@ void MacGuiImpl::MacDialogWindow::drawDottedHLine(int x0, int y, int x1) {
 		s->setPixel(x, y, color[x & 1]);
 }
 
-void MacGuiImpl::MacDialogWindow::fillPattern(Common::Rect r, uint16 pattern) {
+void MacGuiImpl::MacDialogWindow::fillPattern(Common::Rect r, uint16 pattern, bool fillBlack, bool fillWhite) {
 	for (int y = r.top; y < r.bottom; y++) {
 		for (int x = r.left; x < r.right; x++) {
 			int bit = 0x8000 >> (4 * (y % 4) + (x % 4));
-			_innerSurface.setPixel(x, y, (pattern & bit) ? kBlack : kWhite);
+
+			if (pattern & bit) {
+				if (fillBlack)
+					_innerSurface.setPixel(x, y, kBlack);
+			} else {
+				if (fillWhite)
+					_innerSurface.setPixel(x, y, kWhite);
+			}
 		}
 	}
 
@@ -708,6 +715,12 @@ void MacGuiImpl::MacDialogWindow::drawTexts(Common::Rect r, const TextLine *line
 		case kStyleHeader:
 			f1 = _gui->getFont(kAboutFontHeaderOutside);
 			f2 = _gui->getFont(kAboutFontHeaderInside);
+			break;
+		case kStyleHeaderSimple1:
+			f1 = _gui->getFont(kAboutFontHeaderSimple1);
+			break;
+		case kStyleHeaderSimple2:
+			f1 = _gui->getFont(kAboutFontHeaderSimple2);
 			break;
 		case kStyleBold:
 			f1 = _gui->getFont(kAboutFontBold);
