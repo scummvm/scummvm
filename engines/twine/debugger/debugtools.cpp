@@ -878,9 +878,6 @@ void onImGuiRender() {
 void onImGuiCleanup() {
 	delete _logger;
 	_logger = nullptr;
-
-	delete _tinyFont;
-	_tinyFont = nullptr;
 }
 
 } // namespace TwinE

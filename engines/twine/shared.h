@@ -808,7 +808,8 @@ enum kDebugLevels {
 	kDebugImGui = 1 << 4,
 	kDebugInput = 1 << 5,
 	kDebugMovies = 1 << 6,
-	kDebugPalette = 1 << 7
+	kDebugPalette = 1 << 7,
+	kDebugCollision = 1 << 8
 };
 
 } // namespace TwinE

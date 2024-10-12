@@ -737,6 +737,9 @@ void Animations::doAnim(int32 actorIdx) {
 				collision->reajustPos(processActor, col);
 			}
 
+			if (actor->_workFlags.bIsFalling) {
+				debugC(1, TwinE::kDebugCollision, "Actor %d reset falling", actorIdx);
+			}
 			actor->_workFlags.bIsFalling = 0;
 		} else {
 			if (actor->_staticFlags.bObjFallable && actor->_carryBy == -1) {
@@ -750,6 +753,7 @@ void Animations::doAnim(int32 actorIdx) {
 					collision->reajustPos(processActor, col);
 				} else {
 					if (!actor->_workFlags.bIsRotationByAnim) {
+						debugC(1, TwinE::kDebugCollision, "Actor %d is falling", actorIdx);
 						actor->_workFlags.bIsFalling = 1;
 
 						if (IS_HERO(actorIdx) && _engine->_scene->_startYFalling == 0) {

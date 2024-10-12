@@ -431,6 +431,10 @@ void Collision::receptionObj(int actorIdx) {
 		_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationAllThen, actor->_nextGenAnim, actorIdx);
 	}
 
+	if (actor->_workFlags.bIsFalling) {
+		debugC(1, TwinE::kDebugCollision, "Actor %d reset falling", actorIdx);
+	}
+
 	actor->_workFlags.bIsFalling = 0;
 	actor->_workFlags.bWasWalkingBeforeFalling = 0;
 }
