@@ -416,8 +416,9 @@ void Actor::checkCarrier(int32 actorIdx) {
 		return;
 	}
 	for (int32 a = 0; a < _engine->_scene->_nbObjets; a++) {
-		if (actor->_carryBy == actorIdx) {
-			actor->_carryBy = -1;
+		ActorStruct *otherActor =  _engine->_scene->getActor(a);
+		if (otherActor->_carryBy == actorIdx) {
+			otherActor->_carryBy = -1;
 		}
 	}
 }
