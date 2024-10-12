@@ -614,47 +614,28 @@ Graphics::Surface *MacGuiImpl::loadPict(int id) {
 		s = new Graphics::Surface();
 		s->create(s1->w, s1->h, Graphics::PixelFormat::createFormatCLUT8());
 
-		// The palette doesn't match the game's palette at all, so remap
-		// the colors to the custom area of the palette. It's assumed that
-		// only one such picture will be loaded at a time.
-		//
-		// But we still match black and white to 0 and 15 to make sure they
-		// mach exactly.
+		byte paletteMap[256];
 
-		int black = -1;
-		int white = -1;
 
 		for (int i = 0; i < pict.getPaletteColorCount(); i++) {
 			int r = palette[3 * i];
 			int g = palette[3 * i + 1];
 			int b = palette[3 * i + 2];
 
-			if (r == 0 && g == 0 && b == 0)
-				black = i;
-			else if (r == 255 && g == 255 && b == 255)
-				white = i;
+			uint32 c = _windowManager->findBestColor(r, g, b);
+			paletteMap[i] = c;
 		}
 
 		if (!pict.getPaletteColorCount()) {
-			black = 0xff;
-			white = 0x00;
+			paletteMap[255] = getBlack();
+			paletteMap[0] = getWhite();
 		}
 
 		if (palette) {
-			_system->getPaletteManager()->setPalette(palette, kCustomColor, pict.getPaletteColorCount());
-
 			for (int y = 0; y < s->h; y++) {
 				for (int x = 0; x < s->w; x++) {
 					int color = s1->getPixel(x, y);
-
-					if (color == black)
-						color = kBlack;
-					else if (color == white)
-						color = kWhite;
-					else
-						color = kCustomColor + color;
-
-					s->setPixel(x, y, color);
+					s->setPixel(x, y, paletteMap[color]);
 				}
 			}
 		} else
