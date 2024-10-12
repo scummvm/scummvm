@@ -43,7 +43,6 @@ namespace Wintermute {
 
 XMesh::XMesh(Wintermute::BaseGame *inGame) : BaseNamedObject(inGame) {
 	_skinMesh = nullptr;
-	_skinnedMesh = false;
 
 	_BBoxStart = Math::Vector3d(0.0f, 0.0f, 0.0f);
 	_BBoxEnd = Math::Vector3d(0.0f, 0.0f, 0.0f);
@@ -109,44 +108,41 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 		}
 	}
 
-	_skinnedMesh = numBones > 0;
-	if (_skinnedMesh) {
-		for (uint index = 0; index < numBones; index++) {
-			SkinWeights currSkinWeights;
-			DXBone *bone = skinInfo->getBone(index);
-			currSkinWeights._boneName = bone->_name;
+	for (uint index = 0; index < numBones; index++) {
+		SkinWeights currSkinWeights;
+		DXBone *bone = skinInfo->getBone(index);
+		currSkinWeights._boneName = bone->_name;
 
-			int weightCount = bone->_numInfluences;
-			currSkinWeights._vertexIndices.resize(weightCount);
-			currSkinWeights._vertexWeights.resize(weightCount);
+		int weightCount = bone->_numInfluences;
+		currSkinWeights._vertexIndices.resize(weightCount);
+		currSkinWeights._vertexWeights.resize(weightCount);
 
-			for (int i = 0; i < weightCount; ++i) {
-				currSkinWeights._vertexIndices[i] = bone->_vertices[i];
-			}
-
-			for (int i = 0; i < weightCount; ++i) {
-				currSkinWeights._vertexWeights[i] = bone->_weights[i];
-			}
-
-			for (int r = 0; r < 4; ++r) {
-				for (int c = 0; c < 4; ++c) {
-					currSkinWeights._offsetMatrix(c, r) = bone->_transform._m4x4[r * 4 + c];
-				}
-			}
-
-			// mirror at orign
-			currSkinWeights._offsetMatrix(2, 3) *= -1.0f;
-
-			// mirror base vectors
-			currSkinWeights._offsetMatrix(2, 0) *= -1.0f;
-			currSkinWeights._offsetMatrix(2, 1) *= -1.0f;
-
-			// change handedness
-			currSkinWeights._offsetMatrix(0, 2) *= -1.0f;
-			currSkinWeights._offsetMatrix(1, 2) *= -1.0f;
-
-			meshLoader->_skinWeightsList.push_back(currSkinWeights);
+		for (int i = 0; i < weightCount; ++i) {
+			currSkinWeights._vertexIndices[i] = bone->_vertices[i];
 		}
+
+		for (int i = 0; i < weightCount; ++i) {
+			currSkinWeights._vertexWeights[i] = bone->_weights[i];
+		}
+
+		for (int r = 0; r < 4; ++r) {
+			for (int c = 0; c < 4; ++c) {
+				currSkinWeights._offsetMatrix(c, r) = bone->_transform._m4x4[r * 4 + c];
+			}
+		}
+
+		// mirror at orign
+		currSkinWeights._offsetMatrix(2, 3) *= -1.0f;
+
+		// mirror base vectors
+		currSkinWeights._offsetMatrix(2, 0) *= -1.0f;
+		currSkinWeights._offsetMatrix(2, 1) *= -1.0f;
+
+		// change handedness
+		currSkinWeights._offsetMatrix(0, 2) *= -1.0f;
+		currSkinWeights._offsetMatrix(1, 2) *= -1.0f;
+
+		meshLoader->_skinWeightsList.push_back(currSkinWeights);
 	}
 
 	mesh->generateAdjacency(_adjacency);
@@ -160,7 +156,7 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 //////////////////////////////////////////////////////////////////////////
 bool XMesh::findBones(FrameNode *rootFrame) {
 	// normal meshes don't have bones
-	if (!_skinnedMesh) {
+	if (!_skinMesh || !_skinMesh->getNumBones()) {
 		return true;
 	}
 	auto skinWeightsList = _skinMesh->_mesh->_skinWeightsList;
@@ -193,7 +189,7 @@ bool XMesh::update(FrameNode *parentFrame) {
 	auto skinWeightsList = _skinMesh->_mesh->_skinWeightsList;
 
 	// update skinned mesh
-	if (_skinnedMesh) {
+	if (_skinMesh->getNumBones() > 0) {
 		BaseArray<Math::Matrix4> finalBoneMatrices;
 		finalBoneMatrices.resize(_boneMatrices.size());
 
@@ -436,7 +432,7 @@ bool XMesh::restoreDeviceObjects() {
 		_materials[i]->restoreDeviceObjects();
 	}
 
-	if (_skinnedMesh) {
+	if (!_skinMesh || _skinMesh->getNumBones() > 0) {
 		return _skinMesh->_dxmesh->generateAdjacency(_adjacency);
 	} else {
 		return true;

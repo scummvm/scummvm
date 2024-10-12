@@ -73,11 +73,6 @@ protected:
 
 	void updateBoundingBox();
 
-	// Wintermute3D used the ID3DXSKININFO interface
-	// we will only store, whether this mesh is skinned at all
-	// and factor out the necessary computations into some functions
-	bool _skinnedMesh;
-
 	SkinMeshHelper *_skinMesh;
 
 	BaseArray<Math::Matrix4 *> _boneMatrices;
