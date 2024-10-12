@@ -379,6 +379,7 @@ bool MacGuiImpl::handleMenu(int id, Common::String &name) {
 
 	case 405: // Graphics Smoothing
 		_vm->mac_toggleSmoothing();
+		return true;
 
 	case 500: // Voice Only
 		_vm->_voiceMode = 0;
