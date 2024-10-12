@@ -1056,7 +1056,31 @@ void CastleEngine::updateTimeVariables() {
 }
 
 void CastleEngine::borderScreen() {
-	FreescapeEngine::borderScreen();
+
+	if (isSpectrum())
+		FreescapeEngine::borderScreen();
+	else {
+		uint32 color = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
+		Graphics::Surface *surface = new Graphics::Surface();
+		surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
+		surface->fillRect(_fullscreenViewArea, color);
+
+		int x = 40;
+		int y = 34;
+
+		Common::Array<RiddleText> selectMessage = _riddleList[19]._lines;
+		for (int i = 0; i < int(selectMessage.size()); i++) {
+			x = x + selectMessage[i]._dx;
+			y = y + selectMessage[i]._dy;
+			// Color is not important, as the font has already a palette
+			drawStringInSurface(selectMessage[i]._text, x, y, 0, 0, surface);
+		}
+		drawFullscreenSurface(surface);
+		drawBorderScreenAndWait(surface, 6 * 60);
+		surface->free();
+		delete surface;
+	}
+
 	if (isAmiga() && isDemo()) {
 		// Skip character selection
 	} else
