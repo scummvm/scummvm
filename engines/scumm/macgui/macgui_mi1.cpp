@@ -378,6 +378,9 @@ void MacMI1Gui::runAboutDialogMI1() {
 	bool megaSkip = false;
 	int page = 0;
 
+	uint32 black = getBlack();
+	uint32 white = getWhite();
+
 	window->show();
 
 	while (!_vm->shouldQuit() && page < ARRAYSIZE(aboutPages)) {
@@ -385,17 +388,17 @@ void MacMI1Gui::runAboutDialogMI1() {
 
 		switch (page) {
 		case 0:
-			s->fillRect(drawArea, kBlack);
+			s->fillRect(drawArea, black);
 			break;
 		case 1:
 			window->fillPattern(drawArea, 0xD7D7, false, true);
 			break;
 		case 2:
-			s->fillRect(drawArea, kWhite);
+			s->fillRect(drawArea, white);
 			break;
 		case 4:
 			allowMegaSkip = true;
-			s->fillRect(drawArea, kWhite);
+			s->fillRect(drawArea, white);
 			drawShadow(s, 77, 141, 2 * ARRAYSIZE(shadow1), shadow1);
 			break;
 		case 5:
@@ -421,7 +424,7 @@ void MacMI1Gui::runAboutDialogMI1() {
 			allowMegaSkip = megaSkip = false;
 			break;
 		case 13:
-			s->fillRect(Common::Rect(178, 127, s->w, s->h), kWhite);
+			s->fillRect(Common::Rect(178, 127, s->w, s->h), white);
 			window->markRectAsDirty(Common::Rect(178, 127, s->w, s->h));
 			break;
 		default:
@@ -432,7 +435,7 @@ void MacMI1Gui::runAboutDialogMI1() {
 			if (aboutPages[page].drawArea == 2) {
 				window->drawTextBox(drawArea, aboutPages[page].text);
 			} else {
-				s->fillRect(drawArea, kWhite);
+				s->fillRect(drawArea, white);
 				window->drawTexts(drawArea, aboutPages[page].text);
 			}
 		}
@@ -459,15 +462,18 @@ void MacMI1Gui::drawShadow(Graphics::Surface *s, int x, int y, int h, Common::Pa
 	int y1 = y;
 	int y2 = y + h - 1;
 
+	uint32 black = getBlack();
+	uint32 white = getWhite();
+
 	for (int i = 0; i < h / 2; i++) {
 		int x1 = x + drawData[i].first;
 		for (int j = 0; j < drawData[i].second; j++) {
 			if ((x1 + y1) & 1) {
-				s->setPixel(x1, y1, kWhite);
-				s->setPixel(x1, y2, kBlack);
+				s->setPixel(x1, y1, white);
+				s->setPixel(x1, y2, black);
 			} else {
-				s->setPixel(x1, y1, kBlack);
-				s->setPixel(x1, y2, kWhite);
+				s->setPixel(x1, y1, black);
+				s->setPixel(x1, y2, white);
 			}
 			x1++;
 		}
@@ -533,6 +539,8 @@ bool MacMI1Gui::runOpenDialog(int &saveSlotToHandle) {
 }
 
 bool MacMI1Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
+	uint32 black = getBlack();
+
 	Common::Rect bounds(110, 27, 470, 231);
 
 	MacDialogWindow *window = createWindow(bounds);
@@ -569,11 +577,11 @@ bool MacMI1Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 	Graphics::Surface *s = window->innerSurface();
 	const Graphics::Font *font = getFont(kSystemFont);
 
-	s->frameRect(Common::Rect(14, 156, 232, 178), kBlack);
+	s->frameRect(Common::Rect(14, 156, 232, 178), black);
 
 	window->drawDottedHLine(253, 121, 334);
 
-	font->drawString(s, saveGameFileAsResStr, 14, 138, 218, kBlack, Graphics::kTextAlignLeft, 4);
+	font->drawString(s, saveGameFileAsResStr, 14, 138, 218, black, Graphics::kTextAlignLeft, 4);
 
 	window->setDefaultWidget(0);
 	editText->selectAll();

@@ -65,6 +65,14 @@ MacGuiImpl::~MacGuiImpl() {
 	delete _windowManager;
 }
 
+uint32 MacGuiImpl::getBlack() const {
+	return _windowManager->_colorBlack;
+}
+
+uint32 MacGuiImpl::getWhite() const {
+	return _windowManager->_colorWhite;
+}
+
 Common::String MacGuiImpl::readCString(uint8 *&data) {
 	Common::String result(reinterpret_cast<const char *>(data));
 	data += result.size() + 1;
@@ -402,6 +410,8 @@ bool MacGuiImpl::handleMenu(int id, Common::String &name) {
 }
 
 void MacGuiImpl::updateWindowManager() {
+
+
 	Graphics::MacMenu *menu = _windowManager->getMenu();
 
 	if (!menu)
@@ -688,6 +698,8 @@ Common::String MacGuiImpl::getDialogString(Common::SeekableReadStream *res, int 
 }
 
 MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
+	uint32 black = getBlack();
+
 	Common::MacResManager resource;
 	Common::SeekableReadStream *res;
 
@@ -775,7 +787,7 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 				// Skip drive label box and listbox
 				bool doNotDraw = (isOpenDialog && (i == 6 || i == 7)) || ((isOpenDialog || isSaveDialog) && i == 3);
 				if (!doNotDraw) {
-					window->innerSurface()->frameRect(r, kBlack);
+					window->innerSurface()->frameRect(r, black);
 				} else if (_vm->_game.id == GID_INDY3 && i == 3) {
 					drawFakeDriveLabel(window, Common::Rect(r.left + 9, r.top, r.right, r.bottom), _hardDriveIcon, "ScummVM", Graphics::kTextAlignLeft);
 				}
@@ -816,7 +828,7 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 				MacGuiImpl::MacEditText *editText = window->addEditText(r, gameFileResStr, enabled);
 				editText->selectAll();
 
-				window->innerSurface()->frameRect(Common::Rect(r.left - 2, r.top - 3, r.right + 3, r.bottom + 3), kBlack);
+				window->innerSurface()->frameRect(Common::Rect(r.left - 2, r.top - 3, r.right + 3, r.bottom + 3), black);
 				res->skip(len);
 				break;
 			}
@@ -909,6 +921,8 @@ bool MacGuiImpl::runOkCancelDialog(Common::String text) {
 }
 
 void MacGuiImpl::drawFakePathList(MacDialogWindow *window, Common::Rect r, byte *icon, const char *text, Graphics::TextAlign alignment) {
+	uint32 black = getBlack();
+
 	// Draw the text...
 	window->addStaticText(Common::Rect(r.left + 22, r.top + 2, r.right - 21, r.bottom - 1), text, true, alignment);
 
@@ -927,11 +941,11 @@ void MacGuiImpl::drawFakePathList(MacDialogWindow *window, Common::Rect r, byte 
 	delete arrowSurf;
 
 	// Draw the black frame...
-	window->innerSurface()->frameRect(r, kBlack);
+	window->innerSurface()->frameRect(r, black);
 
 	// Draw the shadows...
-	window->innerSurface()->hLine(r.left + 3, r.bottom, r.right, kBlack);
-	window->innerSurface()->vLine(r.right, r.top + 3, r.bottom, kBlack);
+	window->innerSurface()->hLine(r.left + 3, r.bottom, r.right, black);
+	window->innerSurface()->vLine(r.right, r.top + 3, r.bottom, black);
 }
 
 void MacGuiImpl::drawFakeDriveLabel(MacDialogWindow *window, Common::Rect r, byte *icon, const char *text, Graphics::TextAlign alignment) {
@@ -990,7 +1004,7 @@ void MacGuiImpl::drawBanner(char *message) {
 	const Graphics::Font *font = getFont(_vm->_game.id == GID_INDY3 ? kIndy3FontMedium : kLoomFontMedium);
 
 	Graphics::Surface *s = _bannerWindow->innerSurface();
-	font->drawString(s, (char *)message, 0, 0, s->w, kBlack, Graphics::kTextAlignCenter);
+	font->drawString(s, (char *)message, 0, 0, s->w, getBlack(), Graphics::kTextAlignCenter);
 
 	_bannerWindow->show();
 }
@@ -1002,7 +1016,7 @@ void MacGuiImpl::undrawBanner() {
 	}
 }
 
-void MacGuiImpl::drawBitmap(Graphics::Surface *s, Common::Rect r, const uint16 *bitmap, Color color) const {
+void MacGuiImpl::drawBitmap(Graphics::Surface *s, Common::Rect r, const uint16 *bitmap, uint32 color) const {
 	assert(r.width() <= 16);
 
 	for (int y = 0; y < r.height(); y++) {

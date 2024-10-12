@@ -73,6 +73,9 @@ protected:
 		kDelayAborted
 	};
 
+	// Colors used by the 16 color Mac games. Nothing that is ever drawn by
+	// 256 color games should use these!
+
 	enum Color {
 		kBlack = 0,
 		kBlue = 1,
@@ -243,6 +246,9 @@ public:
 	class MacWidget : public MacGuiObject {
 	protected:
 		MacGuiImpl::MacDialogWindow *_window;
+		uint32 _black;
+		uint32 _white;
+
 		int _id = -1;
 
 		bool _fullRedraw = false;
@@ -250,8 +256,8 @@ public:
 		Common::String _text;
 		int _value = 0;
 
-		int drawText(Common::String text, int x, int y, int w, Color fg = kBlack, Color bg = kWhite, Graphics::TextAlign align = Graphics::kTextAlignLeft, bool wordWrap = false, int deltax = 0) const;
-		void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
+		int drawText(Common::String text, int x, int y, int w, uint32 fg = 0, uint32 bg = 0, Graphics::TextAlign align = Graphics::kTextAlignLeft, bool wordWrap = false, int deltax = 0) const;
+		void drawBitmap(Common::Rect r, const uint16 *bitmap, uint32 color) const;
 
 	public:
 		MacWidget(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled);
@@ -329,8 +335,8 @@ public:
 
 	class MacStaticText : public MacWidget {
 	private:
-		Color _fg = kBlack;
-		Color _bg = kWhite;
+		uint32 _fg;
+		uint32 _bg;
 		Graphics::TextAlign _alignment = Graphics::kTextAlignLeft;
 		bool _wordWrap = false;
 
@@ -340,6 +346,8 @@ public:
 			Common::Rect bounds, Common::String text,
 			bool enabled, Graphics::TextAlign alignment = Graphics::kTextAlignLeft) : MacWidget(window, bounds, text, true) {
 			_alignment = alignment;
+			_fg = _black;
+			_bg = _white;
 		}
 
 		void getFocus() {}
@@ -354,7 +362,7 @@ public:
 			}
 		}
 
-		void setColor(Color fg, Color bg) {
+		void setColor(uint32 fg, uint32 bg) {
 			if (fg != _fg || bg != _bg) {
 				_fg = fg;
 				_bg = bg;
@@ -559,6 +567,9 @@ public:
 
 	class MacDialogWindow {
 	private:
+		uint32 _black;
+		uint32 _white;
+
 		bool _shakeWasEnabled;
 
 		Common::Rect _bounds;
@@ -672,6 +683,8 @@ public:
 	bool _forceMenuClosed = false;
 
 	Graphics::Surface *surface() { return _surface; }
+	uint32 getBlack() const;
+	uint32 getWhite() const;
 
 	virtual const Common::String name() const = 0;
 
@@ -712,7 +725,7 @@ public:
 	void drawBanner(char *message);
 	void undrawBanner();
 
-	void drawBitmap(Graphics::Surface *s, Common::Rect r, const uint16 *bitmap, Color color) const;
+	void drawBitmap(Graphics::Surface *s, Common::Rect r, const uint16 *bitmap, uint32 color) const;
 };
 
 } // End of namespace Scumm

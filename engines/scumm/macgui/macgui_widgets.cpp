@@ -39,6 +39,9 @@ namespace Scumm {
 // ---------------------------------------------------------------------------
 
 MacGuiImpl::MacWidget::MacWidget(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacGuiObject(bounds, enabled), _window(window), _text(text) {
+	_black = _window->_gui->getBlack();
+	_white = _window->_gui->getWhite();
+
 	// Widgets are clipped to the inner surface of the dialog. If a widget
 	// is clipped out of existence, make it invisible to avoid crashes.
 
@@ -76,13 +79,18 @@ void MacGuiImpl::MacWidget::setValue(int value) {
 	setRedraw();
 }
 
-void MacGuiImpl::MacWidget::drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const {
+void MacGuiImpl::MacWidget::drawBitmap(Common::Rect r, const uint16 *bitmap, uint32 color) const {
 	_window->_gui->drawBitmap(_window->innerSurface(), r, bitmap, color);
 }
 
-int MacGuiImpl::MacWidget::drawText(Common::String text, int x, int y, int w, Color fg, Color bg, Graphics::TextAlign align, bool wordWrap, int deltax) const {
+int MacGuiImpl::MacWidget::drawText(Common::String text, int x, int y, int w, uint32 fg, uint32 bg, Graphics::TextAlign align, bool wordWrap, int deltax) const {
 	if (text.empty())
 		return 0;
+
+	if (fg == 0 && bg == 0) {
+		fg = _black;
+		bg = _white;
+	}
 
 	const Graphics::Font *font = _window->_gui->getFont(kSystemFont);
 
@@ -154,14 +162,14 @@ void MacGuiImpl::MacButton::draw(bool drawFocused) {
 	CornerLine frameCorner[] = { { 5, 1 }, { 3, 3 }, { 2, 4 }, { 1, 5 }, { 1, 3 }, { 0, 4 }, { 0, -1 } };
 
 	Graphics::Surface *s = _window->innerSurface();
-	Color fg, bg;
+	uint32 fg, bg;
 
 	if (drawFocused || (_window->getFocusedWidget() == this && _bounds.contains(_window->getMousePos()))) {
-		fg = kWhite;
-		bg = kBlack;
+		fg = _white;
+		bg = _black;
 	} else {
-		fg = kBlack;
-		bg = kWhite;
+		fg = _black;
+		bg = _white;
 	}
 
 	int x0 = _bounds.left;
@@ -181,10 +189,10 @@ void MacGuiImpl::MacButton::draw(bool drawFocused) {
 		cornerSize = 2;
 	}
 
-	s->hLine(x0 + cornerSize, y0, x1 - cornerSize, kBlack);
-	s->hLine(x0 + cornerSize, y1, x1 - cornerSize, kBlack);
-	s->vLine(x0, y0 + cornerSize, y1 - cornerSize, kBlack);
-	s->vLine(x1, y0 + cornerSize, y1 - cornerSize, kBlack);
+	s->hLine(x0 + cornerSize, y0, x1 - cornerSize, _black);
+	s->hLine(x0 + cornerSize, y1, x1 - cornerSize, _black);
+	s->vLine(x0, y0 + cornerSize, y1 - cornerSize, _black);
+	s->vLine(x1, y0 + cornerSize, y1 - cornerSize, _black);
 
 	// The way the corners are rounded, we can fill this entire rectangle
 	// in one go.
@@ -235,12 +243,12 @@ void MacGuiImpl::MacButton::hLine(int x0, int y0, int x1, bool enabled) {
 
 		for (int x = x0; x <= x1; x++) {
 			if (((x + y0) % 2) == 0)
-				s->setPixel(x, y0, kBlack);
+				s->setPixel(x, y0, _black);
 			else
-				s->setPixel(x, y0, kWhite);
+				s->setPixel(x, y0, _white);
 		}
 	} else
-		s->hLine(x0, y0, x1, kBlack);
+		s->hLine(x0, y0, x1, _black);
 }
 
 void MacGuiImpl::MacButton::vLine(int x0, int y0, int y1, bool enabled) {
@@ -252,12 +260,12 @@ void MacGuiImpl::MacButton::vLine(int x0, int y0, int y1, bool enabled) {
 
 		for (int y = y0; y <= y1; y++) {
 			if (((x0 + y) % 2) == 0)
-				s->setPixel(x0, y, kBlack);
+				s->setPixel(x0, y, _black);
 			else
-				s->setPixel(x0, y, kWhite);
+				s->setPixel(x0, y, _white);
 		}
 	} else
-		s->vLine(x0, y0, y1, kBlack);
+		s->vLine(x0, y0, y1, _black);
 }
 
 void MacGuiImpl::MacButton::drawCorners(Common::Rect r, CornerLine *corner, bool enabled) {
@@ -307,10 +315,11 @@ void MacGuiImpl::MacCheckbox::draw(bool drawFocused) {
 	debug(1, "MacGuiImpl::MacCheckbox: Drawing checkbox %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
 
 	Graphics::Surface *s = _window->innerSurface();
+
 	Common::Rect box(_hitBounds.left + 2, _hitBounds.top + 2, _hitBounds.left + 14, _hitBounds.top + 14);
 
 	if (_fullRedraw) {
-		_window->innerSurface()->fillRect(_bounds, kWhite);
+		_window->innerSurface()->fillRect(_bounds, _white);
 
 		int x = _hitBounds.left + 18;
 		int y = _hitBounds.top;
@@ -320,17 +329,17 @@ void MacGuiImpl::MacCheckbox::draw(bool drawFocused) {
 	} else
 		_window->markRectAsDirty(box);
 
-	s->fillRect(box, kBlack);
+	s->fillRect(box, _black);
 	if (drawFocused || (_window->getFocusedWidget() == this && _hitBounds.contains(_window->getMousePos()))) {
 		box.grow(-2);
 	} else {
 		box.grow(-1);
 	}
-	s->fillRect(box, kWhite);
+	s->fillRect(box, _white);
 
 	if (_value && _enabled) {
-		s->drawLine(box.left, box.top, box.right - 1, box.bottom - 1, kBlack);
-		s->drawLine(box.left, box.bottom - 1, box.right - 1, box.top, kBlack);
+		s->drawLine(box.left, box.top, box.right - 1, box.bottom - 1, _black);
+		s->drawLine(box.left, box.bottom - 1, box.right - 1, box.top, _black);
 	}
 
 	_redraw = false;
@@ -503,7 +512,7 @@ void MacGuiImpl::MacEditText::draw(bool drawFocused) {
 	if (_redraw || _fullRedraw) {
 		Graphics::Surface *s = _window->innerSurface();
 
-		s->fillRect(_bounds, kWhite);
+		s->fillRect(_bounds, _white);
 
 		int selectStart = -1;
 		int selectEnd = -1;
@@ -526,7 +535,7 @@ void MacGuiImpl::MacEditText::draw(bool drawFocused) {
 		bool lastCharSelected = false;
 
 		for (int i = 0; i < (int)_text.size() && x < _textSurface.w; i++) {
-			Color color = kBlack;
+			uint32 color = _black;
 			int charWidth = _font->getCharWidth((byte)_text[i]);
 
 			if (x + charWidth >= 0) {
@@ -535,8 +544,8 @@ void MacGuiImpl::MacEditText::draw(bool drawFocused) {
 						firstCharSelected = true;
 					lastCharSelected = true;
 
-					_textSurface.fillRect(Common::Rect(x, 0, x + charWidth, _textSurface.h), kBlack);
-					color = kWhite;
+					_textSurface.fillRect(Common::Rect(x, 0, x + charWidth, _textSurface.h), _black);
+					color = _white;
 				} else
 					lastCharSelected = false;
 
@@ -548,10 +557,10 @@ void MacGuiImpl::MacEditText::draw(bool drawFocused) {
 		}
 
 		if (firstCharSelected)
-			_window->innerSurface()->fillRect(Common::Rect(_bounds.left + 1, _bounds.top, _bounds.left + 2, _bounds.bottom), kBlack);
+			_window->innerSurface()->fillRect(Common::Rect(_bounds.left + 1, _bounds.top, _bounds.left + 2, _bounds.bottom), _black);
 
 		if (lastCharSelected && _bounds.left + x + 1 < _bounds.right)
-			_window->innerSurface()->fillRect(Common::Rect(_bounds.left + x + 1, _bounds.top, _bounds.right, _bounds.bottom), kBlack);
+			_window->innerSurface()->fillRect(Common::Rect(_bounds.left + x + 1, _bounds.top, _bounds.right, _bounds.bottom), _black);
 
 		_window->markRectAsDirty(_bounds);
 	}
@@ -572,14 +581,14 @@ void MacGuiImpl::MacEditText::draw(bool drawFocused) {
 				// Erase the old caret. Not needed if the whole
 				// widget was just redrawn.
 
-				_textSurface.vLine(_caretX, 0, _bounds.bottom - 1, kWhite);
+				_textSurface.vLine(_caretX, 0, _bounds.bottom - 1, _white);
 				if (!_redraw && !_fullRedraw)
 					_window->markRectAsDirty(Common::Rect(_bounds.left + _caretX + 1, _bounds.top, _bounds.left + _caretX + 2, _bounds.bottom));
 			}
 
 			// Draw the new caret
 
-			_textSurface.vLine(caretX, 0, _bounds.bottom - 1, _caretVisible ? kBlack : kWhite);
+			_textSurface.vLine(caretX, 0, _bounds.bottom - 1, _caretVisible ? _black : _white);
 
 			if (!_redraw && !_fullRedraw)
 				_window->markRectAsDirty(Common::Rect(_bounds.left + caretX + 1, _bounds.top, _bounds.left + caretX + 2, _bounds.bottom));
@@ -901,9 +910,9 @@ Common::Rect MacGuiImpl::MacSlider::getHandleRect(int value) {
 }
 
 void MacGuiImpl::MacSlider::fill(Common::Rect r, bool inverted) {
-	Color pattern[2][4] = {
-		{ kWhite, kWhite, kBlack, kWhite },
-		{ kBlack, kWhite, kWhite, kWhite }
+	uint32 pattern[2][4] = {
+		{ _white, _white, _black, _white },
+		{ _black, _white, _white, _white }
 	};
 
 	Graphics::Surface *s = _window->innerSurface();
@@ -915,10 +924,10 @@ void MacGuiImpl::MacSlider::fill(Common::Rect r, bool inverted) {
 				// slider handle while dragging. I think this matches the
 				// original behavior, though I'm not quite sure.
 
-				bool srcPixel = s->getPixel(x, y) == kBlack;
-				bool dstPixel = pattern[y % 2][x % 4] == kWhite;
+				bool srcPixel = s->getPixel(x, y) == _black;
+				bool dstPixel = pattern[y % 2][x % 4] == _white;
 
-				Color color = (srcPixel ^ dstPixel) ? kBlack : kWhite;
+				uint32 color = (srcPixel ^ dstPixel) ? _black : _white;
 
 				s->setPixel(x, y, color);
 			} else
@@ -940,9 +949,9 @@ void MacGuiImpl::MacSlider::draw(bool drawFocused) {
 
 		Graphics::Surface *s = _window->innerSurface();
 
-		s->frameRect(_bounds, kBlack);
-		s->hLine(_bounds.left + 1, _bounds.top + 15, _bounds.right - 2, kBlack);
-		s->hLine(_bounds.left + 1, _bounds.bottom - 16, _bounds.right - 2, kBlack);
+		s->frameRect(_bounds, _black);
+		s->hLine(_bounds.left + 1, _bounds.top + 15, _bounds.right - 2, _black);
+		s->hLine(_bounds.left + 1, _bounds.bottom - 16, _bounds.right - 2, _black);
 
 		drawUpArrow(false);
 		drawDownArrow(false);
@@ -955,7 +964,7 @@ void MacGuiImpl::MacSlider::draw(bool drawFocused) {
 			Common::Rect handleRect = getHandleRect(_value);
 			drawHandle(handleRect);
 		} else
-			s->fillRect(fillRect, kWhite);
+			s->fillRect(fillRect, _white);
 
 		_window->markRectAsDirty(_bounds);
 	}
@@ -1005,8 +1014,8 @@ void MacGuiImpl::MacSlider::drawArrow(Common::Rect r, const uint16 *bitmap, bool
 
 	r.grow(-1);
 
-	s->fillRect(r, kWhite);
-	drawBitmap(Common::Rect(r.left + 1, r.top + 2, r.right - 1, r.top + 12), bitmap, kBlack);
+	s->fillRect(r, _white);
+	drawBitmap(Common::Rect(r.left + 1, r.top + 2, r.right - 1, r.top + 12), bitmap, _black);
 
 	if (markAsDirty)
 		_window->markRectAsDirty(r);
@@ -1023,9 +1032,9 @@ void MacGuiImpl::MacSlider::drawHandle(Common::Rect r) {
 
 	Graphics::Surface *s = _window->innerSurface();
 
-	s->frameRect(r, kBlack);
+	s->frameRect(r, _black);
 	r.grow(-1);
-	s->fillRect(r, kWhite);
+	s->fillRect(r, _white);
 }
 
 void MacGuiImpl::MacSlider::redrawHandle(int oldValue, int newValue) {
@@ -1408,9 +1417,9 @@ void MacGuiImpl::MacListBox::updateTexts() {
 		_textWidgets[i]->setText(_texts[i + offset]);
 
 		if (_textWidgets[i]->isEnabled() && (int)i + offset == _value)
-			_textWidgets[i]->setColor(kWhite, kBlack);
+			_textWidgets[i]->setColor(_white, _black);
 		else
-			_textWidgets[i]->setColor(kBlack, kWhite);
+			_textWidgets[i]->setColor(_black, _white);
 	}
 }
 
@@ -1427,9 +1436,9 @@ void MacGuiImpl::MacListBox::draw(bool drawFocused) {
 
 	Graphics::Surface *s = _window->innerSurface();
 
-	s->hLine(_bounds.left, _bounds.top, _bounds.right - 17, kBlack);
-	s->hLine(_bounds.left, _bounds.bottom - 1, _bounds.right - 17, kBlack);
-	s->vLine(_bounds.left, _bounds.top + 1, _bounds.bottom - 2, kBlack);
+	s->hLine(_bounds.left, _bounds.top, _bounds.right - 17, _black);
+	s->hLine(_bounds.left, _bounds.bottom - 1, _bounds.right - 17, _black);
+	s->vLine(_bounds.left, _bounds.top + 1, _bounds.bottom - 2, _black);
 
 	_redraw = false;
 	_fullRedraw = false;
