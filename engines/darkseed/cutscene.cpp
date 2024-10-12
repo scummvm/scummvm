@@ -43,7 +43,7 @@ void Cutscene::update() {
 		nightmare2Scene();
 		break;
 	case 'C' :
-		_movieStep = 9999;
+		nightmare3Scene();
 		break;
 	case 'D' :
 		babyDollScene();
@@ -85,9 +85,10 @@ void Cutscene::update() {
 			g_engine->newGame();
 		} else if (_cutsceneId == 'Y') {
 			play('I');
-		} else if (_cutsceneId == 'B' || _cutsceneId == 'D' || _cutsceneId == 'G') {
+		} else if (_cutsceneId == 'B' || _cutsceneId == 'C' || _cutsceneId == 'D' || _cutsceneId == 'G') {
 			g_engine->_cursor.showCursor(true); // TODO fade in here
 			g_engine->_room->restorePalette();
+			g_engine->_frame.draw();
 		}
 	}
 }
@@ -681,7 +682,7 @@ bool Cutscene::alienBornScene() {
 bool Cutscene::babyDollScene() {
 	switch (_movieStep) {
 	case 1: {
-		delete _morph;
+		freeMorph();
 		_morph = new Morph({73, 46, 472, 240});
 		_palette.load("art/norm.pal");
 		Img left00Img;
@@ -754,8 +755,7 @@ bool Cutscene::babyDollScene() {
 		if (g_engine->fadeStep()) {
 			return true;
 		}
-		delete _morph;
-		_morph = nullptr;
+		freeMorph();
 		break;
 	default:
 		_movieStep = 9999;
@@ -776,7 +776,7 @@ bool Cutscene::bookScene() {
 		}
 		break;
 	case 3: {
-		delete _morph;
+		freeMorph();
 		_morph = new Morph({136, 41, 423, 239});
 		_palette.load("art/norm.pal");
 		Img left00Img;
@@ -849,7 +849,7 @@ bool Cutscene::bookScene() {
 		}
 		break;
 	case 14:
-		delete _morph;
+		freeMorph();
 		g_engine->fadeOut();
 		break;
 	case 15:
@@ -871,7 +871,7 @@ bool Cutscene::bookScene() {
 bool Cutscene::nightmare2Scene() {
 	switch (_movieStep) {
 	case 1: {
-		delete _morph;
+		freeMorph();
 		_morph = new Morph({264, 85, 515, 267});
 		_palette.load("art/ship.pal");
 		Img left00Img;
@@ -963,10 +963,78 @@ bool Cutscene::nightmare2Scene() {
 		}
 		break;
 	case 16:
-		delete _morph;
+		freeMorph();
 		g_engine->fadeOut();
 		break;
 	case 17:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
+	default:
+		_movieStep = 9999;
+		return false;
+	}
+	_movieStep++;
+	return true;
+}
+
+bool Cutscene::nightmare3Scene() { // TODO fix animation of values + face here.
+	switch (_movieStep) {
+	case 1: {
+		_palette.load("art/ship.pal");
+		Img left00Img;
+		left00Img.load("art/nmf0.img");
+		left00Img.draw();
+		Img left01Img;
+		left01Img.load("art/nmf1.img");
+		left01Img.draw();
+
+		Img book2Img;
+		book2Img.load("art/nm3a.img");
+		book2Img.draw(1);
+
+		g_engine->_screen->clearPalette();
+		break;
+	}
+	case 2: {
+		_animation.load("art/valves.anm", -9340);
+		// TODO play night3 music here.
+		g_engine->fadeIn(_palette);
+		break;
+	}
+	case 3:
+		if (g_engine->fadeStep()) {
+			return true;
+		}
+		break;
+	case 4:
+		_animIdx = 0;
+		_animCount = 12;
+		// TODO speed = 2
+		runAnim();
+		break;
+	case 5:
+		if (stepAnim(1)) {
+			return true;
+		}
+		registTime();
+		break;
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+		registTime();
+		break;
+	case 10:
+		if (waitTime(10)) {
+			return true;
+		}
+		break;
+	case 11:
+		g_engine->fadeOut();
+		break;
+	case 12:
 		if (g_engine->fadeStep()) {
 			return true;
 		}
@@ -1022,6 +1090,11 @@ bool Cutscene::waitTime(int16 duration) {
 void Cutscene::runAnim(int direction) {
 	_animDelayCount = 0;
 	_animDirection = direction;
+}
+
+void Cutscene::freeMorph() {
+	delete _morph;
+	_morph = nullptr;
 }
 
 } // End of namespace Darkseed

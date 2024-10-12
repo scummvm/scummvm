@@ -30,10 +30,11 @@ class Anm {
 private:
 	Common::File _file;
 	uint16 _numRecords = 0;
-	uint16 _assetOffset = 0;
+	uint16 _assetFileId = 0;
+	int _deltaOffset = 0;
 
 public:
-	bool load(const Common::Path &filename);
+	bool load(const Common::Path &filename, int deltaOffset = 0);
 	bool getImg(uint16 index, Img &img, bool includesPosition = true);
 	int numImages();
 };
