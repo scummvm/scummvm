@@ -200,7 +200,7 @@ void Room803::daemonSub1() {
 			terminateMachine(_meiStepOffPileMach);
 
 		_meiStepOffPile = series_load("MEI STEPS OFF PILE", -1, nullptr);
-		_meiStepOffPileMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 256, 0, triggerMachineByHashCallbackNegative, "rip");
+		_meiStepOffPileMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 256, 0, triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _meiStepOffPileMach, _meiStepOffPile, 57, 50, -1, _meiStepOffPile, 57, 60, 1);
 		digi_play("803r01", 1, 255, 5, -1);
 		break;
