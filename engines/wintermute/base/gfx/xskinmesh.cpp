@@ -1056,7 +1056,7 @@ static void cleanupMeshData(MeshData *meshData, bool releaseSkin = true) {
 		delete meshData->_skinInfo;
 }
 
-bool DXLoadSkinMesh(XFileData *fileData, DXBuffer &adjacencyOut, DXBuffer &materialsOut, uint32 &numMaterialsOut, DXSkinInfo **skinInfoOut, DXMesh **meshOut) {
+bool DXLoadSkinMesh(XFileData *fileData, DXBuffer &materialsOut, uint32 &numMaterialsOut, DXSkinInfo **skinInfoOut, DXMesh **meshOut) {
 	MeshData meshData{};
 	DXMesh *mesh;
 	uint32 i;
@@ -1069,7 +1069,6 @@ bool DXLoadSkinMesh(XFileData *fileData, DXBuffer &adjacencyOut, DXBuffer &mater
 	if (meshData._numVertices == 0) {
 		createMesh(meshData._numTriFaces, meshData._numVertices, meshData._fvf, &mesh);
 		*meshOut = mesh;
-		adjacencyOut = DXBuffer(meshData._numTriFaces * 3 * sizeof(uint32));
 		numMaterialsOut = meshData._numMaterials;
 		materialsOut = DXBuffer(meshData._numMaterials * sizeof(DXMaterial));
 		*skinInfoOut = meshData._skinInfo;
@@ -1180,24 +1179,7 @@ bool DXLoadSkinMesh(XFileData *fileData, DXBuffer &adjacencyOut, DXBuffer &mater
 	memcpy(materials.ptr(), meshData._materials, meshData._numMaterials * sizeof(DXMaterial));
 
 
-	DXBuffer adjacency = DXBuffer(meshData._numTriFaces * 3 * sizeof(uint32));
-	if (!adjacency.ptr()) {
-		materials.free();
-		cleanupMeshData(&meshData);
-		delete mesh;
-		return false;
-	}
-	if (!mesh->generateAdjacency((uint32 *)adjacency.ptr())) {
-		materials.free();
-		adjacency.free();
-		cleanupMeshData(&meshData);
-		delete mesh;
-		return false;
-	}
-
-
 	*meshOut = mesh;
-	adjacencyOut = adjacency;
 	numMaterialsOut = meshData._numMaterials;
 	materialsOut = materials;
 	*skinInfoOut = meshData._skinInfo;

@@ -159,7 +159,7 @@ public:
 	bool generateAdjacency(Common::Array<uint32> &adjacency);
 };
 
-bool DXLoadSkinMesh(XFileData *fileData, DXBuffer &adjacencyOut, DXBuffer &materialsOut, uint32 &numMaterialsOut, DXSkinInfo **skinInfoOut, DXMesh **meshOut);
+bool DXLoadSkinMesh(XFileData *fileData, DXBuffer &materialsOut, uint32 &numMaterialsOut, DXSkinInfo **skinInfoOut, DXMesh **meshOut);
 uint32 DXGetFVFVertexSize(uint32 fvf);
 
 } // namespace Wintermute

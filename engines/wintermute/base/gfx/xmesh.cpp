@@ -64,14 +64,13 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 
 	// load mesh
 	DXBuffer bufMaterials;
-	DXBuffer bufAdjacency;
 	//DXBuffer bufBoneOffset;
 	//uint32 numFaces;
 	uint32 numMaterials;
 	DXMesh *mesh;
 	DXSkinInfo *skinInfo = nullptr;
 
-	auto res = DXLoadSkinMesh(xobj, bufAdjacency, bufMaterials, numMaterials, &skinInfo, &mesh);
+	auto res = DXLoadSkinMesh(xobj, bufMaterials, numMaterials, &skinInfo, &mesh);
 	if (!res) {
 		BaseEngine::LOG(0, "Error loading skin mesh");
 		return false;
@@ -151,7 +150,6 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 
 	mesh->generateAdjacency(_adjacency);
 
-	bufAdjacency.free();
 	bufMaterials.free();
 	//bufBoneOffset.free();
 
