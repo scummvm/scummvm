@@ -57,15 +57,6 @@ public:
 	virtual ~XSkinMeshLoader();
 
 protected:
-	static const int kVertexComponentCount = 8;
-	static const int kPositionOffset = 5;
-	static const int kTextureCoordOffset = 0;
-	static const int kNormalOffset = 2;
-
-protected:
-
-	float *_vertexData;
-	uint32 _vertexCount;
 
 	BaseArray<Math::Matrix4 *> _boneMatrices;
 	BaseArray<SkinWeights> _skinWeightsList;

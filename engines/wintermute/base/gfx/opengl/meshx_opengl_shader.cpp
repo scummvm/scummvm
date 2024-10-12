@@ -55,11 +55,12 @@ bool XMeshOpenGLShader::loadFromXData(const Common::String &filename, XFileData 
 	if (XMesh::loadFromXData(filename, xobj)) {
 		uint32 *indexData = (uint32 *)_blendedMesh->getIndexBuffer().ptr();
 		uint32 indexDataSize = _blendedMesh->getIndexBuffer().size() / sizeof(uint32);
-		float *vertexData = _blendedMesh->_meshLoader->_vertexData;
-		uint32 vertexCount = _blendedMesh->_meshLoader->_vertexCount;
+		float *vertexData = (float *)_blendedMesh->getVertexBuffer().ptr();
+		uint32 vertexSize = DXGetFVFVertexSize(_blendedMesh->getFVF()) / sizeof(float);
+		uint32 vertexCount = _blendedMesh->getNumVertices();
 
 		glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-		glBufferData(GL_ARRAY_BUFFER, 4 * XSkinMeshLoader::kVertexComponentCount * vertexCount, vertexData, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, 4 * vertexSize * vertexCount, vertexData, GL_DYNAMIC_DRAW);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * indexDataSize, indexData, GL_STATIC_DRAW);
@@ -75,9 +76,22 @@ bool XMeshOpenGLShader::render(XModel *model) {
 	if (!_blendedMesh)
 		return false;
 
-	float *vertexData = _blendedMesh->_meshLoader->_vertexData;
+	auto fvf = _blendedMesh->getFVF();
+	uint32 vertexSize = DXGetFVFVertexSize(fvf) / sizeof(float);
+	float *vertexData = (float *)_blendedMesh->getVertexBuffer().ptr();
 	if (vertexData == nullptr) {
 		return false;
+	}
+	uint32 offset = 0, normalOffset = 0, textureOffset = 0;
+	if (fvf & DXFVF_XYZ) {
+		offset += sizeof(DXVector3) / sizeof(float);
+	}
+	if (fvf & DXFVF_NORMAL) {
+		normalOffset = offset;
+		offset += sizeof(DXVector3) / sizeof(float);
+	}
+	if (fvf & DXFVF_TEX1) {
+		textureOffset = offset;
 	}
 
 	bool noAttrs = false;
@@ -101,9 +115,9 @@ bool XMeshOpenGLShader::render(XModel *model) {
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
 
-	_shader->enableVertexAttribute("position", _vertexBuffer, 3, GL_FLOAT, false, 4 * XSkinMeshLoader::kVertexComponentCount, 4 * XSkinMeshLoader::kPositionOffset);
-	_shader->enableVertexAttribute("texcoord", _vertexBuffer, 2, GL_FLOAT, false, 4 * XSkinMeshLoader::kVertexComponentCount, 4 * XSkinMeshLoader::kTextureCoordOffset);
-	_shader->enableVertexAttribute("normal", _vertexBuffer, 3, GL_FLOAT, false, 4 * XSkinMeshLoader::kVertexComponentCount, 4 * XSkinMeshLoader::kNormalOffset);
+	_shader->enableVertexAttribute("position", _vertexBuffer, 3, GL_FLOAT, false, 4 * vertexSize, 0);
+	_shader->enableVertexAttribute("texcoord", _vertexBuffer, 2, GL_FLOAT, false, 4 * vertexSize, 4 * textureOffset);
+	_shader->enableVertexAttribute("normal", _vertexBuffer, 3, GL_FLOAT, false, 4 * vertexSize, 4 * normalOffset);
 
 	_shader->use(true);
 
@@ -123,8 +137,8 @@ bool XMeshOpenGLShader::render(XModel *model) {
 		_shader->setUniform("diffuse", diffuse);
 		_shader->setUniform("ambient", diffuse);
 
-		size_t offset = 4 * attrsTable->_ptr[i]._faceStart * 3;
-		glDrawElements(GL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, GL_UNSIGNED_INT, (void *)offset);
+		size_t offsetFace = 4 * attrsTable->_ptr[i]._faceStart * 3;
+		glDrawElements(GL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, GL_UNSIGNED_INT, (void *)offsetFace);
 	}
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -141,14 +155,15 @@ bool XMeshOpenGLShader::render(XModel *model) {
 }
 
 bool XMeshOpenGLShader::renderFlatShadowModel() {
-	float *vertexData = _blendedMesh->_meshLoader->_vertexData;
+	float *vertexData = (float *)_blendedMesh->getVertexBuffer().ptr();
+	uint32 vertexSize = DXGetFVFVertexSize(_blendedMesh->getFVF()) / sizeof(float);
 	if (vertexData == nullptr) {
 		return false;
 	}
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
 
-	_flatShadowShader->enableVertexAttribute("position", _vertexBuffer, 3, GL_FLOAT, false, 4 * XSkinMeshLoader::kVertexComponentCount, 4 * XSkinMeshLoader::kPositionOffset);
+	_flatShadowShader->enableVertexAttribute("position", _vertexBuffer, 3, GL_FLOAT, false, 4 * vertexSize, 4);
 	_flatShadowShader->use(true);
 
 	glDrawElements(GL_TRIANGLES, _blendedMesh->getNumFaces() * 3, GL_UNSIGNED_SHORT, 0);
@@ -162,11 +177,12 @@ bool XMeshOpenGLShader::renderFlatShadowModel() {
 bool XMeshOpenGLShader::update(FrameNode *parentFrame) {
 	XMesh::update(parentFrame);
 
-	float *vertexData = _blendedMesh->_meshLoader->_vertexData;
-	uint32 vertexCount = _blendedMesh->_meshLoader->_vertexCount;
+	float *vertexData = (float *)_blendedMesh->getVertexBuffer().ptr();
+	uint32 vertexSize = DXGetFVFVertexSize(_blendedMesh->getFVF()) / sizeof(float);
+	uint32 vertexCount = _blendedMesh->getNumVertices();
 
 	glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * XSkinMeshLoader::kVertexComponentCount * vertexCount, vertexData);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * vertexSize * vertexCount, vertexData);
 
 	return true;
 }

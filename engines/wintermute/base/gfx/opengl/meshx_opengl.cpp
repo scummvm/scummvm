@@ -51,11 +51,24 @@ bool XMeshOpenGL::render(XModel *model) {
 	if (!_blendedMesh)
 		return false;
 
-	float *vertexData = _blendedMesh->_meshLoader->_vertexData;
-	uint32 *indexData = (uint32 *)_blendedMesh->getIndexBuffer().ptr();
+	auto fvf = _blendedMesh->getFVF();
+	uint32 vertexSize = DXGetFVFVertexSize(fvf) / sizeof(float);
+	float *vertexData = (float *)_blendedMesh->getVertexBuffer().ptr();
 	if (vertexData == nullptr) {
 		return false;
 	}
+	uint32 offset = 0, normalOffset = 0, textureOffset = 0;
+	if (fvf & DXFVF_XYZ) {
+		offset += sizeof(DXVector3) / sizeof(float);
+	}
+	if (fvf & DXFVF_NORMAL) {
+		normalOffset = offset;
+		offset += sizeof(DXVector3) / sizeof(float);
+	}
+	if (fvf & DXFVF_TEX1) {
+		textureOffset = offset;
+	}
+	uint32 *indexData = (uint32 *)_blendedMesh->getIndexBuffer().ptr();
 
 	bool noAttrs = false;
 	auto attrsTable = _blendedMesh->getAttributeTable();
@@ -99,10 +112,10 @@ bool XMeshOpenGL::render(XModel *model) {
 		if (textureEnable)
 			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-		glVertexPointer(3, GL_FLOAT, XSkinMeshLoader::kVertexComponentCount * sizeof(float), vertexData + XSkinMeshLoader::kPositionOffset);
-		glNormalPointer(GL_FLOAT, XSkinMeshLoader::kVertexComponentCount * sizeof(float), vertexData + XSkinMeshLoader::kNormalOffset);
+		glVertexPointer(3, GL_FLOAT, vertexSize * sizeof(float), vertexData);
+		glNormalPointer(GL_FLOAT, vertexSize * sizeof(float), vertexData + normalOffset);
 		if (textureEnable)
-			glTexCoordPointer(2, GL_FLOAT, XSkinMeshLoader::kVertexComponentCount * sizeof(float), vertexData + XSkinMeshLoader::kTextureCoordOffset);
+			glTexCoordPointer(2, GL_FLOAT, vertexSize * sizeof(float), vertexData + textureOffset);
 
 		glDrawElements(GL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, GL_UNSIGNED_INT, indexData + attrsTable->_ptr[i]._faceStart * 3);
 

@@ -255,28 +255,26 @@ bool XMesh::update(FrameNode *parentFrame) {
 	if (!_blendedMesh)
 		return false;
 
-	float *vertexDstData = _blendedMesh->_meshLoader->_vertexData;
+	float *vertexDstData = (float *)_blendedMesh->getVertexBuffer().ptr();
 	if (vertexDstData == nullptr) {
 		return false;
 	}
+	auto fvf = _blendedMesh->getFVF();
+	uint32 vertexSize = DXGetFVFVertexSize(fvf) / sizeof(float);
+	uint32 offset = 0, normalOffset = 0;
+	if (fvf & DXFVF_XYZ) {
+		offset += sizeof(DXVector3) / sizeof(float);
+	}
+	if (fvf & DXFVF_NORMAL) {
+		normalOffset = offset;
+	}
 
-	uint32 vertexCount = _blendedMesh->_meshLoader->_vertexCount;
+	uint32 vertexCount = _blendedMesh->getNumVertices();
 	auto skinWeightsList = _blendedMesh->_meshLoader->_skinWeightsList;
 
 	// update skinned mesh
 	if (_skinMesh) {
 		float *vertexSrcData = (float *)_skinMesh->_mesh->getVertexBuffer().ptr();
-		auto fvf = _skinMesh->_mesh->getFVF();
-		uint32 vertexSize = DXGetFVFVertexSize(fvf) / sizeof(float);
-		uint32 offset = 0, normalOffset = 0;
-
-		if (fvf & DXFVF_XYZ) {
-			offset += sizeof(DXVector3) / sizeof(float);
-		}
-		if (fvf & DXFVF_NORMAL) {
-			normalOffset = offset;
-		}
-
 		BaseArray<Math::Matrix4> finalBoneMatrices;
 		finalBoneMatrices.resize(_boneMatrices.size());
 
@@ -290,7 +288,7 @@ bool XMesh::update(FrameNode *parentFrame) {
 		// to be able too add the weighted summands together, we reset everything to zero first
 		for (uint32 i = 0; i < vertexCount; ++i) {
 			for (int j = 0; j < 3; ++j) {
-				vertexDstData[i * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset + j] = 0.0f;
+				vertexDstData[i * vertexSize + j] = 0.0f;
 			}
 		}
 
@@ -307,7 +305,7 @@ bool XMesh::update(FrameNode *parentFrame) {
 				pos *= skinWeightsList[boneIndex]._vertexWeights[i];
 
 				for (uint j = 0; j < 3; ++j) {
-					vertexDstData[vertexIndex * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset + j] += pos.getData()[j];
+					vertexDstData[vertexIndex * vertexSize + j] += pos.getData()[j];
 				}
 			}
 		}
@@ -321,7 +319,7 @@ bool XMesh::update(FrameNode *parentFrame) {
 		// reset so we can form the weighted sums
 		for (uint32 i = 0; i < vertexCount; ++i) {
 			for (int j = 0; j < 3; ++j) {
-				vertexDstData[i * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kNormalOffset + j] = 0.0f;
+				vertexDstData[i * vertexSize + normalOffset + j] = 0.0f;
 			}
 		}
 
@@ -334,21 +332,20 @@ bool XMesh::update(FrameNode *parentFrame) {
 				pos *= skinWeightsList[boneIndex]._vertexWeights[i];
 
 				for (uint j = 0; j < 3; ++j) {
-					vertexDstData[vertexIndex * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kNormalOffset + j] += pos.getData()[j];
+					vertexDstData[vertexIndex * vertexSize + normalOffset + j] += pos.getData()[j];
 				}
 			}
 		}
 
-	//updateNormals();
+		//updateNormals();
 	} else { // update static
 		for (uint32 i = 0; i < vertexCount; ++i) {
 			float *vertexSrcData = (float *)_staticMesh->getVertexBuffer().ptr();
-			uint32 vertexSize = DXGetFVFVertexSize(_staticMesh->getFVF()) / sizeof(float);
 			Math::Vector3d pos(vertexSrcData + i * vertexSize);
 			parentFrame->getCombinedMatrix()->transform(&pos, true);
 
 			for (uint j = 0; j < 3; ++j) {
-				vertexDstData[i * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset + j] = pos.getData()[j];
+				vertexDstData[i * vertexSize + j] = pos.getData()[j];
 			}
 		}
 	}
@@ -363,10 +360,11 @@ bool XMesh::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const
 	if (!_blendedMesh)
 		return false;
 
-	float *vertexData = _blendedMesh->_meshLoader->_vertexData;
+	float *vertexData = (float *)_blendedMesh->getVertexBuffer().ptr();
 	if (vertexData == nullptr) {
 		return false;
 	}
+	uint32 vertexSize = DXGetFVFVertexSize(_blendedMesh->getFVF()) / sizeof(float);
 
 	Math::Vector3d invLight = light;
 	Math::Matrix4 matInverseModel = modelMat;
@@ -385,9 +383,9 @@ bool XMesh::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const
 		uint16 index1 = indexData[3 * i + 1];
 		uint16 index2 = indexData[3 * i + 2];
 
-		Math::Vector3d v0(vertexData + index0 * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset);
-		Math::Vector3d v1(vertexData + index1 * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset);
-		Math::Vector3d v2(vertexData + index2 * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset);
+		Math::Vector3d v0(vertexData + index0 * vertexSize);
+		Math::Vector3d v1(vertexData + index1 * vertexSize);
+		Math::Vector3d v2(vertexData + index2 * vertexSize);
 
 		// Transform vertices or transform light?
 		Math::Vector3d vNormal = Math::Vector3d::crossProduct(v2 - v1, v1 - v0);
@@ -435,8 +433,8 @@ bool XMesh::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const
 	}
 
 	for (uint32 i = 0; i < numEdges; i++) {
-		Math::Vector3d v1(vertexData + edges[2 * i + 0] * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset);
-		Math::Vector3d v2(vertexData + edges[2 * i + 1] * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset);
+		Math::Vector3d v1(vertexData + edges[2 * i + 0] * vertexSize);
+		Math::Vector3d v2(vertexData + edges[2 * i + 1] * vertexSize);
 		Math::Vector3d v3 = v1 - invLight * extrusionDepth;
 		Math::Vector3d v4 = v2 - invLight * extrusionDepth;
 
@@ -457,10 +455,11 @@ bool XMesh::pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir) {
 	if (!_blendedMesh)
 		return false;
 
-	float *vertexData = _blendedMesh->_meshLoader->_vertexData;
+	float *vertexData = (float *)_blendedMesh->getVertexBuffer().ptr();
 	if (vertexData == nullptr) {
 		return false;
 	}
+	uint32 vertexSize = DXGetFVFVertexSize(_blendedMesh->getFVF()) / sizeof(float);
 
 	bool res = false;
 
@@ -472,11 +471,11 @@ bool XMesh::pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir) {
 		uint32 index3 = indexData[i + 2];
 
 		Math::Vector3d v0;
-		v0.setData(&vertexData[index1 * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset]);
+		v0.setData(&vertexData[index1 * vertexSize]);
 		Math::Vector3d v1;
-		v1.setData(&vertexData[index2 * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset]);
+		v1.setData(&vertexData[index2 * vertexSize]);
 		Math::Vector3d v2;
-		v2.setData(&vertexData[index3 * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset]);
+		v2.setData(&vertexData[index3 * vertexSize]);
 
 		if (isnan(v0.x()))
 			continue;
@@ -539,22 +538,22 @@ bool XMesh::restoreDeviceObjects() {
 }
 
 void XMesh::updateBoundingBox() {
-	float *vertexData = _blendedMesh->_meshLoader->_vertexData;
+	float *vertexData = (float *)_blendedMesh->getVertexBuffer().ptr();
 	if (vertexData == nullptr) {
 		return;
 	}
-
+	uint32 vertexSize = DXGetFVFVertexSize(_blendedMesh->getFVF()) / sizeof(float);
 	uint32 vertexCount = _blendedMesh->getNumVertices();
 	if (vertexCount == 0) {
 		return;
 	}
 
-	_BBoxStart.setData(&vertexData[0 + XSkinMeshLoader::kPositionOffset]);
-	_BBoxEnd.setData(&vertexData[0 + XSkinMeshLoader::kPositionOffset]);
+	_BBoxStart.setData(&vertexData[0]);
+	_BBoxEnd.setData(&vertexData[0]);
 
 	for (uint16 i = 1; i < vertexCount; ++i) {
 		Math::Vector3d v;
-		v.setData(&vertexData[i * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset]);
+		v.setData(&vertexData[i * vertexSize]);
 
 		_BBoxStart.x() = MIN(_BBoxStart.x(), v.x());
 		_BBoxStart.y() = MIN(_BBoxStart.y(), v.y());
