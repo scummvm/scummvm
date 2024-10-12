@@ -84,10 +84,10 @@ void Room801::init() {
 	}
 
 	if (_G(game).previous_room == 850) {
-		_G(flags)	[V250] = 0;
-		_G(flags)	[V251] = 0;
-		_G(flags)	[V252] = 0;
-		_G(flags)	[V273] = 0;
+		_G(flags)[V250] = 0;
+		_G(flags)[V251] = 0;
+		_G(flags)[V252] = 0;
+		_G(flags)[V273] = 0;
 
 		_roomStates_tt = 0;
 		hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar  ", true);
@@ -210,7 +210,7 @@ void Room801::parser() {
 	}
 
 	else if (lookFl && _G(walker).ripley_said(SAID)) {
-		; // Yep, nothing
+		// Nothing (though it's important to keep it because of the cascade of checks
 	}
 
 	else if (lookFl && player_said("house")) {
