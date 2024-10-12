@@ -331,11 +331,12 @@ static void _doScroll(Graphics::ManagedSurface &compBuf, int16 dir, int16 steps,
 	const Common::Rect screenRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	for (int16 i = 1; i <= steps; i++) {
 		int stepval = ((int)i * offset) / steps;
-		int xoff = (dir == 2 ? stepval : 0);
-		int yoff = (dir == 2 ? 0 : (dir == 1 ? stepval : -stepval));
+		int xoff = (dir <= 1 ? 0 : (dir == 2 ? stepval : -stepval));
+		int yoff = (dir >= 2 ? 0 : (dir == 1 ? stepval : -stepval));
 		Common::Rect srcRectFromOrigScreen(Common::Point(xoff, yoff), SCREEN_WIDTH, SCREEN_HEIGHT);
 		srcRectFromOrigScreen.clip(screenRect);
-		screen->copyRectToSurface(screenCopy, MAX(0, -xoff), MAX(0, -yoff), srcRectFromOrigScreen);
+		if (abs(xoff) < SCREEN_WIDTH && abs(yoff) < SCREEN_HEIGHT)
+			screen->copyRectToSurface(screenCopy, MAX(0, -xoff), MAX(0, -yoff), srcRectFromOrigScreen);
 
 		switch (dir) {
 		case 0: {
@@ -349,9 +350,15 @@ static void _doScroll(Graphics::ManagedSurface &compBuf, int16 dir, int16 steps,
 			break;
 		}
 		case 2: {
-			// Draw composition buf to right of screen buf
+			// Draw composition buf to right of screen buf (camera moves to right)
 			Common::Rect rectFromCompBuf(0, 0, SCREEN_WIDTH - srcRectFromOrigScreen.width(), SCREEN_HEIGHT);
 			screen->copyRectToSurface(compBuf, srcRectFromOrigScreen.width(), 0, rectFromCompBuf);
+			break;
+		}
+		case 3: {
+			// Draw composition buf to left of screen buf (camera moves to left)
+			Common::Rect rectFromCompBuf(srcRectFromOrigScreen.width(), 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+			screen->copyRectToSurface(compBuf, 0, 0, rectFromCompBuf);
 			break;
 		}
 		default:
