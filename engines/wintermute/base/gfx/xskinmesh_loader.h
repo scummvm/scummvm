@@ -53,7 +53,7 @@ class XSkinMeshLoader {
 	friend class SkinMeshHelper;
 
 public:
-	XSkinMeshLoader(XMesh *mesh, XMeshObject *meshObject, DXMesh *dxmesh);
+	XSkinMeshLoader(XMesh *mesh, DXMesh *dxmesh);
 	virtual ~XSkinMeshLoader();
 	void loadMesh(const Common::String &filename, XFileData *xobj);
 

@@ -62,12 +62,6 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 		return false;
 	}
 
-	XMeshObject *meshObject = xobj->getXMeshObject();
-	if (!meshObject) {
-		BaseEngine::LOG(0, "Error loading mesh");
-		return false;
-	}
-
 	// load mesh
 	DXBuffer bufMaterials;
 	DXBuffer bufAdjacency;
@@ -83,7 +77,7 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 		return false;
 	}
 
-	XSkinMeshLoader *meshLoader = new XSkinMeshLoader(this, meshObject, mesh);
+	XSkinMeshLoader *meshLoader = new XSkinMeshLoader(this, mesh);
 	meshLoader->loadMesh(filename, xobj);
 
 	_skinMesh = new SkinMeshHelper(meshLoader, mesh, skinInfo);

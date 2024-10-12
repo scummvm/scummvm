@@ -32,11 +32,11 @@
 
 namespace Wintermute {
 
-XSkinMeshLoader::XSkinMeshLoader(XMesh *mesh, XMeshObject *meshObject, DXMesh *dxmesh) {
+XSkinMeshLoader::XSkinMeshLoader(XMesh *mesh, DXMesh *dxmesh) {
 	_mesh = mesh;
 	_dxmesh = dxmesh;
 
-	_vertexCount = meshObject->_numVertices;
+	_vertexCount = dxmesh->getNumVertices();
 	// vertex format for .X meshes will be position + normals + textures
 	_vertexData = new float[kVertexComponentCount * _vertexCount]();
 	_vertexPositionData = new float[3 * _vertexCount]();
