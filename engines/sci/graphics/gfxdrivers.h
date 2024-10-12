@@ -54,7 +54,7 @@ public:
 	virtual void clearRect(const Common::Rect &r) const;
 	virtual void copyCurrentBitmap(byte *dest, uint32 size) const = 0;
 	virtual void copyCurrentPalette(byte *dest, int start, int num) const;
-	virtual void drawTextFontGlyph(const byte *src, int pitch, int hiresDestX, int hiresDestY, int hiresW, int hiresH, int transpColor, const PaletteMod *palMods, const byte *palModMapping) = 0; 
+	virtual void drawTextFontGlyph(const byte *src, int pitch, int hiresDestX, int hiresDestY, int hiresW, int hiresH, int transpColor, const PaletteMod *palMods, const byte *palModMapping) = 0;
 	virtual byte remapTextColor(byte color) const { return color; }
 	virtual void setColorMap(const byte *colorMap) {}
 	virtual Common::Point getRealCoords(Common::Point &pos) const { return pos; }
@@ -291,7 +291,7 @@ public:
 	void copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	Common::Point getRealCoords(Common::Point &pos) const override;
-	void setColorMap(const byte *colorMap) { _colorMap = colorMap; }
+	void setColorMap(const byte *colorMap) override { _colorMap = colorMap; }
 	void setFlags(uint32 flags) override;
 	void clearFlags(uint32 flags) override;
 	bool supportsHiResGraphics() const override { return !_smallWindow; }
