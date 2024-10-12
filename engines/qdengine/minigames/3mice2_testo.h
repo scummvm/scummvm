@@ -100,13 +100,13 @@ public:
 			int maxY = 0;
 
 			for (int j = 0; j < _numVerts[i]; j++) {
-				if ( _figureVerts[v].x < minX)
+				if (_figureVerts[v].x < minX)
 					minX = _figureVerts[v].x;
-				if ( _figureVerts[v].x > maxX)
+				if (_figureVerts[v].x > maxX)
 					maxX = _figureVerts[v].x;
-				if ( _figureVerts[v].y < minY)
+				if (_figureVerts[v].y < minY)
 					minY = _figureVerts[v].y;
-				if ( _figureVerts[v].y > maxY)
+				if (_figureVerts[v].y > maxY)
 					maxY = _figureVerts[v].y;
 
 				v += 8;	// Data is arranged in vertical columns
@@ -156,7 +156,84 @@ public:
 	bool quant(float dt) {
 		debugC(3, kDebugMinigames, "3mice2Testo::quant(%f)", dt);
 
-		return true;
+		if (checkSolution())
+			_objDone->set_state("да");
+		else
+			_objDone->set_state("нет");
+
+		for (int i = 0; i < 8; i++) {
+			mgVect2i pos = _figures[i]->screen_R();
+
+			pos.x += _noDoughX;
+
+			_figures[8 + i]->set_R(_scene->screen2world_coords(pos, 1000.0));
+		}
+
+		qdMinigameObjectInterface *mouseObj = _scene->mouse_object_interface();
+		qdMinigameObjectInterface *clickObj = _scene->mouse_click_object_interface();
+
+		const char *name = mouseObj->name();
+
+		if (mouseObj) {
+			if (strstr(name, "figure") && strstr(name, "inv")) {
+				int num = atol(name + 6);
+
+				if (checkSnapPiece(num - 1))
+					mouseObj->set_state("inv");
+				else
+					mouseObj->set_state("inv_glow");
+			}
+		}
+
+		if (_engine->is_mouse_event_active(qdmg::qdEngineInterfaceImpl::MOUSE_EV_LEFT_DOWN) && !mouseObj) {
+			int hit = hitTest();
+
+			if (hit > -1) {
+				_figures[hit]->set_state("hide");
+				_figures[hit + 16]->set_state("to_inv");
+			}
+		}
+
+		if (_engine->is_mouse_event_active(qdmg::qdEngineInterfaceImpl::MOUSE_EV_LEFT_DOWN) && mouseObj) {
+			int num = -1;
+
+			if (strstr(name, "figure") && strstr(name, "inv")) {
+				num = atol(name + 6);
+
+				if (num > 0 && num <= 8 && !checkSnapPiece(num - 1)) {
+					_figures[num - 1]->set_state("testo");
+					_figures[num + 15]->set_state("del");
+					_figures[num - 1]->set_R(_scene->screen2world_coords(_engine->mouse_cursor_position(), 0.0));
+				}
+			}
+
+			if (mouseObj && clickObj) {
+				name = clickObj->name();
+
+				if (strstr(name, "notesto")) {
+					_figures[num - 1]->set_state("base");
+					_figures[num + 15]->set_state("del");
+
+					_figures[num - 1]->set_R(_scene->screen2world_coords(_initialCoords[num - 1], 0.0));
+				}
+			}
+		}
+
+		if (_engine->is_mouse_event_active(qdmg::qdEngineInterfaceImpl::MOUSE_EV_RIGHT_DOWN) && mouseObj) {
+			name = mouseObj->name();
+			if (strstr(name, "figure") && strstr(name, "inv")) {
+				int num = atol(name + 6);
+
+				if (num > 0 && num <= 8) {
+					_figures[num - 1]->set_state("base");
+					_figures[num + 15]->set_state("del");
+
+					_figures[num - 1]->set_R(_scene->screen2world_coords(_initialCoords[num - 1], 0.0));
+				}
+			}
+		}
+
+  		return true;
 	}
 
 	bool finit() {
@@ -185,6 +262,94 @@ public:
 	enum { INTERFACE_VERSION = 112 };
 	int version() const {
 		return INTERFACE_VERSION;
+	}
+
+private:
+	bool checkSolution() {
+		return _figures[1]->is_state_active("testo")
+			&& _figures[3]->is_state_active("testo")
+			&& _figures[4]->is_state_active("testo")
+			&& _figures[5]->is_state_active("testo")
+			&& _figures[6]->is_state_active("testo");
+	}
+
+	int hitTest() {
+		mgVect2i pos = _engine->mouse_cursor_position();
+
+		for (int i = 0; i < 8; i++) {
+			if (_figures[i + 8]->hit_test(pos))
+				return i;
+		}
+
+		return -1;
+	}
+
+	bool checkSnapPiece(int num) {
+#if 0
+		v3 = _noDoughX + _engine->mouse_cursor_position(_engine, &v22)->x;
+		v4 = _engine->mouse_cursor_position(_engine, &v22);
+		v5 = num;
+		y = v4->y;
+		v16 = 0;
+		if (_numVerts[num] > 0) {
+			p_y = (mgVect2i_s1 *)&_figureVerts[num].y;
+			while (2) {
+				v7 = 0;
+				v8 = &_figures[8];
+				v19 = 0;
+				do {
+					if (v7 != v5) {
+						v9 = p_y->y;
+						v21[0] = p_y[-1].x + v3;
+						v10 = *v8;
+						v21[1] = y + v9;
+						if (v10->hit_test(v10, (mgVect2i *)v21))
+							return 1;
+						v11 = y + p_y->y;
+						v22.x = p_y[-1].x + v3;
+						v22.y = v11;
+						if (_objNoDoughFake->hit_test(_objNoDoughFake, &v22))
+							return 1;
+						v5 = num;
+						v7 = v19;
+					}
+					++v7;
+					++v8;
+					v19 = v7;
+				} while (v7 < 8);
+
+				p_y += 8;
+
+				if (++v16 < _numVerts[v5])
+					continue;
+				break;
+			}
+		}
+		v12 = 0;
+		figures_ = &_figures[8];
+		v17 = 0;
+		v14 = (mgVect2i_s1 *)&_figureBboxes[0].y;
+		do {
+			if (v12 != v5) {
+				if (v14[-1].x + (*figures_)->screen_R(*figures_, &v22)->x < v3 + _figureBboxes[2 * num].x) {
+					v20 = (qdMinigameInterface *)((char *)this + 16 * num);
+					if (v14->y + (*figures_)->screen_R(*figures_, (mgVect2i *)v21)->x > v3
+																							+ v20->_figureBboxes[offsetof(qdMinigameInterface, vmt)].y
+					&& v14[1].y + (*figures_)->screen_R(*figures_, &v23)->y > y + v20->_figureBboxes[1].y
+					&& v14->x + (*figures_)->screen_R(*figures_, (mgVect2i *)v24)->y < y + v20->_figureBboxes[1].x) {
+						return true;
+					}
+				}
+				v5 = num;
+				v12 = v17;
+			}
+			++v12;
+			++figures_;
+			v14 += 2;
+			v17 = v12;
+		} while (v12 < 8);
+#endif
+		return false;
 	}
 
 private:
