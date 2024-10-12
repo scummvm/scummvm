@@ -62,7 +62,7 @@ private:
 	int _ctr1 = 0;
 
 	static void intrMsg(frac16 myMessage, struct machine *sender);
-	void handlingStick();
+	void handlingStickAndSword();
 
 public:
 	Room304() : Room() {}

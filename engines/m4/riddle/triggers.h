@@ -42,7 +42,7 @@ extern void setGlobals4(int val1, int val2, int val3, int val4);
 
 extern void sendWSMessage_10000(int val1, machine *recv, int val2, int val3,
 	int val4, int trigger, int val9, int val6, int val7, int val8);
-extern void sendWSMessage_10000(machine *recv, int val1, int val2, int val3,
+extern void sendWSMessage_10000(machine *recv, int val1, int val2, int index,
 	int trigger, int val4);
 
 machine *triggerMachineByHash_3000(int myHash, int dataHash,

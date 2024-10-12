@@ -275,8 +275,9 @@ void Room304::parser() {
 			digi_play("304r64", 1);
 		}
 	} else if (_G(flags)[V001] && (takeFlag || useFlag) && player_said("handling stick")) {
-		// Catching snake with the handling stick
-		handlingStick();
+		// Catching snake with the handling stick, or killing it
+		// with the sword
+		handlingStickAndSword();
 	
 	} else if (lookFlag && player_said_any("native mask", "shield")) {
 		digi_play("304r05", 1);
@@ -453,7 +454,7 @@ void Room304::intrMsg(frac16 myMessage, struct machine *sender) {
 	}
 }
 
-void Room304::handlingStick() {
+void Room304::handlingStickAndSword() {
 	switch (_G(kernel).trigger) {
 	case 13:
 		series_stream_break_on_frame(_safe3, 29, 14);
