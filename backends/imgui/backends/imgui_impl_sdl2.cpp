@@ -128,7 +128,8 @@
 #define SDL_HAS_DISPLAY_EVENT               SDL_VERSION_ATLEAST(2,0,9)
 #define SDL_HAS_SHOW_WINDOW_ACTIVATION_HINT SDL_VERSION_ATLEAST(2,0,18)
 #if SDL_HAS_VULKAN
-extern "C" { extern DECLSPEC void SDLCALL SDL_Vulkan_GetDrawableSize(SDL_Window* window, int* w, int* h); }
+//extern "C" { extern DECLSPEC void SDLCALL SDL_Vulkan_GetDrawableSize(SDL_Window* window, int* w, int* h); }
+#include <SDL_vulkan.h>
 #elif
 static const Uint32 SDL_WINDOW_VULKAN = 0x10000000;
 #endif
