@@ -28,6 +28,8 @@
 
 #include "graphics/surface.h"
 
+#include "scumm/macgui/macgui_colors.h"
+
 namespace Scumm {
 
 class MacGuiImpl;
@@ -146,9 +148,9 @@ private:
 
 		// Primitives
 		void fill(Common::Rect r);
-		void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
+		void drawBitmap(Common::Rect r, const uint16 *bitmap, byte color) const;
 		void drawShadowBox(Common::Rect r) const;
-		void drawShadowFrame(Common::Rect r, Color shadowColor, Color fillColor);
+		void drawShadowFrame(Common::Rect r, byte shadowColor, byte fillColor);
 
 		void markScreenAsDirty(Common::Rect r) const;
 	};

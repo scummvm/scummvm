@@ -33,6 +33,7 @@
 #include "scumm/scumm.h"
 #include "scumm/detection.h"
 #include "scumm/macgui/macgui_impl.h"
+#include "scumm/macgui/macgui_colors.h"
 #include "scumm/macgui/macgui_loom.h"
 #include "scumm/music.h"
 #include "scumm/sound.h"
@@ -531,9 +532,9 @@ void MacLoomGui::runDraftsInventory() {
 	int base = 55;
 
 	// TODO: Can these be drawn in different styles? (e.g. Checkerboard)
-	Color unlockedColor = kBlack;
-	Color inactiveColor = kBlack;
-	Color newDraftColor = kBlack;
+	byte unlockedColor = kBlack;
+	byte inactiveColor = kBlack;
+	byte newDraftColor = kBlack;
 
 	for (int i = 0; i < 16; i++) {
 		int draft = _vm->_scummVars[base + i * 2];
@@ -896,7 +897,7 @@ void MacLoomGui::update(int delta) {
 
 				_practiceBox->fillRect(Common::Rect(w, h), kBlack);
 
-				Color color = bw ? kWhite : kLightGray;
+				byte color = bw ? kWhite : kLightGray;
 
 				_practiceBox->hLine(2, 1, w - 3, color);
 				_practiceBox->hLine(2, h - 2, w - 3, color);
@@ -913,7 +914,7 @@ void MacLoomGui::update(int delta) {
 				_practiceBox->fillRect(Common::Rect(2, 2, w - 2, h - 2), kBlack);
 
 				const Graphics::Font *font = getFont(kLoomFontLarge);
-				Color colors[] = { kRed, kBrightRed, kBrightYellow, kBrightGreen, kBrightCyan, kCyan, kBrightBlue, kWhite };
+				byte colors[] = { kRed, kBrightRed, kBrightYellow, kBrightGreen, kBrightCyan, kCyan, kBrightBlue, kWhite };
 
 				for (int i = 0; i < 4; i++) {
 					int note = (notes >> (4 * i)) & 0x0F;
