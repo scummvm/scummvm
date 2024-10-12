@@ -1071,7 +1071,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			continue;
 		}
 
-		if (actor->_lifePoint <= 0) {
+		if (actor->_lifePoint == 0) {
 			if (IS_HERO(a)) {
 				_animations->initAnim(AnimationTypes::kLandDeath, AnimType::kAnimationSet, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 				actor->_controlMode = ControlMode::kNoMove;
