@@ -285,70 +285,39 @@ private:
 	}
 
 	bool checkSnapPiece(int num) {
-#if 0
-		v3 = _noDoughX + _engine->mouse_cursor_position(_engine, &v22)->x;
-		v4 = _engine->mouse_cursor_position(_engine, &v22);
-		v5 = num;
-		y = v4->y;
-		v16 = 0;
-		if (_numVerts[num] > 0) {
-			p_y = (mgVect2i_s1 *)&_figureVerts[num].y;
-			while (2) {
-				v7 = 0;
-				v8 = &_figures[8];
-				v19 = 0;
-				do {
-					if (v7 != v5) {
-						v9 = p_y->y;
-						v21[0] = p_y[-1].x + v3;
-						v10 = *v8;
-						v21[1] = y + v9;
-						if (v10->hit_test(v10, (mgVect2i *)v21))
-							return 1;
-						v11 = y + p_y->y;
-						v22.x = p_y[-1].x + v3;
-						v22.y = v11;
-						if (_objNoDoughFake->hit_test(_objNoDoughFake, &v22))
-							return 1;
-						v5 = num;
-						v7 = v19;
-					}
-					++v7;
-					++v8;
-					v19 = v7;
-				} while (v7 < 8);
+		mgVect2i pos = _engine->mouse_cursor_position();
+		pos.x += _noDoughX;
 
-				p_y += 8;
+		int v = num;
 
-				if (++v16 < _numVerts[v5])
-					continue;
-				break;
+		for (int i = 0; i < _numVerts[num]; i++) {
+			mgVect2i npos = _figureVerts[v];
+			npos.x += pos.x;
+			npos.y += pos.y;
+
+			for (int j = 0; j < 8; j++) {
+				if (j != num) {
+					if (_figures[8 + i]->hit_test(npos))
+						return true;
+
+					if (_objNoDoughFake->hit_test(npos))
+						return true;
+				}
+			}
+
+			v += 8;
+		}
+
+		for (int i = 0; i < 8; i++) {
+			if (i != num) {
+				if (_figureBboxes[2 * i].x     + _figures[i]->screen_R().x < pos.x + _figureBboxes[2 * num].x &&
+					_figureBboxes[2 * i].y     + _figures[i]->screen_R().x > pos.x + _figureBboxes[2 * num].y &&
+					_figureBboxes[2 * i + 1].x + _figures[i]->screen_R().y < pos.y + _figureBboxes[2 * num + 1].x &&
+					_figureBboxes[2 * i + 1].y + _figures[i]->screen_R().y > pos.y + _figureBboxes[2 * num + 1].y)
+						return true;
 			}
 		}
-		v12 = 0;
-		figures_ = &_figures[8];
-		v17 = 0;
-		v14 = (mgVect2i_s1 *)&_figureBboxes[0].y;
-		do {
-			if (v12 != v5) {
-				if (v14[-1].x + (*figures_)->screen_R(*figures_, &v22)->x < v3 + _figureBboxes[2 * num].x) {
-					v20 = (qdMinigameInterface *)((char *)this + 16 * num);
-					if (v14->y + (*figures_)->screen_R(*figures_, (mgVect2i *)v21)->x > v3
-																							+ v20->_figureBboxes[offsetof(qdMinigameInterface, vmt)].y
-					&& v14[1].y + (*figures_)->screen_R(*figures_, &v23)->y > y + v20->_figureBboxes[1].y
-					&& v14->x + (*figures_)->screen_R(*figures_, (mgVect2i *)v24)->y < y + v20->_figureBboxes[1].x) {
-						return true;
-					}
-				}
-				v5 = num;
-				v12 = v17;
-			}
-			++v12;
-			++figures_;
-			v14 += 2;
-			v17 = v12;
-		} while (v12 < 8);
-#endif
+
 		return false;
 	}
 
