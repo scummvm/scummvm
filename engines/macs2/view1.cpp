@@ -519,7 +519,12 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		uint8 numberPressed = msg.ascii - '1' + 1;
 		TriggerDialogueChoice(numberPressed);
 	} else if (msg.ascii == 'p') {
-		characters[0].
+		characters[0]->IsFollowingPath = true;
+		characters[0]->CurrentPathIndex = -1;
+		characters[0]->Path.clear();
+		characters[0]->Path.push_back(8);
+		characters[0]->Path.push_back(9);
+		characters[0]->Path.push_back(11);
 	}
 	return true;
 }
