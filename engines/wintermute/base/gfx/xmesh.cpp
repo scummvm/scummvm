@@ -83,6 +83,27 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 	}
 
 	XSkinMeshLoader *meshLoader = new XSkinMeshLoader(mesh);
+	auto fvf = mesh->getFVF();
+	uint32 vertexSize = DXGetFVFVertexSize(fvf) / sizeof(float);
+	float *vertexBuffer = (float *)mesh->getVertexBuffer().ptr();
+	uint32 offset = 0, normalOffset = 0;
+
+	if (fvf & DXFVF_XYZ) {
+		offset += sizeof(DXVector3) / sizeof(float);
+	}
+	if (fvf & DXFVF_NORMAL) {
+		normalOffset = offset;
+	}
+
+	for (uint32 i = 0; i < mesh->getNumVertices(); ++i) {
+		// mirror z coordinate to change to OpenGL coordinate system
+		vertexBuffer[i * vertexSize + 2] *= -1.0f;
+
+		if (fvf & DXFVF_NORMAL) {
+			// mirror z coordinate to change to OpenGL coordinate system
+			vertexBuffer[i * vertexSize + normalOffset + 2] *= -1.0f;
+		}
+	}
 
 	_skinMesh = new SkinMeshHelper(mesh, skinInfo);
 
@@ -244,7 +265,18 @@ bool XMesh::update(FrameNode *parentFrame) {
 
 	// update skinned mesh
 	if (_skinMesh) {
-		float *vertexSrcData = _skinMesh->_mesh->_meshLoader->_vertexData;
+		float *vertexSrcData = (float *)_skinMesh->_mesh->getVertexBuffer().ptr();
+		auto fvf = _skinMesh->_mesh->getFVF();
+		uint32 vertexSize = DXGetFVFVertexSize(fvf) / sizeof(float);
+		uint32 offset = 0, normalOffset = 0;
+
+		if (fvf & DXFVF_XYZ) {
+			offset += sizeof(DXVector3) / sizeof(float);
+		}
+		if (fvf & DXFVF_NORMAL) {
+			normalOffset = offset;
+		}
+
 		BaseArray<Math::Matrix4> finalBoneMatrices;
 		finalBoneMatrices.resize(_boneMatrices.size());
 
@@ -270,7 +302,7 @@ bool XMesh::update(FrameNode *parentFrame) {
 			for (uint i = 0; i < skinWeightsList[boneIndex]._vertexIndices.size(); ++i) {
 				uint32 vertexIndex = skinWeightsList[boneIndex]._vertexIndices[i];
 				Math::Vector3d pos;
-				pos.setData(vertexSrcData + vertexIndex * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset);
+				pos.setData(vertexSrcData + vertexIndex * vertexSize);
 				finalBoneMatrices[boneIndex].transform(&pos, true);
 				pos *= skinWeightsList[boneIndex]._vertexWeights[i];
 
@@ -297,7 +329,7 @@ bool XMesh::update(FrameNode *parentFrame) {
 			for (uint i = 0; i < skinWeightsList[boneIndex]._vertexIndices.size(); ++i) {
 				uint32 vertexIndex = skinWeightsList[boneIndex]._vertexIndices[i];
 				Math::Vector3d pos;
-				pos.setData(vertexSrcData + vertexIndex * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kNormalOffset);
+				pos.setData(vertexSrcData + vertexIndex * vertexSize + normalOffset);
 				finalBoneMatrices[boneIndex].transform(&pos, true);
 				pos *= skinWeightsList[boneIndex]._vertexWeights[i];
 
@@ -310,8 +342,9 @@ bool XMesh::update(FrameNode *parentFrame) {
 	//updateNormals();
 	} else { // update static
 		for (uint32 i = 0; i < vertexCount; ++i) {
-			float *vertexData = _staticMesh->_meshLoader->_vertexData;
-			Math::Vector3d pos(vertexData + i * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset);
+			float *vertexSrcData = (float *)_staticMesh->getVertexBuffer().ptr();
+			uint32 vertexSize = DXGetFVFVertexSize(_staticMesh->getFVF()) / sizeof(float);
+			Math::Vector3d pos(vertexSrcData + i * vertexSize);
 			parentFrame->getCombinedMatrix()->transform(&pos, true);
 
 			for (uint j = 0; j < 3; ++j) {
