@@ -141,7 +141,30 @@ const Graphics::Font *MacMI1Gui::getFontByScummId(int32 id) {
 }
 
 bool MacMI1Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) const {
-	return MacGuiImpl::getFontParams(fontId, id, size, slant);
+	switch (fontId) {
+	case kAboutFontRegular:
+		id = Graphics::kMacFontGeneva;
+		size = 9;
+		slant = Graphics::kMacFontRegular;
+		return true;
+	case kAboutFontBold:
+		id = Graphics::kMacFontGeneva;
+		size = 9;
+		slant = Graphics::kMacFontBold;
+		return true;
+	case kAboutFontHeaderSimple1:
+		id = Graphics::kMacFontGeneva;
+		size = 12;
+		slant = Graphics::kMacFontBold | Graphics::kMacFontItalic | Graphics::kMacFontOutline;
+		return true;
+	case kAboutFontHeaderSimple2:
+		id = Graphics::kMacFontChicago;
+		size = 12;
+		slant = Graphics::kMacFontBold | Graphics::kMacFontItalic | Graphics::kMacFontOutline;
+		return true;
+	default:
+		return MacGuiImpl::getFontParams(fontId, id, size, slant);
+	}
 }
 
 void MacMI1Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
@@ -196,7 +219,267 @@ bool MacMI1Gui::handleMenu(int id, Common::String &name) {
 }
 
 void MacMI1Gui::runAboutDialog() {
-	// TODO
+	switch (_vm->_game.id) {
+	case GID_MONKEY:
+		runAboutDialogMI1();
+		break;
+	case GID_MONKEY2:
+		runAboutDialogMI2();
+		break;
+	case GID_INDY4:
+		runAboutDialogIndy4();
+		break;
+	default:
+		break;
+	}
+}
+
+void MacMI1Gui::runAboutDialogMI1() {
+	int width = 416;
+	int height = 166;
+	int x = (640 - width) / 2;
+	int y = (400 - height) / 2;
+
+	Common::Rect bounds(x, y, x + width, y + height);
+	MacDialogWindow *window = createWindow(bounds);
+//	Graphics::Surface *lucasArts = loadPict(5000);
+//	Graphics::Surface *monkeys = loadPict(5001);
+
+	Graphics::Surface *s = window->innerSurface();
+
+	const TextLine page3[] = {
+		{ 0, 68, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[114].c_str() }, // "PRESENTS"
+		TEXT_END_MARKER
+	};
+
+	const TextLine page12[] = {
+		{ 0, 0, kStyleHeaderSimple1, Graphics::kTextAlignLeft, _strsStrings[115].c_str() }, // "The Secret"
+		{ 87, 13, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[117].c_str() }, // "of"
+		{ 40, 26, kStyleHeaderSimple1, Graphics::kTextAlignLeft, _strsStrings[116].c_str() }, // "Monkey Island(TM)"
+		{ 178, 120, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[118].c_str() }, // "TM & (C) 1990 LucasArts Entertainment Company."
+		{ 312, 133, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[119].c_str() }, // "All rights reserved."
+		TEXT_END_MARKER
+	};
+
+	const TextLine page13[] = {
+		{ 0, 47, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[120].c_str() }, // "Macintosh version by"
+		{ 50, 62, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[121].c_str() }, // "Eric Johnston"
+		TEXT_END_MARKER
+	};
+
+	const TextLine page14[] = {
+		{ 85, 32, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[122].c_str() }, // "Created by"
+		{ 60, 47, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[124].c_str() }, // "Ron Gilbert"
+		{ 39, 70, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[123].c_str() }, // "Macintosh Version Produced by"
+		{ 47, 85, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[125].c_str() }, // "Brenna Holden"
+		TEXT_END_MARKER
+	};
+
+	const TextLine page15[] = {
+		{ 59, 27, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[126].c_str() }, // "SCUMM Story System"
+		{ 85, 37, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[127].c_str() }, // "created by"
+		{ 35, 57, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[129].c_str() }, // "Ron Gilbert"
+		{ 102, 72, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[128].c_str() }, // "and"
+		{ 59, 87, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[130].c_str() }, // "Aric Wilmunder"
+		TEXT_END_MARKER
+	};
+
+	const TextLine page16[] = {
+		{ 29, 37, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[131].c_str() }, // "Stumped? Hint books are available"
+		{ 15, 55, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[134].c_str() }, // "In the U.S. call"
+		{ 89, 55, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[132].c_str() }, // "1 (800) STAR-WARS"
+		{ 89, 65, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[136].c_str() }, // "that's 1 (800)782-7927"
+		{ 19, 85, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[135].c_str() }, // "In Canada call"
+		{ 89, 85, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[133].c_str() }, // "1 (800) 828-7927"
+		TEXT_END_MARKER
+	};
+
+	const TextLine page17[] = {
+		{ 27, 32, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[137].c_str() }, // "Need a hint NOW?  Having problems?"
+		{ 6, 47, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[140].c_str() }, // "For technical support call"
+		{ 130, 47, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[138].c_str() }, // "1 (415) 721-3333"
+		{ 62, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[141].c_str() }, // "For hints call"
+		{ 130, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[139].c_str() }, // "1 (900) 740-JEDI"
+		{ 5, 72, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[142].c_str() }, // "The charge for the hint line is 75\xA2 per minute."
+		{ 10, 82, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[143].c_str() }, // "(You must have your parents' permission to"
+		{ 25, 92, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[144].c_str() }, // "call this number if you are under 18.)"
+		TEXT_END_MARKER
+	};
+
+	struct AboutPage {
+		const TextLine *text;
+		int drawArea;
+		uint32 delayMs;
+	};
+
+	AboutPage aboutPages[] = {
+		{ nullptr, 0,  3600 },
+		{ nullptr, 0,   100 },
+		{ nullptr, 0,   100 },
+		{ page3,   0,  2100 },
+		{ nullptr, 0,   300 },
+		{ nullptr, 0,   400 },
+		{ nullptr, 0,   400 },
+		{ nullptr, 0,   300 },
+		{ nullptr, 0,   400 },
+		{ nullptr, 0,   100 },
+		{ nullptr, 0,   100 },
+		{ nullptr, 0,   600 },
+		{ page12,  1,  7000 },
+		{ page13,  2,  4300 },
+		{ page14,  2,  4200 },
+		{ page15,  2,  4200 },
+		{ page16,  2, 14000 },
+		{ page17,  2,     0 }
+	};
+
+	Common::Rect drawAreas[] = {
+		Common::Rect(2, 2, s->w - 2, s->h - 2),
+		Common::Rect(0, 7, s->w, s->h - 2),
+		Common::Rect(176, 10, 394, 144)
+	};
+
+	// We probably can't trust our ellipse drawing function to get pixel
+	// perfect shadows, so at least for now we define our own. Note that
+	// all of the shadows have an even height. The bottom half is just a
+	// mirror of the top half.
+
+	Common::Pair<int, int> shadow1[] = {
+		Common::Pair<int, int>(0, 10)
+	};
+
+	Common::Pair<int, int> shadow2[] = {
+		Common::Pair<int, int>(4, 21),
+		Common::Pair<int, int>(0, 30)
+	};
+
+	Common::Pair<int, int> shadow3[] = {
+		Common::Pair<int, int>(13, 34),
+		Common::Pair<int, int>(4, 52),
+		Common::Pair<int, int>(0, 60),
+	};
+
+	Common::Pair<int, int> shadow4[] = {
+		Common::Pair<int, int>(25, 50),
+		Common::Pair<int, int>(10, 80),
+		Common::Pair<int, int>(3, 94),
+		Common::Pair<int, int>(0, 100)
+	};
+
+	Common::Pair<int, int> shadow5[] = {
+		Common::Pair<int, int>(41, 67),
+		Common::Pair<int, int>(21, 108),
+		Common::Pair<int, int>(10, 130),
+		Common::Pair<int, int>(3, 144),
+		Common::Pair<int, int>(0, 150)
+	};
+
+	bool allowMegaSkip = false;
+	bool megaSkip = false;
+	int page = 0;
+
+	window->show();
+
+	while (!_vm->shouldQuit() && page < ARRAYSIZE(aboutPages)) {
+		Common::Rect &drawArea = drawAreas[aboutPages[page].drawArea];
+
+		switch (page) {
+		case 0:
+			s->fillRect(drawArea, kBlack);
+			break;
+		case 1:
+			window->fillPattern(drawArea, 0xD7D7, false, true);
+			break;
+		case 2:
+			s->fillRect(drawArea, kWhite);
+			break;
+		case 4:
+			allowMegaSkip = true;
+			s->fillRect(drawArea, kWhite);
+			drawShadow(s, 77, 141, 2 * ARRAYSIZE(shadow1), shadow1);
+			break;
+		case 5:
+			drawShadow(s, 67, 140, 2 * ARRAYSIZE(shadow2), shadow2);
+			break;
+		case 6:
+			drawShadow(s, 52, 139, 2 * ARRAYSIZE(shadow3), shadow3);
+			break;
+		case 7:
+			drawShadow(s, 32, 138, 2 * ARRAYSIZE(shadow4), shadow4);
+			break;
+		case 8:
+			drawShadow(s, 7, 137, 2 * ARRAYSIZE(shadow5), shadow5);
+			break;
+		case 9:
+			// Monkeys
+			break;
+		case 10:
+			// Monkeys
+			break;
+		case 11:
+			// Monkeys (shadow still barely visible)
+			allowMegaSkip = megaSkip = false;
+			break;
+		case 13:
+			s->fillRect(Common::Rect(178, 127, s->w, s->h), kWhite);
+			window->markRectAsDirty(Common::Rect(178, 127, s->w, s->h));
+			break;
+		default:
+			break;
+		}
+
+		if (aboutPages[page].text) {
+			if (aboutPages[page].drawArea == 2) {
+				window->drawTextBox(drawArea, aboutPages[page].text);
+			} else {
+				s->fillRect(drawArea, kWhite);
+				window->drawTexts(drawArea, aboutPages[page].text);
+			}
+		}
+
+		if (aboutPages[page].drawArea != 2)
+			window->markRectAsDirty(drawArea);
+
+		window->update();
+
+		uint32 ms = megaSkip ? 100 : aboutPages[page].delayMs;
+
+		if (delay(ms) == kDelayInterrupted && allowMegaSkip)
+			megaSkip = true;
+
+		page++;
+	}
+
+//	delete lucasArts;
+//	delete monkeys;
+	delete window;
+}
+
+void MacMI1Gui::drawShadow(Graphics::Surface *s, int x, int y, int h, Common::Pair<int, int> *drawData) {
+	int y1 = y;
+	int y2 = y + h - 1;
+
+	for (int i = 0; i < h / 2; i++) {
+		int x1 = x + drawData[i].first;
+		for (int j = 0; j < drawData[i].second; j++) {
+			if ((x1 + y1) & 1) {
+				s->setPixel(x1, y1, kWhite);
+				s->setPixel(x1, y2, kBlack);
+			} else {
+				s->setPixel(x1, y1, kBlack);
+				s->setPixel(x1, y2, kWhite);
+			}
+			x1++;
+		}
+		y1++;
+		y2--;
+	}
+}
+
+void MacMI1Gui::runAboutDialogMI2() {
+}
+
+void MacMI1Gui::runAboutDialogIndy4() {
 }
 
 // A standard file picker dialog doesn't really make sense in ScummVM, so we

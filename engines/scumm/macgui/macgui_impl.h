@@ -106,6 +106,8 @@ protected:
 		kAboutFontExtraBold,
 		kAboutFontHeaderInside,
 		kAboutFontHeaderOutside,
+		kAboutFontHeaderSimple1,
+		kAboutFontHeaderSimple2,
 
 		kIndy3FontSmall,
 		kIndy3FontMedium,
@@ -120,6 +122,8 @@ protected:
 
 	enum TextStyle {
 		kStyleHeader,
+		kStyleHeaderSimple1,
+		kStyleHeaderSimple2,
 		kStyleBold,
 		kStyleExtraBold,
 		kStyleRegular
@@ -654,7 +658,7 @@ public:
 		static void plotPatternDarkenOnly(int x, int y, int pattern, void *data);
 
 		void drawDottedHLine(int x0, int y, int x1);
-		void fillPattern(Common::Rect r, uint16 pattern);
+		void fillPattern(Common::Rect r, uint16 pattern, bool fillBlack = true, bool fillWhite = true);
 		void drawSprite(const Graphics::Surface *sprite, int x, int y);
 		void drawSprite(const Graphics::Surface *sprite, int x, int y, Common::Rect clipRect);
 		void drawTexts(Common::Rect r, const TextLine *lines);
