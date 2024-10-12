@@ -68,63 +68,206 @@ void MacMI1Gui::readStrings() {
 	// Most of these are debug strings. We parse the entire STRS block anyway,
 	// for any future need.
 
-	// Debug strings
-	for (int i = 0; i < 93; i++) {
+	if (_vm->_game.id == GID_MONKEY) {
+		// Debug strings
+		for (int i = 0; i < 93; i++) {
+			_strsStrings.emplace_back(readCString(strsData));
+		}
+
+		// "\x14", "About Monkey Island...<B;(-"
+		for (int i = 0; i < 2; i++) {
+			_strsStrings.emplace_back(readPascalString(strsData));
+		}
+
+		// "Are you sure you want to quit?", "Are you sure you want to quit?",
+		// "Are you sure you want to restart this game from the beginning?",
+		// "Are you sure you want to quit?"
+		for (int i = 0; i < 4; i++) {
+			_strsStrings.emplace_back(readCString(strsData));
+		}
+
+		// "macPixHead is NULL", "Monkey Island"
+		for (int i = 0; i < 2; i++) {
+			_strsStrings.emplace_back(readPascalString(strsData));
+		}
+
+		// "CopyBits error:"
 		_strsStrings.emplace_back(readCString(strsData));
-	}
 
-	// "\x14", "About Monkey Island...<B;(-"
-	for (int i = 0; i < 2; i++) {
-		_strsStrings.emplace_back(readPascalString(strsData));
-	}
+		// "Open Game File...", "Save Game File as..." "Game file"
+		for (int i = 0; i < 3; i++) {
+			_strsStrings.emplace_back(readPascalString(strsData));
+		}
 
-	// "Are you sure you want to quit?", "Are you sure you want to quit?",
-	// "Are you sure you want to restart this game from the beginning?",
-	// "Are you sure you want to quit?"
-	for (int i = 0; i < 4; i++) {
+		// "This disk is full.  The game was not saved."
 		_strsStrings.emplace_back(readCString(strsData));
-	}
 
-	// "macPixHead is NULL", "Monkey Island"
-	for (int i = 0; i < 2; i++) {
-		_strsStrings.emplace_back(readPascalString(strsData));
-	}
-
-	// "CopyBits error:"
-	_strsStrings.emplace_back(readCString(strsData));
-
-	// "Open Game File...", "Save Game File as..." "Game file"
-	for (int i = 0; i < 3; i++) {
-		_strsStrings.emplace_back(readPascalString(strsData));
-	}
-
-	// "This disk is full.  The game was not saved."
-	_strsStrings.emplace_back(readCString(strsData));
-
-	// "An error occured while saving.  The game was not saved.  Please try saving the game to another disk."
-	_strsStrings.emplace_back(readCString(strsData));
-
-	// "At this size, you will not be able to fit the whole game on your screen."
-	_strsStrings.emplace_back(readCString(strsData));
-
-	// Debug strings
-	for (int i = 0; i < 3; i++) {
+		// "An error occured while saving.  The game was not saved.  Please try saving the game to another disk."
 		_strsStrings.emplace_back(readCString(strsData));
-	}
 
-	for (int i = 0; i < 2; i++) {
-		_strsStrings.emplace_back(readPascalString(strsData));
-	}
-
-	// All the "About" dialog strings
-	for (int i = 0; i < 32; i++) {
-		_strsStrings.emplace_back(readPascalString(strsData));
-	}
-
-	// Remaining debug strings
-	for (int i = 0; i < 75; i++) {
+		// "At this size, you will not be able to fit the whole game on your screen."
 		_strsStrings.emplace_back(readCString(strsData));
-	}
+
+		// Debug strings
+		for (int i = 0; i < 3; i++) {
+			_strsStrings.emplace_back(readCString(strsData));
+		}
+
+		for (int i = 0; i < 2; i++) {
+			_strsStrings.emplace_back(readPascalString(strsData));
+		}
+
+		// All the "About" dialog strings
+		for (int i = 0; i < 32; i++) {
+			_strsStrings.emplace_back(readPascalString(strsData));
+		}
+
+		// Remaining debug strings
+		for (int i = 0; i < 75; i++) {
+			_strsStrings.emplace_back(readCString(strsData));
+		}
+	} else if (_vm->_game.id == GID_MONKEY2) {
+		// Debug strings
+		for (int i = 0; i < 93; i++) {
+			_strsStrings.emplace_back(readCString(strsData));
+		}
+
+		// "\x14", "About Monkey Island 2...<B;(-"
+		for (int i = 0; i < 2; i++) {
+			_strsStrings.emplace_back(readPascalString(strsData));
+		}
+
+		// "Are you sure you want to quit?",
+		// "Warning: The 'rough' command will make your Mac screen look dangerously like a PC.  (eek!)",
+		// "Are you sure you want to quit?",
+		// "Are you sure you want to restart this game from the beginning?",
+		// "Are you sure you want to quit?"
+		for (int i = 0; i < 5; i++) {
+			_strsStrings.emplace_back(readCString(strsData));
+		}
+
+		// " macPixHead is NULL", "Monkey Island 2"
+		for (int i = 0; i < 2; i++) {
+			_strsStrings.emplace_back(readPascalString(strsData));
+		}
+
+		// "CopyBits error:"
+		_strsStrings.emplace_back(readCString(strsData));
+
+		// "Open Game File...", "Monkey2 temp", "Monkey2 temp", "Save Game File as...", "Game file"
+		for (int i = 0; i < 5; i++) {
+			_strsStrings.emplace_back(readPascalString(strsData));
+		}
+
+		// "This disk is full.  The game was not saved."
+		_strsStrings.emplace_back(readCString(strsData));
+
+		// "An error occured while saving.  The game was not saved.  Please try saving the game to another disk."
+		_strsStrings.emplace_back(readCString(strsData));
+
+		// "At this size, you will not be able to fit the whole game on your screen."
+		_strsStrings.emplace_back(readCString(strsData));
+
+		// Debug strings
+		for (int i = 0; i < 3; i++) {
+			_strsStrings.emplace_back(readCString(strsData));
+		}
+
+		for (int i = 0; i < 2; i++) {
+			_strsStrings.emplace_back(readPascalString(strsData));
+		}
+
+		// All the "About" dialog strings
+		for (int i = 0; i < 40; i++) {
+			_strsStrings.emplace_back(readPascalString(strsData));
+		}
+
+		// More debug strings...
+		for (int i = 0; i < 95; i++) {
+			_strsStrings.emplace_back(readCString(strsData));
+		}
+	} else if (_vm->_game.id == GID_INDY4) {
+		bool isFloppyVersion = _vm->_game.variant && !strcmp(_vm->_game.variant, "Floppy");
+
+		// Debug strings
+		for (int i = 0; i < (isFloppyVersion ? 93 : 144); i++) {
+			_strsStrings.emplace_back(readCString(strsData));
+		}
+
+		if (!isFloppyVersion) {
+			_strsStrings.emplace_back(readPascalString(strsData));
+
+			for (int i = 0; i < 2; i++) {
+				_strsStrings.emplace_back(readCString(strsData));
+			}
+
+			for (int i = 0; i < 10; i++) {
+				_strsStrings.emplace_back(readPascalString(strsData));
+			}
+
+			for (int i = 0; i < 51; i++) {
+				_strsStrings.emplace_back(readCString(strsData));
+			}
+		}
+
+		// "\x14", "About Indy Atlantis...<B;(-"
+		for (int i = 0; i < 2; i++) {
+			_strsStrings.emplace_back(readPascalString(strsData));
+		}
+
+		if (!isFloppyVersion) {
+			// "Indy Temp", "Indy Temp"
+			for (int i = 0; i < 2; i++) {
+				_strsStrings.emplace_back(readPascalString(strsData));
+			}
+		}
+
+		// "Are you sure you want to quit?",
+		// "Warning: The 'rough' command will make your Mac screen look dangerously like a PC.  (eek!)",
+		// "Are you sure you want to quit?",
+		// "Are you sure you want to restart this game from the beginning?",
+		// "Are you sure you want to quit?"
+		for (int i = 0; i < 5; i++) {
+			_strsStrings.emplace_back(readCString(strsData));
+		}
+
+		// " macPixHead is NULL", "Indy Atlantis"
+		for (int i = 0; i < 2; i++) {
+			_strsStrings.emplace_back(readPascalString(strsData));
+		}
+
+		// "CopyBits error:"
+		_strsStrings.emplace_back(readCString(strsData));
+
+		// "Open Game File...", "Indy Atlantis IQ Points", "Indy Atlantis IQ Points",
+		// "Indy Temp", "Indy Temp", "Save Game File as...", "Game file"
+		for (int i = 0; i < 7; i++) {
+			_strsStrings.emplace_back(readPascalString(strsData));
+		}
+
+		// "This disk is full.  The game was not saved."
+		_strsStrings.emplace_back(readCString(strsData));
+
+		// "An error occured while saving.  The game was not saved.  Please try saving the game to another disk."
+		_strsStrings.emplace_back(readCString(strsData));
+
+		// "At this size, you will not be able to fit the whole game on your screen."
+		_strsStrings.emplace_back(readCString(strsData));
+
+		// Debug strings
+		for (int i = 0; i < 3; i++) {
+			_strsStrings.emplace_back(readCString(strsData));
+		}
+
+		for (int i = 0; i < 2; i++) {
+			_strsStrings.emplace_back(readPascalString(strsData));
+		}
+
+		// All the "About" dialog strings
+		for (int i = 0; i < (isFloppyVersion ? 38 : 37); i++) {
+			_strsStrings.emplace_back(readPascalString(strsData));
+		}
+	} 
 
 	free(strsBlock);
 	delete strsStream;
