@@ -53,7 +53,7 @@ XMeshOpenGLShader::~XMeshOpenGLShader() {
 
 bool XMeshOpenGLShader::loadFromXData(const Common::String &filename, XFileData *xobj) {
 	if (XMesh::loadFromXData(filename, xobj)) {
-		auto indexData = _blendedMesh->getIndexBuffer().ptr();
+		uint32 *indexData = (uint32 *)_blendedMesh->getIndexBuffer().ptr();
 		uint32 indexDataSize = _blendedMesh->getIndexBuffer().size() / sizeof(uint32);
 		float *vertexData = _blendedMesh->_meshLoader->_vertexData;
 		uint32 vertexCount = _blendedMesh->_meshLoader->_vertexCount;

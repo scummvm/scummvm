@@ -52,7 +52,7 @@ bool XMeshOpenGL::render(XModel *model) {
 		return false;
 
 	float *vertexData = _blendedMesh->_meshLoader->_vertexData;
-	auto indexData = (uint32 *)_blendedMesh->getIndexBuffer().ptr();
+	uint32 *indexData = (uint32 *)_blendedMesh->getIndexBuffer().ptr();
 	if (vertexData == nullptr) {
 		return false;
 	}

@@ -340,7 +340,7 @@ bool XMesh::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const
 
 	uint32 numEdges = 0;
 
-	auto indexData = (uint32 *)_blendedMesh->getIndexBuffer().ptr();
+	uint32 *indexData = (uint32 *)_blendedMesh->getIndexBuffer().ptr();
 	uint32 indexDataSize = _blendedMesh->getIndexBuffer().size() / sizeof(uint32);
 	Common::Array<bool> isFront(indexDataSize / 3, false);
 
@@ -429,7 +429,7 @@ bool XMesh::pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir) {
 
 	bool res = false;
 
-	auto indexData = _blendedMesh->getIndexBuffer().ptr();
+	uint32 *indexData = (uint32 *)_blendedMesh->getIndexBuffer().ptr();
 	uint32 indexDataSize = _blendedMesh->getIndexBuffer().size() / sizeof(uint32);
 	for (uint16 i = 0; i < indexDataSize; i += 3) {
 		uint16 index1 = indexData[i + 0];
