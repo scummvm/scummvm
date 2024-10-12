@@ -144,26 +144,26 @@ void Room801::init() {
 }
 
 void Room801::pre_parser() {
-	player_said("take", nullptr, nullptr);
+	player_said("take");
 	bool lookCheck = false;
-	if (player_said("look", nullptr, nullptr) || player_said("look at", nullptr, nullptr)) {
+	if (player_said("look") || player_said("look at")) {
 		lookCheck = true;
 	}
 
-	if (player_said("push", nullptr, nullptr) || player_said("pull", nullptr, nullptr)
-		|| player_said("gear", nullptr, nullptr) || player_said("open", nullptr, nullptr)) {
-		player_said("close", nullptr, nullptr);
+	if (player_said("push") || player_said("pull")
+		|| player_said("gear") || player_said("open")) {
+		player_said("close");
 	}
 
-	player_said("go", nullptr, nullptr);
-	if (lookCheck && player_said("farm", nullptr, nullptr)) {
+	player_said("go");
+	if (lookCheck && player_said("farm")) {
 		digi_play("801R23", 1, 255, -1, -1);
 		_G(player).need_to_walk = false;
 		_G(player).ready_to_walk = true;
 		_G(player).waiting_for_walk = false;
 	}
 
-	if (lookCheck && player_said(" ", nullptr, nullptr)) {
+	if (lookCheck && player_said(" ")) {
 		_G(player).need_to_walk = false;
 		_G(player).ready_to_walk = true;
 		_G(player).waiting_for_walk = false;
@@ -177,27 +177,27 @@ void Room801::parser() {
 	bool talkFl = false;
 	bool goFl = false;
 
-	if (player_said("look", nullptr, nullptr) || player_said("look at", nullptr, nullptr)) {
+	if (player_said("look") || player_said("look at")) {
 		lookFl = true;
 	}
 
-	if (player_said("talk", nullptr, nullptr) || player_said("talk TO", nullptr, nullptr)) {
+	if (player_said("talk") || player_said("talk TO")) {
 		talkFl = true;
 	}
 
-	if (player_said("take", nullptr, nullptr)) {
+	if (player_said("take")) {
 		takeFl = true;
 	}
 
-	if (player_said("gear", nullptr, nullptr)) {
+	if (player_said("gear")) {
 		gearFl = true;
 	}
 
-	if (player_said("go", nullptr, nullptr)) {
+	if (player_said("go")) {
 		goFl = true;
 	}
 
-	if (player_said("conv801a", nullptr, nullptr)) {
+	if (player_said("conv801a")) {
 		room801_conv801a();
 	}
 
