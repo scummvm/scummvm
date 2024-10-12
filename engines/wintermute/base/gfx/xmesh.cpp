@@ -186,17 +186,6 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 			}
 		}
 
-		// mirror at orign
-		currSkinWeights._offsetMatrix(2, 3) *= -1.0f;
-
-		// mirror base vectors
-		currSkinWeights._offsetMatrix(2, 0) *= -1.0f;
-		currSkinWeights._offsetMatrix(2, 1) *= -1.0f;
-
-		// change handedness
-		currSkinWeights._offsetMatrix(0, 2) *= -1.0f;
-		currSkinWeights._offsetMatrix(1, 2) *= -1.0f;
-
 		meshLoader->_skinWeightsList.push_back(currSkinWeights);
 	}
 

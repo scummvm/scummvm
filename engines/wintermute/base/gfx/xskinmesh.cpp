@@ -556,6 +556,18 @@ bool DXSkinInfo::setBoneOffsetMatrix(uint32 boneIdx, const float *boneTransform)
 	for (int m = 0; m < 16; m++) {
 		_bones[boneIdx]._transform._m4x4[m] = boneTransform[m];
 	}
+
+	// mirror at orign
+	_bones[boneIdx]._transform._m[3][2] *= -1.0f;
+
+	// mirror base vectors
+	_bones[boneIdx]._transform._m[0][2] *= -1.0f;
+	_bones[boneIdx]._transform._m[1][2] *= -1.0f;
+
+	// change handedness
+	_bones[boneIdx]._transform._m[2][0] *= -1.0f;
+	_bones[boneIdx]._transform._m[2][1] *= -1.0f;
+
 	return true;
 }
 
