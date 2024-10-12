@@ -416,7 +416,7 @@ static void sceneDetailsWindows(TwinEEngine *engine) {
 		ImGui::SameLine();
 		ImGuiEx::Boolean(scene->_flagClimbing);
 
-		ImGuiEx::InputInt("Currently followed actor", &scene->_currentlyFollowedActor);
+		ImGuiEx::InputInt("Currently followed actor", &scene->_numObjFollow);
 
 		ImGui::Checkbox("Enable enhancements", &scene->_enableEnhancements);
 		ImGui::Checkbox("Render grid tiles", &scene->_enableGridTileRendering);

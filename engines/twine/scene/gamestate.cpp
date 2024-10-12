@@ -136,7 +136,7 @@ void GameState::initEngineVars() {
 	setChapter(0);
 
 	_engine->_scene->_sceneTextBank = TextBankId::Options_and_menus;
-	_engine->_scene->_currentlyFollowedActor = OWN_ACTOR_SCENE_INDEX;
+	_engine->_scene->_numObjFollow = OWN_ACTOR_SCENE_INDEX;
 	_engine->_actor->_heroBehaviour = HeroBehaviourType::kNormal;
 	_engine->_actor->_previousHeroAngle = 0;
 	_engine->_actor->_previousHeroBehaviour = HeroBehaviourType::kNormal;
@@ -333,15 +333,15 @@ void GameState::doFoundObj(InventoryItems item) {
 
 	// Hide hero in scene
 	_engine->_scene->_sceneHero->_staticFlags.bIsInvisible = 1;
-	_engine->_redraw->redrawEngineActions(true);
+	_engine->_redraw->drawScene(true);
 	_engine->_scene->_sceneHero->_staticFlags.bIsInvisible = 0;
 
 	_engine->saveFrontBuffer();
 
 	IVec3 itemCamera;
-	itemCamera.x = _engine->_grid->_newCamera.x * SIZE_BRICK_XZ;
-	itemCamera.y = _engine->_grid->_newCamera.y * SIZE_BRICK_Y;
-	itemCamera.z = _engine->_grid->_newCamera.z * SIZE_BRICK_XZ;
+	itemCamera.x = _engine->_grid->_startCube.x * SIZE_BRICK_XZ;
+	itemCamera.y = _engine->_grid->_startCube.y * SIZE_BRICK_Y;
+	itemCamera.z = _engine->_grid->_startCube.z * SIZE_BRICK_XZ;
 
 	BodyData &bodyData = _engine->_scene->_sceneHero->_entityDataPtr->getBody(_engine->_scene->_sceneHero->_body);
 	const IVec3 bodyPos = _engine->_scene->_sceneHero->_posObj - itemCamera;
@@ -509,7 +509,7 @@ void GameState::processGameoverAnimation() {
 	_engine->testRestoreModeSVGA(false);
 	// workaround to fix hero redraw after drowning
 	_engine->_scene->_sceneHero->_staticFlags.bIsInvisible = 1;
-	_engine->_redraw->redrawEngineActions(true);
+	_engine->_redraw->drawScene(true);
 	_engine->_scene->_sceneHero->_staticFlags.bIsInvisible = 0;
 
 	// TODO: inSceneryView

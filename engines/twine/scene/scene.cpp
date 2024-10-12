@@ -629,9 +629,9 @@ void Scene::changeCube() {
 	}
 
 	_engine->_gameState->_inventoryNumKeys = 0;
-	_engine->_disableScreenRecenter = false;
+	_engine->_cameraZone = false;
 
-	ActorStruct *followedActor = getActor(_currentlyFollowedActor);
+	ActorStruct *followedActor = getActor(_numObjFollow);
 	_engine->_grid->centerOnActor(followedActor);
 
 	_engine->_gameState->_magicBall = -1;
@@ -784,12 +784,12 @@ void Scene::checkZoneSce(int32 actorIdx) {
 				}
 				break;
 			case ZoneType::kCamera:
-				if (_currentlyFollowedActor == actorIdx && !_engine->_debugState->_useFreeCamera) {
-					_engine->_disableScreenRecenter = true;
-					if (_engine->_grid->_newCamera.x != zone->infoData.CameraView.x || _engine->_grid->_newCamera.y != zone->infoData.CameraView.y || _engine->_grid->_newCamera.z != zone->infoData.CameraView.z) {
-						_engine->_grid->_newCamera.x = zone->infoData.CameraView.x;
-						_engine->_grid->_newCamera.y = zone->infoData.CameraView.y;
-						_engine->_grid->_newCamera.z = zone->infoData.CameraView.z;
+				if (_numObjFollow == actorIdx && !_engine->_debugState->_useFreeCamera) {
+					_engine->_cameraZone = true;
+					if (_engine->_grid->_startCube.x != zone->infoData.CameraView.x || _engine->_grid->_startCube.y != zone->infoData.CameraView.y || _engine->_grid->_startCube.z != zone->infoData.CameraView.z) {
+						_engine->_grid->_startCube.x = zone->infoData.CameraView.x;
+						_engine->_grid->_startCube.y = zone->infoData.CameraView.y;
+						_engine->_grid->_startCube.z = zone->infoData.CameraView.z;
 						_engine->_redraw->_firstTime = true;
 					}
 				}
@@ -798,7 +798,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 				actor->_zoneSce = zone->num;
 				break;
 			case ZoneType::kGrid:
-				if (_currentlyFollowedActor == actorIdx) {
+				if (_numObjFollow == actorIdx) {
 					tmpCellingGrid = true;
 					if (_engine->_grid->_useCellingGrid != zone->num) {
 						if (zone->num != -1) {
@@ -827,7 +827,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 					_talkingActor = actorIdx;
 					_engine->_text->drawTextProgressive((TextId)zone->num);
 					_engine->restoreTimer();
-					_engine->_redraw->redrawEngineActions(true);
+					_engine->_redraw->drawScene(true);
 				}
 				break;
 			case ZoneType::kLadder:
@@ -852,7 +852,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 		}
 	}
 
-	if (!tmpCellingGrid && actorIdx == _currentlyFollowedActor && _engine->_grid->_useCellingGrid != -1) {
+	if (!tmpCellingGrid && actorIdx == _numObjFollow && _engine->_grid->_useCellingGrid != -1) {
 		_engine->_grid->_useCellingGrid = -1;
 		_engine->_grid->_cellingGridIdx = -1;
 		_engine->_grid->copyMapToCube();

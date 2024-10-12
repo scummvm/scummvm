@@ -630,7 +630,7 @@ void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y,
 	int32 brickPixelPosX = 0;
 	int32 brickPixelPosY = 0;
 
-	getBrickPos(x - _newCamera.x, y - _newCamera.y, z - _newCamera.z, brickPixelPosX, brickPixelPosY);
+	getBrickPos(x - _startCube.x, y - _startCube.y, z - _startCube.z, brickPixelPosX, brickPixelPosY);
 
 	if (brickPixelPosX < -24) {
 		return;
@@ -670,9 +670,9 @@ void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y,
 }
 
 void Grid::redrawGrid() { // AffGrille
-	_worldCube.x = _newCamera.x * SIZE_BRICK_XZ;
-	_worldCube.y = _newCamera.y * SIZE_BRICK_Y;
-	_worldCube.z = _newCamera.z * SIZE_BRICK_XZ;
+	_worldCube.x = _startCube.x * SIZE_BRICK_XZ;
+	_worldCube.y = _startCube.y * SIZE_BRICK_Y;
+	_worldCube.z = _startCube.z * SIZE_BRICK_XZ;
 
 	memset(_brickInfoBuffer, 0, _brickInfoBufferSize);
 
@@ -831,36 +831,36 @@ uint8 Grid::worldCodeBrick(int32 x, int32 y, int32 z) {
 }
 
 void Grid::centerOnActor(const ActorStruct* actor) {
-	_newCamera.x = (actor->_posObj.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
-	_newCamera.y = (actor->_posObj.y + SIZE_BRICK_Y) / SIZE_BRICK_Y;
-	_newCamera.z = (actor->_posObj.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
+	_startCube.x = (actor->_posObj.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
+	_startCube.y = (actor->_posObj.y + SIZE_BRICK_Y) / SIZE_BRICK_Y;
+	_startCube.z = (actor->_posObj.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
 	_engine->_redraw->_firstTime = true;
 }
 
 void Grid::centerScreenOnActor() {
-	if (_engine->_disableScreenRecenter) {
+	if (_engine->_cameraZone) {
 		return;
 	}
 	if (_engine->_debugState->_useFreeCamera) {
 		return;
 	}
 
-	ActorStruct *actor = _engine->_scene->getActor(_engine->_scene->_currentlyFollowedActor);
-	const IVec3 projPos = _engine->_renderer->projectPoint(actor->_posObj.x - (_newCamera.x * SIZE_BRICK_XZ),
-	                                   actor->_posObj.y - (_newCamera.y * SIZE_BRICK_Y),
-	                                   actor->_posObj.z - (_newCamera.z * SIZE_BRICK_XZ));
+	ActorStruct *actor = _engine->_scene->getActor(_engine->_scene->_numObjFollow);
+	const IVec3 projPos = _engine->_renderer->projectPoint(actor->_posObj.x - (_startCube.x * SIZE_BRICK_XZ),
+	                                   actor->_posObj.y - (_startCube.y * SIZE_BRICK_Y),
+	                                   actor->_posObj.z - (_startCube.z * SIZE_BRICK_XZ));
 	// TODO: these border values should get scaled for higher resolutions
 	if (projPos.x < 80 || projPos.x >= _engine->width() - 60 || projPos.y < 80 || projPos.y >= _engine->height() - 50) {
-		_newCamera.x = ((actor->_posObj.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ) + (((actor->_posObj.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ) - _newCamera.x) / 2;
-		_newCamera.y = actor->_posObj.y / SIZE_BRICK_Y;
-		_newCamera.z = ((actor->_posObj.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ) + (((actor->_posObj.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ) - _newCamera.z) / 2;
+		_startCube.x = ((actor->_posObj.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ) + (((actor->_posObj.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ) - _startCube.x) / 2;
+		_startCube.y = actor->_posObj.y / SIZE_BRICK_Y;
+		_startCube.z = ((actor->_posObj.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ) + (((actor->_posObj.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ) - _startCube.z) / 2;
 
-		if (_newCamera.x >= SIZE_CUBE_X) {
-			_newCamera.x = SIZE_CUBE_X - 1;
+		if (_startCube.x >= SIZE_CUBE_X) {
+			_startCube.x = SIZE_CUBE_X - 1;
 		}
 
-		if (_newCamera.z >= SIZE_CUBE_Z) {
-			_newCamera.z = SIZE_CUBE_Z - 1;
+		if (_startCube.z >= SIZE_CUBE_Z) {
+			_startCube.z = SIZE_CUBE_Z - 1;
 		}
 
 		_engine->_redraw->_firstTime = true;

@@ -935,7 +935,7 @@ int32 ScriptLife::lMESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 			engine->unlockAchievement("LBA_ACH_008");
 		}
 	}
-	engine->_redraw->redrawEngineActions(true);
+	engine->_redraw->drawScene(true);
 	engine->restoreTimer();
 	return 0;
 }
@@ -997,10 +997,10 @@ int32 ScriptLife::lSET_DIRMODE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) 
 int32 ScriptLife::lCAM_FOLLOW(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 followedActorIdx = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::CAM_FOLLOW(%i)", (int)followedActorIdx);
-	if (engine->_scene->_currentlyFollowedActor != followedActorIdx) {
+	if (engine->_scene->_numObjFollow != followedActorIdx) {
 		const ActorStruct *followedActor = engine->_scene->getActor(followedActorIdx);
 		engine->_grid->centerOnActor(followedActor);
-		engine->_scene->_currentlyFollowedActor = followedActorIdx;
+		engine->_scene->_numObjFollow = followedActorIdx;
 	}
 
 	return 0;
@@ -1202,7 +1202,7 @@ int32 ScriptLife::lMESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_scene->_talkingActor = otherActorIdx;
 	engine->_text->drawTextProgressive(textIdx);
 	engine->restoreTimer();
-	engine->_redraw->redrawEngineActions(true);
+	engine->_redraw->drawScene(true);
 
 	return 0;
 }
@@ -1230,7 +1230,7 @@ int32 ScriptLife::lFOUND_OBJECT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->testRestoreModeSVGA(true);
 	engine->_gameState->doFoundObj(item);
 	engine->restoreTimer();
-	engine->_redraw->redrawEngineActions(true);
+	engine->_redraw->drawScene(true);
 
 	return 0;
 }
@@ -1589,7 +1589,7 @@ int32 ScriptLife::lASK_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_gameState->gameAskChoice(choiceIdx);
 	engine->_gameState->_gameNbChoices = 0;
 	engine->restoreTimer();
-	engine->_redraw->redrawEngineActions(true);
+	engine->_redraw->drawScene(true);
 
 	return 0;
 }
@@ -1612,7 +1612,7 @@ int32 ScriptLife::lBIG_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_scene->_talkingActor = ctx.actorIdx;
 	engine->_text->drawTextProgressive(textIdx);
 	engine->_text->normalWinDial();
-	engine->_redraw->redrawEngineActions(true);
+	engine->_redraw->drawScene(true);
 	engine->restoreTimer();
 	return 0;
 }
@@ -1764,7 +1764,7 @@ int32 ScriptLife::lGRM_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
 		engine->_grid->_useCellingGrid = -1;
 		engine->_grid->_cellingGridIdx = -1;
 		engine->_grid->copyMapToCube();
-		engine->_redraw->redrawEngineActions(true);
+		engine->_redraw->drawScene(true);
 	}
 
 	return 0;
@@ -1887,7 +1887,7 @@ int32 ScriptLife::lASK_CHOICE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_gameState->gameAskChoice(choiceIdx);
 	engine->_gameState->_gameNbChoices = 0;
 	engine->restoreTimer();
-	engine->_redraw->redrawEngineActions(true);
+	engine->_redraw->drawScene(true);
 
 	return 0;
 }

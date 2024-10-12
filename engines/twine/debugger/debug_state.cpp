@@ -134,17 +134,17 @@ void DebugState::changeGridCamera() {
 	Redraw *redraw = _engine->_redraw;
 	Input *input = _engine->_input;
 	if (input->isActionActive(TwinEActionType::DebugGridCameraPressUp)) {
-		grid->_newCamera.z--;
+		grid->_startCube.z--;
 		redraw->_firstTime = true;
 	} else if (input->isActionActive(TwinEActionType::DebugGridCameraPressDown)) {
-		grid->_newCamera.z++;
+		grid->_startCube.z++;
 		redraw->_firstTime = true;
 	}
 	if (input->isActionActive(TwinEActionType::DebugGridCameraPressLeft)) {
-		grid->_newCamera.x--;
+		grid->_startCube.x--;
 		redraw->_firstTime = true;
 	} else if (input->isActionActive(TwinEActionType::DebugGridCameraPressRight)) {
-		grid->_newCamera.x++;
+		grid->_startCube.x++;
 		redraw->_firstTime = true;
 	}
 }

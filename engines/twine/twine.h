@@ -325,7 +325,7 @@ public:
 	bool _flagRain = false;
 
 	/** Disable screen recenter */
-	bool _disableScreenRecenter = false;
+	bool _cameraZone = false;
 
 	Graphics::ManagedSurface _imageBuffer;
 	/** Work video buffer */

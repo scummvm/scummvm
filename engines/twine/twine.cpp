@@ -668,7 +668,7 @@ void TwinEEngine::testRestoreModeSVGA(bool redraw) {
 	if (_redraw->_flagMCGA) {
 		extInitSvga();
 		if (redraw) {
-			_redraw->redrawEngineActions(redraw);
+			_redraw->drawScene(redraw);
 		}
 	}
 }
@@ -836,7 +836,7 @@ void TwinEEngine::processInventoryAction() {
 	}
 	case kiBonusList: {
 		restoreTimer();
-		_redraw->redrawEngineActions(true);
+		_redraw->drawScene(true);
 		saveTimer(false);
 		processBonusList();
 		break;
@@ -854,7 +854,7 @@ void TwinEEngine::processInventoryAction() {
 	}
 
 	restoreTimer();
-	_redraw->redrawEngineActions(true);
+	_redraw->drawScene(true);
 }
 
 int32 TwinEEngine::toSeconds(int x) const {
@@ -872,7 +872,7 @@ void TwinEEngine::processOptionsMenu() {
 	_scene->playSceneMusic();
 	_sound->resumeSamples();
 	restoreTimer();
-	_redraw->redrawEngineActions(true);
+	_redraw->drawScene(true);
 }
 
 bool TwinEEngine::runGameEngine() { // mainLoopInteration
@@ -927,12 +927,12 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			}
 			if (giveUp == 1) {
 				restoreTimer();
-				_redraw->redrawEngineActions(true);
+				_redraw->drawScene(true);
 				_sceneLoopState = SceneLoopState::ReturnToMenu;
 				return false;
 			}
 			restoreTimer();
-			_redraw->redrawEngineActions(true);
+			_redraw->drawScene(true);
 		}
 
 		if (_input->toggleActionIfActive(TwinEActionType::OptionsMenu)) {
@@ -976,7 +976,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			testRestoreModeSVGA(true);
 			_menu->processBehaviourMenu(behaviourMenu);
 			restoreTimer();
-			_redraw->redrawEngineActions(true);
+			_redraw->drawScene(true);
 		}
 
 		// use Proto-Pack
@@ -995,8 +995,8 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		// Recenter Screen
-		if (_input->toggleActionIfActive(TwinEActionType::RecenterScreenOnTwinsen) && !_disableScreenRecenter) {
-			const ActorStruct *currentlyFollowedActor = _scene->getActor(_scene->_currentlyFollowedActor);
+		if (_input->toggleActionIfActive(TwinEActionType::RecenterScreenOnTwinsen) && !_cameraZone) {
+			const ActorStruct *currentlyFollowedActor = _scene->getActor(_scene->_numObjFollow);
 			_grid->centerOnActor(currentlyFollowedActor);
 		}
 
@@ -1009,7 +1009,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			// see https://bugs.scummvm.org/ticket/14808
 			restoreTimer();
 			_screens->_flagFade = true;
-			_redraw->redrawEngineActions(true);
+			_redraw->drawScene(true);
 		}
 
 		// Process Pause
@@ -1033,7 +1033,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 				}
 			} while (!_input->toggleActionIfActive(TwinEActionType::Pause));
 			restoreTimer();
-			_redraw->redrawEngineActions(true);
+			_redraw->drawScene(true);
 		}
 
 		if (_input->toggleActionIfActive(TwinEActionType::SceneryZoom)) {
@@ -1053,7 +1053,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 	}
 
 	_movements->initRealValue(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_90, LBAAngles::ANGLE_1, &_realFalling);
-	_disableScreenRecenter = false;
+	_cameraZone = false;
 
 	_scene->processEnvironmentSound();
 
@@ -1206,12 +1206,12 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 	_grid->centerScreenOnActor();
 
-	_redraw->redrawEngineActions(_redraw->_firstTime);
+	_redraw->drawScene(_redraw->_firstTime);
 
 	// workaround to fix hero redraw after drowning
 	if (_actor->_cropBottomScreen && _redraw->_firstTime) {
 		_scene->_sceneHero->_staticFlags.bIsInvisible = 1;
-		_redraw->redrawEngineActions(true);
+		_redraw->drawScene(true);
 		_scene->_sceneHero->_staticFlags.bIsInvisible = 0;
 	}
 
@@ -1256,11 +1256,11 @@ bool TwinEEngine::delaySkip(uint32 time) {
 	return false;
 }
 
-void TwinEEngine::saveFrontBuffer() {
+void TwinEEngine::saveFrontBuffer() { // CopyScreen(Log, Screen)
 	_screens->copyScreen(_frontVideoBuffer, _workVideoBuffer);
 }
 
-void TwinEEngine::restoreFrontBuffer() {
+void TwinEEngine::restoreFrontBuffer() { // CopyScreen
 	_screens->copyScreen(_workVideoBuffer, _frontVideoBuffer);
 }
 

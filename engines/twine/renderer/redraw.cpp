@@ -313,7 +313,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool flagflip) {
 				drawList[drawListPos].num = 1;
 				drawListPos++;
 			}
-			if (_flagMCGA && n == _engine->_scene->_currentlyFollowedActor) {
+			if (_flagMCGA && n == _engine->_scene->_numObjFollow) {
 				_sceneryViewX = projPos.x;
 				_sceneryViewY = projPos.y;
 			}
@@ -872,7 +872,7 @@ void Redraw::renderText() {
 	addRedrawArea(redraw);
 }
 
-void Redraw::redrawEngineActions(bool bgRedraw) { // AffScene
+void Redraw::drawScene(bool bgRedraw) { // AffScene
 	int32 tmp_projPosX = _projPosScreen.x;
 	int32 tmp_projPosY = _projPosScreen.y;
 

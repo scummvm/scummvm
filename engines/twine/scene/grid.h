@@ -194,7 +194,7 @@ public:
 	const uint8 *getBlockBufferGround(const IVec3 &pos, int32 &ground);
 
 	/** New grid camera x, y and z coordinates */
-	IVec3 _newCamera;
+	IVec3 _startCube; // StartXCube, StartYCube, StartZCube
 
 	/** Current grid camera x, y and z coordinates */
 	IVec3 _worldCube; // WorldXCube WorldYCube

@@ -190,7 +190,7 @@ public:
 	 * This is responsible for the entire game screen redraw
 	 * @param bgRedraw true if we want to redraw background grid, false if we want to update certain screen areas
 	 */
-	void redrawEngineActions(bool bgRedraw);
+	void drawScene(bool bgRedraw);
 
 	/** Draw dialogue sprite image */
 	void drawBubble(int32 actorIdx);

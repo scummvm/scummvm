@@ -196,7 +196,7 @@ public:
 	int16 _mecaPenguinIdx = 0;
 
 	/** Current followed actor in scene */
-	int16 _currentlyFollowedActor = OWN_ACTOR_SCENE_INDEX;
+	int16 _numObjFollow = OWN_ACTOR_SCENE_INDEX;
 	/** Current actor in zone - climbing a ladder */
 	bool _flagClimbing = false;
 	bool _enableEnhancements = false;
