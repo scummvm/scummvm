@@ -518,6 +518,8 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		// Register a dialogue choice and act upon it
 		uint8 numberPressed = msg.ascii - '1' + 1;
 		TriggerDialogueChoice(numberPressed);
+	} else if (msg.ascii == 'p') {
+		characters[0].
 	}
 	return true;
 }
@@ -1077,6 +1079,19 @@ void Character::SetPosition(const Common::Point &newPosition) {
 	GameObject->Position = newPosition;
 }
 
+bool Character::TryFollowPath() {
+	CurrentPathIndex++;
+	if (CurrentPathIndex == Path.size() - 1) {
+		// TODO: Handle the need to walk to a free point at the end of the path to
+		// read the actual destiantion
+		return false;
+	}
+	// Set up a lerp
+	PathfindingPoint &current = g_engine->pathfindingPoints[CurrentPathIndex];
+	StartLerpTo(current.Position, 1000);
+	
+}
+
 bool Character::isAnimationMirrored() const {
 	
 	return is_in_list<uint16, 6, 7, 8, 14, 15, 16>(GameObject->Orientation);
@@ -1249,7 +1264,7 @@ void Character::RegisterWaitForMovementFinishedEvent() {
 }
 
 void Character::Update() {
-	if (!IsLerping) {
+	if (!IsLerping && !IsFollowingPath) {
 		// We might have gotten the 0x11 command after we stopped moving
 		// TODO: Check if the code handles this similarly
 		// TODO: Consider which run function to use
@@ -1262,8 +1277,18 @@ void Character::Update() {
 	}
 	uint32 endTime = StartTime + Duration;
 	bool isDone = endTime < g_events->currentMillis;
-	
+
+
 	if (isDone) {
+		if (IsFollowingPath) {
+			// Set up a new lerp
+			IsFollowingPath = TryFollowPath();
+			if (IsFollowingPath) {
+				return;
+			}
+		}
+
+
 		IsLerping = false;
 		// Go to the same orientation but standing
 		GameObject->Orientation += 8;

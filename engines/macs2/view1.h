@@ -54,6 +54,11 @@ private:
 	Common::Point StartPosition;
 	Common::Point EndPosition;
 
+	Common::Array<uint16> Path;
+	uint16 CurrentPathIndex;
+
+	bool IsFollowingPath;
+
 	uint32 StartTime;
 	uint32 Duration;
 
@@ -81,6 +86,9 @@ private:
 	Common::Point GetPosition() const;
 		void SetPosition(const Common::Point &newPosition);
 		Macs2::GameObject *GameObject;
+
+	// Returns false if we are at the end of the path already or the path is not valid
+	bool TryFollowPath();
 
 	// Set by opcode 11h
 	bool ExecuteScriptOnFinishLerp;
