@@ -434,13 +434,6 @@ void triggerMachineByHashCallback(frac16 myMessage, machine *) {
 		kernel_trigger_dispatch_now(hi);
 }
 
-void triggerMachineByHashCallbackNegative(frac16 myMessage, machine *) {
-	int32 hi = myMessage >> 16;
-
-	if (hi < 0)
-		kernel_trigger_dispatchx(hi);
-}
-
 void triggerMachineByHashCallbackAlways(frac16 myMessage, machine *sender) {
 	kernel_trigger_dispatchx(myMessage);
 }

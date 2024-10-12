@@ -55,13 +55,13 @@ private:
 	int _mei2 = 0;
 	int _mei3 = 0;
 	machine *_mei = nullptr;
-	int _clasped1 = 0;
-	int _clasped2 = 0;
-	int _clasped3 = 0;
-	int _clasped4 = 0;
+	int _feng1 = 0;
+	int _feng2 = 0;
+	int _feng3 = 0;
+	int _feng4 = 0;
 	machine *_shadow4 = nullptr;
 	machine *_shadow5 = nullptr;
-	machine *_machine1 = nullptr;
+	machine *_fengLi = nullptr;
 	machine *_machine2 = nullptr;
 	machine *_machine3 = nullptr;
 	machine *_ripPonders = nullptr;
@@ -84,7 +84,7 @@ private:
 	static void escapePressed(void *, void *);
 
 	void setupMei();
-	void loadClasped();
+	void loadFengLi();
 	void setFengActive(bool flag);
 	void setShadow4(bool active);
 	void setShadow5(bool active);

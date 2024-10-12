@@ -72,7 +72,7 @@ void Room504::init() {
 		_downSteps = series_load("504 down steps");
 		player_update_info();
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
-			_G(player_info).depth, 0, triggerMachineByHashCallbackNegative, "Rp");
+			_G(player_info).depth, 0, triggerMachineByHashCallback, "Rp");
 		sendWSMessage_10000(1, _ripley, _downSteps, 1, 27, 647,
 			_downSteps, 27, 27, 0);
 		break;
@@ -133,7 +133,7 @@ void Room504::daemon() {
 		_mzDigs = series_load("504 MZ DIGS");
 		_mzStandsTalks = series_load("504 MZ STANDS TALKS");
 		_mzMachine = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xb00, 0,
-			triggerMachineByHashCallbackNegative, "Emilio Menendez Machine");
+			triggerMachineByHashCallback, "Emilio Menendez Machine");
 		kernel_timing_trigger(1, 503);
 		break;
 
@@ -396,7 +396,7 @@ void Room504::daemon() {
 	case 505:
 		_trigger4 = -1;
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x900, 0,
-			triggerMachineByHashCallbackNegative, "Rip Delta Machine State");
+			triggerMachineByHashCallback, "Rip Delta Machine State");
 		player_update_info();
 		_ripKneels = series_load("504 rip kneels talks");
 		ws_hide_walker();
@@ -1007,7 +1007,7 @@ void Room504::daemon() {
 		digi_preload("COM125");
 		_ripWipe = series_load("504WIPE");
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
-			_G(player_info).depth, 0, triggerMachineByHashCallbackNegative,
+			_G(player_info).depth, 0, triggerMachineByHashCallback,
 			"Rip Delta Machine State");
 		sendWSMessage_10000(1, _ripley, _ripWipe, 1, 6, 568,
 			_ripWipe, 6, 6, 0);
@@ -1084,7 +1084,7 @@ void Room504::daemon() {
 
 	case 581:
 		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
-			triggerMachineByHashCallbackNegative, "Rope Falling to the Ground");
+			triggerMachineByHashCallback, "Rope Falling to the Ground");
 		sendWSMessage_10000(1, _vineMachine2, _vineTie, 1, 6, 582, _vineTie, 6, 6, 0);
 		break;
 
@@ -1201,7 +1201,7 @@ void Room504::daemon() {
 		ws_hide_walker();
 
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x300, 0,
-			triggerMachineByHashCallbackNegative, "Rip Crossing");
+			triggerMachineByHashCallback, "Rip Crossing");
 		sendWSMessage_10000(1, _ripley, _ripStepUpRight, 1, 33, 596,
 			_ripStepUpRight, 33, 33, 0);
 		break;
@@ -1295,7 +1295,7 @@ void Room504::daemon() {
 	case 605:
 		setVines();
 		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
-			triggerMachineByHashCallbackNegative, "Rope Being Slurped Up from right");
+			triggerMachineByHashCallback, "Rope Being Slurped Up from right");
 		sendWSMessage_10000(1, _vineMachine2, _ropeRSlurpsUp, 1, 14, 606,
 			_ropeRSlurpsUp, 14, 14, 0);
 		break;
@@ -1371,7 +1371,7 @@ void Room504::daemon() {
 
 		setVines();
 		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
-			triggerMachineByHashCallbackNegative, "Tie Thrown Coil to tree");
+			triggerMachineByHashCallback, "Tie Thrown Coil to tree");
 		sendWSMessage_10000(1, _vineMachine2, _rightVineTie, 1, 10, -1,
 			_rightVineTie, 10, 10, 0);
 		setGlobals1(_ripHiReach2Handed, 1, 13, 13, 13, 0, 13, 1, 1, 1);
@@ -1407,7 +1407,7 @@ void Room504::daemon() {
 	case 613:
 		_vineUnrolling = series_load("VINE UNROLLING AS TIED");
 		_vineMachine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
-			triggerMachineByHashCallbackNegative, "Vine Unrolling as Tied");
+			triggerMachineByHashCallback, "Vine Unrolling as Tied");
 		sendWSMessage_10000(1, _vineMachine1, _vineUnrolling, 1, 6, 614,
 			_vineUnrolling, 6, 6, 0);
 		break;
@@ -1440,7 +1440,7 @@ void Room504::daemon() {
 		ws_hide_walker();
 
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x300, 0,
-			triggerMachineByHashCallbackNegative, "Rip Throwing Right");
+			triggerMachineByHashCallback, "Rip Throwing Right");
 		sendWSMessage_10000(1, _ripley, _ripStepUpLeft, 1, 25, 622,
 			_ripStepUpLeft, 25, 25, 0);
 		break;
@@ -1524,7 +1524,7 @@ void Room504::daemon() {
 
 	case 632:
 		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
-			triggerMachineByHashCallbackNegative, "Vine Unrolling as Tied");
+			triggerMachineByHashCallback, "Vine Unrolling as Tied");
 		sendWSMessage_10000(1, _vineMachine2, _vineUnrolling, 1, 6, 633,
 			_vineUnrolling, 6, 6, 0);
 		break;
@@ -1596,7 +1596,7 @@ void Room504::daemon() {
 
 		setVines();
 		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
-			triggerMachineByHashCallbackNegative, "Rope Rising");
+			triggerMachineByHashCallback, "Rope Rising");
 		sendWSMessage_120000(640);
 		break;
 
@@ -1629,7 +1629,7 @@ void Room504::daemon() {
 	case 641:
 		_vineTie = series_load("504 R VINE TIE BEFORE THROW");
 		_vine = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
-			triggerMachineByHashCallbackNegative, "Vine Unrolling as Tied");
+			triggerMachineByHashCallback, "Vine Unrolling as Tied");
 		sendWSMessage_10000(1, _vine, _vineTie, 1, 6, 642, _vineTie, 6, 6, 0);
 		break;
 
@@ -1770,7 +1770,7 @@ void Room504::daemon() {
 
 		setVines();
 		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
-			triggerMachineByHashCallbackNegative, "Rope Falling");
+			triggerMachineByHashCallback, "Rope Falling");
 		sendWSMessage_10000(1, _vineMachine2, _leftVineTie, 9, 1, 677,
 			_leftVineTie, 1, 1, 0);
 		break;
@@ -1838,7 +1838,7 @@ void Room504::daemon() {
 
 		setVines();
 		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
-			triggerMachineByHashCallbackNegative, "Tie Thrown Coil to tree");
+			triggerMachineByHashCallback, "Tie Thrown Coil to tree");
 		sendWSMessage_10000(1, _vineMachine2, _rightVineTie, 10, 1, 686,
 			_rightVineTie, 1, 1, 0);
 		break;
@@ -1907,7 +1907,7 @@ void Room504::daemon() {
 		setVines();
 		setVinesRope();
 		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
-			triggerMachineByHashCallbackNegative, "Vine Untied ");
+			triggerMachineByHashCallback, "Vine Untied ");
 		sendWSMessage_10000(1, _vineMachine2, _vineUnrolling, 6, 1, 695,
 			_vineUnrolling, 1, 1, 0);
 		break;
@@ -1984,7 +1984,7 @@ void Room504::daemon() {
 		setVines();
 		setVinesRope();
 		_vineMachine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
-			triggerMachineByHashCallbackNegative, "Left Slurp");
+			triggerMachineByHashCallback, "Left Slurp");
 		sendWSMessage_10000(1, _vineMachine2, _ropeLSlurpsUp, 1, 11, 702,
 			_ropeLSlurpsUp, 11, 11, 0);
 		break;
@@ -2425,7 +2425,7 @@ void Room504::parser() {
 			player_update_info();
 			ws_hide_walker();
 			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
-				_G(player_info).depth, 0, triggerMachineByHashCallbackNegative, "Rp");
+				_G(player_info).depth, 0, triggerMachineByHashCallback, "Rp");
 			sendWSMessage_10000(1, _ripley, _upSteps, 1, 25, -1, _upSteps, 25, 25, 0);
 			kernel_timing_trigger(60, 2);
 			break;

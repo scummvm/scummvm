@@ -93,7 +93,7 @@ void Room408::init() {
 				_val9 = 2200;
 				_wolf = series_load("WOLF CLPNG LOOP LOOKS TO SIDE");
 				_wolfie = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xd00, 0,
-					triggerMachineByHashCallbackNegative, "WOLFIE");
+					triggerMachineByHashCallback, "WOLFIE");
 				sendWSMessage_10000(1, _wolfie, _wolf, 1, 10, 110, _wolf, 10, 10, 0);
 			}
 
@@ -111,7 +111,7 @@ void Room408::init() {
 					hotspot_set_active("WOLF", true);
 					_wolf = series_load("WOLF CLPNG LOOP LOOKS TO SIDE");
 					_wolfie = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xd00, 0,
-						triggerMachineByHashCallbackNegative, "WOLFIE");
+						triggerMachineByHashCallback, "WOLFIE");
 					sendWSMessage_10000(1, _wolfie, _wolf, 1, 10, 110, _wolf, 10, 10, 0);
 					_val8 = 2001;
 					_val9 = 2200;
@@ -142,7 +142,7 @@ void Room408::init() {
 			ws_hide_walker();
 
 			_exit = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
-				triggerMachineByHashCallbackNegative, "RIP ENTERS from GIZMO");
+				triggerMachineByHashCallback, "RIP ENTERS from GIZMO");
 			sendWSMessage_10000(1, _exit, _ripExits, 1, 75, 40, _ripExits, 75, 75, 0);
 			digi_play("408_s01", 2);
 			break;
@@ -161,7 +161,7 @@ void Room408::init() {
 				hotspot_set_active("WOLF", true);
 				_wolf = series_load("WOLF CLPNG LOOP LOOKS TO SIDE");
 				_wolfie = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xd00, 0,
-					triggerMachineByHashCallbackNegative, "WOLFIE");
+					triggerMachineByHashCallback, "WOLFIE");
 				sendWSMessage_10000(1, _wolfie, _wolf, 1, 10, 110, _wolf, 10, 10, 0);
 				_val8 = 2001;
 				_val9 = 2200;
@@ -241,10 +241,10 @@ void Room408::daemon() {
 				player_update_info();
 				_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 					_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x100, 0,
-					triggerMachineByHashCallbackNegative, "rip talks wolf");
+					triggerMachineByHashCallback, "rip talks wolf");
 				_ripleyShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 					_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x100, 0,
-					triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+					triggerMachineByHashCallback, "rip talks wolf SHADOW");
 
 				sendWSMessage_10000(1, _ripley, _ripHandsBehindBack, 1, 15, 102,
 					_ripHandsBehindBack, 15, 15, 0);
@@ -401,10 +401,10 @@ void Room408::daemon() {
 		player_update_info();
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale,
-			0x100, 0, triggerMachineByHashCallbackNegative, "rip talks wolf");
+			0x100, 0, triggerMachineByHashCallback, "rip talks wolf");
 		_ripleyShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale,
-			0x100, 0, triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+			0x100, 0, triggerMachineByHashCallback, "rip talks wolf SHADOW");
 
 		sendWSMessage_10000(1, _ripleyShadow, _ripShadowSeries, 1, 1, -1,
 			_ripShadowSeries, 1, 1, 0);

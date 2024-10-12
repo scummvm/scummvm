@@ -60,7 +60,7 @@ void Room301::init() {
 	_agentTalk = series_load("agent animated talk disp");
 	_agentSalutes = series_load("agent salutes rip");
 	_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-		triggerMachineByHashCallbackNegative, "guy behind desk");
+		triggerMachineByHashCallback, "guy behind desk");
 
 	sendWSMessage(1, _machine1, _agentStander, 1, 1, 10, _agentStander, 1, 1, 0);
 
@@ -98,7 +98,7 @@ void Room301::daemon() {
 
 	case 9:
 		_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-			triggerMachineByHashCallbackNegative, "guy behind desk");
+			triggerMachineByHashCallback, "guy behind desk");
 		_val13 = _val14 = 0;
 		sendWSMessage_10000(1, _machine1, _agentStander, 1,
 			1, 10, _agentStander, 1, 1, 0);
@@ -420,7 +420,7 @@ void Room301::daemon() {
 		break;
 
 	case 12:
-		_machine4 = TriggerMachineByHash(triggerMachineByHashCallbackNegative, "rip");
+		_machine4 = TriggerMachineByHash(triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _machine4, _ripTrekTravel, 10, 10, 20,
 			_ripTrekTravel, 10, 10, 0);
 		_val15 = _val19 = 0;
@@ -431,7 +431,7 @@ void Room301::daemon() {
 		break;
 
 	case 13:
-		_machine4 = TriggerMachineByHash(triggerMachineByHashCallbackNegative, "rip in conv");
+		_machine4 = TriggerMachineByHash(triggerMachineByHashCallback, "rip in conv");
 		sendWSMessage_10000(1, _machine4, _ripTrekTravel, 10, 10, 20,
 			_ripTrekTravel, 10, 10, 0);
 		_val15 = _val19 = 0;
@@ -728,7 +728,7 @@ void Room301::daemon() {
 	case 300:
 		terminateMachineAndNull(_machine1);
 		_machine4 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-			triggerMachineByHashCallbackNegative, "rip");
+			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _machine4, _agentStander, 7,
 			1, 304, _agentStander, 1, 1, 0);
 		break;
@@ -753,7 +753,7 @@ void Room301::daemon() {
 		sendWSMessage_10000(1, _machine4, _ripTrekTravel,
 			10, 1, 324, _ripTrekTravel, 1, 1, 0);
 		_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-			triggerMachineByHashCallbackNegative, "guy behind desk");
+			triggerMachineByHashCallback, "guy behind desk");
 		_val13 = 0;
 		_val14 = 0;
 		sendWSMessage_10000(1, _machine1, _agentStander, 1,
@@ -880,7 +880,7 @@ void Room301::parser() {
 			} else if (_G(kernel).trigger == 1) {
 				_G(kernel).trigger_mode = KT_DAEMON;
 				_machine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-					triggerMachineByHashCallbackNegative, "marshal");
+					triggerMachineByHashCallback, "marshal");
 				sendWSMessage(1, _machine2, _marshalMatt, 1, 2, 202, _marshalMatt, 3, 3, 0);
 				_val17 = 0;
 				_val18 = 0;
@@ -992,7 +992,7 @@ void Room301::parser() {
 		_machine3 = series_show("safari shadow 3", 0xf00, 0, -1, -1, 0,
 			_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 		_machine4 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-			triggerMachineByHashCallbackNegative, "rip");
+			triggerMachineByHashCallback, "rip");
 
 		_G(kernel).trigger_mode = KT_DAEMON;
 		_val19 = 0;

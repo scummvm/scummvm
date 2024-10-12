@@ -165,7 +165,7 @@ void Room305::init() {
 	case KERNEL_RESTORING_GAME:
 		if (player_been_here(201)) {
 			_stander = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 494, 278, 73, 0xf00, 1,
-				triggerMachineByHashCallbackNegative, "fl stander");
+				triggerMachineByHashCallback, "fl stander");
 			sendWSMessage_10000(1, _stander, _feng3, 1, 1, 400, _feng3, 1, 6, 0);
 			_val6 = _val7 = 1;
 			setShadow5(true);
@@ -187,7 +187,7 @@ void Room305::init() {
 				_rip5 = series_show("ripsh1", 0xf00, 0, -1, -1, 0,
 					_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 				_rip6 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, false,
-					triggerMachineByHashCallbackNegative, "rip reach");
+					triggerMachineByHashCallback, "rip reach");
 				sendWSMessage_10000(1, _rip6, _rip4, 5, 5, -1, _rip4, 5, 5, 0);
 			}
 
@@ -215,7 +215,7 @@ void Room305::init() {
 
 			if (player_been_here(201)) {
 				_stander = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 494, 278, 73, 0xf00, true,
-					triggerMachineByHashCallbackNegative, "fl stander");
+					triggerMachineByHashCallback, "fl stander");
 				_G(kernel).trigger_mode = KT_DAEMON;
 				sendWSMessage_10000(1, _stander, _feng3, 1, 1, 400, _feng3, 1, 6, 0);
 				_val6 = _val7 = 1;
@@ -274,7 +274,7 @@ void Room305::daemon() {
 	case 42:
 		sendWSMessage_60000(_stander);
 		_stander = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 494, 278, 73, 0xf00, 1,
-			triggerMachineByHashCallbackNegative, "fl stander");
+			triggerMachineByHashCallback, "fl stander");
 		_G(kernel).trigger_mode = KT_DAEMON;
 		sendWSMessage_10000(1, _stander, _feng3, 1, 1, 400, _feng3, 1, 6, 1);
 		_val6 = _val7 = 1;
@@ -633,7 +633,7 @@ void Room305::parser() {
 
 		_rip6 = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale + 1,
-			0x500, 0, triggerMachineByHashCallbackNegative, "rip");
+			0x500, 0, triggerMachineByHashCallback, "rip");
 		_G(kernel).trigger_mode = KT_DAEMON;
 		sendWSMessage_10000(1, _rip6, 1, 1, 1,
 			_G(flags)[V000] == 1 ? 200 : 300,
@@ -724,7 +724,7 @@ void Room305::parser() {
 				_rip5 = series_show("ripsh1", 0xf00, 128, -1, -1, 0,
 					_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 				_rip6 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, false,
-					triggerMachineByHashCallbackNegative, "rip reach");
+					triggerMachineByHashCallback, "rip reach");
 
 				sendWSMessage_10000(1, _rip6, _rip4, 1, 5, 1, _rip4, 5, 5, 0);
 			}

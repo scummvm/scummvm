@@ -152,7 +152,7 @@ void Room403::init() {
 				_wolfEdger = series_load("WOLF EDGER LOOP");
 
 				_wolfie = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x300, 0,
-					triggerMachineByHashCallbackNegative, "WOLFIE");
+					triggerMachineByHashCallback, "WOLFIE");
 
 				if (_val12) {
 					sendWSMessage_10000(1, _wolfie, _wolfTurnHand, 45, 45, -1,
@@ -169,7 +169,7 @@ void Room403::init() {
 				ws_demand_facing(11);
 				ws_hide_walker();
 				_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
-					triggerMachineByHashCallbackNegative, "RIP on ladder/plank");
+					triggerMachineByHashCallback, "RIP on ladder/plank");
 
 				switch (_val10) {
 				case 1:
@@ -233,7 +233,7 @@ void Room403::init() {
 				_wolfEdger = series_load("WOLF EDGER LOOP");
 
 				_wolfie = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x300, 0,
-					triggerMachineByHashCallbackNegative, "WOLFIE");
+					triggerMachineByHashCallback, "WOLFIE");
 				sendWSMessage_10000(1, _wolfie, _wolfEdger, 1, 6, 110,
 					_wolfEdger, 6, 6, 0);
 				_val8 = 2001;
@@ -293,10 +293,10 @@ void Room403::daemon() {
 				player_set_commands_allowed(false);
 
 				_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
-					triggerMachineByHashCallbackNegative, "rip takes wolf");
+					triggerMachineByHashCallback, "rip takes wolf");
 				_ripTalksWolf = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 					_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00, 0,
-					triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+					triggerMachineByHashCallback, "rip talks wolf SHADOW");
 
 				sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 1, 10, 102,
 					_ripTalkPay, 10, 10, 0);
@@ -395,7 +395,7 @@ void Room403::daemon() {
 				ws_hide_walker();
 
 				_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
-					triggerMachineByHashCallbackNegative, "RIP climbs ladder");
+					triggerMachineByHashCallback, "RIP climbs ladder");
 				sendWSMessage_10000(1, _ripOnLadder, _ripClimbsLadder, 1, 12, 103,
 					_ripClimbsLadder, 12, 12, 0);
 				_val7 = 1202;
@@ -518,7 +518,7 @@ void Room403::daemon() {
 				ws_hide_walker();
 
 				_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
-					triggerMachineByHashCallbackNegative, "RIP climbs plank");
+					triggerMachineByHashCallback, "RIP climbs plank");
 				sendWSMessage_10000(1, _ripOnLadder, _ripLegUp, 1, 10, 103,
 					_ripLegUp, 10, 10, 0);
 				_val7 = 1302;
@@ -792,7 +792,7 @@ void Room403::daemon() {
 			case 2230:
 				terminateMachineAndNull(_wolfie);
 				_wolfie = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x300, 0,
-					triggerMachineByHashCallbackNegative, "WOLFIE");
+					triggerMachineByHashCallback, "WOLFIE");
 				sendWSMessage_10000(1, _wolfie, _wolfTurnHand, 11, 45, 111,
 					_wolfTurnHand, 45, 45, 0);
 				_val9 = 2231;
@@ -809,12 +809,12 @@ void Room403::daemon() {
 
 			case 2232:
 				_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
-					triggerMachineByHashCallbackNegative, "rip talks wolf");
+					triggerMachineByHashCallback, "rip talks wolf");
 				player_update_info();
 
 				_ripTalksWolf = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 					_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00, 0,
-					triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+					triggerMachineByHashCallback, "rip talks wolf SHADOW");
 				sendWSMessage_10000(1, _ripTalksWolf, _safariShadow, 1, 1, -1,
 					_safariShadow, 1, 1, 0);
 
@@ -978,12 +978,12 @@ void Room403::daemon() {
 	case 200:
 		player_set_commands_allowed(false);
 		_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
-			triggerMachineByHashCallbackNegative, "rip talks wolf");
+			triggerMachineByHashCallback, "rip talks wolf");
 
 		player_update_info();
 		_ripTalksWolf = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00, 0,
-			triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+			triggerMachineByHashCallback, "rip talks wolf SHADOW");
 		sendWSMessage_10000(1, _ripTalksWolf, _safariShadow, 1, 1, -1,
 			_safariShadow, 1, 1, 0);
 
@@ -1032,12 +1032,12 @@ void Room403::daemon() {
 	case 210:
 		player_set_commands_allowed(false);
 		_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
-			triggerMachineByHashCallbackNegative, "rip talks wolf");
+			triggerMachineByHashCallback, "rip talks wolf");
 
 		player_update_info();
 		_ripTalksWolf = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00, 0,
-			triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+			triggerMachineByHashCallback, "rip talks wolf SHADOW");
 
 		sendWSMessage_10000(1, _ripTalksWolf, _safariShadow, 1, 1, -1,
 			_safariShadow, 1, 1, 0);
@@ -1111,12 +1111,12 @@ void Room403::daemon() {
 	case 220:
 		player_set_commands_allowed(false);
 		_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
-			triggerMachineByHashCallbackNegative, "rip talks wolf");
+			triggerMachineByHashCallback, "rip talks wolf");
 
 		player_update_info();
 		_ripTalksWolf = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00, 0,
-			triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+			triggerMachineByHashCallback, "rip talks wolf SHADOW");
 
 		sendWSMessage_10000(1, _ripTalksWolf, _safariShadow, 1, 1, -1,
 			_safariShadow, 1, 1, 0);
@@ -1152,12 +1152,12 @@ void Room403::daemon() {
 	case 230:
 		player_set_commands_allowed(false);
 		_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
-			triggerMachineByHashCallbackNegative, "rip talks wolf");
+			triggerMachineByHashCallback, "rip talks wolf");
 
 		player_update_info();
 		_ripTalksWolf = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00, 0,
-			triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+			triggerMachineByHashCallback, "rip talks wolf SHADOW");
 
 		sendWSMessage_10000(1, _ripTalksWolf, _safariShadow, 1, 1, -1,
 			_safariShadow, 1, 1, 0);
@@ -1228,7 +1228,7 @@ void Room403::daemon() {
 
 	case 310:
 		_wolfWalker = triggerMachineByHash_3000(8, 8, *S4_NORMAL_DIRS, *S4_SHADOW_DIRS,
-			620, 313, 3, triggerMachineByHashCallbackNegative, "wolf_walker");
+			620, 313, 3, triggerMachineByHashCallback, "wolf_walker");
 		DisposePath(_wolfWalker->walkPath);
 		_wolfWalker->walkPath = CreateCustomPath(1067, 313, -1);
 		ws_custom_walk(_wolfWalker, 3, 312);
@@ -1259,7 +1259,7 @@ void Room403::daemon() {
 		sendWSMessage_60000(_wolfWalker);
 		_wolfIndicatesTomb = series_load("WOLF INDICATES TOMB");
 		_wolfie = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x900, 0,
-			triggerMachineByHashCallbackNegative, "WOLFIE");
+			triggerMachineByHashCallback, "WOLFIE");
 		sendWSMessage_10000(1, _wolfie, _wolfIndicatesTomb, 1, 93, -1,
 			_wolfIndicatesTomb, 93, 93, 0);
 		digi_play("403w01", 1, 255, 316);
@@ -1374,7 +1374,7 @@ void Room403::daemon() {
 		_G(flags)[V125] = 3;
 		_turtlePopup = series_load("403 turtle popup");
 		_wolfJustSo = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
-			triggerMachineByHashCallbackNegative, "Turtle POPUP");
+			triggerMachineByHashCallback, "Turtle POPUP");
 		sendWSMessage_10000(1, _wolfJustSo, _turtlePopup, 1, 46, -1,
 			_turtlePopup, 46, 46, 0);
 		midi_play("turtle", 255, 1, -1, 949);
@@ -1389,7 +1389,7 @@ void Room403::daemon() {
 		ws_hide_walker();
 
 		_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x300, 0,
-			triggerMachineByHashCallbackNegative, "RIP plants plank");
+			triggerMachineByHashCallback, "RIP plants plank");
 		sendWSMessage_10000(1, _ripOnLadder, _ripPutBoard, 57, 1, 443,
 			_ripPutBoard, 1, 1, 0);
 		break;
@@ -1880,7 +1880,7 @@ void Room403::edgerBell() {
 			player_update_info();
 			ws_hide_walker();
 			_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
-				triggerMachineByHashCallbackNegative, "RIP rings bell");
+				triggerMachineByHashCallback, "RIP rings bell");
 
 			terminateMachineAndNull(_bell);
 			sendWSMessage_10000(1, _ripOnLadder, _ripRingsBell, 1, 19, 1,
@@ -1924,7 +1924,7 @@ void Room403::edgerBell() {
 	case 5:
 		sendWSMessage_60000(_wolfWalker);
 		_wolfie = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
-			triggerMachineByHashCallbackNegative, "WOLFIE");
+			triggerMachineByHashCallback, "WOLFIE");
 		sendWSMessage_10000(1, _wolfie, _wolfAdmonish, 1, 18, 6,
 			_wolfAdmonish, 18, 18, 0);
 
@@ -2069,7 +2069,7 @@ bool Room403::takePlank() {
 			ws_hide_walker();
 
 			_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x300, 0,
-				triggerMachineByHashCallbackNegative, "RIP plants plank");
+				triggerMachineByHashCallback, "RIP plants plank");
 			sendWSMessage_10000(1, _ripOnLadder, _ripPutBoard, 57, 1, 2,
 				_ripPutBoard, 1, 1, 0);
 			return true;

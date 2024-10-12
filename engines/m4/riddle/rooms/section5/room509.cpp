@@ -66,7 +66,7 @@ void Room509::daemon() {
 	case 2:
 		ws_hide_walker();
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-			triggerMachineByHashCallbackNegative, "Rip climbs steps from 506");
+			triggerMachineByHashCallback, "Rip climbs steps from 506");
 		sendWSMessage_10000(1, _ripley, _ripFrom506, 1, 39, 6,
 			_ripFrom506, 40, 40, 0);
 		break;
@@ -74,7 +74,7 @@ void Room509::daemon() {
 	case 3:
 		ws_hide_walker();
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-			triggerMachineByHashCallbackNegative, "Rip climbs steps from 506");
+			triggerMachineByHashCallback, "Rip climbs steps from 506");
 		sendWSMessage_10000(1, _ripley, _ripFrom510, 1, 15, 7,
 			_ripFrom510, 16, 16, 0);
 		break;
@@ -184,7 +184,7 @@ void Room509::parser() {
 		ws_hide_walker();
 		digi_preload("509_s02");
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-			triggerMachineByHashCallbackNegative, "RIP DIGS AT WALL");
+			triggerMachineByHashCallback, "RIP DIGS AT WALL");
 		_G(kernel).trigger_mode = KT_DAEMON;
 		sendWSMessage_10000(1, _ripley, _ripDigsWall, 1, 33, 8,
 			_ripDigsWall, 34, 34, 0);
@@ -199,7 +199,7 @@ void Room509::parser() {
 			ws_hide_walker();
 			_roomNum = 510;
 			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-				triggerMachineByHashCallbackNegative, "RIP CLIMBS UP TO 510");
+				triggerMachineByHashCallback, "RIP CLIMBS UP TO 510");
 			sendWSMessage_10000(1, _ripley, _ripClimbStairs3, 1, 8, 1,
 				_ripClimbStairs3, 9, 16, 0);
 			break;
@@ -219,7 +219,7 @@ void Room509::parser() {
 			ws_hide_walker();
 			_roomNum = 506;
 			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-				triggerMachineByHashCallbackNegative, "RIP CLIMBS DOWN TO 506");
+				triggerMachineByHashCallback, "RIP CLIMBS DOWN TO 506");
 			sendWSMessage_10000(1, _ripley, _ripClimbStairs1, 1, 14, 1,
 				_ripClimbStairs1, 15, 28, 0);
 			break;

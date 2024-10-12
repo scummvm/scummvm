@@ -72,9 +72,9 @@ void Room801::init() {
 	_roomStates_val2 = series_load("rip looks l r down", -1, nullptr);
 	series_load("SAFARI SHADOW 5", -1, nullptr);
 	_roomStates_loop4 = series_load("MCTSH1", -1, nullptr);
-	_roomStates_field96h = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 1024, 0, triggerMachineByHashCallbackNegative, "farmer displacement");
+	_roomStates_field96h = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 1024, 0, triggerMachineByHashCallback, "farmer displacement");
 	sendWSMessage_10000(1, _roomStates_field96h, _roomStates_field642, 1, 14, 0, _roomStates_field642, 14, 14, 0);
-	_roomStates_field9Ah = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 151, 317, 100, 1280, 0, triggerMachineByHashCallbackNegative, "farmer shadow");
+	_roomStates_field9Ah = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 151, 317, 100, 1280, 0, triggerMachineByHashCallback, "farmer shadow");
 	sendWSMessage_10000(1, _roomStates_field9Ah, _roomStates_loop4, 1, 1, -1, _roomStates_loop4, 1, 1, 0);
 	if (inv_player_has("farmer's shovel"))
 		hotspot_set_active(_G(currentSceneDef).hotspots, "farmer's shovel", false);
@@ -137,7 +137,7 @@ void Room801::init() {
 			_roomStates_fieldA6h = series_place_sprite("CELLAR DOOR CLOSED", 0, 0, -53, 100, 1280);
 		}
 
-		_roomStates_field9Eh = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 1280, 0, triggerMachineByHashCallbackNegative, "mc talk frames");
+		_roomStates_field9Eh = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 1280, 0, triggerMachineByHashCallback, "mc talk frames");
 		_roomStates_fieldA2h = series_show("SAFARI SHADOW 5", 1280, 16, -1, -1, 0, 50, 124, 304);
 		sendWSMessage_10000(1, _roomStates_field9Eh, _roomStates_field782, 42, 42, 0, _roomStates_field782, 42, 42, 0);
 	}
@@ -477,7 +477,7 @@ void Room801::parser() {
 				ws_hide_walker();
 				terminateMachine(_roomStates_fieldA6h);
 				_roomStates_field18 = series_load("RIP OPENS CELLAR", -1, nullptr);
-				_roomStates_field8Ah = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 256, 0, triggerMachineByHashCallbackNegative, "rip opens cellar");
+				_roomStates_field8Ah = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 256, 0, triggerMachineByHashCallback, "rip opens cellar");
 				sendWSMessage_10000(1, _roomStates_field8Ah, 1, _roomStates_field18, 28, 10, _roomStates_field18, 28, 28, 0);
 			}
 			break;
@@ -516,7 +516,7 @@ void Room801::parser() {
 				ws_hide_walker(_G(my_walker));
 				terminateMachine(_roomStates_fieldAAh);
 				_roomStates_ripTalking = series_load("RIP CLOSES CELLAR", -1, nullptr);
-				_roomStates_field8Ah = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 256, 0, triggerMachineByHashCallbackNegative, "rip closes cellar");
+				_roomStates_field8Ah = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 256, 0, triggerMachineByHashCallback, "rip closes cellar");
 				sendWSMessage_10000(1, _roomStates_field8Ah, _roomStates_ripTalking, 1, 19, 10, _roomStates_ripTalking, 34, 34, 0);
 			}
 			break;
@@ -549,7 +549,7 @@ void Room801::parser() {
 		if (_G(flags)[V252] || _G(flags)[V253] || _G(flags)[V255]) {
 			ws_hide_walker(_G(my_walker));
 			player_set_commands_allowed(false);
-			_roomStates_field8Ah = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 167, 303, 49, 1280, 1, triggerMachineByHashCallbackNegative, "rip talking to farmer");
+			_roomStates_field8Ah = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 167, 303, 49, 1280, 1, triggerMachineByHashCallback, "rip talking to farmer");
 			sendWSMessage_10000(1, _roomStates_field8Ah, _roomStates_loop62, 1, 1, -1, _roomStates_loop62, 1, 1, 0);
 			_roomStates_field8Eh = series_show("SAFARI SHADOW 5", 1280, 144, -1, -1, 0, 48, 167, 303);
 			_roomStates_pu2 = 1;
@@ -667,7 +667,7 @@ void Room801::parser() {
 		case -1:
 			player_set_commands_allowed(false);
 			ws_hide_walker(_G(my_walker));
-			_roomStates_field8Ah = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 256, 0, triggerMachineByHashCallbackNegative, "rip enters cellar");
+			_roomStates_field8Ah = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 256, 0, triggerMachineByHashCallback, "rip enters cellar");
 			sendWSMessage_10000(1, _roomStates_field8Ah, _roomStates_loop2, 1, 14, 5, _roomStates_loop2, 15, 19, 0);
 			break;
 		case 5:
@@ -722,14 +722,14 @@ void Room801::daemon() {
 	case 7:
 		player_set_commands_allowed(false);
 		ws_hide_walker(_G(my_walker));
-		_roomStates_field9Eh = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 1280, 0, triggerMachineByHashCallbackNegative, "mc talk frames");
+		_roomStates_field9Eh = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 1280, 0, triggerMachineByHashCallback, "mc talk frames");
 		_roomStates_fieldA2h = series_show("SAFARI SHADOW 5", 1280, 16, -1, -1, 0, 50, 124, 304);
 		sendWSMessage_10000(1, _roomStates_field9Eh, _roomStates_field782, 42, 42, 0, _roomStates_field782, 42, 42, 0);
 
 		if (_G(flags)[V260]) {
 			kernel_timing_trigger(30, 81, nullptr);
 		} else {
-			_roomStates_field8Ah = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0, triggerMachineByHashCallbackNegative, "rip returns from cellar");
+			_roomStates_field8Ah = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0, triggerMachineByHashCallback, "rip returns from cellar");
 			sendWSMessage_10000(1, _roomStates_field8Ah, _roomStates_loop3, 1, 22, 8, _roomStates_loop3, 22, 22, 0);
 		}
 		break;
@@ -745,9 +745,9 @@ void Room801::daemon() {
 		break;
 	case 10:
 		terminateMachine(_roomStates_field96h);
-		_roomStates_field92h = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 2048, 0, triggerMachineByHashCallbackNegative, "shadow of de plane");
-		_roomStates_field96h = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 1024, 0, triggerMachineByHashCallbackNegative, "farmer looks to zero");
-		_roomStates_field8Ah = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 1536, 0, triggerMachineByHashCallbackNegative, "rip looks to zero");
+		_roomStates_field92h = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 2048, 0, triggerMachineByHashCallback, "shadow of de plane");
+		_roomStates_field96h = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 1024, 0, triggerMachineByHashCallback, "farmer looks to zero");
+		_roomStates_field8Ah = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 1536, 0, triggerMachineByHashCallback, "rip looks to zero");
 		sendWSMessage_10000(1, _roomStates_field92h, _roomStates_field60, 1, 47, 2, _roomStates_field60, 47, 47, 0);
 		_roomStates_field4 = 0;
 		sendWSMessage_10000(1, _roomStates_field96h, _roomStates_field702, 1, 48, 12, _roomStates_field702, 48, 48, 0);
@@ -760,7 +760,7 @@ void Room801::daemon() {
 	case 11:
 		digi_play("801_s01", 2, 255, -1, -1);
 		sendWSMessage_60000(_roomStates_field9Eh);
-		_roomStates_field9Eh = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 1280, 0, triggerMachineByHashCallbackNegative, "mei chen looks to zero");
+		_roomStates_field9Eh = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 1280, 0, triggerMachineByHashCallback, "mei chen looks to zero");
 		sendWSMessage_10000(1, _roomStates_field9Eh, _roomStates_field782, 1, 7, 0, _roomStates_field782, 7, 7, 0);
 		_roomStates_fieldA2h = series_show("SAFARI SHADOW 5", 1280, 16, -1, -1, 0, 50, 124, 304);
 		break;
@@ -881,9 +881,9 @@ void Room801::daemon() {
 			series_unload(_roomStates_field702);
 			series_unload(_roomStates_field7E);
 			series_unload(_roomStates_field2A);
-			_roomStates_field96h = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 1024, 0, triggerMachineByHashCallbackNegative, "farmer talk frames");
+			_roomStates_field96h = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 1024, 0, triggerMachineByHashCallback, "farmer talk frames");
 			sendWSMessage_10000(1, _roomStates_field96h, _roomStates_field742, 1, 1, 0, _roomStates_field742, 1, 1, 0);
-			_roomStates_field9Eh = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 1280, 0, triggerMachineByHashCallbackNegative, "mc talk frames");
+			_roomStates_field9Eh = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 1280, 0, triggerMachineByHashCallback, "mc talk frames");
 			sendWSMessage_10000(1, _roomStates_field9Eh, _roomStates_field782, 8, 17, 33, _roomStates_field782, 17, 17, 0);
 			_roomStates_field502 = series_load("RIP TREK HAT TIP POS5", -1, nullptr);
 			kernel_timing_trigger(210, 62, nullptr);

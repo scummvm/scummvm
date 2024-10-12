@@ -110,7 +110,7 @@ void Room508::daemon() {
 		ws_hide_walker();
 
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
-			_G(player_info).depth, 0, triggerMachineByHashCallbackNegative, "Rp1");
+			_G(player_info).depth, 0, triggerMachineByHashCallback, "Rp1");
 		sendWSMessage_10000(1, _ripley, _ripPutsShovel, 1, 22, 505,
 			_ripPutsShovel, 22, 22, 0);
 		inv_move_object("SHOVEL", 508);
@@ -144,7 +144,7 @@ void Room508::daemon() {
 		ws_hide_walker();
 
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
-			_G(player_info).depth, 0, triggerMachineByHashCallbackNegative, "Rp2");
+			_G(player_info).depth, 0, triggerMachineByHashCallback, "Rp2");
 		sendWSMessage_10000(1, _ripley, _ripPutsShovel, 34, 25, 509,
 			_ripPutsShovel, 25, 25, 0);
 		hotspot_set_active("SHOVEL", false);
@@ -173,7 +173,7 @@ void Room508::daemon() {
 		ws_hide_walker();
 
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
-			_G(player_info).depth, 0, triggerMachineByHashCallbackNegative, "Rp3");
+			_G(player_info).depth, 0, triggerMachineByHashCallback, "Rp3");
 		terminateMachineAndNull(_shovel);
 		sendWSMessage_10000(1, _ripley, _ripTryTurnDome, 1, 29, 512,
 			_ripTryTurnDome, 29, 29, 0);
@@ -215,7 +215,7 @@ void Room508::daemon() {
 		ws_hide_walker();
 
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
-			_G(player_info).depth, 0, triggerMachineByHashCallbackNegative, "Rp4");
+			_G(player_info).depth, 0, triggerMachineByHashCallback, "Rp4");
 		sendWSMessage_10000(1, _ripley, _ripTryTurnDome, 1, 29, 516,
 			_ripTryTurnDome, 29, 29, 0);
 		break;
@@ -267,18 +267,18 @@ void Room508::daemon() {
 		_statue = series_place_sprite("STATU SPRITE AFTER DOME TURN", 0, 0, 0, 100, 0x450);
 
 		_light = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, 0,
-			triggerMachineByHashCallbackNegative, "Receeding Light");
+			triggerMachineByHashCallback, "Receeding Light");
 		sendWSMessage_10000(1, _light, _lightAppearing, 12, 12, -1,
 			_lightAppearing, 12, 12, 0);
 
 		player_update_info();
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
-			_G(player_info).depth, 0, triggerMachineByHashCallbackNegative, "Rp");
+			_G(player_info).depth, 0, triggerMachineByHashCallback, "Rp");
 		sendWSMessage_10000(1, _ripley, _ripReturnsToStander, 1, 10, -1,
 			_ripReturnsToStander, 10, 10, 0);
 
 		_chain = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, 0,
-			triggerMachineByHashCallbackNegative, "Chain Breaking Machine");
+			triggerMachineByHashCallback, "Chain Breaking Machine");
 		sendWSMessage_10000(1, _chain, _chainBreaking, 1, 58, 675,
 			_chainBreaking, 58, 58, 0);
 		digi_play("508_s08", 1, 255, 555);
@@ -292,7 +292,7 @@ void Room508::daemon() {
 
 	case 539:
 		_x = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, 0,
-			triggerMachineByHashCallbackNegative, "x");
+			triggerMachineByHashCallback, "x");
 		sendWSMessage_10000(1, _x, _flick, 1, 2, -1, _flick, 1, 2, 0);
 		sendWSMessage_190000(_x, 1);
 		sendWSMessage_1a0000(_x, 1);

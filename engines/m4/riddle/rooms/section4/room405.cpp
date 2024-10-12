@@ -79,7 +79,7 @@ void Room405::init() {
 
 	_candlesBurning = series_load("TWO CANDLES BURNING");
 	_candles = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
-		triggerMachineByHashCallbackNegative, "candles");
+		triggerMachineByHashCallback, "candles");
 	sendWSMessage_10000(1, _candles, _candlesBurning, 1, 8, -1,
 		_candlesBurning, 1, 8, 0);
 
@@ -139,7 +139,7 @@ void Room405::daemon() {
 		ws_hide_walker();
 		sendWSMessage_150000(-1);
 		_baronWalker = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x600, 0,
-			triggerMachineByHashCallbackNegative, "BARON talks rip");
+			triggerMachineByHashCallback, "BARON talks rip");
 		sendWSMessage_10000(1, _baronWalker, _baronShakeSit, 1, 48, 23,
 			_baronShakeSit, 48, 48, 0);
 		digi_play("405b01", 1);
@@ -153,7 +153,7 @@ void Room405::daemon() {
 
 	case 24:
 		_ripTalksBaron = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x600, 0,
-			triggerMachineByHashCallbackNegative, "rip talks baron");
+			triggerMachineByHashCallback, "rip talks baron");
 		_val5 = 1000;
 		_val6 = 1103;
 		kernel_timing_trigger(1, 102);
@@ -223,7 +223,7 @@ void Room405::daemon() {
 
 	case 36:
 		_baronWalker = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x600, 0,
-			triggerMachineByHashCallbackNegative, "BARON talks rip");
+			triggerMachineByHashCallback, "BARON talks rip");
 		sendWSMessage_10000(1, _baronWalker, _baronTalkLoop, 1, 1, 110,
 			_baronTalkLoop, 1, 1, 0);
 		kernel_timing_trigger(1, 37);

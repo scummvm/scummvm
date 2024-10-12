@@ -68,7 +68,7 @@ void Room401::init() {
 	_401rp01 = series_load("401rp01");
 
 	_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x500, 0,
-		triggerMachineByHashCallbackNegative, "agent");
+		triggerMachineByHashCallback, "agent");
 	sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
 	_val5 = 1;
 	_val6 = 0;
@@ -281,7 +281,7 @@ void Room401::daemon() {
 
 	case 102:
 		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-			triggerMachineByHashCallbackNegative, "rip");
+			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 11, 200, _401rp01, 11, 11, 0);
 		_val7 = _val3 = 0;
 
@@ -302,7 +302,7 @@ void Room401::daemon() {
 	case 104:
 		series_show("401a06", 0);
 		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-			triggerMachineByHashCallbackNegative, "rip");
+			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 11, 200, _401rp01, 11, 11, 0);
 		_val7 = _val3 = 0;
 
@@ -319,7 +319,7 @@ void Room401::daemon() {
 
 	case 106:
 		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-			triggerMachineByHashCallbackNegative, "rip");
+			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 11, 200, _401rp01, 11, 11, 0);
 		_val7 = _val3 = 0;
 
@@ -373,7 +373,7 @@ void Room401::daemon() {
 	case 300:
 		ws_hide_walker();
 		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-			triggerMachineByHashCallbackNegative, "rip");
+			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 1, 11, 305, _401rp01, 11, 11, 0);
 		_val6 = 5;
 
@@ -397,7 +397,7 @@ void Room401::daemon() {
 	case 322:
 		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 1, 324, _401rp01, 1, 1, 0);
 		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, 0,
-			triggerMachineByHashCallbackNegative, "agent");
+			triggerMachineByHashCallback, "agent");
 		sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
 		break;
 
@@ -503,7 +503,7 @@ void Room401::daemon() {
 
 	case 515:
 		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-			triggerMachineByHashCallbackNegative, "rip");
+			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 1, 11, 516, _401rp01, 11, 11, 0);
 		break;
 
@@ -524,7 +524,7 @@ void Room401::daemon() {
 		_G(flags)[V366] = 1;
 
 		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-			triggerMachineByHashCallbackNegative, "rip");
+			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 1, 520, _401rp01, 1, 1, 0);
 		_val6 = 0;
 		_ctr1 = 0;
@@ -549,7 +549,7 @@ void Room401::daemon() {
 	case 613:
 		ws_hide_walker();
 		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-			triggerMachineByHashCallbackNegative, "rip");
+			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _agent, _401rp01, 1, 11, 616, _401rp01, 11, 11, 0);
 		break;
 
@@ -566,7 +566,7 @@ void Room401::daemon() {
 	case 618:
 		series_show("401a06", 0x600, 16);
 		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, 0,
-			triggerMachineByHashCallbackNegative, "agent");
+			triggerMachineByHashCallback, "agent");
 		sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
 		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 1, 620, _401rp01, 1, 1, 0);
 		_G(flags)[GLB_TEMP_13] = 1;
@@ -620,7 +620,7 @@ void Room401::daemon() {
 	case 715:
 		ws_hide_walker();
 		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-			triggerMachineByHashCallbackNegative, "rip");
+			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401a04, 1, 11, 716, _401rp01, 11, 11, 0);
 		break;
 
@@ -635,7 +635,7 @@ void Room401::daemon() {
 		inv_move_object("TURTLE TREATS", 305);
 
 		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-			triggerMachineByHashCallbackNegative, "rip");
+			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 1, 720, _401rp01, 1, 1, 0);
 		_ctr1 = 0;
 		break;
@@ -652,7 +652,7 @@ void Room401::daemon() {
 		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 1, 826, _401rp01, 1, 1, 0);
 		inv_give_to_player("ROMANOV EMERALD");
 		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, 0,
-			triggerMachineByHashCallbackNegative, "agent");
+			triggerMachineByHashCallback, "agent");
 		sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
 		_val6 = 0;
 		_ctr1 = 0;
@@ -816,7 +816,7 @@ void Room401::parser() {
 		ws_hide_walker();
 		_G(kernel).trigger_mode = KT_DAEMON;
 		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-			triggerMachineByHashCallbackNegative, "rip");
+			triggerMachineByHashCallback, "rip");
 		sendWSMessage_10000(1, _ripMach, _401rp01, 1, 11, 200, _401rp01, 11, 11, 0);
 
 		_val7 = 0;

@@ -74,7 +74,7 @@ void Room404::init() {
 	switch (_G(game).previous_room) {
 	case KERNEL_RESTORING_GAME:
 		_butlerTalks = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x900, 0,
-			triggerMachineByHashCallbackNegative, "BUTLER talks rip");
+			triggerMachineByHashCallback, "BUTLER talks rip");
 		sendWSMessage_10000(1, _butlerTalks, _butlerTalkLoop, 1, 1, -1,
 			_butlerTalkLoop, 1, 1, 0);
 		player_set_commands_allowed(true);
@@ -82,7 +82,7 @@ void Room404::init() {
 
 	case 405:
 		_butlerTalks = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x900, 0,
-			triggerMachineByHashCallbackNegative, "BUTLER talks rip");
+			triggerMachineByHashCallback, "BUTLER talks rip");
 		sendWSMessage_10000(1, _butlerTalks, _butlerTalkLoop, 1, 1, -1,
 			_butlerTalkLoop, 1, 1, 0);
 		ws_demand_location(58, 347, 3);
@@ -91,7 +91,7 @@ void Room404::init() {
 
 	case 406:
 		_butlerTalks = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x900, 0,
-			triggerMachineByHashCallbackNegative, "BUTLER talks rip");
+			triggerMachineByHashCallback, "BUTLER talks rip");
 		sendWSMessage_10000(1, _butlerTalks, _butlerTalkLoop, 1, 1, -1,
 			_butlerTalkLoop, 1, 1, 0);
 		ws_demand_location(174, 268, 3);
@@ -128,7 +128,7 @@ void Room404::daemon() {
 	case 21:
 		sendWSMessage_60000(_machine1);
 		_butlerTalks = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x900, 0,
-			triggerMachineByHashCallbackNegative, "BUTLER talks rip");
+			triggerMachineByHashCallback, "BUTLER talks rip");
 		sendWSMessage_10000(1, _butlerTalks, _butlerTurns7, 1, 10, 23,
 			_butlerTalkLoop, 1, 1, 0);
 		break;
@@ -210,7 +210,7 @@ void Room404::daemon() {
 	case 42:
 		sendWSMessage_60000(_machine1);
 		_butlerTalks = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x900, 0,
-			triggerMachineByHashCallbackNegative, "BUTLER talks rip");
+			triggerMachineByHashCallback, "BUTLER talks rip");
 		sendWSMessage_10000(1, _butlerTalks, _butlerTurns7, 1, 10, 43,
 			_butlerTalkLoop, 1, 1, 0);
 		break;

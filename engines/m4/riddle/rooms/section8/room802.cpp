@@ -219,7 +219,7 @@ void Room802::parser() {
 			player_set_commands_allowed(false);
 			interface_hide();
 			ws_unhide_walker(_G(my_walker));
-			_ripWalksDownstairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, 0, triggerMachineByHashCallbackNegative, "rip lights match");
+			_ripWalksDownstairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, 0, triggerMachineByHashCallback, "rip lights match");
 			sendWSMessage_10000(1, _ripWalksDownstairsMach, _lookWithMatch, 1, 12, 10, _lookWithMatch, 12, 12, 0);
 			break;
 		case 1:
@@ -254,7 +254,7 @@ void Room802::parser() {
 		case -1:
 			player_set_commands_allowed(false);
 			ws_hide_walker(_G(my_walker));
-			_ripWalksDownstairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, 0, triggerMachineByHashCallbackNegative, "rip bends down to look in hole / at hand");
+			_ripWalksDownstairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, 0, triggerMachineByHashCallback, "rip bends down to look in hole / at hand");
 			sendWSMessage_10000(1, _ripWalksDownstairsMach, _ripLooksAtHand, 1, 17, 1, _ripLooksAtHand, 17, 17, 0);
 			break;
 		case 1:
@@ -288,7 +288,7 @@ void Room802::parser() {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
-			_ripWalksDownstairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, 0, triggerMachineByHashCallbackNegative, "rip moves sack of rice");
+			_ripWalksDownstairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, 0, triggerMachineByHashCallback, "rip moves sack of rice");
 			ws_hide_walker(_G(my_walker));
 			terminateMachine(_sackAgainstWallMach);
 			sendWSMessage_10000(1, _ripWalksDownstairsMach, _ripDragsSack, 1, 15, 10, _ripDragsSack, 15, 15, 0);
@@ -331,7 +331,7 @@ void Room802::parser() {
 				player_set_commands_allowed(false);
 				ws_hide_walker(_G(my_walker));
 				terminateMachine(_handInWallMach);
-				_ripWalksDownstairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, 0, triggerMachineByHashCallbackNegative, "802 rip digs at wall");
+				_ripWalksDownstairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, 0, triggerMachineByHashCallback, "802 rip digs at wall");
 				sendWSMessage_10000(1, _ripWalksDownstairsMach, _ripDigsWall, 1, 24, 10, _ripDigsWall, 24, 24, 0);
 				break;
 			case 1:
@@ -364,7 +364,7 @@ void Room802::parser() {
 				case -1:
 					player_set_commands_allowed(false);
 					ws_unhide_walker(_G(my_walker));
-					_ripWalksDownstairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, 0, triggerMachineByHashCallbackNegative, "rip tugs at hand and removes it");
+					_ripWalksDownstairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, 0, triggerMachineByHashCallback, "rip tugs at hand and removes it");
 					terminateMachine(_handInWallMach);
 					sendWSMessage_10000(1, _ripWalksDownstairsMach, _ripTugsOnArm, 1, 36, 10, _ripTugsOnArm, 36, 36, 0);
 					break;
@@ -402,7 +402,7 @@ void Room802::parser() {
 			case -1:
 				player_set_commands_allowed(false);
 				ws_hide_walker(_G(my_walker));
-				_ripWalksDownstairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, 0, triggerMachineByHashCallbackNegative, "rip tugs at hand (noshovel)");
+				_ripWalksDownstairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, 0, triggerMachineByHashCallback, "rip tugs at hand (noshovel)");
 				terminateMachine(_handInWallMach);
 				sendWSMessage_10000(1, _ripWalksDownstairsMach, _ripTugsBeforeDigging, 1, 15, 10, _ripTugsBeforeDigging, 15, 15, 0);
 				break;
@@ -446,7 +446,7 @@ void Room802::parser() {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
-			_ripWalksDownstairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, 0, triggerMachineByHashCallbackNegative, "rip walks up stairs");
+			_ripWalksDownstairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, 0, triggerMachineByHashCallback, "rip walks up stairs");
 			ws_hide_walker(_G(my_walker));
 			sendWSMessage_10000(1, _ripWalksDownstairsMach, _ripUpStairs, 1, 23, 1, _ripUpStairs, 24, 29, 0);
 			break;
@@ -474,7 +474,7 @@ void Room802::daemon() {
 	case 6:
 	case 7:
 		player_set_commands_allowed(false);
-		_ripWalksDownstairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, 0, triggerMachineByHashCallbackNegative, "rip walks down stairs");
+		_ripWalksDownstairsMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 768, 0, triggerMachineByHashCallback, "rip walks down stairs");
 		sendWSMessage_10000(1, _ripWalksDownstairsMach, _ripDownStairs, 1, 20, 51, _ripDownStairs, 20, 20, 0);
 		break;
 	case 14:

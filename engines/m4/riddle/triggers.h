@@ -89,7 +89,6 @@ extern void sendWSMessage_29a0000(int val1);
 
 extern void intrMsgNull(frac16 myMessage, machine *sender);
 extern void triggerMachineByHashCallback(frac16 myMessage, machine *sender = nullptr);
-extern void triggerMachineByHashCallbackNegative(frac16 myMessage, machine *sender = nullptr);
 extern void triggerMachineByHashCallback3000(frac16 myMessage, machine *sender = nullptr);
 extern void triggerMachineByHashCallbackAlways(frac16 myMessage, machine *sender = nullptr);
 

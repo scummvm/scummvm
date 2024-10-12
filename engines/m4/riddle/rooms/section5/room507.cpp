@@ -195,7 +195,7 @@ void Room507::useStoneGlyph(int blockNum) {
 	if (!_blockFlag[blockNum]) {
 		terminateMachineAndNull(_block[blockNum]);
 		_block[blockNum] = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
-			triggerMachineByHashCallbackNegative, BLOCK_NAMES[blockNum]);
+			triggerMachineByHashCallback, BLOCK_NAMES[blockNum]);
 		_blockFlag[blockNum] = true;
 		_G(flags)[V172] = 1;
 	}

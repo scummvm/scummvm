@@ -104,20 +104,20 @@ void Room303::init() {
 
 			ws_walk_load_walker_series(S3_NORMAL_DIRS, S3_NORMAL_NAMES);
 			ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
-			loadClasped();
+			loadFengLi();
 
 			if (_val13) {
-				_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
-					triggerMachineByHashCallbackNegative, "fl");
+				_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
+					triggerMachineByHashCallback, "fl");
 				setShadow5(true);
 			} else {
-				_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 706, 256, 86, 0xc00, 0,
-					triggerMachineByHashCallbackNegative, "fl state machine");
+				_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 706, 256, 86, 0xc00, 0,
+					triggerMachineByHashCallback, "fl state machine");
 				setShadow5(false);
 			}
 
-			sendWSMessage_10000(1, _machine1, _clasped4, 1, 1, 400,
-				_clasped4, 1, 6, 0);
+			sendWSMessage_10000(1, _fengLi, _feng4, 1, 1, 400,
+				_feng4, 1, 6, 0);
 			_val14 = _val15 = 1;
 		}
 
@@ -148,13 +148,13 @@ void Room303::init() {
 
 			ws_walk_load_walker_series(S3_NORMAL_DIRS, S3_NORMAL_NAMES);
 			ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
-			_machine1 = triggerMachineByHash_3000(8, 2, *S3_NORMAL_DIRS, *S3_SHADOW_DIRS,
+			_fengLi = triggerMachineByHash_3000(8, 2, *S3_NORMAL_DIRS, *S3_SHADOW_DIRS,
 				470, 226, 9, triggerMachineByHashCallback3000, "fl");
 			_val13 = 1;
 
 			kernel_load_variant("303lock1");
 			setFengActive(true);
-			loadClasped();
+			loadFengLi();
 
 			ws_walk_load_walker_series(S3_NORMAL_DIRS2, S3_NORMAL_NAMES2);
 			ws_walk_load_shadow_series(S3_SHADOW_DIRS2, S3_SHADOW_NAMES2);
@@ -177,12 +177,12 @@ void Room303::init() {
 
 				ws_walk_load_walker_series(S3_NORMAL_DIRS, S3_NORMAL_NAMES);
 				ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
-				loadClasped();
+				loadFengLi();
 
-				_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
-					triggerMachineByHashCallbackNegative, "fl");
-				sendWSMessage_10000(1, _machine1, _clasped4, 1, 1, 400,
-					_clasped4, 1, 6, 0);
+				_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
+					triggerMachineByHashCallback, "fl");
+				sendWSMessage_10000(1, _fengLi, _feng4, 1, 1, 400,
+					_feng4, 1, 6, 0);
 
 				_val14 = _val15 = _val13 = 1;
 				setShadow5(true);
@@ -204,12 +204,12 @@ void Room303::init() {
 
 			ws_walk_load_walker_series(S3_NORMAL_DIRS, S3_NORMAL_NAMES);
 			ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
-			loadClasped();
+			loadFengLi();
 
-			_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
-				triggerMachineByHashCallbackNegative, "fl");
-			sendWSMessage_10000(1, _machine1, _clasped1, 1, 16, 400,
-				_clasped1, 1, 6, 0);
+			_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
+				triggerMachineByHashCallback, "fl");
+			sendWSMessage_10000(1, _fengLi, _feng1, 1, 16, 400,
+				_feng1, 1, 6, 0);
 			_val14 = _val15 = 1;
 			setShadow5(true);
 			_val13 = 1;
@@ -232,12 +232,12 @@ void Room303::init() {
 			ws_walk_load_walker_series(S3_NORMAL_DIRS, S3_NORMAL_NAMES);
 			ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
 			_val13 = 1;
-			loadClasped();
+			loadFengLi();
 
-			_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
-				triggerMachineByHashCallbackNegative, "fl");
-			sendWSMessage_10000(1, _machine1, _clasped4, 1, 16, 400,
-				_clasped4, 1, 6, 0);
+			_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
+				triggerMachineByHashCallback, "fl");
+			sendWSMessage_10000(1, _fengLi, _feng4, 1, 16, 400,
+				_feng4, 1, 6, 0);
 
 			_val14 = _val15 = 1;
 			setShadow5(true);
@@ -290,11 +290,11 @@ void Room303::init() {
 		ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
 
 		_val13 = 1;
-		loadClasped();
-		_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
-			triggerMachineByHashCallbackNegative, "fl");
-		sendWSMessage_10000(1, _machine1, _clasped4, 1, 1, 400,
-			_clasped4, 1, 6, 0);
+		loadFengLi();
+		_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
+			triggerMachineByHashCallback, "fl");
+		sendWSMessage_10000(1, _fengLi, _feng4, 1, 1, 400,
+			_feng4, 1, 6, 0);
 		_val14 = _val15 = 1;
 		setShadow5(true);
 
@@ -377,19 +377,19 @@ void Room303::daemon() {
 		break;
 
 	case 38:
-		sendWSMessage_10000(_machine1, 146, 270, 9, 39, 0);
+		sendWSMessage_10000(_fengLi, 146, 270, 9, 39, 0);
 		break;
 
 	case 39:
-		sendWSMessage_10000(_machine1, 480, 256, 7, 40, 1);
+		sendWSMessage_10000(_fengLi, 480, 256, 7, 40, 1);
 		break;
 
 	case 40:
-		sendWSMessage_60000(_machine1);
-		_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
-			triggerMachineByHashCallbackNegative, "fl");
-		sendWSMessage_10000(1, _machine1, _clasped1, 1, 16, 400,
-			_clasped4, 1, 6, 0);
+		sendWSMessage_60000(_fengLi);
+		_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
+			triggerMachineByHashCallback, "fl");
+		sendWSMessage_10000(1, _fengLi, _feng1, 1, 16, 400,
+			_feng4, 1, 6, 0);
 		_val14 = _val15 = 1;
 		setShadow5(true);
 		player_set_commands_allowed(true);
@@ -434,22 +434,22 @@ void Room303::daemon() {
 		break;
 
 	case 103:
-		sendWSMessage_10000(_machine1, 414, 228, 9, 104, 0);
+		sendWSMessage_10000(_fengLi, 414, 228, 9, 104, 0);
 		break;
 
 	case 104:
-		sendWSMessage_10000(_machine1, 399, 256, 7, 105, 0);
+		sendWSMessage_10000(_fengLi, 399, 256, 7, 105, 0);
 		break;
 
 	case 105:
 		terminateMachineAndNull(_door);
 		digi_preload("950_s44");
 		series_plain_play("DOOR", 1, 2, 100, 0xf05, 8, 156);
-		sendWSMessage_10000(_machine1, 480, 256, 7, 106, 1);
+		sendWSMessage_10000(_fengLi, 480, 256, 7, 106, 1);
 		break;
 
 	case 106:
-		sendWSMessage_60000(_machine1);
+		sendWSMessage_60000(_fengLi);
 		priestTalk(true, -1);
 		setShadow5(true);
 		break;
@@ -654,10 +654,10 @@ void Room303::daemon() {
 		_G(flags)[V001] = 0;
 
 		terminateMachineAndNull(_priestTalk);
-		_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, true,
-			triggerMachineByHashCallbackNegative, "fl");
-		sendWSMessage_10000(1, _machine1, _clasped4, 1, 1, 400,
-			_clasped4, 1, 6, 0);
+		_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, true,
+			triggerMachineByHashCallback, "fl");
+		sendWSMessage_10000(1, _fengLi, _feng4, 1, 1, 400,
+			_feng4, 1, 6, 0);
 		_val14 = _val15 = 1;
 
 		player_set_commands_allowed(true);
@@ -1012,32 +1012,32 @@ void Room303::daemon() {
 		case 0:
 			switch (_val15) {
 			case 0:
-				sendWSMessage_10000(1, _machine1, _clasped1, 1, 1, 400,
-					_clasped1, 1, 1, 0);
+				sendWSMessage_10000(1, _fengLi, _feng1, 1, 1, 400,
+					_feng1, 1, 1, 0);
 				break;
 
 			case 1:
 			case 2:
 			case 4:
-				sendWSMessage_10000(1, _machine1, _clasped1, 1, 18, 400,
-					_clasped4, 1, 6, 1);
+				sendWSMessage_10000(1, _fengLi, _feng1, 1, 18, 400,
+					_feng4, 1, 6, 1);
 				_val14 = 1;
 				break;
 
 			case 3:
-				sendWSMessage_10000(1, _machine1, _clasped2, 1, 13, 400,
-					_clasped2, 14, 19, 1);
+				sendWSMessage_10000(1, _fengLi, _feng2, 1, 13, 400,
+					_feng2, 14, 19, 1);
 				_val14 = 3;
 				break;
 
 			case 5:
-				terminateMachineAndNull(_machine1);
+				terminateMachineAndNull(_fengLi);
 
 				if (_val13)
-					_machine1 = triggerMachineByHash_3000(8, 2, *S3_NORMAL_DIRS, *S3_SHADOW_DIRS,
+					_fengLi = triggerMachineByHash_3000(8, 2, *S3_NORMAL_DIRS, *S3_SHADOW_DIRS,
 						480, 256, 7, triggerMachineByHashCallback3000, "fl walker");
 				else
-					_machine1 = triggerMachineByHash_3000(8, 2, *S3_NORMAL_DIRS, *S3_SHADOW_DIRS,
+					_fengLi = triggerMachineByHash_3000(8, 2, *S3_NORMAL_DIRS, *S3_SHADOW_DIRS,
 						706, 256, 5, triggerMachineByHashCallback3000, "fl walker");
 
 				_G(kernel).trigger_mode = KT_PARSE;
@@ -1052,35 +1052,35 @@ void Room303::daemon() {
 		case 1:
 			switch (_val15) {
 			case 0:
-				sendWSMessage_10000(1, _machine1, _clasped1, 16, 1, 400,
-					_clasped1, 1, 1, 0);
+				sendWSMessage_10000(1, _fengLi, _feng1, 16, 1, 400,
+					_feng1, 1, 1, 0);
 				_val14 = 0;
 				break;
 
 			case 1:
 				frame = imath_ranged_rand(1, 6);
-				sendWSMessage_10000(1, _machine1, _clasped4, frame, frame, 400,
-					_clasped4, frame, frame, 0);
+				sendWSMessage_10000(1, _fengLi, _feng4, frame, frame, 400,
+					_feng4, frame, frame, 0);
 				break;
 
 			case 3:
 			case 5:
-				sendWSMessage_10000(1, _machine1, _clasped1, 16, 1, 400,
-					_clasped2, 1, 1, 0);
+				sendWSMessage_10000(1, _fengLi, _feng1, 16, 1, 400,
+					_feng2, 1, 1, 0);
 				_val14 = 0;
 				break;
 
 			case 4:
 				frame = imath_ranged_rand(1, 6);
-				sendWSMessage_10000(1, _machine1, _clasped4, frame, frame, 400,
-					_clasped4, frame, frame, 0);
+				sendWSMessage_10000(1, _fengLi, _feng4, frame, frame, 400,
+					_feng4, frame, frame, 0);
 				player_set_commands_allowed(true);
 				_val15 = 1;
 				break;
 
 			default:
-				sendWSMessage_10000(1, _machine1, _clasped3, 1, 18, 400,
-					_clasped3, 19, 21, 1);
+				sendWSMessage_10000(1, _fengLi, _feng3, 1, 18, 400,
+					_feng3, 19, 21, 1);
 				_val14 = 2;
 				break;
 			}
@@ -1089,11 +1089,11 @@ void Room303::daemon() {
 		case 2:
 			if (_val15 == 2) {
 				frame = imath_ranged_rand(19, 21);
-				sendWSMessage_10000(1, _machine1, _clasped3, frame, frame, 400,
-					_clasped3, frame, frame, 0);
+				sendWSMessage_10000(1, _fengLi, _feng3, frame, frame, 400,
+					_feng3, frame, frame, 0);
 			} else {
-				sendWSMessage_10000(1, _machine1, _clasped3, 18, 1, 400,
-					_clasped4, 1, 6, 0);
+				sendWSMessage_10000(1, _fengLi, _feng3, 18, 1, 400,
+					_feng4, 1, 6, 0);
 				_val14 = 1;
 			}
 			break;
@@ -1101,11 +1101,11 @@ void Room303::daemon() {
 		case 3:
 			if (_val15 == 3) {
 				frame = imath_ranged_rand(14, 19);
-				sendWSMessage_10000(1, _machine1, _clasped2, frame, frame, 400,
-					_clasped2, frame, frame, 0);
+				sendWSMessage_10000(1, _fengLi, _feng2, frame, frame, 400,
+					_feng2, frame, frame, 0);
 			} else {
-				sendWSMessage_10000(1, _machine1, _clasped2, 20, 31, 400,
-					_clasped2, 1, 1, 0);
+				sendWSMessage_10000(1, _fengLi, _feng2, 20, 31, 400,
+					_feng2, 1, 1, 0);
 				_val14 = 0;
 			}
 			break;
@@ -1169,17 +1169,17 @@ void Room303::parser() {
 			if (player_said("giant matchstick"))
 				ws_demand_location(610, 256);
 
-			sendWSMessage_10000(_machine1, 706, 256, 5, 2, 1);
+			sendWSMessage_10000(_fengLi, 706, 256, 5, 2, 1);
 			break;
 
 		case 2:
 			setShadow5Alt(true);
-			_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 706, 256, 86, 0xc00, 0,
-				triggerMachineByHashCallbackNegative, "fl state machine");
+			_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 706, 256, 86, 0xc00, 0,
+				triggerMachineByHashCallback, "fl state machine");
 
 			_G(kernel).trigger_mode = KT_DAEMON;
-			sendWSMessage_10000(1, _machine1, _clasped1, 1, 16, 400,
-				_clasped4, 1, 6, 0);
+			sendWSMessage_10000(1, _fengLi, _feng1, 1, 16, 400,
+				_feng4, 1, 6, 0);
 			_val14 = _val15 = 1;
 			setFengActive(false);
 			_val13 = 0;
@@ -1197,18 +1197,18 @@ void Room303::parser() {
 		switch (_G(kernel).trigger) {
 		case 1:
 			setShadow5Alt(false);
-			sendWSMessage_10000(_machine1, 480, 256, 7, 2, 1);
+			sendWSMessage_10000(_fengLi, 480, 256, 7, 2, 1);
 			break;
 
 		case 2:
 			setShadow5(true);
-			sendWSMessage_60000(_machine1);
-			_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
-				triggerMachineByHashCallbackNegative, "fl state machine");
+			sendWSMessage_60000(_fengLi);
+			_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
+				triggerMachineByHashCallback, "fl state machine");
 
 			_G(kernel).trigger_mode = KT_DAEMON;
-			sendWSMessage_10000(1, _machine1, _clasped1, 1, 16, 400,
-				_clasped4, 1, 6, 0);
+			sendWSMessage_10000(1, _fengLi, _feng1, 1, 16, 400,
+				_feng4, 1, 6, 0);
 			_val14 = _val15 = 1;
 			setFengActive(true);
 			_val13 = 1;
@@ -1624,7 +1624,7 @@ void Room303::parser() {
 			_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 		_machine3 = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale + 1,
-			0x500, 1, triggerMachineByHashCallbackNegative, "rip");
+			0x500, 1, triggerMachineByHashCallback, "rip");
 
 		_G(kernel).trigger_mode = KT_DAEMON;
 		sendWSMessage_10000(1, _machine3, 1, 1, 1, 300, 1, 1, 1, 0);
@@ -1660,14 +1660,14 @@ void Room303::parser() {
 				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			_machine3 = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 				_G(player_info).x, _G(player_info).y, _G(player_info).scale + 1,
-				0x500, 0, triggerMachineByHashCallbackNegative, "rip");
+				0x500, 0, triggerMachineByHashCallback, "rip");
 
 		} else {
 			_ripsh2 = series_show("ripsh2", 0xf00, 128, -1, -1, 0,
 				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			_machine3 = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 				_G(player_info).x, _G(player_info).y, _G(player_info).scale + 1,
-				0x500, 1, triggerMachineByHashCallbackNegative, "rip");
+				0x500, 1, triggerMachineByHashCallback, "rip");
 		}
 
 		_G(kernel).trigger_mode = KT_DAEMON;
@@ -1736,18 +1736,18 @@ void Room303::setupMei() {
 	_mei2 = series_load("MC NY hand on hip pos4");
 	_mei3 = series_load("MC NY hand out talk pos4");
 	_mei = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 357, 255, 86, 0xf00, 0,
-		triggerMachineByHashCallbackNegative, "mc");
+		triggerMachineByHashCallback, "mc");
 
 	_G(kernel).trigger_mode = KT_DAEMON;
 	sendWSMessage_10000(1, _mei, _mei1, 1, 1, 200, _mei1, 1, 1, 0);
 	_val10 = _val11 = 0;
 }
 
-void Room303::loadClasped() {
-	_clasped1 = series_load("hands clasped pos5");
-	_clasped2 = series_load("shrug head shake pos5");
-	_clasped3 = series_load("hands clasped bow pos5");
-	_clasped4 = series_load("hands clasped flame loop pos5");
+void Room303::loadFengLi() {
+	_feng1 = series_load("hands clasped pos5");
+	_feng2 = series_load("shrug head shake pos5");
+	_feng3 = series_load("hands clasped bow pos5");
+	_feng4 = series_load("hands clasped flame loop pos5");
 }
 
 void Room303::setFengActive(bool flag) {
@@ -1995,12 +1995,12 @@ void Room303::priestTalkCallback(frac16 myMessage, machine *sender) {
 }
 
 void Room303::priestTalk(bool flag, int trigger) {
-	ws_hide_walker(_machine1);
-	_G(globals)[GLB_TEMP_1] = _clasped1 << 24;
+	ws_hide_walker(_fengLi);
+	_G(globals)[GLB_TEMP_1] = _feng1 << 24;
 	_G(globals)[GLB_TEMP_2] = 0xD << 24;
-	_G(globals)[GLB_TEMP_3] = _clasped3 << 24;
+	_G(globals)[GLB_TEMP_3] = _feng3 << 24;
 	_G(globals)[GLB_TEMP_4] = 0xD << 24;
-	_G(globals)[GLB_TEMP_9] = _clasped4 << 24;
+	_G(globals)[GLB_TEMP_9] = _feng4 << 24;
 	_G(globals)[GLB_TEMP_10] = 0xD << 24;
 	_G(globals)[GLB_TEMP_5] = (flag ? 480 : 705) << 16;
 	_G(globals)[GLB_TEMP_6] = 1 << 24;

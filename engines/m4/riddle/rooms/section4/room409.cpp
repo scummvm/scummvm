@@ -46,7 +46,7 @@ void Room409::init() {
 	_seriesReachHand = series_load("RIP TREK MED REACH HAND POS1");
 
 	_turtleRope = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
-		triggerMachineByHashCallbackNegative, "TURTLE & rope");
+		triggerMachineByHashCallback, "TURTLE & rope");
 	sendWSMessage_10000(1, _turtleRope, _seriesRope, 1, 20, 100, _seriesRope, 20, 20, 0);
 
 	_volume = 255;
@@ -56,7 +56,7 @@ void Room409::init() {
 	digi_play("409_s04", 3);
 
 	_wolfWalker = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x300, 0,
-		triggerMachineByHashCallbackNegative, "WOLFIE");
+		triggerMachineByHashCallback, "WOLFIE");
 	sendWSMessage_10000(1, _wolfWalker, _seriesWolfOpensDoor, 1, 20, 350,
 		_seriesWolfOpensDoor, 20, 20, 0);
 }
@@ -107,7 +107,7 @@ void Room409::daemon() {
 	case 357:
 		ws_hide_walker();
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
-			triggerMachineByHashCallbackNegative, "rip looks at turtle");
+			triggerMachineByHashCallback, "rip looks at turtle");
 		sendWSMessage_10000(1, _ripley, _seriesRp02, 1, 16, 358,
 			_seriesRp02, 16, 16, 0);
 		break;
@@ -127,7 +127,7 @@ void Room409::daemon() {
 		player_update_info();
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x100, 0,
-			triggerMachineByHashCallbackNegative, "rip looks around");
+			triggerMachineByHashCallback, "rip looks around");
 		ws_hide_walker();
 		sendWSMessage_10000(1, _ripley, _seriesHeadTurn, 1, 6, -1,
 			_seriesHeadTurn, 6, 6, 0);
@@ -194,7 +194,7 @@ void Room409::daemon() {
 		player_update_info();
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x100, 0,
-			triggerMachineByHashCallbackNegative, "rip looks around");
+			triggerMachineByHashCallback, "rip looks around");
 		_shadow = series_place_sprite("SAFARI SHADOW 5", 0,
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
 		sendWSMessage_10000(1, _ripley, _seriesReadTelegram, 1, 21, 386,
@@ -272,7 +272,7 @@ void Room409::daemon() {
 	case 408:
 		ws_hide_walker();
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
-			triggerMachineByHashCallbackNegative, "rip looks at turtle");
+			triggerMachineByHashCallback, "rip looks at turtle");
 		sendWSMessage_10000(1, _ripley, _seriesRp02, 1, 16, 409, _seriesRp02, 16, 16, 0);
 		break;
 

@@ -104,7 +104,7 @@ void Room501::daemon() {
 		_shadow = series_show("SAFARI SHADOW 3", 0xf00, 128, -1, -1, 0,
 			_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, 0,
-			triggerMachineByHashCallbackNegative, "Rip Delta Machine State");
+			triggerMachineByHashCallback, "Rip Delta Machine State");
 
 		switch (_val3) {
 		case 3:
@@ -336,7 +336,7 @@ void Room501::daemon() {
 		_xyzzy7 = -1;
 		_xyzzy5 = -1;
 		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, 0,
-			triggerMachineByHashCallbackNegative, "Agent at Desk");
+			triggerMachineByHashCallback, "Agent at Desk");
 		sendWSMessage_10000(1, _agent, _agentTalkLoop, 1, 1, 506,
 			_agentTalkLoop, 1, 1, 0);
 		_xyzzy8 = 1;
@@ -349,7 +349,7 @@ void Room501::daemon() {
 		_xyzzy7 = -1;
 		_xyzzy5 = -1;
 		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, 0,
-			triggerMachineByHashCallbackNegative, "Agent at Desk");
+			triggerMachineByHashCallback, "Agent at Desk");
 		sendWSMessage_10000(1, _agent, _agentStridesForward, 15, 15, 506,
 			_agentStridesForward, 15, 15, 0);
 		break;
@@ -831,7 +831,7 @@ void Room501::daemon() {
 
 	case 557:
 		_deltaPuffinMachine = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, 0,
-			triggerMachineByHashCallbackNegative, "Delta Puffin Machine State");
+			triggerMachineByHashCallback, "Delta Puffin Machine State");
 		_xyzzy3 = 1;
 		_xyzzy1 = 1;
 		_xyzzy5 = 1;
@@ -1038,7 +1038,7 @@ void Room501::daemon() {
 
 	case 596:
 		_deltaPuffinMachine = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, 0,
-			triggerMachineByHashCallbackNegative, "Delta Puffin Machine State");
+			triggerMachineByHashCallback, "Delta Puffin Machine State");
 		_xyzzy3 = 1;
 		_xyzzy1 = 1;
 		_xyzzy5 = 1;
