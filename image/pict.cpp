@@ -63,10 +63,13 @@ void PICTDecoder::setupOpcodesCommon() {
 	OPCODE(0x0003, o_txFont, "TxFont");
 	OPCODE(0x0004, o_txFace, "TxFace");
 	OPCODE(0x0007, o_pnSize, "PnSize");
+	OPCODE(0x0009, o_pnPat, "PnPat");
 	OPCODE(0x000D, o_txSize, "TxSize");
 	OPCODE(0x0010, o_txRatio, "TxRatio");
 	OPCODE(0x0011, o_versionOp, "VersionOp");
 	OPCODE(0x001E, o_nop, "DefHilite");
+	OPCODE(0x0022, o_shortLine, "ShortLine");
+	OPCODE(0x0023, o_shortLineFrom, "ShortLineFrom");
 	OPCODE(0x0028, o_longText, "LongText");
 	OPCODE(0x0091, o_bitsRgn, "BitsRgn");
 	OPCODE(0x0099, o_packBitsRgn, "PackBitsRgn");
@@ -132,6 +135,12 @@ void PICTDecoder::o_pnSize(Common::SeekableReadStream &stream) {
 	stream.readUint16BE();
 }
 
+void PICTDecoder::o_pnPat(Common::SeekableReadStream &stream) {
+	for (int i = 0; i < 8; i++) {
+		_penPattern[i] = stream.readByte();
+	}
+}
+
 void PICTDecoder::o_txSize(Common::SeekableReadStream &stream) {
 	// Ignore
 	stream.readUint16BE();
@@ -155,6 +164,48 @@ void PICTDecoder::o_versionOp(Common::SeekableReadStream &stream) {
 
 void PICTDecoder::o_versionOp1(Common::SeekableReadStream& stream) {
 	_version = 1;
+}
+
+void PICTDecoder::o_shortLine(Common::SeekableReadStream &stream) {
+	// Read the pen location (pnLoc)
+	int16 pnLocX = stream.readSint16BE();
+	int16 pnLocY = stream.readSint16BE();
+
+	// Update the current pen position
+	_currentPenPosition.x = pnLocX;
+	_currentPenPosition.y = pnLocY;
+
+	// Read the relative coordinates for the end of the line (dh, dv)
+	int8 dh = stream.readByte(); // Delta horizontal
+	int8 dv = stream.readByte(); // Delta vertical
+
+	// Calculate the end position of the line
+	int16 endX = pnLocX + dh;
+	int16 endY = pnLocY + dv;
+
+	// Draw the line from the current pen location to the new position
+	//drawLine(pnLocX, pnLocY, endX, endY);
+
+	// Update the pen position
+	_currentPenPosition.x = endX;
+	_currentPenPosition.y = endY;
+}
+
+void PICTDecoder::o_shortLineFrom(Common::SeekableReadStream &stream) {
+	// Read the relative coordinates (dh, dv)
+	int8 dh = stream.readByte(); // Delta horizontal
+	int8 dv = stream.readByte(); // Delta vertical
+
+	// Calculate the new pen position
+	int16 newX = _currentPenPosition.x + dh;
+	int16 newY = _currentPenPosition.y + dv;
+
+	// Draw the line from the current pen position to the new position
+	//drawLine(_currentPenPosition.x, _currentPenPosition.y, newX, newY);
+
+	// Update the pen position
+	_currentPenPosition.x = newX;
+	_currentPenPosition.y = newY;
 }
 
 void PICTDecoder::o_longText(Common::SeekableReadStream &stream) {
