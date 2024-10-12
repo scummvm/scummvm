@@ -53,10 +53,10 @@ XMeshOpenGLShader::~XMeshOpenGLShader() {
 
 bool XMeshOpenGLShader::loadFromXData(const Common::String &filename, XFileData *xobj) {
 	if (XMesh::loadFromXData(filename, xobj)) {
-		auto indexData = _skinMesh->_dxmesh->getIndexBuffer().ptr();
-		uint32 indexDataSize = _skinMesh->_dxmesh->getIndexBuffer().size() / sizeof(uint32);
-		float *vertexData = _skinMesh->_mesh->_vertexData;
-		uint32 vertexCount = _skinMesh->_mesh->_vertexCount;
+		auto indexData = _blendedMesh->getIndexBuffer().ptr();
+		uint32 indexDataSize = _blendedMesh->getIndexBuffer().size() / sizeof(uint32);
+		float *vertexData = _blendedMesh->_meshLoader->_vertexData;
+		uint32 vertexCount = _blendedMesh->_meshLoader->_vertexCount;
 
 		glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
 		glBufferData(GL_ARRAY_BUFFER, 4 * XSkinMeshLoader::kVertexComponentCount * vertexCount, vertexData, GL_DYNAMIC_DRAW);
@@ -72,13 +72,16 @@ bool XMeshOpenGLShader::loadFromXData(const Common::String &filename, XFileData 
 
 //////////////////////////////////////////////////////////////////////////
 bool XMeshOpenGLShader::render(XModel *model) {
-	float *vertexData = _skinMesh->_mesh->_vertexData;
+	if (!_blendedMesh)
+		return false;
+
+	float *vertexData = _blendedMesh->_meshLoader->_vertexData;
 	if (vertexData == nullptr) {
 		return false;
 	}
 
 	bool noAttrs = false;
-	auto attrsTable = _skinMesh->_mesh->_dxmesh->getAttributeTable();
+	auto attrsTable = _blendedMesh->getAttributeTable();
 	uint32 numAttrs = attrsTable->_size;
 	DXAttributeRange *attrs;
 	if (numAttrs == 0) {
@@ -92,8 +95,8 @@ bool XMeshOpenGLShader::render(XModel *model) {
 	if (noAttrs) {
 		attrs[0]._attribId = 0;
 		attrs[0]._vertexStart = attrs[0]._faceStart = 0;
-		attrs[0]._vertexCount = _skinMesh->_mesh->_dxmesh->getNumVertices();
-		attrs[0]._faceCount = _skinMesh->_mesh->_dxmesh->getNumFaces();
+		attrs[0]._vertexCount = _blendedMesh->getNumVertices();
+		attrs[0]._faceCount = _blendedMesh->getNumFaces();
 	}
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
@@ -138,7 +141,7 @@ bool XMeshOpenGLShader::render(XModel *model) {
 }
 
 bool XMeshOpenGLShader::renderFlatShadowModel() {
-	float *vertexData = _skinMesh->_mesh->_vertexData;
+	float *vertexData = _blendedMesh->_meshLoader->_vertexData;
 	if (vertexData == nullptr) {
 		return false;
 	}
@@ -148,7 +151,7 @@ bool XMeshOpenGLShader::renderFlatShadowModel() {
 	_flatShadowShader->enableVertexAttribute("position", _vertexBuffer, 3, GL_FLOAT, false, 4 * XSkinMeshLoader::kVertexComponentCount, 4 * XSkinMeshLoader::kPositionOffset);
 	_flatShadowShader->use(true);
 
-	glDrawElements(GL_TRIANGLES, _skinMesh->_mesh->_dxmesh->getNumFaces() * 3, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, _blendedMesh->getNumFaces() * 3, GL_UNSIGNED_SHORT, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -159,8 +162,8 @@ bool XMeshOpenGLShader::renderFlatShadowModel() {
 bool XMeshOpenGLShader::update(FrameNode *parentFrame) {
 	XMesh::update(parentFrame);
 
-	float *vertexData = _skinMesh->_mesh->_vertexData;
-	uint32 vertexCount = _skinMesh->_mesh->_vertexCount;
+	float *vertexData = _blendedMesh->_meshLoader->_vertexData;
+	uint32 vertexCount = _blendedMesh->_meshLoader->_vertexCount;
 
 	glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * XSkinMeshLoader::kVertexComponentCount * vertexCount, vertexData);

@@ -49,20 +49,19 @@ class SkinMeshHelper {
 	friend class XMeshOpenGLShader;
 
 public:
-	SkinMeshHelper(XSkinMeshLoader *meshLoader, DXMesh *mesh, DXSkinInfo *skinInfo);
+	SkinMeshHelper(DXMesh *mesh, DXSkinInfo *skinInfo);
 	virtual ~SkinMeshHelper();
 
 	uint getNumFaces();
 	uint getNumBones();
 	bool getOriginalMesh(DXMesh **mesh);
-	bool generateSkinnedMesh(uint32 *adjacencyOut, DXMesh **mesh);
+	bool generateSkinnedMesh(Common::Array<uint32> &adjacencyOut, DXMesh **mesh);
 	bool updateSkinnedMesh(const DXMatrix *boneTransforms, DXMesh *mesh);
 	const char *getBoneName(uint32 boneIndex);
 	DXMatrix *getBoneOffsetMatrix(uint32 boneIndex);
 
 private:
-	XSkinMeshLoader *_mesh;
-	DXMesh *_dxmesh;
+	DXMesh *_mesh;
 	DXSkinInfo *_skinInfo;
 };
 

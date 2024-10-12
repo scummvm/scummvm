@@ -104,6 +104,8 @@ struct DXBone {
 #pragma pack()
 #endif
 
+class XSkinMeshLoader;
+
 class DXSkinInfo {
 	uint32 _fvf;
 	uint32 _numVertices{};
@@ -144,6 +146,7 @@ class DXMesh {
 	bool adjacentEdge(uint32 index1, uint32 index2, uint32 index3, uint32 index4);
 
 public:
+	XSkinMeshLoader *_meshLoader;
 	~DXMesh() { destroy(); }
 	bool create(uint32 numFaces, uint32 numVertices, uint32 fvf);
 	void destroy();

@@ -43,6 +43,8 @@ namespace Wintermute {
 
 XMesh::XMesh(Wintermute::BaseGame *inGame) : BaseNamedObject(inGame) {
 	_skinMesh = nullptr;
+	_blendedMesh = nullptr;
+	_staticMesh = nullptr;
 
 	_BBoxStart = Math::Vector3d(0.0f, 0.0f, 0.0f);
 	_BBoxEnd = Math::Vector3d(0.0f, 0.0f, 0.0f);
@@ -50,6 +52,11 @@ XMesh::XMesh(Wintermute::BaseGame *inGame) : BaseNamedObject(inGame) {
 
 XMesh::~XMesh() {
 	delete _skinMesh;
+	_skinMesh = nullptr;
+	delete _blendedMesh;
+	_blendedMesh = nullptr;
+	delete _staticMesh;
+	_staticMesh = nullptr;
 	_materials.clear();
 }
 
@@ -64,7 +71,7 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 	// load mesh
 	DXBuffer bufMaterials;
 	//DXBuffer bufBoneOffset;
-	uint32 numFaces;
+	//uint32 numFaces;
 	uint32 numMaterials;
 	DXMesh *mesh;
 	DXSkinInfo *skinInfo = nullptr;
@@ -76,13 +83,38 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 	}
 
 	XSkinMeshLoader *meshLoader = new XSkinMeshLoader(this, mesh);
-	meshLoader->loadMesh(filename, xobj);
 
-	_skinMesh = new SkinMeshHelper(meshLoader, mesh, skinInfo);
+	_skinMesh = new SkinMeshHelper(mesh, skinInfo);
 
-	numFaces = _skinMesh->getNumFaces();
+	//numFaces = _skinMesh->getNumFaces();
 
 	uint32 numBones = _skinMesh->getNumBones();
+
+	// Process skinning data
+	if (numBones) {
+		// bones are available
+		//_boneMatrices = new DXMatrix*[numBones];
+
+		generateMesh();
+		_blendedMesh->_meshLoader = meshLoader;
+	} else {
+		// no bones are found, blend the mesh and use it as a static mesh
+		_skinMesh->getOriginalMesh(&_staticMesh);
+		_staticMesh->cloneMesh(&_blendedMesh);
+
+		_staticMesh->_meshLoader = meshLoader;
+		_blendedMesh->_meshLoader = meshLoader;
+
+		delete _skinMesh;
+		_skinMesh = nullptr;
+
+		if (_blendedMesh) {
+			//numFaces = _blendedMesh->getNumFaces();
+			//_adjacency = new uint32[numFaces * 3];
+			_blendedMesh->generateAdjacency(_adjacency);
+		}
+	}
+
 
 	// check for materials
 	if ((bufMaterials.ptr() == nullptr) || (numMaterials == 0)) {
@@ -145,8 +177,6 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 		meshLoader->_skinWeightsList.push_back(currSkinWeights);
 	}
 
-	mesh->generateAdjacency(_adjacency);
-
 	bufMaterials.free();
 	//bufBoneOffset.free();
 
@@ -154,22 +184,43 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 }
 
 //////////////////////////////////////////////////////////////////////////
+bool XMesh::generateMesh() {
+	//uint32 numFaces = _skinMesh->getNumFaces();
+
+	delete _blendedMesh;
+	_blendedMesh = nullptr;
+
+	//delete[] _adjacency;
+	//_adjacency = new uint32[numFaces * 3];
+
+	// blend the mesh
+	if (!_skinMesh->generateSkinnedMesh(_adjacency, &_blendedMesh)) {
+		BaseEngine::LOG(0, "Error converting to blended mesh");
+		return false;
+	}
+
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
 bool XMesh::findBones(FrameNode *rootFrame) {
 	// normal meshes don't have bones
-	if (!_skinMesh || !_skinMesh->getNumBones()) {
+	if (!_skinMesh)
 		return true;
-	}
-	auto skinWeightsList = _skinMesh->_mesh->_skinWeightsList;
+
+	auto skinWeightsList = _blendedMesh->_meshLoader->_skinWeightsList;
 
 	_boneMatrices.resize(skinWeightsList.size());
-
+	// get the buffer with the names of the bones
 	for (uint i = 0; i < skinWeightsList.size(); ++i) {
+		// find a frame with the same name
 		FrameNode *frame = rootFrame->findFrame(skinWeightsList[i]._boneName.c_str());
 
 		if (frame) {
+			// get a *pointer* to its world matrix
 			_boneMatrices[i] = frame->getCombinedMatrix();
 		} else {
-			warning("XMesh::findBones could not find bone %s", skinWeightsList[i]._boneName.c_str());
+			BaseEngine::LOG(0, "Warning: Cannot find frame '%s'", skinWeightsList[i]._boneName.c_str());
 		}
 	}
 
@@ -178,21 +229,25 @@ bool XMesh::findBones(FrameNode *rootFrame) {
 
 //////////////////////////////////////////////////////////////////////////
 bool XMesh::update(FrameNode *parentFrame) {
-	float *vertexData = _skinMesh->_mesh->_vertexData;
+	if (!_blendedMesh)
+		return false;
+
+	float *vertexData = _blendedMesh->_meshLoader->_vertexData;
 	if (vertexData == nullptr) {
 		return false;
 	}
 
-	float *vertexPositionData = _skinMesh->_mesh->_vertexPositionData;
-	float *vertexNormalData = _skinMesh->_mesh->_vertexNormalData;
-	uint32 vertexCount = _skinMesh->_mesh->_vertexCount;
-	auto skinWeightsList = _skinMesh->_mesh->_skinWeightsList;
+	float *vertexPositionData = _blendedMesh->_meshLoader->_vertexPositionData;
+	float *vertexNormalData = _blendedMesh->_meshLoader->_vertexNormalData;
+	uint32 vertexCount = _blendedMesh->_meshLoader->_vertexCount;
+	auto skinWeightsList = _blendedMesh->_meshLoader->_skinWeightsList;
 
 	// update skinned mesh
-	if (_skinMesh->getNumBones() > 0) {
+	if (_skinMesh) {
 		BaseArray<Math::Matrix4> finalBoneMatrices;
 		finalBoneMatrices.resize(_boneMatrices.size());
 
+		// prepare final matrices
 		for (uint i = 0; i < skinWeightsList.size(); ++i) {
 			finalBoneMatrices[i] = *_boneMatrices[i] * skinWeightsList[i]._offsetMatrix;
 		}
@@ -270,7 +325,10 @@ bool XMesh::update(FrameNode *parentFrame) {
 
 //////////////////////////////////////////////////////////////////////////
 bool XMesh::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth) {
-	float *vertexData = _skinMesh->_mesh->_vertexData;
+	if (!_blendedMesh)
+		return false;
+
+	float *vertexData = _blendedMesh->_meshLoader->_vertexData;
 	if (vertexData == nullptr) {
 		return false;
 	}
@@ -282,8 +340,8 @@ bool XMesh::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const
 
 	uint32 numEdges = 0;
 
-	auto indexData = (uint32 *)_skinMesh->_dxmesh->getIndexBuffer().ptr();
-	uint32 indexDataSize = _skinMesh->_dxmesh->getIndexBuffer().size() / sizeof(uint32);
+	auto indexData = (uint32 *)_blendedMesh->getIndexBuffer().ptr();
+	uint32 indexDataSize = _blendedMesh->getIndexBuffer().size() / sizeof(uint32);
 	Common::Array<bool> isFront(indexDataSize / 3, false);
 
 	// First pass : for each face, record if it is front or back facing the light
@@ -361,15 +419,18 @@ bool XMesh::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const
 
 //////////////////////////////////////////////////////////////////////////
 bool XMesh::pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir) {
-	float *vertexData = _skinMesh->_mesh->_vertexData;
+	if (!_blendedMesh)
+		return false;
+
+	float *vertexData = _blendedMesh->_meshLoader->_vertexData;
 	if (vertexData == nullptr) {
 		return false;
 	}
 
 	bool res = false;
 
-	auto indexData = _skinMesh->_dxmesh->getIndexBuffer().ptr();
-	uint32 indexDataSize = _skinMesh->_dxmesh->getIndexBuffer().size() / sizeof(uint32);
+	auto indexData = _blendedMesh->getIndexBuffer().ptr();
+	uint32 indexDataSize = _blendedMesh->getIndexBuffer().size() / sizeof(uint32);
 	for (uint16 i = 0; i < indexDataSize; i += 3) {
 		uint16 index1 = indexData[i + 0];
 		uint16 index2 = indexData[i + 1];
@@ -417,7 +478,10 @@ bool XMesh::setMaterialTheora(const Common::String &matName, VideoTheoraPlayer *
 
 //////////////////////////////////////////////////////////////////////////
 bool XMesh::invalidateDeviceObjects() {
-	// release buffers here
+	if (_skinMesh) {
+		delete[] _blendedMesh;
+		_blendedMesh = nullptr;
+	}
 
 	for (uint32 i = 0; i < _materials.size(); i++) {
 		_materials[i]->invalidateDeviceObjects();
@@ -432,16 +496,22 @@ bool XMesh::restoreDeviceObjects() {
 		_materials[i]->restoreDeviceObjects();
 	}
 
-	if (!_skinMesh || _skinMesh->getNumBones() > 0) {
-		return _skinMesh->_dxmesh->generateAdjacency(_adjacency);
+	if (_skinMesh) {
+		return generateMesh();
 	} else {
 		return true;
 	}
 }
 
 void XMesh::updateBoundingBox() {
-	float *vertexData = _skinMesh->_mesh->_vertexData;
-	uint32 vertexCount = _skinMesh->_mesh->_vertexCount;
+	float *vertexData;
+
+	if (_blendedMesh)
+		vertexData = _blendedMesh->_meshLoader->_vertexData;
+	else
+		vertexData = _staticMesh->_meshLoader->_vertexData;
+
+	uint32 vertexCount = _blendedMesh->getNumVertices();
 	if (vertexData == nullptr || vertexCount == 0) {
 		return;
 	}

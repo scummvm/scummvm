@@ -43,6 +43,7 @@ class Material;
 class ShadowVolume;
 class VideoTheoraPlayer;
 class SkinMeshHelper;
+class DXMesh;
 struct XMeshObject;
 
 class XMesh : public BaseNamedObject {
@@ -70,10 +71,13 @@ public:
 	bool restoreDeviceObjects();
 
 protected:
+	bool generateMesh();
 
 	void updateBoundingBox();
 
 	SkinMeshHelper *_skinMesh;
+	DXMesh *_blendedMesh;
+	DXMesh *_staticMesh;
 
 	BaseArray<Math::Matrix4 *> _boneMatrices;
 

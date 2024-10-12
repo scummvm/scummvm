@@ -35,7 +35,7 @@ namespace Wintermute {
 XSkinMeshLoader::XSkinMeshLoader(XMesh *mesh, DXMesh *dxmesh) {
 	_mesh = mesh;
 	_dxmesh = dxmesh;
-
+	
 	_vertexCount = dxmesh->getNumVertices();
 	// vertex format for .X meshes will be position + normals + textures
 	_vertexData = new float[kVertexComponentCount * _vertexCount]();
@@ -43,15 +43,7 @@ XSkinMeshLoader::XSkinMeshLoader(XMesh *mesh, DXMesh *dxmesh) {
 	// we already know how big this is supposed to be
 	// TODO: might have to generate normals if file does not contain any
 	_vertexNormalData = new float[3 * _vertexCount]();
-}
-
-XSkinMeshLoader::~XSkinMeshLoader() {
-	delete[] _vertexData;
-	delete[] _vertexPositionData;
-	delete[] _vertexNormalData;
-}
-
-void XSkinMeshLoader::loadMesh(const Common::String &filename, XFileData *xobj) {
+	
 	auto fvf = _dxmesh->getFVF();
 	uint32 vertexSize = DXGetFVFVertexSize(fvf) / sizeof(float);
 	float *vertexBuffer = (float *)_dxmesh->getVertexBuffer().ptr();
@@ -105,6 +97,12 @@ void XSkinMeshLoader::loadMesh(const Common::String &filename, XFileData *xobj) 
 			_vertexData[i * kVertexComponentCount + kTextureCoordOffset + 1] = vertexBuffer[i * vertexSize + textureOffset + 1];
 		}
 	}
+}
+
+XSkinMeshLoader::~XSkinMeshLoader() {
+	delete[] _vertexData;
+	delete[] _vertexPositionData;
+	delete[] _vertexNormalData;
 }
 
 } // namespace Wintermute

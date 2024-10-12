@@ -48,14 +48,17 @@ XMeshOpenGL::~XMeshOpenGL() {
 
 //////////////////////////////////////////////////////////////////////////
 bool XMeshOpenGL::render(XModel *model) {
-	float *vertexData = _skinMesh->_mesh->_vertexData;
-	auto indexData = (uint32 *)_skinMesh->_dxmesh->getIndexBuffer().ptr();
+	if (!_blendedMesh)
+		return false;
+
+	float *vertexData = _blendedMesh->_meshLoader->_vertexData;
+	auto indexData = (uint32 *)_blendedMesh->getIndexBuffer().ptr();
 	if (vertexData == nullptr) {
 		return false;
 	}
 
 	bool noAttrs = false;
-	auto attrsTable = _skinMesh->_mesh->_dxmesh->getAttributeTable();
+	auto attrsTable = _blendedMesh->getAttributeTable();
 	uint32 numAttrs = attrsTable->_size;
 	DXAttributeRange *attrs;
 	if (numAttrs == 0) {
@@ -69,8 +72,8 @@ bool XMeshOpenGL::render(XModel *model) {
 	if (noAttrs) {
 		attrs[0]._attribId = 0;
 		attrs[0]._vertexStart = attrs[0]._faceStart = 0;
-		attrs[0]._vertexCount = _skinMesh->_mesh->_dxmesh->getNumVertices();
-		attrs[0]._faceCount = _skinMesh->_mesh->_dxmesh->getNumFaces();
+		attrs[0]._vertexCount = _blendedMesh->getNumVertices();
+		attrs[0]._faceCount = _blendedMesh->getNumFaces();
 	}
 
 	for (uint32 i = 0; i < numAttrs; i++) {
