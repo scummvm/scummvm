@@ -99,7 +99,7 @@ void Room303::init() {
 		if (!player_been_here(301)) {
 			kernel_load_variant(_val13 ? "303lock1" : "303lock2");
 			setFengActive(_val13);
-			loadHands();
+			setupMei();
 			setShadow4(true);
 
 			ws_walk_load_walker_series(S3_NORMAL_DIRS, S3_NORMAL_NAMES);
@@ -159,7 +159,7 @@ void Room303::init() {
 			ws_walk_load_walker_series(S3_NORMAL_DIRS2, S3_NORMAL_NAMES2);
 			ws_walk_load_shadow_series(S3_SHADOW_DIRS2, S3_SHADOW_NAMES2);
 
-			_hands4 = triggerMachineByHash_3000(8, 3, *S3_NORMAL_DIRS2, *S3_SHADOW_DIRS2,
+			_mei = triggerMachineByHash_3000(8, 3, *S3_NORMAL_DIRS2, *S3_SHADOW_DIRS2,
 				445, 215, 7, triggerMachineByHashCallback3000, "mc");
 			_gestTalk4 = series_load("mei ny lft hand gest talk pos4");
 			kernel_timing_trigger(1, 107);
@@ -172,7 +172,7 @@ void Room303::init() {
 			if (!player_been_here(301)) {
 				kernel_load_variant("303lock1");
 				setFengActive(true);
-				loadHands();
+				setupMei();
 				setShadow4(true);
 
 				ws_walk_load_walker_series(S3_NORMAL_DIRS, S3_NORMAL_NAMES);
@@ -199,7 +199,7 @@ void Room303::init() {
 
 		if (!player_been_here(301)) {
 			kernel_timing_trigger(1, 6);
-			loadHands();
+			setupMei();
 			setShadow4(true);
 
 			ws_walk_load_walker_series(S3_NORMAL_DIRS, S3_NORMAL_NAMES);
@@ -227,7 +227,7 @@ void Room303::init() {
 		player_set_commands_allowed(false);
 
 		if (!player_been_here(301)) {
-			loadHands();
+			setupMei();
 			setShadow4(true);
 			ws_walk_load_walker_series(S3_NORMAL_DIRS, S3_NORMAL_NAMES);
 			ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
@@ -283,7 +283,7 @@ void Room303::init() {
 		kernel_load_variant("303lock1");
 		setFengActive(true);
 		ws_demand_location(145, 289, 3);
-		loadHands();
+		setupMei();
 		setShadow4(true);
 
 		ws_walk_load_walker_series(S3_NORMAL_DIRS, S3_NORMAL_NAMES);
@@ -456,16 +456,16 @@ void Room303::daemon() {
 
 	case 107:
 		ws_walk(700, 305, 0, -1, 3);
-		sendWSMessage_10000(_hands4, 393, 260, 9, 109, 0);
+		sendWSMessage_10000(_mei, 393, 260, 9, 109, 0);
 		break;
 
 	case 109:
-		sendWSMessage_10000(_hands4, 393, 260, 5, 110, 1);
+		sendWSMessage_10000(_mei, 393, 260, 5, 110, 1);
 		break;
 
 	case 110:
 		setGlobals3(_gestTalk4, 1, 21);
-		sendWSMessage_F0000(_hands4, 157);
+		sendWSMessage_F0000(_mei, 157);
 		digi_play("303m03", 1, 255, 143);
 		break;
 
@@ -479,7 +479,7 @@ void Room303::daemon() {
 
 	case 116:
 		_gestTalk4 = series_load("mc ny hand out talk pos4");
-		sendWSMessage_10000(_hands4, 357, 255, 4, 117, 1);
+		sendWSMessage_10000(_mei, 357, 255, 4, 117, 1);
 		kernel_timing_trigger(60, 103);
 		series_unload(_suitTalk1);
 		series_unload(_chinTalk4);
@@ -488,7 +488,7 @@ void Room303::daemon() {
 
 	case 117:
 		setGlobals1(_gestTalk4, 1, 9, 9, 9);
-		sendWSMessage_110000(_hands4, 120);
+		sendWSMessage_110000(_mei, 120);
 		kernel_timing_trigger(70, 118);
 		digi_play("303m04", 1, 255);
 		break;
@@ -507,7 +507,7 @@ void Room303::daemon() {
 		break;
 
 	case 120:
-		sendWSMessage_140000(_hands4, 159);
+		sendWSMessage_140000(_mei, 159);
 		break;
 
 	case 121:
@@ -590,8 +590,8 @@ void Room303::daemon() {
 		break;
 
 	case 137:
-		sendWSMessage_60000(_hands4);
-		loadHands();
+		sendWSMessage_60000(_mei);
+		setupMei();
 		setShadow4(true);
 		_val11 = 7;
 		kernel_timing_trigger(1, 160);
@@ -716,14 +716,14 @@ void Room303::daemon() {
 
 					switch (imath_ranged_rand(1, 3)) {
 					case 1:
-						sendWSMessage_10000(1, _hands4, _hands2, 1, 14, 200,
-							_hands2, 14, 14, 0);
+						sendWSMessage_10000(1, _mei, _mei2, 1, 14, 200,
+							_mei2, 14, 14, 0);
 						_val10 = _val11 = 1;
 						break;
 
 					case 2:
-						sendWSMessage_10000(1, _hands4, _hands1, 2, 9, 200,
-							_hands1, 9, 9, 0);
+						sendWSMessage_10000(1, _mei, _mei1, 2, 9, 200,
+							_mei1, 9, 9, 0);
 						_val10 = _val11 = 1;
 						break;
 
@@ -740,27 +740,27 @@ void Room303::daemon() {
 				break;
 
 			case 3:
-				sendWSMessage_10000(1, _hands4, _hands3, 1, 12, 200,
-					_hands3, 12, 12, 0);
+				sendWSMessage_10000(1, _mei, _mei3, 1, 12, 200,
+					_mei3, 12, 12, 0);
 				_val10 = 3;
 				break;
 
 			case 4:
 			case 5:
-				sendWSMessage_10000(1, _hands4, _hands3, 17, 17, 200,
-					_hands3, 17, 17, 0);
+				sendWSMessage_10000(1, _mei, _mei3, 17, 17, 200,
+					_mei3, 17, 17, 0);
 				_val10 = 4;
 				break;
 
 			case 6:
-				sendWSMessage_10000(1, _hands4, _meiLips, 1, 13, 200,
+				sendWSMessage_10000(1, _mei, _meiLips, 1, 13, 200,
 					_meiLips, 13, 13, 0);
 				_val10 = 6;
 				break;
 
 			case 7:
-				sendWSMessage_10000(1, _hands4, _hands2, 1, 14, 200,
-					_hands2, 14, 14, 0);
+				sendWSMessage_10000(1, _mei, _mei2, 1, 14, 200,
+					_mei2, 14, 14, 0);
 				_val10 = _val11 = 1;
 				break;
 
@@ -777,8 +777,8 @@ void Room303::daemon() {
 
 					switch (imath_ranged_rand(1, 2)) {
 					case 1:
-						sendWSMessage_10000(1, _hands4, _hands2, 14, 1, 200,
-							_hands1, 1, 1, 0);
+						sendWSMessage_10000(1, _mei, _mei2, 14, 1, 200,
+							_mei1, 1, 1, 0);
 						_val10 = _val11 = 0;
 						break;
 
@@ -793,8 +793,8 @@ void Room303::daemon() {
 					kernel_timing_trigger(60, 201);
 				}
 			} else {
-				sendWSMessage_10000(1, _hands4, _hands2, 14, 1, 200,
-					_hands1, 1, 1, 0);
+				sendWSMessage_10000(1, _mei, _mei2, 14, 1, 200,
+					_mei1, 1, 1, 0);
 				_val10 = 0;
 			}
 			break;
@@ -807,8 +807,8 @@ void Room303::daemon() {
 
 					switch (imath_ranged_rand(1, 2)) {
 					case 1:
-						sendWSMessage_10000(1, _hands4, _hands1, 9, 2, 200,
-							_hands1, 1, 1, 0);
+						sendWSMessage_10000(1, _mei, _mei1, 9, 2, 200,
+							_mei1, 1, 1, 0);
 						break;
 
 					case 2:
@@ -823,19 +823,19 @@ void Room303::daemon() {
 				}
 				break;
 			} else {
-				sendWSMessage_10000(1, _hands4, _hands1, 9, 2, 200,
-					_hands1, 1, 1, 0);
+				sendWSMessage_10000(1, _mei, _mei1, 9, 2, 200,
+					_mei1, 1, 1, 0);
 				_val10 = 0;
 			}
 			break;
 
 		case 3:
 			if (_val11 == 3) {
-				sendWSMessage_10000(1, _hands4, _hands3, 13, 13, 200,
-					_hands3, 13, 16, 0);
+				sendWSMessage_10000(1, _mei, _mei3, 13, 13, 200,
+					_mei3, 13, 16, 0);
 			} else {
-				sendWSMessage_10000(1, _hands4, _hands3, 12, 1, 200,
-					_hands1, 1, 1, 0);
+				sendWSMessage_10000(1, _mei, _mei3, 12, 1, 200,
+					_mei1, 1, 1, 0);
 				_val10 = 0;
 			}
 			break;
@@ -843,19 +843,19 @@ void Room303::daemon() {
 		case 4:
 			switch (_val11) {
 			case 4:
-				sendWSMessage_10000(1, _hands4, _hands3, 17, 17, 200,
-					_hands3, 17, 17, 0);
+				sendWSMessage_10000(1, _mei, _mei3, 17, 17, 200,
+					_mei3, 17, 17, 0);
 				break;
 
 			case 5:
 				frame = imath_ranged_rand(17, 20);
-				sendWSMessage_10000(1, _hands4, _hands3, frame, frame, 200,
-					_hands3, frame, frame, 0);
+				sendWSMessage_10000(1, _mei, _mei3, frame, frame, 200,
+					_mei3, frame, frame, 0);
 				break;
 
 			default:
-				sendWSMessage_10000(1, _hands4, _hands1, 1, 1, 200,
-					_hands1, 1, 1, 0);
+				sendWSMessage_10000(1, _mei, _mei1, 1, 1, 200,
+					_mei1, 1, 1, 0);
 				_val10 = 0;
 				break;
 			}
@@ -864,11 +864,11 @@ void Room303::daemon() {
 		case 6:
 			if (_val11 == 6) {
 				frame = imath_ranged_rand(14, 16);
-				sendWSMessage_10000(1, _hands4, _meiLips, frame, frame, 200,
+				sendWSMessage_10000(1, _mei, _meiLips, frame, frame, 200,
 					_meiLips, frame, frame, 0);
 			} else {
-				sendWSMessage_10000(1, _hands4, _meiLips, 17, 24, 200,
-					_hands1, 1, 1, 0);
+				sendWSMessage_10000(1, _mei, _meiLips, 17, 24, 200,
+					_mei1, 1, 1, 0);
 				_val10 = 0;
 			}
 			break;
@@ -1731,16 +1731,16 @@ void Room303::parser() {
 	_G(player).command_ready = false;
 }
 
-void Room303::loadHands() {
-	_hands1 = series_load("MC NY hands behind back pos4");
-	_hands2 = series_load("MC NY hand on hip pos4");
-	_hands3 = series_load("MC NY hand out talk pos4");
-	_hands4 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 357, 255, 86, 0xf00, 0,
+void Room303::setupMei() {
+	_mei1 = series_load("MC NY hands behind back pos4");
+	_mei2 = series_load("MC NY hand on hip pos4");
+	_mei3 = series_load("MC NY hand out talk pos4");
+	_mei = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 357, 255, 86, 0xf00, 0,
 		triggerMachineByHashCallbackNegative, "mc");
 
 	_G(kernel).trigger_mode = KT_DAEMON;
-	sendWSMessage_10000(1, _hands4, _hands1, 1, 1, 200,
-		_hands1, 1, 1, 0);
+	sendWSMessage_10000(1, _mei, _mei1, 1, 1, 200,
+		_mei1, 1, 1, 0);
 	_val10 = _val11 = 0;
 }
 

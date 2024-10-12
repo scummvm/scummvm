@@ -51,10 +51,10 @@ private:
 	KernelTriggerType _triggerMode1 = KT_DAEMON;
 	KernelTriggerType _triggerMode2 = KT_DAEMON;
 	machine *_door = nullptr;
-	int _hands1 = 0;
-	int _hands2 = 0;
-	int _hands3 = 0;
-	machine *_hands4 = nullptr;
+	int _mei1 = 0;
+	int _mei2 = 0;
+	int _mei3 = 0;
+	machine *_mei = nullptr;
 	int _clasped1 = 0;
 	int _clasped2 = 0;
 	int _clasped3 = 0;
@@ -83,7 +83,7 @@ private:
 
 	static void escapePressed(void *, void *);
 
-	void loadHands();
+	void setupMei();
 	void loadClasped();
 	void setFengActive(bool flag);
 	void setShadow4(bool active);
