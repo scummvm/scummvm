@@ -1739,8 +1739,7 @@ void Room303::setupMei() {
 		triggerMachineByHashCallbackNegative, "mc");
 
 	_G(kernel).trigger_mode = KT_DAEMON;
-	sendWSMessage_10000(1, _mei, _mei1, 1, 1, 200,
-		_mei1, 1, 1, 0);
+	sendWSMessage_10000(1, _mei, _mei1, 1, 1, 200, _mei1, 1, 1, 0);
 	_val10 = _val11 = 0;
 }
 

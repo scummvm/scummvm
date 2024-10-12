@@ -68,8 +68,8 @@ void setGlobals4(int val1, int val2, int val3, int val4) {
 	_G(globals)[GLB_TEMP_4] = val4;
 }
 
-void sendWSMessage_10000(int val1, machine *recv, int val2, int val3,
-	int val4, int trigger, int val9, int val6, int val7, int val8) {
+void sendWSMessage_10000(int val1, machine *mach, int val2, int val3,
+		int val4, int trigger, int val9, int val6, int val7, int val8) {
 	if (!trigger)
 		trigger = -1;
 
@@ -83,11 +83,10 @@ void sendWSMessage_10000(int val1, machine *recv, int val2, int val3,
 	_G(globals)[GLB_TEMP_8] = val8 << 16;
 	_G(globals)[GLB_TEMP_9] = val9 << 24;
 
-	sendWSMessage(0x10000, 0, nullptr, 0, nullptr, 1);
+	sendWSMessage(0x10000, 0, mach, 0, nullptr, 1);
 }
 
-void sendWSMessage_10000(machine *recv, int val1, int val2, int index,
-		int trigger, int val4) {
+void sendWSMessage_10000(machine *mach, int val1, int val2, int index, int trigger, int val4) {
 	static const byte NUMS[14] = { 0, 0, 1, 2, 3, 4, 4, 5, 6, 7, 8, 9, 9, 0 };
 
 	int val = ((val2 << 16) - _G(globals)[V002]) *_G(globals)[V006] + _G(globals)[V004];
@@ -99,7 +98,7 @@ void sendWSMessage_10000(machine *recv, int val1, int val2, int index,
 	_G(globals)[GLB_TEMP_5] = kernel_trigger_create(trigger);
 	_G(globals)[GLB_TEMP_6] = val4 << 16;
 
-	sendWSMessage(0x10000, 0, recv, 0, nullptr, 1);
+	sendWSMessage(0x10000, 0, mach, 0, nullptr, 1);
 }
 
 machine *triggerMachineByHash_3000(int myHash, int dataHash, int normalDir, int shadowDir,
