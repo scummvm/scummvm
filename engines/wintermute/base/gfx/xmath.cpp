@@ -32,6 +32,164 @@
 
 namespace Wintermute {
 
+DXVector3::DXVector3(const float *pf) {
+	_x = pf[0];
+	_y = pf[1];
+	_z = pf[2];
+}
+
+DXVector3::DXVector3(float fx, float fy, float fz) {
+	_x = fx;
+	_y = fy;
+	_z = fz;
+}
+
+DXVector3::operator float* () {
+	return (float *)&_x;
+}
+
+DXVector3::operator const float* () const {
+	return (const float *)&_x;
+}
+
+DXVector3 &DXVector3::operator += (const DXVector3 &v) {
+	_x += v._x;
+	_y += v._y;
+	_z += v._z;
+	return *this;
+}
+
+DXVector3 &DXVector3::operator -= (const DXVector3 &v) {
+	_x -= v._x;
+	_y -= v._y;
+	_z -= v._z;
+	return *this;
+}
+
+DXVector3 &DXVector3::operator *= (float f) {
+	_x *= f;
+	_y *= f;
+	_z *= f;
+	return *this;
+}
+
+DXVector3 &DXVector3::operator /= (float f) {
+	_x /= f;
+	_y /= f;
+	_z /= f;
+	return *this;
+}
+
+DXVector3 DXVector3::operator + () const {
+	return *this;
+}
+
+DXVector3 DXVector3::operator - () const {
+	return DXVector3(-_x, -_y, -_z);
+}
+
+DXVector3 DXVector3::operator + (const DXVector3 &v) const {
+	return DXVector3(_x + v._x, _y + v._y, _z + v._z);
+}
+
+DXVector3 DXVector3::operator - (const DXVector3 &v) const {
+	return DXVector3(_x - v._x, _y - v._y, _z - v._z);
+}
+
+DXVector3 DXVector3::operator * (float f) const {
+	return DXVector3(_x * f, _y * f, _z * f);
+}
+
+DXVector3 DXVector3::operator / (float f) const {
+	return DXVector3(_x / f, _y / f, _z / f);
+}
+
+DXVector3 operator * (float f, const DXVector3 &v) {
+	return DXVector3(f * v._x, f * v._y, f * v._z);
+}
+
+bool DXVector3::operator == (const DXVector3 &v) const {
+	return _x == v._x && _y == v._y && _z == v._z;
+}
+
+bool DXVector3::operator != (const DXVector3 &v) const {
+	return _x != v._x || _y != v._y || _z != v._z;
+}
+
+DXVector4::DXVector4(const float *pf) {
+	_x = pf[0];
+	_y = pf[1];
+	_z = pf[2];
+	_w = pf[3];
+}
+
+DXVector4::DXVector4(float fx, float fy, float fz, float fw) {
+	_x = fx;
+	_y = fy;
+	_z = fz;
+	_w = fw;
+}
+
+DXVector4::operator float* () {
+	return (float *)&_x;
+}
+
+DXVector4::operator const float* () const {
+	return (const float *)&_x;
+}
+
+DXMatrix::DXMatrix(const float *pf) {
+	memcpy(&matrix._11, pf, sizeof(DXMatrix::matrix));
+}
+
+DXMatrix::operator float* () {
+	return (float *)&matrix._11;
+}
+
+DXMatrix::operator const float* () const {
+	return (const float *)&matrix._11;
+}
+
+DXMatrix DXMatrix::operator * (const DXMatrix &mat) const {
+	DXMatrix buf;
+	DXMatrixMultiply(&buf, this, &mat);
+	return buf;
+}
+
+DXQuaternion::DXQuaternion(const float *pf) {
+	_x = pf[0];
+	_y = pf[1];
+	_z = pf[2];
+	_w = pf[3];
+}
+
+DXQuaternion::DXQuaternion(float fx, float fy, float fz, float fw) {
+	_x = fx;
+	_y = fy;
+	_z = fz;
+	_w = fw;
+}
+					  
+DXQuaternion::operator float* () {
+	return (float *)&_x;
+}
+	
+DXQuaternion::operator const float* () const {
+	return (const float *)&_x;
+}
+
+DXMatrix *DXMatrixTranspose(DXMatrix *pout, const DXMatrix *pm) {
+	uint32 i, j;
+	DXMatrix m;
+
+	m = *pm;
+
+	for (i = 0; i < 4; ++i)
+		for (j = 0; j < 4; ++j) pout->_m[i][j] = m._m[j][i];
+
+	return pout;
+}
+
 DXQuaternion *DXQuaternionRotationMatrix(DXQuaternion *out, const DXMatrix *m) {
 	float s, trace;
 
@@ -178,7 +336,7 @@ DXPlane *DXPlaneFromPointNormal(DXPlane *pout, const DXVector3 *pvpoint, const D
 	return pout;
 }
 
-DXPlane *D3DXPlaneFromPoints(DXPlane *pout, const DXVector3 *pv1, const DXVector3 *pv2, const DXVector3 *pv3) {
+DXPlane *DXPlaneFromPoints(DXPlane *pout, const DXVector3 *pv1, const DXVector3 *pv2, const DXVector3 *pv3) {
 	DXVector3 edge1, edge2, normal, Nnormal;
 
 	edge1._x = 0.0f; edge1._y = 0.0f; edge1._z = 0.0f;
@@ -236,7 +394,7 @@ DXMatrix *DXMatrixTranslation(DXMatrix *pout, float x, float y, float z) {
 	return pout;
 }
 
-DXMatrix *D3DXMatrixScaling(DXMatrix *pout, float sx, float sy, float sz) {
+DXMatrix *DXMatrixScaling(DXMatrix *pout, float sx, float sy, float sz) {
 	DXMatrixIdentity(pout);
 	pout->_m[0][0] = sx;
 	pout->_m[1][1] = sy;
@@ -244,7 +402,7 @@ DXMatrix *D3DXMatrixScaling(DXMatrix *pout, float sx, float sy, float sz) {
 	return pout;
 }
 
-DXMatrix *D3DXMatrixRotationZ(DXMatrix *pout, float angle) {
+DXMatrix *DXMatrixRotationZ(DXMatrix *pout, float angle) {
 	DXMatrixIdentity(pout);
 	pout->_m[0][0] = cosf(angle);
 	pout->_m[1][1] = cosf(angle);
@@ -321,11 +479,11 @@ DXQuaternion *DXQuaternionSlerp(DXQuaternion *out, const DXQuaternion *q1, const
 	return out;
 }
 
-float D3DXQuaternionDot(const DXVector4 *pq1, const DXVector4 *pq2) {
+float DXQuaternionDot(const DXVector4 *pq1, const DXVector4 *pq2) {
 	return (pq1->_x) * (pq2->_x) + (pq1->_y) * (pq2->_y) + (pq1->_z) * (pq2->_z) + (pq1->_w) * (pq2->_w);
 }
 
-DXVector4 *D3DXVec3Transform(DXVector4 *pout, const DXVector3 *pv, const DXMatrix *pm) {
+DXVector4 *DXVec3Transform(DXVector4 *pout, const DXVector3 *pv, const DXMatrix *pm) {
 	DXVector4 out;
 
 	out._x = pm->_m[0][0] * pv->_x + pm->_m[1][0] * pv->_y + pm->_m[2][0] * pv->_z + pm->_m[3][0];
@@ -392,10 +550,6 @@ DXVector3 *DXVec3Project(DXVector3 *pout, const DXVector3 *pv, const Rect32 *pvi
 		pout->_z = (1.0f + pout->_z) / 2.0f;
 	}
 	return pout;
-}
-
-float D3DXVec3Length(const DXVector3 *pv) {
-	return sqrtf(pv->_x * pv->_x + pv->_y * pv->_y + pv->_z * pv->_z);
 }
 
 DXMatrix *DXMatrixLookAtLH(DXMatrix *out, const DXVector3 *eye, const DXVector3 *at, const DXVector3 *up) {

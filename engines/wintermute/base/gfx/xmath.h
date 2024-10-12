@@ -42,12 +42,37 @@ namespace Wintermute {
 struct DXVector2 {
 	float           _x;
 	float           _y;
+
+	DXVector2() {}
 };
 
 struct DXVector3 {
 	float           _x;
 	float           _y;
 	float           _z;
+
+	DXVector3() {}
+	DXVector3(const float *pf);
+	DXVector3(float fx, float fy, float fz);
+
+	operator float* ();
+	operator const float* () const;
+
+	DXVector3 &operator += (const DXVector3 &);
+	DXVector3 &operator -= (const DXVector3 &);
+	DXVector3 &operator *= (float);
+	DXVector3 &operator /= (float);
+
+	DXVector3 operator + () const;
+	DXVector3 operator - () const;
+
+	DXVector3 operator + (const DXVector3 &) const;
+	DXVector3 operator - (const DXVector3 &) const;
+	DXVector3 operator * (float) const;
+	DXVector3 operator / (float) const;
+
+	bool operator == (const DXVector3 &) const;
+	bool operator != (const DXVector3 &) const;
 };
 
 struct DXVector4 {
@@ -55,6 +80,13 @@ struct DXVector4 {
 	float           _y;
 	float           _z;
 	float           _w;
+
+	DXVector4() {}
+	DXVector4(const float *pf);
+	DXVector4(float fx, float fy, float fz, float fw);
+
+	operator float* ();
+	operator const float* () const;
 };
 
 struct DXQuaternion {
@@ -62,6 +94,13 @@ struct DXQuaternion {
 	float           _y;
 	float           _z;
 	float           _w;
+
+	DXQuaternion() {}
+	DXQuaternion(const float *pf);
+	DXQuaternion(float fx, float fy, float fz, float fw);
+
+	operator float* ();
+	operator const float* () const;
 };
 
 struct DXPlane {
@@ -69,17 +108,29 @@ struct DXPlane {
 	float           _b;
 	float           _c;
 	float           _d;
+
+	DXPlane() {}
 };
 
-union DXMatrix {
-	struct {
-		float _11, _12, _13, _14;
-		float _21, _22, _23, _24;
-		float _31, _32, _33, _34;
-		float _41, _42, _43, _44;
-	} matrix;
-	float _m[4][4];
-	float _m4x4[16];
+struct DXMatrix {
+	union {
+		struct {
+			float _11, _12, _13, _14;
+			float _21, _22, _23, _24;
+			float _31, _32, _33, _34;
+			float _41, _42, _43, _44;
+		} matrix;
+		float _m[4][4];
+		float _m4x4[16];
+	};
+	
+	DXMatrix() {}
+	DXMatrix(const float *pf);
+
+	operator float* ();
+	operator const float* () const;
+
+	DXMatrix operator * (const DXMatrix &) const;
 };
 
 #if defined(SCUMMVM_USE_PRAGMA_PACK)
@@ -106,8 +157,10 @@ DXVector4 *DXVec3Transform(DXVector4 *pout, const DXVector3 *pv, const DXMatrix 
 DXVector3 *DXVec3TransformCoord(DXVector3 *pout, const DXVector3 *pv, const DXMatrix *pm);
 DXVector3 *DXVec3TransformNormal(DXVector3 *pout, const DXVector3 *pv, const DXMatrix *pm);
 DXMatrix *DXMatrixMultiply(DXMatrix *pout, const DXMatrix *pm1, const DXMatrix *pm2);
+DXMatrix *DXMatrixScaling(DXMatrix *pout, float sx, float sy, float sz);
 DXVector3 *DXVec3Project(DXVector3 *pout, const DXVector3 *pv, const Rect32 *pviewport,
-                         const DXVector3 *pprojection, const DXMatrix *pview, const DXMatrix *pworld);
+                         const DXMatrix *pprojection, const DXMatrix *pview, const DXMatrix *pworld);
+DXMatrix *DXMatrixTranspose(DXMatrix *pout, const DXMatrix *pm);
 
 static inline DXMatrix *DXMatrixIdentity(DXMatrix *pout) {
 	(*pout)._m[0][1] = 0.0f;
