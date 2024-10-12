@@ -44,7 +44,8 @@ enum {
 };
 
 class Walker : public M4::Walker {
-private:
+	// Strangerke : I turned the callback from private to public as it's called by room 803. TODO: Check if it's correct, then update the description accordingly
+public:
 	/**
 	 * This is called when PLAYER walker code sends system message back to C (used by MAIN PLAYER WALKER ONLY)
 	 */

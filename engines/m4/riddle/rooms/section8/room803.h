@@ -33,8 +33,25 @@ public:
 	Room803() : Room() {}
 	~Room803() override {}
 
+	void preload() override;
 	void init() override;
+	void parser() override;
 	void daemon() override;
+
+private:
+	int32 _meiStepOffPile = 0;
+	int32 _meiTalksPos3 = 0;
+	int32 _ripTalkerPos5 = 0;
+	int32 _var1 = 0;
+
+	machine *_mcWalkerMach = nullptr;
+	machine *_meiLooksAboutMach = nullptr;
+	machine *_meiStepOffPileMach = nullptr;
+	machine *_ripStanderMach = nullptr;
+
+	void initWalker();
+	void loadWalkSeries();
+	void daemonSub1();
 };
 
 } // namespace Rooms
