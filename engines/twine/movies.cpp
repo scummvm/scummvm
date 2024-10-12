@@ -391,6 +391,8 @@ bool Movies::playMovie(const char *name) { // PlayAnimFla
 	if (!_file.open(Common::Path(fileNamePath + FLA_EXT))) {
 		warning("Failed to open fla movie '%s'", fileNamePath.c_str());
 		playGIFMovie(fileNamePath.c_str());
+		_engine->_screens->setBlackPal();
+		_engine->_screens->clearScreen();
 		return true;
 	}
 

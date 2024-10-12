@@ -538,9 +538,12 @@ int32 ScriptMove::mPLAY_FLA(TwinEEngine *engine, MoveScriptContext &ctx) {
 	} while (true);
 
 	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::PLAY_FLA(%s)", movie);
+	engine->saveTimer(false);
+	engine->_screens->fadeToBlack(engine->_screens->_ptrPal);
 	engine->_movie->playMovie(movie);
-	engine->setPalette(engine->_screens->_ptrPal);
-	engine->_screens->clearScreen();
+	engine->_screens->_flagFade = true;
+	engine->restoreTimer();
+	engine->_redraw->drawScene(true);
 	return 0;
 }
 
