@@ -5127,8 +5127,16 @@ Common::SharedPtr<Structural> Runtime::findDefaultSharedSceneForScene(Structural
 	Structural *subsection = scene->getParent();
 
 	const Common::Array<Common::SharedPtr<Structural> > &children = subsection->getChildren();
-	if (children.size() == 0 || children[0].get() == scene)
+	if (children.size() == 0)
 		return Common::SharedPtr<Structural>();
+
+	if (children[0].get() == scene) {
+		// This case occurs in The Day The World Broke
+		if (children.size() > 1)
+			return children[1];
+		else
+			return Common::SharedPtr<Structural>();
+	}
 
 	return children[0];
 }
