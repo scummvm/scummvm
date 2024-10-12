@@ -249,18 +249,7 @@ void MacGuiImpl::MacDialogWindow::drawBeamCursor() {
 	for (int i = 0; i < ARRAYSIZE(beam); i += 2) {
 		uint32 color = _beamCursor->getPixel(beam[i], beam[i + 1]);
 
-		// From looking at a couple of colors, it seems this is how
-		// the colors are inverted for 0-15. I'm just going to assume
-		// that the same method will work reasonably well for the
-		// custom colors. If there's anything else, just make it black.
-
-		if (color <= 15)
-			color = 15 - color;
-		else if (color > kCustomColor && color <= kCustomColor + 15)
-			color = kCustomColor + 15 - color;
-		else
-			color = _black;
-
+		color = _gui->_windowManager->inverter(color);
 		_beamCursor->setPixel(beam[i], beam[i + 1], color);
 	}
 

@@ -94,9 +94,6 @@ protected:
 		kBrightYellow = 14,
 		kWhite = 15,
 
-		// Reserved for custom colors, loaded from PICT resources.
-		kCustomColor = 100,
-
 		kBackground = 254,	// Gray or checkerboard
 		kTransparency = 255
 	};
