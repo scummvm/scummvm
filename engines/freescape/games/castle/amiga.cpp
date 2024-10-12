@@ -68,15 +68,33 @@ void CastleEngine::loadAssetsAmigaDemo() {
 
 	_viewArea = Common::Rect(40, 29, 280, 154);
 	loadMessagesVariableSize(&file, 0x8bb2, 178);
-	loadRiddles(&file, 0x96c8, 19);
+	loadRiddles(&file, 0x96c8 - 2 - 19 * 2, 19);
+
+	file.seek(0x3c6d0);
+	byte *borderPalete = loadPalette(&file);
+
+	file.seek(0x11eec);
+	Common::Array<Graphics::ManagedSurface *> chars;
+	for (int i = 0; i < 90; i++) {
+		Graphics::ManagedSurface *img = loadFrameFromPlanes(&file, 8, 8);
+		//Graphics::ManagedSurface *imgRiddle = new Graphics::ManagedSurface();
+		//imgRiddle->copyFrom(*img);
+
+		chars.push_back(img);
+		chars[i]->convertToInPlace(_gfx->_texturePixelFormat, borderPalete, 16);
+
+		//charsRiddle.push_back(imgRiddle);
+		//charsRiddle[i]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGARiddleFontPalette, 16);
+	}
+	_font = Font(chars);
+	_font.setCharWidth(9);
+
 	load8bitBinary(&file, 0x162a6, 16);
 	loadPalettes(&file, 0x151a6);
 
 	file.seek(0x2be96); // Area 255
 	_areaMap[255] = load8bitArea(&file, 16);
 
-	file.seek(0x3c6d0);
-	byte *borderPalete = loadPalette(&file);
 
 	file.seek(0x2cf28 + 0x28 - 0x2 + 0x28);
 	_border = loadFrameFromPlanesVertical(&file, 160, 200);
@@ -93,6 +111,7 @@ void CastleEngine::loadAssetsAmigaDemo() {
 }
 
 void CastleEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
+	drawStringInSurface(_currentArea->_name, 97, 182, 0, 0, surface);
 }
 
 } // End of namespace Freescape

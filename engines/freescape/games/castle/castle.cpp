@@ -739,10 +739,8 @@ void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int
 					message = message + c;
 			}
 
-			/*if (isAmiga() || isAtariST())
+			if (isAmiga() || isAtariST())
 				debug("extra byte: %x", file->readByte());
-			debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
-			debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());*/
 			debugC(1, kFreescapeDebugParser, "'%s' with offset: %d, %d", message.c_str(), x, y);
 
 			riddle._lines.push_back(RiddleText(x, y, message));
@@ -1056,6 +1054,8 @@ void CastleEngine::updateTimeVariables() {
 }
 
 void CastleEngine::borderScreen() {
+	if (isAmiga() && isDemo())
+		return; // Skip character selection
 
 	if (isSpectrum())
 		FreescapeEngine::borderScreen();
@@ -1080,11 +1080,7 @@ void CastleEngine::borderScreen() {
 		surface->free();
 		delete surface;
 	}
-
-	if (isAmiga() && isDemo()) {
-		// Skip character selection
-	} else
-		selectCharacterScreen();
+	selectCharacterScreen();
 }
 
 void CastleEngine::drawOption() {
