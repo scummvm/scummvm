@@ -23,7 +23,7 @@
 #include "darkseed/anm.h"
 
 namespace Darkseed {
-bool Anm::load(const Common::Path &filename) {
+bool Anm::load(const Common::Path &filename, int deltaOffset) {
 	if (_file.isOpen()) {
 		_file.close();
 	}
@@ -31,14 +31,14 @@ bool Anm::load(const Common::Path &filename) {
 		return false;
 	}
 	_numRecords = _file.readUint16LE();
-	_assetOffset = _file.readUint16LE();
-
+	_assetFileId = _file.readUint16LE();
+	_deltaOffset = deltaOffset;
 	return true;
 }
 
 bool Anm::getImg(uint16 index, Img &img, bool includesPosition) {
 	_file.seek(4 + index * 2);
-	int offset = _file.readUint16LE();
+	int offset = _file.readUint16LE() + _deltaOffset;
 	_file.seek((offset * 16) + (4 + _numRecords * 2));
 	if (includesPosition) {
 		img.load(_file);

@@ -61,6 +61,7 @@ private:
 	bool babyDollScene();
 	bool bookScene();
 	bool nightmare2Scene();
+	bool nightmare3Scene();
 
 	void runAnim(int direction = 1);
 	bool stepAnim(int drawMode = 1);
@@ -69,6 +70,8 @@ private:
 
 	void registTime();
 	bool waitTime(int16 duration);
+
+	void freeMorph();
 };
 
 }; // End of namespace Darkseed
