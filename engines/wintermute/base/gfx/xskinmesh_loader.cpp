@@ -105,12 +105,6 @@ void XSkinMeshLoader::loadMesh(const Common::String &filename, XFileData *xobj) 
 			_vertexData[i * kVertexComponentCount + kTextureCoordOffset + 1] = vertexBuffer[i * vertexSize + textureOffset + 1];
 		}
 	}
-
-
-	uint32 *indexPtr = (uint32 *)_dxmesh->getIndexBuffer().ptr();
-	for (uint i = 0; i < _dxmesh->getIndexBuffer().size() / sizeof(uint32); ++i) {
-		_indexData.push_back(indexPtr[i]);
-	}
 }
 
 } // namespace Wintermute

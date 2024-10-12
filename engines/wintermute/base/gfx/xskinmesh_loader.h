@@ -69,7 +69,6 @@ protected:
 	float *_vertexPositionData;
 	float *_vertexNormalData;
 	uint32 _vertexCount;
-	Common::Array<uint16> _indexData;
 
 	BaseArray<Math::Matrix4 *> _boneMatrices;
 	BaseArray<SkinWeights> _skinWeightsList;

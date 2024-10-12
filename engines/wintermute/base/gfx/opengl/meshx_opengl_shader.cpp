@@ -53,7 +53,8 @@ XMeshOpenGLShader::~XMeshOpenGLShader() {
 
 bool XMeshOpenGLShader::loadFromXData(const Common::String &filename, XFileData *xobj) {
 	if (XMesh::loadFromXData(filename, xobj)) {
-		auto indexData = _skinMesh->_mesh->_indexData;
+		auto indexData = _skinMesh->_dxmesh->getIndexBuffer().ptr();
+		uint32 indexDataSize = _skinMesh->_dxmesh->getIndexBuffer().size() / sizeof(uint32);
 		float *vertexData = _skinMesh->_mesh->_vertexData;
 		uint32 vertexCount = _skinMesh->_mesh->_vertexCount;
 
@@ -61,7 +62,7 @@ bool XMeshOpenGLShader::loadFromXData(const Common::String &filename, XFileData 
 		glBufferData(GL_ARRAY_BUFFER, 4 * XSkinMeshLoader::kVertexComponentCount * vertexCount, vertexData, GL_DYNAMIC_DRAW);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * indexData.size(), indexData.data(), GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * indexDataSize, indexData, GL_STATIC_DRAW);
 
 		return true;
 	}
@@ -119,8 +120,8 @@ bool XMeshOpenGLShader::render(XModel *model) {
 		_shader->setUniform("diffuse", diffuse);
 		_shader->setUniform("ambient", diffuse);
 
-		size_t offset = 2 * attrsTable->_ptr[i]._faceStart * 3;
-		glDrawElements(GL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, GL_UNSIGNED_SHORT, (void *)offset);
+		size_t offset = 4 * attrsTable->_ptr[i]._faceStart * 3;
+		glDrawElements(GL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, GL_UNSIGNED_INT, (void *)offset);
 	}
 
 	glBindTexture(GL_TEXTURE_2D, 0);

@@ -49,7 +49,7 @@ XMeshOpenGL::~XMeshOpenGL() {
 //////////////////////////////////////////////////////////////////////////
 bool XMeshOpenGL::render(XModel *model) {
 	float *vertexData = _skinMesh->_mesh->_vertexData;
-	auto indexData = _skinMesh->_mesh->_indexData;
+	auto indexData = (uint32 *)_skinMesh->_dxmesh->getIndexBuffer().ptr();
 	if (vertexData == nullptr) {
 		return false;
 	}
@@ -101,7 +101,7 @@ bool XMeshOpenGL::render(XModel *model) {
 		if (textureEnable)
 			glTexCoordPointer(2, GL_FLOAT, XSkinMeshLoader::kVertexComponentCount * sizeof(float), vertexData + XSkinMeshLoader::kTextureCoordOffset);
 
-		glDrawElements(GL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, GL_UNSIGNED_SHORT, indexData.data() + attrsTable->_ptr[i]._faceStart * 3);
+		glDrawElements(GL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, GL_UNSIGNED_INT, indexData + attrsTable->_ptr[i]._faceStart * 3);
 
 		glDisableClientState(GL_VERTEX_ARRAY);
 		glDisableClientState(GL_NORMAL_ARRAY);

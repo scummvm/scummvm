@@ -293,11 +293,12 @@ bool XMesh::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const
 
 	uint32 numEdges = 0;
 
-	auto indexData = _skinMesh->_mesh->_indexData;
-	Common::Array<bool> isFront(indexData.size() / 3, false);
+	auto indexData = (uint32 *)_skinMesh->_dxmesh->getIndexBuffer().ptr();
+	uint32 indexDataSize = _skinMesh->_dxmesh->getIndexBuffer().size() / sizeof(uint32);
+	Common::Array<bool> isFront(indexDataSize / 3, false);
 
 	// First pass : for each face, record if it is front or back facing the light
-	for (uint32 i = 0; i < indexData.size() / 3; i++) {
+	for (uint32 i = 0; i < indexDataSize / 3; i++) {
 		uint16 index0 = indexData[3 * i + 0];
 		uint16 index1 = indexData[3 * i + 1];
 		uint16 index2 = indexData[3 * i + 2];
@@ -317,14 +318,14 @@ bool XMesh::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const
 	}
 
 	// Allocate a temporary edge list
-	Common::Array<uint16> edges(indexData.size() * 2, 0);
+	Common::Array<uint16> edges(indexDataSize * 2, 0);
 
 	// First pass : for each face, record if it is front or back facing the light
-	for (uint32 i = 0; i < indexData.size() / 3; i++) {
+	for (uint32 i = 0; i < indexDataSize / 3; i++) {
 		if (isFront[i]) {
-			uint16 wFace0 = indexData[3 * i + 0];
-			uint16 wFace1 = indexData[3 * i + 1];
-			uint16 wFace2 = indexData[3 * i + 2];
+			uint32 wFace0 = indexData[3 * i + 0];
+			uint32 wFace1 = indexData[3 * i + 1];
+			uint32 wFace2 = indexData[3 * i + 2];
 
 			uint32 adjacent0 = _adjacency[3 * i + 0];
 			uint32 adjacent1 = _adjacency[3 * i + 1];
@@ -378,8 +379,9 @@ bool XMesh::pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir) {
 
 	bool res = false;
 
-	auto indexData = _skinMesh->_mesh->_indexData;
-	for (uint16 i = 0; i < indexData.size(); i += 3) {
+	auto indexData = _skinMesh->_dxmesh->getIndexBuffer().ptr();
+	uint32 indexDataSize = _skinMesh->_dxmesh->getIndexBuffer().size() / sizeof(uint32);
+	for (uint16 i = 0; i < indexDataSize; i += 3) {
 		uint16 index1 = indexData[i + 0];
 		uint16 index2 = indexData[i + 1];
 		uint16 index3 = indexData[i + 2];

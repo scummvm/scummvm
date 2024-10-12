@@ -33,8 +33,6 @@
 #include "engines/wintermute/base/gfx/xskinmesh.h"
 #include "engines/wintermute/base/gfx/xmath.h"
 
-#include "math/vector3d.h"
-
 namespace Wintermute {
 
 struct MeshData {
