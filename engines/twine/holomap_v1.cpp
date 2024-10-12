@@ -342,6 +342,8 @@ void HolomapV1::holoTraj(int32 trajectoryIndex) {
 		return;
 	}
 
+	_engine->saveTimer(false);
+
 	if (_engine->_screens->_flagPalettePcx)
 		_engine->_screens->fadeToBlack(_engine->_screens->_palettePcx);
 	else
@@ -352,7 +354,6 @@ void HolomapV1::holoTraj(int32 trajectoryIndex) {
 
 	initHoloDatas();
 
-	_engine->saveTimer(false);
 	const int32 cameraPosX = _engine->width() / 2 + 80;
 	const int32 cameraPosY = _engine->height() / 2;
 	_engine->_renderer->setProjection(cameraPosX, cameraPosY, 128, 1024, 1024);
@@ -538,6 +539,8 @@ void HolomapV1::holoMap() {
 	const int32 betaLightTmp = _engine->_scene->_betaLight;
 	const Graphics::Palette savepalette = _engine->_screens->_palettePcx;
 
+	_engine->saveTimer(false);
+
 	_engine->_screens->fadeToBlack(_engine->_screens->_ptrPal);
 	_engine->_sound->stopSamples();
 	_engine->_interface->unsetClip();
@@ -698,6 +701,7 @@ void HolomapV1::holoMap() {
 
 	_engine->_input->enableKeyMap(mainKeyMapId);
 	_engine->_text->initSceneTextBank();
+	_engine->restoreTimer();
 
 	_engine->_screens->_palettePcx = savepalette;
 
