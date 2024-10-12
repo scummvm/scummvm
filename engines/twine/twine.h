@@ -369,8 +369,8 @@ public:
 	void restoreFrontBuffer();
 	void saveFrontBuffer();
 
-	void freezeTime(bool pause);
-	void unfreezeTime();
+	void saveTimer(bool pause);
+	void restoreTimer();
 
 	/**
 	 * Game engine main loop

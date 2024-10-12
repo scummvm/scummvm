@@ -80,11 +80,11 @@
 namespace TwinE {
 
 ScopedEngineFreeze::ScopedEngineFreeze(TwinEEngine *engine, bool pause) : _engine(engine) {
-	_engine->freezeTime(pause);
+	_engine->saveTimer(pause);
 }
 
 ScopedEngineFreeze::~ScopedEngineFreeze() {
-	_engine->unfreezeTime();
+	_engine->restoreTimer();
 }
 
 ScopedCursor::ScopedCursor(TwinEEngine *engine) : _engine(engine) {
@@ -707,7 +707,7 @@ int TwinEEngine::getRandomNumber(uint max) {
 	return _rnd.getRandomNumber(max - 1);
 }
 
-void TwinEEngine::freezeTime(bool pause) {
+void TwinEEngine::saveTimer(bool pause) {
 	if (_isTimeFreezed == 0) {
 		_saveFreezedTime = timerRef;
 		debugC(3, kDebugLevels::kDebugTimers, "freezeTime: timer %i", timerRef);
@@ -718,7 +718,7 @@ void TwinEEngine::freezeTime(bool pause) {
 	debugC(3, kDebugLevels::kDebugTimers, "freezeTime: %i", _isTimeFreezed);
 }
 
-void TwinEEngine::unfreezeTime() {
+void TwinEEngine::restoreTimer() {
 	--_isTimeFreezed;
 	debugC(3, kDebugLevels::kDebugTimers, "unfreezeTime: %i", _isTimeFreezed);
 	if (_isTimeFreezed == 0) {
@@ -769,7 +769,7 @@ void TwinEEngine::processBonusList() {
 }
 
 void TwinEEngine::processInventoryAction() {
-	freezeTime(false);
+	saveTimer(false);
 	testRestoreModeSVGA(true) ;
 	_menu->inventory();
 
@@ -843,9 +843,9 @@ void TwinEEngine::processInventoryAction() {
 		break;
 	}
 	case kiBonusList: {
-		unfreezeTime();
+		restoreTimer();
 		_redraw->redrawEngineActions(true);
-		freezeTime(false);
+		saveTimer(false);
 		processBonusList();
 		break;
 	}
@@ -861,7 +861,7 @@ void TwinEEngine::processInventoryAction() {
 		break;
 	}
 
-	unfreezeTime();
+	restoreTimer();
 	_redraw->redrawEngineActions(true);
 }
 
@@ -977,10 +977,10 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			} else if (_input->isActionActive(TwinEActionType::QuickBehaviourDiscreet, false)) {
 				_actor->_heroBehaviour = HeroBehaviourType::kDiscrete;
 			}
-			freezeTime(false);
+			saveTimer(false);
 			testRestoreModeSVGA(true);
 			_menu->processBehaviourMenu(behaviourMenu);
-			unfreezeTime();
+			restoreTimer();
 			_redraw->redrawEngineActions(true);
 		}
 
@@ -1008,18 +1008,18 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		// Draw holomap
 		if (_input->toggleActionIfActive(TwinEActionType::OpenHolomap) && _gameState->hasItem(InventoryItems::kiHolomap) && !_gameState->inventoryDisabled()) {
 			testRestoreModeSVGA(true);
-			freezeTime(false);
+			saveTimer(false);
 			_holomap->holoMap();
 			// unfreeze here - the redrawEngineActions is also doing a freeze
 			// see https://bugs.scummvm.org/ticket/14808
-			unfreezeTime();
+			restoreTimer();
 			_screens->_flagFade = true;
 			_redraw->redrawEngineActions(true);
 		}
 
 		// Process Pause
 		if (_input->toggleActionIfActive(TwinEActionType::Pause)) {
-			freezeTime(true);
+			saveTimer(true);
 			const char *PauseString = "Pause";
 			_text->setFontColor(COLOR_WHITE);
 			if (_redraw->_flagMCGA) {
@@ -1037,7 +1037,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 					break;
 				}
 			} while (!_input->toggleActionIfActive(TwinEActionType::Pause));
-			unfreezeTime();
+			restoreTimer();
 			_redraw->redrawEngineActions(true);
 		}
 

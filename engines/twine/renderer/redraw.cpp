@@ -879,7 +879,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // AffScene
 	_engine->_interface->unsetClip();
 
 	if (bgRedraw) {
-		_engine->freezeTime(false);
+		_engine->saveTimer(false);
 		if (_engine->_scene->_newCube != SCENE_CEILING_GRID_FADE_1 && _engine->_scene->_newCube != SCENE_CEILING_GRID_FADE_2) {
 			_engine->_screens->fadeToBlack(_engine->_screens->_ptrPal);
 		}
@@ -923,7 +923,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // AffScene
 
 	if (bgRedraw) {
 		moveNextAreas();
-		_engine->unfreezeTime();
+		_engine->restoreTimer();
 	} else {
 		flipRedrawAreas();
 	}
