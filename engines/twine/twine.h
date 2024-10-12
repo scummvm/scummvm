@@ -162,12 +162,6 @@ enum class SceneLoopState {
 	Finished = 1
 };
 
-struct ScopedEngineFreeze {
-	TwinEEngine *_engine;
-	ScopedEngineFreeze(TwinEEngine *engine, bool pause = false);
-	~ScopedEngineFreeze();
-};
-
 struct ScopedCursor {
 	TwinEEngine *_engine;
 	ScopedCursor(TwinEEngine *engine);

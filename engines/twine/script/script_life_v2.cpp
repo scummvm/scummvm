@@ -201,10 +201,11 @@ static const ScriptLifeFunction function_map[] = {
 int32 ScriptLifeV2::lPALETTE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 palIndex = engine->_screens->mapLba2Palette(ctx.stream.readByte());
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::PALETTE(%i)", palIndex);
-	ScopedEngineFreeze scoped(engine);
+	engine->saveTimer(false);
 	HQR::getPaletteEntry(engine->_screens->_ptrPal, Resources::HQR_RESS_FILE, palIndex);
 	engine->setPalette(engine->_screens->_ptrPal);
 	engine->_screens->_flagPalettePcx = true;
+	engine->restoreTimer();
 	return 0;
 }
 
@@ -549,7 +550,7 @@ int32 ScriptLifeV2::lSET_CAMERA(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lPLAY_ACF(TwinEEngine *engine, LifeScriptContext &ctx) {
-	ScopedEngineFreeze timer(engine);
+	engine->saveTimer(false);
 	int strIdx = 0;
 	char movie[64];
 	do {
@@ -567,6 +568,7 @@ int32 ScriptLifeV2::lPLAY_ACF(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_movie->playMovie(movie);
 	// TODO: lba2 is doing more stuff here - reset the cinema mode, init the scene and palette stuff
 	engine->setPalette(engine->_screens->_ptrPal);
+	engine->restoreTimer();
 	engine->_redraw->_firstTime = true;
 
 	return -1;

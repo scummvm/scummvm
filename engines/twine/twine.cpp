@@ -79,14 +79,6 @@
 #endif
 namespace TwinE {
 
-ScopedEngineFreeze::ScopedEngineFreeze(TwinEEngine *engine, bool pause) : _engine(engine) {
-	_engine->saveTimer(pause);
-}
-
-ScopedEngineFreeze::~ScopedEngineFreeze() {
-	_engine->restoreTimer();
-}
-
 ScopedCursor::ScopedCursor(TwinEEngine *engine) : _engine(engine) {
 	_engine->pushMouseCursorVisible();
 }
@@ -873,12 +865,13 @@ int32 TwinEEngine::toSeconds(int x) const {
 }
 
 void TwinEEngine::processOptionsMenu() {
-	ScopedEngineFreeze scoped(this);
+	saveTimer(false);
 	testRestoreModeSVGA(true) ;
 	_sound->pauseSamples();
 	_menu->inGameOptionsMenu();
 	_scene->playSceneMusic();
 	_sound->resumeSamples();
+	restoreTimer();
 	_redraw->redrawEngineActions(true);
 }
 
@@ -926,17 +919,19 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 	} else {
 		// Process give up menu - Press ESC
 		if (_input->toggleAbortAction() && _scene->_sceneHero->_lifePoint > 0 && _scene->_sceneHero->_body != -1 && !_scene->_sceneHero->_staticFlags.bIsInvisible) {
-			ScopedEngineFreeze scopedFreeze(this);
+			saveTimer(false);
 			testRestoreModeSVGA(true) ;
 			const int giveUp = _menu->quitMenu();
 			if (giveUp == kQuitEngine) {
 				return false;
 			}
 			if (giveUp == 1) {
+				restoreTimer();
 				_redraw->redrawEngineActions(true);
 				_sceneLoopState = SceneLoopState::ReturnToMenu;
 				return false;
 			}
+			restoreTimer();
 			_redraw->redrawEngineActions(true);
 		}
 

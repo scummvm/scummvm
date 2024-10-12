@@ -807,8 +807,9 @@ void Scene::checkZoneSce(int32 actorIdx) {
 
 						_engine->_grid->_useCellingGrid = zone->num;
 						_engine->_grid->_cellingGridIdx = z;
-						ScopedEngineFreeze freeze(_engine);
+						_engine->saveTimer(false);
 						_engine->_grid->initCellingGrid(_engine->_grid->_useCellingGrid);
+						_engine->restoreTimer();
 					}
 				}
 				break;
@@ -820,11 +821,12 @@ void Scene::checkZoneSce(int32 actorIdx) {
 				break;
 			case ZoneType::kText:
 				if (IS_HERO(actorIdx) && _engine->_movements->shouldExecuteAction()) {
-					ScopedEngineFreeze scopedFreeze(_engine);
+					_engine->saveTimer(false);
 					_engine->testRestoreModeSVGA(true);
 					_engine->_text->setFontCrossColor(zone->infoData.DisplayText.textColor);
 					_talkingActor = actorIdx;
 					_engine->_text->drawTextProgressive((TextId)zone->num);
+					_engine->restoreTimer();
 					_engine->_redraw->redrawEngineActions(true);
 				}
 				break;

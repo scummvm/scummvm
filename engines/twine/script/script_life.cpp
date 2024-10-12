@@ -21,24 +21,24 @@
 
 #include "twine/script/script_life.h"
 #include "common/memstream.h"
-#include "twine/debugger/debug_state.h"
-#include "twine/scene/actor.h"
-#include "twine/scene/animations.h"
 #include "twine/audio/music.h"
 #include "twine/audio/sound.h"
-#include "twine/scene/collision.h"
-#include "twine/movies.h"
-#include "twine/scene/gamestate.h"
-#include "twine/scene/grid.h"
+#include "twine/debugger/debug_state.h"
 #include "twine/holomap.h"
 #include "twine/input.h"
 #include "twine/menu/interface.h"
-#include "twine/scene/movements.h"
+#include "twine/movies.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
 #include "twine/resources/resources.h"
+#include "twine/scene/actor.h"
+#include "twine/scene/animations.h"
+#include "twine/scene/collision.h"
 #include "twine/scene/extra.h"
+#include "twine/scene/gamestate.h"
+#include "twine/scene/grid.h"
+#include "twine/scene/movements.h"
 #include "twine/scene/scene.h"
 #include "twine/shared.h"
 #include "twine/text.h"
@@ -93,16 +93,16 @@ enum LifeScriptConditions {
 	kcBETA = 33,
 	kcBETA_OBJ = 34,
 	kcCARRY_OBJ_BY = 35,
-	kcANGLE = 36,            /*<! meansure the angle between two actors */
+	kcANGLE = 36, /*<! meansure the angle between two actors */
 	kcDISTANCE_MESSAGE = 37,
 	kcHIT_OBJ_BY = 38,
-	kcREAL_ANGLE = 39,       /*<! meansure the angle between two actors */
+	kcREAL_ANGLE = 39, /*<! meansure the angle between two actors */
 	kcDEMO = 40,
 	kcCOL_DECORS = 41,
 	kcCOL_DECORS_OBJ = 42,
 	kcPROCESSOR = 43,
 	kcOBJECT_DISPLAYED = 44,
-	kcANGLE_OBJ = 45         /*<! meansure the angle between two actors */
+	kcANGLE_OBJ = 45 /*<! meansure the angle between two actors */
 };
 
 enum class ReturnType {
@@ -290,7 +290,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		int32 flagIdx = ctx.stream.readByte();
 		debugCN(3, kDebugLevels::kDebugScriptsLife, "flag_game(%i", flagIdx);
 		if (!engine->_gameState->inventoryDisabled() ||
-		    (engine->_gameState->inventoryDisabled() && flagIdx >= MaxInventoryItems)) {
+			(engine->_gameState->inventoryDisabled() && flagIdx >= MaxInventoryItems)) {
 			engine->_scene->_currentScriptValue = engine->_gameState->hasGameFlag(flagIdx);
 		} else {
 			if (flagIdx == GAMEFLAG_INVENTORY_DISABLED) {
@@ -538,11 +538,11 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 
 		if (ABS(otherActor->posObj().y - ctx.actor->posObj().y) < 1500) {
 			int32 angle = engine->_movements->getAngle(ctx.actor->posObj(),
-																				otherActor->posObj());
+													   otherActor->posObj());
 			angle = ClampAngle(ctx.actor->_beta - angle + LBAAngles::ANGLE_90);
 
 			// 320: CONE_VIEW
-			if (angle <= LBAAngles::ANGLE_157_5)  {
+			if (angle <= LBAAngles::ANGLE_157_5) {
 				int32 distance = getDistance2D(ctx.actor->posObj(),
 											   otherActor->posObj());
 
@@ -645,7 +645,6 @@ static int32 processLifeOperators(TwinEEngine *engine, LifeScriptContext &ctx, R
 
 	return 0;
 }
-
 
 /** Life script command definitions */
 
@@ -916,7 +915,7 @@ int32 ScriptLife::lMESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::MESSAGE(%i)", (int)textIdx);
 
-	ScopedEngineFreeze scopedFreeze(engine);
+	engine->saveTimer(false);
 	engine->testRestoreModeSVGA(true);
 	if (engine->_text->_showDialogueBubble) {
 		engine->_redraw->drawBubble(ctx.actorIdx);
@@ -937,7 +936,7 @@ int32 ScriptLife::lMESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 		}
 	}
 	engine->_redraw->redrawEngineActions(true);
-
+	engine->restoreTimer();
 	return 0;
 }
 
@@ -1194,7 +1193,7 @@ int32 ScriptLife::lMESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::MESSAGE_OBJ(%i, %i)", (int)otherActorIdx, (int)textIdx);
 
-	ScopedEngineFreeze scopedFreeze(engine);
+	engine->saveTimer(false);
 	engine->testRestoreModeSVGA(true);
 	if (engine->_text->_showDialogueBubble) {
 		engine->_redraw->drawBubble(otherActorIdx);
@@ -1202,6 +1201,7 @@ int32 ScriptLife::lMESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_text->setFontCrossColor(engine->_scene->getActor(otherActorIdx)->_talkColor);
 	engine->_scene->_talkingActor = otherActorIdx;
 	engine->_text->drawTextProgressive(textIdx);
+	engine->restoreTimer();
 	engine->_redraw->redrawEngineActions(true);
 
 	return 0;
@@ -1226,9 +1226,10 @@ int32 ScriptLife::lFOUND_OBJECT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const InventoryItems item = (InventoryItems)ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::FOUND_OBJECT(%i)", (int)item);
 
-	ScopedEngineFreeze scopedFreeze(engine);
+	engine->saveTimer(false);
 	engine->testRestoreModeSVGA(true);
 	engine->_gameState->doFoundObj(item);
+	engine->restoreTimer();
 	engine->_redraw->redrawEngineActions(true);
 
 	return 0;
@@ -1508,7 +1509,12 @@ int32 ScriptLife::lHIT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x40
  */
 int32 ScriptLife::lPLAY_FLA(TwinEEngine *engine, LifeScriptContext &ctx) {
-	ScopedEngineFreeze timer(engine);
+	engine->saveTimer(false);
+	if (engine->_screens->_flagPalettePcx)
+		engine->_screens->fadeToBlack(engine->_screens->_palettePcx);
+	else
+		engine->_screens->fadeToBlack(engine->_screens->_ptrPal);
+	engine->_sound->stopSamples();
 	int strIdx = 0;
 	char movie[64];
 	do {
@@ -1524,7 +1530,8 @@ int32 ScriptLife::lPLAY_FLA(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::PLAY_FLA(%s)", movie);
 
 	engine->_movie->playMovie(movie);
-	engine->setPalette(engine->_screens->_ptrPal);
+	engine->restoreTimer();
+	engine->_screens->_flagFade = true;
 	engine->_redraw->_firstTime = true;
 
 	return 0;
@@ -1573,7 +1580,7 @@ int32 ScriptLife::lASK_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const TextId choiceIdx = (TextId)ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::ASK_CHOICE(%i)", (int)choiceIdx);
 
-	ScopedEngineFreeze scopedFreeze(engine);
+	engine->saveTimer(false);
 	engine->testRestoreModeSVGA(true);
 	if (engine->_text->_showDialogueBubble) {
 		engine->_redraw->drawBubble(ctx.actorIdx);
@@ -1581,6 +1588,7 @@ int32 ScriptLife::lASK_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_text->setFontCrossColor(ctx.actor->_talkColor);
 	engine->_gameState->gameAskChoice(choiceIdx);
 	engine->_gameState->_gameNbChoices = 0;
+	engine->restoreTimer();
 	engine->_redraw->redrawEngineActions(true);
 
 	return 0;
@@ -1594,7 +1602,7 @@ int32 ScriptLife::lBIG_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::BIG_MESSAGE(%i)", (int)textIdx);
 
-	ScopedEngineFreeze scopedFreeze(engine);
+	engine->saveTimer(false);
 	engine->testRestoreModeSVGA(true);
 	engine->_text->bigWinDial();
 	if (engine->_text->_showDialogueBubble) {
@@ -1605,7 +1613,7 @@ int32 ScriptLife::lBIG_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_text->drawTextProgressive(textIdx);
 	engine->_text->normalWinDial();
 	engine->_redraw->redrawEngineActions(true);
-
+	engine->restoreTimer();
 	return 0;
 }
 
@@ -1699,9 +1707,9 @@ int32 ScriptLife::lSAY_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 	engine->_redraw->addOverlay(OverlayType::koText, (int16)textEntry, 0, 0, ctx.actorIdx, OverlayPosType::koFollowActor, 2);
 
-	ScopedEngineFreeze scoped(engine);
+	engine->saveTimer(false);
 	engine->_text->initVoxToPlayTextId(textEntry);
-
+	engine->restoreTimer();
 	return 0;
 }
 
@@ -1716,8 +1724,9 @@ int32 ScriptLife::lSAY_MESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) 
 
 	engine->_redraw->addOverlay(OverlayType::koText, (int16)textEntry, 0, 0, otherActorIdx, OverlayPosType::koFollowActor, 2);
 
-	ScopedEngineFreeze scoped(engine);
+	engine->saveTimer(false);
 	engine->_text->initVoxToPlayTextId(textEntry);
+	engine->restoreTimer();
 
 	return 0;
 }
@@ -1767,8 +1776,9 @@ int32 ScriptLife::lGRM_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 int32 ScriptLife::lFADE_PAL_RED(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::FADE_PAL_RED()");
-	ScopedEngineFreeze scoped(engine);
+	engine->saveTimer(false);
 	engine->_screens->fadeToRed(engine->_screens->_ptrPal);
+	engine->restoreTimer();
 	engine->_screens->_flagPalettePcx = false;
 	return 0;
 }
@@ -1779,10 +1789,11 @@ int32 ScriptLife::lFADE_PAL_RED(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 int32 ScriptLife::lFADE_ALARM_RED(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::FADE_ALARM_RED()");
-	ScopedEngineFreeze scoped(engine);
+	engine->saveTimer(false);
 	HQR::getPaletteEntry(engine->_screens->_palettePcx, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
 	engine->_screens->fadeToRed(engine->_screens->_palettePcx);
 	engine->_screens->_flagPalettePcx = true;
+	engine->restoreTimer();
 	return 0;
 }
 
@@ -1792,9 +1803,10 @@ int32 ScriptLife::lFADE_ALARM_RED(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 int32 ScriptLife::lFADE_ALARM_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::FADE_ALARM_PAL()");
-	ScopedEngineFreeze scoped(engine);
+	engine->saveTimer(false);
 	HQR::getPaletteEntry(engine->_screens->_palettePcx, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
 	engine->_screens->fadePalToPal(engine->_screens->_palettePcx, engine->_screens->_ptrPal);
+	engine->restoreTimer();
 	engine->_screens->_flagPalettePcx = false;
 	return 0;
 }
@@ -1805,8 +1817,9 @@ int32 ScriptLife::lFADE_ALARM_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 int32 ScriptLife::lFADE_RED_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::FADE_RED_PAL()");
-	ScopedEngineFreeze scoped(engine);
+	engine->saveTimer(false);
 	engine->_screens->fadeRedToPal(engine->_screens->_ptrPal);
+	engine->restoreTimer();
 	engine->_screens->_flagPalettePcx = false;
 	return 0;
 }
@@ -1817,9 +1830,10 @@ int32 ScriptLife::lFADE_RED_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 int32 ScriptLife::lFADE_RED_ALARM(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::FADE_RED_ALARM()");
-	ScopedEngineFreeze scoped(engine);
+	engine->saveTimer(false);
 	HQR::getPaletteEntry(engine->_screens->_palettePcx, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
 	engine->_screens->fadeRedToPal(engine->_screens->_palettePcx);
+	engine->restoreTimer();
 	engine->_screens->_flagPalettePcx = true;
 	return 0;
 }
@@ -1830,9 +1844,10 @@ int32 ScriptLife::lFADE_RED_ALARM(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 int32 ScriptLife::lFADE_PAL_ALARM(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::FADE_PAL_ALARM()");
-	ScopedEngineFreeze scoped(engine);
+	engine->saveTimer(false);
 	HQR::getPaletteEntry(engine->_screens->_palettePcx, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
 	engine->_screens->fadePalToPal(engine->_screens->_ptrPal, engine->_screens->_palettePcx);
+	engine->restoreTimer();
 	engine->_screens->_flagPalettePcx = true;
 	return 0;
 }
@@ -1863,7 +1878,7 @@ int32 ScriptLife::lASK_CHOICE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const TextId choiceIdx = (TextId)ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::ASK_CHOICE_OBJ(%i, %i)", (int)otherActorIdx, (int)choiceIdx);
 
-	ScopedEngineFreeze freeze(engine);
+	engine->saveTimer(false);
 	engine->testRestoreModeSVGA(true);
 	if (engine->_text->_showDialogueBubble) {
 		engine->_redraw->drawBubble(otherActorIdx);
@@ -1871,6 +1886,7 @@ int32 ScriptLife::lASK_CHOICE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_text->setFontCrossColor(engine->_scene->getActor(otherActorIdx)->_talkColor);
 	engine->_gameState->gameAskChoice(choiceIdx);
 	engine->_gameState->_gameNbChoices = 0;
+	engine->restoreTimer();
 	engine->_redraw->redrawEngineActions(true);
 
 	return 0;
@@ -1882,7 +1898,7 @@ int32 ScriptLife::lASK_CHOICE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 int32 ScriptLife::lSET_DARK_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::SET_DARK_PAL()");
-	ScopedEngineFreeze scoped(engine);
+	engine->saveTimer(false);
 	if (!HQR::getPaletteEntry(engine->_screens->_palettePcx, Resources::HQR_RESS_FILE, RESSHQR_DARKPAL)) {
 		error("Failed to get palette entry for dark palette");
 	}
@@ -1890,6 +1906,7 @@ int32 ScriptLife::lSET_DARK_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 		// set the palette hard if it should not get faded
 		engine->setPalette(engine->_screens->_palettePcx);
 	}
+	engine->restoreTimer();
 	engine->_screens->_flagPalettePcx = true;
 	return 0;
 }
@@ -1914,7 +1931,7 @@ int32 ScriptLife::lSET_NORMAL_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 int32 ScriptLife::lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::MESSAGE_SENDELL()");
-	ScopedEngineFreeze scoped(engine);
+	engine->saveTimer(false);
 	engine->testRestoreModeSVGA(true);
 	engine->_screens->fadeToBlack(engine->_screens->_ptrPal);
 	engine->_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 25, 26));
@@ -1930,6 +1947,7 @@ int32 ScriptLife::lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) 
 	engine->_screens->fadeToBlack(engine->_screens->_palettePcx);
 	engine->_screens->clearScreen();
 	engine->setPalette(engine->_screens->_ptrPal);
+	engine->restoreTimer();
 	return 0;
 }
 

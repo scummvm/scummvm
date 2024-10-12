@@ -352,7 +352,7 @@ void HolomapV1::holoTraj(int32 trajectoryIndex) {
 
 	initHoloDatas();
 
-	ScopedEngineFreeze timeFreeze(_engine);
+	_engine->saveTimer(false);
 	const int32 cameraPosX = _engine->width() / 2 + 80;
 	const int32 cameraPosY = _engine->height() / 2;
 	_engine->_renderer->setProjection(cameraPosX, cameraPosY, 128, 1024, 1024);
@@ -439,6 +439,7 @@ void HolomapV1::holoTraj(int32 trajectoryIndex) {
 
 	_engine->_text->initSceneTextBank();
 	_engine->_input->enableKeyMap(mainKeyMapId);
+	_engine->restoreTimer();
 
 	free(holomapImagePtr);
 }

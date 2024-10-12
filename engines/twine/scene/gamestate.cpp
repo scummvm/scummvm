@@ -329,7 +329,6 @@ void GameState::setGameFlag(uint8 index, int16 value) {
 }
 
 void GameState::doFoundObj(InventoryItems item) {
-	ScopedEngineFreeze freeze(_engine);
 	_engine->_grid->centerOnActor(_engine->_scene->_sceneHero);
 
 	// Hide hero in scene

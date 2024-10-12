@@ -372,7 +372,6 @@ bool Movies::playMovie(const char *name) { // PlayAnimFla
 		const int index = _engine->_resources->findSmkMovieIndex(name);
 		return playSmkMovie(name, index);
 	}
-	_engine->_sound->stopSamples();
 
 	Common::String fileNamePath = name;
 	const size_t n = fileNamePath.findLastOf(".");
@@ -459,6 +458,8 @@ bool Movies::playMovie(const char *name) { // PlayAnimFla
 	_engine->_screens->fadeToBlack(_paletteOrg);
 
 	_engine->_sound->stopSamples();
+	_engine->_screens->setBlackPal();
+	_engine->_screens->clearScreen();
 	return finished;
 }
 
