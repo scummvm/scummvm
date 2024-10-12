@@ -330,8 +330,8 @@ void MacGuiImpl::MacDialogWindow::drawDottedHLine(int x0, int y, int x1) {
 		color[0] = _black;
 		color[1] = _white;
 	} else {
-		color[0] = kDarkGray;
-		color[1] = kLightGray;
+		color[0] = _gui->_windowManager->findBestColor(0x75, 0x75, 0x75);
+		color[1] = _gui->_windowManager->findBestColor(0xBE, 0xBE, 0xBE);
 	}
 
 	for (int x = x0; x <= x1; x++)
