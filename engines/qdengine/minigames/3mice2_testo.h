@@ -92,95 +92,64 @@ public:
 		_numVerts[6] = 112;
 		_numVerts[7] = 112;
 
-#if 0
-		v6 = &_figureBboxes[1];
-		p_y = (mgVect2i_s1 *)&_figureVerts[0].y;
-		v33 = 8;
-		do {
-			v8 = *numVerts;
-			maxX = 0;
-			minX = 0;
-			minY = 0;
-			maxY = 0;
+		for (int i = 0; i < 8; i++) {
+			int v = i;
+			int maxX = 0;
+			int minX = 0;
+			int minY = 0;
+			int maxY = 0;
 
-			if (*numVerts > 0) {
-				figureVerts_ = p_y;
-				v32.x = v8;
-				do {
-					x = figureVerts_[-1].x;
-					if (x < minX)
-						minX = figureVerts_[-1].x;
-					if (x > maxX)
-						maxX = figureVerts_[-1].x;
-					if (figureVerts_->y < minY)
-						minY = figureVerts_->y;
-					if (figureVerts_->y > maxY)
-						maxY = figureVerts_->y;
+			for (int j = 0; j < _numVerts[i]; j++) {
+				if ( _figureVerts[v].x < minX)
+					minX = _figureVerts[v].x;
+				if ( _figureVerts[v].x > maxX)
+					maxX = _figureVerts[v].x;
+				if ( _figureVerts[v].y < minY)
+					minY = _figureVerts[v].y;
+				if ( _figureVerts[v].y > maxY)
+					maxY = _figureVerts[v].y;
 
-					figureVerts_ += 8;
-					--v32.x;
-				} while (v32.x);
+				v += 8;	// Data is arranged in vertical columns
 			}
-			++numVerts;
-			v6[-1].x = maxX;
-			v6[-1].y = minX;
-			v6->x = maxY;
-			v6->y = minY;
-			v6 += 2;
-			++p_y;
-			--v33;
-		} while (v33);
+
+			_figureBboxes[i * 2].x = maxX;
+			_figureBboxes[i * 2].y = minX;
+			_figureBboxes[i * 2 + 1].x = maxY;
+			_figureBboxes[i * 2 + 1].y = minY;
+		}
 
 		mgVect2i pos = _objNoDough->screen_R();
 
 		pos.x += _noDoughX;
 
 		_objNoDoughFake->set_R(_scene->screen2world_coords(pos, -100.0));
-#endif
-		_targetCoords[0].x = 75;
-		_targetCoords[0].y = 80;
-		_targetCoords[1].x = 695;
-		_targetCoords[1].y = 100;
-		_targetCoords[2].x = 82;
-		_targetCoords[2].y = 234;
-		_targetCoords[3].x = 738;
-		_targetCoords[3].y = 468;
-		_targetCoords[4].x = 84;
-		_targetCoords[4].y = 392;
-		_targetCoords[5].x = 302;
-		_targetCoords[5].y = 465;
-		_targetCoords[6].x = 687;
-		_targetCoords[6].y = 293;
-		_targetCoords[7].x = 611;
-		_targetCoords[7].y = 472;
 
-#if 0
-		if (_objLoadPassed->is_state_active("нет")) {
-			v18 = (mgVect2i_s1 *)&_targetCoords[0].y;
-			figures = _figures;
-			a2b = (mgVect2i_s1 *)&_targetCoords[0].y;
-			v33 = 8;
-			do {
-				v20 = v18[-1].x;
-				v21 = v18->y;
-				v22 = *figures;
-				v32.x = v20;
-				v23 = _scene;
-				v32.y = v21;
-				v24 = v22->vmt;
-				v25 = v23->screen2world_coords(v23, &v35, &v32, 0.0);
-				v24->set_R(*figures++, v25);
-				v18 = a2b + 1;
-				v26 = v33 == 1;
-				++a2b;
-				--v33;
-			} while (!v26);
+		_initialCoords[0].x = 75;
+		_initialCoords[0].y = 80;
+		_initialCoords[1].x = 695;
+		_initialCoords[1].y = 100;
+		_initialCoords[2].x = 82;
+		_initialCoords[2].y = 234;
+		_initialCoords[3].x = 738;
+		_initialCoords[3].y = 468;
+		_initialCoords[4].x = 84;
+		_initialCoords[4].y = 392;
+		_initialCoords[5].x = 302;
+		_initialCoords[5].y = 465;
+		_initialCoords[6].x = 687;
+		_initialCoords[6].y = 293;
+		_initialCoords[7].x = 611;
+		_initialCoords[7].y = 472;
 
-			_objLoadPassed->set_state(_objLoadPassed, "да");
+		if (_objLoadPassed->is_state_active("\xed\xe5\xf2")) { // "нет"
+			for (int i = 0; i < 8; i++)
+				_figures[i]->set_R(_scene->screen2world_coords(_initialCoords[i], 0.0));
+
+			_objLoadPassed->set_state("\xe4\xe0");	// "да"
 
 			return true;
 		}
-#endif
+
 		return false;
 	}
 
@@ -231,7 +200,7 @@ private:
 	qdMinigameObjectInterface *_objLoadPassed = nullptr;
 	qdMinigameObjectInterface *_objDone = nullptr;
 
-	mgVect2i _targetCoords[8];
+	mgVect2i _initialCoords[8];
 	int _noDoughX = 0;
 	mgVect2i _figureBboxes[16];
 
