@@ -99,6 +99,8 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 		ImGui::TableNextColumn();
 
+		ImGui::PushID(ch * 10000 + f);
+
 		if (f + _state->_scoreFrameOffset == (int)currentFrameNum)
 			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
 
@@ -165,6 +167,8 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 		default:
 			ImGui::Selectable("  ");
 		}
+
+		ImGui::PopID();
 
 		if (ImGui::IsItemClicked(0)) {
 			_state->_selectedScoreCast.frame = f + _state->_scoreFrameOffset - 1;
@@ -409,8 +413,12 @@ void showScore() {
 			ImGui::PushFont(_state->_tinyFont);
 
 			ImGui::TableSetupColumn("##", flags);
-			for (uint i = 0; i < tableColumns; i++)
-				ImGui::TableSetupColumn(((i + _state->_scoreFrameOffset) % 5 ? " " : Common::String::format("%-2d", i + _state->_scoreFrameOffset).c_str()), flags);
+			for (uint i = 0; i < tableColumns; i++) {
+				Common::String label = (i + _state->_scoreFrameOffset) % 5 ? " " : Common::String::format("%-2d", i + _state->_scoreFrameOffset);
+				label += Common::String::format("##l%d", i);
+
+				ImGui::TableSetupColumn(label.c_str(), flags);
+			}
 
 			ImGui::TableNextRow(ImGuiTableRowFlags_Headers);
 			ImGui::TableNextRow(0);
@@ -580,18 +588,24 @@ void showChannels() {
 				ImGui::TableNextColumn();
 
 				if (sprite._castId.member) {
+					Common::String chNum = Common::String::format("%d", i);
+					Common::String colN;
+
 					Common::Point position = channel.getPosition();
 					ImGui::Text("%s", sprite._castId.asString().c_str());
 					ImGui::TableNextColumn();
-					ImGui::Checkbox("", &channel._visible);
+					colN = "##vis" + chNum;
+					ImGui::Checkbox(colN.c_str(), &channel._visible);
 					ImGui::TableNextColumn();
 					ImGui::Text("0x%02x", sprite._inkData);
 					ImGui::TableNextColumn();
 					ImGui::Text("%d (%s)", sprite._ink, inkType2str(sprite._ink));
 					ImGui::TableNextColumn();
-					ImGui::Checkbox("", &sprite._trails);
+					colN = "##trails" + chNum;
+					ImGui::Checkbox(colN.c_str(), &sprite._trails);
 					ImGui::TableNextColumn();
-					ImGui::Checkbox("", &sprite._stretch);
+					colN = "##stretch" + chNum;
+					ImGui::Checkbox(colN.c_str(), &sprite._stretch);
 					ImGui::TableNextColumn();
 					ImGui::Text("%d", sprite._thickness);
 					ImGui::TableNextColumn();
@@ -615,9 +629,11 @@ void showChannels() {
 					ImGui::TableNextColumn();
 					ImGui::Text("%d", channel._constraint);
 					ImGui::TableNextColumn();
-					ImGui::Checkbox("", &sprite._puppet);
+					colN = "##puppet" + chNum;
+					ImGui::Checkbox(colN.c_str(), &sprite._puppet);
 					ImGui::TableNextColumn();
-					ImGui::Checkbox("", &sprite._moveable);
+					colN = "##moveable" + chNum;
+					ImGui::Checkbox(colN.c_str(), &sprite._moveable);
 					ImGui::TableNextColumn();
 					if (channel._movieRate)
 						ImGui::Text("%f", channel._movieRate);
