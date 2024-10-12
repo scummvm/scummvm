@@ -32,22 +32,17 @@
 
 namespace Wintermute {
 
-XSkinMeshLoader::XSkinMeshLoader(XMesh *mesh, DXMesh *dxmesh) {
-	_mesh = mesh;
+XSkinMeshLoader::XSkinMeshLoader(DXMesh *dxmesh) {
 	_dxmesh = dxmesh;
 	
 	_vertexCount = dxmesh->getNumVertices();
 	// vertex format for .X meshes will be position + normals + textures
 	_vertexData = new float[kVertexComponentCount * _vertexCount]();
-	_vertexPositionData = new float[3 * _vertexCount]();
-	// we already know how big this is supposed to be
-	// TODO: might have to generate normals if file does not contain any
-	_vertexNormalData = new float[3 * _vertexCount]();
 	
 	auto fvf = _dxmesh->getFVF();
 	uint32 vertexSize = DXGetFVFVertexSize(fvf) / sizeof(float);
 	float *vertexBuffer = (float *)_dxmesh->getVertexBuffer().ptr();
-	uint32 offset = 0, normalOffset = 0, /*diffuseOffset = 0, */textureOffset = 0;
+	uint32 offset = 0, normalOffset = 0, textureOffset = 0;
 
 	if (fvf & DXFVF_XYZ) {
 		offset += sizeof(DXVector3) / sizeof(float);
@@ -57,7 +52,6 @@ XSkinMeshLoader::XSkinMeshLoader(XMesh *mesh, DXMesh *dxmesh) {
 		offset += sizeof(DXVector3) / sizeof(float);
 	}
 	if (fvf & DXFVF_DIFFUSE) {
-		//diffuseOffset = offset;
 		offset += sizeof(DXColorValue) / sizeof(float);
 	}
 	if (fvf & DXFVF_TEX1) {
@@ -66,30 +60,20 @@ XSkinMeshLoader::XSkinMeshLoader(XMesh *mesh, DXMesh *dxmesh) {
 	}
 
 	for (uint i = 0; i < _vertexCount; ++i) {
-		_vertexPositionData[i * 3 + 0] = vertexBuffer[i * vertexSize + 0];
-		_vertexPositionData[i * 3 + 1] = vertexBuffer[i * vertexSize + 1];
-		_vertexPositionData[i * 3 + 2] = vertexBuffer[i * vertexSize + 2];
 		for (int j = 0; j < 3; ++j) {
-			_vertexData[i * kVertexComponentCount + kPositionOffset + j] = _vertexPositionData[i * 3 + j];
+			_vertexData[i * kVertexComponentCount + kPositionOffset + j] = vertexBuffer[i * vertexSize + j];
 		}
+
 		// mirror z coordinate to change to OpenGL coordinate system
-		_vertexPositionData[i * 3 + 2] *= -1.0f;
 		_vertexData[i * kVertexComponentCount + kPositionOffset + 2] *= -1.0f;
 
 		if (fvf & DXFVF_NORMAL) {
-			_vertexNormalData[i * 3 + 0] = vertexBuffer[i * vertexSize + normalOffset + 0];
-			_vertexNormalData[i * 3 + 1] = vertexBuffer[i * vertexSize + normalOffset + 1];
-			_vertexNormalData[i * 3 + 2] = vertexBuffer[i * vertexSize + normalOffset + 2];
 			for (int j = 0; j < 3; ++j) {
-				_vertexData[i * kVertexComponentCount + kNormalOffset + j] = _vertexNormalData[i * 3 + j];
+				_vertexData[i * kVertexComponentCount + kNormalOffset + j] = vertexBuffer[i * vertexSize + normalOffset + j];
 			}
-			// mirror z coordinate to change to OpenGL coordinate system
-			_vertexNormalData[i * 3 + 2] *= -1.0f;
-			_vertexData[i * kVertexComponentCount + kNormalOffset + 2] *= -1.0f;
-		}
 
-		if (fvf & DXFVF_DIFFUSE) {
-			// nothing
+			// mirror z coordinate to change to OpenGL coordinate system
+			_vertexData[i * kVertexComponentCount + kNormalOffset + 2] *= -1.0f;
 		}
 
 		if (fvf & DXFVF_TEX1) {
@@ -101,8 +85,6 @@ XSkinMeshLoader::XSkinMeshLoader(XMesh *mesh, DXMesh *dxmesh) {
 
 XSkinMeshLoader::~XSkinMeshLoader() {
 	delete[] _vertexData;
-	delete[] _vertexPositionData;
-	delete[] _vertexNormalData;
 }
 
 } // namespace Wintermute

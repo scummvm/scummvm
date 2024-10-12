@@ -53,7 +53,7 @@ class XSkinMeshLoader {
 	friend class SkinMeshHelper;
 
 public:
-	XSkinMeshLoader(XMesh *mesh, DXMesh *dxmesh);
+	XSkinMeshLoader(DXMesh *dxmesh);
 	virtual ~XSkinMeshLoader();
 
 protected:
@@ -65,14 +65,11 @@ protected:
 protected:
 
 	float *_vertexData;
-	float *_vertexPositionData;
-	float *_vertexNormalData;
 	uint32 _vertexCount;
 
 	BaseArray<Math::Matrix4 *> _boneMatrices;
 	BaseArray<SkinWeights> _skinWeightsList;
 
-	XMesh *_mesh;
 	DXMesh *_dxmesh;
 };
 
