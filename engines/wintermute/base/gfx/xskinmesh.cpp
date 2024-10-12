@@ -1066,9 +1066,9 @@ static bool parseMesh(XFileData *fileData, struct MeshData *meshData) {
 	}
 
 	if (!meshData->_skinInfo) {
-		/*result = createSkinInfo(meshData->_numVertices, meshData->_boneCount, &meshData->_skinInfo);
+		result = createSkinInfo(meshData->_numVertices, meshData->_boneCount, &meshData->_skinInfo);
 		if (!result)
-			return false;*/
+			return false;
 	}
 
 	return true;

@@ -65,7 +65,7 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 	// load mesh
 	DXBuffer bufMaterials;
 	//DXBuffer bufBoneOffset;
-	//uint32 numFaces;
+	uint32 numFaces;
 	uint32 numMaterials;
 	DXMesh *mesh;
 	DXSkinInfo *skinInfo = nullptr;
@@ -81,6 +81,9 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 
 	_skinMesh = new SkinMeshHelper(meshLoader, mesh, skinInfo);
 
+	numFaces = _skinMesh->getNumFaces();
+
+	uint32 numBones = _skinMesh->getNumBones();
 
 	// check for materials
 	if ((bufMaterials.ptr() == nullptr) || (numMaterials == 0)) {
@@ -106,11 +109,9 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 		}
 	}
 
-	_skinnedMesh = false;
-
-	if (skinInfo) {
-		_skinnedMesh = skinInfo->getNumBones() > 0;
-		for (uint index = 0; index < skinInfo->getNumBones(); index++) {
+	_skinnedMesh = numBones > 0;
+	if (_skinnedMesh) {
+		for (uint index = 0; index < numBones; index++) {
 			SkinWeights currSkinWeights;
 			DXBone *bone = skinInfo->getBone(index);
 			currSkinWeights._boneName = bone->_name;
