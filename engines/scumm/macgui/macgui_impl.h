@@ -73,31 +73,6 @@ protected:
 		kDelayAborted
 	};
 
-	// Colors used by the 16 color Mac games. Nothing that is ever drawn by
-	// 256 color games should use these!
-
-	enum Color {
-		kBlack = 0,
-		kBlue = 1,
-		kGreen = 2,
-		kCyan = 3,
-		kRed = 4,
-		kMagenta = 5,
-		kBrown = 6,
-		kLightGray = 7,
-		kDarkGray = 8,
-		kBrightBlue = 9,
-		kBrightGreen = 10,
-		kBrightCyan = 11,
-		kBrightRed = 12,
-		kBrightMagenta = 13,
-		kBrightYellow = 14,
-		kWhite = 15,
-
-		kBackground = 254,	// Gray or checkerboard
-		kTransparency = 255
-	};
-
 	enum FontId {
 		kSystemFont,
 

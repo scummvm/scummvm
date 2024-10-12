@@ -115,7 +115,7 @@ void MacIndy3Gui::Widget::fill(Common::Rect r) {
 	_gui->fill(r);
 }
 
-void MacIndy3Gui::Widget::drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const {
+void MacIndy3Gui::Widget::drawBitmap(Common::Rect r, const uint16 *bitmap, byte color) const {
 	_gui->drawBitmap(_surface, r, bitmap, color);
 }
 
@@ -138,7 +138,7 @@ void MacIndy3Gui::Widget::drawShadowBox(Common::Rect r) const {
 // The shadow frame is a rectangle with a highlight. It can be filled or
 // unfilled.
 
-void MacIndy3Gui::Widget::drawShadowFrame(Common::Rect r, Color shadowColor, Color fillColor) {
+void MacIndy3Gui::Widget::drawShadowFrame(Common::Rect r, byte shadowColor, byte fillColor) {
 	_surface->hLine(r.left, r.top, r.right - 1, kBlack);
 	_surface->hLine(r.left, r.bottom - 1, r.right - 1, kBlack);
 	_surface->vLine(r.left, r.top + 1, r.bottom - 2, kBlack);
@@ -315,7 +315,7 @@ void MacIndy3Gui::Button::draw() {
 
 		int x = (_bounds.left + (_bounds.width() - 1 - stringWidth) / 2) - 1;
 		int y = _bounds.top + 2;
-		Color color = _enabled ? kWhite : kBlack;
+		byte color = _enabled ? kWhite : kBlack;
 
 		if (hasTimer()) {
 			x++;
@@ -657,7 +657,7 @@ void MacIndy3Gui::Inventory::Slot::draw() {
 
 	Widget::draw();
 
-	Color fg, bg;
+	byte fg, bg;
 
 	if (hasTimer()) {
 		fg = kWhite;
@@ -863,7 +863,7 @@ void MacIndy3Gui::Inventory::ScrollButton::draw() {
 	};
 
 	const uint16 *arrow = (_direction == kScrollUp) ? upArrow : downArrow;
-	Color color = hasTimer() ? kBlack : kWhite;
+	byte color = hasTimer() ? kBlack : kWhite;
 
 	drawBitmap(_bounds, arrow, color);
 
