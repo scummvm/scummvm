@@ -516,6 +516,10 @@ static void actorDetailsWindow(int &actorIdx, TwinEEngine *engine) {
 				ImGui::TableNextColumn();
 				ImGui::Text("%i", actor->_objCol);
 				ImGui::TableNextColumn();
+				ImGui::Text("Carried by");
+				ImGui::TableNextColumn();
+				ImGui::Text("%i", actor->_carryBy);
+				ImGui::TableNextColumn();
 				ImGui::Text("Talk color");
 				ImGui::TableNextColumn();
 				ImGui::Text("%i", actor->_talkColor);
