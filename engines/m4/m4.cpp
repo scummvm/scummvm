@@ -290,6 +290,7 @@ Common::Error M4Engine::syncGame(Common::Serializer &s) {
 
 		digi_set_overall_volume(_G(game).digi_overall_volume_percent);
 		midi_set_overall_volume(_G(game).midi_overall_volume_percent);
+		interface_show();
 	}
 
 	return Common::kNoError;

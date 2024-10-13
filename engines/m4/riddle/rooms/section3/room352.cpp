@@ -30,8 +30,8 @@ namespace Riddle {
 namespace Rooms {
 
 void Room352::preload() {
-	_G(player).walker_type = 0;
-	_G(player).shadow_type = 0;
+	_G(player).walker_type = WALKER_PLAYER;
+	_G(player).shadow_type = SHADOW_PLAYER;
 	LoadWSAssets("OTHER SCRIPT");
 }
 
@@ -111,9 +111,9 @@ void Room352::daemon() {
 
 		series_ranged_play_xy("rip suit reaches for door", 1, 0, 0, 4,
 			_playerX, _playerY, _playerScale, 0, 6, 21);
-		series_ranged_play_xy("ripsh1", -1, 0, 0, 0,
+		_ripsh1 = series_ranged_play_xy("ripsh1", -1, 0, 0, 0,
 			_playerX, _playerY, _playerScale, 0, 3000, -1);
-		sendWSMessage_60000(_ripsh1);
+		sendWSMessage_60000(_G(my_walker));
 		digi_play("352_s02", 1);
 		break;
 
@@ -159,7 +159,7 @@ void Room352::daemon() {
 		break;
 
 	case 24:
-		series_ranged_play_xy("rip turns from door", 1, 0, 0, 6,
+		series_ranged_play_xy("rip turns from door talks", 1, 0, 0, 6,
 			_playerX, _playerY, _playerScale, 0, 5, 113);
 		digi_play("352r01", 1, 255, 111);
 		break;

@@ -67,7 +67,8 @@ void gui_system_event_handler() {
 
 	// WORKAROUND: Keep the player_info up to date, in case the game
 	// is saved directly via the GMM without moving the mouse
-	if (_G(my_walker) && _G(player).walker_in_this_scene &&_G(player).walker_visible)
+	if (_G(my_walker) && _G(player).walker_in_this_scene &&
+			_G(player).walker_visible && INTERFACE_VISIBLE)
 		player_update_info();
 
 	// Deal with mouse events first..
@@ -76,7 +77,7 @@ void gui_system_event_handler() {
 
 	newMouseEvent = mouse_get_event();
 
-	if (newMouseEvent != _ME_no_event) {		//We have a mouse event
+	if (newMouseEvent != _ME_no_event) {	// We have a mouse event
 		gui_mouse_refresh();
 		_G(oldX) = _G(mouseX);
 		_G(oldY) = _G(mouseY);

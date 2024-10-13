@@ -78,18 +78,15 @@ void Room908::daemon() {
 		digi_stop(1);
 		digi_stop(2);
 		digi_stop(3);
-		_G(game).new_room = 352;
-		_G(game).new_section = 3;
+		_G(game).setRoom(352);
 		break;
 
 	case 55:
-		_G(game).new_room = 304;
-		_G(game).new_section = 3;
+		_G(game).setRoom(304);
 		break;
 
 	case 56:
-		_G(game).new_room = 494;
-		_G(game).new_section = 4;
+		_G(game).setRoom(494);
 		break;
 
 	case 71:
