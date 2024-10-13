@@ -411,7 +411,6 @@ private:
 	int _restartSound;
 	int _curSoundSaveVar;
 	int _songTimer;
-	bool _blocked;
 	byte _songTimerInternal;
 	byte *_chanConfigTable;
 	const int _idRangeMax;
