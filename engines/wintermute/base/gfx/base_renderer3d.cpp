@@ -44,18 +44,17 @@ BaseRenderer3D::BaseRenderer3D(Wintermute::BaseGame *inGame) : BaseRenderer(inGa
 BaseRenderer3D::~BaseRenderer3D() {
 }
 
-bool BaseRenderer3D::setAmbientLightColor(uint32 color) {
-	_ambientLightColor = color;
-	_ambientLightOverride = true;
-	setAmbientLight();
-	return true;
+void BaseRenderer3D::initLoop() {
+	deleteRectList();
+	setup2D();
 }
 
-bool BaseRenderer3D::setDefaultAmbientLightColor() {
-	_ambientLightColor = 0x00000000;
-	_ambientLightOverride = false;
-	setAmbientLight();
-	return true;
+bool BaseRenderer3D::drawSprite(BaseSurfaceOpenGL3D &tex, const Wintermute::Rect32 &rect,
+							float zoomX, float zoomY, const Wintermute::Vector2 &pos,
+							uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
+							bool mirrorX, bool mirrorY) {
+	Vector2 scale(zoomX / 100.0f, zoomY / 100.0f);
+	return drawSpriteEx(tex, rect, pos, Vector2(0.0f, 0.0f), scale, 0.0f, color, alphaDisable, blendMode, mirrorX, mirrorY);
 }
 
 void BaseRenderer3D::project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int32 &x, int32 &y) {
@@ -68,23 +67,6 @@ void BaseRenderer3D::project(const Math::Matrix4 &worldMatrix, const Math::Vecto
 	x = windowCoords.x();
 	// The Wintermute script code will expect a Direct3D viewport
 	y = viewport[3] - windowCoords.y();
-}
-
-Rect32 BaseRenderer3D::getViewPort() {
-	return _viewportRect;
-}
-
-Graphics::PixelFormat BaseRenderer3D::getPixelFormat() const {
-	return g_system->getScreenFormat();
-}
-
-void BaseRenderer3D::fade(uint16 alpha) {
-	fadeToColor(0, 0, 0, (byte)(255 - alpha));
-}
-
-void BaseRenderer3D::initLoop() {
-	deleteRectList();
-	setup2D();
 }
 
 Math::Ray BaseRenderer3D::rayIntoScene(int x, int y) {
@@ -101,12 +83,30 @@ Math::Ray BaseRenderer3D::rayIntoScene(int x, int y) {
 	return Math::Ray(origin, direction);
 }
 
-bool BaseRenderer3D::drawSprite(BaseSurfaceOpenGL3D &tex, const Wintermute::Rect32 &rect,
-	                        float zoomX, float zoomY, const Wintermute::Vector2 &pos,
-	                        uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
-	                        bool mirrorX, bool mirrorY) {
-	Vector2 scale(zoomX / 100.0f, zoomY / 100.0f);
-	return drawSpriteEx(tex, rect, pos, Vector2(0.0f, 0.0f), scale, 0.0f, color, alphaDisable, blendMode, mirrorX, mirrorY);
+bool BaseRenderer3D::setAmbientLightColor(uint32 color) {
+	_ambientLightColor = color;
+	_ambientLightOverride = true;
+	setAmbientLight();
+	return true;
+}
+
+bool BaseRenderer3D::setDefaultAmbientLightColor() {
+	_ambientLightColor = 0x00000000;
+	_ambientLightOverride = false;
+	setAmbientLight();
+	return true;
+}
+
+Rect32 BaseRenderer3D::getViewPort() {
+	return _viewportRect;
+}
+
+Graphics::PixelFormat BaseRenderer3D::getPixelFormat() const {
+	return g_system->getScreenFormat();
+}
+
+void BaseRenderer3D::fade(uint16 alpha) {
+	fadeToColor(0, 0, 0, (byte)(255 - alpha));
 }
 
 Math::Matrix3 BaseRenderer3D::build2dTransformation(const Vector2 &center, float angle) {

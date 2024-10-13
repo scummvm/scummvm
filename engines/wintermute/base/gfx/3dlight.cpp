@@ -72,6 +72,20 @@ bool Light3D::setLight(int index) {
 	return true;
 }
 
+//////////////////////////////////////////////////////////////////////////
+bool Light3D::getViewMatrix(Math::Matrix4 *viewMatrix) {
+	Math::Vector3d up = Math::Vector3d(0.0f, 1.0f, 0.0f);
+	*viewMatrix = Math::makeLookAtMatrix(_position, _target, up);
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool Light3D::persist(BasePersistenceManager *persistMgr) {
+	persistMgr->transferBool("_active", &_active);
+	persistMgr->transferUint32("_diffuseColor", &_diffuseColor);
+	return true;
+}
+
 bool Light3D::loadFrom3DS(Common::MemoryReadStream &fileStream) {
 	uint32 wholeChunkSize = fileStream.readUint32LE();
 	int32 end = fileStream.pos() + wholeChunkSize - 6;
@@ -138,20 +152,6 @@ bool Light3D::loadFrom3DS(Common::MemoryReadStream &fileStream) {
 		}
 	}
 
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool Light3D::getViewMatrix(Math::Matrix4 *viewMatrix) {
-	Math::Vector3d up = Math::Vector3d(0.0f, 1.0f, 0.0f);
-	*viewMatrix = Math::makeLookAtMatrix(_position, _target, up);
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool Light3D::persist(BasePersistenceManager *persistMgr) {
-	persistMgr->transferBool("_active", &_active);
-	persistMgr->transferUint32("_diffuseColor", &_diffuseColor);
 	return true;
 }
 

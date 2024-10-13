@@ -52,41 +52,6 @@ Camera3D::Camera3D(BaseGame *inGame) : BaseNamedObject(inGame) {
 Camera3D::~Camera3D() {
 }
 
-bool Camera3D::loadFrom3DS(Common::MemoryReadStream &fileStream) {
-	uint32 wholeChunkSize = fileStream.readUint32LE();
-	int32 end = fileStream.pos() + wholeChunkSize - 6;
-
-	_position.x() = fileStream.readFloatLE();
-	_position.z() = -fileStream.readFloatLE();
-	_position.y() = fileStream.readFloatLE();
-
-	_target.x() = fileStream.readFloatLE();
-	_target.z() = -fileStream.readFloatLE();
-	_target.y() = fileStream.readFloatLE();
-
-	_bank = fileStream.readFloatLE();
-
-	float lens = fileStream.readFloatLE();
-
-	if (lens > 0.0f) {
-		_fov = degToRad(1900.0f / lens);
-	} else {
-		_fov = degToRad(45.0f);
-	}
-
-	_origFov = _fov;
-
-	// discard all subchunks
-	while (fileStream.pos() < end) {
-		fileStream.readUint16LE(); // chunk id
-		uint32 chunkSize = fileStream.readUint32LE();
-
-		fileStream.seek(chunkSize - 6, SEEK_CUR);
-	}
-
-	return true;
-}
-
 //////////////////////////////////////////////////////////////////////////
 bool Camera3D::getViewMatrix(Math::Matrix4 *viewMatrix) {
 	Math::Vector3d up = Math::Vector3d(0.0f, 1.0f, 0.0f);
@@ -98,6 +63,7 @@ bool Camera3D::getViewMatrix(Math::Matrix4 *viewMatrix) {
 	}
 
 	*viewMatrix = Math::makeLookAtMatrix(_position, _target, up);
+
 	return true;
 }
 
@@ -144,6 +110,41 @@ void Camera3D::move(float speed) {
 	_position.z() += vector.z() * speed; // Add our acceleration to our position's Z
 	_target.x() += vector.x() * speed;   // Add our acceleration to our view's X
 	_target.z() += vector.z() * speed;   // Add our acceleration to our view's Z
+}
+
+bool Camera3D::loadFrom3DS(Common::MemoryReadStream &fileStream) {
+	uint32 wholeChunkSize = fileStream.readUint32LE();
+	int32 end = fileStream.pos() + wholeChunkSize - 6;
+
+	_position.x() = fileStream.readFloatLE();
+	_position.z() = -fileStream.readFloatLE();
+	_position.y() = fileStream.readFloatLE();
+
+	_target.x() = fileStream.readFloatLE();
+	_target.z() = -fileStream.readFloatLE();
+	_target.y() = fileStream.readFloatLE();
+
+	_bank = fileStream.readFloatLE();
+
+	float lens = fileStream.readFloatLE();
+
+	if (lens > 0.0f) {
+		_fov = degToRad(1900.0f / lens);
+	} else {
+		_fov = degToRad(45.0f);
+	}
+
+	_origFov = _fov;
+
+	// discard all subchunks
+	while (fileStream.pos() < end) {
+		fileStream.readUint16LE(); // chunk id
+		uint32 chunkSize = fileStream.readUint32LE();
+
+		fileStream.seek(chunkSize - 6, SEEK_CUR);
+	}
+
+	return true;
 }
 
 } // namespace Wintermute

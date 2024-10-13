@@ -126,6 +126,9 @@ public:
 	bool loadFromFile(const Common::String &filename, XModel *parentModel = nullptr);
 	bool mergeFromFile(const Common::String &filename);
 
+	bool loadAnimationSet(const Common::String &filename, XFileData *xobj);
+	bool loadAnimation(const Common::String &filename, XFileData *xobj, AnimationSet *parentAnimSet = nullptr);
+
 	bool update() override;
 	bool render();
 	bool renderFlatShadowModel();
@@ -141,9 +144,6 @@ public:
 
 	static bool loadName(BaseNamedObject *obj, XFileData *data);
 	static bool loadName(Common::String &targetStr, XFileData *data);
-
-	bool loadAnimationSet(const Common::String &filename, XFileData *xobj);
-	bool loadAnimation(const Common::String &filename, XFileData *xobj, AnimationSet *parentAnimSet = nullptr);
 
 	Math::Matrix4 _lastWorldMat;
 	Rect32 _boundingRect;
