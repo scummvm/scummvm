@@ -30,7 +30,13 @@ namespace Rooms {
 
 void Section::global_room_init() {
 	digi_preload("950_s51", 950);
-	_GINT().show();
+
+	int roomId = _G(game).room_id;
+
+	if (roomId < 900 && roomId != 494)
+		_GINT().show();
+	else
+		_GINT().hide();
 }
 
 void Section::tick() {
