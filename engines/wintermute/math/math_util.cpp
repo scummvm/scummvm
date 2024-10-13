@@ -53,9 +53,10 @@ float MathUtil::roundUp(float val) {
 }
 
 #ifdef ENABLE_WME3D
-bool lineIntersectsTriangle(const Math::Vector3d &origin, const Math::Vector3d &direction,
-							const Math::Vector3d &v0, const Math::Vector3d &v1, const Math::Vector3d &v2,
-							float &t, float &u, float &v) {
+
+bool intersectTriangle(const Math::Vector3d &origin, const Math::Vector3d &direction,
+                       const Math::Vector3d &v0, const Math::Vector3d &v1, const Math::Vector3d &v2,
+					   float &t, float &u, float &v) {
 	const float epsilon = 0.0001f;
 
 	Math::Vector3d edge1 = v1 - v0;
@@ -92,7 +93,7 @@ bool lineIntersectsTriangle(const Math::Vector3d &origin, const Math::Vector3d &
 	return true;
 }
 
-bool lineSegmentIntersectsTriangle(const Math::Vector3d &lineStart, const Math::Vector3d &lineEnd,
+bool pickGetIntersect(const Math::Vector3d &lineStart, const Math::Vector3d &lineEnd,
 								   const Math::Vector3d &v0, const Math::Vector3d &v1, const Math::Vector3d &v2,
 								   Math::Vector3d &intersection, float &distance) {
 	const float epsilon = 0.0001f;

@@ -46,13 +46,13 @@ public:
 #define degToRad(_val) (_val * DX_PI * (1.0f / 180.0f))
 #define radToDeg(_val) (_val * (180.0f / DX_PI))
 
-bool lineIntersectsTriangle(const Math::Vector3d &origin, const Math::Vector3d &direction,
+bool intersectTriangle(const Math::Vector3d &origin, const Math::Vector3d &direction,
 							const Math::Vector3d &v0, const Math::Vector3d &v1, const Math::Vector3d &v2,
 							float &t, float &u, float &v);
-
-bool lineSegmentIntersectsTriangle(const Math::Vector3d &lineStart, const Math::Vector3d &lineEnd,
+bool pickGetIntersect(const Math::Vector3d &lineStart, const Math::Vector3d &lineEnd,
 								   const Math::Vector3d &v0, const Math::Vector3d &v1, const Math::Vector3d &v2,
 								   Math::Vector3d &intersection, float &distance);
+
 #endif
 
 } // End of namespace Wintermute

@@ -427,11 +427,11 @@ float AdSceneGeometry::getHeightAt(Math::Vector3d pos, float tolerance, bool *in
 			float *v1 = _planes[i]->_mesh->getVertexPosition(triangle[1]);
 			float *v2 = _planes[i]->_mesh->getVertexPosition(triangle[2]);
 
-			if (lineIntersectsTriangle(pos, dir,
-			                           Math::Vector3d(v0[0], v0[1], v0[2]),
-			                           Math::Vector3d(v1[0], v1[1], v1[2]),
-			                           Math::Vector3d(v2[0], v2[1], v2[2]),
-			                           intersection.x(), intersection.y(), intersection.z())) {
+			if (intersectTriangle(pos, dir,
+								  Math::Vector3d(v0[0], v0[1], v0[2]),
+								  Math::Vector3d(v1[0], v1[1], v1[2]),
+								  Math::Vector3d(v2[0], v2[1], v2[2]),
+								  intersection.x(), intersection.y(), intersection.z())) {
 				if (intersection.y() > pos.y() + tolerance) {
 					continue; // only fall down
 				}
@@ -464,17 +464,17 @@ bool AdSceneGeometry::directPathExists(Math::Vector3d *p1, Math::Vector3d *p2) {
 			Math::Vector3d intersection;
 			float dist;
 
-			if (lineSegmentIntersectsTriangle(*p1, *p2, Math::Vector3d(v0[0], v0[1], v0[2]),
-			                                  Math::Vector3d(v1[0], v1[1], v1[2]),
-			                                  Math::Vector3d(v2[0], v2[1], v2[2]),
-			                                  intersection, dist)) {
-				if (lineIntersectsTriangle(*p1, *p1 - *p2, v0, v1, v2,
-				                           intersection.x(), intersection.y(), intersection.z())) {
+			if (pickGetIntersect(*p1, *p2, Math::Vector3d(v0[0], v0[1], v0[2]),
+								 Math::Vector3d(v1[0], v1[1], v1[2]),
+								 Math::Vector3d(v2[0], v2[1], v2[2]),
+								 intersection, dist)) {
+				if (intersectTriangle(*p1, *p1 - *p2, v0, v1, v2,
+									  intersection.x(), intersection.y(), intersection.z())) {
 					return false;
 				}
 
-				if (lineIntersectsTriangle(*p2, *p2 - *p1, v0, v1, v2,
-				                           intersection.x(), intersection.y(), intersection.z())) {
+				if (intersectTriangle(*p2, *p2 - *p1, v0, v1, v2,
+									  intersection.x(), intersection.y(), intersection.z())) {
 					return false;
 				}
 			}
@@ -495,17 +495,17 @@ bool AdSceneGeometry::directPathExists(Math::Vector3d *p1, Math::Vector3d *p2) {
 			Math::Vector3d intersection;
 			float dist;
 
-			if (lineSegmentIntersectsTriangle(*p1, *p2, Math::Vector3d(v0[0], v0[1], v0[2]),
-			                                  Math::Vector3d(v1[0], v1[1], v1[2]),
-			                                  Math::Vector3d(v2[0], v2[1], v2[2]),
-			                                  intersection, dist)) {
-				if (lineIntersectsTriangle(*p1, *p1 - *p2, v0, v1, v2,
-				                           intersection.x(), intersection.y(), intersection.z())) {
+			if (pickGetIntersect(*p1, *p2, Math::Vector3d(v0[0], v0[1], v0[2]),
+								 Math::Vector3d(v1[0], v1[1], v1[2]),
+								 Math::Vector3d(v2[0], v2[1], v2[2]),
+								 intersection, dist)) {
+				if (intersectTriangle(*p1, *p1 - *p2, v0, v1, v2,
+									  intersection.x(), intersection.y(), intersection.z())) {
 					return false;
 				}
 
-				if (lineIntersectsTriangle(*p2, *p2 - *p1, v0, v1, v2,
-				                           intersection.x(), intersection.y(), intersection.z())) {
+				if (intersectTriangle(*p2, *p2 - *p1, v0, v1, v2,
+									  intersection.x(), intersection.y(), intersection.z())) {
 					return false;
 				}
 			}
@@ -532,12 +532,12 @@ Math::Vector3d AdSceneGeometry::getBlockIntersection(Math::Vector3d *p1, Math::V
 			Math::Vector3d intersection;
 			float dist;
 
-			if (lineSegmentIntersectsTriangle(*p1, *p2, v0, v1, v2, intersection, dist)) {
-				if (lineIntersectsTriangle(*p1, *p1 - *p2, v0, v1, v2, intersection.x(), intersection.y(), intersection.z())) {
+			if (pickGetIntersect(*p1, *p2, v0, v1, v2, intersection, dist)) {
+				if (intersectTriangle(*p1, *p1 - *p2, v0, v1, v2, intersection.x(), intersection.y(), intersection.z())) {
 					return intersection;
 				}
 
-				if (lineIntersectsTriangle(*p2, *p2 - *p1, v0, v1, v2, intersection.x(), intersection.y(), intersection.z())) {
+				if (intersectTriangle(*p2, *p2 - *p1, v0, v1, v2, intersection.x(), intersection.y(), intersection.z())) {
 					return intersection;
 				}
 			}
@@ -646,11 +646,11 @@ bool AdSceneGeometry::convert2Dto3D(int x, int y, Math::Vector3d *pos) {
 			float *v2 = _planes[i]->_mesh->getVertexPosition(triangle[2]);
 			Math::Vector3d intersection;
 
-			if (lineIntersectsTriangle(ray.getOrigin(), ray.getDirection(),
-			                           Math::Vector3d(v0[0], v0[1], v0[2]),
-			                           Math::Vector3d(v1[0], v1[1], v1[2]),
-			                           Math::Vector3d(v2[0], v2[1], v2[2]),
-			                           intersection.x(), intersection.y(), intersection.z())) {
+			if (intersectTriangle(ray.getOrigin(), ray.getDirection(),
+								  Math::Vector3d(v0[0], v0[1], v0[2]),
+								  Math::Vector3d(v1[0], v1[1], v1[2]),
+								  Math::Vector3d(v2[0], v2[1], v2[2]),
+							      intersection.x(), intersection.y(), intersection.z())) {
 				Math::Vector3d lineSegement = intersection - getActiveCamera()->_position;
 				float dist = lineSegement.getMagnitude();
 
