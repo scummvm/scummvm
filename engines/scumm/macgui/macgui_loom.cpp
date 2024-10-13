@@ -738,13 +738,8 @@ bool MacLoomGui::runOptionsDialog() {
 	// 11 - Text speed slider (manually created)
 	// 12 - Music quality slider (manually created)
 
-	int sound = 1;
-	int music = 1;
-	if (_vm->VAR(167) == 2) {
-		sound = music = 0;
-	} else if (_vm->VAR(167) == 1) {
-		music = 0;
-	}
+	int sound = (!ConfMan.hasKey("mute") || !ConfMan.getBool("mute")) ? 1 : 0;
+	int music = (!ConfMan.hasKey("music_mute") || !ConfMan.getBool("music_mute")) ? 1 : 0;
 
 	int scrolling = _vm->_snapScroll == 0;
 	int fullAnimation = _vm->VAR(_vm->VAR_MACHINE_SPEED) == 1 ? 0 : 1;
@@ -805,20 +800,15 @@ bool MacLoomGui::runOptionsDialog() {
 		// 2 - Sound&Music off
 		int musicVariableValue = 0;
 
-		if (window->getWidgetValue(2) == 0) {
+		if (window->getWidgetValue(2) == 0)
 			musicVariableValue = 2;
-		} else if (window->getWidgetValue(2) == 1 && window->getWidgetValue(3) == 0) {
+		else if (window->getWidgetValue(2) == 1 && window->getWidgetValue(3) == 0)
 			musicVariableValue = 1;
-		}
 
-		_vm->VAR(167) = musicVariableValue;
-
-		if (musicVariableValue != 0) {
-			if (_vm->VAR(169) != 0) {
-				_vm->_sound->stopSound(_vm->VAR(169));
-				_vm->VAR(169) = 0;
-			}
-		}
+		_vm->_musicEngine->toggleMusic(musicVariableValue == 0);
+		_vm->_musicEngine->toggleSoundEffects(musicVariableValue < 2);
+		ConfMan.setBool("music_mute", musicVariableValue > 0);
+		ConfMan.setBool("mute", musicVariableValue == 2);
 
 		// SCROLLING ACTIVATION
 		_vm->_snapScroll = window->getWidgetValue(6) == 0;

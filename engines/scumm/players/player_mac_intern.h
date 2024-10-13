@@ -410,6 +410,7 @@ private:
 	int _curSound;
 	int _restartSound;
 	int _curSoundSaveVar;
+	int &_checkSound;
 	int _songTimer;
 	byte _songTimerInternal;
 	byte *_chanConfigTable;

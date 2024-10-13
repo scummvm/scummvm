@@ -110,7 +110,7 @@ public:
 	bool parseNextEvent(uint16 chan, uint16 &duration, uint8 &note, bool &skip, bool &updateInstr) override;
 	uint16 getChanSetup() const override { return _chanSetup; }
 	bool isMusic() const override { return (_chanSetup == 0); }
-	bool restartSoundAfterLoad() const override { return true; }
+	bool restartSoundAfterLoad() const override { return isMusic(); }
 	bool ignoreMachineRating() const override { return false; }
 private:
 	const Common::SharedPtr<Instrument> *fetchInstrument(uint16 id) const;
@@ -416,7 +416,8 @@ LoomMonkeyMacSnd::LoomMonkeyMacSnd(ScummEngine *vm, Audio::Mixer *mixer) : VblTa
 	_machineRating(0), _selectedQuality(2), _effectiveChanConfig(0), _16bit(false), _idRangeMax(200), _sndChannel(0), _chanUse(0), _defaultChanConfig(0),
 	_chanConfigTable(nullptr), _chanPlaying(0), _curChanConfig(0), _curSynthType(0), _curSndType(Audio::Mixer::kPlainSoundType), _mixerThread(false),
 	_restartSound(0), _lastSndType(Audio::Mixer::kPlainSoundType), _chanCbProc(this, &MacLowLevelPCMDriver::CallbackClient::sndChannelCallback),
-	_curSoundSaveVar(0), _saveVersionChange(vm->_game.id == GID_MONKEY ? 115 : 114), _legacySaveUnits(vm->_game.id == GID_MONKEY ? 3 : 5) {
+	_curSoundSaveVar(0), _saveVersionChange(vm->_game.id == GID_MONKEY ? 115 : 114), _legacySaveUnits(vm->_game.id == GID_MONKEY ? 3 : 5),
+	_checkSound(vm->_game.id == GID_MONKEY ? _curSound : _curSoundSaveVar) { 
 	assert(_vm);
 	assert(_mixer);
 
@@ -519,7 +520,8 @@ void LoomMonkeyMacSnd::startSound(int id, int jumpToTick) {
 	if (_loader->blocked(ptr, size))
 		return;
 
-	stopActiveSound();
+	if (_curSound)
+		stopActiveSound();
 	if (_chanUse <= 1)
 		disposeAllChannels();
 
@@ -586,7 +588,7 @@ int LoomMonkeyMacSnd::getSoundStatus(int id) const {
 		return 0;
 	}
 	Common::StackLock lock(_mixer->mutex());
-	return (_curSound == id) ? 1 : 0;
+	return (_checkSound == id) ? 1 : 0;
 }
 
 void LoomMonkeyMacSnd::setQuality(int qual) {
