@@ -621,21 +621,23 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 
 		setAmbientLight();
 
-		if (camera) {
-			_fov = camera->_fov;
+		if (camera)
+			_camera = camera;
+		if (_camera) {
+			_fov = _camera->_fov;
 
-			if (camera->_nearClipPlane >= 0.0f) {
+			if (_camera->_nearClipPlane >= 0.0f) {
 				_nearClipPlane = camera->_nearClipPlane;
 			}
 
-			if (camera->_farClipPlane >= 0.0f) {
-				_farClipPlane = camera->_farClipPlane;
+			if (_camera->_farClipPlane >= 0.0f) {
+				_farClipPlane = _camera->_farClipPlane;
 			}
 
 			Math::Matrix4 viewMatrix;
-			camera->getViewMatrix(&viewMatrix);
+			_camera->getViewMatrix(&viewMatrix);
 			Math::Matrix4 cameraTranslate;
-			cameraTranslate.setPosition(-camera->_position);
+			cameraTranslate.setPosition(-_camera->_position);
 			cameraTranslate.transpose();
 			viewMatrix = cameraTranslate * viewMatrix;
 			_lastViewMatrix = viewMatrix;

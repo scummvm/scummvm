@@ -542,6 +542,26 @@ bool XModel::isTransparentAt(int x, int y) {
 		return false;
 	}
 
+	x += _lastOffsetX;
+	y += _lastOffsetY;
+
+	if (!_gameRef->_renderer3D->_camera)
+		return true;
+
+	float resWidth, resHeight;
+	float layerWidth, layerHeight;
+	float modWidth, modHeight;
+	bool customViewport;
+	_gameRef->_renderer3D->getProjectionParams(&resWidth, &resHeight, &layerWidth, &layerHeight, &modWidth, &modHeight, &customViewport);
+
+	x -= _drawingViewport.left + modWidth;
+	y -= _drawingViewport.top + modHeight;
+
+	if (customViewport) {
+		x += _gameRef->_renderer3D->_drawOffsetX;
+		y += _gameRef->_renderer3D->_drawOffsetY;
+	}
+
 	Math::Ray ray = _gameRef->_renderer3D->rayIntoScene(x, y);
 
 	// transform to model space

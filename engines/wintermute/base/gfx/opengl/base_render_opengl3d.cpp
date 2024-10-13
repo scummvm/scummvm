@@ -55,6 +55,7 @@ BaseRenderOpenGL3D::BaseRenderOpenGL3D(BaseGame *inGame) : BaseRenderer3D(inGame
 }
 
 BaseRenderOpenGL3D::~BaseRenderOpenGL3D() {
+	_camera = nullptr;
 }
 
 void BaseRenderOpenGL3D::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) {
@@ -491,21 +492,23 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 
 		glEnable(GL_NORMALIZE);
 
-		if (camera) {
-			_fov = camera->_fov;
+		if (camera)
+			_camera = camera;
+		if (_camera) {
+			_fov = _camera->_fov;
 
-			if (camera->_nearClipPlane >= 0.0f) {
-				_nearClipPlane = camera->_nearClipPlane;
+			if (_camera->_nearClipPlane >= 0.0f) {
+				_nearClipPlane = _camera->_nearClipPlane;
 			}
 
-			if (camera->_farClipPlane >= 0.0f) {
-				_farClipPlane = camera->_farClipPlane;
+			if (_camera->_farClipPlane >= 0.0f) {
+				_farClipPlane = _camera->_farClipPlane;
 			}
 
 			Math::Matrix4 viewMatrix;
-			camera->getViewMatrix(&viewMatrix);
+			_camera->getViewMatrix(&viewMatrix);
 			glLoadMatrixf(viewMatrix.getData());
-			glTranslatef(-camera->_position.x(), -camera->_position.y(), -camera->_position.z());
+			glTranslatef(-_camera->_position.x(), -_camera->_position.y(), -_camera->_position.z());
 			glGetFloatv(GL_MODELVIEW_MATRIX, _lastViewMatrix.getData());
 		} else {
 			glLoadMatrixf(_lastViewMatrix.getData());
