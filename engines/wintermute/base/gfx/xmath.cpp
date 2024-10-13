@@ -485,6 +485,11 @@ float DXQuaternionDot(const DXVector4 *pq1, const DXVector4 *pq2) {
 
 DXVector4 *DXVec3Transform(DXVector4 *pout, const DXVector3 *pv, const DXMatrix *pm) {
 	DXVector4 out;
+	DXVector3 vz(0, 0, 0);
+
+	if (!pv) {
+		pv = &vz;
+	}
 
 	out._x = pm->_m[0][0] * pv->_x + pm->_m[1][0] * pv->_y + pm->_m[2][0] * pv->_z + pm->_m[3][0];
 	out._y = pm->_m[0][1] * pv->_x + pm->_m[1][1] * pv->_y + pm->_m[2][1] * pv->_z + pm->_m[3][1];
