@@ -128,7 +128,7 @@ void Room802::init() {
 	if (_G(flags)[V255])
 		hotspot_set_active(_G(currentSceneDef).hotspots, "WALL", false);
 
-	if (_G(game).previous_room == -2)
+	if (_G(game).previous_room == KERNEL_RESTORING_GAME)
 		return;
 
 	if (_G(game).previous_room != 801) {

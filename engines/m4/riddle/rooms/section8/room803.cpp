@@ -410,7 +410,7 @@ void Room803::daemon() {
 
 void Room803::initWalker() {
 	switch (_G(game).previous_room) {
-	case -2:
+	case KERNEL_RESTORING_GAME:
 		if (_G(flags)[V276] == 0) {
 			_mcWalkerMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 357, 175, 3, Walker::player_walker_callback, "mc");
 		}
