@@ -25,6 +25,7 @@
 #include "m4/wscript/ws_machine.h"
 #include "m4/wscript/wst_regs.h"
 #include "m4/vars.h"
+#include "m4/m4.h"
 
 namespace M4 {
 
@@ -201,8 +202,11 @@ bool series_stream_break_on_frame(machine *m, int32 frameNum, int32 trigger) {
 void series_set_frame_rate(machine *m, int32 newFrameRate) {
 	CHECK_SERIES
 
-	if ((!m) || (!m->myAnim8) || !verifyMachineExists(m))
-		error_show(FL, 'SSFR');
+	if ((!m) || (!m->myAnim8) || !verifyMachineExists(m)) {
+		if (g_engine->getGameType() == GType_Burger)
+			error_show(FL, 'SSFR');
+		return;
+	}
 
 	m->myAnim8->myRegs[IDX_CELS_FRAME_RATE] = newFrameRate << 16;
 }
@@ -347,11 +351,6 @@ machine *series_simple_play(const char *seriesName, frac16 layer, bool stickWhen
 		flags |= 0x10;
 
 	return series_play(seriesName, layer, flags);
-}
-
-void series_stream_check_series(machine *m, int val) {
-	// TODO: series_stream_check_series
-	error("TODO: series_stream_check_series");
 }
 
 } // namespace M4

@@ -580,12 +580,12 @@ void Room405::daemon() {
 		break;
 
 	case 667:
-		series_stream_check_series(_response, 15);
+		series_set_frame_rate(_response, 15);
 		series_stream_break_on_frame(_response, 10, 668);
 		break;
 
 	case 668:
-		series_stream_check_series(_response, 5);
+		series_set_frame_rate(_response, 5);
 		ws_OverrideCrunchTime(_response);
 		break;
 

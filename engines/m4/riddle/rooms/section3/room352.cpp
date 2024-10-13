@@ -100,7 +100,7 @@ void Room352::daemon() {
 		break;
 
 	case 17:
-		series_stream_check_series(_meiChecksShoe, 3000);
+		series_set_frame_rate(_meiChecksShoe, 3000);
 		break;
 
 	case 20:

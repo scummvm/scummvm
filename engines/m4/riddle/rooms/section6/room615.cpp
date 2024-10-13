@@ -102,7 +102,7 @@ void Room615::daemon() {
 	case 11:
 		if (_flag1) {
 			_flag1 = false;
-			series_stream_check_series(_untie, 30000);
+			series_set_frame_rate(_untie, 30000);
 			digi_play("615r02", 1, 255, 15);
 		} else {
 			_flag1 = true;
@@ -123,7 +123,7 @@ void Room615::daemon() {
 			_flag1 = false;
 			_pu = series_stream("515PU02", 6, 0x100, 24);
 			series_stream_break_on_frame(_pu, 5, 22);
-			series_stream_check_series(_pu, 4);
+			series_set_frame_rate(_pu, 4);
 		} else {
 			_flag1 = true;
 		}
@@ -136,7 +136,7 @@ void Room615::daemon() {
 	case 24:
 		if (_flag1) {
 			_flag1 = false;
-			series_stream_check_series(_untie, 7);
+			series_set_frame_rate(_untie, 7);
 			ws_OverrideCrunchTime(_untie);
 			series_stream_break_on_frame(_untie, 144, 26);
 			digi_play("615t03", 1, 255, 25);
@@ -156,7 +156,7 @@ void Room615::daemon() {
 
 	case 26:
 		if (!_val1)
-			series_stream_check_series(_untie, 3000);
+			series_set_frame_rate(_untie, 3000);
 		break;
 
 	case 40:
@@ -172,7 +172,7 @@ void Room615::daemon() {
 
 			_val1 = 1;
 			terminateMachineAndNull(_ripTalker);
-			series_stream_check_series(_untie, 7);
+			series_set_frame_rate(_untie, 7);
 			ws_OverrideCrunchTime(_untie);
 	
 		} else {
@@ -401,11 +401,11 @@ void Room615::daemon() {
 
 	case 116:
 		series_stream_break_on_frame(_untie, 58, 150);
-		series_stream_check_series(_untie, 30000);
+		series_set_frame_rate(_untie, 30000);
 		break;
 
 	case 118:
-		series_stream_check_series(_untie, 6);
+		series_set_frame_rate(_untie, 6);
 		ws_OverrideCrunchTime(_untie);
 		digi_play("615t10", 1, 255, 119);
 		break;
@@ -414,7 +414,7 @@ void Room615::daemon() {
 		_val2 = 1;
 
 		if (_val2) {
-			series_stream_check_series(_untie, 6);
+			series_set_frame_rate(_untie, 6);
 			ws_OverrideCrunchTime(_untie);
 		} else {
 			kernel_timing_trigger(10, 151);
@@ -481,7 +481,7 @@ void Room615::daemon() {
 		break;
 
 	case 135:
-		series_stream_check_series(_untie, 400);
+		series_set_frame_rate(_untie, 400);
 		kernel_timing_trigger(60, 140);
 		break;
 
@@ -499,14 +499,14 @@ void Room615::daemon() {
 
 	case 150:
 		if (!_val2) {
-			series_stream_check_series(_untie, 30000);
+			series_set_frame_rate(_untie, 30000);
 			kernel_timing_trigger(10, 151);
 		}
 		break;
 
 	case 151:
 		if (_val2) {
-			series_stream_check_series(_untie, 6);
+			series_set_frame_rate(_untie, 6);
 			ws_OverrideCrunchTime(_untie);
 		} else {
 			kernel_timing_trigger(10, 151);

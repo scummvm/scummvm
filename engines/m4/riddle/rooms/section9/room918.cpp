@@ -76,25 +76,25 @@ void Room918::daemon() {
 
 	case 30:
 		series_stream_break_on_frame(_roomStates_field4, 64, 40);
-		series_stream_check_series(_roomStates_field4, 6);
+		series_set_frame_rate(_roomStates_field4, 6);
 		digi_play("908R04", 1, 255, -1, 908);
 		break;
 
 	case 40:
 		series_stream_break_on_frame(_roomStates_field4, 103, 50);
-		series_stream_check_series(_roomStates_field4, 5);
+		series_set_frame_rate(_roomStates_field4, 5);
 		digi_play("908m07", 1, 255, -1, 908);
 		break;
 
 	case 50:
 		series_stream_break_on_frame(_roomStates_field4, 121, 60);
-		series_stream_check_series(_roomStates_field4, 5);
+		series_set_frame_rate(_roomStates_field4, 5);
 		digi_play("908r05", 1, 255, -1, 908);
 		break;
 
 	case 60:
 		series_stream_break_on_frame(_roomStates_field4, 133, 70);
-		series_stream_check_series(_roomStates_field4, 5);
+		series_set_frame_rate(_roomStates_field4, 5);
 		digi_play("908r05a", 1, 255, -1, 908);
 		break;
 
@@ -109,68 +109,68 @@ void Room918::daemon() {
 		break;
 
 	case 80:
-		series_stream_check_series(_roomStates_field4, 5);
+		series_set_frame_rate(_roomStates_field4, 5);
 		series_stream_break_on_frame(_roomStates_field4, 210, 90);
 		digi_play("908m08a", 2, 255, -1, 908);
 		break;
 
 	case 90:
 		series_stream_break_on_frame(_roomStates_field4, 245, 100);
-		series_stream_check_series(_roomStates_field4, 6);
+		series_set_frame_rate(_roomStates_field4, 6);
 		digi_play("908r06", 1, 255, -1, 908);
 		break;
 
 	case 100:
 		series_stream_break_on_frame(_roomStates_field4, 271, 102);
-		series_stream_check_series(_roomStates_field4, 5);
+		series_set_frame_rate(_roomStates_field4, 5);
 		digi_play("908m09", 2, 255, -1, 908);
 		break;
 
 	case 102:
 		series_stream_break_on_frame(_roomStates_field4, 291, 104);
-		series_stream_check_series(_roomStates_field4, 5);
+		series_set_frame_rate(_roomStates_field4, 5);
 		digi_play("908m09a", 2, 255, -1, 908);
 		break;
 
 	case 104:
 		series_stream_break_on_frame(_roomStates_field4, 326, 110);
-		series_stream_check_series(_roomStates_field4, 5);
+		series_set_frame_rate(_roomStates_field4, 5);
 		digi_play("908m09b", 2, 255, -1, 908);
 		break;
 
 	case 110:
 		series_stream_break_on_frame(_roomStates_field4, 333, 112);
-		series_stream_check_series(_roomStates_field4, 6);
+		series_set_frame_rate(_roomStates_field4, 6);
 		digi_play("908r07", 1, 255, -1, 908);
 		break;
 
 	case 112:
 		series_stream_break_on_frame(_roomStates_field4, 339, 114);
-		series_stream_check_series(_roomStates_field4, 6);
+		series_set_frame_rate(_roomStates_field4, 6);
 		digi_play("908r07a", 1, 255, -1, 908);
 		break;
 
 	case 114:
 		series_stream_break_on_frame(_roomStates_field4, 354, 116);
-		series_stream_check_series(_roomStates_field4, 6);
+		series_set_frame_rate(_roomStates_field4, 6);
 		digi_play("908r07b", 1, 255, -1, 908);
 		break;
 
 	case 116:
 		series_stream_break_on_frame(_roomStates_field4, 382, 120);
-		series_stream_check_series(_roomStates_field4, 6);
+		series_set_frame_rate(_roomStates_field4, 6);
 		digi_play("908r07c", 1, 255, -1, 908);
 		break;
 
 	case 120:
 		series_stream_break_on_frame(_roomStates_field4, 390, 122);
-		series_stream_check_series(_roomStates_field4, 5);
+		series_set_frame_rate(_roomStates_field4, 5);
 		digi_play("908m10", 2, 255, -1, 908);
 		break;
 
 	case 122:
 		series_stream_break_on_frame(_roomStates_field4, 435, 130);
-		series_stream_check_series(_roomStates_field4, 5);
+		series_set_frame_rate(_roomStates_field4, 5);
 		digi_play("908m10a", 2, 255, -1, 908);
 		break;
 
@@ -189,7 +189,7 @@ void Room918::daemon() {
 		break;
 
 	case 300:
-		series_stream_check_series(_roomStates_field4, 7);
+		series_set_frame_rate(_roomStates_field4, 7);
 		series_stream_break_on_frame(_roomStates_field4, 486, 320);
 		digi_play("950_s48f", 2, 255, 310, -1);
 		break;

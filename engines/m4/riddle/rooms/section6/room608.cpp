@@ -899,17 +899,17 @@ void Room608::daemon() {
 		break;
 
 	case 505:
-		series_stream_check_series(_ol2, 240);
+		series_set_frame_rate(_ol2, 240);
 		series_stream_break_on_frame(_ol2, 50, 506);
 		break;
 
 	case 506:
-		series_stream_check_series(_ol2, 7);
+		series_set_frame_rate(_ol2, 7);
 		series_stream_break_on_frame(_ol2, 53, 508);
 		break;
 
 	case 507:
-		series_stream_check_series(_ol2, 13);
+		series_set_frame_rate(_ol2, 13);
 		digi_play("608r47", 1);
 		break;
 
@@ -938,13 +938,13 @@ void Room608::daemon() {
 		break;
 
 	case 514:
-		series_stream_check_series(_ol2, 300);
+		series_set_frame_rate(_ol2, 300);
 		kernel_timing_trigger(60, 555);
 		series_stream_break_on_frame(_ol2, 275, 515);
 		break;
 
 	case 515:
-		series_stream_check_series(_ol2, 7);
+		series_set_frame_rate(_ol2, 7);
 		series_stream_break_on_frame(_ol2, 290, 516);
 		break;
 
@@ -1222,7 +1222,7 @@ void Room608::daemon() {
 
 		_ol2 = series_stream("608all5", 5, 0x600, 750);
 		series_stream_break_on_frame(_ol2, 21, 783);
-		series_stream_check_series(_ol2, 10);
+		series_set_frame_rate(_ol2, 10);
 		break;
 
 	case 731:
@@ -1236,7 +1236,7 @@ void Room608::daemon() {
 		break;
 
 	case 734:
-		series_stream_check_series(_ol2, 7);
+		series_set_frame_rate(_ol2, 7);
 		series_stream_break_on_frame(_ol2, 107, 792);
 		break;
 

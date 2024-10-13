@@ -1901,12 +1901,12 @@ void Room303::conv303b() {
 		break;
 
 	case 2:
-		series_stream_check_series(_ripPonders, 20);
+		series_set_frame_rate(_ripPonders, 20);
 		series_stream_break_on_frame(_ripPonders, 27, 3);
 		return;
 
 	case 3:
-		series_stream_check_series(_ripPonders, 5);
+		series_set_frame_rate(_ripPonders, 5);
 		return;
 
 	case 4:

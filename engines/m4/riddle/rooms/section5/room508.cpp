@@ -238,7 +238,7 @@ void Room508::daemon() {
 		terminateMachineAndNull(_shovel);
 		terminateMachineAndNull(_skull);
 		terminateMachineAndNull(_ripley);
-		series_stream_check_series(_ripStartTurnDome, 9999);
+		series_set_frame_rate(_ripStartTurnDome, 9999);
 		kernel_timing_trigger(1, 519);
 		break;
 
@@ -296,7 +296,7 @@ void Room508::daemon() {
 		sendWSMessage_10000(1, _x, _flick, 1, 2, -1, _flick, 1, 2, 0);
 		sendWSMessage_190000(_x, 1);
 		sendWSMessage_1a0000(_x, 1);
-		series_stream_check_series(_spect, 5);
+		series_set_frame_rate(_spect, 5);
 		ws_OverrideCrunchTime(_spect);
 		break;
 
@@ -374,7 +374,7 @@ void Room508::daemon() {
 		break;
 
 	case 666:
-		series_stream_check_series(_spect, 3000);
+		series_set_frame_rate(_spect, 3000);
 		hotspot_set_active("CRYSTAL SKULL ", true);
 		hotspot_set_active("SHOVEL ", true);
 		hotspot_set_active("SHOVEL", false);

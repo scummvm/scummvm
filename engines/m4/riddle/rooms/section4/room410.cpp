@@ -79,18 +79,18 @@ void Room410::daemon() {
 
 	case 104:
 		series_stream_break_on_frame(_pu, 102, 105);
-		series_stream_check_series(_pu, 5);
+		series_set_frame_rate(_pu, 5);
 		digi_play("410r01", 1);
 		break;
 
 	case 105:
 		series_stream_break_on_frame(_pu, 116, 110);
-		series_stream_check_series(_pu, 3000);
+		series_set_frame_rate(_pu, 3000);
 		digi_play("410t01", 1, 255, 106);
 		break;
 
 	case 106:
-		series_stream_check_series(_pu, 7);
+		series_set_frame_rate(_pu, 7);
 		ws_OverrideCrunchTime(_pu);
 		break;
 
@@ -116,7 +116,7 @@ void Room410::daemon() {
 		break;
 
 	case 127:
-		series_stream_check_series(_pu, 3000);
+		series_set_frame_rate(_pu, 3000);
 		break;
 
 	case 225:
@@ -128,7 +128,7 @@ void Room410::daemon() {
 		break;
 
 	case 300:
-		series_stream_check_series(_pu, 3000);
+		series_set_frame_rate(_pu, 3000);
 		kernel_timing_trigger(1, 305);
 		disable_player_commands_and_fade_init(-1);
 		break;

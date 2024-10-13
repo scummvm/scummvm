@@ -2093,7 +2093,7 @@ void Room504::daemon() {
 		break;
 
 	case 721:
-		series_stream_check_series(_ripStep, 9999);
+		series_set_frame_rate(_ripStep, 9999);
 		kernel_timing_trigger(360, 722);
 		break;
 
@@ -2201,7 +2201,7 @@ void Room504::daemon() {
 		break;
 
 	case 742:
-		series_stream_check_series(_ripStep, 9999);
+		series_set_frame_rate(_ripStep, 9999);
 		kernel_timing_trigger(360, 743);
 		break;
 

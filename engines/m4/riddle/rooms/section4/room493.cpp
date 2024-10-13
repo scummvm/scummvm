@@ -197,12 +197,12 @@ void Room493::escape_key_pressed(void *, void *) {
 }
 
 void Room493::setTrigger(int trigger) {
-	series_stream_check_series(_credits, 30000);
+	series_set_frame_rate(_credits, 30000);
 	kernel_timing_trigger(900, trigger);
 }
 
 void Room493::crunch() {
-	series_stream_check_series(_credits, 10);
+	series_set_frame_rate(_credits, 10);
 	ws_OverrideCrunchTime(_credits);
 }
 
