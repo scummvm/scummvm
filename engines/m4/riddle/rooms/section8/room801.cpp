@@ -128,7 +128,7 @@ void Room801::init() {
 		_roomStates_field9Eh = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 1280, 0, triggerMachineByHashCallback, "mc talk frames");
 		_roomStates_fieldA2h = series_show("SAFARI SHADOW 5", 1280, 16, -1, -1, 0, 50, 124, 304);
 		sendWSMessage_10000(1, _roomStates_field9Eh, _roomStates_field782, 42, 42, 0, _roomStates_field782, 42, 42, 0);
-	} else if (_G(game).previous_room < 850) {
+	} else {
 		ws_demand_facing(_G(my_walker), 8);
 		ws_demand_location(_G(my_walker), 525, 301);
 		_roomStates_loop3 = series_load("rip returns from root cellar", -1, nullptr);
@@ -997,7 +997,7 @@ void Room801::daemon() {
 			switch (_roomStates_pu) {
 			case 4:
 				_roomStates_pu = 1;
-				// Fallthrough on purpose
+				// Fallthrough
 			case 1:
 			case 2:
 			case 3:
@@ -1060,7 +1060,7 @@ void Room801::daemon() {
 			switch (_roomStates_ripTalker) {
 			case 3:
 				_roomStates_ripTalker = 1;
-				// Fallthrough on purpose
+				// Fallthrough
 			case 1:
 			case 2:
 			case 4:
