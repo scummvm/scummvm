@@ -969,14 +969,8 @@ bool MacMI1Gui::runOptionsDialog() {
 	// 11 - Text speed slider (manually created)
 	// 12 - Music quality slider (manually created)
 
-	int sound = 1;
-	int music = 1;
-	if (_vm->VAR(167) == 2) {
-		sound = music = 0;
-	} else if (_vm->VAR(167) == 1) {
-		music = 0;
-	}
-
+	int sound = (!ConfMan.hasKey("mute") || !ConfMan.getBool("mute")) ? 1 : 0;
+	int music = (!ConfMan.hasKey("music_mute") || !ConfMan.getBool("music_mute")) ? 1 : 0;
 	int textSpeed = _vm->_defaultTextSpeed;
 	int musicQuality = ConfMan.hasKey("mac_snd_quality") ? ConfMan.getInt("mac_snd_quality") : 0;
 	int musicQualityOption = (musicQuality == 0) ? 1 : (musicQuality - 1) % 3;
@@ -1026,19 +1020,10 @@ bool MacMI1Gui::runOptionsDialog() {
 		_vm->setTalkSpeed(_vm->_defaultTextSpeed);
 
 		// SOUND&MUSIC ACTIVATION
-		if (window->getWidgetValue(2) == 0) {
-			_vm->_musicEngine->disableMusic();
-			_vm->_musicEngine->disableSoundEffects();
-			_vm->VAR(167) = 2;
-		} else if (window->getWidgetValue(2) == 1 && window->getWidgetValue(3) == 0) {
-			_vm->_musicEngine->disableMusic();
-			_vm->_musicEngine->enableSoundEffects();
-			_vm->VAR(167) = 1;
-		} else {
-			_vm->_musicEngine->enableMusic();
-			_vm->_musicEngine->enableSoundEffects();
-			_vm->VAR(167) = 0;
-		}
+		_vm->_musicEngine->toggleMusic(window->getWidgetValue(2) != 0 && (window->getWidgetValue(2) != 1 || window->getWidgetValue(3) != 0));
+		_vm->_musicEngine->toggleSoundEffects(window->getWidgetValue(2) != 0);
+		ConfMan.setBool("music_mute", window->getWidgetValue(2) == 0 || (window->getWidgetValue(2) == 1 && window->getWidgetValue(3) == 0));
+		ConfMan.setBool("mute", window->getWidgetValue(2) == 0);
 
 		// MUSIC QUALITY SELECTOR
 		musicQuality = musicQuality * 3 + 1 + window->getWidgetValue(12);

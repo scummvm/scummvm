@@ -532,8 +532,10 @@ void LoomMonkeyMacSnd::startSound(int id, int jumpToTick) {
 	}
 
 	if (_disableFlags) {
-		if (_loader->restartSoundAfterLoad())
+		if (_loader->restartSoundAfterLoad()) {
 			_curSoundSaveVar = id;
+			_loader->unblock();
+		}
 		if (_loader->isMusic() || (_disableFlags & 2))
 			return;
 	}
@@ -645,23 +647,13 @@ void LoomMonkeyMacSnd::restoreAfterLoad() {
 		startSound(sound);
 }
 
-void LoomMonkeyMacSnd::enableMusic() {
-	_disableFlags &= ~1;
+void LoomMonkeyMacSnd::toggleMusic(bool enable) {
+	_disableFlags = enable ? _disableFlags & ~1 : _disableFlags | 1;
 	updateDisabledState();
 }
 
-void LoomMonkeyMacSnd::disableMusic() {
-	_disableFlags |= 1;
-	updateDisabledState();
-}
-
-void LoomMonkeyMacSnd::enableSoundEffects() {
-	_disableFlags &= ~2;
-	updateDisabledState();
-}
-
-void LoomMonkeyMacSnd::disableSoundEffects() {
-	_disableFlags |= 2;
+void LoomMonkeyMacSnd::toggleSoundEffects(bool enable) {
+	_disableFlags = enable ? _disableFlags & ~2 : _disableFlags | 2;
 	updateDisabledState();
 }
 
