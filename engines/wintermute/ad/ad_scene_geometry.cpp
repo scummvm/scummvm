@@ -356,17 +356,13 @@ Math::Matrix4 *AdSceneGeometry::getViewMatrix() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::storeDrawingParams() {
-	// implement this later
-	//	CBRenderD3D* m_Renderer = (CBRenderD3D*)_gameRef->m_Renderer;
+	_drawingViewport = _gameRef->_renderer3D->getViewPort();
 
-	//  // store values
-	//	m_Renderer->m_Device->GetViewport(&m_DrawingViewport);
+	// store values
+	//_gameRef->_renderer3D->getWorldTransform(_lastWorldMat);
+	//_gameRef->_renderer3D->getViewTransform(_lastViewMat);
+	//_gameRef->_renderer3D->getProjectionTransform(_lastProjMat);
 
-	//	m_Renderer->m_Device->GetTransform(D3DTS_WORLD, &m_LastWorldMat);
-	//	m_Renderer->m_Device->GetTransform(D3DTS_VIEW, &m_LastViewMat);
-	//	m_Renderer->m_Device->GetTransform(D3DTS_PROJECTION, &m_LastProjMat);
-
-	warning("AdSceneGeometry::storeDrawingParams not yet implemented");
 
 	AdScene *scene = ((AdGame *)_gameRef)->_scene;
 	if (scene) {
@@ -379,17 +375,17 @@ bool AdSceneGeometry::storeDrawingParams() {
 
 	Rect32 rc;
 	_gameRef->getCurrentViewportRect(&rc);
-//	float width = (float)rc.right - (float)rc.left;
-//	float height = (float)rc.bottom - (float)rc.top;
+	float width = (float)rc.right - (float)rc.left;
+	float height = (float)rc.bottom - (float)rc.top;
 
 	// margins
-	//	int mleft = rc.left;
-	//	int mright = m_Renderer->m_Width - Width - rc.left;
-	//	int mtop = rc.top;
-	//	int mbottom = m_Renderer->m_Height - Height - rc.top;
+	int mleft = rc.left;
+	int mright = _gameRef->_renderer3D->getWidth() - width - rc.left;
+	int mtop = rc.top;
+	int mbottom = _gameRef->_renderer3D->getHeight() - height - rc.top;
 
-	//	m_LastOffsetX = _gameRef->_offsetX + (mleft - mright)/2;
-	//	m_LastOffsetY = _gameRef->_offsetY + (mtop - mbottom)/2;
+	_lastOffsetX = _gameRef->_offsetX + (mleft - mright) / 2;
+	_lastOffsetY = _gameRef->_offsetY + (mtop - mbottom) / 2;
 
 	_lastValuesInitialized = true;
 
@@ -399,7 +395,7 @@ bool AdSceneGeometry::storeDrawingParams() {
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::render(bool render) {
 	// store values
-	// storeDrawingParams();
+	storeDrawingParams();
 	if (render) {
 		_gameRef->_renderer3D->renderSceneGeometry(_planes, _blocks, _generics, _lights, getActiveCamera());
 	}

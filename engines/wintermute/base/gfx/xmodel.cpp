@@ -477,6 +477,11 @@ bool XModel::render() {
 		// render everything
 		bool res = _rootFrame->render(this);
 
+		// remember matrices for object picking purposes
+		//_gameRef->_renderer3D->getWorldTransform(_lastWorldMat);
+		//_gameRef->_renderer3D->getWorldTransform(_lastViewMat);
+		//_gameRef->_renderer3D->getWorldTransform(_lastProjMat);
+
 		// remember scene offset
 		Rect32 rc;
 		_gameRef->getCurrentViewportRect(&rc);
@@ -561,8 +566,13 @@ void XModel::updateBoundingRect() {
 	_boundingRect.left = _boundingRect.top = INT_MAX_VALUE;
 	_boundingRect.right = _boundingRect.bottom = INT_MIN_VALUE;
 
+	Math::Matrix4 viewMat, projMat, worldMat;
 	Math::Vector3d vec2d(0, 0, 0);
+	_gameRef->_renderer3D->getViewTransform(viewMat);
+	_gameRef->_renderer3D->getProjectionTransform(projMat);
+	_gameRef->_renderer3D->getWorldTransform(worldMat);
 
+	_drawingViewport = _gameRef->_renderer3D->getViewPort();
 	float x1 = _BBoxStart.x();
 	float x2 = _BBoxEnd.x();
 	float y1 = _BBoxStart.y();
@@ -596,6 +606,11 @@ void XModel::updateBoundingRect() {
 
 	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x2, y2, z2), screenX, screenY);
 	updateRect(&_boundingRect, Math::Vector3d(screenX, screenY, 0));
+
+	_boundingRect.left -= _gameRef->_renderer3D->_drawOffsetX;
+	_boundingRect.right -= _gameRef->_renderer3D->_drawOffsetX;
+	_boundingRect.bottom -= _gameRef->_renderer3D->_drawOffsetY;
+	_boundingRect.top -= _gameRef->_renderer3D->_drawOffsetY;
 }
 
 //////////////////////////////////////////////////////////////////////////

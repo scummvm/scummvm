@@ -470,6 +470,8 @@ bool AdActor3DX::displayShadowVolume() {
 		return false;
 	}
 
+	//_gameRef->_renderer3D->setWorldTransform(_worldMatrix);
+
 	Math::Vector3d lightVector = Math::Vector3d(_shadowLightPos.x() * _scale3D,
 	                                            _shadowLightPos.y() * _scale3D,
 	                                            _shadowLightPos.z() * _scale3D);
@@ -488,6 +490,9 @@ bool AdActor3DX::displayShadowVolume() {
 	}
 
 	shadowModel->updateShadowVol(getShadowVolume(), _worldMatrix, lightVector, extrusionDepth);
+
+	Math::Matrix4 origWorld;
+	_gameRef->_renderer3D->getWorldTransform(origWorld);
 
 	// handle the attachments
 	for (uint32 i = 0; i < _attachments.size(); i++) {
@@ -536,6 +541,9 @@ bool AdActor3DX::displayAttachments(bool registerObjects) {
 		return true;
 	}
 
+	Math::Matrix4 origView;
+	_gameRef->_renderer3D->getWorldTransform(origView);
+
 	for (uint32 i = 0; i < _attachments.size(); i++) {
 		AdAttach3DX *at = _attachments[i];
 		if (!at->_active) {
@@ -550,6 +558,8 @@ bool AdActor3DX::displayAttachments(bool registerObjects) {
 		Math::Matrix4 viewMat = *boneMat;
 		at->displayAttachable(viewMat, registerObjects);
 	}
+
+	//_gameRef->_renderer3D->setWorldTransform(origView);
 
 	return true;
 }

@@ -94,12 +94,32 @@ public:
 	virtual bool setProjection2D() = 0;
 	virtual void setWorldTransform(const Math::Matrix4 &transform) = 0;
 
-	void project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int32 &x, int32 &y);
-	Math::Ray rayIntoScene(int x, int y);
+//	void setWorldTransform(const Math::Matrix4 &transform) {
+//		_worldMatrix = transform;
+//	}
 
 	Math::Matrix4 lastProjectionMatrix() {
-		return _projectionMatrix3d;
+		return _projectionMatrix;
 	}
+
+	void setProjectionTransform(const Math::Matrix4 &transform) {
+		_projectionMatrix = transform;
+	}
+
+	void getWorldTransform(Math::Matrix4 &transform) {
+		transform = _worldMatrix;
+	}
+
+	void getViewTransform(Math::Matrix4 &transform) {
+		transform = _viewMatrix;
+	}
+
+	void getProjectionTransform(Math::Matrix4 &transform) {
+		transform = _projectionMatrix;
+	}
+
+	void project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int32 &x, int32 &y);
+	Math::Ray rayIntoScene(int x, int y);
 
 	Camera3D *_camera;
 
@@ -121,6 +141,8 @@ public:
 protected:
 	Math::Matrix4 _lastViewMatrix;
 	Rect32 _viewport3dRect;
+	Math::Matrix4 _worldMatrix;
+	Math::Matrix4 _viewMatrix;
 	Math::Matrix4 _projectionMatrix;
 	float _fov;
 	float _nearClipPlane;
