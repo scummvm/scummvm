@@ -27,12 +27,12 @@
 namespace M4 {
 namespace Riddle {
 
-void setGlobals1(int val1, int val2, int val3, int val4, int val5,
+void setGlobals1(int series, int val2, int val3, int val4, int val5,
 	int val6, int val7, int val8, int val9, int val10,
 	int val11, int val12, int val13, int val14, int val15,
 	int val16, int val17, int val18, int val19, int val20,
 	int val21) {
-	_G(globals)[GLB_TEMP_1] = val1 << 24;
+	_G(globals)[GLB_TEMP_1] = series << 24;
 	_G(globals)[GLB_TEMP_2] = val2 << 16;
 	_G(globals)[GLB_TEMP_3] = val3 << 16;
 	_G(globals)[GLB_TEMP_4] = val4 << 16;
@@ -61,8 +61,8 @@ void setGlobals3(int series, int val1, int val2) {
 	_G(globals)[GLB_TEMP_3] = val2 << 16;
 }
 
-void setGlobals4(int val1, int val2, int val3, int val4) {
-	_G(globals)[GLB_TEMP_1] = val1;
+void setGlobals4(int series, int val2, int val3, int val4) {
+	_G(globals)[GLB_TEMP_1] = series << 24;
 	_G(globals)[GLB_TEMP_2] = val2;
 	_G(globals)[GLB_TEMP_3] = val3;
 	_G(globals)[GLB_TEMP_4] = val4;

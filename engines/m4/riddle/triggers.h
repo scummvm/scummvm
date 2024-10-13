@@ -32,13 +32,13 @@ extern void sendWSMessage_multi(const char *name);
 /**
  * Sets a bunch of globals. Sooooo many globals.
  */
-extern void setGlobals1(int val1, int val2, int val3, int val4, int val5,
+extern void setGlobals1(int series, int val2, int val3, int val4, int val5,
 	int val6 = 0, int val7 = 0, int val8 = 0, int val9 = 0, int val10 = 0,
 	int val11 = 0, int val12 = 0, int val13 = 0, int val14 = 0, int val15 = 0,
 	int val16 = 0, int val17 = 0, int val18 = 0, int val19 = 0, int val20 = 0,
 	int val21 = 0);
 extern void setGlobals3(int series, int val1, int val2);
-extern void setGlobals4(int val1, int val2, int val3, int val4);
+extern void setGlobals4(int series, int val2, int val3, int val4);
 
 extern void sendWSMessage_10000(int val1, machine *mach, int val2, int val3,
 	int val4, int trigger, int val9, int val6, int val7, int val8);

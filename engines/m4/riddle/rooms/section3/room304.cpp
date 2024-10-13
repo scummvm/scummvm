@@ -473,6 +473,7 @@ void Room304::handlingStickAndSword() {
 		midi_stop();
 		digi_play("304_s11", 1);
 		break;
+
 	case 17:
 		if (_G(flags)[V084] == 1) {
 			digi_unload("304_s10");
@@ -692,7 +693,7 @@ void Room304::handlingStickAndSword() {
 		digi_unload("304_f05");
 		digi_unload("304r52");
 		sendWSMessage_140000(-1);
-		ws_hide_walker();
+		ws_hide_walker(_mei);
 
 		_field60 = series_ranged_play_xy("mc hand to chin pos3",
 			1, 0, 0, 17, 29, 295, 100, 0x100, 9);
