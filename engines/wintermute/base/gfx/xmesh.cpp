@@ -342,7 +342,7 @@ bool XMesh::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const
 	}
 
 	// Allocate a temporary edge list
-	Common::Array<uint16> edges(indexDataSize * 2, 0);
+	Common::Array<uint32> edges(indexDataSize * 2, 0);
 
 	// First pass : for each face, record if it is front or back facing the light
 	for (uint32 i = 0; i < indexDataSize / 3; i++) {
