@@ -398,8 +398,8 @@ void MacMI1Gui::runAboutDialogMI1() {
 	const TextLine page12[] = {
 		{ 0, 0, kStyleHeaderSimple1, Graphics::kTextAlignLeft, _strsStrings[115].c_str() }, // "The Secret"
 		{ 87, 13, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[117].c_str() }, // "of"
-		{ 40, 26, kStyleHeaderSimple1, Graphics::kTextAlignLeft, _strsStrings[116].c_str() }, // "Monkey Island(TM)"
-		{ 178, 120, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[118].c_str() }, // "TM & (C) 1990 LucasArts Entertainment Company."
+		{ 40, 26, kStyleHeaderSimple1, Graphics::kTextAlignLeft, _strsStrings[116].c_str() }, // "Monkey Island\xAA"
+		{ 178, 120, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[118].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company."
 		{ 312, 133, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[119].c_str() }, // "All rights reserved."
 		TEXT_END_MARKER
 	};
@@ -431,7 +431,7 @@ void MacMI1Gui::runAboutDialogMI1() {
 		{ 29, 37, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[131].c_str() }, // "Stumped? Hint books are available"
 		{ 15, 55, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[134].c_str() }, // "In the U.S. call"
 		{ 89, 55, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[132].c_str() }, // "1 (800) STAR-WARS"
-		{ 89, 65, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[136].c_str() }, // "that's 1 (800)782-7927"
+		{ 89, 65, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[136].c_str() }, // "that\xD5s  1 (800)782-7927"
 		{ 19, 85, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[135].c_str() }, // "In Canada call"
 		{ 89, 85, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[133].c_str() }, // "1 (800) 828-7927"
 		TEXT_END_MARKER
@@ -444,7 +444,7 @@ void MacMI1Gui::runAboutDialogMI1() {
 		{ 62, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[141].c_str() }, // "For hints call"
 		{ 130, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[139].c_str() }, // "1 (900) 740-JEDI"
 		{ 5, 72, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[142].c_str() }, // "The charge for the hint line is 75\xA2 per minute."
-		{ 10, 82, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[143].c_str() }, // "(You must have your parents' permission to"
+		{ 10, 82, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[143].c_str() }, // "(You must have your parents\xD5 permission to"
 		{ 25, 92, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[144].c_str() }, // "call this number if you are under 18.)"
 		TEXT_END_MARKER
 	};
@@ -578,7 +578,6 @@ void MacMI1Gui::runAboutDialogMI1() {
 			if (aboutPages[page].drawArea == 2) {
 				window->drawTextBox(drawArea, aboutPages[page].text);
 			} else {
-				s->fillRect(drawArea, white);
 				window->drawTexts(drawArea, aboutPages[page].text);
 			}
 		}
@@ -629,6 +628,195 @@ void MacMI1Gui::runAboutDialogMI2() {
 }
 
 void MacMI1Gui::runAboutDialogIndy4() {
+	bool isFloppyVersion = _vm->_game.variant && !strcmp(_vm->_game.variant, "Floppy");
+
+	int width = 416;
+	int height = 166;
+	int x = (640 - width) / 2;
+	int y = (400 - height) / 2;
+
+	Common::Rect bounds(x, y, x + width, y + height);
+	MacDialogWindow *window = createWindow(bounds);
+//	Graphics::Surface *lucasArts = loadPict(5000);
+	Graphics::Surface *indianaJones = loadPict(5001);
+
+	Graphics::Surface *s = window->innerSurface();
+
+	int baseString = isFloppyVersion ? 119 : 236;
+	int baseString2 = isFloppyVersion ? 142 : 258;
+
+	const TextLine page3[] = {
+		{ 0, 68, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[baseString].c_str() }, // "PRESENTS"
+		TEXT_END_MARKER
+	};
+
+	const TextLine page5[] = {
+		{ 317, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString + 1].c_str() }, // "\xA8"
+		{ 176, 125, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString + 2].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company."
+		{ 310, 138, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString + 3].c_str() }, // "All rights reserved."
+		TEXT_END_MARKER
+	};
+
+	const TextLine page6[] = {
+		{ 0, 19, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[baseString + 4].c_str() }, // "Macintosh version by
+		{ 133, 34, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[baseString + 5].c_str() }, // "Eric Johnston"
+		TEXT_END_MARKER
+	};
+
+	const TextLine page7[] = {
+		{ 168, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString + 6].c_str() }, // "Created by"
+		{ 138, 19, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[baseString + 8].c_str() }, // "Hal Barwood"
+		{ 141, 42, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString + 7].c_str() }, // "Macintosh Scripting by"
+		{ 127, 57, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[baseString + 9].c_str() }, // "Alric Wilmunder"
+		TEXT_END_MARKER
+	};
+
+	// The original drew this page in two passes, 0.1 seconds apart. But I
+	// guess that's an implementation thing, not an intended effect, because
+	// none of the other pages do it.
+
+	const TextLine page8[] = {
+		{ 142, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString + 10].c_str() }, // "SCUMM Story System"
+		{ 168, 14, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString + 11].c_str() }, // "created by"
+		{ 68, 28, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[baseString + 13].c_str() }, // "Ron Gilbert    Aric Wilmunder"
+		{ 79, 43, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[baseString + 14].c_str() }, // "Brad P. Taylor    Vince Lee"
+		{ 135, 60, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString + 12].c_str() }, // "and"
+		{ 109, 58, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[baseString + 15].c_str() }, // "        Eric Johnston"
+		TEXT_END_MARKER
+	};
+
+	const TextLine page9[] = {
+		{ 137, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString + 16].c_str() }, // "Macintosh Orchestration"
+		{ 125, 19, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[baseString + 18].c_str() }, // "Robin Goldstein"
+		{ 152, 42, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString + 17].c_str() }, // "Macintosh Testing"
+		{ 144, 57, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[baseString + 19].c_str() }, // "Jo Ashburn"
+		TEXT_END_MARKER
+	};
+
+	// Annoyingly, this page is missing a string in the CD version of the
+	// game so we need two different versions. Note that the "rough" command
+	// does work in both versions.
+
+	const TextLine page10_cd[] = {
+		{ 2, 19, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[baseString + 20].c_str() }, // "\xD2djm\xD3  Sound and Music System \xA91992 Eric Johnston
+		{ 2, 39, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[baseString + 21].c_str() }, // "\xD2epx\xD3  Graphics Smoothing System \xA91992 Eric Johnson
+		TEXT_END_MARKER
+	};
+
+	const TextLine page10_floppy[] = {
+		{ 2, 19, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[baseString + 20].c_str() }, // "\xD2djm\xD3  Sound and Music System \xA91992 Eric Johnston
+		{ 2, 39, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[baseString + 21].c_str() }, // "\xD2epx\xD3  Graphics Smoothing System \xA91992 Eric Johnson
+		{ 2, 54, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[baseString + 22].c_str() }, // "Type 'rough' to see the difference."
+		TEXT_END_MARKER
+	};
+
+	const TextLine page11[] = {
+		{ 112, 9, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2].c_str() }, // "Stumped?  Hint books are available!"
+		{ 98, 27, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 3].c_str() }, // "In the U.S. call"
+		{ 172, 27, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 1].c_str() }, // "1 (800) STAR-WARS"
+		{ 172, 37, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 5].c_str() }, // "that\xD5s  1 (800) 782-7927"
+		{ 102, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 4].c_str() }, // "In Canada call"
+		{ 172, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 2].c_str() }, // "1 (900) 740-JEDI"
+		TEXT_END_MARKER
+	};
+
+	const TextLine page12[] = {
+		{ 110, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 6].c_str() }, // "Need a hint NOW?  Having problems?"
+		{ 89, 19, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 9].c_str() }, // "For technical support call"
+		{ 213, 19, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 7].c_str() }, // "1 (415) 721-3333"
+		{ 145, 29, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 10].c_str() }, // "For hints call"
+		{ 213, 29, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 8].c_str() }, // "1 (900) 740-JEDI"
+		{ 88, 44, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 11].c_str() }, // "The charge for the hint line is 75\xA2 per minute."
+		{ 93, 54, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 12].c_str() }, // "(You must have your parents\xD5 permission to"
+		{ 108, 64, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 13].c_str() }, // "call this number if you are under 18.)"
+		TEXT_END_MARKER
+	};
+
+	struct AboutPage {
+		const TextLine *text;
+		int drawArea;
+		uint32 delayMs;
+	};
+
+	AboutPage aboutPages[] = {
+		{ nullptr, 0,  2800 },
+		{ nullptr, 0,   100 },
+		{ nullptr, 0,   100 },
+		{ page3,   0,  2100 },
+		{ nullptr, 0,   500 },
+		{ page5,   0,  2900 },
+		{ page6,   1,  4200 },
+		{ page7,   1,  4300 },
+		{ page8,   1,  4200 },
+		{ page9,   1,  4200 },
+		{ nullptr, 1,  4200 },
+		{ page11,  1, 14100 },
+		{ page12,  1,     0 }
+	};
+
+	Common::Rect drawAreas[] = {
+		Common::Rect(2, 2, s->w - 2, s->h - 2),
+		Common::Rect(10, 63, s->w - 10, s->h - 10)
+	};
+
+	int page = 0;
+
+	window->show();
+
+	uint32 black = getBlack();
+	uint32 white = getWhite();
+
+	while (!_vm->shouldQuit() && page < ARRAYSIZE(aboutPages)) {
+		Common::Rect &drawArea = drawAreas[aboutPages[page].drawArea];
+
+		switch (page) {
+		case 0:
+			s->fillRect(drawArea, black);
+			break;
+		case 1:
+			window->fillPattern(drawArea, 0xD7D7, false, true);
+			break;
+		case 2:
+			window->fillPattern(drawArea, 0x5A5A, false, true);
+			break;
+		case 3:
+			s->fillRect(drawArea, white);
+			break;
+		case 4:
+			s->fillRect(drawArea, white);
+			window->drawSprite(indianaJones, 89, 6);
+			break;
+		case 6:
+			s->fillRect(Common::Rect(178, 129, s->w - 2, s->h - 2), white);
+			window->markRectAsDirty(Common::Rect(178, 129, s->w - 2, s->h - 2));
+			break;
+		case 10:
+			aboutPages[10].text = isFloppyVersion ? page10_floppy : page10_cd;
+			break;
+		}
+
+		if (aboutPages[page].drawArea != 2)
+			window->markRectAsDirty(drawArea);
+
+		if (aboutPages[page].text) {
+			if (aboutPages[page].drawArea == 1) {
+				window->drawTextBox(drawArea, aboutPages[page].text);
+			} else {
+				window->drawTexts(drawArea, aboutPages[page].text);
+			}
+		}
+
+		if (aboutPages[page].drawArea != 1)
+			window->markRectAsDirty(drawArea);
+
+		window->update();
+		delay(aboutPages[page].delayMs);
+		page++;
+	}
+
+//	delete lucasArts;
+	delete indianaJones;
+	delete window;
 }
 
 // A standard file picker dialog doesn't really make sense in ScummVM, so we
