@@ -41,6 +41,13 @@ struct Channel {
 	byte volume;
 };
 
+struct SoundData {
+	SoundData() : _size(0), _data(nullptr), _flags(0) {}
+	uint32 _size;
+	const byte *_data;
+	uint16 _flags;
+};
+
 class Sound {
 public:
 	Sound(Audio::Mixer *mixer, ResourceManager *resource, Decompressor *decompressor);
@@ -64,25 +71,23 @@ public:
 	bool playPCM(const byte *data, uint32 size);
 
 private:
-	void loadPCSound(const Common::String &filename, Common::Array<uint32> &sizeArray, Common::Array<byte *> &dataArray);
-	void playPCSound(int num, const Common::Array<uint32> &sizeArray, const Common::Array<byte *> &dataArray, Audio::Mixer::SoundType soundType);
+	void loadPCSound(const Common::String &filename, Common::Array<SoundData> &dataArray);
+	void playPCSound(int num, const Common::Array<SoundData> &dataArray, Audio::Mixer::SoundType soundType);
 
-	void processInitSound(uint32 obj, const byte *data, int dataSz, Audio::Mixer::SoundType soundType);
+	void processInitSound(uint32 obj, const SoundData &data, Audio::Mixer::SoundType soundType);
 	void processDisposeSound(uint32 obj);
 	void processStopSound(uint32 obj, bool sampleFinishedPlaying);
-	void processPlaySound(uint32 obj, bool playBed, bool restoring, const byte *data, int dataSz);
-	void initSoundResource(MusicEntry *newSound, const byte *data, int dataSz, Audio::Mixer::SoundType soundType);
+	void processPlaySound(uint32 obj, bool playBed, bool restoring, const SoundData &data);
+	void initSoundResource(MusicEntry *newSound, const SoundData &data, Audio::Mixer::SoundType soundType);
 
 	int mapSfxNum(int num) const;
 
 	struct Channel _channels[2];
 
-	Common::Array<uint32> _musicSizes;
-	Common::Array<byte *> _musicData;
+	Common::Array<SoundData> _musicData;
 	Common::HashMap<uint16, uint16> _musicIdMap;
 
-	Common::Array<uint32> _sfxSizes;
-	Common::Array<byte *> _sfxData;
+	Common::Array<SoundData> _sfxData;
 
 	SciMusic *_music;
 

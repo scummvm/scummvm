@@ -436,6 +436,11 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 				// This can be a problem if it is a dedicated percussion
 				// channel, so always err on the side of caution.
 				pSnd->_chan[chan.number]._dontRemap |= (bool)(chan.flags & 2);
+
+				// HACK for DGDS - don't remap rhythm channel.
+				if (chan.number == 9)
+					pSnd->_chan[chan.number]._dontRemap = true;
+
 				if (pSnd->_chan[chan.number]._prio == -1)
 					pSnd->_chan[chan.number]._prio = chan.prio;
 				if (pSnd->_chan[chan.number]._voices == -1)

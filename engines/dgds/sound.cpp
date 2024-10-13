@@ -40,6 +40,9 @@
 namespace Dgds {
 
 static const uint16 SIGNAL_OFFSET = 0xffff;
+
+// Offsets from sound/music num to playing ID.
+// This is to make a fake SCI-style "resource ID"
 static const int SND_RESOURCE_OFFSET = 4096;
 static const int MUSIC_RESOURCE_OFFSET = 8192;
 
@@ -197,8 +200,8 @@ Sound::Sound(Audio::Mixer *mixer, ResourceManager *resource, Decompressor *decom
 Sound::~Sound() {
 	unloadMusic();
 
-	for (auto *data: _sfxData)
-		delete [] data;
+	for (auto &data: _sfxData)
+		delete [] data._data;
 }
 
 void Sound::playAmigaSfx(const Common::String &filename, byte channel, byte volume) {
@@ -338,9 +341,9 @@ void Sound::loadMacMusic(const Common::String &filename) {
 			// TODO: Should we record the indexes?
 			/*uint16 idx = */ stream->readUint16LE();
 			/*uint16 type = */ stream->readUint16LE();
-			uint32 sz;
-			_musicData.push_back(_decompressor->decompress(stream, stream->size() - stream->pos(), sz));
-			_musicSizes.push_back(sz);
+			SoundData soundData;
+			soundData._data = _decompressor->decompress(stream, stream->size() - stream->pos(), soundData._size);
+			_musicData.push_back(soundData);
 		}
 	}
 
@@ -349,17 +352,17 @@ void Sound::loadMacMusic(const Common::String &filename) {
 
 void Sound::loadMusic(const Common::String &filename) {
 	unloadMusic();
-	loadPCSound(filename, _musicSizes, _musicData);
+	loadPCSound(filename, _musicData);
 	debug("Sound: Loaded music %s with %d entries", filename.c_str(), _musicData.size());
 }
 
 void Sound::loadSFX(const Common::String &filename) {
-	if (_sfxSizes.size())
+	if (_sfxData.size())
 		error("Sound: SFX data should only be loaded once");
-	loadPCSound(filename, _sfxSizes, _sfxData);
+	loadPCSound(filename, _sfxData);
 }
 
-void Sound::loadPCSound(const Common::String &filename, Common::Array<uint32> &sizeArray, Common::Array<byte *> &dataArray) {
+void Sound::loadPCSound(const Common::String &filename, Common::Array<SoundData> &dataArray) {
 	if (!filename.hasSuffixIgnoreCase(".sng"))
 		error("Unhandled music file type: %s", filename.c_str());
 
@@ -378,17 +381,21 @@ void Sound::loadPCSound(const Common::String &filename, Common::Array<uint32> &s
 
 		Common::SeekableReadStream *stream = chunk.getContent();
 		if (chunk.isSection(ID_SNG)) {
-			int32 chunkSize = stream->size();
-			byte *data = new byte[chunkSize];
-			stream->read(data, chunkSize);
-			sizeArray.push_back(chunkSize);
-			dataArray.push_back(data);
+			SoundData soundData;
+			soundData._size = stream->size();
+			byte *data = new byte[soundData._size];
+			stream->read(data, soundData._size);
+			soundData._data = data;
+			dataArray.push_back(soundData);
 		} else if (chunk.isSection(ID_INF)) {
 			uint32 count = stream->size() / 2;
+			if (count > dataArray.size())
+				error("Sound: %s has more flags in INF than SNG entries.", filename.c_str());
 			debug("  SNG INF [%u entries]", count);
 			for (uint32 k = 0; k < count; k++) {
-				uint16 idx = stream->readUint16LE();
-				debug("        %2u: 0x%04x", k, idx);
+				uint16 flags = stream->readUint16LE();
+				debug("        %2u: 0x%04x", k, flags);
+				dataArray[k]._flags = flags;
 			}
 		} else {
 			warning("loadPCSound: skip unused chunk %s in %s", chunk.getIdStr(), filename.c_str());
@@ -407,11 +414,13 @@ int Sound::mapSfxNum(int num) const {
 
 void Sound::playSFX(int num) {
 	int mappedNum = mapSfxNum(num);
-	playPCSound(mappedNum, _sfxSizes, _sfxData, Audio::Mixer::kSFXSoundType);
+	debug("Play SFX %d (-> %d), have %d entries", num, mappedNum, _sfxData.size());
+	playPCSound(mappedNum, _sfxData, Audio::Mixer::kSFXSoundType);
 }
 
 void Sound::stopSfxByNum(int num) {
 	int mappedNum = mapSfxNum(num);
+	debug("Stop SFX %d (-> %d)", num, mappedNum);
 
 	MusicEntry *musicSlot = _music->getSlot(mappedNum + SND_RESOURCE_OFFSET);
 	if (!musicSlot) {
@@ -426,10 +435,10 @@ void Sound::stopSfxByNum(int num) {
 
 void Sound::playMusic(int num) {
 	debug("Sound: Play music %d of (%d entries)", num, _musicData.size());
-	playPCSound(num, _musicSizes, _musicData, Audio::Mixer::kMusicSoundType);
+	playPCSound(num, _musicData, Audio::Mixer::kMusicSoundType);
 }
 
-void Sound::processInitSound(uint32 obj, const byte *data, int dataSz, Audio::Mixer::SoundType soundType) {
+void Sound::processInitSound(uint32 obj, const SoundData &data, Audio::Mixer::SoundType soundType) {
 	// Check if a track with the same sound object is already playing
 	MusicEntry *oldSound = _music->getSlot(obj);
 	if (oldSound) {
@@ -439,23 +448,27 @@ void Sound::processInitSound(uint32 obj, const byte *data, int dataSz, Audio::Mi
 	MusicEntry *newSound = new MusicEntry();
 	newSound->resourceId = obj;
 	newSound->soundObj = obj;
-	newSound->loop = 1; // Default to one loop
+	newSound->loop = 0; // set in playSound
 	newSound->overridePriority = false;
 	newSound->priority = 255; // TODO: Priority?
 	newSound->volume = MUSIC_VOLUME_DEFAULT;
 	newSound->reverb = -1;	// initialize to SCI invalid, it'll be set correctly in soundInitSnd() below
 
-	debugC(kDebugLevelSound, "kDoSound(init): %08x number %d, loop %d, prio %d, vol %d", obj,
+	debugC(kDebugLevelSound, "processInitSound: %08x number %d, loop %d, prio %d, vol %d", obj,
 			obj, newSound->loop, newSound->priority, newSound->volume);
 
-	initSoundResource(newSound, data, dataSz, soundType);
+	initSoundResource(newSound, data, soundType);
 
 	_music->pushBackSlot(newSound);
 }
 
-void Sound::initSoundResource(MusicEntry *newSound, const byte *data, int dataSz, Audio::Mixer::SoundType soundType) {
+void Sound::initSoundResource(MusicEntry *newSound, const SoundData &data, Audio::Mixer::SoundType soundType) {
 	if (newSound->resourceId) {
-		newSound->soundRes = new SoundResource(newSound->resourceId, data, dataSz);
+		// Skip the header.
+		const byte *dataPtr = data._data;
+		uint32 hdrSize = 0;
+		_readHeader(dataPtr, hdrSize);
+		newSound->soundRes = new SoundResource(newSound->resourceId, dataPtr, data._size - hdrSize);
 		if (!newSound->soundRes->exists()) {
 			delete newSound->soundRes;
 			newSound->soundRes = nullptr;
@@ -496,7 +509,7 @@ void Sound::processStopSound(uint32 obj, bool sampleFinishedPlaying) {
 	_music->soundStop(musicSlot);
 }
 
-void Sound::processPlaySound(uint32 obj, bool playBed, bool restoring, const byte *data, int dataSz) {
+void Sound::processPlaySound(uint32 obj, bool playBed, bool restoring, const SoundData &data) {
 	// Mostly copied from SCI soundcmd.
 	MusicEntry *musicSlot = _music->getSlot(obj);
 
@@ -515,12 +528,12 @@ void Sound::processPlaySound(uint32 obj, bool playBed, bool restoring, const byt
 
 	if (musicSlot->resourceId != resourceId) { // another sound loaded into struct
 		processDisposeSound(obj);
-		processInitSound(obj, data, dataSz, Audio::Mixer::kSFXSoundType);
+		processInitSound(obj, data, Audio::Mixer::kSFXSoundType);
 		// Find slot again :)
 		musicSlot = _music->getSlot(obj);
 	}
 
-	musicSlot->loop = 1; // Play once by default?
+	musicSlot->loop = (data._flags & 1) ? -1 : 1;
 
 	// Get song priority from either obj or soundRes
 	byte resourcePriority = 0xFF;
@@ -548,24 +561,20 @@ void Sound::processPlaySound(uint32 obj, bool playBed, bool restoring, const byt
 	musicSlot->fadeStep = 0;
 }
 
-void Sound::playPCSound(int num, const Common::Array<uint32> &sizeArray, const Common::Array<byte *> &dataArray, Audio::Mixer::SoundType soundType) {
+void Sound::playPCSound(int num, const Common::Array<SoundData> &dataArray, Audio::Mixer::SoundType soundType) {
 	if (_musicIdMap.size()) {
 		num = _musicIdMap[num];
 	}
 
 	if (num >= 0 && num < (int)dataArray.size()) {
-		int size = sizeArray[num];
-		const byte *data = dataArray[num];
-		uint32 tracks = _availableSndTracks(data, size);
+		const SoundData &data = dataArray[num];
+		uint32 tracks = _availableSndTracks(data._data, data._size);
 		if (tracks & DIGITAL_PCM) {
-			playPCM(data, size);
+			playPCM(data._data, data._size);
 		} else {
-			uint32 hdrsize = 0;
-			_readHeader(data, hdrsize);
-			size -= hdrsize;
-			int offset = soundType == Audio::Mixer::kSFXSoundType ? SND_RESOURCE_OFFSET : MUSIC_RESOURCE_OFFSET;
-			processInitSound(num + offset, data, size, soundType);
-			processPlaySound(num + offset, false, false, data, size);
+			int idOffset = soundType == Audio::Mixer::kSFXSoundType ? SND_RESOURCE_OFFSET : MUSIC_RESOURCE_OFFSET;
+			processInitSound(num + idOffset, data, soundType);
+			processPlaySound(num + idOffset, false, false, data);
 		}
 	} else {
 		warning("Sound: Requested to play %d but only have %d tracks", num, dataArray.size());
@@ -578,9 +587,8 @@ void Sound::stopMusic() {
 
 void Sound::unloadMusic() {
 	stopMusic();
-	_musicSizes.clear();
-	for (auto *data: _musicData)
-		delete [] data;
+	for (auto &data: _musicData)
+		delete [] data._data;
 	_musicData.clear();
 
 	// Don't unload sfxData.
