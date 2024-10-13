@@ -92,15 +92,15 @@ void BaseRenderer3D::project(const Math::Matrix4 &worldMatrix, const Math::Vecto
 	Math::Vector3d windowCoords;
 	Math::Matrix4 modelMatrix = tmp * _lastViewMatrix;
 	int viewport[4] = { _viewport3dRect.left, _height - _viewport3dRect.bottom, _viewport3dRect.width(), _viewport3dRect.height()};
-	Math::gluMathProject(point, modelMatrix.getData(), _projectionMatrix3d.getData(), viewport, windowCoords);
+	Math::gluMathProject(point, modelMatrix.getData(), _projectionMatrix.getData(), viewport, windowCoords);
 	x = windowCoords.x();
 	// The Wintermute script code will expect a Direct3D viewport
 	y = viewport[3] - windowCoords.y();
 }
 
 Math::Ray BaseRenderer3D::rayIntoScene(int x, int y) {
-	Math::Vector3d direction((((2.0f * x) / _viewport3dRect.width()) - 1) / _projectionMatrix3d(0, 0),
-	                        -(((2.0f * y) / _viewport3dRect.height()) - 1) / _projectionMatrix3d(1, 1),
+	Math::Vector3d direction((((2.0f * x) / _viewport3dRect.width()) - 1) / _projectionMatrix(0, 0),
+	                        -(((2.0f * y) / _viewport3dRect.height()) - 1) / _projectionMatrix(1, 1),
 	                        -1.0f);
 
 	Math::Matrix4 m = _lastViewMatrix;

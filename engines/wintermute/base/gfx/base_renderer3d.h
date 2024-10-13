@@ -120,8 +120,8 @@ public:
 
 protected:
 	Math::Matrix4 _lastViewMatrix;
-	Math::Matrix4 _projectionMatrix3d;
 	Rect32 _viewport3dRect;
+	Math::Matrix4 _projectionMatrix;
 	float _fov;
 	float _nearClipPlane;
 	float _farClipPlane;

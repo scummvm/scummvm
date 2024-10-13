@@ -346,12 +346,12 @@ bool BaseRenderOpenGL3D::setProjection() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glFrustum(-top * aspectRatio, top * aspectRatio, -top, top, _nearClipPlane, _farClipPlane);
-	glGetFloatv(GL_PROJECTION_MATRIX, _projectionMatrix3d.getData());
+	glGetFloatv(GL_PROJECTION_MATRIX, _projectionMatrix.getData());
 
-	_projectionMatrix3d(0, 0) *= scaleMod;
-	_projectionMatrix3d(1, 1) *= scaleMod;
+	_projectionMatrix(0, 0) *= scaleMod;
+	_projectionMatrix(1, 1) *= scaleMod;
 
-	glLoadMatrixf(_projectionMatrix3d.getData());
+	glLoadMatrixf(_projectionMatrix.getData());
 
 	glMatrixMode(GL_MODELVIEW);
 	return true;

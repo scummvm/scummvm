@@ -315,7 +315,7 @@ void BaseRenderOpenGL3DShader::displayShadow(BaseObject *object, const Math::Vec
 		_flatShadowMaskShader->setUniform("lightViewMatrix", lightViewMatrix);
 		_flatShadowMaskShader->setUniform("worldMatrix", shadowPosition);
 		_flatShadowMaskShader->setUniform("viewMatrix", _lastViewMatrix);
-		_flatShadowMaskShader->setUniform("projMatrix", _projectionMatrix3d);
+		_flatShadowMaskShader->setUniform("projMatrix", _projectionMatrix);
 		_flatShadowMaskShader->setUniform("shadowColor", _flatShadowColor);
 
 		glBindBuffer(GL_ARRAY_BUFFER, _flatShadowMaskVBO);
@@ -442,10 +442,10 @@ bool BaseRenderOpenGL3DShader::setProjection() {
 
 	float top = _nearClipPlane * tanf(verticalViewAngle * 0.5f);
 
-	_projectionMatrix3d = Math::makeFrustumMatrix(-top * aspectRatio, top * aspectRatio, -top, top, _nearClipPlane, _farClipPlane);
+	_projectionMatrix = Math::makeFrustumMatrix(-top * aspectRatio, top * aspectRatio, -top, top, _nearClipPlane, _farClipPlane);
 
-	_projectionMatrix3d(0, 0) *= scaleMod;
-	_projectionMatrix3d(1, 1) *= scaleMod;
+	_projectionMatrix(0, 0) *= scaleMod;
+	_projectionMatrix(1, 1) *= scaleMod;
 	return true;
 }
 
@@ -666,17 +666,17 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 
 	_xmodelShader->use();
 	_xmodelShader->setUniform("viewMatrix", _lastViewMatrix);
-	_xmodelShader->setUniform("projMatrix", _projectionMatrix3d);
+	_xmodelShader->setUniform("projMatrix", _projectionMatrix);
 	// this is 8 / 255, since 8 is the value used by wme (as a DWORD)
 	_xmodelShader->setUniform1f("alphaRef", 0.031f);
 
 	_geometryShader->use();
 	_geometryShader->setUniform("viewMatrix", _lastViewMatrix);
-	_geometryShader->setUniform("projMatrix", _projectionMatrix3d);
+	_geometryShader->setUniform("projMatrix", _projectionMatrix);
 
 	_shadowVolumeShader->use();
 	_shadowVolumeShader->setUniform("viewMatrix", _lastViewMatrix);
-	_shadowVolumeShader->setUniform("projMatrix", _projectionMatrix3d);
+	_shadowVolumeShader->setUniform("projMatrix", _projectionMatrix);
 
 	return true;
 }
