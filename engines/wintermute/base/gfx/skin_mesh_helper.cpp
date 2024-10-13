@@ -26,8 +26,8 @@
  */
 
 #include "engines/wintermute/dcgf.h"
+#include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/base/gfx/skin_mesh_helper.h"
-#include "engines/wintermute/base/gfx/xskinmesh_loader.h"
 #include "engines/wintermute/base/gfx/xskinmesh.h"
 #include "engines/wintermute/base/gfx/xfile_loader.h"
 
@@ -74,6 +74,14 @@ bool SkinMeshHelper::generateSkinnedMesh(Common::Array<uint32> &adjacencyOut, DX
 
 //////////////////////////////////////////////////////////////////////////
 bool SkinMeshHelper::updateSkinnedMesh(const DXMatrix *boneTransforms, DXMesh *mesh) {
+	void *sourceVerts = reinterpret_cast<void *>(_mesh->getVertexBuffer().ptr());
+	void *targetVerts = reinterpret_cast<void *>(mesh->getVertexBuffer().ptr());
+
+	return _skinInfo->updateSkinnedMesh(boneTransforms, sourceVerts, targetVerts);
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool SkinMeshHelper::updateSkinnedMesh(BaseArray<Math::Matrix4> &boneTransforms, DXMesh *mesh) {
 	void *sourceVerts = reinterpret_cast<void *>(_mesh->getVertexBuffer().ptr());
 	void *targetVerts = reinterpret_cast<void *>(mesh->getVertexBuffer().ptr());
 

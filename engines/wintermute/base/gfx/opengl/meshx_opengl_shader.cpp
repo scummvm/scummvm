@@ -26,7 +26,6 @@
  */
 
 #include "engines/wintermute/base/gfx/xmaterial.h"
-#include "engines/wintermute/base/gfx/xskinmesh_loader.h"
 #include "engines/wintermute/base/gfx/skin_mesh_helper.h"
 
 #include "graphics/opengl/system_headers.h"

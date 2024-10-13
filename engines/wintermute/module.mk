@@ -178,7 +178,6 @@ MODULE_OBJS += \
 	base/gfx/xmesh.o \
 	base/gfx/xmodel.o \
 	base/gfx/xskinmesh.o \
-	base/gfx/xskinmesh_loader.o \
 	base/gfx/opengl/base_surface_opengl3d.o \
 	base/gfx/opengl/base_render_opengl3d.o \
 	base/gfx/opengl/base_render_opengl3d_shader.o \

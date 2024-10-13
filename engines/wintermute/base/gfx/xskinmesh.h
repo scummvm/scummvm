@@ -33,6 +33,7 @@
 #ifndef WINTERMUTE_XSKINMESH_H
 #define WINTERMUTE_XSKINMESH_H
 
+#include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/base/gfx/xbuffer.h"
 #include "engines/wintermute/base/gfx/xfile_loader.h"
 #include "engines/wintermute/base/gfx/xmath.h"
@@ -114,7 +115,7 @@ class DXSkinInfo {
 
 public:
 	~DXSkinInfo() { destroy(); }
-	bool create(uint32 vertexCount, uint32 boneCount);
+	bool create(uint32 vertexCount, uint32 fvf, uint32 boneCount);
 	void destroy();
 	uint32 getNumBones() { return _numBones; }
 	bool setBoneName(uint32 boneIdx, const char *name);
@@ -124,6 +125,7 @@ public:
 	bool setBoneOffsetMatrix(uint32 boneIdx, const float *boneTransform);
 	DXMatrix *getBoneOffsetMatrix(uint32 boneIdx) { return &_bones[boneIdx]._transform; }
 	bool updateSkinnedMesh(const DXMatrix *boneTransforms, void *srcVertices, void *dstVertices);
+	bool updateSkinnedMesh(BaseArray<Math::Matrix4> &boneTransforms, void *srcVertices, void *dstVertices);
 };
 
 class DXMesh {
@@ -146,7 +148,6 @@ class DXMesh {
 	bool adjacentEdge(uint32 index1, uint32 index2, uint32 index3, uint32 index4);
 
 public:
-	XSkinMeshLoader *_meshLoader;
 	~DXMesh() { destroy(); }
 	bool create(uint32 numFaces, uint32 numVertices, uint32 fvf);
 	void destroy();

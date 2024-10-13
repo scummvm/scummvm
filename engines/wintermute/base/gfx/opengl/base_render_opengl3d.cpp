@@ -42,6 +42,7 @@
 #include "engines/wintermute/base/gfx/opengl/shadow_volume_opengl.h"
 
 namespace Wintermute {
+
 BaseRenderer3D *makeOpenGL3DRenderer(BaseGame *inGame) {
 	return new BaseRenderOpenGL3D(inGame);
 }

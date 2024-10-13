@@ -73,8 +73,6 @@ public:
 protected:
 	bool generateMesh();
 
-	void updateBoundingBox();
-
 	SkinMeshHelper *_skinMesh;
 	DXMesh *_blendedMesh;
 	DXMesh *_staticMesh;
