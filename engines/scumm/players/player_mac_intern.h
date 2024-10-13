@@ -233,8 +233,10 @@ public:
 	void setQuality(int qual);
 	void saveLoadWithSerializer(Common::Serializer &ser);
 	void restoreAfterLoad();
-	void enable() {}
-	void disable() {}
+	void enableMusic() {}
+	void disableMusic() {}
+	void enableSoundEffects() {}
+	void disableSoundEffects() {}
 
 	void vblCallback() override;
 	void generateData(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) const override;
@@ -388,8 +390,10 @@ public:
 	void setQuality(int qual);
 	void saveLoadWithSerializer(Common::Serializer &ser);
 	void restoreAfterLoad();
-	void enable();
-	void disable();
+	void enableMusic();
+	void disableMusic();
+	void enableSoundEffects();
+	void disableSoundEffects();
 
 	void vblCallback() override;
 	void generateData(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) const override;
@@ -402,6 +406,7 @@ private:
 	void stopActiveSound();
 	void setupChannels();
 	void disposeAllChannels();
+	void updateDisabledState();
 
 	void detectQuality();
 	bool isSoundCardType10() const;
@@ -422,6 +427,7 @@ private:
 	int _effectiveChanConfig;
 	int _defaultChanConfig;
 	bool _16bit;
+	byte _disableFlags;
 
 	MacLowLevelPCMDriver::ChanHandle _sndChannel;
 	MacLowLevelPCMDriver::ChanHandle _musChannels[4];

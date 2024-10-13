@@ -1027,14 +1027,17 @@ bool MacMI1Gui::runOptionsDialog() {
 
 		// SOUND&MUSIC ACTIVATION
 		if (window->getWidgetValue(2) == 0) {
-			// Sound&Music off
-			// STUB
+			_vm->_musicEngine->disableMusic();
+			_vm->_musicEngine->disableSoundEffects();
+			_vm->VAR(167) = 2;
 		} else if (window->getWidgetValue(2) == 1 && window->getWidgetValue(3) == 0) {
-			// Sound on, music off
-			// STUB
+			_vm->_musicEngine->disableMusic();
+			_vm->_musicEngine->enableSoundEffects();
+			_vm->VAR(167) = 1;
 		} else {
-			// Sound&Music on
-			// STUB
+			_vm->_musicEngine->enableMusic();
+			_vm->_musicEngine->enableSoundEffects();
+			_vm->VAR(167) = 0;
 		}
 
 		// MUSIC QUALITY SELECTOR
