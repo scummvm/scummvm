@@ -194,11 +194,11 @@ void ScummEngine::mac_updateCompositeBuffer(const byte *buffer, int pitch, int x
 }
 
 void ScummEngine::mac_blitDoubleResImage(const byte *buffer, int pitch, int x, int y, int width, int height) {
-	byte *mac = (byte *)_macScreen->getBasePtr(x * 2, y * 2);
+	byte *mac = (byte *)_macScreen->getBasePtr(x * 2, y * 2 + _macScreenDrawOffset * 2);
 
 	mac_applyDoubleResToBuffer(buffer, mac, width, height, pitch, _macScreen->pitch);
 
-	_system->copyRectToScreen(_macScreen->getBasePtr(x * 2, y * 2), _macScreen->pitch, x * 2, y * 2 + _macScreenDrawOffset * 2, width * 2, height * 2);
+	_system->copyRectToScreen(_macScreen->getBasePtr(x * 2, y * 2 + _macScreenDrawOffset * 2), _macScreen->pitch, x * 2, y * 2 + _macScreenDrawOffset * 2, width * 2, height * 2);
 }
 
 void ScummEngine::mac_applyDoubleResToBuffer(const byte *inputBuffer, byte *outputBuffer, int width, int height, int inputPitch, int outputPitch) {
@@ -254,12 +254,12 @@ void ScummEngine::mac_blitEPXImage(const byte *buffer, int pitch, int x, int y, 
 	int y2 = (y + height < _screenHeight) ? y + height + 1 : _screenHeight;
 
 	// Adjust output buffer accordingly
-	byte *targetScreenBuf = (byte *)_macScreen->getBasePtr(x1 * 2, y1 * 2);
+	byte *targetScreenBuf = (byte *)_macScreen->getBasePtr(x1 * 2, y1 * 2 + _macScreenDrawOffset * 2);
 
 	// Apply the EPX/Scale2x algorithm
 	mac_applyEPXToBuffer(_completeScreenBuffer, targetScreenBuf, x2 - x1, y2 - y1, _screenWidth, _macScreen->pitch, x1, y1, _screenWidth, _screenHeight);
 
-	_system->copyRectToScreen(_macScreen->getBasePtr(x1 * 2, y1 * 2), _macScreen->pitch, x1 * 2, y1 * 2 + _macScreenDrawOffset * 2, (x2 - x1) * 2, (y2 - y1) * 2);
+	_system->copyRectToScreen(_macScreen->getBasePtr(x1 * 2, y1 * 2 + _macScreenDrawOffset * 2), _macScreen->pitch, x1 * 2, y1 * 2 + _macScreenDrawOffset * 2, (x2 - x1) * 2, (y2 - y1) * 2);
 }
 
 void ScummEngine::mac_applyEPXToBuffer(const byte *inputBuffer, byte *outputBuffer, int width, int height, int inputPitch, int outputPitch, int xOffset, int yOffset, int bufferWidth, int bufferHeight) {
