@@ -23,6 +23,7 @@
 #define QDENGINE_MINIGAMES_3MICE2_TESTO_H
 
 #include "common/debug.h"
+#include "common/rect.h"
 
 #include "qdengine/qd_fwd.h"
 #include "qdengine/qdcore/qd_minigame_interface.h"
@@ -112,10 +113,12 @@ public:
 				v += 8;	// Data is arranged in vertical columns
 			}
 
-			_figureBboxes[i * 2].x = maxX;
-			_figureBboxes[i * 2].y = minX;
-			_figureBboxes[i * 2 + 1].x = maxY;
-			_figureBboxes[i * 2 + 1].y = minY;
+			_figureBboxes[i].top = maxX;
+			_figureBboxes[i].left = minX;
+			_figureBboxes[i].bottom = maxY;
+			_figureBboxes[i].top = minY;
+
+			debugC(2, kDebugMinigames, "bbox for: %d: [%d, %d, %d, %d]", i, _figureBboxes[i].left, _figureBboxes[i].top, _figureBboxes[i].right, _figureBboxes[i].bottom);
 		}
 
 		mgVect2i pos = _objNoDough->screen_R();
@@ -157,24 +160,25 @@ public:
 		debugC(3, kDebugMinigames, "3mice2Testo::quant(%f)", dt);
 
 		if (checkSolution())
-			_objDone->set_state("да");
+			_objDone->set_state("\xe4\xe0");	// "да"
 		else
-			_objDone->set_state("нет");
+			_objDone->set_state("\xed\xe5\xf2"); // "нет"
 
 		for (int i = 0; i < 8; i++) {
 			mgVect2i pos = _figures[i]->screen_R();
 
 			pos.x += _noDoughX;
 
-			_figures[8 + i]->set_R(_scene->screen2world_coords(pos, 1000.0));
+			_figures[i + 8]->set_R(_scene->screen2world_coords(pos, 1000.0));
 		}
 
 		qdMinigameObjectInterface *mouseObj = _scene->mouse_object_interface();
 		qdMinigameObjectInterface *clickObj = _scene->mouse_click_object_interface();
 
-		const char *name = mouseObj->name();
+		const char *name = nullptr;
 
 		if (mouseObj) {
+			name = mouseObj->name();
 			if (strstr(name, "figure") && strstr(name, "inv")) {
 				int num = atol(name + 6);
 
@@ -188,6 +192,8 @@ public:
 		if (_engine->is_mouse_event_active(qdmg::qdEngineInterfaceImpl::MOUSE_EV_LEFT_DOWN) && !mouseObj) {
 			int hit = hitTest();
 
+			debugC(2, kDebugMinigames, "hit: %d", hit);
+
 			if (hit > -1) {
 				_figures[hit]->set_state("hide");
 				_figures[hit + 16]->set_state("to_inv");
@@ -199,6 +205,8 @@ public:
 
 			if (strstr(name, "figure") && strstr(name, "inv")) {
 				num = atol(name + 6);
+
+				debugC(2, kDebugMinigames, "drop: %d", num);
 
 				if (num > 0 && num <= 8 && !checkSnapPiece(num - 1)) {
 					_figures[num - 1]->set_state("testo");
@@ -310,10 +318,10 @@ private:
 
 		for (int i = 0; i < 8; i++) {
 			if (i != num) {
-				if (_figureBboxes[2 * i].x     + _figures[i]->screen_R().x < pos.x + _figureBboxes[2 * num].x &&
-					_figureBboxes[2 * i].y     + _figures[i]->screen_R().x > pos.x + _figureBboxes[2 * num].y &&
-					_figureBboxes[2 * i + 1].x + _figures[i]->screen_R().y < pos.y + _figureBboxes[2 * num + 1].x &&
-					_figureBboxes[2 * i + 1].y + _figures[i]->screen_R().y > pos.y + _figureBboxes[2 * num + 1].y)
+				if (_figureBboxes[i].right  + _figures[i]->screen_R().x < pos.x + _figureBboxes[num].right &&
+					_figureBboxes[i].left   + _figures[i]->screen_R().x > pos.x + _figureBboxes[num].left &&
+					_figureBboxes[i].top    + _figures[i]->screen_R().y < pos.y + _figureBboxes[num].top &&
+					_figureBboxes[i].bottom + _figures[i]->screen_R().y > pos.y + _figureBboxes[num].bottom)
 						return true;
 			}
 		}
@@ -336,7 +344,7 @@ private:
 
 	mgVect2i _initialCoords[8];
 	int _noDoughX = 0;
-	mgVect2i _figureBboxes[16];
+	Common::Rect _figureBboxes[8];
 
 
 	const mgVect2i _figureVerts[1088] = {
