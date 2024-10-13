@@ -634,6 +634,7 @@ bool AdSceneGeometry::convert2Dto3DTolerant(int x, int y, Math::Vector3d *pos) {
 bool AdSceneGeometry::convert2Dto3D(int x, int y, Math::Vector3d *pos) {
 	bool intFound = false;
 	float minDist = FLT_MAX;
+	Math::Vector3d intersection;
 
 	Math::Ray ray = _gameRef->_renderer3D->rayIntoScene(x, y);
 
@@ -643,7 +644,6 @@ bool AdSceneGeometry::convert2Dto3D(int x, int y, Math::Vector3d *pos) {
 			float *v0 = _planes[i]->_mesh->getVertexPosition(triangle[0]);
 			float *v1 = _planes[i]->_mesh->getVertexPosition(triangle[1]);
 			float *v2 = _planes[i]->_mesh->getVertexPosition(triangle[2]);
-			Math::Vector3d intersection;
 
 			if (intersectTriangle(ray.getOrigin(), ray.getDirection(),
 								  Math::Vector3d(v0[0], v0[1], v0[2]),

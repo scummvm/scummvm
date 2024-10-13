@@ -54,73 +54,95 @@ float MathUtil::roundUp(float val) {
 
 #ifdef ENABLE_WME3D
 
-bool intersectTriangle(const Math::Vector3d &origin, const Math::Vector3d &direction,
+bool intersectTriangle(const Math::Vector3d &orig, const Math::Vector3d &dir,
                        const Math::Vector3d &v0, const Math::Vector3d &v1, const Math::Vector3d &v2,
 					   float &t, float &u, float &v) {
-	const float epsilon = 0.0001f;
-
+	// Find vectors for two edges sharing vert0
 	Math::Vector3d edge1 = v1 - v0;
 	Math::Vector3d edge2 = v2 - v0;
 
-	Math::Vector3d pVector = Math::Vector3d::crossProduct(direction, edge2);
+	// Begin calculating determinant - also used to calculate U parameter
+	Math::Vector3d pVec;
+	pVec = Math::Vector3d::crossProduct(dir, edge2);
 
-	float det = Math::Vector3d::dotProduct(edge1, pVector);
-
-	if (ABS(det) < epsilon) {
+	// If determinant is near zero, ray lies in plane of triangle
+	float det = Math::Vector3d::dotProduct(edge1, pVec);
+	if (ABS(det) < 0.0001f)
 		return false;
-	}
 
-	Math::Vector3d tVector = origin - v0;
-	u = Math::Vector3d::dotProduct(tVector, pVector) / det;
+	// Calculate distance from vert0 to ray origin
+	Math::Vector3d tvec = orig - v0;
 
-	if (u < 0.0f || u > 1.0f) {
+	// Calculate U parameter and test bounds
+	u = Math::Vector3d::dotProduct(tvec, pVec) / det;
+	if (u < 0.0f || u > 1.0f)
 		return false;
-	}
 
-	Math::Vector3d qVector = Math::Vector3d::crossProduct(tVector, edge1);
-	v = Math::Vector3d::dotProduct(direction, qVector) / det;
+	// Prepare to test V parameter
+	Math::Vector3d qvec;
+	qvec = Math::Vector3d::crossProduct(tvec, edge1);
 
-	if (v < 0.0f || u + v > 1.0f) {
+	// Calculate V parameter and test bounds
+	v = Math::Vector3d::dotProduct(dir, qvec) / det;
+	if (v < 0.0f || u + v > 1.0f)
 		return false;
-	}
 
-	t = Math::Vector3d::dotProduct(edge2, qVector) / det;
+	// Calculate t, scale parameters, ray intersects triangle
+	t = Math::Vector3d::dotProduct(edge2, qvec) / det;
 
-	Math::Vector3d intersectionPoint = origin + direction * t;
-	t = intersectionPoint.x();
-	u = intersectionPoint.y();
-	v = intersectionPoint.z();
+	Math::Vector3d intersection;
+	intersection = orig + dir * t;
+
+	t = intersection.x();
+	u = intersection.y();
+	v = intersection.z();
+
 	return true;
 }
 
 bool pickGetIntersect(const Math::Vector3d &lineStart, const Math::Vector3d &lineEnd,
 								   const Math::Vector3d &v0, const Math::Vector3d &v1, const Math::Vector3d &v2,
 								   Math::Vector3d &intersection, float &distance) {
-	const float epsilon = 0.0001f;
+	// compute plane's normal
+	Math::Vector3d vertex;
+	Math::Vector3d normal;
 
 	Math::Vector3d edge1 = v1 - v0;
 	Math::Vector3d edge2 = v2 - v1;
 
-	Math::Vector3d planeNormal = Math::Vector3d::crossProduct(edge1, edge2);
-	planeNormal.normalize();
+	normal = Math::Vector3d::crossProduct(edge1, edge2);
+	normal.normalize();
 
-	Math::Vector3d lineDirection = lineEnd - lineStart;
+	vertex = v0;
 
-	float lineLength = Math::Vector3d::dotProduct(lineDirection, planeNormal);
+	Math::Vector3d direction, l1;
+	float lineLength, distFromPlane, percentage;
 
-	if (ABS(lineLength) < epsilon) {
+	direction.x() = lineEnd.x() - lineStart.x(); // calculate the lines direction vector
+	direction.y() = lineEnd.y() - lineStart.y();
+	direction.z() = lineEnd.z() - lineStart.z();
+
+	lineLength = Math::Vector3d::dotProduct(direction, normal); // This gives us the line length (the blue dot L3 + L4 in figure d)
+
+	if (ABS(lineLength) < 0.0001f)
 		return false;
-	}
 
-	float distFromPlane = Math::Vector3d::dotProduct(v0 - lineStart, planeNormal);
-	float relativeDistance = distFromPlane / lineLength;
+	l1.x() = vertex.x() - lineStart.x(); // calculate vector L1 (the PINK line in figure d)
+	l1.y() = vertex.y() - lineStart.y();
+	l1.z() = vertex.z() - lineStart.z();
 
-	if (relativeDistance < 0.0f || relativeDistance > 1.0f) {
+	distFromPlane = Math::Vector3d::dotProduct(l1, normal); // gives the distance from the plane (ORANGE Line L3 in figure d)
+	percentage = distFromPlane / lineLength; // How far from Linestart , intersection is as a percentage of 0 to 1
+	if (percentage < 0.0)
 		return false;
-	}
+	else if (percentage > 1.0)
+		return false;
 
-	distance = relativeDistance;
-	intersection = lineStart + lineDirection * relativeDistance;
+	distance = percentage; //record the distance from beginning of ray (0.0 -1.0)
+
+	intersection.x() = lineStart.x() + direction.x() * percentage; // add the percentage of the line to line start
+	intersection.y() = lineStart.y() + direction.y() * percentage;
+	intersection.z() = lineStart.z() + direction.z() * percentage;
 
 	return true;
 }

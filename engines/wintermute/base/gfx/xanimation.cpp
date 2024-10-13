@@ -187,12 +187,10 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 
 			BonePositionKey *posKey = new BonePositionKey;
 			posKey->_time = filePosKey->_time;
-			for (uint i = 0; i < filePosKey->_numTfkeys; ++i) {
-				posKey->_pos.getData()[i] = filePosKey->_tfkeys[i];
-			}
-
+			posKey->_pos.getData()[0] = filePosKey->_tfkeys[0];
+			posKey->_pos.getData()[1] = filePosKey->_tfkeys[1];
 			// mirror Z
-			posKey->_pos.getData()[2] *= -1.0f;
+			posKey->_pos.getData()[2] = -filePosKey->_tfkeys[2];
 
 			_posKeys.push_back(posKey);
 		}
