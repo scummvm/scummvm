@@ -30,6 +30,7 @@
 
 #ifdef ENABLE_WME3D
 #include "math/vector3d.h"
+#include "engines/wintermute/base/gfx/xmath.h"
 #endif
 
 namespace Wintermute {
@@ -52,6 +53,9 @@ bool intersectTriangle(const Math::Vector3d &origin, const Math::Vector3d &direc
 bool pickGetIntersect(const Math::Vector3d &lineStart, const Math::Vector3d &lineEnd,
 								   const Math::Vector3d &v0, const Math::Vector3d &v1, const Math::Vector3d &v2,
 								   Math::Vector3d &intersection, float &distance);
+DXMatrix *matrixSetTranslation(DXMatrix *mat, DXVector3 *vec);
+DXMatrix *matrixSetRotation(DXMatrix *mat, DXVector3 *vec);
+void decomposeMatrixSimple(const DXMatrix *mat, DXVector3 *transVec, DXVector3 *scaleVec, DXQuaternion *rotQ);
 
 #endif
 

@@ -125,6 +125,52 @@ bool pickGetIntersect(const Math::Vector3d &lineStart, const Math::Vector3d &lin
 	return true;
 }
 
+void decomposeMatrixSimple(const DXMatrix *mat, DXVector3 *transVec, DXVector3 *scaleVec, DXQuaternion *rotQ) {
+	*transVec = DXVector3(mat->matrix._41, mat->matrix._42, mat->matrix._43);
+	*scaleVec = DXVector3(sqrtf(mat->matrix._11 * mat->matrix._11 + mat->matrix._21 * mat->matrix._21 + mat->matrix._31 * mat->matrix._31),
+			sqrtf(mat->matrix._12 * mat->matrix._12 + mat->matrix._22 * mat->matrix._22 + mat->matrix._32 * mat->matrix._32),
+			sqrtf(mat->matrix._13 * mat->matrix._13 + mat->matrix._23 * mat->matrix._23 + mat->matrix._33 * mat->matrix._33));
+
+	DXQuaternion q;
+	DXQuaternionRotationMatrix(&q, mat);
+
+	*rotQ = q;
+}
+
+DXMatrix *matrixSetTranslation(DXMatrix *mat, DXVector3 *vec) {
+	mat->matrix._41 = vec->_x;
+	mat->matrix._42 = vec->_y;
+	mat->matrix._43 = vec->_z;
+
+	return mat;
+}
+
+DXMatrix *matrixSetRotation(DXMatrix *mat, DXVector3 *vec) {
+	double cr = cos(vec->_x);
+	double sr = sin(vec->_x);
+	double cp = cos(vec->_y);
+	double sp = sin(vec->_y);
+	double cy = cos(vec->_z);
+	double sy = sin(vec->_z);
+
+	mat->matrix._11 = (float)(cp * cy);
+	mat->matrix._12 = (float)(cp * sy);
+	mat->matrix._13 = (float)(-sp);
+
+	double srsp = sr * sp;
+	double crsp = cr * sp;
+
+	mat->matrix._21 = (float)(srsp * cy - cr * sy);
+	mat->matrix._22 = (float)(srsp * sy + cr * cy);
+	mat->matrix._23 = (float)(sr * cp);
+
+	mat->matrix._31 = (float)(crsp * cy + sr * sy);
+	mat->matrix._32 = (float)(crsp * sy - sr * cy);
+	mat->matrix._33 = (float)(cr * cp);
+
+	return mat;
+}
+
 #endif
 
 } // End of namespace Wintermute
