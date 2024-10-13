@@ -47,6 +47,329 @@ void Room803::init() {
 }
 
 void Room803::parser() {
+	bool cl = false;
+	if (player_said("look") || player_said("look at")) {
+		cl = true;
+	}
+
+	bool ch = false;
+	if (player_said("take")) {
+		ch = true;
+	}
+
+	bool talkFl = false;
+	if (player_said("talk") || player_said("talk to")) {
+		talkFl = true;
+	}
+
+	player_said("gear");
+
+	if (cl && player_said("HOLE IN THE WALL")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripTalkerPos5 = series_load("RIP LOOKS UP POS3", -1, nullptr);
+			setGlobals1(_ripTalkerPos5, 1, 6, 6, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 1);
+			break;
+
+		case 1:
+			digi_play("803R04", 1, 255, 2, -1);
+			break;
+
+		case 2:
+			sendWSMessage_140000(_G(my_walker), 3);
+			break;
+
+		case 3:
+			player_set_commands_allowed(true);
+
+		default:
+			break;
+		}
+	}
+
+	else if (cl && player_said("MURAL")) {
+		digi_play("803R05", 1, 255, -1, -1);
+	}
+
+	else if (cl && player_said("SOLDIER")) {
+		digi_play("COM074", 1, 255, -1, 997);
+	}
+
+	else if (cl && player_said("FALLEN SOLDIER")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripTalkerPos5 = series_load("RIP TREK LOOK DOWN POS3", -1, nullptr);
+			setGlobals1(_ripTalkerPos5, 1, 11, 11, 11, 0, 11, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 1);
+			break;
+
+		case 1:
+			digi_play("COM062", 1, 255, 2, 997);
+			break;
+
+		case 2:
+			sendWSMessage_120000(_G(my_walker), 3);
+			break;
+
+		case 3:
+			sendWSMessage_150000(_G(my_walker), 4);
+			break;
+
+		case 4:
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	else if (cl && player_said("FALLEN STATUE")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripTalkerPos5 = series_load("RIP TREK LOOK DOWN POS3", -1, nullptr);
+			setGlobals1(_ripTalkerPos5, 1, 11, 11, 11, 0, 11, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 1);
+			break;
+
+		case 1:
+			digi_play("803R06", 1, 255, 2, -1);
+			break;
+
+		case 2:
+			sendWSMessage_120000(_G(my_walker), 3);
+			break;
+
+		case 3:
+			sendWSMessage_150000(_G(my_walker), 4);
+			break;
+
+		case 4:
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	else if (cl && player_said("BROKEN STATUE")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripTalkerPos5 = series_load("RIP TREK LOOK DOWN POS3", -1, nullptr);
+			setGlobals1(_ripTalkerPos5, 1, 11, 11, 11, 0, 12, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 1);
+			break;
+
+		case 1:
+			digi_play("803R07", 1, 255, 2, -1);
+			break;
+
+		case 2:
+			sendWSMessage_120000(_G(my_walker), 3);
+			break;
+
+		case 3:
+			sendWSMessage_150000(_G(my_walker), 4);
+			break;
+
+		case 4:
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	else if (cl && player_said("URN")) {
+		digi_play("803R08", 1, 255, -1, -1);
+	}
+
+	else if (cl && player_said("UNLIT URN")) {
+		digi_play("COM061", 1, 255, -1, 997);
+	}
+
+	else if (cl && player_said("FALLEN URN")) {
+		digi_play("803R10", 1, 255, -1, -1);
+	}
+
+	else if (cl && player_said(" ")) {
+		digi_play("803R11", 1, 255, -1, -1);
+	}
+
+	else if (cl && player_said("MEI CHEN")) {
+		digi_play("COM043", 1, 255, -1, 997);
+	}
+
+	else if (cl && player_said("BROKEN BEAM")) {
+		digi_play("844R12", 1, 255, -1, -1);
+	}
+
+	else if (cl && player_said("tipped soldier")) {
+		digi_play("com062", 1, 255, -1, 997);
+	}
+
+	else if (cl && player_said(" ")) { // Previously checked??...
+		digi_play("803R11", 1, 255, -1, -1);
+	}
+
+	else if (talkFl && player_said("MEI CHEN")) {
+		player_set_commands_allowed(false);
+		_G(kernel).trigger_mode = KT_DAEMON;
+		switch (imath_ranged_rand(1, 4)) {
+		case 1:
+			digi_play("COM044", 1, 255, 33, 997);
+			break;
+
+		case 2:
+			digi_play("COM045", 1, 255, 33, 997);
+			break;
+
+		case 3:
+			digi_play("COM046", 1, 255, 33, 997);
+			break;
+
+		case 4:
+			digi_play("COM047", 1, 255, 33, 997);
+			break;
+
+		default:
+			break;
+		}
+
+		ws_demand_facing(_G(my_walker), 3);
+		_ripTalkerPos5 = series_load("RIP TREK TALKER POS3", -1, nullptr);
+		setGlobals1(_ripTalkerPos5, 1, 5, 1, 6, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), -1);
+	}
+
+	else if (ch && (player_said("BROKEN STATUE") || player_said("FALLEN STATUE"))) {
+		digi_play("803R13", 1, 255, -1, -1);
+	}
+
+	else if (player_said("climb through", "Hole in the Wall")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			digi_play("803R19", 1, 255, 1, -1);
+			break;
+
+		case 1:
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	else if (player_said("Fifth Door")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(1);
+			break;
+
+		case 1:
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s29", 2, 180, -1, 950);
+			_G(game).new_room = 844;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	else if (player_said("Fourth Door")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(1);
+			break;
+
+		case 1:
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s29", 3, 180, -1, 950);
+			_G(game).new_room = 834;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	else if (player_said("Third Door")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(1);
+			break;
+
+		case 1:
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s29", 3, 180, -1, 950);
+			_G(game).new_room = 814;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	else if (player_said("Second Door")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(1);
+			break;
+
+		case 1:
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s29", 3, 180, -1, 950);
+			_G(game).new_room = 824;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	else if (player_said("First Door")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			kernel_timing_trigger(15, 1, nullptr);
+			break;
+
+		case 1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(2);
+			break;
+
+		case 2:
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s29", 3, 180, -1, 950);
+			_G(game).new_room = 804;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	else if (player_said("journal") && player_said("look at")) {
+		digi_play("com042", 1, 255, -1, 997);
+	} else
+		return;
+
+
+	_G(player).command_ready = false;
 }
 
 void Room803::daemon() {
@@ -85,7 +408,7 @@ void Room803::daemon() {
 		daemonSub1();
 }
 
-void Rooms::Room803::initWalker() {
+void Room803::initWalker() {
 	switch (_G(game).previous_room) {
 	case -2:
 		if (_G(flags)[V276] == 0) {
