@@ -62,8 +62,7 @@ XModel::XModel(BaseGame *inGame, BaseObject *owner) : BaseObject(inGame) {
 	_lastProjMat.setToIdentity();
 	_lastOffsetX = _lastOffsetY = 0;
 
-	_BBoxStart = Math::Vector3d(0.0f, 0.0f, 0.0f);
-	_BBoxEnd = Math::Vector3d(0.0f, 0.0f, 0.0f);
+	_BBoxStart = _BBoxEnd = Math::Vector3d(0.0f, 0.0f, 0.0f);
 	_boundingRect.setEmpty();
 
 	for (int i = 0; i < X_NUM_ANIMATION_CHANNELS; i++) {
@@ -553,17 +552,14 @@ bool XModel::isTransparentAt(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 void XModel::updateBoundingRect() {
-	_BBoxStart = Math::Vector3d(0, 0, 0);
-	_BBoxStart = Math::Vector3d(0, 0, 0);
+	_BBoxStart = _BBoxEnd = Math::Vector3d(0, 0, 0);
 
 	if (_rootFrame) {
 		_rootFrame->getBoundingBox(&_BBoxStart, &_BBoxEnd);
 	}
 
-	_boundingRect.left = INT_MAX_VALUE;
-	_boundingRect.top = INT_MAX_VALUE;
-	_boundingRect.right = INT_MIN_VALUE;
-	_boundingRect.bottom = INT_MIN_VALUE;
+	_boundingRect.left = _boundingRect.top = INT_MAX_VALUE;
+	_boundingRect.right = _boundingRect.bottom = INT_MIN_VALUE;
 
 	Math::Vector3d vec2d(0, 0, 0);
 
