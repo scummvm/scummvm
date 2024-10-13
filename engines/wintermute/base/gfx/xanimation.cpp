@@ -202,6 +202,10 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 			return false;
 		}
 
+	    Math::Quaternion qRot;
+		Math::Vector3d transVec;
+		Math::Vector3d scaleVec;
+
 		for (uint32 key = 0; key < numKeys; key++) {
 			const XTimedFloatKeys *fileMatrixKey = &animationKey->_keys[key];
 			uint32 time = fileMatrixKey->_time;
@@ -225,18 +229,16 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 			keyData(0, 2) *= -1.0f;
 			keyData(1, 2) *= -1.0f;
 
-			Math::Vector3d translation = keyData.getPosition();
+			transVec = keyData.getPosition();
 
-			Math::Vector3d scale;
-			scale.x() = keyData(0, 0) * keyData(0, 0) + keyData(1, 0) * keyData(1, 0) + keyData(2, 0) * keyData(2, 0);
-			scale.x() = sqrtf(scale.x());
-			scale.y() = keyData(0, 1) * keyData(0, 1) + keyData(1, 1) * keyData(1, 1) + keyData(2, 1) * keyData(2, 1);
-			scale.y() = sqrtf(scale.y());
-			scale.z() = keyData(0, 2) * keyData(0, 2) + keyData(1, 2) * keyData(1, 2) + keyData(2, 2) * keyData(2, 2);
-			scale.z() = sqrtf(scale.z());
+			scaleVec.x() = keyData(0, 0) * keyData(0, 0) + keyData(1, 0) * keyData(1, 0) + keyData(2, 0) * keyData(2, 0);
+			scaleVec.x() = sqrtf(scaleVec.x());
+			scaleVec.y() = keyData(0, 1) * keyData(0, 1) + keyData(1, 1) * keyData(1, 1) + keyData(2, 1) * keyData(2, 1);
+			scaleVec.y() = sqrtf(scaleVec.y());
+			scaleVec.z() = keyData(0, 2) * keyData(0, 2) + keyData(1, 2) * keyData(1, 2) + keyData(2, 2) * keyData(2, 2);
+			scaleVec.z() = sqrtf(scaleVec.z());
 
-			Math::Quaternion rotation;
-			rotation.fromMatrix(keyData.getRotation());
+			qRot.fromMatrix(keyData.getRotation());
 
 			BonePositionKey *positionKey = new BonePositionKey;
 			BoneScaleKey *scaleKey = new BoneScaleKey;
@@ -246,9 +248,9 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 			scaleKey->_time = time;
 			rotationKey->_time = time;
 
-			positionKey->_pos = translation;
-			scaleKey->_scale = scale;
-			rotationKey->_rotation = rotation;
+			positionKey->_pos = transVec;
+			scaleKey->_scale = scaleVec;
+			rotationKey->_rotation = qRot;
 
 			_posKeys.push_back(positionKey);
 			_scaleKeys.push_back(scaleKey);
