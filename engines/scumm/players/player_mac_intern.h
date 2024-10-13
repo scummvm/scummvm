@@ -233,10 +233,8 @@ public:
 	void setQuality(int qual);
 	void saveLoadWithSerializer(Common::Serializer &ser);
 	void restoreAfterLoad();
-	void enableMusic() {}
-	void disableMusic() {}
-	void enableSoundEffects() {}
-	void disableSoundEffects() {}
+	void toggleMusic(bool enable) {}
+	void toggleSoundEffects(bool enable) {}
 
 	void vblCallback() override;
 	void generateData(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) const override;
@@ -390,10 +388,8 @@ public:
 	void setQuality(int qual);
 	void saveLoadWithSerializer(Common::Serializer &ser);
 	void restoreAfterLoad();
-	void enableMusic();
-	void disableMusic();
-	void enableSoundEffects();
-	void disableSoundEffects();
+	void toggleMusic(bool enable);
+	void toggleSoundEffects(bool enable);
 
 	void vblCallback() override;
 	void generateData(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) const override;
@@ -415,6 +411,7 @@ private:
 	int _restartSound;
 	int _curSoundSaveVar;
 	int _songTimer;
+	bool _blocked;
 	byte _songTimerInternal;
 	byte *_chanConfigTable;
 	const int _idRangeMax;

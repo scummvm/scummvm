@@ -2269,6 +2269,8 @@ void ScummEngine::setupMusic(int midi) {
 			_musicEngine->setQuality(MacSound::kQualityLowest);
 		else if (ConfMan.hasKey("mac_snd_quality"))
 			_musicEngine->setQuality(ConfMan.getInt("mac_snd_quality"));
+		_musicEngine->toggleMusic(!ConfMan.hasKey("music_mute") || !ConfMan.getBool("music_mute"));
+		_musicEngine->toggleSoundEffects(!ConfMan.hasKey("mute") || !ConfMan.getBool("mute"));
 		_sound->_musicType = MDT_MACINTOSH;
 	} else if (_game.id == GID_MANIAC && _game.version == 1) {
 		_musicEngine = new Player_V1(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
