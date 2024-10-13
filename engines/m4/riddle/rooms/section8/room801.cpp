@@ -110,19 +110,7 @@ void Room801::init() {
 		_roomStates_field9Eh = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1,
 														 20, 310, 3, triggerMachineByHashCallback3000, "mc_trek");
 		kernel_timing_trigger(60, 1, nullptr);
-	} else if (_G(game).previous_room < 850 || _G(game).previous_room != -2) {
-		// CHECKME: the second part of the check is useless. That's suspicious.
-		ws_demand_facing(_G(my_walker), 8);
-		ws_demand_location(_G(my_walker), 525, 301);
-		_roomStates_loop3 = series_load("rip returns from root cellar", -1, nullptr);
-		_roomStates_tt = 1;
-		hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar ", true);
-		hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar  ", false);
-		hotspot_set_active(_G(currentSceneDef).hotspots, "ROOT CELLAR", true);
-		_roomStates_field24 = series_load("CELLAR DOOR OPEN", -1, nullptr);
-		_roomStates_fieldAAh = series_place_sprite("CELLAR DOOR OPEN", 0, 0, -53, 100, 1024);
-		kernel_timing_trigger(10, 7, nullptr);
-	} else {
+	} else if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
 		if (_roomStates_tt) {
 			hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar ", true);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar  ", false);
@@ -140,6 +128,17 @@ void Room801::init() {
 		_roomStates_field9Eh = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 1280, 0, triggerMachineByHashCallback, "mc talk frames");
 		_roomStates_fieldA2h = series_show("SAFARI SHADOW 5", 1280, 16, -1, -1, 0, 50, 124, 304);
 		sendWSMessage_10000(1, _roomStates_field9Eh, _roomStates_field782, 42, 42, 0, _roomStates_field782, 42, 42, 0);
+	} else if (_G(game).previous_room < 850) {
+		ws_demand_facing(_G(my_walker), 8);
+		ws_demand_location(_G(my_walker), 525, 301);
+		_roomStates_loop3 = series_load("rip returns from root cellar", -1, nullptr);
+		_roomStates_tt = 1;
+		hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar ", true);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "root cellar  ", false);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "ROOT CELLAR", true);
+		_roomStates_field24 = series_load("CELLAR DOOR OPEN", -1, nullptr);
+		_roomStates_fieldAAh = series_place_sprite("CELLAR DOOR OPEN", 0, 0, -53, 100, 1024);
+		kernel_timing_trigger(10, 7, nullptr);
 	}
 }
 
@@ -1013,6 +1012,7 @@ void Room801::daemon() {
 		default:
 			break;
 		}
+		break;
 	case 300:
 		switch (_roomStates_pu2) {
 		case 1:
