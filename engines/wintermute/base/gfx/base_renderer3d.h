@@ -59,6 +59,8 @@ public:
 	BaseRenderer3D(BaseGame *inGame = nullptr);
 	~BaseRenderer3D() override;
 
+	bool getProjectionParams(float *resWidth, float *resHeight, float *layerWidth, float *layerHeight,
+							 float *modWidth, float *modHeight, bool *customViewport);
 	bool setAmbientLightColor(uint32 color);
 	bool setDefaultAmbientLightColor();
 	virtual void setAmbientLight() = 0;

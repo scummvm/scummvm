@@ -57,6 +57,35 @@ bool BaseRenderer3D::drawSprite(BaseSurfaceOpenGL3D &tex, const Wintermute::Rect
 	return drawSpriteEx(tex, rect, pos, Vector2(0.0f, 0.0f), scale, 0.0f, color, alphaDisable, blendMode, mirrorX, mirrorY);
 }
 
+bool BaseRenderer3D::getProjectionParams(float *resWidth, float *resHeight, float *layerWidth, float *layerHeight,
+										 float *modWidth, float *modHeight, bool *customViewport) {
+	*resWidth = _width;
+	*resHeight = _height;
+
+	int lWidth, lHeight;
+	Rect32 sceneViewport;
+	_gameRef->getLayerSize(&lWidth, &lHeight, &sceneViewport, customViewport);
+	*layerWidth = (float)lWidth;
+	*layerHeight = (float)lHeight;
+
+	*modWidth = 0.0f;
+	*modHeight = 0.0f;
+	if (*layerWidth > *resWidth)
+		*modWidth  = (*layerWidth - *resWidth) / 2.0f;
+	if (*layerHeight > *resHeight)
+		*modHeight = (*layerHeight - *resHeight) / 2.0f;
+
+	// new in 1.7.2.1
+	// if layer height is smaller than resolution, we assume that we don't want to scroll
+	// and that the camera overviews the entire resolution
+	if (*layerHeight < *resHeight) {
+		*modHeight -= (*resHeight - *layerHeight) / 2;
+		*layerHeight = *resHeight;
+	}
+
+	return true;
+}
+
 void BaseRenderer3D::project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int32 &x, int32 &y) {
 	Math::Matrix4 tmp = worldMatrix;
 	tmp.transpose();
