@@ -233,6 +233,8 @@ public:
 	void setQuality(int qual);
 	void saveLoadWithSerializer(Common::Serializer &ser);
 	void restoreAfterLoad();
+	void enable() {}
+	void disable() {}
 
 	void vblCallback() override;
 	void generateData(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) const override;
@@ -386,6 +388,8 @@ public:
 	void setQuality(int qual);
 	void saveLoadWithSerializer(Common::Serializer &ser);
 	void restoreAfterLoad();
+	void enable();
+	void disable();
 
 	void vblCallback() override;
 	void generateData(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) const override;

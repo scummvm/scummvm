@@ -104,6 +104,16 @@ public:
 	virtual void setQuality(int qual) {}
 
 	/**
+	 * Notify player that the sound is supposed to be disabled (used for Macintosh sound)
+	 */
+	virtual void disable() {}
+
+	/**
+	 * Notify player that the sound is supposed to be enabled (used for Macintosh sound)
+	 */
+	virtual void enable() {}
+
+	/**
 	 * Save or load the music state.
 	 */
 	void saveLoadWithSerializer(Common::Serializer &ser) override {}

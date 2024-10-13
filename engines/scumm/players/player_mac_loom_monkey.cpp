@@ -641,6 +641,16 @@ void LoomMonkeyMacSnd::restoreAfterLoad() {
 		startSound(sound);
 }
 
+void LoomMonkeyMacSnd::enable() {
+	restoreAfterLoad();
+}
+
+void LoomMonkeyMacSnd::disable() {
+	int sound = _curSoundSaveVar;
+	stopActiveSound();
+	_curSoundSaveVar = sound;
+}
+
 void LoomMonkeyMacSnd::vblCallback() {
 	if (_songTimerInternal++ == 29) {
 		_songTimerInternal = 0;
