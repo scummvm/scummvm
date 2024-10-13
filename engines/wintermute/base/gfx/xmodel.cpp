@@ -926,9 +926,6 @@ bool XModel::persist(BasePersistenceManager *persistMgr) {
 		}
 	}
 
-	if (!persistMgr->getIsSaving())
-		initializeSimple();
-
 	return true;
 }
 

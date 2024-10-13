@@ -126,9 +126,9 @@ bool SaveLoad::initAfterLoad() {
 #ifdef ENABLE_WME3D
 	SystemClassRegistry::getInstance()->enumInstances(afterLoadXModel,   "XModel",       nullptr);
 #endif
-	SystemClassRegistry::getInstance()->enumInstances(afterLoadScript,   "ScScript",  nullptr);
+	SystemClassRegistry::getInstance()->enumInstances(afterLoadScript,   "ScScript",     nullptr);
 	// AdGame:
-	SystemClassRegistry::getInstance()->enumInstances(afterLoadScene,   "AdScene",   nullptr);
+	SystemClassRegistry::getInstance()->enumInstances(afterLoadScene,    "AdScene",      nullptr);
 	return STATUS_OK;
 }
 
