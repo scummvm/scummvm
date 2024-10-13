@@ -129,7 +129,7 @@ public:
 					}
 
 					if (_objSound->is_state_active("\xed\xe5\xf2") // "нет"
-							|| _objSound->is_state_active("\xed\xe5\xf2\x31")); // "нет1"
+							|| _objSound->is_state_active("\xed\xe5\xf2\x31")) // "нет1"
 						_objSound->set_state("\xe4\xe0");	// "да"
 				}
 			}
