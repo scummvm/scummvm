@@ -34,7 +34,7 @@ Mesh3DS::~Mesh3DS() {
 	delete[] _indexData;
 }
 
-bool Wintermute::Mesh3DS::loadFrom3DS(Common::MemoryReadStream &fileStream) {
+bool Mesh3DS::loadFrom3DS(Common::MemoryReadStream &fileStream) {
 	uint32 wholeChunkSize = fileStream.readUint32LE();
 	int32 end = fileStream.pos() + wholeChunkSize - 6;
 
@@ -80,6 +80,48 @@ bool Wintermute::Mesh3DS::loadFrom3DS(Common::MemoryReadStream &fileStream) {
 	}
 
 	return true;
+}
+
+void Mesh3DS::computeNormals() {
+	DXVector3 *normals = new DXVector3[_vertexCount];
+	for (int i = 0; i < _vertexCount; ++i) {
+		normals[i]._x = 0.0f;
+		normals[i]._y = 0.0f;
+		normals[i]._z = 0.0f;
+	}
+
+	for (int i = 0; i < faceCount(); ++i) {
+		uint16 a = _indexData[3 * i + 0];
+		uint16 b = _indexData[3 * i + 1];
+		uint16 c = _indexData[3 * i + 2];
+
+		DXVector3 v1(getVertexPosition(a));
+		DXVector3 v2(getVertexPosition(b));
+		DXVector3 v3(getVertexPosition(c));
+
+		DXVector3 edge1 = v2 - v1;
+		DXVector3 edge2 = v3 - v2;
+		DXVector3 normal;
+		DXVec3Cross(&normal, &edge1, &edge2);
+		DXVec3Normalize(&normal, &normal);
+
+		normals[a] += normal;
+		normals[b] += normal;
+		normals[c] += normal;
+	}
+
+	// Assign the newly computed normals back to the vertices
+	for (int i = 0; i < faceCount(); ++i) {
+		for (int j = 0; j < 3; j++) {
+			DXVector3 normal;
+			DXVec3Normalize(&normal, &normals[_indexData[3 * i + j]]);
+			_vertexData[_indexData[3 * i + j]].nx = normal._x;
+			_vertexData[_indexData[3 * i + j]].ny = normal._y;
+			_vertexData[_indexData[3 * i + j]].nz = normal._z;
+		}
+	}
+
+	delete[] normals;
 }
 
 void Mesh3DS::dumpVertexCoordinates(const char *filename) {

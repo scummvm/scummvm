@@ -105,8 +105,6 @@ struct DXBone {
 #pragma pack()
 #endif
 
-class XSkinMeshLoader;
-
 class DXSkinInfo {
 	uint32 _fvf;
 	uint32 _numVertices{};

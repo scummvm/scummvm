@@ -26,18 +26,24 @@
 
 #include "math/vector4d.h"
 
+#include "engines/wintermute/base/gfx/xmath.h"
+
 namespace Wintermute {
 
 struct GeometryVertex {
 	float x;
 	float y;
 	float z;
+	float nx;
+	float ny;
+	float nz;
 };
 
 class Mesh3DS {
 public:
 	Mesh3DS();
 	virtual ~Mesh3DS();
+	void computeNormals();
 	virtual void fillVertexBuffer(uint32 color) = 0;
 	virtual bool loadFrom3DS(Common::MemoryReadStream &fileStream);
 	virtual void render() = 0;

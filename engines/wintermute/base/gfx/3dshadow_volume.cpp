@@ -47,6 +47,12 @@ bool ShadowVolume::reset() {
 	return true;
 }
 
+//////////////////////////////////////////////////////////////////////////^M
+bool ShadowVolume::addMesh(Math::Vector3d *mesh, uint32 *adjacency, Math::Matrix4 *modelMat, Math::Vector3d *light, float extrusionDepth) {
+	// TODO
+
+	return true;
+}
 //////////////////////////////////////////////////////////////////////////
 void ShadowVolume::addVertex(const Math::Vector3d &vertex) {
 	_vertices.add(vertex);

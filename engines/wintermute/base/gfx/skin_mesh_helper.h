@@ -36,7 +36,6 @@
 
 namespace Wintermute {
 
-class XSkinMeshLoader;
 class XMesh;
 class XMeshOpenGL;
 class XMeshOpenGLShader;

@@ -50,6 +50,7 @@ public:
 	ShadowVolume(BaseGame *inGame);
 	virtual ~ShadowVolume();
 
+	bool addMesh(Math::Vector3d *mesh, uint32 *adjacency, Math::Matrix4 *modelMat, Math::Vector3d *light, float extrusionDepth);
 	void addVertex(const Math::Vector3d &vertex);
 	bool reset();
 
