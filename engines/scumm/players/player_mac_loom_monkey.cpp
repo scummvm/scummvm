@@ -412,7 +412,7 @@ const Common::SharedPtr<MacSndLoader::Instrument> *MonkeyMacSndLoader::fetchInst
 Common::WeakPtr<LoomMonkeyMacSnd> *LoomMonkeyMacSnd::_inst = nullptr;
 
 LoomMonkeyMacSnd::LoomMonkeyMacSnd(ScummEngine *vm, Audio::Mixer *mixer) : VblTaskClientDriver(), _vm(vm), _mixer(mixer), _curSound(0), _loader(nullptr),
-	_macstr(nullptr), _sdrv(nullptr), _vblTskProc(this, &VblTaskClientDriver::vblCallback), _songTimer(0), _songTimerInternal(0),
+	_macstr(nullptr), _sdrv(nullptr), _vblTskProc(this, &VblTaskClientDriver::vblCallback), _songTimer(0), _songTimerInternal(0), _disableFlags(0),
 	_machineRating(0), _selectedQuality(2), _effectiveChanConfig(0), _16bit(false), _idRangeMax(200), _sndChannel(0), _chanUse(0), _defaultChanConfig(0),
 	_chanConfigTable(nullptr), _chanPlaying(0), _curChanConfig(0), _curSynthType(0), _curSndType(Audio::Mixer::kPlainSoundType), _mixerThread(false),
 	_restartSound(0), _lastSndType(Audio::Mixer::kPlainSoundType), _chanCbProc(this, &MacLowLevelPCMDriver::CallbackClient::sndChannelCallback),
@@ -531,8 +531,12 @@ void LoomMonkeyMacSnd::startSound(int id, int jumpToTick) {
 		return;
 	}
 
-	//if (_sndDisableFlags && _loader->isMusic())
-	//	return;
+	if (_disableFlags) {
+		if (_loader->restartSoundAfterLoad())
+			_curSoundSaveVar = id;
+		if (_loader->isMusic() || (_disableFlags & 2))
+			return;
+	}
 
 	_effectiveChanConfig = _loader->getChanSetup() ? _loader->getChanSetup() : _defaultChanConfig;
 	_curSndType = _loader->isMusic() ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
@@ -641,14 +645,24 @@ void LoomMonkeyMacSnd::restoreAfterLoad() {
 		startSound(sound);
 }
 
-void LoomMonkeyMacSnd::enable() {
-	restoreAfterLoad();
+void LoomMonkeyMacSnd::enableMusic() {
+	_disableFlags &= ~1;
+	updateDisabledState();
 }
 
-void LoomMonkeyMacSnd::disable() {
-	int sound = _curSoundSaveVar;
-	stopActiveSound();
-	_curSoundSaveVar = sound;
+void LoomMonkeyMacSnd::disableMusic() {
+	_disableFlags |= 1;
+	updateDisabledState();
+}
+
+void LoomMonkeyMacSnd::enableSoundEffects() {
+	_disableFlags &= ~2;
+	updateDisabledState();
+}
+
+void LoomMonkeyMacSnd::disableSoundEffects() {
+	_disableFlags |= 2;
+	updateDisabledState();
 }
 
 void LoomMonkeyMacSnd::vblCallback() {
@@ -879,6 +893,17 @@ void LoomMonkeyMacSnd::disposeAllChannels() {
 	}
 
 	_curChanConfig = 0;
+}
+
+void LoomMonkeyMacSnd::updateDisabledState() {
+	if (_disableFlags == 0) {
+		if (_curSoundSaveVar)
+			startSound(_curSoundSaveVar);
+	} else {
+		int sound = _curSoundSaveVar;
+		stopActiveSound();
+		_curSoundSaveVar = sound;
+	}
 }
 
 void LoomMonkeyMacSnd::detectQuality() {
