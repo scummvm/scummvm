@@ -196,11 +196,11 @@ private:
 	const qdEngineInterface *_engine = nullptr;
 	qdMinigameSceneInterface *_scene = nullptr;
 
-	qdMinigameObjectInterface *_objects[84];
+	qdMinigameObjectInterface *_objects[84] = { nullptr };
 	qdMinigameObjectInterface *_objDone = nullptr;
 	qdMinigameObjectInterface *_objSound = nullptr;
 
-	float _timePassed;
+	float _timePassed = 0.0;
 };
 
 } // namespace QDEngine
