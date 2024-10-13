@@ -977,8 +977,6 @@ bool MacMI1Gui::runOptionsDialog() {
 		music = 0;
 	}
 
-	int scrolling = _vm->_snapScroll == 0;
-	int fullAnimation = _vm->VAR(_vm->VAR_MACHINE_SPEED) == 1 ? 0 : 1;
 	int textSpeed = _vm->_defaultTextSpeed;
 	int musicQuality = ConfMan.hasKey("mac_snd_quality") ? ConfMan.getInt("mac_snd_quality") : 0;
 	int musicQualityOption = (musicQuality == 0) ? 1 : (musicQuality - 1) % 3;
@@ -988,8 +986,6 @@ bool MacMI1Gui::runOptionsDialog() {
 
 	window->setWidgetValue(2, sound);
 	window->setWidgetValue(3, music);
-	window->setWidgetValue(6, scrolling);
-	window->setWidgetValue(7, fullAnimation);
 
 	if (!sound)
 		window->setWidgetEnabled(3, false);
@@ -999,9 +995,6 @@ bool MacMI1Gui::runOptionsDialog() {
 
 	window->addPictureSlider(8, 9, true, 5, 69, 0, 2, 6, 4);
 	window->setWidgetValue(12, musicQualityOption);
-
-	// Machine rating
-	window->addSubstitution(Common::String::format("%d", _vm->VAR(53)));
 
 	// When quitting, the default action is not to not apply options
 	bool ret = false;
@@ -1018,8 +1011,10 @@ bool MacMI1Gui::runOptionsDialog() {
 		if (clicked == 1)
 			break;
 
-		if (clicked == 2)
+		if (clicked == 2) {
 			window->setWidgetEnabled(3, window->getWidgetValue(2) != 0);
+			window->setWidgetValue(3, window->getWidgetValue(2) != 0 ? 1 : 0);
+		}
 	}
 
 	if (ret) {
@@ -1031,34 +1026,16 @@ bool MacMI1Gui::runOptionsDialog() {
 		_vm->setTalkSpeed(_vm->_defaultTextSpeed);
 
 		// SOUND&MUSIC ACTIVATION
-		// 0 - Sound&Music on
-		// 1 - Sound on, music off
-		// 2 - Sound&Music off
-		int musicVariableValue = 0;
-
 		if (window->getWidgetValue(2) == 0) {
-			musicVariableValue = 2;
+			// Sound&Music off
+			// STUB
 		} else if (window->getWidgetValue(2) == 1 && window->getWidgetValue(3) == 0) {
-			musicVariableValue = 1;
+			// Sound on, music off
+			// STUB
+		} else {
+			// Sound&Music on
+			// STUB
 		}
-
-		_vm->VAR(167) = musicVariableValue;
-
-		if (musicVariableValue != 0) {
-			if (_vm->VAR(169) != 0) {
-				_vm->_sound->stopSound(_vm->VAR(169));
-				_vm->VAR(169) = 0;
-			}
-		}
-
-		// SCROLLING ACTIVATION
-		_vm->_snapScroll = window->getWidgetValue(6) == 0;
-
-		if (_vm->VAR_CAMERA_FAST_X != 0xFF)
-			_vm->VAR(_vm->VAR_CAMERA_FAST_X) = _vm->_snapScroll;
-
-		// FULL ANIMATION ACTIVATION
-		_vm->VAR(_vm->VAR_MACHINE_SPEED) = window->getWidgetValue(7) == 1 ? 0 : 1;
 
 		// MUSIC QUALITY SELECTOR
 		musicQuality = musicQuality * 3 + 1 + window->getWidgetValue(12);
