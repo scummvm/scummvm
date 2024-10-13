@@ -399,39 +399,36 @@ bool XMesh::pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir) {
 	if (!_blendedMesh)
 		return false;
 
-	float *vertexData = (float *)_blendedMesh->getVertexBuffer().ptr();
-	if (vertexData == nullptr) {
-		return false;
-	}
-	uint32 vertexSize = DXGetFVFVertexSize(_blendedMesh->getFVF()) / sizeof(float);
+	uint32 fvfSize = DXGetFVFVertexSize(_blendedMesh->getFVF());
+	uint32 numFaces = _blendedMesh->getNumFaces();
 
-	bool res = false;
+	// lock vertex buffer
+	byte *points = _blendedMesh->getVertexBuffer().ptr();
 
-	uint32 *indexData = (uint32 *)_blendedMesh->getIndexBuffer().ptr();
-	uint32 indexDataSize = _blendedMesh->getIndexBuffer().size() / sizeof(uint32);
-	for (uint32 i = 0; i < indexDataSize; i += 3) {
-		uint32 index1 = indexData[i + 0];
-		uint32 index2 = indexData[i + 1];
-		uint32 index3 = indexData[i + 2];
+	// lock index buffer
+	uint32 *indices = (uint32 *)_blendedMesh->getIndexBuffer().ptr();
 
-		Math::Vector3d v0;
-		v0.setData(&vertexData[index1 * vertexSize]);
-		Math::Vector3d v1;
-		v1.setData(&vertexData[index2 * vertexSize]);
-		Math::Vector3d v2;
-		v2.setData(&vertexData[index3 * vertexSize]);
+
+	bool found = false;
+	Math::Vector3d intersection;
+
+	for (uint32 i = 0; i < numFaces; i++) {
+		DXVector3 vp0 = *(DXVector3 *)(points + indices[3 * i + 0] * fvfSize);
+		DXVector3 vp1 = *(DXVector3 *)(points + indices[3 * i + 1] * fvfSize);
+		DXVector3 vp2 = *(DXVector3 *)(points + indices[3 * i + 2] * fvfSize);
+		Math::Vector3d v0 = Math::Vector3d(vp0._x, vp0._y, vp0._z);
+		Math::Vector3d v1 = Math::Vector3d(vp1._x, vp1._y, vp1._z);
+		Math::Vector3d v2 = Math::Vector3d(vp2._x, vp2._y, vp2._z);
 
 		if (isnan(v0.x()))
 			continue;
 
-		Math::Vector3d intersection;
-		if (intersectTriangle(*pickRayOrig, *pickRayDir, v0, v1, v2, intersection.x(), intersection.y(), intersection.z())) {
-			res = true;
+		found = intersectTriangle(*pickRayOrig, *pickRayDir, v0, v1, v2, intersection.x(), intersection.y(), intersection.z()) != false;
+		if (found)
 			break;
-		}
 	}
 
-	return res;
+	return found;
 }
 
 ////////////////////////////////////////////////////////////////////////////
