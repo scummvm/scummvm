@@ -307,13 +307,13 @@ public:
 
 	uint32 getMagic() const { return _magic; }
 	const Common::String &getVersion() const { return _version; }
+
 	bool runPreTickOps() { return runOps(_preTickOps); }
 	bool runPostTickOps() { return runOps(_postTickOps); }
 
 	static bool runOps(const Common::Array<SceneOp> ops, int16 addMinutes = 0);
+
 	virtual Common::Error syncState(Common::Serializer &s) = 0;
-	virtual void enableTrigger(uint16 numm, bool enable = true) {}
-	virtual void showDialog(uint16 fileNum, uint16 dlgNum) {}
 
 protected:
 	bool readConditionList(Common::SeekableReadStream *s, Common::Array<SceneConditions> &list) const;
@@ -448,7 +448,7 @@ public:
 	Common::Error syncState(Common::Serializer &s) override;
 
 	void onDragFinish(const Common::Point &pt);
-	void enableTrigger(uint16 num, bool enable = true) override;
+	void enableTrigger(uint16 num, bool enable = true);
 
 	Dialog *loadDialogData(uint16 num);
 	void freeDialogData(uint16 num);
@@ -468,7 +468,7 @@ public:
 	bool isTriggerEnabled(uint16 num);
 	bool isLButtonDown() const { return _lbuttonDown; }
 	bool isRButtonDown() const { return _rbuttonDown; }
-	void showDialog(uint16 fileNum, uint16 dlgNum) override;
+	void showDialog(uint16 fileNum, uint16 dlgNum);
 	const Common::Array<ConditionalSceneOp> &getConditionalOps() { return _conditionalOps; }
 
 protected:

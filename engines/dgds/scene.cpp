@@ -1054,7 +1054,7 @@ void SDSScene::enableTrigger(uint16 num, bool enable /* = true */) {
 		}
 	}
 
-	warning("Trigger %d not found", num);
+	warning("enableTrigger: Trigger %d not found", num);
 }
 
 bool SDSScene::isTriggerEnabled(uint16 num) {
@@ -1064,14 +1064,11 @@ bool SDSScene::isTriggerEnabled(uint16 num) {
 		}
 	}
 
-	warning("Trigger %d not found", num);
+	warning("isTriggerEnabled: Trigger %d not found", num);
 	return false;
 }
 
 void SDSScene::checkTriggers() {
-	// scene can change on these triggers.  if that happens we stop.
-	int startSceneNum = _num;
-
 	for (SceneTrigger &trigger : _triggers) {
 		if (!trigger._enabled)
 			continue;
@@ -1085,10 +1082,10 @@ void SDSScene::checkTriggers() {
 			continue;
 
 		trigger._enabled = false;
-		runOps(trigger.sceneOpList);
+		bool keepGoing = runOps(trigger.sceneOpList);
 
 		// If the scene changed, the list is no longer valid. Abort!
-		if (_num != startSceneNum)
+		if (!keepGoing)
 			return;
 	}
 }
@@ -1694,8 +1691,9 @@ void SDSScene::mouseLDown(const Common::Point &pt) {
 	if (!area)
 		return;
 
-	debug(9, "Mouse LDown on area %d (%d,%d,%d,%d) cursor %d", area->_num, area->_rect.x, area->_rect.y,
-			area->_rect.width, area->_rect.height, area->_cursorNum);
+	debug(9, "Mouse LDown on area %d (%d,%d,%d,%d) cursor %d. Run %d ops", area->_num,
+			area->_rect.x, area->_rect.y, area->_rect.width, area->_rect.height,
+			area->_cursorNum, area->onLDownOps.size());
 
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	int16 addmins = engine->getGameGlobals()->getGameMinsToAddOnStartDrag();
@@ -1763,7 +1761,7 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 			addInvButtonToHotAreaList();
 	} else {
 		if (_rbuttonDown) {
-			debug(" --> exec %d both-button click ops for area %d", area->onLClickOps.size(), area->_num);
+			debug(" --> exec both-button click ops for area %d", area->_num);
 			// A both-button-click event, find the interaction list.
 			const GameItem *activeItem = engine->getGDSScene()->getActiveItem();
 			if (activeItem) {
