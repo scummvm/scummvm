@@ -23,6 +23,7 @@
 #define M4_CORE_ROOMS_H
 
 #include "common/hashmap.h"
+#include "common/serializer.h"
 #include "m4/adv_r/adv.h"
 #include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/adv_hotspot.h"
@@ -41,6 +42,7 @@ public:
 	virtual void parser();
 	virtual void roomError() {}
 	virtual void shutdown() {}
+	virtual void syncGame(Common::Serializer &s) {}
 
 	/**
 	 * Used to return custom hotspots at a given position
@@ -148,6 +150,7 @@ public:
 	HotSpotRec *custom_hotspot_which(int x, int y) {
 		return _activeRoom->custom_hotspot_which(x, y);
 	}
+	Room *getRoom(int room) const;
 
 	void m4SceneLoad();
 	void m4RunScene();

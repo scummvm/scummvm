@@ -278,6 +278,10 @@ Common::Error M4Engine::syncGame(Common::Serializer &s) {
 	_G(conversations).syncGame(s);
 	_G(inventory)->syncGame(s);
 
+	Room *room = s.isSaving() ? g_engine->_activeRoom :
+		g_engine->getRoom(_G(game).room_id);
+	room->syncGame(s);
+
 	if (s.isLoading()) {
 		// set up variables so everyone knows we've teleported
 		_G(kernel).restore_game = true;

@@ -97,8 +97,8 @@ void Room303::init() {
 	switch (_G(game).previous_room) {
 	case KERNEL_RESTORING_GAME:
 		if (!player_been_here(301)) {
-			kernel_load_variant(_val13 ? "303lock1" : "303lock2");
-			setFengActive(_val13);
+			kernel_load_variant(_fengFlag ? "303lock1" : "303lock2");
+			setFengActive(_fengFlag);
 			setupMei();
 			setShadow4(true);
 
@@ -106,7 +106,7 @@ void Room303::init() {
 			ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
 			loadFengLi();
 
-			if (_val13) {
+			if (_fengFlag) {
 				_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
 					triggerMachineByHashCallback, "fl");
 				setShadow5(true);
@@ -116,8 +116,7 @@ void Room303::init() {
 				setShadow5(false);
 			}
 
-			sendWSMessage_10000(1, _fengLi, _feng4, 1, 1, 400,
-				_feng4, 1, 6, 0);
+			sendWSMessage_10000(1, _fengLi, _feng4, 1, 1, 400, _feng4, 1, 6, 0);
 			_val14 = _val15 = 1;
 		}
 
@@ -150,7 +149,7 @@ void Room303::init() {
 			ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
 			_fengLi = triggerMachineByHash_3000(8, 2, *S3_NORMAL_DIRS, *S3_SHADOW_DIRS,
 				470, 226, 9, triggerMachineByHashCallback3000, "fl");
-			_val13 = 1;
+			_fengFlag = true;
 
 			kernel_load_variant("303lock1");
 			setFengActive(true);
@@ -184,7 +183,8 @@ void Room303::init() {
 				sendWSMessage_10000(1, _fengLi, _feng4, 1, 1, 400,
 					_feng4, 1, 6, 0);
 
-				_val14 = _val15 = _val13 = 1;
+				_val14 = _val15 = 1;
+				_fengFlag = true;
 				setShadow5(true);
 			}
 
@@ -208,11 +208,10 @@ void Room303::init() {
 
 			_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
 				triggerMachineByHashCallback, "fl");
-			sendWSMessage_10000(1, _fengLi, _feng1, 1, 16, 400,
-				_feng1, 1, 6, 0);
+			sendWSMessage_10000(1, _fengLi, _feng1, 1, 16, 400, _feng1, 1, 6, 0);
 			_val14 = _val15 = 1;
 			setShadow5(true);
-			_val13 = 1;
+			_fengFlag = true;
 
 			kernel_load_variant("303lock1");
 			setFengActive(true);
@@ -231,7 +230,7 @@ void Room303::init() {
 			setShadow4(true);
 			ws_walk_load_walker_series(S3_NORMAL_DIRS, S3_NORMAL_NAMES);
 			ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
-			_val13 = 1;
+			_fengFlag = true;
 			loadFengLi();
 
 			_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
@@ -289,12 +288,11 @@ void Room303::init() {
 		ws_walk_load_walker_series(S3_NORMAL_DIRS, S3_NORMAL_NAMES);
 		ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
 
-		_val13 = 1;
+		_fengFlag = true;
 		loadFengLi();
 		_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
 			triggerMachineByHashCallback, "fl");
-		sendWSMessage_10000(1, _fengLi, _feng4, 1, 1, 400,
-			_feng4, 1, 6, 0);
+		sendWSMessage_10000(1, _fengLi, _feng4, 1, 1, 400, _feng4, 1, 6, 0);
 		_val14 = _val15 = 1;
 		setShadow5(true);
 
@@ -1033,7 +1031,7 @@ void Room303::daemon() {
 			case 5:
 				terminateMachineAndNull(_fengLi);
 
-				if (_val13)
+				if (_fengFlag)
 					_fengLi = triggerMachineByHash_3000(8, 2, *S3_NORMAL_DIRS, *S3_SHADOW_DIRS,
 						480, 256, 7, triggerMachineByHashCallback3000, "fl walker");
 				else
@@ -1156,7 +1154,7 @@ void Room303::parser() {
 		conv303b();
 	} else if (player_said("conv303a")) {
 		conv303a();
-	} else if (lookFlag && _G(flags)[V000] == 0 && _val13 &&
+	} else if (lookFlag && _G(flags)[V000] == 0 && _fengFlag &&
 			player_said_any("cow", "giant matchstick")) {
 		switch (_G(kernel).trigger) {
 		case -1:
@@ -1182,7 +1180,7 @@ void Room303::parser() {
 				_feng4, 1, 6, 0);
 			_val14 = _val15 = 1;
 			setFengActive(false);
-			_val13 = 0;
+			_fengFlag = false;
 
 			kernel_load_variant("303lock2");
 			_G(kernel).trigger_mode = KT_PARSE;
@@ -1193,7 +1191,7 @@ void Room303::parser() {
 			break;
 		}
 	} else if (lookFlag && player_said("torso tomato") &&
-			!_G(flags)[V081] && !_G(flags)[V000] && !_val13) {
+			!_G(flags)[V081] && !_G(flags)[V000] && !_fengFlag) {
 		switch (_G(kernel).trigger) {
 		case 1:
 			setShadow5Alt(false);
@@ -1211,7 +1209,7 @@ void Room303::parser() {
 				_feng4, 1, 6, 0);
 			_val14 = _val15 = 1;
 			setFengActive(true);
-			_val13 = 1;
+			_fengFlag = true;
 
 			kernel_load_variant("303lock1");
 			_G(kernel).trigger_mode = KT_PARSE;
@@ -1305,7 +1303,7 @@ void Room303::parser() {
 			}
 		}
 	} else if (lookFlag && player_said("copper tank") &&
-			(_G(flags)[V000] == 1 || _val13)) {
+			(_G(flags)[V000] == 1 || _fengFlag)) {
 		if (_G(flags)[V000] == 1) {
 			digi_play("303r31", 1);
 		} else {
@@ -1655,7 +1653,7 @@ void Room303::parser() {
 		player_update_info();
 		ws_hide_walker();
 
-		if (_val13) {
+		if (_fengFlag) {
 			_ripsh2 = series_show("ripsh2", 0xf00, 0, -1, -1, 0,
 				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			_machine3 = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
@@ -1759,6 +1757,7 @@ void Room303::setFengActive(bool flag) {
 			} else {
 				hotspot->active = hotspot->lr_x > 600;
 			}
+			break;
 		}
 	}
 }
@@ -2031,6 +2030,10 @@ void Room303::playSound(const Common::String &assetName, int trigger, int val1) 
 	sendWSMessage(0x200000, 0, _priestTalk, 0, nullptr, 1);
 
 	digi_play(assetName.c_str(), 1, 255, trigger);
+}
+
+void Room303::syncGame(Common::Serializer &s) {
+	s.syncAsByte(_fengFlag);
 }
 
 } // namespace Rooms

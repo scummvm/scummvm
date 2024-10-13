@@ -1292,6 +1292,7 @@ next4:
 
 		case 1:
 			_G(game).setRoom(303);
+			break;
 
 		default:
 			break;

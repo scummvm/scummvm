@@ -465,6 +465,10 @@ void Sections::adv_camera_pan_step(int32 step) {
 	camera_pan_step = step;
 }
 
+Room *Sections::getRoom(int room) const {
+	return (*_sections[(room / 100) - 1])[room];
+}
+
 /*------------------------------------------------------------------------*/
 
 Room *Section::operator[](uint roomNum) {

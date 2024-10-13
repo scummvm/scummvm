@@ -42,7 +42,7 @@ private:
 	int _val10 = 0;
 	int _val11 = 0;
 	KernelTriggerType _val12 = KT_DAEMON;
-	bool _val13 = false;
+	bool _fengFlag = false;
 	int _val14 = 0;
 	int _val15 = 0;
 	int _val16 = 0;
@@ -106,6 +106,7 @@ public:
 	void daemon() override;
 	void pre_parser() override;
 	void parser() override;
+	void syncGame(Common::Serializer &s) override;
 };
 
 } // namespace Rooms
