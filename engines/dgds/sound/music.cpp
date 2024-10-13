@@ -88,6 +88,9 @@ void SciMusic::init() {
 		error("TODO: Implement pc speaker driver?");
 		//_pMidiDrv = MidiPlayer_PCSpeaker_create();
 		break;
+	case MT_CMS:
+		_pMidiDrv = MidiPlayer_CMS_create();
+		break;
 	default:
 		_pMidiDrv = MidiPlayer_Midi_create();
 	}
@@ -391,7 +394,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 		} else {
 			// play MIDI track
 			Common::StackLock lock(_mutex);
-			pSnd->soundType = Audio::Mixer::kMusicSoundType;
+			//pSnd->soundType = Audio::Mixer::kMusicSoundType; // set on init for DGDS
 			if (pSnd->pMidiParser == nullptr) {
 				pSnd->pMidiParser = new MidiParser_SCI(this);
 				pSnd->pMidiParser->setMidiDriver(_pMidiDrv);

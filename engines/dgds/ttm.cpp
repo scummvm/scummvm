@@ -316,8 +316,8 @@ static void _dissolveToScreen(const Graphics::ManagedSurface &src, const Common:
 
 static void _doScroll(Graphics::ManagedSurface &compBuf, int16 dir, int16 steps, int16 offset) {
 	// Scroll the contents of the composition buffer on to the screen
-	// Dir 0/1 means y (scroll toward bottom / top)
-	// Dir 2 means x (scroll toward right)
+	// Dir 0/1 means y (scroll camera toward bottom / top)
+	// Dir 2/3 means x (scroll camera toward right / left)
 	//
 	// This is not at all how the original does it, but we have a bit
 	// more memory and cpu to play with so an extra 64k screen buffer
@@ -1088,7 +1088,6 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		if (seq._executed) // this is a one-shot op
 			break;
 
-		_vm->_soundPlayer->stopMusic();
 		if (_vm->_platform == Common::kPlatformAmiga) {
 			// TODO: remove hard-coded stuff..
 			_vm->_soundPlayer->playAmigaSfx("DYNAMIX.INS", 0, 255);

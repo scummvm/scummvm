@@ -31,6 +31,7 @@ MODULE_OBJS := \
 	sound/music.o \
 	sound/drivers/adlib.o \
 	sound/drivers/amigamac1.o \
+	sound/drivers/cms.o \
 	sound/drivers/midi.o \
 	sound/drivers/midipatch.o \
 	sound/resource/sci_resource.o \

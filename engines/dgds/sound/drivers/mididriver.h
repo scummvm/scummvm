@@ -127,6 +127,7 @@ extern SciResource *getMidiPatchData(int num);
 
 extern MidiPlayer *MidiPlayer_AdLib_create();
 extern MidiPlayer *MidiPlayer_AmigaMac1_create(Common::Platform platform);
+extern MidiPlayer *MidiPlayer_CMS_create();
 extern MidiPlayer *MidiPlayer_PCJr_create();
 extern MidiPlayer *MidiPlayer_PCSpeaker_create();
 extern MidiPlayer *MidiPlayer_Midi_create();

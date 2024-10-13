@@ -51,27 +51,29 @@ public:
 	void loadMacMusic(const Common::String &filename);
 	void loadSFX(const Common::String &filename);
 
-	void playMusic(uint num);
+	void playMusic(int num);
 	void stopMusic();
 	void unloadMusic();
 
-	void playSFX(uint num);
+	void playSFX(int num);
 
 	void stopSfxForChannel(byte channel);
-	void stopSfxByNum(uint num);
+	void stopSfxByNum(int num);
 	void stopAllSfx();
 
 	bool playPCM(const byte *data, uint32 size);
 
 private:
 	void loadPCSound(const Common::String &filename, Common::Array<uint32> &sizeArray, Common::Array<byte *> &dataArray);
-	void playPCSound(uint num, const Common::Array<uint32> &sizeArray, const Common::Array<byte *> &dataArray, Audio::Mixer::SoundType soundType);
+	void playPCSound(int num, const Common::Array<uint32> &sizeArray, const Common::Array<byte *> &dataArray, Audio::Mixer::SoundType soundType);
 
-	void processInitSound(uint num, const byte *data, int dataSz, Audio::Mixer::SoundType soundType);
+	void processInitSound(uint32 obj, const byte *data, int dataSz, Audio::Mixer::SoundType soundType);
 	void processDisposeSound(uint32 obj);
 	void processStopSound(uint32 obj, bool sampleFinishedPlaying);
 	void processPlaySound(uint32 obj, bool playBed, bool restoring, const byte *data, int dataSz);
 	void initSoundResource(MusicEntry *newSound, const byte *data, int dataSz, Audio::Mixer::SoundType soundType);
+
+	int mapSfxNum(int num) const;
 
 	struct Channel _channels[2];
 
@@ -93,7 +95,10 @@ enum {
 	DIGITAL_PCM   = 1 << 0,
 	TRACK_ADLIB   = 1 << 1,
 	TRACK_GM      = 1 << 2,
-	TRACK_MT32    = 1 << 3
+	TRACK_MT32    = 1 << 3,
+	TRACK_CMS     = 1 << 4,
+	TRACK_PCSPK   = 1 << 5,
+	TRACK_TANDY   = 1 << 6,
 };
 
 } // End of namespace Dgds

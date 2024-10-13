@@ -25,7 +25,7 @@
 #include "audio/cms.h"
 
 #include "dgds/sound/resource/sci_resource.h"
-#include "dgds/util.h"
+#include "dgds/sound/scispan.h"
 
 namespace Dgds {
 
@@ -715,8 +715,8 @@ const int CMSVoice_V1::_velocityTable[32] = {
 	 6,  6,  7,  8,  8,  9, 10, 10
 };
 
-MidiDriver_CMS::MidiDriver_CMS(ResourceManager *resMan, SciVersion version) : _resMan(resMan), _isOpen(false),
-	_version(version), _cms(nullptr), _playSwitch(true), _masterVolume(0), _numVoicesPrimary(version > SCI_VERSION_0_LATE ? 12 : 8),
+MidiDriver_CMS::MidiDriver_CMS(ResourceManager *resMan) : _resMan(resMan), _isOpen(false),
+	_cms(nullptr), _playSwitch(true), _masterVolume(0), _numVoicesPrimary(12),
 	_timerProc(nullptr), _timerParam(nullptr), _actualTimerInterval(1000000 / CMS::CMS::DEFAULT_CALLBACK_FREQUENCY), _reqTimerInterval(1000000/60),
 	_numVoicesSecondary(0) {
 	memset(_voice, 0, sizeof(_voice));
@@ -733,7 +733,7 @@ int MidiDriver_CMS::open() {
 		return MERR_ALREADY_OPEN;
 
 	assert(_resMan);
-	Resource *res = _resMan->findResource(ResourceId(kResourceTypePatch, 101), false);
+	SciResource *res = getMidiPatchData(101);
 	if (!res)
 		return -1;
 
@@ -1233,12 +1233,10 @@ void MidiDriver_CMS::writeToChip(int chip, int address, int data) {
 
 class MidiPlayer_CMS : public MidiPlayer {
 public:
-	MidiPlayer_CMS(SciVersion version) : MidiPlayer(version), _filesMissing(false) {}
+	MidiPlayer_CMS() : MidiPlayer() {}
 
 	int open(ResourceManager *resMan) override;
 	void close() override;
-
-	void initTrack(SciSpan<const byte>& header) override;
 
 	bool hasRhythmChannel() const override { return false; }
 	byte getPlayId() const override { return 9; }
@@ -1251,7 +1249,7 @@ int MidiPlayer_CMS::open(ResourceManager *resMan) {
 	if (_driver)
 		return MidiDriver::MERR_ALREADY_OPEN;
 
-	_driver = new MidiDriver_CMS(resMan, _version);
+	_driver = new MidiDriver_CMS(resMan);
 	int driverRetVal = _driver->open();
 
 	return driverRetVal;
@@ -1264,15 +1262,8 @@ void MidiPlayer_CMS::close() {
 	_driver = nullptr;
 }
 
-void MidiPlayer_CMS::initTrack(SciSpan<const byte>& header) {
-	if (_driver)
-		static_cast<MidiDriver_CMS*>(_driver)->initTrack(header);
-}
-
-const char MidiPlayer_CMS::_requiredFiles[] = "'PATCH.101'";
-
-MidiPlayer *MidiPlayer_CMS_create(SciVersion version) {
-	return new MidiPlayer_CMS(version);
+MidiPlayer *MidiPlayer_CMS_create() {
+	return new MidiPlayer_CMS();
 }
 
 } // End of namespace SCI

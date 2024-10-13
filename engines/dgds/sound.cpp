@@ -112,6 +112,7 @@ static uint32 _availableSndTracks(const byte *data, uint32 size) {
 				break;
 			case 9:
 				//debug("- CMS");
+				tracks |= TRACK_CMS;
 				break;
 			case 12:
 				//debug("- MT-32");
@@ -119,9 +120,11 @@ static uint32 _availableSndTracks(const byte *data, uint32 size) {
 				break;
 			case 18:
 				//debug("- PC Speaker");
+				tracks |= TRACK_PCSPK;
 				break;
 			case 19:
 				//debug("- Tandy 1000");
+				tracks |= TRACK_TANDY;
 				break;
 			default:
 				//debug("- Unknown %d", drv);
@@ -347,6 +350,7 @@ void Sound::loadMacMusic(const Common::String &filename) {
 void Sound::loadMusic(const Common::String &filename) {
 	unloadMusic();
 	loadPCSound(filename, _musicSizes, _musicData);
+	debug("Sound: Loaded music %s with %d entries", filename.c_str(), _musicData.size());
 }
 
 void Sound::loadSFX(const Common::String &filename) {
@@ -394,14 +398,24 @@ void Sound::loadPCSound(const Common::String &filename, Common::Array<uint32> &s
 	delete musicStream;
 }
 
-void Sound::playSFX(uint num) {
-	playPCSound(num, _sfxSizes, _sfxData, Audio::Mixer::kSFXSoundType);
+int Sound::mapSfxNum(int num) const {
+	// Fixed offset in Dragon and HoC?
+	if (DgdsEngine::getInstance()->getGameId() == GID_DRAGON || DgdsEngine::getInstance()->getGameId() == GID_HOC)
+		return num - 24;
+	return num;
 }
 
-void Sound::stopSfxByNum(uint num) {
-	MusicEntry *musicSlot = _music->getSlot(num + SND_RESOURCE_OFFSET);
+void Sound::playSFX(int num) {
+	int mappedNum = mapSfxNum(num);
+	playPCSound(mappedNum, _sfxSizes, _sfxData, Audio::Mixer::kSFXSoundType);
+}
+
+void Sound::stopSfxByNum(int num) {
+	int mappedNum = mapSfxNum(num);
+
+	MusicEntry *musicSlot = _music->getSlot(mappedNum + SND_RESOURCE_OFFSET);
 	if (!musicSlot) {
-		warning("stopSfxByNum: Slot not found (%08x)", num);
+		debug("stopSfxByNum: Slot for sfx num %d not found.", mappedNum);
 		return;
 	}
 
@@ -410,28 +424,29 @@ void Sound::stopSfxByNum(uint num) {
 	_music->soundStop(musicSlot);
 }
 
-void Sound::playMusic(uint num) {
+void Sound::playMusic(int num) {
+	debug("Sound: Play music %d of (%d entries)", num, _musicData.size());
 	playPCSound(num, _musicSizes, _musicData, Audio::Mixer::kMusicSoundType);
 }
 
-void Sound::processInitSound(uint num, const byte *data, int dataSz, Audio::Mixer::SoundType soundType) {
+void Sound::processInitSound(uint32 obj, const byte *data, int dataSz, Audio::Mixer::SoundType soundType) {
 	// Check if a track with the same sound object is already playing
-	MusicEntry *oldSound = _music->getSlot(num);
+	MusicEntry *oldSound = _music->getSlot(obj);
 	if (oldSound) {
-		processDisposeSound(num);
+		processDisposeSound(obj);
 	}
 
 	MusicEntry *newSound = new MusicEntry();
-	newSound->resourceId = num;
-	newSound->soundObj = num;
+	newSound->resourceId = obj;
+	newSound->soundObj = obj;
 	newSound->loop = 1; // Default to one loop
 	newSound->overridePriority = false;
 	newSound->priority = 255; // TODO: Priority?
 	newSound->volume = MUSIC_VOLUME_DEFAULT;
 	newSound->reverb = -1;	// initialize to SCI invalid, it'll be set correctly in soundInitSnd() below
 
-	debugC(kDebugLevelSound, "kDoSound(init): %08x number %d, loop %d, prio %d, vol %d", num,
-			num, newSound->loop, newSound->priority, newSound->volume);
+	debugC(kDebugLevelSound, "kDoSound(init): %08x number %d, loop %d, prio %d, vol %d", obj,
+			obj, newSound->loop, newSound->priority, newSound->volume);
 
 	initSoundResource(newSound, data, dataSz, soundType);
 
@@ -533,18 +548,18 @@ void Sound::processPlaySound(uint32 obj, bool playBed, bool restoring, const byt
 	musicSlot->fadeStep = 0;
 }
 
-void Sound::playPCSound(uint num, const Common::Array<uint32> &sizeArray, const Common::Array<byte *> &dataArray, Audio::Mixer::SoundType soundType) {
+void Sound::playPCSound(int num, const Common::Array<uint32> &sizeArray, const Common::Array<byte *> &dataArray, Audio::Mixer::SoundType soundType) {
 	if (_musicIdMap.size()) {
 		num = _musicIdMap[num];
 	}
 
-	if (num < dataArray.size()) {
-		uint32 tracks = _availableSndTracks(dataArray[num], sizeArray[num]);
+	if (num >= 0 && num < (int)dataArray.size()) {
+		int size = sizeArray[num];
+		const byte *data = dataArray[num];
+		uint32 tracks = _availableSndTracks(data, size);
 		if (tracks & DIGITAL_PCM) {
-			playPCM(dataArray[num], sizeArray[num]);
+			playPCM(data, size);
 		} else {
-			int size = sizeArray[num];
-			const byte *data = dataArray[num];
 			uint32 hdrsize = 0;
 			_readHeader(data, hdrsize);
 			size -= hdrsize;
