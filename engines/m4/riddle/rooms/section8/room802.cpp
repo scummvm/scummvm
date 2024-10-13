@@ -464,7 +464,8 @@ void Room802::parser() {
 
 	else if (player_said("journal") && (takeFl || lookFl || gearFl)) {
 		digi_play("com042", 1, 255, -1, 997);
-	}
+	} else
+		return;
 
 	_G(player).command_ready = false;
 }
