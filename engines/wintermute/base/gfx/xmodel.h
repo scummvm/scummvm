@@ -177,7 +177,7 @@ private:
 	bool findBones(bool animOnly = false, XModel *parentModel = nullptr);
 
 	void updateBoundingRect();
-	void static inline updateRect(Rect32 *rc, int32 x, int32 y);
+	void static inline updateRect(Rect32 *rc, Math::Vector3d vec);
 	Rect32 _drawingViewport;
 	Math::Matrix4 _lastViewMat;
 	Math::Matrix4 _lastProjMat;

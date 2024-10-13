@@ -578,36 +578,36 @@ void XModel::updateBoundingRect() {
 	int32 screenY = 0;
 
 	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x1, y1, z1), screenX, screenY);
-	updateRect(&_boundingRect, screenX, screenY);
+	updateRect(&_boundingRect, Math::Vector3d(screenX, screenY, 0));
 
 	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x1, y1, z2), screenX, screenY);
-	updateRect(&_boundingRect, screenX, screenY);
+	updateRect(&_boundingRect, Math::Vector3d(screenX, screenY, 0));
 
 	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x1, y2, z1), screenX, screenY);
-	updateRect(&_boundingRect, screenX, screenY);
+	updateRect(&_boundingRect, Math::Vector3d(screenX, screenY, 0));
 
 	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x1, y2, z2), screenX, screenY);
-	updateRect(&_boundingRect, screenX, screenY);
+	updateRect(&_boundingRect, Math::Vector3d(screenX, screenY, 0));
 
 	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x2, y1, z1), screenX, screenY);
-	updateRect(&_boundingRect, screenX, screenY);
+	updateRect(&_boundingRect, Math::Vector3d(screenX, screenY, 0));
 
 	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x2, y1, z2), screenX, screenY);
-	updateRect(&_boundingRect, screenX, screenY);
+	updateRect(&_boundingRect, Math::Vector3d(screenX, screenY, 0));
 
 	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x2, y2, z1), screenX, screenY);
-	updateRect(&_boundingRect, screenX, screenY);
+	updateRect(&_boundingRect, Math::Vector3d(screenX, screenY, 0));
 
 	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x2, y2, z2), screenX, screenY);
-	updateRect(&_boundingRect, screenX, screenY);
+	updateRect(&_boundingRect, Math::Vector3d(screenX, screenY, 0));
 }
 
 //////////////////////////////////////////////////////////////////////////
-void XModel::updateRect(Rect32 *rc, int32 x, int32 y) {
-	rc->left   = MIN(rc->left, x);
-	rc->right  = MAX(rc->right, x);
-	rc->top    = MIN(rc->top, y);
-	rc->bottom = MAX(rc->bottom, y);
+void XModel::updateRect(Rect32 *rc, Math::Vector3d vec) {
+	rc->left   = MIN(rc->left, (int32)vec.x());
+	rc->right  = MAX(rc->right, (int32)vec.x());
+	rc->top    = MIN(rc->top, (int32)vec.y());
+	rc->bottom = MAX(rc->bottom, (int32)vec.y());
 }
 
 //////////////////////////////////////////////////////////////////////////
