@@ -523,8 +523,8 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		characters[0]->CurrentPathIndex = -1;
 		characters[0]->Path.clear();
 		characters[0]->Path.push_back(8);
-		characters[0]->Path.push_back(9);
 		characters[0]->Path.push_back(11);
+		characters[0]->Path.push_back(9);
 	}
 	return true;
 }
@@ -1086,13 +1086,17 @@ void Character::SetPosition(const Common::Point &newPosition) {
 
 bool Character::TryFollowPath() {
 	CurrentPathIndex++;
-	if (CurrentPathIndex == Path.size() - 1) {
-		// TODO: Handle the need to walk to a free point at the end of the path to
-		// read the actual destiantion
+	if (CurrentPathIndex == Path.size()) {
+		// This means we now need to move to the final destination
+		StartLerpTo(PathFinalDestination, 1000);
+		return true;
+	}
+	if (CurrentPathIndex == Path.size() + 1) {
 		return false;
 	}
+	const uint16 currentPathPointIndex = Path[CurrentPathIndex] -1;
 	// Set up a lerp
-	PathfindingPoint &current = g_engine->pathfindingPoints[CurrentPathIndex];
+	PathfindingPoint &current = g_engine->pathfindingPoints[currentPathPointIndex];
 	StartLerpTo(current.Position, 1000);
 	
 }

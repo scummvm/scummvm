@@ -83,6 +83,7 @@ private:
 
 	Common::Array<uint16> Path;
 	int16 CurrentPathIndex;
+	Common::Point PathFinalDestination;
 
 	bool IsFollowingPath;
 
