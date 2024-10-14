@@ -299,20 +299,22 @@ static void _readStrings(Common::SeekableReadStream *stream) {
 	}
 }
 
-void Sound::loadMacMusic(const Common::String &filename) {
+bool Sound::loadMacMusic(const Common::String &filename) {
 	if (filename.hasSuffixIgnoreCase(".sng")) {
 		Common::String macFileName = filename.substr(0, filename.find(".")) + ".sx";
-		loadMacMusic(macFileName);
-		return;
+		return loadMacMusic(macFileName);
 	}
 
 	if (!filename.hasSuffixIgnoreCase(".sx"))
 		error("Unhandled music file type: %s", filename.c_str());
 
+	if (filename == _currentMusic)
+		return false;
+
 	Common::SeekableReadStream *musicStream = _resource->getResource(filename);
 	if (!musicStream) {
 		warning("Music file %s not found", filename.c_str());
-		return;
+		return false;
 	}
 
 	DgdsChunkReader chunk(musicStream);
@@ -348,12 +350,18 @@ void Sound::loadMacMusic(const Common::String &filename) {
 	}
 
 	delete musicStream;
+	_currentMusic = filename;
+	return true;
 }
 
-void Sound::loadMusic(const Common::String &filename) {
+bool Sound::loadMusic(const Common::String &filename) {
+	if (filename == _currentMusic)
+		return false;
 	unloadMusic();
 	loadPCSound(filename, _musicData);
+	_currentMusic = filename;
 	debug("Sound: Loaded music %s with %d entries", filename.c_str(), _musicData.size());
+	return true;
 }
 
 void Sound::loadSFX(const Common::String &filename) {

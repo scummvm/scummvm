@@ -1092,11 +1092,11 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 			// TODO: remove hard-coded stuff..
 			_vm->_soundPlayer->playAmigaSfx("DYNAMIX.INS", 0, 255);
 		} else if (_vm->_platform == Common::kPlatformMacintosh) {
-			_vm->_soundPlayer->loadMacMusic(sval.c_str());
-			_vm->_soundPlayer->playMusic(seq._currentSongId);
+			if (_vm->_soundPlayer->loadMacMusic(sval.c_str()))
+				_vm->_soundPlayer->playMusic(seq._currentSongId);
 		} else {
-			_vm->_soundPlayer->loadMusic(sval.c_str());
-			_vm->_soundPlayer->playMusic(seq._currentSongId);
+			if (_vm->_soundPlayer->loadMusic(sval.c_str()))
+				_vm->_soundPlayer->playMusic(seq._currentSongId);
 		}
 		break;
 	case 0xf080: { // LOAD SCROLL: filename:str

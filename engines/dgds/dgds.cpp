@@ -196,7 +196,6 @@ bool DgdsEngine::changeScene(int sceneNum) {
 
 	_scene->unload();
 	_backgroundFile.clear();
-	_soundPlayer->unloadMusic();
 	_soundPlayer->stopAllSfx();
 
 	_gdsScene->runChangeSceneOps();
@@ -754,7 +753,6 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 		if (!_resource->hasResource(sceneFile))
 			error("Game references non-existent scene %d", sceneNum);
 
-		_soundPlayer->unloadMusic();
 		_soundPlayer->stopAllSfx();
 		_scene->unload();
 		_adsInterp->unload();

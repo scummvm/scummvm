@@ -54,8 +54,8 @@ public:
 	~Sound();
 
 	void playAmigaSfx(const Common::String &filename, byte channel, byte volume);
-	void loadMusic(const Common::String &filename);
-	void loadMacMusic(const Common::String &filename);
+	bool loadMusic(const Common::String &filename);
+	bool loadMacMusic(const Common::String &filename);
 	void loadSFX(const Common::String &filename);
 
 	void playMusic(int num);
@@ -88,6 +88,8 @@ private:
 	Common::HashMap<uint16, uint16> _musicIdMap;
 
 	Common::Array<SoundData> _sfxData;
+
+	Common::String _currentMusic;
 
 	SciMusic *_music;
 
