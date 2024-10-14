@@ -33,19 +33,20 @@ namespace Darkseed {
 
 class Cutscene {
 private:
-	char _cutsceneId;
+	char _cutsceneId = 0;
 	uint16 _movieStep = 9999;
 	TitleFont *_titleFont = nullptr;
 	Pal _palette;
 	Anm _animation;
-	int _animIdx;
-	int _animCount;
-	int _animDelayCount;
-	int _animDirection;
+	int _animIdx = 0;
+	int _animCount = 0;
+	int _animDelayCount = 0;
+	int _animDirection = 0;
 	uint32 _startTime = 0;
 	Morph *_morph = nullptr;
 
 public:
+	Cutscene() {}
 	virtual ~Cutscene();
 	void play(char cutsceneId);
 	bool isPlaying() {

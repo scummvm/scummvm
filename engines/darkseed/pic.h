@@ -30,14 +30,15 @@ namespace Darkseed {
 
 class Pic {
 private:
-	uint16 _width;
-	uint16 _height;
+	uint16 _width = 0;
+	uint16 _height = 0;
 	Common::Array<uint8> _pixels;
 
 	bool _hasReadByte = false;
 	byte _currentDataByte = 0;
 
 public:
+	Pic() {}
 	bool load(const Common::Path &filename);
 	Common::Array<uint8> &getPixels() {
 		return _pixels;
