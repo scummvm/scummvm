@@ -232,9 +232,9 @@ void Screens::fadeToPal(const Graphics::Palette &ptrpal) {
 }
 
 void Screens::setBlackPal() {
-	_ptrPal.clear();
+	Graphics::Palette workPal(NUMOFCOLORS);
 
-	_engine->setPalette(_ptrPal);
+	_engine->setPalette(workPal);
 
 	_flagBlackPal = true;
 }
