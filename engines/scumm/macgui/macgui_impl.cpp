@@ -184,7 +184,8 @@ void MacGuiImpl::menuCallback(int id, Common::String &name, void *data) {
 }
 
 void MacGuiImpl::initialize() {
-	uint32 menuMode = Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu | Graphics::kWMModalMenuMode | Graphics::kWMModeNoCursorOverride;
+	uint32 menuMode = Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu |
+		Graphics::kWMModalMenuMode | Graphics::kWMModeNoCursorOverride | Graphics::kWMModeForceMacFonts;
 
 	// Allow a more modern UX: the menu doesn't close if the mouse accidentally goes outside the menu area
 	if (_vm->enhancementEnabled(kEnhUIUX))
