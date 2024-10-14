@@ -259,9 +259,9 @@ bool Animation::update(int slot, uint32 localTime, float animLerpValue) {
 		return true;
 	}
 
-	Math::Vector3d resultPos(0.0f, 0.0f, 0.0f);
-	Math::Vector3d resultScale(1.0f, 1.0f, 1.0f);
-	Math::Quaternion resultRot(0.0f, 0.0f, 0.0f, 1.0f);
+	DXVector3 resultPos(0.0f, 0.0f, 0.0f);
+	DXVector3 resultScale(1.0f, 1.0f, 1.0f);
+	DXQuaternion resultRot(0.0f, 0.0f, 0.0f, 1.0f);
 
 	int keyIndex1, keyIndex2;
 	uint32 time1, time2;
@@ -298,7 +298,10 @@ bool Animation::update(int slot, uint32 localTime, float animLerpValue) {
 			lerpValue = float(localTime - time1) / float(time2 - time1);
 		}
 
-		resultScale = (1 - lerpValue) * _scaleKeys[keyIndex1]->_scale + lerpValue * _scaleKeys[keyIndex2]->_scale;
+		// apply the lerp function on the scale vector
+		DXVector3 scale1vec = DXVector3(_scaleKeys[keyIndex1]->_scale.x(), _scaleKeys[keyIndex1]->_scale.y(), _scaleKeys[keyIndex1]->_scale.z());
+		DXVector3 scale2vec = DXVector3(_scaleKeys[keyIndex2]->_scale.x(), _scaleKeys[keyIndex2]->_scale.y(), _scaleKeys[keyIndex2]->_scale.z());
+		DXVec3Lerp(&resultScale, &scale1vec, &scale2vec, lerpValue);
 
 		animate = true;
 	}
@@ -330,7 +333,22 @@ bool Animation::update(int slot, uint32 localTime, float animLerpValue) {
 			lerpValue = float(localTime - time1) / float(time2 - time1);
 		}
 
-		resultRot = _rotKeys[keyIndex1]->_rotation.slerpQuat(_rotKeys[keyIndex2]->_rotation, lerpValue);
+		// apply spherical lerp function
+		DXQuaternion q1, q2;
+
+		// negate for opengl
+		q1._x =  -(-_rotKeys[keyIndex1]->_rotation.x());
+		q1._y =  -(-_rotKeys[keyIndex1]->_rotation.y());
+		q1._z =  -(-_rotKeys[keyIndex1]->_rotation.z());
+		q1._w =  _rotKeys[keyIndex1]->_rotation.w();
+
+		// negate for opengl
+		q2._x =  -(-_rotKeys[keyIndex2]->_rotation.x());
+		q2._y =  -(-_rotKeys[keyIndex2]->_rotation.y());
+		q2._z =  -(-_rotKeys[keyIndex2]->_rotation.z());
+		q2._w =   _rotKeys[keyIndex2]->_rotation.w();
+
+		DXQuaternionSlerp(&resultRot, &q1, &q2, lerpValue);
 
 		animate = true;
 	}
@@ -361,13 +379,16 @@ bool Animation::update(int slot, uint32 localTime, float animLerpValue) {
 		else
 			lerpValue = float(localTime - time1) / float(time2 - time1);
 
-		resultPos = (1 - lerpValue) * _posKeys[keyIndex1]->_pos + lerpValue * _posKeys[keyIndex2]->_pos;
+		// apply the lerp function
+		DXVector3 pos1vec = DXVector3(_posKeys[keyIndex1]->_pos.x(), _posKeys[keyIndex1]->_pos.y(), _posKeys[keyIndex1]->_pos.z());
+		DXVector3 pos2vec = DXVector3(_posKeys[keyIndex2]->_pos.x(), _posKeys[keyIndex2]->_pos.y(), _posKeys[keyIndex2]->_pos.z());
+		DXVec3Lerp(&resultPos, &pos1vec, &pos2vec, lerpValue);
 
 		animate = true;
 	}
 
 	if (animate) {
-		_targetFrame->setTransformation(slot, resultPos, resultScale, resultRot, animLerpValue);
+		_targetFrame->setTransformation(slot, Math::Vector3d(resultPos), Math::Vector3d(resultScale), Math::Quaternion(resultRot._x, resultRot._y, resultRot._z, resultRot._w), animLerpValue);
 	}
 
 	return true;
