@@ -364,8 +364,8 @@ bool XModel::update() {
 
 	// update matrices
 	if (_rootFrame) {
-		Math::Matrix4 tempMat;
-		tempMat.setToIdentity();
+		DXMatrix tempMat;
+		DXMatrixIdentity(&tempMat);
 		_rootFrame->updateMatrices(tempMat);
 
 		return _rootFrame->updateMeshes();
@@ -521,7 +521,7 @@ bool XModel::renderFlatShadowModel() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Math::Matrix4 *XModel::getBoneMatrix(const char *boneName) {
+DXMatrix *XModel::getBoneMatrix(const char *boneName) {
 	FrameNode *bone = _rootFrame->findFrame(boneName);
 
 	if (bone) {

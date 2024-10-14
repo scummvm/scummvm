@@ -28,10 +28,6 @@
 #ifndef WINTERMUTE_SKIN_MESH_HELPER_H
 #define WINTERMUTE_SKIN_MESH_HELPER_H
 
-#include "math/matrix4.h"
-#include "math/vector3d.h"
-#include "math/vector3d.h"
-
 #include "engines/wintermute/base/gfx/xmath.h"
 
 namespace Wintermute {
@@ -56,7 +52,6 @@ public:
 	bool getOriginalMesh(DXMesh **mesh);
 	bool generateSkinnedMesh(Common::Array<uint32> &adjacencyOut, DXMesh **mesh);
 	bool updateSkinnedMesh(const DXMatrix *boneTransforms, DXMesh *mesh);
-	bool updateSkinnedMesh(BaseArray<Math::Matrix4> &boneTransforms, DXMesh *mesh);
 	const char *getBoneName(uint32 boneIndex);
 	DXMatrix *getBoneOffsetMatrix(uint32 boneIndex);
 

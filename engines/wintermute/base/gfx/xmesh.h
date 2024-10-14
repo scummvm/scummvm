@@ -77,7 +77,7 @@ protected:
 	DXMesh *_blendedMesh;
 	DXMesh *_staticMesh;
 
-	BaseArray<Math::Matrix4 *> _boneMatrices;
+	DXMatrix **_boneMatrices;
 
 	Common::Array<uint32> _adjacency;
 

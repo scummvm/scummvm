@@ -502,12 +502,13 @@ bool AdActor3DX::displayShadowVolume() {
 			continue;
 		}
 
-		Math::Matrix4 *boneMat = _xmodel->getBoneMatrix(at->getParentBone().c_str());
+		DXMatrix *boneMat = _xmodel->getBoneMatrix(at->getParentBone().c_str());
 		if (!boneMat) {
 			continue;
 		}
 
-		Math::Matrix4 viewMat = *boneMat;
+		Math::Matrix4 viewMat;
+		viewMat.setData(*boneMat);
 		at->displayShadowVol(viewMat, lightVector, extrusionDepth, true);
 	}
 
@@ -550,12 +551,13 @@ bool AdActor3DX::displayAttachments(bool registerObjects) {
 			continue;
 		}
 
-		Math::Matrix4 *boneMat = _xmodel->getBoneMatrix(at->getParentBone().c_str());
+		DXMatrix *boneMat = _xmodel->getBoneMatrix(at->getParentBone().c_str());
 		if (!boneMat) {
 			continue;
 		}
 
-		Math::Matrix4 viewMat = *boneMat;
+		Math::Matrix4 viewMat;
+		viewMat.setData(*boneMat);
 		at->displayAttachable(viewMat, registerObjects);
 	}
 

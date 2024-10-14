@@ -48,7 +48,7 @@ public:
 	FrameNode(BaseGame *inGame);
 	virtual ~FrameNode();
 
-	bool updateMatrices(Math::Matrix4 &parentMat);
+	bool updateMatrices(DXMatrix &parentMat);
 	bool updateMeshes();
 	bool resetMatrices();
 	bool render(XModel *model);
@@ -59,7 +59,7 @@ public:
 	bool mergeFromXData(const Common::String &filename, XModel *model, XFileData *xobj);
 	bool findBones(FrameNode *rootFrame);
 	FrameNode *findFrame(const char *frameName);
-	Math::Matrix4 *getCombinedMatrix();
+	DXMatrix *getCombinedMatrix();
 	Math::Matrix4 *getOriginalMatrix();
 	void setTransformationMatrix(Math::Matrix4 *mat);
 	bool pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir);
@@ -81,7 +81,7 @@ protected:
 
 	Math::Matrix4 _transformationMatrix;
 	Math::Matrix4 _originalMatrix;
-	Math::Matrix4 _combinedMatrix;
+	DXMatrix _combinedMatrix;
 
 	Math::Vector3d _transPos[2];
 	Math::Vector3d _transScale[2];

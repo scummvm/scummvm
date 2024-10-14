@@ -33,7 +33,6 @@
 #ifndef WINTERMUTE_XSKINMESH_H
 #define WINTERMUTE_XSKINMESH_H
 
-#include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/base/gfx/xbuffer.h"
 #include "engines/wintermute/base/gfx/xfile_loader.h"
 #include "engines/wintermute/base/gfx/xmath.h"
@@ -123,7 +122,6 @@ public:
 	bool setBoneOffsetMatrix(uint32 boneIdx, const float *boneTransform);
 	DXMatrix *getBoneOffsetMatrix(uint32 boneIdx) { return &_bones[boneIdx]._transform; }
 	bool updateSkinnedMesh(const DXMatrix *boneTransforms, void *srcVertices, void *dstVertices);
-	bool updateSkinnedMesh(BaseArray<Math::Matrix4> &boneTransforms, void *srcVertices, void *dstVertices);
 };
 
 class DXMesh {

@@ -40,7 +40,7 @@ namespace Wintermute {
 FrameNode::FrameNode(BaseGame *inGame) : BaseNamedObject(inGame) {
 	_transformationMatrix.setToIdentity();
 	_originalMatrix.setToIdentity();
-	_combinedMatrix.setToIdentity();
+	DXMatrixIdentity(&_combinedMatrix);
 
 	for (int i = 0; i < 2; i++) {
 		_transPos[i] = Math::Vector3d(0.0f, 0.0f, 0.0f);
@@ -70,7 +70,7 @@ FrameNode::~FrameNode() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Math::Matrix4 *FrameNode::getCombinedMatrix() {
+DXMatrix *FrameNode::getCombinedMatrix() {
 	return &_combinedMatrix;
 }
 
@@ -249,7 +249,7 @@ FrameNode *FrameNode::findFrame(const char *frameName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool FrameNode::updateMatrices(Math::Matrix4 &parentMat) {
+bool FrameNode::updateMatrices(DXMatrix &parentMat) {
 	if (_transUsed[0]) {
 		Math::Vector3d transPos = _transPos[0];
 		Math::Vector3d transScale = _transScale[0];
@@ -282,7 +282,10 @@ bool FrameNode::updateMatrices(Math::Matrix4 &parentMat) {
 	_transUsed[0] = _transUsed[1] = false;
 
 	// multiply by parent transformation
-	_combinedMatrix = parentMat * _transformationMatrix;
+	Math::Matrix4 parentMatrix;
+	parentMatrix.setData(parentMat._m4x4);
+	Math::Matrix4 combinedMatrix = parentMatrix * _transformationMatrix;
+	_combinedMatrix = DXMatrix(combinedMatrix.getData());
 
 	// update child frames
 	for (uint32 i = 0; i < _frames.size(); i++) {

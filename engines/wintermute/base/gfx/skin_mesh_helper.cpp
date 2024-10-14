@@ -81,14 +81,6 @@ bool SkinMeshHelper::updateSkinnedMesh(const DXMatrix *boneTransforms, DXMesh *m
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool SkinMeshHelper::updateSkinnedMesh(BaseArray<Math::Matrix4> &boneTransforms, DXMesh *mesh) {
-	void *sourceVerts = reinterpret_cast<void *>(_mesh->getVertexBuffer().ptr());
-	void *targetVerts = reinterpret_cast<void *>(mesh->getVertexBuffer().ptr());
-
-	return _skinInfo->updateSkinnedMesh(boneTransforms, sourceVerts, targetVerts);
-}
-
-//////////////////////////////////////////////////////////////////////////
 const char *SkinMeshHelper::getBoneName(uint32 boneIndex) {
 	return _skinInfo->getBoneName(boneIndex);
 }

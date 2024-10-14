@@ -156,7 +156,7 @@ public:
 	bool stopAnim(int channel, uint32 transitionTime);
 	bool stopAnim(uint32 transitionTime);
 
-	Math::Matrix4 *getBoneMatrix(const char *boneName);
+	DXMatrix *getBoneMatrix(const char *boneName);
 	FrameNode *getRootFrame();
 
 	bool setMaterialSprite(const char *materialName, const char *spriteFilename);

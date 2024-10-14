@@ -45,6 +45,8 @@ XMesh::XMesh(Wintermute::BaseGame *inGame) : BaseNamedObject(inGame) {
 	_blendedMesh = nullptr;
 	_staticMesh = nullptr;
 
+	_boneMatrices = nullptr;
+
 	_BBoxStart = _BBoxEnd = Math::Vector3d(0.0f, 0.0f, 0.0f);
 }
 
@@ -55,6 +57,10 @@ XMesh::~XMesh() {
 	_blendedMesh = nullptr;
 	delete _staticMesh;
 	_staticMesh = nullptr;
+
+	delete[] _boneMatrices;
+	_boneMatrices = nullptr;
+
 	_materials.clear();
 }
 
@@ -110,7 +116,7 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 	// Process skinning data
 	if (numBones) {
 		// bones are available
-		//_boneMatrices = new DXMatrix*[numBones];
+		_boneMatrices = new DXMatrix*[numBones];
 
 		generateMesh();
 	} else {
@@ -183,7 +189,6 @@ bool XMesh::findBones(FrameNode *rootFrame) {
 	if (!_skinMesh)
 		return true;
 
-	_boneMatrices.resize(_skinMesh->getNumBones());
 	// get the buffer with the names of the bones
 	for (uint32 i = 0; i < _skinMesh->getNumBones(); i++) {
 		// find a frame with the same name
@@ -209,8 +214,7 @@ bool XMesh::update(FrameNode *parentFrame) {
 	// update skinned mesh
 	if (_skinMesh) {
 		int numBones = _skinMesh->getNumBones();
-		BaseArray<Math::Matrix4> boneMatrices;
-		boneMatrices.resize(numBones);
+		DXMatrix *boneMatrices = new DXMatrix[numBones];
 
 		// prepare final matrices
 		for (int i = 0; i < numBones; ++i) {
@@ -220,11 +224,14 @@ bool XMesh::update(FrameNode *parentFrame) {
 					offsetMatrix(c, r) = _skinMesh->getBoneOffsetMatrix(i)->_m4x4[r * 4 + c];
 				}
 			}
-			boneMatrices[i] = *_boneMatrices[i] * offsetMatrix;
+			Math::Matrix4 boneMatrix;
+			boneMatrix.setData(_boneMatrices[i]->_m4x4);
+			boneMatrices[i] = DXMatrix((boneMatrix * offsetMatrix).getData());
 		}
 
 		// generate skinned mesh
 		res = _skinMesh->updateSkinnedMesh(boneMatrices, _blendedMesh);
+		delete [] boneMatrices;
 
 		if (!res) {
 			BaseEngine::LOG(0, "Error updating skinned mesh");
@@ -281,7 +288,9 @@ bool XMesh::update(FrameNode *parentFrame) {
 		for (uint32 i = 0; i < numVertices; i++) {
 			DXVector3 v = *(DXVector3 *)(oldPoints + i * fvfSize);
 			Math::Vector3d newVertex = Math::Vector3d(v._x, v._y, v._z);
-			parentFrame->getCombinedMatrix()->transform(&newVertex, true);
+			Math::Matrix4 combinedMatrix;
+			combinedMatrix.setData(parentFrame->getCombinedMatrix()->_m4x4);
+			combinedMatrix.transform(&newVertex, true);
 
 			((DXVector3 *)(newPoints + i * fvfSize))->_x = newVertex.x();
 			((DXVector3 *)(newPoints + i * fvfSize))->_y = newVertex.y();

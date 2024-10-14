@@ -599,13 +599,14 @@ bool AdObject3D::getBonePosition2D(const char *boneName, int32 *x, int32 *y) {
 	if (!adGame->_scene || !adGame->_scene->_sceneGeometry)
 		return false;
 
-	Math::Matrix4 *boneMat = _xmodel->getBoneMatrix(boneName);
-
+	DXMatrix *boneMat = _xmodel->getBoneMatrix(boneName);
 	if (!boneMat) {
 		return false;
 	}
 
-	Math::Matrix4 bonePosMat = *boneMat * _worldMatrix;
+	Math::Matrix4 boneMatrix;
+	boneMatrix.setData(*boneMat);
+	Math::Matrix4 bonePosMat = boneMatrix * _worldMatrix;
 
 	Math::Vector4d vectBone4 = Math::Vector4d(0.0f, 0.0f, 0.0f, 0.0f);
 	bonePosMat.transformVector(&vectBone4);
@@ -621,12 +622,14 @@ bool AdObject3D::getBonePosition3D(const char *boneName, Math::Vector3d *pos, Ma
 		return false;
 	}
 
-	Math::Matrix4 *boneMat = _xmodel->getBoneMatrix(boneName);
+	DXMatrix *boneMat = _xmodel->getBoneMatrix(boneName);
 	if (!boneMat) {
 		return false;
 	}
 
-	Math::Matrix4 bonePosMat = *boneMat * _worldMatrix;
+	Math::Matrix4 boneMatrix;
+	boneMatrix.setData(*boneMat);
+	Math::Matrix4 bonePosMat = boneMatrix * _worldMatrix;
 	*pos = Math::Vector3d(0.0f, 0.0f, 0.0f);
 
 	if (offset) {
