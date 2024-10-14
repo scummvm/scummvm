@@ -693,9 +693,19 @@ void MacGuiImpl::MacDialogWindow::plotPatternDarkenOnly(int x, int y, int patter
 		s->setPixel(x, y, window->_gui->getBlack());
 }
 
-void MacGuiImpl::MacDialogWindow::drawTexts(Common::Rect r, const TextLine *lines) {
+void MacGuiImpl::MacDialogWindow::drawTexts(Common::Rect r, const TextLine *lines, bool inverse) {
 	if (!lines)
 		return;
+
+	uint32 fg, bg;
+
+	if (inverse) {
+		fg = _white;
+		bg = _black;
+	} else {
+		fg = _black;
+		bg = _white;
+	}
 
 	Graphics::Surface *s = innerSurface();
 
@@ -717,6 +727,9 @@ void MacGuiImpl::MacDialogWindow::drawTexts(Common::Rect r, const TextLine *line
 		case kStyleBold:
 			f1 = _gui->getFont(kAboutFontBold);
 			break;
+		case kStyleBold2:
+			f1 = _gui->getFont(kAboutFontBold2);
+			break;
 		case kStyleExtraBold:
 			f1 = _gui->getFont(kAboutFontExtraBold);
 			break;
@@ -732,25 +745,35 @@ void MacGuiImpl::MacDialogWindow::drawTexts(Common::Rect r, const TextLine *line
 		int width = r.right - x;
 
 		if (lines[i].style == kStyleHeader) {
-			f1->drawString(s, msg, x - 1, y + 1, width, _black, align);
-			f2->drawString(s, msg, x + 1, y + 1, width, _black, align);
-			f1->drawString(s, msg, x - 2, y, width, _black, align);
-			f2->drawString(s, msg, x, y, width, _white, align);
+			f1->drawString(s, msg, x - 1, y + 1, width, fg, align);
+			f2->drawString(s, msg, x + 1, y + 1, width, fg, align);
+			f1->drawString(s, msg, x - 2, y, width, fg, align);
+			f2->drawString(s, msg, x, y, width, bg, align);
 		} else {
-			f1->drawString(s, msg, x, y, width, _black, align);
+			f1->drawString(s, msg, x, y, width, fg, align);
 
 			if (lines[i].style == kStyleExtraBold)
-				f1->drawString(s, msg, x + 1, y, width, _black, align);
+				f1->drawString(s, msg, x + 1, y, width, fg, align);
 		}
 	}
 }
 
-void MacGuiImpl::MacDialogWindow::drawTextBox(Common::Rect r, const TextLine *lines, int arc) {
-	Graphics::drawRoundRect(r, arc, _white, true, plotPixel, this);
-	Graphics::drawRoundRect(r, arc, _black, false, plotPixel, this);
+void MacGuiImpl::MacDialogWindow::drawTextBox(Common::Rect r, const TextLine *lines, bool inverse, int arc) {
+	uint32 fg, bg;
+
+	if (inverse) {
+		fg = _white;
+		bg = _black;
+	} else {
+		fg = _black;
+		bg = _white;
+	}
+
+	Graphics::drawRoundRect(r, arc, bg, true, plotPixel, this);
+	Graphics::drawRoundRect(r, arc, fg, false, plotPixel, this);
 	markRectAsDirty(r);
 
-	drawTexts(r, lines);
+	drawTexts(r, lines, inverse);
 }
 
 } // End of namespace Scumm

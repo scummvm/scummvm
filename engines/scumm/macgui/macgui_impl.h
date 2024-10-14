@@ -78,6 +78,7 @@ protected:
 
 		kAboutFontRegular,
 		kAboutFontBold,
+		kAboutFontBold2,
 		kAboutFontExtraBold,
 		kAboutFontHeaderInside,
 		kAboutFontHeaderOutside,
@@ -100,6 +101,7 @@ protected:
 		kStyleHeaderSimple1,
 		kStyleHeaderSimple2,
 		kStyleBold,
+		kStyleBold2,
 		kStyleExtraBold,
 		kStyleRegular
 	};
@@ -644,8 +646,8 @@ public:
 		void fillPattern(Common::Rect r, uint16 pattern, bool fillBlack = true, bool fillWhite = true);
 		void drawSprite(const Graphics::Surface *sprite, int x, int y);
 		void drawSprite(const Graphics::Surface *sprite, int x, int y, Common::Rect clipRect);
-		void drawTexts(Common::Rect r, const TextLine *lines);
-		void drawTextBox(Common::Rect r, const TextLine *lines, int arc = 9);
+		void drawTexts(Common::Rect r, const TextLine *lines, bool inverse = false);
+		void drawTextBox(Common::Rect r, const TextLine *lines, bool inverse = false, int arc = 9);
 	};
 
 	MacGuiImpl(ScummEngine *vm, const Common::Path &resourceFile);

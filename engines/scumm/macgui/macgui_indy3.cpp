@@ -1417,7 +1417,7 @@ void MacIndy3Gui::runAboutDialog() {
 				break;
 
 			case 8:
-				window->drawTextBox(Common::Rect(142, 106, 262, 119), page8, 3);
+				window->drawTextBox(Common::Rect(142, 106, 262, 119), page8, false, 3);
 				break;
 			}
 
