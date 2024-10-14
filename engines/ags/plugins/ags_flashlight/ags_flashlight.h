@@ -116,7 +116,7 @@ public:
 	const char *AGS_GetPluginName() override;
 	void AGS_EngineStartup(IAGSEngine *engine) override;
 	int64 AGS_EngineOnEvent(int event, NumberPtr data) override;
-	int AGS_PluginV2() const { return 1; };
+	int AGS_PluginV2() const override { return 1; };
 };
 
 } // namespace AGSFlashlight
