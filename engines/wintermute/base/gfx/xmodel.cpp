@@ -563,16 +563,20 @@ bool XModel::isTransparentAt(int x, int y) {
 	}
 
 	Math::Ray ray = _gameRef->_renderer3D->rayIntoScene(x, y);
+	Math::Vector3d pickRayDir;
+	Math::Vector3d pickRayOrig;
+	pickRayDir = ray.getDirection();
+	pickRayOrig = ray.getOrigin();
 
 	// transform to model space
-	Math::Vector3d end = ray.getOrigin() + ray.getDirection();
+	Math::Vector3d end = pickRayOrig + pickRayDir;
 	Math::Matrix4 m = _lastWorldMat;
 	m.inverse();
-	m.transform(&ray.getOrigin(), true);
+	m.transform(&pickRayOrig, true);
 	m.transform(&end, true);
-	Math::Vector3d pickRayDirection = end - ray.getOrigin();
+	pickRayDir = end - pickRayOrig;
 
-	return !_rootFrame->pickPoly(&ray.getOrigin(), &pickRayDirection);
+	return !_rootFrame->pickPoly(&pickRayOrig, &pickRayDir);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -593,6 +597,7 @@ void XModel::updateBoundingRect() {
 	_gameRef->_renderer3D->getWorldTransform(worldMat);
 
 	_drawingViewport = _gameRef->_renderer3D->getViewPort();
+
 	float x1 = _BBoxStart.x();
 	float x2 = _BBoxEnd.x();
 	float y1 = _BBoxStart.y();
