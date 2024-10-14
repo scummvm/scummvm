@@ -680,10 +680,12 @@ static bool parseDeclData(XFileData &fileData, struct MeshData *meshData) {
 		case DXDECLUSAGE_NORMAL:
 			assert(!(meshData->_fvf & DXFVF_NORMAL));
 			normalOffset = vertexSize;
+			meshData->_fvf |= DXFVF_NORMAL;
 			break;
 		case DXDECLUSAGE_TEXCOORD:
 			assert(!(meshData->_fvf & DXFVF_TEX1));
 			textureOffset = vertexSize;
+			meshData->_fvf |= DXFVF_TEX1;
 			break;
 		case DXDECLUSAGE_TANGENT:
 			//tangentOffset = vertexSize;
@@ -710,7 +712,7 @@ static bool parseDeclData(XFileData &fileData, struct MeshData *meshData) {
 		return false;
 	}
 
-	if (normalOffset != (uint32)-1) {
+	if (meshData->_fvf & DXFVF_NORMAL) {
 		if (!meshData->_indices)
 			return false;
 		delete[] meshData->_normals;
@@ -722,16 +724,14 @@ static bool parseDeclData(XFileData &fileData, struct MeshData *meshData) {
 			return false;
 		}
 		memcpy(meshData->_normalIndices, meshData->_indices, numFaceIndices * sizeof(uint32));
-		meshData->_fvf |= DXFVF_NORMAL;
 	}
 
-	if (textureOffset != (uint32)-1) {
+	if (meshData->_fvf & DXFVF_TEX1) {
 		delete[] meshData->_texCoords;
 		meshData->_texCoords = new DXVector2[meshData->_numVertices];
 		if (!meshData->_texCoords) {
 			return false;
 		}
-		meshData->_fvf |= DXFVF_TEX1;
 	}
 
 	for (i = 0; i < meshData->_numVertices; ++i) {
