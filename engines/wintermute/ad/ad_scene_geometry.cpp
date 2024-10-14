@@ -632,11 +632,37 @@ bool AdSceneGeometry::convert2Dto3DTolerant(int x, int y, Math::Vector3d *pos) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::convert2Dto3D(int x, int y, Math::Vector3d *pos) {
+	if (!_lastValuesInitialized) {
+		_drawingViewport = _gameRef->_renderer3D->getViewPort();
+		//_gameRef->_renderer3D->getProjectionTransform(&_lastProjMat);
+	}
+
+	float resWidth, resHeight;
+	float layerWidth, layerHeight;
+	float modWidth, modHeight;
+	bool customViewport;
+	_gameRef->_renderer3D->getProjectionParams(&resWidth, &resHeight, &layerWidth, &layerHeight, &modWidth, &modHeight, &customViewport);
+
+	// modify coordinates according to viewport settings
+	int mleft = _drawingViewport.left;
+	int mright = resWidth - _drawingViewport.width() - _drawingViewport.left;
+	int mtop = _drawingViewport.top;
+	int mbottom = resHeight - _drawingViewport.height() - _drawingViewport.top;
+
+	x -= (mleft + mright) / 2 + modWidth;
+	y -= (mtop + mbottom) / 2 + modHeight;
+
+	Math::Vector3d vPickRayDir;
+	Math::Vector3d vPickRayOrig;
+
+	Math::Ray rayScene = _gameRef->_renderer3D->rayIntoScene(x, y);
+	vPickRayDir = rayScene.getDirection();
+	vPickRayOrig = rayScene.getOrigin();
+
+
 	bool intFound = false;
 	float minDist = FLT_MAX;
-	Math::Vector3d intersection;
-
-	Math::Ray ray = _gameRef->_renderer3D->rayIntoScene(x, y);
+	Math::Vector3d intersection, ray;
 
 	for (uint32 i = 0; i < _planes.size(); i++) {
 		for (int j = 0; j < _planes[i]->_mesh->faceCount(); j++) {
@@ -645,13 +671,13 @@ bool AdSceneGeometry::convert2Dto3D(int x, int y, Math::Vector3d *pos) {
 			float *v1 = _planes[i]->_mesh->getVertexPosition(triangle[1]);
 			float *v2 = _planes[i]->_mesh->getVertexPosition(triangle[2]);
 
-			if (intersectTriangle(ray.getOrigin(), ray.getDirection(),
+			if (intersectTriangle(vPickRayOrig, vPickRayDir,
 								  Math::Vector3d(v0[0], v0[1], v0[2]),
 								  Math::Vector3d(v1[0], v1[1], v1[2]),
 								  Math::Vector3d(v2[0], v2[1], v2[2]),
 							      intersection.x(), intersection.y(), intersection.z())) {
-				Math::Vector3d lineSegement = intersection - getActiveCamera()->_position;
-				float dist = lineSegement.getMagnitude();
+				ray = intersection - vPickRayOrig;
+				float dist = ray.getMagnitude();
 
 				if (dist < minDist) {
 					*pos = intersection;
