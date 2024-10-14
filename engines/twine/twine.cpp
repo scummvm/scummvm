@@ -101,12 +101,13 @@ FrameMarker::~FrameMarker() {
 	const uint32 end = g_system->getMillis();
 	const uint32 frameTime = end - _start;
 	const uint32 maxDelay = 1000 / _fps;
-	if (frameTime > maxDelay) {
+	const int32 waitMillis = (int32)maxDelay - (int32)frameTime;
+	_engine->_debugState->addFrameData(frameTime, waitMillis, maxDelay);
+	if (waitMillis < 0) {
 		debug(5, "Frame took longer than the max allowed time: %u (max is %u)", frameTime, maxDelay);
 		return;
 	}
-	const uint32 waitMillis = maxDelay - frameTime;
-	g_system->delayMillis(waitMillis);
+	g_system->delayMillis((uint)waitMillis);
 }
 
 TwineScreen::TwineScreen(TwinEEngine *engine) : _engine(engine) {

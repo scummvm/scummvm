@@ -221,6 +221,29 @@ static void paletteWindow(TwinEEngine *engine) {
 	ImGui::End();
 }
 
+static float WaitTime(void *data, int i) {
+	TwinE::DebugState::FrameDataBuffer &buffer = *(TwinE::DebugState::FrameDataBuffer *)data;
+	return (float)buffer[i].waitMillis;
+}
+
+static float FrameTime(void *data, int i) {
+	TwinE::DebugState::FrameDataBuffer &buffer = *(TwinE::DebugState::FrameDataBuffer *)data;
+	return (float)buffer[i].frameTime;
+}
+
+static void frameTimeWindow(TwinEEngine *engine) {
+	if (!engine->_debugState->_frameTimeWindow) {
+		return;
+	}
+
+	if (ImGui::Begin("Frame time", &engine->_debugState->_frameTimeWindow)) {
+		ImGui::Checkbox("Record", &engine->_debugState->_frameDataRecording);
+		ImGui::PlotHistogram("Wait time", WaitTime, &engine->_debugState->_frameData, (int)engine->_debugState->_frameData.size(), 0, "Wait time in millis", -100.0f, 100.0f, ImVec2(0, 80));
+		ImGui::PlotHistogram("Frame time", FrameTime, &engine->_debugState->_frameData, (int)engine->_debugState->_frameData.size(), 0, "Frame time in millis", -100.0f, 100.0f, ImVec2(0, 80));
+	}
+	ImGui::End();
+}
+
 static void sceneFlagsWindow(TwinEEngine *engine) {
 	if (!engine->_debugState->_sceneFlagsWindow) {
 		return;
@@ -786,6 +809,9 @@ static void debuggerMenu(TwinEEngine *engine) {
 		if (ImGui::MenuItem("Actor details")) {
 			engine->_debugState->_actorDetailsWindow = true;
 		}
+		if (ImGui::MenuItem("Frame time")) {
+			engine->_debugState->_frameTimeWindow = true;
+		}
 
 		ImGui::SeparatorText("Actions");
 
@@ -870,8 +896,8 @@ void onImGuiRender() {
 	gameFlagsWindow(engine);
 	paletteWindow(engine);
 	sceneFlagsWindow(engine);
+	frameTimeWindow(engine);
 	_logger->draw("Logger", &engine->_debugState->_loggerWindow);
-
 
 	if (engine->_debugState->_openPopup) {
 		ImGui::OpenPopup(engine->_debugState->_openPopup);

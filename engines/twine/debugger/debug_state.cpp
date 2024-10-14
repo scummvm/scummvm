@@ -20,6 +20,7 @@
  */
 
 #include "twine/debugger/debug_state.h"
+#include "common/util.h"
 #include "twine/menu/interface.h"
 #include "twine/menu/menu.h"
 #include "twine/renderer/redraw.h"
@@ -212,6 +213,13 @@ bool DebugState::displayZones() {
 		state = true;
 	}
 	return state;
+}
+
+void DebugState::addFrameData(uint32 frameTime, int32 waitMillis, uint32 maxDelay) {
+	if (!_frameDataRecording) {
+		return;
+	}
+	_frameData.emplace_back(frameTime, waitMillis, maxDelay);
 }
 
 void DebugState::renderDebugView() {
