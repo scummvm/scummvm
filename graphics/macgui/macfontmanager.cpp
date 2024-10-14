@@ -521,7 +521,7 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 	}
 
 #ifdef USE_FREETYPE2
-	if (!font) {
+	if (!font && !(_mode & MacGUIConstants::kWMModeForceMacFonts)) {
 		if (_mode & kWMModeUnicode) {
 			if (macFont->getSize() <= 0) {
 				debugC(1, kDebugLevelMacGUI, "MacFontManager::getFont() - Font size <= 0!");
@@ -806,11 +806,13 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 	Common::String name;
 
 #ifdef USE_FREETYPE2
-	// Check if we have TTF data for this font.
-	name = getFontName(macFont.getId(), 0, macFont.getSlant());
-	if (_ttfData.contains(name)) {
-		generateTTFFont(macFont, _ttfData[name]);
-		return;
+	if (!(_mode & MacGUIConstants::kWMModeForceMacFonts)) {
+		// Check if we have TTF data for this font.
+		name = getFontName(macFont.getId(), 0, macFont.getSlant());
+		if (_ttfData.contains(name)) {
+			generateTTFFont(macFont, _ttfData[name]);
+			return;
+		}
 	}
 #endif
 

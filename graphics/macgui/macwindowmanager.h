@@ -93,6 +93,7 @@ enum {
 	kWMModeForceMacFontsInWin95 = (1 << 11), // Enforce Mac font for languages which don't have glyphs in ms_sans_serif.ttf
 	kWMModeNoCursorOverride     = (1 << 12),
 	kWMModeForceMacBorder       = (1 << 13),
+	kWMModeForceMacFonts        = (1 << 14), // Enforce Mac fonts even when there are viable TTF substitutions
 };
 
 }
