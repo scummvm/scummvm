@@ -46,6 +46,7 @@ XMesh::XMesh(Wintermute::BaseGame *inGame) : BaseNamedObject(inGame) {
 	_staticMesh = nullptr;
 
 	_boneMatrices = nullptr;
+	_adjacency = nullptr;
 
 	_BBoxStart = _BBoxEnd = Math::Vector3d(0.0f, 0.0f, 0.0f);
 }
@@ -60,6 +61,8 @@ XMesh::~XMesh() {
 
 	delete[] _boneMatrices;
 	_boneMatrices = nullptr;
+	delete[] _adjacency;
+	_adjacency = nullptr;
 
 	_materials.clear();
 }
@@ -74,7 +77,6 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 
 	// load mesh
 	DXBuffer bufMaterials;
-	//uint32 numFaces;
 	uint32 numMaterials;
 	DXMesh *mesh;
 	DXSkinInfo *skinInfo;
@@ -109,8 +111,6 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 
 	_skinMesh = new SkinMeshHelper(mesh, skinInfo);
 
-	//numFaces = _skinMesh->getNumFaces();
-
 	uint32 numBones = _skinMesh->getNumBones();
 
 	// Process skinning data
@@ -128,8 +128,8 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 		_skinMesh = nullptr;
 
 		if (_blendedMesh) {
-			//numFaces = _blendedMesh->getNumFaces();
-			//_adjacency = new uint32[numFaces * 3];
+			uint32 numFaces = _blendedMesh->getNumFaces();
+			_adjacency = new uint32[numFaces * 3];
 			_blendedMesh->generateAdjacency(_adjacency);
 		}
 	}
@@ -166,13 +166,13 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 
 //////////////////////////////////////////////////////////////////////////
 bool XMesh::generateMesh() {
-	//uint32 numFaces = _skinMesh->getNumFaces();
+	uint32 numFaces = _skinMesh->getNumFaces();
 
 	delete _blendedMesh;
 	_blendedMesh = nullptr;
 
-	//delete[] _adjacency;
-	//_adjacency = new uint32[numFaces * 3];
+	delete[] _adjacency;
+	_adjacency = new uint32[numFaces * 3];
 
 	// blend the mesh
 	if (!_skinMesh->generateSkinnedMesh(_adjacency, &_blendedMesh)) {

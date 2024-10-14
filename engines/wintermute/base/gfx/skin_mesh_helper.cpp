@@ -26,7 +26,6 @@
  */
 
 #include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/base/gfx/skin_mesh_helper.h"
 #include "engines/wintermute/base/gfx/xskinmesh.h"
 #include "engines/wintermute/base/gfx/xfile_loader.h"
@@ -63,7 +62,7 @@ bool SkinMeshHelper::getOriginalMesh(DXMesh **mesh) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool SkinMeshHelper::generateSkinnedMesh(Common::Array<uint32> &adjacencyOut, DXMesh **mesh) {
+bool SkinMeshHelper::generateSkinnedMesh(uint32 *adjacencyOut, DXMesh **mesh) {
 	bool res = getOriginalMesh(mesh);
 	if (res) {
 		(*mesh)->generateAdjacency(adjacencyOut);

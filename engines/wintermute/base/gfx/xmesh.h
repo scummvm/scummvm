@@ -79,7 +79,7 @@ protected:
 
 	DXMatrix **_boneMatrices;
 
-	Common::Array<uint32> _adjacency;
+	uint32 *_adjacency;
 
 	BaseArray<Material *> _materials;
 };

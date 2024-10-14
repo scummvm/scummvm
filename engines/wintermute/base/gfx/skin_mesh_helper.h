@@ -50,7 +50,7 @@ public:
 	uint getNumFaces();
 	uint getNumBones();
 	bool getOriginalMesh(DXMesh **mesh);
-	bool generateSkinnedMesh(Common::Array<uint32> &adjacencyOut, DXMesh **mesh);
+	bool generateSkinnedMesh(uint32 *adjacencyOut, DXMesh **mesh);
 	bool updateSkinnedMesh(const DXMatrix *boneTransforms, DXMesh *mesh);
 	const char *getBoneName(uint32 boneIndex);
 	DXMatrix *getBoneOffsetMatrix(uint32 boneIndex);

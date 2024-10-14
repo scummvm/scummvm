@@ -290,55 +290,6 @@ bool DXMesh::generateAdjacency(uint32 *adjacency) {
 	return true;
 }
 
-bool DXMesh::generateAdjacency(Common::Array<uint32> &adjacency) {
-	uint32 *indexData = (uint32 *)_indexBuffer.ptr();
-	uint32 indexDataSize = _indexBuffer.size() / sizeof(uint32);
-	adjacency = Common::Array<uint32>(indexDataSize, 0xFFFFFFFF);
-
-	for (uint32 i = 0; i < indexDataSize / 3; ++i) {
-		for (uint32 j = i + 1; j < indexDataSize / 3; ++j) {
-			for (int edge1 = 0; edge1 < 3; ++edge1) {
-				uint32 index1 = indexData[i * 3 + edge1];
-				uint32 index2 = indexData[i * 3 + (edge1 + 1) % 3];
-
-				for (int edge2 = 0; edge2 < 3; ++edge2) {
-					uint32 index3 = indexData[j * 3 + edge2];
-					uint32 index4 = indexData[j * 3 + (edge2 + 1) % 3];
-
-					if (adjacency[i * 3 + edge1] == 0xFFFFFFFF &&
-						adjacency[j * 3 + edge2] == 0xFFFFFFFF &&
-						adjacentEdge(index1, index2, index3, index4)) {
-						adjacency[i * 3 + edge1] = j;
-						adjacency[j * 3 + edge2] = i;
-						break;
-					}
-				}
-			}
-		}
-	}
-
-	return true;
-}
-
-bool DXMesh::adjacentEdge(uint32 index1, uint32 index2, uint32 index3, uint32 index4) {
-	float *vertexData = (float *)_vertexBuffer.ptr();
-	uint32 vertexSize = DXGetFVFVertexSize(_fvf) / sizeof(float);
-	DXVector3 vertex1(vertexData + vertexSize * index1);
-	DXVector3 vertex2(vertexData + vertexSize * index2);
-	DXVector3 vertex3(vertexData + vertexSize * index3);
-	DXVector3 vertex4(vertexData + vertexSize * index4);
-
-	// wme uses a function from the D3DX library, which takes in an epsilon for floating point comparison
-	// wme passes in zero, so we just do a direct comparison
-	if (vertex1 == vertex3 && vertex2 == vertex4) {
-		return true;
-	} else if (vertex1 == vertex4 && vertex2 == vertex3) {
-		return true;
-	}
-
-	return false;
-}
-
 bool DXMesh::cloneMesh(DXMesh **cloneMeshOut) {
 	DXMesh *clonedMesh;
 
