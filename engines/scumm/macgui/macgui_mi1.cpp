@@ -295,6 +295,21 @@ bool MacMI1Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) con
 		size = 9;
 		slant = Graphics::kMacFontBold;
 		return true;
+	case kAboutFontBold2:
+		id = Graphics::kMacFontTimes;
+		size = 10;
+		slant = Graphics::kMacFontBold;
+		return true;
+	case kAboutFontHeaderOutside:
+		id = Graphics::kMacFontTimes;
+		size = 18;
+		slant = Graphics::kMacFontBold | Graphics::kMacFontItalic | Graphics::kMacFontOutline;
+		return true;
+	case kAboutFontHeaderInside:
+		id = Graphics::kMacFontTimes;
+		size = 18;
+		slant = Graphics::kMacFontItalic | Graphics::kMacFontBold | Graphics::kMacFontExtend;
+		return true;
 	case kAboutFontHeaderSimple1:
 		id = Graphics::kMacFontGeneva;
 		size = 12;
@@ -625,6 +640,103 @@ void MacMI1Gui::drawShadow(Graphics::Surface *s, int x, int y, int h, Common::Pa
 }
 
 void MacMI1Gui::runAboutDialogMI2() {
+	int width = 416;
+	int height = 166;
+	int x = (640 - width) / 2;
+	int y = (400 - height) / 2;
+
+	Common::Rect bounds(x, y, x + width, y + height);
+	MacDialogWindow *window = createWindow(bounds);
+//	Graphics::Surface *lucasArts = loadPict(5000);
+
+	Graphics::Surface *s = window->innerSurface();
+
+	const TextLine page3[] = {
+		{ 0, 68, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[115].c_str() }, // "PRESENTS"
+		TEXT_END_MARKER
+	};
+
+	const TextLine page5[] = {
+		{ 0, 10, kStyleBold2, Graphics::kTextAlignCenter, _strsStrings[116].c_str() }, // "LeChuck\xD5s Revenge"
+		{ 0, 25, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[117].c_str() }, // "Monkey Island 2"
+		{ 176, 125, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[119].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company."
+		{ 310, 138, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[120].c_str() }, // "All rights reserved."
+		TEXT_END_MARKER
+	};
+
+	const TextLine page6[] = {
+		{ 0, 19, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[121].c_str() }, // "Macintosh version by
+		{ 133, 34, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[122].c_str() }, // "Eric Johnston"
+		TEXT_END_MARKER
+	};
+
+	struct AboutPage {
+		const TextLine *text;
+		int drawArea;
+		uint32 delayMs;
+	};
+
+	AboutPage aboutPages[] = {
+		{ nullptr, 0,  2800 },
+		{ nullptr, 0,   100 },
+		{ nullptr, 0,   100 },
+		{ page3,   0,  2100 },
+		{ nullptr, 0,   500 },
+		{ page5,   0,  2800 },
+		{ page6,   1,     0 },
+	};
+
+	Common::Rect drawAreas[] = {
+		Common::Rect(2, 2, s->w - 2, s->h - 2),
+		Common::Rect(10, 63, s->w - 10, s->h - 10)
+	};
+
+	int page = 0;
+
+	window->show();
+
+	uint32 black = getBlack();
+//	uint32 white = getWhite();
+
+	while (!_vm->shouldQuit() && page < ARRAYSIZE(aboutPages)) {
+		Common::Rect &drawArea = drawAreas[aboutPages[page].drawArea];
+
+		switch (page) {
+		case 0:
+			s->fillRect(drawArea, black);
+			break;
+		case 1:
+			// TODO: Verify this once the graphics work
+			window->fillPattern(drawArea, 0xEAEA, true, false);
+			break;
+		case 2:
+		case 4:
+			s->fillRect(drawArea, black);
+			break;
+		case 6:
+			s->fillRect(Common::Rect(178, 129, s->w - 2, s->h - 2), black);
+			window->markRectAsDirty(Common::Rect(178, 129, s->w - 2, s->h - 2));
+			break;
+		}
+
+		if (aboutPages[page].text) {
+			if (aboutPages[page].drawArea == 1) {
+				window->drawTextBox(drawArea, aboutPages[page].text, true);
+			} else {
+				window->drawTexts(drawArea, aboutPages[page].text, true);
+			}
+		}
+
+		if (aboutPages[page].drawArea != 1)
+			window->markRectAsDirty(drawArea);
+
+		window->update();
+		delay(aboutPages[page].delayMs);
+		page++;
+	}
+
+//	delete lucasArts;
+	delete window;
 }
 
 void MacMI1Gui::runAboutDialogIndy4() {
