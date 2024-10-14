@@ -113,38 +113,44 @@ bool intersectTriangle(const Math::Vector3d &origin, const Math::Vector3d &direc
 	return true;
 }
 
-bool pickGetIntersect(const Math::Vector3d &lineStart, const Math::Vector3d &lineEnd,
-								   const Math::Vector3d &v0, const Math::Vector3d &v1, const Math::Vector3d &v2,
+bool pickGetIntersect(const Math::Vector3d &lineS, const Math::Vector3d &lineE,
+								   const Math::Vector3d &vp0, const Math::Vector3d &vp1, const Math::Vector3d &vp2,
 								   Math::Vector3d &intersection, float &distance) {
+	DXVector3 v0 = DXVector3(vp0.x(), vp0.y(), vp0.z());
+	DXVector3 v1 = DXVector3(vp1.x(), vp1.y(), vp1.z());
+	DXVector3 v2 = DXVector3(vp2.x(), vp2.y(), vp2.z());
+	DXVector3 lineStart = DXVector3(lineS.x(), lineS.y(), lineS.z());
+	DXVector3 lineEnd = DXVector3(lineE.x(), lineE.y(), lineE.z());
+
 	// compute plane's normal
-	Math::Vector3d vertex;
-	Math::Vector3d normal;
+	DXVector3 vertex;
+	DXVector3 normal;
 
-	Math::Vector3d edge1 = v1 - v0;
-	Math::Vector3d edge2 = v2 - v1;
+	DXVector3 edge1 = v1 - v0;
+	DXVector3 edge2 = v2 - v1;
 
-	normal = Math::Vector3d::crossProduct(edge1, edge2);
-	normal.normalize();
+	DXVec3Cross(&normal, &edge1, &edge2);
+	DXVec3Normalize(&normal, &normal);
 
 	vertex = v0;
 
-	Math::Vector3d direction, l1;
+	DXVector3 direction, l1;
 	float lineLength, distFromPlane, percentage;
 
-	direction.x() = lineEnd.x() - lineStart.x(); // calculate the lines direction vector
-	direction.y() = lineEnd.y() - lineStart.y();
-	direction.z() = lineEnd.z() - lineStart.z();
+	direction._x = lineEnd._x - lineStart._x; // calculate the lines direction vector
+	direction._y = lineEnd._y - lineStart._y;
+	direction._z = lineEnd._z - lineStart._z;
 
-	lineLength = Math::Vector3d::dotProduct(direction, normal); // This gives us the line length (the blue dot L3 + L4 in figure d)
+	lineLength = DXVec3Dot(&direction, &normal); // This gives us the line length (the blue dot L3 + L4 in figure d)
 
-	if (ABS(lineLength) < 0.0001f)
+	if (fabsf(lineLength) < 0.00001f)
 		return false;
 
-	l1.x() = vertex.x() - lineStart.x(); // calculate vector L1 (the PINK line in figure d)
-	l1.y() = vertex.y() - lineStart.y();
-	l1.z() = vertex.z() - lineStart.z();
+	l1._x = vertex._x - lineStart._x; // calculate vector L1 (the PINK line in figure d)
+	l1._y = vertex._y - lineStart._y;
+	l1._z = vertex._z - lineStart._z;
 
-	distFromPlane = Math::Vector3d::dotProduct(l1, normal); // gives the distance from the plane (ORANGE Line L3 in figure d)
+	distFromPlane = DXVec3Dot(&l1, &normal); // gives the distance from the plane (ORANGE Line L3 in figure d)
 	percentage = distFromPlane / lineLength; // How far from Linestart , intersection is as a percentage of 0 to 1
 	if (percentage < 0.0)
 		return false;
@@ -153,9 +159,9 @@ bool pickGetIntersect(const Math::Vector3d &lineStart, const Math::Vector3d &lin
 
 	distance = percentage; //record the distance from beginning of ray (0.0 -1.0)
 
-	intersection.x() = lineStart.x() + direction.x() * percentage; // add the percentage of the line to line start
-	intersection.y() = lineStart.y() + direction.y() * percentage;
-	intersection.z() = lineStart.z() + direction.z() * percentage;
+	intersection.x() = lineStart._x + direction._x * percentage; // add the percentage of the line to line start
+	intersection.y() = lineStart._y + direction._y * percentage;
+	intersection.z() = lineStart._z + direction._z * percentage;
 
 	return true;
 }
