@@ -1374,8 +1374,7 @@ bool BaseObject::getMatrix(Math::Matrix4 *model, Math::Vector3d *pos) {
 		pos = &_posVector;
 	}
 	DXVector3 posVect = DXVector3(pos->x(), pos->y(), pos->z());
-	model->transpose();
-	DXMatrix modelMatrix = DXMatrix(model->getData());
+	DXMatrix modelMatrix;
 
 	DXMatrix matRot, matScale, matTrans;
 	DXMatrixRotationYawPitchRoll(&matRot, degToRad(_angle), 0, 0);
