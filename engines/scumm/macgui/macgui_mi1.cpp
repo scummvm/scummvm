@@ -548,43 +548,55 @@ void MacMI1Gui::runAboutDialogMI1() {
 		case 0:
 			s->fillRect(drawArea, black);
 			break;
+
 		case 1:
 			window->fillPattern(drawArea, 0xD7D7, false, true);
 			break;
+
 		case 2:
 			s->fillRect(drawArea, white);
 			break;
+
 		case 4:
 			allowMegaSkip = true;
 			s->fillRect(drawArea, white);
 			drawShadow(s, 77, 141, 2 * ARRAYSIZE(shadow1), shadow1);
 			break;
+
 		case 5:
 			drawShadow(s, 67, 140, 2 * ARRAYSIZE(shadow2), shadow2);
 			break;
+
 		case 6:
 			drawShadow(s, 52, 139, 2 * ARRAYSIZE(shadow3), shadow3);
 			break;
+
 		case 7:
 			drawShadow(s, 32, 138, 2 * ARRAYSIZE(shadow4), shadow4);
 			break;
+
 		case 8:
 			drawShadow(s, 7, 137, 2 * ARRAYSIZE(shadow5), shadow5);
 			break;
+
 		case 9:
 			// Monkeys
 			break;
+
 		case 10:
 			// Monkeys
 			break;
+
 		case 11:
 			// Monkeys (shadow still barely visible)
 			allowMegaSkip = megaSkip = false;
 			break;
+
 		case 13:
 			s->fillRect(Common::Rect(178, 127, s->w, s->h), white);
 			window->markRectAsDirty(Common::Rect(178, 127, s->w, s->h));
 			break;
+
 		default:
 			break;
 		}
@@ -657,8 +669,8 @@ void MacMI1Gui::runAboutDialogMI2() {
 	};
 
 	const TextLine page5[] = {
-		{ 0, 10, kStyleBold2, Graphics::kTextAlignCenter, _strsStrings[116].c_str() }, // "LeChuck\xD5s Revenge"
-		{ 0, 25, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[117].c_str() }, // "Monkey Island 2"
+		{ 1, 16, kStyleBold2, Graphics::kTextAlignCenter, _strsStrings[116].c_str() }, // "LeChuck\xD5s Revenge"
+		{ 1, 31, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[117].c_str() }, // "Monkey Island 2"
 		{ 176, 125, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[119].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company."
 		{ 310, 138, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[120].c_str() }, // "All rights reserved."
 		TEXT_END_MARKER
@@ -667,6 +679,61 @@ void MacMI1Gui::runAboutDialogMI2() {
 	const TextLine page6[] = {
 		{ 0, 19, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[121].c_str() }, // "Macintosh version by
 		{ 133, 34, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[122].c_str() }, // "Eric Johnston"
+		TEXT_END_MARKER
+	};
+
+	const TextLine page7[] = {
+		{ 168, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[123].c_str() }, // "Created by"
+		{ 143, 19, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[125].c_str() }, // "Ron Gilbert"
+		{ 141, 42, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[124].c_str() }, // "Macintosh Scripting by"
+		{ 127, 57, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[126].c_str() }, // "Alric Wilmunder"
+		TEXT_END_MARKER
+	};
+
+	const TextLine page8[] = {
+		{ 142, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[127].c_str() }, // "SCUMM Story System"
+		{ 168, 14, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[128].c_str() }, // "created by"
+		{ 68, 28, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[130].c_str() }, // "Ron Gilbert    Aric Wilmunder"
+		{ 79, 43, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[131].c_str() }, // "Brad P. Taylor    Vince Lee"
+		{ 135, 60, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[129].c_str() }, // "and"
+		{ 109, 58, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[132].c_str() }, // "        Eric Johnston"
+		TEXT_END_MARKER
+	};
+
+	const TextLine page9[] = {
+		{ 137, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[133].c_str() }, // "Macintosh Orchestration"
+		{ 125, 19, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[135].c_str() }, // "Robin Goldstein"
+		{ 152, 42, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[134].c_str() }, // "Macintosh Testing"
+		{ 144, 57, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[136].c_str() }, // "Jo Ashburn"
+		TEXT_END_MARKER
+	};
+
+	const TextLine page10[] = {
+		{ 2, 19, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[137].c_str() }, // "\xD2djm\xD3  Sound and Music System \xA91992 Eric Johnston
+		{ 2, 39, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[138].c_str() }, // "\xD2epx\xD3  Graphics Smoothing System \xA91992 Eric Johnson
+		{ 2, 54, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[139].c_str() }, // "Type 'rough' to see the difference."
+		TEXT_END_MARKER
+	};
+
+	const TextLine page11[] = {
+		{ 112, 9, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[140].c_str() }, // "Stumped?  Hint books are available!"
+		{ 98, 27, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[143].c_str() }, // "In the U.S. call"
+		{ 172, 27, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[141].c_str() }, // "1 (800) STAR-WARS"
+		{ 172, 37, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[145].c_str() }, // "that\xD5s  1 (800) 782-7927"
+		{ 102, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[144].c_str() }, // "In Canada call"
+		{ 172, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[142].c_str() }, // "1 (800) 828-7927"
+		TEXT_END_MARKER
+	};
+
+	const TextLine page12[] = {
+		{ 110, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[146].c_str() }, // "Need a hint NOW?  Having problems?"
+		{ 89, 19, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[149].c_str() }, // "For technical support call"
+		{ 213, 19, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[147].c_str() }, // "1 (415) 721-3333"
+		{ 145, 29, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[150].c_str() }, // "For hints call"
+		{ 213, 29, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[148].c_str() }, // "1 (900) 740-JEDI"
+		{ 88, 44, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[151].c_str() }, // "The charge for the hint line is 75\xA2 per minute."
+		{ 93, 54, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[152].c_str() }, // "(You must have your parents\xD5 permission to"
+		{ 108, 64, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[153].c_str() }, // "call this number if you are under 18.)"
 		TEXT_END_MARKER
 	};
 
@@ -683,7 +750,13 @@ void MacMI1Gui::runAboutDialogMI2() {
 		{ page3,   0,  2100 },
 		{ nullptr, 0,   500 },
 		{ page5,   0,  2800 },
-		{ page6,   1,     0 },
+		{ page6,   1,  4300 },
+		{ page7,   1,  4300 },
+		{ page8,   1,  4200 },
+		{ page9,   1,  4200 },
+		{ page10,  1,  4200 },
+		{ page11,  1, 14000 },
+		{ page12,  1,     0 }
 	};
 
 	Common::Rect drawAreas[] = {
@@ -696,7 +769,6 @@ void MacMI1Gui::runAboutDialogMI2() {
 	window->show();
 
 	uint32 black = getBlack();
-//	uint32 white = getWhite();
 
 	while (!_vm->shouldQuit() && page < ARRAYSIZE(aboutPages)) {
 		Common::Rect &drawArea = drawAreas[aboutPages[page].drawArea];
@@ -705,17 +777,23 @@ void MacMI1Gui::runAboutDialogMI2() {
 		case 0:
 			s->fillRect(drawArea, black);
 			break;
+
 		case 1:
 			// TODO: Verify this once the graphics work
 			window->fillPattern(drawArea, 0xEAEA, true, false);
 			break;
+
 		case 2:
 		case 4:
 			s->fillRect(drawArea, black);
 			break;
+
 		case 6:
 			s->fillRect(Common::Rect(178, 129, s->w - 2, s->h - 2), black);
 			window->markRectAsDirty(Common::Rect(178, 129, s->w - 2, s->h - 2));
+			break;
+
+		default:
 			break;
 		}
 
@@ -828,7 +906,7 @@ void MacMI1Gui::runAboutDialogIndy4() {
 		{ 172, 27, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 1].c_str() }, // "1 (800) STAR-WARS"
 		{ 172, 37, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 5].c_str() }, // "that\xD5s  1 (800) 782-7927"
 		{ 102, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 4].c_str() }, // "In Canada call"
-		{ 172, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 2].c_str() }, // "1 (900) 740-JEDI"
+		{ 172, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 2].c_str() }, // "1 (800) 828-7927"
 		TEXT_END_MARKER
 	};
 
@@ -885,25 +963,34 @@ void MacMI1Gui::runAboutDialogIndy4() {
 		case 0:
 			s->fillRect(drawArea, black);
 			break;
+
 		case 1:
 			window->fillPattern(drawArea, 0xD7D7, false, true);
 			break;
+
 		case 2:
 			window->fillPattern(drawArea, 0x5A5A, false, true);
 			break;
+
 		case 3:
 			s->fillRect(drawArea, white);
 			break;
+
 		case 4:
 			s->fillRect(drawArea, white);
 			window->drawSprite(indianaJones, 89, 6);
 			break;
+
 		case 6:
 			s->fillRect(Common::Rect(178, 129, s->w - 2, s->h - 2), white);
 			window->markRectAsDirty(Common::Rect(178, 129, s->w - 2, s->h - 2));
 			break;
+
 		case 10:
 			aboutPages[10].text = isFloppyVersion ? page10_floppy : page10_cd;
+			break;
+
+		default:
 			break;
 		}
 
