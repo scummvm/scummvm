@@ -376,7 +376,7 @@ Common::Error TwinEEngine::run() {
 			_state = EngineState::GameLoop;
 			break;
 		case EngineState::GameLoop:
-			if (gameEngineLoop()) {
+			if (mainLoop()) {
 				_menuOptions->showCredits();
 				_menuOptions->showEndSequence();
 			}
@@ -1222,7 +1222,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 	return false;
 }
 
-bool TwinEEngine::gameEngineLoop() {
+bool TwinEEngine::mainLoop() {
 	_redraw->_firstTime = true;
 	_screens->_flagFade = true;
 	_movements->initRealValue(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_90, LBAAngles::ANGLE_1, &_realFalling);

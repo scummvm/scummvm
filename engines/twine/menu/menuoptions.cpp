@@ -106,7 +106,7 @@ void MenuOptions::showCredits() {
 	_engine->_scene->_newCube = LBA1SceneId::Credits_List_Sequence;
 
 	flagCredits = true;
-	_engine->gameEngineLoop();
+	_engine->mainLoop();
 	_engine->_scene->stopRunningGame();
 	flagCredits = false;
 

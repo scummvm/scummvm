@@ -370,7 +370,7 @@ public:
 	 * Game engine main loop
 	 * @return true if we want to show credit sequence
 	 */
-	bool gameEngineLoop();
+	bool mainLoop();
 
 	/**
 	 * Deplay certain seconds till proceed - Can also Skip this delay
