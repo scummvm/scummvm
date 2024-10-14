@@ -370,6 +370,16 @@ on GetCDLetter tagFile, discNumber\r\
 end \r\
 ";
 
+/* Frankenstein: Through The Eyes Of The Monster uses a projector FRANKIE.EXE, which calls an
+ * identically-named submovie FRANKIE.DIR. For now we can work around this mess by referring to
+ * the full "path" of the embedded submovie so path detection doesn't collide with FRANKIE.EXE.
+ */
+const char *frankensteinSwapFix = " \
+on exitFrame \r\
+  go(1, \"FRANKIE\\FRANKIE.DIR\")\r\
+end \r\
+";
+
 struct ScriptHandlerPatch {
 	const char *gameId;
 	const char *extra;
@@ -395,6 +405,7 @@ struct ScriptHandlerPatch {
 	{"vnc", nullptr, kPlatformWindows, "VNC\\VNC.EXE", kMovieScript, 57, DEFAULT_CAST_LIB, &vncSkipDetection},
 	{"vnc", nullptr, kPlatformWindows, "VNC2\\SHARED.DXR", kMovieScript, 1248, DEFAULT_CAST_LIB, &vncEnableCheats},
 	{"amber", nullptr, kPlatformWindows, "AMBER_F\\AMBER_JB.EXE", kMovieScript, 7, DEFAULT_CAST_LIB, &amberDriveDetectionFix},
+	{"frankenstein", nullptr, kPlatformWindows, "FRANKIE.EXE", kScoreScript, 21, DEFAULT_CAST_LIB, &frankensteinSwapFix},
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, nullptr},
 
 };

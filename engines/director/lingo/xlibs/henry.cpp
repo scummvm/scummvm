@@ -31,6 +31,7 @@
  *
  * USED IN:
  * Mummy: Tomb of the Pharaoh
+ * Frankenstein: Through the Eyes of the Monster
  *
  **************************************************/
 
