@@ -192,7 +192,7 @@ void Screens::fadeToBlack(const Graphics::Palette &ptrpal) {
 	}
 
 	for (int32 n = 100; n >= 0; n -= 2) {
-		FrameMarker frame(_engine, DEFAULT_HZ); // VSync()
+		FrameMarker frame(_engine, 66); // VSync()
 		fadePal(0, 0, 0, ptrpal, n);
 	}
 
@@ -203,7 +203,7 @@ void Screens::whiteFade() {
 	Graphics::Palette workpal{NUMOFCOLORS};
 
 	for (int32 n = 0; n <= 255; n++) {
-		FrameMarker frame(_engine, DEFAULT_HZ); // VSync()
+		FrameMarker frame(_engine, 66); // VSync()
 		for (int i = 0; i < NUMOFCOLORS; i++) {
 			workpal.set(i, n, n, n);
 		}
@@ -215,14 +215,14 @@ void Screens::whiteFade() {
 
 void Screens::fadeWhiteToPal(const Graphics::Palette &ptrpal) {
 	for (int32 n = 0; n <= 100; ++n) {
-		FrameMarker frame(_engine, DEFAULT_HZ); // VSync()
+		FrameMarker frame(_engine, 66); // VSync()
 		fadePal(255, 255, 255, ptrpal, n);
 	}
 }
 
 void Screens::fadeToPal(const Graphics::Palette &ptrpal) {
 	for (int32 i = 0; i <= 100; i += 3) {
-		FrameMarker frame(_engine, DEFAULT_HZ); // VSync()
+		FrameMarker frame(_engine, 66); // VSync()
 		fadePal(0, 0, 0, ptrpal, i);
 	}
 
@@ -243,7 +243,7 @@ void Screens::fadePalToPal(const Graphics::Palette &ptrpal, const Graphics::Pale
 	Graphics::Palette workpal{NUMOFCOLORS};
 
 	for (int m = 0; m < 100; ++m) {
-		FrameMarker frame(_engine, DEFAULT_HZ); // VSync()
+		FrameMarker frame(_engine, 66); // VSync()
 		for (int32 i = 0; i < NUMOFCOLORS; i++) {
 			byte r1, g1, b1;
 			ptrpal.get(i, r1, g1, b1);
@@ -264,14 +264,14 @@ void Screens::fadePalToPal(const Graphics::Palette &ptrpal, const Graphics::Pale
 
 void Screens::fadeToRed(const Graphics::Palette &ptrpal) {
 	for (int32 i = 100; i >= 0; i -= 2) {
-		FrameMarker frame(_engine, DEFAULT_HZ);
+		FrameMarker frame(_engine, 66); // VSync()
 		fadePal(255, 0, 0, ptrpal, i);
 	}
 }
 
 void Screens::fadeRedToPal(const Graphics::Palette &ptrpal) {
 	for (int32 i = 0; i <= 100; i += 2) {
-		FrameMarker frame(_engine, DEFAULT_HZ);
+		FrameMarker frame(_engine, 66); // VSync()
 		fadePal(255, 0, 0, ptrpal, i);
 	}
 }
