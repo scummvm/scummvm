@@ -27,6 +27,7 @@
 
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/math/math_util.h"
 #include "engines/wintermute/base/gfx/xanimation.h"
 #include "engines/wintermute/base/gfx/xanimation_set.h"
 #include "engines/wintermute/base/gfx/xframe_node.h"
@@ -200,43 +201,33 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 			return false;
 		}
 
-	    Math::Quaternion qRot;
-		Math::Vector3d transVec;
-		Math::Vector3d scaleVec;
+		DXQuaternion qRot;
+		DXVector3 transVec;
+		DXVector3 scaleVec;
 
 		for (uint32 key = 0; key < numKeys; key++) {
 			const XTimedFloatKeys *fileMatrixKey = &animationKey->_keys[key];
 			uint32 time = fileMatrixKey->_time;
 			assert(fileMatrixKey->_numTfkeys == 16);
 
-			Math::Matrix4 keyData;
-			for (int r = 0; r < 4; ++r) {
-				for (int c = 0; c < 4; ++c) {
-					keyData(c, r) = fileMatrixKey->_tfkeys[r * 4 + c];
-				}
+			DXMatrix keyData;
+			for (uint32 i = 0; i < 16; ++i) {
+				keyData._m4x4[i] = fileMatrixKey->_tfkeys[i];
 			}
 
 			// mirror at orign
-			keyData(2, 3) *= -1.0f;
+			keyData._m[3][2] *= -1.0f;
 
 			// mirror base vectors
-			keyData(2, 0) *= -1.0f;
-			keyData(2, 1) *= -1.0f;
+			keyData._m[0][2] *= -1.0f;
+			keyData._m[1][2] *= -1.0f;
 
 			// change handedness
-			keyData(0, 2) *= -1.0f;
-			keyData(1, 2) *= -1.0f;
+			keyData._m[2][0] *= -1.0f;
+			keyData._m[2][1] *= -1.0f;
 
-			transVec = keyData.getPosition();
-
-			scaleVec.x() = keyData(0, 0) * keyData(0, 0) + keyData(1, 0) * keyData(1, 0) + keyData(2, 0) * keyData(2, 0);
-			scaleVec.x() = sqrtf(scaleVec.x());
-			scaleVec.y() = keyData(0, 1) * keyData(0, 1) + keyData(1, 1) * keyData(1, 1) + keyData(2, 1) * keyData(2, 1);
-			scaleVec.y() = sqrtf(scaleVec.y());
-			scaleVec.z() = keyData(0, 2) * keyData(0, 2) + keyData(1, 2) * keyData(1, 2) + keyData(2, 2) * keyData(2, 2);
-			scaleVec.z() = sqrtf(scaleVec.z());
-
-			qRot.fromMatrix(keyData.getRotation());
+			// we always convert matrix keys to T-R-S
+			decomposeMatrixSimple(&keyData, &transVec, &scaleVec, &qRot);
 
 			BonePositionKey *positionKey = new BonePositionKey;
 			BoneScaleKey *scaleKey = new BoneScaleKey;
@@ -246,9 +237,9 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 			scaleKey->_time = time;
 			rotationKey->_time = time;
 
-			positionKey->_pos = transVec;
-			scaleKey->_scale = scaleVec;
-			rotationKey->_rotation = qRot;
+			positionKey->_pos = Math::Vector3d(transVec._x, transVec._y, transVec._z);
+			scaleKey->_scale = Math::Vector3d(scaleVec._x, scaleVec._y, scaleVec._z);
+			rotationKey->_rotation = Math::Vector4d(qRot._x, qRot._y, qRot._z, qRot._w);
 
 			_posKeys.push_back(positionKey);
 			_scaleKeys.push_back(scaleKey);
