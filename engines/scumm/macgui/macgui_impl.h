@@ -656,6 +656,8 @@ public:
 	Graphics::MacWindowManager *_windowManager = nullptr;
 	bool _forceMenuClosed = false;
 
+	virtual int getNumColors() const = 0;
+
 	Graphics::Surface *surface() { return _surface; }
 	uint32 getBlack() const;
 	uint32 getWhite() const;

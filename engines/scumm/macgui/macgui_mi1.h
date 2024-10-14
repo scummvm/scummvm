@@ -36,6 +36,7 @@ public:
 	~MacMI1Gui();
 
 	const Common::String name() const { return "game"; }
+	int getNumColors() const override { return 256; }
 
 	bool handleEvent(Common::Event event);
 

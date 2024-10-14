@@ -36,6 +36,7 @@ public:
 	~MacLoomGui();
 
 	const Common::String name() const override { return "Loom"; }
+	int getNumColors() const override { return 16; }
 
 	bool handleEvent(Common::Event event) override;
 

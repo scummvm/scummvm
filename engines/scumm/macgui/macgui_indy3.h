@@ -45,6 +45,7 @@ public:
 	~MacIndy3Gui();
 
 	const Common::String name() const override { return "Indy"; }
+	int getNumColors() const override { return 16; }
 
 	Graphics::Surface _textArea;
 

@@ -56,6 +56,10 @@ MacGui::~MacGui() {
 	delete _impl;
 }
 
+int MacGui::getNumColors() const {
+	return _impl->getNumColors();
+}
+
 void MacGui::initialize() {
 	_impl->initialize();
 }
