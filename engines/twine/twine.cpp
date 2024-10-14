@@ -917,7 +917,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		if (_input->toggleAbortAction()) {
 			return true;
 		}
-	} else {
+	} else if (_screens->_flagFade) {
 		// Process give up menu - Press ESC
 		if (_input->toggleAbortAction() && _scene->_sceneHero->_lifePoint > 0 && _scene->_sceneHero->_body != -1 && !_scene->_sceneHero->_staticFlags.bIsInvisible) {
 			saveTimer(false);
