@@ -1314,24 +1314,18 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdSceneGeometry::convert3Dto2D(Math::Vector3d *pos, int32 *x, int32 *y) {
-	Math::Matrix4 worldMat;
-	worldMat.setToIdentity();
+bool AdSceneGeometry::convert3Dto2D(Math::Vector3d *position, int32 *x, int32 *y) {
+	DXMatrix worldMat;
+	DXMatrixIdentity(&worldMat);
+	DXMatrix projMat = DXMatrix(_lastProjMat.getData());
+	DXMatrixTranspose(&projMat, &projMat);
+	DXMatrix viewMat = DXMatrix(_lastViewMat.getData());
+	DXMatrixTranspose(&viewMat, &viewMat);
 
-	Math::Vector3d vect2D;
-	int viewportTmp[4];
-	// TODO: gluMathProject expects an OpenGL viewport,
-	// hence the first coordinates specify the lower left corner
-	// wme works with a Direct3D viewport, though
-	// so check if this does work
-	viewportTmp[0] = _drawingViewport.left;
-	viewportTmp[1] = _drawingViewport.bottom;
-	viewportTmp[2] = _drawingViewport.width();
-	viewportTmp[3] = _drawingViewport.height();
-	Math::Matrix4 modelViewMatrix = _lastViewMat * worldMat;
-	Math::gluMathProject(*pos, modelViewMatrix.getData(), _lastProjMat.getData(), viewportTmp, vect2D);
-	*x = vect2D.x() + _lastScrollX;
-	*y = vect2D.y() + _lastScrollY;
+	DXVector3 vect2D, pos = DXVector3(position->x(), position->y(), position->z());
+	DXVec3Project(&vect2D, &pos, &_drawingViewport, &projMat, &viewMat, &worldMat);
+	*x = vect2D._x + _lastScrollX;
+	*y = vect2D._y + _lastScrollY;
 
 	return true;
 }
