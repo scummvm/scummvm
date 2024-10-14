@@ -54,7 +54,10 @@ private:
 	int32 _guessX = 0;
 	int32 _mctdSerie = 0;
 	int32 _meiHandsBehindBack = 0;
+	int32 _ripAttemptsPush = 0;
 	int32 _ripLooksAround = 0;
+	int32 _unkSerie1 = 0;
+	int32 _unkSerie2 = 0;
 	int32 _var1 = 0;
 	int32 _var2 = 0;
 	int32 _var3 = 0;
@@ -67,6 +70,9 @@ private:
 	machine *_dynSerie1Mach = nullptr;
 	machine *_machArr[4] = {nullptr, nullptr, nullptr, nullptr};
 	machine *_mcTrekMach = nullptr;
+	machine *_ripPushMach = nullptr;
+	machine *_unkMach1 = nullptr;
+	machine *_unkMach2 = nullptr;
 
 	int32 subCE498(int32 val1);
 	void subD7916(machine *machine, int32 val1);

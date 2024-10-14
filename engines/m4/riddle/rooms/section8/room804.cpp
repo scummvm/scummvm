@@ -231,6 +231,261 @@ void Room804::pre_parser() {
 }
 
 void Room804::parser() {
+	_G(player).command_ready = false;
+	if (scumm_strnicmp(_G(player).noun, "mei chen", 8) && inv_player_has(_G(player).verb)) {
+		digi_play("com017", 1, 255, -1, 997);
+		return;
+	}
+
+	if (player_said("journal") && !player_said("look at")) {
+		digi_play("com042", 1, 255, -1, 997);
+		return;
+	}
+
+	int32 caty = -1;
+	if (player_said("look") || player_said("look at")) {
+		caty = 1;
+	} else if (player_said("gear") || player_said("use")) {
+		caty = 0;
+	} else if (player_said("take")) {
+		caty = 2;
+	} else if (player_said("talk to")) {
+		caty = 3;
+	} else if (player_said("walk to") || player_said("spleen")) {
+		caty = 4;
+	} else if (player_said("go")) {
+		caty = 5;
+	}
+
+	switch (caty) {
+	case -1:
+		_G(player).command_ready = true;
+		break;
+
+	case 0:
+		if (player_said("chariot") || player_said("chariot ")) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				switch (_currentRoom) {
+				case 804:
+					ws_walk(_G(my_walker), 696, 330, nullptr, 10, 9, true);
+					break;
+				case 814:
+					ws_walk(_G(my_walker), 851, 330, nullptr, 10, 9, true);
+					break;
+				case 824:
+					ws_walk(_G(my_walker), 1627, 318, nullptr, 50, 3, true);
+					break;
+				case 834:
+					digi_play("834r20", 1, 255, -1, -1);
+					break;
+				case 844:
+					ws_walk(_G(my_walker), 1216, 330, nullptr, 10, 9, true);
+					break;
+				default:
+					break;
+				}
+
+				break;
+
+			case 10:
+				player_set_commands_allowed(false);
+				ws_hide_walker(_G(my_walker));
+				switch (_currentRoom) {
+				case 804:
+					_ripAttemptsPush = series_load("rip attempts char push", -1, nullptr);
+					_ripPushMach = series_plain_play("RIP ATTEMPTS CHAR PUSH", 1, 0, 100, 0, 5, 20, true);
+					break;
+
+				case 814:
+					_ripAttemptsPush = series_load("rip attempts char push", -1, nullptr);
+					_ripPushMach = series_plain_play("rip tries to push cart", 1, 0, 100, 0, 5, 20, true);
+					break;
+
+				case 844:
+					_ripAttemptsPush = series_load("rip attempts char push", -1, nullptr);
+					_ripPushMach = series_plain_play("844push", 1, 0, 100, 0, 5, 20, true);
+					break;
+
+				default:
+					break;
+				}
+				break;
+
+			case 20:
+				kernel_timing_trigger(120, 30, nullptr);
+				digi_play("950_s32", 2, 255, -1, -1);
+				break;
+
+			case 30:
+				switch (_currentRoom) {
+				case 804:
+					_ripPushMach = series_plain_play("RIP ATTEMPTS CHAR PUSH", 1, 2, 100, 0, 5, 40, true);
+					break;
+
+				case 814:
+					_ripPushMach = series_plain_play("rip tries to push cart", 1, 2, 100, 0, 5, 40, true);
+					break;
+
+				case 844:
+					_ripPushMach = series_plain_play("844push", 1, 2, 100, 0, 5, 40, true);
+					break;
+
+				default:
+					break;
+				}
+
+				break;
+
+			case 40:
+				player_set_commands_allowed(true);
+				series_unload(_ripAttemptsPush);
+				digi_play("814R26", 1, 255, -1, -1);
+				terminateMachine(_ripPushMach);
+				ws_unhide_walker(_G(my_walker));
+				ws_demand_facing(_G(my_walker), 9);
+
+				break;
+
+			case 50:
+				player_set_commands_allowed(false);
+				terminateMachine(_unkMach1);
+				terminateMachine(_unkMach2);
+				series_unload(_unkSerie1);
+				series_unload(_unkSerie2);
+				digi_preload("950_s33", -1);
+				ws_hide_walker(_G(my_walker));
+				terminateMachine(_ripPushMach);
+				_ripPushMach = series_stream("824rp01", 5, 256, -1);
+				series_stream_break_on_frame(_ripPushMach, 80, 60);
+				digi_play_loop("950_s33", 2, 255, -1, -1);
+
+				break;
+
+			case 60:
+				disable_player_commands_and_fade_init(70);
+				break;
+
+			case 70:
+				_G(flags)[V270] = 805;
+				_G(game).new_room = 805;
+				adv_kill_digi_between_rooms(false);
+				digi_preload("950_s29", -1);
+				digi_play_loop("950_s29", 3, 96, -1, -1);
+
+				break;
+
+			default:
+				break;
+			}
+		} // if (player_said("chariot") || player_said("chariot "))
+
+		else if (scumm_strnicmp(_G(player).noun, "1st", 3) == 0 || scumm_strnicmp(_G(player).noun, "2nd", 3) == 0
+			|| scumm_strnicmp(_G(player).noun, "3rd", 3) == 0 || scumm_strnicmp(_G(player).noun, "4th", 3) == 0
+			|| scumm_strnicmp(_G(player).noun, "5th", 3) == 0 || scumm_strnicmp(_G(player).noun, "6th", 3) == 0
+			|| scumm_strnicmp(_G(player).noun, "7th", 3) == 0) {
+			_field64 = _G(player).noun[0] - 0x30; // Thus a number between 1 and 7
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_trigger_dispatchx(kernel_trigger_create(15));
+		}
+
+		else if (player_said("horse") || player_said("fallen horse")) {
+			// The original has 2 distinct tests but the same content -> merged
+			digi_play("com069", 1, 255, -1, 997);
+		}
+
+		else if (player_said("soldier"))
+			digi_play("com070", 1, 255, -1, 997);
+
+		else if (player_said("soldier ")) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				digi_play("com070", 1, 255, -1, 997);
+				break;
+
+			case 10:
+				digi_play("com071", 1, 255, -1, 997);
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		else if (player_said("lit urn"))
+			digi_play("com072", 1, 255, -1, 997);
+
+		else if (player_said("unlit urn"))
+			digi_play("com073", 1, 255, -1, 997);
+
+		else
+			_G(player).command_ready = true;
+
+		break; // caty case 0
+
+	case 1:
+		if (player_said(" "))
+			digi_play("com059", 1, 255, -1, 997);
+
+		else if (player_said("wooden beam") && inv_object_in_scene("wooden beam", _currentRoom))
+			digi_play("844r12", 1, 255, -1, -1);
+
+		else if (scumm_strnicmp(_G(player).noun, "1st", 3) == 0 || scumm_strnicmp(_G(player).noun, "2nd", 3) == 0 || scumm_strnicmp(_G(player).noun, "3rd", 3) == 0 || scumm_strnicmp(_G(player).noun, "4th", 3) == 0 || scumm_strnicmp(_G(player).noun, "5th", 3) == 0 || scumm_strnicmp(_G(player).noun, "6th", 3) == 0 || scumm_strnicmp(_G(player).noun, "7th", 3) == 0) {
+			switch (_currentRoom) {
+			case 804:
+			case 814:
+				_currentSeriesName = Common::String::format("%ldr%02ld", _currentRoom, _G(player).noun[0] - 0x2B);
+				break;
+			case 824:
+			case 834:
+				_currentSeriesName = Common::String::format("%ldr%02ld", _currentRoom, _G(player).noun[0] - 0x2F);
+				break;
+			case 844:
+				_currentSeriesName = Common::String::format("%ldr%02ld", _currentRoom, _G(player).noun[0] - 0x2E);
+				break;
+			default:
+				break;
+			}
+
+			digi_play(_currentSeriesName.c_str(), 1, 255, -1, -1);
+		}
+
+		else if (player_said("lit urn"))
+			digi_play("com060", 1, 255, -1, 997);
+
+		else if (player_said("unlit urn"))
+			digi_play("com061", 1, 255, -1, 997);
+
+		else if (player_said("broken beam"))
+			digi_play("804r15", 1, 255, -1, -1);
+
+		else if (player_said("tipped soldier"))
+			digi_play("com062", 1, 255, -1, 997);
+
+		else if (player_said("fallen soldier") || player_said("fallen horse")) {
+			switch (_G(kernel).trigger) {
+			case -1:
+			case 10:
+			case 20:
+			case 30:
+				break;
+
+			default:
+				break;
+
+			}
+		} // player_said("fallen soldier") || player_said("fallen horse")
+
+		break; // caty case 1
+
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	default:
+		break;
+	}
+
 }
 
 void Room804::daemon() {
