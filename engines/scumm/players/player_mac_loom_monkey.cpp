@@ -650,12 +650,16 @@ void LoomMonkeyMacSnd::restoreAfterLoad() {
 }
 
 void LoomMonkeyMacSnd::toggleMusic(bool enable) {
-	_disableFlags = enable ? _disableFlags & ~1 : _disableFlags | 1;
+	if ((_disableFlags & 1) == (enable ? 0 : 1))
+		return;
+	_disableFlags ^= 1;
 	updateDisabledState();
 }
 
 void LoomMonkeyMacSnd::toggleSoundEffects(bool enable) {
-	_disableFlags = enable ? _disableFlags & ~2 : _disableFlags | 2;
+	if ((_disableFlags & 2) == (enable ? 0 : 2))
+		return;
+	_disableFlags ^= 2;
 	updateDisabledState();
 }
 
