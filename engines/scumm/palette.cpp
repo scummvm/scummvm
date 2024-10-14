@@ -273,9 +273,6 @@ void ScummEngine::resetPalette() {
 		}
 		setDirtyColors(0, 255);
 	}
-
-	if (_macGui)
-		_macGui->setPalette(_currentPalette, 16);
 }
 
 void ScummEngine::setPaletteFromTable(const byte *ptr, int numcolor, int index) {
@@ -1734,17 +1731,14 @@ void ScummEngine::updatePalette() {
 #endif
 
 	if (_game.platform == Common::kPlatformMacintosh && _game.heversion == 0) {
-		for (int i = 0; i < ARRAYSIZE(paletteColors); i += 3) {
+		for (int i = 0; i < 3 * num; ++i)
 			paletteColors[i] = _macGammaCorrectionLookUp[paletteColors[i]];
-			paletteColors[i + 1] = _macGammaCorrectionLookUp[paletteColors[i + 1]];
-			paletteColors[i + 2] = _macGammaCorrectionLookUp[paletteColors[i + 2]];
-		}
 	}
 
 	_system->getPaletteManager()->setPalette(paletteColors, first, num);
 
 	if (_macGui)
-		_macGui->setPalette(paletteColors, 256);
+		_macGui->setPalette(_currentPalette, _macGui->getNumColors());
 }
 
 } // End of namespace Scumm

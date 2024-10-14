@@ -46,6 +46,8 @@ public:
 	MacGui(ScummEngine *vm, const Common::Path &resourceFile);
 	~MacGui();
 
+	int getNumColors() const;
+
 	void initialize();
 	void reset();
 	void update(int delta);
