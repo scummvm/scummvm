@@ -92,14 +92,14 @@ public:
 	void initLoop() override;
 
 	virtual bool setProjection2D() = 0;
-	virtual void setWorldTransform(const Math::Matrix4 &transform) = 0;
 
+	virtual void setWorldTransform(const Math::Matrix4 &transform) = 0;
 //	void setWorldTransform(const Math::Matrix4 &transform) {
 //		_worldMatrix = transform;
 //	}
 
-	Math::Matrix4 lastProjectionMatrix() {
-		return _projectionMatrix;
+	void setViewTransform(const Math::Matrix4 &transform) {
+		_viewMatrix = transform;
 	}
 
 	void setProjectionTransform(const Math::Matrix4 &transform) {
@@ -144,6 +144,7 @@ protected:
 	Math::Matrix4 _worldMatrix;
 	Math::Matrix4 _viewMatrix;
 	Math::Matrix4 _projectionMatrix;
+	Rect32 _viewport;
 	float _fov;
 	float _nearClipPlane;
 	float _farClipPlane;

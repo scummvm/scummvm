@@ -45,8 +45,7 @@ XMesh::XMesh(Wintermute::BaseGame *inGame) : BaseNamedObject(inGame) {
 	_blendedMesh = nullptr;
 	_staticMesh = nullptr;
 
-	_BBoxStart = Math::Vector3d(0.0f, 0.0f, 0.0f);
-	_BBoxEnd = Math::Vector3d(0.0f, 0.0f, 0.0f);
+	_BBoxStart = _BBoxEnd = Math::Vector3d(0.0f, 0.0f, 0.0f);
 }
 
 XMesh::~XMesh() {
