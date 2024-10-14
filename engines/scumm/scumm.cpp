@@ -3964,9 +3964,10 @@ bool ScummEngine::startManiac() {
 void ScummEngine::pauseEngineIntern(bool pause) {
 	if (pause) {
 		// Pause sound & video
-		if (_sound && canPauseSoundsDuringSave()) {
-			_oldSoundsPaused = _sound->_soundsPaused;
+		_needsSoundUnpause = false;
+		if (_sound && canPauseSoundsDuringSave() && !_sound->_soundsPaused) {
 			_sound->pauseSounds(true);
+			_needsSoundUnpause = true;
 		}
 	} else {
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
@@ -3981,8 +3982,8 @@ void ScummEngine::pauseEngineIntern(bool pause) {
 		_system->updateScreen();
 
 		// Resume sound & video
-		if (_sound && canPauseSoundsDuringSave())
-			_sound->pauseSounds(_oldSoundsPaused);
+		if (_sound && canPauseSoundsDuringSave() && _needsSoundUnpause)
+			_sound->pauseSounds(false);
 	}
 }
 

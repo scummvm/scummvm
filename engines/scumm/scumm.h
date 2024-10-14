@@ -567,7 +567,7 @@ public:
 protected:
 	VirtualMachineState vm;
 
-	bool _oldSoundsPaused = false;
+	bool _needsSoundUnpause = false;
 
 public:
 	// Constructor / Destructor
