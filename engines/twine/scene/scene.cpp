@@ -443,20 +443,29 @@ bool Scene::loadSceneLBA1() {
 	if (_enableEnhancements) {
 		switch (_numCube) {
 		case LBA1SceneId::Hamalayi_Mountains_landing_place:
+			// move the mine a little bit, as it's too close to the change cube zone
 			_sceneActors[21]._posObj.x = _sceneActors[21]._oldPos.x = 6656 + 256;
 			_sceneActors[21]._posObj.z = _sceneActors[21]._oldPos.z = 768;
 			break;
 		case LBA1SceneId::Principal_Island_outside_the_fortress:
+			// https://bugs.scummvm.org/ticket/13818
 			_sceneActors[29]._posObj.z = _sceneActors[29]._oldPos.z = 1795;
+
 #if 0
+			// increase the zones for opening the doors
+			// red card door
 			_sceneZones[15].mins.x = 1104;
 			_sceneZones[15].mins.z = 8448;
 			_sceneZones[15].maxs.x = 4336;
 			_sceneZones[15].maxs.z = 11488;
+
+			// red card door
 			_sceneZones[16].mins.x = 21104;
 			_sceneZones[16].mins.z = 4608;
 			_sceneZones[16].maxs.x = 23824;
 			_sceneZones[16].maxs.z = 8080;
+
+			// blue card door
 			_sceneZones[22].mins.x = 6144;
 			_sceneZones[22].mins.z = 6144;
 			_sceneZones[22].maxs.x = 8865;
