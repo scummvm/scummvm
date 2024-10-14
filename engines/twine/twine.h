@@ -226,7 +226,7 @@ private:
 	void initConfigurations();
 	/** Initialize all needed stuffs at first time running engine */
 	void initAll();
-	void playIntro();
+	void introduction();
 	void processActorSamplePosition(int32 actorIdx);
 	/** Allocate video memory, both front and back buffers */
 	void allocVideoMemory(int32 w, int32 h);

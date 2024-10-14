@@ -325,7 +325,7 @@ Common::Error TwinEEngine::run() {
 	_renderer->init(w, h);
 	_grid->init(w, h);
 	initAll();
-	playIntro();
+	introduction();
 	_sound->stopSamples();
 	saveFrontBuffer();
 
@@ -593,7 +593,7 @@ void TwinEEngine::clearScreenMinMax(Common::Rect &rect) {
 	rect.bottom = -0x7D00;
 }
 
-void TwinEEngine::playIntro() {
+void TwinEEngine::introduction() {
 	_input->enableKeyMap(cutsceneKeyMapId);
 	// Display company logo
 	bool abort = false;
