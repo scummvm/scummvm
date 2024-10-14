@@ -1252,6 +1252,24 @@ bool MacMI1Gui::handleEvent(Common::Event event) {
 	if (_vm->_userPut <= 0)
 		return false;
 
+	const char *rough = "rough";
+
+	if (event.type == Common::EVENT_KEYDOWN) {
+		if (event.kbd.keycode == rough[_roughProgress]) {
+			_roughProgress++;
+			if (_roughProgress >= strlen(rough)) {
+				if (_vm->_useMacGraphicsSmoothing && !_roughWarned) {
+					// TODO: Show warning dialog
+					_roughWarned = true;
+				}
+				_vm->mac_toggleSmoothing();
+				_roughProgress = 0;
+			}
+		} else {
+			_roughProgress = 0;
+		}
+	}
+
 	return false;
 }
 

@@ -60,6 +60,9 @@ protected:
 	void readStrings() override;
 
 private:
+	uint _roughProgress = 0;
+	bool _roughWarned = false;
+
 	void runAboutDialogMI1();
 	void runAboutDialogMI2();
 	void runAboutDialogIndy4();
