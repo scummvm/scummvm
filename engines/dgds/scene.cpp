@@ -577,16 +577,16 @@ void Scene::segmentStateOps(const Common::Array<uint16> &args) {
 		if (!subop && !arg)
 			return;
 		switch (subop) {
-		case 1:
+		case 1: // Restart
 			interp->segmentOrState(arg, 3);
 			break;
-		case 2:
+		case 2: // Start
 			interp->segmentOrState(arg, 4);
 			break;
-		case 3:
+		case 3: // Stop
 			interp->segmentSetState(arg, 6);
 			break;
-		case 4:
+		case 4: // Pause
 			interp->segmentSetState(arg, 5);
 			break;
 		case 9:

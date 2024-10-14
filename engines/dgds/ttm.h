@@ -73,7 +73,7 @@ enum TTMRunType {
 	kRunTypeMulti = 2,
 	kRunTypeTimeLimited = 3,
 	kRunTypeFinished = 4,
-	kRunType5 = 5,
+	kRunTypePaused = 5,
 };
 
 

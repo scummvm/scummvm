@@ -342,14 +342,14 @@ bool ADSInterpreter::logicOpResult(uint16 code, const TTMEnviro *env, const TTMS
 	assert(seq || code == 0x1380 || code == 0x1390);
 
 	switch (code) {
-	case 0x1010: // WHILE runtype 5
-	case 0x1310: // IF runtype 5, 2 params
-		debugN(10, "ADS 0x%04x: %s runtype 5 env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
-		return seq->_runFlag == kRunType5;
-	case 0x1020: // WHILE not runtype 5
-	case 0x1320: // IF not runtype 5, 2 params
-		debugN(10, "ADS 0x%04x: %s not runtype 5 env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
-		return seq->_runFlag != kRunType5;
+	case 0x1010: // WHILE paused
+	case 0x1310: // IF paused, 2 params
+		debugN(10, "ADS 0x%04x: %s paused env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
+		return seq->_runFlag == kRunTypePaused;
+	case 0x1020: // WHILE not paused
+	case 0x1320: // IF not paused, 2 params
+		debugN(10, "ADS 0x%04x: %s not paused env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
+		return seq->_runFlag != kRunTypePaused;
 	case 0x1030: // WHILE NOT PLAYED
 	case 0x1330: // IF_NOT_PLAYED, 2 params
 		debugN(10, "ADS 0x%04x: %s not played env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
@@ -529,8 +529,8 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0x1070: // WHILE running, 2 params
 	case 0x1080: // WHILE count?, 1 param (HOC+ only)
 	case 0x1090: // WHILE ??, 1 param (HOC+ only)
-	case 0x1310: // IF runtype 5, 2 params
-	case 0x1320: // IF not runtype 5, 2 params
+	case 0x1310: // IF paused, 2 params
+	case 0x1320: // IF not paused, 2 params
 	case 0x1330: // IF NOT_PLAYED, 2 params
 	case 0x1340: // IF PLAYED, 2 params
 	case 0x1350: // IF FINISHED, 2 params
@@ -597,16 +597,16 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 			_currentTTMSeq->_runFlag = kRunTypeStopped;
 		break;
 	}
-	case 0x2015: { // SET RUNFLAG 5, 3 params (ttmenv, ttmseq, proportion)
+	case 0x2015: { // SET RUNFLAG 5, 3 params (ttmenv, ttmseq, proportion) (pause)
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
 		uint16 unk = scr->readUint16LE();
 		_currentTTMSeq = findTTMSeq(enviro, seqnum);
 		const TTMEnviro *env = findTTMEnviro(enviro);
-		debug(10, "ADS 0x2015: set runflag5 env %d seq %d (%s) prop %d", enviro, seqnum,
+		debug(10, "ADS 0x2015: set paused env %d seq %d (%s) prop %d", enviro, seqnum,
 				env->_tags.getValOrDefault(seqnum).c_str(), unk);
 		if (_currentTTMSeq)
-			_currentTTMSeq->_runFlag = kRunType5;
+			_currentTTMSeq->_runFlag = kRunTypePaused;
 		break;
 	}
 	case 0x2020: { // RESET SEQ, 2 params (env, seq, proportion)
@@ -633,32 +633,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		handleRandomOp(code, scr);
 		break;
 
-	case 0x4000: { // MOVE SEQ TO BACK
-		enviro = scr->readUint16LE();
-		seqnum = scr->readUint16LE();
-		debug(10, "ADS 0x%04x: mov seq to back env %d seq %d", code, enviro, seqnum);
-		/*uint16 unk = */scr->readUint16LE();
-		// This is O(N) but the N is small and it's not called often.
-		TTMSeq seq;
-		bool success = false;
-		for (uint i = 0; i < _adsData->_ttmSeqs.size(); i++) {
-			if (_adsData->_ttmSeqs[i]._enviro == enviro && _adsData->_ttmSeqs[i]._seqNum == seqnum) {
-				seq = _adsData->_ttmSeqs[i];
-				_adsData->_ttmSeqs.remove_at(i);
-				success = true;
-				break;
-			}
-		}
-
-		if (success)
-			_adsData->_ttmSeqs.push_back(seq);
-		else
-			warning("ADS: 0x4000 Request to move env %d seq %d which doesn't exist", enviro, seqnum);
-
-		break;
-	}
-
-	case 0x4010: { // MOVE SEQ TO FRONT
+	case 0x4000: { // MOVE SEQ TO FRONT
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
 		debug(10, "ADS 0x%04x: mov seq to front env %d seq %d", code, enviro, seqnum);
@@ -677,6 +652,31 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 
 		if (success)
 			_adsData->_ttmSeqs.insert_at(0, seq);
+		else
+			warning("ADS: 0x4000 Request to move env %d seq %d which doesn't exist", enviro, seqnum);
+
+		break;
+	}
+
+	case 0x4010: { // MOVE SEQ TO FRONT
+		enviro = scr->readUint16LE();
+		seqnum = scr->readUint16LE();
+		debug(10, "ADS 0x%04x: mov seq to back env %d seq %d", code, enviro, seqnum);
+		/*uint16 unk = */scr->readUint16LE();
+		// This is O(N) but the N is small and it's not called often.
+		TTMSeq seq;
+		bool success = false;
+		for (uint i = 0; i < _adsData->_ttmSeqs.size(); i++) {
+			if (_adsData->_ttmSeqs[i]._enviro == enviro && _adsData->_ttmSeqs[i]._seqNum == seqnum) {
+				seq = _adsData->_ttmSeqs[i];
+				_adsData->_ttmSeqs.remove_at(i);
+				success = true;
+				break;
+			}
+		}
+
+		if (success)
+			_adsData->_ttmSeqs.push_back(seq);
 		else
 			warning("ADS: 0x4010 Request to move env %d seq %d which doesn't exist", enviro, seqnum);
 
@@ -706,7 +706,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0xF200: { // RUN_SCRIPT, 1 param
 		int16 segment = scr->readSint16LE();
 		int16 idx = getArrIndexOfSegNum(segment);
-		debug(10, "ADS 0x%04x: add 4 remove 8 to state seg %d idx %d", code, segment, idx);
+		debug(10, "ADS 0x%04x: run seg %d idx %d", code, segment, idx);
 		if (segment >= 0 && idx >= 0) {
 			int state = (_adsData->_state[idx] & 8) | 4;
 			_adsData->_state[idx] = state;
@@ -714,10 +714,10 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		return true;
 	}
 
-	case 0xF210: { // RUN_SCRIPT, 1 param
+	case 0xF210: { // RESTART_SCRIPT, 1 param
 		int16 segment = scr->readSint16LE();
 		int16 idx = getArrIndexOfSegNum(segment);
-		debug(10, "ADS 0x%04x: add 3 remove 8 to state seg %d idx %d", code, segment, idx);
+		debug(10, "ADS 0x%04x: restart seg %d idx %d", code, segment, idx);
 		if (segment >= 0 && idx >= 0) {
 			int state = (_adsData->_state[idx] & 8) | 3;
 			_adsData->_state[idx] = state;
@@ -831,7 +831,7 @@ bool ADSInterpreter::run() {
 		seq._lastFrame = -1;
 		int sflag = seq._scriptFlag;
 		TTMRunType rflag = seq._runFlag;
-		if (sflag == 6 || (rflag != kRunType1 && rflag != kRunTypeTimeLimited && rflag != kRunTypeMulti && rflag != kRunType5)) {
+		if (sflag == 6 || (rflag != kRunType1 && rflag != kRunTypeTimeLimited && rflag != kRunTypeMulti && rflag != kRunTypePaused)) {
 			if (sflag != 6 && sflag != 5 && rflag == kRunTypeFinished) {
 				seq._runFlag = kRunTypeStopped;
 			}
@@ -863,7 +863,7 @@ bool ADSInterpreter::run() {
 						if (seq._currentFrame == _adsData->_gotoTarget)
 							seq._selfLoop = true;
 					}
-					if (seq._runFlag != kRunType5)
+					if (seq._runFlag != kRunTypePaused)
 						updateSeqTimeAndFrame(env, seq);
 				} else {
 					seq._gotoFrame = seq._startFrame;
