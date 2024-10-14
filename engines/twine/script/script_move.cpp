@@ -101,7 +101,7 @@ int32 ScriptMove::mGOTO_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	if (ctx.actor->_staticFlags.bSprite3D) {
 		ctx.actor->_beta = newAngle;
 	} else {
-		engine->_movements->initRealAngleConst(ctx.actor->_beta, newAngle, ctx.actor->_speed, &ctx.actor->realAngle);
+		engine->_movements->initRealAngleConst(ctx.actor->_beta, newAngle, ctx.actor->_srot, &ctx.actor->realAngle);
 	}
 
 	if (engine->_movements->_targetActorDistance > 500) {
@@ -149,7 +149,7 @@ int32 ScriptMove::mANGLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	}
 	engine->_scene->_currentScriptValue = angle;
 	if (ctx.actor->realAngle.timeValue == 0) {
-		engine->_movements->initRealAngleConst(ctx.actor->_beta, angle, ctx.actor->_speed, &ctx.actor->realAngle);
+		engine->_movements->initRealAngleConst(ctx.actor->_beta, angle, ctx.actor->_srot, &ctx.actor->realAngle);
 	}
 	if (ctx.actor->_beta == angle) {
 		engine->_movements->clearRealAngle(ctx.actor);
@@ -169,7 +169,7 @@ int32 ScriptMove::mPOS_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 
 	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
 	if (ctx.actor->_staticFlags.bSprite3D) {
-		ctx.actor->_speed = 0;
+		ctx.actor->_srot = 0;
 	}
 
 	ctx.actor->_posObj = sp;
@@ -231,7 +231,7 @@ int32 ScriptMove::mGOTO_SYM_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	if (ctx.actor->_staticFlags.bSprite3D) {
 		ctx.actor->_beta = newAngle;
 	} else {
-		engine->_movements->initRealAngleConst(ctx.actor->_beta, newAngle, ctx.actor->_speed, &ctx.actor->realAngle);
+		engine->_movements->initRealAngleConst(ctx.actor->_beta, newAngle, ctx.actor->_srot, &ctx.actor->realAngle);
 	}
 
 	if (engine->_movements->_targetActorDistance > 500) {
@@ -315,11 +315,11 @@ int32 ScriptMove::mGOTO_POINT_3D(TwinEEngine *engine, MoveScriptContext &ctx) {
  * @note Opcode @c 0x10
  */
 int32 ScriptMove::mSPEED(TwinEEngine *engine, MoveScriptContext &ctx) {
-	ctx.actor->_speed = ctx.stream.readSint16LE();
-	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::SPEED(%i)", (int)ctx.actor->_speed);
+	ctx.actor->_srot = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::SPEED(%i)", (int)ctx.actor->_srot);
 
 	if (ctx.actor->_staticFlags.bSprite3D) {
-		engine->_movements->initRealValue(LBAAngles::ANGLE_0, ctx.actor->_speed, LBAAngles::ANGLE_17, &ctx.actor->realAngle);
+		engine->_movements->initRealValue(LBAAngles::ANGLE_0, ctx.actor->_srot, LBAAngles::ANGLE_17, &ctx.actor->realAngle);
 	}
 
 	return 0;
@@ -411,7 +411,7 @@ int32 ScriptMove::mOPEN_GENERIC(TwinEEngine *engine, MoveScriptContext &ctx, int
 		ctx.actor->_beta = angle;
 		ctx.actor->_doorWidth = doorStatus;
 		ctx.actor->_workFlags.bIsSpriteMoving = 1;
-		ctx.actor->_speed = 1000;
+		ctx.actor->_srot = 1000;
 		engine->_movements->initRealValue(LBAAngles::ANGLE_0, LBAAngles::ANGLE_351, LBAAngles::ANGLE_17, &ctx.actor->realAngle);
 	}
 	if (engine->_scene->_numCube == LBA1SceneId::Proxima_Island_Museum && ctx.actor->_actorIdx == 16) {
@@ -463,7 +463,7 @@ int32 ScriptMove::mCLOSE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	if (ctx.actor->_staticFlags.bSprite3D && ctx.actor->_staticFlags.bSpriteClip) {
 		ctx.actor->_doorWidth = 0;
 		ctx.actor->_workFlags.bIsSpriteMoving = 1;
-		ctx.actor->_speed = -1000;
+		ctx.actor->_srot = -1000;
 		engine->_movements->initRealValue(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_351, LBAAngles::ANGLE_17, &ctx.actor->realAngle);
 	}
 	return 0;
@@ -476,7 +476,7 @@ int32 ScriptMove::mCLOSE(TwinEEngine *engine, MoveScriptContext &ctx) {
 int32 ScriptMove::mWAIT_DOOR(TwinEEngine *engine, MoveScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::WAIT_DOOR()");
 	if (ctx.actor->_staticFlags.bSprite3D && ctx.actor->_staticFlags.bSpriteClip) {
-		if (ctx.actor->_speed) {
+		if (ctx.actor->_srot) {
 			ctx.undo(0);
 			return 1;
 		}
@@ -582,7 +582,7 @@ int32 ScriptMove::mFACE_HERO(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->_currentScriptValue = angle;
 	if (engine->_scene->_currentScriptValue == -1 && ctx.actor->realAngle.timeValue == 0) {
 		engine->_scene->_currentScriptValue = engine->_movements->getAngle(ctx.actor->posObj(), engine->_scene->_sceneHero->posObj());
-		engine->_movements->initRealAngleConst(ctx.actor->_beta, engine->_scene->_currentScriptValue, ctx.actor->_speed, &ctx.actor->realAngle);
+		engine->_movements->initRealAngleConst(ctx.actor->_beta, engine->_scene->_currentScriptValue, ctx.actor->_srot, &ctx.actor->realAngle);
 		ctx.stream.rewind(2);
 		ctx.stream.writeSint16LE(engine->_scene->_currentScriptValue);
 	}
@@ -620,7 +620,7 @@ int32 ScriptMove::mANGLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 			engine->_scene->_currentScriptValue = ClampAngle(newAngle - engine->getRandomNumber(val1));
 		}
 
-		engine->_movements->initRealAngleConst(ctx.actor->_beta, engine->_scene->_currentScriptValue, ctx.actor->_speed, &ctx.actor->realAngle);
+		engine->_movements->initRealAngleConst(ctx.actor->_beta, engine->_scene->_currentScriptValue, ctx.actor->_srot, &ctx.actor->realAngle);
 		ctx.stream.rewind(2);
 		ctx.stream.writeSint16LE(engine->_scene->_currentScriptValue);
 	}

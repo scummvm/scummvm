@@ -394,7 +394,7 @@ void Movements::processManualRotationExecution(int actorIdx) {
 		tempAngle = LBAAngles::ANGLE_0;
 	}
 
-	initRealAngleConst(actor->_beta, actor->_beta + tempAngle, actor->_speed, &actor->realAngle);
+	initRealAngleConst(actor->_beta, actor->_beta + tempAngle, actor->_srot, &actor->realAngle);
 }
 
 void Movements::processManualAction(int actorIdx) {
@@ -422,7 +422,7 @@ void Movements::processFollowAction(int actorIdx) {
 	if (actor->_staticFlags.bSprite3D) {
 		actor->_beta = newAngle;
 	} else {
-		initRealAngleConst(actor->_beta, newAngle, actor->_speed, &actor->realAngle);
+		initRealAngleConst(actor->_beta, newAngle, actor->_srot, &actor->realAngle);
 	}
 }
 
@@ -434,7 +434,7 @@ void Movements::processRandomAction(int actorIdx) {
 
 	if (actor->brickCausesDamage()) {
 		const int32 angle = ClampAngle(actor->_beta + (_engine->getRandomNumber() & (LBAAngles::ANGLE_180 - 1)) - LBAAngles::ANGLE_90 + LBAAngles::ANGLE_180);
-		initRealAngleConst(actor->_beta, angle, actor->_speed, &actor->realAngle);
+		initRealAngleConst(actor->_beta, angle, actor->_srot, &actor->realAngle);
 		actor->_delayInMillis = _engine->timerRef + _engine->getRandomNumber(_engine->toSeconds(6)) + _engine->toSeconds(6);
 		_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, actorIdx);
 	}
@@ -443,7 +443,7 @@ void Movements::processRandomAction(int actorIdx) {
 		_engine->_animations->initAnim(AnimationTypes::kForward, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, actorIdx);
 		if (_engine->timerRef > actor->_delayInMillis) {
 			const int32 angle = ClampAngle(actor->_beta + (_engine->getRandomNumber() & (LBAAngles::ANGLE_180 - 1)) - LBAAngles::ANGLE_90);
-			initRealAngleConst(actor->_beta, angle, actor->_speed, &actor->realAngle);
+			initRealAngleConst(actor->_beta, angle, actor->_srot, &actor->realAngle);
 			actor->_delayInMillis = _engine->timerRef + _engine->getRandomNumber(_engine->toSeconds(6)) + _engine->toSeconds(6);
 		}
 	}
@@ -471,7 +471,7 @@ void Movements::manualRealAngle(ActorStruct *actor) {
 		tempAngle = -LBAAngles::ANGLE_90;
 	}
 
-	initRealAngleConst(actor->_beta, actor->_beta + tempAngle, actor->_speed, &actor->realAngle);
+	initRealAngleConst(actor->_beta, actor->_beta + tempAngle, actor->_srot, &actor->realAngle);
 }
 
 void Movements::doDir(int32 actorIdx) {

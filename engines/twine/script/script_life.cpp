@@ -1246,7 +1246,7 @@ int32 ScriptLife::lSET_DOOR_LEFT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ctx.actor->_beta = LBAAngles::ANGLE_270;
 	ctx.actor->_posObj.x = ctx.actor->_animStep.x - distance;
 	ctx.actor->_workFlags.bIsSpriteMoving = 0;
-	ctx.actor->_speed = 0;
+	ctx.actor->_srot = 0;
 
 	return 0;
 }
@@ -1262,7 +1262,7 @@ int32 ScriptLife::lSET_DOOR_RIGHT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ctx.actor->_beta = LBAAngles::ANGLE_90;
 	ctx.actor->_posObj.x = ctx.actor->_animStep.x + distance;
 	ctx.actor->_workFlags.bIsSpriteMoving = 0;
-	ctx.actor->_speed = 0;
+	ctx.actor->_srot = 0;
 
 	return 0;
 }
@@ -1278,7 +1278,7 @@ int32 ScriptLife::lSET_DOOR_UP(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ctx.actor->_beta = LBAAngles::ANGLE_180;
 	ctx.actor->_posObj.z = ctx.actor->_animStep.z - distance;
 	ctx.actor->_workFlags.bIsSpriteMoving = 0;
-	ctx.actor->_speed = 0;
+	ctx.actor->_srot = 0;
 
 	return 0;
 }
@@ -1294,7 +1294,7 @@ int32 ScriptLife::lSET_DOOR_DOWN(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ctx.actor->_beta = LBAAngles::ANGLE_0;
 	ctx.actor->_posObj.z = ctx.actor->_animStep.z + distance;
 	ctx.actor->_workFlags.bIsSpriteMoving = 0;
-	ctx.actor->_speed = 0;
+	ctx.actor->_srot = 0;
 
 	return 0;
 }

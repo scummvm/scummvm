@@ -829,7 +829,7 @@ void TwinEEngine::processInventoryAction() {
 			_actor->initBody(BodyType::btNormal, _scene->_mecaPenguinIdx);
 			penguin->_workFlags.bIsDead = 0;
 			penguin->setCollision(ShapeType::kNone);
-			_movements->initRealAngleConst(penguin->_beta, penguin->_beta, penguin->_speed, &penguin->realAngle);
+			_movements->initRealAngleConst(penguin->_beta, penguin->_beta, penguin->_srot, &penguin->realAngle);
 			_gameState->removeItem(InventoryItems::kiPenguin);
 			penguin->_delayInMillis = timerRef + toSeconds(30);
 		}

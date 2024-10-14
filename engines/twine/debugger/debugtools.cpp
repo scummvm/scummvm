@@ -493,7 +493,7 @@ static void actorDetailsWindow(int &actorIdx, TwinEEngine *engine) {
 
 		ImGuiEx::InputIVec3("Pos", actor->_posObj);
 		ImGuiEx::InputAngle("Rotation", &actor->_beta);
-		ImGuiEx::InputInt("Speed", &actor->_speed);
+		ImGuiEx::InputInt("Rotation speed", &actor->_srot);
 		ImGuiEx::InputInt("Life", &actor->_lifePoint);
 		ImGuiEx::InputInt("Armor", &actor->_armor);
 		ImGuiEx::InputBoundingBox(actorIdx, "Bounding box", actor->_boundingBox);

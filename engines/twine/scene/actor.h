@@ -192,8 +192,8 @@ public:
 	int32 _strengthOfHit = 0;
 	int32 _hitBy = -1;
 	BonusParameter _bonusParameter;
-	int32 _beta = 0; // facing angle of actor. Minumum is 0 (SW). Going counter clock wise (BETA in original sources)
-	int32 _speed = 40; // SRot - speed of movement
+	int32 _beta = 0; // facing angle of actor. Minumum is 0 (SW). Going counter clock wise
+	int32 _srot = 40; // speed of rotation
 	ControlMode _controlMode = ControlMode::kNoMove; // Move
 	int32 _delayInMillis = 0;
 	int32 _cropLeft = 0;      // Info

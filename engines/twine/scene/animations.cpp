@@ -475,7 +475,7 @@ void Animations::doAnim(int32 actorIdx) {
 		processActor = actor->posObj();
 
 		if (!actor->_workFlags.bIsFalling) {
-			if (actor->_speed) {
+			if (actor->_srot) {
 				int32 xAxisRotation = actor->realAngle.getRealValueFromTime(_engine->timerRef);
 				if (!xAxisRotation) {
 					if (actor->realAngle.endValue > 0) {
@@ -494,7 +494,7 @@ void Animations::doAnim(int32 actorIdx) {
 				processActor.x = actor->_posObj.x + destPos.x;
 				processActor.z = actor->_posObj.z + destPos.y;
 
-				_engine->_movements->initRealValue(LBAAngles::ANGLE_0, actor->_speed, LBAAngles::ANGLE_17, &actor->realAngle);
+				_engine->_movements->initRealValue(LBAAngles::ANGLE_0, actor->_srot, LBAAngles::ANGLE_17, &actor->realAngle);
 
 				if (actor->_workFlags.bIsSpriteMoving) {
 					if (actor->_doorWidth) { // open door
@@ -510,7 +510,7 @@ void Animations::doAnim(int32 actorIdx) {
 							}
 
 							actor->_workFlags.bIsSpriteMoving = 0;
-							actor->_speed = 0;
+							actor->_srot = 0;
 						}
 					} else { // close door
 						bool updatePos = false;
@@ -537,7 +537,7 @@ void Animations::doAnim(int32 actorIdx) {
 							processActor = actor->_animStep;
 
 							actor->_workFlags.bIsSpriteMoving = 0;
-							actor->_speed = 0;
+							actor->_srot = 0;
 						}
 					}
 				}

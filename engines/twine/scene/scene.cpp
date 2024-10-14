@@ -250,7 +250,7 @@ bool Scene::loadSceneLBA2() {
 		act->_strengthOfHit = stream.readByte();
 		setBonusParameterFlags(act, stream.readUint16LE());
 		act->_beta = (int16)stream.readUint16LE();
-		act->_speed = (int16)stream.readUint16LE(); // srot
+		act->_srot = (int16)stream.readUint16LE();
 		act->_controlMode = (ControlMode)stream.readByte(); // move
 		act->_cropLeft = stream.readSint16LE();
 		act->_delayInMillis = act->_cropLeft; // TODO: this might not be needed
@@ -385,7 +385,7 @@ bool Scene::loadSceneLBA1() {
 		setBonusParameterFlags(act, stream.readUint16LE());
 		act->_bonusParameter.givenNothing = 0;
 		act->_beta = (int16)stream.readUint16LE();
-		act->_speed = (int16)stream.readUint16LE();
+		act->_srot = (int16)stream.readUint16LE();
 		act->_controlMode = (ControlMode)stream.readUint16LE();
 		act->_cropLeft = stream.readSint16LE();
 		act->_delayInMillis = act->_cropLeft; // TODO: this might not be needed
