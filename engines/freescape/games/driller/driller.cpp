@@ -111,6 +111,14 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 
 DrillerEngine::~DrillerEngine() {
 	delete _drillBase;
+
+	if (_borderExtra) {
+		delete _borderExtra;
+		_borderExtra = nullptr;
+	}
+
+	if (_borderExtraTexture)
+		_gfx->freeTexture(_borderExtraTexture);
 }
 
 void DrillerEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) {

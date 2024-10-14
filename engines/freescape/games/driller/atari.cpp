@@ -66,7 +66,8 @@ void DrillerEngine::loadAssetsAtariFullGame() {
 		Common::SeekableReadStream *stream = decryptFileAtari("x.prg");
 
 		_border = loadAndConvertNeoImage(stream, 0x14b96);
-		_title = loadAndConvertNeoImage(stream, 0x1c916);
+		_borderExtra = loadAndConvertNeoImage(stream, 0x1c916);
+		_title = loadAndConvertNeoImage(stream, 0x3f6);
 
 		loadFonts(stream, 0x8a92);
 		loadMessagesFixedSize(stream, 0xda22, 14, 20);
@@ -99,13 +100,7 @@ void DrillerEngine::loadAssetsAtariFullGame() {
 			loadSoundsFx(&file, 0x30da6 - 0x1d6, 25);
 		} else {
 			_border = loadAndConvertNeoImage(&file, 0x1371a);
-			byte *palette = (byte *)malloc(16 * 3);
-			for (int i = 0; i < 16; i++) { // gray scale palette
-				palette[i * 3 + 0] = i * (255 / 16);
-				palette[i * 3 + 1] = i * (255 / 16);
-				palette[i * 3 + 2] = i * (255 / 16);
-			}
-			_title = loadAndConvertNeoImage(&file, 0x10, palette);
+			_title = loadAndConvertNeoImage(&file, 0x396);
 
 			loadFonts(&file, 0x8a32);
 			loadMessagesFixedSize(&file, 0xc5d8, 14, 20);
