@@ -627,7 +627,7 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 			_fov = _camera->_fov;
 
 			if (_camera->_nearClipPlane >= 0.0f) {
-				_nearClipPlane = camera->_nearClipPlane;
+				_nearClipPlane = _camera->_nearClipPlane;
 			}
 
 			if (_camera->_farClipPlane >= 0.0f) {
