@@ -1263,8 +1263,6 @@ void GrimEngine::savegameRestore() {
 	lua_Restore(_savedState);
 	Debug::debug(Debug::Engine, "Lua restored successfully.");
 
-	delete _savedState;
-
 	_justSaveLoaded = true;
 
 	//Re-read the values, since we may have been in some state that changed them when loading the savegame,
@@ -1277,7 +1275,15 @@ void GrimEngine::savegameRestore() {
 	if (g_imuse)
 		g_imuse->pause(false);
 	g_movie->pause(false);
+
 	debug(2, "GrimEngine::savegameRestore() finished.");
+
+	// Related to bug #13139 and #14987
+	if (getGameType() == GType_GRIM && !(getGameFlags() & ADGF_DEMO) && _savedState->saveMajorVersion() == SaveGame::SAVEGAME_MAJOR_VERSION && _savedState->saveMinorVersion() <= 28) {
+		GUI::displayErrorDialog(Common::U32String::format(_("The game save file may be invalid and prevent game to be completed.")));
+	}
+
+	delete _savedState;
 
 	_shortFrame = true;
 	clearEventQueue();
