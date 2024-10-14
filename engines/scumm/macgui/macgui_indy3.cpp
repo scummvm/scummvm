@@ -32,6 +32,7 @@
 #include "scumm/dialogs.h"
 #include "scumm/macgui/macgui_impl.h"
 #include "scumm/macgui/macgui_indy3.h"
+#include "scumm/music.h"
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
 
@@ -1590,9 +1591,8 @@ bool MacIndy3Gui::runOptionsDialog() {
 	// 8 - Scrolling checkbox
 	// 9 - Text speed slider (manually created)
 
-	int sound = _vm->_mixer->isSoundTypeMuted(Audio::Mixer::SoundType::kSFXSoundType) ? 0 : 1;
-	int music = _vm->_mixer->isSoundTypeMuted(Audio::Mixer::SoundType::kPlainSoundType) ? 0 : 1;
-
+	int sound = (!ConfMan.hasKey("mute") || !ConfMan.getBool("mute")) ? 1 : 0;
+	int music = (!ConfMan.hasKey("music_mute") || !ConfMan.getBool("music_mute")) ? 1 : 0;
 	int scrolling = _vm->_snapScroll == 0;
 	int textSpeed = _vm->_defaultTextSpeed;
 
@@ -1636,7 +1636,6 @@ bool MacIndy3Gui::runOptionsDialog() {
 		_vm->_defaultTextSpeed = CLIP<int>(window->getWidgetValue(9), 0, 9);
 		ConfMan.setInt("original_gui_text_speed", _vm->_defaultTextSpeed);
 		_vm->setTalkSpeed(_vm->_defaultTextSpeed);
-		_vm->syncSoundSettings();
 
 		// SOUND&MUSIC ACTIVATION
 		// 0 - Sound&Music on
@@ -1644,13 +1643,17 @@ bool MacIndy3Gui::runOptionsDialog() {
 		// 2 - Sound&Music off
 		bool disableSound = window->getWidgetValue(2) == 0;
 		bool disableMusic = window->getWidgetValue(3) == 0;
-		_vm->_mixer->muteSoundType(Audio::Mixer::SoundType::kSFXSoundType, disableSound);
-		_vm->_mixer->muteSoundType(Audio::Mixer::SoundType::kPlainSoundType, disableMusic || disableSound);
+
+		_vm->_musicEngine->toggleMusic(!disableMusic);
+		_vm->_musicEngine->toggleSoundEffects(!disableSound);
+		ConfMan.setBool("music_mute", disableMusic);
+		ConfMan.setBool("mute", disableSound);
+		ConfMan.flushToDisk();
+
+		_vm->syncSoundSettings();
 
 		// SCROLLING ACTIVATION
-		_vm->_snapScroll = window->getWidgetValue(8) == 0;
-
-		ConfMan.flushToDisk();
+		_vm->_snapScroll = window->getWidgetValue(8) == 0;		
 	}
 
 	delete window;
