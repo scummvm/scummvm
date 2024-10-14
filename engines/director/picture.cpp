@@ -43,7 +43,7 @@ void Picture::copyPalette(const byte *src, int numColors) {
 	delete[] _palette;
 	if (src) {
 		_paletteColors = numColors;
-		_palette = new byte[getPaletteSize()]();
+		_palette = new byte[3*256]();
 		memcpy(_palette, src, getPaletteSize());
 	} else {
 		_paletteColors = 0;
