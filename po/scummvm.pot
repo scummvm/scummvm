@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-10-14 10:45+0000\n"
+"POT-Creation-Date: 2024-10-14 15:50+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -7063,7 +7063,11 @@ msgstr ""
 msgid "Examine/Look"
 msgstr ""
 
-#: engines/grim/grim.cpp:1378
+#: engines/grim/grim.cpp:1283
+msgid "The game save file may be invalid and prevent game to be completed."
+msgstr ""
+
+#: engines/grim/grim.cpp:1384
 msgid "Error: the game could not be saved."
 msgstr ""
 
