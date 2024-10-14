@@ -922,14 +922,14 @@ void Room::runRoomObjects() {
 						sprite._height,
 						false);
 				}
-			} else if (((((((_roomNumber == 6) || (_roomNumber == 5)) || (_roomNumber == 7)) ||
-						  ((_roomNumber == 32 || (_roomNumber == 26)))) ||
-						 ((_roomNumber == 64 || ((_roomNumber == 65 || (_roomNumber == 63)))))) ||
-						(_roomNumber == 66)) ||
-					   (((((((_roomNumber == 67 || (_roomNumber == 28)) || (_roomNumber == 37)) ||
-							((_roomNumber == 39 || (_roomNumber == 32)))) || (_roomNumber == 57)) ||
-						  ((_roomNumber == 60 || (_roomNumber == 44)))) ||
-						 ((_roomNumber == 57 || ((_roomNumber == 38 || (_roomNumber == 25)))))))) {
+			} else if (_roomNumber == 6 || _roomNumber == 5 || _roomNumber == 7 ||
+					   _roomNumber == 32 || _roomNumber == 26 ||
+					   _roomNumber == 64 || _roomNumber == 65 || _roomNumber == 63 ||
+					   _roomNumber == 66 ||
+					   _roomNumber == 67 || _roomNumber == 28 || _roomNumber == 37 ||
+					   _roomNumber == 39 || _roomNumber == 32 || _roomNumber == 57 ||
+					   _roomNumber == 60 || _roomNumber == 44 ||
+					   _roomNumber == 38 || _roomNumber == 25) {
 				const Sprite &sprite = _locationSprites.getSpriteAt(spriteNum);
 				int playerLeftXPos = g_engine->_player->_position.x - g_engine->_player->getWidth() / 2;
 				int playerRightXPos = g_engine->_player->_position.x + g_engine->_player->getWidth() / 2;
