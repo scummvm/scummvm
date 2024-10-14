@@ -41,6 +41,8 @@
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/base/gfx/base_renderer3d.h"
 #include "engines/wintermute/base/gfx/xmodel.h"
+#include "engines/wintermute/base/gfx/xmath.h"
+#include "engines/wintermute/math/math_util.h"
 #include "engines/wintermute/wintermute.h"
 #endif
 
@@ -1367,31 +1369,26 @@ bool BaseObject::afterMove() {
 }
 
 #ifdef ENABLE_WME3D
-bool BaseObject::getMatrix(Math::Matrix4 *modelMatrix, Math::Vector3d *posVect) {
-	if (posVect == nullptr) {
-		posVect = &_posVector;
+bool BaseObject::getMatrix(Math::Matrix4 *model, Math::Vector3d *pos) {
+	if (pos == nullptr) {
+		pos = &_posVector;
 	}
+	DXVector3 posVect = DXVector3(pos->x(), pos->y(), pos->z());
+	Math::Matrix4 m = *model;
+	m.transpose();
+	DXMatrix modelMatrix = DXMatrix(m.getData());
 
-	Math::Matrix4 scale;
-	scale.setToIdentity();
-	scale(0, 0) = _scale3D;
-	scale(1, 1) = _scale3D;
-	scale(2, 2) = _scale3D;
+	DXMatrix matRot, matScale, matTrans;
+	DXMatrixRotationYawPitchRoll(&matRot, degToRad(_angle), 0, 0);
+	DXMatrixScaling(&matScale, _scale3D, _scale3D, _scale3D);
 
-	Math::Angle angle = _angle;
-	float sinOfAngle = angle.getSine();
-	float cosOfAngle = angle.getCosine();
-	Math::Matrix4 rotation;
-	rotation.setToIdentity();
-	rotation(0, 0) = cosOfAngle;
-	rotation(0, 2) = sinOfAngle;
-	rotation(2, 0) = -sinOfAngle;
-	rotation(2, 2) = cosOfAngle;
-	Math::Matrix4 translation;
-	translation.setToIdentity();
-	translation.setPosition(*posVect);
+	DXMatrixTranslation(&matTrans, posVect._x, posVect._y, posVect._z);
+	DXMatrixMultiply(&modelMatrix, &matRot, &matScale);
+	DXMatrixMultiply(&modelMatrix, &modelMatrix, &matTrans);
 
-	*modelMatrix = translation * rotation * scale;
+	model->setData(modelMatrix._m4x4);
+	model->transpose();
+
 	return true;
 }
 
