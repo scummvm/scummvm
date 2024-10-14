@@ -233,9 +233,12 @@ int LogicHEBasketball::u32_userComputePointsForPixels(int pixels, int screenYPos
 
 	if (pixelsFromBottom < 0) {
 		courtWidth = TRANSLATED_NEAR_MAX_X;
+// FIXME: Remove duplicated condition branch?
+#if 0
 	} else if (pixelsFromBottom < TRANSLATED_MAX_Y) {
 		// Find the width of the court in pixels at the current y coordinate...
 		courtWidth = TRANSLATED_NEAR_MAX_X - (2.0 * (pixelsFromBottom / tan(courtAngle)));
+#endif
 	} else {
 		// Find the width of the court in pixels at the current y coordinate...
 		courtWidth = TRANSLATED_NEAR_MAX_X - (2.0 * (pixelsFromBottom / tan(courtAngle)));
