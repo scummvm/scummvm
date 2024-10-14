@@ -54,48 +54,61 @@ float MathUtil::roundUp(float val) {
 
 #ifdef ENABLE_WME3D
 
-bool intersectTriangle(const Math::Vector3d &orig, const Math::Vector3d &dir,
-                       const Math::Vector3d &v0, const Math::Vector3d &v1, const Math::Vector3d &v2,
+bool intersectTriangle(const Math::Vector3d &origin, const Math::Vector3d &direction,
+                       const Math::Vector3d &vp0, const Math::Vector3d &vp1, const Math::Vector3d &vp2,
 					   float &t, float &u, float &v) {
+	DXVector3 v0 = DXVector3(vp0.x(), vp0.y(), vp0.z());
+	DXVector3 v1 = DXVector3(vp1.x(), vp1.y(), vp1.z());
+	DXVector3 v2 = DXVector3(vp2.x(), vp2.y(), vp2.z());
+	DXVector3 orig = DXVector3(origin.x(), origin.y(), origin.z());
+	DXVector3 dir = DXVector3(direction.x(), direction.y(), direction.z());
+
 	// Find vectors for two edges sharing vert0
-	Math::Vector3d edge1 = v1 - v0;
-	Math::Vector3d edge2 = v2 - v0;
+	DXVector3 edge1 = v1 - v0;
+	DXVector3 edge2 = v2 - v0;
 
 	// Begin calculating determinant - also used to calculate U parameter
-	Math::Vector3d pVec;
-	pVec = Math::Vector3d::crossProduct(dir, edge2);
+	DXVector3 pvec;
+	DXVec3Cross(&pvec, &dir, &edge2);
 
 	// If determinant is near zero, ray lies in plane of triangle
-	float det = Math::Vector3d::dotProduct(edge1, pVec);
-	if (ABS(det) < 0.0001f)
+	float det = DXVec3Dot(&edge1, &pvec);
+	if (det < 0.0001f)
 		return false;
 
 	// Calculate distance from vert0 to ray origin
-	Math::Vector3d tvec = orig - v0;
+	DXVector3 tvec = orig - v0;
 
 	// Calculate U parameter and test bounds
-	u = Math::Vector3d::dotProduct(tvec, pVec) / det;
-	if (u < 0.0f || u > 1.0f)
+	u = DXVec3Dot(&tvec, &pvec);
+	if (u < 0.0f || u > det)
 		return false;
 
 	// Prepare to test V parameter
-	Math::Vector3d qvec;
-	qvec = Math::Vector3d::crossProduct(tvec, edge1);
+	DXVector3 qvec;
+	DXVec3Cross(&qvec, &tvec, &edge1);
 
 	// Calculate V parameter and test bounds
-	v = Math::Vector3d::dotProduct(dir, qvec) / det;
-	if (v < 0.0f || u + v > 1.0f)
+	v = DXVec3Dot(&dir, &qvec);
+	if (v < 0.0f || u + v > det)
 		return false;
 
 	// Calculate t, scale parameters, ray intersects triangle
-	t = Math::Vector3d::dotProduct(edge2, qvec) / det;
+	t = DXVec3Dot(&edge2, &qvec);
 
-	Math::Vector3d intersection;
-	intersection = orig + dir * t;
+	float fInvDet = 1.0f / det;
+	t *= fInvDet;
+	u *= fInvDet;
+	v *= fInvDet;
 
-	t = intersection.x();
-	u = intersection.y();
-	v = intersection.z();
+	DXVector3 intersection;
+	DXVector3 dest = orig + dir;
+	DXPlane plane;
+	DXPlaneFromPoints(&plane, &v0, &v1, &v2);
+	DXPlaneIntersectLine(&intersection, &plane, &orig, &dest);
+	t = intersection._x;
+	u = intersection._y;
+	v = intersection._z;
 
 	return true;
 }
