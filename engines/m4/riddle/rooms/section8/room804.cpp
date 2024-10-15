@@ -580,6 +580,7 @@ void Room804::daemon() {
 				break;
 			}
 		}
+		break;
 
 	case 6:
 		player_update_info(_G(my_walker), &_G(player_info));
@@ -610,7 +611,6 @@ void Room804::daemon() {
 		default:
 			break;
 		}
-
 		break;
 
 	case 7:
@@ -668,7 +668,6 @@ void Room804::daemon() {
 		default:
 			break;
 		}
-
 		break;
 
 	case 10:
@@ -685,8 +684,8 @@ void Room804::daemon() {
 		} else {
 			setGlobals3(_ripLooksAround, 13, 1);
 		}
-		subD7916(_G(my_walker), 14);
 
+		subD7916(_G(my_walker), 14);
 		break;
 
 	case 13:
@@ -706,7 +705,6 @@ void Room804::daemon() {
 			subD7916(_mcTrekMach, -1);
 			kernel_timing_trigger(imath_ranged_rand(7200, 14400), 5, nullptr);
 		}
-
 		break;
 
 	case 15:
