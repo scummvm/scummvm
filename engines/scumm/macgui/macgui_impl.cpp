@@ -616,7 +616,7 @@ Graphics::Surface *MacGuiImpl::loadPict(int id) {
 		s->create(s1->w, s1->h, Graphics::PixelFormat::createFormatCLUT8());
 
 		byte paletteMap[256];
-
+		memset(paletteMap, 0, ARRAYSIZE(paletteMap));
 
 		for (int i = 0; i < pict.getPaletteColorCount(); i++) {
 			int r = palette[3 * i];
@@ -628,7 +628,7 @@ Graphics::Surface *MacGuiImpl::loadPict(int id) {
 		}
 
 		if (!pict.getPaletteColorCount()) {
-			paletteMap[255] = getBlack();
+			paletteMap[15] = getBlack();
 			paletteMap[0] = getWhite();
 		}
 
