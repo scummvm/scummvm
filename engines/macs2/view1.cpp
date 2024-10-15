@@ -1076,6 +1076,15 @@ bool Character::IsWalkable(const Common::Point &p) const {
 	return walkability < 0xC8;
 }
 
+bool Character::FindPath(Common::Point target) {
+	// First naive implementation
+	// Find the closest reachable start point
+	// Check if we can reach the target
+	// If not: Do a recusrive search using the other points
+
+	return true;
+}
+
 Common::Point Character::GetPosition() const {
 	return GameObject->Position;
 }
