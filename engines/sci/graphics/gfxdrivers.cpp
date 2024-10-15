@@ -1661,7 +1661,7 @@ void KQ6WinGfxDriver::renderBitmap(const byte *src, int pitch, int dx, int dy, i
 	realHeight = (dst - dstart) / _screenW;
 }
 
-KQ6WinGfx16ColorsDriver::KQ6WinGfx16ColorsDriver(bool altCursor, bool enhancedDithering, bool rgbRendering) : SCI1_EGADriver(rgbRendering), _enhancedDithering(enhancedDithering), _altCursor(altCursor), _renderLine2(nullptr) {
+KQ6WinGfx16ColorsDriver::KQ6WinGfx16ColorsDriver(bool enhancedDithering, bool rgbRendering) : SCI1_EGADriver(rgbRendering), _enhancedDithering(enhancedDithering), _renderLine2(nullptr) {
 	static const byte win16Colors[48] = {
 		0x00, 0x00, 0x00, 0xA8, 0x00, 0x57, 0x00, 0xA8, 0x57, 0xA8, 0xA8, 0x57,
 		0x00, 0x00, 0xA8, 0xA8, 0x57, 0xA8, 0x57, 0xA8, 0xA8, 0x87, 0x88, 0x8F,

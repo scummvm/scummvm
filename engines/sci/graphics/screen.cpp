@@ -166,7 +166,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 		_gfxDrv = new SCI1_VGAGreyScaleDriver(requestRGB);
 		break;
 	case Common::kRenderWin16c:
-		_gfxDrv = new KQ6WinGfx16ColorsDriver(ConfMan.getBool("windows_cursors") == false, true, requestRGB);
+		_gfxDrv = new KQ6WinGfx16ColorsDriver(true, requestRGB);
 		break;
 	case Common::kRenderPC98_8c:
 		if (g_sci->getGameId() == GID_PQ2)

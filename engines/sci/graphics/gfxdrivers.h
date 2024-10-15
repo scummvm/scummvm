@@ -313,7 +313,7 @@ class KQ6WinGfx16ColorsDriver final : public SCI1_EGADriver {
 public:
 	// The original does not take into account the extra lines required for the 200->440 vertical scaling. There is a noticeable dithering glitch every 11th line, as the
 	// two pixels of the checkerbox pattern appear in the wrong order. I have implemented a fix for this which can be activated with the fixDithering parameter.
-	KQ6WinGfx16ColorsDriver(bool altCursor, bool fixDithering, bool rgbRendering);
+	KQ6WinGfx16ColorsDriver(bool fixDithering, bool rgbRendering);
 	~KQ6WinGfx16ColorsDriver() override;
 	void initScreen(const Graphics::PixelFormat *format) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
@@ -324,7 +324,6 @@ private:
 	void renderBitmap(byte *dst, const byte *src, int pitch, int y, int w, int h, const byte *patterns, const byte *palette, uint16 &realWidth, uint16 &realHeight) override;
 	LineProc _renderLine2;
 	const bool _enhancedDithering;
-	const bool _altCursor;
 	static const byte _win16ColorsDitherPatterns[512];
 };
 
