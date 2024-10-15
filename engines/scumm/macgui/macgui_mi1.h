@@ -60,12 +60,18 @@ protected:
 	void readStrings() override;
 
 private:
+	struct AboutPage {
+		const TextLine *text;
+		int drawArea;
+		uint32 delayMs;
+	};
+
 	uint _roughProgress = 0;
 	bool _roughWarned = false;
 
-	void runAboutDialogMI1();
-	void runAboutDialogMI2();
-	void runAboutDialogIndy4();
+	void runAboutDialogMI1(MacDialogWindow *window);
+	void runAboutDialogMI2(MacDialogWindow *window);
+	void runAboutDialogIndy4(MacDialogWindow *window);
 
 	void drawShadow(Graphics::Surface *s, int x, int y, int h, Common::Pair<int, int> *drawData);
 };

@@ -377,22 +377,6 @@ bool MacMI1Gui::handleMenu(int id, Common::String &name) {
 }
 
 void MacMI1Gui::runAboutDialog() {
-	switch (_vm->_game.id) {
-	case GID_MONKEY:
-		runAboutDialogMI1();
-		break;
-	case GID_MONKEY2:
-		runAboutDialogMI2();
-		break;
-	case GID_INDY4:
-		runAboutDialogIndy4();
-		break;
-	default:
-		break;
-	}
-}
-
-void MacMI1Gui::runAboutDialogMI1() {
 	int width = 416;
 	int height = 166;
 	int x = (640 - width) / 2;
@@ -400,6 +384,25 @@ void MacMI1Gui::runAboutDialogMI1() {
 
 	Common::Rect bounds(x, y, x + width, y + height);
 	MacDialogWindow *window = createWindow(bounds);
+
+	switch (_vm->_game.id) {
+	case GID_MONKEY:
+		runAboutDialogMI1(window);
+		break;
+	case GID_MONKEY2:
+		runAboutDialogMI2(window);
+		break;
+	case GID_INDY4:
+		runAboutDialogIndy4(window);
+		break;
+	default:
+		break;
+	}
+
+	delete window;
+}
+
+void MacMI1Gui::runAboutDialogMI1(MacDialogWindow *window) {
 //	Graphics::Surface *lucasArts = loadPict(5000);
 //	Graphics::Surface *monkeys = loadPict(5001);
 
@@ -462,12 +465,6 @@ void MacMI1Gui::runAboutDialogMI1() {
 		{ 10, 82, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[143].c_str() }, // "(You must have your parents\xD5 permission to"
 		{ 25, 92, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[144].c_str() }, // "call this number if you are under 18.)"
 		TEXT_END_MARKER
-	};
-
-	struct AboutPage {
-		const TextLine *text;
-		int drawArea;
-		uint32 delayMs;
 	};
 
 	AboutPage aboutPages[] = {
@@ -624,7 +621,6 @@ void MacMI1Gui::runAboutDialogMI1() {
 
 //	delete lucasArts;
 //	delete monkeys;
-	delete window;
 }
 
 void MacMI1Gui::drawShadow(Graphics::Surface *s, int x, int y, int h, Common::Pair<int, int> *drawData) {
@@ -651,17 +647,10 @@ void MacMI1Gui::drawShadow(Graphics::Surface *s, int x, int y, int h, Common::Pa
 	}
 }
 
-void MacMI1Gui::runAboutDialogMI2() {
-	int width = 416;
-	int height = 166;
-	int x = (640 - width) / 2;
-	int y = (400 - height) / 2;
-
-	Common::Rect bounds(x, y, x + width, y + height);
-	MacDialogWindow *window = createWindow(bounds);
-//	Graphics::Surface *lucasArts = loadPict(5000);
-
+void MacMI1Gui::runAboutDialogMI2(MacDialogWindow *window) {
 	Graphics::Surface *s = window->innerSurface();
+
+//	Graphics::Surface *lucasArts = loadPict(5000);
 
 	const TextLine page3[] = {
 		{ 0, 68, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[115].c_str() }, // "PRESENTS"
@@ -737,12 +726,6 @@ void MacMI1Gui::runAboutDialogMI2() {
 		TEXT_END_MARKER
 	};
 
-	struct AboutPage {
-		const TextLine *text;
-		int drawArea;
-		uint32 delayMs;
-	};
-
 	AboutPage aboutPages[] = {
 		{ nullptr, 0,  2800 },
 		{ nullptr, 0,   100 },
@@ -814,23 +797,15 @@ void MacMI1Gui::runAboutDialogMI2() {
 	}
 
 //	delete lucasArts;
-	delete window;
 }
 
-void MacMI1Gui::runAboutDialogIndy4() {
+void MacMI1Gui::runAboutDialogIndy4(MacDialogWindow *window) {
 	bool isFloppyVersion = _vm->_game.variant && !strcmp(_vm->_game.variant, "Floppy");
 
-	int width = 416;
-	int height = 166;
-	int x = (640 - width) / 2;
-	int y = (400 - height) / 2;
+	Graphics::Surface *s = window->innerSurface();
 
-	Common::Rect bounds(x, y, x + width, y + height);
-	MacDialogWindow *window = createWindow(bounds);
 //	Graphics::Surface *lucasArts = loadPict(5000);
 	Graphics::Surface *indianaJones = loadPict(5001);
-
-	Graphics::Surface *s = window->innerSurface();
 
 	int baseString = isFloppyVersion ? 119 : 236;
 	int baseString2 = isFloppyVersion ? 142 : 258;
@@ -922,12 +897,6 @@ void MacMI1Gui::runAboutDialogIndy4() {
 		TEXT_END_MARKER
 	};
 
-	struct AboutPage {
-		const TextLine *text;
-		int drawArea;
-		uint32 delayMs;
-	};
-
 	AboutPage aboutPages[] = {
 		{ nullptr, 0,  2800 },
 		{ nullptr, 0,   100 },
@@ -1015,7 +984,6 @@ void MacMI1Gui::runAboutDialogIndy4() {
 
 //	delete lucasArts;
 	delete indianaJones;
-	delete window;
 }
 
 // A standard file picker dialog doesn't really make sense in ScummVM, so we
