@@ -514,7 +514,7 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 			glLoadMatrixf(_lastViewMatrix.getData());
 		}
 
-		for (int i = 0; i < maximumLightsCount(); ++i) {
+		for (int i = 0; i < getMaxActiveLights(); ++i) {
 			glLightfv(GL_LIGHT0 + i, GL_POSITION, _lightPositions[i].getData());
 			glLightfv(GL_LIGHT0 + i, GL_SPOT_DIRECTION, _lightDirections[i].getData());
 		}
