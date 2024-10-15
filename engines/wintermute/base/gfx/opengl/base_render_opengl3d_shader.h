@@ -61,7 +61,7 @@ public:
 	bool enableShadows() override;
 	bool disableShadows() override;
 	void displayShadow(BaseObject *object, const Math::Vector3d &lightPos, bool lightPosRelative) override;
-	bool stencilSupported() override;
+	bool usingStencilBuffer() override;
 
 	void dumpData(const char *filename) override {}
 	BaseImage *takeScreenshot() override;

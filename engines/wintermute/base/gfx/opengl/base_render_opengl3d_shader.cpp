@@ -329,7 +329,7 @@ void BaseRenderOpenGL3DShader::displayShadow(BaseObject *object, const Math::Vec
 	}
 }
 
-bool BaseRenderOpenGL3DShader::stencilSupported() {
+bool BaseRenderOpenGL3DShader::usingStencilBuffer() {
 	// assume that we have a stencil buffer
 	return true;
 }

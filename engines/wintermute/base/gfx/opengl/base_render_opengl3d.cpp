@@ -217,7 +217,7 @@ void BaseRenderOpenGL3D::displayShadow(BaseObject *object, const Math::Vector3d 
 	glLoadMatrixf(_lastViewMatrix.getData());
 }
 
-bool BaseRenderOpenGL3D::stencilSupported() {
+bool BaseRenderOpenGL3D::usingStencilBuffer() {
 	// assume that we have a stencil buffer
 	return true;
 }
