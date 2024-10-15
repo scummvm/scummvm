@@ -16,13 +16,16 @@ namespace TwinE {
 template<typename TYPE, size_t SIZE = 64u>
 class RingBuffer {
 protected:
-	size_t _size = 0u;
-	size_t _front = 0u;
-	size_t _back = SIZE - 1;
-	TYPE _buffer[SIZE]{};
+	size_t _size;
+	size_t _front;
+	size_t _back;
+	TYPE _buffer[SIZE];
 
 public:
 	using value_type = TYPE;
+
+	RingBuffer() : _size(0u), _front(0u), _back(0) {
+	}
 
 	class iterator {
 	private:
