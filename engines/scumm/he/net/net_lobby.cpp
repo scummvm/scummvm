@@ -144,6 +144,10 @@ void Lobby::processLine(Common::String line) {
 			Common::String filename = root["filename"]->asString();
 			Common::String data = root["data"]->asString();
 			handleFileData(filename, data);
+		} else if (command == "system_alert") {
+			int type = root["type"]->asIntegerNumber();
+			Common::String message = root["message"]->asString();
+			systemAlert(type, message);
 		} else if (command == "population_resp") {
 			int areaId = root["area"]->asIntegerNumber();
 			int population = root["population"]->asIntegerNumber();
