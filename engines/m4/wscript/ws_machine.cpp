@@ -1284,20 +1284,20 @@ void sendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
 	}
 }
 
-void sendWSMessage(int32 val1, machine *recv, int32 val2, int32 val3, int32 val4,
-	int32 trigger, int32 val5, int32 val6, int32 val7, int32 val8) {
+void sendWSMessage(int32 val1, machine *recv, int32 series1, int32 val3, int32 val4,
+	int32 trigger, int32 series2, int32 val6, int32 val7, int32 val8) {
 	if (!trigger)
 		trigger = -1;
 
 	_G(globals)[GLB_TEMP_1] = val1 << 16;
-	_G(globals)[GLB_TEMP_2] = val2 << 24;
+	_G(globals)[GLB_TEMP_2] = series1 << 24;
 	_G(globals)[GLB_TEMP_3] = val3 << 16;
 	_G(globals)[GLB_TEMP_4] = val4 << 16;
 	_G(globals)[GLB_TEMP_5] = kernel_trigger_create(trigger);
 	_G(globals)[GLB_TEMP_6] = val6 << 16;
 	_G(globals)[GLB_TEMP_7] = val7 << 16;
 	_G(globals)[GLB_TEMP_8] = val8 << 16;
-	_G(globals)[GLB_TEMP_9] = val5 << 16;
+	_G(globals)[GLB_TEMP_9] = series2 << 24;
 
 	sendWSMessage(0x10000, 0, recv, 0, nullptr, 1);
 }
