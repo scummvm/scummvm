@@ -27,6 +27,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <tchar.h>
+#include <errno.h>
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
