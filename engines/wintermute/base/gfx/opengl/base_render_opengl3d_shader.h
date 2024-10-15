@@ -48,9 +48,9 @@ public:
 
 	void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) override;
 
-	void setAmbientLight() override;
+	void setAmbientLightRenderState() override;
 
-	int maximumLightsCount() override;
+	int getMaxActiveLights() override;
 	void enableLight(int index) override;
 	void disableLight(int index) override;
 	void setLightParameters(int index, const Math::Vector3d &position, const Math::Vector3d &direction, const Math::Vector4d &diffuse, bool spotlight) override;

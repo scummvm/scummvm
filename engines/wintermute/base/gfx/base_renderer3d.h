@@ -61,35 +61,43 @@ public:
 
 	bool getProjectionParams(float *resWidth, float *resHeight, float *layerWidth, float *layerHeight,
 							 float *modWidth, float *modHeight, bool *customViewport);
+	virtual int getMaxActiveLights() = 0;
 	bool setAmbientLightColor(uint32 color);
 	bool setDefaultAmbientLightColor();
-	virtual void setAmbientLight() = 0;
 
 	uint32 _ambientLightColor;
 	bool _ambientLightOverride;
 
-	virtual int maximumLightsCount() = 0;
+	virtual bool enableShadows() = 0;
+	virtual bool disableShadows() = 0;
+	virtual bool stencilSupported() = 0;
+	virtual void displayShadow(BaseObject *object, const Math::Vector3d &light, bool lightPosRelative) = 0;
+
+	virtual void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) = 0;
+
+	void fade(uint16 alpha) override;
+	bool drawSprite(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, float zoomX, float zoomY, const Vector2 &pos,
+					uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
+	virtual bool drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, const Vector2 &pos, const Vector2 &rot, const Vector2 &scale,
+							  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) = 0;
+	void initLoop() override;
+
+
+	
+	// ScummVM specific methods:
+
 	virtual void enableLight(int index) = 0;
 	virtual void disableLight(int index) = 0;
 	virtual void setLightParameters(int index, const Math::Vector3d &position, const Math::Vector3d &direction,
 	                                const Math::Vector4d &diffuse, bool spotlight) = 0;
 
-	virtual void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) = 0;
-
 	virtual void enableCulling() = 0;
 	virtual void disableCulling() = 0;
 
-	virtual bool enableShadows() = 0;
-	virtual bool disableShadows() = 0;
-	virtual void displayShadow(BaseObject *object, const Math::Vector3d &light, bool lightPosRelative) = 0;
-	virtual bool stencilSupported() = 0;
 
 	Rect32 getViewPort() override;
 
 	Graphics::PixelFormat getPixelFormat() const override;
-	void fade(uint16 alpha) override;
-
-	void initLoop() override;
 
 	virtual bool setProjection2D() = 0;
 
@@ -127,10 +135,6 @@ public:
 	virtual XMesh *createXMesh() = 0;
 	virtual ShadowVolume *createShadowVolume() = 0;
 
-	bool drawSprite(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, float zoomX, float zoomY, const Vector2 &pos,
-	                uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
-	virtual bool drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, const Vector2 &pos, const Vector2 &rot, const Vector2 &scale,
-	                          float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) = 0;
 
 	virtual void renderSceneGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
 	                                 const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) = 0;
@@ -151,6 +155,9 @@ protected:
 	TRendererState _state;
 	bool _spriteBatchMode;
 
+	virtual void setAmbientLightRenderState() = 0;
+
+	// ScummVM specific methods:
 	void flipVertical(Graphics::Surface *s);
 };
 

@@ -50,8 +50,8 @@ BaseRenderer3D *makeOpenGL3DRenderer(BaseGame *inGame) {
 BaseRenderOpenGL3D::BaseRenderOpenGL3D(BaseGame *inGame) : BaseRenderer3D(inGame) {
 	setDefaultAmbientLightColor();
 
-	_lightPositions.resize(maximumLightsCount());
-	_lightDirections.resize(maximumLightsCount());
+	_lightPositions.resize(getMaxActiveLights());
+	_lightDirections.resize(getMaxActiveLights());
 }
 
 BaseRenderOpenGL3D::~BaseRenderOpenGL3D() {
@@ -78,7 +78,7 @@ void BaseRenderOpenGL3D::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode
 	}
 }
 
-void BaseRenderOpenGL3D::setAmbientLight() {
+void BaseRenderOpenGL3D::setAmbientLightRenderState() {
 	byte a = 0;
 	byte r = 0;
 	byte g = 0;
@@ -102,7 +102,7 @@ void BaseRenderOpenGL3D::setAmbientLight() {
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, value);
 }
 
-int BaseRenderOpenGL3D::maximumLightsCount() {
+int BaseRenderOpenGL3D::getMaxActiveLights() {
 	GLint maxLightCount = 0;
 	glGetIntegerv(GL_MAX_LIGHTS, &maxLightCount);
 	return maxLightCount;
@@ -488,7 +488,7 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 		// 8 / 255 ~ 0.0313
 		glAlphaFunc(GL_GEQUAL, 0.0313f);
 
-		setAmbientLight();
+		setAmbientLightRenderState();
 
 		glEnable(GL_NORMALIZE);
 

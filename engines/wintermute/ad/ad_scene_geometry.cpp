@@ -838,11 +838,11 @@ bool AdSceneGeometry::initLoop() {
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::createLights() {
 	// disable all lights
-	for (int i = 0; i < _gameRef->_renderer3D->maximumLightsCount(); i++) {
+	for (int i = 0; i < _gameRef->_renderer3D->getMaxActiveLights(); i++) {
 		_gameRef->_renderer3D->disableLight(i);
 	}
 
-	int lightCount = MIN(static_cast<int>(_lights.size()), _gameRef->_renderer3D->maximumLightsCount());
+	int lightCount = MIN(static_cast<int>(_lights.size()), _gameRef->_renderer3D->getMaxActiveLights());
 
 	for (int i = 0; i < lightCount; i++) {
 		_lights[i]->setLight(i);
@@ -868,13 +868,13 @@ bool AdSceneGeometry::enableLights(Math::Vector3d point, BaseArray<char *> &igno
 		}
 	}
 
-	if (activeLightCount <= _gameRef->_renderer3D->maximumLightsCount()) {
+	if (activeLightCount <= _gameRef->_renderer3D->getMaxActiveLights()) {
 		for (uint i = 0; i < _lights.size(); i++) {
 			_lights[i]->_isAvailable = true;
 		}
 	} else {
 		if (!_maxLightsWarning) {
-			_gameRef->LOG(0, "Warning: Using more lights than the hardware supports (%d)", _gameRef->_renderer3D->maximumLightsCount());
+			_gameRef->LOG(0, "Warning: Using more lights than the hardware supports (%d)", _gameRef->_renderer3D->getMaxActiveLights());
 			_maxLightsWarning = true;
 		}
 
@@ -905,7 +905,7 @@ bool AdSceneGeometry::enableLights(Math::Vector3d point, BaseArray<char *> &igno
 			Common::sort(activeLights.begin(), activeLights.end(), compareLights);
 
 			for (uint i = 0; i < activeLights.size(); i++) {
-				activeLights[i]->_isAvailable = static_cast<int>(i) < _gameRef->_renderer3D->maximumLightsCount();
+				activeLights[i]->_isAvailable = static_cast<int>(i) < _gameRef->_renderer3D->getMaxActiveLights();
 			}
 		}
 	}
@@ -918,7 +918,7 @@ bool AdSceneGeometry::enableLights(Math::Vector3d point, BaseArray<char *> &igno
 	activeLightCount = 0;
 
 	for (uint i = 0; i < _lights.size(); i++) {
-		if (activeLightCount >= _gameRef->_renderer3D->maximumLightsCount()) {
+		if (activeLightCount >= _gameRef->_renderer3D->getMaxActiveLights()) {
 			break;
 		}
 

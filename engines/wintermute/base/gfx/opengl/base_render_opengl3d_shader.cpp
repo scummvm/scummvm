@@ -89,7 +89,7 @@ void BaseRenderOpenGL3DShader::setSpriteBlendMode(Graphics::TSpriteBlendMode ble
 	}
 }
 
-void BaseRenderOpenGL3DShader::setAmbientLight() {
+void BaseRenderOpenGL3DShader::setAmbientLightRenderState() {
 	byte a = RGBCOLGetA(_ambientLightColor);
 	byte r = RGBCOLGetR(_ambientLightColor);
 	byte g = RGBCOLGetG(_ambientLightColor);
@@ -114,7 +114,7 @@ void BaseRenderOpenGL3DShader::setAmbientLight() {
 	_xmodelShader->setUniform("ambientLight", value);
 }
 
-int BaseRenderOpenGL3DShader::maximumLightsCount() {
+int BaseRenderOpenGL3DShader::getMaxActiveLights() {
 	return 8;
 }
 
@@ -523,7 +523,7 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 
 	setDefaultAmbientLightColor();
 
-	for (int i = 0; i < maximumLightsCount(); ++i) {
+	for (int i = 0; i < getMaxActiveLights(); ++i) {
 		setLightParameters(i, Math::Vector3d(0, 0, 0), Math::Vector3d(0, 0, 0), Math::Vector4d(0, 0, 0, 0), false);
 		disableLight(i);
 	}
@@ -619,7 +619,7 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 
-		setAmbientLight();
+		setAmbientLightRenderState();
 
 		if (camera)
 			_camera = camera;

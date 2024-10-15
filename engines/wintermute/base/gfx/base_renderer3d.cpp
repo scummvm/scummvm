@@ -42,10 +42,11 @@ BaseRenderer3D::BaseRenderer3D(Wintermute::BaseGame *inGame) : BaseRenderer(inGa
 }
 
 BaseRenderer3D::~BaseRenderer3D() {
+	_camera = nullptr; // ref only
 }
 
 void BaseRenderer3D::initLoop() {
-	deleteRectList();
+	BaseRenderer::initLoop();
 	setup2D();
 }
 
@@ -115,14 +116,14 @@ Math::Ray BaseRenderer3D::rayIntoScene(int x, int y) {
 bool BaseRenderer3D::setAmbientLightColor(uint32 color) {
 	_ambientLightColor = color;
 	_ambientLightOverride = true;
-	setAmbientLight();
+	setAmbientLightRenderState();
 	return true;
 }
 
 bool BaseRenderer3D::setDefaultAmbientLightColor() {
 	_ambientLightColor = 0x00000000;
 	_ambientLightOverride = false;
-	setAmbientLight();
+	setAmbientLightRenderState();
 	return true;
 }
 
