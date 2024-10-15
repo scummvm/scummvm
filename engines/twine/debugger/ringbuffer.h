@@ -24,7 +24,7 @@ protected:
 public:
 	using value_type = TYPE;
 
-	RingBuffer() : _size(0u), _front(0u), _back(0) {
+	RingBuffer() : _size(0u), _front(0u), _back(SIZE - 1u) {
 	}
 
 	class iterator {
