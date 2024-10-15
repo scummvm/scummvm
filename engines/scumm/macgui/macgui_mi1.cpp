@@ -404,7 +404,7 @@ void MacMI1Gui::runAboutDialog() {
 
 void MacMI1Gui::runAboutDialogMI1(MacDialogWindow *window) {
 //	Graphics::Surface *lucasArts = loadPict(5000);
-//	Graphics::Surface *monkeys = loadPict(5001);
+	Graphics::Surface *monkeys = loadPict(5001);
 
 	Graphics::Surface *s = window->innerSurface();
 
@@ -538,12 +538,15 @@ void MacMI1Gui::runAboutDialogMI1(MacDialogWindow *window) {
 
 	window->show();
 
+	Common::Rect monkeysRect(monkeys->w, monkeys->h);
+
 	while (!_vm->shouldQuit() && page < ARRAYSIZE(aboutPages)) {
 		Common::Rect &drawArea = drawAreas[aboutPages[page].drawArea];
 
 		switch (page) {
 		case 0:
 			s->fillRect(drawArea, black);
+//			window->drawSprite(lucasArts, 0, 0, drawArea);
 			break;
 
 		case 1:
@@ -577,15 +580,20 @@ void MacMI1Gui::runAboutDialogMI1(MacDialogWindow *window) {
 			break;
 
 		case 9:
-			// Monkeys
+			monkeysRect.moveTo(2, 18);
+			window->drawSprite(monkeys, monkeysRect.left, monkeysRect.top);
 			break;
 
 		case 10:
-			// Monkeys
+			s->fillRect(monkeysRect, white);
+			monkeysRect.moveTo(2, 36);
+			s->fillRect(Common::Rect(monkeysRect.left, monkeysRect.top + monkeys->h, monkeysRect.left + monkeys->w, 146), white);
+			window->drawSprite(monkeys, monkeysRect.left, monkeysRect.top);
 			break;
 
 		case 11:
-			// Monkeys (shadow still barely visible)
+			s->fillRect(monkeysRect, white);
+			window->drawSprite(monkeys, 2, 54, drawArea);
 			allowMegaSkip = megaSkip = false;
 			break;
 
@@ -620,7 +628,7 @@ void MacMI1Gui::runAboutDialogMI1(MacDialogWindow *window) {
 	}
 
 //	delete lucasArts;
-//	delete monkeys;
+	delete monkeys;
 }
 
 void MacMI1Gui::drawShadow(Graphics::Surface *s, int x, int y, int h, Common::Pair<int, int> *drawData) {
