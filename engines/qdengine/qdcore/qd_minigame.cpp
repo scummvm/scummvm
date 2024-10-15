@@ -58,6 +58,7 @@
 #include "qdengine/minigames/3mice2_states.h"
 #include "qdengine/minigames/3mice2_testo.h"
 #include "qdengine/minigames/3mice2_plate.h"
+#include "qdengine/minigames/3mice2_raskr1.h"
 
 namespace QDEngine {
 
