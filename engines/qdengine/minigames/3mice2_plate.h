@@ -37,9 +37,14 @@ public:
 	bool init(const qdEngineInterface *engine_interface) {
 		debugC(1, kDebugMinigames, "3mice2Plate::init()");
 
+		_engine = engine_interface;
+		_scene = engine_interface->current_scene_interface();
+		if (!_scene)
+			return false;
+
 		for (int i = 1; i <= 5; i++) {
 			_figures[i] = _scene->object_interface(Common::String::format("object@%i#", i).c_str());
-			_figures[i + 6] = _scene->object_interface(Common::String::format("inv_object@%i#", i).c_str());
+			_figures[i + 5] = _scene->object_interface(Common::String::format("inv_object@%i#", i).c_str());
 		}
 
 		_objDone = _scene->object_interface("$done");
@@ -101,6 +106,9 @@ public:
 				int num = getObjNum(name);
 
 				clickObj->set_state("hide");
+
+				debugC(2, kDebugMinigames, "to_inv: num is: %d for name: '%s'", num, name);
+
 				_figures[num + 5]->set_state("to_inv");
 				_objZoneFull->set_state("\xD4\xEE\xED - \xEC\xE0\xF1\xEA\xE0"); // "Фон - маска"
 
@@ -118,6 +126,8 @@ public:
 						num = i + 1;
 					}
 				}
+
+				debugC(2, kDebugMinigames, "zone_target: num is: %d", num);
 
 				if (num > -1) {
 					_figures[num]->set_state("hide");
@@ -138,6 +148,8 @@ public:
 			name = mouseObj->name();
 
 			int num = getObjNum(name);
+
+			debugC(2, kDebugMinigames, "base: num is: %d for name: '%s'", num, name);
 
 			mouseObj->set_state("del");
 
@@ -162,12 +174,14 @@ public:
 
 			int num = getObjNum(name);
 
+			debugC(2, kDebugMinigames, "plate: num is: %d for name: '%s'", num, name);
+
 			if (!strcmp(hoverObj->name(), "zone_target")) {
 				mouseObj->set_state("del");
 
 				_figures[num]->set_state("plate");
 
-				_figures[num]->set_R(_scene->screen2world_coords(mgVect2i(400, 300), 0));
+				_figures[num]->set_R(_scene->screen2world_coords(mgVect2i(400, 300), _zoneDepth));
 
 				_zoneDepth -= 500;
 			} else if (!strcmp(hoverObj->name(), "zone_full")) {
