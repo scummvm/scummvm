@@ -30,6 +30,9 @@
 class WindowsSaveFileManager final : public DefaultSaveFileManager {
 public:
 	WindowsSaveFileManager(bool isPortable);
+
+protected:
+	Common::ErrorCode removeFile(const Common::FSNode &fileNode) override;
 };
 
 #endif
