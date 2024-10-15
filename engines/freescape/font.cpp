@@ -136,7 +136,7 @@ Common::Array<Graphics::ManagedSurface *> FreescapeEngine::getChars(Common::Seek
 	return chars;
 }
 
-Common::Array<Graphics::ManagedSurface *> FreescapeEngine::getCharsAmigaAtari(Common::SeekableReadStream *file, int offset, int charsNumber) {
+Common::Array<Graphics::ManagedSurface *> FreescapeEngine::getCharsAmigaAtariInternal(int sizeX, int sizeY, int additional, int m1, int m2, Common::SeekableReadStream *file, int offset, int charsNumber) {
 
 	file->seek(offset);
 	int fontSize = 4654;
@@ -146,14 +146,7 @@ Common::Array<Graphics::ManagedSurface *> FreescapeEngine::getCharsAmigaAtari(Co
 	Common::BitArray font;
 	font.set_size(8 * fontSize);
 	font.set_bits(fontBuffer);
-
 	Common::Array<Graphics::ManagedSurface *> chars;
-
-	int sizeX = 8;
-	int sizeY = 8;
-	int additional = isEclipse() ? 0 : 1;
-	int m1 = isDriller() ? 33 : 16;
-	int m2 = isDriller() ? 32 : 16;
 
 	for (int c = 0; c < charsNumber - 1; c++) {
 		int position = 8 * (m1*c + 1);
@@ -171,7 +164,12 @@ Common::Array<Graphics::ManagedSurface *> FreescapeEngine::getCharsAmigaAtari(Co
 		}
 		chars.push_back(surface);
 	}
+	free(fontBuffer);
 	return chars;
+}
+
+Common::Array<Graphics::ManagedSurface *> FreescapeEngine::getCharsAmigaAtari(Common::SeekableReadStream *file, int offset, int charsNumber) {
+	return getCharsAmigaAtariInternal(8, 8, isEclipse() ? 0 : 1, isDriller() ? 33 : 16, isDriller() ? 32 : 16, file, offset, charsNumber);
 }
 
 void FreescapeEngine::drawStringInSurface(const Common::String &str, int x, int y, uint32 fontColor, uint32 backColor, Graphics::Surface *surface, int offset) {

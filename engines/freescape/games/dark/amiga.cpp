@@ -99,60 +99,25 @@ void DarkEngine::initAmigaAtari() {
 void DarkEngine::drawString(const DarkFontSize size, const Common::String &str, int x, int y, uint32 primaryColor, uint32 secondaryColor, uint32 backColor, Graphics::Surface *surface) {
 	if (!_fontLoaded)
 		return;
-	/*Common::String ustr = str;
-	ustr.toUppercase();
 
-	int multiplier1 = 0;
-	int multiplier2 = 0;
-	int sizeX = 0;
-	int sizeY = 0;
-	int sep = 0;
+	Font *font = nullptr;
 
-	switch (size) {
-		case kDarkFontBig:
-			multiplier1 = 16;
-			multiplier2 = 16;
-			sizeY = 8;
-			sizeX = 8;
-			sep = 8;
-			_font = _fontBig;
-		break;
-		case kDarkFontMedium:
-			multiplier1 = 10;
-			multiplier2 = 8;
-			sizeY = 8;
-			sizeX = 8;
-			sep = 8;
-			_font = _fontMedium;
-		break;
-		case kDarkFontSmall:
-			multiplier1 = 10;
-			multiplier2 = 16;
-			sizeY = 5;
-			sizeX = 8;
-			sep = 4;
-			_font = _fontSmall;
-		break;
-		default:
-			error("Invalid font size %d", size);
-		break;
+	if (size == kDarkFontBig) {
+		font = &_fontBig;
+	} else if (size == kDarkFontMedium) {
+		font = &_fontMedium;
+	} else if (size == kDarkFontSmall) {
+		font = &_fontSmall;
+	} else {
+		error("Invalid font size %d", size);
+		return;
 	}
 
-	for (uint32 c = 0; c < ustr.size(); c++) {
-		assert(ustr[c] >= 32);
-		int position = 8 * (multiplier1*(ustr[c] - 32));
-		for (int j = 0; j < sizeY; j++) {
-			for (int i = 0; i < sizeX; i++) {
-				if (_font.get(position + j * multiplier2 + i)) {
-					surface->setPixel(x + 8 - i + sep * c, y + j, primaryColor);
-				}*/ /*else if (_font.get(position + j * multiplier2 + i)) {
-					surface->setPixel(x + 8 - i + 8 * c, y + j, primaryColor);
-				}*/ /*else {
-					surface->setPixel(x + 8 - i + sep * c, y + j, backColor);
-				}
-			}
-		}
-	}*/
+	Common::String ustr = str;
+	ustr.toUppercase();
+	font->setBackground(backColor);
+	font->setSecondaryColor(secondaryColor);
+	font->drawString(surface, ustr, x, y, _screenW, primaryColor);
 }
 
 } // End of namespace Freescape

@@ -92,10 +92,9 @@ public:
 	void drawCPCUI(Graphics::Surface *surface) override;
 	void drawAmigaAtariSTUI(Graphics::Surface *surface) override;
 
-	Common::BitArray _fontBig;
-	Common::BitArray _fontMedium;
-	Common::BitArray _fontSmall;
-
+	Font _fontBig;
+	Font _fontMedium;
+	Font _fontSmall;
 	int _soundIndexRestoreECD;
 
 	void drawString(const DarkFontSize size, const Common::String &str, int x, int y, uint32 primaryColor, uint32 secondaryColor, uint32 backColor, Graphics::Surface *surface);
