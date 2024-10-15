@@ -1263,6 +1263,18 @@ void GrimEngine::savegameRestore() {
 	lua_Restore(_savedState);
 	Debug::debug(Debug::Engine, "Lua restored successfully.");
 
+	if (getGameType() == GType_GRIM && !(getGameFlags() & ADGF_DEMO) &&
+		_savedState->saveMajorVersion() == 22 &&
+		_savedState->saveMinorVersion() >= 7 &&
+		_savedState->saveMinorVersion() <= 28) {
+		// Since ResidualVM 0.2.0, a ResidualVM/ScummVM specific patch was provided broken.
+		// We patch here the code to fix all saves containing this invalid code.
+		// cf. bug #13139 and #14987
+		lua_PatchGrimSave();
+	}
+
+	delete _savedState;
+
 	_justSaveLoaded = true;
 
 	//Re-read the values, since we may have been in some state that changed them when loading the savegame,
@@ -1277,13 +1289,6 @@ void GrimEngine::savegameRestore() {
 	g_movie->pause(false);
 
 	debug(2, "GrimEngine::savegameRestore() finished.");
-
-	// Related to bug #13139 and #14987
-	if (getGameType() == GType_GRIM && !(getGameFlags() & ADGF_DEMO) && _savedState->saveMajorVersion() == SaveGame::SAVEGAME_MAJOR_VERSION && _savedState->saveMinorVersion() <= 28) {
-		GUI::displayErrorDialog(Common::U32String::format(_("The game save file may be invalid and prevent game to be completed.")));
-	}
-
-	delete _savedState;
 
 	_shortFrame = true;
 	clearEventQueue();
