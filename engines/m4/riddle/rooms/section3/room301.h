@@ -61,7 +61,7 @@ private:
 	int _agentSalutes = 0;
 	int _ripTrekArms = 0;
 	int _marshalMatt = 0;
-	machine *_machine1 = nullptr;
+	machine *_deskGuy = nullptr;
 	machine *_machine2 = nullptr;
 	machine *_machine3 = nullptr;
 	machine *_machine4 = nullptr;
@@ -76,6 +76,7 @@ public:
 	Room301() : Room() {}
 	~Room301() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
 	void pre_parser() override;
