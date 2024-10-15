@@ -49,71 +49,71 @@ Scene::~Scene() {
 
 void Scene::setActorStaticFlags(ActorStruct *act, uint32 staticFlags) {
 	if (staticFlags & 0x1) {
-		act->_staticFlags.bComputeCollisionWithObj = 1;
+		act->_flags.bComputeCollisionWithObj = 1;
 	}
 	if (staticFlags & 0x2) {
-		act->_staticFlags.bComputeCollisionWithBricks = 1;
+		act->_flags.bComputeCollisionWithBricks = 1;
 	}
 	if (staticFlags & 0x4) {
-		act->_staticFlags.bCheckZone = 1;
+		act->_flags.bCheckZone = 1;
 	}
 	if (staticFlags & 0x8) {
-		act->_staticFlags.bSpriteClip = 1;
+		act->_flags.bSpriteClip = 1;
 	}
 	if (staticFlags & 0x10) {
-		act->_staticFlags.bCanBePushed = 1;
+		act->_flags.bCanBePushed = 1;
 	}
 	if (staticFlags & 0x20) {
-		act->_staticFlags.bComputeLowCollision = 1;
+		act->_flags.bComputeLowCollision = 1;
 	}
 	if (staticFlags & 0x40) {
-		act->_staticFlags.bCanDrown = 1;
+		act->_flags.bCanDrown = 1;
 	}
 	if (staticFlags & 0x80) {
-		act->_staticFlags.bComputeCollisionWithFloor = 1;
+		act->_flags.bComputeCollisionWithFloor = 1;
 	}
 
 	if (staticFlags & 0x100) {
-		act->_staticFlags.bUnk0100 = 1;
+		act->_flags.bUnk0100 = 1;
 	}
 	if (staticFlags & 0x200) {
-		act->_staticFlags.bIsInvisible = 1;
+		act->_flags.bIsInvisible = 1;
 	}
 	if (staticFlags & 0x400) {
-		act->_staticFlags.bSprite3D = 1;
+		act->_flags.bSprite3D = 1;
 	}
 	if (staticFlags & 0x800) {
-		act->_staticFlags.bObjFallable = 1;
+		act->_flags.bObjFallable = 1;
 	}
 	if (staticFlags & 0x1000) {
-		act->_staticFlags.bNoShadow = 1;
+		act->_flags.bNoShadow = 1;
 	}
 	if (staticFlags & 0x2000) {
-		act->_staticFlags.bIsBackgrounded = 1;
+		act->_flags.bIsBackgrounded = 1;
 	}
 	if (staticFlags & 0x4000) {
-		act->_staticFlags.bIsCarrierActor = 1;
+		act->_flags.bIsCarrierActor = 1;
 	}
 	if (staticFlags & 0x8000) {
-		act->_staticFlags.bUseMiniZv = 1;
+		act->_flags.bUseMiniZv = 1;
 	}
 	if (staticFlags & 0x10000) {
-		act->_staticFlags.bHasInvalidPosition = 1;
+		act->_flags.bHasInvalidPosition = 1;
 	}
 	if (staticFlags & 0x20000) {
-		act->_staticFlags.bNoElectricShock = 1;
+		act->_flags.bNoElectricShock = 1;
 	}
 	if (staticFlags & 0x40000) {
-		act->_staticFlags.bHasSpriteAnim3D = 1;
+		act->_flags.bHasSpriteAnim3D = 1;
 	}
 	if (staticFlags & 0x80000) {
-		act->_staticFlags.bNoPreClipping = 1;
+		act->_flags.bNoPreClipping = 1;
 	}
 	if (staticFlags & 0x100000) {
-		act->_staticFlags.bHasZBuffer = 1;
+		act->_flags.bHasZBuffer = 1;
 	}
 	if (staticFlags & 0x200000) {
-		act->_staticFlags.bHasZBufferInWater = 1;
+		act->_flags.bHasZBufferInWater = 1;
 	}
 }
 
@@ -180,7 +180,7 @@ bool Scene::loadSceneCubeXY(int numcube, int32 *cubex, int32 *cubey) {
 
 void Scene::loadModel(ActorStruct &actor, int32 modelIndex, bool lba1) {
 	actor._body = modelIndex;
-	if (!actor._staticFlags.bSprite3D) {
+	if (!actor._flags.bSprite3D) {
 		debug(1, "Init actor with model %i", modelIndex);
 		_engine->_resources->loadEntityData(actor._entityData, modelIndex);
 		actor._entityDataPtr = &actor._entityData;
@@ -260,7 +260,7 @@ bool Scene::loadSceneLBA2() {
 		act->_followedActor = act->_cropBottom; // TODO: is this needed? and valid?
 		act->_bonusAmount = stream.readSint16LE();
 		act->_talkColor = stream.readByte();
-		if (act->_staticFlags.bHasSpriteAnim3D) {
+		if (act->_flags.bHasSpriteAnim3D) {
 			/*act->spriteAnim3DNumber = */stream.readSint32LE();
 			/*act->spriteSizeHit = */stream.readSint16LE();
 			/*act->cropBottom = act->spriteSizeHit;*/

@@ -477,7 +477,7 @@ int32 ScriptLifeV2::lBUBBLE(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lNO_CHOC(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 val = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lNO_CHOC(%i)", (int)val);
-	ctx.actor->_staticFlags.bNoElectricShock = val;
+	ctx.actor->_flags.bNoElectricShock = val;
 	return 0;
 }
 
@@ -580,7 +580,7 @@ int32 ScriptLifeV2::lSHADOW_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::SHADOW_OBJ(%i, %s)", actorIdx, castShadow ? "true" : "false");
 	ActorStruct *actor = engine->_scene->getActor(actorIdx);
 	if (actor->_lifePoint > 0) {
-		actor->_staticFlags.bNoShadow = !castShadow;
+		actor->_flags.bNoShadow = !castShadow;
 	}
 	return 0;
 }
@@ -647,7 +647,7 @@ int32 ScriptLifeV2::lACTION(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lSET_FRAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int frame = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSET_FRAME(%i)", (int)frame);
-	if (!ctx.actor->_staticFlags.bSprite3D) {
+	if (!ctx.actor->_flags.bSprite3D) {
 		// TODO: ObjectSetFrame(ctx.actorIdx, frame);
 	}
 	return -1;
@@ -656,7 +656,7 @@ int32 ScriptLifeV2::lSET_FRAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lSET_SPRITE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int16 num = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSET_SPRITE(%i)", (int)num);
-	if (ctx.actor->_staticFlags.bSprite3D) {
+	if (ctx.actor->_flags.bSprite3D) {
 		engine->_actor->initSprite(num, ctx.actorIdx);
 	}
 	return 0;
@@ -665,7 +665,7 @@ int32 ScriptLifeV2::lSET_SPRITE(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lSET_FRAME_3DS(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int sprite = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSET_FRAME_3DS(%i)", (int)sprite);
-	if (ctx.actor->_staticFlags.bHasSpriteAnim3D) {
+	if (ctx.actor->_flags.bHasSpriteAnim3D) {
 		const T_ANIM_3DS *anim = engine->_resources->getAnim(ctx.actor->A3DS.Num);
 		if (sprite >= anim->Fin - anim->Deb) {
 			sprite = anim->Fin - anim->Deb;

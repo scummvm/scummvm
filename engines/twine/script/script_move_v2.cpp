@@ -149,7 +149,7 @@ int32 ScriptMoveV2::mWAIT_NB_SECOND_RND(TwinEEngine *engine, MoveScriptContext &
 
 int32 ScriptMoveV2::mSPRITE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int16 num = ctx.stream.readSint16LE();
-	if (ctx.actor->_staticFlags.bSprite3D) {
+	if (ctx.actor->_flags.bSprite3D) {
 		engine->_actor->initSprite(num, ctx.actorIdx);
 	}
 	return 0;
@@ -157,7 +157,7 @@ int32 ScriptMoveV2::mSPRITE(TwinEEngine *engine, MoveScriptContext &ctx) {
 
 int32 ScriptMoveV2::mSET_FRAME(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const uint8 num = ctx.stream.readByte();
-	if (!ctx.actor->_staticFlags.bSprite3D) {
+	if (!ctx.actor->_flags.bSprite3D) {
 		engine->_actor->setFrame(ctx.actorIdx, num);
 	}
 	return 0;
@@ -165,7 +165,7 @@ int32 ScriptMoveV2::mSET_FRAME(TwinEEngine *engine, MoveScriptContext &ctx) {
 
 int32 ScriptMoveV2::mSET_FRAME_3DS(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 num = ctx.stream.readByte();
-	if (ctx.actor->_staticFlags.bHasSpriteAnim3D) {
+	if (ctx.actor->_flags.bHasSpriteAnim3D) {
 		const T_ANIM_3DS *anim = engine->_resources->getAnim(ctx.actor->A3DS.Num);
 		if (num > (anim->Fin - anim->Deb)) {
 			num = anim->Fin - anim->Deb;

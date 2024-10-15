@@ -332,9 +332,9 @@ void GameState::doFoundObj(InventoryItems item) {
 	_engine->_grid->centerOnActor(_engine->_scene->_sceneHero);
 
 	// Hide hero in scene
-	_engine->_scene->_sceneHero->_staticFlags.bIsInvisible = 1;
+	_engine->_scene->_sceneHero->_flags.bIsInvisible = 1;
 	_engine->_redraw->drawScene(true);
-	_engine->_scene->_sceneHero->_staticFlags.bIsInvisible = 0;
+	_engine->_scene->_sceneHero->_flags.bIsInvisible = 0;
 
 	_engine->saveFrontBuffer();
 
@@ -508,9 +508,9 @@ void GameState::processGameoverAnimation() {
 
 	_engine->testRestoreModeSVGA(false);
 	// workaround to fix hero redraw after drowning
-	_engine->_scene->_sceneHero->_staticFlags.bIsInvisible = 1;
+	_engine->_scene->_sceneHero->_flags.bIsInvisible = 1;
 	_engine->_redraw->drawScene(true);
-	_engine->_scene->_sceneHero->_staticFlags.bIsInvisible = 0;
+	_engine->_scene->_sceneHero->_flags.bIsInvisible = 0;
 
 	// TODO: inSceneryView
 	_engine->setPalette(_engine->_screens->_ptrPal);

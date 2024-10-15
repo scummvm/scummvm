@@ -107,7 +107,7 @@ void Dart::CheckDartCol(ActorStruct *ptrobj) {
 	int32 x0, y0, z0, x1, y1, z1;
 	int32 xt0, yt0, zt0, xt1, yt1, zt1;
 
-	if (ptrobj->_staticFlags.bIsInvisible)
+	if (ptrobj->_flags.bIsInvisible)
 		return;
 
 	x0 = ptrobj->_posObj.x + ptrobj->_boundingBox.mins.x;

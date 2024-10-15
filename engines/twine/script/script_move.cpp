@@ -98,7 +98,7 @@ int32 ScriptMove::mGOTO_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
 	const int32 newAngle = engine->_movements->getAngle(ctx.actor->_posObj.x, ctx.actor->_posObj.z, sp.x, sp.z);
 
-	if (ctx.actor->_staticFlags.bSprite3D) {
+	if (ctx.actor->_flags.bSprite3D) {
 		ctx.actor->_beta = newAngle;
 	} else {
 		engine->_movements->initRealAngleConst(ctx.actor->_beta, newAngle, ctx.actor->_srot, &ctx.actor->realAngle);
@@ -144,7 +144,7 @@ int32 ScriptMove::mLOOP(TwinEEngine *engine, MoveScriptContext &ctx) {
 int32 ScriptMove::mANGLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int16 angle = ToAngle(ctx.stream.readSint16LE());
 	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::ANGLE(%i)", (int)angle);
-	if (ctx.actor->_staticFlags.bSprite3D) {
+	if (ctx.actor->_flags.bSprite3D) {
 		return 0;
 	}
 	engine->_scene->_currentScriptValue = angle;
@@ -168,7 +168,7 @@ int32 ScriptMove::mPOS_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::POS_POINT(%i)", (int)engine->_scene->_currentScriptValue);
 
 	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
-	if (ctx.actor->_staticFlags.bSprite3D) {
+	if (ctx.actor->_flags.bSprite3D) {
 		ctx.actor->_srot = 0;
 	}
 
@@ -228,7 +228,7 @@ int32 ScriptMove::mGOTO_SYM_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
 	const int32 newAngle = LBAAngles::ANGLE_180 + engine->_movements->getAngle(ctx.actor->_posObj, sp);
 
-	if (ctx.actor->_staticFlags.bSprite3D) {
+	if (ctx.actor->_flags.bSprite3D) {
 		ctx.actor->_beta = newAngle;
 	} else {
 		engine->_movements->initRealAngleConst(ctx.actor->_beta, newAngle, ctx.actor->_srot, &ctx.actor->realAngle);
@@ -291,7 +291,7 @@ int32 ScriptMove::mSAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 int32 ScriptMove::mGOTO_POINT_3D(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int32 trackId = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::GOTO_POINT_3D(%i)", (int)trackId);
-	if (!ctx.actor->_staticFlags.bSprite3D) {
+	if (!ctx.actor->_flags.bSprite3D) {
 		return 0;
 	}
 
@@ -318,7 +318,7 @@ int32 ScriptMove::mSPEED(TwinEEngine *engine, MoveScriptContext &ctx) {
 	ctx.actor->_srot = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::SPEED(%i)", (int)ctx.actor->_srot);
 
-	if (ctx.actor->_staticFlags.bSprite3D) {
+	if (ctx.actor->_flags.bSprite3D) {
 		engine->_movements->initRealValue(LBAAngles::ANGLE_0, ctx.actor->_srot, LBAAngles::ANGLE_17, &ctx.actor->realAngle);
 	}
 
@@ -333,15 +333,15 @@ int32 ScriptMove::mBACKGROUND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const uint8 val = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::BACKGROUND(%i)", (int)val);
 	if (val != 0) {
-		if (!ctx.actor->_staticFlags.bIsBackgrounded) {
-			ctx.actor->_staticFlags.bIsBackgrounded = 1;
+		if (!ctx.actor->_flags.bIsBackgrounded) {
+			ctx.actor->_flags.bIsBackgrounded = 1;
 			if (ctx.actor->_workFlags.bWasDrawn) {
 				engine->_redraw->_firstTime = true;
 			}
 		}
 	} else {
-		if (ctx.actor->_staticFlags.bIsBackgrounded) {
-			ctx.actor->_staticFlags.bIsBackgrounded = 0;
+		if (ctx.actor->_flags.bIsBackgrounded) {
+			ctx.actor->_flags.bIsBackgrounded = 0;
 			if (ctx.actor->_workFlags.bWasDrawn) {
 				engine->_redraw->_firstTime = true;
 			}
@@ -397,7 +397,7 @@ int32 ScriptMove::mBETA(TwinEEngine *engine, MoveScriptContext &ctx) {
 
 	ctx.actor->_beta = beta;
 
-	if (!ctx.actor->_staticFlags.bSprite3D) {
+	if (!ctx.actor->_flags.bSprite3D) {
 		engine->_movements->clearRealAngle(ctx.actor);
 	}
 
@@ -407,7 +407,7 @@ int32 ScriptMove::mBETA(TwinEEngine *engine, MoveScriptContext &ctx) {
 int32 ScriptMove::mOPEN_GENERIC(TwinEEngine *engine, MoveScriptContext &ctx, int32 angle) {
 	const int16 doorStatus = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::OPEN(%i, %i)", (int)doorStatus, angle);
-	if (ctx.actor->_staticFlags.bSprite3D && ctx.actor->_staticFlags.bSpriteClip) {
+	if (ctx.actor->_flags.bSprite3D && ctx.actor->_flags.bSpriteClip) {
 		ctx.actor->_beta = angle;
 		ctx.actor->_doorWidth = doorStatus;
 		ctx.actor->_workFlags.bIsSpriteMoving = 1;
@@ -460,7 +460,7 @@ int32 ScriptMove::mOPEN_DOWN(TwinEEngine *engine, MoveScriptContext &ctx) {
  */
 int32 ScriptMove::mCLOSE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::CLOSE()");
-	if (ctx.actor->_staticFlags.bSprite3D && ctx.actor->_staticFlags.bSpriteClip) {
+	if (ctx.actor->_flags.bSprite3D && ctx.actor->_flags.bSpriteClip) {
 		ctx.actor->_doorWidth = 0;
 		ctx.actor->_workFlags.bIsSpriteMoving = 1;
 		ctx.actor->_srot = -1000;
@@ -475,7 +475,7 @@ int32 ScriptMove::mCLOSE(TwinEEngine *engine, MoveScriptContext &ctx) {
  */
 int32 ScriptMove::mWAIT_DOOR(TwinEEngine *engine, MoveScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::WAIT_DOOR()");
-	if (ctx.actor->_staticFlags.bSprite3D && ctx.actor->_staticFlags.bSpriteClip) {
+	if (ctx.actor->_flags.bSprite3D && ctx.actor->_flags.bSpriteClip) {
 		if (ctx.actor->_srot) {
 			ctx.undo(0);
 			return 1;
@@ -576,7 +576,7 @@ int32 ScriptMove::mSIMPLE_SAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 int32 ScriptMove::mFACE_HERO(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int16 angle = ToAngle(ctx.stream.readSint16LE());
 	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::FACE_HERO(%i)", (int)angle);
-	if (ctx.actor->_staticFlags.bSprite3D) {
+	if (ctx.actor->_flags.bSprite3D) {
 		return 0;
 	}
 	engine->_scene->_currentScriptValue = angle;
@@ -605,7 +605,7 @@ int32 ScriptMove::mANGLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int16 val1 = ctx.stream.readSint16LE();
 	const int16 val2 = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::LBAAngles::ANGLE_RND(%i, %i)", (int)val1, (int)val2);
-	if (ctx.actor->_staticFlags.bSprite3D) {
+	if (ctx.actor->_flags.bSprite3D) {
 		return 0;
 	}
 

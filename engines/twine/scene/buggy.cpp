@@ -44,8 +44,8 @@ void Buggy::initBuggy(uint8 numobj, uint32 flaginit) {
 
 	// So that the objects follow their tracks without being interrupted
 	// by the buggy (too bad, it will be pushed)
-	ptrobj->_staticFlags.bCanBePushed = true;
-	ptrobj->_staticFlags.bCanDrown = true;
+	ptrobj->_flags.bCanBePushed = true;
+	ptrobj->_flags.bCanDrown = true;
 
 	if (flaginit == 2               // we force the repositioning of the buggy
 		|| (flaginit && !NumBuggy)) // first initialization
@@ -84,10 +84,10 @@ void Buggy::initBuggy(uint8 numobj, uint32 flaginit) {
 
 				ptrobj->_beta = ptb->Beta;
 
-				ptrobj->_staticFlags.bNoShadow = 1;
-				ptrobj->_staticFlags.bIsBackgrounded = 1;
-				ptrobj->_staticFlags.bNoElectricShock = 1;
-				ptrobj->_staticFlags.bHasZBuffer = 1;
+				ptrobj->_flags.bNoShadow = 1;
+				ptrobj->_flags.bIsBackgrounded = 1;
+				ptrobj->_flags.bNoElectricShock = 1;
+				ptrobj->_flags.bHasZBuffer = 1;
 
 				_engine->_actor->initBody(BodyType::btNormal, numobj);
 			} else {
@@ -135,7 +135,7 @@ void Buggy::takeBuggy() {
 	_engine->_movements->clearRealAngle(ptrobj); // To avoid crushing the beta.
 
 	ptrobj->_workFlags.bMANUAL_INTER_FRAME = true;
-	ptrobj->_staticFlags.bHasZBuffer = true;
+	ptrobj->_flags.bHasZBuffer = true;
 
 	_engine->_actor->setBehaviour(HeroBehaviourType::kBUGGY);
 
@@ -197,7 +197,7 @@ void Buggy::leaveBuggy(HeroBehaviourType behaviour) {
 	// TODO: ObjectClear(ptrobj);
 
 	ptrobj->_workFlags.bMANUAL_INTER_FRAME = 0;
-	ptrobj->_staticFlags.bHasZBuffer = 0;
+	ptrobj->_flags.bHasZBuffer = 0;
 
 	_engine->_actor->initBody(BodyType::btTunic, OWN_ACTOR_SCENE_INDEX);
 

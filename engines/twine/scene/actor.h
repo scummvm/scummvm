@@ -148,8 +148,8 @@ private:
 
 public:
 	ActorStruct(int maxLife = 0) : _lifePoint(maxLife), _maxLife(maxLife) {}
-	StaticFlagsStruct _staticFlags; // Flags
-	DynamicFlagsStruct _workFlags;  // WorkFlags
+	StaticFlagsStruct _flags;
+	DynamicFlagsStruct _workFlags;
 
 	EntityData _entityData;
 	inline ShapeType brickShape() const { return _col; }
@@ -195,12 +195,12 @@ public:
 	int32 _beta = 0; // facing angle of actor. Minumum is 0 (SW). Going counter clock wise
 	int32 _srot = 40; // speed of rotation
 	ControlMode _controlMode = ControlMode::kNoMove; // Move
-	int32 _delayInMillis = 0;
+	int32 _delayInMillis = 0; // Info
 	int32 _cropLeft = 0;      // Info
 	int32 _cropTop = 0;       // Info1
 	int32 _cropRight = 0;     // Info2
 	int32 _cropBottom = 0;    // Info3
-	int32 _followedActor = 0; // same as info3
+	int32 _followedActor = 0; // same as Info3
 	int32 _bonusAmount = 0;
 	int32 _talkColor = COLOR_BLACK;
 	int32 _armor = 1;
@@ -226,7 +226,7 @@ public:
 	/**
 	 * colliding actor id
 	 */
-	int32 _objCol = -1; // ObjCol
+	int32 _objCol = -1;
 	/**
 	 * actor id we are standing on
 	 */

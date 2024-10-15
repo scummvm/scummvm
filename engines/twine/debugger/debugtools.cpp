@@ -651,7 +651,7 @@ static void actorDetailsWindow(int &actorIdx, TwinEEngine *engine) {
 			if (ImGui::BeginTable("##staticflags", 6)) {
 				for (int i = 0; i < ARRAYSIZE(Names); ++i) {
 					ImGui::TableNextColumn();
-					ImGui::CheckboxFlags(Names[i], (uint32_t *)&actor->_staticFlags, (1 << i));
+					ImGui::CheckboxFlags(Names[i], (uint32_t *)&actor->_flags, (1 << i));
 				}
 				ImGui::EndTable();
 			}

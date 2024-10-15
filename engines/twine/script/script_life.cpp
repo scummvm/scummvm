@@ -946,7 +946,7 @@ int32 ScriptLife::lMESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 int32 ScriptLife::lFALLABLE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 flag = ctx.stream.readByte();
-	ctx.actor->_staticFlags.bObjFallable = flag & 1;
+	ctx.actor->_flags.bObjFallable = flag & 1;
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::FALLABLE(%i)", (int)flag);
 	return 0;
 }
@@ -1338,9 +1338,9 @@ int32 ScriptLife::lOBJ_COL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 collision = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::OBJ_COL(%i)", (int)collision);
 	if (collision != 0) {
-		ctx.actor->_staticFlags.bComputeCollisionWithObj = 1;
+		ctx.actor->_flags.bComputeCollisionWithObj = 1;
 	} else {
-		ctx.actor->_staticFlags.bComputeCollisionWithObj = 0;
+		ctx.actor->_flags.bComputeCollisionWithObj = 0;
 	}
 	return 0;
 }
@@ -1353,14 +1353,14 @@ int32 ScriptLife::lBRICK_COL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 collision = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::BRICK_COL(%i)", (int)collision);
 
-	ctx.actor->_staticFlags.bComputeCollisionWithBricks = 0;
-	ctx.actor->_staticFlags.bComputeLowCollision = 0;
+	ctx.actor->_flags.bComputeCollisionWithBricks = 0;
+	ctx.actor->_flags.bComputeLowCollision = 0;
 
 	if (collision == 1) {
-		ctx.actor->_staticFlags.bComputeCollisionWithBricks = 1;
+		ctx.actor->_flags.bComputeCollisionWithBricks = 1;
 	} else if (collision == 2) {
-		ctx.actor->_staticFlags.bComputeCollisionWithBricks = 1;
-		ctx.actor->_staticFlags.bComputeLowCollision = 1;
+		ctx.actor->_flags.bComputeCollisionWithBricks = 1;
+		ctx.actor->_flags.bComputeLowCollision = 1;
 	}
 	return 0;
 }
@@ -1389,8 +1389,8 @@ int32 ScriptLife::lOR_IF(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x38
  */
 int32 ScriptLife::lINVISIBLE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	ctx.actor->_staticFlags.bIsInvisible = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::INVISIBLE(%i)", (int)ctx.actor->_staticFlags.bIsInvisible);
+	ctx.actor->_flags.bIsInvisible = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::INVISIBLE(%i)", (int)ctx.actor->_flags.bIsInvisible);
 	return 0;
 }
 

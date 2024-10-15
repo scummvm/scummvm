@@ -919,7 +919,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 	} else if (!_screens->_flagFade) {
 		// Process give up menu - Press ESC
-		if (_input->toggleAbortAction() && _scene->_sceneHero->_lifePoint > 0 && _scene->_sceneHero->_body != -1 && !_scene->_sceneHero->_staticFlags.bIsInvisible) {
+		if (_input->toggleAbortAction() && _scene->_sceneHero->_lifePoint > 0 && _scene->_sceneHero->_body != -1 && !_scene->_sceneHero->_flags.bIsInvisible) {
 			saveTimer(false);
 			testRestoreModeSVGA(true) ;
 			const int giveUp = _menu->quitMenu();
@@ -1079,11 +1079,11 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 #if 0 // TODO: enable me - found in the lba1 community release source code
 				// Disable collisions on Twinsen to allow other objects to continue their tracks
 				// while the death animation is playing
-				actor->_staticFlags.bObjFallable = 1;
-				actor->_staticFlags.bCheckZone = 0;
-				actor->_staticFlags.bComputeCollisionWithObj = 0;
-				actor->_staticFlags.bComputeCollisionWithBricks = 0;
-				actor->_staticFlags.bCanDrown = 1;
+				actor->_flags.bObjFallable = 1;
+				actor->_flags.bCheckZone = 0;
+				actor->_flags.bComputeCollisionWithObj = 0;
+				actor->_flags.bComputeCollisionWithBricks = 0;
+				actor->_flags.bCanDrown = 1;
 				actor->_workFlags.bIsHitting = 0;
 #endif
 			} else {
@@ -1109,7 +1109,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		_animations->doAnim(a);
 
-		if (actor->_staticFlags.bCheckZone) {
+		if (actor->_flags.bCheckZone) {
 			_scene->checkZoneSce(a);
 		}
 
@@ -1123,7 +1123,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			return _sceneLoopState == SceneLoopState::Finished;
 		}
 
-		if (actor->_staticFlags.bCanDrown) {
+		if (actor->_flags.bCanDrown) {
 			const uint8 brickSound = _grid->worldCodeBrick(actor->_posObj.x, actor->_posObj.y - 1, actor->_posObj.z);
 			actor->_brickSound = brickSound;
 
@@ -1138,7 +1138,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 						actor->_controlMode = ControlMode::kNoMove;
 						actor->setLife(-1);
 						_actor->_cropBottomScreen = projPos.y;
-						actor->_staticFlags.bNoShadow = 1;
+						actor->_flags.bNoShadow = 1;
 					}
 				} else {
 					_sound->playSample(Samples::Explode, 1, actor->posObj(), a);
@@ -1211,9 +1211,9 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 	// workaround to fix hero redraw after drowning
 	if (_actor->_cropBottomScreen && _redraw->_firstTime) {
-		_scene->_sceneHero->_staticFlags.bIsInvisible = 1;
+		_scene->_sceneHero->_flags.bIsInvisible = 1;
 		_redraw->drawScene(true);
-		_scene->_sceneHero->_staticFlags.bIsInvisible = 0;
+		_scene->_sceneHero->_flags.bIsInvisible = 0;
 	}
 
 	_scene->_newCube = SCENE_CEILING_GRID_FADE_1;
