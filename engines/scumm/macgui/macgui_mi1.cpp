@@ -1249,26 +1249,47 @@ bool MacMI1Gui::handleEvent(Common::Event event) {
 	if (_vm->isPaused())
 		return false;
 
-	if (_vm->_userPut <= 0)
-		return false;
-
 	const char *rough = "rough";
 
 	if (event.type == Common::EVENT_KEYDOWN) {
 		if (event.kbd.keycode == rough[_roughProgress]) {
 			_roughProgress++;
 			if (_roughProgress >= strlen(rough)) {
+				_roughProgress = 0;
 				if (_vm->_useMacGraphicsSmoothing && !_roughWarned) {
-					// TODO: Show warning dialog
 					_roughWarned = true;
+
+					Common::String warnString;
+
+					switch (_vm->_game.id) {
+					case GID_MONKEY2:
+						warnString = _strsStrings[98];
+						break;
+
+					case GID_INDY4:
+						if (_vm->_game.variant && !strcmp(_vm->_game.variant, "Floppy"))
+							warnString = _strsStrings[96];
+						else
+							warnString = _strsStrings[213];
+						break;
+
+					default:
+						warnString = "Warning: The 'rough' command will make your Mac screen look dangerously like a PC.  (eek!)";
+						break;
+					}
+
+					if (!runOkCancelDialog(warnString))
+						return false;
 				}
 				_vm->mac_toggleSmoothing();
-				_roughProgress = 0;
 			}
 		} else {
 			_roughProgress = 0;
 		}
 	}
+
+	if (_vm->_userPut <= 0)
+		return false;
 
 	return false;
 }
