@@ -159,6 +159,11 @@ void EclipseEngine::drawCPCUI(Graphics::Surface *surface) {
 }*/
 
 void EclipseEngine::loadAssetsAtariFullGame() {
+	Common::File file;
+	file.open("0.tec");
+	_title = loadAndConvertNeoImage(&file, 0x17ac);
+	file.close();
+
     Common::SeekableReadStream *stream = decryptFileAmigaAtari("1.tec", "0.tec", 0x1774 - 4 * 1024);
 	parseAmigaAtariHeader(stream);
 

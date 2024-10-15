@@ -49,6 +49,11 @@ Common::String centerAndPadString(const Common::String &str, int size) {
 }
 
 void DarkEngine::loadAssetsAtariFullGame() {
+	Common::File file;
+	file.open("0.drk");
+	_title = loadAndConvertNeoImage(&file, 0x13ec);
+	file.close();
+
 	Common::SeekableReadStream *stream = decryptFileAmigaAtari("1.drk", "0.drk", 840);
 	parseAmigaAtariHeader(stream);
 
