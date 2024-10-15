@@ -1290,7 +1290,7 @@ void sendWSMessage(int32 val1, machine *recv, int32 val2, int32 val3, int32 val4
 		trigger = -1;
 
 	_G(globals)[GLB_TEMP_1] = val1 << 16;
-	_G(globals)[GLB_TEMP_2] = val3 << 24;
+	_G(globals)[GLB_TEMP_2] = val2 << 24;
 	_G(globals)[GLB_TEMP_3] = val3 << 16;
 	_G(globals)[GLB_TEMP_4] = val4 << 16;
 	_G(globals)[GLB_TEMP_5] = kernel_trigger_create(trigger);
