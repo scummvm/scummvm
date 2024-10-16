@@ -75,7 +75,7 @@ private:
 	uint8 LookupWalkability(const Common::Point &p) const;
 	bool IsWalkable(const Common::Point &p) const;
 
-	
+	bool IsLineSegmentWalkable(const Common::Point &p1, const Common::Point &p2);
 
 
 	public:
