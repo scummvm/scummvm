@@ -1875,32 +1875,29 @@ void Renderer::fillTextPolyNoClip(int32 yMin, int32 yMax, const uint8 *holomapIm
 	const uint16 *pV0 = (const uint16 *)&_taby0[yMin];
 	const uint16 *pU1 = (const uint16 *)&_tabx1[yMin];
 	const uint16 *pV1 = (const uint16 *)&_taby1[yMin];
-	byte *pDest;
-	int32 ustep, vstep;
-	int16 xMin, xMax;
-	uint32 u0, v0, u1, v1, idx;
-	int32 u, v;
 
 	yMax -= yMin;
 
 	for (; yMax >= 0; yMax--) {
-		xMin = *pVerticG++;
-		xMax = *pVerticD++;
+		int16 xMin = *pVerticG++;
+		int16 xMax = *pVerticD++;
 		xMax -= xMin;
 
+		uint32 u0, v0;
+		int32 u, v;
 		u = u0 = *pU0++;
 		v = v0 = *pV0++;
-		u1 = *pU1++;
-		v1 = *pV1++;
+		uint32 u1 = *pU1++;
+		uint32 v1 = *pV1++;
 
 		if (xMax > 0) {
-			pDest = pDestLine + xMin;
+			byte *pDest = pDestLine + xMin;
 
-			ustep = ((int32)u1 - (int32)u0 + 1) / xMax;
-			vstep = ((int32)v1 - (int32)v0 + 1) / xMax;
+			int32 ustep = ((int32)u1 - (int32)u0 + 1) / xMax;
+			int32 vstep = ((int32)v1 - (int32)v0 + 1) / xMax;
 
 			for (; xMax > 0; xMax--) {
-				idx = ((u >> 8) & 0xFF) | (v & 0xFF00); // u0&0xFF00=column*256, v0&0xFF00 = line*256
+				uint32 idx = ((u >> 8) & 0xFF) | (v & 0xFF00); // u0&0xFF00=column*256, v0&0xFF00 = line*256
 				*pDest++ = holomapImage[idx];
 
 				u += ustep;
