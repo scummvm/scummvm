@@ -114,29 +114,34 @@ bool Animations::doSetInterAnimObjet(int32 framedest, const AnimData &animData, 
 	}
 	const int32 time = _engine->timerRef - remainingFrameTime;
 	if (time >= timeDest) {
-		copyKeyFrameToState(keyFrame, pBody, numOfBonesInAnim);
 		ptranimdest->ptr = keyFrame;
-		ptranimdest->time = _engine->timerRef;
 
-		_animStep.x = keyFrame->x;
-		_animStep.y = keyFrame->y;
-		_animStep.z = keyFrame->z;
-		_animMasterRot = keyFrame->animMasterRot;
-		_animStepAlpha = ToAngle(keyFrame->animStepAlpha);
-		_animStepBeta = ToAngle(keyFrame->animStepBeta);
-		_animStepGamma = ToAngle(keyFrame->animStepGamma);
+		if (global) {
+			ptranimdest->time = _engine->timerRef;
+
+			_animStep.x = keyFrame->x;
+			_animStep.y = keyFrame->y;
+			_animStep.z = keyFrame->z;
+			_animMasterRot = keyFrame->animMasterRot;
+			_animStepAlpha = ToAngle(keyFrame->animStepAlpha);
+			_animStepBeta = ToAngle(keyFrame->animStepBeta);
+			_animStepGamma = ToAngle(keyFrame->animStepGamma);
+		}
+
+		copyKeyFrameToState(keyFrame, pBody, numOfBonesInAnim);
 
 		return true;
 	}
 
-	_animStep.x = keyFrame->x;
-	_animStep.y = keyFrame->y;
-	_animStep.z = keyFrame->z;
-	_animMasterRot = keyFrame->animMasterRot;
-	_animStepAlpha = (keyFrame->animStepAlpha * time) / timeDest;
-	_animStepBeta = (keyFrame->animStepBeta * time) / timeDest;
-	_animStepGamma = (keyFrame->animStepGamma * time) / timeDest;
-
+	if (global) {
+		_animStep.x = keyFrame->x;
+		_animStep.y = keyFrame->y;
+		_animStep.z = keyFrame->z;
+		_animMasterRot = keyFrame->animMasterRot;
+		_animStepAlpha = (keyFrame->animStepAlpha * time) / timeDest;
+		_animStepBeta = (keyFrame->animStepBeta * time) / timeDest;
+		_animStepGamma = (keyFrame->animStepGamma * time) / timeDest;
+	}
 	if (numOfBonesInAnim <= 1) {
 		return false;
 	}
