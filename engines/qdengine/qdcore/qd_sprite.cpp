@@ -267,7 +267,7 @@ bool qdSprite::load() {
 		_format = GR_ARGB8888;
 		break;
 	// otherwise the file format is incorrect
-	default: 
+	default:
 		warning("qdSprite::load(): Bad file format3: '%s'", transCyrillic(_file.toString()));
 		return false;
 	}
@@ -277,7 +277,7 @@ bool qdSprite::load() {
 	byte *dataPtr = _data;
 
 	for (int i = 0; i < height; i++) {
-		byte *ptr = (byte *)tgaSurface->getBasePtr(0, i);
+		const byte *ptr = (const byte *)tgaSurface->getBasePtr(0, i);
 
 		memcpy(dataPtr, ptr, widthNB);
 		dataPtr += widthNB;
