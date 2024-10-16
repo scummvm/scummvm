@@ -356,13 +356,18 @@ bool qdMiniGame::load_interface() {
 		} else if (_dll_name == "DLL\\3Mice2_raskr1.dll") {
 			_interface = new qd3mice2RaskrAllMiniGame(1);
 			return true;
+		} else if (_dll_name == "DLL\\3Mice2_raskr2.dll") {
+			_interface = new qd3mice2RaskrAllMiniGame(2);
+			return true;
+		} else if (_dll_name == "DLL\\3Mice2_raskr3.dll") {
+			_interface = new qd3mice2RaskrAllMiniGame(3);
+			return true;
+		} else if (_dll_name == "DLL\\3Mice2_raskr4.dll") {
+			_interface = new qd3mice2RaskrAllMiniGame(4);
+			return true;
 		} else if (_dll_name == "DLL\\3Mice2_babochka.dll") {
 			_interface = new qd3mice2BabochkaMiniGame();
 			return true;
-		// 3Mice2_raskr1.dll
-		// 3Mice2_raskr2.dll
-		// 3Mice2_raskr3.dll
-		// 3Mice2_raskr4.dll
 
 		// dogncat
 		// scores.dll
