@@ -1719,26 +1719,20 @@ PBitmap draw_room_background(Viewport *view) {
 	return _GP(CameraDrawData)[view_index].Frame;
 }
 
-struct DrawFPS {
-	IDriverDependantBitmap *ddb = nullptr;
-	std::unique_ptr<Bitmap> bmp;
-	int font = -1; // in case normal font changes at runtime
-} gl_DrawFPS;
-
 void dispose_engine_overlay() {
-	gl_DrawFPS.bmp.reset();
-	if (gl_DrawFPS.ddb)
-		_G(gfxDriver)->DestroyDDB(gl_DrawFPS.ddb);
-	gl_DrawFPS.ddb = nullptr;
-	gl_DrawFPS.font = -1;
+	_G(gl_DrawFPS).bmp.reset();
+	if (_G(gl_DrawFPS).ddb)
+		_G(gfxDriver)->DestroyDDB(_G(gl_DrawFPS).ddb);
+	_G(gl_DrawFPS).ddb = nullptr;
+	_G(gl_DrawFPS).font = -1;
 }
 
 void draw_fps(const Rect &viewport) {
 	const int font = FONT_NORMAL;
-	auto &fpsDisplay = gl_DrawFPS.bmp;
-	if (fpsDisplay == nullptr || gl_DrawFPS.font != font) {
+	auto &fpsDisplay = _G(gl_DrawFPS).bmp;
+	if (fpsDisplay == nullptr || _G(gl_DrawFPS).font != font) {
 		recycle_bitmap(fpsDisplay, _GP(game).GetColorDepth(), viewport.GetWidth(), (get_font_surface_height(font) + get_fixed_pixel_size(5)));
-		gl_DrawFPS.font = font;
+		_G(gl_DrawFPS).font = font;
 	}
 
 	fpsDisplay->ClearTransparent();
@@ -1764,10 +1758,10 @@ void draw_fps(const Rect &viewport) {
 	int text_off = get_font_surface_extent(font).first; // TODO: a generic function that accounts for this?
 	wouttext_outline(fpsDisplay.get(), 1, 1 - text_off, font, text_color, fps_buffer);
 	wouttext_outline(fpsDisplay.get(), viewport.GetWidth() / 2, 1 - text_off, font, text_color, loop_buffer);
-	gl_DrawFPS.ddb = recycle_ddb_bitmap(gl_DrawFPS.ddb, gl_DrawFPS.bmp.get());
+	_G(gl_DrawFPS).ddb = recycle_ddb_bitmap(_G(gl_DrawFPS).ddb, _G(gl_DrawFPS).bmp.get());
 	int yp = viewport.GetHeight() - fpsDisplay->GetHeight();
-	_G(gfxDriver)->DrawSprite(1, yp, gl_DrawFPS.ddb);
-	invalidate_sprite_glob(1, yp, gl_DrawFPS.ddb);
+	_G(gfxDriver)->DrawSprite(1, yp, _G(gl_DrawFPS).ddb);
+	invalidate_sprite_glob(1, yp, _G(gl_DrawFPS).ddb);
 }
 
 // Draw GUI controls as separate sprites

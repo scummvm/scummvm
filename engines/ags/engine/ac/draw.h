@@ -120,6 +120,12 @@ struct ObjectCache {
 		, lightlev(light_), zoom(zoom_), mirrored(mirror_), x(posx_), y(posy_) {}
 };
 
+struct DrawFPS {
+	Engine::IDriverDependantBitmap *ddb = nullptr;
+	std::unique_ptr<Shared::Bitmap> bmp;
+	int font = -1; // in case normal font changes at runtime
+};
+
 // Converts AGS color index to the actual bitmap color using game's color depth
 int MakeColor(int color_index);
 
