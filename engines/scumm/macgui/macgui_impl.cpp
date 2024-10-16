@@ -1205,6 +1205,69 @@ static MacGuiImpl::MacSTRSParsingEntry strsMI2Variant1Table[] = {
 	// SKIP_C(95)
 };
 
+static MacGuiImpl::MacSTRSParsingEntry strsMI2Variant2Table[] = {
+	SKIP_C(93),
+	SKIP_P(1),
+	{ MacGuiImpl::kMSIAboutGameName,              "Pascal", 1 },
+	SKIP_C(2),
+	{ MacGuiImpl::kMSIAreYouSureYouWantToQuit,    "C",      1 },
+	{ MacGuiImpl::kMSIRoughCommandMsg,            "C",      1 },
+	SKIP_C(1),
+	{ MacGuiImpl::kMSIAreYouSureYouWantToRestart, "C",      1 },
+	SKIP_C(1),
+	SKIP_P(1),
+	{ MacGuiImpl::kMSIGameName,                   "Pascal", 1 },
+	SKIP_C(1),
+	{ MacGuiImpl::kMSIOpenGameFile,               "Pascal", 1 },
+	SKIP_P(1),
+	SKIP_P(1),
+	{ MacGuiImpl::kMSISaveGameFileAs,             "Pascal", 1 },
+	{ MacGuiImpl::kMSIGameFile,                   "Pascal", 1 },
+	SKIP_C(6),
+	SKIP_P(2),
+	{ MacGuiImpl::kMSIAboutString1,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString2,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString3,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString4,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString5,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString6,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString7,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString8,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString9,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString10,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString11,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString12,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString13,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString14,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString15,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString16,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString17,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString18,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString19,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString20,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString21,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString22,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString23,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString24,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString25,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString26,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString27,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString28,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString29,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString30,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString31,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString32,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString33,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString34,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString35,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString36,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString37,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString38,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString39,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString40,              "Pascal", 1 },
+	// SKIP_C(95)
+};
+
 static MacGuiImpl::MacSTRSParsingEntry strsIndy4CDVariant1Table[] = {
 	SKIP_C(144),
 	SKIP_P(1),
@@ -1422,8 +1485,17 @@ void MacGuiImpl::readStrings() {
 		parsingTable = strsMI1Table;
 		parsingTableSize = ARRAYSIZE(strsMI1Table);
 	} else if (_vm->_game.id == GID_MONKEY2) {
-		parsingTable = strsMI2Variant1Table;
-		parsingTableSize = ARRAYSIZE(strsMI2Variant1Table);
+		switch (strsLen) {
+		case 6602:
+			// v1.0 11/5/92 from the LucasArts Mac CD Game Pack II
+			parsingTable = strsMI2Variant2Table;
+			parsingTableSize = ARRAYSIZE(strsMI2Variant2Table);
+			break;
+		default:
+			parsingTable = strsMI2Variant1Table;
+			parsingTableSize = ARRAYSIZE(strsMI2Variant1Table);
+			break;
+		}
 	} else if (_vm->_game.id == GID_INDY4) {
 		switch (strsLen) {
 		case 6516:
