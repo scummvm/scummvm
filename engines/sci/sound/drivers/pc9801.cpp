@@ -518,7 +518,7 @@ uint8 SoundChannel_PC9801::getVolume() {
 
 	uint16 partVolume = ((_assign != 0xFF) ? _parts[_assign]->getCurrentVolume() : 0);
 	if (_version == SCI_VERSION_0_LATE)
-		return partVolume;
+		return _soundOn ? partVolume : 0;
 
 	partVolume += 1;
 	uint16 velocity = volumeTable1[_velo] + 1;
