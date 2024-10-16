@@ -37,9 +37,9 @@ enum BoneType : uint16 {
 
 struct BoneFrame {
 	BoneType type = BoneType::TYPE_ROTATE;
-	int16 x = 0;
-	int16 y = 0;
-	int16 z = 0;
+	int16 x = 0; // alpha
+	int16 y = 0; // beta
+	int16 z = 0; // gamma
 };
 
 struct KeyFrame {
