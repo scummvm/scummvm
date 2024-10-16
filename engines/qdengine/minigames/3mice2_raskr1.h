@@ -135,7 +135,7 @@ public:
 			_zoneCount[i] = true;
 		}
 
-		for (int i = 1; i < ARRAYSIZE(zoneCountInit); i++)
+		for (int i = 0; i < ARRAYSIZE(zoneCountInit); i++)
 			_zoneCount[zoneCountInit[i]] = false;
 
 		_objColor = _scene->object_interface("$color");
@@ -164,7 +164,7 @@ public:
 
 		if (_timePassed > 0.5) {
 			if (checkSolution())
-				_objDone->set_state("да");
+				_objDone->set_state("\xe4\xe0");	// "да"
 
 			_timePassed = 0.0;
 		}
@@ -190,15 +190,23 @@ public:
 
 				int start = 0;
 				for (int i = 0; i < ARRAYSIZE(colorRegions); i++) {
-					if (colorRegions[i] == 0)
+					if (colorRegions[i] == 0) {
 						start = i + 1;
+						continue;
+					}
 
 					if (colorRegions[i] == num)
 						break;
 				}
 
-				for (int i = start; colorRegions[i] != 0; i++)
-					_zones[colorRegions[i]]->set_shadow(_objColor->shadow_color(), _objColor->shadow_alpha());
+				debugC(2, kDebugMinigames, "zone: %d", num);
+
+				if (start < ARRAYSIZE(colorRegions)) {
+					for (int i = start; colorRegions[i] != 0; i++)
+						_zones[colorRegions[i]]->set_shadow(_objColor->shadow_color(), _objColor->shadow_alpha());
+				} else {
+					_zones[num]->set_shadow(_objColor->shadow_color(), _objColor->shadow_alpha());
+				}
 			}
 		}
 		_scene->release_object_interface(mouseObj);
@@ -239,10 +247,12 @@ private:
 		int count = 0;
 
 		for (int i = 1; i < 312; i++) {
-			if (_zones[i]->shadow_color() != 0xFEFEFF)
+			if (_zones[i]->shadow_color() != 0)
 				if (_zoneCount[i])
 					count++;
 		}
+
+		debugC(2, kDebugMinigames, "Solution count: %d  zone234: %06x", count, _zones[234]->shadow_color());
 
 		return count > 50;
 	}

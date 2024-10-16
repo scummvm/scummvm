@@ -352,6 +352,9 @@ bool qdMiniGame::load_interface() {
 		} else if (_dll_name == "DLL\\3Mice2_plate.dll") {
 			_interface = new qd3mice2PlateMiniGame();
 			return true;
+		} else if (_dll_name == "DLL\\3Mice2_raskr1.dll") {
+			_interface = new qd3mice2Raskr1MiniGame();
+			return true;
 		// 3Mice2_babochka.dll
 		// 3Mice2_raskr1.dll
 		// 3Mice2_raskr2.dll
