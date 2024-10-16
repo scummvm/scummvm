@@ -686,7 +686,6 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 		}
 
 		glViewport(_viewportRect.left, _height - _viewportRect.bottom, _viewportRect.width(), _viewportRect.height());
-		_viewport3dRect = _viewportRect;
 
 		setProjection();
 	}

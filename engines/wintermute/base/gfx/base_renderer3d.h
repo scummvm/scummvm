@@ -174,7 +174,6 @@ public:
 
 protected:
 	Math::Matrix4 _lastViewMatrix;
-	Rect32 _viewport3dRect;
 	Math::Matrix4 _worldMatrix;
 	Math::Matrix4 _viewMatrix;
 	Math::Matrix4 _projectionMatrix;
