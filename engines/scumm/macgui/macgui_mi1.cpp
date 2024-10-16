@@ -1233,7 +1233,7 @@ bool MacMI1Gui::handleEvent(Common::Event event) {
 				if (_vm->_useMacGraphicsSmoothing && !_roughWarned) {
 					_roughWarned = true;
 
-					if (!runOkCancelDialog(_strsStrings[kMSIRoughCommandMsg]))
+					if (!_strsStrings[kMSIRoughCommandMsg].empty() && !runOkCancelDialog(_strsStrings[kMSIRoughCommandMsg]))
 						return false;
 				}
 				_vm->mac_toggleSmoothing();
