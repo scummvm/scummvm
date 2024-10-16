@@ -269,6 +269,8 @@ void Renderer::rotMatIndex2(IMatrix3x3 *pDest, const IMatrix3x3 *pSrc, const IVe
 		tmp.row2.y = (pSrc->row2.y * nCos - pSrc->row2.x * nSin) / SCENE_SIZE_HALF;
 		tmp.row3.x = (pSrc->row3.y * nSin + pSrc->row3.x * nCos) / SCENE_SIZE_HALF;
 		tmp.row3.y = (pSrc->row3.y * nCos - pSrc->row3.x * nSin) / SCENE_SIZE_HALF;
+
+		pSrc = &tmp;
 	}
 
 	if (lBeta) {
