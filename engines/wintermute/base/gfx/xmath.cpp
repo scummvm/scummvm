@@ -240,8 +240,8 @@ DXQuaternion *DXQuaternionRotationMatrix(DXQuaternion *out, const DXMatrix *m) {
 
 DXMatrix *DXMatrixPerspectiveFovLH(DXMatrix *pout,float fovy, float aspect, float zn, float zf) {
 	DXMatrixIdentity(pout);
-	pout->_m[0][0] = 1.0f / (aspect * tanf(fovy/2.0f));
-	pout->_m[1][1] = 1.0f / tanf(fovy/2.0f);
+	pout->_m[0][0] = 1.0f / (aspect * tanf(fovy / 2.0f));
+	pout->_m[1][1] = 1.0f / tanf(fovy / 2.0f);
 	pout->_m[2][2] = zf / (zf - zn);
 	pout->_m[2][3] = 1.0f;
 	pout->_m[3][2] = (zf * zn) / (zn - zf);

@@ -431,21 +431,46 @@ bool BaseRenderOpenGL3DShader::drawLine(int x1, int y1, int x2, int y2, uint32 c
 }
 
 bool BaseRenderOpenGL3DShader::setProjection() {
-	// is the viewport already set here?
-	float viewportWidth = _viewportRect.right - _viewportRect.left;
-	float viewportHeight = _viewportRect.bottom - _viewportRect.top;
+	DXMatrix matProj;
 
-	float verticalViewAngle = _fov;
-	float aspectRatio = viewportWidth / viewportHeight;
+	float resWidth, resHeight;
+	float layerWidth, layerHeight;
+	float modWidth, modHeight;
+	bool customViewport;
+	getProjectionParams(&resWidth, &resHeight, &layerWidth, &layerHeight, &modWidth, &modHeight, &customViewport);
 
-	float scaleMod = _height / viewportHeight;
+	Rect32 rc;
+	_gameRef->getCurrentViewportRect(&rc);
+	float viewportWidth = (float)rc.right - (float)rc.left;
+	float viewportHeight = (float)rc.bottom - (float)rc.top;
 
-	float top = _nearClipPlane * tanf(verticalViewAngle * 0.5f);
+	// margins
+	int mleft = rc.left;
+	int mright = resWidth - viewportWidth - rc.left;
+	int mtop = rc.top;
+	int mbottom = resHeight - viewportHeight - rc.top;
 
-	_projectionMatrix = Math::makeFrustumMatrix(-top * aspectRatio, top * aspectRatio, -top, top, _nearClipPlane, _farClipPlane);
+	DXMatrixPerspectiveFovRH(&matProj, _fov, viewportWidth / viewportHeight, _nearClipPlane, _farClipPlane);
 
-	_projectionMatrix(0, 0) *= scaleMod;
-	_projectionMatrix(1, 1) *= scaleMod;
+	float scaleMod = resHeight / viewportHeight;
+	float scaleRatio = MAX(layerWidth / resWidth, layerHeight / resHeight) /** 1.05*/;
+
+	float offsetX = (float)_gameRef->_offsetX;
+	float offsetY = (float)_gameRef->_offsetY;
+
+	if (!customViewport) {
+		offsetX -= _drawOffsetX;
+		offsetY -= _drawOffsetY;
+	}
+
+	matProj.matrix._11 *= scaleRatio * scaleMod;
+	matProj.matrix._22 *= scaleRatio * scaleMod;
+	matProj.matrix._31 = -(offsetX + (mleft - mright) / 2 - modWidth) / viewportWidth * 2.0f;
+	matProj.matrix._32 =  (offsetY + (mtop - mbottom) / 2 - modHeight) / viewportHeight * 2.0f;
+
+	Math::Matrix4 m;
+	m.setData(matProj);
+	_projectionMatrix = m;
 	return true;
 }
 
