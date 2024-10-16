@@ -29,6 +29,94 @@
 
 namespace QDEngine {
 
+const int zoneCountInit[] = {
+	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+	22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 64, 89, 90, 91,
+	92, 93, 94, 96, 97, 98, 99, 129, 130, 132, 134, 135, 136, 138, 139, 140, 141,
+	142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 153, 154, 155, 156, 157, 158,
+	159, 160, 161, 162, 163, 164, 166, 167, 170, 172, 173, 174, 178, 179, 180, 182,
+	184, 185, 186, 187, 190, 192, 196, 197, 198, 199, 204, 205, 211, 212, 213, 214,
+	216, 217, 218, 219, 220, 221, 222, 223, 225, 226, 227, 229, 230, 231, 232, 234,
+	242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 254, 255, 260, 261, 263,
+	265, 267, 268, 271, 272, 273, 274, 280, 283, 284, 287, 288, 289, 290, 292, 294,
+	296, 308, 309,
+};
+
+const int colorRegions[] = {
+	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
+	27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 89, 308, 309, 311, 0,
+
+	64, 65, 0,
+
+	90, 91, 92, 190, 207, 0,
+
+	93, 94, 95, 0,
+
+	96, 97, 98, 99, 103, 0,
+
+	129, 132, 133, 0,
+
+	130, 131, 0,
+
+	134, 135, 136, 137, 0,
+
+	138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 0,
+
+	153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 0,
+
+	166, 167, 194, 0,
+
+	170, 171, 0,
+
+	172, 173, 174, 175, 0,
+
+	178, 179, 180, 182, 184, 185, 186, 187, 229, 230, 231, 232, 233, 0,
+
+	192, 282, 0,
+
+	196, 208, 0,
+
+	197, 198, 199, 200, 0,
+
+	204, 205, 206, 0,
+
+	211, 212, 213, 214, 215, 0,
+
+	216, 217, 218, 219, 220, 221, 222, 223, 224, 0,
+
+	225, 226, 227, 228, 0,
+
+	234, 235, 0,
+
+	242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 0,
+
+	254, 255, 256, 0,
+
+	260, 261, 262, 0,
+
+	263, 264, 0,
+
+	265, 266, 0,
+
+	267, 268, 269, 0,
+
+	271, 272, 273, 274, 275, 0,
+
+	280, 281, 0,
+
+	283, 306, 0,
+
+	284, 287, 288, 289, 290, 307, 0,
+
+	292, 293, 0,
+
+	294, 295, 0,
+
+	296, 297, 0,
+
+	0,
+};
+
 class qd3mice2Raskr1MiniGame : public qdMiniGameInterface {
 public:
 	qd3mice2Raskr1MiniGame() {}
@@ -42,8 +130,13 @@ public:
 		if (!_scene)
 			return false;
 
-		for (int i = 1; i <= 311; i++)
+		for (int i = 1; i <= 311; i++) {
 			_zones[i] = _scene->object_interface(Common::String::format("zone@%i#", i).c_str());
+			_zoneCount[i] = true;
+		}
+
+		for (int i = 1; i < ARRAYSIZE(zoneCountInit); i++)
+			_zoneCount[zoneCountInit[i]] = false;
 
 		_objColor = _scene->object_interface("$color");
 		_objColorSel = _scene->object_interface("$color_sel");
@@ -66,6 +159,49 @@ public:
 
 	bool quant(float dt) {
 		debugC(3, kDebugMinigames, "3mice2Raskr1::quant(%f)", dt);
+
+		_timePassed += dt;
+
+		if (_timePassed > 0.5) {
+			if (checkSolution())
+				_objDone->set_state("да");
+
+			_timePassed = 0.0;
+		}
+
+		qdMinigameObjectInterface *mouseObj = _scene->mouse_click_object_interface();
+
+		if (!mouseObj)
+			return true;
+
+		const char *name = mouseObj->name();
+
+		if (strstr(name, "@color@")) {
+			_objColor->set_shadow(mouseObj->shadow_color(), mouseObj->shadow_alpha());
+
+			Common::String color;
+			for (int i = 8; name[i] != '#'; i++)
+				color += name[i];
+
+			_objColorSel->set_state(color.c_str());
+		} else {
+			if (strstr(name, "zone@")) {
+				int num = getObjNum(name);
+
+				int start = 0;
+				for (int i = 0; i < ARRAYSIZE(colorRegions); i++) {
+					if (colorRegions[i] == 0)
+						start = i + 1;
+
+					if (colorRegions[i] == num)
+						break;
+				}
+
+				for (int i = start; colorRegions[i] != 0; i++)
+					_zones[colorRegions[i]]->set_shadow(_objColor->shadow_color(), _objColor->shadow_alpha());
+			}
+		}
+		_scene->release_object_interface(mouseObj);
 
 		return true;
 	}
@@ -99,6 +235,29 @@ public:
 	}
 
 private:
+	bool checkSolution() {
+		int count = 0;
+
+		for (int i = 1; i < 312; i++) {
+			if (_zones[i]->shadow_color() != 0xFEFEFF)
+				if (_zoneCount[i])
+					count++;
+		}
+
+		return count > 50;
+	}
+
+	int getObjNum(const char *name) {
+		const char *from = strstr(name, "@");
+		const char *to = strstr(name, "#");
+		char tmp[20];
+
+		Common::strlcpy(tmp, from + 1, to - from);
+
+		return atol(tmp);
+	}
+
+private:
 	const qdEngineInterface *_engine = nullptr;
 	qdMinigameSceneInterface *_scene = nullptr;
 
@@ -107,6 +266,8 @@ private:
 	qdMinigameObjectInterface *_objColorSel = nullptr;
 	qdMinigameObjectInterface *_objLoaded = nullptr;
 	qdMinigameObjectInterface *_objDone = nullptr;
+
+	bool _zoneCount[312] = { false };
 
 	float _timePassed = 0;
 };
