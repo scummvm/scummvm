@@ -62,8 +62,6 @@ struct ScriptFileHandle {
 	std::unique_ptr<Stream> stream;
 	int32_t  handle = 0;
 };
-extern ScriptFileHandle valid_handles[MAX_OPEN_SCRIPT_FILES + 1];
-extern int num_open_script_files;
 
 ScriptFileHandle *check_valid_file_handle_ptr(Stream *stream_ptr, const char *operation_name);
 ScriptFileHandle *check_valid_file_handle_int32(int32_t handle, const char *operation_name);

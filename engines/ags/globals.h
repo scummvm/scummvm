@@ -37,6 +37,7 @@
 #include "ags/shared/script/cc_script.h"
 #include "ags/engine/ac/dynobj/script_game.h"
 #include "ags/engine/ac/event.h"
+#include "ags/engine/ac/file.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/walk_behind.h"
 #include "ags/engine/main/engine.h"
@@ -708,6 +709,11 @@ public:
 	String _installAudioDirectory;
 	// Installation directory, containing voice-over files
 	String _installVoiceDirectory;
+
+	ScriptFileHandle _valid_handles[MAX_OPEN_SCRIPT_FILES + 1];
+	// [IKM] NOTE: this is not precisely the number of files opened at this moment,
+	// but rather maximal number of handles that were used simultaneously during game run
+	int _num_open_script_files = 0;
 
 	/**@}*/
 

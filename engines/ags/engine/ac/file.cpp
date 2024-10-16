@@ -580,15 +580,11 @@ AssetPath get_voice_over_assetpath(const String &filename) {
 	return AssetPath(filename, "voice");
 }
 
-ScriptFileHandle valid_handles[MAX_OPEN_SCRIPT_FILES + 1];
-// [IKM] NOTE: this is not precisely the number of files opened at this moment,
-// but rather maximal number of handles that were used simultaneously during game run
-int num_open_script_files = 0;
 ScriptFileHandle *check_valid_file_handle_ptr(Stream *stream_ptr, const char *operation_name) {
 	if (stream_ptr) {
-		for (int i = 0; i < num_open_script_files; ++i) {
-			if (stream_ptr == valid_handles[i].stream.get()) {
-				return &valid_handles[i];
+		for (int i = 0; i < _G(num_open_script_files); ++i) {
+			if (stream_ptr == _G(valid_handles)[i].stream.get()) {
+				return &_G(valid_handles)[i];
 			}
 		}
 	}
@@ -600,9 +596,9 @@ ScriptFileHandle *check_valid_file_handle_ptr(Stream *stream_ptr, const char *op
 
 ScriptFileHandle *check_valid_file_handle_int32(int32_t handle, const char *operation_name) {
 	if (handle > 0) {
-		for (int i = 0; i < num_open_script_files; ++i) {
-			if (handle == valid_handles[i].handle) {
-				return &valid_handles[i];
+		for (int i = 0; i < _G(num_open_script_files); ++i) {
+			if (handle == _G(valid_handles)[i].handle) {
+				return &_G(valid_handles)[i];
 			}
 		}
 	}
