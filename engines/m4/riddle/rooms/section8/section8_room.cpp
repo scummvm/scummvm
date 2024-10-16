@@ -123,6 +123,12 @@ int32 Section8Room::daemonSub1(int32 dx, bool ascendingFl) {
 	return fullArr[i];
 }
 
+void Section8Room::preload() {
+	_G(player).walker_type = WALKER_ALT;
+	_G(player).shadow_type = SHADOW_ALT;
+}
+
+
 void Section8Room::pre_parser() {
 	int16 caty = -1;
 

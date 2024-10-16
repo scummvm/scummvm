@@ -33,6 +33,7 @@ public:
 	Section8Room() : Room() {}
 	~Section8Room() override {}
 
+	void preload() override;
 	void init() override {}
 	void pre_parser() override;
 	void parser() override;
