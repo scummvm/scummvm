@@ -191,7 +191,7 @@ void BaseRenderOpenGL3D::displayShadow(BaseObject *object, const Math::Vector3d 
 
 	Math::Matrix4 worldTransformation = translation * rotation * scale;
 	worldTransformation.transpose();
-	worldTransformation = worldTransformation * _lastViewMatrix;
+	worldTransformation = worldTransformation * _viewMatrix;
 
 	glLoadMatrixf(worldTransformation.getData());
 
@@ -214,7 +214,7 @@ void BaseRenderOpenGL3D::displayShadow(BaseObject *object, const Math::Vector3d 
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	glDepthMask(GL_TRUE);
-	glLoadMatrixf(_lastViewMatrix.getData());
+	glLoadMatrixf(_viewMatrix.getData());
 }
 
 bool BaseRenderOpenGL3D::usingStencilBuffer() {
@@ -373,12 +373,7 @@ bool BaseRenderOpenGL3D::setProjection() {
 
 	Math::Matrix4 m;
 	m.setData(matProj);
-	_projectionMatrix = m;
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(m.getData());
-
-	glMatrixMode(GL_MODELVIEW);
-	return true;
+	return setProjectionTransform(m);
 }
 
 bool BaseRenderOpenGL3D::setProjection2D() {
@@ -390,11 +385,28 @@ bool BaseRenderOpenGL3D::setProjection2D() {
 	return true;
 }
 
-void BaseRenderOpenGL3D::setWorldTransform(const Math::Matrix4 &transform) {
+bool BaseRenderOpenGL3D::setWorldTransform(const Math::Matrix4 &transform) {
+	_worldMatrix = transform;
 	Math::Matrix4 tmp = transform;
 	tmp.transpose();
-	Math::Matrix4 newModelViewTransform = tmp * _lastViewMatrix;
+	Math::Matrix4 newModelViewTransform = tmp * _viewMatrix;
 	glLoadMatrixf(newModelViewTransform.getData());
+	return true;
+}
+
+bool BaseRenderOpenGL3D::setViewTransform(const Math::Matrix4 &transform) {
+	_viewMatrix = transform;
+	glLoadMatrixf(transform.getData());
+	return true;
+}
+
+bool BaseRenderOpenGL3D::setProjectionTransform(const Math::Matrix4 &transform) {
+	_projectionMatrix = transform;
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(transform.getData());
+
+	glMatrixMode(GL_MODELVIEW);
+	return true;
 }
 
 bool BaseRenderOpenGL3D::windowedBlt() {
@@ -525,7 +537,7 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 			cameraTranslate.setPosition(-_camera->_position);
 			cameraTranslate.transpose();
 			viewMatrix = cameraTranslate * viewMatrix;
-			_lastViewMatrix = viewMatrix;
+			setViewTransform(viewMatrix);
 
 			_fov = _camera->_fov;
 
@@ -540,10 +552,7 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 			} else {
 				_farClipPlane = DEFAULT_FAR_PLANE;
 			}
-
-			glLoadMatrixf(_lastViewMatrix.getData());
 		} else {
-			glLoadMatrixf(_lastViewMatrix.getData());
 			_nearClipPlane = DEFAULT_NEAR_PLANE;
 			_farClipPlane = DEFAULT_FAR_PLANE;
 		}

@@ -91,7 +91,7 @@ void BaseRenderer3D::project(const Math::Matrix4 &worldMatrix, const Math::Vecto
 	Math::Matrix4 tmp = worldMatrix;
 	tmp.transpose();
 	Math::Vector3d windowCoords;
-	Math::Matrix4 modelMatrix = tmp * _lastViewMatrix;
+	Math::Matrix4 modelMatrix = tmp * _viewMatrix;
 	int viewport[4] = { _viewportRect.left, _height - _viewportRect.bottom, _viewportRect.width(), _viewportRect.height()};
 	Math::gluMathProject(point, modelMatrix.getData(), _projectionMatrix.getData(), viewport, windowCoords);
 	x = windowCoords.x();
@@ -104,7 +104,7 @@ Math::Ray BaseRenderer3D::rayIntoScene(int x, int y) {
 	                        -(((2.0f * y) / _viewportRect.height()) - 1) / _projectionMatrix(1, 1),
 	                        -1.0f);
 
-	Math::Matrix4 m = _lastViewMatrix;
+	Math::Matrix4 m = _viewMatrix;
 	m.inverse();
 	m.transpose();
 	m.transform(&direction, false);

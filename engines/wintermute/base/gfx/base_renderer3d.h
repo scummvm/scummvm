@@ -129,18 +129,9 @@ public:
 
 	virtual bool setProjection2D() = 0;
 
-	virtual void setWorldTransform(const Math::Matrix4 &transform) = 0;
-//	void setWorldTransform(const Math::Matrix4 &transform) {
-//		_worldMatrix = transform;
-//	}
-
-	void setViewTransform(const Math::Matrix4 &transform) {
-		_viewMatrix = transform;
-	}
-
-	void setProjectionTransform(const Math::Matrix4 &transform) {
-		_projectionMatrix = transform;
-	}
+	virtual bool setWorldTransform(const Math::Matrix4 &transform) = 0;
+	virtual bool setViewTransform(const Math::Matrix4 &transform) = 0;
+	virtual bool setProjectionTransform(const Math::Matrix4 &transform) = 0;
 
 	void getWorldTransform(Math::Matrix4 &transform) {
 		transform = _worldMatrix;
@@ -173,7 +164,6 @@ public:
 	// ScummVM specific methods <--
 
 protected:
-	Math::Matrix4 _lastViewMatrix;
 	Math::Matrix4 _worldMatrix;
 	Math::Matrix4 _viewMatrix;
 	Math::Matrix4 _projectionMatrix;

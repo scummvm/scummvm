@@ -74,7 +74,9 @@ public:
 
 	bool setProjection() override;
 	bool setProjection2D() override;
-	void setWorldTransform(const Math::Matrix4 &transform) override;
+	bool setWorldTransform(const Math::Matrix4 &transform) override;
+	bool setViewTransform(const Math::Matrix4 &transform) override;
+	bool setProjectionTransform(const Math::Matrix4 &transform) override;
 
 	bool windowedBlt() override;
 
