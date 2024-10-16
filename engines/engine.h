@@ -28,6 +28,7 @@
 #include "common/platform.h"
 #include "common/queue.h"
 #include "common/singleton.h"
+#include "engines/enhancements.h"
 
 class OSystem;
 class MetaEngineDetection;
@@ -178,6 +179,8 @@ protected:
 	 * Target name for saves.
 	 */
 	const Common::String _targetName;
+
+	int32 _activeEnhancements = kEnhGameBreakingBugFixes;
 
 private:
 	/**
@@ -378,6 +381,8 @@ public:
 	 * Determine whether the engine supports the specified feature.
 	 */
 	virtual bool hasFeature(EngineFeature f) const { return false; }
+
+	bool enhancementEnabled(int32 cls);
 
 	/**
 	 * Notify the engine that the sound settings in the config manager might have

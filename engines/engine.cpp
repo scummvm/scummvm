@@ -193,6 +193,18 @@ Engine::Engine(OSystem *syst)
 	g_system->getPaletteManager()->setPalette(dummyPalette, 0, 256);
 
 	defaultSyncSoundSettings();
+
+	// Register original bug fixes as defaults...
+	ConfMan.registerDefault("enhancements", kEnhGameBreakingBugFixes | kEnhGrp1);
+	if (!ConfMan.hasKey("enhancements", _targetName)) {
+		if (ConfMan.hasKey("enable_enhancements", _targetName) && ConfMan.getBool("enable_enhancements", _targetName)) {
+			// Was the "enable_enhancements" key previously set to true?
+			// Convert it to a full activation of the enhancement flags then!
+			ConfMan.setInt("enhancements", kEnhGameBreakingBugFixes | kEnhGrp1 | kEnhGrp2 | kEnhGrp3 | kEnhGrp4);
+		}
+	}
+
+	_activeEnhancements = (int32)ConfMan.getInt("enhancements");
 }
 
 Engine::~Engine() {
@@ -213,6 +225,10 @@ Engine::~Engine() {
 
 void Engine::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.addDirectory(gamePath, 0, 4);
+}
+
+bool Engine::enhancementEnabled(int32 cls) {
+	return _activeEnhancements & cls;
 }
 
 void initCommonGFX() {
