@@ -98,36 +98,44 @@ bool Animations::doSetInterAnimObjet(int32 framedest, const AnimData &animData, 
 	}
 	const KeyFrame *keyFrame = animData.getKeyframe(framedest);
 
-	_animStep.x = keyFrame->x;
-	_animStep.y = keyFrame->y;
-	_animStep.z = keyFrame->z;
-
-	_animMasterRot = keyFrame->animMasterRot;
-	_animStepBeta = ToAngle(keyFrame->animStepBeta);
-
 	const int16 numBones = pBody.getNumBones();
 
 	int32 numOfBonesInAnim = animData.getNumBoneframes();
 	if (numOfBonesInAnim > numBones) {
 		numOfBonesInAnim = numBones;
 	}
-	const int32 keyFrameLength = keyFrame->length;
+	const int32 timeDest = keyFrame->length;
 
 	const KeyFrame *lastKeyFramePtr = ptranimdest->ptr;
 	int32 remainingFrameTime = ptranimdest->time;
 	if (lastKeyFramePtr == nullptr) {
 		lastKeyFramePtr = keyFrame;
-		remainingFrameTime = keyFrameLength;
+		remainingFrameTime = timeDest;
 	}
-	const int32 deltaTime = _engine->timerRef - remainingFrameTime;
-	if (deltaTime >= keyFrameLength) {
+	const int32 time = _engine->timerRef - remainingFrameTime;
+	if (time >= timeDest) {
 		copyKeyFrameToState(keyFrame, pBody, numOfBonesInAnim);
 		ptranimdest->ptr = keyFrame;
 		ptranimdest->time = _engine->timerRef;
+
+		_animStep.x = keyFrame->x;
+		_animStep.y = keyFrame->y;
+		_animStep.z = keyFrame->z;
+		_animMasterRot = keyFrame->animMasterRot;
+		_animStepAlpha = ToAngle(keyFrame->animStepAlpha);
+		_animStepBeta = ToAngle(keyFrame->animStepBeta);
+		_animStepGamma = ToAngle(keyFrame->animStepGamma);
+
 		return true;
 	}
 
-	_animStepBeta = (_animStepBeta * deltaTime) / keyFrameLength;
+	_animStep.x = keyFrame->x;
+	_animStep.y = keyFrame->y;
+	_animStep.z = keyFrame->z;
+	_animMasterRot = keyFrame->animMasterRot;
+	_animStepAlpha = (keyFrame->animStepAlpha * time) / timeDest;
+	_animStepBeta = (keyFrame->animStepBeta * time) / timeDest;
+	_animStepGamma = (keyFrame->animStepGamma * time) / timeDest;
 
 	if (numOfBonesInAnim <= 1) {
 		return false;
@@ -143,15 +151,15 @@ bool Animations::doSetInterAnimObjet(int32 framedest, const AnimData &animData, 
 		boneState->type = boneFrame.type;
 		switch (boneFrame.type) {
 		case BoneType::TYPE_ROTATE:
-			boneState->x = patchInterAngle(deltaTime, keyFrameLength, boneFrame.x, lastBoneFrame.x);
-			boneState->y = patchInterAngle(deltaTime, keyFrameLength, boneFrame.y, lastBoneFrame.y);
-			boneState->z = patchInterAngle(deltaTime, keyFrameLength, boneFrame.z, lastBoneFrame.z);
+			boneState->x = patchInterAngle(time, timeDest, boneFrame.x, lastBoneFrame.x);
+			boneState->y = patchInterAngle(time, timeDest, boneFrame.y, lastBoneFrame.y);
+			boneState->z = patchInterAngle(time, timeDest, boneFrame.z, lastBoneFrame.z);
 			break;
 		case BoneType::TYPE_TRANSLATE:
 		case BoneType::TYPE_ZOOM:
-			boneState->x = patchInterStep(deltaTime, keyFrameLength, boneFrame.x, lastBoneFrame.x);
-			boneState->y = patchInterStep(deltaTime, keyFrameLength, boneFrame.y, lastBoneFrame.y);
-			boneState->z = patchInterStep(deltaTime, keyFrameLength, boneFrame.z, lastBoneFrame.z);
+			boneState->x = patchInterStep(time, timeDest, boneFrame.x, lastBoneFrame.x);
+			boneState->y = patchInterStep(time, timeDest, boneFrame.y, lastBoneFrame.y);
+			boneState->z = patchInterStep(time, timeDest, boneFrame.z, lastBoneFrame.z);
 			break;
 		default:
 			error("Unsupported animation rotation mode %d", boneFrame.type);
@@ -228,32 +236,35 @@ void Animations::copyKeyFrameToState(const KeyFrame *keyframe, BodyData &bodyDat
 
 bool Animations::setInterDepObjet(int32 keyframeIdx, const AnimData &animData, AnimTimerDataStruct *animTimerDataPtr) {
 	const KeyFrame *keyFrame = animData.getKeyframe(keyframeIdx);
-	const int32 keyFrameLength = keyFrame->length;
+	const int32 timeDest = keyFrame->length;
 
 	int32 remainingFrameTime = animTimerDataPtr->time;
 	if (animTimerDataPtr->ptr == nullptr) {
-		remainingFrameTime = keyFrameLength;
+		remainingFrameTime = timeDest;
 	}
 
-	const int32 deltaTime = _engine->timerRef - remainingFrameTime;
-
-	_animStep.x = keyFrame->x;
-	_animStep.y = keyFrame->y;
-	_animStep.z = keyFrame->z;
+	const int32 time = _engine->timerRef - remainingFrameTime;
 
 	_animMasterRot = keyFrame->animMasterRot;
-	_animStepBeta = ToAngle(keyFrame->animStepBeta);
 
-	if (deltaTime >= keyFrameLength) {
+	if (time >= timeDest) {
+		_animStep.x = keyFrame->x;
+		_animStep.y = keyFrame->y;
+		_animStep.z = keyFrame->z;
+		_animStepAlpha = ToAngle(keyFrame->animStepAlpha);
+		_animStepBeta = ToAngle(keyFrame->animStepBeta);
+		_animStepGamma = ToAngle(keyFrame->animStepGamma);
 		animTimerDataPtr->ptr = animData.getKeyframe(keyframeIdx);
 		animTimerDataPtr->time = _engine->timerRef;
 		return true; // finished animation
 	}
 
-	_animStepBeta = (_animStepBeta * deltaTime) / keyFrameLength;
-	_animStep.x = (_animStep.x * deltaTime) / keyFrameLength;
-	_animStep.y = (_animStep.y * deltaTime) / keyFrameLength;
-	_animStep.z = (_animStep.z * deltaTime) / keyFrameLength;
+	_animStep.x = (keyFrame->x * time) / timeDest;
+	_animStep.y = (keyFrame->y * time) / timeDest;
+	_animStep.z = (keyFrame->z * time) / timeDest;
+	_animStepAlpha = ToAngle((keyFrame->animStepAlpha * time) / timeDest);
+	_animStepBeta = ToAngle((keyFrame->animStepBeta * time) / timeDest);
+	_animStepGamma = ToAngle((keyFrame->animStepGamma * time) / timeDest);
 
 	return false;
 }
