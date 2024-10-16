@@ -60,110 +60,6 @@ MacLoomGui::~MacLoomGui() {
 	}
 }
 
-void MacLoomGui::readStrings() {
-	Common::MacResManager resource;
-	resource.open(_resourceFile);
-	uint32 strsLen = resource.getResLength(MKTAG('S', 'T', 'R', 'S'), 0);
-	Common::SeekableReadStream *strsStream = resource.getResource(MKTAG('S', 'T', 'R', 'S'), 0);
-	uint8 *strsBlock = (uint8 *)malloc(strsLen);
-	strsStream->read(strsBlock, strsLen);
-
-	uint8 *strsData = strsBlock;
-
-	// Most of these are debug strings. We parse the entire STRS block anyway,
-	// for any future need.
-
-	// Debug strings
-	for (int i = 0; i < 6; i++) {
-		_strsStrings.emplace_back(readCString(strsData));
-	}
-
-	_strsStrings.emplace_back(readPascalString(strsData));
-	_strsStrings.emplace_back(readPascalString(strsData));
-
-	_strsStrings.emplace_back(readCString(strsData));
-	_strsStrings.emplace_back(readCString(strsData));
-
-	// "\x14", "About Loom...<B;(-", "MacScumm", "MacScumm"
-	for (int i = 0; i < 4; i++) {
-		_strsStrings.emplace_back(readPascalString(strsData));
-	}
-
-	// "Are you sure you want to restart this game from the beginning?"
-	_strsStrings.emplace_back(readCString(strsData));
-
-	// "Are you sure you want to quit?"
-	_strsStrings.emplace_back(readCString(strsData));
-
-	// "Open Game File...", "Save Game File as..." "Game file"
-	for (int i = 0; i < 3; i++) {
-		_strsStrings.emplace_back(readPascalString(strsData));
-	}
-
-	// "This disk is full.  The game was not saved."
-	_strsStrings.emplace_back(readCString(strsData));
-
-	// "An error occured while saving.  The game was not saved.  Please try saving the game to another disk."
-	_strsStrings.emplace_back(readCString(strsData));
-
-	// "Select a color"
-	_strsStrings.emplace_back(readPascalString(strsData));
-
-	// Debug strings
-	for (int i = 0; i < 67; i++) {
-		_strsStrings.emplace_back(readCString(strsData));
-	}
-
-	// "About", "PRESENTS"
-	for (int i = 0; i < 2; i++) {
-		_strsStrings.emplace_back(readPascalString(strsData));
-	}
-
-	// "%s Interpreter version %c.%c.%c"
-	_strsStrings.emplace_back(readCString(strsData));
-
-	// All the other "About" dialog strings
-	for (int i = 0; i < 30; i++) {
-		_strsStrings.emplace_back(readPascalString(strsData));
-	}
-
-	// "ERROR #%d"
-	_strsStrings.emplace_back(readCString(strsData));
-
-	// Other debug strings...
-	for (int i = 0; i < 4; i++) {
-		_strsStrings.emplace_back(readPascalString(strsData));
-	}
-
-	for (int i = 0; i < 3; i++) {
-		_strsStrings.emplace_back(readCString(strsData));
-	}
-
-	_strsStrings.emplace_back(readPascalString(strsData));
-	_strsStrings.emplace_back(readPascalString(strsData));
-
-	// "Copyright (c) 1989 Lucasfilm Ltd. All Rights Reserved.", "rb, "wb", "wb"
-	for (int i = 0; i < 4; i++) {
-		_strsStrings.emplace_back(readCString(strsData));
-	}
-
-	// Other debug strings...
-	_strsStrings.emplace_back(readPascalString(strsData));
-
-	_strsStrings.emplace_back(readCString(strsData));
-
-	for (int i = 0; i < 5; i++) {
-		_strsStrings.emplace_back(readPascalString(strsData));
-	}
-
-	for (int i = 0; i < 7; i++) {
-		_strsStrings.emplace_back(readCString(strsData));
-	}
-
-	free(strsBlock);
-	delete strsStream;
-}
-
 const Graphics::Font *MacLoomGui::getFontByScummId(int32 id) {
 	switch (id) {
 	case 0:
@@ -277,70 +173,70 @@ void MacLoomGui::runAboutDialog() {
 	Graphics::Surface *loom = loadPict(5001);
 
 	const char *subVers = (const char *)_vm->getStringAddress(5);
-	Common::String version = Common::String::format(_strsStrings[91].c_str(), subVers, '5', '1', '6');
+	Common::String version = Common::String::format(_strsStrings[kMSIAboutString2].c_str(), subVers, '5', '1', '6');
 
 	const TextLine page1[] = {
-		{ 0, 23, kStyleExtraBold, Graphics::kTextAlignCenter, _strsStrings[90].c_str() }, // "PRESENTS"
+		{ 0, 23, kStyleExtraBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString1].c_str() }, // "PRESENTS"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page2[] = {
-		{ 1, 59, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[92].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved."
+		{ 1, 59, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString3].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved."
 		{ 0, 70, kStyleRegular, Graphics::kTextAlignCenter, version.c_str() }, // "Release Version 1.2  25-JAN-91 Interpreter version 5.1.6"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page3[] = {
-		{ 1, 11, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[93].c_str() }, // "Macintosh version by"
-		{ 0, 25, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[95].c_str() }, // "Eric Johnston"
-		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[94].c_str() }, // "Macintosh scripting by"
-		{ 1, 63, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[96].c_str() }, // "Ron Baldwin"
+		{ 1, 11, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString4].c_str() }, // "Macintosh version by"
+		{ 0, 25, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString6].c_str() }, // "Eric Johnston"
+		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString5].c_str() }, // "Macintosh scripting by"
+		{ 1, 63, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString7].c_str() }, // "Ron Baldwin"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page4[] = {
-		{ 0, 26, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[97].c_str() }, // "Original game created by"
-		{ 1, 40, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[98].c_str() }, // "Brian Moriarty"
+		{ 0, 26, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString8].c_str() }, // "Original game created by"
+		{ 1, 40, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString9].c_str() }, // "Brian Moriarty"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page5[] = {
-		{ 1, 11, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[99].c_str() }, // "Produced by"
-		{ 0, 25, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[101].c_str() }, // "Gregory D. Hammond"
-		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[100].c_str() }, // "Macintosh Version Produced by"
-		{ 1, 63, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[102].c_str() }, // "David Fox"
+		{ 1, 11, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString10].c_str() }, // "Produced by"
+		{ 0, 25, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString12].c_str() }, // "Gregory D. Hammond"
+		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString11].c_str() }, // "Macintosh Version Produced by"
+		{ 1, 63, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString13].c_str() }, // "David Fox"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page6[] = {
-		{ 1, 6, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[103].c_str() }, // "SCUMM Story System"
-		{ 1, 16, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[104].c_str() }, // "created by"
-		{ 97, 35, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[106].c_str() }, // "Ron Gilbert"
-		{ 1, 51, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[105].c_str() }, // "and"
-		{ 122, 65, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[107].c_str() }, // "Aric Wilmunder"
+		{ 1, 6, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString14].c_str() }, // "SCUMM Story System"
+		{1, 16, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString15].c_str()}, // "created by"
+		{ 97, 35, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString17].c_str() }, // "Ron Gilbert"
+		{ 1, 51, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString16].c_str() }, // "and"
+		{ 122, 65, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString18].c_str() }, // "Aric Wilmunder"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page7[] = {
-		{ 1, 16, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[108].c_str() }, // "Stumped?  Loom hint books are available!"
-		{ 76, 33, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[111].c_str() }, // "In the U.S. call"
-		{ 150, 34, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[109].c_str() }, // "1 (800) STAR-WARS"
-		{ 150, 43, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[113].c_str() }, // "that\xD5s  1 (800) 782-7927"
-		{ 80, 63, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[112].c_str() }, // "In Canada call"
-		{ 150, 64, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[110].c_str() }, // "1 (800) 828-7927"
+		{ 1, 16, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString19].c_str() }, // "Stumped?  Loom hint books are available!"
+		{ 76, 33, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString22].c_str() }, // "In the U.S. call"
+		{ 150, 34, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString20].c_str() }, // "1 (800) STAR-WARS"
+		{ 150, 43, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString24].c_str() }, // "that\xD5s  1 (800) 782-7927"
+		{ 80, 63, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString23].c_str() }, // "In Canada call"
+		{ 150, 64, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString21].c_str() }, // "1 (800) 828-7927"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page8[] = {
-		{ 1, 11, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[114].c_str() }, // "Need a hint NOW?  Having problems?"
-		{ 81, 25, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[117].c_str() }, // "For technical support call"
-		{ 205, 26, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[115].c_str() }, // "1 (415) 721-3333"
-		{ 137, 35, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[118].c_str() }, // "For hints call"
+		{ 1, 11, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString25].c_str() }, // "Need a hint NOW?  Having problems?"
+		{ 81, 25, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString28].c_str() }, // "For technical support call"
+		{ 205, 26, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString26].c_str() }, // "1 (415) 721-3333"
+		{ 137, 35, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString29].c_str() }, // "For hints call"
 
-		{ 205, 36, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[116].c_str() }, // "1 (900) 740-JEDI"
-		{ 1, 50, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[119].c_str() }, // "The charge for the hint line is 75\xA2 per minute."
-		{ 1, 60, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[120].c_str() }, // "(You must have your parents\xD5 permission to"
-		{ 1, 70, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[121].c_str() }, // "call this number if you are under 18.)"
+		{ 205, 36, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString27].c_str() }, // "1 (900) 740-JEDI"
+		{ 1, 50, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString30].c_str() }, // "The charge for the hint line is 75\xA2 per minute."
+		{ 1, 60, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString31].c_str() }, // "(You must have your parents\xD5 permission to"
+		{ 1, 70, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString32].c_str() }, // "call this number if you are under 18.)"
 		TEXT_END_MARKER
 	};
 
@@ -656,8 +552,8 @@ bool MacLoomGui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 	Common::StringArray savegameNames;
 	prepareSaveLoad(savegameNames, busySlots, slotIds, ARRAYSIZE(busySlots));
 
-	Common::String saveGameFileAsResStr = _strsStrings[17].c_str();
-	Common::String gameFileResStr = _strsStrings[18].c_str();
+	Common::String saveGameFileAsResStr = _strsStrings[kMSISaveGameFileAs].c_str();
+	Common::String gameFileResStr = _strsStrings[kMSIGameFile].c_str();
 
 	int firstAvailableSlot = -1;
 	for (int i = 1; i < ARRAYSIZE(busySlots); i++) { // Skip the autosave slot

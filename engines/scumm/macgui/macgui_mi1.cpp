@@ -51,6 +51,7 @@ MacMI1Gui::MacMI1Gui(ScummEngine *vm, const Common::Path &resourceFile) : MacGui
 MacMI1Gui::~MacMI1Gui() {
 }
 
+#if 0
 void MacMI1Gui::readStrings() {
 	Common::MacResManager resource;
 	resource.open(_resourceFile);
@@ -272,7 +273,7 @@ void MacMI1Gui::readStrings() {
 	free(strsBlock);
 	delete strsStream;
 }
-
+#endif
 const Graphics::Font *MacMI1Gui::getFontByScummId(int32 id) {
 	switch (id) {
 	case 0:
@@ -409,61 +410,61 @@ void MacMI1Gui::runAboutDialogMI1(MacDialogWindow *window) {
 	Graphics::Surface *s = window->innerSurface();
 
 	const TextLine page3[] = {
-		{ 0, 68, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[114].c_str() }, // "PRESENTS"
+		{ 0, 68, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString2].c_str() }, // "PRESENTS"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page12[] = {
-		{ 0, 0, kStyleHeaderSimple1, Graphics::kTextAlignLeft, _strsStrings[115].c_str() }, // "The Secret"
-		{ 87, 13, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[117].c_str() }, // "of"
-		{ 40, 26, kStyleHeaderSimple1, Graphics::kTextAlignLeft, _strsStrings[116].c_str() }, // "Monkey Island\xAA"
-		{ 178, 120, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[118].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company."
-		{ 312, 133, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[119].c_str() }, // "All rights reserved."
+		{ 0, 0, kStyleHeaderSimple1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString3].c_str() }, // "The Secret"
+		{ 87, 13, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString5].c_str() }, // "of"
+		{ 40, 26, kStyleHeaderSimple1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString4].c_str() }, // "Monkey Island\xAA"
+		{ 178, 120, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString6].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company."
+		{ 312, 133, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString7].c_str() }, // "All rights reserved."
 		TEXT_END_MARKER
 	};
 
 	const TextLine page13[] = {
-		{ 0, 47, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[120].c_str() }, // "Macintosh version by"
-		{ 50, 62, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[121].c_str() }, // "Eric Johnston"
+		{ 0, 47, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString8].c_str() }, // "Macintosh version by"
+		{ 50, 62, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString9].c_str() }, // "Eric Johnston"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page14[] = {
-		{ 85, 32, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[122].c_str() }, // "Created by"
-		{ 60, 47, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[124].c_str() }, // "Ron Gilbert"
-		{ 39, 70, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[123].c_str() }, // "Macintosh Version Produced by"
-		{ 47, 85, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[125].c_str() }, // "Brenna Holden"
+		{ 85, 32, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString10].c_str() }, // "Created by"
+		{ 60, 47, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString12].c_str() }, // "Ron Gilbert"
+		{ 39, 70, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString11].c_str() }, // "Macintosh Version Produced by"
+		{ 47, 85, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString13].c_str() }, // "Brenna Holden"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page15[] = {
-		{ 59, 27, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[126].c_str() }, // "SCUMM Story System"
-		{ 85, 37, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[127].c_str() }, // "created by"
-		{ 35, 57, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[129].c_str() }, // "Ron Gilbert"
-		{ 102, 72, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[128].c_str() }, // "and"
-		{ 59, 87, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[130].c_str() }, // "Aric Wilmunder"
+		{ 59, 27, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString14].c_str() }, // "SCUMM Story System"
+		{ 85, 37, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString15].c_str() }, // "created by"
+		{ 35, 57, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString17].c_str() }, // "Ron Gilbert"
+		{ 102, 72, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString16].c_str() }, // "and"
+		{ 59, 87, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString18].c_str() }, // "Aric Wilmunder"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page16[] = {
-		{ 29, 37, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[131].c_str() }, // "Stumped? Hint books are available"
-		{ 15, 55, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[134].c_str() }, // "In the U.S. call"
-		{ 89, 55, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[132].c_str() }, // "1 (800) STAR-WARS"
-		{ 89, 65, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[136].c_str() }, // "that\xD5s  1 (800)782-7927"
-		{ 19, 85, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[135].c_str() }, // "In Canada call"
-		{ 89, 85, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[133].c_str() }, // "1 (800) 828-7927"
+		{ 29, 37, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString19].c_str() }, // "Stumped? Hint books are available"
+		{ 15, 55, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString22].c_str() }, // "In the U.S. call"
+		{ 89, 55, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString20].c_str() }, // "1 (800) STAR-WARS"
+		{ 89, 65, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString24].c_str() }, // "that\xD5s  1 (800)782-7927"
+		{ 19, 85, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString23].c_str() }, // "In Canada call"
+		{ 89, 85, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString21].c_str() }, // "1 (800) 828-7927"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page17[] = {
-		{ 27, 32, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[137].c_str() }, // "Need a hint NOW?  Having problems?"
-		{ 6, 47, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[140].c_str() }, // "For technical support call"
-		{ 130, 47, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[138].c_str() }, // "1 (415) 721-3333"
-		{ 62, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[141].c_str() }, // "For hints call"
-		{ 130, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[139].c_str() }, // "1 (900) 740-JEDI"
-		{ 5, 72, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[142].c_str() }, // "The charge for the hint line is 75\xA2 per minute."
-		{ 10, 82, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[143].c_str() }, // "(You must have your parents\xD5 permission to"
-		{ 25, 92, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[144].c_str() }, // "call this number if you are under 18.)"
+		{ 27, 32, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString25].c_str() }, // "Need a hint NOW?  Having problems?"
+		{ 6, 47, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString28].c_str() }, // "For technical support call"
+		{ 130, 47, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString26].c_str() }, // "1 (415) 721-3333"
+		{ 62, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString29].c_str() }, // "For hints call"
+		{ 130, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString27].c_str() }, // "1 (900) 740-JEDI"
+		{ 5, 72, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString30].c_str() }, // "The charge for the hint line is 75\xA2 per minute."
+		{ 10, 82, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString31].c_str() }, // "(You must have your parents\xD5 permission to"
+		{ 25, 92, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString32].c_str() }, // "call this number if you are under 18.)"
 		TEXT_END_MARKER
 	};
 
@@ -661,76 +662,76 @@ void MacMI1Gui::runAboutDialogMI2(MacDialogWindow *window) {
 //	Graphics::Surface *lucasArts = loadPict(5000);
 
 	const TextLine page3[] = {
-		{ 0, 68, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[115].c_str() }, // "PRESENTS"
+		{ 0, 68, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString2].c_str() }, // "PRESENTS"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page5[] = {
-		{ 1, 16, kStyleBold2, Graphics::kTextAlignCenter, _strsStrings[116].c_str() }, // "LeChuck\xD5s Revenge"
-		{ 1, 31, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[117].c_str() }, // "Monkey Island 2"
-		{ 176, 125, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[119].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company."
-		{ 310, 138, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[120].c_str() }, // "All rights reserved."
+		{ 1, 16, kStyleBold2, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString3].c_str() }, // "LeChuck\xD5s Revenge"
+		{ 1, 31, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString4].c_str() }, // "Monkey Island 2"
+		{ 176, 125, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString6].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company."
+		{ 310, 138, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString7].c_str() }, // "All rights reserved."
 		TEXT_END_MARKER
 	};
 
 	const TextLine page6[] = {
-		{ 0, 19, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[121].c_str() }, // "Macintosh version by
-		{ 133, 34, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[122].c_str() }, // "Eric Johnston"
+		{ 0, 19, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString8].c_str() }, // "Macintosh version by
+		{ 133, 34, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString9].c_str() }, // "Eric Johnston"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page7[] = {
-		{ 168, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[123].c_str() }, // "Created by"
-		{ 143, 19, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[125].c_str() }, // "Ron Gilbert"
-		{ 141, 42, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[124].c_str() }, // "Macintosh Scripting by"
-		{ 127, 57, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[126].c_str() }, // "Alric Wilmunder"
+		{ 168, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString10].c_str() }, // "Created by"
+		{ 143, 19, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString12].c_str() }, // "Ron Gilbert"
+		{ 141, 42, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString11].c_str() }, // "Macintosh Scripting by"
+		{ 127, 57, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString13].c_str() }, // "Alric Wilmunder"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page8[] = {
-		{ 142, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[127].c_str() }, // "SCUMM Story System"
-		{ 168, 14, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[128].c_str() }, // "created by"
-		{ 68, 28, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[130].c_str() }, // "Ron Gilbert    Aric Wilmunder"
-		{ 79, 43, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[131].c_str() }, // "Brad P. Taylor    Vince Lee"
-		{ 135, 60, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[129].c_str() }, // "and"
-		{ 109, 58, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[132].c_str() }, // "        Eric Johnston"
+		{ 142, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString14].c_str() }, // "SCUMM Story System"
+		{ 168, 14, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString15].c_str() }, // "created by"
+		{ 68, 28, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString17].c_str() }, // "Ron Gilbert    Aric Wilmunder"
+		{ 79, 43, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString18].c_str() }, // "Brad P. Taylor    Vince Lee"
+		{ 135, 60, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString16].c_str() }, // "and"
+		{ 109, 58, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString19].c_str() }, // "        Eric Johnston"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page9[] = {
-		{ 137, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[133].c_str() }, // "Macintosh Orchestration"
-		{ 125, 19, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[135].c_str() }, // "Robin Goldstein"
-		{ 152, 42, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[134].c_str() }, // "Macintosh Testing"
-		{ 144, 57, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[136].c_str() }, // "Jo Ashburn"
+		{ 137, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString20].c_str() }, // "Macintosh Orchestration"
+		{ 125, 19, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString22].c_str() }, // "Robin Goldstein"
+		{ 152, 42, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString21].c_str() }, // "Macintosh Testing"
+		{ 144, 57, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString23].c_str() }, // "Jo Ashburn"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page10[] = {
-		{ 2, 19, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[137].c_str() }, // "\xD2djm\xD3  Sound and Music System \xA91992 Eric Johnston
-		{ 2, 39, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[138].c_str() }, // "\xD2epx\xD3  Graphics Smoothing System \xA91992 Eric Johnson
-		{ 2, 54, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[139].c_str() }, // "Type 'rough' to see the difference."
+		{ 2, 19, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString24].c_str() }, // "\xD2djm\xD3  Sound and Music System \xA91992 Eric Johnston
+		{ 2, 39, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString25].c_str() }, // "\xD2epx\xD3  Graphics Smoothing System \xA91992 Eric Johnson
+		{ 2, 54, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString26].c_str() }, // "Type 'rough' to see the difference."
 		TEXT_END_MARKER
 	};
 
 	const TextLine page11[] = {
-		{ 112, 9, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[140].c_str() }, // "Stumped?  Hint books are available!"
-		{ 98, 27, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[143].c_str() }, // "In the U.S. call"
-		{ 172, 27, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[141].c_str() }, // "1 (800) STAR-WARS"
-		{ 172, 37, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[145].c_str() }, // "that\xD5s  1 (800) 782-7927"
-		{ 102, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[144].c_str() }, // "In Canada call"
-		{ 172, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[142].c_str() }, // "1 (800) 828-7927"
+		{ 112, 9, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString27].c_str() }, // "Stumped?  Hint books are available!"
+		{ 98, 27, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString30].c_str() }, // "In the U.S. call"
+		{ 172, 27, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString28].c_str() }, // "1 (800) STAR-WARS"
+		{ 172, 37, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString32].c_str() }, // "that\xD5s  1 (800) 782-7927"
+		{ 102, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString31].c_str() }, // "In Canada call"
+		{ 172, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString29].c_str() }, // "1 (800) 828-7927"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page12[] = {
-		{ 110, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[146].c_str() }, // "Need a hint NOW?  Having problems?"
-		{ 89, 19, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[149].c_str() }, // "For technical support call"
-		{ 213, 19, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[147].c_str() }, // "1 (415) 721-3333"
-		{ 145, 29, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[150].c_str() }, // "For hints call"
-		{ 213, 29, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[148].c_str() }, // "1 (900) 740-JEDI"
-		{ 88, 44, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[151].c_str() }, // "The charge for the hint line is 75\xA2 per minute."
-		{ 93, 54, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[152].c_str() }, // "(You must have your parents\xD5 permission to"
-		{ 108, 64, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[153].c_str() }, // "call this number if you are under 18.)"
+		{ 110, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString33].c_str() }, // "Need a hint NOW?  Having problems?"
+		{ 89, 19, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString36].c_str() }, // "For technical support call"
+		{ 213, 19, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString34].c_str() }, // "1 (415) 721-3333"
+		{ 145, 29, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString37].c_str() }, // "For hints call"
+		{ 213, 29, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString35].c_str() }, // "1 (900) 740-JEDI"
+		{ 88, 44, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString38].c_str() }, // "The charge for the hint line is 75\xA2 per minute."
+		{ 93, 54, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString39].c_str() }, // "(You must have your parents\xD5 permission to"
+		{ 108, 64, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString40].c_str() }, // "call this number if you are under 18.)"
 		TEXT_END_MARKER
 	};
 
@@ -815,32 +816,29 @@ void MacMI1Gui::runAboutDialogIndy4(MacDialogWindow *window) {
 //	Graphics::Surface *lucasArts = loadPict(5000);
 	Graphics::Surface *indianaJones = loadPict(5001);
 
-	int baseString = isFloppyVersion ? 119 : 236;
-	int baseString2 = isFloppyVersion ? 142 : 258;
-
 	const TextLine page3[] = {
-		{ 0, 68, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[baseString].c_str() }, // "PRESENTS"
+		{ 0, 68, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString2].c_str() }, // "PRESENTS"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page5[] = {
-		{ 317, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString + 1].c_str() }, // "\xA8"
-		{ 176, 125, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString + 2].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company."
-		{ 310, 138, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString + 3].c_str() }, // "All rights reserved."
+		{ 317, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString3].c_str() }, // "\xA8"
+		{ 176, 125, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString4].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company."
+		{ 310, 138, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString5].c_str() }, // "All rights reserved."
 		TEXT_END_MARKER
 	};
 
 	const TextLine page6[] = {
-		{ 0, 19, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[baseString + 4].c_str() }, // "Macintosh version by
-		{ 133, 34, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[baseString + 5].c_str() }, // "Eric Johnston"
+		{ 0, 19, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString6].c_str() }, // "Macintosh version by
+		{ 133, 34, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString7].c_str() }, // "Eric Johnston"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page7[] = {
-		{ 168, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString + 6].c_str() }, // "Created by"
-		{ 138, 19, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[baseString + 8].c_str() }, // "Hal Barwood"
-		{ 141, 42, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString + 7].c_str() }, // "Macintosh Scripting by"
-		{ 127, 57, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[baseString + 9].c_str() }, // "Alric Wilmunder"
+		{ 168, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString8].c_str() }, // "Created by"
+		{ 138, 19, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString10].c_str() }, // "Hal Barwood"
+		{ 141, 42, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString9].c_str() }, // "Macintosh Scripting by"
+		{ 127, 57, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString11].c_str() }, // "Alric Wilmunder"
 		TEXT_END_MARKER
 	};
 
@@ -849,20 +847,20 @@ void MacMI1Gui::runAboutDialogIndy4(MacDialogWindow *window) {
 	// none of the other pages do it.
 
 	const TextLine page8[] = {
-		{ 142, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString + 10].c_str() }, // "SCUMM Story System"
-		{ 168, 14, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString + 11].c_str() }, // "created by"
-		{ 68, 28, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[baseString + 13].c_str() }, // "Ron Gilbert    Aric Wilmunder"
-		{ 79, 43, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[baseString + 14].c_str() }, // "Brad P. Taylor    Vince Lee"
-		{ 135, 60, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString + 12].c_str() }, // "and"
-		{ 109, 58, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[baseString + 15].c_str() }, // "        Eric Johnston"
+		{ 142, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString12].c_str() }, // "SCUMM Story System"
+		{ 168, 14, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString13].c_str() }, // "created by"
+		{ 68, 28, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString15].c_str() }, // "Ron Gilbert    Aric Wilmunder"
+		{ 79, 43, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString16].c_str() }, // "Brad P. Taylor    Vince Lee"
+		{ 135, 60, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString14].c_str() }, // "and"
+		{ 109, 58, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString17].c_str() }, // "        Eric Johnston"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page9[] = {
-		{ 137, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString + 16].c_str() }, // "Macintosh Orchestration"
-		{ 125, 19, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[baseString + 18].c_str() }, // "Robin Goldstein"
-		{ 152, 42, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString + 17].c_str() }, // "Macintosh Testing"
-		{ 144, 57, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[baseString + 19].c_str() }, // "Jo Ashburn"
+		{ 137, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString18].c_str() }, // "Macintosh Orchestration"
+		{ 125, 19, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString20].c_str() }, // "Robin Goldstein"
+		{ 152, 42, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString19].c_str() }, // "Macintosh Testing"
+		{ 144, 57, kStyleHeaderSimple2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString21].c_str() }, // "Jo Ashburn"
 		TEXT_END_MARKER
 	};
 
@@ -871,37 +869,37 @@ void MacMI1Gui::runAboutDialogIndy4(MacDialogWindow *window) {
 	// does work in both versions.
 
 	const TextLine page10_cd[] = {
-		{ 2, 19, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[baseString + 20].c_str() }, // "\xD2djm\xD3  Sound and Music System \xA91992 Eric Johnston
-		{ 2, 39, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[baseString + 21].c_str() }, // "\xD2epx\xD3  Graphics Smoothing System \xA91992 Eric Johnson
+		{ 2, 19, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString22].c_str() }, // "\xD2djm\xD3  Sound and Music System \xA91992 Eric Johnston
+		{ 2, 39, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString23].c_str() }, // "\xD2epx\xD3  Graphics Smoothing System \xA91992 Eric Johnson
 		TEXT_END_MARKER
 	};
 
 	const TextLine page10_floppy[] = {
-		{ 2, 19, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[baseString + 20].c_str() }, // "\xD2djm\xD3  Sound and Music System \xA91992 Eric Johnston
-		{ 2, 39, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[baseString + 21].c_str() }, // "\xD2epx\xD3  Graphics Smoothing System \xA91992 Eric Johnson
-		{ 2, 54, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[baseString + 22].c_str() }, // "Type 'rough' to see the difference."
+		{ 2, 19, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString22].c_str() }, // "\xD2djm\xD3  Sound and Music System \xA91992 Eric Johnston
+		{ 2, 39, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString23].c_str() }, // "\xD2epx\xD3  Graphics Smoothing System \xA91992 Eric Johnson
+		{ 2, 54, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString38].c_str() }, // "Type 'rough' to see the difference."
 		TEXT_END_MARKER
 	};
 
 	const TextLine page11[] = {
-		{ 112, 9, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2].c_str() }, // "Stumped?  Hint books are available!"
-		{ 98, 27, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 3].c_str() }, // "In the U.S. call"
-		{ 172, 27, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 1].c_str() }, // "1 (800) STAR-WARS"
-		{ 172, 37, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 5].c_str() }, // "that\xD5s  1 (800) 782-7927"
-		{ 102, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 4].c_str() }, // "In Canada call"
-		{ 172, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 2].c_str() }, // "1 (800) 828-7927"
+		{ 112, 9, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString24].c_str() }, // "Stumped?  Hint books are available!"
+		{ 98, 27, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString27].c_str() }, // "In the U.S. call"
+		{ 172, 27, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString25].c_str() }, // "1 (800) STAR-WARS"
+		{ 172, 37, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString29].c_str() }, // "that\xD5s  1 (800) 782-7927"
+		{ 102, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString28].c_str() }, // "In Canada call"
+		{ 172, 57, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString26].c_str() }, // "1 (800) 828-7927"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page12[] = {
-		{ 110, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 6].c_str() }, // "Need a hint NOW?  Having problems?"
-		{ 89, 19, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 9].c_str() }, // "For technical support call"
-		{ 213, 19, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 7].c_str() }, // "1 (415) 721-3333"
-		{ 145, 29, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 10].c_str() }, // "For hints call"
-		{ 213, 29, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 8].c_str() }, // "1 (900) 740-JEDI"
-		{ 88, 44, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 11].c_str() }, // "The charge for the hint line is 75\xA2 per minute."
-		{ 93, 54, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 12].c_str() }, // "(You must have your parents\xD5 permission to"
-		{ 108, 64, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[baseString2 + 13].c_str() }, // "call this number if you are under 18.)"
+		{ 110, 4, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString30].c_str() }, // "Need a hint NOW?  Having problems?"
+		{ 89, 19, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString33].c_str() }, // "For technical support call"
+		{ 213, 19, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString31].c_str() }, // "1 (415) 721-3333"
+		{ 145, 29, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString34].c_str() }, // "For hints call"
+		{ 213, 29, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString32].c_str() }, // "1 (900) 740-JEDI"
+		{ 88, 44, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString35].c_str() }, // "The charge for the hint line is 75\xA2 per minute."
+		{ 93, 54, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString36].c_str() }, // "(You must have your parents\xD5 permission to"
+		{ 108, 64, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString37].c_str() }, // "call this number if you are under 18.)"
 		TEXT_END_MARKER
 	};
 
@@ -1062,8 +1060,8 @@ bool MacMI1Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 	Common::StringArray savegameNames;
 	prepareSaveLoad(savegameNames, busySlots, slotIds, ARRAYSIZE(busySlots));
 
-	Common::String saveGameFileAsResStr = _strsStrings[103].c_str();
-	Common::String gameFileResStr = _strsStrings[104].c_str();
+	Common::String saveGameFileAsResStr = _strsStrings[kMSISaveGameFileAs].c_str();
+	Common::String gameFileResStr = _strsStrings[kMSIGameFile].c_str();
 
 	int firstAvailableSlot = -1;
 	for (int i = 1; i < ARRAYSIZE(busySlots); i++) { // Skip the autosave slot
@@ -1235,26 +1233,7 @@ bool MacMI1Gui::handleEvent(Common::Event event) {
 				if (_vm->_useMacGraphicsSmoothing && !_roughWarned) {
 					_roughWarned = true;
 
-					Common::String warnString;
-
-					switch (_vm->_game.id) {
-					case GID_MONKEY2:
-						warnString = _strsStrings[98];
-						break;
-
-					case GID_INDY4:
-						if (_vm->_game.variant && !strcmp(_vm->_game.variant, "Floppy"))
-							warnString = _strsStrings[96];
-						else
-							warnString = _strsStrings[213];
-						break;
-
-					default:
-						warnString = "Warning: The 'rough' command will make your Mac screen look dangerously like a PC.  (eek!)";
-						break;
-					}
-
-					if (!runOkCancelDialog(warnString))
+					if (!runOkCancelDialog(_strsStrings[kMSIRoughCommandMsg]))
 						return false;
 				}
 				_vm->mac_toggleSmoothing();

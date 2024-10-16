@@ -210,20 +210,17 @@ void MacGuiImpl::initialize() {
 			{ 0, nullptr, 0, 0, false }
 		};
 
-		Common::String aboutMenuDef;
+		Common::String aboutMenuDef = _strsStrings[kMSIAboutGameName].c_str();
 		int maxMenu = -1;
 		switch (_vm->_game.id) {
 		case GID_INDY3:
 		case GID_LOOM:
-			aboutMenuDef = _strsStrings[11].c_str();
 			maxMenu = 130;
 			break;
 		case GID_MONKEY:
-			aboutMenuDef = _strsStrings[94].c_str();
 			maxMenu = 131;
 			break;
 		default:
-			aboutMenuDef = "About " + name() + "...<B;(-";
 			maxMenu = 132;
 		}
 
@@ -686,23 +683,8 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 	Common::SeekableReadStream *res;
 
 	Common::String saveGameFileAsResStr, gameFileResStr;
-	switch (_vm->_game.id) {
-	case GID_INDY3:
-		saveGameFileAsResStr = _strsStrings[18].c_str();
-		gameFileResStr = _strsStrings[19].c_str();
-		break;
-	case GID_LOOM:
-		saveGameFileAsResStr = _strsStrings[17].c_str();
-		gameFileResStr = _strsStrings[18].c_str();
-		break;
-	case GID_MONKEY:
-		saveGameFileAsResStr = _strsStrings[103].c_str();
-		gameFileResStr = _strsStrings[104].c_str();
-		break;
-	default:
-		saveGameFileAsResStr = "Save Game File as...";
-		gameFileResStr = "Game file";
-	}
+	saveGameFileAsResStr = _strsStrings[kMSISaveGameFileAs].c_str();
+	gameFileResStr = _strsStrings[kMSIGameFile].c_str();
 
 	resource.open(_resourceFile);
 
@@ -943,37 +925,11 @@ void MacGuiImpl::drawFakeDriveLabel(MacDialogWindow *window, Common::Rect r, byt
 }
 
 bool MacGuiImpl::runQuitDialog() {
-	Common::String quitString;
-	switch (_vm->_game.id) {
-	case GID_INDY3:
-	case GID_LOOM:
-		quitString = _strsStrings[15].c_str();
-		break;
-	case GID_MONKEY:
-		quitString = _strsStrings[96].c_str();
-		break;
-	default:
-		quitString = "Are you sure you want to quit?";
-	}
-
-	return runOkCancelDialog(quitString);
+	return runOkCancelDialog(_strsStrings[kMSIAreYouSureYouWantToQuit].c_str());
 }
 
 bool MacGuiImpl::runRestartDialog() {
-	Common::String restartString;
-	switch (_vm->_game.id) {
-	case GID_INDY3:
-	case GID_LOOM:
-		restartString = _strsStrings[14].c_str();
-		break;
-	case GID_MONKEY:
-		restartString = _strsStrings[97].c_str();
-		break;
-	default:
-		restartString = "Are you sure you want to restart this game from the beginning?";
-	}
-
-	return runOkCancelDialog(restartString);
+	return runOkCancelDialog(_strsStrings[kMSIAreYouSureYouWantToRestart].c_str());
 }
 
 void MacGuiImpl::drawBanner(char *message) {
@@ -1007,6 +963,454 @@ void MacGuiImpl::drawBitmap(Graphics::Surface *s, Common::Rect r, const uint16 *
 			if (bitmap[y] & bit)
 				s->setPixel(r.left + x, r.top + y, color);
 			bit >>= 1;
+		}
+	}
+}
+
+#define SKIP_C(x) { MacGuiImpl::kMSISkip, "C",      x }
+#define SKIP_P(x) { MacGuiImpl::kMSISkip, "Pascal", x }
+
+static MacGuiImpl::MacSTRSParsingEntry strsIndy3Table[] = {
+	SKIP_C(6),
+	SKIP_P(2),
+	SKIP_C(2),
+	SKIP_P(1),
+	{ MacGuiImpl::kMSIAboutGameName,              "Pascal", 1 },
+	SKIP_P(2),
+	{ MacGuiImpl::kMSIAreYouSureYouWantToRestart, "C",      1 },
+	{ MacGuiImpl::kMSIAreYouSureYouWantToQuit,    "C",      1 },
+	SKIP_P(1),
+	{ MacGuiImpl::kMSIOpenGameFile,               "Pascal", 1 },
+	{ MacGuiImpl::kMSISaveGameFileAs,             "Pascal", 1 },
+	{ MacGuiImpl::kMSIGameFile,                   "Pascal", 1 },
+	SKIP_P(2),
+	SKIP_C(2),
+	SKIP_P(1),
+	SKIP_C(67),
+	SKIP_P(2),
+	{ MacGuiImpl::kMSIAboutString1,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString2,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString3,               "C",      1 },
+	{ MacGuiImpl::kMSIAboutString4,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString5,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString6,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString7,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString8,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString9,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString10,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString11,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString12,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString13,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString14,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString15,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString16,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString17,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString18,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString19,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString20,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString21,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString22,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString23,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString24,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString25,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString26,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString27,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString28,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString29,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString30,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString31,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString32,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString33,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString34,              "Pascal", 1 },
+	// SKIP_C(1),
+	// SKIP_P(4),
+	// SKIP_C(3),
+	// SKIP_P(2),
+	// SKIP_C(4),
+	// SKIP_P(1),
+	// SKIP_C(1),
+	// SKIP_P(5),
+};
+
+static MacGuiImpl::MacSTRSParsingEntry strsLoomTable[] = {
+	SKIP_C(6),
+	SKIP_P(2),
+	SKIP_C(2),
+	SKIP_P(1),
+	{ MacGuiImpl::kMSIAboutGameName,              "Pascal", 1 },
+	SKIP_P(2),
+	{ MacGuiImpl::kMSIAreYouSureYouWantToRestart, "C",      1 },
+	{ MacGuiImpl::kMSIAreYouSureYouWantToQuit,    "C",      1 },
+	{ MacGuiImpl::kMSIOpenGameFile,               "Pascal", 1 },
+	{ MacGuiImpl::kMSISaveGameFileAs,             "Pascal", 1 },
+	{ MacGuiImpl::kMSIGameFile,                   "Pascal", 1 },
+	SKIP_C(2),
+	SKIP_P(1),
+	SKIP_C(67),
+	SKIP_P(1),
+	{ MacGuiImpl::kMSIAboutString1,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString2,               "C",      1 },
+	{ MacGuiImpl::kMSIAboutString3,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString4,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString5,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString6,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString7,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString8,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString9,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString10,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString11,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString12,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString13,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString14,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString15,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString16,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString17,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString18,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString19,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString20,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString21,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString22,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString23,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString24,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString25,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString26,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString27,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString28,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString29,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString30,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString31,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString32,              "Pascal", 1 },
+	// SKIP_C(1),
+	// SKIP_P(4),
+	// SKIP_C(3),
+	// SKIP_P(2),
+	// SKIP_C(4),
+	// SKIP_P(1),
+	// SKIP_C(1),
+	// SKIP_P(5),
+	// SKIP_C(7),
+};
+
+static MacGuiImpl::MacSTRSParsingEntry strsMI1Table[] = {
+	SKIP_C(93),
+	SKIP_P(1),
+	{ MacGuiImpl::kMSIAboutGameName,              "Pascal", 1 },
+	SKIP_C(1),
+	{ MacGuiImpl::kMSIAreYouSureYouWantToQuit,    "C",      1 },
+	{ MacGuiImpl::kMSIAreYouSureYouWantToRestart, "C",      1 },
+	SKIP_C(1),
+	SKIP_P(1),
+	{ MacGuiImpl::kMSIGameName,                   "Pascal", 1 },
+	SKIP_C(1),
+	{ MacGuiImpl::kMSIOpenGameFile,               "Pascal", 1 },
+	{ MacGuiImpl::kMSISaveGameFileAs,             "Pascal", 1 },
+	{ MacGuiImpl::kMSIGameFile,                   "Pascal", 1 },
+	SKIP_C(6),
+	SKIP_P(2),
+	{ MacGuiImpl::kMSIAboutString1,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString2,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString3,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString4,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString5,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString6,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString7,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString8,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString9,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString10,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString11,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString12,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString13,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString14,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString15,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString16,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString17,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString18,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString19,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString20,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString21,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString22,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString23,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString24,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString25,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString26,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString27,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString28,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString29,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString30,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString31,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString32,              "Pascal", 1 },
+	// SKIP_C(75)
+};
+
+static MacGuiImpl::MacSTRSParsingEntry strsMI2Variant1Table[] = {
+	SKIP_C(93),
+	SKIP_P(1),
+	{ MacGuiImpl::kMSIAboutGameName,              "Pascal", 1 },
+	SKIP_C(1),
+	{ MacGuiImpl::kMSIAreYouSureYouWantToQuit,    "C",      1 },
+	{ MacGuiImpl::kMSIRoughCommandMsg,            "C",      1 },
+	SKIP_C(1),
+	{ MacGuiImpl::kMSIAreYouSureYouWantToRestart, "C",      1 },
+	SKIP_C(1),
+	SKIP_P(1),
+	{ MacGuiImpl::kMSIGameName,                   "Pascal", 1 },
+	SKIP_C(1),
+	{ MacGuiImpl::kMSIOpenGameFile,               "Pascal", 1 },
+	SKIP_P(1),
+	SKIP_P(1),
+	{ MacGuiImpl::kMSISaveGameFileAs,             "Pascal", 1 },
+	{ MacGuiImpl::kMSIGameFile,                   "Pascal", 1 },
+	SKIP_C(6),
+	SKIP_P(2),
+	{ MacGuiImpl::kMSIAboutString1,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString2,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString3,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString4,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString5,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString6,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString7,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString8,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString9,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString10,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString11,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString12,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString13,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString14,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString15,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString16,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString17,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString18,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString19,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString20,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString21,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString22,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString23,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString24,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString25,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString26,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString27,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString28,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString29,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString30,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString31,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString32,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString33,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString34,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString35,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString36,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString37,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString38,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString39,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString40,              "Pascal", 1 },
+	// SKIP_C(95)
+};
+
+static MacGuiImpl::MacSTRSParsingEntry strsIndy4CDVariant1Table[] = {
+	SKIP_C(144),
+	SKIP_P(1),
+	SKIP_C(2),
+	SKIP_P(10),
+	SKIP_C(51),
+	SKIP_P(1),
+	{ MacGuiImpl::kMSIAboutGameName,              "Pascal", 1 },
+	SKIP_P(2),
+	{ MacGuiImpl::kMSIAreYouSureYouWantToQuit,    "C",      1 },
+	{ MacGuiImpl::kMSIRoughCommandMsg,            "C",      1 },
+	SKIP_C(1),
+	{ MacGuiImpl::kMSIAreYouSureYouWantToRestart, "C",      1 },
+	SKIP_C(1),
+	SKIP_P(1),
+	{ MacGuiImpl::kMSIGameName,                   "Pascal", 1 },
+	SKIP_C(1),
+	{ MacGuiImpl::kMSIOpenGameFile,               "Pascal", 1 },
+	SKIP_P(1),
+	SKIP_P(1),
+	SKIP_P(1),
+	SKIP_P(1),
+	{ MacGuiImpl::kMSISaveGameFileAs,             "Pascal", 1 },
+	{ MacGuiImpl::kMSIGameFile,                   "Pascal", 1 },
+	SKIP_C(6),
+	SKIP_P(2),
+	{ MacGuiImpl::kMSIAboutString1,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString2,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString3,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString4,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString5,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString6,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString7,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString8,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString9,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString10,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString11,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString12,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString13,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString14,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString15,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString16,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString17,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString18,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString19,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString20,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString21,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString22,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString23,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString24,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString25,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString26,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString27,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString28,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString29,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString30,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString31,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString32,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString33,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString34,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString35,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString36,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString37,              "Pascal", 1 },
+};
+
+static MacGuiImpl::MacSTRSParsingEntry strsIndy4FloppyVariant1Table[] = {
+	SKIP_C(93),
+	SKIP_P(1),
+	{ MacGuiImpl::kMSIAboutGameName,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAreYouSureYouWantToQuit,    "C",      1 },
+	{ MacGuiImpl::kMSIRoughCommandMsg,            "C",      1 },
+	SKIP_C(1),
+	{ MacGuiImpl::kMSIAreYouSureYouWantToRestart, "C",      1 },
+	SKIP_C(1),
+	SKIP_P(1),
+	{ MacGuiImpl::kMSIGameName,                   "Pascal", 1 },
+	SKIP_C(1),
+	{ MacGuiImpl::kMSIOpenGameFile,               "Pascal", 1 },
+	SKIP_P(1),
+	SKIP_P(1),
+	SKIP_P(1),
+	SKIP_P(1),
+	{ MacGuiImpl::kMSISaveGameFileAs,             "Pascal", 1 },
+	{ MacGuiImpl::kMSIGameFile,                   "Pascal", 1 },
+	SKIP_C(6),
+	SKIP_P(2),
+	{ MacGuiImpl::kMSIAboutString1,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString2,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString3,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString4,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString5,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString6,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString7,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString8,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString9,               "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString10,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString11,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString12,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString13,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString14,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString15,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString16,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString17,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString18,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString19,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString20,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString21,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString22,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString23,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString38,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString24,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString25,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString26,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString27,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString28,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString29,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString30,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString31,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString32,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString33,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString34,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString35,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString36,              "Pascal", 1 },
+	{ MacGuiImpl::kMSIAboutString37,              "Pascal", 1 },
+};
+
+#undef SKIP_C
+#undef SKIP_P
+
+void MacGuiImpl::readStrings() {
+	Common::MacResManager resource;
+	resource.open(_resourceFile);
+	uint32 strsLen = resource.getResLength(MKTAG('S', 'T', 'R', 'S'), 0);
+
+	if (strsLen <= 0)
+		return;
+
+	Common::SeekableReadStream *strsStream = resource.getResource(MKTAG('S', 'T', 'R', 'S'), 0);
+	uint8 *strsBlock = (uint8 *)malloc(strsLen);
+	strsStream->read(strsBlock, strsLen);
+
+	uint8 *strsData = strsBlock;
+	MacSTRSParsingEntry *parsingTable = nullptr;
+	int parsingTableSize = 0;
+
+	if (_vm->_game.id == GID_INDY3) {
+		parsingTable = strsIndy3Table;
+		parsingTableSize = ARRAYSIZE(strsIndy3Table);
+	} else if (_vm->_game.id == GID_LOOM) {
+		parsingTable = strsLoomTable;
+		parsingTableSize = ARRAYSIZE(strsLoomTable);
+	} else if (_vm->_game.id == GID_MONKEY) {
+		parsingTable = strsMI1Table;
+		parsingTableSize = ARRAYSIZE(strsMI1Table);
+	} else if (_vm->_game.id == GID_MONKEY2) {
+		parsingTable = strsMI2Variant1Table;
+		parsingTableSize = ARRAYSIZE(strsMI2Variant1Table);
+	} else if (_vm->_game.id == GID_INDY4) {
+		switch (strsLen) {
+		case 6516:
+			parsingTable = strsIndy4FloppyVariant1Table;
+			parsingTableSize = ARRAYSIZE(strsIndy4FloppyVariant1Table);
+			break;
+		case 6836: // CD
+			parsingTable = strsIndy4CDVariant1Table;
+			parsingTableSize = ARRAYSIZE(strsIndy4CDVariant1Table);
+			break;
+		default:
+			warning("MacGuiImpl::readStrings(): String parsing table not defined for this variant of the game; STRS resource %d bytes", strsLen);
+			break;
+		}
+
+	} else {
+		error("MacGuiImpl::readStrings(): String parsing table not defined for this game");
+	}
+
+	parseSTRSBlock(strsData, parsingTable, parsingTableSize);
+
+	free(strsBlock);
+	delete strsStream;
+}
+
+void MacGuiImpl::parseSTRSBlock(uint8 *strsData, MacSTRSParsingEntry *parsingTable, int parsingTableSize) {
+	_strsStrings.clear();
+	_strsStrings.reserve(128);
+	for (int i = 0; i < 128; i++) {
+		_strsStrings.emplace_back("");
+	} 
+
+	for (int i = 0; i < parsingTableSize; i++) {
+		MacSTRSParsingEntry entry = parsingTable[i];
+
+		if (entry.strId == kMSISkip) {
+			for (int j = 0; j < entry.numStrings; j++) {
+				entry.parsingMethod == "C" ? readCString(strsData) : readPascalString(strsData);
+			}
+		} else {
+			for (int j = 0; j < entry.numStrings; j++) {
+				if (entry.parsingMethod == "C") {
+					_strsStrings[entry.strId] = readCString(strsData);
+				} else if (entry.parsingMethod == "Pascal") {
+					_strsStrings[entry.strId] = readPascalString(strsData);
+				} else {
+					error("MacGuiImpl::parseSTRSBlock(): invalid parsing method encountered (%s)", entry.parsingMethod.c_str());
+				}
+			}
 		}
 	}
 }

@@ -48,6 +48,64 @@ class MacGuiImpl {
 public:
 	class MacDialogWindow;
 
+	enum MacStringIds {
+		kMSISkip = -1,
+		kMSIAboutGameName = 1,
+		kMSIRoughCommandMsg,
+		kMSIAreYouSureYouWantToQuit,
+		kMSIAreYouSureYouWantToRestart,
+		kMSIGameName,
+		kMSIOpenGameFile,
+		kMSISaveGameFileAs,
+		kMSIGameFile,
+		kMSIAboutString1,
+		kMSIAboutString2,
+		kMSIAboutString3,
+		kMSIAboutString4,
+		kMSIAboutString5,
+		kMSIAboutString6,
+		kMSIAboutString7,
+		kMSIAboutString8,
+		kMSIAboutString9,
+		kMSIAboutString10,
+		kMSIAboutString11,
+		kMSIAboutString12,
+		kMSIAboutString13,
+		kMSIAboutString14,
+		kMSIAboutString15,
+		kMSIAboutString16,
+		kMSIAboutString17,
+		kMSIAboutString18,
+		kMSIAboutString19,
+		kMSIAboutString20,
+		kMSIAboutString21,
+		kMSIAboutString22,
+		kMSIAboutString23,
+		kMSIAboutString24,
+		kMSIAboutString25,
+		kMSIAboutString26,
+		kMSIAboutString27,
+		kMSIAboutString28,
+		kMSIAboutString29,
+		kMSIAboutString30,
+		kMSIAboutString31,
+		kMSIAboutString32,
+		kMSIAboutString33,
+		kMSIAboutString34,
+		kMSIAboutString35,
+		kMSIAboutString36,
+		kMSIAboutString37,
+		kMSIAboutString38,
+		kMSIAboutString39,
+		kMSIAboutString40
+	};
+
+	struct MacSTRSParsingEntry {
+		MacStringIds strId;
+		Common::String parsingMethod;
+		int numStrings;
+	};
+
 protected:
 	ScummEngine *_vm = nullptr;
 	OSystem *_system = nullptr;
@@ -176,7 +234,6 @@ protected:
 		0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F
 	};
 
-
 	MacGuiImpl::DelayStatus delay(uint32 ms = 0);
 
 	virtual bool getFontParams(FontId fontId, int &id, int &size, int &slant) const;
@@ -193,7 +250,8 @@ protected:
 
 	bool runOkCancelDialog(Common::String text);
 
-	virtual void readStrings() {}
+	void readStrings();
+	void parseSTRSBlock(uint8 *strsData, MacSTRSParsingEntry *parsingTable, int parsingTableSize);
 
 	// These are non interactable, no point in having them as widgets for now...
 	void drawFakePathList(MacDialogWindow *window, Common::Rect r, byte *icon, const char *text, Graphics::TextAlign alignment);

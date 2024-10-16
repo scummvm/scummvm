@@ -57,8 +57,6 @@ protected:
 	bool runSaveDialog(int &saveSlotToHandle, Common::String &name);
 	bool runOptionsDialog();
 
-	void readStrings() override;
-
 private:
 	struct AboutPage {
 		const TextLine *text;
