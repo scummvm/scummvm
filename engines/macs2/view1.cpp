@@ -1076,11 +1076,73 @@ bool Character::IsWalkable(const Common::Point &p) const {
 	return walkability < 0xC8;
 }
 
+bool Character::IsLineSegmentWalkable(const Common::Point &p1, const Common::Point &p2) {
+	int x1 = p1.x;
+	int y1 = p1.y;
+	int x2 = p2.x;
+	int y2 = p2.y;
+
+	int dx = abs(x2 - x1);
+	int dy = abs(y2 - y1);
+
+	int sx = (x1 < x2) ? 1 : -1;
+	int sy = (y1 < y2) ? 1 : -1;
+
+	int err = dx - dy;
+
+	while (true) {
+		Common::Point currentPoint(x1, y1);
+		if (!IsWalkable(currentPoint)) { // If the point is not walkable, return false
+			return false;
+		}
+
+		if (x1 == x2 && y1 == y2)
+			break; // Reached the end point
+
+		int e2 = 2 * err;
+		if (e2 > -dy) {
+			err -= dy;
+			x1 += sx;
+		}
+		if (e2 < dx) {
+			err += dx;
+			y1 += sy;
+		}
+	}
+
+	return true; // All points along the line are walkable
+}
+
 bool Character::FindPath(Common::Point target) {
 	// First naive implementation
 	// Find the closest reachable start point
 	// Check if we can reach the target
 	// If not: Do a recusrive search using the other points
+
+	// TODO: Assume we have to use the net, usually we would do a path trace
+	constexpr uint16 numPoints = 16;
+	uint16 minLength = std::numeric_limits<uint16>::max();
+	uint16 minIndex = 0; // TODO: Handle not finding any
+	const Common::Point &charPosition = GameObjects::instance().GetProtagonistObject()->Position;
+	for (int i = 0; i < numPoints; i++) {
+		PathfindingPoint &current = g_engine->pathfindingPoints[i];
+		if (IsLineSegmentWalkable(charPosition, current.Position)) {
+			uint dist = charPosition.sqrDist(current.Position);
+			if (dist < minLength) {
+				minLength = dist;
+				minIndex = i;
+			}
+		}
+	}
+
+	// TODO: Handle not finding a start point
+	g_engine->_path.push_back(g_engine->pathfindingPoints[minIndex].Position);
+
+	// Now handle searching for the end point, for this, keep track of nodes we already visited
+	// Args:
+	// Target position
+	// Current path
+	// Array of points already visited
 
 	return true;
 }
