@@ -605,6 +605,11 @@ void Scene::changeCube() {
 		_engine->_screens->setBlackPal();
 		_engine->_holomap->holoTraj(_numHolomapTraj);
 		_numHolomapTraj = -1;
+		_engine->_screens->_flagFade = true;
+	} else {
+		// TODO lbawin can do a fade here (if activated)
+		// _engine->_screens->_flagFade = true;
+
 	}
 
 	if (_newCube == LBA1SceneId::Citadel_Island_end_sequence_1 || _newCube == LBA1SceneId::Citadel_Island_end_sequence_2) {
