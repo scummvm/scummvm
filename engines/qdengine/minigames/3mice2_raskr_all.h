@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QDENGINE_MINIGAMES_3MICE2_RASKR1_H
-#define QDENGINE_MINIGAMES_3MICE2_RASKR1_H
+#ifndef QDENGINE_MINIGAMES_3MICE2_RASKR_ALL_H
+#define QDENGINE_MINIGAMES_3MICE2_RASKR_ALL_H
 
 #include "common/debug.h"
 
@@ -117,13 +117,13 @@ const int colorRegions[] = {
 	0,
 };
 
-class qd3mice2Raskr1MiniGame : public qdMiniGameInterface {
+class qd3mice2RaskrAllMiniGame : public qdMiniGameInterface {
 public:
-	qd3mice2Raskr1MiniGame() {}
-	~qd3mice2Raskr1MiniGame() {}
+	qd3mice2RaskrAllMiniGame() {}
+	~qd3mice2RaskrAllMiniGame() {}
 
 	bool init(const qdEngineInterface *engine_interface) {
-		debugC(1, kDebugMinigames, "3mice2Raskr1::init()");
+		debugC(1, kDebugMinigames, "3mice2RaskrAll::init()");
 
 		_engine = engine_interface;
 		_scene = engine_interface->current_scene_interface();
@@ -158,7 +158,7 @@ public:
 	}
 
 	bool quant(float dt) {
-		debugC(3, kDebugMinigames, "3mice2Raskr1::quant(%f)", dt);
+		debugC(3, kDebugMinigames, "3mice2RaskrAll::quant(%f)", dt);
 
 		_timePassed += dt;
 
@@ -215,7 +215,7 @@ public:
 	}
 
 	bool finit() {
-		debugC(1, kDebugMinigames, "3mice2Raskr1::finit()");
+		debugC(1, kDebugMinigames, "3mice2RaskrAll::finit()");
 
 		if (_scene)  {
 			_engine->release_scene_interface(_scene);
@@ -284,4 +284,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // QDENGINE_MINIGAMES_3MICE2_RASKR1_H
+#endif // QDENGINE_MINIGAMES_3MICE2_RASKR_ALL_H
