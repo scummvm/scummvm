@@ -621,6 +621,8 @@ public:
 	std::vector<Engine::IDriverDependantBitmap *> *_guiobjddb;
 	std::vector<Point> *_guiobjoff; // because surface may be larger than logical position
 
+	DrawFPS _gl_DrawFPS;
+
 	/**@}*/
 
 	/**
