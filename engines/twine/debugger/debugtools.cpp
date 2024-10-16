@@ -456,7 +456,7 @@ static void sceneDetailsWindows(TwinEEngine *engine) {
 		ImGuiEx::InputInt("Alpha light", &scene->_alphaLight);
 		ImGuiEx::InputInt("Beta light", &scene->_betaLight);
 		ImGuiEx::InputInt("Fall Y position", &scene->_startYFalling);
-		ImGui::Text("Hero position type: %i", (int)scene->_heroPositionType);
+		ImGui::Text("Hero position type: %i", (int)scene->_flagChgCube);
 	}
 	ImGui::End();
 }
@@ -511,7 +511,7 @@ static void actorDetailsWindow(int &actorIdx, TwinEEngine *engine) {
 				ImGui::TableNextColumn();
 				ImGui::Text("Control mode");
 				ImGui::TableNextColumn();
-				ImGui::Text("%i", actor->_controlMode);
+				ImGui::Text("%i", actor->_move);
 				ImGui::TableNextColumn();
 				ImGui::Text("Delay");
 				ImGui::TableNextColumn();
@@ -698,7 +698,7 @@ static void actorDetailsWindow(int &actorIdx, TwinEEngine *engine) {
 
 static void gameStateMenu(TwinEEngine *engine) {
 	if (ImGui::BeginMenu("Game State")) {
-		int keys = engine->_gameState->_inventoryNumKeys;
+		int keys = engine->_gameState->_nbLittleKeys;
 		if (ImGui::InputInt("Keys", &keys)) {
 			engine->_gameState->setKeys(keys);
 		}

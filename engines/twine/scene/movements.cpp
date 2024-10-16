@@ -481,17 +481,17 @@ void Movements::doDir(int32 actorIdx) {
 	}
 
 	if (actor->_workFlags.bIsFalling) {
-		if (actor->_controlMode == ControlMode::kManual) {
+		if (actor->_move == ControlMode::kManual) {
 			manualRealAngle(actor);
 			// TODO: _lastJoyFlag = _joyFlag;
 		}
 		return;
 	}
-	if (!actor->_flags.bSprite3D && actor->_controlMode != ControlMode::kManual) {
+	if (!actor->_flags.bSprite3D && actor->_move != ControlMode::kManual) {
 		actor->_beta = actor->realAngle.getRealAngle(_engine->timerRef);
 	}
 
-	switch (actor->_controlMode) {
+	switch (actor->_move) {
 	case ControlMode::kManual:
 		processManualAction(actorIdx);
 		break;
@@ -519,7 +519,7 @@ void Movements::doDir(int32 actorIdx) {
 	case ControlMode::kTrackAttack: // unused
 		break;
 	default:
-		warning("Unknown control mode %d", (int)actor->_controlMode);
+		warning("Unknown control mode %d", (int)actor->_move);
 		break;
 	}
 }

@@ -952,7 +952,7 @@ int32 ScriptLifeV2::lSET_RAIL(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lINVERSE_BETA(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ctx.actor->_beta = ClampAngle(ctx.actor->_beta + LBAAngles::ANGLE_180);
 
-	if (ctx.actor->_controlMode == ControlMode::kWagon) {
+	if (ctx.actor->_move == ControlMode::kWagon) {
 #if 0 // TODO:
 		ctx.actor->Info1 = 1; // reinit speed wagon
 

@@ -368,7 +368,7 @@ bool TwinEConsole::doChangeScene(int argc, const char **argv) {
 		return true;
 	}
 	_engine->_scene->_newCube = atoi(argv[1]);
-	_engine->_scene->_heroPositionType = ScenePositionType::kScene;
+	_engine->_scene->_flagChgCube = ScenePositionType::kScene;
 	_engine->_scene->changeCube();
 	return true;
 }

@@ -113,8 +113,6 @@ private:
 	int32 _bubbleActor = -1;
 	int32 _bubbleSpriteIndex;
 
-	IVec3 _projPosScreen; // XpOrgw, YpOrgw
-
 	// big font shadow text in the lower left corner
 	Common::String _text;
 	int32 _textDisappearTime = -1;
@@ -150,6 +148,8 @@ public:
 
 	/** Request background redraw */
 	bool _firstTime = false;
+
+	IVec3 _projPosScreen; // XpOrgw, YpOrgw
 
 	/** Current number of redraw regions in the screen */
 	int32 _nbPhysBox = 0; // fullRedrawVar8

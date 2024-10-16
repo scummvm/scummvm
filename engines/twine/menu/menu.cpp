@@ -1067,7 +1067,7 @@ void Menu::drawCoins(int32 left, int32 top) {
 }
 
 void Menu::drawKeys(int32 left, int32 top) {
-	const Common::String &inventoryNumKeys = Common::String::format("%d", _engine->_gameState->_inventoryNumKeys);
+	const Common::String &inventoryNumKeys = Common::String::format("%d", _engine->_gameState->_nbLittleKeys);
 	drawSpriteAndString(left, top, _engine->_resources->_spriteData[SPRITEHQR_KEY], inventoryNumKeys);
 }
 

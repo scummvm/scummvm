@@ -186,7 +186,7 @@ public:
 	int16 _startYFalling = 0;
 
 	/** Hero type of position in scene */
-	ScenePositionType _heroPositionType = ScenePositionType::kNoPosition; // twinsenPositionModeInNewCube
+	ScenePositionType _flagChgCube = ScenePositionType::kNoPosition; // twinsenPositionModeInNewCube
 
 	// ACTORS
 	int32 _nbObjets = 0;

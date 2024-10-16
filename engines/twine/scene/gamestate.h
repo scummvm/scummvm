@@ -107,7 +107,7 @@ public:
 	int16 _magicLevelIdx = 0;
 
 	/** Store the number of inventory keys */
-	int16 _inventoryNumKeys = 0;
+	int16 _nbLittleKeys = 0;
 	/** Store the number of inventory kashes */
 	int16 _goldPieces = 0;
 	int16 _zlitosPieces = 0;

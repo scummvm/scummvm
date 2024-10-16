@@ -42,9 +42,9 @@ namespace TwinE {
 Actor::Actor(TwinEEngine *engine) : _engine(engine) {
 }
 
-void Actor::restartHeroScene() {
+void Actor::restartPerso() {
 	ActorStruct *sceneHero = _engine->_scene->_sceneHero;
-	sceneHero->_controlMode = ControlMode::kManual;
+	sceneHero->_move = ControlMode::kManual;
 	memset(&sceneHero->_workFlags, 0, sizeof(sceneHero->_workFlags));
 	memset(&sceneHero->_flags, 0, sizeof(sceneHero->_flags));
 

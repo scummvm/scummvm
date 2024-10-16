@@ -674,11 +674,17 @@ void Grid::redrawGrid() { // AffGrille
 	_worldCube.y = _startCube.y * SIZE_BRICK_Y;
 	_worldCube.z = _startCube.z * SIZE_BRICK_XZ;
 
+	const IVec3 &projPos = _engine->_renderer->projectPoint(-_worldCube);
+	_engine->_redraw->_projPosScreen.x = projPos.x;
+	_engine->_redraw->_projPosScreen.y = projPos.y;
+
 	memset(_brickInfoBuffer, 0, _brickInfoBufferSize);
 
 	if (!_engine->_scene->_enableGridTileRendering) {
 		return;
 	}
+
+	_engine->_screens->clearScreen();
 
 	for (int32 z = 0; z < SIZE_CUBE_Z; z++) {
 		for (int32 x = 0; x < SIZE_CUBE_X; x++) {

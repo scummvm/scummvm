@@ -91,7 +91,7 @@ void GameState::initHeroVars() {
 	_inventoryNumLeafsBox = 2;
 	_inventoryNumLeafs = 2;
 	_goldPieces = 0;
-	_inventoryNumKeys = 0;
+	_nbLittleKeys = 0;
 	_magicPoint = 0;
 
 	_usingSabre = false;
@@ -125,7 +125,7 @@ void GameState::initEngineVars() {
 	_inventoryNumLeafsBox = 2;
 	_magicPoint = 0;
 	_goldPieces = 0;
-	_inventoryNumKeys = 0;
+	_nbLittleKeys = 0;
 	_inventoryNumGas = 0;
 
 	_engine->_actor->_cropBottomScreen = 0;
@@ -227,7 +227,7 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 	}
 
 	_engine->_scene->_numCube = SCENE_CEILING_GRID_FADE_1;
-	_engine->_scene->_heroPositionType = ScenePositionType::kReborn;
+	_engine->_scene->_flagChgCube = ScenePositionType::kReborn;
 	return true;
 }
 
@@ -609,12 +609,12 @@ int16 GameState::setZlitos(int16 value) {
 }
 
 int16 GameState::setKeys(int16 value) {
-	_inventoryNumKeys = MAX<int16>(0, value);
-	return _inventoryNumKeys;
+	_nbLittleKeys = MAX<int16>(0, value);
+	return _nbLittleKeys;
 }
 
 void GameState::addKeys(int16 val) {
-	setKeys(_inventoryNumKeys + val);
+	setKeys(_nbLittleKeys + val);
 }
 
 void GameState::addKashes(int16 val) {

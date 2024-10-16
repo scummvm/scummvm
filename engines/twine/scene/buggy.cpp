@@ -63,7 +63,7 @@ void Buggy::initBuggy(uint8 numobj, uint32 flaginit) {
 
 		NumBuggy = (uint8)(numobj | BUGGY_PRESENT);
 	} else if (NumBuggy) {
-		if (_engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX)->_controlMode != ControlMode::kBuggyManual && _engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX)->_controlMode != ControlMode::kBuggy) {
+		if (_engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX)->_move != ControlMode::kBuggyManual && _engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX)->_move != ControlMode::kBuggy) {
 			int32 x, y;
 
 			if (_engine->_scene->_numCube == ptb->Cube) {

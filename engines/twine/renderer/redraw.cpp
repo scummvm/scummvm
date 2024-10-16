@@ -872,42 +872,39 @@ void Redraw::renderText() {
 	addPhysBox(redraw);
 }
 
-void Redraw::drawScene(bool bgRedraw) { // AffScene
+void Redraw::drawScene(bool flagflip) { // AffScene
 	int32 tmp_projPosX = _projPosScreen.x;
 	int32 tmp_projPosY = _projPosScreen.y;
 
 	_engine->_interface->unsetClip();
 
-	if (bgRedraw) {
+	if (!flagflip) {
+		clsBoxes();
+	} else {
 		_engine->saveTimer(false);
 		if (_engine->_scene->_newCube != SCENE_CEILING_GRID_FADE_1 && _engine->_scene->_newCube != SCENE_CEILING_GRID_FADE_2) {
 			_engine->_screens->fadeToBlack(_engine->_screens->_ptrPal);
 		}
-		_engine->_screens->clearScreen();
 
 		_engine->_grid->redrawGrid();
-		const IVec3 &projPos = _engine->_renderer->projectPoint(-_engine->_grid->_worldCube);
-		_projPosScreen.x = projPos.x;
-		_projPosScreen.y = projPos.y;
 
 		updateOverlayTypePosition(tmp_projPosX, tmp_projPosY, _projPosScreen.x, _projPosScreen.y);
+
 		_engine->saveFrontBuffer();
 
 		if (_engine->_scene->_newCube != SCENE_CEILING_GRID_FADE_1 && _engine->_scene->_newCube != SCENE_CEILING_GRID_FADE_2) {
 			_engine->_screens->fadeToPal(_engine->_screens->_ptrPal);
 		}
-	} else {
-		clsBoxes();
 	}
 
 	DrawListStruct drawList[NUM_MAX_ACTORS + EXTRA_MAX_ENTRIES]; // ListTri[MAX_OBJECTS + MAX_EXTRAS]
-	int32 drawListPos = fillActorDrawingList(drawList, bgRedraw);
+	int32 drawListPos = fillActorDrawingList(drawList, flagflip);
 	drawListPos = fillExtraDrawingList(drawList, drawListPos);
 
 	_nbPhysBox = 0;
 	sortDrawingList(drawList, drawListPos);
 	correctZLevels(drawList, drawListPos);
-	processDrawList(drawList, drawListPos, bgRedraw);
+	processDrawList(drawList, drawListPos, flagflip);
 
 	_engine->_debugState->renderDebugView();
 
@@ -921,7 +918,7 @@ void Redraw::drawScene(bool bgRedraw) { // AffScene
 		_engine->_scene->_newCube = SCENE_CEILING_GRID_FADE_1;
 	}
 
-	if (bgRedraw) {
+	if (flagflip) {
 		moveNextAreas();
 		_engine->restoreTimer();
 	} else {

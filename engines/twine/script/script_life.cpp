@@ -317,7 +317,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 	}
 	case kcNUM_LITTLE_KEYS:
 		debugCN(3, kDebugLevels::kDebugScriptsLife, "num_little_keys(");
-		engine->_scene->_currentScriptValue = engine->_gameState->_inventoryNumKeys;
+		engine->_scene->_currentScriptValue = engine->_gameState->_nbLittleKeys;
 		break;
 	case kcNUM_GOLD_PIECES:
 		debugCN(3, kDebugLevels::kDebugScriptsLife, "num_gold_pieces(");
@@ -958,8 +958,8 @@ int32 ScriptLife::lFALLABLE(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLife::lSET_DIRMODE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 controlMode = ctx.stream.readByte();
 
-	ctx.actor->_controlMode = (ControlMode)controlMode;
-	if (ctx.actor->_controlMode == ControlMode::kFollow) {
+	ctx.actor->_move = (ControlMode)controlMode;
+	if (ctx.actor->_move == ControlMode::kFollow) {
 		ctx.actor->_followedActor = ctx.stream.readByte();
 		debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::SET_DIRMODE(%i, %i)", (int)controlMode, (int)ctx.actor->_followedActor);
 	} else {
@@ -978,9 +978,9 @@ int32 ScriptLife::lSET_DIRMODE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) 
 	const int32 controlMode = ctx.stream.readByte();
 
 	ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
-	otherActor->_controlMode = (ControlMode)controlMode;
+	otherActor->_move = (ControlMode)controlMode;
 	// TODO: should ControlMode::kSameXZ be taken into account, too - see processSameXZAction
-	if (otherActor->_controlMode == ControlMode::kFollow || ctx.actor->_controlMode == ControlMode::kFollow2) {
+	if (otherActor->_move == ControlMode::kFollow || ctx.actor->_move == ControlMode::kFollow2) {
 		otherActor->_followedActor = ctx.stream.readByte();
 		debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::SET_DIRMODE_OBJ(%i, %i, %i)", (int)otherActorIdx, (int)controlMode, (int)otherActor->_followedActor);
 	} else {
@@ -1326,7 +1326,7 @@ int32 ScriptLife::lCHANGE_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 sceneIdx = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::CHANGE_CUBE(%i)", (int)sceneIdx);
 	engine->_scene->_newCube = sceneIdx;
-	engine->_scene->_heroPositionType = ScenePositionType::kScene;
+	engine->_scene->_flagChgCube = ScenePositionType::kScene;
 	return 0;
 }
 

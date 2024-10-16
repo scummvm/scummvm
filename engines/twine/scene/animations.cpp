@@ -59,9 +59,9 @@ int32 Animations::searchAnim(AnimationTypes animIdx, int32 actorIdx) {
 
 int16 Animations::patchInterAngle(int32 deltaTime, int32 keyFrameLength, int16 newAngle1, int16 lastAngle1) const {
 	const int16 lastAngle = ClampAngle(lastAngle1);
-	const int16 newAngle = ClampAngle(newAngle1);
+	const int16 nextAngle = ClampAngle(newAngle1);
 
-	int16 angleDiff = newAngle - lastAngle;
+	int16 angleDiff = nextAngle - lastAngle;
 
 	int16 computedAngle;
 	if (angleDiff) {

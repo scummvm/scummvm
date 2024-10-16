@@ -352,7 +352,7 @@ Common::Error TwinEEngine::run() {
 			_text->_flagMessageShade = true;
 			_text->_renderTextTriangle = false;
 			_scene->_newCube = sceneIndex;
-			_scene->_heroPositionType = ScenePositionType::kScene;
+			_scene->_flagChgCube = ScenePositionType::kScene;
 			_state = EngineState::GameLoop;
 		}
 	}
@@ -368,7 +368,7 @@ Common::Error TwinEEngine::run() {
 		case EngineState::LoadedGame:
 			debug("Loaded game");
 			if (_scene->_newHeroPos.x == -1) {
-				_scene->_heroPositionType = ScenePositionType::kNoPosition;
+				_scene->_flagChgCube = ScenePositionType::kNoPosition;
 			}
 			_text->_renderTextTriangle = false;
 			_text->normalWinDial();
@@ -942,7 +942,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		// inventory menu
 		_loopInventoryItem = -1;
-		if (_input->isActionActive(TwinEActionType::InventoryMenu) && _scene->_sceneHero->_body != -1 && _scene->_sceneHero->_controlMode == ControlMode::kManual) {
+		if (_input->isActionActive(TwinEActionType::InventoryMenu) && _scene->_sceneHero->_body != -1 && _scene->_sceneHero->_move == ControlMode::kManual) {
 			processInventoryAction();
 		}
 
@@ -963,7 +963,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			 _input->isActionActive(TwinEActionType::QuickBehaviourAthletic, false) ||
 			 _input->isActionActive(TwinEActionType::QuickBehaviourAggressive, false) ||
 			 _input->isActionActive(TwinEActionType::QuickBehaviourDiscreet, false)) &&
-			_scene->_sceneHero->_body != -1 && _scene->_sceneHero->_controlMode == ControlMode::kManual) {
+			_scene->_sceneHero->_body != -1 && _scene->_sceneHero->_move == ControlMode::kManual) {
 			if (_input->isActionActive(TwinEActionType::QuickBehaviourNormal, false)) {
 				_actor->_heroBehaviour = HeroBehaviourType::kNormal;
 			} else if (_input->isActionActive(TwinEActionType::QuickBehaviourAthletic, false)) {
@@ -1075,7 +1075,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		if (actor->_lifePoint == 0) {
 			if (IS_HERO(a)) {
 				_animations->initAnim(AnimationTypes::kLandDeath, AnimType::kAnimationSet, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
-				actor->_controlMode = ControlMode::kNoMove;
+				actor->_move = ControlMode::kNoMove;
 #if 0 // TODO: enable me - found in the lba1 community release source code
 				// Disable collisions on Twinsen to allow other objects to continue their tracks
 				// while the death animation is playing
@@ -1145,7 +1145,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 							_animations->initAnim(AnimationTypes::kDrawn, AnimType::kAnimationSet, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 						}
 						const IVec3 &projPos = _renderer->projectPoint(actor->posObj() - _grid->_worldCube);
-						actor->_controlMode = ControlMode::kNoMove;
+						actor->_move = ControlMode::kNoMove;
 						actor->setLife(-1);
 						_actor->_cropBottomScreen = projPos.y;
 						actor->_flags.bNoShadow = 1;
@@ -1173,7 +1173,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 						_grid->centerOnActor(_scene->_sceneHero);
 
-						_scene->_heroPositionType = ScenePositionType::kReborn;
+						_scene->_flagChgCube = ScenePositionType::kReborn;
 
 						_scene->_sceneHero->setLife(getMaxLife());
 						_redraw->_firstTime = true;
