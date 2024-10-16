@@ -518,23 +518,34 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 		if (camera)
 			_camera = camera;
 		if (_camera) {
+			Math::Matrix4 viewMatrix;
+			_camera->getViewMatrix(&viewMatrix);
+
+			Math::Matrix4 cameraTranslate;
+			cameraTranslate.setPosition(-_camera->_position);
+			cameraTranslate.transpose();
+			viewMatrix = cameraTranslate * viewMatrix;
+			_lastViewMatrix = viewMatrix;
+
 			_fov = _camera->_fov;
 
 			if (_camera->_nearClipPlane >= 0.0f) {
 				_nearClipPlane = _camera->_nearClipPlane;
+			} else {
+				_nearClipPlane = DEFAULT_NEAR_PLANE;
 			}
 
 			if (_camera->_farClipPlane >= 0.0f) {
 				_farClipPlane = _camera->_farClipPlane;
+			} else {
+				_farClipPlane = DEFAULT_FAR_PLANE;
 			}
 
-			Math::Matrix4 viewMatrix;
-			_camera->getViewMatrix(&viewMatrix);
-			glLoadMatrixf(viewMatrix.getData());
-			glTranslatef(-_camera->_position.x(), -_camera->_position.y(), -_camera->_position.z());
-			glGetFloatv(GL_MODELVIEW_MATRIX, _lastViewMatrix.getData());
+			glLoadMatrixf(_lastViewMatrix.getData());
 		} else {
 			glLoadMatrixf(_lastViewMatrix.getData());
+			_nearClipPlane = DEFAULT_NEAR_PLANE;
+			_farClipPlane = DEFAULT_FAR_PLANE;
 		}
 
 		for (int i = 0; i < getMaxActiveLights(); ++i) {
@@ -545,7 +556,6 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 		bool fogEnabled;
 		uint32 fogColor;
 		float fogStart, fogEnd;
-
 		_gameRef->getFogParams(&fogEnabled, &fogColor, &fogStart, &fogEnd);
 		if (fogEnabled) {
 			glEnable(GL_FOG);

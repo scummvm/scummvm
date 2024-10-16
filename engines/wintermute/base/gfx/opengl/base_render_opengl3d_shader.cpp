@@ -649,16 +649,6 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 		if (camera)
 			_camera = camera;
 		if (_camera) {
-			_fov = _camera->_fov;
-
-			if (_camera->_nearClipPlane >= 0.0f) {
-				_nearClipPlane = _camera->_nearClipPlane;
-			}
-
-			if (_camera->_farClipPlane >= 0.0f) {
-				_farClipPlane = _camera->_farClipPlane;
-			}
-
 			Math::Matrix4 viewMatrix;
 			_camera->getViewMatrix(&viewMatrix);
 			Math::Matrix4 cameraTranslate;
@@ -666,6 +656,21 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 			cameraTranslate.transpose();
 			viewMatrix = cameraTranslate * viewMatrix;
 			_lastViewMatrix = viewMatrix;
+
+			_fov = _camera->_fov;
+
+			if (_camera->_nearClipPlane >= 0.0f) {
+				_nearClipPlane = _camera->_nearClipPlane;
+			} else {
+				_nearClipPlane = DEFAULT_NEAR_PLANE;
+			}
+
+			if (_camera->_farClipPlane >= 0.0f) {
+				_farClipPlane = _camera->_farClipPlane;
+			} else {
+				_farClipPlane = DEFAULT_FAR_PLANE;
+			}
+
 		}
 
 		bool fogEnabled;
