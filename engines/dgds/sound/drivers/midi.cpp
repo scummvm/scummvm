@@ -545,7 +545,8 @@ void MidiPlayer_Midi::readMt32Patch(const SciSpan<const byte> &data) {
 	stream.seek(_mt32LCDSize * 2);
 	stream.read(_goodbyeMsg, _mt32LCDSize);
 
-	const uint8 volume = MIN<uint16>(stream.readUint16LE(), 100);
+	// Change from SCI - DGDS uses 80 instead of 100 here.
+	const uint8 volume = MIN<uint16>(stream.readUint16LE(), 80);
 	setMt32Volume(volume);
 
 	// Reverb default only used in (roughly) SCI0/SCI01
