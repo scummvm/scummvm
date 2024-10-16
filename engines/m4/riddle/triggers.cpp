@@ -22,6 +22,7 @@
 #include "m4/riddle/triggers.h"
 #include "m4/riddle/vars.h"
 #include "m4/adv_r/adv_control.h"
+#include "m4/core/imath.h"
 #include "m4/graphics/gr_series.h"
 
 namespace M4 {
@@ -110,8 +111,8 @@ machine *triggerMachineByHash_3000(int myHash, int dataHash, int normalDir, int 
 	_G(globals)[GLB_TEMP_3] = shadowDir << 24;
 	_G(globals)[GLB_TEMP_4] = param1 << 16;
 	_G(globals)[GLB_TEMP_5] = param2 << 16;
-	_G(globals)[GLB_TEMP_6] = ((param2 << 16) - _G(globals)[V002])
-		* _G(globals)[V006] + _G(globals)[V004];
+	_G(globals)[GLB_TEMP_6] = MulSF16((param2 << 16) - _G(globals)[V002],
+		_G(globals)[V006]) + _G(globals)[V004];
 	_G(globals)[GLB_TEMP_7] = NUMS[index] << 16;
 
 	machine *result = TriggerMachineByHash(myHash, nullptr, dataHash + 8, 0,
