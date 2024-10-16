@@ -48,7 +48,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
         AD_ENTRY2s("qd_game.qml", md5, size, exefile, exemd5, exesize), \
         lang, \
         Common::kPlatformWindows, \
-        ADGF_UNSTABLE | ADGF_DROPPLATFORM, \
+        (ADGF_UNSTABLE | ADGF_DROPPLATFORM | flags), \
         GUIO1(GUIO_NONE) \
     }
 
@@ -134,8 +134,33 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	//GAMEl("3mice2", "???", 8176962, Common::CZ_CZE),
 	GAMEd("3mice2", "dfd98feb2e7d3345a7babdeb3ed3e9a7", 800666, // Demo1
 			"demo1.exe", "ffe20c2dbb131b01fccc1211a41e76e7", 962560),
-	GAMEd("3mice2", "6af4c6f11cf0994670bedb78efe22267", 1124576, // Demo2
-			"demo2.exe", "ffe20c2dbb131b01fccc1211a41e76e7", 962560),
+
+	{ // Demo2, original
+	  // Video is in MP4 format which is not supported
+		"3mice2",
+		"Original",
+		AD_ENTRY3s("qd_game.qml", "6af4c6f11cf0994670bedb78efe22267", 1124576, // Demo2
+				   "demo2.exe",   "ffe20c2dbb131b01fccc1211a41e76e7", 962560,
+				   "Resource/Video/martha.mpg", "02850c5fc074eba22b368cca0ff57c98", 9810104),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM | ADGF_DEMO | GF_BROKEN_VIDEOS,
+		GUIO1(GUIO_NONE)
+	},
+
+	{ // Demo2, original
+	  // Video is recoded with: ffmpeg -i martha.mpg -b:v 6000k -maxrate:v 9000k martha-new.mpeg
+	  // The full game has this video also broken: the video frames get frozen at the last several seconds
+		"3mice2",
+		"Recoded video",
+		AD_ENTRY3s("qd_game.qml", "6af4c6f11cf0994670bedb78efe22267", 1124576,
+				   "demo2.exe",   "ffe20c2dbb131b01fccc1211a41e76e7", 962560,
+				   "Resource/Video/martha.mpg", "4dc93c37c0cdd75c01c58412f68e4874", 32499712),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM | ADGF_DEMO,
+		GUIO1(GUIO_NONE)
+	},
 
 	// Агентство "КотоПес": Остров доктора Крысарди
 	// 2008/09/19 KD Vision Games

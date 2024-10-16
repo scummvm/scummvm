@@ -53,6 +53,7 @@ class QDEngineMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDes
 
 public:
 	QDEngineMetaEngineDetection() : AdvancedMetaEngineDetection(QDEngine::GAME_DESCRIPTIONS, QDEngine::GAME_NAMES) {
+		_flags = kADFlagMatchFullPaths;
 	}
 
 	~QDEngineMetaEngineDetection() override {}

@@ -134,6 +134,12 @@ Common::Error QDEngineEngine::run() {
 	Common::String firstFileName;
 	Common::String script_name;
 
+
+	if (getFeatures() & GF_BROKEN_VIDEOS)
+		warning("YEEEEES");
+
+	warning("%s, %x", _gameDescription->filesDescriptions[0].md5, getFeatures());
+
 	if (p) {
 		firstFileName = p->getFileName();
 		script_name = firstFileName.c_str();

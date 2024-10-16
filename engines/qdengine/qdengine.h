@@ -59,6 +59,10 @@ enum QDEngineDebugChannels {
 	kDebugText,
 };
 
+enum {
+	GF_BROKEN_VIDEOS = 1
+};
+
 class QDEngineEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;

@@ -1899,6 +1899,11 @@ bool qdGameDispatcher::play_video(const char *vid_name) {
 }
 
 bool qdGameDispatcher::play_video(qdVideo *p) {
+	if (g_engine->getFeatures() & GF_BROKEN_VIDEOS) {
+		warning("Skipping broken video '%s'", p->file_name().toString().c_str());
+		return false;
+	}
+
 	if (!_video_player.open_file(find_file(p->file_name(), *p)))
 		return false;
 
