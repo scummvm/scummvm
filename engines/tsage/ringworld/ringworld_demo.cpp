@@ -70,20 +70,20 @@ void RingworldDemoGame::pauseGame() {
 }
 
 void RingworldDemoGame::processEvent(Event &event) {
-	if (event.eventType == EVENT_KEYPRESS) {
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_F1:
+	if (event.eventType == EVENT_CUSTOM_ACTIONSTART) {
+		switch (event.customType) {
+		case kActionHelp:
 			// F1 - Help
 			MessageDialog::show(DEMO_HELP_MSG, OK_BTN_STRING);
 			break;
 
-		case Common::KEYCODE_F2: {
+		case kActionSoundOptions: {
 			// F2 - Sound Options
 			SoundDialog::execute();
 			break;
 		}
 
-		case Common::KEYCODE_F3:
+		case kActionQuitGame:
 			// F3 - Quit
 			quitGame();
 			event.handled = false;
