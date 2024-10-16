@@ -359,7 +359,7 @@ public:
 	int getRandomNumber(uint max = 0x7FFF);
 
 	void blitWorkToFront(const Common::Rect &rect);
-	void blitFrontToWork(const Common::Rect &rect);
+	void copyBlock(const Common::Rect &rect);
 	void restoreFrontBuffer();
 	void saveFrontBuffer();
 

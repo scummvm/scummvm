@@ -92,20 +92,20 @@ int16 Animations::patchInterStep(int32 deltaTime, int32 keyFrameLength, int16 ne
 	return computedPos;
 }
 
-bool Animations::setInterAnimObjet(int32 keyframeIdx, const AnimData &animData, BodyData &bodyData, AnimTimerDataStruct *animTimerDataPtr) {
-	if (!bodyData.isAnimated()) {
+bool Animations::doSetInterAnimObjet(int32 framedest, const AnimData &animData, BodyData &pBody, AnimTimerDataStruct *ptranimdest, bool global) {
+	if (!pBody.isAnimated()) {
 		return false;
 	}
-	const KeyFrame *keyFrame = animData.getKeyframe(keyframeIdx);
+	const KeyFrame *keyFrame = animData.getKeyframe(framedest);
 
-	_currentStep.x = keyFrame->x;
-	_currentStep.y = keyFrame->y;
-	_currentStep.z = keyFrame->z;
+	_animStep.x = keyFrame->x;
+	_animStep.y = keyFrame->y;
+	_animStep.z = keyFrame->z;
 
 	_animMasterRot = keyFrame->animMasterRot;
 	_animStepBeta = ToAngle(keyFrame->animStepBeta);
 
-	const int16 numBones = bodyData.getNumBones();
+	const int16 numBones = pBody.getNumBones();
 
 	int32 numOfBonesInAnim = animData.getNumBoneframes();
 	if (numOfBonesInAnim > numBones) {
@@ -113,17 +113,17 @@ bool Animations::setInterAnimObjet(int32 keyframeIdx, const AnimData &animData, 
 	}
 	const int32 keyFrameLength = keyFrame->length;
 
-	const KeyFrame *lastKeyFramePtr = animTimerDataPtr->ptr;
-	int32 remainingFrameTime = animTimerDataPtr->time;
+	const KeyFrame *lastKeyFramePtr = ptranimdest->ptr;
+	int32 remainingFrameTime = ptranimdest->time;
 	if (lastKeyFramePtr == nullptr) {
 		lastKeyFramePtr = keyFrame;
 		remainingFrameTime = keyFrameLength;
 	}
 	const int32 deltaTime = _engine->timerRef - remainingFrameTime;
 	if (deltaTime >= keyFrameLength) {
-		copyKeyFrameToState(keyFrame, bodyData, numOfBonesInAnim);
-		animTimerDataPtr->ptr = keyFrame;
-		animTimerDataPtr->time = _engine->timerRef;
+		copyKeyFrameToState(keyFrame, pBody, numOfBonesInAnim);
+		ptranimdest->ptr = keyFrame;
+		ptranimdest->time = _engine->timerRef;
 		return true;
 	}
 
@@ -136,7 +136,7 @@ bool Animations::setInterAnimObjet(int32 keyframeIdx, const AnimData &animData, 
 	int16 boneIdx = 1;
 	int16 tmpNumOfPoints = MIN<int16>(lastKeyFramePtr->boneframes.size() - 1, numOfBonesInAnim - 1);
 	do {
-		BoneFrame *boneState = bodyData.getBoneState(boneIdx);
+		BoneFrame *boneState = pBody.getBoneState(boneIdx);
 		const BoneFrame &boneFrame = keyFrame->boneframes[boneIdx];
 		const BoneFrame &lastBoneFrame = lastKeyFramePtr->boneframes[boneIdx];
 
@@ -175,9 +175,9 @@ void Animations::setAnimObjet(int32 keyframeIdx, const AnimData &animData, BodyD
 
 	const KeyFrame *keyFrame = animData.getKeyframe(keyframeIdx);
 
-	_currentStep.x = keyFrame->x;
-	_currentStep.y = keyFrame->y;
-	_currentStep.z = keyFrame->z;
+	_animStep.x = keyFrame->x;
+	_animStep.y = keyFrame->y;
+	_animStep.z = keyFrame->z;
 
 	_animMasterRot = keyFrame->animMasterRot;
 	_animStepBeta = ToAngle(keyFrame->animStepBeta);
@@ -237,9 +237,9 @@ bool Animations::setInterDepObjet(int32 keyframeIdx, const AnimData &animData, A
 
 	const int32 deltaTime = _engine->timerRef - remainingFrameTime;
 
-	_currentStep.x = keyFrame->x;
-	_currentStep.y = keyFrame->y;
-	_currentStep.z = keyFrame->z;
+	_animStep.x = keyFrame->x;
+	_animStep.y = keyFrame->y;
+	_animStep.z = keyFrame->z;
 
 	_animMasterRot = keyFrame->animMasterRot;
 	_animStepBeta = ToAngle(keyFrame->animStepBeta);
@@ -251,9 +251,9 @@ bool Animations::setInterDepObjet(int32 keyframeIdx, const AnimData &animData, A
 	}
 
 	_animStepBeta = (_animStepBeta * deltaTime) / keyFrameLength;
-	_currentStep.x = (_currentStep.x * deltaTime) / keyFrameLength;
-	_currentStep.y = (_currentStep.y * deltaTime) / keyFrameLength;
-	_currentStep.z = (_currentStep.z * deltaTime) / keyFrameLength;
+	_animStep.x = (_animStep.x * deltaTime) / keyFrameLength;
+	_animStep.y = (_animStep.y * deltaTime) / keyFrameLength;
+	_animStep.z = (_animStep.z * deltaTime) / keyFrameLength;
 
 	return false;
 }
@@ -572,14 +572,14 @@ void Animations::doAnim(int32 actorIdx) {
 			actor->_beta = ClampAngle(actor->_beta + _animStepBeta - actor->_animStepBeta);
 			actor->_animStepBeta = _animStepBeta;
 
-			const IVec2 &destPos = _engine->_renderer->rotate(_currentStep.x, _currentStep.z, actor->_beta);
+			const IVec2 &destPos = _engine->_renderer->rotate(_animStep.x, _animStep.z, actor->_beta);
 
-			_currentStep.x = destPos.x;
-			_currentStep.z = destPos.y;
+			_animStep.x = destPos.x;
+			_animStep.z = destPos.y;
 
-			processActor = actor->posObj() + _currentStep - actor->_animStep;
+			processActor = actor->posObj() + _animStep - actor->_animStep;
 
-			actor->_animStep = _currentStep;
+			actor->_animStep = _animStep;
 
 			actor->_workFlags.bAnimEnded = 0;
 			actor->_workFlags.bAnimNewFrame = 0;

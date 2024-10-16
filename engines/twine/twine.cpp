@@ -1278,7 +1278,7 @@ void TwinEEngine::blitWorkToFront(const Common::Rect &rect) {
 	copyBlockPhys(rect);
 }
 
-void TwinEEngine::blitFrontToWork(const Common::Rect &rect) {
+void TwinEEngine::copyBlock(const Common::Rect &rect) {
 	_interface->blitBox(rect, _frontVideoBuffer, _workVideoBuffer);
 }
 

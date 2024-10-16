@@ -381,23 +381,23 @@ void GameState::doFoundObj(InventoryItems item) {
 	_engine->_text->initVoxToPlayTextId((TextId)item);
 
 	const int32 bodyAnimIdx = _engine->_animations->searchAnim(AnimationTypes::kFoundItem, OWN_ACTOR_SCENE_INDEX);
-	const AnimData &currentAnimData = _engine->_resources->_animData[bodyAnimIdx];
+	const AnimData &ptranim = _engine->_resources->_animData[bodyAnimIdx];
 
 	AnimTimerDataStruct tmpAnimTimer = _engine->_scene->_sceneHero->_animTimerData;
 
 	_engine->_animations->stockInterAnim(bodyData, &_engine->_scene->_sceneHero->_animTimerData);
 
-	uint currentAnimState = 0;
+	uint frameanim = 0;
 
-	_engine->_redraw->_numOfRedrawBox = 0;
+	_engine->_redraw->_nbOptPhysBox = 0;
 
 	ScopedKeyMap uiKeyMap(_engine, uiKeyMapId);
 	int16 itemAngle = LBAAngles::ANGLE_0;
 	for (;;) {
 		FrameMarker frame(_engine, 66);
 		_engine->_interface->unsetClip();
-		_engine->_redraw->_currNumOfRedrawBox = 0;
-		_engine->_redraw->blitBackgroundAreas();
+		_engine->_redraw->_nbPhysBox = 0;
+		_engine->_redraw->clsBoxes();
 		_engine->_interface->shadeBox(boxRect, 4);
 
 		_engine->_interface->setClip(boxRect);
@@ -407,21 +407,21 @@ void GameState::doFoundObj(InventoryItems item) {
 		_engine->_renderer->draw3dObject(projPos.x, projPos.y, _engine->_resources->_inventoryTable[item], itemAngle, 10000);
 
 		_engine->_menu->drawRectBorders(boxRect);
-		_engine->_redraw->addRedrawArea(boxRect);
+		_engine->_redraw->addPhysBox(boxRect);
 		_engine->_interface->unsetClip();
 		init3DGame();
 
-		if (_engine->_animations->setInterAnimObjet(currentAnimState, currentAnimData, bodyData, &_engine->_scene->_sceneHero->_animTimerData)) {
-			currentAnimState++; // keyframe
-			if (currentAnimState >= currentAnimData.getNbFramesAnim()) {
-				currentAnimState = currentAnimData.getLoopFrame();
+		if (_engine->_animations->setInterAnimObjet(frameanim, ptranim, bodyData, &_engine->_scene->_sceneHero->_animTimerData)) {
+			frameanim++; // keyframe
+			if (frameanim >= ptranim.getNbFramesAnim()) {
+				frameanim = ptranim.getLoopFrame();
 			}
 		}
 
 		_engine->_renderer->renderIsoModel(bodyPos, LBAAngles::ANGLE_0, LBAAngles::ANGLE_45, LBAAngles::ANGLE_0, bodyData, modelRect);
 		_engine->_interface->setClip(modelRect);
 		_engine->_grid->drawOverBrick(itemX, itemY, itemZ);
-		_engine->_redraw->addRedrawArea(modelRect);
+		_engine->_redraw->addPhysBox(modelRect);
 
 		if (textState == ProgressiveTextState::ContinueRunning) {
 			_engine->_interface->unsetClip();
@@ -430,7 +430,7 @@ void GameState::doFoundObj(InventoryItems item) {
 			_engine->_text->fadeInRemainingChars();
 		}
 
-		_engine->_redraw->flipRedrawAreas();
+		_engine->_redraw->flipBoxes();
 
 		_engine->readKeys();
 		if (_engine->_input->toggleAbortAction()) {

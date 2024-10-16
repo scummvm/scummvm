@@ -468,7 +468,7 @@ void Text::initDialWindow() {
 	}
 
 	_nbChar = 0;
-	_engine->blitFrontToWork(_dialTextBox);
+	_engine->copyBlock(_dialTextBox);
 }
 
 void Text::secondInitDialWindow() {

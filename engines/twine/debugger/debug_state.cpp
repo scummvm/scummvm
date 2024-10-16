@@ -172,7 +172,7 @@ bool DebugState::displayActors() {
 		const int16 rbottom = positions.frontBottomRightPoint2D.y;
 		Common::Rect actorRect(rleft, rtop, rright, rbottom);
 		actorRect.extend(filledRect);
-		_engine->_redraw->addRedrawArea(actorRect);
+		_engine->_redraw->addPhysBox(actorRect);
 		state = true;
 	}
 	return state;

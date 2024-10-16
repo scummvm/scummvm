@@ -48,16 +48,20 @@ private:
 	void copyKeyFrameToState(const KeyFrame *keyframe, BodyData &bodyData, int32 numBones) const;
 	void copyStateToKeyFrame(KeyFrame *keyframe, const BodyData &bodyData) const;
 
+	bool doSetInterAnimObjet(int32 keyframeIdx, const AnimData &animData, BodyData &bodyData, AnimTimerDataStruct *animTimerDataPt, bool global);
+
 	int _animKeyframeBufIdx = 0;
 	KeyFrame _animKeyframeBuf[32];
 
 	/** Rotation by anim and not by engine */
-	int16 _animMasterRot = 0; // AnimMasterRot
+	int16 _animMasterRot = 0;
 	/** Last rotation angle */
-	int16 _animStepBeta = 0; // AnimStepBeta
+	int16 _animStepBeta = 0;
+	int16 _animStepAlpha = 0;
+	int16 _animStepGamma = 0;
 
 	/** Current step coordinates */
-	IVec3 _currentStep;
+	IVec3 _animStep;
 
 public:
 	Animations(TwinEEngine *engine);
@@ -81,7 +85,13 @@ public:
 	 * @param bodyData Body model data
 	 * @param animTimerDataPtr Animation time data
 	 */
-	bool setInterAnimObjet(int32 keyframeIdx, const AnimData &animData, BodyData &bodyData, AnimTimerDataStruct *animTimerDataPtr);
+	bool setInterAnimObjet(int32 keyframeIdx, const AnimData &animData, BodyData &bodyData, AnimTimerDataStruct *animTimerDataPtr) {
+		return doSetInterAnimObjet(keyframeIdx, animData, bodyData, animTimerDataPtr, true);
+	}
+
+	bool setInterAnimObjet2(int32 keyframeIdx, const AnimData &animData, BodyData &bodyData, AnimTimerDataStruct *animTimerDataPtr) {
+		return doSetInterAnimObjet(keyframeIdx, animData, bodyData, animTimerDataPtr, false);
+	}
 
 	/**
 	 * Get entity anim index (This is taken from File3D entities)
