@@ -383,14 +383,13 @@ void GameState::doFoundObj(InventoryItems item) {
 	const int32 bodyAnimIdx = _engine->_animations->searchAnim(AnimationTypes::kFoundItem, OWN_ACTOR_SCENE_INDEX);
 	const AnimData &ptranim = _engine->_resources->_animData[bodyAnimIdx];
 
-	AnimTimerDataStruct tmpAnimTimer = _engine->_scene->_sceneHero->_animTimerData;
-
 	_engine->_animations->stockInterAnim(bodyData, &_engine->_scene->_sceneHero->_animTimerData);
 
 	uint frameanim = 0;
 
 	_engine->_redraw->_nbOptPhysBox = 0;
 
+	AnimTimerDataStruct animTimerData;
 	ScopedKeyMap uiKeyMap(_engine, uiKeyMapId);
 	int16 itemAngle = LBAAngles::ANGLE_0;
 	for (;;) {
@@ -411,7 +410,7 @@ void GameState::doFoundObj(InventoryItems item) {
 		_engine->_interface->unsetClip();
 		init3DGame();
 
-		if (_engine->_animations->setInterAnimObjet(frameanim, ptranim, bodyData, &_engine->_scene->_sceneHero->_animTimerData)) {
+		if (_engine->_animations->setInterAnimObjet(frameanim, ptranim, bodyData, &animTimerData)) {
 			frameanim++; // keyframe
 			if (frameanim >= ptranim.getNbFramesAnim()) {
 				frameanim = ptranim.getLoopFrame();
@@ -466,8 +465,6 @@ void GameState::doFoundObj(InventoryItems item) {
 	init3DGame();
 	_engine->_text->initSceneTextBank();
 	_engine->_text->stopVox(_engine->_text->_currDialTextEntry);
-
-	_engine->_scene->_sceneHero->_animTimerData = tmpAnimTimer;
 	_engine->_interface->unsetClip();
 }
 
