@@ -59,6 +59,7 @@
 #include "qdengine/minigames/3mice2_testo.h"
 #include "qdengine/minigames/3mice2_plate.h"
 #include "qdengine/minigames/3mice2_raskr1.h"
+#include "qdengine/minigames/3mice2_babochka.h"
 
 namespace QDEngine {
 
@@ -355,7 +356,9 @@ bool qdMiniGame::load_interface() {
 		} else if (_dll_name == "DLL\\3Mice2_raskr1.dll") {
 			_interface = new qd3mice2Raskr1MiniGame();
 			return true;
-		// 3Mice2_babochka.dll
+		} else if (_dll_name == "DLL\\3Mice2_babochka.dll") {
+			_interface = new qd3mice2BabochkaMiniGame();
+			return true;
 		// 3Mice2_raskr1.dll
 		// 3Mice2_raskr2.dll
 		// 3Mice2_raskr3.dll
