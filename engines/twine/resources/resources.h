@@ -169,7 +169,7 @@ public:
 	uint32 _spriteSizeTable[NUM_SPRITES]{0};
 	SpriteData _spriteData[NUM_SPRITES];
 
-	AnimData _animData[NUM_ANIMS];
+	AnimData _animData[NUM_ANIMS]; // HQR_Anims
 
 	/** Table with all loaded samples */
 	uint8 *_samplesTable[NUM_SAMPLES]{nullptr};

@@ -1117,6 +1117,14 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			_scriptLife->doLife(a);
 		}
 
+		if (_debugState->_playFoundItemAnimation) {
+			_debugState->_playFoundItemAnimation = false;
+			LifeScriptContext fakeCtx(0, _scene->_sceneHero);
+			fakeCtx.stream.writeByte(InventoryItems::kiHolomap);
+			fakeCtx.stream.seek(0);
+			_scriptLife->lFOUND_OBJECT(this, fakeCtx);
+		}
+
 		processActorSamplePosition(a);
 
 		if (_sceneLoopState != SceneLoopState::Continue) {

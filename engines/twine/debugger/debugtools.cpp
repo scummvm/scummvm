@@ -826,6 +826,14 @@ static void debuggerMenu(TwinEEngine *engine) {
 			actor->_posObj = engine->_grid->_worldCube;
 			actor->_posObj.y += 1000;
 		}
+
+		if (ImGui::BeginMenu("Animations")) {
+			if (ImGui::MenuItem("Found item")) {
+				engine->_debugState->_playFoundItemAnimation = true;
+			}
+			ImGui::EndMenu();
+		}
+
 		if (ImGui::BeginMenu("Palettes")) {
 			LifeScriptContext fakeCtx(0, engine->_scene->_sceneHero);
 			if (ImGui::MenuItem("Show palette")) {

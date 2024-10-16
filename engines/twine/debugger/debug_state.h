@@ -95,6 +95,7 @@ public:
 	bool _loggerWindow = false;
 	bool _frameTimeWindow = false;
 	bool _frameDataRecording = true;
+	bool _playFoundItemAnimation = false;
 
 	bool _useFreeCamera = false;
 	bool _disableGridRendering = false;

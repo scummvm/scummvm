@@ -349,12 +349,12 @@ void GameState::doFoundObj(InventoryItems item) {
 	_engine->_renderer->renderIsoModel(bodyPos, LBAAngles::ANGLE_0, LBAAngles::ANGLE_45, LBAAngles::ANGLE_0, bodyData, modelRect);
 	_engine->_interface->setClip(modelRect);
 
-	const int32 itemX = (_engine->_scene->_sceneHero->_posObj.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
+	const int32 itemX = (_engine->_scene->_sceneHero->_posObj.x + DEMI_BRICK_XZ) / SIZE_BRICK_XZ;
 	int32 itemY = _engine->_scene->_sceneHero->_posObj.y / SIZE_BRICK_Y;
 	if (_engine->_scene->_sceneHero->brickShape() != ShapeType::kNone) {
 		itemY++;
 	}
-	const int32 itemZ = (_engine->_scene->_sceneHero->_posObj.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
+	const int32 itemZ = (_engine->_scene->_sceneHero->_posObj.z + DEMI_BRICK_XZ) / SIZE_BRICK_XZ;
 
 	_engine->_grid->drawOverBrick(itemX, itemY, itemZ);
 
@@ -380,7 +380,7 @@ void GameState::doFoundObj(InventoryItems item) {
 
 	_engine->_text->initVoxToPlayTextId((TextId)item);
 
-	const int32 bodyAnimIdx = _engine->_animations->searchAnim(AnimationTypes::kFoundItem);
+	const int32 bodyAnimIdx = _engine->_animations->searchAnim(AnimationTypes::kFoundItem, OWN_ACTOR_SCENE_INDEX);
 	const AnimData &currentAnimData = _engine->_resources->_animData[bodyAnimIdx];
 
 	AnimTimerDataStruct tmpAnimTimer = _engine->_scene->_sceneHero->_animTimerData;
