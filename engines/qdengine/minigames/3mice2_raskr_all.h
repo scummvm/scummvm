@@ -29,7 +29,7 @@
 
 namespace QDEngine {
 
-const int zoneCountInit[] = {
+const int zoneCountInit1[] = {
 	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
 	22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 64, 89, 90, 91,
 	92, 93, 94, 96, 97, 98, 99, 129, 130, 132, 134, 135, 136, 138, 139, 140, 141,
@@ -39,10 +39,10 @@ const int zoneCountInit[] = {
 	216, 217, 218, 219, 220, 221, 222, 223, 225, 226, 227, 229, 230, 231, 232, 234,
 	242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 254, 255, 260, 261, 263,
 	265, 267, 268, 271, 272, 273, 274, 280, 283, 284, 287, 288, 289, 290, 292, 294,
-	296, 308, 309,
+	296, 308, 309, 0
 };
 
-const int colorRegions[] = {
+const int colorRegions1[] = {
 	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
 	27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 89, 308, 309, 311, 0,
 
@@ -119,7 +119,7 @@ const int colorRegions[] = {
 
 class qd3mice2RaskrAllMiniGame : public qdMiniGameInterface {
 public:
-	qd3mice2RaskrAllMiniGame() {}
+	qd3mice2RaskrAllMiniGame(int gameNum) : _gameNum(gameNum) {}
 	~qd3mice2RaskrAllMiniGame() {}
 
 	bool init(const qdEngineInterface *engine_interface) {
@@ -130,12 +130,22 @@ public:
 		if (!_scene)
 			return false;
 
-		for (int i = 1; i <= 311; i++) {
+		const int *zoneCountInit = nullptr;
+
+		if (_gameNum == 1) {
+			_numZones = 311;
+			_colorRegions = colorRegions1;
+			_colorRegionsSize = ARRAYSIZE(colorRegions1);
+
+			zoneCountInit = zoneCountInit1;
+		}
+
+		for (int i = 1; i <= _numZones; i++) {
 			_zones[i] = _scene->object_interface(Common::String::format("zone@%i#", i).c_str());
 			_zoneCount[i] = true;
 		}
 
-		for (int i = 0; i < ARRAYSIZE(zoneCountInit); i++)
+		for (int i = 0; zoneCountInit[i] != 0; i++)
 			_zoneCount[zoneCountInit[i]] = false;
 
 		_objColor = _scene->object_interface("$color");
@@ -144,7 +154,7 @@ public:
 		_objDone = _scene->object_interface("$done");
 
 		if (_objLoaded->is_state_active("no")) {
-			for (int i = 1; i <= 311; i++)
+			for (int i = 1; i <= _numZones; i++)
 				_zones[i]->set_shadow(0xFEFEFF, 0);
 
 			_objColorSel->set_state("!\xEC\xE0\xF1\xEA\xE0"); // "!маска"
@@ -189,21 +199,21 @@ public:
 				int num = getObjNum(name);
 
 				int start = 0;
-				for (int i = 0; i < ARRAYSIZE(colorRegions); i++) {
-					if (colorRegions[i] == 0) {
+				for (int i = 0; i < _colorRegionsSize; i++) {
+					if (_colorRegions[i] == 0) {
 						start = i + 1;
 						continue;
 					}
 
-					if (colorRegions[i] == num)
+					if (_colorRegions[i] == num)
 						break;
 				}
 
 				debugC(2, kDebugMinigames, "zone: %d", num);
 
-				if (start < ARRAYSIZE(colorRegions)) {
-					for (int i = start; colorRegions[i] != 0; i++)
-						_zones[colorRegions[i]]->set_shadow(_objColor->shadow_color(), _objColor->shadow_alpha());
+				if (start < _colorRegionsSize) {
+					for (int i = start; _colorRegions[i] != 0; i++)
+						_zones[_colorRegions[i]]->set_shadow(_objColor->shadow_color(), _objColor->shadow_alpha());
 				} else {
 					_zones[num]->set_shadow(_objColor->shadow_color(), _objColor->shadow_alpha());
 				}
@@ -246,7 +256,7 @@ private:
 	bool checkSolution() {
 		int count = 0;
 
-		for (int i = 1; i < 312; i++) {
+		for (int i = 1; i <= _numZones; i++) {
 			if (_zones[i]->shadow_color() != 0)
 				if (_zoneCount[i])
 					count++;
@@ -278,8 +288,14 @@ private:
 	qdMinigameObjectInterface *_objDone = nullptr;
 
 	bool _zoneCount[312] = { false };
+	int _numZones = 0;
 
 	float _timePassed = 0;
+
+	int _gameNum = 0;
+
+	const int *_colorRegions;
+	int _colorRegionsSize = 0;
 };
 
 } // namespace QDEngine
