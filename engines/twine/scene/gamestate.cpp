@@ -465,7 +465,6 @@ void GameState::doFoundObj(InventoryItems item) {
 	init3DGame();
 	_engine->_text->initSceneTextBank();
 	_engine->_text->stopVox(_engine->_text->_currDialTextEntry);
-	_engine->_interface->unsetClip();
 }
 
 void GameState::gameAskChoice(TextId choiceIdx) {
