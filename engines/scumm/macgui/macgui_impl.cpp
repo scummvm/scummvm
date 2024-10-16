@@ -1476,14 +1476,29 @@ void MacGuiImpl::readStrings() {
 	int parsingTableSize = 0;
 
 	if (_vm->_game.id == GID_INDY3) {
-		parsingTable = strsIndy3Table;
-		parsingTableSize = ARRAYSIZE(strsIndy3Table);
+		switch (strsLen) {
+		case 2950:
+			// 1.7 8/17/90
+			parsingTable = strsIndy3Table;
+			parsingTableSize = ARRAYSIZE(strsIndy3Table);
+			break;
+		}
 	} else if (_vm->_game.id == GID_LOOM) {
-		parsingTable = strsLoomTable;
-		parsingTableSize = ARRAYSIZE(strsLoomTable);
+		switch (strsLen) {
+		case 3184:
+			// 1.2 25-JAN-91
+			parsingTable = strsLoomTable;
+			parsingTableSize = ARRAYSIZE(strsLoomTable);
+			break;
+		}
 	} else if (_vm->_game.id == GID_MONKEY) {
-		parsingTable = strsMI1Table;
-		parsingTableSize = ARRAYSIZE(strsMI1Table);
+		switch (strsLen) {
+		case 5986:
+			// version 2.4
+			parsingTable = strsMI1Table;
+			parsingTableSize = ARRAYSIZE(strsMI1Table);
+			break;
+		}
 	} else if (_vm->_game.id == GID_MONKEY2) {
 		switch (strsLen) {
 		case 6602:
@@ -1508,19 +1523,19 @@ void MacGuiImpl::readStrings() {
 			parsingTableSize = ARRAYSIZE(strsIndy4FloppyVariant2Table);
 			break;
 		case 6836: // CD
+			// V1.0 10-9-92
 			parsingTable = strsIndy4CDVariant1Table;
 			parsingTableSize = ARRAYSIZE(strsIndy4CDVariant1Table);
 			break;
-		default:
-			warning("MacGuiImpl::readStrings(): String parsing table not defined for this variant of the game; STRS resource %d bytes", strsLen);
-			break;
 		}
-
 	} else {
 		error("MacGuiImpl::readStrings(): String parsing table not defined for this game");
 	}
 
-	parseSTRSBlock(strsData, parsingTable, parsingTableSize);
+	if (parsingTable)
+		parseSTRSBlock(strsData, parsingTable, parsingTableSize);
+	else
+		warning("MacGuiImpl::readStrings(): String parsing table not defined for this variant of the game; STRS resource %d bytes", strsLen);
 
 	free(strsBlock);
 	delete strsStream;
