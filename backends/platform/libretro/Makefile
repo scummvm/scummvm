@@ -586,31 +586,124 @@ else
 endif
 endif
 
+######################################################################
+# Dependencies
+######################################################################
+
+libdeps_libretro_common.a: $(OBJS_DEPS_LIBRETRO_COMMON)
+	@echo Linking $@...
+	$(HIDE)$(AR) $@ $^
+LIBDEPS_ARCHIVES = libdeps_libretro_common.a
+
+ifeq ($(USE_FLUIDSYNTH), 1)
+libdeps_fluidsynth.a: $(OBJS_DEPS_FLUIDSYNTH)
+	@echo Linking $@...
+	$(HIDE)$(AR) $@ $^
+LIBDEPS_ARCHIVES += libdeps_fluidsynth.a
+endif
+
+ifeq ($(USE_FLAC), 1)
+libdeps_libflac.a: $(OBJS_DEPS_LIBFLAC)
+	@echo Linking $@...
+	$(HIDE)$(AR) $@ $^
+LIBDEPS_ARCHIVES += libdeps_libflac.a
+endif
+
+ifeq ($(USE_VORBIS), 1)
+libdeps_libvorbis.a: $(OBJS_DEPS_LIBVORBIS)
+	@echo Linking $@...
+	$(HIDE)$(AR) $@ $^
+LIBDEPS_ARCHIVES += libdeps_libvorbis.a
+endif
+
+ifeq ($(USE_TREMOR), 1)
+libdeps_tremor.a: $(OBJS_DEPS_TREMOR)
+	@echo Linking $@...
+	$(HIDE)$(AR) $@ $^
+LIBDEPS_ARCHIVES += libdeps_tremor.a
+endif
+
+ifeq ($(USE_ZLIB), 1)
+libdeps_libz.a: $(OBJS_DEPS_LIBZ)
+	@echo Linking $@...
+	$(HIDE)$(AR) $@ $^
+LIBDEPS_ARCHIVES += libdeps_libz.a
+endif
+
+ifeq ($(USE_MAD), 1)
+libdeps_libmad.a: $(OBJS_DEPS_LIBMAD)
+	@echo Linking $@...
+	$(HIDE)$(AR) $@ $^
+LIBDEPS_ARCHIVES += libdeps_libmad.a
+endif
+
+ifeq ($(USE_FAAD), 1)
+libdeps_faad.a: $(OBJS_DEPS_FAAD)
+	@echo Linking $@...
+	$(HIDE)$(AR) $@ $^
+LIBDEPS_ARCHIVES += libdeps_faad.a
+endif
+
+ifeq ($(USE_PNG), 1)
+libdeps_png.a: $(OBJS_DEPS_PNG)
+	@echo Linking $@...
+	$(HIDE)$(AR) $@ $^
+LIBDEPS_ARCHIVES += libdeps_png.a
+endif
+
+ifeq ($(USE_JPEG), 1)
+libdeps_jpeg.a: $(OBJS_DEPS_JPEG)
+	@echo Linking $@...
+	$(HIDE)$(AR) $@ $^
+LIBDEPS_ARCHIVES += libdeps_jpeg.a
+endif
+
+ifeq ($(USE_THEORADEC), 1)
+libdeps_theora.a: $(OBJS_DEPS_THEORA)
+	@echo Linking $@...
+	$(HIDE)$(AR) $@ $^
+LIBDEPS_ARCHIVES += libdeps_theora.a
+endif
+
+ifeq ($(USE_FREETYPE2), 1)
+libdeps_freetype.a: $(OBJS_DEPS_FREETYPE)
+	@echo Linking $@...
+	$(HIDE)$(AR) $@ $^
+LIBDEPS_ARCHIVES += libdeps_freetype.a
+endif
+
+ifeq ($(USE_FRIBIDI), 1)
+libdeps_fribidi.a: $(OBJS_DEPS_FRIBIDI)
+	@echo Linking $@...
+	$(HIDE)$(AR) $@ $^
+LIBDEPS_ARCHIVES += libdeps_fribidi.a
+endif
+
+######################################################################
+# Platform libraries
+######################################################################
+
 ifneq (,$(filter $(platform), wiiu emscripten))
-$(TARGET): $(OBJS) libdeps.a libdetect.a
+$(TARGET): $(OBJS) $(LIBDEPS_ARCHIVES) libdetect.a
 	$(MKDIR) libtemp
 	$(CP) $+ libtemp/
 	$(AR_ALONE) -M < $(ROOT_PATH)/script.mri
 else ifeq ($(platform), libnx)
-$(TARGET): libnx-ln $(OBJS) libdeps.a libdetect.a
+$(TARGET): libnx-ln $(OBJS) $(LIBDEPS_ARCHIVES) libdetect.a
 	$(MKDIR) libtemp
 	cp $+ libtemp/
 	$(AR) -M < $(ROOT_PATH)/script.mri
 else ifeq ($(STATIC_LINKING), 1)
-$(TARGET): $(OBJS) libdeps.a libdetect.a
+$(TARGET): $(OBJS) $(LIBDEPS_ARCHIVES) libdetect.a
 	$(MKDIR) libtemp
 	$(CP) $+ libtemp/
 	@echo Linking $@...
 	$(AR) -M < $(ROOT_PATH)/script.mri
 else
-$(TARGET): $(DETECT_OBJS) $(OBJS) libdeps.a
+$(TARGET): $(DETECT_OBJS) $(OBJS) $(LIBDEPS_ARCHIVES)
 	@echo Linking $@...
 	$(HIDE)$(LD) $(LDFLAGS) $+ $(LIBS) $(LINKOUT)$@
 endif
-
-libdeps.a: $(OBJS_DEPS)
-	@echo Linking $@...
-	$(HIDE)$(AR) $@ $^
 
 libdetect.a: $(DETECT_OBJS)
 	@echo Linking $@...
@@ -636,7 +729,7 @@ libdetect.a: $(DETECT_OBJS)
 clean:
 	@echo Cleaning project...
 	$(HIDE)$(RM_REC) $(DEPDIRS) $(DEPS_PATH)
-	$(HIDE)$(RM) $(OBJS) $(DETECT_OBJS) $(OBJS_DEPS) libdeps.a libdetect.a $(TARGET) *.a
+	$(HIDE)$(RM) $(OBJS) $(DETECT_OBJS) $(OBJS_DEPS) $(LIBDEPS_ARCHIVES) libdetect.a $(TARGET) *.a
 	$(HIDE)$(RM_REC) libtemp $(MODULES)
 	$(HIDE)$(RM) libnx-ln
 	$(HIDE)$(RM) scummvm.zip  $(TARGET_NAME)_libretro.* script.mri config.mk.engines.lite ScummVM.dat
