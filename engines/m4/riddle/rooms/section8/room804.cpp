@@ -47,9 +47,9 @@ int32 Room804::subCE498(int32 val1) {
 	return -1;
 }
 
-void Room804::subD7916(machine *machine, int32 val1) {
-	int32 num = val1;
-	if (val1 == 0)
+void Room804::subD7916(machine *machine, int32 trigger) {
+	int32 num = trigger;
+	if (trigger == 0)
 		num = -1;
 
 	_G(globals)[GLB_TEMP_4] = kernel_trigger_create(num);
@@ -384,7 +384,7 @@ void Room804::parser() {
 			|| scumm_strnicmp(_G(player).noun, "3rd", 3) == 0 || scumm_strnicmp(_G(player).noun, "4th", 3) == 0
 			|| scumm_strnicmp(_G(player).noun, "5th", 3) == 0 || scumm_strnicmp(_G(player).noun, "6th", 3) == 0
 			|| scumm_strnicmp(_G(player).noun, "7th", 3) == 0) {
-			_field64 = _G(player).noun[0] - 0x30; // Thus a number between 1 and 7
+			_coordArrayId = _G(player).noun[0] - 0x30; // Thus a number between 1 and 7
 			_G(kernel).trigger_mode = KT_DAEMON;
 			kernel_trigger_dispatchx(kernel_trigger_create(15));
 		}
@@ -465,23 +465,268 @@ void Room804::parser() {
 		else if (player_said("fallen soldier") || player_said("fallen horse")) {
 			switch (_G(kernel).trigger) {
 			case -1:
+				player_set_commands_allowed(false);
+				player_update_info(_G(my_walker), &_G(player_info));
+				_savedPlayerInfoFacing = _G(player_info).facing;
+				_rptldSerie = series_load("rptld1a", -1, nullptr);
+				setGlobals3(_rptldSerie, 1, 6);
+				subD7916(_G(my_walker), 10);
+
+				break;
+
 			case 10:
+				if (player_said("fallen soldier"))
+					digi_play("com062", 1, 255, 20, 997);
+				else
+					digi_play("814r18", 1, 255, 20, -1);
+
+				break;
+
 			case 20:
+				setGlobals3(_rptldSerie, 6, 1);
+				subD7916(_G(my_walker), 30);
+				break;
+
 			case 30:
+				player_set_commands_allowed(true);
+				series_unload(_rptldSerie);
+				ws_demand_facing(_G(my_walker), _savedPlayerInfoFacing);
 				break;
 
 			default:
 				break;
-
 			}
 		} // player_said("fallen soldier") || player_said("fallen horse")
+
+		else if (player_said("mural"))
+			digi_play("com064", 1, 255, -1, 997);
+
+		else if (player_said("chariot") || player_said("chariot "))
+			digi_play("com063", 1, 255, -1, 997);
+
+		else if (player_said("horse"))
+			digi_play("com101", 1, 255, -1, 997);
+
+		else if (scumm_strnicmp(_G(player).noun, "mei chen", 8) == 0) {
+			if (_G(kernel).trigger == -1) {
+				player_update_info(_G(my_walker), &_G(player_info));
+				_savedPlayerInfoFacing = _G(player_info).facing;
+				_savedPlayerInfoX = _G(player_info).x;
+				_savedPlayerInfoY = _G(player_info).y;
+				player_update_info(_mcTrekMach, &_G(player_info));
+				if (_G(player_info).x >= _savedPlayerInfoX) {
+					if (_G(player_info).x - _savedPlayerInfoX <= 30)
+						ws_walk(_G(my_walker), _savedPlayerInfoX, _savedPlayerInfoY, nullptr, 10, 5, true);
+					else
+						ws_walk(_G(my_walker), _savedPlayerInfoX, _savedPlayerInfoY, nullptr, 10, 4, true);
+				} else {
+					if (_savedPlayerInfoX - _G(player_info).x <= 30)
+						ws_walk(_G(my_walker), _savedPlayerInfoX, _savedPlayerInfoY, nullptr, 10, 7, true);
+					else
+						ws_walk(_G(my_walker), _savedPlayerInfoX, _savedPlayerInfoY, nullptr, 10, 8, true);
+				}
+
+			} else if (_G(kernel).trigger == 10) {
+				digi_play("COM043", 1, 255, -1, 997);
+			}
+
+		} // if (player_said("horse") && scumm_strnicmp(_G(player).noun, "mei chen", 8) == 0)
+
+		else if (player_said("soldier") || player_said("soldier "))
+		// The original has two separate checks with the same underlying code => merged
+			digi_play("com074", 1, 255, -1, 997);
+
+		else
+			_G(player).command_ready = true;
 
 		break; // caty case 1
 
 	case 2:
+		if (player_said("chariot")) {
+			switch (_currentRoom) {
+			case 834:
+				digi_play("834r15", 1, 255, -1, -1);
+				break;
+
+			case 844:
+				digi_play("814r21", 1, 255, -1, -1);
+				break;
+
+			default:
+				digi_play("804r20", 1, 255, -1, -1);
+				break;
+			}
+		} // if (player_said("chariot"))
+
+		else if (player_said("chariot "))
+			digi_play("814r21", 1, 255, -1, -1);
+
+		else if (player_said("horse") || player_said("fallen horse"))
+			// The original has two separate checks with the same underlying code => merged
+			digi_play("com065", 1, 255, -1, 997);
+
+		else if (player_said("soldier") || player_said("soldier "))
+			// The original has two separate checks with the same underlying code => merged
+			digi_play("com066", 1, 255, -1, 997);
+
+		else if (player_said("lit urn"))
+			digi_play("com067", 1, 255, -1, 997);
+
+		else if (player_said("unlit urn"))
+			digi_play("com068", 1, 255, -1, 997);
+
+		else if (player_said("wooden beam")) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				if (inv_object_in_scene("wooden beam", 844)) {
+					player_set_commands_allowed(false);
+					_ripTrekLowReach = series_load("RIP TREK LOW REACH POS2", -1, nullptr);
+					setGlobals3(_ripTrekLowReach, 1, 16);
+					subD7916(_G(my_walker), 10);
+				} else
+					_G(player).command_ready = true;
+
+				break;
+
+			case 10:
+				inv_give_to_player("WOODEN BEAM");
+				kernel_examine_inventory_object("PING WOODEN BEAM", _G(master_palette), 5, 1, 410, 250, 20, nullptr, -1);
+
+				break;
+
+			case 20:
+				terminateMachine(_unkMach3);
+				setGlobals3(_ripTrekLowReach, 16, 1);
+				subD7916(_G(my_walker), 30);
+				digi_play("844r22", 1, 255, -1, -1);
+
+				break;
+
+			case 30:
+				player_set_commands_allowed(true);
+				series_unload(_ripTrekLowReach);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "wooden beam", false);
+				ws_demand_facing(_G(my_walker), 2);
+
+				break;
+
+			default:
+				break;
+			}
+		} // if (player_said("wooden beam"))
+
+		break; // caty case 2
+
 	case 3:
-	case 4:
+		if (scumm_strnicmp(_G(player).noun, "mei chen", 8) == 0) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				_ripTakerPos5 = series_load("RIP TALKER POS 5", -1, nullptr);
+				setGlobals1(_ripTakerPos5, 1, 4, 1, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_G(my_walker), -1);
+				_savedRandom = imath_ranged_rand(1, 4);
+				switch (_savedRandom) {
+				case 1:
+					digi_play("com044", 1, 255, 10, 997);
+					break;
+
+				case 2:
+					digi_play("com045", 1, 255, 10, 997);
+					break;
+
+				case 3:
+					digi_play("com046", 1, 255, 10, 997);
+					break;
+
+				default:
+					digi_play("com047", 1, 255, 10, 997);
+					break;
+				}
+
+				break;
+
+			case 10:
+				player_set_commands_allowed(true);
+				sendWSMessage_150000(_G(my_walker), -1);
+				series_unload(_ripTakerPos5);
+				_savedRandom = imath_ranged_rand(1, 4);
+				switch (_savedRandom) {
+				case 1:
+					digi_play("com048", 1, 255, -1, 997);
+					break;
+
+				case 2:
+					digi_play("com049", 1, 255, -1, 997);
+					break;
+
+				case 3:
+					digi_play("com050", 1, 255, -1, 997);
+					break;
+
+				default:
+					digi_play("com051", 1, 255, -1, 997);
+					break;
+				}
+
+				break;
+
+			default:
+				break;
+			}
+		} // if (scumm_strnicmp(_G(player).noun, "mei chen", 8) == 0)
+
+		else
+			_G(player).command_ready = true;
+
+		break; // caty case 3
+
 	case 5:
+		switch (_G(kernel).trigger) {
+		case -1:
+			if (player_said("west")) {
+				_savedNextRoom = 803;
+				if (_currentRoom == 804 || _currentRoom == 814 || _currentRoom == 844)
+					ws_walk(_G(my_walker), -10, 325, nullptr, 10, 3, true);
+				else if (_currentRoom == 824)
+					ws_walk(_G(my_walker), -10, 328, nullptr, 10, 3, true);
+				else if (_currentRoom == 834)
+					ws_walk(_G(my_walker), -10, 330, nullptr, 10, 3, true);
+			} else {
+				_savedNextRoom = 805;
+				if (_currentRoom == 804 || _currentRoom == 814 || _currentRoom == 844)
+					ws_walk(_G(my_walker), 1925, 325, nullptr, 10, 3, true);
+				else if (_currentRoom == 824)
+					ws_walk(_G(my_walker), 1925, 328, nullptr, 10, 3, true);
+				else if (_currentRoom == 834)
+					ws_walk(_G(my_walker), 1925, 330, nullptr, 10, 3, true);
+			}
+
+			break;
+
+		case 10:
+			player_set_commands_allowed(false);
+			if (_G(flags)[V276] == 0) {
+				setGlobals3(_meiHandsBehindBack, 17, 1);
+				subD7916(_mcTrekMach, -1);
+			}
+			disable_player_commands_and_fade_init(20);
+
+			break;
+
+		case 20:
+			_G(game).new_room = _savedNextRoom;
+			adv_kill_digi_between_rooms(false);
+			digi_preload("950_s29", -1);
+			digi_play_loop("950_s29", 3, 255, -1, -1);
+
+			break;
+		default:
+			break;
+		}
+
+		break; // caty case 5
+
 	default:
 		break;
 	}
@@ -710,23 +955,23 @@ void Room804::daemon() {
 	case 15:
 		switch (_currentRoom) {
 		case 804:
-			ws_walk(_G(my_walker), _dword1948BC[_field64], 321, nullptr, 16, 3, true);
+			ws_walk(_G(my_walker), _dword1948BC[_coordArrayId], 321, nullptr, 16, 3, true);
 			break;
 
 		case 814:
-			ws_walk(_G(my_walker), _dword1948D8[_field64], 321, nullptr, 16, 3, true);
+			ws_walk(_G(my_walker), _dword1948D8[_coordArrayId], 321, nullptr, 16, 3, true);
 			break;
 
 		case 824:
-			ws_walk(_G(my_walker), _dword1948F4[_field64], 321, nullptr, 16, 3, true);
+			ws_walk(_G(my_walker), _dword1948F4[_coordArrayId], 321, nullptr, 16, 3, true);
 			break;
 
 		case 834:
-			ws_walk(_G(my_walker), _dword194910[_field64], 321, nullptr, 16, 3, true);
+			ws_walk(_G(my_walker), _dword194910[_coordArrayId], 321, nullptr, 16, 3, true);
 			break;
 
 		case 844:
-			ws_walk(_G(my_walker), _dword19492C[_field64], 321, nullptr, 16, 3, true);
+			ws_walk(_G(my_walker), _dword19492C[_coordArrayId], 321, nullptr, 16, 3, true);
 			break;
 
 		default:
@@ -737,15 +982,15 @@ void Room804::daemon() {
 	case 16: {
 		player_set_commands_allowed(false);
 		ws_hide_walker(_G(my_walker));
-		int32 retVal = subCE498(_field64);
+		int32 retVal = subCE498(_coordArrayId);
 		if (retVal > 0) {
 			terminateMachine(_machArr[retVal]);
 			_machArr[retVal] = nullptr;
 		}
 
-		getSeriesName(_field64, true);
+		getSeriesName(_coordArrayId, true);
 		_dynSerie1 = series_load(_currentSeriesName.c_str(), -1, nullptr);
-		retVal = subCE52E(_field64);
+		retVal = subCE52E(_coordArrayId);
 		switch (retVal) {
 		case 1:
 			_dynSerie1Mach = series_play(_currentSeriesName.c_str(), 766, 0, 18, 5, 0, 100, 0, 0, 0, 9);
@@ -774,7 +1019,7 @@ void Room804::daemon() {
 		break;
 
 	case 19:
-		if (subCE498(_field64) < 0) {
+		if (subCE498(_coordArrayId) < 0) {
 			kernel_timing_trigger(120, 20, nullptr);
 			digi_play("950_s32", 2, 255, -1, -1);
 		} else {
@@ -785,7 +1030,7 @@ void Room804::daemon() {
 	case 20:
 		terminateMachine(_dynSerie1Mach);
 		series_play(_currentSeriesName.c_str(), 766, 2, 21, 5, 0, 100, 0, 0, 0, -1);
-		switch (subCE52E(_field64)) {
+		switch (subCE52E(_coordArrayId)) {
 		case 1:
 			_G(flags)[V271] = 0;
 			_G(flags)[V272] = 0;
@@ -812,11 +1057,11 @@ void Room804::daemon() {
 		series_unload(_dynSerie1);
 		ws_unhide_walker(_G(my_walker));
 		ws_demand_facing(_G(my_walker), 3);
-		int32 retVal = subCE498(_field64);
+		int32 retVal = subCE498(_coordArrayId);
 		if (retVal < 0) {
 			digi_play("com066", 1, 255, -1, 997);
 		} else {
-			getSeriesName(_field64, false);
+			getSeriesName(_coordArrayId, false);
 			_machArr[retVal] = series_play(_currentSeriesName.c_str(), 768, 16, -1, 0, 0, 100, 0, 0, 0, -1);
 		}
 		}

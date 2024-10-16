@@ -40,12 +40,12 @@ public:
 
 private:
 	int32 _byte1A19BC = 0;
-	int32 _field64 = 0;
 	int32 _field68 = 0;
 	int32 _field70 = 0;
 	int32 _unkArray[8];
 
 	int32 _case7RandVal = 0;
+	int32 _coordArrayId = 0;
 	int32 _counter1 = 0;
 	int32 _currentRoom = 0;
 	int32 _dynSerie1 = 0;
@@ -56,6 +56,14 @@ private:
 	int32 _meiHandsBehindBack = 0;
 	int32 _ripAttemptsPush = 0;
 	int32 _ripLooksAround = 0;
+	int32 _ripTakerPos5 = 0;
+	int32 _ripTrekLowReach = 0;
+	int32 _rptldSerie = 0;
+	int32 _savedNextRoom = 0;
+	int32 _savedPlayerInfoFacing = 0;
+	int32 _savedPlayerInfoX = 0;
+	int32 _savedPlayerInfoY = 0;
+	int32 _savedRandom = 0;
 	int32 _unkSerie1 = 0;
 	int32 _unkSerie2 = 0;
 	int32 _var1 = 0;
@@ -73,9 +81,10 @@ private:
 	machine *_ripPushMach = nullptr;
 	machine *_unkMach1 = nullptr;
 	machine *_unkMach2 = nullptr;
+	machine *_unkMach3 = nullptr;
 
 	int32 subCE498(int32 val1);
-	void subD7916(machine *machine, int32 val1);
+	void subD7916(machine *machine, int32 trigger);
 	int32 subCE52E(int32 val1);
 	void moveScreen(int32 dx, int32 dy);
 	void getSeriesName(int32 val1, bool true_or_False);
