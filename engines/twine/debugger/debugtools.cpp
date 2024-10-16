@@ -448,11 +448,11 @@ static void sceneDetailsWindows(TwinEEngine *engine) {
 		ImGuiEx::InputInt("Currently followed actor", &scene->_numObjFollow);
 
 		ImGui::Checkbox("Enable enhancements", &scene->_enableEnhancements);
-		ImGui::Checkbox("Render grid tiles", &scene->_enableGridTileRendering);
+		ImGui::Checkbox("Render grid tiles", &scene->_flagRenderGrid);
 		ImGuiEx::InputInt("Current script value", &scene->_currentScriptValue);
 		ImGuiEx::InputInt("Talking actor", &scene->_talkingActor);
 		ImGuiEx::InputInt("Cube jingle", &scene->_cubeJingle);
-		ImGuiEx::InputIVec3("New hero pos", scene->_newHeroPos);
+		ImGuiEx::InputIVec3("New hero pos", scene->_sceneStart);
 		ImGuiEx::InputInt("Alpha light", &scene->_alphaLight);
 		ImGuiEx::InputInt("Beta light", &scene->_betaLight);
 		ImGuiEx::InputInt("Fall Y position", &scene->_startYFalling);

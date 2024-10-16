@@ -111,9 +111,9 @@ void GameState::initEngineVars() {
 	initGameStateVars();
 	initHeroVars();
 
-	_engine->_scene->_newHeroPos.x = 16 * SIZE_BRICK_XZ;
-	_engine->_scene->_newHeroPos.y = 24 * SIZE_BRICK_Y;
-	_engine->_scene->_newHeroPos.z = 16 * SIZE_BRICK_XZ;
+	_engine->_scene->_sceneStart.x = 16 * SIZE_BRICK_XZ;
+	_engine->_scene->_sceneStart.y = 24 * SIZE_BRICK_Y;
+	_engine->_scene->_sceneStart.z = 16 * SIZE_BRICK_XZ;
 
 	_engine->_scene->_numCube = SCENE_CEILING_GRID_FADE_1;
 	_engine->_scene->_newCube = LBA1SceneId::Citadel_Island_Prison;
@@ -194,9 +194,9 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 	_magicLevelIdx = file->readByte();
 	setMagicPoints(file->readByte());
 	setLeafBoxes(file->readByte());
-	_engine->_scene->_newHeroPos.x = file->readSint16LE();
-	_engine->_scene->_newHeroPos.y = file->readSint16LE();
-	_engine->_scene->_newHeroPos.z = file->readSint16LE();
+	_engine->_scene->_sceneStart.x = file->readSint16LE();
+	_engine->_scene->_sceneStart.y = file->readSint16LE();
+	_engine->_scene->_sceneStart.z = file->readSint16LE();
 	_engine->_scene->_sceneHero->_beta = ToAngle(file->readSint16LE());
 	_engine->_actor->_previousHeroAngle = _engine->_scene->_sceneHero->_beta;
 	_engine->_scene->_sceneHero->_genBody = (BodyType)file->readByte();
@@ -266,9 +266,9 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->writeByte(_inventoryNumLeafsBox);
 	// we don't save the whole scene state - so we have to make sure that the hero is
 	// respawned at the start of the scene - and not at its current position
-	file->writeSint16LE(_engine->_scene->_newHeroPos.x);
-	file->writeSint16LE(_engine->_scene->_newHeroPos.y);
-	file->writeSint16LE(_engine->_scene->_newHeroPos.z);
+	file->writeSint16LE(_engine->_scene->_sceneStart.x);
+	file->writeSint16LE(_engine->_scene->_sceneStart.y);
+	file->writeSint16LE(_engine->_scene->_sceneStart.z);
 	file->writeSint16LE(FromAngle(_engine->_scene->_sceneHero->_beta));
 	file->writeByte((uint8)_engine->_scene->_sceneHero->_genBody);
 

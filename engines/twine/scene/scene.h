@@ -136,7 +136,7 @@ private:
 	bool _isOutsideScene = false; // lba2
 
 	/** Timer for the next sample ambience in scene */
-	int32 _sampleAmbienceTime = 0;
+	int32 _timerNextAmbiance = 0;
 	int16 _sampleAmbiance[4]{0};
 	int16 _sampleRepeat[4]{0};
 	int16 _sampleRound[4]{0};
@@ -150,8 +150,8 @@ private:
 public:
 	int16 _cubeJingle = 0;
 private:
-	IVec3 _sceneHeroPos;
-	IVec3 _zoneHeroPos;
+	IVec3 _sceneHeroPos; // CubeStartX, CubeStartY, CubeStartZ
+	IVec3 _zoneHeroPos; // NewPosX, NewPosY, NewPosZ
 
 	int32 _currentGameOverScene = 0;
 
@@ -180,7 +180,7 @@ public:
 	uint8 _currentCubeX = 0; // lba2
 	uint8 _currentCubeY = 0; // lba2
 
-	IVec3 _newHeroPos;
+	IVec3 _sceneStart;
 
 	/** Hero Y coordinate before fall */
 	int16 _startYFalling = 0;
@@ -209,7 +209,7 @@ public:
 	int32 _sceneNumTracks = 0;
 	IVec3 _sceneTracks[NUM_MAX_TRACKS];
 
-	bool _enableGridTileRendering = true;
+	bool _flagRenderGrid = true; // FlagAffGrille
 
 	uint8 _listFlagCube[NUM_SCENES_FLAGS]{0}; // ListVarCube
 

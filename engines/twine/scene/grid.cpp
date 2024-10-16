@@ -680,7 +680,7 @@ void Grid::redrawGrid() { // AffGrille
 
 	memset(_brickInfoBuffer, 0, _brickInfoBufferSize);
 
-	if (!_engine->_scene->_enableGridTileRendering) {
+	if (!_engine->_scene->_flagRenderGrid) {
 		return;
 	}
 

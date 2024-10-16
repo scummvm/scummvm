@@ -367,7 +367,7 @@ Common::Error TwinEEngine::run() {
 		}
 		case EngineState::LoadedGame:
 			debug("Loaded game");
-			if (_scene->_newHeroPos.x == -1) {
+			if (_scene->_sceneStart.x == -1) {
 				_scene->_flagChgCube = ScenePositionType::kNoPosition;
 			}
 			_text->_renderTextTriangle = false;
@@ -1166,7 +1166,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			if (IS_HERO(a)) {
 				if (actor->_workFlags.bAnimEnded) {
 					if (_gameState->_inventoryNumLeafs > 0) { // use clover leaf automaticaly
-						_scene->_sceneHero->_posObj = _scene->_newHeroPos;
+						_scene->_sceneHero->_posObj = _scene->_sceneStart;
 
 						_scene->_newCube = _scene->_numCube;
 						_gameState->setMaxMagicPoints();
@@ -1189,9 +1189,9 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 						actor->setLife(getMaxLife());
 
 						if (_scene->_oldcube != _scene->_numCube) {
-							_scene->_newHeroPos.x = -1;
-							_scene->_newHeroPos.y = -1;
-							_scene->_newHeroPos.z = -1;
+							_scene->_sceneStart.x = -1;
+							_scene->_sceneStart.y = -1;
+							_scene->_sceneStart.z = -1;
 							_scene->_numCube = _scene->_oldcube;
 							_scene->stopRunningGame();
 						}

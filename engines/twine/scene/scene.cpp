@@ -618,21 +618,20 @@ void Scene::changeCube() {
 
 	_engine->_text->initSceneTextBank();
 
-	debug(2, "Scene %i music track id: %i", _numCube, _cubeJingle);
 	if (_cubeJingle != 255) {
-		_engine->_music->playMusic(_cubeJingle);
+		// _engine->_music->fadeMusicMidi(1);
 	}
 
 	_engine->_grid->initGrid(_newCube);
 
 	if (_flagChgCube == ScenePositionType::kZone) {
-		_newHeroPos = _zoneHeroPos;
+		_sceneStart = _zoneHeroPos;
 	} else if (_flagChgCube == ScenePositionType::kScene || _flagChgCube == ScenePositionType::kNoPosition) {
-		_newHeroPos = _sceneHeroPos;
+		_sceneStart = _sceneHeroPos;
 	}
 
-	_sceneHero->_posObj = _newHeroPos;
-	_startYFalling = _newHeroPos.y;
+	_sceneHero->_posObj = _sceneStart;
+	_startYFalling = _sceneStart.y;
 
 	_engine->_renderer->setLightVector(_alphaLight, _betaLight, LBAAngles::ANGLE_0);
 
@@ -656,18 +655,24 @@ void Scene::changeCube() {
 	_engine->_grid->_cellingGridIdx = -1;
 	_engine->_redraw->_firstTime = true;
 	_engine->_cameraZone = false;
+	_newCube = SCENE_CEILING_GRID_FADE_1;
+	_flagChgCube = ScenePositionType::kNoPosition;
+	_flagRenderGrid = true;
+
+	_samplePlayed = 2 * 4 * 8;
+	_timerNextAmbiance = 0;
 
 	ActorStruct *followedActor = getActor(_numObjFollow);
 	_engine->_grid->centerOnActor(followedActor);
 
-	_engine->_screens->_flagFade = true;
 	_engine->_renderer->setLightVector(_alphaLight, _betaLight, LBAAngles::ANGLE_0);
 
-	_newCube = SCENE_CEILING_GRID_FADE_1;
-	_enableGridTileRendering = true;
-	_flagChgCube = ScenePositionType::kNoPosition;
 	_zoneHeroPos = IVec3();
-	_sampleAmbienceTime = 0;
+
+	debug(2, "Scene %i music track id: %i", _numCube, _cubeJingle);
+	if (_cubeJingle != 255) {
+		_engine->_music->playMusic(_cubeJingle);
+	}
 
 	_engine->_gameState->handleLateGameItems();
 }
@@ -715,7 +720,7 @@ void Scene::playSceneMusic() {
 }
 
 void Scene::processEnvironmentSound() {
-	if (_engine->timerRef < _sampleAmbienceTime) {
+	if (_engine->timerRef < _timerNextAmbiance) {
 		return;
 	}
 	int16 currentAmb = _engine->getRandomNumber(4); // random ambiance
@@ -743,7 +748,7 @@ void Scene::processEnvironmentSound() {
 	}
 
 	// compute next ambiance timer
-	_sampleAmbienceTime = _engine->timerRef + _engine->toSeconds(_engine->getRandomNumber(_sampleMinDelayRnd) + _sampleMinDelay);
+	_timerNextAmbiance = _engine->timerRef + _engine->toSeconds(_engine->getRandomNumber(_sampleMinDelayRnd) + _sampleMinDelay);
 }
 
 void Scene::processZoneExtraBonus(ZoneStruct *zone) {

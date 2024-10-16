@@ -2001,7 +2001,7 @@ int32 ScriptLife::lTHE_END(TwinEEngine *engine, LifeScriptContext &ctx) {
 	// TODO: lba2 has a different ending
 	engine->_scene->_numCube = LBA1SceneId::Polar_Island_Final_Battle;
 	engine->_actor->_heroBehaviour = engine->_actor->_previousHeroBehaviour;
-	engine->_scene->_newHeroPos.x = -1;
+	engine->_scene->_sceneStart.x = -1;
 	engine->_scene->_sceneHero->_beta = engine->_actor->_previousHeroAngle;
 	engine->autoSave();
 	return 1; // break;
@@ -2036,7 +2036,7 @@ int32 ScriptLife::lPROJ_3D(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::PROJ_3D()");
 	// TODO: only used for credits scene? If not, then move the credits related code into the menu->showCredits method
 	engine->_screens->copyScreen(engine->_frontVideoBuffer, engine->_workVideoBuffer);
-	engine->_scene->_enableGridTileRendering = false;
+	engine->_scene->_flagRenderGrid = false;
 
 	engine->_renderer->setProjection(engine->width() / 2, engine->height() / 2, 128, 1024, 1024);
 	engine->_renderer->setFollowCamera(0, 1500, 0, 25, -128, 0, 13000);
