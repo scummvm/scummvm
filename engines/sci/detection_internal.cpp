@@ -137,18 +137,19 @@ Common::String customizeGuiOptions(Common::Path gamePath, Common::String guiOpti
 		return guiOptions + GUIO_RENDERWIN_256C + GUIO_RENDERWIN_16C;
 
 	Common::FSNode node(gamePath);
-
-	if (!node.exists()) {
+	Common::FSList files;
+	if (!node.getChildren(files, Common::FSNode::kListFilesOnly)) {
 		warning("Game path '%s' could not be accessed", gamePath.toString().c_str());
 		return guiOptions;
 	}
 
-	Common::FSList files;
-	node.getChildren(files, Common::FSNode::kListFilesOnly);
 	for (Common::FSList::const_iterator i = files.begin(); i != files.end(); ++i) {
 		for (int ii = 0; ii < ARRAYSIZE(rmodes); ii++) {
-			if ((version == SCI_VERSION_NONE || (version >= rmodes[ii].min && version <= rmodes[ii].max)) && i->getFileName().equalsIgnoreCase(rmodes[ii].gfxDriverName))
-				guiOptions += rmodes[ii].guio;
+			if (version == SCI_VERSION_NONE || (rmodes[ii].min <= version && version <= rmodes[ii].max)) {
+				if (i->getFileName().equalsIgnoreCase(rmodes[ii].gfxDriverName)) {
+					guiOptions += rmodes[ii].guio;
+				}
+			}
 		}
 	}
 
