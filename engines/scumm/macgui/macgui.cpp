@@ -26,7 +26,7 @@
 #include "scumm/macgui/macgui_impl.h"
 #include "scumm/macgui/macgui_indy3.h"
 #include "scumm/macgui/macgui_loom.h"
-#include "scumm/macgui/macgui_mi1.h"
+#include "scumm/macgui/macgui_v5.h"
 
 namespace Scumm {
 
@@ -43,7 +43,7 @@ MacGui::MacGui(ScummEngine *vm, const Common::Path &resourceFile) {
 	case GID_MONKEY:
 	case GID_MONKEY2:
 	case GID_INDY4:
-		_impl = new MacMI1Gui(vm, resourceFile);
+		_impl = new MacV5Gui(vm, resourceFile);
 		break;
 
 	default:

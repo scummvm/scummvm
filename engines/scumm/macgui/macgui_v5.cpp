@@ -33,7 +33,7 @@
 #include "scumm/scumm.h"
 #include "scumm/detection.h"
 #include "scumm/macgui/macgui_impl.h"
-#include "scumm/macgui/macgui_mi1.h"
+#include "scumm/macgui/macgui_v5.h"
 #include "scumm/music.h"
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
@@ -44,21 +44,21 @@ namespace Scumm {
 // The Mac Monkey Island 1 GUI.
 // ===========================================================================
 
-MacMI1Gui::MacMI1Gui(ScummEngine *vm, const Common::Path &resourceFile) : MacGuiImpl(vm, resourceFile) {
+MacV5Gui::MacV5Gui(ScummEngine *vm, const Common::Path &resourceFile) : MacGuiImpl(vm, resourceFile) {
 	readStrings();
 }
 
-const Graphics::Font *MacMI1Gui::getFontByScummId(int32 id) {
+const Graphics::Font *MacV5Gui::getFontByScummId(int32 id) {
 	switch (id) {
 	case 0:
 		return getFont(kLoomFontLarge);
 
 	default:
-		error("MacMI1Gui::getFontByScummId: Invalid font id %d", id);
+		error("MacV5Gui::getFontByScummId: Invalid font id %d", id);
 	}
 }
 
-bool MacMI1Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) const {
+bool MacV5Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) const {
 	switch (fontId) {
 	case kAboutFontRegular:
 		id = Graphics::kMacFontGeneva;
@@ -100,7 +100,7 @@ bool MacMI1Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) con
 	}
 }
 
-void MacMI1Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
+void MacV5Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
 	if (_vm->_game.id == GID_MONKEY) {
 		_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
 	} else if (_vm->_game.version == 5) {
@@ -126,7 +126,7 @@ void MacMI1Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspot
 	}
 }
 
-bool MacMI1Gui::handleMenu(int id, Common::String &name) {
+bool MacV5Gui::handleMenu(int id, Common::String &name) {
 	if (MacGuiImpl::handleMenu(id, name))
 		return true;
 
@@ -151,7 +151,7 @@ bool MacMI1Gui::handleMenu(int id, Common::String &name) {
 	return false;
 }
 
-void MacMI1Gui::runAboutDialog() {
+void MacV5Gui::runAboutDialog() {
 	int width = 416;
 	int height = 166;
 	int x = (640 - width) / 2;
@@ -177,7 +177,7 @@ void MacMI1Gui::runAboutDialog() {
 	delete window;
 }
 
-void MacMI1Gui::runAboutDialogMI1(MacDialogWindow *window) {
+void MacV5Gui::runAboutDialogMI1(MacDialogWindow *window) {
 	Graphics::Surface *lucasArts = loadPict(5000);
 	Graphics::Surface *monkeys = loadPict(5001);
 
@@ -406,7 +406,7 @@ void MacMI1Gui::runAboutDialogMI1(MacDialogWindow *window) {
 	delete monkeys;
 }
 
-void MacMI1Gui::drawShadow(Graphics::Surface *s, int x, int y, int h, Common::Pair<int, int> *drawData) {
+void MacV5Gui::drawShadow(Graphics::Surface *s, int x, int y, int h, Common::Pair<int, int> *drawData) {
 	int y1 = y;
 	int y2 = y + h - 1;
 
@@ -430,7 +430,7 @@ void MacMI1Gui::drawShadow(Graphics::Surface *s, int x, int y, int h, Common::Pa
 	}
 }
 
-void MacMI1Gui::runAboutDialogMI2(MacDialogWindow *window) {
+void MacV5Gui::runAboutDialogMI2(MacDialogWindow *window) {
 	Graphics::Surface *s = window->innerSurface();
 
 	Graphics::Surface *lucasArts = loadPict(5000);
@@ -582,7 +582,7 @@ void MacMI1Gui::runAboutDialogMI2(MacDialogWindow *window) {
 	delete lucasArts;
 }
 
-void MacMI1Gui::runAboutDialogIndy4(MacDialogWindow *window) {
+void MacV5Gui::runAboutDialogIndy4(MacDialogWindow *window) {
 	bool isFloppyVersion = _vm->_game.variant && !strcmp(_vm->_game.variant, "Floppy");
 
 	Graphics::Surface *s = window->innerSurface();
@@ -770,7 +770,7 @@ void MacMI1Gui::runAboutDialogIndy4(MacDialogWindow *window) {
 // A standard file picker dialog doesn't really make sense in ScummVM, so we
 // make something that just looks similar to one.
 
-bool MacMI1Gui::runOpenDialog(int &saveSlotToHandle) {
+bool MacV5Gui::runOpenDialog(int &saveSlotToHandle) {
 	Common::Rect bounds(88, 28, 448, 210);
 
 	MacDialogWindow *window = createWindow(bounds);
@@ -817,7 +817,7 @@ bool MacMI1Gui::runOpenDialog(int &saveSlotToHandle) {
 	return ret;
 }
 
-bool MacMI1Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
+bool MacV5Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 	uint32 black = getBlack();
 
 	Common::Rect bounds(110, 27, 470, 231);
@@ -900,7 +900,7 @@ bool MacMI1Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 	return ret;
 }
 
-bool MacMI1Gui::runOptionsDialog() {
+bool MacV5Gui::runOptionsDialog() {
 	// Widgets:
 	//
 	// 0 - Okay button
@@ -986,12 +986,12 @@ bool MacMI1Gui::runOptionsDialog() {
 	return ret;
 }
 
-void MacMI1Gui::resetAfterLoad() {
+void MacV5Gui::resetAfterLoad() {
 	reset();
 	_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
 }
 
-bool MacMI1Gui::handleEvent(Common::Event event) {
+bool MacV5Gui::handleEvent(Common::Event event) {
 	if (MacGuiImpl::handleEvent(event))
 		return true;
 

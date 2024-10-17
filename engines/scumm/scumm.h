@@ -524,7 +524,7 @@ class ScummEngine : public Engine, public Common::Serializable {
 	friend class MacGuiImpl;
 	friend class MacIndy3Gui;
 	friend class MacLoomGui;
-	friend class MacMI1Gui;
+	friend class MacV5Gui;
 	friend class LogicHEBasketball;
 
 public:
