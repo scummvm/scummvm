@@ -613,8 +613,8 @@ ADDetectedGame SciMetaEngine::fallbackDetectExtern(uint md5Bytes, const FileMap 
 	// resources, and it's not possible to detect that easily
 	// Also look for "%J" which is used in japanese games
 	Resource *text = resMan.findResource(ResourceId(kResourceTypeText, 0), false);
-	uint seeker = 0;
 	if (text) {
+		uint seeker = 0;
 		while (seeker < text->size()) {
 			if (text->getUint8At(seeker) == '#')  {
 				if (seeker + 1 < text->size())

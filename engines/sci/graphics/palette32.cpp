@@ -410,10 +410,9 @@ bool GfxPalette32::loadPalette(const GuiResourceId resourceId) {
 int16 GfxPalette32::matchColor(const uint8 r, const uint8 g, const uint8 b) {
 	int16 bestIndex = 0;
 	int bestDifference = 0xFFFFF;
-	int difference;
 
 	for (int i = 0, channelDifference; i < g_sci->_gfxRemap32->getStartColor(); ++i) {
-		difference = _currentPalette.colors[i].r - r;
+		int difference = _currentPalette.colors[i].r - r;
 		difference *= difference;
 		if (bestDifference <= difference) {
 			continue;

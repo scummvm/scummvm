@@ -1023,9 +1023,9 @@ void GfxFrameout::mergeToShowList(const Common::Rect &drawRect, RectList &showLi
 	mergeList.add(drawRect);
 
 	for (RectList::size_type i = 0; i < mergeList.size(); ++i) {
-		bool didMerge = false;
 		const Common::Rect &r1 = *mergeList[i];
 		if (!r1.isEmpty()) {
+			bool didMerge = false;
 			for (RectList::size_type j = 0; j < showList.size(); ++j) {
 				const Common::Rect &r2 = *showList[j];
 				if (!r2.isEmpty()) {

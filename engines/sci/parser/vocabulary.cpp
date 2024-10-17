@@ -90,7 +90,6 @@ void Vocabulary::reset() {
 
 bool Vocabulary::loadParserWords() {
 	char currentWord[VOCAB_MAX_WORDLENGTH] = "";
-	int currentWordPos = 0;
 
 	// First try to load the SCI0 vocab resource.
 	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeVocab, _resourceIdWords), 0);
@@ -138,7 +137,7 @@ bool Vocabulary::loadParserWords() {
 	while (seeker < resource->size()) {
 		byte c;
 
-		currentWordPos = resource->getUint8At(seeker++); // Parts of previous words may be re-used
+		int currentWordPos = resource->getUint8At(seeker++); // Parts of previous words may be re-used
 
 		if (resourceType == kVocabularySCI1) {
 			c = 1;
@@ -205,13 +204,12 @@ void Vocabulary::loadTranslatedWords() {
 		return;
 	
 	char currentWord[VOCAB_MAX_WORDLENGTH] = "";
-	int currentWordPos = 0;
 
 	uint32 seeker = 0;
 	while (seeker < resource->size()) {
 		byte c;
 
-		currentWordPos = resource->getUint8At(seeker++); // Parts of previous words may be re-used
+		int currentWordPos = resource->getUint8At(seeker++); // Parts of previous words may be re-used
 
 		do {
 			if (seeker >= resource->size()) {
@@ -808,7 +806,6 @@ void _vocab_recursive_ptree_dump(ParseTreeNode *tree, int blanks) {
 
 	ParseTreeNode* lbranch = tree->left;
 	ParseTreeNode* rbranch = tree->right;
-	int i;
 
 	if (tree->type == kParseTreeLeafNode) {
 		debugN("vocab_dump_parse_tree: Error: consp is nil\n");
@@ -818,12 +815,12 @@ void _vocab_recursive_ptree_dump(ParseTreeNode *tree, int blanks) {
 	if (lbranch) {
 		if (lbranch->type == kParseTreeBranchNode) {
 			debugN("\n");
-			for (i = 0; i < blanks; i++)
+			for (int i = 0; i < blanks; i++)
 				debugN("    ");
 			debugN("(");
 			_vocab_recursive_ptree_dump(lbranch, blanks + 1);
 			debugN(")\n");
-			for (i = 0; i < blanks; i++)
+			for (int i = 0; i < blanks; i++)
 				debugN("    ");
 		} else
 			debugN("%x", lbranch->value);
@@ -886,7 +883,7 @@ void Vocabulary::printParserNodes(int num) {
 }
 
 int Vocabulary::parseNodes(int *i, int *pos, int type, int nr, int argc, const char **argv) {
-	int nextToken = 0, nextValue = 0, newPos = 0, oldPos = 0;
+	int nextToken = 0, nextValue = 0, oldPos = 0;
 	Console *con = g_sci->getSciDebugger();
 
 	if (type == kParseNil)
@@ -927,7 +924,7 @@ int Vocabulary::parseNodes(int *i, int *pos, int type, int nr, int argc, const c
 			}
 		}
 
-		newPos = parseNodes(i, pos, nextToken, nextValue, argc, argv);
+		int newPos = parseNodes(i, pos, nextToken, nextValue, argc, argv);
 
 		if (newPos == -1)
 			return -1;

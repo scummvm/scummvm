@@ -503,16 +503,12 @@ void Script::identifyOffsets() {
 #ifdef ENABLE_SCI32
 	} else if (getSciVersion() == SCI_VERSION_3) {
 		// SCI3
-		uint32 sci3StringOffset = 0;
-		uint32 sci3RelocationOffset = 0;
-		uint32 sci3BoundaryOffset = 0;
-
 		if (_buf->size() < 22)
 			error("Script::identifyOffsets(): script %d smaller than expected SCI3-header", _nr);
 
 		_codeOffset = _buf->getUint32LEAt(0);
-		sci3StringOffset = _buf->getUint32LEAt(4);
-		sci3RelocationOffset = _buf->getUint32LEAt(8);
+		uint32 sci3StringOffset = _buf->getUint32LEAt(4);
+		uint32 sci3RelocationOffset = _buf->getUint32LEAt(8);
 
 		if (sci3RelocationOffset > _buf->size())
 			error("Script::identifyOffsets(): relocation offset is beyond end of script %d", _nr);
@@ -601,7 +597,7 @@ void Script::identifyOffsets() {
 				_offsetLookupStringCount++;
 
 				// SCI3 seems to have aligned all string on DWORD boundaries
-				sci3BoundaryOffset = stringDataPtr - *_buf; // Calculate current offset inside script data
+				uint32 sci3BoundaryOffset = stringDataPtr - *_buf; // Calculate current offset inside script data
 				sci3BoundaryOffset = sci3BoundaryOffset & 3; // Check boundary offset
 				if (sci3BoundaryOffset) {
 					// lower 2 bits are set? Then we have to adjust the offset

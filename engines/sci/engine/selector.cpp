@@ -325,7 +325,6 @@ void invokeSelector(EngineState *s, reg_t object, int selectorId,
 
 SelectorType lookupSelector(SegManager *segMan, reg_t obj_location, Selector selectorId, ObjVarRef *varp, reg_t *fptr) {
 	const Object *obj = segMan->getObject(obj_location);
-	int index;
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 	// Early SCI versions used the LSB in the selector ID as a read/write
@@ -337,7 +336,7 @@ SelectorType lookupSelector(SegManager *segMan, reg_t obj_location, Selector sel
 		error("lookupSelector: Attempt to send to non-object or invalid script. Address %04x:%04x", PRINT_REG(obj_location));
 	}
 
-	index = obj->locateVarSelector(segMan, selectorId);
+	int index = obj->locateVarSelector(segMan, selectorId);
 
 	if (index >= 0) {
 		// Found it as a variable
@@ -362,9 +361,6 @@ SelectorType lookupSelector(SegManager *segMan, reg_t obj_location, Selector sel
 
 		return kSelectorNone;
 	}
-
-
-//	return _lookupSelector_function(segMan, obj, selectorId, fptr);
 }
 
 } // End of namespace Sci

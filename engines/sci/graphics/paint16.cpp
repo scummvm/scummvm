@@ -205,14 +205,13 @@ void GfxPaint16::fillRect(const Common::Rect &rect, int16 drawFlags, byte color,
 	int16 oldPenMode = _ports->_curPort->penMode;
 	_ports->offsetRect(r);
 	int16 x, y;
-	byte curVisual;
 
 	// Doing visual first
 	if (drawFlags & GFX_SCREEN_MASK_VISUAL) {
 		if (oldPenMode == 2) { // invert mode
 			for (y = r.top; y < r.bottom; y++) {
 				for (x = r.left; x < r.right; x++) {
-					curVisual = _screen->getVisual(x, y);
+					byte curVisual = _screen->getVisual(x, y);
 					if (curVisual == color) {
 						_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, priority, 0, 0);
 					} else if (curVisual == priority) {

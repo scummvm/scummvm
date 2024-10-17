@@ -33,9 +33,8 @@
 
 namespace Sci {
 int Decompressor::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
-	uint32 chunk;
 	while (nPacked && !(src->eos() || src->err())) {
-		chunk = MIN<uint32>(1024, nPacked);
+		uint32 chunk = MIN<uint32>(1024, nPacked);
 		src->read(dest, chunk);
 		nPacked -= chunk;
 		dest += chunk;
@@ -391,11 +390,10 @@ void DecompressorLZW::decodeRLE(byte **rledata, byte **pixeldata, byte *outbuffe
  */
 int DecompressorLZW::getRLEsize(byte *rledata, int dsize) {
 	int pos = 0;
-	byte nextbyte;
 	int size = 0;
 
 	while (pos < dsize) {
-		nextbyte = *(rledata++);
+		byte nextbyte = *(rledata++);
 		pos++;
 		size++;
 

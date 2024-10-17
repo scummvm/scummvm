@@ -378,8 +378,6 @@ void MidiPlayer_Midi::controlChange(int channel, int control, int value) {
 }
 
 void MidiPlayer_Midi::setPatch(int channel, int patch) {
-	bool resetVol = false;
-
 	assert(channel <= 15);
 
 	// No need to do anything if a patch change is sent on the rhythm channel of an MT-32
@@ -392,8 +390,7 @@ void MidiPlayer_Midi::setPatch(int channel, int patch) {
 		_channels[channel].patch = patch;
 		_channels[channel].velocityMapIdx = _velocityMapIdx[patch];
 
-		if (_channels[channel].mappedPatch == MIDI_UNMAPPED)
-			resetVol = true;
+		bool resetVol = (_channels[channel].mappedPatch == MIDI_UNMAPPED);
 
 		_channels[channel].mappedPatch = patchToSend = _patchMap[patch];
 
