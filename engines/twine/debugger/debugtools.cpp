@@ -824,7 +824,12 @@ static void debuggerMenu(TwinEEngine *engine) {
 		if (ImGui::MenuItem("Center actor")) {
 			ActorStruct *actor = engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX);
 			actor->_posObj = engine->_grid->_worldCube;
-			actor->_posObj.y += 1000;
+			actor->_posObj.y += 16 * SIZE_BRICK_Y;
+			int32 y = actor->_posObj.y - 1 - SIZE_BRICK_Y;
+			while (y > 0 && ShapeType::kNone == engine->_grid->worldColBrick(actor->_posObj.x, y, actor->_posObj.z)) {
+				y -= SIZE_BRICK_Y;
+			}
+			actor->_posObj.y = (y + SIZE_BRICK_Y) & ~(SIZE_BRICK_Y - 1);
 		}
 
 		if (ImGui::BeginMenu("Animations")) {
