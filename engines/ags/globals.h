@@ -1221,6 +1221,7 @@ public:
 	int _new_room_flags = 0;
 	int _gs_to_newroom = -1;
 	int _bg_just_changed = 0;
+	std::unique_ptr<RoomStatus> _room_statuses[MAX_ROOMS];
 
 	/**@}*/
 
