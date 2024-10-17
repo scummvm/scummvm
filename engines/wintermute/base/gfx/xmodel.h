@@ -30,6 +30,7 @@
 
 #include "engines/wintermute/base/base_object.h"
 #include "engines/wintermute/base/base_sprite.h"
+#include "engines/wintermute/base/gfx/xmath.h"
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/video/video_theora_player.h"
@@ -184,8 +185,8 @@ private:
 	int32 _lastOffsetX;
 	int32 _lastOffsetY;
 
-	Math::Vector3d _BBoxStart;
-	Math::Vector3d _BBoxEnd;
+	DXVector3 _BBoxStart;
+	DXVector3 _BBoxEnd;
 
 protected:
 	BaseArray<const char*> _mergedModels;

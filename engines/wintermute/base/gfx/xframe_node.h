@@ -63,7 +63,7 @@ public:
 	Math::Matrix4 *getOriginalMatrix();
 	void setTransformationMatrix(Math::Matrix4 *mat);
 	bool pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir);
-	bool getBoundingBox(Math::Vector3d *boxStart, Math::Vector3d *boxEnd);
+	bool getBoundingBox(DXVector3 *boxStart, DXVector3 *boxEnd);
 
 	void setTransformation(int slot, Math::Vector3d pos, Math::Vector3d scale, Math::Quaternion rot, float lerpValue);
 

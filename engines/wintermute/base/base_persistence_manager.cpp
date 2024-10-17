@@ -849,6 +849,29 @@ bool BasePersistenceManager::transferVector3d(const char *name, Math::Vector3d *
 		return STATUS_OK;
 	}
 }
+bool BasePersistenceManager::transferVector3d(const char *name, DXVector3 *val) {
+	if (_saving) {
+		putFloat(val->_x);
+		putFloat(val->_y);
+		putFloat(val->_z);
+
+		if (_saveStream->err()) {
+			return STATUS_FAILED;
+		}
+
+		return STATUS_OK;
+	} else {
+		val->_x = getFloat();
+		val->_y = getFloat();
+		val->_z = getFloat();
+
+		if (_loadStream->err()) {
+			return STATUS_FAILED;
+		}
+
+		return STATUS_OK;
+	}
+}
 
 //////////////////////////////////////////////////////////////////////////
 // Matrix4
@@ -870,6 +893,29 @@ bool BasePersistenceManager::transferMatrix4(const char *name, Math::Matrix4 *va
 			for (int c = 0; c < 4; ++c) {
 				(*val)(r, c) = getFloat();
 			}
+		}
+
+		if (_loadStream->err()) {
+			return STATUS_FAILED;
+		}
+
+		return STATUS_OK;
+	}
+}
+bool BasePersistenceManager::transferMatrix4(const char *name, DXMatrix *val) {
+	if (_saving) {
+		for (int i = 0; i < 16; ++i) {
+			putFloat(val->_m4x4[i]);
+		}
+
+		if (_saveStream->err()) {
+			return STATUS_FAILED;
+		}
+
+		return STATUS_OK;
+	} else {
+		for (int i = 0; i < 16; ++i) {
+			val->_m4x4[i] = getFloat();
 		}
 
 		if (_loadStream->err()) {

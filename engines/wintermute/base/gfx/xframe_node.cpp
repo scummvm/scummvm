@@ -30,6 +30,7 @@
 #include "engines/wintermute/base/gfx/base_renderer3d.h"
 #include "engines/wintermute/base/gfx/xmaterial.h"
 #include "engines/wintermute/base/gfx/xframe_node.h"
+#include "engines/wintermute/base/gfx/xmath.h"
 #include "engines/wintermute/base/gfx/xmodel.h"
 #include "engines/wintermute/base/gfx/xfile_loader.h"
 #include "engines/wintermute/dcgf.h"
@@ -413,15 +414,15 @@ bool FrameNode::pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool FrameNode::getBoundingBox(Math::Vector3d *boxStart, Math::Vector3d *boxEnd) {
+bool FrameNode::getBoundingBox(DXVector3 *boxStart, DXVector3 *boxEnd) {
 	for (uint32 i = 0; i < _meshes.size(); i++) {
-		boxStart->x() = MIN(boxStart->x(), _meshes[i]->_BBoxStart._x);
-		boxStart->y() = MIN(boxStart->y(), _meshes[i]->_BBoxStart._y);
-		boxStart->z() = MIN(boxStart->z(), _meshes[i]->_BBoxStart._z);
+		boxStart->_x = MIN(boxStart->_x, _meshes[i]->_BBoxStart._x);
+		boxStart->_y = MIN(boxStart->_y, _meshes[i]->_BBoxStart._y);
+		boxStart->_z = MIN(boxStart->_z, _meshes[i]->_BBoxStart._z);
 
-		boxEnd->x() = MAX(boxEnd->x(), _meshes[i]->_BBoxEnd._x);
-		boxEnd->y() = MAX(boxEnd->y(), _meshes[i]->_BBoxEnd._y);
-		boxEnd->z() = MAX(boxEnd->z(), _meshes[i]->_BBoxEnd._z);
+		boxEnd->_x = MAX(boxEnd->_x, _meshes[i]->_BBoxEnd._x);
+		boxEnd->_y = MAX(boxEnd->_y, _meshes[i]->_BBoxEnd._y);
+		boxEnd->_z = MAX(boxEnd->_z, _meshes[i]->_BBoxEnd._z);
 	}
 
 	for (uint32 i = 0; i < _frames.size(); i++) {

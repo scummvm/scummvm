@@ -62,7 +62,7 @@ XModel::XModel(BaseGame *inGame, BaseObject *owner) : BaseObject(inGame) {
 	_lastProjMat.setToIdentity();
 	_lastOffsetX = _lastOffsetY = 0;
 
-	_BBoxStart = _BBoxEnd = Math::Vector3d(0.0f, 0.0f, 0.0f);
+	_BBoxStart = _BBoxEnd = DXVector3(0.0f, 0.0f, 0.0f);
 	_boundingRect.setEmpty();
 
 	for (int i = 0; i < X_NUM_ANIMATION_CHANNELS; i++) {
@@ -602,7 +602,7 @@ bool XModel::isTransparentAt(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 void XModel::updateBoundingRect() {
-	_BBoxStart = _BBoxEnd = Math::Vector3d(0, 0, 0);
+	_BBoxStart = _BBoxEnd = DXVector3(0, 0, 0);
 
 	if (_rootFrame) {
 		_rootFrame->getBoundingBox(&_BBoxStart, &_BBoxEnd);
@@ -623,12 +623,12 @@ void XModel::updateBoundingRect() {
 
 	_drawingViewport = _gameRef->_renderer3D->getViewPort();
 
-	float x1 = _BBoxStart.x();
-	float x2 = _BBoxEnd.x();
-	float y1 = _BBoxStart.y();
-	float y2 = _BBoxEnd.y();
-	float z1 = _BBoxStart.z();
-	float z2 = _BBoxEnd.z();
+	float x1 = _BBoxStart._x;
+	float x2 = _BBoxEnd._x;
+	float y1 = _BBoxStart._y;
+	float y2 = _BBoxEnd._y;
+	float z1 = _BBoxStart._z;
+	float z2 = _BBoxEnd._z;
 
 	DXVector3 v111(x1 ,y1, z1);
 	DXVec3Project(&vec2d, &v111, &_drawingViewport, &projMat, &viewMat, &worldMat);
