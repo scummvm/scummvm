@@ -625,8 +625,8 @@ Graphics::Surface *MacGuiImpl::loadPict(int id) {
 		}
 
 		if (!pict.getPaletteColorCount()) {
-			paletteMap[15] = getBlack();
 			paletteMap[0] = getWhite();
+			paletteMap[1] = getBlack();
 		}
 
 		if (palette) {
