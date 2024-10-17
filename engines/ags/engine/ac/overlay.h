@@ -22,6 +22,7 @@
 #ifndef AGS_ENGINE_AC_OVERLAY_H
 #define AGS_ENGINE_AC_OVERLAY_H
 
+#include "common/std/vector.h"
 #include "ags/shared/util/geometry.h"
 #include "ags/engine/ac/screen_overlay.h"
 #include "ags/engine/ac/dynobj/script_overlay.h"
@@ -43,24 +44,27 @@ void Overlay_SetX(ScriptOverlay *scover, int newx);
 int  Overlay_GetY(ScriptOverlay *scover);
 void Overlay_SetY(ScriptOverlay *scover, int newy);
 int  Overlay_GetValid(ScriptOverlay *scover);
-ScriptOverlay *Overlay_CreateGraphical(int x, int y, int slot, int transparent);
+ScriptOverlay *Overlay_CreateGraphical(int x, int y, int slot, bool transparent = true, bool clone = false);
 ScriptOverlay *Overlay_CreateTextual(int x, int y, int width, int font, int colour, const char *text);
-ScreenOverlay *Overlay_CreateGraphicCore(bool room_layer, int x, int y, int slot, bool transparent, bool clone);
+ScreenOverlay *Overlay_CreateGraphicCore(bool room_layer, int x, int y, int slot, bool transparent = true, bool clone = false);
 ScreenOverlay *Overlay_CreateTextCore(bool room_layer, int x, int y, int width, int font, int text_color,
-	const char *text, int disp_type, int allow_shrink);
+									  const char *text, int disp_type, int allow_shrink);
 
-int  find_overlay_of_type(int type);
-void remove_screen_overlay(int type);
+ScreenOverlay *get_overlay(int type);
 // Calculates overlay position in its respective layer (screen or room)
 Point get_overlay_position(const ScreenOverlay &over);
 size_t add_screen_overlay(bool roomlayer, int x, int y, int type, int sprnum);
 size_t add_screen_overlay(bool roomlayer, int x, int y, int type, Shared::Bitmap *piccy, bool has_alpha);
 size_t add_screen_overlay(bool roomlayer, int x, int y, int type, Shared::Bitmap *piccy, int pic_offx, int pic_offy, bool has_alpha);
-void remove_screen_overlay_index(size_t over_idx);
+void remove_screen_overlay(int type);
+void remove_all_overlays();
 // Creates and registers a managed script object for // Creates and registers a managed script object for existing overlay object;
 // optionally adds an internal engine reference to prevent object's disposal
 ScriptOverlay *create_scriptoverlay(ScreenOverlay &over, bool internal_ref = false);
-void recreate_overlay_ddbs();
+// Restores overlays, e.g. after restoring a game save
+void restore_overlays();
+
+std::vector<ScreenOverlay> &get_overlays();
 
 } // namespace AGS3
 

@@ -118,6 +118,7 @@ namespace AGS3 {
 #define EXPORT_FUNCTION   1
 #define EXPORT_DATA       2
 
+#define FIXUP_NOFIXUP     0     // no-op
 #define FIXUP_GLOBALDATA  1     // code[fixup] += &globaldata[0]
 #define FIXUP_FUNCTION    2     // code[fixup] += &code[0]
 #define FIXUP_STRING      3     // code[fixup] += &strings[0]

@@ -101,6 +101,10 @@ int get_font_height_outlined(size_t fontNumber);
 // Get font's surface height: this always returns the height enough to accommodate
 // font letters on a bitmap or a texture; the distinction is needed for compatibility reasons
 int get_font_surface_height(size_t fontNumber);
+// Get font's maximal graphical extent: this means the farthest vertical positions of glyphs,
+// relative to the "pen" position. Besides letting to calculate the surface height,
+// this information also lets to detect if some of the glyphs may appear above y0.
+std::pair<int, int> get_font_surface_extent(size_t fontNumber);
 // Get font's line spacing
 int get_font_linespacing(size_t fontNumber);
 // Set font's line spacing

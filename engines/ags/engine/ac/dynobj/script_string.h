@@ -26,31 +26,41 @@
 
 namespace AGS3 {
 
-struct ScriptString final : AGSCCDynamicObject, ICCStringClass {
-	int Dispose(const char *address, bool force) override;
-	const char *GetType() override;
-	void Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz) override;
-
-	DynObjectRef CreateString(const char *fromText) override;
+struct ScriptString final : AGSCCDynamicObject {
+public:
+	struct Header {
+		uint32_t Length = 0u;
+	};
 
 	ScriptString() = default;
-	ScriptString(const char *text);
-	ScriptString(char *text, bool take_ownership);
-	char *GetTextPtr() const {
-		return _text;
+	~ScriptString() = default;
+
+	inline static const Header &GetHeader(const void *address) {
+		return reinterpret_cast<const Header &>(*(static_cast<const uint8_t *>(address) - MemHeaderSz));
 	}
 
-protected:
-	// Calculate and return required space for serialization, in bytes
-	size_t CalcSerializeSize() override;
-	// Write object data into the provided stream
-	void Serialize(const char *address, AGS::Shared::Stream *out) override;
+	// Create a new script string by copying the given text
+	static DynObjectRef Create(const char *text) { return CreateImpl(text, -1); }
+	// Create a new script string with a buffer of at least the given text length
+	static DynObjectRef Create(size_t buf_len) { return CreateImpl(nullptr, buf_len); }
+
+	const char *GetType() override;
+	int Dispose(void *address, bool force) override;
+	void Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz) override;
 
 private:
-	// TODO: the preallocated text buffer may be assigned externally;
-	// find out if it's possible to refactor while keeping same functionality
-	char *_text = nullptr;
-	size_t _len = 0;
+	// The size of the array's header in memory, prepended to the element data
+	static const size_t MemHeaderSz = sizeof(Header);
+	// The size of the serialized header
+	static const size_t FileHeaderSz = sizeof(uint32_t);
+
+	static DynObjectRef CreateImpl(const char *text, size_t buf_len);
+
+	// Savegame serialization
+	// Calculate and return required space for serialization, in bytes
+	size_t CalcSerializeSize(const void *address) override;
+	// Write object data into the provided stream
+	void Serialize(const void *address, AGS::Shared::Stream *out) override;
 };
 
 } // namespace AGS3

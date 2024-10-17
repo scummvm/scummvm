@@ -26,6 +26,9 @@
 #include "ags/shared/ac/common_defines.h" // constants
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/core/types.h"
+#include "ags/shared/util/bbop.h"
+#include "ags/shared/util/string.h"
+
 
 namespace AGS3 {
 
@@ -38,6 +41,7 @@ class Stream;
 using namespace AGS; // FIXME later
 
 #define MAX_INV             301
+// Character flags
 #define CHF_MANUALSCALING   1
 #define CHF_FIXVIEW         2     // between SetCharView and ReleaseCharView
 #define CHF_NOINTERACT      4
@@ -57,20 +61,59 @@ using namespace AGS; // FIXME later
 #define CHF_MOVENOTWALK     0x10000   // engine only - do not do walk anim
 #define CHF_ANTIGLIDE       0x20000
 #define CHF_HASLIGHT        0x40000
+#define CHF_TINTLIGHTMASK   (CHF_NOLIGHTING | CHF_HASTINT | CHF_HASLIGHT)
 // Speechcol is no longer part of the flags as of v2.5
 #define OCHF_SPEECHCOL      0xff000000
 #define OCHF_SPEECHCOLSHIFT 24
 #define UNIFORM_WALK_SPEED  0
 #define FOLLOW_ALWAYSONTOP  0x7ffe
 
-// Length of deprecated character name field, in bytes
-#define MAX_CHAR_NAME_LEN 40
+// Character's internal flags, packed in CharacterInfo::animating
+#define CHANIM_MASK         0xFF
+#define CHANIM_ON           0x01
+#define CHANIM_REPEAT       0x02
+#define CHANIM_BACKWARDS    0x04
 
-struct CharacterExtras; // forward declaration
+// Converts character flags (CHF_*) to matching RoomObject flags (OBJF_*)
+inline int CharFlagsToObjFlags(int chflags) {
+	using namespace AGS::Shared;
+	return FlagToFlag(chflags, CHF_NOINTERACT, OBJF_NOINTERACT) |
+		   FlagToFlag(chflags, CHF_NOWALKBEHINDS, OBJF_NOWALKBEHINDS) |
+		   FlagToFlag(chflags, CHF_HASTINT, OBJF_HASTINT) |
+		   FlagToFlag(chflags, CHF_HASLIGHT, OBJF_HASLIGHT) |
+		   // following flags are inverse
+		   FlagToNoFlag(chflags, CHF_NOLIGHTING, OBJF_USEREGIONTINTS) |
+		   FlagToNoFlag(chflags, CHF_MANUALSCALING, OBJF_USEROOMSCALING) |
+		   FlagToNoFlag(chflags, CHF_NOBLOCKING, OBJF_SOLID);
+}
+
+// Length of deprecated character name field, in bytes
+#define LEGACY_MAX_CHAR_NAME_LEN 40
+
+enum CharacterSvgVersion {
+	kCharSvgVersion_Initial = 0, // [UNSUPPORTED] from 3.5.0 pre-alpha
+	kCharSvgVersion_350 = 1,     // new movelist format (along with pathfinder)
+	kCharSvgVersion_36025 = 2,   // animation volume
+	kCharSvgVersion_36109 = 3,   // removed movelists, save externally
+	kCharSvgVersion_36115 = 4,   // no limit on character name's length
+};
+
+
+// Predeclare a design-time Character extension
+struct CharacterInfo2;
+// Predeclare a runtime Character extension (TODO: refactor and remove this from here)
+struct CharacterExtras;
+
+// CharacterInfo is a design-time Character data.
+// Contains original set of character fields.
 // IMPORTANT: exposed to script API, and plugin API as AGSCharacter!
-// For older script compatibility the struct also has to maintain its size;
-// do not extend or change existing fields, unless planning breaking compatibility.
-// Use CharacterExtras struct for any extensions
+// For older script compatibility the struct also has to maintain its size,
+// and be stored in a plain array to keep the relative memory address offsets
+// between the Character objects!
+// Do not add or change existing fields, unless planning breaking compatibility.
+// Prefer to use CharacterInfo2 and CharacterExtras structs for any extensions.
+//
+// TODO: must refactor, some parts of it should be in a runtime Character class.
 struct CharacterInfo {
 	int   defview;
 	int   talkview;
@@ -99,18 +142,21 @@ struct CharacterInfo {
 	short pic_xoffs; // this is fixed in screen coordinates
 	short walkwaitcounter;
 	uint16_t loop, frame;
-	short walking, animating;
+	short walking;  // stores movelist index, optionally +TURNING_AROUND
+	short animating; // stores CHANIM_* flags in lower byte and delay in upper byte
 	short walkspeed, animspeed;
 	short inv[MAX_INV];
 	short actx, acty;
-	char  name[MAX_CHAR_NAME_LEN];
-	char  scrname[MAX_SCRIPT_NAME_LEN];
+	// These two name fields are deprecated, but must stay here
+	// for compatibility with old scripts and plugin API
+	char name[LEGACY_MAX_CHAR_NAME_LEN];
+	char scrname[LEGACY_MAX_SCRIPT_NAME_LEN];
 	int8  on;
 
-	int get_effective_y();   // return Y - Z
-	int get_baseline();      // return baseline, or Y if not set
-	int get_blocking_top();    // return Y - BlockingHeight/2
-	int get_blocking_bottom(); // return Y + BlockingHeight/2
+	int get_effective_y() const;   // return Y - Z
+	int get_baseline() const;      // return baseline, or Y if not set
+	int get_blocking_top() const;    // return Y - BlockingHeight/2
+	int get_blocking_bottom() const; // return Y + BlockingHeight/2
 
 	// Returns effective x/y walkspeeds for this character
 	void get_effective_walkspeeds(int &walk_speed_x, int &walk_speed_y) const {
@@ -123,6 +169,24 @@ struct CharacterInfo {
 	}
 	inline bool has_explicit_tint()  const {
 		return (flags & CHF_HASTINT) != 0;
+	}
+	inline bool is_animating() const {
+		return (animating & CHANIM_ON) != 0;
+	}
+	inline int get_anim_repeat() const {
+		return (animating & CHANIM_REPEAT) ? ANIM_REPEAT : ANIM_ONCE;
+	}
+	inline bool get_anim_forwards() const {
+		return (animating & CHANIM_BACKWARDS) == 0;
+	}
+	inline int get_anim_delay() const {
+		return (animating >> 8) & 0xFF;
+	}
+	inline void set_animating(bool repeat, bool forwards, int delay) {
+		animating = CHANIM_ON |
+					(CHANIM_REPEAT * repeat) |
+					(CHANIM_BACKWARDS * !forwards) |
+					((delay & 0xFF) << 8);
 	}
 
 	// [IKM] 2012-06-28: I still have to pass char_index to some of those functions
@@ -141,8 +205,25 @@ struct CharacterInfo {
 	void update_character_idle(CharacterExtras *chex, int &doing_nothing);
 	void update_character_follower(int &char_index, std::vector<int> &followingAsSheep, int &doing_nothing);
 
-	void ReadFromFile(Shared::Stream *in, GameDataVersion data_ver, int save_ver = -1);
-	void WriteToFile(Shared::Stream *out);
+	void ReadFromFile(Shared::Stream *in, CharacterInfo2 &chinfo2, GameDataVersion data_ver);
+	void WriteToFile(Shared::Stream *out) const;
+	// TODO: move to runtime-only class (?)
+	void ReadFromSavegame(Shared::Stream *in, CharacterInfo2 &chinfo2, CharacterSvgVersion save_ver);
+	void WriteToSavegame(Shared::Stream *out, const CharacterInfo2 &chinfo2) const;
+
+private:
+	// Helper functions that read and write first data fields,
+	// common for both game file and save.
+	void ReadBaseFields(Shared::Stream *in);
+	void WriteBaseFields(Shared::Stream *out) const;
+};
+
+
+// Design-time Character extended fields
+struct CharacterInfo2 {
+	// Unrestricted scriptname and name fields
+	AGS::Shared::String scrname_new;
+	AGS::Shared::String name_new;
 };
 
 

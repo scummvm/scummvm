@@ -59,7 +59,7 @@ static char scfunctionname[MAX_FUNCTION_NAME_LEN + 1];
 int run_dialog_request(int parmtr) {
 	_GP(play).stop_dialog_at_end = DIALOG_RUNNING;
 	RuntimeScriptValue params[]{ parmtr };
-	RunScriptFunction(_G(gameinst), "dialog_request", 1, params);
+	RunScriptFunction(_G(gameinst).get(), "dialog_request", 1, params);
 
 	if (_GP(play).stop_dialog_at_end == DIALOG_STOP) {
 		_GP(play).stop_dialog_at_end = DIALOG_NONE;
@@ -90,34 +90,21 @@ void run_function_on_non_blocking_thread(NonBlockingScriptFunction *funcToRun) {
 	// run modules
 	// modules need a forkedinst for this to work
 	for (size_t i = 0; i < _G(numScriptModules); ++i) {
-		funcToRun->moduleHasFunction[i] = DoRunScriptFuncCantBlock(_GP(moduleInstFork)[i], funcToRun, funcToRun->moduleHasFunction[i]);
+		funcToRun->moduleHasFunction[i] = DoRunScriptFuncCantBlock(_GP(moduleInstFork)[i].get(), funcToRun, funcToRun->moduleHasFunction[i]);
 
 		if (room_changes_was != _GP(play).room_changes)
 			return;
 	}
 
-	funcToRun->globalScriptHasFunction = DoRunScriptFuncCantBlock(_G(gameinstFork), funcToRun, funcToRun->globalScriptHasFunction);
+	funcToRun->globalScriptHasFunction = DoRunScriptFuncCantBlock(_G(gameinstFork).get(), funcToRun, funcToRun->globalScriptHasFunction);
 
 	if (room_changes_was != _GP(play).room_changes || _G(abort_engine))
 		return;
 
-	funcToRun->roomHasFunction = DoRunScriptFuncCantBlock(_G(roominstFork), funcToRun, funcToRun->roomHasFunction);
+	funcToRun->roomHasFunction = DoRunScriptFuncCantBlock(_G(roominstFork).get(), funcToRun, funcToRun->roomHasFunction);
 }
 
-//-----------------------------------------------------------
-// [IKM] 2012-06-22
-//
-// run_interaction_event() and run_interaction_script()
-// are *almost* identical, except for the first parameter
-// type.
-// May these types be made children of the same base?
-//-----------------------------------------------------------
-
-
-// Returns 0 normally, or -1 to indicate that the NewInteraction has
-// become invalid and don't run another interaction on it
-// (eg. a room change occurred)
-int run_interaction_event(Interaction *nint, int evnt, int chkAny, int isInv) {
+int run_interaction_event(const ObjectEvent &obj_evt, Interaction *nint, int evnt, int chkAny, bool isInv) {
 
 	if (evnt < 0 || (size_t)evnt >= nint->Events.size() ||
 	        (nint->Events[evnt].Response.get() == nullptr) || (nint->Events[evnt].Response->Cmds.size() == 0)) {
@@ -130,7 +117,7 @@ int run_interaction_event(Interaction *nint, int evnt, int chkAny, int isInv) {
 			return 0;
 
 		// Otherwise, run unhandled_event
-		run_unhandled_event(evnt);
+		run_unhandled_event(obj_evt, evnt);
 
 		return 0;
 	}
@@ -142,14 +129,14 @@ int run_interaction_event(Interaction *nint, int evnt, int chkAny, int isInv) {
 
 	int cmdsrun = 0, retval = 0;
 	// Right, so there were some commands defined in response to the event.
-	retval = run_interaction_commandlist(nint->Events[evnt].Response.get(), &nint->Events[evnt].TimesRun, &cmdsrun);
+	retval = run_interaction_commandlist(obj_evt, nint->Events[evnt].Response.get(), &nint->Events[evnt].TimesRun, &cmdsrun);
 
 	if (_G(abort_engine))
 		return -1;
 
 	// An inventory interaction, but the wrong item was used
 	if ((isInv) && (cmdsrun == 0))
-		run_unhandled_event(evnt);
+		run_unhandled_event(obj_evt, evnt);
 
 	return retval;
 }
@@ -157,9 +144,9 @@ int run_interaction_event(Interaction *nint, int evnt, int chkAny, int isInv) {
 // Returns 0 normally, or -1 to indicate that the NewInteraction has
 // become invalid and don't run another interaction on it
 // (eg. a room change occurred)
-int run_interaction_script(InteractionScripts *nint, int evnt, int chkAny) {
+int run_interaction_script(const ObjectEvent &obj_evt, InteractionScripts *nint, int evnt, int chkAny) {
 
-	if (((int)nint->ScriptFuncNames.size() <= evnt) || nint->ScriptFuncNames[evnt].IsEmpty()) {
+	if (evnt < 0 || static_cast<size_t>(evnt) >= nint->ScriptFuncNames.size() || nint->ScriptFuncNames[evnt].IsEmpty()) {
 		// no response defined for this event
 		// If there is a response for "Any Click", then abort now so as to
 		// run that instead
@@ -168,34 +155,42 @@ int run_interaction_script(InteractionScripts *nint, int evnt, int chkAny) {
 			return 0;
 
 		// Otherwise, run unhandled_event
-		run_unhandled_event(evnt);
-
+		run_unhandled_event(obj_evt, evnt);
 		return 0;
 	}
 
 	if (_GP(play).check_interaction_only) {
-		_GP(play).check_interaction_only = 2;
+		_GP(play).check_interaction_only = 2;  // CHECKME: wth is "2"?
 		return -1;
 	}
 
-	int room_was = _GP(play).room_changes;
+	const int room_was = _GP(play).room_changes;
 
-	RuntimeScriptValue rval_null;
+	// TODO: find a way to generalize all the following hard-coded behavior
 
-	if ((strstr(_G(evblockbasename), "character") != nullptr) || (strstr(_G(evblockbasename), "inventory") != nullptr)) {
-		// Character or Inventory (global script)
-		QueueScriptFunction(kScInstGame, nint->ScriptFuncNames[evnt].GetCStr());
-	} else {
-		// Other (room script)
-		QueueScriptFunction(kScInstRoom, nint->ScriptFuncNames[evnt].GetCStr());
+	// Character or Inventory require a global script call
+	const ScriptInstType inst_type = (strstr(obj_evt.BlockName.GetCStr(), "character") != nullptr) || (strstr(obj_evt.BlockName.GetCStr(), "inventory") != nullptr) ?
+		kScInstGame : kScInstRoom;
+
+	// Room events do not require additional params
+	if ((strstr(obj_evt.BlockName.GetCStr(), "room") != nullptr)) {
+		QueueScriptFunction(inst_type, nint->ScriptFuncNames[evnt].GetCStr());
+	}
+	// Regions only require 1 param - dynobj ref
+	else if ((strstr(obj_evt.BlockName.GetCStr(), "region") != nullptr)) {
+		QueueScriptFunction(inst_type, nint->ScriptFuncNames[evnt].GetCStr(), 1, &obj_evt.DynObj);
+	}
+	// Other types (characters, objects, invitems, hotspots) require
+	// 2 params - dynobj ref and the interaction mode (aka verb)
+	else {
+		RuntimeScriptValue params[]{obj_evt.DynObj, RuntimeScriptValue().SetInt32(obj_evt.Mode)};
+		QueueScriptFunction(inst_type, nint->ScriptFuncNames[evnt].GetCStr(), 2, params);
 	}
 
-	int retval = 0;
 	// if the room changed within the action
 	if (room_was != _GP(play).room_changes)
-		retval = -1;
-
-	return retval;
+		return -1;
+	return 0;
 }
 
 int create_global_script() {
@@ -203,29 +198,31 @@ int create_global_script() {
 
 	ccSetOption(SCOPT_AUTOIMPORT, 1);
 
-	std::vector<ccInstance *> instances_for_resolving;
+	// NOTE: this function assumes that the module lists have their elements preallocated!
+
+	std::vector<ccInstance *> all_insts; // gather all to resolve exports below
 	for (size_t i = 0; i < _G(numScriptModules); ++i) {
-		_GP(moduleInst)[i] = ccInstance::CreateFromScript(_GP(scriptModules)[i]);
-		if (_GP(moduleInst)[i] == nullptr)
+		auto inst = ccInstance::CreateFromScript(_GP(scriptModules)[i]);
+		if (!inst)
 			return kscript_create_error;
-		instances_for_resolving.push_back(_GP(moduleInst)[i]);
+		_GP(moduleInst)[i].reset(inst);
+		all_insts.push_back(inst);
 	}
 
-	_G(gameinst) = ccInstance::CreateFromScript(_GP(gamescript));
-	if (_G(gameinst) == nullptr)
+	_G(gameinst).reset(ccInstance::CreateFromScript(_GP(gamescript)));
+	if (!_G(gameinst))
 		return kscript_create_error;
-	instances_for_resolving.push_back(_G(gameinst));
+	all_insts.push_back(_G(gameinst).get());
 
-	if (_GP(dialogScriptsScript) != nullptr) {
-		_G(dialogScriptsInst) = ccInstance::CreateFromScript(_GP(dialogScriptsScript));
-		if (_G(dialogScriptsInst) == nullptr)
+	if (_GP(dialogScriptsScript)) {
+		_G(dialogScriptsInst).reset(ccInstance::CreateFromScript(_GP(dialogScriptsScript)));
+		if (!_G(dialogScriptsInst))
 			return kscript_create_error;
-		instances_for_resolving.push_back(_G(dialogScriptsInst));
+		all_insts.push_back(_G(dialogScriptsInst).get());
 	}
 
 	// Resolve the script imports after all the scripts have been loaded
-	for (size_t instance_idx = 0; instance_idx < instances_for_resolving.size(); instance_idx++) {
-		auto inst = instances_for_resolving[instance_idx];
+	for (auto &inst : all_insts) {
 		if (!inst->ResolveScriptImports(inst->instanceof.get()))
 			return kscript_create_error;
 		if (!inst->ResolveImportFixups(inst->instanceof.get()))
@@ -235,14 +232,15 @@ int create_global_script() {
 	// Create the forks for 'repeatedly_execute_always' after resolving
 	// because they copy their respective originals including the resolve information
 	for (size_t module_idx = 0; module_idx < _G(numScriptModules); module_idx++) {
-		_GP(moduleInstFork)[module_idx] = _GP(moduleInst)[module_idx]->Fork();
-		if (_GP(moduleInstFork)[module_idx] == nullptr)
+		auto fork = _GP(moduleInst)[module_idx]->Fork();
+		if (!fork)
 			return kscript_create_error;
 
+		_GP(moduleInstFork)[module_idx].reset(fork);
 		_GP(moduleRepExecAddr)[module_idx] = _GP(moduleInst)[module_idx]->GetSymbolAddress(REP_EXEC_NAME);
 	}
 
-	_G(gameinstFork) = _G(gameinst)->Fork();
+	_G(gameinstFork).reset(_G(gameinst)->Fork());
 	if (_G(gameinstFork) == nullptr)
 		return kscript_create_error;
 
@@ -251,12 +249,12 @@ int create_global_script() {
 }
 
 void cancel_all_scripts() {
-	for (int aa = 0; aa < _G(num_scripts); aa++) {
-		if (_G(scripts)[aa].forked)
-			_G(scripts)[aa].inst->AbortAndDestroy();
-		else
-			_G(scripts)[aa].inst->Abort();
-		_G(scripts)[aa].numanother = 0;
+	for (int i = 0; i < _G(num_scripts); ++i) {
+		auto &sc = _G(scripts)[i];
+		if (sc.inst) {
+			(sc.forkedInst) ? sc.inst->AbortAndDestroy() : sc.inst->Abort();
+		}
+		sc.numanother = 0;
 	}
 	_G(num_scripts) = 0;
 	// in case the script is running on non-blocking thread (rep-exec-always etc)
@@ -267,9 +265,9 @@ void cancel_all_scripts() {
 
 ccInstance *GetScriptInstanceByType(ScriptInstType sc_inst) {
 	if (sc_inst == kScInstGame)
-		return _G(gameinst);
+		return _G(gameinst).get();
 	else if (sc_inst == kScInstRoom)
-		return _G(roominst);
+		return _G(roominst).get();
 	return nullptr;
 }
 
@@ -319,16 +317,19 @@ static int PrepareTextScript(ccInstance *sci, const char **tsname) {
 		cc_error("script is already in execution");
 		return -3;
 	}
-	_G(scripts)[_G(num_scripts)].init();
-	_G(scripts)[_G(num_scripts)].inst = sci;
+	ExecutingScript exscript;
 	// CHECKME: this conditional block will never run, because
 	// function would have quit earlier (deprecated functionality?)
 	if (sci->IsBeingRun()) {
-		_G(scripts)[_G(num_scripts)].inst = sci->Fork();
-		if (_G(scripts)[_G(num_scripts)].inst == nullptr)
+		auto fork = sci->Fork();
+		if (!fork)
 			quit("unable to fork instance for secondary script");
-		_G(scripts)[_G(num_scripts)].forked = 1;
+		exscript.forkedInst.reset(fork);
+		exscript.inst = fork;
+	} else {
+		exscript.inst = sci;
 	}
+	_G(scripts)[_G(num_scripts)] = std::move(exscript);
 	_G(curscript) = &_G(scripts)[_G(num_scripts)];
 	_G(num_scripts)++;
 	if (_G(num_scripts) >= MAX_SCRIPT_AT_ONCE)
@@ -387,8 +388,8 @@ int RunScriptFunction(ccInstance *sci, const char *tsname, size_t numParam, cons
 
 void RunScriptFunctionInModules(const char *tsname, size_t param_count, const RuntimeScriptValue *params) {
 	for (size_t i = 0; i < _G(numScriptModules); ++i)
-		RunScriptFunction(_GP(moduleInst)[i], tsname, param_count, params);
-	RunScriptFunction(_G(gameinst), tsname, param_count, params);
+		RunScriptFunction(_GP(moduleInst)[i].get(), tsname, param_count, params);
+	RunScriptFunction(_G(gameinst).get(), tsname, param_count, params);
 }
 
 int RunScriptFunctionInRoom(const char *tsname, size_t param_count, const RuntimeScriptValue *params) {
@@ -396,7 +397,7 @@ int RunScriptFunctionInRoom(const char *tsname, size_t param_count, const Runtim
 	// identified by having no parameters;
 	// TODO: this is a hack, this should be defined either by function type, or as an arg
 	const bool strict_room_event = (param_count == 0);
-	int toret = RunScriptFunction(_G(roominst), tsname, param_count, params);
+	int toret = RunScriptFunction(_G(roominst).get(), tsname, param_count, params);
 	// If it's a obligatory room event, and return code means missing function - error
 	if (strict_room_event && (toret == -18))
 		quitprintf("RunScriptFunction: error %d (%s) trying to run '%s'   (Room %d)",
@@ -410,13 +411,13 @@ static int RunUnclaimableEvent(const char *tsname) {
 	const int restore_game_count_was = _G(gameHasBeenRestored);
 	for (size_t i = 0; i < _G(numScriptModules); ++i) {
 		if (!_GP(moduleRepExecAddr)[i].IsNull())
-			RunScriptFunction(_GP(moduleInst)[i], tsname);
+			RunScriptFunction(_GP(moduleInst)[i].get(), tsname);
 		// Break on room change or save restoration
 		if ((room_changes_was != _GP(play).room_changes) ||
 			(restore_game_count_was != _G(gameHasBeenRestored)))
 			return 0;
 	}
-	return RunScriptFunction(_G(gameinst), tsname);
+	return RunScriptFunction(_G(gameinst).get(), tsname);
 }
 
 static int RunClaimableEvent(const char *tsname, size_t param_count, const RuntimeScriptValue *params) {
@@ -426,7 +427,7 @@ static int RunClaimableEvent(const char *tsname, size_t param_count, const Runti
 	// Break on event claim
 	if (eventWasClaimed)
 		return toret;
-	return RunScriptFunction(_G(gameinst), tsname, param_count, params);
+	return RunScriptFunction(_G(gameinst).get(), tsname, param_count, params);
 }
 
 int RunScriptFunctionAuto(ScriptInstType sc_inst, const char *tsname, size_t param_count, const RuntimeScriptValue *params) {
@@ -440,8 +441,8 @@ int RunScriptFunctionAuto(ScriptInstType sc_inst, const char *tsname, size_t par
 	}
 	// Claimable event is run in all the script modules and room script,
 	// before running in the globalscript instance
-	if ((strcmp(tsname, _G(tsnames)[TS_KEYPRESS]) == 0) || (strcmp(tsname, _G(tsnames)[TS_MCLICK]) == 0) ||
-		(strcmp(tsname, _G(tsnames)[TS_TEXTINPUT]) == 0) || (strcmp(tsname, "on_event") == 0)) {
+	if ((strcmp(tsname, _G(tsnames)[kTS_KeyPress]) == 0) || (strcmp(tsname, _G(tsnames)[kTS_MouseClick]) == 0) ||
+		(strcmp(tsname, _G(tsnames)[kTS_TextInput]) == 0) || (strcmp(tsname, "on_event") == 0)) {
 		return RunClaimableEvent(tsname, param_count, params);
 	}
 	// Else run on the single chosen script instance
@@ -449,6 +450,65 @@ int RunScriptFunctionAuto(ScriptInstType sc_inst, const char *tsname, size_t par
 	if (!sci)
 		return 0;
 	return RunScriptFunction(sci, tsname, param_count, params);
+}
+
+void AllocScriptModules() {
+	// NOTE: this preallocation possibly required to safeguard some algorithms
+	_GP(moduleInst).resize(_G(numScriptModules));
+	_GP(moduleInstFork).resize(_G(numScriptModules));
+	_GP(moduleRepExecAddr).resize(_G(numScriptModules));
+	_GP(repExecAlways).moduleHasFunction.resize(_G(numScriptModules), true);
+	_GP(lateRepExecAlways).moduleHasFunction.resize(_G(numScriptModules), true);
+	_GP(getDialogOptionsDimensionsFunc).moduleHasFunction.resize(_G(numScriptModules), true);
+	_GP(renderDialogOptionsFunc).moduleHasFunction.resize(_G(numScriptModules), true);
+	_GP(getDialogOptionUnderCursorFunc).moduleHasFunction.resize(_G(numScriptModules), true);
+	_GP(runDialogOptionMouseClickHandlerFunc).moduleHasFunction.resize(_G(numScriptModules), true);
+	_GP(runDialogOptionKeyPressHandlerFunc).moduleHasFunction.resize(_G(numScriptModules), true);
+	_GP(runDialogOptionTextInputHandlerFunc).moduleHasFunction.resize(_G(numScriptModules), true);
+	_GP(runDialogOptionRepExecFunc).moduleHasFunction.resize(_G(numScriptModules), true);
+	_GP(runDialogOptionCloseFunc).moduleHasFunction.resize(_G(numScriptModules), true);
+	for (auto &val : _GP(moduleRepExecAddr)) {
+		val.Invalidate();
+	}
+}
+
+void FreeAllScriptInstances() {
+	ccInstance::FreeInstanceStack();
+	FreeRoomScriptInstance();
+
+	// NOTE: don't know why, but Forks must be deleted prior to primary inst,
+	// or bad things will happen; TODO: investigate and make this less fragile
+	_G(gameinstFork).reset();
+	_G(gameinst).reset();
+	_G(dialogScriptsInst).reset();
+	_GP(moduleInstFork).clear();
+	_GP(moduleInst).clear();
+}
+
+void FreeRoomScriptInstance() {
+	// NOTE: don't know why, but Forks must be deleted prior to primary inst,
+	// or bad things will happen; TODO: investigate and make this less fragile
+	_G(roominstFork).reset();
+	_G(roominst).reset();
+}
+
+void FreeGlobalScripts() {
+	_G(numScriptModules) = 0;
+
+	_GP(gamescript).reset();
+	_GP(scriptModules).clear();
+	_GP(dialogScriptsScript).reset();
+
+	_GP(repExecAlways).moduleHasFunction.clear();
+	_GP(lateRepExecAlways).moduleHasFunction.clear();
+	_GP(getDialogOptionsDimensionsFunc).moduleHasFunction.clear();
+	_GP(renderDialogOptionsFunc).moduleHasFunction.clear();
+	_GP(getDialogOptionUnderCursorFunc).moduleHasFunction.clear();
+	_GP(runDialogOptionMouseClickHandlerFunc).moduleHasFunction.clear();
+	_GP(runDialogOptionKeyPressHandlerFunc).moduleHasFunction.clear();
+	_GP(runDialogOptionTextInputHandlerFunc).moduleHasFunction.clear();
+	_GP(runDialogOptionRepExecFunc).moduleHasFunction.clear();
+	_GP(runDialogOptionCloseFunc).moduleHasFunction.clear();
 }
 
 String GetScriptName(ccInstance *sci) {
@@ -483,10 +543,9 @@ void post_script_cleanup() {
 		quit(cc_get_error().ErrorString);
 
 	ExecutingScript copyof;
-	if (_G(num_scripts) > 0) {
-		copyof = _G(scripts)[_G(num_scripts) - 1];
-		if (_G(scripts)[_G(num_scripts) - 1].forked)
-			delete _G(scripts)[_G(num_scripts) - 1].inst;
+	if (_G(num_scripts) > 0) {  // save until the end of function
+		copyof = std::move(_G(scripts)[_G(num_scripts) - 1]);
+		copyof.forkedInst.reset(); // don't need it further
 		_G(num_scripts)--;
 	}
 	_G(inside_script)--;
@@ -573,7 +632,6 @@ void post_script_cleanup() {
 		if ((_G(displayed_room) != old_room_number) || (_G(load_new_game)))
 			break;
 	}
-	copyof.numanother = 0;
 
 }
 
@@ -630,24 +688,24 @@ InteractionVariable *FindGraphicalVariable(const char *varName) {
 struct TempEip {
 	int oldval;
 	TempEip(int newval) {
-		oldval = _G(our_eip);
-		_G(our_eip) = newval;
+		oldval = get_our_eip();
+		set_our_eip(newval);
 	}
 	~TempEip() {
-		_G(our_eip) = oldval;
+		set_our_eip(oldval);
 	}
 };
 
 // the 'cmdsrun' parameter counts how many commands are run.
 // if a 'Inv Item Was Used' check does not pass, it doesn't count
 // so cmdsrun remains 0 if no inventory items matched
-int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int *cmdsrun) {
-	size_t i;
-
+int run_interaction_commandlist(const ObjectEvent &obj_evt, InteractionCommandList *nicl, int *timesrun, int *cmdsrun) {
 	if (nicl == nullptr)
 		return -1;
 
-	for (i = 0; i < nicl->Cmds.size(); i++) {
+	const char *evblockbasename = obj_evt.BlockName.GetCStr();
+	const int evblocknum = obj_evt.BlockID;
+	for (size_t i = 0; i < nicl->Cmds.size(); i++) {
 		cmdsrun[0] ++;
 		int room_was = _GP(play).room_changes;
 
@@ -657,14 +715,14 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 		case 1: { // Run script
 			TempEip tempip(4001);
 			RuntimeScriptValue rval_null;
-			if ((strstr(_G(evblockbasename), "character") != nullptr) || (strstr(_G(evblockbasename), "inventory") != nullptr)) {
+			if ((strstr(evblockbasename, "character") != nullptr) || (strstr(evblockbasename, "inventory") != nullptr)) {
 				// Character or Inventory (global script)
-				const char *torun = make_ts_func_name(_G(evblockbasename), _G(evblocknum), nicl->Cmds[i].Data[0].Value);
+				const char *torun = make_ts_func_name(evblockbasename, evblocknum, nicl->Cmds[i].Data[0].Value);
 				// we are already inside the mouseclick event of the script, can't nest calls
 				QueueScriptFunction(kScInstGame, torun);
 			} else {
 				// Other (room script)
-				const char *torun = make_ts_func_name(_G(evblockbasename), _G(evblocknum), nicl->Cmds[i].Data[0].Value);
+				const char *torun = make_ts_func_name(evblockbasename, evblocknum, nicl->Cmds[i].Data[0].Value);
 				QueueScriptFunction(kScInstRoom, torun);
 			}
 			break;
@@ -730,7 +788,7 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 			SetObjectView(IPARAM1, IPARAM2);
 			break;
 		case 18: // Animate Object
-			AnimateObject(IPARAM1, IPARAM2, IPARAM3, IPARAM4);
+			AnimateObject4(IPARAM1, IPARAM2, IPARAM3, IPARAM4);
 			break;
 		case 19: // Move Character
 			if (IPARAM4)
@@ -742,24 +800,24 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 			if (_GP(play).usedinv == IPARAM1) {
 				if (_GP(game).options[OPT_NOLOSEINV] == 0)
 					lose_inventory(_GP(play).usedinv);
-				if (run_interaction_commandlist(nicl->Cmds[i].Children.get(), timesrun, cmdsrun))
+				if (run_interaction_commandlist(obj_evt, nicl->Cmds[i].Children.get(), timesrun, cmdsrun))
 					return -1;
 			} else
 				cmdsrun[0] --;
 			break;
 		case 21: // if player has inventory item
 			if (_G(playerchar)->inv[IPARAM1] > 0)
-				if (run_interaction_commandlist(nicl->Cmds[i].Children.get(), timesrun, cmdsrun))
+				if (run_interaction_commandlist(obj_evt, nicl->Cmds[i].Children.get(), timesrun, cmdsrun))
 					return -1;
 			break;
 		case 22: // if a character is moving
 			if (_GP(game).chars[IPARAM1].walking)
-				if (run_interaction_commandlist(nicl->Cmds[i].Children.get(), timesrun, cmdsrun))
+				if (run_interaction_commandlist(obj_evt, nicl->Cmds[i].Children.get(), timesrun, cmdsrun))
 					return -1;
 			break;
 		case 23: // if two variables are equal
 			if (IPARAM1 == IPARAM2)
-				if (run_interaction_commandlist(nicl->Cmds[i].Children.get(), timesrun, cmdsrun))
+				if (run_interaction_commandlist(obj_evt, nicl->Cmds[i].Children.get(), timesrun, cmdsrun))
 					return -1;
 			break;
 		case 24: // Stop character walking
@@ -795,12 +853,12 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 			get_interaction_variable(nicl->Cmds[i].Data[0].Value)->Value = IPARAM2;
 			break;
 		case 34: // Run animation
-			scAnimateCharacter(IPARAM1, IPARAM2, IPARAM3, 0);
+			AnimateCharacter4(IPARAM1, IPARAM2, IPARAM3, 0);
 			GameLoopUntilValueIsZero(&_GP(game).chars[IPARAM1].animating);
 			break;
 		case 35: // Quick animation
 			SetCharacterView(IPARAM1, IPARAM2);
-			scAnimateCharacter(IPARAM1, IPARAM3, IPARAM4, 0);
+			AnimateCharacter4(IPARAM1, IPARAM3, IPARAM4, 0);
 			GameLoopUntilValueIsZero(&_GP(game).chars[IPARAM1].animating);
 			ReleaseCharacterView(IPARAM1);
 			break;
@@ -832,17 +890,17 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 			break;
 		case 45: // If player character is
 			if (GetPlayerCharacter() == IPARAM1)
-				if (run_interaction_commandlist(nicl->Cmds[i].Children.get(), timesrun, cmdsrun))
+				if (run_interaction_commandlist(obj_evt, nicl->Cmds[i].Children.get(), timesrun, cmdsrun))
 					return -1;
 			break;
 		case 46: // if cursor mode is
 			if (GetCursorMode() == IPARAM1)
-				if (run_interaction_commandlist(nicl->Cmds[i].Children.get(), timesrun, cmdsrun))
+				if (run_interaction_commandlist(obj_evt, nicl->Cmds[i].Children.get(), timesrun, cmdsrun))
 					return -1;
 			break;
 		case 47: // if player has been to room
 			if (HasBeenToRoom(IPARAM1))
-				if (run_interaction_commandlist(nicl->Cmds[i].Children.get(), timesrun, cmdsrun))
+				if (run_interaction_commandlist(obj_evt, nicl->Cmds[i].Children.get(), timesrun, cmdsrun))
 					return -1;
 			break;
 		default:
@@ -868,21 +926,24 @@ void can_run_delayed_command() {
 		quit("!This command cannot be used within non-blocking events such as " REP_EXEC_ALWAYS_NAME);
 }
 
-void run_unhandled_event(int evnt) {
+void run_unhandled_event(const ObjectEvent &obj_evt, int evnt) {
 
 	if (_GP(play).check_interaction_only)
 		return;
 
+	const char *evblockbasename = obj_evt.BlockName.GetCStr();
+	const int evblocknum = obj_evt.BlockID;
 	int evtype = 0;
-	if (ags_strnicmp(_G(evblockbasename), "hotspot", 7) == 0) evtype = 1;
-	else if (ags_strnicmp(_G(evblockbasename), "object", 6) == 0) evtype = 2;
-	else if (ags_strnicmp(_G(evblockbasename), "character", 9) == 0) evtype = 3;
-	else if (ags_strnicmp(_G(evblockbasename), "inventory", 9) == 0) evtype = 5;
-	else if (ags_strnicmp(_G(evblockbasename), "region", 6) == 0)
+
+	if (ags_strnicmp(evblockbasename, "hotspot", 7) == 0) evtype = 1;
+	else if (ags_strnicmp(evblockbasename, "object", 6) == 0) evtype = 2;
+	else if (ags_strnicmp(evblockbasename, "character", 9) == 0) evtype = 3;
+	else if (ags_strnicmp(evblockbasename, "inventory", 9) == 0) evtype = 5;
+	else if (ags_strnicmp(evblockbasename, "region", 6) == 0)
 		return;  // no unhandled_events for regions
 
 	// clicked Hotspot 0, so change the type code
-	if ((evtype == 1) & (_G(evblocknum) == 0) & (evnt != 0) & (evnt != 5) & (evnt != 6))
+	if ((evtype == 1) & (evblocknum == 0) & (evnt != 0) & (evnt != 5) & (evnt != 6))
 		evtype = 4;
 	if ((evtype == 1) & ((evnt == 0) | (evnt == 5) | (evnt == 6)))
 		;  // character stands on hotspot, mouse moves over hotspot, any click

@@ -23,6 +23,7 @@
 #define AGS_SHARED_AC_INVENTORY_ITEM_INFO_H
 
 #include "ags/shared/core/types.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 
@@ -32,22 +33,22 @@ class Stream;
 } // namespace Shared
 } // namespace AGS
 
-using namespace AGS; // FIXME later
+using namespace AGS::Shared;
 
 #define IFLG_STARTWITH 1
-#define MAX_INVENTORY_NAME_LENGTH 25
+#define LEGACY_MAX_INVENTORY_NAME_LENGTH 25
 
 struct InventoryItemInfo {
-	char name[MAX_INVENTORY_NAME_LENGTH];
+	String name;
 	int  pic;
 	int  cursorPic, hotx, hoty;
 	int32_t reserved[5];
-	int8 flags;
+	uint8_t flags;  // IFLG_STARTWITH
 
-	void ReadFromFile(Shared::Stream *in);
-	void WriteToFile(Shared::Stream *out);
-	void ReadFromSavegame(Shared::Stream *in);
-	void WriteToSavegame(Shared::Stream *out) const;
+	void ReadFromFile(Stream *in);
+	void WriteToFile(Stream *out);
+	void ReadFromSavegame(Stream *in);
+	void WriteToSavegame(Stream *out) const;
 };
 
 } // namespace AGS3

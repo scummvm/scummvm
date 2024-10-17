@@ -27,6 +27,7 @@
 #include "ags/engine/ac/character.h"
 #include "ags/engine/ac/character_extras.h"
 #include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/game.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/global_character.h"
@@ -37,6 +38,7 @@
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/main/update.h"
 #include "ags/engine/ac/screen_overlay.h"
+#include "ags/shared/ac/sprite_cache.h"
 #include "ags/engine/ac/view_frame.h"
 #include "ags/engine/ac/walkable_area.h"
 #include "ags/shared/gfx/bitmap.h"
@@ -52,122 +54,167 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-int do_movelist_move(short *mlnum, int *xx, int *yy) {
-	int need_to_fix_sprite = 0;
-	if (mlnum[0] < 1) quit("movelist_move: attempted to move on a non-exist movelist");
-	MoveList *cmls;
-	cmls = &_GP(mls)[mlnum[0]];
-	fixed xpermove = cmls->xpermove[cmls->onstage], ypermove = cmls->ypermove[cmls->onstage];
 
-	short targetx = short((cmls->pos[cmls->onstage + 1] >> 16) & 0x00ffff);
-	short targety = short(cmls->pos[cmls->onstage + 1] & 0x00ffff);
-	int xps = xx[0], yps = yy[0];
-	if (cmls->doneflag & 1) {
-		// if the X-movement has finished, and the Y-per-move is < 1, finish
-		// This can cause jump at the end, but without it the character will
-		// walk on the spot for a while if the Y-per-move is for example 0.2
-		//    if ((ypermove & 0xfffff000) == 0) cmls->doneflag|=2;
-		//    int ypmm=(ypermove >> 16) & 0x0000ffff;
+// Optionally fixes target position, when one axis is left to move along.
+// This is done only for backwards compatibility now.
+// Uses generic parameters.
+static void movelist_handle_targetfix(const fixed &xpermove, const fixed &ypermove, int &targety) {
+	// Old comment about ancient behavior:
+	// if the X-movement has finished, and the Y-per-move is < 1, finish
+	// This can cause jump at the end, but without it the character will
+	// walk on the spot for a while if the Y-per-move is for example 0.2
+	//    if ((ypermove & 0xfffff000) == 0) cmls.doneflag|=2;
+	//    int ypmm=(ypermove >> 16) & 0x0000ffff;
 
-		// NEW 2.15 SR-1 plan: if X-movement has finished, and Y-per-move is < 1,
-		// allow it to finish more easily by moving target zone
+	// NEW 2.15 SR-1 plan: if X-movement has finished, and Y-per-move is < 1,
+	// allow it to finish more easily by moving target zone
+	// NOTE: interesting fact: this fix was also done for the strictly vertical
+	// move, probably because of the logical mistake in condition.
 
-		int adjAmnt = 3;
-		// 2.70: if the X permove is also <=1, don't do the skipping
-		if (((xpermove & 0xffff0000) == 0xffff0000) ||
-		        ((xpermove & 0xffff0000) == 0x00000000))
-			adjAmnt = 2;
+	int tfix = 3;
+	// 2.70: if the X permove is also <=1, don't skip as far
+	if (((xpermove & 0xffff0000) == 0xffff0000) ||
+		((xpermove & 0xffff0000) == 0x00000000))
+		tfix = 2;
 
-		// 2.61 RC1: correct this to work with > -1 as well as < 1
-		if (ypermove == 0) {
-		}
-		// Y per move is < 1, so finish the move
-		else if ((ypermove & 0xffff0000) == 0)
-			targety -= adjAmnt;
-		// Y per move is -1 exactly, don't snap to finish
-		else if (ypermove == (fixed)0xffff0000) {
-		}
-		// Y per move is > -1, so finish the move
-		else if ((ypermove & 0xffff0000) == 0xffff0000)
-			targety += adjAmnt;
-	} else xps = cmls->fromx + (int)(fixtof(xpermove) * (float)cmls->onpart);
+	// 2.61 RC1: correct this to work with > -1 as well as < 1
+	if (ypermove == 0) {
+	}
+	// Y per move is < 1, so finish the move
+	else if ((ypermove & 0xffff0000) == 0)
+		targety -= tfix;
+	// Y per move is -1 exactly, don't snap to finish
+	else if (ypermove == 0xffff0000) {
+	}
+	// Y per move is > -1, so finish the move
+	else if ((ypermove & 0xffff0000) == 0xffff0000)
+		targety += tfix;
+}
 
-	if (cmls->doneflag & 2) {
-		// Y-movement has finished
+// Handle remaining move along a single axis; uses generic parameters.
+static void movelist_handle_remainer(const fixed xpermove, const fixed ypermove,
+									 const int xdistance, const float step_length, fixed &fin_ymove, float &fin_from_part) {
+	// Walk along the remaining axis with the full walking speed
+	assert(xpermove != 0 && ypermove != 0 && step_length >= 0.f);
+	fin_ymove = ypermove > 0 ? ftofix(step_length) : -ftofix(step_length);
+	fin_from_part = (float)xdistance / fixtof(xpermove);
+	assert(fin_from_part >= 0);
+}
 
-		int adjAmnt = 3;
+// Handle remaining move fixup, but only if necessary
+static void movelist_handle_remainer(MoveList &m) {
+	assert(m.numstage > 0);
+	const fixed xpermove = m.xpermove[m.onstage];
+	const fixed ypermove = m.ypermove[m.onstage];
+	const Point target = m.pos[m.onstage + 1];
+	// Apply remainer to movelists where LONGER axis was completed, and SHORTER remains
+	if ((xpermove != 0) && (ypermove != 0)) {
+		if ((m.doneflag & kMoveListDone_XY) == kMoveListDone_X && (abs(ypermove) < abs(xpermove)))
+			movelist_handle_remainer(xpermove, ypermove, target.X - m.from.X,
+									 m.GetStepLength(), m.fin_move, m.fin_from_part);
+		else if ((m.doneflag & kMoveListDone_XY) == kMoveListDone_Y && (abs(xpermove) < abs(ypermove)))
+			movelist_handle_remainer(ypermove, xpermove, target.Y - m.from.Y,
+									 m.GetStepLength(), m.fin_move, m.fin_from_part);
+	}
+}
 
-		// if the Y permove is also <=1, don't skip as far
-		if (((ypermove & 0xffff0000) == 0xffff0000) ||
-		        ((ypermove & 0xffff0000) == 0x00000000))
-			adjAmnt = 2;
+// Test if move completed, returns if just completed
+static bool movelist_handle_donemove(const uint8_t testflag, const fixed xpermove, const int targetx, uint8_t &doneflag, int &xps) {
+	if ((doneflag & testflag) != 0)
+		return false; // already done before
 
-		if (xpermove == 0) {
-		}
-		// Y per move is < 1, so finish the move
-		else if ((xpermove & 0xffff0000) == 0)
-			targetx -= adjAmnt;
-		// X per move is -1 exactly, don't snap to finish
-		else if (xpermove == (fixed)0xffff0000) {
-		}
-		// X per move is > -1, so finish the move
-		else if ((xpermove & 0xffff0000) == 0xffff0000)
-			targetx += adjAmnt;
-
-		/*    int xpmm=(xpermove >> 16) & 0x0000ffff;
-		//    if ((xpmm==0) | (xpmm==0xffff)) cmls->doneflag|=1;
-		    if (xpmm==0) cmls->doneflag|=1;*/
-	} else yps = cmls->fromy + (int)(fixtof(ypermove) * (float)cmls->onpart);
-	// check if finished horizontal movement
-	if (((xpermove > 0) && (xps >= targetx)) ||
-	        ((xpermove < 0) && (xps <= targetx))) {
-		cmls->doneflag |= 1;
-		xps = targetx;
+	if (((xpermove > 0) && (xps >= targetx)) || ((xpermove < 0) && (xps <= targetx))) {
+		doneflag |= testflag;
+		xps = targetx; // snap to the target (in case run over)
+		// Comment about old engine behavior:
 		// if the Y is almost there too, finish it
 		// this is new in v2.40
 		// removed in 2.70
 		/*if (abs(yps - targety) <= 2)
-		  yps = targety;*/
-	} else if (xpermove == 0)
-		cmls->doneflag |= 1;
-	// check if finished vertical movement
-	if ((ypermove > 0) & (yps >= targety)) {
-		cmls->doneflag |= 2;
-		yps = targety;
-	} else if ((ypermove < 0) & (yps <= targety)) {
-		cmls->doneflag |= 2;
-		yps = targety;
-	} else if (ypermove == 0)
-		cmls->doneflag |= 2;
-
-	if ((cmls->doneflag & 0x03) == 3) {
-		// this stage is done, go on to the next stage
-		// signed shorts to ensure that numbers like -20 do not become 65515
-		cmls->fromx = (signed short)((cmls->pos[cmls->onstage + 1] >> 16) & 0x000ffff);
-		cmls->fromy = (signed short)(cmls->pos[cmls->onstage + 1] & 0x000ffff);
-		if ((cmls->fromx > 65000) || (cmls->fromy > 65000))
-			quit("do_movelist: int to short rounding error");
-
-		cmls->onstage++;
-		cmls->onpart = -1;
-		cmls->doneflag &= 0xf0;
-		cmls->lastx = -1;
-		if (cmls->onstage < cmls->numstage) {
-			xps = cmls->fromx;
-			yps = cmls->fromy;
-		}
-		if (cmls->onstage >= cmls->numstage - 1) {  // last stage is just dest pos
-			cmls->numstage = 0;
-			mlnum[0] = 0;
-			need_to_fix_sprite = 1;
-		} else need_to_fix_sprite = 2;
+			yps = targety;*/
+	} else if (xpermove == 0) {
+		doneflag |= testflag;
 	}
-	cmls->onpart++;
-	xx[0] = xps;
-	yy[0] = yps;
+	return (doneflag & testflag) != 0;
+}
+
+int do_movelist_move(short &mslot, int &pos_x, int &pos_y) {
+	// TODO: find out why movelist 0 is not being used
+	assert(mslot >= 1);
+	if (mslot < 1)
+		return 0;
+
+	int need_to_fix_sprite = 0; // TODO: find out what this value means and refactor
+	MoveList &cmls = _GP(mls)[mslot];
+	const fixed xpermove = cmls.xpermove[cmls.onstage];
+	const fixed ypermove = cmls.ypermove[cmls.onstage];
+	const fixed fin_move = cmls.fin_move;
+	const float main_onpart = (cmls.fin_from_part > 0.f) ? cmls.fin_from_part : cmls.onpart;
+	const float fin_onpart = cmls.onpart - main_onpart;
+	Point target = cmls.pos[cmls.onstage + 1];
+	int xps = pos_x, yps = pos_y;
+
+	// Old-style optional move target fixup
+	if (_G(loaded_game_file_version) < kGameVersion_361) {
+		if ((ypermove != 0) && (cmls.doneflag & kMoveListDone_X) != 0) { // X-move has finished, handle the Y-move remainer
+			movelist_handle_targetfix(xpermove, ypermove, target.Y);
+		} else if ((xpermove != 0) && (cmls.doneflag & kMoveListDone_Y) != 0) { // Y-move has finished, handle the X-move remainer
+			movelist_handle_targetfix(xpermove, ypermove, target.Y);
+		}
+	}
+
+	// Calculate next positions, as required
+	if ((cmls.doneflag & kMoveListDone_X) == 0) {
+		xps = cmls.from.X + (int)(fixtof(xpermove) * main_onpart) + (int)(fixtof(fin_move) * fin_onpart);
+	}
+	if ((cmls.doneflag & kMoveListDone_Y) == 0) {
+		yps = cmls.from.Y + (int)(fixtof(ypermove) * main_onpart) + (int)(fixtof(fin_move) * fin_onpart);
+	}
+
+	// Check if finished either horizontal or vertical movement;
+	// if any was finished just now, then also handle remainer fixup
+	bool done_now = movelist_handle_donemove(kMoveListDone_X, xpermove, target.X, cmls.doneflag, xps);
+	done_now |= movelist_handle_donemove(kMoveListDone_Y, ypermove, target.Y, cmls.doneflag, yps);
+	if (done_now)
+		movelist_handle_remainer(cmls);
+
+	// Handle end of move stage
+	if ((cmls.doneflag & kMoveListDone_XY) == kMoveListDone_XY) {
+		// this stage is done, go on to the next stage
+		cmls.from = cmls.pos[cmls.onstage + 1];
+		cmls.onstage++;
+		cmls.onpart = -1.f;
+		cmls.fin_from_part = 0.f;
+		cmls.fin_move = 0;
+		cmls.doneflag = 0;
+		if (cmls.onstage < cmls.numstage) {
+			xps = cmls.from.X;
+			yps = cmls.from.Y;
+		}
+
+		if (cmls.onstage >= cmls.numstage - 1) { // last stage is just dest pos
+			cmls.numstage = 0;
+			mslot = 0;
+			need_to_fix_sprite = 1; // TODO: find out what this means
+		} else {
+			need_to_fix_sprite = 2; // TODO: find out what this means
+		}
+	}
+
+	// Make a step along the current vector and return
+	cmls.onpart += 1.f;
+	pos_x = xps;
+	pos_y = yps;
 	return need_to_fix_sprite;
 }
 
+void restore_movelists() {
+	// Recalculate move remainer fixups, where necessary
+	for (auto &m : _GP(mls)) {
+		if (m.numstage > 0)
+			movelist_handle_remainer(m);
+	}
+}
 
 void update_script_timers() {
 	if (_GP(play).gscript_timer > 0) _GP(play).gscript_timer--;
@@ -224,15 +271,14 @@ void update_following_exactly_characters(const std::vector<int> &followingAsShee
 
 void update_overlay_timers() {
 	// update overlay timers
-	for (size_t i = 0; i < _GP(screenover).size();) {
-		if (_GP(screenover)[i].timeout > 0) {
-			_GP(screenover)[i].timeout--;
-			if (_GP(screenover)[i].timeout == 0) {
-				remove_screen_overlay_index(i);
-				continue;
+	auto &overs = get_overlays();
+	for (auto &over : overs) {
+		if (over.timeout > 0) {
+			over.timeout--;
+			if (over.timeout == 0) {
+				remove_screen_overlay(over.type);
 			}
 		}
-		i++;
 	}
 }
 
@@ -258,7 +304,7 @@ void update_speech_and_messages() {
 		if (!_GP(play).speech_in_post_state && (_GP(play).fast_forward == 0) && (_GP(play).messagetime < 1)) {
 			_GP(play).speech_in_post_state = true;
 			if (_GP(play).speech_display_post_time_ms > 0) {
-				_GP(play).messagetime = ::lround(_GP(play).speech_display_post_time_ms * get_current_fps() / 1000.0f);
+				_GP(play).messagetime = ::lround(_GP(play).speech_display_post_time_ms * get_game_fps() / 1000.0f);
 			}
 		}
 
@@ -313,16 +359,16 @@ void update_sierra_speech() {
 
 		if (_G(curLipLine) >= 0) {
 			// check voice lip sync
-			if (_G(curLipLinePhoneme) >= _G(splipsync)[_G(curLipLine)].numPhonemes) {
+			if (_G(curLipLinePhoneme) >= _GP(splipsync)[_G(curLipLine)].numPhonemes) {
 				// the lip-sync has finished, so just stay idle
 			} else {
-				while ((_G(curLipLinePhoneme) < _G(splipsync)[_G(curLipLine)].numPhonemes) &&
-				        ((_G(curLipLinePhoneme) < 0) || (voice_pos_ms >= _G(splipsync)[_G(curLipLine)].endtimeoffs[_G(curLipLinePhoneme)]))) {
+				while ((_G(curLipLinePhoneme) < _GP(splipsync)[_G(curLipLine)].numPhonemes) &&
+				        ((_G(curLipLinePhoneme) < 0) || (voice_pos_ms >= _GP(splipsync)[_G(curLipLine)].endtimeoffs[_G(curLipLinePhoneme)]))) {
 					_G(curLipLinePhoneme)++;
-					if (_G(curLipLinePhoneme) >= _G(splipsync)[_G(curLipLine)].numPhonemes)
+					if (_G(curLipLinePhoneme) >= _GP(splipsync)[_G(curLipLine)].numPhonemes)
 						_G(facetalkframe) = _GP(game).default_lipsync_frame;
 					else
-						_G(facetalkframe) = _G(splipsync)[_G(curLipLine)].frame[_G(curLipLinePhoneme)];
+						_G(facetalkframe) = _GP(splipsync)[_G(curLipLine)].frame[_G(curLipLinePhoneme)];
 
 					if (_G(facetalkframe) >= _GP(views)[_G(facetalkview)].loops[_G(facetalkloop)].numFrames)
 						_G(facetalkframe) = 0;
@@ -378,7 +424,8 @@ void update_sierra_speech() {
 		// _G(is_text_overlay) might be 0 if it was only just destroyed this loop
 		if ((updatedFrame) && (_GP(play).text_overlay_on > 0)) {
 
-			const int frame_vol = GetCharacterFrameVolume(_G(facetalkchar));
+			const auto &talking_chex = _GP(charextra)[_G(facetalkchar)->index_id];
+			const int frame_vol = talking_chex.GetFrameSoundVolume(_G(facetalkchar));
 			if (updatedFrame & 1)
 				CheckViewFrame(_G(facetalkview), _G(facetalkloop), _G(facetalkframe), frame_vol);
 			if (updatedFrame & 2)
@@ -388,7 +435,9 @@ void update_sierra_speech() {
 			int view_frame_x = 0;
 			int view_frame_y = 0;
 
-			Bitmap *frame_pic = _GP(screenover)[_G(face_talking)].GetImage();
+			auto *face_over = get_overlay(_G(face_talking));
+			assert(face_over != nullptr);
+			Bitmap *frame_pic = _GP(spriteset)[face_over->GetSpriteNum()];
 			if (_GP(game).options[OPT_SPEECHTYPE] == 3) {
 				// QFG4-style fullscreen dialog
 				if (_G(facetalk_qfg4_override_placement_x)) {
@@ -415,8 +464,8 @@ void update_sierra_speech() {
 				DrawViewFrame(frame_pic, blink_vf, view_frame_x, view_frame_y, face_has_alpha);
 			}
 
-			_GP(screenover)[_G(face_talking)].SetAlphaChannel(face_has_alpha);
-			_GP(screenover)[_G(face_talking)].MarkChanged();
+			face_over->SetAlphaChannel(face_has_alpha);
+			face_over->MarkChanged();
 		}  // end if updatedFrame
 	}
 }
@@ -425,17 +474,17 @@ void update_sierra_speech() {
 // the like.
 void update_stuff() {
 
-	_G(our_eip) = 20;
+	set_our_eip(20);
 
 	update_script_timers();
 
 	update_cycling_views();
 
-	_G(our_eip) = 21;
+	set_our_eip(21);
 
 	update_player_view();
 
-	_G(our_eip) = 22;
+	set_our_eip(22);
 
 	std::vector<int> followingAsSheep;
 
@@ -443,17 +492,17 @@ void update_stuff() {
 
 	update_following_exactly_characters(followingAsSheep);
 
-	_G(our_eip) = 23;
+	set_our_eip(23);
 
 	update_overlay_timers();
 
 	update_speech_and_messages();
 
-	_G(our_eip) = 24;
+	set_our_eip(24);
 
 	update_sierra_speech();
 
-	_G(our_eip) = 25;
+	set_our_eip(25);
 }
 
 } // namespace AGS3

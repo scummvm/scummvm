@@ -22,118 +22,64 @@
 #include "common/std/memory.h"
 #include "ags/shared/util/stream.h"
 #include "ags/engine/ac/dynobj/script_user_object.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 
+const char *ScriptUserObject::TypeName = "UserObject";
+
 // return the type name of the object
 const char *ScriptUserObject::GetType() {
-	return "UserObject";
+	return TypeName;
 }
 
-ScriptUserObject::ScriptUserObject()
-	: _size(0)
-	, _data(nullptr) {
-}
-
-ScriptUserObject::~ScriptUserObject() {
-	delete[] _data;
-}
-
-/* static */ ScriptUserObject *ScriptUserObject::CreateManaged(size_t size) {
-	ScriptUserObject *suo = new ScriptUserObject();
-	suo->Create(nullptr, nullptr, size);
-	ccRegisterManagedObject(suo, suo);
-	return suo;
-}
-
-void ScriptUserObject::Create(const char *data, Stream *in, size_t size) {
-	delete[] _data;
-	_data = nullptr;
-
-	_size = size;
-	if (_size > 0) {
-		_data = new char[size];
-		if (data)
-			memcpy(_data, data, _size);
-		else if (in)
-			in->Read(_data, _size);
-		else
-			memset(_data, 0, _size);
+/* static */ DynObjectRef ScriptUserObject::Create(size_t size) {
+	uint8_t *new_data = new uint8_t[size + MemHeaderSz];
+	memset(new_data, 0, size + MemHeaderSz);
+	Header &hdr = reinterpret_cast<Header &>(*new_data);
+	hdr.Size = size;
+	void *obj_ptr = &new_data[MemHeaderSz];
+	int32_t handle = ccRegisterManagedObject(obj_ptr, &_G(globalDynamicStruct));
+	if (handle == 0) {
+		delete[] new_data;
+		return DynObjectRef();
 	}
+	return DynObjectRef(handle, obj_ptr, &_G(globalDynamicStruct));
 }
 
-int ScriptUserObject::Dispose(const char *address, bool force) {
-	delete this;
+int ScriptUserObject::Dispose(void *address, bool /*force*/) {
+	delete[] (static_cast<uint8_t *>(address) - MemHeaderSz);
 	return 1;
 }
 
-int ScriptUserObject::Serialize(const char *address, char *buffer, int bufsize) {
-	if (_size > bufsize)
-		// buffer not big enough, ask for a bigger one
-		return -_size;
+size_t ScriptUserObject::CalcSerializeSize(const void *address) {
+	const Header &hdr = GetHeader(address);
+	return hdr.Size + FileHeaderSz;
+}
 
-	memcpy(buffer, _data, _size);
-	return _size;
+void ScriptUserObject::Serialize(const void *address, AGS::Shared::Stream *out) {
+	const Header &hdr = GetHeader(address);
+	// NOTE: we only write the data, no header at the moment
+	out->Write(address, hdr.Size);
 }
 
 void ScriptUserObject::Unserialize(int index, Stream *in, size_t data_sz) {
-	Create(nullptr, in, data_sz);
-	ccRegisterUnserializedObject(index, this, this);
+	uint8_t *new_data = new uint8_t[(data_sz - FileHeaderSz) + MemHeaderSz];
+	Header &hdr = reinterpret_cast<Header &>(*new_data);
+	hdr.Size = data_sz - FileHeaderSz;
+	in->Read(new_data + MemHeaderSz, data_sz - FileHeaderSz);
+	ccRegisterUnserializedObject(index, &new_data[MemHeaderSz], this);
 }
-
-const char *ScriptUserObject::GetFieldPtr(const char *address, intptr_t offset) {
-	return _data + offset;
-}
-
-void ScriptUserObject::Read(const char *address, intptr_t offset, void *dest, int size) {
-	memcpy(dest, _data + offset, size);
-}
-
-uint8_t ScriptUserObject::ReadInt8(const char *address, intptr_t offset) {
-	return *(uint8_t *)(_data + offset);
-}
-
-int16_t ScriptUserObject::ReadInt16(const char *address, intptr_t offset) {
-	return *(int16_t *)(_data + offset);
-}
-
-int32_t ScriptUserObject::ReadInt32(const char *address, intptr_t offset) {
-	return *(int32_t *)(_data + offset);
-}
-
-float ScriptUserObject::ReadFloat(const char *address, intptr_t offset) {
-	return *(float *)(_data + offset);
-}
-
-void ScriptUserObject::Write(const char *address, intptr_t offset, void *src, int size) {
-	memcpy((void *)(_data + offset), src, size);
-}
-
-void ScriptUserObject::WriteInt8(const char *address, intptr_t offset, uint8_t val) {
-	*(uint8_t *)(_data + offset) = val;
-}
-
-void ScriptUserObject::WriteInt16(const char *address, intptr_t offset, int16_t val) {
-	*(int16_t *)(_data + offset) = val;
-}
-
-void ScriptUserObject::WriteInt32(const char *address, intptr_t offset, int32_t val) {
-	*(int32_t *)(_data + offset) = val;
-}
-
-void ScriptUserObject::WriteFloat(const char *address, intptr_t offset, float val) {
-	*(float *)(_data + offset) = val;
-}
-
 
 // Allocates managed struct containing two ints: X and Y
 ScriptUserObject *ScriptStructHelpers::CreatePoint(int x, int y) {
-	ScriptUserObject *suo = ScriptUserObject::CreateManaged(sizeof(int32_t) * 2);
-	suo->WriteInt32((const char *)suo, 0, x);
-	suo->WriteInt32((const char *)suo, sizeof(int32_t), y);
-	return suo;
+	DynObjectRef ref = ScriptUserObject::Create(sizeof(int32_t) * 2);
+	ref.Mgr->WriteInt32(ref.Obj, 0, x);
+	ref.Mgr->WriteInt32(ref.Obj, sizeof(int32_t), y);
+	return static_cast<ScriptUserObject *>(ref.Obj);
 }
 
 } // namespace AGS3

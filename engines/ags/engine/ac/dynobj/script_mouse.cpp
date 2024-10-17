@@ -19,35 +19,34 @@
  *
  */
 
-//=============================================================================
-//
-// ConsoleOutputTarget prints messages onto in-game console GUI (available
-// only if the game was compiled in debug mode).
-//
-//=============================================================================
-
-#ifndef AGS_ENGINE_DEBUGGING_CONSOLE_OUTPUT_TARGET_H
-#define AGS_ENGINE_DEBUGGING_CONSOLE_OUTPUT_TARGET_H
-
-#include "ags/shared/debugging/output_handler.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/ac/dynobj/script_mouse.h"
+#include "ags/shared/script/cc_common.h" // cc_error
 
 namespace AGS3 {
-namespace AGS {
-namespace Engine {
 
-using Shared::String;
-using Shared::DebugMessage;
+int32_t ScriptMouse::ReadInt32(void *address, intptr_t offset) {
+	switch (offset) {
+	case 0:
+		return x;
+	case 4:
+		return y;
+	default:
+		cc_error("ScriptMouse: unsupported variable offset %d", offset);
+		return 0;
+	}
+}
 
-class ConsoleOutputTarget : public AGS::Shared::IOutputHandler {
-public:
-	ConsoleOutputTarget();
-	virtual ~ConsoleOutputTarget();
+void ScriptMouse::WriteInt32(void *address, intptr_t offset, int32_t val) {
+	switch (offset) {
+	case 0:
+	case 4:
+		debug_script_warn("ScriptMouse: attempt to write in readonly variable at offset %d, value", offset, val);
+		break;
+	default:
+		cc_error("ScriptMouse: unsupported variable offset %d", offset);
+		break;
+	}
+}
 
-	void PrintMessage(const DebugMessage &msg) override;
-};
-
-} // namespace Engine
-} // namespace AGS
 } // namespace AGS3
-
-#endif

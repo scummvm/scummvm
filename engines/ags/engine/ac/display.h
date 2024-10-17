@@ -45,9 +45,10 @@ Shared::Bitmap *create_textual_image(const char *text, int asspch, int isThought
 // Pass yy = -1 to find Y co-ord automatically
 // allowShrink = 0 for none, 1 for leftwards, 2 for rightwards
 // pass blocking=2 to create permanent overlay
-ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp_type, int usingfont,
-	int asspch, int isThought, int allowShrink, bool overlayPositionFixed, bool roomlayer = false);
-void _display_at(int xx, int yy, int wii, const char *text, int disp_type, int asspch, int isThought, int allowShrink, bool overlayPositionFixed);
+ScreenOverlay *display_main(int xx, int yy, int wii, const char *text, int disp_type, int usingfont,
+							int asspch, int isThought, int allowShrink, bool overlayPositionFixed, bool roomlayer = false);
+// Displays a standard blocking message box at a given position
+void display_at(int xx, int yy, int wii, const char *text);
 // Cleans up display message state
 void post_display_cleanup();
 // Tests the given string for the voice-over tags and plays cue clip for the given character;

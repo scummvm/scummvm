@@ -48,10 +48,8 @@ using namespace AGS::Engine;
 
 // RawSaveScreen: copy the current screen to a backup bitmap
 void RawSaveScreen() {
-	if (_G(raw_saved_screen) != nullptr)
-		delete _G(raw_saved_screen);
-	PBitmap source = _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic;
-	_G(raw_saved_screen) = BitmapHelper::CreateBitmapCopy(source.get());
+	auto source = _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic;
+	_G(raw_saved_screen).reset(BitmapHelper::CreateBitmapCopy(source.get()));
 }
 // RawRestoreScreen: copy backup bitmap back to screen; we
 // deliberately don't free the Bitmap *cos they can multiple restore
@@ -61,8 +59,8 @@ void RawRestoreScreen() {
 		debug_script_warn("RawRestoreScreen: unable to restore, since the screen hasn't been saved previously.");
 		return;
 	}
-	PBitmap deston = _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic;
-	deston->Blit(_G(raw_saved_screen), 0, 0, 0, 0, deston->GetWidth(), deston->GetHeight());
+	auto deston = _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic;
+	deston->Blit(_G(raw_saved_screen).get(), 0, 0, 0, 0, deston->GetWidth(), deston->GetHeight());
 	invalidate_screen();
 	mark_current_background_dirty();
 }
@@ -80,7 +78,7 @@ void RawRestoreScreenTinted(int red, int green, int blue, int opacity) {
 	debug_script_log("RawRestoreTinted RGB(%d,%d,%d) %d%%", red, green, blue, opacity);
 
 	PBitmap deston = _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic;
-	tint_image(deston.get(), _G(raw_saved_screen), red, green, blue, opacity);
+	tint_image(deston.get(), _G(raw_saved_screen).get(), red, green, blue, opacity);
 	invalidate_screen();
 	mark_current_background_dirty();
 }
@@ -168,12 +166,13 @@ void RawPrintMessageWrapped(int xx, int yy, int wid, int font, int msgm) {
 }
 
 void RawDrawImageCore(int xx, int yy, int slot, int alpha) {
-	if ((slot < 0) || (_GP(spriteset)[slot] == nullptr))
+	if ((slot < 0) || (!_GP(spriteset).DoesSpriteExist(slot)))
 		quit("!RawDrawImage: invalid sprite slot number specified");
 	RAW_START();
 
-	if (_GP(spriteset)[slot]->GetColorDepth() != RAW_SURFACE()->GetColorDepth()) {
-		debug_script_warn("RawDrawImage: Sprite %d colour depth %d-bit not same as background depth %d-bit", slot, _GP(spriteset)[slot]->GetColorDepth(), RAW_SURFACE()->GetColorDepth());
+	Bitmap *sprite = _GP(spriteset)[slot];
+	if (sprite->GetColorDepth() != RAW_SURFACE()->GetColorDepth()) {
+		debug_script_warn("RawDrawImage: Sprite %d colour depth %d-bit not same as background depth %d-bit", slot, sprite->GetColorDepth(), RAW_SURFACE()->GetColorDepth());
 	}
 
 	draw_sprite_slot_support_alpha(RAW_SURFACE(), false, xx, yy, slot, kBlendMode_Alpha, alpha);
@@ -224,7 +223,7 @@ void RawDrawImageTransparent(int xx, int yy, int slot, int legacy_transparency) 
 	RawDrawImageTrans(xx, yy, slot, GfxDef::LegacyTrans100ToAlpha255(legacy_transparency));
 }
 void RawDrawImageResized(int xx, int yy, int gotSlot, int width, int height) {
-	if ((gotSlot < 0) || (_GP(spriteset)[gotSlot] == nullptr))
+	if ((gotSlot < 0) || (!_GP(spriteset).DoesSpriteExist(gotSlot)))
 		quit("!RawDrawImageResized: invalid sprite slot number specified");
 	// very small, don't draw it
 	if ((width < 1) || (height < 1))
@@ -234,10 +233,11 @@ void RawDrawImageResized(int xx, int yy, int gotSlot, int width, int height) {
 	data_to_game_coords(&width, &height);
 
 	// resize the sprite to the requested size
-	Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, _GP(spriteset)[gotSlot]->GetColorDepth());
-	newPic->StretchBlt(_GP(spriteset)[gotSlot],
-	                   RectWH(0, 0, _GP(game).SpriteInfos[gotSlot].Width, _GP(game).SpriteInfos[gotSlot].Height),
-	                   RectWH(0, 0, width, height));
+	Bitmap *sprite = _GP(spriteset)[gotSlot];
+	Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, sprite->GetColorDepth());
+	newPic->StretchBlt(sprite,
+					   RectWH(0, 0, _GP(game).SpriteInfos[gotSlot].Width, _GP(game).SpriteInfos[gotSlot].Height),
+					   RectWH(0, 0, width, height));
 
 	RAW_START();
 	if (newPic->GetColorDepth() != RAW_SURFACE()->GetColorDepth())

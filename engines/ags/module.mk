@@ -70,7 +70,6 @@ MODULE_OBJS = \
 	shared/gui/gui_textbox.o \
 	shared/script/cc_common.o \
 	shared/script/cc_script.o \
-	shared/util/aligned_stream.o \
 	shared/util/buffered_stream.o \
 	shared/util/compress.o \
 	shared/util/data_ext.o \
@@ -85,7 +84,6 @@ MODULE_OBJS = \
 	shared/util/memory_stream.o \
 	shared/util/multi_file_lib.o \
 	shared/util/path.o \
-	shared/util/proxy_stream.o \
 	shared/util/stdio_compat.o \
 	shared/util/stream.o \
 	shared/util/string.o \
@@ -183,7 +181,6 @@ MODULE_OBJS = \
 	engine/ac/slider.o \
 	engine/ac/speech.o \
 	engine/ac/sprite.o \
-	engine/ac/sprite_cache_engine.o \
 	engine/ac/string.o \
 	engine/ac/system.o \
 	engine/ac/sys_events.o \
@@ -200,7 +197,6 @@ MODULE_OBJS = \
 	engine/ac/dynobj/cc_character.o \
 	engine/ac/dynobj/cc_dialog.o \
 	engine/ac/dynobj/cc_dynamic_array.o \
-	engine/ac/dynobj/cc_dynamic_object.o \
 	engine/ac/dynobj/cc_gui.o \
 	engine/ac/dynobj/cc_gui_object.o \
 	engine/ac/dynobj/cc_hotspot.o \
@@ -208,6 +204,8 @@ MODULE_OBJS = \
 	engine/ac/dynobj/cc_object.o \
 	engine/ac/dynobj/cc_region.o \
 	engine/ac/dynobj/cc_serializer.o \
+	engine/ac/dynobj/cc_static_array.o \
+	engine/ac/dynobj/dynobj_manager.o \
 	engine/ac/dynobj/managed_object_pool.o \
 	engine/ac/dynobj/script_camera.o \
 	engine/ac/dynobj/script_date_time.o \
@@ -216,15 +214,15 @@ MODULE_OBJS = \
 	engine/ac/dynobj/script_drawing_surface.o \
 	engine/ac/dynobj/script_dynamic_sprite.o \
 	engine/ac/dynobj/script_file.o \
+	engine/ac/dynobj/script_game.o \
+	engine/ac/dynobj/script_mouse.o \
 	engine/ac/dynobj/script_overlay.o \
 	engine/ac/dynobj/script_set.o \
 	engine/ac/dynobj/script_string.o \
+	engine/ac/dynobj/script_system.o \
 	engine/ac/dynobj/script_user_object.o \
 	engine/ac/dynobj/script_viewport.o \
 	engine/ac/dynobj/script_view_frame.o \
-	engine/ac/statobj/ags_static_object.o \
-	engine/ac/statobj/static_array.o \
-	engine/debugging/console_output_target.o \
 	engine/debugging/debug.o \
 	engine/debugging/file_based_ags_debugger.o \
 	engine/debugging/log_file.o \
@@ -283,7 +281,6 @@ MODULE_OBJS = \
 	engine/script/system_imports.o \
 	plugins/ags_plugin.o \
 	plugins/plugin_base.o \
-	plugins/plugin_object_reader.o \
 	plugins/core/core.o \
 	plugins/core/audio_channel.o \
 	plugins/core/audio_clip.o \
