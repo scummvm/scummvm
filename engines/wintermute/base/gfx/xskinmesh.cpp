@@ -396,28 +396,24 @@ bool DXSkinInfo::updateSkinnedMesh(const DXMatrix *boneTransforms, void *srcVert
 	}
 
 	for (i = 0; i < _numBones; i++) {
-		//DXMatrix boneInverse, matrix;
+		DXMatrix boneInverse, matrix;
 
-		Math::Matrix4 boneMatrix;
-		boneMatrix.setData(boneTransforms[i]._m4x4);
-
-		//DXMatrixInverse(&boneInverse, NULL, &_bones[i]._transform);
-		//DXMatrixMultiply(&matrix, &boneTransforms[i], &boneInverse);
-		//DXMatrixMultiply(&matrix, &matrix, &_bones[i]._transform);
+		DXMatrixInverse(&boneInverse, NULL, &_bones[i]._transform);
+		DXMatrixMultiply(&matrix, &boneInverse, &boneTransforms[i]);
+		DXMatrixMultiply(&matrix, &_bones[i]._transform, &matrix);
+		DXMatrixTranspose(&matrix, &matrix);
 
 		for (j = 0; j < _bones[i]._numInfluences; j++) {
-			Math::Vector3d position;
+			DXVector3 position;
 			DXVector3 *positionSrc = (DXVector3 *)((byte *)srcVertices + vertexSize * _bones[i]._vertices[j]);
 			DXVector3 *positionDst = (DXVector3 *)((byte *)dstVertices + vertexSize * _bones[i]._vertices[j]);
 			float weight = _bones[i]._weights[j];
 
-			position.set(positionSrc->_x, positionSrc->_y, positionSrc->_z);
-			boneMatrix.transform(&position, true);
-			//DXVec3TransformCoord(&position, positionSrc, &matrix);
+			DXVec3TransformCoord(&position, positionSrc, &matrix);
 
-			positionDst->_x += weight * position.x();
-			positionDst->_y += weight * position.y();
-			positionDst->_z += weight * position.z();
+			positionDst->_x += weight * position._x;
+			positionDst->_y += weight * position._y;
+			positionDst->_z += weight * position._z;
 		}
 	}
 
@@ -430,29 +426,23 @@ bool DXSkinInfo::updateSkinnedMesh(const DXMatrix *boneTransforms, void *srcVert
 		}
 
 		for (i = 0; i < _numBones; i++) {
-			//DXMatrix boneInverse, matrix;
+			DXMatrix boneInverse, matrix;
 
-			Math::Matrix4 boneMatrix;
-			boneMatrix.setData(boneTransforms[i]._m4x4);
-			boneMatrix.transpose();
-			boneMatrix.inverse();
-
-			//DXMatrixInverse(&boneInverse, nullptr, &_bones[i]._transform);
-			//DXMatrixMultiply(&matrix, &_bones[i]._transform, &boneTransforms[i]);
+			DXMatrixInverse(&boneInverse, nullptr, &_bones[i]._transform);
+			DXMatrixMultiply(&matrix, &_bones[i]._transform, &boneTransforms[i]);
 
 			for (j = 0; j < _bones[i]._numInfluences; j++) {
-				Math::Vector3d normal;
+				DXVector3 normal;
 				DXVector3 *normalSrc = (DXVector3 *)((byte *)srcVertices + vertexSize * _bones[i]._vertices[j] + normalOffset);
 				DXVector3 *normalDst = (DXVector3 *)((byte *)dstVertices + vertexSize * _bones[i]._vertices[j] + normalOffset);
 				float weight = _bones[i]._weights[j];
 
-				//DXVec3TransformNormal(&normal, normalSrc, &boneInverse);
-				//DXVec3TransformNormal(&normal, &normal, &matrix);
-				normal.set(normalSrc->_x, normalSrc->_y, normalSrc->_z);
-				boneMatrix.transform(&normal, true);
-				normalDst->_x += weight * normal.x();
-				normalDst->_y += weight * normal.y();
-				normalDst->_z += weight * normal.z();
+				DXVec3TransformNormal(&normal, normalSrc, &boneInverse);
+				DXVec3TransformNormal(&normal, &normal, &matrix);
+
+				normalDst->_x += weight * normal._x;
+				normalDst->_y += weight * normal._y;
+				normalDst->_z += weight * normal._z;
 			}
 		}
 
