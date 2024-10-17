@@ -69,7 +69,12 @@ reg_t SoundCommandParser::kDoSoundInit(EngineState *s, int argc, reg_t *argv) {
 }
 
 int SoundCommandParser::getSoundResourceId(reg_t obj) {
-	int resourceId = obj.getSegment() ? (int)readSelectorValue(_segMan, obj, SELECTOR(number)) : -1;
+	if (obj.getSegment() == 0) {
+		return -1;
+	}
+
+	uint16 resourceId = readSelectorValue(_segMan, obj, SELECTOR(number));
+
 	// Modify the resourceId for the Windows versions that have an alternate MIDI soundtrack, like SSCI did.
 	if (g_sci->_features->useAltWinGMSound()) {
 		// Check if the alternate MIDI song actually exists...
