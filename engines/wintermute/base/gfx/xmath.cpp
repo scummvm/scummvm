@@ -304,6 +304,7 @@ DXMatrix *DXMatrixInverse(DXMatrix *pout, float *pdeterminant, const DXMatrix *p
 	t[1] = pm->_m[3][0] * pm->_m[0][1] - pm->_m[0][0] * pm->_m[3][1];
 	t[2] = pm->_m[1][0] * pm->_m[3][1] - pm->_m[3][0] * pm->_m[1][1];
 	v[10] = pm->_m[3][3] * t[0] + pm->_m[1][3] * t[1] + pm->_m[0][3] * t[2];
+	v[14] = -pm->_m[3][2] * t[0] - pm->_m[1][2] * t[1] - pm->_m[0][2] * t[2];
 
 	t[0] = pm->_m[1][2] * pm->_m[2][3] - pm->_m[1][3] * pm->_m[2][2];
 	t[1] = pm->_m[0][2] * pm->_m[2][3] - pm->_m[0][3] * pm->_m[2][2];

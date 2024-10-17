@@ -562,31 +562,42 @@ bool XModel::isTransparentAt(int x, int y) {
 		y += _gameRef->_renderer3D->_drawOffsetY;
 	}
 
-	Math::Vector3d pickRayDir;
-	Math::Vector3d pickRayOrig;
+	DXVector3 pickRayDir;
+	DXVector3 pickRayOrig;
 
 	// Compute the vector of the pick ray in screen space
-	Math::Vector3d vec((((2.0f * x) / _drawingViewport.width()) - 1) / _lastProjMat(0, 0),
-					  -(((2.0f * y) / _drawingViewport.height()) - 1) / _lastProjMat(1, 1),
-						 -1.0f);
+	DXVector3 vec;
+	vec._x =  (((2.0f * x) / (_drawingViewport.width())) - 1) / _lastProjMat(0, 0);
+	vec._y = -(((2.0f * y) / (_drawingViewport.height())) - 1) / _lastProjMat(1, 1);
+	vec._z =  -1.0f;
 
-	Math::Matrix4 m = _lastViewMat;
-	m.inverse();
-	m.transpose();
-	m.transform(&vec, false);
+	// Get the inverse view matrix
+	DXMatrix m, viewMatrix = DXMatrix(_lastViewMat.getData());
+	DXMatrixInverse(&m, nullptr, &viewMatrix);
 
-	pickRayDir = vec;
-	pickRayOrig = m.getPosition();
+	// Transform the screen space pick ray into 3D space
+	pickRayDir._x  = vec._x * m.matrix._11 + vec._y * m.matrix._21 + vec._z * m.matrix._31;
+	pickRayDir._y  = vec._x * m.matrix._12 + vec._y * m.matrix._22 + vec._z * m.matrix._32;
+	pickRayDir._z  = vec._x * m.matrix._13 + vec._y * m.matrix._23 + vec._z * m.matrix._33;
+	pickRayOrig._x = m.matrix._41;
+	pickRayOrig._y = m.matrix._42;
+	pickRayOrig._z = m.matrix._43;
 
 	// transform to model space
-	Math::Vector3d end = pickRayOrig + pickRayDir;
-	m = _lastWorldMat;
-	m.inverse();
-	m.transform(&pickRayOrig, true);
-	m.transform(&end, true);
+	DXVector3 end = pickRayOrig + pickRayDir;
+	DXMatrix worldMatrix = DXMatrix(_lastWorldMat.getData());
+	DXMatrixInverse(&m, nullptr, &worldMatrix);
+	DXMatrixTranspose(&m, &m);
+	DXVec3TransformCoord(&pickRayOrig, &pickRayOrig, &m);
+	DXVec3TransformCoord(&end, &end, &m);
 	pickRayDir = end - pickRayOrig;
 
-	return !_rootFrame->pickPoly(&pickRayOrig, &pickRayDir);
+	Math::Vector3d vPickRayOrig = Math::Vector3d(pickRayOrig._x, pickRayOrig._y, pickRayOrig._z);
+	Math::Vector3d vPickRayDir = Math::Vector3d(pickRayDir._x, pickRayDir._y, pickRayDir._z);
+
+	return !_rootFrame->pickPoly(&vPickRayOrig, &vPickRayDir);
+ 
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
