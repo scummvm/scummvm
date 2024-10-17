@@ -492,8 +492,8 @@ inline RuntimeScriptValue GetStackPtrOffsetFw(RuntimeScriptValue *stack, int32_t
 		stack_entry++;
 		total_off += stack_entry->Size;
 	}
-	CC_ERROR_IF_RETVAL(total_off < fw_offset, RuntimeScriptValue, "accessing address beyond stack's tail");
-	CC_ERROR_IF_RETVAL(total_off > fw_offset, RuntimeScriptValue, "stack offset forward: trying to access stack data inside stack entry, stack corrupted?");
+	CC_ERROR_IF_RETVAL(total_off < fw_offset, RuntimeScriptValue, "accessing address %d beyond stack's tail (%d)", fw_offset, total_off);
+	CC_ERROR_IF_RETVAL(total_off > fw_offset, RuntimeScriptValue, "stack offset forward (%d): trying to access stack data inside stack entry (%d), stack corrupted?", fw_offset, total_off);
 	RuntimeScriptValue stack_ptr;
 	stack_ptr.SetStackPtr(stack_entry);
 	return stack_ptr;
@@ -1040,7 +1040,7 @@ int ccInstance::Run(int32_t curpc) {
 				break;
 			default:
 				// There's one possible case when the reg1 is 0, which means writing nullptr
-				CC_ERROR_IF_RETCODE(!reg1.IsNull(), "internal error: MEMWRITEPTR argument is not a dynamic object");
+				CC_ERROR_IF_RETCODE(!reg1.IsNull(), "internal error: MEMWRITEPTR argument is not a dynamic object (Type = %d)", reg1.Type);
 				address = nullptr;
 				break;
 			}
@@ -1078,7 +1078,7 @@ int ccInstance::Run(int32_t curpc) {
 				break;
 			default:
 				// There's one possible case when the reg1 is 0, which means writing nullptr
-				CC_ERROR_IF_RETCODE(!reg1.IsNull(), "internal error: SCMD_MEMINITPTR argument is not a dynamic object");
+				CC_ERROR_IF_RETCODE(!reg1.IsNull(), "internal error: SCMD_MEMINITPTR argument is not a dynamic object (Type = %d)", reg1.Type);
 				address = nullptr;
 				break;
 			}
@@ -1961,7 +1961,7 @@ void ccInstance::PushValueToStack(const RuntimeScriptValue &rval) {
 }
 
 void ccInstance::PushDataToStack(const int32_t num_bytes) {
-	CC_ERROR_IF(registers[SREG_SP].RValue->IsValid(), "internal error: valid data beyond stack ptr");
+	CC_ERROR_IF(registers[SREG_SP].RValue->IsValid(), "internal error: valid data (%d bytes) beyond stack ptr", num_bytes);
 	// Assign pointer to data block to the stack tail, advance both stack ptr and stack data ptr
 	// NOTE: memory is zeroed by SCMD_ZEROMEMORY
 	registers[SREG_SP].RValue->SetData(stackdata_ptr, num_bytes);
@@ -1997,8 +1997,8 @@ void ccInstance::PopDataFromStack(const int32_t num_bytes) {
 		total_pop += registers[SREG_SP].RValue->Size;
 		registers[SREG_SP].RValue->Invalidate(); // FIXME: bad, this is used to separate PushValue and PushData
 	}
-	CC_ERROR_IF(total_pop < num_bytes, "stack underflow");
-	CC_ERROR_IF(total_pop > num_bytes, "stack pointer points inside local variable after pop, stack corrupted?");
+	CC_ERROR_IF(total_pop < num_bytes, "stack underflow: %d bytes popped of %d total", total_pop, num_bytes);
+	CC_ERROR_IF(total_pop > num_bytes, "stack pointer points inside local variable after pop (%d bytes), stack corrupted?", total_pop);
 }
 
 RuntimeScriptValue ccInstance::GetStackPtrOffsetRw(const int32_t rw_offset) {
@@ -2008,12 +2008,13 @@ RuntimeScriptValue ccInstance::GetStackPtrOffsetRw(const int32_t rw_offset) {
 		stack_entry--;
 		total_off += stack_entry->Size;
 	}
-	CC_ERROR_IF_RETVAL(total_off < rw_offset, RuntimeScriptValue, "accessing address before stack's head");
+	CC_ERROR_IF_RETVAL(total_off < rw_offset, RuntimeScriptValue, "accessing address (off: %d) before stack's head (%d)", rw_offset, total_off);
 	RuntimeScriptValue stack_ptr;
 	stack_ptr.SetStackPtr(stack_entry);
 	stack_ptr.IValue += total_off - rw_offset; // possibly offset to the mid-array
 	// Could be accessing array element, so state error only if stack entry does not refer to data array
-	CC_ERROR_IF_RETVAL((total_off > rw_offset) && (stack_entry->Type != kScValData), RuntimeScriptValue, "stack offset backward: trying to access stack data inside stack entry, stack corrupted?")
+	CC_ERROR_IF_RETVAL((total_off > rw_offset) && (stack_entry->Type != kScValData), RuntimeScriptValue,
+					   "stack offset backward: trying to access stack data (off: %d) inside stack entry (tot: %d), stack corrupted?", rw_offset, total_off);
 	return stack_ptr;
 }
 
