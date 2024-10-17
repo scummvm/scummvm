@@ -210,15 +210,13 @@ void RoomStatus::WriteToSavegame(Stream *out, GameDataVersion data_ver) const {
 	out->WriteInt32(0);
 }
 
-std::unique_ptr<RoomStatus> room_statuses[MAX_ROOMS];
-
 // Replaces all accesses to the roomstats array
 RoomStatus *getRoomStatus(int room) {
-	if (!room_statuses[room]) {
+	if (!_G(room_statuses)[room]) {
 		// First access, allocate and initialise the status
-		room_statuses[room].reset(new RoomStatus());
+		_G(room_statuses)[room].reset(new RoomStatus());
 	}
-	return room_statuses[room].get();
+	return _G(room_statuses)[room].get();
 }
 
 // Used in places where it is only important to know whether the player
@@ -226,12 +224,12 @@ RoomStatus *getRoomStatus(int room) {
 // to initialise the status because a player can only have been in
 // a room if the status is already initialised.
 bool isRoomStatusValid(int room) {
-	return (room_statuses[room] != nullptr);
+	return (_G(room_statuses)[room] != nullptr);
 }
 
 void resetRoomStatuses() {
 	for (int i = 0; i < MAX_ROOMS; i++) {
-		room_statuses[i].reset();
+		_G(room_statuses)[i].reset();
 	}
 }
 
