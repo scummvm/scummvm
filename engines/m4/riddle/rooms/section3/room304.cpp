@@ -639,7 +639,7 @@ void Room304::handlingStickAndSword() {
 		series_unload(_suit1);
 		_safe1 = series_load("rip opens safe part 1");
 		_safe2 = series_load("rip opens safe part 2");
-		ws_walk(510, 300, 0, 43, 3);
+		ws_walk(510, 300, nullptr, 43, 3);
 		digi_preload("304r51");
 		digi_play("304r51", 1, 255, 79);
 		break;
@@ -784,7 +784,7 @@ void Room304::handlingStickAndSword() {
 		break;
 
 	case 69:
-		ws_walk(458, 263, 0, -1, 2);
+		ws_walk(458, 263, nullptr, -1, 2);
 		kernel_timing_trigger(30, 678);
 		break;
 
