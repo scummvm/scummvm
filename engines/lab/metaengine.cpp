@@ -56,7 +56,7 @@ public:
 	bool hasFeature(MetaEngineFeature f) const override;
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
@@ -113,9 +113,9 @@ int LabMetaEngine::getMaximumSaveSlot() const {
 	return 999;
 }
 
-void LabMetaEngine::removeSaveState(const char *target, int slot) const {
+bool LabMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	saveFileMan->removeSavefile(Common::String::format("%s.%03u", target, slot));
+	return saveFileMan->removeSavefile(Common::String::format("%s.%03u", target, slot));
 }
 
 SaveStateDescriptor LabMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

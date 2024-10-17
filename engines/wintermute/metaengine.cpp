@@ -159,9 +159,9 @@ public:
 		return 100;
 	}
 
-	void removeSaveState(const char *target, int slot) const override {
+	bool removeSaveState(const char *target, int slot) const override {
 		Wintermute::BasePersistenceManager pm(target, true);
-		pm.deleteSaveSlot(slot);
+		return pm.deleteSaveSlot(slot);
 	}
 
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {

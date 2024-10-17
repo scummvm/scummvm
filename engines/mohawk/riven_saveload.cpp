@@ -591,11 +591,11 @@ Common::Error RivenSaveLoad::saveGame(const int slot, const Common::String &desc
 	return Common::kNoError;
 }
 
-void RivenSaveLoad::deleteSave(const int slot) {
+bool RivenSaveLoad::deleteSave(const int slot) {
 	Common::String filename = buildSaveFilename(slot);
 
 	debug (0, "Deleting save file \'%s\'", filename.c_str());
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 } // End of namespace Mohawk

@@ -945,9 +945,9 @@ Common::OutSaveFile *SaveLoad::openForSaving(const Common::String &target, GameI
 	return save;
 }
 
-void SaveLoad::remove(const Common::String &target, GameId id) {
+bool SaveLoad::remove(const Common::String &target, GameId id) {
 	Common::String filename = getFilename(target, id);
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 } // End of namespace LastExpress

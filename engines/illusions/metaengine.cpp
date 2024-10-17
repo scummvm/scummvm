@@ -61,7 +61,7 @@ public:
 	int getMaximumSaveSlot() const override;
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
@@ -77,9 +77,9 @@ bool IllusionsMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportCreationDate);
 }
 
-void IllusionsMetaEngine::removeSaveState(const char *target, int slot) const {
+bool IllusionsMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
+	return g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 Common::KeymapArray IllusionsMetaEngine::initKeymaps(const char *target) const {

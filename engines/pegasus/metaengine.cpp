@@ -75,7 +75,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override { return 999; }
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
 	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
 		if (saveGameIdx == kSavegameFilePattern)
@@ -117,10 +117,10 @@ SaveStateList PegasusMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-void PegasusMetaEngine::removeSaveState(const char *target, int slot) const {
+bool PegasusMetaEngine::removeSaveState(const char *target, int slot) const {
 	// See listSaves() for info on the pattern
 	Common::StringArray fileNames = Pegasus::PegasusEngine::listSaveFiles();
-	g_system->getSavefileManager()->removeSavefile(fileNames[slot].c_str());
+	return g_system->getSavefileManager()->removeSavefile(fileNames[slot].c_str());
 }
 
 Common::KeymapArray PegasusMetaEngine::initKeymaps(const char *target) const {

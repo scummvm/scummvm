@@ -64,7 +64,7 @@ public:
 	Common::Error loadGame(const int slot);
 	Common::Error saveGame(const int slot, const Common::String &description,
 	                       const Graphics::Surface *thumbnail, bool autoSave);
-	static void deleteSave(const int slot);
+	static bool deleteSave(const int slot);
 
 	static SaveStateDescriptor querySaveMetaInfos(const int slot);
 	static Common::String querySaveDescription(const int slot);

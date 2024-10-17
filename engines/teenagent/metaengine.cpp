@@ -97,8 +97,8 @@ public:
 		return MAX_SAVES - 1;
 	}
 
-	void removeSaveState(const char *target, int slot) const override {
-		g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
+	bool removeSaveState(const char *target, int slot) const override {
+		return g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
 	}
 
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {

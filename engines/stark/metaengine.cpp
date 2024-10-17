@@ -157,9 +157,9 @@ public:
 		return descriptor;
 	}
 
-	void removeSaveState(const char *target, int slot) const override {
+	bool removeSaveState(const char *target, int slot) const override {
 		Common::String filename = StarkEngine::formatSaveName(target, slot);
-		g_system->getSavefileManager()->removeSavefile(filename);
+		return g_system->getSavefileManager()->removeSavefile(filename);
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {

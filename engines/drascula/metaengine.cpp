@@ -89,7 +89,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
@@ -167,9 +167,9 @@ SaveStateDescriptor DrasculaMetaEngine::querySaveMetaInfos(const char *target, i
 
 int DrasculaMetaEngine::getMaximumSaveSlot() const { return 999; }
 
-void DrasculaMetaEngine::removeSaveState(const char *target, int slot) const {
+bool DrasculaMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
+	return g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 Common::Error DrasculaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Drascula::DrasculaGameDescription *desc) const {

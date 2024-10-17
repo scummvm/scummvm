@@ -169,7 +169,7 @@ public:
 	/**
 	 * Deletes a savegame in the specified slot
 	 */
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 
 	/**
 	 * Given a specified savegame slot, returns extended information for the save
@@ -222,9 +222,9 @@ int SherlockMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVEGAME_SLOTS;
 }
 
-void SherlockMetaEngine::removeSaveState(const char *target, int slot) const {
+bool SherlockMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Sherlock::SaveManager(nullptr, target).generateSaveName(slot);
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor SherlockMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

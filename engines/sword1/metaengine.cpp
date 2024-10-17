@@ -215,7 +215,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
 	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
@@ -341,8 +341,8 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 
 int SwordMetaEngine::getMaximumSaveSlot() const { return 999; }
 
-void SwordMetaEngine::removeSaveState(const char *target, int slot) const {
-	g_system->getSavefileManager()->removeSavefile(Common::String::format("sword1.%03d", slot));
+bool SwordMetaEngine::removeSaveState(const char *target, int slot) const {
+	return g_system->getSavefileManager()->removeSavefile(Common::String::format("sword1.%03d", slot));
 }
 
 SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

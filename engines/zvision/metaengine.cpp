@@ -131,7 +131,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
@@ -344,9 +344,9 @@ int ZVisionMetaEngine::getMaximumSaveSlot() const {
 	return 999;
 }
 
-void ZVisionMetaEngine::removeSaveState(const char *target, int slot) const {
+bool ZVisionMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	saveFileMan->removeSavefile(Common::String::format("%s.%03u", target, slot));
+	return saveFileMan->removeSavefile(Common::String::format("%s.%03u", target, slot));
 }
 
 SaveStateDescriptor ZVisionMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
