@@ -61,10 +61,13 @@ reg_t kStrCmp(EngineState *s, int argc, reg_t *argv) {
 	Common::String s1 = s->_segMan->getString(argv[0]);
 	Common::String s2 = s->_segMan->getString(argv[1]);
 
-	if (argc > 2)
-		return make_reg(0, strncmp(s1.c_str(), s2.c_str(), argv[2].toUint16()));
-	else
-		return make_reg(0, strcmp(s1.c_str(), s2.c_str()));
+	int result;
+	if (argc > 2) {
+		result = strncmp(s1.c_str(), s2.c_str(), argv[2].toUint16());
+	} else {
+		result = strcmp(s1.c_str(), s2.c_str());
+	}
+	return make_reg(0, CLIP<int>(result, -32768, 32767));
 }
 
 
