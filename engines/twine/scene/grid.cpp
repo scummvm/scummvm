@@ -364,7 +364,7 @@ void Grid::decompColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *des
 	} while (--brickCount);
 }
 
-void Grid::createCellingGridColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *dest, uint32 destSize) {
+void Grid::calcGraphMsk(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *dest, uint32 destSize) {
 	Common::MemoryReadStream stream(gridEntry, gridEntrySize);
 	Common::SeekableMemoryWriteStream outstream(dest, destSize);
 	int32 brickCount = stream.readByte();
@@ -417,7 +417,7 @@ void Grid::createCellingGridMap(const uint8 *gridPtr, int32 gridPtrSize) { // Mi
 		for (int32 x = 0; x < SIZE_CUBE_X; x++) {
 			const int gridOffset = READ_LE_UINT16(tempGridPtr);
 			tempGridPtr += 2;
-			createCellingGridColumn(gridPtr + gridOffset, gridPtrSize - gridOffset, _bufCube + blockOffset, _blockBufferSize - blockOffset);
+			calcGraphMsk(gridPtr + gridOffset, gridPtrSize - gridOffset, _bufCube + blockOffset, _blockBufferSize - blockOffset);
 			blockOffset += 2 * SIZE_CUBE_Y;
 		}
 		currGridOffset += SIZE_CUBE_X + SIZE_CUBE_Z;

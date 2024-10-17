@@ -122,7 +122,7 @@ private:
 	 * @param gridEntry current grid index
 	 * @param dest destination block buffer
 	 */
-	void createCellingGridColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *dest, uint32 destSize);
+	void calcGraphMsk(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *dest, uint32 destSize);
 	/**
 	 * Create grid Y column in block buffer
 	 * @param gridEntry current grid index
