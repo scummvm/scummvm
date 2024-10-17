@@ -57,7 +57,7 @@ void ScummEngine::mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, i
 
 	const byte *pixels = vs->getPixels(x, top);
 	const byte *ts = (byte *)_textSurface.getBasePtr(x * 2, y * 2);
-	byte *mac = (byte *)_macScreen->getBasePtr(x * 2, y * 2);
+	byte *mac = (byte *)_macScreen->getBasePtr(x * 2, y * 2 + _macScreenDrawOffset * 2);
 
 	int pixelsPitch = vs->pitch;
 	int tsPitch = _textSurface.pitch;
@@ -112,7 +112,7 @@ void ScummEngine::mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, i
 		}
 	}
 
-	_system->copyRectToScreen(_macScreen->getBasePtr(x * 2, y * 2), _macScreen->pitch, x * 2, y * 2 + _macScreenDrawOffset * 2, width * 2, height * 2);
+	_system->copyRectToScreen(_macScreen->getBasePtr(x * 2, y * 2 + _macScreenDrawOffset * 2), _macScreen->pitch, x * 2, y * 2 + _macScreenDrawOffset * 2, width * 2, height * 2);
 }
 
 void ScummEngine::mac_drawIndy3TextBox() {
@@ -133,7 +133,7 @@ void ScummEngine::mac_drawIndy3TextBox() {
 	byte *ptr = (byte *)s->getBasePtr(0, 2);
 	int pitch = s->pitch;
 
-	_macScreen->copyRectToSurface(ptr, pitch, x, y, w, h);
+	_macScreen->copyRectToSurface(ptr, pitch, x, y + 2 * _macScreenDrawOffset, w, h + 2 * _macScreenDrawOffset);
 	_textSurface.fillRect(Common::Rect(x, y, x + w, y + h), 0);
 
 	mac_markScreenAsDirty(x, y, w, h);
@@ -147,7 +147,7 @@ void ScummEngine::mac_undrawIndy3TextBox() {
 	int w = s->w;
 	int h = s->h - 2;
 
-	_macScreen->fillRect(Common::Rect(x, y, x + w, y + h), 0);
+	_macScreen->fillRect(Common::Rect(x, y + 2 * _macScreenDrawOffset, x + w, y + h + 2 * _macScreenDrawOffset), 0);
 	_textSurface.fillRect(Common::Rect(x, y, x + w, y + h), CHARSET_MASK_TRANSPARENCY);
 
 	mac_markScreenAsDirty(x, y, w, h);
