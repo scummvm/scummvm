@@ -1927,16 +1927,16 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 			_font->drawChar(&_vm->_textSurface, chr, x + 2, y + 2, 0);
 
 			if (color != -1) {
-				_font->drawChar(_vm->_macScreen, chr, x + 1, y - 1, shadowColor);
-				_font->drawChar(_vm->_macScreen, chr, x - 1, y + 1, shadowColor);
-				_font->drawChar(_vm->_macScreen, chr, x + 2, y + 2, shadowColor);
+				_font->drawChar(_vm->_macScreen, chr, x + 1, y - 1 + 2 * _vm->_macScreenDrawOffset, shadowColor);
+				_font->drawChar(_vm->_macScreen, chr, x - 1, y + 1 + 2 * _vm->_macScreenDrawOffset, shadowColor);
+				_font->drawChar(_vm->_macScreen, chr, x + 2, y + 2 + 2 * _vm->_macScreenDrawOffset, shadowColor);
 			}
 		} else {
 			// Indy 3 uses simpler shadowing, and doesn't need the
 			// "draw only on text surface" hack.
 
 			_font->drawChar(&_vm->_textSurface, chr, x + 1, y + 1, 0);
-			_font->drawChar(_vm->_macScreen, chr, x + 1, y + 1, shadowColor);
+			_font->drawChar(_vm->_macScreen, chr, x + 1, y + 1 + 2 * _vm->_macScreenDrawOffset, shadowColor);
 		}
 	}
 
@@ -1953,14 +1953,14 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 				for (int x0 = 0; x0 < _glyphSurface->w; x0++) {
 					if (_glyphSurface->getPixel(x0, y0)) {
 						int x1 = x + x0;
-						int y1 = y + y0;
+						int y1 = y + y0 + 2 * _vm->_macScreenDrawOffset;
 
 						_vm->_macScreen->setPixel(x1, y1, ((x1 + y1) & 1) ? 0 : 15);
 					}
 				}
 			}
 		} else {
-			_font->drawChar(_vm->_macScreen, chr, x, y, color);
+			_font->drawChar(_vm->_macScreen, chr, x, y + 2 * _vm->_macScreenDrawOffset, color);
 		}
 	}
 }
