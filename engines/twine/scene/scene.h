@@ -142,8 +142,8 @@ private:
 	int16 _sampleRound[4]{0};
 	int16 _sampleFrequency[4]{0}; // lba2
 	int16 _sampleVolume[4]{0}; // lba2
-	int16 _sampleMinDelay = 0;
-	int16 _sampleMinDelayRnd = 0;
+	int16 _sampleMinDelay = 0; // SecondMin
+	int16 _sampleMinDelayRnd = 0; // SecondEcart
 
 	int16 _samplePlayed = 0;
 
@@ -229,7 +229,7 @@ public:
 	bool loadSceneCubeXY(int sceneNum, int32 *cubeX, int32 *cubeY);
 
 	/** Process scene environment sound */
-	void processEnvironmentSound();
+	void processEnvironmentSound(); // GereAmbiance
 	void initSceneVars();
 
 	bool isGameRunning() const;
