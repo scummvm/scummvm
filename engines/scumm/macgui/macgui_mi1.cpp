@@ -404,7 +404,7 @@ void MacMI1Gui::runAboutDialog() {
 }
 
 void MacMI1Gui::runAboutDialogMI1(MacDialogWindow *window) {
-//	Graphics::Surface *lucasArts = loadPict(5000);
+	Graphics::Surface *lucasArts = loadPict(5000);
 	Graphics::Surface *monkeys = loadPict(5001);
 
 	Graphics::Surface *s = window->innerSurface();
@@ -547,7 +547,7 @@ void MacMI1Gui::runAboutDialogMI1(MacDialogWindow *window) {
 		switch (page) {
 		case 0:
 			s->fillRect(drawArea, black);
-//			window->drawSprite(lucasArts, 0, 0, drawArea);
+			window->drawSprite(lucasArts, 64, 2, drawArea);
 			break;
 
 		case 1:
@@ -628,7 +628,7 @@ void MacMI1Gui::runAboutDialogMI1(MacDialogWindow *window) {
 		page++;
 	}
 
-//	delete lucasArts;
+	delete lucasArts;
 	delete monkeys;
 }
 
@@ -659,7 +659,7 @@ void MacMI1Gui::drawShadow(Graphics::Surface *s, int x, int y, int h, Common::Pa
 void MacMI1Gui::runAboutDialogMI2(MacDialogWindow *window) {
 	Graphics::Surface *s = window->innerSurface();
 
-//	Graphics::Surface *lucasArts = loadPict(5000);
+	Graphics::Surface *lucasArts = loadPict(5000);
 
 	const TextLine page3[] = {
 		{ 0, 68, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString2].c_str() }, // "PRESENTS"
@@ -768,11 +768,11 @@ void MacMI1Gui::runAboutDialogMI2(MacDialogWindow *window) {
 		switch (page) {
 		case 0:
 			s->fillRect(drawArea, black);
+			window->drawSprite(lucasArts, 64, 2, drawArea);
 			break;
 
 		case 1:
-			// TODO: Verify this once the graphics work
-			window->fillPattern(drawArea, 0xEAEA, true, false);
+			window->fillPattern(drawArea, 0xADAD, true, false);
 			break;
 
 		case 2:
@@ -805,7 +805,7 @@ void MacMI1Gui::runAboutDialogMI2(MacDialogWindow *window) {
 		page++;
 	}
 
-//	delete lucasArts;
+	delete lucasArts;
 }
 
 void MacMI1Gui::runAboutDialogIndy4(MacDialogWindow *window) {
@@ -813,7 +813,7 @@ void MacMI1Gui::runAboutDialogIndy4(MacDialogWindow *window) {
 
 	Graphics::Surface *s = window->innerSurface();
 
-//	Graphics::Surface *lucasArts = loadPict(5000);
+	Graphics::Surface *lucasArts = loadPict(5000);
 	Graphics::Surface *indianaJones = loadPict(5001);
 
 	const TextLine page3[] = {
@@ -937,6 +937,7 @@ void MacMI1Gui::runAboutDialogIndy4(MacDialogWindow *window) {
 		switch (page) {
 		case 0:
 			s->fillRect(drawArea, black);
+			window->drawSprite(lucasArts, 64, 2, drawArea);
 			break;
 
 		case 1:
@@ -988,7 +989,7 @@ void MacMI1Gui::runAboutDialogIndy4(MacDialogWindow *window) {
 		page++;
 	}
 
-//	delete lucasArts;
+	delete lucasArts;
 	delete indianaJones;
 }
 
