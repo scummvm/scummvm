@@ -48,7 +48,7 @@ XMesh::XMesh(Wintermute::BaseGame *inGame) : BaseNamedObject(inGame) {
 	_boneMatrices = nullptr;
 	_adjacency = nullptr;
 
-	_BBoxStart = _BBoxEnd = Math::Vector3d(0.0f, 0.0f, 0.0f);
+	_BBoxStart = _BBoxEnd = DXVector3(0.0f, 0.0f, 0.0f);
 }
 
 XMesh::~XMesh() {
@@ -217,16 +217,14 @@ bool XMesh::update(FrameNode *parentFrame) {
 		DXMatrix *boneMatrices = new DXMatrix[numBones];
 
 		// prepare final matrices
-		for (int i = 0; i < numBones; ++i) {
-			Math::Matrix4 offsetMatrix;
+		for (int i = 0; i < numBones; i++) {
+			DXMatrix offsetMatrix;
 			for (int r = 0; r < 4; ++r) {
 				for (int c = 0; c < 4; ++c) {
-					offsetMatrix(c, r) = _skinMesh->getBoneOffsetMatrix(i)->_m4x4[r * 4 + c];
+					offsetMatrix._m[c][r] = _skinMesh->getBoneOffsetMatrix(i)->_m4x4[r * 4 + c];
 				}
 			}
-			Math::Matrix4 boneMatrix;
-			boneMatrix.setData(_boneMatrices[i]->_m4x4);
-			boneMatrices[i] = DXMatrix((boneMatrix * offsetMatrix).getData());
+			DXMatrixMultiply(&boneMatrices[i], _boneMatrices[i], &offsetMatrix);
 		}
 
 		// generate skinned mesh
@@ -241,13 +239,9 @@ bool XMesh::update(FrameNode *parentFrame) {
 		// update mesh bounding box
 		byte *points = _blendedMesh->getVertexBuffer().ptr();
 
-		DXVector3 BBoxStart = DXVector3(_BBoxStart.x(), _BBoxStart.y(), _BBoxStart.z());
-		DXVector3 BBoxEnd = DXVector3(_BBoxEnd.x(), _BBoxEnd.y(), _BBoxEnd.z());
-		DXComputeBoundingBox((DXVector3 *)points, _blendedMesh->getNumVertices(), DXGetFVFVertexSize(_blendedMesh->getFVF()), &BBoxStart, &BBoxEnd);
-		_BBoxStart = Math::Vector3d(BBoxStart._x, BBoxStart._y, BBoxStart._z);
-		_BBoxEnd = Math::Vector3d(BBoxEnd._x, BBoxEnd._y, BBoxEnd._z);
+		DXComputeBoundingBox((DXVector3 *)points, _blendedMesh->getNumVertices(), DXGetFVFVertexSize(_blendedMesh->getFVF()), &_BBoxStart, &_BBoxEnd);
 		// if you want something done right...
-		if (isnan(_BBoxEnd.x())) {
+		if (isnan(_BBoxEnd._x)) {
 			float minX = FLT_MAX;
 			float minY = FLT_MAX;
 			float minZ = FLT_MAX;
@@ -271,8 +265,8 @@ bool XMesh::update(FrameNode *parentFrame) {
 
 				vectBuf += DXGetFVFVertexSize(fvfSize);
 			}
-			_BBoxStart = Math::Vector3d(minX, minY, minZ);
-			_BBoxEnd = Math::Vector3d(maxX, maxY, maxZ);
+			_BBoxStart = DXVector3(minX, minY, minZ);
+			_BBoxEnd = DXVector3(maxX, maxY, maxZ);
 		}
 	} else {
 		// update static mesh
@@ -287,22 +281,16 @@ bool XMesh::update(FrameNode *parentFrame) {
 
 		for (uint32 i = 0; i < numVertices; i++) {
 			DXVector3 v = *(DXVector3 *)(oldPoints + i * fvfSize);
-			Math::Vector3d newVertex = Math::Vector3d(v._x, v._y, v._z);
-			Math::Matrix4 combinedMatrix;
-			combinedMatrix.setData(parentFrame->getCombinedMatrix()->_m4x4);
-			combinedMatrix.transform(&newVertex, true);
+			DXVector4 newVertex;
+			DXVec3Transform(&newVertex, &v, parentFrame->getCombinedMatrix());
 
-			((DXVector3 *)(newPoints + i * fvfSize))->_x = newVertex.x();
-			((DXVector3 *)(newPoints + i * fvfSize))->_y = newVertex.y();
-			((DXVector3 *)(newPoints + i * fvfSize))->_z = newVertex.z();
+			((DXVector3 *)(newPoints + i * fvfSize))->_x = newVertex._x;
+			((DXVector3 *)(newPoints + i * fvfSize))->_y = newVertex._y;
+			((DXVector3 *)(newPoints + i * fvfSize))->_z = newVertex._z;
 		}
 
 		// update bounding box
-		DXVector3 BBoxStart = DXVector3(_BBoxStart.x(), _BBoxStart.y(), _BBoxStart.z());
-		DXVector3 BBoxEnd = DXVector3(_BBoxEnd.x(), _BBoxEnd.y(), _BBoxEnd.z());
-		DXComputeBoundingBox((DXVector3 *)newPoints, _blendedMesh->getNumVertices(), DXGetFVFVertexSize(_blendedMesh->getFVF()), &BBoxStart, &BBoxEnd);
-		_BBoxStart = Math::Vector3d(BBoxStart._x, BBoxStart._y, BBoxStart._z);
-		_BBoxEnd = Math::Vector3d(BBoxEnd._x, BBoxEnd._y, BBoxEnd._z);
+		DXComputeBoundingBox((DXVector3 *)newPoints, _blendedMesh->getNumVertices(), DXGetFVFVertexSize(_blendedMesh->getFVF()), &_BBoxStart, &_BBoxEnd);
 	}
 	return res;
 }

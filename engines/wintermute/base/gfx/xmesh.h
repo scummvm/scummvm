@@ -61,8 +61,8 @@ public:
 
 	bool pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir);
 
-	Math::Vector3d _BBoxStart;
-	Math::Vector3d _BBoxEnd;
+	DXVector3 _BBoxStart;
+	DXVector3 _BBoxEnd;
 
 	bool setMaterialSprite(const Common::String &matName, BaseSprite *sprite);
 	bool setMaterialTheora(const Common::String &matName, VideoTheoraPlayer *theora);
