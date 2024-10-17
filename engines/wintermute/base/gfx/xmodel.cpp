@@ -596,8 +596,6 @@ bool XModel::isTransparentAt(int x, int y) {
 	Math::Vector3d vPickRayDir = Math::Vector3d(pickRayDir._x, pickRayDir._y, pickRayDir._z);
 
 	return !_rootFrame->pickPoly(&vPickRayOrig, &vPickRayDir);
- 
-	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
