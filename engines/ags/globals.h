@@ -36,6 +36,7 @@
 #include "ags/shared/gui/gui_main.h"
 #include "ags/shared/script/cc_script.h"
 #include "ags/engine/ac/dynobj/script_game.h"
+#include "ags/engine/ac/dynobj/script_user_object.h"
 #include "ags/engine/ac/event.h"
 #include "ags/engine/ac/file.h"
 #include "ags/engine/ac/runtime_defines.h"
@@ -1298,7 +1299,7 @@ public:
 	/**@}*/
 
 	/**
-	 * @defgroup agsscript_runtimeglobals agscript_string script_runtime globals
+	 * @defgroup agsscript_runtimeglobals agsscript_user_object agscript_string script_runtime globals
 	 * @ingroup agsglobals
 	 * @{
 	 */
@@ -1315,6 +1316,7 @@ public:
 	unsigned _maxWhileLoops = 0u;
 	ccInstance *_loadedInstances[MAX_LOADED_INSTANCES];
 	ScriptString *_myScriptStringImpl;
+	ScriptUserObject _globalDynamicStruct;
 
 	/**@}*/
 

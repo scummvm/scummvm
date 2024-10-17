@@ -23,6 +23,7 @@
 #include "ags/shared/util/stream.h"
 #include "ags/engine/ac/dynobj/script_user_object.h"
 #include "ags/engine/ac/dynobj/dynobj_manager.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -41,12 +42,12 @@ const char *ScriptUserObject::GetType() {
 	Header &hdr = reinterpret_cast<Header &>(*new_data);
 	hdr.Size = size;
 	void *obj_ptr = &new_data[MemHeaderSz];
-	int32_t handle = ccRegisterManagedObject(obj_ptr, &globalDynamicStruct);
+	int32_t handle = ccRegisterManagedObject(obj_ptr, &_G(globalDynamicStruct));
 	if (handle == 0) {
 		delete[] new_data;
 		return DynObjectRef();
 	}
-	return DynObjectRef(handle, obj_ptr, &globalDynamicStruct);
+	return DynObjectRef(handle, obj_ptr, &_G(globalDynamicStruct));
 }
 
 int ScriptUserObject::Dispose(void *address, bool /*force*/) {
@@ -72,8 +73,6 @@ void ScriptUserObject::Unserialize(int index, Stream *in, size_t data_sz) {
 	in->Read(new_data + MemHeaderSz, data_sz - FileHeaderSz);
 	ccRegisterUnserializedObject(index, &new_data[MemHeaderSz], this);
 }
-
-ScriptUserObject globalDynamicStruct;
 
 // Allocates managed struct containing two ints: X and Y
 ScriptUserObject *ScriptStructHelpers::CreatePoint(int x, int y) {

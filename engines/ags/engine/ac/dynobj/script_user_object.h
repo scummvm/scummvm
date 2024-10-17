@@ -75,8 +75,6 @@ private:
 	void Serialize(const void *address, AGS::Shared::Stream *out) override;
 };
 
-extern ScriptUserObject globalDynamicStruct;
-
 // Helper functions for setting up custom managed structs based on ScriptUserObject.
 namespace ScriptStructHelpers {
 // Creates a managed Point object, represented as a pair of X and Y coordinates.
