@@ -652,26 +652,33 @@ bool AdSceneGeometry::convert2Dto3D(int x, int y, Math::Vector3d *pos) {
 	x -= (mleft + mright) / 2 + modWidth;
 	y -= (mtop + mbottom) / 2 + modHeight;
 
-	Math::Vector3d vPickRayDir;
-	Math::Vector3d vPickRayOrig;
+	DXVector3 vPickRayDir;
+	DXVector3 vPickRayOrig;
 
 	// Compute the vector of the pick ray in screen space
-	Math::Vector3d vec((((2.0f * x) / _drawingViewport.width()) - 1) / _lastProjMat(0, 0),
-							-(((2.0f * y) / _drawingViewport.height()) - 1) / _lastProjMat(1, 1),
-							-1.0f);
+	DXVector3 vec;
+	vec._x =  (((2.0f * x) / _drawingViewport.width()) - 1) / _lastProjMat(0, 0);
+	vec._y = -(((2.0f * y) / _drawingViewport.height()) - 1) / _lastProjMat(1, 1);
+	vec._z =  -1.0f;
 
-	Math::Matrix4 m = _viewMatrix;
-	m.inverse();
-	m.transpose();
-	m.transform(&vec, false);
+	// Get the inverse view matrix
+	DXMatrix m, viewMatrix = DXMatrix(_lastViewMat.getData());
+	DXMatrixInverse(&m, nullptr, &viewMatrix);
 
-	vPickRayDir = vec;
-	vPickRayOrig = m.getPosition();
+	// Transform the screen space pick ray into 3D space
+	vPickRayDir._x  = vec._x * m.matrix._11 + vec._y * m.matrix._21 + vec._z * m.matrix._31;
+	vPickRayDir._y  = vec._x * m.matrix._12 + vec._y * m.matrix._22 + vec._z * m.matrix._32;
+	vPickRayDir._z  = vec._x * m.matrix._13 + vec._y * m.matrix._23 + vec._z * m.matrix._33;
+	vPickRayOrig._x = m.matrix._41;
+	vPickRayOrig._y = m.matrix._42;
+	vPickRayOrig._z = m.matrix._43;
 
+	Math::Vector3d pickRayDir = Math::Vector3d(vPickRayDir);
+	Math::Vector3d pickRayOrig = Math::Vector3d(vPickRayOrig);
 
 	bool intFound = false;
 	float minDist = FLT_MAX;
-	Math::Vector3d intersection, ray;
+	DXVector3 intersection, ray;
 
 	for (uint32 i = 0; i < _planes.size(); i++) {
 		for (int j = 0; j < _planes[i]->_mesh->faceCount(); j++) {
@@ -680,16 +687,16 @@ bool AdSceneGeometry::convert2Dto3D(int x, int y, Math::Vector3d *pos) {
 			float *v1 = _planes[i]->_mesh->getVertexPosition(triangle[1]);
 			float *v2 = _planes[i]->_mesh->getVertexPosition(triangle[2]);
 
-			if (intersectTriangle(vPickRayOrig, vPickRayDir,
+			if (intersectTriangle(pickRayOrig, pickRayDir,
 								  Math::Vector3d(v0[0], v0[1], v0[2]),
 								  Math::Vector3d(v1[0], v1[1], v1[2]),
 								  Math::Vector3d(v2[0], v2[1], v2[2]),
-							      intersection.x(), intersection.y(), intersection.z())) {
+							      intersection._x, intersection._y, intersection._z)) {
 				ray = intersection - vPickRayOrig;
-				float dist = ray.getMagnitude();
+				float dist = DXVec3Length(&ray);
 
 				if (dist < minDist) {
-					*pos = intersection;
+					*pos = Math::Vector3d(intersection);
 					minDist = dist;
 				}
 
