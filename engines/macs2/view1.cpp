@@ -519,12 +519,20 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		uint8 numberPressed = msg.ascii - '1' + 1;
 		TriggerDialogueChoice(numberPressed);
 	} else if (msg.ascii == 'p') {
-		characters[0]->IsFollowingPath = true;
+
+		/*  characters[0]->IsFollowingPath = true;
 		characters[0]->CurrentPathIndex = -1;
 		characters[0]->Path.clear();
 		characters[0]->Path.push_back(8);
 		characters[0]->Path.push_back(11);
-		characters[0]->Path.push_back(9);
+		characters[0]->Path.push_back(9); */
+		const Common::Point mousePos = g_system->getEventManager()->getMousePos();
+		characters[0]->PathFinalDestination = mousePos;
+		g_engine->_path.clear();
+		characters[0]->FindPath(mousePos);
+		characters[0]->IsFollowingPath = true;
+		characters[0]->CurrentPathIndex = -1;
+		
 	}
 	return true;
 }
@@ -1136,8 +1144,11 @@ bool Character::FindPath(Common::Point target) {
 	}
 
 	// TODO: Handle not finding a start point
-	g_engine->_path.push_back(g_engine->pathfindingPoints[minIndex].Position);
-
+	// g_engine->_path.push_back(g_engine->pathfindingPoints[minIndex].Position);
+	
+	Common::Array<bool> visited;
+	visited.resize(16);
+	VisitPathfindingNode(minIndex, visited, target);
 	// Now handle searching for the end point, for this, keep track of nodes we already visited
 	// Args:
 	// Target position
@@ -1145,6 +1156,33 @@ bool Character::FindPath(Common::Point target) {
 	// Array of points already visited
 
 	return true;
+}
+
+bool Character::VisitPathfindingNode(uint16 index, Common::Array<bool> &visited, const Common::Point &target) {
+	if (visited[index] == true) {
+		// We have visited this node before
+		return false;
+	}
+	visited[index] = true;
+	const PathfindingPoint &currentPoint = g_engine->pathfindingPoints[index];
+	const Common::Point &currentPosition = currentPoint.Position;
+	g_engine->_path.push_back(currentPosition);
+
+	// Check if we can reach the target from here
+	if (IsLineSegmentWalkable(currentPosition, target)) {
+		return true;
+	}
+
+	// See if the adjacent points are good
+	for (int i = 0; i < currentPoint.adjacentPoints.size(); i++) {
+		const uint16 currentAdjacentIndex = currentPoint.adjacentPoints[i];
+		if (VisitPathfindingNode(currentAdjacentIndex - 1, visited, target)) {
+			return true;
+		}
+	}
+	// None we good, remove us from the path and return
+	g_engine->_path.remove_at(g_engine->_path.size() - 1);
+	return false;
 }
 
 Common::Point Character::GetPosition() const {

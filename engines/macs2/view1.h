@@ -87,6 +87,8 @@ private:
 
 	bool FindPath(Common::Point target);
 
+	bool VisitPathfindingNode(uint16 index, Common::Array<bool> &visited, const Common::Point &target);
+
 	bool IsFollowingPath;
 
 	Common::Point GetPosition() const;
