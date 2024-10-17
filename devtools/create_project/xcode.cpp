@@ -588,6 +588,14 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (CONTAINS_DEFINE(setup.defines, "USE_DISCORD")) {
 		DEF_LOCALLIB_STATIC("libdiscord-rpc");
 	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_A52")) {
+		DEF_LOCALLIB_STATIC("liba52");
+		DEF_LOCALXCFRAMEWORK("a52", projectOutputDirectory);
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_MPCDEC")) {
+		DEF_LOCALLIB_STATIC("libmpcdec");
+		DEF_LOCALXCFRAMEWORK("mpcdec", projectOutputDirectory);
+	}
 
 	if (setup.useSDL2) {
 		DEF_LOCALLIB_STATIC("libSDL2main");
@@ -685,6 +693,12 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FRIBIDI")) {
 		frameworks_iOS.push_back(getLibString("fribidi", setup.useXCFramework));
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_A52")) {
+		frameworks_iOS.push_back(getLibString("a52", setup.useXCFramework));
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_MPCDEC")) {
+		frameworks_iOS.push_back(getLibString("mpcdec", setup.useXCFramework));
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH") &&
 		!CONTAINS_DEFINE(setup.defines, "USE_FLUIDLITE")) {
@@ -820,6 +834,12 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (CONTAINS_DEFINE(setup.defines, "USE_DISCORD")) {
 		frameworks_osx.push_back(getLibString("discord-rpc", setup.useXCFramework));
 	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_A52")) {
+		frameworks_osx.push_back(getLibString("a52", setup.useXCFramework));
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_MPCDEC")) {
+		frameworks_osx.push_back(getLibString("mpcdec", setup.useXCFramework));
+	}
 
 	if (setup.useSDL2) {
 		frameworks_osx.push_back(getLibString("SDL2main", setup.useXCFramework));
@@ -919,6 +939,12 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FRIBIDI")) {
 		frameworks_tvOS.push_back(getLibString("fribidi", setup.useXCFramework));
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_A52")) {
+		frameworks_tvOS.push_back(getLibString("a52", setup.useXCFramework));
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_MPCDEC")) {
+		frameworks_tvOS.push_back(getLibString("mpcdec", setup.useXCFramework));
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH") &&
 		!CONTAINS_DEFINE(setup.defines, "USE_FLUIDLITE")) {

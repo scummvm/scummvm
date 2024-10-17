@@ -345,8 +345,13 @@ int main(int argc, char *argv[]) {
 	}
 
 	// HACK: Fluidsynth and Fluidlite can not be enabled simultaneously
-	if (getFeatureBuildState("fluidsynth", setup.features)) {
-		setFeatureBuildState("fluidlite", setup.features, false);
+	if (getFeatureBuildState("fluidlite", setup.features)) {
+		setFeatureBuildState("fluidsynth", setup.features, false);
+	}
+
+	// HACK: OpenMPT and Mikmod can not be enabled simultaneously
+	if (getFeatureBuildState("openmpt", setup.features)) {
+		setFeatureBuildState("mikmod", setup.features, false);
 	}
 
 	// HACK: These features depend on OpenGL
@@ -1123,6 +1128,8 @@ const Feature s_features[] = {
 	{    "sdlnet",     "USE_SDL_NET", true, true,  "SDL_net support" },
 	{   "discord",     "USE_DISCORD", true, false, "Discord support" },
 	{ "retrowave",   "USE_RETROWAVE", true, false, "RetroWave OPL3 support" },
+	{       "a52",         "USE_A52", true, false, "ATSC A/52 support" },
+	{    "mpcdec",      "USE_MPCDEC", true, false, "Musepack support" },
 
 	// Feature flags
 	{               "bink",                      "USE_BINK", false, true,  "Bink video support" },
