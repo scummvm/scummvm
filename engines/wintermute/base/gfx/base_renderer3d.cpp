@@ -99,20 +99,6 @@ void BaseRenderer3D::project(const Math::Matrix4 &worldMatrix, const Math::Vecto
 	y = viewport[3] - windowCoords.y();
 }
 
-Math::Ray BaseRenderer3D::rayIntoScene(int x, int y) {
-	Math::Vector3d direction((((2.0f * x) / _viewportRect.width()) - 1) / _projectionMatrix(0, 0),
-	                        -(((2.0f * y) / _viewportRect.height()) - 1) / _projectionMatrix(1, 1),
-	                        -1.0f);
-
-	Math::Matrix4 m = _viewMatrix;
-	m.inverse();
-	m.transpose();
-	m.transform(&direction, false);
-
-	Math::Vector3d origin = m.getPosition();
-	return Math::Ray(origin, direction);
-}
-
 bool BaseRenderer3D::setAmbientLightColor(uint32 color) {
 	_ambientLightColor = color;
 	_ambientLightOverride = true;

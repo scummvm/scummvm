@@ -479,8 +479,8 @@ bool XModel::render() {
 
 		// remember matrices for object picking purposes
 		_gameRef->_renderer3D->getWorldTransform(_lastWorldMat);
-		_gameRef->_renderer3D->getWorldTransform(_lastViewMat);
-		_gameRef->_renderer3D->getWorldTransform(_lastProjMat);
+		_gameRef->_renderer3D->getViewTransform(_lastViewMat);
+		_gameRef->_renderer3D->getProjectionTransform(_lastProjMat);
 
 		// remember scene offset
 		Rect32 rc;
@@ -562,15 +562,25 @@ bool XModel::isTransparentAt(int x, int y) {
 		y += _gameRef->_renderer3D->_drawOffsetY;
 	}
 
-	Math::Ray ray = _gameRef->_renderer3D->rayIntoScene(x, y);
 	Math::Vector3d pickRayDir;
 	Math::Vector3d pickRayOrig;
-	pickRayDir = ray.getDirection();
-	pickRayOrig = ray.getOrigin();
+
+	// Compute the vector of the pick ray in screen space
+	Math::Vector3d vec((((2.0f * x) / _drawingViewport.width()) - 1) / _lastProjMat(0, 0),
+					  -(((2.0f * y) / _drawingViewport.height()) - 1) / _lastProjMat(1, 1),
+						 -1.0f);
+
+	Math::Matrix4 m = _lastViewMat;
+	m.inverse();
+	m.transpose();
+	m.transform(&vec, false);
+
+	pickRayDir = vec;
+	pickRayOrig = m.getPosition();
 
 	// transform to model space
 	Math::Vector3d end = pickRayOrig + pickRayDir;
-	Math::Matrix4 m = _lastWorldMat;
+	m = _lastWorldMat;
 	m.inverse();
 	m.transform(&pickRayOrig, true);
 	m.transform(&end, true);

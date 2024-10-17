@@ -146,7 +146,6 @@ public:
 	}
 
 	void project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int32 &x, int32 &y);
-	Math::Ray rayIntoScene(int x, int y);
 
 	Camera3D *_camera;
 
