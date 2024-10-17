@@ -138,7 +138,7 @@ struct BonusParameter {
 /**
  * Actors structure
  *
- * Such as characters, doors, moving plataforms, invisible actors, ...
+ * Such as characters, doors, moving platforms, invisible actors, ...
  */
 class ActorStruct { // T_OBJET
 private:
@@ -368,7 +368,7 @@ public:
 	void hitObj(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit, int32 angle);
 
 	/** Process actor carrier */
-	void checkCarrier(int32 actorIdx); // CheckCarrier
+	void checkCarrier(int32 actorIdx);
 
 	/** Process actor extra bonus */
 	void giveExtraBonus(int32 actorIdx);
