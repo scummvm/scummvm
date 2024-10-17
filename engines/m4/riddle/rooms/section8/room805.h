@@ -33,8 +33,39 @@ public:
 	Room805() : Room() {}
 	~Room805() override {}
 
+	void preload() override;
 	void init() override;
+	void parser() override;
 	void daemon() override;
+
+private:
+	int32 _lastRnd = 1;
+	int32 _meiHandsBehindBack = 0;
+	int32 _meiSpookedPos2 = 0;
+	int32 _meiTalkPos3 = 0;
+	int32 _ripPos3LookAround = 0;
+	int32 _ripHeadTurnPos3 = 0;
+	int32 _ripLookDownPos3 = 0;
+	int32 _ripLowReachPos2 = 0;
+	int32 _ripTalkerPos3 = 0;
+	int32 _ripMedHiReachPos2 = 0;
+	int32 _ripMedHiReachPos3 = 0;
+	int32 _unkVar1 = 0;
+
+	machine *_chariotRestMach = nullptr;
+	machine *_fallenBeamOnFloorMach = nullptr;
+	machine *_farSoldiersShieldMach = nullptr;
+	machine *_jadeDoorsOpenMach = nullptr;
+	machine *_mcMach = nullptr;
+	machine *_nearSoldiersShieldMach = nullptr;
+	machine *_ripChariotInMach = nullptr;
+
+	void initSub2();
+	void initHotspots();
+	void daemonSub1();
+	void daemonSub2(const char *seriesName1, const char *seriesName2);
+	void daemonSub3(const char *seriesName1, const char *seriesName2);
+	void daemonSub4(const char *seriesName1, const char *seriesName2);
 };
 
 } // namespace Rooms

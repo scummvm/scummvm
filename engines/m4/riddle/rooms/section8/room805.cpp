@@ -20,17 +20,466 @@
  */
 
 #include "m4/riddle/rooms/section8/room805.h"
+
+#include "m4/adv_r/adv_file.h"
 #include "m4/graphics/gr_series.h"
+#include "m4/riddle/riddle.h"
 #include "m4/riddle/vars.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+void Room805::initSub2() {
+	series_play("BRAZIER 1 (L TO R) BURNING", 768, 0, -1, 5, -1, 100, 0, 0, 0, -1);
+	series_play("BRAZIER 2 (L TO R) BURNING", 1536, 0, -1, 5, -1, 100, 0, 0, 0, -1);
+	series_play("BRAZIER 3 (L TO R) BURNING", 3840, 0, -1, 5, -1, 100, 0, 0, 0, -1);
+	series_play("BRAZIER 4&5 (L TO R) BURNING", 2560, 0, -1, 5, -1, 100, 0, 0, 0, -1);
+	series_play("BRAZIER 6 (L TO R) BURNING", 0, 0, -1, 5, -1, 100, 0, 0, 0, -1);
+
+	initHotspots();
+
+	switch (_G(game).previous_room) {
+	case -2:
+		if (_G(flags)[V276] == 0) {
+			_mcMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 276, 201, 10, Walker::player_walker_callback, "mc");
+		}
+
+		break;
+
+	case 804:
+		ws_demand_location(_G(my_walker), 0, 264);
+		if (_G(flags)[V276] == 0) {
+			player_set_commands_allowed(false);
+			_mcMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 0, 264, 3, Walker::player_walker_callback, "mc");
+			ws_walk(_G(my_walker), 53, 264, nullptr, 102, 3, true);
+		} else {
+			ws_walk(_G(my_walker), 295, 305, nullptr, -1, 3, true);
+		}
+		break;
+
+	case 806:
+		ws_demand_location(_G(my_walker), 395, 202);
+		ws_demand_facing(_G(my_walker), 9);
+		if (_G(flags)[V276] == 0) {
+			player_set_commands_allowed(false);
+			_mcMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 420, 201, 0, Walker::player_walker_callback, "mc");
+			ws_walk(_G(my_walker), 370, 201, nullptr, 109, 3, true);
+		} else {
+			ws_walk(_G(my_walker), 295, 305, nullptr, -1, 3, true);
+		}
+		break;
+
+	case 814:
+		ws_demand_location(_G(my_walker), 119, 194);
+		if (_G(flags)[V276] == 0) {
+			player_set_commands_allowed(false);
+			_mcMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 119, 194, 0, Walker::player_walker_callback, "mc");
+			ws_walk(_G(my_walker), 169, 194, nullptr, 103, 3, true);
+		} else {
+			ws_walk(_G(my_walker), 295, 305, nullptr, -1, 3, true);
+		}
+
+		break;
+
+	case 824:
+		ws_demand_location(_G(my_walker), 61, 221);
+		if (_G(flags)[V276] == 0) {
+			_mcMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 61, 221, 0, Walker::player_walker_callback, "mc");
+		}
+
+		if (_G(flags)[V270] == 805 && _G(flags)[V262] == 0) {
+			ws_hide_walker(_G(my_walker));
+			player_set_commands_allowed(false);
+			digi_preload("950_s33", -1);
+			digi_play_loop("950_s33", 2, 255, -1, -1);
+			kernel_timing_trigger(1, 110, nullptr);
+		} else if (_G(flags)[V276] == 0) {
+			player_set_commands_allowed(false);
+			ws_walk(_G(my_walker), 295, 305, nullptr, 104, 3, true);
+		} else {
+			ws_walk(_G(my_walker), 295, 305, nullptr, -1, 3, true);
+		}
+
+		break;
+
+	case 834:
+		ws_demand_location(_G(my_walker), 156, 164);
+		if (_G(flags)[V276] == 0) {
+			_mcMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 156, 164, 3, Walker::player_walker_callback, "mc");
+			player_set_commands_allowed(false);
+			ws_walk(_G(my_walker), 206, 164, nullptr, 107, 3, true);
+		} else {
+			ws_walk(_G(my_walker), 295, 305, nullptr, -1, 3, true);
+		}
+
+		break;
+
+	case 844:
+		ws_demand_location(_G(my_walker), 170, 154);
+		if (_G(flags)[V276] == 0) {
+			player_set_commands_allowed(false);
+			_mcMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 170, 154, 3, Walker::player_walker_callback, "mc");
+			ws_walk(_G(my_walker), 240, 154, nullptr, 108, 3, true);
+		} else {
+			ws_walk(_G(my_walker), 295, 305, nullptr, -1, 3, true);
+		}
+
+		break;
+
+	default:
+		ws_demand_facing(_G(my_walker), 3);
+		ws_demand_location(_G(my_walker), 295, 305);
+		if (_G(flags)[V276] == 0) {
+			_mcMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 276, 201, 10, Walker::player_walker_callback, "mc");
+		}
+		break;
+	}
+}
+
+void Room805::initHotspots() {
+	if (inv_object_is_here("TWO SOLDIERS' SHIELDS")) {
+		_G(flags[V257]) = 0;
+		_G(flags[V258]) = 0;
+
+		hotspot_set_active(_G(currentSceneDef).hotspots, "SHIELD", true);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "SHIELD ", true);
+	}
+
+	if (_G(flags)[V257] == 0)
+		_farSoldiersShieldMach = series_play("805 FAR SOLDIERS SHIELD", 2304, 0, -1, 0, -1, 100, 0, 0, 0, -1);
+	else
+		hotspot_set_active(_G(currentSceneDef).hotspots, "SHIELD", false);
+
+	if (_G(flags)[V258] == 0)
+		_nearSoldiersShieldMach = series_play("805 NEAR SOLDIERS SHIELD", 1280, 0, -1, 0, -1, 100, 0, 0, 0, -1);
+	else
+		hotspot_set_active(_G(currentSceneDef).hotspots, "SHIELD ", false);
+
+	if (inv_object_is_here("WOODEN POST"))
+		_fallenBeamOnFloorMach = series_play("805 FALLEN BEAM ON FLOOR", 0, 0, -1, 0, -1, 100, 0, 0, 0, -1);
+	else
+		hotspot_set_active(_G(currentSceneDef).hotspots, "WOODEN POST", false);
+
+	if (_G(flags)[V272] == 1) {
+		hotspot_set_active(_G(currentSceneDef).hotspots, "JADE DOOR", false);
+		_jadeDoorsOpenMach = series_play("805 JADE DOORS OPEN", 1280, 0, -1, 0, -1, 100, 0, 0, 0, -1);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "URN ", false);
+	} else
+		hotspot_set_active(_G(currentSceneDef).hotspots, "JADE DOOR ", false);
+
+	if (!player_been_here(805))
+		_G(flags)
+		[V262] = 0;
+
+	if (_G(flags)[V270] == 805 && _G(flags)[V262] == 1) {
+		_chariotRestMach = series_play("805 CHARIOT REST", 1280, 0, -1, 0, -1, 100, 0, 0, 0, -1);
+		kernel_load_variant("805LOCK1");
+		hotspot_set_active(_G(currentSceneDef).hotspots, "CHARIOT", true);
+	} else {
+		hotspot_set_active(_G(currentSceneDef).hotspots, "CHARIOT", false);
+	}
+
+	_unkVar1 = 0;
+}
+
+void Room805::daemonSub1() {
+	switch (_G(kernel).trigger) {
+	case 100:
+		player_set_commands_allowed(true);
+		_unkVar1 = 0;
+
+		break;
+
+	case 101:
+		sendWSMessage_10000(_mcMach, 276, 201, 10, 100, 1);
+		break;
+
+	case 102:
+	case 103:
+	case 108:
+		ws_walk(_G(my_walker), 295, 305, nullptr, -1, 3, true);
+		ws_walk(_mcMach, 250, 201, nullptr, 101, 3, true);
+
+		break;
+
+	case 104:
+		sendWSMessage_10000(_mcMach, 185, 221, 1, 105, 1);
+		break;
+
+	case 105:
+		sendWSMessage_10000(_mcMach, 200, 201, 3, 101, 1);
+		break;
+
+	case 109:
+		ws_walk(_G(my_walker), 295, 305, nullptr, -1, 3, true);
+		kernel_timing_trigger(1, 101, nullptr);
+
+		break;
+
+	case 111:
+		_unkVar1 = 1;
+		ws_unhide_walker(_G(my_walker));
+		ws_demand_facing(_G(my_walker), 3);
+		ws_demand_location(_G(my_walker), 240, 215);
+		digi_stop(1);
+		digi_stop(2);
+		digi_unload("950_s33");
+		_chariotRestMach = series_play("805 CHARIOT REST", 1280, 0, -1, 0, -1, 100, 0, 0, 0, -1);
+		_G(flags[V262]) = 1;
+		kernel_load_variant("805LOCK1");
+		hotspot_set_active(_G(currentSceneDef).hotspots, "CHARIOT", true);
+		ws_walk(_G(my_walker), 295, 305, nullptr, -1, 3, true);
+		if (_G(flags[V276]) == 0)
+			kernel_timing_trigger(10, 104, nullptr);
+		else
+			player_set_commands_allowed(true);
+
+		break; // case 111
+
+	default:
+		break;
+	}
+}
+
+void Room805::daemonSub2(const char *seriesName1, const char *seriesName2) {
+	switch (_G(kernel).trigger) {
+	case 30:
+		ws_turn_to_face(_G(my_walker), 3, -1);
+		ws_turn_to_face(_mcMach, 10, 31);
+
+		break;
+
+	case 31:
+		setGlobals1(_meiHandsBehindBack, 1, 17, 17, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_mcMach, 32);
+
+		break;
+
+	case 32:
+		sendWSMessage_150000(_mcMach, -1);
+		setGlobals1(_meiSpookedPos2, 1, 49, 49, 49, 0, 49, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_mcMach, 33);
+		if (strlen(seriesName1) != 0)
+			digi_play(seriesName1, 1, 255, -1, 997);
+
+		break;
+
+	case 33:
+		sendWSMessage_120000(_mcMach, -1);
+		setGlobals1(_ripPos3LookAround, 1, 19, 19, 19, 0, 19, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 34);
+
+		break;
+
+	case 34:
+		digi_play(seriesName2, 1, 255, 35, 997);
+		break;
+
+	case 35:
+		sendWSMessage_120000(_G(my_walker), 36);
+		break;
+
+	case 36:
+		sendWSMessage_150000(_G(my_walker), -1);
+		sendWSMessage_150000(_mcMach, -1);
+		sendWSMessage_140000(_G(my_walker), -1);
+		setGlobals1(_meiHandsBehindBack, 17, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_mcMach, 37);
+
+		break;
+
+	case 37:
+		sendWSMessage_150000(_mcMach, 38);
+		break;
+
+	case 38:
+		ws_turn_to_face(_mcMach, 10, -1);
+		player_set_commands_allowed(true);
+
+		break;
+
+	default:
+		break;
+	}
+
+}
+
+void Room805::daemonSub3(const char *seriesName1, const char *seriesName2) {
+	warning("STUB - Room805::daemonSub3");
+}
+
+void Room805::daemonSub4(const char *seriesName1, const char *seriesName2) {
+	warning("STUB - Room805::daemonSub4");
+}
+
+void Room805::preload() {
+	_G(player).walker_type = WALKER_ALT;
+	_G(player).shadow_type = SHADOW_ALT;
+	LoadWSAssets("other script", _G(master_palette));
+}
+
 void Room805::init() {
+	digi_preload("950_s29", -1);
+	_meiHandsBehindBack = series_load("MEI CHIEN HANDS BEHIND BACK", -1, nullptr);
+	_meiSpookedPos2 = series_load("MEI SPOOKED POS2", -1, nullptr);
+	_meiTalkPos3 = series_load("Mei talks pos3", -1, nullptr);
+	_ripPos3LookAround = series_load("RIP POS 3 LOOK AROUND", -1, nullptr);
+	_ripHeadTurnPos3 = series_load("RIP TREK HEAD TURN POS3", -1, nullptr);
+	_ripLookDownPos3 = series_load("RIP TREK LOOK DOWN POS3", -1, nullptr);
+	_ripLowReachPos2 = series_load("RIP TREK LOW REACH POS2", -1, nullptr);
+	_ripTalkerPos3 = series_load("RIP TREK TALKER POS3", -1, nullptr);
+	_ripMedHiReachPos2 = series_load("RIP MED HI REACH POS2", -1, nullptr);
+	_ripMedHiReachPos3 = series_load("RIP MED HI REACH POS3", -1, nullptr);
+
+	if (_G(flags)[V276] == 0) {
+		ws_walk_load_walker_series(S8_SHADOW_DIRS1, S8_SHADOW_NAMES1, false);
+		ws_walk_load_walker_series(S8_SHADOW_DIRS2, S8_SHADOW_NAMES2, false);
+	} else {
+		hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN", false);
+	}
+
+	if (!player_been_here(809) && _G(flags)[V276] == 0)
+		kernel_timing_trigger(29, imath_ranged_rand(3600, 7200));
+
+	initSub2();
+
+	digi_play_loop("950_s29", 3, 127, -1, 950);
+}
+
+void Room805::parser() {
+	warning("STUB - Room805::parser");
 }
 
 void Room805::daemon() {
+	switch (_G(kernel).trigger) {
+	case 29:
+		if (_unkVar1 == 0 && player_commands_allowed() && !_G(player).need_to_walk && !_G(player).ready_to_walk && !_G(player).waiting_for_walk) {
+			if (player_been_here(809))
+				kernel_timing_trigger(imath_ranged_rand(3600, 7200), 29, nullptr);
+
+			player_set_commands_allowed(false);
+
+			_lastRnd = imath_ranged_rand(1, 4);
+			switch (_lastRnd) {
+			case 1:
+				digi_play("950_s15", 1, 255, 30, -1);
+				break;
+
+			case 2:
+				digi_play("950_s16", 1, 255, 30, -1);
+				break;
+
+			case 3:
+				digi_play("950_s17", 1, 255, 30, -1);
+				break;
+
+			default:
+				digi_play("950_s18", 1, 255, 30, -1);
+				break;
+			}
+		} else
+			kernel_timing_trigger(60, 39, nullptr);
+
+		break; // case 29
+
+	case 39:
+		if (_unkVar1 == 0 && player_commands_allowed() && !_G(player).need_to_walk && !_G(player).ready_to_walk && !_G(player).waiting_for_walk)
+			kernel_timing_trigger(1, 29, nullptr);
+		else
+			kernel_timing_trigger(60, 39, nullptr);
+
+		break; // case 39
+
+	case 55:
+		sendWSMessage_150000(_mcMach, -1);
+		player_set_commands_allowed(true);
+
+		break; // case 55
+
+	case 56:
+		sendWSMessage_150000(_mcMach, -1);
+
+		break; // case 56
+
+	case 63:
+		sendWSMessage_150000(_G(my_walker), -1);
+		switch (imath_ranged_rand(1, 4)) {
+		case 1:
+			digi_play("COM048", 1, 255, 55, 997);
+			break;
+
+		case 2:
+			digi_play("COM049", 1, 255, 55, 997);
+			break;
+
+		case 3:
+			digi_play("COM050", 1, 255, 55, 997);
+			break;
+
+		case 4:
+			digi_play("COM051", 1, 255, 55, 997);
+			break;
+
+		default:
+			break;
+		}
+		_unkVar1 = 0;
+		setGlobals1(_meiTalkPos3, 1, 4, 1, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_mcMach, -1);
+
+		break; // case 63
+
+	case 100:
+	case 101:
+	case 102:
+	case 103:
+	case 104:
+	case 105:
+	case 108:
+	case 109:
+	case 111:
+		daemonSub1();
+
+		break;
+
+	case 110:
+		digi_preload("950_s33", -1);
+		digi_play_loop("950_s33", 2, 255, -1, -1);
+		_ripChariotInMach = series_stream("805 RIP CHARIOT IN", 5, 1280, 111);
+		_G(flags[V262]) = 1;
+
+		break; // case 110
+
+	default:
+		if (_G(kernel).trigger > 29 && _G(kernel).trigger < 39) {
+			switch (_lastRnd) {
+			case 1:
+				daemonSub2("COM052", "COM053");
+
+				break;
+			case 2:
+				daemonSub3("COM054", "COM055");
+
+				break;
+			case 3:
+				daemonSub4("COM056", nullptr);
+
+				break;
+			case 4:
+				daemonSub2("COM057", "COM058");
+
+				break;
+			default:
+				break;
+			}
+		}
+
+		break;
+	}
+
+
+
 }
 
 } // namespace Rooms
