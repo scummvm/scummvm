@@ -284,7 +284,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 	}
 	case kcACTION:
 		debugCN(3, kDebugLevels::kDebugScriptsLife, "action(");
-		engine->_scene->_currentScriptValue = engine->_movements->shouldExecuteAction() ? 1 : 0;
+		engine->_scene->_currentScriptValue = engine->_movements->actionNormal() ? 1 : 0;
 		break;
 	case kcFLAG_GAME: {
 		int32 flagIdx = ctx.stream.readByte();

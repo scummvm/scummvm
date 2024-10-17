@@ -98,10 +98,10 @@ struct DynamicFlagsStruct {
 	uint32 bIsTargetable : 1;            // 0x0200 IS_TARGETABLE (lba1) OK_SUPER_HIT (lba2)
 	uint32 bIsBlinking : 1;              // 0x0400 IS_BLINKING (lba1) FRAME_SHIELD (lba2)
 	uint32 bWasWalkingBeforeFalling : 1; // 0x0800 DRAW_SHADOW (lba2) - bWasWalkingBeforeFalling in lba1
-	uint32 bUnk1000 : 1;                 // 0x1000 ANIM_MASTER_GRAVITY (lba2)
-	uint32 bUnk2000 : 1;                 // 0x2000 SKATING (lba2) Ouch! I slip in a forbidden collision
-	uint32 bUnk4000 : 1;                 // 0x4000 OK_RENVOIE (lba2) ready to send back a projectile
-	uint32 bUnk8000 : 1;                 // 0x8000 LEFT_JUMP (lba2) ready to jump from the left foot
+	uint32 bANIM_MASTER_GRAVITY : 1;     // 0x1000 ANIM_MASTER_GRAVITY (lba2)
+	uint32 bSKATING : 1;                 // 0x2000 SKATING (lba2) Ouch! I slip in a forbidden collision
+	uint32 bOK_RENVOIE : 1;              // 0x4000 OK_RENVOIE (lba2) ready to send back a projectile
+	uint32 bLEFT_JUMP : 1;               // 0x8000 LEFT_JUMP (lba2) ready to jump from the left foot
 	uint32 bRIGHT_JUMP : 1;              // RIGHT_JUMP          (1<<16) // (lba2) ready to jump from the right foot
 	uint32 bWAIT_SUPER_HIT : 1;          // WAIT_SUPER_HIT      (1<<17) // (lba2) waiting for the end of the animation before giving another super hit
 	uint32 bTRACK_MASTER_ROT : 1;        // TRACK_MASTER_ROT    (1<<18) // (lba2) it's the track that manages the direction

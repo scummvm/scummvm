@@ -129,7 +129,7 @@ public:
 	/**
 	 * Hero executes the current action of the trigger zone
 	 */
-	bool shouldExecuteAction() const;
+	bool actionNormal() const;
 
 	bool _lastJoyFlag = false;
 
@@ -194,7 +194,7 @@ inline void Movements::setActionNormal(bool actionNormal) {
 	_actionNormal = actionNormal;
 }
 
-inline bool Movements::shouldExecuteAction() const {
+inline bool Movements::actionNormal() const {
 	return _actionNormal;
 }
 

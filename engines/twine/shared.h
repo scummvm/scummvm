@@ -323,15 +323,15 @@ enum class AnimationTypes {
 
 enum class AnimType {
 	kAnimationTypeRepeat = 0, // ANIM_REPEAT
-	kAnimationThen = 1,
+	kAnimationThen = 1, // ANIM_THEN
 	// play animation and let animExtra follow as next animation
 	// if there is already a next animation set - replace the value
-	kAnimationAllThen = 2,
+	kAnimationAllThen = 2, // ANIM_ALL_THEN
 	// replace animation and let the current animation follow
-	kAnimationInsert = 3,
+	kAnimationInsert = 3, // ANIM_TEMPO
 	// play animation and let animExtra follow as next animation
 	// but don't take the current state in account
-	kAnimationSet = 4
+	kAnimationSet = 4 // ANIM_FINAL
 };
 
 /** Hero behaviour
