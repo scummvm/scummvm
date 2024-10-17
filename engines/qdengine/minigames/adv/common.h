@@ -1,0 +1,89 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef QDENGINE_MINIGAMES_ADV_COMMON_H
+#define QDENGINE_MINIGAMES_ADV_COMMON_H
+
+#include "qdengine/qdcore/qd_minigame_interface.h"
+
+namespace QDEngine {
+
+void dprintf(const char *format, ...);
+
+typedef mgVect3<int> mgVect3i;
+
+using namespace std;
+
+class QDObject {
+	qdMinigameObjectInterface *obj_;
+
+	#ifdef _DEBUG
+	string name_;
+	#endif
+
+public:
+	static QDObject ZERO;
+
+	QDObject(qdMinigameObjectInterface* obj = 0, const char* name = "") : obj_(obj) {
+		#ifdef _DEBUG
+		name_ = name;
+		#endif
+	}
+
+	const char *getName() const; // DEBUG ONLY
+	bool hit(const mgVect2f& point) const;
+	float depth() const;
+
+	void setState(const char* name);
+
+	bool operator==(const QDObject& obj) const {
+		return obj_ == obj.obj_;
+	}
+	bool operator==(const qdMinigameObjectInterface* obj) const {
+		return obj_ == obj;
+	}
+
+	operator qdMinigameObjectInterface* () const {
+		return obj_;
+	}
+	qdMinigameObjectInterface* operator->() const {
+		return obj_;
+	}
+};
+
+typedef qdMinigameCounterInterface *QDCounter;
+
+typedef vector<QDObject> QDObjects;
+typedef vector<int> Indexes;
+typedef vector<mgVect3f> Coords;
+
+class MinigameManager;
+extern MinigameManager *runtime;
+
+template<class T>
+T getParameter(const char* name, const T& defValue);
+
+template<class T>
+bool getParameter(const char* name, T& out, bool obligatory);
+
+} // namespace QDEngine
+
+#endif // QDENGINE_MINIGAMES_ADV_COMMON_H
