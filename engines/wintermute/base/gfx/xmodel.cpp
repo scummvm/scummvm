@@ -600,11 +600,15 @@ void XModel::updateBoundingRect() {
 	_boundingRect.left = _boundingRect.top = INT_MAX_VALUE;
 	_boundingRect.right = _boundingRect.bottom = INT_MIN_VALUE;
 
-	Math::Matrix4 viewMat, projMat, worldMat;
-	Math::Vector3d vec2d(0, 0, 0);
-	_gameRef->_renderer3D->getViewTransform(viewMat);
-	_gameRef->_renderer3D->getProjectionTransform(projMat);
-	_gameRef->_renderer3D->getWorldTransform(worldMat);
+	Math::Matrix4 view, proj, world;
+	DXVector3 vec2d(0, 0, 0);
+	_gameRef->_renderer3D->getViewTransform(view);
+	_gameRef->_renderer3D->getProjectionTransform(proj);
+	_gameRef->_renderer3D->getWorldTransform(world);
+	world.transpose();
+	DXMatrix viewMat = DXMatrix(view.getData());
+	DXMatrix projMat = DXMatrix(proj.getData());
+	DXMatrix worldMat = DXMatrix(world.getData());
 
 	_drawingViewport = _gameRef->_renderer3D->getViewPort();
 
@@ -615,32 +619,31 @@ void XModel::updateBoundingRect() {
 	float z1 = _BBoxStart.z();
 	float z2 = _BBoxEnd.z();
 
-	int32 screenX = 0;
-	int32 screenY = 0;
+	DXVector3 v111(x1 ,y1, z1);
+	DXVec3Project(&vec2d, &v111, &_drawingViewport, &projMat, &viewMat, &worldMat);
+	updateRect(&_boundingRect, &vec2d);
+	DXVector3 v211(x2, y1, z1);
+	DXVec3Project(&vec2d, &v211, &_drawingViewport, &projMat, &viewMat, &worldMat);
+	updateRect(&_boundingRect, &vec2d);
+	DXVector3 v112(x1, y1, z2);
+	DXVec3Project(&vec2d, &v112, &_drawingViewport, &projMat, &viewMat, &worldMat);
+	updateRect(&_boundingRect, &vec2d);
+	DXVector3 v212(x2, y1, z2);
+	DXVec3Project(&vec2d, &v212, &_drawingViewport, &projMat, &viewMat, &worldMat);
+	updateRect(&_boundingRect, &vec2d);
 
-	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x1, y1, z1), screenX, screenY);
-	updateRect(&_boundingRect, Math::Vector3d(screenX, screenY, 0));
-
-	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x1, y1, z2), screenX, screenY);
-	updateRect(&_boundingRect, Math::Vector3d(screenX, screenY, 0));
-
-	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x1, y2, z1), screenX, screenY);
-	updateRect(&_boundingRect, Math::Vector3d(screenX, screenY, 0));
-
-	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x1, y2, z2), screenX, screenY);
-	updateRect(&_boundingRect, Math::Vector3d(screenX, screenY, 0));
-
-	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x2, y1, z1), screenX, screenY);
-	updateRect(&_boundingRect, Math::Vector3d(screenX, screenY, 0));
-
-	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x2, y1, z2), screenX, screenY);
-	updateRect(&_boundingRect, Math::Vector3d(screenX, screenY, 0));
-
-	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x2, y2, z1), screenX, screenY);
-	updateRect(&_boundingRect, Math::Vector3d(screenX, screenY, 0));
-
-	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x2, y2, z2), screenX, screenY);
-	updateRect(&_boundingRect, Math::Vector3d(screenX, screenY, 0));
+	DXVector3 v121(x1, y2, z1);
+	DXVec3Project(&vec2d, &v121, &_drawingViewport, &projMat, &viewMat, &worldMat);
+	updateRect(&_boundingRect, &vec2d);
+	DXVector3 v221(x2, y2, z1);
+	DXVec3Project(&vec2d, &v221, &_drawingViewport, &projMat, &viewMat, &worldMat);
+	updateRect(&_boundingRect, &vec2d);
+	DXVector3 v122(x1, y2, z2);
+	DXVec3Project(&vec2d, &v122, &_drawingViewport, &projMat, &viewMat, &worldMat);
+	updateRect(&_boundingRect, &vec2d);
+	DXVector3 v222(x2, y2, z2);
+	DXVec3Project(&vec2d, &v222, &_drawingViewport, &projMat, &viewMat, &worldMat);
+	updateRect(&_boundingRect, &vec2d);
 
 	_boundingRect.left -= _gameRef->_renderer3D->_drawOffsetX;
 	_boundingRect.right -= _gameRef->_renderer3D->_drawOffsetX;
@@ -649,11 +652,11 @@ void XModel::updateBoundingRect() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void XModel::updateRect(Rect32 *rc, Math::Vector3d vec) {
-	rc->left   = MIN(rc->left, (int32)vec.x());
-	rc->right  = MAX(rc->right, (int32)vec.x());
-	rc->top    = MIN(rc->top, (int32)vec.y());
-	rc->bottom = MAX(rc->bottom, (int32)vec.y());
+void XModel::updateRect(Rect32 *rc, DXVector3 *vec) {
+	rc->left   = MIN(rc->left, (int32)vec->_x);
+	rc->right  = MAX(rc->right, (int32)vec->_x);
+	rc->top    = MIN(rc->top, (int32)vec->_y);
+	rc->bottom = MAX(rc->bottom, (int32)vec->_y);
 }
 
 //////////////////////////////////////////////////////////////////////////

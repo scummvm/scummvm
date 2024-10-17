@@ -145,8 +145,6 @@ public:
 		transform = _projectionMatrix;
 	}
 
-	void project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int32 &x, int32 &y);
-
 	Camera3D *_camera;
 
 	virtual Mesh3DS *createMesh3DS() = 0;
