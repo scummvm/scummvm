@@ -75,7 +75,7 @@ void Room834::init() {
 		ws_demand_location(_G(my_walker), -10, 330);
 		if (_G(flags)[V276] == 0) {
 			_mcTrekMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, -50, 330, 2, Walker::player_walker_callback, "mc_trek");
-			_field70 = 0;
+			_unkArrayIndex = 0;
 			_guessX = 100;
 			_guessIndex = 1;
 			ws_walk(_G(my_walker), 150, 355, nullptr, -1, 3, true);
@@ -91,7 +91,7 @@ void Room834::init() {
 		ws_demand_location(_G(my_walker), 1925, 330);
 		if (_G(flags)[V276] == 0) {
 			_mcTrekMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 2000, 330, 9, Walker::player_walker_callback, "mc_trek");
-			_field70 = 4;
+			_unkArrayIndex = 4;
 			_guessX = 1815;
 			_guessIndex = 11;
 			ws_walk(_G(my_walker), 1765, 348, nullptr, -1, 9, true);

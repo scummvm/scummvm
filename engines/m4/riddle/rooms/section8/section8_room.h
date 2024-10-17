@@ -42,9 +42,12 @@ public:
 protected:
 	int32 _byte1A19BC = 0;
 	int32 _field68 = 0;
-	int32 _field70 = 0;
+
+	// The array seems to be set and never read. Idem for the index
+	int32 _unkArrayIndex = 0;
 	int32 _unkArray[8];
 
+	int32 _824fire2Serie = 0;
 	int32 _case7RandVal = 0;
 	int32 _coordArrayId = 0;
 	int32 _counter1 = 0;
@@ -65,8 +68,7 @@ protected:
 	int32 _savedPlayerInfoX = 0;
 	int32 _savedPlayerInfoY = 0;
 	int32 _savedRandom = 0;
-	int32 _unkSerie1 = 0;
-	int32 _unkSerie2 = 0;
+	
 	int32 _var1 = 0;
 	int32 _var2 = 0;
 	int32 _var3 = 0;
@@ -76,13 +78,13 @@ protected:
 	Common::String _currentSeriesName;
 	Common::String _guessHotspotName;
 
+	machine *_824fire1Mach = nullptr;
+	machine *_824fire2Mach = nullptr;
+	machine *_844postMach = nullptr;
 	machine *_dynSerie1Mach = nullptr;
 	machine *_machArr[4] = {nullptr, nullptr, nullptr, nullptr};
 	machine *_mcTrekMach = nullptr;
 	machine *_ripPushMach = nullptr;
-	machine *_unkMach1 = nullptr;
-	machine *_unkMach2 = nullptr;
-	machine *_unkMach3 = nullptr;
 
 	int32 subCE498(int32 val1);
 	void subD7916(machine *machine, int32 trigger);

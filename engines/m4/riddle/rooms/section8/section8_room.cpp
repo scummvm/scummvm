@@ -111,8 +111,8 @@ int32 Section8Room::daemonSub1(int32 dx, bool ascendingFl) {
 	hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN   ", false);
 	hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN    ", false);
 	_guessHotspotName = Common::String("MEI CHEN      ");
-	_unkArray[i] = 0;
-	_field70 = i;
+	_unkArrayIndex = i;
+	_unkArray[_unkArrayIndex] = 0;
 	_guessX = fullArr[i];
 
 	if (ascendingFl)
@@ -279,10 +279,10 @@ void Section8Room::parser() {
 
 			case 50:
 				player_set_commands_allowed(false);
-				terminateMachine(_unkMach1);
-				terminateMachine(_unkMach2);
-				series_unload(_unkSerie1);
-				series_unload(_unkSerie2);
+				terminateMachine(_824fire1Mach);
+				terminateMachine(_824fire2Mach);
+				series_unload(_ripTakerPos5);
+				series_unload(_824fire2Serie);
 				digi_preload("950_s33", -1);
 				ws_hide_walker(_G(my_walker));
 				terminateMachine(_ripPushMach);
@@ -525,7 +525,7 @@ void Section8Room::parser() {
 				break;
 
 			case 20:
-				terminateMachine(_unkMach3);
+				terminateMachine(_844postMach);
 				setGlobals3(_ripTrekLowReach, 16, 1);
 				subD7916(_G(my_walker), 30);
 				digi_play("844r22", 1, 255, -1, -1);
@@ -672,7 +672,7 @@ void Section8Room::daemon() {
 
 	switch (_G(kernel).trigger) {
 	case 1:
-		_byte1A19BC = 1;
+		_byte1A19BC = 1; // Seems to be set once and never accessed otherwise...
 		_field68 = 0;
 		player_set_commands_allowed(true);
 		if (_G(flags)[V276] == 0) {
@@ -687,7 +687,7 @@ void Section8Room::daemon() {
 			setGlobals3(_meiHandsBehindBack, 1, 17);
 			subD7916(_mcTrekMach, 4);
 			_guessHotspotName = Common::String("MEI CHEN      ");
-			_unkArray[_field70] = 0;
+			_unkArray[_unkArrayIndex] = 0;
 			kernel_timing_trigger(imath_ranged_rand(1200, 1800), 5, nullptr);
 			// CHECKME: CouldMakeMem();
 		}
