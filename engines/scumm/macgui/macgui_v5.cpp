@@ -41,7 +41,7 @@
 namespace Scumm {
 
 // ===========================================================================
-// The Mac Monkey Island 1 GUI.
+// The Mac SCUMM v5 GUI.
 // ===========================================================================
 
 MacV5Gui::MacV5Gui(ScummEngine *vm, const Common::Path &resourceFile) : MacGuiImpl(vm, resourceFile) {
