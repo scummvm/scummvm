@@ -22,8 +22,10 @@
 #include "image/pict.h"
 #include "image/codecs/codec.h"
 
+#include "common/bitstream.h"
 #include "common/debug.h"
 #include "common/endian.h"
+#include "common/memstream.h"
 #include "common/stream.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
@@ -217,11 +219,11 @@ void PICTDecoder::o_longText(Common::SeekableReadStream &stream) {
 
 void PICTDecoder::o_bitsRgn(Common::SeekableReadStream &stream) {
 	// Copy unpacked data with clipped region (8bpp or lower)
-	unpackBitsRectOrRgn(stream, false);
+	unpackBitsRectOrRgn(stream, false, true);
 }
 
 void PICTDecoder::o_packBitsRgn(Common::SeekableReadStream &stream) {
-	unpackBitsRectOrRgn(stream, true);
+	unpackBitsRectOrRgn(stream, true, true);
 }
 
 void PICTDecoder::o_shortComment(Common::SeekableReadStream &stream) {
@@ -256,12 +258,12 @@ void PICTDecoder::o_headerOp(Common::SeekableReadStream &stream) {
 
 void PICTDecoder::on_bitsRect(Common::SeekableReadStream &stream) {
 	// Copy unpacked data with clipped rectangle (8bpp or lower)
-	unpackBitsRectOrRgn(stream, false);
+	unpackBitsRectOrRgn(stream, false, false);
 }
 
 void PICTDecoder::on_packBitsRect(Common::SeekableReadStream &stream) {
 	// Unpack data (8bpp or lower)
-	unpackBitsRectOrRgn(stream, true);
+	unpackBitsRectOrRgn(stream, true, false);
 }
 
 void PICTDecoder::on_directBitsRect(Common::SeekableReadStream &stream) {
@@ -271,7 +273,7 @@ void PICTDecoder::on_directBitsRect(Common::SeekableReadStream &stream) {
 	unpackBitsRect(stream, false, pixMap);
 }
 
-void PICTDecoder::unpackBitsRectOrRgn(Common::SeekableReadStream &stream, bool hasPackBits) {
+void PICTDecoder::unpackBitsRectOrRgn(Common::SeekableReadStream &stream, bool compressed, bool hasRegion) {
     PixMap pixMap = readRowBytes(stream, false);
     bool hasPixMap = (pixMap.rowBytes & 0x8000);
     pixMap.rowBytes = pixMap.rowBytes & 0x7fff;
@@ -279,7 +281,7 @@ void PICTDecoder::unpackBitsRectOrRgn(Common::SeekableReadStream &stream, bool h
     if (hasPixMap)
         unpackBitsRect(stream, true, pixMap);
     else
-        unpackBitsRgn(stream, hasPackBits);
+        unpackBits(stream, compressed, hasRegion);
 }
 
 void PICTDecoder::on_compressedQuickTime(Common::SeekableReadStream &stream) {
@@ -549,83 +551,84 @@ void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool withPa
 	delete[] buffer;
 }
 
-void PICTDecoder::unpackBitsRgn(Common::SeekableReadStream &stream, bool compressed) {
-	int x1, x2, y1, y2;
-	int size = 0;
+// TODO: It should be possible to merge this with unpackBitsRect, but that's
+// a story for another day because this works for now.
 
+void PICTDecoder::unpackBits(Common::SeekableReadStream &stream, bool compressed, bool hasRegion) {
 	if (!_outputSurface) {
 		_outputSurface = new Graphics::Surface();
 		_outputSurface->create(_imageRect.width(), _imageRect.height(), Graphics::PixelFormat::createFormatCLUT8());
 	}
 
-	y1 = stream.readSint16BE();
-	x1 = stream.readSint16BE();
-	y2 = stream.readSint16BE();
-	x2 = stream.readSint16BE();
+	int y1 = stream.readSint16BE();
+	int x1 = stream.readSint16BE();
+	int y2 = stream.readSint16BE();
+	int x2 = stream.readSint16BE();
 
-	stream.skip(8);	// Skip srcRect
-	stream.skip(8);	// Skip dstRect
-	stream.skip(2);	// Skip mode
-	stream.skip(stream.readUint16BE() - 2);
+	stream.skip(8); // srcRect
+	stream.skip(8); // dstRect
+	stream.skip(2); // mode
 
-	int x = 0;
-	int y = 0;
-	byte value;
+	if (hasRegion)
+		stream.skip(stream.readUint16BE() - 2);
+
+	Common::Rect outputRect(_outputSurface->w, _outputSurface->h);
 
 	if (!compressed) {
-		for (y = y1; y < y2 && y < _imageRect.height(); y++) {
-			byte b = stream.readByte();
-			byte bit = 0x80;
+		Common::BitStream8MSB bs(stream);
 
-			for (x = x1; x < x2 && x < _imageRect.width(); x++) {
-				if (b & bit)
-					_outputSurface->setPixel(x, y, 0x0F);
-				else
-					_outputSurface->setPixel(x, y, 0x00);
+		for (int y = y1; y < y2; y++) {
+			int yPos = y - _imageRect.top;
 
-				bit >>= 1;
+			for (int x = x1; x < x2; x++) {
+				int xPos = x - _imageRect.left;
 
-				if (bit == 0) {
-					b = stream.readByte();
-					bit = 0x80;
-				}
+				uint bit = bs.getBit();
+
+				if (outputRect.contains(xPos, yPos))
+					_outputSurface->setPixel(xPos, yPos, bit);
 			}
 		}
-	} else {
-		for (y = y1; y < y2 && y < _imageRect.height(); y++) {
-			x = x1;
-			size = stream.readByte();
 
-			while (size > 0) {
-				byte count = stream.readByte();
-				size--;
+		return;
+	}
 
-				bool repeat;
+	for (int y = y1; y < y2; y++) {
+		int yPos = y - _imageRect.top;
+		int x = x1;
 
-				if (count >= 128) {
-					// Repeat value
-					count = 256 - count;
-					repeat = true;
-					value = stream.readByte();
-					size--;
-				} else {
-					// Copy values
-					repeat = false;
-					value = 0;
-				}
+		byte rowBytes = stream.readByte();
+		byte readBytes = 0;
 
-				for (int j = 0; j <= count; j++) {
-					if (!repeat) {
-						value = stream.readByte();
-						size--;
-					}
-					for (int k = 7; k >= 0 && x < x2 && x < _imageRect.width(); k--, x++) {
-						if (value & (1 << k))
-							_outputSurface->setPixel(x, y, 0x0F);
-						else
-							_outputSurface->setPixel(x, y, 0x00);
-					}
-				}
+		while (readBytes < rowBytes) {
+			byte rowBuf[128];
+			byte bufLen;
+
+			byte value = stream.readByte();
+			readBytes++;
+
+			if (value >= 128) {
+				bufLen = (256 - value) + 1;
+				byte repeatValue = stream.readByte();
+				memset(rowBuf, repeatValue, bufLen);
+				readBytes++;
+			} else {
+				bufLen = value + 1;
+				stream.read(rowBuf, bufLen);
+				readBytes += bufLen;
+			}
+
+			Common::MemoryReadStream ms(rowBuf, bufLen);
+			Common::BitStream8MSB bs(ms);
+
+			for (int i = 0; i < 8 * bufLen; i++) {
+				int xPos = x - _imageRect.left;
+				uint bit = bs.getBit();
+
+				if (outputRect.contains(xPos, yPos))
+					_outputSurface->setPixel(xPos, yPos, bit);
+
+				x++;
 			}
 		}
 	}
