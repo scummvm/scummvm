@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	qdengine.o \
 	console.o \
 	metaengine.o \
+	minigames/adv/Range.o \
 	parser/qdscr_parser.o \
 	parser/xml_parser.o \
 	parser/xml_tag_buffer.o \

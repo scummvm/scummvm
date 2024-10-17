@@ -330,7 +330,7 @@ void TextManager::quant(float dt) {
 	}
 
 	if (show_scores_.textID >= 0) {
-		if (scoreUpdateTimer_ >= 0.f && scoreUpdateTimer_ <= runtime->time()) {
+		if (scoreUpdateTimer_ >= 0.f && scoreUpdateTimer_ <= runtime->getTime()) {
 			int sgn = SIGN(targetScore_ - currentScore_);
 			int mod = abs(currentScore_ - targetScore_);
 			currentScore_ += sgn * (mod / 10 + 1);
@@ -340,7 +340,7 @@ void TextManager::quant(float dt) {
 			_snprintf(buf, 15, show_scores_.format, currentScore_);
 			updateStaticText(show_scores_.textID, buf);
 
-			scoreUpdateTimer_ = currentScore_ != targetScore_ ? runtime->time() + scoreUpdateTime_ : -1.f;
+			scoreUpdateTimer_ = currentScore_ != targetScore_ ? runtime->getTime() + scoreUpdateTime_ : -1.f;
 		}
 	}
 }
@@ -348,7 +348,7 @@ void TextManager::quant(float dt) {
 void TextManager::updateScore(int score) {
 	targetScore_ = score;
 	if (scoreUpdateTimer_ < 0.f)
-		scoreUpdateTimer_ = runtime->time();
+		scoreUpdateTimer_ = runtime->getTime();
 }
 
 void TextManager::updateTime(int seconds) {

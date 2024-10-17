@@ -53,13 +53,13 @@ void EffectManager::quant(float dt) {
 	if (current_ == EFFECT_COUNT)
 		return;
 
-	if (runtime->time() > effectTimer_) {
+	if (runtime->getTime() > effectTimer_) {
 		stop(current_);
 		return;
 	}
 
-	if (runtime->time() > phaseTimer_) {
-		phaseTimer_ = runtime->time() + phaseTime_;
+	if (runtime->getTime() > phaseTimer_) {
+		phaseTimer_ = runtime->getTime() + phaseTime_;
 		mgVect2f scale = effect_->screen_scale();
 		mgVect2f speed = scale;
 		scale *= phaseSpeed_;
@@ -73,9 +73,9 @@ void EffectManager::quant(float dt) {
 void EffectManager::start(EffectType id) {
 	if (current_ != EFFECT_COUNT || !effect_)
 		return;
-	effectTimer_ = runtime->time() + effectTime_;
+	effectTimer_ = runtime->getTime() + effectTime_;
 	current_ = id;
-	phaseTimer_ = runtime->time();
+	phaseTimer_ = runtime->getTime();
 	effect_->set_screen_scale(mgVect2f(0.02f, 0.02f), mgVect2f(10000.f, 10000.f));
 	effect_->set_R(data_.crd);
 

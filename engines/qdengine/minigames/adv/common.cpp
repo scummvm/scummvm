@@ -64,11 +64,11 @@ bool getParameter(const char* name, T& out, bool obligatory) {
 
 template<>
 float getParameter(const char* name, const float &defValue) {
-	if (const char * data = runtime->parameter(name, false)) {
+	if (const char *data = runtime->parameter(name, false)) {
 		float retValue = defValue;
-		if (_snscanf(data, 8, "%f", &retValue) == 1)
+		if (sscanf(data, "%f", &retValue) == 1)
 			return retValue;
-		xxassert(false, (XBuffer() < "В параметре [" < name < "] неверный тип данных. Должно быть число.").c_str());
+		error("The parameter [%s] contains wrong data type. It must be a number", name);
 	}
 	return defValue;
 
@@ -78,11 +78,11 @@ template<>
 bool getParameter(const char* name, float &out, bool obligatory) {
 	if (const char * data = runtime->parameter(name, obligatory)) {
 		float retValue = out;
-		if (_snscanf(data, 8, "%f", &retValue) == 1) {
+		if (sscanf(data, "%f", &retValue) == 1) {
 			out = retValue;
 			return true;
 		}
-		xxassert(false, (XBuffer() < "В параметре [" < name < "] неверный тип данных. Должно быть число.").c_str());
+		error("The parameter [%s] contains wrong data type. It must be a number", name);
 	}
 	return false;
 
@@ -92,9 +92,9 @@ template<>
 mgVect2f getParameter(const char* name, const mgVect2f& defValue) {
 	if (const char * data = runtime->parameter(name, false)) {
 		mgVect2f retValue = defValue;
-		if (_snscanf(data, 16, "%f %f", &retValue.x, &retValue.y) == 2)
+		if (sscanf(data, "%f %f", &retValue.x, &retValue.y) == 2)
 			return retValue;
-		xxassert(false, (XBuffer() < "В параметре [" < name < "] неверный тип данных. Должна быть пара чисел.").c_str());
+		error("The parameter [%s] contains wrong data type. It must be a pair of numbers", name);
 	}
 	return defValue;
 
@@ -104,11 +104,11 @@ template<>
 bool getParameter(const char* name, mgVect2f& out, bool obligatory) {
 	if (const char * data = runtime->parameter(name, obligatory)) {
 		mgVect2f retValue = out;
-		if (_snscanf(data, 16, "%f %f", &retValue.x, &retValue.y) == 2) {
+		if (sscanf(data, "%f %f", &retValue.x, &retValue.y) == 2) {
 			out = retValue;
 			return true;
 		}
-		xxassert(false, (XBuffer() < "В параметре [" < name < "] неверный тип данных. Должна быть пара чисел.").c_str());
+		error("The parameter [%s] contains wrong data type. It must be a pair of numbers", name);
 	}
 	return false;
 

@@ -64,7 +64,7 @@ Swap::Swap() {
 
 	if ((rotateTimePeriod_ = getParameter("rotate_period", 86400.f)) < 10.f)
 		return;
-	nextRotateTime_ = runtime->time() + rotateTimePeriod_;
+	nextRotateTime_ = runtime->getTime() + rotateTimePeriod_;
 
 	const char *name_begin = runtime->parameter("obj_name_begin", "obj_");
 
@@ -129,11 +129,11 @@ void Swap::quant(float dt) {
 	else
 		runtime->setGameHelpVariant(0);
 
-	if (runtime->time() > nextRotateTime_) {
+	if (runtime->getTime() > nextRotateTime_) {
 		int item1 = runtime->rnd(0, gameSize_ - 1);
 		int item2 = runtime->rnd(0, gameSize_ - 1);
 		if (item1 != last1_ && item1 != last2_ && item1 != pickedItem_ && item2 != last1_ && item2 != last2_ && item2 != pickedItem_) {
-			nextRotateTime_ = runtime->time() + rotateTimePeriod_;
+			nextRotateTime_ = runtime->getTime() + rotateTimePeriod_;
 			rotate(item1, item2, false, true);
 			runtime->event(EVENT_AUTO_ROTATE, mgVect2f(400, 300));
 			return;

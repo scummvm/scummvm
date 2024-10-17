@@ -31,11 +31,11 @@ const float FLT_INF = 1.e+30f;
 #define SQRT3 1.73205081f
 
 inline float dist(const mgVect2f& v1, const mgVect2f& v2) {
-	return sqrt(sqr(v1.x - v2.x) + sqr(v1.y - v2.y));
+	return sqrt((v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y));
 }
 
 inline float abs(const mgVect2f& v) {
-	return sqrt(sqr(v.x) + sqr(v.y));
+	return sqrt(v.x * v.x + v.y * v.y);
 }
 
 inline void norm(mgVect2f& v) {

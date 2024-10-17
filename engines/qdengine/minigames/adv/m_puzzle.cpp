@@ -85,7 +85,7 @@ Puzzle::Puzzle() {
 			return;
 	} else
 		rotateTimePeriod_ = 86400; // сутки
-	nextRotateTime_ = runtime->time() + rotateTimePeriod_;
+	nextRotateTime_ = runtime->getTime() + rotateTimePeriod_;
 
 	flySpeed_ = getParameter("inventory_drop_speed", 240.f);
 	xassert(flySpeed_ > 0.f);
@@ -143,7 +143,7 @@ Puzzle::Puzzle() {
 	mouseObjPose_ = stidx(stackSize_ + 1);
 
 	inField_ = runtime->debugMode() ? nodes_.size() : 0;
-	nextObjTime_ = runtime->time();
+	nextObjTime_ = runtime->getTime();
 
 	setState(MinigameInterface::RUNNING);
 }
@@ -248,9 +248,9 @@ void Puzzle::quant(float dt) {
 	else
 		runtime->setGameHelpVariant(1);
 
-	if (runtime->time() > nextRotateTime_) {
+	if (runtime->getTime() > nextRotateTime_) {
 		runtime->event(EVENT_FIELD_ROTATE, mgVect2f(400, 300));
-		nextRotateTime_ = runtime->time() + rotateTimePeriod_;
+		nextRotateTime_ = runtime->getTime() + rotateTimePeriod_;
 		globalAngle_ = (globalAngle_ + 1) % angles_;
 		runtime->setCompleteHelpVariant(globalAngle_);
 	}
@@ -262,7 +262,7 @@ void Puzzle::quant(float dt) {
 		else
 			fit = flyObjs_.erase(fit);
 
-	if (inField_ < nodes_.size() && runtime->time() > nextObjTime_ &&
+	if (inField_ < nodes_.size() && runtime->getTime() > nextObjTime_ &&
 	(stack_.size() < stackSize_ - 1 || stack_.size() < stackSize_ && pickedItem_ == -1)) { // нужно добавить в инвентори фишку
 		// ищем случайный не выставленный фрагмент
 		int freeIdx = round(runtime->rnd(0.f, nodes_.size() - 1));
@@ -277,7 +277,7 @@ void Puzzle::quant(float dt) {
 		int idx = distance(nodes_.begin(), it);
 
 		++inField_;
-		nextObjTime_ = runtime->time() + stackPlaceSize_.y / flySpeed_;
+		nextObjTime_ = runtime->getTime() + stackPlaceSize_.y / flySpeed_;
 
 		it->pos = stidx(stackSize_);
 		it->obj.setState(getStateName(it->angle, false, true));

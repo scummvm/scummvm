@@ -22,6 +22,7 @@
 #ifndef QDENGINE_MINIGAMES_ADV_COMMON_H
 #define QDENGINE_MINIGAMES_ADV_COMMON_H
 
+#include "qdengine/qd_fwd.h"
 #include "qdengine/qdcore/qd_minigame_interface.h"
 
 namespace QDEngine {
@@ -71,9 +72,9 @@ public:
 
 typedef qdMinigameCounterInterface *QDCounter;
 
-typedef vector<QDObject> QDObjects;
-typedef vector<int> Indexes;
-typedef vector<mgVect3f> Coords;
+typedef Std::vector<QDObject> QDObjects;
+typedef Std::vector<int> Indexes;
+typedef Std::vector<mgVect3f> Coords;
 
 class MinigameManager;
 extern MinigameManager *runtime;
@@ -83,6 +84,18 @@ T getParameter(const char* name, const T& defValue);
 
 template<class T>
 bool getParameter(const char* name, T& out, bool obligatory);
+
+enum SystemEvent {
+	EVENT_TIME_1_SECOND_TICK,
+	EVENT_TIME_10_SECOND_TICK,
+	EVENT_TIME_60_SECOND_TICK,
+	EVENT_TIME_10_SECOND_LEFT,
+	EVENT_TIME_LESS_10_SECOND_LEFT_SECOND_TICK,
+	EVENT_TIME_OUT,
+	EVENT_GAME_LOSE,
+	EVENT_GAME_WIN,
+	SYSTEM_EVENTS_SIZE
+};
 
 } // namespace QDEngine
 

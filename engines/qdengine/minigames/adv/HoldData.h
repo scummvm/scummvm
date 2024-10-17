@@ -45,7 +45,7 @@ public:
 	}
 
 	const T &get() const {
-		xassert(!empty_);
+		assert(!empty_);
 		return data_;
 	}
 };

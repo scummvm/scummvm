@@ -628,7 +628,7 @@ void MinigameManager::gameWin() {
 	if (currentGameIndex_.gameNum_ == 0)
 		return;
 
-	int gameTime = round(time());
+	int gameTime = round(getTime());
 	eventManager_->addScore(round(timeManager_->leftTime() * timeManager_->timeCost()));
 
 	currentGameInfo_->game_.lastTime_ = gameTime;
@@ -968,7 +968,7 @@ TimeManager::TimeManager(HoldData<TimeManagerData> &data) {
 	} else
 		size_ = mgVect2f(-1.f, -1.f);
 
-	xassert(runtime->time() == 0.f);
+	xassert(runtime->getTime() == 0.f);
 
 	lastEventTime_ = 0;
 
@@ -982,7 +982,7 @@ TimeManager::~TimeManager() {
 
 bool TimeManager::timeIsOut() const {
 	if (gameTime_ > 0.f)
-		return runtime->time() > gameTime_;
+		return runtime->getTime() > gameTime_;
 	return false;
 
 }
@@ -990,12 +990,12 @@ bool TimeManager::timeIsOut() const {
 float TimeManager::leftTime() const {
 	if (gameTime_ <= 0.f)
 		return 0;
-	return runtime->time() > gameTime_ ? 0 : gameTime_ - runtime->time();
+	return runtime->getTime() > gameTime_ ? 0 : gameTime_ - runtime->getTime();
 
 }
 
 void TimeManager::quant(float dt) {
-	int seconds = round(runtime->time());
+	int seconds = round(runtime->getTime());
 	if (seconds != lastEventTime_) {
 		lastEventTime_ = seconds;
 		runtime->textManager().updateTime(seconds);
@@ -1016,7 +1016,7 @@ void TimeManager::quant(float dt) {
 	if (gameTime_ <= 0.f || !timeBar_)
 		return;
 
-	float phase = clamp(runtime->time() / gameTime_, 0.f, 1.f);
+	float phase = clamp(runtime->getTime() / gameTime_, 0.f, 1.f);
 	mgVect3f pos;
 	switch (direction_) {
 	case UP:

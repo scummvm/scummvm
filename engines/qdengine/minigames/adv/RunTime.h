@@ -22,6 +22,8 @@
 #ifndef QDENGINE_MINIGAMES_ADV_RUNTIME_H
 #define QDENGINE_MINIGAMES_ADV_RUNTIME_H
 
+#include "common/hashmap.h"
+
 namespace QDEngine {
 
 class qdEngineInterface;
@@ -30,7 +32,6 @@ class qdMinigameSceneInterface;
 class MinigameInterface;
 class TextManager;
 class TimeManager;
-enum SystemEvent;
 class EventManager;
 class EffectManager;
 
@@ -103,7 +104,7 @@ public:
 	mgVect2i screenSize() const {
 		return screenSize_;
 	}
-	float time() const {
+	float getTime() const {
 		return gameTime_;
 	}
 
@@ -168,7 +169,7 @@ public:
 	float rnd(float min, float max) const;
 	int rnd(int min, int max) const;
 	// случайный диапазон, из набора вероятностей
-	int rnd(const vector<float> &prob) const;
+	int rnd(const Std::vector<float> &prob) const;
 
 	// файл со списком игр по уровням
 	const char *gameListFileName() const {
@@ -206,13 +207,13 @@ private:
 	QDObject complete_help_;
 	QDObject complete_help_miniature_;
 	// текущее состояние для включения справки
-	string complete_help_state_name_;
+	Common::String complete_help_state_name_;
 	// справка по игре
 	QDObject game_help_;
 	QDObject game_help_trigger_;
 	bool game_help_enabled_;
 	// текущее состояние для включения справки
-	string game_help_state_name_;
+	Common::String game_help_state_name_;
 
 	// интерфейс к движку
 	const qdEngineInterface *engine_;
@@ -230,7 +231,7 @@ private:
 	// имя файла и информацией о минииграх
 	const char *state_container_name_;
 	// количество пройденных игр на каждом уровне
-	typedef map<int, int> Counters;
+	typedef Common::HashMap<int, int> Counters;
 	Counters completeCounters_;
 
 	struct GameInfoIndex {
@@ -242,7 +243,7 @@ private:
 		}
 	};
 	// информация о пройденных играх
-	typedef map<GameInfoIndex, GameInfo> GameInfoMap;
+	typedef Common::HashMap<GameInfoIndex, GameInfo> GameInfoMap;
 	GameInfoMap gameInfos_;
 	// Информация о текущей игре, при выходе запишется
 	GameInfoIndex currentGameIndex_;
