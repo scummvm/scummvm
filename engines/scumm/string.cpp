@@ -971,7 +971,7 @@ void ScummEngine::displayDialog() {
 		int s;
 
 		_string[0].xpos = a->getPos().x - _virtscr[kMainVirtScreen].xstart;
-		_string[0].ypos = a->getPos().y - a->getElevation() - _screenTop - _screenDrawOffset;
+		_string[0].ypos = a->getPos().y - a->getElevation() - _screenTop;
 
 		if (_game.version <= 5) {
 			if (VAR(VAR_V5_TALK_STRING_Y) < 0) {
@@ -1005,7 +1005,7 @@ void ScummEngine::displayDialog() {
 			_string[0].xpos = _screenWidth - 80;
 	}
 
-	_charset->_top = _string[0].ypos + _screenTop + _screenDrawOffset;
+	_charset->_top = _string[0].ypos + _screenTop;
 	_charset->_startLeft = _charset->_left = _string[0].xpos;
 	_charset->_right = _string[0].right;
 	_charset->_center = _string[0].center;
@@ -1225,7 +1225,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	if (_isRTL)
 		fakeBidiString(buf, false, sizeof(buf));
 
-	_charset->_top = _string[a].ypos + _screenTop + _screenDrawOffset;
+	_charset->_top = _string[a].ypos + _screenTop;
 	_charset->_startLeft = _charset->_left = _string[a].xpos;
 	_charset->_right = _string[a].right;
 	_charset->_center = _string[a].center;

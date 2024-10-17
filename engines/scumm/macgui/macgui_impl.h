@@ -30,7 +30,10 @@
 #include "common/str.h"
 #include "common/str-array.h"
 
+#include "engines/engine.h"
+
 #include "graphics/font.h"
+#include "graphics/surface.h"
 
 class OSystem;
 
@@ -47,6 +50,64 @@ class Actor;
 class MacGuiImpl {
 public:
 	class MacDialogWindow;
+
+	enum MacStringIds {
+		kMSISkip = -1,
+		kMSIAboutGameName = 1,
+		kMSIRoughCommandMsg,
+		kMSIAreYouSureYouWantToQuit,
+		kMSIAreYouSureYouWantToRestart,
+		kMSIGameName,
+		kMSIOpenGameFile,
+		kMSISaveGameFileAs,
+		kMSIGameFile,
+		kMSIAboutString1,
+		kMSIAboutString2,
+		kMSIAboutString3,
+		kMSIAboutString4,
+		kMSIAboutString5,
+		kMSIAboutString6,
+		kMSIAboutString7,
+		kMSIAboutString8,
+		kMSIAboutString9,
+		kMSIAboutString10,
+		kMSIAboutString11,
+		kMSIAboutString12,
+		kMSIAboutString13,
+		kMSIAboutString14,
+		kMSIAboutString15,
+		kMSIAboutString16,
+		kMSIAboutString17,
+		kMSIAboutString18,
+		kMSIAboutString19,
+		kMSIAboutString20,
+		kMSIAboutString21,
+		kMSIAboutString22,
+		kMSIAboutString23,
+		kMSIAboutString24,
+		kMSIAboutString25,
+		kMSIAboutString26,
+		kMSIAboutString27,
+		kMSIAboutString28,
+		kMSIAboutString29,
+		kMSIAboutString30,
+		kMSIAboutString31,
+		kMSIAboutString32,
+		kMSIAboutString33,
+		kMSIAboutString34,
+		kMSIAboutString35,
+		kMSIAboutString36,
+		kMSIAboutString37,
+		kMSIAboutString38,
+		kMSIAboutString39,
+		kMSIAboutString40
+	};
+
+	struct MacSTRSParsingEntry {
+		MacStringIds strId;
+		Common::String parsingMethod;
+		int numStrings;
+	};
 
 protected:
 	ScummEngine *_vm = nullptr;
@@ -73,39 +134,17 @@ protected:
 		kDelayAborted
 	};
 
-	enum Color {
-		kBlack = 0,
-		kBlue = 1,
-		kGreen = 2,
-		kCyan = 3,
-		kRed = 4,
-		kMagenta = 5,
-		kBrown = 6,
-		kLightGray = 7,
-		kDarkGray = 8,
-		kBrightBlue = 9,
-		kBrightGreen = 10,
-		kBrightCyan = 11,
-		kBrightRed = 12,
-		kBrightMagenta = 13,
-		kBrightYellow = 14,
-		kWhite = 15,
-
-		// Reserved for custom colors, loaded from PICT resources.
-		kCustomColor = 100,
-
-		kBackground = 254,	// Gray or checkerboard
-		kTransparency = 255
-	};
-
 	enum FontId {
 		kSystemFont,
 
 		kAboutFontRegular,
 		kAboutFontBold,
+		kAboutFontBold2,
 		kAboutFontExtraBold,
 		kAboutFontHeaderInside,
 		kAboutFontHeaderOutside,
+		kAboutFontHeaderSimple1,
+		kAboutFontHeaderSimple2,
 
 		kIndy3FontSmall,
 		kIndy3FontMedium,
@@ -120,7 +159,10 @@ protected:
 
 	enum TextStyle {
 		kStyleHeader,
+		kStyleHeaderSimple1,
+		kStyleHeaderSimple2,
 		kStyleBold,
+		kStyleBold2,
 		kStyleExtraBold,
 		kStyleRegular
 	};
@@ -195,7 +237,6 @@ protected:
 		0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F
 	};
 
-
 	MacGuiImpl::DelayStatus delay(uint32 ms = 0);
 
 	virtual bool getFontParams(FontId fontId, int &id, int &size, int &slant) const;
@@ -212,7 +253,8 @@ protected:
 
 	bool runOkCancelDialog(Common::String text);
 
-	virtual void readStrings() {}
+	void readStrings();
+	void parseSTRSBlock(uint8 *strsData, MacSTRSParsingEntry *parsingTable, int parsingTableSize);
 
 	// These are non interactable, no point in having them as widgets for now...
 	void drawFakePathList(MacDialogWindow *window, Common::Rect r, byte *icon, const char *text, Graphics::TextAlign alignment);
@@ -239,6 +281,9 @@ public:
 	class MacWidget : public MacGuiObject {
 	protected:
 		MacGuiImpl::MacDialogWindow *_window;
+		uint32 _black;
+		uint32 _white;
+
 		int _id = -1;
 
 		bool _fullRedraw = false;
@@ -246,8 +291,8 @@ public:
 		Common::String _text;
 		int _value = 0;
 
-		int drawText(Common::String text, int x, int y, int w, Color fg = kBlack, Color bg = kWhite, Graphics::TextAlign align = Graphics::kTextAlignLeft, bool wordWrap = false, int deltax = 0) const;
-		void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
+		int drawText(Common::String text, int x, int y, int w, uint32 fg = 0, uint32 bg = 0, Graphics::TextAlign align = Graphics::kTextAlignLeft, bool wordWrap = false, int deltax = 0) const;
+		void drawBitmap(Common::Rect r, const uint16 *bitmap, uint32 color) const;
 
 	public:
 		MacWidget(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled);
@@ -325,8 +370,8 @@ public:
 
 	class MacStaticText : public MacWidget {
 	private:
-		Color _fg = kBlack;
-		Color _bg = kWhite;
+		uint32 _fg;
+		uint32 _bg;
 		Graphics::TextAlign _alignment = Graphics::kTextAlignLeft;
 		bool _wordWrap = false;
 
@@ -336,6 +381,8 @@ public:
 			Common::Rect bounds, Common::String text,
 			bool enabled, Graphics::TextAlign alignment = Graphics::kTextAlignLeft) : MacWidget(window, bounds, text, true) {
 			_alignment = alignment;
+			_fg = _black;
+			_bg = _white;
 		}
 
 		void getFocus() {}
@@ -350,7 +397,7 @@ public:
 			}
 		}
 
-		void setColor(Color fg, Color bg) {
+		void setColor(uint32 fg, uint32 bg) {
 			if (fg != _fg || bg != _bg) {
 				_fg = fg;
 				_bg = bg;
@@ -555,6 +602,9 @@ public:
 
 	class MacDialogWindow {
 	private:
+		uint32 _black;
+		uint32 _white;
+
 		bool _shakeWasEnabled;
 
 		Common::Rect _bounds;
@@ -654,11 +704,11 @@ public:
 		static void plotPatternDarkenOnly(int x, int y, int pattern, void *data);
 
 		void drawDottedHLine(int x0, int y, int x1);
-		void fillPattern(Common::Rect r, uint16 pattern);
+		void fillPattern(Common::Rect r, uint16 pattern, bool fillBlack = true, bool fillWhite = true);
 		void drawSprite(const Graphics::Surface *sprite, int x, int y);
 		void drawSprite(const Graphics::Surface *sprite, int x, int y, Common::Rect clipRect);
-		void drawTexts(Common::Rect r, const TextLine *lines);
-		void drawTextBox(Common::Rect r, const TextLine *lines, int arc = 9);
+		void drawTexts(Common::Rect r, const TextLine *lines, bool inverse = false);
+		void drawTextBox(Common::Rect r, const TextLine *lines, bool inverse = false, int arc = 9);
 	};
 
 	MacGuiImpl(ScummEngine *vm, const Common::Path &resourceFile);
@@ -667,7 +717,11 @@ public:
 	Graphics::MacWindowManager *_windowManager = nullptr;
 	bool _forceMenuClosed = false;
 
+	virtual int getNumColors() const = 0;
+
 	Graphics::Surface *surface() { return _surface; }
+	uint32 getBlack() const;
+	uint32 getWhite() const;
 
 	virtual const Common::String name() const = 0;
 
@@ -708,7 +762,7 @@ public:
 	void drawBanner(char *message);
 	void undrawBanner();
 
-	void drawBitmap(Graphics::Surface *s, Common::Rect r, const uint16 *bitmap, Color color) const;
+	void drawBitmap(Graphics::Surface *s, Common::Rect r, const uint16 *bitmap, uint32 color) const;
 };
 
 } // End of namespace Scumm

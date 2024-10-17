@@ -1095,8 +1095,8 @@ public:
 	void setQuality(int qual) override;
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
 	void restoreAfterLoad() override;
-	void enable() override;
-	void disable() override;
+	void toggleMusic(bool enable) override;
+	void toggleSoundEffects(bool enable) override;
 
 private:
 	Common::SharedPtr<T> _player;
@@ -1158,14 +1158,14 @@ template <typename T> void MusicEngineImpl<T>::restoreAfterLoad() {
 		_player->restoreAfterLoad();
 }
 
-template <typename T> void MusicEngineImpl<T>::enable() {
+template <typename T> void MusicEngineImpl<T>::toggleMusic(bool enable) {
 	if (_player != nullptr)
-		_player->enable();
+		_player->toggleMusic(enable);
 }
 
-template <typename T> void MusicEngineImpl<T>::disable() {
+template <typename T> void MusicEngineImpl<T>::toggleSoundEffects(bool enable) {
 	if (_player != nullptr)
-		_player->disable();
+		_player->toggleSoundEffects(enable);
 }
 
 namespace MacSound {
