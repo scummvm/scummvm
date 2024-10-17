@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCUMM_MACGUI_MACGUI_MI1_H
-#define SCUMM_MACGUI_MACGUI_MI1_H
+#ifndef SCUMM_MACGUI_MACGUI_V5_H
+#define SCUMM_MACGUI_MACGUI_V5_H
 
 #include "common/events.h"
 #include "common/rect.h"
@@ -30,10 +30,10 @@ namespace Scumm {
 
 class MacGuiImpl;
 
-class MacMI1Gui : public MacGuiImpl {
+class MacV5Gui : public MacGuiImpl {
 public:
-	MacMI1Gui(ScummEngine *vm, const Common::Path &resourceFile);
-	~MacMI1Gui() {}
+	MacV5Gui(ScummEngine *vm, const Common::Path &resourceFile);
+	~MacV5Gui() {}
 
 	const Common::String name() const { return "game"; }
 	int getNumColors() const override { return 256; }

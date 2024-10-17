@@ -45,7 +45,7 @@ MODULE_OBJS := \
 	macgui/macgui_indy3.o \
 	macgui/macgui_loom.o \
 	macgui/macgui_strings.o \
-	macgui/macgui_mi1.o \
+	macgui/macgui_v5.o \
 	macgui/macgui_widgets.o \
 	metaengine.o \
 	midiparser_ro.o \
