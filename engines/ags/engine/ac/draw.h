@@ -30,6 +30,7 @@
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/game/room_struct.h"
 #include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/ac/walk_behind.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -66,6 +67,37 @@ struct RoomCameraDrawData {
 	AGS::Shared::PBitmap Frame;       // this is either same bitmap reference or sub-bitmap of virtual screen
 	bool    IsOffscreen; // whether room viewport was offscreen (cannot use sub-bitmap)
 	bool    IsOverlap;   // whether room viewport overlaps any others (marking dirty rects is complicated)
+};
+
+typedef int32_t sprkey_t;
+// TODO: refactor the draw unit into a virtual interface with
+// two implementations: for software and video-texture render,
+// instead of checking whether the current method is "software".
+struct DrawState {
+	// Whether we should use software rendering methods
+	// (aka raw draw), as opposed to video texture transform & fx
+	bool SoftwareRender = false;
+	// Whether we should redraw whole game screen each frame
+	bool FullFrameRedraw = false;
+	// Walk-behinds representation
+	WalkBehindMethodEnum WalkBehindMethod = DrawAsSeparateSprite;
+	// Whether there are currently remnants of a on-screen effect
+	bool ScreenIsDirty = false;
+
+	// A map of shared "control blocks" per each sprite used
+	// when preparing object textures. "Control block" is currently just
+	// an integer which lets to check whether the object texture is in sync
+	// with the sprite. When the dynamic sprite is updated or deleted,
+	// the control block is marked as invalid and removed from the map;
+	// but certain objects may keep the shared ptr to the old block with
+	// "invalid" mark, thus they know that they must reset their texture.
+	//
+	// TODO: investigate an alternative of having a equivalent of
+	// "shared texture" with sprite ID ref in Software renderer too,
+	// which would allow to use same method of testing DDB ID for both
+	// kinds of renderers, thus saving on 1 extra notification mechanism.
+	std::unordered_map<sprkey_t, std::shared_ptr<uint32_t> >
+		SpriteNotifyMap;
 };
 
 // ObjTexture is a helper struct that pairs a raw bitmap with
