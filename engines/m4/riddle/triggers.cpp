@@ -455,7 +455,7 @@ void triggerMachineByHashCallback3000(frac16 myMessage, machine *sender) {
 
 	case 2:
 		if (param)
-			sendWSMessage(0x30000, triggerType, sender, 0, nullptr, 1);
+			sendWSMessage(0x30000, 0, sender, 0, nullptr, 1);
 		else if (msg >= 0)
 			kernel_trigger_dispatchx(myMessage);
 		break;
