@@ -801,6 +801,13 @@ public:
 	int16 _menuPanelResourceCacheSlots[MENU_PANELS::PANEL_SIZE_END];
 	Common::StringArray _menuItems;
 
+	/* Dialog */
+	Common::StringArray _dialogStrings;
+	AnimationResource *_dialogPanel;
+	bool _isDialogMenuShowing;
+	typedef void (PrisonerEngine::*DialogAction)();
+	PrisonerEngine::DialogAction _dialogActionCallback;
+
 
 public:
 	int16 loadTextResource(Common::String &pakName, int16 pakSlot);
@@ -1126,6 +1133,8 @@ public:
 	void setTextDisplayColor(int16 textDisplayNum, int16 outlineColor, int16 inkColor);
 
 	/* Menu */
+	void displayDialog(DIALOG_TYPE type, Common::String &titleStrId, Common::String &actionStrId, DialogAction dlgAction);
+	void loadDialogData();
 	void loadMenuPanels();
 	void loadOnscreenMenuText();
 	void runMainMenu_initMessages();
@@ -1135,6 +1144,11 @@ public:
 	void updateMenu(int16 x, int16 y);
 	void doMenuAction(uint8 clickBoxIndex);
 
+	/* Dialog */
+	void updateDialogMenu(int16 x, int16 y);
+	void handleDialogMenuInput();
+	void dialogActionNewGame();
+	void dialogActionExit();
 
 	/* Save/load */
 

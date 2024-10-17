@@ -461,7 +461,7 @@ void MidiResource::load(Common::MemoryReadStream &stream) {
 
 void MidiResource::convertHMPtoSMF(Common::MemoryReadStream &stream) {
 
-	Common::MemoryWriteStreamDynamic writeS(DisposeAfterUse::YES);
+	Common::MemoryWriteStreamDynamic writeS(DisposeAfterUse::NO);
 
 	byte buf[8];
 

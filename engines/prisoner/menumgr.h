@@ -61,6 +61,14 @@ struct _MenuOffset {
 	int16 y2;
 };
 
+enum DIALOG_TYPE {
+	DUMMY,
+	OK,
+	CANCEL,
+	IGNORE,
+};
+
+
 } // namespace Prisoner
 
 #endif

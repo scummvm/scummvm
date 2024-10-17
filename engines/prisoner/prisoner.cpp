@@ -162,6 +162,7 @@ Common::Error PrisonerEngine::run() {
 	_updateDirtyRectsFlag = true;
 	_autoSaveRequested = false;
 	_mainMenuRequested = false;
+	_isDialogMenuShowing = false;
 	_mainLoopDone = false;
 	_dialogRunning = false;
 	_screenTextShowing = false;
@@ -679,6 +680,11 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 			return 0;
 		} else if (y - _cameraY >= 82)
 			_inventoryBarFlag = true;
+	}
+
+	if (_isDialogMenuShowing) {
+		handleDialogMenuInput();
+		return 0;
 	}
 
 	if (_mainMenuRequested) {
