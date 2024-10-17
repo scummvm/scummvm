@@ -2009,7 +2009,7 @@ void Room303::priestTalk(bool flag, int trigger) {
 	_G(globals)[V008] = trigger << 16;
 	_G(globals)[GLB_TEMP_12] = 0xdc28;
 
-	_priestTalk = TriggerMachineByHash(32, nullptr, 0, -1,
+	_priestTalk = TriggerMachineByHash(32, nullptr, -1, -1,
 		priestTalkCallback, false, "fl priest/talk");
 }
 
