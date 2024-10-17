@@ -643,16 +643,16 @@ bool AdObject3D::getBonePosition3D(const char *boneName, Math::Vector3d *pos, Ma
 		return false;
 	}
 
-	Math::Matrix4 boneMatrix;
-	boneMatrix.setData(*boneMat);
-	Math::Matrix4 bonePosMat = boneMatrix * _worldMatrix;
-	*pos = Math::Vector3d(0.0f, 0.0f, 0.0f);
+	DXMatrix bonePosMat, worldMatrix = DXMatrix(_worldMatrix.getData());
+	DXMatrixMultiply(&bonePosMat, boneMat, &worldMatrix);
 
-	if (offset) {
-		*pos = *offset;
-	}
+	DXVector4 vectBone4;
+	DXVector3 vectBone3(offset->x(), offset->x(), offset->y());
+	DXVec3Transform(&vectBone4, &vectBone3, &bonePosMat);
 
-	bonePosMat.transform(pos, true);
+	pos->x() = vectBone4._x;
+	pos->y() = vectBone4._y;
+	pos->z() = vectBone4._z;
 
 	return true;
 }
