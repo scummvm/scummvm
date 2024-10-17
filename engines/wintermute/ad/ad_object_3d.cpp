@@ -127,8 +127,23 @@ bool AdObject3D::update() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject3D::convert3DTo2D(Math::Matrix4 *worldMat, int32 *posX, int32 *posY) {
-	Math::Vector3d origin(0.0f, 0.0f, 0.0f);
-	_gameRef->_renderer3D->project(*worldMat, origin, *posX, *posY);
+	DXMatrix viewMat, projMat, world;
+	DXVector3 vec2d(0.0f, 0.0f, 0.0f);
+	DXVector3 origin(0.0f, 0.0f, 0.0f);
+	Math::Matrix4 view, proj;
+	_gameRef->_renderer3D->getViewTransform(view);
+	_gameRef->_renderer3D->getProjectionTransform(proj);
+	viewMat = DXMatrix(view.getData());
+	projMat = DXMatrix(proj.getData());
+	world = DXMatrix(worldMat->getData());
+	DXMatrixTranspose(&world, &world);
+
+	Rect32 viewport = _gameRef->_renderer3D->getViewPort();
+
+	DXVec3Project(&vec2d, &origin, &viewport, &projMat, &viewMat, &world);
+
+	*posX = vec2d._x + _gameRef->_offsetX - _gameRef->_renderer3D->_drawOffsetX;
+	*posY = vec2d._y + _gameRef->_offsetY - _gameRef->_renderer3D->_drawOffsetY;
 
 	return true;
 }
