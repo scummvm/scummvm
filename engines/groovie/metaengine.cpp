@@ -137,7 +137,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	int getAutosaveSlot() const override;
 
@@ -171,14 +171,14 @@ int GroovieMetaEngine::getMaximumSaveSlot() const {
 	return SaveLoad::getMaximumSlot();
 }
 
-void GroovieMetaEngine::removeSaveState(const char *target, int slot) const {
+bool GroovieMetaEngine::removeSaveState(const char *target, int slot) const {
 	if (!SaveLoad::isSlotValid(slot)) {
 		// Invalid slot, do nothing
-		return;
+		return false;
 	}
 
 	Common::String filename = SaveLoad::getSlotSaveName(target, slot);
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor GroovieMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

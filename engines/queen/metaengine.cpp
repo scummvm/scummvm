@@ -70,7 +70,7 @@ public:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const Queen::QueenGameDescription *desc) const override;
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override { return 99; }
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	int getAutosaveSlot() const override { return 99; }
 };
 
@@ -111,10 +111,10 @@ SaveStateList QueenMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-void QueenMetaEngine::removeSaveState(const char *target, int slot) const {
+bool QueenMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Common::String::format("queen.s%02d", slot);
 
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 Common::Error QueenMetaEngine::createInstance(OSystem *syst, Engine **engine, const Queen::QueenGameDescription *desc) const {

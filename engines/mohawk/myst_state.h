@@ -110,7 +110,7 @@ public:
 	void reset();
 	bool load(int slot);
 	bool save(int slot, const Common::String &desc, const Graphics::Surface *thumbnail, bool autosave);
-	static void deleteSave(int slot);
+	static bool deleteSave(int slot);
 
 	void addZipDest(MystStack stack, uint16 view);
 	bool isReachableZipDest(MystStack stack, uint16 view);

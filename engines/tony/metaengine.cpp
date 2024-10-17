@@ -61,7 +61,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
@@ -121,10 +121,10 @@ int TonyMetaEngine::getMaximumSaveSlot() const {
 	return 99;
 }
 
-void TonyMetaEngine::removeSaveState(const char *target, int slot) const {
+bool TonyMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Tony::TonyEngine::getSaveStateFileName(slot);
 
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor TonyMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

@@ -61,7 +61,7 @@ public:
 	int getMaximumSaveSlot() const override;
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 
 	// Disable autosave (see mirrored method in bbvs.h for detailed explanation)
 	int getAutosaveSlot() const override { return -1; }
@@ -80,9 +80,9 @@ bool BbvsMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSimpleSavesNames);
 }
 
-void BbvsMetaEngine::removeSaveState(const char *target, int slot) const {
+bool BbvsMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
+	return g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 Common::KeymapArray BbvsMetaEngine::initKeymaps(const char *target) const {

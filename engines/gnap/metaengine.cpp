@@ -40,7 +40,7 @@ public:
 	int getMaximumSaveSlot() const override;
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 };
 
 bool GnapMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -61,9 +61,9 @@ bool Gnap::GnapEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-void GnapMetaEngine::removeSaveState(const char *target, int slot) const {
+bool GnapMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
+	return g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 int GnapMetaEngine::getMaximumSaveSlot() const { return 99; }

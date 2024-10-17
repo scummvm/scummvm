@@ -67,7 +67,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
@@ -120,11 +120,11 @@ SaveStateList Sword2MetaEngine::listSaves(const char *target) const {
 
 int Sword2MetaEngine::getMaximumSaveSlot() const { return 999; }
 
-void Sword2MetaEngine::removeSaveState(const char *target, int slot) const {
+bool Sword2MetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = target;
 	filename += Common::String::format(".%03d", slot);
 
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 Common::Error Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

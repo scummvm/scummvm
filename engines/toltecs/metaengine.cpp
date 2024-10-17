@@ -73,7 +73,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
@@ -135,11 +135,11 @@ int ToltecsMetaEngine::getMaximumSaveSlot() const {
 	return 999;
 }
 
-void ToltecsMetaEngine::removeSaveState(const char *target, int slot) const {
+bool ToltecsMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::String filename = Toltecs::ToltecsEngine::getSavegameFilename(target, slot);
 
-	saveFileMan->removeSavefile(filename.c_str());
+	bool success = saveFileMan->removeSavefile(filename.c_str());
 
 	Common::StringArray filenames;
 	Common::String pattern = target;
@@ -157,6 +157,8 @@ void ToltecsMetaEngine::removeSaveState(const char *target, int slot) const {
 			filename = Toltecs::ToltecsEngine::getSavegameFilename(target, ++slot);
 		}
 	}
+
+	return success;
 }
 
 SaveStateDescriptor ToltecsMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

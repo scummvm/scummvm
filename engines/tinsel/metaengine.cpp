@@ -95,7 +95,7 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 
 	// TODO: Add getSavegameFile(). See comments in loadGameState and removeSaveState
 	
@@ -203,7 +203,7 @@ Common::Error TinselMetaEngine::createInstance(OSystem *syst, Engine **engine, c
 
 int TinselMetaEngine::getMaximumSaveSlot() const { return 99; }
 
-void TinselMetaEngine::removeSaveState(const char *target, int slot) const {
+bool TinselMetaEngine::removeSaveState(const char *target, int slot) const {
 	Tinsel::setNeedLoad();
 	// Same issue here as with loadGameState(): we need the physical savegame
 	// slot. Refer to bug #5819.
@@ -219,9 +219,10 @@ void TinselMetaEngine::removeSaveState(const char *target, int slot) const {
 		}
 	}
 
-	g_system->getSavefileManager()->removeSavefile(Tinsel::ListEntry(listSlot, Tinsel::LE_NAME));
+	bool success = g_system->getSavefileManager()->removeSavefile(Tinsel::ListEntry(listSlot, Tinsel::LE_NAME));
 	Tinsel::setNeedLoad();
 	Tinsel::getList(g_system->getSavefileManager(), target);
+	return success;
 }
 
 void TinselMetaEngine::registerDefaultSettings(const Common::String &target) const {

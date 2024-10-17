@@ -345,7 +345,7 @@ public:
 	 * @param target  Name of a config manager target.
 	 * @param slot    Slot number of the save state to be removed.
 	 */
-	virtual void removeSaveState(const char *target, int slot) const;
+	virtual bool removeSaveState(const char *target, int slot) const;
 
 	/**
 	 * Return meta information from the specified save state.
