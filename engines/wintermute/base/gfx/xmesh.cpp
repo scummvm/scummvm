@@ -318,10 +318,9 @@ bool XMesh::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const
 	}
 	uint32 vertexSize = DXGetFVFVertexSize(_blendedMesh->getFVF()) / sizeof(float);
 
-	Math::Vector3d invLight = light;
-	Math::Matrix4 matInverseModel = modelMat;
-	matInverseModel.inverse();
-	matInverseModel.transform(&invLight, false);
+	DXVector3 invLight = DXVector3(light.getData());
+	DXMatrix matInverseModel = DXMatrix(modelMat.getData());
+	DXMatrixInverse(&matInverseModel, nullptr, &matInverseModel);
 
 	uint32 numEdges = 0;
 
@@ -335,14 +334,17 @@ bool XMesh::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const
 		uint16 index1 = indexData[3 * i + 1];
 		uint16 index2 = indexData[3 * i + 2];
 
-		Math::Vector3d v0(vertexData + index0 * vertexSize);
-		Math::Vector3d v1(vertexData + index1 * vertexSize);
-		Math::Vector3d v2(vertexData + index2 * vertexSize);
+		DXVector3 v0(vertexData + index0 * vertexSize);
+		DXVector3 v1(vertexData + index1 * vertexSize);
+		DXVector3 v2(vertexData + index2 * vertexSize);
 
 		// Transform vertices or transform light?
-		Math::Vector3d vNormal = Math::Vector3d::crossProduct(v2 - v1, v1 - v0);
+		DXVector3 vNormal, vec1, vec2;
+		vec1 = v2 - v1;
+		vec2 = v1 - v0;
+		DXVec3Cross(&vNormal, &vec1, &vec2);
 
-		if (Math::Vector3d::dotProduct(vNormal, invLight) >= 0.0f) {
+		if (DXVec3Dot(&vNormal, &invLight) >= 0.0f) {
 			isFront[i] = false; // back face
 		} else {
 			isFront[i] = true; // front face
@@ -385,10 +387,10 @@ bool XMesh::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const
 	}
 
 	for (uint32 i = 0; i < numEdges; i++) {
-		Math::Vector3d v1(vertexData + edges[2 * i + 0] * vertexSize);
-		Math::Vector3d v2(vertexData + edges[2 * i + 1] * vertexSize);
-		Math::Vector3d v3 = v1 - invLight * extrusionDepth;
-		Math::Vector3d v4 = v2 - invLight * extrusionDepth;
+		DXVector3 v1(vertexData + edges[2 * i + 0] * vertexSize);
+		DXVector3 v2(vertexData + edges[2 * i + 1] * vertexSize);
+		DXVector3 v3 = v1 - invLight * extrusionDepth;
+		DXVector3 v4 = v2 - invLight * extrusionDepth;
 
 		// Add a quad (two triangles) to the vertex list
 		shadow->addVertex(v1);

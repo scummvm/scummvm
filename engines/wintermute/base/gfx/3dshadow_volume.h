@@ -28,7 +28,8 @@
 #ifndef WINTERMUTE_3D_SHADOW_VOLUME_H
 #define WINTERMUTE_3D_SHADOW_VOLUME_H
 
-#include "engines/wintermute//base/base.h"
+#include "engines/wintermute/base/base.h"
+#include "engines/wintermute/base/gfx/xmath.h"
 #include "engines/wintermute/coll_templ.h"
 #include "math/matrix4.h"
 #include "math/vector3d.h"
@@ -50,8 +51,8 @@ public:
 	ShadowVolume(BaseGame *inGame);
 	virtual ~ShadowVolume();
 
-	bool addMesh(Math::Vector3d *mesh, uint32 *adjacency, Math::Matrix4 *modelMat, Math::Vector3d *light, float extrusionDepth);
-	void addVertex(const Math::Vector3d &vertex);
+	bool addMesh(DXVector3 *mesh, uint32 *adjacency, DXMatrix *modelMat, DXVector3 *light, float extrusionDepth);
+	void addVertex(const DXVector3 &vertex);
 	bool reset();
 
 	virtual bool renderToStencilBuffer() = 0;
