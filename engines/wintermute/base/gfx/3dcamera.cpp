@@ -54,15 +54,19 @@ Camera3D::~Camera3D() {
 
 //////////////////////////////////////////////////////////////////////////
 bool Camera3D::getViewMatrix(Math::Matrix4 *viewMatrix) {
-	Math::Vector3d up = Math::Vector3d(0.0f, 1.0f, 0.0f);
+	DXVector3 up = DXVector3(0.0f, 1.0f, 0.0f);
 
 	if (_bank != 0) {
-		Math::Matrix4 rotZ;
-		rotZ.buildAroundZ(Math::Angle(_bank).getRadians());
-		rotZ.transform(&up, false);
+		DXMatrix rot;
+		DXMatrixRotationZ(&rot, degToRad(_bank));
+		DXVec3TransformCoord(&up, &up, &rot);
 	}
 
-	*viewMatrix = Math::makeLookAtMatrix(_position, _target, up);
+	DXVector3 position = DXVector3(_position.getData());
+	DXVector3 target = DXVector3(_target.getData());
+	DXMatrix view = DXMatrix(viewMatrix->getData());
+	DXMatrixLookAtRH(&view, &position, &target, &up);
+	viewMatrix->setData(view);
 
 	return true;
 }

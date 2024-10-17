@@ -478,9 +478,9 @@ bool XModel::render() {
 		bool res = _rootFrame->render(this);
 
 		// remember matrices for object picking purposes
-		//_gameRef->_renderer3D->getWorldTransform(_lastWorldMat);
-		//_gameRef->_renderer3D->getWorldTransform(_lastViewMat);
-		//_gameRef->_renderer3D->getWorldTransform(_lastProjMat);
+		_gameRef->_renderer3D->getWorldTransform(_lastWorldMat);
+		_gameRef->_renderer3D->getWorldTransform(_lastViewMat);
+		_gameRef->_renderer3D->getWorldTransform(_lastProjMat);
 
 		// remember scene offset
 		Rect32 rc;

@@ -344,7 +344,7 @@ BaseImage *BaseRenderOpenGL3DShader::takeScreenshot() {
 #endif
 	surface->create(_viewportRect.width(), _viewportRect.height(), format);
 
-	glReadPixels(_viewportRect.left, g_system->getHeight() - _viewportRect.bottom, _viewportRect.width(), _viewportRect.height(),
+	glReadPixels(_viewportRect.left, _viewportRect.height() - _viewportRect.bottom, _viewportRect.width(), _viewportRect.height(),
 	             GL_RGBA, GL_UNSIGNED_BYTE, surface->getPixels());
 	flipVertical(surface);
 	Graphics::Surface *converted = surface->convertTo(getPixelFormat());
@@ -662,10 +662,6 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 		if (_camera) {
 			Math::Matrix4 viewMatrix;
 			_camera->getViewMatrix(&viewMatrix);
-			Math::Matrix4 cameraTranslate;
-			cameraTranslate.setPosition(-_camera->_position);
-			cameraTranslate.transpose();
-			viewMatrix = cameraTranslate * viewMatrix;
 			setViewTransform(viewMatrix);
 
 			_fov = _camera->_fov;

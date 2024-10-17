@@ -145,7 +145,6 @@ public:
 	static bool loadName(BaseNamedObject *obj, XFileData *data);
 	static bool loadName(Common::String &targetStr, XFileData *data);
 
-	Math::Matrix4 _lastWorldMat;
 	Rect32 _boundingRect;
 	BaseObject *_owner;
 
@@ -179,6 +178,7 @@ private:
 	void updateBoundingRect();
 	void static inline updateRect(Rect32 *rc, Math::Vector3d vec);
 	Rect32 _drawingViewport;
+	Math::Matrix4 _lastWorldMat;
 	Math::Matrix4 _lastViewMat;
 	Math::Matrix4 _lastProjMat;
 	int32 _lastOffsetX;

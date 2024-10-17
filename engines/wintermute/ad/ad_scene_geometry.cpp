@@ -359,9 +359,9 @@ bool AdSceneGeometry::storeDrawingParams() {
 	_drawingViewport = _gameRef->_renderer3D->getViewPort();
 
 	// store values
-	//_gameRef->_renderer3D->getWorldTransform(_lastWorldMat);
-	//_gameRef->_renderer3D->getViewTransform(_lastViewMat);
-	//_gameRef->_renderer3D->getProjectionTransform(_lastProjMat);
+	_gameRef->_renderer3D->getWorldTransform(_lastWorldMat);
+	_gameRef->_renderer3D->getViewTransform(_lastViewMat);
+	_gameRef->_renderer3D->getProjectionTransform(_lastProjMat);
 
 
 	AdScene *scene = ((AdGame *)_gameRef)->_scene;
@@ -634,7 +634,7 @@ bool AdSceneGeometry::convert2Dto3DTolerant(int x, int y, Math::Vector3d *pos) {
 bool AdSceneGeometry::convert2Dto3D(int x, int y, Math::Vector3d *pos) {
 	if (!_lastValuesInitialized) {
 		_drawingViewport = _gameRef->_renderer3D->getViewPort();
-		//_gameRef->_renderer3D->getProjectionTransform(&_lastProjMat);
+		_gameRef->_renderer3D->getProjectionTransform(_lastProjMat);
 	}
 
 	float resWidth, resHeight;
@@ -655,9 +655,18 @@ bool AdSceneGeometry::convert2Dto3D(int x, int y, Math::Vector3d *pos) {
 	Math::Vector3d vPickRayDir;
 	Math::Vector3d vPickRayOrig;
 
-	Math::Ray rayScene = _gameRef->_renderer3D->rayIntoScene(x, y);
-	vPickRayDir = rayScene.getDirection();
-	vPickRayOrig = rayScene.getOrigin();
+	// Compute the vector of the pick ray in screen space
+	Math::Vector3d vec((((2.0f * x) / _drawingViewport.width()) - 1) / _lastProjMat(0, 0),
+							-(((2.0f * y) / _drawingViewport.height()) - 1) / _lastProjMat(1, 1),
+							-1.0f);
+
+	Math::Matrix4 m = _viewMatrix;
+	m.inverse();
+	m.transpose();
+	m.transform(&vec, false);
+
+	vPickRayDir = vec;
+	vPickRayOrig = m.getPosition();
 
 
 	bool intFound = false;
