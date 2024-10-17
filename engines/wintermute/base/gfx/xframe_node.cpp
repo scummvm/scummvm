@@ -252,41 +252,46 @@ FrameNode *FrameNode::findFrame(const char *frameName) {
 //////////////////////////////////////////////////////////////////////////
 bool FrameNode::updateMatrices(DXMatrix &parentMat) {
 	if (_transUsed[0]) {
-		Math::Vector3d transPos = _transPos[0];
-		Math::Vector3d transScale = _transScale[0];
-		Math::Quaternion transRot = _transRot[0];
+		DXVector3 transPos = DXVector3(_transPos[0].getData());
+		DXVector3 transScale = DXVector3(_transScale[0].getData());
+		DXQuaternion transRot = DXQuaternion(_transRot[0].getData());
 		float lerpValue = _lerpValue[0];
 
 		if (_transUsed[1]) {
-			transScale = (1 - lerpValue) * transScale + lerpValue * _transScale[1];
-			transRot = transRot.slerpQuat(_transRot[1], lerpValue);
-			transPos = (1 - lerpValue) * transPos + lerpValue * _transPos[1];
+			DXVector3 transPos1 = DXVector3(_transPos[1].getData());
+			DXVector3 transScale1 = DXVector3(_transScale[1].getData());
+			DXQuaternion transRot1 = DXQuaternion(_transRot[1].getData());
+			DXVec3Lerp(&transScale, &transScale, &transScale1, lerpValue);
+			DXQuaternionSlerp(&transRot, &transRot, &transRot1, lerpValue);
+			DXVec3Lerp(&transPos, &transPos, &transPos1, lerpValue);
 		}
 
 		// prepare local transformation matrix
-		_transformationMatrix.setToIdentity();
+		DXMatrix transformationMatrix = DXMatrix(_transformationMatrix.getData());
+		DXMatrixIdentity(&transformationMatrix);
 
-		Math::Matrix4 scaleMat;
-		scaleMat.setToIdentity();
-		scaleMat(0, 0) = transScale.x();
-		scaleMat(1, 1) = transScale.y();
-		scaleMat(2, 2) = transScale.z();
-		Math::Matrix4 rotMat;
-		transRot.toMatrix(rotMat);
-		Math::Matrix4 posMat;
-		posMat.setToIdentity();
-		posMat.translate(transPos);
+		DXMatrix scaleMat;
+		DXMatrixScaling(&scaleMat, transScale._x, transScale._y, transScale._z);
+		DXMatrixTranspose(&scaleMat, &scaleMat);
+		DXMatrixMultiply(&transformationMatrix, &scaleMat, &transformationMatrix);
 
-		_transformationMatrix = posMat * rotMat * scaleMat;
+		DXMatrix rotMat;
+		DXMatrixRotationQuaternion(&rotMat, &transRot);
+		DXMatrixTranspose(&rotMat, &rotMat);
+		DXMatrixMultiply(&transformationMatrix, &rotMat, &transformationMatrix);
+
+		DXMatrix posMat;
+		DXMatrixTranslation(&posMat, transPos._x, transPos._y, transPos._z);
+		DXMatrixTranspose(&posMat, &posMat);
+		DXMatrixMultiply(&transformationMatrix, &posMat, &transformationMatrix);
+		_transformationMatrix.setData(transformationMatrix._m4x4);
 	}
 
 	_transUsed[0] = _transUsed[1] = false;
 
 	// multiply by parent transformation
-	Math::Matrix4 parentMatrix;
-	parentMatrix.setData(parentMat._m4x4);
-	Math::Matrix4 combinedMatrix = parentMatrix * _transformationMatrix;
-	_combinedMatrix = DXMatrix(combinedMatrix.getData());
+	DXMatrix transformationMatrix = DXMatrix(_transformationMatrix.getData());
+	DXMatrixMultiply(&_combinedMatrix, &parentMat, &transformationMatrix);
 
 	// update child frames
 	for (uint32 i = 0; i < _frames.size(); i++) {
