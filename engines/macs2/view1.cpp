@@ -1129,7 +1129,7 @@ bool Character::FindPath(Common::Point target) {
 
 	// TODO: Assume we have to use the net, usually we would do a path trace
 	constexpr uint16 numPoints = 16;
-	uint16 minLength = std::numeric_limits<uint16>::max();
+	uint minLength = std::numeric_limits<uint>::max();
 	uint16 minIndex = 0; // TODO: Handle not finding any
 	const Common::Point &charPosition = GameObjects::instance().GetProtagonistObject()->Position;
 	for (int i = 0; i < numPoints; i++) {
@@ -1148,6 +1148,7 @@ bool Character::FindPath(Common::Point target) {
 	
 	Common::Array<bool> visited;
 	visited.resize(16);
+	debug("Best entry point: %u at distance %u", minIndex, minLength);
 	VisitPathfindingNode(minIndex, visited, target);
 	// Now handle searching for the end point, for this, keep track of nodes we already visited
 	// Args:
