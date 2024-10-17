@@ -270,6 +270,7 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 	IVec3 mins = processActor + ptrobj->_boundingBox.mins;
 	IVec3 maxs = processActor + ptrobj->_boundingBox.maxs;
 
+	int32 oldObjCol = ptrobj->_objCol;
 	ptrobj->_objCol = -1;
 
 	for (int32 a = 0; a < _engine->_scene->_nbObjets; a++) {
@@ -282,7 +283,9 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 
 			if (mins.x < maxsTest.x && maxs.x > minsTest.x && mins.y < maxsTest.y && maxs.y > minsTest.y && mins.z < maxsTest.z && maxs.z > minsTest.z) {
 				ptrobj->_objCol = a; // mark as collision with actor a
-
+				if (a != oldObjCol) {
+					debugC(1, TwinE::kDebugCollision, "Actor %d is colliding with %d", actorIdx, a);
+				}
 				if (ptrobjt->_flags.bIsCarrierActor) {
 					if (ptrobj->_workFlags.bIsFalling) {
 						// I touch a carrier
