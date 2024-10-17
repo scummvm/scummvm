@@ -98,8 +98,8 @@ private:
 	int _version;
 
 	// Utility Functions
-	void unpackBitsRectOrRgn(Common::SeekableReadStream &stream, bool hasPackBits);
-	void unpackBitsRgn(Common::SeekableReadStream &stream, bool compressed);
+	void unpackBitsRectOrRgn(Common::SeekableReadStream &stream, bool compressed, bool hasRegion);
+	void unpackBits(Common::SeekableReadStream &stream, bool compressed, bool hasRegion);
 	void unpackBitsRect(Common::SeekableReadStream &stream, bool withPalette, PixMap pixMap);
 	void unpackBitsLine(byte *out, uint32 length, Common::SeekableReadStream *stream, byte bitsPerPixel, byte bytesPerPixel);
 	void skipBitsRect(Common::SeekableReadStream &stream, bool withPalette);
