@@ -55,7 +55,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
 		if (!target)
 			target = getName();
@@ -183,8 +183,8 @@ SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
 
 int ParallactionMetaEngine::getMaximumSaveSlot() const { return 99; }
 
-void ParallactionMetaEngine::removeSaveState(const char *target, int slot) const {
-	g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
+bool ParallactionMetaEngine::removeSaveState(const char *target, int slot) const {
+	return g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PARALLACTION)

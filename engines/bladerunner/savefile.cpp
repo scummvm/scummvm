@@ -92,9 +92,9 @@ Common::OutSaveFile *SaveFileManager::openForSaving(const Common::String &target
 	return g_system->getSavefileManager()->openForSaving(filename);
 }
 
-void SaveFileManager::remove(const Common::String &target, int slot) {
+bool SaveFileManager::remove(const Common::String &target, int slot) {
 	Common::String filename = Common::String::format("%s.%03d", target.c_str(), slot);
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 bool SaveFileManager::readHeader(Common::SeekableReadStream &in, SaveFileHeader &header, bool skipThumbnail) {

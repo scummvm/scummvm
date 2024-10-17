@@ -43,7 +43,7 @@ public:
 
 	int getMaximumSaveSlot() const override { return 99; }
 	SaveStateList listSaves(const char *target) const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
@@ -85,8 +85,8 @@ SaveStateList PinkMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-void PinkMetaEngine::removeSaveState(const char *target, int slot) const {
-	g_system->getSavefileManager()->removeSavefile(Pink::generateSaveName(slot, target));
+bool PinkMetaEngine::removeSaveState(const char *target, int slot) const {
+	return g_system->getSavefileManager()->removeSavefile(Pink::generateSaveName(slot, target));
 }
 
 SaveStateDescriptor PinkMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

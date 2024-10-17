@@ -442,11 +442,11 @@ GUI::OptionsContainerWidget *MetaEngine::buildEngineOptionsWidget(GUI::GuiObject
 	return new GUI::ExtraGuiOptionsWidget(boss, name, target, engineOptions);
 }
 
-void MetaEngine::removeSaveState(const char *target, int slot) const {
+bool MetaEngine::removeSaveState(const char *target, int slot) const {
 	if (!hasFeature(kSavesUseExtendedFormat))
-		return;
+		return false;
 
-	g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
+	return g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
 }
 
 SaveStateDescriptor MetaEngine::querySaveMetaInfos(const char *target, int slot) const {

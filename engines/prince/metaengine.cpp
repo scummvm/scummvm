@@ -55,7 +55,7 @@ public:
 	int getMaximumSaveSlot() const override { return 99; }
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 };
 
 bool PrinceMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -153,9 +153,9 @@ SaveStateDescriptor PrinceMetaEngine::querySaveMetaInfos(const char *target, int
 	return SaveStateDescriptor();
 }
 
-void PrinceMetaEngine::removeSaveState(const char *target, int slot) const {
+bool PrinceMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
+	return g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 Common::Error PrinceMetaEngine::createInstance(OSystem *syst, Engine **engine, const Prince::PrinceGameDescription *desc) const {

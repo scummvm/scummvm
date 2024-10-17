@@ -48,7 +48,7 @@ public:
 
 	int getMaximumSaveSlot() const override;
 	SaveStateList listSaves(const char *target) const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
@@ -108,9 +108,9 @@ SaveStateList KingdomMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-void KingdomMetaEngine::removeSaveState(const char *target, int slot) const {
+bool KingdomMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor KingdomMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

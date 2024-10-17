@@ -94,9 +94,9 @@ public:
 		return Tucker::kAutoSaveSlot;
 	}
 
-	void removeSaveState(const char *target, int slot) const override {
+	bool removeSaveState(const char *target, int slot) const override {
 		Common::String filename = Tucker::generateGameStateFileName(target, slot);
-		g_system->getSavefileManager()->removeSavefile(filename);
+		return g_system->getSavefileManager()->removeSavefile(filename);
 	}
 
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {

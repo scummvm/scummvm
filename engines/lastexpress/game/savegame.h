@@ -167,7 +167,7 @@ public:
 	void saveVolumeBrightness();
 
 	static SaveStateList list(const MetaEngine *metaEngine, const Common::String &target);
-	static void remove(const Common::String &target, GameId slot);
+	static bool remove(const Common::String &target, GameId slot);
 
 	// Opening save files
 	static Common::String getFilename(const Common::String &target, GameId slot);

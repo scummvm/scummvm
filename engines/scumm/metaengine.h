@@ -34,7 +34,7 @@ class ScummMetaEngine : public MetaEngine {
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;

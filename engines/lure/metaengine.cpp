@@ -99,7 +99,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
@@ -154,11 +154,11 @@ SaveStateList LureMetaEngine::listSaves(const char *target) const {
 
 int LureMetaEngine::getMaximumSaveSlot() const { return 999; }
 
-void LureMetaEngine::removeSaveState(const char *target, int slot) const {
+bool LureMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = target;
 	filename += Common::String::format(".%03d", slot);
 
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 Common::KeymapArray LureMetaEngine::initKeymaps(const char *target) const {

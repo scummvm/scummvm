@@ -143,9 +143,9 @@ public:
 		return saveInfos;
 	}
 
-	void removeSaveState(const char *target, int slot) const override {
+	bool removeSaveState(const char *target, int slot) const override {
 		SaveStateDescriptor saveInfos = getSaveDescription(target, slot);
-		g_system->getSavefileManager()->removeSavefile(saveInfos.getDescription());
+		return g_system->getSavefileManager()->removeSavefile(saveInfos.getDescription());
 	}
 
 	int getMaximumSaveSlot() const override {

@@ -106,7 +106,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
@@ -179,11 +179,11 @@ SaveStateList SagaMetaEngine::listSaves(const char *target) const {
 
 int SagaMetaEngine::getMaximumSaveSlot() const { return MAX_SAVES - 1; }
 
-void SagaMetaEngine::removeSaveState(const char *target, int slot) const {
+bool SagaMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = target;
 	filename += Common::String::format(".s%02d", slot);
 
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor SagaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

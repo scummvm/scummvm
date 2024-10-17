@@ -208,7 +208,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
 	bool hasFeature(MetaEngineFeature f) const override;
@@ -306,9 +306,9 @@ SaveStateList AgiMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-void AgiMetaEngine::removeSaveState(const char *target, int slot) const {
+bool AgiMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
+	return g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 int AgiMetaEngine::getMaximumSaveSlot() const { return 999; }

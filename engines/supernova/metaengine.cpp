@@ -72,7 +72,7 @@ public:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	int getMaximumSaveSlot() const override {
 		return 99;
 	}
@@ -144,8 +144,8 @@ SaveStateList SupernovaMetaEngine::listSaves(const char *target) const {
 	return saveFileList;
 }
 
-void SupernovaMetaEngine::removeSaveState(const char *target, int slot) const {
-	g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
+bool SupernovaMetaEngine::removeSaveState(const char *target, int slot) const {
+	return g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
 }
 
 SaveStateDescriptor SupernovaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

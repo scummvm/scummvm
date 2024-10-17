@@ -77,7 +77,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override { return 999; }
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
 		if (!target)
 			target = getName();
@@ -128,8 +128,8 @@ SaveStateList CryOmni3DMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-void CryOmni3DMetaEngine::removeSaveState(const char *target, int slot) const {
-	g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
+bool CryOmni3DMetaEngine::removeSaveState(const char *target, int slot) const {
+	return g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
 }
 
 Common::Error CryOmni3DMetaEngine::createInstance(OSystem *syst, Engine **engine,

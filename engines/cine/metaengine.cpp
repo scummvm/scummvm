@@ -93,7 +93,7 @@ public:
 	bool hasFeature(MetaEngineFeature f) const override;
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	Common::String getSavegameFile(int saveGameIdx, const char *target = nullptr) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	
@@ -435,9 +435,9 @@ Common::KeymapArray CineMetaEngine::initKeymaps(const char *target) const {
 	return keymaps;
 }
 
-void CineMetaEngine::removeSaveState(const char *target, int slot) const {
+bool CineMetaEngine::removeSaveState(const char *target, int slot) const {
 	if (slot < 0 || slot >= MAX_SAVEGAMES) {
-		return;
+		return false;
 	}
 
 	// Load savegame descriptions from index file
@@ -453,7 +453,7 @@ void CineMetaEngine::removeSaveState(const char *target, int slot) const {
 	in = g_system->getSavefileManager()->openForLoading(Common::String::format("%s.dir", target));
 
 	if (!in)
-		return;
+		return false;
 
 	in->read(saveNames, SAVELIST_SIZE);
 	delete in;
@@ -468,7 +468,7 @@ void CineMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(indexFile);
 	if (!out) {
 		warning("Unable to open file %s for saving", indexFile.c_str());
-		return;
+		return false;
 	}
 
 	out->write(saveNames, SAVELIST_SIZE);
@@ -477,7 +477,7 @@ void CineMetaEngine::removeSaveState(const char *target, int slot) const {
 	// Delete save file
 	Common::String saveFileName = getSavegameFile(slot, target);
 
-	g_system->getSavefileManager()->removeSavefile(saveFileName);
+	return g_system->getSavefileManager()->removeSavefile(saveFileName);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(CINE)

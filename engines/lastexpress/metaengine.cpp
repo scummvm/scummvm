@@ -35,7 +35,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 
 protected:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
@@ -64,8 +64,8 @@ int LastExpressMetaEngine::getMaximumSaveSlot() const {
 	return LastExpress::SaveLoad::kMaximumSaveSlots - 1;
 }
 
-void LastExpressMetaEngine::removeSaveState(const char *target, int slot) const {
-	LastExpress::SaveLoad::remove(target, (LastExpress::GameId)slot);
+bool LastExpressMetaEngine::removeSaveState(const char *target, int slot) const {
+	return LastExpress::SaveLoad::remove(target, (LastExpress::GameId)slot);
 }
 
 } // End of namespace LastExpress

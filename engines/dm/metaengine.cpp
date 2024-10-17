@@ -108,7 +108,7 @@ public:
 		return SaveStateDescriptor();
 	}
 
-	void removeSaveState(const char *target, int slot) const override {}
+	bool removeSaveState(const char *target, int slot) const override { return false; }
 
 };
 

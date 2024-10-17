@@ -91,7 +91,7 @@ public:
 	bool hasFeature(MetaEngineFeature f) const override;
 	int getMaximumSaveSlot() const override;
 
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
@@ -115,9 +115,9 @@ bool HDB::HDBGame::hasFeature(Engine::EngineFeature f) const {
 		   (f == kSupportsSavingDuringRuntime);
 }
 
-void HDBMetaEngine::removeSaveState(const char *target, int slot) const {
+bool HDBMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
+	return g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 int HDBMetaEngine::getMaximumSaveSlot() const { return 99; }

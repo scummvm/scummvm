@@ -175,7 +175,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
@@ -237,9 +237,9 @@ int MADSMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVES;
 }
 
-void MADSMetaEngine::removeSaveState(const char *target, int slot) const {
+bool MADSMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor MADSMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

@@ -190,9 +190,9 @@ void BasePersistenceManager::getSaveStateDesc(int slot, SaveStateDescriptor &des
 	desc.setPlayTime(0);
 }
 
-void BasePersistenceManager::deleteSaveSlot(int slot) {
+bool BasePersistenceManager::deleteSaveSlot(int slot) {
 	Common::String filename = getFilenameForSlot(slot);
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 uint32 BasePersistenceManager::getMaxUsedSlot() {

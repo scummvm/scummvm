@@ -183,7 +183,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	int getAutosaveSlot() const override { return 999; }
 
@@ -312,16 +312,16 @@ int KyraMetaEngine::getMaximumSaveSlot() const {
 	return 999;
 }
 
-void KyraMetaEngine::removeSaveState(const char *target, int slot) const {
+bool KyraMetaEngine::removeSaveState(const char *target, int slot) const {
 	// In Kyra games slot 0 can't be deleted, it's for restarting the game(s).
 	// An exception makes Lands of Lore here, it does not have any way to restart the
 	// game except via its main menu.
 	const Common::String gameId = ConfMan.getDomain(target)->getVal("gameid");
 	if (slot == 0 && !gameId.equalsIgnoreCase("lol") && !gameId.equalsIgnoreCase("eob") && !gameId.equalsIgnoreCase("eob2"))
-		return;
+		return false;
 
 	Common::String filename = Kyra::KyraEngine_v1::getSavegameFilename(target, slot);
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

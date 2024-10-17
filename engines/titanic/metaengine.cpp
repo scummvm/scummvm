@@ -55,7 +55,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
@@ -121,9 +121,9 @@ int TitanicMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVES;
 }
 
-void TitanicMetaEngine::removeSaveState(const char *target, int slot) const {
+bool TitanicMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor TitanicMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

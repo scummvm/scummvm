@@ -133,7 +133,7 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateList listSavesForPrefix(const char *prefix, const char *extension) const;
 	int getMaximumSaveSlot() const override { return 999; }
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
@@ -229,20 +229,21 @@ SaveStateList MohawkMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-void MohawkMetaEngine::removeSaveState(const char *target, int slot) const {
+bool MohawkMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String gameId = ConfMan.get("gameid", target);
 
 	// Removing saved games is only supported in Myst/Riven currently.
 #ifdef ENABLE_MYST
 	if (gameId == "myst") {
-		Mohawk::MystGameState::deleteSave(slot);
+		return Mohawk::MystGameState::deleteSave(slot);
 	}
 #endif
 #ifdef ENABLE_RIVEN
 	if (gameId == "riven") {
-		Mohawk::RivenSaveLoad::deleteSave(slot);
+		return Mohawk::RivenSaveLoad::deleteSave(slot);
 	}
 #endif
+	return false;
 }
 
 SaveStateDescriptor MohawkMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

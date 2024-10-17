@@ -78,7 +78,7 @@ public:
 	static Common::InSaveFile *openForLoading(const Common::String &target, int slot);
 	static Common::OutSaveFile *openForSaving(const Common::String &target, int slot);
 
-	static void remove(const Common::String &target, int slot);
+	static bool remove(const Common::String &target, int slot);
 
 	static bool readHeader(Common::SeekableReadStream &in, SaveFileHeader &header, bool skipThumbnail = true);
 	static bool writeHeader(Common::WriteStream &out, SaveFileHeader &header);

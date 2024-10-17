@@ -83,7 +83,7 @@ public:
 	int getMaximumSaveSlot() const override;
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
@@ -99,9 +99,9 @@ bool CGEMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSimpleSavesNames);
 }
 
-void CGEMetaEngine::removeSaveState(const char *target, int slot) const {
+bool CGEMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
+	return g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 int CGEMetaEngine::getMaximumSaveSlot() const {

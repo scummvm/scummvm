@@ -539,13 +539,24 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 			MessageDialog alert(_("Do you really want to delete this saved game?"),
 								_("Delete"), _("Cancel"));
 			if (alert.runModal() == kMessageOK) {
-				_metaEngine->removeSaveState(_target.c_str(), _saveList[selItem].getSaveSlot());
+				int saveSlot = _saveList[selItem].getSaveSlot();
+				if (_metaEngine->removeSaveState(_target.c_str(), saveSlot)) {
+					setResult(-1);
+					int scrollPos = _list->getCurrentScrollPos();
+					updateSaveList(); // resets scroll pos
+					_list->scrollTo(scrollPos);
+					updateSelection(true);
+				} else {
+					// Delete failed. SavefileManager may contain an error description.
+					Common::String errorDesc;
+					if (g_system->getSavefileManager()->getError().getCode() != Common::kNoError) {
+						errorDesc = ", " + g_system->getSavefileManager()->getErrorDesc();
+					}
+					warning("Error deleting %s save slot %d%s", _target.c_str(), saveSlot, errorDesc.c_str());
 
-				setResult(-1);
-				int scrollPos = _list->getCurrentScrollPos();
-				updateSaveList(); // resets scroll pos
-				_list->scrollTo(scrollPos);
-				updateSelection(true);
+					GUI::MessageDialog errorDialog(_("Error deleting saved game"));
+					errorDialog.runModal();
+				}
 			}
 		}
 		break;

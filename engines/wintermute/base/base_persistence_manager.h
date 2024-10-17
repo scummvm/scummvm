@@ -70,7 +70,7 @@ public:
 	void putDouble(double val);
 	void cleanup();
 	void getSaveStateDesc(int slot, SaveStateDescriptor &desc);
-	void deleteSaveSlot(int slot);
+	bool deleteSaveSlot(int slot);
 	uint32 getMaxUsedSlot();
 	bool getSaveExists(int slot);
 	bool initLoad(const Common::String &filename);

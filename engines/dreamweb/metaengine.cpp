@@ -111,7 +111,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
 		if (saveGameIdx == kSavegameFilePattern)
@@ -179,9 +179,9 @@ SaveStateList DreamWebMetaEngine::listSaves(const char *target) const {
 
 int DreamWebMetaEngine::getMaximumSaveSlot() const { return 99; }
 
-void DreamWebMetaEngine::removeSaveState(const char *target, int slot) const {
+bool DreamWebMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("DREAMWEB.D%02d", slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
+	return g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 SaveStateDescriptor DreamWebMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
