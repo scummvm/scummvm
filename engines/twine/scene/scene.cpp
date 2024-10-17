@@ -824,7 +824,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 				if (_numObjFollow == actorIdx) {
 					flaggrm = true;
 					if (_engine->_grid->_zoneGrm != zone->num) {
-						if (zone->num != -1) {
+						if (_engine->_grid->_zoneGrm != -1) {
 							_engine->_grid->copyMapToCube();
 						}
 
