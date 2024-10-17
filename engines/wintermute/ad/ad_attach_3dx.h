@@ -42,7 +42,7 @@ public:
 	bool init(const char *modelFile, const char *name, const char *parentBone);
 	bool update() override;
 	bool displayAttachable(const Math::Matrix4 &viewMat, bool registerObjects);
-	bool displayShadowVol(const Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth, bool update);
+	bool displayShadowVol(const DXMatrix &modelMat, const Math::Vector3d &light, float extrusionDepth, bool update);
 	bool invalidateDeviceObjects() override;
 	bool restoreDeviceObjects() override;
 

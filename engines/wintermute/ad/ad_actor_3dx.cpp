@@ -504,9 +504,10 @@ bool AdActor3DX::displayShadowVolume() {
 			continue;
 		}
 
-		Math::Matrix4 viewMat;
-		viewMat.setData(*boneMat);
-		at->displayShadowVol(viewMat, lightVector, extrusionDepth, true);
+		DXMatrix viewMatrix, worldMatrix;
+		worldMatrix = DXMatrix(_worldMatrix.getData());
+		DXMatrixMultiply(&viewMatrix, &worldMatrix, boneMat);
+		at->displayShadowVol(viewMatrix, lightVector, extrusionDepth, true);
 	}
 
 	// restore model's world matrix and render the shadow volume

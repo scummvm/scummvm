@@ -84,7 +84,12 @@ bool AdAttach3DX::update() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdAttach3DX::displayAttachable(const Math::Matrix4 &viewMat, bool registerObjects) {
-	Math::Matrix4 finalMat = _owner->_worldMatrix * viewMat * _worldMatrix;
+	DXMatrix finalMatrix, worldMatrix, viewMatrix;
+	worldMatrix = DXMatrix(_worldMatrix.getData());
+	viewMatrix = DXMatrix(viewMat.getData());
+	DXMatrixMultiply(&finalMatrix, &worldMatrix, &viewMatrix);
+	Math::Matrix4 finalMat;
+	finalMat.setData(finalMatrix);
 	_gameRef->_renderer3D->setWorldTransform(finalMat);
 
 	if (_xmodel) {
@@ -104,8 +109,12 @@ bool AdAttach3DX::displayAttachable(const Math::Matrix4 &viewMat, bool registerO
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdAttach3DX::displayShadowVol(const Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth, bool update) {
-	Math::Matrix4 finalMat = modelMat * _worldMatrix;
+bool AdAttach3DX::displayShadowVol(const DXMatrix &modelMat, const Math::Vector3d &light, float extrusionDepth, bool update) {
+	DXMatrix finalMatrix, worldMatrix;
+	worldMatrix = DXMatrix(_worldMatrix.getData());
+	DXMatrixMultiply(&finalMatrix, &modelMat, &worldMatrix);
+	Math::Matrix4 finalMat;
+	finalMat.setData(finalMatrix);
 
 	if (_xmodel) {
 		if (update) {
