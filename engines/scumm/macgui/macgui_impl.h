@@ -30,7 +30,10 @@
 #include "common/str.h"
 #include "common/str-array.h"
 
+#include "engines/engine.h"
+
 #include "graphics/font.h"
+#include "graphics/surface.h"
 
 class OSystem;
 
