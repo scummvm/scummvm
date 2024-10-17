@@ -285,6 +285,7 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 		return;
 	}
 	for (const EntityAnim::Action &action : *actions) {
+		debugC(1, TwinE::kDebugAnimation, "Execute animation action %d for actor %d", (int)action.type, actorIdx);
 		switch (action.type) {
 		case ActionType::ACTION_HITTING:
 			if (action.animFrame - 1 == actor->_frame) {
@@ -469,6 +470,8 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType flag, AnimationTypes 
 
 	actor->_animStepBeta = LBAAngles::ANGLE_0;
 	actor->_animStep = IVec3();
+
+	debugC(1, TwinE::kDebugAnimation, "Change animation for actor %d to %d", actorIdx, newanim);
 
 	return true;
 }
