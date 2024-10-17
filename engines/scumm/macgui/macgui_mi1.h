@@ -33,7 +33,7 @@ class MacGuiImpl;
 class MacMI1Gui : public MacGuiImpl {
 public:
 	MacMI1Gui(ScummEngine *vm, const Common::Path &resourceFile);
-	~MacMI1Gui();
+	~MacMI1Gui() {}
 
 	const Common::String name() const { return "game"; }
 	int getNumColors() const override { return 256; }

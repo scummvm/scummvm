@@ -1146,7 +1146,6 @@ static MacGuiImpl::MacSTRSParsingEntry strsMI2Variant1Table[] = {
 	SKIP_C(93),
 	SKIP_P(1),
 	{ MacGuiImpl::kMSIAboutGameName,              "Pascal", 1 },
-	SKIP_C(1),
 	{ MacGuiImpl::kMSIAreYouSureYouWantToQuit,    "C",      1 },
 	{ MacGuiImpl::kMSIRoughCommandMsg,            "C",      1 },
 	SKIP_C(1),
@@ -1501,14 +1500,14 @@ void MacGuiImpl::readStrings() {
 		}
 	} else if (_vm->_game.id == GID_MONKEY2) {
 		switch (strsLen) {
+		case 6574:
+			parsingTable = strsMI2Variant1Table;
+			parsingTableSize = ARRAYSIZE(strsMI2Variant1Table);
+			break;
 		case 6602:
 			// v1.0 11/5/92 from the LucasArts Mac CD Game Pack II
 			parsingTable = strsMI2Variant2Table;
 			parsingTableSize = ARRAYSIZE(strsMI2Variant2Table);
-			break;
-		default:
-			parsingTable = strsMI2Variant1Table;
-			parsingTableSize = ARRAYSIZE(strsMI2Variant1Table);
 			break;
 		}
 	} else if (_vm->_game.id == GID_INDY4) {
