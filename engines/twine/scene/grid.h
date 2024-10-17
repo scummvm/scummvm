@@ -200,9 +200,9 @@ public:
 	IVec3 _worldCube; // WorldXCube WorldYCube
 
 	/** Flag to know if the engine is using celling grids */
-	int16 _useCellingGrid = 0;
+	int16 _zoneGrm = 0;
 	/** Current celling grid index */
-	int16 _cellingGridIdx = 0;
+	int16 _indexGrm = 0;
 
 	/**
 	 * Draw 3D actor over bricks

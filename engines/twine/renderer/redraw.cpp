@@ -248,7 +248,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool flagflip) {
 		actor->_workFlags.bWasDrawn = 0; // reset visible state
 		actor->_workFlags.bIsTargetable = 0;
 
-		if (_engine->_grid->_useCellingGrid != -1 && actor->_posObj.y > _engine->_scene->_sceneZones[_engine->_grid->_cellingGridIdx].maxs.y) {
+		if (_engine->_grid->_zoneGrm != -1 && actor->_posObj.y > _engine->_scene->_sceneZones[_engine->_grid->_indexGrm].maxs.y) {
 			continue;
 		}
 		// no redraw required

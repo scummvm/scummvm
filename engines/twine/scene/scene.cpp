@@ -651,8 +651,8 @@ void Scene::changeCube() {
 	_engine->_gameState->_nbLittleKeys = 0;
 	_engine->_gameState->_magicBall = -1;
 	_engine->_movements->_lastJoyFlag = true;
-	_engine->_grid->_useCellingGrid = -1;
-	_engine->_grid->_cellingGridIdx = -1;
+	_engine->_grid->_zoneGrm = -1;
+	_engine->_grid->_indexGrm = -1;
 	_engine->_redraw->_firstTime = true;
 	_engine->_cameraZone = false;
 	_newCube = SCENE_CEILING_GRID_FADE_1;
@@ -781,7 +781,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 	int32 currentZ = actor->_posObj.z;
 
 	actor->_zoneSce = -1;
-	bool tmpCellingGrid = false;
+	bool flaggrm = false;
 
 	if (IS_HERO(actorIdx)) {
 		_flagClimbing = false;
@@ -822,16 +822,16 @@ void Scene::checkZoneSce(int32 actorIdx) {
 				break;
 			case ZoneType::kGrid:
 				if (_numObjFollow == actorIdx) {
-					tmpCellingGrid = true;
-					if (_engine->_grid->_useCellingGrid != zone->num) {
+					flaggrm = true;
+					if (_engine->_grid->_zoneGrm != zone->num) {
 						if (zone->num != -1) {
 							_engine->_grid->copyMapToCube();
 						}
 
-						_engine->_grid->_useCellingGrid = zone->num;
-						_engine->_grid->_cellingGridIdx = z;
+						_engine->_grid->_zoneGrm = zone->num;
+						_engine->_grid->_indexGrm = z;
 						_engine->saveTimer(false);
-						_engine->_grid->initCellingGrid(_engine->_grid->_useCellingGrid);
+						_engine->_grid->initCellingGrid(_engine->_grid->_zoneGrm);
 						_engine->restoreTimer();
 					}
 				}
@@ -875,9 +875,9 @@ void Scene::checkZoneSce(int32 actorIdx) {
 		}
 	}
 
-	if (!tmpCellingGrid && actorIdx == _numObjFollow && _engine->_grid->_useCellingGrid != -1) {
-		_engine->_grid->_useCellingGrid = -1;
-		_engine->_grid->_cellingGridIdx = -1;
+	if (!flaggrm && actorIdx == _numObjFollow && _engine->_grid->_zoneGrm != -1) {
+		_engine->_grid->_zoneGrm = -1;
+		_engine->_grid->_indexGrm = -1;
 		_engine->_grid->copyMapToCube();
 		_engine->_redraw->_firstTime = true;
 	}

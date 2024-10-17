@@ -1691,9 +1691,9 @@ int32 ScriptLife::lSUB_FUEL(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x4C
  */
 int32 ScriptLife::lSET_GRM(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_grid->_cellingGridIdx = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::SET_GRM(%i)", (int)engine->_grid->_cellingGridIdx);
-	engine->_grid->initCellingGrid(engine->_grid->_cellingGridIdx);
+	engine->_grid->_indexGrm = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::SET_GRM(%i)", (int)engine->_grid->_indexGrm);
+	engine->_grid->initCellingGrid(engine->_grid->_indexGrm);
 	return 0;
 }
 
@@ -1760,9 +1760,9 @@ int32 ScriptLife::lBETA(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 int32 ScriptLife::lGRM_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::GRM_OFF()");
-	if (engine->_grid->_cellingGridIdx != -1) {
-		engine->_grid->_useCellingGrid = -1;
-		engine->_grid->_cellingGridIdx = -1;
+	if (engine->_grid->_indexGrm != -1) {
+		engine->_grid->_zoneGrm = -1;
+		engine->_grid->_indexGrm = -1;
 		engine->_grid->copyMapToCube();
 		engine->_redraw->drawScene(true);
 	}
