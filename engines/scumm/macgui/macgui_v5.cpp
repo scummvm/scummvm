@@ -406,6 +406,9 @@ void MacV5Gui::runAboutDialogMI1(MacDialogWindow *window) {
 		page++;
 	}
 
+	lucasArts->free();
+	monkeys->free();
+
 	delete lucasArts;
 	delete monkeys;
 }
@@ -582,6 +585,8 @@ void MacV5Gui::runAboutDialogMI2(MacDialogWindow *window) {
 		delay(aboutPages[page].delayMs);
 		page++;
 	}
+
+	lucasArts->free();
 
 	delete lucasArts;
 }
@@ -766,6 +771,9 @@ void MacV5Gui::runAboutDialogIndy4(MacDialogWindow *window) {
 		delay(aboutPages[page].delayMs);
 		page++;
 	}
+
+	lucasArts->free();
+	indianaJones->free();
 
 	delete lucasArts;
 	delete indianaJones;
