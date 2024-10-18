@@ -188,32 +188,32 @@ void MacLoomGui::runAboutDialog() {
 
 	const TextLine page3[] = {
 		{ 1, 11, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString4].c_str() }, // "Macintosh version by"
-		{ 0, 25, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString6].c_str() }, // "Eric Johnston"
+		{ 0, 25, kStyleHeader1, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString6].c_str() }, // "Eric Johnston"
 		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString5].c_str() }, // "Macintosh scripting by"
-		{ 1, 63, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString7].c_str() }, // "Ron Baldwin"
+		{ 1, 63, kStyleHeader1, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString7].c_str() }, // "Ron Baldwin"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page4[] = {
 		{ 0, 26, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString8].c_str() }, // "Original game created by"
-		{ 1, 40, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString9].c_str() }, // "Brian Moriarty"
+		{ 1, 40, kStyleHeader1, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString9].c_str() }, // "Brian Moriarty"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page5[] = {
 		{ 1, 11, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString10].c_str() }, // "Produced by"
-		{ 0, 25, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString12].c_str() }, // "Gregory D. Hammond"
+		{ 0, 25, kStyleHeader1, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString12].c_str() }, // "Gregory D. Hammond"
 		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString11].c_str() }, // "Macintosh Version Produced by"
-		{ 1, 63, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString13].c_str() }, // "David Fox"
+		{ 1, 63, kStyleHeader1, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString13].c_str() }, // "David Fox"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page6[] = {
 		{ 1, 6, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString14].c_str() }, // "SCUMM Story System"
 		{1, 16, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString15].c_str()}, // "created by"
-		{ 97, 35, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString17].c_str() }, // "Ron Gilbert"
+		{ 97, 35, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString17].c_str() }, // "Ron Gilbert"
 		{ 1, 51, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString16].c_str() }, // "and"
-		{ 122, 65, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString18].c_str() }, // "Aric Wilmunder"
+		{ 122, 65, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString18].c_str() }, // "Aric Wilmunder"
 		TEXT_END_MARKER
 	};
 

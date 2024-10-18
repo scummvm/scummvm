@@ -714,28 +714,41 @@ void MacGuiImpl::MacDialogWindow::drawTexts(Common::Rect r, const TextLine *line
 		const Graphics::Font *f2 = nullptr;
 
 		switch (lines[i].style) {
-		case kStyleHeader:
+		case kStyleHeader1:
 			f1 = _gui->getFont(kAboutFontHeaderOutside);
 			f2 = _gui->getFont(kAboutFontHeaderInside);
 			break;
+
+		case kStyleHeader2:
+			f1 = _gui->getFont(kAboutFontHeader);
+			break;
+
 		case kStyleHeaderSimple1:
 			f1 = _gui->getFont(kAboutFontHeaderSimple1);
 			break;
+
 		case kStyleHeaderSimple2:
 			f1 = _gui->getFont(kAboutFontHeaderSimple2);
 			break;
+
 		case kStyleBold:
 			f1 = _gui->getFont(kAboutFontBold);
 			break;
+
 		case kStyleBold2:
 			f1 = _gui->getFont(kAboutFontBold2);
 			break;
+
 		case kStyleExtraBold:
 			f1 = _gui->getFont(kAboutFontExtraBold);
 			break;
+
 		case kStyleRegular:
 			f1 = _gui->getFont(kAboutFontRegular);
 			break;
+
+		default:
+			return;
 		}
 
 		const char *msg = lines[i].str;
@@ -744,13 +757,22 @@ void MacGuiImpl::MacDialogWindow::drawTexts(Common::Rect r, const TextLine *line
 		Graphics::TextAlign align = lines[i].align;
 		int width = r.right - x;
 
-		if (lines[i].style == kStyleHeader) {
+		switch (lines[i].style) {
+		case kStyleHeader1:
 			f1->drawString(s, msg, x - 1, y + 1, width, fg, align);
 			f2->drawString(s, msg, x + 1, y + 1, width, fg, align);
 			f1->drawString(s, msg, x - 2, y, width, fg, align);
 			f2->drawString(s, msg, x, y, width, bg, align);
-		} else {
+			break;
+
+		case kStyleHeader2:
 			f1->drawString(s, msg, x, y, width, fg, align);
+			f1->drawString(s, msg, x + 1, y, width, fg, align);
+			break;
+
+		default:
+			f1->drawString(s, msg, x, y, width, fg, align);
+			break;
 		}
 	}
 }
