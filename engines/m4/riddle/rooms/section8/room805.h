@@ -65,7 +65,7 @@ private:
 	void daemonSub1();
 	void daemonSub2(const char *seriesName1, const char *seriesName2);
 	void daemonSub3(const char *seriesName1, const char *seriesName2);
-	void daemonSub4(const char *seriesName1, const char *seriesName2);
+	void daemonSub4(const char *seriesName1);
 };
 
 } // namespace Rooms
