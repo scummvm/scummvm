@@ -111,23 +111,23 @@ bool MinigameManager::init(const qdEngineInterface* engine_interface) {
 	xxassert(runtime == this, "Попытка одновременного запуска дубля миниигры");
 	if (runtime != this)
 		return false;
-	xassert(!engine_ && !scene_);
+	assert(!engine_ && !scene_);
 
-	xassert(engine_interface);
+	assert(engine_interface);
 	if (!engine_interface)
 		return false;
 
 	engine_ = engine_interface;
 	scene_ = engine_->current_scene_interface();
 
-	xassert(scene_);
+	assert(scene_);
 	if (!scene_) {
 		engine_ = 0;
 		return false;
 	}
 
 	if (!createGame()) {
-		xxassert(0, "Игра не смогла проинициализироваться");
+		warning("MinigameManager::init(): Game could not be initialized");
 		finit();
 		return false;
 	}
@@ -138,8 +138,8 @@ bool MinigameManager::init(const qdEngineInterface* engine_interface) {
 }
 
 bool MinigameManager::createGame() {
-	xassert(engine_ && scene_);
-	xassert(!game_);
+	assert(engine_ && scene_);
+	assert(!game_);
 
 	screenSize_ = engine_->screen_size();
 
@@ -181,11 +181,11 @@ bool MinigameManager::createGame() {
 
 	if (state_flag_ = scene_->object_interface(stateFlagName)) {
 		if (!state_flag_->has_state("game") || !state_flag_->has_state("win") || !state_flag_->has_state("lose")) {
-			xxassert(false, (XBuffer() < "У объекта \"" < stateFlagName < "\" должны быть состояния: game, win, lose").c_str());
+			warning("MinigameManager::createGame(): The object %s must have state: game, win, lose", transCyrillic(stateFlagName));
 			return false;
 		}
 	} else {
-		xxassert(false, (XBuffer() < "Отсутствует объект передачи состояния \"" < stateFlagName < "\"").c_str());
+		warning("MinigameManager::createGame(): Object '%s' for state flag is missing", transCyrillic(stateFlagName));
 		return false;
 	}
 
@@ -193,7 +193,7 @@ bool MinigameManager::createGame() {
 
 	if (pause_flag_ = scene_->object_interface(pauseFlagName)) {
 		if (!pause_flag_->has_state("on")) {
-			xxassert(false, (XBuffer() < "У объекта \"" < pauseFlagName < "\" должно быть состояние: on").c_str());
+			warning("MinigameManager::createGame(): The object %s must have state: on", transCyrillic(pauseFlagName));
 			return false;
 		}
 	}
@@ -204,11 +204,11 @@ bool MinigameManager::createGame() {
 		complete_help_miniature_ = getObject(parameter("complete_help_miniatute", "miniature"));
 		if (complete_help_ = getObject(parameter("complete_help", "complete"))) {
 			if (!complete_help_->has_state("off") || !complete_help_->has_state("01")) {
-				xxassert(false, (XBuffer() < "У объекта для отображения собранной игры должны быть состояния: off, 01").c_str());
+				warning("MinigameManager::createGame(): The object for completed game must have state: off, 01");
 				return false;
 			}
 		} else {
-			xxassert(false, (XBuffer() < "Не найден объект для отображения собранной игры").c_str());
+			warning("MinigameManager::createGame(): Object completed game is missing");
 			return false;
 		}
 	}
@@ -327,11 +327,11 @@ class TempValue {
 	MinigameManager *pre_runtime_;
 public:
 	TempValue(MinigameManager* new_runtime, const qdEngineInterface* new_engine, qdMinigameSceneInterface* new_scene) {
-		xassert(new_runtime);
+		assert(new_runtime);
 		pre_runtime_ = runtime;
 		runtime = new_runtime;
 
-		xassert(new_engine && new_scene);
+		assert(new_engine && new_scene);
 		pre_engine_ = runtime->engine_;
 		pre_scene_ = runtime->scene_;
 
@@ -364,7 +364,7 @@ int MinigameManager::save_game(const qdEngineInterface* engine, const qdMinigame
 }
 
 int MinigameManager::load_game(const qdEngineInterface* engine, const qdMinigameSceneInterface* scene, const char* buffer, int buffer_size) {
-	xassert(!game_);
+	assert(!game_);
 	if (game_) {
 		dprintf("load game skiped\n");
 		return buffer_size;
