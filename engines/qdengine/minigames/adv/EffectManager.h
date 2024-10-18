@@ -43,15 +43,15 @@ public:
 	void stop(EffectType id);
 
 private:
-	EffectType current_;
-	EffectManagerData data_;
-	float phaseTime_;
-	float effectTime_;
-	float phaseSpeed_;
+	EffectType _current;
+	EffectManagerData _data;
+	float _phaseTime;
+	float _effectTime;
+	float _phaseSpeed;
 
-	float effectTimer_;
-	float phaseTimer_;
-	QDObject effect_;
+	float _effectTimer;
+	float _phaseTimer;
+	QDObject _effect;
 
 };
 

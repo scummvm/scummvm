@@ -26,27 +26,27 @@ namespace QDEngine {
 
 template <class T>
 class HoldData {
-	T emptyData_;
-	T &data_;
-	bool empty_;
+	T _emptyData;
+	T &_data;
+	bool _empty;
 public:
-	HoldData() : data_(emptyData_), empty_(true) {}
+	HoldData() : _data(_emptyData), _empty(true) {}
 	HoldData(T* data, bool empty)
-		: data_(data ? * data : emptyData_) {
-		empty_ = data ? empty : true;
+		: _data(data ? * data : _emptyData) {
+		_empty = data ? empty : true;
 	}
 
 	void process(T& current) {
-		if (empty_) {
-			data_ = current;
-			empty_ = false;
+		if (_empty) {
+			_data = current;
+			_empty = false;
 		} else
-			current = data_;
+			current = _data;
 	}
 
 	const T &get() const {
-		assert(!empty_);
-		return data_;
+		assert(!_empty);
+		return _data;
 	}
 };
 

@@ -34,19 +34,19 @@ typedef mgVect3<int> mgVect3i;
 using namespace std;
 
 class QDObject {
-	qdMinigameObjectInterface *obj_;
+	qdMinigameObjectInterface *_obj;
 
-	#ifdef _DEBUG
+#ifdef _DEBUG
 	string name_;
-	#endif
+#endif
 
 public:
 	static QDObject ZERO;
 
-	QDObject(qdMinigameObjectInterface* obj = 0, const char* name = "") : obj_(obj) {
-		#ifdef _DEBUG
+	QDObject(qdMinigameObjectInterface* obj = 0, const char* name = "") : _obj(obj) {
+#ifdef _DEBUG
 		name_ = name;
-		#endif
+#endif
 	}
 
 	const char *getName() const; // DEBUG ONLY
@@ -56,17 +56,17 @@ public:
 	void setState(const char* name);
 
 	bool operator==(const QDObject& obj) const {
-		return obj_ == obj.obj_;
+		return _obj == obj._obj;
 	}
 	bool operator==(const qdMinigameObjectInterface* obj) const {
-		return obj_ == obj;
+		return _obj == obj;
 	}
 
 	operator qdMinigameObjectInterface* () const {
-		return obj_;
+		return _obj;
 	}
 	qdMinigameObjectInterface* operator->() const {
-		return obj_;
+		return _obj;
 	}
 };
 

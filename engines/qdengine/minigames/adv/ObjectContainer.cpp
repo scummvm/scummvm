@@ -27,30 +27,29 @@
 namespace QDEngine {
 
 ObjectContainer::ObjectContainer() {
-	current_ = 0;
+	_current = 0;
 
 }
 
 void ObjectContainer::release() {
-	for (auto &it : objects_)
+	for (auto &it : _objects)
 		runtime->release(it);
 
-	objects_.clear();
-	current_ = 0;
+	_objects.clear();
+	_current = 0;
 }
 
 void ObjectContainer::pushObject(QDObject& obj) {
-	assert(Common::find(objects_.begin(), objects_.end(), obj) == objects_.end());
-	objects_.push_back(obj);
+	assert(Common::find(_objects.begin(), _objects.end(), obj) == _objects.end());
+	_objects.push_back(obj);
 }
 
 const char *ObjectContainer::name() const {
-	#ifdef _DEBUG
-	return name_.c_str();
-	#else
+#ifdef _DEBUG
+	return _name.c_str();
+#else
 	return "";
-	#endif
-
+#endif
 }
 
 bool ObjectContainer::load(const char* base_name, bool hide) {
@@ -59,12 +58,12 @@ bool ObjectContainer::load(const char* base_name, bool hide) {
 		return false;
 	}
 
-	#ifdef _DEBUG
-	name_ = base_name;
-	#endif
+#ifdef _DEBUG
+	_name = base_name;
+#endif
 
 	QDObject obj = runtime->getObject(base_name);
-	coord_ = runtime->world2game(obj);
+	_coord = runtime->world2game(obj);
 	pushObject(obj);
 	if (hide)
 		runtime->hide(obj);
@@ -86,27 +85,27 @@ bool ObjectContainer::load(const char* base_name, bool hide) {
 }
 
 void ObjectContainer::hideAll() {
-	for (auto &it : objects_)
+	for (auto &it : _objects)
 		runtime->hide(it);
 }
 
 QDObject ObjectContainer::getObject() {
-	if (current_ < objects_.size())
-		return objects_[current_++];
+	if (_current < _objects.size())
+		return _objects[_current++];
 
-	return objects_[0]; // bad, but better than crashing
+	return _objects[0]; // bad, but better than crashing
 
 }
 
 void ObjectContainer::releaseObject(QDObject& obj) {
-	QDObjects::iterator it = Common::find(objects_.begin(), objects_.end(), obj);
-	if (it != objects_.end()) {
-		if ((int)Common::distance(objects_.begin(), it) >= current_)
+	QDObjects::iterator it = Common::find(_objects.begin(), _objects.end(), obj);
+	if (it != _objects.end()) {
+		if ((int)Common::distance(_objects.begin(), it) >= _current)
 			error("ObjectContainer::releaseObject(): Object released more than once in to the pool: %s", transCyrillic(name()));
 
 		runtime->hide(obj);
-		if (current_ > 0)
-			swap(*it, objects_[--current_]);
+		if (_current > 0)
+			swap(*it, _objects[--_current]);
 		obj = 0;
 	}
 }

@@ -1,6 +1,6 @@
 /* ScummVM - Graphic Adventure Engine
  *
- * ScummVM is the legal property of its developers, whose names
+ * ScummVM is the legal property of its developers, whose _names
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
@@ -25,11 +25,11 @@
 namespace QDEngine {
 
 class ObjectContainer {
-	QDObjects objects_;
-	int current_;
-	mgVect3f coord_;
+	QDObjects _objects;
+	int _current;
+	mgVect3f _coord;
 	#ifdef _DEBUG
-	string name_;
+	string _name;
 	#endif
 	const char *name() const;
 	void pushObject(QDObject& obj);
@@ -38,11 +38,11 @@ public:
 	ObjectContainer();
 	void release();
 
-	bool load(const char* name, bool hide = true);
+	bool load(const char* _name, bool hide = true);
 	void hideAll();
 
 	const mgVect3f &coord() const {
-		return coord_;
+		return _coord;
 	}
 
 	QDObject getObject();

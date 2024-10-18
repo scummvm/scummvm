@@ -26,114 +26,114 @@ namespace QDEngine {
 
 class Rangef {
 public:
-	Rangef(float _min = 0.f, float _max = 0.f)
-		: min_(_min)
-		, max_(_max)
+	Rangef(float min = 0.f, float max = 0.f)
+		: _min(min)
+		, _max(max)
 	{}
 
 	float minimum() const {
-		return min_;
+		return _min;
 	}
-	void setMinimum(float _min) {
-		min_ = _min;
+	void setMinimum(float min) {
+		_min = min;
 	}
 
 	float maximum() const {
-		return max_;
+		return _max;
 	}
-	void setMaximum(float _max) {
-		max_ = _max;
+	void setMaximum(float max) {
+		_max = max;
 	}
 
-	void set(float _min, float _max);
+	void set(float min, float max);
 
 	float length() const {
-		return max_ - min_;
+		return _max - _min;
 	}
 	float center() const {
-		return (max_ + min_) / 2.f;
+		return (_max + _min) / 2.f;
 	}
 
 	/// Корректен ли интервал (нет - в случае когда minimum > maximum);
 	bool is_valid() const {
-		return min_ <= max_;
+		return _min <= _max;
 	}
 
 	/// Включает ли отрезок (закрытый интервал) точку \c _value.
-	bool include(float _value) const {
-		return (min_ <= _value) && (max_ >= _value);
+	bool include(float value) const {
+		return (_min <= value) && (_max >= value);
 	}
 	/// Включает ли интервал в себя \c _range.
-	bool include(const Rangef& _range) const {
-		return min_ <= _range.min_ && max_ >= _range.max_;
+	bool include(const Rangef& range) const {
+		return _min <= range._min && _max >= range._max;
 	}
 
 	/// Возвращает пересечение интервала *this и \c _range.
-	Rangef intersection(const Rangef& _range);
+	Rangef intersection(const Rangef& range);
 
 	/// Возвращает \c _value в пределах интервала [minimum, maximum].
-	float clip(float &_value) const;
+	float clip(float &value) const;
 
 private:
-	float min_;
-	float max_;
+	float _min;
+	float _max;
 };
 
 // --------------------- Rangei
 
 class Rangei {
 public:
-	Rangei(int _min = 0.f, int _max = 0.f)
-		: min_(_min)
-		, max_(_max)
+	Rangei(int min = 0.f, int max = 0.f)
+		: _min(min)
+		, _max(max)
 	{}
 
 	int minimum() const {
-		return min_;
+		return _min;
 	}
-	void setMinimum(int _min) {
-		min_ = _min;
+	void setMinimum(int min) {
+		_min = min;
 	}
 
 	int maximum() const {
-		return max_;
+		return _max;
 	}
-	void setMaximum(int _max) {
-		max_ = _max;
+	void setMaximum(int max) {
+		_max = max;
 	}
 
-	void set(int _min, int _max);
+	void set(int min, int max);
 
 	int length() const {
-		return max_ - min_;
+		return _max - _min;
 	}
 	int center() const {
-		return (max_ + min_) / 2;
+		return (_max + _min) / 2;
 	}
 
 	/// Корректен ли интервал (нет - в случае когда minimum > maximum);
 	bool is_valid() const {
-		return min_ <= max_;
+		return _min <= _max;
 	}
 
 	/// Включает ли отрезок (закрытый интервал) точку \c _value.
-	bool include(int _value) const {
-		return (min_ <= _value) && (max_ >= _value);
+	bool include(int value) const {
+		return (_min <= value) && (_max >= value);
 	}
 	/// Включает ли интервал в себя \c _range.
-	bool include(const Rangei& _range) const {
-		return min_ <= _range.min_ && max_ >= _range.max_;
+	bool include(const Rangei& range) const {
+		return _min <= range._min && _max >= range._max;
 	}
 
 	/// Возвращает пересечение интервала *this и \c _range.
-	Rangei intersection(const Rangei& _range);
+	Rangei intersection(const Rangei& range);
 
 	/// Возвращает \c _value в пределах интервала [minimum, maximum].
-	int clip(int &_value);
+	int clip(int &value);
 
 private:
-	int min_;
-	int max_;
+	int _min;
+	int _max;
 };
 
 } // namespace QDEngine

@@ -28,65 +28,65 @@ namespace QDEngine {
 EffectManager::EffectManager(HoldData<EffectManagerData> &data) {
 	const char *effectName = runtime->parameter("effect_name", "effect");
 	if (runtime->testObject(effectName)) {
-		effect_ = runtime->getObject(effectName);
-		data_.crd = effect_->R();
-		effect_->set_screen_scale(mgVect2f(0.01f, 0.01f), mgVect2f(10000.f, 10000.f));
-		runtime->hide(effect_);
+		_effect = runtime->getObject(effectName);
+		_data.crd = _effect->R();
+		_effect->set_screen_scale(mgVect2f(0.01f, 0.01f), mgVect2f(10000.f, 10000.f));
+		runtime->hide(_effect);
 	}
 
-	data.process(data_);
+	data.process(_data);
 
-	effectTime_ = clamp(getParameter("effect_time", 3.f), 0.5f, 10.f);
-	phaseTime_ = clamp(getParameter("effect_phase_time", effectTime_ / 20.f), 0.03f, 1.f);
-	phaseSpeed_ = clamp(getParameter("effect_phase_speed", 1.5f), 1.05f, 10.f);
+	_effectTime = clamp(getParameter("effect_time", 3.f), 0.5f, 10.f);
+	_phaseTime = clamp(getParameter("effect_phase_time", _effectTime / 20.f), 0.03f, 1.f);
+	_phaseSpeed = clamp(getParameter("effect_phase_speed", 1.5f), 1.05f, 10.f);
 
-	current_ = EFFECT_COUNT;
+	_current = EFFECT_COUNT;
 
 }
 
 EffectManager::~EffectManager() {
-	runtime->release(effect_);
+	runtime->release(_effect);
 
 }
 
 void EffectManager::quant(float dt) {
-	if (current_ == EFFECT_COUNT)
+	if (_current == EFFECT_COUNT)
 		return;
 
-	if (runtime->getTime() > effectTimer_) {
-		stop(current_);
+	if (runtime->getTime() > _effectTimer) {
+		stop(_current);
 		return;
 	}
 
-	if (runtime->getTime() > phaseTimer_) {
-		phaseTimer_ = runtime->getTime() + phaseTime_;
-		mgVect2f scale = effect_->screen_scale();
+	if (runtime->getTime() > _phaseTimer) {
+		_phaseTimer = runtime->getTime() + _phaseTime;
+		mgVect2f scale = _effect->screen_scale();
 		mgVect2f speed = scale;
-		scale *= phaseSpeed_;
+		scale *= _phaseSpeed;
 		speed = scale - speed;
-		speed /= phaseTime_;
-		effect_->set_screen_scale(scale, speed);
+		speed /= _phaseTime;
+		_effect->set_screen_scale(scale, speed);
 	}
 
 }
 
 void EffectManager::start(EffectType id) {
-	if (current_ != EFFECT_COUNT || !effect_)
+	if (_current != EFFECT_COUNT || !_effect)
 		return;
-	effectTimer_ = runtime->getTime() + effectTime_;
-	current_ = id;
-	phaseTimer_ = runtime->getTime();
-	effect_->set_screen_scale(mgVect2f(0.02f, 0.02f), mgVect2f(10000.f, 10000.f));
-	effect_->set_R(data_.crd);
+	_effectTimer = runtime->getTime() + _effectTime;
+	_current = id;
+	_phaseTimer = runtime->getTime();
+	_effect->set_screen_scale(mgVect2f(0.02f, 0.02f), mgVect2f(10000.f, 10000.f));
+	_effect->set_R(_data.crd);
 
 }
 
 void EffectManager::stop(EffectType id) {
-	if (current_ == EFFECT_COUNT)
+	if (_current == EFFECT_COUNT)
 		return;
-	runtime->hide(effect_);
-	effect_->set_screen_scale(mgVect2f(0.01f, 0.01f), mgVect2f(10000.f, 10000.f));
-	current_ = EFFECT_COUNT;
+	runtime->hide(_effect);
+	_effect->set_screen_scale(mgVect2f(0.01f, 0.01f), mgVect2f(10000.f, 10000.f));
+	_current = EFFECT_COUNT;
 }
 
 } // namespace QDEngine

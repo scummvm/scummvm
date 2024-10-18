@@ -27,24 +27,24 @@ namespace QDEngine {
 QDObject QDObject::ZERO(0, "ZERO OBJECT");
 
 const char *QDObject::getName() const {
-	#ifdef _DEBUG
+#ifdef _DEBUG
 	return name_.c_str();
-	#else
+#else
 	return "";
-	#endif
+#endif
 }
 
 bool QDObject::hit(const mgVect2f& point) const {
-	return obj_->hit_test(mgVect2i(round(point.x), round(point.y)));
+	return _obj->hit_test(mgVect2i(round(point.x), round(point.y)));
 }
 
 float QDObject::depth() const {
-	return runtime->getDepth(obj_);
+	return runtime->getDepth(_obj);
 }
 
 void QDObject::setState(const char* name) {
-	if (!obj_->is_state_active(name))
-		obj_->set_state(name);
+	if (!_obj->is_state_active(name))
+		_obj->set_state(name);
 }
 
 template<class T>

@@ -37,20 +37,20 @@ EventManager::EventPreset::EventPreset() {
 }
 
 EventManager::EventManager() {
-	score_ = 0;
+	_score = 0;
 
 	char str_cache[256];
 
 	for (int idx = 0;; ++idx) {
 		snprintf(str_cache, 127, "register_trigger_%d", idx);
 		if (const char *descr = runtime->parameter(str_cache, false))
-			triggerEvents_.push_back(runtime->getObject(descr));
+			_triggerEvents.push_back(runtime->getObject(descr));
 		else
 			break;
 	}
-	debugC(2, kDebugMinigames, "EventManager(): registered %d trigger objects", triggerEvents_.size());
+	debugC(2, kDebugMinigames, "EventManager(): registered %d trigger objects", _triggerEvents.size());
 
-	eventPresets_.resize(SYSTEM_EVENTS_SIZE);
+	_eventPresets.resize(SYSTEM_EVENTS_SIZE);
 	for (int idx = 0; idx < SYSTEM_EVENTS_SIZE; ++idx) {
 		snprintf(str_cache, 127, "system_event_%d", idx);
 		if (const char * descr = runtime->parameter(str_cache, false)) {
@@ -61,11 +61,11 @@ EventManager::EventManager() {
 				error("EventManager(): Incorrect description string: %s", str_cache);
 
 			if (read == 2) {
-				if (preset.triggerEventID >= (int)triggerEvents_.size())
+				if (preset.triggerEventID >= (int)_triggerEvents.size())
 					error("EventManager(): Reference to an unregistered trigger in %s", str_cache);
 
-				if (preset.triggerEventID < (int)triggerEvents_.size())
-					eventPresets_[idx] = preset;
+				if (preset.triggerEventID < (int)_triggerEvents.size())
+					_eventPresets[idx] = preset;
 			}
 		}
 	}
@@ -79,24 +79,24 @@ EventManager::EventManager() {
 			if (read != 4)
 				error("EventManager(): Incorrect event description string: %d", idx);
 
-			if (preset.triggerEventID >= (int)triggerEvents_.size())
+			if (preset.triggerEventID >= (int)_triggerEvents.size())
 				error("EventManager(): Reference to an unregistered trigger in %s", str_cache);
 
-			if (read == 4 && preset.triggerEventID < (int)triggerEvents_.size())
-				eventPresets_.push_back(preset);
+			if (read == 4 && preset.triggerEventID < (int)_triggerEvents.size())
+				_eventPresets.push_back(preset);
 			else
-				eventPresets_.push_back(EventPreset());
+				_eventPresets.push_back(EventPreset());
 		} else
 			break;
 	}
-	debugC(2, kDebugMinigames, "EventManager(): registered %d events", eventPresets_.size());
+	debugC(2, kDebugMinigames, "EventManager(): registered %d events", _eventPresets.size());
 
 	if (const char * data = runtime->parameter("allow_negative", false)) {
 		int tmp;
 		sscanf(data, "%d", &tmp);
-		enableNegative_ = tmp;
+		_enableNegative = tmp;
 	} else
-		enableNegative_ = false;
+		_enableNegative = false;
 }
 
 void EventManager::sysEvent(int eventID) {
@@ -114,14 +114,14 @@ void EventManager::event(int eventID, const mgVect2f& pos, int factor) {
 
 	eventID += SYSTEM_EVENTS_SIZE;
 
-	if (eventID >= eventPresets_.size())
+	if (eventID >= _eventPresets.size())
 		return;
 
-	const EventPreset& pr = eventPresets_[eventID];
+	const EventPreset& pr = _eventPresets[eventID];
 
 	if (pr.triggerEventID >= 0) {
-		assert(pr.triggerEventID < triggerEvents_.size());
-		triggerEvents_[pr.triggerEventID]->set_state("on");
+		assert(pr.triggerEventID < _triggerEvents.size());
+		_triggerEvents[pr.triggerEventID]->set_state("on");
 	}
 
 	if (pr.score) {
@@ -133,16 +133,16 @@ void EventManager::event(int eventID, const mgVect2f& pos, int factor) {
 }
 
 int EventManager::addScore(int sc) {
-	int diff = score_;
+	int diff = _score;
 
-	score_ += sc;
-	if (score_ < 0 && !enableNegative_)
-		score_ = 0;
+	_score += sc;
+	if (_score < 0 && !_enableNegative)
+		_score = 0;
 
-	diff = score_ - diff;
+	diff = _score - diff;
 
 	if (diff)
-		runtime->textManager().updateScore(score_);
+		runtime->textManager().updateScore(_score);
 
 	return diff;
 }

@@ -32,13 +32,13 @@ public:
 	void event(int eventID, const mgVect2f& pos, int factor);
 
 	int score() const {
-		return score_;
+		return _score;
 	}
 	int addScore(int sc);
 
 private:
-	int score_;
-	bool enableNegative_;
+	int _score;
+	bool _enableNegative;
 
 	struct EventPreset {
 		EventPreset();
@@ -48,9 +48,9 @@ private:
 		int triggerEventID;
 	};
 	typedef Std::vector<EventPreset> EventPresets;
-	EventPresets eventPresets_;
+	EventPresets _eventPresets;
 
-	QDObjects triggerEvents_;
+	QDObjects _triggerEvents;
 };
 
 } // namespace QDEngine
