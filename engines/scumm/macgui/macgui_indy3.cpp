@@ -1162,7 +1162,7 @@ void MacIndy3Gui::runAboutDialog() {
 	Common::String version = Common::String::format(_strsStrings[kMSIAboutString3].c_str(), subVers, '5', '1', '6');
 
 	const TextLine page1[] = {
-		{ 0, 4, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString1].c_str() }, // "Indiana Jones and the Last Crusade"
+		{ 0, 4, kStyleHeader1, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString1].c_str() }, // "Indiana Jones and the Last Crusade"
 		{ 0, 22, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString2].c_str() }, // "The Graphic Adventure"
 		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, version.c_str() }, // "Mac 1.7 8/17/90, Interpreter version 5.1.6"
 		{ 1, 82, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString4].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved."
@@ -1171,34 +1171,34 @@ void MacIndy3Gui::runAboutDialog() {
 
 	const TextLine page2[] = {
 		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString5].c_str() }, // "Macintosh version by"
-		{ 70, 21, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString7].c_str() }, // "Eric Johnston"
+		{ 70, 21, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString7].c_str() }, // "Eric Johnston"
 		{ 194, 32, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString6].c_str() }, // "and"
-		{ 216, 41, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString8].c_str() }, // "Dan Filner"
+		{ 216, 41, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString8].c_str() }, // "Dan Filner"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page3[] = {
 		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString9].c_str() }, // "Macintosh scripting by"
-		{ 75, 21, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString11].c_str() }, // "Ron Baldwin"
+		{ 75, 21, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString11].c_str() }, // "Ron Baldwin"
 		{ 186, 32, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString10].c_str() }, // "and"
-		{ 214, 41, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString12].c_str() }, // "David Fox"
+		{ 214, 41, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString12].c_str() }, // "David Fox"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page4[] = {
 		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString13].c_str() }, // "Designed and scripted by"
-		{ 77, 24, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString14].c_str() }, // "Noah Falstein"
-		{ 134, 44, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString15].c_str() }, // "David Fox"
-		{ 167, 64, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString16].c_str() }, // "Ron Gilbert"
+		{ 77, 24, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString14].c_str() }, // "Noah Falstein"
+		{ 134, 44, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString15].c_str() }, // "David Fox"
+		{ 167, 64, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString16].c_str() }, // "Ron Gilbert"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page5[] = {
 		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString17].c_str() }, // "SCUMM Story System"
 		{ 1, 17, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString18].c_str() }, // "created by"
-		{ 107, 36, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString20].c_str() }, // "Ron Gilbert"
+		{ 107, 36, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString20].c_str() }, // "Ron Gilbert"
 		{ 170, 52, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString19].c_str() }, // "and"
-		{ 132, 66, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString21].c_str() }, // "Aric Wilmunder"
+		{ 132, 66, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString21].c_str() }, // "Aric Wilmunder"
 		TEXT_END_MARKER
 	};
 

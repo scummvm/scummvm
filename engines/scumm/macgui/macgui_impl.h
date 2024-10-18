@@ -143,6 +143,7 @@ protected:
 		kAboutFontExtraBold,
 		kAboutFontHeaderInside,
 		kAboutFontHeaderOutside,
+		kAboutFontHeader,
 		kAboutFontHeaderSimple1,
 		kAboutFontHeaderSimple2,
 
@@ -158,7 +159,8 @@ protected:
 	};
 
 	enum TextStyle {
-		kStyleHeader,
+		kStyleHeader1,
+		kStyleHeader2,
 		kStyleHeaderSimple1,
 		kStyleHeaderSimple2,
 		kStyleBold,

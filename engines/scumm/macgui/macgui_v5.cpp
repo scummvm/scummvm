@@ -65,36 +65,37 @@ bool MacV5Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) cons
 		size = 9;
 		slant = Graphics::kMacFontRegular;
 		return true;
+
 	case kAboutFontBold:
 		id = Graphics::kMacFontGeneva;
 		size = 9;
 		slant = Graphics::kMacFontBold;
 		return true;
+
 	case kAboutFontBold2:
 		id = Graphics::kMacFontTimes;
 		size = 10;
 		slant = Graphics::kMacFontBold;
 		return true;
-	case kAboutFontHeaderOutside:
+
+	case kAboutFontHeader:
 		id = Graphics::kMacFontTimes;
 		size = 18;
 		slant = Graphics::kMacFontBold | Graphics::kMacFontItalic | Graphics::kMacFontOutline;
 		return true;
-	case kAboutFontHeaderInside:
-		id = Graphics::kMacFontTimes;
-		size = 18;
-		slant = Graphics::kMacFontItalic | Graphics::kMacFontBold | Graphics::kMacFontExtend;
-		return true;
+
 	case kAboutFontHeaderSimple1:
 		id = Graphics::kMacFontGeneva;
 		size = 12;
 		slant = Graphics::kMacFontBold | Graphics::kMacFontItalic | Graphics::kMacFontOutline;
 		return true;
+
 	case kAboutFontHeaderSimple2:
 		id = Graphics::kMacFontChicago;
 		size = 12;
 		slant = Graphics::kMacFontBold | Graphics::kMacFontItalic | Graphics::kMacFontOutline;
 		return true;
+
 	default:
 		return MacGuiImpl::getFontParams(fontId, id, size, slant);
 	}
@@ -442,7 +443,7 @@ void MacV5Gui::runAboutDialogMI2(MacDialogWindow *window) {
 
 	const TextLine page5[] = {
 		{ 1, 16, kStyleBold2, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString3].c_str() }, // "LeChuck\xD5s Revenge"
-		{ 1, 31, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString4].c_str() }, // "Monkey Island 2"
+		{ 1, 31, kStyleHeader2, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString4].c_str() }, // "Monkey Island 2"
 		{ 176, 125, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString6].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company."
 		{ 310, 138, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString7].c_str() }, // "All rights reserved."
 		TEXT_END_MARKER
