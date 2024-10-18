@@ -81,7 +81,10 @@ bool MacV5Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) cons
 	case kAboutFontHeader:
 		id = Graphics::kMacFontTimes;
 		size = 18;
-		slant = Graphics::kMacFontBold | Graphics::kMacFontItalic | Graphics::kMacFontOutline;
+		// TODO: This is WRONG! We shouldn't use the Extended style
+		// here, but apparently ScummVM doesn't handle character
+		// spacing correctly for Mac fonts.
+		slant = Graphics::kMacFontBold | Graphics::kMacFontItalic | Graphics::kMacFontOutline | Graphics::kMacFontExtend;
 		return true;
 
 	case kAboutFontHeaderSimple1:
@@ -442,8 +445,8 @@ void MacV5Gui::runAboutDialogMI2(MacDialogWindow *window) {
 	};
 
 	const TextLine page5[] = {
-		{ 1, 16, kStyleBold2, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString3].c_str() }, // "LeChuck\xD5s Revenge"
-		{ 1, 31, kStyleHeader2, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString4].c_str() }, // "Monkey Island 2"
+		{ 152, 16, kStyleBold2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString3].c_str() }, // "LeChuck\xD5s Revenge"
+		{ 114, 31, kStyleHeader2, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString4].c_str() }, // "Monkey Island 2"
 		{ 176, 125, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString6].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company."
 		{ 310, 138, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString7].c_str() }, // "All rights reserved."
 		TEXT_END_MARKER
