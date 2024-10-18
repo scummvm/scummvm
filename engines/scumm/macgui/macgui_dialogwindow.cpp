@@ -751,9 +751,6 @@ void MacGuiImpl::MacDialogWindow::drawTexts(Common::Rect r, const TextLine *line
 			f2->drawString(s, msg, x, y, width, bg, align);
 		} else {
 			f1->drawString(s, msg, x, y, width, fg, align);
-
-			if (lines[i].style == kStyleExtraBold)
-				f1->drawString(s, msg, x + 1, y, width, fg, align);
 		}
 	}
 }
