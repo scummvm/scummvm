@@ -19,6 +19,9 @@
  *
  */
 
+#include "common/debug.h"
+
+#include "qdengine/qdengine.h"
 #include "qdengine/minigames/adv/common.h"
 #include "qdengine/minigames/adv/qdMath.h"
 #include "qdengine/minigames/adv/RunTime.h"
@@ -98,9 +101,9 @@ MinigameManager::MinigameManager()
 MinigameManager::~MinigameManager() {
 	assert(!engine_ && !scene_);
 
-	for (auto &it : (gameInfos_, it) {
-		debugC(5, kDebugMinigames, "~MinigameManager(): free: (%d,%d)", it->first.gameLevel_, it->first.gameNum_);
-		it.second.free();
+	for (auto &it : gameInfos_) {
+		debugC(5, kDebugMinigames, "~MinigameManager(): free: (%d,%d)", it._key.gameLevel_, it._key.gameNum_);
+		it._value.free();
 	}
 }
 
@@ -179,7 +182,7 @@ bool MinigameManager::createGame() {
 
 	const char *stateFlagName = parameter("state_flag_name", "state_flag");
 
-	if (state_flag_ = scene_->object_interface(stateFlagName)) {
+	if ((state_flag_ = scene_->object_interface(stateFlagName))) {
 		if (!state_flag_->has_state("game") || !state_flag_->has_state("win") || !state_flag_->has_state("lose")) {
 			warning("MinigameManager::createGame(): The object %s must have state: game, win, lose", transCyrillic(stateFlagName));
 			return false;
@@ -191,7 +194,7 @@ bool MinigameManager::createGame() {
 
 	const char *pauseFlagName = parameter("pause_flag_name", "BackHelp");
 
-	if (pause_flag_ = scene_->object_interface(pauseFlagName)) {
+	if ((pause_flag_ = scene_->object_interface(pauseFlagName))) {
 		if (!pause_flag_->has_state("on")) {
 			warning("MinigameManager::createGame(): The object %s must have state: on", transCyrillic(pauseFlagName));
 			return false;
@@ -202,7 +205,7 @@ bool MinigameManager::createGame() {
 
 	if (testObject(parameter("complete_help_miniatute", "miniature"))) {
 		complete_help_miniature_ = getObject(parameter("complete_help_miniatute", "miniature"));
-		if (complete_help_ = getObject(parameter("complete_help", "complete"))) {
+		if ((complete_help_ = getObject(parameter("complete_help", "complete")))) {
 			if (!complete_help_->has_state("off") || !complete_help_->has_state("01")) {
 				warning("MinigameManager::createGame(): The object for completed game must have state: off, 01");
 				return false;
@@ -224,7 +227,9 @@ bool MinigameManager::createGame() {
 		game_help_trigger_.setState(game_help_enabled_ ? "01" : "02");
 	}
 
-	game_ = ::createGame();
+	warning("STUB: MinigameManager::createGame()");
+	// Here we instantiate the specific game
+	//game_ = ::createGame();
 
 	if (currentGameInfo_)
 		currentGameInfo_->empty_ = false;
@@ -311,8 +316,8 @@ bool MinigameManager::new_game(const qdEngineInterface* engine_interface) {
 	debugC(2, kDebugMinigames, "MinigameManager::new_game(): new game");
 
 	for (auto &it : gameInfos_) {
-		debugC(3, kDebugMinigames, "MinigameManager::new_game(): clean game data (%d, %d)", it->first.gameLevel_, it->first.gameNum_);
-		it.second.game_ = MinigameData();
+		debugC(3, kDebugMinigames, "MinigameManager::new_game(): clean game data (%d, %d)", it._key.gameLevel_, it._key.gameNum_);
+		it._value.game_ = MinigameData();
 	}
 
 	saveState(true);
@@ -352,10 +357,14 @@ int MinigameManager::save_game(const qdEngineInterface* engine, const qdMinigame
 	loadState();
 	if (currentGameInfo_ && !currentGameInfo_->empty()) {
 		debugC(2, kDebugMinigames, "MinigameManager::save_game(): save game (%d, %d)", currentGameIndex_.gameLevel_, currentGameIndex_.gameNum_);
+
+		warning("STUB: MinigameManager::save_game()");
+#if 0
 		XBuffer out((void*)buffer, buffer_size);
 		out.write(GameInfo::version());
 		out.write(currentGameInfo_->game_);
 		return out.tell();
+#endif
 	}
 	return 0;
 
@@ -370,6 +379,10 @@ int MinigameManager::load_game(const qdEngineInterface* engine, const qdMinigame
 	debugC(2, kDebugMinigames, "MinigameManager::load_game(): load game");
 	TEMP_SCENE_ENTER();
 	loadState();
+
+	warning("STUB: MinigameManager::load_game()");
+
+#if 0
 	if (currentGameInfo_) {
 		if (buffer_size > 0) {
 			debugC(2, kDebugMinigames, "MinigameManager::load_game(): load game (%d, %d)", currentGameIndex_.gameLevel_, currentGameIndex_.gameNum_);
@@ -396,6 +409,7 @@ int MinigameManager::load_game(const qdEngineInterface* engine, const qdMinigame
 		}
 		saveState();
 	}
+#endif
 	return buffer_size;
 
 }
@@ -416,6 +430,8 @@ bool MinigameManager::loadState(bool current) {
 	} else
 		currentGameIndex_ = GameInfoIndex(-1, -1);
 
+	warning("STUB: MinigameManager::loadState()");
+#if 0
 	if (!current || currentGameIndex_.gameNum_ >= 0) {
 
 		if (current)
@@ -449,30 +465,35 @@ bool MinigameManager::loadState(bool current) {
 
 		currentGameInfo_ = current ? &gameInfos_[currentGameIndex_] : 0;
 	}
+#endif
 	return true;
 }
 
 extern bool createDirForFile(const char* partialPath);
 void MinigameManager::saveState(bool force) {
 	debugC(2, kDebugMinigames, "MinigameManager::save_state(): save state");
+
+	warning("STUB: MinigameManager::saveState()");
+
+#if 0
 	if (force || currentGameIndex_.gameNum_ >= 0) {
 		XStream file(false);
 		if (createDirForFile(state_container_name_) && file.open(state_container_name_, XS_OUT)) {
 			file < GameInfo::version();
 			file < (engine_ ? engine_->rnd(999999) : seed_);
-			GameInfoMap::const_iterator it;
 
 			for (auto &it: gameInfos_) {
-				if (!it.second.empty()) {
-					debugC(2, kDebugMinigames, "MinigameManager::save_state(): write game info: (%d,%d), index: %d, game data:%d", it.first.gameLevel_, it.first.gameNum_, it.second.game_.sequenceIndex_, it.second.empty_ ? 0 : 1);
-					file.write(it->first);
-					file < it->second;
+				if (!it._value.empty()) {
+					debugC(2, kDebugMinigames, "MinigameManager::save_state(): write game info: (%d,%d), index: %d, game data: %d", it._key.gameLevel_, it._key.gameNum_, it._value.game_.sequenceIndex_, it._value.empty_ ? 0 : 1);
+					file.write(it._key);
+					file < it._value;
 				}
 			}
 		} else {
 			warning("MinigameManager::saveState(): Failed to save file '%s'", state_container_name_);
 		}
 	}
+#endif
 }
 
 bool MinigameManager::quant(float dt) {
@@ -534,6 +555,9 @@ bool MinigameManager::quant(float dt) {
 			signal(EVENT_GAME_WIN);
 			gameWin();
 			break;
+
+		default:
+			break;
 		}
 	}
 
@@ -554,7 +578,7 @@ void MinigameManager::setCompleteHelpVariant(int idx) {
 	assert(idx >= 0);
 	char buf[32];
 	buf[31] = 0;
-	_snprintf(buf, 31, "%02d", idx + 1);
+	snprintf(buf, 31, "%02d", idx + 1);
 	complete_help_state_name_ = buf;
 }
 
@@ -562,7 +586,7 @@ void MinigameManager::setGameHelpVariant(int idx) {
 	if (idx >= 0) {
 		char buf[32];
 		buf[31] = 0;
-		_snprintf(buf, 31, "%02d", idx + 1);
+		snprintf(buf, 31, "%02d", idx + 1);
 		game_help_state_name_ = buf;
 	} else
 		game_help_state_name_ = "off";
@@ -579,11 +603,14 @@ void MinigameManager::signal(SystemEvent id) {
 const MinigameData *MinigameManager::getScore(int level, int game) const {
 	GameInfoMap::const_iterator it = gameInfos_.find(GameInfoIndex(game, level));
 	if (it != gameInfos_.end())
-		return &it->second.game_;
+		return &it->_value.game_;
 	return 0;
 }
 
 bool MinigameManager::testAllGamesWin() {
+	warning("STUB: MinigameManager::testAllGamesWin()");
+
+#if 0
 	XStream file(false);
 	if (!file.open(gameListFileName(), XS_IN))
 		return false;
@@ -602,7 +629,7 @@ bool MinigameManager::testAllGamesWin() {
 		}
 		while (xbuf.tell() < xbuf.size()) {
 			xbuf > ch;
-			if (isdigit(ch)) {
+			if (Common::isDigit(ch)) {
 				--xbuf;
 				int game;
 				xbuf >= game;
@@ -612,6 +639,7 @@ bool MinigameManager::testAllGamesWin() {
 			}
 		}
 	}
+#endif
 
 	return true;
 }
@@ -687,7 +715,7 @@ const char *MinigameManager::parameter(const char *name, const char *def) const 
 
 	const char *txt = scene_->minigame_parameter(name);
 
-	if (!required && !txt)
+	if (!def && !txt)
 		warning("MinigameManager::parameter(): Required parameter '%s' is missing in the ini file", transCyrillic(name));
 
 	return txt ? txt : (def ? def : "");
@@ -818,7 +846,7 @@ void MinigameManager::setText(const char* name, const char* text) const {
 void MinigameManager::setText(const char* name, int toText, const char* format) const {
 	char text[16];
 	text[15] = 0;
-	_snprintf(text, 15, format, toText);
+	snprintf(text, 15, format, toText);
 	setText(name, text);
 }
 
@@ -834,7 +862,7 @@ int MinigameManager::rnd(int min, int max) const {
 	return min + round(engine_->fabs_rnd(max - min));
 }
 
-int MinigameManager::rnd(const vector<float> &prob) const {
+int MinigameManager::rnd(const Std::vector<float> &prob) const {
 	float rnd = runtime->rnd(0.f, .9999f);
 	float accum = 0.f;
 	int idx = 0;
@@ -862,7 +890,9 @@ int MinigameManager::rnd(const vector<float> &prob) const {
 
 // если данные еще ни разу не сохранялись - запоминаем
 // если уже есть запомненные, то заменяем на них
-bool MinigameManager::processGameData(XBuffer& data) {
+bool MinigameManager::processGameData(Common::MemoryWriteStream& data) {
+	warning("STUB: MinigameManager::processGameData()");
+#if 0
 	if (currentGameInfo_) {
 		if (currentGameInfo_->empty_) {
 			currentGameInfo_->empty_ = false;
@@ -882,6 +912,7 @@ bool MinigameManager::processGameData(XBuffer& data) {
 		}
 	}
 	data.set(0);
+#endif
 	return true;
 }
 
@@ -921,6 +952,7 @@ void GameInfo::write(void* data, unsigned int size) {
 		memcpy(gameData_, data, dataSize_);
 }
 
+#if 0
 XStream &operator< (XStream& out, const GameInfo& info) {
 	out.write(info.game_);
 	out.write(info.empty_);
@@ -948,13 +980,13 @@ XStream &operator> (XStream& in, GameInfo& info) {
 	}
 	return in;
 }
-
+#endif
 
 //========================================================================================================================
 
 
-TimeManager::TimeManager(HoldData<TimeManagerData> &data) {
-	if (const char * data = runtime->parameter("game_time", false)) {
+TimeManager::TimeManager(HoldData<TimeManagerData> &data_) {
+	if (const char *data = runtime->parameter("game_time", false)) {
 		if (sscanf(data, "%f", &gameTime_) != 1)
 			gameTime_ = -1.f;
 	} else
@@ -963,7 +995,7 @@ TimeManager::TimeManager(HoldData<TimeManagerData> &data) {
 	timeCost_ = 0.f;
 
 	if (gameTime_ > 0) {
-		if (const char * data = runtime->parameter("time_bar"))
+		if (const char *data = runtime->parameter("time_bar"))
 			timeBar_ = runtime->getObject(data);
 
 		if (const char * data = runtime->parameter("time_cost"))
@@ -974,12 +1006,12 @@ TimeManager::TimeManager(HoldData<TimeManagerData> &data) {
 		TimeManagerData myData;
 		myData.crd = runtime->world2game(timeBar_);
 
-		data.process(myData);
+		data_.process(myData);
 
 		startPos_ = myData.crd;
 		size_ = runtime->getSize(timeBar_);
 
-		if (const char * data = runtime->parameter("time_bar_direction")) {
+		if (const char *data = runtime->parameter("time_bar_direction")) {
 			int dir;
 			if (sscanf(data, "%d", &dir) == 1) {
 				assert(dir >= 0 && dir <= 3);

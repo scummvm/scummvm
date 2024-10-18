@@ -11,6 +11,7 @@ MODULE_OBJS = \
 	minigames/adv/FlyObject.o \
 	minigames/adv/ObjectContainer.o \
 	minigames/adv/Range.o \
+	minigames/adv/RunTime.o \
 	minigames/adv/TextManager.o \
 	parser/qdscr_parser.o \
 	parser/xml_parser.o \

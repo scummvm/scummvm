@@ -75,10 +75,6 @@ struct GameInfo {
 	void *gameData_;
 };
 
-class XStream;
-XStream &operator< (XStream& out, const GameInfo& info);
-XStream &operator> (XStream& in, GameInfo& info);
-
 class MinigameManager : public qdMiniGameInterface {
 	friend class TempValue;
 public:
