@@ -71,7 +71,7 @@ void Animation::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 	case 24:
 	case 25:
 	case 65:
-		_scaleSequence = 1;
+		_scaleSequence = true;
 		break;
 	case 6: // stairs
 		_nsp_sprite_scaling_y_position = 0xbe;
@@ -463,7 +463,7 @@ void Animation::updateAnimation() {
 		// Open doors
 		advanceAnimationFrame(0);
 		if (!_objRestarted) {
-			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
+			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 		} else {
 			_player->updateSprite();
 			if (_otherNspAnimationType_maybe == 14) {

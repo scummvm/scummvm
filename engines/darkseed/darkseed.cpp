@@ -1413,6 +1413,7 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 						_player->_flipSprite);
 				}
 				if (_animation->_isPlayingAnimation_maybe && _animation->_otherNspAnimationType_maybe == 14 && _animation->_animIndexTbl[0] > 1) {
+					// opening doors.
 					if (_objectVar.getObjectRunningCode(140) == 0 || _room->_roomNumber != 6) {
 						if (_room->_roomNumber == 6 && _player->_isAutoWalkingToBed) {
 							const Sprite &animSprite = _player->_animations.getSpriteAt(8);
@@ -1424,7 +1425,7 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 							const Sprite &animSprite = _player->_animations.getSpriteAt(6);
 							_sprites.addSpriteToDrawList(369, 119, &animSprite, 255, animSprite._width, animSprite._height, _player->_flipSprite);
 						} else if (_room->_roomNumber == 12) {
-							const Sprite &animSprite = _player->_animations.getSpriteAt(6);
+							const Sprite &animSprite = _player->_animations.getSpriteAt(7);
 							_sprites.addSpriteToDrawList(252, 121, &animSprite, 255, animSprite._width, animSprite._height, _player->_flipSprite);
 						}
 					} else {
