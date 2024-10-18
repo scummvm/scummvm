@@ -493,6 +493,7 @@ bool BaseRenderOpenGL3DShader::setProjection2D() {
 }
 
 bool BaseRenderOpenGL3DShader::setWorldTransform(const Math::Matrix4 &transform) {
+	_worldMatrix = transform;
 	Math::Matrix4 tmp = transform;
 	tmp.transpose();
 
