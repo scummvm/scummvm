@@ -696,10 +696,11 @@ void Animation::updateAnimation() {
 	case 53:
 	case 54:
 	case 55:
-	case 56:
-		advanceAnimationFrame((_otherNspAnimationType_maybe - 53) & 1);
+	case 56: {
+		int stairsIdx = (_otherNspAnimationType_maybe - 53) & 1;
+		advanceAnimationFrame(stairsIdx);
 		if (!_objRestarted) {
-			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
+			_player->_frameIdx = _player->_animations.getAnimAt(stairsIdx)._frameNo[_animIndexTbl[stairsIdx]];
 		} else {
 			switch (_otherNspAnimationType_maybe) {
 			case 53:
@@ -731,6 +732,7 @@ void Animation::updateAnimation() {
 			// PlaySound(1,5,-1);
 		}
 		break;
+	}
 	case 57:
 	case 58:
 		advanceAnimationFrame((_otherNspAnimationType_maybe - 57) & 1);

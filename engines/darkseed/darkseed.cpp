@@ -1084,7 +1084,7 @@ void DarkseedEngine::changeToRoom(int newRoomNumber, bool placeDirectly) { // AK
 		_animation->setupOtherNspAnimation(0, 16);
 	} else if (newRoomNumber == 10 && _previousRoomNumber == 6) {
 		_player->loadAnimations("rm10strs.nsp");
-		_animation->setupOtherNspAnimation(1, 54);
+		_animation->setupOtherNspAnimation(1, 54); // walk down front steps
 	} else if (newRoomNumber == 11 && _previousRoomNumber == 15) {
 		_player->loadAnimations("rm11strs.nsp");
 		_animation->setupOtherNspAnimation(1, 56);
