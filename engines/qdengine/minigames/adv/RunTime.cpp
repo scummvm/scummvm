@@ -145,6 +145,10 @@ bool MinigameManager::createGame() {
 	assert(engine_ && scene_);
 	assert(!game_);
 
+	warning("STUB: MinigameManager::createGame()");
+
+#if 0
+
 	screenSize_ = engine_->screen_size();
 
 #ifdef _DEBUG
@@ -227,9 +231,8 @@ bool MinigameManager::createGame() {
 		game_help_trigger_.setState(game_help_enabled_ ? "01" : "02");
 	}
 
-	warning("STUB: MinigameManager::createGame()");
 	// Here we instantiate the specific game
-	//game_ = ::createGame();
+	game_ = ::createGame();
 
 	if (currentGameInfo_)
 		currentGameInfo_->empty_ = false;
@@ -240,6 +243,7 @@ bool MinigameManager::createGame() {
 		return true;
 	}
 
+#endif
 	return false;
 }
 
@@ -415,6 +419,8 @@ int MinigameManager::load_game(const qdEngineInterface* engine, const qdMinigame
 }
 
 bool MinigameManager::loadState(bool current) {
+	warning("STUB: MinigameManager::loadState()");
+#if 0
 	if (game_) {
 		debugC(2, kDebugMinigames, "MinigameManager::loadState(): load state skiped");
 		return false;
@@ -430,8 +436,6 @@ bool MinigameManager::loadState(bool current) {
 	} else
 		currentGameIndex_ = GameInfoIndex(-1, -1);
 
-	warning("STUB: MinigameManager::loadState()");
-#if 0
 	if (!current || currentGameIndex_.gameNum_ >= 0) {
 
 		if (current)
