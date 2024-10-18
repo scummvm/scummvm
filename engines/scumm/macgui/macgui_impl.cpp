@@ -544,6 +544,12 @@ bool MacGuiImpl::getFontParams(FontId fontId, int &id, int &size, int &slant) co
 		slant = Graphics::kMacFontItalic | Graphics::kMacFontBold | Graphics::kMacFontExtend;
 		return true;
 
+	case kAboutFontRegular:
+		id = Graphics::kMacFontGeneva;
+		size = 9;
+		slant = Graphics::kMacFontRegular;
+		return true;
+
 	case kAboutFontBold:
 		id = _gameFontId;
 		size = 9;
@@ -553,13 +559,7 @@ bool MacGuiImpl::getFontParams(FontId fontId, int &id, int &size, int &slant) co
 	case kAboutFontExtraBold:
 		id = _gameFontId;
 		size = 9;
-		slant = Graphics::kMacFontRegular | Graphics::kMacFontExtend;
-		return true;
-
-	case kAboutFontRegular:
-		id = Graphics::kMacFontGeneva;
-		size = 9;
-		slant = Graphics::kMacFontRegular;
+		slant = Graphics::kMacFontBold;
 		return true;
 
 	default:
