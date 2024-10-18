@@ -1260,11 +1260,28 @@ void GfxOpenGLS::turnOffLight(int lightId) {
 void GfxOpenGLS::createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) {
 	texture->_texture = new GLuint[1];
 	glGenTextures(1, (GLuint *)texture->_texture);
-	char *texdata = new char[texture->_width * texture->_height * 4];
-	char *texdatapos = texdata;
+
+	GLuint *textures = (GLuint *)texture->_texture;
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+
+	// Remove darkened lines in EMI intro
+	if (g_grim->getGameType() == GType_MONKEY4 && clamp) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	} else {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	}
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 	if (cmap != nullptr) { // EMI doesn't have colour-maps
 		int bytes = 4;
+
+		char *texdata = new char[texture->_width * texture->_height * bytes];
+		char *texdatapos = texdata;
+
 		for (int y = 0; y < texture->_height; y++) {
 			for (int x = 0; x < texture->_width; x++) {
 				uint8 col = *(const uint8 *)(data);
@@ -1281,26 +1298,13 @@ void GfxOpenGLS::createTexture(Texture *texture, const uint8 *data, const CMap *
 				data++;
 			}
 		}
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->_width, texture->_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texdata);
+		delete[] texdata;
 	} else {
-		memcpy(texdata, data, texture->_width * texture->_height * texture->_bpp);
+		GLint format = (texture->_bpp == 4) ? GL_RGBA : GL_RGB;
+		glTexImage2D(GL_TEXTURE_2D, 0, format, texture->_width, texture->_height, 0, format, GL_UNSIGNED_BYTE, data);
 	}
-
-	GLuint *textures = (GLuint *)texture->_texture;
-	glBindTexture(GL_TEXTURE_2D, textures[0]);
-
-	// Remove darkened lines in EMI intro
-	if (g_grim->getGameType() == GType_MONKEY4 && clamp) {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	} else {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	}
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->_width, texture->_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texdata);
-	delete[] texdata;
 }
 
 void GfxOpenGLS::selectTexture(const Texture *texture) {
@@ -1327,7 +1331,7 @@ void GfxOpenGLS::createBitmap(BitmapData *bitmap) {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
 			uint16 *zbufPtr = reinterpret_cast<uint16 *>(const_cast<void *>(bitmap->getImageData(pic).getPixels()));
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
-				uint16 val = READ_LE_UINT16(zbufPtr + i);
+				uint16 val = zbufPtr[i];
 				// fix the value if it is incorrectly set to the bitmap transparency color
 				if (val == 0xf81f) {
 					val = 0;
@@ -1355,13 +1359,21 @@ void GfxOpenGLS::createBitmap(BitmapData *bitmap) {
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, bytes);
 
+		const Graphics::PixelFormat format_16bpp(2, 5, 6, 5, 0, 11, 5, 0, 0);
+#ifdef SCUMM_BIG_ENDIAN
+		const Graphics::PixelFormat format_32bpp(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#else
+		const Graphics::PixelFormat format_32bpp(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#endif
+
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
-			if (bitmap->_format == 1 && bitmap->_bpp == 16 && bitmap->_colorFormat != BM_RGB1555) {
+			const Graphics::Surface &imageData = bitmap->getImageData(pic);
+			if (bitmap->_format == 1 && imageData.format == format_16bpp) {
 				if (texData == nullptr)
 					texData = new byte[bytes * bitmap->_width * bitmap->_height];
 				// Convert data to 32-bit RGBA format
 				byte *texDataPtr = texData;
-				const uint16 *bitmapData = reinterpret_cast<const uint16 *>(bitmap->getImageData(pic).getPixels());
+				const uint16 *bitmapData = reinterpret_cast<const uint16 *>(imageData.getPixels());
 				for (int i = 0; i < bitmap->_width * bitmap->_height; i++, texDataPtr += bytes, bitmapData++) {
 					uint16 pixel = *bitmapData;
 					int r = pixel >> 11;
@@ -1378,11 +1390,11 @@ void GfxOpenGLS::createBitmap(BitmapData *bitmap) {
 					}
 				}
 				texOut = texData;
-			} else if (bitmap->_format == 1 && bitmap->_colorFormat == BM_RGB1555) {
-				bitmap->convertToColorFormat(pic, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-				texOut = (const byte *)bitmap->getImageData(pic).getPixels();
+			} else if (bitmap->_format == 1 && imageData.format != format_32bpp) {
+				bitmap->convertToColorFormat(pic, format_32bpp);
+				texOut = (const byte *)imageData.getPixels();
 			} else {
-				texOut = (const byte *)bitmap->getImageData(pic).getPixels();
+				texOut = (const byte *)imageData.getPixels();
 			}
 
 			int actualWidth = nextHigher2(bitmap->_width);
@@ -1987,6 +1999,14 @@ void GfxOpenGLS::drawPolygon(const PrimitiveObject *primitive) {
 	drawGenericPrimitive(data, 8, primitive);
 }
 
+const Graphics::PixelFormat GfxOpenGLS::getMovieFormat() const {
+#ifdef SCUMM_BIG_ENDIAN
+	return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#else
+	return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#endif
+}
+
 void GfxOpenGLS::prepareMovieFrame(Graphics::Surface* frame) {
 	int width = frame->w;
 	int height = frame->h;
@@ -1994,40 +2014,14 @@ void GfxOpenGLS::prepareMovieFrame(Graphics::Surface* frame) {
 
 	GLenum frameType, frameFormat;
 
-	// GLES2 support is needed here, so:
-	// - frameFormat GL_BGRA is not supported, so use GL_RGBA
-	// - no format conversion, so same format is used for internal storage, so swizzle in shader
-	// - GL_UNSIGNED_INT_8_8_8_8[_REV] do not exist, so use _BYTE and fix
-	//   endianness in shader.
-	if (frame->format == Graphics::PixelFormat(4, 8, 8, 8, 0, 8, 16, 24, 0) || frame->format == Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0)) {
-		// frame->format: GBRA
-		// read in little endian: {A, R, G, B}, swap: {B, G, R, A}, swizzle: {R, G, B, A}
-		// read in big endian: {B, G, R, A}, swizzle: {R, G, B, A}
+	// Used by Bink, QuickTime, MPEG, Theora and paletted SMUSH
+	if (frame->format == getMovieFormat()) {
 		frameType = GL_UNSIGNED_BYTE;
 		frameFormat = GL_RGBA;
-		_smushSwizzle = true;
-#ifdef SCUMM_LITTLE_ENDIAN
-		_smushSwap = true;
-#else
-		_smushSwap = false;
-#endif
-	} else if (frame->format == Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 0) || frame->format == Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24)) {
-		// frame->format: ARGB
-		// read in little endian: {B, G, R, A}, swizzle: {R, G, B, A}
-		// read in big endian: {A, R, G, B}, swap: {B, G, R, A}, swizzle: {R, G, B, A}
-		frameType = GL_UNSIGNED_BYTE;
-		frameFormat = GL_RGBA;
-		_smushSwizzle = true;
-#ifdef SCUMM_LITTLE_ENDIAN
-		_smushSwap = false;
-#else
-		_smushSwap = true;
-#endif
+	// Used by 16-bit SMUSH
 	} else if (frame->format == Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) {
 		frameType = GL_UNSIGNED_SHORT_5_6_5;
 		frameFormat = GL_RGB;
-		_smushSwizzle = false;
-		_smushSwap = false;
 	} else {
 		error("Unknown pixelformat: Bpp: %d RBits: %d GBits: %d BBits: %d ABits: %d RShift: %d GShift: %d BShift: %d AShift: %d",
 			frame->format.bytesPerPixel,
@@ -2068,8 +2062,6 @@ void GfxOpenGLS::drawMovieFrame(int offsetX, int offsetY) {
 	_smushProgram->setUniform("texcrop", Math::Vector2d(float(_smushWidth) / nextHigher2(_smushWidth), float(_smushHeight) / nextHigher2(_smushHeight)));
 	_smushProgram->setUniform("scale", Math::Vector2d(float(_smushWidth)/ float(_gameWidth), float(_smushHeight) / float(_gameHeight)));
 	_smushProgram->setUniform("offset", Math::Vector2d(float(offsetX) / float(_gameWidth), float(offsetY) / float(_gameHeight)));
-	_smushProgram->setUniform("swap", _smushSwap);
-	_smushProgram->setUniform("swizzle", _smushSwizzle);
 	glBindTexture(GL_TEXTURE_2D, _smushTexId);
 
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
@@ -2231,7 +2223,11 @@ static void readPixels(int x, int y, int width, int height, byte *buffer) {
 
 Bitmap *GfxOpenGLS::getScreenshot(int w, int h, bool useStored) {
 	Graphics::Surface src;
+#ifdef SCUMM_BIG_ENDIAN
+	src.create(_screenWidth, _screenHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+#else
 	src.create(_screenWidth, _screenHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#endif
 	Bitmap *bmp;
 
 	if (useStored) {

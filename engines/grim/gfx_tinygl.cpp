@@ -912,7 +912,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 			uint32 *buf = (uint32 *)buffer.getPixels();
 			const uint16 *bufPtr = (const uint16 *)(bitmap->getImageData(pic).getPixels());
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
-				uint16 val = READ_LE_UINT16(bufPtr + i);
+				uint16 val = bufPtr[i];
 				// fix the value if it is incorrectly set to the bitmap transparency color
 				if (val == 0xf81f) {
 					val = 0;
@@ -928,34 +928,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 		for (int i = 0; i < bitmap->_numImages; ++i) {
 			imgs[i] = tglGenBlitImage();
 			const Graphics::Surface &imageBuffer = bitmap->getImageData(i);
-#ifdef SCUMM_BIG_ENDIAN
-			if (g_grim->getGameType() == GType_MONKEY4 && imageBuffer.format.bytesPerPixel == 2) {
-				Graphics::Surface buffer;
-				buffer.create(bitmap->_width, bitmap->_height, imageBuffer.format);
-				uint16 *bufSrc = (uint16 *)const_cast<void *>(imageBuffer.getPixels());
-				uint16 *bufDst = (uint16 *)(buffer.getPixels());
-				for (int f = 0; f < (bitmap->_width * bitmap->_height); f++) {
-					uint16 val = SWAP_BYTES_16(bufSrc[f]);
-					bufDst[f] = val;
-				}
-				tglUploadBlitImage(imgs[i], buffer, buffer.format.ARGBToColor(0, 255, 0, 255), true);
-				buffer.free();
-			} else if (g_grim->getGameType() == GType_MONKEY4 && imageBuffer.format.bytesPerPixel == 4) {
-				Graphics::Surface buffer;
-				buffer.create(bitmap->_width, bitmap->_height, imageBuffer.format);
-				uint32 *bufSrc = (uint32 *)const_cast<void *>(imageBuffer.getPixels());
-				uint32 *bufDst = (uint32 *)(buffer.getPixels());
-				for (int f = 0; f < (bitmap->_width * bitmap->_height); f++) {
-					uint32 val = SWAP_BYTES_32(bufSrc[f]);
-					bufDst[f] = val;
-				}
-				tglUploadBlitImage(imgs[i], buffer, buffer.format.ARGBToColor(0, 255, 0, 255), true);
-				buffer.free();
-			} else
-#endif
-			{
-				tglUploadBlitImage(imgs[i], imageBuffer, imageBuffer.format.ARGBToColor(0, 255, 0, 255), true);
-			}
+			tglUploadBlitImage(imgs[i], imageBuffer, imageBuffer.format.ARGBToColor(0, 255, 0, 255), true);
 		}
 	}
 }
@@ -1109,10 +1082,21 @@ void GfxTinyGL::destroyTextObject(TextObject *text) {
 void GfxTinyGL::createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) {
 	texture->_texture = new TGLuint[1];
 	tglGenTextures(1, (TGLuint *)texture->_texture);
-	uint8 *texdata = new uint8[texture->_width * texture->_height * 4];
-	uint8 *texdatapos = texdata;
+
+	TGLuint *textures = (TGLuint *)texture->_texture;
+	tglBindTexture(TGL_TEXTURE_2D, textures[0]);
+
+	// TinyGL doesn't have issues with dark lines in EMI intro so doesn't need TGL_CLAMP_TO_EDGE
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
+
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
 
 	if (cmap != nullptr) { // EMI doesn't have colour-maps
+		uint8 *texdata = new uint8[texture->_width * texture->_height * 4];
+		uint8 *texdatapos = texdata;
+
 		for (int y = 0; y < texture->_height; y++) {
 			for (int x = 0; x < texture->_width; x++) {
 				uint8 col = *data;
@@ -1129,21 +1113,14 @@ void GfxTinyGL::createTexture(Texture *texture, const uint8 *data, const CMap *c
 				data++;
 			}
 		}
+
+		tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->_width, texture->_height, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, texdata);
+		delete[] texdata;
 	} else {
-		memcpy(texdata, data, texture->_width * texture->_height * texture->_bpp);
+		TGLint format = (texture->_bpp == 4) ? TGL_RGBA : TGL_RGB;
+
+		tglTexImage2D(TGL_TEXTURE_2D, 0, format, texture->_width, texture->_height, 0, format, TGL_UNSIGNED_BYTE, data);
 	}
-
-	TGLuint *textures = (TGLuint *)texture->_texture;
-	tglBindTexture(TGL_TEXTURE_2D, textures[0]);
-
-	// TinyGL doesn't have issues with dark lines in EMI intro so doesn't need TGL_CLAMP_TO_EDGE
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
-
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
-	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->_width, texture->_height, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, texdata);
-	delete[] texdata;
 }
 
 void GfxTinyGL::selectTexture(const Texture *texture) {
@@ -1168,6 +1145,10 @@ void GfxTinyGL::destroyTexture(Texture *texture) {
 		tglDeleteTextures(1, textures);
 		delete[] textures;
 	}
+}
+
+const Graphics::PixelFormat GfxTinyGL::getMovieFormat() const {
+	return g_system->getScreenFormat();
 }
 
 void GfxTinyGL::prepareMovieFrame(Graphics::Surface *frame) {

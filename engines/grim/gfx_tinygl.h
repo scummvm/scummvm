@@ -120,6 +120,7 @@ public:
 	void drawPolygon(const PrimitiveObject *primitive) override;
 	void drawDimPlane() override;
 
+	const Graphics::PixelFormat getMovieFormat() const override;
 	void prepareMovieFrame(Graphics::Surface *frame) override;
 	void drawMovieFrame(int offsetX, int offsetY) override;
 	void releaseMovieFrame() override;
