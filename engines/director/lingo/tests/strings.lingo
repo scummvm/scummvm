@@ -183,3 +183,9 @@ set the itemDelimiter to ":"
 scummvmAssertEqual(the last item of "one:two", "two")
 set the itemDelimiter to save
 scummvmAssertEqual(the last item of "onetwo", "onetwo")
+
+-- LB::b_offset
+set pos to offset("mov", "mov")
+scummvmAssertEqual(pos, 1)
+set pos to offset("mov", "MOV")
+scummvmAssertEqual(pos, 1)
