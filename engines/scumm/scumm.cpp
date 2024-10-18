@@ -312,11 +312,11 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	case Common::kRenderEGA:
 		// An actual use case for letting users change the render mode on Monkey Island 1 (Amiga):
 		// between revisions and localizations there were two variants of the executable:
-		// 
+		//
 		// - One which used the EGA palette for actors, resulting in
 		//   characters having the usual "sunburnt" effect; as an example,
 		//   one of the italian versions shipped with this executable.
-		// 
+		//
 		// - One which used a custom paler palette for actors, which might
 		//   be how most of the people experienced the game.
 		//
@@ -969,17 +969,6 @@ Common::Error ScummEngine::init() {
 		_useOriginalGUI = ConfMan.getBool("original_gui");
 	}
 
-	// Register original bug fixes as defaults...
-	ConfMan.registerDefault("enhancements", kEnhGameBreakingBugFixes | kEnhGrp1);
-	if (!ConfMan.hasKey("enhancements", _targetName)) {
-		if (ConfMan.hasKey("enable_enhancements", _targetName) && ConfMan.getBool("enable_enhancements", _targetName)) {
-			// Was the "enable_enhancements" key previously set to true?
-			// Convert it to a full activation of the enhancement flags then!
-			ConfMan.setInt("enhancements", kEnhGameBreakingBugFixes | kEnhGrp1 | kEnhGrp2 | kEnhGrp3 | kEnhGrp4);
-		}
-	}
-
-	_activeEnhancements = (int32)ConfMan.getInt("enhancements");
 	_enableAudioOverride = ConfMan.getBool("audio_override");
 
 	// Add default file directories.
@@ -2434,7 +2423,7 @@ Common::Error ScummEngine::go() {
 	// In ScummVM 2.7.0, original GUI support was added.
 	// Unfortunately it came with an issue: in v4-7 games users could
 	// overwrite autosaves (slot 0). Why? Because I forgot about autosaves :-)
-	// 
+	//
 	// To amend this from 2.9.0 onwards we check for savegames which are on slot 0
 	// and are not autosaves (the heuristic is not optimal, but it will have to do),
 	// and performs a mass rename. Unless the user has used all 99 slots, in which case
@@ -2673,7 +2662,7 @@ double ScummEngine::getTimerFrequency() {
 	// the song end when the visuals are done. Just two checks are being done on VAR_MUSIC_TIMER
 	// within the relevant scripts at the beginning of the intro, and then in the end there is
 	// this check which fails because at that point Var[151 Bit 8] seems to be deactivated:
-	// 
+	//
 	// if (Var[151 Bit 8]) {
 	//   breakHere();
 	//   VAR_RESULT = isSoundRunning(93);
@@ -2835,7 +2824,7 @@ load_game:
 	// - Set screen shake off
 	//
 	// to work and to be timed correctly.
-	// 
+	//
 	// Again, from the disasms, we call runAllScripts() on a loop,
 	// while the _saveLoadFlag is active.
 	if (_game.version == 7 && !isFTDOSDemo) {
@@ -3328,13 +3317,13 @@ void ScummEngine_v3::terminateSaveMenuScript() {
 		int chainedArgs[NUM_SCRIPT_LOCAL];
 		// We only needed the first slot (0), but just like getWordVararg(), let's not leave memory uninitalized...
 		for (int i = 0; i < NUM_SCRIPT_LOCAL; i++)
-			chainedArgs[i] = 0; 
+			chainedArgs[i] = 0;
 
 		int cur = _currentScript;
 		int scriptToChain = _game.platform == Common::kPlatformFMTowns ? 5 : 6;
-		
+
 		assert(cur != 0xFF);
-		
+
 		vm.slot[cur].number = 0;
 		vm.slot[cur].status = ssDead;
 		_currentScript = 0xFF;
