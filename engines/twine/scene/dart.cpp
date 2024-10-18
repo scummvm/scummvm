@@ -28,12 +28,9 @@
 namespace TwinE {
 
 void Dart::InitDarts() {
-#if 0
-	T_DART *ptrd;
-	uint8 *ptrbody;
-	uint32 t;
 	int32 x0, x1, y0, y1, z0, z1;
-	int32 size;
+#if 0
+	uint8 *ptrbody;
 	T_BODY_HEADER *ptr;
 
 	ptrbody = (uint8 *)GivePtrObjFix(BODY_3D_DART);
@@ -51,13 +48,16 @@ void Dart::InitDarts() {
 	y1 = ptr->YMax;
 	z0 = ptr->ZMin;
 	z1 = ptr->ZMax;
+#else
+	x0 = x1 = y0 = y1 = z0 = z1 = 0;
+#endif
 
 	// Average
-	size = ((x1 - x0) + (z1 - z0)) / 4;
+	int32 size = ((x1 - x0) + (z1 - z0)) / 4;
 
-	ptrd = ListDart;
+	T_DART *ptrd = ListDart;
 
-	for (t = 0; t < MAX_DARTS; t++, ptrd++) {
+	for (uint32 t = 0; t < MAX_DARTS; t++, ptrd++) {
 		ptrd->Body = BODY_3D_DART;
 
 		ptrd->XMin = -size;
@@ -70,7 +70,6 @@ void Dart::InitDarts() {
 		ptrd->Flags = 0;
 		ptrd->NumCube = -1;
 	}
-#endif
 }
 
 int32 Dart::GetDart() {

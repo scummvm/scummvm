@@ -35,12 +35,13 @@ enum BoneType : uint16 {
 	TYPE_ZOOM = 2,
 };
 
-struct BoneFrame {
+struct BoneFrame { // T_GROUP_INFO
 	BoneType type = BoneType::TYPE_ROTATE;
 	int16 x = 0; // alpha
 	int16 y = 0; // beta
 	int16 z = 0; // gamma
 };
+using T_GROUP_INFO = BoneFrame; // (lba2)
 
 struct KeyFrame {
 	uint16 length = 0;

@@ -201,9 +201,10 @@ bool BodyData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
 		loadLines(stream);
 		loadSpheres(stream);
 	} else {
+		// T_BODY_HEADER (lba2)
 		const uint32 flags = stream.readUint32LE();
 		animated = (flags & 2) != 0;
-		stream.skip(4);
+		stream.skip(4); // int16 size of header and int16 dummy
 		bbox.mins.x = stream.readSint32LE();
 		bbox.maxs.x = stream.readSint32LE();
 		bbox.mins.y = stream.readSint32LE();

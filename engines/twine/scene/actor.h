@@ -246,6 +246,9 @@ public:
 	// SizeSHit contains the number of the brick under the wagon - hack
 	int16 SizeSHit; // lba2 - always square
 
+	// T_OBJ_3D Obj; // lba2
+	// T_GROUP_INFO CurrentFrame[30]; // lba2
+
 	BoundingBox _boundingBox; // Xmin, YMin, Zmin, Xmax, Ymax, Zmax
 	RealValue realAngle;
 	AnimTimerDataStruct _animTimerData;

@@ -113,31 +113,30 @@ void Buggy::resetBuggy() {
 }
 
 void Buggy::takeBuggy() {
-#if 0
 	int32 sample;
 	ActorStruct *ptrobj = _engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX);
 	S_BUGGY *ptb = &ListBuggy[0];
 
 	ptb->SpeedRot = 1024;
-	ptb->LastTimer = TimerRefHR;
+	// TODO: ptb->LastTimer = TimerRefHR;
 
 	// TODO: ObjectClear(&ptrobj);
 
 	// Shielding in case the Buggy moved (being pushed, for example).
-	ptb->X = _engine->_scene->getActor(NUM_BUGGY)->_pos.x;
-	ptb->Y = _engine->_scene->getActor(NUM_BUGGY)->_pos.y;
-	ptb->Z = _engine->_scene->getActor(NUM_BUGGY)->_pos.z;
+	ptb->X = _engine->_scene->getActor(NUM_BUGGY)->_posObj.x;
+	ptb->Y = _engine->_scene->getActor(NUM_BUGGY)->_posObj.y;
+	ptb->Z = _engine->_scene->getActor(NUM_BUGGY)->_posObj.z;
 
-	ptrobj->_pos.x = ptb->X;
-	ptrobj->_pos.y = ptb->Y;
-	ptrobj->_pos.z = ptb->Z;
+	ptrobj->_posObj.x = ptb->X;
+	ptrobj->_posObj.y = ptb->Y;
+	ptrobj->_posObj.z = ptb->Z;
 	ptrobj->_beta = ptb->Beta;
 	_engine->_movements->clearRealAngle(ptrobj); // To avoid crushing the beta.
 
 	ptrobj->_workFlags.bMANUAL_INTER_FRAME = true;
 	ptrobj->_flags.bHasZBuffer = true;
 
-	_engine->_actor->setBehaviour(HeroBehaviourType::kBUGGY);
+	// TODO: _engine->_actor->setBehaviour(HeroBehaviourType::kBUGGY);
 
 	// Switch Buggy Scenario to NoBody.
 	_engine->_actor->initBody(BodyType::btNone, NUM_BUGGY);
@@ -155,14 +154,13 @@ void Buggy::takeBuggy() {
 
 	ptrobj->SampleVolume = 20;
 
-	ParmSampleVolume = ptrobj->SampleVolume;
+	// TODO: ParmSampleVolume = ptrobj->SampleVolume;
 
 	Gear = 0;
 	TimerGear = 0;
 
-	ptrobj->SampleAlways = _engine->_sound->playSample(SAMPLE_BUGGY, 4096, 0, 0,
-										   ptrobj->_pos.x, ptrobj->_pos.y, ptrobj->_pos.z);
-#endif
+	// TODO: ptrobj->SampleAlways = _engine->_sound->playSample(SAMPLE_BUGGY, 4096, 0, 0,
+	//    ptrobj->_posObj.x, ptrobj->_posObj.y, ptrobj->_posObj.z);
 }
 
 #if 0
@@ -222,6 +220,105 @@ void Buggy::leaveBuggy(HeroBehaviourType behaviour) {
 	_engine->_actor->posObjectAroundAnother(NUM_BUGGY, OWN_ACTOR_SCENE_INDEX);
 }
 
+#if 0
+
+struct T_HALF_POLY {
+	uint32 Bank : 4;       // coul bank poly
+	uint32 TexFlag : 2;    // flag texture 00 rien 01 triste 10 flat 11 gouraud
+	uint32 PolyFlag : 2;   // flag poly 00 rien 01 flat 10 gouraud 11 dither
+	uint32 SampleStep : 4; // sample pas twinsen
+	uint32 CodeJeu : 4;    // code jeu
+	uint32 Sens : 1;       // sens diagonale
+	uint32 Col : 1;
+	uint32 Dummy : 1;
+	uint32 IndexTex : 13; // index texture 8192
+}; // 1 long
+
+struct T_HALF_TEX {
+	uint16 Tx0;
+	uint16 Ty0;
+	uint16 Tx1;
+	uint16 Ty1;
+	uint16 Tx2;
+	uint16 Ty2;
+}; // 2 Longs
+
+int32 CalculAltitudeObjet(int32 x, int32 z, int32 cj) {
+	int32 y0, y1, y2, y3;
+	int32 dx, dz;
+	int32 dz0, dz1;
+
+	dx = x >> 9; // div512
+	dz = z >> 9; // div512
+
+	if ((dx < 0) || (dx > 63))
+		return -1;
+	if ((dz < 0) || (dz > 63))
+		return -1;
+
+	x &= 511;
+	z &= 511;
+
+	dz0 = dz * 65;
+	dz1 = dz0 + 65;
+
+	//---------------------------------------------------------------
+	if (cj == -1) {
+		T_HALF_POLY *mappoly = &MapPolyGround[dz * 64 * 2 + dx * 2];
+
+		if (mappoly->Sens == 0) // poly séparé par ligne reliant point 0 et 2
+		{
+			if (x >= z) // poly de droite
+			{
+				mappoly++;
+			}
+		} else // poly séparé par ligne reliant point 1 et 3
+		{
+			if (511 - x <= z) // poly de droite
+			{
+				mappoly++;
+			}
+		}
+
+		cj = (uint8)mappoly->CodeJeu;
+	}
+	//--------------------------------------------------------------
+
+	y0 = MapSommetY[dz0 + dx];
+	y1 = MapSommetY[dz1 + dx];
+	y2 = MapSommetY[dz1 + (dx + 1)];
+	y3 = MapSommetY[dz0 + (dx + 1)];
+
+	if (cj == CJ_FOOT_WATER OR cj == CJ_WATER) {
+		uint8 *i = &MapIntensity[dz0 + dx];
+
+		y0 += (i[0] >> 4) * -200;
+		y1 += (i[65] >> 4) * -200;
+		y2 += (i[65 + 1] >> 4) * -200;
+		y3 += (i[1] >> 4) * -200;
+	}
+	if (MapPolyGround[dz * 64 * 2 + dx * 2].Sens == 0) // poly séparé par ligne reliant point 0 et 2
+	{
+		if (x < z) // poly de gauche
+		{
+			return (y0 + ((y1 - y0) * z + (y2 - y1) * x) / 512);
+		} else // poly de droite
+		{
+			return (y0 + ((y3 - y0) * x + (y2 - y3) * z) / 512);
+		}
+	} else // poly séparé par ligne reliant point 1 et 3
+	{
+		if (511 - x > z) // poly de gauche
+		{
+			return (y0 + ((y3 - y0) * x + (y1 - y0) * z) / 512);
+		} else // poly de droite
+		{
+			return (y1 + ((y2 - y1) * x + (y3 - y2) * (511 - z)) / 512);
+		}
+	}
+}
+#endif
+
 void Buggy::doAnimBuggy(ActorStruct *ptrobj) {
 #if 0
 	int32 x1, y1, z1, yw;
@@ -236,16 +333,16 @@ void Buggy::doAnimBuggy(ActorStruct *ptrobj) {
 	// Trick to avoid crushing the groups in AffOneObject().
 	ObjectSetInterFrame(ptb3d);
 
-	if (ptrobj->_workFlags.bIsFalling || ptrobj->_workFlags.bUnk1000) {
+	if (ptrobj->_workFlags.bIsFalling || ptrobj->_workFlags.bANIM_MASTER_GRAVITY) {
 		return;
 	}
 
 	LongRotate(0, ptb->SpeedInc * 1024, ptb3d->Beta);
-	Nxw = ptb3d->X + X0 / 1024;
-	Nzw = ptb3d->Z + Z0 / 1024;
+	ptrobj->_processActor.x = ptb3d->X + X0 / 1024;
+	ptrobj->_processActor.z = ptb3d->Z + Z0 / 1024;
 
 	// Ideal altitude
-	yw = CalculAltitudeObjet(Nxw, Nzw, -1); // Ground Y for XZ
+	yw = CalculAltitudeObjet(ptrobj->_processActor.x, ptrobj->_processActor.z, -1); // Ground Y for XZ
 
 	// test altitude #2: Forbidden triangles
 
@@ -259,8 +356,8 @@ void Buggy::doAnimBuggy(ActorStruct *ptrobj) {
 	// front right wheel
 
 	LongRotate(-400, 400, ptb3d->Beta);
-	x = Nxw + X0;
-	z = Nzw + Z0;
+	x = ptrobj->_processActor.x + X0;
+	z = ptrobj->_processActor.z + Z0;
 	y = yw;
 
 	if (x >= 0 && x < 32768 && z >= 0 && z < 32768) {
@@ -283,8 +380,8 @@ void Buggy::doAnimBuggy(ActorStruct *ptrobj) {
 	// front left wheel
 
 	LongRotate(400, 400, ptb3d->Beta);
-	x = Nxw + X0;
-	z = Nzw + Z0;
+	x = ptrobj->_processActor.x + X0;
+	z = ptrobj->_processActor.z + Z0;
 	y = yw;
 
 	if (x >= 0 && x < 32768 && z >= 0 && z < 32768) {
@@ -307,8 +404,8 @@ void Buggy::doAnimBuggy(ActorStruct *ptrobj) {
 	// back left wheel
 
 	LongRotate(400, -350, ptb3d->Beta);
-	x = Nxw + X0;
-	z = Nzw + Z0;
+	x = ptrobj->_processActor.x + X0;
+	z = ptrobj->_processActor.z + Z0;
 	y = yw;
 
 	if (x >= 0 && x < 32768 && z >= 0 && z < 32768) {
@@ -331,8 +428,8 @@ void Buggy::doAnimBuggy(ActorStruct *ptrobj) {
 	// back right wheel
 
 	LongRotate(-400, -350, ptb3d->Beta);
-	x = Nxw + X0;
-	z = Nzw + Z0;
+	x = ptrobj->_processActor.x + X0;
+	z = ptrobj->_processActor.z + Z0;
 	y = yw;
 
 	if (x >= 0 && x < 32768 && z >= 0 && z < 32768) {
@@ -455,7 +552,7 @@ void Buggy::moveBuggy(ActorStruct *ptrobj) {
 		}
 	}
 
-	if (!flagattack && !ptrobj->_workFlags.bIsFalling && !ptrobj->_workFlags.bUnk1000) {
+	if (!flagattack && !ptrobj->_workFlags.bIsFalling && !ptrobj->_workFlags.bANIM_MASTER_GRAVITY) {
 		_engine->_movements->clearRealAngle(ptrobj);
 
 		if (_engine->_movements->_lastJoyFlag && (((Input & I_JOY) != LastMyJoy) || ((Input & I_FIRE) != LastMyFire))) {
@@ -487,7 +584,7 @@ void Buggy::moveBuggy(ActorStruct *ptrobj) {
 		}
 	}
 
-	if (!ptrobj->_workFlags.bIsFalling && !ptrobj->_workFlags.bUnk1000) {
+	if (!ptrobj->_workFlags.bIsFalling && !ptrobj->_workFlags.bANIM_MASTER_GRAVITY) {
 		// check speed command
 		if ((Input & I_UP) // accelerating
 			&& !flagattack) {
@@ -559,7 +656,7 @@ void Buggy::moveBuggy(ActorStruct *ptrobj) {
 			rotlevel = 0;
 		}
 
-		if (ptrobj->_staticFlags & SKATING) {
+		if (ptrobj->_staticFlags.bSKATING) {
 			ptb->Speed = 3000;
 			speedinc = ptb->Speed * deltatimer / 1000;
 		} else {
