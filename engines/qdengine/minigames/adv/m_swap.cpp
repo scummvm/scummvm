@@ -248,7 +248,7 @@ void Swap::swap(int item1, int item2, bool silent) {
 		}
 	}
 
-	::swap(nodes_[item1], nodes_[item2]);
+	SWAP(nodes_[item1], nodes_[item2]);
 	put(item1, !silent);
 	put(item2, !silent);
 

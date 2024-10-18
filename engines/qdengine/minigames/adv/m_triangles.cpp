@@ -253,7 +253,7 @@ void MinigameTriangle::beginSwapNodes(int pos1, int pos2) {
 	xassert(compatible(pos1, pos2));
 
 	if (pos1 > pos2)
-		swap(pos1, pos2);
+		SWAP(pos1, pos2);
 
 	animationState_ = FIRST_PHASE;
 	animationTimer_ = animationTime_;
@@ -376,7 +376,7 @@ bool MinigameTriangle::animate(float dt) {
 		updateNode(node1, animatedNodes_[1], destination(animatedNodes_[0], animatedNodes_[1]));
 		updateNode(node2, animatedNodes_[0], destination(animatedNodes_[1], animatedNodes_[0]));
 
-		swap(node1, node2);
+		SWAP(node1, node2);
 
 		animationTimer_ = animationTime_;
 		animationState_ = FIRD_PHASE;
@@ -423,7 +423,7 @@ void MinigameTriangle::swapNodes(int pos1, int pos2, bool silentQuick) {
 		releaseNodeBack(node1);
 		releaseNodeBack(node2);
 
-		swap(node1, node2);
+		SWAP(node1, node2);
 
 		updateNode(node1, pos1, 0, true);
 		updateNode(node2, pos2, 0, true);
@@ -560,7 +560,7 @@ int MinigameTriangle::orientation(int num) const {
 
 bool MinigameTriangle::compatible(int num1, int num2) const {
 	if (num1 > num2)
-		swap(num1, num2);
+		SWAP(num1, num2);
 
 	if (num1 < 0)
 		return false;

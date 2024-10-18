@@ -105,7 +105,7 @@ void ObjectContainer::releaseObject(QDObject& obj) {
 
 		runtime->hide(obj);
 		if (_current > 0)
-			swap(*it, _objects[--_current]);
+			SWAP(*it, _objects[--_current]);
 		obj = 0;
 	}
 }
