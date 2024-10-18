@@ -110,7 +110,7 @@ public:
 	bool parseNextEvent(uint16 chan, uint16 &duration, uint8 &note, bool &skip, bool &updateInstr) override;
 	uint16 getChanSetup() const override { return _chanSetup; }
 	bool isMusic() const override { return (_chanSetup == 0); }
-	bool restartSoundAfterLoad() const override { return true; }
+	bool restartSoundAfterLoad() const override { return isMusic(); }
 	bool ignoreMachineRating() const override { return false; }
 private:
 	const Common::SharedPtr<Instrument> *fetchInstrument(uint16 id) const;
@@ -412,11 +412,12 @@ const Common::SharedPtr<MacSndLoader::Instrument> *MonkeyMacSndLoader::fetchInst
 Common::WeakPtr<LoomMonkeyMacSnd> *LoomMonkeyMacSnd::_inst = nullptr;
 
 LoomMonkeyMacSnd::LoomMonkeyMacSnd(ScummEngine *vm, Audio::Mixer *mixer) : VblTaskClientDriver(), _vm(vm), _mixer(mixer), _curSound(0), _loader(nullptr),
-	_macstr(nullptr), _sdrv(nullptr), _vblTskProc(this, &VblTaskClientDriver::vblCallback), _songTimer(0), _songTimerInternal(0),
+	_macstr(nullptr), _sdrv(nullptr), _vblTskProc(this, &VblTaskClientDriver::vblCallback), _songTimer(0), _songTimerInternal(0), _disableFlags(0),
 	_machineRating(0), _selectedQuality(2), _effectiveChanConfig(0), _16bit(false), _idRangeMax(200), _sndChannel(0), _chanUse(0), _defaultChanConfig(0),
 	_chanConfigTable(nullptr), _chanPlaying(0), _curChanConfig(0), _curSynthType(0), _curSndType(Audio::Mixer::kPlainSoundType), _mixerThread(false),
 	_restartSound(0), _lastSndType(Audio::Mixer::kPlainSoundType), _chanCbProc(this, &MacLowLevelPCMDriver::CallbackClient::sndChannelCallback),
-	_curSoundSaveVar(0), _saveVersionChange(vm->_game.id == GID_MONKEY ? 115 : 114), _legacySaveUnits(vm->_game.id == GID_MONKEY ? 3 : 5) {
+	_curSoundSaveVar(0), _saveVersionChange(vm->_game.id == GID_MONKEY ? 115 : 114), _legacySaveUnits(vm->_game.id == GID_MONKEY ? 3 : 5),
+	_checkSound(vm->_game.id == GID_MONKEY ? _curSound : _curSoundSaveVar) { 
 	assert(_vm);
 	assert(_mixer);
 
@@ -519,7 +520,8 @@ void LoomMonkeyMacSnd::startSound(int id, int jumpToTick) {
 	if (_loader->blocked(ptr, size))
 		return;
 
-	stopActiveSound();
+	if (_curSound)
+		stopActiveSound();
 	if (_chanUse <= 1)
 		disposeAllChannels();
 
@@ -531,8 +533,14 @@ void LoomMonkeyMacSnd::startSound(int id, int jumpToTick) {
 		return;
 	}
 
-	//if (_sndDisableFlags && _loader->isMusic())
-	//	return;
+	if (_disableFlags) {
+		if (_loader->restartSoundAfterLoad()) {
+			_curSoundSaveVar = id;
+			_loader->unblock();
+		}
+		if (_loader->isMusic() || (_disableFlags & 2))
+			return;
+	}
 
 	_effectiveChanConfig = _loader->getChanSetup() ? _loader->getChanSetup() : _defaultChanConfig;
 	_curSndType = _loader->isMusic() ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
@@ -580,7 +588,7 @@ int LoomMonkeyMacSnd::getSoundStatus(int id) const {
 		return 0;
 	}
 	Common::StackLock lock(_mixer->mutex());
-	return (_curSound == id) ? 1 : 0;
+	return (_checkSound == id) ? 1 : 0;
 }
 
 void LoomMonkeyMacSnd::setQuality(int qual) {
@@ -641,14 +649,18 @@ void LoomMonkeyMacSnd::restoreAfterLoad() {
 		startSound(sound);
 }
 
-void LoomMonkeyMacSnd::enable() {
-	restoreAfterLoad();
+void LoomMonkeyMacSnd::toggleMusic(bool enable) {
+	if ((_disableFlags & 1) == (enable ? 0 : 1))
+		return;
+	_disableFlags ^= 1;
+	updateDisabledState();
 }
 
-void LoomMonkeyMacSnd::disable() {
-	int sound = _curSoundSaveVar;
-	stopActiveSound();
-	_curSoundSaveVar = sound;
+void LoomMonkeyMacSnd::toggleSoundEffects(bool enable) {
+	if ((_disableFlags & 2) == (enable ? 0 : 2))
+		return;
+	_disableFlags ^= 2;
+	updateDisabledState();
 }
 
 void LoomMonkeyMacSnd::vblCallback() {
@@ -879,6 +891,17 @@ void LoomMonkeyMacSnd::disposeAllChannels() {
 	}
 
 	_curChanConfig = 0;
+}
+
+void LoomMonkeyMacSnd::updateDisabledState() {
+	if (_disableFlags == 0) {
+		if (_curSoundSaveVar)
+			startSound(_curSoundSaveVar);
+	} else {
+		int sound = _curSoundSaveVar;
+		stopActiveSound();
+		_curSoundSaveVar = sound;
+	}
 }
 
 void LoomMonkeyMacSnd::detectQuality() {

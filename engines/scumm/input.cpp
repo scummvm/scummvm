@@ -244,10 +244,15 @@ void ScummEngine::parseEvent(Common::Event event) {
 				_mouse.y = _mouse.y * 4 / 7;
 			}
 
-		} else if (_textSurfaceMultiplier == 2 || _renderMode == Common::kRenderCGA_BW || _enableEGADithering) {
+		} else if ((_textSurfaceMultiplier == 2 || _macScreen) || _renderMode == Common::kRenderCGA_BW || _enableEGADithering) {
 			_mouse.x >>= 1;
 			_mouse.y >>= 1;
 		}
+
+		if (_useMacScreenCorrectHeight && _macScreen) {
+			_mouse.y -= _macScreenDrawOffset;
+		}
+
 		break;
 	case Common::EVENT_LBUTTONUP:
 		_leftBtnPressed &= ~msDown;
@@ -936,6 +941,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 	bool isSegaCD = _game.platform == Common::kPlatformSegaCD;
 	bool isNES = _game.platform == Common::kPlatformNES;
 	bool inSaveRoom = false;
+	bool canToggleSmoothing = _macScreen && _game.version > 3 && _game.heversion == 0;
 
 	// The following check is used by v3 games which have writable savegame names
 	// and also support some key combinations which in our case are mapped to SHIFT-<letter>
@@ -977,7 +983,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			} else {
 				// Force the cursor OFF...
 				int8 oldCursorState = _cursor.state;
-				_cursor.state = 0;
+				_cursor.state = (_game.id == GID_MONKEY && _game.platform == Common::kPlatformMacintosh) ? 1 : 0;
 				CursorMan.showMouse(_cursor.state > 0);
 				// "Game Paused.  Press SPACE to Continue."
 				if (_game.version > 4)
@@ -1169,7 +1175,9 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			if (isSegaCD) {
 				// We map the GMM to F5, while SPACE (which acts as our pause button) calls the original menu...
 				openMainMenuDialog();
-			} else {
+			} else if (_macGui) {
+				openMainMenuDialog(); // Mac games have their own menu so let's just call the GMM...
+			} else  {
 				showMainMenu();
 			}
 			return;
@@ -1229,7 +1237,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			} else if (_game.version >= 4 && lastKeyHit.keycode == Common::KEYCODE_j && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
 				if (_game.version == 4) {
 					showOldStyleBannerAndPause(getGUIString(gsRecalJoystick), 2, 90);
-				} else {
+				} else if (!_macGui) {
 					showBannerAndPause(0, 90, getGUIString(gsRecalJoystick));
 				}
 				return;
@@ -1243,7 +1251,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			if (_game.version >= 4 && lastKeyHit.keycode == Common::KEYCODE_m && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
 				if (_game.version == 4) {
 					showOldStyleBannerAndPause(getGUIString(gsMouseMode), 2, 90);
-				} else {
+				} else if (!_macGui) {
 					showBannerAndPause(0, 90, getGUIString(gsMouseMode));
 				}
 				return;
@@ -1404,6 +1412,8 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		if (VAR_CHARINC != 0xFF)
 			VAR(VAR_CHARINC) = 9 - _defaultTextSpeed;
 
+	} else if (canToggleSmoothing && (lastKeyHit.keycode == Common::KEYCODE_g && lastKeyHit.hasFlags(Common::KBD_ALT))) {
+		mac_toggleSmoothing();
 	} else {
 
 		if (lastKeyHit.keycode >= Common::KEYCODE_F1 &&

@@ -32,6 +32,7 @@
 #include "scumm/dialogs.h"
 #include "scumm/macgui/macgui_impl.h"
 #include "scumm/macgui/macgui_indy3.h"
+#include "scumm/music.h"
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
 
@@ -115,7 +116,7 @@ void MacIndy3Gui::Widget::fill(Common::Rect r) {
 	_gui->fill(r);
 }
 
-void MacIndy3Gui::Widget::drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const {
+void MacIndy3Gui::Widget::drawBitmap(Common::Rect r, const uint16 *bitmap, byte color) const {
 	_gui->drawBitmap(_surface, r, bitmap, color);
 }
 
@@ -138,7 +139,7 @@ void MacIndy3Gui::Widget::drawShadowBox(Common::Rect r) const {
 // The shadow frame is a rectangle with a highlight. It can be filled or
 // unfilled.
 
-void MacIndy3Gui::Widget::drawShadowFrame(Common::Rect r, Color shadowColor, Color fillColor) {
+void MacIndy3Gui::Widget::drawShadowFrame(Common::Rect r, byte shadowColor, byte fillColor) {
 	_surface->hLine(r.left, r.top, r.right - 1, kBlack);
 	_surface->hLine(r.left, r.bottom - 1, r.right - 1, kBlack);
 	_surface->vLine(r.left, r.top + 1, r.bottom - 2, kBlack);
@@ -315,7 +316,7 @@ void MacIndy3Gui::Button::draw() {
 
 		int x = (_bounds.left + (_bounds.width() - 1 - stringWidth) / 2) - 1;
 		int y = _bounds.top + 2;
-		Color color = _enabled ? kWhite : kBlack;
+		byte color = _enabled ? kWhite : kBlack;
 
 		if (hasTimer()) {
 			x++;
@@ -657,7 +658,7 @@ void MacIndy3Gui::Inventory::Slot::draw() {
 
 	Widget::draw();
 
-	Color fg, bg;
+	byte fg, bg;
 
 	if (hasTimer()) {
 		fg = kWhite;
@@ -863,7 +864,7 @@ void MacIndy3Gui::Inventory::ScrollButton::draw() {
 	};
 
 	const uint16 *arrow = (_direction == kScrollUp) ? upArrow : downArrow;
-	Color color = hasTimer() ? kBlack : kWhite;
+	byte color = hasTimer() ? kBlack : kWhite;
 
 	drawBitmap(_bounds, arrow, color);
 
@@ -880,7 +881,7 @@ MacIndy3Gui::MacIndy3Gui(ScummEngine *vm, const Common::Path &resourceFile) :
 	MacGuiImpl(vm, resourceFile), _visible(false) {
 
 	Common::Rect verbGuiArea(640, 112);
-	verbGuiArea.translate(0, 288 + 2 * _vm->_screenDrawOffset);
+	verbGuiArea.translate(0, 288 + _vm->_macScreenDrawOffset * 2);
 
 	_verbGuiTop = verbGuiArea.top;
 	_verbGuiSurface = _surface->getSubArea(verbGuiArea);
@@ -935,105 +936,6 @@ MacIndy3Gui::~MacIndy3Gui() {
 	for (auto &it: _widgets)
 		delete it._value;
 	_textArea.free();
-}
-
-
-void MacIndy3Gui::readStrings() {
-	Common::MacResManager resource;
-	resource.open(_resourceFile);
-	uint32 strsLen = resource.getResLength(MKTAG('S', 'T', 'R', 'S'), 0);
-	Common::SeekableReadStream *strsStream = resource.getResource(MKTAG('S', 'T', 'R', 'S'), 0);
-	uint8 *strsBlock = (uint8 *)malloc(strsLen);
-	strsStream->read(strsBlock, strsLen);
-
-	uint8 *strsData = strsBlock;
-
-	// Most of these are debug strings. We parse the entire STRS block anyway,
-	// for any future need.
-
-	// Debug strings
-	for (int i = 0; i < 6; i++) {
-		_strsStrings.emplace_back(readCString(strsData));
-	}
-
-	_strsStrings.emplace_back(readPascalString(strsData));
-	_strsStrings.emplace_back(readPascalString(strsData));
-
-	_strsStrings.emplace_back(readCString(strsData));
-	_strsStrings.emplace_back(readCString(strsData));
-
-	// "\x14", "About Indy...<B;(-", "MacScumm", "MacScumm"
-	for (int i = 0; i < 4; i++) {
-		_strsStrings.emplace_back(readPascalString(strsData));
-	}
-
-	// "Are you sure you want to restart this game from the beginning?"
-	_strsStrings.emplace_back(readCString(strsData));
-
-	// "Are you sure you want to quit?"
-	_strsStrings.emplace_back(readCString(strsData));
-
-	// "Open Game File...", "Open Game File...", "Save Game File as..."
-	// "Game file", "Save Game File as...", "Game file"
-	for (int i = 0; i < 6; i++) {
-		_strsStrings.emplace_back(readPascalString(strsData));
-	}
-
-	// "An error occured while saving.  The game was not saved."
-	_strsStrings.emplace_back(readCString(strsData));
-
-	// "Select a color"
-	_strsStrings.emplace_back(readPascalString(strsData));
-
-	// Debug strings
-	for (int i = 0; i < 67; i++) {
-		_strsStrings.emplace_back(readCString(strsData));
-	}
-
-	// "About", "about", "Indiana Jones and the Last Crusade", "The Graphic Adventure"
-	for (int i = 0; i < 4; i++) {
-		_strsStrings.emplace_back(readPascalString(strsData));
-	}
-
-	// "%sInterpreter version %c.%c.%c"
-	_strsStrings.emplace_back(readCString(strsData));
-
-	// All the other "About" dialog strings
-	for (int i = 0; i < 31; i++) {
-		_strsStrings.emplace_back(readPascalString(strsData));
-	}
-
-	// "ERROR #%d"
-	_strsStrings.emplace_back(readCString(strsData));
-
-	// Other debug strings...
-	for (int i = 0; i < 4; i++) {
-		_strsStrings.emplace_back(readPascalString(strsData));
-	}
-
-	for (int i = 0; i < 3; i++) {
-		_strsStrings.emplace_back(readCString(strsData));
-	}
-
-	_strsStrings.emplace_back(readPascalString(strsData));
-	_strsStrings.emplace_back(readPascalString(strsData));
-
-	// "Copyright (c) 1989 Lucasfilm Ltd. All Rights Reserved.", "rb, "wb", "wb"
-	for (int i = 0; i < 4; i++) {
-		_strsStrings.emplace_back(readCString(strsData));
-	}
-
-	// Other debug strings...
-	_strsStrings.emplace_back(readPascalString(strsData));
-
-	_strsStrings.emplace_back(readCString(strsData));
-
-	for (int i = 0; i < 5; i++) {
-		_strsStrings.emplace_back(readPascalString(strsData));
-	}
-
-	free(strsBlock);
-	delete strsStream;
 }
 
 void MacIndy3Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
@@ -1257,71 +1159,71 @@ void MacIndy3Gui::runAboutDialog() {
 
 	const char *subVers = (const char *)_vm->getStringAddress(24);
 
-	Common::String version = Common::String::format(_strsStrings[95].c_str(), subVers, '5', '1', '6');
+	Common::String version = Common::String::format(_strsStrings[kMSIAboutString3].c_str(), subVers, '5', '1', '6');
 
 	const TextLine page1[] = {
-		{ 0, 4, kStyleHeader, Graphics::kTextAlignCenter, _strsStrings[93].c_str() }, // "Indiana Jones and the Last Crusade"
-		{ 0, 22, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[94].c_str() }, // "The Graphic Adventure"
+		{ 0, 4, kStyleHeader1, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString1].c_str() }, // "Indiana Jones and the Last Crusade"
+		{ 0, 22, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString2].c_str() }, // "The Graphic Adventure"
 		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, version.c_str() }, // "Mac 1.7 8/17/90, Interpreter version 5.1.6"
-		{ 1, 82, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[96].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved."
+		{ 1, 82, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString4].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved."
 		TEXT_END_MARKER
 	};
 
 	const TextLine page2[] = {
-		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[97].c_str() }, // "Macintosh version by"
-		{ 70, 21, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[99].c_str() }, // "Eric Johnston"
-		{ 194, 32, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[98].c_str() }, // "and"
-		{ 216, 41, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[100].c_str() }, // "Dan Filner"
+		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString5].c_str() }, // "Macintosh version by"
+		{ 70, 21, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString7].c_str() }, // "Eric Johnston"
+		{ 194, 32, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString6].c_str() }, // "and"
+		{ 216, 41, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString8].c_str() }, // "Dan Filner"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page3[] = {
-		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[101].c_str() }, // "Macintosh scripting by"
-		{ 75, 21, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[103].c_str() }, // "Ron Baldwin"
-		{ 186, 32, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[102].c_str() }, // "and"
-		{ 214, 41, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[104].c_str() }, // "David Fox"
+		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString9].c_str() }, // "Macintosh scripting by"
+		{ 75, 21, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString11].c_str() }, // "Ron Baldwin"
+		{ 186, 32, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString10].c_str() }, // "and"
+		{ 214, 41, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString12].c_str() }, // "David Fox"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page4[] = {
-		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[105].c_str() }, // "Designed and scripted by"
-		{ 77, 24, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[106].c_str() }, // "Noah Falstein"
-		{ 134, 44, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[107].c_str() }, // "David Fox"
-		{ 167, 64, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[108].c_str() }, // "Ron Gilbert"
+		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString13].c_str() }, // "Designed and scripted by"
+		{ 77, 24, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString14].c_str() }, // "Noah Falstein"
+		{ 134, 44, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString15].c_str() }, // "David Fox"
+		{ 167, 64, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString16].c_str() }, // "Ron Gilbert"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page5[] = {
-		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[109].c_str() }, // "SCUMM Story System"
-		{ 1, 17, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[110].c_str() }, // "created by"
-		{ 107, 36, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[112].c_str() }, // "Ron Gilbert"
-		{ 170, 52, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[111].c_str() }, // "and"
-		{ 132, 66, kStyleHeader, Graphics::kTextAlignLeft, _strsStrings[113].c_str() }, // "Aric Wilmunder"
+		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString17].c_str() }, // "SCUMM Story System"
+		{ 1, 17, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString18].c_str() }, // "created by"
+		{ 107, 36, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString20].c_str() }, // "Ron Gilbert"
+		{ 170, 52, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString19].c_str() }, // "and"
+		{ 132, 66, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString21].c_str() }, // "Aric Wilmunder"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page6[] = {
-		{ 1, 19, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[114].c_str() }, // "Stumped?  Indy hint books are available!"
-		{ 86, 36, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[117].c_str() }, // "In the U.S. call"
-		{ 160, 37, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[115].c_str() }, // "1 (800) STAR-WARS"
-		{ 160, 46, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[119].c_str() }, // "that\xD5s  1 (800) 782-7927"
-		{ 90, 66, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[118].c_str() }, // "In Canada call"
-		{ 160, 67, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[116].c_str() }, // "1 (800) 828-7927"
+		{ 1, 19, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString22].c_str() }, // "Stumped?  Indy hint books are available!"
+		{ 86, 36, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString25].c_str() }, // "In the U.S. call"
+		{ 160, 37, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString23].c_str() }, // "1 (800) STAR-WARS"
+		{ 160, 46, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString27].c_str() }, // "that\xD5s  1 (800) 782-7927"
+		{ 90, 66, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString26].c_str() }, // "In Canada call"
+		{ 160, 67, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString24].c_str() }, // "1 (800) 828-7927"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page7[] = {
-		{ 1, 17, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[120].c_str() }, // "Need a hint NOW?  Having problems?"
-		{ 53, 31, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[122].c_str() }, // "For hints or technical support call"
-		{ 215, 32, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[121].c_str() }, // "1 (900) 740-JEDI"
-		{ 1, 46, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[123].c_str() }, // "The charge is 75\xA2 per minute."
-		{ 1, 56, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[124].c_str() }, // "(You must have your parents\xD5 permission to"
-		{ 1, 66, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[125].c_str() }, // "call this number if you are under 18.)"
+		{ 1, 17, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString28].c_str() }, // "Need a hint NOW?  Having problems?"
+		{ 53, 31, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString30].c_str() }, // "For hints or technical support call"
+		{ 215, 32, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString29].c_str() }, // "1 (900) 740-JEDI"
+		{ 1, 46, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString31].c_str() }, // "The charge is 75\xA2 per minute."
+		{ 1, 56, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString32].c_str() }, // "(You must have your parents\xD5 permission to"
+		{ 1, 66, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString33].c_str() }, // "call this number if you are under 18.)"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page8[] = {
-		{ 1, 1, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[126].c_str() }, // "Click to continue"
+		{ 1, 1, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString34].c_str() }, // "Click to continue"
 		TEXT_END_MARKER
 	};
 
@@ -1417,7 +1319,7 @@ void MacIndy3Gui::runAboutDialog() {
 				break;
 
 			case 8:
-				window->drawTextBox(Common::Rect(142, 106, 262, 119), page8, 3);
+				window->drawTextBox(Common::Rect(142, 106, 262, 119), page8, false, 3);
 				break;
 			}
 
@@ -1590,9 +1492,8 @@ bool MacIndy3Gui::runOptionsDialog() {
 	// 8 - Scrolling checkbox
 	// 9 - Text speed slider (manually created)
 
-	int sound = _vm->_mixer->isSoundTypeMuted(Audio::Mixer::SoundType::kSFXSoundType) ? 0 : 1;
-	int music = _vm->_mixer->isSoundTypeMuted(Audio::Mixer::SoundType::kPlainSoundType) ? 0 : 1;
-
+	int sound = (!ConfMan.hasKey("mute") || !ConfMan.getBool("mute")) ? 1 : 0;
+	int music = (!ConfMan.hasKey("music_mute") || !ConfMan.getBool("music_mute")) ? 1 : 0;
 	int scrolling = _vm->_snapScroll == 0;
 	int textSpeed = _vm->_defaultTextSpeed;
 
@@ -1636,7 +1537,6 @@ bool MacIndy3Gui::runOptionsDialog() {
 		_vm->_defaultTextSpeed = CLIP<int>(window->getWidgetValue(9), 0, 9);
 		ConfMan.setInt("original_gui_text_speed", _vm->_defaultTextSpeed);
 		_vm->setTalkSpeed(_vm->_defaultTextSpeed);
-		_vm->syncSoundSettings();
 
 		// SOUND&MUSIC ACTIVATION
 		// 0 - Sound&Music on
@@ -1644,13 +1544,17 @@ bool MacIndy3Gui::runOptionsDialog() {
 		// 2 - Sound&Music off
 		bool disableSound = window->getWidgetValue(2) == 0;
 		bool disableMusic = window->getWidgetValue(3) == 0;
-		_vm->_mixer->muteSoundType(Audio::Mixer::SoundType::kSFXSoundType, disableSound);
-		_vm->_mixer->muteSoundType(Audio::Mixer::SoundType::kPlainSoundType, disableMusic || disableSound);
+
+		_vm->_musicEngine->toggleMusic(!disableMusic);
+		_vm->_musicEngine->toggleSoundEffects(!disableSound);
+		ConfMan.setBool("music_mute", disableMusic);
+		ConfMan.setBool("mute", disableSound);
+		ConfMan.flushToDisk();
+
+		_vm->syncSoundSettings();
 
 		// SCROLLING ACTIVATION
-		_vm->_snapScroll = window->getWidgetValue(8) == 0;
-
-		ConfMan.flushToDisk();
+		_vm->_snapScroll = window->getWidgetValue(8) == 0;		
 	}
 
 	delete window;
@@ -1711,7 +1615,7 @@ bool MacIndy3Gui::isVerbGuiAllowed() const {
 	// really seems to be all that's needed.
 
 	VirtScreen *vs = &_vm->_virtscr[kVerbVirtScreen];
-	if (vs->topline != 144 + _vm->_screenDrawOffset || vs->h != 56 + _vm->_screenDrawOffset)
+	if (vs->topline != 144 || vs->h != 56)
 		return false;
 
 	// HACK: Don't allow the GUI during fist fights. Usually this is not a
