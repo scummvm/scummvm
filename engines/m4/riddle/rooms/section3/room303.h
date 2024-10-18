@@ -30,7 +30,7 @@ namespace Rooms {
 
 class Room303 : public Room {
 private:
-	int _val1 = 0;
+	bool _newExhibitsFlag = false;
 	bool _lonelyFlag = 0;
 	const char *_digiName1 = nullptr;
 	int _val4 = 0;
@@ -95,7 +95,7 @@ private:
 	static void priestTalkCallback(frac16 myMessage, machine *sender);
 	void priestTalk(bool flag, int trigger);
 	int getSize(const Common::String &assetName, int roomNum = -1);
-	void playSound(const Common::String &assetName, int trigger, int val1);
+	void playSound(const Common::String &assetName, int trigger1, int trigger2);
 
 public:
 	Room303() : Room() {}

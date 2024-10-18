@@ -68,7 +68,7 @@ void Room303::preload() {
 }
 
 void Room303::init() {
-	_val1 = _lonelyFlag = 0;
+	_newExhibitsFlag = _lonelyFlag = false;
 
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
 		_digiName1 = nullptr;
@@ -310,7 +310,7 @@ void Room303::daemon() {
 		break;
 
 	case 4:
-		sendWSMessage_150000(61);
+		sendWSMessage_150000(5);
 		break;
 
 	case 5:
@@ -577,7 +577,7 @@ void Room303::daemon() {
 		break;
 
 	case 134:
-		if (_val1)
+		if (_newExhibitsFlag)
 			kernel_timing_trigger(1, 172);
 		else
 			kernel_timing_trigger(60, 134);
@@ -662,7 +662,7 @@ void Room303::daemon() {
 		break;
 
 	case 170:
-		_val1 = 1;
+		_newExhibitsFlag = true;
 		break;
 
 	case 172:
@@ -2001,12 +2001,12 @@ void Room303::priestTalk(bool flag, int trigger) {
 	_G(globals)[GLB_TEMP_4] = 0xD << 24;
 	_G(globals)[GLB_TEMP_9] = _feng4 << 24;
 	_G(globals)[GLB_TEMP_10] = 0xD << 24;
-	_G(globals)[GLB_TEMP_5] = (flag ? 480 : 705) << 16;
+	_G(globals)[GLB_TEMP_5] = (flag ? 480 : 706) << 16;
 	_G(globals)[GLB_TEMP_6] = 1 << 24;
-	_G(globals)[V007] = _G(globals)[V006] *
-		((1 << 24) - _G(globals)[V002]) + _G(globals)[V004];
+	_G(globals)[GLB_TEMP_7] = MulSF16(_G(globals)[V006],
+		(1 << 24) - _G(globals)[V002]) + _G(globals)[V004];
 	_G(globals)[GLB_TEMP_8] = (flag ? 1 : 0) << 16;
-	_G(globals)[V008] = trigger << 16;
+	_G(globals)[GLB_TEMP_11] = trigger << 16;
 	_G(globals)[GLB_TEMP_12] = 0xdc28;
 
 	_priestTalk = TriggerMachineByHash(32, nullptr, -1, -1,
@@ -2020,16 +2020,16 @@ int Room303::getSize(const Common::String &assetName, int roomNum) {
 	return static_cast<int>((double)fileSize * 0.000090702946);
 }
 
-void Room303::playSound(const Common::String &assetName, int trigger, int val1) {
-	if (!val1)
-		_val1 = -1;
+void Room303::playSound(const Common::String &assetName, int trigger1, int trigger2) {
+	if (!trigger2)
+		trigger2 = -1;
 
 	int size = MAX(getSize(assetName), 0);
 	_G(globals)[GLB_TEMP_1] = size << 16;
-	_G(globals)[GLB_TEMP_2] = val1 << 16;
+	_G(globals)[GLB_TEMP_2] = trigger2 << 16;
 	sendWSMessage(0x200000, 0, _priestTalk, 0, nullptr, 1);
 
-	digi_play(assetName.c_str(), 1, 255, trigger);
+	digi_play(assetName.c_str(), 1, 255, trigger1);
 }
 
 void Room303::syncGame(Common::Serializer &s) {
