@@ -880,7 +880,7 @@ int MinigameManager::rnd(const Std::vector<float> &prob) const {
 	#ifdef _DEBUG
 	float sum = 0.f;
 
-	for (auto &ptr : prob)
+	for (auto &pit : prob)
 		sum += pit;
 
 	assert(abs(sum - 1.f) < 0.0001f);
