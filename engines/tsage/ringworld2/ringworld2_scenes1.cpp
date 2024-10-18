@@ -4717,7 +4717,7 @@ void Scene1625::signal() {
 }
 
 void Scene1625::process(Event &event) {
-	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE))
+	if ((event.eventType == EVENT_CUSTOM_ACTIONSTART) && (event.customType == kActionEscape))
 		event.handled = true;
 	else
 		Scene::process(event);

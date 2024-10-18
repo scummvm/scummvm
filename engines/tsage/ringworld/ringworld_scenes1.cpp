@@ -3412,11 +3412,11 @@ void Scene6100::remove() {
 void Scene6100::process(Event &event) {
 	Scene::process(event);
 
-	if (event.eventType == EVENT_KEYPRESS) {
+	if (event.eventType == EVENT_CUSTOM_ACTIONSTART) {
 		// Handle incremental turning speeds with arrow keys
-		if ((event.kbd.keycode == Common::KEYCODE_LEFT) || (event.kbd.keycode == Common::KEYCODE_KP4)) {
+		if (event.customType == kActionMoveLeftCrawlWest) {
 			_turnAmount = MIN(_turnAmount + 1, 8);
-		} else if ((event.kbd.keycode == Common::KEYCODE_RIGHT) || (event.kbd.keycode == Common::KEYCODE_KP6)) {
+		} else if (event.customType == kActionMoveRightCrawlEast) {
 			_turnAmount = MAX(_turnAmount - 1, -8);
 		}
 	}
