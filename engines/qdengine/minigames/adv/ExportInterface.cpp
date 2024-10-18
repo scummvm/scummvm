@@ -19,13 +19,16 @@
  *
  */
 
+#include "common/debug.h"
+
+#include "qdengine/qdengine.h"
 #include "qdengine/minigames/adv/common.h"
 #include "qdengine/minigames/adv/RunTime.h"
 
 namespace QDEngine {
 
 qdMiniGameInterface *open_game_interface(const char* name) {
-	dprintf("open_game_interface: %s, runtime%s\n", name, runtime ? "!=0" : "==0");
+	debugC(3, kDebugMinigames, "open_game_interface: %s, runtime%s", name, runtime ? "!=0" : "==0");
 
 	if (!runtime)
 		return runtime = new MinigameManager;
@@ -34,7 +37,7 @@ qdMiniGameInterface *open_game_interface(const char* name) {
 }
 
 bool close_game_interface(qdMiniGameInterface* game) {
-	dprintf("close_game_interface, runtime%s%s\n", runtime == game ? "==game" : "!=game", runtime ? "!=0" : "==0");
+	debugC(3, kDebugMinigames, "close_game_interface, runtime%s%s", runtime == game ? "==game" : "!=game", runtime ? "!=0" : "==0");
 
 	delete game;
 	if (game == runtime)

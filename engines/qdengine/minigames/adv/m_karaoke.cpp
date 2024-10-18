@@ -130,7 +130,7 @@ Karaoke::Karaoke() {
 	}
 
 	Parse(file, nodes_);
-	dprintf("read %d tags\n", nodes_.size());
+	debugC(2, kDebugMinigames, "read %d tags", nodes_.size());
 
 	startScreenTag_ = 0;
 	currentTag_ = 0;
@@ -189,7 +189,7 @@ void Karaoke::quant(float dt) {
 	}
 
 	if (runtime->mouseRightPressed())
-		dprintf("%s\n", outText.c_str());
+		debugC(2, kDebugMinigames, "%s", outText.c_str());
 
 	runtime->setText(controlName_, outText.c_str());
 }

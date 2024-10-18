@@ -86,7 +86,7 @@ Scores::Scores() {
 			return;
 		}
 		Level lvl(level);
-		dprintf("%d: ", level);
+		debugCN(2, kDebugMinigames, "%d: ", level);
 		while (xbuf.tell() < xbuf.size()) {
 			xbuf > ch;
 			if (isdigit(ch)) {
@@ -94,7 +94,7 @@ Scores::Scores() {
 				int game;
 				xbuf >= game;
 				lvl.games.push_back(game);
-				dprintf("%d, ", game);
+				debugCN(2, kDebugMinigames, "%d, ", game);
 				if (const MinigameData * data = runtime->getScore(level, game))
 					lvl.data.push_back(GameData(game, *data));
 			}
@@ -105,7 +105,7 @@ Scores::Scores() {
 		}
 		sort(lvl.data.begin(), lvl.data.end());
 		levels_.push_back(lvl);
-		dprintf("\n");
+		debugC(2, kDebugMinigames, "");
 	}
 	if (levels_.empty())
 		return;

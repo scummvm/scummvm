@@ -181,7 +181,7 @@ MinigameTriangle::~MinigameTriangle() {
 }
 
 void MinigameTriangle::Node::debugInfo() const {
-	dprintf("name:\"%s\" state:\"%s\" number:%d rotation:%d flip:%d isBack:%d highlight:%d animated:%d\n", obj().getName(), obj()->current_state_name(), number_, rotation_, flip, isBack_, highlight_, animated_);
+	debugC(5, kDebugMinigames, "name:\"%s\" state:\"%s\" number:%d rotation:%d flip:%d isBack:%d highlight:%d animated:%d", obj().getName(), obj()->current_state_name(), number_, rotation_, flip, isBack_, highlight_, animated_);
 }
 
 const char *MinigameTriangle::Node::getFaceStateName(int angle, bool selected, bool animated, bool instantaneous) {
@@ -273,9 +273,9 @@ void MinigameTriangle::beginSwapNodes(int pos1, int pos2) {
 	updateNode(node1, pos1, destination(pos1, pos2));
 	updateNode(node2, pos2, destination(pos1, pos2));
 
-	//dprintf(">>>>>>>>>>>>>>>>>>>>>>>>>>> change %d <> %d, 1st phase <<<<<<<<<<<<<<<<<<<<<<<<<<<<\n", pos1, pos2);
-	//nodes_[pos1].debugInfo();
-	//nodes_[pos2].debugInfo();
+	debugC(5, kDebugMinigames, ">>>>>>>>>>>>>>>>>>>>>>>>>>> change %d <> %d, 1st phase <<<<<<<<<<<<<<<<<<<<<<<<<<<<", pos1, pos2);
+	nodes_[pos1].debugInfo();
+	nodes_[pos2].debugInfo();
 }
 
 void MinigameTriangle::endSwapNodes(int pos1, int pos2) {
@@ -363,9 +363,9 @@ bool MinigameTriangle::animate(float dt) {
 		animationTimer_ = 0.f;
 		animationState_ = SECOND_PHASE;
 
-		//dprintf(">>>>>>>>>>>>>>>>>>>>>>>>>>> change %d <> %d, 2nd phase 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<\n", animatedNodes_[0], animatedNodes_[1]);
-		//node1.debugInfo();
-		//node2.debugInfo();
+		debugC(5, kDebugMinigames, ">>>>>>>>>>>>>>>>>>>>>>>>>>> change %d <> %d, 2nd phase 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<", animatedNodes_[0], animatedNodes_[1]);
+		node1.debugInfo();
+		node2.debugInfo();
 
 		return true;
 	}
@@ -381,9 +381,9 @@ bool MinigameTriangle::animate(float dt) {
 		animationTimer_ = animationTime_;
 		animationState_ = FIRD_PHASE;
 
-		//dprintf(">>>>>>>>>>>>>>>>>>>>>>>>>>> change %d <> %d, 2nd phase 2 <<<<<<<<<<<<<<<<<<<<<<<<<<<<\n", animatedNodes_[0], animatedNodes_[1]);
-		//node2.debugInfo();
-		//node1.debugInfo();
+		debugC(5, kDebugMinigames, ">>>>>>>>>>>>>>>>>>>>>>>>>>> change %d <> %d, 2nd phase 2 <<<<<<<<<<<<<<<<<<<<<<<<<<<<", animatedNodes_[0], animatedNodes_[1]);
+		node2.debugInfo();
+		node1.debugInfo();
 
 		return true;
 
@@ -398,7 +398,7 @@ bool MinigameTriangle::animate(float dt) {
 		updateNode(node2, animatedNodes_[1]);
 
 		endSwapNodes(animatedNodes_[0], animatedNodes_[1]);
-		//dprintf("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ change %d <> %d, finished ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n", animatedNodes_[0], animatedNodes_[1]);
+		debugC(5, kDebugMinigames, "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ change %d <> %d, finished ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", animatedNodes_[0], animatedNodes_[1]);
 
 		animatedNodes_[0] = -1;
 		animatedNodes_[1] = -1;
@@ -504,8 +504,8 @@ void MinigameTriangle::quant(float dt) {
 	}
 
 	if (runtime->mouseRightPressed() && mousePos >= 0) {
-		dprintf("----- DUBUG INFO FOR %d POSITION --------------------\n", mousePos);
-		dprintf("row = %d, begin = %d, orientation = %d\n", rowByNum(mousePos), rowBegin(rowByNum(mousePos)), orientation(mousePos));
+		debugC(2, kDebugMinigames, "----- DUBUG INFO FOR %d POSITION --------------------", mousePos);
+		debugC(2, kDebugMinigames, "row = %d, begin = %d, orientation = %d", rowByNum(mousePos), rowBegin(rowByNum(mousePos)), orientation(mousePos));
 		nodes_[mousePos].debugInfo();
 	}
 }

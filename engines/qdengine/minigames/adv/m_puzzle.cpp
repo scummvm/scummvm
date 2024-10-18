@@ -130,13 +130,13 @@ Puzzle::Puzzle() {
 		nodes_[0].angle = angles_ - 1;
 
 	size_ = runtime->getSize(nodes_[0].obj);
-	dprintf("size = (%6.2f,%6.2f)\n", size_.x, size_.y);
+	debugC(2, kDebugMinigames, "size = (%6.2f,%6.2f)", size_.x, size_.y);
 
 	depth_ = nodes_[0].obj.depth();
 
 	stackPlaceSize_ = getParameter("inventory_place_size", size_ * 1.2f);
 	xassert(stackPlaceSize_.x > 0.f && stackPlaceSize_.x < 500.f && stackPlaceSize_.y > 0.f && stackPlaceSize_.y < 500.f);
-	dprintf("stackPlaceSize = (%5.1f, %5.1f)\n", stackPlaceSize_.x, stackPlaceSize_.y);
+	debugC(2, kDebugMinigames, "stackPlaceSize = (%5.1f, %5.1f)", stackPlaceSize_.x, stackPlaceSize_.y);
 
 	prevPlace_ = -1;
 	pickedItem_ = -1;

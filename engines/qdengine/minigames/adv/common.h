@@ -27,8 +27,6 @@
 
 namespace QDEngine {
 
-void dprintf(const char *format, ...);
-
 typedef mgVect3<int> mgVect3i;
 
 using namespace std;

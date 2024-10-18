@@ -94,7 +94,7 @@ Swap::Swap() {
 
 	size_ = getParameter("element_size", runtime->getSize(nodes_[0].obj));
 	xassert(size_.x > 0.f && size_.y > 0.f && size_.x < 500.f && size_.y < 500.f);
-	dprintf("element_size = (%6.2f,%6.2f)\n", size_.x, size_.y);
+	debugC(2, kDebugMinigames, "element_size = (%6.2f,%6.2f)", size_.x, size_.y);
 
 	pickedItem_ = -1;
 	last1_ = last2_ = -1;
@@ -161,7 +161,6 @@ void Swap::quant(float dt) {
 			}
 		}
 
-	//dprintf("%d\n", hovPlace);
 	if (runtime->mouseLeftPressed()) {
 		if (hovPlace >= 0) { // клик по полю
 			if (pickedItem_ == -1) { // мышь пустая, берем
