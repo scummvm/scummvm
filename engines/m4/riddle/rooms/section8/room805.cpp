@@ -306,11 +306,94 @@ void Room805::daemonSub2(const char *seriesName1, const char *seriesName2) {
 }
 
 void Room805::daemonSub3(const char *seriesName1, const char *seriesName2) {
-	warning("STUB - Room805::daemonSub3");
+	switch (_G(kernel).trigger) {
+	case 30:
+		ws_turn_to_face(_G(my_walker), 3, 32);
+		ws_turn_to_face(_mcMach, 10, 31);
+
+		break;
+
+	case 31:
+		setGlobals1(_meiHandsBehindBack, 1, 17, 17, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_mcMach, -1);
+
+		break;
+
+	case 32:
+		setGlobals1(_ripPos3LookAround, 1, 19, 19, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 33);
+		if (strlen(seriesName1) > 0)
+			digi_play(seriesName1, 1, 255, -1, 997);
+		break;
+
+	case 33:
+		sendWSMessage_150000(_mcMach, -1);
+		setGlobals1(_meiSpookedPos2, 1, 13, 13, 13, 0, 13, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_mcMach, 34);
+		digi_play(seriesName2, 1, 255, -1, 997);
+
+		break;
+
+	case 34:
+		sendWSMessage_120000(_mcMach, 35);
+
+		break;
+
+	case 35:
+		sendWSMessage_150000(_mcMach, -1);
+		setGlobals1(_meiHandsBehindBack, 17, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_mcMach, 36);
+		sendWSMessage_140000(_G(my_walker), -1);
+
+		break;
+
+	case 36:
+		sendWSMessage_150000(_mcMach, 37);
+
+		break;
+
+	case 37:
+		ws_turn_to_face(_mcMach, 10, -1);
+		player_set_commands_allowed(true);
+
+		break;
+
+	default:
+		break;
+	}
 }
 
-void Room805::daemonSub4(const char *seriesName1, const char *seriesName2) {
-	warning("STUB - Room805::daemonSub4");
+void Room805::daemonSub4(const char *seriesName1) {
+	switch (_G(kernel).trigger) {
+	case 30:
+		ws_turn_to_face(_mcMach, 3, 31);
+
+		break;
+
+	case 31:
+		setGlobals1(_ripPos3LookAround, 1, 19, 19, 19, 0, 19, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 32);
+		break;
+
+	case 32:
+		digi_play(seriesName1, 1, 255, 33, 997);
+
+		break;
+
+	case 33:
+		sendWSMessage_120000(_G(my_walker), 34);
+
+		break;
+
+	case 34:
+		sendWSMessage_150000(_G(my_walker), -1);
+		player_set_commands_allowed(true);
+
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Room805::preload() {
@@ -463,7 +546,7 @@ void Room805::daemon() {
 
 				break;
 			case 3:
-				daemonSub4("COM056", nullptr);
+				daemonSub4("COM056");
 
 				break;
 			case 4:
