@@ -59,6 +59,10 @@ int InventoryItem_GetID(ScriptInvItem *scii) {
 	return scii->id;
 }
 
+const char *InventoryItem_GetScriptName(ScriptInvItem *scii) {
+	return CreateNewScriptString(_GP(game).invScriptNames[scii->id]);
+}
+
 ScriptInvItem *GetInvAtLocation(int xx, int yy) {
 	int hsnum = GetInvAt(xx, yy);
 	if (hsnum <= 0)
@@ -71,7 +75,7 @@ void InventoryItem_GetName(ScriptInvItem *iitem, char *buff) {
 }
 
 const char *InventoryItem_GetName_New(ScriptInvItem *invitem) {
-	return CreateNewScriptString(get_translation(_GP(game).invinfo[invitem->id].name));
+	return CreateNewScriptString(get_translation(_GP(game).invinfo[invitem->id].name.GetCStr()));
 }
 
 int InventoryItem_GetGraphic(ScriptInvItem *iitem) {
@@ -123,6 +127,14 @@ void set_inv_item_cursorpic(int invItemId, int piccy) {
 //
 //=============================================================================
 
+ScriptInvItem *InventoryItem_GetByName(const char *name) {
+	return static_cast<ScriptInvItem *>(ccGetScriptObjectAddress(name, _GP(ccDynamicInv).GetType()));
+}
+
+RuntimeScriptValue Sc_InventoryItem_GetByName(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_OBJ_POBJ(ScriptInvItem, _GP(ccDynamicInv), InventoryItem_GetByName, const char);
+}
+
 // ScriptInvItem *(int xx, int yy)
 RuntimeScriptValue Sc_GetInvAtLocation(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_OBJ_PINT2(ScriptInvItem, _GP(ccDynamicInv), GetInvAtLocation);
@@ -150,7 +162,7 @@ RuntimeScriptValue Sc_InventoryItem_GetPropertyText(void *self, const RuntimeScr
 
 // const char* (ScriptInvItem *scii, const char *property)
 RuntimeScriptValue Sc_InventoryItem_GetTextProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ_POBJ(ScriptInvItem, const char, _GP(myScriptStringImpl), InventoryItem_GetTextProperty, const char);
+	API_OBJCALL_OBJ_POBJ(ScriptInvItem, const char, _GP(myScriptStringImpl), InventoryItem_GetTextProperty, const char);
 }
 
 RuntimeScriptValue Sc_InventoryItem_SetProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -196,31 +208,40 @@ RuntimeScriptValue Sc_InventoryItem_GetID(void *self, const RuntimeScriptValue *
 	API_OBJCALL_INT(ScriptInvItem, InventoryItem_GetID);
 }
 
-// const char* (ScriptInvItem *invitem)
-RuntimeScriptValue Sc_InventoryItem_GetName_New(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ(ScriptInvItem, const char, _GP(myScriptStringImpl), InventoryItem_GetName_New);
+RuntimeScriptValue Sc_InventoryItem_GetScriptName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_OBJ(ScriptInvItem, const char, _GP(myScriptStringImpl), InventoryItem_GetScriptName);
 }
 
-
+// const char* (ScriptInvItem *invitem)
+RuntimeScriptValue Sc_InventoryItem_GetName_New(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_OBJ(ScriptInvItem, const char, _GP(myScriptStringImpl), InventoryItem_GetName_New);
+}
 
 void RegisterInventoryItemAPI() {
-	ccAddExternalStaticFunction("InventoryItem::GetAtScreenXY^2", Sc_GetInvAtLocation);
-	ccAddExternalObjectFunction("InventoryItem::IsInteractionAvailable^1", Sc_InventoryItem_CheckInteractionAvailable);
-	ccAddExternalObjectFunction("InventoryItem::GetName^1", Sc_InventoryItem_GetName);
-	ccAddExternalObjectFunction("InventoryItem::GetProperty^1", Sc_InventoryItem_GetProperty);
-	ccAddExternalObjectFunction("InventoryItem::GetPropertyText^2", Sc_InventoryItem_GetPropertyText);
-	ccAddExternalObjectFunction("InventoryItem::GetTextProperty^1", Sc_InventoryItem_GetTextProperty);
-	ccAddExternalObjectFunction("InventoryItem::SetProperty^2", Sc_InventoryItem_SetProperty);
-	ccAddExternalObjectFunction("InventoryItem::SetTextProperty^2", Sc_InventoryItem_SetTextProperty);
-	ccAddExternalObjectFunction("InventoryItem::RunInteraction^1", Sc_InventoryItem_RunInteraction);
-	ccAddExternalObjectFunction("InventoryItem::SetName^1", Sc_InventoryItem_SetName);
-	ccAddExternalObjectFunction("InventoryItem::get_CursorGraphic", Sc_InventoryItem_GetCursorGraphic);
-	ccAddExternalObjectFunction("InventoryItem::set_CursorGraphic", Sc_InventoryItem_SetCursorGraphic);
-	ccAddExternalObjectFunction("InventoryItem::get_Graphic", Sc_InventoryItem_GetGraphic);
-	ccAddExternalObjectFunction("InventoryItem::set_Graphic", Sc_InventoryItem_SetGraphic);
-	ccAddExternalObjectFunction("InventoryItem::get_ID", Sc_InventoryItem_GetID);
-	ccAddExternalObjectFunction("InventoryItem::get_Name", Sc_InventoryItem_GetName_New);
-	ccAddExternalObjectFunction("InventoryItem::set_Name", Sc_InventoryItem_SetName);
+	ScFnRegister invitem_api[] = {
+		{"InventoryItem::GetAtScreenXY^2", API_FN_PAIR(GetInvAtLocation)},
+		{"InventoryItem::GetByName", API_FN_PAIR(InventoryItem_GetByName)},
+
+		{"InventoryItem::IsInteractionAvailable^1", API_FN_PAIR(InventoryItem_CheckInteractionAvailable)},
+		{"InventoryItem::GetName^1", API_FN_PAIR(InventoryItem_GetName)},
+		{"InventoryItem::GetProperty^1", API_FN_PAIR(InventoryItem_GetProperty)},
+		{"InventoryItem::GetPropertyText^2", API_FN_PAIR(InventoryItem_GetPropertyText)},
+		{"InventoryItem::GetTextProperty^1", API_FN_PAIR(InventoryItem_GetTextProperty)},
+		{"InventoryItem::SetProperty^2", API_FN_PAIR(InventoryItem_SetProperty)},
+		{"InventoryItem::SetTextProperty^2", API_FN_PAIR(InventoryItem_SetTextProperty)},
+		{"InventoryItem::RunInteraction^1", API_FN_PAIR(InventoryItem_RunInteraction)},
+		{"InventoryItem::SetName^1", API_FN_PAIR(InventoryItem_SetName)},
+		{"InventoryItem::get_CursorGraphic", API_FN_PAIR(InventoryItem_GetCursorGraphic)},
+		{"InventoryItem::set_CursorGraphic", API_FN_PAIR(InventoryItem_SetCursorGraphic)},
+		{"InventoryItem::get_Graphic", API_FN_PAIR(InventoryItem_GetGraphic)},
+		{"InventoryItem::set_Graphic", API_FN_PAIR(InventoryItem_SetGraphic)},
+		{"InventoryItem::get_ID", API_FN_PAIR(InventoryItem_GetID)},
+		{"InventoryItem::get_Name", API_FN_PAIR(InventoryItem_GetName_New)},
+		{"InventoryItem::set_Name", API_FN_PAIR(InventoryItem_SetName)},
+		{"InventoryItem::get_ScriptName", API_FN_PAIR(InventoryItem_GetScriptName)},
+	};
+
+	ccAddExternalFunctions361(invitem_api);
 }
 
 } // namespace AGS3

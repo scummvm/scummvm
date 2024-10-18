@@ -19,19 +19,18 @@
  *
  */
 
-//include <string.h>
+#include "ags/engine/gui/my_listbox.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/game_setup.h"
 #include "ags/shared/ac/keycode.h"
 #include "ags/shared/font/fonts.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gui/gui_dialog.h"
-#include "ags/engine/gui/gui_dialog_internal_defs.h"
-#include "ags/engine/gui/my_listbox.h"
+#include "ags/engine/gui/gui_dialog_defines.h"
 
 namespace AGS3 {
 
-using AGS::Shared::Bitmap;
+using namespace AGS::Shared;
 
 MyListBox::MyListBox(int xx, int yy, int wii, int hii) {
 	x = xx;

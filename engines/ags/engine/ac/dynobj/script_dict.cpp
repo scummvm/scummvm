@@ -20,10 +20,11 @@
  */
 
 #include "ags/engine/ac/dynobj/script_dict.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 
 namespace AGS3 {
 
-int ScriptDictBase::Dispose(const char *address, bool force) {
+int ScriptDictBase::Dispose(void *address, bool force) {
 	Clear();
 	delete this;
 	return 1;
@@ -33,7 +34,11 @@ const char *ScriptDictBase::GetType() {
 	return "StringDictionary";
 }
 
-void ScriptDictBase::Serialize(const char *address, Stream *out) {
+size_t ScriptDictBase::CalcSerializeSize(const void * /*address*/) {
+	return CalcContainerSize();
+}
+
+void ScriptDictBase::Serialize(const void *address, Stream *out) {
 	out->WriteInt32(IsSorted());
 	out->WriteInt32(IsCaseSensitive());
 	SerializeContainer(out);

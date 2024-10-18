@@ -59,6 +59,9 @@ using AGS::Shared::String;
  // for options that may be changed at runtime (and later written back
  // to the config file).
 struct GameSetup {
+	static const size_t DefSpriteCacheSize = (128 * 1024); // 128 MB
+	static const size_t DefTexCacheSize = (128 * 1024);    // 128 MB
+
 	bool  audio_enabled;
 	String audio_driver;
 	int   textheight; // text height used on the certain built-in GUI // TODO: move out to game class?
@@ -87,8 +90,8 @@ struct GameSetup {
 	bool  mouse_ctrl_enabled;
 	MouseSpeedDef mouse_speed_def;
 	bool  RenderAtScreenRes; // render sprites at screen resolution, as opposed to native one
-	int   Supersampling;
-	size_t SpriteCacheSize = 0u;
+	size_t SpriteCacheSize = DefSpriteCacheSize;  // in KB
+	size_t TextureCacheSize = DefTexCacheSize;  // in KB
 	bool  clear_cache_on_room_change; // for low-end devices: clear resource caches on room change
 	bool  load_latest_save; // load latest saved game on launch
 	ScreenRotation rotation;

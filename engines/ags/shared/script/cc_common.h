@@ -54,6 +54,9 @@ struct ScriptError {
 void cc_clear_error();
 bool cc_has_error();
 const ScriptError &cc_get_error();
+// Returns callstack of the last recorded script error, or a callstack
+// of a current execution point, if no script error is currently saved in memory.
+AGS::Shared::String cc_get_err_callstack(int max_lines = INT_MAX);
 void cc_error(const char *, ...);
 void cc_error(const ScriptError &err);
 // Project-dependent script error formatting

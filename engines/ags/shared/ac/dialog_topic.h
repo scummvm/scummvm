@@ -65,12 +65,15 @@ using namespace AGS; // FIXME later
 struct DialogTopic {
 	char          optionnames[MAXTOPICOPTIONS][150];
 	int32_t       optionflags[MAXTOPICOPTIONS];
-	unsigned char *optionscripts;
 	short         entrypoints[MAXTOPICOPTIONS];
 	short         startupentrypoint;
 	short         codesize;
 	int           numoptions;
 	int           topicFlags;
+	// NOTE: optionscripts is an unknown data from before AGS 2.5
+#ifdef OBSOLETE
+	std::vector<uint8_t> optionscripts;
+#endif
 
 	void ReadFromFile(Shared::Stream *in);
 

@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/std/memory.h"
 #include "ags/shared/core/platform.h"
 #include "ags/engine/gfx/gfx_util.h"
 #include "ags/engine/gfx/blender.h"
@@ -100,40 +101,16 @@ void DrawSpriteWithTransparency(Bitmap *ds, Bitmap *sprite, int x, int y, int al
 		return;
 	}
 
-	Bitmap hctemp;
 	const int surface_depth = ds->GetColorDepth();
 	const int sprite_depth = sprite->GetColorDepth();
 
-	if (sprite_depth < surface_depth) {
-		// If sprite is lower color depth than destination surface, e.g.
-		// 8-bit sprites drawn on 16/32-bit surfaces.
-		if (sprite_depth == 8 && surface_depth >= 24) {
-			// 256-col sprite -> truecolor background
-			// this is automatically supported by allegro, no twiddling needed
-			ds->Blit(sprite, x, y, kBitmap_Transparency);
-			return;
-		}
-
-		// 256-col sprite -> hi-color background, or
-		// 16-bit sprite -> 32-bit background
-		hctemp.CreateCopy(sprite, surface_depth);
-		if (sprite_depth == 8) {
-			// only do this for 256-col -> hi-color, cos the Blit call converts
-			// transparency for 16->32 bit
-			color_t mask_color = hctemp.GetMaskColor();
-			for (int scan_y = 0; scan_y < hctemp.GetHeight(); ++scan_y) {
-				// we know this must be 1 bpp source and 2 bpp pixel destination
-				const uint8_t *src_scanline = sprite->GetScanLine(scan_y);
-				uint16_t *dst_scanline = (uint16_t *)hctemp.GetScanLineForWriting(scan_y);
-				for (int scan_x = 0; scan_x < hctemp.GetWidth(); ++scan_x) {
-					if (src_scanline[scan_x] == 0) {
-						dst_scanline[scan_x] = mask_color;
-					}
-				}
-			}
-		}
-
-		sprite = &hctemp;
+	// Allegro does not support masked blit or blend between different formats
+	// *except* when drawing 8-bit sprites onto a higher dest.
+	std::unique_ptr<Bitmap> conv_bm;
+	if ((surface_depth != sprite_depth) && (sprite_depth > 8)) {
+		// use ConvertBitmap in order to keep mask pixels
+		conv_bm.reset(ConvertBitmap(sprite, surface_depth));
+		sprite = conv_bm.get();
 	}
 
 	if ((alpha < 0xFF) && (surface_depth > 8) && (sprite_depth > 8)) {

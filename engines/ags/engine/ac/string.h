@@ -23,12 +23,17 @@
 #define AGS_ENGINE_AC_STRING_H
 
 //include <stdarg.h>
-#include "ags/engine/ac/dynobj/cc_dynamic_object.h"
+#include "ags/engine/ac/dynobj/cc_script_object.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 
 // Check that a supplied buffer from a text script function was not null
 #define VALIDATE_STRING(strin) if (!strin) quit("!String argument was null: make sure you pass a string buffer")
+
+const char *CreateNewScriptString(const char *text);
+inline const char *CreateNewScriptString(const AGS::Shared::String &text) { return CreateNewScriptString(text.GetCStr()); }
+char *CreateNewScriptString(size_t buf_len); // FIXME, unsafe to expose raw buf like this
 
 int String_IsNullOrEmpty(const char *thisString);
 const char *String_Copy(const char *srcString);
@@ -49,15 +54,31 @@ int StrContains(const char *s1, const char *s2);
 
 //=============================================================================
 
-const char *CreateNewScriptString(const char *fromText, bool reAllocate = true);
-DynObjectRef CreateNewScriptStringObj(const char *fromText, bool reAllocate = true);
 class SplitLines;
 // Break up the text into lines restricted by the given width;
 // returns number of lines, or 0 if text cannot be split well to fit in this width.
 // Does additional processing, like removal of voice-over tags and text reversal if right-to-left text display is on.
-size_t break_up_text_into_lines(const char *todis, SplitLines &lines, int wii, int fonnt, size_t max_lines = -1);
-void check_strlen(char *ptt);
-void my_strncpy(char *dest, const char *src, int len);
+// Optionally applies text direction rules (apply_direction param), otherwise leaves left-to-right always.
+size_t break_up_text_into_lines(const char *todis, bool apply_direction, SplitLines &lines, int wii, int fonnt, size_t max_lines = -1);
+inline size_t break_up_text_into_lines(const char *todis, SplitLines &lines, int wii, int fonnt, size_t max_lines = -1) {
+	return break_up_text_into_lines(todis, true, lines, wii, fonnt, max_lines);
+}
+// Checks the capacity of an old-style script string buffer.
+// Commonly this should return MAX_MAXSTRLEN, but there are
+// cases when the buffer is a field inside one of the game structs,
+// in which case this returns that field's capacity.
+size_t check_scstrcapacity(const char *ptr);
+// This function reports that a legacy script string was modified,
+// and checks if it is an object's field in order to sync with any contemporary
+// properties.
+void commit_scstr_update(const char *ptr);
+// Tries if the input string contains a voice-over token ("&N"),
+// *optionally* fills the voice_num value (if the valid int pointer is passed),
+// and returns the pointer to the text portion after the token.
+// If returned pointer equals input pointer, that means that there was no token.
+// voice_num must be > 0 for a valid token, it's assigned 0 if no token was found,
+// or if there have been a parsing error.
+const char *parse_voiceover_token(const char *text, int *voice_num);
 
 } // namespace AGS3
 

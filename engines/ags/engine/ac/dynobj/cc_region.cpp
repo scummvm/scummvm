@@ -21,6 +21,7 @@
 
 #include "ags/engine/ac/dynobj/cc_region.h"
 #include "ags/engine/ac/dynobj/script_region.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/game/room_struct.h"
 #include "ags/shared/util/stream.h"
@@ -35,14 +36,14 @@ const char *CCRegion::GetType() {
 	return "Region";
 }
 
-size_t CCRegion::CalcSerializeSize() {
+size_t CCRegion::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t);
 }
 
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
-void CCRegion::Serialize(const char *address, Stream *out) {
-	const ScriptRegion *shh = (const ScriptRegion *)address;
+void CCRegion::Serialize(const void *address, Stream *out) {
+	const ScriptRegion *shh = static_cast<const ScriptRegion *>(address);
 	out->WriteInt32(shh->id);
 }
 

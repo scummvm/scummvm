@@ -20,6 +20,7 @@
  */
 
 #include "ags/engine/ac/dynobj/script_camera.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/shared/util/bbop.h"
 #include "ags/shared/util/stream.h"
@@ -36,18 +37,18 @@ const char *ScriptCamera::GetType() {
 	return "Camera2";
 }
 
-int ScriptCamera::Dispose(const char *address, bool force) {
+int ScriptCamera::Dispose(void *address, bool force) {
 	// Note that ScriptCamera is a reference to actual Camera object,
 	// and this deletes the reference, while camera may remain in GameState.
 	delete this;
 	return 1;
 }
 
-size_t ScriptCamera::CalcSerializeSize() {
+size_t ScriptCamera::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t);
 }
 
-void ScriptCamera::Serialize(const char *address, Stream *out) {
+void ScriptCamera::Serialize(const void *address, Stream *out) {
 	out->WriteInt32(_id);
 }
 

@@ -23,6 +23,7 @@
 #define AGS_SHARED_AC_MOUSE_CURSOR_H
 
 #include "ags/shared/core/types.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 
@@ -39,7 +40,12 @@ using namespace AGS; // FIXME later
 #define MCF_STANDARD 4
 #define MCF_HOTSPOT  8  // only animate when over hotspot
 
-#define MAX_CURSOR_NAME_LENGTH 10
+#define LEGACY_MAX_CURSOR_NAME_LENGTH 10
+
+enum CursorSvgVersion {
+	kCursorSvgVersion_Initial = 0,
+	kCursorSvgVersion_36016 = 1, // animation delay
+};
 
 // IMPORTANT: exposed to plugin API as AGSCursor!
 // do not change topmost fields, unless planning breaking compatibility.
@@ -47,11 +53,14 @@ struct MouseCursor {
 	int   pic = 0;
 	short hotx = 0, hoty = 0;
 	short view = -1;
-	char  name[MAX_CURSOR_NAME_LENGTH]{};
-	char  flags = 0;
+	// This is a deprecated name field, but must stay here for compatibility
+	// with the plugin API (unless the plugin interface is reworked)
+	char legacy_name[LEGACY_MAX_CURSOR_NAME_LENGTH]{};
+	char flags = 0;
 
-	// up to here is a part of plugin API
-	int   animdelay = 5;
+	// Following fields are not part of the plugin API
+	Shared::String name;
+	int animdelay = 5;
 
 	MouseCursor() {}
 

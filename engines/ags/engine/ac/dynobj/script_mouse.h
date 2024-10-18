@@ -19,14 +19,24 @@
  *
  */
 
+//=============================================================================
+//
+// Wrapper around script "Mouse" struct, managing access to its variables.
+//
+//=============================================================================
 #ifndef AGS_ENGINE_DYNOBJ__SCRIPTMOUSE_H
 #define AGS_ENGINE_DYNOBJ__SCRIPTMOUSE_H
 
+#include "ags/engine/ac/dynobj/cc_ags_dynamic_object.h"
+
 namespace AGS3 {
 
-// The text script's "mouse" struct
-struct ScriptMouse {
-	int x, y;
+struct ScriptMouse : public AGSCCStaticObject {
+	int x;
+	int y;
+
+	int32_t ReadInt32(void *address, intptr_t offset) override;
+	void WriteInt32(void *address, intptr_t offset, int32_t val) override;
 };
 
 } // namespace AGS3

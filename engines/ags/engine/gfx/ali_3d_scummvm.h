@@ -91,13 +91,13 @@ public:
 		_stretchToHeight = _height;
 	}
 
-	ALSoftwareBitmap(Bitmap *bmp, bool opaque, bool hasAlpha) {
+	ALSoftwareBitmap(Bitmap *bmp, bool has_alpha, bool opaque) {
 		_bmp = bmp;
 		_width = bmp->GetWidth();
 		_height = bmp->GetHeight();
 		_colDepth = bmp->GetColorDepth();
 		_opaque = opaque;
-		_hasAlpha = hasAlpha;
+		_hasAlpha = has_alpha;
 		_stretchToWidth = _width;
 		_stretchToHeight = _height;
 	}
@@ -163,6 +163,12 @@ public:
 	const char *GetDriverID() override {
 		return "Software";
 	}
+
+	bool RequiresFullRedrawEachFrame() override { return false; }
+	bool HasAcceleratedTransform() override { return false; }
+	bool UsesMemoryBackBuffer() override { return true; }
+	bool ShouldReleaseRenderTargets() override { return false; }
+
 	const char *GetDriverName() override {
 		return "ScummVM 2D renderer";
 	}
@@ -180,19 +186,23 @@ public:
 	// Clears the screen rectangle. The coordinates are expected in the **native game resolution**.
 	void ClearRectangle(int x1, int y1, int x2, int y2, RGB *colorToUse) override;
 	int  GetCompatibleBitmapFormat(int color_depth) override;
+	size_t GetAvailableTextureMemory() override {
+		// not using textures for sprites anyway
+		return 0;
+	}
 	IDriverDependantBitmap *CreateDDB(int width, int height, int color_depth, bool opaque) override;
-	IDriverDependantBitmap *CreateDDBFromBitmap(Bitmap *bitmap, bool hasAlpha, bool opaque) override;
+	IDriverDependantBitmap *CreateDDBFromBitmap(Bitmap *bitmap, bool has_alpha, bool opaque) override;
 	IDriverDependantBitmap *CreateRenderTargetDDB(int width, int height, int color_depth, bool opaque) override;
-	void UpdateDDBFromBitmap(IDriverDependantBitmap *ddb, Bitmap *bitmap, bool hasAlpha) override;
+	void UpdateDDBFromBitmap(IDriverDependantBitmap *ddb, Bitmap *bitmap, bool has_alpha) override;
 	void DestroyDDB(IDriverDependantBitmap *ddb) override;
 
 	IDriverDependantBitmap *GetSharedDDB(uint32_t /*sprite_id*/,
-		Bitmap *bitmap, bool hasAlpha, bool opaque) override {
+		Bitmap *bitmap, bool has_alpha, bool opaque) override {
 		// Software renderer does not require a texture cache, because it uses bitmaps directly
-		return CreateDDBFromBitmap(bitmap, hasAlpha, opaque);
+		return CreateDDBFromBitmap(bitmap, has_alpha, opaque);
 	}
 
-	void UpdateSharedDDB(uint32_t /*sprite_id*/, Bitmap */*bitmap*/, bool /*hasAlpha*/, bool /*opaque*/) override {
+	void UpdateSharedDDB(uint32_t /*sprite_id*/, Bitmap */*bitmap*/, bool /*has_alpha*/, bool /*opaque*/) override {
 		/* do nothing */
 	}
 	void ClearSharedDDB(uint32_t /*sprite_id*/) override {
@@ -207,24 +217,18 @@ public:
 	void RenderToBackBuffer() override;
 	void Render() override;
 	void Render(int xoff, int yoff, Shared::GraphicFlip flip) override;
-	bool GetCopyOfScreenIntoBitmap(Bitmap *destination, bool at_native_res, GraphicResolution *want_fmt) override;
-	void FadeOut(int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) override;
-	void FadeIn(int speed, PALETTE pal, int targetColourRed, int targetColourGreen, int targetColourBlue) override;
-	void BoxOutEffect(bool blackingOut, int speed, int delay) override;
+	bool GetCopyOfScreenIntoBitmap(Bitmap *destination, const Rect *src_rect, bool at_native_res, GraphicResolution *want_fmt,
+								   uint32_t batch_skip_filter = 0u) override;
+	void FadeOut(int speed, int targetColourRed, int targetColourGreen, int targetColourBlue,
+				 uint32_t batch_skip_filter = 0u) override;
+	void FadeIn(int speed, PALETTE pal, int targetColourRed, int targetColourGreen, int targetColourBlue,
+				uint32_t batch_skip_filter = 0u) override;
+	void BoxOutEffect(bool blackingOut, int speed, int delay, uint32_t batch_skip_filter = 0u) override;
 	bool SupportsGammaControl() override;
 	void SetGamma(int newGamma) override;
 	void UseSmoothScaling(bool /*enabled*/) override {}
 	bool DoesSupportVsyncToggle() override;
-	void RenderSpritesAtScreenResolution(bool /*enabled*/, int /*supersampling*/) override {}
-	bool RequiresFullRedrawEachFrame() override {
-		return false;
-	}
-	bool HasAcceleratedTransform() override {
-		return false;
-	}
-	bool UsesMemoryBackBuffer() override {
-		return true;
-	}
+	void RenderSpritesAtScreenResolution(bool /*enabled*/) override {}
 	Bitmap *GetMemoryBackBuffer() override;
 	void SetMemoryBackBuffer(Bitmap *backBuffer) override;
 	Bitmap *GetStageBackBuffer(bool mark_dirty) override;

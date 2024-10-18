@@ -74,7 +74,7 @@ void DrawingSurface::DrawCircle(ScriptMethodParams &params) {
 
 void DrawingSurface::DrawImage(ScriptMethodParams &params) {
 	PARAMS7(ScriptDrawingSurface *, sds, int, xx, int, yy, int, slot, int, trans, int, width, int, height);
-	AGS3::DrawingSurface_DrawImage(sds, xx, yy, slot, trans, width, height);
+	AGS3::DrawingSurface_DrawImage6(sds, xx, yy, slot, trans, width, height);
 }
 
 void DrawingSurface::DrawLine(ScriptMethodParams &params) {
@@ -116,7 +116,7 @@ void DrawingSurface::DrawStringWrapped(ScriptMethodParams &params) {
 
 void DrawingSurface::DrawSurface(ScriptMethodParams &params) {
 	PARAMS3(ScriptDrawingSurface *, target, ScriptDrawingSurface *, source, int, translev);
-	AGS3::DrawingSurface_DrawSurface(target, source, translev);
+	AGS3::DrawingSurface_DrawSurface2(target, source, translev);
 }
 
 void DrawingSurface::DrawTriangle(ScriptMethodParams &params) {

@@ -53,10 +53,10 @@ bool GUITextBox::IsBorderShown() const {
 
 Rect GUITextBox::CalcGraphicRect(bool clipped) {
 	if (clipped)
-		return RectWH(0, 0, Width, Height);
+		return RectWH(0, 0, _width, _height);
 
 	// TODO: need to find a way to cache text position, or there'll be some repetition
-	Rect rc = RectWH(0, 0, Width, Height);
+	Rect rc = RectWH(0, 0, _width, _height);
 	Point text_at(1 + get_fixed_pixel_size(1), 1 + get_fixed_pixel_size(1));
 	Rect text_rc = GUI::CalcTextGraphicalRect(Text.GetCStr(), Font, text_at);
 	if (IsGUIEnabled(this)) {
@@ -75,9 +75,9 @@ void GUITextBox::Draw(Bitmap *ds, int x, int y) {
 	color_t text_color = ds->GetCompatibleColor(TextColor);
 	color_t draw_color = ds->GetCompatibleColor(TextColor);
 	if (IsBorderShown()) {
-		ds->DrawRect(RectWH(x, y, Width, Height), draw_color);
+		ds->DrawRect(RectWH(x, y, _width, _height), draw_color);
 		if (get_fixed_pixel_size(1) > 1) {
-			ds->DrawRect(Rect(x + 1, y + 1, x + Width - get_fixed_pixel_size(1), y + Height - get_fixed_pixel_size(1)), draw_color);
+			ds->DrawRect(Rect(x + 1, y + 1, x + _width - get_fixed_pixel_size(1), y + _height - get_fixed_pixel_size(1)), draw_color);
 		}
 	}
 	DrawTextBoxContents(ds, x, y, text_color);
@@ -109,14 +109,14 @@ void GUITextBox::OnKeyPress(const KeyInput &ki) {
 
 	if (ki.UChar == 0)
 		return; // not a textual event
-	if ((ki.UChar >= 128) && (!font_supports_extended_characters(Font)))
-		return; // unsupported letter
-
-	(get_uformat() == U_UTF8) ?
-		Text.Append(ki.Text) :
-		Text.AppendChar(ki.UChar);
+	if (get_uformat() == U_UTF8)
+		Text.Append(ki.Text); // proper unicode char
+	else if (ki.UChar < 256)
+		Text.AppendChar(static_cast<uint8_t>(ki.UChar)); // ascii/ansi-range char in ascii mode
+	else
+		return; // char from an unsupported range, don't print but still report as handled
 	// if the new string is too long, remove the new character
-	if (get_text_width(Text.GetCStr(), Font) > (Width - (6 + get_fixed_pixel_size(5))))
+	if (get_text_width(Text.GetCStr(), Font) > (_width - (6 + get_fixed_pixel_size(5))))
 		Backspace(Text);
 	MarkChanged();
 }

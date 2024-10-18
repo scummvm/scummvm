@@ -80,10 +80,10 @@ void GlobalAPI::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(AddInventory, GlobalAPI::add_inventory);
 	SCRIPT_METHOD(AddInventoryToCharacter, GlobalAPI::AddInventoryToCharacter);
 	SCRIPT_METHOD(AnimateButton, GlobalAPI::AnimateButton);
-	SCRIPT_METHOD(AnimateCharacter, GlobalAPI::scAnimateCharacter);
-	SCRIPT_METHOD(AnimateCharacterEx, GlobalAPI::AnimateCharacterEx);
-	SCRIPT_METHOD(AnimateObject, GlobalAPI::AnimateObject);
-	SCRIPT_METHOD(AnimateObjectEx, GlobalAPI::AnimateObjectEx);
+	SCRIPT_METHOD(AnimateCharacter, GlobalAPI::AnimateCharacter4);
+	SCRIPT_METHOD(AnimateCharacterEx, GlobalAPI::AnimateCharacter6);
+	SCRIPT_METHOD(AnimateObject, GlobalAPI::AnimateObject4);
+	SCRIPT_METHOD(AnimateObjectEx, GlobalAPI::AnimateObject6);
 	SCRIPT_METHOD(AreCharactersColliding, GlobalAPI::AreCharactersColliding);
 	SCRIPT_METHOD(AreCharObjColliding, GlobalAPI::AreCharObjColliding);
 	SCRIPT_METHOD(AreObjectsColliding, GlobalAPI::AreObjectsColliding);
@@ -207,7 +207,7 @@ void GlobalAPI::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(GiveScore, GlobalAPI::GiveScore);
 	SCRIPT_METHOD(HasPlayerBeenInRoom, GlobalAPI::HasPlayerBeenInRoom);
 	SCRIPT_METHOD(HideMouseCursor, GlobalAPI::HideMouseCursor);
-	SCRIPT_METHOD(InputBox, GlobalAPI::sc_inputbox);
+	SCRIPT_METHOD(InputBox, GlobalAPI::ShowInputBox);
 	SCRIPT_METHOD(InterfaceOff, GlobalAPI::InterfaceOff);
 	SCRIPT_METHOD(InterfaceOn, GlobalAPI::InterfaceOn);
 	SCRIPT_METHOD(IntToFloat, GlobalAPI::IntToFloat);
@@ -462,24 +462,24 @@ void GlobalAPI::AnimateButton(ScriptMethodParams &params) {
 	AGS3::AnimateButton(guin, objn, view, loop, speed, repeat);
 }
 
-void GlobalAPI::scAnimateCharacter(ScriptMethodParams &params) {
+void GlobalAPI::AnimateCharacter4(ScriptMethodParams &params) {
 	PARAMS4(int, chh, int, loopn, int, sppd, int, rept);
-	AGS3::scAnimateCharacter(chh, loopn, sppd, rept);
+	AGS3::AnimateCharacter4(chh, loopn, sppd, rept);
 }
 
-void GlobalAPI::AnimateCharacterEx(ScriptMethodParams &params) {
+void GlobalAPI::AnimateCharacter6(ScriptMethodParams &params) {
 	PARAMS6(int, chh, int, loopn, int, sppd, int, rept, int, direction, int, blocking);
-	AGS3::AnimateCharacterEx(chh, loopn, sppd, rept, direction, blocking);
+	AGS3::AnimateCharacter6(chh, loopn, sppd, rept, direction, blocking);
 }
 
-void GlobalAPI::AnimateObject(ScriptMethodParams &params) {
+void GlobalAPI::AnimateObject4(ScriptMethodParams &params) {
 	PARAMS4(int, obn, int, loopn, int, spdd, int, rept);
-	AGS3::AnimateObject(obn, loopn, spdd, rept);
+	AGS3::AnimateObject4(obn, loopn, spdd, rept);
 }
 
-void GlobalAPI::AnimateObjectEx(ScriptMethodParams &params) {
+void GlobalAPI::AnimateObject6(ScriptMethodParams &params) {
 	PARAMS6(int, obn, int, loopn, int, spdd, int, rept, int, direction, int, blocking);
-	AGS3::AnimateObjectEx(obn, loopn, spdd, rept, direction, blocking);
+	AGS3::AnimateObject6(obn, loopn, spdd, rept, direction, blocking);
 }
 
 void GlobalAPI::AreCharactersColliding(ScriptMethodParams &params) {
@@ -1078,9 +1078,9 @@ void GlobalAPI::HideMouseCursor(ScriptMethodParams &params) {
 	AGS3::HideMouseCursor();
 }
 
-void GlobalAPI::sc_inputbox(ScriptMethodParams &params) {
+void GlobalAPI::ShowInputBox(ScriptMethodParams &params) {
 	PARAMS2(const char *, msg, char *, bufr);
-	AGS3::sc_inputbox(msg, bufr);
+	AGS3::ShowInputBox(msg, bufr);
 }
 
 void GlobalAPI::InterfaceOff(ScriptMethodParams &params) {

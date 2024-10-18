@@ -29,22 +29,24 @@
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/global_character.h"
 #include "ags/engine/ac/global_display.h"
+#include "ags/engine/ac/global_inventory_item.h"
 #include "ags/engine/ac/global_room.h"
 #include "ags/engine/ac/mouse.h"
+#include "ags/shared/ac/sprite_cache.h"
 #include "ags/engine/ac/sys_events.h"
+#include "ags/engine/ac/timer.h"
+#include "ags/engine/ac/dynobj/cc_character.h"
+#include "ags/engine/ac/dynobj/cc_inventory.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/gui/gui_dialog.h"
 #include "ags/shared/gui/gui_main.h"
 #include "ags/engine/main/game_run.h"
-#include "ags/engine/platform/base/ags_platform_driver.h"
-#include "ags/shared/ac/sprite_cache.h"
-#include "ags/engine/script/runtime_script_value.h"
-#include "ags/engine/ac/dynobj/cc_character.h"
-#include "ags/engine/ac/dynobj/cc_inventory.h"
-#include "ags/shared/util/math.h"
 #include "ags/engine/media/audio/audio_system.h"
-#include "ags/engine/ac/timer.h"
+#include "ags/engine/platform/base/ags_platform_driver.h"
+#include "ags/engine/script/runtime_script_value.h"
+#include "ags/shared/util/math.h"
 #include "ags/shared/util/wgt2_allg.h"
+
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
@@ -253,7 +255,7 @@ int InventoryScreen::Redraw() {
 	}
 
 	for (int i = 0; i < _GP(charextra)[_GP(game).playercharacter].invorder_count; ++i) {
-		if (_GP(game).invinfo[_GP(charextra)[_GP(game).playercharacter].invorder[i]].name[0] != 0) {
+		if (!_GP(game).invinfo[_GP(charextra)[_GP(game).playercharacter].invorder[i]].name.IsEmpty()) {
 			dii[numitems].num = _GP(charextra)[_GP(game).playercharacter].invorder[i];
 			dii[numitems].sprnum = _GP(game).invinfo[_GP(charextra)[_GP(game).playercharacter].invorder[i]].pic;
 			int snn = dii[numitems].sprnum;
@@ -383,11 +385,10 @@ bool InventoryScreen::Run() {
 		if (my < buttonyp) {
 			int clickedon = isonitem;
 			if (clickedon < 0) return true; // continue inventory screen loop
-			_G(evblocknum) = dii[clickedon].num;
 			_GP(play).used_inv_on = dii[clickedon].num;
 
 			if (cmode == MODE_LOOK) {
-				run_event_block_inv(dii[clickedon].num, 0);
+				RunInventoryInteraction(dii[clickedon].num, MODE_LOOK);
 				// in case the script did anything to the screen, redraw it
 				UpdateGameOnce();
 
@@ -401,7 +402,7 @@ bool InventoryScreen::Run() {
 				int activeinvwas = _G(playerchar)->activeinv;
 				_G(playerchar)->activeinv = toret;
 
-				run_event_block_inv(dii[clickedon].num, 3);
+				RunInventoryInteraction(dii[clickedon].num, MODE_USE);
 
 				// if the script didn't change it, then put it back
 				if (_G(playerchar)->activeinv == toret)
@@ -590,22 +591,25 @@ RuntimeScriptValue Sc_InvWindow_SetTopItem(void *self, const RuntimeScriptValue 
 }
 
 
-
 void RegisterInventoryWindowAPI() {
-	ccAddExternalObjectFunction("InvWindow::ScrollDown^0", Sc_InvWindow_ScrollDown);
-	ccAddExternalObjectFunction("InvWindow::ScrollUp^0", Sc_InvWindow_ScrollUp);
-	ccAddExternalObjectFunction("InvWindow::get_CharacterToUse", Sc_InvWindow_GetCharacterToUse);
-	ccAddExternalObjectFunction("InvWindow::set_CharacterToUse", Sc_InvWindow_SetCharacterToUse);
-	ccAddExternalObjectFunction("InvWindow::geti_ItemAtIndex", Sc_InvWindow_GetItemAtIndex);
-	ccAddExternalObjectFunction("InvWindow::get_ItemCount", Sc_InvWindow_GetItemCount);
-	ccAddExternalObjectFunction("InvWindow::get_ItemHeight", Sc_InvWindow_GetItemHeight);
-	ccAddExternalObjectFunction("InvWindow::set_ItemHeight", Sc_InvWindow_SetItemHeight);
-	ccAddExternalObjectFunction("InvWindow::get_ItemWidth", Sc_InvWindow_GetItemWidth);
-	ccAddExternalObjectFunction("InvWindow::set_ItemWidth", Sc_InvWindow_SetItemWidth);
-	ccAddExternalObjectFunction("InvWindow::get_ItemsPerRow", Sc_InvWindow_GetItemsPerRow);
-	ccAddExternalObjectFunction("InvWindow::get_RowCount", Sc_InvWindow_GetRowCount);
-	ccAddExternalObjectFunction("InvWindow::get_TopItem", Sc_InvWindow_GetTopItem);
-	ccAddExternalObjectFunction("InvWindow::set_TopItem", Sc_InvWindow_SetTopItem);
+	ScFnRegister invwindow_api[] = {
+		{"InvWindow::ScrollDown^0", API_FN_PAIR(InvWindow_ScrollDown)},
+		{"InvWindow::ScrollUp^0", API_FN_PAIR(InvWindow_ScrollUp)},
+		{"InvWindow::get_CharacterToUse", API_FN_PAIR(InvWindow_GetCharacterToUse)},
+		{"InvWindow::set_CharacterToUse", API_FN_PAIR(InvWindow_SetCharacterToUse)},
+		{"InvWindow::geti_ItemAtIndex", API_FN_PAIR(InvWindow_GetItemAtIndex)},
+		{"InvWindow::get_ItemCount", API_FN_PAIR(InvWindow_GetItemCount)},
+		{"InvWindow::get_ItemHeight", API_FN_PAIR(InvWindow_GetItemHeight)},
+		{"InvWindow::set_ItemHeight", API_FN_PAIR(InvWindow_SetItemHeight)},
+		{"InvWindow::get_ItemWidth", API_FN_PAIR(InvWindow_GetItemWidth)},
+		{"InvWindow::set_ItemWidth", API_FN_PAIR(InvWindow_SetItemWidth)},
+		{"InvWindow::get_ItemsPerRow", API_FN_PAIR(InvWindow_GetItemsPerRow)},
+		{"InvWindow::get_RowCount", API_FN_PAIR(InvWindow_GetRowCount)},
+		{"InvWindow::get_TopItem", API_FN_PAIR(InvWindow_GetTopItem)},
+		{"InvWindow::set_TopItem", API_FN_PAIR(InvWindow_SetTopItem)},
+	};
+
+	ccAddExternalFunctions361(invwindow_api);
 }
 
 } // namespace AGS3

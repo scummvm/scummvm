@@ -19,10 +19,17 @@
  *
  */
 
+//=============================================================================
+//
+// Constants for built-in GUI dialogs.
+//
+//=============================================================================
+
 #ifndef AGS_ENGINE_GUI_GUI_DIALOG_DEFINES_H
 #define AGS_ENGINE_GUI_GUI_DIALOG_DEFINES_H
 
 #include "ags/engine/ac/game_setup.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -38,6 +45,8 @@ namespace AGS3 {
 #define MSG_QUITBUTTON   993    // "Quit"
 #define MSG_PLAYBUTTON   994    // "Play"
 #define MSG_QUITDIALOG   995    // "Do you want to quit?"
+
+#define TEXT_HT _GP(usetup).textheight
 
 /*#define COL251 26
 #define COL252 28

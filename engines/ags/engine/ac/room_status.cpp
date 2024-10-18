@@ -24,7 +24,6 @@
 #include "ags/engine/ac/room_status.h"
 #include "ags/shared/game/custom_properties.h"
 #include "ags/engine/game/savegame_components.h"
-#include "ags/shared/util/aligned_stream.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/globals.h"
 
@@ -35,7 +34,7 @@ using namespace AGS::Engine;
 
 void HotspotState::ReadFromSavegame(Shared::Stream *in, int save_ver) {
 	Enabled = in->ReadInt8() != 0;
-	if (save_ver > 0) {
+	if (save_ver >= kRoomStatSvgVersion_36016) {
 		Name = StrUtil::ReadString(in);
 	}
 }
@@ -71,20 +70,24 @@ void RoomStatus::FreeProperties() {
 	objProps.clear();
 }
 
-void RoomStatus::ReadFromFile_v321(Stream *in, GameDataVersion data_ver) {
+void RoomStatus::ReadFromSavegame_v321(Stream *in, GameDataVersion data_ver) {
 	FreeScriptData();
 	FreeProperties();
 
 	contentFormat = kRoomStatSvgVersion_Initial;
-	beenhere = in->ReadInt32();
-	numobj = in->ReadInt32();
 	obj.resize(MAX_ROOM_OBJECTS_v300);
 	objProps.resize(MAX_ROOM_OBJECTS_v300);
 	intrObject.resize(MAX_ROOM_OBJECTS_v300);
-	ReadRoomObjects_Aligned(in);
 
-	int16_t dummy[MAX_LEGACY_ROOM_FLAGS]; // cannot seek with AlignedStream
-	in->ReadArrayOfInt16(dummy, MAX_LEGACY_ROOM_FLAGS); // flagstates (OBSOLETE)
+	beenhere = in->ReadInt32();
+	numobj = in->ReadInt32();
+	// NOTE: legacy format always contained max object slots
+	for (auto &o : obj) {
+		o.ReadFromSavegame(in, -1 /* legacy save with padding */);
+	}
+
+	in->Seek(MAX_LEGACY_ROOM_FLAGS * sizeof(int16_t)); // flagstates (OBSOLETE)
+	in->ReadInt16(); // alignment padding to int32
 	tsdatasize = static_cast<uint32_t>(in->ReadInt32());
 	in->ReadInt32(); // tsdata
 	for (int i = 0; i < MAX_ROOM_HOTSPOTS; ++i) {
@@ -101,6 +104,7 @@ void RoomStatus::ReadFromFile_v321(Stream *in, GameDataVersion data_ver) {
 		hotspot[i].Enabled = in->ReadInt8() != 0;
 	in->ReadArrayOfInt8((int8_t *)region_enabled, MAX_ROOM_REGIONS);
 	in->ReadArrayOfInt16(walkbehind_base, MAX_WALK_BEHINDS);
+	in->ReadInt16(); // alignment padding to int32 (66 int8 + 16 int16 = 49 int16 -> 50)
 	in->ReadArrayOfInt32(interactionVariableValues, MAX_GLOBAL_VARIABLES);
 
 	if (data_ver >= kGameVersion_340_4) {
@@ -111,14 +115,6 @@ void RoomStatus::ReadFromFile_v321(Stream *in, GameDataVersion data_ver) {
 		for (auto &props : objProps) {
 			Properties::ReadValues(props, in);
 		}
-	}
-}
-
-void RoomStatus::ReadRoomObjects_Aligned(Shared::Stream *in) {
-	AlignedStream align_s(in, Shared::kAligned_Read);
-	for (auto &o : obj) {
-		o.ReadFromSavegame(&align_s, 0);
-		align_s.Reset();
 	}
 }
 
@@ -214,17 +210,13 @@ void RoomStatus::WriteToSavegame(Stream *out, GameDataVersion data_ver) const {
 	out->WriteInt32(0);
 }
 
-// JJS: Replacement for the global roomstats array in the original engine.
-
-RoomStatus *room_statuses[MAX_ROOMS];
-
 // Replaces all accesses to the roomstats array
 RoomStatus *getRoomStatus(int room) {
-	if (room_statuses[room] == nullptr) {
+	if (!_G(room_statuses)[room]) {
 		// First access, allocate and initialise the status
-		room_statuses[room] = new RoomStatus();
+		_G(room_statuses)[room].reset(new RoomStatus());
 	}
-	return room_statuses[room];
+	return _G(room_statuses)[room].get();
 }
 
 // Used in places where it is only important to know whether the player
@@ -232,15 +224,12 @@ RoomStatus *getRoomStatus(int room) {
 // to initialise the status because a player can only have been in
 // a room if the status is already initialised.
 bool isRoomStatusValid(int room) {
-	return (room_statuses[room] != nullptr);
+	return (_G(room_statuses)[room] != nullptr);
 }
 
 void resetRoomStatuses() {
 	for (int i = 0; i < MAX_ROOMS; i++) {
-		if (room_statuses[i] != nullptr) {
-			delete room_statuses[i];
-			room_statuses[i] = nullptr;
-		}
+		_G(room_statuses)[i].reset();
 	}
 }
 

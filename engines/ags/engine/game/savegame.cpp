@@ -19,6 +19,7 @@
  *
  */
 
+#include "ags/engine/ac/button.h"
 #include "ags/engine/ac/character.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/draw.h"
@@ -40,6 +41,7 @@
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/engine/ac/system.h"
 #include "ags/engine/ac/timer.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/device/mouse_w32.h"
@@ -53,13 +55,14 @@
 #include "ags/engine/main/game_run.h"
 #include "ags/engine/main/engine.h"
 #include "ags/engine/main/main.h"
+#include "ags/engine/main/update.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/engine/platform/base/sys_main.h"
-#include "ags/plugins/ags_plugin.h"
+#include "ags/plugins/ags_plugin_evts.h"
 #include "ags/plugins/plugin_engine.h"
 #include "ags/engine/script/script.h"
 #include "ags/shared/script/cc_common.h"
-#include "ags/shared/util/aligned_stream.h"
+#include "ags/shared/util/data_stream.h"
 #include "ags/shared/util/file.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string_utils.h"
@@ -103,6 +106,7 @@ RestoredData::ScriptData::ScriptData()
 
 RestoredData::RestoredData()
 	: FPS(0)
+	, DoOnceCount(0u)
 	, RoomVolume(kRoomVolumeNormal)
 	, CursorID(0)
 	, CursorMode(0) {
@@ -332,9 +336,8 @@ void DoBeforeRestore(PreservedParams &pp) {
 	memcpy(pp.GameOptions, _GP(game).options, GameSetupStruct::MAX_OPTIONS * sizeof(int));
 
 	unload_old_room();
-	delete _G(raw_saved_screen);
-	_G(raw_saved_screen) = nullptr;
-	remove_screen_overlay(-1);
+	_G(raw_saved_screen).reset();
+	remove_all_overlays();
 	_GP(play).complete_overlay_on = 0;
 	_GP(play).text_overlay_on = 0;
 
@@ -342,8 +345,6 @@ void DoBeforeRestore(PreservedParams &pp) {
 	// NOTE: sprite 0 is a special constant sprite that cannot be dynamic
 	for (int i = 1; i < (int)_GP(spriteset).GetSpriteSlotCount(); ++i) {
 		if (_GP(game).SpriteInfos[i].Flags & SPF_DYNAMICALLOC) {
-			// do this early, so that it changing _GP(guibuts) doesn't
-			// affect the restored data
 			free_dynamic_sprite(i);
 		}
 	}
@@ -353,34 +354,24 @@ void DoBeforeRestore(PreservedParams &pp) {
 
 	// preserve script data sizes and cleanup scripts
 	pp.GlScDataSize = _G(gameinst)->globaldatasize;
-	delete _G(gameinstFork);
-	delete _G(gameinst);
-	_G(gameinstFork) = nullptr;
-	_G(gameinst) = nullptr;
 	pp.ScMdDataSize.resize(_G(numScriptModules));
 	for (size_t i = 0; i < _G(numScriptModules); ++i) {
 		pp.ScMdDataSize[i] = _GP(moduleInst)[i]->globaldatasize;
-		delete _GP(moduleInstFork)[i];
-		delete _GP(moduleInst)[i];
-		_GP(moduleInstFork)[i] = nullptr;
-		_GP(moduleInst)[i] = nullptr;
 	}
 
+	FreeAllScriptInstances();
+
+	// reset saved room states
+	resetRoomStatuses();
+	// reset temp room state
+	_GP(troom) = RoomStatus();
+	// reset (some of the?) GameState data
+	// FIXME: investigate and refactor to be able to just reset whole object
 	_GP(play).FreeProperties();
 	_GP(play).FreeViewportsAndCameras();
-
-	delete _G(roominstFork);
-	delete _G(roominst);
-	_G(roominstFork) = nullptr;
-	_G(roominst) = nullptr;
-
-	delete _G(dialogScriptsInst);
-	_G(dialogScriptsInst) = nullptr;
-
-	resetRoomStatuses();
-	_GP(troom) = RoomStatus(); // reset temp room state
 	free_do_once_tokens();
 
+	RemoveAllButtonAnimations();
 	// unregister gui controls from API exports
 	// CHECKME: find out why are we doing this here? why only to gui controls?
 	for (int i = 0; i < _GP(game).numgui; ++i) {
@@ -398,6 +389,10 @@ void DoBeforeRestore(PreservedParams &pp) {
 }
 
 void RestoreViewportsAndCameras(const RestoredData &r_data) {
+	// If restored from older saves, we have to adjust
+	// cam and view sizes to a main viewport, which is init later
+	const auto &main_view = _GP(play).GetMainViewport();
+
 	for (size_t i = 0; i < r_data.Cameras.size(); ++i) {
 		const auto &cam_dat = r_data.Cameras[i];
 		auto cam = _GP(play).GetRoomCamera(i);
@@ -407,7 +402,10 @@ void RestoreViewportsAndCameras(const RestoredData &r_data) {
 		else
 			cam->Release();
 		// Set size first, or offset position may clamp to the room
-		cam->SetSize(Size(cam_dat.Width, cam_dat.Height));
+		if (r_data.LegacyViewCamera)
+			cam->SetSize(main_view.GetSize());
+		else
+			cam->SetSize(Size(cam_dat.Width, cam_dat.Height));
 		cam->SetAt(cam_dat.Left, cam_dat.Top);
 	}
 	for (size_t i = 0; i < r_data.Viewports.size(); ++i) {
@@ -415,7 +413,10 @@ void RestoreViewportsAndCameras(const RestoredData &r_data) {
 		auto view = _GP(play).GetRoomViewport(i);
 		view->SetID(view_dat.ID);
 		view->SetVisible((view_dat.Flags & kSvgViewportVisible) != 0);
-		view->SetRect(RectWH(view_dat.Left, view_dat.Top, view_dat.Width, view_dat.Height));
+		if (r_data.LegacyViewCamera)
+			view->SetRect(RectWH(view_dat.Left, view_dat.Top, main_view.GetWidth(), main_view.GetHeight()));
+		else
+			view->SetRect(RectWH(view_dat.Left, view_dat.Top, view_dat.Width, view_dat.Height));
 		view->SetZOrder(view_dat.ZOrder);
 		// Restore camera link
 		int cam_index = view_dat.CamID;
@@ -435,7 +436,7 @@ static void CopyPreservedGameOptions(GameSetupStructBase &gs, const PreservedPar
 }
 
 // Final processing after successfully restoring from save
-HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data) {
+HSaveError DoAfterRestore(const PreservedParams &pp, RestoredData &r_data) {
 	// Use a yellow dialog highlight for older game versions
 	// CHECKME: it is dubious that this should be right here
 	if (_G(loaded_game_file_version) < kGameVersion_331)
@@ -460,10 +461,17 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	// Remap old sound nums in case we restored a save having a different list of audio clips
 	RemapLegacySoundNums(_GP(game), _GP(views), _G(loaded_game_file_version));
 
-	// restore these to the ones retrieved from the save game
+	// Restore Overlay bitmaps (older save format, which stored them along with overlays)
+	auto &overs = get_overlays();
+	for (auto &over_im : r_data.OverlayImages) {
+		auto &over = overs[over_im._key];
+		over.SetImage(std::move(over_im._value), over.HasAlphaChannel(), over.offsetX, over.offsetY);
+	}
+
+	// Restore dynamic surfaces
 	const size_t dynsurf_num = MIN((uint)MAX_DYNAMIC_SURFACES, r_data.DynamicSurfaces.size());
 	for (size_t i = 0; i < dynsurf_num; ++i) {
-		_G(dynamicallyCreatedSurfaces)[i] = r_data.DynamicSurfaces[i];
+		_G(dynamicallyCreatedSurfaces)[i] = std::move(r_data.DynamicSurfaces[i]);
 	}
 
 	// Re-export any missing audio channel script objects, e.g. if restoring old save
@@ -475,6 +483,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 
 	update_gui_zorder();
 
+	AllocScriptModules();
 	if (create_global_script()) {
 		return new SavegameError(kSvgErr_GameObjectInitFailed,
 		                         String::FromFormat("Unable to recreate global script: %s", cc_get_error().ErrorString.GetCStr()));
@@ -517,13 +526,13 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	_GP(mouse).SetMoveLimit(Rect(oldx1, oldy1, oldx2, oldy2));
 
 	set_cursor_mode(r_data.CursorMode);
-	set_mouse_cursor(r_data.CursorID);
+	set_mouse_cursor(r_data.CursorID, true);
 	if (r_data.CursorMode == MODE_USE)
 		SetActiveInventory(_G(playerchar)->activeinv);
 	// ensure that the current cursor is locked
-	_GP(spriteset).Precache(_GP(game).mcurs[r_data.CursorID].pic);
+	_GP(spriteset).PrecacheSprite(_GP(game).mcurs[r_data.CursorID].pic);
 
-	sys_window_set_title(_GP(play).game_name);
+	sys_window_set_title(_GP(play).game_name.GetCStr());
 
 	if (_G(displayed_room) >= 0) {
 		// Fixup the frame index, in case the restored room does not have enough background frames
@@ -544,7 +553,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 		}
 		generate_light_table();
 
-		for (size_t i = 0; i < MAX_WALK_AREAS + 1; ++i) {
+		for (size_t i = 0; i < MAX_WALK_AREAS; ++i) {
 			_GP(thisroom).WalkAreas[i].ScalingFar = r_data.RoomZoomLevels1[i];
 			_GP(thisroom).WalkAreas[i].ScalingNear = r_data.RoomZoomLevels2[i];
 		}
@@ -616,7 +625,9 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 
 	adjust_fonts_for_render_mode(_GP(game).options[OPT_ANTIALIASFONTS] != 0);
 
-	recreate_overlay_ddbs();
+	restore_characters();
+	restore_overlays();
+	restore_movelists();
 
 	GUI::MarkAllGUIForUpdate(true, true);
 
@@ -754,6 +765,74 @@ void DoBeforeSave() {
 void SaveGameState(Stream *out) {
 	DoBeforeSave();
 	SavegameComponents::WriteAllCommon(out);
+}
+
+void ReadPluginSaveData(Stream *in, PluginSvgVersion svg_ver, soff_t max_size) {
+	const soff_t start_pos = in->GetPosition();
+	const soff_t end_pos = start_pos + max_size;
+
+	if (svg_ver >= kPluginSvgVersion_36115) {
+		int num_plugins_read = in->ReadInt32();
+		soff_t cur_pos = start_pos;
+		while ((num_plugins_read--) > 0 && (cur_pos < end_pos)) {
+			String pl_name = StrUtil::ReadString(in);
+			size_t data_size = in->ReadInt32();
+			soff_t data_start = in->GetPosition();
+
+			auto pl_handle = AGSE_RESTOREGAME;
+			pl_set_file_handle(pl_handle, in);
+			pl_run_plugin_hook_by_name(pl_name, AGSE_RESTOREGAME, pl_handle);
+			pl_clear_file_handle();
+
+			// Seek to the end of plugin data, in case it ended up reading not in the end
+			cur_pos = data_start + data_size;
+			in->Seek(cur_pos, kSeekBegin);
+		}
+	} else {
+		String pl_name;
+		for (int pl_index = 0; pl_query_next_plugin_for_event(AGSE_RESTOREGAME, pl_index, pl_name); ++pl_index) {
+			auto pl_handle = AGSE_RESTOREGAME;
+			pl_set_file_handle(pl_handle, in);
+			pl_run_plugin_hook_by_index(pl_index, AGSE_RESTOREGAME, pl_handle);
+			pl_clear_file_handle();
+		}
+	}
+}
+
+void WritePluginSaveData(Stream *out) {
+	soff_t pluginnum_pos = out->GetPosition();
+	out->WriteInt32(0); // number of plugins which wrote data
+
+	int num_plugins_wrote = 0;
+	String pl_name;
+	for (int pl_index = 0; pl_query_next_plugin_for_event(AGSE_SAVEGAME, pl_index, pl_name); ++pl_index) {
+		// NOTE: we don't care if they really write anything,
+		// but count them so long as they subscribed to AGSE_SAVEGAME
+		num_plugins_wrote++;
+
+		// Write a header for plugin data
+		StrUtil::WriteString(pl_name, out);
+		soff_t data_size_pos = out->GetPosition();
+		out->WriteInt32(0); // data size
+
+		// Create a stream section and write plugin data
+		soff_t data_start_pos = out->GetPosition();
+		auto pl_handle = AGSE_SAVEGAME;
+		pl_set_file_handle(pl_handle, out);
+		pl_run_plugin_hook_by_index(pl_index, AGSE_SAVEGAME, pl_handle);
+		pl_clear_file_handle();
+
+		// Finalize header
+		soff_t data_end_pos = out->GetPosition();
+		out->Seek(data_size_pos, kSeekBegin);
+		out->WriteInt32(data_end_pos - data_start_pos);
+		out->Seek(0, kSeekEnd);
+	}
+
+	// Write number of plugins
+	out->Seek(pluginnum_pos, kSeekBegin);
+	out->WriteInt32(num_plugins_wrote);
+	out->Seek(0, kSeekEnd);
 }
 
 } // namespace Engine

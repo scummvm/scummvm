@@ -32,25 +32,15 @@
 namespace AGS3 {
 
 int FloatToInt(float value, int roundDirection) {
-	if (value >= 0.0) {
-		if (roundDirection == eRoundDown)
-			return static_cast<int>(value);
-		else if (roundDirection == eRoundNearest)
-			return static_cast<int>(value + 0.5);
-		else if (roundDirection == eRoundUp)
-			return static_cast<int>(value + 0.999999);
-		else
-			error("!FloatToInt: invalid round direction");
-	} else {
-		// negative number
-		if (roundDirection == eRoundUp)
-			return static_cast<int>(value); // this just truncates
-		else if (roundDirection == eRoundNearest)
-			return static_cast<int>(value - 0.5);
-		else if (roundDirection == eRoundDown)
-			return static_cast<int>(value - 0.999999);
-		else
-			error("!FloatToInt: invalid round direction");
+	switch (roundDirection) {
+	case eRoundDown:
+		return static_cast<int>(floor(value));
+	case eRoundUp:
+		return static_cast<int>(ceil(value));
+	case eRoundNearest:
+		return static_cast<int>(round(value));
+	default:
+		quit("!FloatToInt: invalid round direction");
 	}
 	return 0;
 }
@@ -247,26 +237,29 @@ RuntimeScriptValue Sc_Math_GetPi(const RuntimeScriptValue *params, int32_t param
 	API_SCALL_FLOAT(Math_GetPi);
 }
 
-
 void RegisterMathAPI() {
-	ccAddExternalStaticFunction("Maths::ArcCos^1", Sc_Math_ArcCos);
-	ccAddExternalStaticFunction("Maths::ArcSin^1", Sc_Math_ArcSin);
-	ccAddExternalStaticFunction("Maths::ArcTan^1", Sc_Math_ArcTan);
-	ccAddExternalStaticFunction("Maths::ArcTan2^2", Sc_Math_ArcTan2);
-	ccAddExternalStaticFunction("Maths::Cos^1", Sc_Math_Cos);
-	ccAddExternalStaticFunction("Maths::Cosh^1", Sc_Math_Cosh);
-	ccAddExternalStaticFunction("Maths::DegreesToRadians^1", Sc_Math_DegreesToRadians);
-	ccAddExternalStaticFunction("Maths::Exp^1", Sc_Math_Exp);
-	ccAddExternalStaticFunction("Maths::Log^1", Sc_Math_Log);
-	ccAddExternalStaticFunction("Maths::Log10^1", Sc_Math_Log10);
-	ccAddExternalStaticFunction("Maths::RadiansToDegrees^1", Sc_Math_RadiansToDegrees);
-	ccAddExternalStaticFunction("Maths::RaiseToPower^2", Sc_Math_RaiseToPower);
-	ccAddExternalStaticFunction("Maths::Sin^1", Sc_Math_Sin);
-	ccAddExternalStaticFunction("Maths::Sinh^1", Sc_Math_Sinh);
-	ccAddExternalStaticFunction("Maths::Sqrt^1", Sc_Math_Sqrt);
-	ccAddExternalStaticFunction("Maths::Tan^1", Sc_Math_Tan);
-	ccAddExternalStaticFunction("Maths::Tanh^1", Sc_Math_Tanh);
-	ccAddExternalStaticFunction("Maths::get_Pi", Sc_Math_GetPi);
+	ScFnRegister math_api[] = {
+		{"Maths::ArcCos^1", API_FN_PAIR(Math_ArcCos)},
+		{"Maths::ArcSin^1", API_FN_PAIR(Math_ArcSin)},
+		{"Maths::ArcTan^1", API_FN_PAIR(Math_ArcTan)},
+		{"Maths::ArcTan2^2", API_FN_PAIR(Math_ArcTan2)},
+		{"Maths::Cos^1", API_FN_PAIR(Math_Cos)},
+		{"Maths::Cosh^1", API_FN_PAIR(Math_Cosh)},
+		{"Maths::DegreesToRadians^1", API_FN_PAIR(Math_DegreesToRadians)},
+		{"Maths::Exp^1", API_FN_PAIR(Math_Exp)},
+		{"Maths::Log^1", API_FN_PAIR(Math_Log)},
+		{"Maths::Log10^1", API_FN_PAIR(Math_Log10)},
+		{"Maths::RadiansToDegrees^1", API_FN_PAIR(Math_RadiansToDegrees)},
+		{"Maths::RaiseToPower^2", API_FN_PAIR(Math_RaiseToPower)},
+		{"Maths::Sin^1", API_FN_PAIR(Math_Sin)},
+		{"Maths::Sinh^1", API_FN_PAIR(Math_Sinh)},
+		{"Maths::Sqrt^1", API_FN_PAIR(Math_Sqrt)},
+		{"Maths::Tan^1", API_FN_PAIR(Math_Tan)},
+		{"Maths::Tanh^1", API_FN_PAIR(Math_Tanh)},
+		{"Maths::get_Pi", API_FN_PAIR(Math_GetPi)},
+	};
+
+	ccAddExternalFunctions361(math_api);
 }
 
 } // namespace AGS3

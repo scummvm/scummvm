@@ -69,8 +69,8 @@ struct ViewLoopNew {
 	bool RunNextLoop();
 	void WriteToFile_v321(Shared::Stream *out);
 	void ReadFromFile_v321(Shared::Stream *in);
-	void WriteFrames_Aligned(Shared::Stream *out);
-	void ReadFrames_Aligned(Shared::Stream *in);
+	void WriteFrames(Shared::Stream *out);
+	void ReadFrames(Shared::Stream *in);
 };
 
 struct ViewStruct {

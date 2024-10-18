@@ -42,8 +42,6 @@ namespace AGS {
 namespace Engine {
 namespace RouteFinder {
 
-#define MAKE_INTCOORD(x,y) (((unsigned short)x << 16) | ((unsigned short)y))
-
 static const int MAXNAVPOINTS = MAXNEEDSTAGES;
 
 void init_pathfinder() {
@@ -101,7 +99,7 @@ static int find_route_jps(int fromx, int fromy, int destx, int desty) {
 		int x, y;
 		_GP(nav).UnpackSquare(cpath[i], x, y);
 
-		_G(navpoints)[_G(num_navpoints)++] = MAKE_INTCOORD(x, y);
+		_G(navpoints)[_G(num_navpoints)++] = {x, y};
 	}
 
 	return 1;
@@ -116,6 +114,31 @@ inline fixed input_speed_to_fixed(int speed_val) {
 	}
 }
 
+void set_route_move_speed(int speed_x, int speed_y) {
+	_G(move_speed_x) = input_speed_to_fixed(speed_x);
+	_G(move_speed_y) = input_speed_to_fixed(speed_y);
+}
+
+inline fixed calc_move_speed_at_angle(fixed speed_x, fixed speed_y, fixed xdist, fixed ydist) {
+	fixed useMoveSpeed;
+	if (speed_x == speed_y) {
+		useMoveSpeed = speed_x;
+	} else {
+		// different X and Y move speeds
+		// the X proportion of the movement is (x / (x + y))
+		fixed xproportion = fixdiv(xdist, (xdist + ydist));
+
+		if (speed_x > speed_y) {
+			// speed = y + ((1 - xproportion) * (x - y))
+			useMoveSpeed = speed_y + fixmul(xproportion, speed_x - speed_y);
+		} else {
+			// speed = x + (xproportion * (y - x))
+			useMoveSpeed = speed_x + fixmul(itofix(1) - xproportion, speed_y - speed_x);
+		}
+	}
+	return useMoveSpeed;
+}
+
 // Calculates the X and Y per game loop, for this stage of the movelist
 void calculate_move_stage(MoveList *mlsp, int aaa, fixed move_speed_x, fixed move_speed_y) {
 	// work out the x & y per move. First, opp/adj=tan, so work out the angle
@@ -125,10 +148,10 @@ void calculate_move_stage(MoveList *mlsp, int aaa, fixed move_speed_x, fixed mov
 		return;
 	}
 
-	short ourx = (mlsp->pos[aaa] >> 16) & 0x000ffff;
-	short oury = (mlsp->pos[aaa] & 0x000ffff);
-	short destx = ((mlsp->pos[aaa + 1] >> 16) & 0x000ffff);
-	short desty = (mlsp->pos[aaa + 1] & 0x000ffff);
+	short ourx = mlsp->pos[aaa].X;
+	short oury = mlsp->pos[aaa].Y;
+	short destx = mlsp->pos[aaa + 1].X;
+	short desty = mlsp->pos[aaa + 1].Y;
 
 	// Special case for vertical and horizontal movements
 	if (ourx == destx) {
@@ -152,23 +175,7 @@ void calculate_move_stage(MoveList *mlsp, int aaa, fixed move_speed_x, fixed mov
 	fixed xdist = itofix(abs(ourx - destx));
 	fixed ydist = itofix(abs(oury - desty));
 
-	fixed useMoveSpeed;
-
-	if (move_speed_x == move_speed_y) {
-		useMoveSpeed = move_speed_x;
-	} else {
-		// different X and Y move speeds
-		// the X proportion of the movement is (x / (x + y))
-		fixed xproportion = fixdiv(xdist, (xdist + ydist));
-
-		if (move_speed_x > move_speed_y) {
-			// speed = y + ((1 - xproportion) * (x - y))
-			useMoveSpeed = move_speed_y + fixmul(xproportion, move_speed_x - move_speed_y);
-		} else {
-			// speed = x + (xproportion * (y - x))
-			useMoveSpeed = move_speed_x + fixmul(itofix(1) - xproportion, move_speed_y - move_speed_x);
-		}
-	}
+	fixed useMoveSpeed = calc_move_speed_at_angle(move_speed_x, move_speed_y, xdist, ydist);
 
 	fixed angl = fixatan(fixdiv(ydist, xdist));
 
@@ -189,7 +196,51 @@ void calculate_move_stage(MoveList *mlsp, int aaa, fixed move_speed_x, fixed mov
 	mlsp->ypermove[aaa] = newymove;
 }
 
-int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int move_speed_y, Bitmap *onscreen, int movlst, int nocross, int ignore_walls) {
+void recalculate_move_speeds(MoveList *mlsp, int old_speed_x, int old_speed_y, int new_speed_x, int new_speed_y) {
+	const fixed old_movspeed_x = input_speed_to_fixed(old_speed_x);
+	const fixed old_movspeed_y = input_speed_to_fixed(old_speed_y);
+	const fixed new_movspeed_x = input_speed_to_fixed(new_speed_x);
+	const fixed new_movspeed_y = input_speed_to_fixed(new_speed_y);
+	// save current stage's step lengths, for later onpart's update
+	const fixed old_stage_xpermove = mlsp->xpermove[mlsp->onstage];
+	const fixed old_stage_ypermove = mlsp->ypermove[mlsp->onstage];
+
+	for (int i = 0; (i < mlsp->numstage) && ((mlsp->xpermove[i] != 0) || (mlsp->ypermove[i] != 0)); ++i) {
+		// First three cases where the speed is a plain factor, therefore
+		// we may simply divide on old one and multiple on a new one
+		if ((old_movspeed_x == old_movspeed_y) || // diagonal move at straight 45 degrees
+			(mlsp->xpermove[i] == 0) ||           // straight vertical move
+			(mlsp->ypermove[i] == 0))             // straight horizontal move
+		{
+			mlsp->xpermove[i] = fixdiv(fixmul(mlsp->xpermove[i], new_movspeed_x), old_movspeed_x);
+			mlsp->ypermove[i] = fixdiv(fixmul(mlsp->ypermove[i], new_movspeed_y), old_movspeed_y);
+		} else {
+			// Move at angle has adjusted speed factor, which we must recalculate first
+			short ourx = mlsp->pos[i].X;
+			short oury = mlsp->pos[i].Y;
+			short destx = mlsp->pos[i + 1].X;
+			short desty = mlsp->pos[i + 1].Y;
+
+			fixed xdist = itofix(abs(ourx - destx));
+			fixed ydist = itofix(abs(oury - desty));
+			fixed old_speed_at_angle = calc_move_speed_at_angle(old_movspeed_x, old_movspeed_y, xdist, ydist);
+			fixed new_speed_at_angle = calc_move_speed_at_angle(new_movspeed_x, new_movspeed_y, xdist, ydist);
+
+			mlsp->xpermove[i] = fixdiv(fixmul(mlsp->xpermove[i], new_speed_at_angle), old_speed_at_angle);
+			mlsp->ypermove[i] = fixdiv(fixmul(mlsp->ypermove[i], new_speed_at_angle), old_speed_at_angle);
+		}
+	}
+
+	// now adjust current passed stage fraction
+	if (mlsp->onpart >= 0.f) {
+		if (old_stage_xpermove != 0)
+			mlsp->onpart = (mlsp->onpart * fixtof(old_stage_xpermove)) / fixtof(mlsp->xpermove[mlsp->onstage]);
+		else
+			mlsp->onpart = (mlsp->onpart * fixtof(old_stage_ypermove)) / fixtof(mlsp->ypermove[mlsp->onstage]);
+	}
+}
+
+int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int move_speed_y, Bitmap *onscreen, int move_id, int nocross, int ignore_walls) {
 
 	_G(wallscreen) = onscreen;
 
@@ -197,8 +248,8 @@ int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int
 
 	if (ignore_walls || can_see_from(srcx, srcy, xx, yy)) {
 		_G(num_navpoints) = 2;
-		_G(navpoints)[0] = MAKE_INTCOORD(srcx, srcy);
-		_G(navpoints)[1] = MAKE_INTCOORD(xx, yy);
+		_G(navpoints)[0] = {srcx, srcy};
+		_G(navpoints)[1] = {xx, yy};
 	} else {
 		if ((nocross == 0) && (_G(wallscreen)->GetPixel(xx, yy) == 0))
 			return 0; // clicked on a wall
@@ -219,9 +270,9 @@ int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int
 	AGS::Shared::Debug::Printf("Route from %d,%d to %d,%d - %d stages", srcx, srcy, xx, yy, _G(num_navpoints));
 #endif
 
-	int mlist = movlst;
-	_GP(mls)[mlist].numstage = _G(num_navpoints);
-	memcpy(&_GP(mls)[mlist].pos[0], &_G(navpoints)[0], sizeof(int) * _G(num_navpoints));
+	MoveList mlist;
+	mlist.numstage = _G(num_navpoints);
+	memcpy(&mlist.pos[0], &_G(navpoints)[0], sizeof(Point) * _G(num_navpoints));
 #ifdef DEBUG_PATHFINDER
 	AGS::Shared::Debug::Printf("stages: %d\n", _G(num_navpoints));
 #endif
@@ -229,17 +280,12 @@ int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int
 	const fixed fix_speed_x = input_speed_to_fixed(move_speed_x);
 	const fixed fix_speed_y = input_speed_to_fixed(move_speed_y);
 	for (int i = 0; i < _G(num_navpoints) - 1; i++) {
-		calculate_move_stage(&_GP(mls)[mlist], i, fix_speed_x, fix_speed_y);
+		calculate_move_stage(&mlist, i, fix_speed_x, fix_speed_y);
 	}
 
-	_GP(mls)[mlist].fromx = srcx;
-	_GP(mls)[mlist].fromy = srcy;
-	_GP(mls)[mlist].onstage = 0;
-	_GP(mls)[mlist].onpart = 0;
-	_GP(mls)[mlist].doneflag = 0;
-	_GP(mls)[mlist].lastx = -1;
-	_GP(mls)[mlist].lasty = -1;
-	return mlist;
+	mlist.from = {srcx, srcy};
+	_GP(mls)[move_id] = mlist;
+	return move_id;
 }
 
 bool add_waypoint_direct(MoveList *mlsp, short x, short y, int move_speed_x, int move_speed_y) {
@@ -248,11 +294,9 @@ bool add_waypoint_direct(MoveList *mlsp, short x, short y, int move_speed_x, int
 
 	const fixed fix_speed_x = input_speed_to_fixed(move_speed_x);
 	const fixed fix_speed_y = input_speed_to_fixed(move_speed_y);
-	mlsp->pos[mlsp->numstage] = MAKE_INTCOORD(x, y);
+	mlsp->pos[mlsp->numstage] = {x, y};
 	calculate_move_stage(mlsp, mlsp->numstage - 1, fix_speed_x, fix_speed_y);
 	mlsp->numstage++;
-	mlsp->lastx = x;
-	mlsp->lasty = y;
 	return true;
 }
 
