@@ -47,7 +47,7 @@ struct FlyQDObject : public FlyObjectBase {
 	int data;
 };
 
-typedef vector<FlyQDObject> FlyQDObjects;
+typedef Std::vector<FlyQDObject> FlyQDObjects;
 
 } // namespace QDEngine
 

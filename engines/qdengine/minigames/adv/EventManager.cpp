@@ -19,6 +19,9 @@
  *
  */
 
+#include "common/debug.h"
+
+#include "qdengine/qdengine.h"
 #include "qdengine/minigames/adv/common.h"
 #include "qdengine/minigames/adv/EventManager.h"
 #include "qdengine/minigames/adv/RunTime.h"
@@ -39,23 +42,28 @@ EventManager::EventManager() {
 	char str_cache[256];
 
 	for (int idx = 0;; ++idx) {
-		_snprintf(str_cache, 127, "register_trigger_%d", idx);
-		if (const char * descr = runtime->parameter(str_cache, false))
+		snprintf(str_cache, 127, "register_trigger_%d", idx);
+		if (const char *descr = runtime->parameter(str_cache, false))
 			triggerEvents_.push_back(runtime->getObject(descr));
 		else
 			break;
 	}
-	dprintf("registered %d trigger objects\n", triggerEvents_.size());
+	debugC(2, kDebugMinigames, "EventManager(): registered %d trigger objects", triggerEvents_.size());
 
 	eventPresets_.resize(SYSTEM_EVENTS_SIZE);
 	for (int idx = 0; idx < SYSTEM_EVENTS_SIZE; ++idx) {
-		_snprintf(str_cache, 127, "system_event_%d", idx);
+		snprintf(str_cache, 127, "system_event_%d", idx);
 		if (const char * descr = runtime->parameter(str_cache, false)) {
 			EventPreset preset;
 			int read = sscanf(descr, "%d %d", &preset.score, &preset.triggerEventID);
-			xxassert(read == 2, (XBuffer() < "Неверная строка для описания" < str_cache).c_str());
+
+			if (read != 2)
+				error("EventManager(): Incorrect description string: %s", str_cache);
+
 			if (read == 2) {
-				xxassert(preset.triggerEventID < (int)triggerEvents_.size(), (XBuffer() < "Ссылка на незарегистрированный триггер в " < str_cache).c_str());
+				if (preset.triggerEventID >= (int)triggerEvents_.size())
+					error("EventManager(): Reference to an unregistered trigger in %s", str_cache);
+
 				if (preset.triggerEventID < (int)triggerEvents_.size())
 					eventPresets_[idx] = preset;
 			}
@@ -63,12 +71,17 @@ EventManager::EventManager() {
 	}
 
 	for (int idx = 0;; ++idx) {
-		_snprintf(str_cache, 127, "register_event_%d", idx);
+		snprintf(str_cache, 127, "register_event_%d", idx);
 		if (const char * descr = runtime->parameter(str_cache, false)) {
 			EventPreset preset;
 			int read = sscanf(descr, "%d %d %d %d", &preset.score, &preset.fontID, &preset.escapeID, &preset.triggerEventID);
-			xxassert(read == 4, (XBuffer() < "Неверная строка для описания события " < idx).c_str());
-			xxassert(preset.triggerEventID < (int)triggerEvents_.size(), (XBuffer() < "Ссылка на незарегистрированный триггер в " < str_cache).c_str());
+
+			if (read != 4)
+				error("EventManager(): Incorrect event description string: %d", idx);
+
+			if (preset.triggerEventID >= (int)triggerEvents_.size())
+				error("EventManager(): Reference to an unregistered trigger in %s", str_cache);
+
 			if (read == 4 && preset.triggerEventID < (int)triggerEvents_.size())
 				eventPresets_.push_back(preset);
 			else
@@ -76,7 +89,7 @@ EventManager::EventManager() {
 		} else
 			break;
 	}
-	dprintf("registered %d events\n", eventPresets_.size());
+	debugC(2, kDebugMinigames, "EventManager(): registered %d events", eventPresets_.size());
 
 	if (const char * data = runtime->parameter("allow_negative", false)) {
 		int tmp;
@@ -87,17 +100,17 @@ EventManager::EventManager() {
 }
 
 void EventManager::sysEvent(int eventID) {
-	xassert(eventID >= 0);
-	//dprintf("System event: %d\n", eventID);
+	assert(eventID >= 0);
+	debugC(6, kDebugMinigames, "EventManager() System event: %d", eventID);
 
-	xassert(eventID < SYSTEM_EVENTS_SIZE);
+	assert(eventID < SYSTEM_EVENTS_SIZE);
 
 	mgVect2i pos = runtime->screenSize() / 2;
 	event(eventID - SYSTEM_EVENTS_SIZE, mgVect2f(pos.x, pos.y), 1);
 }
 
 void EventManager::event(int eventID, const mgVect2f& pos, int factor) {
-	//dprintf("Event: %d, pos=(%5.1f, %5.1f), fartor=%d\n", eventID, pos.x, pos.y, factor);
+	debugC(6, kDebugMinigames, "EventManager() Event: %d, pos=(%5.1f, %5.1f), fartor=%d", eventID, pos.x, pos.y, factor);
 
 	eventID += SYSTEM_EVENTS_SIZE;
 
@@ -107,7 +120,7 @@ void EventManager::event(int eventID, const mgVect2f& pos, int factor) {
 	const EventPreset& pr = eventPresets_[eventID];
 
 	if (pr.triggerEventID >= 0) {
-		xassert(pr.triggerEventID < triggerEvents_.size());
+		assert(pr.triggerEventID < triggerEvents_.size());
 		triggerEvents_[pr.triggerEventID]->set_state("on");
 	}
 

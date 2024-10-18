@@ -19,6 +19,9 @@
  *
  */
 
+#include "common/debug.h"
+
+#include "qdengine/qdengine.h"
 #include "qdengine/minigames/adv/common.h"
 #include "qdengine/minigames/adv/TextManager.h"
 #include "qdengine/minigames/adv/RunTime.h"
@@ -30,32 +33,34 @@ TextManager::TextManager() {
 	char str_cache[256];
 
 	for (int idx = 0;; ++idx) {
-		_snprintf(str_cache, 127, "register_font_%d", idx);
+		snprintf(str_cache, 127, "register_font_%d", idx);
 		if (const char * descr = runtime->parameter(str_cache, false)) {
 			sscanf(descr, "%255s", str_cache);
 			Font digit;
 			if (!digit.pool.load(str_cache))
 				break;
-			dprintf("%d character set \"%s\" loaded, ", idx, str_cache);
-			_snprintf(str_cache, 127, "font_size_%d", idx);
-			if (descr = runtime->parameter(str_cache, false)) {
+
+			debugCN(2, kDebugMinigames, "TextManager(): %d character set \"%s\" loaded, ", idx, str_cache);
+
+			snprintf(str_cache, 127, "font_size_%d", idx);
+			if ((descr = runtime->parameter(str_cache, false))) {
 				int read = sscanf(descr, "%f %f", &digit.size.x, &digit.size.y);
-				xxassert(read == 2, (XBuffer() < "Неверная строка с размерами шрифта в [" < str_cache < "]").c_str());
-				dprintf("re");
+				if (read != 2)
+					warning("TextManager(): incorrect font size definition in [%s]", str_cache);
 			} else {
-				QDObject& obj = digit.pool.getObject();
-				obj->set_state("0");
+				QDObject obj = digit.pool.getObject();
+				obj.setState("0");
 				digit.size = runtime->getSize(obj);
 				digit.pool.releaseObject(obj);
 			}
-			dprintf("set size to (%5.1f, %5.1f)\n", digit.size.x, digit.size.y);
+			debugC(2, kDebugMinigames, "set size to (%5.1f, %5.1f)\n", digit.size.x, digit.size.y);
 			fonts_.push_back(digit);
 		} else
 			break;
 	}
 
 	for (int idx = 0;; ++idx) {
-		_snprintf(str_cache, 127, "register_particle_escape_%d", idx);
+		snprintf(str_cache, 127, "register_particle_escape_%d", idx);
 		if (const char * descr = runtime->parameter(str_cache, false)) {
 			Escape escape;
 			int read = sscanf(descr, "%d (%f><%f, %f><%f) (%f><%f, %f><%f) %f '%15s",
@@ -63,14 +68,17 @@ TextManager::TextManager() {
 			                  &escape.vel_min.x, &escape.vel_max.x, &escape.vel_min.y, &escape.vel_max.y,
 			                  &escape.accel_min.x, &escape.accel_max.x, &escape.accel_min.y, &escape.accel_max.y,
 			                  &escape.aliveTime, escape.format);
-			xxassert(read == 11, (XBuffer() < "Неверная строка для описания полета в [" < str_cache < "]").c_str());
+
+			if (read != 11)
+				warning("TextManager(): incorrect particle definition in [%s]", str_cache);
+
 			if (read != 11)
 				break;
 			escapes_.push_back(escape);
 		} else
 			break;
 	}
-	dprintf("registered %d particle escapes\n", escapes_.size());
+	debugCN(2, kDebugMinigames, "TextManager(): registered %d particle escapes", escapes_.size());
 
 	if (getStaticPreset(show_scores_, "show_scores"))
 		show_scores_.textID = createStaticText(show_scores_.pos, show_scores_.font, show_scores_.align);
@@ -95,12 +103,18 @@ bool TextManager::getStaticPreset(StaticTextPreset& preset, const char* name) co
 		char str[64];
 		str[63] = 0;
 		int read = sscanf(descr, "%d %d |%63s", &align, &preset.font, str);
-		xxassert(read == 3, (XBuffer() < "Неверная строка для описания формата текста в [" < name < "]").c_str());
+
+		if (read != 3)
+				warning("TextManager::getStaticPreset(): Incorrect text format description in %s", transCyrillic(name));
+
 		if (read != 3)
 			return false;
 
 		char *pos_obj = strchr(str, '|');
-		xxassert(pos_obj, (XBuffer() < "Неверная строка для описания формата текста в [" < name < "]").c_str());
+
+		if (!pos_obj)
+				warning("TextManager::getStaticPreset(): Incorrect text format description (2) in %s", transCyrillic(name));
+
 		if (!pos_obj)
 			return false;
 		*pos_obj = 0;
@@ -132,21 +146,18 @@ bool TextManager::getStaticPreset(StaticTextPreset& preset, const char* name) co
 }
 
 TextManager::~TextManager() {
-	Messages::iterator mit;
-	FOR_EACH(flowMsgs_, mit)
-	mit->release();
+	for (auto &mit : flowMsgs_)
+		mit.release();
 
-	StaticMessages::iterator sit;
-	FOR_EACH(staticMsgs_, sit)
-	sit->release();
+	for (auto &sit : staticMsgs_)
+		sit.release();
 
-	Fonts::iterator dit;
-	FOR_EACH(fonts_, dit)
-	dit->pool.release();
+	for (auto &dit : fonts_)
+		dit.pool.release();
 }
 
 int TextManager::createStaticText(const mgVect3f& pos, int fontID, TextAlign align) {
-	xassert(fontID >= 0 && fontID < fonts_.size());
+	assert(fontID >= 0 && fontID < fonts_.size());
 
 	StaticMessage msg(&fonts_[fontID]);
 
@@ -159,14 +170,14 @@ int TextManager::createStaticText(const mgVect3f& pos, int fontID, TextAlign ali
 }
 
 void TextManager::updateStaticText(int textID, const char* txt) {
-	xassert(textID >= 0 && textID < staticMsgs_.size());
+	assert(textID >= 0 && textID < staticMsgs_.size());
 
 	staticMsgs_[textID].setText(txt);
 }
 
 void TextManager::showText(const char* txt, const mgVect2f& pos, int fontID, int escapeID) {
-	xassert(fontID >= 0 && fontID < fonts_.size());
-	xassert(escapeID >= 0 && escapeID < escapes_.size());
+	assert(fontID >= 0 && fontID < fonts_.size());
+	assert(escapeID >= 0 && escapeID < escapes_.size());
 
 	Escape& es = escapes_[escapeID];
 
@@ -190,12 +201,12 @@ void TextManager::showText(const char* txt, const mgVect2f& pos, int fontID, int
 }
 
 void TextManager::showNumber(int num, const mgVect2f& pos, int fontID, int escapeID) {
-	xassert(fontID >= 0 && fontID < fonts_.size());
-	xassert(escapeID >= 0 && escapeID < escapes_.size());
+	assert(fontID >= 0 && fontID < fonts_.size());
+	assert(escapeID >= 0 && escapeID < escapes_.size());
 
 	char buf[16];
 	buf[15] = 0;
-	_snprintf(buf, 15, escapes_[escapeID].format, num);
+	snprintf(buf, 15, escapes_[escapeID].format, num);
 
 	showText(buf, pos, fontID, escapeID);
 }
@@ -212,21 +223,21 @@ TextManager::StaticTextPreset::StaticTextPreset() {
 	format[15] = 0;
 }
 
-TextManager::StaticMessage::StaticMessage(Font* font, TextAlign align_) {
+TextManager::StaticMessage::StaticMessage(Font* font, TextAlign align) {
 	font_ = font;
-	align_ = align_;
+	align_ = align;
 	depth_ = 0.f;
 }
 
 void TextManager::StaticMessage::release() {
-	QDObjects::iterator it;
-	FOR_EACH(objects_, it)
-	font_->pool.releaseObject(*it);
+	for (auto &it : objects_)
+		font_->pool.releaseObject(it);
+
 	objects_.clear();
 }
 
 void TextManager::StaticMessage::setText(const char* str) {
-	xassert(font_);
+	assert(font_);
 
 	if (!str) {
 		release();
@@ -278,6 +289,8 @@ void TextManager::StaticMessage::update() {
 	case ALIGN_CENTER:
 		x -= width / 2.f;
 		break;
+	default:
+		break;
 	}
 	if (y < -font_->size.y || y > runtime->screenSize().y + font_->size.y
 	        || x < -2 * width || x > runtime->screenSize().x + 2 * width) {
@@ -285,10 +298,9 @@ void TextManager::StaticMessage::update() {
 		return;
 	}
 
-	QDObjects::iterator it;
-	FOR_EACH(objects_, it) {
-		if (*it)
-			(*it)->set_R(runtime->game2world(mgVect2f(x, y), depth_));
+	for (auto &it : objects_) {
+		if (it)
+			it->set_R(runtime->game2world(mgVect2f(x, y), depth_));
 		x += font_->size.x;
 	}
 }
@@ -331,13 +343,13 @@ void TextManager::quant(float dt) {
 
 	if (show_scores_.textID >= 0) {
 		if (scoreUpdateTimer_ >= 0.f && scoreUpdateTimer_ <= runtime->getTime()) {
-			int sgn = SIGN(targetScore_ - currentScore_);
+			int sgn = targetScore_ - currentScore_ < 0 ? -1 : 1;
 			int mod = abs(currentScore_ - targetScore_);
 			currentScore_ += sgn * (mod / 10 + 1);
 
 			char buf[16];
 			buf[15] = 0;
-			_snprintf(buf, 15, show_scores_.format, currentScore_);
+			snprintf(buf, 15, show_scores_.format, currentScore_);
 			updateStaticText(show_scores_.textID, buf);
 
 			scoreUpdateTimer_ = currentScore_ != targetScore_ ? runtime->getTime() + scoreUpdateTime_ : -1.f;
@@ -359,7 +371,7 @@ void TextManager::updateTime(int seconds) {
 		seconds -= 3600 * h;
 		int minutes = seconds / 60;
 		seconds -= 60 * minutes;
-		_snprintf(buf, 15, show_time_.format, h, minutes, seconds);
+		snprintf(buf, 15, show_time_.format, h, minutes, seconds);
 		updateStaticText(show_time_.textID, buf);
 	}
 }

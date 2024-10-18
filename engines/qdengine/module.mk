@@ -4,7 +4,14 @@ MODULE_OBJS = \
 	qdengine.o \
 	console.o \
 	metaengine.o \
+	minigames/adv/common.o \
+	minigames/adv/EffectManager.o \
+	minigames/adv/EventManager.o \
+	minigames/adv/ExportInterface.o \
+	minigames/adv/FlyObject.o \
+	minigames/adv/ObjectContainer.o \
 	minigames/adv/Range.o \
+	minigames/adv/TextManager.o \
 	parser/qdscr_parser.o \
 	parser/xml_parser.o \
 	parser/xml_tag_buffer.o \

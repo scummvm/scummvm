@@ -47,7 +47,7 @@ private:
 		int escapeID;
 		int triggerEventID;
 	};
-	typedef vector<EventPreset> EventPresets;
+	typedef Std::vector<EventPreset> EventPresets;
 	EventPresets eventPresets_;
 
 	QDObjects triggerEvents_;

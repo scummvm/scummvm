@@ -22,10 +22,9 @@
 #ifndef QDENGINE_MINIGAMES_ADV_QDMATH_H
 #define QDENGINE_MINIGAMES_ADV_QDMATH_H
 
-namespace QDEngine {
+#include "qdengine/xmath.h"
 
-const float FLT_EPS = 1.192092896e-07f;
-const float FLT_INF = 1.e+30f;
+namespace QDEngine {
 
 #define SQRT2 1.41421356f
 #define SQRT3 1.73205081f

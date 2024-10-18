@@ -52,7 +52,7 @@ private:
 		mgVect2f size;
 		ObjectContainer pool;
 	};
-	typedef vector<Font> Fonts;
+	typedef Std::vector<Font> Fonts;
 
 	struct Escape {
 		Escape();
@@ -64,7 +64,7 @@ private:
 		mgVect2f accel_max;
 		char format[16];
 	};
-	typedef vector<Escape> Escapes;
+	typedef Std::vector<Escape> Escapes;
 
 	struct StaticTextPreset {
 		StaticTextPreset();
@@ -101,7 +101,7 @@ private:
 
 		QDObjects objects_;
 	};
-	typedef vector<StaticMessage> StaticMessages;
+	typedef Std::vector<StaticMessage> StaticMessages;
 
 	struct Message : public StaticMessage {
 		Message(Font* font = 0);
@@ -114,7 +114,7 @@ private:
 		mgVect2f accel_;
 
 	};
-	typedef vector<Message> Messages;
+	typedef Std::vector<Message> Messages;
 
 	Fonts fonts_;
 	Escapes escapes_;

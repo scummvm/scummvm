@@ -19,6 +19,7 @@
  *
  */
 
+#include "qdengine/qdengine.h"
 #include "qdengine/minigames/adv/common.h"
 #include "qdengine/minigames/adv/ObjectContainer.h"
 #include "qdengine/minigames/adv/RunTime.h"
@@ -31,16 +32,15 @@ ObjectContainer::ObjectContainer() {
 }
 
 void ObjectContainer::release() {
-	QDObjects::iterator it;
-	FOR_EACH(objects_, it)
-	runtime->release(*it);
+	for (auto &it : objects_)
+		runtime->release(it);
 
 	objects_.clear();
 	current_ = 0;
 }
 
 void ObjectContainer::pushObject(QDObject& obj) {
-	xassert(find(objects_.begin(), objects_.end(), obj) == objects_.end());
+	assert(Common::find(objects_.begin(), objects_.end(), obj) == objects_.end());
 	objects_.push_back(obj);
 }
 
@@ -55,7 +55,7 @@ const char *ObjectContainer::name() const {
 
 bool ObjectContainer::load(const char* base_name, bool hide) {
 	if (!runtime->testObject(base_name)) {
-		xxassert(false, (XBuffer() < "Не найден объект: \"" < base_name < "\"").c_str());
+		warning("ObjectContainer::load(): Object '%s' not found", transCyrillic(base_name));
 		return false;
 	}
 
@@ -72,7 +72,7 @@ bool ObjectContainer::load(const char* base_name, bool hide) {
 	char name[128];
 	name[127] = 0;
 	for (int dubl = 0; ; ++dubl) {
-		_snprintf(name, 127, "%s%04d", base_name, dubl);
+		snprintf(name, 127, "%s%04d", base_name, dubl);
 		if (runtime->testObject(name)) {
 			obj = runtime->getObject(name);
 			pushObject(obj);
@@ -86,27 +86,24 @@ bool ObjectContainer::load(const char* base_name, bool hide) {
 }
 
 void ObjectContainer::hideAll() {
-	QDObjects::iterator it;
-	FOR_EACH(objects_, it)
-	runtime->hide(*it);
+	for (auto &it : objects_)
+		runtime->hide(it);
 }
 
 QDObject ObjectContainer::getObject() {
 	if (current_ < objects_.size())
 		return objects_[current_++];
-	xxassert(0, (XBuffer() < "кончились объекты \"" < name() < "\" в пуле").c_str());
-//#ifdef _DEBUG
-//	return QDObject::ZERO;
-//#else
-	return objects_[0]; // плохо, но альтернатива это вообще упасть
-//#endif
+
+	return objects_[0]; // bad, but better than crashing
 
 }
 
 void ObjectContainer::releaseObject(QDObject& obj) {
-	QDObjects::iterator it = find(objects_.begin(), objects_.end(), obj);
+	QDObjects::iterator it = Common::find(objects_.begin(), objects_.end(), obj);
 	if (it != objects_.end()) {
-		xxassert((int)distance(objects_.begin(), it) < current_, (XBuffer() < "объект в пул \"" < name() < "\" возвращен несколько раз").c_str());
+		if ((int)Common::distance(objects_.begin(), it) >= current_)
+			error("ObjectContainer::releaseObject(): Object released more than once in to the pool: %s", transCyrillic(name()));
+
 		runtime->hide(obj);
 		if (current_ > 0)
 			swap(*it, objects_[--current_]);

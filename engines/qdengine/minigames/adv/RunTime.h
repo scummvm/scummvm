@@ -24,6 +24,10 @@
 
 #include "common/hashmap.h"
 
+namespace Common {
+class MemoryWriteStream;
+}
+
 namespace QDEngine {
 
 class qdEngineInterface;
@@ -92,7 +96,7 @@ public:
 	// finish MiniGame virtual interface
 
 	// при необходимости заменяет на неизмененные предыдущим прохождением данные
-	bool processGameData(XBuffer& data);
+	bool processGameData(Common::MemoryWriteStream& data);
 
 	mgVect2f mousePosition() const {
 		return mousePos_;
@@ -242,8 +246,17 @@ private:
 			return gameLevel_ == rs.gameLevel_ ? gameNum_ < rs.gameNum_ : gameLevel_ < rs.gameLevel_;
 		}
 	};
+
+	struct GameInfoIndex_Hash {
+        uint operator()(const GameInfoIndex& x) const { return (x.gameNum_ << 16) + x.gameLevel_; }
+	};
+
+	struct GameInfoIndex_EqualTo {
+        uint operator()(const GameInfoIndex& x, const GameInfoIndex& y) const { return x.gameNum_ == y.gameNum_ && x.gameLevel_ == y.gameLevel_; }
+	};
+
 	// информация о пройденных играх
-	typedef Common::HashMap<GameInfoIndex, GameInfo> GameInfoMap;
+	typedef Common::HashMap<GameInfoIndex, GameInfo, GameInfoIndex_Hash, GameInfoIndex_EqualTo> GameInfoMap;
 	GameInfoMap gameInfos_;
 	// Информация о текущей игре, при выходе запишется
 	GameInfoIndex currentGameIndex_;
