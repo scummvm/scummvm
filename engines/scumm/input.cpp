@@ -1175,7 +1175,9 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			if (isSegaCD) {
 				// We map the GMM to F5, while SPACE (which acts as our pause button) calls the original menu...
 				openMainMenuDialog();
-			} else {
+			} else if (_macGui) {
+				openMainMenuDialog(); // Mac games have their own menu so let's just call the GMM...
+			} else  {
 				showMainMenu();
 			}
 			return;
@@ -1235,7 +1237,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			} else if (_game.version >= 4 && lastKeyHit.keycode == Common::KEYCODE_j && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
 				if (_game.version == 4) {
 					showOldStyleBannerAndPause(getGUIString(gsRecalJoystick), 2, 90);
-				} else {
+				} else if (!_macGui) {
 					showBannerAndPause(0, 90, getGUIString(gsRecalJoystick));
 				}
 				return;
@@ -1249,7 +1251,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			if (_game.version >= 4 && lastKeyHit.keycode == Common::KEYCODE_m && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
 				if (_game.version == 4) {
 					showOldStyleBannerAndPause(getGUIString(gsMouseMode), 2, 90);
-				} else {
+				} else if (!_macGui) {
 					showBannerAndPause(0, 90, getGUIString(gsMouseMode));
 				}
 				return;
