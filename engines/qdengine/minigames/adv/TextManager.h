@@ -77,18 +77,18 @@ private:
 	bool getStaticPreset(StaticTextPreset& preset, const char* name) const;
 
 	struct StaticMessage {
-		StaticMessage(Font* font = 0, TextAlign align_ = ALIGN_CENTER);
+		StaticMessage(Font* font = 0, TextAlign _align = ALIGN_CENTER);
 		void release();
 
 		bool empty() const {
-			return objects_.empty();
+			return _objects.empty();
 		}
 
 		void setText(const char* str);
 
-		int depth_;
-		mgVect2f pos_;
-		TextAlign align_;
+		int _depth;
+		mgVect2f _pos;
+		TextAlign _align;
 
 	protected:
 		void update();
@@ -97,9 +97,9 @@ private:
 		}
 
 	private:
-		Font *font_;
+		Font *_font;
 
-		QDObjects objects_;
+		QDObjects _objects;
 	};
 	typedef Std::vector<StaticMessage> StaticMessages;
 
@@ -109,24 +109,24 @@ private:
 
 		void quant(float dt);
 
-		float time_;
-		mgVect2f vel_;
-		mgVect2f accel_;
+		float _time;
+		mgVect2f _vel;
+		mgVect2f _accel;
 
 	};
 	typedef Std::vector<Message> Messages;
 
-	Fonts fonts_;
-	Escapes escapes_;
-	StaticTextPreset show_scores_;
-	StaticTextPreset show_time_;
-	StaticMessages staticMsgs_;
-	Messages flowMsgs_;
+	Fonts _fonts;
+	Escapes _escapes;
+	StaticTextPreset _show_scores;
+	StaticTextPreset _show_time;
+	StaticMessages _staticMsgs;
+	Messages _flowMsgs;
 
-	int targetScore_;
-	int currentScore_;
-	float scoreUpdateTime_;
-	float scoreUpdateTimer_;
+	int _targetScore;
+	int _currentScore;
+	float _scoreUpdateTime;
+	float _scoreUpdateTimer;
 };
 
 } // namespace QDEngine
