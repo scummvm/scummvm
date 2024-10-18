@@ -37,7 +37,7 @@ class QDObject {
 	qdMinigameObjectInterface *_obj;
 
 #ifdef _DEBUG
-	string name_;
+	Common::String name_;
 #endif
 
 public:

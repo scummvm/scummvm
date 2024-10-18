@@ -29,7 +29,7 @@ class ObjectContainer {
 	int _current;
 	mgVect3f _coord;
 	#ifdef _DEBUG
-	string _name;
+	Common::String _name;
 	#endif
 	const char *name() const;
 	void pushObject(QDObject& obj);
