@@ -505,22 +505,22 @@ bool BaseRenderOpenGL3DShader::setProjection2D() {
 
 bool BaseRenderOpenGL3DShader::setWorldTransform(const DXMatrix &transform) {
 	_worldMatrix = transform;
-	Math::Matrix4 tmp;
-	tmp.setData(transform);
-	tmp.transpose();
+	DXMatrix newInvertedTranspose, world = transform;
+	DXMatrixTranspose(&world, &world);
+	DXMatrixMultiply(&newInvertedTranspose, &world, &_viewMatrix);
+	DXMatrixInverse(&newInvertedTranspose, nullptr, &newInvertedTranspose);
+	DXMatrixTranspose(&newInvertedTranspose, &newInvertedTranspose);
 
-	Math::Matrix4 viewMatrix;
-	viewMatrix.setData(_viewMatrix);
-	Math::Matrix4 newInvertedTranspose = tmp * viewMatrix;
-	newInvertedTranspose.inverse();
-	newInvertedTranspose.transpose();
+	Math::Matrix4 modelMatrix, normalMatrix;
+	modelMatrix.setData(world);
+	normalMatrix.setData(newInvertedTranspose);
 
 	_xmodelShader->use();
-	_xmodelShader->setUniform("modelMatrix", tmp);
-	_xmodelShader->setUniform("normalMatrix", newInvertedTranspose);
+	_xmodelShader->setUniform("modelMatrix", modelMatrix);
+	_xmodelShader->setUniform("normalMatrix", normalMatrix);
 
 	_shadowVolumeShader->use();
-	_shadowVolumeShader->setUniform("modelMatrix", tmp);
+	_shadowVolumeShader->setUniform("modelMatrix", modelMatrix);
 
 	return true;
 }
