@@ -974,10 +974,7 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_ANGLE:
-			// not sure if this temp variable is necessary
-			float tmpAngle;
-			parser.scanStr((char *)params, "%f", &tmpAngle);
-			_angle = tmpAngle;
+			parser.scanStr((char *)params, "%f", &_angle);
 			BaseUtils::normalizeAngle(_angle);
 			break;
 
@@ -1555,7 +1552,6 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 				if (adGame->_scene && adGame->_scene->_sceneGeometry) {
 					DXVector3 pos;
 					if (adGame->_scene->_sceneGeometry->convert2Dto3DTolerant(x, y, &pos)) {
-						//_gameRef->QuickMessageForm("%d, %d -> %f, %f, %f", x, y, pos.x, pos.y, pos.z);
 						goTo3D(pos);
 						if (strcmp(name, "GoToAsync") != 0) {
 							script->waitForExclusive(this);
@@ -1856,6 +1852,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		/*const char *effectFilename =*/ stack->pop()->getString();
 
 		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
+		//if (_xmodel && _xmodel->setMaterialEffect(materialName, effectFilename)) {
 		if (_xmodel) {
 			stack->pushBool(true);
 		} else {
@@ -1873,6 +1870,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		stack->pop();
 
 		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
+		// if (_xmodel && _xodel->removeMaterialEffect(materialName)) {
 		if (_xmodel) {
 			stack->pushBool(true);
 		} else {
@@ -1891,6 +1889,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		/*ScValue *val =*/ stack->pop();
 
 		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
+		// if (_xmodel && _xmodel->setMaterialEffectParam(materialName, paramName, val)) {
 		if (_xmodel) {
 			stack->pushBool(true);
 		} else {
@@ -1911,6 +1910,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		/*float z =*/ stack->pop()->getFloat();
 		/*float w =*/ stack->pop()->getFloat();
 
+		//if (_xmodel && _xmodel->setMaterialEffectParam(materialName, paramName, DXVector4(x, y, z, w))) {
 		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
 		if (_xmodel) {
 			stack->pushBool(true);
@@ -1929,6 +1929,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		/*const char *paramName =*/ stack->pop()->getString();
 		/*uint32 color =*/ stack->pop()->getInt();
 
+		// if (_xmodel && _xmodel->setMaterialEffectParam(materialName, paramName, DXVector4(r, g, b, a))) {
 		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
 		if (_xmodel) {
 			stack->pushBool(true);
