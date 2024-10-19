@@ -100,8 +100,6 @@ public:
 	bool transferVector2(const char *name, Vector2 *val);
 #ifdef ENABLE_WME3D
 	bool transferVector3d(const char *name, DXVector3 *val);
-	bool transferVector3d(const char *name, Math::Vector3d *val);
-	bool transferMatrix4(const char *name, Math::Matrix4 *val);
 	bool transferMatrix4(const char *name, DXMatrix *val);
 	bool transferAngle(const char *name, float *val);
 #endif

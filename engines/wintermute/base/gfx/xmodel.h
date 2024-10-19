@@ -135,7 +135,7 @@ public:
 	bool renderFlatShadowModel();
 	bool reset();
 
-	bool updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth);
+	bool updateShadowVol(ShadowVolume *shadow, DXMatrix *modelMat, DXVector3 *light, float extrusionDepth);
 
 	bool playAnim(int channel, const Common::String &anim, uint32 transitionTime = 0, bool forceReset = false, uint32 stopTransitionTime = 0);
 	bool isAnimPending(char *animName = nullptr);
@@ -179,9 +179,9 @@ private:
 	void updateBoundingRect();
 	void static inline updateRect(Rect32 *rc, DXVector3 *vec);
 	Rect32 _drawingViewport;
-	Math::Matrix4 _lastWorldMat;
-	Math::Matrix4 _lastViewMat;
-	Math::Matrix4 _lastProjMat;
+	DXMatrix _lastWorldMat;
+	DXMatrix _lastViewMat;
+	DXMatrix _lastProjMat;
 	int32 _lastOffsetX;
 	int32 _lastOffsetY;
 

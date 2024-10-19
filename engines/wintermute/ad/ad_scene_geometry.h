@@ -53,18 +53,18 @@ public:
 	bool dropWaypoints();
 	bool setLightColor(const char *lightName, uint32 color);
 	uint32 getLightColor(const char *lightName);
-	Math::Vector3d getLightPos(const char *lightName);
+	DXVector3 getLightPos(const char *lightName);
 	bool enableNode(const char *nodeName, bool enable = true);
 	bool isNodeEnabled(const char *nodeName);
 	bool enableLight(const char *lightName, bool enable = true);
 	bool isLightEnabled(const char *lightName);
 	DECLARE_PERSISTENT(AdSceneGeometry, BaseObject)
-	bool correctTargetPoint(const Math::Vector3d &source, Math::Vector3d *target);
+	bool correctTargetPoint(const DXVector3 &source, DXVector3 *target);
 
 	bool _lastValuesInitialized;
-	Math::Matrix4 _lastWorldMat;
-	Math::Matrix4 _lastViewMat;
-	Math::Matrix4 _lastProjMat;
+	DXMatrix _lastWorldMat;
+	DXMatrix _lastViewMat;
+	DXMatrix _lastProjMat;
 	int _lastOffsetX;
 	int _lastOffsetY;
 	Rect32 _drawingViewport;
@@ -72,26 +72,26 @@ public:
 	int _lastScrollY;
 
 	bool createLights();
-	bool enableLights(Math::Vector3d Point, BaseArray<char *> &IgnoreLights);
+	bool enableLights(DXVector3 Point, BaseArray<char *> &IgnoreLights);
 
 	bool initLoop();
-	float getPointsDist(Math::Vector3d p1, Math::Vector3d p2);
+	float getPointsDist(DXVector3 p1, DXVector3 p2);
 	void pathFinderStep();
-	bool getPath(Math::Vector3d source, Math::Vector3d target, AdPath3D *path, bool rerun = false);
-	bool convert2Dto3D(int x, int y, Math::Vector3d *pos);
-	bool convert2Dto3DTolerant(int x, int y, Math::Vector3d *pos);
-	bool convert3Dto2D(Math::Vector3d *pos, int32 *x, int32 *y);
+	bool getPath(DXVector3 source, DXVector3 target, AdPath3D *path, bool rerun = false);
+	bool convert2Dto3D(int x, int y, DXVector3 *pos);
+	bool convert2Dto3DTolerant(int x, int y, DXVector3 *pos);
+	bool convert3Dto2D(DXVector3 *pos, int32 *x, int32 *y);
 	BaseSprite *_wptMarker;
 	float _waypointHeight;
-	bool directPathExists(Math::Vector3d *p1, Math::Vector3d *p2);
-	float getHeightAt(Math::Vector3d pos, float Ttlerance = 0.0f, bool *intFound = NULL);
+	bool directPathExists(DXVector3 *p1, DXVector3 *p2);
+	float getHeightAt(DXVector3 pos, float Ttlerance = 0.0f, bool *intFound = NULL);
 
 	bool storeDrawingParams();
 	bool render(bool render);
 	bool renderShadowGeometry();
 
-	Math::Matrix4 *getViewMatrix();
-	Math::Matrix4 _viewMatrix;
+	DXMatrix *getViewMatrix();
+	DXMatrix _viewMatrix;
 	bool setActiveCamera(const char *camera, float fov, float nearClipPlane, float farClipPlane);
 	bool setActiveCamera(int camera, float fow, float nearClipPlane, float farClipPlane);
 	//bool SetActiveCameraTwin(char* Camera);
@@ -117,12 +117,12 @@ public:
 
 private:
 	AdGeomExt *getGeometryExtension(char *filename);
-	Math::Vector3d getBlockIntersection(Math::Vector3d *p1, Math::Vector3d *p2);
+	DXVector3 getBlockIntersection(DXVector3 *p1, DXVector3 *p2);
 	bool _PFReady;
-	Math::Vector3d _PFSource;
-	Math::Vector3d _PFTarget;
+	DXVector3 _PFSource;
+	DXVector3 _PFTarget;
 	AdPath3D *_PFTargetPath;
-	Math::Vector3d _PFAlternateTarget;
+	DXVector3 _PFAlternateTarget;
 	float _PFAlternateDist;
 	bool _PFRerun;
 	BaseArray<AdPathPoint3D *> _PFPath;

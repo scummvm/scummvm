@@ -826,29 +826,6 @@ bool BasePersistenceManager::transferVector2(const char *name, Vector2 *val) {
 #ifdef ENABLE_WME3D
 //////////////////////////////////////////////////////////////////////////
 // Vector3
-bool BasePersistenceManager::transferVector3d(const char *name, Math::Vector3d *val) {
-	if (_saving) {
-		putFloat(val->x());
-		putFloat(val->y());
-		putFloat(val->z());
-
-		if (_saveStream->err()) {
-			return STATUS_FAILED;
-		}
-
-		return STATUS_OK;
-	} else {
-		val->x() = getFloat();
-		val->y() = getFloat();
-		val->z() = getFloat();
-
-		if (_loadStream->err()) {
-			return STATUS_FAILED;
-		}
-
-		return STATUS_OK;
-	}
-}
 bool BasePersistenceManager::transferVector3d(const char *name, DXVector3 *val) {
 	if (_saving) {
 		putFloat(val->_x);
@@ -875,33 +852,6 @@ bool BasePersistenceManager::transferVector3d(const char *name, DXVector3 *val) 
 
 //////////////////////////////////////////////////////////////////////////
 // Matrix4
-bool BasePersistenceManager::transferMatrix4(const char *name, Math::Matrix4 *val) {
-	if (_saving) {
-		for (int r = 0; r < 4; ++r) {
-			for (int c = 0; c < 4; ++c) {
-				putFloat((*val)(r, c));
-			}
-		}
-
-		if (_saveStream->err()) {
-			return STATUS_FAILED;
-		}
-
-		return STATUS_OK;
-	} else {
-		for (int r = 0; r < 4; ++r) {
-			for (int c = 0; c < 4; ++c) {
-				(*val)(r, c) = getFloat();
-			}
-		}
-
-		if (_loadStream->err()) {
-			return STATUS_FAILED;
-		}
-
-		return STATUS_OK;
-	}
-}
 bool BasePersistenceManager::transferMatrix4(const char *name, DXMatrix *val) {
 	if (_saving) {
 		for (int i = 0; i < 16; ++i) {

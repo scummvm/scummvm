@@ -148,13 +148,13 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 			assert(fileRotKey->_numTfkeys == 4);
 
 			BoneRotationKey *rotKey = new BoneRotationKey;
-			rotKey->_time         = fileRotKey->_time;
+			rotKey->_time        = fileRotKey->_time;
 			// NOTE x files are w x y z and QUATERNIONS are x y z w
-			rotKey->_rotation.w() = fileRotKey->_tfkeys[0];
-			rotKey->_rotation.x() = fileRotKey->_tfkeys[1];
-			rotKey->_rotation.y() = fileRotKey->_tfkeys[2];
+			rotKey->_rotation._w = fileRotKey->_tfkeys[0];
+			rotKey->_rotation._x = fileRotKey->_tfkeys[1];
+			rotKey->_rotation._y = fileRotKey->_tfkeys[2];
 			// mirror z component
-			rotKey->_rotation.z() = -fileRotKey->_tfkeys[3];
+			rotKey->_rotation._z = -fileRotKey->_tfkeys[3];
 
 			_rotKeys.push_back(rotKey);
 		}
@@ -170,9 +170,9 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 
 			BoneScaleKey *scaleKey = new BoneScaleKey;
 			scaleKey->_time  = fileScaleKey->_time;
-			for (uint i = 0; i < fileScaleKey->_numTfkeys; ++i) {
-				scaleKey->_scale.getData()[i] = fileScaleKey->_tfkeys[i];
-			}
+			scaleKey->_scale._x = fileScaleKey->_tfkeys[0];
+			scaleKey->_scale._y = fileScaleKey->_tfkeys[1];
+			scaleKey->_scale._z = fileScaleKey->_tfkeys[2];
 
 			_scaleKeys.push_back(scaleKey);
 		}
@@ -188,10 +188,10 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 
 			BonePositionKey *posKey = new BonePositionKey;
 			posKey->_time = filePosKey->_time;
-			posKey->_pos.getData()[0] = filePosKey->_tfkeys[0];
-			posKey->_pos.getData()[1] = filePosKey->_tfkeys[1];
+			posKey->_pos._x = filePosKey->_tfkeys[0];
+			posKey->_pos._y = filePosKey->_tfkeys[1];
 			// mirror Z
-			posKey->_pos.getData()[2] = -filePosKey->_tfkeys[2];
+			posKey->_pos._z = -filePosKey->_tfkeys[2];
 
 			_posKeys.push_back(posKey);
 		}
@@ -237,9 +237,9 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 			scaleKey->_time = time;
 			rotationKey->_time = time;
 
-			positionKey->_pos = Math::Vector3d(transVec._x, transVec._y, transVec._z);
-			scaleKey->_scale = Math::Vector3d(scaleVec._x, scaleVec._y, scaleVec._z);
-			rotationKey->_rotation = Math::Vector4d(qRot._x, qRot._y, qRot._z, qRot._w);
+			positionKey->_pos = DXVector3(transVec._x, transVec._y, transVec._z);
+			scaleKey->_scale = DXVector3(scaleVec._x, scaleVec._y, scaleVec._z);
+			rotationKey->_rotation = DXQuaternion(qRot._x, qRot._y, qRot._z, qRot._w);
 
 			_posKeys.push_back(positionKey);
 			_scaleKeys.push_back(scaleKey);
@@ -299,8 +299,8 @@ bool Animation::update(int slot, uint32 localTime, float animLerpValue) {
 		}
 
 		// apply the lerp function on the scale vector
-		DXVector3 scale1vec = DXVector3(_scaleKeys[keyIndex1]->_scale.x(), _scaleKeys[keyIndex1]->_scale.y(), _scaleKeys[keyIndex1]->_scale.z());
-		DXVector3 scale2vec = DXVector3(_scaleKeys[keyIndex2]->_scale.x(), _scaleKeys[keyIndex2]->_scale.y(), _scaleKeys[keyIndex2]->_scale.z());
+		DXVector3 scale1vec = DXVector3(_scaleKeys[keyIndex1]->_scale._x, _scaleKeys[keyIndex1]->_scale._y, _scaleKeys[keyIndex1]->_scale._z);
+		DXVector3 scale2vec = DXVector3(_scaleKeys[keyIndex2]->_scale._x, _scaleKeys[keyIndex2]->_scale._y, _scaleKeys[keyIndex2]->_scale._z);
 		DXVec3Lerp(&resultScale, &scale1vec, &scale2vec, lerpValue);
 
 		animate = true;
@@ -337,16 +337,16 @@ bool Animation::update(int slot, uint32 localTime, float animLerpValue) {
 		DXQuaternion q1, q2;
 
 		// negate for opengl
-		q1._x =  -(-_rotKeys[keyIndex1]->_rotation.x());
-		q1._y =  -(-_rotKeys[keyIndex1]->_rotation.y());
-		q1._z =  -(-_rotKeys[keyIndex1]->_rotation.z());
-		q1._w =  _rotKeys[keyIndex1]->_rotation.w();
+		q1._x =  -(-_rotKeys[keyIndex1]->_rotation._x);
+		q1._y =  -(-_rotKeys[keyIndex1]->_rotation._y);
+		q1._z =  -(-_rotKeys[keyIndex1]->_rotation._z);
+		q1._w =  _rotKeys[keyIndex1]->_rotation._w;
 
 		// negate for opengl
-		q2._x =  -(-_rotKeys[keyIndex2]->_rotation.x());
-		q2._y =  -(-_rotKeys[keyIndex2]->_rotation.y());
-		q2._z =  -(-_rotKeys[keyIndex2]->_rotation.z());
-		q2._w =   _rotKeys[keyIndex2]->_rotation.w();
+		q2._x =  -(-_rotKeys[keyIndex2]->_rotation._x);
+		q2._y =  -(-_rotKeys[keyIndex2]->_rotation._y);
+		q2._z =  -(-_rotKeys[keyIndex2]->_rotation._z);
+		q2._w =  _rotKeys[keyIndex2]->_rotation._w;
 
 		DXQuaternionSlerp(&resultRot, &q1, &q2, lerpValue);
 
@@ -380,15 +380,15 @@ bool Animation::update(int slot, uint32 localTime, float animLerpValue) {
 			lerpValue = float(localTime - time1) / float(time2 - time1);
 
 		// apply the lerp function
-		DXVector3 pos1vec = DXVector3(_posKeys[keyIndex1]->_pos.x(), _posKeys[keyIndex1]->_pos.y(), _posKeys[keyIndex1]->_pos.z());
-		DXVector3 pos2vec = DXVector3(_posKeys[keyIndex2]->_pos.x(), _posKeys[keyIndex2]->_pos.y(), _posKeys[keyIndex2]->_pos.z());
+		DXVector3 pos1vec = DXVector3(_posKeys[keyIndex1]->_pos._x, _posKeys[keyIndex1]->_pos._y, _posKeys[keyIndex1]->_pos._z);
+		DXVector3 pos2vec = DXVector3(_posKeys[keyIndex2]->_pos._x, _posKeys[keyIndex2]->_pos._y, _posKeys[keyIndex2]->_pos._z);
 		DXVec3Lerp(&resultPos, &pos1vec, &pos2vec, lerpValue);
 
 		animate = true;
 	}
 
 	if (animate) {
-		_targetFrame->setTransformation(slot, Math::Vector3d(resultPos), Math::Vector3d(resultScale), Math::Quaternion(resultRot._x, resultRot._y, resultRot._z, resultRot._w), animLerpValue);
+		_targetFrame->setTransformation(slot, DXVector3(resultPos), DXVector3(resultScale), DXQuaternion(resultRot._x, resultRot._y, resultRot._z, resultRot._w), animLerpValue);
 	}
 
 	return true;

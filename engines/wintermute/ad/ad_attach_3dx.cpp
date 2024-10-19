@@ -83,14 +83,12 @@ bool AdAttach3DX::update() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdAttach3DX::displayAttachable(const Math::Matrix4 &viewMat, bool registerObjects) {
+bool AdAttach3DX::displayAttachable(DXMatrix *viewMat, bool registerObjects) {
 	DXMatrix finalMatrix, worldMatrix, viewMatrix;
-	worldMatrix = DXMatrix(_worldMatrix.getData());
-	viewMatrix = DXMatrix(viewMat.getData());
+	worldMatrix = DXMatrix(_worldMatrix);
+	viewMatrix = DXMatrix(*viewMat);
 	DXMatrixMultiply(&finalMatrix, &worldMatrix, &viewMatrix);
-	Math::Matrix4 finalMat;
-	finalMat.setData(finalMatrix);
-	_gameRef->_renderer3D->setWorldTransform(finalMat);
+	_gameRef->_renderer3D->setWorldTransform(finalMatrix);
 
 	if (_xmodel) {
 		_xmodel->render();
@@ -109,17 +107,15 @@ bool AdAttach3DX::displayAttachable(const Math::Matrix4 &viewMat, bool registerO
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdAttach3DX::displayShadowVol(const DXMatrix &modelMat, const Math::Vector3d &light, float extrusionDepth, bool update) {
-	DXMatrix finalMatrix, worldMatrix;
-	worldMatrix = DXMatrix(_worldMatrix.getData());
-	DXMatrixMultiply(&finalMatrix, &modelMat, &worldMatrix);
-	Math::Matrix4 finalMat;
-	finalMat.setData(finalMatrix);
+bool AdAttach3DX::displayShadowVol(DXMatrix *modelMat, DXVector3 *light, float extrusionDepth, bool update) {
+	DXMatrix finalMat, worldMatrix;
+	worldMatrix = DXMatrix(_worldMatrix);
+	DXMatrixMultiply(&finalMat, modelMat, &worldMatrix);
 
 	if (_xmodel) {
 		if (update) {
 			getShadowVolume()->reset();
-			_xmodel->updateShadowVol(getShadowVolume(), finalMat, light, extrusionDepth);
+			_xmodel->updateShadowVol(getShadowVolume(), &finalMat, light, extrusionDepth);
 		}
 
 		_gameRef->_renderer3D->setWorldTransform(finalMat);

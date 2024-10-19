@@ -31,6 +31,7 @@
 
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/base/base.h"
+#include "engines/wintermute/base/gfx/xmath.h"
 
 #include "math/vector3d.h"
 
@@ -39,13 +40,13 @@ namespace Wintermute {
 class AdPathPoint3D: public BaseClass {
 public:
 	DECLARE_PERSISTENT(AdPathPoint3D, BaseClass)
-	AdPathPoint3D(Math::Vector3d pos, float dist);
+	AdPathPoint3D(DXVector3 pos, float dist);
 	AdPathPoint3D();
 	virtual ~AdPathPoint3D();
 	AdPathPoint3D *_origin;
 	bool _marked;
 	float _distance;
-	Math::Vector3d _pos;
+	DXVector3 _pos;
 };
 
 }

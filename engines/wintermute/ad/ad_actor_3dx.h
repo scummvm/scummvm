@@ -31,6 +31,7 @@
 #include "engines/wintermute/ad/ad_object_3d.h"
 #include "engines/wintermute/base/base_animation_transition_time.h"
 #include "engines/wintermute/base/base_point.h"
+#include "engines/wintermute/base/gfx/xmath.h"
 #include "engines/wintermute/coll_templ.h"
 
 namespace Wintermute {
@@ -42,10 +43,10 @@ class AdPath3D;
 class AdActor3DX : public AdObject3D {
 public:
 	PartEmitter *createParticleEmitter(bool followParent = false, int offsetX = 0, int offsetY = 0) override;
-	virtual PartEmitter *createParticleEmitter(const char *boneName, Math::Vector3d offset);
+	virtual PartEmitter *createParticleEmitter(const char *boneName, DXVector3 offset);
 	bool updatePartEmitter() override;
 	Common::String _partBone;
-	Math::Vector3d _partOffset;
+	DXVector3 _partOffset;
 
 	bool displayShadowVolume();
 	bool restoreDeviceObjects() override;
@@ -85,17 +86,17 @@ public:
 	DECLARE_PERSISTENT(AdActor3DX, AdObject3D)
 	bool _turningLeft;
 
-	void initLine3D(Math::Vector3d startPt, Math::Vector3d endPt, bool firstStep);
+	void initLine3D(DXVector3 startPt, DXVector3 endPt, bool firstStep);
 	void getNextStep3D();
 	void followPath3D();
 
 	void getNextStep2D();
 	void followPath2D();
 
-	void goTo3D(Math::Vector3d targetPos, float targetAngle = -1.0f);
+	void goTo3D(DXVector3 targetPos, float targetAngle = -1.0f);
 	void goTo2D(int x, int y, float targetAngle = -1.0f);
 	bool turnTo(float angle);
-	Math::Vector3d _targetPoint3D;
+	DXVector3 _targetPoint3D;
 	BasePoint *_targetPoint2D;
 	float _targetAngle;
 	bool display() override;

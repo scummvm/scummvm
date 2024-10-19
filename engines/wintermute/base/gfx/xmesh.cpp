@@ -296,7 +296,7 @@ bool XMesh::update(FrameNode *parentFrame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool XMesh::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth) {
+bool XMesh::updateShadowVol(ShadowVolume *shadow, DXMatrix *modelMat, DXVector3 *light, float extrusionDepth) {
 	if (!_blendedMesh)
 		return false;
 
@@ -306,12 +306,11 @@ bool XMesh::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const
 	}
 	uint32 vertexSize = DXGetFVFVertexSize(_blendedMesh->getFVF()) / sizeof(float);
 
-	DXVector3 invLight = DXVector3(light.getData());
-	DXMatrix matInverseModel = DXMatrix(modelMat.getData());
+	DXVector3 invLight = *light;
+	DXMatrix matInverseModel = *modelMat;
 	DXMatrixInverse(&matInverseModel, nullptr, &matInverseModel);
 	DXMatrixTranspose(&matInverseModel, &matInverseModel);
-	DXVector3 l = DXVector3(light.getData());
-	DXVec3TransformNormal(&invLight, &l, &matInverseModel);
+	DXVec3TransformNormal(&invLight, light, &matInverseModel);
 
 	uint32 numEdges = 0;
 
@@ -396,7 +395,7 @@ bool XMesh::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool XMesh::pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir) {
+bool XMesh::pickPoly(DXVector3 *pickRayOrig, DXVector3 *pickRayDir) {
 	if (!_blendedMesh)
 		return false;
 
@@ -411,20 +410,17 @@ bool XMesh::pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir) {
 
 
 	bool found = false;
-	Math::Vector3d intersection;
+	DXVector3 intersection;
 
 	for (uint32 i = 0; i < numFaces; i++) {
-		DXVector3 vp0 = *(DXVector3 *)(points + indices[3 * i + 0] * fvfSize);
-		DXVector3 vp1 = *(DXVector3 *)(points + indices[3 * i + 1] * fvfSize);
-		DXVector3 vp2 = *(DXVector3 *)(points + indices[3 * i + 2] * fvfSize);
-		Math::Vector3d v0 = Math::Vector3d(vp0._x, vp0._y, vp0._z);
-		Math::Vector3d v1 = Math::Vector3d(vp1._x, vp1._y, vp1._z);
-		Math::Vector3d v2 = Math::Vector3d(vp2._x, vp2._y, vp2._z);
+		DXVector3 v0 = *(DXVector3 *)(points + indices[3 * i + 0] * fvfSize);
+		DXVector3 v1 = *(DXVector3 *)(points + indices[3 * i + 1] * fvfSize);
+		DXVector3 v2 = *(DXVector3 *)(points + indices[3 * i + 2] * fvfSize);
 
-		if (isnan(v0.x()))
+		if (isnan(v0._x))
 			continue;
 
-		found = intersectTriangle(*pickRayOrig, *pickRayDir, v0, v1, v2, intersection.x(), intersection.y(), intersection.z()) != false;
+		found = intersectTriangle(*pickRayOrig, *pickRayDir, v0, v1, v2, &intersection._x, &intersection._y, &intersection._z) != false;
 		if (found)
 			break;
 	}

@@ -59,7 +59,7 @@ protected:
 	uint16 _vertexCount;
 	uint16 *_indexData;
 	uint16 _indexCount;
-	Math::Vector4d _color;
+	DXVector4 _color;
 };
 
 } // namespace Wintermute

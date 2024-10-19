@@ -57,9 +57,9 @@ XModel::XModel(BaseGame *inGame, BaseObject *owner) : BaseObject(inGame) {
 	_rootFrame = nullptr;
 
 	_drawingViewport.setEmpty();
-	_lastWorldMat.setToIdentity();
-	_lastViewMat.setToIdentity();
-	_lastProjMat.setToIdentity();
+	DXMatrixIdentity(&_lastWorldMat);
+	DXMatrixIdentity(&_lastViewMat);
+	DXMatrixIdentity(&_lastProjMat);
 	_lastOffsetX = _lastOffsetY = 0;
 
 	_BBoxStart = _BBoxEnd = DXVector3(0.0f, 0.0f, 0.0f);
@@ -366,7 +366,7 @@ bool XModel::update() {
 	if (_rootFrame) {
 		DXMatrix tempMat;
 		DXMatrixIdentity(&tempMat);
-		_rootFrame->updateMatrices(tempMat);
+		_rootFrame->updateMatrices(&tempMat);
 
 		return _rootFrame->updateMeshes();
 	} else {
@@ -456,7 +456,7 @@ bool XModel::isAnimPending(char *animName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool XModel::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth) {
+bool XModel::updateShadowVol(ShadowVolume *shadow, DXMatrix *modelMat, DXVector3 *light, float extrusionDepth) {
 	if (_rootFrame) {
 		return _rootFrame->updateShadowVol(shadow, modelMat, light, extrusionDepth);
 	} else {
@@ -478,9 +478,9 @@ bool XModel::render() {
 		bool res = _rootFrame->render(this);
 
 		// remember matrices for object picking purposes
-		_gameRef->_renderer3D->getWorldTransform(_lastWorldMat);
-		_gameRef->_renderer3D->getViewTransform(_lastViewMat);
-		_gameRef->_renderer3D->getProjectionTransform(_lastProjMat);
+		_gameRef->_renderer3D->getWorldTransform(&_lastWorldMat);
+		_gameRef->_renderer3D->getViewTransform(&_lastViewMat);
+		_gameRef->_renderer3D->getProjectionTransform(&_lastProjMat);
 
 		// remember scene offset
 		Rect32 rc;
@@ -567,12 +567,12 @@ bool XModel::isTransparentAt(int x, int y) {
 
 	// Compute the vector of the pick ray in screen space
 	DXVector3 vec;
-	vec._x =  (((2.0f * x) / (_drawingViewport.width())) - 1) / _lastProjMat(0, 0);
-	vec._y = -(((2.0f * y) / (_drawingViewport.height())) - 1) / _lastProjMat(1, 1);
+	vec._x =  (((2.0f * x) / (_drawingViewport.width())) - 1) / _lastProjMat.matrix._11;
+	vec._y = -(((2.0f * y) / (_drawingViewport.height())) - 1) / _lastProjMat.matrix._22;
 	vec._z =  -1.0f;
 
 	// Get the inverse view matrix
-	DXMatrix m, viewMatrix = DXMatrix(_lastViewMat.getData());
+	DXMatrix m, viewMatrix = DXMatrix(_lastViewMat);
 	DXMatrixInverse(&m, nullptr, &viewMatrix);
 
 	// Transform the screen space pick ray into 3D space
@@ -585,17 +585,14 @@ bool XModel::isTransparentAt(int x, int y) {
 
 	// transform to model space
 	DXVector3 end = pickRayOrig + pickRayDir;
-	DXMatrix worldMatrix = DXMatrix(_lastWorldMat.getData());
+	DXMatrix worldMatrix = DXMatrix(_lastWorldMat);
 	DXMatrixInverse(&m, nullptr, &worldMatrix);
 	DXMatrixTranspose(&m, &m);
 	DXVec3TransformCoord(&pickRayOrig, &pickRayOrig, &m);
 	DXVec3TransformCoord(&end, &end, &m);
 	pickRayDir = end - pickRayOrig;
 
-	Math::Vector3d vPickRayOrig = Math::Vector3d(pickRayOrig._x, pickRayOrig._y, pickRayOrig._z);
-	Math::Vector3d vPickRayDir = Math::Vector3d(pickRayDir._x, pickRayDir._y, pickRayDir._z);
-
-	return !_rootFrame->pickPoly(&vPickRayOrig, &vPickRayDir);
+	return !_rootFrame->pickPoly(&pickRayOrig, &pickRayDir);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -609,15 +606,12 @@ void XModel::updateBoundingRect() {
 	_boundingRect.left = _boundingRect.top = INT_MAX_VALUE;
 	_boundingRect.right = _boundingRect.bottom = INT_MIN_VALUE;
 
-	Math::Matrix4 view, proj, world;
+	DXMatrix viewMat, projMat, worldMat;
 	DXVector3 vec2d(0, 0, 0);
-	_gameRef->_renderer3D->getViewTransform(view);
-	_gameRef->_renderer3D->getProjectionTransform(proj);
-	_gameRef->_renderer3D->getWorldTransform(world);
-	world.transpose();
-	DXMatrix viewMat = DXMatrix(view.getData());
-	DXMatrix projMat = DXMatrix(proj.getData());
-	DXMatrix worldMat = DXMatrix(world.getData());
+	_gameRef->_renderer3D->getViewTransform(&viewMat);
+	_gameRef->_renderer3D->getProjectionTransform(&projMat);
+	_gameRef->_renderer3D->getWorldTransform(&worldMat);
+	DXMatrixTranspose(&worldMat, &worldMat);
 
 	_drawingViewport = _gameRef->_renderer3D->getViewPort();
 

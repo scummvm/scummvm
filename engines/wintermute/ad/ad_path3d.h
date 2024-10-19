@@ -38,17 +38,17 @@ namespace Wintermute {
 
 class AdPath3D : public BaseClass {
 public:
-	Math::Vector3d *getCurrent();
-	Math::Vector3d *getNext();
-	Math::Vector3d *getFirst();
+	DXVector3 *getCurrent();
+	DXVector3 *getNext();
+	DXVector3 *getFirst();
 	bool setReady(bool ready);
 	void addPoint(float x, float y, float z);
-	void addPoint(Math::Vector3d Point);
+	void addPoint(DXVector3 Point);
 	void reset();
 	AdPath3D(BaseGame *inGame);
 	virtual ~AdPath3D();
 	bool _ready;
-	BaseArray<Math::Vector3d *> _points;
+	BaseArray<DXVector3 *> _points;
 	int32 _currIndex;
 
 	DECLARE_PERSISTENT(AdPath3D, BaseClass)

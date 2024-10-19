@@ -47,7 +47,7 @@ public:
 	bool addFromMesh(Mesh3DS *mesh);
 	AdWaypointGroup3D(BaseGame *inGame);
 	virtual ~AdWaypointGroup3D();
-	BaseArray<Math::Vector3d *> _points;
+	BaseArray<DXVector3 *> _points;
 };
 
 }

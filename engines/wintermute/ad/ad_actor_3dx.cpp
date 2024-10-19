@@ -64,7 +64,7 @@ IMPLEMENT_PERSISTENT(AdActor3DX, false)
 
 //////////////////////////////////////////////////////////////////////////
 AdActor3DX::AdActor3DX(BaseGame *inGame) : AdObject3D(inGame) {
-	_targetPoint3D = Math::Vector3d(0.0f, 0.0f, 0.0f);
+	_targetPoint3D = DXVector3(0.0f, 0.0f, 0.0f);
 	_targetPoint2D = new BasePoint;
 
 	_targetAngle = 0.0f;
@@ -98,7 +98,7 @@ AdActor3DX::AdActor3DX(BaseGame *inGame) : AdObject3D(inGame) {
 
 	_goToTolerance = 2;
 
-	_partOffset = Math::Vector3d(0.0f, 0.0f, 0.0f);
+	_partOffset = DXVector3(0.0f, 0.0f, 0.0f);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -185,18 +185,18 @@ bool AdActor3DX::update() {
 			}
 
 			float walkVel = _directWalkVelocity == 0.0f ? _velocity : _directWalkVelocity;
-			Math::Vector3d newPos = _posVector;
+			DXVector3 newPos = _posVector;
 			if (_directWalkMode == DIRECT_WALK_FW) {
 				// we add the direction vector since in a right handed coordinate system
 				// angles turn counter-clockwise (wme uses a left handed coordinate system, so there it's a subtraction)
-				newPos.x() += sinf(degToRad(_angle)) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
-				newPos.z() += cosf(degToRad(_angle)) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+				newPos._x += sinf(degToRad(_angle)) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+				newPos._z += cosf(degToRad(_angle)) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
 			}
 
 			if (_directWalkMode == DIRECT_WALK_BK) {
 				// but here we subtract
-				newPos.x() -= sinf(degToRad(_angle)) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
-				newPos.z() -= cosf(degToRad(_angle)) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+				newPos._x -= sinf(degToRad(_angle)) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+				newPos._z -= cosf(degToRad(_angle)) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
 			}
 
 			AdScene *scene = ((AdGame *)_gameRef)->_scene;
@@ -205,7 +205,7 @@ bool AdActor3DX::update() {
 				bool canWalk = false;
 
 				if (scene->_2DPathfinding) {
-					Math::Matrix4 newWorldMat;
+					DXMatrix newWorldMat;
 					getMatrix(&newWorldMat, &newPos);
 
 					int32 newX, newY;
@@ -399,7 +399,10 @@ bool AdActor3DX::display() {
 	if (ShadowType == SHADOW_STENCIL) {
 		displayShadowVolume();
 	} else if  (ShadowType > SHADOW_NONE) {
-		_gameRef->_renderer3D->displayShadow(this, Math::Vector3d(_shadowLightPos.x() * _scale3D, _shadowLightPos.y() * _scale3D, _shadowLightPos.z() * _scale3D), true);
+		DXVector3 lightPos = DXVector3(_shadowLightPos._x * _scale3D,
+									   _shadowLightPos._y * _scale3D,
+									   _shadowLightPos._z * _scale3D);
+		_gameRef->_renderer3D->displayShadow(this, &lightPos, true);
 	}
 
 	_gameRef->_renderer3D->setSpriteBlendMode(_blendMode);
@@ -469,11 +472,11 @@ bool AdActor3DX::displayShadowVolume() {
 
 	_gameRef->_renderer3D->setWorldTransform(_worldMatrix);
 
-	Math::Vector3d lightVector = Math::Vector3d(_shadowLightPos.x() * _scale3D,
-	                                            _shadowLightPos.y() * _scale3D,
-	                                            _shadowLightPos.z() * _scale3D);
-	float extrusionDepth = lightVector.length() * 1.5f;
-	lightVector.normalize();
+	DXVector3 lightPos = DXVector3(_shadowLightPos._x * _scale3D,
+	                               _shadowLightPos._y * _scale3D,
+								   _shadowLightPos._z * _scale3D);
+	float extrusionDepth = DXVec3Length(&lightPos) * 1.5f;
+	DXVec3Normalize(&lightPos, &lightPos);
 
 	getShadowVolume()->setColor(_shadowColor);
 
@@ -486,10 +489,10 @@ bool AdActor3DX::displayShadowVolume() {
 		shadowModel = _xmodel;
 	}
 
-	shadowModel->updateShadowVol(getShadowVolume(), _worldMatrix, lightVector, extrusionDepth);
+	shadowModel->updateShadowVol(getShadowVolume(), &_worldMatrix, &lightPos, extrusionDepth);
 
-	Math::Matrix4 origWorld;
-	_gameRef->_renderer3D->getWorldTransform(origWorld);
+	DXMatrix origWorld;
+	_gameRef->_renderer3D->getWorldTransform(&origWorld);
 
 	// handle the attachments
 	for (uint32 i = 0; i < _attachments.size(); i++) {
@@ -504,10 +507,9 @@ bool AdActor3DX::displayShadowVolume() {
 			continue;
 		}
 
-		DXMatrix viewMatrix, worldMatrix;
-		worldMatrix = DXMatrix(_worldMatrix.getData());
-		DXMatrixMultiply(&viewMatrix, &worldMatrix, boneMat);
-		at->displayShadowVol(viewMatrix, lightVector, extrusionDepth, true);
+		DXMatrix viewMat;
+		DXMatrixMultiply(&viewMat, &_worldMatrix, boneMat);
+		at->displayShadowVol(&viewMat, &lightPos, extrusionDepth, true);
 	}
 
 	// restore model's world matrix and render the shadow volume
@@ -541,8 +543,8 @@ bool AdActor3DX::displayAttachments(bool registerObjects) {
 		return true;
 	}
 
-	Math::Matrix4 origView;
-	_gameRef->_renderer3D->getWorldTransform(origView);
+	DXMatrix origView;
+	_gameRef->_renderer3D->getWorldTransform(&origView);
 
 	for (uint32 i = 0; i < _attachments.size(); i++) {
 		AdAttach3DX *at = _attachments[i];
@@ -555,10 +557,10 @@ bool AdActor3DX::displayAttachments(bool registerObjects) {
 			continue;
 		}
 
-		Math::Matrix4 viewMat;
-		viewMat.setData(*boneMat);
+		DXMatrix viewMat = *boneMat;
+		DXMatrixMultiply(&viewMat, &origView, boneMat);
 
-		at->displayAttachable(viewMat, registerObjects);
+		at->displayAttachable(&viewMat, registerObjects);
 	}
 
 	_gameRef->_renderer3D->setWorldTransform(origView);
@@ -581,7 +583,7 @@ bool AdActor3DX::turnTo(float angle) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void AdActor3DX::goTo3D(Math::Vector3d targetPos, float targetAngle) {
+void AdActor3DX::goTo3D(DXVector3 targetPos, float targetAngle) {
 	_afterWalkAngle = targetAngle;
 
 	if (_targetPoint3D == targetPos && _state == STATE_FOLLOWING_PATH) {
@@ -637,21 +639,21 @@ void AdActor3DX::getNextStep3D() {
 	if (_angle != _targetAngle)
 		turnToStep(_angVelocity);
 
-	Math::Vector3d newPos = _posVector;
+	DXVector3 newPos = _posVector;
 	// we add the direction vector since in a right handed coordinate system
 	// angles turn counter-clockwise (wme uses a left handed coordinate system, so there it's a subtraction)
-	newPos.x() += sinf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
-	newPos.z() += cosf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+	newPos._x += sinf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+	newPos._z += cosf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
 
-	Math::Vector3d origVec, newVec;
-	Math::Vector3d *currentPos = _path3D->getCurrent();
+	DXVector3 origVec, newVec;
+	DXVector3 *currentPos = _path3D->getCurrent();
 
 	if (currentPos != nullptr) {
 		origVec = *currentPos - _posVector;
 		newVec = *currentPos - newPos;
 	}
 
-	if (currentPos == nullptr || origVec.length() < newVec.length()) {
+	if (currentPos == nullptr || DXVec3Length(&origVec) < DXVec3Length(&newVec)) {
 		if (currentPos != nullptr) {
 			_posVector = *currentPos;
 		}
@@ -673,15 +675,15 @@ void AdActor3DX::getNextStep3D() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void AdActor3DX::initLine3D(Math::Vector3d startPt, Math::Vector3d endPt, bool firstStep) {
+void AdActor3DX::initLine3D(DXVector3 startPt, DXVector3 endPt, bool firstStep) {
 	if (firstStep) {
 		_nextState = STATE_FOLLOWING_PATH;
 		// wme subtracted 90 dregrees from the angle, so that the angle zero points downwards
 		// and the angle 90 goes left
 		// now we have a right handed coordinate system, so we add 90 degrees instead
-		turnTo(radToDeg(-atan2(endPt.z() - startPt.z(), endPt.x() - startPt.x())) + 90);
+		turnTo(radToDeg(-atan2(endPt._z - startPt._z, endPt._x - startPt._x)) + 90);
 	} else {
-		_turningLeft = prepareTurn(radToDeg(-atan2(endPt.z() - startPt.z(), endPt.x() - startPt.x())) + 90);
+		_turningLeft = prepareTurn(radToDeg(-atan2(endPt._z - startPt._z, endPt._x - startPt._x)) + 90);
 	}
 }
 
@@ -699,23 +701,23 @@ void AdActor3DX::getNextStep2D() {
 		turnToStep(_angVelocity);
 	}
 
-	Math::Vector3d newPos = _posVector;
+	DXVector3 newPos = _posVector;
 	// we add the direction vector since in a right handed coordinate system
 	// angles turn counter-clockwise (wme uses a left handed coordinate system, so there it's a subtraction)
-	newPos.x() += sinf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
-	newPos.z() += cosf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+	newPos._x += sinf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+	newPos._z += cosf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
 
-	Math::Vector3d currentPoint;
+	DXVector3 currentPoint;
 	adGame->_scene->_sceneGeometry->convert2Dto3DTolerant(_path2D->getCurrent()->x,
 	                                                      _path2D->getCurrent()->y,
 	                                                      &currentPoint);
 
-	Math::Vector3d origVec, newVec;
+	DXVector3 origVec, newVec;
 
 	origVec = currentPoint - _posVector;
 	newVec = currentPoint - newPos;
 
-	if (origVec.length() < newVec.length()) {
+	if (DXVec3Length(&origVec) < DXVec3Length(&newVec)) {
 		_posVector = currentPoint;
 
 		if (_path2D->getNext() == nullptr) {
@@ -756,7 +758,7 @@ void AdActor3DX::followPath2D() {
 	if (_path2D->getCurrent() != nullptr) {
 		_state = STATE_FOLLOWING_PATH;
 
-		Math::Vector3d currentPoint;
+		DXVector3 currentPoint;
 		adGameRef->_scene->_sceneGeometry->convert2Dto3DTolerant(_path2D->getCurrent()->x,
 		                                                         _path2D->getCurrent()->y,
 		                                                         &currentPoint);
@@ -950,15 +952,15 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_X:
-			parser.scanStr((char *)params, "%f", &_posVector.x());
+			parser.scanStr((char *)params, "%f", &_posVector._x);
 			break;
 
 		case TOKEN_Y:
-			parser.scanStr((char *)params, "%f", &_posVector.y());
+			parser.scanStr((char *)params, "%f", &_posVector._y);
 			break;
 
 		case TOKEN_Z:
-			parser.scanStr((char *)params, "%f", &_posVector.z());
+			parser.scanStr((char *)params, "%f", &_posVector._z);
 			break;
 
 		case TOKEN_ANGLE:
@@ -993,9 +995,9 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 		}
 
 		case TOKEN_LIGHT_POSITION:
-			parser.scanStr((char *)params, "%f,%f,%f", &_shadowLightPos.x(), &_shadowLightPos.y(), &_shadowLightPos.z());
+			parser.scanStr((char *)params, "%f,%f,%f", &_shadowLightPos._x, &_shadowLightPos._y, &_shadowLightPos._z);
 			// invert z coordinate since wme uses a Direct3D coordinate system but we use OpenGL
-			_shadowLightPos.z() *= -1.0f;
+			_shadowLightPos._z *= -1.0f;
 			break;
 
 		case TOKEN_SHADOW: {
@@ -1508,11 +1510,11 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GoTo3D") == 0 || strcmp(name, "GoTo3DAsync") == 0) {
 		stack->correctParams(3);
-		Math::Vector3d pos;
-		pos.x() = stack->pop()->getFloat();
-		pos.y() = stack->pop()->getFloat();
+		DXVector3 pos;
+		pos._x = stack->pop()->getFloat();
+		pos._y = stack->pop()->getFloat();
 		// scripts will expect a Direct3D coordinate system
-		pos.z() = -stack->pop()->getFloat();
+		pos._z = -stack->pop()->getFloat();
 		goTo3D(pos);
 
 		if (strcmp(name, "GoTo3DAsync") != 0) {
@@ -1541,7 +1543,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 				}
 			} else {
 				if (adGame->_scene && adGame->_scene->_sceneGeometry) {
-					Math::Vector3d pos;
+					DXVector3 pos;
 					if (adGame->_scene->_sceneGeometry->convert2Dto3DTolerant(x, y, &pos)) {
 						//_gameRef->QuickMessageForm("%d, %d -> %f, %f, %f", x, y, pos.x, pos.y, pos.z);
 						goTo3D(pos);
@@ -1627,7 +1629,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			}
 		} else {
 			if (adGame->_scene->_sceneGeometry) {
-				Math::Vector3d pos;
+				DXVector3 pos;
 
 				if (adGame->_scene->_sceneGeometry->convert2Dto3DTolerant(ent->getWalkToX(), ent->getWalkToY(), &pos)) {
 					if (ent->getWalkToX() == 0 && ent->getWalkToY() == 0) {
@@ -1659,9 +1661,9 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		// turn to object?
 		if (val->isNative() && _gameRef->validObject((BaseObject *)val->getNative())) {
 			BaseObject *obj = (BaseObject *)val->getNative();
-			Math::Vector3d objPos;
+			DXVector3 objPos;
 			((AdGame *)_gameRef)->_scene->_sceneGeometry->convert2Dto3D(obj->_posX, obj->_posY, &objPos);
-			angle = radToDeg(-atan2(objPos.z() - _posVector.z(), objPos.x() - _posVector.x())) + 90;
+			angle = radToDeg(-atan2(objPos._z - _posVector._z, objPos._x - _posVector._x)) + 90;
 		} else {
 			// otherwise turn to direction
 			dir = val->getInt();
@@ -2011,7 +2013,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		float offsetY = stack->pop()->getFloat();
 		float offsetZ = stack->pop()->getFloat();
 
-		PartEmitter *emitter = createParticleEmitter(boneName, Math::Vector3d(offsetX, offsetY, offsetZ));
+		PartEmitter *emitter = createParticleEmitter(boneName, DXVector3(offsetX, offsetY, offsetZ));
 		if (emitter) {
 			stack->pushNative(_partEmitter, true);
 		} else {
@@ -2444,7 +2446,7 @@ PartEmitter *AdActor3DX::createParticleEmitter(bool followParent, int offsetX, i
 }
 
 //////////////////////////////////////////////////////////////////////////
-PartEmitter *AdActor3DX::createParticleEmitter(const char *boneName, Math::Vector3d offset) {
+PartEmitter *AdActor3DX::createParticleEmitter(const char *boneName, DXVector3 offset) {
 	_partBone = boneName;
 	_partOffset = offset;
 	return AdObject::createParticleEmitter(true);
@@ -2466,7 +2468,7 @@ bool AdActor3DX::updatePartEmitter() {
 		return false;
 	}
 
-	Math::Vector3d bonePos;
+	DXVector3 bonePos;
 	getBonePosition3D(_partBone.c_str(), &bonePos, &_partOffset);
 	int32 x = 0, y = 0;
 	static_cast<AdGame *>(_gameRef)->_scene->_sceneGeometry->convert3Dto2D(&bonePos, &x, &y);

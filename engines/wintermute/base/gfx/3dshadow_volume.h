@@ -29,6 +29,8 @@
 #define WINTERMUTE_3D_SHADOW_VOLUME_H
 
 #include "engines/wintermute/base/base.h"
+#include "engines/wintermute/base/gfx/xbuffer.h"
+#include "engines/wintermute/base/gfx/xmesh.h"
 #include "engines/wintermute/base/gfx/xmath.h"
 #include "engines/wintermute/coll_templ.h"
 #include "math/matrix4.h"
@@ -51,8 +53,8 @@ public:
 	ShadowVolume(BaseGame *inGame);
 	virtual ~ShadowVolume();
 
-	bool addMesh(DXVector3 *mesh, uint32 *adjacency, DXMatrix *modelMat, DXVector3 *light, float extrusionDepth);
-	void addVertex(const DXVector3 &vertex);
+	bool addMesh(DXMesh *mesh, uint32 *adjacency, DXMatrix *modelMat, DXVector3 *light, float extrusionDepth);
+	void addVertex(DXVector3 &vertex);
 	bool reset();
 
 	virtual bool renderToStencilBuffer() = 0;
@@ -61,7 +63,7 @@ public:
 	bool setColor(uint32 color);
 
 protected:
-	BaseArray<Math::Vector3d> _vertices; // Vertex data for rendering shadow volume
+	BaseArray<DXVector3> _vertices; // Vertex data for rendering shadow volume
 	uint32 _color;
 
 private:

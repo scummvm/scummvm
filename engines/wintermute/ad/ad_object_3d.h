@@ -40,10 +40,10 @@ class ShadowVolume;
 class AdObject3D : public AdObject {
 public:
 	bool setupLights();
-	bool convert3DTo2D(Math::Matrix4 *worldMat, int32 *posX, int32 *posY);
+	bool convert3DTo2D(DXMatrix *worldMat, int32 *posX, int32 *posY);
 	bool skipTo(int x, int y, bool tolerant = false);
 	char *_tempSkelAnim;
-	Math::Vector3d _lastPosVector;
+	DXVector3 _lastPosVector;
 	DECLARE_PERSISTENT(AdObject3D, AdObject)
 	bool _dropToFloor;
 	bool display() override;
@@ -51,7 +51,7 @@ public:
 	AdObject3D(BaseGame *inGame);
 	virtual ~AdObject3D();
 	bool getBonePosition2D(const char *boneName, int32 *x, int32 *y);
-	bool getBonePosition3D(const char *boneName, Math::Vector3d *pos, Math::Vector3d *offset = nullptr);
+	bool getBonePosition3D(const char *boneName, DXVector3 *pos, DXVector3 *offset = nullptr);
 
 	float _velocity;
 	float _angVelocity;

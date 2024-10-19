@@ -40,10 +40,10 @@ Mesh3DSOpenGLShader::~Mesh3DSOpenGLShader() {
 }
 
 void Mesh3DSOpenGLShader::fillVertexBuffer(uint32 color) {
-	_color.x() = RGBCOLGetR(color) / 255.0f;
-	_color.y() = RGBCOLGetG(color) / 255.0f;
-	_color.z() = RGBCOLGetB(color) / 255.0f;
-	_color.w() = RGBCOLGetA(color) / 255.0f;
+	_color._x = RGBCOLGetR(color) / 255.0f;
+	_color._y = RGBCOLGetG(color) / 255.0f;
+	_color._z = RGBCOLGetB(color) / 255.0f;
+	_color._w = RGBCOLGetA(color) / 255.0f;
 
 	glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GeometryVertex) * _vertexCount, _vertexData, GL_STATIC_DRAW);
@@ -60,7 +60,8 @@ void Mesh3DSOpenGLShader::render() {
 	_shader->enableVertexAttribute("position", _vertexBuffer, 3, GL_FLOAT, false, sizeof(GeometryVertex), 0);
 
 	_shader->use(true);
-	_shader->setUniform("color", _color);
+	Math::Vector4d color = Math::Vector4d(_color._x, _color._y, _color._z, 1.0f);
+	_shader->setUniform("color", color);
 
 	glDrawElements(GL_TRIANGLES, _indexCount, GL_UNSIGNED_SHORT, 0);
 

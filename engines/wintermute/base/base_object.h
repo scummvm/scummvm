@@ -149,14 +149,14 @@ public:
 	float _angle;
 	XModel *_xmodel;
 	XModel *_shadowModel;
-	Math::Matrix4 _worldMatrix;
-	Math::Vector3d _posVector;
-	bool getMatrix(Math::Matrix4 *modelMatrix, Math::Vector3d *posVect = nullptr);
+	DXMatrix _worldMatrix;
+	DXVector3 _posVector;
+	bool getMatrix(DXMatrix *modelMatrix, DXVector3 *posVect = nullptr);
 	uint32 _shadowColor;
 	BaseSurface *_shadowImage;
 	float _shadowSize;
 	float _scale3D;
-	Math::Vector3d _shadowLightPos;
+	DXVector3 _shadowLightPos;
 	bool _drawBackfaces;
 	TShadowType _shadowType;
 

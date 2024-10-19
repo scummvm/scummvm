@@ -2136,14 +2136,14 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			script->runtimeError("Scene.GetLightPosition: Scene doesn't contain any geometry");
 			stack->pushInt(0);
 		} else {
-			Math::Vector3d pos = _sceneGeometry->getLightPos(lightName);
+			DXVector3 pos = _sceneGeometry->getLightPos(lightName);
 			ScValue *val = stack->getPushValue();
 
 			if (val) {
-				val->setProperty("X", pos.x());
-				val->setProperty("Y", pos.y());
+				val->setProperty("X", pos._x);
+				val->setProperty("Y", pos._y);
 				// invert z coordinate to change to OpenGL coordinate system
-				val->setProperty("Z", -pos.z());
+				val->setProperty("Z", -pos._z);
 			}
 		}
 

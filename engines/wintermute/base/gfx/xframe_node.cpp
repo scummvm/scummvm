@@ -39,14 +39,14 @@ namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 FrameNode::FrameNode(BaseGame *inGame) : BaseNamedObject(inGame) {
-	_transformationMatrix.setToIdentity();
-	_originalMatrix.setToIdentity();
+	DXMatrixIdentity(&_transformationMatrix);
+   	DXMatrixIdentity(&_originalMatrix);
 	DXMatrixIdentity(&_combinedMatrix);
 
 	for (int i = 0; i < 2; i++) {
-		_transPos[i] = Math::Vector3d(0.0f, 0.0f, 0.0f);
-		_transScale[i] = Math::Vector3d(1.0f, 1.0f, 1.0f);
-		_transRot[i] = Math::Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+		_transPos[i] = DXVector3(0.0f, 0.0f, 0.0f);
+		_transScale[i] = DXVector3(1.0f, 1.0f, 1.0f);
+		_transRot[i] = DXQuaternion(0.0f, 0.0f, 0.0f, 1.0f);
 		_lerpValue[i] = 0.0f;
 
 		_transUsed[i] = false;
@@ -76,17 +76,17 @@ DXMatrix *FrameNode::getCombinedMatrix() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Math::Matrix4 *FrameNode::getOriginalMatrix() {
+DXMatrix *FrameNode::getOriginalMatrix() {
 	return &_originalMatrix;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void FrameNode::setTransformationMatrix(Math::Matrix4 *mat) {
+void FrameNode::setTransformationMatrix(DXMatrix *mat) {
 	_transformationMatrix = *mat;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void FrameNode::setTransformation(int slot, Math::Vector3d pos, Math::Vector3d scale, Math::Quaternion rot, float lerpValue) {
+void FrameNode::setTransformation(int slot, DXVector3 pos, DXVector3 scale, DXQuaternion rot, float lerpValue) {
 	if (slot < 0 || slot > 1)
 		return;
 
@@ -124,23 +124,22 @@ bool FrameNode::loadFromXData(const Common::String &filename, XModel *model, XFi
 			BaseEngine::LOG(0, "Error loading transformation matrix");
 			return false;
 		} else {
-			// TODO: check if this is the right format
 			for (int r = 0; r < 4; ++r) {
 				for (int c = 0; c < 4; ++c) {
-					_transformationMatrix(c, r) = frameTransformMatrix->_frameMatrix[r * 4 + c];
+					_transformationMatrix._m[c][r] = frameTransformMatrix->_frameMatrix[r * 4 + c];
 				}
 			}
 
 			// mirror at orign
-			_transformationMatrix(2, 3) *= -1.0f;
+			_transformationMatrix._m[2][3] *= -1.0f;
 
 			// mirror base vectors
-			_transformationMatrix(2, 0) *= -1.0f;
-			_transformationMatrix(2, 1) *= -1.0f;
+			_transformationMatrix._m[2][0] *= -1.0f;
+			_transformationMatrix._m[2][1] *= -1.0f;
 
 			// change handedness
-			_transformationMatrix(0, 2) *= -1.0f;
-			_transformationMatrix(1, 2) *= -1.0f;
+			_transformationMatrix._m[0][2] *= -1.0f;
+			_transformationMatrix._m[1][2] *= -1.0f;
 
 			_originalMatrix = _transformationMatrix;
 			return true;
@@ -250,24 +249,24 @@ FrameNode *FrameNode::findFrame(const char *frameName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool FrameNode::updateMatrices(DXMatrix &parentMat) {
+bool FrameNode::updateMatrices(DXMatrix *parentMat) {
 	if (_transUsed[0]) {
-		DXVector3 transPos = DXVector3(_transPos[0].getData());
-		DXVector3 transScale = DXVector3(_transScale[0].getData());
-		DXQuaternion transRot = DXQuaternion(_transRot[0].getData());
+		DXVector3 transPos = DXVector3(_transPos[0]);
+		DXVector3 transScale = DXVector3(_transScale[0]);
+		DXQuaternion transRot = DXQuaternion(_transRot[0]);
 		float lerpValue = _lerpValue[0];
 
 		if (_transUsed[1]) {
-			DXVector3 transPos1 = DXVector3(_transPos[1].getData());
-			DXVector3 transScale1 = DXVector3(_transScale[1].getData());
-			DXQuaternion transRot1 = DXQuaternion(_transRot[1].getData());
+			DXVector3 transPos1 = DXVector3(_transPos[1]);
+			DXVector3 transScale1 = DXVector3(_transScale[1]);
+			DXQuaternion transRot1 = DXQuaternion(_transRot[1]);
 			DXVec3Lerp(&transScale, &transScale, &transScale1, lerpValue);
 			DXQuaternionSlerp(&transRot, &transRot, &transRot1, lerpValue);
 			DXVec3Lerp(&transPos, &transPos, &transPos1, lerpValue);
 		}
 
 		// prepare local transformation matrix
-		DXMatrix transformationMatrix = DXMatrix(_transformationMatrix.getData());
+		DXMatrix transformationMatrix = DXMatrix(_transformationMatrix);
 		DXMatrixIdentity(&transformationMatrix);
 
 		DXMatrix scaleMat;
@@ -284,18 +283,18 @@ bool FrameNode::updateMatrices(DXMatrix &parentMat) {
 		DXMatrixTranslation(&posMat, transPos._x, transPos._y, transPos._z);
 		DXMatrixTranspose(&posMat, &posMat);
 		DXMatrixMultiply(&transformationMatrix, &posMat, &transformationMatrix);
-		_transformationMatrix.setData(transformationMatrix._m4x4);
+		_transformationMatrix = transformationMatrix;
 	}
 
 	_transUsed[0] = _transUsed[1] = false;
 
 	// multiply by parent transformation
-	DXMatrix transformationMatrix = DXMatrix(_transformationMatrix.getData());
-	DXMatrixMultiply(&_combinedMatrix, &parentMat, &transformationMatrix);
+	DXMatrix transformationMatrix = DXMatrix(_transformationMatrix);
+	DXMatrixMultiply(&_combinedMatrix, parentMat, &transformationMatrix);
 
 	// update child frames
 	for (uint32 i = 0; i < _frames.size(); i++) {
-		_frames[i]->updateMatrices(_combinedMatrix);
+		_frames[i]->updateMatrices(&_combinedMatrix);
 	}
 
 	return true;
@@ -336,7 +335,7 @@ bool FrameNode::resetMatrices() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool FrameNode::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth) {
+bool FrameNode::updateShadowVol(ShadowVolume *shadow, DXMatrix *modelMat, DXVector3 *light, float extrusionDepth) {
 	bool res = true;
 
 	// meshes
@@ -400,7 +399,7 @@ bool FrameNode::renderFlatShadowModel() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool FrameNode::pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir) {
+bool FrameNode::pickPoly(DXVector3 *pickRayOrig, DXVector3 *pickRayDir) {
 	bool found = false;
 	for (uint32 i = 0; i < _meshes.size(); i++) {
 		found = _meshes[i]->pickPoly(pickRayOrig, pickRayDir);

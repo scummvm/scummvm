@@ -48,15 +48,14 @@ bool ShadowVolume::reset() {
 }
 
 //////////////////////////////////////////////////////////////////////////^M
-bool ShadowVolume::addMesh(DXVector3 *mesh, uint32 *adjacency, DXMatrix *modelMat, DXVector3 *light, float extrusionDepth) {
+bool ShadowVolume::addMesh(DXMesh *mesh, uint32 *adjacency, DXMatrix *modelMat, DXVector3 *light, float extrusionDepth) {
 	// TODO
 
 	return true;
 }
 //////////////////////////////////////////////////////////////////////////
-void ShadowVolume::addVertex(const DXVector3 &vertex) {
-	Math::Vector3d vec = Math::Vector3d(vertex._x, vertex._y, vertex._z);
-	_vertices.add(vec);
+void ShadowVolume::addVertex(DXVector3 &vertex) {
+	_vertices.add(vertex);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -54,14 +54,14 @@ float MathUtil::roundUp(float val) {
 
 #ifdef ENABLE_WME3D
 
-bool intersectTriangle(const Math::Vector3d &origin, const Math::Vector3d &direction,
-                       const Math::Vector3d &vp0, const Math::Vector3d &vp1, const Math::Vector3d &vp2,
-					   float &t, float &u, float &v) {
-	DXVector3 v0 = DXVector3(vp0.x(), vp0.y(), vp0.z());
-	DXVector3 v1 = DXVector3(vp1.x(), vp1.y(), vp1.z());
-	DXVector3 v2 = DXVector3(vp2.x(), vp2.y(), vp2.z());
-	DXVector3 orig = DXVector3(origin.x(), origin.y(), origin.z());
-	DXVector3 dir = DXVector3(direction.x(), direction.y(), direction.z());
+bool intersectTriangle(const DXVector3 &origin, const DXVector3 &direction,
+                       DXVector3 &vp0, DXVector3 &vp1, DXVector3 &vp2,
+                       float *t, float *u, float *v) {
+	DXVector3 v0 = DXVector3(vp0._x, vp0._y, vp0._z);
+	DXVector3 v1 = DXVector3(vp1._x, vp1._y, vp1._z);
+	DXVector3 v2 = DXVector3(vp2._x, vp2._y, vp2._z);
+	DXVector3 orig = DXVector3(origin._x, origin._y, origin._z);
+	DXVector3 dir = DXVector3(direction._x, direction._y, direction._z);
 
 	// Find vectors for two edges sharing vert0
 	DXVector3 edge1 = v1 - v0;
@@ -80,8 +80,8 @@ bool intersectTriangle(const Math::Vector3d &origin, const Math::Vector3d &direc
 	DXVector3 tvec = orig - v0;
 
 	// Calculate U parameter and test bounds
-	u = DXVec3Dot(&tvec, &pvec);
-	if (u < 0.0f || u > det)
+	*u = DXVec3Dot(&tvec, &pvec);
+	if (*u < 0.0f || *u > det)
 		return false;
 
 	// Prepare to test V parameter
@@ -89,38 +89,38 @@ bool intersectTriangle(const Math::Vector3d &origin, const Math::Vector3d &direc
 	DXVec3Cross(&qvec, &tvec, &edge1);
 
 	// Calculate V parameter and test bounds
-	v = DXVec3Dot(&dir, &qvec);
-	if (v < 0.0f || u + v > det)
+	*v = DXVec3Dot(&dir, &qvec);
+	if (*v < 0.0f || *u + *v > det)
 		return false;
 
 	// Calculate t, scale parameters, ray intersects triangle
-	t = DXVec3Dot(&edge2, &qvec);
+	*t = DXVec3Dot(&edge2, &qvec);
 
 	float fInvDet = 1.0f / det;
-	t *= fInvDet;
-	u *= fInvDet;
-	v *= fInvDet;
+	*t *= fInvDet;
+	*u *= fInvDet;
+	*v *= fInvDet;
 
 	DXVector3 intersection;
 	DXVector3 dest = orig + dir;
 	DXPlane plane;
 	DXPlaneFromPoints(&plane, &v0, &v1, &v2);
 	DXPlaneIntersectLine(&intersection, &plane, &orig, &dest);
-	t = intersection._x;
-	u = intersection._y;
-	v = intersection._z;
+	*t = intersection._x;
+	*u = intersection._y;
+	*v = intersection._z;
 
 	return true;
 }
 
-bool pickGetIntersect(const Math::Vector3d &lineS, const Math::Vector3d &lineE,
-								   const Math::Vector3d &vp0, const Math::Vector3d &vp1, const Math::Vector3d &vp2,
-								   Math::Vector3d &intersection, float &distance) {
-	DXVector3 v0 = DXVector3(vp0.x(), vp0.y(), vp0.z());
-	DXVector3 v1 = DXVector3(vp1.x(), vp1.y(), vp1.z());
-	DXVector3 v2 = DXVector3(vp2.x(), vp2.y(), vp2.z());
-	DXVector3 lineStart = DXVector3(lineS.x(), lineS.y(), lineS.z());
-	DXVector3 lineEnd = DXVector3(lineE.x(), lineE.y(), lineE.z());
+bool pickGetIntersect(const DXVector3 lineS, const DXVector3 lineE,
+					  const DXVector3 vp0, const DXVector3 vp1, const DXVector3 vp2,
+					  DXVector3 *intersection, float *distance) {
+	DXVector3 v0 = DXVector3(vp0._x, vp0._y, vp0._z);
+	DXVector3 v1 = DXVector3(vp1._x, vp1._y, vp1._z);
+	DXVector3 v2 = DXVector3(vp2._x, vp2._y, vp2._z);
+	DXVector3 lineStart = DXVector3(lineS._x, lineS._y, lineS._z);
+	DXVector3 lineEnd = DXVector3(lineE._x, lineE._y, lineE._z);
 
 	// compute plane's normal
 	DXVector3 vertex;
@@ -157,11 +157,11 @@ bool pickGetIntersect(const Math::Vector3d &lineS, const Math::Vector3d &lineE,
 	else if (percentage > 1.0)
 		return false;
 
-	distance = percentage; //record the distance from beginning of ray (0.0 -1.0)
+	*distance = percentage; //record the distance from beginning of ray (0.0 -1.0)
 
-	intersection.x() = lineStart._x + direction._x * percentage; // add the percentage of the line to line start
-	intersection.y() = lineStart._y + direction._y * percentage;
-	intersection.z() = lineStart._z + direction._z * percentage;
+	intersection->_x = lineStart._x + direction._x * percentage; // add the percentage of the line to line start
+	intersection->_y = lineStart._y + direction._y * percentage;
+	intersection->_z = lineStart._z + direction._z * percentage;
 
 	return true;
 }

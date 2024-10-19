@@ -38,6 +38,8 @@
 
 #include "graphics/opengl/system_headers.h"
 
+#include "engines/wintermute/base/gfx/xmath.h"
+
 #endif
 
 namespace Wintermute {
@@ -73,7 +75,7 @@ public:
 	virtual bool enableShadows() = 0;
 	virtual bool disableShadows() = 0;
 	virtual bool usingStencilBuffer() = 0;
-	virtual void displayShadow(BaseObject *object, const Math::Vector3d &light, bool lightPosRelative) = 0;
+	virtual void displayShadow(BaseObject *object, const DXVector3 *light, bool lightPosRelative) = 0;
 	//HRESULT InvalidateTexture(LPDIRECT3DTEXTURE Texture);
 
 	virtual void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) = 0;
@@ -117,8 +119,8 @@ public:
 
 	virtual void enableLight(int index) = 0;
 	virtual void disableLight(int index) = 0;
-	virtual void setLightParameters(int index, const Math::Vector3d &position, const Math::Vector3d &direction,
-	                                const Math::Vector4d &diffuse, bool spotlight) = 0;
+	virtual void setLightParameters(int index, const DXVector3 &position, const DXVector3 &direction,
+	                                const DXVector4 &diffuse, bool spotlight) = 0;
 
 	virtual void enableCulling() = 0;
 	virtual void disableCulling() = 0;
@@ -129,20 +131,20 @@ public:
 
 	virtual bool setProjection2D() = 0;
 
-	virtual bool setWorldTransform(const Math::Matrix4 &transform) = 0;
-	virtual bool setViewTransform(const Math::Matrix4 &transform) = 0;
-	virtual bool setProjectionTransform(const Math::Matrix4 &transform) = 0;
+	virtual bool setWorldTransform(const DXMatrix &transform) = 0;
+	virtual bool setViewTransform(const DXMatrix &transform) = 0;
+	virtual bool setProjectionTransform(const DXMatrix &transform) = 0;
 
-	void getWorldTransform(Math::Matrix4 &transform) {
-		transform = _worldMatrix;
+	void getWorldTransform(DXMatrix *transform) {
+		*transform = _worldMatrix;
 	}
 
-	void getViewTransform(Math::Matrix4 &transform) {
-		transform = _viewMatrix;
+	void getViewTransform(DXMatrix *transform) {
+		*transform = _viewMatrix;
 	}
 
-	void getProjectionTransform(Math::Matrix4 &transform) {
-		transform = _projectionMatrix;
+	void getProjectionTransform(DXMatrix *transform) {
+		*transform = _projectionMatrix;
 	}
 
 	Camera3D *_camera;
@@ -161,9 +163,9 @@ public:
 	// ScummVM specific methods <--
 
 protected:
-	Math::Matrix4 _worldMatrix;
-	Math::Matrix4 _viewMatrix;
-	Math::Matrix4 _projectionMatrix;
+	DXMatrix _worldMatrix;
+	DXMatrix _viewMatrix;
+	DXMatrix _projectionMatrix;
 	Rect32 _viewport;
 	float _fov;
 	float _nearClipPlane;

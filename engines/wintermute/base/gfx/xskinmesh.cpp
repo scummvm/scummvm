@@ -33,9 +33,6 @@
 #include "engines/wintermute/base/gfx/xskinmesh.h"
 #include "engines/wintermute/base/gfx/xmath.h"
 
-#include "common/array.h"
-#include "math/matrix4.h"
-
 namespace Wintermute {
 
 struct MeshData {

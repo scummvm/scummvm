@@ -31,6 +31,7 @@
 #include "common/memstream.h"
 
 #include "engines/wintermute/base/base_named_object.h"
+#include "engines/wintermute/base/gfx/xmath.h"
 
 #include "math/matrix4.h"
 #include "math/vector3d.h"
@@ -41,13 +42,13 @@ class Camera3D : public BaseNamedObject {
 public:
 	void move(float speed);
 	void rotateView(float x, float y, float z);
-	void setupPos(Math::Vector3d pos, Math::Vector3d target, float Bank = 0);
-	bool getViewMatrix(Math::Matrix4 *viewMatrix);
+	void setupPos(DXVector3 pos, DXVector3 target, float bank = 0);
+	bool getViewMatrix(DXMatrix *viewMatrix);
 	Camera3D(BaseGame *inGame);
 	virtual ~Camera3D();
 
-	Math::Vector3d _position;
-	Math::Vector3d _target;
+	DXVector3 _position;
+	DXVector3 _target;
 	float _bank;
 	float _fov;
 	float _origFov;

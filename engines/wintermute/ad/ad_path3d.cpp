@@ -55,13 +55,13 @@ void AdPath3D::reset() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void AdPath3D::addPoint(Math::Vector3d point) {
-	_points.add(new Math::Vector3d(point));
+void AdPath3D::addPoint(DXVector3 point) {
+	_points.add(new DXVector3(point));
 }
 
 //////////////////////////////////////////////////////////////////////////
 void AdPath3D::addPoint(float x, float y, float z) {
-	_points.add(new Math::Vector3d(x, y, z));
+	_points.add(new DXVector3(x, y, z));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ bool AdPath3D::setReady(bool ready) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Math::Vector3d *AdPath3D::getFirst() {
+DXVector3 *AdPath3D::getFirst() {
 	if (_points.size() > 0) {
 		_currIndex = 0;
 		return _points[_currIndex];
@@ -83,7 +83,7 @@ Math::Vector3d *AdPath3D::getFirst() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Math::Vector3d *AdPath3D::getNext() {
+DXVector3 *AdPath3D::getNext() {
 	_currIndex++;
 	if (static_cast<uint>(_currIndex) < _points.size()) {
 		return _points[_currIndex];
@@ -93,7 +93,7 @@ Math::Vector3d *AdPath3D::getNext() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Math::Vector3d *AdPath3D::getCurrent() {
+DXVector3 *AdPath3D::getCurrent() {
 	if (_currIndex >= 0 && static_cast<uint>(_currIndex) < _points.size()) {
 		return _points[_currIndex];
 	} else {
@@ -112,9 +112,9 @@ bool AdPath3D::persist(BasePersistenceManager *persistMgr) {
 		int32 j = _points.size();
 		persistMgr->transferSint32("ArraySize", &j);
 		for (int i = 0; i < j; i++) {
-			persistMgr->transferFloat("x", &_points[i]->x());
-			persistMgr->transferFloat("y", &_points[i]->y());
-			persistMgr->transferFloat("z", &_points[i]->z());
+			persistMgr->transferFloat("x", &_points[i]->_x);
+			persistMgr->transferFloat("y", &_points[i]->_y);
+			persistMgr->transferFloat("z", &_points[i]->_z);
 		}
 	} else {
 		int32 j = 0;

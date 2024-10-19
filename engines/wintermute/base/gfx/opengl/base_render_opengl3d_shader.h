@@ -53,14 +53,14 @@ public:
 	int getMaxActiveLights() override;
 	void enableLight(int index) override;
 	void disableLight(int index) override;
-	void setLightParameters(int index, const Math::Vector3d &position, const Math::Vector3d &direction, const Math::Vector4d &diffuse, bool spotlight) override;
+	void setLightParameters(int index, const DXVector3 &position, const DXVector3 &direction, const DXVector4 &diffuse, bool spotlight) override;
 
 	void enableCulling() override;
 	void disableCulling() override;
 
 	bool enableShadows() override;
 	bool disableShadows() override;
-	void displayShadow(BaseObject *object, const Math::Vector3d &lightPos, bool lightPosRelative) override;
+	void displayShadow(BaseObject *object, const DXVector3 *lightPos, bool lightPosRelative) override;
 	bool usingStencilBuffer() override;
 
 	void dumpData(const char *filename) override {}
@@ -74,9 +74,9 @@ public:
 
 	bool setProjection() override;
 	bool setProjection2D() override;
-	bool setWorldTransform(const Math::Matrix4 &transform) override;
-	bool setViewTransform(const Math::Matrix4 &transform) override;
-	bool setProjectionTransform(const Math::Matrix4 &transform) override;
+	bool setWorldTransform(const DXMatrix &transform) override;
+	bool setViewTransform(const DXMatrix &transform) override;
+	bool setProjectionTransform(const DXMatrix &transform) override;
 
 	bool windowedBlt() override;
 
@@ -129,7 +129,7 @@ public:
 private:
 	Math::Matrix4 _projectionMatrix2d;
 
-	Common::Array<Math::Matrix4> _transformStack;
+	Common::Array<DXMatrix> _transformStack;
 
 	Math::Vector4d _flatShadowColor;
 	int _shadowTextureWidth;

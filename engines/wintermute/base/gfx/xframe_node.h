@@ -48,24 +48,24 @@ public:
 	FrameNode(BaseGame *inGame);
 	virtual ~FrameNode();
 
-	bool updateMatrices(DXMatrix &parentMat);
+	bool updateMatrices(DXMatrix *parentMat);
 	bool updateMeshes();
 	bool resetMatrices();
 	bool render(XModel *model);
 	bool renderFlatShadowModel();
-	bool updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth);
+	bool updateShadowVol(ShadowVolume *shadow, DXMatrix *modelMat, DXVector3 *light, float extrusionDepth);
 
 	bool loadFromXData(const Common::String &filename, XModel *model, XFileData *xobj);
 	bool mergeFromXData(const Common::String &filename, XModel *model, XFileData *xobj);
 	bool findBones(FrameNode *rootFrame);
 	FrameNode *findFrame(const char *frameName);
 	DXMatrix *getCombinedMatrix();
-	Math::Matrix4 *getOriginalMatrix();
-	void setTransformationMatrix(Math::Matrix4 *mat);
-	bool pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir);
+	DXMatrix *getOriginalMatrix();
+	void setTransformationMatrix(DXMatrix *mat);
+	bool pickPoly(DXVector3 *pickRayOrig, DXVector3 *pickRayDir);
 	bool getBoundingBox(DXVector3 *boxStart, DXVector3 *boxEnd);
 
-	void setTransformation(int slot, Math::Vector3d pos, Math::Vector3d scale, Math::Quaternion rot, float lerpValue);
+	void setTransformation(int slot, DXVector3 pos, DXVector3 scale, DXQuaternion rot, float lerpValue);
 
 	bool hasChildren();
 
@@ -79,13 +79,13 @@ protected:
 	BaseArray<FrameNode *> _frames;
 	BaseArray<XMesh *> _meshes;
 
-	Math::Matrix4 _transformationMatrix;
-	Math::Matrix4 _originalMatrix;
+	DXMatrix _transformationMatrix;
+	DXMatrix _originalMatrix;
 	DXMatrix _combinedMatrix;
 
-	Math::Vector3d _transPos[2];
-	Math::Vector3d _transScale[2];
-	Math::Quaternion _transRot[2];
+	DXVector3 _transPos[2];
+	DXVector3 _transScale[2];
+	DXQuaternion _transRot[2];
 	bool _transUsed[2];
 	float _lerpValue[2];
 };

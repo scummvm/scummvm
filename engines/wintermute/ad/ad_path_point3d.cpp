@@ -27,6 +27,7 @@
 
 #include "engines/wintermute/ad/ad_path_point3d.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
+#include "engines/wintermute/base/gfx/xmath.h"
 
 namespace Wintermute {
 
@@ -34,7 +35,7 @@ IMPLEMENT_PERSISTENT(AdPathPoint3D, false)
 
 //////////////////////////////////////////////////////////////////////////
 AdPathPoint3D::AdPathPoint3D() : BaseClass() {
-	_pos = Math::Vector3d(0.0f, 0.0f, 0.0f);
+	_pos = DXVector3(0.0f, 0.0f, 0.0f);
 	_distance = 0.0f;
 
 	_marked = false;
@@ -42,7 +43,7 @@ AdPathPoint3D::AdPathPoint3D() : BaseClass() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-AdPathPoint3D::AdPathPoint3D(Math::Vector3d pos, float dist) {
+AdPathPoint3D::AdPathPoint3D(DXVector3 pos, float dist) {
 	_pos = pos;
 	_distance = dist;
 
@@ -61,9 +62,9 @@ bool AdPathPoint3D::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_marked));
 	persistMgr->transferPtr(TMEMBER(_origin));
 
-	persistMgr->transferFloat("x", &_pos.x());
-	persistMgr->transferFloat("y", &_pos.y());
-	persistMgr->transferFloat("z", &_pos.z());
+	persistMgr->transferFloat("x", &_pos._x);
+	persistMgr->transferFloat("y", &_pos._y);
+	persistMgr->transferFloat("z", &_pos._z);
 
 	return true;
 }
