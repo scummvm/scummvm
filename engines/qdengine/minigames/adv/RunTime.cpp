@@ -35,7 +35,7 @@
 
 namespace QDEngine {
 
-MinigameManager *runtime = 0;
+MinigameManager *g_runtime = 0;
 // createGame() должна реализоваться непосредственно в КАЖДОМ проекте игры
 MinigameInterface *createGame();
 
