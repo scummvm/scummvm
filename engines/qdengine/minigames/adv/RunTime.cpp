@@ -108,7 +108,7 @@ MinigameManager::~MinigameManager() {
 	}
 }
 
-bool MinigameManager::init(const qdEngineInterface* engine_interface) {
+bool MinigameManager::init(const qdEngineInterface *engine_interface) {
 	debugC(1, kDebugMinigames, "MinigameManager::init(): init game");
 
 	if (runtime != this)
@@ -313,7 +313,7 @@ bool MinigameManager::finit() {
 #undef SAFE_RELEASE
 
 
-bool MinigameManager::new_game(const qdEngineInterface* engine_interface) {
+bool MinigameManager::new_game(const qdEngineInterface *engine_interface) {
 	if (!loadState(false)) {
 		debugC(2, kDebugMinigames, "MinigameManager::new_game(): new game skiped");
 		return false;
@@ -334,7 +334,7 @@ class TempValue {
 	qdMinigameSceneInterface *pre_scene_;
 	MinigameManager *pre_runtime_;
 public:
-	TempValue(MinigameManager* new_runtime, const qdEngineInterface* new_engine, qdMinigameSceneInterface* new_scene) {
+	TempValue(MinigameManager *new_runtime, const qdEngineInterface *new_engine, qdMinigameSceneInterface *new_scene) {
 		assert(new_runtime);
 		pre_runtime_ = runtime;
 		runtime = new_runtime;
@@ -356,7 +356,7 @@ public:
 
 #define TEMP_SCENE_ENTER() TempValue tempSceneObject(this, engine, const_cast<qdMinigameSceneInterface*>(scene))
 
-int MinigameManager::save_game(const qdEngineInterface* engine, const qdMinigameSceneInterface* scene, char* buffer, int buffer_size) {
+int MinigameManager::save_game(const qdEngineInterface *engine, const qdMinigameSceneInterface *scene, char *buffer, int buffer_size) {
 	debugC(2, kDebugMinigames, "MinigameManager::save_game(): save game");
 	TEMP_SCENE_ENTER();
 	loadState();
@@ -372,7 +372,7 @@ int MinigameManager::save_game(const qdEngineInterface* engine, const qdMinigame
 
 }
 
-int MinigameManager::load_game(const qdEngineInterface* engine, const qdMinigameSceneInterface* scene, const char* buffer, int buffer_size) {
+int MinigameManager::load_game(const qdEngineInterface *engine, const qdMinigameSceneInterface *scene, const char *buffer, int buffer_size) {
 	assert(!game_);
 	if (game_) {
 		debugC(2, kDebugMinigames, "MinigameManager::load_game(): load game skiped");
@@ -468,7 +468,7 @@ bool MinigameManager::loadState(bool current) {
 	return true;
 }
 
-extern bool createDirForFile(const char* partialPath);
+extern bool createDirForFile(const char *partialPath);
 void MinigameManager::saveState(bool force) {
 	debugC(2, kDebugMinigames, "MinigameManager::save_state(): save state");
 
@@ -632,7 +632,7 @@ bool MinigameManager::testAllGamesWin() {
 				--xbuf;
 				int game;
 				xbuf >= game;
-				const MinigameData* data = getScore(level, game);
+				const MinigameData *data = getScore(level, game);
 				if (!data || data->sequenceIndex_ == -1)
 					return false;
 			}
@@ -696,7 +696,7 @@ void MinigameManager::gameLose() {
 	state_flag_->set_state("lose");
 }
 
-const char *MinigameManager::parameter(const char* name, bool required) const {
+const char *MinigameManager::parameter(const char *name, bool required) const {
 	if (!scene_)
 		error("MinigameManager::parameter(): Scene is undefined");
 
@@ -765,12 +765,12 @@ mgVect2f MinigameManager::world2game(const mgVect3f& pos) const {
 	return mgVect2f(scr.x, scr.y);
 }
 
-mgVect3f MinigameManager::world2game(qdMinigameObjectInterface* obj) const {
+mgVect3f MinigameManager::world2game(qdMinigameObjectInterface *obj) const {
 	mgVect2i scr = obj->screen_R();
 	return mgVect3f(scr.x, scr.y, round(getDepth(obj)));
 }
 
-mgVect2f MinigameManager::getSize(qdMinigameObjectInterface* obj) const {
+mgVect2f MinigameManager::getSize(qdMinigameObjectInterface *obj) const {
 	if (obj) {
 		mgVect2i size = obj->screen_size();
 		return mgVect2f(size.x, size.y);
@@ -778,12 +778,12 @@ mgVect2f MinigameManager::getSize(qdMinigameObjectInterface* obj) const {
 	return mgVect2f();
 }
 
-void MinigameManager::setDepth(qdMinigameObjectInterface* obj, int depth) const {
+void MinigameManager::setDepth(qdMinigameObjectInterface *obj, int depth) const {
 	mgVect2i scr = obj->screen_R();
 	obj->set_R(scene_->screen2world_coords(scr, depth));
 }
 
-float MinigameManager::getDepth(qdMinigameObjectInterface* obj) const {
+float MinigameManager::getDepth(qdMinigameObjectInterface *obj) const {
 	return scene_->screen_depth(obj->R());
 }
 
@@ -797,7 +797,7 @@ QDObject MinigameManager::getObject(const char *name) const {
 
 	if (!name || !*name)
 		return QDObject::ZERO;
-	qdMinigameObjectInterface* obj = scene_->object_interface(name);
+	qdMinigameObjectInterface *obj = scene_->object_interface(name);
 	if (!obj)
 		warning("MinigameManager::getObject(): Object '%s' not found", transCyrillic(name));
 
@@ -806,8 +806,8 @@ QDObject MinigameManager::getObject(const char *name) const {
 	return QDObject::ZERO;
 }
 
-bool MinigameManager::testObject(const char* name) const {
-	if (qdMinigameObjectInterface * obj = scene_->object_interface(name)) {
+bool MinigameManager::testObject(const char *name) const {
+	if (qdMinigameObjectInterface *obj = scene_->object_interface(name)) {
 		scene_->release_object_interface(obj);
 		return true;
 	}
@@ -821,8 +821,8 @@ void MinigameManager::release(QDObject& obj) {
 	}
 }
 
-QDCounter MinigameManager::getCounter(const char* name) {
-	qdMinigameCounterInterface* counter = engine_->counter_interface(name);
+QDCounter MinigameManager::getCounter(const char *name) {
+	qdMinigameCounterInterface *counter = engine_->counter_interface(name);
 
 	if (!counter)
 		warning("MinigameManager::getCounter(): Counter '%s' not found", transCyrillic(name));
@@ -838,18 +838,18 @@ void MinigameManager::release(QDCounter& counter) {
 	counter = 0;
 }
 
-void MinigameManager::setText(const char* name, const char* text) const {
+void MinigameManager::setText(const char *name, const char *text) const {
 	engine_->set_interface_text(0, name, text);
 }
 
-void MinigameManager::setText(const char* name, int toText, const char* format) const {
+void MinigameManager::setText(const char *name, int toText, const char *format) const {
 	char text[16];
 	text[15] = 0;
 	snprintf(text, 15, format, toText);
 	setText(name, text);
 }
 
-void MinigameManager::hide(qdMinigameObjectInterface* obj) const {
+void MinigameManager::hide(qdMinigameObjectInterface *obj) const {
 	obj->set_R(scene_->screen2world_coords(mgVect2i(-10000, -10000), getDepth(obj)));
 }
 
@@ -889,7 +889,7 @@ int MinigameManager::rnd(const Std::vector<float> &prob) const {
 
 // если данные еще ни разу не сохранялись - запоминаем
 // если уже есть запомненные, то заменяем на них
-bool MinigameManager::processGameData(Common::MemoryWriteStream& data) {
+bool MinigameManager::processGameData(Common::MemoryWriteStream &data) {
 	warning("STUB: MinigameManager::processGameData()");
 #if 0
 	if (currentGameInfo_) {
@@ -955,7 +955,7 @@ void GameInfo::free() {
 	dataSize_ = 0;
 }
 
-void GameInfo::write(void* data, unsigned int size) {
+void GameInfo::write(void *data, uint size) {
 	if (dataSize_ != size) {
 		free();
 		if (size > 0) {
@@ -987,7 +987,7 @@ XStream &operator> (XStream& in, GameInfo& info) {
 	if (!info.empty_) {
 		in.read(info.timeManagerData_);
 		in.read(info.effectManagerData_);
-		unsigned int size;
+		uint size;
 		in > size;
 		XBuffer buf(size);
 		in.read(buf.buffer(), size);
@@ -1013,7 +1013,7 @@ TimeManager::TimeManager(HoldData<TimeManagerData> &data_) {
 		if (const char *data = runtime->parameter("time_bar"))
 			timeBar_ = runtime->getObject(data);
 
-		if (const char * data = runtime->parameter("time_cost"))
+		if (const char *data = runtime->parameter("time_cost"))
 			sscanf(data, "%f", &timeCost_);
 	}
 

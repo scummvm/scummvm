@@ -62,7 +62,7 @@ struct MinigameData {
 
 struct GameInfo {
 	GameInfo();
-	void write(void* data, unsigned int size);
+	void write(void *data, uint size);
 	void free();
 	static int version() {
 		return 9;
@@ -75,7 +75,7 @@ struct GameInfo {
 	bool empty_;
 	TimeManagerData timeManagerData_;
 	EffectManagerData effectManagerData_;
-	unsigned int dataSize_;
+	uint dataSize_;
 	void *gameData_;
 };
 
