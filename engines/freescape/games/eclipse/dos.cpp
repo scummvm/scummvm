@@ -91,7 +91,7 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 			error("Failed to open TOTEE.EXE");
 
 		loadMessagesFixedSize(&file, 0x710f, 16, 20);
-		loadSoundsFx(&file, 0xd670, 1);
+		loadSoundsFx(&file, 0xd670, 5);
 		loadSpeakerFxDOS(&file, 0x7396 + 0x200, 0x72a1 + 0x200);
 		loadFonts(&file, 0xd403);
 		load8bitBinary(&file, 0x3ce0, 16);
@@ -121,7 +121,7 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 			error("Failed to open TOTEC.EXE");
 
 		loadMessagesFixedSize(&file, 0x594f, 16, 20);
-		load1bPCM(&file, 0xd038 - 4);
+		loadSoundsFx(&file, 0xb9f0, 5);
 		loadFonts(&file, 0xb785);
 		load8bitBinary(&file, 0x2530, 4);
 		for (auto &it : _areaMap) {
@@ -220,7 +220,7 @@ void EclipseEngine::loadSoundsFx(Common::SeekableReadStream *file, int offset, i
 		return;
 	}
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < number; i++) {
 		_soundsFx[i] = load1bPCM(file, offset);
 		offset += (_soundsFx[i]->size / 8) + 4;
 	}
