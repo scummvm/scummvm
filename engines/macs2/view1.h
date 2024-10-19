@@ -75,11 +75,13 @@ private:
 	uint8 LookupWalkability(const Common::Point &p) const;
 	bool IsWalkable(const Common::Point &p) const;
 
-	bool IsLineSegmentWalkable(const Common::Point &p1, const Common::Point &p2);
+	
+	bool IsLineSegmentWalkable(const Common::Point &p1, const Common::Point &p2, bool print = false);
 
 
 	public:
-
+	Common::Array<uint8> PathfindingOverlay;
+	Character();
 
 	Common::Array<uint16> Path;
 	int16 CurrentPathIndex;
@@ -89,7 +91,7 @@ private:
 
 	bool VisitPathfindingNode(uint16 index, Common::Array<bool> &visited, const Common::Point &target);
 
-	bool IsFollowingPath;
+	bool IsFollowingPath = false;
 
 	Common::Point GetPosition() const;
 		void SetPosition(const Common::Point &newPosition);
@@ -189,6 +191,8 @@ class View1 : public UIElement {
 	void handleFading();
 
 	void drawPathfindingPoints(Graphics::ManagedSurface &s);
+
+	void drawDebugOutput(Graphics::ManagedSurface &s);
 
 	void drawPath(Graphics::ManagedSurface &s);
 
