@@ -149,6 +149,8 @@ public:
 	byte _pal[256 * 3] = { 0 };
 	byte _palVanilla[256 * 3] = { 0 };
 
+	Common::Array<Common::String> debugOutput;
+
 	// fn0037_0E8C proc
 	uint16 getWalkabilityAt(uint16 x, uint16 y);
 

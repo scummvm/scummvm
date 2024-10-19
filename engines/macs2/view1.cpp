@@ -109,7 +109,8 @@ View1::View1() : UIElement("View1") {
 				const uint16 currentY = y + yOffset;
 				const uint32 currentValue = s.getPixel(currentX, currentY);
 				const uint32 newValue = g_engine->_shadingTable[currentValue];
-				s.setPixel(currentX, currentY, newValue);
+				if (currentX < 320 && currentY < 200) 
+					s.setPixel(currentX, currentY, newValue);
 			}
 		}
 	}
@@ -312,24 +313,49 @@ View1::View1() : UIElement("View1") {
 	}
 
 	void View1::drawPathfindingPoints(Graphics::ManagedSurface &s) {
-		GlyphData xData;
-		g_engine->FindGlyph('x', xData);
-		int numLines = 0;
-		for (int i = 0; i < 16; i++) {
-			PathfindingPoint &current = g_engine->pathfindingPoints[i];
-			renderString(current.Position.x - xData.Width * 0.5, current.Position.y - xData.Height * 0.5, "x");
+		constexpr bool drawNodes = false;
+		if (drawNodes) {
+		
+			GlyphData xData;
+			g_engine->FindGlyph('x', xData);
+			int numLines = 0;
+			for (int i = 0; i < 16; i++) {
+				PathfindingPoint &current = g_engine->pathfindingPoints[i];
+				renderString(current.Position.x - xData.Width * 0.5, current.Position.y - xData.Height * 0.5, "x");
 
-			Common::String number = Common::String::format("%u", i);
-			renderString(current.Position.x - xData.Width * 0.5 + 10, current.Position.y - xData.Height * 0.5 + 10, number.c_str());
+				Common::String number = Common::String::format("%u", i);
+				renderString(current.Position.x - xData.Width * 0.5 + 10, current.Position.y - xData.Height * 0.5 + 10, number.c_str());
 
-			for (uint8 adjacentIndex : current.adjacentPoints) {
-				if (adjacentIndex >= g_engine->pathfindingPoints.size()) {
-					continue;
+				for (uint8 adjacentIndex : current.adjacentPoints) {
+					if (adjacentIndex >= g_engine->pathfindingPoints.size()) {
+						continue;
+					}
+					PathfindingPoint &other = g_engine->pathfindingPoints[adjacentIndex - 1];
+					s.drawLine(current.Position.x, current.Position.y, other.Position.x, other.Position.y, 0xFFFFFFFF);
+					numLines++;
 				}
-				PathfindingPoint &other = g_engine->pathfindingPoints[adjacentIndex - 1];
-				s.drawLine(current.Position.x, current.Position.y, other.Position.x, other.Position.y, 0xFFFFFFFF);
-				numLines++;
 			}
+		}
+
+		// Draw the test results
+		Common::Array<uint8> &overlay = characters[0]->PathfindingOverlay;
+		for (int y = 0; y < 200; y++) {
+			for (int x = 0; x < 320; x++) {
+				const uint8 currentValue = overlay[y * 320 + x];
+				if (currentValue != 0) {
+					s.setPixel(x, y, currentValue);
+				}
+			}
+		}
+	}
+
+	void View1::drawDebugOutput(Graphics::ManagedSurface &s) {
+		uint16 x = 0;
+		uint16 y = 0;
+		constexpr uint16 deltaY = 20;
+		for (const Common::String &current : g_engine->debugOutput) {
+			renderString(x, y, current);
+			y += deltaY;
 		}
 	}
 
@@ -528,9 +554,10 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		characters[0]->Path.push_back(9); */
 		const Common::Point mousePos = g_system->getEventManager()->getMousePos();
 		characters[0]->PathFinalDestination = mousePos;
-		g_engine->_path.clear();
-		characters[0]->FindPath(mousePos);
-		characters[0]->IsFollowingPath = true;
+		characters[0]->Path.clear();
+		// g_engine->_path.clear();
+		bool pathfindingResult = characters[0]->FindPath(mousePos);
+		characters[0]->IsFollowingPath = pathfindingResult;
 		characters[0]->CurrentPathIndex = -1;
 		
 	}
@@ -649,6 +676,7 @@ void View1::draw() {
 	drawPathfindingPoints(s);
 	drawPath(s);
 	// drawBackgroundAnimationNumbers(s);
+	drawDebugOutput(s);
 
 	// Get mouse position
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
@@ -792,7 +820,8 @@ void View1::DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, ui
 			uint8 val = data[currentY * width + currentX];
 			if (val != 0) {
 				if (clippingRect.contains(x + currentX, y + currentY)) {
-					s.setPixel(x + currentX, y + currentY, val);
+					if (x + currentX < 320 && y + currentY < 200)
+						s.setPixel(x + currentX, y + currentY, val);
 				}
 			}
 		}
@@ -806,7 +835,7 @@ void View1::DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, co
 void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, uint16 scaling, byte *data, Graphics::ManagedSurface &s) {
 	int xScaling = 0;
 	int yScaling = 0;
-
+	
 	int currentTargetX = 0;
 	int currentTargetY = 0;
 
@@ -1070,6 +1099,11 @@ uint8 Character::LookupWalkability(const Common::Point &p) const {
 		// TODO: Hardcoded test case
 		return 0x00;
 	}
+	if (value == 0xCB)
+	{
+		// TODO: Hardcoded test, for pathfinding should finally look up exactly how this works
+		return 0x00;
+	}
 	if (!lookedUpValue) {
 		return 0xFF;
 	} else {
@@ -1084,7 +1118,7 @@ bool Character::IsWalkable(const Common::Point &p) const {
 	return walkability < 0xC8;
 }
 
-bool Character::IsLineSegmentWalkable(const Common::Point &p1, const Common::Point &p2) {
+bool Character::IsLineSegmentWalkable(const Common::Point &p1, const Common::Point &p2, bool print) {
 	int x1 = p1.x;
 	int y1 = p1.y;
 	int x2 = p2.x;
@@ -1098,10 +1132,14 @@ bool Character::IsLineSegmentWalkable(const Common::Point &p1, const Common::Poi
 
 	int err = dx - dy;
 
+	bool result = true;
 	while (true) {
 		Common::Point currentPoint(x1, y1);
-		if (!IsWalkable(currentPoint)) { // If the point is not walkable, return false
-			return false;
+		bool isCurrentWalkable = IsWalkable(currentPoint);
+		if (print)
+			PathfindingOverlay[y1 * 320 + x1] = isCurrentWalkable ? 100 : 50;
+		if (!isCurrentWalkable) { // If the point is not walkable, save for later
+			result = false;
 		}
 
 		if (x1 == x2 && y1 == y2)
@@ -1118,7 +1156,11 @@ bool Character::IsLineSegmentWalkable(const Common::Point &p1, const Common::Poi
 		}
 	}
 
-	return true; // All points along the line are walkable
+	return result;
+}
+
+Character::Character() {
+	PathfindingOverlay = Common::Array<uint8>(320 * 200, 0);
 }
 
 bool Character::FindPath(Common::Point target) {
@@ -1130,7 +1172,7 @@ bool Character::FindPath(Common::Point target) {
 	// TODO: Assume we have to use the net, usually we would do a path trace
 	constexpr uint16 numPoints = 16;
 	uint minLength = std::numeric_limits<uint>::max();
-	uint16 minIndex = 0; // TODO: Handle not finding any
+	int minIndex = -1;
 	const Common::Point &charPosition = GameObjects::instance().GetProtagonistObject()->Position;
 	for (int i = 0; i < numPoints; i++) {
 		PathfindingPoint &current = g_engine->pathfindingPoints[i];
@@ -1145,18 +1187,24 @@ bool Character::FindPath(Common::Point target) {
 
 	// TODO: Handle not finding a start point
 	// g_engine->_path.push_back(g_engine->pathfindingPoints[minIndex].Position);
+	if (minIndex == -1) {
+		debug("No walkable entry point found!");
+		return false;
+	}
 	
 	Common::Array<bool> visited;
 	visited.resize(16);
 	debug("Best entry point: %u at distance %u", minIndex, minLength);
-	VisitPathfindingNode(minIndex, visited, target);
+	bool result = VisitPathfindingNode(minIndex, visited, target);
+	PathfindingPoint &entryPoint = g_engine->pathfindingPoints[minIndex];
+	IsLineSegmentWalkable(charPosition, entryPoint.Position, true);
 	// Now handle searching for the end point, for this, keep track of nodes we already visited
 	// Args:
 	// Target position
 	// Current path
 	// Array of points already visited
 
-	return true;
+	// return true;
 }
 
 bool Character::VisitPathfindingNode(uint16 index, Common::Array<bool> &visited, const Common::Point &target) {
@@ -1167,10 +1215,12 @@ bool Character::VisitPathfindingNode(uint16 index, Common::Array<bool> &visited,
 	visited[index] = true;
 	const PathfindingPoint &currentPoint = g_engine->pathfindingPoints[index];
 	const Common::Point &currentPosition = currentPoint.Position;
+	Path.push_back(index);
 	g_engine->_path.push_back(currentPosition);
 
 	// Check if we can reach the target from here
 	if (IsLineSegmentWalkable(currentPosition, target)) {
+		IsLineSegmentWalkable(currentPosition, target, true);
 		return true;
 	}
 
@@ -1178,11 +1228,14 @@ bool Character::VisitPathfindingNode(uint16 index, Common::Array<bool> &visited,
 	for (int i = 0; i < currentPoint.adjacentPoints.size(); i++) {
 		const uint16 currentAdjacentIndex = currentPoint.adjacentPoints[i];
 		if (VisitPathfindingNode(currentAdjacentIndex - 1, visited, target)) {
+			const PathfindingPoint &adjacentPoint = g_engine->pathfindingPoints[currentAdjacentIndex - 1];
+			IsLineSegmentWalkable(currentPoint.Position, adjacentPoint.Position, true);
 			return true;
 		}
 	}
 	// None we good, remove us from the path and return
 	g_engine->_path.remove_at(g_engine->_path.size() - 1);
+	Path.remove_at(Path.size() - 1);
 	return false;
 }
 
@@ -1204,11 +1257,13 @@ bool Character::TryFollowPath() {
 	if (CurrentPathIndex == Path.size() + 1) {
 		return false;
 	}
-	const uint16 currentPathPointIndex = Path[CurrentPathIndex] -1;
+	const uint16 currentPathPointIndex = Path[CurrentPathIndex]; // -1;
 	// Set up a lerp
+	Common::String output = Common::String::format("%u - %u", CurrentPathIndex, currentPathPointIndex);
+	g_engine->debugOutput.push_back(output);
 	PathfindingPoint &current = g_engine->pathfindingPoints[currentPathPointIndex];
 	StartLerpTo(current.Position, 1000);
-	
+	return true;
 }
 
 bool Character::isAnimationMirrored() const {
