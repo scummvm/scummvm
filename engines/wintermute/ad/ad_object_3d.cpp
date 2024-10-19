@@ -640,6 +640,11 @@ bool AdObject3D::getBonePosition3D(const char *boneName, DXVector3 *pos, DXVecto
 		return false;
 	}
 
+	DXVector3 vz(0, 0, 0);
+	if (!offset) {
+		offset = &vz;
+	}
+
 	DXMatrix bonePosMat;
 	DXMatrixMultiply(&bonePosMat, boneMat, &_worldMatrix);
 
