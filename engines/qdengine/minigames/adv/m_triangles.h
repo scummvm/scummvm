@@ -68,7 +68,7 @@ class MinigameTriangle : public MinigameInterface {
 		static const char *getBackStateName(bool selected, bool animated, bool instantaneous);
 		static const char *getBorderStateName(bool selected);
 	};
-	typedef vector<Node> Nodes;
+	typedef Std::vector<Node> Nodes;
 
 public:
 	MinigameTriangle();

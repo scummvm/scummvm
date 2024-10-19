@@ -19,6 +19,9 @@
  *
  */
 
+#include "common/debug.h"
+
+#include "qdengine/qdengine.h"
 #include "qdengine/minigames/adv/m_triangles.h"
 #include "qdengine/minigames/adv/RunTime.h"
 #include "qdengine/minigames/adv/EventManager.h"
@@ -46,9 +49,8 @@ MinigameTriangle::Node::Node(int number, int rot) {
 }
 
 void MinigameTriangle::Node::release() {
-	QDObjects::iterator it;
-	FOR_EACH(face_, it)
-	runtime->release(*it);
+	for (auto &it : face_)
+		runtime->release(it);
 }
 
 bool MinigameTriangle::Node::hit(const mgVect2f& pos) const {
@@ -91,7 +93,7 @@ MinigameTriangle::MinigameTriangle() {
 		fieldSize_ = fieldLines_ * fieldWidth_;
 		break;
 	case HEXAGON:
-		xassert(fieldLines_ % 2 == 0);
+		assert(fieldLines_ % 2 == 0);
 		if (fieldLines_ % 2 != 0)
 			return;
 		fieldSize_ = 3 * sqr(fieldLines_) / 2;
@@ -111,32 +113,34 @@ MinigameTriangle::MinigameTriangle() {
 		nodes_.push_back(Node(num, 0));
 		Node& node = nodes_.back();
 		for (int angle = 1; angle <= 3; ++angle) {
-			sprintf(name, "%s%02d_%1d", faceNameBegin, num + 1, angle);
+			snprintf(name, 63, "%s%02d_%1d", faceNameBegin, num + 1, angle);
 			QDObject obj = runtime->getObject(name);
 			node.face_.push_back(obj);
 			positions_.push_back(obj->R());
 		}
 	}
 
+	warning("STUB: MinigameTriangle::MinigameTriangle(): processGameData");
+#if 0
 	XBuffer gameData;
 
-	Coords::iterator it;
-	FOR_EACH(positions_, it)
-	gameData.write(*it);
+	for (auto &it : positions_)
+		gameData.write(it);
 
 	if (!runtime->processGameData(gameData))
 		return;
 
-	FOR_EACH(positions_, it)
-	gameData.read(*it);
+	for (auto &it : positions_)
+		gameData.read(it);
+#endif
 
 	for (int num = 1; num <= 2; ++num) {
 		for (int angle = 1; angle <= 3; ++angle) {
-			sprintf(name, "%s%1d_%1d", backNameBegin, num, angle);
+			snprintf(name, 63, "%s%1d_%1d", backNameBegin, num, angle);
 			if (!backSides_[(num - 1) * 3 + angle - 1].load(name))
 				return;
 		}
-		sprintf(name, "%s%1d", selectNameBegin, num);
+		snprintf(name, 63, "%s%1d", selectNameBegin, num);
 		if (!selectBorders_[num - 1].load(name))
 			return;
 	}
@@ -169,9 +173,8 @@ MinigameTriangle::MinigameTriangle() {
 }
 
 MinigameTriangle::~MinigameTriangle() {
-	Nodes::iterator it;
-	FOR_EACH(nodes_, it)
-	it->release();
+	for (auto &it : nodes_)
+		it.release();
 
 	for (int idx = 0; idx < 2; ++idx)
 		selectBorders_[idx].release();
@@ -185,20 +188,19 @@ void MinigameTriangle::Node::debugInfo() const {
 }
 
 const char *MinigameTriangle::Node::getFaceStateName(int angle, bool selected, bool animated, bool instantaneous) {
-	xassert(!selected || !animated); // анимированные выделенными быть не могут
+	assert(!selected || !animated); // анимированные выделенными быть не могут
 
-	static char *angleNames[3] = {"0", "120", "240"};
-	xassert(angle >= 0 && angle < sizeof(angleNames) / sizeof(angleNames[0]));
+	static const char *angleNames[3] = {"0", "120", "240"};
+	assert(angle >= 0 && angle < sizeof(angleNames) / sizeof(angleNames[0]));
 
-	static XBuffer out;
-	out.init();
+	Common::String out;
 
-	out < (animated ? "02_" : "01_") < angleNames[angle] < (selected || instantaneous ? "_sel" : "") < '\0';
+	out = Common::String::format("%s%s%s", (animated ? "02_" : "01_"), angleNames[angle], (selected || instantaneous ? "_sel" : ""));
 	return out.c_str();
 }
 
 const char *MinigameTriangle::Node::getBackStateName(bool selected, bool animated, bool instantaneous) {
-	xassert(!selected || !animated); // анимированные выделенными быть не могут
+	assert(!selected || !animated); // анимированные выделенными быть не могут
 
 	if (animated)
 		return selected || instantaneous ? "02_sel" : "02";
@@ -219,9 +221,8 @@ void MinigameTriangle::releaseNodeBack(Node& node) {
 }
 
 void MinigameTriangle::updateNode(Node& node, int position, int flip, bool quick) {
-	QDObjects::iterator fit;
-	FOR_EACH(node.face_, fit)
-	runtime->hide(*fit);
+	for (auto &fit : node.face_)
+		runtime->hide(fit);
 
 	node.flip = flip;
 
@@ -243,14 +244,14 @@ void MinigameTriangle::updateNode(Node& node, int position, int flip, bool quick
 
 void MinigameTriangle::highlight(int idx, bool hl) {
 	if (idx >= 0) {
-		xassert(idx < (int)nodes_.size());
+		assert(idx < (int)nodes_.size());
 		nodes_[idx].highlight_ = hl;
 		updateNode(nodes_[idx], idx);
 	}
 }
 
 void MinigameTriangle::beginSwapNodes(int pos1, int pos2) {
-	xassert(compatible(pos1, pos2));
+	assert(compatible(pos1, pos2));
 
 	if (pos1 > pos2)
 		SWAP(pos1, pos2);
@@ -284,25 +285,25 @@ void MinigameTriangle::endSwapNodes(int pos1, int pos2) {
 
 	bool counted = false;
 	if (node1.number_ == pos1) { // поставили на свое место
-		xassert(!node1.isBack_);
+		assert(!node1.isBack_);
 		counted = true;
 		runtime->event(EVENT_PUT_RIGHT, node1.obj()->screen_R());
 	}
 
 	if (node2.number_ == pos1) { // сняли со своего места
-		xassert(node2.isBack_);
+		assert(node2.isBack_);
 		counted = true;
 		runtime->event(EVENT_GET_RIGHT, node1.obj()->screen_R());
 	}
 
 	if (node2.number_ == pos2) { // поставили на свое место
-		xassert(!node2.isBack_);
+		assert(!node2.isBack_);
 		counted = true;
 		runtime->event(EVENT_PUT_RIGHT, node2.obj()->screen_R());
 	}
 
 	if (node1.number_ == pos2) { // сняли со своего места
-		xassert(node1.isBack_);
+		assert(node1.isBack_);
 		counted = true;
 		runtime->event(EVENT_GET_RIGHT, node2.obj()->screen_R());
 	}
@@ -316,11 +317,12 @@ void MinigameTriangle::endSwapNodes(int pos1, int pos2) {
 
 	bool isWin = true;
 	int position = 0;
-	Nodes::const_iterator it;
-	FOR_EACH(nodes_, it)
-	if (it->number_ != position++) {
-		isWin = false;
-		break;
+
+	for (auto &it : nodes_) {
+		if (it.number_ != position++) {
+			isWin = false;
+			break;
+		}
 	}
 
 	if (isWin) {
@@ -351,11 +353,11 @@ bool MinigameTriangle::animate(float dt) {
 		releaseNodeBack(node1);
 		releaseNodeBack(node2);
 
-		QDObjects::iterator it;
-		FOR_EACH(node1.face_, it)
-		(*it).setState(Node::getFaceStateName(0, false, false, false));
-		FOR_EACH(node2.face_, it)
-		(*it).setState(Node::getFaceStateName(0, false, false, false));
+		for (auto &it : node1.face_)
+			it.setState(Node::getFaceStateName(0, false, false, false));
+
+		for (auto &it : node2.face_)
+			it.setState(Node::getFaceStateName(0, false, false, false));
 
 		updateNode(node1, animatedNodes_[1], destination(animatedNodes_[0], animatedNodes_[1]), true);
 		updateNode(node2, animatedNodes_[0], destination(animatedNodes_[1], animatedNodes_[0]), true);
@@ -404,6 +406,9 @@ bool MinigameTriangle::animate(float dt) {
 		animatedNodes_[1] = -1;
 
 		return true;
+
+	default:
+		break;
 	}
 
 	return false;
@@ -519,9 +524,11 @@ int MinigameTriangle::rowBegin(int row) const {
 		return sqr(row);
 	case RECTANGLE:
 		return row * fieldWidth_;
+	default:
+		break;
 	}
 	//case HEXAGON:
-	xassert(row >= 0 && row < fieldLines_);
+	assert(row >= 0 && row < fieldLines_);
 	if (row >= fieldLines_ / 2) {
 		row -= fieldLines_ / 2;
 		return fieldSize_ / 2 + (2 * fieldLines_ - row) * row;
@@ -539,6 +546,8 @@ int MinigameTriangle::rowByNum(int num) const {
 		return floor(sqrt((float)num));
 	case RECTANGLE:
 		return num / fieldWidth_;
+	default:
+		break;
 	}
 	//case HEXAGON:
 	int row = num < fieldSize_ / 2 ? 0 : fieldLines_ / 2;
@@ -553,6 +562,8 @@ int MinigameTriangle::orientation(int num) const {
 		return (rowByNum(num) + num) % 2;
 	case RECTANGLE:
 		return num % 2;
+	default:
+		break;
 	}
 	//case HEXAGON:
 	return (num + rowByNum(num) + (num >= fieldSize_ / 2 ? 1 : 0)) % 2;
@@ -590,7 +601,7 @@ int MinigameTriangle::getRotate(int num1, int num2) const {
 		{{2, 1, 0}, {1, 0, 2}},
 		{{1, 0, 2}, {2, 1, 0}}
 	};
-	xassert(compatible(num1, num2));
+	assert(compatible(num1, num2));
 	return solves[rowByNum(num1) != rowByNum(num2) ? 0 : (num2 < num1 ? 1 : 2)]
 	       [orientation(num1)][nodes_[num1].rotation_];
 }
@@ -603,7 +614,7 @@ int MinigameTriangle::destination(int num1, int num2) const {
 }
 
 mgVect3f MinigameTriangle::slotCoord(int pos, int angle) const {
-	xassert(pos * 3 + angle < positions_.size());
+	assert(pos * 3 + angle < positions_.size());
 	return positions_[pos * 3 + angle];
 }
 
