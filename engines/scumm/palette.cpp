@@ -224,10 +224,6 @@ void ScummEngine::resetPalette() {
 	} else if (_game.features & GF_16COLOR) {
 		switch (_renderMode) {
 		case Common::kRenderEGA:
-		case Common::kRenderMacintoshBW:
-			// Use EGA palette for MacintoshBW, because that makes
-			// white 0xFFFFFF there. The Mac EGA palette, would
-			// make it 0xFCFCFC.
 			setPaletteFromTable(tableEGAPalette, sizeof(tableEGAPalette) / 3);
 			break;
 
