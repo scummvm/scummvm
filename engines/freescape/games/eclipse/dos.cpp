@@ -31,13 +31,20 @@ namespace Freescape {
 extern byte kEGADefaultPalette[16][3];
 byte kEclipseCGAPaletteRedGreen[4][3] = {
 	{0x00, 0x00, 0x00},
-	{0x00, 0xff, 0xff},
-	{0xff, 0x00, 0xff},
+	{0x55, 0xff, 0x55},
+	{0xff, 0x55, 0x55},
+	{0xff, 0xff, 0x55},
+};
+
+byte kEclipseCGAPalettePinkBlue[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x55, 0xff, 0xff},
+	{0xff, 0x55, 0xff},
 	{0xff, 0xff, 0xff},
 };
 
 static const CGAPaletteEntry rawCGAPaletteByArea[] {
-	{1, (byte *)kEclipseCGAPaletteRedGreen},
+	{1, (byte *)kEclipseCGAPalettePinkBlue},
 	{2, (byte *)kEclipseCGAPaletteRedGreen},
 	{3, (byte *)kEclipseCGAPaletteRedGreen},
 	{4, (byte *)kEclipseCGAPaletteRedGreen},
