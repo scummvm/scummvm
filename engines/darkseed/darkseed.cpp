@@ -528,7 +528,9 @@ void DarkseedEngine::handleInput() {
 				_player->_walkToSequencePoint = _cursor.getPosition();
 				_player->_sequenceRotation = -1;
 				Common::Point currentCursorPos = _cursor.getPosition();
-				int objNum = _room->_roomObj[roomObjIdx].objNum;
+				// TODO check this logic with original it looks like there might be a buffer overrun
+				// in the original logic when roomObjIdx >= 30 eg package.
+				int objNum = roomObjIdx >= 30 ? 0 : _room->_roomObj[roomObjIdx].objNum;
 				if (walkToDirTbl[objNum] != 4) {
 					_player->_sequenceRotation = walkToDirTbl[objNum];
 					_cursor.updatePosition(walkToXTbl[objNum], walkToYTbl[objNum]);
@@ -820,8 +822,8 @@ void DarkseedEngine::handleInput() {
 		int objIdx = _room->getObjectUnderCursor();
 		_cursor.setPosition(currentCursorPos);
 		if (objIdx != -1) {
-			int objType = _room->_roomObj[objIdx].type;
-			int objNum = _room->_roomObj[objIdx].objNum;
+			int objType = objIdx >= 30 ? 0 : _room->_roomObj[objIdx].type;
+			int objNum = objIdx >= 30 ? 0 : _room->_roomObj[objIdx].objNum;
 			if (((objType != 4 && objType != 0 && objType < 10) || objNum > 5 || _room->_collisionType != 0)) {
 				if (_room->_collisionType == 0) {
 					handleObjCollision(objNum);
