@@ -244,6 +244,11 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 			scaleKey->_scale = scaleVec;
 			rotationKey->_rotation = qRot;
 
+			// negate for opengl
+			rotationKey->_rotation._x = -(-rotationKey->_rotation._x);
+			rotationKey->_rotation._y = -(-rotationKey->_rotation._y);
+			rotationKey->_rotation._z = -(-rotationKey->_rotation._z);
+
 			_posKeys.push_back(positionKey);
 			_scaleKeys.push_back(scaleKey);
 			_rotKeys.push_back(rotationKey);
