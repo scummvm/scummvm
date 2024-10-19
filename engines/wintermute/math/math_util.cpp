@@ -54,15 +54,9 @@ float MathUtil::roundUp(float val) {
 
 #ifdef ENABLE_WME3D
 
-bool intersectTriangle(const DXVector3 &origin, const DXVector3 &direction,
-                       DXVector3 &vp0, DXVector3 &vp1, DXVector3 &vp2,
-                       float *t, float *u, float *v) {
-	DXVector3 v0 = DXVector3(vp0._x, vp0._y, vp0._z);
-	DXVector3 v1 = DXVector3(vp1._x, vp1._y, vp1._z);
-	DXVector3 v2 = DXVector3(vp2._x, vp2._y, vp2._z);
-	DXVector3 orig = DXVector3(origin._x, origin._y, origin._z);
-	DXVector3 dir = DXVector3(direction._x, direction._y, direction._z);
-
+bool intersectTriangle(const DXVector3 &orig, const DXVector3 &dir,
+					   DXVector3 &v0, DXVector3 &v1, DXVector3 &v2,
+					   float *t, float *u, float *v) {
 	// Find vectors for two edges sharing vert0
 	DXVector3 edge1 = v1 - v0;
 	DXVector3 edge2 = v2 - v0;
@@ -113,15 +107,9 @@ bool intersectTriangle(const DXVector3 &origin, const DXVector3 &direction,
 	return true;
 }
 
-bool pickGetIntersect(const DXVector3 lineS, const DXVector3 lineE,
-					  const DXVector3 vp0, const DXVector3 vp1, const DXVector3 vp2,
+bool pickGetIntersect(DXVector3 lineStart, DXVector3 lineEnd,
+                      DXVector3 v0, DXVector3 v1, DXVector3 v2,
 					  DXVector3 *intersection, float *distance) {
-	DXVector3 v0 = DXVector3(vp0._x, vp0._y, vp0._z);
-	DXVector3 v1 = DXVector3(vp1._x, vp1._y, vp1._z);
-	DXVector3 v2 = DXVector3(vp2._x, vp2._y, vp2._z);
-	DXVector3 lineStart = DXVector3(lineS._x, lineS._y, lineS._z);
-	DXVector3 lineEnd = DXVector3(lineE._x, lineE._y, lineE._z);
-
 	// compute plane's normal
 	DXVector3 vertex;
 	DXVector3 normal;

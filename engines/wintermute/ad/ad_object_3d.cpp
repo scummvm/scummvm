@@ -617,16 +617,15 @@ bool AdObject3D::getBonePosition2D(const char *boneName, int32 *x, int32 *y) {
 		return false;
 	}
 
-	DXMatrix bonePosMat, worldMatrix = DXMatrix(_worldMatrix);
-	DXMatrixMultiply(&bonePosMat, boneMat, &worldMatrix);
+	DXMatrix bonePosMat;
+	DXMatrixMultiply(&bonePosMat, boneMat, &_worldMatrix);
 
 	DXVector4 vectBone4;
 	DXVector3 vectBone3(0, 0, 0);
 	DXVec3Transform(&vectBone4, &vectBone3, &bonePosMat);
 	DXVector3 vectBone(vectBone4._x, vectBone4._y, vectBone4._z);
 
-	DXVector3 vectBonePos = DXVector3(vectBone4._x, vectBone4._y, vectBone4._z);
-	adGame->_scene->_sceneGeometry->convert3Dto2D(&vectBonePos, x, y);
+	adGame->_scene->_sceneGeometry->convert3Dto2D(&vectBone, x, y);
 	return true;
 }
 
@@ -641,12 +640,11 @@ bool AdObject3D::getBonePosition3D(const char *boneName, DXVector3 *pos, DXVecto
 		return false;
 	}
 
-	DXMatrix bonePosMat, worldMatrix = DXMatrix(_worldMatrix);
-	DXMatrixMultiply(&bonePosMat, boneMat, &worldMatrix);
+	DXMatrix bonePosMat;
+	DXMatrixMultiply(&bonePosMat, boneMat, &_worldMatrix);
 
 	DXVector4 vectBone4;
-	DXVector3 vectBone3(offset->_x, offset->_x, offset->_y);
-	DXVec3Transform(&vectBone4, &vectBone3, &bonePosMat);
+	DXVec3Transform(&vectBone4, offset, &bonePosMat);
 
 	pos->_x = vectBone4._x;
 	pos->_y = vectBone4._y;

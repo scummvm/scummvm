@@ -62,11 +62,7 @@ bool Camera3D::getViewMatrix(DXMatrix *viewMatrix) {
 		DXVec3TransformCoord(&up, &up, &rot);
 	}
 
-	DXVector3 position = DXVector3(_position);
-	DXVector3 target = DXVector3(_target);
-	DXMatrix view = DXMatrix(*viewMatrix);
-	DXMatrixLookAtRH(&view, &position, &target, &up);
-	*viewMatrix = view;
+	DXMatrixLookAtRH(viewMatrix, &_position, &_target, &up);
 
 	return true;
 }

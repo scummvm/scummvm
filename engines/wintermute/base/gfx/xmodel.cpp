@@ -572,8 +572,8 @@ bool XModel::isTransparentAt(int x, int y) {
 	vec._z =  -1.0f;
 
 	// Get the inverse view matrix
-	DXMatrix m, viewMatrix = DXMatrix(_lastViewMat);
-	DXMatrixInverse(&m, nullptr, &viewMatrix);
+	DXMatrix m;
+	DXMatrixInverse(&m, nullptr, &_lastViewMat);
 
 	// Transform the screen space pick ray into 3D space
 	pickRayDir._x  = vec._x * m.matrix._11 + vec._y * m.matrix._21 + vec._z * m.matrix._31;
@@ -585,8 +585,7 @@ bool XModel::isTransparentAt(int x, int y) {
 
 	// transform to model space
 	DXVector3 end = pickRayOrig + pickRayDir;
-	DXMatrix worldMatrix = DXMatrix(_lastWorldMat);
-	DXMatrixInverse(&m, nullptr, &worldMatrix);
+	DXMatrixInverse(&m, nullptr, &_lastWorldMat);
 	DXMatrixTranspose(&m, &m);
 	DXVec3TransformCoord(&pickRayOrig, &pickRayOrig, &m);
 	DXVec3TransformCoord(&end, &end, &m);

@@ -673,8 +673,6 @@ bool AdSceneGeometry::convert2Dto3D(int x, int y, DXVector3 *pos) {
 	vPickRayOrig._y = m.matrix._42;
 	vPickRayOrig._z = m.matrix._43;
 
-	DXVector3 pickRayDir = DXVector3(vPickRayDir);
-	DXVector3 pickRayOrig = DXVector3(vPickRayOrig);
 
 	bool intFound = false;
 	float minDist = FLT_MAX;
@@ -689,7 +687,7 @@ bool AdSceneGeometry::convert2Dto3D(int x, int y, DXVector3 *pos) {
 			DXVector3 v1(vp1[0], vp1[1], vp1[2]);
 			DXVector3 v2(vp2[0], vp2[1], vp2[2]);
 
-			if (intersectTriangle(pickRayOrig, pickRayDir, v0, v1, v2, &intersection._x, &intersection._y, &intersection._z)) {
+			if (intersectTriangle(vPickRayOrig, vPickRayDir, v0, v1, v2, &intersection._x, &intersection._y, &intersection._z)) {
 				ray = intersection - vPickRayOrig;
 				float dist = DXVec3Length(&ray);
 
