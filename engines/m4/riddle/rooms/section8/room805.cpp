@@ -180,14 +180,14 @@ void Room805::initHotspots() {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "CHARIOT", false);
 	}
 
-	_unkVar1 = 0;
+	_unkFlag1 = false;
 }
 
 void Room805::daemonSub1() {
 	switch (_G(kernel).trigger) {
 	case 100:
 		player_set_commands_allowed(true);
-		_unkVar1 = 0;
+		_unkFlag1 = false;
 
 		break;
 
@@ -218,7 +218,7 @@ void Room805::daemonSub1() {
 		break;
 
 	case 111:
-		_unkVar1 = 1;
+		_unkFlag1 = true;
 		ws_unhide_walker(_G(my_walker));
 		ws_demand_facing(_G(my_walker), 3);
 		ws_demand_location(_G(my_walker), 240, 215);
@@ -396,6 +396,14 @@ void Room805::daemonSub4(const char *seriesName1) {
 	}
 }
 
+void Room805::parserSub1(const char *name, uint channel, int32 vol, int32 trigger, int32 room_num) {
+	if (_G(kernel).trigger == -1) {
+		_unkFlag1 = true;
+		digi_play(name, channel, vol, trigger, room_num);
+	} else
+		_unkFlag1 = false;
+}
+
 void Room805::preload() {
 	_G(player).walker_type = WALKER_ALT;
 	_G(player).shadow_type = SHADOW_ALT;
@@ -431,13 +439,457 @@ void Room805::init() {
 }
 
 void Room805::parser() {
+	bool lookFl = player_said_any("look", "look at");
+	bool takeFl = player_said("take");
+	bool talkFl = player_said_any("talk", "talk to");
+	bool gearFl = player_said("gear");
+	bool goFl = player_said("go");
+
+	if (lookFl && player_said(" "))
+		parserSub1("805R01", 1, 255, 1, -1);
+
+	else if (lookFl && (player_said("JADE DOOR") || player_said("JADE DOOR ")))
+		parserSub1("805R02", 1, 255, 1, -1);
+
+	else if (lookFl && (player_said("URN") || player_said("URN ")))
+		parserSub1("COM060", 1, 255, 1, 997);
+
+	else if (lookFl && player_said("UNLIT URN"))
+		parserSub1("COM061", 1, 255, 1, 997);
+
+	else if (lookFl && player_said("SOLDIER")) {
+		if (_G(flags[V257]))
+			parserSub1("COM074", 1, 255, 1, -1);
+		else if (_G(flags[V258]))
+			parserSub1("805R10a", 1, 255, 1, -1);
+		else
+			parserSub1("805R10", 1, 255, 1, -1);
+	} // if (lookFl && player_said("SOLDIER"))
+
+	else if (lookFl && player_said("SOLDIER ")) {
+		if (_G(flags[V258]))
+			parserSub1("COM074", 1, 255, 1, -1);
+		else if (_G(flags[V257]))
+			parserSub1("805R10a", 1, 255, 1, -1);
+		else
+			parserSub1("805R10", 1, 255, 1, -1);
+	} // if (lookFl && player_said("SOLDIER "))
+
+	else if (lookFl && (player_said("SHIELD") || player_said("SHIELD ")))
+		parserSub1("805R11", 1, 255, 1, -1);
+
+	else if (lookFl && (player_said("MURAL") || player_said("BROKEN BEAM")))
+		parserSub1("805R12", 1, 255, 1, -1);
+
+	else if (lookFl && player_said("CHARIOT"))
+		parserSub1("805R13", 1, 255, 1, -1);
+
+	else if (lookFl && player_said("MEI CHEN"))
+		parserSub1("COM043", 1, 255, 1, 997);
+
+	else if (lookFl && player_said("WOODEN POST") && inv_object_is_here("WOODEN POST")) {
+		_unkFlag1 = true;
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			setGlobals1(_unkSeries1, 1, 9, 9, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 10);
+			digi_stop(1);
+
+			break;
+
+		case 2:
+			player_set_commands_allowed(true);
+			_unkFlag1 = false;
+
+			break;
+
+		case 10:
+			sendWSMessage_140000(_G(my_walker), -1);
+			digi_play("805r07", 1, 255, 2, -1);
+
+			break;
+
+		default:
+			break;
+		}
+
+	} // if (lookFl && player_said("WOODEN POST") && inv_object_is_here("WOODEN POST"))
+
+	else if (lookFl && player_said("HOLE IN ROOF")) {
+		if (_G(flags[V261]) != 1 && _G(flags[V276]) == 0 && _G(flags[V256]) != 1) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				ws_hide_walker(_G(my_walker));
+				_unkSeries4 = series_load("805 RIP LOOKS UP", -1, nullptr);
+				_ripSiftsDirtMach = series_play("805 RIP LOOKS UP", 256, 16, 2, 5, 0, 100, 0, 0, 0, 11);
+				digi_stop(1);
+
+				break;
+
+			case 2:
+				terminateMachine(_ripSiftsDirtMach);
+				_ripSiftsDirtMach = series_play("805 RIP LOOKS UP", 256, 18, 3, 5, 0, 100, 0, 0, 0, 11);
+
+				break;
+
+			case 3:
+				ws_unhide_walker(_G(my_walker));
+				terminateMachine(_ripSiftsDirtMach);
+				setGlobals1(_ripHeadTurnPos3, 1, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_G(my_walker), -1);
+				digi_play("805R03", 1, 255, 4, -1);
+
+				break;
+
+			case 4:
+				series_unload(_unkSeries4);
+				sendWSMessage_140000(_G(my_walker), 5);
+				ws_turn_to_face(_mcMach, 4, -1);
+
+				break;
+
+			case 5:
+				ws_hide_walker(_G(my_walker));
+				_ripSiftsDirtSeries = series_load("RIP SIFTS DIRT WITH HAND", -1, nullptr);
+				_ripSiftsDirtMach = series_play("RIP SIFTS DIRT WITH HAND", 256, 16, 6, 5, 0, 100, 0, 0, 0, -1);
+				break;
+
+			case 6:
+				digi_play("805R04", 1, 255, 7, -1);
+
+				break;
+
+			case 7:
+				_meiTrekTalkerSeries = series_load("MEI TREK TALKER POS4", -1, nullptr);
+				setGlobals1(_meiTrekTalkerSeries, 1, 4, 1, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_mcMach, -1);
+				digi_play("805M01", 1, 255, 8, -1);
+
+				break;
+
+			case 8:
+				sendWSMessage_140000(_mcMach, -1);
+				terminateMachine(_ripSiftsDirtMach);
+				_ripSiftsDirtMach = series_play("RIP SIFTS DIRT WITH HAND", 256, 18, 9, 5, 0, 100, 0, 0, 0, 25);
+
+				break;
+
+			case 9:
+				digi_play("805R05", 1, 255, 10, -1);
+
+				break;
+
+			case 10:
+				terminateMachine(_ripSiftsDirtMach);
+				ws_unhide_walker(_G(my_walker));
+				setGlobals1(_ripHeadTurnPos3, 6, 9, 9, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_G(my_walker), 12);
+
+				break;
+
+			case 12:
+				series_unload(_ripSiftsDirtSeries);
+				kernel_timing_trigger(15, 13, nullptr);
+
+				break;
+
+			case 13:
+				sendWSMessage_140000(_G(my_walker), 14);
+				break;
+
+			case 14:
+				setGlobals1(_ripHeadTurnPos3, 1, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_G(my_walker), -1);
+				digi_play("805R05A", 1, 255, 16, -1);
+
+				break;
+
+			case 16:
+				ws_walk(_mcMach, 276, 201, nullptr, 100, 10, true);
+				sendWSMessage_140000(_G(my_walker), 17);
+				break;
+
+			case 17:
+				series_unload(_ripHeadTurnPos3);
+				series_unload(_meiTrekTalkerSeries);
+				_G(flags[V261]) = 1;
+				ws_walk(_mcMach, 276, 201, nullptr, 100, 10, true);
+				player_set_commands_allowed(true);
+				break;
+
+			default:
+				break;
+			}
+		} else if (_G(flags[V256]) == 1) {
+			parserSub1("805R06A", 1, 255, 1, -1);
+		} else {
+			parserSub1("805R06", 1, 255, 1, -1);
+		}
+	} // if (lookFl && player_said("HOLE IN ROOF")
+
+	else if (takeFl && (player_said("SOLDIER") || player_said("SOLDIER ")))
+		parserSub1("805R15", 1, 255, 1, -1);
+
+	else if (takeFl && (player_said("URN") || player_said("URN ")))
+		parserSub1("COM067", 1, 255, 1, 997);
+
+	else if (takeFl && player_said("UNLIT URN"))
+		parserSub1("COM068", 1, 255, 1, 997);
+
+	else if (takeFl && player_said("CHARIOT"))
+		parserSub1("805R36", 1, 255, 1, -1);
+
+	else if (takeFl && player_said("SHIELD")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			setGlobals1(_unkSeries5, 1, 13, 13, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 10);
+			digi_stop(1);
+
+			break;
+
+		case 10:
+			if (_unkFlag1)
+				kernel_timing_trigger(5, 1, nullptr);
+			_G(flags[V257]) = 1;
+
+			if (_G(flags[V258]) == 0) {
+				kernel_examine_inventory_object("PING SOLDIER'S SHIELD", _G(master_palette), 5, 1, 310, 130, 20, nullptr, 1);
+				inv_give_to_player("SOLDIER'S SHIELD");
+				inv_put_thing_in("TWO SOLDIERS' SHIELDS", 999);
+			} else {
+				kernel_examine_inventory_object("PING SOLDIER'S SHIELD", _G(master_palette), 5, 1, 310, 130, 20, nullptr, 1);
+				inv_put_thing_in("SOLDIER'S SHIELD", 999);
+				inv_give_to_player("TWO SOLDIERS' SHIELDS");
+			}
+
+			terminateMachine(_farSoldiersShieldMach);
+
+			break;
+
+		case 20:
+			sendWSMessage_140000(_G(my_walker), 30);
+			break;
+
+		case 30:
+			hotspot_set_active(_G(currentSceneDef).hotspots, "SHIELD", false);
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+	} // if (takeFl && player_said("SHIELD"))
+
+	else if (takeFl && player_said("SHIELD ")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			setGlobals1(_unkSeries6, 1, 12, 12, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 10);
+			digi_stop(1);
+
+			break;
+
+		case 10:
+			if (_unkFlag1)
+				kernel_timing_trigger(5, 1, nullptr);
+			_G(flags[V258]) = 1;
+
+			if (_G(flags[V257]) == 0) {
+				kernel_examine_inventory_object("PING SOLDIER'S SHIELD", _G(master_palette), 5, 1, 330, 170, 20, nullptr, 1);
+				inv_give_to_player("SOLDIER'S SHIELD");
+				inv_put_thing_in("TWO SOLDIERS' SHIELDS", 999);
+			} else {
+				kernel_examine_inventory_object("PING SOLDIER'S SHIELD", _G(master_palette), 5, 1, 330, 170, 20, nullptr, 1);
+				inv_put_thing_in("SOLDIER'S SHIELD", 999);
+				inv_give_to_player("TWO SOLDIERS' SHIELDS");
+			}
+
+			terminateMachine(_nearSoldiersShieldMach);
+
+			break;
+
+		case 20:
+			sendWSMessage_140000(_G(my_walker), 30);
+			break;
+
+		case 30:
+			hotspot_set_active(_G(currentSceneDef).hotspots, "SHIELD ", false);
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} // if (takeFl && player_said("SHIELD "))
+
+	else if (takeFl && player_said("WOODEN POST")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			ws_demand_facing(_G(my_walker), 2);
+			if (inv_object_is_here("WOODEN POST")) {
+				player_set_commands_allowed(false);
+				player_update_info(_G(my_walker), &_G(player_info));
+				player_set_commands_allowed(false);
+				setGlobals1(_unkSeries7, 1, 16, 16, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_G(my_walker), 10);
+			}
+
+			digi_stop(1);
+
+			break;
+
+		case 10:
+			inv_give_to_player("WOODEN POST");
+			_unkFlag1 = true;
+			kernel_examine_inventory_object("PING WOODEN POST", _G(master_palette), 5, 1, 386, 279, 20, nullptr, -1);
+			terminateMachine(_fallenBeamOnFloorMach);
+
+			break;
+
+		case 20:
+			sendWSMessage_140000(_G(my_walker), 30);
+			break;
+
+		case 30:
+			_unkFlag1 = false;
+			hotspot_set_active(_G(currentSceneDef).hotspots, "WOODEN POST", false);
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+	} // if (takeFl && player_said("WOODEN POST"))
+
+	else if (takeFl && _unkFlag1) {
+		switch (imath_ranged_rand(1, 6)) {
+		case 1:
+			parserSub1("COM006", 1, 255, 1, 997);
+			break;
+
+		case 2:
+			parserSub1("COM007", 1, 255, 1, 997);
+			break;
+
+		case 3:
+			parserSub1("COM008", 1, 255, 1, 997);
+			break;
+
+		case 4:
+			parserSub1("COM009", 1, 255, 1, 997);
+			break;
+
+		case 5:
+			parserSub1("COM010", 1, 255, 1, 997);
+			break;
+
+		case 6:
+			parserSub1("COM011", 1, 255, 1, 997);
+			break;
+
+		default:
+			break;
+		}
+	} // if (takeFl && _unkFlag1)
+
+	else if (talkFl && player_said("MEI CHEN")) {
+		player_set_commands_allowed(false);
+		_G(kernel.trigger_mode) = KT_DAEMON;
+		switch (imath_ranged_rand(1, 4)) {
+		case 1:
+			digi_play("COM044", 1, 255, 63, 997);
+			break;
+
+		case 2:
+			digi_play("COM045", 1, 255, 63, 997);
+			break;
+
+		case 3:
+			digi_play("COM046", 1, 255, 63, 997);
+			break;
+
+		case 4:
+			digi_play("COM047", 1, 255, 63, 997);
+			break;
+
+		default:
+			break;
+		}
+
+		ws_demand_facing(_G(my_walker), 3);
+		setGlobals1(_unkSeries8, 1, 5, 1, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), -1);
+	} // if (talkFl && player_said("MEI CHEN"))
+
+	else if (player_said("go", "jade door"))
+		parserSub1("805r34", 1, 255, 1, -1);
+
+	else if (gearFl && (player_said("JADE DOOR") || player_said("JADE DOOR ")) && (_G(flags[V271]) == 1))
+		parserSub1("805R18", 1, 255, 1, -1);
+
+	else if (gearFl && (player_said("JADE DOOR") || player_said("JADE DOOR ")) && (_G(flags[V272]) == 1))
+		parserSub1("805R19", 1, 255, 1, -1);
+
+	else if (gearFl && player_said("CHARIOT")) {
+		if (_G(flags[V272])!= 1) {
+			parserSub1("805R20", 1, 255, 1, -1);
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				ws_hide_walker(_G(my_walker));
+				terminateMachine(_chariotRestMach);
+				digi_preload("950_s33", -1);
+				_ripSiftsDirtMach = series_stream("805rp04a", 5, 0, -1);
+				series_stream_break_on_frame(_ripSiftsDirtMach, 15, 7);
+				digi_stop(1);
+
+				break;
+
+			case 2:
+				adv_kill_digi_between_rooms(false);
+				digi_play_loop("950_s29", 3, 180, -1, 950);
+				digi_play_loop("950_s33", 2, 255, -1, -1);
+				_G(flags[V270]) = 806;
+				_G(flags[V262]) = 0;
+				_G(game).new_room = 806;
+
+				break;
+
+			case 7:
+				series_stream_break_on_frame(_ripSiftsDirtMach, 50, 10);
+				digi_play_loop("950_s33", 2, 255, -1, -1);
+
+				break;
+
+			case 10:
+				disable_player_commands_and_fade_init(2);
+				break;
+
+			default:
+				break;
+
+			}
+		}
+	} // if (gearFl && player_said("CHARIOT"))
+
 	warning("STUB - Room805::parser");
+
+	_G(player).command_ready = false;
+
 }
 
 void Room805::daemon() {
 	switch (_G(kernel).trigger) {
 	case 29:
-		if (_unkVar1 == 0 && player_commands_allowed() && !_G(player).need_to_walk && !_G(player).ready_to_walk && !_G(player).waiting_for_walk) {
+		if (!_unkFlag1 && player_commands_allowed() && !_G(player).need_to_walk && !_G(player).ready_to_walk && !_G(player).waiting_for_walk) {
 			if (player_been_here(809))
 				kernel_timing_trigger(imath_ranged_rand(3600, 7200), 29, nullptr);
 
@@ -467,7 +919,7 @@ void Room805::daemon() {
 		break; // case 29
 
 	case 39:
-		if (_unkVar1 == 0 && player_commands_allowed() && !_G(player).need_to_walk && !_G(player).ready_to_walk && !_G(player).waiting_for_walk)
+		if (!_unkFlag1 && player_commands_allowed() && !_G(player).need_to_walk && !_G(player).ready_to_walk && !_G(player).waiting_for_walk)
 			kernel_timing_trigger(1, 29, nullptr);
 		else
 			kernel_timing_trigger(60, 39, nullptr);
@@ -507,7 +959,7 @@ void Room805::daemon() {
 		default:
 			break;
 		}
-		_unkVar1 = 0;
+		_unkFlag1 = false;
 		setGlobals1(_meiTalkPos3, 1, 4, 1, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		sendWSMessage_110000(_mcMach, -1);
 
@@ -560,9 +1012,6 @@ void Room805::daemon() {
 
 		break;
 	}
-
-
-
 }
 
 } // namespace Rooms
