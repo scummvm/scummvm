@@ -49,7 +49,7 @@ bool FlyObjectBase::quant(float dt) {
 
 bool FlyQDObject::quant(float dt, QDObject& obj) {
 	bool ret = FlyObjectBase::quant(dt);
-	obj->set_R(runtime->game2world(current, depth));
+	obj->set_R(g_runtime->game2world(current, depth));
 	return ret;
 }
 

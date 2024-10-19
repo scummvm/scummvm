@@ -75,7 +75,7 @@ typedef Std::vector<int> Indexes;
 typedef Std::vector<mgVect3f> Coords;
 
 class MinigameManager;
-extern MinigameManager *runtime;
+extern MinigameManager *g_runtime;
 
 template<class T>
 T getParameter(const char* name, const T& defValue);

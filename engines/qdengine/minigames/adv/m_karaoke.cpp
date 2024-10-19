@@ -37,11 +37,11 @@ Karaoke::Node::Node() {
 
 
 Karaoke::Karaoke() {
-	controlName_ = runtime->parameter("control_name", true);
+	controlName_ = g_runtime->parameter("control_name", true);
 	if (!controlName_ || !*controlName_)
 		return;
 
-	colorReaded_ = runtime->parameter("color_first", true);
+	colorReaded_ = g_runtime->parameter("color_first", true);
 	if (!colorReaded_ || !*colorReaded_)
 		return;
 
@@ -119,7 +119,7 @@ Karaoke::Karaoke() {
 		}
 	};
 
-	const char *fileName = runtime->parameter("text_file", true);
+	const char *fileName = g_runtime->parameter("text_file", true);
 	if (!fileName)
 		return;
 
@@ -188,10 +188,10 @@ void Karaoke::quant(float dt) {
 		++idx;
 	}
 
-	if (runtime->mouseRightPressed())
+	if (g_runtime->mouseRightPressed())
 		debugC(2, kDebugMinigames, "%s", outText.c_str());
 
-	runtime->setText(controlName_, outText.c_str());
+	g_runtime->setText(controlName_, outText.c_str());
 }
 
 } // namespace QDEngine

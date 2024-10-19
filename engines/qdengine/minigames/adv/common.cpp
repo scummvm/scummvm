@@ -39,7 +39,7 @@ bool QDObject::hit(const mgVect2f& point) const {
 }
 
 float QDObject::depth() const {
-	return runtime->getDepth(_obj);
+	return g_runtime->getDepth(_obj);
 }
 
 void QDObject::setState(const char* name) {
@@ -64,7 +64,7 @@ bool getParameter(const char* name, T& out, bool obligatory) {
 
 template<>
 float getParameter(const char* name, const float &defValue) {
-	if (const char *data = runtime->parameter(name, false)) {
+	if (const char *data = g_runtime->parameter(name, false)) {
 		float retValue = defValue;
 		if (sscanf(data, "%f", &retValue) == 1)
 			return retValue;
@@ -76,7 +76,7 @@ float getParameter(const char* name, const float &defValue) {
 
 template<>
 bool getParameter(const char* name, float &out, bool obligatory) {
-	if (const char * data = runtime->parameter(name, obligatory)) {
+	if (const char * data = g_runtime->parameter(name, obligatory)) {
 		float retValue = out;
 		if (sscanf(data, "%f", &retValue) == 1) {
 			out = retValue;
@@ -90,7 +90,7 @@ bool getParameter(const char* name, float &out, bool obligatory) {
 
 template<>
 mgVect2f getParameter(const char* name, const mgVect2f& defValue) {
-	if (const char * data = runtime->parameter(name, false)) {
+	if (const char * data = g_runtime->parameter(name, false)) {
 		mgVect2f retValue = defValue;
 		if (sscanf(data, "%f %f", &retValue.x, &retValue.y) == 2)
 			return retValue;
@@ -102,7 +102,7 @@ mgVect2f getParameter(const char* name, const mgVect2f& defValue) {
 
 template<>
 bool getParameter(const char* name, mgVect2f& out, bool obligatory) {
-	if (const char * data = runtime->parameter(name, obligatory)) {
+	if (const char * data = g_runtime->parameter(name, obligatory)) {
 		mgVect2f retValue = out;
 		if (sscanf(data, "%f %f", &retValue.x, &retValue.y) == 2) {
 			out = retValue;

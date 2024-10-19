@@ -33,7 +33,7 @@ ObjectContainer::ObjectContainer() {
 
 void ObjectContainer::release() {
 	for (auto &it : _objects)
-		runtime->release(it);
+		g_runtime->release(it);
 
 	_objects.clear();
 	_current = 0;
@@ -53,7 +53,7 @@ const char *ObjectContainer::name() const {
 }
 
 bool ObjectContainer::load(const char* base_name, bool hide) {
-	if (!runtime->testObject(base_name)) {
+	if (!g_runtime->testObject(base_name)) {
 		warning("ObjectContainer::load(): Object '%s' not found", transCyrillic(base_name));
 		return false;
 	}
@@ -62,21 +62,21 @@ bool ObjectContainer::load(const char* base_name, bool hide) {
 	_name = base_name;
 #endif
 
-	QDObject obj = runtime->getObject(base_name);
-	_coord = runtime->world2game(obj);
+	QDObject obj = g_runtime->getObject(base_name);
+	_coord = g_runtime->world2game(obj);
 	pushObject(obj);
 	if (hide)
-		runtime->hide(obj);
+		g_runtime->hide(obj);
 
 	char name[128];
 	name[127] = 0;
 	for (int dubl = 0; ; ++dubl) {
 		snprintf(name, 127, "%s%04d", base_name, dubl);
-		if (runtime->testObject(name)) {
-			obj = runtime->getObject(name);
+		if (g_runtime->testObject(name)) {
+			obj = g_runtime->getObject(name);
 			pushObject(obj);
 			if (hide)
-				runtime->hide(obj);
+				g_runtime->hide(obj);
 		} else
 			break;
 	}
@@ -86,7 +86,7 @@ bool ObjectContainer::load(const char* base_name, bool hide) {
 
 void ObjectContainer::hideAll() {
 	for (auto &it : _objects)
-		runtime->hide(it);
+		g_runtime->hide(it);
 }
 
 QDObject ObjectContainer::getObject() {
@@ -103,7 +103,7 @@ void ObjectContainer::releaseObject(QDObject& obj) {
 		if ((int)Common::distance(_objects.begin(), it) >= _current)
 			error("ObjectContainer::releaseObject(): Object released more than once in to the pool: %s", transCyrillic(name()));
 
-		runtime->hide(obj);
+		g_runtime->hide(obj);
 		if (_current > 0)
 			SWAP(*it, _objects[--_current]);
 		obj = 0;

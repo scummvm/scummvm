@@ -34,7 +34,7 @@ TextManager::TextManager() {
 
 	for (int idx = 0;; ++idx) {
 		snprintf(str_cache, 127, "register_font_%d", idx);
-		if (const char * descr = runtime->parameter(str_cache, false)) {
+		if (const char * descr = g_runtime->parameter(str_cache, false)) {
 			sscanf(descr, "%255s", str_cache);
 			Font digit;
 			if (!digit.pool.load(str_cache))
@@ -43,14 +43,14 @@ TextManager::TextManager() {
 			debugCN(2, kDebugMinigames, "TextManager(): %d character set \"%s\" loaded, ", idx, str_cache);
 
 			snprintf(str_cache, 127, "font_size_%d", idx);
-			if ((descr = runtime->parameter(str_cache, false))) {
+			if ((descr = g_runtime->parameter(str_cache, false))) {
 				int read = sscanf(descr, "%f %f", &digit.size.x, &digit.size.y);
 				if (read != 2)
 					warning("TextManager(): incorrect font size definition in [%s]", str_cache);
 			} else {
 				QDObject obj = digit.pool.getObject();
 				obj.setState("0");
-				digit.size = runtime->getSize(obj);
+				digit.size = g_runtime->getSize(obj);
 				digit.pool.releaseObject(obj);
 			}
 			debugC(2, kDebugMinigames, "set size to (%5.1f, %5.1f)\n", digit.size.x, digit.size.y);
@@ -61,7 +61,7 @@ TextManager::TextManager() {
 
 	for (int idx = 0;; ++idx) {
 		snprintf(str_cache, 127, "register_particle_escape_%d", idx);
-		if (const char * descr = runtime->parameter(str_cache, false)) {
+		if (const char * descr = g_runtime->parameter(str_cache, false)) {
 			Escape escape;
 			int read = sscanf(descr, "%d (%f><%f, %f><%f) (%f><%f, %f><%f) %f '%15s",
 			                  &escape.depth,
@@ -98,7 +98,7 @@ TextManager::TextManager() {
 }
 
 bool TextManager::getStaticPreset(StaticTextPreset& preset, const char* name) const {
-	if (const char * descr = runtime->parameter(name, false)) {
+	if (const char * descr = g_runtime->parameter(name, false)) {
 		int align = 0;
 		char str[64];
 		str[63] = 0;
@@ -134,9 +134,9 @@ bool TextManager::getStaticPreset(StaticTextPreset& preset, const char* name) co
 			break;
 		}
 
-		if (QDObject obj = runtime->getObject(pos_obj)) {
-			preset.pos = runtime->world2game(obj);
-			runtime->release(obj);
+		if (QDObject obj = g_runtime->getObject(pos_obj)) {
+			preset.pos = g_runtime->world2game(obj);
+			g_runtime->release(obj);
 		} else
 			return false;
 	} else
@@ -192,10 +192,10 @@ void TextManager::showText(const char* txt, const mgVect2f& pos, int fontID, int
 	msg._depth = es.depth;
 	msg._pos = pos;
 
-	msg._vel.x = runtime->rnd(es.vel_min.x, es.vel_max.x);
-	msg._vel.y = runtime->rnd(es.vel_min.y, es.vel_max.y);
-	msg._accel.x = runtime->rnd(es.accel_min.x, es.accel_max.x);
-	msg._accel.y = runtime->rnd(es.accel_min.y, es.accel_max.y);
+	msg._vel.x = g_runtime->rnd(es.vel_min.x, es.vel_max.x);
+	msg._vel.y = g_runtime->rnd(es.vel_min.y, es.vel_max.y);
+	msg._accel.x = g_runtime->rnd(es.accel_min.x, es.accel_max.x);
+	msg._accel.y = g_runtime->rnd(es.accel_min.y, es.accel_max.y);
 
 	_flowMsgs.push_back(msg);
 }
@@ -292,15 +292,15 @@ void TextManager::StaticMessage::update() {
 	default:
 		break;
 	}
-	if (y < -_font->size.y || y > runtime->screenSize().y + _font->size.y
-	        || x < -2 * width || x > runtime->screenSize().x + 2 * width) {
+	if (y < -_font->size.y || y > g_runtime->screenSize().y + _font->size.y
+	        || x < -2 * width || x > g_runtime->screenSize().x + 2 * width) {
 		release();
 		return;
 	}
 
 	for (auto &it : _objects) {
 		if (it)
-			it->set_R(runtime->game2world(mgVect2f(x, y), _depth));
+			it->set_R(g_runtime->game2world(mgVect2f(x, y), _depth));
 		x += _font->size.x;
 	}
 }
@@ -342,7 +342,7 @@ void TextManager::quant(float dt) {
 	}
 
 	if (_show_scores.textID >= 0) {
-		if (_scoreUpdateTimer >= 0.f && _scoreUpdateTimer <= runtime->getTime()) {
+		if (_scoreUpdateTimer >= 0.f && _scoreUpdateTimer <= g_runtime->getTime()) {
 			int sgn = _targetScore - _currentScore < 0 ? -1 : 1;
 			int mod = abs(_currentScore - _targetScore);
 			_currentScore += sgn * (mod / 10 + 1);
@@ -352,7 +352,7 @@ void TextManager::quant(float dt) {
 			snprintf(buf, 15, _show_scores.format, _currentScore);
 			updateStaticText(_show_scores.textID, buf);
 
-			_scoreUpdateTimer = _currentScore != _targetScore ? runtime->getTime() + _scoreUpdateTime : -1.f;
+			_scoreUpdateTimer = _currentScore != _targetScore ? g_runtime->getTime() + _scoreUpdateTime : -1.f;
 		}
 	}
 }
@@ -360,7 +360,7 @@ void TextManager::quant(float dt) {
 void TextManager::updateScore(int score) {
 	_targetScore = score;
 	if (_scoreUpdateTimer < 0.f)
-		_scoreUpdateTimer = runtime->getTime();
+		_scoreUpdateTimer = g_runtime->getTime();
 }
 
 void TextManager::updateTime(int seconds) {

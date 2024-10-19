@@ -26,12 +26,12 @@
 namespace QDEngine {
 
 EffectManager::EffectManager(HoldData<EffectManagerData> &data) {
-	const char *effectName = runtime->parameter("effect_name", "effect");
-	if (runtime->testObject(effectName)) {
-		_effect = runtime->getObject(effectName);
+	const char *effectName = g_runtime->parameter("effect_name", "effect");
+	if (g_runtime->testObject(effectName)) {
+		_effect = g_runtime->getObject(effectName);
 		_data.crd = _effect->R();
 		_effect->set_screen_scale(mgVect2f(0.01f, 0.01f), mgVect2f(10000.f, 10000.f));
-		runtime->hide(_effect);
+		g_runtime->hide(_effect);
 	}
 
 	data.process(_data);
@@ -45,7 +45,7 @@ EffectManager::EffectManager(HoldData<EffectManagerData> &data) {
 }
 
 EffectManager::~EffectManager() {
-	runtime->release(_effect);
+	g_runtime->release(_effect);
 
 }
 
@@ -53,13 +53,13 @@ void EffectManager::quant(float dt) {
 	if (_current == EFFECT_COUNT)
 		return;
 
-	if (runtime->getTime() > _effectTimer) {
+	if (g_runtime->getTime() > _effectTimer) {
 		stop(_current);
 		return;
 	}
 
-	if (runtime->getTime() > _phaseTimer) {
-		_phaseTimer = runtime->getTime() + _phaseTime;
+	if (g_runtime->getTime() > _phaseTimer) {
+		_phaseTimer = g_runtime->getTime() + _phaseTime;
 		mgVect2f scale = _effect->screen_scale();
 		mgVect2f speed = scale;
 		scale *= _phaseSpeed;
@@ -73,9 +73,9 @@ void EffectManager::quant(float dt) {
 void EffectManager::start(EffectType id) {
 	if (_current != EFFECT_COUNT || !_effect)
 		return;
-	_effectTimer = runtime->getTime() + _effectTime;
+	_effectTimer = g_runtime->getTime() + _effectTime;
 	_current = id;
-	_phaseTimer = runtime->getTime();
+	_phaseTimer = g_runtime->getTime();
 	_effect->set_screen_scale(mgVect2f(0.02f, 0.02f), mgVect2f(10000.f, 10000.f));
 	_effect->set_R(_data.crd);
 
@@ -84,7 +84,7 @@ void EffectManager::start(EffectType id) {
 void EffectManager::stop(EffectType id) {
 	if (_current == EFFECT_COUNT)
 		return;
-	runtime->hide(_effect);
+	g_runtime->hide(_effect);
 	_effect->set_screen_scale(mgVect2f(0.01f, 0.01f), mgVect2f(10000.f, 10000.f));
 	_current = EFFECT_COUNT;
 }

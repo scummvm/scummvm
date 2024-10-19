@@ -28,20 +28,20 @@
 namespace QDEngine {
 
 qdMiniGameInterface *open_game_interface(const char* name) {
-	debugC(3, kDebugMinigames, "open_game_interface: %s, runtime%s", name, runtime ? "!=0" : "==0");
+	debugC(3, kDebugMinigames, "open_game_interface: %s, runtime%s", name, g_runtime ? "!=0" : "==0");
 
-	if (!runtime)
-		return runtime = new MinigameManager;
+	if (!g_runtime)
+		return g_runtime = new MinigameManager;
 
 	return new MinigameManager;
 }
 
 bool close_game_interface(qdMiniGameInterface* game) {
-	debugC(3, kDebugMinigames, "close_game_interface, runtime%s%s", runtime == game ? "==game" : "!=game", runtime ? "!=0" : "==0");
+	debugC(3, kDebugMinigames, "close_game_interface, runtime%s%s", g_runtime == game ? "==game" : "!=game", g_runtime ? "!=0" : "==0");
 
 	delete game;
-	if (game == runtime)
-		runtime = 0;
+	if (game == g_runtime)
+		g_runtime = 0;
 
 	return true;
 }
