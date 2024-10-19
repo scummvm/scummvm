@@ -44,6 +44,7 @@ AdGeomExtNode::AdGeomExtNode(BaseGame *inGame) : BaseClass(inGame) {
 //////////////////////////////////////////////////////////////////////////
 AdGeomExtNode::~AdGeomExtNode() {
 	delete[] _namePattern;
+	_namePattern = nullptr;
 }
 
 TOKEN_DEF_START

@@ -63,6 +63,11 @@ bool BaseRenderer3D::getProjectionParams(float *resWidth, float *resHeight, floa
 	*resWidth = _width;
 	*resHeight = _height;
 
+	if (_gameRef->_editorResolutionWidth > 0)
+		*resWidth = _gameRef->_editorResolutionWidth;
+	if (_gameRef->_editorResolutionHeight > 0)
+		*resHeight = _gameRef->_editorResolutionHeight;
+
 	int lWidth, lHeight;
 	Rect32 sceneViewport;
 	_gameRef->getLayerSize(&lWidth, &lHeight, &sceneViewport, customViewport);
@@ -87,9 +92,14 @@ bool BaseRenderer3D::getProjectionParams(float *resWidth, float *resHeight, floa
 	return true;
 }
 
+void BaseRenderer3D::fade(uint16 alpha) {
+	fadeToColor(0, 0, 0, (byte)(255 - alpha));
+}
+
 bool BaseRenderer3D::setAmbientLightColor(uint32 color) {
 	_ambientLightColor = color;
 	_ambientLightOverride = true;
+
 	setAmbientLightRenderState();
 	return true;
 }
@@ -97,6 +107,7 @@ bool BaseRenderer3D::setAmbientLightColor(uint32 color) {
 bool BaseRenderer3D::setDefaultAmbientLightColor() {
 	_ambientLightColor = 0x00000000;
 	_ambientLightOverride = false;
+
 	setAmbientLightRenderState();
 	return true;
 }
@@ -107,10 +118,6 @@ Rect32 BaseRenderer3D::getViewPort() {
 
 Graphics::PixelFormat BaseRenderer3D::getPixelFormat() const {
 	return g_system->getScreenFormat();
-}
-
-void BaseRenderer3D::fade(uint16 alpha) {
-	fadeToColor(0, 0, 0, (byte)(255 - alpha));
 }
 
 Math::Matrix3 BaseRenderer3D::build2dTransformation(const Vector2 &center, float angle) {
