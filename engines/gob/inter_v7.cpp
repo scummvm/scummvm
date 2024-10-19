@@ -1025,7 +1025,7 @@ void Inter_v7::o7_printText(OpFuncParams &params) {
 
 	// colMod is read from conf file (_off_=xxx).
 	// in Playtoons, it's not present in the conf file, thus always equal to the default value (0).
-	// Maybe used in ADIs...
+	// Maybe used in ADI's...
 	//	if (!_vm->_draw->_transparency)
 	//		_vm->_draw->_backColor += colMod;
 	//	_vm->_draw->_frontColor += colMod;
