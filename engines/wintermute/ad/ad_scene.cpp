@@ -156,8 +156,8 @@ void AdScene::setDefaults() {
 	_viewport = nullptr;
 
 #ifdef ENABLE_WME3D
-	_nearPlane = -1.0f;
-	_farPlane = -1.0f;
+	_nearClipPlane = -1.0f;
+	_farClipPlane = -1.0f;
 
 	_2DPathfinding = false;
 	_maxShadowType = SHADOW_FLAT;
@@ -992,11 +992,11 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_NEAR_CLIPPING_PLANE:
-			parser.scanStr(params, "%f", &_nearPlane);
+			parser.scanStr(params, "%f", &_nearClipPlane);
 			break;
 
 		case TOKEN_FAR_CLIPPING_PLANE:
-			parser.scanStr(params, "%f", &_farPlane);
+			parser.scanStr(params, "%f", &_farClipPlane);
 			break;
 
 		case TOKEN_2D_PATHFINDING:
@@ -1035,7 +1035,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 
 #ifdef ENABLE_WME3D
 	if (_sceneGeometry && camera[0] != '\0') {
-		_sceneGeometry->setActiveCamera(camera, _fov, _nearPlane, _farPlane);
+		_sceneGeometry->setActiveCamera(camera, _fov, _nearClipPlane, _farClipPlane);
 	}
 #endif
 
@@ -1283,6 +1283,7 @@ bool AdScene::traverseNodes(bool doUpdate) {
 	} // each layer
 
 #ifdef ENABLE_WME3D
+	// display hidden geometry
 	if (!doUpdate && _sceneGeometry) {
 		_gameRef->setOffset(mainOffsetX, mainOffsetY);
 		_sceneGeometry->render(_showGeometry);
@@ -1421,6 +1422,7 @@ bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 			obj->display();
 		}
 #else
+		// ScummVM: Don't render 3d models if there is no geometry
 		if ((_gameRef->_editorMode || !obj->_editorOnly) && (!objects[i]->_is3D || _sceneGeometry)) {
 			obj->display();
 		}
@@ -2162,7 +2164,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			script->runtimeError("Scene.SetActiveCamera: Scene doesn't contain any geometry");
 			stack->pushBool(false);
 		} else {
-			bool res = _sceneGeometry->setActiveCamera(cameraName, _fov, _nearPlane, _farPlane);
+			bool res = _sceneGeometry->setActiveCamera(cameraName, _fov, _nearClipPlane, _farClipPlane);
 			if (!res) {
 				script->runtimeError("Scene.SetActiveCamera failed");
 			}
@@ -2780,11 +2782,11 @@ bool AdScene::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		if (_fov >= 0.0f)
 			buffer->putTextIndent(indent + 2, "FOV_OVERRIDE=%f\n", _fov);
 
-		if (_nearPlane >= 0.0f)
-			buffer->putTextIndent(indent + 2, "NEAR_CLIPPING_PLANE=%f\n", _nearPlane);
+		if (_nearClipPlane >= 0.0f)
+			buffer->putTextIndent(indent + 2, "NEAR_CLIPPING_PLANE=%f\n", _nearClipPlane);
 
-		if (_farPlane >= 0.0f)
-			buffer->putTextIndent(indent + 2, "FAR_CLIPPING_PLANE=%f\n", _farPlane);
+		if (_farClipPlane >= 0.0f)
+			buffer->putTextIndent(indent + 2, "FAR_CLIPPING_PLANE=%f\n", _farClipPlane);
 
 		if (_showGeometry)
 			buffer->putTextIndent(indent + 2, "EDITOR_SHOW_GEOMETRY=%s\n", "TRUE");
@@ -3051,8 +3053,8 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 		persistMgr->transferSint32(TMEMBER(_editorResolutionWidth));
 		persistMgr->transferSint32(TMEMBER(_editorResolutionHeight));
 		persistMgr->transferFloat(TMEMBER(_fov));
-		persistMgr->transferFloat(TMEMBER(_nearPlane));
-		persistMgr->transferFloat(TMEMBER(_farPlane));
+		persistMgr->transferFloat(TMEMBER(_nearClipPlane));
+		persistMgr->transferFloat(TMEMBER(_farClipPlane));
 		persistMgr->transferBool(TMEMBER(_2DPathfinding));
 		persistMgr->transferSint32(TMEMBER_INT(_maxShadowType));
 		persistMgr->transferBool(TMEMBER(_scroll3DCompatibility));
@@ -3063,12 +3065,15 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 		persistMgr->transferFloat(TMEMBER(_fogEnd));
 	} else {
 		_editorResolutionWidth = _editorResolutionHeight = 0;
-		_fov = _nearPlane = _farPlane = -1.0f;
+		_fov = _nearClipPlane = _farClipPlane = -1.0f;
 		_2DPathfinding = false;
 		_maxShadowType = SHADOW_SIMPLE;
 		_scroll3DCompatibility = false;
 		_ambientLightColor = 0x00000000;
 		_fogEnabled = false;
+		_fogColor = 0x00FFFFFF;
+		_fogStart = 0.0f;
+		_fogEnd = 0.0f;
 	}
 #endif
 
@@ -3081,7 +3086,7 @@ bool AdScene::afterLoad() {
 	if (_sceneGeometry) {
 		int activeCamera = _sceneGeometry->_activeCamera;
 		if (activeCamera >= 0 && static_cast<uint>(activeCamera) < _sceneGeometry->_cameras.size()) {
-			_sceneGeometry->setActiveCamera(activeCamera, _fov, _nearPlane, _farPlane);
+			_sceneGeometry->setActiveCamera(activeCamera, _fov, _nearClipPlane, _farClipPlane);
 		}
 	}
 #endif

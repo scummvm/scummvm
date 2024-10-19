@@ -73,8 +73,8 @@ public:
 	void setMaxShadowType(TShadowType shadowType);
 
 #ifdef ENABLE_WME3D
-	float _nearPlane;
-	float _farPlane;
+	float _nearClipPlane;
+	float _farClipPlane;
 	float _fov;
 	int32 _editorResolutionWidth;
 	int32 _editorResolutionHeight;
