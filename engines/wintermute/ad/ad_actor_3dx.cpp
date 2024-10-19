@@ -466,6 +466,11 @@ bool AdActor3DX::renderModel() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor3DX::displayShadowVolume() {
+	DXVector3 pos;
+	DXVector3 target;
+	DXVector3 lightVector;
+	float extrusionDepth;
+
 	if (!_xmodel) {
 		return false;
 	}
@@ -475,8 +480,12 @@ bool AdActor3DX::displayShadowVolume() {
 	DXVector3 lightPos = DXVector3(_shadowLightPos._x * _scale3D,
 	                               _shadowLightPos._y * _scale3D,
 								   _shadowLightPos._z * _scale3D);
-	float extrusionDepth = DXVec3Length(&lightPos) * 1.5f;
-	DXVec3Normalize(&lightPos, &lightPos);
+	pos = _posVector + lightPos;
+	target = _posVector;
+
+	lightVector = pos - target;
+	extrusionDepth = DXVec3Length(&lightPos) * 1.5f;
+	DXVec3Normalize(&lightVector, &lightVector);
 
 	getShadowVolume()->setColor(_shadowColor);
 
@@ -489,7 +498,7 @@ bool AdActor3DX::displayShadowVolume() {
 		shadowModel = _xmodel;
 	}
 
-	shadowModel->updateShadowVol(getShadowVolume(), &_worldMatrix, &lightPos, extrusionDepth);
+	shadowModel->updateShadowVol(getShadowVolume(), &_worldMatrix, &lightVector, extrusionDepth);
 
 	DXMatrix origWorld;
 	_gameRef->_renderer3D->getWorldTransform(&origWorld);
@@ -509,7 +518,8 @@ bool AdActor3DX::displayShadowVolume() {
 
 		DXMatrix viewMat;
 		DXMatrixMultiply(&viewMat, &_worldMatrix, boneMat);
-		at->displayShadowVol(&viewMat, &lightPos, extrusionDepth, true);
+
+		at->displayShadowVol(&viewMat, &lightVector, extrusionDepth, true);
 	}
 
 	// restore model's world matrix and render the shadow volume
