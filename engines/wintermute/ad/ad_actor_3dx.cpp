@@ -557,7 +557,7 @@ bool AdActor3DX::displayAttachments(bool registerObjects) {
 			continue;
 		}
 
-		DXMatrix viewMat = *boneMat;
+		DXMatrix viewMat;
 		DXMatrixMultiply(&viewMat, &origView, boneMat);
 
 		at->displayAttachable(&viewMat, registerObjects);

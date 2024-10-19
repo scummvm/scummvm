@@ -1326,16 +1326,12 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdSceneGeometry::convert3Dto2D(DXVector3 *position, int32 *x, int32 *y) {
+bool AdSceneGeometry::convert3Dto2D(DXVector3 *pos, int32 *x, int32 *y) {
 	DXMatrix worldMat;
 	DXMatrixIdentity(&worldMat);
-	DXMatrix projMat = DXMatrix(_lastProjMat);
-	DXMatrixTranspose(&projMat, &projMat);
-	DXMatrix viewMat = DXMatrix(_lastViewMat);
-	DXMatrixTranspose(&viewMat, &viewMat);
 
-	DXVector3 vect2D, pos = DXVector3(position->_x, position->_y, position->_z);
-	DXVec3Project(&vect2D, &pos, &_drawingViewport, &projMat, &viewMat, &worldMat);
+	DXVector3 vect2D;
+	DXVec3Project(&vect2D, pos, &_drawingViewport, &_lastProjMat, &_lastViewMat, &worldMat);
 	*x = vect2D._x + _lastScrollX;
 	*y = vect2D._y + _lastScrollY;
 
