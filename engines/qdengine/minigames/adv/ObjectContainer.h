@@ -28,9 +28,9 @@ class ObjectContainer {
 	QDObjects _objects;
 	int _current;
 	mgVect3f _coord;
-	#ifdef _DEBUG
+#ifdef _DEBUG
 	Common::String _name;
-	#endif
+#endif
 	const char *name() const;
 	void pushObject(QDObject& obj);
 

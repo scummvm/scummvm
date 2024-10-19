@@ -105,7 +105,7 @@ bool TextManager::getStaticPreset(StaticTextPreset& preset, const char* name) co
 		int read = sscanf(descr, "%d %d |%63s", &align, &preset.font, str);
 
 		if (read != 3)
-				warning("TextManager::getStaticPreset(): Incorrect text format description in %s", transCyrillic(name));
+			warning("TextManager::getStaticPreset(): Incorrect text format description in %s", transCyrillic(name));
 
 		if (read != 3)
 			return false;
@@ -113,7 +113,7 @@ bool TextManager::getStaticPreset(StaticTextPreset& preset, const char* name) co
 		char *pos_obj = strchr(str, '|');
 
 		if (!pos_obj)
-				warning("TextManager::getStaticPreset(): Incorrect text format description (2) in %s", transCyrillic(name));
+			warning("TextManager::getStaticPreset(): Incorrect text format description (2) in %s", transCyrillic(name));
 
 		if (!pos_obj)
 			return false;

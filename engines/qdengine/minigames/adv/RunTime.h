@@ -244,11 +244,15 @@ private:
 	};
 
 	struct GameInfoIndex_Hash {
-        uint operator()(const GameInfoIndex& x) const { return (x.gameNum_ << 16) + x.gameLevel_; }
+		uint operator()(const GameInfoIndex& x) const {
+			return (x.gameNum_ << 16) + x.gameLevel_;
+		}
 	};
 
 	struct GameInfoIndex_EqualTo {
-        uint operator()(const GameInfoIndex& x, const GameInfoIndex& y) const { return x.gameNum_ == y.gameNum_ && x.gameLevel_ == y.gameLevel_; }
+		uint operator()(const GameInfoIndex& x, const GameInfoIndex& y) const {
+			return x.gameNum_ == y.gameNum_ && x.gameLevel_ == y.gameLevel_;
+		}
 	};
 
 	// информация о пройденных играх

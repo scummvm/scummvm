@@ -248,10 +248,10 @@ bool MinigameManager::createGame() {
 }
 
 #define SAFE_RELEASE(name)                      \
-	if(name){                                   \
-		scene_->release_object_interface(name); \
-		name = 0;                               \
-	}
+    if(name){                                   \
+        scene_->release_object_interface(name); \
+        name = 0;                               \
+    }
 
 bool MinigameManager::finit() {
 	debugC(2, kDebugMinigames, "MinigameManager::finit(): finit game");
@@ -486,7 +486,7 @@ void MinigameManager::saveState(bool force) {
 			file < GameInfo::version();
 			file < (engine_ ? engine_->rnd(999999) : seed_);
 
-			for (auto &it: gameInfos_) {
+			for (auto &it : gameInfos_) {
 				if (!it._value.empty()) {
 					debugC(2, kDebugMinigames, "MinigameManager::save_state(): write game info: (%d,%d), index: %d, game data: %d", it._key.gameLevel_, it._key.gameNum_, it._value.game_.sequenceIndex_, it._value.empty_ ? 0 : 1);
 					file.write(it._key);
@@ -542,10 +542,10 @@ bool MinigameManager::quant(float dt) {
 		if (game_help_)
 			game_help_.setState(game_help_enabled_ ? game_help_state_name_.c_str() : "off");
 
-		#ifdef _DEBUG
+#ifdef _DEBUG
 		if (keyPressed(VK_MULTIPLY, true))
 			game_->setState(MinigameInterface::GAME_WIN);
-		#endif
+#endif
 
 		switch (game_->state()) {
 		case MinigameInterface::GAME_LOST:

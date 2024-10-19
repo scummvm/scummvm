@@ -171,7 +171,7 @@ struct Rect {
 	/// Проверяет не находится ли точка \a _point внутри прямоугольника
 	inline bool point_inside(const VectType& point) const {
 		if (point.x >= left() && point.y >= top() &&
-		                                      point.x <= right() && point.y <= bottom())
+		                                    point.x <= right() && point.y <= bottom())
 			return true;
 		else
 			return false;
@@ -179,7 +179,7 @@ struct Rect {
 	/// Проверяет не находится ли прямоугольник \a _rect внутри прямоугольника
 	inline bool rect_inside(const RectType& rect) const {
 		if (rect.left() >= left() && rect.top() >= top() &&
-		                    rect.bottom() <= bottom() && rect.right() <= right())
+		                   rect.bottom() <= bottom() && rect.right() <= right())
 			return true;
 		else
 			return false;
