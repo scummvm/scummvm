@@ -396,12 +396,8 @@ bool DXSkinInfo::updateSkinnedMesh(const DXMatrix *boneTransforms, void *srcVert
 	}
 
 	for (i = 0; i < _numBones; i++) {
-		DXMatrix boneInverse, matrix;
-
-		DXMatrixInverse(&boneInverse, NULL, &_bones[i]._transform);
-		DXMatrixMultiply(&matrix, &boneInverse, &boneTransforms[i]);
-		DXMatrixMultiply(&matrix, &_bones[i]._transform, &matrix);
-		DXMatrixTranspose(&matrix, &matrix);
+		DXMatrix boneMatrix = boneTransforms[i];
+		DXMatrixTranspose(&boneMatrix, &boneMatrix);
 
 		for (j = 0; j < _bones[i]._numInfluences; j++) {
 			DXVector3 position;
@@ -409,7 +405,7 @@ bool DXSkinInfo::updateSkinnedMesh(const DXMatrix *boneTransforms, void *srcVert
 			DXVector3 *positionDst = (DXVector3 *)((byte *)dstVertices + vertexSize * _bones[i]._vertices[j]);
 			float weight = _bones[i]._weights[j];
 
-			DXVec3TransformCoord(&position, positionSrc, &matrix);
+			DXVec3TransformCoord(&position, positionSrc, &boneMatrix);
 
 			positionDst->_x += weight * position._x;
 			positionDst->_y += weight * position._y;
@@ -426,10 +422,8 @@ bool DXSkinInfo::updateSkinnedMesh(const DXMatrix *boneTransforms, void *srcVert
 		}
 
 		for (i = 0; i < _numBones; i++) {
-			DXMatrix boneInverse, matrix;
-
-			DXMatrixInverse(&boneInverse, nullptr, &_bones[i]._transform);
-			DXMatrixMultiply(&matrix, &_bones[i]._transform, &boneTransforms[i]);
+			DXMatrix boneInverse = boneTransforms[i];
+			DXMatrixInverse(&boneInverse, NULL, &boneInverse);
 
 			for (j = 0; j < _bones[i]._numInfluences; j++) {
 				DXVector3 normal;
@@ -438,7 +432,6 @@ bool DXSkinInfo::updateSkinnedMesh(const DXMatrix *boneTransforms, void *srcVert
 				float weight = _bones[i]._weights[j];
 
 				DXVec3TransformNormal(&normal, normalSrc, &boneInverse);
-				DXVec3TransformNormal(&normal, &normal, &matrix);
 
 				normalDst->_x += weight * normal._x;
 				normalDst->_y += weight * normal._y;
