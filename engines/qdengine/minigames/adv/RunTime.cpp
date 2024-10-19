@@ -20,6 +20,7 @@
  */
 
 #include "common/debug.h"
+#include "common/memstream.h"
 
 #include "qdengine/qdengine.h"
 #include "qdengine/minigames/adv/common.h"
@@ -362,13 +363,10 @@ int MinigameManager::save_game(const qdEngineInterface* engine, const qdMinigame
 	if (currentGameInfo_ && !currentGameInfo_->empty()) {
 		debugC(2, kDebugMinigames, "MinigameManager::save_game(): save game (%d, %d)", currentGameIndex_.gameLevel_, currentGameIndex_.gameNum_);
 
-		warning("STUB: MinigameManager::save_game()");
-#if 0
-		XBuffer out((void*)buffer, buffer_size);
-		out.write(GameInfo::version());
-		out.write(currentGameInfo_->game_);
-		return out.tell();
-#endif
+		Common::MemoryWriteStream out((byte *)buffer, buffer_size);
+		out.writeUint32LE(GameInfo::version());
+		currentGameInfo_->game_.write(out);
+		return out.pos();
 	}
 	return 0;
 
@@ -384,21 +382,18 @@ int MinigameManager::load_game(const qdEngineInterface* engine, const qdMinigame
 	TEMP_SCENE_ENTER();
 	loadState();
 
-	warning("STUB: MinigameManager::load_game()");
-
-#if 0
 	if (currentGameInfo_) {
 		if (buffer_size > 0) {
 			debugC(2, kDebugMinigames, "MinigameManager::load_game(): load game (%d, %d)", currentGameIndex_.gameLevel_, currentGameIndex_.gameNum_);
-			XBuffer in((void*)buffer, buffer_size);
+			Common::MemoryReadStream in((const byte *)buffer, buffer_size);
 			int version;
-			in.read(version);
+			version = in.readUint32LE();
 			if (version == GameInfo::version()) {
-				in.read(currentGameInfo_->game_);
+				currentGameInfo_->game_.read(in);
 
 				if (currentGameInfo_->empty_)
 					warning("MinigameManager::load_game(): Attempt to load minigame without a scene");
-				if (in.tell() != buffer_size) {
+				if (in.pos() != buffer_size) {
 					currentGameInfo_->game_ = MinigameData();
 					warning("MinigameManager::load_game(): Data size mismatch");
 					return 0;
@@ -413,7 +408,7 @@ int MinigameManager::load_game(const qdEngineInterface* engine, const qdMinigame
 		}
 		saveState();
 	}
-#endif
+
 	return buffer_size;
 
 }
@@ -926,6 +921,22 @@ MinigameData::MinigameData() {
 	lastTime_ = 0;
 	bestTime_ = 0;
 	bestScore_ = 0;
+}
+
+void MinigameData::write(Common::SeekableWriteStream &out) {
+	out.writeSint32LE(sequenceIndex_);
+	out.writeSint32LE(lastScore_);
+	out.writeSint32LE(lastTime_);
+	out.writeSint32LE(bestTime_);
+	out.writeSint32LE(bestScore_);
+}
+
+void MinigameData::read(Common::SeekableReadStream &out) {
+	sequenceIndex_ = out.readSint32LE();
+	lastScore_ =     out.readSint32LE();
+	lastTime_ =      out.readSint32LE();
+	bestTime_ =      out.readSint32LE();
+	bestScore_ =     out.readSint32LE();
 }
 
 GameInfo::GameInfo() {

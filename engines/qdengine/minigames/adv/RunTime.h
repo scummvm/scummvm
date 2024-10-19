@@ -26,6 +26,7 @@
 
 namespace Common {
 class MemoryWriteStream;
+class SeekableWriteStream;
 }
 
 namespace QDEngine {
@@ -54,6 +55,9 @@ struct MinigameData {
 	int lastTime_;
 	int bestTime_;
 	int bestScore_;
+
+	void write(Common::SeekableWriteStream &out);
+	void read(Common::SeekableReadStream &out);
 };
 
 struct GameInfo {
