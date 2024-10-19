@@ -27,24 +27,24 @@
 namespace Scumm {
 
 Common::String MacGuiImpl::readCString(uint8 *&data) {
-	Common::String result(reinterpret_cast<const char *>(data));
-	data += result.size() + 1;
-
 	while (data[0] == '\0') {
 		data++;
 	}
+
+	Common::String result(reinterpret_cast<const char *>(data));
+	data += result.size() + 1;
 
 	debug(8, "MacGuiImpl::readCString(): %s", result.c_str());
 	return result;
 }
 
 Common::String MacGuiImpl::readPascalString(uint8 *&data) {
-	Common::String result(reinterpret_cast<const char *>(&data[1]), (uint32)data[0]);
-	data += (uint32)data[0] + 1;
-
 	while (data[0] == '\0') {
 		data++;
 	}
+
+	Common::String result(reinterpret_cast<const char *>(&data[1]), (uint32)data[0]);
+	data += (uint32)data[0] + 1;
 
 	debug(8, "MacGuiImpl::readPascalString(): %s", result.c_str());
 	return result;
@@ -628,7 +628,7 @@ void MacGuiImpl::parseSTRSBlock(uint8 *strsData, MacSTRSParsingEntry *parsingTab
 	_strsStrings.reserve(128);
 	for (int i = 0; i < 128; i++) {
 		_strsStrings.emplace_back("");
-	} 
+	}
 
 	for (int i = 0; i < parsingTableSize; i++) {
 		MacSTRSParsingEntry entry = parsingTable[i];
