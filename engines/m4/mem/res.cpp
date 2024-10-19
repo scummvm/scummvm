@@ -174,8 +174,11 @@ void Resources::rtoss(const Common::String &resourceName) {
 
 	/* check if resource is in resource table */
 	if (_resources[hash_val].Flags) {
-		while (_resources[hash_val].Flags && !lowerName.equals(_resources[hash_val].name))
-			hash_val = (hash_val + 1) & (HASHSIZE - 1);
+		int ctr = 0;
+		while (ctr++ <= HASHSIZE && _resources[hash_val].Flags &&
+				!lowerName.equals(_resources[hash_val].name)) {
+			hash_val = (hash_val + 1) % HASHSIZE;
+		}
 		resEntry = &_resources[hash_val];
 	}
 
