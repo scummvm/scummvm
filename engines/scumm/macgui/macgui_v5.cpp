@@ -107,6 +107,11 @@ bool MacV5Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) cons
 void MacV5Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
 	if (_vm->_game.id == GID_MONKEY) {
 		_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
+		width = 11;
+		height = 16;
+		hotspotX = 1;
+		hotspotY = 3;
+		animate = 0;
 	} else if (_vm->_game.version == 5) {
 		Common::MacResManager resource;
 		Graphics::MacCursor macCursor;
