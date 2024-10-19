@@ -107,6 +107,10 @@ bool FrameNode::loadFromXData(const Common::String &filename, XModel *model, XFi
 	// get the type of the object
 	XClassType objectType = kXClassUnknown;
 	res = xobj->getType(objectType);
+	if (!res) {
+		BaseEngine::LOG(0, "Error getting object type");
+		return res;
+	}
 
 	if (objectType == kXClassMesh) { // load a child mesh
 		XMesh *mesh = _gameRef->_renderer3D->createXMesh();
@@ -280,7 +284,6 @@ bool FrameNode::updateMatrices(DXMatrix *parentMat) {
 		DXMatrixTranspose(&posMat, &posMat);
 		DXMatrixMultiply(&_transformationMatrix, &posMat, &_transformationMatrix);
 	}
-
 	_transUsed[0] = _transUsed[1] = false;
 
 	// multiply by parent transformation

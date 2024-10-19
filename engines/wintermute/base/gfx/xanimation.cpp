@@ -73,11 +73,14 @@ bool Animation::load(XFileData *xobj, AnimationSet *parentAnimSet) {
 	bool result;
 	XClassType objectType;
 
+	// Query the child for it's FileDataReference
 	if (xobj->isReference()) {
 		// The original data is found
 		result = xobj->getType(objectType);
-		if (!result)
+		if (!result) {
+			BaseEngine::LOG(0, "Couldn't retrieve object type while loading animation");
 			return result;
+		}
 
 		// The object must be a frame
 		if (objectType == kXClassFrame) {

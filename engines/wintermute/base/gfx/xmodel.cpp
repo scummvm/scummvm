@@ -133,6 +133,7 @@ bool XModel::loadFromFile(const Common::String &filename, XModel *parentModel) {
 		return false;
 	}
 
+	// get top level objects
 	_rootFrame = new FrameNode(_gameRef);
 
 	uint32 numChildren = 0;
@@ -208,6 +209,7 @@ bool XModel::mergeFromFile(const Common::String &filename) {
 		res = findBones(true);
 	}
 
+	// remember path for save/load purposes
 	bool found = false;
 	for (uint i = 0; i < _mergedModels.size(); ++i) {
 		if (scumm_stricmp(_mergedModels[i], filename.c_str()) == 0) {
@@ -242,6 +244,7 @@ bool XModel::loadAnimationSet(const Common::String &filename, XFileData *xobj) {
 		animSet->setName(PathUtil::getFileName(filename).c_str());
 	}
 
+	// query through the child objects to load the animations
 	XFileData xchildData;
 	XClassType objectType;
 
@@ -290,6 +293,7 @@ bool XModel::loadAnimation(const Common::String &filename, XFileData *xobj, Anim
 	// create the new object
 	Animation *anim = new Animation(_gameRef);
 
+	// load the animation
 	uint32 numChildren = 0;
 	xobj->getChildren(numChildren);
 
@@ -392,7 +396,6 @@ bool XModel::playAnim(int channel, const Common::String &name, uint32 transition
 	if (anim) {
 		char *currentAnim = _channels[channel]->getName();
 		if (_owner && currentAnim) {
-			// clean this up later
 			transitionTime = _owner->getAnimTransitionTime(currentAnim, const_cast<char *>(name.c_str()));
 		}
 
