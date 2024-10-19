@@ -237,9 +237,9 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 			scaleKey->_time = time;
 			rotationKey->_time = time;
 
-			positionKey->_pos = DXVector3(transVec._x, transVec._y, transVec._z);
-			scaleKey->_scale = DXVector3(scaleVec._x, scaleVec._y, scaleVec._z);
-			rotationKey->_rotation = DXQuaternion(qRot._x, qRot._y, qRot._z, qRot._w);
+			positionKey->_pos = transVec;
+			scaleKey->_scale = scaleVec;
+			rotationKey->_rotation = qRot;
 
 			_posKeys.push_back(positionKey);
 			_scaleKeys.push_back(scaleKey);
@@ -299,9 +299,7 @@ bool Animation::update(int slot, uint32 localTime, float animLerpValue) {
 		}
 
 		// apply the lerp function on the scale vector
-		DXVector3 scale1vec = DXVector3(_scaleKeys[keyIndex1]->_scale._x, _scaleKeys[keyIndex1]->_scale._y, _scaleKeys[keyIndex1]->_scale._z);
-		DXVector3 scale2vec = DXVector3(_scaleKeys[keyIndex2]->_scale._x, _scaleKeys[keyIndex2]->_scale._y, _scaleKeys[keyIndex2]->_scale._z);
-		DXVec3Lerp(&resultScale, &scale1vec, &scale2vec, lerpValue);
+		DXVec3Lerp(&resultScale, &_scaleKeys[keyIndex1]->_scale, &_scaleKeys[keyIndex2]->_scale, lerpValue);
 
 		animate = true;
 	}
@@ -380,15 +378,13 @@ bool Animation::update(int slot, uint32 localTime, float animLerpValue) {
 			lerpValue = float(localTime - time1) / float(time2 - time1);
 
 		// apply the lerp function
-		DXVector3 pos1vec = DXVector3(_posKeys[keyIndex1]->_pos._x, _posKeys[keyIndex1]->_pos._y, _posKeys[keyIndex1]->_pos._z);
-		DXVector3 pos2vec = DXVector3(_posKeys[keyIndex2]->_pos._x, _posKeys[keyIndex2]->_pos._y, _posKeys[keyIndex2]->_pos._z);
-		DXVec3Lerp(&resultPos, &pos1vec, &pos2vec, lerpValue);
+		DXVec3Lerp(&resultPos, &_posKeys[keyIndex1]->_pos, &_posKeys[keyIndex2]->_pos, lerpValue);
 
 		animate = true;
 	}
 
 	if (animate) {
-		_targetFrame->setTransformation(slot, DXVector3(resultPos), DXVector3(resultScale), DXQuaternion(resultRot._x, resultRot._y, resultRot._z, resultRot._w), animLerpValue);
+		_targetFrame->setTransformation(slot, resultPos, resultScale, resultRot, animLerpValue);
 	}
 
 	return true;
