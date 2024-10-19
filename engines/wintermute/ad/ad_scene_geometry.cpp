@@ -117,6 +117,8 @@ void AdSceneGeometry::cleanup() {
 	_waypointGroups.clear();
 
 	for (i = 0; i < _cameras.size(); i++) {
+		if (_gameRef->_renderer3D->_camera == _cameras[i])
+			_gameRef->_renderer3D->_camera = nullptr;
 		delete _cameras[i];
 	}
 	_cameras.clear();
@@ -211,7 +213,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 				plane->setName(meshNames[i].c_str());
 				plane->_mesh = meshes[i];
 				plane->_mesh->computeNormals();
-				plane->_mesh->fillVertexBuffer(0xFF0000FF);
+				plane->_mesh->fillVertexBuffer(0xFF0000FF); // original 0x700000FF
 				plane->_receiveShadows = ExtNode->_receiveShadows;
 				_planes.add(plane);
 			}
@@ -222,7 +224,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 				block->setName(meshNames[i].c_str());
 				block->_mesh = meshes[i];
 				block->_mesh->computeNormals();
-				block->_mesh->fillVertexBuffer(0xFFFF0000);
+				block->_mesh->fillVertexBuffer(0xFFFF0000); // original 0x70FF0000
 				block->_receiveShadows = ExtNode->_receiveShadows;
 				_blocks.add(block);
 			}
@@ -243,7 +245,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 				generic->setName(meshNames[i].c_str());
 				generic->_mesh = meshes[i];
 				generic->_mesh->computeNormals();
-				generic->_mesh->fillVertexBuffer(0xFF00FF00);
+				generic->_mesh->fillVertexBuffer(0xFF00FF00); // original 0x7000FF00
 				generic->_receiveShadows = ExtNode->_receiveShadows;
 				_generics.add(generic);
 			}
@@ -357,9 +359,9 @@ DXMatrix *AdSceneGeometry::getViewMatrix() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::storeDrawingParams() {
+	// store values
 	_drawingViewport = _gameRef->_renderer3D->getViewPort();
 
-	// store values
 	_gameRef->_renderer3D->getWorldTransform(&_lastWorldMat);
 	_gameRef->_renderer3D->getViewTransform(&_lastViewMat);
 	_gameRef->_renderer3D->getProjectionTransform(&_lastProjMat);
@@ -652,6 +654,7 @@ bool AdSceneGeometry::convert2Dto3D(int x, int y, DXVector3 *pos) {
 	x -= (mleft + mright) / 2 + modWidth;
 	y -= (mtop + mbottom) / 2 + modHeight;
 
+
 	DXVector3 vPickRayDir;
 	DXVector3 vPickRayOrig;
 
@@ -662,8 +665,8 @@ bool AdSceneGeometry::convert2Dto3D(int x, int y, DXVector3 *pos) {
 	vec._z =  -1.0f;
 
 	// Get the inverse view matrix
-	DXMatrix m, viewMatrix = DXMatrix(_lastViewMat);
-	DXMatrixInverse(&m, nullptr, &viewMatrix);
+	DXMatrix m;
+	DXMatrixInverse(&m, nullptr, &_lastViewMat);
 
 	// Transform the screen space pick ray into 3D space
 	vPickRayDir._x  = vec._x * m.matrix._11 + vec._y * m.matrix._21 + vec._z * m.matrix._31;
@@ -876,7 +879,7 @@ bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLig
 	for (uint i = 0; i < _lights.size(); i++) {
 		_lights[i]->_isAvailable = false;
 		if (_lights[i]->_active) {
-			++activeLightCount;
+			activeLightCount++;
 		}
 	}
 
@@ -1223,6 +1226,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 
 			if (name) {
 				delete[] name;
+				name = nullptr;
 			}
 		}
 	}
@@ -1254,6 +1258,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 
 			if (name) {
 				delete[] name;
+				name = nullptr;
 			}
 		}
 	}
@@ -1284,6 +1289,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 
 			if (name) {
 				delete[] name;
+				name = nullptr;
 			}
 		}
 	}
@@ -1314,6 +1320,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 
 			if (name) {
 				delete[] name;
+				name = nullptr;
 			}
 		}
 	}
