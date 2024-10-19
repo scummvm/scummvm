@@ -170,7 +170,7 @@ void Digi::stop(uint channel, bool calledFromUnload) {
 }
 
 void Digi::flush_mem() {
-	// No implementation
+	unload_sounds();
 }
 
 void Digi::read_another_chunk() {
