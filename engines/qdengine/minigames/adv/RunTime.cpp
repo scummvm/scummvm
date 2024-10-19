@@ -111,10 +111,10 @@ MinigameManager::~MinigameManager() {
 bool MinigameManager::init(const qdEngineInterface *engine_interface) {
 	debugC(1, kDebugMinigames, "MinigameManager::init(): init game");
 
-	if (runtime != this)
+	if (g_runtime != this)
 		warning("MinigameManager::init(): Attempt to instantiate double minigame");
 
-	if (runtime != this)
+	if (g_runtime != this)
 		return false;
 	assert(!engine_ && !scene_);
 
@@ -336,8 +336,8 @@ class TempValue {
 public:
 	TempValue(MinigameManager *new_runtime, const qdEngineInterface *new_engine, qdMinigameSceneInterface *new_scene) {
 		assert(new_runtime);
-		pre_runtime_ = runtime;
-		runtime = new_runtime;
+		pre_runtime_ = g_runtime;
+		g_runtime = new_runtime;
 
 		assert(new_engine && new_scene);
 		pre_engine_ = g_runtime->engine_;
@@ -350,7 +350,7 @@ public:
 		g_runtime->engine_ = pre_engine_;
 		g_runtime->scene_ = pre_scene_;
 
-		runtime = pre_runtime_;
+		g_runtime = pre_runtime_;
 	}
 };
 
