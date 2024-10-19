@@ -51,7 +51,7 @@ void Init_v7::initGame() {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "adibodem");
 
 	// Add additional applications directories (e.g. "Read/Count 4-5 years").
-	// We rely on the presence of an "intro_ap.itk" to determinate whether a subdirectory contains an applcation.
+	// We rely on the presence of an "intro_ap.itk" to determinate whether a subdirectory contains an application.
 	Common::FSList subdirs;
 	gameDataDir.getChildren(subdirs, Common::FSNode::kListDirectoriesOnly);
 	for (const Common::FSNode &subdirNode : subdirs) {
