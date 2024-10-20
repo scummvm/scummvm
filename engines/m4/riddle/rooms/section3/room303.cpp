@@ -1323,6 +1323,7 @@ void Room303::parser() {
 
 			case 3:
 				series_unload(_chinTalk4);
+				player_set_commands_allowed(true);
 				break;
 
 			default:
