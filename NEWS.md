@@ -9,6 +9,7 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Added support for Thimbleweed Park.
   - Added support for The Space Bar.
   - Added support for Moonbase Commander.
+  - Added support for Backyard Basketball.
 
  New platforms:
   - Added SailfishOS port.
