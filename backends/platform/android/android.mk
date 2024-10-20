@@ -4,8 +4,8 @@ PATH_DIST = $(srcdir)/dists/android
 GRADLE_FILES = $(shell find $(PATH_DIST)/gradle -type f)
 
 PATH_BUILD = ./android_project
-PATH_BUILD_GRADLE = $(PATH_BUILD)/gradle/.timestamp $(PATH_BUILD)/gradlew $(PATH_BUILD)/build.gradle $(PATH_BUILD)/gradle.properties $(PATH_BUILD)/local.properties $(PATH_BUILD)/src.properties
-PATH_BUILD_ASSETS = $(PATH_BUILD)/assets
+PATH_BUILD_GRADLE = $(PATH_BUILD)/gradle/.timestamp $(PATH_BUILD)/gradlew $(PATH_BUILD)/build.gradle $(PATH_BUILD)/settings.gradle $(PATH_BUILD)/mainAssets/build.gradle $(PATH_BUILD)/gradle.properties $(PATH_BUILD)/local.properties $(PATH_BUILD)/src.properties
+PATH_BUILD_ASSETS = $(PATH_BUILD)/mainAssets/src/main/assets
 PATH_BUILD_LIB = $(PATH_BUILD)/lib/$(ABI)
 PATH_BUILD_LIBSCUMMVM = $(PATH_BUILD)/lib/$(ABI)/libscummvm.so
 
@@ -24,19 +24,25 @@ $(PATH_BUILD)/gradle/.timestamp: $(GRADLE_FILES) | $(PATH_BUILD)
 	touch "$@"
 
 $(PATH_BUILD)/gradlew: $(PATH_DIST)/gradlew | $(PATH_BUILD)
-	$(INSTALL) -c -m 755 $(PATH_DIST)/gradlew $(PATH_BUILD)
+	$(INSTALL) -c -m 755 $< $@
 
 $(PATH_BUILD)/build.gradle: $(PATH_DIST)/build.gradle | $(PATH_BUILD)
-	$(INSTALL) -c -m 644 $(PATH_DIST)/build.gradle $(PATH_BUILD)
+	$(INSTALL) -c -m 644 $< $@
+
+$(PATH_BUILD)/settings.gradle: $(PATH_DIST)/settings.gradle | $(PATH_BUILD)
+	$(INSTALL) -c -m 644 $< $@
 
 $(PATH_BUILD)/gradle.properties: $(PATH_DIST)/gradle.properties | $(PATH_BUILD)
-	$(INSTALL) -c -m 644 $(PATH_DIST)/gradle.properties $(PATH_BUILD)
+	$(INSTALL) -c -m 644 $< $@
 
 $(PATH_BUILD)/local.properties: configure.stamp | $(PATH_BUILD)
 	$(ECHO) "sdk.dir=$(realpath $(ANDROID_SDK_ROOT))\n" > $(PATH_BUILD)/local.properties
 
 $(PATH_BUILD)/src.properties: configure.stamp | $(PATH_BUILD)
 	$(ECHO) "srcdir=$(realpath $(srcdir))\n" > $(PATH_BUILD)/src.properties
+
+$(PATH_BUILD)/mainAssets/build.gradle: $(PATH_DIST)/mainAssets.gradle | $(PATH_BUILD_ASSETS)
+	$(INSTALL) -c -m 644 $< $@
 
 $(PATH_BUILD_ASSETS): $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_ENGINEDATA_BIG) $(DIST_FILES_SOUNDFONTS) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_DOCS) $(DIST_FILES_PLATFORM) $(DIST_FILES_SHADERS) | $(PATH_BUILD)
 	$(INSTALL) -d $(PATH_BUILD_ASSETS)
@@ -72,7 +78,7 @@ $(APK_MAIN_RELEASE): $(PATH_BUILD_GRADLE) $(PATH_BUILD_ASSETS) $(PATH_BUILD_ASSE
 	$(CP) $(PATH_BUILD)/build/outputs/apk/release/$(APK_MAIN_RELEASE) $@
 
 $(AAB_MAIN_RELEASE): $(PATH_BUILD_GRADLE) $(PATH_BUILD_ASSETS) $(PATH_BUILD_ASSETS)/cacert.pem $(PATH_BUILD_LIBSCUMMVM) | $(PATH_BUILD)
-	(cd $(PATH_BUILD); ./gradlew bundleRelease)
+	(cd $(PATH_BUILD); ./gradlew bundleRelease -PsplitAssets)
 	$(CP) $(PATH_BUILD)/build/outputs/bundle/release/$(AAB_MAIN_RELEASE) $@
 
 all: $(APK_MAIN)

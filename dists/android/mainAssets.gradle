@@ -1,0 +1,12 @@
+plugins {
+    id 'com.android.asset-pack'
+}
+
+if (project.hasProperty('splitAssets')) {
+    assetPack {
+        packName = 'mainAssets'
+        dynamicDelivery {
+            deliveryType = 'install-time'
+        }
+    }
+}
