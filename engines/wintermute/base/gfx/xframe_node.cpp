@@ -128,22 +128,20 @@ bool FrameNode::loadFromXData(const Common::String &filename, XModel *model, XFi
 			BaseEngine::LOG(0, "Error loading transformation matrix");
 			return false;
 		} else {
-			for (int r = 0; r < 4; ++r) {
-				for (int c = 0; c < 4; ++c) {
-					_transformationMatrix._m[c][r] = frameTransformMatrix->_frameMatrix[r * 4 + c];
-				}
+			for (int i = 0; i < 16; ++i) {
+				_transformationMatrix._m4x4[i] = frameTransformMatrix->_frameMatrix[i];
 			}
 
 			// mirror at orign
-			_transformationMatrix._m[2][3] *= -1.0f;
+			_transformationMatrix._m[3][2] *= -1.0f;
 
 			// mirror base vectors
-			_transformationMatrix._m[2][0] *= -1.0f;
-			_transformationMatrix._m[2][1] *= -1.0f;
-
-			// change handedness
 			_transformationMatrix._m[0][2] *= -1.0f;
 			_transformationMatrix._m[1][2] *= -1.0f;
+
+			// change handedness
+			_transformationMatrix._m[2][0] *= -1.0f;
+			_transformationMatrix._m[2][1] *= -1.0f;
 
 			_originalMatrix = _transformationMatrix;
 			return true;
@@ -271,23 +269,20 @@ bool FrameNode::updateMatrices(DXMatrix *parentMat) {
 	
 		DXMatrix scaleMat;
 		DXMatrixScaling(&scaleMat, transScale._x, transScale._y, transScale._z);
-		DXMatrixTranspose(&scaleMat, &scaleMat);
-		DXMatrixMultiply(&_transformationMatrix, &scaleMat, &_transformationMatrix);
+		DXMatrixMultiply(&_transformationMatrix, &_transformationMatrix, &scaleMat);
 
 		DXMatrix rotMat;
 		DXMatrixRotationQuaternion(&rotMat, &transRot);
-		DXMatrixTranspose(&rotMat, &rotMat);
-		DXMatrixMultiply(&_transformationMatrix, &rotMat, &_transformationMatrix);
+		DXMatrixMultiply(&_transformationMatrix, &_transformationMatrix, &rotMat);
 
 		DXMatrix posMat;
 		DXMatrixTranslation(&posMat, transPos._x, transPos._y, transPos._z);
-		DXMatrixTranspose(&posMat, &posMat);
-		DXMatrixMultiply(&_transformationMatrix, &posMat, &_transformationMatrix);
+		DXMatrixMultiply(&_transformationMatrix, &_transformationMatrix, &posMat);
 	}
 	_transUsed[0] = _transUsed[1] = false;
 
 	// multiply by parent transformation
-	DXMatrixMultiply(&_combinedMatrix, parentMat, &_transformationMatrix);
+	DXMatrixMultiply(&_combinedMatrix, &_transformationMatrix, parentMat);
 
 	// update child frames
 	for (uint32 i = 0; i < _frames.size(); i++) {

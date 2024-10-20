@@ -394,7 +394,6 @@ bool DXSkinInfo::updateSkinnedMesh(const DXMatrix *boneTransforms, void *srcVert
 
 	for (i = 0; i < _numBones; i++) {
 		DXMatrix boneMatrix = boneTransforms[i];
-		DXMatrixTranspose(&boneMatrix, &boneMatrix);
 
 		for (j = 0; j < _bones[i]._numInfluences; j++) {
 			DXVector3 position;
@@ -421,6 +420,7 @@ bool DXSkinInfo::updateSkinnedMesh(const DXMatrix *boneTransforms, void *srcVert
 		for (i = 0; i < _numBones; i++) {
 			DXMatrix boneInverse = boneTransforms[i];
 			DXMatrixInverse(&boneInverse, NULL, &boneInverse);
+			DXMatrixTranspose(&boneInverse, &boneInverse);
 
 			for (j = 0; j < _bones[i]._numInfluences; j++) {
 				DXVector3 normal;

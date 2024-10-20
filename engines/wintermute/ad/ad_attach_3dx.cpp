@@ -107,7 +107,7 @@ bool AdAttach3DX::displayAttachable(DXMatrix *viewMat, bool registerObjects) {
 //////////////////////////////////////////////////////////////////////////
 bool AdAttach3DX::displayShadowVol(DXMatrix *modelMat, DXVector3 *light, float extrusionDepth, bool update) {
 	DXMatrix finalMat;
-	DXMatrixMultiply(&finalMat, modelMat, &_worldMatrix);
+	DXMatrixMultiply(&finalMat, &_worldMatrix, modelMat);
 
 	if (_xmodel) {
 		if (update) {

@@ -517,7 +517,7 @@ bool AdActor3DX::displayShadowVolume() {
 		}
 
 		DXMatrix viewMat;
-		DXMatrixMultiply(&viewMat, &_worldMatrix, boneMat);
+		DXMatrixMultiply(&viewMat, boneMat, &_worldMatrix);
 
 		at->displayShadowVol(&viewMat, &lightVector, extrusionDepth, true);
 	}
@@ -568,7 +568,7 @@ bool AdActor3DX::displayAttachments(bool registerObjects) {
 		}
 
 		DXMatrix viewMat;
-		DXMatrixMultiply(&viewMat, &origView, boneMat);
+		DXMatrixMultiply(&viewMat, boneMat, &origView);
 
 		at->displayAttachable(&viewMat, registerObjects);
 	}

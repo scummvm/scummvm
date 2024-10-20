@@ -218,13 +218,7 @@ bool XMesh::update(FrameNode *parentFrame) {
 
 		// prepare final matrices
 		for (int i = 0; i < numBones; i++) {
-			DXMatrix offsetMatrix;
-			for (int r = 0; r < 4; ++r) {
-				for (int c = 0; c < 4; ++c) {
-					offsetMatrix._m[c][r] = _skinMesh->getBoneOffsetMatrix(i)->_m4x4[r * 4 + c];
-				}
-			}
-			DXMatrixMultiply(&boneMatrices[i], _boneMatrices[i], &offsetMatrix);
+			DXMatrixMultiply(&boneMatrices[i], _skinMesh->getBoneOffsetMatrix(i), _boneMatrices[i]);
 		}
 
 		// generate skinned mesh
