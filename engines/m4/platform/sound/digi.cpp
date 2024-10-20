@@ -48,8 +48,10 @@ void Digi::loadFootstepSounds(const char **names) {
 void Digi::unload_sounds() {
 	_mixer->stopAll();
 
-	for (auto it = _sounds.begin(); it != _sounds.end(); ++it)
+	for (auto it = _sounds.begin(); it != _sounds.end(); ++it) {
+		rtoss(it->_value._filename);
 		free(it->_value._data);
+	}
 
 	_sounds.clear();
 }
