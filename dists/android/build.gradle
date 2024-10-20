@@ -22,7 +22,7 @@ srcProperties.load(new FileInputStream(rootProject.file("src.properties")))
 
 // Enable to see use of deprecated API
 tasks.withType(JavaCompile).configureEach {
-	options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
+    options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
 }
 
 //gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS_FULL
@@ -46,17 +46,17 @@ android {
         versionName "2.9.0"
         versionCode 2090001
         // versioncode must be incremented for each market upload
-		// maximum versioncode allowed by Play Store is: 2100000000
-		// After 2.8.0 release the versioncode numbering schema changed to be more immediately helpful.
-		// It now follows the format: M.mm.p[.bb][.a]
-		// (M is major release version number)
-		// (m is minor release version number)
-		// (p is patch/bugfix release number)
-		// (b is build number, eg. re-release or beta testing was done on Play Store)
-		// (a is a number indicating the target architecture (ABI)):
-		//     (1: arm-v7a, 2: arm64-v8a, 3: x86, 4: x86_64)
-		// eg. ScummVM 2.9.0 builds would have version codes: 2090001 - 2090004
-		// --------------
+        // maximum versioncode allowed by Play Store is: 2100000000
+        // After 2.8.0 release the versioncode numbering schema changed to be more immediately helpful.
+        // It now follows the format: M.mm.p[.bb][.a]
+        // (M is major release version number)
+        // (m is minor release version number)
+        // (p is patch/bugfix release number)
+        // (b is build number, eg. re-release or beta testing was done on Play Store)
+        // (a is a number indicating the target architecture (ABI)):
+        //     (1: arm-v7a, 2: arm64-v8a, 3: x86, 4: x86_64)
+        // eg. ScummVM 2.9.0 builds would have version codes: 2090001 - 2090004
+        // --------------
         // ScummVM 2.8.0:   113 - 116 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
         // ScummVM 2.7.1:   109 - 112 (arm-v7a, arm64-v8a, x86, x86_64 respectively) (release on Play Store)
         // Historical version codes:
