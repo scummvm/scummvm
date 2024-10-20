@@ -2,10 +2,6 @@
 %define outdir out-sailfish.%{_arch}
 %endif
 
-%if %{undefined real_src_path}
-%define real_src_path OFF
-%endif
-
 %define freetype_version 2.13.3
 %define flac_version 1.4.3
 %define theora_version 1.1.1
@@ -18,8 +14,8 @@
 %define sdl2_version 2.30.7
 %define vpx_version 1.14.1
 
-%define engine_config --disable-all-engines --enable-engines=scumm  --disable-tinygl
-#define engine_config %{nil}
+#define engine_config --disable-all-engines --enable-engines=scumm  --disable-tinygl
+%define engine_config %{nil}
 
 %define _rpmfilename %%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm
 
