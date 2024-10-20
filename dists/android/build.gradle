@@ -109,7 +109,9 @@ android {
     }
     sourceSets {
         main {
-            assets.srcDirs 'assets/'
+            if (!project.hasProperty('splitAssets')) {
+                assets.srcDirs 'mainAssets/src/main/assets/'
+            }
             java.srcDirs srcProperties['srcdir'] + '/backends/platform/android/'
             jniLibs.srcDirs 'lib/'
             res.srcDirs srcProperties['srcdir'] + '/dists/android/res/'
@@ -119,6 +121,11 @@ android {
     lint {
         abortOnError false
     }
+
+    if (project.hasProperty('splitAssets')) {
+        assetPacks = [':mainAssets']
+    }
+
 }
 
 dependencies {
