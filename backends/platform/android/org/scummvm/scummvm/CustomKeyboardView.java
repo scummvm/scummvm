@@ -48,12 +48,11 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.collection.ArraySet;
-import androidx.core.content.res.ResourcesCompat;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -203,7 +202,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
 	private int mDownKey = NOT_A_KEY;
 
 	// New auxiliary set to keep track of any keys that were not released at the time of closing the keyboard
-	private ArraySet<Integer> mKeysDownCodesSet;
+	private HashSet<Integer> mKeysDownCodesSet;
 
 	private long mLastKeyTime;
 	private long mCurrentKeyTime;
@@ -421,12 +420,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
 		mMiniKeyboardCache = new HashMap<>();
 
 		if (mKeyBackground == null) {
-//			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//				mKeyBackground = context.getResources().getDrawable(R.drawable.btn_keyboard_key, context.getTheme());
-//			} else {
-//				mKeyBackground = context.getResources().getDrawable(R.drawable.btn_keyboard_key);
-//			}
-			mKeyBackground = ResourcesCompat.getDrawable(context.getResources(), R.drawable.btn_keyboard_key, context.getTheme());
+			mKeyBackground = CompatHelpers.DrawableCompat.getDrawable(context, R.drawable.btn_keyboard_key);
 		}
 
 		mKeyBackground.getPadding(mPadding);
@@ -438,7 +432,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
 		mAccessibilityManager = (AccessibilityManager) context.getSystemService(Context.ACCESSIBILITY_SERVICE);
 		mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
-		mKeysDownCodesSet = new ArraySet<>();
+		mKeysDownCodesSet = new HashSet<>();
 
 		resetMultiTap();
 	}
