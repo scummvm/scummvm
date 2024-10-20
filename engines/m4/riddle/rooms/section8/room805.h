@@ -44,17 +44,17 @@ private:
 	int32 _meiSpookedPos2 = 0;
 	int32 _meiTalkPos3 = 0;
 	int32 _meiTrekTalkerSeries = 0;
-	int32 _ripPos3LookAround = 0;
 	int32 _ripHeadTurnPos3 = 0;
 	int32 _ripLookDownPos3 = 0;
+	int32 _ripLooksUpSeries = 0;
 	int32 _ripLowReachPos2 = 0;
-	int32 _ripSiftsDirtSeries = 0;
-	int32 _ripTalkerPos3 = 0;
 	int32 _ripMedHiReachPos2 = 0;
 	int32 _ripMedHiReachPos3 = 0;
+	int32 _ripPos3LookAround = 0;
+	int32 _ripSiftsDirtSeries = 0;
+	int32 _ripTalkerPos3 = 0;
 
 	int32 _unkSeries1 = 0;
-	int32 _unkSeries4 = 0;
 	int32 _unkSeries5 = 0;
 	int32 _unkSeries6 = 0;
 	int32 _unkSeries7 = 0;

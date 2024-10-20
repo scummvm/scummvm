@@ -522,7 +522,7 @@ void Room805::parser() {
 			case -1:
 				player_set_commands_allowed(false);
 				ws_hide_walker(_G(my_walker));
-				_unkSeries4 = series_load("805 RIP LOOKS UP", -1, nullptr);
+				_ripLooksUpSeries = series_load("805 RIP LOOKS UP", -1, nullptr);
 				_ripSiftsDirtMach = series_play("805 RIP LOOKS UP", 256, 16, 2, 5, 0, 100, 0, 0, 0, 11);
 				digi_stop(1);
 
@@ -544,7 +544,7 @@ void Room805::parser() {
 				break;
 
 			case 4:
-				series_unload(_unkSeries4);
+				series_unload(_ripLooksUpSeries);
 				sendWSMessage_140000(_G(my_walker), 5);
 				ws_turn_to_face(_mcMach, 4, -1);
 
@@ -880,10 +880,239 @@ void Room805::parser() {
 		}
 	} // if (gearFl && player_said("CHARIOT"))
 
-	warning("STUB - Room805::parser");
+	else if (player_said("SOLDIER'S SHIELD", "SOLDIER") || player_said("TWO SOLDIERS' SHIELDS", "SOLDIER")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			if (_G(flags[V257])) {
+				player_set_commands_allowed(false);
+				setGlobals1(_unkSeries5, 1, 13, 13, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_G(my_walker), 10);
+				digi_stop(1);
+			} else {
+				return;
+			}
+
+			break;
+
+		case 2:
+			hotspot_set_active("SHIELD", true);
+			player_set_commands_allowed(true);
+			break;
+
+		case 10:
+			_G(flags[V257]) = 0;
+			if (_G(flags[V258])) {
+				inv_put_thing_in("TWO SOLDIERS' SHIELDS", 999);
+				inv_give_to_player("SOLDIER'S SHIELD");
+			} else {
+				inv_put_thing_in("TWO SOLDIERS' SHIELDS", 805);
+				inv_put_thing_in("SOLDIER'S SHIELD", 999);
+			}
+
+			_farSoldiersShieldMach = series_play("805 FAR SOLDIERS SHIELD", 2304, 0, -1, 0, -1, 100, 0, 0, 0, -1);
+			sendWSMessage_140000(_G(my_walker), 2);
+
+			break;
+
+		default:
+			break;
+		}
+	} // if (player_said("SOLDIER'S SHIELD", "SOLDIER") || player_said("TWO SOLDIERS' SHIELDS", "SOLDIER"))
+
+	else if (player_said("SOLDIER'S SHIELD", "SOLDIER ") || player_said("TWO SOLDIERS' SHIELDS", "SOLDIER ")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			if (_G(flags[V258])) {
+				player_set_commands_allowed(false);
+				setGlobals1(_unkSeries6, 1, 12, 12, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_G(my_walker), 10);
+				digi_stop(1);
+			} else {
+				return;
+			}
+
+			break;
+
+		case 2:
+			hotspot_set_active("SHIELD ", true);
+			player_set_commands_allowed(true);
+			break;
+
+		case 10:
+			_G(flags[V258]) = 0;
+			if (_G(flags[V257])) {
+				inv_put_thing_in("TWO SOLDIERS' SHIELDS", 999);
+				inv_give_to_player("SOLDIER'S SHIELD");
+			} else {
+				inv_put_thing_in("TWO SOLDIERS' SHIELDS", 805);
+				inv_put_thing_in("SOLDIER'S SHIELD", 999);
+			}
+
+			_nearSoldiersShieldMach = series_play("805 NEAR SOLDIERS SHIELD", 1280, 0, -1, 0, -1, 100, 0, 0, 0, -1);
+			sendWSMessage_140000(_G(my_walker), 2);
+
+			break;
+		default:
+			break;
+		}
+	} // if (player_said("SOLDIER'S SHIELD", "SOLDIER ") || player_said("TWO SOLDIERS' SHIELDS", "SOLDIER "))
+
+	else if (gearFl && (player_said("URN") || player_said("URN ")))
+		parserSub1("COM072", 1, 255, 1, 997);
+
+	else if (gearFl && player_said("UNLIT URN"))
+		parserSub1("COM073", 1, 255, 1, 997);
+
+	else if (gearFl && (player_said("SHIELD") || player_said("SHIELD ") || player_said("SOLDIER'S SHIELD")))
+		parserSub1("805R23", 1, 255, 1, -1);
+
+	else if (gearFl && (player_said("WOODEN POST") || player_said("WOODEN BEAM")))
+		parserSub1("805R24", 1, 255, 1, -1);
+
+	else if (gearFl && player_said("MEI CHEN"))
+		parserSub1("COM017", 1, 255, 1, 997);
+
+	else if ((player_said("WOODEN POST", "JADE DOOR") && inv_player_has("WOODEN POST") && !_G(flags[V272]))
+			|| (player_said("WOODEN POST", "JADE DOOR ") && inv_player_has("WOODEN POST") && !_G(flags[V272]))
+			|| (player_said("WOODEN BEAN", "JADE DOOR") && inv_player_has("WOODEN BEAN"))
+			|| (player_said("WOODEN BEAN", "JADE DOOR ") && inv_player_has("WOODEN BEAN")))
+		parserSub1("805r25", 1, 255, 1, -1);
+
+	else if (player_said("journal") && !takeFl && !lookFl && !inv_player_has(_G(player).noun))
+		parserSub1("com042", 1, 255, 1, 997);
+
+	else if (player_said("Fifth Door")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(10);
+
+			break;
+
+		case 10:
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s29", 3, 180, -1, 950);
+			_G(game).new_room = 844;
+
+			break;
+
+		default:
+			break;
+		}
+	} // if (player_said("Fifth Door"))
+
+	else if (player_said("Fourth Door")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(10);
+
+			break;
+
+		case 10:
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s29", 3, 180, -1, 950);
+			_G(game).new_room = 834;
+
+			break;
+
+		default:
+			break;
+		}
+	} // if (player_said("Fourth Door"))
+
+	else if (player_said("Third Door")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(10);
+
+			break;
+
+		case 10:
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s29", 3, 180, -1, 950);
+			_G(game).new_room = 814;
+
+			break;
+
+		default:
+			break;
+		}
+	} // if (player_said("Third Door"))
+
+	else if (player_said("Second Door")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(10);
+
+			break;
+
+		case 10:
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s29", 3, 180, -1, 950);
+			_G(game).new_room = 824;
+
+			break;
+
+		default:
+			break;
+		}
+	} // if (player_said("Second Door"))
+
+	else if (player_said("First Door")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			kernel_timing_trigger(15, 10, nullptr);
+
+			break;
+
+		case 2:
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s29", 3, 180, -1, 950);
+			_G(game).new_room = 804;
+
+			break;
+
+		case 10:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(2);
+
+			break;
+
+		default:
+			break;
+		}
+	} // if (player_said("First Door"))
+
+	else if (goFl && (player_said("Jade Door") || player_said("Jade Door "))) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			if (_G(flags[V272])) {
+				player_set_commands_allowed(false);
+				disable_player_commands_and_fade_init(3);
+			} else if (_G(flags[V271])) {
+				parserSub1("805r34", 1, 255, 1, -1);
+			}
+
+			break;
+		case 3:
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s29", 3, 180, -1, 950);
+			_G(game).new_room = 806;
+
+			break;
+
+		default:
+			break;
+		}
+	} //  if (goFl && (player_said("Jade Door") || player_said("Jade Door ")))
+
+	else
+		return;
 
 	_G(player).command_ready = false;
-
 }
 
 void Room805::daemon() {
