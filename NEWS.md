@@ -42,7 +42,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Composer:
   - Added keymapper support.
 
- Crusie:
+ Cruise:
   - Added support for Russian fan-translation.
   - Added keymapper support.
 
