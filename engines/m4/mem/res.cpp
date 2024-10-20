@@ -45,7 +45,8 @@ Resources::Entry *Resources::findAndSetResEntry(const Common::String &resourceNa
 	Entry *res = nullptr;
 
 	Common::String resName = resourceName;
-	resName.toLowercase();
+	if (_useLowercase)
+		resName.toLowercase();
 	orig_hash_val = hash_val = hash(resName);
 
 	// If empty slot at this hash, then we're done
@@ -54,7 +55,7 @@ Resources::Entry *Resources::findAndSetResEntry(const Common::String &resourceNa
 
 	// Flags is set, so scan until Flags is clear, or the resource name strings match
 	while ((_resources[hash_val].Flags & FULLY_BUFFERED)
-			&& !resName.equalsIgnoreCase(_resources[hash_val].name)) {
+			&& !resName.equals(_resources[hash_val].name)) {
 		// if we searched every entry to no avail:
 		if ((hash_val = (hash_val + 1) & (HASHSIZE - 1)) == orig_hash_val)
 			goto test4;
@@ -164,17 +165,17 @@ MemHandle Resources::rget(const Common::String &resourceName, int32 *resourceSiz
 void Resources::rtoss(const Common::String &resourceName) {
 	int hash_val;
 	Entry *resEntry = nullptr;
-	Common::String lowerName;
+	Common::String resName = resourceName;
 
-	lowerName = resourceName;
-	lowerName.toLowercase();
-	hash_val = hash(lowerName);
+	if (_useLowercase)
+		resName.toLowercase();
+	hash_val = hash(resName);
 
-	/* check if resource is in resource table */
+	// Check if resource is in resource table
 	if (_resources[hash_val].Flags) {
 		for (int ctr = 0; ctr <= HASHSIZE && _resources[hash_val].Flags;
 				++ctr, hash_val = (hash_val + 1) % HASHSIZE) {
-			if (lowerName.equals(_resources[hash_val].name)) {
+			if (resName.equals(_resources[hash_val].name)) {
 				resEntry = &_resources[hash_val];
 				break;
 			}

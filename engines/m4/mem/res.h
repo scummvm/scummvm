@@ -41,6 +41,7 @@ class Resources {
 private:
 	Entry _resources[MAX_RESOURCES];
 	SysFile *_fp = nullptr;
+	bool _useLowercase = false;
 
 	Entry *findAndSetResEntry(const Common::String &resourceName);
 	int hash(const Common::String &sym) const;
@@ -49,6 +50,9 @@ private:
 
 public:
 	~Resources();
+	void setUseLowercase(bool flag) {
+		_useLowercase = flag;
+	}
 
 	MemHandle rget(const Common::String &resourceName, int32 *resourceSize);
 	void rtoss(const Common::String &resourceName);

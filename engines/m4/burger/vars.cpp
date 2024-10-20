@@ -77,6 +77,7 @@ static const ConverterEntry ASCII_CONVERTERS[] = {
 
 Vars::Vars() {
 	g_vars = this;
+	_resources.setUseLowercase(true);
 
 	Inventory *inv = new Inventory();
 	_inventory = inv;
