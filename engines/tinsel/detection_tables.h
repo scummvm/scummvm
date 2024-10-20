@@ -645,15 +645,50 @@ static const TinselGameDescription gameDescriptions[] = {
 	// Note: All Discworld 2 versions are CD only, therefore we don't add the ADGF_CD flag
 #define DISCWORLD2_GUIOPTIONS GUIO2(GUIO_NOASPECT, GAMEOPTION_CROP_HEIGHT_480_TO_432)
 
-	{	// English Discworld 2 demo
+	{	// English Discworld 2 demo (dw2-win-demo-en)
 		{
 			"dw2",
 			"Demo",
 			AD_ENTRY2s("dw2.scn",		"853ab998f5136b69bc586991175d6eeb", 4231121,
 					   "english.smp",	"b5660a0e031cb4710bcb0ef5629ea61d", 28562357),
 			Common::EN_ANY,
-			Common::kPlatformDOS,
+			Common::kPlatformWindows,
 			ADGF_DEMO,
+			DISCWORLD2_GUIOPTIONS
+		},
+		GID_DW2,
+		0,
+		GF_SCNFILES,
+		TINSEL_V2,
+	},
+
+	{	// English Discworld 2 demo (second Windows demo: dw2-win-demo-2-en)
+		{
+			"dw2",
+			"",
+			AD_ENTRY3s("dw2.scn",     "3f24abb61a058f8faeac7c0768cf21fc", 4224921,
+					   "english.smp", "b5660a0e031cb4710bcb0ef5629ea61d", 31360342,
+					   "english.txt", "f17e10eccac0fb2d1fea489a951da266", 283144),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED | ADGF_DEMO,
+			DISCWORLD2_GUIOPTIONS
+		},
+		GID_DW2,
+		0,
+		GF_SCNFILES,
+		TINSEL_V2,
+	},
+
+	{	// English (US) Discworld 2 demo (DOS demo: dw2-dos-demo-en)
+		{
+			"dw2",
+			"",
+			AD_ENTRY2s("dw2.scn",     "05beafadd26562d708f68194d337b2cb", 103221,
+					   "us.smp",      "b5660a0e031cb4710bcb0ef5629ea61d", 28320582),
+			Common::EN_USA,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED | ADGF_DEMO,
 			DISCWORLD2_GUIOPTIONS
 		},
 		GID_DW2,
