@@ -222,6 +222,9 @@ void Sections::m4EndScene() {
 	ClearWSAssets(_WS_ASSET_DATA, 0, 255);
 	ClearWSAssets(_WS_ASSET_CELS, 0, 255);
 
+	// Dump a list of any resources remaining in memory
+	_G(resources).dumpResources();
+
 	// Reload the walker and show scripts.
 	if (!LoadWSAssets("walker script", &_G(master_palette)[0]))
 		error_show(FL, 'FNF!', "walker script");

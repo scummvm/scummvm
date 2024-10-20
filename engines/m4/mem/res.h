@@ -52,6 +52,11 @@ public:
 
 	MemHandle rget(const Common::String &resourceName, int32 *resourceSize);
 	void rtoss(const Common::String &resourceName);
+
+	/**
+	 * Dumps a list of any active resources
+	 */
+	void dumpResources();
 };
 
 MemHandle rget(const Common::String &resourceName, int32 *ResourceSize);

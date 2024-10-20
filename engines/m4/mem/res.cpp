@@ -46,15 +46,13 @@ Resources::Entry *Resources::findAndSetResEntry(const Common::String &resourceNa
 
 	Common::String resName = resourceName;
 	resName.toLowercase();
-	hash_val = hash(resName);
+	orig_hash_val = hash_val = hash(resName);
 
 	// If empty slot at this hash, then we're done
 	if (!_resources[hash_val].Flags)
 		goto got_one;
 
 	// Flags is set, so scan until Flags is clear, or the resource name strings match
-	orig_hash_val = hash_val;
-
 	while ((_resources[hash_val].Flags & FULLY_BUFFERED)
 			&& !resName.equalsIgnoreCase(_resources[hash_val].name)) {
 		// if we searched every entry to no avail:
@@ -174,12 +172,13 @@ void Resources::rtoss(const Common::String &resourceName) {
 
 	/* check if resource is in resource table */
 	if (_resources[hash_val].Flags) {
-		int ctr = 0;
-		while (ctr++ <= HASHSIZE && _resources[hash_val].Flags &&
-				!lowerName.equals(_resources[hash_val].name)) {
-			hash_val = (hash_val + 1) % HASHSIZE;
+		for (int ctr = 0; ctr <= HASHSIZE && _resources[hash_val].Flags;
+				++ctr, hash_val = (hash_val + 1) % HASHSIZE) {
+			if (lowerName.equals(_resources[hash_val].name)) {
+				resEntry = &_resources[hash_val];
+				break;
+			}
 		}
-		resEntry = &_resources[hash_val];
 	}
 
 	if (!resEntry)
@@ -193,6 +192,9 @@ void Resources::rtoss(const Common::String &resourceName) {
 	}
 
 	if (resEntry->Flags & MARKED_PURGE)
+		// This is actually okay. In Riddle, for example, "show script"
+		// is assigned to multiple MACH slots, and in ClearWSAssets will
+		// pass it to rtoss for each entry
 		term_message("multiple rtoss: %s", resourceName.c_str());
 	else
 		term_message("rtossing: %s", resourceName.c_str());
@@ -228,6 +230,19 @@ bool Resources::do_file(MemHandle buffer) {
 	_fp = nullptr;
 
 	return result;
+}
+
+void Resources::dumpResources() {
+	if (gDebugLevel >= 2) {
+		debug(2, "List of active resources:");
+		for (int i = 0; i < MAX_RESOURCES; ++i) {
+			Entry &entry = _resources[i];
+			if (entry.Flags != 0 && (entry.Flags & MARKED_PURGE) == 0)
+				debug(2, "#%d - %s", i, entry.name.c_str());
+		}
+
+		debugN(2, "\n");
+	}
 }
 
 MemHandle rget(const Common::String &resourceName, int32 *resourceSize) {
