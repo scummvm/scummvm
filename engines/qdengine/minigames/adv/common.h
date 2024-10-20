@@ -77,11 +77,15 @@ typedef Std::vector<mgVect3f> Coords;
 class MinigameManager;
 extern MinigameManager *g_runtime;
 
-template<class T>
-T getParameter(const char* name, const T& defValue);
+int getParameter(const char* name, const int& defValue);
+bool getParameter(const char* name, int& out, bool obligatory);
+float getParameter(const char* name, const float &defValue);
+bool getParameter(const char* name, float &out, bool obligatory);
+mgVect2f getParameter(const char* name, const mgVect2f& defValue);
+bool getParameter(const char* name, mgVect2f& out, bool obligatory);
+mgVect2i getParameter(const char* name, const mgVect2i& defValue);
+bool getParameter(const char* name, mgVect2i& out, bool obligatory);
 
-template<class T>
-bool getParameter(const char* name, T& out, bool obligatory);
 
 enum SystemEvent {
 	EVENT_TIME_1_SECOND_TICK,

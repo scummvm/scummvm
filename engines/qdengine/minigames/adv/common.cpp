@@ -47,22 +47,19 @@ void QDObject::setState(const char* name) {
 		_obj->set_state(name);
 }
 
-template<class T>
-T getParameter(const char* name, const T& defValue) {
-	return round(getParameter<float>(name, (float)defValue));
+int getParameter(const char* name, const int& defValue) {
+	return round(getParameter(name, (float)defValue));
 }
 
-template<class T>
-bool getParameter(const char* name, T& out, bool obligatory) {
+bool getParameter(const char* name, int& out, bool obligatory) {
 	float retValue = out;
-	if (getParameter<float>(name, retValue, obligatory)) {
+	if (getParameter(name, retValue, obligatory)) {
 		out = round(retValue);
 		return true;
 	}
 	return false;
 }
 
-template<>
 float getParameter(const char* name, const float &defValue) {
 	if (const char *data = g_runtime->parameter(name, false)) {
 		float retValue = defValue;
@@ -74,7 +71,6 @@ float getParameter(const char* name, const float &defValue) {
 
 }
 
-template<>
 bool getParameter(const char* name, float &out, bool obligatory) {
 	if (const char * data = g_runtime->parameter(name, obligatory)) {
 		float retValue = out;
@@ -88,7 +84,6 @@ bool getParameter(const char* name, float &out, bool obligatory) {
 
 }
 
-template<>
 mgVect2f getParameter(const char* name, const mgVect2f& defValue) {
 	if (const char * data = g_runtime->parameter(name, false)) {
 		mgVect2f retValue = defValue;
@@ -100,7 +95,6 @@ mgVect2f getParameter(const char* name, const mgVect2f& defValue) {
 
 }
 
-template<>
 bool getParameter(const char* name, mgVect2f& out, bool obligatory) {
 	if (const char * data = g_runtime->parameter(name, obligatory)) {
 		mgVect2f retValue = out;
@@ -114,43 +108,19 @@ bool getParameter(const char* name, mgVect2f& out, bool obligatory) {
 
 }
 
-template<>
 mgVect2i getParameter(const char* name, const mgVect2i& defValue) {
 	mgVect2f retValue = getParameter(name, mgVect2f(defValue.x, defValue.y));
 	return mgVect2i(round(retValue.x), round(retValue.y));
 
 }
 
-template<>
 bool getParameter(const char* name, mgVect2i& out, bool obligatory) {
 	mgVect2f retValue = mgVect2f(out.x, out.y);
-	if (getParameter<mgVect2f>(name, retValue, obligatory)) {
+	if (getParameter(name, retValue, obligatory)) {
 		out = mgVect2i(round(retValue.x), round(retValue.y));
 		return true;
 	}
 	return false;
-}
-
-void dummyInstanceGetParameter() {
-	bool db = false;
-	getParameter("", db);
-	getParameter("", db, false);
-
-	int di = 0;
-	getParameter("", di);
-	getParameter("", di, false);
-
-	float df = 0.f;
-	getParameter("", df);
-	getParameter("", df, false);
-
-	mgVect2i d2i;
-	getParameter("", d2i);
-	getParameter("", d2i, false);
-
-	mgVect2i d2f;
-	getParameter("", d2f);
-	getParameter("", d2f, false);
 }
 
 } // namespace QDEngine
