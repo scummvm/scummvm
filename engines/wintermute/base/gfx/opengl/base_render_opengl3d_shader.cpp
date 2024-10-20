@@ -699,7 +699,9 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 			} else {
 				_farClipPlane = DEFAULT_FAR_PLANE;
 			}
-
+		} else {
+			_nearClipPlane = DEFAULT_NEAR_PLANE;
+			_farClipPlane = DEFAULT_FAR_PLANE;
 		}
 
 		bool fogEnabled;
