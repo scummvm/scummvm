@@ -177,7 +177,7 @@ public:
 
 	// файл со списком игр по уровням
 	const char *gameListFileName() const {
-		return "resource\\minigames.lst";
+		return "resource//minigames.lst";
 	}
 
 private:

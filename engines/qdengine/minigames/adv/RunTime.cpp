@@ -70,7 +70,7 @@ private:
 
 MinigameManager::MinigameManager()
 	: currentGameIndex_(-1, -1) {
-	state_container_name_ = "Saves\\minigames.dat";
+	state_container_name_ = "Saves/minigames.dat";
 
 	engine_ = 0;
 	scene_ = 0;
