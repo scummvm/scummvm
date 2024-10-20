@@ -27,7 +27,7 @@
 
 namespace QDEngine {
 
-qdMiniGameInterface *creade_adv_minigame(const char *name, MinigameConsCallback callback) {
+qdMiniGameInterface *create_adv_minigame(const char *name, MinigameConsCallback callback) {
 	debugC(3, kDebugMinigames, "open_game_interface: %s, runtime%s", name, g_runtime ? "!=0" : "==0");
 
 	if (!g_runtime)

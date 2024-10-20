@@ -83,7 +83,7 @@ struct GameInfo {
 
 typedef MinigameInterface *(*MinigameConsCallback)();
 
-qdMiniGameInterface *creade_adv_minigame(const char *name, MinigameConsCallback callback);
+qdMiniGameInterface *create_adv_minigame(const char *name, MinigameConsCallback callback);
 
 bool close_adv_minigame(qdMiniGameInterface *game);
 
