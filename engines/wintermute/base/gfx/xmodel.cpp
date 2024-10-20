@@ -589,7 +589,6 @@ bool XModel::isTransparentAt(int x, int y) {
 	// transform to model space
 	DXVector3 end = pickRayOrig + pickRayDir;
 	DXMatrixInverse(&m, nullptr, &_lastWorldMat);
-	DXMatrixTranspose(&m, &m);
 	DXVec3TransformCoord(&pickRayOrig, &pickRayOrig, &m);
 	DXVec3TransformCoord(&end, &end, &m);
 	pickRayDir = end - pickRayOrig;
@@ -613,7 +612,6 @@ void XModel::updateBoundingRect() {
 	_gameRef->_renderer3D->getViewTransform(&viewMat);
 	_gameRef->_renderer3D->getProjectionTransform(&projMat);
 	_gameRef->_renderer3D->getWorldTransform(&worldMat);
-	DXMatrixTranspose(&worldMat, &worldMat);
 
 	_drawingViewport = _gameRef->_renderer3D->getViewPort();
 

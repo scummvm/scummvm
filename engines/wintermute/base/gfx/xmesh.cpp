@@ -309,7 +309,6 @@ bool XMesh::updateShadowVol(ShadowVolume *shadow, DXMatrix *modelMat, DXVector3 
 	DXVector3 invLight = *light;
 	DXMatrix matInverseModel = *modelMat;
 	DXMatrixInverse(&matInverseModel, nullptr, &matInverseModel);
-	DXMatrixTranspose(&matInverseModel, &matInverseModel);
 	DXVec3TransformNormal(&invLight, light, &matInverseModel);
 
 	uint32 numEdges = 0;

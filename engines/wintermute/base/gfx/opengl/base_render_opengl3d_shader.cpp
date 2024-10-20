@@ -513,7 +513,6 @@ bool BaseRenderOpenGL3DShader::setProjection2D() {
 bool BaseRenderOpenGL3DShader::setWorldTransform(const DXMatrix &transform) {
 	_worldMatrix = transform;
 	DXMatrix newInvertedTranspose, world = transform;
-	DXMatrixTranspose(&world, &world);
 	DXMatrixMultiply(&newInvertedTranspose, &world, &_viewMatrix);
 	DXMatrixInverse(&newInvertedTranspose, nullptr, &newInvertedTranspose);
 	DXMatrixTranspose(&newInvertedTranspose, &newInvertedTranspose);

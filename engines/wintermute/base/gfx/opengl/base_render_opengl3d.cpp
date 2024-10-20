@@ -388,7 +388,6 @@ bool BaseRenderOpenGL3D::setProjection2D() {
 bool BaseRenderOpenGL3D::setWorldTransform(const DXMatrix &transform) {
 	_worldMatrix = transform;
 	DXMatrix newModelViewTransform, world = transform;
-	DXMatrixTranspose(&world, &world);
 	DXMatrixMultiply(&newModelViewTransform, &world, &_viewMatrix);
 	glLoadMatrixf(newModelViewTransform);
 	return true;

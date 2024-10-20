@@ -1382,8 +1382,6 @@ bool BaseObject::getMatrix(DXMatrix *modelMatrix, DXVector3 *posVect) {
 	DXMatrixMultiply(modelMatrix, &matRot, &matScale);
 	DXMatrixMultiply(modelMatrix, modelMatrix, &matTrans);
 
-	DXMatrixTranspose(modelMatrix, modelMatrix);
-
 	return true;
 }
 
