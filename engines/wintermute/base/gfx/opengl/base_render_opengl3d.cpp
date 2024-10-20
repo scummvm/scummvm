@@ -189,6 +189,7 @@ void BaseRenderOpenGL3D::displayShadow(BaseObject *object, const DXVector3 *ligh
 
 	DXMatrix translation;
 	DXMatrixTranslation(&translation, object->_posVector._x, object->_posVector._y, object->_posVector._z);
+	DXMatrixTranspose(&translation, &translation);
 
 	DXMatrix worldTransformation = translation * rotation * scale;
 	DXMatrixTranspose(&worldTransformation, &worldTransformation);
