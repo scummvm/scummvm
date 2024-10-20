@@ -24,6 +24,8 @@
 
 #include "common/hashmap.h"
 
+#include "qdengine/minigames/adv/common.h"
+
 namespace Common {
 class MemoryWriteStream;
 class SeekableWriteStream;
@@ -79,10 +81,16 @@ struct GameInfo {
 	void *gameData_;
 };
 
+typedef MinigameInterface *(*MinigameConsCallback)();
+
+qdMiniGameInterface *creade_adv_minigame(const char *name, MinigameConsCallback callback);
+
+bool close_adv_minigame(qdMiniGameInterface *game);
+
 class MinigameManager : public qdMiniGameInterface {
 	friend class TempValue;
 public:
-	MinigameManager();
+	MinigameManager(MinigameConsCallback callback);
 	~MinigameManager();
 
 	// begin MiniGame virtual interface
@@ -283,6 +291,8 @@ private:
 	QDCounter getCounter(const char* name);
 	// Освободить счетчик
 	void release(QDCounter& counter);
+
+	MinigameConsCallback _callback = nullptr;
 };
 
 } // namespace QDEngine

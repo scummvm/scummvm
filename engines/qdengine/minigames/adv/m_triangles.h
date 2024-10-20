@@ -28,6 +28,8 @@
 
 namespace QDEngine {
 
+MinigameInterface *createMinigameTriangleGame();
+
 class MinigameTriangle : public MinigameInterface {
 	enum GameType {
 		TRIANGLE,

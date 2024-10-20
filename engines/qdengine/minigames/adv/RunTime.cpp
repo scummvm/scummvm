@@ -36,8 +36,6 @@
 namespace QDEngine {
 
 MinigameManager *g_runtime = 0;
-// createGame() должна реализоваться непосредственно в КАЖДОМ проекте игры
-MinigameInterface *createGame();
 
 class TimeManager {
 	enum Direction {
@@ -68,7 +66,7 @@ private:
 	QDObject timeBar_;
 };
 
-MinigameManager::MinigameManager()
+MinigameManager::MinigameManager(MinigameConsCallback callback)
 	: currentGameIndex_(-1, -1) {
 	state_container_name_ = "Saves/minigames.dat";
 
@@ -97,6 +95,8 @@ MinigameManager::MinigameManager()
 
 	for (int idx = 0; idx < 256; ++idx)
 		lastKeyChecked_[idx] = false;
+
+	_callback = callback;
 }
 
 MinigameManager::~MinigameManager() {
@@ -233,7 +233,7 @@ bool MinigameManager::createGame() {
 	}
 
 	// Here we instantiate the specific game
-	game_ = ::createGame();
+	game_ = _callback();
 
 	if (currentGameInfo_)
 		currentGameInfo_->empty_ = false;

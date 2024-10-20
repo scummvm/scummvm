@@ -31,6 +31,8 @@
 #include "qdengine/qdcore/qd_minigame_interface.h"
 #include "qdengine/qdcore/qd_engine_interface.h"
 
+#include "qdengine/minigames/adv/RunTime.h"
+
 #include "qdengine/minigames/qd_empty_minigame_interface.h"
 
 // maski
@@ -60,6 +62,9 @@
 #include "qdengine/minigames/3mice2_plate.h"
 #include "qdengine/minigames/3mice2_raskr_all.h"
 #include "qdengine/minigames/3mice2_babochka.h"
+
+// dogncat
+#include "qdengine/minigames/adv/m_triangles.h"
 
 namespace QDEngine {
 
@@ -370,6 +375,9 @@ bool qdMiniGame::load_interface() {
 			return true;
 
 		// dogncat
+		} else if (_dll_name == "DLL\\triangles.dll") {
+			_interface = creade_adv_minigame(_dll_name.c_str(), createMinigameTriangleGame);
+			return true;
 		// scores.dll
 		// triangles.dll
 

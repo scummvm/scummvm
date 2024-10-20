@@ -27,16 +27,16 @@
 
 namespace QDEngine {
 
-qdMiniGameInterface *open_game_interface(const char* name) {
+qdMiniGameInterface *creade_adv_minigame(const char *name, MinigameConsCallback callback) {
 	debugC(3, kDebugMinigames, "open_game_interface: %s, runtime%s", name, g_runtime ? "!=0" : "==0");
 
 	if (!g_runtime)
-		return g_runtime = new MinigameManager;
+		return g_runtime = new MinigameManager(callback);
 
-	return new MinigameManager;
+	return new MinigameManager(callback);
 }
 
-bool close_game_interface(qdMiniGameInterface* game) {
+bool close_adv_minigame(qdMiniGameInterface *game) {
 	debugC(3, kDebugMinigames, "close_game_interface, runtime%s%s", g_runtime == game ? "==game" : "!=game", g_runtime ? "!=0" : "==0");
 
 	delete game;
