@@ -170,33 +170,31 @@ void BaseRenderOpenGL3D::displayShadow(BaseObject *object, const DXVector3 *ligh
 		return;
 	}
 
-	Math::Matrix4 scale;
-	scale.setToIdentity();
-	scale(0, 0) = object->_shadowSize * object->_scale3D;
-	scale(1, 1) = 1.0f;
-	scale(2, 2) = object->_shadowSize * object->_scale3D;
+	DXMatrix scale;
+	DXMatrixIdentity(&scale);
+	scale.matrix._11 = object->_shadowSize * object->_scale3D;
+	scale.matrix._22 = 1.0f;
+	scale.matrix._33 = object->_shadowSize * object->_scale3D;
 
 	Math::Angle angle = object->_angle;
 	float sinOfAngle = angle.getSine();
 	float cosOfAngle = angle.getCosine();
-	Math::Matrix4 rotation;
-	rotation.setToIdentity();
-	rotation(0, 0) = cosOfAngle;
-	rotation(0, 2) = sinOfAngle;
-	rotation(2, 0) = -sinOfAngle;
-	rotation(2, 2) = cosOfAngle;
-	Math::Matrix4 translation;
-	translation.setToIdentity();
-	Math::Vector3d posVector = Math::Vector3d(object->_posVector);
-	translation.setPosition(posVector);
 
-	Math::Matrix4 worldTransformation = translation * rotation * scale;
-	worldTransformation.transpose();
-	Math::Matrix4 viewMatrix;
-	viewMatrix.setData(_viewMatrix);
-	worldTransformation = worldTransformation * viewMatrix;
+	DXMatrix rotation;
+	DXMatrixIdentity(&rotation);
+	rotation.matrix._11 = cosOfAngle;
+	rotation.matrix._13 = sinOfAngle;
+	rotation.matrix._31 = -sinOfAngle;
+	rotation.matrix._33 = cosOfAngle;
 
-	glLoadMatrixf(worldTransformation.getData());
+	DXMatrix translation;
+	DXMatrixTranslation(&translation, object->_posVector._x, object->_posVector._y, object->_posVector._z);
+
+	DXMatrix worldTransformation = translation * rotation * scale;
+	DXMatrixTranspose(&worldTransformation, &worldTransformation);
+	DXMatrixMultiply(&worldTransformation, &worldTransformation, &_viewMatrix);
+
+	glLoadMatrixf(worldTransformation);
 
 	glDepthMask(GL_FALSE);
 	glEnable(GL_TEXTURE_2D);

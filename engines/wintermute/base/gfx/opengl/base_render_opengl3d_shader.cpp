@@ -266,26 +266,28 @@ void BaseRenderOpenGL3DShader::displayShadow(BaseObject *object, const DXVector3
 		}
 
 		DXVector3 position = *lightPos;
-		Math::Vector3d target = Math::Vector3d(object->_posVector);
 
 		if (lightPosRelative) {
 			position = object->_posVector + *lightPos;
 		}
 
-		Math::Vector3d pos = Math::Vector3d(position);
-		Math::Matrix4 lightViewMatrix = Math::makeLookAtMatrix(pos, target, Math::Vector3d(0.0f, 1.0f, 0.0f));
-		Math::Matrix4 translation;
-		translation.setPosition(-pos);
-		translation.transpose();
-		lightViewMatrix = translation * lightViewMatrix;
+		DXMatrix lightView = DXMatrix(Math::makeLookAtMatrix(Math::Vector3d(position),
+																   Math::Vector3d(object->_posVector),
+																   Math::Vector3d(0.0f, 1.0f, 0.0f)).getData());
+		DXMatrix translation;
+		DXMatrixTranslation(&translation, -position._x, -position._y, -position._z);
+		DXMatrixTranspose(&translation, &translation);
+		DXMatrixMultiply(&lightView, &translation, &lightView);
 
+		Math::Matrix4 lightViewMatrix;
+		lightViewMatrix.setData(lightView);
 		_flatShadowXModelShader->use();
 		_flatShadowXModelShader->setUniform("viewMatrix", lightViewMatrix);
 
-		Math::Matrix4 tmp;
-		tmp.setData(object->_worldMatrix);
-		tmp.transpose();
-		_flatShadowXModelShader->setUniform("modelMatrix", tmp);
+		Math::Matrix4 worldMatrix;
+		worldMatrix.setData(object->_worldMatrix);
+		worldMatrix.transpose();
+		_flatShadowXModelShader->setUniform("modelMatrix", worldMatrix);
 
 		byte a = RGBCOLGetA(object->_shadowColor);
 		byte r = RGBCOLGetR(object->_shadowColor);
@@ -315,15 +317,14 @@ void BaseRenderOpenGL3DShader::displayShadow(BaseObject *object, const DXVector3
 
 		glDisable(GL_DEPTH_WRITEMASK);
 
-		Math::Matrix4 shadowPosition;
-		shadowPosition.setToIdentity();
-		Math::Vector3d posVector = Math::Vector3d(object->_posVector);
-		shadowPosition.setPosition(posVector);
-		shadowPosition.transpose();
+		DXMatrix shadowPos;
+		DXMatrixTranslation(&shadowPos, object->_posVector._x, object->_posVector._y, object->_posVector._z);
+		DXMatrixTranspose(&shadowPos, &shadowPos);
 
-		Math::Matrix4 viewMatrix, projectionMatrix;
+		Math::Matrix4 viewMatrix, projectionMatrix, shadowPosition;
 		viewMatrix.setData(_viewMatrix);
 		projectionMatrix.setData(_projectionMatrix);
+		shadowPosition.setData(shadowPos);
 		_flatShadowMaskShader->use();
 		_flatShadowMaskShader->setUniform("lightViewMatrix", lightViewMatrix);
 		_flatShadowMaskShader->setUniform("worldMatrix", shadowPosition);
@@ -389,9 +390,11 @@ void BaseRenderOpenGL3DShader::fadeToColor(byte r, byte g, byte b, byte a) {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, _fadeVBO);
 
+	Math::Matrix4 projectionMatrix2d;
+	projectionMatrix2d.setData(_projectionMatrix2d);
 	_fadeShader->use();
 	_fadeShader->setUniform("color", color);
-	_fadeShader->setUniform("projMatrix", _projectionMatrix2d);
+	_fadeShader->setUniform("projMatrix", projectionMatrix2d);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -433,9 +436,11 @@ bool BaseRenderOpenGL3DShader::drawLine(int x1, int y1, int x2, int y2, uint32 c
 	colorValue.z() = b / 255.0f;
 	colorValue.w() = a / 255.0f;
 
+	Math::Matrix4 projectionMatrix2d;
+	projectionMatrix2d.setData(_projectionMatrix2d);
 	_lineShader->use();
 	_lineShader->setUniform("color", colorValue);
-	_lineShader->setUniform("projMatrix", _projectionMatrix2d);
+	_lineShader->setUniform("projMatrix", projectionMatrix2d);
 
 	glDrawArrays(GL_LINES, 0, 2);
 
@@ -488,18 +493,20 @@ bool BaseRenderOpenGL3DShader::setProjection2D() {
 	float nearPlane = -1.0f;
 	float farPlane = 100.0f;
 
-	_projectionMatrix2d.setToIdentity();
+	DXMatrixIdentity(&_projectionMatrix2d);
 
-	_projectionMatrix2d(0, 0) = 2.0f / _width;
-	_projectionMatrix2d(1, 1) = 2.0f / _height;
-	_projectionMatrix2d(2, 2) = 2.0f / (farPlane - nearPlane);
+	_projectionMatrix2d.matrix._11 = 2.0f / _width;
+	_projectionMatrix2d.matrix._22 = 2.0f / _height;
+	_projectionMatrix2d.matrix._33 = 2.0f / (farPlane - nearPlane);
 
-	_projectionMatrix2d(3, 0) = -1.0f;
-	_projectionMatrix2d(3, 1) = -1.0f;
-	_projectionMatrix2d(3, 2) = -(farPlane + nearPlane) / (farPlane - nearPlane);
+	_projectionMatrix2d.matrix._41 = -1.0f;
+	_projectionMatrix2d.matrix._42 = -1.0f;
+	_projectionMatrix2d.matrix._43 = -(farPlane + nearPlane) / (farPlane - nearPlane);
 
+	Math::Matrix4 projectionMatrix2d;
+	projectionMatrix2d.setData(_projectionMatrix2d);
 	_shadowMaskShader->use();
-	_shadowMaskShader->setUniform("projMatrix", _projectionMatrix2d);
+	_shadowMaskShader->setUniform("projMatrix", projectionMatrix2d);
 	return true;
 }
 
@@ -844,10 +851,12 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wint
 		transform.transpose();
 	}
 
+	Math::Matrix4 projectionMatrix2d;
+	projectionMatrix2d.setData(_projectionMatrix2d);
 	_spriteShader->use();
 	_spriteShader->setUniform("alphaTest", !alphaDisable);
-	_spriteShader->setUniform("projMatrix", _projectionMatrix2d);
 	_spriteShader->setUniform("transform", transform);
+	_spriteShader->setUniform("projMatrix", projectionMatrix2d);
 
 	glBindBuffer(GL_ARRAY_BUFFER, _spriteVBO);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(SpriteVertexShader), vertices);

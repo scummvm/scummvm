@@ -127,7 +127,7 @@ public:
 	ShadowVolume *createShadowVolume() override;
 
 private:
-	Math::Matrix4 _projectionMatrix2d;
+	DXMatrix _projectionMatrix2d;
 
 	Common::Array<DXMatrix> _transformStack;
 
