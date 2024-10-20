@@ -634,7 +634,7 @@ void Room142::pre_parser() {
 		if (_G(flags)[V000] == 1003 &&
 			_G(player).walk_x >= 230 && _G(player).walk_x <= 294 &&
 			_G(player).walk_y >= 250 && _G(player).walk_y <= 277) {
-			player_hotspot_walk_override(_G(click_x), 278);
+			player_hotspot_walk_override(_G(player).click_x, 278);
 		} else if (player_said_any("GEAR", "LOOK AT")) {
 			if (player_said("MAIN STREET")) {
 				player_hotspot_walk_override(_G(player).walk_x, 400);

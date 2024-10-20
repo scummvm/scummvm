@@ -186,7 +186,6 @@ public:
 	bool _shut_down_digi_tracks_between_rooms = false;
 	cursor_states _cursor_state = kARROW;
 	int _iPitch = 0;
-	int _click_x = 0, _click_y = 0;
 	bool _hyperwalk = false;
 };
 

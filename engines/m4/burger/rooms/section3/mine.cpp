@@ -404,11 +404,11 @@ void Mine::pre_parser() {
 	_fade_down_rect_active = false;
 
 	if (player_said("tunnel") && player_said_any("walk through", "GEAR")) {
-		if (_G(click_y) > 300)
+		if (_G(player).click_y > 300)
 			set_fade_down_rect(FRONT);
-		else if (_G(click_x) < 200)
+		else if (_G(player).click_x < 200)
 			set_fade_down_rect(LEFT);
-		else if (_G(click_x) < 400)
+		else if (_G(player).click_x < 400)
 			set_fade_down_rect(BACK);
 		else
 			set_fade_down_rect(RIGHT);
@@ -439,11 +439,11 @@ void Mine::parser() {
 	} else if (player_said("tunnel") && player_said_any("walk through", "GEAR")) {
 		pal_fade_set_start(0);
 
-		if (_G(click_y) > 300)
+		if (_G(player).click_y > 300)
 			mine_travel_link(FRONT);
-		else if (_G(click_x) < 200)
+		else if (_G(player).click_x < 200)
 			mine_travel_link(LEFT);
-		else if (_G(click_x) > 400)
+		else if (_G(player).click_x > 400)
 			mine_travel_link(RIGHT);
 		else
 			mine_travel_link(BACK);

@@ -659,7 +659,7 @@ void Room171::pre_parser() {
 	if ((_val1 == 10019 || _val1 == 10020) &&
 		_G(player).walk_x > 378 && _G(player).walk_x <= 518 &&
 		_G(player).walk_y >= 300 && _G(player).walk_y <= 354) {
-		player_walk_to(_G(click_x), 355);
+		player_walk_to(_G(player).click_x, 355);
 	}
 
 	if (!player_said("GEAR") && player_said("FRONT DOOR")) {

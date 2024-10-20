@@ -1419,19 +1419,19 @@ void Room406::pre_parser() {
 		if (player_said("FORCE FIELD")) {
 			player_set_facing_hotspot();
 		} else if (!_G(flags)[V175]) {
-			_hotspot = hotspot_which(_G(click_x), _G(click_y));
+			_hotspot = hotspot_which(_G(player).click_x, _G(player).click_y);
 			assert(_hotspot);
 
 			if (_hotspot->feet_y == 0x7fff) {
 				term_message("click_y: %d     taboo_area_y (click_x)",
-					_G(click_x), tabooAreaY(_G(click_x)));
+					_G(player).click_x, tabooAreaY(_G(player).click_x));
 			} else {
 				term_message("feet_y: %d     taboo_area_y (feet_x): %d",
 					_hotspot->feet_y, tabooAreaY(_hotspot->feet_x));
 			}
 
 			if (_hotspot->feet_x > _hotspot->feet_y ||
-					(_hotspot->feet_y == 0x7fff && tabooAreaY(_G(click_x)) > _G(click_y)))
+					(_hotspot->feet_y == 0x7fff && tabooAreaY(_G(player).click_x) > _G(player).click_y))
 				player_walk_to(_hotspot->feet_x, tabooAreaY(_hotspot->feet_x) + 1);
 		}
 	}

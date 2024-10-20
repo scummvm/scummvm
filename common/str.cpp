@@ -700,6 +700,12 @@ size_t strlcpy(char *dst, const char *src, size_t size) {
 	// to calculate the source's length.
 	const char * const srcStart = src;
 
+	// If no src was specified, treat it as an empty string
+	if (!src) {
+		*dst = '\0';
+		return 0;
+	}
+
 	// In case a non-empty size was specified we
 	// copy over (size - 1) bytes at max.
 	if (size != 0) {
