@@ -929,11 +929,12 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 			flipMode = kImageFlipHV;
 
 		Common::SharedPtr<Image> img = env._scriptShapes[bmpNo];
-		if (img)
+		if (img) {
 			img->drawBitmap(frameno, env._xOff + ivals[0], env._yOff + ivals[1],
 					seq._drawWin, _vm->_compositionBuffer, flipMode, dstWidth, dstHeight);
-		else
+		} else {
 			warning("Trying to draw image %d in env %d which is not loaded", bmpNo, env._enviro);
+		}
 		break;
 	}
 	case 0xa600: { // DRAW GETPUT: i:int

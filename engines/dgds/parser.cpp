@@ -81,8 +81,12 @@ Common::HashMap<uint16, Common::String> DgdsParser::readTags(Common::SeekableRea
 
 	for (uint16 i = 0; i < count; i++) {
 		uint16 idx = stream->readUint16LE();
-		tags[idx] = stream->readString();
-		debug("        %2u: %2u, \"%s\"", i, idx, tags[idx].c_str());
+		const Common::String tagVal = stream->readString();
+		debug("        %2u: %2u, \"%s\"", i, idx, tagVal.c_str());
+		// TODO: How to handle when these IDs overlap? (eg, see
+		// BBEDROOM.TTM in RotD)
+		if (!tags.contains(idx))
+			tags[idx] = tagVal;
 	}
 
 	return tags;
