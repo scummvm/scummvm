@@ -96,7 +96,9 @@ bool sndDispatcher::play_sound(const sndSound *snd, bool loop, int vol) {
 
 		int snd_volume = (vol == 255) ? volume_dB() : convert_volume_to_dB((volume() * vol) >> 8);
 
-		p.create_sound_buffer();
+		if (!p.create_sound_buffer())
+			return false;
+
 		p.set_volume(snd_volume);
 		p.change_frequency(frequency_coeff());
 
