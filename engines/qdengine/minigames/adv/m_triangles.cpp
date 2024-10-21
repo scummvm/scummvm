@@ -73,6 +73,8 @@ MinigameTriangle::MinigameTriangle() {
 		gameType_ = TRIANGLE;
 	}
 
+	fieldLines_ = fieldWidth_ = 0;
+
 	if (!getParameter("size", fieldLines_, true))
 		return;
 	if (fieldLines_ < 2)
