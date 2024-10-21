@@ -224,10 +224,6 @@ void ScummEngine::resetPalette() {
 	} else if (_game.features & GF_16COLOR) {
 		switch (_renderMode) {
 		case Common::kRenderEGA:
-		case Common::kRenderMacintoshBW:
-			// Use EGA palette for MacintoshBW, because that makes
-			// white 0xFFFFFF there. The Mac EGA palette, would
-			// make it 0xFCFCFC.
 			setPaletteFromTable(tableEGAPalette, sizeof(tableEGAPalette) / 3);
 			break;
 
@@ -238,8 +234,6 @@ void ScummEngine::resetPalette() {
 		default:
 			if ((_game.platform == Common::kPlatformAmiga) || (_game.platform == Common::kPlatformAtariST))
 				setPaletteFromTable(tableAmigaPalette, sizeof(tableAmigaPalette) / 3);
-			else if ((_game.id == GID_LOOM || _game.id == GID_INDY3) && _game.platform == Common::kPlatformMacintosh)
-				setPaletteFromTable(Graphics::macEGAPalette, sizeof(Graphics::macEGAPalette) / 3);
 			else
 				setPaletteFromTable(tableEGAPalette, sizeof(tableEGAPalette) / 3);
 		}
@@ -275,9 +269,6 @@ void ScummEngine::resetPalette() {
 		}
 		setDirtyColors(0, 255);
 	}
-
-	if (_macGui)
-		_macGui->setPalette(_currentPalette, 16);
 }
 
 void ScummEngine::setPaletteFromTable(const byte *ptr, int numcolor, int index) {
@@ -1649,8 +1640,8 @@ void ScummEngine::updatePalette() {
 	if (_palDirtyMax == -1)
 		return;
 
-	byte palette_colors[3 * 256];
-	byte *p = palette_colors;
+	byte paletteColors[3 * 256];
+	byte *p = paletteColors;
 	int first;
 	int num;
 
@@ -1725,7 +1716,7 @@ void ScummEngine::updatePalette() {
 #ifdef USE_RGB_COLOR
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_game.platform == Common::kPlatformFMTowns) {
-		p = palette_colors;
+		p = paletteColors;
 		for (int i = first; i < first + num; ++i) {
 			_16BitPalette[i] = get16BitColor(p[0], p[1], p[2]);
 			p += 3;
@@ -1735,7 +1726,15 @@ void ScummEngine::updatePalette() {
 #endif
 #endif
 
-	_system->getPaletteManager()->setPalette(palette_colors, first, num);
+	if (_game.platform == Common::kPlatformMacintosh && _game.heversion == 0) {
+		for (int i = 0; i < 3 * num; ++i)
+			paletteColors[i] = _macGammaCorrectionLookUp[paletteColors[i]];
+	}
+
+	_system->getPaletteManager()->setPalette(paletteColors, first, num);
+
+	if (_macGui)
+		_macGui->setPalette(_currentPalette, _macGui->getNumColors());
 }
 
 } // End of namespace Scumm

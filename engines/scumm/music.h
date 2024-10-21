@@ -104,14 +104,10 @@ public:
 	virtual void setQuality(int qual) {}
 
 	/**
-	 * Notify player that the sound is supposed to be disabled (used for Macintosh sound)
+	 * Notify player that the sound is supposed to be enabled/disabled (used for Macintosh sound)
 	 */
-	virtual void disable() {}
-
-	/**
-	 * Notify player that the sound is supposed to be enabled (used for Macintosh sound)
-	 */
-	virtual void enable() {}
+	virtual void toggleMusic(bool enable) {}
+	virtual void toggleSoundEffects(bool enable) {}
 
 	/**
 	 * Save or load the music state.

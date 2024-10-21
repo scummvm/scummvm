@@ -26,6 +26,7 @@
 #include "scumm/macgui/macgui_impl.h"
 #include "scumm/macgui/macgui_indy3.h"
 #include "scumm/macgui/macgui_loom.h"
+#include "scumm/macgui/macgui_v5.h"
 
 namespace Scumm {
 
@@ -39,6 +40,12 @@ MacGui::MacGui(ScummEngine *vm, const Common::Path &resourceFile) {
 		_impl = new MacLoomGui(vm, resourceFile);
 		break;
 
+	case GID_MONKEY:
+	case GID_MONKEY2:
+	case GID_INDY4:
+		_impl = new MacV5Gui(vm, resourceFile);
+		break;
+
 	default:
 		error("MacGui: Invalid game id %d", vm->_game.id);
 		break;
@@ -47,6 +54,10 @@ MacGui::MacGui(ScummEngine *vm, const Common::Path &resourceFile) {
 
 MacGui::~MacGui() {
 	delete _impl;
+}
+
+int MacGui::getNumColors() const {
+	return _impl->getNumColors();
 }
 
 void MacGui::initialize() {
