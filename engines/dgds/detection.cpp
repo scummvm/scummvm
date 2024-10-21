@@ -29,6 +29,7 @@ static const PlainGameDescriptor dgdsGames[] = {
 	{"quarky", "Quarky And Quaysoo's Turbo Science"},
 	{"sq5demo", "Space Quest V Demo"},
 	{"comingattractions", "Sierra / Dynamix 1991 Coming Attractions Demo"},
+	{"castaway", "Johnny Castaway"},
 
 	{0, 0}
 };

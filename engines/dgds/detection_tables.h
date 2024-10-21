@@ -353,6 +353,22 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Johnny Castaway screensaver
+	{
+		"castaway",
+		0,
+		{
+			{"resource.map", 0, "374e6d05c5e0acd88fb5af748948c899", 1461},
+			{"resource.001", 0, "46acc7ab8f6d7f63838ffea5f87380e2", 1175645},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DEMO | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
+
 	AD_TABLE_END_MARKER
 };
 

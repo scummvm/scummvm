@@ -105,6 +105,9 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	} else if (!strcmp(gameDesc->gameId, "comingattractions")) {
 		_isDemo = true;
 		_gameId = GID_COMINGATTRACTIONS;
+	} else if (!strcmp(gameDesc->gameId, "castaway")) {
+		_isDemo = true;
+		_gameId = GID_CASTAWAY;
 	} else {
 		error("Unknown game ID");
 	}
@@ -415,6 +418,12 @@ void DgdsEngine::loadGameFiles() {
 		_gameGlobals = new Globals(_clock);
 		_gamePals->loadPalette("DYNAMIX.PAL");
 		_adsInterp->load("DEMO.ADS");
+		_adsInterp->segmentOrState(1, 3);
+		break;
+	case GID_CASTAWAY:
+		_gameGlobals = new Globals(_clock);
+		_gamePals->loadPalette("JOHNCAST.PAL");
+		_adsInterp->load("JOHNNY.ADS");
 		_adsInterp->segmentOrState(1, 3);
 		break;
 	default:

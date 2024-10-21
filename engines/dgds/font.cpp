@@ -234,6 +234,9 @@ FontManager::FontType FontManager::fontTypeByName(const Common::String &filename
 
 
 void FontManager::loadFonts(DgdsGameId gameId, ResourceManager *resMgr, Decompressor *decomp) {
+	if (gameId == GID_CASTAWAY)
+		return; // no fonts
+
 	if (gameId == GID_SQ5DEMO) {
 		tryLoadFont("SSM1_12.FNT", resMgr, decomp);
 		tryLoadFont("SSM1_15.FNT", resMgr, decomp);
