@@ -28,6 +28,25 @@
 
 namespace Dgds {
 
+static const byte EGA_COLORS[16][3] = {
+    { 0x00, 0x00, 0x00 },
+    { 0x00, 0x00, 0xAA },
+    { 0x00, 0xAA, 0x00 },
+    { 0x00, 0xAA, 0xAA },
+    { 0xAA, 0x00, 0x00 },
+    { 0xAA, 0x00, 0xAA },
+    { 0xAA, 0x55, 0x00 },
+    { 0xAA, 0xAA, 0xAA },
+    { 0x55, 0x55, 0x55 },
+    { 0x55, 0x55, 0xFF },
+    { 0x55, 0xFF, 0x55 },
+    { 0x55, 0xFF, 0xFF },
+    { 0xFF, 0x55, 0x55 },
+    { 0xFF, 0x55, 0xFF },
+    { 0xFF, 0xFF, 0x55 },
+    { 0xFF, 0xFF, 0xFF },
+};
+
 DgdsPal::DgdsPal() : Palette(256) {
 }
 
@@ -56,13 +75,29 @@ int GamePalettes::loadPalette(const Common::String &filename) {
 	while (chunk.readNextHeader(EX_PAL, filename)) {
 		chunk.readContent(_decompressor);
 		Common::SeekableReadStream *chunkStream = chunk.getContent();
-		if (chunk.isSection(ID_VGA)) {
+		if (chunk.isSection(ID_PAL)) {
+			assert(chunk.isContainer());
+		} else if (chunk.isSection(ID_VGA)) {
 			for (uint k = 0; k < 256; k++) {
 				byte r = chunkStream->readByte() << 2;
 				byte g = chunkStream->readByte() << 2;
 				byte b = chunkStream->readByte() << 2;
 				pal.set(k, r, g, b);
 			}
+			break;
+		} else if (chunk.isSection(ID_EGA)) {
+			for (uint k = 0; k < chunk.getSize() / 2; k++) {
+				byte egaCol = (chunkStream->readUint16LE() & 0xF);
+				byte r = EGA_COLORS[egaCol][0];
+				byte g = EGA_COLORS[egaCol][1];
+				byte b = EGA_COLORS[egaCol][2];
+				pal.set(k, r, g, b);
+			}
+			break;
+		} else if (chunk.isSection(ID_CGA)) {
+			warning("Skipping CGA palette data");
+		} else {
+			error("Unknown Palette chunk in %s: %s size %d", filename.c_str(), chunk.getIdStr(), chunk.getSize());
 		}
 	}
 	pal.setName(filename);
