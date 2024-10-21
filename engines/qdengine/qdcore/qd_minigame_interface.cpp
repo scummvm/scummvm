@@ -42,6 +42,20 @@
 
 namespace QDEngine {
 
+template<>
+void mgVect3<float>::write(Common::WriteStream &out) {
+	out.writeFloatLE(x);
+	out.writeFloatLE(y);
+	out.writeFloatLE(z);
+}
+
+template<>
+void mgVect3<float>::read(Common::ReadStream &in) {
+	x = in.readFloatLE();
+	y = in.readFloatLE();
+	z = in.readFloatLE();
+}
+
 namespace qdmg {
 
 class qdMinigameObjectInterfaceImplBase : public qdMinigameObjectInterface {

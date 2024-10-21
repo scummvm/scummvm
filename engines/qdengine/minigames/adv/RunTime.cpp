@@ -892,7 +892,7 @@ int MinigameManager::rnd(const Std::vector<float> &prob) const {
 
 // если данные еще ни разу не сохранялись - запоминаем
 // если уже есть запомненные, то заменяем на них
-bool MinigameManager::processGameData(Common::MemoryWriteStream &data) {
+bool MinigameManager::processGameData(Common::SeekableWriteStream &data) {
 	warning("STUB: MinigameManager::processGameData()");
 #if 0
 	if (currentGameInfo_) {

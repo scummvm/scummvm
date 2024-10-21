@@ -22,6 +22,10 @@
 #ifndef QDENGINE_QDCORE_QD_MINIGAME_INTERFACE_H
 #define QDENGINE_QDCORE_QD_MINIGAME_INTERFACE_H
 
+namespace Common {
+class ReadStream;
+class WriteStream;
+};
 
 namespace QDEngine {
 
@@ -209,6 +213,9 @@ public:
 	mgVect3 operator * (T v) {
 		return mgVect3(*this) *= v;
 	}
+
+	void write(Common::WriteStream &out);
+	void read(Common::ReadStream &out);
 
 	T x;
 	T y;
