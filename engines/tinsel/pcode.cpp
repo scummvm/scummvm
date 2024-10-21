@@ -462,19 +462,21 @@ void RegisterGlobals(int num) {
 		// read initial values
 		CdCD(Common::nullContext);
 
+		const char *globalsFile = Common::File::exists("gdata_") ? "gdata_" : GLOBALS_FILENAME;
+
 		Common::File f;
-		if (!f.open(GLOBALS_FILENAME))
-			error(CANNOT_FIND_FILE, GLOBALS_FILENAME);
+		if (!f.open(globalsFile))
+			error(CANNOT_FIND_FILE, globalsFile);
 
 		int32 length = f.readSint32LE();
 		if (length != num)
-			error(FILE_IS_CORRUPT, GLOBALS_FILENAME);
+			error(FILE_IS_CORRUPT, globalsFile);
 
 		for (int i = 0; i < length; ++i)
 			g_pGlobals[i] = f.readSint32LE();
 
 		if (f.eos() || f.err())
-			error(FILE_IS_CORRUPT, GLOBALS_FILENAME);
+			error(FILE_IS_CORRUPT, globalsFile);
 
 		f.close();
 	}
