@@ -263,6 +263,9 @@ grScreenRegion qdInventoryCellSet::screen_region() const {
 bool qdInventoryCellSet::put_object(qdGameObjectAnimated *p, const Vect2s &pos) {
 	if (!hit(pos)) return false;
 
+	if (_cells.front().size_x() == 0 || _cells.front().size_y() == 0)
+		return NULL;
+
 	Vect2s v = pos - screen_pos() + _cells.front().size() / 2;
 	int idx = v.x / _cells.front().size_x() + (v.y / _cells.front().size_y()) * _size.x;
 	// Двигаем индекс на текущее смещение ячеек
@@ -278,6 +281,9 @@ bool qdInventoryCellSet::put_object(qdGameObjectAnimated *p, const Vect2s &pos) 
 
 qdGameObjectAnimated *qdInventoryCellSet::get_object(const Vect2s &pos) const {
 	if (!hit(pos)) return NULL;
+
+	if (_cells.front().size_x() == 0 || _cells.front().size_y() == 0)
+		return NULL;
 
 	Vect2s v = pos - screen_pos() + _cells.front().size() / 2;
 
