@@ -1017,6 +1017,8 @@ TimeManager::TimeManager(HoldData<TimeManagerData> &data_) {
 			sscanf(data, "%f", &timeCost_);
 	}
 
+	direction_ = DOWN;
+
 	if (timeBar_) {
 		TimeManagerData myData;
 		myData.crd = g_runtime->world2game(timeBar_);
@@ -1041,7 +1043,6 @@ TimeManager::TimeManager(HoldData<TimeManagerData> &data_) {
 	assert(g_runtime->getTime() == 0.f);
 
 	lastEventTime_ = 0;
-
 }
 
 TimeManager::~TimeManager() {
