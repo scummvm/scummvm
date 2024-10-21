@@ -1039,8 +1039,6 @@ bool qdGameObjectMoving::update_screen_pos() {
 				qdGameObjectStateWalk::OffsetType offs_type = qdGameObjectStateWalk::OFFSET_WALK;
 				switch (_movement_mode) {
 				case MOVEMENT_MODE_STOP:
-					offs_type = qdGameObjectStateWalk::OFFSET_STATIC;
-					break;
 				case MOVEMENT_MODE_TURN:
 					offs_type = qdGameObjectStateWalk::OFFSET_STATIC;
 					break;
@@ -1050,7 +1048,7 @@ bool qdGameObjectMoving::update_screen_pos() {
 				case MOVEMENT_MODE_MOVE:
 					offs_type = qdGameObjectStateWalk::OFFSET_WALK;
 					break;
-			case MOVEMENT_MODE_END:
+				case MOVEMENT_MODE_END:
 					offs_type = qdGameObjectStateWalk::OFFSET_END;
 					break;
 				}
