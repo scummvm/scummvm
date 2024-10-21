@@ -1800,7 +1800,8 @@ bool qdGameObjectMoving::load_data(Common::SeekableReadStream &fh, int save_vers
 	_circuit_objs.clear();
 	for (int i = 0; i < num; i++) {
 		qdNamedObjectReference circ_ref;
-		circ_ref.load_data(fh, save_version);
+		if (!circ_ref.load_data(fh, save_version))
+			return false;
 		_circuit_objs.push_back(dynamic_cast<qdGameObjectMoving *>(
 		                            qdGameDispatcher::get_dispatcher()->get_named_object(&circ_ref)));
 	}
