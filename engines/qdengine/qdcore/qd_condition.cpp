@@ -78,6 +78,8 @@ void qdCondition::set_type(ConditionType tp) {
 	case CONDITION_FALSE:
 		break;
 	case CONDITION_MOUSE_CLICK:
+	case CONDITION_PERSONAGE_ACTIVE:
+	case CONDITION_MOUSE_ZONE_CLICK:
 		_data.resize(1);
 		_objects.resize(1);
 		init_data(0, qdConditionData::DATA_STRING);
@@ -130,11 +132,6 @@ void qdCondition::set_type(ConditionType tp) {
 		init_data(0, qdConditionData::DATA_STRING);
 		init_data(1, qdConditionData::DATA_STRING);
 		break;
-	case CONDITION_MOUSE_ZONE_CLICK:
-		_data.resize(1);
-		_objects.resize(1);
-		init_data(0, qdConditionData::DATA_STRING);
-		break;
 	case CONDITION_MOUSE_OBJECT_ZONE_CLICK:
 		_data.resize(2);
 		_objects.resize(2);
@@ -162,11 +159,6 @@ void qdCondition::set_type(ConditionType tp) {
 		init_data(0, qdConditionData::DATA_STRING);
 		init_data(1, qdConditionData::DATA_STRING);
 		init_data(2, qdConditionData::DATA_FLOAT, 1);
-		break;
-	case CONDITION_PERSONAGE_ACTIVE:
-		_data.resize(1);
-		_objects.resize(1);
-		init_data(0, qdConditionData::DATA_STRING);
 		break;
 	case CONDITION_OBJECT_STATE_WAITING:
 		_data.resize(2);
