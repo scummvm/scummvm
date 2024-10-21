@@ -334,9 +334,9 @@ private:
 	const qdEngineInterface *_engine = nullptr;
 	qdMinigameSceneInterface *_scene = nullptr;
 
-	qdMinigameObjectInterface *_figures[24];
+	qdMinigameObjectInterface *_figures[24] = { nullptr };
 
-	int _numVerts[8];
+	int _numVerts[8] = { 0 };
 
 	qdMinigameObjectInterface *_objNoDough = nullptr;
 	qdMinigameObjectInterface *_objNoDoughFake = nullptr;
