@@ -351,7 +351,7 @@ private:
 
 	int _gameNum = 0;
 
-	const int *_colorRegions;
+	const int *_colorRegions = nullptr;
 	int _colorRegionsSize = 0;
 	int _neededColors = 0;
 };
