@@ -490,8 +490,8 @@ private:
 	int _stage = 0;
 
 	struct {
-		float depth;
-		int num;
+		float depth = 0;
+		int num = 0;
 	} _artState[4];
 };
 
