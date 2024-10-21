@@ -115,9 +115,9 @@ void Mesh3DS::computeNormals() {
 		for (int j = 0; j < 3; j++) {
 			DXVector3 normal;
 			DXVec3Normalize(&normal, &normals[_indexData[3 * i + j]]);
-			_vertexData[_indexData[3 * i + j]].nx = normal._x;
-			_vertexData[_indexData[3 * i + j]].ny = normal._y;
-			_vertexData[_indexData[3 * i + j]].nz = normal._z;
+			//_vertexData[_indexData[3 * i + j]].nx = normal._x;
+			//_vertexData[_indexData[3 * i + j]].ny = normal._y;
+			//_vertexData[_indexData[3 * i + j]].nz = normal._z;
 		}
 	}
 
