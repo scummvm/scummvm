@@ -221,6 +221,7 @@ TextManager::StaticTextPreset::StaticTextPreset() {
 	font = -1;
 	align = ALIGN_CENTER;
 	format[15] = 0;
+	textID = 0;
 }
 
 TextManager::StaticMessage::StaticMessage(Font* font, TextAlign align) {
