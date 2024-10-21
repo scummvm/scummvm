@@ -961,12 +961,12 @@ bool grDispatcher::drawParsedText(int x, int y, int sx, int sy, uint32 color, co
 	int hSize = parser->fontHeight();
 	y -= hSize;
 
-	bool skipToNextLine = false;
+	//bool skipToNextLine = false;
 	int cur_x = x;
 	for (OutNodes::const_iterator it = parser->outNodes().begin(); it != parser->outNodes().end(); ++it) {
 		switch (it->type) {
 		case OutNode::NEW_LINE:
-			skipToNextLine = false;
+			//skipToNextLine = false;
 			y += hSize;
 			switch (align) {
 			case GR_ALIGN_LEFT:
@@ -984,8 +984,8 @@ bool grDispatcher::drawParsedText(int x, int y, int sx, int sy, uint32 color, co
 			break;
 
 		case OutNode::TEXT: {
-			if (skipToNextLine)
-				break;
+			//if (skipToNextLine)
+			//	break;
 
 			Common::String str(it->nl.begin, it->nl.end - it->nl.begin);
 			drawText(cur_x, y, color, str.c_str(), 0, 0, font);
