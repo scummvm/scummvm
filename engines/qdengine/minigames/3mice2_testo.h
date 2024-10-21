@@ -215,7 +215,7 @@ public:
 				}
 			}
 
-			if (mouseObj && clickObj) {
+			if (clickObj) { // && mouseObj
 				name = clickObj->name();
 
 				if (strstr(name, "notesto") && num > 0 && num <= 8) {
