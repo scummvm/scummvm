@@ -385,7 +385,7 @@ private:
 	int _someVar3 = 0;
 	bool _needSnap = false;
 
-	qdMinigameObjectInterface *_stones[14];
+	qdMinigameObjectInterface *_stones[14] = { nullptr };
 	qdMinigameObjectInterface *_draggedStone = nullptr;
 	qdMinigameObjectInterface *_cursorObj = nullptr;
 	qdMinigameObjectInterface *_doneObj = nullptr;
