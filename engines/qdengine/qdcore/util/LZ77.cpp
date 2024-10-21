@@ -160,7 +160,7 @@ int32 CLZ77::decode(byte *target, int32 &tlen, const byte *source, int32 slen) {
 			s += 2;
 		} else {
 			*t++ = *s++;
-			len = 1;
+			//len = 1;
 		}
 		if (++block >= 8) {
 			flag = s++;
