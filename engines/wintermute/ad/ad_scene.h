@@ -114,7 +114,7 @@ public:
 	bool sortRotLevels();
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 #ifdef ENABLE_WME3D
-	AdSceneGeometry *_sceneGeometry;
+	AdSceneGeometry *_geom;
 	bool _showGeometry;
 #endif
 	uint32 getAlphaAt(int x, int y, bool colorCheck = false);

@@ -109,8 +109,8 @@ bool AdObject3D::update() {
 	AdGame *adGame = (AdGame *)_gameRef;
 
 	// drop to floor
-	if (_dropToFloor && adGame->_scene && adGame->_scene->_sceneGeometry) {
-		_posVector._y = adGame->_scene->_sceneGeometry->getHeightAt(_posVector, 5.0f);
+	if (_dropToFloor && adGame->_scene && adGame->_scene->_geom) {
+		_posVector._y = adGame->_scene->_geom->getHeightAt(_posVector, 5.0f);
 	}
 
 	getMatrix(&_worldMatrix);
@@ -152,8 +152,8 @@ bool AdObject3D::display() {
 bool AdObject3D::setupLights() {
 	AdGame *adGame = (AdGame *)_gameRef;
 
-	if (adGame->_scene && adGame->_scene->_sceneGeometry) {
-		return adGame->_scene->_sceneGeometry->enableLights(_posVector, _ignoredLights);
+	if (adGame->_scene && adGame->_scene->_geom) {
+		return adGame->_scene->_geom->enableLights(_posVector, _ignoredLights);
 	} else {
 		return false;
 	}
@@ -415,7 +415,7 @@ bool AdObject3D::scSetProperty(const char *name, ScValue *value) {
 		_posX = value->getInt();
 		AdGame *adGame = (AdGame *)_gameRef;
 		DXVector3 pos;
-		if (adGame->_scene->_sceneGeometry && adGame->_scene->_sceneGeometry->convert2Dto3D(_posX, _posY, &pos)) {
+		if (adGame->_scene->_geom && adGame->_scene->_geom->convert2Dto3D(_posX, _posY, &pos)) {
 			_posVector = pos;
 		}
 		return true;
@@ -428,7 +428,7 @@ bool AdObject3D::scSetProperty(const char *name, ScValue *value) {
 		_posY = value->getInt();
 		AdGame *adGame = (AdGame *)_gameRef;
 		DXVector3 pos;
-		if (adGame->_scene->_sceneGeometry && adGame->_scene->_sceneGeometry->convert2Dto3D(_posX, _posY, &pos)) {
+		if (adGame->_scene->_geom && adGame->_scene->_geom->convert2Dto3D(_posX, _posY, &pos)) {
 			_posVector = pos;
 		}
 		return true;
@@ -574,9 +574,9 @@ bool AdObject3D::skipTo(int x, int y, bool tolerant) {
 
 	bool success;
 	if (tolerant) {
-		success = adGame->_scene->_sceneGeometry && adGame->_scene->_sceneGeometry->convert2Dto3DTolerant(x, y, &pos);
+		success = adGame->_scene->_geom && adGame->_scene->_geom->convert2Dto3DTolerant(x, y, &pos);
 	} else {
-		success = adGame->_scene->_sceneGeometry && adGame->_scene->_sceneGeometry->convert2Dto3D(x, y, &pos);
+		success = adGame->_scene->_geom && adGame->_scene->_geom->convert2Dto3D(x, y, &pos);
 	}
 
 	if (success) {
@@ -606,7 +606,7 @@ bool AdObject3D::getBonePosition2D(const char *boneName, int32 *x, int32 *y) {
 
 	AdGame *adGame = (AdGame *)_gameRef;
 
-	if (!adGame->_scene || !adGame->_scene->_sceneGeometry)
+	if (!adGame->_scene || !adGame->_scene->_geom)
 		return false;
 
 	DXMatrix *boneMat = _xmodel->getBoneMatrix(boneName);
@@ -622,7 +622,7 @@ bool AdObject3D::getBonePosition2D(const char *boneName, int32 *x, int32 *y) {
 	DXVec3Transform(&vectBone4, &vectBone3, &bonePosMat);
 	DXVector3 vectBone(vectBone4._x, vectBone4._y, vectBone4._z);
 
-	adGame->_scene->_sceneGeometry->convert3Dto2D(&vectBone, x, y);
+	adGame->_scene->_geom->convert3Dto2D(&vectBone, x, y);
 	return true;
 }
 

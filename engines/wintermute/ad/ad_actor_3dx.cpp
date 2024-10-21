@@ -201,7 +201,7 @@ bool AdActor3DX::update() {
 
 			AdScene *scene = ((AdGame *)_gameRef)->_scene;
 
-			if (scene && scene->_sceneGeometry) {
+			if (scene && scene->_geom) {
 				bool canWalk = false;
 
 				if (scene->_2DPathfinding) {
@@ -212,7 +212,7 @@ bool AdActor3DX::update() {
 					convert3DTo2D(&newWorldMat, &newX, &newY);
 					canWalk = !scene->isBlockedAt(newX, newY, false, this);
 				} else {
-					canWalk = scene->_sceneGeometry->directPathExists(&_posVector, &newPos);
+					canWalk = scene->_geom->directPathExists(&_posVector, &newPos);
 				}
 
 				if (canWalk) {
@@ -254,7 +254,7 @@ bool AdActor3DX::update() {
 				_state = STATE_WAITING_PATH;
 			}
 		} else {
-			if (adGame->_scene->_sceneGeometry->getPath(_posVector, _targetPoint3D, _path3D))
+			if (adGame->_scene->_geom->getPath(_posVector, _targetPoint3D, _path3D))
 				_state = STATE_WAITING_PATH;
 		}
 		break;
@@ -701,7 +701,7 @@ void AdActor3DX::initLine3D(DXVector3 startPt, DXVector3 endPt, bool firstStep) 
 void AdActor3DX::getNextStep2D() {
 	AdGame *adGame = (AdGame *)_gameRef;
 
-	if (!adGame || !adGame->_scene || !adGame->_scene->_sceneGeometry || !_path2D || !_path2D->getCurrent()) {
+	if (!adGame || !adGame->_scene || !adGame->_scene->_geom || !_path2D || !_path2D->getCurrent()) {
 		_state = _nextState;
 		_nextState = STATE_READY;
 		return;
@@ -718,7 +718,7 @@ void AdActor3DX::getNextStep2D() {
 	newPos._z += cosf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
 
 	DXVector3 currentPoint;
-	adGame->_scene->_sceneGeometry->convert2Dto3DTolerant(_path2D->getCurrent()->x,
+	adGame->_scene->_geom->convert2Dto3DTolerant(_path2D->getCurrent()->x,
 	                                                      _path2D->getCurrent()->y,
 	                                                      &currentPoint);
 
@@ -740,7 +740,7 @@ void AdActor3DX::getNextStep2D() {
 				_nextState = STATE_READY;
 			}
 		} else {
-			adGame->_scene->_sceneGeometry->convert2Dto3DTolerant(_path2D->getCurrent()->x,
+			adGame->_scene->_geom->convert2Dto3DTolerant(_path2D->getCurrent()->x,
 			                                                      _path2D->getCurrent()->y,
 			                                                      &currentPoint);
 			initLine3D(_posVector, currentPoint, false);
@@ -769,7 +769,7 @@ void AdActor3DX::followPath2D() {
 		_state = STATE_FOLLOWING_PATH;
 
 		DXVector3 currentPoint;
-		adGameRef->_scene->_sceneGeometry->convert2Dto3DTolerant(_path2D->getCurrent()->x,
+		adGameRef->_scene->_geom->convert2Dto3DTolerant(_path2D->getCurrent()->x,
 		                                                         _path2D->getCurrent()->y,
 		                                                         &currentPoint);
 
@@ -1549,9 +1549,9 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 					script->waitForExclusive(this);
 				}
 			} else {
-				if (adGame->_scene && adGame->_scene->_sceneGeometry) {
+				if (adGame->_scene && adGame->_scene->_geom) {
 					DXVector3 pos;
-					if (adGame->_scene->_sceneGeometry->convert2Dto3DTolerant(x, y, &pos)) {
+					if (adGame->_scene->_geom->convert2Dto3DTolerant(x, y, &pos)) {
 						goTo3D(pos);
 						if (strcmp(name, "GoToAsync") != 0) {
 							script->waitForExclusive(this);
@@ -1634,10 +1634,10 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 				script->waitForExclusive(this);
 			}
 		} else {
-			if (adGame->_scene->_sceneGeometry) {
+			if (adGame->_scene->_geom) {
 				DXVector3 pos;
 
-				if (adGame->_scene->_sceneGeometry->convert2Dto3DTolerant(ent->getWalkToX(), ent->getWalkToY(), &pos)) {
+				if (adGame->_scene->_geom->convert2Dto3DTolerant(ent->getWalkToX(), ent->getWalkToY(), &pos)) {
 					if (ent->getWalkToX() == 0 && ent->getWalkToY() == 0) {
 						goTo3D(pos);
 					} else {
@@ -1668,7 +1668,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		if (val->isNative() && _gameRef->validObject((BaseObject *)val->getNative())) {
 			BaseObject *obj = (BaseObject *)val->getNative();
 			DXVector3 objPos;
-			((AdGame *)_gameRef)->_scene->_sceneGeometry->convert2Dto3D(obj->_posX, obj->_posY, &objPos);
+			((AdGame *)_gameRef)->_scene->_geom->convert2Dto3D(obj->_posX, obj->_posY, &objPos);
 			angle = radToDeg(-atan2(objPos._z - _posVector._z, objPos._x - _posVector._x)) + 90;
 		} else {
 			// otherwise turn to direction
@@ -2475,14 +2475,14 @@ bool AdActor3DX::updatePartEmitter() {
 
 	AdGame *adGame = (AdGame *)_gameRef;
 
-	if (!adGame->_scene || !adGame->_scene->_sceneGeometry) {
+	if (!adGame->_scene || !adGame->_scene->_geom) {
 		return false;
 	}
 
 	DXVector3 bonePos;
 	getBonePosition3D(_partBone.c_str(), &bonePos, &_partOffset);
 	int32 x = 0, y = 0;
-	static_cast<AdGame *>(_gameRef)->_scene->_sceneGeometry->convert3Dto2D(&bonePos, &x, &y);
+	static_cast<AdGame *>(_gameRef)->_scene->_geom->convert3Dto2D(&bonePos, &x, &y);
 
 	_partEmitter->_posX = x - _gameRef->_renderer->_drawOffsetX;
 	_partEmitter->_posY = y - _gameRef->_renderer->_drawOffsetY;
