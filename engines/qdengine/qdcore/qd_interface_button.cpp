@@ -220,7 +220,8 @@ bool qdInterfaceButton::load_script_body(const xml::tag *p) {
 		switch (it->ID()) {
 		case QDSCR_INTERFACE_ELEMENT_STATE: {
 			qdInterfaceElementState st;
-			st.load_script(&*it);
+			if (!st.load_script(&*it))
+				return false;
 			add_state(st);
 		}
 		break;
