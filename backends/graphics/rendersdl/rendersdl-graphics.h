@@ -173,6 +173,7 @@ protected:
 
 	SDL_Renderer *_renderer;
 	SDL_Texture *_screenTexture;
+	Uint32 _screenTexFormat;
 	void recreateScreenTexture();
 
 	/** Unseen game screen */
