@@ -667,13 +667,8 @@ void Adlib::OnTimer() {
 									uint8 v = gArray227F[bp8];
 									if (v == bp3) {
 										// l0017_1C09:
-										// TODO: And another comparison with an unimplemented
-										// structure
-										// 	mov	di,[bp-8h]
-										// mov al, [di + 2235h]
-										// cmp al, [bp - 4h]
-										// jz 1C1Ah
-										if (true) {
+										uint8 v2 = gArray2235[bp8];
+										if (v2 != bp4) {
 											// l0017_1C15:
 											bp8++;
 										} else {
