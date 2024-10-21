@@ -58,7 +58,7 @@ EventManager::EventManager() {
 			int read = sscanf(descr, "%d %d", &preset.score, &preset.triggerEventID);
 
 			if (read != 2)
-				error("EventManager(): Incorrect description string: %s", str_cache);
+				warning("EventManager(): Incorrect description string: %s", str_cache);
 
 			if (read == 2) {
 				if (preset.triggerEventID >= (int)_triggerEvents.size())
@@ -77,7 +77,7 @@ EventManager::EventManager() {
 			int read = sscanf(descr, "%d %d %d %d", &preset.score, &preset.fontID, &preset.escapeID, &preset.triggerEventID);
 
 			if (read != 4)
-				error("EventManager(): Incorrect event description string: %d", idx);
+				warning("EventManager(): Incorrect event description string: %d", idx);
 
 			if (preset.triggerEventID >= (int)_triggerEvents.size())
 				error("EventManager(): Reference to an unregistered trigger in %s", str_cache);
