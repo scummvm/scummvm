@@ -439,7 +439,7 @@ float AdSceneGeometry::getHeightAt(DXVector3 pos, float tolerance, bool *intFoun
 					continue; // only fall down
 				}
 
-				if (!intFoundTmp || ABS(ret - pos._y) > ABS(intersection._y - pos._y)) {
+				if (!intFoundTmp || fabs(ret - pos._y) > fabs(intersection._y - pos._y)) {
 					ret = intersection._y;
 				}
 
