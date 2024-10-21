@@ -39,6 +39,7 @@ void Pal::load(const Pal &pal) {
 bool Pal::load(const Common::Path &filename, bool shouldInstallPalette) {
 	Common::File file;
 	if (!file.open(filename)) {
+		loadFromScreen();
 		return false;
 	}
 	uint32 bytesRead = file.read(_palData, DARKSEED_PAL_SIZE);
