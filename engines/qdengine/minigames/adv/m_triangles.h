@@ -78,7 +78,7 @@ public:
 	void quant(float dt);
 
 private:
-	GameType gameType_;
+	GameType gameType_ = TRIANGLE;
 	Coords positions_;
 	int selectDepth_ = 0;
 
