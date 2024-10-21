@@ -108,6 +108,9 @@ protected:
 				if ((int)_path[curpos] == _hoverIndex)
 					break;
 
+			if (curpos == 0)
+				return;			// There is no previous element
+
 			int nextloc = curpos - 1;
 			while (nextloc != (int)curpos) {
 				if (nextloc < 0)
