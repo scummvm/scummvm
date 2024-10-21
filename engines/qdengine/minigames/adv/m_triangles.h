@@ -80,21 +80,21 @@ public:
 private:
 	GameType gameType_;
 	Coords positions_;
-	int selectDepth_;
+	int selectDepth_ = 0;
 
-	int fieldLines_;
-	int fieldWidth_;
-	int fieldSize_;
+	int fieldLines_ = 0;
+	int fieldWidth_ = 0;
+	int fieldSize_ = 0;
 	Nodes nodes_;
 	ObjectContainer selectBorders_[2];
 	ObjectContainer backSides_[6];
-	int selected_;
-	int hovered_;
+	int selected_ = 0;
+	int hovered_ = 0;
 
-	AnimationState animationState_;
-	int animatedNodes_[2];
-	float animationTime_;
-	float animationTimer_;
+	AnimationState animationState_ = NO_ANIMATION;
+	int animatedNodes_[2] =  { 0 };
+	float animationTime_ = 0.0;
+	float animationTimer_ = 0.0;
 
 	/// очистить рубашку фишки
 	void releaseNodeBack(Node& node);
