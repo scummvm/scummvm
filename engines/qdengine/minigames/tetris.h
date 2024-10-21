@@ -50,6 +50,9 @@ public:
 		if (!_flyingObjs) {
 			_flyingObjs = (qdMinigameObjectInterface **)malloc(5 * sizeof(qdMinigameObjectInterface *));
 
+			if (!_flyingObjs)
+				return false;
+
 			for (int i = 0; i < 5; i++) {
 				Common::String name = Common::String::format("\xeb\xe5\xf2\xe8\xf2%d", i + 1); // "летит%i"
 				_flyingObjs[i] = _scene->object_interface(_scene->minigame_parameter(name.c_str()));
@@ -58,6 +61,9 @@ public:
 
 		if (!_hiddenObjs) {
 			_hiddenObjs = (qdMinigameObjectInterface **)malloc(5 * sizeof(qdMinigameObjectInterface *));
+
+			if (!_hiddenObjs)
+				return false;
 
 			for (int i = 0; i < 5; i++) {
 				Common::String name = Common::String::format("\xf1\xea\xf0\xfb\xf2%d", i + 1); // "скрыт%i"
