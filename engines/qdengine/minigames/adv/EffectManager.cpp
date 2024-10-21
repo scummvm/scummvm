@@ -42,6 +42,8 @@ EffectManager::EffectManager(HoldData<EffectManagerData> &data) {
 
 	_current = EFFECT_COUNT;
 
+	_effectTimer = 0;
+	_phaseTimer = 0;
 }
 
 EffectManager::~EffectManager() {
