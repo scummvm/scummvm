@@ -381,7 +381,7 @@ const qdInterfaceEvent *qdInterfaceElementState::find_event(qdInterfaceEvent::ev
 bool qdInterfaceElementState::has_event(qdInterfaceEvent::event_t type, const char *ev_data) const {
 	for (events_container_t::const_iterator it = _events.begin(); it != _events.end(); ++it) {
 		if (it->event() == type) {
-			if ((!ev_data && !it->event_data()) || (it->event_data() && !strcmp(ev_data, it->event_data())))
+			if ((!ev_data && !it->event_data()) || (it->event_data() && ev_data && !strcmp(ev_data, it->event_data())))
 				return true;
 		}
 	}
