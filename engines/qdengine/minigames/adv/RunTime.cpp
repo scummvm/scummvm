@@ -146,10 +146,6 @@ bool MinigameManager::createGame() {
 	assert(engine_ && scene_);
 	assert(!game_);
 
-	warning("STUB: MinigameManager::createGame()");
-
-#if 0
-
 	screenSize_ = engine_->screen_size();
 
 #ifdef _DEBUG
@@ -244,7 +240,6 @@ bool MinigameManager::createGame() {
 		return true;
 	}
 
-#endif
 	return false;
 }
 
