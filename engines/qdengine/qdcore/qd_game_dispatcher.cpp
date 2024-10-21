@@ -1934,7 +1934,6 @@ bool qdGameDispatcher::play_video(qdVideo *p) {
 }
 
 bool qdGameDispatcher::pause_video() {
-	if (!_cur_video) return false;
 	return false;
 }
 
