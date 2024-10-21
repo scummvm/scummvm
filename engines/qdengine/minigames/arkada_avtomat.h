@@ -524,20 +524,20 @@ private:
 	const qdEngineInterface *_engine = nullptr;
 	qdMinigameSceneInterface *_scene = nullptr;
 
-	qdMinigameObjectInterface *_patronMouseObj;
-	qdMinigameObjectInterface *_patronTomatoObj;
-	qdMinigameObjectInterface *_killObj;
-	qdMinigameObjectInterface *_fazaObj;
-	qdMinigameObjectInterface *_menObj;
-	qdMinigameObjectInterface *_bloodObj;
-	qdMinigameObjectInterface *_shotsEggObj;
-	qdMinigameObjectInterface *_shotsTomatoObj;
-	qdMinigameObjectInterface *_shotsBananObj;
-	qdMinigameObjectInterface *_doneObj;
-	qdMinigameObjectInterface *_livesObj;
-	qdMinigameObjectInterface *_bublObj;
-	qdMinigameObjectInterface *_walkFlagObj;
-	qdMinigameObjectInterface *_jumpFlagObj;
+	qdMinigameObjectInterface *_patronMouseObj = nullptr;
+	qdMinigameObjectInterface *_patronTomatoObj = nullptr;
+	qdMinigameObjectInterface *_killObj = nullptr;
+	qdMinigameObjectInterface *_fazaObj = nullptr;
+	qdMinigameObjectInterface *_menObj = nullptr;
+	qdMinigameObjectInterface *_bloodObj = nullptr;
+	qdMinigameObjectInterface *_shotsEggObj = nullptr;
+	qdMinigameObjectInterface *_shotsTomatoObj = nullptr;
+	qdMinigameObjectInterface *_shotsBananObj = nullptr;
+	qdMinigameObjectInterface *_doneObj = nullptr;
+	qdMinigameObjectInterface *_livesObj = nullptr;
+	qdMinigameObjectInterface *_bublObj = nullptr;
+	qdMinigameObjectInterface *_walkFlagObj = nullptr;
+	qdMinigameObjectInterface *_jumpFlagObj = nullptr;
 
 	bool _goingLeft = false;
 	bool _goingRight = false;
