@@ -194,7 +194,8 @@ bool qdInterfaceButton::init(bool is_game_active) {
 
 bool qdInterfaceButton::save_script_body(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < num_states(); i++) {
-		get_state(i)->save_script(fh, indent + 1);
+		if (!get_state(i)->save_script(fh, indent + 1))
+			return false;
 	}
 
 	return true;
