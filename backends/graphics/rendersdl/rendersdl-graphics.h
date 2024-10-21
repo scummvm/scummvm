@@ -64,12 +64,10 @@ public:
 	Graphics::PixelFormat getScreenFormat() const override { return _screenFormat; }
 	Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
 #endif
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	const OSystem::GraphicsMode *getSupportedStretchModes() const override;
 	int getDefaultStretchMode() const override;
 	bool setStretchMode(int mode) override;
 	int getStretchMode() const override;
-#endif
 	void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL) override;
 	int getScreenChangeID() const override { return _screenChangeCount; }
 
@@ -83,7 +81,6 @@ protected:
 	// PaletteManager API
 	void setPalette(const byte *colors, uint start, uint num) override;
 	void grabPalette(byte *colors, uint start, uint num) const override;
-	virtual void initGraphicsSurface();
 
 	/**
 	 * Convert from the SDL pixel format to Graphics::PixelFormat
@@ -174,19 +171,9 @@ protected:
 
 	virtual void setupHardwareSize();
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	/* SDL2 features a different API for 2D graphics. We create a wrapper
-	 * around this API to keep the code paths as close as possible. */
 	SDL_Renderer *_renderer;
 	SDL_Texture *_screenTexture;
-	void deinitializeRenderer();
 	void recreateScreenTexture();
-
-	virtual SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags);
-	virtual void SDL_UpdateRects(SDL_Surface *screen, int numrects, SDL_Rect *rects);
-	int SDL_SetColors(SDL_Surface *surface, SDL_Color *colors, int firstcolor, int ncolors);
-	int SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Uint8 alpha);
-#endif
 
 	/** Unseen game screen */
 	SDL_Surface *_screen;
@@ -221,10 +208,8 @@ protected:
 		bool sizeChanged;
 		bool needHotswap;
 		bool needUpdatescreen;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 		bool needTextureUpdate;
 		bool needDisplayResize;
-#endif
 #ifdef USE_RGB_COLOR
 		bool formatChanged;
 #endif
@@ -234,10 +219,8 @@ protected:
 			needHotswap = false;
 			needUpdatescreen = false;
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 			needTextureUpdate = false;
 			needDisplayResize = false;
-#endif
 #ifdef USE_RGB_COLOR
 			formatChanged = false;
 #endif
@@ -253,9 +236,7 @@ protected:
 		bool filtering;
 
 		int mode;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 		int stretchMode;
-#endif
 		bool vsync;
 
 		uint scalerIndex;
@@ -274,9 +255,7 @@ protected:
 			filtering = false;
 
 			mode = GFX_RENDERSDL;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 			stretchMode = 0;
-#endif
 			vsync = false;
 
 			scalerIndex = 0;
@@ -292,23 +271,6 @@ protected:
 		}
 	};
 	VideoState _videoMode, _oldVideoMode;
-
-#if defined(WIN32) && !SDL_VERSION_ATLEAST(2, 0, 0)
-	/**
-	 * Original BPP to restore the video mode on unload.
-	 *
-	 * This is required to make listing video modes for the OpenGL output work
-	 * on Windows 8+. On these systems OpenGL modes are only available for
-	 * 32bit formats. However, we setup a 16bit format and thus mode listings
-	 * for OpenGL will return an empty list afterwards.
-	 *
-	 * In theory we might require this behavior on non-Win32 platforms too.
-	 * However, SDL sometimes gives us invalid pixel formats for X11 outputs
-	 * causing crashes when trying to setup the original pixel format.
-	 * See bug #7038 "IRIX: X BadMatch when trying to start any 640x480 game".
-	 */
-	uint8 _originalBitsPerPixel;
-#endif
 
 	int _transactionMode;
 
