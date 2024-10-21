@@ -54,17 +54,11 @@
 #endif
 #endif
 
-// SDL surface flags which got removed in SDL2.
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-#define SDL_FULLSCREEN  0x40000000
-#endif
-
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"rendersdl", _s("SDL Renderer"), GFX_RENDERSDL},
 	{nullptr, nullptr, 0}
 };
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 const OSystem::GraphicsMode s_supportedStretchModes[] = {
 	{"center", _s("Center"), STRETCH_CENTER},
 	{"pixel-perfect", _s("Pixel-perfect scaling"), STRETCH_INTEGRAL},
@@ -73,7 +67,6 @@ const OSystem::GraphicsMode s_supportedStretchModes[] = {
 	{"fit_force_aspect", _s("Fit to window (4:3)"), STRETCH_FIT_FORCE_ASPECT},
 	{nullptr, nullptr, 0}
 };
-#endif
 
 RenderSdlGraphicsManager::RenderSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
 	:
@@ -82,12 +75,7 @@ RenderSdlGraphicsManager::RenderSdlGraphicsManager(SdlEventSource *sdlEventSourc
 	_osdMessageTexture(nullptr), _osdMessageAlpha(SDL_ALPHA_TRANSPARENT), _osdMessageFadeStartTime(0),
 	_osdIconTexture(nullptr),
 #endif
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	_renderer(nullptr), _screenTexture(nullptr),
-#endif
-#if defined(WIN32) && !SDL_VERSION_ATLEAST(2, 0, 0)
-	_originalBitsPerPixel(0),
-#endif
 	_screen(nullptr), _tmpscreen(nullptr),
 	_screenFormat(Graphics::PixelFormat::createFormatCLUT8()),
 	_cursorFormat(Graphics::PixelFormat::createFormatCLUT8()),
@@ -115,9 +103,7 @@ RenderSdlGraphicsManager::RenderSdlGraphicsManager(SdlEventSource *sdlEventSourc
 
 	_videoMode.fullscreen = ConfMan.getBool("fullscreen");
 	_videoMode.filtering = ConfMan.getBool("filtering");
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	_videoMode.stretchMode = STRETCH_FIT;
-#endif
 	_videoMode.vsync = ConfMan.getBool("vsync");
 
 	_videoMode.scalerIndex = getDefaultScaler();
@@ -152,12 +138,10 @@ bool RenderSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 #endif
 		(f == OSystem::kFeatureAspectRatioCorrection) ||
 		(f == OSystem::kFeatureFilteringMode) ||
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 		(f == OSystem::kFeatureFullscreenToggleKeepsContext) ||
 		(f == OSystem::kFeatureStretchMode) ||
 		(f == OSystem::kFeatureRotationMode) ||
 		(f == OSystem::kFeatureVSync) ||
-#endif
 		(f == OSystem::kFeatureCursorPalette) ||
 		(f == OSystem::kFeatureCursorAlpha) ||
 		(f == OSystem::kFeatureIconifyWindow) ||
@@ -268,10 +252,8 @@ void RenderSdlGraphicsManager::beginGFXTransaction() {
 	_transactionDetails.needHotswap = false;
 	_transactionDetails.needUpdatescreen = false;
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	_transactionDetails.needDisplayResize = false;
 	_transactionDetails.needTextureUpdate = false;
-#endif
 #ifdef USE_RGB_COLOR
 	_transactionDetails.formatChanged = false;
 #endif
@@ -310,13 +292,12 @@ OSystem::TransactionError RenderSdlGraphicsManager::endGFXTransaction() {
 			_videoMode.scaleFactor = _oldVideoMode.scaleFactor;
 		}
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 		if (_videoMode.stretchMode != _oldVideoMode.stretchMode) {
 			errors |= OSystem::kTransactionStretchModeSwitchFailed;
 
 			_videoMode.stretchMode = _oldVideoMode.stretchMode;
 		}
-#endif
+
 		if (_videoMode.vsync != _oldVideoMode.vsync) {
 			errors |= OSystem::kTransactionVSyncFailed;
 
@@ -390,16 +371,14 @@ OSystem::TransactionError RenderSdlGraphicsManager::endGFXTransaction() {
 			// To fix this issue we update the screen change count right here.
 			_screenChangeCount++;
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 			if (_transactionDetails.needDisplayResize) {
 				recalculateDisplayAreas();
 				recalculateCursorScaling();
 			}
-#endif
+
 			if (_transactionDetails.needUpdatescreen)
 				internUpdateScreen();
 		}
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	} else if (_transactionDetails.needTextureUpdate) {
 		setGraphicsModeIntern();
 		recreateScreenTexture();
@@ -408,15 +387,12 @@ OSystem::TransactionError RenderSdlGraphicsManager::endGFXTransaction() {
 			recalculateCursorScaling();
 		}
 		internUpdateScreen();
-#endif
 	} else if (_transactionDetails.needUpdatescreen) {
 		setGraphicsModeIntern();
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 		if (_transactionDetails.needDisplayResize) {
 			recalculateDisplayAreas();
 			recalculateCursorScaling();
 		}
-#endif
 		internUpdateScreen();
 	}
 
@@ -449,7 +425,6 @@ Common::List<Graphics::PixelFormat> RenderSdlGraphicsManager::getSupportedFormat
 	return _supportedFormats;
 }
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 static void maskToBitCount(Uint32 mask, uint8 &numBits, uint8 &shift) {
 	numBits = 0;
 	shift = 32;
@@ -464,14 +439,12 @@ static void maskToBitCount(Uint32 mask, uint8 &numBits, uint8 &shift) {
 		mask >>= 1;
 	}
 }
-#endif
 
 void RenderSdlGraphicsManager::detectSupportedFormats() {
 	_supportedFormats.clear();
 
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	{
 		SDL_DisplayMode defaultMode;
 		if (SDL_GetDesktopDisplayMode(_window->getDisplayIndex(), &defaultMode) != 0) {
@@ -495,17 +468,12 @@ void RenderSdlGraphicsManager::detectSupportedFormats() {
 
 		_supportedFormats.push_back(format);
 	}
-#endif
 
 	if (_hwScreen) {
 		// Get our currently set hardware format
 		Graphics::PixelFormat hwFormat = convertSDLPixelFormat(_hwScreen->format);
 
 		_supportedFormats.push_back(hwFormat);
-
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
-		format = hwFormat;
-#endif
 	}
 
 	// Some tables with standard formats that we always list
@@ -659,7 +627,6 @@ uint RenderSdlGraphicsManager::getScaleFactor() const {
 	return _videoMode.scaleFactor;
 }
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 const OSystem::GraphicsMode *RenderSdlGraphicsManager::getSupportedStretchModes() const {
 	return s_supportedStretchModes;
 }
@@ -702,7 +669,6 @@ bool RenderSdlGraphicsManager::setStretchMode(int mode) {
 int RenderSdlGraphicsManager::getStretchMode() const {
 	return _videoMode.stretchMode;
 }
-#endif
 
 void RenderSdlGraphicsManager::getDefaultResolution(uint &w, uint &h) {
 	w = 320;
@@ -734,15 +700,6 @@ void RenderSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFor
 		_transactionDetails.formatChanged = true;
 		_screenFormat = newFormat;
 	}
-#endif
-
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
-	// Avoid redundant res changes, only in SDL1. In SDL2, redundancies may not
-	// actually be redundant if ScummVM is switching between game engines and
-	// the screen dimensions are being reinitialized, since window resizing is
-	// supposed to reset when this happens
-	if ((int)w == _videoMode.screenWidth && (int)h == _videoMode.screenHeight)
-		return;
 #endif
 
 	if ((int)w != _videoMode.screenWidth || (int)h != _videoMode.screenHeight) {
@@ -795,14 +752,6 @@ void RenderSdlGraphicsManager::setupHardwareSize() {
 	_videoMode.hardwareHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 }
 
-void RenderSdlGraphicsManager::initGraphicsSurface() {
-	Uint32 flags = SDL_SWSURFACE;
-	if (_videoMode.fullscreen)
-		flags |= SDL_FULLSCREEN;
-
-	_hwScreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 16, flags);
-}
-
 bool RenderSdlGraphicsManager::loadGFXMode() {
 	_forceRedraw = true;
 
@@ -823,15 +772,15 @@ bool RenderSdlGraphicsManager::loadGFXMode() {
 		error("allocating _screen failed");
 
 #ifdef USE_RGB_COLOR
-	// Avoid having SDL_SRCALPHA set even if we supplied an alpha-channel in the format.
-	SDL_SetAlpha(_screen, 0, 255);
+	// Avoid having the blend mode set even if we supplied an alpha-channel in the format.
+	SDL_SetSurfaceBlendMode(_screen, SDL_BLENDMODE_NONE);
 #endif
 
 	// SDL 1.2 palettes default to all black,
 	// SDL 1.3 palettes default to all white,
 	// Thus set our own default palette to all black.
-	// SDL_SetColors does nothing for non indexed surfaces.
-	SDL_SetColors(_screen, _currentPalette, 0, 256);
+	if (_screen->format->palette)
+		SDL_SetPaletteColors(_screen->format->palette, _currentPalette, 0, 256);
 
 	//
 	// Create the surface that contains the scaled graphics in 16 bit mode
@@ -845,17 +794,58 @@ bool RenderSdlGraphicsManager::loadGFXMode() {
 	} else
 #endif
 	{
-#if defined(WIN32) && !SDL_VERSION_ATLEAST(2, 0, 0)
-		// Save the original bpp to be able to restore the video mode on
-		// unload. See _originalBitsPerPixel documentation.
-		if (_originalBitsPerPixel == 0) {
-			const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
-			_originalBitsPerPixel = videoInfo->vfmt->BitsPerPixel;
+
+		uint32 createWindowFlags = SDL_WINDOW_RESIZABLE;
+		uint32 rendererFlags = 0;
+
+		if (_videoMode.fullscreen)
+			createWindowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+
+		if (!createOrUpdateWindow(_videoMode.hardwareWidth, _videoMode.hardwareHeight, createWindowFlags)) {
+			error("Failed to create window: %s", SDL_GetError());
 		}
+
+#if defined(MACOSX) && SDL_VERSION_ATLEAST(2, 0, 10)
+		// WORKAROUND: Bug #11430: "macOS: blurry content on Retina displays"
+		// Since SDL 2.0.10, Metal takes priority over OpenGL rendering on macOS,
+		// but this causes blurriness issues on Retina displays. Just switch
+		// back to OpenGL for now.
+		SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 #endif
 
-		initGraphicsSurface();
+		if (_videoMode.vsync) {
+			rendererFlags |= SDL_RENDERER_PRESENTVSYNC;
+		}
+
+		_renderer = SDL_CreateRenderer(_window->getSDLWindow(), -1, rendererFlags);
+		if (!_renderer) {
+			if (_videoMode.vsync) {
+				// VSYNC might not be available, so retry without VSYNC
+				warning("SDL_SetVideoMode: SDL_CreateRenderer() failed with VSYNC option, retrying without it...");
+				_videoMode.vsync = false;
+				rendererFlags &= ~SDL_RENDERER_PRESENTVSYNC;
+				_renderer = SDL_CreateRenderer(_window->getSDLWindow(), -1, rendererFlags);
+			}
+			if (!_renderer) {
+				error("Failed to create renderer: %s", SDL_GetError());
+			}
+		}
+
+		getWindowSizeFromSdl(&_windowWidth, &_windowHeight);
+		handleResize(_windowWidth, _windowHeight);
+
+		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, _videoMode.filtering ? "linear" : "nearest");
+
+		Uint32 screenFormat = SDL_PIXELFORMAT_RGB565;
+
+		_screenTexture = SDL_CreateTexture(_renderer, screenFormat, SDL_TEXTUREACCESS_STREAMING, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
+		if (!_screenTexture) {
+			error("Failed to create texture: %s", SDL_GetError());
+		}
+
+		_hwScreen = SDL_CreateRGBSurfaceWithFormat(SDL_SWSURFACE, _videoMode.hardwareWidth, _videoMode.hardwareHeight, SDL_BITSPERPIXEL(screenFormat), screenFormat);
 	}
+
 
 #ifdef USE_RGB_COLOR
 	detectSupportedFormats();
@@ -872,10 +862,6 @@ bool RenderSdlGraphicsManager::loadGFXMode() {
 			return false;
 		}
 	}
-
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
-	handleResize(_videoMode.hardwareWidth, _videoMode.hardwareHeight);
-#endif
 
 	//
 	// Create the surface used for the graphics in 16 bit before scaling, and also the overlay
@@ -899,10 +885,19 @@ bool RenderSdlGraphicsManager::loadGFXMode() {
 									_videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels);
 	}
 
+#if defined(USE_IMGUI) && defined(USE_IMGUI_SDLRENDERER2)
+	// Setup Dear ImGui
+	initImGui(_renderer, nullptr);
+#endif
+
 	return true;
 }
 
 void RenderSdlGraphicsManager::unloadGFXMode() {
+#if defined(USE_IMGUI) && defined(USE_IMGUI_SDLRENDERER2)
+	destroyImGui();
+#endif
+
 	if (_screen) {
 		SDL_FreeSurface(_screen);
 		_screen = nullptr;
@@ -935,9 +930,10 @@ void RenderSdlGraphicsManager::unloadGFXMode() {
 		_overlaySurface = nullptr;
 	}
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	deinitializeRenderer();
-#endif
+	if (_screenTexture) {
+		SDL_DestroyTexture(_screenTexture);
+		_screenTexture = nullptr;
+	}
 
 	if (_hwScreen) {
 		SDL_FreeSurface(_hwScreen);
@@ -949,13 +945,10 @@ void RenderSdlGraphicsManager::unloadGFXMode() {
 		_tmpscreen = nullptr;
 	}
 
-#if defined(WIN32) && !SDL_VERSION_ATLEAST(2, 0, 0)
-	// Reset video mode to original.
-	// This will ensure that any new graphic manager will use the initial BPP
-	// when listing available modes. See _originalBitsPerPixel documentation.
-	if (_originalBitsPerPixel != 0)
-		SDL_SetVideoMode(_videoMode.screenWidth, _videoMode.screenHeight, _originalBitsPerPixel, _videoMode.fullscreen ? (SDL_FULLSCREEN | SDL_SWSURFACE) : SDL_SWSURFACE);
-#endif
+	if (_renderer) {
+		SDL_DestroyRenderer(_renderer);
+		_renderer = nullptr;
+	}
 }
 
 bool RenderSdlGraphicsManager::hotswapGFXMode() {
@@ -987,7 +980,8 @@ bool RenderSdlGraphicsManager::hotswapGFXMode() {
 	}
 
 	// reset palette
-	SDL_SetColors(_screen, _currentPalette, 0, 256);
+	if (_screen->format->palette)
+		SDL_SetPaletteColors(_screen->format->palette, _currentPalette, 0, 256);
 
 	// Restore old screen content
 	SDL_BlitSurface(old_screen, nullptr, _screen, nullptr);
@@ -1013,7 +1007,7 @@ void RenderSdlGraphicsManager::updateScreen() {
 }
 
 void RenderSdlGraphicsManager::updateScreen(SDL_Rect *dirtyRectList, int actualDirtyRects) {
-	SDL_UpdateRects(_hwScreen, actualDirtyRects, dirtyRectList);
+	SDL_UpdateTexture(_screenTexture, nullptr, _hwScreen->pixels, _hwScreen->pitch);
 }
 
 void RenderSdlGraphicsManager::internUpdateScreen() {
@@ -1026,50 +1020,14 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 	if (debugger)
 		debugger->onFrame();
 
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
-	// If the shake position changed, fill the dirty area with blackness
-	// When building with SDL2, the shake offset is added to the active rect instead,
-	// so this isn't needed there.
-	if (_currentShakeXOffset != _gameScreenShakeXOffset) {
-		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_videoMode.screenHeight * _videoMode.scaleFactor)};
-
-		if (_gameScreenShakeXOffset >= 0)
-			blackrect.w = (Uint16)(_gameScreenShakeXOffset * _videoMode.scaleFactor);
-		else {
-			blackrect.w = ((-_gameScreenShakeXOffset) * _videoMode.scaleFactor);
-			blackrect.x = ((_videoMode.screenWidth + _gameScreenShakeXOffset) * _videoMode.scaleFactor);
-		}
-
-		SDL_FillRect(_hwScreen, &blackrect, 0);
-
-		_currentShakeXOffset = _gameScreenShakeXOffset;
-
-		_forceRedraw = true;
-	}
-	if (_currentShakeYOffset != _gameScreenShakeYOffset) {
-		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_videoMode.screenHeight * _videoMode.scaleFactor)};
-
-		if (_gameScreenShakeYOffset >= 0)
-			blackrect.h = (Uint16)(_gameScreenShakeYOffset * _videoMode.scaleFactor);
-		else {
-			blackrect.h = ((-_gameScreenShakeYOffset) * _videoMode.scaleFactor);
-			blackrect.y = ((_videoMode.screenHeight + _gameScreenShakeYOffset) * _videoMode.scaleFactor);
-		}
-
-		SDL_FillRect(_hwScreen, &blackrect, 0);
-
-		_currentShakeYOffset = _gameScreenShakeYOffset;
-
-		_forceRedraw = true;
-	}
-#endif
-
 	// Check whether the palette was changed in the meantime and update the
 	// screen surface accordingly.
 	if (_screen && _paletteDirtyEnd != 0) {
-		SDL_SetColors(_screen, _currentPalette + _paletteDirtyStart,
-			_paletteDirtyStart,
-			_paletteDirtyEnd - _paletteDirtyStart);
+		if (_screen->format->palette)
+			SDL_SetPaletteColors(_screen->format->palette,
+				_currentPalette + _paletteDirtyStart,
+				_paletteDirtyStart,
+				_paletteDirtyEnd - _paletteDirtyStart);
 
 		_paletteDirtyEnd = 0;
 
@@ -1209,8 +1167,6 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 	_forceRedraw = false;
 	_cursorNeedsRedraw = false;
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-
 #if defined(USE_IMGUI) && defined(USE_IMGUI_SDLRENDERER2)
 	renderImGui();
 #endif
@@ -1218,7 +1174,6 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 	if (doPresent) {
 		SDL_RenderPresent(_renderer);
 	}
-#endif
 }
 
 bool RenderSdlGraphicsManager::saveScreenshot(const Common::Path &filename) const {
@@ -1307,9 +1262,7 @@ void RenderSdlGraphicsManager::setFilteringMode(bool enable) {
 
 	if (_transactionMode == kTransactionActive) {
 		_videoMode.filtering = enable;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 		_transactionDetails.needTextureUpdate = true;
-#endif
 	}
 }
 
@@ -1482,9 +1435,7 @@ void RenderSdlGraphicsManager::setPalette(const byte *colors, uint start, uint n
 		base[i].r = b[0];
 		base[i].g = b[1];
 		base[i].b = b[2];
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 		base[i].a = 255;
-#endif
 	}
 
 	if (start < _paletteDirtyStart)
@@ -1520,9 +1471,7 @@ void RenderSdlGraphicsManager::setCursorPalette(const byte *colors, uint start, 
 		base[i].r = b[0];
 		base[i].g = b[1];
 		base[i].b = b[2];
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 		base[i].a = 255;
-#endif
 	}
 
 	_cursorPaletteDisabled = false;
@@ -2025,7 +1974,9 @@ void RenderSdlGraphicsManager::blitCursor() {
 			SDL_SetSurfaceRLE(_mouseSurface, SDL_TRUE);
 	}
 
-	SDL_SetColors(_mouseSurface, _cursorPaletteDisabled ? _currentPalette : _cursorPalette, 0, 256);
+	if (_mouseSurface->format->palette)
+		SDL_SetPaletteColors(_mouseSurface->format->palette,
+			_cursorPaletteDisabled ? _currentPalette : _cursorPalette, 0, 256);
 	uint32 flags = _disableMouseKeyColor ? SDL_FALSE : SDL_TRUE;
 	SDL_SetColorKey(_mouseSurface, flags, _mouseKeyColor);
 
@@ -2417,9 +2368,7 @@ void RenderSdlGraphicsManager::handleResizeImpl(const int width, const int heigh
 }
 
 void RenderSdlGraphicsManager::handleScalerHotkeys(uint mode, int factor) {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	bool sizeChanged = _videoMode.scaleFactor != factor;
-#endif
 
 	beginGFXTransaction();
 		setScaler(mode, factor);
@@ -2438,13 +2387,11 @@ void RenderSdlGraphicsManager::handleScalerHotkeys(uint mode, int factor) {
 	}
 #endif
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (sizeChanged) {
 		// Forcibly resizing the window here since a user switching scaler
 		// size will not normally cause the window to update
 		_window->createOrUpdateWindow(_hwScreen->w, _hwScreen->h, _lastFlags);
 	}
-#endif
 
 	internUpdateScreen();
 }
@@ -2485,7 +2432,6 @@ bool RenderSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		internUpdateScreen();
 		return true;
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	case kActionCycleStretchMode: {
 		int index = 0;
 		const OSystem::GraphicsMode *sm = s_supportedStretchModes;
@@ -2514,7 +2460,6 @@ bool RenderSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		internUpdateScreen();
 		return true;
 	}
-#endif
 
 	case kActionIncreaseScaleFactor:
 		handleScalerHotkeys(_videoMode.scalerIndex, _scaler->increaseFactor());
@@ -2555,24 +2500,7 @@ void RenderSdlGraphicsManager::notifyVideoExpose() {
 }
 
 void RenderSdlGraphicsManager::notifyResize(const int width, const int height) {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	handleResize(width, height);
-#endif
-}
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-void RenderSdlGraphicsManager::deinitializeRenderer() {
-#if defined(USE_IMGUI) && defined(USE_IMGUI_SDLRENDERER2)
-	destroyImGui();
-#endif
-
-	if (_screenTexture)
-		SDL_DestroyTexture(_screenTexture);
-	_screenTexture = nullptr;
-
-	if (_renderer)
-		SDL_DestroyRenderer(_renderer);
-	_renderer = nullptr;
 }
 
 void RenderSdlGraphicsManager::recreateScreenTexture() {
@@ -2587,103 +2515,6 @@ void RenderSdlGraphicsManager::recreateScreenTexture() {
 		SDL_DestroyTexture(oldTexture);
 	else
 		_screenTexture = oldTexture;
-}
-
-SDL_Surface *RenderSdlGraphicsManager::SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
-	deinitializeRenderer();
-
-	uint32 createWindowFlags = SDL_WINDOW_RESIZABLE;
-	uint32 rendererFlags = 0;
-	if ((flags & SDL_FULLSCREEN) != 0) {
-		createWindowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-	}
-
-	if (!createOrUpdateWindow(width, height, createWindowFlags)) {
-		return nullptr;
-	}
-
-#if defined(MACOSX) && SDL_VERSION_ATLEAST(2, 0, 10)
-	// WORKAROUND: Bug #11430: "macOS: blurry content on Retina displays"
-	// Since SDL 2.0.10, Metal takes priority over OpenGL rendering on macOS,
-	// but this causes blurriness issues on Retina displays. Just switch
-	// back to OpenGL for now.
-	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
-#endif
-
-	if (_videoMode.vsync) {
-		rendererFlags |= SDL_RENDERER_PRESENTVSYNC;
-	}
-
-	_renderer = SDL_CreateRenderer(_window->getSDLWindow(), -1, rendererFlags);
-	if (!_renderer) {
-		if (_videoMode.vsync) {
-			// VSYNC might not be available, so retry without VSYNC
-			warning("SDL_SetVideoMode: SDL_CreateRenderer() failed with VSYNC option, retrying without it...");
-			_videoMode.vsync = false;
-			rendererFlags &= ~SDL_RENDERER_PRESENTVSYNC;
-			_renderer = SDL_CreateRenderer(_window->getSDLWindow(), -1, rendererFlags);
-		}
-		if (!_renderer) {
-			deinitializeRenderer();
-			return nullptr;
-		}
-	}
-
-	getWindowSizeFromSdl(&_windowWidth, &_windowHeight);
-	handleResize(_windowWidth, _windowHeight);
-
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, _videoMode.filtering ? "linear" : "nearest");
-
-	Uint32 format = SDL_PIXELFORMAT_RGB565;
-
-	_screenTexture = SDL_CreateTexture(_renderer, format, SDL_TEXTUREACCESS_STREAMING, width, height);
-	if (!_screenTexture) {
-		deinitializeRenderer();
-		return nullptr;
-	}
-
-	SDL_Surface *screen = SDL_CreateRGBSurfaceWithFormat(0, width, height, SDL_BITSPERPIXEL(format), format);
-	if (!screen) {
-		deinitializeRenderer();
-		return nullptr;
-	}
-
-#if defined(USE_IMGUI) && defined(USE_IMGUI_SDLRENDERER2)
-	// Setup Dear ImGui
-	initImGui(_renderer, nullptr);
-#endif
-
-	return screen;
-}
-
-void RenderSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrects, SDL_Rect *rects) {
-	SDL_UpdateTexture(_screenTexture, nullptr, screen->pixels, screen->pitch);
-}
-
-int RenderSdlGraphicsManager::SDL_SetColors(SDL_Surface *surface, SDL_Color *colors, int firstcolor, int ncolors) {
-	if (surface->format->palette) {
-		return !SDL_SetPaletteColors(surface->format->palette, colors, firstcolor, ncolors) ? 1 : 0;
-	} else {
-		return 0;
-	}
-}
-
-int RenderSdlGraphicsManager::SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Uint8 alpha) {
-	if (SDL_SetSurfaceAlphaMod(surface, alpha)) {
-		return -1;
-	}
-
-	if (alpha == 255 || !flag) {
-		if (SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE)) {
-			return -1;
-		}
-	} else {
-		if (SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_BLEND)) {
-			return -1;
-		}
-	}
-
-	return 0;
 }
 
 #if defined(USE_IMGUI) && defined(USE_IMGUI_SDLRENDERER2)
@@ -2711,7 +2542,5 @@ void RenderSdlGraphicsManager::freeImGuiTexture(void *texture) {
 	SDL_DestroyTexture((SDL_Texture *) texture);
 }
 #endif // defined(USE_IMGUI) && defined(USE_IMGUI_SDLRENDERER2)
-
-#endif // SDL_VERSION_ATLEAST(2, 0, 0)
 
 #endif
