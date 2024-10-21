@@ -393,7 +393,7 @@ private:
 	qdMinigameObjectInterface *_objScene = nullptr;
 	qdMinigameObjectInterface *_objSelectedSet = nullptr;
 
-	qdMinigameObjectInterface *_objects[131];
+	qdMinigameObjectInterface *_objects[131] = { nullptr };
 };
 
 } // namespace QDEngine
