@@ -39,6 +39,10 @@ BaseRenderer3D::BaseRenderer3D(Wintermute::BaseGame *inGame) : BaseRenderer(inGa
 
 	_ambientLightColor = 0x00000000;
 	_ambientLightOverride = false;
+
+	DXMatrixIdentity(&_worldMatrix);
+	DXMatrixIdentity(&_viewMatrix);
+	DXMatrixIdentity(&_projectionMatrix);
 }
 
 BaseRenderer3D::~BaseRenderer3D() {

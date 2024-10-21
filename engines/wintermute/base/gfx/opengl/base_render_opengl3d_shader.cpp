@@ -628,8 +628,9 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	_flatShadowXModelShader = OpenGL::Shader::fromFiles("wme_flat_shadow_modelx", flatShadowXModelAttributes);
 
 	_active = true;
-	// setup a proper state
-	setup2D(true);
+
+	setProjection();
+
 	return true;
 }
 
@@ -876,7 +877,13 @@ void BaseRenderOpenGL3DShader::renderSceneGeometry(const BaseArray<AdWalkplane *
 
 void BaseRenderOpenGL3DShader::renderShadowGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
                                                     const BaseArray<AdGeneric *> &generics, Camera3D *camera) {
-	setup3D(camera, true);
+	DXMatrix matIdentity;
+	DXMatrixIdentity(&matIdentity);
+
+	if (camera)
+		_gameRef->_renderer3D->setup3D(camera, true);
+
+	setWorldTransform(matIdentity);
 
 	// disable color write
 	glBlendFunc(GL_ZERO, GL_ONE);

@@ -408,6 +408,8 @@ bool AdSceneGeometry::render(bool render) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::renderShadowGeometry() {
+	storeDrawingParams();
+
 	_gameRef->_renderer3D->renderShadowGeometry(_planes, _blocks, _generics, getActiveCamera());
 	return true;
 }

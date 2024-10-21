@@ -56,6 +56,8 @@ public:
 
 	bool displayDebugInfo() override;
 
+	virtual bool renderShadowGeometry() override;
+
 	bool addSpeechDir(const char *dir);
 	bool removeSpeechDir(const char *dir);
 	char *findSpeechFile(char *StringID);

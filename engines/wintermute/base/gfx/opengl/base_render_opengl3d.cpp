@@ -467,6 +467,8 @@ bool BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
 	_simpleShadow[3].u = 1.0f;
 	_simpleShadow[3].v = 0.0f;
 
+	setProjection();
+
 	return true;
 }
 
@@ -742,9 +744,13 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 
 void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
 	                                     const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) {
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	_gameRef->_renderer3D->setup3D(camera, true);
+	DXMatrix matIdentity;
+	DXMatrixIdentity(&matIdentity);
+
+	if (camera)
+		_gameRef->_renderer3D->setup3D(camera, true);
+
+	setWorldTransform(matIdentity);
 
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
@@ -811,9 +817,13 @@ void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &pla
 void BaseRenderOpenGL3D::renderShadowGeometry(const BaseArray<AdWalkplane *> &planes,
                                               const BaseArray<AdBlock *> &blocks,
                                               const BaseArray<AdGeneric *> &generics, Camera3D *camera) {
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	setup3D(camera, true);
+	DXMatrix matIdentity;
+	DXMatrixIdentity(&matIdentity);
+
+	if (camera)
+		_gameRef->_renderer3D->setup3D(camera, true);
+
+	setWorldTransform(matIdentity);
 
 	// disable color write
 	glBlendFunc(GL_ZERO, GL_ONE);
