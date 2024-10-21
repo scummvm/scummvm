@@ -337,45 +337,35 @@ const char *qdscr_XML_string(const char *p) {
 
 	conv_str = p;
 
-	uint32 pos = Common::String::npos;
-	do {
+	uint32 pos = conv_str.find("&");;
+	while (pos != Common::String::npos) {
+		conv_str.replace(pos, 1, "&amp;");
 		pos = conv_str.find("&", pos + 1);
-		if (pos != Common::String::npos)
-			conv_str.replace(pos, 1, "&amp;");
+	}
 
-	} while (pos != Common::String::npos);
-
-	pos = Common::String::npos;
-	do {
+	pos = conv_str.find("<");
+	while (pos != Common::String::npos) {
+		conv_str.replace(pos, 1, "&lt;");
 		pos = conv_str.find("<", pos + 1);
-		if (pos != Common::String::npos)
-			conv_str.replace(pos, 1, "&lt;");
+	}
 
-	} while (pos != Common::String::npos);
-
-	pos = Common::String::npos;
-	do {
+	pos = conv_str.find(">");
+	while (pos != Common::String::npos) {
+		conv_str.replace(pos, 1, "&gt;");
 		pos = conv_str.find(">", pos + 1);
-		if (pos != Common::String::npos)
-			conv_str.replace(pos, 1, "&gt;");
+	}
 
-	} while (pos != Common::String::npos);
-
-	pos = Common::String::npos;
-	do {
+	pos = conv_str.find("\"");
+	while (pos != Common::String::npos) {
+		conv_str.replace(pos, 1, "&quot;");
 		pos = conv_str.find("\"", pos + 1);
-		if (pos != Common::String::npos)
-			conv_str.replace(pos, 1, "&quot;");
+	}
 
-	} while (pos != Common::String::npos);
-
-	pos = Common::String::npos;
-	do {
+	pos = conv_str.find("'");
+	while (pos != Common::String::npos) {
+		conv_str.replace(pos, 1, "&#039;");
 		pos = conv_str.find("'", pos + 1);
-		if (pos != Common::String::npos)
-			conv_str.replace(pos, 1, "&#039;");
-
-	} while (pos != Common::String::npos);
+	}
 
 	return (const char *)transCyrillic(conv_str.c_str());
 }
