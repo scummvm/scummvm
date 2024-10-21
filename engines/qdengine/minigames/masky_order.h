@@ -51,7 +51,7 @@ public:
 	~qdMaskyOrderMiniGame() {};
 
 	bool init(const qdEngineInterface *engine_interface) {
-		debugC(1, kDebugMinigames, "MaskyOrder::init(), dll: %s lang: %d", _dll.c_str(), _language);
+		debugC(1, kDebugMinigames, "MaskyOrder::init()");
 
 		_engine = engine_interface;
 		_scene = _engine->current_scene_interface();
@@ -319,9 +319,6 @@ private:
 	int _rotatingPiece = -1;
 	bool _pieceIsPut = true;
 	int _currentPieceState = 0;
-
-	Common::String _dll;
-	Common::Language _language;
 };
 
 } // namespace QDEngine
