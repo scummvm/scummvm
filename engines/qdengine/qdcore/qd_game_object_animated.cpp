@@ -75,6 +75,7 @@ qdGameObjectAnimated::qdGameObjectAnimated(const qdGameObjectAnimated &obj) : qd
 	_inventory_name(obj._inventory_name),
 	_last_state(NULL),
 	_inventory_cell_index(-1),
+	_last_inventory_state(nullptr),
 	_last_frame(NULL),
 	_last_chg_time(obj._last_chg_time),
 	_shadow_alpha(obj._shadow_alpha),
