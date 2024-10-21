@@ -43,20 +43,19 @@ using namespace AGS::Shared;
 
 #define Random __Rand
 
-int CharacterInfo::get_effective_y() {
-	return y - z;
-}
-int CharacterInfo::get_baseline() {
+int CharacterInfo::get_baseline() const {
 	if (baseline < 1)
 		return y;
 	return baseline;
 }
-int CharacterInfo::get_blocking_top() {
+
+int CharacterInfo::get_blocking_top() const {
 	if (blocking_height > 0)
 		return y - blocking_height / 2;
 	return y - 2;
 }
-int CharacterInfo::get_blocking_bottom() {
+
+int CharacterInfo::get_blocking_bottom() const {
 	// the blocking_bottom should be 1 less than the top + height
 	// since the code does <= checks on it rather than < checks
 	if (blocking_height > 0)
@@ -86,7 +85,7 @@ void CharacterInfo::UpdateMoveAndAnim(int &char_index, CharacterExtras *chex, st
 			// view has no frames?!
 			// amazingly enough there are old games that allow this to happen...
 			if (_G(loaded_game_file_version) >= kGameVersion_300)
-				quitprintf("!Character %s is assigned view %d that has no frames!", name, view);
+				quitprintf("!Character %s is assigned view %d that has no frames!", scrname, view);
 			loop = 0;
 		}
 	}
@@ -209,7 +208,7 @@ void CharacterInfo::update_character_moving(int &char_index, CharacterExtras *ch
 		}
 
 		if (loop >= _GP(views)[view].numLoops)
-			quitprintf("Unable to render character %d (%s) because loop %d does not exist in view %d", index_id, name, loop, view + 1);
+			quitprintf("Unable to render character %d (%s) because loop %d does not exist in view %d", index_id, scrname, loop, view + 1);
 
 		// check don't overflow loop
 		int framesInLoop = _GP(views)[view].loops[loop].numFrames;
@@ -220,7 +219,7 @@ void CharacterInfo::update_character_moving(int &char_index, CharacterExtras *ch
 				frame = 0;
 
 			if (framesInLoop < 1)
-				quitprintf("Unable to render character %d (%s) because there are no frames in loop %d", index_id, name, loop);
+				quitprintf("Unable to render character %d (%s) because there are no frames in loop %d", index_id, scrname, loop);
 		}
 
 		doing_nothing = 0; // still walking?
@@ -235,7 +234,7 @@ void CharacterInfo::update_character_moving(int &char_index, CharacterExtras *ch
 				// use standing pic
 				chex->animwait = 0;
 				frame = 0;
-				CheckViewFrameForCharacter(this);
+				chex->CheckViewFrame(this);
 			}
 		} else if (chex->animwait > 0) {
 			chex->animwait--;
@@ -260,13 +259,15 @@ void CharacterInfo::update_character_moving(int &char_index, CharacterExtras *ch
 				else
 					walkwait = 0;
 
-				CheckViewFrameForCharacter(this);
+				chex->CheckViewFrame(this);
 			}
 		}
 	}
 }
 
 int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
+	CharacterExtras *chex = &_GP(charextra)[index_id];
+
 	// not moving, but animating
 	// idleleft is <0 while idle view is playing (.animating is 0)
 	if (((animating != 0) || (idleleft < 0)) &&
@@ -290,7 +291,7 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 
 			if (frame != fraa) {
 				frame = fraa;
-				CheckViewFrameForCharacter(this);
+				chex->CheckViewFrame(this);
 			}
 
 			//continue;
@@ -309,8 +310,7 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 				done_anim = true;
 				frame = 0;
 			} else {
-				if (!CycleViewAnim(view, loop, frame, (animating & CHANIM_BACKWARDS) == 0,
-					(animating & CHANIM_REPEAT) ? ANIM_REPEAT : ANIM_ONCE)) {
+				if (!CycleViewAnim(view, loop, frame, get_anim_forwards(), get_anim_repeat())) {
 					done_anim = true; // finished animating
 					// end of idle anim
 					if (idleleft < 0) {
@@ -331,10 +331,10 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 			if (idleleft < 0)
 				wait += idle_anim_speed;
 			else
-				wait += (animating >> 8) & 0x00ff;
+				wait += get_anim_delay();
 
 			if (frame != oldframe)
-				CheckViewFrameForCharacter(this);
+				chex->CheckViewFrame(this);
 
 			if (done_anim)
 				stop_character_anim(this);
@@ -400,10 +400,10 @@ void CharacterInfo::update_character_follower(int &aa, std::vector<int> &followi
 				}
 			}
 		} else if (room != _G(displayed_room)) {
-			// if the characetr is following another character and
+			// if the character is following another character and
 			// neither is in the current room, don't try to move
-		} else if ((abs(_GP(game).chars[following].x - x) > distaway + 30) |
-		           (abs(_GP(game).chars[following].y - y) > distaway + 30) |
+		} else if ((abs(_GP(game).chars[following].x - x) > distaway + 30) ||
+		           (abs(_GP(game).chars[following].y - y) > distaway + 30) ||
 		           ((followinfo & 0x00ff) == 0)) {
 			// in same room
 			int goxoffs = (Random(50) - 25);

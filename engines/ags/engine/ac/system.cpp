@@ -53,7 +53,7 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-bool System_HasInputFocus() {
+bool System_GetHasInputFocus() {
 	return !_G(switched_away);
 }
 
@@ -256,7 +256,7 @@ RuntimeScriptValue Sc_System_GetHardwareAcceleration(const RuntimeScriptValue *p
 }
 
 RuntimeScriptValue Sc_System_GetHasInputFocus(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_BOOL(System_HasInputFocus);
+	API_SCALL_BOOL(System_GetHasInputFocus);
 }
 
 // int ()
@@ -291,7 +291,7 @@ RuntimeScriptValue Sc_System_GetSupportsGammaControl(const RuntimeScriptValue *p
 
 // const char *()
 RuntimeScriptValue Sc_System_GetVersion(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ(const char, _GP(myScriptStringImpl), System_GetVersion);
+	API_SCALL_OBJ(const char, _GP(myScriptStringImpl), System_GetVersion);
 }
 
 // int ()
@@ -334,7 +334,7 @@ RuntimeScriptValue Sc_System_SetWindowed(const RuntimeScriptValue *params, int32
 
 // const char *()
 RuntimeScriptValue Sc_System_GetRuntimeInfo(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ(const char, _GP(myScriptStringImpl), System_GetRuntimeInfo);
+	API_SCALL_OBJ(const char, _GP(myScriptStringImpl), System_GetRuntimeInfo);
 }
 
 RuntimeScriptValue Sc_System_GetRenderAtScreenResolution(const RuntimeScriptValue *params, int32_t param_count) {
@@ -355,38 +355,52 @@ RuntimeScriptValue Sc_System_Log(const RuntimeScriptValue *params, int32_t param
 	return RuntimeScriptValue((int32_t)0);
 }
 
+//=============================================================================
+//
+// Exclusive variadic API implementation for Plugins
+//
+//=============================================================================
+
+void ScPl_System_Log(int message_type, const char *texx, ...) {
+	API_PLUGIN_SCRIPT_SPRINTF_PURE(texx);
+	Debug::Printf(kDbgGroup_Script, (MessageType)message_type, scsf_buffer);
+}
 
 void RegisterSystemAPI() {
-	ccAddExternalStaticFunction("System::get_AudioChannelCount", Sc_System_GetAudioChannelCount);
-	ccAddExternalStaticFunction("System::geti_AudioChannels", Sc_System_GetAudioChannels);
-	ccAddExternalStaticFunction("System::get_CapsLock", Sc_System_GetCapsLock);
-	ccAddExternalStaticFunction("System::get_ColorDepth", Sc_System_GetColorDepth);
-	ccAddExternalStaticFunction("System::get_Gamma", Sc_System_GetGamma);
-	ccAddExternalStaticFunction("System::set_Gamma", Sc_System_SetGamma);
-	ccAddExternalStaticFunction("System::get_HardwareAcceleration", Sc_System_GetHardwareAcceleration);
-	ccAddExternalStaticFunction("System::get_HasInputFocus", Sc_System_GetHasInputFocus);
-	ccAddExternalStaticFunction("System::get_NumLock", Sc_System_GetNumLock);
-	ccAddExternalStaticFunction("System::get_OperatingSystem", Sc_System_GetOS);
-	ccAddExternalStaticFunction("System::get_RenderAtScreenResolution", Sc_System_GetRenderAtScreenResolution);
-	ccAddExternalStaticFunction("System::set_RenderAtScreenResolution", Sc_System_SetRenderAtScreenResolution);
-	ccAddExternalStaticFunction("System::get_RuntimeInfo", Sc_System_GetRuntimeInfo);
-	ccAddExternalStaticFunction("System::get_ScreenHeight", Sc_System_GetScreenHeight);
-	ccAddExternalStaticFunction("System::get_ScreenWidth", Sc_System_GetScreenWidth);
-	ccAddExternalStaticFunction("System::get_ScrollLock", Sc_System_GetScrollLock);
-	ccAddExternalStaticFunction("System::get_SupportsGammaControl", Sc_System_GetSupportsGammaControl);
-	ccAddExternalStaticFunction("System::get_Version", Sc_System_GetVersion);
-	ccAddExternalStaticFunction("SystemInfo::get_Version", Sc_System_GetVersion);
-	ccAddExternalStaticFunction("System::get_ViewportHeight", Sc_System_GetViewportHeight);
-	ccAddExternalStaticFunction("System::get_ViewportWidth", Sc_System_GetViewportWidth);
-	ccAddExternalStaticFunction("System::get_Volume", Sc_System_GetVolume);
-	ccAddExternalStaticFunction("System::set_Volume", Sc_System_SetVolume);
-	ccAddExternalStaticFunction("System::get_VSync", Sc_System_GetVsync);
-	ccAddExternalStaticFunction("System::set_VSync", Sc_System_SetVsync);
-	ccAddExternalStaticFunction("System::get_Windowed", Sc_System_GetWindowed);
-	ccAddExternalStaticFunction("System::set_Windowed", Sc_System_SetWindowed);
+	ScFnRegister system_api[] = {
+		{"System::get_AudioChannelCount", API_FN_PAIR(System_GetAudioChannelCount)},
+		{"System::geti_AudioChannels", API_FN_PAIR(System_GetAudioChannels)},
+		{"System::get_CapsLock", API_FN_PAIR(System_GetCapsLock)},
+		{"System::get_ColorDepth", API_FN_PAIR(System_GetColorDepth)},
+		{"System::get_Gamma", API_FN_PAIR(System_GetGamma)},
+		{"System::set_Gamma", API_FN_PAIR(System_SetGamma)},
+		{"System::get_HardwareAcceleration", API_FN_PAIR(System_GetHardwareAcceleration)},
+		{"System::get_HasInputFocus", API_FN_PAIR(System_GetHasInputFocus)},
+		{"System::get_NumLock", API_FN_PAIR(System_GetNumLock)},
+		{"System::get_OperatingSystem", API_FN_PAIR(System_GetOS)},
+		{"System::get_RenderAtScreenResolution", API_FN_PAIR(System_GetRenderAtScreenResolution)},
+		{"System::set_RenderAtScreenResolution", API_FN_PAIR(System_SetRenderAtScreenResolution)},
+		{"System::get_RuntimeInfo", API_FN_PAIR(System_GetRuntimeInfo)},
+		{"System::get_ScreenHeight", API_FN_PAIR(System_GetScreenHeight)},
+		{"System::get_ScreenWidth", API_FN_PAIR(System_GetScreenWidth)},
+		{"System::get_ScrollLock", API_FN_PAIR(System_GetScrollLock)},
+		{"System::get_SupportsGammaControl", API_FN_PAIR(System_GetSupportsGammaControl)},
+		{"System::get_Version", API_FN_PAIR(System_GetVersion)},
+		{"SystemInfo::get_Version", API_FN_PAIR(System_GetVersion)},
+		{"System::get_ViewportHeight", API_FN_PAIR(System_GetViewportHeight)},
+		{"System::get_ViewportWidth", API_FN_PAIR(System_GetViewportWidth)},
+		{"System::get_Volume", API_FN_PAIR(System_GetVolume)},
+		{"System::set_Volume", API_FN_PAIR(System_SetVolume)},
+		{"System::get_VSync", API_FN_PAIR(System_GetVsync)},
+		{"System::set_VSync", API_FN_PAIR(System_SetVsync)},
+		{"System::get_Windowed", API_FN_PAIR(System_GetWindowed)},
+		{"System::set_Windowed", API_FN_PAIR(System_SetWindowed)},
 
-	ccAddExternalStaticFunction("System::SaveConfigToFile", Sc_System_SaveConfigToFile);
-	ccAddExternalStaticFunction("System::Log^102", Sc_System_Log);
+		{"System::SaveConfigToFile", Sc_System_SaveConfigToFile},
+		{"System::Log^102", Sc_System_Log},
+	};
+
+	ccAddExternalFunctions361(system_api);
 }
 
 } // namespace AGS3

@@ -43,32 +43,35 @@ void StrSetCharAt(char *strin, int posn, int nchar) {
 	strin[posn] = static_cast<char>(nchar);
 	if (static_cast<size_t>(posn) == len)
 		strin[posn + 1] = 0;
+	commit_scstr_update(strin);
 }
 
 void _sc_strcat(char *s1, const char *s2) {
-	// make sure they don't try to append a char to the string
 	VALIDATE_STRING(s2);
-	check_strlen(s1);
-	int mosttocopy = (_G(MAXSTRLEN) - strlen(s1)) - 1;
-	my_strncpy(&s1[strlen(s1)], s2, mosttocopy);
+	size_t buflen = check_scstrcapacity(s1);
+	size_t s1_len = strlen(s1);
+	size_t buf_avail = (buflen - s1_len);
+	snprintf(s1 + s1_len, buf_avail, "%s", s2);
+	commit_scstr_update(s1);
 }
 
 void _sc_strlower(char *desbuf) {
 	VALIDATE_STRING(desbuf);
-	check_strlen(desbuf);
 	ags_strlwr(desbuf);
+	commit_scstr_update(desbuf);
 }
 
 void _sc_strupper(char *desbuf) {
 	VALIDATE_STRING(desbuf);
-	check_strlen(desbuf);
 	ags_strupr(desbuf);
+	commit_scstr_update(desbuf);
 }
 
 void _sc_strcpy(char *destt, const char *text) {
 	VALIDATE_STRING(destt);
-	check_strlen(destt);
-	my_strncpy(destt, text, _G(MAXSTRLEN) - 1);
+	size_t buflen = check_scstrcapacity(destt);
+	snprintf(destt, buflen, "%s", text);
+	commit_scstr_update(destt);
 }
 
 } // namespace AGS3

@@ -45,11 +45,13 @@
 #include "ags/engine/ac/event.h"
 #include "ags/engine/ac/game_setup.h"
 #include "ags/engine/ac/game_state.h"
+#include "ags/engine/ac/lip_sync.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/move_list.h"
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/route_finder_jps.h"
 #include "ags/engine/ac/screen_overlay.h"
+#include "ags/engine/ac/sprite.h"
 #include "ags/engine/ac/sprite_list_entry.h"
 #include "ags/engine/ac/top_bar_settings.h"
 #include "ags/engine/ac/dynobj/cc_audio_channel.h"
@@ -64,17 +66,19 @@
 #include "ags/engine/ac/dynobj/cc_object.h"
 #include "ags/engine/ac/dynobj/cc_region.h"
 #include "ags/engine/ac/dynobj/cc_serializer.h"
+#include "ags/engine/ac/dynobj/cc_static_array.h"
 #include "ags/engine/ac/dynobj/managed_object_pool.h"
 #include "ags/engine/ac/dynobj/script_audio_channel.h"
+#include "ags/engine/ac/dynobj/script_dialog.h"
 #include "ags/engine/ac/dynobj/script_dialog_options_rendering.h"
+#include "ags/engine/ac/dynobj/script_game.h"
+#include "ags/engine/ac/dynobj/script_gui.h"
 #include "ags/engine/ac/dynobj/script_hotspot.h"
 #include "ags/engine/ac/dynobj/script_inv_item.h"
 #include "ags/engine/ac/dynobj/script_object.h"
 #include "ags/engine/ac/dynobj/script_region.h"
 #include "ags/engine/ac/dynobj/script_string.h"
 #include "ags/engine/ac/dynobj/script_system.h"
-#include "ags/engine/ac/statobj/static_array.h"
-#include "ags/engine/debugging/console_output_target.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/engine/debugging/log_file.h"
 #include "ags/engine/debugging/message_buffer.h"
@@ -95,7 +99,7 @@
 #include "ags/engine/script/system_imports.h"
 #include "common/std/limits.h"
 #include "ags/plugins/ags_plugin.h"
-#include "ags/plugins/plugin_object_reader.h"
+#include "ags/plugins/plugin_engine.h"
 #include "ags/plugins/core/core.h"
 #include "common/file.h"
 
@@ -116,10 +120,11 @@ Globals::Globals() {
 
 	// ags_plugin.cpp globals
 	_glVirtualScreenWrap = new AGS::Shared::Bitmap();
+	_pluginReaders = new std::vector<PluginObjectReader>();
 
-	// ags_static_object.cpp globals
-	_GlobalStaticManager = new AGSStaticObject();
-	_GameStaticManager = new StaticGame();
+	// cc_ags_dynamic_object.cpp globals
+	_GlobalStaticManager = new AGSCCStaticObject();
+	_GameStaticManager = new CCScriptGame();
 
 	// asset_manager.cpp globals
 	_AssetMgr = new std::unique_ptr<Shared::AssetManager>();
@@ -148,6 +153,9 @@ Globals::Globals() {
 	// cc_common globals
 	_ccError = new ScriptError();
 
+	// character.cpp globals
+	_splipsync = new std::vector<SpeechLipSyncLine>();
+
 	// csc_dialog.cpp globals
 	_vobjs = new NewControl *[MAXCONTROLS];
 	_oswi = new OnScreenWindow[MAXSCREENWINDOWS];
@@ -157,12 +165,9 @@ Globals::Globals() {
 	_pushbuttonlightcolor = COL253;
 
 	// debug.cpp globals
-	_fps = std::numeric_limits<float>::quiet_NaN();
 	_display_fps = kFPS_Hide;
-	_debug_line = new String[DEBUG_CONSOLE_NUMLINES];
 	_DebugMsgBuff = new std::unique_ptr<AGS::Engine::MessageBuffer>();
 	_DebugLogFile = new std::unique_ptr<AGS::Engine::LogFile>();
-	_DebugConsole = new std::unique_ptr<AGS::Engine::ConsoleOutputTarget>();
 
 	// debug_manager.cpp globals
 	_DbgMgr = new AGS::Shared::DebugManager();
@@ -177,9 +182,9 @@ Globals::Globals() {
 	_CameraDrawData = new std::vector<RoomCameraDrawData>();
 	_sprlist = new std::vector<SpriteListEntry>();
 	_thingsToDrawList = new std::vector<SpriteListEntry>();
-	_dynamicallyCreatedSurfaces = new AGS::Shared::Bitmap *[MAX_DYNAMIC_SURFACES];
-	Common::fill(_dynamicallyCreatedSurfaces, _dynamicallyCreatedSurfaces +
-	             MAX_DYNAMIC_SURFACES, (AGS::Shared::Bitmap *)nullptr);
+	_dynamicallyCreatedSurfaces = new std::unique_ptr<AGS::Shared::Bitmap>[MAX_DYNAMIC_SURFACES];
+	for (int i = 0; i < MAX_DYNAMIC_SURFACES; i++)
+		_dynamicallyCreatedSurfaces[i].reset(nullptr);
 
 	_actsps = new std::vector<ObjTexture>();
 	_walkbehindobj = new std::vector<ObjTexture>();
@@ -189,10 +194,10 @@ Globals::Globals() {
 	_guiobjddb = new std::vector<Engine::IDriverDependantBitmap *>();
 	_guiobjoff = new std::vector<Point>();
 	_guiobjddbref = new std::vector<int>();
-	_overlaybmp = new std::vector<std::unique_ptr<Shared::Bitmap> >();
+	_overtxs = new std::vector<ObjTexture>();
 	_debugRoomMaskObj =  new ObjTexture();
 	_debugMoveListObj = new ObjTexture();
-
+	_debugConsoleBuffer = new AGS::Shared::Bitmap();
 	_maincoltable = new COLOR_MAP();
 	_palette = new color[256];
 	for (int i = 0; i < PALETTE_COUNT; ++i)
@@ -228,34 +233,45 @@ Globals::Globals() {
 	_ccDynamicDialog = new CCDialog();
 	_ccDynamicAudioClip = new CCAudioClip();
 	_ccDynamicAudio = new CCAudioChannel();
-	_myScriptStringImpl = new ScriptString();
 	_guis = new std::vector<AGS::Shared::GUIMain>();
 	_play = new GameState();
 	_game = new GameSetupStruct();
-	_spriteset = new AGS::Shared::SpriteCache(_game->SpriteInfos);
+
+	AGS::Shared::SpriteCache::Callbacks spritecallbacks = {
+		get_new_size_for_sprite,
+		initialize_sprite,
+		post_init_sprite,
+		nullptr};
+	_spriteset = new AGS::Shared::SpriteCache(_game->SpriteInfos, spritecallbacks);
+
 	_thisroom = new AGS::Shared::RoomStruct();
 	_troom = new RoomStatus();
 	_usetup = new GameSetup();
+	_scrGui = new std::vector<ScriptGUI>();
 	_scrObj = new ScriptObject[MAX_ROOM_OBJECTS];
 	_scrHotspot = new ScriptHotspot[MAX_ROOM_HOTSPOTS];
 	_scrRegion = new ScriptRegion[MAX_ROOM_REGIONS];
 	_scrInv = new ScriptInvItem[MAX_INV];
+	_scrDialog = new std::vector<ScriptDialog>();
 	_charcache = new std::vector<ObjectCache>();
 	_objcache = new ObjectCache[MAX_ROOM_OBJECTS];
-	_screenovercache = new std::vector<Point>();
+	_overcache = new std::vector<Point>();
 	_charextra = new std::vector<CharacterExtras>();
 	_mls = new std::vector<MoveList>();
 	_views = new std::vector<ViewStruct>();
 	_saveGameDirectory = AGS::Shared::SAVE_FOLDER_PREFIX;
 
 	// game_init.cpp globals
-	_StaticCharacterArray = new StaticArray();
-	_StaticObjectArray = new StaticArray();
-	_StaticGUIArray = new StaticArray();
-	_StaticHotspotArray = new StaticArray();
-	_StaticRegionArray = new StaticArray();
-	_StaticInventoryArray = new StaticArray();
-	_StaticDialogArray = new StaticArray();
+	_StaticCharacterArray = new CCStaticArray();
+	_StaticObjectArray = new CCStaticArray();
+	_StaticGUIArray = new CCStaticArray();
+	_StaticHotspotArray = new CCStaticArray();
+	_StaticRegionArray = new CCStaticArray();
+	_StaticInventoryArray = new CCStaticArray();
+	_StaticDialogArray = new CCStaticArray();
+
+	// game_run.cpp globals
+	_fps = std::numeric_limits<float>::quiet_NaN();
 
 	_scummvmGfxFilter = new AGS::Engine::GfxFilterInfo("StdScale", "Nearest-neighbour");
 
@@ -325,6 +341,7 @@ Globals::Globals() {
 
 	// overlay.cpp globals
 	_screenover = new std::vector<ScreenOverlay>();
+	_over_free_ids = new std::queue<int32_t>();
 
 	// plugins globals
 	_engineExports = new Plugins::Core::EngineExports();
@@ -332,13 +349,12 @@ Globals::Globals() {
 	_plugins->reserve(MAXPLUGINS);
 
 	// plugin_object_reader.cpp globals
-	_pluginReaders = new PluginObjectReader[MAX_PLUGIN_OBJECT_READERS];
 
 	// room.cpp globals
 	_rgb_table = new RGB_MAP();
 
 	// route_finder_impl.cpp globals
-	_navpoints = new int32_t[MAXNEEDSTAGES];
+	_navpoints = new Point[MAXNEEDSTAGES];
 	_nav = new Navigation();
 	_route_finder_impl = new std::unique_ptr<IRouteFinder>();
 
@@ -361,13 +377,16 @@ Globals::Globals() {
 	_runDialogOptionCloseFunc = new NonBlockingScriptFunction("dialog_options_close", 1);
 	_scsystem = new ScriptSystem();
 	_scriptModules = new std::vector<PScript>();
-	_moduleInst = new std::vector<ccInstance *>();
-	_moduleInstFork = new std::vector<ccInstance *>();
+	_moduleInst = new std::vector<UInstance>();
+	_moduleInstFork = new std::vector<UInstance>();
 	_moduleRepExecAddr = new std::vector<RuntimeScriptValue>();
 
 	// script_runtime.cpp globals
 	Common::fill(_loadedInstances, _loadedInstances + MAX_LOADED_INSTANCES,
 	             (ccInstance *)nullptr);
+
+	// script_string.cpp globals
+	_myScriptStringImpl = new ScriptString();
 
 	// system_imports.cpp globals
 	_simp = new SystemImports();
@@ -394,6 +413,7 @@ Globals::~Globals() {
 
 	// ags_plugin.cpp globals
 	delete _glVirtualScreenWrap;
+	delete _pluginReaders;
 
 	// ags_static_object.cpp globals
 	delete _GlobalStaticManager;
@@ -424,15 +444,16 @@ Globals::~Globals() {
 	// cc_common.cpp globals
 	delete _ccError;
 
+	// character.cpp globals
+	delete _splipsync;
+
 	// cscdialog.cpp globals
 	delete[] _vobjs;
 	delete[] _oswi;
 
 	// debug.cpp globals
-	delete[] _debug_line;
 	delete _DebugMsgBuff;
 	delete _DebugLogFile;
-	delete _DebugConsole;
 
 	// debug_manager.cpp globals
 	delete _DbgMgr;
@@ -454,7 +475,7 @@ Globals::~Globals() {
 	delete _guiobjddbref;
 	delete _guiobjddb;
 	delete _guiobjoff;
-	delete _overlaybmp;
+	delete _overtxs;
 	delete _debugRoomMaskObj;
 	delete _debugMoveListObj;
 
@@ -491,7 +512,6 @@ Globals::~Globals() {
 	delete _ccDynamicDialog;
 	delete _ccDynamicAudioClip;
 	delete _ccDynamicAudio;
-	delete _myScriptStringImpl;
 	delete _guis;
 	delete _game;
 	delete _play;
@@ -499,13 +519,15 @@ Globals::~Globals() {
 	delete _thisroom;
 	delete _troom;
 	delete _usetup;
+	delete _scrGui;
 	delete[] _scrObj;
 	delete[] _scrHotspot;
 	delete[] _scrRegion;
 	delete[] _scrInv;
+	delete _scrDialog;
 	delete _charcache;
 	delete[] _objcache;
-	delete _screenovercache;
+	delete _overcache;
 	delete _charextra;
 	delete _mls;
 	delete _views;
@@ -584,7 +606,6 @@ Globals::~Globals() {
 	delete _plugins;
 
 	// plugin_object_reader.cpp globals
-	delete[] _pluginReaders;
 
 	// room.cpp globals
 	delete _rgb_table;
@@ -615,6 +636,9 @@ Globals::~Globals() {
 	delete _moduleInst;
 	delete _moduleInstFork;
 	delete _moduleRepExecAddr;
+
+	// script_string.cpp globals
+	delete _myScriptStringImpl;
 
 	// system_imports.cpp globals
 	delete _simp;

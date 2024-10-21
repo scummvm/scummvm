@@ -33,9 +33,11 @@
 #include "ags/engine/ac/properties.h"
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/string.h"
+#include "ags/engine/ac/dynobj/cc_hotspot.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/game/room_struct.h"
 #include "ags/engine/script/script.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -91,18 +93,26 @@ void GetHotspotName(int hotspot, char *buffer) {
 
 void RunHotspotInteraction(int hotspothere, int mood) {
 
-	int passon = -1, cdata = -1;
-	if (mood == MODE_TALK) passon = 4;
-	else if (mood == MODE_WALK) passon = 0;
-	else if (mood == MODE_LOOK) passon = 1;
-	else if (mood == MODE_HAND) passon = 2;
-	else if (mood == MODE_PICKUP) passon = 7;
-	else if (mood == MODE_CUSTOM1) passon = 8;
-	else if (mood == MODE_CUSTOM2) passon = 9;
-	else if (mood == MODE_USE) {
-		passon = 3;
-		cdata = _G(playerchar)->activeinv;
-		_GP(play).usedinv = cdata;
+	// convert cursor mode to event index (in hotspot event table)
+	// TODO: probably move this conversion table elsewhere? should be a global info
+	// TODO: find out what is hotspot event with index 6 (5 is any-click)
+	int evnt;
+	switch (mood) {
+		case MODE_WALK:	evnt = 0; break;
+		case MODE_LOOK:	evnt = 1; break;
+		case MODE_HAND:	evnt = 2; break;
+		case MODE_TALK:	evnt = 4; break;
+		case MODE_USE: evnt = 3; break;
+		case MODE_PICKUP: evnt = 7; break;
+		case MODE_CUSTOM1: evnt = 8; break;
+		case MODE_CUSTOM2: evnt = 9; break;
+		default: evnt = -1; break;
+	}
+	const int anyclick_evt = 5; // TODO: make global constant (hotspot any-click evt)
+
+	// For USE verb: remember active inventory
+	if (mood == MODE_USE) {
+		_GP(play).usedinv = _G(playerchar)->activeinv;
 	}
 
 	if ((_GP(game).options[OPT_WALKONLOOK] == 0) & (mood == MODE_LOOK));
@@ -110,32 +120,20 @@ void RunHotspotInteraction(int hotspothere, int mood) {
 	else if ((mood != MODE_WALK) && (_GP(play).check_interaction_only == 0))
 		MoveCharacterToHotspot(_GP(game).playercharacter, hotspothere);
 
-	// can't use the setevent functions because this ProcessClick is only
-	// executed once in a eventlist
-	const char *oldbasename = _G(evblockbasename);
-	int   oldblocknum = _G(evblocknum);
+	const auto obj_evt = ObjectEvent("hotspot%d", hotspothere,
+									 RuntimeScriptValue().SetScriptObject(&_G(scrHotspot)[hotspothere], &_GP(ccDynamicHotspot)), mood);
 
-	_G(evblockbasename) = "hotspot%d";
-	_G(evblocknum) = hotspothere;
-
-	if (_GP(thisroom).Hotspots[hotspothere].EventHandlers != nullptr) {
-		if (passon >= 0)
-			run_interaction_script(_GP(thisroom).Hotspots[hotspothere].EventHandlers.get(), passon, 5);
-		run_interaction_script(_GP(thisroom).Hotspots[hotspothere].EventHandlers.get(), 5);  // any click on hotspot
+	if (_G(loaded_game_file_version) > kGameVersion_272) {
+		if ((evnt >= 0) &&
+			run_interaction_script(obj_evt, _GP(thisroom).Hotspots[hotspothere].EventHandlers.get(), evnt, anyclick_evt) < 0)
+			return; // game state changed, don't do "any click"
+		run_interaction_script(obj_evt, _GP(thisroom).Hotspots[hotspothere].EventHandlers.get(), anyclick_evt); // any click on hotspot
 	} else {
-		if (passon >= 0) {
-			if (run_interaction_event(&_G(croom)->intrHotspot[hotspothere], passon, 5, (passon == 3))) {
-				_G(evblockbasename) = oldbasename;
-				_G(evblocknum) = oldblocknum;
-				return;
-			}
-		}
-		// run the 'any click on hs' event
-		run_interaction_event(&_G(croom)->intrHotspot[hotspothere], 5);
+		if ((evnt >= 0) &&
+			run_interaction_event(obj_evt, &_G(croom)->intrHotspot[hotspothere], evnt, anyclick_evt, (mood == MODE_USE)) < 0)
+			return; // game state changed, don't do "any click"
+		run_interaction_event(obj_evt, &_G(croom)->intrHotspot[hotspothere], anyclick_evt); // any click on hotspot
 	}
-
-	_G(evblockbasename) = oldbasename;
-	_G(evblocknum) = oldblocknum;
 }
 
 int GetHotspotProperty(int hss, const char *property) {

@@ -29,7 +29,7 @@
 
 namespace AGS3 {
 
-namespace Math = AGS::Shared::Math;
+using namespace AGS::Shared;
 
 enum FormatParseResult {
 	kFormatParseNone,
@@ -65,7 +65,7 @@ inline const char *GetArgPtr(const RuntimeScriptValue *sc_args, va_list *varg_pt
 	if (varg_ptr)
 		return va_arg(*varg_ptr, const char *);
 	else
-		return sc_args[arg_idx].Ptr;
+		return reinterpret_cast<const char *>(sc_args[arg_idx].Ptr);
 }
 
 
@@ -188,11 +188,8 @@ const char *ScriptSprintf(char *buffer, size_t buf_length, const char *format,
 				case kFormatParseArgCharacter:
 				{
 					int chr = GetArgInt(sc_args, varg_ptr, arg_idx);
-					char cbuf[Utf8::UtfSz + 1]{};
-					if (get_uformat() == U_UTF8)
-						Utf8::SetChar(chr, cbuf, Utf8::UtfSz);
-					else
-						cbuf[0] = chr;
+					char cbuf[5]{};
+					usetc(cbuf, chr);
 					snprintf_res = snprintf(out_ptr, avail_outbuf + 1, "%s", cbuf);
 					break;
 				}

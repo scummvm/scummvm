@@ -221,7 +221,7 @@ Bitmap *create_textual_image(const char *text, int asspch, int isThought,
 // Pass yy = -1 to find Y co-ord automatically
 // allowShrink = 0 for none, 1 for leftwards, 2 for rightwards
 // pass blocking=2 to create permanent overlay
-ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp_type, int usingfont,
+ScreenOverlay *display_main(int xx, int yy, int wii, const char *text, int disp_type, int usingfont,
 							 int asspch, int isThought, int allowShrink, bool overlayPositionFixed, bool roomlayer) {
 	//
 	// Prepare for the message display
@@ -259,9 +259,12 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 	if (disp_type < DISPLAYTEXT_NORMALOVERLAY)
 		remove_screen_overlay(_GP(play).text_overlay_on);
 
-	int adjustedXX, adjustedYY;
-	bool alphaChannel;
-	Bitmap *text_window_ds = create_textual_image(text, asspch, isThought, xx, yy, adjustedXX, adjustedYY, wii, usingfont, allowShrink, alphaChannel);
+	// If fast-forwarding, then skip any blocking message immediately
+	if (_GP(play).fast_forward && (disp_type < DISPLAYTEXT_NORMALOVERLAY)) {
+		_GP(play).SetWaitSkipResult(SKIP_AUTOTIMER);
+		post_display_cleanup();
+		return nullptr;
+	}
 
 	//
 	// Configure and create an overlay object
@@ -275,12 +278,17 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 	default: ovrtype = disp_type; break; // must be precreated overlay id
 	}
 
+	int adjustedXX, adjustedYY;
+	bool alphaChannel;
+	Bitmap *text_window_ds = create_textual_image(text, asspch, isThought, xx, yy, adjustedXX, adjustedYY, wii, usingfont, allowShrink, alphaChannel);
+
 	size_t nse = add_screen_overlay(roomlayer, xx, yy, ovrtype, text_window_ds, adjustedXX - xx, adjustedYY - yy, alphaChannel);
+	auto *over = get_overlay(nse); // FIXME: optimize return value
 	// we should not delete text_window_ds here, because it is now owned by Overlay
 
 	// If it's a non-blocking overlay type, then we're done here
 	if (disp_type >= DISPLAYTEXT_NORMALOVERLAY) {
-		return &_GP(screenover)[nse];
+		return over;
 	}
 
 	//
@@ -288,13 +296,6 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 	//
 
 	if (disp_type == DISPLAYTEXT_MESSAGEBOX) {
-		// If fast-forwarding, then skip immediately
-		if (_GP(play).fast_forward) {
-			remove_screen_overlay(OVER_TEXTMSG);
-			_GP(play).SetWaitSkipResult(SKIP_AUTOTIMER);
-			post_display_cleanup();
-			return nullptr;
-		}
 
 		int countdown = GetTextDisplayTime(text);
 		int skip_setting = user_to_internal_skip_speech((SkipSpeechStyle)_GP(play).skip_display);
@@ -306,7 +307,7 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 			sys_evt_process_pending();
 
 			update_audio_system_on_game_loop();
-			update_cursor_and_dependent();
+			UpdateCursorAndDrawables();
 			render_graphics();
 			eAGSMouseButton mbut;
 			int mwheelz;
@@ -365,16 +366,11 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 		invalidate_screen();
 	} else {
 		/* DISPLAYTEXT_SPEECH */
-		// if the speech does not time out, but we are skipping a cutscene,
-		// allow it to time out
-		if ((_GP(play).messagetime < 0) && (_GP(play).fast_forward))
-			_GP(play).messagetime = 2;
-
 		if (!overlayPositionFixed) {
-			_GP(screenover)[nse].SetRoomRelative(true);
-			VpPoint vpt = _GP(play).GetRoomViewport(0)->ScreenToRoom(_GP(screenover)[nse].x, _GP(screenover)[nse].y, false);
-			_GP(screenover)[nse].x = vpt.first.X;
-			_GP(screenover)[nse].y = vpt.first.Y;
+			over->SetRoomRelative(true);
+			VpPoint vpt = _GP(play).GetRoomViewport(0)->ScreenToRoom(over->x, over->y, false);
+			over->x = vpt.first.X;
+			over->y = vpt.first.Y;
 		}
 
 		GameLoopUntilNoOverlay();
@@ -387,22 +383,14 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 	return nullptr;
 }
 
-void _display_at(int xx, int yy, int wii, const char *text, int disp_type, int asspch, int isThought, int allowShrink, bool overlayPositionFixed) {
-	int usingfont = FONT_NORMAL;
-	if (asspch) usingfont = FONT_SPEECH;
-	// TODO: _display_at may be called from _displayspeech, which can start
-	// and finalize voice speech on its own. Find out if we really need to
-	// keep track of this and not just stop voice regardless.
-	bool need_stop_speech = false;
-
+void display_at(int xx, int yy, int wii, const char *text) {
 	EndSkippingUntilCharStops();
+	// Start voice-over, if requested by the tokens in speech text
+	try_auto_play_speech(text, text, _GP(play).narrator_speech);
+	display_main(xx, yy, wii, text, DISPLAYTEXT_MESSAGEBOX, FONT_NORMAL, 0, 0, 0, false);
 
-	if (try_auto_play_speech(text, text, _GP(play).narrator_speech)) {
-		need_stop_speech = true;
-	}
-	_display_main(xx, yy, wii, text, disp_type, usingfont, asspch, isThought, allowShrink, overlayPositionFixed);
-
-	if (need_stop_speech)
+	// Stop any blocking voice-over, if was started by this function
+	if (_GP(play).IsBlockingVoiceSpeech())
 		stop_voice_speech();
 }
 
@@ -413,18 +401,16 @@ void post_display_cleanup() {
 }
 
 bool try_auto_play_speech(const char *text, const char *&replace_text, int charid) {
-	const char *src = text;
-	if (src[0] != '&')
-		return false;
+	int voice_num;
+	const char *src = parse_voiceover_token(text, &voice_num);
+	if (src == text)
+		return false; // no token
 
-	int sndid = atoi(&src[1]);
-	while ((src[0] != ' ') & (src[0] != 0)) src++;
-	if (src[0] == ' ') src++;
-	if (sndid <= 0)
+	if (voice_num <= 0)
 		quit("DisplaySpeech: auto-voice symbol '&' not followed by valid integer");
 
 	replace_text = src; // skip voice tag
-	if (play_voice_speech(charid, sndid)) {
+	if (play_voice_speech(charid, voice_num)) {
 		// if Voice Only, then blank out the text
 		if (_GP(play).speech_mode == kSpeech_VoiceOnly)
 			replace_text = "  ";
@@ -434,25 +420,29 @@ bool try_auto_play_speech(const char *text, const char *&replace_text, int chari
 }
 
 int GetTextDisplayLength(const char *text) {
-	int len = (int)strlen(text);
-	if ((text[0] == '&') && (_GP(play).unfactor_speech_from_textlength != 0)) {
-		// if there's an "&12 text" type line, remove "&12 " from the source length
-		size_t j = 0;
-		while ((text[j] != ' ') && (text[j] != 0))
-			j++;
-		j++;
-		len -= j;
-	}
-	return len;
+	// Skip voice-over token from the length calculation if required
+	if (_GP(play).unfactor_speech_from_textlength != 0)
+		text = parse_voiceover_token(text, nullptr);
+	return static_cast<int>(strlen(text));
+}
+
+// Calculates lipsync frame duration (or duration per character) in game loops.
+// NOTE: historical formula was this:
+//   loops_per_character = (((text_len / play.lipsync_speed) + 1) * fps) / text_len;
+// But because of a precision loss due integer division this resulted in "jumping" values.
+// The new formula uses float division, and coefficent found experimentally to make
+// results match the old formula in certain key text lengths, for backwards compatibility.
+int CalcLipsyncFrameDuration(int text_len, int fps) {
+	return static_cast<int>((((static_cast<float>(text_len) / _GP(play).lipsync_speed) + 0.75f) * fps) / text_len);
 }
 
 int GetTextDisplayTime(const char *text, int canberel) {
 	int uselen = 0;
-	auto fpstimer = ::lround(get_current_fps());
+	auto fpstimer = ::lround(get_game_fps());
 
 	// if it's background speech, make it stay relative to game speed
 	if ((canberel == 1) && (_GP(play).bgspeech_game_speed == 1))
-		fpstimer = 40;
+		fpstimer = 40; // NOTE: should be a fixed constant here, not game speed value
 
 	if (_G(source_text_length) >= 0) {
 		// sync to length of original text, to make sure any animations
@@ -470,10 +460,7 @@ int GetTextDisplayTime(const char *text, int canberel) {
 		quit("!Text speed is zero; unable to display text. Check your _GP(game).text_speed settings.");
 
 	// Store how many game loops per character of text
-	// This is calculated using a hard-coded 15 for the text speed,
-	// so that it's always the same no matter how fast the user
-	// can read.
-	_G(loops_per_character) = (((uselen / _GP(play).lipsync_speed) + 1) * fpstimer) / uselen;
+	_G(loops_per_character) = CalcLipsyncFrameDuration(uselen, fpstimer);
 
 	int textDisplayTimeInMS = ((uselen / (_GP(play).text_speed + _GP(play).text_speed_modifier)) + 1) * 1000;
 	if (textDisplayTimeInMS < _GP(play).text_min_display_time_ms)
@@ -504,20 +491,23 @@ void wouttextxy_AutoOutline(Bitmap *ds, size_t font, int32_t color, const char *
 
 	// WORKAROUND: Clifftop's Spritefont plugin returns a wrong font height for font 2 in Kathy Rain, which causes a partial outline
 	// for some letters. Unfortunately fixing the value on the plugin side breaks the line spacing, so let's just correct it here.
-	size_t const t_width = get_text_width(texx, font);
-	size_t const t_height = get_font_surface_height(font) + ((strcmp(_GP(game).guid, "{d6795d1c-3cfe-49ec-90a1-85c313bfccaf}") == 0) && (font == 2) ? 1 : 0);
+	const int t_width = get_text_width(texx, font);
+	const auto t_extent = get_font_surface_extent(font);
+	const int t_height = t_extent.second - t_extent.first + ((strcmp(_GP(game).guid, "{d6795d1c-3cfe-49ec-90a1-85c313bfccaf}") == 0) && (font == 2) ? 1 : 0);
 
 	if (t_width == 0 || t_height == 0)
 		return;
 
 	// Prepare stencils
+	const int t_yoff = t_extent.first;
 	Bitmap *texx_stencil, *outline_stencil;
 	alloc_font_outline_buffers(font, &texx_stencil, &outline_stencil,
 		t_width, t_height, stencil_cd);
 	texx_stencil->ClearTransparent();
 	outline_stencil->ClearTransparent();
 	// Ready text stencil
-	wouttextxy(texx_stencil, 0, 0, font, color, texx);
+	// Note we are drawing with y off, in case some font's glyphs exceed font's ascender
+	wouttextxy(texx_stencil, 0, -t_yoff, font, color, texx);
 
 	// Anti-aliased TTFs require to be alpha-blended, not blit,
 	// or the alpha values will be plain copied and final image will be broken.
@@ -531,7 +521,7 @@ void wouttextxy_AutoOutline(Bitmap *ds, size_t font, int32_t color, const char *
 
 	// move start of text so that the outline doesn't drop off the bitmap
 	xxp += thickness;
-	int const outline_y = yyp;
+	int const outline_y = yyp + t_yoff;
 	yyp += thickness;
 
 	// What we do here: first we paint text onto outline_stencil offsetting vertically;
@@ -602,7 +592,7 @@ int get_font_outline_padding(int font) {
 
 void do_corner(Bitmap *ds, int sprn, int x, int y, int offx, int offy) {
 	if (sprn < 0) return;
-	if (_GP(spriteset)[sprn] == nullptr) {
+	if (!_GP(spriteset).DoesSpriteExist(sprn)) {
 		sprn = 0;
 	}
 
@@ -613,7 +603,7 @@ void do_corner(Bitmap *ds, int sprn, int x, int y, int offx, int offy) {
 
 int get_but_pic(GUIMain *guo, int indx) {
 	int butid = guo->GetControlID(indx);
-	return butid >= 0 ? _GP(guibuts)[butid].Image : 0;
+	return butid >= 0 ? _GP(guibuts)[butid].GetNormalImage() : 0;
 }
 
 void draw_button_background(Bitmap *ds, int xx1, int yy1, int xx2, int yy2, GUIMain *iep) {
@@ -623,14 +613,10 @@ void draw_button_background(Bitmap *ds, int xx1, int yy1, int xx2, int yy2, GUIM
 		ds->FillRect(Rect(xx1, yy1, xx2, yy2), draw_color);
 		draw_color = ds->GetCompatibleColor(16);
 		ds->DrawRect(Rect(xx1, yy1, xx2, yy2), draw_color);
-		/*    draw_color = ds->GetCompatibleColor(opts.tws.backcol); ds->FillRect(Rect(xx1,yy1,xx2,yy2);
-		draw_color = ds->GetCompatibleColor(opts.tws.ds->GetTextColor()); ds->DrawRect(Rect(xx1+1,yy1+1,xx2-1,yy2-1);*/
 	} else {
-		if (_G(loaded_game_file_version) < kGameVersion_262) { // < 2.62
-			// Color 0 wrongly shows as transparent instead of black
-			// From the changelog of 2.62:
-			//  - Fixed text windows getting a black background if colour 0 was
-			//    specified, rather than being transparent.
+		if (_G(loaded_game_file_version) < kGameVersion_262) {
+			// In pre-2.62 color 0 should be treated as "black" instead of "transparent";
+			// this was an unintended effect in older versions (see 2.62 changelog fixes).
 			if (iep->BgColor == 0)
 				iep->BgColor = 16;
 		}
@@ -645,12 +631,7 @@ void draw_button_background(Bitmap *ds, int xx1, int yy1, int xx2, int yy2, GUIM
 		const int topBottomHeight = _GP(game).SpriteInfos[get_but_pic(iep, 6)].Height;
 		// GUI middle space
 		if (iep->BgImage > 0) {
-			if ((_G(loaded_game_file_version) <= kGameVersion_272) // 2.xx
-			        && (_GP(spriteset)[iep->BgImage]->GetWidth() == 1)
-			        && (_GP(spriteset)[iep->BgImage]->GetHeight() == 1)
-			        && (*((const unsigned int *)_GP(spriteset)[iep->BgImage]->GetData()) == 0x00FF00FF)) {
-				// Don't draw fully transparent dummy GUI backgrounds
-			} else {
+			{
 				// offset the background image and clip it so that it is drawn
 				// such that the border graphics can have a transparent outside
 				// edge
@@ -736,7 +717,7 @@ int get_textwindow_padding(int ifnum) {
 
 void draw_text_window(Bitmap **text_window_ds, bool should_free_ds,
                       int *xins, int *yins, int *xx, int *yy, int *wii, color_t *set_text_color, int ovrheight, int ifnum) {
-
+	assert(text_window_ds);
 	Bitmap *ds = *text_window_ds;
 	if (ifnum < 0)
 		ifnum = _GP(game).options[OPT_TWCUSTOM];
@@ -779,7 +760,7 @@ void draw_text_window(Bitmap **text_window_ds, bool should_free_ds,
 
 void draw_text_window_and_bar(Bitmap **text_window_ds, bool should_free_ds,
                               int *xins, int *yins, int *xx, int *yy, int *wii, color_t *set_text_color, int ovrheight, int ifnum) {
-
+	assert(text_window_ds);
 	draw_text_window(text_window_ds, should_free_ds, xins, yins, xx, yy, wii, set_text_color, ovrheight, ifnum);
 
 	if ((_GP(topBar).wantIt) && (text_window_ds && *text_window_ds)) {

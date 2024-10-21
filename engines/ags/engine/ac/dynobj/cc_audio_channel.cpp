@@ -22,6 +22,7 @@
 #include "ags/shared/util/stream.h"
 #include "ags/engine/ac/dynobj/cc_audio_channel.h"
 #include "ags/engine/ac/dynobj/script_audio_channel.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/globals.h"
 
@@ -33,12 +34,12 @@ const char *CCAudioChannel::GetType() {
 	return "AudioChannel";
 }
 
-size_t CCAudioChannel::CalcSerializeSize() {
+size_t CCAudioChannel::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t);
 }
 
-void CCAudioChannel::Serialize(const char *address, Stream *out) {
-	const ScriptAudioChannel *ach = (const ScriptAudioChannel *)address;
+void CCAudioChannel::Serialize(const void *address, Stream *out) {
+	const ScriptAudioChannel *ach = static_cast<const ScriptAudioChannel *>(address);
 	out->WriteInt32(ach->id);
 }
 

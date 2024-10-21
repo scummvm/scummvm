@@ -127,7 +127,7 @@ HError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 			if (data_ver >= kRoomVersion_3415)
 				room->Hotspots[i].ScriptName = StrUtil::ReadString(in);
 			else
-				room->Hotspots[i].ScriptName = String::FromStreamCount(in, MAX_SCRIPT_NAME_LEN);
+				room->Hotspots[i].ScriptName = String::FromStreamCount(in, LEGACY_MAX_SCRIPT_NAME_LEN);
 		}
 	}
 
@@ -211,8 +211,8 @@ HError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 	room->WalkAreaCount = MAX_WALK_AREAS;
 	if (data_ver >= kRoomVersion_240)
 		room->WalkAreaCount = in->ReadInt32();
-	if (room->WalkAreaCount > MAX_WALK_AREAS + 1)
-		return new RoomFileError(kRoomFileErr_IncompatibleEngine, String::FromFormat("Too many walkable areas (in room: %d, max: %d).", room->WalkAreaCount, MAX_WALK_AREAS + 1));
+	if (room->WalkAreaCount > MAX_WALK_AREAS)
+		return new RoomFileError(kRoomFileErr_IncompatibleEngine, String::FromFormat("Too many walkable areas (in room: %d, max: %d).", room->WalkAreaCount, MAX_WALK_AREAS));
 
 	if (data_ver >= kRoomVersion_200_alpha7)
 		for (size_t i = 0; i < room->WalkAreaCount; ++i)
@@ -283,7 +283,7 @@ HError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 
 	if (data_ver >= kRoomVersion_114) {
 		// NOTE: this WA value was written for the second time here, for some weird reason
-		for (size_t i = 0; i < (size_t)MAX_WALK_AREAS + 1; ++i)
+		for (size_t i = 0; i < (size_t)MAX_WALK_AREAS; ++i)
 			room->WalkAreas[i].PlayerView = in->ReadInt16();
 	}
 	if (data_ver >= kRoomVersion_255b) {
@@ -357,18 +357,18 @@ HError ReadObjScNamesBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ve
 		if (data_ver >= kRoomVersion_3415)
 			obj.ScriptName = StrUtil::ReadString(in);
 		else
-			obj.ScriptName.ReadCount(in, MAX_SCRIPT_NAME_LEN);
+			obj.ScriptName.ReadCount(in, LEGACY_MAX_SCRIPT_NAME_LEN);
 	}
 	return HError::None();
 }
 
 // Secondary backgrounds
 HError ReadAnimBgBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
-	room->BgFrameCount = in->ReadByte();
+	room->BgFrameCount = in->ReadInt8();
 	if (room->BgFrameCount > MAX_ROOM_BGFRAMES)
 		return new RoomFileError(kRoomFileErr_IncompatibleEngine, String::FromFormat("Too many room backgrounds (in room: %d, max: %d).", room->BgFrameCount, MAX_ROOM_BGFRAMES));
 
-	room->BgAnimSpeed = in->ReadByte();
+	room->BgAnimSpeed = in->ReadInt8();
 	if (data_ver >= kRoomVersion_255a) {
 		for (size_t i = 0; i < room->BgFrameCount; ++i)
 			room->BgFrames[i].IsPaletteShared = in->ReadInt8() != 0;
@@ -679,16 +679,16 @@ void WriteMainBlock(const RoomStruct *room, Stream *out) {
 		out->WriteInt16(obj.Flags);
 	out->WriteInt16(room->MaskResolution);
 
-	out->WriteInt32(MAX_WALK_AREAS + 1);
-	for (size_t i = 0; i < (size_t)MAX_WALK_AREAS + 1; ++i)
+	out->WriteInt32(MAX_WALK_AREAS);
+	for (size_t i = 0; i < (size_t)MAX_WALK_AREAS; ++i)
 		out->WriteInt16(room->WalkAreas[i].ScalingFar);
-	for (size_t i = 0; i < (size_t)MAX_WALK_AREAS + 1; ++i)
+	for (size_t i = 0; i < (size_t)MAX_WALK_AREAS; ++i)
 		out->WriteInt16(room->WalkAreas[i].PlayerView);
-	for (size_t i = 0; i < (size_t)MAX_WALK_AREAS + 1; ++i)
+	for (size_t i = 0; i < (size_t)MAX_WALK_AREAS; ++i)
 		out->WriteInt16(room->WalkAreas[i].ScalingNear);
-	for (size_t i = 0; i < (size_t)MAX_WALK_AREAS + 1; ++i)
+	for (size_t i = 0; i < (size_t)MAX_WALK_AREAS; ++i)
 		out->WriteInt16(room->WalkAreas[i].Top);
-	for (size_t i = 0; i < (size_t)MAX_WALK_AREAS + 1; ++i)
+	for (size_t i = 0; i < (size_t)MAX_WALK_AREAS; ++i)
 		out->WriteInt16(room->WalkAreas[i].Bottom);
 
 	out->WriteByteCount(0, LEGACY_ROOM_PASSWORD_LENGTH);
@@ -711,7 +711,7 @@ void WriteMainBlock(const RoomStruct *room, Stream *out) {
 	out->WriteInt16(0); // legacy room animations
 
 	// NOTE: this WA value was written for the second time here, for some weird reason
-	for (size_t i = 0; i < (size_t)MAX_WALK_AREAS + 1; ++i)
+	for (size_t i = 0; i < (size_t)MAX_WALK_AREAS; ++i)
 		out->WriteInt16(room->WalkAreas[i].PlayerView);
 	for (size_t i = 0; i < (size_t)MAX_ROOM_REGIONS; ++i)
 		out->WriteInt16(room->Regions[i].Light);

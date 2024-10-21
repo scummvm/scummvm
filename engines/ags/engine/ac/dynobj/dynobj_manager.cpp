@@ -33,8 +33,8 @@
 //
 //=============================================================================
 
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/core/platform.h"
-#include "ags/engine/ac/dynobj/cc_dynamic_object.h"
 #include "ags/engine/ac/dynobj/managed_object_pool.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/shared/script/cc_common.h"
@@ -46,15 +46,10 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-// set the class that will be used for dynamic strings
-void ccSetStringClassImpl(ICCStringClass *theClass) {
-	_G(stringClassImpl) = theClass;
-}
-
 // register a memory handle for the object and allow script
 // pointers to point to it
-int32_t ccRegisterManagedObject(const void *object, ICCDynamicObject *callback, bool plugin_object) {
-	int32_t handl = _GP(pool).AddObject((const char *)object, callback, plugin_object);
+int32_t ccRegisterManagedObject(void *object, IScriptObject *callback, ScriptValueType obj_type) {
+	int32_t handl = _GP(pool).AddObject(object, callback, obj_type);
 
 	ManagedObjectLog("Register managed object type '%s' handle=%d addr=%08X",
 	                 ((callback == NULL) ? "(unknown)" : callback->GetType()), handl, object);
@@ -63,13 +58,13 @@ int32_t ccRegisterManagedObject(const void *object, ICCDynamicObject *callback, 
 }
 
 // register a de-serialized object
-int32_t ccRegisterUnserializedObject(int index, const void *object, ICCDynamicObject *callback, bool plugin_object) {
-	return _GP(pool).AddUnserializedObject((const char *)object, callback, plugin_object, index);
+int32_t ccRegisterUnserializedObject(int index, void *object, IScriptObject *callback, ScriptValueType obj_type) {
+	return _GP(pool).AddUnserializedObject(object, callback, obj_type, index);
 }
 
 // unregister a particular object
-int ccUnRegisterManagedObject(const void *object) {
-	return _GP(pool).RemoveObject((const char *)object);
+int ccUnRegisterManagedObject(void *object) {
+	return _GP(pool).RemoveObject(object);
 }
 
 // remove all registered objects
@@ -83,7 +78,7 @@ void ccSerializeAllObjects(Stream *out) {
 }
 
 // un-serialise all objects (will remove all currently registered ones)
-int ccUnserializeAllObjects(Stream *in, ICCObjectReader *callback) {
+int ccUnserializeAllObjects(Stream *in, ICCObjectCollectionReader *callback) {
 	return _GP(pool).ReadFromDisk(in, callback);
 }
 
@@ -93,12 +88,12 @@ void ccAttemptDisposeObject(int32_t handle) {
 }
 
 // translate between object handles and memory addresses
-int32_t ccGetObjectHandleFromAddress(const void *address) {
+int32_t ccGetObjectHandleFromAddress(void *address) {
 	// set to null
 	if (address == nullptr)
 		return 0;
 
-	int32_t handl = _GP(pool).AddressToHandle((const char *)address);
+	int32_t handl = _GP(pool).AddressToHandle(address);
 
 	ManagedObjectLog("Line %d WritePtr: %08X to %d", _G(currentline), address, handl);
 
@@ -109,11 +104,11 @@ int32_t ccGetObjectHandleFromAddress(const void *address) {
 	return handl;
 }
 
-const char *ccGetObjectAddressFromHandle(int32_t handle) {
+void *ccGetObjectAddressFromHandle(int32_t handle) {
 	if (handle == 0) {
 		return nullptr;
 	}
-	const char *addr = _GP(pool).HandleToAddress(handle);
+	void *addr = _GP(pool).HandleToAddress(handle);
 
 	ManagedObjectLog("Line %d ReadPtr: %d to %08X", _G(currentline), handle, addr);
 
@@ -124,7 +119,7 @@ const char *ccGetObjectAddressFromHandle(int32_t handle) {
 	return addr;
 }
 
-ScriptValueType ccGetObjectAddressAndManagerFromHandle(int32_t handle, void *&object, ICCDynamicObject *&manager) {
+ScriptValueType ccGetObjectAddressAndManagerFromHandle(int32_t handle, void *&object, IScriptObject *&manager) {
 	if (handle == 0) {
 		object = nullptr;
 		manager = nullptr;

@@ -51,8 +51,6 @@ using namespace AGS::Shared;
 // For engine these are defined in ac.cpp
 extern void replace_macro_tokens(const char *, String &);
 
-// in ac_runningame
-
 
 bool GUIMain::HasAlphaChannel() const {
 	if (this->BgImage > 0) {
@@ -76,11 +74,11 @@ bool GUIMain::HasAlphaChannel() const {
 //=============================================================================
 
 int get_adjusted_spritewidth(int spr) {
-	return _GP(spriteset)[spr]->GetWidth();
+	return _GP(game).SpriteInfos[spr].Width;
 }
 
 int get_adjusted_spriteheight(int spr) {
-	return _GP(spriteset)[spr]->GetHeight();
+	return _GP(game).SpriteInfos[spr].Height;
 }
 
 bool is_sprite_alpha(int spr) {
@@ -98,58 +96,85 @@ int get_eip_guiobj() {
 namespace AGS {
 namespace Shared {
 
-bool GUIObject::IsClickable() const {
-	return (Flags & kGUICtrl_Clickable) != 0;
+String GUI::ApplyTextDirection(const String &text) {
+	if (_GP(game).options[OPT_RIGHTLEFTWRITE] == 0)
+		return text;
+	String res_text = text;
+	(get_uformat() == U_UTF8) ? res_text.ReverseUTF8() : res_text.Reverse();
+	return res_text;
+}
+
+String GUI::TransformTextForDrawing(const String &text, bool translate, bool apply_direction) {
+	String res_text = translate ? String(get_translation(text.GetCStr())) : text;
+	if (translate && apply_direction)
+		res_text = ApplyTextDirection(res_text);
+	return res_text;
+}
+
+size_t GUI::SplitLinesForDrawing(const char *text, bool is_translated, SplitLines &lines, int font, int width, size_t max_lines) {
+	// Use the engine's word wrap tool, to have RTL writing and other features
+	return break_up_text_into_lines(text, is_translated, lines, width, font);
 }
 
 void GUIObject::MarkChanged() {
 	_hasChanged = true;
-	_GP(guis)[ParentId].MarkControlsChanged();
+	_GP(guis)[ParentId].MarkControlChanged();
 }
 
-void GUIObject::NotifyParentChanged() {
-	_GP(guis)[ParentId].MarkControlsChanged();
+void GUIObject::MarkParentChanged() {
+	_GP(guis)[ParentId].MarkControlChanged();
 }
 
-bool GUIObject::HasChanged() const {
-	return _hasChanged;
+void GUIObject::MarkPositionChanged(bool self_changed) {
+	_hasChanged |= self_changed;
+	_GP(guis)[ParentId].NotifyControlPosition();
+}
+
+void GUIObject::MarkStateChanged(bool self_changed, bool parent_changed) {
+	_hasChanged |= self_changed;
+	_GP(guis)[ParentId].NotifyControlState(Id, self_changed | parent_changed);
 }
 
 void GUIObject::ClearChanged() {
 	_hasChanged = false;
 }
 
-void GUILabel::PrepareTextToDraw() {
-	replace_macro_tokens((Flags & kGUICtrl_Translated) ? get_translation(Text.GetCStr()) : Text.GetCStr(), _textToDraw);
-}
-
-size_t GUILabel::SplitLinesForDrawing(SplitLines &lines) {
-	// Use the engine's word wrap tool, to have hebrew-style writing and other features
-	return break_up_text_into_lines(_textToDraw.GetCStr(), lines, Width, Font);
+int GUILabel::PrepareTextToDraw() {
+	const bool is_translated = (Flags & kGUICtrl_Translated) != 0;
+	replace_macro_tokens(is_translated ? get_translation(Text.GetCStr()) : Text.GetCStr(), _textToDraw);
+	return GUI::SplitLinesForDrawing(_textToDraw.GetCStr(), is_translated, _GP(Lines), Font, _width);
 }
 
 void GUITextBox::DrawTextBoxContents(Bitmap *ds, int x, int y, color_t text_color) {
-	wouttext_outline(ds, x + 1 + get_fixed_pixel_size(1), y + 1 + get_fixed_pixel_size(1), Font, text_color, Text.GetCStr());
+	_textToDraw = Text;
+	bool reverse = false;
+	// Text boxes input is never "translated" in regular sense,
+	// but they use this flag to apply text direction
+	if ((_G(loaded_game_file_version) >= kGameVersion_361) && ((Flags & kGUICtrl_Translated) != 0)) {
+		_textToDraw = GUI::ApplyTextDirection(Text);
+		reverse = _GP(game).options[OPT_RIGHTLEFTWRITE] != 0;
+	}
+
+	Line tpos = GUI::CalcTextPositionHor(_textToDraw.GetCStr(), Font,
+										 x + 1 + get_fixed_pixel_size(1), x + _width - 1, y + 1 + get_fixed_pixel_size(1),
+										 reverse ? kAlignTopRight : kAlignTopLeft);
+	wouttext_outline(ds, tpos.X1, tpos.Y1, Font, text_color, _textToDraw.GetCStr());
+
 	if (IsGUIEnabled(this)) {
 		// draw a cursor
-		int draw_at_x = x + get_text_width(Text.GetCStr(), Font) + 3;
+		const int cursor_width = get_fixed_pixel_size(5);
+		int draw_at_x = reverse ? tpos.X1 - 3 - cursor_width : tpos.X2 + 3;
 		int draw_at_y = y + 1 + get_font_height(Font);
-		ds->DrawRect(Rect(draw_at_x, draw_at_y, draw_at_x + get_fixed_pixel_size(5), draw_at_y + (get_fixed_pixel_size(1) - 1)), text_color);
+		ds->DrawRect(Rect(draw_at_x, draw_at_y, draw_at_x + cursor_width, draw_at_y + (get_fixed_pixel_size(1) - 1)), text_color);
 	}
 }
 
 void GUIListBox::PrepareTextToDraw(const String &text) {
-	if (Flags & kGUICtrl_Translated)
-		_textToDraw = get_translation(text.GetCStr());
-	else
-		_textToDraw = text;
+	_textToDraw = GUI::TransformTextForDrawing(text, (Flags & kGUICtrl_Translated) != 0, (_G(loaded_game_file_version) >= kGameVersion_361));
 }
 
 void GUIButton::PrepareTextToDraw() {
-	if (Flags & kGUICtrl_Translated)
-		_textToDraw = get_translation(_text.GetCStr());
-	else
-		_textToDraw = _text;
+	_textToDraw = GUI::TransformTextForDrawing(_text, (Flags & kGUICtrl_Translated) != 0, (_G(loaded_game_file_version) >= kGameVersion_361));
 }
 
 } // namespace Shared

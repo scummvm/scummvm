@@ -20,6 +20,7 @@
  */
 
 #include "ags/engine/ac/dynobj/script_dialog_options_rendering.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/util/stream.h"
 
 namespace AGS3 {
@@ -31,13 +32,13 @@ const char *ScriptDialogOptionsRendering::GetType() {
 	return "DialogOptionsRendering";
 }
 
-size_t ScriptDialogOptionsRendering::CalcSerializeSize() {
+size_t ScriptDialogOptionsRendering::CalcSerializeSize(const void * /*address*/) {
 	return 0;
 }
 
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
-void ScriptDialogOptionsRendering::Serialize(const char *address, Stream *out) {
+void ScriptDialogOptionsRendering::Serialize(const void *address, Stream *out) {
 }
 
 void ScriptDialogOptionsRendering::Unserialize(int index, Stream *in, size_t data_sz) {

@@ -37,9 +37,11 @@
 #include "ags/engine/ac/inv_window.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/ac/string.h"
 #include "ags/engine/ac/system.h"
 #include "ags/engine/ac/dynobj/cc_gui_object.h"
 #include "ags/engine/ac/dynobj/script_gui.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/script/cc_instance.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/device/mouse_w32.h"
@@ -52,6 +54,7 @@
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/ac/dynobj/cc_gui.h"
 #include "ags/engine/ac/dynobj/cc_gui_object.h"
+#include "ags/engine/ac/dynobj/script_string.h"
 #include "ags/engine/script/runtime_script_value.h"
 #include "ags/shared/util/string_compat.h"
 #include "ags/shared/debugging/out.h"
@@ -65,7 +68,7 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 ScriptGUI *GUI_AsTextWindow(ScriptGUI *tehgui) { // Internally both GUI and TextWindow are implemented by same class
-	return _GP(guis)[tehgui->id].IsTextWindow() ? &_G(scrGui)[tehgui->id] : nullptr;
+	return _GP(guis)[tehgui->id].IsTextWindow() ? &_GP(scrGui)[tehgui->id] : nullptr;
 }
 
 int GUI_GetPopupStyle(ScriptGUI *tehgui) {
@@ -164,6 +167,10 @@ int GUI_GetClickable(ScriptGUI *tehgui) {
 
 int GUI_GetID(ScriptGUI *tehgui) {
 	return tehgui->id;
+}
+
+const char *GUI_GetScriptName(ScriptGUI *tehgui) {
+	return CreateNewScriptString(_GP(guis)[tehgui->id].Name);
 }
 
 GUIObject *GUI_GetiControls(ScriptGUI *tehgui, int idx) {
@@ -269,7 +276,7 @@ ScriptGUI *GetGUIAtLocation(int xx, int yy) {
 	int guiid = GetGUIAt(xx, yy);
 	if (guiid < 0)
 		return nullptr;
-	return &_G(scrGui)[guiid];
+	return &_GP(scrGui)[guiid];
 }
 
 void GUI_Click(ScriptGUI *scgui, int mbut) {
@@ -278,10 +285,10 @@ void GUI_Click(ScriptGUI *scgui, int mbut) {
 
 void GUI_ProcessClick(int x, int y, int mbut) {
 	int guiid = gui_get_interactable(x, y);
-	if (guiid >= 0) {
+	if (guiid >= 0) { // simulate mouse click at the given coordinates
 		_GP(guis)[guiid].Poll(x, y);
-		gui_on_mouse_down(guiid, mbut);
-		gui_on_mouse_up(guiid, mbut);
+		gui_on_mouse_down(guiid, mbut, x, y);
+		gui_on_mouse_up(guiid, mbut, x, y);
 	}
 }
 
@@ -306,7 +313,7 @@ void remove_popup_interface(int ifacenum) {
 void process_interface_click(int ifce, int btn, int mbut) {
 	if (btn < 0) {
 		// click on GUI background
-		RuntimeScriptValue params[]{ RuntimeScriptValue().SetDynamicObject(&_G(scrGui)[ifce], &_GP(ccDynamicGUI)),
+		RuntimeScriptValue params[]{ RuntimeScriptValue().SetScriptObject(&_GP(scrGui)[ifce], &_GP(ccDynamicGUI)),
 					RuntimeScriptValue().SetInt32(mbut) };
 		QueueScriptFunction(kScInstGame, _GP(guis)[ifce].OnClickHandler.GetCStr(), 2, params);
 		return;
@@ -334,11 +341,11 @@ void process_interface_click(int ifce, int btn, int mbut) {
 			(!_G(gameinst)->GetSymbolAddress(theObj->EventHandlers[0].GetCStr()).IsNull())) {
 			// control-specific event handler
 			if (theObj->GetEventArgs(0).FindChar(',') != String::NoIndex) {
-				RuntimeScriptValue params[]{ RuntimeScriptValue().SetDynamicObject(theObj, &_GP(ccDynamicGUIObject)),
+				RuntimeScriptValue params[]{ RuntimeScriptValue().SetScriptObject(theObj, &_GP(ccDynamicGUIObject)),
 					RuntimeScriptValue().SetInt32(mbut) };
 				QueueScriptFunction(kScInstGame, theObj->EventHandlers[0].GetCStr(), 2, params);
 			} else {
-				RuntimeScriptValue params[]{ RuntimeScriptValue().SetDynamicObject(theObj, &_GP(ccDynamicGUIObject)) };
+				RuntimeScriptValue params[]{ RuntimeScriptValue().SetScriptObject(theObj, &_GP(ccDynamicGUIObject)) };
 				QueueScriptFunction(kScInstGame, theObj->EventHandlers[0].GetCStr(), 1, params);
 			}
 		} else {
@@ -384,7 +391,7 @@ void replace_macro_tokens(const char *text, String &fixed_text) {
 			else if (ags_stricmp(macroname, "scoretext") == 0)
 				snprintf(tempo, sizeof(tempo), "%d of %d", _GP(play).score, MAXSCORE);
 			else if (ags_stricmp(macroname, "gamename") == 0)
-				snprintf(tempo, sizeof(tempo), "%s", _GP(play).game_name);
+				snprintf(tempo, sizeof(tempo), "%s", _GP(play).game_name.GetCStr());
 			else if (ags_stricmp(macroname, "overhotspot") == 0) {
 				// While game is in Wait mode, no overhotspot text
 				if (!IsInterfaceEnabled())
@@ -419,7 +426,7 @@ void export_gui_controls(int ee) {
 	for (int ff = 0; ff < _GP(guis)[ee].GetControlCount(); ff++) {
 		GUIObject *guio = _GP(guis)[ee].GetControl(ff);
 		if (!guio->Name.IsEmpty())
-			ccAddExternalDynamicObject(guio->Name, guio, &_GP(ccDynamicGUIObject));
+			ccAddExternalScriptObject(guio->Name, guio, &_GP(ccDynamicGUIObject));
 		ccRegisterManagedObject(guio, &_GP(ccDynamicGUIObject));
 	}
 }
@@ -448,50 +455,56 @@ void update_gui_disabled_status() {
 	}
 }
 
-int adjust_x_for_guis(int xx, int yy) {
-	if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) && (_G(all_buttons_disabled) >= 0))
-		return xx;
-	// If it's covered by a GUI, move it right a bit
-	for (int aa = 0; aa < _GP(game).numgui; aa++) {
-		if (!_GP(guis)[aa].IsDisplayed())
-			continue;
-		if ((_GP(guis)[aa].X > xx) || (_GP(guis)[aa].Y > yy) || (_GP(guis)[aa].Y + _GP(guis)[aa].Height < yy))
-			continue;
-		// totally transparent GUI, ignore
-		if (((_GP(guis)[aa].BgColor == 0) && (_GP(guis)[aa].BgImage < 1)) || (_GP(guis)[aa].Transparency == 255))
-			continue;
-
-		// try to deal with full-width GUIs across the top
-		if (_GP(guis)[aa].X + _GP(guis)[aa].Width >= get_fixed_pixel_size(280))
-			continue;
-
-		if (xx < _GP(guis)[aa].X + _GP(guis)[aa].Width)
-			xx = _GP(guis)[aa].X + _GP(guis)[aa].Width + 2;
-	}
-	return xx;
+static bool should_skip_adjust_for_gui(const GUIMain &gui) {
+	return
+		// not shown
+		!gui.IsDisplayed() ||
+		// completely offscreen
+		!IsRectInsideRect(_GP(play).GetUIViewport(), RectWH(gui.X, gui.Y, gui.Width, gui.Height)) ||
+		// fully transparent (? FIXME: this only checks background, but not controls)
+		((gui.BgColor == 0) && (gui.BgImage < 1)) || (gui.Transparency == 255);
 }
 
-int adjust_y_for_guis(int yy) {
-	if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) && (_G(all_buttons_disabled) >= 0))
-		return yy;
-	// If it's covered by a GUI, move it down a bit
-	for (int aa = 0; aa < _GP(game).numgui; aa++) {
-		if (!_GP(guis)[aa].IsDisplayed())
+int adjust_x_for_guis(int x, int y, bool assume_blocking) {
+	if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) && (_G(all_buttons_disabled) >= 0 || assume_blocking))
+		return x;  // All GUI off (or will be when the message is displayed)
+	// If it's covered by a GUI, move it right a bit
+	for (const auto &gui : _GP(guis)) {
+		if (should_skip_adjust_for_gui(gui))
 			continue;
-		if (_GP(guis)[aa].Y > yy)
+		// higher, lower or to the right from the message (?)
+		if ((gui.X > x) || (gui.Y > y) || (gui.Y + gui.Height < y))
 			continue;
-		// totally transparent GUI, ignore
-		if (((_GP(guis)[aa].BgColor == 0) && (_GP(guis)[aa].BgImage < 1)) || (_GP(guis)[aa].Transparency == 255))
+		// try to deal with full-width GUIs across the top
+		// FIXME: using a harcoded width in pixels...
+		if (gui.X + gui.Width >= get_fixed_pixel_size(280))
 			continue;
-
-		// try to deal with full-height GUIs down the left or right
-		if (_GP(guis)[aa].Height > get_fixed_pixel_size(50))
-			continue;
-
-		if (yy < _GP(guis)[aa].Y + _GP(guis)[aa].Height)
-			yy = _GP(guis)[aa].Y + _GP(guis)[aa].Height + 2;
+		// Fix coordinates if x is inside the gui
+		if (x < gui.X + gui.Width)
+			x = gui.X + gui.Width + 2;
 	}
-	return yy;
+	return x;
+}
+
+int adjust_y_for_guis(int y, bool assume_blocking) {
+	if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) && (_G(all_buttons_disabled) >= 0 || assume_blocking))
+		return y;  // All GUI off (or will be when the message is displayed)
+	// If it's covered by a GUI, move it down a bit
+	for (const auto &gui : _GP(guis)) {
+		if (should_skip_adjust_for_gui(gui))
+			continue;
+		// lower than the message
+		if (gui.Y > y)
+			continue;
+		// try to deal with full-height GUIs down the left or right
+		// FIXME: using a harcoded height in pixels...
+		if (gui.Height > get_fixed_pixel_size(50))
+			continue;
+		// Fix coordinates if y is inside the gui
+		if (y < gui.Y + gui.Height)
+			y = gui.Y + gui.Height + 2;
+	}
+	return y;
 }
 
 int gui_get_interactable(int x, int y) {
@@ -500,7 +513,7 @@ int gui_get_interactable(int x, int y) {
 	return GetGUIAt(x, y);
 }
 
-int gui_on_mouse_move() {
+int gui_on_mouse_move(const int mx, const int my) {
 	int mouse_over_gui = -1;
 	// If all GUIs are off, skip the loop
 	if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) && (_G(all_buttons_disabled) >= 0));
@@ -510,7 +523,7 @@ int gui_on_mouse_move() {
 		// CHECKME: not sure why, but we're testing forward draw order here -
 		// from farthest to nearest (this was in original code?)
 		for (int guin : _GP(play).gui_draw_order) {
-			if (_GP(guis)[guin].IsInteractableAt(_G(mousex), _G(mousey))) mouse_over_gui = guin;
+			if (_GP(guis)[guin].IsInteractableAt(mx, my)) mouse_over_gui = guin;
 
 			if (_GP(guis)[guin].PopupStyle != kGUIPopupMouseY) continue;
 			if (_GP(play).complete_overlay_on > 0) break;  // interfaces disabled			//    if (_GP(play).disabled_user_interface>0) break;
@@ -543,7 +556,7 @@ void gui_on_mouse_hold(const int wasongui, const int wasbutdown) {
 	}
 }
 
-void gui_on_mouse_up(const int wasongui, const int wasbutdown) {
+void gui_on_mouse_up(const int wasongui, const int wasbutdown, const int mx, const int my) {
 	_GP(guis)[wasongui].OnMouseButtonUp();
 
 	for (int i = 0; i < _GP(guis)[wasongui].GetControlCount(); i++) {
@@ -556,23 +569,21 @@ void gui_on_mouse_up(const int wasongui, const int wasbutdown) {
 		if ((cttype == kGUIButton) || (cttype == kGUISlider) || (cttype == kGUIListBox)) {
 			force_event(EV_IFACECLICK, wasongui, i, wasbutdown);
 		} else if (cttype == kGUIInvWindow) {
-			_G(mouse_ifacebut_xoffs) = _G(mousex) - (guio->X) - _GP(guis)[wasongui].X;
-			_G(mouse_ifacebut_yoffs) = _G(mousey) - (guio->Y) - _GP(guis)[wasongui].Y;
+			_G(mouse_ifacebut_xoffs) = mx - (guio->X) - _GP(guis)[wasongui].X;
+			_G(mouse_ifacebut_yoffs) = my - (guio->Y) - _GP(guis)[wasongui].Y;
 			int iit = offset_over_inv((GUIInvWindow *)guio);
 			if (iit >= 0) {
-				_G(evblocknum) = iit;
 				_GP(play).used_inv_on = iit;
 				if (_GP(game).options[OPT_HANDLEINVCLICKS]) {
 					// Let the script handle the click
 					// LEFTINV is 5, RIGHTINV is 6
-					force_event(EV_TEXTSCRIPT, TS_MCLICK, wasbutdown + 4);
-				} else if (wasbutdown == 2)  // right-click is always Look
-					run_event_block_inv(iit, 0);
+					force_event(EV_TEXTSCRIPT, kTS_MouseClick, wasbutdown + 4);
+				} else if (wasbutdown == kMouseRight)  // right-click is always Look
+					RunInventoryInteraction(iit, MODE_LOOK);
 				else if (_G(cur_mode) == MODE_HAND)
 					SetActiveInventory(iit);
 				else
 					RunInventoryInteraction(iit, _G(cur_mode));
-				_G(evblocknum) = -1;
 			}
 		} else quit("clicked on unknown control type");
 		if (_GP(guis)[wasongui].PopupStyle == kGUIPopupMouseY)
@@ -583,9 +594,9 @@ void gui_on_mouse_up(const int wasongui, const int wasbutdown) {
 	run_on_event(GE_GUI_MOUSEUP, RuntimeScriptValue().SetInt32(wasongui));
 }
 
-void gui_on_mouse_down(const int guin, const int mbut) {
+void gui_on_mouse_down(const int guin, const int mbut, const int mx, const int my) {
 	debug_script_log("Mouse click over GUI %d", guin);
-	_GP(guis)[guin].OnMouseButtonDown(_G(mousex), _G(mousey));
+	_GP(guis)[guin].OnMouseButtonDown(mx, my);
 	// run GUI click handler if not on any control
 	if ((_GP(guis)[guin].MouseDownCtrl < 0) && (!_GP(guis)[guin].OnClickHandler.IsEmpty()))
 		force_event(EV_IFACECLICK, guin, -1, mbut);
@@ -598,6 +609,14 @@ void gui_on_mouse_down(const int guin, const int mbut) {
 // Script API Functions
 //
 //=============================================================================
+
+ScriptGUI *GUI_GetByName(const char *name) {
+	return static_cast<ScriptGUI *>(ccGetScriptObjectAddress(name, _GP(ccDynamicGUI).GetType()));
+}
+
+RuntimeScriptValue Sc_GUI_GetByName(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_OBJ_POBJ(ScriptGUI, _GP(ccDynamicGUI), GUI_GetByName, const char);
+}
 
 // void GUI_Centre(ScriptGUI *sgui)
 RuntimeScriptValue Sc_GUI_Centre(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -686,6 +705,10 @@ RuntimeScriptValue Sc_GUI_SetHeight(void *self, const RuntimeScriptValue *params
 // int (ScriptGUI *tehgui)
 RuntimeScriptValue Sc_GUI_GetID(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptGUI, GUI_GetID);
+}
+
+RuntimeScriptValue Sc_GUI_GetScriptName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_OBJ(ScriptGUI, const char, _GP(myScriptStringImpl), GUI_GetScriptName);
 }
 
 RuntimeScriptValue Sc_GUI_GetPopupYPos(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -785,46 +808,53 @@ RuntimeScriptValue Sc_GUI_GetShown(void *self, const RuntimeScriptValue *params,
 }
 
 void RegisterGUIAPI() {
-	ccAddExternalObjectFunction("GUI::Centre^0", Sc_GUI_Centre);
-	ccAddExternalObjectFunction("GUI::Click^1", Sc_GUI_Click);
-	ccAddExternalStaticFunction("GUI::GetAtScreenXY^2", Sc_GetGUIAtLocation);
-	ccAddExternalStaticFunction("GUI::ProcessClick^3", Sc_GUI_ProcessClick);
-	ccAddExternalObjectFunction("GUI::SetPosition^2", Sc_GUI_SetPosition);
-	ccAddExternalObjectFunction("GUI::SetSize^2", Sc_GUI_SetSize);
-	ccAddExternalObjectFunction("GUI::get_BackgroundGraphic", Sc_GUI_GetBackgroundGraphic);
-	ccAddExternalObjectFunction("GUI::set_BackgroundGraphic", Sc_GUI_SetBackgroundGraphic);
-	ccAddExternalObjectFunction("GUI::get_BackgroundColor", Sc_GUI_GetBackgroundColor);
-	ccAddExternalObjectFunction("GUI::set_BackgroundColor", Sc_GUI_SetBackgroundColor);
-	ccAddExternalObjectFunction("GUI::get_BorderColor", Sc_GUI_GetBorderColor);
-	ccAddExternalObjectFunction("GUI::set_BorderColor", Sc_GUI_SetBorderColor);
-	ccAddExternalObjectFunction("GUI::get_Clickable", Sc_GUI_GetClickable);
-	ccAddExternalObjectFunction("GUI::set_Clickable", Sc_GUI_SetClickable);
-	ccAddExternalObjectFunction("GUI::get_ControlCount", Sc_GUI_GetControlCount);
-	ccAddExternalObjectFunction("GUI::geti_Controls", Sc_GUI_GetiControls);
-	ccAddExternalObjectFunction("GUI::get_Height", Sc_GUI_GetHeight);
-	ccAddExternalObjectFunction("GUI::set_Height", Sc_GUI_SetHeight);
-	ccAddExternalObjectFunction("GUI::get_ID", Sc_GUI_GetID);
-	ccAddExternalObjectFunction("GUI::get_AsTextWindow", Sc_GUI_AsTextWindow);
-	ccAddExternalObjectFunction("GUI::get_PopupStyle", Sc_GUI_GetPopupStyle);
-	ccAddExternalObjectFunction("GUI::get_PopupYPos", Sc_GUI_GetPopupYPos);
-	ccAddExternalObjectFunction("GUI::set_PopupYPos", Sc_GUI_SetPopupYPos);
-	ccAddExternalObjectFunction("TextWindowGUI::get_TextColor", Sc_GUI_GetTextColor);
-	ccAddExternalObjectFunction("TextWindowGUI::set_TextColor", Sc_GUI_SetTextColor);
-	ccAddExternalObjectFunction("TextWindowGUI::get_TextPadding", Sc_GUI_GetTextPadding);
-	ccAddExternalObjectFunction("TextWindowGUI::set_TextPadding", Sc_GUI_SetTextPadding);
-	ccAddExternalObjectFunction("GUI::get_Transparency", Sc_GUI_GetTransparency);
-	ccAddExternalObjectFunction("GUI::set_Transparency", Sc_GUI_SetTransparency);
-	ccAddExternalObjectFunction("GUI::get_Visible", Sc_GUI_GetVisible);
-	ccAddExternalObjectFunction("GUI::set_Visible", Sc_GUI_SetVisible);
-	ccAddExternalObjectFunction("GUI::get_Width", Sc_GUI_GetWidth);
-	ccAddExternalObjectFunction("GUI::set_Width", Sc_GUI_SetWidth);
-	ccAddExternalObjectFunction("GUI::get_X", Sc_GUI_GetX);
-	ccAddExternalObjectFunction("GUI::set_X", Sc_GUI_SetX);
-	ccAddExternalObjectFunction("GUI::get_Y", Sc_GUI_GetY);
-	ccAddExternalObjectFunction("GUI::set_Y", Sc_GUI_SetY);
-	ccAddExternalObjectFunction("GUI::get_ZOrder", Sc_GUI_GetZOrder);
-	ccAddExternalObjectFunction("GUI::set_ZOrder", Sc_GUI_SetZOrder);
-	ccAddExternalObjectFunction("GUI::get_Shown", Sc_GUI_GetShown);
+	ScFnRegister gui_api[] = {
+		{"GUI::GetAtScreenXY^2", API_FN_PAIR(GetGUIAtLocation)},
+		{"GUI::GetByName", API_FN_PAIR(GUI_GetByName)},
+		{"GUI::ProcessClick^3", API_FN_PAIR(GUI_ProcessClick)},
+
+		{"GUI::Centre^0", API_FN_PAIR(GUI_Centre)},
+		{"GUI::Click^1", API_FN_PAIR(GUI_Click)},
+		{"GUI::SetPosition^2", API_FN_PAIR(GUI_SetPosition)},
+		{"GUI::SetSize^2", API_FN_PAIR(GUI_SetSize)},
+		{"GUI::get_BackgroundGraphic", API_FN_PAIR(GUI_GetBackgroundGraphic)},
+		{"GUI::set_BackgroundGraphic", API_FN_PAIR(GUI_SetBackgroundGraphic)},
+		{"GUI::get_BackgroundColor", API_FN_PAIR(GUI_GetBackgroundColor)},
+		{"GUI::set_BackgroundColor", API_FN_PAIR(GUI_SetBackgroundColor)},
+		{"GUI::get_BorderColor", API_FN_PAIR(GUI_GetBorderColor)},
+		{"GUI::set_BorderColor", API_FN_PAIR(GUI_SetBorderColor)},
+		{"GUI::get_Clickable", API_FN_PAIR(GUI_GetClickable)},
+		{"GUI::set_Clickable", API_FN_PAIR(GUI_SetClickable)},
+		{"GUI::get_ControlCount", API_FN_PAIR(GUI_GetControlCount)},
+		{"GUI::geti_Controls", API_FN_PAIR(GUI_GetiControls)},
+		{"GUI::get_Height", API_FN_PAIR(GUI_GetHeight)},
+		{"GUI::set_Height", API_FN_PAIR(GUI_SetHeight)},
+		{"GUI::get_ID", API_FN_PAIR(GUI_GetID)},
+		{"GUI::get_AsTextWindow", API_FN_PAIR(GUI_AsTextWindow)},
+		{"GUI::get_PopupStyle", API_FN_PAIR(GUI_GetPopupStyle)},
+		{"GUI::get_PopupYPos", API_FN_PAIR(GUI_GetPopupYPos)},
+		{"GUI::set_PopupYPos", API_FN_PAIR(GUI_SetPopupYPos)},
+		{"GUI::get_ScriptName", API_FN_PAIR(GUI_GetScriptName)},
+		{"TextWindowGUI::get_TextColor", API_FN_PAIR(GUI_GetTextColor)},
+		{"TextWindowGUI::set_TextColor", API_FN_PAIR(GUI_SetTextColor)},
+		{"TextWindowGUI::get_TextPadding", API_FN_PAIR(GUI_GetTextPadding)},
+		{"TextWindowGUI::set_TextPadding", API_FN_PAIR(GUI_SetTextPadding)},
+		{"GUI::get_Transparency", API_FN_PAIR(GUI_GetTransparency)},
+		{"GUI::set_Transparency", API_FN_PAIR(GUI_SetTransparency)},
+		{"GUI::get_Visible", API_FN_PAIR(GUI_GetVisible)},
+		{"GUI::set_Visible", API_FN_PAIR(GUI_SetVisible)},
+		{"GUI::get_Width", API_FN_PAIR(GUI_GetWidth)},
+		{"GUI::set_Width", API_FN_PAIR(GUI_SetWidth)},
+		{"GUI::get_X", API_FN_PAIR(GUI_GetX)},
+		{"GUI::set_X", API_FN_PAIR(GUI_SetX)},
+		{"GUI::get_Y", API_FN_PAIR(GUI_GetY)},
+		{"GUI::set_Y", API_FN_PAIR(GUI_SetY)},
+		{"GUI::get_ZOrder", API_FN_PAIR(GUI_GetZOrder)},
+		{"GUI::set_ZOrder", API_FN_PAIR(GUI_SetZOrder)},
+		{"GUI::get_Shown", API_FN_PAIR(GUI_GetShown)},
+	};
+
+	ccAddExternalFunctions361(gui_api);
 }
 
 } // namespace AGS3
