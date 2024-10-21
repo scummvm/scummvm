@@ -296,10 +296,10 @@ private:
 	const qdEngineInterface *_engine = nullptr;
 	qdMinigameSceneInterface *_scene = nullptr;
 
-	qdMinigameObjectInterface *_figures[26];
-	int _pos[13];
+	qdMinigameObjectInterface *_figures[26] = { nullptr };
+	int _pos[13] = { 0 };
 	mgVect2i _pieceCoords[13];
-	int _pieceTargets[13];
+	int _pieceTargets[13] = { 0 };
 
 	qdMinigameObjectInterface *_objDone = nullptr;
 	qdMinigameObjectInterface *_objResult = nullptr;
