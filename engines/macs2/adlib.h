@@ -90,6 +90,10 @@ namespace Macs2 {
 		// TODO: Initialization, access pattern, size
 		Common::Array<uint8> gArray227F;
 
+		// Array at [2235h] - accessed with bytes values
+		// TODO: Initialization, access pattern, size
+		Common::Array<uint8> gArray2235;
+
 		bool g229A;
 
 		// [229Bh] - seems to contain song byte - TODO: Initial value?
