@@ -757,13 +757,15 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 	// TODO: Add proper grid, add y as well
 	int x = 0;
 	int y = 0;
+	int rowHeight = 0;
 	for (GameObject *currentItem : inventoryItems) {
 		AnimFrame *icon = GetInventoryIcon(currentItem);
 		DrawSprite(0x36 + x, 0x2c + y, icon->Width, icon->Height, icon->Data, s, false);
 		x += icon->Width;
+		rowHeight = MAX<int>(icon->Height, rowHeight);
 		if (x > inventoryRect.width()) {
 			x = 0;
-			y += icon->Height;
+			y += rowHeight;
 		}
 	}
 }
@@ -773,6 +775,7 @@ GameObject *View1::getClickedInventoryItem(const Common::Point &p) {
 	Common::Rect inventoryRect(0x36, 0x2C, 0x10A, 0x82);
 	int x = 0;
 	int y = 0;
+	int rowHeight = 0;
 	for (GameObject *currentItem : inventoryItems) {
 		AnimFrame *icon = GetInventoryIcon(currentItem);
 		Common::Rect currentRect(Common::Point(0x36 + x, 0x2c + y), icon->Width, icon->Height);
@@ -780,9 +783,10 @@ GameObject *View1::getClickedInventoryItem(const Common::Point &p) {
 			return currentItem;
 		}
 		x += icon->Width;
+		rowHeight = MAX<int>(rowHeight, icon->Height);
 		if (x > inventoryRect.width()) {
 			x = 0;
-			y += icon->Height;
+			y += rowHeight;
 		}
 	}
 	return nullptr;
@@ -1373,7 +1377,18 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 }
 
 Macs2::AnimFrame *Character::GetCurrentPortrait() {
+	uint16 offset = BackgroundAnimationBlob::Func1480(GameObject->Blobs[17], true, 1);
+	// My remaining code expects to get dialed to the width and height directly - TODO make uniform
+	offset += 6;
 	AnimFrame *result = new AnimFrame();
+	Common::MemoryReadStream stream(GameObject->Blobs[17].data(), GameObject->Blobs[17].size());
+	stream.seek(offset);
+	result->ReadFromStream(&stream);
+	return result;
+	// TODO: Think about proper memory management
+
+	// Old code below from before 1480 implementation
+	/* AnimFrame *result = new AnimFrame();
 	Common::MemoryReadStream stream(this->GameObject->Blobs[17].data(), this->GameObject->Blobs[17].size());
 	// TODO: Need to check how the offset really is calculated by the game code, this will not hold
 	if (is_in_list<uint16, 2, 4, 6, 0xd, 0xf, 0x12, 0x16, 0x4D>(GameObject->Index)) {
@@ -1386,6 +1401,7 @@ Macs2::AnimFrame *Character::GetCurrentPortrait() {
 	result->ReadFromStream(&stream);
 	return result;
 	// TODO: Think about proper memory management
+	*/
 }
 
 void Character::StartLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles) {
