@@ -795,11 +795,11 @@ float MinigameManager::getDepth(const mgVect3f& pos) const {
 }
 
 QDObject MinigameManager::getObject(const char *name) const {
-	if (!name || !*name)
+	if (!name || !*name) {
 		warning("MinigameManager::getObject(): null name");
-
-	if (!name || !*name)
 		return QDObject::ZERO;
+	}
+
 	qdMinigameObjectInterface *obj = scene_->object_interface(name);
 	if (!obj)
 		warning("MinigameManager::getObject(): Object '%s' not found", transCyrillic(name));
