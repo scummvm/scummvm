@@ -71,6 +71,14 @@ void SciMusic::init() {
 	_dwTempo = 0;
 
 	const Common::Platform platform = DgdsEngine::getInstance()->getPlatform();
+
+	//
+	// TODO: This list seems right for the basic versions of the DOS games.
+	//
+	// Do we ever want to support MDT_CMS? It looks like Willy Beamish
+	// has *some* audio for that track type, but it's not complete and not
+	// supported in the game's installer.
+	//
 	uint32 deviceFlags = MDT_PCSPK | MDT_ADLIB | MDT_MIDI;
 
 	uint32 dev = MidiDriver::detectDevice(deviceFlags);
@@ -85,7 +93,7 @@ void SciMusic::init() {
 			_pMidiDrv = MidiPlayer_AdLib_create();
 		break;
 	case MT_PCSPK:
-		error("TODO: Implement pc speaker driver?");
+		error("TODO: Implement PC speaker driver?");
 		//_pMidiDrv = MidiPlayer_PCSpeaker_create();
 		break;
 	case MT_CMS:

@@ -175,7 +175,7 @@ public:
 	};
 
 public:
-	MidiDriver_CMS(ResourceManager *resMan);
+	MidiDriver_CMS();
 	~MidiDriver_CMS() override;
 
 	int open() override;
@@ -231,7 +231,6 @@ private:
 
 	CMS::CMS *_cms;
 	bool _isOpen;
-	ResourceManager *_resMan;
 	Common::SpanOwner<SciSpan<const uint8> > _patchData;
 
 	bool _playSwitch;
@@ -715,7 +714,7 @@ const int CMSVoice_V1::_velocityTable[32] = {
 	 6,  6,  7,  8,  8,  9, 10, 10
 };
 
-MidiDriver_CMS::MidiDriver_CMS(ResourceManager *resMan) : _resMan(resMan), _isOpen(false),
+MidiDriver_CMS::MidiDriver_CMS() : _isOpen(false),
 	_cms(nullptr), _playSwitch(true), _masterVolume(0), _numVoicesPrimary(12),
 	_timerProc(nullptr), _timerParam(nullptr), _actualTimerInterval(1000000 / CMS::CMS::DEFAULT_CALLBACK_FREQUENCY), _reqTimerInterval(1000000/60),
 	_numVoicesSecondary(0) {
@@ -732,7 +731,6 @@ int MidiDriver_CMS::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 
-	assert(_resMan);
 	SciResource *res = getMidiPatchData(101);
 	if (!res)
 		return -1;
@@ -751,7 +749,7 @@ int MidiDriver_CMS::open() {
 	}
 
 	_playSwitch = true;
-	_masterVolume = 0;
+	_masterVolume = 15;
 
 	for (int i = 0; i < 31; ++i) {
 		writeToChip(0, i, 0);
@@ -1235,7 +1233,7 @@ class MidiPlayer_CMS : public MidiPlayer {
 public:
 	MidiPlayer_CMS() : MidiPlayer() {}
 
-	int open(ResourceManager *resMan) override;
+	int open() override;
 	void close() override;
 
 	bool hasRhythmChannel() const override { return false; }
@@ -1245,11 +1243,11 @@ public:
 	void playSwitch(bool play) override { _driver->property(MidiDriver_CMS::MIDI_PROP_PLAYSWITCH, play ? 1 : 0); }
 };
 
-int MidiPlayer_CMS::open(ResourceManager *resMan) {
+int MidiPlayer_CMS::open() {
 	if (_driver)
 		return MidiDriver::MERR_ALREADY_OPEN;
 
-	_driver = new MidiDriver_CMS(resMan);
+	_driver = new MidiDriver_CMS();
 	int driverRetVal = _driver->open();
 
 	return driverRetVal;

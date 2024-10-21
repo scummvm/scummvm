@@ -179,7 +179,7 @@ public:
 		_driver = nullptr;
 	}
 
-	int open(ResourceManager *resMan) override;
+	int open() override;
 	void close() override;
 
 	byte getPlayId() const override;
@@ -856,9 +856,7 @@ uint32 MidiDriver_AdLib::property(int prop, uint32 param) {
 }
 
 
-int MidiPlayer_AdLib::open(ResourceManager *resMan) {
-	assert(resMan != nullptr);
-
+int MidiPlayer_AdLib::open() {
 	// Load up the patch.003 file, parse out the instruments
 	SciResource *res = getMidiPatchData(3);
 	bool ok = false;

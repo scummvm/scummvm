@@ -82,11 +82,7 @@ protected:
 public:
 	MidiPlayer() : _driver(0), _reverb(-1) {}
 
-	int open() {
-		ResourceManager *resMan = DgdsEngine::getInstance()->getResourceManager();	// HACK
-		return open(resMan);
-	}
-	virtual int open(ResourceManager *resMan) { return _driver->open(); }
+	virtual int open() { return _driver->open(); }
 	virtual void close() { _driver->close(); }
 	void send(uint32 b) override { _driver->send(b); }
 	virtual uint32 getBaseTempo() { return _driver->getBaseTempo(); }

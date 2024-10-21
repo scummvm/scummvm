@@ -53,7 +53,7 @@ public:
 	MidiPlayer_Midi();
 	~MidiPlayer_Midi() override;
 
-	int open(ResourceManager *resMan) override;
+	int open() override;
 	void close() override;
 	void send(uint32 b) override;
 	void sysEx(const byte *msg, uint16 length) override;
@@ -950,9 +950,7 @@ void MidiPlayer_Midi::resetMt32() {
 	}
 }
 
-int MidiPlayer_Midi::open(ResourceManager *resMan) {
-	assert(resMan != nullptr);
-
+int MidiPlayer_Midi::open() {
 	int retval = _driver->open();
 	if (retval != 0) {
 		warning("Failed to open MIDI driver");

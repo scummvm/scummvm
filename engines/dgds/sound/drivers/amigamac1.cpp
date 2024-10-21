@@ -910,7 +910,7 @@ public:
 	MidiPlayer_Mac1(Audio::Mixer *mixer, Mixer_Mac<MidiPlayer_Mac1>::Mode mode);
 
 	// MidiPlayer
-	int open(ResourceManager *resMan) override;
+	int open() override;
 
 	// MidiDriver
 	void close() override;
@@ -945,7 +945,7 @@ MidiPlayer_Mac1::MidiPlayer_Mac1(Audio::Mixer *mixer, Mixer_Mac<MidiPlayer_Mac1>
 	Mixer_Mac<MidiPlayer_Mac1>(mode),
 	MidiPlayer_AmigaMac1(mixer, 1480, false, _mutex) {}
 
-int MidiPlayer_Mac1::open(ResourceManager *resMan) {
+int MidiPlayer_Mac1::open() {
 	if (_isOpen)
 		return MidiDriver::MERR_ALREADY_OPEN;
 
@@ -1091,7 +1091,7 @@ public:
 	MidiPlayer_Amiga1(Audio::Mixer *mixer);
 
 	// MidiPlayer
-	int open(ResourceManager *resMan) override;
+	int open() override;
 
 	// MidiDriver
 	void close() override;
@@ -1127,7 +1127,7 @@ MidiPlayer_Amiga1::MidiPlayer_Amiga1(Audio::Mixer *mixer) :
 	MidiPlayer_AmigaMac1(mixer, 224, true, _mutex),
 	_isSci1Ega(false) {}
 
-int MidiPlayer_Amiga1::open(ResourceManager *resMan) {
+int MidiPlayer_Amiga1::open() {
 	if (_isOpen)
 		return MidiDriver::MERR_ALREADY_OPEN;
 

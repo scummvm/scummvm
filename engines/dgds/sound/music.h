@@ -19,6 +19,16 @@
  *
  */
 
+/**
+ * This file and all files in this directory were imported from the SCI
+ * engine and lightly modified to match DGDS, removing:
+ *  * SCI0, SCI2, and SCI32 code
+ *  * game-specific code
+ *  * some unsupported devices
+ *
+ * The original games also used lightly modified SCI midi drivers.
+ */
+
 #ifndef DGDS_SOUND_MUSIC_H
 #define DGDS_SOUND_MUSIC_H
 
