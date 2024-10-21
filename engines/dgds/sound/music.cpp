@@ -438,7 +438,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 				pSnd->_chan[chan.number]._dontRemap |= (bool)(chan.flags & 2);
 
 				// HACK for DGDS - don't remap rhythm channel.
-				if (chan.number == 9)
+				if (chan.number == MIDI_RHYTHM_CHANNEL)
 					pSnd->_chan[chan.number]._dontRemap = true;
 
 				if (pSnd->_chan[chan.number]._prio == -1)
@@ -916,7 +916,7 @@ void MusicEntry::onTimer() {
 		}
 	}
 
-	if (status != kSoundPlaying || !loop)
+	if (status != kSoundPlaying)
 		return;
 
 	// Fade MIDI and digital sound effects

@@ -46,6 +46,8 @@ static const uint16 SIGNAL_OFFSET = 0xffff;
 static const int SND_RESOURCE_OFFSET = 4096;
 static const int MUSIC_RESOURCE_OFFSET = 8192;
 
+static const uint16 FLAG_LOOP = 1;
+
 static void _readHeader(const byte* &pos, uint32 &sci_header) {
 	sci_header = 0;
 	if (READ_LE_UINT16(pos) == 0x0084)
@@ -422,13 +424,13 @@ int Sound::mapSfxNum(int num) const {
 
 void Sound::playSFX(int num) {
 	int mappedNum = mapSfxNum(num);
-	debug("Play SFX %d (-> %d), have %d entries", num, mappedNum, _sfxData.size());
+	debug("Sound: Play SFX %d (-> %d), have %d entries", num, mappedNum, _sfxData.size());
 	playPCSound(mappedNum, _sfxData, Audio::Mixer::kSFXSoundType);
 }
 
 void Sound::stopSfxByNum(int num) {
 	int mappedNum = mapSfxNum(num);
-	debug("Stop SFX %d (-> %d)", num, mappedNum);
+	debug("Sound: Stop SFX %d (-> %d)", num, mappedNum);
 
 	MusicEntry *musicSlot = _music->getSlot(mappedNum + SND_RESOURCE_OFFSET);
 	if (!musicSlot) {
@@ -442,7 +444,7 @@ void Sound::stopSfxByNum(int num) {
 }
 
 void Sound::playMusic(int num) {
-	debug("Sound: Play music %d of (%d entries)", num, _musicData.size());
+	debug("Sound: Play music %d (%s), have %d entries", num, _currentMusic.c_str(), _musicData.size());
 	playPCSound(num, _musicData, Audio::Mixer::kMusicSoundType);
 }
 
@@ -456,13 +458,13 @@ void Sound::processInitSound(uint32 obj, const SoundData &data, Audio::Mixer::So
 	MusicEntry *newSound = new MusicEntry();
 	newSound->resourceId = obj;
 	newSound->soundObj = obj;
-	newSound->loop = 0; // set in playSound
+	newSound->loop = 0; // set in processPlaySound
 	newSound->overridePriority = false;
-	newSound->priority = 255; // TODO: Priority?
+	newSound->priority = 255;
 	newSound->volume = MUSIC_VOLUME_DEFAULT;
 	newSound->reverb = -1;	// initialize to SCI invalid, it'll be set correctly in soundInitSnd() below
 
-	debugC(kDebugLevelSound, "processInitSound: %08x number %d, loop %d, prio %d, vol %d", obj,
+	debug("processInitSound: %08x number %d, loop %d, prio %d, vol %d", obj,
 			obj, newSound->loop, newSound->priority, newSound->volume);
 
 	initSoundResource(newSound, data, soundType);
@@ -541,7 +543,7 @@ void Sound::processPlaySound(uint32 obj, bool playBed, bool restoring, const Sou
 		musicSlot = _music->getSlot(obj);
 	}
 
-	musicSlot->loop = (data._flags & 1) ? -1 : 1;
+	musicSlot->loop = (data._flags & FLAG_LOOP) ? 1 : 0;
 
 	// Get song priority from either obj or soundRes
 	byte resourcePriority = 0xFF;
@@ -550,7 +552,7 @@ void Sound::processPlaySound(uint32 obj, bool playBed, bool restoring, const Sou
 	if (!musicSlot->overridePriority && resourcePriority != 0xFF) {
 		musicSlot->priority = resourcePriority;
 	} else {
-		musicSlot->priority = 0xff; // todo: priority?
+		musicSlot->priority = 255;
 	}
 
 	// Reset hold when starting a new song. kDoSoundSetHold is always called after
@@ -559,8 +561,8 @@ void Sound::processPlaySound(uint32 obj, bool playBed, bool restoring, const Sou
 	musicSlot->playBed = playBed;
 	musicSlot->volume = MUSIC_VOLUME_DEFAULT;
 
-	debugC(kDebugLevelSound, "kDoSound(play): %08x number %d, loop %d, prio %d, vol %d, bed %d", obj,
-			resourceId, musicSlot->loop, musicSlot->priority, musicSlot->volume, playBed ? 1 : 0);
+	debug("processPlaySound: %08x number %d, sz %d, loop %d, prio %d, vol %d, bed %d", obj,
+			resourceId, data._size, musicSlot->loop, musicSlot->priority, musicSlot->volume, playBed ? 1 : 0);
 
 	_music->soundPlay(musicSlot, restoring);
 
@@ -590,6 +592,7 @@ void Sound::playPCSound(int num, const Common::Array<SoundData> &dataArray, Audi
 }
 
 void Sound::stopMusic() {
+	debug("Sound: Stop music.");
 	_music->stopMusic();
 }
 

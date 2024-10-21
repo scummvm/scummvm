@@ -565,7 +565,7 @@ bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 	case 0xC:
 		if (info.channel() == 0xF) {// SCI special case
 			if (info.basic.param1 == kSetSignalLoop) {
-				_loopTick = _position._playTick;
+				_loopTick = _position._lastEventTime + info.delta;
 				return true;
 			}
 
@@ -676,14 +676,13 @@ bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 		break;
 	case 0xF: // META event
 		if (info.ext.type == 0x2F) {// end of track reached
-			if (_pSnd->loop)
-				_pSnd->loop--;
 			// QFG3 abuses the hold flag. Its scripts call kDoSoundSetHold,
 			// but sometimes there's no hold marker in the associated songs
 			// (e.g. song 110, during the intro). The original interpreter
 			// treats this case as an infinite loop (bug #5744).
 			if (_pSnd->loop || _pSnd->hold > 0) {
-				jumpToTick(_loopTick);
+				// Change from SCI: Don't stop current notes on loop.
+				jumpToTick(_loopTick, false, false);
 
 				// Done with this event.
 				return true;
