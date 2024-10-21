@@ -156,7 +156,7 @@ bool HiRes5Engine::isInventoryFull() {
 	}
 
 	if (weight >= 100) {
-		printString(_gameStrings.carryingTooMuch);
+		_display->printString(_gameStrings.carryingTooMuch);
 		inputString();
 		return true;
 	}
