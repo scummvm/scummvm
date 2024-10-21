@@ -546,6 +546,7 @@ bool MinigameManager::quant(float dt) {
 		case MinigameInterface::GAME_LOST:
 			if (!timeManager_->timeIsOut())
 				signal(EVENT_GAME_LOSE);
+			// fallthrough
 		case MinigameInterface::NOT_INITED:
 			gameLose();
 			break;
