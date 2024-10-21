@@ -249,7 +249,7 @@ bool MinigameManager::createGame() {
 }
 
 #define SAFE_RELEASE(name)                      \
-    if(name){                                   \
+    if (name) {                                 \
         scene_->release_object_interface(name); \
         name = 0;                               \
     }
@@ -274,8 +274,10 @@ bool MinigameManager::finit() {
 	delete timeManager_;
 	timeManager_ = 0;
 
-	SAFE_RELEASE(state_flag_)
-	SAFE_RELEASE(pause_flag_)
+	if (scene_) {
+		SAFE_RELEASE(state_flag_)
+		SAFE_RELEASE(pause_flag_)
+	}
 
 	release(complete_help_miniature_);
 	release(complete_help_);
