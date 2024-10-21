@@ -69,11 +69,10 @@ TextManager::TextManager() {
 			                  &escape.accel_min.x, &escape.accel_max.x, &escape.accel_min.y, &escape.accel_max.y,
 			                  &escape.aliveTime, escape.format);
 
-			if (read != 11)
+			if (read != 11) {
 				warning("TextManager(): incorrect particle definition in [%s]", str_cache);
-
-			if (read != 11)
 				break;
+			}
 			_escapes.push_back(escape);
 		} else
 			break;
@@ -104,19 +103,18 @@ bool TextManager::getStaticPreset(StaticTextPreset& preset, const char* name) co
 		str[63] = 0;
 		int read = sscanf(descr, "%d %d |%63s", &align, &preset.font, str);
 
-		if (read != 3)
+		if (read != 3) {
 			warning("TextManager::getStaticPreset(): Incorrect text format description in %s", transCyrillic(name));
-
-		if (read != 3)
 			return false;
+		}
 
 		char *pos_obj = strchr(str, '|');
 
-		if (!pos_obj)
+		if (!pos_obj) {
 			warning("TextManager::getStaticPreset(): Incorrect text format description (2) in %s", transCyrillic(name));
-
-		if (!pos_obj)
 			return false;
+		}
+
 		*pos_obj = 0;
 		++pos_obj;
 

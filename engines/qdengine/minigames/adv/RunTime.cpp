@@ -1020,7 +1020,7 @@ TimeManager::TimeManager(HoldData<TimeManagerData> &data_) {
 			sscanf(data, "%f", &timeCost_);
 	}
 
-	direction_ = DOWN;
+	direction_ = DOWN; // Default value
 
 	if (timeBar_) {
 		TimeManagerData myData;
@@ -1036,10 +1036,8 @@ TimeManager::TimeManager(HoldData<TimeManagerData> &data_) {
 			if (sscanf(data, "%d", &dir) == 1) {
 				assert(dir >= 0 && dir <= 3);
 				direction_ = Direction(dir);
-			} else
-				direction_ = DOWN;
-		} else
-			direction_ = DOWN;
+			}
+		}
 	} else
 		size_ = mgVect2f(-1.f, -1.f);
 
