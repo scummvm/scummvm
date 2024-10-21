@@ -27,6 +27,7 @@
 #include "qdengine/minigames/adv/common.h"
 
 namespace Common {
+class SeekableReadStream;
 class SeekableWriteStream;
 }
 
@@ -63,7 +64,7 @@ struct MinigameData {
 
 struct GameInfo {
 	GameInfo();
-	void write(void *data, uint size);
+	void write(Common::SeekableReadStream &in);
 	void free();
 	static int version() {
 		return 9;
@@ -103,7 +104,7 @@ public:
 	// finish MiniGame virtual interface
 
 	// при необходимости заменяет на неизмененные предыдущим прохождением данные
-	bool processGameData(Common::SeekableWriteStream &data);
+	bool processGameData(Common::SeekableReadStream &data);
 
 	mgVect2f mousePosition() const {
 		return mousePos_;

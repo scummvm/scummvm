@@ -892,29 +892,28 @@ int MinigameManager::rnd(const Std::vector<float> &prob) const {
 
 // если данные еще ни разу не сохранялись - запоминаем
 // если уже есть запомненные, то заменяем на них
-bool MinigameManager::processGameData(Common::SeekableWriteStream &data) {
-	warning("STUB: MinigameManager::processGameData()");
-#if 0
+bool MinigameManager::processGameData(Common::SeekableReadStream &data) {
+	data.seek(0);
+
 	if (currentGameInfo_) {
 		if (currentGameInfo_->empty_) {
 			currentGameInfo_->empty_ = false;
-			assert(data.tell());
-			currentGameInfo_->write(data.buffer(), data.tell());
+			assert(data.pos());
+			currentGameInfo_->write(data);
 		} else {
-			if (data.tell() != currentGameInfo_->dataSize_)
+			if (data.pos() != currentGameInfo_->dataSize_)
 				warning("MinigameManager::processGameData(): Old minigame save detected. Remove '%s'", state_container_name_);
 
-			if (data.tell() == currentGameInfo_->dataSize_) {
-				data.set(0);
-				data.write(currentGameInfo_->gameData_, currentGameInfo_->dataSize_, true);
+			if (data.pos() == currentGameInfo_->dataSize_) {
+				currentGameInfo_->write(data);
 			} else {
-				data.set(0);
+				data.seek(0);
 				return false;
 			}
 		}
 	}
-	data.set(0);
-#endif
+	data.seek(0);
+
 	return true;
 }
 
@@ -958,16 +957,16 @@ void GameInfo::free() {
 	dataSize_ = 0;
 }
 
-void GameInfo::write(void *data, uint size) {
-	if (dataSize_ != size) {
+void GameInfo::write(Common::SeekableReadStream &in) {
+	if (dataSize_ != in.size()) {
 		free();
-		if (size > 0) {
-			gameData_ = malloc(size);
-			dataSize_ = size;
+		if (in.size() > 0) {
+			dataSize_ = in.size();
+			gameData_ = malloc(dataSize_);
 		}
 	}
 	if (dataSize_ > 0)
-		memcpy(gameData_, data, dataSize_);
+		in.read(gameData_, dataSize_);
 }
 
 #if 0
