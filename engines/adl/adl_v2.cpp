@@ -304,22 +304,27 @@ void AdlEngine_v2::takeItem(byte noun) {
 				return;
 			}
 
+			bool itemIsHere = false;
+
 			if (item->state == IDI_ITEM_DROPPED) {
-				item->room = IDI_ANY;
-				_itemRemoved = true;
-				return;
+				itemIsHere = true;
+			} else {
+				Common::Array<byte>::const_iterator pic;
+				for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
+					if (*pic == getCurRoom().curPicture || *pic == IDI_ANY) {
+						itemIsHere = true;
+						break;
+					}
+				}
 			}
 
-			Common::Array<byte>::const_iterator pic;
-			for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-				if (*pic == getCurRoom().curPicture || *pic == IDI_ANY) {
-					if (!isInventoryFull()) {
-						item->room = IDI_ANY;
-						_itemRemoved = true;
-						item->state = IDI_ITEM_DROPPED;
-					}
-					return;
+			if (itemIsHere) {
+				if (!isInventoryFull()) {
+					item->room = IDI_ANY;
+					_itemRemoved = true;
+					item->state = IDI_ITEM_DROPPED;
 				}
+				return;
 			}
 		}
 	}
