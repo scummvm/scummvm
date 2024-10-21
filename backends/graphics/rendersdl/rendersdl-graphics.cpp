@@ -499,20 +499,48 @@ Common::List<Graphics::PixelFormat> RenderSdlGraphicsManager::getSupportedFormat
 	return _supportedFormats;
 }
 
+static void maskToBitCount(Uint32 mask, uint8 &numBits, uint8 &shift) {
+	numBits = 0;
+	shift = 32;
+	for (int i = 0; i < 32; ++i) {
+		if (mask & 1) {
+			if (i < shift) {
+				shift = i;
+			}
+			++numBits;
+		}
+		mask >>= 1;
+	}
+}
+
 void RenderSdlGraphicsManager::detectSupportedFormats() {
 	_supportedFormats.clear();
 
-	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+	SDL_RendererInfo info;
+	if (SDL_GetRendererInfo(_renderer, &info) < 0)
+		error("SDL_GetRendererInfo failed: %s", SDL_GetError());
 
-	if (_hwScreen) {
-		// Get our currently set hardware format
-		Graphics::PixelFormat hwFormat = convertSDLPixelFormat(_hwScreen->format);
+	// Enumerate all pixel formats supported by the renderer
+	for (Uint32 i = 0; i < info.num_texture_formats; i++) {
+		if (!SDL_ISPIXELFORMAT_PACKED(info.texture_formats[i]))
+			continue;
 
-		// This is the first supported format to prevent pixel format conversion
-		// on blitting. This gives us a lot more performance on low perf hardware.
-		_supportedFormats.push_back(hwFormat);
+		int bpp;
+		Uint32 rMask, gMask, bMask, aMask;
+		if (SDL_PixelFormatEnumToMasks(info.texture_formats[i], &bpp, &rMask, &gMask, &bMask, &aMask) != SDL_TRUE) {
+			error("Could not convert system pixel format %s to masks", SDL_GetPixelFormatName(info.texture_formats[i]));
+		}
 
-		format = hwFormat;
+		const uint8 bytesPerPixel = SDL_BYTESPERPIXEL(info.texture_formats[i]);
+		uint8 rBits, rShift, gBits, gShift, bBits, bShift, aBits, aShift;
+		maskToBitCount(rMask, rBits, rShift);
+		maskToBitCount(gMask, gBits, gShift);
+		maskToBitCount(bMask, bBits, bShift);
+		maskToBitCount(aMask, aBits, aShift);
+
+		Graphics::PixelFormat format(bytesPerPixel, rBits, gBits, bBits, aBits, rShift, gShift, bShift, aShift);
+
+		_supportedFormats.push_back(format);
 	}
 
 	// Some tables with standard formats that we always list
@@ -554,18 +582,12 @@ void RenderSdlGraphicsManager::detectSupportedFormats() {
 
 	// Push some RGB formats
 	for (i = 0; i < ARRAYSIZE(RGBList); i++) {
-		if (_hwScreen && (RGBList[i].bytesPerPixel > format.bytesPerPixel))
-			continue;
-		if (RGBList[i] != format)
-			_supportedFormats.push_back(RGBList[i]);
+		_supportedFormats.push_back(RGBList[i]);
 	}
 
 	// Push some BGR formats
 	for (i = 0; i < ARRAYSIZE(BGRList); i++) {
-		if (_hwScreen && (BGRList[i].bytesPerPixel > format.bytesPerPixel))
-			continue;
-		if (BGRList[i] != format)
-			_supportedFormats.push_back(BGRList[i]);
+		_supportedFormats.push_back(BGRList[i]);
 	}
 
 	// Finally, we always supposed 8 bit palette graphics
@@ -880,14 +902,32 @@ bool RenderSdlGraphicsManager::loadGFXMode() {
 
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, _videoMode.filtering ? "linear" : "nearest");
 
-		Uint32 screenFormat = SDL_PIXELFORMAT_RGB565;
+		_screenTexFormat = SDL_PIXELFORMAT_UNKNOWN;
+		if (!_screenFormat.isCLUT8())
+			_screenTexFormat = SDL_MasksToPixelFormatEnum(_screenFormat.bytesPerPixel * 8, rMask, gMask, bMask, aMask);
+		if (_screenTexFormat == SDL_PIXELFORMAT_UNKNOWN) {
+			// Pick the best pixel format for the screen based on what the
+			// renderer supports.
+			SDL_RendererInfo info;
+			if (SDL_GetRendererInfo(_renderer, &info) < 0)
+				error("SDL_GetRendererInfo failed: %s", SDL_GetError());
 
-		_screenTexture = SDL_CreateTexture(_renderer, screenFormat, SDL_TEXTUREACCESS_STREAMING, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
+			for (Uint32 i = 0; i < info.num_texture_formats; i++) {
+				if (!SDL_ISPIXELFORMAT_PACKED(info.texture_formats[i]))
+					continue;
+				_screenTexFormat = info.texture_formats[i];
+				break;
+			}
+		}
+		if (_screenTexFormat == SDL_PIXELFORMAT_UNKNOWN)
+			_screenTexFormat = SDL_PIXELFORMAT_RGBA32;
+
+		_screenTexture = SDL_CreateTexture(_renderer, _screenTexFormat, SDL_TEXTUREACCESS_STREAMING, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
 		if (!_screenTexture) {
 			error("Failed to create texture: %s", SDL_GetError());
 		}
 
-		_hwScreen = SDL_CreateRGBSurfaceWithFormat(SDL_SWSURFACE, _videoMode.hardwareWidth, _videoMode.hardwareHeight, SDL_BITSPERPIXEL(screenFormat), screenFormat);
+		_hwScreen = SDL_CreateRGBSurfaceWithFormat(SDL_SWSURFACE, _videoMode.hardwareWidth, _videoMode.hardwareHeight, SDL_BITSPERPIXEL(_screenTexFormat), _screenTexFormat);
 	}
 
 
@@ -2710,7 +2750,7 @@ void RenderSdlGraphicsManager::recreateScreenTexture() {
 #endif
 
 	SDL_Texture *oldTexture = _screenTexture;
-	_screenTexture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
+	_screenTexture = SDL_CreateTexture(_renderer, _screenTexFormat, SDL_TEXTUREACCESS_STREAMING, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
 	if (_screenTexture) {
 		SDL_DestroyTexture(oldTexture);
 #if SDL_VERSION_ATLEAST(3, 0, 0)
