@@ -666,10 +666,15 @@ Graphics::ManagedSurface *grTileAnimation::dumpTiles(int tilesPerRow) const {
 void grTileAnimation::dumpTiles(Common::Path basename, int tilesPerRow) const {
 	Common::Path path = Common::Path(Common::String::format("dumps/%s.tiles.png", transCyrillic(basename.baseName())));
 
+	Common::DumpFile bitmapFile;
+	if (!bitmapFile.open(path, true)) {
+		warning("Cannot dump tile into file '%s'", path.toString().c_str());
+		return;
+	}
+
 	Graphics::ManagedSurface *dstSurf = dumpTiles(tilesPerRow);
 
-	Common::DumpFile bitmapFile;
-	bitmapFile.open(path, true);
+
 	Image::writePNG(bitmapFile, *(dstSurf->surfacePtr()));
 	bitmapFile.close();
 
