@@ -218,7 +218,7 @@ public:
 			if (mouseObj && clickObj) {
 				name = clickObj->name();
 
-				if (strstr(name, "notesto")) {
+				if (strstr(name, "notesto") && num > 0 && num <= 8) {
 					_figures[num - 1]->set_state("base");
 					_figures[num + 15]->set_state("del");
 
