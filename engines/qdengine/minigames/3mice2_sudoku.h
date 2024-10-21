@@ -177,7 +177,7 @@ public:
 				num = getObjNum(clickObj->name());
 				debugC(2, kDebugMinigames, "clickObj: zone is: %d for name: '%s'", num, clickObj->name());
 
-				if (num > -1) {
+				if (num > 0) {
 					_figures[num - 1]->set_state("hide");
 					_figures[num + 12]->set_state("to_inv");
 				}
@@ -199,7 +199,7 @@ public:
 			debugC(2, kDebugMinigames, "clickObj: zone is: %d for name: '%s'", num, clickObj->name());
 			debugC(2, kDebugMinigames, "mouseObj: zone is: %d for name: '%s'", num2, mouseObj->name());
 
-			if (num > -1 && num2 > -1 && !posIsSet(num - 1)) {
+			if (num > 0 && num2 > 0 && !posIsSet(num - 1)) {
 				_objTarget->set_state(Common::String::format("%d", num).c_str());
 				_objTarget->update_screen_R();
 
