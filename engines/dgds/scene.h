@@ -334,10 +334,10 @@ protected:
 
 	// These are all static as they are potentially run over scene changes.
 	static bool checkConditions(const Common::Array<SceneConditions> &cond);
-	static bool runSceneOp(const SceneOp &op, bool sceneChanged);
-	static bool runDragonOp(const SceneOp &op, bool sceneChanged);
-	static bool runChinaOp(const SceneOp &op, bool sceneChanged);
-	static bool runBeamishOp(const SceneOp &op, bool sceneChanged);
+	static bool runSceneOp(const SceneOp &op);
+	static bool runDragonOp(const SceneOp &op);
+	static bool runChinaOp(const SceneOp &op);
+	static bool runBeamishOp(const SceneOp &op);
 
 	uint32 _magic;
 	Common::String _version;

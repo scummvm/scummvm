@@ -162,6 +162,10 @@ void Clock::update(bool gameRunning) {
 		addGameTime(mins_to_add);
 }
 
+Common::String Clock::dump() {
+	return Common::String::format("days %d hours %d mins %d", _days, _mins, _hours);
+}
+
 Common::Error Clock::syncState(Common::Serializer &s) {
 	s.syncAsUint32LE(_lastPlayTime);
 	s.syncAsUint32LE(_millis);

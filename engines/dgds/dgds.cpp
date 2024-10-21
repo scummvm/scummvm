@@ -158,6 +158,8 @@ void DgdsEngine::loadIcons() {
 bool DgdsEngine::changeScene(int sceneNum) {
 	assert(_scene && _adsInterp);
 
+	debug("CHANGE SCENE %d -> %d (clock %s)", _scene->getNum(), sceneNum, _clock.dump().c_str());
+
 	if (sceneNum == _scene->getNum()) {
 		warning("Tried to change from scene %d to itself, doing nothing.", sceneNum);
 		return false;
@@ -223,8 +225,8 @@ bool DgdsEngine::changeScene(int sceneNum) {
 	else
 		_adsInterp->unload();
 
-	_scene->runEnterSceneOps();
 	debug("%s", _scene->dump("").c_str());
+	_scene->runEnterSceneOps();
 
 	_justChangedScene1 = true;
 	_justChangedScene2 = true;
@@ -801,7 +803,6 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 		_storedAreaBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 	}
 
-	debug("%s", _scene->dump("").c_str());
 	_scene->runEnterSceneOps();
 
 	return Common::kNoError;

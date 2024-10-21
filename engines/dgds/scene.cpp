@@ -621,7 +621,7 @@ static void _drawDragonCountdown(FontManager::FontType fontType, int16 x, int16 
 }
 
 
-bool Scene::runSceneOp(const SceneOp &op, bool sceneChanged) {
+bool Scene::runSceneOp(const SceneOp &op) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	switch (op._opCode) {
 	case kSceneOpChangeScene:
@@ -646,7 +646,7 @@ bool Scene::runSceneOp(const SceneOp &op, bool sceneChanged) {
 	case kSceneOpOpenInventory:
 		engine->getInventory()->open();
 		// This implicitly changes scene num
-		return true;
+		break;
 	case kSceneOpShowDlg:
 		if (op._args.size() == 1)
 			engine->getScene()->showDialog(0, op._args[0]);
@@ -663,7 +663,7 @@ bool Scene::runSceneOp(const SceneOp &op, bool sceneChanged) {
 		engine->getScene()->enableTrigger(op._args[0]);
 		break;
 	case kSceneOpChangeSceneToStored: {
-		uint16 sceneNo = engine->getGameGlobals()->getGlobal(0x61);
+		int16 sceneNo = engine->getGameGlobals()->getGlobal(0x61);
 		if (engine->changeScene(sceneNo))
 			return true;
 		break;
@@ -732,7 +732,7 @@ bool Scene::runSceneOp(const SceneOp &op, bool sceneChanged) {
 }
 
 /*static*/
-bool Scene::runDragonOp(const SceneOp &op, bool sceneChanged) {
+bool Scene::runDragonOp(const SceneOp &op) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	switch (op._opCode) {
 	case kSceneOpPasscode:
@@ -776,7 +776,7 @@ bool Scene::runDragonOp(const SceneOp &op, bool sceneChanged) {
 }
 
 /*static*/
-bool Scene::runChinaOp(const SceneOp &op, bool sceneChanged) {
+bool Scene::runChinaOp(const SceneOp &op) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	switch (op._opCode) {
 	case kSceneOpOpenChinaOpenGameOverMenu:
@@ -806,7 +806,7 @@ bool Scene::runChinaOp(const SceneOp &op, bool sceneChanged) {
 	return false;
 }
 
-bool Scene::runBeamishOp(const SceneOp &op, bool sceneChanged) {
+bool Scene::runBeamishOp(const SceneOp &op) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 
 	if (op._opCode & 0x8000) {
@@ -837,15 +837,18 @@ bool Scene::runBeamishOp(const SceneOp &op, bool sceneChanged) {
 //
 // Note: ops list here is not a reference on purpose, it must be copied.
 // The underlying list might be freed during execution if the scene changes, but
-// we have to finish executing the whole list.
+// we have to finish executing the list if the scene changed into inventory -
+// which could have invalidated the op list pointer.  We *don't* finish executing
+// if any other scene change happens.
 //
-// Scene change can also invalidate the `this` pointer, which is why
-// this is static and the runOp functions fetch the scene through the engine.
+// Because scene change can also invalidate the `this` pointer, this is static
+// and the runOp functions fetch the scene through the engine.
 //
 /*static*/
 bool Scene::runOps(const Common::Array<SceneOp> ops, int16 addMinuites /* = 0 */) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	bool sceneChanged = false;
+	int16 startSceneNum = engine->getScene()->getNum();
 	for (const SceneOp &op : ops) {
 		if (!checkConditions(op._conditionList))
 			continue;
@@ -855,26 +858,36 @@ bool Scene::runOps(const Common::Array<SceneOp> ops, int16 addMinuites /* = 0 */
 			addMinuites = 0;
 		}
 		if (op._opCode < 100) {
-			sceneChanged |= runSceneOp(op, sceneChanged);
-			// NOTE: After executing op, `this` may no longer be valid.
+			sceneChanged = runSceneOp(op);
 		} else {
 			// Game-specific opcode
 			switch (engine->getGameId()) {
 			case GID_DRAGON:
-				sceneChanged |= runDragonOp(op, sceneChanged);
+				sceneChanged = runDragonOp(op);
 				break;
 			case GID_HOC:
-				sceneChanged |= runChinaOp(op, sceneChanged);
+				sceneChanged = runChinaOp(op);
 				break;
 			case GID_WILLY:
-				sceneChanged |= runBeamishOp(op, sceneChanged);
+				sceneChanged = runBeamishOp(op);
 				break;
 			default:
 				error("TODO: Implement game-specific scene op for this game");
 			}
 		}
+
+		if (sceneChanged)
+			break;
 	}
-	return !sceneChanged;
+
+	//
+	// The definition of "scene changed" returned by this function is slightly different -
+	// for the purpose of continuing to run ops above, we ignore changes to scene 2 (the
+	// inventory), but for the purpose of telling the caller, any change means they
+	// need to stop as pointers are no longer valid.
+	//
+	int16 endSceneNum = engine->getScene()->getNum();
+	return startSceneNum == endSceneNum;
 }
 
 /*static*/
