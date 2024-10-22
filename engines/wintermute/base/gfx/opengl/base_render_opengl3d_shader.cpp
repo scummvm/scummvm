@@ -260,6 +260,7 @@ bool BaseRenderOpenGL3DShader::disableShadows() {
 }
 
 void BaseRenderOpenGL3DShader::displayShadow(BaseObject *object, const DXVector3 *lightPos, bool lightPosRelative) {
+	return; // shadows are broken for a while since it use not allowed binding to frame buffer
 	if (_flatShadowMaskShader) {
 		if (object->_shadowType <= SHADOW_SIMPLE) {
 			// TODO: Display simple shadow here
