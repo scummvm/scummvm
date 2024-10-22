@@ -876,6 +876,36 @@ void Surface::blitToScreen(uint16 left, uint16 top, uint16 right, uint16 bottom,
 	g_system->copyRectToScreen(src, _width * _bpp, x, y, width, height);
 }
 
+bool Surface::getImageInfo(Common::SeekableReadStream &stream, uint32 &width, uint32 &height, uint32 &bpp) {
+	ImageType type = identifyImage(stream);
+	if (type == kImageTypeNone)
+		return false;
+
+	Common::ScopedPtr<Image::ImageDecoder> decoder;
+	switch (type) {
+	case kImageTypeTGA:
+		decoder.reset(new Image::TGADecoder());
+		break;
+	case kImageTypeIFF:
+		decoder.reset(new Image::IFFDecoder());
+		break;
+	default:
+		warning("Surface::getImageInfo(): Unhandled image type: %d", (int)type);
+		return false;
+	}
+
+	decoder->loadStream(stream);
+	const Graphics::Surface *surf = decoder->getSurface();
+	if (!surf)
+		return false;
+
+	width  = surf->w;
+	height = surf->h;
+	bpp    = surf->format.bytesPerPixel;
+
+	return true;
+}
+
 bool Surface::loadImage(Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom,
 						int16 x, int16 y, int16 transp, Graphics::PixelFormat format) {
 	ImageType type = identifyImage(stream);

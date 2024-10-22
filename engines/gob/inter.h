@@ -722,7 +722,7 @@ protected:
 	void o7_setActiveCD();
 	void o7_findFile();
 	void o7_findNextFile();
-	void o7_getImageInfo();
+	void o7_getFileInfo();
 	void o7_getSystemProperty();
 	void o7_loadImage();
 	void o7_setVolume();
