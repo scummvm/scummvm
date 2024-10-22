@@ -2342,9 +2342,11 @@ char *AdGame::findSpeechFile(char *stringID) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::renderShadowGeometry() {
+#ifdef ENABLE_WME3D
 	if (_scene && _scene->_geom)
 		return _scene->_geom->renderShadowGeometry();
 	else
+#endif
 		return true;
 }
 
