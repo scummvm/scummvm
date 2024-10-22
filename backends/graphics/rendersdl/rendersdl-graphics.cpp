@@ -1069,7 +1069,6 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 	}
 
 	// Only draw anything if necessary
-	bool doPresent = false;
 	if (_numDirtyRects > 0) {
 		SDL_Rect *r;
 		SDL_Rect dst;
@@ -1152,7 +1151,6 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 		// Finally, blit all our changes to the screen
 		if (!_displayDisabled) {
 			updateScreen(_dirtyRectList, _numDirtyRects);
-			doPresent = true;
 		}
 	}
 
@@ -1163,7 +1161,6 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 #ifdef USE_OSD
 	drawOSD();
 #endif
-	SDL_RenderPresent(_renderer);
 
 	// Set up the old scale factor
 	if (_scaler)
@@ -1177,9 +1174,8 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 	renderImGui();
 #endif
 
-	if (doPresent) {
-		SDL_RenderPresent(_renderer);
-	}
+	SDL_RenderPresent(_renderer);
+
 }
 
 bool RenderSdlGraphicsManager::saveScreenshot(const Common::Path &filename) const {
