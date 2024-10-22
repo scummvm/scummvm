@@ -297,6 +297,7 @@ protected:
 	void readCommands(Common::ReadStream &stream, Commands &commands);
 	void removeCommand(Commands &commands, uint idx);
 	Command &getCommand(Commands &commands, uint idx);
+	void removeMessage(uint idx);
 	void checkInput(byte verb, byte noun);
 	virtual bool isInputValid(byte verb, byte noun, bool &is_any);
 	virtual bool isInputValid(const Commands &commands, byte verb, byte noun, bool &is_any);
