@@ -50,7 +50,6 @@ bool ShadowVolume::reset() {
 
 //////////////////////////////////////////////////////////////////////////^M
 bool ShadowVolume::addMesh(DXMesh *mesh, uint32 *adjacency, DXMatrix *modelMat, DXVector3 *light, float extrusionDepth) {
-
 	if (!mesh || !adjacency)
 		return false;
 
