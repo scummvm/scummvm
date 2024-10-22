@@ -837,6 +837,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			_geom = new AdSceneGeometry(_gameRef);
 			if (_geom == nullptr || !_geom->loadFile(params)) {
 				delete _geom;
+				_geom = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
