@@ -691,15 +691,10 @@ void Adlib::OnTimer() {
 								uint16 bp0A = 0;
 								// TODO: Loop condition
 								do {
+									// l0017_1C49:
+									bp0A++;
 									// l0017_1C4C:
-									// TODO: Comparison with a structure
-									/*
-									mov di, [bp - 0Ah]
-									cmp byte ptr[di + 222Ch], 0h
-									jz 1C5Dh
-									*/
-
-									if (true) {
+									if (gArray222C[bp0A] != 0) {
 										// l0017_1C56:
 										// TODO: Increase the pointed to value
 
