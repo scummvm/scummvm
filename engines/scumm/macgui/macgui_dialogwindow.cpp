@@ -326,7 +326,14 @@ void MacGuiImpl::MacDialogWindow::drawDottedHLine(int x0, int y, int x1) {
 
 	uint32 color[2];
 
-	if (_gui->_vm->_renderMode == Common::kRenderMacintoshBW) {
+	// The dotted line is used by the default save/load dialogs as a
+	// separator between buttons. Surprisingly, this is only drawn using
+	// shades of gray in 16 color mode. Not, as you might think, in 256
+	// color mode.
+	//
+	// At least not in the version of MacOS that was used for reference.
+
+	if (_gui->_vm->_renderMode == Common::kRenderMacintoshBW || !(_gui->_vm->_game.features & GF_16COLOR)) {
 		color[0] = _black;
 		color[1] = _white;
 	} else {

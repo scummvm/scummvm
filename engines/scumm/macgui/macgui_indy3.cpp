@@ -1404,7 +1404,7 @@ bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 	return ret;
 }
 
-bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
+bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &saveName) {
 	// Widgets:
 	//
 	// 0 - Save button
@@ -1452,7 +1452,7 @@ bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 
 		if (clicked == 0) {
 			ret = true;
-			name = window->getWidget(6)->getText(); // Edit text widget
+			saveName = window->getWidget(6)->getText(); // Edit text widget
 			saveSlotToHandle = firstAvailableSlot;
 			break;
 		}
