@@ -273,13 +273,14 @@ bool MinigameManager::finit() {
 	if (scene_) {
 		SAFE_RELEASE(state_flag_)
 		SAFE_RELEASE(pause_flag_)
+
+		release(complete_help_miniature_);
+		release(complete_help_);
+
+		release(game_help_);
+		release(game_help_trigger_);
 	}
 
-	release(complete_help_miniature_);
-	release(complete_help_);
-
-	release(game_help_);
-	release(game_help_trigger_);
 	game_help_enabled_ = true;
 
 	complete_help_state_name_.clear();
