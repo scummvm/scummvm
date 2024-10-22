@@ -412,8 +412,6 @@ int MinigameManager::load_game(const qdEngineInterface *engine, const qdMinigame
 }
 
 bool MinigameManager::loadState(bool current) {
-	warning("STUB: MinigameManager::loadState()");
-#if 0
 	if (game_) {
 		debugC(2, kDebugMinigames, "MinigameManager::loadState(): load state skiped");
 		return false;
@@ -434,35 +432,40 @@ bool MinigameManager::loadState(bool current) {
 		if (current)
 			debugC(2, kDebugMinigames, "MinigameManager::loadState(): current game: (%d,%d)", currentGameIndex_.gameLevel_, currentGameIndex_.gameNum_);
 
-		XStream file(false);
-		if (file.open(state_container_name_, XS_IN)) {
-			int version;
-			file > version;
+		Common::InSaveFile *file = g_engine->getSaveFileManager()->openForLoading(state_container_name_);
+		if (file) {
+			int version = file->readUint32LE();
+
 			if (version != GameInfo::version()) {
-				warning("MinigameManager::loadState(): Minigame savestate version mismatch. Remove '%s'", state_container_name_);
+				warning("MinigameManager::loadState(): Minigame savestate version mismatch. Remove '%s'", state_container_name_.c_str());
+
+				delete file;
 				return false;
 			}
-			file > seed_;
+			seed_ = file->readUint32LE();
+
 			GameInfoIndex index(0, 0);
-			while (!file.eof()) {
-				file.read(index);
-				assert(gameInfos_.find(index) == gameInfos_.end());
-				if (file.eof())
-					return false;
-				{
-					GameInfo data;
-					file > data;
-					debugC(2, kDebugMinigames, "MinigameManager::loadState(): read game info: (%d,%d), index: %d, game data:%d", index.gameLevel_, index.gameNum_, data.game_.sequenceIndex_, data.empty_ ? 0 : 1);
-					if (data.game_.sequenceIndex_ >= 0)
-						completeCounters_[index.gameLevel_]++;
-					gameInfos_[index] = data;
-				}
+
+			while (!file->eos()) {
+				index.read(*file);
+
+				GameInfo data;
+				data.read(*file);
+
+				debugC(2, kDebugMinigames, "MinigameManager::loadState(): read game info: (%d,%d), index: %d, game data:%d", index.gameLevel_, index.gameNum_, data.game_.sequenceIndex_, data.empty_ ? 0 : 1);
+
+				if (data.game_.sequenceIndex_ >= 0)
+					completeCounters_[index.gameLevel_]++;
+
+				gameInfos_[index] = data;
 			}
+
+			delete file;
 		}
 
 		currentGameInfo_ = current ? &gameInfos_[currentGameIndex_] : 0;
 	}
-#endif
+
 	return true;
 }
 
@@ -483,6 +486,9 @@ void MinigameManager::saveState(bool force) {
 					it._value.write(*file);
 				}
 			}
+
+			file->finalize();
+			delete file;
 		} else {
 			warning("MinigameManager::saveState(): Failed to save file '%s'", state_container_name_.c_str());
 		}
