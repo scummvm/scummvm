@@ -223,7 +223,7 @@ void ws_StepWhile(machine *m, int32 pcOffset, int32 pcCount);
 void IntoTheState(machine *m);
 machine *TriggerMachineByHash(int32 myHash, Anim8 *parentAnim8, int32 dataHash, int32 dataRow, MessageCB CintrMsg, bool debug, const char *machName);
 machine *TriggerMachineByHash(int32 val1, int32 val2, int32 val3, int32 val4, int32 val5, int32 val6,
-	int32 val7, int32 val8, int32 val9, int32 val10, bool flag,
+	int32 x, int32 y, int32 scale, int32 layer, bool flag,
 	MessageCB intrMsg, const char *machName);
 machine *TriggerMachineByHash(MessageCB intrMsg, const char *machName);
 

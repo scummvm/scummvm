@@ -33,7 +33,7 @@ private:
 	bool _newExhibitsFlag = false;
 	bool _lonelyFlag = 0;
 	const char *_digiName1 = nullptr;
-	int _val4 = 0;
+	int _destTrigger = 0;
 	int _val5 = 0;
 	int _val6 = 0;
 	int _val7 = 0;
@@ -43,8 +43,8 @@ private:
 	int _val11 = 0;
 	KernelTriggerType _val12 = KT_DAEMON;
 	bool _fengFlag = false;
-	int _val14 = 0;
-	int _val15 = 0;
+	int _fengShould = 0;
+	int _fengMode = 0;
 	int _val16 = 0;
 	int _val17 = 0;
 	int _val18 = 0;

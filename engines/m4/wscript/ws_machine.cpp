@@ -1055,7 +1055,7 @@ machine *TriggerMachineByHash(MessageCB intrMsg, const char *machName) {
 }
 
 machine *TriggerMachineByHash(int32 val1, int32 val2, int32 val3, int32 val4, int32 val5, int32 val6,
-	int32 val7, int32 val8, int32 val9, int32 val10, bool flag,
+	int32 x, int32 y, int32 scale, int32 layer, bool flag,
 	MessageCB intrMsg, const char *machName) {
 	_G(globals)[GLB_TEMP_1] = val1 << 24;
 	_G(globals)[GLB_TEMP_2] = val2 << 16;
@@ -1064,10 +1064,10 @@ machine *TriggerMachineByHash(int32 val1, int32 val2, int32 val3, int32 val4, in
 
 	_G(globals)[GLB_TEMP_5] = (val5 << 16) / 100;
 	_G(globals)[GLB_TEMP_6] = val6 << 16;
-	_G(globals)[GLB_TEMP_7] = val7 << 16;
-	_G(globals)[GLB_TEMP_8] = val8 << 16;
-	_G(globals)[GLB_TEMP_9] = (val9 << 16) / 100;
-	_G(globals)[GLB_TEMP_10] = val10 << 16;
+	_G(globals)[GLB_TEMP_7] = x << 16;
+	_G(globals)[GLB_TEMP_8] = y << 16;
+	_G(globals)[GLB_TEMP_9] = (scale << 16) / 100;
+	_G(globals)[GLB_TEMP_10] = layer << 16;
 	_G(globals)[GLB_TEMP_11] = flag ? 0xffff0000 : 0x10000;
 
 	return TriggerMachineByHash(40, nullptr, -1, -1, intrMsg, false, machName);
