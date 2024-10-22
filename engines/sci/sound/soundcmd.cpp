@@ -68,11 +68,7 @@ reg_t SoundCommandParser::kDoSoundInit(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-int SoundCommandParser::getSoundResourceId(reg_t obj) {
-	if (obj.getSegment() == 0) {
-		return -1;
-	}
-
+uint16 SoundCommandParser::getSoundResourceId(reg_t obj) {
 	uint16 resourceId = readSelectorValue(_segMan, obj, SELECTOR(number));
 
 	// Modify the resourceId for the Windows versions that have an alternate MIDI soundtrack, like SSCI did.
@@ -143,7 +139,7 @@ void SoundCommandParser::initSoundResource(MusicEntry *newSound) {
 }
 
 void SoundCommandParser::processInitSound(reg_t obj) {
-	int resourceId = getSoundResourceId(obj);
+	uint16 resourceId = getSoundResourceId(obj);
 
 	// Check if a track with the same sound object is already playing
 	MusicEntry *oldSound = _music->getSlot(obj);
@@ -211,7 +207,7 @@ void SoundCommandParser::processPlaySound(reg_t obj, bool playBed, bool restorin
 			error("Failed to initialize uninitialized sound slot");
 	}
 
-	int resourceId;
+	uint16 resourceId;
 	if (!restoring)
 		resourceId = getSoundResourceId(obj);
 	else
