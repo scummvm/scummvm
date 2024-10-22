@@ -403,6 +403,15 @@ DXMatrix *DXMatrixScaling(DXMatrix *pout, float sx, float sy, float sz) {
 	return pout;
 }
 
+DXMatrix *DXMatrixRotationY(DXMatrix *pout, float angle) {
+	DXMatrixIdentity(pout);
+	pout->_m[0][0] = cosf(angle);
+	pout->_m[2][2] = cosf(angle);
+	pout->_m[0][2] = -sinf(angle);
+	pout->_m[2][0] = sinf(angle);
+	return pout;
+}
+
 DXMatrix *DXMatrixRotationZ(DXMatrix *pout, float angle) {
 	DXMatrixIdentity(pout);
 	pout->_m[0][0] = cosf(angle);

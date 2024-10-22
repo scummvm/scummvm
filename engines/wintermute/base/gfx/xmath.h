@@ -149,6 +149,7 @@ DXVector3 *DXPlaneIntersectLine(DXVector3 *pout, const DXPlane *pp, const DXVect
 DXVector3 *DXVec3Normalize(DXVector3 *pout, const DXVector3 *pv);
 DXMatrix *DXMatrixTranslation(DXMatrix *pout, float x, float y, float z);
 DXMatrix *DXMatrixScaling(DXMatrix *pout, float sx, float sy, float sz);
+DXMatrix *DXMatrixRotationY(DXMatrix *pout, float angle);
 DXMatrix *DXMatrixRotationZ(DXMatrix *pout, float angle);
 DXMatrix *DXMatrixRotationYawPitchRoll(DXMatrix *out, float yaw, float pitch, float roll);
 DXMatrix *DXMatrixRotationQuaternion(DXMatrix *pout, const DXQuaternion *pq);

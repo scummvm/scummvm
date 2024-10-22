@@ -35,6 +35,7 @@
 
 #if defined(USE_OPENGL_GAME)
 
+#include "engines/wintermute/math/math_util.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/mesh3ds_opengl.h"
@@ -160,42 +161,25 @@ bool BaseRenderOpenGL3D::disableShadows() {
 }
 
 void BaseRenderOpenGL3D::displayShadow(BaseObject *object, const DXVector3 *lightPos, bool lightPosRelative) {
-	BaseSurface *shadowImage = _gameRef->_shadowImage;
-
+	BaseSurface *shadowImage;
 	if (object->_shadowImage) {
 		shadowImage = object->_shadowImage;
+	} else {
+		shadowImage = _gameRef->_shadowImage;
 	}
 
 	if (!shadowImage) {
 		return;
 	}
 
-	DXMatrix scale;
-	DXMatrixIdentity(&scale);
-	scale.matrix._11 = object->_shadowSize * object->_scale3D;
-	scale.matrix._22 = 1.0f;
-	scale.matrix._33 = object->_shadowSize * object->_scale3D;
 
-	Math::Angle angle = object->_angle;
-	float sinOfAngle = angle.getSine();
-	float cosOfAngle = angle.getCosine();
-
-	DXMatrix rotation;
-	DXMatrixIdentity(&rotation);
-	rotation.matrix._11 = cosOfAngle;
-	rotation.matrix._13 = sinOfAngle;
-	rotation.matrix._31 = -sinOfAngle;
-	rotation.matrix._33 = cosOfAngle;
-
-	DXMatrix translation;
-	DXMatrixTranslation(&translation, object->_posVector._x, object->_posVector._y, object->_posVector._z);
-	DXMatrixTranspose(&translation, &translation);
-
-	DXMatrix worldTransformation = translation * rotation * scale;
-	DXMatrixTranspose(&worldTransformation, &worldTransformation);
-	DXMatrixMultiply(&worldTransformation, &worldTransformation, &_viewMatrix);
-
-	glLoadMatrixf(worldTransformation);
+	DXMatrix scale, trans, rot, finalm;
+	DXMatrixScaling(&scale, object->_shadowSize * object->_scale3D, 1.0f, object->_shadowSize * object->_scale3D);
+	DXMatrixRotationY(&rot, degToRad(object->_angle));
+	DXMatrixTranslation(&trans, object->_posVector._x, object->_posVector._y, object->_posVector._z);
+	DXMatrixMultiply(&finalm, &scale, &rot);
+	DXMatrixMultiply(&finalm, &finalm, &trans);
+	setWorldTransform(finalm);
 
 	glDepthMask(GL_FALSE);
 	glEnable(GL_TEXTURE_2D);
@@ -216,7 +200,6 @@ void BaseRenderOpenGL3D::displayShadow(BaseObject *object, const DXVector3 *ligh
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	glDepthMask(GL_TRUE);
-	glLoadMatrixf(_viewMatrix);
 }
 
 bool BaseRenderOpenGL3D::usingStencilBuffer() {
