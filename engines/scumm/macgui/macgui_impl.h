@@ -248,8 +248,8 @@ protected:
 	virtual bool handleMenu(int id, Common::String &name);
 
 	virtual void runAboutDialog() = 0;
-	virtual bool runOpenDialog(int &saveSlotToHandle) = 0;
-	virtual bool runSaveDialog(int &saveSlotToHandle, Common::String &name) = 0;
+	virtual bool runOpenDialog(int &saveSlotToHandle);
+	virtual bool runSaveDialog(int &saveSlotToHandle, Common::String &saveName);
 	virtual bool runOptionsDialog() = 0;
 	void prepareSaveLoad(Common::StringArray &savegameNames, bool *availSlots, int *slotIds, int size);
 

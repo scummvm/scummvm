@@ -55,8 +55,6 @@ protected:
 	bool handleMenu(int id, Common::String &name) override;
 
 	void runAboutDialog() override;
-	bool runOpenDialog(int &saveSlotToHandle) override;
-	bool runSaveDialog(int &saveSlotToHandle, Common::String &name) override;
 	bool runOptionsDialog() override;
 
 private:

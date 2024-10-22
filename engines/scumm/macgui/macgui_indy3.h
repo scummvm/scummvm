@@ -82,7 +82,7 @@ protected:
 
 	void runAboutDialog() override;
 	bool runOpenDialog(int &saveSlotToHandle) override;
-	bool runSaveDialog(int &saveSlotToHandle, Common::String &name) override;
+	bool runSaveDialog(int &saveSlotToHandle, Common::String &saveName) override;
 	bool runOptionsDialog() override;
 	bool runIqPointsDialog();
 
