@@ -90,20 +90,20 @@ machine *triggerMachineByHash_3000(int myHash, int dataHash, int normalDir, int 
 	return result;
 }
 
-void sendWSMessage_10000(int val1, machine *mach, int val2, int val3,
-		int val4, int trigger, int val9, int val6, int val7, int val8) {
+void sendWSMessage_10000(int val1, machine *mach, int series1, int val3,
+		int val4, int trigger, int series2, int val6, int val7, int val8) {
 	if (!trigger)
 		trigger = -1;
 
 	_G(globals)[GLB_TEMP_1] = val1 << 16;
-	_G(globals)[GLB_TEMP_2] = val2 << 16;
+	_G(globals)[GLB_TEMP_2] = series1 << 24;
 	_G(globals)[GLB_TEMP_3] = val3 << 16;
 	_G(globals)[GLB_TEMP_4] = val4 << 16;
 	_G(globals)[GLB_TEMP_5] = kernel_trigger_create(trigger);
 	_G(globals)[GLB_TEMP_6] = val6 << 16;
 	_G(globals)[GLB_TEMP_7] = val7 << 16;
 	_G(globals)[GLB_TEMP_8] = val8 << 16;
-	_G(globals)[GLB_TEMP_9] = val9 << 24;
+	_G(globals)[GLB_TEMP_9] = series2 << 24;
 
 	sendWSMessage(STARTWALK << 16, 0, mach, 0, nullptr, 1);
 }
