@@ -96,6 +96,7 @@ public:
 	 * Returns the game Id
 	 */
 	Common::String getGameId() const;
+	Common::String getTargetName() const { return _targetName; }
 
 	const char *getExeName() const;
 

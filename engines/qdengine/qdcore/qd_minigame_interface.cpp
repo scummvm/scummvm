@@ -43,7 +43,7 @@
 namespace QDEngine {
 
 template<>
-void mgVect3<float>::write(Common::WriteStream &out) {
+void mgVect3<float>::write(Common::WriteStream &out) const {
 	out.writeFloatLE(x);
 	out.writeFloatLE(y);
 	out.writeFloatLE(z);

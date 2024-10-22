@@ -214,7 +214,7 @@ public:
 		return mgVect3(*this) *= v;
 	}
 
-	void write(Common::WriteStream &out);
+	void write(Common::WriteStream &out) const;
 	void read(Common::ReadStream &out);
 
 	T x;

@@ -21,6 +21,7 @@
 
 #include "common/debug.h"
 #include "common/memstream.h"
+#include "common/savefile.h"
 
 #include "qdengine/qdengine.h"
 #include "qdengine/minigames/adv/common.h"
@@ -68,7 +69,7 @@ private:
 
 MinigameManager::MinigameManager(MinigameConsCallback callback)
 	: currentGameIndex_(-1, -1) {
-	state_container_name_ = "Saves/minigames.dat";
+	state_container_name_ = Common::String::format("%s.min", g_engine->getTargetName().c_str());
 
 	engine_ = 0;
 	scene_ = 0;
@@ -465,31 +466,27 @@ bool MinigameManager::loadState(bool current) {
 	return true;
 }
 
-extern bool createDirForFile(const char *partialPath);
 void MinigameManager::saveState(bool force) {
 	debugC(2, kDebugMinigames, "MinigameManager::save_state(): save state");
 
-	warning("STUB: MinigameManager::saveState()");
-
-#if 0
 	if (force || currentGameIndex_.gameNum_ >= 0) {
-		XStream file(false);
-		if (createDirForFile(state_container_name_) && file.open(state_container_name_, XS_OUT)) {
-			file < GameInfo::version();
-			file < (engine_ ? engine_->rnd(999999) : seed_);
+		Common::OutSaveFile *file = g_engine->getSaveFileManager()->openForSaving(state_container_name_);
+
+		if (file) {
+			file->writeUint32LE(GameInfo::version());
+			file->writeUint32LE(engine_ ? engine_->rnd(999999) : seed_);
 
 			for (auto &it : gameInfos_) {
 				if (!it._value.empty()) {
 					debugC(2, kDebugMinigames, "MinigameManager::save_state(): write game info: (%d,%d), index: %d, game data: %d", it._key.gameLevel_, it._key.gameNum_, it._value.game_.sequenceIndex_, it._value.empty_ ? 0 : 1);
-					file.write(it._key);
-					file < it._value;
+					it._key.write(*file);
+					it._value.write(*file);
 				}
 			}
 		} else {
-			warning("MinigameManager::saveState(): Failed to save file '%s'", state_container_name_);
+			warning("MinigameManager::saveState(): Failed to save file '%s'", state_container_name_.c_str());
 		}
 	}
-#endif
 }
 
 bool MinigameManager::quant(float dt) {
@@ -894,13 +891,13 @@ bool MinigameManager::processGameData(Common::SeekableReadStream &data) {
 		if (currentGameInfo_->empty_) {
 			currentGameInfo_->empty_ = false;
 			assert(data.pos());
-			currentGameInfo_->write(data);
+			currentGameInfo_->persist(data);
 		} else {
 			if (data.pos() != currentGameInfo_->dataSize_)
-				warning("MinigameManager::processGameData(): Old minigame save detected. Remove '%s'", state_container_name_);
+				warning("MinigameManager::processGameData(): Old minigame save detected. Remove '%s'", state_container_name_.c_str());
 
 			if (data.pos() == currentGameInfo_->dataSize_) {
-				currentGameInfo_->write(data);
+				currentGameInfo_->persist(data);
 			} else {
 				data.seek(0);
 				return false;
@@ -920,7 +917,7 @@ MinigameData::MinigameData() {
 	bestScore_ = 0;
 }
 
-void MinigameData::write(Common::SeekableWriteStream &out) {
+void MinigameData::write(Common::WriteStream &out) const {
 	out.writeSint32LE(sequenceIndex_);
 	out.writeSint32LE(lastScore_);
 	out.writeSint32LE(lastTime_);
@@ -928,7 +925,7 @@ void MinigameData::write(Common::SeekableWriteStream &out) {
 	out.writeSint32LE(bestScore_);
 }
 
-void MinigameData::read(Common::SeekableReadStream &out) {
+void MinigameData::read(Common::ReadStream &out) {
 	sequenceIndex_ = out.readSint32LE();
 	lastScore_ =     out.readSint32LE();
 	lastTime_ =      out.readSint32LE();
@@ -952,7 +949,7 @@ void GameInfo::free() {
 	dataSize_ = 0;
 }
 
-void GameInfo::write(Common::SeekableReadStream &in) {
+void GameInfo::persist(Common::SeekableReadStream &in) {
 	if (dataSize_ != in.size()) {
 		free();
 		if (in.size() > 0) {
@@ -964,35 +961,48 @@ void GameInfo::write(Common::SeekableReadStream &in) {
 		in.read(gameData_, dataSize_);
 }
 
-#if 0
-XStream &operator< (XStream& out, const GameInfo& info) {
-	out.write(info.game_);
-	out.write(info.empty_);
-	if (!info.empty_) {
-		out.write(info.timeManagerData_);
-		out.write(info.effectManagerData_);
-		out < info.dataSize_;
-		if (info.dataSize_ > 0)
-			out.write(info.gameData_, info.dataSize_);
+void GameInfo::write(Common::WriteStream &out) const {
+	game_.write(out);
+	out.writeByte(empty_);
+
+	if (!empty_) {
+		timeManagerData_.crd.write(out);
+		effectManagerData_.crd.write(out);
+
+		out.writeUint32LE(dataSize_);
+		if (dataSize_ > 0)
+			out.write(gameData_, dataSize_);
 	}
-	return out;
 }
 
-XStream &operator> (XStream& in, GameInfo& info) {
-	in.read(info.game_);
-	in.read(info.empty_);
-	if (!info.empty_) {
-		in.read(info.timeManagerData_);
-		in.read(info.effectManagerData_);
-		uint size;
-		in > size;
-		XBuffer buf(size);
-		in.read(buf.buffer(), size);
-		info.write(buf.buffer(), size);
+void GameInfo::read(Common::ReadStream &in) {
+	game_.read(in);
+	empty_ = in.readByte();
+
+	if (!empty_) {
+		timeManagerData_.crd.read(in);
+		effectManagerData_.crd.read(in);
+
+		free();
+
+		dataSize_ = in.readUint32LE();
+
+		if (dataSize_) {
+			gameData_ = malloc(dataSize_);
+			in.read(gameData_, dataSize_);
+		}
 	}
-	return in;
 }
-#endif
+
+void MinigameManager::GameInfoIndex::write(Common::WriteStream &out) const {
+	out.writeUint32LE(gameNum_);
+	out.writeUint32LE(gameLevel_);
+}
+
+void MinigameManager::GameInfoIndex::read(Common::ReadStream &in) {
+	gameNum_ = in.readUint32LE();
+	gameLevel_ = in.readUint32LE();
+}
 
 //========================================================================================================================
 

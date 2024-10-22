@@ -58,13 +58,17 @@ struct MinigameData {
 	int bestTime_;
 	int bestScore_;
 
-	void write(Common::SeekableWriteStream &out);
-	void read(Common::SeekableReadStream &out);
+	void write(Common::WriteStream &out) const;
+	void read(Common::ReadStream &out);
 };
 
 struct GameInfo {
 	GameInfo();
-	void write(Common::SeekableReadStream &in);
+	void persist(Common::SeekableReadStream &in);
+
+	void write(Common::WriteStream &out) const;
+	void read(Common::ReadStream &in);
+
 	void free();
 	static int version() {
 		return 9;
@@ -241,7 +245,7 @@ private:
 	bool invertMouseButtons_;
 
 	// имя файла и информацией о минииграх
-	const char *state_container_name_;
+	Common::String state_container_name_;
 	// количество пройденных игр на каждом уровне
 	typedef Common::HashMap<int, int> Counters;
 	Counters completeCounters_;
@@ -250,6 +254,10 @@ private:
 		GameInfoIndex(int idx, int level) : gameNum_(idx), gameLevel_(level) {}
 		int gameNum_;
 		int gameLevel_;
+
+		void write(Common::WriteStream &out) const;
+		void read(Common::ReadStream &in);
+
 		bool operator< (const GameInfoIndex& rs) const {
 			return gameLevel_ == rs.gameLevel_ ? gameNum_ < rs.gameNum_ : gameLevel_ < rs.gameLevel_;
 		}
