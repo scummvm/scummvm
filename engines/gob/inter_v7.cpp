@@ -85,7 +85,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x8A, o7_findFile);
 	OPCODEDRAW(0x8B, o7_findNextFile);
 	OPCODEDRAW(0x8C, o7_getSystemProperty);
-	OPCODEDRAW(0x8E, o7_getImageInfo);
+	OPCODEDRAW(0x8E, o7_getFileInfo);
 	OPCODEDRAW(0x90, o7_loadImage);
 	OPCODEDRAW(0x93, o7_setVolume);
 	OPCODEDRAW(0x95, o7_zeroVar);
@@ -882,11 +882,54 @@ void Inter_v7::o7_getSystemProperty() {
 	storeValue(0);
 }
 
-void Inter_v7::o7_getImageInfo() {
-	_vm->_game->_script->readValExpr();
-	_vm->_game->_script->readValExpr();
-	_vm->_game->_script->readVarIndex();
-	_vm->_game->_script->readVarIndex();
+void Inter_v7::o7_getFileInfo() {
+	Common::String file = getFile(_vm->_game->_script->evalString());
+	Common::String property = _vm->_game->_script->evalString();
+	uint16 resultVarType = 0;
+	uint16 resultVar = _vm->_game->_script->readVarIndex(nullptr, &resultVarType);
+	_vm->_game->_script->readVarIndex(); // Unknown, some status variable?
+
+	if (property.hasPrefix("IMAGE")) {
+		if (!file.contains('.'))
+			file += ".TGA";
+
+		Common::SeekableReadStream *imageFile = _vm->_dataIO->getFile(file);
+		if (!imageFile) {
+			warning("o7_getFileInfo(): No such file \"%s\"", file.c_str());
+			return;
+		}
+
+		uint32 width = -1;
+		uint32 height = -1;
+		uint32 bpp = -1;
+		Surface::getImageInfo(*imageFile, width, height, bpp);
+		if (property == "IMAGELARGEUR")
+			storeValue(resultVar, resultVarType, width);
+		else if (property == "IMAGEHAUTEUR")
+			storeValue(resultVar, resultVarType, height);
+		else if (property == "IMAGECOULEUR")
+			storeValue(resultVar, resultVarType, bpp);
+		else
+			warning("o7_getFileInfo(): Unknown image property \"%s\"", property.c_str());
+	} else {
+		if (property == "NOMBRELIGNE") {
+			Common::SeekableReadStream *stream = _vm->_dataIO->getFile(file);
+			if (!stream) {
+				warning("o7_getFileInfo(): No such file \"%s\"", file.c_str());
+				return;
+			}
+
+			int nbrLines = 0;
+			while (!stream->eos()) {
+				stream->readLine(true);
+				++nbrLines;
+			}
+
+			storeValue(resultVar, resultVarType, nbrLines);
+		} else {
+			warning("o7_getFileInfo(): Unknown property \"%s\"", property.c_str());
+		}
+	}
 }
 
 void Inter_v7::o7_loadImage() {

@@ -154,6 +154,7 @@ public:
 				   int16 x, int16 y, int16 transp, Graphics::PixelFormat format);
 
 	static ImageType identifyImage(Common::SeekableReadStream &stream);
+	static bool getImageInfo(Common::SeekableReadStream &stream, uint32 &width, uint32 &height, uint32 &bpp);
 	static void computeHighColorMap(uint32 *highColorMap, const byte *palette,
 									const Graphics::PixelFormat &format,
 									bool useSpecialBlackWhiteValues,
