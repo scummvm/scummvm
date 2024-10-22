@@ -444,6 +444,15 @@ Command &AdlEngine::getCommand(Commands &commands, uint idx) {
 	error("Command %d not found", idx);
 }
 
+void AdlEngine::removeMessage(uint idx) {
+		if (_messages[idx]) {
+			_messages[idx].reset();
+			return;
+		}
+
+		error("Message %d not found", idx);
+}
+
 void AdlEngine::checkInput(byte verb, byte noun) {
 	// Try room-local command list first
 	if (doOneCommand(_roomData.commands, verb, noun))
