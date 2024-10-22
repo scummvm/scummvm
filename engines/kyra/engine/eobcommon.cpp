@@ -1037,6 +1037,7 @@ int EoBCoreEngine::rollHitDie(int charIndex, int levelIndex) {
 	int classOffset = getCharacterClassType(c->cClass, levelIndex);
 	int die = classOffset >= 0 ? _hpIncrPerLevel[classOffset] : 1;
 	int roll = rollDice(1, die);
+	debugC(1, kDebugLevelMain, "Rolled Hit Die d%d: %d", die, roll);
 	return roll;
 }
 
@@ -1419,6 +1420,27 @@ void EoBCoreEngine::initNpc(int npcIndex) {
 	recalcArmorClass(i);
 	makeFaceShapes(i);
 	makeNameShapes(i);
+
+	/*
+	 * Patch minor issues with Eye of the Beholder 1 NPCs:
+	 *
+	 * Near Beohram's bones, a paladin's holy symbol can be found.
+	 *
+	 * Ileria is indicated to be female in the dialog (calls herself
+	 * "sister"), by the portrait and by the character sheet in the
+	 * official Clue Book.
+	 */
+	if (_configADDRuleEnhancements) {
+		if (_flags.gameID == GI_EOB1) {
+			if (npcIndex == 1) {
+				debugC(1, kDebugLevelMain, "Patching Beohram to be a paladin");
+				c->cClass = 2;
+			} else if (npcIndex == 3) {
+				debugC(1, kDebugLevelMain, "Patching Ileria to be a half-elf female");
+				c->raceSex = 5;
+			}
+		}
+	}
 
 	for (i = 0; i < 25; i++) {
 		if (!c->inventory[i])
@@ -2252,26 +2274,33 @@ int EoBCoreEngine::thrownAttack(int charIndex, int slotIndex, Item item) {
 	return 0;
 }
 
+int EoBCoreEngine::normalizeProjectileWeaponType(int itemType) {
+	if (_flags.gameID == GI_EOB1) {
+		assert(itemType >= 7);
+		itemType -= 7;
+	}
+	return itemType;
+}
+
 int EoBCoreEngine::projectileWeaponAttack(int charIndex, Item item) {
-	int tp = _items[item].type;
+	int itemType = normalizeProjectileWeaponType(_items[item].type);
 
-	if (_flags.gameID == GI_EOB1)
-		assert(tp >= 7);
+	int ammoItemType = _projectileWeaponAmmoTypes[itemType];
 
-	int t = _projectileWeaponAmmoTypes[_flags.gameID == GI_EOB1 ? tp - 7 : tp];
 	Item ammoItem = 0;
 
-	if (t == 16) {
-		if (_characters[charIndex].inventory[0] && _items[_characters[charIndex].inventory[0]].type == 16)
+	if (ammoItemType == ITEM_TYPE_ARROW) {
+		/* Fire arrow in hand first, then take from quiver. */
+		if (_characters[charIndex].inventory[0] && _items[_characters[charIndex].inventory[0]].type == ITEM_TYPE_ARROW)
 			SWAP(ammoItem, _characters[charIndex].inventory[0]);
-		else if (_characters[charIndex].inventory[1] && _items[_characters[charIndex].inventory[1]].type == 16)
+		else if (_characters[charIndex].inventory[1] && _items[_characters[charIndex].inventory[1]].type == ITEM_TYPE_ARROW)
 			SWAP(ammoItem, _characters[charIndex].inventory[1]);
 		else if (_characters[charIndex].inventory[16])
 			ammoItem = getQueuedItem(&_characters[charIndex].inventory[16], 0, -1);
 
 	} else {
 		for (int i = 0; i < 27; i++) {
-			if (_items[_characters[charIndex].inventory[i]].type == t) {
+			if (_items[_characters[charIndex].inventory[i]].type == ammoItemType) {
 				SWAP(ammoItem, _characters[charIndex].inventory[i]);
 				if (i < 2)
 					gui_drawCharPortraitWithStats(charIndex);
@@ -2287,8 +2316,8 @@ int EoBCoreEngine::projectileWeaponAttack(int charIndex, Item item) {
 	if (c > 3)
 		c -= 2;
 
-	if (launchObject(charIndex, ammoItem, _currentBlock, _dropItemDirIndex[(_currentDirection << 2) + c], _currentDirection, tp)) {
-		snd_playSoundEffect(tp == 7 ? 26 : 11);
+	if (launchObject(charIndex, ammoItem, _currentBlock, _dropItemDirIndex[(_currentDirection << 2) + c], _currentDirection, itemType, item)) {
+		snd_playSoundEffect(itemType == 7 ? 26 : 11);
 		_sceneUpdateRequired = true;
 	}
 
@@ -2296,6 +2325,7 @@ int EoBCoreEngine::projectileWeaponAttack(int charIndex, Item item) {
 }
 
 void EoBCoreEngine::inflictMonsterDamage(EoBMonsterInPlay *m, int damage, bool giveExperience) {
+	debugC(1, kDebugLevelMain, "Inflicted damage to monster: %d", damage);
 	m->hitPointsCur -= damage;
 	m->flags = (m->flags & 0xF7) | 1;
 
@@ -2321,20 +2351,20 @@ void EoBCoreEngine::inflictMonsterDamage(EoBMonsterInPlay *m, int damage, bool g
 	}
 }
 
-void EoBCoreEngine::calcAndInflictMonsterDamage(EoBMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect) {
-	int dmg = calcMonsterDamage(m, times, pips, offs, flags, savingThrowType, savingThrowEffect);
+void EoBCoreEngine::calcAndInflictMonsterDamage(EoBMonsterInPlay *m, int charIndex, int itemType, int offs, int flags, int savingThrowType, int savingThrowEffect, Item projectileWeapon) {
+	int dmg = calcMonsterDamage(m, charIndex, itemType, offs, flags, savingThrowType, savingThrowEffect, projectileWeapon);
 	if (dmg > 0)
 		inflictMonsterDamage(m, dmg, flags & 0x800 ? true : false);
 }
 
-void EoBCoreEngine::calcAndInflictCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flags, int savingThrowType, int savingThrowEffect) {
-	int dmg = calcCharacterDamage(charIndex, times, itemOrPips, useStrModifierOrBase, flags, savingThrowType, savingThrowEffect);
+void EoBCoreEngine::calcAndInflictCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flags, int savingThrowType, int savingThrowEffect, Item projectileWeapon) {
+	int dmg = calcCharacterDamage(charIndex, times, itemOrPips, useStrModifierOrBase, flags, savingThrowType, savingThrowEffect, projectileWeapon);
 	if (dmg)
 		inflictCharacterDamage(charIndex, dmg);
 }
 
-int EoBCoreEngine::calcCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flags, int savingThrowType, int savingThrowEffect) {
-	int s = (flags & 0x100) ? calcDamageModifers(times, 0, itemOrPips, _items[itemOrPips].type, useStrModifierOrBase) : rollDice(times, itemOrPips, useStrModifierOrBase);
+int EoBCoreEngine::calcCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flags, int savingThrowType, int savingThrowEffect, Item projectileWeapon) {
+	int s = (flags & 0x100) ? calcDamageModifers(times, 0, itemOrPips, _items[itemOrPips].type, useStrModifierOrBase, projectileWeapon) : rollDice(times, itemOrPips, useStrModifierOrBase);
 	EoBCharacter *c = &_characters[charIndex];
 
 	if (savingThrowType != 5) {
@@ -2342,7 +2372,7 @@ int EoBCoreEngine::calcCharacterDamage(int charIndex, int times, int itemOrPips,
 			s = savingThrowReduceDamage(savingThrowEffect, s);
 	}
 
-	if ((flags & 0x110) == 0x110) {
+	if ((flags & 0x110) == 0x110) { /* damage is inflicted by a flying object */
 		if (!calcDamageCheckItemType(_items[itemOrPips].type))
 			s = 1;
 	}
@@ -2363,6 +2393,7 @@ int EoBCoreEngine::calcCharacterDamage(int charIndex, int times, int itemOrPips,
 }
 
 void EoBCoreEngine::inflictCharacterDamage(int charIndex, int damage) {
+	debugC(1, kDebugLevelMain, "Inflicted damage to character %d: %d", charIndex, damage);
 	EoBCharacter *c = &_characters[charIndex];
 	if (!testCharacter(charIndex, 3))
 		return;
@@ -2404,16 +2435,36 @@ void EoBCoreEngine::inflictCharacterDamage(int charIndex, int damage) {
 	setCharEventTimer(charIndex, 18, 6, 1);
 }
 
-bool EoBCoreEngine::characterAttackHitTest(int charIndex, int monsterIndex, int item, int attackType) {
+bool EoBCoreEngine::isElf(int charIndex)
+{
+	const uint8 kRaceElf = 1;
+	return kRaceElf == _characters[charIndex].raceSex >> 1;
+}
+
+bool EoBCoreEngine::isSword(Item item)
+{
+	return _items[item].type == ITEM_TYPE_LONG_SWORD || _items[item].type == ITEM_TYPE_SHORT_SWORD;
+}
+
+bool EoBCoreEngine::isBow(Item projectileWeapon)
+{
+	if (projectileWeapon == kItemNone) return false;
+	int projectileWeaopnType = normalizeProjectileWeaponType(_items[projectileWeapon].type);
+	return projectileWeaopnType == ITEM_TYPE_BOW;
+}
+
+bool EoBCoreEngine::characterAttackHitTest(int charIndex, int monsterIndex, int item, int attackType, Item projectileWeapon) {
 	if (charIndex < 0)
 		return true;
 
+	// TODO double check disassembly here:
 	int p = item ? (_flags.gameID == GI_EOB1 ? _items[item].type : (_itemTypes[_items[item].type].extraProperties & 0x7F)) : 0;
 
 	if (_monsters[monsterIndex].flags & 0x20)
 		return true;// EOB 2 only ?
 
 	int t = _monsters[monsterIndex].type;
+	// TODO double check disassembly here:
 	int d = (p < 1 || p > 3) ? 0 : _items[item].value;
 
 	if (_flags.gameID == GI_EOB2) {
@@ -2423,7 +2474,7 @@ bool EoBCoreEngine::characterAttackHitTest(int charIndex, int monsterIndex, int 
 		}
 	}
 
-	d += (attackType ? getStrHitChanceModifier(charIndex) : getDexHitChanceModifier(charIndex));
+	d += attackType ? getStrHitChanceModifier(charIndex) : getDexHitChanceModifier(charIndex);
 
 	int m = getMonsterAcHitChanceModifier(charIndex, _monsterProps[t].armorClass) - d;
 	int s = rollDice(1, 20);
@@ -2433,10 +2484,21 @@ bool EoBCoreEngine::characterAttackHitTest(int charIndex, int monsterIndex, int 
 	if (_flags.gameID == GI_EOB1) {
 		if (_partyEffectFlags & 0x30)
 			s++;
-		if (_characters[charIndex].effectFlags & 0x40)
+		if (_characters[charIndex].effectFlags & 0x40) /* invisibility */
 			s++;
 	} else if ((_partyEffectFlags & 0x8400) || (_characters[charIndex].effectFlags & 0x1000)) {
 		s++;
+	}
+
+	/*
+	 * According to the official game manual, Elves should get a +1 to hit
+	 * bonus when using swords or bows.
+	 */
+	if (_configADDRuleEnhancements) {
+		if (isElf(charIndex) && (isSword(item) || isBow(projectileWeapon))) {
+		   debugC(1, kDebugLevelMain, "Applying elven +1 to hit bonus");
+		   s += 1;
+		}
 	}
 
 	s = CLIP(s, 1, 20);
@@ -2466,10 +2528,10 @@ bool EoBCoreEngine::monsterAttackHitTest(EoBMonsterInPlay *m, int charIndex) {
 
 bool EoBCoreEngine::flyingObjectMonsterHit(EoBFlyingObject *fo, int monsterIndex) {
 	if (fo->attackerId != -1) {
-		if (!characterAttackHitTest(fo->attackerId, monsterIndex, fo->item, 0))
+		if (!characterAttackHitTest(fo->attackerId, monsterIndex, fo->item, 0, fo->projectileWeapon))
 			return false;
 	}
-	calcAndInflictMonsterDamage(&_monsters[monsterIndex], fo->attackerId, fo->item, 0, (fo->attackerId == -1) ? 0x110 : 0x910, 5, 3);
+	calcAndInflictMonsterDamage(&_monsters[monsterIndex], fo->attackerId, fo->item, 0, (fo->attackerId == -1) ? 0x110 : 0x910, 5, 3, fo->projectileWeapon);
 	return true;
 }
 
@@ -2489,7 +2551,7 @@ bool EoBCoreEngine::flyingObjectPartyHit(EoBFlyingObject *fo) {
 		s ^= 1;
 		if (!testCharacter(c, 3))
 			continue;
-		calcAndInflictCharacterDamage(c, -1, fo->item, 0, 0x110, 5, 3);
+		calcAndInflictCharacterDamage(c, -1, fo->item, 0, 0x110, 5, 3, fo->projectileWeapon);
 		res = true;
 		if (ps < 2 || b == 0)
 			break;
@@ -2599,8 +2661,8 @@ void EoBCoreEngine::statusAttack(int charIndex, int attackStatusFlags, const cha
 	_txt->printMessage(_characterStatusStrings13[0], -1, c->name, attackStatusString);
 }
 
-int EoBCoreEngine::calcMonsterDamage(EoBMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect) {
-	int s = flags & 0x100 ? calcDamageModifers(times, m, pips, _items[pips].type, offs) : rollDice(times, pips, offs);
+int EoBCoreEngine::calcMonsterDamage(EoBMonsterInPlay *m, int charIndexOrTimes, int itemOrPips, int offs, int flags, int savingThrowType, int savingThrowEffect, Item projectileWeapon) {
+	int s = flags & 0x100 ? calcDamageModifers(charIndexOrTimes, m, itemOrPips, _items[itemOrPips].type, offs, projectileWeapon) : rollDice(charIndexOrTimes, itemOrPips, offs);
 	EoBMonsterProperty *p = &_monsterProps[m->type];
 
 	if (savingThrowType != 5) {
@@ -2608,23 +2670,23 @@ int EoBCoreEngine::calcMonsterDamage(EoBMonsterInPlay *m, int times, int pips, i
 			s = savingThrowReduceDamage(savingThrowEffect, s);
 	}
 
-	if ((flags & 0x110) == 0x110) {
-		if (!calcDamageCheckItemType(_items[pips].type))
+	if ((flags & 0x110) == 0x110) { /* damage is inflicted by a flying object */
+		if (!calcDamageCheckItemType(_items[itemOrPips].type))
 			s = 1;
 	}
 
-	if ((flags & 0x100) && (!(_itemTypes[_items[pips].type].allowedClasses & 4 /* bug in original code ??*/))
+	if ((flags & 0x100) && (!(_itemTypes[_items[itemOrPips].type].allowedClasses & 4 /* bug in original code? */))
 	    && ((_flags.gameID == GI_EOB2 && (p->immunityFlags & 0x100)) || (_flags.gameID == GI_EOB1 && (p->capsFlags & 4))))
 		s >>= 1;
 
 	if (p->immunityFlags & 0x2000) {
 		if (flags & 0x100) {
-			if (_items[pips].value < 3)
+			if (_items[itemOrPips].value < 3)
 				s >>= 2;
-			if (_items[pips].value == 3)
+			if (_items[itemOrPips].value == 3)
 				s >>= 1;
 			if (s == 0)
-				s = _items[pips].value;
+				s = _items[itemOrPips].value;
 
 		} else {
 			s >>= 1;
@@ -2648,14 +2710,28 @@ int EoBCoreEngine::calcMonsterDamage(EoBMonsterInPlay *m, int times, int pips, i
 	return s;
 }
 
-int EoBCoreEngine::calcDamageModifers(int charIndex, EoBMonsterInPlay *m, int item, int itemType, int useStrModifier) {
+int EoBCoreEngine::calcDamageModifers(int charIndex, EoBMonsterInPlay *m, int item, int itemType, int useStrModifier, Item projectileWeapon) {
 	int s = (useStrModifier && (charIndex != -1)) ? getStrDamageModifier(charIndex) : 0;
 	if (item) {
+		/*
+		 * If the damaging item was launched from a projectile weapon,
+		 * roll damage dice from that projectile weapon type and
+		 * add any damage bonus from that particular projectile weapon.
+		 */
+		if (_configADDRuleEnhancements && projectileWeapon != kItemNone) {
+			itemType = normalizeProjectileWeaponType(_items[projectileWeapon].type);
+			s += _items[projectileWeapon].value;
+			debugC(1, kDebugLevelMain, "calcDamageModifers: damage bonus from projectile weapon: %d", _items[projectileWeapon].value);
+		}
 		EoBItemType *p = &_itemTypes[itemType];
-		int t = m ? m->type : 0;
-		s += ((m && (_monsterProps[t].capsFlags & 1)) ? rollDice(p->dmgNumDiceL, p->dmgNumPipsL, p->dmgIncS /* bug in original code ? */) :
-		      rollDice(p->dmgNumDiceS, p->dmgNumPipsS, p->dmgIncS));
+		int monsterType = m ? m->type : 0;
+		bool largeMonster = m && (_monsterProps[monsterType].capsFlags & 1);
+		int dieRoll = largeMonster ? rollDice(p->dmgNumDiceL, p->dmgNumPipsL, p->dmgIncS /* bug in original code ? */) :
+		              rollDice(p->dmgNumDiceS, p->dmgNumPipsS, p->dmgIncS);
+		s += dieRoll;
+		debugC(1, kDebugLevelMain, "calcDamageModifers: damage roll (d%d): %d", largeMonster ? p->dmgNumPipsL : p->dmgNumPipsS, dieRoll);
 		s += _items[item].value;
+		debugC(1, kDebugLevelMain, "calcDamageModifers: item damage bonus: %d", _items[item].value);
 	} else {
 		s += rollDice(1, 2);
 	}
@@ -2693,8 +2769,28 @@ int EoBCoreEngine::getSaveThrowModifier(int hpModifier, int level, int type) {
 }
 
 bool EoBCoreEngine::calcDamageCheckItemType(int itemType) {
+	/*
+	 * This check signals to the damage calculation code if the damage dice
+	 * from the flying object item type should be used for damage calculation.
+	 *
+	 * Projectile damage dice is recorded on the projectile weapon type,
+	 * rather than on the projectile ammo item type, possibly in an attempt
+	 * to differentiate between e.g. a rock thrown by hand from a rock fired
+	 * from a sling.
+	 *
+	 * Since in the original games this check permits both projectiles and
+	 * projectile weapons, when a projectile weapon is thrown by dropping it
+	 * onto the 3-D view, it may inflict the damage that the projectile itself
+	 * should inflict.
+	 *
+	 * Excluding projectile weapons from this check makes a thrown projectile
+	 * weapon deal 1 damage.
+	 */
+	const unsigned int kItemTypeAmmo = 2;
+	const unsigned int kItemTypeProjectileWeapon = 3;
 	itemType = _itemTypes[itemType].extraProperties & 0x7F;
-	return (itemType == 2 || itemType == 3) ? true : false;
+	if (_configADDRuleEnhancements) return itemType == kItemTypeAmmo;
+	return itemType == kItemTypeAmmo || itemType == kItemTypeProjectileWeapon;
 }
 
 int EoBCoreEngine::savingThrowReduceDamage(int savingThrowEffect, int damage) {

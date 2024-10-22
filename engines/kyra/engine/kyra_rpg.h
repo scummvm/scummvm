@@ -83,7 +83,7 @@ struct EoBFlyingObject {
 	int8 callBackIndex;
 	uint8 curPos;
 	uint8 flags;
-	uint8 unused;
+	Item projectileWeapon;
 };
 
 struct KyraRpgGUISettings {

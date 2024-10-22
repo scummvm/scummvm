@@ -262,7 +262,11 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 			m->callBackIndex = in.readSByte();
 			m->curPos = in.readByte();
 			m->flags = in.readByte();
-			m->unused = in.readByte();
+			if (header.version >= 23) {
+				m->projectileWeapon = in.readSint16BE();
+			} else {
+				m->projectileWeapon = in.readByte();
+			}
 		}
 
 		for (int ii = 0; ii < 5; ii++) {
@@ -518,7 +522,7 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 			out->writeSByte(m->callBackIndex);
 			out->writeByte(m->curPos);
 			out->writeByte(m->flags);
-			out->writeByte(m->unused);
+			out->writeSint16BE(m->projectileWeapon);
 		}
 
 		for (int ii = 0; ii < 5; ii++) {
