@@ -53,9 +53,9 @@ bool ShadowVolume::addMesh(DXMesh *mesh, uint32 *adjacency, DXMatrix *modelMat, 
 	if (!mesh || !adjacency)
 		return false;
 
-	DXVector3 invLight = *light;
-	DXMatrix matInverseModel = *modelMat;
-	DXMatrixInverse(&matInverseModel, nullptr, &matInverseModel);
+	DXVector3 invLight;
+	DXMatrix matInverseModel;
+	DXMatrixInverse(&matInverseModel, nullptr, modelMat);
 	DXVec3TransformNormal(&invLight, light, &matInverseModel);
 
 	float *points = (float *)mesh->getVertexBuffer().ptr();
