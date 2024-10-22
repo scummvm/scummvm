@@ -58,6 +58,7 @@ struct SpriteVertexShader {
 };
 
 BaseRenderOpenGL3DShader::BaseRenderOpenGL3DShader(BaseGame *inGame) : BaseRenderer3D(inGame) {
+	_flatShadowMaskShader = nullptr;
 }
 
 BaseRenderOpenGL3DShader::~BaseRenderOpenGL3DShader() {
