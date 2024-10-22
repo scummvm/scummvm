@@ -253,6 +253,10 @@ void HiRes1Engine::runIntro() {
 	static_cast<Display_A2 *>(_display)->loadFrameBuffer(*stream);
 	_display->renderGraphics();
 
+	// The title screen would normally be visible during loading.
+	// We add a short delay here to simulate that.
+	delay(2000);
+
 	_display->setMode(Display::kModeMixed);
 
 	if (getGameVersion() == GAME_VER_HR1_SIMI) {
