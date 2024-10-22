@@ -200,7 +200,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 		return;
 	}
 	if (objNum == 35) {
-		_objectVar[35] = 3600;
+		_objectVar[35] = 3600; // wind watch
 	}
 	if (objNum == 47) {
 		_player->loadAnimations("phone.nsp");

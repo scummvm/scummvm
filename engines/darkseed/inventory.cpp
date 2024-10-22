@@ -151,7 +151,7 @@ void Inventory::handleClick() {
 			   ) {
 		g_engine->handleObjCollision(icon);
 	} else if (g_engine->_actionMode == kHandAction && icon == 35) {
-		g_engine->_objectVar[35] = 0x7080;
+		g_engine->_objectVar[35] = 28800; // wind watch
 		g_engine->_console->printTosText(669);
 	} else if (g_engine->_actionMode == kLookAction) {
 		g_engine->lookCode(icon);
