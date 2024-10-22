@@ -98,7 +98,8 @@ void EoBCoreEngine::loadItemDefs() {
 	uint16 numTypes = s->readUint16();
 
 	delete[] _itemTypes;
-	_itemTypes = new EoBItemType[65]();
+	size_t itemTypeTableSize = 65;
+	_itemTypes = new EoBItemType[itemTypeTableSize]();
 
 	for (int i = 0; i < numTypes; i++) {
 		_itemTypes[i].invFlags = s->readUint16();
@@ -114,6 +115,24 @@ void EoBCoreEngine::loadItemDefs() {
 		_itemTypes[i].dmgIncL = s->readSByte();
 		_itemTypes[i].unk1 = s->readByte();
 		_itemTypes[i].extraProperties = s->readUint16();
+	}
+
+	/*
+	 * In the original Eye of the Beholder 1 data files, bow and sling item
+	 * types have damage dice that are not in line with AD&D 2nd edition rules:
+	 *
+	 * Bow:   dmgNumPipsS = 8, dmgNumPipsL = 10
+	 * Sling: dmgNumPipsS = 6, dmgNumPipsL = 6
+	 */
+	if (_flags.gameID == GI_EOB1 && _configADDRuleEnhancements) {
+		debugC(1, kDebugLevelMain, "patching EotB 1 bow   (%d), old dice S d%d, L d%d, new dice S d6, L d6",
+			   ITEM_TYPE_BOW, _itemTypes[ITEM_TYPE_BOW].dmgNumPipsS, _itemTypes[ITEM_TYPE_BOW].dmgNumPipsL);
+		_itemTypes[ITEM_TYPE_BOW].dmgNumPipsS = 6;
+		_itemTypes[ITEM_TYPE_BOW].dmgNumPipsL = 6;
+		debugC(1, kDebugLevelMain, "patching EotB 1 sling (%d), old dice S d%d, L  d%d, new dice S d4, L d4",
+			   ITEM_TYPE_SLING, _itemTypes[ITEM_TYPE_SLING].dmgNumPipsS, _itemTypes[ITEM_TYPE_SLING].dmgNumPipsL);
+		_itemTypes[ITEM_TYPE_SLING].dmgNumPipsS = 4;
+		_itemTypes[ITEM_TYPE_SLING].dmgNumPipsL = 4;
 	}
 
 	delete s;
@@ -594,7 +613,7 @@ void EoBCoreEngine::eatItemInHand(int charIndex) {
 	}
 }
 
-bool EoBCoreEngine::launchObject(int charIndex, Item item, uint16 startBlock, int startPos, int dir, int type) {
+bool EoBCoreEngine::launchObject(int charIndex, Item item, uint16 startBlock, int startPos, int dir, int type, Item projectileWeapon) {
 	EoBFlyingObject *t = _flyingObjects;
 	int slot = 0;
 	for (; slot < 10; slot++) {
@@ -619,6 +638,8 @@ bool EoBCoreEngine::launchObject(int charIndex, Item item, uint16 startBlock, in
 	t->objectType = type;
 	t->attackerId = charIndex;
 	t->callBackIndex = 0;
+
+	t->projectileWeapon = projectileWeapon;
 
 	snd_playSoundEffect(type == 7 ? 26 : 11);
 	return true;

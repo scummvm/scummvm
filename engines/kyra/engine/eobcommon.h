@@ -34,6 +34,14 @@ class Keymap;
 
 namespace Kyra {
 
+const int8 ITEM_TYPE_BOW = 0;
+const int8 ITEM_TYPE_LONG_SWORD = 1;
+const int8 ITEM_TYPE_SHORT_SWORD = 2;
+const int8 ITEM_TYPE_SLING = 7;
+const int8 ITEM_TYPE_ARROW = 16;
+const int8 ITEM_TYPE_ROCK= 18;
+const int8 ITEM_TYPE_RATIONS = 31;
+
 #define releaseShpArr(shapes, num) \
 if (shapes) { \
 	for (int iii = 0; iii < num; iii++) { \
@@ -481,7 +489,7 @@ protected:
 	bool checkInventoryForRings(int charIndex, int itemValue);
 	void eatItemInHand(int charIndex);
 
-	bool launchObject(int charIndex, Item item, uint16 startBlock, int startPos, int dir, int type);
+	bool launchObject(int charIndex, Item item, uint16 startBlock, int startPos, int dir, int type, Item projectileWeapon = kItemNone);
 	void launchMagicObject(int charIndex, int type, uint16 startBlock, int startPos, int dir);
 	bool updateObjectFlight(EoBFlyingObject *fo, int block, int pos);
 	bool updateFlyingObjectHitTest(EoBFlyingObject *fo, int block, int pos);
@@ -988,16 +996,21 @@ protected:
 	void useSlotWeapon(int charIndex, int slotIndex, Item item);
 	int closeDistanceAttack(int charIndex, Item item);
 	int thrownAttack(int charIndex, int slotIndex, Item item);
+	int normalizeProjectileWeaponType(int itemType);
 	int projectileWeaponAttack(int charIndex, Item item);
 	virtual void playStrikeAnimation(uint8 pos, Item itm) {}
 
 	void inflictMonsterDamage(EoBMonsterInPlay *m, int damage, bool giveExperience);
-	void calcAndInflictMonsterDamage(EoBMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect);
-	void calcAndInflictCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flags, int savingThrowType, int savingThrowEffect);
-	int calcCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flags, int savingThrowType, int damageType);
+	void calcAndInflictMonsterDamage(EoBMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect, Item projectileWeapon = kItemNone);
+	void calcAndInflictCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flags, int savingThrowType, int savingThrowEffect, Item projectileWeapon = kItemNone);
+	int calcCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flags, int savingThrowType, int damageType, Item projectileWeapon = kItemNone);
 	void inflictCharacterDamage(int charIndex, int damage);
 
-	bool characterAttackHitTest(int charIndex, int monsterIndex, int item, int attackType);
+	bool isElf(int charIndex);
+	bool isBow(Item projectileWeapon);
+	bool isSword(Item item);
+
+	bool characterAttackHitTest(int charIndex, int monsterIndex, int item, int attackType, Item projectileWeapon = kItemNone);
 	bool monsterAttackHitTest(EoBMonsterInPlay *m, int charIndex);
 	bool flyingObjectMonsterHit(EoBFlyingObject *fo, int monsterIndex);
 	bool flyingObjectPartyHit(EoBFlyingObject *fo);
@@ -1006,8 +1019,8 @@ protected:
 	void monsterSpellCast(EoBMonsterInPlay *m, int type);
 	void statusAttack(int charIndex, int attackStatusFlags, const char *attackStatusString, int savingThrowType, uint32 effectDuration, int restoreEvent, int noRefresh);
 
-	int calcMonsterDamage(EoBMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect);
-	int calcDamageModifers(int charIndex, EoBMonsterInPlay *m, int item, int itemType, int useStrModifier);
+	int calcMonsterDamage(EoBMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect, Item projectileWeapon = kItemNone);
+	int calcDamageModifers(int charIndex, EoBMonsterInPlay *m, int item, int itemType, int useStrModifier, Item projectileWeapon);
 	bool trySavingThrow(void *target, int hpModifier, int level, int type, int race);
 	bool specialAttackSavingThrow(int charIndex, int type);
 	int getSaveThrowModifier(int hpModifier, int level, int type);
