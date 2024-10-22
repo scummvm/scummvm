@@ -33,8 +33,38 @@ public:
 	Room806() : Room() {}
 	~Room806() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+
+private:
+	int32 _unkVar1 = 0;
+	int32 _unkVar2 = 0;
+	int32 _unkVar3 = 0;
+
+	int32 _806mc01Series = 0;
+	int32 _806mc02Series = 0;
+	int32 _806rp01Series = 0;
+	int32 _806rp02Series = 0;
+	int32 _806rp03Series = 0;
+	int32 _meiTalkPos3Series = 0;
+	int32 _meiTrekHandsOnHipsPos3Series = 0;
+	int32 _meiTrekHeadTurnPos3Series = 0;
+	int32 _ripHighReacherPos2Series = 0;
+	int32 _ripKneelAndExamineWallSeries = 0;
+	int32 _ripLookUpPos3Series = 0;
+	int32 _ripMedHighReacherPos2Series = 0;
+	int32 _ripPos3LookAroundSeries = 0;
+	int32 _ripTrekHandTalkPos3Series = 0;
+	int32 _ripTrekHeadTurnPos3Series = 0;
+	int32 _ripTrekLookDownPos3Series = 0;
+	int32 _ripTrekTalkerPos3Series = 0;
+
+	machine *_806CrankMach = nullptr;
+	machine *_806ChartMach = nullptr;
+	machine *_mcTrekMach = nullptr;
 };
 
 } // namespace Rooms
