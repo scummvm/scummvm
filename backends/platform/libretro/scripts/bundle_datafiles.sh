@@ -110,7 +110,12 @@ fi
 if [ ! $3 = "bundle" ]; then
 
 # Update from libretro ScummVM.dat
-wget -NO "$BUILD_PATH"/ScummVM.dat https://raw.githubusercontent.com/libretro/libretro-database/master/dat/ScummVM.dat
+if command -v wget >/dev/null; then
+  wget -NO "$BUILD_PATH"/ScummVM.dat https://raw.githubusercontent.com/libretro/libretro-database/master/dat/ScummVM.dat
+else
+  # if wget is not available use curl
+  curl -f -o "$BUILD_PATH"/ScummVM.dat https://raw.githubusercontent.com/libretro/libretro-database/master/dat/ScummVM.dat
+fi
 [ -f "$BUILD_PATH"/ScummVM.dat ] && SUPPORTED_EXTENSIONS="$(cat $BUILD_PATH/ScummVM.dat | grep 'rom (' | sed -e 's/\" .*//g' -e 's/.*\.//g' | sort -u | tr '\n' '|')" || SUPPORTED_EXTENSIONS="$ALLOWED_EXT"
 
 	# Create core.info file
