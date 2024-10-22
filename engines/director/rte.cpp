@@ -30,17 +30,21 @@ namespace Director {
 
 RTE0::RTE0(Cast *cast, Common::SeekableReadStreamEndian &stream) : _cast(cast) {
 	data.resize(stream.size(), 0);
-	stream.read(&data[0], stream.size());
+	if (stream.size())
+		stream.read(&data[0], stream.size());
 }
 
 RTE1::RTE1(Cast *cast, Common::SeekableReadStreamEndian &stream) : _cast(cast) {
 	data.resize(stream.size(), 0);
-	stream.read(&data[0], stream.size());
+	if (stream.size())
+		stream.read(&data[0], stream.size());
 }
 
 RTE2::RTE2(Cast *cast, Common::SeekableReadStreamEndian &stream) : _cast(cast) {
 	if (debugChannelSet(2, kDebugText))
 		stream.hexdump(stream.size());
+	if (!stream.size())
+		return;
 
 	width = stream.readUint16BE();
 	height = stream.readUint16BE();
