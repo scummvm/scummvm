@@ -1619,7 +1619,7 @@ void Room303::parser() {
 		player_update_info();
 		ws_hide_walker();
 
-		_ripsh2 = series_show("ripsh2", 0xf00, 128, -1, 0,
+		_ripsh2 = series_show("ripsh2", 0xf00, 128, -1, -1, 0,
 			_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 		_machine3 = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 			_G(player_info).x, _G(player_info).y, _G(player_info).scale + 1,
