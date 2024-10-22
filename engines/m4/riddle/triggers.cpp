@@ -432,10 +432,8 @@ void intrMsgNull(frac16 myMessage, machine *sender) {
 }
 
 void triggerMachineByHashCallback(frac16 myMessage, machine *) {
-	int32 hi = myMessage >> 16;
-
-	if (hi >= 0)
-		kernel_trigger_dispatch_now(hi);
+	if ((myMessage >> 16) >= 0)
+		kernel_trigger_dispatch_now(myMessage);
 }
 
 void triggerMachineByHashCallbackAlways(frac16 myMessage, machine *sender) {
