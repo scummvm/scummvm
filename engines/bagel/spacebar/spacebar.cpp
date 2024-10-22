@@ -220,8 +220,7 @@ ErrorCode SpaceBarEngine::ShutDownSoundSystem() {
 
 Common::Error SpaceBarEngine::run() {
 	// Initialize graphics mode
-	Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	initGraphics(640, 480, &format);
+	initGraphics(640, 480, nullptr);
 
 	// Initialize systems
 	_screen = new Graphics::Screen();
