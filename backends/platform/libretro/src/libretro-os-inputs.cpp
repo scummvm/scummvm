@@ -240,20 +240,18 @@ void OSystem_libretro::processInputs(void) {
 	}
 
 	if (ptrhold > 10 && _ptrmouseButton == 0) {
-		Common::Point mouse = convertWindowToVirtual(_mouseX, _mouseY);
 		_ptrmouseButton = 1;
 		Common::Event ev;
 		ev.type = eventID[0][_ptrmouseButton ? 0 : 1];
-		ev.mouse.x = mouse.x;
-		ev.mouse.y = mouse.y;
+		ev.mouse.x = _mouseX;
+		ev.mouse.y = _mouseY;
 		_events.push_back(ev);
 	} else if (ptrhold == 0 && _ptrmouseButton == 1) {
-		Common::Point mouse = convertWindowToVirtual(_mouseX, _mouseY);
 		_ptrmouseButton = 0;
 		Common::Event ev;
 		ev.type = eventID[0][_ptrmouseButton ? 0 : 1];
-		ev.mouse.x = mouse.x;
-		ev.mouse.y = mouse.y;
+		ev.mouse.x = _mouseX;
+		ev.mouse.y = _mouseY;
 		_events.push_back(ev);
 	}
 
