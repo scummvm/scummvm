@@ -466,12 +466,17 @@ void EoBCoreEngine::loadDecorations(const char *cpsFile, const char *decFile) {
 
 void EoBCoreEngine::assignWallsAndDecorations(int wallIndex, int vmpIndex, int decIndex, int specialType, int flags) {
 	_wllVmpMap[wallIndex] = vmpIndex;
-	for (int i = 0; i < 6; i++) {
-		for (int ii = 0; ii < 10; ii++) {
-			if (_characters[i].events[ii] == -57)
-				spellCallback_start_trueSeeing();
+
+	if (wallIndex == 46) {
+		// This is not part of the original code. The original will discard the true seeing spell effect when entering a new level.
+		for (int i = 0; i < 6; i++) {
+			for (int ii = 0; ii < 10; ii++) {
+				if (_characters[i].events[ii] == -57 && _characters[i].timers[ii])
+					spellCallback_start_trueSeeing();
+			}
 		}
 	}
+
 	_wllShapeMap[wallIndex] = _mappedDecorationsCount + 1;
 	_specialWallTypes[wallIndex] = specialType;
 	_wllWallFlags[wallIndex] = flags ^ 4;

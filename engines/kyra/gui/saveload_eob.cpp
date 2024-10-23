@@ -279,9 +279,10 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 	_sceneUpdateRequired = true;
 	_screen->setFont(_conFont);
 
+	// This is not part of the original code. The original will not restore the true seeing spell effect when loading a game.
 	for (int i = 0; i < 6; i++) {
 		for (int ii = 0; ii < 10; ii++) {
-			if (_characters[i].events[ii] == -57)
+			if (_characters[i].events[ii] == -57 && _characters[i].timers[ii])
 				spellCallback_start_trueSeeing();
 		}
 	}
