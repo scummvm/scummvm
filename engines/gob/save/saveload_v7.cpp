@@ -167,87 +167,119 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"DATA/ptreco16.inf"  , kSaveModeSave, nullptr, "construction game progress" },
 	{"DATA/aide16.inf"    , kSaveModeSave, nullptr, "construction game progress" },
 
-	// Adibou Applications 1-5
+	// Adibou Applications 1-7
 	{"DATA/Gsa01_01.inf", kSaveModeSave, nullptr, "app progress" }, // Child 01
 	{"DATA/Gsa02_01.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa03_01.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa04_01.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa05_01.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa06_01.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa07_01.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa01_02.inf", kSaveModeSave, nullptr, "app progress" }, // Child 02
 	{"DATA/Gsa02_02.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa03_02.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa04_02.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa05_02.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa06_02.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa07_02.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa01_03.inf", kSaveModeSave, nullptr, "app progress" }, // Child 03
 	{"DATA/Gsa02_03.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa03_03.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa04_03.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa05_03.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa06_03.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa07_03.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa01_04.inf", kSaveModeSave, nullptr, "app progress" }, // Child 04
 	{"DATA/Gsa02_04.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa03_04.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa04_04.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa05_04.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa06_04.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa07_04.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa01_05.inf", kSaveModeSave, nullptr, "app progress" }, // Child 05
 	{"DATA/Gsa02_05.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa03_05.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa04_05.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa05_05.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa06_05.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa07_05.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa01_06.inf", kSaveModeSave, nullptr, "app progress" }, // Child 06
 	{"DATA/Gsa02_06.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa03_06.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa04_06.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa05_06.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa06_06.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa07_06.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa01_07.inf", kSaveModeSave, nullptr, "app progress" }, // Child 07
 	{"DATA/Gsa02_07.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa03_07.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa04_07.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa05_07.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa06_07.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa07_07.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa01_08.inf", kSaveModeSave, nullptr, "app progress" }, // Child 08
 	{"DATA/Gsa02_08.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa03_08.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa04_08.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa05_08.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa06_08.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa07_08.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa01_09.inf", kSaveModeSave, nullptr, "app progress" }, // Child 09
 	{"DATA/Gsa02_09.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa03_09.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa04_09.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa05_09.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa06_09.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa07_09.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa01_10.inf", kSaveModeSave, nullptr, "app progress" }, // Child 10
 	{"DATA/Gsa02_10.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa03_10.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa04_10.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa05_10.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa06_10.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa07_10.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa01_11.inf", kSaveModeSave, nullptr, "app progress" }, // Child 11
 	{"DATA/Gsa02_11.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa03_11.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa04_11.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa05_11.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa06_11.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa07_11.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa01_12.inf", kSaveModeSave, nullptr, "app progress" }, // Child 12
 	{"DATA/Gsa02_12.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa03_12.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa04_12.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa05_12.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa06_12.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa07_12.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa01_13.inf", kSaveModeSave, nullptr, "app progress" }, // Child 13
 	{"DATA/Gsa02_13.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa03_13.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa04_13.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa05_13.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa06_13.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa07_13.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa01_14.inf", kSaveModeSave, nullptr, "app progress" }, // Child 14
 	{"DATA/Gsa02_14.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa03_14.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa04_14.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa05_14.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa06_14.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa07_14.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa01_15.inf", kSaveModeSave, nullptr, "app progress" }, // Child 15
 	{"DATA/Gsa02_15.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa03_15.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa04_15.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa05_15.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa06_15.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa07_15.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa01_16.inf", kSaveModeSave, nullptr, "app progress" }, // Child 16
 	{"DATA/Gsa02_16.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa03_16.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa04_16.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/Gsa05_16.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa06_16.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/Gsa07_16.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA/memo_01.inf", kSaveModeSave, nullptr, "memo" }, // Child 01
 	{"DATA/memo_02.inf", kSaveModeSave, nullptr, "memo" }, // Child 02
 	{"DATA/memo_03.inf", kSaveModeSave, nullptr, "memo" }, // Child 03
@@ -285,21 +317,29 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"DATA/appli_03.inf", kSaveModeSave, nullptr, "app info" },
 	{"DATA/appli_04.inf", kSaveModeSave, nullptr, "app info" },
 	{"DATA/appli_05.inf", kSaveModeSave, nullptr, "app info" },
+	{"DATA/appli_06.inf", kSaveModeSave, nullptr, "app info" },
+	{"DATA/appli_07.inf", kSaveModeSave, nullptr, "app info" },
 	{"DATA/crite_01.inf", kSaveModeSave, nullptr, "app info" },
 	{"DATA/crite_02.inf", kSaveModeSave, nullptr, "app info" },
 	{"DATA/crite_03.inf", kSaveModeSave, nullptr, "app info" },
 	{"DATA/crite_04.inf", kSaveModeSave, nullptr, "app info" },
 	{"DATA/crite_05.inf", kSaveModeSave, nullptr, "app info" },
+	{"DATA/crite_06.inf", kSaveModeSave, nullptr, "app info" },
+	{"DATA/crite_07.inf", kSaveModeSave, nullptr, "app info" },
 	{"DATA/exo_01.inf", kSaveModeSave, nullptr, "app info" },
 	{"DATA/exo_02.inf", kSaveModeSave, nullptr, "app info" },
 	{"DATA/exo_03.inf", kSaveModeSave, nullptr, "app info" },
 	{"DATA/exo_04.inf", kSaveModeSave, nullptr, "app info" },
 	{"DATA/exo_05.inf", kSaveModeSave, nullptr, "app info" },
+	{"DATA/exo_06.inf", kSaveModeSave, nullptr, "app info" },
+	{"DATA/exo_07.inf", kSaveModeSave, nullptr, "app info" },
 	{"DATA/ico_01.inf", kSaveModeSave, nullptr, "app info" },
 	{"DATA/ico_02.inf", kSaveModeSave, nullptr, "app info" },
 	{"DATA/ico_03.inf", kSaveModeSave, nullptr, "app info" },
 	{"DATA/ico_04.inf", kSaveModeSave, nullptr, "app info" },
 	{"DATA/ico_05.inf", kSaveModeSave, nullptr, "app info" },
+	{"DATA/ico_06.inf", kSaveModeSave, nullptr, "app info" },
+	{"DATA/ico_07.inf", kSaveModeSave, nullptr, "app info" },
 	{"DATA/applis.inf", kSaveModeSave, nullptr, "app info" },
 	{"DATA/lance.inf", kSaveModeSave, nullptr, "app info" },
 	{"DATA/retour.inf", kSaveModeSave, nullptr, "app info" },
@@ -826,21 +866,68 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"TEMP/mem.$$$", kSaveModeSave, nullptr, "app info" },
 
 	{"DATA/GIE05_01.pho", kSaveModeSave, nullptr, "app progress" }, // Child 01
+	{"DATA/GIE06_01.pho", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/GIE07_01.pho", kSaveModeSave, nullptr, "app progress" },
+
 	{"DATA/GIE05_02.pho", kSaveModeSave, nullptr, "app progress" }, // Child 02
+	{"DATA/GIE06_02.pho", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/GIE07_02.pho", kSaveModeSave, nullptr, "app progress" },
+
 	{"DATA/GIE05_03.pho", kSaveModeSave, nullptr, "app progress" }, // Child 03
+	{"DATA/GIE06_03.pho", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/GIE07_03.pho", kSaveModeSave, nullptr, "app progress" },
+
 	{"DATA/GIE05_04.pho", kSaveModeSave, nullptr, "app progress" }, // Child 04
+	{"DATA/GIE06_04.pho", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/GIE07_04.pho", kSaveModeSave, nullptr, "app progress" },
+
 	{"DATA/GIE05_05.pho", kSaveModeSave, nullptr, "app progress" }, // Child 05
+	{"DATA/GIE06_05.pho", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/GIE07_05.pho", kSaveModeSave, nullptr, "app progress" },
+
 	{"DATA/GIE05_06.pho", kSaveModeSave, nullptr, "app progress" }, // Child 06
+	{"DATA/GIE06_06.pho", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/GIE07_06.pho", kSaveModeSave, nullptr, "app progress" },
+
 	{"DATA/GIE05_07.pho", kSaveModeSave, nullptr, "app progress" }, // Child 07
+	{"DATA/GIE06_07.pho", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/GIE07_07.pho", kSaveModeSave, nullptr, "app progress" },
+
 	{"DATA/GIE05_08.pho", kSaveModeSave, nullptr, "app progress" }, // Child 08
+	{"DATA/GIE06_08.pho", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/GIE07_08.pho", kSaveModeSave, nullptr, "app progress" },
+
 	{"DATA/GIE05_09.pho", kSaveModeSave, nullptr, "app progress" }, // Child 09
+	{"DATA/GIE06_09.pho", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/GIE07_09.pho", kSaveModeSave, nullptr, "app progress" },
+
 	{"DATA/GIE05_10.pho", kSaveModeSave, nullptr, "app progress" }, // Child 10
+	{"DATA/GIE06_10.pho", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/GIE07_10.pho", kSaveModeSave, nullptr, "app progress" },
+
 	{"DATA/GIE05_11.pho", kSaveModeSave, nullptr, "app progress" }, // Child 11
+	{"DATA/GIE06_11.pho", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/GIE07_11.pho", kSaveModeSave, nullptr, "app progress" },
+
 	{"DATA/GIE05_12.pho", kSaveModeSave, nullptr, "app progress" }, // Child 12
+	{"DATA/GIE06_12.pho", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/GIE07_12.pho", kSaveModeSave, nullptr, "app progress" },
+
 	{"DATA/GIE05_13.pho", kSaveModeSave, nullptr, "app progress" }, // Child 13
+	{"DATA/GIE06_13.pho", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/GIE07_13.pho", kSaveModeSave, nullptr, "app progress" },
+
 	{"DATA/GIE05_14.pho", kSaveModeSave, nullptr, "app progress" }, // Child 14
+	{"DATA/GIE06_14.pho", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/GIE07_14.pho", kSaveModeSave, nullptr, "app progress" },
+
 	{"DATA/GIE05_15.pho", kSaveModeSave, nullptr, "app progress" }, // Child 15
+	{"DATA/GIE06_15.pho", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/GIE07_15.pho", kSaveModeSave, nullptr, "app progress" },
+
 	{"DATA/GIE05_16.pho", kSaveModeSave, nullptr, "app progress" }, // Child 16
+	{"DATA/GIE06_16.pho", kSaveModeSave, nullptr, "app progress" },
+	{"DATA/GIE07_16.pho", kSaveModeSave, nullptr, "app progress" },
 
 	{"APPLIS/appli_05.ini", kSaveModeSave, nullptr, "app info" },
 
@@ -1360,13 +1447,17 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 	_saveFiles[index++].handler = _adibou2RelanceHandler = new FakeFileHandler(_vm);
 	_saveFiles[index++].handler = _adibou2MemHandler = new FakeFileHandler(_vm);
 
-	for (uint32 i = 0; i < kChildrenCount; i++) {
-		_saveFiles[index++].handler = _adibou2SciencesProgressHandler[i] = new GameFileHandler(_vm,
-																							   targetName,
-																							   Common::String::format("gie_05_%02d_pho", i + 1));
-	}
+	for (uint32 i = 4; i < kAdibou2NbrOfApplications; i++) {
+		for (uint32 j = 0; j < kChildrenCount; j++) {
+			_saveFiles[index++].handler = _adibou2AppProgressExtHandler[i - 4][j] = new GameFileHandler(_vm,
+																										targetName,
+																										Common::String::format("gie_%02d_%02d_pho", i + 1, j + 1));
+		}
 
-	_saveFiles[index++].handler = _adibou2AppliSciencesIniHandler = new GameFileHandler(_vm, targetName, "appli_05_ini");
+		_saveFiles[index++].handler = _adibou2AppliIniHandler[i - 4] = new GameFileHandler(_vm,
+																						   targetName,
+																						   Common::String::format("appli_%02d_ini", i + 1));
+	}
 
 	for (int i = 0; i < 2; i++)
 		_saveFiles[index++].handler = _addy4BaseHandler[i] = new FakeFileHandler(_vm);
@@ -1444,11 +1535,15 @@ SaveLoad_v7::~SaveLoad_v7() {
 	delete _adibou2RelanceHandler;
 	delete _adibou2MemHandler;
 
-	for (uint32 i = 0; i < kChildrenCount; i++) {
-		delete _adibou2SciencesProgressHandler[i];
-	}
 
-	delete _adibou2AppliSciencesIniHandler;
+	for (uint32 i = 4; i < kAdibou2NbrOfApplications; i++) {
+		for (uint32 j = 0; j < kChildrenCount; j++) {
+			delete _adibou2AppProgressExtHandler[i - 4][j];
+		}
+
+
+		delete _adibou2AppliIniHandler[i - 4];
+	}
 }
 
 const SaveLoad_v7::SaveFile *SaveLoad_v7::getSaveFile(const char *fileName) const {
