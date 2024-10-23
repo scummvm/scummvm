@@ -88,7 +88,8 @@ bool cCollideRayCallback::OnIntersect(iPhysicsBody *pBody, cPhysicsRayParams *ap
 unsigned generatorInstances = 0;
 
 cAINodeGenerator::cAINodeGenerator() {
-	assert(++generatorInstances == 1);
+	++generatorInstances;
+	assert(generatorInstances == 1);
 }
 
 cAINodeGenerator::~cAINodeGenerator() {
