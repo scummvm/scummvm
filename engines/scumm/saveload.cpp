@@ -1649,6 +1649,10 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 		} else if (_textSurfaceMultiplier == 2 || _renderMode == Common::kRenderCGA_BW || _enableEGADithering) {
 			x *= 2;
 			y *= 2;
+		} else if (_macScreen) {
+			y += _macScreenDrawOffset;
+			x *= 2;
+			y *= 2;
 		}
 
 		updateCursor();
