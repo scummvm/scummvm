@@ -471,6 +471,7 @@ void Menu::menuDemo() {
 			}
 		}
 	}
+	_engine->_screens->loadMenuImage(false);
 }
 
 int32 Menu::doGameMenu(MenuSettings *menuSettings) {
@@ -952,7 +953,6 @@ EngineState Menu::run() {
 	}
 	case kDemoMenu: {
 		menuDemo();
-		_engine->_screens->loadMenuImage(false);
 		break;
 	}
 	case (int32)TextId::kQuit:

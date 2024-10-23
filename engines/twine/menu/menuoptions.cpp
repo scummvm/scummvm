@@ -104,6 +104,7 @@ void MenuOptions::showCredits() {
 	_engine->_gameState->initEngineVars();
 	_engine->_scene->_numCube = LBA1SceneId::Credits_List_Sequence;
 	_engine->_scene->_newCube = LBA1SceneId::Credits_List_Sequence;
+	_engine->_screens->clearScreen();
 
 	flagCredits = true;
 	_engine->mainLoop();
