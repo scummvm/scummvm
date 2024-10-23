@@ -75,7 +75,7 @@ private:
 	void drawTitle(int32 centerx, int32 top, const char *title);
 	int32 searchNextArrow(int32 num) const;
 	int32 searchPrevArrow(int32 num) const;
-
+	void drawCursor(); // DrawCurseur
 	void drawListPos(int xRot, int yRot, int zRot, bool lower);
 
 	/**

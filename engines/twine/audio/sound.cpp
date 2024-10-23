@@ -214,7 +214,7 @@ void Sound::pauseSamples() {
 	_engine->_system->getMixer()->pauseAll(true);
 }
 
-void Sound::stopSamples() {
+void Sound::stopSamples() { // HQ_StopSample
 	if (!_engine->_cfgfile.Sound) {
 		return;
 	}

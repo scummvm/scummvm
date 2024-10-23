@@ -113,7 +113,6 @@ bool HolomapV1::setHoloPos(int32 locationIdx) {
 		_engine->_gameState->_holomapFlags[locationIdx] = HOLOMAP_ACTIVE;
 		return true;
 	}
-	// TODO: lba2
 	_engine->_gameState->_holomapFlags[locationIdx] = HOLOMAP_ACTIVE | HOLOMAP_VISITED;
 	return true;
 }
@@ -534,6 +533,13 @@ void HolomapV1::drawListPos(int calpha, int cbeta, int cgamma, bool pos) {
 	}
 }
 
+void HolomapV1::drawCursor() {
+	// draw cursor
+	const int32 cameraPosY = scale(190);
+	const Common::Rect &targetRect = _engine->centerOnScreenX(SIZE_CURSOR * 2, 170, SIZE_CURSOR * 2);
+	_engine->_menu->drawRectBorders(targetRect.left, cameraPosY - 20, targetRect.right, cameraPosY + 20, 15, 15);
+}
+
 void HolomapV1::holoMap() {
 	const int32 alphaLightTmp = _engine->_scene->_alphaLight;
 	const int32 betaLightTmp = _engine->_scene->_betaLight;
@@ -668,9 +674,7 @@ void HolomapV1::holoMap() {
 			drawListPos(calpha, cbeta, cgamma, true);
 			_engine->_interface->restoreClip();
 			if (automove) {
-				// draw cursor
-				const Common::Rect &targetRect = _engine->centerOnScreenX(SIZE_CURSOR * 2, 170, SIZE_CURSOR * 2);
-				_engine->_menu->drawRectBorders(targetRect.left, cameraPosY - 20, targetRect.right, cameraPosY + 20, 15, 15);
+				drawCursor();
 			}
 		}
 
