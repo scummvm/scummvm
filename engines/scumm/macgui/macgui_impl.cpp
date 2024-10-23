@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "common/enc-internal.h"
 #include "common/macresman.h"
 
@@ -364,18 +365,21 @@ bool MacGuiImpl::handleMenu(int id, Common::String &name) {
 		return true;
 
 	case 500: // Voice Only
-		_vm->_voiceMode = 0;
-		_vm->_v5VoiceMode = 0;
+		ConfMan.setBool("subtitles", false);
+		ConfMan.setBool("speech_mute", false);
+		ConfMan.flushToDisk();
 		_vm->syncSoundSettings();
 		return true;
 	case 501: // Text Only
-		_vm->_voiceMode = 2;
-		_vm->_v5VoiceMode = 2;
+		ConfMan.setBool("subtitles", true);
+		ConfMan.setBool("speech_mute", true);
+		ConfMan.flushToDisk();
 		_vm->syncSoundSettings();
 		return true;
 	case 502: // Voice and Text
-		_vm->_voiceMode = 1;
-		_vm->_v5VoiceMode = 1;
+		ConfMan.setBool("subtitles", true);
+		ConfMan.setBool("speech_mute", false);
+		ConfMan.flushToDisk();
 		_vm->syncSoundSettings();
 		return true;
 	}
