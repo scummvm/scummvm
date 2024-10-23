@@ -677,6 +677,9 @@ int32 my_sprintf(char *buf, const char *format...) {
 
 	strncpy(buf, lbuf, slen);
 	buf[slen] = '\0';
+
+	va_end(arglist);
+
 	return slen;
 }
 
