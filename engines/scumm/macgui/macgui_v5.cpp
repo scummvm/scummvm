@@ -867,7 +867,9 @@ bool MacV5Gui::runOptionsDialog() {
 
 void MacV5Gui::resetAfterLoad() {
 	reset();
-	_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
+
+	int dummyW, dummyH, dummyHX, dummyHY, dummyAnimate;
+	setupCursor(dummyW, dummyH, dummyHX, dummyHY, dummyAnimate);
 }
 
 bool MacV5Gui::handleEvent(Common::Event event) {
