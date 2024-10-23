@@ -42,9 +42,9 @@ private:
 	int _val10 = 0;
 	int _val11 = 0;
 	int _val12 = 0;
-	int _val13 = 0;
-	int _val14 = 0;
-	int _val15 = 0;
+	int _georgeShould = 0;
+	int _georgeMode = 0;
+	int _ripleyShould = 0;
 	int _val16 = 0;
 	int _val17 = 0;
 	int _val18 = 0;
@@ -64,7 +64,7 @@ private:
 	machine *_deskGuy = nullptr;
 	machine *_machine2 = nullptr;
 	machine *_machine3 = nullptr;
-	machine *_machine4 = nullptr;
+	machine *_ripley = nullptr;
 	const char *_digiSound1 = nullptr;
 	const char *_digiSound2 = nullptr;
 	const char *_digiSound3 = nullptr;
