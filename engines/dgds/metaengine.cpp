@@ -34,7 +34,7 @@
 class DgdsMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
-		return "DGDS";
+		return "dgds";
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;

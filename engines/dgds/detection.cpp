@@ -44,11 +44,11 @@ public:
 	}
 
 	const char* getEngineName() const override {
-		return "dgds";
+		return "Dynamix Game Development System";
 	}
 
 	const char *getName() const override {
-		return "DGDS";
+		return "dgds";
 	}
 
 	const char *getOriginalCopyright() const override {
