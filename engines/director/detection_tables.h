@@ -6621,8 +6621,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2tf("gondwana",  "", "MOVIE/MOVIE.EXE",	  "t:dfce572624ed9816e7268ac8f5ef7d2b", 5647741,
 								"MOVIE/GONDWANA.DXR", "t:beee5b25488c1d4c30d81b78ae8d9368",  626006, 505, GF_32BPP),
 
-	WINGAME1("gothos", "", "gothos.exe", "6199bb7cabc7f636394cacffd6a71fa9", 1788333, 501),
-	MACGAME1("gothos", "", "MACINST/GOTHOS", "1d08e56a4c7ba60a67417c7988cd3ffe", 718097, 501),
+	WINGAME1tf("gothos", "", "gothos.exe", "6199bb7cabc7f636394cacffd6a71fa9", 1788333, 501, GF_32BPP),
+	MACGAME1tf("gothos", "", "MACINST/GOTHOS", "1d08e56a4c7ba60a67417c7988cd3ffe", 718097, 501, GF_32BPP),
 
 	// Green Eggs and Hamulator mini-game
 	// Demo for a Living Books game that is supported in MOHAWK engine
