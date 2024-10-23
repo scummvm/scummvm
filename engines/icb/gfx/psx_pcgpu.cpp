@@ -125,6 +125,8 @@ OT_tag *ClearOTag(OT_tag *ot, uint32 size) {
 	while (i < (size - 1)) {
 		ot[i].addr = (void *)&ot[i + 1];
 		ot[i].len = UNLINKED_LEN;
+
+		i++;
 	}
 	ot[size - 1].addr = UNLINKED_ADDR;
 	ot[size - 1].len = UNLINKED_LEN;
