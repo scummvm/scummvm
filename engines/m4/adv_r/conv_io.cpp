@@ -709,6 +709,9 @@ void conv_set_default_hv(int32 h, int32 v) {
 
 void conv_set_default_text_colour(int32 norm_colour, int32 hi_colour) {
 	conv_set_text_colours(norm_colour, norm_colour, norm_colour, hi_colour, hi_colour, hi_colour);
+
+	_GC(conv_default_normal_colour) = norm_colour;
+	_GC(conv_default_hilite_colour) = hi_colour;
 }
 
 void conv_set_shading(int32 shade) {

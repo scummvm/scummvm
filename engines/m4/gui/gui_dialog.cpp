@@ -1303,10 +1303,8 @@ static void TextScrn_Show(void *s, void *r, void *b, int32 destX, int32 destY) {
 
 		while (myItem) {
 			if (myItem == myTextScrn->hiliteItem) {
-				// Gr_font_set_color(myTextScrn->hiliteColor);
 				font_set_colors(myTextScrn->hiliteColor_alt1, myTextScrn->hiliteColor_alt2, myTextScrn->hiliteColor);
 			} else {
-				// Gr_font_set_color(myTextScrn->textColor);
 				font_set_colors(myTextScrn->textColor_alt1, myTextScrn->textColor_alt2, myTextScrn->textColor);
 			}
 			gr_font_write(myBuff, myItem->prompt, myItem->x, myItem->y, 0, 0); // MattP no auto spacing
