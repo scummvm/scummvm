@@ -321,6 +321,478 @@ void Room806::parser() {
 }
 
 void Room806::daemon() {
+	switch (_G(kernel).trigger) {
+	case 101:
+		ws_hide_walker(_mcTrekMach);
+		_candlemanShadow3Mach = series_show("CANDLEMAN SHADOW3", 32767, 16, -1, -1, 0, 84, 225, 306);
+		series_play("806MC01", 1792, 0, 102, 5, 0, 100, 0, 0, 0, 23);
+
+		break;
+
+	case 102:
+		digi_play("806m01", 1, 255, 106, -1);
+		series_play("806MC01", 1792, 0, 103, 5, 0, 100, 0, 0, 24, 39);
+
+		break;
+
+	case 103:
+		terminateMachine(_806rp01Mach);
+		_806rp01Mach = series_play("806RP01", 256, 16, -1, 5, 0, 100, 0, 0, 3, 6);
+		_806mc01Mach = series_play("806MC01", 1792, 16, -1, 5, 0, 100, 0, 0, 40, -1);
+
+		break;
+
+	case 106:
+		digi_play("806r01", 1, 255, 107, -1);
+		break;
+
+	case 107:
+		digi_play("806m02", 1, 255, 111, -1);
+		terminateMachine(_806mc01Mach);
+		series_play("806MC01", 1792, 2, 108, 5, 0, 100, 0, 0, 41, -1);
+
+		break;
+
+	case 108:
+		terminateMachine(_806rp01Mach);
+		_806rp01Mach = series_play("806RP01", 256, 16, -1, 5, 0, 100, 0, 0, 7, 14);
+		series_play("806MC01", 1792, 2, 110, 5, 0, 100, 0, 0, 24, 40);
+
+		break;
+
+	case 110:
+		_806mc01Mach = series_show("806MC01", 1792, 16, -1, -1, 24, 100, 0, 0);
+		break;
+
+	case 111:
+		digi_play("806r02", 1, 255, 112, -1);
+		break;
+
+	case 112:
+		digi_play("806m03", 1, 255, 12014, -1);
+		kernel_timing_trigger(1, 114, nullptr);
+		terminateMachine(_806mc01Mach);
+		series_play("806MC01", 1792, 2, 113, 5, 0, 100, 0, 0, 0, 23);
+
+		break;
+
+	case 113:
+		terminateMachine(_candlemanShadow3Mach);
+		ws_unhide_walker(_G(my_walker));
+
+		break;
+
+	case 114:
+		terminateMachine(_806rp01Mach);
+		series_play("806RP01", 256, 0, 115, 5, 0, 100, 0, 0, 14, -1);
+
+		break;
+
+	case 115:
+		terminateMachine(_safariShadow3Mach);
+		setGlobals1(_ripPos3LookAroundSeries, 1, 20, 20, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		ws_unhide_walker(_G(my_walker));
+		sendWSMessage_110000(_G(my_walker), 116);
+
+		break;
+
+	case 116:
+		sendWSMessage_140000(_G(my_walker), 117);
+		break;
+
+	case 117:
+		_G(flags[265]) = 1;
+		_G(flags[256]) = 1;
+		series_unload(_806rp01Series);
+		series_unload(_806mc01Series);
+		digi_unload("806m01");
+		digi_unload("806r01");
+		digi_unload("806m02");
+		digi_unload("806r02");
+		digi_unload("806m03");
+		player_set_commands_allowed(true);
+		_unkVar1 = 0;
+		_unkVar3 = 0;
+		kernel_timing_trigger(imath_ranged_rand(1200, 1800), 201, nullptr);
+		kernel_timing_trigger(imath_ranged_rand(1200, 1800), 701, nullptr);
+
+		break;
+
+	case 201:
+		player_update_info(_G(my_walker), &_G(player_info));
+		if (!_unkVar1 && player_commands_allowed() && checkStrings()) {
+			_unkVar1 = 1;
+			player_set_commands_allowed(false);
+			intr_cancel_sentence();
+			switch (imath_ranged_rand(1, 4)) {
+			case 1:
+				digi_play("950_s15", 2, 255, -1);
+				break;
+
+			case 2:
+				digi_play("950_s16", 2, 255, -1);
+				break;
+
+			case 3:
+				digi_play("950_s17", 2, 255, -1);
+				break;
+
+			case 4:
+				digi_play("950_s18", 2, 255, -1);
+				break;
+
+			default:
+				break;
+			}
+
+			if (_G(player_info).facing >= 1 && _G(player_info).facing <= 5)
+				ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 205, 3, true);
+			else if (_G(player_info).facing > 5 && _G(player_info).facing <= 11)
+				ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 205, 9, true);
+
+		} else if (_G(flags[269]))
+			kernel_timing_trigger(60, 201, nullptr);
+
+		break;
+
+	case 205:
+		switch (imath_ranged_rand(1, 5)) {
+		case 1:
+			_unkVar4 = 1;
+			kernel_timing_trigger(1, 250, nullptr);
+
+			break;
+
+		case 2:
+			setGlobals1(_meiTrekHeadTurnPos3Series, 1, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_mcTrekMach, 210);
+
+			break;
+
+		case 3:
+			setGlobals1(_meiTrekHeadTurnPos3Series, 6, 9, 9, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_mcTrekMach, 211);
+
+			break;
+
+		case 4:
+			setGlobals1(_meiTrekHeadTurnPos3Series, 1, 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_mcTrekMach, 212);
+
+			break;
+
+		case 5:
+			setGlobals1(_meiTrekHeadTurnPos3Series, 1, 20, 20, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_mcTrekMach, 220);
+
+			break;
+
+		default:
+			break;
+		}
+
+		if (_unkVar2) {
+			sendWSMessage_140000(_mcTrekMach, 50);
+			_unkVar5 = 1;
+		} else {
+			switch (imath_ranged_rand(1, 3)) {
+			case 1:
+				_unkVar5 = 1;
+				kernel_timing_trigger(1, 250, nullptr);
+				break;
+
+			case 2:
+				setGlobals1(_meiTrekHeadTurnPos3Series, 1, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_mcTrekMach, 213);
+				break;
+
+			case 3:
+				setGlobals1(_meiTrekHeadTurnPos3Series, 6, 9, 9, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_mcTrekMach, 214);
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		break;
+
+	case 210:
+		sendWSMessage_140000(_G(my_walker), 215);
+		break;
+
+	case 211:
+		sendWSMessage_140000(_G(my_walker), 216);
+		break;
+
+	case 212:
+		_unkVar4 = 1;
+		sendWSMessage_150000(_G(my_walker), 250);
+		break;
+
+	case 213:
+		sendWSMessage_140000(_mcTrekMach, 218);
+		break;
+
+	case 214:
+		sendWSMessage_140000(_mcTrekMach, 219);
+		break;
+
+	case 215:
+		switch (imath_ranged_rand(1, 2)) {
+		case 1:
+			setGlobals1(_ripTrekHeadTurnPos3Series, 6, 9, 9, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 220);
+
+			break;
+
+		case 2:
+			_unkVar4 = 1;
+			kernel_timing_trigger(1, 250, nullptr);
+
+			break;
+
+		default:
+			break;
+		}
+
+		break;
+
+	case 216:
+		switch (imath_ranged_rand(1, 2)) {
+		case 1:
+			setGlobals1(_ripTrekHeadTurnPos3Series, 1, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 220);
+
+			break;
+
+		case 2:
+			_unkVar4 = 1;
+			kernel_timing_trigger(1, 250, nullptr);
+
+			break;
+
+		default:
+			break;
+		}
+
+		break;
+
+	case 218:
+		switch (imath_ranged_rand(1, 2)) {
+		case 1:
+			setGlobals1(_ripTrekHeadTurnPos3Series, 6, 9, 9, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_mcTrekMach, 223);
+
+			break;
+
+		case 2:
+			_unkVar5 = 1;
+			kernel_timing_trigger(1, 250, nullptr);
+
+			break;
+
+		default:
+			break;
+		}
+
+		break;
+
+	case 219:
+		switch (imath_ranged_rand(1, 2)) {
+		case 1:
+			setGlobals1(_ripTrekHeadTurnPos3Series, 1, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_mcTrekMach, 224);
+
+			break;
+
+		case 2:
+			_unkVar5 = 1;
+			kernel_timing_trigger(1, 250, nullptr);
+
+			break;
+
+		default:
+			break;
+		}
+
+		break;
+
+	case 220:
+		_unkVar4 = 1;
+		sendWSMessage_140000(_G(my_walker), 250);
+
+		break;
+
+	case 223:
+	case 224:
+		_unkVar5 = 1;
+		sendWSMessage_140000(_mcTrekMach, 250);
+		break;
+
+	case 250:
+		player_set_commands_allowed(true);
+		if (_unkVar4 && _unkVar5) {
+			_unkVar4 = 0;
+			_unkVar5 = 0;
+			kernel_timing_trigger(1, imath_ranged_rand(260, 263));
+		}
+
+		break;
+
+	case 260:
+		setGlobals1(_meiTalkPos3Series, 1, 1, 1, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_mcTrekMach, -1);
+		digi_play("com052", 1, 255, 270, 997);
+
+		break;
+
+	case 261:
+		setGlobals1(_ripTrekTalkerPos3Series, 1, 1, 1, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), -1);
+		digi_play("com054", 1, 255, 271, 997);
+
+		break;
+
+	case 262:
+		setGlobals1(_ripTrekTalkerPos3Series, 1, 1, 1, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), -1);
+		digi_play("com056", 1, 255, 272, 997);
+
+		break;
+
+	case 263:
+		setGlobals1(_meiTalkPos3Series, 1, 1, 1, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_mcTrekMach, -1);
+		digi_play("com057", 1, 255, 273, 997);
+
+		break;
+
+	case 270:
+		sendWSMessage_150000(_mcTrekMach, 280);
+		break;
+
+	case 271:
+		sendWSMessage_150000(_G(my_walker), 281);
+		break;
+
+	case 272:
+	case 290:
+	case 293:
+		sendWSMessage_150000(_G(my_walker), 299);
+		break;
+
+	case 273:
+		sendWSMessage_150000(_mcTrekMach, 283);
+		break;
+
+	case 280:
+		setGlobals1(_ripTrekTalkerPos3Series, 1, 1, 1, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), -1);
+		digi_play("com053", 1, 255, 290, 997);
+
+		break;
+
+	case 281:
+		setGlobals1(_meiTalkPos3Series, 1, 1, 1, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_mcTrekMach, -1);
+		digi_play("com055", 1, 255, 291, 997);
+
+		break;
+
+	case 283:
+		setGlobals1(_ripTrekTalkerPos3Series, 1, 1, 1, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), -1);
+		digi_play("com058", 1, 255, 293, 997);
+
+		break;
+
+	case 291:
+		sendWSMessage_150000(_mcTrekMach, 299);
+		break;
+
+	case 299:
+		player_set_commands_allowed(true);
+		_unkVar1 = 0;
+		kernel_timing_trigger(imath_ranged_rand(1200, 1800), 201);
+
+		break;
+
+	case 501:
+		sendWSMessage_10000(_mcTrekMach, 200, 296, 0, 502, 0);
+		break;
+
+	case 502:
+		terminateMachine(_806ChartMach);
+		_806ChartMach = series_show("806chart", 3840, 16, -1, -1, 0, 100, 0, 0);
+
+		if (_G(flags[265]))
+			sendWSMessage_10000(_mcTrekMach, 225, 306, 3, -1, 1);
+		else
+			sendWSMessage_10000(_mcTrekMach, 225, 306, 3, 101, 1);
+
+		_unkVar3 = 0;
+
+		break;
+
+	case 701:
+		if (!_unkVar2 && !_unkVar1) {
+			setGlobals1(_unkSeries1, 1, 22, 22, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_mcTrekMach, 703);
+			_unkVar2 = 1;
+		}
+
+		kernel_timing_trigger(imath_ranged_rand(1200, 1800), 702, nullptr);
+
+		break;
+
+	case 702:
+		if (_unkVar2) {
+			sendWSMessage_140000(_mcTrekMach, 703);
+			_unkVar2 = 0;
+		}
+
+		kernel_timing_trigger(imath_ranged_rand(1200, 1800), 701, nullptr);
+
+		break;
+
+	case 703:
+		_unkVar1 = 0;
+		break;
+
+	case 999:
+		if (_G(flags[265])) {
+			player_set_commands_allowed(true);
+			_unkVar1 = 0;
+		}
+
+		break;
+
+	case 12001:
+		ws_hide_walker(_G(my_walker));
+		player_update_info(_G(my_walker), &_G(player_info));
+		_safariShadow3Mach = series_show("SAFARI SHADOW 3", 32767, 16, -1, -1, 0, _G(player_info).scale + 1, 221, 316);
+		series_play("806RP01", 256, 2, 12002, 5, 0, 100, 0, 0, 12, 16);
+
+		break;
+
+	case 12002:
+		_806rp01Mach = series_show("806RP01", 256, 16, -1, -1, 12, 100, 0, 0);
+		break;
+
+	case 12014:
+		digi_play("806r03", 1, 255, 12016, -1);
+		break;
+
+	case 12016:
+		digi_unload("806r03");
+		break;
+
+	default:
+		break;
+	}
+
 }
 
 } // namespace Rooms

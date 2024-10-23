@@ -40,9 +40,13 @@ public:
 	void daemon() override;
 
 private:
+	int32 _unkSeries1 = 0;
+
 	int32 _unkVar1 = 0;
 	int32 _unkVar2 = 0;
 	int32 _unkVar3 = 0;
+	int32 _unkVar4 = 0;
+	int32 _unkVar5 = 0;
 
 	int32 _806mc01Series = 0;
 	int32 _806mc02Series = 0;
@@ -64,7 +68,12 @@ private:
 
 	machine *_806CrankMach = nullptr;
 	machine *_806ChartMach = nullptr;
+	machine *_candlemanShadow3Mach = nullptr;
 	machine *_mcTrekMach = nullptr;
+	machine *_806rp01Mach = nullptr;
+	machine *_806mc01Mach = nullptr;
+
+	machine *_safariShadow3Mach = nullptr;
 };
 
 } // namespace Rooms
