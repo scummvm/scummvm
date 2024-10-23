@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-10-21 00:15+0000\n"
+"POT-Creation-Date: 2024-10-23 19:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -299,7 +299,7 @@ msgstr ""
 #: base/main.cpp:585 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
-#: engines/kyra/gui/saveload_eob.cpp:601 engines/kyra/gui/saveload_eob.cpp:634
+#: engines/kyra/gui/saveload_eob.cpp:602 engines/kyra/gui/saveload_eob.cpp:635
 #: engines/parallaction/metaengine.cpp:143
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4048
 #: engines/toon/toon.cpp:1543
@@ -312,7 +312,7 @@ msgstr ""
 #: gui/launcher.cpp:502 gui/options.cpp:3515 gui/options.cpp:3898
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
-#: engines/kyra/gui/saveload_eob.cpp:601 engines/kyra/gui/saveload_eob.cpp:634
+#: engines/kyra/gui/saveload_eob.cpp:602 engines/kyra/gui/saveload_eob.cpp:635
 #: engines/parallaction/metaengine.cpp:149
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:4048
 #: engines/toon/toon.cpp:1543
@@ -7618,7 +7618,7 @@ msgstr ""
 msgid "Choose Spell"
 msgstr ""
 
-#: engines/kyra/gui/saveload_eob.cpp:601
+#: engines/kyra/gui/saveload_eob.cpp:602
 #, c-format
 msgid ""
 "The following original saved game file has been found in your game path:\n"
@@ -7629,14 +7629,14 @@ msgid ""
 "\n"
 msgstr ""
 
-#: engines/kyra/gui/saveload_eob.cpp:634
+#: engines/kyra/gui/saveload_eob.cpp:635
 #, c-format
 msgid ""
 "A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
 
-#: engines/kyra/gui/saveload_eob.cpp:667
+#: engines/kyra/gui/saveload_eob.cpp:668
 #, c-format
 msgid ""
 "%d original saved games have been successfully imported into\n"
