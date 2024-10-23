@@ -1122,17 +1122,17 @@ bool DXLoadSkinMesh(XFileData *fileData, DXBuffer &materialsOut, uint32 &numMate
 	for (i = 0; i < meshData._numPolyFaces; i++) {
 		uint32 count = meshData._numTriPerFace[i];
 		uint32 firstIndex = *indexInPtr++;
-		// 1 -> 1
-		// 2 -> 2
-		// 3 -> 3
-		// 1 -> 4
-		// 3 -> 5
-		// 4 -> 6
+		// 1 -> 1 -> 3
+		// 2 -> 2 -> 2
+		// 3 -> 3 -> 1
+		// 1 -> 4 -> 6
+		// 3 -> 5 -> 5
+		// 4 -> 6 -> 4
 		while (count--) {
-			*indices++ = firstIndex;
-			*indices++ = *indexInPtr;
-			indexInPtr++;
-			*indices++ = *indexInPtr;
+			indices[2] = firstIndex;
+			indices[1] = *indexInPtr++;
+			indices[0] = *indexInPtr;
+			indices += 3;
 		}
 		indexInPtr++;
 	}
