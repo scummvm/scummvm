@@ -356,7 +356,7 @@ public:
 	int getMenuNum();
 	int getMenuItemsNum(Datum &d);
 	int getXtrasNum();
-	int getCastlibsNum();
+	int getCastLibsNum();
 	int getMembersNum();
 
 	void executeHandler(const Common::String &name);
