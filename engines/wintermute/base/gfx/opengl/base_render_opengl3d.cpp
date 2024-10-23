@@ -379,6 +379,8 @@ bool BaseRenderOpenGL3D::setWorldTransform(const DXMatrix &transform) {
 
 bool BaseRenderOpenGL3D::setViewTransform(const DXMatrix &transform) {
 	_viewMatrix = transform;
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(transform);
 	return true;
 }
 
