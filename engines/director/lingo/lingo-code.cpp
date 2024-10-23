@@ -719,7 +719,7 @@ Datum LC::mapBinaryOp(Datum (*mapFunc)(Datum &, Datum &), Datum &d1, Datum &d2) 
 		if (d2.isArray()) {
 			b = d2.u.farr->arr[i];
 		} else if (d2.type == PARRAY) {
-			a = d2.u.parr->arr[i].v;
+			b = d2.u.parr->arr[i].v;
 		}
 		if (res.type == PARRAY) {
 			res.u.parr->arr[i] = PCell(d1.u.parr->arr[i].p, mapFunc(a, b));
