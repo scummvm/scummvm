@@ -1501,7 +1501,7 @@ bool LingoCompiler::visitTheNumberOfNode(TheNumberOfNode *node) {
 	case kNumberOfCastlibs:
 		codeInt(0); // Put dummy id
 		code1(LC::c_theentitypush);
-		codeInt(kTheCastlibs);
+		codeInt(kTheCastLibs);
 		codeInt(kTheNumber);
 		break;
 	case kNumberOfChars:

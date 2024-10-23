@@ -404,8 +404,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheCast:
 		d = getTheCast(id, field);
 		break;
-	case kTheCastlibs: // D5
-		d = getCastlibsNum();
+	case kTheCastLibs: // D5
+		d = getCastLibsNum();
 		break;
 	case kTheCastMembers:
 		d = getMembersNum();
@@ -1268,7 +1268,7 @@ int Lingo::getMenuNum() {
 	return g_director->_wm->getMenu()->numberOfMenus();
 }
 
-int Lingo::getCastlibsNum() {
+int Lingo::getCastLibsNum() {
 	return _vm->getCurrentMovie()->getCasts()->size();
 }
 

@@ -219,6 +219,7 @@ static BuiltinProto builtins[] = {
 	{ "version",		LB::b_version,		0, 0, 300, KBLTIN },	//		D3 k
 	// References
 	{ "cast",			LB::b_cast,			1, 1, 400, FBLTIN },	//			D4 f
+	{ "castLib",		LB::b_castLib,		1, 1, 500, FBLTIN },	//				D5 f
 	{ "member",			LB::b_member,		1, 2, 500, FBLTIN },	//				D5 f
 	{ "script",			LB::b_script,		1, 1, 400, FBLTIN },	//			D4 f
 	{ "window",			LB::b_window,		1, 1, 400, FBLTIN },	//			D4 f
@@ -3355,6 +3356,13 @@ void LB::b_cast(int nargs) {
 	g_lingo->push(res);
 }
 
+void LB::b_castLib(int nargs) {
+	Datum d = g_lingo->pop();
+	Datum res = d.asInt();
+	res.type = CASTLIBREF;
+	g_lingo->push(res);
+}
+
 void LB::b_member(int nargs) {
 	Movie *movie = g_director->getCurrentMovie();
 	CastMemberID res;
@@ -3371,7 +3379,9 @@ void LB::b_member(int nargs) {
 		Datum library = g_lingo->pop();
 		Datum member = g_lingo->pop();
 		int libId = -1;
-		if (library.isNumeric()) {
+		if (library.type == CASTLIBREF) {
+			libId = library.u.i;
+		} else if (library.isNumeric()) {
 			libId = library.asInt();
 		} else {
 			libId = movie->getCastLibIDByName(library.asString());

@@ -973,6 +973,7 @@ void Datum::reset() {
 		case FLOAT:
 		case ARGC:
 		case ARGCNORET:
+		case CASTLIBREF:
 			break;
 		case VARREF:
 		case GLOBALREF:
@@ -1170,6 +1171,9 @@ Common::String Datum::asString(bool printonly) const {
 	case CASTREF:
 		s = Common::String::format("member %d of castLib %d", u.cast->member, u.cast->castLib);
 		break;
+	case CASTLIBREF:
+		s = Common::String::format("castLib %d", u.i);
+		break;
 	case FIELDREF:
 		s = Common::String::format("field %d of castLib %d", u.cast->member, u.cast->castLib);
 		break;
@@ -1302,6 +1306,8 @@ const char *Datum::type2str(bool ilk) const {
 		return ilk ? "linearlist" : "ARRAY";
 	case CASTREF:
 		return "CASTREF";
+	case CASTLIBREF:
+		return "CASTLIBREF";
 	case CHUNKREF:
 		return "CHUNKREF";
 	case FIELDREF:
@@ -1369,6 +1375,7 @@ int Datum::equalTo(Datum &d, bool ignoreCase) const {
 		return u.obj == d.u.obj;
 	case CASTREF:
 		return *u.cast == *d.u.cast;
+	case CASTLIBREF:
 	case PICTUREREF:
 		return 0; // Original always returns 0 on picture reference comparison
 	default:

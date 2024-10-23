@@ -254,7 +254,7 @@ static LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x08, 0x01, kThePerFrameHook,		kTheNOField,		true, kTEANOArgs },
 	{ 0x08, 0x02, kTheCastMembers,		kTheNumber,			false, kTEANOArgs },
 	{ 0x08, 0x03, kTheMenus,			kTheNumber,			false, kTEANOArgs },
-	{ 0x08, 0x04, kTheCastlibs,			kTheNumber,			false, kTEANOArgs }, // D5
+	{ 0x08, 0x04, kTheCastLibs,			kTheNumber,			false, kTEANOArgs }, // D5
 	{ 0x08, 0x05, kTheXtras,			kTheNumber,			false, kTEANOArgs }, // D5
 
 	{ 0x09, 0x01, kTheCast,				kTheName,			true, kTEAItemId },
