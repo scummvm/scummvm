@@ -51,7 +51,6 @@ void m_getRollOverActions(int nargs);
 void m_getEntryActions(int nargs);
 void m_peekEntryActions(int nargs);
 void m_getExitActions(int nargs);
-void m_setSavedPosition(int nargs);
 void m_getStateVariable(int nargs);
 void m_setStateVariable(int nargs);
 void m_getStringVariable(int nargs);
@@ -60,28 +59,39 @@ void m_startTimer(int nargs);
 void m_abortTimer(int nargs);
 void m_checkTimers(int nargs);
 void m_getTimerStatus(int nargs);
-void m_pickUpItem(int nargs);
 void m_dropItem(int nargs);
 void m_dumpItem(int nargs);
-void m_returnItem(int nargs);
-void m_ingestItem(int nargs);
-void m_putItemInContainer(int nargs);
-void m_putItemAtLocation(int nargs);
 void m_getCurrentPosition(int nargs);
-void m_getPlayerProperties(int nargs);
-void m_saveGame(int nargs);
-void m_loadGame(int nargs);
 void m_showCursor(int nargs);
 void m_releaseCursor(int nargs);
 void m_getRoomList(int nargs);
 void m_getItemList(int nargs);
+void m_getItemLocation(int nargs);
+
+void m_setSavedPosition(int nargs);
+void m_pickUpItem(int nargs);
+void m_returnItem(int nargs);
+void m_ingestItem(int nargs);
+void m_putItemInContainer(int nargs);
+void m_putItemAtLocation(int nargs);
+void m_getPlayerProperties(int nargs);
+void m_saveGame(int nargs);
+void m_loadGame(int nargs);
 void m_getCurrentItem(int nargs);
 void m_getCurrentContainer(int nargs);
 void m_getCurrentInteraction(int nargs);
-void m_getItemLocation(int nargs);
 void m_getContainerContents(int nargs);
 void m_pauseGame(int nargs);
 void m_resumeGame(int nargs);
+
+void m_putItemInHand(int nargs);
+void m_putItemInEnvironment(int nargs);
+void m_putItemInBag(int nargs);
+void m_getVariableList(int nargs);
+void m_getTimerActionsForTimer(int nargs);
+void m_saveGameState(int nargs);
+void m_loadGameState(int nargs);
+
 
 } // End of namespace HenryXObj
 
