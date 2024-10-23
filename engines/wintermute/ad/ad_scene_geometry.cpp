@@ -869,11 +869,6 @@ bool AdSceneGeometry::createLights() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool compareLights(const Light3D *light1, const Light3D *light2) {
-	return light1->_distance < light2->_distance;
-}
-
-//////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLights) {
 	const int maxLightCount = 100;
 
@@ -895,7 +890,7 @@ bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLig
 			_maxLightsWarning = true;
 		}
 
-		Common::Array<Light3D *> activeLights;
+		BaseArray<Light3D *> activeLights;
 
 		// compute distance to point
 		for (uint i = 0; i < _lights.size(); i++) {
@@ -919,7 +914,7 @@ bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLig
 
 		// sort by distance
 		if (activeLights.size() > 0) {
-			Common::sort(activeLights.begin(), activeLights.end(), compareLights);
+			qsort(activeLights.begin(), activeLights.size(), sizeof(Light3D *), AdSceneGeometry::compareLights);
 
 			for (uint i = 0; i < activeLights.size(); i++) {
 				activeLights[i]->_isAvailable = static_cast<int>(i) < _gameRef->_renderer3D->getMaxActiveLights();
@@ -963,6 +958,21 @@ bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLig
 	}
 
 	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+int AdSceneGeometry::compareLights(const void *obj1, const void *obj2) {
+	void *o1 = const_cast<void *>(obj1);
+	void *o2 = const_cast<void *>(obj2);
+	Light3D *light1 = *(Light3D **)o1;
+	Light3D *light2 = *(Light3D **)o2;
+
+	if (light1->_distance < light2->_distance)
+		return -1;
+	else if (light1->_distance > light2->_distance)
+		return 1;
+	else
+		return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////

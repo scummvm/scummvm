@@ -73,6 +73,7 @@ public:
 
 	bool createLights();
 	bool enableLights(DXVector3 Point, BaseArray<char *> &IgnoreLights);
+	static int compareLights(const void *obj1, const void *obj2);
 
 	bool initLoop();
 	float getPointsDist(DXVector3 p1, DXVector3 p2);

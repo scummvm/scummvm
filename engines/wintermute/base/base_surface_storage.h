@@ -29,7 +29,7 @@
 #define WINTERMUTE_BASE_SURFACE_STORAGE_H
 
 #include "engines/wintermute/base/base.h"
-#include "common/array.h"
+#include "engines/wintermute/coll_templ.h"
 
 namespace Wintermute {
 class BaseSurface;
@@ -38,7 +38,7 @@ public:
 	uint32 _lastCleanupTime;
 	bool initLoop();
 	bool sortSurfaces();
-	static bool surfaceSortCB(const BaseSurface *arg1, const BaseSurface *arg2);
+	static int surfaceSortCB(const void *arg1, const void *arg);
 	bool cleanup(bool warn = false);
 	//DECLARE_PERSISTENT(BaseSurfaceStorage, BaseClass);
 
@@ -48,7 +48,7 @@ public:
 	BaseSurfaceStorage(BaseGame *inGame);
 	~BaseSurfaceStorage() override;
 
-	Common::Array<BaseSurface *> _surfaces;
+	BaseArray<BaseSurface *> _surfaces;
 };
 
 } // End of namespace Wintermute

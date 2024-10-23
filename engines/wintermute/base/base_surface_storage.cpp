@@ -170,36 +170,38 @@ bool BaseSurfaceStorage::persist(BasePersistenceManager *persistMgr)
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceStorage::sortSurfaces() {
-	Common::sort(_surfaces.begin(), _surfaces.end(), surfaceSortCB);
+	qsort(_surfaces.data(), _surfaces.size(), sizeof(BaseSurface *), surfaceSortCB);
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceStorage::surfaceSortCB(const BaseSurface *s1, const BaseSurface *s2) {
+int BaseSurfaceStorage::surfaceSortCB(const void *arg1, const void *arg2) {
+	void *o1 = const_cast<void *>(arg1);
+	void *o2 = const_cast<void *>(arg2);
+	BaseSurface *s1 = *((BaseSurface **)o1);
+	BaseSurface *s2 = *((BaseSurface **)o2);
+
 	// sort by life time
-	if (s1->_lifeTime <= 0 && s2->_lifeTime > 0) {
-		return false;
-	} else if (s1->_lifeTime > 0 && s2->_lifeTime <= 0) {
-		return true;
-	}
+	if (s1->_lifeTime <= 0 && s2->_lifeTime > 0)
+		return 1;
+	else if (s1->_lifeTime > 0 && s2->_lifeTime <= 0)
+		return -1;
 
 
 	// sort by validity
-	if (s1->_valid && !s2->_valid) {
-		return true;
-	} else if (!s1->_valid && s2->_valid) {
-		return false;
-	}
+	if (s1->_valid && !s2->_valid)
+		return -1;
+	else if (!s1->_valid && s2->_valid)
+		return 1;
 
 	// sort by time
-	else if (s1->_lastUsedTime > s2->_lastUsedTime) {
-		return false;
-	} else if (s1->_lastUsedTime < s2->_lastUsedTime) {
-		return true;
-	} else {
-		return false;
-	}
+	else if (s1->_lastUsedTime > s2->_lastUsedTime)
+		return 1;
+	else if (s1->_lastUsedTime < s2->_lastUsedTime)
+		return -1;
+	else
+		return 0;
 }
 
 } // End of namespace Wintermute

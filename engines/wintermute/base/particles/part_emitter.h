@@ -126,7 +126,7 @@ private:
 	BaseScriptHolder *_owner;
 
 	PartForce *addForceByName(const Common::String &name);
-	bool static compareZ(const PartParticle *p1, const PartParticle *p2);
+	int static compareZ(const void *obj1, const void *obj2);
 	bool initParticle(PartParticle *particle, uint32 currentTime, uint32 timerDelta);
 	bool updateInternal(uint32 currentTime, uint32 timerDelta);
 	uint32 _lastGenTime;

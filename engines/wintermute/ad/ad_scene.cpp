@@ -1377,7 +1377,7 @@ bool AdScene::updateFreeObjects() {
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 	AdGame *adGame = (AdGame *)_gameRef;
-	Common::Array<AdObject *> objects;
+	BaseArray<AdObject *> objects;
 	AdObject *obj;
 
 	// global objects
@@ -1397,7 +1397,7 @@ bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 	}
 
 	// sort by _posY
-	Common::sort(objects.begin(), objects.end(), AdScene::compareObjs);
+	qsort(objects.data(), objects.size(), sizeof(AdObject *), AdScene::compareObjs);
 
 	// display them
 	for (uint32 i = 0; i < objects.size(); i++) {
@@ -1450,12 +1450,18 @@ bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdScene::compareObjs(const AdObject *obj1, const AdObject *obj2) {
-	if (obj1->_posY < obj2->_posY) {
-		return true;
-	} else {
-		return false;
-	}
+int AdScene::compareObjs(const void *obj1, const void *obj2) {
+	void *o1 = const_cast<void *>(obj1);
+	void *o2 = const_cast<void *>(obj2);
+	AdObject *object1 = *(AdObject **)o1;
+	AdObject *object2 = *(AdObject **)o2;
+
+	if (object1->_posY < object2->_posY)
+		return -1;
+	else if (object1->_posY > object2->_posY)
+		return 1;
+	else
+		return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -3720,7 +3726,7 @@ bool AdScene::getRegionObjects(AdRegion *region, BaseArray<AdObject *> &objects,
 	}
 
 	// sort by _posY
-	Common::sort(objects.begin(), objects.end(), AdScene::compareObjs);
+	qsort(objects.data(), objects.size(), sizeof(AdObject *), AdScene::compareObjs);
 
 	return STATUS_OK;
 }
