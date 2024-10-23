@@ -2516,7 +2516,7 @@ void DarkseedEngine::zeromousebuttons() {
 }
 
 void DarkseedEngine::updateBaseSprites() {
-	if (!_room->isGiger() == _normalWorldSpritesLoaded) {
+	if (_room->isGiger() != _normalWorldSpritesLoaded) {
 		// no need to change graphics
 		return;
 	}
