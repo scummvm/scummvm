@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-10 12:54+0000\n"
+"PO-Revision-Date: 2024-10-23 14:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -6429,24 +6429,24 @@ msgstr "Перемикання назви хіт-боксів"
 
 #: engines/agos/metaengine.cpp:360
 msgid "Switches between speech only and combined speech and subtitles"
-msgstr ""
+msgstr "Перемикання між лише озвучкою і комбінованими озвучкою та субтитрами"
 
 #: engines/agos/metaengine.cpp:366
 msgid "Switches between subtitles only and combined speech and subtitles"
-msgstr ""
+msgstr "Перемикання між лише субтитрами і комбінованими озвучкою та субтитрами"
 
 #: engines/agos/metaengine.cpp:376
 msgid "High speed mode on/off in Swampy Adventures"
-msgstr ""
+msgstr "Перемкнути пришвидшений режим у Swampy Adventures"
 
 #: engines/agos/metaengine.cpp:382 engines/lure/metaengine.cpp:295
 #: engines/trecision/metaengine.cpp:181
 msgid "Press \"Yes\" key"
-msgstr ""
+msgstr "Натисніть клавішу \"Так\""
 
 #: engines/agos/metaengine.cpp:387 engines/lure/metaengine.cpp:310
 msgid "Press \"No\" key"
-msgstr ""
+msgstr "Натисніть клавішу \"Ні\""
 
 #: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -7182,7 +7182,7 @@ msgstr "Мапа клавіш виходу з екрану"
 
 #: engines/cine/metaengine.cpp:277
 msgid "Exit Sony intro screen"
-msgstr ""
+msgstr "Вийти з заставки Sony"
 
 #: engines/cine/metaengine.cpp:283
 msgid "Select option / Click in game"
@@ -7245,7 +7245,7 @@ msgstr "Активувати"
 
 #: engines/cine/metaengine.cpp:340
 msgid "Speak"
-msgstr ""
+msgstr "Промовляти"
 
 #: engines/cine/metaengine.cpp:345
 msgid "Action menu"
@@ -7282,11 +7282,11 @@ msgstr "Рухатись донизу-направо"
 
 #: engines/cine/metaengine.cpp:416
 msgid "Menu option up"
-msgstr ""
+msgstr "Опція меню догори"
 
 #: engines/cine/metaengine.cpp:421
 msgid "Menu option down"
-msgstr ""
+msgstr "Опція меню донизу"
 
 #: engines/cine/saveload.cpp:860
 msgid ""
@@ -7519,17 +7519,15 @@ msgstr "Автентична графіка"
 
 #: engines/freescape/metaengine.cpp:120
 msgid "Keep graphics as close as possible to the original"
-msgstr ""
+msgstr "Зробити графіку якомога ближче до оригіналу"
 
 #: engines/freescape/metaengine.cpp:130
-#, fuzzy
-#| msgid "Enable storage"
 msgid "Enable rock travel"
-msgstr "Ввімкнути сховище"
+msgstr "Ввімкнути подорож через каміння"
 
 #: engines/freescape/metaengine.cpp:131
 msgid "Enable traveling using a rock shoot at start"
-msgstr ""
+msgstr "Вмикає подорожування за допомогою каменю на старті"
 
 #: engines/freescape/movement.cpp:49 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
@@ -7547,21 +7545,15 @@ msgid "Shoot"
 msgstr "Стріляти"
 
 #: engines/freescape/movement.cpp:72
-#, fuzzy
-#| msgid "Rotate"
 msgid "Rotate up"
-msgstr "Повернути"
+msgstr "Повернути догори"
 
 #: engines/freescape/movement.cpp:77
-#, fuzzy
-#| msgid "Rotate"
 msgid "Rotate down"
-msgstr "Повернути"
+msgstr "Повернути донизу"
 
 #. I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
 #: engines/freescape/movement.cpp:90
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change mode"
 msgstr "Змінити режим"
 
@@ -7580,8 +7572,6 @@ msgstr "Інфо-меню"
 
 #: engines/freescape/games/dark/dark.cpp:203
 #: engines/freescape/games/driller/driller.cpp:139
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Sound"
 msgstr "Перемкнути звук"
 
@@ -7598,18 +7588,14 @@ msgstr "Обертання направо"
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:220
 #: engines/freescape/games/driller/driller.cpp:156
-#, fuzzy
-#| msgid "Increase the scale factor"
 msgid "Increase Step Size"
-msgstr "Збільшити масштаб"
+msgstr "Збільшити розмір кроку"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:226
 #: engines/freescape/games/driller/driller.cpp:162
-#, fuzzy
-#| msgid "Decrease the scale factor"
 msgid "Decrease Step Size"
-msgstr "Зменшити масштаб"
+msgstr "Зменшити розмір кроку"
 
 #: engines/freescape/games/dark/dark.cpp:231
 #: engines/freescape/games/driller/driller.cpp:167
@@ -7623,7 +7609,7 @@ msgstr "Знизитись/Летіти додолу"
 
 #: engines/freescape/games/dark/dark.cpp:243
 msgid "Enable/Disable Jetpack"
-msgstr ""
+msgstr "Ввімкнути/вимкнути реактивний ранець"
 
 #. I18N: drilling rig is an in game item
 #: engines/freescape/games/driller/driller.cpp:180
@@ -7967,10 +7953,8 @@ msgid "Groovie engine"
 msgstr "Движок Groovie"
 
 #: engines/groovie/metaengine.cpp:217
-#, fuzzy
-#| msgid "Skip the Hall of Records storyboard scenes"
 msgid "Skip or fast forward scene"
-msgstr "Перескакувати Залу Рекордів"
+msgstr "Перескочити обо перемотати сцену"
 
 #: engines/groovie/saveload.cpp:52
 msgid "Reserved"
@@ -8021,16 +8005,12 @@ msgid "Enable Gore Mode when available"
 msgstr "Ввімкнути режим з кров'ю, якщо є доступний"
 
 #: engines/hopkins/metaengine.cpp:231
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Open inventory"
-msgstr "Відкрити/закрити інвентар"
+msgstr "Відкрити інвентар"
 
 #: engines/hopkins/metaengine.cpp:250
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Option dialog"
-msgstr "Пропустити діалог"
+msgstr "Діалог опцій"
 
 #: engines/hpl1/metaengine.cpp:76
 msgid "Forward"
@@ -8249,13 +8229,14 @@ msgstr "Ліва кнопка для атаки, права кнопка для 
 
 #: engines/kyra/metaengine.cpp:159
 msgid "Faithful AD&D rules"
-msgstr ""
+msgstr "Вірні правила AD&D"
 
 #: engines/kyra/metaengine.cpp:160
 msgid ""
 "Make implementation of AD&D rules more compliant with the AD&D 2nd edition "
 "handbook"
 msgstr ""
+"Вмикає реалізацію правил AD&D більш сумісну з довідником AD&D 2nd edition"
 
 #: engines/kyra/metaengine.cpp:251
 msgid "Lands of Lore support is not compiled in"
@@ -8524,22 +8505,16 @@ msgid "TTS Narrator"
 msgstr "Ведучий TTS"
 
 #: engines/lure/metaengine.cpp:170
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Fight sequence keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш бою"
 
 #: engines/lure/metaengine.cpp:171
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Index keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапи клавіш"
 
 #: engines/lure/metaengine.cpp:172
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Yes/No keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш для Так/Ні"
 
 #: engines/lure/metaengine.cpp:197 engines/mads/metaengine.cpp:311
 msgid "Restore game"
