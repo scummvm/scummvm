@@ -126,7 +126,7 @@ void MIF::defineStartLocations(MapFile *map) {
 					i = 0;
 					while (i < 3) {
 						if (map->threePlayerPoints[i].x == 0xFFFF) {
-							map->threePlayerPoints[i].y = x * 60;
+							map->threePlayerPoints[i].x = x * 60;
 							map->threePlayerPoints[i].y = y * 60;
 							break;
 						}
