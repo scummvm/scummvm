@@ -84,8 +84,11 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "bioscopia",			"Bioscopia: Where Science Conquers Evil" },
 	{ "birdlife",			"Shelley Duvall's It's a Bird's Life" },
 	{ "blinddate",			"National Lampoon's Blind Date" },
+	{ "blinkyballoon",		"Blinky Bill's Extraordinary Balloon Adventure" },
 	{ "blinkybill1",		"Blinky Bill's Ghost Cave" },
 	{ "blinkyk1",			"Blinky Bill: Play and Learn - Kindergarten" },
+	{ "blinkymagician",		"Blinky Bill and the Magician" },
+	{ "blinkyprint",		"Print & Play with Blinky Bill" },
 	{ "blinkyps",			"Blinky Bill: Play and Learn - Preschool" },
 	{ "blinkyy1",			"Blinky Bill: Play and Learn - Year 1" },
 	{ "bobcastle",			"Bob the Builder: Bob's Castle Adventure" },
@@ -6252,6 +6255,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 									  "FILES/OPENING.DIR", "45cb69d7174a3f93d54e9a5ee1fb9f3b", 2274768, 500),
 	WINGAME1("blender", "Volume 3.1", "LNCHR_32.EXE",	   "1a7acbba10a7246ba58c1d53fc7203f5", 1421431, 501),
 
+	MACGAME1("blinkyballoon", "", "Balloon",	 "r:0c0109b03fd29253e5d74c314911fa7f",  719005, 501),
+	WINGAME1("blinkyballoon", "", "BALLN95.EXE", "t:7a6e8152e71b82816b8742cc8e1cb453", 1427375, 501),
+
 	WINGAME1t_l("bluesango", "", "BLUESANG.EXE", "08e531b980ebfb343201400add17b68e", 2143080, Common::JA_JPN, 501),
 
 	// Designed by In Chair Viewing (ICV)
@@ -7569,6 +7575,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("biobalance", "", "Bioblnc/Bio.exe", "t:722dfefcebd9db546021b3251b428a6c", 1830151, 600),
 	WINGAME1("biobalance", "Preferences", "BioBalance.exe", "t:05519343f11e6394dbdf3cbfb7eceaf7", 1830137, 600),
+
+	WINGAME1("blinkymagician", "", "MAGI32.EXE", "t:af3f0ff154ca525fc42ff0c9a4f1f1a5", 1514279, 650),
+
+	MACGAME1("blinkyprint", "", "Print & Play", "r:63e8b9f6744efefbb8a004a2b76e2b1d",  115776, 600),
+	WINGAME1("blinkyprint", "", "PRINTPLA.EXE", "t:6a2fe0b06c7c9cf15736237c06aa300e", 1516941, 600),
 
 	// Japanese release, "Zlurp", is part of the Digitalogue Future Artist Series
 	MACGAME1_l("boitearire", "", "Zlurp", "e402b347a9cf682d2154c70cfefdbf26", 115776, Common::JA_JPN, 601),
