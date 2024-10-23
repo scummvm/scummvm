@@ -733,7 +733,7 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createDialog(int dialogId) {
 				if (!doNotDraw) {
 					window->innerSurface()->frameRect(r, black);
 				} else if (_vm->_game.id == GID_INDY3 && i == 3) {
-					drawFakeDriveLabel(window, Common::Rect(r.left + 9, r.top, r.right, r.bottom), _hardDriveIcon, "ScummVM", Graphics::kTextAlignLeft);
+					drawFakeDriveLabel(window, Common::Rect(r.left + 5, r.top, r.right, r.bottom), "ScummVM");
 				}
 
 				break;
@@ -822,8 +822,8 @@ bool MacGuiImpl::runOpenDialog(int &saveSlotToHandle) {
 	Common::StringArray savegameNames;
 	prepareSaveLoad(savegameNames, availSlots, slotIds, ARRAYSIZE(availSlots));
 
-	drawFakePathList(window, Common::Rect(14, 8, 232, 26), _folderIcon, name().c_str(), Graphics::kTextAlignLeft);
-	drawFakeDriveLabel(window, Common::Rect(242, 10, 340, 28), _hardDriveIcon, "ScummVM", Graphics::kTextAlignLeft);
+	drawFakePathList(window, Common::Rect(14, 8, 232, 27), name().c_str());
+	drawFakeDriveLabel(window, Common::Rect(232, 10, 344, 28), "ScummVM");
 
 	window->addListBox(Common::Rect(14, 31, 232, 161), savegameNames, true);
 
@@ -881,8 +881,8 @@ bool MacGuiImpl::runSaveDialog(int &saveSlotToHandle, Common::String &saveName) 
 		}
 	}
 
-	drawFakePathList(window, Common::Rect(14, 8, 232, 26), _folderIcon, name().c_str(), Graphics::kTextAlignLeft);
-	drawFakeDriveLabel(window, Common::Rect(242, 10, 340, 28), _hardDriveIcon, "ScummVM", Graphics::kTextAlignLeft);
+	drawFakePathList(window, Common::Rect(14, 8, 232, 27), name().c_str());
+	drawFakeDriveLabel(window, Common::Rect(232, 10, 344, 28), "ScummVM");
 
 	window->addListBox(Common::Rect(14, 31, 232, 129), savegameNames, true, true);
 
@@ -997,44 +997,72 @@ bool MacGuiImpl::runOkCancelDialog(Common::String text) {
 	return ret;
 }
 
-void MacGuiImpl::drawFakePathList(MacDialogWindow *window, Common::Rect r, byte *icon, const char *text, Graphics::TextAlign alignment) {
+void MacGuiImpl::drawFakePathList(MacDialogWindow *window, Common::Rect r, const char *text) {
 	uint32 black = getBlack();
+	const Graphics::Font *font = getFont(kSystemFont);
 
 	// Draw the text...
-	window->addStaticText(Common::Rect(r.left + 22, r.top + 2, r.right - 21, r.bottom - 1), text, true, alignment);
+	int x0 = r.left + 23;
+	int x1 = r.right - 23;
+
+	font->drawString(window->innerSurface(), text, x0 + 1, r.top + 2, x1 - x0, black, Graphics::kTextAlignCenter, 0, true);
+
+	int width = font->getStringWidth(text);
+
+	if (width < x1 - x0) {
+		int middle = (x0 + x1) / 2;
+		x0 = middle - width / 2;
+		x1 = middle + width / 2;
+	}
+
+	Common::Rect iconRect(16, 16);
+
+	const uint16 folderIcon[16] = {
+		0x0000,	0x0000,	0x0000,	0x0000,	0x1E00,	0x21FC,	0x2002,	0xFFE2,
+		0x8012,	0x4012,	0x400A,	0x200A,	0x2006,	0x1FFE,	0x0000,	0x0000
+	};
+
+	const uint16 arrowDownIcon[16] = {
+		0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x3FF8, 0x1FF0, 0x0FE0,
+		0x07C0, 0x0380, 0x0100, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
+	};
 
 	// Draw the icon...
-	Graphics::Surface *iconSurf = new Graphics::Surface();
-	iconSurf->create(16, 16, Graphics::PixelFormat::createFormatCLUT8());
-	iconSurf->setPixels(icon);
-	window->drawSprite(iconSurf, r.left + 4, r.top + 1);
-	delete iconSurf;
+	iconRect.moveTo(x0 - 19, r.top + 1);
+	drawBitmap(window->innerSurface(), iconRect, folderIcon, black);
 
 	// Draw the arrow...
-	Graphics::Surface *arrowSurf = new Graphics::Surface();
-	arrowSurf->create(16, 16, Graphics::PixelFormat::createFormatCLUT8());
-	arrowSurf->setPixels(_arrowDownIcon);
-	window->drawSprite(arrowSurf, r.right - 19, r.top + 1);
-	delete arrowSurf;
+	iconRect.moveTo(x1 + 4, r.top + 1);
+	drawBitmap(window->innerSurface(), iconRect, arrowDownIcon, black);
 
 	// Draw the black frame...
-	window->innerSurface()->frameRect(r, black);
+	window->innerSurface()->frameRect(Common::Rect(x0 - 23, r.top, x1 + 23, r.bottom - 1), black);
 
 	// Draw the shadows...
-	window->innerSurface()->hLine(r.left + 3, r.bottom, r.right, black);
-	window->innerSurface()->vLine(r.right, r.top + 3, r.bottom, black);
+	window->innerSurface()->hLine(x0 - 20, r.bottom - 1, x1 + 23, black);
+	window->innerSurface()->vLine(x1 + 23, r.top + 3, r.bottom - 1, black);
 }
 
-void MacGuiImpl::drawFakeDriveLabel(MacDialogWindow *window, Common::Rect r, byte *icon, const char *text, Graphics::TextAlign alignment) {
-	// Draw the text...
-	window->addStaticText(Common::Rect(r.left + 25, r.top, r.right, r.bottom), text, true, alignment);
+void MacGuiImpl::drawFakeDriveLabel(MacDialogWindow *window, Common::Rect r, const char *text) {
+	uint32 black = getBlack();
+	const Graphics::Font *font = getFont(kSystemFont);
 
-	// Draw the icon...
-	Graphics::Surface *surf = new Graphics::Surface();
-	surf->create(16, 16, Graphics::PixelFormat::createFormatCLUT8());
-	surf->setPixels(icon);
-	window->drawSprite(surf, r.left + 6, r.top);
-	delete surf;
+	font->drawString(window->innerSurface(), text, r.left, r.top, r.width(), black, Graphics::kTextAlignCenter, 9, true);
+
+	const uint16 hardDriveIcon[16] = {
+		0x0000,	0x0000,	0x0000,	0x0000,	0x0000,	0x7FFE,	0x8001,	0x8001,
+		0xA001,	0x8001,	0x7FFE,	0x0000,	0x0000,	0x0000,	0x0000, 0x0000
+	};
+
+	Common::Rect iconRect(16, 16);
+	int width = font->getStringWidth(text);
+
+	if (width < r.width())
+		iconRect.moveTo((r.left + r.right - width - 20) / 2, r.top);
+	else
+		iconRect.moveTo(r.left, r.top);
+
+	drawBitmap(window->innerSurface(), iconRect, hardDriveIcon, black);
 }
 
 bool MacGuiImpl::runQuitDialog() {
