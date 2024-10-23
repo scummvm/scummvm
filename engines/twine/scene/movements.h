@@ -104,17 +104,15 @@ private:
 	 */
 	void processSameXZAction(int actorIdx);
 
-	/**
-	 * @return A value of @c true means that the actor should e.g. start reading a sign or checking
-	 * a locker for loot or secrets
-	 */
-	bool processBehaviourExecution(int actorIdx);
+	void processBehaviourExecution(int actorIdx);
 	bool processAttackExecution(int actorIdx);
 	void processManualMovementExecution(int actorIdx);
 	void processManualRotationExecution(int actorIdx);
 
 	/**
-	 * This is true if the player hits the action button. E.g. in the second prison scene when you hide in the waste.
+	 * @return A value of @c true means that the actor should e.g. start reading a sign or checking
+	 * a locker for loot or secrets or talking to an npc - this can get triggered by the SpecialAction binding
+	 * in any behaviour mode
 	 */
 	bool _actionNormal = false;
 	void manualRealAngle(ActorStruct *actor);

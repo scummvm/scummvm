@@ -87,7 +87,7 @@ bool Input::isMoveOrTurnActionActive() const {
 }
 
 bool Input::isHeroActionActive() const {
-	return isActionActive(TwinEActionType::ExecuteBehaviourAction) || isActionActive(TwinEActionType::SpecialAction);
+	return isActionActive(TwinEActionType::ExecuteBehaviourAction);
 }
 
 bool Input::resetHeroActions() {

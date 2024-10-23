@@ -242,14 +242,9 @@ void Movements::update() {
 	_changedCursorKeys.update(_engine);
 }
 
-bool Movements::processBehaviourExecution(int actorIdx) {
-	bool executeAction = false;
-	if (_engine->_input->toggleActionIfActive(TwinEActionType::SpecialAction)) {
-		executeAction = true;
-	}
+void Movements::processBehaviourExecution(int actorIdx) {
 	switch (_engine->_actor->_heroBehaviour) {
 	case HeroBehaviourType::kNormal:
-		executeAction = true;
 		break;
 	case HeroBehaviourType::kAthletic:
 		_engine->_animations->initAnim(AnimationTypes::kJump, AnimType::kAnimationThen, AnimationTypes::kStanding, actorIdx);
@@ -295,7 +290,6 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 	case HeroBehaviourType::kMax:
 		break;
 	}
-	return executeAction;
 }
 
 bool Movements::processAttackExecution(int actorIdx) {
@@ -401,7 +395,9 @@ void Movements::processManualAction(int actorIdx) {
 	if (IS_HERO(actorIdx)) {
 		_actionNormal = false;
 		if (_engine->_input->isHeroActionActive()) {
-			_actionNormal = processBehaviourExecution(actorIdx);
+			processBehaviourExecution(actorIdx);
+		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::SpecialAction)) {
+			_actionNormal = true;
 		}
 	}
 
