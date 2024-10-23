@@ -695,6 +695,7 @@ void DgdsEngine::restartGame() {
 	loadGameFiles();
 	loadRestartFile();
 	_gameGlobals->setGlobal(0x57, 1);
+	_isLoading = false;
 }
 
 Common::SeekableReadStream *DgdsEngine::getResource(const Common::String &name, bool ignorePatches) {
