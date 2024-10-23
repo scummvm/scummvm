@@ -31,6 +31,10 @@ public:
 	TransitionCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	TransitionCastMember(Cast *cast, uint16 castId, TransitionCastMember &source);
 
+	bool hasField(int field) override;
+	Datum getField(int field) override;
+	bool setField(int field, const Datum &value) override;
+
 	Common::String formatInfo() override;
 
 	TransitionType _transType;

@@ -23,6 +23,7 @@
 #include "director/cast.h"
 #include "director/movie.h"
 #include "director/castmember/transition.h"
+#include "director/lingo/lingo-the.h"
 
 namespace Director {
 
@@ -60,6 +61,43 @@ TransitionCastMember::TransitionCastMember(Cast *cast, uint16 castId, Transition
 	_flags = source._flags;
 	_chunkSize = source._chunkSize;
 	_area = source._area;
+}
+
+bool TransitionCastMember::hasField(int field) {
+	switch (field) {
+	case kTheDuration:
+		return true;
+	default:
+		break;
+	}
+	return CastMember::hasField(field);
+}
+
+Datum TransitionCastMember::getField(int field) {
+	Datum d;
+
+	switch (field) {
+	case kTheDuration:
+		d = Datum(_durationMillis);
+		break;
+	default:
+		d = CastMember::getField(field);
+		break;
+	}
+
+	return d;
+}
+
+bool TransitionCastMember::setField(int field, const Datum &d) {
+	switch (field) {
+	case kTheDuration:
+		_durationMillis = (bool)d.asInt();
+		return true;
+	default:
+		break;
+	}
+
+	return CastMember::setField(field, d);
 }
 
 Common::String TransitionCastMember::formatInfo() {
