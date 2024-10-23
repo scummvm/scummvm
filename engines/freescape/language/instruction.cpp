@@ -756,7 +756,8 @@ void FreescapeEngine::executeStartAnim(FCLInstruction &instruction) {
 		group = (Group *)obj->_partOfGroup;
 	}
 	debugC(1, kFreescapeDebugCode, "From group %d", group->getObjectID());
-	group->_active = true;
+	if (!group->isDestroyed())
+		group->start();
 }
 
 

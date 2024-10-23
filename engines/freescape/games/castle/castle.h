@@ -126,6 +126,8 @@ public:
 	int _spiritsMeterMax;
 	int _spiritsToKill;
 
+	int _lastTenSeconds;
+
 private:
 	Common::SeekableReadStream *decryptFile(const Common::Path &filename);
 	void loadRiddles(Common::SeekableReadStream *file, int offset, int number);

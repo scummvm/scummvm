@@ -91,7 +91,6 @@ void Group::linkObject(Object *obj) {
 
 void Group::assemble(int index) {
 	GeometricObject *gobj = (GeometricObject *)_objects[index];
-	//gobj->makeVisible();
 	Math::Vector3d position = _operations[_step]->position;
 	Math::Vector3d offset = _origins[index] - _origins[0];
 	/*if (index == 0)
@@ -108,7 +107,7 @@ void Group::assemble(int index) {
 
 	debugC(1, kFreescapeDebugGroup, "Group %d: Assembling object %d originally at %f, %f, %f", _objectID, gobj->getObjectID(), gobj->getOrigin().x(), gobj->getOrigin().y(), gobj->getOrigin().z());
 	gobj->offsetOrigin(position + offset);
-	debugC(1, kFreescapeDebugGroup, "Group %d: Assembling object %d originally at %f, %f, %f", _objectID, gobj->getObjectID(), gobj->getOrigin().x(), gobj->getOrigin().y(), gobj->getOrigin().z());
+	debugC(1, kFreescapeDebugGroup, "Group %d: Assembling object %d moved to %f, %f, %f", _objectID, gobj->getObjectID(), gobj->getOrigin().x(), gobj->getOrigin().y(), gobj->getOrigin().z());
 }
 
 void Group::run() {
@@ -144,17 +143,20 @@ void Group::run() {
 
 			if (opcode & 0x20) {
 				for (uint32 i = 0; i < groupSize ; i++)
-					_objects[i]->makeInvisible();
-
+					_objects[i]->destroy();
 			}
 
 			if (opcode & 0x40) {
 				for (uint32 i = 0; i < groupSize ; i++)
-					_objects[i]->destroy();
+					_objects[i]->makeInvisible();
 			}
 		}
-
 	}
+}
+
+void Group::start() {
+	makeVisible();
+	_active = true;
 }
 
 void Group::reset() {

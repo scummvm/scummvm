@@ -51,6 +51,7 @@ public:
 	void run();
 	void run(int index);
 	void reset();
+	void start();
 
 	Common::Array<Object *> _objects;
 	Common::Array<Math::Vector3d> _origins;

@@ -47,6 +47,7 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 
 	_playerHeightNumber = 1;
 	_playerHeightMaxNumber = 1;
+	_lastTenSeconds = -1;
 
 	_playerSteps.clear();
 	_playerSteps.push_back(15);
@@ -365,6 +366,11 @@ void CastleEngine::initGameState() {
 		setGameBit(k8bitGameBitTravelRock);
 
 	_gfx->_shakeOffset = Common::Point();
+
+	int seconds, minutes, hours;
+	getTimeFromCountdown(seconds, minutes, hours);
+	_lastMinute = minutes;
+	_lastTenSeconds = seconds / 10;
 }
 
 bool CastleEngine::checkIfGameEnded() {
@@ -1050,6 +1056,13 @@ void CastleEngine::updateTimeVariables() {
 		_spiritsMeterPosition = _spiritsMeter * (_spiritsToKill - _spiritsDestroyed) / _spiritsToKill;
 		if (_spiritsMeterPosition >= _spiritsMeterMax)
 			_countdown = -1;
+	}
+
+	if (_lastTenSeconds != seconds / 10) {
+		//_gameStateVars[0x1e] += 1;
+		//_gameStateVars[0x1f] += 1;
+		_lastTenSeconds = seconds / 10;
+		executeLocalGlobalConditions(false, false, true);
 	}
 }
 

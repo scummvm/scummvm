@@ -1039,6 +1039,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{Freescape::kFreescapeDebugParser, "parser", ""},
 	{Freescape::kFreescapeDebugCode, "code", ""},
 	{Freescape::kFreescapeDebugMedia, "media", ""},
+	{Freescape::kFreescapeDebugGroup, "group", ""},
 	DEBUG_CHANNEL_END
 };
 
