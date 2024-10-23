@@ -28,10 +28,11 @@
 #include "ags/shared/ac/common.h" // quit
 #include "ags/engine/ac/string.h"
 #include "ags/engine/ac/dynobj/cc_dynamic_array.h"
-#include "ags/engine/ac/dynobj/cc_dynamic_object.h"
+#include "ags/engine/ac/dynobj/cc_script_object.h"
 #include "ags/engine/ac/dynobj/script_dict.h"
 #include "ags/engine/ac/dynobj/script_set.h"
 #include "ags/engine/ac/dynobj/script_string.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/shared/util/bbop.h"
@@ -117,7 +118,7 @@ void *Dict_GetKeysAsArray(ScriptDictBase *dic) {
 	if (items.size() == 0)
 		return nullptr;
 	DynObjectRef arr = DynamicArrayHelpers::CreateStringArray(items);
-	return arr.second;
+	return arr.Obj;
 }
 
 void *Dict_GetValuesAsArray(ScriptDictBase *dic) {
@@ -126,7 +127,7 @@ void *Dict_GetValuesAsArray(ScriptDictBase *dic) {
 	if (items.size() == 0)
 		return nullptr;
 	DynObjectRef arr = DynamicArrayHelpers::CreateStringArray(items);
-	return arr.second;
+	return arr.Obj;
 }
 
 RuntimeScriptValue Sc_Dict_Create(const RuntimeScriptValue *params, int32_t param_count) {
@@ -142,7 +143,7 @@ RuntimeScriptValue Sc_Dict_Contains(void *self, const RuntimeScriptValue *params
 }
 
 RuntimeScriptValue Sc_Dict_Get(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ_POBJ(ScriptDictBase, const char, _GP(myScriptStringImpl), Dict_Get, const char);
+	API_OBJCALL_OBJ_POBJ(ScriptDictBase, const char, _GP(myScriptStringImpl), Dict_Get, const char);
 }
 
 RuntimeScriptValue Sc_Dict_Remove(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -246,7 +247,7 @@ void *Set_GetItemsAsArray(ScriptSetBase *set) {
 	if (items.size() == 0)
 		return nullptr;
 	DynObjectRef arr = DynamicArrayHelpers::CreateStringArray(items);
-	return arr.second;
+	return arr.Obj;
 }
 
 RuntimeScriptValue Sc_Set_Create(const RuntimeScriptValue *params, int32_t param_count) {
@@ -281,34 +282,37 @@ RuntimeScriptValue Sc_Set_GetItemCount(void *self, const RuntimeScriptValue *par
 	API_OBJCALL_INT(ScriptSetBase, Set_GetItemCount);
 }
 
-RuntimeScriptValue Sc_Set_GetItemAsArray(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Set_GetItemsAsArray(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_OBJ(ScriptSetBase, void, _GP(globalDynamicArray), Set_GetItemsAsArray);
 }
 
-
-
 void RegisterContainerAPI() {
-	ccAddExternalStaticFunction("Dictionary::Create", Sc_Dict_Create);
-	ccAddExternalObjectFunction("Dictionary::Clear", Sc_Dict_Clear);
-	ccAddExternalObjectFunction("Dictionary::Contains", Sc_Dict_Contains);
-	ccAddExternalObjectFunction("Dictionary::Get", Sc_Dict_Get);
-	ccAddExternalObjectFunction("Dictionary::Remove", Sc_Dict_Remove);
-	ccAddExternalObjectFunction("Dictionary::Set", Sc_Dict_Set);
-	ccAddExternalObjectFunction("Dictionary::get_CompareStyle", Sc_Dict_GetCompareStyle);
-	ccAddExternalObjectFunction("Dictionary::get_SortStyle", Sc_Dict_GetSortStyle);
-	ccAddExternalObjectFunction("Dictionary::get_ItemCount", Sc_Dict_GetItemCount);
-	ccAddExternalObjectFunction("Dictionary::GetKeysAsArray", Sc_Dict_GetKeysAsArray);
-	ccAddExternalObjectFunction("Dictionary::GetValuesAsArray", Sc_Dict_GetValuesAsArray);
+	ScFnRegister container_api[] = {
+		// Dictionary
+		{"Dictionary::Create", API_FN_PAIR(Dict_Create)},
+		{"Dictionary::Clear", API_FN_PAIR(Dict_Clear)},
+		{"Dictionary::Contains", API_FN_PAIR(Dict_Contains)},
+		{"Dictionary::Get", API_FN_PAIR(Dict_Get)},
+		{"Dictionary::Remove", API_FN_PAIR(Dict_Remove)},
+		{"Dictionary::Set", API_FN_PAIR(Dict_Set)},
+		{"Dictionary::get_CompareStyle", API_FN_PAIR(Dict_GetCompareStyle)},
+		{"Dictionary::get_SortStyle", API_FN_PAIR(Dict_GetSortStyle)},
+		{"Dictionary::get_ItemCount", API_FN_PAIR(Dict_GetItemCount)},
+		{"Dictionary::GetKeysAsArray", API_FN_PAIR(Dict_GetKeysAsArray)},
+		{"Dictionary::GetValuesAsArray", API_FN_PAIR(Dict_GetValuesAsArray)},
+		// Set
+		{"Set::Create", API_FN_PAIR(Set_Create)},
+		{"Set::Add", API_FN_PAIR(Set_Add)},
+		{"Set::Clear", API_FN_PAIR(Set_Clear)},
+		{"Set::Contains", API_FN_PAIR(Set_Contains)},
+		{"Set::Remove", API_FN_PAIR(Set_Remove)},
+		{"Set::get_CompareStyle", API_FN_PAIR(Set_GetCompareStyle)},
+		{"Set::get_SortStyle", API_FN_PAIR(Set_GetSortStyle)},
+		{"Set::get_ItemCount", API_FN_PAIR(Set_GetItemCount)},
+		{"Set::GetItemsAsArray", API_FN_PAIR(Set_GetItemsAsArray)},
+	};
 
-	ccAddExternalStaticFunction("Set::Create", Sc_Set_Create);
-	ccAddExternalObjectFunction("Set::Add", Sc_Set_Add);
-	ccAddExternalObjectFunction("Set::Clear", Sc_Set_Clear);
-	ccAddExternalObjectFunction("Set::Contains", Sc_Set_Contains);
-	ccAddExternalObjectFunction("Set::Remove", Sc_Set_Remove);
-	ccAddExternalObjectFunction("Set::get_CompareStyle", Sc_Set_GetCompareStyle);
-	ccAddExternalObjectFunction("Set::get_SortStyle", Sc_Set_GetSortStyle);
-	ccAddExternalObjectFunction("Set::get_ItemCount", Sc_Set_GetItemCount);
-	ccAddExternalObjectFunction("Set::GetItemsAsArray", Sc_Set_GetItemAsArray);
+	ccAddExternalFunctions361(container_api);
 }
 
 } // namespace AGS3

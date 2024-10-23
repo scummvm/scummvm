@@ -20,13 +20,14 @@
  */
 
 #include "ags/engine/ac/dynobj/script_view_frame.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 
-int ScriptViewFrame::Dispose(const char *address, bool force) {
+int ScriptViewFrame::Dispose(void * /*address*/, bool force) {
 	// always dispose a ViewFrame
 	delete this;
 	return 1;
@@ -36,11 +37,11 @@ const char *ScriptViewFrame::GetType() {
 	return "ViewFrame";
 }
 
-size_t ScriptViewFrame::CalcSerializeSize() {
+size_t ScriptViewFrame::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t) * 3;
 }
 
-void ScriptViewFrame::Serialize(const char *address, Stream *out) {
+void ScriptViewFrame::Serialize(const void * /*address*/, Stream *out) {
 	out->WriteInt32(view);
 	out->WriteInt32(loop);
 	out->WriteInt32(frame);

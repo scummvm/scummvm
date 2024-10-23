@@ -46,7 +46,7 @@ ScriptRegion *GetRegionAtRoom(int xx, int yy) {
 ScriptRegion *GetRegionAtScreen(int x, int y) {
 	VpPoint vpt = _GP(play).ScreenToRoomDivDown(x, y);
 	if (vpt.second < 0)
-		return nullptr;
+		return &_G(scrRegion)[0]; // return region[0] for consistency and backwards compatibility
 	return GetRegionAtRoom(vpt.first.X, vpt.first.Y);
 }
 
@@ -140,9 +140,7 @@ RuntimeScriptValue Sc_GetRegionAtScreen(const RuntimeScriptValue *params, int32_
 }
 
 RuntimeScriptValue Sc_Region_GetDrawingSurface(const RuntimeScriptValue *params, int32_t param_count) {
-	(void)params; (void)param_count;
-	ScriptDrawingSurface *ret_obj = Room_GetDrawingSurfaceForMask(kRoomAreaRegion);
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj);
+	API_SCALL_OBJAUTO(ScriptDrawingSurface, Region_GetDrawingSurface);
 }
 
 RuntimeScriptValue Sc_Region_Tint(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -213,25 +211,29 @@ RuntimeScriptValue Sc_Region_GetTintLuminance(void *self, const RuntimeScriptVal
 	API_OBJCALL_INT(ScriptRegion, Region_GetTintLuminance);
 }
 
-
 void RegisterRegionAPI() {
-	ccAddExternalStaticFunction("Region::GetAtRoomXY^2", Sc_GetRegionAtRoom);
-	ccAddExternalStaticFunction("Region::GetAtScreenXY^2", Sc_GetRegionAtScreen);
-	ccAddExternalStaticFunction("Region::GetDrawingSurface", Sc_Region_GetDrawingSurface);
-	ccAddExternalObjectFunction("Region::Tint^4", Sc_Region_TintNoLum);
-	ccAddExternalObjectFunction("Region::Tint^5", Sc_Region_Tint);
-	ccAddExternalObjectFunction("Region::RunInteraction^1", Sc_Region_RunInteraction);
-	ccAddExternalObjectFunction("Region::get_Enabled", Sc_Region_GetEnabled);
-	ccAddExternalObjectFunction("Region::set_Enabled", Sc_Region_SetEnabled);
-	ccAddExternalObjectFunction("Region::get_ID", Sc_Region_GetID);
-	ccAddExternalObjectFunction("Region::get_LightLevel", Sc_Region_GetLightLevel);
-	ccAddExternalObjectFunction("Region::set_LightLevel", Sc_Region_SetLightLevel);
-	ccAddExternalObjectFunction("Region::get_TintEnabled", Sc_Region_GetTintEnabled);
-	ccAddExternalObjectFunction("Region::get_TintBlue", Sc_Region_GetTintBlue);
-	ccAddExternalObjectFunction("Region::get_TintGreen", Sc_Region_GetTintGreen);
-	ccAddExternalObjectFunction("Region::get_TintRed", Sc_Region_GetTintRed);
-	ccAddExternalObjectFunction("Region::get_TintSaturation", Sc_Region_GetTintSaturation);
-	ccAddExternalObjectFunction("Region::get_TintLuminance", Sc_Region_GetTintLuminance);
+	ScFnRegister region_api[] = {
+		{"Region::GetAtRoomXY^2", API_FN_PAIR(GetRegionAtRoom)},
+		{"Region::GetAtScreenXY^2", API_FN_PAIR(GetRegionAtScreen)},
+		{"Region::GetDrawingSurface", API_FN_PAIR(Region_GetDrawingSurface)},
+
+		{"Region::Tint^4", API_FN_PAIR(Region_TintNoLum)},
+		{"Region::Tint^5", API_FN_PAIR(Region_Tint)},
+		{"Region::RunInteraction^1", API_FN_PAIR(Region_RunInteraction)},
+		{"Region::get_Enabled", API_FN_PAIR(Region_GetEnabled)},
+		{"Region::set_Enabled", API_FN_PAIR(Region_SetEnabled)},
+		{"Region::get_ID", API_FN_PAIR(Region_GetID)},
+		{"Region::get_LightLevel", API_FN_PAIR(Region_GetLightLevel)},
+		{"Region::set_LightLevel", API_FN_PAIR(Region_SetLightLevel)},
+		{"Region::get_TintEnabled", API_FN_PAIR(Region_GetTintEnabled)},
+		{"Region::get_TintBlue", API_FN_PAIR(Region_GetTintBlue)},
+		{"Region::get_TintGreen", API_FN_PAIR(Region_GetTintGreen)},
+		{"Region::get_TintRed", API_FN_PAIR(Region_GetTintRed)},
+		{"Region::get_TintSaturation", API_FN_PAIR(Region_GetTintSaturation)},
+		{"Region::get_TintLuminance", API_FN_PAIR(Region_GetTintLuminance)},
+	};
+
+	ccAddExternalFunctions361(region_api);
 }
 
 } // namespace AGS3

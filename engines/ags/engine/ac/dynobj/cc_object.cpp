@@ -21,6 +21,7 @@
 
 #include "ags/engine/ac/dynobj/cc_object.h"
 #include "ags/engine/ac/dynobj/script_object.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/game/room_struct.h"
 #include "ags/shared/util/stream.h"
@@ -35,14 +36,14 @@ const char *CCObject::GetType() {
 	return "Object";
 }
 
-size_t CCObject::CalcSerializeSize() {
+size_t CCObject::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t);
 }
 
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
-void CCObject::Serialize(const char *address, Stream *out) {
-	const ScriptObject *shh = (const ScriptObject *)address;
+void CCObject::Serialize(const void *address, Stream *out) {
+	const ScriptObject *shh = static_cast<const ScriptObject *>(address);
 	out->WriteInt32(shh->id);
 }
 

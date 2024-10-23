@@ -50,10 +50,13 @@ int  ViewFrame_GetView(ScriptViewFrame *svf);
 int  ViewFrame_GetLoop(ScriptViewFrame *svf);
 int  ViewFrame_GetFrame(ScriptViewFrame *svf);
 
-void precache_view(int view);
+// Calculate the frame sound volume from different factors;
+// pass scale as 100 if volume scaling is disabled
+// NOTE: historically scales only in 0-100 range :/
+int CalcFrameSoundVolume(int obj_vol, int anim_vol, int scale = 100);
 // Handle the new animation frame (play linked sounds, etc);
- // sound_volume is an optional relative factor, -1 means not use
- void CheckViewFrame(int view, int loop, int frame, int sound_volume = -1);
+// sound_volume is an optional *relative* factor, 100 is default (unchanged)
+void CheckViewFrame(int view, int loop, int frame, int sound_volume = 100);
 // draws a view frame, flipped if appropriate
 void DrawViewFrame(Shared::Bitmap *ds, const ViewFrame *vframe, int x, int y, bool alpha_blend = false);
 

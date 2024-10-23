@@ -23,9 +23,7 @@
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/display.h"
 #include "ags/engine/ac/draw.h"
-#include "ags/shared/ac/game_version.h"
 #include "ags/engine/ac/game_setup.h"
-#include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/mouse.h"
@@ -51,94 +49,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-// Convert guis position and size to proper game resolution.
-// Necessary for pre 3.1.0 games only to sync with modern engine.
-void convert_gui_to_game_resolution(GameDataVersion filever) {
-	if (filever >= kGameVersion_310)
-		return;
-
-	const int mul = _GP(game).GetDataUpscaleMult();
-	for (int i = 0; i < _GP(game).numcursors; ++i) {
-		_GP(game).mcurs[i].hotx *= mul;
-		_GP(game).mcurs[i].hoty *= mul;
-	}
-
-	for (int i = 0; i < _GP(game).numinvitems; ++i) {
-		_GP(game).invinfo[i].hotx *= mul;
-		_GP(game).invinfo[i].hoty *= mul;
-	}
-
-	for (int i = 0; i < _GP(game).numgui; ++i) {
-		GUIMain *cgp = &_GP(guis)[i];
-		cgp->X *= mul;
-		cgp->Y *= mul;
-		if (cgp->Width < 1)
-			cgp->Width = 1;
-		if (cgp->Height < 1)
-			cgp->Height = 1;
-		// This is probably a way to fix GUIs meant to be covering whole screen
-		if (cgp->Width == _GP(game).GetDataRes().Width - 1)
-			cgp->Width = _GP(game).GetDataRes().Width;
-
-		cgp->Width *= mul;
-		cgp->Height *= mul;
-
-		cgp->PopupAtMouseY *= mul;
-
-		for (int j = 0; j < cgp->GetControlCount(); ++j) {
-			GUIObject *guio = cgp->GetControl(j);
-			guio->X *= mul;
-			guio->Y *= mul;
-			guio->Width *= mul;
-			guio->Height *= mul;
-			guio->IsActivated = false;
-			guio->OnResized();
-		}
-	}
-}
-
-// Convert certain coordinates to data resolution (only if it's different from game resolution).
-// Necessary for 3.1.0 and above games with legacy "low-res coordinates" setting.
-void convert_objects_to_data_resolution(GameDataVersion filever) {
-	if (filever < kGameVersion_310 || _GP(game).GetDataUpscaleMult() == 1)
-		return;
-
-	const int mul = _GP(game).GetDataUpscaleMult();
-	for (int i = 0; i < _GP(game).numcharacters; ++i) {
-		_GP(game).chars[i].x /= mul;
-		_GP(game).chars[i].y /= mul;
-	}
-
-	for (auto &inv : _GP(guiinv)) {
-		inv.ItemWidth /= mul;
-		inv.ItemHeight /= mul;
-		inv.OnResized();
-	}
-}
-
-void engine_setup_system_gamesize() {
-	_GP(scsystem).width = _GP(game).GetGameRes().Width;
-	_GP(scsystem).height = _GP(game).GetGameRes().Height;
-	_GP(scsystem).coldepth = _GP(game).GetColorDepth();
-	_GP(scsystem).viewport_width = game_to_data_coord(_GP(play).GetMainViewport().GetWidth());
-	_GP(scsystem).viewport_height = game_to_data_coord(_GP(play).GetMainViewport().GetHeight());
-}
-
-void engine_init_resolution_settings(const Size game_size) {
-	Debug::Printf("Initializing resolution settings");
-	_GP(usetup).textheight = get_font_height_outlined(0) + 1;
-
-	Debug::Printf(kDbgMsg_Info, "Game native resolution: %d x %d (%d bit)%s", game_size.Width, game_size.Height, _GP(game).color_depth * 8,
-	              _GP(game).IsLegacyLetterbox() ? " letterbox-by-design" : "");
-
-	convert_gui_to_game_resolution(_G(loaded_game_file_version));
-	convert_objects_to_data_resolution(_G(loaded_game_file_version));
-
-	Rect viewport = RectWH(game_size);
-	_GP(play).SetMainViewport(viewport);
-	_GP(play).SetUIViewport(viewport);
-	engine_setup_system_gamesize();
-}
 
 void engine_adjust_for_rotation_settings() {
 #if 0

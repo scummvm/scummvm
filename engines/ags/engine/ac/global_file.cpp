@@ -53,13 +53,12 @@ int32_t FileOpenCMode(const char *fnmm, const char *cmode) {
 // Find a free file slot to use
 int32_t FindFreeFileSlot() {
 	int useindx = 0;
-	for (; useindx < num_open_script_files; useindx++) {
-		if (valid_handles[useindx].stream == nullptr)
+	for (; useindx < _G(num_open_script_files); useindx++) {
+		if (_G(valid_handles)[useindx].stream == nullptr)
 			break;
 	}
 
-	if (useindx >= num_open_script_files &&
-	        num_open_script_files >= MAX_OPEN_SCRIPT_FILES) {
+	if (useindx >= _G(num_open_script_files) && _G(num_open_script_files) >= MAX_OPEN_SCRIPT_FILES) {
 		quit("!FileOpen: tried to open more than 10 files simultaneously - close some first");
 		return -1;
 	}
@@ -96,24 +95,22 @@ int32_t FileOpen(const char *fnmm, Shared::FileOpenMode open_mode, Shared::FileW
 		}
 	}
 
-	valid_handles[useindx].stream = s;
-	if (valid_handles[useindx].stream == nullptr) {
+	_G(valid_handles)[useindx].stream.reset(s);
+	if (_G(valid_handles)[useindx].stream == nullptr) {
 		debug_script_warn("FileOpen: FAILED: %s", resolved_path.GetCStr());
 		return 0;
 	}
-	valid_handles[useindx].handle = useindx + 1; // make handle indexes 1-based
+	_G(valid_handles)[useindx].handle = useindx + 1; // make handle indexes 1-based
 	debug_script_print(kDbgMsg_Info, "FileOpen: success: %s", resolved_path.GetCStr());
 
-	if (useindx >= num_open_script_files)
-		num_open_script_files++;
-	return valid_handles[useindx].handle;
+	if (useindx >= _G(num_open_script_files))
+		_G(num_open_script_files)++;
+	return _G(valid_handles)[useindx].handle;
 }
 
 void FileClose(int32_t handle) {
 	ScriptFileHandle *sc_handle = check_valid_file_handle_int32(handle, "FileClose");
-	delete sc_handle->stream;
-	sc_handle->stream = nullptr;
-	sc_handle->handle = 0;
+	*sc_handle = ScriptFileHandle();
 }
 void FileWrite(int32_t handle, const char *towrite) {
 	Stream *out = get_valid_file_stream_from_handle(handle, "FileWrite");
@@ -150,7 +147,7 @@ int FileIsEOF(int32_t handle) {
 		return 1;
 
 	// TODO: stream errors
-	if (stream->HasErrors())
+	if (stream->GetError())
 		return 1;
 
 	if (stream->GetPosition() >= stream->GetLength())
@@ -161,7 +158,7 @@ int FileIsError(int32_t handle) {
 	Stream *stream = get_valid_file_stream_from_handle(handle, "FileIsError");
 
 	// TODO: stream errors
-	if (stream->HasErrors())
+	if (stream->GetError())
 		return 1;
 
 	return 0;

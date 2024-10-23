@@ -24,6 +24,7 @@
 
 #include "common/std/memory.h"
 #include "common/std/vector.h"
+#include "common/std/map.h"
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/game/room_struct.h"
 #include "ags/shared/gfx/bitmap.h"
@@ -34,6 +35,7 @@ namespace AGS {
 namespace Engine {
 
 using AGS::Shared::Bitmap;
+using AGS::Shared::Stream;
 
 typedef std::shared_ptr<Bitmap> PBitmap;
 
@@ -71,7 +73,9 @@ enum ViewportSaveFlags {
 struct RestoredData {
 	int                     FPS;
 	// Unserialized bitmaps for dynamic surfaces
-	std::vector<Bitmap *>    DynamicSurfaces;
+	std::vector<std::unique_ptr<Bitmap>> DynamicSurfaces;
+	// Unserialized bitmaps for overlays (old-style saves)
+	std::unordered_map<int, std::unique_ptr<Bitmap> > OverlayImages;
 	// Scripts global data
 	struct ScriptData {
 		std::vector<char>	Data;
@@ -81,12 +85,14 @@ struct RestoredData {
 	};
 	ScriptData              GlobalScript;
 	std::vector<ScriptData> ScriptModules;
+	// Game state data (loaded ahead)
+	uint32_t				DoOnceCount;
 	// Room data (has to be be preserved until room is loaded)
 	PBitmap                 RoomBkgScene[MAX_ROOM_BGFRAMES];
 	int16_t                 RoomLightLevels[MAX_ROOM_REGIONS];
 	int32_t                 RoomTintLevels[MAX_ROOM_REGIONS];
-	int16_t                 RoomZoomLevels1[MAX_WALK_AREAS + 1];
-	int16_t                 RoomZoomLevels2[MAX_WALK_AREAS + 1];
+	int16_t                 RoomZoomLevels1[MAX_WALK_AREAS];
+	int16_t                 RoomZoomLevels2[MAX_WALK_AREAS];
 	RoomVolumeMod           RoomVolume;
 	// Mouse cursor parameters
 	int                     CursorID;
@@ -131,10 +137,23 @@ struct RestoredData {
 	};
 	std::vector<ViewportData> Viewports;
 	std::vector<CameraData> Cameras;
+	bool LegacyViewCamera = false;
 	int32_t Camera0_Flags = 0; // flags for primary camera, when data is read in legacy order
 
 	RestoredData();
 };
+
+enum PluginSvgVersion {
+	kPluginSvgVersion_Initial = 0,
+	kPluginSvgVersion_36115   = 1,
+};
+
+// Runs plugin events, requesting to read save data from the given stream.
+// NOTE: there's no error check in this function, because plugin API currently
+// does not let plugins report any errors when restoring their saved data.
+void ReadPluginSaveData(Stream *in, PluginSvgVersion svg_ver, soff_t max_size);
+// Runs plugin events, requesting to write save data into the given stream.
+void WritePluginSaveData(Stream *out);
 
 } // namespace Engine
 } // namespace AGS

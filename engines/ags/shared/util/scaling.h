@@ -137,19 +137,19 @@ struct PlaneScaling {
 		Y.SetDstOffset(y);
 	}
 
-	inline Point Scale(const Point p) const {
+	inline Point Scale(const Point &p) const {
 		return Point(X.ScalePt(p.X), Y.ScalePt(p.Y));
 	}
 
-	inline Rect ScaleRange(const Rect r) const {
+	inline Rect ScaleRange(const Rect &r) const {
 		return RectWH(X.ScalePt(r.Left), Y.ScalePt(r.Top), X.ScaleDistance(r.GetWidth()), Y.ScaleDistance(r.GetHeight()));
 	}
 
-	inline Point UnScale(const Point p) const {
+	inline Point UnScale(const Point &p) const {
 		return Point(X.UnScalePt(p.X), Y.UnScalePt(p.Y));
 	}
 
-	inline Rect UnScaleRange(const Rect r) const {
+	inline Rect UnScaleRange(const Rect &r) const {
 		return RectWH(X.UnScalePt(r.Left), Y.UnScalePt(r.Top), X.UnScaleDistance(r.GetWidth()), Y.UnScaleDistance(r.GetHeight()));
 	}
 };

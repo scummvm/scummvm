@@ -109,6 +109,10 @@ struct AGSPlatformDriver
 	virtual FSLocation GetAppOutputDirectory() {
 		return FSLocation(".");
 	}
+	// Tells whether it's not permitted to write to the local directory (cwd, or game dir),
+	// and only specified user/app directories should be used.
+	// FIXME: this is a part of a hotfix, review uses of this function later.
+	virtual bool IsLocalDirRestricted() { return true; }
 	// Returns array of characters illegal to use in file names
 	virtual const char *GetIllegalFileChars() {
 		return "\\/";
@@ -117,7 +121,7 @@ struct AGSPlatformDriver
 	virtual const char *GetGraphicsTroubleshootingText() {
 		return "";
 	}
-	virtual unsigned long GetDiskFreeSpaceMB() = 0;
+	virtual uint64_t GetDiskFreeSpaceMB(const Shared::String &path) = 0;
 	virtual const char *GetNoMouseErrorString() = 0;
 	// Tells whether build is capable of controlling mouse movement properly
 	virtual bool IsMouseControlSupported(bool windowed) {
@@ -147,6 +151,9 @@ struct AGSPlatformDriver
 	// Formats message and writes to platform's error output;
 	// Always adds trailing '\n' after formatted string
 	virtual void WriteStdErr(const char *fmt, ...);
+	// Display a text in a message box with a "warning" icon.
+	// Platforms which do not support this should do nothing.
+	virtual void DisplayMessageBox(const char *text) = 0;
 	virtual void YieldCPU();
 	// Called when the game window is being switch out from
 	virtual void DisplaySwitchOut();
