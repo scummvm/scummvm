@@ -372,13 +372,13 @@ bool BaseRenderOpenGL3D::setWorldTransform(const DXMatrix &transform) {
 	_worldMatrix = transform;
 	DXMatrix newModelViewTransform, world = transform;
 	DXMatrixMultiply(&newModelViewTransform, &world, &_viewMatrix);
+	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(newModelViewTransform);
 	return true;
 }
 
 bool BaseRenderOpenGL3D::setViewTransform(const DXMatrix &transform) {
 	_viewMatrix = transform;
-	glLoadMatrixf(transform);
 	return true;
 }
 
@@ -386,8 +386,6 @@ bool BaseRenderOpenGL3D::setProjectionTransform(const DXMatrix &transform) {
 	_projectionMatrix = transform;
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixf(transform);
-
-	glMatrixMode(GL_MODELVIEW);
 	return true;
 }
 
