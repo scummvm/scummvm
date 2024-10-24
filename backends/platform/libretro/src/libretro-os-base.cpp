@@ -94,6 +94,7 @@ void OSystem_libretro::initBackend() {
 	checkPathSetting("soundfont", s_soundfontPath, false);
 	checkPathSetting("browser_lastpath", s_homeDir);
 	checkPathSetting("libretro_playlist_path", s_playlistDir.empty() ? s_homeDir : s_playlistDir);
+	checkPathSetting("iconspath", "");
 
 	//Check other settings
 	if (! ConfMan.hasKey("libretro_playlist_version"))
