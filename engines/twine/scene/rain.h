@@ -29,7 +29,7 @@ namespace TwinE {
 
 class Rain {
 private:
-	TwinEEngine *_engine;
+	//TwinEEngine *_engine;
 
 public:
 	struct T_RAIN {
@@ -39,7 +39,7 @@ public:
 		int32 Timer;
 	};
 
-	Rain(TwinEEngine *engine) : _engine(engine) {}
+	Rain(TwinEEngine *engine) /*: _engine(engine) */ {}
 
 	void InitOneRain(T_RAIN *pt);
 	void InitRain();
