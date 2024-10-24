@@ -1249,7 +1249,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 		if (r->top + h >= _screen.h)
 			h = _screen.h - 1 - r->top;
 
-		Graphics::ManagedSurface g = *_wm->_screenCopy;
+		Graphics::ManagedSurface g(*_wm->_screenCopy, _wm->_screenCopy->getBounds());
 		g.transBlitFrom(_screen, _wm->_colorGreen);
 		g_system->copyRectToScreen(g.getBasePtr(r->left, r->top), g.pitch, r->left, r->top, w, h);
 	}
