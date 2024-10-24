@@ -28,9 +28,8 @@
 namespace Darkseed {
 
 class DebugConsole : public GUI::Debugger {
-private:
 	TosText *_tosText;
-private:
+
 	bool Cmd_tostext(int argc, const char **argv);
 	bool Cmd_dt(int argc, const char **argv);
 	bool Cmd_getvar(int argc, const char **argv);
@@ -43,6 +42,7 @@ private:
 	bool Cmd_changeDay(int argc, const char **argv);
 	bool validateObjVarIndex(int16 varIdx);
 	void printDayAndTime();
+
 public:
 	DebugConsole(TosText *tostext);
 	~DebugConsole() override;

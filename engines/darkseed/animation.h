@@ -26,7 +26,6 @@
 namespace Darkseed {
 
 class Animation {
-private:
 	Player *_player = nullptr;
 	Objects &_objectVar;
 

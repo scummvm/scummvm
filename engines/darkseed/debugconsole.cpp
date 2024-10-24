@@ -24,7 +24,7 @@
 
 namespace Darkseed {
 
-DebugConsole::DebugConsole(TosText *tosText) : GUI::Debugger(), _tosText(tosText) {
+DebugConsole::DebugConsole(TosText *tosText) : _tosText(tosText) {
 	registerCmd("tostext",   WRAP_METHOD(DebugConsole, Cmd_tostext));
 	registerCmd("dt",   WRAP_METHOD(DebugConsole, Cmd_dt));
 	registerCmd("getvar",   WRAP_METHOD(DebugConsole, Cmd_getvar));
