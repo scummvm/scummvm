@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-10-23 19:58+0000\n"
+"POT-Creation-Date: 2024-10-24 11:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -6213,7 +6213,7 @@ msgstr ""
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330
 #: engines/freescape/games/dark/dark.cpp:183
-#: engines/freescape/games/driller/driller.cpp:129
+#: engines/freescape/games/driller/driller.cpp:132
 #: engines/pegasus/pegasus.cpp:2825
 msgid "Save Game"
 msgstr ""
@@ -6224,7 +6224,7 @@ msgstr ""
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339
 #: engines/freescape/games/dark/dark.cpp:188
-#: engines/freescape/games/driller/driller.cpp:134
+#: engines/freescape/games/driller/driller.cpp:137
 #: engines/pegasus/pegasus.cpp:2831
 msgid "Load Game"
 msgstr ""
@@ -6259,7 +6259,7 @@ msgstr ""
 #. QUIT GAME
 #: engines/bladerunner/metaengine.cpp:375 engines/dragons/metaengine.cpp:224
 #: engines/freescape/games/dark/dark.cpp:193
-#: engines/freescape/games/driller/driller.cpp:139
+#: engines/freescape/games/driller/driller.cpp:142
 msgid "Quit Game"
 msgstr ""
 
@@ -6851,39 +6851,39 @@ msgid "Info Menu"
 msgstr ""
 
 #: engines/freescape/games/dark/dark.cpp:203
-#: engines/freescape/games/driller/driller.cpp:147
+#: engines/freescape/games/driller/driller.cpp:150
 msgid "Toggle Sound"
 msgstr ""
 
 #: engines/freescape/games/dark/dark.cpp:209
-#: engines/freescape/games/driller/driller.cpp:153
+#: engines/freescape/games/driller/driller.cpp:156
 msgid "Rotate Left"
 msgstr ""
 
 #: engines/freescape/games/dark/dark.cpp:214
-#: engines/freescape/games/driller/driller.cpp:158
+#: engines/freescape/games/driller/driller.cpp:161
 msgid "Rotate Right"
 msgstr ""
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:220
-#: engines/freescape/games/driller/driller.cpp:164
+#: engines/freescape/games/driller/driller.cpp:167
 msgid "Increase Step Size"
 msgstr ""
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:226
-#: engines/freescape/games/driller/driller.cpp:170
+#: engines/freescape/games/driller/driller.cpp:173
 msgid "Decrease Step Size"
 msgstr ""
 
 #: engines/freescape/games/dark/dark.cpp:231
-#: engines/freescape/games/driller/driller.cpp:175
+#: engines/freescape/games/driller/driller.cpp:178
 msgid "Rise/Fly up"
 msgstr ""
 
 #: engines/freescape/games/dark/dark.cpp:237
-#: engines/freescape/games/driller/driller.cpp:181
+#: engines/freescape/games/driller/driller.cpp:184
 msgid "Lower/Fly down"
 msgstr ""
 
@@ -6892,12 +6892,12 @@ msgid "Enable/Disable Jetpack"
 msgstr ""
 
 #. I18N: drilling rig is an in game item
-#: engines/freescape/games/driller/driller.cpp:188
+#: engines/freescape/games/driller/driller.cpp:191
 msgid "Deploy drilling rig"
 msgstr ""
 
 #. I18N: drilling rig is an in game item
-#: engines/freescape/games/driller/driller.cpp:195
+#: engines/freescape/games/driller/driller.cpp:198
 msgid "Collect drilling rig"
 msgstr ""
 
