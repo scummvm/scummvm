@@ -235,6 +235,7 @@ void MidiParser_SCI::midiMixChannels() {
 	*outData++ = 0x00;
 }
 
+#if 0
 static inline bool validateNextRead(const SciSpan<const byte> &channelData, const SciSpan<const byte>::size_type size = 1) {
 	if (channelData.size() < size) {
 		warning("Unexpected end of %s. Music may sound wrong due to game resource corruption", channelData.name().c_str());
@@ -242,7 +243,7 @@ static inline bool validateNextRead(const SciSpan<const byte> &channelData, cons
 	}
 	return true;
 }
-
+#endif
 
 void MidiParser_SCI::resetStateTracking() {
 	for (int i = 0; i < 16; ++i) {

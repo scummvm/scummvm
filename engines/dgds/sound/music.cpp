@@ -510,14 +510,14 @@ void SciMusic::soundPlay(MusicEntry *pSnd, bool restoring) {
 
 	uint playListCount = _playList.size();
 	uint playListNo = playListCount;
-	MusicEntry *alreadyPlaying = nullptr;
+	//MusicEntry *alreadyPlaying = nullptr;
 
 	// searching if sound is already in _playList
 	for (uint i = 0; i < playListCount; i++) {
 		if (_playList[i] == pSnd)
 			playListNo = i;
-		if ((_playList[i]->status == kSoundPlaying) && (_playList[i]->pMidiParser))
-			alreadyPlaying = _playList[i];
+		//if ((_playList[i]->status == kSoundPlaying) && (_playList[i]->pMidiParser))
+		//	alreadyPlaying = _playList[i];
 	}
 	if (playListNo == playListCount) { // not found
 		_playList.push_back(pSnd);
