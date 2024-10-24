@@ -31,7 +31,7 @@ Player::Player() {
 	_connectorList.resize(Room::MAX_CONNECTORS);
 }
 
-const Sprite &Player::getSprite(int frameNo) {
+const Sprite &Player::getSprite(int frameNo) const {
 	if (g_engine->_room->isGiger()) {
 		return _gPlayerSprites.getSpriteAt(frameNo);
 	} else {
@@ -116,6 +116,8 @@ void Player::changeDirection(int16 oldDir, int16 newDir) {
 					_playerWalkFrameDeltaOffset = -1;
 				}
 				break;
+			default:
+				break;
 			}
 		}
 	}
@@ -186,7 +188,7 @@ void Player::calculateWalkTarget() {
 
 	if (!g_engine->_room->canWalkAtLocation(_walkTarget.x, _walkTarget.y)) {
 		int ty = _walkTarget.y;
-		for (; !g_engine->_room->canWalkAtLocation(_walkTarget.x, ty) && ty <= 233;) {
+		while (!g_engine->_room->canWalkAtLocation(_walkTarget.x, ty) && ty <= 233) {
 			ty += 4;
 		}
 		if (ty < 235) {

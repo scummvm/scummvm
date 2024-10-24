@@ -60,7 +60,7 @@ public:
 
 	Player();
 	bool loadAnimations(const Common::Path &filename);
-	const Sprite &getSprite(int frameNo);
+	const Sprite &getSprite(int frameNo) const;
 	void updateSprite();
 	void draw();
 
