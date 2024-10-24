@@ -631,6 +631,14 @@ int32 SysFile::read(MemHandle bufferHandle, int32 n) {
 	}
 }
 
+byte SysFile::readByte() {
+	byte buf[1];
+	void *ptr = (void *)buf;
+	read(&ptr, 1);
+
+	return buf[0];
+}
+
 uint32 SysFile::readUint32LE() {
 	byte buf[4];
 	void *ptr = (void *)buf;
