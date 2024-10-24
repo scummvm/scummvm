@@ -80,11 +80,11 @@ void Section8Room::moveScreen(int32 dx, int32 dy) {
 
 void Section8Room::getSeriesName(int32 val1, bool true_or_False) {
 	if (subCE498(val1) < 0)
-		_currentSeriesName = Common::String::format("%ldsldf%ld", _currentRoom, val1);
+		_currentSeriesName = Common::String::format("%dsldf%d", _currentRoom, val1);
 	else if (true_or_False)
-		_currentSeriesName = Common::String::format("%ldsldr%ld", _currentRoom, val1);
+		_currentSeriesName = Common::String::format("%dsldr%d", _currentRoom, val1);
 	else
-		_currentSeriesName = Common::String::format("%ldslds%ld", _currentRoom, val1);
+		_currentSeriesName = Common::String::format("%dslds%d", _currentRoom, val1);
 }
 
 int32 Section8Room::daemonSub1(int32 dx, bool ascendingFl) {
@@ -364,14 +364,14 @@ void Section8Room::parser() {
 			switch (_currentRoom) {
 			case 804:
 			case 814:
-				_currentSeriesName = Common::String::format("%ldr%02ld", _currentRoom, _G(player).noun[0] - 0x2B);
+				_currentSeriesName = Common::String::format("%dr%02d", _currentRoom, _G(player).noun[0] - 0x2B);
 				break;
 			case 824:
 			case 834:
-				_currentSeriesName = Common::String::format("%ldr%02ld", _currentRoom, _G(player).noun[0] - 0x2F);
+				_currentSeriesName = Common::String::format("%dr%02d", _currentRoom, _G(player).noun[0] - 0x2F);
 				break;
 			case 844:
-				_currentSeriesName = Common::String::format("%ldr%02ld", _currentRoom, _G(player).noun[0] - 0x2E);
+				_currentSeriesName = Common::String::format("%dr%02d", _currentRoom, _G(player).noun[0] - 0x2E);
 				break;
 			default:
 				break;
