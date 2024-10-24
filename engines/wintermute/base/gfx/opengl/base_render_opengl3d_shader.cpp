@@ -178,7 +178,7 @@ void BaseRenderOpenGL3DShader::disableCulling() {
 }
 
 bool BaseRenderOpenGL3DShader::enableShadows() {
-	return true; // shadows are broken for a while since it use not allowed binding to frame buffer
+	return true; // TODO: reimplement. Shadows are broken for a while since it use not allowed binding to frame buffer
 	if (_flatShadowMaskShader == nullptr) {
 		_flatShadowColor = Math::Vector4d(0.0f, 0.0f, 0.0f, 0.5f);
 
@@ -261,7 +261,7 @@ bool BaseRenderOpenGL3DShader::disableShadows() {
 }
 
 void BaseRenderOpenGL3DShader::displayShadow(BaseObject *object, const DXVector3 *lightPos, bool lightPosRelative) {
-	return; // shadows are broken for a while since it use not allowed binding to frame buffer
+	return; // TODO: reimplement. Shadows are broken for a while since it use not allowed binding to frame buffer
 	if (_flatShadowMaskShader) {
 		if (object->_shadowType <= SHADOW_SIMPLE) {
 			// TODO: Display simple shadow here
