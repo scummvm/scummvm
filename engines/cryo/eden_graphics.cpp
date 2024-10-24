@@ -1027,7 +1027,7 @@ void EdenGraphics::clearScreen() {
 	CLBlitter_UpdateScreen();
 }
 
-void EdenGraphics::colimacon(const int16 pattern[16]) {
+void EdenGraphics::colimacon(const int16 pattern[]) {
 	int16 p, r27, r25;
 
 	int16 ww = _game->_vm->_screenView->_pitch;
