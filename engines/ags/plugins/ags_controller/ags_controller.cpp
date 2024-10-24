@@ -44,8 +44,27 @@ public:
 	}
 };
 
-Controller ctrlInterface;
-ConReader ctrlReader;
+Controller *ctrlInterface = nullptr;
+ConReader *ctrlReader = nullptr;
+
+Controller *getController() {
+	if (!ctrlInterface)
+		ctrlInterface = new Controller;
+
+	return ctrlInterface;
+}
+
+ConReader *getConReader() {
+	if (!ctrlReader)
+		ctrlReader = new ConReader;
+
+	return ctrlReader;
+}
+
+AGSController::~AGSController() {
+	delete ctrlInterface;
+	delete ctrlReader;
+}
 
 const char *AGSController::AGS_GetPluginName() {
 	return "AGSController";
@@ -69,7 +88,7 @@ void AGSController::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(ClickMouse, AGSController::ClickMouse);
 
 	_engine->RequestEventHook(AGSE_PREGUIDRAW);
-	_engine->AddManagedObjectReader("Controller", &ctrlReader);
+	_engine->AddManagedObjectReader("Controller", getConReader());
 }
 
 int64 AGSController::AGS_EngineOnEvent(int event, NumberPtr data) {
@@ -104,7 +123,7 @@ void AGSController::ControllerCount(ScriptMethodParams &params) {
 
 void AGSController::Controller_Open(ScriptMethodParams &params) {
 	Controller *newCtrl = new Controller();
-	_engine->RegisterManagedObject(newCtrl, &ctrlInterface);
+	_engine->RegisterManagedObject(newCtrl, getController());
 	params._result = newCtrl;
 }
 
