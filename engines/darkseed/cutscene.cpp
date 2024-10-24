@@ -410,7 +410,7 @@ bool Cutscene::introScene() {
 	}
 	_movieStep++;
 	if (g_engine->_isLeftMouseClicked || g_engine->_isRightMouseClicked) {
-		g_engine->zeromousebuttons();
+		g_engine->zeroMouseButtons();
 		if (_movieStep < 51) {
 			_movieStep = 51;
 		}
@@ -463,7 +463,7 @@ bool Cutscene::embryoInsertedScene() {
 	case 9:
 		if (stepAnim()) {
 			if (g_engine->_isLeftMouseClicked || g_engine->_isRightMouseClicked) {
-				g_engine->zeromousebuttons();
+				g_engine->zeroMouseButtons();
 				if (_movieStep < 16) {
 					_movieStep = 16;
 				}
@@ -522,7 +522,7 @@ bool Cutscene::embryoInsertedScene() {
 	}
 	_movieStep++;
 	if (g_engine->_isLeftMouseClicked || g_engine->_isRightMouseClicked) {
-		g_engine->zeromousebuttons();
+		g_engine->zeroMouseButtons();
 		if (_movieStep < 16) {
 			_movieStep = 16;
 		}

@@ -22,9 +22,6 @@
 #ifndef DARKSEED_CUTSCENE_H
 #define DARKSEED_CUTSCENE_H
 
-#include "common/rect.h"
-#include "common/str.h"
-#include "graphics/managed_surface.h"
 #include "darkseed/pal.h"
 #include "darkseed/titlefont.h"
 #include "darkseed/morph.h"

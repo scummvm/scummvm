@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "darkseed/img.h"
+
 namespace Darkseed {
 
 class Anm {

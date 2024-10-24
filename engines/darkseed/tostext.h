@@ -29,7 +29,6 @@
 namespace Darkseed {
 
 class TosText {
-private:
 	Common::StringArray _textArray;
 	uint16 _numEntries = 0;
 

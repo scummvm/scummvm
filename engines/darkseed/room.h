@@ -54,8 +54,8 @@ struct RoomObjElement {
 };
 
 class Room {
-private:
 	bool _palLoaded = false;
+
 public:
 	static constexpr int MAX_CONNECTORS = 12;
 	uint8 _roomNumber;
@@ -73,7 +73,6 @@ public:
 	uint16 _selectedObjIndex = 0;
 	int16 _collisionType = 0;
 
-public:
 	explicit Room(int roomNumber);
 
 	void initRoom();
@@ -107,6 +106,7 @@ public:
 	void darkenSky();
 	void loadLocationSprites(const Common::Path &path);
 	Common::Point getExitPointForRoom(uint8 roomNumber);
+
 private:
 	bool load();
 	static Common::String stripSpaces(Common::String source);

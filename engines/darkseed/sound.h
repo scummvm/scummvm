@@ -30,10 +30,10 @@
 namespace Darkseed {
 
 class Sound {
-private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _speechHandle;
 	Common::Array<uint8> _didSpeech;
+
 public:
 	explicit Sound(Audio::Mixer *mixer);
 

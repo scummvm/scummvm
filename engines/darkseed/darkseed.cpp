@@ -98,7 +98,7 @@ Common::Error DarkseedEngine::run() {
 	}
 
 	while (!shouldQuit()) {
-		gameloop();
+		gameLoop();
 		_restartGame = false;
 		if (!shouldQuit()) {
 			_cutscene.play('I');
@@ -156,7 +156,7 @@ bool DarkseedEngine::fadeStep() {
 	return _fadeStepCounter < 64;
 }
 
-void DarkseedEngine::gameloop() {
+void DarkseedEngine::gameLoop() {
 	while (!shouldQuit() && !_restartGame) {
 		updateEvents();
 		if (_redrawFrame) {
@@ -196,7 +196,7 @@ void DarkseedEngine::gameloop() {
 						_animation->stuffPlayer();
 					}
 				} else {
-					_animation->dcopanim();
+					_animation->dCopAnim();
 					changeToRoom(59, true);
 					_player->_position = {320, 200};
 					_player->updateSprite();
@@ -235,7 +235,7 @@ void DarkseedEngine::gameloop() {
 			if (_currentDay == 1 && _currentTimeInSeconds == 64800 && _room->_roomNumber != 16) {
 				_objectVar.setMoveObjectRoom(7, 253); // remove scotch from shop.
 			}
-			if (_timeAdvanceEventSelected && _currentTimeInSeconds < 79200 && !_animation->_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_herowaiting) {
+			if (_timeAdvanceEventSelected && _currentTimeInSeconds < 79200 && !_animation->_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_heroWaiting) {
 				_timeAdvanceEventSelected = false;
 				if (((_room->_roomNumber == 30) || ((0 < _objectVar[141] && (_objectVar[141] < 4)))) ||
 					(((_room->_roomNumber == 31 || (_room->_roomNumber == 32)) &&
@@ -267,7 +267,7 @@ void DarkseedEngine::gameloop() {
 				_player->_walkToSequence = false;
 				_player->_actionToPerform = false;
 				_player->_isAutoWalkingToBed = true;
-				_player->setplayertowardsbedroom();
+				_player->setPlayerTowardsBedroom();
 				_console->printTosText(944);
 			}
 			if (_currentTimeInSeconds > 79199 && !_player->_isAutoWalkingToBed) {
@@ -276,7 +276,7 @@ void DarkseedEngine::gameloop() {
 				}
 				if (!_animation->_isPlayingAnimation_maybe) {
 					if (_room->_roomNumber == 30) {
-						gotosleepinjail();
+						gotoSleepInJail();
 					} else {
 						if (_room->_roomNumber != 10) {
 							// TODO release memory.
@@ -296,7 +296,7 @@ void DarkseedEngine::gameloop() {
 				}
 			}
 			if (_room->_roomNumber == 30 && _objectVar[1] == 0 && (_animation->_otherNspAnimationType_maybe != 40 || !_animation->_isPlayingAnimation_maybe || _currentTimeInSeconds > 79199)) {
-				gotosleepinjail();
+				gotoSleepInJail();
 			}
 			updateDisplay(); // Aka serviceRoom()
 
@@ -315,23 +315,23 @@ void DarkseedEngine::gameloop() {
 			}
 
 //			if (((*(int *)&_CursorX < 70) || (570 < *(int *)&_CursorX)) && (*(int *)&_DrawCursorNum < 90)) { TODO do we need this restriction?
-//				zeromousebuttons();
+//				zeroMouseButtons();
 //			}
 			if (_player->_isAutoWalkingToBed ||
 				(_room->_roomNumber == 10 && _player->_position.x < 369 &&
 				  ((_currentDay == 3 && _currentTimeInSeconds > 43200) || _objectVar[88] != 0))) {
-				zeromousebuttons();
+				zeroMouseButtons();
 			}
 			if ((_objectVar[141] > 0 && _objectVar[141] < 4) ||
 				_objectVar[141] == 9 ||
-				  _player->_herowaiting || _objectVar[141] == 10 || _objectVar[141] == 8)  {
-				zeromousebuttons();
+				  _player->_heroWaiting || _objectVar[141] == 10 || _objectVar[141] == 8)  {
+				zeroMouseButtons();
 			}
 			if (_room->_roomNumber == 32 && _currentDay == 2 &&
 				_currentTimeInSeconds > 64799 && _currentTimeInSeconds < 68401 &&
 				  (_objectVar[141] == 5 || _objectVar[141] == 6 || _objectVar[141] == 4
 					 || _objectVar[141] == 12) && !_animation->_isPlayingAnimation_maybe) {
-				zeromousebuttons();
+				zeroMouseButtons();
 			}
 			updateHeadache();
 			handleInput();
@@ -478,7 +478,7 @@ void DarkseedEngine::handleInput() {
 	if (_animation->_isPlayingAnimation_maybe) {
 		_animation->updateAnimation();
 		if (!_animation->_isPlayingAnimation_maybe && _player->_isAutoWalkingToBed) {
-			_player->setplayertowardsbedroom();
+			_player->setPlayerTowardsBedroom();
 		}
 		return;
 	}
@@ -962,7 +962,7 @@ void DarkseedEngine::handleInput() {
 			}
 			_doorEnabled = false;
 			if (_player->_isAutoWalkingToBed && _player->isAtWalkTarget()) {
-				_player->setplayertowardsbedroom();
+				_player->setPlayerTowardsBedroom();
 			}
 		} else {
 			if (_player->_walkTarget.x < _player->_position.x) {
@@ -1473,9 +1473,9 @@ void DarkseedEngine::handleObjCollision(int targetObjNum) {
 //						waitxticks(30); TODO do we need to add delay here?
 						return;
 					}
-					_useCode->genericresponse(_actionMode, targetObjNum, 999);
+					_useCode->genericResponse(_actionMode, targetObjNum, 999);
 				} else {
-					_useCode->genericresponse(_actionMode, targetObjNum, 999);
+					_useCode->genericResponse(_actionMode, targetObjNum, 999);
 				}
 			} else {
 				_console->printTosText(695);
@@ -1778,7 +1778,7 @@ void DarkseedEngine::lookCode(int objNum) {
 		}
 	}
 	if (objNum == 48 && _objectVar[48] == 0) {
-		_animation->sargoanim();
+		_animation->sargoAnim();
 		return;
 	}
 	if (objNum == 35 && _cursor.getY() < 40) {
@@ -1808,7 +1808,7 @@ void DarkseedEngine::lookCode(int objNum) {
 		} else if (_objectVar[51] == 0) {
 			_console->printTosText(853);
 			_objectVar[51] = 1;
-			_animation->keeperanim();
+			_animation->keeperAdmin();
 			_objectVar.setObjectRunningCode(72, 1);
 			_inventory.addItem(24);
 			_console->printTosText(959);
@@ -1878,15 +1878,15 @@ void DarkseedEngine::lookCode(int objNum) {
 			_console->printTosText(eyeTosIdx);
 		}
 		if (eyeTosIdx > 978) {
-			_useCode->genericresponse(3, objNum, eyeTosIdx);
+			_useCode->genericResponse(3, objNum, eyeTosIdx);
 		}
 		return;
 	}
 	_console->addTextLine(Common::String::format("You see the %s.", _objectVar.getObjectName(objNum)));
 }
 
-void DarkseedEngine::wongame() {
-	error("implement wongame()"); // TODO
+void DarkseedEngine::wonGame() {
+	error("implement wonGame()"); // TODO
 	//	_cutscene.play('Z');
 }
 
@@ -1970,12 +1970,12 @@ void DarkseedEngine::updateHeadache() {
 	}
 }
 
-void DarkseedEngine::gotosleepinjail() {
-	gotonextmorning();
+void DarkseedEngine::gotoSleepInJail() {
+	gotoNextMorning();
 	playDayChangeCutscene();
 }
 
-void DarkseedEngine::gotonextmorning() {
+void DarkseedEngine::gotoNextMorning() {
 	_currentDay++;
 	_objectVar[47] = 0;
 	_objectVar[62] = 0;
@@ -2077,7 +2077,7 @@ void DarkseedEngine::runObjects() {
 	int16 delbertSpriteIdx = 0;
 	if (_objectVar[141] == 8 && _room->_roomNumber == 31) {
 		// Fido brings back stick after player gives delbert the scotch.
-		_player->_herowaiting = true;
+		_player->_heroWaiting = true;
 		if (_objectVar[45] == 3) {
 			_room->loadLocationSprites("deldrink.nsp");
 			_objectVar[141] = 9;
@@ -2089,11 +2089,11 @@ void DarkseedEngine::runObjects() {
 			if (delbertSpriteIdx != 9) {
 				_room->advanceFrame(0);
 				delbertSpriteIdx = _room->_locationSprites.getAnimAt(0)._frameNo[_room->_locObjFrame[0]];
-				delthrowstick(delbertSpriteIdx);
+				delbertThrowStick(delbertSpriteIdx);
 			}
 			if (_objectVar[141] == 8) {
 				const Sprite &sprite = _room->_locationSprites.getSpriteAt(delbertSpriteIdx);
-				delthrowstick(delbertSpriteIdx);
+				delbertThrowStick(delbertSpriteIdx);
 				g_engine->_sprites.addSpriteToDrawList(145, 140, &sprite, 240 - (sprite._height + 140), sprite._width, sprite._height, false);
 			}
 		}
@@ -2133,14 +2133,14 @@ void DarkseedEngine::runObjects() {
 		} else {
 			_objectVar[141] = 11;
 			_room->removeObjectFromRoom(141);
-			_player->_herowaiting = false;
+			_player->_heroWaiting = false;
 		}
 	}
 	if (_objectVar[141] == 7 && _room->_roomNumber == 31) {
 		_room->advanceFrame(0);
 		delbertSpriteIdx = _room->_locationSprites.getAnimAt(0)._frameNo[_room->_locObjFrame[0]];
 		const Sprite &sprite = _room->_locationSprites.getSpriteAt(delbertSpriteIdx);
-		delthrowstick(delbertSpriteIdx);
+		delbertThrowStick(delbertSpriteIdx);
 		g_engine->_sprites.addSpriteToDrawList(145, 140, &sprite, 240 - (sprite._height + 140), sprite._width, sprite._height, false);
 		_room->updateRoomObj(141, 145, sprite._width, 140, sprite._height);
 	}
@@ -2215,7 +2215,7 @@ void DarkseedEngine::runObjects() {
 		}
 	}
 	if (_objectVar[141] > 0 && _objectVar[141] < 4) {
-		_player->_herowaiting = true;
+		_player->_heroWaiting = true;
 		if (_player->_walkToSequence == false && _player->_position.x != 290 && _player->_position.y != 209) {
 			_player->_walkTarget = {290, 209};
 			// TODO reset walk path here
@@ -2237,7 +2237,7 @@ void DarkseedEngine::runObjects() {
 //					waitxticks(240);
 //				}
 			} else if (_objectVar[141] == 4) {
-				_player->_herowaiting = false;
+				_player->_heroWaiting = false;
 			}
 			_animation->_objRestarted = false;
 		}
@@ -2281,7 +2281,7 @@ void DarkseedEngine::runObjects() {
 		if (_animation->_objRestarted) {
 			_objectVar[141]++;
 			if (_objectVar[141] == 7) {
-				_player->_herowaiting = false;
+				_player->_heroWaiting = false;
 			}
 		}
 		Common::Point delbertPosition = _objectVar.getMoveObjectPosition(141);
@@ -2298,11 +2298,11 @@ void DarkseedEngine::runObjects() {
 		_objectVar.setMoveObjectX(141, 395);
 		const Sprite &sprite = _room->_locationSprites.getSpriteAt(0);
 		g_engine->_sprites.addSpriteToDrawList(395, 132, &sprite, 240 - (sprite._height + 132), sprite._width, sprite._height, false);
-		moveplayertodelbert();
+		movePlayerToDelbert();
 		if (!_player->_playerIsChangingDirection && !_player->_heroMoving) {
 			_console->printTosText(909);
 			_objectVar[141]++;
-			_player->_herowaiting = true;
+			_player->_heroWaiting = true;
 		}
 	}
 	if (_room->_roomNumber == 32 && _currentDay == 2 && _objectVar[141] == 12) {
@@ -2318,7 +2318,7 @@ void DarkseedEngine::runObjects() {
 			_room->_locObjFrame[2] = 0;
 			_objectVar[141] = 4;
 		}
-		moveplayertodelbert();
+		movePlayerToDelbert();
 	}
 	if (_objectVar.getObjectRunningCode(72) == 1 &&
 		(_room->_roomNumber < 10 || _room->_roomNumber == 60 || _room->_roomNumber == 61)) {
@@ -2390,7 +2390,7 @@ void DarkseedEngine::runObjects() {
 	}
 	if (((_objectVar.getObjectRunningCode(58) != 0) && (_objectVar[21] == 0)) && (_room->_roomNumber == 55)) {
 		if (_player->_position.x == 369) {
-			rundrekethsequence();
+			runDrekethSequence();
 		}
 		if (_player->_heroMoving && _player->_walkTarget.x > 309) {
 			_player->_walkTarget = {369, 219};
@@ -2444,18 +2444,18 @@ void DarkseedEngine::runObjects() {
 			break;
 		case 900:
 		case 901:
-			leavepackage();
+			leavePackage();
 			break;
 		}
 		if (_currentTimeInSeconds - 36000 > 901 && _objectVar._objectRunningCode[140] != 0) {
-			leavepackage();
+			leavePackage();
 		}
 	}
 }
 
-void DarkseedEngine::moveplayertodelbert() {
+void DarkseedEngine::movePlayerToDelbert() {
 	if (_room->_roomNumber == 32 && !_animation->_isPlayingAnimation_maybe) {
-		_player->_herowaiting = true;
+		_player->_heroWaiting = true;
 		if (!_player->_heroMoving && _player->_position.x != 364 && _player->_position.y != 198) {
 			Common::Point oldCursor = g_engine->_cursor.getPosition();
 			Common::Point newTarget = {364, 198};
@@ -2472,11 +2472,11 @@ void DarkseedEngine::moveplayertodelbert() {
 	}
 }
 
-void DarkseedEngine::rundrekethsequence() {
-	error("implement rundrekethsequence()"); // TODO
+void DarkseedEngine::runDrekethSequence() {
+	error("implement runDrekethSequence()"); // TODO
 }
 
-void DarkseedEngine::delthrowstick(int16 spriteNum) {
+void DarkseedEngine::delbertThrowStick(int16 spriteNum) {
 	if (_animation->_frameAdvanced && spriteNum == 8) {
 		Common::Point stickPos = {265, 150};
 		_objectVar.setMoveObjectPosition(19, stickPos);
@@ -2488,7 +2488,7 @@ void DarkseedEngine::delthrowstick(int16 spriteNum) {
 	}
 }
 
-void DarkseedEngine::leavepackage() {
+void DarkseedEngine::leavePackage() {
 	int packageObjNum = _currentDay + 30;
 	int16 xPos = _currentDay * 10 + 299;
 	Common::Point packagePos = {xPos, 191};
@@ -2510,7 +2510,7 @@ void DarkseedEngine::removeFullscreenPic() {
 	}
 }
 
-void DarkseedEngine::zeromousebuttons() {
+void DarkseedEngine::zeroMouseButtons() {
 	_isLeftMouseClicked = false;
 	_isRightMouseClicked = false;
 }

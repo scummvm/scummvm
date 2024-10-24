@@ -22,11 +22,9 @@
 #ifndef DARKSEED_INVENTORY_H
 #define DARKSEED_INVENTORY_H
 
-#include "common/list.h"
 namespace Darkseed {
 
 class Inventory {
-private:
 	Common::Array<uint8> _inventory;
 	int16 _inventoryLength = 0;
 	Common::Array<uint8> _iconList;

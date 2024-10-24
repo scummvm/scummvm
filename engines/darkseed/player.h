@@ -23,12 +23,12 @@
 #define DARKSEED_PLAYER_H
 
 #include "common/rect.h"
+#include "common/path.h"
 #include "darkseed/nsp.h"
 
 namespace Darkseed {
 
 class Player {
-private:
 	Nsp _cPlayerSprites;
 	Nsp _gPlayerSprites;
 
@@ -49,7 +49,7 @@ public:
 	bool _playerIsChangingDirection = false; // AKA _Rotating
 	bool _isAutoWalkingToBed = false;
 	bool _heroMoving = false; // maybe set to true while player is walking around the room.
-	bool _herowaiting = false;
+	bool _heroWaiting = false;
 	int _walkPathIndex = -1;
 	uint16 _numConnectorsInWalkPath = 0;
 	Common::Array<Common::Point> _connectorList;
@@ -58,7 +58,6 @@ public:
 	Common::Point _walkToSequencePoint;
 	bool _flipSprite = false;
 
-public:
 	Player();
 	bool loadAnimations(const Common::Path &filename);
 	const Sprite &getSprite(int frameNo);
@@ -74,14 +73,14 @@ public:
 	int getWidth();
 	int getHeight();
 	void updatePlayerPositionAfterRoomChange();
-	void setplayertowardsbedroom();
+	void setPlayerTowardsBedroom();
 	void walkToNextConnector();
 
 private:
 	void createConnectorPathToDest();
 	Common::Point getClosestUnusedConnector(int16 x, int16 y, bool mustHaveCleanLine = false);
 	void reverseConnectorList();
-	void OptimisePath();
+	void optimisePath();
 };
 
 } // namespace Darkseed

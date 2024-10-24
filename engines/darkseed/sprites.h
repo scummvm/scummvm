@@ -40,8 +40,8 @@ struct SpriteDrawInstruction {
 };
 
 class Sprites {
-private:
 	Common::Array<SpriteDrawInstruction> _spriteDrawList;
+
 public:
 	Sprites();
 	void addSpriteToDrawList(uint16 destX, uint16 destY, const Sprite *sprite, uint8 order, uint16 destW, uint16 destH, bool flip);

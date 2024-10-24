@@ -29,7 +29,6 @@
 namespace Darkseed {
 
 class Pic {
-private:
 	uint16 _width = 0;
 	uint16 _height = 0;
 	Common::Array<uint8> _pixels;
@@ -54,6 +53,7 @@ public:
 	void draw();
 	void draw(int xOffset, int yOffset);
 	void drawRect(const Common::Rect &rect);
+
 private:
 	bool load(Common::SeekableReadStream &readStream);
 

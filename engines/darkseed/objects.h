@@ -34,7 +34,6 @@ enum ObjType {
 };
 
 class Objects {
-private:
 	Common::Array<int16> _objectVar;
 	Common::Array<Common::Point> _moveObjectXY;
 	Common::Array<uint8> _moveObjectRoom;
@@ -42,7 +41,6 @@ private:
 public:
 	Common::Array<int16> _objectRunningCode;
 
-public:
 	static constexpr int MAX_MOVED_OBJECTS = 42;
 	static constexpr int MAX_OBJECTS = 199;
 	Objects();

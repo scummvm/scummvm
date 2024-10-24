@@ -29,8 +29,8 @@
 #include "darkseed/player.h"
 
 namespace Darkseed {
+
 class UseCode {
-private:
 	Console *_console = nullptr;
 	Player *_player = nullptr;
 	Objects &_objectVar;
@@ -40,7 +40,6 @@ private:
 public:
 	UseCode(Console *console, Player *player, Objects &objectVar, Inventory &inventory);
 
-public:
 	void useCode(int objNum);
 	void useCodeGloves(int16 targetObjNum);
 	void useCodeMoney(int16 targetObjNum);
@@ -66,7 +65,7 @@ public:
 	void useCodeWatch(int16 targetObjNum);
 	void useCodeTinCup(int16 targetObjNum);
 	void useCodeEmptyUrn(int16 targetObjNum);
-	void genericresponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx);
+	void genericResponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx);
 
 private:
 	int getHandDescriptionTosIdx(uint16 objNum);
@@ -88,10 +87,10 @@ private:
 	int16 getUseGunTosIdx(uint16 objNum);
 	int16 getUseWatchTosIdx(uint16 objNum);
 
-	void gancanim();
-	void putobjunderpillow(int objNum);
+	void gancAnim();
+	void putObjUnderPillow(int objNum);
 
-	void startdigging(int16 targetObjNum);
+	void startDigging(int16 targetObjNum);
 };
 } // namespace Darkseed
 

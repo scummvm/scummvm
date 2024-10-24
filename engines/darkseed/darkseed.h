@@ -26,12 +26,10 @@
 #include "common/system.h"
 #include "common/error.h"
 #include "common/fs.h"
-#include "common/hash-str.h"
 #include "common/random.h"
 #include "common/serializer.h"
 #include "common/util.h"
 #include "engines/engine.h"
-#include "engines/savestate.h"
 #include "graphics/screen.h"
 
 #include "darkseed/animation.h"
@@ -68,7 +66,6 @@ enum class FadeDirection : uint8 {
 };
 
 class DarkseedEngine : public Engine {
-private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	Pic *_fullscreenPic = nullptr;
@@ -142,13 +139,13 @@ public:
 
 	int16 _soundTimer = 0;
 	bool _printedcomeheredawson = false;
-	void zeromousebuttons();
+	void zeroMouseButtons();
 
-	void gotonextmorning();
+	void gotoNextMorning();
 
 	void playDayChangeCutscene();
 
-	void wongame();
+	void wonGame();
 
 	void removeFullscreenPic();
 
@@ -184,11 +181,11 @@ public:
 	};
 
 	bool canLoadGameStateCurrently(Common::U32String *msg) override {
-		return !_animation->_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_herowaiting;
+		return !_animation->_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_heroWaiting;
 	}
 
 	bool canSaveGameStateCurrently(Common::U32String *msg) override {
-		return !_animation->_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_herowaiting;
+		return !_animation->_isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_heroWaiting;
 	}
 
 	/**
@@ -239,21 +236,21 @@ public:
 
 private:
 	void updateBaseSprites();
-	void gameloop();
+	void gameLoop();
 	void updateEvents();
 	void handleInput();
 	void handlePointerAction();
 	void loadRoom(int roomNumber);
 
-	void gotosleepinjail();
+	void gotoSleepInJail();
 
 	void updateHeadache();
 	void closeShops();
 	void initDelbertAtSide();
-	void moveplayertodelbert();
-	void rundrekethsequence();
-	void delthrowstick(int16 spriteNum);
-	void leavepackage();
+	void movePlayerToDelbert();
+	void runDrekethSequence();
+	void delbertThrowStick(int16 spriteNum);
+	void leavePackage();
 };
 
 extern DarkseedEngine *g_engine;

@@ -26,7 +26,6 @@
 namespace Darkseed {
 
 class TitleFont {
-private:
 	Anm _letters;
 
 public:

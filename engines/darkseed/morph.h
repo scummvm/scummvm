@@ -32,12 +32,12 @@ enum class MorphDirection : uint8 {
 };
 
 class Morph {
-private:
 	Common::Rect _area;
 	Graphics::ManagedSurface _src;
 	Graphics::ManagedSurface _dest;
 	MorphDirection _direction = MorphDirection::Forward;
 	int16 _stepCount = 0;
+
 public:
 	explicit Morph(const Common::Rect &area);
 
@@ -47,6 +47,7 @@ public:
 	void start(MorphDirection direction);
 
 	bool morphStep();
+
 private:
 	void draw(int16 drawIdx);
 };

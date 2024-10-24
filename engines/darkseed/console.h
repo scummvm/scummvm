@@ -24,7 +24,6 @@
 
 #include "darkseed/gamefont.h"
 #include "darkseed/sound.h"
-#include "darkseed/nsp.h"
 #include "darkseed/tostext.h"
 
 namespace Darkseed {

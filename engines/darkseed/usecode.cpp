@@ -309,7 +309,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 		if (handTosIdx != 0 && handTosIdx < 979) {
 			_console->printTosText(handTosIdx);
 		} else if (handTosIdx > 978) {
-			// TODO genericresponse
+			// TODO genericResponse
 		}
 		if (objNum == 80) {
 			_console->printTosText(553 + (_objectVar[80] & 1));
@@ -331,7 +331,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 			return;
 		}
 		if (objNum == 114) {
-			gancanim();
+			gancAnim();
 			return;
 		}
 		if ((objNum == 28) && (_objectVar[28] == 2)) {
@@ -675,7 +675,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 
 void Darkseed::UseCode::useCodeGloves(int16 targetObjNum) {
 	if (targetObjNum == 113) {
-		putobjunderpillow(14);
+		putObjUnderPillow(14);
 		return;
 	}
 
@@ -684,7 +684,7 @@ void Darkseed::UseCode::useCodeGloves(int16 targetObjNum) {
 		if (tosIdx < 979) {
 			_console->printTosText(tosIdx);
 		} else {
-			genericresponse(14, targetObjNum, tosIdx);
+			genericResponse(14, targetObjNum, tosIdx);
 		}
 	}
 	if (targetObjNum == 57) {
@@ -703,12 +703,12 @@ void Darkseed::UseCode::useCodeMoney(int16 targetObjNum) {
 			if (targetObjNum == 7) {
 				_console->printTosText(961);
 			} else if (targetObjNum == 113) {
-				putobjunderpillow(8);
+				putObjUnderPillow(8);
 			}
 		} else if (tosIdx < 979) {
 			_console->printTosText(tosIdx);
 		} else {
-			genericresponse(8, targetObjNum, tosIdx);
+			genericResponse(8, targetObjNum, tosIdx);
 		}
 		return;
 	}
@@ -722,7 +722,7 @@ void Darkseed::UseCode::useCodeMoney(int16 targetObjNum) {
 
 void Darkseed::UseCode::useCodeJournal(int16 actionObjNum, int16 targetObjNum) {
 	if (targetObjNum == 113) {
-		putobjunderpillow(actionObjNum);
+		putObjUnderPillow(actionObjNum);
 	} else if ((actionObjNum == 6) && (targetObjNum == 47)) {
 		_console->printTosText(46);
 	} else if ((actionObjNum == 6) && (targetObjNum == 100)) {
@@ -735,7 +735,7 @@ void Darkseed::UseCode::useCodeJournal(int16 actionObjNum, int16 targetObjNum) {
 			if (tosIdx < 979) {
 				_console->printTosText(tosIdx);
 			} else {
-				genericresponse(6, targetObjNum, tosIdx);
+				genericResponse(6, targetObjNum, tosIdx);
 			}
 		}
 	}
@@ -786,7 +786,7 @@ void Darkseed::UseCode::useCodeShopItems(int16 actionObjNum, int16 targetObjNum)
 				if (targetObjNum == 171) {
 					_console->printTosText(679);
 				} else if (targetObjNum == 129) {
-					genericresponse(7, 129, 998);
+					genericResponse(7, 129, 998);
 				} else if (targetObjNum == 108) {
 					_console->printTosText(386);
 				} else if (targetObjNum == 110) {
@@ -794,25 +794,25 @@ void Darkseed::UseCode::useCodeShopItems(int16 actionObjNum, int16 targetObjNum)
 				} else if (targetObjNum == 85) {
 					_console->printTosText(434);
 				} else if (targetObjNum == 194) {
-					genericresponse(7, 194, 989);
+					genericResponse(7, 194, 989);
 				} else if (targetObjNum == 156) {
 					_console->printTosText(550);
 				} else if (targetObjNum == 172) {
-					genericresponse(7, 172, 988);
+					genericResponse(7, 172, 988);
 				} else if (targetObjNum == 71) {
-					genericresponse(7, 71, 987);
+					genericResponse(7, 71, 987);
 				} else if (targetObjNum == 101) {
-					genericresponse(7, 101, 986);
+					genericResponse(7, 101, 986);
 				} else if (targetObjNum == 120) {
 					_console->printTosText(804);
 				} else if (targetObjNum == 184) {
-					genericresponse(7, 184, 980);
+					genericResponse(7, 184, 980);
 				} else if (targetObjNum == 185) {
-					genericresponse(7, 185, 982);
+					genericResponse(7, 185, 982);
 				} else if (targetObjNum == 121) {
-					genericresponse(7, 121, 990);
+					genericResponse(7, 121, 990);
 				} else {
-					genericresponse(7, targetObjNum, 999);
+					genericResponse(7, targetObjNum, 999);
 				}
 			} else {
 				_console->printTosText(632);
@@ -854,7 +854,7 @@ void Darkseed::UseCode::useCodeShopItems(int16 actionObjNum, int16 targetObjNum)
 	} else if (actionObjNum == 38 && (targetObjNum == 123 || targetObjNum == 318)) {
 		_console->printTosText(320);
 	} else if (targetObjNum == 129) {
-		genericresponse(actionObjNum, 129, 998);
+		genericResponse(actionObjNum, 129, 998);
 	} else if ((actionObjNum == 37) &&
 			   ((((((targetObjNum == 142 || (targetObjNum == 124)) ||
 					((targetObjNum == 137 || (((targetObjNum == 148 || (targetObjNum == 109)) || (targetObjNum == 59)))))) ||
@@ -879,13 +879,13 @@ void Darkseed::UseCode::useCodeShopItems(int16 actionObjNum, int16 targetObjNum)
 	} else if ((actionObjNum == 38) && (targetObjNum == 145)) {
 		_console->printTosText(230);
 	} else if (targetObjNum == 112) {
-		genericresponse(actionObjNum, 112, 996);
+		genericResponse(actionObjNum, 112, 996);
 	} else if ((actionObjNum == 38) && (targetObjNum == 49)) {
 		_console->printTosText(251);
 	} else if ((targetObjNum == 147) && (actionObjNum != 7)) {
 		_console->printTosText(319);
 	} else if (targetObjNum == 197) {
-		genericresponse(actionObjNum, 197, 993);
+		genericResponse(actionObjNum, 197, 993);
 	} else if ((actionObjNum == 38) && (targetObjNum == 150)) {
 		_console->printTosText(354);
 	} else if (targetObjNum == 109) {
@@ -895,7 +895,7 @@ void Darkseed::UseCode::useCodeShopItems(int16 actionObjNum, int16 targetObjNum)
 			_console->printTosText(374);
 		}
 	} else if (targetObjNum == 130) {
-		genericresponse(actionObjNum, 130, 991);
+		genericResponse(actionObjNum, 130, 991);
 	} else if (targetObjNum == 108) {
 		_console->printTosText(386);
 	} else if (targetObjNum == 110) {
@@ -910,7 +910,7 @@ void Darkseed::UseCode::useCodeShopItems(int16 actionObjNum, int16 targetObjNum)
 		} else if (actionObjNum == 40) {
 			_console->printTosText(446);
 		} else {
-			genericresponse(actionObjNum, 121, 990);
+			genericResponse(actionObjNum, 121, 990);
 		}
 	} else if ((actionObjNum == 37) && (targetObjNum == 122)) {
 		_console->printTosText(451);
@@ -922,7 +922,7 @@ void Darkseed::UseCode::useCodeShopItems(int16 actionObjNum, int16 targetObjNum)
 		} else if ((actionObjNum == 37) && (targetObjNum == 53)) {
 			_console->printTosText(492);
 		} else if (targetObjNum == 194) {
-			genericresponse(actionObjNum, 194, 989);
+			genericResponse(actionObjNum, 194, 989);
 		} else if (targetObjNum == 153) {
 			_console->printTosText(405);
 		} else if ((actionObjNum == 37) && (targetObjNum == 154)) {
@@ -943,7 +943,7 @@ void Darkseed::UseCode::useCodeShopItems(int16 actionObjNum, int16 targetObjNum)
 			} else if ((actionObjNum == 38) && ((162 < targetObjNum && (targetObjNum < 169)))) {
 				_console->printTosText(635);
 			} else if (targetObjNum == 172) {
-				genericresponse(actionObjNum, 172, 988);
+				genericResponse(actionObjNum, 172, 988);
 			} else if ((actionObjNum == 37) && (targetObjNum == 174)) {
 				_console->printTosText(690);
 			} else if ((actionObjNum == 38) && (targetObjNum == 25)) {
@@ -951,11 +951,11 @@ void Darkseed::UseCode::useCodeShopItems(int16 actionObjNum, int16 targetObjNum)
 			} else if ((actionObjNum == 40) && (targetObjNum == 26)) {
 				_console->printTosText(700);
 			} else if (targetObjNum == 71) {
-				genericresponse(actionObjNum, 71, 987);
+				genericResponse(actionObjNum, 71, 987);
 			} else if ((actionObjNum == 39) && (targetObjNum == 44)) {
 				_console->printTosText(731);
 			} else if (targetObjNum == 101) {
-				genericresponse(actionObjNum, 101, 986);
+				genericResponse(actionObjNum, 101, 986);
 			} else if (targetObjNum == 113) {
 				_console->printTosText(753);
 			} else if (targetObjNum == 41) {
@@ -971,11 +971,11 @@ void Darkseed::UseCode::useCodeShopItems(int16 actionObjNum, int16 targetObjNum)
 			} else if ((actionObjNum == 38) && (targetObjNum == 119)) {
 				_console->printTosText(808);
 			} else if ((actionObjNum == 38) && (targetObjNum == 114)) {
-				genericresponse(38, 114, 984);
+				genericResponse(38, 114, 984);
 			} else if (targetObjNum == 184) {
-				genericresponse(actionObjNum, 184, 980);
+				genericResponse(actionObjNum, 184, 980);
 			} else if (targetObjNum == 185) {
-				genericresponse(actionObjNum, 185, 982);
+				genericResponse(actionObjNum, 185, 982);
 			} else if ((actionObjNum == 38) && (targetObjNum == 79)) {
 				_console->printTosText(833);
 			} else if ((targetObjNum == 79) && (actionObjNum != 7)) {
@@ -983,7 +983,7 @@ void Darkseed::UseCode::useCodeShopItems(int16 actionObjNum, int16 targetObjNum)
 			} else if ((actionObjNum == 38) && (targetObjNum == 58)) {
 				_console->printTosText(849);
 			} else {
-				genericresponse(actionObjNum, targetObjNum, 999);
+				genericResponse(actionObjNum, targetObjNum, 999);
 			}
 		} else {
 			_console->printTosText(587);
@@ -999,7 +999,7 @@ void Darkseed::UseCode::useCrowBar(int16 targetObjNum) {
 		if (tosIdx < 979) {
 			_console->printTosText(tosIdx);
 		} else {
-			genericresponse(5, targetObjNum, tosIdx);
+			genericResponse(5, targetObjNum, tosIdx);
 		}
 	}
 	if (targetObjNum == 42) {
@@ -1060,29 +1060,29 @@ void UseCode::useCodeNewspaper(int16 targetObjNum) {
 	} else if (targetObjNum == 79) {
 		_console->printTosText(834);
 	} else if (targetObjNum == 185) {
-		genericresponse(9, 185, 982);
+		genericResponse(9, 185, 982);
 	} else if (targetObjNum == 184) {
-		genericresponse(9, 184, 980);
+		genericResponse(9, 184, 980);
 	} else if (targetObjNum == 71) {
-		genericresponse(9, 71, 987);
+		genericResponse(9, 71, 987);
 	} else if (targetObjNum == 101) {
-		genericresponse(9, 101, 986);
+		genericResponse(9, 101, 986);
 	} else if (targetObjNum == 172) {
-		genericresponse(9, 172, 988);
+		genericResponse(9, 172, 988);
 	} else if (targetObjNum == 194) {
-		genericresponse(9, 194, 989);
+		genericResponse(9, 194, 989);
 	} else if (targetObjNum == 121) {
-		genericresponse(9, 121, 990);
+		genericResponse(9, 121, 990);
 	} else if (targetObjNum == 109) {
-		genericresponse(9, 109, 992);
+		genericResponse(9, 109, 992);
 	} else if (targetObjNum == 130) {
-		genericresponse(9, 130, 991);
+		genericResponse(9, 130, 991);
 	} else if (targetObjNum == 129) {
-		genericresponse(9, 129, 998);
+		genericResponse(9, 129, 998);
 	} else if (targetObjNum == 112) {
-		genericresponse(9, 112, 996);
+		genericResponse(9, 112, 996);
 	} else {
-		genericresponse(9, targetObjNum, 999);
+		genericResponse(9, targetObjNum, 999);
 	}
 }
 
@@ -1092,16 +1092,16 @@ void UseCode::useCodeLibraryCard(int16 targetObjNum) {
 		if (tosIdx < 979) {
 			_console->printTosText(tosIdx);
 		} else {
-			genericresponse(10, targetObjNum, tosIdx);
+			genericResponse(10, targetObjNum, tosIdx);
 		}
 	}
 	if (targetObjNum == 46) {
 		g_engine->_cursor.setCursorType(Pointer);
 		_inventory.removeItem(10);
-		g_engine->_animation->libanim(false);
+		g_engine->_animation->libAnim(false);
 		_objectVar[10] = 1;
 	} else if (targetObjNum == 113) {
-		putobjunderpillow(10);
+		putObjUnderPillow(10);
 	}
 }
 
@@ -1111,7 +1111,7 @@ void UseCode::useCodeBobbyPin(int16 targetObjNum) {
 		if (tosIdx < 979) {
 			_console->printTosText(tosIdx);
 		} else {
-			genericresponse(11, targetObjNum, tosIdx);
+			genericResponse(11, targetObjNum, tosIdx);
 		}
 	}
 
@@ -1136,7 +1136,7 @@ void UseCode::useCodeBobbyPin(int16 targetObjNum) {
 			_inventory.removeItem(11);
 		}
 	} else if (targetObjNum == 113) {
-		putobjunderpillow(11);
+		putObjUnderPillow(11);
 	}
 }
 
@@ -1159,7 +1159,7 @@ void UseCode::useCodeKeys(int16 actionObjNum, int16 targetObjNum) {
 			_console->printTosText(707);
 		}
 	} else if (targetObjNum == 113) {
-		putobjunderpillow(actionObjNum);
+		putObjUnderPillow(actionObjNum);
 	} else if ((actionObjNum == 26) &&
 			   ((((targetObjNum == 175 || (targetObjNum == 62)) || (targetObjNum == 176)) || (targetObjNum == 44)))) {
 		_console->printTosText(720);
@@ -1171,7 +1171,7 @@ void UseCode::useCodeKeys(int16 actionObjNum, int16 targetObjNum) {
 			if (tosIdx < 979) {
 				_console->printTosText(tosIdx);
 			} else {
-				genericresponse(actionObjNum, targetObjNum, tosIdx);
+				genericResponse(actionObjNum, targetObjNum, tosIdx);
 			}
 		}
 	}
@@ -1187,21 +1187,21 @@ void UseCode::useCodeMirrorShard(int16 targetObjNum) {
 	} else if (targetObjNum == 124) {
 		_console->printTosText(20);
 	} else if (targetObjNum == 129) {
-		genericresponse(15, 129, 998);
+		genericResponse(15, 129, 998);
 	} else if (targetObjNum == 23 || targetObjNum == 103 || targetObjNum == 170) {
-		genericresponse(15, targetObjNum, 999);
+		genericResponse(15, targetObjNum, 999);
 	} else if (targetObjNum == 52) {
 		_console->printTosText(197);
 	} else if (targetObjNum == 112) {
 		_console->printTosText(235);
 	} else if (targetObjNum == 130) {
-		genericresponse(15, 130, 991);
+		genericResponse(15, 130, 991);
 	} else if (targetObjNum == 108) {
 		_console->printTosText(386);
 	} else if (targetObjNum == 110) {
 		_console->printTosText(392);
 	} else {
-		genericresponse(15, targetObjNum, 997);
+		genericResponse(15, targetObjNum, 997);
 	}
 }
 
@@ -1211,7 +1211,7 @@ void UseCode::useCodeBinoculars(int16 targetObjNum) {
 		if (tosIdx < 979) {
 			_console->printTosText(tosIdx);
 		} else {
-			genericresponse(16, targetObjNum, tosIdx);
+			genericResponse(16, targetObjNum, tosIdx);
 		}
 	}
 	if ((targetObjNum == 162) && (g_engine->_room->_roomNumber == 36)) {
@@ -1230,11 +1230,11 @@ void UseCode::useCodeShovel(int16 targetObjNum) {
 		if (tosIdx < 979) {
 			_console->printTosText(tosIdx);
 		} else {
-			genericresponse(17, targetObjNum, tosIdx);
+			genericResponse(17, targetObjNum, tosIdx);
 		}
 	}
 	if (targetObjNum > 86 && targetObjNum < 99) {
-		startdigging(targetObjNum + -87);
+		startDigging(targetObjNum + -87);
 	}
 }
 
@@ -1244,7 +1244,7 @@ void UseCode::useCodeDelbertsCard(int16 targetObjNum) {
 		if (tosIdx < 979) {
 			_console->printTosText(tosIdx);
 		} else {
-			genericresponse(18, targetObjNum, tosIdx);
+			genericResponse(18, targetObjNum, tosIdx);
 		}
 	}
 	if (targetObjNum == 64) {
@@ -1262,7 +1262,7 @@ void UseCode::useCodeStick(int16 targetObjNum) {
 		if (tosIdx < 979) {
 			_console->printTosText(tosIdx);
 		} else {
-			genericresponse(19, targetObjNum, tosIdx);
+			genericResponse(19, targetObjNum, tosIdx);
 		}
 	}
 	if (targetObjNum == 116) {
@@ -1279,7 +1279,7 @@ void UseCode::useCodeAxeHandle(int16 targetObjNum) {
 		if (tosIdx < 979) {
 			_console->printTosText(tosIdx);
 		} else {
-			genericresponse(20, targetObjNum, tosIdx);
+			genericResponse(20, targetObjNum, tosIdx);
 		}
 	}
 	if (targetObjNum == 53) {
@@ -1293,7 +1293,7 @@ void UseCode::useCodeRope(int16 targetObjNum) {
 		if (tosIdx < 979) {
 			_console->printTosText(tosIdx);
 		} else {
-			genericresponse(23, targetObjNum, tosIdx);
+			genericResponse(23, targetObjNum, tosIdx);
 		}
 	}
 	if (targetObjNum == 61) {
@@ -1313,7 +1313,7 @@ void UseCode::useCodeMicroFilm(int16 targetObjNum) {
 		if (tosIdx < 979) {
 			_console->printTosText(tosIdx);
 		} else {
-			genericresponse(24, targetObjNum, tosIdx);
+			genericResponse(24, targetObjNum, tosIdx);
 		}
 	}
 	if (targetObjNum == 80) {
@@ -1325,7 +1325,7 @@ void UseCode::useCodeMicroFilm(int16 targetObjNum) {
 			_console->printTosText(964);
 		}
 	} else if (targetObjNum == 113) {
-		putobjunderpillow(24);
+		putObjUnderPillow(24);
 	}
 }
 
@@ -1357,14 +1357,14 @@ void UseCode::useCodeSpecialHammer(int16 actionObjNum, int16 targetObjNum) {
 	} else if ((actionObjNum == 25) && (targetObjNum == 79)) {
 		_console->printTosText(833);
 	} else if (actionObjNum == 25) {
-		genericresponse(25, targetObjNum, 999);
+		genericResponse(25, targetObjNum, 999);
 	} else if (actionObjNum == 27) {
 		int16 tosIdx = getUseSpecialHammerTosIdx(targetObjNum);
 		if (tosIdx != 0) {
 			if (tosIdx < 979) {
 				_console->printTosText(tosIdx);
 			} else {
-				genericresponse(27, targetObjNum, tosIdx);
+				genericResponse(27, targetObjNum, tosIdx);
 			}
 		}
 	}
@@ -1386,7 +1386,7 @@ void UseCode::useCodeGun(int16 targetObjNum) {
 		if (tosIdx < 979) {
 			_console->printTosText(tosIdx);
 		} else {
-			genericresponse(28, targetObjNum, tosIdx);
+			genericResponse(28, targetObjNum, tosIdx);
 		}
 	}
 	if (targetObjNum == 53) {
@@ -1400,13 +1400,13 @@ void UseCode::useCodeMoversNote(int16 targetObjNum) {
 	} else if (targetObjNum == 172) { // original logic also duplicated this if statement and called a generic response
 		_console->printTosText(93);
 	} else if (targetObjNum == 129) {
-		genericresponse(30, 129, 998);
+		genericResponse(30, 129, 998);
 	} else if (targetObjNum == 52) {
 		_console->printTosText(205);
 	} else if (targetObjNum == 145) {
 		_console->printTosText(222);
 	} else if (targetObjNum == 112) {
-		genericresponse(30, 112, 996);
+		genericResponse(30, 112, 996);
 	} else if (targetObjNum == 146) {
 		_console->printTosText(289);
 	} else if (targetObjNum == 137) {
@@ -1414,23 +1414,23 @@ void UseCode::useCodeMoversNote(int16 targetObjNum) {
 	} else if (targetObjNum == 147) {
 		_console->printTosText(309);
 	} else if (targetObjNum == 197) {
-		genericresponse(30, 197, 993);
+		genericResponse(30, 197, 993);
 	} else if (targetObjNum == 109) {
-		genericresponse(30, 109, 992);
+		genericResponse(30, 109, 992);
 	} else if (targetObjNum == 130) {
-		genericresponse(30, 130, 991);
+		genericResponse(30, 130, 991);
 	} else if (targetObjNum == 121) {
-		genericresponse(30, 121, 990);
+		genericResponse(30, 121, 990);
 	} else if (targetObjNum == 194) {
-		genericresponse(30, 194, 989);
+		genericResponse(30, 194, 989);
 	} else if (targetObjNum == 71) {
-		genericresponse(30, 71, 987);
+		genericResponse(30, 71, 987);
 	} else if (targetObjNum == 101) {
-		genericresponse(30, 101, 986);
+		genericResponse(30, 101, 986);
 	} else if (targetObjNum == 184) {
-		genericresponse(30, 184, 980);
+		genericResponse(30, 184, 980);
 	} else if (targetObjNum == 185) {
-		genericresponse(30, 185, 982);
+		genericResponse(30, 185, 982);
 	} else if (targetObjNum == 108) {
 		_console->printTosText(386);
 	} else if (targetObjNum == 110) {
@@ -1442,7 +1442,7 @@ void UseCode::useCodeMoversNote(int16 targetObjNum) {
 	} else if (targetObjNum == 159) {
 		_console->printTosText(577);
 	} else if (targetObjNum == 113) {
-		putobjunderpillow(113);
+		putObjUnderPillow(113);
 	} else if (targetObjNum == 120) {
 		_console->printTosText(804);
 	} else if (targetObjNum == 188) {
@@ -1450,7 +1450,7 @@ void UseCode::useCodeMoversNote(int16 targetObjNum) {
 	} else if (targetObjNum == 48) {
 		_console->printTosText(860);
 	} else {
-		genericresponse(30, targetObjNum, 999);
+		genericResponse(30, targetObjNum, 999);
 	}
 }
 
@@ -1488,31 +1488,31 @@ void UseCode::useCodeBluePrints(int16 targetObjNum) {
 	} else if (targetObjNum == 48) {
 		_console->printTosText(868);
 	} else if (targetObjNum == 185) {
-		genericresponse(34, 185, 982);
+		genericResponse(34, 185, 982);
 	} else if (targetObjNum == 184) {
-		genericresponse(34, 184, 980);
+		genericResponse(34, 184, 980);
 	} else if (targetObjNum == 130) {
-		genericresponse(34, 130, 991);
+		genericResponse(34, 130, 991);
 	} else if (targetObjNum == 197) {
-		genericresponse(34, 197, 993);
+		genericResponse(34, 197, 993);
 	} else if (targetObjNum == 112) {
-		genericresponse(34, 112, 996);
+		genericResponse(34, 112, 996);
 	} else if (targetObjNum == 129) {
-		genericresponse(34, 129, 998);
+		genericResponse(34, 129, 998);
 	} else if (targetObjNum == 121) {
-		genericresponse(34, 121, 990);
+		genericResponse(34, 121, 990);
 	} else if (targetObjNum == 194) {
-		genericresponse(34, 194, 989);
+		genericResponse(34, 194, 989);
 	} else if (targetObjNum == 172) {
-		genericresponse(34, 172, 988);
+		genericResponse(34, 172, 988);
 	} else if (targetObjNum == 71) {
-		genericresponse(34, 71, 987);
+		genericResponse(34, 71, 987);
 	} else if (targetObjNum == 101) {
-		genericresponse(34, 101, 986);
+		genericResponse(34, 101, 986);
 	} else if (targetObjNum == 113) {
-		putobjunderpillow(34);
+		putObjUnderPillow(34);
 	} else {
-		genericresponse(34, targetObjNum, 999);
+		genericResponse(34, targetObjNum, 999);
 	}
 }
 
@@ -1520,14 +1520,14 @@ void UseCode::useCodeWatch(int16 targetObjNum) {
 	if (((targetObjNum == 61) || (targetObjNum == 194)) || (targetObjNum == 156)) {
 		g_engine->printTime();
 	} else if (targetObjNum == 113) {
-		putobjunderpillow(35);
+		putObjUnderPillow(35);
 	} else {
 		int16 tosIdx = getUseWatchTosIdx(targetObjNum);
 		if (tosIdx != 0) {
 			if (tosIdx < 979) {
 				_console->printTosText(tosIdx);
 			} else {
-				genericresponse(35, targetObjNum, tosIdx);
+				genericResponse(35, targetObjNum, tosIdx);
 			}
 		}
 	}
@@ -1549,7 +1549,7 @@ void UseCode::useCodeEmptyUrn(int16 targetObjNum) {
 	}
 }
 
-void UseCode::genericresponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx) {
+void UseCode::genericResponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx) {
 	_genericResponseCounter++;
 	if (_genericResponseCounter > 4) {
 		_genericResponseCounter = 0;
@@ -1725,7 +1725,7 @@ void UseCode::genericresponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx)
 	}
 }
 
-void UseCode::putobjunderpillow(int objNum) {
+void UseCode::putObjUnderPillow(int objNum) {
 	_objectVar[113] = 1;
 	_inventory.removeItem(objNum);
 	_objectVar.setMoveObjectRoom(objNum, 250);
@@ -1735,8 +1735,8 @@ void UseCode::putobjunderpillow(int objNum) {
 	_console->printTosText(947);
 }
 
-void UseCode::gancanim() {
-	error("implement gancanim()"); // TODO
+void UseCode::gancAnim() {
+	error("implement gancAnim()"); // TODO
 }
 
 static constexpr bool diggingxflipTbl[12] = {
@@ -1745,7 +1745,7 @@ static constexpr bool diggingxflipTbl[12] = {
 	true, true, true, false
 };
 
-void UseCode::startdigging(int16 targetObjNum) {
+void UseCode::startDigging(int16 targetObjNum) {
 	if (targetObjNum == 0) {
 		_player->loadAnimations("lgravedg.nsp");
 		g_engine->_animation->setupOtherNspAnimation(0, 21);

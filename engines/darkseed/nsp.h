@@ -23,8 +23,9 @@
 #define DARKSEED_NSP_H
 
 #include "common/array.h"
+#include "common/path.h"
+#include "common/stream.h"
 #include "common/scummsys.h"
-#include "common/file.h"
 #include "graphics/surface.h"
 
 namespace Darkseed {
@@ -36,12 +37,12 @@ public:
 	uint16 _pitch;
 	Common::Array<uint8> _pixels;
 
-public:
 	Sprite(uint16 width, uint16 height, uint16 pitch);
 	bool loadData(Common::SeekableReadStream &readStream);
 	void draw(int x, int y, uint16 frameBottom = 0) const;
 	void draw(Graphics::Surface *dst, int x, int y, uint16 frameBottom = 0) const;
 	void drawScaled(int x, int y, int destWidth, int destHeight, bool flipX) const;
+
 private:
 	void clipToScreen(int x, int y, uint16 frameBottom, uint16 *clippedWidth, uint16 *clippedHeight) const;
 };
@@ -58,7 +59,6 @@ public:
 };
 
 class Nsp {
-private:
 	Common::Array<Sprite> _frames;
 	Common::Array<Obt> _animations;
 
