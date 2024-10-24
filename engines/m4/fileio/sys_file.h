@@ -124,6 +124,14 @@ public:
 	int32 read(MemHandle bufferHandle, int32 n);
 
 	/**
+	 * Read in a 8-bit value
+	 */
+	byte readByte();
+	int8 readSByte() {
+		return (int8)readByte();
+	}
+
+	/**
 	 * Read in a 32-bit value
 	 */
 	uint32 readUint32LE();
