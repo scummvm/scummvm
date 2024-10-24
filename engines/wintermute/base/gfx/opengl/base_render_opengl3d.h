@@ -61,8 +61,7 @@ public:
 	void setAmbientLightRenderState() override;
 
 	int getMaxActiveLights() override;
-	void enableLight(int index) override;
-	void disableLight(int index) override;
+	void lightEnable(int index, bool enable) override;
 	void setLightParameters(int index, const DXVector3 &position, const DXVector3 &direction, const DXVector4 &diffuse, bool spotlight) override;
 
 	void enableCulling() override;

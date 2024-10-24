@@ -109,12 +109,11 @@ int BaseRenderOpenGL3D::getMaxActiveLights() {
 	return maxLightCount;
 }
 
-void BaseRenderOpenGL3D::enableLight(int index) {
-	glEnable(GL_LIGHT0 + index);
-}
-
-void BaseRenderOpenGL3D::disableLight(int index) {
-	glDisable(GL_LIGHT0 + index);
+void BaseRenderOpenGL3D::lightEnable(int index, bool enable) {
+	if (enable)
+		glEnable(GL_LIGHT0 + index);
+	else
+		glDisable(GL_LIGHT0 + index);
 }
 
 void BaseRenderOpenGL3D::setLightParameters(int index, const DXVector3 &position, const DXVector3 &direction, const DXVector4 &diffuse, bool spotlight) {

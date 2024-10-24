@@ -117,8 +117,7 @@ public:
 	
 	// ScummVM specific methods -->
 
-	virtual void enableLight(int index) = 0;
-	virtual void disableLight(int index) = 0;
+	virtual void lightEnable(int index, bool enable) = 0;
 	virtual void setLightParameters(int index, const DXVector3 &position, const DXVector3 &direction,
 	                                const DXVector4 &diffuse, bool spotlight) = 0;
 

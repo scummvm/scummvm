@@ -119,16 +119,13 @@ int BaseRenderOpenGL3DShader::getMaxActiveLights() {
 	return 8;
 }
 
-void BaseRenderOpenGL3DShader::enableLight(int index) {
+void BaseRenderOpenGL3DShader::lightEnable(int index, bool enable) {
 	_xmodelShader->use();
 	Common::String uniform = Common::String::format("lights[%i].enabled", index);
-	_xmodelShader->setUniform1f(uniform.c_str(), 1.0f);
-}
-
-void BaseRenderOpenGL3DShader::disableLight(int index) {
-	_xmodelShader->use();
-	Common::String uniform = Common::String::format("lights[%i].enabled", index);
-	_xmodelShader->setUniform1f(uniform.c_str(), -1.0f);
+	if (enable)
+		_xmodelShader->setUniform1f(uniform.c_str(), 1.0f);
+	else
+		_xmodelShader->setUniform1f(uniform.c_str(), -1.0f);
 }
 
 void BaseRenderOpenGL3DShader::setLightParameters(int index, const DXVector3 &position,
@@ -587,7 +584,7 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 
 	for (int i = 0; i < getMaxActiveLights(); ++i) {
 		setLightParameters(i, DXVector3(0, 0, 0), DXVector3(0, 0, 0), DXVector4(0, 0, 0, 0), false);
-		disableLight(i);
+		lightEnable(i, false);
 	}
 
 	_windowed = !ConfMan.getBool("fullscreen");

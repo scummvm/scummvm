@@ -66,7 +66,7 @@ bool Light3D::setLight(int index) {
 	_gameRef->_renderer3D->setLightParameters(index, _position, _target - _position, diffuse, _isSpotlight);
 
 	if (_active) {
-		_gameRef->_renderer3D->enableLight(index);
+		_gameRef->_renderer3D->lightEnable(index, true);
 	}
 
 	return true;

@@ -2040,7 +2040,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			script->runtimeError("Scene.EnableLight: Scene doesn't contain any geometry");
 			stack->pushBool(false);
 		} else {
-			bool res = _geom->enableLight(lightName);
+			bool res = _geom->enableLight(lightName, true);
 			stack->pushBool(res);
 		}
 

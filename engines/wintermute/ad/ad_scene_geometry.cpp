@@ -856,11 +856,12 @@ bool AdSceneGeometry::initLoop() {
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::createLights() {
 	// disable all lights
-	for (int i = 0; i < _gameRef->_renderer3D->getMaxActiveLights(); i++) {
-		_gameRef->_renderer3D->disableLight(i);
+	int maxLights = _gameRef->_renderer3D->getMaxActiveLights();
+	for (int i = 0; i < maxLights; i++) {
+		_gameRef->_renderer3D->lightEnable(i, false);
 	}
 
-	int lightCount = MIN(static_cast<int>(_lights.size()), _gameRef->_renderer3D->getMaxActiveLights());
+	int lightCount = MIN(static_cast<int>(_lights.size()), maxLights);
 
 	for (int i = 0; i < lightCount; i++) {
 		_lights[i]->setLight(i);
@@ -872,6 +873,7 @@ bool AdSceneGeometry::createLights() {
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLights) {
 	const int maxLightCount = 100;
+	int maxLights = _gameRef->_renderer3D->getMaxActiveLights();
 
 	int activeLightCount = 0;
 	for (uint i = 0; i < _lights.size(); i++) {
@@ -881,13 +883,13 @@ bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLig
 		}
 	}
 
-	if (activeLightCount <= _gameRef->_renderer3D->getMaxActiveLights()) {
+	if (activeLightCount <= maxLights) {
 		for (uint i = 0; i < _lights.size(); i++) {
 			_lights[i]->_isAvailable = true;
 		}
 	} else {
 		if (!_maxLightsWarning) {
-			_gameRef->LOG(0, "Warning: Using more lights than the hardware supports (%d)", _gameRef->_renderer3D->getMaxActiveLights());
+			_gameRef->LOG(0, "Warning: Using more lights than the hardware supports (%d)", maxLights);
 			_maxLightsWarning = true;
 		}
 
@@ -918,20 +920,20 @@ bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLig
 			qsort(activeLights.begin(), activeLights.size(), sizeof(Light3D *), AdSceneGeometry::compareLights);
 
 			for (uint i = 0; i < activeLights.size(); i++) {
-				activeLights[i]->_isAvailable = static_cast<int>(i) < _gameRef->_renderer3D->getMaxActiveLights();
+				activeLights[i]->_isAvailable = static_cast<int>(i) < maxLights;
 			}
 		}
 	}
 
 	// light all available lights
 	for (int i = 0; i < maxLightCount; i++) {
-		_gameRef->_renderer3D->disableLight(i);
+		_gameRef->_renderer3D->lightEnable(i, false);
 	}
 
 	activeLightCount = 0;
 
 	for (uint i = 0; i < _lights.size(); i++) {
-		if (activeLightCount >= _gameRef->_renderer3D->getMaxActiveLights()) {
+		if (activeLightCount >= maxLights) {
 			break;
 		}
 
@@ -952,7 +954,7 @@ bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLig
 
 		if (_lights[i]->_isAvailable) {
 			if (_lights[i]->_active) {
-				_gameRef->_renderer3D->enableLight(i);
+				_gameRef->_renderer3D->lightEnable(i, true);
 				++activeLightCount;
 			}
 		}
