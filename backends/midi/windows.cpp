@@ -174,6 +174,7 @@ public:
 
 	MusicDevices getDevices() const override;
 	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const override;
+	bool checkDevice(MidiDriver::DeviceHandle hdl, int checkFlags, bool quiet) const override;
 };
 
 MusicDevices WindowsMusicPlugin::getDevices() const {
@@ -236,9 +237,11 @@ Common::Error WindowsMusicPlugin::createInstance(MidiDriver **mididriver, MidiDr
 	bool found = false;
 
 	if (dev) {
+		Common::String deviceIDString = MidiDriver::getDeviceString(dev, MidiDriver::kDeviceId);
+
 		MusicDevices i = getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
-			if (d->getCompleteId().equals(MidiDriver::getDeviceString(dev, MidiDriver::kDeviceId))) {
+			if (d->getCompleteId().equals(deviceIDString)) {
 				found = true;
 				break;
 			}
@@ -248,6 +251,10 @@ Common::Error WindowsMusicPlugin::createInstance(MidiDriver **mididriver, MidiDr
 
 	*mididriver = new MidiDriver_WIN(found ? devIndex : 0);
 	return Common::kNoError;
+}
+
+bool WindowsMusicPlugin::checkDevice(MidiDriver::DeviceHandle hdl, int checkFlags, bool quiet) const {
+	return true;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(WINDOWS)
