@@ -714,7 +714,7 @@ void GridWidget::reloadThumbnails() {
 					surf = loadSurfaceFromFile(path);
 				} else {
 					const Graphics::ManagedSurface *scSurf = _loadedSurfaces[path];
-					_loadedSurfaces[entry->thumbPath] = new Graphics::ManagedSurface(*scSurf);
+					_loadedSurfaces[entry->thumbPath] = scSurf;
 				}
 			}
 
@@ -723,7 +723,7 @@ void GridWidget::reloadThumbnails() {
 				_loadedSurfaces[entry->thumbPath] = scSurf;
 
 				if (path != entry->thumbPath) {
-					_loadedSurfaces[path] = new Graphics::ManagedSurface(*scSurf);
+					_loadedSurfaces[path] = scSurf;
 				}
 
 				if (surf != scSurf) {
