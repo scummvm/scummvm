@@ -506,7 +506,7 @@ private:
 	void computer0();
 	void computer1();
 	void init();
-	void draw(int sn, int x, int y);
+	void drawEE(int sn, int x, int y);
 	bool doMenu(Common::KeyState state);
 	void putshapes();
 	void game();
@@ -1155,7 +1155,7 @@ void EEWidget::init() {
 	_inited = true;
 }
 
-void EEWidget::draw(int sn, int x1, int y1) {
+void EEWidget::drawEE(int sn, int x1, int y1) {
 	int x = x1 * _scale;
 	int y = y1 * _scale;
 
@@ -1168,7 +1168,7 @@ void EEWidget::putshapes() {
 	clear(_colorBlack);
 
 	sprite = kSpB1 + (_tbx / 16) % 4;
-	draw(sprite, _tbx, _tby);
+	drawEE(sprite, _tbx, _tby);
 	_obx = _tbx;
 	_oby = _tby;
 
@@ -1180,7 +1180,7 @@ void EEWidget::putshapes() {
 		else
 			sprite = kSpL2;
 	}
-	draw(sprite, _xx[0], _yy[0]);
+	drawEE(sprite, _xx[0], _yy[0]);
 	_olx = _xx[0];
 	_oly = _yy[0];
 
@@ -1192,7 +1192,7 @@ void EEWidget::putshapes() {
 		else
 			sprite = kSpR2;
 	}
-	draw(sprite, _xx[1], _yy[1]);
+	drawEE(sprite, _xx[1], _yy[1]);
 	_orx = _xx[1];
 	_ory = _yy[1];
 
@@ -1220,11 +1220,11 @@ void EEWidget::putshapes() {
 	for (int i = 0; i < 2; i++) {
 		int startx = i ? 264 : 32;
 
-		draw(kSpNum0 + _score[i] / 10, startx, 1);
+		drawEE(kSpNum0 + _score[i] / 10, startx, 1);
 		startx += 8;
-		draw(kSpNum0 + _score[i] % 10, startx, 1);
+		drawEE(kSpNum0 + _score[i] % 10, startx, 1);
 		startx += 8;
-		draw(_server == i ? kSpStar : kSpSpace, startx, 1);
+		drawEE(_server == i ? kSpStar : kSpSpace, startx, 1);
 	}
 
 	for (int i = 0; i < 6; i++) {
@@ -1232,7 +1232,7 @@ void EEWidget::putshapes() {
 		int sy = i == 0 ? 2 : 20;
 
 		int code = i == 0 ? kSpCode1 : i - 1 == _opt ? kSpCode1h + i : kSpCode1 + i;
-		draw(code, sx, sy + i * 10);
+		drawEE(code, sx, sy + i * 10);
 
 		if (_mode != kModeMenu)
 			break;
