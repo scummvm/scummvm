@@ -666,12 +666,12 @@ void Room603::daemon() {
 			break;
 
 		case 10:
-			if (_num1 == 9) {
+			if (_num1 == 10) {
 				sendWSMessage_10000(1, _ripley, _ripHandsHips, 12, 12, 300,
-					_ripHandChin, 12, 12, 0);
+					_ripHandsHips, 12, 12, 0);
 			} else {
 				sendWSMessage_10000(1, _ripley, _ripHandsHips, 12, 1, 300,
-					_ripHandsHips, 1, 1, 0);
+					_rp04, 1, 1, 0);
 				_num2 = 0;
 			}
 			break;
@@ -1578,7 +1578,7 @@ void Room603::conv603a() {
 					_pu01 = series_stream("603pu03", 5, 0, 30);
 					_val8 = 6;
 
-					if (_val5)
+					if (_trigger1)
 						kernel_timing_trigger(1, _trigger1, KT_DAEMON, KT_PARSE);
 				} else {
 					_pu01 = series_stream("603pu03a", 5, 0, 30);
