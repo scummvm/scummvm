@@ -356,21 +356,15 @@ int32 gr_font_write(Buffer *target, const char *out_string, int32 x, int32 y, in
 }
 
 Font *gr_font_load(const char *fontName) {
-	uint8 buffer[10];
 	uint32 tag;
-	uint32 *bumpf;
 	Font *newFont;
-	void *bufferHandle = &buffer[0];
+	void *bufferHandle;
 
 	SysFile fontFile(fontName, BINARY);
 	if (!fontFile.exists())
 		return nullptr;
 
-	bufferHandle = &buffer[0];
-	fontFile.read(&bufferHandle, 10);
-
-	bumpf = (uint32 *)&buffer[0];
-	tag = convert_intel32(*bumpf);
+	tag = fontFile.readUint32LE();
 	if (tag != 'FONT')
 		error_show(FL, 'FNTL', "font: %s chkpnt: %d", (const char *)fontName, 0);
 
@@ -378,16 +372,12 @@ Font *gr_font_load(const char *fontName) {
 	if (!newFont)
 		error_show(FL, 'OOM!', "_G(font) struct");
 
-	newFont->max_y_size = buffer[4];
-	newFont->max_x_size = buffer[5];
-	newFont->dataSize = *((uint32 *)&buffer[6]);
-	newFont->dataSize = convert_intel32(newFont->dataSize);
+	newFont->max_y_size = fontFile.readByte();
+	newFont->max_x_size = fontFile.readByte();
+	newFont->dataSize = fontFile.readUint32LE();
 
 	// read 'WIDT' into tag
-	bufferHandle = &buffer[0];
-	fontFile.read(&bufferHandle, 4);
-	bumpf = (uint32 *)&buffer[0];
-	tag = convert_intel32(*bumpf);
+	tag = fontFile.readUint32LE();
 	if (tag != 'WIDT')
 		error_show(FL, 'FNTL', "font: %s chkpnt: %d", fontName, 1);
 
@@ -400,10 +390,7 @@ Font *gr_font_load(const char *fontName) {
 	fontFile.read(&bufferHandle, 256);
 
 	// read 'OFFS' into tag
-	bufferHandle = &buffer[0];
-	fontFile.read(&bufferHandle, 4);
-	bumpf = (uint32 *)&buffer[0];
-	tag = convert_intel32(*bumpf);
+	tag = fontFile.readUint32LE();
 	if (tag != 'OFFS')
 		error_show(FL, 'FNTL', "font: %s chkpnt: %d", fontName, 2);
 
@@ -419,10 +406,7 @@ Font *gr_font_load(const char *fontName) {
 		newFont->offset[i] = convert_intel16(newFont->offset[i]);
 
 	// read 'PIXS' into tag
-	bufferHandle = &buffer[0];
-	fontFile.read(&bufferHandle, 4);
-	bumpf = (uint32 *)&buffer[0];
-	tag = convert_intel32(*bumpf);
+	tag = fontFile.readUint32LE();
 	if (tag != 'PIXS')
 		error_show(FL, 'FNTL', "font: %s chkpnt: %d", fontName, 3);
 
