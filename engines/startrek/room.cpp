@@ -150,7 +150,7 @@ bool Room::actionHasCode(const Action &action) {
 }
 
 bool Room::actionHasCode(int8 type, byte b1, byte b2, byte b3) {
-	const Action a = {type, b1, b2, b3};
+	const Action a = {type, b1, b2, b3, 0};
 	return actionHasCode(a);
 }
 
@@ -170,7 +170,7 @@ bool Room::handleAction(const Action &action) {
 }
 
 bool Room::handleAction(int8 type, byte b1, byte b2, byte b3) {
-	const Action a = {type, b1, b2, b3};
+	const Action a = {type, b1, b2, b3, 0};
 	return handleAction(a);
 }
 
@@ -191,7 +191,7 @@ bool Room::handleActionWithBitmask(const Action &action) {
 }
 
 bool Room::handleActionWithBitmask(int8 type, byte b1, byte b2, byte b3) {
-	Action a = {type, b1, b2, b3};
+	Action a = {type, b1, b2, b3, 0};
 	return handleActionWithBitmask(a);
 }
 

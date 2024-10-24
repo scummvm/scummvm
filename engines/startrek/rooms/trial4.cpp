@@ -28,9 +28,9 @@
 namespace StarTrek {
 
 extern const RoomAction trial4ActionList[] = {
-	{ {ACTION_TICK, 1,  0, 0}, &Room::trial4Tick1 },
-	{ {ACTION_TICK, 60, 0, 0}, &Room::trial4Tick60 },
-	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
+	{ {ACTION_TICK, 1,  0, 0, 0}, &Room::trial4Tick1 },
+	{ {ACTION_TICK, 60, 0, 0, 0}, &Room::trial4Tick60 },
+	{ {ACTION_LIST_END, 0, 0, 0, 0}, nullptr }
 };
 
 enum trial4TextIds {

@@ -24,61 +24,61 @@
 namespace StarTrek {
 
 extern const RoomAction demon0ActionList[] = {
-	{ {ACTION_TICK, 1, 0, 0}, &Room::demon0Tick1 },
-	{ {ACTION_TICK, 2, 0, 0}, &Room::demon0Tick2 },
-	{ {ACTION_TICK, 60, 0, 0}, &Room::demon0Tick60 },
-	{ {ACTION_TICK, 100, 0, 0}, &Room::demon0Tick100 },
-	{ {ACTION_TICK, 140, 0, 0}, &Room::demon0Tick140 },
+	{ {ACTION_TICK, 1, 0, 0, 0}, &Room::demon0Tick1 },
+	{ {ACTION_TICK, 2, 0, 0, 0}, &Room::demon0Tick2 },
+	{ {ACTION_TICK, 60, 0, 0, 0}, &Room::demon0Tick60 },
+	{ {ACTION_TICK, 100, 0, 0, 0}, &Room::demon0Tick100 },
+	{ {ACTION_TICK, 140, 0, 0, 0}, &Room::demon0Tick140 },
 
-	{ {ACTION_TOUCHED_WARP, 0, 0, 0}, &Room::demon0TouchedWarp0 },
+	{ {ACTION_TOUCHED_WARP, 0, 0, 0, 0}, &Room::demon0TouchedWarp0 },
 
-	{ {ACTION_WALK, 0x27, 0, 0}, &Room::demon0WalkToBottomDoor },
-	{ {ACTION_WALK, 9, 0, 0}, &Room::demon0WalkToBottomDoor },
-	{ {ACTION_TOUCHED_HOTSPOT, 1, 0, 0}, &Room::demon0TouchedHotspot1 },
-	{ {ACTION_FINISHED_WALKING, 1, 0, 0}, &Room::demon0ReachedBottomDoor },
-	{ {ACTION_FINISHED_ANIMATION, 1, 0, 0}, &Room::demon0ReachedBottomDoor },
+	{ {ACTION_WALK, 0x27, 0, 0, 0}, &Room::demon0WalkToBottomDoor },
+	{ {ACTION_WALK, 9, 0, 0, 0}, &Room::demon0WalkToBottomDoor },
+	{ {ACTION_TOUCHED_HOTSPOT, 1, 0, 0, 0}, &Room::demon0TouchedHotspot1 },
+	{ {ACTION_FINISHED_WALKING, 1, 0, 0, 0}, &Room::demon0ReachedBottomDoor },
+	{ {ACTION_FINISHED_ANIMATION, 1, 0, 0, 0}, &Room::demon0ReachedBottomDoor },
 
-	{ {ACTION_WALK, 0x26, 0, 0}, &Room::demon0WalkToTopDoor },
-	{ {ACTION_WALK, 10, 0, 0}, &Room::demon0WalkToTopDoor },
-	{ {ACTION_TOUCHED_HOTSPOT, 0, 0, 0}, &Room::demon0TouchedHotspot0 },
-	{ {ACTION_FINISHED_WALKING, 2, 0, 0}, &Room::demon0ReachedTopDoor },
-	{ {ACTION_FINISHED_ANIMATION, 2, 0, 0}, &Room::demon0ReachedTopDoor },
+	{ {ACTION_WALK, 0x26, 0, 0, 0}, &Room::demon0WalkToTopDoor },
+	{ {ACTION_WALK, 10, 0, 0, 0}, &Room::demon0WalkToTopDoor },
+	{ {ACTION_TOUCHED_HOTSPOT, 0, 0, 0, 0}, &Room::demon0TouchedHotspot0 },
+	{ {ACTION_FINISHED_WALKING, 2, 0, 0, 0}, &Room::demon0ReachedTopDoor },
+	{ {ACTION_FINISHED_ANIMATION, 2, 0, 0, 0}, &Room::demon0ReachedTopDoor },
 
-	{ {ACTION_TALK, 8, 0, 0}, &Room::demon0TalkToPrelate },
-	{ {ACTION_LOOK, 8, 0, 0}, &Room::demon0LookAtPrelate },
+	{ {ACTION_TALK, 8, 0, 0, 0}, &Room::demon0TalkToPrelate },
+	{ {ACTION_LOOK, 8, 0, 0, 0}, &Room::demon0LookAtPrelate },
 
-	{ {ACTION_USE, OBJECT_IPHASERS, 0x23, 0}, &Room::demon0UsePhaserOnSnow },
-	{ {ACTION_USE, OBJECT_IPHASERK, 0x23, 0}, &Room::demon0UsePhaserOnSnow },
-	{ {ACTION_USE, OBJECT_IPHASERS, 0x25, 0}, &Room::demon0UsePhaserOnSign },
-	{ {ACTION_USE, OBJECT_IPHASERK, 0x25, 0}, &Room::demon0UsePhaserOnSign },
-	{ {ACTION_USE, OBJECT_IPHASERK, 0x20, 0}, &Room::demon0UsePhaserOnShelter },
-	{ {ACTION_USE, OBJECT_IPHASERK, 8, 0}, &Room::demon0UsePhaserOnPrelate },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0x23, 0, 0}, &Room::demon0UsePhaserOnSnow },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0x23, 0, 0}, &Room::demon0UsePhaserOnSnow },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0x25, 0, 0}, &Room::demon0UsePhaserOnSign },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0x25, 0, 0}, &Room::demon0UsePhaserOnSign },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0x20, 0, 0}, &Room::demon0UsePhaserOnShelter },
+	{ {ACTION_USE, OBJECT_IPHASERK, 8, 0, 0}, &Room::demon0UsePhaserOnPrelate },
 
-	{ {ACTION_LOOK, 0x25, 0, 0}, &Room::demon0LookAtSign },
-	{ {ACTION_LOOK, 0x21, 0, 0}, &Room::demon0LookAtTrees },
-	{ {ACTION_LOOK, 0x22, 0, 0}, &Room::demon0LookAtTrees },
-	{ {ACTION_LOOK, 0x23, 0, 0}, &Room::demon0LookAtSnow },
-	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::demon0LookAnywhere },
-	{ {ACTION_LOOK, 0x24, 0, 0}, &Room::demon0LookAtBushes },
+	{ {ACTION_LOOK, 0x25, 0, 0, 0}, &Room::demon0LookAtSign },
+	{ {ACTION_LOOK, 0x21, 0, 0, 0}, &Room::demon0LookAtTrees },
+	{ {ACTION_LOOK, 0x22, 0, 0, 0}, &Room::demon0LookAtTrees },
+	{ {ACTION_LOOK, 0x23, 0, 0, 0}, &Room::demon0LookAtSnow },
+	{ {ACTION_LOOK, 0xff, 0, 0, 0}, &Room::demon0LookAnywhere },
+	{ {ACTION_LOOK, 0x24, 0, 0, 0}, &Room::demon0LookAtBushes },
 
-	{ {ACTION_LOOK, OBJECT_KIRK,     0, 0}, &Room::demon0LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_MCCOY,    0, 0}, &Room::demon0LookAtMcCoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::demon0LookAtRedShirt },
-	{ {ACTION_LOOK, OBJECT_SPOCK,    0, 0}, &Room::demon0LookAtSpock },
+	{ {ACTION_LOOK, OBJECT_KIRK,     0, 0, 0}, &Room::demon0LookAtKirk },
+	{ {ACTION_LOOK, OBJECT_MCCOY,    0, 0, 0}, &Room::demon0LookAtMcCoy },
+	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0, 0}, &Room::demon0LookAtRedShirt },
+	{ {ACTION_LOOK, OBJECT_SPOCK,    0, 0, 0}, &Room::demon0LookAtSpock },
 
-	{ {ACTION_LOOK, 9, 0, 0}, &Room::demon0LookAtShelter },    // Door 1
-	{ {ACTION_LOOK, 10, 0, 0}, &Room::demon0LookAtShelter },   // Door 2
-	{ {ACTION_LOOK, 0x20, 0, 0}, &Room::demon0LookAtShelter }, // Shelter itself
+	{ {ACTION_LOOK, 9, 0, 0, 0}, &Room::demon0LookAtShelter },    // Door 1
+	{ {ACTION_LOOK, 10, 0, 0, 0}, &Room::demon0LookAtShelter },   // Door 2
+	{ {ACTION_LOOK, 0x20, 0, 0, 0}, &Room::demon0LookAtShelter }, // Shelter itself
 
-	{ {ACTION_TALK, OBJECT_KIRK,     0, 0}, &Room::demon0TalkToKirk },
-	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::demon0TalkToRedshirt },
-	{ {ACTION_TALK, OBJECT_MCCOY,    0, 0}, &Room::demon0TalkToMcCoy },
-	{ {ACTION_TALK, OBJECT_SPOCK,    0, 0}, &Room::demon0TalkToSpock },
+	{ {ACTION_TALK, OBJECT_KIRK,     0, 0, 0}, &Room::demon0TalkToKirk },
+	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0, 0}, &Room::demon0TalkToRedshirt },
+	{ {ACTION_TALK, OBJECT_MCCOY,    0, 0, 0}, &Room::demon0TalkToMcCoy },
+	{ {ACTION_TALK, OBJECT_SPOCK,    0, 0, 0}, &Room::demon0TalkToSpock },
 
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::demon0UseSTricorderAnywhere },
-	{ {ACTION_USE, OBJECT_IMTRICOR, 0xff, 0}, &Room::demon0UseMTricorderAnywhere },
-	{ {ACTION_USE, OBJECT_IMTRICOR, 8, 0}, &Room::demon0UseMTricorderOnPrelate },
-	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0, 0}, &Room::demon0UseSTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0xff, 0, 0}, &Room::demon0UseMTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 8, 0, 0}, &Room::demon0UseMTricorderOnPrelate },
+	{ {ACTION_LIST_END, 0, 0, 0, 0}, nullptr }
 };
 
 enum demon0TextIds {
@@ -482,4 +482,3 @@ void Room::demon0BadResponse() {
 	showText(TX_SPEAKER_ANGIVEN, TX_DEM0_033);
 }
 }
-

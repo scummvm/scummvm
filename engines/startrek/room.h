@@ -46,7 +46,7 @@ class Room;
 // Per-room action functions
 struct RoomAction {
 	const Action action;
-	void (Room::*funcPtr)();
+	void (Room::*funcPtr)(); // This must be aligned to 64-bit, thus we added the dummy variable in Action
 };
 
 #include "common/pack-end.h"	// END STRUCT PACKING

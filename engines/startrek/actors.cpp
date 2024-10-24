@@ -1000,7 +1000,7 @@ bool StarTrekEngine::walkActiveObjectToHotspot() {
 	else {
 		// If this action has code defined for it in this room, buffer the action to be
 		// done after the object finished walking there.
-		Action action = {static_cast<int8>(_awayMission.activeAction), _awayMission.activeObject, 0, 0};
+		Action action = {static_cast<int8>(_awayMission.activeAction), _awayMission.activeObject, 0, 0, 0};
 		if (_awayMission.activeAction == ACTION_USE)
 			action.b2 = _awayMission.passiveObject;
 
