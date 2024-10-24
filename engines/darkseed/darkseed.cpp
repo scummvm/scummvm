@@ -26,17 +26,13 @@
 #include "common/system.h"
 #include "engines/util.h"
 #include "darkseed/darkseed.h"
-#include "darkseed/anm.h"
 #include "darkseed/console.h"
 #include "darkseed/detection.h"
 #include "darkseed/debugconsole.h"
-#include "graphics/palette.h"
-#include "darkseed/img.h"
 #include "darkseed/nsp.h"
 #include "darkseed/pal.h"
 #include "darkseed/pic.h"
 #include "darkseed/room.h"
-#include "darkseed/titlefont.h"
 
 namespace Darkseed {
 
@@ -847,9 +843,10 @@ void DarkseedEngine::handleInput() {
 	}
 	if (!_animation->_isPlayingAnimation_maybe) {
 		// walk to destination point
-		int walkXDelta = 0;
-		int walkYDelta = 0;
+		int walkXDelta;
+		int walkYDelta;
 		int local_a = _scaledWalkSpeed_maybe * 16;
+
 		if (_player->_direction == 0 || _player->_direction == 2) {
 			local_a = local_a / 3;
 		}
@@ -888,8 +885,8 @@ void DarkseedEngine::handleInput() {
 				_player->_position.x == _player->_walkTarget.x) {
 				bVar1 = true;
 			}
-			int local_6 = 0;
-			int local_4 = 0;
+			int local_6;
+			int local_4;
 			if (_player->_walkTarget.x < _player->_position.x) {
 				if (_player->_position.x - _player->_walkTarget.x <= walkXDelta) {
 					local_6 = _player->_position.x - _player->_walkTarget.x;
@@ -1440,14 +1437,14 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 	}
 }
 
-Common::Path DarkseedEngine::getRoomFilePath(const Common::Path &filename) {
+Common::Path DarkseedEngine::getRoomFilePath(const Common::Path &filename) const {
 	if (isCdVersion()) {
 		return Common::Path("room").join(filename);
 	}
 	return filename;
 }
 
-Common::Path DarkseedEngine::getPictureFilePath(const Common::Path &filename) {
+Common::Path DarkseedEngine::getPictureFilePath(const Common::Path &filename) const {
 	if (isCdVersion()) {
 		return Common::Path("picture").join(filename);
 	}
@@ -1897,9 +1894,8 @@ void DarkseedEngine::printTime() {
 }
 
 void DarkseedEngine::showFullscreenPic(const Common::Path &filename) {
-	if (_fullscreenPic) {
-		delete _fullscreenPic;
-	}
+	delete _fullscreenPic;
+
 	_fullscreenPic = new Pic();
 	if (!_fullscreenPic->load(filename)) {
 		delete _fullscreenPic;
@@ -2272,7 +2268,7 @@ void DarkseedEngine::runObjects() {
 		}
 		int spriteY = delbertPosition.y - sprite._height;
 		if (_objectVar[141] < 4) {
-			g_engine->_sprites.addSpriteToDrawList(spriteX, spriteY, &sprite, 240 - delbertPosition.y, sprite._width, sprite._height, _objectVar[141] == 3 ? true : false);
+			g_engine->_sprites.addSpriteToDrawList(spriteX, spriteY, &sprite, 240 - delbertPosition.y, sprite._width, sprite._height, _objectVar[141] == 3);
 		}
 	}
 	if (_room->_roomNumber == 32 && _currentDay == 2 && _currentTimeInSeconds > 64799 && (_objectVar[141] == 5 || _objectVar[141] == 6)) {
@@ -2445,6 +2441,8 @@ void DarkseedEngine::runObjects() {
 		case 900:
 		case 901:
 			leavePackage();
+			break;
+		default:
 			break;
 		}
 		if (_currentTimeInSeconds - 36000 > 901 && _objectVar._objectRunningCode[140] != 0) {

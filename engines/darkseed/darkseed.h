@@ -169,7 +169,7 @@ public:
 		return _randomSource.getRandomNumber(maxNum);
 	}
 
-	bool isCdVersion() {
+	bool isCdVersion() const {
 		return getFeatures() & ADGF_CD;
 	}
 
@@ -208,8 +208,8 @@ public:
 		return syncResult;
 	}
 
-	Common::Path getRoomFilePath(const Common::Path &filename);
-	Common::Path getPictureFilePath(const Common::Path &filename);
+	Common::Path getRoomFilePath(const Common::Path &filename) const;
+	Common::Path getPictureFilePath(const Common::Path &filename) const;
 
 	void fadeIn(const Pal &palette);
 	void fadeOut();

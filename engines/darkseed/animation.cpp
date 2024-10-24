@@ -60,7 +60,7 @@ void Animation::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 		//			LoadModeSong(7);
 		//			PlaySound(0,6,-1);
 		//		}
-		_scaleSequence = 1;
+		_scaleSequence = true;
 		break;
 	case 4:
 	case 14:
@@ -470,7 +470,7 @@ void Animation::updateAnimation() {
 				// TODO
 				if (_objectVar.getObjectRunningCode(140) == 0 || g_engine->_room->_roomNumber != 6) {
 					g_engine->_previousRoomNumber = g_engine->_room->_roomNumber;
-					int newRoomNumber = g_engine->_previousRoomNumber;
+					int newRoomNumber;
 					if (g_engine->_room->_roomNumber == 6) {
 						if (_player->_isAutoWalkingToBed && _objectVar[137] == 2) {
 							g_engine->wonGame();
@@ -724,6 +724,8 @@ void Animation::updateAnimation() {
 				_player->_walkTarget = _player->_position;
 				_player->_direction = 2;
 				_player->updateSprite();
+				break;
+			default:
 				break;
 			}
 		}
