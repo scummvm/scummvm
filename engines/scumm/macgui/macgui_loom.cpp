@@ -416,7 +416,7 @@ void MacLoomGui::runDraftsInventory() {
 	const char *notes = "cdefgabC";
 
 	// ACT 1: Draw the Mac dialog window
-	MacGuiImpl::MacDialogWindow *window = createWindow(Common::Rect(110, 20, 540, 252));
+	MacGuiImpl::MacDialogWindow *window = createWindow(Common::Rect(110, 20, 540, 252), kWindowStyleNormal, kMenuStyleApple);
 	const Graphics::Font *font = getFont(kSystemFont);
 
 	Graphics::Surface *s = window->innerSurface();
