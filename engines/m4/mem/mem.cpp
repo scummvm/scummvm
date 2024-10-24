@@ -67,8 +67,8 @@ bool mem_register_stash_type(int32 *memType, int32 blockSize, int32 maxNumReques
 
 		_G(requests)[i] = maxNumRequests;
 
-		_G(memBlock)[i] = mem_alloc((blockSize + 1) * maxNumRequests, name.c_str());
-		memset(_G(memBlock)[i], 0, (blockSize + 1) * maxNumRequests);
+		_G(memBlock)[i] = mem_alloc((blockSize + sizeof(uintptr)) * maxNumRequests, name.c_str());
+		memset(_G(memBlock)[i], 0, (blockSize + sizeof(uintptr)) * maxNumRequests);
 
 		return true;
 	}
@@ -80,12 +80,12 @@ bool mem_register_stash_type(int32 *memType, int32 blockSize, int32 maxNumReques
 void mem_free_to_stash(void *mem, int32 memType) {
 	// _G(memBlock)[memType] is block associated with memType
 	int8 *b_ptr = (int8 *)_G(memBlock)[memType];
-	int32 index = ((intptr)mem - (intptr)_G(memBlock)[memType]) / (_G(sizeMem)[memType] + 1);
+	int32 index = ((intptr)mem - (intptr)_G(memBlock)[memType]) / (_G(sizeMem)[memType] + sizeof(uintptr));
 
 	if (index < 0 || index > _G(requests)[memType])
 		error_show(FL, 'MSGF');
 
-	b_ptr += index * (_G(sizeMem)[memType] + 1);
+	b_ptr += index * (_G(sizeMem)[memType] + sizeof(uintptr));
 	*b_ptr = 0;
 }
 
@@ -95,13 +95,13 @@ void *mem_get_from_stash(int32 memType, const Common::String &name) {
 
 	for (i = 0; i < _G(requests)[memType]; i++) {
 		if (!*b_ptr) {
-			*b_ptr = 1;
-			void *result = (void *)(b_ptr + 1);
+			*(uintptr *)b_ptr = 1;
+			void *result = (void *)(b_ptr + sizeof(uintptr));
 			Common::fill((byte *)result, (byte *)result + _G(sizeMem)[memType], 0);
 			return result;
 
 		} else {
-			b_ptr += _G(sizeMem)[memType] + 1;
+			b_ptr += _G(sizeMem)[memType] + sizeof(uintptr);
 		}
 	}
 
