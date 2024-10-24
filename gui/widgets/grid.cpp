@@ -50,6 +50,7 @@ void GridItemWidget::updateThumb() {
 	const Graphics::ManagedSurface *gfx = _grid->filenameToSurface(_activeEntry->thumbPath);
 	_thumbGfx.free();
 	if (gfx) {
+		// TODO: Use a reference instead of copying the surface
 		_thumbGfx.copyFrom(*gfx);
 		_thumbAlpha = _thumbGfx.detectAlpha();
 	}
@@ -714,7 +715,10 @@ void GridWidget::reloadThumbnails() {
 					surf = loadSurfaceFromFile(path);
 				} else {
 					const Graphics::ManagedSurface *scSurf = _loadedSurfaces[path];
-					_loadedSurfaces[entry->thumbPath] = scSurf;
+					// TODO: Use SharedPtr instead of duplicating the surface
+					Graphics::ManagedSurface *thSurf = new Graphics::ManagedSurface();
+					thSurf->copyFrom(*scSurf);
+					_loadedSurfaces[entry->thumbPath] = thSurf;
 				}
 			}
 
@@ -723,7 +727,10 @@ void GridWidget::reloadThumbnails() {
 				_loadedSurfaces[entry->thumbPath] = scSurf;
 
 				if (path != entry->thumbPath) {
-					_loadedSurfaces[path] = scSurf;
+					// TODO: Use SharedPtr instead of duplicating the surface
+					Graphics::ManagedSurface *thSurf = new Graphics::ManagedSurface();
+					thSurf->copyFrom(*scSurf);
+					_loadedSurfaces[path] = thSurf;
 				}
 
 				if (surf != scSurf) {
