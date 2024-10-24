@@ -107,6 +107,9 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_soundIndexTimeout = 20;
 	_soundIndexForceEndGame = 20;
 	_soundIndexCrushed = 20;
+
+	_borderExtra = nullptr;
+	_borderExtraTexture = nullptr;
 }
 
 DrillerEngine::~DrillerEngine() {
