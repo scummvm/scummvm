@@ -178,8 +178,14 @@ protected:
 	};
 
 	enum MacDialogWindowStyle {
-		kStyleNormal,
-		kStyleRounded
+		kWindowStyleNormal,
+		kWindowStyleRounded
+	};
+
+	enum MacDialogMenuStyle {
+		kMenuStyleNone,
+		kMenuStyleDisabled,
+		kMenuStyleApple
 	};
 
 	MacGuiImpl::DelayStatus delay(uint32 ms = 0);
@@ -596,7 +602,7 @@ public:
 		OSystem *_system;
 		MacGuiImpl *_gui;
 
-		MacDialogWindow(MacGuiImpl *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, MacDialogWindowStyle style = kStyleNormal);
+		MacDialogWindow(MacGuiImpl *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, MacDialogWindowStyle windowStyle = kWindowStyleNormal, MacDialogMenuStyle menuStyle = kMenuStyleDisabled);
 		~MacDialogWindow();
 
 		Graphics::Surface *surface() { return &_surface; }
@@ -702,7 +708,7 @@ public:
 	virtual void initTextAreaForActor(Actor *a, byte color) {}
 	virtual void printCharToTextArea(int chr, int x, int y, int color) {}
 
-	MacDialogWindow *createWindow(Common::Rect bounds, MacDialogWindowStyle style = kStyleNormal);
+	MacDialogWindow *createWindow(Common::Rect bounds, MacDialogWindowStyle style = kWindowStyleNormal, MacDialogMenuStyle menuStyle = kMenuStyleDisabled);
 	MacDialogWindow *createDialog(int dialogId);
 	void drawBanner(char *message);
 	void undrawBanner();

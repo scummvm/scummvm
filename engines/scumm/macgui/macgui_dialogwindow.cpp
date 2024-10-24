@@ -39,7 +39,13 @@ namespace Scumm {
 // drawing area (about and pause). It can not be dragged.
 // ---------------------------------------------------------------------------
 
-MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, MacDialogWindowStyle style) : _gui(gui), _system(system), _from(from), _bounds(bounds) {
+MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, MacDialogWindowStyle windowStyle, MacDialogMenuStyle menuStyle) : _gui(gui), _system(system), _from(from), _bounds(bounds) {
+	// Only apply menu style if the menu is open.
+	Graphics::MacMenu *menu = _gui->_windowManager->getMenu();
+
+	if (!menu->_active)
+		menuStyle = kMenuStyleNone;
+
 	_black = _gui->getBlack();
 	_white = _gui->getWhite();
 
@@ -56,7 +62,7 @@ MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, G
 	_backup->create(bounds.width(), bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
 	_backup->copyRectToSurface(*_from, 0, 0, bounds);
 
-	_margin = (style == kStyleNormal) ? 6 : 4;
+	_margin = (windowStyle == kWindowStyleNormal) ? 6 : 4;
 
 	_surface = _from->getSubArea(bounds);
 	bounds.grow(-_margin);
@@ -70,7 +76,7 @@ MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, G
 	r.grow(-1);
 	s->fillRect(r, _white);
 
-	if (style == kStyleNormal) {
+	if (windowStyle == kWindowStyleNormal) {
 		int growths[] = { 1, -3, -1 };
 
 		for (int i = 0; i < ARRAYSIZE(growths); i++) {
@@ -81,7 +87,7 @@ MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, G
 			s->vLine(r.left, r.top + 1, r.bottom - 2, _black);
 			s->vLine(r.right - 1, r.top + 1, r.bottom - 2, _black);
 		}
-	} else if (style == kStyleRounded) {
+	} else if (windowStyle == kWindowStyleRounded) {
 		r.grow(1);
 
 		for (int i = 0; i < 2; i++) {
@@ -97,16 +103,40 @@ MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, G
 		}
 	}
 
-	// The menu bar isn't part of the Mac screen. We copy it to the Mac
-	// screen so that the beam cursor is correctly drawn if it ever moves
-	// that far up. There's no reason for it to, but it can happen.
+	if (menuStyle != kMenuStyleNone) {
+		// The menu bar isn't part of the Mac screen. We copy it to the
+		// Mac screen so that the beam cursor is correctly drawn if it
+		// ever moves that far up. There's no reason for it to, but it
+		// can happen.
 
-	Graphics::Surface *screen = _gui->surface();
-	Graphics::Surface *realScreen = _system->lockScreen();
+		Graphics::Surface *screen = _gui->surface();
+		Graphics::Surface *realScreen = _system->lockScreen();
 
-	screen->copyRectToSurface(*realScreen, 0, 0, Common::Rect(0, 0, 640, 19));
+		// On a real Mac, the menu stays interactable. But the only
+		// thing that is actually used for is the Edit menu, which we
+		// don't implement. In ScummVM, the menu bar is just a drawing
+		// at the point, so we can retouch it to look correct.
 
-	_system->unlockScreen();
+		if (menuStyle == kMenuStyleDisabled) {
+			for (int y = 0; y < 19; y++) {
+				for (int x = 5; x < 635; x++) {
+					if (((x + y) & 1) == 0)
+						realScreen->setPixel(x, y, _white);
+				}
+			}
+		} else if (menuStyle == kMenuStyleApple) {
+			for (int y = 1; y < 19; y++) {
+				for (int x = 10; x < 38; x++) {
+					uint32 color = realScreen->getPixel(x, y);
+					realScreen->setPixel(x, y, _gui->_windowManager->inverter(color));
+				}
+			}
+		}
+
+		screen->copyRectToSurface(*realScreen, 0, 0, Common::Rect(0, 0, 640, 19));
+
+		_system->unlockScreen();
+	}
 }
 
 MacGuiImpl::MacDialogWindow::~MacDialogWindow() {
