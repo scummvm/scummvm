@@ -196,13 +196,27 @@ void CastleEngine::loadAssetsZXFullGame() {
 	_thunderFrame->fillRect(Common::Rect(0, 0, thunderWidth * 8, thunderHeight), 0);
 	_thunderFrame = loadFrame(&file, _thunderFrame, thunderWidth, thunderHeight, front);
 
-	_riddleTopFrame = new Graphics::ManagedSurface(loadBundledImage("castle_riddle_top_frame"));
+	Graphics::Surface *tmp;
+
+	tmp = loadBundledImage("castle_riddle_top_frame");
+	_riddleTopFrame = new Graphics::ManagedSurface;
+	_riddleTopFrame->copyFrom(*tmp);
+	tmp->free();
+	delete tmp;
 	_riddleTopFrame->convertToInPlace(_gfx->_texturePixelFormat);
 
-	_riddleBackgroundFrame = new Graphics::ManagedSurface(loadBundledImage("castle_riddle_background_frame"));
+	tmp = loadBundledImage("castle_riddle_background_frame");
+	_riddleBackgroundFrame = new Graphics::ManagedSurface();
+	_riddleBackgroundFrame->copyFrom(*tmp);
+	tmp->free();
+	delete tmp;
 	_riddleBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat);
 
-	_riddleBottomFrame = new Graphics::ManagedSurface(loadBundledImage("castle_riddle_bottom_frame"));
+	tmp = loadBundledImage("castle_riddle_bottom_frame");
+	_riddleBottomFrame = new Graphics::ManagedSurface();
+	_riddleBackgroundFrame->copyFrom(*tmp);
+	tmp->free();
+	delete tmp;
 	_riddleBottomFrame->convertToInPlace(_gfx->_texturePixelFormat);
 
 	for (auto &it : _areaMap) {
