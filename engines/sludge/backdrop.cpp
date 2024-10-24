@@ -113,7 +113,8 @@ void GraphicsManager::drawParallax() {
 
 		debugC(1, kSludgeDebugGraphics, "drawParallax(): camX: %d camY: %d dims: %d x %d sceneDims: %d x %d winDims: %d x %d surf: %d x %d", p->cameraX, p->cameraY, w, h, _sceneWidth, _sceneHeight, _winWidth, _winHeight, p->surface.w, p->surface.h);
 
-		Graphics::ManagedSurface tmp(&(p->surface), DisposeAfterUse::NO);
+		Graphics::ManagedSurface tmp;
+		tmp.copyFrom(p->surface);
 
 		for (uint y = 0; y < _sceneHeight; y += p->surface.h) {
 			for (uint x = 0; x < _sceneWidth; x += p->surface.w) {
@@ -323,7 +324,8 @@ void GraphicsManager::drawHorizontalLine(uint x1, uint y, uint x2) {
 }
 
 void GraphicsManager::darkScreen() {
-	Graphics::ManagedSurface tmp(&_backdropSurface, DisposeAfterUse::NO);
+	Graphics::ManagedSurface tmp;
+	tmp.copyFrom(_backdropSurface);
 	tmp.blendBlitTo(_backdropSurface, 0, 0, Graphics::FLIP_NONE, nullptr, MS_ARGB(255 >> 1, 0, 0, 0));
 
 	// reset zBuffer
@@ -339,7 +341,8 @@ void GraphicsManager::drawBackDrop() {
 	if (!_backdropExists)
 		return;
 	// draw backdrop
-	Graphics::ManagedSurface tmp(&_backdropSurface, DisposeAfterUse::NO);
+	Graphics::ManagedSurface tmp;
+	tmp.copyFrom(_backdropSurface);
 	tmp.blendBlitTo(_renderSurface, -_cameraX, -_cameraY);
 }
 
@@ -435,7 +438,8 @@ bool GraphicsManager::loadHSI(int num, Common::SeekableReadStream *stream, int x
 		_backdropSurface.fillRect(Common::Rect(x, y, x + tmp.w, y + tmp.h), _renderSurface.format.ARGBToColor(0, 0, 0, 0));
 
 	// copy surface loaded to backdrop
-	Graphics::ManagedSurface tmp_trans(&tmp, DisposeAfterUse::NO);
+	Graphics::ManagedSurface tmp_trans;
+	tmp_trans.copyFrom(tmp);
 	tmp_trans.blendBlitTo(_backdropSurface, x, y);
 	tmp.free();
 
@@ -461,7 +465,8 @@ bool GraphicsManager::mixHSI(int num, Common::SeekableReadStream *stream, int x,
 	if (x < 0 || x + realPicWidth > _sceneWidth || y < 0 || y + realPicHeight > _sceneHeight)
 		return false;
 
-	Graphics::ManagedSurface tmp(&mixSurface, DisposeAfterUse::NO);
+	Graphics::ManagedSurface tmp;
+	tmp.copyFrom(mixSurface);
 	tmp.blendBlitTo(_backdropSurface, x, y, Graphics::FLIP_NONE, nullptr, MS_ARGB(255 >> 1, 255, 255, 255));
 	mixSurface.free();
 

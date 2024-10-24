@@ -280,7 +280,8 @@ void GraphicsManager::pasteSpriteToBackDrop(int x1, int y1, Sprite &single, cons
 	x1 -= single.xhot;
 	y1 -= single.yhot;
 
-	Graphics::ManagedSurface tmp(&single.surface, DisposeAfterUse::NO);
+	Graphics::ManagedSurface tmp;
+	tmp.copyFrom(single.surface);
 	tmp.blendBlitTo(_backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr, MS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
 
 }
@@ -303,7 +304,8 @@ void GraphicsManager::burnSpriteToBackDrop(int x1, int y1, Sprite &single, const
 	x1 -= single.xhot;
 	y1 -= single.yhot - 1;
 
-	Graphics::ManagedSurface tmp(&single.burnSurface, DisposeAfterUse::NO);
+	Graphics::ManagedSurface tmp;
+	tmp.copyFrom(single.burnSurface);
 	tmp.blendBlitTo(_backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr,
 			MS_RGB(_currentBurnR, _currentBurnG, _currentBurnB));
 }
@@ -318,11 +320,13 @@ void GraphicsManager::fontSprite(bool flip, int x, int y, Sprite &single, const 
 	float y1 = (float)y - (float)single.yhot / _cameraZoom;
 
 	// Use Managed surface to scale and blit
-	Graphics::ManagedSurface tmp(&single.surface, DisposeAfterUse::NO);
+	Graphics::ManagedSurface tmp;
+	tmp.copyFrom(single.surface);
 	tmp.blendBlitTo(_renderSurface, x1, y1, (flip ? Graphics::FLIP_H : Graphics::FLIP_NONE), 0, MS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
 
 	if (single.burnSurface.getPixels() != nullptr) {
-		Graphics::ManagedSurface tmp2(&single.burnSurface, DisposeAfterUse::NO);
+		Graphics::ManagedSurface tmp2;
+		tmp2.copyFrom(single.burnSurface);
 		tmp2.blendBlitTo(_renderSurface, x1, y1, (flip ? Graphics::FLIP_H : Graphics::FLIP_NONE), 0, MS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
 
 	}
@@ -375,7 +379,8 @@ Graphics::Surface *GraphicsManager::applyLightmapToSprite(Graphics::Surface *&bl
 			toDetele = blitted = duplicateSurface(blitted);
 
 			// apply light map texture
-			Graphics::ManagedSurface tmp(&_lightMap, DisposeAfterUse::NO);
+			Graphics::ManagedSurface tmp;
+			tmp.copyFrom(_lightMap);
 			Common::Rect rect_h(_sceneWidth - x1 - diffX, y1, _sceneWidth - x1, y1 + diffY);
 			Common::Rect rect_none(x1, y1, x1 + diffX, y1 + diffY);
 			tmp.blendBlitTo(*blitted, 0, 0,
@@ -482,7 +487,8 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 
 	// Use Managed surface to scale and blit
 	if (!_zBuffer->numPanels) {
-		Graphics::ManagedSurface tmp(blitted, DisposeAfterUse::NO);
+		Graphics::ManagedSurface tmp;
+		tmp.copyFrom(*blitted);
 		tmp.blendBlitTo(_renderSurface, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, MS_ARGB(255 - thisPerson->transparency, 255, 255, 255), diffX, diffY);
 
 		if (ptr) {
@@ -493,9 +499,11 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 	} else {
 
 		// TODO: you dont need to copy the whole render surface, just the part to which the sprite may be drawn
-		Graphics::ManagedSurface scaled(&_renderSurface, DisposeAfterUse::NO);
+		Graphics::ManagedSurface scaled;
+		scaled.copyFrom(_renderSurface);
 
-		Graphics::ManagedSurface tmp(blitted, DisposeAfterUse::NO);
+		Graphics::ManagedSurface tmp;
+		tmp.copyFrom(*blitted);
 		tmp.blendBlitTo(scaled, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, MS_ARGB(255 - thisPerson->transparency, 255, 255, 255), diffX, diffY);
 
 		drawSpriteToZBuffer(0, 0, z, scaled.rawSurface());
@@ -565,7 +573,8 @@ void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpriteP
 
 	// draw sprite
 	if (!_zBuffer->numPanels) {
-		Graphics::ManagedSurface tmp(&single.surface, DisposeAfterUse::NO);
+		Graphics::ManagedSurface tmp;
+		tmp.copyFrom(single.surface);
 		tmp.blendBlitTo(_renderSurface, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, MS_ARGB((uint)255, (uint)255, (uint)255, (uint)255), diffX, diffY);
 
 		if (ptr) {
@@ -574,9 +583,11 @@ void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpriteP
 			ptr = nullptr;
 		}
 	} else {
-		Graphics::ManagedSurface scaled(&_renderSurface, DisposeAfterUse::NO);
+		Graphics::ManagedSurface scaled;
+		scaled.copyFrom(_renderSurface);
 
-		Graphics::ManagedSurface tmp(blitted, DisposeAfterUse::NO);
+		Graphics::ManagedSurface tmp;
+		tmp.copyFrom(*blitted);
 		tmp.blendBlitTo(scaled, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, MS_ARGB(255 - thisPerson->transparency, 255, 255, 255), diffX, diffY);
 
 		drawSpriteToZBuffer(0, 0, z, scaled.rawSurface());

@@ -47,7 +47,8 @@ void GraphicsManager::transitionCrossFader() {
 	if (_brightnessLevel == 255)
 		return;
 
-	Graphics::ManagedSurface tmp(&_snapshotSurface, DisposeAfterUse::NO);
+	Graphics::ManagedSurface tmp;
+	tmp.copyFrom(_snapshotSurface);
 	tmp.blendBlitTo(_renderSurface, 0, 0, Graphics::FLIP_NONE, nullptr, MS_ARGB(255 - _brightnessLevel, 0xff, 0xff, 0xff));
 }
 
