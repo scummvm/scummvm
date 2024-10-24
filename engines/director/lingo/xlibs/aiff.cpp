@@ -108,6 +108,7 @@ void AiffXObj::m_duration(int nargs) {
 	int duration = (aiffHeader->getFrameCount() / (float)aiffHeader->getFrameRate()) * 60;
 
 	delete aiffHeader;
+	delete aiffStream;
 	g_lingo->push(Datum(duration));
 }
 
