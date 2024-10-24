@@ -30,17 +30,17 @@ namespace Rooms {
 
 class Room301 : public Room {
 private:
-	int32 _val1 = 0;
+	int32 _travelDest = 0;
 	int _val2 = 0;
 	const char *_soundName = nullptr;
 	const char *_nextSound = nullptr;
-	int _val5 = -1;
+	int _trigger1 = -1;
 	KernelTriggerType _val6 = KT_DAEMON;
 	KernelTriggerType _val7 = KT_DAEMON;
 	int _val8 = 0;
-	int _val9 = 0;
-	int _val10 = 0;
-	int _val11 = 0;
+	bool _showWalkerFlag = false;	// Value never seems to be set to true
+	bool _msgRipleyFlag = false;
+	bool _convResumeFlag = false;
 	int _val12 = 0;
 	int _georgeShould = 0;
 	int _georgeMode = 0;
@@ -61,7 +61,7 @@ private:
 	int _agentSalutes = 0;
 	int _ripTrekArms = 0;
 	int _marshalMatt = 0;
-	machine *_deskGuy = nullptr;
+	machine *_george = nullptr;
 	machine *_machine2 = nullptr;
 	machine *_machine3 = nullptr;
 	machine *_ripley = nullptr;
