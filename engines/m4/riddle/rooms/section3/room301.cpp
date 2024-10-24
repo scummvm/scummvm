@@ -111,14 +111,17 @@ void Room301::daemon() {
 		break;
 
 	case 10:
-		if (_georgeShould == 0 && _georgeMode == 0 && _trigger1 != -1) {
-			kernel_trigger_dispatchx(_trigger1);
-			_trigger1 = -1;
+		if (_georgeShould == 0 && _georgeMode == 0) {
+			if (_trigger1 != -1) {
+				kernel_trigger_dispatchx(_trigger1);
+				_trigger1 = -1;
 
-			if (_showWalkerFlag) {
-				ws_unhide_walker();
-				_showWalkerFlag = false;
+				if (_showWalkerFlag) {
+					ws_unhide_walker();
+					_showWalkerFlag = false;
+				}
 			}
+
 			if (_convResumeFlag) {
 				conv_resume();
 				_convResumeFlag = false;
