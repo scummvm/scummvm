@@ -138,7 +138,7 @@ Graphics::ManagedSurface *CastleEngine::loadFrameWithHeaderDOS(Common::SeekableR
 	frame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
 
 	debug("header: %x %x, height: %d, mask: %x, widthBytes: %d, size: %d", header1, header2, height, mask, widthBytes, size);
-	debug("pos: %lx", file->pos());
+	debug("pos: %x", (int32)file->pos());
 	return frame;
 }
 
@@ -160,13 +160,13 @@ void CastleEngine::loadAssetsDOSFullGame() {
 
 			_background = loadFrameFromPlanes(stream, 504, 18);
 			_background->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
-			debug("%lx", stream->pos());
+			debug("%x", (int32)stream->pos());
 			// Eye widget is next to 0x1f058
 
 			stream->seek(0x1f4e3);
 			for (int i = 0; i < 6; i++)
 				debug("i: %d -> %x", i, stream->readByte());
-			debug("%lx", stream->pos());
+			debug("%x", (int32)stream->pos());
 			debug("extra: %x", stream->readByte());
 
 			for (int i = 0; i < 10; i++) {
@@ -334,7 +334,7 @@ void CastleEngine::loadAssetsDOSDemo() {
 			stream->seek(0x1f4e3 - 0x2a0);
 			for (int i = 0; i < 6; i++)
 				debug("i: %d -> %x", i, stream->readByte());
-			debug("%lx", stream->pos());
+			debug("%x", (int32)stream->pos());
 			debug("extra: %x", stream->readByte());
 
 			for (int i = 0; i < 9; i++) {
