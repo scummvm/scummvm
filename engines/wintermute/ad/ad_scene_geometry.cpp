@@ -90,6 +90,7 @@ AdSceneGeometry::AdSceneGeometry(BaseGame *gameRef) : BaseObject(gameRef) {
 AdSceneGeometry::~AdSceneGeometry() {
 	cleanup();
 	delete _wptMarker;
+	_wptMarker = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -136,7 +137,7 @@ void AdSceneGeometry::cleanup() {
 	}
 	_PFPath.clear();
 
-	_PFTargetPath = NULL;
+	_PFTargetPath = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
