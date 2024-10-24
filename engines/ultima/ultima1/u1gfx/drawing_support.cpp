@@ -27,7 +27,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
-DrawingSupport::DrawingSupport(const Shared::Gfx::VisualSurface &s) : _surface(s) {
+DrawingSupport::DrawingSupport(const Shared::Gfx::VisualSurface &s) : _surface(s, s.getBounds()) {
 	_game = static_cast<Ultima1Game *>(g_vm->_game);
 }
 

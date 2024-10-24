@@ -29,7 +29,8 @@ namespace Shared {
 namespace Gfx {
 
 VisualSurface::VisualSurface(const Graphics::ManagedSurface &src, const Rect &bounds, GameBase *game) :
-		Graphics::ManagedSurface(src), _bounds(bounds), _textColor(255), _bgColor(0) {
+		_bounds(bounds), _textColor(255), _bgColor(0) {
+	copyFrom(src);
 	Shared::Game *sharedGame = dynamic_cast<Shared::Game *>(game);
 	if (sharedGame) {
 		_textColor = sharedGame->_textColor;
