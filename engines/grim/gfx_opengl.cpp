@@ -1042,7 +1042,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
 			uint16 *zbufPtr = reinterpret_cast<uint16 *>(const_cast<void  *>(bitmap->getImageData(pic).getPixels()));
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
-				uint16 val = READ_LE_UINT16(zbufPtr + i);
+				uint16 val = zbufPtr[i];
 				// fix the value if it is incorrectly set to the bitmap transparency color
 				if (val == 0xf81f) {
 					val = 0;
@@ -1087,13 +1087,21 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 		glPixelStorei(GL_UNPACK_ALIGNMENT, bytes);
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, bitmap->_width);
 
+		const Graphics::PixelFormat format_16bpp(2, 5, 6, 5, 0, 11, 5, 0, 0);
+#ifdef SCUMM_BIG_ENDIAN
+		const Graphics::PixelFormat format_32bpp(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#else
+		const Graphics::PixelFormat format_32bpp(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#endif
+
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
-			if (bitmap->_format == 1 && bitmap->_bpp == 16 && bitmap->_colorFormat != BM_RGB1555) {
+			const Graphics::Surface &imageData = bitmap->getImageData(pic);
+			if (bitmap->_format == 1 && imageData.format == format_16bpp) {
 				if (texData == nullptr)
 					texData = new byte[bytes * bitmap->_width * bitmap->_height];
 				// Convert data to 32-bit RGBA format
 				byte *texDataPtr = texData;
-				uint16 *bitmapData = (uint16 *)const_cast<void *>(bitmap->getImageData(pic).getPixels());
+				uint16 *bitmapData = (uint16 *)const_cast<void *>(imageData.getPixels());
 				for (int i = 0; i < bitmap->_width * bitmap->_height; i++, texDataPtr += bytes, bitmapData++) {
 					uint16 pixel = *bitmapData;
 					int r = pixel >> 11;
@@ -1110,11 +1118,11 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 					}
 				}
 				texOut = texData;
-			} else if (bitmap->_format == 1 && bitmap->_colorFormat == BM_RGB1555) {
-				bitmap->convertToColorFormat(pic, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-				texOut = (byte *)const_cast<void *>(bitmap->getImageData(pic).getPixels());
+			} else if (bitmap->_format == 1 && imageData.format != format_32bpp) {
+				bitmap->convertToColorFormat(pic, format_32bpp);
+				texOut = (byte *)const_cast<void *>(imageData.getPixels());
 			} else {
-				texOut = (byte *)const_cast<void *>(bitmap->getImageData(pic).getPixels());
+				texOut = (byte *)const_cast<void *>(imageData.getPixels());
 			}
 
 			for (int i = 0; i < bitmap->_numTex; i++) {
@@ -1574,11 +1582,28 @@ void GfxOpenGL::destroyTextObject(TextObject *text) {
 void GfxOpenGL::createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) {
 	texture->_texture = new GLuint[1];
 	glGenTextures(1, (GLuint *)texture->_texture);
-	uint8 *texdata = new uint8[texture->_width * texture->_height * 4];
-	uint8 *texdatapos = texdata;
+
+	GLuint *textures = (GLuint *)texture->_texture;
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+
+	// Remove darkened lines in EMI intro
+	if (g_grim->getGameType() == GType_MONKEY4 && clamp) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	} else {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	}
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 	if (cmap != nullptr) { // EMI doesn't have colour-maps
 		int bytes = 4;
+
+		uint8 *texdata = new uint8[texture->_width * texture->_height * bytes];
+		uint8 *texdatapos = texdata;
+
 		for (int y = 0; y < texture->_height; y++) {
 			for (int x = 0; x < texture->_width; x++) {
 				uint8 col = *data;
@@ -1595,26 +1620,13 @@ void GfxOpenGL::createTexture(Texture *texture, const uint8 *data, const CMap *c
 				data++;
 			}
 		}
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->_width, texture->_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texdata);
+		delete[] texdata;
 	} else {
-		memcpy(texdata, data, texture->_width * texture->_height * texture->_bpp);
+		GLint format = (texture->_bpp == 4) ? GL_RGBA : GL_RGB;
+		glTexImage2D(GL_TEXTURE_2D, 0, format, texture->_width, texture->_height, 0, format, GL_UNSIGNED_BYTE, data);
 	}
-
-	GLuint *textures = (GLuint *)texture->_texture;
-	glBindTexture(GL_TEXTURE_2D, textures[0]);
-
-	// Remove darkened lines in EMI intro
-	if (g_grim->getGameType() == GType_MONKEY4 && clamp) {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	} else {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	}
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->_width, texture->_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texdata);
-	delete[] texdata;
 }
 
 void GfxOpenGL::selectTexture(const Texture *texture) {
@@ -1666,6 +1678,14 @@ void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, const char *data) {
 	glDepthFunc(_depthFunc);
 }
 
+const Graphics::PixelFormat GfxOpenGL::getMovieFormat() const {
+#ifdef SCUMM_BIG_ENDIAN
+	return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#else
+	return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#endif
+}
+
 void GfxOpenGL::prepareMovieFrame(Graphics::Surface *frame) {
 	int height = frame->h;
 	int width = frame->w;
@@ -1683,29 +1703,11 @@ void GfxOpenGL::prepareMovieFrame(Graphics::Surface *frame) {
 	GLenum dataType;
 	int bytesPerPixel = frame->format.bytesPerPixel;
 
-	// Aspyr Logo format
-	if (frame->format == Graphics::PixelFormat(4, 8, 8, 8, 0, 8, 16, 24, 0)) {
-#if !defined(__amigaos4__)
-		format = GL_BGRA;
-		dataType = GL_UNSIGNED_INT_8_8_8_8;
-#else
-		// MiniGL on AmigaOS4 doesn't understand GL_UNSIGNED_INT_8_8_8_8 yet.
-		format = GL_BGRA;
+	// Used by Bink, QuickTime, MPEG, Theora and paletted SMUSH
+	if (frame->format == getMovieFormat()) {
+		format = GL_RGBA;
 		dataType = GL_UNSIGNED_BYTE;
-#endif
-	// Used by Grim Fandango Remastered
-	} else if (frame->format == Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0)) {
-#if !defined(__amigaos4__)
-		format = GL_BGRA;
-		dataType = GL_UNSIGNED_INT_8_8_8_8;
-#else
-		// MiniGL on AmigaOS4 doesn't understand GL_UNSIGNED_INT_8_8_8_8 yet.
-		format = GL_BGRA;
-		dataType = GL_UNSIGNED_BYTE;
-#endif
-	} else if (frame->format == Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 0)) {
-		format = GL_BGRA;
-		dataType = GL_UNSIGNED_INT_8_8_8_8_REV;
+	// Used by 16-bit SMUSH
 	} else if (frame->format == Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) {
 		format = GL_RGB;
 		dataType = GL_UNSIGNED_SHORT_5_6_5;
@@ -1869,7 +1871,11 @@ void GfxOpenGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 
 Bitmap *GfxOpenGL::getScreenshot(int w, int h, bool useStored) {
 	Graphics::Surface src;
+#ifdef SCUMM_BIG_ENDIAN
+	src.create(_screenWidth, _screenHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+#else
 	src.create(_screenWidth, _screenHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#endif
 	if (useStored) {
 		memcpy(src.getPixels(), _storedDisplay, _screenWidth * _screenHeight * 4);
 	} else {
