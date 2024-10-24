@@ -27,14 +27,13 @@
 namespace Darkseed {
 
 #define DARKSEED_NUM_PAL_ENTRIES 16
-#define DARKSEED_PAL_SIZE DARKSEED_NUM_PAL_ENTRIES * 3
+#define DARKSEED_PAL_SIZE (DARKSEED_NUM_PAL_ENTRIES * 3)
 
 
 class Pal {
 public:
 	byte _palData[DARKSEED_PAL_SIZE];
 
-public:
 	Pal() {};
 	Pal(const Pal &pal);
 	void loadFromScreen();
@@ -42,7 +41,7 @@ public:
 	bool load(const Common::Path &filename, bool shouldInstallPalette = true);
 	void clear();
 	void updatePalette(int delta, const Pal &targetPal, bool shouldInstallPalette = true);
-	void installPalette();
+	void installPalette() const;
 };
 
 } // namespace Darkseed

@@ -26,7 +26,7 @@
 namespace Darkseed {
 
 #define DARKSEED_NUM_PAL_ENTRIES 16
-#define DARKSEED_PAL_SIZE DARKSEED_NUM_PAL_ENTRIES * 3
+#define DARKSEED_PAL_SIZE (DARKSEED_NUM_PAL_ENTRIES * 3)
 
 Pal::Pal(const Pal &pal) {
 	load(pal);
@@ -77,7 +77,7 @@ void Pal::updatePalette(int delta, const Pal &targetPal, bool shouldInstallPalet
 	}
 }
 
-void Pal::installPalette() {
+void Pal::installPalette() const {
 	g_system->getPaletteManager()->setPalette(_palData, 0, DARKSEED_NUM_PAL_ENTRIES);
 }
 

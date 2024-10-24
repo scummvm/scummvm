@@ -64,12 +64,12 @@ class Nsp {
 
 public:
 	bool load(const Common::Path &filename);
-	bool containsSpriteAt(int index) {
+	bool containsSpriteAt(int index) const {
 		return (int)_frames.size() > index;
 	}
 	const Sprite &getSpriteAt(int index) const;
 	const Obt &getAnimAt(int index);
-	int16 getTotalAnim() {
+	int16 getTotalAnim() const {
 		return (int16)_animations.size();
 	}
 	int16 getMaxSpriteWidth();

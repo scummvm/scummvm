@@ -29,7 +29,6 @@
 namespace Darkseed {
 
 class Cutscene {
-private:
 	char _cutsceneId = 0;
 	uint16 _movieStep = 9999;
 	TitleFont *_titleFont = nullptr;
@@ -46,7 +45,7 @@ public:
 	Cutscene() {}
 	virtual ~Cutscene();
 	void play(char cutsceneId);
-	bool isPlaying() {
+	bool isPlaying() const {
 		return _movieStep != 9999;
 	}
 	void update();
@@ -67,7 +66,7 @@ private:
 	void putHouse();
 
 	void registTime();
-	bool waitTime(int16 duration);
+	bool waitTime(int16 duration) const;
 
 	void freeMorph();
 };

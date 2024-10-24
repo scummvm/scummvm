@@ -50,7 +50,7 @@ bool Anm::getImg(uint16 index, Img &img, bool includesPosition) {
 	return false;
 }
 
-int Anm::numImages() {
+int Anm::numImages() const {
 	return _numRecords;
 }
 

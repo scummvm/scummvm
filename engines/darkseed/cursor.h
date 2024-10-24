@@ -47,7 +47,7 @@ public:
 
 	void showCursor(bool showCursor);
 	void setCursorType(enum CursorType newType);
-	CursorType getCursorType() {
+	CursorType getCursorType() const {
 		return _currentCursorType;
 	}
 
@@ -65,10 +65,10 @@ public:
 		return _position.y;
 	}
 
-	int getWidth();
-	int getHeight();
-	const Sprite &getSprite();
-	const Sprite &getSpriteForType(CursorType cursorType);
+	int getWidth() const;
+	int getHeight() const;
+	const Sprite &getSprite() const;
+	const Sprite &getSpriteForType(CursorType cursorType) const;
 	void updatePosition(int16 x, int16 y);
 };
 

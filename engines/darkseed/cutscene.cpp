@@ -69,6 +69,8 @@ void Cutscene::update() {
 	case 'Z' :
 		_movieStep = 9999;
 		break;
+	default:
+		break;
 	}
 
 	if (_movieStep == 9999) {
@@ -1083,7 +1085,7 @@ void Cutscene::registTime() {
 	_startTime = g_system->getMillis();
 }
 
-bool Cutscene::waitTime(int16 duration) {
+bool Cutscene::waitTime(int16 duration) const {
 	return g_system->getMillis() < _startTime + (duration * 100);
 }
 

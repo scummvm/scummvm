@@ -44,19 +44,19 @@ void Cursor::updatePosition(int16 x, int16 y) {
 	//	debug("mouse at (%d,%d)", _x, _y);
 }
 
-int Cursor::getWidth() {
+int Cursor::getWidth() const {
 	return g_engine->_baseSprites.getSpriteAt(_currentCursorType)._width;
 }
 
-int Cursor::getHeight() {
+int Cursor::getHeight() const {
 	return g_engine->_baseSprites.getSpriteAt(_currentCursorType)._height;
 }
 
-const Sprite &Darkseed::Cursor::getSprite() {
+const Sprite &Darkseed::Cursor::getSprite() const {
 	return g_engine->_baseSprites.getSpriteAt(_currentCursorType);
 }
 
-const Sprite &Darkseed::Cursor::getSpriteForType(Darkseed::CursorType cursorType) {
+const Sprite &Darkseed::Cursor::getSpriteForType(Darkseed::CursorType cursorType) const {
 	return g_engine->_baseSprites.getSpriteAt(cursorType);
 }
 

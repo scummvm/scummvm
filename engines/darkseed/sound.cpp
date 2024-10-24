@@ -49,7 +49,7 @@ void Sound::playTosSpeech(int tosIdx) {
 	_didSpeech[tosIdx] = 1;
 }
 
-bool Sound::isPlayingSpeech() {
+bool Sound::isPlayingSpeech() const {
 	return _mixer->isSoundHandleActive(_speechHandle);
 }
 

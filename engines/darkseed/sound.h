@@ -40,7 +40,7 @@ public:
 	Common::Error sync(Common::Serializer &s);
 
 	void playTosSpeech(int tosIdx);
-	bool isPlayingSpeech();
+	bool isPlayingSpeech() const;
 	void waitForSpeech();
 	void resetSpeech();
 };
