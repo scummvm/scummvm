@@ -59,42 +59,46 @@ OSystem_libretro::~OSystem_libretro() {
 	_mixer = nullptr;
 }
 
-void OSystem_libretro::initBackend() {
+void OSystem_libretro::checkAllPathSettings() {
 	Common::String s_homeDir(LibRetroFilesystemNode::getHomeDir());
-	Common::String s_themeDir(s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_THEME_SUBDIR);
-	Common::String s_extraDir(s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_EXTRA_SUBDIR);
-	Common::String s_soundfontPath(s_extraDir + "/" + DEFAULT_SOUNDFONT_FILENAME);
+		Common::String s_themeDir(s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_THEME_SUBDIR);
+		Common::String s_extraDir(s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_EXTRA_SUBDIR);
+		Common::String s_soundfontPath(s_extraDir + "/" + DEFAULT_SOUNDFONT_FILENAME);
 
-	if (! (LibRetroFilesystemNode(s_themeDir).isDirectory() && LibRetroFilesystemNode(s_themeDir).isReadable()))
-		s_themeDir.clear();
-	if (! (LibRetroFilesystemNode(s_extraDir).isDirectory() && LibRetroFilesystemNode(s_extraDir).isReadable()))
-		s_extraDir.clear();
-	if (! LibRetroFilesystemNode(s_soundfontPath).exists())
-		s_soundfontPath.clear();
-	if (s_homeDir.empty() || ! (LibRetroFilesystemNode(s_homeDir).isDirectory() && LibRetroFilesystemNode(s_homeDir).isReadable()))
-		s_homeDir = s_systemDir;
+		if (! (LibRetroFilesystemNode(s_themeDir).isDirectory() && LibRetroFilesystemNode(s_themeDir).isReadable()))
+			s_themeDir.clear();
+		if (! (LibRetroFilesystemNode(s_extraDir).isDirectory() && LibRetroFilesystemNode(s_extraDir).isReadable()))
+			s_extraDir.clear();
+		if (! LibRetroFilesystemNode(s_soundfontPath).exists())
+			s_soundfontPath.clear();
+		if (s_homeDir.empty() || ! (LibRetroFilesystemNode(s_homeDir).isDirectory() && LibRetroFilesystemNode(s_homeDir).isReadable()))
+			s_homeDir = s_systemDir;
 
-	//Register default paths
-	if (! s_homeDir.empty()) {
-		ConfMan.registerDefault("browser_lastpath", s_homeDir);
-		retro_log_cb(RETRO_LOG_DEBUG, "Default browser last path set to: %s\n", s_homeDir.c_str());
-	}
-	if (! s_saveDir.empty()) {
-		ConfMan.registerDefault("savepath", s_saveDir);
-		retro_log_cb(RETRO_LOG_DEBUG, "Default save path set to: %s\n", s_saveDir.c_str());
-	}
+		//Register default paths
+		if (! s_homeDir.empty()) {
+			ConfMan.registerDefault("browser_lastpath", s_homeDir);
+			retro_log_cb(RETRO_LOG_DEBUG, "Default browser last path set to: %s\n", s_homeDir.c_str());
+		}
+		if (! s_saveDir.empty()) {
+			ConfMan.registerDefault("savepath", s_saveDir);
+			retro_log_cb(RETRO_LOG_DEBUG, "Default save path set to: %s\n", s_saveDir.c_str());
+		}
 
-	//Check current path settings
-	if (!checkPathSetting("savepath", s_saveDir))
-		retro_osd_notification("ScummVM save folder not found.");
-	if (!checkPathSetting("themepath", s_themeDir))
-		retro_osd_notification("ScummVM theme folder not found.");
-	if (!checkPathSetting("extrapath", s_extraDir))
-		retro_osd_notification("ScummVM extra folder not found. Some engines/features (e.g. Virtual Keyboard) will not work without relevant datafiles.");
-	checkPathSetting("soundfont", s_soundfontPath, false);
-	checkPathSetting("browser_lastpath", s_homeDir);
-	checkPathSetting("libretro_playlist_path", s_playlistDir.empty() ? s_homeDir : s_playlistDir);
-	checkPathSetting("iconspath", "");
+		//Check current path settings
+		if (!checkPathSetting("savepath", s_saveDir))
+			retro_osd_notification("ScummVM save folder not found.");
+		if (!checkPathSetting("themepath", s_themeDir))
+			retro_osd_notification("ScummVM theme folder not found.");
+		if (!checkPathSetting("extrapath", s_extraDir))
+			retro_osd_notification("ScummVM extra folder not found. Some engines/features (e.g. Virtual Keyboard) will not work without relevant datafiles.");
+		checkPathSetting("soundfont", s_soundfontPath, false);
+		checkPathSetting("browser_lastpath", s_homeDir);
+		checkPathSetting("libretro_playlist_path", s_playlistDir.empty() ? s_homeDir : s_playlistDir);
+		checkPathSetting("iconspath", "");
+}
+
+void OSystem_libretro::initBackend() {
+
 
 	//Check other settings
 	if (! ConfMan.hasKey("libretro_playlist_version"))
