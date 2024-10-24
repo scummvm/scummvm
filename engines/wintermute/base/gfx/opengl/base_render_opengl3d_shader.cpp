@@ -178,6 +178,7 @@ void BaseRenderOpenGL3DShader::disableCulling() {
 }
 
 bool BaseRenderOpenGL3DShader::enableShadows() {
+	return true; // shadows are broken for a while since it use not allowed binding to frame buffer
 	if (_flatShadowMaskShader == nullptr) {
 		_flatShadowColor = Math::Vector4d(0.0f, 0.0f, 0.0f, 0.5f);
 
