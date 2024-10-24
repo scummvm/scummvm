@@ -337,6 +337,8 @@ bool MacGuiImpl::handleMenu(int id, Common::String &name) {
 
 	case 203:	// Pause
 		if (!_vm->_messageBannerActive) {
+			menu->closeMenu();
+
 			if (_vm->_game.version == 3)
 				_vm->mac_showOldStyleBannerAndPause(_vm->getGUIString(gsPause), -1);
 			else
