@@ -144,7 +144,7 @@ int save_bitmap(Common::WriteStream &out, BITMAP *bmp, const RGB *pal) {
 
 	Graphics::ManagedSurface &src = bmp->getSurface();
 	if (bmp->format.bytesPerPixel == 1) {
-		Graphics::ManagedSurface temp = src;
+		Graphics::ManagedSurface temp(src, src.getBounds());
 		if (pal) {
 			byte palette[256 * 3];
 			for (int c = 0, i = 0; c < 256; ++c, i += 3) {
@@ -159,7 +159,7 @@ int save_bitmap(Common::WriteStream &out, BITMAP *bmp, const RGB *pal) {
 			Common::Point(0, 0));
 	} else {
 		// Copy from the source surface without alpha transparency
-		Graphics::ManagedSurface temp = src;
+		Graphics::ManagedSurface temp(src, src.getBounds());
 		temp.format.aLoss = 8;
 
 		surface.rawBlitFrom(temp, Common::Rect(0, 0, src.w, src.h),
