@@ -166,7 +166,7 @@ GUI::OptionsContainerWidget *OSystem_libretro::buildBackendOptionsWidget(GUI::Gu
 }
 
 void OSystem_libretro::applyBackendSettings() {
-	return;
+	checkAllPathSettings();
 }
 
 static const char * const helpTabs[] = {
