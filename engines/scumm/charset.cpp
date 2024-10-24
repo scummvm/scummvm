@@ -1265,7 +1265,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 			dstPtr = vs->getPixels(_left, drawTop);
 		} else {
 			dstSurface = _vm->_textSurface;
-			dstPtr = (byte *)_vm->_textSurface.getBasePtr(_left * _vm->_textSurfaceMultiplier, (_top - _vm->_screenTop - _vm->_screenDrawOffset) * _vm->_textSurfaceMultiplier);
+			dstPtr = (byte *)_vm->_textSurface.getBasePtr(_left * _vm->_textSurfaceMultiplier, (_top - _vm->_screenTop) * _vm->_textSurfaceMultiplier);
 		}
 
 		if (_blitAlso && vs->hasTwoBuffers) {
@@ -1276,7 +1276,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 		}
 
 		if (!ignoreCharsetMask && vs->hasTwoBuffers) {
-			drawTop = _top - _vm->_screenTop - _vm->_screenDrawOffset;
+			drawTop = _top - _vm->_screenTop;
 		}
 
 		if (is2byte && _vm->_game.platform != Common::kPlatformFMTowns)
@@ -1744,7 +1744,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	// If this is the beginning of a line, assume the position will be
 	// correct without any padding.
 
-	if (_firstChar || (_top - _vm->_screenDrawOffset) != _lastTop) {
+	if (_firstChar || _top != _lastTop) {
 		_pad = false;
 	}
 
@@ -1801,7 +1801,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	bool drawToTextBox = (vs->number == kTextVirtScreen && _vm->_game.id == GID_INDY3);
 
 	if (drawToTextBox)
-		_vm->_macGui->printCharToTextArea(chr, macLeft, macTop - 2 * (_vm->_screenDrawOffset), color);
+		_vm->_macGui->printCharToTextArea(chr, macLeft, macTop, color);
 	else
 		printCharInternal(chr, color, enableShadow, macLeft, macTop);
 
@@ -1881,7 +1881,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 		_pad = true;
 
 	_left = macLeft / 2;
-	_lastTop = _top - _vm->_screenDrawOffset;
+	_lastTop = _top;
 }
 
 byte CharsetRendererMac::getTextColor() {
@@ -1927,16 +1927,16 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 			_font->drawChar(&_vm->_textSurface, chr, x + 2, y + 2, 0);
 
 			if (color != -1) {
-				_font->drawChar(_vm->_macScreen, chr, x + 1, y - 1, shadowColor);
-				_font->drawChar(_vm->_macScreen, chr, x - 1, y + 1, shadowColor);
-				_font->drawChar(_vm->_macScreen, chr, x + 2, y + 2, shadowColor);
+				_font->drawChar(_vm->_macScreen, chr, x + 1, y - 1 + 2 * _vm->_macScreenDrawOffset, shadowColor);
+				_font->drawChar(_vm->_macScreen, chr, x - 1, y + 1 + 2 * _vm->_macScreenDrawOffset, shadowColor);
+				_font->drawChar(_vm->_macScreen, chr, x + 2, y + 2 + 2 * _vm->_macScreenDrawOffset, shadowColor);
 			}
 		} else {
 			// Indy 3 uses simpler shadowing, and doesn't need the
 			// "draw only on text surface" hack.
 
 			_font->drawChar(&_vm->_textSurface, chr, x + 1, y + 1, 0);
-			_font->drawChar(_vm->_macScreen, chr, x + 1, y + 1, shadowColor);
+			_font->drawChar(_vm->_macScreen, chr, x + 1, y + 1 + 2 * _vm->_macScreenDrawOffset, shadowColor);
 		}
 	}
 
@@ -1953,14 +1953,14 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 				for (int x0 = 0; x0 < _glyphSurface->w; x0++) {
 					if (_glyphSurface->getPixel(x0, y0)) {
 						int x1 = x + x0;
-						int y1 = y + y0;
+						int y1 = y + y0 + 2 * _vm->_macScreenDrawOffset;
 
 						_vm->_macScreen->setPixel(x1, y1, ((x1 + y1) & 1) ? 0 : 15);
 					}
 				}
 			}
 		} else {
-			_font->drawChar(_vm->_macScreen, chr, x, y, color);
+			_font->drawChar(_vm->_macScreen, chr, x, y + 2 * _vm->_macScreenDrawOffset, color);
 		}
 	}
 }

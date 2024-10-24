@@ -28,6 +28,8 @@
 
 #include "graphics/surface.h"
 
+#include "scumm/macgui/macgui_colors.h"
+
 namespace Scumm {
 
 class MacGuiImpl;
@@ -43,6 +45,7 @@ public:
 	~MacIndy3Gui();
 
 	const Common::String name() const override { return "Indy"; }
+	int getNumColors() const override { return 16; }
 
 	Graphics::Surface _textArea;
 
@@ -79,11 +82,9 @@ protected:
 
 	void runAboutDialog() override;
 	bool runOpenDialog(int &saveSlotToHandle) override;
-	bool runSaveDialog(int &saveSlotToHandle, Common::String &name) override;
+	bool runSaveDialog(int &saveSlotToHandle, Common::String &saveName) override;
 	bool runOptionsDialog() override;
 	bool runIqPointsDialog();
-
-	void readStrings() override;
 
 private:
 	int _verbGuiTop = 0;
@@ -146,9 +147,9 @@ private:
 
 		// Primitives
 		void fill(Common::Rect r);
-		void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
+		void drawBitmap(Common::Rect r, const uint16 *bitmap, byte color) const;
 		void drawShadowBox(Common::Rect r) const;
-		void drawShadowFrame(Common::Rect r, Color shadowColor, Color fillColor);
+		void drawShadowFrame(Common::Rect r, byte shadowColor, byte fillColor);
 
 		void markScreenAsDirty(Common::Rect r) const;
 	};

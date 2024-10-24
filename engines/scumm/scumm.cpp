@@ -193,6 +193,13 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		}
 	}
 
+	if (_game.platform == Common::kPlatformMacintosh) {
+		ConfMan.registerDefault("mac_graphics_smoothing", true);
+		if (ConfMan.hasKey("mac_graphics_smoothing", _targetName)) {
+			_useMacGraphicsSmoothing = ConfMan.getBool("mac_graphics_smoothing");
+		}
+	}
+
 	setTimerAndShakeFrequency();
 
 	camera.reset();
@@ -376,10 +383,9 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	} else if (_game.platform == Common::kPlatformNES) {
 		_screenWidth = 256;
 		_screenHeight = 240;
-	} else if (!isSteamVersion && _useMacScreenCorrectHeight && _game.platform == Common::kPlatformMacintosh && _game.version == 3) {
+	} else if (!isSteamVersion && _useMacScreenCorrectHeight && _game.platform == Common::kPlatformMacintosh && _game.version >= 3) {
 		_screenWidth = 320;
-		_screenHeight = 240;
-		_screenDrawOffset = 20;
+		_screenHeight = 200;
 	} else {
 		_screenWidth = 320;
 		_screenHeight = 200;
@@ -1182,6 +1188,9 @@ Common::Error ScummEngine::init() {
 	if (_game.platform == Common::kPlatformMacintosh) {
 		Common::MacResManager resource;
 
+		_macScreen = new Graphics::Surface();
+		_macScreen->create(640, _useMacScreenCorrectHeight ? 480 : 400, Graphics::PixelFormat::createFormatCLUT8());
+
 		// \xAA is a trademark glyph in Mac OS Roman. We try that, but
 		// also the Windows version, the UTF-8 version, and just plain
 		// without in case the file system can't handle exotic
@@ -1200,17 +1209,13 @@ Common::Error ScummEngine::init() {
 					macResourceFile = indyFileNames[i];
 
 					_textSurfaceMultiplier = 2;
-					_macScreen = new Graphics::Surface();
-					_macScreen->create(640, _useMacScreenCorrectHeight ? 480 : 400, Graphics::PixelFormat::createFormatCLUT8());
-
 					_macGui = new MacGui(this, macResourceFile);
 					break;
 				}
 			}
 
 			if (macResourceFile.empty()) {
-				return Common::Error(Common::kReadingFailed, _(
-"This game requires the 'Indy' Macintosh executable for its fonts."));
+				return Common::Error(Common::kReadingFailed, _("This game requires the 'Indy' Macintosh executable for its fonts."));
 			}
 
 		} else if (_game.id == GID_LOOM) {
@@ -1226,16 +1231,13 @@ Common::Error ScummEngine::init() {
 					macResourceFile = loomFileNames[i];
 
 					_textSurfaceMultiplier = 2;
-					_macScreen = new Graphics::Surface();
-					_macScreen->create(640, _useMacScreenCorrectHeight ? 480 : 400, Graphics::PixelFormat::createFormatCLUT8());
 					_macGui = new MacGui(this, macResourceFile);
 					break;
 				}
 			}
 
 			if (macResourceFile.empty()) {
-				return Common::Error(Common::kReadingFailed, _(
-"This game requires the 'Loom' Macintosh executable for its music and fonts."));
+				return Common::Error(Common::kReadingFailed, _("This game requires the 'Loom' Macintosh executable for its music and fonts."));
 			}
 		} else if (_game.id == GID_MONKEY) {
 			// Try both with and without underscore in the
@@ -1250,14 +1252,66 @@ Common::Error ScummEngine::init() {
 			for (int i = 0; i < ARRAYSIZE(monkeyIslandFileNames); i++) {
 				if (resource.exists(monkeyIslandFileNames[i])) {
 					macResourceFile = monkeyIslandFileNames[i];
+					break;
 				}
 			}
 
 			if (macResourceFile.empty()) {
-				GUI::MessageDialog dialog(_(
-"Could not find the 'Monkey Island' Macintosh executable to read the\n"
-"instruments from. Music will be disabled."), _("OK"));
+				GUI::MessageDialog dialog(_("Could not find the 'Monkey Island' Macintosh executable to read resources\n"
+											"and instruments from. Music and Mac GUI will be disabled."), _("OK"));
 				dialog.runModal();
+			} else {
+				_macGui = new MacGui(this, macResourceFile);
+			}
+		} else if (_game.id == GID_INDY4 && _language != Common::JA_JPN) {
+			static const char *indy4FileNames[] = {
+				"Fate of Atlantis",
+				"Fate_of_Atlantis",
+				"Fate of Atlantis 1.1",
+				"Fate_of_Atlantis_1.1",
+				"Indy Fate",
+				"Indy_Fate",
+				"fate_v1.5",
+				"Indy 12/15/92",
+				"Indy_12/15/92",
+				"Fate of Atlantis v1.5",
+				"Fate_of_Atlantis_v1.5"
+			};
+
+			for (int i = 0; i < ARRAYSIZE(indy4FileNames); i++) {
+				if (resource.exists(indy4FileNames[i])) {
+					macResourceFile = indy4FileNames[i];
+					break;
+				}
+			}
+
+			if (macResourceFile.empty()) {
+				GUI::MessageDialog dialog(_("Could not find the 'Fate of Atlantis' Macintosh executable.\n"
+											"Mac GUI will not be shown."),
+										_("OK"));
+				dialog.runModal();
+			} else {
+				_macGui = new MacGui(this, macResourceFile);
+			}
+		} else if (_game.id == GID_MONKEY2) {
+			static const char *monkeyIsland2FileNames[] = {
+				"LeChuck's Revenge",
+				"LeChuck's_Revenge"};
+
+			for (int i = 0; i < ARRAYSIZE(monkeyIsland2FileNames); i++) {
+				if (resource.exists(monkeyIsland2FileNames[i])) {
+					macResourceFile = monkeyIsland2FileNames[i];
+					break;
+				}
+			}
+
+			if (macResourceFile.empty()) {
+				GUI::MessageDialog dialog(_("Could not find the 'LeChuck's Revenge' Macintosh executable.\n"
+											"Mac GUI will not be shown."),
+										  _("OK"));
+				dialog.runModal();
+			} else {
+				_macGui = new MacGui(this, macResourceFile);
 			}
 		}
 
@@ -1274,6 +1328,8 @@ Common::Error ScummEngine::init() {
 		if (!_macScreen && _renderMode == Common::kRenderMacintoshBW)
 			_renderMode = Common::kRenderDefault;
 
+		memset(_completeScreenBuffer, 0, 320 * 200);
+
 		if (_macGui)
 			_macGui->initialize();
 	}
@@ -1284,8 +1340,17 @@ Common::Error ScummEngine::init() {
 	} else if (_renderMode == Common::kRenderCGA_BW || (_renderMode == Common::kRenderEGA && _supportsEGADithering)) {
 		initGraphics(_screenWidth * 2, _screenHeight * 2);
 	} else {
-		int screenWidth = _screenWidth * _textSurfaceMultiplier;
-		int screenHeight = _screenHeight * _textSurfaceMultiplier;
+		int screenWidth = _screenWidth;
+		int screenHeight = _screenHeight;
+
+		if (_macScreen && _game.platform == Common::kPlatformMacintosh && _game.version >= 3 && _game.heversion == 0) {
+			screenWidth *= 2;
+			screenHeight *= 2;
+			screenHeight += 2 * 2 * _macScreenDrawOffset;
+		} else {
+			screenWidth *= _textSurfaceMultiplier;
+			screenHeight *= _textSurfaceMultiplier;
+		}
 
 		if (_game.features & GF_16BIT_COLOR
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
@@ -1890,7 +1955,7 @@ void ScummEngine::resetScumm() {
 	_nextTop = 0;
 
 	_currentCursor = 0;
-	_cursor.state = 0;
+	_cursor.state = (_game.id == GID_MONKEY && _game.platform == Common::kPlatformMacintosh) ? 1 : 0;
 	_userPut = 0;
 
 	_newEffect = 129;
@@ -2209,6 +2274,8 @@ void ScummEngine::setupMusic(int midi) {
 			_musicEngine->setQuality(MacSound::kQualityLowest);
 		else if (ConfMan.hasKey("mac_snd_quality"))
 			_musicEngine->setQuality(ConfMan.getInt("mac_snd_quality"));
+		_musicEngine->toggleMusic(!ConfMan.hasKey("music_mute") || !ConfMan.getBool("music_mute"));
+		_musicEngine->toggleSoundEffects(!ConfMan.hasKey("mute") || !ConfMan.getBool("mute"));
 		_sound->_musicType = MDT_MACINTOSH;
 	} else if (_game.id == GID_MANIAC && _game.version == 1) {
 		_musicEngine = new Player_V1(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);

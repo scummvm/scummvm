@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCUMM_MACGUI_MACGUI_LOOM_H
-#define SCUMM_MACGUI_MACGUI_LOOM_H
+#ifndef SCUMM_MACGUI_MACGUI_V5_H
+#define SCUMM_MACGUI_MACGUI_V5_H
 
 #include "common/events.h"
 #include "common/rect.h"
@@ -30,24 +30,22 @@ namespace Scumm {
 
 class MacGuiImpl;
 
-class MacLoomGui : public MacGuiImpl {
+class MacV5Gui : public MacGuiImpl {
 public:
-	MacLoomGui(ScummEngine *vm, const Common::Path &resourceFile);
-	~MacLoomGui();
+	MacV5Gui(ScummEngine *vm, const Common::Path &resourceFile);
+	~MacV5Gui() {}
 
-	const Common::String name() const override { return "Loom"; }
-	int getNumColors() const override { return 16; }
+	const Common::String name() const override { return _strsStrings[kMSIGameName]; }
+	int getNumColors() const override { return 256; }
 
 	bool handleEvent(Common::Event event) override;
 
-	const Graphics::Font *getFontByScummId(int32 id) override;
+	const Graphics::Font *getFontByScummId(int32 id);
 
 	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) override;
 
 	void resetAfterLoad() override;
-	void update(int delta) override;
-
-	void runDraftsInventory();
+	void update(int delta) override {}
 
 protected:
 	bool getFontParams(FontId fontId, int &id, int &size, int &slant) const override;
@@ -58,9 +56,20 @@ protected:
 	bool runOptionsDialog() override;
 
 private:
-	Graphics::Surface *_practiceBox = nullptr;
-	Common::Point _practiceBoxPos;
-	int _practiceBoxNotes;
+	struct AboutPage {
+		const TextLine *text;
+		int drawArea;
+		uint32 delayMs;
+	};
+
+	uint _roughProgress = 0;
+	bool _roughWarned = false;
+
+	void runAboutDialogMI1(MacDialogWindow *window);
+	void runAboutDialogMI2(MacDialogWindow *window);
+	void runAboutDialogIndy4(MacDialogWindow *window);
+
+	void drawShadow(Graphics::Surface *s, int x, int y, int h, Common::Pair<int, int> *drawData);
 };
 
 } // End of namespace Scumm

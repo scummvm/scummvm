@@ -91,13 +91,15 @@ private:
 	Common::Rect _imageRect;
 	byte _palette[256 * 3];
 	uint16 _paletteColorCount;
+	byte _penPattern[8];
+	Common::Point _currentPenPosition;
 	Graphics::Surface *_outputSurface;
 	bool _continueParsing;
 	int _version;
 
 	// Utility Functions
-	void unpackBitsRectOrRgn(Common::SeekableReadStream &stream, bool hasPackBits);
-	void unpackBitsRgn(Common::SeekableReadStream &stream, bool compressed);
+	void unpackBitsRectOrRgn(Common::SeekableReadStream &stream, bool compressed, bool hasRegion);
+	void unpackBits(Common::SeekableReadStream &stream, bool compressed, bool hasRegion);
 	void unpackBitsRect(Common::SeekableReadStream &stream, bool withPalette, PixMap pixMap);
 	void unpackBitsLine(byte *out, uint32 length, Common::SeekableReadStream *stream, byte bitsPerPixel, byte bytesPerPixel);
 	void skipBitsRect(Common::SeekableReadStream &stream, bool withPalette);
@@ -122,9 +124,12 @@ private:
 	DECLARE_OPCODE(o_txFont);
 	DECLARE_OPCODE(o_txFace);
 	DECLARE_OPCODE(o_pnSize);
+	DECLARE_OPCODE(o_pnPat);
 	DECLARE_OPCODE(o_txSize);
 	DECLARE_OPCODE(o_txRatio);
 	DECLARE_OPCODE(o_versionOp);
+	DECLARE_OPCODE(o_shortLine);
+	DECLARE_OPCODE(o_shortLineFrom);
 	DECLARE_OPCODE(o_longText);
 	DECLARE_OPCODE(o_bitsRgn);
 	DECLARE_OPCODE(o_packBitsRgn);

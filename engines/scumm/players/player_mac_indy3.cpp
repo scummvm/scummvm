@@ -335,7 +335,7 @@ Indy3MacSnd::Indy3MacSnd(ScummEngine *vm, Audio::Mixer *mixer) : VblTaskClientDr
 	_vm(vm), _mixer(mixer), _musicChannels(nullptr), _curSound(0), _curSong(0), _lastSoundEffectPrio(0), _idRangeMax(86), _soundEffectNumLoops(-1),
 	_musicIDTable(nullptr), _macstr(nullptr), _musicIDTableLen(0), _soundUsage(0), _mdrv(nullptr), _sdrv(nullptr), _nextTickProc(this, &VblTaskClientDriver::vblCallback),
 	_soundEffectPlaying(false), _songTimer(0), _songTimerInternal(0), _qmode(0), _16bit(false), _qualHi(false),	_mixerThread(false), _activeChanCount(0),
-	_songUnfinished(false), _numMusicChannels(8), _numMusicTracks(4), _sfxChan(0) {
+	_songUnfinished(false), _numMusicChannels(8), _numMusicTracks(4), _sfxChan(0), _disableFlags(0), _soundEffectReschedule(false) {
 	assert(_vm);
 	assert(_mixer);
 
@@ -529,6 +529,27 @@ void Indy3MacSnd::restoreAfterLoad() {
 			startSound(i);
 		}
 	}
+	_soundEffectReschedule = true;
+}
+
+void Indy3MacSnd::toggleMusic(bool enable) {
+	if ((_disableFlags & 1) == (enable ? 0 : 1))
+		return;
+	if (enable)
+		_mdrv->start();
+	else
+		_mdrv->stop();
+	_disableFlags ^= 1;
+}
+
+void Indy3MacSnd::toggleSoundEffects(bool enable) {
+	if ((_disableFlags & 2) == (enable ? 0 : 2))
+		return;
+	if (enable)
+		_soundEffectReschedule = true;
+	else
+		stopSoundEffect();
+	_disableFlags ^= 2;
 }
 
 void Indy3MacSnd::vblCallback() {
@@ -539,7 +560,7 @@ void Indy3MacSnd::vblCallback() {
 
 	_mixerThread = true;
 
-	if (!_curSong && (_sdrv->getChannelStatus(_sfxChan) & MacSoundDriver::kStatusDone))
+	if (!_curSong && ((_sdrv->getChannelStatus(_sfxChan) & MacSoundDriver::kStatusDone) || _soundEffectReschedule))
 		updateSoundEffect();
 	else if (_curSong)
 		updateSong();
@@ -641,11 +662,14 @@ void Indy3MacSnd::startSoundEffect(int id) {
 	}
 
 	stopActiveSound();
-	_soundEffectPlaying = true;
 
 	// Two-byte prio always gets through.
 	_lastSoundEffectPrio = prio & 0xff;
 	_soundEffectNumLoops = (int8)ptr[27];
+
+	_soundUsage[id]++;
+	if (_disableFlags & 2)
+		return;
 
 	int offs = (READ_BE_UINT16(ptr + 14) >= READ_BE_UINT16(ptr + 12)) ? 2 : 0;
 	uint16 numSamples = READ_BE_UINT16(ptr + 12 + offs);
@@ -673,7 +697,7 @@ void Indy3MacSnd::startSoundEffect(int id) {
 	}
 
 	_curSound = id;
-	_soundUsage[id]++;
+	_soundEffectPlaying = true;
 }
 
 void Indy3MacSnd::stopSong() {
@@ -716,6 +740,9 @@ void Indy3MacSnd::updateSong() {
 					_musicChannels[ii]->nextTick();
 			}
 
+			if (_disableFlags)
+				break;
+
 			if (_qualHi) {
 				for (int i = 0; i < _mdrv->numChannels(); ++i)
 					_mdrv->send(LegacyMusicDriver::kChanRate, i, _curSong ? _musicChannels[i]->checkPeriod() : 0);
@@ -736,6 +763,7 @@ void Indy3MacSnd::updateSong() {
 void Indy3MacSnd::updateSoundEffect() {
 	_sdrv->clearChannelFlags(_sfxChan, MacSoundDriver::kStatusDone);
 	bool chkRestart = false;
+	_soundEffectReschedule = false;
 
 	if (!_soundEffectPlaying || !_curSound) {
 		chkRestart = true;

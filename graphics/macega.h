@@ -23,30 +23,6 @@
 
 namespace Graphics {
 
-// This is the palette that Basilisk II uses by default for 16-color games.
-// It's basically the same as EGA, but a little bit brighter. While it does
-// seem like games can have their own palette (CLUT) resources, at least Loom
-// didn't seem to use it. (I could be wrong about that.)
-
-static const byte macEGAPalette[] = {
-	0x00, 0x00, 0x00,	// Black
-	0x00, 0x00, 0xBE,	// Blue
-	0x00, 0xBE, 0x00,	// Green
-	0x00, 0xBE, 0xBE,	// Cyan
-	0xBE, 0x00, 0x00,	// Red
-	0xBE, 0x00, 0xBE,	// Magenta
-	0xBE, 0x75, 0x00,	// Brown
-	0xBE, 0xBE, 0xBE,	// Light Gray
-	0x75, 0x75, 0x75,	// Dark Gray
-	0x75, 0x75, 0xFC,	// Bright Blue
-	0x75, 0xFC, 0x75,	// Bright Green
-	0x75, 0xFC, 0xFC,	// Bright Cyan
-	0xFC, 0x75, 0x75,	// Bright Red
-	0xFC, 0x75, 0xFC,	// Bright Magenta
-	0xFC, 0xFC, 0x75,	// Bright Yellow
-	0xFC, 0xFC, 0xFC	// White
-};
-
 // Each color has its own 2x2 dithering pattern. This array remaps them to the
 // color indexes for black and white. The order of the pixels is upper left,
 // upper right, lower left, lower right. I don't know if this is the standard

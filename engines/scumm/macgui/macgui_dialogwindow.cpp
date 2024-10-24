@@ -39,7 +39,16 @@ namespace Scumm {
 // drawing area (about and pause). It can not be dragged.
 // ---------------------------------------------------------------------------
 
-MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, MacDialogWindowStyle style) : _gui(gui), _system(system), _from(from), _bounds(bounds) {
+MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, MacDialogWindowStyle windowStyle, MacDialogMenuStyle menuStyle) : _gui(gui), _system(system), _from(from), _bounds(bounds) {
+	// Only apply menu style if the menu is open.
+	Graphics::MacMenu *menu = _gui->_windowManager->getMenu();
+
+	if (!menu->_active)
+		menuStyle = kMenuStyleNone;
+
+	_black = _gui->getBlack();
+	_white = _gui->getWhite();
+
 	_pauseToken = _gui->_vm->pauseEngine();
 
 	// Remember if the screen was shaking. We don't use the SCUMM engine's
@@ -53,7 +62,7 @@ MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, G
 	_backup->create(bounds.width(), bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
 	_backup->copyRectToSurface(*_from, 0, 0, bounds);
 
-	_margin = (style == kStyleNormal) ? 6 : 4;
+	_margin = (windowStyle == kWindowStyleNormal) ? 6 : 4;
 
 	_surface = _from->getSubArea(bounds);
 	bounds.grow(-_margin);
@@ -65,45 +74,69 @@ MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, G
 	Common::Rect r = Common::Rect(s->w, s->h);
 
 	r.grow(-1);
-	s->fillRect(r, kWhite);
+	s->fillRect(r, _white);
 
-	if (style == kStyleNormal) {
+	if (windowStyle == kWindowStyleNormal) {
 		int growths[] = { 1, -3, -1 };
 
 		for (int i = 0; i < ARRAYSIZE(growths); i++) {
 			r.grow(growths[i]);
 
-			s->hLine(r.left, r.top, r.right - 1, kBlack);
-			s->hLine(r.left, r.bottom - 1, r.right - 1, kBlack);
-			s->vLine(r.left, r.top + 1, r.bottom - 2, kBlack);
-			s->vLine(r.right - 1, r.top + 1, r.bottom - 2, kBlack);
+			s->hLine(r.left, r.top, r.right - 1, _black);
+			s->hLine(r.left, r.bottom - 1, r.right - 1, _black);
+			s->vLine(r.left, r.top + 1, r.bottom - 2, _black);
+			s->vLine(r.right - 1, r.top + 1, r.bottom - 2, _black);
 		}
-	} else if (style == kStyleRounded) {
+	} else if (windowStyle == kWindowStyleRounded) {
 		r.grow(1);
 
 		for (int i = 0; i < 2; i++) {
-			s->hLine(r.left + 2, r.top, r.right - 3, kBlack);
-			s->hLine(r.left + 2, r.bottom - 1, r.right - 3, kBlack);
-			s->vLine(r.left, r.top + 2, r.bottom - 3, kBlack);
-			s->vLine(r.right - 1, r.top + 2, r.bottom - 3, kBlack);
-			s->setPixel(r.left + 1, r.top + 1, kBlack);
-			s->setPixel(r.left + 1, r.bottom - 2, kBlack);
-			s->setPixel(r.right - 2, r.top + 1, kBlack);
-			s->setPixel(r.right - 2, r.bottom - 2, kBlack);
+			s->hLine(r.left + 2, r.top, r.right - 3, _black);
+			s->hLine(r.left + 2, r.bottom - 1, r.right - 3, _black);
+			s->vLine(r.left, r.top + 2, r.bottom - 3, _black);
+			s->vLine(r.right - 1, r.top + 2, r.bottom - 3, _black);
+			s->setPixel(r.left + 1, r.top + 1, _black);
+			s->setPixel(r.left + 1, r.bottom - 2, _black);
+			s->setPixel(r.right - 2, r.top + 1, _black);
+			s->setPixel(r.right - 2, r.bottom - 2, _black);
 			r.grow(-2);
 		}
 	}
 
-	// The menu bar isn't part of the Mac screen. We copy it to the Mac
-	// screen so that the beam cursor is correctly drawn if it ever moves
-	// that far up. There's no reason for it to, but it can happen.
+	if (menuStyle != kMenuStyleNone) {
+		// The menu bar isn't part of the Mac screen. We copy it to the
+		// Mac screen so that the beam cursor is correctly drawn if it
+		// ever moves that far up. There's no reason for it to, but it
+		// can happen.
 
-	Graphics::Surface *screen = _gui->surface();
-	Graphics::Surface *realScreen = _system->lockScreen();
+		Graphics::Surface *screen = _gui->surface();
+		Graphics::Surface *realScreen = _system->lockScreen();
 
-	screen->copyRectToSurface(*realScreen, 0, 0, Common::Rect(0, 0, 640, 19));
+		// On a real Mac, the menu stays interactable. But the only
+		// thing that is actually used for is the Edit menu, which we
+		// don't implement. In ScummVM, the menu bar is just a drawing
+		// at the point, so we can retouch it to look correct.
 
-	_system->unlockScreen();
+		if (menuStyle == kMenuStyleDisabled) {
+			for (int y = 0; y < 19; y++) {
+				for (int x = 5; x < 635; x++) {
+					if (((x + y) & 1) == 0)
+						realScreen->setPixel(x, y, _white);
+				}
+			}
+		} else if (menuStyle == kMenuStyleApple) {
+			for (int y = 1; y < 19; y++) {
+				for (int x = 10; x < 38; x++) {
+					uint32 color = realScreen->getPixel(x, y);
+					realScreen->setPixel(x, y, _gui->_windowManager->inverter(color));
+				}
+			}
+		}
+
+		screen->copyRectToSurface(*realScreen, 0, 0, Common::Rect(0, 0, 640, 19));
+
+		_system->unlockScreen();
+	}
 }
 
 MacGuiImpl::MacDialogWindow::~MacDialogWindow() {
@@ -246,18 +279,7 @@ void MacGuiImpl::MacDialogWindow::drawBeamCursor() {
 	for (int i = 0; i < ARRAYSIZE(beam); i += 2) {
 		uint32 color = _beamCursor->getPixel(beam[i], beam[i + 1]);
 
-		// From looking at a couple of colors, it seems this is how
-		// the colors are inverted for 0-15. I'm just going to assume
-		// that the same method will work reasonably well for the
-		// custom colors. If there's anything else, just make it black.
-
-		if (color <= 15)
-			color = 15 - color;
-		else if (color > kCustomColor && color <= kCustomColor + 15)
-			color = kCustomColor + 15 - color;
-		else
-			color = kBlack;
-
+		color = _gui->_windowManager->inverter(color);
 		_beamCursor->setPixel(beam[i], beam[i + 1], color);
 	}
 
@@ -332,25 +354,39 @@ void MacGuiImpl::MacDialogWindow::update(bool fullRedraw) {
 void MacGuiImpl::MacDialogWindow::drawDottedHLine(int x0, int y, int x1) {
 	Graphics::Surface *s = innerSurface();
 
-	Color color[2];
+	uint32 color[2];
 
-	if (_gui->_vm->_renderMode == Common::kRenderMacintoshBW) {
-		color[0] = kBlack;
-		color[1] = kWhite;
+	// The dotted line is used by the default save/load dialogs as a
+	// separator between buttons. Surprisingly, this is only drawn using
+	// shades of gray in 16 color mode. Not, as you might think, in 256
+	// color mode.
+	//
+	// At least not in the version of MacOS that was used for reference.
+
+	if (_gui->_vm->_renderMode == Common::kRenderMacintoshBW || !(_gui->_vm->_game.features & GF_16COLOR)) {
+		color[0] = _black;
+		color[1] = _white;
 	} else {
-		color[0] = kDarkGray;
-		color[1] = kLightGray;
+		color[0] = _gui->_windowManager->findBestColor(0x75, 0x75, 0x75);
+		color[1] = _gui->_windowManager->findBestColor(0xBE, 0xBE, 0xBE);
 	}
 
 	for (int x = x0; x <= x1; x++)
 		s->setPixel(x, y, color[x & 1]);
 }
 
-void MacGuiImpl::MacDialogWindow::fillPattern(Common::Rect r, uint16 pattern) {
+void MacGuiImpl::MacDialogWindow::fillPattern(Common::Rect r, uint16 pattern, bool fillBlack, bool fillWhite) {
 	for (int y = r.top; y < r.bottom; y++) {
 		for (int x = r.left; x < r.right; x++) {
 			int bit = 0x8000 >> (4 * (y % 4) + (x % 4));
-			_innerSurface.setPixel(x, y, (pattern & bit) ? kBlack : kWhite);
+
+			if (pattern & bit) {
+				if (fillBlack)
+					_innerSurface.setPixel(x, y, _black);
+			} else {
+				if (fillWhite)
+					_innerSurface.setPixel(x, y, _white);
+			}
 		}
 	}
 
@@ -677,9 +713,9 @@ void MacGuiImpl::MacDialogWindow::plotPattern(int x, int y, int pattern, void *d
 	Graphics::Surface *s = window->innerSurface();
 	int bit = 0x8000 >> (4 * (y % 4) + (x % 4));
 	if (patterns[pattern] & bit)
-		s->setPixel(x, y, kBlack);
+		s->setPixel(x, y, window->_gui->getBlack());
 	else
-		s->setPixel(x, y, kWhite);
+		s->setPixel(x, y, window->_gui->getWhite());
 }
 
 void MacGuiImpl::MacDialogWindow::plotPatternDarkenOnly(int x, int y, int pattern, void *data) {
@@ -691,12 +727,22 @@ void MacGuiImpl::MacDialogWindow::plotPatternDarkenOnly(int x, int y, int patter
 	Graphics::Surface *s = window->innerSurface();
 	int bit = 0x8000 >> (4 * (y % 4) + (x % 4));
 	if (patterns[pattern] & bit)
-		s->setPixel(x, y, kBlack);
+		s->setPixel(x, y, window->_gui->getBlack());
 }
 
-void MacGuiImpl::MacDialogWindow::drawTexts(Common::Rect r, const TextLine *lines) {
+void MacGuiImpl::MacDialogWindow::drawTexts(Common::Rect r, const TextLine *lines, bool inverse) {
 	if (!lines)
 		return;
+
+	uint32 fg, bg;
+
+	if (inverse) {
+		fg = _white;
+		bg = _black;
+	} else {
+		fg = _black;
+		bg = _white;
+	}
 
 	Graphics::Surface *s = innerSurface();
 
@@ -705,19 +751,41 @@ void MacGuiImpl::MacDialogWindow::drawTexts(Common::Rect r, const TextLine *line
 		const Graphics::Font *f2 = nullptr;
 
 		switch (lines[i].style) {
-		case kStyleHeader:
+		case kStyleHeader1:
 			f1 = _gui->getFont(kAboutFontHeaderOutside);
 			f2 = _gui->getFont(kAboutFontHeaderInside);
 			break;
+
+		case kStyleHeader2:
+			f1 = _gui->getFont(kAboutFontHeader);
+			break;
+
+		case kStyleHeaderSimple1:
+			f1 = _gui->getFont(kAboutFontHeaderSimple1);
+			break;
+
+		case kStyleHeaderSimple2:
+			f1 = _gui->getFont(kAboutFontHeaderSimple2);
+			break;
+
 		case kStyleBold:
 			f1 = _gui->getFont(kAboutFontBold);
 			break;
+
+		case kStyleBold2:
+			f1 = _gui->getFont(kAboutFontBold2);
+			break;
+
 		case kStyleExtraBold:
 			f1 = _gui->getFont(kAboutFontExtraBold);
 			break;
+
 		case kStyleRegular:
 			f1 = _gui->getFont(kAboutFontRegular);
 			break;
+
+		default:
+			return;
 		}
 
 		const char *msg = lines[i].str;
@@ -726,26 +794,42 @@ void MacGuiImpl::MacDialogWindow::drawTexts(Common::Rect r, const TextLine *line
 		Graphics::TextAlign align = lines[i].align;
 		int width = r.right - x;
 
-		if (lines[i].style == kStyleHeader) {
-			f1->drawString(s, msg, x - 1, y + 1, width, kBlack, align);
-			f2->drawString(s, msg, x + 1, y + 1, width, kBlack, align);
-			f1->drawString(s, msg, x - 2, y, width, kBlack, align);
-			f2->drawString(s, msg, x, y, width, kWhite, align);
-		} else {
-			f1->drawString(s, msg, x, y, width, kBlack, align);
+		switch (lines[i].style) {
+		case kStyleHeader1:
+			f1->drawString(s, msg, x - 1, y + 1, width, fg, align);
+			f2->drawString(s, msg, x + 1, y + 1, width, fg, align);
+			f1->drawString(s, msg, x - 2, y, width, fg, align);
+			f2->drawString(s, msg, x, y, width, bg, align);
+			break;
 
-			if (lines[i].style == kStyleExtraBold)
-				f1->drawString(s, msg, x + 1, y, width, kBlack, align);
+		case kStyleHeader2:
+			f1->drawString(s, msg, x, y, width, fg, align);
+			f1->drawString(s, msg, x + 1, y, width, fg, align);
+			break;
+
+		default:
+			f1->drawString(s, msg, x, y, width, fg, align);
+			break;
 		}
 	}
 }
 
-void MacGuiImpl::MacDialogWindow::drawTextBox(Common::Rect r, const TextLine *lines, int arc) {
-	Graphics::drawRoundRect(r, arc, kWhite, true, plotPixel, this);
-	Graphics::drawRoundRect(r, arc, kBlack, false, plotPixel, this);
+void MacGuiImpl::MacDialogWindow::drawTextBox(Common::Rect r, const TextLine *lines, bool inverse, int arc) {
+	uint32 fg, bg;
+
+	if (inverse) {
+		fg = _white;
+		bg = _black;
+	} else {
+		fg = _black;
+		bg = _white;
+	}
+
+	Graphics::drawRoundRect(r, arc, bg, true, plotPixel, this);
+	Graphics::drawRoundRect(r, arc, fg, false, plotPixel, this);
 	markRectAsDirty(r);
 
-	drawTexts(r, lines);
+	drawTexts(r, lines, inverse);
 }
 
 } // End of namespace Scumm

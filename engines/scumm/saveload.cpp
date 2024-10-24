@@ -70,7 +70,7 @@ struct SaveInfoSection {
 
 #define SaveInfoSectionSize (4+4+4 + 4+4 + 4+2)
 
-#define CURRENT_VER 120
+#define CURRENT_VER 121
 #define INFOSECTION_VERSION 2
 
 #pragma mark -
@@ -753,9 +753,6 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	if (_game.features & GF_OLD_BUNDLE)
 		loadCharset(0); // FIXME - HACK ?
 
-	// Save this for later
-	bool currentSessionUsesCorrection = _useMacScreenCorrectHeight;
-
 	//
 	// Now do the actual loading
 	//
@@ -875,17 +872,8 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	updateDirtyScreen(kMainVirtScreen);
 	updatePalette();
 
-	if (!currentSessionUsesCorrection && _useMacScreenCorrectHeight) {
-		sb -= 20 * 2;
-		sh -= 20 * 2;
-	} else if (currentSessionUsesCorrection && !_useMacScreenCorrectHeight) {
-		sb += 20 * 2;
-		sh += 20 * 2;
-	}
-
 	initScreens(sb, sh);
 
-	_useMacScreenCorrectHeight = currentSessionUsesCorrection;
 	_completeScreenRedraw = true;
 
 	// Reset charset mask
@@ -1432,27 +1420,16 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsUint16LE(camera._movingToActor, VER(8));
 	s.syncAsByte(_cameraIsFrozen, VER(108));
 
-	// For Mac versions...
-	bool currentSessionUsesCorrection = _useMacScreenCorrectHeight;
-
-	s.syncAsUint16LE(_screenDrawOffset, VER(112));
+	// Old stuff for Mac versions, see below...
+	s.skip(2, VER(112), VER(121)); // Old _screenDrawOffset
 	s.syncAsByte(_useMacScreenCorrectHeight, VER(112));
 
-	// If this is an older version without Mac screen
-	// offset correction, bring it up to date...
+	// Post-load fix for some savegame versions which offset the engine elements
+	// instead of offsetting the final screen texture and the mouse coordinates...
 	if (s.isLoading()) {
-		if (s.getVersion() < VER(112)) {
-			// We assume _useMacScreenCorrectHeight == false
-			camera._cur.y += _screenDrawOffset;
-			camera._last.y += _screenDrawOffset;
-		} else {
-			if (!currentSessionUsesCorrection && _useMacScreenCorrectHeight) {
-				camera._cur.y -= _screenDrawOffset;
-				camera._last.y -= _screenDrawOffset;
-			} else if (currentSessionUsesCorrection && !_useMacScreenCorrectHeight) {
-				camera._cur.y += _screenDrawOffset;
-				camera._last.y += _screenDrawOffset;
-			}
+		if (_game.version == 3 && _game.platform == Common::kPlatformMacintosh && s.getVersion() >= VER(112) && s.getVersion() < VER(121)) {
+			camera._cur.y -= 20;
+			camera._last.y -= 20;
 		}
 	}
 
@@ -1540,6 +1517,11 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 				_cursor.hotspotX = _cursor.hotspotY = 0;
 			}
 		}
+	} else if ((_cursor.width <= 0 || _cursor.width > 640 || _cursor.height <= 0 || _cursor.height > 480) && _game.platform == Common::kPlatformMacintosh) {
+		_cursor.width = 11;
+		_cursor.height = 16;
+		_cursor.hotspotX = 1;
+		_cursor.hotspotY = 1;
 	}
 
 	s.syncAsByte(_cursor.animate, VER(20));
@@ -1606,19 +1588,12 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsUint16LE(_screenB, VER(8));
 	s.syncAsUint16LE(_screenH, VER(8));
 
-	// Other screen offset corrections for Mac games savestates...
+	// Post-load fix for some savegame versions which offset the engine elements
+	// instead of offsetting the final screen texture and the mouse coordinates...
 	if (s.isLoading()) {
-		if (s.getVersion() < VER(112)) {
-			_screenB += _screenDrawOffset;
-			_screenH += _screenDrawOffset;
-		} else {
-			if (currentSessionUsesCorrection && !_useMacScreenCorrectHeight) {
-				_screenB -= _screenDrawOffset;
-				_screenH -= _screenDrawOffset;
-			} else if (!currentSessionUsesCorrection && _useMacScreenCorrectHeight) {
-				_screenB += _screenDrawOffset;
-				_screenH += _screenDrawOffset;
-			}
+		if (_game.version == 3 && _game.platform == Common::kPlatformMacintosh && s.getVersion() >= VER(112) && s.getVersion() < VER(121)) {
+			_screenB -= 20;
+			_screenH -= 20;
 		}
 	}
 
@@ -1672,6 +1647,10 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 			x += (kHercWidth - _screenWidth * 2) / 2;
 			y = y * 7 / 4;
 		} else if (_textSurfaceMultiplier == 2 || _renderMode == Common::kRenderCGA_BW || _enableEGADithering) {
+			x *= 2;
+			y *= 2;
+		} else if (_macScreen) {
+			y += _macScreenDrawOffset;
 			x *= 2;
 			y *= 2;
 		}
