@@ -94,7 +94,7 @@ public:
 	bool canWalkInLineToTarget(int x, int y, int targetX, int targetY);
 	void printRoomDescriptionText() const;
 	void calculateScaledSpriteDimensions(int width, int height, int curYPosition);
-	bool isOutside();
+	bool isOutside() const;
 	bool isGiger();
 	void runRoomObjects();
 	void removeObjectFromRoom(int16 objNum);
@@ -109,7 +109,7 @@ public:
 
 private:
 	bool load();
-	static Common::String stripSpaces(Common::String source);
+	static Common::String stripSpaces(const Common::String &source);
 	void drawTrunk();
 	void advanceLocAnimFrame(int roomObjIdx);
 };

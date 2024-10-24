@@ -199,7 +199,7 @@ bool Room::load() {
 	return true;
 }
 
-Common::String Room::stripSpaces(Common::String source) {
+Common::String Room::stripSpaces(const Common::String &source) {
 	Common::String out;
 	const char *src = source.c_str();
 	for (uint i = 0; i < source.size(); i++) {
@@ -328,8 +328,8 @@ int Room::CheckCursorAndMovedObjects() {
 	for (int i = 0; i < Objects::MAX_MOVED_OBJECTS; i++) {
 		if (g_engine->_objectVar.getMoveObjectRoom(i) == _roomNumber) {
 			Common::Point movedObjPos = g_engine->_objectVar.getMoveObjectPosition(i);
-			int16 spriteWidth = 0;
-			int16 spriteHeight = 0;
+			int16 spriteWidth;
+			int16 spriteHeight;
 			if (i == 22) {
 				uint8 spriteIdx = g_engine->_objectVar.getVar(5) != 0 ? 1 : 0;
 				const Sprite &sprite = _locationSprites.getSpriteAt(spriteIdx);
@@ -464,7 +464,7 @@ bool Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int destY) {
 	iVar4 = 0;
 	if ((iVar1 < 0) || (0 < destY)) {
 		if ((iVar1 < 1) && (destY < 1)) {
-			iVar2 = -iVar1;
+			//iVar2 = -iVar1;	// TODO: Unused
 			if (-iVar1 <= -destY) { //destY == iVar1 || SBORROW2(iVar2,-destY) != iVar2 + destY < 0) { //-iVar1 <= -destY
 				while (srcX != destX) {
 					iVar4 = iVar4 - iVar1;
@@ -475,7 +475,7 @@ bool Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int destY) {
 					srcY = srcY + -1;
 					iVar2 = canWalkAtLocation(srcX, srcY);
 					if (iVar2 == 0) {
-						return 0;
+						return false;
 					}
 				}
 			} else {
@@ -488,7 +488,7 @@ bool Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int destY) {
 					srcX = srcX + -1;
 					iVar2 = canWalkAtLocation(srcX, srcY);
 					if (iVar2 == 0) {
-						return 0;
+						return false;
 					}
 				}
 			}
@@ -504,7 +504,7 @@ bool Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int destY) {
 					srcY = srcY + 1;
 					iVar2 = canWalkAtLocation(srcX, srcY);
 					if (iVar2 == 0) {
-						return 0;
+						return false;
 					}
 				}
 			} else {
@@ -517,12 +517,12 @@ bool Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int destY) {
 					srcX = srcX + -1;
 					iVar2 = canWalkAtLocation(srcX, srcY);
 					if (iVar2 == 0) {
-						return 0;
+						return false;
 					}
 				}
 			}
 		} else {
-			iVar2 = iVar1;
+			//iVar2 = iVar1;	// TODO: Unused
 			if (destY < iVar1) {
 				while (srcX != destX) {
 					iVar4 = iVar4 + destY;
@@ -533,7 +533,7 @@ bool Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int destY) {
 					srcX = srcX + 1;
 					iVar2 = canWalkAtLocation(srcX, srcY);
 					if (iVar2 == 0) {
-						return 0;
+						return false;
 					}
 				}
 			} else {
@@ -546,7 +546,7 @@ bool Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int destY) {
 					srcY = srcY + 1;
 					iVar2 = canWalkAtLocation(srcX, srcY);
 					if (iVar2 == 0) {
-						return 0;
+						return false;
 					}
 				}
 			}
@@ -563,7 +563,7 @@ bool Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int destY) {
 				srcX = srcX + 1;
 				iVar2 = canWalkAtLocation(srcX, srcY);
 				if (iVar2 == 0) {
-					return 0;
+					return false;
 				}
 			}
 		} else {
@@ -576,7 +576,7 @@ bool Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int destY) {
 				srcY = srcY + -1;
 				iVar2 = canWalkAtLocation(srcX, srcY);
 				if (iVar2 == 0) {
-					return 0;
+					return false;
 				}
 			}
 		}
@@ -750,7 +750,7 @@ int Room::getObjectUnderCursor() {
 	return objIdx;
 }
 
-bool Room::isOutside() {
+bool Room::isOutside() const {
 	bool isRoomOutside;
 
 	if (_roomNumber == 61) {
@@ -819,7 +819,7 @@ void Room::runRoomObjects() {
 			break;
 		}
 		case 2: {
-			int spriteNum = 0;
+			int spriteNum;
 			if (_roomNumber == 17 && g_engine->_animation->_isPlayingAnimation_maybe && g_engine->_animation->_otherNspAnimationType_maybe == 19 && _locObjFrame[roomObjIdx] == 4) {
 				advanceLocAnimFrame(roomObjIdx + 1);
 				spriteNum = _locationSprites.getAnimAt(1)._frameNo[_locObjFrame[roomObjIdx + 1]];
