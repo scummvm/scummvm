@@ -756,7 +756,7 @@ void FormattaLogs(WGame &game) {
 		init.PDALog[PDALogSorted[i].PDALogInd].dy = 15 * init.PDALog[PDALogSorted[i].PDALogInd].lines;
 
 		if (((init.PDALog[PDALogSorted[i].PDALogInd].flags & PDA_MENU) == FALSE) && (init.PDALog[PDALogSorted[i].PDALogInd].time >= 0)) {
-			sprintf(init.PDALog[PDALogSorted[i].PDALogInd].info.c_str(), "%04d", init.PDALog[PDALogSorted[i].PDALogInd].time);
+			snprintf(init.PDALog[PDALogSorted[i].PDALogInd].info.c_str(), 6, "%04d", init.PDALog[PDALogSorted[i].PDALogInd].time);
 			init.PDALog[PDALogSorted[i].PDALogInd].info.c_str()[5] = 0;
 			init.PDALog[PDALogSorted[i].PDALogInd].info.c_str()[4] = init.PDALog[PDALogSorted[i].PDALogInd].info.c_str()[3];
 			init.PDALog[PDALogSorted[i].PDALogInd].info.c_str()[3] = init.PDALog[PDALogSorted[i].PDALogInd].info.c_str()[2];
