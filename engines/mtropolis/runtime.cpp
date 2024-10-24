@@ -3886,7 +3886,7 @@ CORO_BEGIN_DEFINITION(Structural::StructuralConsumeCommandCoroutine)
 #endif
 				CORO_ERROR;
 			CORO_END_IF
-				
+
 			locals->miniscriptThread.reset(new MiniscriptThread(params->runtime, params->msg, nullptr, nullptr, nullptr));
 
 			CORO_IF(!params->self->readAttribute(locals->miniscriptThread.get(), locals->attribGetResult, *locals->attribName))
@@ -3918,7 +3918,7 @@ CORO_BEGIN_DEFINITION(Structural::StructuralConsumeCommandCoroutine)
 		if (!locals->quietlyDiscard)
 			warning("Command type %i was ignored", params->msg->getEvent().eventType);
 	CORO_END_FUNCTION
-	
+
 CORO_END_DEFINITION
 
 VThreadState Structural::asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
@@ -7899,7 +7899,7 @@ void Project::loadSceneFromStream(const Common::SharedPtr<Structural> &scene, ui
 		loaderStack.contexts.push_back(loaderContext);
 	}
 
-	size_t numObjectsLoaded = 0;
+	int numObjectsLoaded = 0;
 	while (stream.pos() != streamDesc.size) {
 		Common::SharedPtr<Data::DataObject> dataObject;
 		Data::loadDataObject(plugInDataLoaderRegistry, reader, dataObject);
@@ -7924,6 +7924,7 @@ void Project::loadSceneFromStream(const Common::SharedPtr<Structural> &scene, ui
 
 		numObjectsLoaded++;
 	}
+	debug(9, "Loaded %d scene objects", numObjectsLoaded);
 
 	if ((loaderStack.contexts.size() == 1 && loaderStack.contexts[0].type != ChildLoaderContext::kTypeFilteredElements) || loaderStack.contexts.size() > 1) {
 		error("Scene stream loader finished in an expected state, something didn't finish loading");
@@ -8195,7 +8196,7 @@ void Project::loadBootStream(size_t streamIndex, const Hacks &hacks) {
 
 	const Data::PlugInModifierRegistry &plugInDataLoaderRegistry = _plugInRegistry.getDataLoaderRegistry();
 
-	size_t numObjectsLoaded = 0;
+	int numObjectsLoaded = 0;
 	while (stream.pos() != streamDesc.size) {
 		Common::SharedPtr<Data::DataObject> dataObject;
 		Data::loadDataObject(plugInDataLoaderRegistry, reader, dataObject);
@@ -8260,6 +8261,8 @@ void Project::loadBootStream(size_t streamIndex, const Hacks &hacks) {
 
 		numObjectsLoaded++;
 	}
+
+	debug(9, "Loaded %d boot objects", numObjectsLoaded);
 
 	if (loaderStack.contexts.size() != 1 || loaderStack.contexts[0].type != ChildLoaderContext::kTypeProject) {
 		error("Boot stream loader finished in an expected state, something didn't finish loading");
@@ -9043,7 +9046,7 @@ CORO_BEGIN_DEFINITION(VisualElement::VisualElementConsumeCommandCoroutine)
 			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, params->self, false, true, false));
 
 			CORO_CALL(Runtime::SendMessageOnVThreadCoroutine, params->runtime, dispatch);
-			
+
 			CORO_RETURN;
 		CORO_ELSE_IF(Event(EventIDs::kElementHide, 0).respondsTo(params->msg->getEvent()))
 			if (params->self->_visible) {

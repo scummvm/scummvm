@@ -254,6 +254,8 @@ static void loadCursorsMac(Common::Archive &archive, const Common::Path &path, C
 			numCursorsLoaded++;
 		}
 	}
+
+	debug(9, "Loaded %d Mac cursors", numCursorsLoaded);
 }
 
 static bool loadCursorsWin(Common::Archive &archive, const Common::Path &path, CursorGraphicCollection &cursorGraphics) {
@@ -285,6 +287,8 @@ static bool loadCursorsWin(Common::Archive &archive, const Common::Path &path, C
 		cursorGraphics.addWinCursorGroup(id.getID(), cursorGroup);
 		numCursorGroupsLoaded++;
 	}
+
+	debug(9, "Loaded %d Win cursors", numCursorGroupsLoaded);
 
 	return true;
 }
@@ -2640,7 +2644,7 @@ void findWindowsMainSegment(Common::Archive &fs, const BootScriptContext &bootSc
 		filteredFiles.push_back(mainSegmentFile);
 
 		bool hasRecognizedSuffix = false;
-		
+
 		for (const char *suffix : mainSegmentSuffixes) {
 			if (pathStr.hasSuffixIgnoreCase(suffix)) {
 				hasRecognizedSuffix = true;
@@ -3230,7 +3234,7 @@ BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 
 		vfs->listMatchingMembers(pluginFiles, pluginsLocation.appendComponent("*"));
 
-		
+
 		debug(4, "Looking for plug-in files in %s", pluginsLocation.toString(vfs->getPathSeparator()).c_str());
 		for (const Common::ArchiveMemberPtr &pluginFile : pluginFiles) {
 			Common::String fileName = pluginFile->getFileName();
