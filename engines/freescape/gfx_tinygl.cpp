@@ -95,19 +95,17 @@ void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 	tglBlit(((TinyGLTexture *)texture)->getBlitTexture(), transform);
 }
 
-void TinyGLRenderer::updateProjectionMatrix(float fov, float yminValue, float ymaxValue, float nearClipPlane, float farClipPlane) {
+void TinyGLRenderer::updateProjectionMatrix(float fov, float aspectRatio, float nearClipPlane, float farClipPlane) {
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
 
-	// Determining xmaxValue and ymaxValue still needs some work for matching the 3D view in freescape games
-	/*float aspectRatio = _screenW / (float)_screenH;
-
-	float xmaxValue = nearClipPlane * tan(Common::deg2rad(fov) / 2);
+	float xmaxValue = nearClipPlane * tan(Math::deg2rad(fov) / 2);
 	float ymaxValue = xmaxValue / aspectRatio;
-	// debug("max values: %f %f", xmaxValue, ymaxValue);
 
-	tglFrustumf(xmaxValue, -xmaxValue, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);*/
-	tglFrustumf(1.5, -1.5, yminValue, ymaxValue, nearClipPlane, farClipPlane);
+	// Corrected glFrustum call
+	tglFrustum(-xmaxValue, xmaxValue, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);
+	tglScalef(-1.0f, 1.0f, 1.0f);
+
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
 }

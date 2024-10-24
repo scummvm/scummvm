@@ -29,9 +29,6 @@ namespace Freescape {
 
 void CastleEngine::initZX() {
 	_viewArea = Common::Rect(64, 36, 256, 148);
-	_yminValue = -1;
-	_ymaxValue = 1;
-
 	_soundIndexShoot = 5;
 	_soundIndexCollide = -1;
 	_soundIndexFall = -1;

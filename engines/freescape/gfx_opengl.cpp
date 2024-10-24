@@ -199,18 +199,18 @@ void OpenGLRenderer::drawSkybox(Texture *texture, Math::Vector3d camera) {
 	glFlush();
 }
 
-void OpenGLRenderer::updateProjectionMatrix(float fov, float yminValue, float ymaxValue, float nearClipPlane, float farClipPlane) {
+void OpenGLRenderer::updateProjectionMatrix(float fov, float aspectRatio, float nearClipPlane, float farClipPlane) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	// Determining xmaxValue and ymaxValue still needs some work for matching the 3D view in freescape games
-	/*float aspectRatio = _screenW / (float)_screenH;
 
-	float xmaxValue = nearClipPlane * tan(Common::deg2rad(fov) / 2);
+	// Calculate the xmax and ymax values based on FOV and aspect ratio
+	float xmaxValue = nearClipPlane * tan(Math::deg2rad(fov) / 2);
 	float ymaxValue = xmaxValue / aspectRatio;
-	// debug("max values: %f %f", xmaxValue, ymaxValue);
 
-	glFrustum(xmaxValue, -xmaxValue, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);*/
-	glFrustum(1.5, -1.5, yminValue, ymaxValue, nearClipPlane, farClipPlane);
+	// Corrected glFrustum call
+	glFrustum(-xmaxValue, xmaxValue, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);
+	glScalef(-1.0f, 1.0f, 1.0f);
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }

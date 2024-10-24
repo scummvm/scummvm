@@ -144,8 +144,6 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_lastFrame = 0;
 	_nearClipPlane = 2;
 	_farClipPlane = 8192 + 1802; // Added some extra distance to avoid flickering
-	_yminValue = -0.625;
-	_ymaxValue = 0.625;
 
 	// These depends on the specific game
 	_playerHeight = 0;
@@ -421,7 +419,8 @@ void FreescapeEngine::drawFrame() {
 	if (_currentArea->isOutside())
 		farClipPlane *= 100;
 
-	_gfx->updateProjectionMatrix(90.0, _yminValue, _ymaxValue, _nearClipPlane, farClipPlane);
+	float aspectRatio = isCastle() ? 1.6 : 2.18;
+	_gfx->updateProjectionMatrix(75.0, aspectRatio, _nearClipPlane, farClipPlane);
 	_gfx->positionCamera(_position, _position + _cameraFront);
 
 	if (_underFireFrames > 0) {
