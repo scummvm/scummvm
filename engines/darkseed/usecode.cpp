@@ -186,6 +186,9 @@ void Darkseed::UseCode::useCode(int objNum) {
 			break;
 		case 4:
 			_console->printTosText(653);
+			break;
+		default:
+			break;
 		}
 		return;
 	}
@@ -643,8 +646,9 @@ void Darkseed::UseCode::useCode(int objNum) {
 					} else {
 						_objectVar[68] = 2;
 					}
-				} else {
-					_objectVar[68] = 0;
+				// TODO: Unreachable code
+				//} else {
+				//	_objectVar[68] = 0;
 				}
 			} else {
 				_console->addTextLine("You touch the surface of the ornate sigil.");
