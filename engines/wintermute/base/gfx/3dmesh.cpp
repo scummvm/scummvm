@@ -48,10 +48,8 @@ bool Mesh3DS::loadFrom3DS(Common::MemoryReadStream &fileStream) {
 			_vertexData = new GeometryVertex[_vertexCount]();
 
 			for (int i = 0; i < _vertexCount; ++i) {
-				// note that .3ds has a right handed coordinate system
-				// with the z axis pointing upwards
 				_vertexData[i].x = fileStream.readFloatLE();
-				_vertexData[i].z = -fileStream.readFloatLE();
+				_vertexData[i].z = fileStream.readFloatLE();
 				_vertexData[i].y = fileStream.readFloatLE();
 			}
 			break;
@@ -63,8 +61,8 @@ bool Mesh3DS::loadFrom3DS(Common::MemoryReadStream &fileStream) {
 
 			for (int i = 0; i < faceCount; ++i) {
 				_indexData[i * 3 + 0] = fileStream.readUint16LE();
-				_indexData[i * 3 + 1] = fileStream.readUint16LE();
 				_indexData[i * 3 + 2] = fileStream.readUint16LE();
+				_indexData[i * 3 + 1] = fileStream.readUint16LE();
 				fileStream.readUint16LE(); // not used
 			}
 			break;

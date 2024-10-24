@@ -183,8 +183,7 @@ bool AdObject3D::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		stack->correctParams(3);
 		_posVector._x = stack->pop()->getFloat();
 		_posVector._y = stack->pop()->getFloat();
-		// scripts will expect a Direct3D coordinate system
-		_posVector._z = -stack->pop()->getFloat();
+		_posVector._z = stack->pop()->getFloat();
 
 		stack->pushNULL();
 
@@ -283,8 +282,7 @@ ScValue *AdObject3D::scGetProperty(const Common::String &name) {
 	// PosZ
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "PosZ") {
-		// scripts will expect a Direct3D coordinate system
-		_scValue->setFloat(-_posVector._z);
+		_scValue->setFloat(_posVector._z);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -403,8 +401,7 @@ bool AdObject3D::scSetProperty(const char *name, ScValue *value) {
 	// PosZ
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PosZ") == 0) {
-		// scripts will expect a Direct3D coordinate system
-		_posVector._z = -value->getFloat();
+		_posVector._z = value->getFloat();
 		return true;
 	}
 

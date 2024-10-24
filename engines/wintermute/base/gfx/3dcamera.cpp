@@ -62,7 +62,7 @@ bool Camera3D::getViewMatrix(DXMatrix *viewMatrix) {
 		DXVec3TransformCoord(&up, &up, &rot);
 	}
 
-	DXMatrixLookAtRH(viewMatrix, &_position, &_target, &up);
+	DXMatrixLookAtLH(viewMatrix, &_position, &_target, &up);
 
 	return true;
 }
@@ -117,11 +117,11 @@ bool Camera3D::loadFrom3DS(Common::MemoryReadStream &fileStream) {
 	int32 end = fileStream.pos() + wholeChunkSize - 6;
 
 	_position._x = fileStream.readFloatLE();
-	_position._z = -fileStream.readFloatLE();
+	_position._z = fileStream.readFloatLE();
 	_position._y = fileStream.readFloatLE();
 
 	_target._x = fileStream.readFloatLE();
-	_target._z = -fileStream.readFloatLE();
+	_target._z = fileStream.readFloatLE();
 	_target._y = fileStream.readFloatLE();
 
 	_bank = fileStream.readFloatLE();

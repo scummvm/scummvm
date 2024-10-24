@@ -156,8 +156,7 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 			rotKey->_rotation._w = fileRotKey->_tfkeys[0];
 			rotKey->_rotation._x = fileRotKey->_tfkeys[1];
 			rotKey->_rotation._y = fileRotKey->_tfkeys[2];
-			// mirror z component
-			rotKey->_rotation._z = -fileRotKey->_tfkeys[3];
+			rotKey->_rotation._z = fileRotKey->_tfkeys[3];
 
 			_rotKeys.push_back(rotKey);
 		}
@@ -193,8 +192,7 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 			posKey->_time = filePosKey->_time;
 			posKey->_pos._x = filePosKey->_tfkeys[0];
 			posKey->_pos._y = filePosKey->_tfkeys[1];
-			// mirror Z
-			posKey->_pos._z = -filePosKey->_tfkeys[2];
+			posKey->_pos._z = filePosKey->_tfkeys[2];
 
 			_posKeys.push_back(posKey);
 		}
@@ -218,17 +216,6 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 				keyData._m4x4[i] = fileMatrixKey->_tfkeys[i];
 			}
 
-			// mirror at orign
-			keyData._m[3][2] *= -1.0f;
-
-			// mirror base vectors
-			keyData._m[0][2] *= -1.0f;
-			keyData._m[1][2] *= -1.0f;
-
-			// change handedness
-			keyData._m[2][0] *= -1.0f;
-			keyData._m[2][1] *= -1.0f;
-
 			// we always convert matrix keys to T-R-S
 			decomposeMatrixSimple(&keyData, &transVec, &scaleVec, &qRot);
 
@@ -244,10 +231,9 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 			scaleKey->_scale = scaleVec;
 			rotationKey->_rotation = qRot;
 
-			// negate for opengl
-			rotationKey->_rotation._x = -(-rotationKey->_rotation._x);
-			rotationKey->_rotation._y = -(-rotationKey->_rotation._y);
-			rotationKey->_rotation._z = -(-rotationKey->_rotation._z);
+			rotationKey->_rotation._x = -rotationKey->_rotation._x;
+			rotationKey->_rotation._y = -rotationKey->_rotation._y;
+			rotationKey->_rotation._z = -rotationKey->_rotation._z;
 
 			_posKeys.push_back(positionKey);
 			_scaleKeys.push_back(scaleKey);
@@ -342,16 +328,14 @@ bool Animation::update(int slot, uint32 localTime, float animLerpValue) {
 		// apply spherical lerp function
 		DXQuaternion q1, q2;
 
-		// negate for opengl
-		q1._x =  -(-_rotKeys[keyIndex1]->_rotation._x);
-		q1._y =  -(-_rotKeys[keyIndex1]->_rotation._y);
-		q1._z =  -(-_rotKeys[keyIndex1]->_rotation._z);
+		q1._x = -_rotKeys[keyIndex1]->_rotation._x;
+		q1._y = -_rotKeys[keyIndex1]->_rotation._y;
+		q1._z = -_rotKeys[keyIndex1]->_rotation._z;
 		q1._w =  _rotKeys[keyIndex1]->_rotation._w;
 
-		// negate for opengl
-		q2._x =  -(-_rotKeys[keyIndex2]->_rotation._x);
-		q2._y =  -(-_rotKeys[keyIndex2]->_rotation._y);
-		q2._z =  -(-_rotKeys[keyIndex2]->_rotation._z);
+		q2._x = -_rotKeys[keyIndex2]->_rotation._x;
+		q2._y = -_rotKeys[keyIndex2]->_rotation._y;
+		q2._z = -_rotKeys[keyIndex2]->_rotation._z;
 		q2._w =  _rotKeys[keyIndex2]->_rotation._w;
 
 		DXQuaternionSlerp(&resultRot, &q1, &q2, lerpValue);

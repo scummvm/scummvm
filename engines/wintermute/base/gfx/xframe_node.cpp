@@ -131,18 +131,6 @@ bool FrameNode::loadFromXData(const Common::String &filename, XModel *model, XFi
 			for (int i = 0; i < 16; ++i) {
 				_transformationMatrix._m4x4[i] = frameTransformMatrix->_frameMatrix[i];
 			}
-
-			// mirror at orign
-			_transformationMatrix._m[3][2] *= -1.0f;
-
-			// mirror base vectors
-			_transformationMatrix._m[0][2] *= -1.0f;
-			_transformationMatrix._m[1][2] *= -1.0f;
-
-			// change handedness
-			_transformationMatrix._m[2][0] *= -1.0f;
-			_transformationMatrix._m[2][1] *= -1.0f;
-
 			_originalMatrix = _transformationMatrix;
 			return true;
 		}

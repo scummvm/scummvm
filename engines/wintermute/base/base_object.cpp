@@ -563,8 +563,7 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		double x = stack->pop()->getFloat();
 		double y = stack->pop()->getFloat();
 		double z = stack->pop()->getFloat();
-		// invert z coordinate because of OpenGL coordinate system
-		_shadowLightPos = DXVector3(x, y, -z);
+		_shadowLightPos = DXVector3(x, y, z);
 
 		stack->pushNULL();
 		return STATUS_OK;

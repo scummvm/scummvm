@@ -504,18 +504,6 @@ bool DXSkinInfo::setBoneOffsetMatrix(uint32 boneIdx, const float *boneTransform)
 	for (int m = 0; m < 16; m++) {
 		_bones[boneIdx]._transform._m4x4[m] = boneTransform[m];
 	}
-
-	// mirror at orign
-	_bones[boneIdx]._transform._m[3][2] *= -1.0f;
-
-	// mirror base vectors
-	_bones[boneIdx]._transform._m[0][2] *= -1.0f;
-	_bones[boneIdx]._transform._m[1][2] *= -1.0f;
-
-	// change handedness
-	_bones[boneIdx]._transform._m[2][0] *= -1.0f;
-	_bones[boneIdx]._transform._m[2][1] *= -1.0f;
-
 	return true;
 }
 
@@ -1122,17 +1110,17 @@ bool DXLoadSkinMesh(XFileData *fileData, DXBuffer &materialsOut, uint32 &numMate
 	for (i = 0; i < meshData._numPolyFaces; i++) {
 		uint32 count = meshData._numTriPerFace[i];
 		uint32 firstIndex = *indexInPtr++;
-		// 1 -> 1 -> 3
-		// 2 -> 2 -> 2
-		// 3 -> 3 -> 1
-		// 1 -> 4 -> 6
-		// 3 -> 5 -> 5
-		// 4 -> 6 -> 4
+		// 1 -> 1
+		// 2 -> 2
+		// 3 -> 3
+		// 1 -> 4
+		// 3 -> 5
+		// 4 -> 6
 		while (count--) {
-			indices[2] = firstIndex;
-			indices[1] = *indexInPtr++;
-			indices[0] = *indexInPtr;
-			indices += 3;
+			*indices++ = firstIndex;
+			*indices++ = *indexInPtr;
+			indexInPtr++;
+			*indices++ = *indexInPtr;
 		}
 		indexInPtr++;
 	}

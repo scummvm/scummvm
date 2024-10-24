@@ -2155,8 +2155,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			if (val) {
 				val->setProperty("X", pos._x);
 				val->setProperty("Y", pos._y);
-				// invert z coordinate to change to OpenGL coordinate system
-				val->setProperty("Z", -pos._z);
+				val->setProperty("Z", pos._z);
 			}
 		}
 

@@ -665,7 +665,7 @@ bool AdSceneGeometry::convert2Dto3D(int x, int y, DXVector3 *pos) {
 	DXVector3 vec;
 	vec._x =  (((2.0f * x) / _drawingViewport.width()) - 1) / _lastProjMat.matrix._11;
 	vec._y = -(((2.0f * y) / _drawingViewport.height()) - 1) / _lastProjMat.matrix._22;
-	vec._z =  -1.0f;
+	vec._z =  1.0f;
 
 	// Get the inverse view matrix
 	DXMatrix m;

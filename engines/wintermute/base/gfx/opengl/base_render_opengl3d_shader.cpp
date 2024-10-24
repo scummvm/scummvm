@@ -170,6 +170,7 @@ void BaseRenderOpenGL3DShader::setLightParameters(int index, const DXVector3 &po
 }
 
 void BaseRenderOpenGL3DShader::enableCulling() {
+	glFrontFace(GL_CW);
 	glEnable(GL_CULL_FACE);
 }
 
@@ -471,7 +472,7 @@ bool BaseRenderOpenGL3DShader::setProjection() {
 	int mtop = rc.top;
 	int mbottom = resHeight - viewportHeight - rc.top;
 
-	DXMatrixPerspectiveFovRH(&matProj, _fov, viewportWidth / viewportHeight, _nearClipPlane, _farClipPlane);
+	DXMatrixPerspectiveFovLH(&matProj, _fov, viewportWidth / viewportHeight, _nearClipPlane, _farClipPlane);
 
 	float scaleMod = resHeight / viewportHeight;
 	float scaleRatio = MAX(layerWidth / resWidth, layerHeight / resHeight) /** 1.05*/;
@@ -891,7 +892,7 @@ void BaseRenderOpenGL3DShader::renderShadowGeometry(const BaseArray<AdWalkplane 
 	// disable color write
 	glBlendFunc(GL_ZERO, GL_ONE);
 
-	glFrontFace(GL_CCW);
+	glFrontFace(GL_CW);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// render walk planes

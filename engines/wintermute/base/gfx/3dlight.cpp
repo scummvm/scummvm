@@ -75,7 +75,7 @@ bool Light3D::setLight(int index) {
 //////////////////////////////////////////////////////////////////////////
 bool Light3D::getViewMatrix(DXMatrix *viewMatrix) {
 	DXVector3 up = DXVector3(0.0f, 1.0f, 0.0f);
-	DXMatrixLookAtRH(viewMatrix, &_position, &_target, &up);
+	DXMatrixLookAtLH(viewMatrix, &_position, &_target, &up);
 	return true;
 }
 
@@ -91,7 +91,7 @@ bool Light3D::loadFrom3DS(Common::MemoryReadStream &fileStream) {
 	int32 end = fileStream.pos() + wholeChunkSize - 6;
 
 	_position._x = fileStream.readFloatLE();
-	_position._z = -fileStream.readFloatLE();
+	_position._z = fileStream.readFloatLE();
 	_position._y = fileStream.readFloatLE();
 
 	while (fileStream.pos() < end) {
@@ -101,7 +101,7 @@ bool Light3D::loadFrom3DS(Common::MemoryReadStream &fileStream) {
 		switch (chunkId) {
 		case SPOTLIGHT:
 			_target._x = fileStream.readFloatLE();
-			_target._z = -fileStream.readFloatLE();
+			_target._z = fileStream.readFloatLE();
 			_target._y = fileStream.readFloatLE();
 
 			// this is appearently not used
