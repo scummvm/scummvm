@@ -815,17 +815,17 @@ void BaseRenderOpenGL3D::renderShadowGeometry(const BaseArray<AdWalkplane *> &pl
 	glDisable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	// render walk planes
-	for (uint i = 0; i < planes.size(); i++) {
-		if (planes[i]->_active && planes[i]->_receiveShadows) {
-			planes[i]->_mesh->render();
-		}
-	}
-
 	// render blocks
 	for (uint i = 0; i < blocks.size(); i++) {
 		if (blocks[i]->_active && blocks[i]->_receiveShadows) {
 			blocks[i]->_mesh->render();
+		}
+	}
+
+	// render walk planes
+	for (uint i = 0; i < planes.size(); i++) {
+		if (planes[i]->_active && planes[i]->_receiveShadows) {
+			planes[i]->_mesh->render();
 		}
 	}
 
