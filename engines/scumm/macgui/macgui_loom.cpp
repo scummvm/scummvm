@@ -168,7 +168,7 @@ void MacLoomGui::runAboutDialog() {
 	int y = (400 - height) / 2;
 
 	Common::Rect bounds(x, y, x + width, y + height);
-	MacDialogWindow *window = createWindow(bounds);
+	MacDialogWindow *window = createWindow(bounds, kWindowStyleNormal, kMenuStyleApple);
 	Graphics::Surface *lucasFilm = loadPict(5000);
 	Graphics::Surface *loom = loadPict(5001);
 

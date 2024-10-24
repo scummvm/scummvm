@@ -162,7 +162,7 @@ void MacV5Gui::runAboutDialog() {
 	int y = (400 - height) / 2;
 
 	Common::Rect bounds(x, y, x + width, y + height);
-	MacDialogWindow *window = createWindow(bounds);
+	MacDialogWindow *window = createWindow(bounds, kWindowStyleNormal, kMenuStyleApple);
 
 	switch (_vm->_game.id) {
 	case GID_MONKEY:

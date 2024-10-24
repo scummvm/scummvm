@@ -631,7 +631,7 @@ Graphics::Surface *MacGuiImpl::loadPict(int id) {
 // Window handling
 // ---------------------------------------------------------------------------
 
-MacGuiImpl::MacDialogWindow *MacGuiImpl::createWindow(Common::Rect bounds, MacDialogWindowStyle style) {
+MacGuiImpl::MacDialogWindow *MacGuiImpl::createWindow(Common::Rect bounds, MacDialogWindowStyle windowStyle, MacDialogMenuStyle menuStyle) {
 	if (bounds.left < 0 || bounds.top < 0 || bounds.right >= 640 || bounds.bottom >= 400) {
 		// This happens with the Last Crusade file dialogs.
 		bounds.moveTo((640 - bounds.width()) / 2, 27);
@@ -644,7 +644,7 @@ MacGuiImpl::MacDialogWindow *MacGuiImpl::createWindow(Common::Rect bounds, MacDi
 
 	bounds.translate(0, 2 * _vm->_macScreenDrawOffset);
 
-	return new MacDialogWindow(this, _system, _surface, bounds, style);
+	return new MacDialogWindow(this, _system, _surface, bounds, windowStyle, menuStyle);
 }
 
 Common::String MacGuiImpl::getDialogString(Common::SeekableReadStream *res, int len) {
@@ -1079,7 +1079,7 @@ void MacGuiImpl::drawBanner(char *message) {
 
 	_bannerWindow = createWindow(
 		Common::Rect(70, 189, 570, 211),
-		kStyleRounded);
+		kWindowStyleRounded, kMenuStyleNone);
 	const Graphics::Font *font = getFont(_vm->_game.id == GID_INDY3 ? kIndy3FontMedium : kLoomFontMedium);
 
 	Graphics::Surface *s = _bannerWindow->innerSurface();

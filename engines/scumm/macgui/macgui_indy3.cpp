@@ -1120,7 +1120,7 @@ void MacIndy3Gui::runAboutDialog() {
 	int y = (400 - height) / 2;
 
 	Common::Rect bounds(x, y, x + width, y + height);
-	MacDialogWindow *window = createWindow(bounds);
+	MacDialogWindow *window = createWindow(bounds, kWindowStyleNormal, kMenuStyleApple);
 	Graphics::Surface *pict = loadPict(2000);
 
 	// For the background of the sprites to match the background of the
