@@ -31,10 +31,14 @@ MODULE_OBJS = \
 	rooms/demon4.o \
 	rooms/demon5.o \
 	rooms/demon6.o \
-	rooms/tug0.o \
-	rooms/tug1.o \
-	rooms/tug2.o \
-	rooms/tug3.o \
+	rooms/feather0.o \
+	rooms/feather1.o \
+	rooms/feather2.o \
+	rooms/feather3.o \
+	rooms/feather4.o \
+	rooms/feather5.o \
+	rooms/feather6.o \
+	rooms/feather7.o \
 	rooms/love0.o \
 	rooms/love1.o \
 	rooms/love2.o \
@@ -49,20 +53,16 @@ MODULE_OBJS = \
 	rooms/mudd4.o \
 	rooms/mudd5.o \
 	rooms/mudda.o \
-	rooms/feather0.o \
-	rooms/feather1.o \
-	rooms/feather2.o \
-	rooms/feather3.o \
-	rooms/feather4.o \
-	rooms/feather5.o \
-	rooms/feather6.o \
-	rooms/feather7.o \
 	rooms/trial0.o \
 	rooms/trial1.o \
 	rooms/trial2.o \
 	rooms/trial3.o \
 	rooms/trial4.o \
 	rooms/trial5.o \
+	rooms/tug0.o \
+	rooms/tug1.o \
+	rooms/tug2.o \
+	rooms/tug3.o \
 	rooms/sins0.o \
 	rooms/sins1.o \
 	rooms/sins2.o \
