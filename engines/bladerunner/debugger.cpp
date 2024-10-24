@@ -264,6 +264,8 @@ bool Debugger::cmdAnimation(int argc, const char **argv) {
 	int animationNext = -1;
 	actor->queryAnimationState(&animationState, &animationFrame, &animationStateNext, &animationNext);
 
+	(void)animationsList;
+
 	debugPrintf("actorAnimationMode(%s) = %i, model: %i, goal: %i, state:%i, frame:%i, stateNext: %i, nextModelId: %i, showDamageWhenMoving = %i, inCombat = %i\n",
 	             _vm->_textActorNames->getText(actorId),
 	             actor->getAnimationMode(),
