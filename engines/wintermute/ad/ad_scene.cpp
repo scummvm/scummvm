@@ -1495,9 +1495,11 @@ bool AdScene::displayRegionContentOld(AdRegion *region) {
 #ifndef ENABLE_WME3D
 			_gameRef->_renderer->setup2D();
 #else
-			Camera3D *activeCamera = _geom->getActiveCamera();
-			if (activeCamera != nullptr) {
-				_gameRef->_renderer->setup3D(activeCamera);
+			if (obj->_is3D && _geom) {
+				Camera3D *activeCamera = _geom->getActiveCamera();
+				if (activeCamera != nullptr) {
+					_gameRef->_renderer->setup3D(activeCamera);
+				}
 			} else {
 				_gameRef->_renderer->setup2D();
 			}
