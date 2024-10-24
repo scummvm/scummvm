@@ -70,7 +70,7 @@ public:
 	bool enableShadows() override;
 	bool disableShadows() override;
 	void displayShadow(BaseObject *object, const DXVector3 *lightPos, bool lightPosRelative) override;
-	bool usingStencilBuffer() override;
+	bool stencilSupported() override;
 
 	void dumpData(const char *filename) override {}
 	BaseImage *takeScreenshot() override;

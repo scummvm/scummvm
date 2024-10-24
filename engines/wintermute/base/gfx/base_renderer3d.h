@@ -74,7 +74,7 @@ public:
 	//virtual void DumpData(char* Filename);
 	virtual bool enableShadows() = 0;
 	virtual bool disableShadows() = 0;
-	virtual bool usingStencilBuffer() = 0;
+	virtual bool stencilSupported() = 0;
 	virtual void displayShadow(BaseObject *object, const DXVector3 *light, bool lightPosRelative) = 0;
 	//HRESULT InvalidateTexture(LPDIRECT3DTEXTURE Texture);
 

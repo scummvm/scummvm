@@ -202,7 +202,7 @@ void BaseRenderOpenGL3D::displayShadow(BaseObject *object, const DXVector3 *ligh
 	glDepthMask(GL_TRUE);
 }
 
-bool BaseRenderOpenGL3D::usingStencilBuffer() {
+bool BaseRenderOpenGL3D::stencilSupported() {
 	// assume that we have a stencil buffer
 	return true;
 }

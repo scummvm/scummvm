@@ -2068,7 +2068,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			break;
 
 		case SHADOW_STENCIL:
-			stack->pushBool(_gameRef->_renderer3D->usingStencilBuffer());
+			stack->pushBool(_renderer3D->stencilSupported());
 			break;
 
 		default:
