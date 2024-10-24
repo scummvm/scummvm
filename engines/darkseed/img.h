@@ -29,13 +29,13 @@
 namespace Darkseed {
 
 class Img {
-private:
-	uint16 _x;
-	uint16 _y;
-	uint16 _width;
-	uint16 _height;
-	byte _mode;
+	uint16 _x = 0;
+	uint16 _y = 0;
+	uint16 _width = 0;
+	uint16 _height = 0;
+	byte _mode = 0;
 	Common::Array<uint8> _pixels;
+
 public:
 	bool load(const Common::Path &filename);
 	bool load(Common::SeekableReadStream &readStream);
