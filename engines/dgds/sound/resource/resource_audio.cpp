@@ -165,6 +165,8 @@ SoundResource::~SoundResource() {
 			delete[] _tracks[trackNr].channels;
 		delete[] _tracks;
 	}
+
+	delete _resource;
 }
 
 
