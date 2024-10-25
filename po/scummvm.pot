@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-10-25 14:00+0000\n"
+"POT-Creation-Date: 2024-10-25 18:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2550,7 +2550,7 @@ msgstr ""
 msgid "Playback"
 msgstr ""
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:290
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:291
 msgid "Edit"
 msgstr ""
 
@@ -2735,11 +2735,11 @@ msgstr ""
 msgid "Clear value"
 msgstr ""
 
-#: gui/widgets/grid.cpp:284
+#: gui/widgets/grid.cpp:285
 msgid "Play"
 msgstr ""
 
-#: gui/widgets/grid.cpp:287
+#: gui/widgets/grid.cpp:288
 msgid "Saves"
 msgstr ""
 
