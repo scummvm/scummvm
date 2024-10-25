@@ -186,8 +186,6 @@ bool XMesh::update(FrameNode *parentFrame) {
 	if (!_blendedMesh)
 		return false;
 
-	bool res = false;
-
 	// update skinned mesh
 	if (_skinMesh) {
 		int numBones = _skinMesh->getNumBones();
@@ -199,13 +197,8 @@ bool XMesh::update(FrameNode *parentFrame) {
 		}
 
 		// generate skinned mesh
-		res = _skinMesh->updateSkinnedMesh(boneMatrices, _blendedMesh);
+		_skinMesh->updateSkinnedMesh(boneMatrices, _blendedMesh);
 		delete [] boneMatrices;
-
-		if (!res) {
-			BaseEngine::LOG(0, "Error updating skinned mesh");
-			return res;
-		}
 
 		// update mesh bounding box
 		byte *points = _blendedMesh->getVertexBuffer().ptr();
@@ -263,7 +256,7 @@ bool XMesh::update(FrameNode *parentFrame) {
 		// update bounding box
 		DXComputeBoundingBox((DXVector3 *)newPoints, _blendedMesh->getNumVertices(), DXGetFVFVertexSize(_blendedMesh->getFVF()), &_BBoxStart, &_BBoxEnd);
 	}
-	return res;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
