@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#define FORBIDDEN_SYMBOL_EXCEPTION_time
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include <features/features_cpu.h>
 
@@ -30,6 +30,7 @@
 #include "backends/platform/libretro/include/libretro-core.h"
 #include "backends/platform/libretro/include/libretro-os.h"
 #include "backends/platform/libretro/include/libretro-options-widget.h"
+#include "backends/platform/libretro/include/libretro-fs.h"
 
 void OSystem_libretro::getTimeAndDate(TimeDate &t, bool skipRecord) const {
 	uint32 curTime = (uint32)(cpu_features_get_time_usec() / 1000000);
@@ -165,8 +166,67 @@ GUI::OptionsContainerWidget *OSystem_libretro::buildBackendOptionsWidget(GUI::Gu
 
 }
 
+bool OSystem_libretro::checkPathSetting(const char *setting, Common::String const &defaultPath, bool isDirectory) {
+	Common::String setPath;
+	if (ConfMan.hasKey(setting))
+		setPath = Common::Path::fromConfig(ConfMan.get(setting)).toString();
+	if (setPath.empty() || ! (isDirectory ? (LibRetroFilesystemNode(setPath).isDirectory() && LibRetroFilesystemNode(setPath).isReadable()) : LibRetroFilesystemNode(setPath).exists()))
+		ConfMan.removeKey(setting, Common::ConfigManager::kApplicationDomain);
+	if (! ConfMan.hasKey(setting))
+		if (defaultPath.empty())
+			return false;
+		else
+			ConfMan.set(setting, defaultPath);
+	return true;
+}
+
+void OSystem_libretro::setLibretroDir(const char * path, Common::String &var) {
+	var = Common::String(path ? path : "");
+	if (! var.empty())
+		if (! (LibRetroFilesystemNode(var).isDirectory() && LibRetroFilesystemNode(var).isReadable()))
+			var.clear();
+	return;
+}
+
 void OSystem_libretro::applyBackendSettings() {
-	checkAllPathSettings();
+	/* ScummVM paths checks at startup and on settings applied */
+	Common::String s_homeDir(LibRetroFilesystemNode::getHomeDir());
+	Common::String s_themeDir(s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_THEME_SUBDIR);
+	Common::String s_extraDir(s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_EXTRA_SUBDIR);
+	Common::String s_soundfontPath(s_extraDir + "/" + DEFAULT_SOUNDFONT_FILENAME);
+
+	if (! (LibRetroFilesystemNode(s_themeDir).isDirectory() && LibRetroFilesystemNode(s_themeDir).isReadable()))
+		s_themeDir.clear();
+	if (! (LibRetroFilesystemNode(s_extraDir).isDirectory() && LibRetroFilesystemNode(s_extraDir).isReadable()))
+		s_extraDir.clear();
+	if (! LibRetroFilesystemNode(s_soundfontPath).exists())
+		s_soundfontPath.clear();
+	if (s_homeDir.empty() || ! (LibRetroFilesystemNode(s_homeDir).isDirectory() && LibRetroFilesystemNode(s_homeDir).isReadable()))
+		s_homeDir = s_systemDir;
+
+	//Register default paths
+	if (! s_homeDir.empty()) {
+		ConfMan.registerDefault("browser_lastpath", s_homeDir);
+		retro_log_cb(RETRO_LOG_DEBUG, "Default browser last path set to: %s\n", s_homeDir.c_str());
+	}
+	if (! s_saveDir.empty()) {
+		ConfMan.registerDefault("savepath", s_saveDir);
+		retro_log_cb(RETRO_LOG_DEBUG, "Default save path set to: %s\n", s_saveDir.c_str());
+	}
+
+	//Check current path settings
+	if (!checkPathSetting("savepath", s_saveDir)) {
+		ConfMan.setAndFlush("savepath", s_homeDir);
+		retro_osd_notification("ScummVM save folder not found.");
+	}
+	if (!checkPathSetting("themepath", s_themeDir))
+		retro_osd_notification("ScummVM theme folder not found.");
+	if (!checkPathSetting("extrapath", s_extraDir))
+		retro_osd_notification("ScummVM extra folder not found. Some engines/features (e.g. Virtual Keyboard) will not work without relevant datafiles.");
+	checkPathSetting("soundfont", s_soundfontPath, false);
+	checkPathSetting("browser_lastpath", s_homeDir);
+	checkPathSetting("libretro_playlist_path", s_playlistDir.empty() ? s_homeDir : s_playlistDir);
+	checkPathSetting("iconspath", "");
 }
 
 static const char * const helpTabs[] = {

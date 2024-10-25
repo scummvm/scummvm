@@ -291,5 +291,6 @@ bool LibretroOptionsWidget::save() {
 
 	ConfMan.setBool("libretro_hooks_clear", _hooksClear->getState(), _domain);
 
+	/* Always return true to call applyBackendSettings every time settings are applied */
 	return true;
 }
