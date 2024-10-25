@@ -72,6 +72,11 @@ For a more comprehensive changelog of the latest experimental code, see:
  Illusions:
   - Added keymapper support.
 
+ KYRA:
+  - Added some more gameplay enhancements that get enabled via the "Faithful AD&D rules"
+	checkbox (fix projectile weapon damage and elf weapon bonus acoording to AD&D 2nd ed.
+	handbook rules, fix some messed up npc stats in Eye of the Beholder I).
+
  Lure:
   - Added keymapper support.
 
