@@ -130,28 +130,46 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 	Math::Vector3d rotation = entrance->getRotation();
 	_position = entrance->getOrigin();
 
-	if (scale == 1) {
+	if (_position.x() < 0) {
+		assert(isCastle());
+		_position.x() = _lastPosition.x();
+	}
+
+	if (_position.y() < 0) {
+		assert(isCastle());
+		_position.y() = _lastPosition.y();
+	}
+
+	if (_position.z() < 0) {
+		assert(isCastle());
+		_position.z() = _lastPosition.z();
+	}
+
+	// TODO: verify if this is needed
+	/*if (scale == 1) {
 		_position.x() = _position.x() + 16;
 		_position.z() = _position.z() + 16;
 	} else if (scale == 5) {
 		_position.x() = _position.x() + 4;
 		_position.z() = _position.z() + 4;
+	}*/
+
+	if (rotation.x() >= 0 && rotation.y() >= 0 && rotation.z() >= 0) {
+		_pitch = rotation.x();
+		float y = rotation.y();
+
+		// Adjust _yaw based on normalized angle
+		if (y >= 0 && y < 90)
+			_yaw = 90 - y;			// 0 to 90 maps to 90 to 0 (yaw should be 90 to 0)
+		else if (y >= 90 && y <= 180)
+			_yaw = 450 - y;			// 90 to 180 maps to 360 to 270 (yaw should be 360 to 270)
+		else if (y > 180 && y <= 225)
+			_yaw = y;				// 180 to 225 maps to 180 to 225 (yaw should be 180 to 225)
+		else if (y > 225 && y < 270)
+			_yaw = y - 90;			// 180 to 270 maps to 90 to 0 (yaw should be 90 to 0)
+		else
+			_yaw = 360 + 90 - y;	// 270 to 360 maps to 90 to 180 (yaw should be 90 to 180)
 	}
-
-	_pitch = rotation.x();
-	float y = rotation.y();
-
-	// Adjust _yaw based on normalized angle
-	if (y >= 0 && y < 90)
-		_yaw = 90 - y;			// 0 to 90 maps to 90 to 0 (yaw should be 90 to 0)
-	else if (y >= 90 && y <= 180)
-		_yaw = 450 - y;			// 90 to 180 maps to 360 to 270 (yaw should be 360 to 270)
-	else if (y > 180 && y <= 225)
-		_yaw = y;				// 180 to 225 maps to 180 to 225 (yaw should be 180 to 225)
-	else if (y > 225 && y < 270)
-		_yaw = y - 90;			// 180 to 270 maps to 90 to 0 (yaw should be 90 to 0)
-	else
-		_yaw = 360 + 90 - y;	// 270 to 360 maps to 90 to 180 (yaw should be 90 to 180)
 
 	debugC(1, kFreescapeDebugMove, "entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
 	// Set the player height
@@ -462,6 +480,9 @@ bool FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, 
 			debugC(1, kFreescapeDebugMove, "Collided with object id %d of size %f %f %f", gobj->getObjectID(), gobj->getSize().x(), gobj->getSize().y(), gobj->getSize().z());
 			executed |= executeObjectConditions(gobj, false, true, false);
 			//break;
+		}
+		if (areaID != _currentArea->getAreaID()) {
+			return true;
 		}
 	}
 

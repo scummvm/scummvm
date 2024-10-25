@@ -487,11 +487,44 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		}
 		assert(byteSizeOfObject == 0);
 		debugC(1, kFreescapeDebugParser, "End of object at %lx", long(file->pos()));
+
+		if (isCastle()) {
+
+			if (position.x() == 255)
+				position.x() = -8096;
+			else
+				position.x() = 32 * position.x();
+
+			if (position.y() == 255)
+				position.y() = -8096;
+			else
+				position.y() = 32 * position.y();
+
+			if (position.z() == 255)
+				position.z() = -8096;
+			else
+				position.z() = 32 * position.z();
+
+			if (v.x() == 255 && v.y() == 255 && v.z() == 255) {
+				v.x() = -8096;
+				v.y() = -8096;
+				v.z() = -8096;
+			} else {
+				v.x() = 5 * v.x();
+				v.y() = 5 * v.y();
+				v.z() = 5 * v.z();
+			}
+
+		} else {
+			v = 5 * v;
+			position = 32 * position;
+		}
+
 		// create an entrance
 		return new Entrance(
 			objectID,
-			32 * position,
-			5 * v, // rotation
+			position,
+			v, // rotation
 			instructions,
 			conditionSource);
 	} break;
