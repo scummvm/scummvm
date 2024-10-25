@@ -34,6 +34,12 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+extern const int16 S2_DIRS1[];
+extern const char *S2_NAMES1[];
+
+extern const int16 S2_DIRS2[];
+extern const char *S2_NAMES2[];
+
 class Section2 : public Section {
 private:
 	Room201 _room201;

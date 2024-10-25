@@ -26,6 +26,13 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+const int16 S2_DIRS1[] = {240, -1};
+const char *S2_NAMES1[] = { "pesky walk pos3" };
+
+const int16 S2_DIRS2[] = {250, -1};
+const char *S2_NAMES2[] = { "shadow pesky walk pos3" };
+
+
 Section2::Section2() : Rooms::Section() {
 	add(201, &_room201);
 	add(202, &_room202);
