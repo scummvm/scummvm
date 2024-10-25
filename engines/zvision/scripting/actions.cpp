@@ -66,6 +66,10 @@ ActionAdd::ActionAdd(ZVision *engine, int32 slotKey, const Common::String &line)
 	_value = new ValueSlot(_scriptManager, buf);
 }
 
+ActionAdd::~ActionAdd() {
+	delete _value;
+}
+
 bool ActionAdd::execute() {
 	_scriptManager->setStateValue(_key, _scriptManager->getStateValue(_key) + _value->getValue());
 	return true;

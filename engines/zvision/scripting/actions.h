@@ -59,6 +59,7 @@ protected:
 class ActionAdd : public ResultAction {
 public:
 	ActionAdd(ZVision *engine, int32 slotkey, const Common::String &line);
+	~ActionAdd();
 	bool execute() override;
 
 private:
