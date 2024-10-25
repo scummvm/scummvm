@@ -44,18 +44,6 @@ using namespace pyrodactyl::image;
 //------------------------------------------------------------------------
 // Purpose: Load a texture
 //------------------------------------------------------------------------
-bool Image::load(Graphics::Surface *surface) {
-	deleteImage();
-
-	_texture = new Graphics::ManagedSurface();
-	_texture->create(surface->w, surface->h, surface->format);
-	_texture->copyFrom(*surface);
-
-	_w = surface->w;
-	_h = surface->h;
-
-	return true;
-}
 
 bool Image::load(Graphics::ManagedSurface *surface) {
 	deleteImage();
