@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-10-25 18:27+0000\n"
+"POT-Creation-Date: 2024-10-25 20:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5499,32 +5499,44 @@ msgid ""
 msgstr ""
 
 #: engines/agi/metaengine.cpp:147
-msgid "Use Hercules hires font"
+msgid "Predictive Input Dialogue on mouse click"
 msgstr ""
 
 #: engines/agi/metaengine.cpp:148
-msgid "Uses Hercules hires font, when font file is available."
+msgid ""
+"Enables the assistive Predictive Input Dialogue specifically for when "
+"clicking the left mouse button within text input fields.\n"
+"The Predictive Input Dialogue can still be activated on demand if there's a "
+"specified key mapping for it"
 msgstr ""
 
 #: engines/agi/metaengine.cpp:159
-msgid "Pause when entering commands"
+msgid "Use Hercules hires font"
 msgstr ""
 
 #: engines/agi/metaengine.cpp:160
+msgid "Uses Hercules hires font, when font file is available."
+msgstr ""
+
+#: engines/agi/metaengine.cpp:171
+msgid "Pause when entering commands"
+msgstr ""
+
+#: engines/agi/metaengine.cpp:172
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr ""
 
-#: engines/agi/metaengine.cpp:171
+#: engines/agi/metaengine.cpp:183
 msgid "Add speed menu"
 msgstr ""
 
-#: engines/agi/metaengine.cpp:172
+#: engines/agi/metaengine.cpp:184
 msgid "Add game speed menu (similar to PC version)"
 msgstr ""
 
-#: engines/agi/metaengine.cpp:183 engines/agos/metaengine.cpp:44
+#: engines/agi/metaengine.cpp:195 engines/agos/metaengine.cpp:44
 #: engines/dreamweb/metaengine.cpp:36 engines/lure/metaengine.cpp:41
 #: engines/mads/metaengine.cpp:51 engines/mm/metaengine.cpp:46
 #: engines/saga/metaengine.cpp:52 engines/scumm/dialogs.cpp:1188
@@ -5532,7 +5544,7 @@ msgstr ""
 msgid "Enable copy protection"
 msgstr ""
 
-#: engines/agi/metaengine.cpp:184 engines/agos/metaengine.cpp:45
+#: engines/agi/metaengine.cpp:196 engines/agos/metaengine.cpp:45
 #: engines/dreamweb/metaengine.cpp:37 engines/lure/metaengine.cpp:42
 #: engines/mads/metaengine.cpp:52 engines/mm/metaengine.cpp:47
 #: engines/saga/metaengine.cpp:53 engines/scumm/dialogs.cpp:1189
@@ -5540,13 +5552,13 @@ msgstr ""
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
 
-#: engines/agi/metaengine.cpp:408 engines/asylum/asylum.cpp:655
+#: engines/agi/metaengine.cpp:420 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
 msgid "This game does not support loading"
 msgstr ""
 
-#: engines/agi/metaengine.cpp:431 engines/asylum/asylum.cpp:666
+#: engines/agi/metaengine.cpp:443 engines/asylum/asylum.cpp:666
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
 msgid "This game does not support saving"
