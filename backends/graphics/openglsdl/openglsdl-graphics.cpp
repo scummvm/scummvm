@@ -435,6 +435,9 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 			ConfMan.setInt("last_window_height", requestedHeight, Common::ConfigManager::kApplicationDomain);
 			ConfMan.flushToDisk();
 		}
+
+		if (requestedHeight == 0)
+			requestedHeight = 100; // Add at least some sane value instead of dividing by zero
 	}
 
 #else
