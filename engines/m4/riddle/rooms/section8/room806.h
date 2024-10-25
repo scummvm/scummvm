@@ -68,11 +68,10 @@ private:
 
 	machine *_806CrankMach = nullptr;
 	machine *_806ChartMach = nullptr;
+	machine *_806mc01Mach = nullptr;
+	machine *_806rp01Mach = nullptr;
 	machine *_candlemanShadow3Mach = nullptr;
 	machine *_mcTrekMach = nullptr;
-	machine *_806rp01Mach = nullptr;
-	machine *_806mc01Mach = nullptr;
-
 	machine *_safariShadow3Mach = nullptr;
 };
 

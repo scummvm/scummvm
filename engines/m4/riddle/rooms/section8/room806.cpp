@@ -22,6 +22,7 @@
 #include "m4/riddle/rooms/section8/room806.h"
 
 #include "m4/adv_r/adv_file.h"
+#include "m4/adv_r/other.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/riddle/riddle.h"
 #include "m4/riddle/vars.h"
@@ -318,6 +319,796 @@ void Room806::pre_parser() {
 }
 
 void Room806::parser() {
+	bool lookFl = player_said("look at");
+	bool walkFl = player_said("walk to");
+	bool takeFl = player_said("take");
+	bool gearFl = player_said("gear");
+
+	if (lookFl && player_said_any(" ", "   "))
+		digi_play("806r04", 1, 255, -1, -1);
+
+	else if (lookFl && player_said("WALL")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_unkVar1 = 1;
+			player_update_info(_G(my_walker), &_G(player_info));
+			if (_G(MouseState).CursorColumn >= _G(player_info).x)
+				ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 2, 3, true);
+			else
+				ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 2, 9, true);
+
+			break;
+
+		case 2:
+			setGlobals1(_ripTrekHeadTurnPos3Series, 1, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 3);
+
+			break;
+
+		case 3:
+			digi_play("806r05", 1, 255, 8, -1);
+			sendWSMessage_140000(_G(my_walker), 4);
+
+			break;
+
+		case 4:
+			setGlobals1(_ripTrekHeadTurnPos3Series, 6, 9, 9, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 6);
+
+			break;
+
+		case 6:
+			sendWSMessage_140000(_G(my_walker), 7);
+			setGlobals1(_ripTrekTalkerPos3Series, 1, 1, 1, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), -1);
+
+			break;
+
+		case 7:
+			setGlobals1(_ripTrekTalkerPos3Series, 1, 1, 1, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), -1);
+
+			break;
+
+		case 8:
+			sendWSMessage_150000(_G(my_walker), 10);
+
+			break;
+
+		case 10:
+			player_set_commands_allowed(true);
+			_unkVar1 = 0;
+			_G(flags[V106]) = 1;
+
+			break;
+
+		default:
+			break;
+		}
+	} // if (ecx && player_said("WALL"))
+
+	else if (lookFl && player_said("HOLE")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			_unkVar1 = 1;
+			player_update_info(_G(my_walker), &_G(player_info));
+			ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 1, 3, true);
+
+			break;
+
+		case 1:
+			player_set_commands_allowed(false);
+			ws_hide_walker(_G(my_walker));
+			series_play("RIP KNEEL AND EXAMINE WALL", 2048, 0, 3, 5, 0, 100, 0, 0, 0, -1);
+
+			break;
+
+		case 3:
+			digi_play("806r06", 1, 255, 8, -1);
+			series_play("RIP KNEEL AND EXAMINE WALL", 2048, 2, 9, 5, 0, 100, 0, 0, 0, -1);
+
+			break;
+
+		case 9 :
+			ws_unhide_walker(_G(my_walker));
+			player_set_commands_allowed(true);
+			_G(flags[V106]) = 1;
+			_unkVar1 = 0;
+
+			break;
+
+		default:
+			break;
+		}
+
+	} // if (ecx && player_said("HOLE"))
+
+	else if (lookFl && player_said_any("CROSSBOW BOLT", "CROSSBOW BOLT ", "CROSSBOW BOLT  "))
+		digi_play("806r07", 1, 255, -1, -1);
+
+	else if (lookFl && player_said_any("  ", "    ", "      ")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			_unkVar1 = 1;
+			player_update_info(_G(my_walker), &_G(player_info));
+
+			if (_G(MouseState).CursorColumn >= _G(player_info).x)
+				ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 1, 3, true);
+			else
+				ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 1, 9, true);
+
+			break;
+
+		case 1:
+			player_set_commands_allowed(false);
+			setGlobals1(_ripTrekLookDownPos3Series, 1, 9, 9, 9, 0, 12, 21, 21, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 2);
+
+			if (_G(flags[V105]) == 0 && _G(flags[V276]) == 0)
+				digi_play("806r08", 1, 255, 8, -1);
+			else
+				digi_play("806r08a", 1, 255, 8, -1);
+
+			break;
+
+		case 2:
+			if (_G(flags[V105]) == 0 && _G(flags[V276]) == 0)
+				sendWSMessage_120000(_G(my_walker), imath_ranged_rand(3, 4));
+			else
+				sendWSMessage_120000(_G(my_walker), 8);
+
+			break;
+
+		case 3:
+			sendWSMessage_150000(_G(my_walker), 5);
+			break;
+
+		case 4:
+			sendWSMessage_150000(_G(my_walker), 6);
+			break;
+
+		case 5:
+			setGlobals1(_ripTrekTalkerPos3Series, 1, 1, 1, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), -1);
+
+			break;
+
+		case 6:
+			setGlobals1(_ripTrekHandTalkPos3Series, 1, 16, 16, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 3);
+
+			break;
+
+		case 8:
+			sendWSMessage_150000(_G(my_walker), 9);
+			break;
+
+		case 9:
+			_G(flags[V105]) = 1;
+			player_set_commands_allowed(true);
+			_unkVar1 = 0;
+
+			break;
+
+		default:
+			break;
+		}
+	} // if (ecx && player_said_any("  ", ...)
+
+	else if (lookFl && player_said("CRANK") && !inv_player_has("CRANK"))
+		digi_play("806r09", 1, 255, -1, -1);
+	else if (lookFl && player_said("SLOT"))
+		digi_play("806r24", 1, 255, -1, -1);
+	else if (lookFl && player_said("KUANG"))
+		digi_play("806r10", 1, 255, -1, -1);
+	else if (lookFl && player_said("CHARIOT"))
+		digi_play("806r11", 1, 255, -1, -1);
+	else if (lookFl && player_said("URN")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			_unkVar1 = 1;
+			player_update_info(_G(my_walker), &_G(player_info));
+
+			if (_G(MouseState).CursorColumn >= _G(player_info).x)
+				ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 1, 3, true);
+			else
+				ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 1, 9, true);
+
+			break;
+
+		case 1:
+			player_set_commands_allowed(false);
+			setGlobals1(_ripLookUpPos3Series, 1, 6, 6, 6, 0, 6, 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 3);
+			digi_play("com060", 1, 255, -1, 997);
+
+			break;
+
+		case 3:
+			sendWSMessage_120000(_G(my_walker), 5);
+			break;
+
+		case 5:
+			sendWSMessage_120000(_G(my_walker), 7);
+			break;
+
+
+		case 7:
+			player_set_commands_allowed(true);
+			_unkVar1 = 0;
+
+			break;
+		default:
+			break;
+		}
+	} // if (ecx && player_said("URN"))
+
+	else if (takeFl && player_said("URN"))
+		digi_play("com067", 1, 255, -1, 997);
+	else if (gearFl && player_said("URN"))
+		digi_play("com072", 1, 255, -1, 997);
+	else if (lookFl && player_said_any("MEI CHEN", "MEI CHEN "))
+		digi_play("806r14", 1, 255, -1, -1);
+	else if (lookFl && player_said("FLASHLIGHT")) {
+		if (_G(flags[V267]) == 0) {
+			digi_play("806r25", 1, 255, -1, -1);
+			_G(flags[V267]) = 1;
+		} else
+			digi_play("806r25a", 1, 255, -1, -1);
+	} // if (ecx && player_said("FLASHLIGHT"))
+
+	else if (lookFl && player_said("     ")) {
+		player_update_info(_G(my_walker), &_G(player_info));
+		ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, -1, 9, true);
+		digi_play("805r02", 1, 255, -1, 805);
+	} else if (lookFl && player_said("KUANG'S HAT"))
+		digi_play("806r27", 1, 255, -1, -1);
+	else if ((takeFl || gearFl) && player_said("KUANG'S HAT"))
+		digi_play("806r28", 1, 255, -1, -1);
+	else if (takeFl && player_said("CROSSBOW BOLT ")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			_unkVar1 = 1;
+			ws_walk(_G(my_walker), 281, 287, nullptr, 1, 2, true);
+
+			break;
+
+		case 1:
+			player_set_commands_allowed(false);
+			setGlobals1(_ripHighReacherPos2Series, 1, 12, 12, 12, 0, 12, 14, 14, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 3);
+
+			break;
+
+		case 3:
+			sendWSMessage_120000(_G(my_walker), 5);
+			break;
+
+		case 5:
+			sendWSMessage_110000(_G(my_walker), 7);
+			digi_play("806r15", 1, 255, -1, -1);
+			break;
+
+		case 7:
+			sendWSMessage_120000(_G(my_walker), 9);
+			break;
+
+		case 9:
+			sendWSMessage_110000(_G(my_walker), 11);
+			break;
+
+		case 11:
+			sendWSMessage_140000(_G(my_walker), 15);
+			break;
+
+		case 15:
+			ws_walk(_G(my_walker), 266, 299, nullptr, -1, 0, true);
+			player_set_commands_allowed(true);
+			_unkVar1 = 0;
+
+			break;
+
+		default:
+			break;
+		}
+	} // if (esi && player_said("CROSSBOW BOLT "))
+
+	else if (takeFl && player_said("CROSSBOW BOLT  ")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			_unkVar1 = 1;
+			player_set_commands_allowed(false);
+			setGlobals1(_ripMedHighReacherPos2Series, 1, 11, 11, 11, 0, 11, 12, 12, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 3);
+
+			break;
+
+		case 3:
+			sendWSMessage_120000(_G(my_walker), 5);
+			break;
+
+		case 5:
+			sendWSMessage_110000(_G(my_walker), 7);
+			digi_play("806r15", 1, 255, -1, -1);
+
+			break;
+
+		case 7:
+			sendWSMessage_120000(_G(my_walker), 9);
+			break;
+
+		case 9:
+			sendWSMessage_110000(_G(my_walker), 11);
+			break;
+
+		case 11:
+			sendWSMessage_140000(_G(my_walker), 15);
+			break;
+
+		case 15:
+			player_set_commands_allowed(true);
+			_unkVar1 = 0;
+
+			break;
+
+		default:
+			break;
+		}
+	} // if (esi && player_said("CROSSBOW BOLT  "))
+
+	else if (takeFl && player_said("CROSSBOW BOLT"))
+		digi_play("806r16", 1, 255, -1, -1);
+	else if (takeFl && player_said("CRANK") && inv_object_is_here("CRANK")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_unkVar1 = 1;
+			ws_walk(_G(my_walker), 237, 295, nullptr, 1, 1, true);
+
+			break;
+
+		case 1:
+			ws_hide_walker(_G(my_walker));
+			player_update_info(_G(my_walker), &_G(player_info));
+			_safariShadow3Mach = series_show("SAFARI SHADOW 1", 2304, 16, -1, -1, 0, _G(player_info).scale + 1, _G(player_info).x, _G(player_info).y);
+			_806rp01Mach = series_play("806RP03", 2048, 16, 2, 5, 0, 100, 0, 0, 0, 6);
+
+			break;
+
+		case 2:
+			terminateMachine(_806CrankMach);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "CRANK", false);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "SLOT", true);
+			kernel_examine_inventory_object("ping crank", _G(master_palette), 5, 1, 212, 150, 3, nullptr, -1);
+
+			break;
+
+		case 3:
+			terminateMachine(_806rp01Mach);
+			series_play("806RP03", 2048, 2, 5, 5, 0, 100, 0, 0, 0, 6);
+
+			break;
+
+		case 5:
+			terminateMachine(_safariShadow3Mach);
+			ws_unhide_walker(_G(my_walker));
+			player_set_commands_allowed(true);
+			inv_give_to_player("CRANK");
+			_unkVar1 = 0;
+
+			break;
+
+		default:
+			break;
+		}
+	} // if (esi && player_said("CRANK") && inv_object_is_here("CRANK"))
+
+	else if (takeFl && player_said("CHARIOT"))
+		digi_play("806r23", 1, 255, -1, -1);
+	else if ((takeFl || gearFl) && player_said("FLASHLIGHT"))
+		digi_play("806r26", 1, 255, -1, -1);
+	else if (takeFl) {
+		switch (imath_ranged_rand(1, 6)) {
+		case 1:
+			digi_play("com006", 1, 255, -1, 997);
+			break;
+
+		case 2:
+			digi_play("com007", 1, 255, -1, 997);
+			break;
+
+		case 3:
+			digi_play("com008", 1, 255, -1, 997);
+			break;
+
+		case 4:
+			digi_play("com009", 1, 255, -1, 997);
+			break;
+
+		case 5:
+			digi_play("com010", 1, 255, -1, 997);
+			break;
+
+		case 6:
+			digi_play("com011", 1, 255, -1, 997);
+			break;
+
+		default:
+			break;
+		}
+	} // if (esi)
+
+	else if (gearFl && player_said("CRANK") && !inv_player_has("CRANK")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_unkVar1 = 1;
+			ws_walk(_G(my_walker), 237, 295, nullptr, 1, 1, true);
+
+			break;
+
+		case 1:
+			ws_hide_walker(_G(my_walker));
+			player_update_info(_G(my_walker), &_G(player_info));
+			_safariShadow3Mach = series_show("SAFARI SHADOW 1", 2304, 16, -1, -1, 0, _G(player_info).scale + 1, _G(player_info).x, _G(player_info).y);
+			series_play("806RP03", 2048, 0, 2, 5, 0, 100, 0, 0, 0, 16);
+
+			break;
+
+		case 2:
+			series_play("806RP03", 2048, 2, 3, 5, 0, 100, 0, 0, 15, 16);
+			break;
+
+		case 3:
+			series_play("806RP03", 2048, 0, 4, 5, 0, 100, 0, 0, 15, 16);
+			break;
+
+		case 4:
+			series_play("806RP03", 2048, 2, 9, 5, 0, 100, 0, 0, 0, 16);
+			break;
+
+		case 9:
+			digi_play("806r17", 1, 255, -1, -1);
+			terminateMachine(_safariShadow3Mach);
+			ws_unhide_walker(_G(my_walker));
+			player_set_commands_allowed(true);
+			_unkVar1 = 0;
+
+			break;
+
+		default:
+			break;
+
+		}
+	} // if (edi && player_said("CRANK") && !inv_player_has("CRANK"))
+
+	else if (player_said("CRANK") && player_said("SLOT")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_unkVar1 = 1;
+			digi_preload("806_s03", -1);
+			ws_walk(_G(my_walker), 237, 295, nullptr, 1, 1, true);
+
+			break;
+
+		case 1:
+			ws_hide_walker(_G(my_walker));
+			player_update_info(_G(my_walker), &_G(player_info));
+			_safariShadow3Mach = series_show("SAFARI SHADOW 1", 2304, 16, -1, -1, 0, _G(player_info).scale + 1, _G(player_info).x, _G(player_info).y);
+			series_play("806RP03", 2048, 0, 2, 5, 0, 100, 0, 0, 0, 6);
+
+			break;
+
+		case 2:
+			digi_play("806_s03", 2, 255, -1, -1);
+			_806CrankMach = series_show("806CRANK", 32767, 16, -1, -1, 0, 100, 0, 0);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "CRANK", true);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "SLOT", false);
+			inv_move_object("CRANK", 806);
+			series_play("806RP03", 2048, 2, 5, 5, 0, 100, 0, 0, 0, 6);
+
+			break;
+
+		case 5:
+			terminateMachine(_safariShadow3Mach);
+			ws_unhide_walker(_G(my_walker));
+			player_set_commands_allowed(true);
+			_unkVar1 = 0;
+
+			break;
+
+		default:
+			break;
+		}
+
+	} // if (player_said("CRANK") && player_said("SLOT"))
+
+	else if (player_said("CRANK") && player_said("HOLE"))
+		digi_play("806r18", 1, 255, -1, -1);
+	else if (!lookFl && !takeFl && !player_said("JOURNAL") && player_said_any("TWO SOLDIERS' SHIELDS", "SOLDIER'S SHIELD")) {
+		if (_G(flags[V106]) == 0)
+			digi_play("805r23", 1, 255, -1, 805);
+		else
+			digi_play("806r19", 1, 255, -1, -1);
+	} else if (player_said("CRANK") && player_said_any("MEI CHEN", "MEI CHEN "))
+		digi_play("806r21", 1, 255, -1, -1);
+	else if (gearFl && player_said("CHARIOT")) {
+		player_set_commands_allowed(false);
+		_G(player).disable_hyperwalk = true;
+		_unkVar1 = 1;
+
+		switch (_G(kernel).trigger) {
+		case -1:
+			series_unload(_806rp02Series);
+			series_unload(_806mc02Series);
+			series_unload(_806rp03Series);
+			series_unload(_ripKneelAndExamineWallSeries);
+			series_unload(_ripTrekLookDownPos3Series);
+			series_unload(_ripLookUpPos3Series);
+			series_unload(_ripHighReacherPos2Series);
+			series_unload(_ripTrekTalkerPos3Series);
+			series_unload(_ripTrekHandTalkPos3Series);
+			series_unload(_ripTrekHeadTurnPos3Series);
+			series_unload(_meiTalkPos3Series);
+			series_unload(_meiTrekHeadTurnPos3Series);
+
+			digi_unload("806m08");
+			digi_unload("806_s01");
+			digi_unload("950_s52");
+			digi_unload("950_s53");
+
+			ws_walk(_G(my_walker), 20, 320, nullptr, 5, 3, true);
+			digi_play("806r20", 1, 255, 1, -1);
+
+			if (_unkVar2 != 0)
+				sendWSMessage_140000(_mcTrekMach, 2);
+
+			break;
+
+		case 1:
+			if (_unkVar2 != 0)
+				kernel_timing_trigger(10, 1, nullptr);
+			else
+				sendWSMessage_10000(_mcTrekMach, 200, 288, 5, -1, 1);
+
+			break;
+
+		case 2:
+			_unkVar2 = 0;
+			break;
+
+		case 5:
+			digi_unload("806r20");
+			digi_preload("806_s01", -1);
+			terminateMachine(_806ChartMach);
+			digi_preload("950_s33", -1);
+			digi_play_loop("950_s33", 1, 255, -1, -1);
+			_806rp01Mach = series_stream("806RP05 RIP PUSHES CHARIOT", 5, 512, -1);
+			series_stream_break_on_frame(_806rp01Mach, 137, 12);
+
+			break;
+
+		case 12:
+			digi_play("806_s01", 2, 255, -1, -1);
+			series_stream_break_on_frame(_806rp01Mach, 181, 13);
+
+			break;
+
+		case 13:
+			digi_play("806_s01", 2, 255, -1, -1);
+			series_stream_break_on_frame(_806rp01Mach, 217, 14);
+
+			break;
+
+		case 14:
+			digi_play("806_s01", 2, 255, -1, -1);
+			series_stream_break_on_frame(_806rp01Mach, 266, 21);
+
+			break;
+
+		case 21:
+			disable_player_commands_and_fade_init(31);
+			series_stream_break_on_frame(_806rp01Mach, 276, -1);
+
+			break;
+
+		case 31:
+			_G(flags[V266]) = 1;
+			_G(flags[V270]) = 807;
+			digi_unload("806_s01");
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s33", 1, 255, -1, -1);
+			digi_play_loop("950_s29", 3, 93, -1, -1);
+			_G(game).new_room = 807;
+
+			break;
+
+		default:
+			break;
+		}
+
+	} // if (edi && player_said("CHARIOT"))
+
+	else if (player_said("talk to", "MEI CHEN") || player_said("talk to", "MEI CHEN ")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			if (_unkVar2) {
+				sendWSMessage_140000(_mcTrekMach, -1);
+				_unkVar2 = 0;
+			}
+
+			_unkVar1 = 1;
+			player_update_info(_G(my_walker), &_G(player_info));
+			if (_G(player_info).facing >= 1 && _G(player_info).facing <= 5)
+				ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 1, 3, true);
+			else if (_G(player_info).facing >= 7 && _G(player_info).facing <= 11)
+				ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 1, 9, true);
+
+			break;
+
+		case 1:
+			setGlobals1(_ripTrekTalkerPos3Series, 1, 1, 1, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), -1);
+			switch (imath_ranged_rand(1, 4)) {
+			case 1:
+				digi_play("com034", 1, 255, 3, 997);
+				break;
+
+			case 2:
+				digi_play("com035", 1, 255, 3, 997);
+				break;
+
+			case 3:
+				digi_play("com036", 1, 255, 3, 997);
+				break;
+
+			case 4:
+				digi_play("com037", 1, 255, 3, 997);
+				break;
+
+			default:
+				break;
+			}
+
+			break;
+
+		case 3:
+			sendWSMessage_150000(_G(my_walker), 5);
+			break;
+
+		case 5:
+			setGlobals1(_meiTalkPos3Series, 1, 1, 1, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_mcTrekMach, -1);
+			switch (imath_ranged_rand(1, 3)) {
+			case 1:
+				digi_play("com039", 1, 255, 7, 997);
+				break;
+
+			case 2:
+				digi_play("com040", 1, 255, 7, 997);
+				break;
+
+			case 3:
+				digi_play("com041", 1, 255, 7, 997);
+				break;
+
+			default:
+				break;
+			}
+
+			break;
+
+		case 7:
+			sendWSMessage_150000(_mcTrekMach, 9);
+			break;
+
+		case 9:
+			player_set_commands_allowed(true);
+			_unkVar1 = 0;
+			break;
+
+		default:
+			break;
+
+		}
+	} // if (player_said("talk to", "MEI CHEN") || player_said("talk to", "MEI CHEN "))
+
+	else if (!lookFl && player_said("JOURNAL"))
+		digi_play("com042", 1, 255, -1, 997);
+
+	else if (!gearFl && player_said_any("MEI CHEN", "MEI CHEN "))
+		digi_play("com017", 1, 255, 997);
+
+	else if (((walkFl && player_said("    ")) || (!walkFl && player_said("east"))) && _G(flags[266]) == 0) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			_G(player).disable_hyperwalk = true;
+			player_set_commands_allowed(false);
+			ws_walk(_G(my_walker), 446, 315, nullptr, 1, 0, true);
+			_candlemanShadow3Mach = series_show("CANDLEMAN SHADOW3", 1792, 16, -1, -1, 0, 84, 225, 306);
+			if (_unkVar2 != 0)
+				sendWSMessage_140000(_mcTrekMach, -1);
+
+			_unkVar1 = 1;
+			break;
+
+		case 1:
+			ws_hide_walker(_G(my_walker));
+			digi_play("806_s02", 2, 255, -1, -1);
+			series_play("806RP02", 256, 0, 3, 5, 0, 100, 0, 0, 0, 8);
+
+			break;
+
+		case 3:
+			_806rp01Mach = series_play("806RP02", 256, 0, 5, 5, 0, 100, 0, 0, 9, 18);
+			digi_play("806m08", 1, 255, -1, -1);
+			digi_play("950_s52", 2, 255, -1, 950);
+			sendWSMessage_60000(_mcTrekMach);
+			_806mc01Mach = series_play("806MC02", 256, 16, -1, 5, 0, 100, 0, 0, 0, -1);
+
+			break;
+
+		case 5:
+			_806rp01Mach = series_play("806RP02", 256, 16, 7, 5, 0, 100, 0, 0, 19, -1);
+			digi_play("950_s53", 2, 255, -1, 950);
+
+			break;
+
+		case 7:
+			kernel_timing_trigger(60, 9, nullptr);
+			break;
+
+		case 9:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(11);
+
+			break;
+
+		case 11:
+			ws_unhide_walker(_G(my_walker));
+			_G(player).disable_hyperwalk = false;
+			ws_demand_location(_G(my_walker), 221, 316);
+			ws_demand_facing(_G(my_walker), 3);
+			other_save_game_for_resurrection();
+			_G(game).new_section = 4;
+			_G(game).new_room = 413;
+
+			break;
+
+		default:
+			break;
+		}
+	} // if (((walkFl && player_said("    ")) || (!walkFl && player_said("east"))) && _G(flags[266]) == 0)
+
+	else if (player_said("west") && (_G(kernel).trigger == -1 || _G(kernel).trigger == 1)) {
+		if (_G(kernel).trigger == -1) {
+			player_set_commands_allowed(false);
+			_unkVar1 = 1;
+			disable_player_commands_and_fade_init(1);
+		} else if (_G(kernel).trigger == 1) {
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s29", 3, 93, -1, -1);
+			_G(game).new_room = 805;
+		}
+	} // if (player_said("west") && (_G(kernel).trigger == -1 || _G(kernel).trigger == 1))
+
+	else if (player_said("east")) {
+		if (_G(kernel).trigger == -1) {
+			player_set_commands_allowed(false);
+			_unkVar1 = 1;
+			disable_player_commands_and_fade_init(1);
+		} else if (_G(kernel).trigger == 1) {
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s29", 3, 93, -1, -1);
+			_G(game).new_room = 807;
+		}
+	}
+
+
+	_G(player).command_ready = 0;
 }
 
 void Room806::daemon() {
