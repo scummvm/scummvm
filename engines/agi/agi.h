@@ -433,6 +433,7 @@ struct AgiGame {
 	Common::Rect mouseFence;        /**< rectangle set by fence.mouse command */
 	bool mouseEnabled;              /**< if mouse is supposed to be active */
 	bool mouseHidden;               /**< if mouse is currently hidden */
+	bool predictiveDlgOnMouseClick; /**< if predictive dialog is enabled for mouse clicks */
 
 	// IF condition handling
 	bool testResult;
@@ -521,6 +522,7 @@ struct AgiGame {
 		// mouseFence cleared by Common::Rect constructor
 		mouseEnabled = false;
 		mouseHidden = false;
+		predictiveDlgOnMouseClick = false;
 
 		testResult = false;
 

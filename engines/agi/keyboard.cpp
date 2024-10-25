@@ -422,7 +422,9 @@ bool AgiEngine::handleMouseClicks(uint16 &key) {
 
 			if (displayLineRect.contains(_mouse.pos)) {
 				// and user clicked within the line of the prompt
-				showPredictiveDialog();
+				if (_game.predictiveDlgOnMouseClick) {
+					showPredictiveDialog();
+				}
 
 				key = 0; // eat event
 				return true;
@@ -444,7 +446,9 @@ bool AgiEngine::handleMouseClicks(uint16 &key) {
 			Common::Rect displayRect = _gfx->getFontRectForDisplayScreen(stringColumn, stringRow, stringMaxLen, 1);
 			if (displayRect.contains(_mouse.pos)) {
 				// user clicked inside the input space
-				showPredictiveDialog();
+				if (_game.predictiveDlgOnMouseClick) {
+					showPredictiveDialog();
+				}
 
 				key = 0; // eat event
 				return true;
