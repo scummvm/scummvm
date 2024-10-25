@@ -701,4 +701,14 @@ uint32 Window::frozenLingoRecursionCount() {
 	return count;
 }
 
+Common::String Window::formatWindowInfo() {
+	return Common::String::format(
+			"name: \"%s\", movie: \"%s\", currentPath: \"%s\", dims: (%d,%d) %dx%d, innerDims: (%d, %d) %dx%d, visible: %d",
+			_name.c_str(), _currentMovie->getMacName().c_str(), _currentPath.c_str(),
+			_dims.left, _dims.top, _dims.width(), _dims.height(),
+			_innerDims.left, _innerDims.top, _innerDims.width(), _innerDims.height(),
+			_visible
+	);
+}
+
 } // End of namespace Director

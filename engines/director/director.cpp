@@ -194,9 +194,10 @@ Window *DirectorEngine::getOrCreateWindow(Common::String &name) {
 	window->setTitle(name);
 	window->resizeInner(1, 1);
 	window->setVisible(false, true);
+	window->move(0, 0);
+	window->incRefCount();
 	_wm->addWindowInitialized(window);
 	_windowList.push_back(window);
-	window->incRefCount();
 	return window;
 }
 

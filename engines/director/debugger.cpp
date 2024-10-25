@@ -87,6 +87,8 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("fin", WRAP_METHOD(Debugger, cmdFinish));
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("c", WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("windows", WRAP_METHOD(Debugger, cmdWindows));
+	registerCmd("w", WRAP_METHOD(Debugger, cmdWindows));
 
 	registerCmd("bpset", WRAP_METHOD(Debugger, cmdBpSet));
 	registerCmd("b", WRAP_METHOD(Debugger, cmdBpSet));
@@ -165,6 +167,7 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" next / n [n] - Steps forward one or more operations, skips over calls\n");
 	debugPrintf(" finish / fin - Steps until the current stack frame returns\n");
 	debugPrintf(" continue / c - Continues execution\n");
+	debugPrintf(" windows / w - Lists all of the windows\n");
 	debugPrintf("\n");
 	debugPrintf("Breakpoints:\n");
 	debugPrintf(" bpset / b - Creates a breakpoint at the current Lingo function and offset\n");
@@ -668,6 +671,16 @@ bool Debugger::cmdFinish(int argc, const char **argv) {
 	_finish = true;
 	_finishCounter = 1;
 	return cmdExit(0, nullptr);
+}
+
+bool Debugger::cmdWindows(int argc, const char **argv) {
+	debugPrintf("Stage:\n%s\n\n", g_director->getStage()->formatWindowInfo().c_str());
+	debugPrintf("Windows:\n");
+	for (auto &it : *g_director->getWindowList()) {
+		debugPrintf("%s\n", it->formatWindowInfo().c_str());
+	}
+	debugPrintf("\n");
+	return true;
 }
 
 bool Debugger::cmdBpSet(int argc, const char **argv) {
