@@ -1140,7 +1140,7 @@ void DarkseedEngine::changeToRoom(int newRoomNumber, bool placeDirectly) { // AK
 	}
 	_room->initRoom();
 	updateDisplay();
-	// TODO load room song.
+	_room->loadRoomMusic();
 	_room->printRoomDescriptionText();
 }
 

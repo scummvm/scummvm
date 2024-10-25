@@ -45,6 +45,78 @@ const static int roomDescriptionTextTbl[] = {
 	903
 };
 
+static constexpr MusicId roomMusicIdTbl[69] = {
+	MusicId::kQuiet,
+	MusicId::kQuiet,
+	MusicId::kQuiet,
+	MusicId::kQuiet,
+	MusicId::kQuiet,
+	MusicId::kQuiet,
+	MusicId::kQuiet,
+	MusicId::kQuiet,
+	MusicId::kQuiet,
+	MusicId::kQuiet,
+	MusicId::kOutdoor,
+	MusicId::kTown,
+	MusicId::kTown,
+	MusicId::kQuiet,
+	MusicId::kCemetry,
+	MusicId::kTown,
+	MusicId::kRadio,
+	MusicId::kLibrary,
+	MusicId::kLibrary,
+	MusicId::kLibrary,
+	MusicId::kLibrary,
+	MusicId::kLibrary,
+	MusicId::kLibrary,
+	MusicId::kNone,
+	MusicId::kCemetry,
+	MusicId::kCemetry,
+	MusicId::kCemetry,
+	MusicId::kCemetry,
+	MusicId::kLibrary,
+	MusicId::kNone,
+	MusicId::kTown,
+	MusicId::kOutdoor,
+	MusicId::kOutdoor,
+	MusicId::kOutdoor,
+	MusicId::kNone,
+	MusicId::kCemetry,
+	MusicId::kCemetry,
+	MusicId::kCemetry,
+	MusicId::kLab,
+	MusicId::kLab,
+	MusicId::kLab,
+	MusicId::kLab,
+	MusicId::kLab,
+	MusicId::kLab,
+	MusicId::kLab,
+	MusicId::kLab,
+	MusicId::kExt,
+	MusicId::kNone,
+	MusicId::kExt,
+	MusicId::kLeech,
+	MusicId::kLeech,
+	MusicId::kLeech,
+	MusicId::kNone,
+	MusicId::kExt,
+	MusicId::kExt,
+	MusicId::kExt,
+	MusicId::kLeech,
+	MusicId::kLab,
+	MusicId::kLab,
+	MusicId::kLab,
+	MusicId::kLab,
+	MusicId::kQuiet,
+	MusicId::kQuiet,
+	MusicId::kOutdoor,
+	MusicId::kTown,
+	MusicId::kOutdoor,
+	MusicId::kExt,
+	MusicId::kExt,
+	MusicId::kExt
+};
+
 Room::Room(int roomNumber) : _roomNumber(roomNumber) {
 	_room1.resize(8);
 	_walkableLocationsMap.resize(16);
@@ -1344,6 +1416,23 @@ Common::Point Room::getExitPointForRoom(uint8 roomNumber) {
 		}
 	}
 	return Common::Point();
+}
+
+MusicId Room::getMusicIdForRoom(uint8 roomNumber) {
+	if (roomNumber >= 69) {
+		error("getMusicIdForRoom: Invalid roomNumber: %d", roomNumber);
+	}
+	return roomMusicIdTbl[roomNumber];
+}
+
+void Room::loadRoomMusic() {
+	if (!g_engine->_mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType)) { // TODO move this
+		auto newMusicId = getMusicIdForRoom(_roomNumber);
+		if ((!g_engine->_sound->isPlayingMusic() || getMusicIdForRoom(g_engine->_previousRoomNumber) != newMusicId)
+			&& newMusicId != MusicId::kNone) {
+			g_engine->_sound->playMusic(newMusicId);
+		}
+	}
 }
 
 } // End of namespace Darkseed

@@ -27,6 +27,36 @@
 
 namespace Darkseed {
 
+static constexpr char musicDosFloppyFilenameTbl[][14] = {
+	"lab1",
+	"victory1",
+	"cemetry1",
+	"leech1",
+	"ext1",
+	"quiet",
+	"package",
+	"dth",
+	"library",
+	"radio",
+	"outdoor",
+	"town"
+};
+
+static constexpr char musicDosCDFilenameTbl[][14] = {
+	"lab.mid",
+	"victory.mid",
+	"cemetery.mid",
+	"leech.mid",
+	"exterior.mid",
+	"passtime.mid",
+	"mirrorst.mid",
+	"dth.mid",
+	"lib_moz.mid",
+	"carradio.mid",
+	"greenwal.mid",
+	"walktown.mid"
+};
+
 Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer) {
 	_didSpeech.resize(978);
 	resetSpeech();
@@ -53,6 +83,10 @@ bool Sound::isPlayingSpeech() const {
 	return _mixer->isSoundHandleActive(_speechHandle);
 }
 
+bool Sound::isPlayingMusic() {
+	return _isPlayingMusic;
+}
+
 void Sound::waitForSpeech() {
 	while (isPlayingSpeech()) {
 		// TODO poll events / wait a bit here.
@@ -63,6 +97,26 @@ void Sound::resetSpeech() {
 	for (int i = 0; i < (int)_didSpeech.size(); i++) {
 		_didSpeech[i] = 0;
 	}
+}
+
+void Sound::playMusic(MusicId musicId) {
+	if (musicId == MusicId::kNone) {
+		return;
+	}
+	int filenameIdx = static_cast<uint8>(musicId) - 1;
+	playMusic(g_engine->isCdVersion()
+		? musicDosCDFilenameTbl[filenameIdx]
+		: musicDosFloppyFilenameTbl[filenameIdx]);
+}
+
+void Sound::playMusic(Common::String const &filename) {
+	debug("Loading music: %s", filename.c_str());
+	_isPlayingMusic = true;
+	// TODO load music.
+}
+
+void Sound::stopMusic() {
+	_isPlayingMusic = false;
 }
 
 Common::Error Sound::sync(Common::Serializer &s) {

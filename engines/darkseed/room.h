@@ -23,9 +23,10 @@
 #define DARKSEED_ROOM_H
 
 #include "common/rect.h"
+#include "darkseed/nsp.h"
 #include "darkseed/pal.h"
 #include "darkseed/pic.h"
-#include "darkseed/nsp.h"
+#include "sound.h"
 
 namespace Darkseed {
 
@@ -106,6 +107,8 @@ public:
 	void darkenSky();
 	void loadLocationSprites(const Common::Path &path);
 	Common::Point getExitPointForRoom(uint8 roomNumber);
+	static MusicId getMusicIdForRoom(uint8 roomNumber);
+	void loadRoomMusic();
 
 private:
 	bool load();
