@@ -157,7 +157,9 @@ Common::Error WageEngine::run() {
 		if (_restartRequested)
 			restart();
 
-		_gui->draw();
+		if (_gui)
+			_gui->draw();
+
 		g_system->updateScreen();
 		g_system->delayMillis(50);
 
@@ -175,10 +177,14 @@ void WageEngine::restart() {
 	delete _gui;
 	delete _world;
 
+	_gui = nullptr;
+
 	_world = new World(this);
 
-	if (!_world->loadWorld(_resManager))
+	if (!_world->loadWorld(_resManager)) {
+		_shouldQuit = true;
 		return;
+	}
 
 	_shouldQuit = false;
 
