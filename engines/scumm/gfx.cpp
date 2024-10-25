@@ -4603,6 +4603,10 @@ void ScummEngine::transitionEffect(int a) {
  * dissolveEffect(virtsrc[0].width, 1) produces a line-by-line dissolve
  */
 void ScummEngine::dissolveEffect(int width, int height) {
+	// Apparently Mac versions discarded this effect
+	if (_macScreen && _macGui)
+		return;
+
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 	int *offsets;
 	int blitsBeforeRefresh, blits, blitsToFreeze;
