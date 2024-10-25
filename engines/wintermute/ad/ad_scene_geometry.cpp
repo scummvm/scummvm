@@ -63,10 +63,10 @@ AdSceneGeometry::AdSceneGeometry(BaseGame *gameRef) : BaseObject(gameRef) {
 	_activeCamera = _activeLight = -1;
 	DXMatrixIdentity(&_viewMatrix);
 	_waypointHeight = 10.0f;
-	_wptMarker = NULL;
+	_wptMarker = nullptr;
 
 	_PFReady = true;
-	_PFTargetPath = NULL;
+	_PFTargetPath = nullptr;
 	_PFMaxTime = 15;
 	_PFRerun = false;
 

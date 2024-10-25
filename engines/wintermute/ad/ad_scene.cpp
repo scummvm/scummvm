@@ -170,8 +170,6 @@ void AdScene::setDefaults() {
 	_fogStart = 0.0f;
 	_fogEnd = 0.0f;
 #endif
-
-	_viewport = nullptr;
 }
 
 
