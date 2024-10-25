@@ -1117,7 +1117,31 @@ void CastleEngine::selectCharacterScreen() {
 	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
 	surface->fillRect(_fullscreenViewArea, color);
 
-	if (_language != Common::ES_ESP) {
+	if (isSpectrum()) {
+		if (_language == Common::ES_ESP) {
+			// No accent in "príncipe" since it is not supported by the font
+			lines.push_back(centerAndPadString("*******************", 21));
+			lines.push_back(centerAndPadString("Seleccion el ", 21));
+			lines.push_back(centerAndPadString("personaje que quiera", 21));
+			lines.push_back(centerAndPadString("ser y pulse enter", 21));
+			lines.push_back("");
+			lines.push_back(centerAndPadString("1. Principe", 21));
+			lines.push_back(centerAndPadString("2. Princesa", 21));
+			lines.push_back("");
+			lines.push_back(centerAndPadString("*******************", 21));
+		} else {
+			lines.push_back(centerAndPadString("*******************", 21));
+			lines.push_back(centerAndPadString("Select the character", 21));
+			lines.push_back(centerAndPadString("you wish to play", 21));
+			lines.push_back(centerAndPadString("and press enter", 21));
+			lines.push_back("");
+			lines.push_back(centerAndPadString("1. Prince  ", 21));
+			lines.push_back(centerAndPadString("2. Princess", 21));
+			lines.push_back("");
+			lines.push_back(centerAndPadString("*******************", 21));
+		}
+		drawStringsInSurface(lines, surface);
+	} else {
 		int x = 0;
 		int y = 0;
 
@@ -1128,26 +1152,6 @@ void CastleEngine::selectCharacterScreen() {
 			drawStringInSurface(selectMessage[i]._text, x, y, color, color, surface);
 		}
 		drawFullscreenSurface(surface);
-	} else {
-		// No accent in "príncipe" since it is not supported by the font
-		if (isDOS()) {
-			lines.push_back("Elija su personaje");
-			lines.push_back("");
-			lines.push_back("");
-			lines.push_back("            1. Principe");
-			lines.push_back("            2. Princesa");
-		} else if (isSpectrum()) {
-			lines.push_back(centerAndPadString("*******************", 21));
-			lines.push_back(centerAndPadString("Seleccion el ", 21));
-			lines.push_back(centerAndPadString("personaje que quiera", 21));
-			lines.push_back(centerAndPadString("ser y precione enter", 21));
-			lines.push_back("");
-			lines.push_back(centerAndPadString("1. Principe", 21));
-			lines.push_back(centerAndPadString("2. Princesa", 21));
-			lines.push_back("");
-			lines.push_back(centerAndPadString("*******************", 21));
-		}
-		drawStringsInSurface(lines, surface);
 	}
 
 	_system->lockMouse(false);

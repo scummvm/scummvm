@@ -191,30 +191,48 @@ void FreescapeEngine::borderScreen() {
 	if (isDOS() || isSpectrum()) {
 		Common::Array<Common::String> lines;
 		int pad = 25;
-		if (isSpectrum() && isCastle())
-			pad = 22;
-		else if (isDOS() && !isCastle())
-			pad = 30;
+		if (isDOS()) {
+			if (isDOS() && !isCastle())
+				pad = 30;
 
-		if (isDOS())
 			lines.push_back(centerAndPadString("CONFIGURATION MENU", pad));
-		else
-			lines.push_back(centerAndPadString("CONTROL OPTIONS", pad));
-		lines.push_back("");
-		lines.push_back(centerAndPadString("1: KEYBOARD ONLY   ", pad));
-		lines.push_back(centerAndPadString("2: IBM JOYSTICK    ", pad));
-		lines.push_back(centerAndPadString("3: AMSTRAD JOYSTICK", pad));
-		lines.push_back("");
-		lines.push_back("");
-		if (isDOS())
+			lines.push_back("");
+			lines.push_back(centerAndPadString("1: KEYBOARD ONLY   ", pad));
+			lines.push_back(centerAndPadString("2: IBM JOYSTICK    ", pad));
+			lines.push_back(centerAndPadString("3: AMSTRAD JOYSTICK", pad));
+			lines.push_back("");
+			lines.push_back("");
 			lines.push_back(centerAndPadString("SPACEBAR:  BEGIN MISSION", pad));
-		else
-			lines.push_back(centerAndPadString("ENTER: BEGIN MISSION", pad));
-		lines.push_back("");
-		if (isDOS())
 			lines.push_back(centerAndPadString("COPYRIGHT 1988 INCENTIVE", pad));
-		else
-			lines.push_back(centerAndPadString("(c) 1988 INCENTIVE", pad));
+		} else if (isSpectrum()) {
+			if (isSpectrum() && isCastle())
+				pad = 22;
+
+			if (_language == Common::ES_ESP) {
+				assert(isCastle());
+				lines.push_back(centerAndPadString("MENU DE OPCIONES", pad));
+				lines.push_back("");
+				lines.push_back(centerAndPadString("1 TECLADO          ", pad));
+				lines.push_back(centerAndPadString("2 JOYSTICK SINCLAIR", pad));
+				lines.push_back(centerAndPadString("3 JOYSTICK KEMSTON ", pad));
+				lines.push_back(centerAndPadString("4 JOYSTICK CURSOR  ", pad));
+				lines.push_back("");
+				lines.push_back(centerAndPadString("ENTER: EMPEZAR MISION", pad));
+				lines.push_back(centerAndPadString("(c) 1990 INCENTIVE", pad));
+			} else {
+				lines.push_back(centerAndPadString("CONTROL OPTIONS", pad));
+				lines.push_back("");
+				lines.push_back(centerAndPadString("1 KEYBOARD         ", pad));
+				lines.push_back(centerAndPadString("2 SINCLAIR JOYSTICK", pad));
+				lines.push_back(centerAndPadString("3 KEMSTON JOYSTICK ", pad));
+				lines.push_back(centerAndPadString("4 CURSOR JOYSTICK  ", pad));
+				lines.push_back("");
+				lines.push_back(centerAndPadString("ENTER: BEGIN MISSION", pad));
+				if (!isCastle())
+					lines.push_back("");;
+				lines.push_back(centerAndPadString("(c) 1990 INCENTIVE", pad));
+			}
+		}
 
 		lines.push_back("");
 
