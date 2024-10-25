@@ -421,7 +421,7 @@ void CastleEngine::loadAssetsDOSDemo() {
 
 		stream = decryptFile("CMLD"); // Only english
 		loadMessagesVariableSize(stream, 0x11, 164);
-		loadRiddles(stream, 0xaae - 2 - 21 * 2, 21);
+		loadRiddles(stream, 0xaae - 2 - 22 * 2, 22);
 		delete stream;
 
 		stream = decryptFile("CDEDF");
