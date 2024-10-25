@@ -157,7 +157,7 @@ public:
 	 * pitch and volume to their middle values.
 	 */
 	TextToSpeechManager();
-	virtual ~TextToSpeechManager() {}
+	virtual ~TextToSpeechManager();
 
 	/**
 	 * Says the given string

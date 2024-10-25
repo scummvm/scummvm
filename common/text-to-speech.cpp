@@ -86,6 +86,17 @@ TextToSpeechManager::TextToSpeechManager() {
 	_ttsState->_next = nullptr;
 }
 
+TextToSpeechManager::~TextToSpeechManager() {
+	while (_ttsState->_next != nullptr) {
+		Common::TTSState *oldState = _ttsState;
+		_ttsState = _ttsState->_next;
+
+		delete oldState;
+	}
+
+	delete _ttsState;
+}
+
 void TextToSpeechManager::pushState() {
 	stop();
 	TTSState *newState = new TTSState;
