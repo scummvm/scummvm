@@ -544,10 +544,16 @@ Common::Error HadeschEngine::run() {
 	_mixer->setVolumeForSoundType(_mixer->kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(_mixer->kSpeechSoundType, ConfMan.getInt("speech_volume"));
 
-	if (!ConfMan.getBool("subtitles"))
+	if (!ConfMan.getBool("subtitles")) {
 		_subtitleDelayPerChar = -1;
-	else
+	}else {
+		int talkSpeed = ConfMan.getInt("talkspeed");
+
+		if (!talkSpeed)
+			talkSpeed = 0;
+
 		_subtitleDelayPerChar = 4500 / ConfMan.getInt("talkspeed");
+	}
 
 	debug("HadeschEngine: moving to main loop");
 	_nextRoom.clear();
