@@ -3450,19 +3450,7 @@ void LB::b_script(int nargs) {
 
 void LB::b_window(int nargs) {
 	Datum d = g_lingo->pop();
-	Common::String windowName = d.asString();
 	FArray *windowList = g_lingo->_windowList.u.farr;
-
-	for (uint i = 0; i < windowList->arr.size(); i++) {
-		if (windowList->arr[i].type != OBJECT || windowList->arr[i].u.obj->getObjType() != kWindowObj)
-			continue;
-
-		Window *window = static_cast<Window *>(windowList->arr[i].u.obj);
-		if (window->getName().equalsIgnoreCase(windowName)) {
-			g_lingo->push(window);
-			return;
-		}
-	}
 
 	// Refer window by-indexing, lingo can request using "window #index" where #index is the index of window that is previously
 	// created, in tutorial workshop `rect of window`, a window is created using 'open(window "ball")' and the same window is
@@ -3481,14 +3469,10 @@ void LB::b_window(int nargs) {
 		}
 	}
 
-	Graphics::MacWindowManager *wm = g_director->getMacWindowManager();
-	Window *window = new Window(wm->getNextId(), false, false, false, wm, g_director, false);
-	window->setName(windowName);
-	window->setTitle(windowName);
-	window->resizeInner(1, 1);
-	window->setVisible(false, true);
-	wm->addWindowInitialized(window);
-	windowList->arr.push_back(window);
+	Common::String windowName = d.asString();
+	Window *window = g_director->getOrCreateWindow(windowName);
+	windowList->arr.push_back(Datum(window));
+
 	g_lingo->push(window);
 }
 
