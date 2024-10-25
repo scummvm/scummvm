@@ -167,6 +167,8 @@ public:
 	bool thawLingoPlayState();
 	LingoState *getLastFrozenLingoState() { return _frozenLingoStates.empty() ? nullptr : _frozenLingoStates[_frozenLingoStates.size() - 1]; }
 
+	Common::String formatWindowInfo();
+
 	// events.cpp
 	bool processEvent(Common::Event &event) override;
 
