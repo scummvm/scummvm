@@ -68,6 +68,7 @@ void SpeechManager::kill() {
 		killMe = nullptr;
 	}
 	_speech->allSpeech.clear();
+	delete _speech;
 }
 
 void SpeechManager::setObjFontColour(ObjectType *t) {
