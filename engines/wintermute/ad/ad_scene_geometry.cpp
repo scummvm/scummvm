@@ -669,7 +669,7 @@ bool AdSceneGeometry::convert2Dto3D(int x, int y, DXVector3 *pos) {
 
 	// Get the inverse view matrix
 	DXMatrix m;
-	DXMatrixInverse(&m, nullptr, &_lastViewMat);
+	DXMatrixInverse(&m, nullptr, &_viewMatrix);
 
 	// Transform the screen space pick ray into 3D space
 	vPickRayDir._x  = vec._x * m.matrix._11 + vec._y * m.matrix._21 + vec._z * m.matrix._31;
