@@ -36,7 +36,8 @@ private:
 public:
 
 	DXBuffer() {
-		free();
+		_ptr = nullptr;
+		_size = 0;
 	}
 
 	DXBuffer(uint64 size) {
