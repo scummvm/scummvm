@@ -838,10 +838,10 @@ bool MacGuiImpl::runOpenDialog(int &saveSlotToHandle) {
 	while (!_vm->shouldQuit()) {
 		int clicked = window->runDialog(deferredActionsIds);
 
-		if (clicked == 0 || clicked == 6) {
+		if (clicked == 0 || clicked == 4) {
 			saveSlotToHandle =
-				window->getWidgetValue(6) < ARRAYSIZE(slotIds) ?
-				slotIds[window->getWidgetValue(6)] : -1;
+				window->getWidgetValue(4) < ARRAYSIZE(slotIds) ?
+				slotIds[window->getWidgetValue(4)] : -1;
 			ret = true;
 			break;
 		}
