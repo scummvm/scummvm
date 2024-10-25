@@ -174,6 +174,8 @@ public:
 	Lingo *getLingo() const { return _lingo; }
 	Window *getStage() const { return _stage; }
 	Window *getCurrentWindow() const { return _currentWindow; }
+	Window *getOrCreateWindow(Common::String &name);
+	void forgetWindow(Window *window);
 	void setCurrentWindow(Window *window);
 	Window *getCursorWindow() const { return _cursorWindow; }
 	void setCursorWindow(Window *window) { _cursorWindow = window; }
@@ -300,7 +302,8 @@ private:
 	uint16 _version;
 
 	Window *_stage;
-	Datum *_windowList; // Lingo list
+	Common::Array<Window *> _windowList;
+	Common::Array<Window *> _windowsToForget;
 	Window *_currentWindow;
 	Window *_cursorWindow;
 

@@ -83,9 +83,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	memset(_currentPalette, 0, 768);
 	_currentPaletteLength = 0;
 	_stage = nullptr;
-	_windowList = new Datum;
-	_windowList->type = ARRAY;
-	_windowList->u.farr = new FArray;
 	_currentWindow = nullptr;
 	_cursorWindow = nullptr;
 	_lingo = nullptr;
@@ -155,7 +152,9 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 }
 
 DirectorEngine::~DirectorEngine() {
-	delete _windowList;
+	for (auto &it : _windowList) {
+		it->decRefCount();
+	}
 	delete _lingo;
 	delete _wm;
 	delete _surface;
@@ -183,6 +182,32 @@ Common::String DirectorEngine::getCurrentAbsolutePath() {
 }
 
 static bool buildbotErrorHandler(const char *msg) { return true; }
+
+Window *DirectorEngine::getOrCreateWindow(Common::String &name) {
+	for (auto &it : _windowList) {
+		if (it->getName().equalsIgnoreCase(name)) {
+			return it;
+		}
+	}
+	Window *window = new Window(_wm->getNextId(), false, false, false, _wm, g_director, false);
+	window->setName(name);
+	window->setTitle(name);
+	window->resizeInner(1, 1);
+	window->setVisible(false, true);
+	_wm->addWindowInitialized(window);
+	_windowList.push_back(window);
+	window->incRefCount();
+	return window;
+}
+
+void DirectorEngine::forgetWindow(Window *window) {
+	for (auto &it : _windowsToForget) {
+		if (it == window)
+			return;
+	}
+	window->setVisible(false, true);
+	_windowsToForget.push_back(window);
+}
 
 void DirectorEngine::setCurrentWindow(Window *window) {
 	if (_currentWindow == window)
@@ -311,18 +336,26 @@ Common::Error DirectorEngine::run() {
 		loop = _currentWindow->step();
 
 		if (loop) {
-			FArray *windowList = g_lingo->_windowList.u.farr;
-			for (uint i = 0; i < windowList->arr.size(); i++) {
-				if (windowList->arr[i].type != OBJECT || windowList->arr[i].u.obj->getObjType() != kWindowObj)
-					continue;
-
-				setCurrentWindow(static_cast<Window *>(windowList->arr[i].u.obj));
+			for (auto &it : _windowList) {
+				setCurrentWindow(it);
 				g_lingo->switchStateFromWindow();
 				_currentWindow->step();
 			}
 		}
 
 		draw();
+		while (!_windowsToForget.empty()) {
+			Window *window = _windowsToForget.back();
+			_windowsToForget.pop_back();
+			for (size_t i = 0; i < _windowList.size(); i++) {
+				if (_windowList[i] == window) {
+					_windowList.remove_at(i);
+					window->decRefCount();
+					break;
+				}
+			}
+		}
+
 		g_director->delayMillis(10);
 #ifdef USE_IMGUI
 		// For performance reasons, disable the renderer callback if the ImGui debug flag isn't set

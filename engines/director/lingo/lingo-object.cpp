@@ -825,7 +825,7 @@ void LM::m_forget(int nargs) {
 		if (it._value.u.obj == me)
 			g_lingo->_globalvars[it._key] = 0;
 	}
-
+	g_director->forgetWindow(me);
 }
 
 void LM::m_open(int nargs) {
