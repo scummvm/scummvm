@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-10-25 18:06+0000\n"
+"POT-Creation-Date: 2024-10-25 18:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4985,11 +4985,11 @@ msgstr ""
 msgid "Select Playlist directory"
 msgstr ""
 
-#: backends/platform/libretro/src/libretro-os-utils.cpp:173
+#: backends/platform/libretro/src/libretro-os-utils.cpp:233
 msgid "Libretro playlist"
 msgstr ""
 
-#: backends/platform/libretro/src/libretro-os-utils.cpp:176
+#: backends/platform/libretro/src/libretro-os-utils.cpp:236
 msgid ""
 "## Libretro playlists for ScummVM core\n"
 "Playlists used in Libretro frontends (e.g. Retroarch) are plain text lists "
