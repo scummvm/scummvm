@@ -335,6 +335,7 @@ struct LingoState {
 	ScriptContext *context = nullptr;		// current Lingo script context
 	DatumHash *localVars = nullptr;			// current local variables
 	Datum me;								// current me object
+	StackData stack;
 
 	~LingoState();
 };
@@ -546,8 +547,6 @@ public:
 	Common::HashMap<int, const LingoV4TheEntity *> _lingoV4TheEntity;
 
 	uint _globalCounter;
-
-	StackData _stack;
 
 	DirectorEngine *_vm;
 

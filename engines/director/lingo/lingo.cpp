@@ -416,8 +416,8 @@ void LingoArchive::replaceCode(const Common::U32String &code, ScriptType type, u
 Common::String Lingo::formatStack() {
 	Common::String stack;
 
-	for (uint i = 0; i < _stack.size(); i++) {
-		Datum d = _stack[i];
+	for (uint i = 0; i < _state->stack.size(); i++) {
+		Datum d = _state->stack[i];
 		stack += Common::String::format("<%s> ", d.asString(true).c_str());
 	}
 	return stack;

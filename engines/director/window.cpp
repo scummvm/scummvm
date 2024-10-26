@@ -366,6 +366,12 @@ void Window::ensureMovieIsLoaded() {
 		return;
 	}
 
+	if (_currentMovie) {
+		if (!_lingoState->callstack.empty())
+			freezeLingoState();
+		_currentMovie->getScore()->stopPlay();
+	}
+
 	loadNextMovie();
 
 	if (_currentMovie->getScore()->_playState == kPlayNotStarted)
@@ -670,6 +676,17 @@ bool Window::thawLingoPlayState() {
 	_lingoState = _lingoPlayState;
 	_lingoPlayState = nullptr;
 	return true;
+}
+
+
+void Window::moveLingoState(Window *target) {
+	if (target == this)
+		return;
+	if (!target->_lingoState->callstack.empty())
+		target->freezeLingoState();
+	delete target->_lingoState;
+	target->_lingoState = _lingoState;
+	_lingoState = new LingoState();
 }
 
 

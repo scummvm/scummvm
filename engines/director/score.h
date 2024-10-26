@@ -187,6 +187,7 @@ public:
 	bool _cursorDirty;
 	bool _activeFade;
 	bool _exitFrameCalled;
+	bool _stopPlayCalled;
 	Cursor _defaultCursor;
 	CursorRef _currentCursor;
 	bool _skipTransition;
