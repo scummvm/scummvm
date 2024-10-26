@@ -1553,8 +1553,19 @@ bool SDSScene::checkDialogActive() {
 			if (action || dlg._action.empty()) {
 				dlg.setFlag(kDlgFlagHiFinished);
 				if (action) {
-					debug("Dialog closing: run action (%d ops)", action->sceneOpList.size());
+					// Take a copy of the dialog because the actions might change the scene
+					Dialog dlgCopy = dlg;
+					debug("Dialog %d closing: run action (%d ops)", dlg._num, action->sceneOpList.size());
 					if (!runOps(action->sceneOpList)) {
+						// HACK: the scene changed, but we haven't yet drawn the foreground for the
+						// dialog, this is our last chance so do it now.  The game does it in a
+						// different way that relies on delayed disposal of the dialog data.
+						if (dlgCopy.hasFlag(kDlgFlagVisible) && !dlgCopy.hasFlag(kDlgFlagOpening)) {
+							DgdsEngine *engine = DgdsEngine::getInstance();
+							dlgCopy.draw(&engine->_compositionBuffer, kDlgDrawFindSelectionPointXY);
+							dlgCopy.draw(&engine->_compositionBuffer, kDlgDrawFindSelectionTxtOffset);
+							dlgCopy.draw(&engine->_compositionBuffer, kDlgDrawStageForeground);
+						}
 						_dlgWithFlagLo8IsClosing = false;
 						return true;
 					}
