@@ -4892,6 +4892,8 @@ void ScummEngine::dissolveEffectSelector() {
 		dissolveEffect(1, 1);
 	else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine)
 		dissolveEffect(8, 8);
+	else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformMacintosh)
+		transitionEffect(0);
 	else
 		dissolveEffect(8, 4);
 }
