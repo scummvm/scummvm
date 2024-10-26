@@ -82,6 +82,7 @@ Score::Score(Movie *movie) {
 	_waitForClickCursor = false;
 	_activeFade = false;
 	_exitFrameCalled = false;
+	_stopPlayCalled = false;
 	_playState = kPlayNotStarted;
 
 	_numChannelsDisplayed = 0;
@@ -353,6 +354,9 @@ void Score::step() {
 }
 
 void Score::stopPlay() {
+	if (_stopPlayCalled)
+		return;
+	_stopPlayCalled = true;
 	if (_vm->getVersion() >= 300)
 		_movie->processEvent(kEventStopMovie);
 	_lingo->executePerFrameHook(-1, 0);

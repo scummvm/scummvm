@@ -462,7 +462,7 @@ void LC::cb_objectcall() {
 	}
 
 	if (nargs.u.i > 0) {
-		Datum &firstArg = g_lingo->_stack[g_lingo->_stack.size() - nargs.u.i];
+		Datum &firstArg = g_lingo->_state->stack[g_lingo->_state->stack.size() - nargs.u.i];
 		// The first arg could be either a method name or a variable name
 		if (firstArg.type == SYMBOL) {
 			firstArg.type = VARREF;

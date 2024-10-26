@@ -318,7 +318,7 @@ void Lingo::printArgs(const char *funcname, int nargs, const char *prefix) {
 	s += '(';
 
 	for (int i = 0; i < nargs; i++) {
-		Datum d = _stack[_stack.size() - nargs + i];
+		Datum d = _state->stack[_state->stack.size() - nargs + i];
 
 		s += d.asString(true);
 
@@ -332,9 +332,9 @@ void Lingo::printArgs(const char *funcname, int nargs, const char *prefix) {
 }
 
 void Lingo::convertVOIDtoString(int arg, int nargs) {
-	if (_stack[_stack.size() - nargs + arg].type == VOID) {
-		if (_stack[_stack.size() - nargs + arg].u.s != nullptr)
-			g_lingo->_stack[_stack.size() - nargs + arg].type = STRING;
+	if (_state->stack[_state->stack.size() - nargs + arg].type == VOID) {
+		if (_state->stack[_state->stack.size() - nargs + arg].u.s != nullptr)
+			g_lingo->_state->stack[_state->stack.size() - nargs + arg].type = STRING;
 		else
 			warning("Incorrect convertVOIDtoString for arg %d of %d", arg, nargs);
 	}
@@ -346,11 +346,11 @@ void Lingo::dropStack(int nargs) {
 }
 
 void Lingo::drop(uint num) {
-	if (num > _stack.size() - 1) {
-		warning("Incorrect number of elements to drop from stack: %d > %d", num, _stack.size() - 1);
+	if (num > _state->stack.size() - 1) {
+		warning("Incorrect number of elements to drop from stack: %d > %d", num, _state->stack.size() - 1);
 		return;
 	}
-	_stack.remove_at(_stack.size() - 1 - num);
+	_state->stack.remove_at(_state->stack.size() - 1 - num);
 }
 
 
@@ -1073,7 +1073,7 @@ void LB::b_max(int nargs) {
 		}
 	} else if (nargs > 0) {
 		for (int i = 0; i < nargs; i++) {
-			Datum d = g_lingo->_stack[g_lingo->_stack.size() - nargs + i];
+			Datum d = g_lingo->_state->stack[g_lingo->_state->stack.size() - nargs + i];
 			if (d.type == ARRAY) {
 				warning("b_max: undefined behavior: array mixed with other args");
 			}
@@ -1106,7 +1106,7 @@ void LB::b_min(int nargs) {
 		}
 	} else if (nargs > 0) {
 		for (int i = 0; i < nargs; i++) {
-			Datum d = g_lingo->_stack[g_lingo->_stack.size() - nargs + i];
+			Datum d = g_lingo->_state->stack[g_lingo->_state->stack.size() - nargs + i];
 			if (d.type == ARRAY) {
 				warning("b_min: undefined behavior: array mixed with other args");
 			}
@@ -1882,7 +1882,7 @@ void LB::b_return(int nargs) {
 	}
 
 	// clear any temp values from loops
-	while (g_lingo->_stack.size() > fp->stackSizeBefore)
+	while (g_lingo->_state->stack.size() > fp->stackSizeBefore)
 		g_lingo->pop();
 
 	// Do not allow a factory's mNew method to return a value

@@ -630,10 +630,10 @@ void LM::m_perform(int nargs) {
 	// mNew is called with mPerform
 	Datum d(g_lingo->_state->me);
 	AbstractObject *me = d.u.obj;
-	Datum methodName = g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs); // Take method name out of stack
+	Datum methodName = g_lingo->_state->stack.remove_at(g_lingo->_state->stack.size() - nargs); // Take method name out of stack
 	Symbol funcSym = me->getMethod(*methodName.u.s);
 	// Object methods expect the first argument to be the object
-	g_lingo->_stack.insert_at(g_lingo->_stack.size() - nargs + 1, d);
+	g_lingo->_state->stack.insert_at(g_lingo->_state->stack.size() - nargs + 1, d);
 	LC::call(funcSym, nargs, allowRetVal);
 
 	if (allowRetVal) {
