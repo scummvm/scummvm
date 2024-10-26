@@ -788,13 +788,16 @@ bool MacV5Gui::runOptionsDialog() {
 	// 3 - Music checkbox
 	// 4 - Picture (text speed background)
 	// 5 - Picture (text speed handle)
-	// 6 - Scrolling checkbox
-	// 7 - Full Animation checkbox
+	// 6 - Checkbox (dummy?)
+	// 7 - Checkbox (dummy?)
 	// 8 - Picture (music quality background)
 	// 9 - Picture (music quality handle)
-	// 10 - "Machine Speed:  ^0" text
-	// 11 - Text speed slider (manually created)
-	// 12 - Music quality slider (manually created)
+	// 10 - Static text (dummy?)
+	//
+	// Note: While the widget list is the same, Monkey Island 1 shows
+	//       individual checkboxes for Sound and Music, while Monkey Island
+	//       2 and Fate of Atlantis show a single Music and Sound Effects
+	//       checkbox.
 
 	int sound = (!ConfMan.hasKey("mute") || !ConfMan.getBool("mute")) ? 1 : 0;
 	int music = (!ConfMan.hasKey("music_mute") || !ConfMan.getBool("music_mute")) ? 1 : 0;
