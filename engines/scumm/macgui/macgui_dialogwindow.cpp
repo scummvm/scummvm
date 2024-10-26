@@ -616,7 +616,7 @@ int MacGuiImpl::MacDialogWindow::runDialog(Common::Array<int> &deferredActionIds
 				}
 
 				if (!deferredActionIds.empty())
-					return -2;
+					return kDialogWantsAttention;
 
 				break;
 
@@ -640,7 +640,7 @@ int MacGuiImpl::MacDialogWindow::runDialog(Common::Array<int> &deferredActionIds
 		_system->updateScreen();
 	}
 
-	return -1;
+	return kDialogQuit;
 }
 
 void MacGuiImpl::MacDialogWindow::updateCursor() {
