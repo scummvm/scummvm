@@ -265,7 +265,9 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 			const int currentCharWidth = font.getCharWidth(c);
 			const int w = currentCharWidth + font.getKerningOffset(last, c);
 			last = c;
-			const bool wouldExceedWidth = (lineWidth + tmpWidth + w > targetMaxLineWidth);
+			const bool wouldExceedWidth =
+				(lineWidth + tmpWidth + w > targetMaxLineWidth) &&
+				!(mode & kWordWrapAllowTrailingWhitespace && Common::isSpace(c));
 
 			// If this char is a whitespace, then it represents a potential
 			// 'wrap point' where wrapping could take place. Everything that
