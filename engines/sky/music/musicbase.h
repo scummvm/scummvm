@@ -28,6 +28,10 @@
 
 #include "audio/mixer.h"
 
+namespace Audio {
+class SeekableAudioStream;
+}
+
 namespace Sky {
 
 class Disk;
@@ -36,6 +40,7 @@ class Disk;
 
 typedef struct {
 	uint8 musicToProcess;
+	Audio::SeekableAudioStream *stream;
 } Actions;
 
 class ChannelBase {
