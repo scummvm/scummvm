@@ -28,19 +28,45 @@
 
 namespace Watchmaker {
 
-extern t3dV3F HeadAngles;
-extern t3dF32 CamAngleX, CamAngleY;
+class CameraMan {
+	// Constants:
+	static const int MAX_CAMERA_STEPS = 500;
 
-void GetCameraTarget(Init &init, t3dV3F *Target);
-t3dCAMERA *PickCamera(t3dBODY *b, unsigned char in);
-void doCamera(WGame &game);
-void GetRealCharPos(Init &init, t3dV3F *Target, int32 oc, uint8 bn);
-void ResetCameraTarget();
-void ResetCameraSource();
-void ProcessCamera(WGame &game);
-uint8 GetCameraIndexUnderPlayer(int32 pl);
-void StartAnimCamera(WGame &game);
-uint8 ClipGolfCameraMove(t3dV3F *NewT, t3dV3F *OldT, t3dV3F *Source);
+	t3dCAMERA FirstPersonCamera, *DestCamera, *LastCamera, CameraCarrello;
+	t3dCAMERA CameraStep[MAX_CAMERA_STEPS], AnimCamera;
+	int16 CurCameraSubStep = 0, CurCameraStep = 0, NumCameraSteps = 0;
+	t3dV3F OldCameraTarget, OldPlayerDir, FirstPersonTarget;
+	t3dV3F SourceBlend, TargetBlend;
+
+
+	uint8 bForceDirectCamera = false, bCameraCarrello = false;
+
+	uint8 t3dCurCameraIndex = 255;
+	uint8 t3dLastCameraIndex = 255;
+
+	void NextCameraStep(WGame &game);
+	void HandleCameraCarrello(t3dBODY *croom);
+public:
+	t3dV3F HeadAngles;
+	t3dF32 CamAngleX, CamAngleY;
+
+	void resetAngle();
+	void resetLastCameraIndex() { t3dLastCameraIndex = 255; }
+	uint8 getCurCameraIndex() { return t3dCurCameraIndex; }
+
+	void MoveHeadAngles(t3dF32 diffx, t3dF32 diffy);
+	void GetCameraTarget(Init &init, t3dV3F *Target);
+	t3dCAMERA *PickCamera(t3dBODY *b, unsigned char in);
+	void doCamera(WGame &game);
+	void GetRealCharPos(Init &init, t3dV3F *Target, int32 oc, uint8 bn);
+	void ResetCameraTarget();
+	void ResetCameraSource();
+	void ProcessCamera(WGame &game);
+	uint8 GetCameraIndexUnderPlayer(int32 pl);
+	void StartAnimCamera(WGame &game);
+	uint8 ClipGolfCameraMove(t3dV3F *NewT, t3dV3F *OldT, t3dV3F *Source);
+};
+
 
 } // End of namespace Watchmaker
 

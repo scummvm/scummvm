@@ -132,7 +132,7 @@ bool DInputNonExclusiveMouse() {
 /* -----------------25/08/98 10.42-------------------
  *                  HandleFirstPerson
  * --------------------------------------------------*/
-void HandleFirstPersonView() {
+void HandleFirstPersonView(WGame &game) {
 	t3dF32 dist;
 	t3dV3F d, n;
 
@@ -207,7 +207,7 @@ void HandleFirstPersonView() {
 			if (y > MainDy) diffy = (t3dF32)((t3dF32)(y - MainDy) / 3.0f);
 			else if (y < 0) diffy = (t3dF32)((t3dF32)y / 3.0f);
 
-			MoveHeadAngles(diffx, diffy);
+			game._cameraMan->MoveHeadAngles(diffx, diffy);
 		}
 	}
 
@@ -571,7 +571,7 @@ void ProcessKeyboard(WGame &game) {
 		KeyClear(Common::KEYCODE_RCTRL);
 		if (bSomeOneSpeak) bSkipTalk = TRUE;
 
-		GetRealCharPos(game.init, &ct, ocCURPLAYER, 0);
+		game._cameraMan->GetRealCharPos(game.init, &ct, ocCURPLAYER, 0);
 		ct.y = CurFloorY;
 		for (a = 0; a < MAX_OBJS_IN_ROOM; a++) {
 			b = game.getCurRoom().objects[a];
@@ -651,7 +651,7 @@ void ProcessKeyboard(WGame &game) {
 	if (!t3dCurCamera) return;
 
 	if ((bFirstPerson) && !(bMovingCamera))
-		HandleFirstPersonView();
+		HandleFirstPersonView(game);
 
 	if (bFirstPerson) {
 		_vm->_messageSystem.doEvent(EventClass::MC_MOUSE, ME_MOUSEUPDATE, MP_DEFAULT, 0, 0, 0, NULL, NULL, NULL);

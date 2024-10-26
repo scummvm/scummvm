@@ -323,7 +323,7 @@ void ProcessATFDO(WGame &game, int32 in) {
 		else
 			StartAnim(game, aDARRELL_ASCOLTA);
 
-		cindex = GetCameraIndexUnderPlayer(ocDARRELL + (CurPlayer ^ 1));
+		cindex = game._cameraMan->GetCameraIndexUnderPlayer(ocDARRELL + (CurPlayer ^ 1));
 		if (cindex != 255) {
 			// equivale ad un "setcamera:"
 			ForcedCamera = GetAlternateCamera(init, (uint8)(cindex + 1));
@@ -764,7 +764,7 @@ void ProcessATF(WGame &game, int32 an, int32 atf) {
 		CameraTargetObj = in;
 		break;
 	case ATF_UPDATE_MAX_TARGET:
-		GetCameraTarget(init, &t3dCurCamera->MaxTarget);
+		game._cameraMan->GetCameraTarget(init, &t3dCurCamera->MaxTarget);
 		break;
 	case ATF_SUB_MUSIC:
 		CurSubMusic = in;
@@ -1514,7 +1514,8 @@ void StartAnim(WGame &game, int32 an) {
 			h->sub[a].ptr->CurFrame = 0;
 
 //		Se e' un'animazione di una camera
-		if (h->sub[a].ptr == &game.init._globals._invVars.CameraDummy) StartAnimCamera(game);
+		if (h->sub[a].ptr == &game.init._globals._invVars.CameraDummy)
+			game._cameraMan->StartAnimCamera(game);
 	}
 	if (AnimAutoPush) {
 		PushATF(AnimAutoPush);

@@ -44,9 +44,6 @@
 
 namespace Watchmaker {
 
-extern t3dV3F HeadAngles;
-extern t3dF32 CamAngleX, CamAngleY;
-
 /* -----------------03/04/98 10.39-------------------
  *                      IconInInv
  * --------------------------------------------------*/
@@ -322,10 +319,8 @@ void doInventory(WGame &game) {
 					ChangePlayer(game, (uint8)((CurPlayer ^ 1) + ocDARRELL));
 				}
 				InvStatus = INV_OFF;
-				CamAngleX = 0.0f;
-				CamAngleY = 0.0f;
-				t3dVectFill(&HeadAngles, 0.0f);
-				GetCameraTarget(init, &t3dCurCamera->Target);
+				game._cameraMan->resetAngle();
+				game._cameraMan->GetCameraTarget(init, &t3dCurCamera->Target);
 			} else {
 				rGrabVideo("temp.tmp", 1);
 				InvStatus = INV_ON | INV_MODE1;

@@ -544,8 +544,8 @@ void ChangeRoom(WGame &game, Common::String n, uint8 pos, int32 an) {
 		PortalCrossed = t3dCurRoom;
 		t3dCurCamera = &t3dCurRoom->CameraTable[0];
 		t3dVectCopy(&t3dCurCamera->Target, &Player->Mesh->Trasl);
-		ResetCameraSource();
-		ResetCameraTarget();
+		game._cameraMan->ResetCameraSource();
+		game._cameraMan->ResetCameraTarget();
 		CurFloorY = t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel];
 	}
 
@@ -556,7 +556,7 @@ void ChangeRoom(WGame &game, Common::String n, uint8 pos, int32 an) {
 	game.UpdateAll();
 	if (pos)
 		CharSetPosition(ocCURPLAYER, pos, nullptr);
-	ProcessCamera(game);
+	game._cameraMan->ProcessCamera(game);
 	if (an)
 		StartAnim(game, an);
 }

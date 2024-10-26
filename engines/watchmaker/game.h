@@ -23,12 +23,12 @@
 #define WATCHMAKER_GAME_H
 
 #include "common/random.h"
-#include "watchmaker/fonts.h"
-#include "watchmaker/schedule.h"
 #include "watchmaker/3d/loader.h"
+#include "watchmaker/fonts.h"
 #include "watchmaker/game_options.h"
 #include "watchmaker/ll/ll_ffile.h"
 #include "watchmaker/saveload.h"
+#include "watchmaker/schedule.h"
 #include "watchmaker/work_dirs.h"
 
 namespace Watchmaker {
@@ -51,6 +51,7 @@ public:
 
 class MeshModifiers;
 class RoomManager;
+class CameraMan;
 
 class WGame {
 	bool g_bReady = false, g_bActive = false;
@@ -71,6 +72,7 @@ public:
 	Fonts _fonts;
 	MessageSystem _messageSystem;
 	RoomManager *_roomManager;
+	CameraMan *_cameraMan;
 	WGame();
 	~WGame();
 

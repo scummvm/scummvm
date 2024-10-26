@@ -33,7 +33,6 @@ extern int32 mPosy, mPosx, mMoveX, mMoveY, mMove, mCounter, mHotspotX, mHotspotY
 extern uint8 bLPressed, bRPressed, mHide;
 void ProcessMouse(WGame &game);
 void HandleMouseChanges();
-void MoveHeadAngles(t3dF32 diffx, t3dF32 diffy);
 
 } // End of namespace Watchmaker
 

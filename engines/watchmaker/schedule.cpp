@@ -230,7 +230,7 @@ SUPEREVENT:
 		break;
 
 	case EventClass::MC_CAMERA:
-		doCamera(game);
+		game._cameraMan->doCamera(game);
 		break;
 
 	case EventClass::MC_SYSTEM:

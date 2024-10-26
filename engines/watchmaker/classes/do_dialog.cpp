@@ -328,7 +328,7 @@ void doDialog(WGame &game) {
 //DebugFile("DLG: EndDialog %d",CurDialog);
 			StopObjAnim(game, ocCURPLAYER);
 			CharStop(ocCURPLAYER);   //evito che negli interrupt (in particolare) rimanga in memoria l'animazione di ascolta
-			ResetCameraTarget();
+			game._cameraMan->ResetCameraTarget();
 			init.Dialog[CurDialog].flags |= DIALOG_DONE;
 			CurDialog = dNULL;
 			bDialogActive = false;
@@ -347,15 +347,13 @@ void doDialog(WGame &game) {
 			if (NextDlg != dNULL)
 				_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, NextDlg, 0, 0, nullptr, nullptr, nullptr);
 			else {
-				extern uint8 t3dLastCameraIndex;
-
 				if ((init.Dialog[TheMessage->wparam1].obj) && (Character[init.Dialog[TheMessage->wparam1].obj]))
 					StartDiary(game, game._gameVars.getCurRoomId(), &Character[init.Dialog[TheMessage->wparam1].obj]->Mesh->Trasl);
 				else
 					StartDiary(game, game._gameVars.getCurRoomId(), nullptr);
 
 				DebugLogFile("EndDialog: resetto t3dLastCameraIndex");
-				t3dLastCameraIndex = 255;   //forzo ProcessCamera() a cercare una nuova camera, in modo finito il dialogo non rimane qualche strana camera
+				game._cameraMan->resetLastCameraIndex(); //forzo ProcessCamera() a cercare una nuova camera, in modo finito il dialogo non rimane qualche strana camera
 			}
 		} else
 			bDialogMenuActive = true;

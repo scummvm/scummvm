@@ -469,7 +469,7 @@ void ProcessGopherCamera(WGame &game) {
 		zero *= (EYES_HEIGHT * 2.0f);
 		zero.y = CHEST_HEIGHT;
 
-		GetCameraTarget(game.init, &t3dCurCamera->Target);
+		game._cameraMan->GetCameraTarget(game.init, &t3dCurCamera->Target);
 		t3dCurCamera->Target.y = LastFloorY + CHEST_HEIGHT;
 		t3dVectAdd(&t3dCurCamera->Source,  &t3dCurCamera->Target, &zero);
 		Palla50->Flags |= T3D_CHARACTER_HIDE;
@@ -558,7 +558,7 @@ void ProcessGopherCamera(WGame &game) {
 	}
 	dist = t3dVectDistance(&t3dCurCamera->Source, &OldBallCameraSource);
 	if ((dist < HALF_STEP * 30.0f) && OldBallCameraSource.z) {
-		ClipGolfCameraMove(&t3dCurCamera->Source, &OldBallCameraSource, &t3dCurCamera->Target);
+		game._cameraMan->ClipGolfCameraMove(&t3dCurCamera->Source, &OldBallCameraSource, &t3dCurCamera->Target);
 		t3dVectSub(&tmp, &t3dCurCamera->Source, &t3dCurCamera->Target);
 		t3dVectNormalize(&tmp);
 		tmp *= dist2;
