@@ -468,17 +468,21 @@ bool FreescapeEngine::checkConditional(FCLInstruction &instruction, bool shot, b
 }
 
 bool FreescapeEngine::checkIfGreaterOrEqual(FCLInstruction &instruction) {
+	assert(instruction._destination <= 128);
+
 	uint16 variable = instruction._source;
-	uint16 value = instruction._destination;
+	int8 value = instruction._destination;
 	debugC(1, kFreescapeDebugCode, "Check if variable %d is greater than equal to %d!", variable, value);
-	return (_gameStateVars[variable] >= value);
+	return ((int8)_gameStateVars[variable] >= value);
 }
 
 bool FreescapeEngine::checkIfLessOrEqual(FCLInstruction &instruction) {
+	assert(instruction._destination <= 128);
+
 	uint16 variable = instruction._source;
-	uint16 value = instruction._destination;
+	int8 value = instruction._destination;
 	debugC(1, kFreescapeDebugCode, "Check if variable %d is less than equal to %d!", variable, value);
-	return (_gameStateVars[variable] <= value);
+	return ((int8)_gameStateVars[variable] <= value);
 }
 
 
