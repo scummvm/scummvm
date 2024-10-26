@@ -100,21 +100,21 @@ bool Mesh3DS::fillVertexBuffer(uint32 color) {
 
 	for (int i = 0; i < _numFaces; i++) {
 		for (int j = 0; j < 3; j++) {
-			int iOutVert = i * 3 + j;
-			int iVertex = _faces[i]._vertices[j];
+			int outVert = i * 3 + j;
+			int vertex = _faces[i]._vertices[j];
 
-			verts[iOutVert]._x  = _vertices[iVertex]._pos._x;
-			verts[iOutVert]._y  = _vertices[iVertex]._pos._y;
-			verts[iOutVert]._z  = _vertices[iVertex]._pos._z;
+			verts[outVert]._x  = _vertices[vertex]._pos._x;
+			verts[outVert]._y  = _vertices[vertex]._pos._y;
+			verts[outVert]._z  = _vertices[vertex]._pos._z;
 
-			verts[iOutVert]._nx = _faces[i]._normals[j]._x;
-			verts[iOutVert]._ny = _faces[i]._normals[j]._y;
-			verts[iOutVert]._nz = _faces[i]._normals[j]._z;
+			verts[outVert]._nx = _faces[i]._normals[j]._x;
+			verts[outVert]._ny = _faces[i]._normals[j]._y;
+			verts[outVert]._nz = _faces[i]._normals[j]._z;
 
-			verts[iOutVert]._r = RGBCOLGetR(color) / 255.0f;
-			verts[iOutVert]._g = RGBCOLGetG(color) / 255.0f;
-			verts[iOutVert]._b = RGBCOLGetB(color) / 255.0f;
-			verts[iOutVert]._a = RGBCOLGetA(color) / 255.0f;
+			verts[outVert]._r = RGBCOLGetR(color) / 255.0f;
+			verts[outVert]._g = RGBCOLGetG(color) / 255.0f;
+			verts[outVert]._b = RGBCOLGetB(color) / 255.0f;
+			verts[outVert]._a = RGBCOLGetA(color) / 255.0f;
 		}
 	}
 
