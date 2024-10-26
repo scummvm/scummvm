@@ -109,6 +109,18 @@ public:
 		int numStrings;
 	};
 
+	enum MacWidgetType {
+		kWidgetUnknown,
+		kWidgetButton,
+		kWidgetCheckbox,
+		kWidgetStaticText,
+		kWidgetEditText,
+		kWidgetPicture,
+		kWidgetSlider,
+		kWidgetListBox,
+		kWidgetPictureSlider
+	};
+
 protected:
 	ScummEngine *_vm = nullptr;
 	OSystem *_system = nullptr;
@@ -236,6 +248,7 @@ public:
 		uint32 _white;
 
 		int _id = -1;
+		MacWidgetType _type = kWidgetUnknown;
 
 		bool _fullRedraw = false;
 
@@ -251,6 +264,9 @@ public:
 
 		void setId(int id) { _id = id; }
 		int getId() const { return _id; }
+
+		void setType(MacWidgetType type) { _type = type; }
+		MacWidgetType getType() { return _type; }
 
 		// Visibility never changes after initialization, so it does
 		// not trigger a redraw.
@@ -598,7 +614,7 @@ public:
 
 		void copyToScreen(Graphics::Surface *s = nullptr) const;
 
-		void addWidget(MacWidget *widget);
+		void addWidget(MacWidget *widget, MacWidgetType type);
 
 	public:
 		OSystem *_system;
@@ -616,8 +632,9 @@ public:
 		int runDialog(Common::Array<int> &deferredActionIds);
 		void updateCursor();
 
-		MacWidget *getWidget(int nr) const { return _widgets[nr]; }
-		void setDefaultWidget(int nr) { _defaultWidget = _widgets[nr]; }
+		MacWidget *getWidget(MacWidgetType type, int nr = 0) const;
+
+		void setDefaultWidget(MacWidget *widget) { _defaultWidget = widget; }
 		MacWidget *getDefaultWidget() const { return _defaultWidget; }
 
 		void setFocusedWidget(int x, int y);
@@ -626,13 +643,7 @@ public:
 		Common::Point getFocusClick() const { return _focusClick; }
 		Common::Point getMousePos() const { return _mousePos; }
 
-		void setWidgetEnabled(int nr, bool enabled) { _widgets[nr]->setEnabled(enabled); }
-		bool isWidgetEnabled(int nr) const { return _widgets[nr]->isEnabled(); }
-		void setWidgetVisible(int nr, bool visible) { _widgets[nr]->setVisible(visible); }
-		int getWidgetValue(int nr) const { return _widgets[nr]->getValue(); }
-		void setWidgetValue(int nr, int value) { _widgets[nr]->setValue(value); }
 		int findWidget(int x, int y) const;
-		void redrawWidget(int nr) { _widgets[nr]->setRedraw(true); }
 
 		MacGuiImpl::MacButton *addButton(Common::Rect bounds, Common::String text, bool enabled);
 		MacGuiImpl::MacCheckbox *addCheckbox(Common::Rect bounds, Common::String text, bool enabled);

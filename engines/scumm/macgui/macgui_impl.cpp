@@ -829,7 +829,7 @@ bool MacGuiImpl::runOpenDialog(int &saveSlotToHandle) {
 
 	MacListBox *listBox = window->addListBox(Common::Rect(14, 31, 232, 161), savegameNames, true);
 
-	window->setDefaultWidget(openButton->getId());
+	window->setDefaultWidget(openButton);
 
 	// When quitting, the default action is to not open a saved game
 	bool ret = false;
@@ -899,7 +899,7 @@ bool MacGuiImpl::runSaveDialog(int &saveSlotToHandle, Common::String &saveName) 
 
 	font->drawString(s, saveGameFileAsResStr, 14, 138, 218, black, Graphics::kTextAlignLeft, 4);
 
-	window->setDefaultWidget(saveButton->getId());
+	window->setDefaultWidget(saveButton);
 	editText->selectAll();
 
 	// When quitting, the default action is to not open a saved game
@@ -972,8 +972,12 @@ bool MacGuiImpl::runOkCancelDialog(Common::String text) {
 	window->setDefaultWidget(0);
 	window->addSubstitution(text);
 
-	MacStaticText *widget = (MacStaticText *)window->getWidget(2);
+	MacStaticText *widget = (MacStaticText *)window->getWidget(kWidgetStaticText);
 	widget->setWordWrap(true);
+
+	MacButton *buttonOk = (MacButton *)window->getWidget(kWidgetButton, 0);
+	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
+
 
 	// When quitting, the default action is to quit
 	bool ret = true;
@@ -983,10 +987,10 @@ bool MacGuiImpl::runOkCancelDialog(Common::String text) {
 	while (!_vm->shouldQuit()) {
 		int clicked = window->runDialog(deferredActionsIds);
 
-		if (clicked == 0)
+		if (clicked == buttonOk->getId())
 			break;
 
-		if (clicked == 1) {
+		if (clicked == buttonCancel->getId()) {
 			ret = false;
 			break;
 		}
