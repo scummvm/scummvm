@@ -340,6 +340,7 @@ bool KyraRpgEngine::checkSceneUpdateNeed(int block) {
 
 uint16 KyraRpgEngine::calcNewBlockPosition(uint16 curBlock, uint16 direction) {
 	static const int16 blockPosTable[] = { -32, 1, 32, -1 };
+	assert(direction < ARRAYSIZE(blockPosTable));
 	return (curBlock + blockPosTable[direction]) & 0x3FF;
 }
 
