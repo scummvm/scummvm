@@ -1377,7 +1377,7 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 }
 
 Macs2::AnimFrame *Character::GetCurrentPortrait() {
-	uint16 offset = BackgroundAnimationBlob::Func1480(GameObject->Blobs[17], true, 1);
+	uint16 offset = BackgroundAnimationBlob::Func1480(GameObject->Blobs[17], true, 2);
 	// My remaining code expects to get dialed to the width and height directly - TODO make uniform
 	offset += 6;
 	AnimFrame *result = new AnimFrame();
