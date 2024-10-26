@@ -1369,7 +1369,10 @@ bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 
 	MacDialogWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 4000 : 4001);
 
-	window->setDefaultWidget(0);
+	MacButton *buttonSave = (MacButton *)window->getWidget(kWidgetButton, 0);
+	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
+
+	window->setDefaultWidget(buttonSave);
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
 
@@ -1378,11 +1381,9 @@ bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 	Common::StringArray savegameNames;
 	prepareSaveLoad(savegameNames, availSlots, slotIds, ARRAYSIZE(availSlots));
 
-	drawFakePathList(window, Common::Rect(14, 18, 231, 37), "Indy Last Crusade");
-
-	MacButton *saveButton = (MacButton *)window->getWidget(kWidgetButton, 0);
-	MacButton *cancelButton = (MacButton *)window->getWidget(kWidgetButton, 1);
 	MacListBox *listBox = window->addListBox(Common::Rect(14, 41, 232, 187), savegameNames, true);
+
+	drawFakePathList(window, Common::Rect(14, 18, 231, 37), "Indy Last Crusade");
 
 	// When quitting, the default action is to not open a saved game
 	bool ret = false;
@@ -1391,14 +1392,14 @@ bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 	while (!_vm->shouldQuit()) {
 		int clicked = window->runDialog(deferredActionsIds);
 
-		if (clicked == saveButton->getId() || clicked == listBox->getId()) {
+		if (clicked == buttonSave->getId() || clicked == listBox->getId()) {
 			ret = true;
 			saveSlotToHandle =
 				listBox->getValue() < ARRAYSIZE(slotIds) ? slotIds[listBox->getValue()] : -1;
 			break;
 		}
 
-		if (clicked == cancelButton->getId())
+		if (clicked == buttonCancel->getId())
 			break;
 	}
 
@@ -1424,7 +1425,11 @@ bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &saveName)
 
 	MacDialogWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 3998 : 3999);
 
-	window->setDefaultWidget(0);
+	MacButton *buttonSave = (MacButton *)window->getWidget(kWidgetButton, 0);
+	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
+	MacEditText *editText = (MacEditText *)window->getWidget(kWidgetEditText);
+
+	window->setDefaultWidget(buttonSave);
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
 
@@ -1449,21 +1454,17 @@ bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &saveName)
 	bool ret = false;
 	Common::Array<int> deferredActionsIds;
 
-	MacButton *saveButton = (MacButton *)window->getWidget(kWidgetButton, 0);
-	MacButton *cancelButton = (MacButton *)window->getWidget(kWidgetButton, 1);
-	MacEditText *editText = (MacEditText *)window->getWidget(kWidgetEditText);
-
 	while (!_vm->shouldQuit()) {
 		int clicked = window->runDialog(deferredActionsIds);
 
-		if (clicked == saveButton->getId()) {
+		if (clicked == buttonSave->getId()) {
 			ret = true;
 			saveName = editText->getText();
 			saveSlotToHandle = firstAvailableSlot;
 			break;
 		}
 
-		if (clicked == cancelButton->getId())
+		if (clicked == buttonCancel->getId())
 			break;
 
 		if (clicked == kDialogWantsAttention) {
@@ -1471,7 +1472,7 @@ bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &saveName)
 			for (uint i = 0; i < deferredActionsIds.size(); i++) {
 				if (deferredActionsIds[i] == editText->getId()) {
 					// Disable "Save" button when text is empty
-					saveButton->setEnabled(!editText->getText().empty());
+					buttonSave->setEnabled(!editText->getText().empty());
 				}
 			}
 		}
