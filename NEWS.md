@@ -11,6 +11,7 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Added support for Moonbase Commander.
   - Added support for Backyard Basketball.
   - Added support for Unrest.
+  - Added support for Rise of the Dragon.
 
  New platforms:
   - Added SailfishOS port.
