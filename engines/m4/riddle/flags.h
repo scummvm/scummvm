@@ -162,7 +162,7 @@ enum {
 	V126 = 126,
 	V127 = 127,
 	V128 = 128,
-	V129 = 129,
+	kTravelDest = 129,
 	kCastleCartoon = 130,
 	V131 = 131,
 	V132 = 132,

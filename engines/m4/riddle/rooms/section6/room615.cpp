@@ -493,7 +493,7 @@ void Room615::daemon() {
 		inv_move_object("SPARK PLUG TOOL", NOWHERE);
 		_G(flags)[V203] = 9;
 		_G(flags)[V191] = 0;
-		_G(flags)[V129] = 4;
+		_G(flags)[kTravelDest] = 4;
 		_G(game).setRoom(495);
 		break;
 

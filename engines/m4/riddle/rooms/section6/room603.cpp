@@ -1492,7 +1492,7 @@ void Room603::parser() {
 
 		_G(flags)[GLB_TEMP_5] = 0;
 		_G(game).setRoom(495);
-		_G(flags)[V129] = 4;
+		_G(flags)[kTravelDest] = 4;
 	} else if (_G(kernel).trigger == 556) {
 		digi_stop(1);
 		digi_stop(2);

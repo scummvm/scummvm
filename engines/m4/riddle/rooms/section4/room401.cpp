@@ -789,16 +789,16 @@ void Room401::parser() {
 		if (_val4) {
 			switch (_val4) {
 			case 1:
-				_G(flags)[V129] = 1;
+				_G(flags)[kTravelDest] = 1;
 				break;
 			case 2:
-				_G(flags)[V129] = 0;
+				_G(flags)[kTravelDest] = 0;
 				break;
 			case 3:
-				_G(flags)[V129] = 4;
+				_G(flags)[kTravelDest] = 4;
 				break;
 			case 4:
-				_G(flags)[V129] = 3;
+				_G(flags)[kTravelDest] = 3;
 				break;
 			default:
 				break;

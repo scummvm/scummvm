@@ -60,7 +60,7 @@ void Room495::init() {
 	case 201:
 		_G(flags)[V092] = 1;
 
-		switch (_G(flags)[V129]) {
+		switch (_G(flags)[kTravelDest]) {
 		case 1:
 			play("495 peiping to ny", "495pg03s", 93, 3);
 			break;
@@ -79,7 +79,7 @@ void Room495::init() {
 		break;
 
 	case 301:
-		switch (_G(flags)[V129]) {
+		switch (_G(flags)[kTravelDest]) {
 		case 0:
 			play("495 ny to peiping", "495ny03s", 108, 3);
 			break;
@@ -98,7 +98,7 @@ void Room495::init() {
 		break;
 
 	case 401:
-		switch (_G(flags)[V129]) {
+		switch (_G(flags)[kTravelDest]) {
 		case 0:
 			play("495 danzig to peiping", "495dg04s", 51, 4);
 			break;
@@ -117,7 +117,7 @@ void Room495::init() {
 		break;
 
 	case 501:
-		switch (_G(flags)[V129]) {
+		switch (_G(flags)[kTravelDest]) {
 		case 0:
 			play("495 lima to peiping", "495lm05s", 115, 3);
 			break;
@@ -140,12 +140,12 @@ void Room495::init() {
 
 	case 603:
 	case 615:
-		if (_G(flags)[V129] == 4)
+		if (_G(flags)[kTravelDest] == 4)
 			play("495 easter isle to lima", "495eis", 16, 12);
 		break;
 
 	case 701:
-		switch (_G(flags)[V129]) {
+		switch (_G(flags)[kTravelDest]) {
 		case 0:
 			play("495 sikkim to peiping", "495sm02s", 17, 10);
 			break;
@@ -183,7 +183,7 @@ void Room495::daemon() {
 	case 501:
 		interface_show();
 
-		switch (_G(flags)[V129]) {
+		switch (_G(flags)[kTravelDest]) {
 		case 0:
 			_G(flags)[V092] = 0;
 			_G(game).setRoom(201);

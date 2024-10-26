@@ -33,8 +33,9 @@ private:
 	bool _flag1 = false;
 	bool _flag2 = false;
 	bool _flag3 = false;
+	int32 _travelDest = 0;
 	int _val1 = 0;
-	int _val2 = 0;
+	int32 _givenYuan = 0;
 	const char *_itemDigi = nullptr;
 	const char *_itemDigi2 = nullptr;
 	const char *_itemDigi3 = nullptr;
@@ -51,6 +52,8 @@ private:
 	int _guyWriting = 0;
 	int _guyParcel = 0;
 	int _guyPassForm = 0;
+	int _guyBow = 0;
+	int _guySeries1 = 0;
 	int _series1 = -1;
 	int _series2 = -2;
 	int _series3 = -1;
@@ -66,9 +69,11 @@ private:
 	machine *_doc = nullptr;
 	machine *_shadow3 = nullptr;
 	machine *_agent = nullptr;
-	int _meiHandHip = -1;
-	int _meiTalker = -1;
-	int _meiWalk = -1;
+	int _meiHandHip = 0;
+	int _meiTalker = 0;
+	int _meiWalk = 0;
+	int _meiHeadTurn = 0;
+	int _meiTalkLoop = 0;
 	int _ripHandChin = -1;
 	int _ripTalk = -1;
 	int _num1 = 0;
@@ -87,13 +92,19 @@ private:
 	int _trigger11 = -1;
 	int _trigger12 = -1;
 	int _ctr1 = 0;
+	int _items[12];
+	int32 _itemFlags[12];
+	int _totalItems = 0;
+	int32 _hasKeyItems = 0;
 
 	void setupMei();
 	void conv201a();
 	void animateRipley();
+	void checkFlags();
+	bool buildKeyItemsArray();
 
 public:
-	Room201() : Section2Room() {}
+	Room201();
 	~Room201() override {}
 
 	void init() override;

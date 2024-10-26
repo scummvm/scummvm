@@ -28,6 +28,11 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+Room201::Room201() : Section2Room() {
+	Common::fill(_items, _items + 12, 0);
+	Common::fill(_itemFlags, _itemFlags + 12, 0);
+}
+
 void Room201::init() {
 	if (keyCheck()) {
 		_flag1 = true;
@@ -36,9 +41,11 @@ void Room201::init() {
 		_flag1 = false;
 	}
 
-	if (_G(game).previous_room != KERNEL_RESTORING_GAME)
-		_val1 = _val2 = 0;
-	_itemDigi = 0;
+	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
+		_val1 = 0;
+		_givenYuan = false;
+	}
+	_itemDigi = nullptr;
 
 	digi_preload("950_s02");
 	_nod = series_load("HEAD NOD Y/N");
@@ -131,6 +138,8 @@ void Room201::init() {
 }
 
 void Room201::daemon() {
+	int frame;
+
 	switch (_G(kernel).trigger) {
 	case 50:
 		player_set_commands_allowed(true);
@@ -312,6 +321,19 @@ void Room201::daemon() {
 		kernel_timing_trigger(1, 1999);
 		break;
 
+	case 210:
+		_val6 = 3;
+		digi_play("201m01", 1, 255, 215);
+		break;
+
+	case 215:
+		_ctr1 = 0;
+		_val6 = 0;
+		setGlobals1(_ripTalk, 1, 7, 1, 7, 1);
+		sendWSMessage_110000(217);
+		digi_play("201r02", 1, 255, 217);
+		break;
+
 	case 217:
 		if (_ctr1 >= 1) {
 			_ctr1 = 0;
@@ -319,6 +341,12 @@ void Room201::daemon() {
 		} else {
 			++_ctr1;
 		}
+		break;
+
+	case 220:
+		series_unload(_ripTalk);
+		_val6 = 3;
+		digi_play("201m02", 1, 255, 230);
 		break;
 
 	case 230:
@@ -336,15 +364,30 @@ void Room201::daemon() {
 		sendWSMessage_110000(241);
 		break;
 
+	case 241:
+		digi_play("201r03", 1, 255, 242);
+		break;
+
 	case 242:
 		sendWSMessage_140000(-1);
 		_conv1 = 0;
 		_trigger10 = kernel_trigger_create(244);
 		break;
 
+	case 244:
+		_conv1 = 10;
+		digi_play("201x01", 1, 255, 245);
+		break;
+
 	case 245:
 		_conv1 = 3;
 		_trigger10 = kernel_trigger_create(260);
+		break;
+
+	case 260:
+		_conv1 = 0;
+		_val6 = 4;
+		digi_play("201m03", 1, 255, 270);
 		break;
 
 	case 270:
@@ -357,6 +400,12 @@ void Room201::daemon() {
 		ws_walk(356, 256, nullptr, 280, 3);
 		break;
 
+	case 280:
+		setGlobals1(_series6, 1, 7, 7, 7);
+		sendWSMessage_110000(290);
+		digi_play("201r04", 1, 255, 290);
+		break;
+
 	case 290:
 		if (_ctr1 >= 1) {
 			_ctr1 = 0;
@@ -367,6 +416,11 @@ void Room201::daemon() {
 		} else {
 			++_ctr1;
 		}
+		break;
+
+	case 300:
+		_conv1 = 2;
+		digi_play("201x02", 1, 255, 310);
 		break;
 
 	case 310:
@@ -435,6 +489,54 @@ void Room201::daemon() {
 		}
 		break;
 
+	case 511:
+		if (_num3 <= 0) {
+			switch (_conv1) {
+			case 0:
+				sendWSMessage_10000(1, _agent, _nod, 1, 1, 510, _nod, 1, 1, 0);
+				break;
+
+			case 1:
+				sendWSMessage_10000(1, _agent, _nod, 1, 7, 510, _nod, 1, 1, 0);
+				_conv1 = 0;
+				break;
+
+			case 2:
+				sendWSMessage_10000(1, _agent, _nod, 7, 29, 510, _nod, 1, 1, 0);
+				_conv1 = 0;
+				break;
+
+			case 3:
+				_guyBow = series_load("GUY BOW");
+				sendWSMessage_10000(1, _agent, _guyBow, 1, 32, 510, _guyBow, 1, 1, 0);
+				_conv1 = 4;
+				break;
+
+			case 4:
+				sendWSMessage_10000(1, _agent, _nod, 1, 1, 510, _nod, 1, 1, 0);
+				series_unload(_guyBow);
+				_conv1 = 0;
+				break;
+
+			case 5:
+				sendWSMessage_10000(1, _agent, _guySeries1, 1, 49, 510, _nod, 1, 1, 0);
+				_conv1 = 0;
+				break;
+
+			case 8:
+			case 9:
+				sendWSMessage_10000(1, _agent, _guySeries1, 1, 49, 510, _nod, 1, 1, 0);
+				_conv1 = 0;
+				break;
+
+			default:
+				break;
+			}
+		} else {
+
+		}
+		break;
+
 	case 1000:
 		animateRipley();
 		kernel_timing_trigger(2, 1003);
@@ -450,15 +552,40 @@ void Room201::daemon() {
 		_trigger5 = kernel_trigger_create(1005);
 		break;
 
+	case 1005:
+		_conv2 = 8;
+		digi_play("201r03", 1, 255, 1010);
+		break;
+
 	case 1010:
 		_conv2 = 7;
 		_conv1 = 0;
 		_trigger10 = kernel_trigger_create(1030);
 		break;
 
+	case 1030:
+		_conv1 = 10;
+		digi_play("201x03", 1, 255, 1035);
+		break;
+
 	case 1035:
 		_conv1 = 3;
 		_trigger10 = kernel_trigger_create(1040);
+		break;
+
+	case 1040:
+		checkFlags();
+
+		if (_val1 == 0) {
+			_conv1 = 0;
+			kernel_timing_trigger(15, 1065);
+		} else if (_val1 == 1) {
+			_conv1 = 10;
+			digi_play("201x04", 1, 255, 9160);
+		} else {
+			_conv1 = 10;
+			digi_play("201x05", 1, 255, 9160);
+		}
 		break;
 
 	case 1065:
@@ -482,6 +609,28 @@ void Room201::daemon() {
 		_trigger4 = kernel_trigger_create(1080);
 		break;
 
+	case 1080:
+		_conv1 = 8;
+		player_set_commands_allowed(true);
+
+		if (_G(flags)[V053] == 1)
+			_G(flags)[V053] = 2;
+
+		_trigger11 = kernel_trigger_create(1200);
+		break;
+
+	case 1200:
+		if (_G(flags)[V053] == 1)
+			_G(flags)[V053] = 2;
+		if (_G(flags)[V056] == 1 && _G(flags)[V066] == 0) {
+			kernel_timing_trigger(10, 3000);
+		} else {
+			kernel_timing_trigger(10, 50);
+		}
+
+		_num2 = 1;
+		break;
+
 	case 2000:
 		if (_val5 == 0 && _val6 == 0 && _trigger9 != -1) {
 			kernel_trigger_dispatchx(_trigger9);
@@ -499,6 +648,144 @@ void Room201::daemon() {
 		}
 
 		kernel_timing_trigger(1, 2010);
+		break;
+
+	case 2010:
+		switch (_val5) {
+		case 0:
+			switch (_val6) {
+			case 0:
+				sendWSMessage_10000(1, _mei2, _meiWalk, 1, 1, 2000, _meiWalk, 1, 1, 0);
+				break;
+
+			case 2:
+				_meiHandHip = series_load("MEI TREK HAND ON HIP POS4");
+				sendWSMessage_10000(1, _mei2, _meiHandHip, 1, 21, 2000, _meiHandHip, 22, 22, 0);
+				_val5 = 2;
+				break;
+
+			case 3:
+				sendWSMessage_10000(1, _mei2, _meiTalker, 1, 1, 2000, _meiTalker, 1, 4, 1);
+				_val5 = 3;
+				break;
+
+			case 4:
+				_meiHeadTurn = series_load("MEI TREK HEAD TRN POS4");
+				sendWSMessage_10000(1, _mei2, _meiHeadTurn, 8, 9, 2000, _meiHeadTurn, 10, 10, 0);
+				_val5 = 4;
+				break;
+
+			case 5:
+			case 6:
+				_meiTalkLoop = series_load("MEI TREK TALK LOOP POS4");
+				sendWSMessage_10000(1, _mei2, _meiTalkLoop, 1, 14, 2000, _meiTalkLoop, 15, 15, 0);
+				_val5 = 5;
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 2:
+			switch (_val6) {
+			case 0:
+				sendWSMessage_10000(1, _mei2, _meiHandHip, 21, 1, 2000, _meiWalk, 1, 1, 0);
+				_val6 = 1;
+				break;
+
+			case 1:
+				sendWSMessage_10000(1, _mei2, _meiWalk, 1, 1, 2000, _meiWalk, 1, 1, 0);
+				series_unload(_meiHandHip);
+				_val6 = 0;
+				_val5 = 0;
+				break;
+
+			case 2:
+				sendWSMessage_10000(1, _mei2, _meiHandHip, 22, 22, 2000, _meiHandHip, 22, 22, 0);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 3:
+			switch (_val6) {
+			case 0:
+				sendWSMessage_10000(1, _mei2, _meiTalker, 1, 1, 2000, _meiWalk, 1, 1, 0);
+				_val5 = 0;
+				break;
+
+			case 3:
+				frame = imath_ranged_rand(1, 4);
+				sendWSMessage_10000(1, _mei2, _meiTalker, frame, frame, 2000,
+					_meiTalker, frame, frame, 1);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 4:
+			switch (_val6) {
+			case 0:
+				sendWSMessage_10000(1, _mei2, _meiHeadTurn, 10, 8, 2000, _meiWalk, 1, 1, 0);
+				_val6 = 1;
+				break;
+
+			case 1:
+				sendWSMessage_10000(1, _mei2, _meiWalk, 1, 1, 2000, _meiWalk, 1, 1, 0);
+				_val5 = _val6 = 0;
+				series_unload(_meiHeadTurn);
+				break;
+
+			case 4:
+				sendWSMessage_10000(1, _mei2, _meiHeadTurn, 10, 10, 2000,
+					_meiHeadTurn, 10, 10, 0);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 5:
+			switch (_val6) {
+			case 0:
+				sendWSMessage_10000(1, _mei2, _meiTalkLoop, 15, 1, 2000, _meiWalk, 1, 1, 0);
+				_val6 = 1;
+				break;
+
+			case 1:
+				sendWSMessage_10000(1, _mei2, _meiWalk, 1, 1, 2000, _meiWalk, 1, 1, 0);
+				_val6 = _val5 = 0;
+				series_unload(_meiTalkLoop);
+				break;
+
+			case 5:
+				sendWSMessage_10000(1, _mei2, _meiTalkLoop, 15, 15, 2000, _meiTalkLoop, 15, 15, 0);
+				break;
+
+			case 6:
+				sendWSMessage_10000(1, _mei2, _meiTalkLoop, 15, 29, 2000, _meiTalkLoop, 29, 29, 0);
+				_val6 = 7;
+				break;
+
+			case 7:
+				sendWSMessage_10000(1, _mei2, _meiTalkLoop, 29, 15, 2000, _meiTalkLoop, 15, 15, 0);
+				_val6 = 5;
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
 		break;
 
 	case 3000:
@@ -635,9 +922,341 @@ void Room201::daemon() {
 		}
 		break;
 
+	case 4020:
+		switch (_num1) {
+		case 1:
+			switch (_conv2) {
+			case 1:
+				sendWSMessage_10000(1, _ripley, _series6, 1, 1, 4010, _series6, 1, 1, 0);
+				break;
+
+			case 2:
+			case 3:
+				sendWSMessage_10000(1, _ripley, _series6, 1, 5, 4010, _series6, 5, 5, 0);
+				_num1 = 3;
+				break;
+
+			case 4:
+			case 5:
+				sendWSMessage_10000(1, _ripley, _ripHandChin, 1, 12, 4010, _ripHandChin, 12, 12, 0);
+				_num1 = 4;
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 3:
+			switch (_conv2) {
+			case 1:
+				sendWSMessage_10000(1, _ripley, _series6, 5, 1, 4010, _series6, 1, 1, 0);
+				_num1 = 1;
+				break;
+
+			case 2:
+				sendWSMessage_10000(1, _ripley, _series6, 6, 9, 4010, _series6, 8, 5, 0);
+				break;
+
+			case 3:
+				sendWSMessage_10000(1, _ripley, _series6, 5, 5, 4010, _series6, 5, 5, 0);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 4:
+			switch (_conv2) {
+			case 1:
+				sendWSMessage_10000(1, _ripley, _ripHandChin, 12, 1, 4010, _ripHandChin, 1, 1, 0);
+				_num1 = 1;
+				break;
+
+			case 4:
+				sendWSMessage_10000(1, _ripley, _ripHandChin, 12, 12, 4010, _ripHandChin, 12, 12, 0);
+				break;
+
+			case 5:
+				sendWSMessage_10000(1, _ripley, _ripHandChin, 11, 7, 4010, _ripHandChin, 7, 7, 0);
+				_num1 = 5;
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 5:
+			switch (_conv2) {
+			case 4:
+				sendWSMessage_10000(1, _ripley, _ripHandChin, 7, 12, 4010, _ripHandChin, 12, 12, 0);
+				_num1 = 4;
+				break;
+
+			case 5:
+				sendWSMessage_10000(1, _ripley, _ripHandChin, 7, 7, 4010, _ripHandChin, 7, 7, 0);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 6:
+			switch (_conv2) {
+			case 6:
+				sendWSMessage_10000(1, _ripley, _series7, 1, 1, 4010, _series7, 1, 1, 0);
+				break;
+
+			case 7:
+				sendWSMessage_10000(1, _ripley, _series7, 1, 9, 4010, _series7, 10, 10, 0);
+				_num1 = 7;
+				break;
+
+			case 9:
+				_conv2 = 7;
+				_trigger5 = kernel_trigger_create(6500);
+				kernel_timing_trigger(1, 4010);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 7:
+			switch (_conv2) {
+			case 6:
+				sendWSMessage_10000(1, _ripley, _series7, 9, 1, 4010, _series7, 1, 1, 0);
+				_num1 = 6;
+				break;
+
+			case 7:
+				sendWSMessage_10000(1, _ripley, _series7, 10, 10, 4010, _series7, 10, 10, 0);
+				break;
+
+			case 8:
+				frame = imath_ranged_rand(11, 19);
+				sendWSMessage_10000(1, _ripley, _series7, frame, frame, 4010, _series7, frame, frame, 0);
+				break;
+
+			case 10:
+				_flag3 = true;
+				sendWSMessage_10000(1, _ripley, _guyParcel, 1, 25, 4010, _guyParcel, 25, 25, 0);
+				_conv2 = 11;
+				break;
+
+			case 11:
+				digi_play("COM090", 1);
+				sendWSMessage_10000(1, _ripley, _guyParcel, 26, 68, 4010, _guyParcel, 1, 1, 0);
+				_conv2 = 13;
+				break;
+
+			case 12:
+				player_set_commands_allowed(true);
+				_conv2 = 7;
+				sendWSMessage_10000(1, _ripley, _guyParcel, 1, 1, 4010, _guyParcel, 1, 1, 0);
+				kernel_timing_trigger(1, 6500);
+				break;
+
+			case 13:
+				sendWSMessage_10000(1, _ripley, _guyParcel, 1, 1, 4010, _guyParcel, 1, 1, 0);
+				break;
+
+			case 14:
+				_conv2 = 6;
+				_conv1 = 8;
+				_trigger4 = kernel_trigger_create(6000);
+				kernel_timing_trigger(1, 4010);
+
+				if (_travelDest) {
+					player_set_commands_allowed(false);
+					disable_player_commands_and_fade_init(6700);
+				}
+				break;
+
+			case 15:
+				_flag3 = true;
+				sendWSMessage_10000(1, _ripley, _series5, 1, 35, 4010, _series5, 35, 35, 0);
+				_conv2 = 16;
+				break;
+
+			case 16:
+				sendWSMessage_10000(1, _ripley, _series5, 35, 35, 4010, _series5, 35, 35, 0);
+				break;
+
+			case 17:
+				sendWSMessage_10000(1, _ripley, _series5, 35, 1, 4010, _series5, 1, 1, 0);
+				_conv2 = 7;
+				break;
+
+			case 18:
+				player_set_commands_allowed(false);
+				_flag3 = true;
+				digi_play(conv_sound_to_play(), 1);
+				sendWSMessage_10000(1, _ripley, _guyPassForm, 1, 77, 4010,
+					_guyPassForm, 77, 77, 0);
+				_conv2 = 19;
+				break;
+
+			case 19:
+				sendWSMessage_10000(1, _ripley, _series5, 48, 1, 4010, _series5, 1, 1, 0);
+				_conv2 = 7;
+				_trigger5 = kernel_trigger_create(7100);
+				series_unload(_guyPassForm);
+				break;
+
+			case 20:
+				_flag3 = true;
+				digi_preload("201R63");
+				sendWSMessage_10000(1, _ripley, _series8, 1, 50, 4010, _series8, 50, 50, 0);
+				_conv2 = 21;
+				break;
+
+			case 21:
+				digi_play("201R63", 1);
+				sendWSMessage_10000(1, _ripley, _series8, 51, 69, 4010, _series8, 69, 69, 0);
+				_conv2 = 22;
+				_num1 = 22;
+				break;
+
+			case 24:
+				_flag3 = true;
+				sendWSMessage_10000(1, _ripley, _guyPassForm, 1, 50, 4010, _guyPassForm, 50, 50, 0);
+				_conv2 = 25;
+				break;
+
+			case 25:
+				digi_play("950_S34", 2);
+
+				if (_doc) {
+					_doc = series_place_sprite("201DOC", 0, 0, 0, 100, 0x410);
+					_val4 = 1;
+				}
+
+				sendWSMessage_10000(1, _ripley, _guyPassForm, 51, 57, 4010, _guyPassForm, 57, 57, 0);
+				_conv2 = 26;
+				break;
+
+			case 26:
+				digi_stop(2);
+				sendWSMessage_10000(1, _ripley, _guyPassForm, 58, 77, 4010, _guyPassForm, 77, 77, 0);
+				kernel_timing_trigger(1, 509);
+				_conv2 = 27;
+				break;
+
+			case 27:
+				_G(flags)[V079] = 1;
+				_G(flags)[V365] = 1;
+				sendWSMessage_10000(1, _ripley, _series7, 10, 10, 4010, _series7, 10, 10, 0);
+				_conv2 = 7;
+				break;
+
+			case 28:
+				_flag3 = true;
+				sendWSMessage_10000(1, _ripley, _guyParcel, 68, 1, 4010, _guyParcel, 1, 1, 0);
+				_conv2 = 29;
+				break;
+
+			case 29:
+				kernel_timing_trigger(1, 509);
+				sendWSMessage_10000(1, _ripley, _guyParcel, 1, 1, 4010, _guyParcel, 1, 1, 0);
+				_conv2 = 7;
+				_trigger5 = kernel_trigger_create(9250);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 22:
+			switch (_conv2) {
+			case 7:
+				sendWSMessage_10000(1, _ripley, _series8, 70, 79, 4010, _series7, 10, 10, 0);
+				_num1 = 7;
+				kernel_timing_trigger(1, 509);
+				break;
+
+			case 22:
+				sendWSMessage_10000(1, _ripley, _series8, 69, 69, 4010, _series8, 69, 69, 0);
+				break;
+
+			case 23:
+				sendWSMessage_10000(1, _ripley, _series8, 69, 70, 4010, _series8, 70, 69, 0);
+				_conv2 = 22;
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 6000:
+		player_set_commands_allowed(true);
+		_num2 = 1;
+		break;
+
+	case 6500:
+		_G(kernel).trigger_mode = KT_PARSE;
+		conv_load("conv201a", 10, 10, 747);
+		_hasKeyItems = buildKeyItemsArray();
+		conv_export_pointer_curr(&_hasKeyItems, 0);
+		conv_export_value_curr(_G(flags)[V088] >= 3 ? 1 : 0, 1);
+
+		for (int i = 0; i < 12; ++i)
+			conv_export_pointer_curr(&_itemFlags[i], i + 2);
+
+		if (_G(flags)[V056] != 1)
+			conv_export_value_curr(0, 15);
+		else if (_G(flags)[V110] != 1)
+			conv_export_value_curr(1, 15);
+		else
+			conv_export_value_curr(2, 15);
+
+		_travelDest = 0;
+		conv_export_pointer_curr(&_travelDest, 16);
+		conv_export_pointer_curr(&_givenYuan, 17);
+		conv_export_value_curr((_G(flags)[V053] == 1) ? 1 : 0, 19);
+		conv_play();
+		break;
+
+	case 6700:
+		digi_stop(2);
+		digi_stop(3);
+
+		if (_G(flags)[V056] == 1)
+			_G(flags)[V049] = 1;
+
+		_G(flags)[kTravelDest] = _travelDest;
+		_G(game).setRoom(495);
+		break;
+
 	case 7010:
 		_conv2 = 17;
 		_trigger5 = kernel_trigger_create(7020);
+		break;
+
+	case 7020:
+		if (!_givenYuan) {
+			inv_give_to_player("CHINESE YUAN");
+			_givenYuan = true;
+		}
+
+		kernel_timing_trigger(1, 509);
+		break;
+
+	case 7100:
+		player_set_commands_allowed(true);
+		inv_give_to_player("US DOLLARS");
+		kernel_timing_trigger(1, 509);
 		break;
 
 	case 8000:
@@ -648,6 +1267,20 @@ void Room201::daemon() {
 		kernel_timing_trigger(1, 509);
 		kernel_timing_trigger(5, 9020);
 		break;
+
+	case 9020: {
+		static const char *ITEMS[12] = {
+			"CRYSTAL SKULL", "STICK AND SHELL MAP", "WHEELED TOY",
+			"REBUS AMULET", "SHRUNKEN HEAD", "SILVER BUTTERFLY",
+			"POSTAGE STAMP", "GERMAN BANKNOTE", "WHALE BONE HORN",
+			"CHISEL", "INCENSE BURNER", "ROMANOV EMERALD"
+		};
+		assert((uint)conv_current_entry() <= 12);
+		inv_move_object(ITEMS[conv_current_entry()], 305);
+		player_set_commands_allowed(true);
+		conv_resume();
+		break;
+	}
 
 	case 9050:
 		_itemDigi2 = _itemDigi3 = _itemDigi4 = _itemDigi5 = nullptr;
@@ -701,8 +1334,60 @@ void Room201::daemon() {
 		}
 		break;
 
+	case 9060:
+		_conv2 = 22;
+		_trigger7 = kernel_trigger_create(9085);
+		break;
+
+	case 9085:
+		if (_itemDigi2)
+			digi_play(_itemDigi2, 1, 255, 9090);
+		else
+			kernel_timing_trigger(1, 9090);
+		break;
+
+	case 9090:
+		if (_itemDigi3)
+			digi_play(_itemDigi3, 1, 255, 9100);
+		else
+			kernel_timing_trigger(1, 9100);
+		break;
+
+	case 9100:
+		if (_itemDigi4)
+			digi_play(_itemDigi4, 1, 255, 9110);
+		else
+			kernel_timing_trigger(1, 9110);
+		break;
+
+	case 9110:
+		if (_itemDigi5)
+			digi_play(_itemDigi5, 1, 255, 9120);
+		else
+			kernel_timing_trigger(1, 9120);
+		break;
+
+	case 9120:
+		if (_flag2) {
+			_flag2 = false;
+			kernel_timing_trigger(1, 9230);
+		} else {
+			if (--_val1 > 0) {
+				_conv2 = 23;
+				_trigger7 = kernel_trigger_create(9050);
+			} else {
+				kernel_timing_trigger(1, 9220);
+			}
+		}
+		break;
+
 	case 9139:
 		sendWSMessage_150000(-1);
+		break;
+
+	case 9160:
+		_conv2 = 20;
+		_trigger7 = kernel_trigger_create(9050);
 		break;
 
 	case 9200:
@@ -859,6 +1544,53 @@ void Room201::animateRipley() {
 	sendWSMessage_10000(1, _ripley, _series7, 1, 1, 4010, _series7, 1, 1, 0);
 	_shadow3 = series_place_sprite("SAFARI SHADOW 3", 0,
 		_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
+}
+
+void Room201::checkFlags() {
+	if (_G(flags)[V364] == 1) {
+		_val1++;
+
+		if (_G(flags)[V053] == 1) {
+			_G(flags)[V350] = 1;
+		} else {
+			switch (_G(flags)[V005]) {
+			case 1: _G(flags)[V351] = 1; break;
+			case 2: _G(flags)[V352] = 1; break;
+			case 3: _G(flags)[V353] = 1; break;
+			case 4: _G(flags)[V354] = 1; break;
+			default: break;
+			}
+		}
+	}
+
+	for (int i = V365; i <= V373; ++i) {
+		if (_G(flags)[i] == 1) {
+			_G(flags)[i - 10] = 1;
+			++_val1;
+		}
+	}
+}
+
+bool Room201::buildKeyItemsArray() {
+	static const char *ITEMS[12] = {
+		"CRYSTAL SKULL", "STICK AND SHELL MAP", "WHEELED TOY",
+		"REBUS AMULET", "SHRUNKEN HEAD", "SILVER BUTTERFLY",
+		"POSTAGE STAMP", "GERMAN BANKNOTE", "WHALE BONE HORN",
+		"CHISEL", "INCENSE BURNER", "ROMANOV EMERALD"
+	};
+
+	// Build up an array of the key items the player has
+	Common::fill(_items, _items + 12, 0);
+	Common::fill(_itemFlags, _itemFlags + 12, 0);
+	_totalItems = 0;
+
+	for (int i = 0; i < 12; ++i) {
+		_itemFlags[i] = inv_player_has(ITEMS[i]) ? 1 : 0;
+		if (_itemFlags[i])
+			_items[_totalItems++] = i + 1;
+	}
+
+	return _totalItems > 0;
 }
 
 } // namespace Rooms
