@@ -202,7 +202,7 @@ uint32 MacWindow::getBorderFlags() const {
 	uint32 flags = 0;
 	if (_active)
 		flags |= kWindowBorderActive;
-	if (!_title.empty())
+	if (!_title.empty() && _borderType != 0x02 && _borderType != 0x03 && _borderType != 0x0a && _borderType != 0x0b)
 		flags |= kWindowBorderTitle;
 	if (_hasScrollBar)
 		flags |= kWindowBorderScrollbar;
