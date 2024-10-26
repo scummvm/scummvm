@@ -202,39 +202,44 @@ int MacGuiImpl::MacDialogWindow::findWidget(int x, int y) const {
 	return -1;
 }
 
+void MacGuiImpl::MacDialogWindow::addWidget(MacWidget *widget) {
+	widget->setId(_widgets.size());
+	_widgets.push_back(widget);
+}
+
 MacGuiImpl::MacButton *MacGuiImpl::MacDialogWindow::addButton(Common::Rect bounds, Common::String text, bool enabled) {
 	MacGuiImpl::MacButton *button = new MacButton(this, bounds, text, enabled);
-	_widgets.push_back(button);
+	addWidget(button);
 	return button;
 }
 
 MacGuiImpl::MacCheckbox *MacGuiImpl::MacDialogWindow::addCheckbox(Common::Rect bounds, Common::String text, bool enabled) {
 	MacGuiImpl::MacCheckbox *checkbox = new MacCheckbox(this, bounds, text, enabled);
-	_widgets.push_back(checkbox);
+	addWidget(checkbox);
 	return checkbox;
 }
 
 MacGuiImpl::MacStaticText *MacGuiImpl::MacDialogWindow::addStaticText(Common::Rect bounds, Common::String text, bool enabled, Graphics::TextAlign alignment) {
 	MacGuiImpl::MacStaticText *staticText = new MacStaticText(this, bounds, text, enabled, alignment);
-	_widgets.push_back(staticText);
+	addWidget(staticText);
 	return staticText;
 }
 
 MacGuiImpl::MacEditText *MacGuiImpl::MacDialogWindow::addEditText(Common::Rect bounds, Common::String text, bool enabled) {
 	MacGuiImpl::MacEditText *editText = new MacEditText(this, bounds, text, enabled);
-	_widgets.push_back(editText);
+	addWidget(editText);
 	return editText;
 }
 
 MacGuiImpl::MacPicture *MacGuiImpl::MacDialogWindow::addPicture(Common::Rect bounds, int id, bool enabled) {
 	MacGuiImpl::MacPicture *picture = new MacPicture(this, bounds, id, false);
-	_widgets.push_back(picture);
+	addWidget(picture);
 	return picture;
 }
 
 MacGuiImpl::MacSlider *MacGuiImpl::MacDialogWindow::addSlider(int x, int y, int h, int minValue, int maxValue, int pageSize, bool enabled) {
 	MacGuiImpl::MacSlider *slider = new MacSlider(this, Common::Rect(x, y, x + 16, y + h), minValue, maxValue, pageSize, enabled);
-	_widgets.push_back(slider);
+	addWidget(slider);
 	return slider;
 }
 
@@ -246,18 +251,18 @@ MacGuiImpl::MacPictureSlider *MacGuiImpl::MacDialogWindow::addPictureSlider(int 
 	handle->setVisible(false);
 
 	MacGuiImpl::MacPictureSlider *slider = new MacPictureSlider(this, background, handle, enabled, minX, maxX, minValue, maxValue, leftMargin, rightMargin);
-	_widgets.push_back(slider);
+	addWidget(slider);
 	return slider;
-}
-
-void MacGuiImpl::MacDialogWindow::markRectAsDirty(Common::Rect r) {
-	_dirtyRects.push_back(r);
 }
 
 MacGuiImpl::MacListBox *MacGuiImpl::MacDialogWindow::addListBox(Common::Rect bounds, Common::StringArray texts, bool enabled, bool contentUntouchable) {
 	MacGuiImpl::MacListBox *listBox = new MacListBox(this, bounds, texts, enabled, contentUntouchable);
-	_widgets.push_back(listBox);
+	addWidget(listBox);
 	return listBox;
+}
+
+void MacGuiImpl::MacDialogWindow::markRectAsDirty(Common::Rect r) {
+	_dirtyRects.push_back(r);
 }
 
 void MacGuiImpl::MacDialogWindow::drawBeamCursor() {
@@ -405,8 +410,6 @@ int MacGuiImpl::MacDialogWindow::runDialog(Common::Array<int> &deferredActionIds
 		Common::Rect windowBounds(_innerSurface.w, _innerSurface.h);
 
 		for (uint i = 0; i < _widgets.size(); i++) {
-			_widgets[i]->setId(i);
-
 			if (_widgets[i]->isVisible()) {
 				_widgets[i]->setRedraw(true);
 				_widgets[i]->draw();

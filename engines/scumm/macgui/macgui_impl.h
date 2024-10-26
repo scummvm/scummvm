@@ -598,6 +598,8 @@ public:
 
 		void copyToScreen(Graphics::Surface *s = nullptr) const;
 
+		void addWidget(MacWidget *widget);
+
 	public:
 		OSystem *_system;
 		MacGuiImpl *_gui;

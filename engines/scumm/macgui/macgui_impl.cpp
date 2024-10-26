@@ -812,8 +812,8 @@ bool MacGuiImpl::runOpenDialog(int &saveSlotToHandle) {
 
 	MacDialogWindow *window = createWindow(bounds);
 
-	window->addButton(Common::Rect(254, 137, 334, 157), "Open", true);
-	window->addButton(Common::Rect(254, 106, 334, 126), "Cancel", true);
+	MacButton *openButton = window->addButton(Common::Rect(254, 137, 334, 157), "Open", true);
+	MacButton *cancelButton = window->addButton(Common::Rect(254, 106, 334, 126), "Cancel", true);
 	window->addButton(Common::Rect(254, 62, 334, 82), "Desktop", false);
 	window->addButton(Common::Rect(254, 34, 334, 54), "Eject", false);
 
@@ -827,9 +827,9 @@ bool MacGuiImpl::runOpenDialog(int &saveSlotToHandle) {
 	drawFakePathList(window, Common::Rect(14, 8, 232, 27), name().c_str());
 	drawFakeDriveLabel(window, Common::Rect(232, 10, 344, 28), "ScummVM");
 
-	window->addListBox(Common::Rect(14, 31, 232, 161), savegameNames, true);
+	MacListBox *listBox = window->addListBox(Common::Rect(14, 31, 232, 161), savegameNames, true);
 
-	window->setDefaultWidget(0);
+	window->setDefaultWidget(openButton->getId());
 
 	// When quitting, the default action is to not open a saved game
 	bool ret = false;
@@ -838,15 +838,15 @@ bool MacGuiImpl::runOpenDialog(int &saveSlotToHandle) {
 	while (!_vm->shouldQuit()) {
 		int clicked = window->runDialog(deferredActionsIds);
 
-		if (clicked == 0 || clicked == 4) {
+		if (clicked == openButton->getId() || clicked == listBox->getId()) {
 			saveSlotToHandle =
-				window->getWidgetValue(4) < ARRAYSIZE(slotIds) ?
-				slotIds[window->getWidgetValue(4)] : -1;
+				listBox->getValue() < ARRAYSIZE(slotIds) ?
+				slotIds[listBox->getValue()] : -1;
 			ret = true;
 			break;
 		}
 
-		if (clicked == 1)
+		if (clicked == cancelButton->getId())
 			break;
 	}
 
@@ -861,8 +861,8 @@ bool MacGuiImpl::runSaveDialog(int &saveSlotToHandle, Common::String &saveName) 
 
 	MacDialogWindow *window = createWindow(bounds);
 
-	window->addButton(Common::Rect(254, 163, 334, 183), "Save", true);
-	window->addButton(Common::Rect(254, 132, 334, 152), "Cancel", true);
+	MacButton *saveButton = window->addButton(Common::Rect(254, 163, 334, 183), "Save", true);
+	MacButton *cancelButton = window->addButton(Common::Rect(254, 132, 334, 152), "Cancel", true);
 	window->addButton(Common::Rect(254, 90, 334, 110), "New", false);
 	window->addButton(Common::Rect(254, 62, 334, 82), "Desktop", false);
 	window->addButton(Common::Rect(254, 34, 334, 54), "Eject", false);
@@ -899,7 +899,7 @@ bool MacGuiImpl::runSaveDialog(int &saveSlotToHandle, Common::String &saveName) 
 
 	font->drawString(s, saveGameFileAsResStr, 14, 138, 218, black, Graphics::kTextAlignLeft, 4);
 
-	window->setDefaultWidget(0);
+	window->setDefaultWidget(saveButton->getId());
 	editText->selectAll();
 
 	// When quitting, the default action is to not open a saved game
@@ -909,25 +909,22 @@ bool MacGuiImpl::runSaveDialog(int &saveSlotToHandle, Common::String &saveName) 
 	while (!_vm->shouldQuit()) {
 		int clicked = window->runDialog(deferredActionsIds);
 
-		if (clicked == 0) {
+		if (clicked == saveButton->getId()) {
 			ret = true;
 			saveName = editText->getText();
 			saveSlotToHandle = firstAvailableSlot;
 			break;
 		}
 
-		if (clicked == 1)
+		if (clicked == cancelButton->getId())
 			break;
 
 		if (clicked == -2) {
 			// Cycle through deferred actions
 			for (uint i = 0; i < deferredActionsIds.size(); i++) {
-				// Edit text widget
-				if (deferredActionsIds[i] == 4) {
-					MacGuiImpl::MacWidget *wid = window->getWidget(deferredActionsIds[i]);
-
+				if (deferredActionsIds[i] == editText->getId()) {
 					// Disable "Save" button when text is empty
-					window->getWidget(0)->setEnabled(!wid->getText().empty());
+					saveButton->setEnabled(!editText->getText().empty());
 				}
 			}
 		}
