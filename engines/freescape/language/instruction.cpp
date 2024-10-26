@@ -261,7 +261,7 @@ bool FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			executeRedraw(instruction);
 			break;
 		case Token::EXECUTE:
-			executeExecute(instruction);
+			executeExecute(instruction, shot, collided, activated);
 			ip = codeSize;
 			break;
 		case Token::DELAY:
@@ -326,7 +326,7 @@ void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {
 	}
 }
 
-void FreescapeEngine::executeExecute(FCLInstruction &instruction) {
+void FreescapeEngine::executeExecute(FCLInstruction &instruction, bool shot, bool collided, bool activated) {
 	uint16 objId = instruction._source;
 	debugC(1, kFreescapeDebugCode, "Executing instructions from object %d", objId);
 	Object *obj = _currentArea->objectWithID(objId);
@@ -339,7 +339,7 @@ void FreescapeEngine::executeExecute(FCLInstruction &instruction) {
 			return;
 		}
 	}
-	executeObjectConditions((GeometricObject *)obj, true, false, false);
+	executeObjectConditions((GeometricObject *)obj, shot, collided, activated);
 }
 
 void FreescapeEngine::executeSound(FCLInstruction &instruction) {

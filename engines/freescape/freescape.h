@@ -395,7 +395,7 @@ public:
 	bool checkConditional(FCLInstruction &instruction, bool shot, bool collided, bool timer, bool activated);
 	bool checkIfGreaterOrEqual(FCLInstruction &instruction);
 	bool checkIfLessOrEqual(FCLInstruction &instruction);
-	void executeExecute(FCLInstruction &instruction);
+	void executeExecute(FCLInstruction &instruction, bool shot, bool collided, bool activated);
 	void executeIncrementVariable(FCLInstruction &instruction);
 	void executeDecrementVariable(FCLInstruction &instruction);
 	void executeSetVariable(FCLInstruction &instruction);
