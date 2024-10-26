@@ -28,6 +28,7 @@ namespace Freescape {
 
 enum {
 	k8bitGameBitTravelRock = 30,
+	k8bitVariableSpiritsDestroyed = 28,
 	k8bitVariableEnergy = 62,
 	k8bitVariableScore = 61,
 	k8bitVariableShieldDrillerTank = 60,

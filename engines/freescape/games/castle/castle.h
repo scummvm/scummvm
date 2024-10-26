@@ -77,7 +77,6 @@ public:
 	void drawSensorShoot(Sensor *sensor) override;
 
 	void executePrint(FCLInstruction &instruction) override;
-	void executeMakeInvisible(FCLInstruction &instruction) override;
 	void executeDestroy(FCLInstruction &instruction) override;
 	void executeRedraw(FCLInstruction &instruction) override;
 	void gotoArea(uint16 areaID, int entranceID) override;
@@ -120,7 +119,6 @@ public:
 
 	Common::Array<int> _keysCollected;
 	bool _useRockTravel;
-	int _spiritsDestroyed;
 	int _spiritsMeter;
 	int _spiritsMeterPosition;
 	int _spiritsMeterMax;

@@ -86,7 +86,6 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_menuFxOnIndicator = nullptr;
 	_menuFxOffIndicator = nullptr;
 
-	_spiritsDestroyed = 0;
 	_spiritsMeter = 32;
 	_spiritsToKill = 26;
 }
@@ -358,7 +357,6 @@ void CastleEngine::initGameState() {
 	_gameStateVars[8] = 128; // -1
 	_countdown = INT_MAX;
 	_keysCollected.clear();
-	_spiritsDestroyed = 0;
 	_spiritsMeter = 32;
 	_spiritsMeterMax = 64;
 
@@ -446,6 +444,7 @@ void CastleEngine::drawInfoMenu() {
 
 	int score = _gameStateVars[k8bitVariableScore];
 	int shield = _gameStateVars[k8bitVariableShield];
+	int spiritsDestroyed = _gameStateVars[k8bitVariableSpiritsDestroyed];
 	if (isDOS()) {
 		g_system->lockMouse(false);
 		g_system->showMouse(true);
@@ -460,9 +459,9 @@ void CastleEngine::drawInfoMenu() {
 		Common::replace(keysCollected, "X", Common::String::format("%d", _keysCollected.size()));
 		drawStringInSurface(keysCollected, 103, 41,  front, black, surface);
 
-		Common::String spiritsDestroyed = _messagesList[133];
-		Common::replace(spiritsDestroyed, "X", Common::String::format("%d", _spiritsDestroyed));
-		drawStringInSurface(spiritsDestroyed, 145 , 132,  front, black, surface);
+		Common::String spiritsDestroyedString = _messagesList[133];
+		Common::replace(spiritsDestroyedString, "X", Common::String::format("%d", spiritsDestroyed));
+		drawStringInSurface(spiritsDestroyedString, 145 , 132,  front, black, surface);
 
 		for (int  i = 0; i < int(_keysCollected.size()) ; i++) {
 			if (i % 2 == 0)
@@ -478,14 +477,14 @@ void CastleEngine::drawInfoMenu() {
 			lines.push_back(centerAndPadString("s-save l-load q-quit", 21));
 			lines.push_back("");
 			lines.push_back(centerAndPadString(Common::String::format("keys   %d collected", _keysCollected.size()), 21));
-			lines.push_back(centerAndPadString(Common::String::format("spirits  %d destroyed", _spiritsDestroyed), 21));
+			lines.push_back(centerAndPadString(Common::String::format("spirits  %d destroyed", spiritsDestroyed), 21));
 			lines.push_back(centerAndPadString(Common::String::format("strength  %s", _messagesList[62 + shield / 6].c_str()), 21));
 			lines.push_back(centerAndPadString(Common::String::format("score   %07d", score), 21));
 		} else if (_language == Common::ES_ESP) {
 			lines.push_back(centerAndPadString("s-salv c-carg q-quit", 21));
 			lines.push_back("");
 			lines.push_back(centerAndPadString(Common::String::format("llaves %d recogidas", _keysCollected.size()), 21));
-			lines.push_back(centerAndPadString(Common::String::format("espirit %d destruidos", _spiritsDestroyed), 21));
+			lines.push_back(centerAndPadString(Common::String::format("espirit %d destruidos", spiritsDestroyed), 21));
 			lines.push_back(centerAndPadString(Common::String::format("fuerza  %s", _messagesList[62 + shield / 6].c_str()), 21));
 			lines.push_back(centerAndPadString(Common::String::format("puntos   %07d", score), 21));
 		} else {
@@ -601,36 +600,6 @@ void CastleEngine::drawInfoMenu() {
 }
 
 // Same as FreescapeEngine::executeExecute but updates the spirits destroyed counter
-void CastleEngine::executeMakeInvisible(FCLInstruction &instruction) {
-	uint16 objectID = 0;
-	uint16 areaID = _currentArea->getAreaID();
-
-	if (instruction._destination > 0) {
-		objectID = instruction._destination;
-		areaID = instruction._source;
-	} else {
-		objectID = instruction._source;
-	}
-
-	debugC(1, kFreescapeDebugCode, "Making obj %d invisible in area %d!", objectID, areaID);
-	if (_areaMap.contains(areaID)) {
-		Object *obj = _areaMap[areaID]->objectWithID(objectID);
-		if (!obj && isCastle())
-			return; // No side effects
-		assert(obj); // We assume the object was there
-
-		if (!obj->isInvisible() && obj->getType() == kSensorType && isCastle()) {
-			_spiritsDestroyed++;
-		}
-
-		obj->makeInvisible();
-	} else {
-		assert(isDOS() && isDemo()); // Should only happen in the DOS demo
-	}
-
-}
-
-// Same as FreescapeEngine::executeExecute but updates the spirits destroyed counter
 void CastleEngine::executeDestroy(FCLInstruction &instruction) {
 	uint16 objectID = 0;
 	uint16 areaID = _currentArea->getAreaID();
@@ -648,7 +617,6 @@ void CastleEngine::executeDestroy(FCLInstruction &instruction) {
 	assert(obj); // We know that an object should be there
 
 	if (!obj->isDestroyed() && obj->getType() == kSensorType && isCastle()) {
-		_spiritsDestroyed++;
 		_shootingFrames = 0;
 		_gfx->_inkColor = _currentArea->_inkColor;
 		_gfx->_shakeOffset = Common::Point();
@@ -1053,9 +1021,10 @@ void CastleEngine::updateTimeVariables() {
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
 	if (_lastMinute != minutes / 2) {
+		int spiritsDestroyed = _gameStateVars[k8bitVariableSpiritsDestroyed];
 		_lastMinute = minutes / 2;
 		_spiritsMeter++;
-		_spiritsMeterPosition = _spiritsMeter * (_spiritsToKill - _spiritsDestroyed) / _spiritsToKill;
+		_spiritsMeterPosition = _spiritsMeter * (_spiritsToKill - spiritsDestroyed) / _spiritsToKill;
 		if (_spiritsMeterPosition >= _spiritsMeterMax)
 			_countdown = -1;
 	}
@@ -1230,7 +1199,6 @@ Common::Error CastleEngine::saveGameStreamExtended(Common::WriteStream *stream, 
 	}
 
 	stream->writeUint32LE(_spiritsMeter);
-	stream->writeUint32LE(_spiritsDestroyed);
 
 	for (auto &it : _areaMap) {
 		stream->writeUint16LE(it._key);
@@ -1248,7 +1216,6 @@ Common::Error CastleEngine::loadGameStreamExtended(Common::SeekableReadStream *s
 	}
 
 	_spiritsMeter = stream->readUint32LE();
-	_spiritsDestroyed = stream->readUint32LE();
 
 	for (uint i = 0; i < _areaMap.size(); i++) {
 		uint16 key = stream->readUint16LE();

@@ -150,7 +150,13 @@ bool FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 	int conditionalDepth = 0;
 	bool executed = false;
 	int codeSize = code.size();
-	assert(codeSize > 0);
+
+	if (codeSize == 0) {
+		assert(isCastle()); // Only seems to happen in Castle Master (magister room)
+		debugC(1, kFreescapeDebugCode, "Code is empty!");
+		return false;
+	}
+
 	while (ip <= codeSize - 1) {
 		FCLInstruction &instruction = code[ip];
 		debugC(1, kFreescapeDebugCode, "Executing ip: %d with type %d in code with size: %d. Skip flag is: %d", ip, instruction.getType(), codeSize, skip);
@@ -562,9 +568,6 @@ void FreescapeEngine::executeDestroy(FCLInstruction &instruction) {
 }
 
 void FreescapeEngine::executeMakeInvisible(FCLInstruction &instruction) {
-	// Castle uses their own implementation which is hard to
-	// integrate with this code without duplicating most of it
-	assert(!isCastle());
 	uint16 objectID = 0;
 	uint16 areaID = _currentArea->getAreaID();
 

@@ -81,6 +81,7 @@ Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition
 
 			if (bytePointer > 0) {
 				detokenisedStream += "ENDIF\n";
+				assert(conditionalInstructions->size() > 0);
 				// Allocate the next vector of instructions
 				conditionalInstructions = new FCLInstructionVector();
 			}
@@ -469,6 +470,9 @@ Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition
 		// throw in a newline
 		detokenisedStream += "\n";
 	}
+
+	// This fails in Castle Master
+	//assert(conditionalInstructions->size() > 0);
 
 	return detokenisedStream;
 }
