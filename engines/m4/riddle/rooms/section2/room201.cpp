@@ -1442,6 +1442,38 @@ void Room201::daemon() {
 	}
 }
 
+static const char *LOOK[][2] = {
+	{ "VASE",          "201r08" },
+	{ "POSTCARD RACK", "201r09" },
+	{ "POSTER",        "201r10" },
+	{ "WINDOW",        "201r11" },
+	{ "MAGAZINES",     "201r12" },
+	{ "AGENT",         "201r13" },
+	{ "RUG",           "201r14" },
+	{ "LAMP",          "201r37" },
+	{ "PLANT",         "201r38" },
+	{ "SOFA",          "201r39" },
+	{ "CHAIR",         "201r39" },
+	{ "PHONE",         "201r40" },
+	{ nullptr, nullptr }
+};
+
+static const char *TAKE[][2] = {
+	{ "POSTCARD RACK", "201r19" },
+	{ "MAGAZINES",     "201r20" },
+	{ "VASE",          "201r41" },
+	{ "RUG",           "201r42" },
+	{ nullptr, nullptr }
+};
+
+static const char *USE[][2] = {
+	{ "MONEY WITH AGENT", "201r43" },
+	{ "SOFA",             "201r44" },
+	{ "CHAIR",            "201r44" },
+	{ "PHONE",            "201r45" },
+	{ nullptr, nullptr }
+};
+
 void Room201::parser() {
 	bool lookFlag = player_said_any("look", "look at");
 	bool takeFlag = player_said("take");
@@ -1450,9 +1482,163 @@ void Room201::parser() {
 
 	if (player_said("conv201a")) {
 		conv201a();
+	} else if (lookFlag && player_said(" ")) {
+		digi_play("201R07", 1);
+	} else if (lookFlag && _G(walker).ripley_said(LOOK)) {
+		// Handled
+	} else if (takeFlag && _G(walker).ripley_said(TAKE)) {
+		// Handled
+	} else if (useFlag && _G(walker).ripley_said(USE)) {
+		// Handled
+	} else if (takeFlag && player_said("AGENT")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			player_set_commands_allowed(false);
+			_conv1 = 0;
+			_G(kernel).trigger_mode = KT_DAEMON;
+			animateRipley();
+			_G(kernel).trigger_mode = KT_PARSE;
+			kernel_timing_trigger(2, 3);
+			break;
 
-	} else if (lookFlag || takeFlag || talkFlag || useFlag) {
-		// TODO
+		case 3:
+			_conv2 = 9;
+			_conv1 = 0;
+			break;
+		default:
+			break;
+		}
+	} else if (_G(kernel).trigger == 747) {
+		_conv2 = 14;
+	} else if (talkFlag && player_said("MEI CHEN")) {
+		if (_G(flags)[V059] == 0) {
+			switch (_G(kernel).trigger) {
+			case -1:
+			case 666:
+				_ctr2 = 0;
+				player_set_commands_allowed(false);
+				_ripTalk = series_load("RIP TREK TALK");
+				_val6 = 0;
+				setGlobals1(_ripTalk, 1, 7, 1, 7, 1);
+				sendWSMessage_110000(2);
+				digi_play("201r15", 1, 255, 2);
+				break;
+
+			case 2:
+				if (_ctr2 >= 1) {
+					_ctr2 = 0;
+					sendWSMessage_150000(3);
+				} else {
+					++_ctr2;
+				}
+				break;
+
+			case 3:
+				series_unload(_ripTalk);
+				_val6 = 3;
+				digi_play("201m04", 1, 255, 4);
+				break;
+
+			case 4:
+				_val6 = 0;
+				_trigger9 = kernel_trigger_create(5);
+				break;
+
+			case 5:
+				_val6 = 2;
+				_val8 = kernel_trigger_create(6);
+				break;
+
+			case 6:
+				_G(flags)[V059] = 1;
+				player_set_commands_allowed(true);
+				break;
+
+			default:
+				break;
+			}
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+			case 666:
+				player_set_commands_allowed(false);
+				_ripTalk = series_load("RIP TREK TALK");
+				_val6 = 0;
+				_trigger9 = kernel_trigger_create(2);
+				break;
+
+			case 2:
+				_val6 = 5;
+				_val9 = kernel_trigger_create(3);
+				break;
+
+			case 3:
+			{
+				_ctr2 = 0;
+				setGlobals1(_ripTalk, 1, 7, 1, 7, 1);
+				sendWSMessage_110000(4);
+
+				static const char *DIGI[3] = { "201r16", "201r17", "201r18" };
+				digi_play(DIGI[imath_ranged_rand(0, 2)], 1, 255, 4);
+				break;
+			}
+
+			case 4:
+				if (_ctr2 >= 1) {
+					_ctr2 = 0;
+					sendWSMessage_150000(5);
+				} else {
+					++_ctr2;
+				}
+				break;
+
+			case 5:
+				series_unload(_ripTalk);
+				_val6 = 6;
+				_val9 = kernel_trigger_create(6);
+				break;
+
+			case 6:
+				_val6 = 0;
+				_trigger9 = kernel_trigger_create(7);
+				break;
+
+			case 7:
+				_val6 = 2;
+				_val8 = kernel_trigger_create(8);
+				break;
+
+			case 8:
+				player_set_commands_allowed(true);
+				break;
+
+			default:
+				break;
+			}
+		}
+	} else if (player_said("walk through")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			ws_walk(66, 254, nullptr, 2, 7);
+			break;
+
+		case 2:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(3);
+			break;
+
+		case 3:
+			_G(game).setRoom(203);
+			break;
+
+		default:
+			break;
+		}
+	} else if (player_said("journal") && !takeFlag && !lookFlag) {
+		digi_play("201r25", 1);
+	} else if (useFlag && !inv_player_has(_G(player).noun)) {
+		digi_play("201r46", 1);
 	} else {
 		return;
 	}

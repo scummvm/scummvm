@@ -91,11 +91,13 @@ private:
 	int _trigger10 = -1;
 	int _trigger11 = -1;
 	int _trigger12 = -1;
-	int _ctr1 = 0;
 	int _items[12];
 	int32 _itemFlags[12];
 	int _totalItems = 0;
 	int32 _hasKeyItems = 0;
+
+	int _ctr1 = 0;
+	int _ctr2 = 0;
 
 	void setupMei();
 	void conv201a();
