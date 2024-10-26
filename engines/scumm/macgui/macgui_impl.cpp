@@ -970,15 +970,14 @@ bool MacGuiImpl::runOkCancelDialog(Common::String text) {
 
 	MacDialogWindow *window = createDialog(502);
 
-	window->setDefaultWidget(0);
-	window->addSubstitution(text);
-
-	MacStaticText *widget = (MacStaticText *)window->getWidget(kWidgetStaticText);
-	widget->setWordWrap(true);
-
 	MacButton *buttonOk = (MacButton *)window->getWidget(kWidgetButton, 0);
 	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
+	MacStaticText *textWidget = (MacStaticText *)window->getWidget(kWidgetStaticText);
 
+	textWidget->setWordWrap(true);
+
+	window->setDefaultWidget(buttonOk);
+	window->addSubstitution(text);
 
 	// When quitting, the default action is to quit
 	bool ret = true;
