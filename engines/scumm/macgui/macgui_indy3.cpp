@@ -1380,7 +1380,9 @@ bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 
 	drawFakePathList(window, Common::Rect(14, 18, 231, 37), "Indy Last Crusade");
 
-	MacGuiImpl::MacListBox *listBox = window->addListBox(Common::Rect(14, 41, 232, 187), savegameNames, true);
+	MacButton *saveButton = (MacButton *)window->getWidget(kWidgetButton, 0);
+	MacButton *cancelButton = (MacButton *)window->getWidget(kWidgetButton, 1);
+	MacListBox *listBox = window->addListBox(Common::Rect(14, 41, 232, 187), savegameNames, true);
 
 	// When quitting, the default action is to not open a saved game
 	bool ret = false;
@@ -1389,14 +1391,14 @@ bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 	while (!_vm->shouldQuit()) {
 		int clicked = window->runDialog(deferredActionsIds);
 
-		if (clicked == 0 || clicked == 12) {
+		if (clicked == saveButton->getId() || clicked == listBox->getId()) {
 			ret = true;
 			saveSlotToHandle =
 				listBox->getValue() < ARRAYSIZE(slotIds) ? slotIds[listBox->getValue()] : -1;
 			break;
 		}
 
-		if (clicked == 2)
+		if (clicked == cancelButton->getId())
 			break;
 	}
 
@@ -1447,28 +1449,29 @@ bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &saveName)
 	bool ret = false;
 	Common::Array<int> deferredActionsIds;
 
+	MacButton *saveButton = (MacButton *)window->getWidget(kWidgetButton, 0);
+	MacButton *cancelButton = (MacButton *)window->getWidget(kWidgetButton, 1);
+	MacEditText *editText = (MacEditText *)window->getWidget(kWidgetEditText);
+
 	while (!_vm->shouldQuit()) {
 		int clicked = window->runDialog(deferredActionsIds);
 
-		if (clicked == 0) {
+		if (clicked == saveButton->getId()) {
 			ret = true;
-			saveName = window->getWidget(6)->getText(); // Edit text widget
+			saveName = editText->getText();
 			saveSlotToHandle = firstAvailableSlot;
 			break;
 		}
 
-		if (clicked == 1)
+		if (clicked == cancelButton->getId())
 			break;
 
 		if (clicked == -2) {
 			// Cycle through deferred actions
 			for (uint i = 0; i < deferredActionsIds.size(); i++) {
-				// Edit text widget
-				if (deferredActionsIds[i] == 5) {
-					MacGuiImpl::MacWidget *wid = window->getWidget(deferredActionsIds[i]);
-
+				if (deferredActionsIds[i] == editText->getId()) {
 					// Disable "Save" button when text is empty
-					window->getWidget(0)->setEnabled(!wid->getText().empty());
+					saveButton->setEnabled(!editText->getText().empty());
 				}
 			}
 		}
@@ -1499,15 +1502,22 @@ bool MacIndy3Gui::runOptionsDialog() {
 
 	MacDialogWindow *window = createDialog(1000);
 
-	window->setWidgetValue(2, sound);
-	window->setWidgetValue(3, music);
-	window->setWidgetValue(8, scrolling);
+	MacButton *buttonOk = (MacButton *)window->getWidget(kWidgetButton, 0);
+	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
+
+	MacCheckbox *checkboxSound = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 0);
+	MacCheckbox *checkboxMusic = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 1);
+	MacCheckbox *checkboxScrolling = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 2);
+
+	checkboxSound->setValue(sound);
+	checkboxMusic->setValue(music);
+	checkboxScrolling->setValue(scrolling);
 
 	if (!sound)
-		window->setWidgetEnabled(3, false);
+		checkboxMusic->setEnabled(false);
 
-	window->addPictureSlider(4, 5, true, 5, 105, 0, 9);
-	window->setWidgetValue(9, textSpeed);
+	MacPictureSlider *sliderTextSpeed = window->addPictureSlider(4, 5, true, 5, 105, 0, 9);
+	sliderTextSpeed->setValue(textSpeed);
 
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(_vm->VAR_MACHINE_SPEED)));
 
@@ -1518,23 +1528,23 @@ bool MacIndy3Gui::runOptionsDialog() {
 	while (!_vm->shouldQuit()) {
 		int clicked = window->runDialog(deferredActionsIds);
 
-		if (clicked == 0) {
+		if (clicked == buttonOk->getId()) {
 			ret = true;
 			break;
 		}
 
-		if (clicked == 1)
+		if (clicked == buttonCancel->getId())
 			break;
 
-		if (clicked == 2)
-			window->setWidgetEnabled(3, window->getWidgetValue(2) != 0);
+		if (clicked == checkboxSound->getId())
+			checkboxMusic->setEnabled(checkboxSound->getValue() != 0);
 	}
 
 	if (ret) {
 		// Update settings
 
 		// TEXT SPEED
-		_vm->_defaultTextSpeed = CLIP<int>(window->getWidgetValue(9), 0, 9);
+		_vm->_defaultTextSpeed = CLIP<int>(sliderTextSpeed->getValue(), 0, 9);
 		ConfMan.setInt("original_gui_text_speed", _vm->_defaultTextSpeed);
 		_vm->setTalkSpeed(_vm->_defaultTextSpeed);
 
@@ -1542,8 +1552,8 @@ bool MacIndy3Gui::runOptionsDialog() {
 		// 0 - Sound&Music on
 		// 1 - Sound on, music off
 		// 2 - Sound&Music off
-		bool disableSound = window->getWidgetValue(2) == 0;
-		bool disableMusic = window->getWidgetValue(3) == 0;
+		bool disableSound = checkboxSound->getValue() == 0;
+		bool disableMusic = checkboxMusic->getValue() == 0;
 
 		_vm->_musicEngine->toggleMusic(!disableMusic);
 		_vm->_musicEngine->toggleSoundEffects(!disableSound);
@@ -1554,7 +1564,7 @@ bool MacIndy3Gui::runOptionsDialog() {
 		_vm->syncSoundSettings();
 
 		// SCROLLING ACTIVATION
-		_vm->_snapScroll = window->getWidgetValue(8) == 0;		
+		_vm->_snapScroll = checkboxScrolling->getValue() == 0;
 	}
 
 	delete window;
@@ -1573,6 +1583,11 @@ bool MacIndy3Gui::runIqPointsDialog() {
 
 	MacDialogWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 1001 : 1002);
 
+	MacButton *buttonOk = (MacButton *)window->getWidget(kWidgetButton, 0);
+	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
+
+	MacStaticText *textSeriesIQ = (MacStaticText *)window->getWidget(kWidgetStaticText, 2);
+
 	((ScummEngine_v4 *)_vm)->updateIQPoints();
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
@@ -1582,14 +1597,14 @@ bool MacIndy3Gui::runIqPointsDialog() {
 	while (!_vm->shouldQuit()) {
 		int clicked = window->runDialog(deferredActionsIds);
 
-		if (clicked == 0)
+		if (clicked == buttonOk->getId())
 			break;
 
-		if (clicked == 1) {
+		if (clicked == buttonCancel->getId()) {
 			if (!_vm->enhancementEnabled(kEnhUIUX) || runOkCancelDialog("Are you sure you want to reset the series IQ score?")) {
 				((ScummEngine_v4 *)_vm)->clearSeriesIQPoints();
 				window->replaceSubstitution(1, Common::String::format("%d", _vm->VAR(245)));
-				window->redrawWidget(4);
+				textSeriesIQ->setRedraw(true);
 			}
 		}
 	}
