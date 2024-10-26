@@ -608,7 +608,14 @@ Common::Error DgdsEngine::run() {
 
 			_compositionBuffer.transBlitFrom(_storedAreaBuffer);
 
-			_scene->drawActiveDialogBgs(&_compositionBuffer);
+			//
+			// The originals do something about drawing the background of dialogs here
+			// but that causes graphical glitches in scenes when a region is saved as it
+			// saves the dialog background too (eg, dragon scene 79).
+			//
+			// Instead we just draw the background and foreground of dialogs at the end.
+			//
+			//_scene->drawActiveDialogBgs(&_compositionBuffer);
 
 			if (_scene->getNum() != 2 || _inventory->isZoomVisible())
 				_adsInterp->run();
