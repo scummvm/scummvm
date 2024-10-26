@@ -28,18 +28,28 @@
 
 namespace Wintermute {
 
-#define MAIN3DS               0x4D4D // level 1
-#define EDIT3DS               0x3D3D // level 1
-#define NAMED_OBJECT          0x4000 // level 2
-#define TRIANGLE_MESH         0x4100 // level 3
-#define TRIANGLE_VERTEXLIST   0x4110 // level 4
-#define TRIANGLE_FACELIST     0x4120 // level 4
-#define CHUNK_CAMERA          0x4700 // level 3
-#define CHUNK_LIGHT           0x4600
-#define LIGHT_SPOTLIGHT       0x4610
-#define LIGHT_IS_OFF          0x4620
-#define RGB_FLOAT             0x0010
-#define RGB_BYTE              0x0011
+#define MAIN3DS                       0x4D4D // level 1
+#define EDIT3DS                       0x3D3D // level 1
+#define NAMED_OBJECT                  0x4000 // level 2
+#define TRIANGLE_MESH                 0x4100 // level 3
+#define TRIANGLE_VERTEXLIST           0x4110 // level 4
+#define TRIANGLE_FACELIST             0x4120 // level 4
+#define CHUNK_CAMERA                  0x4700 // level 3
+#define CHUNK_LIGHT                   0x4600
+#define LIGHT_SPOTLIGHT               0x4610
+#define LIGHT_IS_OFF                  0x4620
+#define RGB_FLOAT                     0x0010
+#define RGB_BYTE                      0x0011
+#define KEYFRAMER                     0xB000 // level 1
+#define KEYFRAMER_AMBIENT_INFO        0xB001
+#define KEYFRAMER_MESH_INFO           0xB002
+#define KEYFRAMER_CAMERA_INFO         0xB003
+#define KEYFRAMER_CAMERA_TARGET_INFO  0xB004
+#define KEYFRAMER_OMNI_INFO           0xB005
+#define KEYFRAMER_SPOT_TARGET_INFO    0xB006
+#define KEYFRAMER_SPOT_INFO           0xB007
+#define NODE_HDR                      0xB010
+#define ROLL_TRACK_TAG                0xB024
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -91,6 +101,8 @@ bool Loader3DS::parseFile(const Common::String &filename) {
 	if (!buffer)
 		return false;
 
+	uint16 keyframerSection = 0;
+	Common::String keyframerObject;
 	FileObject3DS *obj = nullptr;
 	uint16 i;
 
@@ -240,6 +252,70 @@ bool Loader3DS::parseFile(const Common::String &filename) {
 				} else
 					handled = false;
 			break;
+
+			// keyframer stuff
+			case KEYFRAMER:
+			break;
+
+			case KEYFRAMER_AMBIENT_INFO:
+			case KEYFRAMER_MESH_INFO:
+			case KEYFRAMER_CAMERA_INFO:
+			case KEYFRAMER_CAMERA_TARGET_INFO:
+			case KEYFRAMER_OMNI_INFO:
+			case KEYFRAMER_SPOT_TARGET_INFO:
+			case KEYFRAMER_SPOT_INFO:
+				keyframerSection = chunkId;
+			break;
+
+			case NODE_HDR:
+				// object name
+				keyframerObject.clear();
+				for (int8 current = fileStream.readByte(); current != 0; current = fileStream.readByte()) {
+					keyframerObject.insertChar(current, keyframerObject.size());
+				}
+				// flags1
+				fileStream.readUint16LE();
+				// flags2
+				fileStream.readUint16LE();
+				// hierarchy
+				fileStream.readUint16LE();
+			break;
+
+			case ROLL_TRACK_TAG:
+				if (keyframerSection == KEYFRAMER_CAMERA_INFO && !keyframerObject.empty()) {
+					// flags
+					fileStream.readUint16LE();
+					// unknown
+					fileStream.readUint16LE();
+					fileStream.readUint16LE();
+					fileStream.readUint16LE();
+					fileStream.readUint16LE();
+					// keys
+					uint16 keys = fileStream.readUint16LE();
+					// unknown
+					fileStream.readUint16LE();
+
+					for (uint16 key = 0; key < keys; key++) {
+						// frame number
+						fileStream.readUint16LE();
+						// unknown
+						fileStream.readUint32LE();
+						// camera roll
+						float cameraRoll = fileStream.readFloatLE();
+
+						// inject this roll value to the camera
+						if (key == 0) {
+							for (size_t index = 0; index < _objects.size(); index++) {
+								if (_objects[index]->_type == OBJ_3DS_CAMERA && _objects[index]->_name == keyframerObject) {
+									_objects[index]->_cameraBank = cameraRoll;
+									break;
+								}
+							}
+						}
+					}
+				} else
+					handled = false;
+				break;
 
 			default:
 				handled = false;
