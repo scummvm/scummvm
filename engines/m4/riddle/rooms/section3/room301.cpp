@@ -1040,7 +1040,7 @@ void Room301::conv301a() {
 	const char *sound = conv_sound_to_play();
 	int who = conv_whos_talking();
 	int node = conv_current_node();
-	warning("TRIGGER %d, WHO %d NODE %d", _G(kernel).trigger, who, node);
+
 	if (_G(kernel).trigger == 1) {
 		if (who <= 0) {
 			if (node != 3) {

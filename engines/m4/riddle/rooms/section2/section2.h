@@ -40,6 +40,11 @@ extern const char *S2_NAMES1[];
 extern const int16 S2_DIRS2[];
 extern const char *S2_NAMES2[];
 
+extern const int16 S2_MEI_NORMAL_DIRS[];
+extern const char *S2_MEI_NORMAL_NAMES[];
+extern const int16 S2_MEI_SHADOW_DIRS[];
+extern const char *S2_MEI_SHADOW_NAMES[];
+
 class Section2 : public Section {
 private:
 	Room201 _room201;

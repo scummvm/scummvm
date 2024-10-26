@@ -28,10 +28,25 @@ namespace Rooms {
 
 const int16 S2_DIRS1[] = {240, -1};
 const char *S2_NAMES1[] = { "pesky walk pos3" };
-
 const int16 S2_DIRS2[] = {250, -1};
 const char *S2_NAMES2[] = { "shadow pesky walk pos3" };
 
+const int16 S2_MEI_NORMAL_DIRS[] = { 220, 221, 222, 223, 224, -1 };
+const char *S2_MEI_NORMAL_NAMES[] = {
+	"mei chen trek walk pos1",
+	"mei chen trek walk pos2",
+	"mei chen trek walk pos3",
+	"mei chen trek walk pos4",
+	"mei chen trek walk pos5"
+};
+const int16 S2_MEI_SHADOW_DIRS[] = { 230, 231, 232, 233, 234, -1 };
+const char *S2_MEI_SHADOW_NAMES[] = {
+	"mctsh1",
+	"mctsh2",
+	"mctsh3",
+	"mctsh4",
+	"mctsh5"
+};
 
 Section2::Section2() : Rooms::Section() {
 	add(201, &_room201);

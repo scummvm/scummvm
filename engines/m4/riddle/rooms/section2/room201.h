@@ -31,18 +31,26 @@ namespace Rooms {
 class Room201 : public Section2Room {
 private:
 	bool _flag1 = false;
+	bool _flag2 = false;
+	bool _flag3 = false;
 	int _val1 = 0;
 	int _val2 = 0;
-	int _val3 = 0;
+	const char *_itemDigi = nullptr;
+	const char *_itemDigi2 = nullptr;
+	const char *_itemDigi3 = nullptr;
+	const char *_itemDigi4 = nullptr;
+	const char *_itemDigi5 = nullptr;
 	int _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;
-	int _val7 = 0;
 	int _val8 = 0;
 	int _val9 = 0;
-	int _nod = -1;
-	int _guyWriting = -1;
-	int _guyParcel = -1;
+	int _conv1 = 0;
+	int _conv2 = 0;
+	int _nod = 0;
+	int _guyWriting = 0;
+	int _guyParcel = 0;
+	int _guyPassForm = 0;
 	int _series1 = -1;
 	int _series2 = -2;
 	int _series3 = -1;
@@ -51,13 +59,38 @@ private:
 	int _series6 = -2;
 	int _series7 = -1;
 	int _series8 = -1;
-	machine *_machine1 = nullptr;
-	machine *_machine2 = nullptr;
-	machine *_machine3 = nullptr;
-	machine *_machine4 = nullptr;
-	int _mei1 = -1;
-	int _mei2 = -1;
-	int _mei3 = -1;
+	machine *_mei0 = nullptr;
+	machine *_mei1 = nullptr;
+	machine *_mei2 = nullptr;
+	machine *_ripley = nullptr;
+	machine *_doc = nullptr;
+	machine *_shadow3 = nullptr;
+	machine *_agent = nullptr;
+	int _meiHandHip = -1;
+	int _meiTalker = -1;
+	int _meiWalk = -1;
+	int _ripHandChin = -1;
+	int _ripTalk = -1;
+	int _num1 = 0;
+	int _num2 = 0;
+	int _num3 = 0;
+	int _trigger1 = -1;
+	int _trigger2 = -1;
+	int _trigger3 = -1;
+	int _trigger4 = -1;
+	int _trigger5 = -1;
+	int _trigger6 = -1;
+	int _trigger7 = -1;
+	int _trigger8 = -1;
+	int _trigger9 = -1;
+	int _trigger10 = -1;
+	int _trigger11 = -1;
+	int _trigger12 = -1;
+	int _ctr1 = 0;
+
+	void setupMei();
+	void conv201a();
+	void animateRipley();
 
 public:
 	Room201() : Section2Room() {}
@@ -65,6 +98,7 @@ public:
 
 	void init() override;
 	void daemon() override;
+	void parser() override;
 };
 
 } // namespace Rooms

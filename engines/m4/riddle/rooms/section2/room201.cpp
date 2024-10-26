@@ -20,6 +20,7 @@
  */
 
 #include "m4/riddle/rooms/section2/room201.h"
+#include "m4/riddle/rooms/section2/section2.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
 
@@ -37,7 +38,7 @@ void Room201::init() {
 
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME)
 		_val1 = _val2 = 0;
-	_val3 = 0;
+	_itemDigi = 0;
 
 	digi_preload("950_s02");
 	_nod = series_load("HEAD NOD Y/N");
@@ -58,56 +59,806 @@ void Room201::init() {
 
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME)
 		_val4 = 0;
-	_val5 = 0;
+	_doc = nullptr;
 
 	kernel_timing_trigger(1, 507);
 	digi_play_loop("950_s02", 3, 50);
 
 	if (_flag1) {
-		_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, 0,
+		_mei1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, 0,
 			triggerMachineByHashCallback, "mc");
-		sendWSMessage(1, _machine1, _series4, 1, 1, -1, _series4, 1, 1, 0);
+		sendWSMessage(1, _mei1, _series4, 1, 1, -1, _series4, 1, 1, 0);
 
-		_machine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, 0,
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 512, 0,
 			triggerMachineByHashCallback, "rip");
-		sendWSMessage(1, _machine2, _series2, 1, 21, -1, _series2, 21, 21, 0);
+		sendWSMessage(1, _ripley, _series2, 1, 21, -1, _series2, 21, 21, 0);
 		kernel_timing_trigger(10, 100);
 
 	} else {
 		if (_val4 == 1)
-			_machine3 = series_place_sprite("201DOC", 0, 0, 0, 100, 0x410);
+			_doc = series_place_sprite("201DOC", 0, 0, 0, 100, 0x410);
 
 		if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
 			if (_G(flags)[V053] == 1) {
-				_mei1 = series_load("MEI TREK HAND ON HIP POS4");
-				_mei2 = series_load("MEI TREK TALKER POS4");
-				_mei3 = series_load("MEI CHEN TREK WALK POS4");
-				_machine4 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 200, 238, 73, 0x900, 0,
+				_meiHandHip = series_load("MEI TREK HAND ON HIP POS4");
+				_meiTalker = series_load("MEI TREK TALKER POS4");
+				_meiWalk = series_load("MEI CHEN TREK WALK POS4");
+				_mei2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 200, 238, 73, 0x900, 0,
 					triggerMachineByHashCallback, "MC");
-				sendWSMessage(1, _machine4, _mei1, 22, 22, 2000, _mei1, 22, 22, 0);
+				sendWSMessage(1, _mei2, _meiHandHip, 22, 22, 2000, _meiHandHip, 22, 22, 0);
 				_val5 = 2;
 				_val6 = 2;
-				_val7 = -1;
+				_trigger9 = -1;
 				_val8 = -1;
 				_val9 = -1;
 
 			} else {
 				hotspot_set_active("MEI CHEN", false);
 			}
-			return;
-		}
+		} else {
+			player_set_commands_allowed(false);
+			ws_demand_location(79, 257, 3);
 
-		player_set_commands_allowed(false);
-		ws_demand_location(79, 257, 3);
+			if (_G(flags)[V053] == 2 && _G(game).previous_room != KERNEL_RESTORING_GAME) {
+				++_G(flags)[V006];
 
-		if (_G(flags)[V053] == 2) {
-			// TODO
-		}
+				if (setItemsPlacedFlags()) {
+					_itemDigi = getItemsPlacedDigi();
+					++_val1;
+				}
+			}
+
+			if (_G(flags)[V053] > 0) {
+				hotspot_set_active("MEI CHEN", false);
+				ws_walk(356, 256, nullptr, 1000, 3);
+				_G(flags)[V068] = 1;
+
+				if (_G(flags)[V053] == 1)
+					_G(flags)[V364] = 1;
+
+			} else {
+				digi_preload("201R01");
+				digi_preload("201M03");
+				_G(flags)[V068] = 1;
+				_G(flags)[V053] = 1;
+				setupMei();
+				_G(flags)[V059] = 0;
+				sendWSMessage_10000(_mei0, 180, 257, 3, 180, 1);
+				kernel_timing_trigger(1, 8000);
+			}
+		}	
 	}
 }
 
 void Room201::daemon() {
-	// TODO
+	switch (_G(kernel).trigger) {
+	case 50:
+		player_set_commands_allowed(true);
+		break;
+
+	case 75:
+		ws_walk(237, 247, nullptr, 205, 10);
+		break;
+
+	case 100:
+		digi_play("201r30", 1, 255, 102);
+		break;
+
+	case 102:
+		sendWSMessage_10000(1, _mei1, _series4, 1, 6, -1, _series4, 3, 6, 1);
+		sendWSMessage_190000(_mei1, 11);
+		sendWSMessage_1a0000(_mei1, 11);
+		digi_play("201m09", 1, 255, 104);
+		break;
+
+	case 104:
+		sendWSMessage_10000(1, _mei1, _series4, 7, 18, -1, _series4, 18, 18, 1);
+		sendWSMessage_10000(1, _ripley, _series2, 21, 42, 105, _series2, 42, 42, 1);
+		digi_play("201r31", 1, 255, 110);
+		break;
+
+	case 105:
+		sendWSMessage_10000(1, _ripley, _series2, 43, 52, 106, _series2, 52, 52, 1);
+		digi_play("950_s35", 2);
+		break;
+
+	case 106:
+		sendWSMessage_10000(1, _ripley, _series2, 52, 21, 108, _series2, 21, 21, 1);
+		sendWSMessage_10000(1, _mei1, _series4, 18, 7, -1, _series4, 7, 7, 1);
+		break;
+
+	case 108:
+		sendWSMessage_10000(1, _ripley, _series2, 13, 13, -1, _series2, 13, 21, 1);
+		sendWSMessage_1a0000(_ripley, 11);
+		break;
+
+	case 110:
+		sendWSMessage_10000(1, _ripley, _series2, 21, 21, -1, _series2, 21, 21, 1);
+		sendWSMessage_10000(1, _mei1, _series4, 33, 61, -1, _series4, 61, 63, 1);
+		sendWSMessage_1a0000(_mei1, 11);
+		digi_play("201m06", 1, 255, 112);
+		break;
+
+	case 112:
+		sendWSMessage_10000(1, _mei1, _series4, 61, 61, -1, _series4, 61, 61, 1);
+		sendWSMessage_10000(1, _ripley, _series2, 13, 13, -1, _series2, 13, 21, 1);
+		digi_play("201r32", 1, 255, 116);
+		break;
+
+	case 116:
+		sendWSMessage_10000(1, _ripley, _series2, 21, 21, -1, _series2, 21, 21, 1);
+		sendWSMessage_10000(1, _mei1, _series4, 61, 61, -1, _series4, 61, 63, 1);
+		sendWSMessage_1a0000(_mei1, 11);
+		digi_play("201m07", 1, 255, 120);
+		break;
+
+	case 120:
+		sendWSMessage_10000(1, _mei1, _series4, 61, 61, -1, _series4, 61, 61, 1);
+		sendWSMessage_10000(1, _ripley, _series2, 53, 61, -1, _series2, 61, 63, 1);
+		sendWSMessage_1a0000(_ripley, 11);
+		digi_play("201r33", 1, 255, 123);
+		kernel_timing_trigger(150, 121);
+		break;
+
+	case 121:
+		sendWSMessage_10000(1, _ripley, _series2, 61, 53, -1, _series2, 13, 21, 1);
+		sendWSMessage_1a0000(_ripley, 11);
+		break;
+
+	case 123:
+		sendWSMessage_10000(1, _ripley, _series2, 13, 13, -1, _series2, 13, 13, 1);
+		sendWSMessage_10000(1, _mei1, _series4, 64, 78, -1, _series4, 78, 81, 1);
+		sendWSMessage_1a0000(_mei1, 11);
+		digi_play("201m08", 1, 255, 126);
+		break;
+
+	case 126:
+		sendWSMessage_10000(1, _mei1, _series4, 78, 64, -1, _series4, 64, 64, 1);
+		sendWSMessage_10000(1, _ripley, _series2, 73, 82, 127, _series2, 82, 82, 1);
+		digi_play("201r34", 1, 255, 129);
+		break;
+
+	case 127:
+		terminateMachineAndNull(_mei1);
+		sendWSMessage_10000(1, _ripley, _series3, 1, 8, -1, _series3, 8, 12, 1);
+		break;
+
+	case 129:
+		sendWSMessage_10000(1, _ripley, _series3, 12, 12, -1, _series3, 12, 12, 1);
+		kernel_timing_trigger(60, 130);
+		break;
+
+	case 130:
+		_conv1 = 0;
+		sendWSMessage_10000(1, _ripley, _series3, 13, 27, 162, _series3, 27, 27, 1);
+		break;
+
+	case 131:
+		sendWSMessage_10000(1, _ripley, _series3, 29, 42, 160, _series3, 42, 42, 1);
+		sendWSMessage_190000(_ripley, 30);
+		break;
+
+	case 132:
+		_conv1 = 0;
+		sendWSMessage_10000(1, _ripley, _series3, 51, 73, 161, _series3, 73, 73, 1);
+		digi_play("com119", 1, 190, -1);
+		break;
+
+	case 137:
+		_conv1 = 0;
+		sendWSMessage_10000(1, _ripley, _series3, 74, 93, 138, _series3, 93, 93, 1);
+		break;
+
+	case 138:
+		sendWSMessage_10000(1, _ripley, _series3, 94, 98, -1, _series3, 98, 102, 11);
+		digi_play("201r36", 1, 255, 140);
+		kernel_timing_trigger(160, 139);
+		break;
+
+	case 139:
+		sendWSMessage_10000(1, _ripley, _series3, 103, 113, -1, _series3, 113, 113, 1);
+		break;
+
+	case 140:
+		sendWSMessage_10000(1, _ripley, _series3, 114, 115, 144, _series3, 115, 115, 1);
+		break;
+
+	case 144:
+		kernel_timing_trigger(50, 145);
+		break;
+
+	case 145:
+		sendWSMessage_10000(1, _ripley, _series3, 116, 128, -1, _series3, 128, 128, 1);
+		digi_play("201r35", 1, 255, 146);
+		break;
+
+	case 146:
+		kernel_timing_trigger(100, 147);
+		break;
+
+	case 147:
+		interface_hide();
+		disable_player_commands_and_fade_init(150);
+		break;
+
+	case 150:
+		_G(game).setRoom(203);
+		break;
+
+	case 160:
+		sendWSMessage_10000(1, _ripley, _series3, 43, 50, 132, _series3, 50, 50, 1);
+		break;
+
+	case 161:
+		sendWSMessage_10000(1, _ripley, _series3, 73, 73, -1, _series3, 73, 73, 1);
+		_conv1 = 10;
+		digi_play("201x08", 1, 255, 137);
+		break;
+
+	case 162:
+		sendWSMessage_10000(1, _ripley, _series3, 28, 28, -1, _series3, 28, 28, 1);
+		kernel_timing_trigger(120, 131);
+		break;
+
+	case 180:
+		sendWSMessage_10000(_mei0, 200, 238, 4, -1, 1);
+		break;
+
+	case 205:
+		_ripTalk = series_load("RIP TREK TALK");
+		setGlobals1(_ripTalk, 1, 7, 1, 7, 1);
+		sendWSMessage_110000(9139);
+		digi_play("201r01", 1, 255, 210);
+		kernel_timing_trigger(1, 1999);
+		break;
+
+	case 217:
+		if (_ctr1 >= 1) {
+			_ctr1 = 0;
+			sendWSMessage_150000(220);
+		} else {
+			++_ctr1;
+		}
+		break;
+
+	case 230:
+		_val6 = 0;
+		kernel_timing_trigger(120, 235);
+		break;
+
+	case 235:
+		player_update_info();
+		ws_walk(_G(player_info).x, _G(player_info).y, nullptr, 240, 3);
+		break;
+
+	case 240:
+		setGlobals1(_series6, 1, 7, 7, 7);
+		sendWSMessage_110000(241);
+		break;
+
+	case 242:
+		sendWSMessage_140000(-1);
+		_conv1 = 0;
+		_trigger10 = kernel_trigger_create(244);
+		break;
+
+	case 245:
+		_conv1 = 3;
+		_trigger10 = kernel_trigger_create(260);
+		break;
+
+	case 270:
+		_val6 = 0;
+		_trigger9 = kernel_trigger_create(279);
+		break;
+
+	case 279:
+		_val6 = 2;
+		ws_walk(356, 256, nullptr, 280, 3);
+		break;
+
+	case 290:
+		if (_ctr1 >= 1) {
+			_ctr1 = 0;
+			sendWSMessage_140000(-1);
+			_conv1 = 0;
+			_trigger10 = kernel_trigger_create(300);
+
+		} else {
+			++_ctr1;
+		}
+		break;
+
+	case 310:
+		_ripHandChin = series_load("RIP TREK HAND CHIN POS3");
+		setGlobals1(_ripHandChin, 1, 14, 14, 14);
+		sendWSMessage_110000(320);
+		digi_play(_G(flags)[GLB_TEMP_2] == 1 ? "201r05" : "201r06", 1, 255, 320);
+		break;
+
+	case 320:
+		if (_ctr1 >= 1) {
+			_ctr1 = 0;
+			sendWSMessage_140000(325);
+			_conv1 = 8;
+		} else {
+			++_ctr1;
+		}
+		break;
+
+	case 325:
+		series_unload(_ripHandChin);
+		digi_unload("201R01");
+		digi_unload("201M03");
+		player_set_commands_allowed(true);
+		break;
+
+	case 507:
+		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			triggerMachineByHashCallback, "201 guy behind desk 1");
+		_num3 = 9;
+		_conv1 = 8;
+		_trigger10 = _trigger11 = _trigger12 = -1;
+		_flag3 = false;
+		break;
+
+	case 509:
+		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			triggerMachineByHashCallback, "201 guy behind desk 2");
+		sendWSMessage_10000(1, _agent, _nod, 1, 1, 510, _nod, 1, 1, 0);
+		_num3 = 0;
+		_conv1 = 0;
+		_trigger10 = _trigger11 = _trigger12 = -1;
+		_flag3 = false;
+		break;
+
+	case 510:
+		if (_num3 == 0 && _conv1 == 0 && _trigger10 != -1) {
+			kernel_trigger_dispatchx(_trigger10);
+			_trigger10 = -1;
+		}
+
+		if (_num3 == 9 && _conv1 == 8 && _trigger11 != -1) {
+			kernel_trigger_dispatchx(_trigger11);
+			_trigger11 = -1;
+		}
+
+		if (_num3 == 9 && _conv1 == 8 && _trigger11 != -1) {
+			kernel_trigger_dispatchx(_trigger11);
+			_trigger11 = -1;
+		}
+
+		if (_flag3) {
+			terminateMachineAndNull(_agent);
+		} else {
+			kernel_timing_trigger(1, 511);
+		}
+		break;
+
+	case 1000:
+		animateRipley();
+		kernel_timing_trigger(2, 1003);
+		break;
+
+	case 1003:
+		_conv2 = 6;
+		_trigger4 = kernel_trigger_create(1004);
+		break;
+
+	case 1004:
+		_conv2 = 7;
+		_trigger5 = kernel_trigger_create(1005);
+		break;
+
+	case 1010:
+		_conv2 = 7;
+		_conv1 = 0;
+		_trigger10 = kernel_trigger_create(1030);
+		break;
+
+	case 1035:
+		_conv1 = 3;
+		_trigger10 = kernel_trigger_create(1040);
+		break;
+
+	case 1065:
+		_trigger10 = kernel_trigger_create(1070);
+		break;
+
+	case 1070:
+		if (_G(flags)[V079] == 0 && _G(flags)[V053] == 1) {
+			kernel_timing_trigger(1, 9200);
+		} else {
+			kernel_timing_trigger(15, 1073);
+			_conv2 = 6;
+		}
+
+	case 1073:
+		_conv1 = 0;
+		_trigger10 = kernel_trigger_create(1075);
+		break;
+
+	case 1075:
+		_trigger4 = kernel_trigger_create(1080);
+		break;
+
+	case 2000:
+		if (_val5 == 0 && _val6 == 0 && _trigger9 != -1) {
+			kernel_trigger_dispatchx(_trigger9);
+			_trigger9 = -1;
+		}
+
+		if (_val5 == 2 && _val6 == 2 && _val8 != -1) {
+			kernel_trigger_dispatchx(_val8);
+			_val8 = -1;
+		}
+
+		if (_val5 == 5 && _val6 == 5 && _val9 != -1) {
+			kernel_trigger_dispatchx(_val9);
+			_val9 = -1;
+		}
+
+		kernel_timing_trigger(1, 2010);
+		break;
+
+	case 3000:
+		player_set_commands_allowed(false);
+		animateRipley();
+		_conv1 = 0;
+		kernel_timing_trigger(2, 3003);
+		break;
+
+	case 3003:
+		_conv2 = 7;
+		_trigger5 = kernel_trigger_create(3005);
+		break;
+
+	case 3005:
+		_trigger10 = kernel_trigger_create(3010);
+		break;
+
+	case 3010:
+		_conv2 = 8;
+		digi_play("201r27", 1, 255, 3020);
+		break;
+
+	case 3020:
+		_conv2 = 7;
+		_conv1 = 10;
+		digi_play("201x06", 1, 255, 3030);
+		break;
+
+	case 3030:
+		_conv2 = 8;
+		_conv1 = 0;
+		digi_play("201r28", 1, 255, 3040);
+		break;
+
+	case 3040:
+		_conv2 = 7;
+		_conv1 = 10;
+		digi_play("201x07", 1, 255, 3050);
+		break;
+
+	case 3050:
+		_conv2 = 8;
+		_conv1 = 0;
+		digi_play("201r29", 1, 255, 3060);
+		break;
+
+	case 3060:
+		_conv2 = 6;
+		_conv1 = 0;
+		_trigger10 = kernel_trigger_create(3070);
+		break;
+
+	case 3070:
+		_conv1 = 8;
+		_trigger4 = kernel_trigger_create(3080);
+		break;
+
+	case 3080:
+		_trigger11 = kernel_trigger_create(3090);
+		break;
+
+	case 3090:
+		_G(flags)[V066] = 1;
+		_num2 = 1;
+		player_set_commands_allowed(true);
+		break;
+
+	case 4000:
+		_num1 = 1;
+		_conv2 = 1;
+		_trigger1 = _trigger2 = _trigger3 = _trigger4 = -1;
+		_trigger5 = _trigger6 = _trigger7 = _trigger8 = -1;
+
+		player_update_info();
+		ws_hide_walker();
+
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale,
+			_G(player_info).depth, false, triggerMachineByHashCallback, "Rip Machine State");
+		sendWSMessage_10000(1, _ripley, _series6, 1, 1, 4010, _series6, 1, 1, 0);
+		_shadow3 = series_place_sprite("SAFARI SHADOW 3", 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
+		break;
+
+	case 4010:
+		if (_num1 == 1 && _conv2 == 1 && _trigger1 != -1) {
+			kernel_trigger_dispatchx(_trigger1);
+			_trigger1 = -1;
+		}
+
+		if (_num1 == 3 && _conv2 == 3 && _trigger2 != -1) {
+			kernel_trigger_dispatchx(_trigger2);
+			_trigger2 = -1;
+		}
+
+		if (_num1 == 4 && _conv2 == 4 && _trigger3 != -1) {
+			kernel_trigger_dispatchx(_trigger3);
+			_trigger3 = -1;
+		}
+
+		if (_num1 == 6 && _conv2 == 6 && _trigger4 != -1) {
+			kernel_trigger_dispatchx(_trigger4);
+			_trigger4 = -1;
+		}
+
+		if (_num1 == 7 && _conv2 == 7 && _trigger5 != -1) {
+			kernel_trigger_dispatchx(_trigger5);
+			_trigger5 = -1;
+		}
+
+		if (_num1 == 7 && _conv2 == 16 && _trigger6 != -1) {
+			kernel_trigger_dispatchx(_trigger6);
+			_trigger6 = -1;
+		}
+
+		if (_num1 == 2 && _conv2 == 22 && _trigger7 != -1) {
+			kernel_trigger_dispatchx(_trigger7);
+			_trigger7 = -1;
+		}
+
+		if (_num1 == 7 && _conv2 == 13 && _trigger8 != -1) {
+			kernel_trigger_dispatchx(_trigger8);
+			_trigger8 = -1;
+		}
+
+		if (_num2) {
+			terminateMachineAndNull(_ripley);
+			ws_unhide_walker();
+			terminateMachineAndNull(_shadow3);
+
+		} else {
+			kernel_timing_trigger(1, 4020);
+		}
+		break;
+
+	case 7010:
+		_conv2 = 17;
+		_trigger5 = kernel_trigger_create(7020);
+		break;
+
+	case 8000:
+		kernel_timing_trigger(120, 75);
+		break;
+
+	case 9010:
+		kernel_timing_trigger(1, 509);
+		kernel_timing_trigger(5, 9020);
+		break;
+
+	case 9050:
+		_itemDigi2 = _itemDigi3 = _itemDigi4 = _itemDigi5 = nullptr;
+		inv_give_to_player("MESSAGE LOG");
+
+		if (_val1 <= 0) {
+			kernel_timing_trigger(1, 1080);
+		} else {
+			if (_itemDigi) {
+				_itemDigi2 = _itemDigi;
+				_itemDigi = nullptr;
+			} else if (_G(flags)[V364] == 1) {
+				_itemDigi2 = "201R26";
+				_G(flags)[V364] = 0;
+			} else if (_G(flags)[V365] == 1) {
+				_itemDigi2 = "201R61";
+				_G(flags)[V365] = 0;
+			} else if (_G(flags)[V366] == 1) {
+				_itemDigi2 = "401R31";
+				_G(flags)[V366] = 0;
+			} else if (_G(flags)[V373] == 1) {
+				_itemDigi2 = "401R36";
+				_G(flags)[V373] = 0;
+			} else if (_G(flags)[V370] == 1) {
+				_itemDigi2 = "501R02B";
+				_itemDigi3 = _itemDigi4 = nullptr;
+				_G(flags)[V370] = 0;
+			} else if (_G(flags)[V371] == 1) {
+				_itemDigi2 = "501R03C";
+				_itemDigi3 = _itemDigi4 = _itemDigi5 = nullptr;
+				_G(flags)[V371] = 0;
+			} else if (_G(flags)[V372] == 1) {
+				_itemDigi2 = "701R39";
+				_itemDigi3 = "701R39A";
+				_G(flags)[V372] = 0;
+			} else if (_G(flags)[V367] == 1) {
+				_itemDigi2 = "401R37";
+				_G(flags)[V367] = 0;
+				_flag2 = true;
+			} else if (_G(flags)[V368] == 1) {
+				_itemDigi2 = "401R38";
+				_G(flags)[V368] = 0;
+				_flag2 = true;
+			} else if (_G(flags)[V369] == 1) {
+				_itemDigi2 = "401R39";
+				_G(flags)[V369] = 0;
+				_flag2 = true;
+			}
+
+			kernel_timing_trigger(1, 9060);
+		}
+		break;
+
+	case 9139:
+		sendWSMessage_150000(-1);
+		break;
+
+	case 9200:
+		_guyPassForm = series_load("GUY PASS FORM TO RIPLEY");
+		digi_preload("950_S34");
+		_conv2 = 8;
+		digi_play("201R60", 1, 255, 9210);
+		break;
+
+	case 9210:
+		_conv2 = 24;
+		_trigger5 = kernel_trigger_create(9215);
+		break;
+
+	case 9215:
+		series_unload(_guyPassForm);
+		digi_unload("950_S34");
+		kernel_timing_trigger(5, 1070);
+		break;
+
+	case 9220:
+		_conv2 = 7;
+		_trigger5 = kernel_trigger_create(1070);
+		break;
+
+	case 9230:
+		_conv2 = 7;
+		_trigger5 = kernel_trigger_create(9240);
+		break;
+
+	case 9240:
+		_conv2 = 28;
+		break;
+
+	case 9250:
+		_conv2 = 8;
+		digi_play("COM084", 1, 255, 9220, 997);
+
+		if (!inv_player_has("ROMANOV EMERALD"))
+			inv_give_to_player("ROMANOV EMERALD");
+		break;
+
+	case 9300:
+		series_unload(S2_MEI_NORMAL_DIRS[4]);
+		series_unload(S2_MEI_NORMAL_DIRS[2]);
+		series_unload(S2_MEI_NORMAL_DIRS[1]);
+		series_unload(S2_MEI_NORMAL_DIRS[0]);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room201::parser() {
+	bool lookFlag = player_said_any("look", "look at");
+	bool takeFlag = player_said("take");
+	bool talkFlag = player_said_any("talk", "talk to");
+	bool useFlag = player_said("gear");
+
+	if (player_said("conv201a")) {
+		conv201a();
+
+	} else if (lookFlag || takeFlag || talkFlag || useFlag) {
+		// TODO
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
+}
+
+void Room201::setupMei() {
+	_meiTalker = series_load("MEI TREK TALKER POS4");
+	_meiWalk = series_load("MEI CHEN TREK WALK POS4");
+	ws_walk_load_walker_series(S2_MEI_NORMAL_DIRS, S2_MEI_NORMAL_NAMES);
+	ws_walk_load_shadow_series(S2_MEI_SHADOW_DIRS, S2_MEI_SHADOW_NAMES);
+	_mei0 = triggerMachineByHash_3000(8, 4, *S2_MEI_NORMAL_DIRS,
+		*S2_MEI_SHADOW_DIRS, 79, 257, 3, triggerMachineByHashCallback3000, "mc");
+}
+
+void Room201::conv201a() {
+	const char *sound = conv_sound_to_play();
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+
+	player_set_commands_allowed(false);
+
+	if (_G(kernel).trigger == 1) {
+		if (who <= 0) {
+			_conv1 = 0;
+
+		} else if (who == 1) {
+			_conv2 = 7;
+
+			if (node == 1 && entry == 1) {
+				int32 x1, y1, x2, y2;
+				conv_set_box_xy(490, -4);
+				conv_get_dlg_coords(&x1, &y1, &x2, &y2);
+				conv_set_dlg_coords(x1, y1 - 10, x2, y2 - 10);
+			} else {
+				conv_set_box_xy(10, 10);
+			}
+
+			if (node == 1 && entry == 3) {
+				player_set_commands_allowed(false);
+				kernel_timing_trigger(1, 7000, KT_DAEMON, KT_PARSE);
+				return;
+			}
+
+			if (node == 14 && entry != 12) {
+				player_set_commands_allowed(false);
+				kernel_timing_trigger(1, 9000, KT_DAEMON, KT_PARSE);
+				return;
+			}
+		}
+
+		player_set_commands_allowed(true);
+		conv_resume();
+
+	} else {
+		if (who <= 0) {
+			if (node == 3 && entry == 0) {
+				player_set_commands_allowed(false);
+				_conv2 = 18;
+				_guyPassForm = series_load("GUY PASS FORM TO RIPLEY");
+				return;
+			} else {
+				_conv1 = 10;
+			}
+		} else if (who == 1) {
+			if (node != 14)
+				_conv2 = 8;
+		}
+
+		if (sound)
+			digi_play(sound, 1, 255, 1);
+	}
+}
+
+void Room201::animateRipley() {
+	_trigger1 = _trigger2 = _trigger3 = _trigger4 = -1;
+	_trigger5 = _trigger6 = _trigger7 = _trigger8 = -1;
+	_num1 = 6;
+	_conv2 = 6;
+	_num2 = 0;
+
+	player_update_info();
+	ws_hide_walker();
+	_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100,
+		_G(player_info).depth, 0, triggerMachineByHashCallback,
+		"Rip Delta Machine State");
+	sendWSMessage_10000(1, _ripley, _series7, 1, 1, 4010, _series7, 1, 1, 0);
+	_shadow3 = series_place_sprite("SAFARI SHADOW 3", 0,
+		_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
 }
 
 } // namespace Rooms
