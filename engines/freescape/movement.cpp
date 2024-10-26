@@ -267,7 +267,8 @@ void FreescapeEngine::decreaseStepSize() {
 	_playerStepIndex--;
 }
 
-void FreescapeEngine::rise() {
+bool FreescapeEngine::rise() {
+	bool result = false;
 	debugC(1, kFreescapeDebugMove, "playerHeightNumber: %d", _playerHeightNumber);
 	int previousAreaID = _currentArea->getAreaID();
 	if (_flyMode) {
@@ -276,7 +277,7 @@ void FreescapeEngine::rise() {
 		resolveCollisions(destination);
 	} else {
 		if (_playerHeightNumber >= _playerHeightMaxNumber)
-			return;
+			return result;
 
 		_playerHeightNumber++;
 		changePlayerHeight(_playerHeightNumber);
@@ -288,13 +289,16 @@ void FreescapeEngine::rise() {
 			if (_currentArea->getAreaID() == previousAreaID) {
 				_playerHeightNumber--;
 				changePlayerHeight(_playerHeightNumber);
+
 			}
-		}
+		} else
+			result = true;
 	}
 	checkIfStillInArea();
 	_lastPosition = _position;
 	debugC(1, kFreescapeDebugMove, "new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	executeMovementConditions();
+	return result;
 }
 
 void FreescapeEngine::lower() {

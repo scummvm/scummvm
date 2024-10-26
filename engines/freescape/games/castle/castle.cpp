@@ -267,13 +267,13 @@ void CastleEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *inf
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("WALK", _("Walk"));
-	act->setCustomEngineActionEvent(kActionRiseOrFlyUp);
+	act->setCustomEngineActionEvent(kActionWalkMode);
 	act->addDefaultInputMapping("JOY_B");
 	act->addDefaultInputMapping("w");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("CRAWL", _("Crawl"));
-	act->setCustomEngineActionEvent(kActionLowerOrFlyDown);
+	act->setCustomEngineActionEvent(kActionCrawlMode);
 	act->addDefaultInputMapping("JOY_Y");
 	act->addDefaultInputMapping("c");
 	engineKeyMap->addAction(act);
@@ -400,18 +400,39 @@ void CastleEngine::pressedKey(const int keycode) {
 	} else if (keycode == Common::KEYCODE_s) {
 		// TODO: show score
 	} else if (keycode == kActionRunMode) {
-		if (_playerHeightNumber == 0)
-			rise();
+		if (_playerHeightNumber == 0) {
+			if (_gameStateVars[k8bitVariableShield] <= 3) {
+				insertTemporaryMessage(_messagesList[12], _countdown - 2);
+				return;
+			}
+
+			if (!rise()) {
+				_playerStepIndex = 0;
+				insertTemporaryMessage(_messagesList[11], _countdown - 2);
+				return;
+			}
+		}
 		// TODO: raising can fail if there is no room, so the action should fail
 		_playerStepIndex = 2;
 		insertTemporaryMessage(_messagesList[15], _countdown - 2);
-	} else if (keycode == kActionRiseOrFlyUp) {
-		if (_playerHeightNumber == 0)
-			rise();
+	} else if (keycode == kActionWalkMode) {
+		if (_playerHeightNumber == 0) {
+			if (_gameStateVars[k8bitVariableShield] <= 3) {
+				insertTemporaryMessage(_messagesList[12], _countdown - 2);
+				return;
+			}
+
+			if (!rise()) {
+				_playerStepIndex = 0;
+				insertTemporaryMessage(_messagesList[11], _countdown - 2);
+				return;
+			}
+		}
+
 		// TODO: raising can fail if there is no room, so the action should fail
 		_playerStepIndex = 1;
 		insertTemporaryMessage(_messagesList[14], _countdown - 2);
-	} else if (keycode == kActionLowerOrFlyDown) {
+	} else if (keycode == kActionCrawlMode) {
 		if (_playerHeightNumber == 1)
 			lower();
 		_playerStepIndex = 0;

@@ -58,7 +58,7 @@ enum CameraMovement {
 	kRightMovement
 };
 
-enum FREESCAPEAction {
+enum FreescapeAction {
 	kActionNone,
 	kActionEscape,
 	kActionSave,
@@ -69,7 +69,6 @@ enum FREESCAPEAction {
 	kActionMoveLeft,
 	kActionMoveRight,
 	kActionShoot,
-	kActionRunMode,
 	kActionChangeAngle,
 	kActionChangeStepSize,
 	kActionToggleRiseLower,
@@ -94,6 +93,9 @@ enum FREESCAPEAction {
 	// Total Eclipse
 	kActionRest,
 	// Castle
+	kActionRunMode,
+	kActionWalkMode,
+	kActionCrawlMode,
 	kActionSelectPrince,
 	kActionSelectPrincess,
 };
@@ -332,7 +334,7 @@ public:
 	void changeStepSize();
 
 	void changeAngle();
-	void rise();
+	bool rise();
 	void lower();
 	bool checkFloor(Math::Vector3d currentPosition);
 	bool tryStepUp(Math::Vector3d currentPosition);
