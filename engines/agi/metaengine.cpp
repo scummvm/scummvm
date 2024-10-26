@@ -130,7 +130,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	},
 
 	{
-		GAMEOPTION_DISABLE_MOUSE,
+		GAMEOPTION_ENABLE_MOUSE,
 		{
 			_s("Mouse support"),
 			_s("Enables mouse support. Allows to use mouse for movement and in game menus."),
@@ -144,8 +144,8 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_ENABLE_PREDICTIVE_FOR_MOUSE,
 		{
-			_s("Predictive Input Dialogue on mouse click"),
-			_s("Enables the assistive Predictive Input Dialogue specifically for when clicking the left mouse button within text input fields.\nThe Predictive Input Dialogue can still be activated on demand if there's a specified key mapping for it"),
+			_s("Predictive Input Dialog on mouse click"),
+			_s("Enables the assistive Predictive Input Dialog specifically for when clicking the left mouse button within text input fields.\nThe Predictive Input Dialog can still be activated on demand if there's a specified key mapping for it"),
 			"predictivedlgonmouseclick",
 			false,
 			0,
