@@ -29,7 +29,7 @@
 
 namespace Wintermute {
 
-Mesh3DSOpenGLShader::Mesh3DSOpenGLShader(OpenGL::Shader *shader) : _shader(shader) {
+Mesh3DSOpenGLShader::Mesh3DSOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader) : Mesh3DS(inGame), _shader(shader) {
 	glGenBuffers(1, &_vertexBuffer);
 	glGenBuffers(1, &_indexBuffer);
 }
@@ -39,34 +39,25 @@ Mesh3DSOpenGLShader::~Mesh3DSOpenGLShader() {
 	glDeleteBuffers(1, &_indexBuffer);
 }
 
-void Mesh3DSOpenGLShader::fillVertexBuffer(uint32 color) {
-	_color._x = RGBCOLGetR(color) / 255.0f;
-	_color._y = RGBCOLGetG(color) / 255.0f;
-	_color._z = RGBCOLGetB(color) / 255.0f;
-	_color._w = RGBCOLGetA(color) / 255.0f;
+void Mesh3DSOpenGLShader::fillVertexBuffer() {
+	_vertexCount = _numFaces * 3;
+	_vertexData = (Mesh3DSVertex *)_vb.ptr();
 
 	glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GeometryVertex) * _vertexCount, _vertexData, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Mesh3DSVertex) * _vertexCount, _vertexData, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * _indexCount, _indexData, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void Mesh3DSOpenGLShader::render() {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
+	if (_vertexCount == 0)
+		return;
 
-	_shader->enableVertexAttribute("position", _vertexBuffer, 3, GL_FLOAT, false, sizeof(GeometryVertex), 0);
+	_shader->enableVertexAttribute("position", _vertexBuffer, 3, GL_FLOAT, false, sizeof(Mesh3DSVertex), 0);
+	_shader->enableVertexAttribute("color", _vertexBuffer, 4, GL_FLOAT, false, sizeof(Mesh3DSVertex), 24);
 
 	_shader->use(true);
-	Math::Vector4d color = Math::Vector4d(_color._x, _color._y, _color._z, 1.0f);
-	_shader->setUniform("color", color);
 
-	glDrawElements(GL_TRIANGLES, _indexCount, GL_UNSIGNED_SHORT, 0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glDrawArrays(GL_TRIANGLES, 0, _vertexCount);
 }
 
 } // namespace Wintermute

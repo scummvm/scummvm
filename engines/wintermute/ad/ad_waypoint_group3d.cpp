@@ -50,18 +50,18 @@ bool AdWaypointGroup3D::addFromMesh(Mesh3DS *mesh) {
 	DXVector3 min = DXVector3(0, 0, 0);
 	DXVector3 max = DXVector3(0, 0, 0);
 
-	if (mesh->vertexCount() > 0) {
-		min = max = mesh->getVertexPosition(0);
+	if (mesh->_numVertices > 0) {
+		min = max = mesh->_vertices[0]._pos;
 	}
 
-	for (int i = 0; i < mesh->vertexCount(); i++) {
-		min._x = MIN(min._x, mesh->getVertexPosition(i)[0]);
-		min._y = MIN(min._y, mesh->getVertexPosition(i)[1]);
-		min._z = MIN(min._z, mesh->getVertexPosition(i)[2]);
+	for (int i = 0; i < mesh->_numVertices; i++) {
+		min._x = MIN(min._x, mesh->_vertices[i]._pos._x);
+		min._y = MIN(min._y, mesh->_vertices[i]._pos._y);
+		min._z = MIN(min._z, mesh->_vertices[i]._pos._z);
 
-		max._x = MAX(max._x, mesh->getVertexPosition(i)[0]);
-		max._y = MAX(max._y, mesh->getVertexPosition(i)[1]);
-		max._z = MAX(max._z, mesh->getVertexPosition(i)[2]);
+		max._x = MAX(max._x, mesh->_vertices[i]._pos._x);
+		max._y = MAX(max._y, mesh->_vertices[i]._pos._y);
+		max._z = MAX(max._z, mesh->_vertices[i]._pos._z);
 	}
 
 	DXVector3 *vect = new DXVector3;

@@ -45,7 +45,7 @@ public:
 	Light3D(BaseGame *inGame);
 	virtual ~Light3D();
 	uint32 _diffuseColor;
-	DXVector3 _position;
+	DXVector3 _pos;
 	DXVector3 _target;
 	bool _isSpotlight;
 	bool _active;
@@ -55,7 +55,6 @@ public:
 	bool _isAvailable;
 
 	bool setLight(int index = 0);
-	bool loadFrom3DS(Common::MemoryReadStream &fileStream);
 };
 
 } // namespace Wintermute

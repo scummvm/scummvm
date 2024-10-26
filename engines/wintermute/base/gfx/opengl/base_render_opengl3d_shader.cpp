@@ -564,7 +564,7 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	_spriteShader->enableVertexAttribute("texcoord", _spriteVBO, 2, GL_FLOAT, false, sizeof(SpriteVertexShader), 8);
 	_spriteShader->enableVertexAttribute("color", _spriteVBO, 4, GL_FLOAT, false, sizeof(SpriteVertexShader), 16);
 
-	static const char *geometryAttributes[] = { "position", nullptr };
+	static const char *geometryAttributes[] = { "position", "color", nullptr };
 	_geometryShader = OpenGL::Shader::fromFiles("wme_geometry", geometryAttributes);
 
 	static const char *shadowVolumeAttributes[] = { "position", nullptr };
@@ -917,7 +917,7 @@ void BaseRenderOpenGL3DShader::renderShadowGeometry(const BaseArray<AdWalkplane 
 }
 
 Mesh3DS *BaseRenderOpenGL3DShader::createMesh3DS() {
-	return new Mesh3DSOpenGLShader(_geometryShader);
+	return new Mesh3DSOpenGLShader(_gameRef, _geometryShader);
 }
 
 XMesh *BaseRenderOpenGL3DShader::createXMesh() {

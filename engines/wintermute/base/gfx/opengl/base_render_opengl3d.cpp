@@ -770,24 +770,24 @@ void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &pla
 		if (lights[i]->_active) {
 			glBegin(GL_LINES);
 			glColor3f(1.0f, 1.0f, 0.0f);
-			DXVector3 right = lights[i]->_position + DXVector3(1000.0f, 0.0f, 0.0f);
-			DXVector3 up = lights[i]->_position + DXVector3(0.0f, 1000.0f, 0.0f);
-			DXVector3 backward = lights[i]->_position + DXVector3(0.0f, 0.0f, 1000.0f);
-			DXVector3 left = lights[i]->_position + DXVector3(-1000.0f, 0.0f, 0.0f);
-			DXVector3 down = lights[i]->_position + DXVector3(0.0f, -1000.0f, 0.0f);
-			DXVector3 forward = lights[i]->_position + DXVector3(0.0f, 0.0f, -1000.0f);
+			DXVector3 right = lights[i]->_pos + DXVector3(1000.0f, 0.0f, 0.0f);
+			DXVector3 up = lights[i]->_pos + DXVector3(0.0f, 1000.0f, 0.0f);
+			DXVector3 backward = lights[i]->_pos + DXVector3(0.0f, 0.0f, 1000.0f);
+			DXVector3 left = lights[i]->_pos + DXVector3(-1000.0f, 0.0f, 0.0f);
+			DXVector3 down = lights[i]->_pos + DXVector3(0.0f, -1000.0f, 0.0f);
+			DXVector3 forward = lights[i]->_pos + DXVector3(0.0f, 0.0f, -1000.0f);
 
-			glVertex3fv(lights[i]->_position);
+			glVertex3fv(lights[i]->_pos);
 			glVertex3fv(right);
-			glVertex3fv(lights[i]->_position);
+			glVertex3fv(lights[i]->_pos);
 			glVertex3fv(up);
-			glVertex3fv(lights[i]->_position);
+			glVertex3fv(lights[i]->_pos);
 			glVertex3fv(backward);
-			glVertex3fv(lights[i]->_position);
+			glVertex3fv(lights[i]->_pos);
 			glVertex3fv(left);
-			glVertex3fv(lights[i]->_position);
+			glVertex3fv(lights[i]->_pos);
 			glVertex3fv(down);
-			glVertex3fv(lights[i]->_position);
+			glVertex3fv(lights[i]->_pos);
 			glVertex3fv(forward);
 			glEnd();
 		}
@@ -840,7 +840,7 @@ void BaseRenderOpenGL3D::renderShadowGeometry(const BaseArray<AdWalkplane *> &pl
 }
 
 Mesh3DS *BaseRenderOpenGL3D::createMesh3DS() {
-	return new Mesh3DSOpenGL();
+	return new Mesh3DSOpenGL(_gameRef);
 }
 
 XMesh *BaseRenderOpenGL3D::createXMesh() {

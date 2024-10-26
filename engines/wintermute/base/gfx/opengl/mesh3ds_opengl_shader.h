@@ -32,12 +32,14 @@ namespace Wintermute {
 
 class Mesh3DSOpenGLShader : public Mesh3DS {
 public:
-	Mesh3DSOpenGLShader(OpenGL::Shader *shader);
+	Mesh3DSOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader);
 	~Mesh3DSOpenGLShader();
-	void fillVertexBuffer(uint32 color) override;
+	void fillVertexBuffer() override;
 	void render() override;
 
 private:
+	Mesh3DSVertex *_vertexData;
+	uint16 _vertexCount;
 	GLuint _vertexBuffer;
 	GLuint _indexBuffer;
 	OpenGL::Shader *_shader;

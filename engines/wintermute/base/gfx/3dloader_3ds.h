@@ -23,51 +23,70 @@
 #define WINTERMUTE_3D_LOADER_3DS_H
 
 #include "engines/wintermute/coll_templ.h"
+#include "engines/wintermute/base/base_named_object.h"
+#include "engines/wintermute/base/gfx/3dcamera.h"
+#include "engines/wintermute/base/gfx/3dlight.h"
+#include "engines/wintermute/base/gfx/3dmesh.h"
+
+#include "common/str.h"
 
 namespace Wintermute {
 
-class BaseGame;
-class Light3D;
-class Camera3D;
-class Mesh3DS;
+class Loader3DS : public BaseNamedObject {
+public:
+	enum E3DSFileObjectType{
+		OBJ_3DS_NONE, OBJ_3DS_MESH, OBJ_3DS_CAMERA, OBJ_3DS_LIGHT
+	};
 
-bool load3DSFile(const char *filename, BaseArray<Mesh3DS *> &meshes, BaseArray<Common::String> &meshNames,
-                 BaseArray<Light3D *> &lights, BaseArray<Camera3D *> &cameras, BaseGame *gameRef);
+	struct SFace{
+		uint16 _a;
+		uint16 _b;
+		uint16 _c;
+	};
 
-enum Chunks3DS {
-	RGB_FLOAT = 0x0010,
-	RGB_BYTE = 0x0011,
-	EDITOR = 0x3D3D,
-	OBJECT = 0x4000,
-	MESH = 0x4100,
-	VERTICES = 0x4110,
-	FACES = 0x4120,
-	FACES_MATERIAL = 0x4130,
-	MAPPING_COORDS = 0x4140,
-	SMOOTHING_GROUPS = 0x4150,
-	LOCAL_COORDS = 0x4160,
-	LIGHT = 0x4600,
-	SPOTLIGHT = 0x4610,
-	LIGHT_IS_OFF = 0x4620,
-	SPOT_RAY_TRACE = 0x4627,
-	SPOT_SHADOW_MAP = 0x4641,
-	ROLL = 0x4656,
-	SPOT_RAY_TRACE_BIAS = 0x4658,
-	RANGE_END = 0x465A,
-	MULTIPLIER = 0x465B,
-	CAMERA = 0x4700,
-	MAIN = 0x4D4D,
-	KEYFRAMER = 0xB000,
-	AMBIENT_INFO = 0xB001,
-	MESH_INFO = 0xB002,
-	CAMERA_INFO = 0xB003,
-	CAMERA_TARGET_INFO = 0xB004,
-	OMNI_LIGHT_INFO = 0xB005,
-	SPOTLIGHT_TARGET_INFO = 0xB006,
-	SPOTLIGHT_INFO = 0xB007,
-	NODE_HEADER = 0xB010,
-	ROLL_TRACK = 0xB024
+	class FileObject3DS {
+	public:
+		DXVector3 _cameraTarget;
+		float _cameraBank;
+		float _cameraLens;
+		float _cameraFOV;
+		DXVector3 _cameraPos;
+		DXVector3 _lightTarget;
+		DXVector3 _lightPos;
+		uint32 _lightColor;
+		float _lightHotspot;
+		float _lightFalloff;
+		bool _lightOff;
+		bool _lightSpotlight;
+		bool _hidden;
+		uint16 _numCoordinates;
+		uint16 _numFaces;
+		SFace *_faces;
+		DXVector3 *_vertices;
+		uint16 _numVertices;
+		Common::String _name;
+		E3DSFileObjectType _type;
+		virtual ~FileObject3DS();
+		FileObject3DS();
+	};
+
+public:
+	Common::String getCameraName(int index);
+	Common::String getLightName(int index);
+	Common::String getMeshName(int index);
+	bool loadCamera(int index, Camera3D *camera);
+	uint getNumCameras();
+	bool loadLight(int index, Light3D *light);
+	uint getNumLights();
+	bool loadMesh(int index, Mesh3DS *mesh);
+	uint getNumMeshes();
+	bool parseFile(const Common::String &filename);
+	Common::String _filename;
+	Loader3DS(BaseGame *inGame);
+	virtual ~Loader3DS();
+	BaseArray<FileObject3DS *> _objects;
 };
 
 } // namespace Wintermute
+
 #endif

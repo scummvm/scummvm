@@ -19,40 +19,31 @@
  *
  */
 
-#include "engines/wintermute/wintypes.h"
+/*
+ * This file is based on WME.
+ * http://dead-code.org/redir.php?target=wme
+ * Copyright (c) 2003-2013 Jan Nedoma and contributors
+ */
 
-#include "graphics/opengl/system_headers.h"
-
-#if defined(USE_OPENGL_GAME)
-
-#include "engines/wintermute/base/gfx/opengl/mesh3ds_opengl.h"
+#include "engines/wintermute/base/gfx/3dface.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
-Mesh3DSOpenGL::Mesh3DSOpenGL(BaseGame *inGame) : Mesh3DS(inGame) {
+//////////////////////////////////////////////////////////////////////
+// Construction/Destruction
+//////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////
+Face3D::Face3D() {
+	for (int i = 0; i < 3; i++) {
+		_normals[i] = DXVector3(0, 0, 0);
+		_vertices[i] = 0;
+	}
 }
 
-Mesh3DSOpenGL::~Mesh3DSOpenGL() {
-}
-
-void Mesh3DSOpenGL::fillVertexBuffer() {
-	_vertexCount = _numFaces * 3;
-	_vertexData = (Mesh3DSVertex *)_vb.ptr();
-}
-
-void Mesh3DSOpenGL::render() {
-	if (_vertexCount == 0)
-		return;
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_COLOR_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(Mesh3DSVertex), &_vertexData[0]._x);
-	glColorPointer(4, GL_FLOAT, sizeof(Mesh3DSVertex), &_vertexData[0]._r);
-	glDrawArrays(GL_TRIANGLES, 0, _vertexCount);
-	glDisableClientState(GL_COLOR_ARRAY);
-	glDisableClientState(GL_VERTEX_ARRAY);
+//////////////////////////////////////////////////////////////////////////
+Face3D::~Face3D() {
 }
 
 } // namespace Wintermute
-
-#endif // defined(USE_OPENGL_GAME)

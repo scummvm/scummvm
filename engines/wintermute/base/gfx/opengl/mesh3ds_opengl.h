@@ -30,10 +30,14 @@ namespace Wintermute {
 
 class Mesh3DSOpenGL : public Mesh3DS {
 public:
-	Mesh3DSOpenGL();
+	Mesh3DSOpenGL(BaseGame *inGame);
 	~Mesh3DSOpenGL();
-	void fillVertexBuffer(uint32 color) override;
+	void fillVertexBuffer() override;
 	void render() override;
+
+private:
+	Mesh3DSVertex *_vertexData;
+	uint16 _vertexCount;
 };
 
 } // namespace Wintermute
