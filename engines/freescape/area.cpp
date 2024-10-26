@@ -556,7 +556,8 @@ void Area::addGroupFromArea(int16 id, Area *global) {
 		if (!global->objectWithID(it))
 			continue;
 
-		addObjectFromArea(it, global);
+		if (!objectWithID(it))
+			addObjectFromArea(it, global);
 		group->linkObject(objectWithID(it));
 	}
 }
