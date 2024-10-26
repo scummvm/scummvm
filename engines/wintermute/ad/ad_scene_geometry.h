@@ -67,7 +67,7 @@ public:
 	DXMatrix _lastProjMat;
 	int _lastOffsetX;
 	int _lastOffsetY;
-	Rect32 _drawingViewport;
+	DXViewport _drawingViewport;
 	int _lastScrollX;
 	int _lastScrollY;
 

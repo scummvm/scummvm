@@ -98,6 +98,7 @@ public:
 	// NOT declared in sub class: virtual HRESULT Setup3DCustom(D3DXMATRIX* ViewMat, D3DXMATRIX* ProjMat);
 	// declared in sub class: virtual HRESULT Setup2D(bool Force=false);
 	// declared in sub class: virtual HRESULT SetupLines();
+	Camera3D *_camera;
 	// declared in sub class: HRESULT ResetDevice();
 	void initLoop() override;
 	// declared in sub class: virtual HRESULT Fill(BYTE r, BYTE g, BYTE b, RECT* rect=NULL);
@@ -124,7 +125,7 @@ public:
 	virtual void enableCulling() = 0;
 	virtual void disableCulling() = 0;
 
-	Rect32 getViewPort() override;
+	DXViewport getViewPort();
 
 	Graphics::PixelFormat getPixelFormat() const override;
 
@@ -146,8 +147,6 @@ public:
 		*transform = _projectionMatrix;
 	}
 
-	Camera3D *_camera;
-
 	virtual Mesh3DS *createMesh3DS() = 0;
 	virtual XMesh *createXMesh() = 0;
 	virtual ShadowVolume *createShadowVolume() = 0;
@@ -159,13 +158,15 @@ public:
 
 	Math::Matrix3 build2dTransformation(const Vector2 &center, float angle);
 
+	virtual bool setViewport3D(DXViewport *viewport) = 0;
+
 	// ScummVM specific methods <--
 
 protected:
 	DXMatrix _worldMatrix;
 	DXMatrix _viewMatrix;
 	DXMatrix _projectionMatrix;
-	Rect32 _viewport;
+	DXViewport _viewport;
 	float _fov;
 	float _nearClipPlane;
 	float _farClipPlane;

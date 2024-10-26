@@ -133,7 +133,7 @@ bool AdObject3D::convert3DTo2D(DXMatrix *worldMat, int32 *posX, int32 *posY) {
 	_gameRef->_renderer3D->getViewTransform(&viewMat);
 	_gameRef->_renderer3D->getProjectionTransform(&projMat);
 
-	Rect32 viewport = _gameRef->_renderer3D->getViewPort();
+	DXViewport viewport = _gameRef->_renderer3D->getViewPort();
 
 	DXVec3Project(&vec2d, &origin, &viewport, &projMat, &viewMat, worldMat);
 

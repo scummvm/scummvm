@@ -178,7 +178,7 @@ private:
 
 	void updateBoundingRect();
 	void static inline updateRect(Rect32 *rc, DXVector3 *vec);
-	Rect32 _drawingViewport;
+	DXViewport _drawingViewport;
 	DXMatrix _lastWorldMat;
 	DXMatrix _lastViewMat;
 	DXMatrix _lastProjMat;

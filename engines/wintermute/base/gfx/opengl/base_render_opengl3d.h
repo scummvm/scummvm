@@ -136,6 +136,8 @@ public:
 	XMesh *createXMesh() override;
 	ShadowVolume *createShadowVolume() override;
 
+	bool setViewport3D(DXViewport *viewport) override;
+
 private:
 	SimpleShadowVertex _simpleShadow[4];
 	Common::Array<DXVector4> _lightPositions;

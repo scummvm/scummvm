@@ -73,7 +73,7 @@ AdSceneGeometry::AdSceneGeometry(BaseGame *gameRef) : BaseObject(gameRef) {
 	_PFSource = _PFTarget = _PFAlternateTarget = DXVector3(0, 0, 0);
 	_PFAlternateDist = FLT_MAX;
 
-	_drawingViewport.setRect(0, 0, 0, 0);
+	memset(&_drawingViewport, 0, sizeof(DXViewport));
 
 	DXMatrixIdentity(&_lastWorldMat);
 	DXMatrixIdentity(&_lastViewMat);
@@ -685,10 +685,10 @@ bool AdSceneGeometry::convert2Dto3D(int x, int y, DXVector3 *pos) {
 	_gameRef->_renderer3D->getProjectionParams(&resWidth, &resHeight, &layerWidth, &layerHeight, &modWidth, &modHeight, &customViewport);
 
 	// modify coordinates according to viewport settings
-	int mleft = _drawingViewport.left;
-	int mright = resWidth - _drawingViewport.width() - _drawingViewport.left;
-	int mtop = _drawingViewport.top;
-	int mbottom = resHeight - _drawingViewport.height() - _drawingViewport.top;
+	int mleft = _drawingViewport._x;
+	int mright = resWidth - _drawingViewport._width - _drawingViewport._x;
+	int mtop = _drawingViewport._y;
+	int mbottom = resHeight - _drawingViewport._height - _drawingViewport._y;
 
 	x -= (mleft + mright) / 2 + modWidth;
 	y -= (mtop + mbottom) / 2 + modHeight;
@@ -699,8 +699,8 @@ bool AdSceneGeometry::convert2Dto3D(int x, int y, DXVector3 *pos) {
 
 	// Compute the vector of the pick ray in screen space
 	DXVector3 vec;
-	vec._x =  (((2.0f * x) / _drawingViewport.width()) - 1) / _lastProjMat.matrix._11;
-	vec._y = -(((2.0f * y) / _drawingViewport.height()) - 1) / _lastProjMat.matrix._22;
+	vec._x =  (((2.0f * x) / _drawingViewport._width) - 1) / _lastProjMat.matrix._11;
+	vec._y = -(((2.0f * y) / _drawingViewport._height) - 1) / _lastProjMat.matrix._22;
 	vec._z =  1.0f;
 
 	// Get the inverse view matrix

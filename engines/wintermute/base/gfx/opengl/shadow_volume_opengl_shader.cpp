@@ -46,19 +46,19 @@ struct ShadowVertexShader {
 ShadowVolumeOpenGLShader::ShadowVolumeOpenGLShader(BaseGame *inGame, OpenGL::Shader *volumeShader, OpenGL::Shader *maskShader)
 	: ShadowVolume(inGame), _color(0x7f000000), _volumeShader(volumeShader), _maskShader(maskShader) {
 	ShadowVertexShader shadowMask[4];
-	Rect32 viewport = _gameRef->_renderer->getViewPort();
+	DXViewport viewport = _gameRef->_renderer3D->getViewPort();
 
-	shadowMask[0].x = viewport.left;
-	shadowMask[0].y = viewport.bottom;
+	shadowMask[0].x = viewport._x;
+	shadowMask[0].y = viewport._height;
 
-	shadowMask[1].x = viewport.left;
-	shadowMask[1].y = viewport.top;
+	shadowMask[1].x = viewport._x;
+	shadowMask[1].y = viewport._y;
 
-	shadowMask[2].x = viewport.right;
-	shadowMask[2].y = viewport.bottom;
+	shadowMask[2].x = viewport._width;
+	shadowMask[2].y = viewport._height;
 
-	shadowMask[3].x = viewport.right;
-	shadowMask[3].y = viewport.top;
+	shadowMask[3].x = viewport._width;
+	shadowMask[3].y = viewport._y;
 
 	glGenBuffers(1, &_shadowMaskVertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, _shadowMaskVertexBuffer);
@@ -166,21 +166,21 @@ bool ShadowVolumeOpenGLShader::renderToScene() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ShadowVolumeOpenGLShader::initMask() {
-	Rect32 viewport = _gameRef->_renderer->getViewPort();
+	DXViewport viewport = _gameRef->_renderer3D->getViewPort();
 
 	ShadowVertexShader shadowMask[4];
 
-	shadowMask[0].x = viewport.left;
-	shadowMask[0].y = viewport.bottom;
+	shadowMask[0].x = viewport._x;
+	shadowMask[0].y = viewport._height;
 
-	shadowMask[1].x = viewport.left;
-	shadowMask[1].y = viewport.top;
+	shadowMask[1].x = viewport._x;
+	shadowMask[1].y = viewport._y;
 
-	shadowMask[2].x = viewport.right;
-	shadowMask[2].y = viewport.bottom;
+	shadowMask[2].x = viewport._width;
+	shadowMask[2].y = viewport._height;
 
-	shadowMask[3].x = viewport.right;
-	shadowMask[3].y = viewport.top;
+	shadowMask[3].x = viewport._width;
+	shadowMask[3].y = viewport._y;
 
 	glBindBuffer(GL_ARRAY_BUFFER, _shadowMaskVertexBuffer);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(ShadowVertexShader), shadowMask);

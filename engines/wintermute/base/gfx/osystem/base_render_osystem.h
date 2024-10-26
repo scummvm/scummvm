@@ -98,7 +98,6 @@ public:
 
 	bool setViewport(int left, int top, int right, int bottom) override;
 	bool setViewport(Rect32 *rect) override { return BaseRenderer::setViewport(rect); }
-	Rect32 getViewPort() override;
 	void modTargetRect(Common::Rect *rect);
 	void pointFromScreen(Point32 *point);
 	void pointToScreen(Point32 *point);

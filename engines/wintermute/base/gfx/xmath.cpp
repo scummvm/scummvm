@@ -540,7 +540,7 @@ DXMatrix *DXMatrixMultiply(DXMatrix *pout, const DXMatrix *pm1, const DXMatrix *
 	return pout;
 }
 
-DXVector3 *DXVec3Project(DXVector3 *pout, const DXVector3 *pv, const Rect32 *pviewport,
+DXVector3 *DXVec3Project(DXVector3 *pout, const DXVector3 *pv, const DXViewport *pviewport,
                          const DXMatrix *pprojection, const DXMatrix *pview, const DXMatrix *pworld) {
 	DXMatrix m;
 
@@ -555,9 +555,9 @@ DXVector3 *DXVec3Project(DXVector3 *pout, const DXVector3 *pv, const Rect32 *pvi
 	DXVec3TransformCoord(pout, pv, &m);
 
 	if (pviewport) {
-		pout->_x = pviewport->left + (1.0f + pout->_x) * pviewport->width() / 2.0f;
-		pout->_y = pviewport->top  + (1.0f - pout->_y) * pviewport->height() / 2.0f;
-		pout->_z = (1.0f + pout->_z) / 2.0f;
+		pout->_x = pviewport->_x + (1.0f + pout->_x) * pviewport->_width / 2.0f;
+		pout->_y = pviewport->_y  + (1.0f - pout->_y) * pviewport->_height / 2.0f;
+		pout->_z = pviewport->_minZ + pout->_z * (pviewport->_maxZ - pviewport->_minZ);
 	}
 	return pout;
 }

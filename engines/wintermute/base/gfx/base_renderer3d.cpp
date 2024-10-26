@@ -116,8 +116,8 @@ bool BaseRenderer3D::setDefaultAmbientLightColor() {
 	return true;
 }
 
-Rect32 BaseRenderer3D::getViewPort() {
-	return _viewportRect;
+DXViewport BaseRenderer3D::getViewPort() {
+	return _viewport;
 }
 
 Graphics::PixelFormat BaseRenderer3D::getPixelFormat() const {

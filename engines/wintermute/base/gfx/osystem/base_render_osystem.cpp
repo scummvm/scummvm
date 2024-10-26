@@ -536,15 +536,6 @@ bool BaseRenderOSystem::setViewport(int left, int top, int right, int bottom) {
 	return STATUS_OK;
 }
 
-Rect32 BaseRenderOSystem::getViewPort() {
-	Rect32 ret;
-	ret.top = _renderRect.top;
-	ret.bottom = _renderRect.bottom;
-	ret.left = _renderRect.left;
-	ret.right = _renderRect.right;
-	return ret;
-}
-
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderOSystem::modTargetRect(Common::Rect *rect) {
 	return;

@@ -125,6 +125,8 @@ public:
 	XMesh *createXMesh() override;
 	ShadowVolume *createShadowVolume() override;
 
+	bool setViewport3D(DXViewport *viewport) override;
+
 private:
 	DXMatrix _projectionMatrix2d;
 
