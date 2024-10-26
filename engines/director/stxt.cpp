@@ -32,7 +32,7 @@ Stxt::Stxt(Cast *cast, Common::SeekableReadStreamEndian &textStream) : _cast(cas
 
 	_textType = kTextTypeFixed;
 	_textAlign = kTextAlignLeft;
-	_textShadow = kSizeNone;
+	_textShadow = 0;
 	_unk1f = _unk2f = 0;
 	_unk3f = 0;
 	_size = textStream.size();

@@ -22,6 +22,7 @@
 #include "director/director.h"
 #include "director/movie.h"
 #include "director/castmember/shape.h"
+#include "director/lingo/lingo-the.h"
 
 namespace Director {
 
@@ -106,6 +107,51 @@ void ShapeCastMember::setForeColor(uint32 fgCol) {
 	_fgCol = fgCol;
 	_modified = true;
 }
+
+bool ShapeCastMember::hasField(int field) {
+	switch (field) {
+	case kTheFilled:
+	case kTheLineSize:
+		return true;
+	default:
+		break;
+	}
+	return CastMember::hasField(field);
+}
+
+Datum ShapeCastMember::getField(int field) {
+	Datum d;
+
+	switch (field) {
+	case kTheFilled:
+		d = Datum((bool)_fillType);
+		break;
+	case kTheLineSize:
+		d = Datum(_lineThickness);
+		break;
+	default:
+		d = CastMember::getField(field);
+		break;
+	}
+
+	return d;
+}
+
+bool ShapeCastMember::setField(int field, const Datum &d) {
+	switch (field) {
+	case kTheFilled:
+		_fillType = d.asInt() ? 1 : 0;
+		return true;
+	case kTheLineSize:
+		_lineThickness = d.asInt();
+		return true;
+	default:
+		break;
+	}
+
+	return CastMember::setField(field, d);
+}
+
 
 Common::String ShapeCastMember::formatInfo() {
 	return Common::String::format(

@@ -62,9 +62,9 @@ public:
 	void load() override;
 	void unload() override;
 
-	SizeType _borderSize;
-	SizeType _gutterSize;
-	SizeType _boxShadow;
+	uint8 _borderSize;
+	uint8 _gutterSize;
+	uint8 _boxShadow;
 	uint16 _maxHeight;
 	uint16 _textHeight;
 
@@ -72,7 +72,7 @@ public:
 	uint16 _fontSize;
 	TextType _textType;
 	TextAlignType _textAlign;
-	SizeType _textShadow;
+	uint8 _textShadow;
 	uint16 _scroll;
 	byte _textSlant;
 	byte _textFlags;

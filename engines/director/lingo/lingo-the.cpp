@@ -47,11 +47,13 @@ namespace Director {
 
 class Sprite;
 
-const TheEntity entities[] = {
-	{ kTheActorList,		"actorList",		false, 400, false },	//			D4 property
+TheEntity entities[] = {					//	hasId  ver.	isFunction
+	{ kTheActiveWindow,		"activeWindow",		false, 500, false },	//				D5 property
+	{ kTheActorList,		"actorList",		false, 400, false },	//			D4 p
 	{ kTheBeepOn,			"beepOn",			false, 200, false },	// D2 p
 	{ kTheButtonStyle,		"buttonStyle",		false, 200, false },	// D2 p
 	{ kTheCast,				"cast",				true,  200, false },	// D2
+	{ kTheCastLibs,			"castLibs",			false, 500, false },	//				D5 p
 	{ kTheCastMembers,		"castmembers",		false, 300, false },	//		 D3
 	{ kTheCenterStage,		"centerStage",		false, 200, false },	// D2 p
 	{ kTheCheckBoxAccess,	"checkBoxAccess",	false, 200, false },	// D2 p
@@ -64,8 +66,10 @@ const TheEntity entities[] = {
 	{ kTheCommandDown,		"commandDown",		false, 200, true },	// D2 f
 	{ kTheControlDown,		"controlDown",		false, 200, true },	// D2 f
 	{ kTheDate,				"date",				false, 300, true },	//		D3 f
-	{ kTheDeskTopRectList,	"deskTopRectList",	false, 500, true },	// D5 p
+	{ kTheDeskTopRectList,	"deskTopRectList",	false, 500, true },	//					D5 p
+	{ kTheDigitalVideoTimeScale,"digitalVideoTimeScale",false, 500, false },//			D5 p
 	{ kTheDoubleClick,		"doubleClick",		false, 200, true },	// D2 f
+	{ kTheEmulateMultiButtonMouse,"emulateMultiButtonMouse",false, 500, false },//		D5 p
 	{ kTheExitLock,			"exitLock",			false, 200, false },	// D2 p
 	{ kTheField,			"field",			true,  300, false },	//		D3
 	{ kTheFixStageSize,		"fixStageSize",		false, 200, false },	// D2 p
@@ -77,12 +81,17 @@ const TheEntity entities[] = {
 	{ kTheFrameTempo,		"frameTempo",		false, 400, true },	//			D4 f
 	{ kTheFreeBlock,		"freeBlock",		false, 200, true },	// D2 f
 	{ kTheFreeBytes,		"freeBytes",		false, 200, true },	// D2 f
+	{ kTheFrontWindow,		"frontWindow",		false, 500, false },//					D5 p
 	{ kTheFullColorPermit,	"fullColorPermit",	false, 200, false },	// D2 p
+	{ kTheIdleLoadMode,		"idleLoadMode",		false, 500, false },//					D5 p
+	{ kTheIdleLoadPeriod,	"idleLoadPeriod",	false, 500, false },//					D5 p
+	{ kTheIdleLoadTag,		"idleLoadTag",		false, 500, false },//					D5 p
 	{ kTheImageDirect,		"imageDirect",		false, 200, false },	// D2 p
 	{ kTheItemDelimiter,	"itemDelimiter",	false, 400, false },	//			D4 p
 	{ kTheKey,				"key",				false, 200, true },	// D2 f
 	{ kTheKeyCode,			"keyCode",			false, 200, true },	// D2 f
 	{ kTheKeyDownScript,	"keyDownScript",	false, 200, false },	// D2 p
+	{ kTheKeyPressed,		"keyPressed",		false, 500, false },//					D5 p
 	{ kTheKeyUpScript,		"keyUpScript",		false, 400, false },	//			D4 p
 	{ kTheLabelList,		"labelList",		false, 300, true },	//		D3 f
 	{ kTheLastClick,		"lastClick",		false, 200, true },	// D2 f
@@ -201,18 +210,29 @@ const TheEntityField fields[] = {
 	{ kTheSprite,	"visible",		kTheVisible,	400 },//				D4 p
 	{ kTheSprite,	"width",		kTheWidth,		200 },// D2 p
 
+	// Cast library fields
+	{ kTheCastLib,	"fileName",		kTheFileName,	500 },//					D5 p
+	{ kTheCastLib,	"name",			kTheName,		500 },//					D5 p
+	{ kTheCastLib,	"number",		kTheNumber,		500 },//					D5 p
+	{ kTheCastLib,	"preLoadMode",	kThePreLoadMode,500 },//					D5 p
+	{ kTheCastLib,	"selection",	kTheSelectionField,500 },//					D5 p
+
 	// Common cast fields
 	{ kTheCast,		"backColor",	kTheBackColor,	400 },//				D4 p
 	{ kTheCast,		"castLibNum",	kTheCastLibNum,	500 },// 					D5 p
 	{ kTheCast,		"castType",		kTheCastType,	400 },//				D4 p
 	{ kTheCast,		"filename",		kTheFileName,	400 },//				D4 p
+	{ kTheCast,		"editable",		kTheEditable,	500 },//					D5 p
 	{ kTheCast,		"foreColor",	kTheForeColor,	400 },//				D4 p
 	{ kTheCast,		"height",		kTheHeight,		400 },//				D4 p
+	{ kTheCast,		"idleReadChunkSize",kTheIdleReadChunkSize,500 },//			D5 p
 	{ kTheCast,		"loaded",		kTheLoaded,		400 },//				D4 p
-	{ kTheCast,		"modified",		kTheModified,	400 },//				D4 p
+	{ kTheCast,		"media",		kTheMedia,		500 },//					D5 p
 	{ kTheCast,		"memberNum",	kTheMemberNum,	500 },//					D5 p
+	{ kTheCast,		"modified",		kTheModified,	400 },//				D4 p
 	{ kTheCast,		"name",			kTheName,		300 },//		D3 p
 	{ kTheCast,		"number",		kTheNumber,		300 },//		D3 p
+	{ kTheCast,		"pageHeight",	kThePageHeight,	500 },//					D5 p
 	{ kTheCast,		"rect",			kTheRect,		400 },//				D4 p
 	{ kTheCast,		"purgePriority",kThePurgePriority,400 },//				D4 p // 0 Never purge, 1 Purge Last, 2 Purge next, 2 Purge normal
 	{ kTheCast,		"scriptText",	kTheScriptText,	400 },//				D4 p
@@ -224,6 +244,7 @@ const TheEntityField fields[] = {
 	{ kTheCast,		"center",		kTheCenter,		400 },//				D4 p
 	{ kTheCast,		"controller",	kTheController,	300 },//		D3.1 p
 	{ kTheCast,		"crop",			kTheCrop,		400 },//				D4 p
+	{ kTheCast,		"digitalVideoType",kTheDigitalVideoType,500 },//			D5 p
 	{ kTheCast,		"directToStage",kTheDirectToStage,300 },//		D3.1 p
 	{ kTheCast,		"duration",		kTheDuration,	300 },//		D3.1 p
 	{ kTheCast,		"frameRate",	kTheFrameRate,	400 },//				D4 p
@@ -237,6 +258,10 @@ const TheEntityField fields[] = {
 	{ kTheSprite,	"stopTime",		kTheStopTime,	300 },//		D3.1 p
 	{ kTheCast,		"video",		kTheVideo,		400 },//				D4 p
 	{ kTheSprite,	"volume",		kTheVolume,		300 },//		D3.1 p
+
+	// Movie fields
+	{ kTheCast,		"scriptsEnabled",	kTheScriptsEnabled,	500 },//			D5 p
+
 
 	// Bitmap fields
 	{ kTheCast,		"depth",		kTheDepth,		400 },//				D4 p
@@ -254,10 +279,26 @@ const TheEntityField fields[] = {
 	{ kTheCast,		"textStyle",	kTheTextStyle,	300 },//		D3 p
 	{ kTheCast,		"scrollTop",	kTheScrollTop,  500 },//						D5 p
 
+	// ButtonCastMember fields
+	{ kTheCast,		"buttonType",	kTheButtonType,	500 },//						D5 p
+
+	// ShapeCastMember fields
+	{ kTheCast,		"filled",		kTheFilled,		500 },//						D5 p
+	{ kTheCast,		"lineSize",		kTheLineSize,	500 },//						D5 p
+
+	// TransitionCastMember fields
+	{ kTheCast,		"chunkSize",	kTheChunkSize,	500 },//						D5 p
+	{ kTheCast,		"transitionType",kTheTransitionType,500 },//					D5 p
 
 	// Field fields
+	{ kTheField,	"autoTab",		kTheAutoTab,	500 },//						D5 p
+	{ kTheField,	"border",		kTheBorder,		500 },//						D5 p
+	{ kTheField,	"boxType",		kTheBoxType,	500 },//						D5 p
+	{ kTheField,	"dropShadow",	kTheDropShadow,	500 },//						D5 p
 	{ kTheField,	"foreColor",	kTheForeColor,	400 },//				D4 p
 	{ kTheField,	"hilite",		kTheHilite,		200 },// D2 p
+	{ kTheField,	"lineCount",	kTheLineCount,	500 },//						D5 p
+	{ kTheField,	"margin",		kTheMargin,		500 },//						D5 p
 	{ kTheField,	"name",			kTheName,		300 },//		D3 p
 	{ kTheField,	"text",			kTheText,		200 },// D2 p
 	{ kTheField,	"textAlign",	kTheTextAlign,	300 },//		D3 p
@@ -293,6 +334,8 @@ const TheEntityField fields[] = {
 	{ kTheMenu,		"name",			kTheName,		300 },//		D3 p
 
 	{ kTheCastMembers,	"number",	kTheNumber,		300 },// 		D3 p
+
+	{ kTheCastLibs,		"number",	kTheNumber,		500 },//						D5 p
 
 	{ kTheDate,		"short",		kTheShort,		300 },//		D3 f
 	{ kTheDate,		"long",			kTheLong,		300 },//		D3 f
@@ -1273,9 +1316,14 @@ int Lingo::getCastLibsNum() {
 }
 
 int Lingo::getMembersNum() {
-	// FIXME: deal with D5 castlibs
 	Movie *movie = _vm->getCurrentMovie();
-	return (MAX(movie->getCast()->getCastMaxID(), (movie->_sharedCast ? movie->_sharedCast->getCastMaxID() : 0)));
+	int castLib = 0;
+	if (g_director->getVersion() >= 500) {
+		LB::b_castLib(1);
+		castLib = g_lingo->pop().u.i;
+	}
+	Cast *cast = movie->getCast(CastMemberID(0, castLib));
+	return (MAX(cast->getCastMaxID(), (movie->_sharedCast ? movie->_sharedCast->getCastMaxID() : 0)));
 }
 
 int Lingo::getXtrasNum() {
@@ -2002,8 +2050,7 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 		g_lingo->push(d);
 		g_debugger->propReadHook(propName);
 		return;
-	}
-	if (obj.type == PARRAY) {
+	} else if (obj.type == PARRAY) {
 		int index = LC::compareArrays(LC::eqData, obj, propName, true).u.i;
 		if (index > 0) {
 			d = obj.u.parr->arr[index - 1].v;
@@ -2011,8 +2058,7 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 		g_lingo->push(d);
 		g_debugger->propReadHook(propName);
 		return;
-	}
-	if (obj.type == POINT) {
+	} else if (obj.type == POINT) {
 		if (propName.equalsIgnoreCase("locH")) {
 			d = obj.u.farr->arr[0];
 		} else if (propName.equalsIgnoreCase("locV")) {
@@ -2023,8 +2069,7 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 		g_lingo->push(d);
 		g_debugger->propReadHook(propName);
 		return;
-	}
-	if (obj.type == RECT) {
+	} else if (obj.type == RECT) {
 		if (propName.equalsIgnoreCase("left")) {
 			d = obj.u.farr->arr[0];
 		} else if (propName.equalsIgnoreCase("top")) {
@@ -2039,8 +2084,7 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 		g_lingo->push(d);
 		g_debugger->propReadHook(propName);
 		return;
-	}
-	if (obj.type == CASTREF) {
+	} else if (obj.type == CASTREF) {
 		Movie *movie = _vm->getCurrentMovie();
 		if (!movie) {
 			g_lingo->lingoError("Lingo::getObjectProp(): No movie loaded");
@@ -2121,7 +2165,24 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 		}
 		g_lingo->push(d);
 		return;
+	} else if (obj.type == CASTLIBREF) {
+		Movie *movie = _vm->getCurrentMovie();
+		if (!movie) {
+			g_lingo->lingoError("Lingo::getObjectProp(): No movie loaded");
+			g_lingo->push(d);
+			return;
+		}
+		Cast *cast = movie->getCast(CastMemberID(0, obj.u.i));
+		if (!cast) {
+			g_lingo->lingoError("Lingo::getObjectProp(): CastLib %d not found", obj.u.i);
+			g_lingo->push(d);
+			return;
+		}
+
+
+
 	}
+
 	if (_builtinFuncs.contains(propName) && _builtinFuncs[propName].nargs == 1) {
 		push(obj);
 		LC::call(_builtinFuncs[propName], 1, true);
@@ -2191,6 +2252,18 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 		} else {
 			g_lingo->lingoError("Lingo::setObjectProp(): %s has no property '%s'", id.asString().c_str(), propName.c_str());
 		}
+	} else if (obj.type == CASTLIBREF) {
+		Movie *movie = _vm->getCurrentMovie();
+		if (!movie) {
+			g_lingo->lingoError("Lingo::setObjectProp(): No movie loaded");
+			return;
+		}
+		Cast *cast = movie->getCast(CastMemberID(0, obj.u.i));
+		if (!cast) {
+			g_lingo->lingoError("Lingo::setObjectProp(): CastLib %d not found", obj.u.i);
+			return;
+		}
+
 	} else {
 		g_lingo->lingoError("Lingo::setObjectProp: Invalid object: %s", obj.asString(true).c_str());
 	}

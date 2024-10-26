@@ -65,7 +65,9 @@ TransitionCastMember::TransitionCastMember(Cast *cast, uint16 castId, Transition
 
 bool TransitionCastMember::hasField(int field) {
 	switch (field) {
+	case kTheChunkSize:
 	case kTheDuration:
+	case kTheTransitionType:
 		return true;
 	default:
 		break;
@@ -77,8 +79,14 @@ Datum TransitionCastMember::getField(int field) {
 	Datum d;
 
 	switch (field) {
+	case kTheChunkSize:
+		d = Datum(_chunkSize);
+		break;
 	case kTheDuration:
 		d = Datum(_durationMillis);
+		break;
+	case kTheTransitionType:
+		d = Datum((int)_transType);
 		break;
 	default:
 		d = CastMember::getField(field);
@@ -90,8 +98,14 @@ Datum TransitionCastMember::getField(int field) {
 
 bool TransitionCastMember::setField(int field, const Datum &d) {
 	switch (field) {
+	case kTheChunkSize:
+		_chunkSize = d.asInt();
+		return true;
 	case kTheDuration:
 		_durationMillis = (bool)d.asInt();
+		return true;
+	case kTheTransitionType:
+		_transType = (TransitionType)d.asInt();
 		return true;
 	default:
 		break;

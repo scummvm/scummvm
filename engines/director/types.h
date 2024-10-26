@@ -135,15 +135,6 @@ enum TextFlag {
 	kTextFlagDoNotWrap	= (1 << 2)
 };
 
-enum SizeType {
-	kSizeNone,
-	kSizeSmallest,
-	kSizeSmall,
-	kSizeMedium,
-	kSizeLarge,
-	kSizeLargest
-};
-
 enum ButtonType {
 	kTypeButton,
 	kTypeCheckBox,
