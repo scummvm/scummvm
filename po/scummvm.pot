@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-10-25 20:10+0000\n"
+"POT-Creation-Date: 2024-10-26 20:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5499,14 +5499,14 @@ msgid ""
 msgstr ""
 
 #: engines/agi/metaengine.cpp:147
-msgid "Predictive Input Dialogue on mouse click"
+msgid "Predictive Input Dialog on mouse click"
 msgstr ""
 
 #: engines/agi/metaengine.cpp:148
 msgid ""
-"Enables the assistive Predictive Input Dialogue specifically for when "
-"clicking the left mouse button within text input fields.\n"
-"The Predictive Input Dialogue can still be activated on demand if there's a "
+"Enables the assistive Predictive Input Dialog specifically for when clicking "
+"the left mouse button within text input fields.\n"
+"The Predictive Input Dialog can still be activated on demand if there's a "
 "specified key mapping for it"
 msgstr ""
 
