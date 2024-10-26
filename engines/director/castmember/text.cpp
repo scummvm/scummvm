@@ -40,9 +40,9 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 		: CastMember(cast, castId, stream) {
 	_type = kCastText;
 
-	_borderSize = kSizeNone;
-	_gutterSize = kSizeNone;
-	_boxShadow = kSizeNone;
+	_borderSize = 0;
+	_gutterSize = 0;
+	_boxShadow = 0;
 	_buttonType = kTypeButton;
 	_editable = false;
 	_maxHeight = _textHeight = 0;
@@ -56,7 +56,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 	_fontSize = 12;
 	_textType = kTextTypeFixed;
 	_textAlign = kTextAlignLeft;
-	_textShadow = kSizeNone;
+	_textShadow = 0;
 	_textSlant = 0;
 	_bgpalinfo1 = _bgpalinfo2 = _bgpalinfo3 = 0;
 	_fgpalinfo1 = _fgpalinfo2 = _fgpalinfo3 = 0xff;
@@ -70,9 +70,9 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 
 	if (version < kFileVer400) {
 		_flags1 = flags1; // region: 0 - auto, 1 - matte, 2 - disabled
-		_borderSize = static_cast<SizeType>(stream.readByte());
-		_gutterSize = static_cast<SizeType>(stream.readByte());
-		_boxShadow = static_cast<SizeType>(stream.readByte());
+		_borderSize = stream.readByte();
+		_gutterSize = stream.readByte();
+		_boxShadow = stream.readByte();
 		_textType = static_cast<TextType>(stream.readByte());
 		_textAlign = static_cast<TextAlignType>(stream.readUint16());
 		_bgpalinfo1 = stream.readUint16();
@@ -93,7 +93,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 			_initialRect = Movie::readRect(stream);
 			pad3 = stream.readUint16();
 
-			_textShadow = static_cast<SizeType>(stream.readByte());
+			_textShadow = stream.readByte();
 			_textFlags = stream.readByte();
 			if (_textFlags & 0xf8)
 				warning("Unprocessed text cast flags: %x", _textFlags & 0xf8);
@@ -117,9 +117,9 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 		}
 	} else if (version >= kFileVer400 && version < kFileVer600) {
 		_flags1 = flags1;
-		_borderSize = static_cast<SizeType>(stream.readByte());
-		_gutterSize = static_cast<SizeType>(stream.readByte());
-		_boxShadow = static_cast<SizeType>(stream.readByte());
+		_borderSize = stream.readByte();
+		_gutterSize = stream.readByte();
+		_boxShadow = stream.readByte();
 		_textType = static_cast<TextType>(stream.readByte());
 		_textAlign = static_cast<TextAlignType>(stream.readSint16()); // this is because 'right' is -1? or should that be 255?
 		_bgpalinfo1 = stream.readUint16();
@@ -131,7 +131,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 
 		_initialRect = Movie::readRect(stream);
 		_maxHeight = stream.readUint16();
-		_textShadow = static_cast<SizeType>(stream.readByte());
+		_textShadow = stream.readByte();
 		_textFlags = stream.readByte(); // 1: editable, 2: auto tab 4: don't wrap
 		_editable = _textFlags & 0x1;
 
@@ -478,8 +478,12 @@ bool TextCastMember::hasField(int field) {
 	case kTheTextHeight:
 	case kTheTextSize:
 	case kTheTextStyle:
-	case kTheScrollTop:
 		return true;
+	case kTheBorder:
+	case kTheScrollTop:
+		return _type == kCastText;
+	case kTheButtonType:
+		return _type == kCastButton;
 	default:
 		break;
 	}
@@ -526,8 +530,28 @@ Datum TextCastMember::getField(int field) {
 	case kTheTextStyle:
 		d = (int)_textSlant;
 		break;
+	case kTheBorder:
+		d = _borderSize;
+		break;
 	case kTheScrollTop:
 		d = _scroll;
+		break;
+	case kTheButtonType:
+		switch (_buttonType) {
+		case kTypeCheckBox:
+			d = Datum("checkBox");
+			d.type = SYMBOL;
+			break;
+		case kTypeRadio:
+			d = Datum("radioButton");
+			d.type = SYMBOL;
+			break;
+		case kTypeButton:
+		default:
+			d = Datum("pushButton");
+			d.type = SYMBOL;
+			break;
+		}
 		break;
 	default:
 		d = CastMember::getField(field);
@@ -635,6 +659,28 @@ bool TextCastMember::setField(int field, const Datum &d) {
 	case kTheScrollTop:
 		_scroll = d.asInt();
 		return true;
+	case kTheBorder:
+		_borderSize = d.asInt();
+		setModified(true);
+		return true;
+	case kTheButtonType:
+		if (d.type == SYMBOL) {
+			if (d.u.s->equalsIgnoreCase("pushButton")) {
+				_buttonType = kTypeButton;
+				setModified(true);
+				return true;
+			} else if (d.u.s->equalsIgnoreCase("radioButton")) {
+				_buttonType = kTypeRadio;
+				setModified(true);
+				return true;
+			} else if (d.u.s->equalsIgnoreCase("checkBox")) {
+				_buttonType = kTypeCheckBox;
+				setModified(true);
+				return true;
+			}
+		}
+		warning("TextCastMember: invalid button type %s", d.asString(true).c_str());
+		return false;
 	default:
 		break;
 	}

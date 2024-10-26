@@ -22,6 +22,7 @@
 #include "director/director.h"
 #include "director/movie.h"
 #include "director/castmember/movie.h"
+#include "director/lingo/lingo-the.h"
 
 namespace Director {
 
@@ -61,6 +62,57 @@ MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, MovieCastMember &sou
 	_enableSound = source._enableSound;
 	_crop = source._crop;
 	_center = source._center;
+}
+
+bool MovieCastMember::hasField(int field) {
+	switch (field) {
+	case kTheSound:
+	case kTheCenter:
+	case kTheScriptsEnabled:
+		return true;
+	default:
+		break;
+	}
+	return CastMember::hasField(field);
+}
+
+Datum MovieCastMember::getField(int field) {
+	Datum d;
+
+	switch (field) {
+	case kTheSound:
+		d = Datum(_enableSound);
+		break;
+	case kTheCenter:
+		d = Datum((int)_center);
+		break;
+	case kTheScriptsEnabled:
+		d = Datum(_enableScripts);
+		break;
+	default:
+		d = CastMember::getField(field);
+		break;
+	}
+
+	return d;
+}
+
+bool MovieCastMember::setField(int field, const Datum &d) {
+	switch (field) {
+	case kTheSound:
+		_enableSound = (bool)d.asInt();
+		return true;
+	case kTheCenter:
+		_center = (bool)d.asInt();
+		return true;
+	case kTheScriptsEnabled:
+		_enableScripts = (bool)d.asInt();
+		return true;
+	default:
+		break;
+	}
+
+	return CastMember::setField(field, d);
 }
 
 Common::String MovieCastMember::formatInfo() {

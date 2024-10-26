@@ -3372,7 +3372,13 @@ void LB::b_cast(int nargs) {
 
 void LB::b_castLib(int nargs) {
 	Datum d = g_lingo->pop();
-	Datum res = d.asInt();
+	Datum res(0);
+	if (d.type == STRING) {
+		Movie *movie = g_director->getCurrentMovie();
+		res.u.i = movie->getCastLibIDByName(*d.u.s);
+	} else {
+		res.u.i = d.asInt();
+	}
 	res.type = CASTLIBREF;
 	g_lingo->push(res);
 }

@@ -57,7 +57,7 @@ public:
 	Common::String _rtext;
 	TextType _textType;
 	TextAlignType _textAlign;
-	SizeType _textShadow;
+	uint8 _textShadow;
 
 	uint32 _size;
 

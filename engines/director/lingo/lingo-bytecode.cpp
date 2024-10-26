@@ -212,8 +212,13 @@ static const LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x06, 0x21, kTheSprite,			kTheLoc,			true, kTEAItemId },
 	{ 0x06, 0x22, kTheSprite,			kTheRect,			true, kTEAItemId },
 	{ 0x06, 0x23, kTheSprite,			kTheMemberNum,		true, kTEAItemId }, // D5
-	{ 0x06, 0x24, kTheSprite, 			kTheCastLibNum, 	true, kTEAItemId },
-	{ 0x06, 0x25, kTheSprite,			kTheMember,			true, kTEAItemId },
+	{ 0x06, 0x24, kTheSprite, 			kTheCastLibNum, 	true, kTEAItemId }, // D5
+	{ 0x06, 0x25, kTheSprite,			kTheMember,			true, kTEAItemId }, // D5
+	// scriptInstanceList
+	// currentTime
+	// mostRecentCuePoint
+	// tweened
+	// name
 
 	{ 0x07, 0x01, kTheBeepOn,			kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x02, kTheButtonStyle,		kTheNOField,		true, kTEANOArgs },
@@ -250,6 +255,11 @@ static const LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x07, 0x21, kTheTimeoutPlay,		kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x22, kTheTimer,			kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x23, kThePreLoadRAM,		kTheNOField,		true, kTEANOArgs },
+	{ 0x07, 0x24, kTheVideoForWindowsPresent, kTheNOField,	true, kTEANOArgs }, // D5
+	// netPresent
+	// safePlayer
+	// soundKeepDevice
+	// soundMixMedia
 
 	{ 0x08, 0x01, kThePerFrameHook,		kTheNOField,		true, kTEANOArgs },
 	{ 0x08, 0x02, kTheCastMembers,		kTheNumber,			false, kTEANOArgs },
@@ -270,6 +280,7 @@ static const LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x09, 0x0b, kTheCast,				kTheSize,			true, kTEAItemId },
 	{ 0x09, 0x11, kTheCast,				kTheForeColor,		true, kTEAItemId },
 	{ 0x09, 0x12, kTheCast,				kTheBackColor,		true, kTEAItemId },
+	{ 0x09, 0x13, kTheCast,				kTheType,			true, kTEAItemId }, // D5
 
 	// the chunk of cast
 	{ 0x0a, 0x03, kTheChunk,			kTheTextStyle,		true, kTEAChunk },
