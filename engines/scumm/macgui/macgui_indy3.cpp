@@ -1466,7 +1466,7 @@ bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &saveName)
 		if (clicked == cancelButton->getId())
 			break;
 
-		if (clicked == -2) {
+		if (clicked == kDialogWantsAttention) {
 			// Cycle through deferred actions
 			for (uint i = 0; i < deferredActionsIds.size(); i++) {
 				if (deferredActionsIds[i] == editText->getId()) {

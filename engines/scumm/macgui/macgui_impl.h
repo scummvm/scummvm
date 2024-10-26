@@ -35,6 +35,11 @@
 #include "graphics/font.h"
 #include "graphics/surface.h"
 
+// Use negative values for these. Zero and upwards are reserved for widget IDs.
+
+#define kDialogQuit           -1
+#define kDialogWantsAttention -2
+
 class OSystem;
 
 namespace Graphics {
