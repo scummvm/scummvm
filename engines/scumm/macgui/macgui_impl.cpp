@@ -145,8 +145,11 @@ MacGuiImpl::DelayStatus MacGuiImpl::delay(uint32 ms) {
 // This does not seem very friendly to touch devices, so we instead use the
 // "mouse over" method in the Mac Window Manager class.
 //
-// TODO: Ideally we should handle both, but I don't know if there's a way for
-//       them to coexist.
+// Later games added clicking to open the menu, and even an option to keep the
+// menu bar always visible.
+//
+// TODO: Ideally we should perhaps implement some of these behaviors, but I'm
+//       not sure which one can sensibly coexist.
 // --------------------------------------------------------------------------
 
 void MacGuiImpl::menuCallback(int id, Common::String &name, void *data) {
@@ -585,7 +588,6 @@ Graphics::Surface *MacGuiImpl::loadPict(int id) {
 
 	Common::SeekableReadStream *res = resource.getResource(MKTAG('P', 'I', 'C', 'T'), id);
 
-	// IQ logos are PICT v2
 	Image::PICTDecoder pict;
 	if (pict.loadStream(*res)) {
 		const Graphics::Surface *s1 = pict.getSurface();
@@ -620,7 +622,6 @@ Graphics::Surface *MacGuiImpl::loadPict(int id) {
 			}
 		} else
 			s->copyFrom(*s1);
-
 	}
 
 	delete res;
