@@ -168,6 +168,7 @@ private:
 
 	bool _isDemo;
 	bool _flipMode;
+	bool _skipNextFrame;
 
 public:
 	DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -242,6 +243,7 @@ public:
 	bool isInvButtonVisible() const;
 	ShellGame *getShellGame() { return _shellGame; }
 	DragonArcade *getDragonArcade() { return _dragonArcade; }
+	void setSkipNextFrame() { _skipNextFrame = true; }
 
 	static DgdsEngine *getInstance() { return static_cast<DgdsEngine *>(g_engine); }
 	void setFlipMode(bool mode) { _flipMode = mode; }

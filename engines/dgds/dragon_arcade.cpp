@@ -76,7 +76,7 @@ void DragonArcade::finish() {
 	engine->enableKeymapper();
 
 	_initFinished = false;
-	warning("TODO: DragonArcade::finish: copy/clear some vid buffers here?");
+	//warning("TODO: DragonArcade::finish: copy/clear some vid buffers here?");
 }
 
 bool DragonArcade::doTickUpdate() {
@@ -136,8 +136,10 @@ bool DragonArcade::doTickUpdate() {
 		break;
 	}
 	drawHealthBars();
-	//do { } while (_arcadeTickDelay != 0);
-	//_arcadeTickDelay = 4;
+
+	// Original has delay here to reduce the arcade speed to 15 FPS.
+	DgdsEngine::getInstance()->setSkipNextFrame();
+
 	_nTickUpdates++;
 
 	return true;
@@ -1665,6 +1667,7 @@ void DragonArcade::initIfNeeded() {
 	_arrowImg->loadBitmap("arcade.bmp");
 
 	engine->_soundPlayer->loadMusic(songName);
+	engine->_soundPlayer->playMusic(0);
 	// set font to 0?
 	// set text draw to 0xe?
 	drawBackgroundAndWeapons();

@@ -614,7 +614,7 @@ void Dialog::updateSelectedAction(int delta) {
 	}
 
 	if (_action.size() > 1 || !delta) {
-		debug("Dialog: update mouse to %d, %d (mouseloc %d, selnum %d)", mouseX, mouseY, _state->_strMouseLoc, _lastSelectedDialogItemNum);
+		debug("Dialog %d: update mouse to %d, %d (mouseloc %d, selnum %d)", _num, mouseX, mouseY, _state->_strMouseLoc, _lastSelectedDialogItemNum);
 		g_system->warpMouse(mouseX, mouseY);
 	}
 }

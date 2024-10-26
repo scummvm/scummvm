@@ -85,7 +85,7 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_detailLevel(kDgdsDetailHigh), _textSpeed(1), _justChangedScene1(false), _justChangedScene2(false),
 	_random("dgds"), _currentCursor(-1), _menuToTrigger(kMenuNone), _isLoading(true), _flipMode(false),
 	_rstFileName(nullptr), _difficulty(1), _menu(nullptr), _adsInterp(nullptr), _isDemo(false),
-	_dragonArcade(nullptr) {
+	_dragonArcade(nullptr), _skipNextFrame(false) {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
@@ -323,6 +323,10 @@ void DgdsEngine::init(bool restarting) {
 		delete _menu;
 		delete _adsInterp;
 		delete _inventory;
+		if (_dragonArcade)
+			delete _dragonArcade;
+		if (_shellGame)
+			delete _shellGame;
 	}
 
 	_gamePals = new GamePalettes(_resource, _decompressor);
@@ -483,6 +487,9 @@ Common::Error DgdsEngine::run() {
 
 	_isLoading = false;
 
+	uint32 startMillis = g_system->getMillis();
+	uint32 frameCount = 0;
+
 	while (!shouldQuit()) {
 		Common::EventType mouseEvent = Common::EVENT_INVALID;
 		while (eventMan->pollEvent(ev)) {
@@ -584,107 +591,123 @@ Common::Error DgdsEngine::run() {
 				default:
 					break;
 			}
-			g_system->updateScreen();
-			g_system->delayMillis(10);
 			_clock.update(false);
-			continue;
-		}
+		} else {
 
-		_scene->checkForClearedDialogs();
+			_scene->checkForClearedDialogs();
 
-		_gdsScene->runPreTickOps();
-		_scene->runPreTickOps();
+			_gdsScene->runPreTickOps();
+			_scene->runPreTickOps();
 
-		_compositionBuffer.blitFrom(_backgroundBuffer);
+			_compositionBuffer.blitFrom(_backgroundBuffer);
 
-		if (_inventory->isOpen() && _scene->getNum() == 2) {
-			int invCount = _gdsScene->countItemsInScene2();
-			_inventory->draw(_compositionBuffer, invCount);
-		}
+			if (_inventory->isOpen() && _scene->getNum() == 2) {
+				int invCount = _gdsScene->countItemsInScene2();
+				_inventory->draw(_compositionBuffer, invCount);
+			}
 
-		_compositionBuffer.transBlitFrom(_storedAreaBuffer);
+			_compositionBuffer.transBlitFrom(_storedAreaBuffer);
 
-		_scene->drawActiveDialogBgs(&_compositionBuffer);
+			_scene->drawActiveDialogBgs(&_compositionBuffer);
 
-		if (_scene->getNum() != 2 || _inventory->isZoomVisible())
-			_adsInterp->run();
+			if (_scene->getNum() != 2 || _inventory->isZoomVisible())
+				_adsInterp->run();
 
-		if (mouseEvent != Common::EVENT_INVALID) {
-			if (_inventory->isOpen()) {
-				switch (mouseEvent) {
-				case Common::EVENT_MOUSEMOVE:
-					_inventory->mouseMoved(_lastMouse);
-					break;
-				case Common::EVENT_LBUTTONDOWN:
-					_inventory->mouseLDown(_lastMouse);
-					break;
-				case Common::EVENT_LBUTTONUP:
-					_inventory->mouseLUp(_lastMouse);
-					break;
-				case Common::EVENT_RBUTTONUP:
-					_inventory->mouseRUp(_lastMouse);
-					break;
-				default:
-					break;
-				}
-			} else {
-				switch (mouseEvent) {
-				case Common::EVENT_MOUSEMOVE:
-					_scene->mouseMoved(_lastMouse);
-					break;
-				case Common::EVENT_LBUTTONDOWN:
-					_scene->mouseLDown(_lastMouse);
-					break;
-				case Common::EVENT_LBUTTONUP:
-					_scene->mouseLUp(_lastMouse);
-					break;
-				case Common::EVENT_RBUTTONDOWN:
-					_scene->mouseRDown(_lastMouse);
-					break;
-				case Common::EVENT_RBUTTONUP:
-					_scene->mouseRUp(_lastMouse);
-					break;
-				default:
-					break;
+			if (mouseEvent != Common::EVENT_INVALID) {
+				if (_inventory->isOpen()) {
+					switch (mouseEvent) {
+					case Common::EVENT_MOUSEMOVE:
+						_inventory->mouseMoved(_lastMouse);
+						break;
+					case Common::EVENT_LBUTTONDOWN:
+						_inventory->mouseLDown(_lastMouse);
+						break;
+					case Common::EVENT_LBUTTONUP:
+						_inventory->mouseLUp(_lastMouse);
+						break;
+					case Common::EVENT_RBUTTONUP:
+						_inventory->mouseRUp(_lastMouse);
+						break;
+					default:
+						break;
+					}
+				} else {
+					switch (mouseEvent) {
+					case Common::EVENT_MOUSEMOVE:
+						_scene->mouseMoved(_lastMouse);
+						break;
+					case Common::EVENT_LBUTTONDOWN:
+						_scene->mouseLDown(_lastMouse);
+						break;
+					case Common::EVENT_LBUTTONUP:
+						_scene->mouseLUp(_lastMouse);
+						break;
+					case Common::EVENT_RBUTTONDOWN:
+						_scene->mouseRDown(_lastMouse);
+						break;
+					case Common::EVENT_RBUTTONUP:
+						_scene->mouseRUp(_lastMouse);
+						break;
+					default:
+						break;
+					}
 				}
 			}
+
+			// TODO: Hard-coded logic to match Rise of the Dragon, check others
+			if (getGameId() != GID_DRAGON || _scene->getNum() != 55)
+				_gdsScene->runPostTickOps();
+
+			_scene->runPostTickOps();
+			_scene->checkTriggers();
+
+			_dumpFrame(_backgroundBuffer, "back");
+			_dumpFrame(_storedAreaBuffer, "stor");
+			_dumpFrame(_compositionBuffer, "comp");
+
+			if (!_inventory->isOpen()) {
+				_gdsScene->drawItems(_compositionBuffer);
+				checkDrawInventoryButton();
+			}
+
+			if (getGameId() == GID_DRAGON)
+				_clock.draw(_compositionBuffer);
+
+			bool haveActiveDialog = _scene->checkDialogActive();
+
+			_scene->drawAndUpdateDialogs(&_compositionBuffer);
+			_scene->drawVisibleHeads(&_compositionBuffer);
+
+			_dumpFrame(_compositionBuffer, "comp-with-dlg");
+
+			bool gameRunning = (!haveActiveDialog && _gameGlobals->getGlobal(0x57) /* TODO: && _dragItem == nullptr*/);
+			_clock.update(gameRunning);
+
+			g_system->copyRectToScreen(_compositionBuffer.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+			_justChangedScene1 = false;
+			_justChangedScene2 = false;
 		}
 
-		// TODO: Hard-coded logic to match Rise of the Dragon, check others
-		if (getGameId() != GID_DRAGON || _scene->getNum() != 55)
-			_gdsScene->runPostTickOps();
-
-		_scene->runPostTickOps();
-		_scene->checkTriggers();
-
-		_dumpFrame(_backgroundBuffer, "back");
-		_dumpFrame(_storedAreaBuffer, "stor");
-		_dumpFrame(_compositionBuffer, "comp");
-
-		if (!_inventory->isOpen()) {
-			_gdsScene->drawItems(_compositionBuffer);
-			checkDrawInventoryButton();
-		}
-
-		if (getGameId() == GID_DRAGON)
-			_clock.draw(_compositionBuffer);
-
-		bool haveActiveDialog = _scene->checkDialogActive();
-
-		_scene->drawAndUpdateDialogs(&_compositionBuffer);
-		_scene->drawVisibleHeads(&_compositionBuffer);
-
-		_dumpFrame(_compositionBuffer, "comp-with-dlg");
-
-		bool gameRunning = (!haveActiveDialog && _gameGlobals->getGlobal(0x57) /* TODO: && _dragItem == nullptr*/);
-		_clock.update(gameRunning);
-
-		g_system->copyRectToScreen(_compositionBuffer.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 		g_system->updateScreen();
-		g_system->delayMillis(10);
 
-		_justChangedScene1 = false;
-		_justChangedScene2 = false;
+		// Limit to 30 FPS
+		const uint32 thisFrameMillis = g_system->getMillis();
+		frameCount++;
+		if (_skipNextFrame) {
+			frameCount++;
+			_skipNextFrame = false;
+		}
+		const uint32 elapsedMillis = thisFrameMillis - startMillis;
+		const uint32 targetMillis = (frameCount * 1000 / 30);
+		if (targetMillis > elapsedMillis) {
+			// too fast, delay
+			g_system->delayMillis(targetMillis - elapsedMillis);
+		} else if (targetMillis < elapsedMillis) {
+			// too slow.. adjust expectations? :)
+			startMillis = g_system->getMillis();
+			frameCount = 0;
+		}
+
 	}
 	return Common::kNoError;
 }
@@ -759,6 +782,13 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 		_soundPlayer->stopAllSfx();
 		_scene->unload();
 		_adsInterp->unload();
+
+		// Clear arcade state completely.
+		if (getGameId() == GID_DRAGON) {
+			delete _dragonArcade;
+			_dragonArcade = new DragonArcade();
+		}
+
 		_scene->load(sceneFile, _resource, _decompressor);
 	}
 
