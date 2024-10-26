@@ -178,6 +178,7 @@ protected:
 	SCNHANDLE _hScript;
 	SCNHANDLE _hSegment;
 	Common::Path _filename;
+	Common::File _file;
 
 	uint8 _volume;
 
