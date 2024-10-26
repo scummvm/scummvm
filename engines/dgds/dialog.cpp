@@ -365,6 +365,31 @@ void Dialog::drawType4(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 	}
 }
 
+int _stringWidthIgnoringTrainingSpace(const DgdsFont *font, const Common::String &line) {
+	if (Common::isSpace(line.lastChar())) {
+		// Find end without trailing spaces
+		int i = line.size() - 2;
+		while (i > 0 && Common::isSpace(line[i]))
+			i--;
+		return font->getStringWidth(line.substr(0, i + 1));
+	} else {
+		return font->getStringWidth(line);
+	}
+}
+
+int _maxWidthIgnoringTrailingSpace(const DgdsFont *font, const Common::Array<Common::String> &lines) {
+	//
+	// The line wrapper returns width including trailing spaces, but for accurate
+	// layout we need to ignore spaces in the string width.
+	//
+	int maxWidth = 0;
+	for (const auto &line : lines) {
+		maxWidth = MAX(_stringWidthIgnoringTrainingSpace(font, line), maxWidth);
+	}
+	return maxWidth;
+}
+
+
 void Dialog::drawFindSelectionXY() {
 	if (!_state)
 		return;
@@ -381,8 +406,9 @@ void Dialog::drawFindSelectionXY() {
 	_state->_charHeight = font->getFontHeight();
 	if (_state->_strMouseLoc) {
 		Common::Array<Common::String> lines;
-		int maxWidth = font->wordWrapText(_str, _state->_loc.width, lines);
+		font->wordWrapText(_str, _state->_loc.width, lines, 0, Graphics::kWordWrapOnExplicitNewLines | Graphics::kWordWrapAllowTrailingWhitespace);
 		uint nlines = _countPrintedLines(lines);
+		int maxWidth = _maxWidthIgnoringTrailingSpace(font, lines);
 
 		if (hasFlag(kDlgFlagLeftJust)) {
 			x = x + (_state->_loc.width - maxWidth - 1) / 2;
@@ -406,7 +432,7 @@ void Dialog::drawFindSelectionXY() {
 		}
 
 		// now get width of the remaining string to the mouse str offset
-		x += font->getStringWidth(_str.substr(totalchars, _state->_strMouseLoc - totalchars));
+		x += _stringWidthIgnoringTrainingSpace(font, _str.substr(totalchars, _state->_strMouseLoc - totalchars));
 
 		// TODO: does this make sense?
 		if (_state->_loc.x + _state->_loc.width < (x + font->getCharWidth(_state->_strMouseLoc))) {
@@ -463,8 +489,9 @@ void Dialog::drawFindSelectionTxtOffset() {
 	int dlgy = _state->_loc.y;
 
 	Common::Array<Common::String> lines;
-	int maxWidth = font->wordWrapText(_str, _state->_loc.width, lines);
+	font->wordWrapText(_str, _state->_loc.width, lines, 0, Graphics::kWordWrapOnExplicitNewLines | Graphics::kWordWrapAllowTrailingWhitespace);
 	uint numPrintedLines = _countPrintedLines(lines);
+	int maxWidth = _maxWidthIgnoringTrailingSpace(font, lines);
 
 	if (hasFlag(kDlgFlagLeftJust)) {
 		int textHeight = numPrintedLines * lineHeight;
@@ -509,7 +536,7 @@ void Dialog::drawForeground(Graphics::ManagedSurface *dst, uint16 fontcol, const
 	Common::StringArray lines;
 	const DgdsFont *font = getDlgTextFont();
 	const int h = font->getFontHeight();
-	font->wordWrapText(txt, _state->_loc.width, lines);
+	font->wordWrapText(txt, _state->_loc.width, lines, 0, Graphics::kWordWrapOnExplicitNewLines | Graphics::kWordWrapAllowTrailingWhitespace);
 	uint numPrintedLines = _countPrintedLines(lines);
 
 	int ystart = _state->_loc.y + (_state->_loc.height - (int)numPrintedLines * h) / 2;
@@ -533,7 +560,7 @@ void Dialog::drawForeground(Graphics::ManagedSurface *dst, uint16 fontcol, const
 		int maxlen = 0;
 		// each line left-aligned, but overall block is still centered
 		for (const auto &line : lines)
-			maxlen = MAX(maxlen, font->getStringWidth(line));
+			maxlen = MAX(maxlen, _stringWidthIgnoringTrainingSpace(font, line));
 		x += (_state->_loc.width - maxlen) / 2;
 		align = Graphics::kTextAlignLeft;
 		xwidth = maxlen;
@@ -658,35 +685,6 @@ struct DialogAction *Dialog::pickAction(bool isClosing, bool isForceClose) {
 
 	return nullptr;
 }
-
-
-void Dialog::fixupStringAndActions() {
-	//
-	// This is a slight HACK.  The original seems to have accepted any number
-	// of trailing spaces before a CR when doing wrapping, but our wrapper
-	// will wrap the spaces.  This creates too many blank lines.
-	// To correct this, remove sequences of blank before CRs -
-	// but we then have to fix up offsets of actions.
-	//
-	// This code is not efficient, but it only runs once on load and
-	// only on fairly short strings, so it's ok.
-	//
-	for (uint i = 0; i < _str.size(); i++) {
-		if (_str[i] == '\r') {
-			while (i > 0 && _str[i - 1] == ' ') {
-				_str.deleteChar(i - 1);
-				for (auto &action : _action) {
-					if (action.strStart >= i)
-						action.strStart--;
-					if (action.strEnd >= i)
-						action.strEnd--;
-				}
-				i--;
-			}
-		}
-	}
-}
-
 
 Common::String Dialog::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format(
