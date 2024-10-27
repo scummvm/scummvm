@@ -416,8 +416,8 @@ byte ButtonGadget::drawChinaBg(Graphics::ManagedSurface *dst, bool enabled) cons
 			dst->drawLine(x + x2_, y + x2_, x + x2_, y2 - x2_, drawCol);
 			dst->drawLine(x + x2_, y2 - x2_, (x2 - x2_) + -1, y2 - x2_, drawCol);
 		}
-    }
-    return colors[7];
+	}
+	return colors[7];
 }
 
 byte ButtonGadget::drawWillyBg(Graphics::ManagedSurface *dst, bool enabled) const {

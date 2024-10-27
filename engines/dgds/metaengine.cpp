@@ -61,11 +61,11 @@ Common::Error DgdsMetaEngine::createInstance(OSystem *syst, Engine **engine, con
 }
 
 struct KeybindingRecord {
-    Dgds::DgdsKeyEvent _action;
-    const char *_id;
-    const Common::U32String _desc;
-    const char *_key;
-    const char *_altKey;
+	Dgds::DgdsKeyEvent _action;
+	const char *_id;
+	const Common::U32String _desc;
+	const char *_key;
+	const char *_altKey;
 };
 
 Common::KeymapArray DgdsMetaEngine::initKeymaps(const char *target) const {

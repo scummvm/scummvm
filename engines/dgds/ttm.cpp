@@ -513,8 +513,8 @@ int16 TTMInterpreter::doOpInitCreditScroll(const Image *img) {
 		y += ygap + height;
 		if (y > 200)
 			break;
-    }
-    return scrollFinished;
+	}
+	return scrollFinished;
 }
 
 void TTMInterpreter::doDrawDialogForStrings(TTMEnviro &env, TTMSeq &seq, int16 x, int16 y, int16 width, int16 height) {
