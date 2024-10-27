@@ -1461,7 +1461,7 @@ int EoBInfProcessor::oeob_changeDirection(int8 *data) {
 
 	} else if (cmd == -11) {
 		for (int i = 0; i < 10; i++) {
-			if (_vm->_flyingObjects[i].enable)
+			if (_vm->_flyingObjects[i].enable && _vm->_flyingObjects[i].curBlock == _lastScriptFunc)
 				_vm->_flyingObjects[i].direction = (_vm->_flyingObjects[i].direction + dir) & 3;
 		}
 	}
