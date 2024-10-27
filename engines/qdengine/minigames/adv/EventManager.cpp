@@ -114,13 +114,13 @@ void EventManager::event(int eventID, const mgVect2f& pos, int factor) {
 
 	eventID += SYSTEM_EVENTS_SIZE;
 
-	if (eventID >= _eventPresets.size())
+	if (eventID >= (int)_eventPresets.size())
 		return;
 
 	const EventPreset& pr = _eventPresets[eventID];
 
 	if (pr.triggerEventID >= 0) {
-		assert(pr.triggerEventID < _triggerEvents.size());
+		assert(pr.triggerEventID < (int)_triggerEvents.size());
 		_triggerEvents[pr.triggerEventID]->set_state("on");
 	}
 

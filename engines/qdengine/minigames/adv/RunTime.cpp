@@ -873,7 +873,7 @@ int MinigameManager::rnd(const Std::vector<float> &prob) const {
 		if (rnd <= accum)
 			break;
 	}
-	assert(idx >= 0 && idx < prob.size());
+	assert(idx >= 0 && idx < (int)prob.size());
 #ifdef _DEBUG
 	float sum = 0.f;
 

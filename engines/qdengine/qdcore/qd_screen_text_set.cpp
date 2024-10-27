@@ -149,7 +149,7 @@ void qdScreenTextSet::clear_texts(qdNamedObject *owner) {
 	// Equivalent of
 	// texts_container_t::iterator it = std::remove_if(_texts.begin(), _texts.end(), std::bind2nd(std::mem_fun_ref(&qdScreenText::is_owned_by), owner));
 
-	for (int i = 0; i < _texts.size();) {
+	for (int i = 0; i < (int)_texts.size();) {
 		if (_texts[i].is_owned_by(owner)) {
 			_texts.remove_at(i);
 

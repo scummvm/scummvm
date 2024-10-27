@@ -111,7 +111,7 @@ bool grTileAnimation::compress(grTileCompressionMethod method) {
 		uint32 offs = tile_offsets.back();
 		uint32 sz = grTileSprite::compress(data, &*tile_vector.begin(), method);
 
-		for (int j = 0; j < sz; j++)
+		for (uint32 j = 0; j < sz; j++)
 			tile_data.push_back(tile_vector[j]);
 
 		tile_offsets.push_back(offs + sz);

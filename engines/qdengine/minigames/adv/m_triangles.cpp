@@ -191,7 +191,7 @@ const char *MinigameTriangle::Node::getFaceStateName(int angle, bool selected, b
 	assert(!selected || !animated); // анимированные выделенными быть не могут
 
 	static const char *angleNames[3] = {"0", "120", "240"};
-	assert(angle >= 0 && angle < sizeof(angleNames) / sizeof(angleNames[0]));
+	assert(angle >= 0 && angle < ARRAYSIZE(angleNames));
 
 	Common::String out;
 
@@ -614,7 +614,7 @@ int MinigameTriangle::destination(int num1, int num2) const {
 }
 
 mgVect3f MinigameTriangle::slotCoord(int pos, int angle) const {
-	assert(pos * 3 + angle < positions_.size());
+	assert(pos * 3 + angle < (int)positions_.size());
 	return positions_[pos * 3 + angle];
 }
 

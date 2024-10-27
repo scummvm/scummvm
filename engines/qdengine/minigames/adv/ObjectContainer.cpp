@@ -90,7 +90,7 @@ void ObjectContainer::hideAll() {
 }
 
 QDObject ObjectContainer::getObject() {
-	if (_current < _objects.size())
+	if (_current < (int)_objects.size())
 		return _objects[_current++];
 
 	return _objects[0]; // bad, but better than crashing
