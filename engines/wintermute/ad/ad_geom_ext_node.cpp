@@ -140,7 +140,7 @@ bool AdGeomExtNode::setupNode(const char *namePattern, TGeomNodeType type, bool 
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGeomExtNode::matchesName(const char *name) {
-	return Common::matchString(name, _namePattern, true);
+	return BaseUtils::matchesPattern(_namePattern, name);
 }
 
 } // namespace Wintermute

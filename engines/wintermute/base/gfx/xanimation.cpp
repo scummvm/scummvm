@@ -62,7 +62,7 @@ Animation::~Animation() {
 
 //////////////////////////////////////////////////////////////////////////
 bool Animation::findBone(FrameNode *rootFrame) {
-	if (_targetName != "") {
+	if (!_targetName.empty()) {
 		_targetFrame = rootFrame->findFrame(_targetName.c_str());
 	}
 	return true;

@@ -51,7 +51,6 @@ AdObject3D::AdObject3D(BaseGame *inGame) : AdObject(inGame) {
 	_lastPosVector = DXVector3(0.0f, 0.0f, 0.0f);
 
 	_state = _nextState = STATE_READY;
-
 	_dropToFloor = true;
 	_shadowType = SHADOW_STENCIL;
 
@@ -84,7 +83,7 @@ void AdObject3D::clearIgnoredLights() {
 //////////////////////////////////////////////////////////////////////////
 bool AdObject3D::addIgnoredLight(char *lightName) {
 	for (uint32 i = 0; i < _ignoredLights.size(); i++) {
-		if (_ignoredLights[i] == lightName) {
+		if (scumm_stricmp(_ignoredLights[i], lightName) == 0) {
 			return true;
 		}
 	}
@@ -96,7 +95,7 @@ bool AdObject3D::addIgnoredLight(char *lightName) {
 //////////////////////////////////////////////////////////////////////////
 bool AdObject3D::removeIgnoredLight(char *lightName) {
 	for (uint32 i = 0; i < _ignoredLights.size(); i++) {
-		if (_ignoredLights[i] == lightName) {
+		if (scumm_stricmp(_ignoredLights[i], lightName) == 0) {
 			_ignoredLights.remove_at(i);
 			return true;
 		}
@@ -259,9 +258,7 @@ ScValue *AdObject3D::scGetProperty(const Common::String &name) {
 	// Angle
 	//////////////////////////////////////////////////////////////////////////
 	if (name == "Angle") {
-		float tmp = 0.0f;
-		_scValue->setFloat(tmp);
-		_angle = tmp;
+		_scValue->setFloat(_angle);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -602,7 +599,6 @@ bool AdObject3D::getBonePosition2D(const char *boneName, int32 *x, int32 *y) {
 	}
 
 	AdGame *adGame = (AdGame *)_gameRef;
-
 	if (!adGame->_scene || !adGame->_scene->_geom)
 		return false;
 

@@ -831,7 +831,6 @@ bool XModel::setMaterialTheora(const char *materialName, const char *theoraFilen
 	}
 
 	VideoTheoraPlayer *theora = new VideoTheoraPlayer(_gameRef);
-
 	if (!theora || theora->initialize(theoraFilename)) {
 		delete theora;
 		return false;
@@ -908,7 +907,6 @@ bool XModel::persist(BasePersistenceManager *persistMgr) {
 		for (int i = 0; i < X_NUM_ANIMATION_CHANNELS; i++) {
 			_channels[i] = nullptr;
 		}
-
 		_rootFrame = nullptr;
 
 		if (getFilename()) {

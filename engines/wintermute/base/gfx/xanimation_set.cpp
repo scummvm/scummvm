@@ -118,7 +118,6 @@ int AnimationSet::getFrameTime() {
 	}
 
 	_frameTime = 0;
-
 	for (uint32 i = 0; i < _animations.size(); i++) {
 		int frameTime = _animations[i]->getFrameTime();
 		if (_frameTime == 0) {
@@ -137,7 +136,6 @@ uint32 AnimationSet::getTotalTime() {
 	}
 
 	_totalTime = 0;
-
 	for (uint32 i = 0; i < _animations.size(); i++) {
 		_totalTime = MAX((float)_totalTime, _animations[i]->getTotalTime() / ((float)_model->_ticksPerSecond / 1000.0f));
 	}

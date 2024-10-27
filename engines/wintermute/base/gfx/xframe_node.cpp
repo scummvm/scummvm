@@ -59,14 +59,12 @@ FrameNode::~FrameNode() {
 	for (uint32 i = 0; i < _frames.size(); i++) {
 		delete _frames[i];
 	}
-
 	_frames.clear();
 
 	// remove meshes
 	for (uint32 i = 0; i < _meshes.size(); i++) {
 		delete _meshes[i];
 	}
-
 	_meshes.clear();
 }
 
@@ -224,7 +222,7 @@ bool FrameNode::findBones(FrameNode *rootFrame) {
 
 //////////////////////////////////////////////////////////////////////////
 FrameNode *FrameNode::findFrame(const char *frameName) {
-	if (getName() && scumm_stricmp(getName(), frameName) == 0) {
+	if (getName() && strcmp(getName(), frameName) == 0) {
 		return this;
 	} else {
 		for (uint32 i = 0; i < _frames.size(); i++) {
