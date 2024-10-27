@@ -27,19 +27,12 @@
 #include "common/stream.h"
 #include "common/str.h"
 
-#if defined(__DC__)
-// libronin doesn't support rename
-#define STDIOSTREAM_NO_ATOMIC_SUPPORT
-#endif
-
 class StdioStream : public Common::SeekableReadStream, public Common::SeekableWriteStream, public Common::NonCopyable {
 public:
 	enum WriteMode {
 		WriteMode_Read = 0,
 		WriteMode_Write = 1,
-#ifndef STDIOSTREAM_NO_ATOMIC_SUPPORT
 		WriteMode_WriteAtomic = 2,
-#endif
 	};
 
 protected:

@@ -35,6 +35,15 @@
 #include "backends/fs/stdiostream.h"
 #include "common/textconsole.h"
 
+#if defined(__DC__)
+// libronin doesn't support rename
+#define STDIOSTREAM_NO_ATOMIC_SUPPORT
+#endif
+#if defined(ATARI)
+// Atari file names must have a 8.3 format, atomic breaks this
+#define STDIOSTREAM_NO_ATOMIC_SUPPORT
+#endif
+
 StdioStream::StdioStream(void *handle) : _handle(handle), _path(nullptr) {
 	assert(handle);
 }
@@ -164,6 +173,7 @@ StdioStream *StdioStream::makeFromPathHelper(const Common::String &path, WriteMo
 		StdioStream *(*factory)(void *handle)) {
 	Common::String tmpPath(path);
 
+	// If no atmoic support is compiled in, WriteMode_WriteAtomic must behave like WriteMode_Write
 #ifndef STDIOSTREAM_NO_ATOMIC_SUPPORT
 	// In atomic mode we create a temporary file and rename it when closing the file descriptor
 	if (writeMode == WriteMode_WriteAtomic) {
