@@ -430,6 +430,7 @@ View1::View1() : UIElement("View1") {
 					g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->Index;
 					g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
 					g_engine->RunScriptExecutor(false);
+					return true;
 				}
 				if (activeInventoryItem != nullptr && clickedObject != nullptr) {
 					// Trigger a use item on item
