@@ -644,6 +644,8 @@ void Room201::daemon() {
 			kernel_timing_trigger(15, 1073);
 			_conv2 = 6;
 		}
+		// fallthrough
+		// FIXME: Was fallthrough intended here?
 
 	case 1073:
 		_conv1 = 0;
