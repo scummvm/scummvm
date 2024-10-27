@@ -4604,7 +4604,7 @@ void ScummEngine::transitionEffect(int a) {
  */
 void ScummEngine::dissolveEffect(int width, int height) {
 	// Apparently Mac versions discarded this effect
-	if (_macScreen && _macGui)
+	if (_macScreen)
 		return;
 
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
@@ -4709,9 +4709,7 @@ void ScummEngine::dissolveEffect(int width, int height) {
 			towns_drawStripToScreen(vs, x, y + vs->topline, x, y, width, height);
 		else
 #endif
-		if (_macScreen && _game.version == 3)
-			mac_drawStripToScreen(vs, y, x, y + vs->topline, width, height);
-		else if (IS_ALIGNED(width, 4))
+		if (IS_ALIGNED(width, 4))
 			drawStripToScreen(vs, x, width, y, y + height);
 		else {
 			const byte *src = vs->getPixels(x, y);
