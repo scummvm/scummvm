@@ -53,6 +53,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -839,11 +840,14 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 		@Override
 		protected String[] getSysArchives() {
-			Log.d(ScummVM.LOG_TAG, "Adding to Search Archive: " + _actualScummVMDataDir.getPath());
+			File assetsDir = new File(_actualScummVMDataDir, "assets");
+			Log.d(ScummVM.LOG_TAG, "Adding to Search Archive: " + assetsDir.getPath());
 			if (_externalPathAvailableForReadAccess && _possibleExternalScummVMDir != null) {
 				Log.d(ScummVM.LOG_TAG, "Adding to Search Archive: " + _possibleExternalScummVMDir.getPath());
-				return new String[]{_actualScummVMDataDir.getPath(), _possibleExternalScummVMDir.getPath()};
-			} else return new String[]{_actualScummVMDataDir.getPath()};
+				return new String[]{assetsDir.getPath(), _possibleExternalScummVMDir.getPath()};
+			} else {
+				return new String[]{assetsDir.getPath()};
+			}
 		}
 
 		@Override
@@ -1964,97 +1968,189 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		return true;
 	}
 
-
-	private boolean containsStringEntry(@NonNull String[] stringItenary, String targetEntry) {
-		for (String sourceEntry : stringItenary) {
-			// Log.d(ScummVM.LOG_TAG, "Comparing filename: " + sourceEntry + " to filename: " + targetEntry);
-			if (sourceEntry.compareToIgnoreCase(targetEntry) == 0) {
-				return true;
+	// Deletes recursively a directory and its contents
+	private static void deleteDir(File dir) {
+		for (File child : dir.listFiles()) {
+			if (child.isDirectory()) {
+				deleteDir(child);
+			} else {
+				if (!child.delete()) {
+					Log.e(ScummVM.LOG_TAG, "Failed to delete file:" + child.getPath());
+				}
 			}
 		}
-		return false;
+		if (!dir.delete()) {
+			Log.e(ScummVM.LOG_TAG, "Failed to delete dir:" + dir.getPath());
+		}
+	}
+
+	// clear up all files in the root of the internal app directory
+	// Don't remove the scummvm.ini nor the scummvm.log file!
+	private static void internalAppFolderCleanup(File dataDir) {
+		// We check if we already did the cleanup before by using a known to exist file
+		// scummmodern.zip has always been there in the Android port
+		if (!(new File(dataDir, "scummmodern.zip")).exists()) {
+			// We already did the cleanup: nothing to do
+			return;
+		}
+
+		File[] extfiles = dataDir.listFiles();
+		if (extfiles == null) {
+			// This should not happen
+			return;
+		}
+
+		Log.d(ScummVM.LOG_TAG, "Cleaning up old files in " + dataDir.getPath());
+		for (File extfile : extfiles) {
+			if (extfile.isDirectory()) {
+				// We never extracted folders before
+				continue;
+			}
+			// Skip scummvm.ini, scummvm.log at root
+			String name = extfile.getName();
+			if ((name.compareToIgnoreCase("scummvm.ini") == 0) ||
+				(name.compareToIgnoreCase("scummvm.log") == 0)) {
+					continue;
+			}
+			Log.d(ScummVM.LOG_TAG, "Deleting file:" + extfile.getName());
+			if (!extfile.delete()) {
+				Log.e(ScummVM.LOG_TAG, "Failed to delete file:" + extfile.getName());
+			}
+		}
 	}
 
 	// clear up any possibly deprecated assets (when upgrading to a new version)
 	// Don't remove the scummvm.ini nor the scummvm.log file!
 	// Remove any files not in the filesItenary, even in a sideUpgrade
 	// Remove any files in the filesItenary only if not a sideUpgrade
-	private void internalAppFolderCleanup(String[] filesItenary, boolean sideUpgrade) {
-		if (_actualScummVMDataDir != null) {
-			File[] extfiles = _actualScummVMDataDir.listFiles();
-			if (extfiles != null) {
-				Log.d(ScummVM.LOG_TAG, "Cleaning up files in internal app space");
-				for (File extfile : extfiles) {
-					if (extfile.isFile()) {
-						if (extfile.getName().compareToIgnoreCase("scummvm.ini") != 0
-							&& extfile.getName().compareToIgnoreCase("scummvm.log") != 0
-							&& (!containsStringEntry(filesItenary, extfile.getName())
-							|| !sideUpgrade)
-						) {
-							Log.d(ScummVM.LOG_TAG, "Deleting file:" + extfile.getName());
-							if (!extfile.delete()) {
-								Log.e(ScummVM.LOG_TAG, "Failed to delete file:" + extfile.getName());
-							}
-						}
-					}
+	// Returns true if the dataDir was a directory and false otherwise
+	private static boolean assetsFolderCleanup(boolean sideUpgrade, File dataDir, String[] assetsToExtract) {
+		HashSet<String> filesToKeep = new HashSet<>(Arrays.asList(assetsToExtract));
+
+		File[] extfiles = dataDir.listFiles();
+		if (extfiles == null) {
+			// If we are here, this means dataDir is a file
+			return false;
+		}
+
+		Log.d(ScummVM.LOG_TAG, "Cleaning up files in " + dataDir.getPath());
+		for (File extfile : extfiles) {
+			String name = extfile.getName();
+
+			if (filesToKeep.contains(name) && sideUpgrade) {
+				continue;
+			}
+
+			if (extfile.isDirectory()) {
+				Log.d(ScummVM.LOG_TAG, "Deleting folder:" + extfile.getName());
+				deleteDir(extfile);
+			} else {
+				Log.d(ScummVM.LOG_TAG, "Deleting file:" + extfile.getName());
+				if (!extfile.delete()) {
+					Log.e(ScummVM.LOG_TAG, "Failed to delete file:" + extfile.getName());
 				}
 			}
 		}
+		return true;
 	}
 
 	// code based on https://stackoverflow.com/a/4530294
 	// Note, the following assumptions are made (since they are true as of yet)
-	// - We don't need to copy (sub)folders
 	// - We copy all the files from our assets (not a subset of them)
 	// Otherwise we would probably need to create a specifically named zip file with the selection of files we'd need to extract to the internal memory
-	private void copyAssetsToInternalMemory(boolean sideUpgrade) {
-		// sideUpgrade is set to true, if we upgrade to the same version -- just check for the files existence before copying
-		if (_actualScummVMDataDir != null) {
-			AssetManager assetManager = getAssets();
-			String[] files = null;
-			try {
-				files = assetManager.list("");
-			} catch (IOException e) {
-				Log.e(ScummVM.LOG_TAG, "Failed to get asset file list.", e);
+	// Returns true if the assetDir was a directory and false otherwise
+	private static boolean extractAssets(boolean sideUpgrade, AssetManager assetManager, String assetDir, File dataDir) {
+		String[] files = null;
+		try {
+			files = assetManager.list(assetDir);
+		} catch (IOException e) {
+			Log.e(ScummVM.LOG_TAG, "Failed to get asset file list.", e);
+		}
+
+		if (files == null || files.length == 0) {
+			// The asset is a file: remove any directory with the same name
+			if (dataDir.isDirectory()) {
+				deleteDir(dataDir);
+			}
+			return false;
+		}
+
+		// Starting from here, assetDir is a directory
+
+		// Cleanup old files
+		if (!assetsFolderCleanup(sideUpgrade, dataDir, files)) {
+			// dataDir is a file but we need a folder
+			if (dataDir.exists()) {
+				if (!dataDir.delete()) {
+					Log.e(ScummVM.LOG_TAG, "Failed to delete file:" + dataDir.getName());
+					// There is no point on continuing this
+					return true;
+				}
+			}
+		}
+
+		if (!dataDir.exists()) {
+			if (!dataDir.mkdir()) {
+				Log.e(ScummVM.LOG_TAG, "Failed to create directory: " + dataDir.getPath());
+				// There is no point on continuing this
+				return true;
+			}
+		}
+
+		for (String filename : files) {
+			String assetPath = (assetDir.length() > 0 ? assetDir + File.separator : "") + filename;
+			File dataPath = new File(dataDir, filename);
+
+			if (extractAssets(sideUpgrade, assetManager, assetPath, dataPath)) {
+				// This was a directory: no data to extract
+				continue;
 			}
 
-			internalAppFolderCleanup(files, sideUpgrade);
+			// This must be a file: extract it
+			InputStream in = null;
+			OutputStream out = null;
+			try {
+				// sideUpgrade is set to true, if we upgrade to the same version -- just check for the files existence before copying
+				if (sideUpgrade && dataPath.exists()) {
+					Log.d(ScummVM.LOG_TAG, "Side-upgrade. No need to update asset file: " + assetPath);
+					continue;
+				}
 
-			if (files != null) {
-				for (String filename : files) {
-					InputStream in = null;
-					OutputStream out = null;
+				Log.d(ScummVM.LOG_TAG, "Copying asset file: " + assetPath);
+				in = assetManager.open(assetPath);
+				out = new FileOutputStream(dataPath);
+				copyStreamToStream(in, out);
+			} catch (IOException e) {
+				Log.e(ScummVM.LOG_TAG, "Failed to copy asset file: " + assetPath);
+			} finally {
+				if (in != null) {
 					try {
-						in = assetManager.open(filename);
-						File outFile = new File(_actualScummVMDataDir, filename);
-						if (sideUpgrade && outFile.exists()) {
-							Log.d(ScummVM.LOG_TAG, "Side-upgrade. No need to update asset file: " + filename);
-						} else {
-							Log.d(ScummVM.LOG_TAG, "Copying asset file: " + filename);
-							out = new FileOutputStream(outFile);
-							copyStreamToStream(in, out);
-						}
+						in.close();
 					} catch (IOException e) {
-						Log.e(ScummVM.LOG_TAG, "Failed to copy asset file: " + filename);
-					} finally {
-						if (in != null) {
-							try {
-								in.close();
-							} catch (IOException e) {
-								// NOOP
-							}
-						}
-						if (out != null) {
-							try {
-								out.close();
-							} catch (IOException e) {
-								// NOOP
-							}
-						}
+						// NOOP
+					}
+				}
+				if (out != null) {
+					try {
+						out.close();
+					} catch (IOException e) {
+						// NOOP
 					}
 				}
 			}
 		}
+		return true;
+	}
+
+	private void copyAssetsToInternalMemory(boolean sideUpgrade) {
+		if (_actualScummVMDataDir == null) {
+			return;
+		}
+
+		internalAppFolderCleanup(_actualScummVMDataDir);
+
+		AssetManager assetManager = getAssets();
+		extractAssets(sideUpgrade, assetManager, "assets", new File(_actualScummVMDataDir, "assets"));
 	}
 
 	// -------------------------------------------------------------------------------------------

@@ -5,7 +5,8 @@ GRADLE_FILES = $(shell find $(PATH_DIST)/gradle -type f)
 
 PATH_BUILD = ./android_project
 PATH_BUILD_GRADLE = $(PATH_BUILD)/gradle/.timestamp $(PATH_BUILD)/gradlew $(PATH_BUILD)/build.gradle $(PATH_BUILD)/settings.gradle $(PATH_BUILD)/mainAssets/build.gradle $(PATH_BUILD)/gradle.properties $(PATH_BUILD)/local.properties $(PATH_BUILD)/src.properties
-PATH_BUILD_ASSETS = $(PATH_BUILD)/mainAssets/src/main/assets
+# $(PATH_BUILD)/mainAssets/src/main/assets is the root and everything is placed in the assets subdirectory
+PATH_BUILD_ASSETS = $(PATH_BUILD)/mainAssets/src/main/assets/assets
 PATH_BUILD_LIB = $(PATH_BUILD)/lib/$(ABI)
 PATH_BUILD_LIBSCUMMVM = $(PATH_BUILD)/lib/$(ABI)/libscummvm.so
 
