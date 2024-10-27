@@ -52,6 +52,10 @@ ifneq ($(DIST_FILES_SHADERS),)
 	$(INSTALL) -d $(PATH_BUILD_ASSETS)/assets/shaders
 	$(INSTALL) -c -m 644 $(DIST_FILES_SHADERS) $(PATH_BUILD_ASSETS)/assets/shaders
 endif
+ifneq ($(GAMES_BUNDLE_DIRECTORY),)
+	$(INSTALL) -d $(PATH_BUILD_ASSETS)/assets/games
+	$(CP) -r $(GAMES_BUNDLE_DIRECTORY)/. $(PATH_BUILD_ASSETS)/assets/games/
+endif
 	(cd $(PATH_BUILD_ASSETS)/ && find assets -type f | sort | xargs md5sum) > $@
 
 ifdef DIST_ANDROID_CACERT_PEM
