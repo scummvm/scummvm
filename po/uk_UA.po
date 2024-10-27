@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-23 14:55+0000\n"
+"PO-Revision-Date: 2024-10-27 09:18+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -8526,59 +8526,45 @@ msgstr "Гра с початку"
 
 #. I18N: Shift Cursor during fight to top left
 #: engines/lure/metaengine.cpp:233
-#, fuzzy
-#| msgid "Cursor Left"
 msgid "Shift Cursor - Top left"
-msgstr "Курсор наліво"
+msgstr "Перевести курсор - догори наліво"
 
 #. I18N: Shift Cursor during fight to middle left
 #: engines/lure/metaengine.cpp:239
 msgid "Shift Cursor -  Middle left"
-msgstr ""
+msgstr "Перевести курсор - досередини наліво"
 
 #. I18N: Shift Cursor during fight to bottom left
 #: engines/lure/metaengine.cpp:245
 msgid "Shift Cursor - Bottom left"
-msgstr ""
+msgstr "Перевести курсор - донизу наліво"
 
 #. I18N: Shift Cursor during fight to top right
 #: engines/lure/metaengine.cpp:251
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Shift Cursor - Top right"
-msgstr "Курсор направо"
+msgstr "Перевести курсор - догори направо"
 
 #. I18N: Shift Cursor during fight to middle right
 #: engines/lure/metaengine.cpp:257
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Shift Cursor - Middle right"
-msgstr "Курсор направо"
+msgstr "Перевести курсор - досередини направо"
 
 #. I18N: Shift Cursor during fight to bottom right
 #: engines/lure/metaengine.cpp:263
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Shift Cursor - Bottom right"
-msgstr "Курсор направо"
+msgstr "Перевести курсор - донизу направо"
 
 #: engines/lure/metaengine.cpp:270
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Go to next index"
-msgstr "Перейти на наступний об'єкт"
+msgstr "Перейти на наступний індекс"
 
 #: engines/lure/metaengine.cpp:277
-#, fuzzy
-#| msgid "Go to previous object"
 msgid "Go to previous index"
-msgstr "Перейти на попередній об'єкт"
+msgstr "Перейти на попередній індекс"
 
 #: engines/lure/metaengine.cpp:284
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select index"
-msgstr "Виберіть шейдер"
+msgstr "Виберіть індекс"
 
 #: engines/made/detection_tables.h:445 engines/made/detection_tables.h:462
 msgid "The game is using unsupported engine"
@@ -8597,34 +8583,24 @@ msgstr ""
 "Інакше буде програватись музика MIDI."
 
 #: engines/made/metaengine.cpp:128
-#, fuzzy
-#| msgid "Cursor Up"
 msgid "Cursor up"
 msgstr "Курсор догори"
 
 #: engines/made/metaengine.cpp:135
-#, fuzzy
-#| msgid "Cursor Down"
 msgid "Cursor down"
 msgstr "Курсор донизу"
 
 #: engines/made/metaengine.cpp:142
-#, fuzzy
-#| msgid "Cursor Left"
 msgid "Cursor left"
 msgstr "Курсор наліво"
 
 #: engines/made/metaengine.cpp:149
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Cursor right"
 msgstr "Курсор направо"
 
 #: engines/made/metaengine.cpp:174
-#, fuzzy
-#| msgid "Reload last save"
 msgid "Repeat last message"
-msgstr "Прочитати останнє збереження гри"
+msgstr "Повторити останнє повідомлення"
 
 #: engines/mads/metaengine.cpp:63
 msgid "Easy mouse interface"
@@ -8647,26 +8623,18 @@ msgid "Naughty game mode"
 msgstr "Відвертий режим гри"
 
 #: engines/mads/metaengine.cpp:276
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Start menu keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш стартового меню"
 
 #: engines/mads/metaengine.cpp:299
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open game menu"
-msgstr "Відкрити головне меню"
+msgstr "Відкрити меню гри"
 
 #: engines/mads/metaengine.cpp:317
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Scroll bar up"
 msgstr "Прокручення догори"
 
 #: engines/mads/metaengine.cpp:323
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Scroll bar down"
 msgstr "Прокручення донизу"
 
@@ -8679,24 +8647,18 @@ msgid "Resume game"
 msgstr "Продовжити гру"
 
 #: engines/mads/metaengine.cpp:343
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show intro"
-msgstr "Показувати підказки"
+msgstr "Показувати заставку"
 
 #: engines/mads/metaengine.cpp:349
 msgid "Show credits"
 msgstr "Показати авторів"
 
 #: engines/mads/metaengine.cpp:355
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Show quotes"
-msgstr "Налаштування озвучки"
+msgstr "Показувати цитати"
 
 #: engines/mads/metaengine.cpp:361 engines/stark/metaengine.cpp:280
-#, fuzzy
-#| msgid "Quit game"
 msgid "Exit game"
 msgstr "Вийти з гри"
 
