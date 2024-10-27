@@ -1053,8 +1053,15 @@ void ScriptExecutor::ScriptPrintString() {
 	uint16 bp4 = ReadWord();
 
 	// TODO: Implement naive string printing here, refine later
+
+	Common::StringArray strings;
+	if (_executingScriptObjectID == 0) {
+		strings = g_engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, bp2, bp4);
+	} else {
+		Common::MemoryReadStream *s = GameObjects::ReadGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
+		strings = g_engine->DecodeStrings(s, bp2, bp4);
+	}
 	
-	Common::StringArray strings = _engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, bp2, bp4);
 	// TODO: Look for good pattern for the view, this feels like it is not intended this way
 	View1 *currentView = (View1 *)_engine->findView("View1");
 	currentView->setStringBox(strings);
