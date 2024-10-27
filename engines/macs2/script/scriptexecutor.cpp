@@ -1645,6 +1645,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			ReadWord();
 		}
 		else if (opcode1 == 0x0a) {
+			// l0037_DDE8:
 			ScriptPrintString();
 			// TODO: Proper end handling
 			EndBuffering(lastOpcodeTriggeredSkip);
