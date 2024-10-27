@@ -1958,7 +1958,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		bool found = false;
 		for (uint32 i = 0; i < _transitionTimes.size(); i++) {
 			BaseAnimationTransitionTime *trans = _transitionTimes[i];
-			if (trans->_animFrom == animFrom && trans->_animTo == animTo) {
+			if (!trans->_animFrom.empty() && !trans->_animTo.empty() && trans->_animFrom.compareToIgnoreCase(animFrom) == 0 && trans->_animTo.compareToIgnoreCase(animTo) == 0) {
 				found = true;
 				if (time < 0) {
 					delete trans;
@@ -1990,7 +1990,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		for (uint32 i = 0; i < _transitionTimes.size(); i++) {
 			BaseAnimationTransitionTime *trans = _transitionTimes[i];
 
-			if (trans->_animFrom == animFrom && trans->_animTo == animTo) {
+			if (!trans->_animFrom.empty() && !trans->_animTo.empty() && trans->_animFrom.compareToIgnoreCase(animFrom) == 0 && trans->_animTo.compareToIgnoreCase(animTo) == 0) {
 				time = trans->_time;
 				break;
 			}
@@ -2427,7 +2427,7 @@ bool AdActor3DX::isGoToNeeded(int x, int y) {
 uint32 AdActor3DX::getAnimTransitionTime(char *from, char *to) {
 	for (uint32 i = 0; i < _transitionTimes.size(); i++) {
 		BaseAnimationTransitionTime *trans = _transitionTimes[i];
-		if (trans->_animFrom == from && trans->_animTo == to) {
+		if (!trans->_animFrom.empty() && !trans->_animTo.empty() && trans->_animFrom.compareToIgnoreCase(from) == 0 && trans->_animTo.compareToIgnoreCase(to) == 0) {
 			return trans->_time;
 		}
 	}
