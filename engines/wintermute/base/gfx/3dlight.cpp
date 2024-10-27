@@ -81,8 +81,8 @@ bool Light3D::getViewMatrix(DXMatrix *viewMatrix) {
 
 //////////////////////////////////////////////////////////////////////////
 bool Light3D::persist(BasePersistenceManager *persistMgr) {
-	persistMgr->transferBool("_active", &_active);
-	persistMgr->transferUint32("_diffuseColor", &_diffuseColor);
+	persistMgr->transferBool(TMEMBER(_active));
+	persistMgr->transferUint32(TMEMBER(_diffuseColor));
 	return true;
 }
 

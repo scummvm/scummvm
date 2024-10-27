@@ -96,6 +96,7 @@ bool AdObject3D::addIgnoredLight(char *lightName) {
 bool AdObject3D::removeIgnoredLight(char *lightName) {
 	for (uint32 i = 0; i < _ignoredLights.size(); i++) {
 		if (scumm_stricmp(_ignoredLights[i], lightName) == 0) {
+			delete[] _ignoredLights[i];
 			_ignoredLights.remove_at(i);
 			return true;
 		}

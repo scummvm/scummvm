@@ -41,7 +41,7 @@ namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 Camera3D::Camera3D(BaseGame *inGame) : BaseNamedObject(inGame) {
-	_pos = DXVector3(0.0f, 0.0f, 0.0f);
+	_position = DXVector3(0.0f, 0.0f, 0.0f);
 	_target = DXVector3(0.0f, 0.0f, 0.0f);
 	_bank = 0.0f;
 	_fov = _origFov = degToRad(45.0f);
@@ -62,14 +62,14 @@ bool Camera3D::getViewMatrix(DXMatrix *viewMatrix) {
 		DXVec3TransformCoord(&up, &up, &rot);
 	}
 
-	DXMatrixLookAtLH(viewMatrix, &_pos, &_target, &up);
+	DXMatrixLookAtLH(viewMatrix, &_position, &_target, &up);
 
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void Camera3D::setupPos(DXVector3 pos, DXVector3 target, float bank) {
-	_pos = pos;
+	_position = pos;
 	_target = target;
 	_bank = bank;
 }
@@ -79,23 +79,23 @@ void Camera3D::rotateView(float x, float y, float z) {
 	DXVector3 vVector; // Vector for the position/view.
 
 	// Get our view vector (The direciton we are facing)
-	vVector = _target - _pos; // This gets the direction of the view
+	vVector = _target - _position; // This gets the direction of the view
 
 	// Rotate the view along the desired axis
 	if (x) {
 		// Rotate the view vector up or down, then add it to our position
-		_target._z = (float)(_pos._z + sin(x) * vVector._y + cos(x) * vVector._z);
-		_target._y = (float)(_pos._y + cos(x) * vVector._y - sin(x) * vVector._z);
+		_target._z = (float)(_position._z + sin(x) * vVector._y + cos(x) * vVector._z);
+		_target._y = (float)(_position._y + cos(x) * vVector._y - sin(x) * vVector._z);
 	}
 	if (y) {
 		// Rotate the view vector right or left, then add it to our position
-		_target._z = (float)(_pos._z + sin(y) * vVector._x + cos(y) * vVector._z);
-		_target._x = (float)(_pos._x + cos(y) * vVector._x - sin(y) * vVector._z);
+		_target._z = (float)(_position._z + sin(y) * vVector._x + cos(y) * vVector._z);
+		_target._x = (float)(_position._x + cos(y) * vVector._x - sin(y) * vVector._z);
 	}
 	if (z) {
 		// Rotate the view vector diagnally right or diagnally down, then add it to our position
-		_target._x = (float)(_pos._x + sin(z) * vVector._y + cos(z) * vVector._x);
-		_target._y = (float)(_pos._y + cos(z) * vVector._y - sin(z) * vVector._x);
+		_target._x = (float)(_position._x + sin(z) * vVector._y + cos(z) * vVector._x);
+		_target._y = (float)(_position._y + cos(z) * vVector._y - sin(z) * vVector._x);
 	}
 }
 
@@ -104,10 +104,10 @@ void Camera3D::move(float speed) {
 	DXVector3 vector; // Init a vector for our view
 
 	// Get our view vector (The direciton we are facing)
-	vector = _target - _pos; // This gets the direction of the view
+	vector = _target - _position; // This gets the direction of the view
 
-	_pos._x += vector._x * speed; // Add our acceleration to our position's X
-	_pos._z += vector._z * speed; // Add our acceleration to our position's Z
+	_position._x += vector._x * speed; // Add our acceleration to our position's X
+	_position._z += vector._z * speed; // Add our acceleration to our position's Z
 	_target._x += vector._x * speed;   // Add our acceleration to our view's X
 	_target._z += vector._z * speed;   // Add our acceleration to our view's Z
 }

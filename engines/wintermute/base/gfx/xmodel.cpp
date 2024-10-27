@@ -232,6 +232,7 @@ bool XModel::mergeFromFile(const Common::String &filename) {
 bool XModel::loadAnimationSet(const Common::String &filename, XFileData *xobj) {
 	bool res = true;
 
+	// create the animation set object
 	AnimationSet *animSet = new AnimationSet(_gameRef, this);
 	res = loadName(animSet, xobj);
 	if (!res) {
@@ -746,8 +747,8 @@ bool XModel::parseAnim(byte *buffer) {
 //////////////////////////////////////////////////////////////////////////
 bool XModel::parseEvent(AnimationSet *anim, byte *buffer) {
 	TOKEN_TABLE_START(commands)
-	TOKEN_TABLE(NAME)
-	TOKEN_TABLE(FRAME)
+		TOKEN_TABLE(NAME)
+		TOKEN_TABLE(FRAME)
 	TOKEN_TABLE_END
 
 	byte *params;

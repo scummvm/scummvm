@@ -44,7 +44,7 @@ public:
 	Camera3D(BaseGame *inGame);
 	virtual ~Camera3D();
 
-	DXVector3 _pos;
+	DXVector3 _position;
 	DXVector3 _target;
 	float _bank;
 	float _fov;

@@ -60,8 +60,8 @@ public:
 	void cleanup();
 	Mesh3DS(BaseGame *inGame);
 	virtual ~Mesh3DS();
-	bool fillVertexBuffer(uint32 color);
 	virtual void fillVertexBuffer() = 0;
+	bool fillVertexBuffer(uint32 color);
 	virtual void render() = 0;
 
 	Face3D *_faces;

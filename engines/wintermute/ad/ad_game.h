@@ -56,7 +56,17 @@ public:
 
 	bool displayDebugInfo() override;
 
+	virtual bool getLayerSize(int *layerWidth, int *layerHeight, Rect32 *viewport, bool *customViewport) override;
+
+#ifdef ENABLE_WME3D
+	uint32 getAmbientLightColor() override;
+
+	bool getFogParams(bool *fogEnabled, uint32 *fogColor, float *start, float *end) override;
+
 	virtual bool renderShadowGeometry() override;
+	TShadowType getMaxShadowType(BaseObject *object) override;
+#endif
+
 
 	bool addSpeechDir(const char *dir);
 	bool removeSpeechDir(const char *dir);
@@ -98,15 +108,6 @@ public:
 	TTalkSkipButton _talkSkipButton;
 	TVideoSkipButton _videoSkipButton;
 
-	virtual bool getLayerSize(int *layerWidth, int *layerHeight, Rect32 *viewport, bool *customViewport) override;
-#ifdef ENABLE_WME3D
-	uint32 getAmbientLightColor() override;
-
-	TShadowType getMaxShadowType(BaseObject *object) override;
-
-	bool getFogParams(bool *fogEnabled, uint32 *fogColor, float *start, float *end) override;
-#endif
-
 	bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const override;
 	bool scheduleChangeScene(const char *filename, bool fadeIn);
 	void setPrevSceneName(const char *name);
@@ -120,7 +121,6 @@ public:
 	bool showCursor() override;
 
 	TGameStateEx _stateEx;
-
 	bool displaySentences(bool frozen);
 	void addSentence(AdSentence *sentence);
 	bool changeScene(const char *filename, bool fadeIn);

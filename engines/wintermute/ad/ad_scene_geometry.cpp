@@ -217,7 +217,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 					return false;
 				} else {
 					plane->_mesh->computeNormals();
-					plane->_mesh->fillVertexBuffer(0xD00000FF); // original 0x700000FF
+					plane->_mesh->fillVertexBuffer(0x700000FF);
 					plane->_receiveShadows = extNode->_receiveShadows;
 					_planes.add(plane);
 				}
@@ -236,7 +236,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 					return false;
 				} else {
 					block->_mesh->computeNormals();
-					block->_mesh->fillVertexBuffer(0xD0FF0000); // original 0x70FF0000
+					block->_mesh->fillVertexBuffer(0x70FF0000);
 					block->_receiveShadows = extNode->_receiveShadows;
 					_blocks.add(block);
 				}
@@ -272,7 +272,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 					return false;
 				} else {
 					generic->_mesh->computeNormals();
-					generic->_mesh->fillVertexBuffer(0xD000FF00); // original 0x7000FF00
+					generic->_mesh->fillVertexBuffer(0x7000FF00);
 					generic->_receiveShadows = extNode->_receiveShadows;
 					_generics.add(generic);
 				}
@@ -987,7 +987,7 @@ bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLig
 		if (_lights[i]->_isAvailable) {
 			if (_lights[i]->_active) {
 				_gameRef->_renderer3D->lightEnable(i, _lights[i]->_active);
-				++numActiveLights;
+				numActiveLights++;
 			}
 		}
 	}

@@ -38,6 +38,7 @@ namespace Wintermute {
 
 class AdPath3D : public BaseClass {
 public:
+	DECLARE_PERSISTENT(AdPath3D, BaseClass)
 	DXVector3 *getCurrent();
 	DXVector3 *getNext();
 	DXVector3 *getFirst();
@@ -50,8 +51,6 @@ public:
 	bool _ready;
 	BaseArray<DXVector3 *> _points;
 	int32 _currIndex;
-
-	DECLARE_PERSISTENT(AdPath3D, BaseClass)
 };
 
 } // namespace Wintermute

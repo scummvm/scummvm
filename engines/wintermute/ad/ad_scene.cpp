@@ -217,6 +217,7 @@ void AdScene::cleanup() {
 		_gameRef->unregisterObject(_objects[i]);
 	}
 	_objects.clear();
+
 #ifdef ENABLE_WME3D
 	delete _geom;
 	_geom = nullptr;
@@ -1267,6 +1268,7 @@ bool AdScene::traverseNodes(bool doUpdate) {
 				}
 			}
 			break;
+
 			default:
 				error("AdScene::TraverseNodes - Unhandled enum");
 				break;
@@ -2017,8 +2019,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		const char *nodeName = stack->pop()->getString();
 
 		if (_geom) {
-			bool ret = _geom->isNodeEnabled(nodeName);
-			stack->pushBool(ret);
+			stack->pushBool(_geom->isNodeEnabled(nodeName));
 		} else {
 			stack->pushBool(false);
 		}
@@ -2073,8 +2074,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		const char *lightName = stack->pop()->getString();
 
 		if (_geom) {
-			bool res = _geom->isLightEnabled(lightName);
-			stack->pushBool(res);
+			stack->pushBool(_geom->isLightEnabled(lightName));
 		} else {
 			stack->pushBool(false);
 		}
@@ -3667,6 +3667,7 @@ bool AdScene::getSceneObjects(BaseArray<AdObject *> &objects, bool interactiveOn
 				//if (regionObj.size() > 0) Objects.Append(RegionObj);
 			}
 			break;
+
 			default:
 				debugC(kWintermuteDebugGeneral, "AdScene::GetSceneObjects - Unhandled enum");
 				break;

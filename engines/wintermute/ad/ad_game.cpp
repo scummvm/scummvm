@@ -2529,15 +2529,17 @@ bool AdGame::getLayerSize(int *layerWidth, int *layerHeight, Rect32 *viewport, b
 			// WME pre-1.7 expects the camera to only view the top-left part of the scene
 			*layerWidth = _gameRef->_renderer->getWidth();
 			*layerHeight = _gameRef->_renderer->getHeight();
-			if (_gameRef->_editorResolutionWidth > 0)
-				*layerWidth = _gameRef->_editorResolutionWidth;
-			if (_gameRef->_editorResolutionHeight > 0)
-				*layerHeight = _gameRef->_editorResolutionHeight;
 		} else
 #endif
 		{
 			*layerWidth = _scene->_mainLayer->_width;
 			*layerHeight = _scene->_mainLayer->_height;
+#ifdef ENABLE_WME3D
+			if (_gameRef->_editorResolutionWidth > 0)
+				*layerWidth = _gameRef->_editorResolutionWidth;
+			if (_gameRef->_editorResolutionHeight > 0)
+				*layerHeight = _gameRef->_editorResolutionHeight;
+#endif
 		}
 		return true;
 	} else
