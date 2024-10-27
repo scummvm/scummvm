@@ -568,6 +568,9 @@ void LoomMonkeyMacSnd::stopSound(int id) {
 
 	Common::StackLock lock(_mixer->mutex());
 
+	if (id == _curSoundSaveVar)
+		_curSoundSaveVar = 0;
+
 	if (id == _curSound)
 		stopActiveSound();
 }
