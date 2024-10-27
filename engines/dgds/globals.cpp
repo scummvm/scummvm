@@ -233,52 +233,52 @@ public:
 };
 
 
-HocGlobals::HocGlobals(Clock &clock) : Globals(clock), _unk82(1), _unk55(0),
+HocGlobals::HocGlobals(Clock &clock) : Globals(clock), _difficultyLevel(1), _unk55(0),
 	_unkDlgFileNum(0), _unkDlgDlgNum(0),  _currentCharacter2(0), _currentCharacter(0),
-	_unk50(0), _nativeGameState(0), _unk48(0), _unk47(0), _unk46(0), _unk45(0x3f), _sheckels(0),
-	_shellBet(0), _shellPea(0), _unk41(0), _unk40(3), _unk39(0) {
+	_tankFinished(0), _nativeGameState(0), _tankState(0), _unk47(0), _unk46(0), _unk45(0x3f), _sheckels(0),
+	_shellBet(0), _shellPea(0), _trainState(0), _startScene(3), _introState(0) {
 	_globals.push_back(new DetailLevelROGlobal(0x53));
-	_globals.push_back(new RWI16Global(0x52, &_unk82));
-	_globals.push_back(new RWI16Global(0x37, &_unk55)); // TODO: Special update function FUN_1407_080d, sound init related
+	_globals.push_back(new RWI16Global(0x52, &_difficultyLevel)); // TODO: Sync with difficulty in menu
+	_globals.push_back(new RWI16Global(0x37, &_unk55)); // TODO: Special update function FUN_1407_080d, sound init related.. sound bank?
 	_globals.push_back(new RWI16Global(0x36, &_unkDlgFileNum));
 	_globals.push_back(new RWI16Global(0x35, &_unkDlgDlgNum));
 	_globals.push_back(new HocCharacterGlobal(0x34, &_currentCharacter));
 	_globals.push_back(new HocCharacterGlobal(0x33, &_currentCharacter2));
-	_globals.push_back(new RWI16Global(0x32, &_unk50));
+	_globals.push_back(new RWI16Global(0x32, &_tankFinished));
 	_globals.push_back(new RWI16Global(0x31, &_nativeGameState));
-	_globals.push_back(new RWI16Global(0x30, &_unk48));
-	_globals.push_back(new RWI16Global(0x2F, &_unk47));
-	_globals.push_back(new RWI16Global(0x2E, &_unk46));
+	_globals.push_back(new RWI16Global(0x30, &_tankState));
+	_globals.push_back(new RWI16Global(0x2F, &_unk47)); // tank related.. cows?
+	_globals.push_back(new RWI16Global(0x2E, &_unk46)); // tank related.. start point?
 	_globals.push_back(new RWI16Global(0x2D, &_unk45)); // TODO: Special update function FUN_1407_0784, palette related?
 	_globals.push_back(new RWI16Global(0x2C, &_sheckels));	// used as currency in Istanbul
 	_globals.push_back(new RWI16Global(0x2B, &_shellBet));
 	_globals.push_back(new RWI16Global(0x2A, &_shellPea));
-	_globals.push_back(new RWI16Global(0x29, &_unk41));
-	_globals.push_back(new RWI16Global(0x28, &_unk40));
-	_globals.push_back(new ROI16Global(0x27, &_unk39));
+	_globals.push_back(new RWI16Global(0x29, &_trainState));
+	_globals.push_back(new RWI16Global(0x28, &_startScene));
+	_globals.push_back(new ROI16Global(0x27, &_introState));
 }
 
 Common::Error HocGlobals::syncState(Common::Serializer &s) {
 	Globals::syncState(s);
 
-	s.syncAsSint16LE(_unk39);
-	s.syncAsSint16LE(_unk40);
-	s.syncAsSint16LE(_unk41);
+	s.syncAsSint16LE(_introState);
+	s.syncAsSint16LE(_startScene);
+	s.syncAsSint16LE(_trainState);
 	s.syncAsSint16LE(_shellPea);
 	s.syncAsSint16LE(_shellBet);
 	s.syncAsSint16LE(_sheckels);
 	s.syncAsSint16LE(_unk45);
 	s.syncAsSint16LE(_unk46);
 	s.syncAsSint16LE(_unk47);
-	s.syncAsSint16LE(_unk48);
+	s.syncAsSint16LE(_tankState);
 	s.syncAsSint16LE(_nativeGameState);
-	s.syncAsSint16LE(_unk50);
+	s.syncAsSint16LE(_tankFinished);
 	s.syncAsSint16LE(_currentCharacter);
 	s.syncAsSint16LE(_currentCharacter2);
 	s.syncAsSint16LE(_unkDlgDlgNum);
 	s.syncAsSint16LE(_unkDlgFileNum);
 	s.syncAsSint16LE(_unk55);
-	s.syncAsSint16LE(_unk82);
+	s.syncAsSint16LE(_difficultyLevel);
 
 	return Common::kNoError;
 }

@@ -19,49 +19,27 @@
  *
  */
 
-#ifndef DGDS_SHELL_GAME_H
-#define DGDS_SHELL_GAME_H
+#ifndef DGDS_DRAGON_NATIVE_H
+#define DGDS_DRAGON_NATIVE_H
 
-#include "dgds/image.h"
+#include "dgds/font.h"
 
 namespace Dgds {
 
-/** Native code for the shell game from Heart of China. */
-class ShellGame {
+/**
+ * Native scene ops for Rise of the Dragon.
+ *
+ * The arcade section is more complex, see `dragon_arcade.h`
+ */
+class DragonNative {
 public:
-	ShellGame();
-
-	void shellGameTick();
-	void shellGameEnd();
+	static void updatePasscodeGlobal();
+	static void drawCountdown(FontManager::FontType fontType, int16 x, int16 y);
 
 private:
-	void init();
-	void drawShellGameStr(int16 count, int16 x, int16 y) const;
-	void drawShells() const;
-	void swapShells(bool flag);
-	void revealPea(bool flag);
-	void update();
-	bool checkDistract();
-	void setupSwap();
-
-	Common::SharedPtr<Image> _shellGameImg;
-	uint16 _revealPeaStep;
-	uint16 _currentPeaPosition;
-	bool _lastPass;
-	uint16 _distractStep;
-	uint16 _distractDelay;
-	uint16 _state13Counter;
-	int16 _swapPea1;
-	int16 _swapPea2;
-	uint16 _lastSwapPea1;
-	uint16 _swapStatus;
-	int16 _swapMoveDist;
-	uint16 _swapMoveStep;
-	uint16 _swapCount;
-	int16 _reverseDirection;
-	bool _clockwise;
+	DragonNative();  // only static ops, don't instantiate
 };
 
 } // end namespace Dgds
 
-#endif // DGDS_SHELL_GAME_H
+#endif // DGDS_DRAGON_NATIVE_H

@@ -63,6 +63,7 @@
 #include "dgds/sound.h"
 #include "dgds/game_palettes.h"
 #include "dgds/dragon_arcade.h"
+#include "dgds/hoc_intro.h"
 
 // for frame contents debugging
 //#define DUMP_FRAME_DATA 1
@@ -81,7 +82,7 @@ const byte DgdsEngine::HOC_CHAR_SWAP_ICONS[] = { 0, 20, 21, 22 };
 DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	: Engine(syst), _fontManager(nullptr), _console(nullptr), _inventory(nullptr),
 	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr), _shellGame(nullptr),
-	_gdsScene(nullptr), _resource(nullptr), _gamePals(nullptr), _gameGlobals(nullptr),
+	_hocIntro(nullptr), _gdsScene(nullptr), _resource(nullptr), _gamePals(nullptr), _gameGlobals(nullptr),
 	_detailLevel(kDgdsDetailHigh), _textSpeed(1), _justChangedScene1(false), _justChangedScene2(false),
 	_random("dgds"), _currentCursor(-1), _menuToTrigger(kMenuNone), _isLoading(true), _flipMode(false),
 	_rstFileName(nullptr), _difficulty(1), _menu(nullptr), _adsInterp(nullptr), _isDemo(false),
@@ -129,6 +130,7 @@ DgdsEngine::~DgdsEngine() {
 	delete _menu;
 	delete _inventory;
 	delete _shellGame;
+	delete _hocIntro;
 	delete _dragonArcade;
 
 	_icons.reset();
@@ -323,10 +325,9 @@ void DgdsEngine::init(bool restarting) {
 		delete _menu;
 		delete _adsInterp;
 		delete _inventory;
-		if (_dragonArcade)
-			delete _dragonArcade;
-		if (_shellGame)
-			delete _shellGame;
+		delete _dragonArcade;
+		delete _shellGame;
+		delete _hocIntro;
 	}
 
 	_gamePals = new GamePalettes(_resource, _decompressor);
@@ -339,8 +340,10 @@ void DgdsEngine::init(bool restarting) {
 	_inventory = new Inventory();
 	if (_gameId == GID_DRAGON)
 		_dragonArcade = new DragonArcade();
-	else if (_gameId == GID_HOC)
+	else if (_gameId == GID_HOC) {
 		_shellGame = new ShellGame();
+		_hocIntro = new HocIntro();
+	}
 
 	_backgroundBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 	_storedAreaBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());

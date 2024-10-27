@@ -1056,7 +1056,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	case 0xf010: { // LOAD SCR:	filename:str
 		if (seq._executed) // this is a one-shot op
 			break;
-		Image tmp = Image(_vm->getResourceManager(), _vm->getDecompressor());
+		Image tmp(_vm->getResourceManager(), _vm->getDecompressor());
 		tmp.drawScreen(sval, _vm->getBackgroundBuffer());
 		_vm->_compositionBuffer.blitFrom(_vm->getBackgroundBuffer());
 		_vm->getStoredAreaBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);

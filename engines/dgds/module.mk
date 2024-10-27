@@ -10,10 +10,12 @@ MODULE_OBJS := \
 	dialog.o \
 	dragon_arcade.o \
 	dragon_arcade_ttm.o \
+	dragon_native.o \
 	drawing.o \
 	font.o \
 	game_palettes.o \
 	globals.o \
+	hoc_intro.o \
 	image.o \
 	inventory.o \
 	menu.o \
@@ -21,12 +23,12 @@ MODULE_OBJS := \
 	parser.o \
 	request.o \
 	resource.o \
+	scene.o \
 	scripts.o \
 	shell_game.o \
+	sound.o \
 	sound_raw.o \
 	ttm.o \
-	scene.o \
-	sound.o \
 	sound/midiparser_sci.o \
 	sound/music.o \
 	sound/drivers/adlib.o \

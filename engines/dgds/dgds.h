@@ -60,6 +60,7 @@ class ADSInterpreter;
 class Globals;
 class ShellGame;
 class DragonArcade;
+class HocIntro;
 
 const float MS_PER_FRAME = 16.6667f;
 
@@ -141,6 +142,7 @@ private:
 
 	// HoC only
 	ShellGame *_shellGame;
+	HocIntro *_hocIntro;
 
 	FontManager *_fontManager;
 	Common::SharedPtr<Image> _corners;
@@ -242,6 +244,7 @@ public:
 	void setMenuToTrigger(MenuId menu) { _menuToTrigger = menu; }
 	bool isInvButtonVisible() const;
 	ShellGame *getShellGame() { return _shellGame; }
+	HocIntro *getHocIntro() { return _hocIntro; }
 	DragonArcade *getDragonArcade() { return _dragonArcade; }
 	void setSkipNextFrame() { _skipNextFrame = true; }
 

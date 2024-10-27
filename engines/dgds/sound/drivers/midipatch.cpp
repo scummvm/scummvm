@@ -39,7 +39,7 @@ namespace Dgds {
 
 static const char *PATCH_RESOURCES[] = {
 	"SXTITLE.OVL", // dragon
-	"SXCODE1.OVL", // china (TODO: when do we load SXCODE2??)
+	"SXCODE1.OVL", // hoc (TODO: when do we load SXCODE2 - maybe when global 0x37 changes)
 	"SX.OVL",      // newer games (beamish, sq5 demo)
 };
 

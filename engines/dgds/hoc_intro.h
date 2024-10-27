@@ -19,49 +19,42 @@
  *
  */
 
-#ifndef DGDS_SHELL_GAME_H
-#define DGDS_SHELL_GAME_H
+#ifndef DGDS_HOC_INTRO_H
+#define DGDS_HOC_INTRO_H
 
+#include "common/ptr.h"
 #include "dgds/image.h"
 
 namespace Dgds {
 
-/** Native code for the shell game from Heart of China. */
-class ShellGame {
+/**
+ * Native scene ops for Heart of China intro.
+ */
+class HocIntro {
 public:
-	ShellGame();
-
-	void shellGameTick();
-	void shellGameEnd();
+	HocIntro();
+	void init();
+	void tick();
+	void leave();
 
 private:
-	void init();
-	void drawShellGameStr(int16 count, int16 x, int16 y) const;
-	void drawShells() const;
-	void swapShells(bool flag);
-	void revealPea(bool flag);
-	void update();
-	bool checkDistract();
-	void setupSwap();
+	void clean1(int16 xoff);
+	void clean2(int16 xoff);
+	void draw1(int16 xoff);
+	void draw2(int16 xoff);
 
-	Common::SharedPtr<Image> _shellGameImg;
-	uint16 _revealPeaStep;
-	uint16 _currentPeaPosition;
-	bool _lastPass;
-	uint16 _distractStep;
-	uint16 _distractDelay;
-	uint16 _state13Counter;
-	int16 _swapPea1;
-	int16 _swapPea2;
-	uint16 _lastSwapPea1;
-	uint16 _swapStatus;
-	int16 _swapMoveDist;
-	uint16 _swapMoveStep;
-	uint16 _swapCount;
-	int16 _reverseDirection;
-	bool _clockwise;
+	void doCopy(int16 x1, int16 y1, int16 x2, int16 y2);
+	void doScroll();
+
+	int16 _scrollCountdown1;
+	int16 _xOffset2042;
+	int16 _xOffset203e;
+	int16 _scrollCountdown2;
+	Common::SharedPtr<Image> _noMaskImg;
+	Common::SharedPtr<Image> _maskImg;
+	Common::Rect _drawWin;
 };
 
 } // end namespace Dgds
 
-#endif // DGDS_SHELL_GAME_H
+#endif // DGDS_HOC_INTRO_H
