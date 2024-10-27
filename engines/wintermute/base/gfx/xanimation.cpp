@@ -27,7 +27,7 @@
 
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_engine.h"
-#include "engines/wintermute/math/math_util.h"
+#include "engines/wintermute/base/gfx/3dutils.h"
 #include "engines/wintermute/base/gfx/xanimation.h"
 #include "engines/wintermute/base/gfx/xanimation_set.h"
 #include "engines/wintermute/base/gfx/xframe_node.h"
@@ -217,7 +217,7 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 			}
 
 			// we always convert matrix keys to T-R-S
-			decomposeMatrixSimple(&keyData, &transVec, &scaleVec, &qRot);
+			C3DUtils::decomposeMatrixSimple(&keyData, &transVec, &scaleVec, &qRot);
 
 			BonePositionKey *positionKey = new BonePositionKey;
 			BoneScaleKey *scaleKey = new BoneScaleKey;

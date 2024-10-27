@@ -35,7 +35,7 @@
 
 #if defined(USE_OPENGL_GAME)
 
-#include "engines/wintermute/math/math_util.h"
+#include "engines/wintermute/base/gfx/3dutils.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/mesh3ds_opengl.h"

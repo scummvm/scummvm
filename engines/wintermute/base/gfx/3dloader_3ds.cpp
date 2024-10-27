@@ -25,6 +25,7 @@
 #include "engines/wintermute/base/gfx/3dloader_3ds.h"
 #include "engines/wintermute/base/gfx/3dface.h"
 #include "engines/wintermute/base/gfx/3dvertex.h"
+#include "engines/wintermute/base/gfx/3dutils.h"
 
 namespace Wintermute {
 

@@ -49,12 +49,12 @@
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/xmodel.h"
 #include "engines/wintermute/base/gfx/xmath.h"
+#include "engines/wintermute/base/gfx/3dutils.h"
 #include "engines/wintermute/base/particles/part_emitter.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/sound/base_sound.h"
-#include "engines/wintermute/math/math_util.h"
 #include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/utils/utils.h"
 

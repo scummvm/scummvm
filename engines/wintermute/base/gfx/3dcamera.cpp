@@ -27,7 +27,7 @@
 
 #include "engines/wintermute/base/gfx/3dcamera.h"
 #include "engines/wintermute/base/gfx/3dloader_3ds.h"
-#include "engines/wintermute/math/math_util.h"
+#include "engines/wintermute/base/gfx/3dutils.h"
 
 #include "math/angle.h"
 #include "math/glmath.h"

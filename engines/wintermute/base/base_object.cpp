@@ -42,7 +42,7 @@
 #include "engines/wintermute/base/gfx/base_renderer3d.h"
 #include "engines/wintermute/base/gfx/xmodel.h"
 #include "engines/wintermute/base/gfx/xmath.h"
-#include "engines/wintermute/math/math_util.h"
+#include "engines/wintermute/base/gfx/3dutils.h"
 #include "engines/wintermute/wintermute.h"
 #endif
 

@@ -34,8 +34,8 @@
 #include "engines/wintermute/base/gfx/xmodel.h"
 #include "engines/wintermute/base/gfx/xbuffer.h"
 #include "engines/wintermute/base/gfx/xskinmesh.h"
+#include "engines/wintermute/base/gfx/3dutils.h"
 #include "engines/wintermute/base/base_engine.h"
-#include "engines/wintermute/math/math_util.h"
 #include "engines/wintermute/utils/path_util.h"
 
 namespace Wintermute {
@@ -296,7 +296,7 @@ bool XMesh::pickPoly(DXVector3 *pickRayOrig, DXVector3 *pickRayDir) {
 		if (isnan(v0._x))
 			continue;
 
-		found = intersectTriangle(*pickRayOrig, *pickRayDir, v0, v1, v2, &intersection._x, &intersection._y, &intersection._z) != false;
+		found = C3DUtils::intersectTriangle(*pickRayOrig, *pickRayDir, v0, v1, v2, &intersection._x, &intersection._y, &intersection._z) != false;
 		if (found)
 			break;
 	}

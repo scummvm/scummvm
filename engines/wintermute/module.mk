@@ -165,6 +165,7 @@ MODULE_OBJS += \
 	base/gfx/3dloader_3ds.o \
 	base/gfx/3dmesh.o \
 	base/gfx/3dshadow_volume.o \
+	base/gfx/3dutils.o \
 	base/gfx/3dvertex.o \
 	base/gfx/base_renderer3d.o \
 	base/gfx/skin_mesh_helper.o \

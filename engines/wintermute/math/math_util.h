@@ -28,11 +28,6 @@
 #ifndef WINTERMUTE_MATHUTIL_H
 #define WINTERMUTE_MATHUTIL_H
 
-#ifdef ENABLE_WME3D
-#include "math/vector3d.h"
-#include "engines/wintermute/base/gfx/xmath.h"
-#endif
-
 namespace Wintermute {
 
 class MathUtil {
@@ -40,24 +35,6 @@ public:
 	static float round(float val);
 	static float roundUp(float val);
 };
-
-#ifdef ENABLE_WME3D
-
-#define DX_PI    ((float)3.141592654)
-#define degToRad(_val) (_val * DX_PI * (1.0f / 180.0f))
-#define radToDeg(_val) (_val * (180.0f / DX_PI))
-
-bool intersectTriangle(const DXVector3 &orig, const DXVector3 &dir,
-					   DXVector3 &v0, DXVector3 &v1, DXVector3 &v2,
-					   float *t, float *u, float *v);
-bool pickGetIntersect(DXVector3 linestart, DXVector3 lineend,
-                      DXVector3 v0, DXVector3 v1, DXVector3 v2,
-					  DXVector3 *intersection, float *distance);
-DXMatrix *matrixSetTranslation(DXMatrix *mat, DXVector3 *vec);
-DXMatrix *matrixSetRotation(DXMatrix *mat, DXVector3 *vec);
-void decomposeMatrixSimple(const DXMatrix *mat, DXVector3 *transVec, DXVector3 *scaleVec, DXQuaternion *rotQ);
-
-#endif
 
 } // End of namespace Wintermute
 
