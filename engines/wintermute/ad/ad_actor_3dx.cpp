@@ -389,11 +389,11 @@ bool AdActor3DX::display() {
 		_gameRef->_renderer3D->setAmbientLightColor(_ambientLightColor);
 	}
 
-	TShadowType ShadowType = _gameRef->getMaxShadowType(this);
+	TShadowType shadowType = _gameRef->getMaxShadowType(this);
 
-	if (ShadowType == SHADOW_STENCIL) {
+	if (shadowType == SHADOW_STENCIL) {
 		displayShadowVolume();
-	} else if  (ShadowType > SHADOW_NONE) {
+	} else if (shadowType > SHADOW_NONE) {
 		DXVector3 lightPos = DXVector3(_shadowLightPos._x * _scale3D,
 									   _shadowLightPos._y * _scale3D,
 									   _shadowLightPos._z * _scale3D);
@@ -443,20 +443,15 @@ bool AdActor3DX::renderModel() {
 	}
 
 	_gameRef->_renderer3D->setWorldTransform(_worldMatrix);
-	bool res;
 
 	if (_shadowModel) {
-		res = _shadowModel->render();
+		_shadowModel->render();
 	} else {
-		res = _xmodel->render();
-	}
-
-	if (!res) {
-		return false;
+		_xmodel->render();
 	}
 
 	displayAttachments(false);
-	return res;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1914,7 +1909,12 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		/*const char *paramName =*/ stack->pop()->getString();
 		/*uint32 color =*/ stack->pop()->getInt();
 
-		// if (_xmodel && _xmodel->setMaterialEffectParam(materialName, paramName, DXVector4(r, g, b, a))) {
+		//float r = RGBCOLGetR(color) / 255.0f;
+		//float g = RGBCOLGetG(color) / 255.0f;
+		//float b = RGBCOLGetB(color) / 255.0f;
+		//float a = RGBCOLGetA(color) / 255.0f;
+
+		//if (_xmodel && _xmodel->setMaterialEffectParam(materialName, paramName, DXVector4(r, g, b, a))) {
 		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
 		if (_xmodel) {
 			stack->pushBool(true);
