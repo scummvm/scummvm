@@ -98,13 +98,13 @@ public:
 	~MinigameManager();
 
 	// begin MiniGame virtual interface
-	bool init(const qdEngineInterface* engine_interface);
+	bool init(const qdEngineInterface *engine_interface);
 	bool quant(float dt);
 	bool finit();
 
-	bool new_game(const qdEngineInterface* engine);
-	int save_game(const qdEngineInterface* engine, const qdMinigameSceneInterface* scene, char* buffer, int buffer_size);
-	int load_game(const qdEngineInterface* engine, const qdMinigameSceneInterface* scene, const char* buffer, int buffer_size);
+	bool new_game(const qdEngineInterface *engine);
+	int save_game(const qdEngineInterface *engine, const qdMinigameSceneInterface *scene, char *buffer, int buffer_size);
+	int load_game(const qdEngineInterface *engine, const qdMinigameSceneInterface *scene, const char *buffer, int buffer_size);
 	// finish MiniGame virtual interface
 
 	// при необходимости заменяет на неизмененные предыдущим прохождением данные
@@ -146,40 +146,40 @@ public:
 	void setGameHelpVariant(int idx);
 
 	// Возвращает параметр из прикрепленного к игре ini файла
-	const char *parameter(const char* name, bool required = true) const;
-	const char *parameter(const char* name, const char* def) const;
+	const char *parameter(const char *name, bool required = true) const;
+	const char *parameter(const char *name, const char *def) const;
 
 	// Пересчитывает из экранных координат UI игры в 3D координаты R() объекта на мире
-	mgVect3f game2world(const mgVect3i& coord) const;
-	mgVect3f game2world(const mgVect3f& coord) const;
-	mgVect3f game2world(const mgVect2i& coord, int depth = 0) const;
-	mgVect3f game2world(const mgVect2f& coord, int depth = 0) const;
+	mgVect3f game2world(const mgVect3i &coord) const;
+	mgVect3f game2world(const mgVect3f &coord) const;
+	mgVect3f game2world(const mgVect2i &coord, int depth = 0) const;
+	mgVect3f game2world(const mgVect2f &coord, int depth = 0) const;
 	// Пересчитывает из мировых координат R() в 2D UI координаты и глубину
 	mgVect2f world2game(const mgVect3f& pos) const;
-	mgVect3f world2game(qdMinigameObjectInterface* obj) const;
+	mgVect3f world2game(qdMinigameObjectInterface *obj) const;
 	// размер объекта
-	mgVect2f getSize(qdMinigameObjectInterface* obj) const;
+	mgVect2f getSize(qdMinigameObjectInterface *obj) const;
 
 	// Меняет глубину объекта, не меняя его 2D положения на экране
-	void setDepth(qdMinigameObjectInterface* obj, int depth) const;
+	void setDepth(qdMinigameObjectInterface *obj, int depth) const;
 	// Получает глубину объекта, чем меньше, тем ближе к игроку
-	float getDepth(qdMinigameObjectInterface* obj) const;
+	float getDepth(qdMinigameObjectInterface *obj) const;
 	// Получает глубину точки, чем меньше, тем ближе к игроку
 	float getDepth(const mgVect3f& pos) const;
 
 	// получает интерфейс к динамическому игровому объекту по имени
-	QDObject getObject(const char* name) const;
+	QDObject getObject(const char *name) const;
 	// проверяет существование динамического объекта в сцене
-	bool testObject(const char* name) const;
+	bool testObject(const char *name) const;
 	// освобождает интерфейс
 	void release(QDObject& obj);
 
 	// задать текст для контрола
-	void setText(const char* name, const char* text) const;
-	void setText(const char* name, int toText, const char* format = "%d") const;
+	void setText(const char *name, const char *text) const;
+	void setText(const char *name, int toText, const char *format = "%d") const;
 
 	// спрятать объект за пределами экрана
-	void hide(qdMinigameObjectInterface* obj) const;
+	void hide(qdMinigameObjectInterface *obj) const;
 
 	// случайное значение в диапазоне [min, max]
 	float rnd(float min, float max) const;
@@ -296,7 +296,7 @@ private:
 	void saveState(bool force = false);
 
 	// Полуить объект-счетчик
-	QDCounter getCounter(const char* name);
+	QDCounter getCounter(const char *name);
 	// Освободить счетчик
 	void release(QDCounter& counter);
 

@@ -38,7 +38,7 @@ public:
 	ObjectContainer();
 	void release();
 
-	bool load(const char* _name, bool hide = true);
+	bool load(const char *_name, bool hide = true);
 	void hideAll();
 
 	const mgVect3f &coord() const {

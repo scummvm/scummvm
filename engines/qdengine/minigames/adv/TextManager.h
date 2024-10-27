@@ -38,9 +38,9 @@ public:
 	~TextManager();
 
 	int createStaticText(const mgVect3f& screen_pos, int fontID, TextAlign align);
-	void updateStaticText(int textID, const char* txt);
+	void updateStaticText(int textID, const char *txt);
 
-	void showText(const char* txt, const mgVect2f& pos, int fontID, int escapeID);
+	void showText(const char *txt, const mgVect2f& pos, int fontID, int escapeID);
 	void showNumber(int num, const mgVect2f& pos, int fontID, int escapeID);
 
 	void quant(float dt);
@@ -74,17 +74,17 @@ private:
 		char format[16];
 		int textID;
 	};
-	bool getStaticPreset(StaticTextPreset& preset, const char* name) const;
+	bool getStaticPreset(StaticTextPreset& preset, const char *name) const;
 
 	struct StaticMessage {
-		StaticMessage(Font* font = 0, TextAlign _align = ALIGN_CENTER);
+		StaticMessage(Font *font = 0, TextAlign _align = ALIGN_CENTER);
 		void release();
 
 		bool empty() const {
 			return _objects.empty();
 		}
 
-		void setText(const char* str);
+		void setText(const char *str);
 
 		int _depth;
 		mgVect2f _pos;
@@ -104,7 +104,7 @@ private:
 	typedef Std::vector<StaticMessage> StaticMessages;
 
 	struct Message : public StaticMessage {
-		Message(Font* font = 0);
+		Message(Font *font = 0);
 		void release();
 
 		void quant(float dt);
