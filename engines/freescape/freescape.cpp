@@ -924,6 +924,7 @@ void FreescapeEngine::initGameState() {
 
 	removeTimers();
 	startCountdown(_initialCountdown - 1);
+	clearTemporalMessages();
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
 	_lastMinute = minutes;

@@ -373,7 +373,10 @@ void CastleEngine::initGameState() {
 }
 
 bool CastleEngine::checkIfGameEnded() {
-	if (getGameBit(31)) { // Escaped!
+	if (_gameStateControl != kFreescapeGameStatePlaying)
+		return false;
+
+	if (getGameBit(31) || _currentArea->getAreaID() == 74) { // Escaped!
 		_gameStateControl = kFreescapeGameStateEnd;
 		return true;
 	} else
@@ -384,11 +387,14 @@ void CastleEngine::endGame() {
 	_shootingFrames = 0;
 	_delayedShootObject = nullptr;
 	_endGamePlayerEndArea = true;
+	insertTemporaryMessage(_messagesList[5], INT_MIN);
 
-	if (_endGameKeyPressed) {
-		_gameStateControl = kFreescapeGameStateRestart;
-		_endGameKeyPressed = false;
+	if (isDOS()) {
+		drawFullscreenEndGameAndWait();
 	}
+
+	_gameStateControl = kFreescapeGameStateRestart;
+	_endGameKeyPressed = false;
 }
 
 void CastleEngine::pressedKey(const int keycode) {
@@ -623,6 +629,53 @@ void CastleEngine::drawInfoMenu() {
 	g_system->lockMouse(true);
 	g_system->showMouse(false);
 }
+
+void CastleEngine::drawFullscreenEndGameAndWait() {
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
+	surface->fillRect(_fullscreenViewArea, _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00));
+	surface->fillRect(_viewArea, _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00));
+	surface->copyRectToSurface(*_endGameBackgroundFrame, 46, 38, Common::Rect(0, 0, _endGameBackgroundFrame->w, _endGameBackgroundFrame->h));
+
+	Common::Event event;
+	bool cont = true;
+	bool magisterAlive = true;
+	while (!shouldQuit() && cont) {
+		while (_eventManager->pollEvent(event)) {
+
+			// Events
+			switch (event.type) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionShoot) {
+					if (magisterAlive) {
+						surface->copyRectToSurface(*_endGameThroneFrame, 121, 52, Common::Rect(0, 0, _endGameThroneFrame->w - 1, _endGameThroneFrame->h));
+						magisterAlive = false;
+					} else
+						cont = false;
+				}
+				break;
+			case Common::EVENT_SCREEN_CHANGED:
+				_gfx->computeScreenViewport();
+				break;
+			default:
+				break;
+			}
+		}
+		_gfx->clear(0, 0, 0, true);
+		drawBorder();
+		if (_currentArea)
+			drawUI();
+
+		drawFullscreenSurface(surface);
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(15); // try to target ~60 FPS
+	}
+
+	surface->free();
+	delete surface;
+}
+
 
 // Same as FreescapeEngine::executeExecute but updates the spirits destroyed counter
 void CastleEngine::executeDestroy(FCLInstruction &instruction) {
