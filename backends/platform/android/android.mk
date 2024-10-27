@@ -85,8 +85,9 @@ all: $(APK_MAIN)
 
 clean: androidclean
 
+# SUBPATH_BUILDS is set in fatbundle.mk
 androidclean:
-	@$(RM) -rf $(PATH_BUILD) *.apk
+	@$(RM) -rf $(PATH_BUILD) $(SUBPATH_BUILDS) *.apk
 
 androidrelease: $(APK_MAIN_RELEASE)
 androidbundlerelease: $(AAB_MAIN_RELEASE)
@@ -119,3 +120,5 @@ androiddistrelease: androidrelease
 	done
 
 .PHONY: androidrelease androidbundlerelease androidtest $(PATH_BUILD_SRC)
+
+include $(srcdir)/backends/platform/android/fatbundle.mk
