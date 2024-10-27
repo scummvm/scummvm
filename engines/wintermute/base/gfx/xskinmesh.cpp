@@ -196,7 +196,7 @@ bool DXMesh::generateAdjacency(uint32 *adjacency) {
 
 	for (i = 0; i < _numVertices; i++) {
 		DXVector3 *vertex = (DXVector3 *)(vertices + _vertexSize * i);
-		sortedVertices[i]._firstSharedIndex = -1;
+		sortedVertices[i]._firstSharedIndex = (uint32)-1;
 		sortedVertices[i]._key = vertex->_x + vertex->_y + vertex->_z;
 		sortedVertices[i]._vertexIndex = i;
 	}
@@ -204,7 +204,7 @@ bool DXMesh::generateAdjacency(uint32 *adjacency) {
 		uint32 *firstSharedIndex = &sortedVertices[indices[i]]._firstSharedIndex;
 		sharedIndices[i] = *firstSharedIndex;
 		*firstSharedIndex = i;
-		adjacency[i] = -1;
+		adjacency[i] = (uint32)-1;
 	}
 	qsort(sortedVertices, _numVertices, sizeof(DXVertexMetadata), compareVertexKeys);
 
@@ -531,8 +531,8 @@ static bool parseFVFData(XFileData &fileData, struct MeshData */*meshData*/) {
 
 static bool parseDeclData(XFileData &fileData, struct MeshData *meshData) {
 	uint32 i, vertexSize = 0;
-	uint32 normalOffset = -1;
-	uint32 textureOffset = -1;
+	uint32 normalOffset = (uint32)-1;
+	uint32 textureOffset = (uint32)-1;
 	//uint32 tangentOffset = -1;
 	//uint32 binormalOffset = -1;
 
