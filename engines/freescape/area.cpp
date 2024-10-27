@@ -444,9 +444,9 @@ Math::Vector3d Area::resolveCollisions(const Math::Vector3d &lastPosition_, cons
 	// Ugly hack to fix the collisions in tight spaces in the stores and junk room
 	// for Castle Master
 	if (_name == "    STORES     " && _areaID == 62) {
-		reductionHeight = 0.3;
+		reductionHeight = 0.3f;
 	} else if (_name == "   JUNK ROOM   " && _areaID == 61) {
-		reductionHeight = 0.3;
+		reductionHeight = 0.3f;
 	}
 
 	Math::AABB boundingBox = createPlayerAABB(lastPosition, playerHeight, reductionHeight);
