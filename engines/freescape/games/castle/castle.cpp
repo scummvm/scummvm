@@ -1004,9 +1004,6 @@ void CastleEngine::addGhosts() {
 }
 
 void CastleEngine::checkSensors() {
-	if (_disableSensors)
-		return;
-
 	if (_lastTick == _ticks)
 		return;
 
@@ -1062,11 +1059,18 @@ void CastleEngine::checkSensors() {
 		return;
 	}
 
-	int firingInterval = 5; // This is fixed for all the ghosts?
-	if (_ticks % firingInterval == 0) {
+	if (_disableSensors)
+		return;
+
+	// This is the frequency to shake the screen
+	if (_ticks % 5 == 0) {
 		if (_underFireFrames <= 0)
 			_underFireFrames = 1;
-		//takeDamageFromSensor();
+	}
+
+	// This is the frequency to take damage
+	if (_ticks % 100 == 0) {
+		takeDamageFromSensor();
 	}
 }
 
