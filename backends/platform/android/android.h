@@ -215,6 +215,8 @@ public:
 	void engineInit() override;
 	void engineDone() override;
 
+	void updateStartSettings(const Common::String &executable, Common::String &command, Common::StringMap &startSettings, Common::StringArray& additionalArgs) override;
+
 	bool hasFeature(OSystem::Feature f) override;
 	void setFeatureState(OSystem::Feature f, bool enable) override;
 	bool getFeatureState(OSystem::Feature f) override;
