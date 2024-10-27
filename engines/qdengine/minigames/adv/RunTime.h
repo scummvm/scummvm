@@ -52,11 +52,11 @@ struct EffectManagerData {
 
 struct MinigameData {
 	MinigameData();
-	int sequenceIndex_;
-	int lastScore_;
-	int lastTime_;
-	int bestTime_;
-	int bestScore_;
+	int _sequenceIndex;
+	int _lastScore;
+	int _lastTime;
+	int _bestTime;
+	int _bestScore;
 
 	void write(Common::WriteStream &out) const;
 	void read(Common::ReadStream &out);
@@ -74,15 +74,15 @@ struct GameInfo {
 		return 9;
 	}
 	bool empty() const {
-		return empty_ && game_.sequenceIndex_ < 0;
+		return _empty && _game._sequenceIndex < 0;
 	}
 
-	MinigameData game_;
-	bool empty_;
-	TimeManagerData timeManagerData_;
-	EffectManagerData effectManagerData_;
-	uint dataSize_;
-	void *gameData_;
+	MinigameData _game;
+	bool _empty;
+	TimeManagerData _timeManagerData;
+	EffectManagerData _effectManagerData;
+	uint _dataSize;
+	void *_gameData;
 };
 
 typedef MinigameInterface *(*MinigameConsCallback)();
@@ -111,27 +111,27 @@ public:
 	bool processGameData(Common::SeekableReadStream &data);
 
 	mgVect2f mousePosition() const {
-		return mousePos_;
+		return _mousePos;
 	}
 	bool mouseLeftPressed() const;
 	bool mouseRightPressed() const;
 	bool keyPressed(int vKey, bool once = false) const;
 
 	mgVect2i screenSize() const {
-		return screenSize_;
+		return _screenSize;
 	}
 	float getTime() const {
-		return gameTime_;
+		return _gameTime;
 	}
 
 	const MinigameData *getScore(int level, int game) const;
 
 	bool debugMode() const {
-		return debugMode_;
+		return _debugMode;
 	}
 
 	TextManager &textManager() const {
-		return *textManager_;
+		return *_textManager;
 	}
 
 	void signal(SystemEvent id);
@@ -189,98 +189,98 @@ public:
 
 	// файл со списком игр по уровням
 	const char *gameListFileName() const {
-		return "resource//minigames.lst";
+		return "resource/minigames.lst";
 	}
 
 private:
-	MinigameInterface *game_;
+	MinigameInterface *_game;
 
 	// Вывод текста с помощью объектов
-	TextManager *textManager_;
+	TextManager *_textManager;
 	// Подсчет и визуализация времени
-	TimeManager *timeManager_;
+	TimeManager *_timeManager;
 	// Обработка событий игры
-	EventManager *eventManager_;
+	EventManager *_eventManager;
 	// выводимые эффекты
-	EffectManager *effectManager_;
+	EffectManager *_effectManager;
 
 	// Время в секундах с момента стара игры
-	float gameTime_;
+	float _gameTime;
 	// кеш проверенных на нажатие клавиш, для отслеживания непосредственно нажатия
-	mutable bool lastKeyChecked_[256];
+	mutable bool _lastKeyChecked[256];
 	// Размер играна
-	mgVect2i screenSize_;
+	mgVect2i _screenSize;
 	// текущее положение мыши
-	mgVect2f mousePos_;
+	mgVect2f _mousePos;
 	// подстройка мыши
-	mgVect2f mouseAdjast_;
+	mgVect2f _mouseAdjast;
 
 	// объект для передачи сигнала об окончании игры в триггеры
-	qdMinigameObjectInterface *state_flag_;
+	qdMinigameObjectInterface *_state_flag;
 	// объект для получения сигнала о постановке на паузу
-	qdMinigameObjectInterface *pause_flag_;
+	qdMinigameObjectInterface *_pause_flag;
 	// справка по победе
-	QDObject complete_help_;
-	QDObject complete_help_miniature_;
+	QDObject _complete_help;
+	QDObject _complete_help_miniature;
 	// текущее состояние для включения справки
-	Common::String complete_help_state_name_;
+	Common::String _complete_help_state_name;
 	// справка по игре
-	QDObject game_help_;
-	QDObject game_help_trigger_;
-	bool game_help_enabled_;
+	QDObject _game_help;
+	QDObject _game_help_trigger;
+	bool _game_help_enabled;
 	// текущее состояние для включения справки
-	Common::String game_help_state_name_;
+	Common::String _game_help_state_name;
 
 	// интерфейс к движку
-	const qdEngineInterface *engine_;
+	const qdEngineInterface *_engine;
 	// интерфейс к текущей сцене
-	qdMinigameSceneInterface *scene_;
+	qdMinigameSceneInterface *_scene;
 
 	// игра запущена для отладки
-	bool debugMode_;
+	bool _debugMode;
 	// rnd seed
-	int seed_;
+	int _seed;
 
 	// кнопки мыши инвертированы
-	bool invertMouseButtons_;
+	bool _invertMouseButtons;
 
 	// имя файла и информацией о минииграх
-	Common::String state_container_name_;
+	Common::String _state_container_name;
 	// количество пройденных игр на каждом уровне
 	typedef Common::HashMap<int, int> Counters;
-	Counters completeCounters_;
+	Counters _completeCounters;
 
 	struct GameInfoIndex {
-		GameInfoIndex(int idx, int level) : gameNum_(idx), gameLevel_(level) {}
-		int gameNum_;
-		int gameLevel_;
+		GameInfoIndex(int idx, int level) : _gameNum(idx), _gameLevel(level) {}
+		int _gameNum;
+		int _gameLevel;
 
 		void write(Common::WriteStream &out) const;
 		void read(Common::ReadStream &in);
 
 		bool operator< (const GameInfoIndex& rs) const {
-			return gameLevel_ == rs.gameLevel_ ? gameNum_ < rs.gameNum_ : gameLevel_ < rs.gameLevel_;
+			return _gameLevel == rs._gameLevel ? _gameNum < rs._gameNum : _gameLevel < rs._gameLevel;
 		}
 	};
 
 	struct GameInfoIndex_Hash {
 		uint operator()(const GameInfoIndex& x) const {
-			return (x.gameNum_ << 16) + x.gameLevel_;
+			return (x._gameNum << 16) + x._gameLevel;
 		}
 	};
 
 	struct GameInfoIndex_EqualTo {
 		uint operator()(const GameInfoIndex& x, const GameInfoIndex& y) const {
-			return x.gameNum_ == y.gameNum_ && x.gameLevel_ == y.gameLevel_;
+			return x._gameNum == y._gameNum && x._gameLevel == y._gameLevel;
 		}
 	};
 
 	// информация о пройденных играх
 	typedef Common::HashMap<GameInfoIndex, GameInfo, GameInfoIndex_Hash, GameInfoIndex_EqualTo> GameInfoMap;
-	GameInfoMap gameInfos_;
+	GameInfoMap _gameInfos;
 	// Информация о текущей игре, при выходе запишется
-	GameInfoIndex currentGameIndex_;
-	GameInfo *currentGameInfo_;
+	GameInfoIndex _currentGameIndex;
+	GameInfo *_currentGameInfo;
 
 	// проверить что все необходимые игры пройдены
 	bool testAllGamesWin();
