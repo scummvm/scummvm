@@ -417,10 +417,20 @@ View1::View1() : UIElement("View1") {
 				clearStringBox();
 				return true;
 			}
+
 			if (_isShowingInventory) {
 				// Check if we hit an item
 				// TODO: Skipping this for now while we only have one item
 				GameObject *clickedObject = getClickedInventoryItem(msg._pos);
+
+				// TODO: Maybe handled better elsewhere - examining inventory items
+				if (clickedObject != nullptr && g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Look) {
+					// TODO: Does the scripting engine expect always the objects with the
+					// right number prefix like here 419 instead of 19?
+					g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->Index;
+					g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
+					g_engine->RunScriptExecutor(false);
+				}
 				if (activeInventoryItem != nullptr && clickedObject != nullptr) {
 					// Trigger a use item on item
 					GameObject *firstObject = activeInventoryItem;
@@ -431,6 +441,7 @@ View1::View1() : UIElement("View1") {
 					g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + clickedObject->Index;
 					g_engine->RunScriptExecutor(false);
 				}
+				
 				activeInventoryItem = clickedObject;
 				return true;
 			}
