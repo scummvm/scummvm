@@ -212,6 +212,45 @@ struct AdLibBnkInstrumentDefinition {
 	void toOplInstrumentDefinition(OplInstrumentDefinition &instrumentDef);
 } PACKED_STRUCT;
 
+/**
+ * Instrument definition for an OPL2 chip in the format used by the IBK
+ * instrument bank file format. This format is also used by the SBI and CMF
+ * file formats.
+ */
+struct AdLibIbkInstrumentDefinition {
+	uint8 o0FreqMultMisc;
+	uint8 o1FreqMultMisc;
+	uint8 o0Level;
+	uint8 o1Level;
+	uint8 o0DecayAttack;
+	uint8 o1DecayAttack;
+	uint8 o0ReleaseSustain;
+	uint8 o1ReleaseSustain;
+	uint8 o0WaveformSelect;
+	uint8 o1WaveformSelect;
+	uint8 connectionFeedback;
+	/**
+	 * Rhythm note type. 0: melodic, 6: bass drum, 7: snare drum, 8: tom tom, 9: cymbal, 10: hi hat
+	 */
+	uint8 rhythmType;
+	/**
+	 * Number of semitones to transpose a note using this instrument.
+	 */
+	int8 transpose;
+	uint8 rhythmNote;
+	uint8 padding1;
+	uint8 padding2;
+
+	/**
+	 * Copies the data in this AdLib BNK instrument definition to the specified
+	 * OplInstrumentDefinition struct.
+	 *
+	 * @param instrumentDef The instrument definition to which the data should
+	 * be copied.
+	 */
+	void toOplInstrumentDefinition(OplInstrumentDefinition &instrumentDef);
+} PACKED_STRUCT;
+
 #include "common/pack-end.h" // END STRUCT PACKING
 
 /**
@@ -1150,6 +1189,9 @@ protected:
 	InstrumentWriteMode _instrumentWriteMode;
 	// Controls response to rhythm note off events when rhythm mode is active.
 	bool _rhythmModeIgnoreNoteOffs;
+	// Controls whether MIDI channel 10 is treated as the rhythm channel or as
+	// a melodic channel.
+	bool _channel10Melodic;
 
 	// The default MIDI channel volume (set when opening the driver).
 	uint8 _defaultChannelVolume;

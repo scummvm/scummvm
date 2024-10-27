@@ -93,6 +93,50 @@ void AdLibBnkInstrumentDefinition::toOplInstrumentDefinition(OplInstrumentDefini
 	instrumentDef.rhythmType = RHYTHM_TYPE_UNDEFINED;
 }
 
+void AdLibIbkInstrumentDefinition::toOplInstrumentDefinition(OplInstrumentDefinition &instrumentDef) {
+	instrumentDef.fourOperator = false;
+
+	instrumentDef.operator0.freqMultMisc = o0FreqMultMisc;
+	instrumentDef.operator0.level = o0Level;
+	instrumentDef.operator0.decayAttack = o0DecayAttack;
+	instrumentDef.operator0.releaseSustain = o0ReleaseSustain;
+	instrumentDef.operator0.waveformSelect = o0WaveformSelect;
+
+	instrumentDef.operator1.freqMultMisc = o1FreqMultMisc;
+	instrumentDef.operator1.level = o1Level;
+	instrumentDef.operator1.decayAttack = o1DecayAttack;
+	instrumentDef.operator1.releaseSustain = o1ReleaseSustain;
+	instrumentDef.operator1.waveformSelect = o1WaveformSelect;
+
+	instrumentDef.connectionFeedback0 = connectionFeedback;
+
+	instrumentDef.rhythmNote = rhythmNote;
+	OplInstrumentRhythmType convRhythmType;
+	switch (rhythmType) {
+		case 6:
+			convRhythmType = RHYTHM_TYPE_BASS_DRUM;
+			break;
+		case 7:
+			convRhythmType = RHYTHM_TYPE_SNARE_DRUM;
+			break;
+		case 8:
+			convRhythmType = RHYTHM_TYPE_TOM_TOM;
+			break;
+		case 9:
+			convRhythmType = RHYTHM_TYPE_CYMBAL;
+			break;
+		case 10:
+			convRhythmType = RHYTHM_TYPE_HI_HAT;
+			break;
+		case 0:
+		default:
+			convRhythmType = RHYTHM_TYPE_UNDEFINED;
+			break;
+	}
+	instrumentDef.rhythmType = convRhythmType;
+	// TODO Add support for transpose
+}
+
 // These are the melodic instrument definitions used by the Win95 SB16 driver.
 OplInstrumentDefinition MidiDriver_ADLIB_Multisource::OPL_INSTRUMENT_BANK[128] = {
 	// 0x00
@@ -402,6 +446,7 @@ MidiDriver_ADLIB_Multisource::MidiDriver_ADLIB_Multisource(OPL::Config::OplType 
 		_allocationMode(ALLOCATION_MODE_DYNAMIC),
 		_instrumentWriteMode(INSTRUMENT_WRITE_MODE_NOTE_ON),
 		_rhythmModeIgnoreNoteOffs(false),
+		_channel10Melodic(false),
 		_defaultChannelVolume(0),
 		_noteSelect(NOTE_SELECT_MODE_0),
 		_modulationDepth(MODULATION_DEPTH_HIGH),
@@ -1317,7 +1362,7 @@ void MidiDriver_ADLIB_Multisource::recalculateVolumes(uint8 channel, uint8 sourc
 MidiDriver_ADLIB_Multisource::InstrumentInfo MidiDriver_ADLIB_Multisource::determineInstrument(uint8 channel, uint8 source, uint8 note) {
 	InstrumentInfo instrument = { 0, nullptr, 0 };
 
-	if (channel == MIDI_RHYTHM_CHANNEL) {
+	if (!_channel10Melodic && channel == MIDI_RHYTHM_CHANNEL) {
 		// On the rhythm channel, the note played indicates which instrument
 		// should be used.
 		if (note < _rhythmBankFirstNote || note > _rhythmBankLastNote)

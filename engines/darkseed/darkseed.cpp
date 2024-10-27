@@ -59,6 +59,9 @@ Common::String DarkseedEngine::getGameId() const {
 Common::Error DarkseedEngine::run() {
 	initGraphics(640, 350);
 	_sound = new Sound(_mixer);
+	if (_sound->init() > 0) {
+		return Common::kAudioDeviceInitFailed;
+	}
 	_screen = new Graphics::Screen();
 	_tosText = new TosText();
 	_tosText->load();
@@ -375,6 +378,12 @@ void DarkseedEngine::wait() {
 	if (_systemTimerCounter == 6) {
 		_systemTimerCounter = 0;
 	}
+}
+
+void DarkseedEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	_sound->syncSoundSettings();
 }
 
 static constexpr uint8 walkToDirTbl[] = {

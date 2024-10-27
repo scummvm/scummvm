@@ -167,6 +167,7 @@ bool Cutscene::introScene() {
 		}
 		break;
 	case 15: {
+		g_engine->_sound->playMusic(StartMusicId::kCredits);
 		g_engine->_screen->clear();
 		g_engine->_screen->clearPalette();
 		g_engine->_screen->makeAllDirty();
@@ -396,9 +397,17 @@ bool Cutscene::introScene() {
 			return true;
 		}
 		break;
-	case 50: // TODO wait for music.
+	case 50:
+		if (g_engine->_sound->isPlayingMusic()) {
+			if (g_engine->_isLeftMouseClicked || g_engine->_isRightMouseClicked) {
+				g_engine->zeroMouseButtons();
+				_movieStep = 51;
+			}
+			return true;
+		}
 		break;
 	case 51:
+		g_engine->_sound->stopMusic();
 		g_engine->fadeOut();
 		break;
 	case 52:
@@ -448,7 +457,7 @@ bool Cutscene::embryoInsertedScene() {
 		break;
 	}
 	case 6:
-		// TODO play implant music here.
+		g_engine->_sound->playMusic(StartMusicId::kImplant);
 		registTime();
 		g_engine->fadeIn(_palette);
 		break;
@@ -511,6 +520,7 @@ bool Cutscene::embryoInsertedScene() {
 		}
 		break;
 	case 16:
+		g_engine->_sound->stopMusic();
 		g_engine->fadeOut();
 		break;
 	case 17:

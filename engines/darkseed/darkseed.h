@@ -151,6 +151,8 @@ public:
 
 	void wait();
 
+	void syncSoundSettings() override;
+
 public:
 	DarkseedEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~DarkseedEngine() override;

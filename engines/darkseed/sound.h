@@ -22,6 +22,8 @@
 #ifndef DARKSEED_SOUND_H
 #define DARKSEED_SOUND_H
 
+#include "darkseed/music.h"
+
 #include "audio/mixer.h"
 #include "common/array.h"
 #include "common/error.h"
@@ -44,14 +46,28 @@ enum class MusicId : uint8 {
 	kTown,
 };
 
+enum class StartMusicId : uint8 {
+	kCredits = 0,
+	kAlien,
+	kImplant,
+	kLaunch,
+	kNight2,
+	kNight3,
+	kBook,
+	kDoll
+};
+
 class Sound {
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _speechHandle;
+	MusicPlayer *_musicPlayer;
 	Common::Array<uint8> _didSpeech;
-	bool _isPlayingMusic = false;
 
 public:
 	explicit Sound(Audio::Mixer *mixer);
+	~Sound();
+
+	int init();
 
 	Common::Error sync(Common::Serializer &s);
 
@@ -61,8 +77,10 @@ public:
 	void waitForSpeech();
 	void resetSpeech();
 	void playMusic(MusicId musicId);
-	void playMusic(Common::String const &filename);
+	void playMusic(StartMusicId musicId);
+	void playMusic(Common::String const &filename, bool loop = false);
 	void stopMusic();
+	void syncSoundSettings();
 };
 
 } // namespace Darkseed

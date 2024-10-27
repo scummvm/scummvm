@@ -57,9 +57,40 @@ static constexpr char musicDosCDFilenameTbl[][14] = {
 	"walktown.mid"
 };
 
+static constexpr char startMusicDosFloppyFilenameTbl[][14] = {
+	"credits",
+	"alien",
+	"implant",
+	"launch",
+	"night2",
+	"night3",
+	"book",
+	"doll"
+};
+
+static constexpr char startMusicDosCDFilenameTbl[][14] = {
+	"openingt.mid",
+	"alienmou.mid",
+	"mindfuck.mid",
+	"spaceshi.mid",
+	"mindfuck.mid",
+	"zombie.mid",
+	"booktran.mid",
+	"babydoll.mid"
+};
+
 Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer) {
+	_musicPlayer = new MusicPlayer(g_engine);
 	_didSpeech.resize(978);
 	resetSpeech();
+}
+
+Sound::~Sound() {
+	delete _musicPlayer;
+}
+
+int Sound::init() {
+	return _musicPlayer->open();
 }
 
 void Sound::playTosSpeech(int tosIdx) {
@@ -84,7 +115,7 @@ bool Sound::isPlayingSpeech() const {
 }
 
 bool Sound::isPlayingMusic() {
-	return _isPlayingMusic;
+	return _musicPlayer->isPlaying();
 }
 
 void Sound::waitForSpeech() {
@@ -106,17 +137,42 @@ void Sound::playMusic(MusicId musicId) {
 	int filenameIdx = static_cast<uint8>(musicId) - 1;
 	playMusic(g_engine->isCdVersion()
 		? musicDosCDFilenameTbl[filenameIdx]
-		: musicDosFloppyFilenameTbl[filenameIdx]);
+		: musicDosFloppyFilenameTbl[filenameIdx],
+		true);
 }
 
-void Sound::playMusic(Common::String const &filename) {
+void Sound::playMusic(StartMusicId musicId) {
+	int filenameIdx = static_cast<uint8>(musicId);
+	playMusic(g_engine->isCdVersion()
+		? startMusicDosCDFilenameTbl[filenameIdx]
+		: startMusicDosFloppyFilenameTbl[filenameIdx]);
+}
+
+void Sound::playMusic(Common::String const &filename, bool loop) {
 	debug("Loading music: %s", filename.c_str());
-	_isPlayingMusic = true;
-	// TODO load music.
+	Common::File file;
+	Common::Path path;
+	if (!g_engine->isCdVersion()) {
+		path = Common::Path(filename);
+	} else {
+		path = Common::Path("sound").join(filename);
+	}
+	if (!file.open(path)) {
+		debug("Failed to load %s", path.toString().c_str());
+		return;
+	}
+	_musicPlayer->load(&file, file.size());
+	file.close();
+
+	_musicPlayer->play(loop);
 }
 
 void Sound::stopMusic() {
-	_isPlayingMusic = false;
+	_musicPlayer->stop();
+}
+
+void Sound::syncSoundSettings() {
+	_musicPlayer->syncSoundSettings();
 }
 
 Common::Error Sound::sync(Common::Serializer &s) {
