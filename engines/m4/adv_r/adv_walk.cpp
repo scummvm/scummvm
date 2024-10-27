@@ -115,9 +115,6 @@ void ws_walk(machine *myWalker, int32 x, int32 y, GrBuff **, int16 trigger, int3
 	if (!myWalker || !myWalker->myAnim8)
 		error_show(FL, 'W:-(');
 
-	if (!_G(globals))
-		error_show(FL, 'OOM1');
-
 	// Get walker's current location
 	currX = myWalker->myAnim8->myRegs[IDX_X] >> 16;
 	currY = myWalker->myAnim8->myRegs[IDX_Y] >> 16;
@@ -266,7 +263,7 @@ void ws_demand_facing(machine *myWalker, int32 facing) {
 void ws_demand_location(machine *myWalker, int32 x, int32 y, int facing) {
 	frac16 s;
 
-	if (!myWalker || !myWalker->myAnim8 || !_G(globals)) {
+	if (!myWalker || !myWalker->myAnim8) {
 		term_message("demand locn, no walker");
 		return;
 	}
@@ -393,7 +390,7 @@ void ws_get_walker_info(machine *myWalker, int32 *x, int32 *y, int32 *s, int32 *
 	Anim8 *myAnim8;
 	const int8 facings[10] = { 1, 2, 3, 4, 5, 7, 8, 9, 10, 11 };
 
-	if (!myWalker || !myWalker->myAnim8 || !_G(globals)) {
+	if (!myWalker || !myWalker->myAnim8) {
 		error_show(FL, 'W:-(');
 		return;
 	}

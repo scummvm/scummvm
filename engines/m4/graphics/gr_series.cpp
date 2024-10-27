@@ -29,8 +29,6 @@
 
 namespace M4 {
 
-#define CHECK_SERIES if (!_G(globals)) error_show(FL, 'SERI');
-
 void Series::play(const char *seriesName, frac16 layer, uint32 flags,
 		int16 triggerNum, int32 frameRate, int32 loopCount, int32 s,
 		int32 x, int32 y, int32 firstFrame, int32 lastFrame) {
@@ -184,8 +182,6 @@ machine *series_stream(const char *seriesName, int32 frameRate, int32 layer, int
 }
 
 bool series_stream_break_on_frame(machine *m, int32 frameNum, int32 trigger) {
-	CHECK_SERIES
-
 	// Parameter verification
 	if (!m)
 		return false;
@@ -200,8 +196,6 @@ bool series_stream_break_on_frame(machine *m, int32 frameNum, int32 trigger) {
 }
 
 void series_set_frame_rate(machine *m, int32 newFrameRate) {
-	CHECK_SERIES
-
 	if ((!m) || (!m->myAnim8) || !verifyMachineExists(m)) {
 		if (g_engine->getGameType() == GType_Burger)
 			error_show(FL, 'SSFR');
@@ -212,9 +206,7 @@ void series_set_frame_rate(machine *m, int32 newFrameRate) {
 }
 
 machine *series_show(const char *seriesName, frac16 layer, uint32 flags, int16 triggerNum,
-	int32 duration, int32 index, int32 s, int32 x, int32 y) {
-	CHECK_SERIES
-
+		int32 duration, int32 index, int32 s, int32 x, int32 y) {
 	int32 myAssetIndex;
 	RGB8 *tempPalettePtr = nullptr;
 
@@ -260,8 +252,6 @@ machine *series_show_sprite(const char *seriesName, int32 index, int32 layer) {
 machine *series_play(const char *seriesName, frac16 layer, uint32 flags, int16 triggerNum,
 		int32 frameRate, int32 loopCount, int32 s, int32 x, int32 y,
 		int32 firstFrame, int32 lastFrame) {
-	CHECK_SERIES
-
 	int32 myAssetIndex;
 	RGB8 *tempPalettePtr = nullptr;
 
