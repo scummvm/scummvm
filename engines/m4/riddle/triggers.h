@@ -42,8 +42,8 @@ extern void setGlobals4(int series, int val2, int val3, int val4);
 
 extern void sendWSMessage_10000(int val1, machine *mach, int val2, int val3,
 	int val4, int trigger, int series2, int val6, int val7, int val8);
-extern void sendWSMessage_10000(machine *mach, int destX, int destY, int index,
-	int trigger, int val4);
+extern void sendWSMessage_10000(machine *mach, int destX, int destY, int facing,
+	int trigger, int complete_walk);
 
 machine *triggerMachineByHash_3000(int myHash, int dataHash,
 	int normalDir, int shadowDir, int param1, int param2,
