@@ -83,13 +83,14 @@ void Walker::player_walker_callback(frac16 myMessage, machine *sender) {
 		break;
 
 	case 2:
-		if (walker_has_walk_finished(sender)) {
-			if (subVal) {
-				sendWSMessage(0x30000, 0, sender, 0, nullptr, 1);
-				return;
-			} else {
-				_G(player).waiting_for_walk = false;
-			}
+		if (!walker_has_walk_finished(sender))
+			return;
+
+		if (subVal) {
+			sendWSMessage(0x30000, 0, sender, 0, nullptr, 1);
+			return;
+		} else {
+			_G(player).waiting_for_walk = false;
 		}
 		break;
 

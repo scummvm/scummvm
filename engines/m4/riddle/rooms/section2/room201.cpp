@@ -124,6 +124,7 @@ void Room201::init() {
 				_meiWalk = series_load("MEI CHEN TREK WALK POS4");
 				_mei2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 200, 238, 73, 0x900, 0,
 					triggerMachineByHashCallback, "MC");
+				series_place_sprite("candleman shadow4", 0, 200, 238, 73, 0xf00);
 				sendWSMessage(1, _mei2, _meiHandHip, 22, 22, 2000, _meiHandHip, 22, 22, 0);
 				_val5 = 2;
 				_val6 = 2;
