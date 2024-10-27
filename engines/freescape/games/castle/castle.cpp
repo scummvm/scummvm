@@ -411,6 +411,7 @@ void CastleEngine::pressedKey(const int keycode) {
 				insertTemporaryMessage(_messagesList[11], _countdown - 2);
 				return;
 			}
+			_gameStateVars[k8bitVariableCrawling] = 0;
 		}
 		// TODO: raising can fail if there is no room, so the action should fail
 		_playerStepIndex = 2;
@@ -427,14 +428,17 @@ void CastleEngine::pressedKey(const int keycode) {
 				insertTemporaryMessage(_messagesList[11], _countdown - 2);
 				return;
 			}
+			_gameStateVars[k8bitVariableCrawling] = 0;
 		}
 
 		// TODO: raising can fail if there is no room, so the action should fail
 		_playerStepIndex = 1;
 		insertTemporaryMessage(_messagesList[14], _countdown - 2);
 	} else if (keycode == kActionCrawlMode) {
-		if (_playerHeightNumber == 1)
+		if (_playerHeightNumber == 1) {
 			lower();
+			_gameStateVars[k8bitVariableCrawling] = 128;
+		}
 		_playerStepIndex = 0;
 		insertTemporaryMessage(_messagesList[13], _countdown - 2);
 	} else if (keycode == kActionFaceForward) {
