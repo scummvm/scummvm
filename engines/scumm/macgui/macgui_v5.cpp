@@ -799,31 +799,40 @@ bool MacV5Gui::runOptionsDialog() {
 	//       2 and Fate of Atlantis show a single Music and Sound Effects
 	//       checkbox.
 
-	int sound = (!ConfMan.hasKey("mute") || !ConfMan.getBool("mute")) ? 1 : 0;
-	int music = (!ConfMan.hasKey("music_mute") || !ConfMan.getBool("music_mute")) ? 1 : 0;
-	int textSpeed = _vm->_defaultTextSpeed;
-	int musicQuality = ConfMan.hasKey("mac_snd_quality") ? ConfMan.getInt("mac_snd_quality") : 0;
-	int musicQualityOption = (musicQuality == 0) ? 1 : (musicQuality - 1) % 3;
-	musicQuality = (musicQuality == 0) ? (_vm->VAR(_vm->VAR_SOUNDCARD) == 10 ? 0 : 2) : (musicQuality - 1) / 3;
-
 	MacDialogWindow *window = createDialog(1000);
 
 	MacButton *buttonOk = (MacButton *)window->getWidget(kWidgetButton, 0);
 	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
 
 	MacCheckbox *checkboxSound = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 0);
-	MacCheckbox *checkboxMusic = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 1);
-
-	checkboxSound->setValue(sound);
-	checkboxMusic->setValue(music);
-
-	if (!sound)
-		checkboxMusic->setEnabled(false);
+	MacCheckbox *checkboxMusic = nullptr;
 
 	MacPictureSlider *sliderTextSpeed = window->addPictureSlider(4, 5, true, 5, 105, 0, 9);
-	sliderTextSpeed->setValue(textSpeed);
-
 	MacPictureSlider *sliderMusicQuality = window->addPictureSlider(8, 9, true, 5, 69, 0, 2, 6, 4);
+
+	bool sound = !ConfMan.hasKey("mute") || !ConfMan.getBool("mute");
+	bool music;
+	int textSpeed = _vm->_defaultTextSpeed;
+	int musicQuality = ConfMan.hasKey("mac_snd_quality") ? ConfMan.getInt("mac_snd_quality") : 0;
+	int musicQualityOption = (musicQuality == 0) ? 1 : (musicQuality - 1) % 3;
+	musicQuality = (musicQuality == 0) ? (_vm->VAR(_vm->VAR_SOUNDCARD) == 10 ? 0 : 2) : (musicQuality - 1) / 3;
+
+	if (_vm->_game.id == GID_MONKEY) {
+		checkboxMusic = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 1);
+		music = !ConfMan.hasKey("music_mute") || !ConfMan.getBool("music_mute");
+		checkboxMusic->setValue(music);
+
+		if (!sound) {
+			checkboxMusic->setEnabled(false);
+			music = false;
+		}
+	} else {
+		checkboxMusic = nullptr;
+		music = sound;
+	}
+
+	checkboxSound->setValue(sound);
+	sliderTextSpeed->setValue(textSpeed);
 	sliderMusicQuality->setValue(musicQualityOption);
 
 	// When quitting, the default action is not to not apply options
@@ -841,10 +850,8 @@ bool MacV5Gui::runOptionsDialog() {
 		if (clicked == buttonCancel->getId())
 			break;
 
-		if (clicked == checkboxSound->getId()) {
+		if (clicked == checkboxSound->getId() && checkboxMusic)
 			checkboxMusic->setEnabled(checkboxSound->getValue() != 0);
-			checkboxMusic->setValue(checkboxSound->getValue() != 0 ? 1 : 0);
-		}
 	}
 
 	if (ret) {
@@ -856,10 +863,16 @@ bool MacV5Gui::runOptionsDialog() {
 		_vm->setTalkSpeed(_vm->_defaultTextSpeed);
 
 		// SOUND&MUSIC ACTIVATION
-		_vm->_musicEngine->toggleMusic(checkboxSound->getValue() != 0 && (checkboxSound->getValue() != 1 || checkboxMusic->getValue() != 0));
-		_vm->_musicEngine->toggleSoundEffects(checkboxSound->getValue() != 0);
-		ConfMan.setBool("music_mute", checkboxSound->getValue() == 0 || (checkboxSound->getValue() == 1 && checkboxMusic->getValue() == 0));
-		ConfMan.setBool("mute", checkboxSound->getValue() == 0);
+		sound = checkboxSound->getValue();
+		music = checkboxMusic ? checkboxMusic->getValue() : sound;
+
+		if (!sound)
+			music = false;
+
+		_vm->_musicEngine->toggleMusic(music);
+		_vm->_musicEngine->toggleSoundEffects(sound);
+		ConfMan.setBool("music_mute", !music);
+		ConfMan.setBool("mute", !sound);
 
 		// MUSIC QUALITY SELECTOR
 		musicQuality = musicQuality * 3 + 1 + sliderMusicQuality->getValue();
