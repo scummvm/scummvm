@@ -68,6 +68,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	private ClipboardManager _clipboardManager;
 
 	private Version _currentScummVMVersion;
+	private boolean _assetsUpdated;
 	private File _configScummvmFile;
 	private File _logScummvmFile;
 	private File _actualScummVMDataDir;
@@ -1012,6 +1013,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			// in fact in all the cases where we return false, we also called finish()
 			return;
 		}
+		_scummvm.setAssetsUpdated(_assetsUpdated);
 
 		// We should have a valid path to a configuration file here
 
@@ -2147,6 +2149,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			return;
 		}
 
+		_assetsUpdated = true;
+
 		internalAppFolderCleanup(_actualScummVMDataDir);
 
 		AssetManager assetManager = getAssets();
@@ -2187,6 +2191,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 					equalsStreamToStream(new ByteArrayInputStream(newSums), oldStream)) {
 					// The files are identical: nothing to do
 					Log.d(ScummVM.LOG_TAG, "MD5SUMS is already up to date");
+					_assetsUpdated = false;
 					return;
 				}
 			} catch (IOException e) {
