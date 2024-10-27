@@ -44,6 +44,8 @@ private:
 	virtual ~JNI();
 
 public:
+	static bool assets_updated;
+
 	static bool pause;
 	static sem_t pause_sem;
 
@@ -183,7 +185,8 @@ private:
 	static void create(JNIEnv *env, jobject self, jobject asset_manager,
 						jobject egl, jobject egl_display,
 						jobject at, jint audio_sample_rate,
-						jint audio_buffer_size);
+						jint audio_buffer_size,
+						jboolean assets_updated_);
 	static void destroy(JNIEnv *env, jobject self);
 
 	static void setSurface(JNIEnv *env, jobject self, jint width, jint height, jint bpp);

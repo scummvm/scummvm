@@ -69,6 +69,8 @@ int JNI::_egl_version = 0;
 Common::Archive *JNI::_asset_archive = 0;
 OSystem_Android *JNI::_system = 0;
 
+bool JNI::assets_updated = false;
+
 bool JNI::pause = false;
 sem_t JNI::pause_sem;
 
@@ -120,7 +122,7 @@ const JNINativeMethod JNI::_natives[] = {
 	{ "create", "(Landroid/content/res/AssetManager;"
 				"Ljavax/microedition/khronos/egl/EGL10;"
 				"Ljavax/microedition/khronos/egl/EGLDisplay;"
-				"Landroid/media/AudioTrack;II)V",
+				"Landroid/media/AudioTrack;IIZ)V",
 		(void *)JNI::create },
 	{ "destroy", "()V",
 		(void *)JNI::destroy },
@@ -721,7 +723,8 @@ void JNI::setAudioStop() {
 
 void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 				jobject egl, jobject egl_display,
-				jobject at, jint audio_sample_rate, jint audio_buffer_size) {
+				jobject at, jint audio_sample_rate, jint audio_buffer_size,
+				jboolean assets_updated_) {
 	LOGI("Native version: %s", gScummVMFullVersion);
 
 	assert(!_system);
@@ -797,6 +800,8 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 
 	env->DeleteLocalRef(cls);
 #undef FIND_METHOD
+
+	assets_updated = assets_updated_;
 
 	pause = false;
 	// initial value of zero!

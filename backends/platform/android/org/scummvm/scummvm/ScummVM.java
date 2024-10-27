@@ -44,14 +44,16 @@ public abstract class ScummVM implements SurfaceHolder.Callback,
 	private int _sample_rate = 0;
 	private int _buffer_size = 0;
 
+	private boolean _assetsUpdated;
 	private String[] _args;
 
 	private native void create(AssetManager asset_manager,
 	                           EGL10 egl,
-							   EGLDisplay egl_display,
+	                           EGLDisplay egl_display,
 	                           AudioTrack audio_track,
-							   int sample_rate,
-							   int buffer_size);
+	                           int sample_rate,
+	                           int buffer_size,
+	                           boolean assetsUpdated);
 	private native void destroy();
 	private native void setSurface(int width, int height, int bpp);
 	private native int main(String[] args);
@@ -151,6 +153,10 @@ public abstract class ScummVM implements SurfaceHolder.Callback,
 		setSurface(0, 0, 0);
 	}
 
+	final public void setAssetsUpdated(boolean assetsUpdated) {
+		_assetsUpdated = assetsUpdated;
+	}
+
 	final public void setArgs(String[] args) {
 		_args = args;
 	}
@@ -173,7 +179,8 @@ public abstract class ScummVM implements SurfaceHolder.Callback,
 		}
 
 		create(_asset_manager, _egl, _egl_display,
-				_audio_track, _sample_rate, _buffer_size);
+				_audio_track, _sample_rate, _buffer_size,
+				_assetsUpdated);
 
 		int res = main(_args);
 
