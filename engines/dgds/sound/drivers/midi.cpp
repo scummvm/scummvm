@@ -492,16 +492,7 @@ void MidiPlayer_Midi::sendMt32SysEx(const uint32 addr, Common::SeekableReadStrea
 
 	uint16 delay = sysExNoDelay(_sysExBuf, len + 8);
 	if (!noDelay && delay > 0) {
-		// Use the appropriate delay technique based on the current thread.
-		// On the main thread, use SciEngine::sleep() to keep the UI responsive,
-		// which is important because loading patches can take several seconds.
-		// On a timer thread however, SciEngine::sleep() can't be used because
-		// it polls events and updates the screen, which isn't thread safe. (bug #12947)
-		if (mainThread) {
-			g_system->delayMillis(delay);
-		} else {
-			g_system->delayMillis(delay);
-		}
+		g_system->delayMillis(delay);
 	}
 }
 

@@ -41,7 +41,16 @@ SciMusic::SciMusic(bool useDigitalSFX) :
 	_useDigitalSFX(useDigitalSFX),
 	_needsResume(true),
 	_globalPause(0),
-	_pMidiDrv(nullptr) {
+	_pMidiDrv(nullptr),
+	_pMixer(nullptr),
+	_dwTempo(0),
+	_needsRemap(false) ,
+	_musicType(MusicType::MT_NULL),
+	_driverFirstChannel(0),
+	_driverLastChannel(0),
+	_currentlyPlayingSample(nullptr),
+	_timeCounter(0)
+{
 
 	// Reserve some space in the playlist, to avoid expensive insertion
 	// operations

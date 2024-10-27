@@ -543,6 +543,8 @@ void Sound::processPlaySound(uint32 obj, bool playBed, bool restoring, const Sou
 		musicSlot = _music->getSlot(obj);
 	}
 
+	assert(musicSlot);
+
 	musicSlot->loop = (data._flags & FLAG_LOOP) ? 1 : 0;
 
 	// Get song priority from either obj or soundRes
