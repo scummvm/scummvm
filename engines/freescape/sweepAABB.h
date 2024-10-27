@@ -24,6 +24,7 @@
 
 namespace Freescape {
 
+extern Math::AABB createPlayerAABB(Math::Vector3d const position, int playerHeight, float reductionHeight = 0.0f);
 extern float sweepAABB(Math::AABB const &a, Math::AABB const &b, Math::Vector3d const &direction, Math::Vector3d &normal);
 
 }

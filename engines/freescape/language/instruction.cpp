@@ -24,6 +24,7 @@
 
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
+#include "freescape/sweepAABB.h"
 
 namespace Freescape {
 
@@ -588,8 +589,6 @@ void FreescapeEngine::executeMakeInvisible(FCLInstruction &instruction) {
 	}
 
 }
-
-extern Math::AABB createPlayerAABB(Math::Vector3d const position, int playerHeight);
 
 void FreescapeEngine::executeMakeVisible(FCLInstruction &instruction) {
 	uint16 objectID = 0;

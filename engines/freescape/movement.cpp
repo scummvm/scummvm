@@ -105,11 +105,11 @@ void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *
 	engineKeyMap->addAction(act);
 }
 
-Math::AABB createPlayerAABB(Math::Vector3d const position, int playerHeight) {
-	Math::AABB boundingBox(position, position);
-
-	Math::Vector3d v1(position.x() + 1, position.y() - 1, position.z() + 1);
+Math::AABB createPlayerAABB(Math::Vector3d const position, int playerHeight, float reductionHeight = 0.0f) {
+	Math::Vector3d v1(position.x() + 1, position.y() - playerHeight * reductionHeight - 1, position.z() + 1);
 	Math::Vector3d v2(position.x() - 1, position.y() - playerHeight, position.z() - 1);
+
+	Math::AABB boundingBox(v1, v2);
 
 	boundingBox.expand(v1);
 	boundingBox.expand(v2);
