@@ -28,6 +28,38 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+static const char *LOOK[][2] = {
+	{ "VASE",          "201r08" },
+	{ "POSTCARD RACK", "201r09" },
+	{ "POSTER",        "201r10" },
+	{ "WINDOW",        "201r11" },
+	{ "MAGAZINES",     "201r12" },
+	{ "AGENT",         "201r13" },
+	{ "RUG",           "201r14" },
+	{ "LAMP",          "201r37" },
+	{ "PLANT",         "201r38" },
+	{ "SOFA",          "201r39" },
+	{ "CHAIR",         "201r39" },
+	{ "PHONE",         "201r40" },
+	{ nullptr, nullptr }
+};
+
+static const char *TAKE[][2] = {
+	{ "POSTCARD RACK", "201r19" },
+	{ "MAGAZINES",     "201r20" },
+	{ "VASE",          "201r41" },
+	{ "RUG",           "201r42" },
+	{ nullptr, nullptr }
+};
+
+static const char *USE[][2] = {
+	{ "MONEY WITH AGENT", "201r43" },
+	{ "SOFA",             "201r44" },
+	{ "CHAIR",            "201r44" },
+	{ "PHONE",            "201r45" },
+	{ nullptr, nullptr }
+};
+
 Room201::Room201() : Section2Room() {
 	Common::fill(_items, _items + 12, 0);
 	Common::fill(_itemFlags, _itemFlags + 12, 0);
@@ -454,6 +486,7 @@ void Room201::daemon() {
 		_conv1 = 8;
 		_trigger10 = _trigger11 = _trigger12 = -1;
 		_flag3 = false;
+		kernel_timing_trigger(1, 511);
 		break;
 
 	case 509:
@@ -532,8 +565,20 @@ void Room201::daemon() {
 			default:
 				break;
 			}
-		} else {
+		} else if (_num3 == 9) {
+			switch (_conv1) {
+			case 8:
+				sendWSMessage_10000(1, _agent, _guyWriting, 23, 32, 510, _guyWriting, 32, 23, 1);
+				break;
 
+			case 9:
+				sendWSMessage_10000(1, _agent, _guyWriting, 22, 22, 510, _guyWriting, 22, 22, 0);
+				break;
+
+			default:
+				sendWSMessage_10000(1, _agent, _guyWriting, 22, 2, 510, _guyWriting, 1, 1, 0);
+				break;
+			}
 		}
 		break;
 
@@ -629,6 +674,20 @@ void Room201::daemon() {
 		}
 
 		_num2 = 1;
+		break;
+
+	case 1999:
+		ws_get_walker_info(_mei0, &_G(player_info).x, &_G(player_info).y,
+			&_G(player_info).scale, &_G(player_info).depth, &_G(player_info).facing);
+		_mei2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, _G(player_info).x, _G(player_info).y,
+			_G(player_info).scale, 0x900, 0, triggerMachineByHashCallback, "Mei Chen other states machine");
+		series_place_sprite("candleman shadow4", 0, _G(player_info).x, _G(player_info).y,
+			_G(player_info).scale, 0xf00);
+		sendWSMessage_10000(1, _mei2, _meiWalk, 1, 1, 2000, _meiWalk, 1, 1, 0);
+		sendWSMessage_60000(_mei0);
+		kernel_timing_trigger(1, 9300);
+		_val5 = _val6 = 0;
+		_trigger9 = _val8 = _val9 = -1;
 		break;
 
 	case 2000:
@@ -1438,41 +1497,11 @@ void Room201::daemon() {
 		break;
 
 	default:
+		if (_G(kernel).trigger < 9999)
+			error("Unhandled trigger");
 		break;
 	}
 }
-
-static const char *LOOK[][2] = {
-	{ "VASE",          "201r08" },
-	{ "POSTCARD RACK", "201r09" },
-	{ "POSTER",        "201r10" },
-	{ "WINDOW",        "201r11" },
-	{ "MAGAZINES",     "201r12" },
-	{ "AGENT",         "201r13" },
-	{ "RUG",           "201r14" },
-	{ "LAMP",          "201r37" },
-	{ "PLANT",         "201r38" },
-	{ "SOFA",          "201r39" },
-	{ "CHAIR",         "201r39" },
-	{ "PHONE",         "201r40" },
-	{ nullptr, nullptr }
-};
-
-static const char *TAKE[][2] = {
-	{ "POSTCARD RACK", "201r19" },
-	{ "MAGAZINES",     "201r20" },
-	{ "VASE",          "201r41" },
-	{ "RUG",           "201r42" },
-	{ nullptr, nullptr }
-};
-
-static const char *USE[][2] = {
-	{ "MONEY WITH AGENT", "201r43" },
-	{ "SOFA",             "201r44" },
-	{ "CHAIR",            "201r44" },
-	{ "PHONE",            "201r45" },
-	{ nullptr, nullptr }
-};
 
 void Room201::parser() {
 	bool lookFlag = player_said_any("look", "look at");
