@@ -1012,8 +1012,10 @@ void CastleEngine::checkSensors() {
 
 	_lastTick = _ticks;
 
-	if (_sensors.empty())
+	if (_sensors.empty()) {
+		_gfx->_shakeOffset = Common::Point();
 		return;
+	}
 
 	for (auto &it : _sensors) {
 		Sensor *sensor = (Sensor *)it;
@@ -1055,8 +1057,10 @@ void CastleEngine::checkSensors() {
 		break;
 	}
 
-	if (!ghostInArea)
+	if (!ghostInArea) {
+		_gfx->_shakeOffset = Common::Point();
 		return;
+	}
 
 	int firingInterval = 5; // This is fixed for all the ghosts?
 	if (_ticks % firingInterval == 0) {
