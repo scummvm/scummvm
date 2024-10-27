@@ -194,7 +194,12 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 			}
 			debugC(kWintermuteDebugFileAccess, "Package contains %s", name);
 
-			Common::Path path(name, '\\');
+			Common::Path path;
+
+			// WME 2D Technology Demo has null name entries
+			if (nameLength != 0)
+				path = Common::Path(name, '\\');
+
 			delete[] name;
 			name = nullptr;
 
