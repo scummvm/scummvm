@@ -4888,14 +4888,19 @@ void ScummEngine::scrollEffect(int dir) {
 
 void ScummEngine::dissolveEffectSelector() {
 	// CD Loom (but not EGA Loom!) uses a more fine-grained dissolve
-	if (_game.id == GID_LOOM && _game.version == 4)
+	if (_game.id == GID_LOOM && _game.version == 4) {
 		dissolveEffect(1, 1);
-	else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine)
+	} else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
 		dissolveEffect(8, 8);
-	else if ((_game.id == GID_INDY3 || _game.id == GID_LOOM) && _game.platform == Common::kPlatformMacintosh)
-		transitionEffect(0);
-	else
+	} else if (_game.platform == Common::kPlatformMacintosh) {
+		if (_game.version == 3) {
+			transitionEffect(0);
+		} else {
+			return;
+		}
+	} else {
 		dissolveEffect(8, 4);
+	}
 }
 
 void ScummEngine::updateScreenShakeEffect() {
