@@ -1746,7 +1746,18 @@ void ScummEngine::moveScreen(int dx, int dy, int height) {
 	Graphics::Surface *screen = _system->lockScreen();
 	if (!screen)
 		return;
-	screen->move(dx, dy, height);
+
+
+	if (_macScreen) {
+		screen->move(dx, dy, height + _macScreenDrawOffset * 2);
+
+		// Mask the empty part of the screen
+		screen->fillRect(Common::Rect(0, 0, screen->pitch, _macScreenDrawOffset * 2), 0);
+		screen->fillRect(Common::Rect(0, screen->h - _macScreenDrawOffset * 2, screen->pitch, screen->h), 0);
+	} else {
+		screen->move(dx, dy, height);
+	}
+
 	_system->unlockScreen();
 }
 
@@ -4810,10 +4821,14 @@ void ScummEngine::scrollEffect(int dir) {
 #endif
 			{
 				src = vs->getPixels(0, y - step);
-				_system->copyRectToScreen(src,
-					vsPitch * m,
-					0, (vs->h - step) * m,
-					vs->w * m, step * m);
+				if (_macScreen) {
+					mac_drawBufferToScreen(src, vsPitch, 0, (vs->h - step), vs->w, step, false);
+				} else {
+					_system->copyRectToScreen(src,
+											  vsPitch * m,
+											  0, (vs->h - step) * m,
+											  vs->w * m, step * m);
+				}
 			}
 
 			waitForTimer(delay, true);
@@ -4832,10 +4847,15 @@ void ScummEngine::scrollEffect(int dir) {
 #endif
 			{
 				src = vs->getPixels(0, vs->h - y);
-				_system->copyRectToScreen(src,
-					vsPitch * m,
-					0, 0,
-					vs->w * m, step * m);
+
+				if (_macScreen) {
+					mac_drawBufferToScreen(src, vsPitch, 0, 0, vs->w, step, false);
+				} else {
+					_system->copyRectToScreen(src,
+											  vsPitch * m,
+											  0, 0,
+											  vs->w * m, step * m);
+				}
 			}
 
 			waitForTimer(delay, true);
@@ -4854,7 +4874,11 @@ void ScummEngine::scrollEffect(int dir) {
 #endif
 			{
 				src = vs->getPixels(x - step, 0);
-				_system->copyRectToScreen(src, vsPitch * m, (vs->w - step) * m, 0, step * m, vs->h * m);
+				if (_macScreen) {
+					mac_drawBufferToScreen(src, vsPitch, (vs->w - step), 0, step, vs->h, false);
+				} else {
+					_system->copyRectToScreen(src, vsPitch * m, (vs->w - step) * m, 0, step * m, vs->h * m);
+				}
 			}
 			waitForTimer(delay, true);
 			x += step;
@@ -4872,7 +4896,11 @@ void ScummEngine::scrollEffect(int dir) {
 #endif
 			{
 				src = vs->getPixels(vs->w - x, 0);
-				_system->copyRectToScreen(src, vsPitch * m, 0, 0, step * m, vs->h * m);
+				if (_macScreen) {
+					mac_drawBufferToScreen(src, vsPitch, 0, 0, step, vs->h, false);
+				} else {
+					_system->copyRectToScreen(src, vsPitch * m, 0, 0, step * m, vs->h * m);
+				}
 			}
 
 			waitForTimer(delay, true);
