@@ -712,7 +712,7 @@ SYM(asm_c2p1x1_4):
 #endif
 	movem.l	d2-d7/a2-a6,-(sp)
 	move.l	d0,a2
-	move.l	#0x0f0f0f0f,d4
+	move.l	#0x33333333,d4
 	move.l	#0x00ff00ff,d5
 	move.l	#0x55555555,d6
 
@@ -720,10 +720,6 @@ SYM(asm_c2p1x1_4):
 	move.l	(a0)+,d2
 	move.l	(a0)+,d1
 	move.l	(a0)+,d3
-	and.l	d4,d0
-	and.l	d4,d2
-	and.l	d4,d1
-	and.l	d4,d3
 	lsl.l	#4,d0
 	lsl.l	#4,d1
 	or.l	d2,d0
@@ -735,16 +731,12 @@ c2p1x1_4_pix16:
 	move.l	(a0)+,d2
 	move.l	(a0)+,d1
 	move.l	(a0)+,d3
-	and.l	d4,d0
-	and.l	d4,d2
-	move.l	a5,(a1)+
-	and.l	d4,d1
-	and.l	d4,d3
-	move.l	a6,(a1)+
 	lsl.l	#4,d0
 	lsl.l	#4,d1
+	move.l	a5,(a1)+
 	or.l	d2,d0
 	or.l	d3,d1
+	move.l	a6,(a1)+
 
 c2p1x1_4_start:
 
@@ -785,7 +777,7 @@ c2p1x1_4_start:
 	move.l	d1,d7
 	lsr.l	#2,d7
 	eor.l	d0,d7
-	and.l	#0x33333333,d7
+	and.l	d4,d7
 	eor.l	d7,d0
 	lsl.l	#2,d7
 	eor.l	d7,d1
@@ -847,7 +839,7 @@ SYM(asm_c2p1x1_4_rect):
 	sub.l	d0,d2
 	move.l	d2,chunky_offset
 
-	move.l	#0x0f0f0f0f,d4
+	move.l	#0x33333333,d4
 	move.l	#0x00ff00ff,d5
 	move.l	#0x55555555,d6
 
@@ -855,10 +847,6 @@ SYM(asm_c2p1x1_4_rect):
 	move.l	(a0)+,d2
 	move.l	(a0)+,d1
 	move.l	(a0)+,d3
-	and.l	d4,d0
-	and.l	d4,d2
-	and.l	d4,d1
-	and.l	d4,d3
 	lsl.l	#4,d0
 	lsl.l	#4,d1
 	or.l	d2,d0
@@ -870,16 +858,12 @@ c2p1x1_4_rect_pix16:
 	move.l	(a0)+,d2
 	move.l	(a0)+,d1
 	move.l	(a0)+,d3
-	and.l	d4,d0
-	and.l	d4,d2
-	move.l	a5,(a1)+
-	and.l	d4,d1
-	and.l	d4,d3
-	move.l	a6,(a1)+
 	lsl.l	#4,d0
 	lsl.l	#4,d1
+	move.l	a5,(a1)+
 	or.l	d2,d0
 	or.l	d3,d1
+	move.l	a6,(a1)+
 
 	cmp.l	a1,a7					| end of dst line?
 	bne.s	c2p1x1_4_rect_start
@@ -926,7 +910,7 @@ c2p1x1_4_rect_start:
 	move.l	d1,d7
 	lsr.l	#2,d7
 	eor.l	d0,d7
-	and.l	#0x33333333,d7
+	and.l	d4,d7
 	eor.l	d7,d0
 	lsl.l	#2,d7
 	eor.l	d7,d1
@@ -941,7 +925,7 @@ c2p1x1_4_rect_start:
 	move.l	d0,a6
 
 	cmp.l	a0,a2					| end of src line?
-	bne	c2p1x1_4_rect_pix16
+	bne.s	c2p1x1_4_rect_pix16
 
 	cmp.l	(chunky_end,pc),a2
 	beq.s	c2p1x1_4_rect_done
@@ -949,7 +933,7 @@ c2p1x1_4_rect_start:
 	add.l	(chunky_offset,pc),a0
 	add.l	(chunky_pitch,pc),a2
 
-	bra	c2p1x1_4_rect_pix16
+	bra.s	c2p1x1_4_rect_pix16
 
 c2p1x1_4_rect_done:
 	move.l	a5,(a1)+
