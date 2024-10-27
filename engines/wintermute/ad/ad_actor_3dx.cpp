@@ -2155,9 +2155,9 @@ bool AdActor3DX::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WalkAnimName") == 0) {
 		if (value->isNULL()) {
-			_talkAnimName = "walk";
+			_walkAnimName = "walk";
 		} else {
-			_talkAnimName = value->getString();
+			_walkAnimName = value->getString();
 		}
 		return true;
 	}
