@@ -662,8 +662,6 @@ void Adlib::OnTimer() {
 								// l0017_1BF3:
 								if (gArray222C[bp8] == 0) {
 									// l0017_1BFD:
-									// TODO: Need to handle another comparison of not yet implemented
-									// data structure
 									uint8 v = gArray227F[bp8];
 									if (v == bp3) {
 										// l0017_1C09:
@@ -677,6 +675,7 @@ void Adlib::OnTimer() {
 									}
 								}	
 							}
+						// TODO: Check if there is a better exit condition
 						} while (true);
 						// l0017_1C1A:
 						// TODO: Not sure about removal of AH bits in the original
@@ -696,29 +695,16 @@ void Adlib::OnTimer() {
 									// l0017_1C4C:
 									if (gArray222C[bp0A] != 0) {
 										// l0017_1C56:
-										// TODO: Increase the pointed to value
-
-										// mov di, [bp - 0Ah]
-										// inc byte ptr[di + 222Ch]
+										gArray222C[bp0A]++;
 									}
 									// l0017_1C5D:
 									// TODO: Again several struct accesses that are not
 									// implemented yet
-									/*
-									mov	di,[bp-0Ah]
-									mov	al,[di+222Ch]
-									xor	ah,ah
-									cmp	ax,[bp-0Ch]
-									jle	1C7Dh
-
-								l0017_1C6B:
-									mov	di,[bp-0Ah]
-									mov	al,[di+222Ch]
-									xor	ah,ah
-									mov	[bp-0Ch],ax
-									mov	ax,[bp-0Ah]
-									mov	[bp-8h],ax
-								*/
+									if (gArray222C[bp0A] > bp0C) {
+										// l0017_1C6B:
+										bp0C = gArray222C[bp0A];
+										bp8 = bp0A;
+									}
 									// l0017_1C7D:
 									if (bp0A == bp16) {
 										break;
@@ -726,7 +712,6 @@ void Adlib::OnTimer() {
 									// TODO: Continue from here
 								} while (true);
 							}
-							
 							// TODO: Should be 1C85h
 							// l0017_1C85:
 							if (bp0C != 0) {
