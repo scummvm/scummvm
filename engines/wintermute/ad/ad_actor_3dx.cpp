@@ -2353,13 +2353,11 @@ bool AdActor3DX::mergeAnimations(const char *filename) {
 		return res;
 	}
 
-	Common::String animExtFile = PathUtil::getFileNameWithoutExtension(filename);
-	animExtFile += ".anim";
+	AnsiString path = PathUtil::getDirectoryName(filename);
+	AnsiString name = PathUtil::getFileNameWithoutExtension(filename);
+	AnsiString animExtFile = PathUtil::combine(path, name + ".anim");
 
-	Common::SeekableReadStream *testFile = BaseFileManager::getEngineInstance()->openFile(animExtFile);
-
-	if (testFile) {
-		BaseFileManager::getEngineInstance()->closeFile(testFile);
+	if (BaseFileManager::getEngineInstance()->hasFile(animExtFile)) {
 		return mergeAnimations2(animExtFile.c_str());
 	} else {
 		return true;

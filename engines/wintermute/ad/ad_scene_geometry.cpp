@@ -48,6 +48,7 @@
 #include "engines/wintermute/base/gfx/3dloader_3ds.h"
 #include "engines/wintermute/base/gfx/3dmesh.h"
 #include "engines/wintermute/base/gfx/xmath.h"
+#include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/math/math_util.h"
 #include "engines/wintermute/system/sys_class_registry.h"
 #include "engines/wintermute/wintermute.h"
@@ -144,11 +145,12 @@ void AdSceneGeometry::cleanup() {
 AdGeomExt *AdSceneGeometry::getGeometryExtension(char *filename) {
 	AdGeomExt *ret = new AdGeomExt(_gameRef);
 
-	Common::String geomExtFile(filename);
-	geomExtFile.replace(geomExtFile.size() - 3, 3, "geometry", 0, 8);
+	AnsiString path = PathUtil::getDirectoryName(filename);
+	AnsiString name = PathUtil::getFileNameWithoutExtension(filename);
+	AnsiString geomExtFile = PathUtil::combine(path, name + ".geometry");
 
 	bool loadOK = false;
-	if (BaseFileManager::getEngineInstance()->openFile(geomExtFile) != nullptr) {
+	if (BaseFileManager::getEngineInstance()->hasFile(geomExtFile)) {
 		loadOK = ret->loadFile(geomExtFile.begin());
 	}
 
