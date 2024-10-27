@@ -204,7 +204,11 @@ void LibretroGraphics::grabPalette(byte *colors, uint start, uint num) const {
 }
 
 bool LibretroGraphics::hasFeature(OSystem::Feature f) const {
-	return (f == OSystem::kFeatureCursorPalette) || (f == OSystem::kFeatureCursorAlpha);
+	return (f == OSystem::kFeatureCursorPalette) ||
+#ifdef SCUMMVM_NEON
+		(f == OSystem::kFeatureCpuNEON) ||
+#endif
+		(f == OSystem::kFeatureCursorAlpha);
 }
 
 void LibretroGraphics::setFeatureState(OSystem::Feature f, bool enable) {

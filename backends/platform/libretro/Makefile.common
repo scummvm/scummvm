@@ -150,6 +150,11 @@ else
    $(info No support for OpenGL/OpenGLES2 requested)
 endif
 
+ifeq ($(HAVE_NEON), 1)
+   SCUMMVM_NEON := 1
+   DEFINES += -DSCUMMVM_NEON
+endif
+
 ######################################################################
 # Libretro settings
 ######################################################################

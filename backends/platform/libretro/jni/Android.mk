@@ -11,6 +11,10 @@ ifneq (,$(findstring 64,$(TARGET_ARCH_ABI)))
   TARGET_64BIT := 1
 endif
 
+ifneq (,$(findstring arm64,$(TARGET_ARCH_ABI)))
+  HAVE_NEON := 1
+endif
+
 include $(ROOT_PATH)/Makefile.common
 
 include $(addprefix $(SCUMMVM_PATH)/, $(addsuffix /module.mk,$(MODULES)))
