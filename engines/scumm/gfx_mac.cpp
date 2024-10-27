@@ -161,13 +161,13 @@ void ScummEngine::mac_undrawIndy3CreditsText() {
 	restoreCharsetBg();
 }
 
-void ScummEngine::mac_drawBufferToScreen(const byte *buffer, int pitch, int x, int y, int width, int height) {
+void ScummEngine::mac_drawBufferToScreen(const byte *buffer, int pitch, int x, int y, int width, int height, bool epxRectangleExpansion) {
 	// Composite the dirty rectangle into _completeScreenBuffer
 	mac_updateCompositeBuffer(buffer, pitch, x, y, width, height);
 
 	if (_useMacGraphicsSmoothing) {
 		// Apply the EPX scaling algorithm to produce a 640x480 image...
-		mac_blitEPXImage(buffer, pitch, x, y, width, height);
+		mac_blitEPXImage(buffer, pitch, x, y, width, height, epxRectangleExpansion);
 	} else {
 		// ...otherwise just double the resolution.
 		mac_blitDoubleResImage(buffer, pitch, x, y, width, height);
@@ -218,7 +218,7 @@ void ScummEngine::mac_applyDoubleResToBuffer(const byte *inputBuffer, byte *outp
 	}
 }
 
-void ScummEngine::mac_blitEPXImage(const byte *buffer, int pitch, int x, int y, int width, int height) {
+void ScummEngine::mac_blitEPXImage(const byte *buffer, int pitch, int x, int y, int width, int height, bool epxRectangleExpansion) {
 	// This is a piecewise version of EPX/Scale2x.
 	//
 	// Just like the original, it applies EPX not on the entire screen but just on the
@@ -248,10 +248,18 @@ void ScummEngine::mac_blitEPXImage(const byte *buffer, int pitch, int x, int y, 
 	// which supposedly use most of the same EPX code from the Macintosh interpreters.
 
 	// Rectangle expansion
-	int x1 = (x > 0) ? x - 1 : 0;
-	int y1 = (y > 0) ? y - 1 : 0;
-	int x2 = (x + width < _screenWidth) ? x + width + 1 : _screenWidth;
-	int y2 = (y + height < _screenHeight) ? y + height + 1 : _screenHeight;
+	int x1, y1, x2, y2;
+	if (epxRectangleExpansion) {
+		x1 = (x > 0) ? x - 1 : 0;
+		y1 = (y > 0) ? y - 1 : 0;
+		x2 = (x + width < _screenWidth) ? x + width + 1 : _screenWidth;
+		y2 = (y + height < _screenHeight) ? y + height + 1 : _screenHeight;
+	} else {
+		x1 = (x > 0) ? x : 0;
+		y1 = (y > 0) ? y : 0;
+		x2 = (x + width < _screenWidth) ? x + width : _screenWidth;
+		y2 = (y + height < _screenHeight) ? y + height : _screenHeight;
+	}
 
 	// Adjust output buffer accordingly
 	byte *targetScreenBuf = (byte *)_macScreen->getBasePtr(x1 * 2, y1 * 2 + _macScreenDrawOffset * 2);
