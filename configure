@@ -1660,7 +1660,7 @@ case $_host in
 	datadir='${datarootdir}'
 	docdir='${prefix}/doc'
 	;;
-android-arm-v7a | ouya)
+android-arm-v7a | android-armeabi-v7a | ouya)
 	_host_os=android
 	_host_cpu=arm
 	_host_alias=arm-linux-androideabi
@@ -2839,7 +2839,7 @@ case $_host_os in
 		;;
 	android)
 		case $_host in
-			android-arm-v7a)
+			android-arm-v7a | android-armeabi-v7a)
 				# Disable NEON for older devices (like with Tegra 2)
 				append_var CXXFLAGS "-mfpu=vfp"
 				# This is really old CPU but might be still used with android 4.1, it slightly increases code size and decreases performance.
@@ -3456,7 +3456,7 @@ if test -n "$_host"; then
 			_vorbis=no
 			_port_mk="backends/platform/3ds/3ds.mk"
 			;;
-		android-arm-v7a | android-arm64-v8a | android-x86 | android-x86_64 | ouya)
+		android-* | ouya)
 			# __ANDROID__ is defined by Clang in the NDK
 			# we link a .so as default
 			append_var LDFLAGS "-shared"
