@@ -1522,7 +1522,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		AdGame *adGame = (AdGame *)_gameRef;
 
 		if (isGoToNeeded(x, y)) {
-			if (adGame->_scene->_2DPathfinding) {
+			if (adGame->_scene && adGame->_scene->_2DPathfinding) {
 				goTo2D(x, y);
 
 				if (strcmp(name, "GoToAsync") != 0) {
