@@ -2695,9 +2695,10 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 	// Direct3DDevice
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "Direct3DDevice") {
-		warning("BaseGame::scGetProperty Direct3D device is not available");
-		_scValue->setNULL();
-
+		if (_gameRef->_useD3D)
+			_scValue->setInt((int)('D3DH'));
+		else
+			_scValue->setNULL();
 		return _scValue;
 	}
 
@@ -2705,9 +2706,10 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 	// DirectDrawInterface
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "DirectDrawInterface") {
-		warning("BaseGame::scGetProperty DirectDraw interface is not available");
-		_scValue->setNULL();
-
+		if (!_gameRef->_useD3D)
+			_scValue->setInt((int)('DDIH'));
+		else
+			_scValue->setNULL();
 		return _scValue;
 	}
 #endif
