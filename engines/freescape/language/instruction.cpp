@@ -342,7 +342,8 @@ void FreescapeEngine::executeExecute(FCLInstruction &instruction, bool shot, boo
 		if (!obj) {
 			obj = _areaMap[255]->entranceWithID(objId);
 			assert(obj);
-			executeEntranceConditions((Entrance *)obj);
+			FCLInstructionVector &condition = ((Entrance *)obj)->_condition;
+			executeCode(condition, shot, collided, false, activated);
 			return;
 		}
 	}

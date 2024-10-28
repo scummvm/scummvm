@@ -41,6 +41,7 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 
 	_soundIndexStart = 9;
 	_soundIndexAreaChange = 5;
+	k8bitVariableShield = 29;
 
 	if (isSpectrum())
 		initZX();
