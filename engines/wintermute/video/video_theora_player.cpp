@@ -258,7 +258,9 @@ bool VideoTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame,
 	default:
 		break;
 	}
-	_theoraDecoder->start();
+
+	if (_theoraDecoder)
+		_theoraDecoder->start();
 
 	return STATUS_OK;
 #if 0 // Stubbed for now as theora isn't seekable
