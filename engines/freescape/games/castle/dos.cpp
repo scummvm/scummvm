@@ -305,6 +305,8 @@ void CastleEngine::loadAssetsDOSFullGame() {
 		_conditionSources.remove_at(1);
 	}
 
+	_endArea = 1;
+	_endEntrance = 42;
 	// CPC
 	// file = gameDir.createReadStreamForMember("cm.bin");
 	// if (file == nullptr)
@@ -454,8 +456,10 @@ void CastleEngine::drawDOSUI(Graphics::Surface *surface) {
 		drawStringInSurface(message, 97, 182, front, back, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
-	} else
-		drawStringInSurface(_currentArea->_name, 97, 182, front, back, surface);
+	} else {
+		if (_gameStateControl == kFreescapeGameStatePlaying)
+			drawStringInSurface(_currentArea->_name, 97, 182, front, back, surface);
+	}
 
 	for (int k = 0; k < int(_keysCollected.size()); k++) {
 		surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_keysBorderFrames[k], 76 - k * 3, 179, Common::Rect(0, 0, 6, 14), black);

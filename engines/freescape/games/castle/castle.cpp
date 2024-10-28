@@ -314,6 +314,8 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 			playSound(13, true);
 		else
 			playSound(_soundIndexStart, false);
+	} else if (areaID == _endArea && entranceID == _endEntrance) {
+		_pitch = -85;
 	} else {
 		// If escaped, play a different sound
 		if (getGameBit(31))
@@ -387,10 +389,15 @@ void CastleEngine::endGame() {
 	_shootingFrames = 0;
 	_delayedShootObject = nullptr;
 	_endGamePlayerEndArea = true;
-	insertTemporaryMessage(_messagesList[5], INT_MIN);
 
-	if (isDOS()) {
-		drawFullscreenEndGameAndWait();
+	if (getGameBit(31) || _currentArea->getAreaID() == 74) {
+		insertTemporaryMessage(_messagesList[5], INT_MIN);
+
+		if (isDOS()) {
+			drawFullscreenEndGameAndWait();
+		}
+	} else {
+		drawFullscreenGameOverAndWait();
 	}
 
 	_gameStateControl = kFreescapeGameStateRestart;
@@ -675,6 +682,69 @@ void CastleEngine::drawFullscreenEndGameAndWait() {
 	surface->free();
 	delete surface;
 }
+
+void CastleEngine::drawFullscreenGameOverAndWait() {
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
+	surface->fillRect(_fullscreenViewArea, _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00));
+
+	Common::Event event;
+	bool cont = true;
+
+	int score = _gameStateVars[k8bitVariableScore];
+	int spiritsDestroyed = _gameStateVars[k8bitVariableSpiritsDestroyed];
+
+	Common::String keysCollectedString = _messagesList[130];
+	if (_keysCollected.size() == 0)
+		keysCollectedString = _messagesList[128];
+	else
+		Common::replace(keysCollectedString, "X", Common::String::format("%d", _keysCollected.size()));
+	keysCollectedString = centerAndPadString(keysCollectedString, 15);
+
+	Common::String scoreString = _messagesList[131];
+	Common::replace(scoreString, "XXXXXXX", Common::String::format("%07d", score));
+	scoreString = centerAndPadString(scoreString, 15);
+
+	Common::String spiritsDestroyedString = _messagesList[133];
+	Common::replace(spiritsDestroyedString, "X", Common::String::format("%d", spiritsDestroyed));
+	spiritsDestroyedString = centerAndPadString(spiritsDestroyedString, 15);
+
+	while (!shouldQuit() && cont) {
+		if (_temporaryMessageDeadlines.empty()) {
+			insertTemporaryMessage(scoreString, _countdown - 2);
+			insertTemporaryMessage(spiritsDestroyedString, _countdown - 4);
+			insertTemporaryMessage(keysCollectedString, _countdown - 6);
+		}
+
+		while (_eventManager->pollEvent(event)) {
+
+			// Events
+			switch (event.type) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionShoot) {
+					cont = false;
+				}
+				break;
+			case Common::EVENT_SCREEN_CHANGED:
+				_gfx->computeScreenViewport();
+				break;
+			default:
+				break;
+			}
+		}
+		_gfx->clear(0, 0, 0, true);
+		drawFrame();
+
+		//drawFullscreenSurface(surface);
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(15); // try to target ~60 FPS
+	}
+
+	surface->free();
+	delete surface;
+}
+
 
 
 // Same as FreescapeEngine::executeExecute but updates the spirits destroyed counter
