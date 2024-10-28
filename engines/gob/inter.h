@@ -740,6 +740,7 @@ protected:
 	void o7_findNextDatabaseRecord();
 	void o7_getDatabaseRecordValue();
 	void o7_checkAnyDatabaseRecordFound();
+	void o7_draw0xC3();
 	void o7_openTranlsationDB();
 	void o7_closeTranslationDB();
 	void o7_getDBString();
@@ -757,6 +758,13 @@ protected:
 	void o7_draw0xE4();
 	void o7_draw0xE6();
 	void o7_draw0xE7();
+	void o7_draw0xE8();
+	void o7_draw0xE9();
+	void o7_draw0xF0();
+	void o7_executeModAddEvent();
+	void o7_executeModSetLength();
+	void o7_executeModGetPosition();
+	void o7_executeModStart();
 	void o7_vmdGetSoundBuffer();
 	void o7_vmdReleaseSoundBuffer();
 
