@@ -243,7 +243,7 @@ public:
 
 	Common::Archive *_dataBundle;
 	void loadDataBundle();
-	Graphics::Surface *loadBundledImage(const Common::String &name);
+	Graphics::Surface *loadBundledImage(const Common::String &name, bool appendRenderMode = true);
 	byte *getPaletteFromNeoImage(Common::SeekableReadStream *stream, int offset);
 	Graphics::ManagedSurface *loadAndConvertNeoImage(Common::SeekableReadStream *stream, int offset, byte *palette = nullptr);
 	Graphics::ManagedSurface *loadAndCenterScrImage(Common::SeekableReadStream *stream);

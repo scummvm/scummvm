@@ -116,6 +116,7 @@ public:
 
 	Graphics::ManagedSurface *_endGameThroneFrame;
 	Graphics::ManagedSurface *_endGameBackgroundFrame;
+	Graphics::ManagedSurface *_gameOverBackgroundFrame;
 
 	Common::Array<int> _keysCollected;
 	bool _useRockTravel;

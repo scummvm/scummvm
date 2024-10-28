@@ -79,6 +79,7 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 
 	_endGameThroneFrame = nullptr;
 	_endGameBackgroundFrame = nullptr;
+	_gameOverBackgroundFrame = nullptr;
 
 	_menuCrawlIndicator = nullptr;
 	_menuWalkIndicator = nullptr;
@@ -172,6 +173,11 @@ CastleEngine::~CastleEngine() {
 	if (_endGameBackgroundFrame) {
 		_endGameBackgroundFrame->free();
 		delete _endGameBackgroundFrame;
+	}
+
+	if (_gameOverBackgroundFrame) {
+		_gameOverBackgroundFrame->free();
+		delete _gameOverBackgroundFrame;
 	}
 
 	if (_menu) {
@@ -687,6 +693,8 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
 	surface->fillRect(_fullscreenViewArea, _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00));
+	uint32 blue = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x24, 0xA5);
+	surface->copyRectToSurfaceWithKey(*_gameOverBackgroundFrame, _viewArea.left, _viewArea.top, Common::Rect(0, 0, _gameOverBackgroundFrame->w, _gameOverBackgroundFrame->h), blue);
 
 	Common::Event event;
 	bool cont = true;
@@ -694,18 +702,51 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 	int score = _gameStateVars[k8bitVariableScore];
 	int spiritsDestroyed = _gameStateVars[k8bitVariableSpiritsDestroyed];
 
-	Common::String keysCollectedString = _messagesList[130];
-	if (_keysCollected.size() == 0)
+	Common::String keysCollectedString;
+	if (isDOS())
+		keysCollectedString = _messagesList[130];
+	else if (isSpectrum()) {
+		if (_language == Common::EN_ANY)
+			keysCollectedString = "X COLLECTED";
+		else if (_language == Common::ES_ESP)
+			keysCollectedString = "X RECOGIDAS";
+		else
+			error("Language not supported");
+	}
+
+	if (isDOS() && _keysCollected.size() == 0)
 		keysCollectedString = _messagesList[128];
 	else
 		Common::replace(keysCollectedString, "X", Common::String::format("%d", _keysCollected.size()));
 	keysCollectedString = centerAndPadString(keysCollectedString, 15);
 
-	Common::String scoreString = _messagesList[131];
+	Common::String scoreString;
+	if (isDOS())
+		scoreString = _messagesList[131];
+	else if (isSpectrum()) {
+		if (_language == Common::EN_ANY)
+			scoreString = "SCORE XXXXXXX";
+		else if (_language == Common::ES_ESP)
+			scoreString = "PUNTAJE XXXXXXX";
+		else
+			error("Language not supported");
+	}
+
 	Common::replace(scoreString, "XXXXXXX", Common::String::format("%07d", score));
 	scoreString = centerAndPadString(scoreString, 15);
 
-	Common::String spiritsDestroyedString = _messagesList[133];
+	Common::String spiritsDestroyedString;
+	if (isDOS())
+		spiritsDestroyedString = _messagesList[133];
+	else if (isSpectrum()) {
+		if (_language == Common::EN_ANY)
+			spiritsDestroyedString = "X DESTROYED";
+		else if (_language == Common::ES_ESP)
+			spiritsDestroyedString = "X DESTRUIDOS";
+		else
+			error("Language not supported");
+	}
+
 	Common::replace(spiritsDestroyedString, "X", Common::String::format("%d", spiritsDestroyed));
 	spiritsDestroyedString = centerAndPadString(spiritsDestroyedString, 15);
 
@@ -735,7 +776,7 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 		_gfx->clear(0, 0, 0, true);
 		drawFrame();
 
-		//drawFullscreenSurface(surface);
+		drawFullscreenSurface(surface);
 		_gfx->flipBuffer();
 		g_system->updateScreen();
 		g_system->delayMillis(15); // try to target ~60 FPS

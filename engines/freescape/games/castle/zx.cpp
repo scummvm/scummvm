@@ -253,6 +253,16 @@ void CastleEngine::loadAssetsZXFullGame() {
 	_crushedMessage = _messagesList[3];
 	_outOfReachMessage = _messagesList[7];
 	_noEffectMessage = _messagesList[8];
+
+	_endArea = 1;
+	_endEntrance = 42;
+
+	tmp = loadBundledImage("castle_gate");
+	_gameOverBackgroundFrame = new Graphics::ManagedSurface;
+	_gameOverBackgroundFrame->copyFrom(*tmp);
+	_gameOverBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat);
+	tmp->free();
+	delete tmp;
 }
 
 void CastleEngine::drawZXUI(Graphics::Surface *surface) {

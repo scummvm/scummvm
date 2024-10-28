@@ -127,9 +127,13 @@ void FreescapeEngine::loadDataBundle() {
 	free(versionData);
 }
 
-Graphics::Surface *FreescapeEngine::loadBundledImage(const Common::String &name) {
+Graphics::Surface *FreescapeEngine::loadBundledImage(const Common::String &name, bool appendRenderMode) {
 	Image::BitmapDecoder decoder;
-	Common::Path bmpFilename(name + "_" + Common::getRenderModeDescription(_renderMode) + ".bmp");
+	Common::Path bmpFilename(name + ".bmp");
+
+	if (appendRenderMode)
+		bmpFilename = Common::Path(name + "_" + Common::getRenderModeDescription(_renderMode) + ".bmp");
+
 	debugC(1, kFreescapeDebugParser, "Loading %s from bundled archive", bmpFilename.toString().c_str());
 	if (!_dataBundle->hasFile(bmpFilename))
 		error("Failed to open file %s from bundle", bmpFilename.toString().c_str());

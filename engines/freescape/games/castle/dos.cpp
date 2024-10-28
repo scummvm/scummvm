@@ -147,7 +147,7 @@ void CastleEngine::loadAssetsDOSFullGame() {
 	Common::SeekableReadStream *stream = nullptr;
 
 	if (_renderMode == Common::kRenderEGA) {
-		_viewArea = Common::Rect(40, 33, 280, 152);
+		_viewArea = Common::Rect(40, 33 - 2, 280, 152);
 
 		file.open("CME.EXE");
 		stream = unpackEXE(file);
@@ -307,6 +307,15 @@ void CastleEngine::loadAssetsDOSFullGame() {
 
 	_endArea = 1;
 	_endEntrance = 42;
+
+	Graphics::Surface *tmp;
+	tmp = loadBundledImage("castle_gate", false);
+	_gameOverBackgroundFrame = new Graphics::ManagedSurface;
+	_gameOverBackgroundFrame->copyFrom(*tmp);
+	_gameOverBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat);
+	tmp->free();
+	delete tmp;
+
 	// CPC
 	// file = gameDir.createReadStreamForMember("cm.bin");
 	// if (file == nullptr)
