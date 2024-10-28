@@ -69,6 +69,9 @@ int32 BaseParser::getObject(char **buf, const TokenDesc *tokens, char **name, ch
 	// skip comment lines.
 	while (**buf == ';') {
 		*buf = strchr(*buf, '\n');
+		if (! *buf) {
+			return PARSERR_EOF;
+		}
 		_parserLine++;
 		skipCharacters(buf, _whiteSpace);
 	}
