@@ -46,7 +46,6 @@ bool walker_has_walk_finished(machine *sender);
 void ws_demand_location(machine *myWalker, int32 x, int32 y, int facing = -1);
 void ws_demand_facing(machine *myWalker, int32 newFacing);
 void ws_turn_to_face(machine *myWalker, int32 facing, int32 trigger = -1);
-void ws_nosepick(machine *myWalker, int32 seriesHash);
 void ws_hide_walker(machine *myWalker);
 void ws_unhide_walker(machine *myWalker);
 void ws_walk(machine *myWalker, int32 x, int32 y, GrBuff **, int16 trigger, int32 finalFacing, bool complete_walk = true);
@@ -54,7 +53,6 @@ void ws_walk(machine *myWalker, int32 x, int32 y, GrBuff **, int16 trigger, int3
 void ws_demand_location(int32 x, int32 y, int facing = -1);
 void ws_demand_facing(int32 newFacing);
 void ws_turn_to_face(int32 facing, int32 trigger = -1);
-void ws_nosepick(int32 seriesHash);
 void ws_hide_walker();
 void ws_unhide_walker();
 void ws_walk(int32 x, int32 y, GrBuff **buffer, int16 trigger, int32 finalFacing = -1, bool complete_walk = true);
@@ -79,7 +77,6 @@ void ws_walk_dump_series(int16 num_directions, int16 start_hash);
 #define player_hide()                  (ws_hide_walker(_G(my_walker)))
 #define player_unhide()                (ws_unhide_walker(_G(my_walker)))
 #define player_get_info()              (player_update_info(_G(my_walker), &_G(player_info)))
-#define player_nosepick(aa)            (ws_nosepick(_G(my_walker), aa))
 
 
 // New walking stuff
