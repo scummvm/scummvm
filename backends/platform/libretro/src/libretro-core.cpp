@@ -85,8 +85,8 @@ static uint8 video_hw_mode = 0;
 
 static unsigned base_width = RES_W_OVERLAY;
 static unsigned base_height = RES_H_OVERLAY;
-static unsigned max_width = RES_W_OVERLAY;
-static unsigned max_height = RES_H_OVERLAY;
+static unsigned max_width = RES_INIT_MAX_W;
+static unsigned max_height = RES_INIT_MAX_H;
 
 static uint32 current_frame = 0;
 static uint8 frameskip_no;
