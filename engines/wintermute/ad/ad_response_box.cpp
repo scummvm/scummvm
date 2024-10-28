@@ -639,7 +639,7 @@ bool AdResponseBox::persist(BasePersistenceManager *persistMgr) {
 bool AdResponseBox::weedResponses() {
 	AdGame *adGame = (AdGame *)_gameRef;
 
-	for (uint32 i = 0; i < _responses.size(); i++) {
+	for (int32 i = 0; i < (int32)_responses.size(); i++) {
 		switch (_responses[i]->_responseType) {
 		case RESPONSE_ONCE:
 			if (adGame->branchResponseUsed(_responses[i]->getID())) {

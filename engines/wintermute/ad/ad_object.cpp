@@ -582,7 +582,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			}
 		} else {
 			const char *attachmentName = val->getString();
-			for (uint32 i = 0; i < _attachmentsPre.size(); i++) {
+			for (int32 i = 0; i < (int32)_attachmentsPre.size(); i++) {
 				if (_attachmentsPre[i]->getName() && scumm_stricmp(_attachmentsPre[i]->getName(), attachmentName) == 0) {
 					found = true;
 					_gameRef->unregisterObject(_attachmentsPre[i]);
@@ -590,7 +590,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 					i--;
 				}
 			}
-			for (uint32 i = 0; i < _attachmentsPost.size(); i++) {
+			for (int32 i = 0; i < (int32)_attachmentsPost.size(); i++) {
 				if (_attachmentsPost[i]->getName() && scumm_stricmp(_attachmentsPost[i]->getName(), attachmentName) == 0) {
 					found = true;
 					_gameRef->unregisterObject(_attachmentsPost[i]);

@@ -1962,7 +1962,7 @@ bool AdGame::endDlgBranch(const char *branchName, const char *scriptName, const 
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::clearBranchResponses(char *name) {
-	for (uint32 i = 0; i < _responsesBranch.size(); i++) {
+	for (int32 i = 0; i < (int32)_responsesBranch.size(); i++) {
 		if (scumm_stricmp(name, _responsesBranch[i]->getContext()) == 0) {
 			delete _responsesBranch[i];
 			_responsesBranch.remove_at(i);

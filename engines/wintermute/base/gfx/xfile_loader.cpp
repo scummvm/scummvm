@@ -723,6 +723,8 @@ bool XFileLoader::decompressMsZipData() {
 	if (!readLE32(&decompressedSize)) {
 		error = true;
 	} else {
+		if (decompressedSize < 16)
+			return false;
 		decompressedSize -= 16;
 	}
 

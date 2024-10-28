@@ -139,7 +139,7 @@ public:
 	bool setViewport3D(DXViewport *viewport) override;
 
 private:
-	SimpleShadowVertex _simpleShadow[4];
+	SimpleShadowVertex _simpleShadow[4]{};
 	Common::Array<DXVector4> _lightPositions;
 	Common::Array<DXVector3> _lightDirections;
 };

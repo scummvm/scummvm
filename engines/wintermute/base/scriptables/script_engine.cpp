@@ -533,7 +533,7 @@ bool ScEngine::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 void ScEngine::editorCleanup() {
-	for (uint32 i = 0; i < _scripts.size(); i++) {
+	for (int32 i = 0; i < (int32)_scripts.size(); i++) {
 		if (_scripts[i]->_owner == nullptr && (_scripts[i]->_state == SCRIPT_FINISHED || _scripts[i]->_state == SCRIPT_ERROR)) {
 			delete _scripts[i];
 			_scripts.remove_at(i);

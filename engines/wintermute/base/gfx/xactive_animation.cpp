@@ -99,7 +99,9 @@ bool ActiveAnimation::update(int slot, bool prevFrameOnly, float lerpValue, bool
 		}
 	}
 	if (_finished) {
-		localTime = _animation->getTotalTime() - 1;
+		localTime = _animation->getTotalTime();
+		if (localTime != 0)
+			localTime--;
 	}
 
 	_lastLocalTime = localTime;

@@ -166,7 +166,7 @@ protected:
 	DXMatrix _worldMatrix;
 	DXMatrix _viewMatrix;
 	DXMatrix _projectionMatrix;
-	DXViewport _viewport;
+	DXViewport _viewport{};
 	float _fov;
 	float _nearClipPlane;
 	float _farClipPlane;

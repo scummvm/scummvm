@@ -58,8 +58,8 @@ bool AdInventory::insertItem(const char *name, const char *insertAfter) {
 		return STATUS_FAILED;
 	}
 
-	int insertIndex = -1;
-	for (uint32 i = 0; i < _takenItems.size(); i++) {
+	int32 insertIndex = -1;
+	for (int32 i = 0; i < (int32)_takenItems.size(); i++) {
 		if (scumm_stricmp(_takenItems[i]->getName(), name) == 0) {
 			_takenItems.remove_at(i);
 			i--;

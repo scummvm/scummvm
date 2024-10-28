@@ -3258,7 +3258,7 @@ bool BaseGame::displayQuickMsg() {
 	}
 
 	// update
-	for (uint32 i = 0; i < _quickMessages.size(); i++) {
+	for (int32 i = 0; i < (int32)_quickMessages.size(); i++) {
 		if (_currentTime - _quickMessages[i]->getStartTime() >= QUICK_MSG_DURATION) {
 			delete _quickMessages[i];
 			_quickMessages.remove_at(i);
