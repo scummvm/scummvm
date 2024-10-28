@@ -638,6 +638,8 @@ void BaseFontTT::measureText(const WideString &text, int maxWidth, int maxHeight
 		Common::Array<WideString>::iterator it;
 		textWidth = 0;
 		for (it = lines.begin(); it != lines.end(); ++it) {
+			if (!it)
+				continue;
 			textWidth = MAX(textWidth, _font->getStringWidth(*it));
 		}
 
