@@ -103,6 +103,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0xB1, o7_findNextDatabaseRecord);
 	OPCODEDRAW(0xB4, o7_getDatabaseRecordValue);
 	OPCODEDRAW(0xB6, o7_checkAnyDatabaseRecordFound);
+	OPCODEDRAW(0xC3, o7_draw0xC3);
 	OPCODEDRAW(0xC4, o7_openTranlsationDB);
 	OPCODEDRAW(0xC5, o7_closeTranslationDB);
 	OPCODEDRAW(0xC6, o7_getDBString);
@@ -120,6 +121,13 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0xE4, o7_draw0xE4);
 	OPCODEDRAW(0xE6, o7_draw0xE6);
 	OPCODEDRAW(0xE7, o7_draw0xE7);
+	OPCODEDRAW(0xE8, o7_draw0xE8);
+	OPCODEDRAW(0xE8, o7_draw0xE9);
+	OPCODEDRAW(0xF0, o7_draw0xF0);
+	OPCODEDRAW(0xF2, o7_executeModAddEvent);
+	OPCODEDRAW(0xF4, o7_executeModSetLength);
+	OPCODEDRAW(0xF5, o7_executeModStart);
+	OPCODEDRAW(0xF7, o7_executeModGetPosition);
 	OPCODEDRAW(0xFA, o7_vmdGetSoundBuffer);
 	OPCODEDRAW(0xFB, o7_vmdReleaseSoundBuffer);
 }
@@ -1229,6 +1237,17 @@ void Inter_v7::o7_checkAnyDatabaseRecordFound() {
 	WRITE_VAR_OFFSET(varIndex, db->hasMatchingRecord() ? 0 : 1);
 }
 
+void Inter_v7::o7_draw0xC3() {
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readVarIndex();
+	_vm->_game->_script->readVarIndex();
+	warning("STUB: o7_draw0xC3 (Adibou/Musique)");
+}
+
 void Inter_v7::o7_openTranlsationDB() {
 	Common::String dbFile = getFile(_vm->_game->_script->evalString());
 	Common::String id     = _vm->_game->_script->evalString();
@@ -1339,6 +1358,45 @@ void Inter_v7::o7_draw0xE6() {
 void Inter_v7::o7_draw0xE7() {
 	_vm->_game->_script->readVarIndex();
 	warning("STUB: o7_draw0xE7 (Adibou/Musique)");
+};
+
+void Inter_v7::o7_draw0xE8() {
+	_vm->_game->_script->readVarIndex();
+	warning("STUB: o7_draw0xE8 (Adibou/Musique)");
+};
+
+void Inter_v7::o7_draw0xE9() {
+	_vm->_game->_script->readVarIndex();
+	_vm->_game->_script->readVarIndex();
+	warning("STUB: o7_draw0xE8 (Adibou/Musique)");
+};
+
+void Inter_v7::o7_draw0xF0() {
+	_vm->_game->_script->readVarIndex();
+	warning("STUB: o7_draw0xF0 (Adibou/Musique)");
+};
+
+void Inter_v7::o7_executeModAddEvent() {
+	_vm->_game->_script->readVarIndex();
+	_vm->_game->_script->readVarIndex();
+	_vm->_game->_script->readVarIndex();
+	_vm->_game->_script->readVarIndex();
+	warning("STUB: o7_executeModAddEvent (Adibou/Musique)");
+};
+
+void Inter_v7::o7_executeModSetLength() {
+	_vm->_game->_script->readVarIndex();
+	warning("STUB: o7_executeModSetLength (Adibou/Musique)");
+};
+
+void Inter_v7::o7_executeModStart() {
+	_vm->_game->_script->readVarIndex();
+	warning("STUB: o7_executeModSetLength (Adibou/Musique)");
+};
+
+void Inter_v7::o7_executeModGetPosition() {
+	_vm->_game->_script->readVarIndex();
+	warning("STUB: o7_executeModSetLength (Adibou/Musique)");
 };
 
 void Inter_v7::o7_vmdGetSoundBuffer() {
