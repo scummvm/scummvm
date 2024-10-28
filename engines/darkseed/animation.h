@@ -42,6 +42,9 @@ public:
 
 	int _nsp_sprite_scaling_y_position = 0;
 
+public:
+	explicit Animation(Player *player, Objects &objectVar) : _player(player), _objectVar(objectVar) {}
+
 	void updateAnimation();
 
 	void advanceAnimationFrame(int nspAminIdx);
@@ -50,11 +53,12 @@ public:
 	void sargoAnim();
 	void keeperAdmin();
 	void stuffPlayer();
+	void runDrekethSequence();
 	void libAnim(bool pickingUpReservedBook);
 
-public:
-	explicit Animation(Player *player, Objects &objectVar) : _player(player), _objectVar(objectVar) {}
 	void setupOtherNspAnimation(int nspAnimIdx, int animId);
+private:
+	void adddrekbutt();
 };
 
 } // End of namespace Darkseed

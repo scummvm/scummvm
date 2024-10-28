@@ -55,11 +55,10 @@ void Animation::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 		_player->_position.y = 94;
 		break;
 	case 3:
-		// TODO
-		//		if ((_SoundDevice != '\x01') && ((char)g_engine->_currentDay == '\x03')) {
-		//			LoadModeSong(7);
-		//			PlaySound(0,6,-1);
-		//		}
+		if (g_engine->_currentDay == 3) {
+			g_engine->_sound->playMusic(MusicId::kDth);
+			g_engine->playSound(0,6,-1);
+		}
 		_scaleSequence = true;
 		break;
 	case 4:
@@ -666,7 +665,7 @@ void Animation::updateAnimation() {
 				}
 			}
 		} else {
-			//			LoadModeSong(7); TODO
+			g_engine->_sound->playMusic(MusicId::kDth);
 			g_engine->playSound(0, 6, -1);
 			stuffPlayer();
 		}
@@ -1118,6 +1117,88 @@ void Animation::stuffPlayer() {
 	g_engine->_sprites.clearSpriteDrawList();
 	g_engine->_cursor.showCursor(true);
 	g_engine->_cutscene.play('Z');
+	g_engine->_sound->stopMusic();
+}
+
+void Animation::runDrekethSequence() {
+	bool updateCounter = false;
+	int counter = 0;
+	if (!g_engine->isCdVersion()) {
+		g_engine->_sound->playMusic(MusicId::kDth);
+	}
+
+	g_engine->_console->printTosText(2);
+	g_engine->_console->draw();
+	while (counter < 6) {
+		g_engine->_sprites.clearSpriteDrawList();
+
+		const Sprite &drekethBaseSprite = g_engine->_room->_locationSprites.getSpriteAt(15);
+		const Sprite &openingAnimation = g_engine->_room->_locationSprites.getSpriteAt(counter);
+		g_engine->_sprites.addSpriteToDrawList(346, 133, &drekethBaseSprite, 255, drekethBaseSprite._width, drekethBaseSprite._height, false);
+		g_engine->_sprites.addSpriteToDrawList(395, 133, &openingAnimation, 255, openingAnimation._width, openingAnimation._height, false);
+		adddrekbutt();
+
+		g_engine->_sprites.drawSprites();
+
+		g_engine->_screen->makeAllDirty();
+		g_engine->_screen->update();
+
+		updateCounter = !updateCounter;
+		if (updateCounter) {
+			counter++;
+		}
+		g_engine->waitxticks(1);
+	}
+
+	while (counter < 9) {
+		g_engine->_sprites.clearSpriteDrawList();
+
+		const Sprite &grabMikeSprite = g_engine->_room->_locationSprites.getSpriteAt(counter);
+		g_engine->_sprites.addSpriteToDrawList(346, 133, &grabMikeSprite, 255, grabMikeSprite._width, grabMikeSprite._height, false);
+		adddrekbutt();
+
+		g_engine->_sprites.drawSprites();
+
+		g_engine->_screen->makeAllDirty();
+		g_engine->_screen->update();
+
+		updateCounter = !updateCounter;
+		if (updateCounter) {
+			counter++;
+			if (counter == 7) {
+				g_engine->playSound(19, 5, -1);
+			}
+		}
+		g_engine->waitxticks(1);
+	}
+
+	while (counter < 13) {
+		g_engine->_sprites.clearSpriteDrawList();
+
+		const Sprite &drekethBaseSprite = g_engine->_room->_locationSprites.getSpriteAt(14);
+		const Sprite &closingAnimation = g_engine->_room->_locationSprites.getSpriteAt(counter);
+		g_engine->_sprites.addSpriteToDrawList(346, 175, &drekethBaseSprite, 255, drekethBaseSprite._width, drekethBaseSprite._height, false);
+		g_engine->_sprites.addSpriteToDrawList(346, 133, &closingAnimation, 255, closingAnimation._width, closingAnimation._height, false);
+		adddrekbutt();
+
+		g_engine->_sprites.drawSprites();
+
+		g_engine->_screen->makeAllDirty();
+		g_engine->_screen->update();
+
+		updateCounter = !updateCounter;
+		if (updateCounter) {
+			counter++;
+		}
+		g_engine->waitxticks(1);
+	}
+	stuffPlayer();
+}
+
+void Animation::adddrekbutt() {
+	const Sprite &drekButt = g_engine->_room->_locationSprites.getSpriteAt(16);
+	g_engine->_sprites.addSpriteToDrawList(466, 133, &drekButt, 255, drekButt._width, drekButt._height, false);
+
 }
 
 static constexpr uint8 libList[100] = {

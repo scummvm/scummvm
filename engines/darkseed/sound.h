@@ -81,6 +81,7 @@ public:
 	void playMusic(Common::String const &filename, bool loop = false);
 	void stopMusic();
 	void syncSoundSettings();
+	void killAllSound();
 };
 
 } // namespace Darkseed

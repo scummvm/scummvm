@@ -513,13 +513,13 @@ void Darkseed::UseCode::useCode(int objNum) {
 				if (((_objectVar[49] == 0) || (1 < _objectVar[62])) || (g_engine->_currentDay != 2)) {
 					if (((_objectVar[49] == 0) || (1 < _objectVar[62])) || (g_engine->_currentDay != 3)) {
 						if (_objectVar[62] < 101) {
-							//							LoadModeSong(9);
+							g_engine->_sound->playMusic(MusicId::kRadio);
 							g_engine->playSound(0, 6, -1);
 							_objectVar[62] = 101;
 							_console->addTextLine("You turn on the music.");
 						} else if (_objectVar[62] == 101) {
-							//							KillAllSound();
-							//							TerminateRoomSong();
+							g_engine->_sound->killAllSound();
+							g_engine->_sound->stopMusic();
 							_objectVar[62] = 100;
 							_console->addTextLine("You turn off the music.");
 						}

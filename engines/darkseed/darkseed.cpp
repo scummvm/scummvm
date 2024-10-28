@@ -190,7 +190,7 @@ void DarkseedEngine::gameLoop() {
 						playSound(21, 5, -1);
 					}
 					if (_objectVar[56] == 6) {
-//						LoadModeSong(7);
+						_sound->playMusic(MusicId::kDth);
 						playSound(0, 6, -1);
 						_animation->stuffPlayer();
 					}
@@ -2395,7 +2395,7 @@ void DarkseedEngine::runObjects() {
 	}
 	if (((_objectVar.getObjectRunningCode(58) != 0) && (_objectVar[21] == 0)) && (_room->_roomNumber == 55)) {
 		if (_player->_position.x == 369) {
-			runDrekethSequence();
+			_animation->runDrekethSequence();
 		}
 		if (_player->_heroMoving && _player->_walkTarget.x > 309) {
 			_player->_walkTarget = {369, 219};
@@ -2477,10 +2477,6 @@ void DarkseedEngine::movePlayerToDelbert() {
 			_player->_heroMoving = false;
 		}
 	}
-}
-
-void DarkseedEngine::runDrekethSequence() {
-	error("implement runDrekethSequence()"); // TODO
 }
 
 void DarkseedEngine::delbertThrowStick(int16 spriteNum) {

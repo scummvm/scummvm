@@ -250,7 +250,6 @@ private:
 	void closeShops();
 	void initDelbertAtSide();
 	void movePlayerToDelbert();
-	void runDrekethSequence();
 	void delbertThrowStick(int16 spriteNum);
 	void leavePackage();
 };
