@@ -2340,6 +2340,16 @@ char *AdGame::findSpeechFile(char *stringID) {
 	return nullptr;
 }
 
+#ifdef ENABLE_WME3D
+//////////////////////////////////////////////////////////////////////////
+bool AdGame::renderShadowGeometry() {
+	if (_scene && _scene->_geom)
+		return _scene->_geom->renderShadowGeometry();
+	else
+		return true;
+}
+#endif
+
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::validMouse() {
 	Point32 pos;
@@ -2495,14 +2505,6 @@ bool AdGame::displayDebugInfo() {
 
 
 #ifdef ENABLE_WME3D
-//////////////////////////////////////////////////////////////////////////
-bool AdGame::renderShadowGeometry() {
-	if (_scene && _scene->_geom)
-		return _scene->_geom->renderShadowGeometry();
-	else
-		return true;
-}
-
 //////////////////////////////////////////////////////////////////////////
 Wintermute::TShadowType AdGame::getMaxShadowType(Wintermute::BaseObject *object) {
 	TShadowType ret = BaseGame::getMaxShadowType(object);
