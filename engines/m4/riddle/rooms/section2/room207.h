@@ -40,20 +40,29 @@ public:
 	void daemon() override;
 
 private:
+	int32 _field4C = 0;
+	int32 _field50 = 0;
 	int32 _field88 = 0;
-	int32 _field89 = 0;
-	int32 _field96 = 0;
-	int32 _field9E = 0;
+	KernelTriggerType _field89_triggerMode = KT_PARSE;
+	int32 _field8A = 0;
+	int32 _field8E = 0;
+	int32 _field92 = 0;
+	const char *_field96_digiName = nullptr;
+	int32 _field9A_triggerNum = 0;
+	int32 _field9E_triggerNum = 0;
 	int32 _fieldA2 = 0;
 	int32 _fieldA4 = 0;
 	int32 _fieldA6 = 0;
 	int32 _fieldA8 = 0;
 	int32 _fieldAA = 0;
-	int32 _fieldAC = 0;
+	int32 _fieldAC_ripForegroundFl = 0;
 	int32 _fieldAE = 0;
 	int32 _fieldB2 = 0;
 	int32 _fieldB6 = 0;
+	int32 _fieldBA = 0;
 	int32 _fieldBE = 0;
+	int32 _fieldC2 = 0;
+	int32 _fieldC6 = 0;
 	int32 _fieldCA = 0;
 
 	int32 _leadPipeSeries = 0;
@@ -80,6 +89,9 @@ private:
 	machine *_sevenSpokesMach = nullptr;
 	machine *_wheelMach = nullptr;
 	machine *_ppSquatMach = nullptr;
+
+	machine *_field84 = nullptr;
+	machine *_field68 = nullptr;
 
 };
 
