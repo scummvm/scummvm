@@ -391,6 +391,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 	int32 myIndex;
 	Anim8 *parentAnim8;
 	uint32 *dataArray;
+	Common::String param;
 
 	// If the format indicates the argument is a local source (parent, register, or data)
 	if (myFormat == FMT_LOCAL_SRC) {
@@ -402,6 +403,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 		// Find out if the index has been previously stored in a special index register
 		if (myData & REG_SET_IDX_REG) {
 			myIndex = _GWS(indexReg);
+			param = "S";
 		} else {
 			// Else the index is part of the data segment for this arg
 			myIndex = myData & REG_SET_IDX;
@@ -423,6 +425,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 				return false;
 			}
 			*argPtr = &parentAnim8->myRegs[myIndex];
+			param += Common::String::format("PREG %d", myIndex);
 			break;
 
 		case LOCAL_FMT_REG:
@@ -433,6 +436,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 				return false;
 			}
 			*argPtr = &myAnim8->myRegs[myIndex];
+			param = Common::String::format("REG %d", myIndex);
 			break;
 
 		case LOCAL_FMT_DATA:
@@ -448,6 +452,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 			// Copy the data field into dataArg1, and set myArg1 to point to this location
 			*argValue = (int32)FROM_LE_32(dataArray[myIndex]);
 			*argPtr = argValue;
+			param = Common::String::format("DATA %d", myIndex);
 			break;
 		}
 	} else if (myFormat == FMT_GLOBAL_SRC) {
@@ -455,6 +460,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 		// Find out if the index has been previously stored in a special index register
 		if (myData & REG_SET_IDX_REG) {
 			myIndex = _GWS(indexReg);
+			param = "S";
 		} else {
 			// Else the index is part of the data segment for this arg
 			myIndex = myData & REG_SET_IDX;
@@ -462,6 +468,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 
 		// Finally, set myArg1 to point to the location in the ws_globals array, whichever index
 		*argPtr = &(_GWS(ws_globals)[myIndex]);
+		param += Common::String::format("GLOB %d", myIndex);
 	} else {
 		// Else the argument is not a variable, but an actual value
 
@@ -476,7 +483,10 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 
 		// myArg1 will point to this location
 		*argPtr = argValue;
+		param += Common::String::format("%d", *argValue);
 	}
+
+	dbg_AddParamToCurrMachInstr(param.c_str());
 
 	return true;
 }
@@ -497,6 +507,7 @@ int32 ws_PreProcessPcode(uint32 **PC, Anim8 *myAnim8) {
 
 	// Get the instruction number
 	myInstruction = (opCode & OP_INSTR) >> 25;
+	dbg_AddOpcodeToMachineInstr(myInstruction);
 
 	// Get the format for the first arg 
 	myFormat = (opCode & OP_FORMAT1) >> 22;
@@ -1336,7 +1347,6 @@ void (*pCodeJmpTable[])(Anim8 *myAnim8) = {
 
 
 // The guts of the engine.  This proc executes an anim8s program.
-bool CrunchAnim8(Anim8 *myAnim8);
 bool CrunchAnim8(Anim8 *myAnim8) {
 	bool moveTheCel = false;
 	frac16 timeElapsed, percentDist;
@@ -1381,9 +1391,13 @@ bool CrunchAnim8(Anim8 *myAnim8) {
 		oldPC = myPC;
 		_GWS(pcOffsetOld) = myAnim8->pcOffset;
 
+		dbg_SetCurrMachInstr(myAnim8->myMachine, myAnim8->pcOffset, true);
+
 		if ((myInstruction = ws_PreProcessPcode(&myPC, myAnim8)) < 0) {
 			ws_Error(myAnim8->myMachine, ERR_SEQU, 0x025c, nullptr);
 		}
+
+		dbg_EndCurrMachInstr();
 
 		myAnim8->pcOffset += (intptr)myPC - (intptr)oldPC;
 		pCodeJmpTable[myInstruction](myAnim8);

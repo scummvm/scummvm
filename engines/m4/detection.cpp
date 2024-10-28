@@ -29,13 +29,9 @@
 #include "m4/detection_tables.h"
 
 const DebugChannelDef M4MetaEngineDetection::debugFlagList[] = {
-	{ M4::kDebugScript, "script", "Script debug level" },
-	{ M4::kDebugGraphics, "graphics", "Graphics debug level" },
-	{ M4::kDebugConversations, "conversations", "Conversations debugging" },
-	{ M4::kDebugSound, "sound", "Sounds debug level" },
+	{ M4::kDebugScripts, "scripts", "Script debug level" },
+	{ M4::kDebugMessages, "messages", "Messages debug level" },
 	{ M4::kDebugCore, "core", "Core debug level" },
-	{ M4::kDebugWSSequ, "wssequ", "WoodScript sequence debug level" },
-	{ M4::kDebugWSMach, "wsmach", "WoodScript machine debug level" },
 	DEBUG_CHANNEL_END
 };
 

@@ -30,6 +30,7 @@
 #include "m4/mem/mem.h"
 #include "m4/platform/timer.h"
 #include "m4/vars.h"
+#include "m4/detection.h"
 
 namespace M4 {
 
@@ -523,9 +524,14 @@ static bool op_TRIG_W(machine *m, int32 *pcOffset) {
 	machInstr = (uint32 *)((intptr)(*(m->machHandle)) + (uint32)m->machInstrOffset);
 	myPC = (uint32 *)((intptr)machInstr + *pcOffset);
 	oldPC = myPC;
+
+	dbg_SetCurrMachInstr(m, *pcOffset, false);
+
 	if ((myInstruction = ws_PreProcessPcode(&myPC, m->myAnim8)) < 0) {
 		ws_Error(m, ERR_MACH, 0x0266, "trig_w() failed.");
 	}
+
+	dbg_EndCurrMachInstr();
 
 	// Now find the new pcOffset
 	*pcOffset += (byte *)myPC - (byte *)oldPC;
@@ -874,17 +880,19 @@ static int32 StepAt(int32 *pcOffset, machine *m) {
 	machID = m->machID;
 	myAnim8 = m->myAnim8;
 
-	dbg_SetCurrMachInstr(m, *pcOffset);
-
 	// Find the current PC and process it to get the current instruction
 	machInstr = (uint32 *)((intptr)(*(m->machHandle)) + m->machInstrOffset);
 	myPC = (uint32 *)((intptr)(machInstr) + *pcOffset);
 	oldPC = myPC;
 	_GWS(pcOffsetOld) = *pcOffset;
 
+	dbg_SetCurrMachInstr(m, *pcOffset, false);
+
 	if ((myInstruction = ws_PreProcessPcode(&myPC, myAnim8)) < 0) {
 		ws_Error(m, ERR_MACH, 0x0266, nullptr);
 	}
+
+	dbg_EndCurrMachInstr();
 
 	// Now find the new pcOffset
 	*pcOffset += (byte *)myPC - (byte *)oldPC;
@@ -1175,6 +1183,10 @@ void sendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
 	int32 myCount;
 	bool sendToAll;
 	globalMsgReq *myGlobalMsgs, *tempGlobalMsg;
+
+	debugC(1, kDebugMessages, "Message %xh, %xh, %s, %xh, %s, %d",
+		msgHash, msgValue, recvM ? recvM->machName : "NONE",
+		machHash, sendM ? sendM->machName : "NONE", msgCount);
 
 	// In this case we are sending to a specific machine: recvM
 	if (recvM) {

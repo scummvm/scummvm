@@ -30,17 +30,20 @@
 
 namespace M4 {
 
-bool dbg_ws_init(bool showTheScreen, Font *useThisFont, frac16 *theGlobals);
-void dbg_ws_shutdown();
-void dbg_ws_update();
+extern bool dbg_ws_init(bool showTheScreen, Font *useThisFont, frac16 *theGlobals);
+extern void dbg_ws_shutdown();
+extern void dbg_SetCurrMachInstr(machine *m, int32 pcOffset, bool isPcode);
+extern void dbg_EndCurrMachInstr();
+extern void dbg_AddOpcodeToMachineInstr(int instruction);
+extern void dbg_AddParamToCurrMachInstr(const char *param);
+extern void dbg_ws_update();
 
-void dbg_LaunchSequence(Anim8 *myAnim8);
-void dbg_DebugWSMach(machine *m, bool debug);
-void dbg_DebugNextCycle();
-void dbg_RemoveWSMach(machine *m);
-void dbg_SetCurrMachInstr(machine *m, int32 pcOffset);
-void dbg_SetCurrSequInstr(Anim8 *myAnim8, int32 compareCCR);
-void dbg_WSError(Common::WriteStream *logFile, machine *m, int32 errorType, const char *errDesc, const char *errMsg, int32 pcOffset);
+extern void dbg_LaunchSequence(Anim8 *myAnim8);
+extern void dbg_DebugWSMach(machine *m, bool debug);
+extern void dbg_DebugNextCycle();
+extern void dbg_RemoveWSMach(machine *m);
+extern void dbg_SetCurrSequInstr(Anim8 *myAnim8, int32 compareCCR);
+extern void dbg_WSError(Common::WriteStream *logFile, machine *m, int32 errorType, const char *errDesc, const char *errMsg, int32 pcOffset);
 
 } // namespace M4
 
