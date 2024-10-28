@@ -145,8 +145,7 @@ void dbg_AddParamToCurrMachInstr(const char *param) {
 }
 
 void dbg_EndCurrMachInstr() {
-	if (!strncmp(g_instructionText, "mc ", 3) && _G(game).room_id == 201)
-		debugC(1, kDebugScripts, "%s", g_instructionText);
+	debugC(1, kDebugScripts, "%s", g_instructionText);
 }
 
 void dbg_SetCurrSequInstr(Anim8 *myAnim8, int32 compareCCR) {

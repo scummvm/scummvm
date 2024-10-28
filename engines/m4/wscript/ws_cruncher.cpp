@@ -958,9 +958,8 @@ static void op_SETCEL(Anim8 *myAnim8) {
 	} else {
 		myRegs[IDX_W] = myCCB->source->w << 16;
 	}
+
 	myRegs[IDX_H] = myCCB->source->h << 16;
-	// MyRegs[IDX_CELS_HASH] = ((uint32)*_GWS(myArg1)) >> 8;
-	// MyRegs[IDX_CELS_INDEX] = myIndex << 16;
 	_GWS(mapTheCel) = true;
 }
 
