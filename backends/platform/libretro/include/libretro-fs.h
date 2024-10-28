@@ -40,6 +40,8 @@ protected:
 	Common::String _path;
 	bool _isDirectory;
 	bool _isValid;
+	bool _isReadable;
+	bool _isWritable;
 
 	virtual AbstractFSNode *makeNode(const Common::String &path) const {
 		return new LibRetroFilesystemNode(path);
@@ -71,13 +73,13 @@ public:
 		return _path;
 	}
 	virtual bool isDirectory() const {
-		return _isDirectory;
+		return _isDirectory && _isReadable;
 	}
 	virtual bool isReadable() const {
-		return access(_path.c_str(), R_OK) == 0;
+		return _isReadable;
 	}
 	virtual bool isWritable() const {
-		return access(_path.c_str(), W_OK) == 0;
+		return _isWritable;
 	}
 
 	virtual AbstractFSNode *getChild(const Common::String &n) const;

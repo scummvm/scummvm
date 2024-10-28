@@ -170,7 +170,7 @@ bool OSystem_libretro::checkPathSetting(const char *setting, Common::String cons
 	Common::String setPath;
 	if (ConfMan.hasKey(setting))
 		setPath = Common::Path::fromConfig(ConfMan.get(setting)).toString();
-	if (setPath.empty() || ! (isDirectory ? (LibRetroFilesystemNode(setPath).isDirectory() && LibRetroFilesystemNode(setPath).isReadable()) : LibRetroFilesystemNode(setPath).exists()))
+	if (setPath.empty() || ! (isDirectory ? LibRetroFilesystemNode(setPath).isDirectory() : LibRetroFilesystemNode(setPath).exists()))
 		ConfMan.removeKey(setting, Common::ConfigManager::kApplicationDomain);
 	if (! ConfMan.hasKey(setting))
 		if (defaultPath.empty())
@@ -183,7 +183,7 @@ bool OSystem_libretro::checkPathSetting(const char *setting, Common::String cons
 void OSystem_libretro::setLibretroDir(const char * path, Common::String &var) {
 	var = Common::String(path ? path : "");
 	if (! var.empty())
-		if (! (LibRetroFilesystemNode(var).isDirectory() && LibRetroFilesystemNode(var).isReadable()))
+		if (! LibRetroFilesystemNode(var).isDirectory())
 			var.clear();
 	return;
 }
@@ -195,13 +195,13 @@ void OSystem_libretro::applyBackendSettings() {
 	Common::String s_extraDir(s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_EXTRA_SUBDIR);
 	Common::String s_soundfontPath(s_extraDir + "/" + DEFAULT_SOUNDFONT_FILENAME);
 
-	if (! (LibRetroFilesystemNode(s_themeDir).isDirectory() && LibRetroFilesystemNode(s_themeDir).isReadable()))
+	if (! LibRetroFilesystemNode(s_themeDir).isDirectory())
 		s_themeDir.clear();
-	if (! (LibRetroFilesystemNode(s_extraDir).isDirectory() && LibRetroFilesystemNode(s_extraDir).isReadable()))
+	if (! LibRetroFilesystemNode(s_extraDir).isDirectory())
 		s_extraDir.clear();
 	if (! LibRetroFilesystemNode(s_soundfontPath).exists())
 		s_soundfontPath.clear();
-	if (s_homeDir.empty() || ! (LibRetroFilesystemNode(s_homeDir).isDirectory() && LibRetroFilesystemNode(s_homeDir).isReadable()))
+	if (s_homeDir.empty() || ! LibRetroFilesystemNode(s_homeDir).isDirectory())
 		s_homeDir = s_systemDir;
 
 	//Register default paths

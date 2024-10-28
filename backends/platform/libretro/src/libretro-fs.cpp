@@ -45,6 +45,8 @@ void LibRetroFilesystemNode::setFlags() {
 
 	_isValid = path_is_valid(fspath);
 	_isDirectory = path_is_directory(fspath);
+	_isReadable = access(fspath, R_OK) == 0;
+	_isWritable = access(_path.c_str(), W_OK) == 0;
 }
 
 LibRetroFilesystemNode::LibRetroFilesystemNode(const Common::String &p) {
@@ -154,7 +156,12 @@ AbstractFSNode *LibRetroFilesystemNode::getParent() const {
 		return 0;
 	}
 
-	return makeNode(Common::String(start, end));
+	AbstractFSNode * parent = makeNode(Common::String(start, end));
+
+	if (parent->isDirectory() == false)
+		return 0;
+
+	return parent;
 }
 
 Common::SeekableReadStream *LibRetroFilesystemNode::createReadStream() {
