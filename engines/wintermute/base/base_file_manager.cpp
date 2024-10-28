@@ -206,6 +206,9 @@ bool BaseFileManager::registerPackages() {
 			warning("getChildren() failed for path: %s", it->getName().c_str());
 		}
 		for (Common::FSList::const_iterator fileIt = files.begin(); fileIt != files.end(); ++fileIt) {
+			if (!fileIt)
+				continue;
+
 			// To prevent any case sensitivity issues we make the filename
 			// all lowercase here. This makes the code slightly prettier
 			// than the equivalent of using equalsIgnoreCase.
