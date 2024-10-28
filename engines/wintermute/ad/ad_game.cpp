@@ -1991,7 +1991,7 @@ bool AdGame::branchResponseUsed(int id) const {
 	char *context = _dlgPendingBranches.size() > 0 ? _dlgPendingBranches[_dlgPendingBranches.size() - 1] : nullptr;
 	for (uint32 i = 0; i < _responsesBranch.size(); i++) {
 		if (_responsesBranch[i]->_id == id) {
-			if ((context == nullptr && _responsesBranch[i]->getContext() == nullptr) || scumm_stricmp(context, _responsesBranch[i]->getContext()) == 0) {
+			if ((context == nullptr && _responsesBranch[i]->getContext() == nullptr) || (context != nullptr && scumm_stricmp(context, _responsesBranch[i]->getContext()) == 0)) {
 				return true;
 			}
 		}
@@ -2019,7 +2019,7 @@ bool AdGame::gameResponseUsed(int id) const {
 	for (uint32 i = 0; i < _responsesGame.size(); i++) {
 		const AdResponseContext *respContext = _responsesGame[i];
 		if (respContext->_id == id) {
-			if ((context == nullptr && respContext->getContext() == nullptr) || ((context != nullptr && respContext->getContext() != nullptr) && scumm_stricmp(context, respContext->getContext()) == 0)) {
+			if ((context == nullptr && respContext->getContext() == nullptr) || ((context != nullptr && respContext->getContext() != nullptr) && (context != nullptr && scumm_stricmp(context, respContext->getContext()) == 0))) {
 				return true;
 			}
 		}
