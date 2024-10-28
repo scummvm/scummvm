@@ -214,7 +214,7 @@ void CastleEngine::loadAssetsZXFullGame() {
 
 	tmp = loadBundledImage("castle_riddle_bottom_frame");
 	_riddleBottomFrame = new Graphics::ManagedSurface();
-	_riddleBackgroundFrame->copyFrom(*tmp);
+	_riddleBottomFrame->copyFrom(*tmp);
 	tmp->free();
 	delete tmp;
 	_riddleBottomFrame->convertToInPlace(_gfx->_texturePixelFormat);
