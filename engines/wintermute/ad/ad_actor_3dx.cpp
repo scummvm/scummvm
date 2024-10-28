@@ -282,6 +282,9 @@ bool AdActor3DX::update() {
 
 	//////////////////////////////////////////////////////////////////////////
 	case STATE_TALKING: {
+		if (!_sentence)
+			break;
+
 		_sentence->update();
 
 		if (_sentence->_currentSkelAnim) {
