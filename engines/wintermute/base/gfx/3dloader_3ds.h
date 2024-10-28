@@ -59,7 +59,6 @@ public:
 		bool _lightOff;
 		bool _lightSpotlight;
 		bool _hidden;
-		uint16 _numCoordinates;
 		uint16 _numFaces;
 		SFace *_faces;
 		DXVector3 *_vertices;

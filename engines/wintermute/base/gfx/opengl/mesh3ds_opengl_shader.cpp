@@ -30,6 +30,9 @@
 namespace Wintermute {
 
 Mesh3DSOpenGLShader::Mesh3DSOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader) : Mesh3DS(inGame), _shader(shader) {
+	_vertexCount = 0;
+	_vertexData = nullptr;
+
 	glGenBuffers(1, &_vertexBuffer);
 	glGenBuffers(1, &_indexBuffer);
 }

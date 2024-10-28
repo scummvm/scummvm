@@ -30,6 +30,8 @@
 namespace Wintermute {
 
 Mesh3DSOpenGL::Mesh3DSOpenGL(BaseGame *inGame) : Mesh3DS(inGame) {
+	_vertexCount = 0;
+	_vertexData = nullptr;
 }
 
 Mesh3DSOpenGL::~Mesh3DSOpenGL() {

@@ -81,6 +81,15 @@ Loader3DS::FileObject3DS::FileObject3DS() {
 
 	_lightOff = false;
 	_lightSpotlight = false;
+	_lightColor = 0;
+	_lightHotspot = false;
+	_lightFalloff = false;
+
+	_cameraBank = 0;
+	_cameraLens = 0;
+	_cameraFOV = 0;
+
+	_hidden = false;
 }
 
 
@@ -125,12 +134,10 @@ bool Loader3DS::parseFile(const Common::String &filename) {
 			//////////////////////////////////////////////////////////////////////
 			// object ////////////////////////////////////////////////////////////
 			case NAMED_OBJECT: {
-				Common::String name;
-				for (int8 current = fileStream.readByte(); current != 0; current = fileStream.readByte()) {
-					name.insertChar(current, name.size());
-				}
 				obj = new FileObject3DS;
-				obj->_name = name;
+				for (int8 current = fileStream.readByte(); current != 0; current = fileStream.readByte()) {
+					obj->_name.insertChar(current, obj->_name.size());
+				}
 				_objects.add(obj);
 			}
 			break;

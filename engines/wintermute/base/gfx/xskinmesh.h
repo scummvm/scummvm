@@ -105,7 +105,7 @@ struct DXBone {
 #endif
 
 class DXSkinInfo {
-	uint32 _fvf;
+	uint32 _fvf{};
 	uint32 _numVertices{};
 	uint32 _numBones{};
 	DXBone *_bones{};
