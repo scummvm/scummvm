@@ -79,22 +79,22 @@ public:
 
 private:
 	GameType gameType_ = TRIANGLE;
-	Coords positions_;
-	int selectDepth_ = 0;
+	Coords _positions;
+	int _selectDepth = 0;
 
-	int fieldLines_ = 0;
-	int fieldWidth_ = 0;
+	int _fieldLines = 0;
+	int _fieldWidth = 0;
 	int fieldSize_ = 0;
-	Nodes nodes_;
-	ObjectContainer selectBorders_[2];
-	ObjectContainer backSides_[6];
-	int selected_ = 0;
-	int hovered_ = 0;
+	Nodes _nodes;
+	ObjectContainer _selectBorders[2];
+	ObjectContainer _backSides[6];
+	int _selected = 0;
+	int _hovered = 0;
 
-	AnimationState animationState_ = NO_ANIMATION;
+	AnimationState _animationState = NO_ANIMATION;
 	int animatedNodes_[2] =  { 0 };
-	float animationTime_ = 0.0;
-	float animationTimer_ = 0.0;
+	float _animationTime = 0.0;
+	float _animationTimer = 0.0;
 
 	/// очистить рубашку фишки
 	void releaseNodeBack(Node& node);
