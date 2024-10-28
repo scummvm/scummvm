@@ -40,6 +40,7 @@ BaseScriptable *makeSXWMEGalaxyAPI(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSX3fStatistics(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXCommandLineHelper(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXSample(BaseGame *inGame, ScStack *stack);
+BaseScriptable *makeSXVlink(BaseGame *inGame, ScStack *stack);
 
 bool EmulatePluginCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, char *name) {
 	ScValue *thisObj;
@@ -103,6 +104,19 @@ bool EmulatePluginCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, cha
 		stack->pushNULL();
 		return STATUS_OK;
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// BinkVideo player (from wme_vlink.dll of "Sunrise" game)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "BinkVideo") == 0) {
+		thisObj = thisStack->getTop();
+
+		thisObj->setNative(makeSXVlink(inGame, stack));
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
 
 	return STATUS_FAILED;
 }
