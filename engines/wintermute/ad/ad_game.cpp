@@ -2034,7 +2034,7 @@ bool AdGame::resetResponse(int id) {
 
 	for (uint32 i = 0; i < _responsesGame.size(); i++) {
 		if (_responsesGame[i]->_id == id) {
-			if ((context == nullptr && _responsesGame[i]->getContext() == nullptr) || scumm_stricmp(context, _responsesGame[i]->getContext()) == 0) {
+			if ((context == nullptr && _responsesGame[i]->getContext() == nullptr) || (context != nullptr && scumm_stricmp(context, _responsesGame[i]->getContext()) == 0)) {
 				delete _responsesGame[i];
 				_responsesGame.remove_at(i);
 				break;
@@ -2044,7 +2044,7 @@ bool AdGame::resetResponse(int id) {
 
 	for (uint32 i = 0; i < _responsesBranch.size(); i++) {
 		if (_responsesBranch[i]->_id == id) {
-			if ((context == nullptr && _responsesBranch[i]->getContext() == nullptr) || scumm_stricmp(context, _responsesBranch[i]->getContext()) == 0) {
+			if ((context == nullptr && _responsesBranch[i]->getContext() == nullptr) || (context != nullptr && scumm_stricmp(context, _responsesBranch[i]->getContext()) == 0)) {
 				delete _responsesBranch[i];
 				_responsesBranch.remove_at(i);
 				break;
