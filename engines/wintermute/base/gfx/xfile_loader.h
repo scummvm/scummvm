@@ -390,9 +390,9 @@ private:
 	const int kCabInputmax = kCabBlockSize + 12;
 
 	bool _initialised{};
-	XToken _currentToken;
+	XToken _currentToken{};
 	byte *_decompBuffer{};
-	byte *_buffer;
+	byte *_buffer{};
 	uint32 _bufferLeft;
 	bool _isText;
 	uint32 _listNbElements;

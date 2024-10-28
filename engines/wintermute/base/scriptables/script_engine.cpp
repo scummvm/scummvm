@@ -414,7 +414,7 @@ bool ScEngine::tickUnbreakable() {
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::removeFinishedScripts() {
 	// remove finished scripts
-	for (uint32 i = 0; i < _scripts.size(); i++) {
+	for (int32 i = 0; i < (int32)_scripts.size(); i++) {
 		if (_scripts[i]->_state == SCRIPT_FINISHED || _scripts[i]->_state == SCRIPT_ERROR) {
 			if (!_scripts[i]->_thread && _scripts[i]->_owner) {
 				_scripts[i]->_owner->removeScript(_scripts[i]);
