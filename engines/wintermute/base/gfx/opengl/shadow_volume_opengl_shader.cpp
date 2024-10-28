@@ -46,6 +46,7 @@ struct ShadowVertexShader {
 ShadowVolumeOpenGLShader::ShadowVolumeOpenGLShader(BaseGame *inGame, OpenGL::Shader *volumeShader, OpenGL::Shader *maskShader)
 	: ShadowVolume(inGame), _color(0x7f000000), _volumeShader(volumeShader), _maskShader(maskShader) {
 	ShadowVertexShader shadowMask[4];
+	_shadowVolumeVertexBuffer = 0;
 	DXViewport viewport = _gameRef->_renderer3D->getViewPort();
 
 	shadowMask[0].x = viewport._x;

@@ -122,7 +122,7 @@ public:
 	XModel(BaseGame *inGame, BaseObject *owner);
 	virtual ~XModel();
 
-	XModel *_parentModel;
+	XModel *_parentModel{};
 
 	bool loadFromFile(const Common::String &filename, XModel *parentModel = nullptr);
 	bool mergeFromFile(const Common::String &filename);
@@ -147,7 +147,7 @@ public:
 	static bool loadName(Common::String &targetStr, XFileData *data);
 
 	Rect32 _boundingRect;
-	BaseObject *_owner;
+	BaseObject *_owner{};
 
 	bool parseAnim(byte *buffer);
 	bool parseEvent(AnimationSet *anim, byte *buffer);
@@ -168,7 +168,7 @@ public:
 
 	bool unloadAnimation(const char *animName);
 
-	uint32 _ticksPerSecond;
+	uint32 _ticksPerSecond{};
 
 	BaseArray<AnimationSet *> _animationSets;
 
@@ -178,21 +178,21 @@ private:
 
 	void updateBoundingRect();
 	void static inline updateRect(Rect32 *rc, DXVector3 *vec);
-	DXViewport _drawingViewport;
+	DXViewport _drawingViewport{};
 	DXMatrix _lastWorldMat;
 	DXMatrix _lastViewMat;
 	DXMatrix _lastProjMat;
-	int32 _lastOffsetX;
-	int32 _lastOffsetY;
+	int32 _lastOffsetX{};
+	int32 _lastOffsetY{};
 
 	DXVector3 _BBoxStart;
 	DXVector3 _BBoxEnd;
 
 protected:
 	BaseArray<const char*> _mergedModels;
-	AnimationChannel *_channels[X_NUM_ANIMATION_CHANNELS];
+	AnimationChannel *_channels[X_NUM_ANIMATION_CHANNELS]{};
 
-	FrameNode *_rootFrame;
+	FrameNode *_rootFrame{};
 
 	BaseArray<XModelMatSprite *> _matSprites;
 };
