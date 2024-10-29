@@ -428,10 +428,10 @@ bool Console::cmdScriptDump(int argc, const char **argv) {
 			printOp(--indent, "END WHILE");
 			break;
 		case 0x2000:
-			printOp(indent, "ADD sequence");
+			printOp(indent, "ADD sequence (restart)");
 			break;
 		case 0x2005:
-			printOp(indent, "ADD sequence");
+			printOp(indent, "ADD sequence (continue)");
 			break;
 		case 0x2010:
 			printOp(indent, "STOP SCENE");
@@ -467,7 +467,7 @@ bool Console::cmdScriptDump(int argc, const char **argv) {
 			printOp(indent, "RUN_SCRIPT");
 			break;
 		case 0xF210:
-			printOp(indent, "RUN_SCRIPT");
+			printOp(indent, "RESTART_SCRIPT");
 			break;
 		case 0x1420:
 			printOp(--indent, "AND");
