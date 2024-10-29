@@ -756,7 +756,7 @@ void cmdResetScanStart(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 void cmdSaveGame(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	if (vm->getVersion() >= 0x2272) {
-		// this was only donce since 2.272
+		// this was only done since 2.272
 		vm->_sound->stopSound();
 	}
 
@@ -950,56 +950,28 @@ void cmdObjStatusF(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 // unk_177: Disable menus completely -- j5
 // unk_181: Deactivate keypressed control (default control of ego)
 void cmdSetSimple(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (!(vm->getFeatures() & GF_AGI256)) {
-		// set.simple is called by Larry 1 on Apple IIgs at the store, after answering the 555-6969 phone.
-		// load.sound(16) is called right before it. Interpreter is 2.440-like.
-		// it's called with parameter 16.
-		// Original interpreter doesn't seem to play any sound.
-		// TODO: Figure out what's going on. It can't be automatic saving of course.
-		// Also getting called in KQ1, when planting beans - parameter 12.
-		// And when killing the witch - parameter 40.
-		if ((vm->getVersion() < 0x2425) || (vm->getVersion() == 0x2440)) {
-			// was not available before 2.2425, but also not available in 2.440
-			warning("set.simple called, although not available for current AGI version");
-			return;
-		}
-
-		int16 stringNr = parameter[0];
-		state->automaticSave = false;
-
-		// Try to get description for automatic saves
-		const char *textPtr = state->getString(stringNr);
-
-		strncpy(state->automaticSaveDescription, textPtr, sizeof(state->automaticSaveDescription));
-		state->automaticSaveDescription[sizeof(state->automaticSaveDescription) - 1] = 0;
-
-		if (state->automaticSaveDescription[0]) {
-			// We got it and it's set, so enable automatic saving
-			state->automaticSave = true;
-		}
-	} else { // AGI256 and AGI256-2 use this unknown170 command to load 256 color pictures.
-		// Load the picture. Similar to void cmdLoad_pic(AgiGame *state, AgiEngine *vm, uint8 *p).
-		SpritesMgr *spritesMgr = vm->_sprites;
-		uint16 varNr = parameter[0];
-		uint16 resourceNr = vm->getVar(varNr);
-
-		spritesMgr->eraseSprites();
-		vm->loadResource(RESOURCETYPE_PICTURE, resourceNr);
-
-		// Draw the picture. Similar to void cmdDraw_pic(AgiGame *state, AgiEngine *vm, uint8 *p).
-		vm->_picture->decodePicture(resourceNr, false, true);
-		spritesMgr->drawAllSpriteLists();
-		state->pictureShown = false;
-
-		// Loading trigger
-		vm->artificialDelayTrigger_DrawPicture(resourceNr);
-
-		// Show the picture. Similar to void cmdShow_pic(AgiGame *state, AgiEngine *vm, uint8 *p).
-		vm->setFlag(VM_FLAG_OUTPUT_MODE, false);
-		vm->_text->closeWindow();
-		vm->_picture->showPic();
-		state->pictureShown = true;
+	// set.simple is called by Larry 1 on Apple IIgs at the store, after answering the 555-6969 phone.
+	// load.sound(16) is called right before it. Interpreter is 2.440-like.
+	// it's called with parameter 16.
+	// Original interpreter doesn't seem to play any sound.
+	// TODO: Figure out what's going on. It can't be automatic saving of course.
+	// Also getting called in KQ1, when planting beans - parameter 12.
+	// And when killing the witch - parameter 40.
+	if ((vm->getVersion() < 0x2425) || (vm->getVersion() == 0x2440)) {
+		// was not available before 2.2425, but also not available in 2.440
+		warning("set.simple called, although not available for current AGI version");
+		return;
 	}
+
+	int16 stringNr = parameter[0];
+
+	// Try to get description for automatic saves
+	const char *textPtr = state->getString(stringNr);
+	strncpy(state->automaticSaveDescription, textPtr, sizeof(state->automaticSaveDescription));
+	state->automaticSaveDescription[sizeof(state->automaticSaveDescription) - 1] = '\0';
+
+	// enable automatic saving if description isn't empty
+	state->automaticSave = (state->automaticSaveDescription[0] != '\0');
 }
 
 // pop.script was not available until 2.425, and also not available in 2.440
@@ -2242,13 +2214,6 @@ void cmdPushScript(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	debug(0, "push.script");
 }
 
-// The AGIMOUSE interpreter modified push.script to set variables 27-29 to mouse state
-void cmdAgiMousePushScript(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	vm->setVar(VM_VAR_MOUSE_BUTTONSTATE, vm->_mouse.button);
-	vm->setVar(VM_VAR_MOUSE_X, vm->_mouse.pos.x / 2);
-	vm->setVar(VM_VAR_MOUSE_Y, vm->_mouse.pos.y);
-}
-
 void cmdSetPriBase(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	if ((vm->getVersion() != 0x2425) && (vm->getVersion() < 0x2936)) {
 		// was only available in the 2.425 interpreter and from 2.936 (last AGI2 version) onwards
@@ -2340,6 +2305,38 @@ void cmdNewRoomVV1(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	state->max_logics = 1;
 	state->logic_list[1] = resourceNr;
 	vm->setVar(13, 1);
+}
+
+// The AGI256 interpreter modified opcode 170 to load 256 color pictures
+void cmdAgi256LoadPic(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+	// Load the picture. Similar to void cmdLoadPic.
+	SpritesMgr *spritesMgr = vm->_sprites;
+	uint16 varNr = parameter[0];
+	uint16 resourceNr = vm->getVar(varNr);
+
+	spritesMgr->eraseSprites();
+	vm->loadResource(RESOURCETYPE_PICTURE, resourceNr);
+
+	// Draw the picture. Similar to void cmdDrawPic.
+	vm->_picture->decodePicture(resourceNr, false, true);
+	spritesMgr->drawAllSpriteLists();
+	state->pictureShown = false;
+
+	// Loading trigger
+	vm->artificialDelayTrigger_DrawPicture(resourceNr);
+
+	// Show the picture. Similar to void cmdShowPic.
+	vm->setFlag(VM_FLAG_OUTPUT_MODE, false);
+	vm->_text->closeWindow();
+	vm->_picture->showPic();
+	state->pictureShown = true;
+}
+
+// The AGIMOUSE interpreter modified opcode 171 to set variables 27-29 to mouse state
+void cmdAgiMouseGetMouseState(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+	vm->setVar(VM_VAR_MOUSE_BUTTONSTATE, vm->_mouse.button);
+	vm->setVar(VM_VAR_MOUSE_X, vm->_mouse.pos.x / 2);
+	vm->setVar(VM_VAR_MOUSE_Y, vm->_mouse.pos.y);
 }
 
 void cmdUnknown(AgiGame *state, AgiEngine *vm, uint8 *parameter) {

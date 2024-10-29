@@ -463,9 +463,14 @@ void AgiEngine::setupOpCodes(uint16 version) {
 		}
 	}
 
-	// AGIMOUSE games use a modified push.script that updates mouse state
+	// AGI256 games use a modified opcode (set.simple) that loads 256 color pictures
+	if (getFeatures() & GF_AGI256) {
+		_opCodes[0xaa].functionPtr = &cmdAgi256LoadPic;
+	}
+
+	// AGIMOUSE games use a modified opcode (push.script) that gets mouse state
 	if (getFeatures() & GF_AGIMOUSE) {
-		_opCodes[0xab].functionPtr = &cmdAgiMousePushScript;
+		_opCodes[0xab].functionPtr = &cmdAgiMouseGetMouseState;
 	}
 
 	// add invalid entries for every opcode, that is not defined at all
@@ -485,11 +490,11 @@ void AgiEngine::setupOpCodes(uint16 version) {
 
 	// calculate parameter size
 	for (int opCodeNr = 0; opCodeNr < opCodesTableSize; opCodeNr++) {
-		_opCodes[opCodeNr].parameterSize = strlen( _opCodes[opCodeNr].parameters);
+		_opCodes[opCodeNr].parameterSize = strlen(_opCodes[opCodeNr].parameters);
 	}
 
 	for (int opCodeNr = 0; opCodeNr < opCodesCondTableSize; opCodeNr++) {
-		_opCodesCond[opCodeNr].parameterSize = strlen( _opCodesCond[opCodeNr].parameters);
+		_opCodesCond[opCodeNr].parameterSize = strlen(_opCodesCond[opCodeNr].parameters);
 	}
 }
 

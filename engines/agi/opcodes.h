@@ -207,8 +207,9 @@ void cmdDivN(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdDivV(AgiGame *state, AgiEngine *vm, uint8 *p);  // 0xa8
 void cmdCloseWindow(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetSimple(AgiGame *state, AgiEngine *vm, uint8 *p);
+void cmdAgi256LoadPic(AgiGame *state, AgiEngine *vm, uint8 *p); // modified 0xaa
 void cmdPushScript(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdAgiMousePushScript(AgiGame *state, AgiEngine *vm, uint8 *p); // modified 0xab
+void cmdAgiMouseGetMouseState(AgiGame *state, AgiEngine *vm, uint8 *p); // modified 0xab
 void cmdPopScript(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdHoldKey(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetPriBase(AgiGame *state, AgiEngine *vm, uint8 *p);
