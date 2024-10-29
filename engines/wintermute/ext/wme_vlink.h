@@ -46,7 +46,7 @@ private:
 	Common::Mutex _frameMutex;
 	Video::VideoDecoder *_videoDecoder{};
 	Graphics::Surface _surface;
-	int _volume;
+	int32 _volume;
 	bool _videoFinished;
 	bool _updateNeeded;
 	int32 _frame;
