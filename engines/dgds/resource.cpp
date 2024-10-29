@@ -144,6 +144,12 @@ bool ResourceManager::hasResource(Common::String name) const {
 	return _resources.contains(name);
 }
 
+DgdsChunkReader::DgdsChunkReader(Common::SeekableReadStream *stream)
+: _sourceStream(stream), _contentStream(nullptr), _size(0), _container(false),
+ _startPos(0), _id(0), _ex(0) {
+	ARRAYCLEAR(_idStr);
+}
+
 DgdsChunkReader::~DgdsChunkReader() {
 	if (_contentStream)
 		delete _contentStream;
