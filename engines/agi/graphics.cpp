@@ -235,14 +235,15 @@ void GfxMgr::setRenderStartOffset(uint16 offsetY) {
 	_renderStartVisualOffsetY = offsetY;
 	_renderStartDisplayOffsetY = offsetY * (1 + _displayHeightMulAdjust);
 }
-uint16 GfxMgr::getRenderStartDisplayOffsetY() {
+
+uint16 GfxMgr::getRenderStartDisplayOffsetY() const {
 	return _renderStartDisplayOffsetY;
 }
 
 // Translates a game screen coordinate to a display screen coordinate
 // Game screen to 320x200 -> x * 2, y + renderStart
 // Game screen to 640x400 -> x * 4, (y * 2) + renderStart
-void GfxMgr::translateGamePosToDisplayScreen(int16 &x, int16 &y) {
+void GfxMgr::translateGamePosToDisplayScreen(int16 &x, int16 &y) const {
 	x = x * (2 + _displayWidthMulAdjust);
 	y = y * (1 + _displayHeightMulAdjust) + _renderStartDisplayOffsetY;
 }
@@ -250,7 +251,7 @@ void GfxMgr::translateGamePosToDisplayScreen(int16 &x, int16 &y) {
 // Translates a visual coordinate to a display screen coordinate
 // Visual to 320x200 -> x * 2, y
 // Visual to 640x400 -> x * 4, y * 2
-void GfxMgr::translateVisualPosToDisplayScreen(int16 &x, int16 &y) {
+void GfxMgr::translateVisualPosToDisplayScreen(int16 &x, int16 &y) const {
 	x = x * (2 + _displayWidthMulAdjust);
 	y = y * (1 + _displayHeightMulAdjust);
 }
@@ -258,7 +259,7 @@ void GfxMgr::translateVisualPosToDisplayScreen(int16 &x, int16 &y) {
 // Translates a display screen coordinate to a game screen coordinate
 // Display screen to 320x200 -> x / 2, y - renderStart
 // Display screen to 640x400 -> x / 4, (y / 2) - renderStart
-void GfxMgr::translateDisplayPosToGameScreen(int16 &x, int16 &y) {
+void GfxMgr::translateDisplayPosToGameScreen(int16 &x, int16 &y) const {
 	y -= _renderStartDisplayOffsetY; // remove status bar line
 	x = x / (2 + _displayWidthMulAdjust);
 	y = y / (1 + _displayHeightMulAdjust);
@@ -269,35 +270,35 @@ void GfxMgr::translateDisplayPosToGameScreen(int16 &x, int16 &y) {
 }
 
 // Translates dimension from visual screen to display screen
-void GfxMgr::translateVisualDimensionToDisplayScreen(int16 &width, int16 &height) {
+void GfxMgr::translateVisualDimensionToDisplayScreen(int16 &width, int16 &height) const {
 	width = width * (2 + _displayWidthMulAdjust);
 	height = height * (1 + _displayHeightMulAdjust);
 }
 
 // Translates dimension from display screen to visual screen
-void GfxMgr::translateDisplayDimensionToVisualScreen(int16 &width, int16 &height) {
+void GfxMgr::translateDisplayDimensionToVisualScreen(int16 &width, int16 &height) const {
 	width = width / (2 + _displayWidthMulAdjust);
 	height = height / (1 + _displayHeightMulAdjust);
 }
 
 // Translates a rect from game screen to display screen
-void GfxMgr::translateGameRectToDisplayScreen(int16 &x, int16 &y, int16 &width, int16 &height) {
+void GfxMgr::translateGameRectToDisplayScreen(int16 &x, int16 &y, int16 &width, int16 &height) const {
 	translateGamePosToDisplayScreen(x, y);
 	translateVisualDimensionToDisplayScreen(width, height);
 }
 
 // Translates a rect from visual screen to display screen
-void GfxMgr::translateVisualRectToDisplayScreen(int16 &x, int16 &y, int16 &width, int16 &height) {
+void GfxMgr::translateVisualRectToDisplayScreen(int16 &x, int16 &y, int16 &width, int16 &height) const {
 	translateVisualPosToDisplayScreen(x, y);
 	translateVisualDimensionToDisplayScreen(width, height);
 }
 
-uint32 GfxMgr::getDisplayOffsetToGameScreenPos(int16 x, int16 y) {
+uint32 GfxMgr::getDisplayOffsetToGameScreenPos(int16 x, int16 y) const {
 	translateGamePosToDisplayScreen(x, y);
 	return (y * _displayScreenWidth) + x;
 }
 
-uint32 GfxMgr::getDisplayOffsetToVisualScreenPos(int16 x, int16 y) {
+uint32 GfxMgr::getDisplayOffsetToVisualScreenPos(int16 x, int16 y) const {
 	translateVisualPosToDisplayScreen(x, y);
 	return (y * _displayScreenWidth) + x;
 }
@@ -313,6 +314,7 @@ void GfxMgr::copyDisplayRectToScreen(int16 x, int16 y, int16 width, int16 height
 
 	_vm->_system->copyRectToScreen(_displayScreen + y * _displayScreenWidth + x, _displayScreenWidth, x, y, width, height);
 }
+
 void GfxMgr::copyDisplayRectToScreen(int16 x, int16 adjX, int16 y, int16 adjY, int16 width, int16 adjWidth, int16 height, int16 adjHeight) {
 	switch (_upscaledHires) {
 	case DISPLAY_UPSCALED_DISABLED:
@@ -329,35 +331,42 @@ void GfxMgr::copyDisplayRectToScreen(int16 x, int16 adjX, int16 y, int16 adjY, i
 	width += adjWidth; height += adjHeight;
 	_vm->_system->copyRectToScreen(_displayScreen + y * _displayScreenWidth + x, _displayScreenWidth, x, y, width, height);
 }
+
 void GfxMgr::copyDisplayRectToScreenUsingGamePos(int16 x, int16 y, int16 width, int16 height) {
 	translateGameRectToDisplayScreen(x, y, width, height);
 	_vm->_system->copyRectToScreen(_displayScreen + (y * _displayScreenWidth) + x, _displayScreenWidth, x, y, width, height);
 }
+
 void GfxMgr::copyDisplayRectToScreenUsingVisualPos(int16 x, int16 y, int16 width, int16 height) {
 	translateVisualRectToDisplayScreen(x, y, width, height);
 	_vm->_system->copyRectToScreen(_displayScreen + (y * _displayScreenWidth) + x, _displayScreenWidth, x, y, width, height);
 }
+
 void GfxMgr::copyDisplayToScreen() {
 	_vm->_system->copyRectToScreen(_displayScreen, _displayScreenWidth, 0, 0, _displayScreenWidth, _displayScreenHeight);
 }
 
-void GfxMgr::translateFontPosToDisplayScreen(int16 &x, int16 &y) {
+void GfxMgr::translateFontPosToDisplayScreen(int16 &x, int16 &y) const {
 	x *= _displayFontWidth;
 	y *= _displayFontHeight;
 }
-void GfxMgr::translateDisplayPosToFontScreen(int16 &x, int16 &y) {
+
+void GfxMgr::translateDisplayPosToFontScreen(int16 &x, int16 &y) const {
 	x /= _displayFontWidth;
 	y /= _displayFontHeight;
 }
-void GfxMgr::translateFontDimensionToDisplayScreen(int16 &width, int16 &height) {
+
+void GfxMgr::translateFontDimensionToDisplayScreen(int16 &width, int16 &height) const {
 	width *= _displayFontWidth;
 	height *= _displayFontHeight;
 }
-void GfxMgr::translateFontRectToDisplayScreen(int16 &x, int16 &y, int16 &width, int16 &height) {
+
+void GfxMgr::translateFontRectToDisplayScreen(int16 &x, int16 &y, int16 &width, int16 &height) const {
 	translateFontPosToDisplayScreen(x, y);
 	translateFontDimensionToDisplayScreen(width, height);
 }
-Common::Rect GfxMgr::getFontRectForDisplayScreen(int16 column, int16 row, int16 width, int16 height) {
+
+Common::Rect GfxMgr::getFontRectForDisplayScreen(int16 column, int16 row, int16 width, int16 height) const {
 	Common::Rect displayRect(width * _displayFontWidth, height * _displayFontHeight);
 	displayRect.moveTo(column * _displayFontWidth, row * _displayFontHeight);
 	return displayRect;
@@ -378,11 +387,17 @@ void GfxMgr::debugShowMap(int mapNr) {
 	render_Block(0, 0, SCRIPT_WIDTH, SCRIPT_HEIGHT);
 }
 
+/**
+ * Clears the game and priority screens
+ */
 void GfxMgr::clear(byte color, byte priority) {
 	memset(_gameScreen, color, _pixels);
 	memset(_priorityScreen, priority, _pixels);
 }
 
+/**
+ * Clears the display screen and copies it to screen
+ */
 void GfxMgr::clearDisplay(byte color, bool copyToScreen) {
 	memset(_displayScreen, color, _displayPixels);
 
@@ -391,6 +406,9 @@ void GfxMgr::clearDisplay(byte color, bool copyToScreen) {
 	}
 }
 
+/**
+ * Puts a pixel on the game and/or priority screens
+ */
 void GfxMgr::putPixel(int16 x, int16 y, byte drawMask, byte color, byte priority) {
 	int offset = y * SCRIPT_WIDTH + x;
 
@@ -402,6 +420,10 @@ void GfxMgr::putPixel(int16 x, int16 y, byte drawMask, byte color, byte priority
 	}
 }
 
+/**
+ * Puts a pixel on the display screen.
+ * If upscaling is enabled then the pixel and coordinates are upscaled.
+ */
 void GfxMgr::putPixelOnDisplay(int16 x, int16 y, byte color) {
 	uint32 offset = 0;
 
@@ -424,6 +446,10 @@ void GfxMgr::putPixelOnDisplay(int16 x, int16 y, byte color) {
 	}
 }
 
+/**
+ * Puts a pixel on the display screen.
+ * If upscaling is enabled then the pixel and coordinates are upscaled.
+ */
 void GfxMgr::putPixelOnDisplay(int16 x, int16 adjX, int16 y, int16 adjY, byte color) {
 	switch (_upscaledHires) {
 	case DISPLAY_UPSCALED_DISABLED:
@@ -440,6 +466,11 @@ void GfxMgr::putPixelOnDisplay(int16 x, int16 adjX, int16 y, int16 adjY, byte co
 	putPixelOnDisplay(x, y, color);
 }
 
+/**
+ * Puts a font pixel on the display screen.
+ * If upscaling is enabled then isHires determines if the pixel and coordinates
+ * are to be used as is or upscaled.
+ */
 void GfxMgr::putFontPixelOnDisplay(int16 baseX, int16 baseY, int16 addX, int16 addY, byte color, bool isHires) {
 	uint32 offset = 0;
 
@@ -465,13 +496,19 @@ void GfxMgr::putFontPixelOnDisplay(int16 baseX, int16 baseY, int16 addX, int16 a
 	}
 }
 
-byte GfxMgr::getColor(int16 x, int16 y) {
+/**
+ * Returns a color from the game screen
+ */
+byte GfxMgr::getColor(int16 x, int16 y) const {
 	int offset = y * SCRIPT_WIDTH + x;
 
 	return _gameScreen[offset];
 }
 
-byte GfxMgr::getPriority(int16 x, int16 y) {
+/**
+ * Returns a priority from the priority screen
+ */
+byte GfxMgr::getPriority(int16 x, int16 y) const {
 	int offset = y * SCRIPT_WIDTH + x;
 
 	return _priorityScreen[offset];
@@ -479,7 +516,7 @@ byte GfxMgr::getPriority(int16 x, int16 y) {
 
 // used, when a control pixel is found
 // will search downwards and compare priority in case any is found
-bool GfxMgr::checkControlPixel(int16 x, int16 y, byte viewPriority) {
+bool GfxMgr::checkControlPixel(int16 x, int16 y, byte viewPriority) const {
 	int offset = y * SCRIPT_WIDTH + x;
 	byte curPriority;
 
@@ -499,19 +536,23 @@ bool GfxMgr::checkControlPixel(int16 x, int16 y, byte viewPriority) {
 	return false; // view priority is lower, don't draw
 }
 
-static byte CGA_MixtureColorTable[] = {
+static const byte CGA_MixtureColorTable[] = {
 	0x00, 0x08, 0x04, 0x0C, 0x01, 0x09, 0x02, 0x05,
 	0x0A, 0x0D, 0x06, 0x0E, 0x0B, 0x03, 0x07, 0x0F
 };
 
-byte GfxMgr::getCGAMixtureColor(byte color) {
+byte GfxMgr::getCGAMixtureColor(byte color) const {
 	return CGA_MixtureColorTable[color & 0x0F];
 }
 
+/**
+ * Renders a block of the game screen on to the display screen.
+ * Optionally copies the display block to screen immediately.
+ */
 // Attention: in our implementation, y-coordinate is upper left.
 // Sierra passed the lower left instead. We changed it to make upscaling easier.
 void GfxMgr::render_Block(int16 x, int16 y, int16 width, int16 height, bool copyToScreen) {
-	if (!render_Clip(x, y, width, height)) {
+	if (!render_Clip(x, y, width, height, 0, SCRIPT_WIDTH, SCRIPT_HEIGHT)) {
 		warning("render_Block ignored by clipping. x: %d, y: %d, w: %d, h: %d", x, y, width, height);
 		return;
 	}
@@ -912,8 +953,11 @@ void GfxMgr::transition_AtariSt() {
 	_vm->_system->updateScreen();
 }
 
+/**
+ * Copies a block of the game and priority screens to a buffer
+ */
 // Attention: y coordinate is here supposed to be the upper one!
-void GfxMgr::block_save(int16 x, int16 y, int16 width, int16 height, byte *bufferPtr) {
+void GfxMgr::block_save(int16 x, int16 y, int16 width, int16 height, byte *bufferPtr) const {
 	int16 startOffset = y * SCRIPT_WIDTH + x;
 	int16 offset = startOffset;
 	int16 remainingHeight = height;
@@ -938,6 +982,9 @@ void GfxMgr::block_save(int16 x, int16 y, int16 width, int16 height, byte *buffe
 	}
 }
 
+/**
+ * Copies a buffer filled by block_save back to the game and priority screens
+ */
 // Attention: y coordinate is here supposed to be the upper one!
 void GfxMgr::block_restore(int16 x, int16 y, int16 width, int16 height, byte *bufferPtr) {
 	int16 startOffset = y * SCRIPT_WIDTH + x;
@@ -964,18 +1011,23 @@ void GfxMgr::block_restore(int16 x, int16 y, int16 width, int16 height, byte *bu
 	}
 }
 
-// coordinates are for visual screen, but are supposed to point somewhere inside the playscreen
-// x, y is the upper left. Sierra passed them as lower left. We change that to make upscaling easier.
-// attention: Clipping is done here against 160x200 instead of 160x168
-//            Original interpreter didn't do any clipping, we do it for security.
-//            Clipping against the regular script width/height must not be done,
-//            because at least during the intro one message box goes beyond playscreen
-//            Going beyond 160x168 will result in messageboxes not getting fully removed
-//            In KQ4's case, the scripts clear the screen that's why it works.
+/**
+ * Draw a box with a border on the display screen.
+ * Currently only used when drawing a message box or an expanded menu.
+ * Coordinates are for the visual screen instead of the game screen, because
+ * while boxes are generally within the game area, there are exceptions:
+ * - KQ4 intro displays a message box that extends below the game area.
+ *   This would normally result in the message box not being fully removed,
+ *   but the script clears the screen afterwards so it works.
+ * - MMMG nursery rhyme message boxes appear over the menu bar.
+ *   The scripts pass a y-coordinate of zero to print.at(). Bug #13820
+ * The original interpreter didn't do any clipping; we clip against the visual
+ * screen to prevent out of bounds writes while allowing boxes to be drawn outside
+ * of the game area. The visual screen is 160x200 normally, 140x192 for Apple II.
+ * The x, y parameters are the upper left of the box in our implementation.
+ * Sierra passed the lower left. We change that to make upscaling easier.
+ */
 void GfxMgr::drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroundColor, byte lineColor) {
-	// Allow rendering all the way to the top of the visual screen, even if there
-	// is a menu bar. MMMG nursery rhyme message boxes appear over the menu bar
-	// when the scripts pass a y-coordinate of zero to print.at(). Bug #13820
 	const int16 minY = 0 - _renderStartDisplayOffsetY;
 	if (!render_Clip(x, y, width, height, minY, VISUAL_WIDTH, VISUAL_HEIGHT - _renderStartVisualOffsetY)) {
 		warning("drawBox ignored by clipping. x: %d, y: %d, w: %d, h: %d", x, y, width, height);
@@ -1024,7 +1076,9 @@ void GfxMgr::drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroun
 	}
 }
 
-// coordinates are directly for display screen
+/**
+ * Draw a rectangle to the display screen
+ */
 void GfxMgr::drawDisplayRect(int16 x, int16 y, int16 width, int16 height, byte color, bool copyToScreen) {
 	switch (_vm->_renderMode) {
 	case Common::kRenderCGA:
@@ -1100,7 +1154,9 @@ void GfxMgr::drawDisplayRectCGA(int16 x, int16 y, int16 width, int16 height, byt
 	}
 }
 
-// row + column are text-coordinates
+/**
+ * Draw a character to the display screen using text row and column coordinates
+ */
 void GfxMgr::drawCharacter(int16 row, int16 column, byte character, byte foreground, byte background, bool disabledLook) {
 	int16 x = column;
 	int16 y = row;
@@ -1124,7 +1180,10 @@ void GfxMgr::drawCharacter(int16 row, int16 column, byte character, byte foregro
 	drawCharacterOnDisplay(x, y, character, foreground, background, transformXOR, transformOR);
 }
 
-// only meant for internal use (SystemUI)
+/**
+ * Draw a string to the display screen using display coordinates.
+ * For internal use by SystemUI.
+ */
 void GfxMgr::drawStringOnDisplay(int16 x, int16 y, const char *text, byte foregroundColor, byte backgroundColor) {
 	while (*text) {
 		drawCharacterOnDisplay(x, y, *text, foregroundColor, backgroundColor);
@@ -1133,6 +1192,10 @@ void GfxMgr::drawStringOnDisplay(int16 x, int16 y, const char *text, byte foregr
 	}
 }
 
+/**
+ * Draw a string to the display screen using display coordinates.
+ * For internal use by SystemUI.
+ */
 void GfxMgr::drawStringOnDisplay(int16 x, int16 adjX, int16 y, int16 adjY, const char *text, byte foregroundColor, byte backgroundColor) {
 	switch (_upscaledHires) {
 	case DISPLAY_UPSCALED_DISABLED:
@@ -1150,6 +1213,9 @@ void GfxMgr::drawStringOnDisplay(int16 x, int16 adjX, int16 y, int16 adjY, const
 	drawStringOnDisplay(x, y, text, foregroundColor, backgroundColor);
 }
 
+/**
+ * Draw a character to the display screen using text row and column coordinates
+ */
 void GfxMgr::drawCharacterOnDisplay(int16 x, int16 y, const byte character, byte foreground, byte background, byte transformXOR, byte transformOR) {
 	int16       curX, curY;
 	const byte *fontData;
@@ -1249,11 +1315,12 @@ void GfxMgr::setPriorityTable(int16 priorityBase) {
 }
 
 // used for saving
-int16 GfxMgr::saveLoadGetPriority(int16 yPos) {
+int16 GfxMgr::saveLoadGetPriority(int16 yPos) const {
 	assert(yPos < SCRIPT_HEIGHT);
 	return _priorityTable[yPos];
 }
-bool GfxMgr::saveLoadWasPriorityTableModified() {
+
+bool GfxMgr::saveLoadWasPriorityTableModified() const {
 	return _priorityTableSet;
 }
 
@@ -1262,9 +1329,11 @@ void GfxMgr::saveLoadSetPriority(int16 yPos, int16 priority) {
 	assert(yPos < SCRIPT_HEIGHT);
 	_priorityTable[yPos] = priority;
 }
+
 void GfxMgr::saveLoadSetPriorityTableModifiedBool(bool wasModified) {
 	_priorityTableSet = wasModified;
 }
+
 void GfxMgr::saveLoadFigureOutPriorityTableModifiedBool() {
 	uint8 defaultPriorityTable[SCRIPT_HEIGHT]; /**< priority table */
 
@@ -1281,7 +1350,7 @@ void GfxMgr::saveLoadFigureOutPriorityTableModifiedBool() {
 /**
  * Convert sprite priority to y value.
  */
-int16 GfxMgr::priorityToY(int16 priority) {
+int16 GfxMgr::priorityToY(int16 priority) const {
 	if (!_priorityTableSet) {
 		// priority table wasn't set by scripts? calculate directly
 		return (priority - 5) * 12 + 48;
@@ -1317,7 +1386,7 @@ int16 GfxMgr::priorityToY(int16 priority) {
 	return currentY;
 }
 
-int16 GfxMgr::priorityFromY(int16 yPos) {
+int16 GfxMgr::priorityFromY(int16 yPos) const {
 	assert(yPos < SCRIPT_HEIGHT);
 	return _priorityTable[yPos];
 }
@@ -1417,7 +1486,7 @@ void GfxMgr::setAGIPal(int p0) {
 	debug(1, "Using AGIPAL palette from '%s'", filename);
 }
 
-int GfxMgr::getAGIPalFileNum() {
+int GfxMgr::getAGIPalFileNum() const {
 	return _agipalFileNum;
 }
 

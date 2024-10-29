@@ -70,10 +70,10 @@ class PictureMgr {
 public:
 	PictureMgr(AgiBase *agi, GfxMgr *gfx);
 
-	int16 getResourceNr() { return _resourceNr; };
+	int16 getResourceNr() const { return _resourceNr; };
 
 private:
-	void draw_xCorner(bool skipOtherCoords = false);
+	void xCorner(bool skipOtherCoords = false);
 	void yCorner(bool skipOtherCoords = false);
 	void plotBrush();
 
@@ -84,8 +84,8 @@ private:
 public:
 	void putVirtPixel(int x, int y);
 
-	int decodePicture(int16 resourceNr, bool clearScreen, bool agi256 = false, int16 pic_width = _DEFAULT_WIDTH, int16 pic_height = _DEFAULT_HEIGHT);
-	int decodePicture(byte *data, uint32 length, int clear, int pic_width = _DEFAULT_WIDTH, int pic_height = _DEFAULT_HEIGHT);
+	void decodePicture(int16 resourceNr, bool clearScreen, bool agi256 = false, int16 width = _DEFAULT_WIDTH, int16 height = _DEFAULT_HEIGHT);
+	void decodePictureFromBuffer(byte *data, uint32 length, bool clearScreen, int16 width = _DEFAULT_WIDTH, int16 height = _DEFAULT_HEIGHT);
 	void unloadPicture(int picNr);
 	void drawPicture();
 private:
@@ -104,7 +104,7 @@ private:
 	void draw_LineShort();
 	void draw_LineAbsolute();
 
-	int  draw_FillCheck(int16 x, int16 y);
+	bool draw_FillCheck(int16 x, int16 y);
 	void draw_Fill(int16 x, int16 y);
 	void draw_Fill();
 
@@ -151,8 +151,10 @@ private:
 	uint8 _minCommand;
 
 	AgiPictureVersion _pictureVersion;
-	int16 _width, _height;
-	int16 _xOffset, _yOffset;
+	int16 _width;
+	int16 _height;
+	int16 _xOffset;
+	int16 _yOffset;
 
 	int _flags;
 	int _currentStep;

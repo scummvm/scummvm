@@ -739,7 +739,7 @@ void MickeyEngine::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
 		_picture->setPictureFlags(kPicFStep);
 
 	_picture->setOffset(x0, y0);
-	_picture->decodePicture(buffer, size, false, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
+	_picture->decodePictureFromBuffer(buffer, size, false, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 	_picture->setOffset(0, 0);
 	_picture->showPic(10, 0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 }
@@ -759,7 +759,7 @@ void MickeyEngine::drawPic(int iPic) {
 
 	// Note that decodePicture clears the screen
 	_picture->setOffset(10, 0);
-	_picture->decodePicture(buffer, size, true, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
+	_picture->decodePictureFromBuffer(buffer, size, true, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 	_picture->setOffset(0, 0);
 	_picture->showPic(10, 0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 }

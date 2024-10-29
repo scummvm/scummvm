@@ -71,30 +71,30 @@ public:
 
 	void initVideo();
 	void deinitVideo();
-	void initPalette(uint8 *destPalette, const uint8 *paletteData, uint colorCount = 16, uint fromBits = 6, uint toBits = 8);
-	void initPaletteCLUT(uint8 *destPalette, const uint16 *paletteCLUTData, uint colorCount = 16);
+	static void initPalette(uint8 *destPalette, const uint8 *paletteData, uint colorCount = 16, uint fromBits = 6, uint toBits = 8);
+	static void initPaletteCLUT(uint8 *destPalette, const uint16 *paletteCLUTData, uint colorCount = 16);
 	void setAGIPal(int);
-	int getAGIPalFileNum();
+	int getAGIPalFileNum() const;
 	void setPalette(bool GfxModePalette);
 
 	void initMouseCursor(MouseCursorData *mouseCursor, const byte *bitmapData, uint16 width, uint16 height, int hotspotX, int hotspotY);
 	void setMouseCursor(bool busy = false);
 
 	void setRenderStartOffset(uint16 offsetY);
-	uint16 getRenderStartDisplayOffsetY();
+	uint16 getRenderStartDisplayOffsetY() const;
 
-	void translateGamePosToDisplayScreen(int16 &x, int16 &y);
-	void translateVisualPosToDisplayScreen(int16 &x, int16 &y);
-	void translateDisplayPosToGameScreen(int16 &x, int16 &y);
+	void translateGamePosToDisplayScreen(int16 &x, int16 &y) const;
+	void translateVisualPosToDisplayScreen(int16 &x, int16 &y) const;
+	void translateDisplayPosToGameScreen(int16 &x, int16 &y) const;
 
-	void translateVisualDimensionToDisplayScreen(int16 &width, int16 &height);
-	void translateDisplayDimensionToVisualScreen(int16 &width, int16 &height);
+	void translateVisualDimensionToDisplayScreen(int16 &width, int16 &height) const;
+	void translateDisplayDimensionToVisualScreen(int16 &width, int16 &height) const;
 
-	void translateGameRectToDisplayScreen(int16 &x, int16 &y, int16 &width, int16 &height);
-	void translateVisualRectToDisplayScreen(int16 &x, int16 &y, int16 &width, int16 &height);
+	void translateGameRectToDisplayScreen(int16 &x, int16 &y, int16 &width, int16 &height) const;
+	void translateVisualRectToDisplayScreen(int16 &x, int16 &y, int16 &width, int16 &height) const;
 
-	uint32 getDisplayOffsetToGameScreenPos(int16 x, int16 y);
-	uint32 getDisplayOffsetToVisualScreenPos(int16 x, int16 y);
+	uint32 getDisplayOffsetToGameScreenPos(int16 x, int16 y) const;
+	uint32 getDisplayOffsetToVisualScreenPos(int16 x, int16 y) const;
 
 	void copyDisplayRectToScreen(int16 x, int16 y, int16 width, int16 height);
 	void copyDisplayRectToScreen(int16 x, int16 adjX, int16 y, int16 adjY, int16 width, int16 adjWidth, int16 height, int16 adjHeight);
@@ -102,11 +102,11 @@ public:
 	void copyDisplayRectToScreenUsingVisualPos(int16 x, int16 y, int16 width, int16 height);
 	void copyDisplayToScreen();
 
-	void translateFontPosToDisplayScreen(int16 &x, int16 &y);
-	void translateDisplayPosToFontScreen(int16 &x, int16 &y);
-	void translateFontDimensionToDisplayScreen(int16 &width, int16 &height);
-	void translateFontRectToDisplayScreen(int16 &x, int16 &y, int16 &width, int16 &height);
-	Common::Rect getFontRectForDisplayScreen(int16 column, int16 row, int16 width, int16 height);
+	void translateFontPosToDisplayScreen(int16 &x, int16 &y) const;
+	void translateDisplayPosToFontScreen(int16 &x, int16 &y) const;
+	void translateFontDimensionToDisplayScreen(int16 &width, int16 &height) const;
+	void translateFontRectToDisplayScreen(int16 &x, int16 &y, int16 &width, int16 &height) const;
+	Common::Rect getFontRectForDisplayScreen(int16 column, int16 row, int16 width, int16 height) const;
 
 private:
 	uint _pixels;
@@ -143,17 +143,17 @@ private:
 	uint16 _renderStartDisplayOffsetY;
 
 public:
-	uint16 getDisplayScreenWidth() {
+	uint16 getDisplayScreenWidth() const {
 		return _displayScreenWidth;
 	}
-	uint16 getDisplayFontWidth() {
+	uint16 getDisplayFontWidth() const {
 		return _displayFontWidth;
 	}
-	uint16 getDisplayFontHeight() {
+	uint16 getDisplayFontHeight() const {
 		return _displayFontHeight;
 	}
 
-	GfxScreenUpscaledMode getUpscaledHires() {
+	GfxScreenUpscaledMode getUpscaledHires() const {
 		return _upscaledHires;
 	}
 
@@ -166,16 +166,16 @@ public:
 	void putPixelOnDisplay(int16 x, int16 adjX, int16 y, int16 adjY, byte color);
 	void putFontPixelOnDisplay(int16 baseX, int16 baseY, int16 addX, int16 addY, byte color, bool isHires);
 
-	byte getColor(int16 x, int16 y);
-	byte getPriority(int16 x, int16 y);
-	bool checkControlPixel(int16 x, int16 y, byte newPriority);
+	byte getColor(int16 x, int16 y) const;
+	byte getPriority(int16 x, int16 y) const;
+	bool checkControlPixel(int16 x, int16 y, byte newPriority) const;
 
-	byte getCGAMixtureColor(byte color);
+	byte getCGAMixtureColor(byte color) const;
 
 	void render_Block(int16 x, int16 y, int16 width, int16 height, bool copyToScreen = true);
-	bool render_Clip(int16 &x, int16 &y, int16 &width, int16 &height, const int16 minY = 0, const int16 clipAgainstWidth = SCRIPT_WIDTH, const int16 clipAgainstHeight = SCRIPT_HEIGHT);
 
 private:
+	static bool render_Clip(int16 &x, int16 &y, int16 &width, int16 &height, const int16 minY, const int16 clipAgainstWidth, const int16 clipAgainstHeight);
 	void render_BlockEGA(int16 x, int16 y, int16 width, int16 height);
 	void render_BlockCGA(int16 x, int16 y, int16 width, int16 height);
 	void render_BlockHercules(int16 x, int16 y, int16 width, int16 height);
@@ -184,7 +184,7 @@ public:
 	void transition_Amiga();
 	void transition_AtariSt();
 
-	void block_save(int16 x, int16 y, int16 width, int16 height, byte *bufferPtr);
+	void block_save(int16 x, int16 y, int16 width, int16 height, byte *bufferPtr) const;
 	void block_restore(int16 x, int16 y, int16 width, int16 height, byte *bufferPtr);
 
 	void drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroundColor, byte lineColor);
@@ -204,16 +204,16 @@ public:
 	void updateScreen();
 
 	void initPriorityTable();
-	void createDefaultPriorityTable(uint8 *priorityTable);
+	static void createDefaultPriorityTable(uint8 *priorityTable);
 	void setPriorityTable(int16 priorityBase);
-	bool saveLoadWasPriorityTableModified();
-	int16 saveLoadGetPriority(int16 yPos);
+	bool saveLoadWasPriorityTableModified() const;
+	int16 saveLoadGetPriority(int16 yPos) const;
 	void saveLoadSetPriorityTableModifiedBool(bool wasModified);
 	void saveLoadSetPriority(int16 yPos, int16 priority);
 	void saveLoadFigureOutPriorityTableModifiedBool();
 
-	int16 priorityToY(int16 priority);
-	int16 priorityFromY(int16 yPos);
+	int16 priorityToY(int16 priority) const;
+	int16 priorityFromY(int16 yPos) const;
 };
 
 } // End of namespace Agi

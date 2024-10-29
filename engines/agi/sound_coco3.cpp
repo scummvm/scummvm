@@ -78,7 +78,7 @@ void SoundGenCoCo3::play(int resnum) {
 	// LSL1 (Int, 2.072) stored the duration in 1/60 of a second.
 	// Fan ports have been made using both interpreters, but our
 	// detection table doesn't capture this. For now, treat KQ3
-	// as the early interpreter all others as the later one.
+	// as the early interpreter and all others as the later one.
 	// TODO: create detection heuristic
 	bool isEarlySound = (_vm->getGameID() == GID_KQ3);
 

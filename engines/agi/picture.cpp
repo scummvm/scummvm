@@ -36,15 +36,23 @@ PictureMgr::PictureMgr(AgiBase *agi, GfxMgr *gfx) {
 	_dataOffset = 0;
 	_dataOffsetNibble = false;
 
-	_patCode = _patNum = _priOn = _scrOn = _scrColor = _priColor = 0;
-	_xOffset = _yOffset = 0;
+	_patCode = 0;
+	_patNum = 0;
+	_priOn = 0;
+	_scrOn = 0;
+	_scrColor = 0;
+	_priColor = 0;
+
+	_minCommand = 0xf0;
 
 	_pictureVersion = AGIPIC_V2;
-	_minCommand = 0xf0;
+	_width = 0;
+	_height = 0;
+	_xOffset = 0;
+	_yOffset = 0;
+
 	_flags = 0;
 	_currentStep = 0;
-
-	_width = _height = 0;
 }
 
 void PictureMgr::putVirtPixel(int x, int y) {
@@ -98,7 +106,7 @@ byte PictureMgr::getNextNibble() {
 **
 ** Draws an xCorner  (drawing action 0xF5)
 **************************************************************************/
-void PictureMgr::draw_xCorner(bool skipOtherCoords) {
+void PictureMgr::xCorner(bool skipOtherCoords) {
 	byte x1, x2, y1, y2, dummy;
 
 	if (!(getNextParamByte(x1) && getNextParamByte(y1)))
@@ -342,14 +350,12 @@ void PictureMgr::drawPicture() {
 }
 
 void PictureMgr::drawPictureC64() {
-	byte curByte;
-
 	debugC(8, kDebugLevelMain, "Drawing C64 picture");
 
 	_scrColor = 0x0;
 
 	while (_dataOffset < _dataSize) {
-		curByte = getNextByte();
+		byte curByte = getNextByte();
 
 		if ((curByte >= 0xF0) && (curByte <= 0xFE)) {
 			_scrColor = curByte & 0x0F;
@@ -358,7 +364,7 @@ void PictureMgr::drawPictureC64() {
 
 		switch (curByte) {
 		case 0xe0:  // x-corner
-			draw_xCorner();
+			xCorner();
 			break;
 		case 0xe1:  // y-corner
 			yCorner();
@@ -391,12 +397,10 @@ void PictureMgr::drawPictureC64() {
 }
 
 void PictureMgr::drawPictureV1() {
-	byte curByte;
-
 	debugC(8, kDebugLevelMain, "Drawing V1 picture");
 
 	while (_dataOffset < _dataSize) {
-		curByte = getNextByte();
+		byte curByte = getNextByte();
 
 		switch (curByte) {
 		case 0xf1:
@@ -430,12 +434,10 @@ void PictureMgr::drawPictureV1() {
 }
 
 void PictureMgr::drawPictureV15() {
-	byte curByte;
-
 	debugC(8, kDebugLevelMain, "Drawing V1.5 picture");
 
 	while (_dataOffset < _dataSize) {
-		curByte = getNextByte();
+		byte curByte = getNextByte();
 
 		switch (curByte) {
 		case 0xf0:
@@ -454,7 +456,7 @@ void PictureMgr::drawPictureV15() {
 			yCorner(true);
 			break;
 		case 0xf9:
-			draw_xCorner(true);
+			xCorner(true);
 			break;
 		case 0xfa:
 			// TODO: is this really correct?
@@ -479,7 +481,6 @@ void PictureMgr::drawPictureV15() {
 }
 
 void PictureMgr::drawPictureV2() {
-	byte curByte;
 	bool nibbleMode = false;
 	bool mickeyCrystalAnimation = false;
 	int  mickeyIteration = 0;
@@ -496,7 +497,7 @@ void PictureMgr::drawPictureV2() {
 	}
 
 	while (_dataOffset < _dataSize) {
-		curByte = getNextByte();
+		byte curByte = getNextByte();
 
 		switch (curByte) {
 		case 0xf0:
@@ -525,7 +526,7 @@ void PictureMgr::drawPictureV2() {
 			yCorner();
 			break;
 		case 0xf5:
-			draw_xCorner();
+			xCorner();
 			break;
 		case 0xf6:
 			draw_LineAbsolute();
@@ -562,8 +563,8 @@ void PictureMgr::drawPictureV2() {
 		// One frame of the crystal animation is shown on each iteration, based on _currentStep
 		if (mickeyCrystalAnimation) {
 			if (_currentStep == mickeyIteration) {
-				int storedXOffset = _xOffset;
-				int storedYOffset = _yOffset;
+				int16 storedXOffset = _xOffset;
+				int16 storedYOffset = _yOffset;
 				// Note that picture coordinates are correct for Mickey only
 				showPic(10, 0, _width, _height);
 				_xOffset = storedXOffset;
@@ -586,12 +587,11 @@ void PictureMgr::drawPictureAGI256() {
 	int16 y = 0;
 	byte *dataPtr = _data;
 	byte *dataEndPtr = _data + _dataSize;
-	byte color = 0;
 
 	debugC(8, kDebugLevelMain, "Drawing AGI256 picture");
 
 	while (dataPtr < dataEndPtr) {
-		color = *dataPtr++;
+		byte color = *dataPtr++;
 		_gfx->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, color, 0);
 
 		x++;
@@ -625,12 +625,8 @@ void PictureMgr::draw_SetColor() {
 		return;
 
 	// For CGA, replace the color with its mixture color
-	switch (_vm->_renderMode) {
-	case Common::kRenderCGA:
+	if (_vm->_renderMode == Common::kRenderCGA) {
 		_scrColor = _gfx->getCGAMixtureColor(_scrColor);
-		break;
-	default:
-		break;
 	}
 }
 
@@ -644,12 +640,8 @@ void PictureMgr::draw_SetNibbleColor() {
 	_scrColor = getNextNibble();
 
 	// For CGA, replace the color with its mixture color
-	switch (_vm->_renderMode) {
-	case Common::kRenderCGA:
+	if (_vm->_renderMode == Common::kRenderCGA) {
 		_scrColor = _gfx->getCGAMixtureColor(_scrColor);
-		break;
-	default:
-		break;
 	}
 }
 
@@ -671,8 +663,6 @@ void PictureMgr::draw_Line(int16 x1, int16 y1, int16 x2, int16 y2) {
 	x2 = CLIP<int16>(x2, 0, _width - 1);
 	y1 = CLIP<int16>(y1, 0, _height - 1);
 	y2 = CLIP<int16>(y2, 0, _height - 1);
-
-	int i, x, y, deltaX, deltaY, stepX, stepY, errorX, errorY, detdelta;
 
 	// Vertical line
 
@@ -698,23 +688,21 @@ void PictureMgr::draw_Line(int16 x1, int16 y1, int16 x2, int16 y2) {
 		return;
 	}
 
-	y = y1;
-	x = x1;
-
-	stepY = 1;
-	deltaY = y2 - y1;
-	if (deltaY < 0) {
-		stepY = -1;
-		deltaY = -deltaY;
-	}
-
-	stepX = 1;
-	deltaX = x2 - x1;
+	int stepX = 1;
+	int deltaX = x2 - x1;
 	if (deltaX < 0) {
 		stepX = -1;
 		deltaX = -deltaX;
 	}
 
+	int stepY = 1;
+	int deltaY = y2 - y1;
+	if (deltaY < 0) {
+		stepY = -1;
+		deltaY = -deltaY;
+	}
+
+	int i, detdelta, errorX, errorY;
 	if (deltaY > deltaX) {
 		i = deltaY;
 		detdelta = deltaY;
@@ -727,6 +715,8 @@ void PictureMgr::draw_Line(int16 x1, int16 y1, int16 x2, int16 y2) {
 		errorY = deltaX / 2;
 	}
 
+	int x = x1;
+	int y = y1;
 	putVirtPixel(x, y);
 
 	do {
@@ -819,17 +809,17 @@ void PictureMgr::draw_Fill(int16 x, int16 y) {
 	// Exit if stack is empty
 	while (!stack.empty()) {
 		Common::Point p = stack.pop();
-		unsigned int c;
-		bool newspanUp, newspanDown;
 
 		if (!draw_FillCheck(p.x, p.y))
 			continue;
 
 		// Scan for left border
+		uint c;
 		for (c = p.x - 1; draw_FillCheck(c, p.y); c--)
 			;
 
-		newspanUp = newspanDown = true;
+		bool newspanUp = true;
+		bool newspanDown = true;
 		for (c++; draw_FillCheck(c, p.y); c++) {
 			putVirtPixel(c, p.y);
 			if (draw_FillCheck(c, p.y - 1)) {
@@ -853,18 +843,15 @@ void PictureMgr::draw_Fill(int16 x, int16 y) {
 	}
 }
 
-int PictureMgr::draw_FillCheck(int16 x, int16 y) {
-	byte screenColor;
-	byte screenPriority;
-
+bool PictureMgr::draw_FillCheck(int16 x, int16 y) {
 	if (x < 0 || x >= _width || y < 0 || y >= _height)
 		return false;
 
 	x += _xOffset;
 	y += _yOffset;
 
-	screenColor = _gfx->getColor(x, y);
-	screenPriority = _gfx->getPriority(x, y);
+	byte screenColor = _gfx->getColor(x, y);
+	byte screenPriority = _gfx->getPriority(x, y);
 
 	if (_flags & kPicFTrollMode)
 		return ((screenColor != 11) && (screenColor != _scrColor));
@@ -873,7 +860,7 @@ int PictureMgr::draw_FillCheck(int16 x, int16 y) {
 		return (screenColor == 15);
 
 	if (_priOn && !_scrOn && _priColor != 4)
-		return screenPriority == 4;
+		return (screenPriority == 4);
 
 	return (_scrOn && screenColor == 15 && _scrColor != 15);
 }
@@ -887,9 +874,7 @@ int PictureMgr::draw_FillCheck(int16 x, int16 y) {
  * @param clear  clear AGI screen before drawing
  * @param agi256 load an AGI256 picture resource
  */
-int PictureMgr::decodePicture(int16 resourceNr, bool clearScreen, bool agi256, int16 pic_width, int16 pic_height) {
-	debugC(8, kDebugLevelResources, "(%d)", resourceNr);
-
+void PictureMgr::decodePicture(int16 resourceNr, bool clearScreen, bool agi256, int16 width, int16 height) {
 	_patCode = 0;
 	_patNum = 0;
 	_priOn = _scrOn = false;
@@ -902,8 +887,8 @@ int PictureMgr::decodePicture(int16 resourceNr, bool clearScreen, bool agi256, i
 	_dataOffset = 0;
 	_dataOffsetNibble = false;
 
-	_width = pic_width;
-	_height = pic_height;
+	_width = width;
+	_height = height;
 
 	if (clearScreen && !agi256) { // 256 color pictures should always fill the whole screen, so no clearing for them.
 		_gfx->clear(15, 4); // Clear 16 color AGI screen (Priority 4, color white).
@@ -915,11 +900,10 @@ int PictureMgr::decodePicture(int16 resourceNr, bool clearScreen, bool agi256, i
 		drawPictureAGI256();
 	}
 
-	if (clearScreen)
+	if (clearScreen) {
 		_vm->clearImageStack();
+	}
 	_vm->recordImageStackCall(ADD_PIC, resourceNr, clearScreen, agi256, 0, 0, 0, 0);
-
-	return errOK;
 }
 
 /**
@@ -931,7 +915,7 @@ int PictureMgr::decodePicture(int16 resourceNr, bool clearScreen, bool agi256, i
  * @param length the size of the picture data buffer
  * @param clear  clear AGI screen before drawing
  */
-int PictureMgr::decodePicture(byte *data, uint32 length, int clr, int pic_width, int pic_height) {
+void PictureMgr::decodePictureFromBuffer(byte *data, uint32 length, bool clearScreen, int16 width, int16 height) {
 	_patCode = 0;
 	_patNum = 0;
 	_priOn = _scrOn = false;
@@ -943,15 +927,14 @@ int PictureMgr::decodePicture(byte *data, uint32 length, int clr, int pic_width,
 	_dataOffset = 0;
 	_dataOffsetNibble = false;
 
-	_width = pic_width;
-	_height = pic_height;
+	_width = width;
+	_height = height;
 
-	if (clr) // 256 color pictures should always fill the whole screen, so no clearing for them.
+	if (clearScreen) {
 		clear();
+	}
 
 	drawPicture(); // Draw 16 color picture.
-
-	return errOK;
 }
 
 /**
