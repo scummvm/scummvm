@@ -941,22 +941,8 @@ void cmdObjStatusF(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	vm->_text->messageBox(msg);
 }
 
-// unknown commands:
-// unk_170: Force savegame name -- j5
-// unk_171: script save -- j5
-// unk_172: script restore -- j5
-// unk_173: Activate keypressed control (ego only moves while key is pressed)
-// unk_174: Change priority table (used in KQ4) -- j5
-// unk_177: Disable menus completely -- j5
-// unk_181: Deactivate keypressed control (default control of ego)
+// only known to used by MMMG for setting the player's name as the save description
 void cmdSetSimple(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	// set.simple is called by Larry 1 on Apple IIgs at the store, after answering the 555-6969 phone.
-	// load.sound(16) is called right before it. Interpreter is 2.440-like.
-	// it's called with parameter 16.
-	// Original interpreter doesn't seem to play any sound.
-	// TODO: Figure out what's going on. It can't be automatic saving of course.
-	// Also getting called in KQ1, when planting beans - parameter 12.
-	// And when killing the witch - parameter 40.
 	if ((vm->getVersion() < 0x2425) || (vm->getVersion() == 0x2440)) {
 		// was not available before 2.2425, but also not available in 2.440
 		warning("set.simple called, although not available for current AGI version");
@@ -985,10 +971,10 @@ void cmdPopScript(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	debug(0, "pop.script");
 }
 
+// discard.sound only existed on Apple IIgs. Apple IIgs sound resources were
+// relatively large, so scripts would unload them from memory when finished.
 void cmdDiscardSound(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (vm->getVersion() >= 0x2936) {
-		debug(0, "discard.sound");
-	}
+	debug(0, "discard.sound");
 }
 
 void cmdShowMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -1075,6 +1061,9 @@ void cmdAdjEgoMoveToXY(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	const AgiOpCodeEntry *opCodeTable = vm->getOpCodesTable();
 	int8 x, y;
 
+	// There are apparently two versions of this opcode: one that takes
+	// two parameters and one that takes none. The only games that call
+	// this opcode use the two parameter version.
 	switch (opCodeTable[182].parameterSize) {
 	// The 2 parameter version is used in:
 	// Amiga/Atari ST Gold Rush!   - Logic 130, 150
@@ -1103,8 +1092,8 @@ void cmdAdjEgoMoveToXY(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 		debugC(4, kDebugLevelScripts, "adj.ego.move.to.x.y(%d, %d)", x, y);
 		break;
-	// TODO: Check where (if anywhere) the 0 arguments version is used
-	case 0:
+
+	// No games call this; all games call the 2 parameter version
 	default:
 		state->screenObjTable[SCREENOBJECTS_EGO_ENTRY].flags |= fAdjEgoXY;
 		break;
@@ -2217,14 +2206,6 @@ void cmdPushScript(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 void cmdSetPriBase(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	if ((vm->getVersion() != 0x2425) && (vm->getVersion() < 0x2936)) {
 		// was only available in the 2.425 interpreter and from 2.936 (last AGI2 version) onwards
-		// Called during KQ3 (Apple IIgs):
-		//  - picking up chicken (parameter = 50)
-		//  - opening store/tavern door (parameter = 19)
-		//  - when pirates say "Land Ho" (parameter = 16)
-		//  - when killing the dragon (parameter = 4)
-		// Also called by SQ2 (Apple IIgs):
-		//  - in Vohaul's lair (SQ2 currently gets this call through, which breaks some priority)
-		// TODO: Figure out what's going on
 		warning("set.pri.base called, although not available for current AGI version");
 		return;
 	}

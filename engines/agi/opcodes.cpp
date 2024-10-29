@@ -347,12 +347,12 @@ static const AgiOpCodeDefinitionEntry opCodesV2[] = {
 	{ "div.n",              "vn",       &cmdDivN },             // A7
 	{ "div.v",              "vv",       &cmdDivV },             // A8
 	{ "close.window",       "",         &cmdCloseWindow },      // A9
-	{ "set.simple",         "n",        &cmdSetSimple },        // AA AGI2.425+, *BUT* not included in AGI2.440
+	{ "set.simple",         "n",        &cmdSetSimple },        // AA AGI2.425+, *BUT* not included in AGI2.440, discard.sound in some Apple IIgs
 	{ "push.script",        "",         &cmdPushScript },       // AB
 	{ "pop.script",         "",         &cmdPopScript },        // AC
 	{ "hold.key",           "",         &cmdHoldKey },          // AD
-	{ "set.pri.base",       "n",        &cmdSetPriBase },       // AE AGI2.936+ *AND* also inside AGI2.425
-	{ "discard.sound",      "n",        &cmdDiscardSound },     // AF was skip for PC
+	{ "set.pri.base",       "n",        &cmdSetPriBase },       // AE AGI2.936+ *AND* also inside AGI2.425, discard.sound in some Apple IIgs
+	{ "discard.sound",      "n",        &cmdDiscardSound },     // AF Apple IIGS only
 	{ "hide.mouse",         "",         &cmdHideMouse },        // B0 1 arg for AGI3 Apple IIGS and AGI 3.002.086. AGI3+ only starts here
 	{ "allow.menu",         "n",        &cmdAllowMenu },        // B1
 	{ "show.mouse",         "",         &cmdShowMouse },        // B2 1 arg for AGI3 Apple IIGS
@@ -403,7 +403,7 @@ void AgiEngine::setupOpCodes(uint16 version) {
 	}
 
 	// Alter opcode parameters for specific games
-	if ((version >= 0x2000) && (version < 0x3000)) {
+	if (0x2000 <= version && version < 0x3000) {
 		// AGI2 adjustments
 
 		// 'quit' takes 0 args for 2.089
@@ -418,22 +418,12 @@ void AgiEngine::setupOpCodes(uint16 version) {
 			_opCodes[0x97].parameters = "vvv";
 			_opCodes[0x98].parameters = "vvv";
 		}
-
-		// TODO: Opcode B0 is used by SQ2 Apple IIgs, but its purpose is
-		// currently unknown. It takes one parameter, and that parameter
- 		// appears to be a variable number. It is not hide.mouse from AGI3.
-		// No other AGI2 games have been discovered that call this opcode.
-		// Logic 1: during the spaceship cutscene in the intro, called with 53
-		// Logic 23: called twice with 39.
-		_opCodes[0xb0].name = "unknown";
-		_opCodes[0xb0].parameters = "v";
-		_opCodes[0xb0].functionPtr = &cmdUnknown;
 	}
 
 	if (version >= 0x3000) {
 		// AGI3 adjustments
 
-		// hide.mouse and hide.key take 1 parameter for 3.002.086.
+		// hide.mouse and hold.key take 1 parameter for 3.002.086.
 		// KQ4 is the only known game with this interpreter and
 		// its scripts do not call either opcode. no game scripts
 		// have been discovered that call hold.key with 1 parameter.
@@ -460,6 +450,46 @@ void AgiEngine::setupOpCodes(uint16 version) {
 			(getPlatform() == Common::kPlatformAmiga ||
 			 getPlatform() == Common::kPlatformAtariST)) {
 			_opCodes[0xb6].parameters = "vv";
+		}
+	}
+
+	// Apple IIgs adjustments
+	if (getPlatform() == Common::kPlatformApple2GS) {
+		// A2GS has platform-specific opcodes whose values changed over time.
+		// Our A2GS version numbering isn't as precise as for DOS interpreters,
+		// so the following version checks are just meant to separate A2GS games
+		// into three broad groups. The use of these opcodes has been audited in
+		// all known A2GS games and versions. Although all of these are currently
+		// no-ops in our implementation, what's important is that they prevent
+		// the "normal" opcodes from being unexpectedly called.
+
+		if (version <= 0x2440) {
+			// opcode 170: discard.sound.
+			// called by AGIDEMO, KQ1, LSL1, PQ1.
+			memcpy(&_opCodes[0xaa], &_opCodes[0xaf], sizeof(AgiOpCodeDefinitionEntry));
+		} else if (version < 0x3000) {
+			// opcode 174: discard.sound.
+			// called by MMMG, KQ2, KQ3, SQ2.
+			memcpy(&_opCodes[0xae], &_opCodes[0xaf], sizeof(AgiOpCodeDefinitionEntry));
+
+			// TODO: opcode 175: unknown opcode that takes one unknown parameter.
+			// called by KQ3 and SQ2. possibly related to sound. example:
+			// SQ2 Logic 20: called once during music after kicking spores
+			_opCodes[0xaf].name = "unknown";
+			_opCodes[0xaf].parameters = "n";
+			_opCodes[0xaf].functionPtr = &cmdUnknown;
+
+			// TODO: opcode 176: unknown opcode that takes one variable parameter.
+			// called by SQ2 in only two places:
+			// Logic 1: during the spaceship cutscene in the intro, called with 53
+			// Logic 23: called twice with 39.
+			_opCodes[0xb0].name = "unknown";
+			_opCodes[0xb0].parameters = "v";
+			_opCodes[0xb0].functionPtr = &cmdUnknown;
+		} else {
+			// AGI3 opcodes are already in the table:
+			// opcode 175: discard sound.
+			// called by KQ4 and MH1.
 		}
 	}
 
