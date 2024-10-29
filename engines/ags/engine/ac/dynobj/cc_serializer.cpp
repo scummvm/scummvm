@@ -125,6 +125,10 @@ void AGSDeSerializer::Unserialize(int index, const char *objectType, const char 
 		// check if the type is read by a plugin
 		for (const auto &pr : _GP(pluginReaders)) {
 			if (pr.Type == objectType) {
+				if (dataSize == 0) { // avoid unserializing stubbed plugins
+					debug(0, "Skipping %s plugin unserialization (dataSize = 0)", objectType);
+					return;
+				}
 				pr.Reader->Unserialize(index, serializedData, dataSize);
 				return;
 			}
