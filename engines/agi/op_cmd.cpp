@@ -2324,12 +2324,6 @@ void cmdAgi256LoadPic(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 	// Loading trigger
 	vm->artificialDelayTrigger_DrawPicture(resourceNr);
-
-	// Show the picture. Similar to void cmdShowPic.
-	vm->setFlag(VM_FLAG_OUTPUT_MODE, false);
-	vm->_text->closeWindow();
-	vm->_picture->showPic();
-	state->pictureShown = true;
 }
 
 // The AGIMOUSE interpreter modified opcode 171 to set variables 27-29 to mouse state
