@@ -530,6 +530,7 @@ public:
 
 	StateVars _gameStateVars;
 	uint32 _gameStateBits;
+	void checkIfPlayerWasCrushed();
 	virtual bool checkIfGameEnded();
 	virtual void endGame();
 	int _endGameDelayTicks;

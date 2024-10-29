@@ -59,6 +59,7 @@ public:
 	Object *checkCollisionRay(const Math::Ray &ray, int raySize);
 	bool checkInSight(const Math::Ray &ray, float maxDistance);
 	ObjectArray checkCollisions(const Math::AABB &boundingBox);
+	bool checkIfPlayerWasCrushed(const Math::AABB &boundingBox);
 	Math::Vector3d resolveCollisions(Math::Vector3d const &lastPosition, Math::Vector3d const &newPosition, int playerHeight);
 	void addObjectFromArea(int16 id, Area *global);
 	void addGroupFromArea(int16 id, Area *global);

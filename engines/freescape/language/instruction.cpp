@@ -668,6 +668,7 @@ void FreescapeEngine::executeToggleVisibility(FCLInstruction &instruction) {
 			Math::AABB boundingBox = createPlayerAABB(_position, _playerHeight);
 			if (obj->_boundingBox.collides(boundingBox)) {
 				_playerWasCrushed = true;
+				_avoidRenderingFrames = 60 * 3;
 				_shootingFrames = 0;
 			}
 		}

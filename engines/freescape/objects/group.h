@@ -52,6 +52,7 @@ public:
 	void run(int index);
 	void reset();
 	void start();
+	bool collides(const Math::AABB &aabb);
 
 	Common::Array<Object *> _objects;
 	Common::Array<Math::Vector3d> _origins;

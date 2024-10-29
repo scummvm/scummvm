@@ -31,6 +31,7 @@
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
 #include "freescape/objects/sensor.h"
+#include "freescape/sweepAABB.h"
 
 namespace Freescape {
 
@@ -519,7 +520,7 @@ void FreescapeEngine::processInput() {
 
 		switch (event.type) {
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-			if (_hasFallen)
+			if (_hasFallen || _playerWasCrushed)
 				break;
 			switch (event.customType) {
 			case kActionMoveUp:
@@ -580,14 +581,14 @@ void FreescapeEngine::processInput() {
 			}
 			break;
 		case Common::EVENT_KEYDOWN:
-			if (_hasFallen)
+			if (_hasFallen || _playerWasCrushed)
 				break;
 
 			pressedKey(event.kbd.keycode);
 			break;
 
 		case Common::EVENT_KEYUP:
-			if (_hasFallen)
+			if (_hasFallen || _playerWasCrushed)
 				break;
 
 			releasedKey(event.kbd.keycode);
@@ -604,7 +605,7 @@ void FreescapeEngine::processInput() {
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
-			if (_hasFallen)
+			if (_hasFallen || _playerWasCrushed)
 				break;
 			mousePos = event.mouse;
 
@@ -632,7 +633,7 @@ void FreescapeEngine::processInput() {
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
-			if (_hasFallen)
+			if (_hasFallen || _playerWasCrushed)
 				break;
 			mousePos = event.mouse;
 			{
@@ -649,7 +650,7 @@ void FreescapeEngine::processInput() {
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:
-			if (_hasFallen || !isCastle())
+			if (_hasFallen || _playerWasCrushed || !isCastle())
 				break;
 			activate();
 			break;
@@ -744,6 +745,7 @@ Common::Error FreescapeEngine::run() {
 			generateDemoInput();
 
 		checkSensors();
+		checkIfPlayerWasCrushed();
 		drawFrame();
 
 		if (_shootingFrames == 0) {
@@ -873,6 +875,14 @@ bool FreescapeEngine::checkIfGameEnded() {
 		_gameStateControl = kFreescapeGameStateEnd;
 	}
 	return false;
+}
+
+void FreescapeEngine::checkIfPlayerWasCrushed() {
+	Math::AABB boundingBox = createPlayerAABB(_position, _playerHeight);
+	if (!_playerWasCrushed && _currentArea->checkIfPlayerWasCrushed(boundingBox)) {
+		_avoidRenderingFrames = 60 * 3;
+		_playerWasCrushed = true;
+	}
 }
 
 void FreescapeEngine::setGameBit(int index) {

@@ -201,4 +201,16 @@ void Group::step() {
 	}
 }
 
+bool Group::collides(const Math::AABB &aabb) {
+	uint32 groupSize = _objects.size();
+	for (uint32 i = 0; i < groupSize ; i++) {
+		if (!_objects[i]->isInvisible() && !_objects[i]->isDestroyed() && _objects[i]->isDrawable()) {
+			GeometricObject *gobj = (GeometricObject *)_objects[i];
+			if (gobj->collides(aabb))
+				return true;
+		}
+	}
+	return false;
+}
+
 } // End of namespace Freescape
