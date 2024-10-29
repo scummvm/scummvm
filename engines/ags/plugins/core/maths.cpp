@@ -66,7 +66,7 @@ void Maths::ArcTan(ScriptMethodParams &params) {
 
 void Maths::ArcTan2(ScriptMethodParams &params) {
 	PARAMS2(float, yval, float, xval);
-	params._result = AGS3::Math_ArcTan2(xval, yval);
+	params._result = AGS3::Math_ArcTan2(yval, xval);
 }
 
 void Maths::Cos(ScriptMethodParams &params) {
