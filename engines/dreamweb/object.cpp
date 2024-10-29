@@ -96,7 +96,7 @@ void DreamWebEngine::obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
 void DreamWebEngine::obPicture() {
 	if (_objectType == kSetObjectType1)
 		return;
-	uint8 frame = 3 * _command + 1;
+	uint16 frame = 3 * _command + 1;
 	if (_objectType == kExObjectType)
 		showFrame(_exFrames, 160, 68, frame, 0x80);
 	else
@@ -424,7 +424,8 @@ void DreamWebEngine::setPickup() {
 	workToScreenM();
 }
 
-void DreamWebEngine::deleteExFrame(uint8 frameNum) {
+void DreamWebEngine::deleteExFrame(uint16 frameNum) {
+	assert(frameNum < 346); // see GraphicsFile::getFrameData
 	Frame *frame = &_exFrames._frames[frameNum];
 
 	uint16 frameSize = frame->width * frame->height;
