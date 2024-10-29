@@ -4483,7 +4483,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("downfall2009", "downfall.exe", "aabdafae8b57dfc48fdf158a72326c23", 183357927),
 	GAME_ENTRY_EN_STEAM("downfall2009", "downfall.exe", "aabdafae8b57dfc48fdf158a72326c23", 279342949), // 1.4
 	GAME_ENTRY_LANG("downfall2009", "downfall.exe", "10212624b951711c4b44f5cb9eecbf0a", 143360, Common::RU_RUS), // GOG
-	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("downfall2016", "downfall.exe", "08b1340f3528feeebce1ecc59cc17907", 1995812750, 0),  // Multilang
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("downfall2016", "downfall.exe", "9d228b6578aa40ee302991f8a8935c7d", 224059671, 0),   // Multilang 1.1.2
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("downfall2016", "downfall.exe", "08b1340f3528feeebce1ecc59cc17907", 1995812750, 0),  // Multilang 1.1.3
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("downfall2016", "downfall.exe", "08b1340f3528feeebce1ecc59cc17907", 224368590, 0),
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("downfall2016", "Downfall.ags", "7c87b99ce309a46085e40ac1a2b20e75", 224024207, 0), // Linux
 	DETECTION_ENTRY_GUIO("dreamswitchhouse", "Dreams in the Witch House.exe", "160d78e898924f5cb1347b13746cc935", 484767783, Common::EN_ANY, "GOG.com", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), ADGF_NO_FLAGS, 0),  // v1.01
@@ -4903,6 +4904,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("thecastle", "maniac.ags", "9d689b7feb29cd29bcb17ad5a3c94f3e", 20208057),  // En-De-Es-It
 	GAME_ENTRY_STEAM("thecastle", "maniac.exe", "f39cba038b386d28fbcf869556c090c1", 23324413),  // En-De-Es-It / Improved (De) translation
 	GAME_ENTRY_STEAM("thecastle", "maniac.ags", "a61420fa39d9772a0d43b41e5db31725", 20214505),  // En-De-Es-It / Improved (De) translation
+	GAME_ENTRY_GOG("thecatlady", "thecatlady.exe", "96d3101a4377644b4e206e38b5d1ce90", 1072013505),  // Multilang (1.6?)
 	GAME_ENTRY_GOG("thecatlady", "thecatlady.exe", "0ea2b985dc5d7d27cb7c1b7da5eedea0", 1072316702),  // Multilang
 	GAME_ENTRY_STEAM("thecatlady", "thecatlady.exe", "0ea2b985dc5d7d27cb7c1b7da5eedea0", 53988582),
 	GAME_ENTRY("thecatlady", "Cat Lady.exe", "92320e20e3d4c70a94d89e2f797e65c1", 1061000756), // DVD
