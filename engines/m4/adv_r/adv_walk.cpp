@@ -395,16 +395,16 @@ void ws_get_walker_info(machine *myWalker, int32 *x, int32 *y, int32 *s, int32 *
 		*layer = myAnim8->myRegs[IDX_LAYER] >> 16;
 	}
 	if (facing) {
-		int index;
-		if (myAnim8->myRegs[IDX_W] < 0) {
-			// Currently walker final facing can be found in 55
-			index = 9 - (myAnim8->myRegs[IDX_CELS_HASH] >> 24);
-		} else {
-			// Currently walker final facing can be found in 55
-			index = myAnim8->myRegs[IDX_CELS_HASH] >> 24;
-		}
+		int index = myAnim8->myRegs[IDX_CELS_HASH] >> 24;
 
-		assert(index >= 0 && index < 10);
+		// WORKAROUND: At the very least, Mei Chen in Riddle room 201
+		// produces a negative index value. This ensures indexes are valid
+		if (index < 0 || index > 9)
+			index = 0;
+
+		if (myAnim8->myRegs[IDX_W] < 0)
+			index = 9 - index;
+
 		*facing = facings[index];
 	}
 }
