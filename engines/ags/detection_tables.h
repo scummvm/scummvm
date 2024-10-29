@@ -2057,6 +2057,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "misc", "Misc" },
 	{ "missinginaction", "Missing In Action" },
 	{ "missingsincemidnight", "Missing since Midnight" },
+	{ "missionarypos", "Missionary Position" },
 	{ "missionfutura", "Mission Futura: The Mindless Menace / Mission Zukunftia" },
 	{ "missionfutura2", "Mission Futura II: Der Zorn des Klon / Mission Zukunftia II" },
 	{ "misspingu", "Miss Pingu" },
@@ -3345,6 +3346,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "tinysoccer", "Tiny Soccer Manager Stories" },
 	{ "tirnanog", "Tir Na Nog" },
 	{ "toffeetrouble", "Toffee Trouble in Creamville" },
+	{ "tokyouhalloween", "Tokyo University Halloween 2024" },
 	{ "tomandjimi", "Tom and Jimi in Blowout!" },
 	{ "tomateundescanso", "Tómate un Descanso" },
 	{ "tombhunter", "Tomb Hunter: Ramitupem" },
@@ -3604,6 +3606,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	// AGS 3.6.1 and 4.0 games. not currently supported
 
 	{ "1bdraculas", "One Billion Draculas are Trying to Enter Your Home" },
+	{ "44thejail", "44 The Jail" },
 	{ "abductedintelligence", "Abducted Intelligence" },
 	{ "apfelman", "Apfelmännchen" },
 	{ "breakfastrequiem", "Breakfast Requiem" },
@@ -4104,6 +4107,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 
 	// AGS 3.6.1 games
 	UNSUPPORTED_GAME_ENTRY("1bdraculas", "One Billion Draculas.ags", "4348088bb5ebb641c3ee4c67be83188f", 1323509),
+	UNSUPPORTED_GAME_ENTRY("44thejail", "44_The_Jail.ags", "d0fa5f40d8be480887e86b7cb909a46d", 43666393),  // Steam Win/Linux
 	UNSUPPORTED_GAME_ENTRY("abductedintelligence", "Abducted.ags", "0a03695d80fed335a30d8ab460a8b22b", 6953306),  // Gamejam
 	UNSUPPORTED_GAME_ENTRY("abductedintelligence", "Abducted.ags", "307ffc4787d34e2c3ae22c0249a1ee68", 7399867),  // Deluxe MAGS
 	UNSUPPORTED_GAME_ENTRY("apfelman", "Apfelmaennchen.ags", "fd215dc93055c1123a4cb9cd7cfb3661", 1277361),
@@ -4462,7 +4466,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 159785509), // 1.07b Win
 	GAME_ENTRY_EN_STEAM("crimsondiamond", "game.ags", "38a49a28c0af599633006c09fe6c2f72", 159579164), // Initial Release Mac
 	GAME_ENTRY_EN_STEAM("crimsondiamond", "game.ags", "38a49a28c0af599633006c09fe6c2f72", 159785509), // 1.07b Mac
-	GAME_ENTRY_EN_PLATFORM("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 159589239, "itch.io"), // 1.02b itch.io 
+	GAME_ENTRY_EN_PLATFORM("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 159589239, "itch.io"), // 1.02b itch.io
 	GAME_ENTRY_EN_GOG("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 159920906), // 1.07b Win
 	GAME_ENTRY_EN_GOG("crimsondiamond", "ac2game.dat", "38fb5c85b695ea0eb4efa062d17c46d8", 156738294), // 1.07b Mac
 	GAME_ENTRY_STEAM("crystalshardadventurebundle", "bundle.exe", "1c45d5c239d9eeef61e283983b6e6851", 4645713),  // Multilang
@@ -4618,8 +4622,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("legendofhand", "legend of hand.exe", "fc478dd7564c908615c9366398d995c8", 75797285),
 	GAME_ENTRY_EN("legendofhand", "legend of hand.exe", "fc478dd7564c908615c9366398d995c8", 75797155),
 	GAME_ENTRY_EN("legendofhand", "legend of hand.exe", "e07a475bcf14bc75c016724186f222ac", 75971657),  // itch.io v2.01
-	GAME_ENTRY_GOG("legendofskye", "LegendSkye.exe", "8d1ff95c16500befbdc72260d461d73f", 72093654),  // Win 1.3.4
-	GAME_ENTRY_GOG("legendofskye", "LegendSkye.ags", "d5316b4bf0f8620e9851ab333480cee9", 68984770),  // Linux 1.3.4
+	GAME_ENTRY_PLATFORM("legendofskye", "LegendSkye.exe", "8d1ff95c16500befbdc72260d461d73f", 72093654, "Steam/GOG.com"),  // Win 1.3.4
+	GAME_ENTRY_PLATFORM("legendofskye", "LegendSkye.ags", "d5316b4bf0f8620e9851ab333480cee9", 68984770, "Steam/GOG.com"),  // Linux 1.3.4
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("mage", "ac2game.dat", "2e822f554994f36e0c62da2acda874da", 30492258, 0), // Mac
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("mage", "mages_initiation.exe", "2e822f554994f36e0c62da2acda874da", 30492089, 0),
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("mage", "mages_initiation.exe", "2e822f554994f36e0c62da2acda874da", 30492087, 0),
@@ -4682,6 +4686,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866342835, 0), // v3.8
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866344821, 0), // v3.9
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866348102, 0), // v4.0
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866349023, 0), // v4.0a
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "agsgame.dat", "22313e59c3233001488c26f18c80cc08", 973495830, 0), // Linux
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "ac2game.dat", "7755b4df8706de91f31ddeee98bd20e9", 976474850, 0), // Mac
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "ac2game.dat", "7755b4df8706de91f31ddeee98bd20e9", 976475347, 0), // Mac v2.7a
@@ -4690,6 +4695,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866341456, 0), // Mac v3.5a
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866342835, 0), // Mac v3.9
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866348102, 0), // Mac v4.0-v4.2
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866349023, 0), // Mac v4.3
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377182, 0),
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 979602678, 0),  // with Ita translation
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 979603766, 0),
@@ -4701,6 +4707,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866342583, 0),  // v3.8
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866344569, 0),  // v3.9
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866347850, 0),  // v4.0
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866348771, 0),  // v4.0a
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "ac2game.dat", "7755b4df8706de91f31ddeee98bd20e9", 976475938, 0),  // Mac
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866341384, 0),  // Mac v3.6 updated
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866341392, 0),  // Mac v3.6 updated2
@@ -4708,6 +4715,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866342583, 0),  // Mac v3.8
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866344569, 0),  // Mac v3.9
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866347850, 0),  // Mac v4.0
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866348771, 0),  // Mac v4.0 updated
 	GAME_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973154021), // DVD version
 	GAME_ENTRY("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 978722743),
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("projectorface", "Projector Face.exe", "d26528c4933649f147c6c4338bcb9e0a", 42610502, 0),  // En-De-It
@@ -7577,6 +7585,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("missionfutura2", "MissionZukunftia2.exe", "839a7cbaa6c287ca35cf46a2505b48eb", 6672476, Common::DE_DEU),
 	GAME_ENTRY_EN_PLATFORM("missingsincemidnight", "msm.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 6738599, "MAGS"),
 	GAME_ENTRY("missingsincemidnight", "msm.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 7989479),  // En-De
+	GAME_ENTRY_EN("missionarypos", "paris.exe", "615e73fc1874e92d60a1996c2330ea36", 26814061),
 	GAME_ENTRY_EN("misspingu", "Ms Pingu.exe", "618d7dce9631229b4579340b964c6810", 3567968),
 	GAME_ENTRY_LANG("mistdelaescueladearte", "EA.exe", "465f972675db2da6040518221af5b0ba", 6732362, Common::ES_ESP),
 	GAME_ENTRY_EN("mistook", "mistook.exe", "f452bafa2eb31215e831d3e232a9bb39", 7302775),
@@ -9157,6 +9166,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("tirnanog", "TirNaNog.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 240701949),
 	GAME_ENTRY("toffeetrouble", "ToffeeTrouble.exe", "acda5a3cf15b9e9e1d96bdc78f6eff60", 74459735),  // Eng-Deu
 	GAME_ENTRY_EN_PLATFORM("toffeetrouble", "ToffeeTrouble.exe", "f7aeb21fc351474cb039769c23b2e8e9", 69824254, "MAGS"),
+	GAME_ENTRY_EN("tokyouhalloween", "hw2024.exe", "615e73fc1874e92d60a1996c2330ea36", 40600826),
 	GAME_ENTRY_EN("tomandjimi", "Tom and Jimi in Blowout!.exe", "9f8a9d74c09f188af9af3e263f8b59bc", 33291483),  // Windows
 	GAME_ENTRY_EN("tomandjimi", "Tom and Jimi in Blowout!.ags", "9efd44ffa71e3d29f44ccb5f4bb9e1fe", 30255303),  // Linux
 	GAME_ENTRY_EN_PLATFORM("tomandjimi", "Tom and Jimi in Crispy Duck.ags", "3ba164667625dc8763524af28c862c7f", 27551972, "Preview"),  // Linux preview
