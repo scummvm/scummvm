@@ -185,7 +185,7 @@ bool qdConditionalObject::save_conditions_script(Common::WriteStream &fh, int in
 	}
 
 	for (auto  &it : _condition_groups) {
-		it.save_script(fh, indent);
+		it.save_script(fh, indent + 1);
 	}
 
 	return true;
