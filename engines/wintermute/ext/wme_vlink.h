@@ -23,7 +23,12 @@
 #define WINTERMUTE_VLINK_H
 
 #include "common/str.h"
+#include "common/mutex.h"
+#include "video/video_decoder.h"
+#include "graphics/surface.h"
+
 #include "engines/wintermute/base/base_scriptable.h"
+#include "engines/wintermute/base/gfx/base_surface.h"
 
 namespace Wintermute {
 
@@ -36,6 +41,18 @@ public:
 	const char *scToString() override;
 	SXVlink(BaseGame *inGame, ScStack *stack);
 	~SXVlink() override;
+	
+private:
+	Common::Mutex _frameMutex;
+	Video::VideoDecoder *_videoDecoder{};
+	Graphics::Surface _surface;
+	int _volume;
+	bool _videoFinished;
+	bool _updateNeeded;
+	int32 _frame;
+	
+	static void timerCallback(void *instance);
+	void prepareFrame();
 };
 
 } // End of namespace Wintermute

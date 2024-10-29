@@ -21,12 +21,21 @@
 
 #include "engines/metaengine.h"
 #include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/ext/wme_vlink.h"
+
+#include "common/timer.h"
+#include "common/substream.h"
+
+#ifdef USE_BINK
+#include "video/bink_decoder.h"
+#endif
 
 namespace Wintermute {
 
@@ -43,15 +52,42 @@ SXVlink::SXVlink(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	if (handle != 'D3DH') {
 		warning("SXVlink() Invalid D3D handle");
 	}
+	_volume = 100;
 }
 
 //////////////////////////////////////////////////////////////////////////
 SXVlink::~SXVlink() {
+	_videoDecoder = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
 const char *SXVlink::scToString() {
 	return "[binkvideo object]";
+}
+
+void SXVlink::timerCallback(void *instance) {
+	SXVlink *movie = static_cast<SXVlink *>(instance);
+	Common::StackLock lock(movie->_frameMutex);
+	movie->prepareFrame();
+}
+
+void SXVlink::prepareFrame() {
+	if (_videoDecoder->endOfVideo()) {
+		_videoFinished = true;
+		return;
+	}
+
+	if (_videoDecoder->getTimeToNextFrame() > 0)
+		return;
+
+	const Graphics::Surface *decodedFrame = _videoDecoder->decodeNextFrame();
+	if (decodedFrame) {
+		_surface = *decodedFrame;
+		if (_frame != _videoDecoder->getCurFrame()) {
+			_updateNeeded = true;
+		}
+		_frame = _videoDecoder->getCurFrame();
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -63,7 +99,75 @@ bool SXVlink::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		stack->correctParams(1);
 		const char *path = stack->pop()->getString();
 
-		warning("SXVlink::Play(%s) missing implementation", path);
+#ifdef USE_BINK
+		_gameRef->freeze();
+
+		Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(path);
+		if (file) {
+			Common::SeekableReadStream *bink = new Common::SeekableSubReadStream(file, 0, file->size(), DisposeAfterUse::NO);
+			if (bink) {
+				_videoDecoder = new Video::BinkDecoder();
+				if (_videoDecoder && _videoDecoder->loadStream(bink) && _videoDecoder->isVideoLoaded()) {
+					_videoDecoder->setOutputPixelFormat(Graphics::PixelFormat(_gameRef->_renderer->getPixelFormat()));
+					BaseSurface *texture = _gameRef->_renderer->createSurface();
+					texture->create(_videoDecoder->getWidth(), _videoDecoder->getHeight());
+
+					_gameRef->_renderer->setup2D();
+
+					_frame = -1;
+					_updateNeeded = false;
+					_videoFinished = false;
+
+					_videoDecoder->start();
+					_videoDecoder->setVolume(_volume);
+
+					g_system->getTimerManager()->installTimerProc(&timerCallback, 10000, this, "movieLoop");
+
+					do {
+						if (_updateNeeded) {
+							{
+								Common::StackLock lock(_frameMutex);
+								texture->startPixelOp();
+								texture->putSurface(_surface, false);
+								texture->endPixelOp();
+							}
+							texture->display(0, 0, Rect32(texture->getWidth(), texture->getHeight()));
+							_updateNeeded = false;
+							_gameRef->_renderer->flip();
+						}
+						g_system->delayMillis(10);
+
+						Common::Event event;
+						while (g_system->getEventManager()->pollEvent(event)) {
+							if (event.type == Common::EVENT_KEYDOWN) {
+								if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+									_videoFinished = true;
+								}
+							} else if (event.type == Common::EVENT_SCREEN_CHANGED) {
+								_gameRef->_renderer->onWindowChange();
+							}
+						}
+					} while (!g_engine->shouldQuit() && !_videoFinished);
+
+					g_system->getTimerManager()->removeTimerProc(&timerCallback);
+
+					{
+						Common::StackLock lock(_frameMutex);
+						_videoDecoder->stop();
+						_videoDecoder->close();
+					}
+
+					delete texture;
+				}
+				delete _videoDecoder;
+			}
+			BaseFileManager::getEngineInstance()->closeFile(file);
+		}
+
+		_gameRef->unfreeze();
+#else
+		warning("SXVlink::Play(%s) Bink playback not compiled in", path);
+#endif
 
 		stack->pushNULL();
 		return STATUS_OK;
@@ -73,9 +177,7 @@ bool SXVlink::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetVolume") == 0) {
 		stack->correctParams(1);
-		int level = stack->pop()->getInt();
-
-		warning("SXVlink::SetVolume(%d) missing implementation", level);
+		_volume = stack->pop()->getInt();
 
 		stack->pushNULL();
 		return STATUS_OK;
@@ -100,7 +202,8 @@ bool SXVlink::scSetProperty(const char *name, ScValue *value) {
 
 //////////////////////////////////////////////////////////////////////////
 bool SXVlink::persist(BasePersistenceManager *persistMgr) {
-	BaseScriptable::persist(persistMgr);
+	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
+	persistMgr->transferSint32(TMEMBER(_volume));
 	return STATUS_OK;
 }
 
