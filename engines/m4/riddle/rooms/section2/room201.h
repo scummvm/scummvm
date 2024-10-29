@@ -46,7 +46,7 @@ private:
 	int _val6 = 0;
 	int _val8 = 0;
 	int _val9 = 0;
-	int _conv1 = 0;
+	int _agentShould = 0;
 	int _conv2 = 0;
 	int _nod = 0;
 	int _guyWriting = 0;
@@ -78,7 +78,7 @@ private:
 	int _ripTalk = -1;
 	int _num1 = 0;
 	int _num2 = 0;
-	int _num3 = 0;
+	int _agentMode = 0;
 	int _trigger1 = -1;
 	int _trigger2 = -1;
 	int _trigger3 = -1;

@@ -271,7 +271,7 @@ void Room201::daemon() {
 		break;
 
 	case 130:
-		_conv1 = 0;
+		_agentShould = 0;
 		sendWSMessage_10000(1, _ripley, _series3, 13, 27, 162, _series3, 27, 27, 1);
 		break;
 
@@ -281,13 +281,13 @@ void Room201::daemon() {
 		break;
 
 	case 132:
-		_conv1 = 0;
+		_agentShould = 0;
 		sendWSMessage_10000(1, _ripley, _series3, 51, 73, 161, _series3, 73, 73, 1);
 		digi_play("com119", 1, 190, -1);
 		break;
 
 	case 137:
-		_conv1 = 0;
+		_agentShould = 0;
 		sendWSMessage_10000(1, _ripley, _series3, 74, 93, 138, _series3, 93, 93, 1);
 		break;
 
@@ -333,7 +333,7 @@ void Room201::daemon() {
 
 	case 161:
 		sendWSMessage_10000(1, _ripley, _series3, 73, 73, -1, _series3, 73, 73, 1);
-		_conv1 = 10;
+		_agentShould = 10;
 		digi_play("201x08", 1, 255, 137);
 		break;
 
@@ -403,22 +403,22 @@ void Room201::daemon() {
 
 	case 242:
 		sendWSMessage_140000(-1);
-		_conv1 = 0;
+		_agentShould = 0;
 		_trigger10 = kernel_trigger_create(244);
 		break;
 
 	case 244:
-		_conv1 = 10;
+		_agentShould = 10;
 		digi_play("201x01", 1, 255, 245);
 		break;
 
 	case 245:
-		_conv1 = 3;
+		_agentShould = 3;
 		_trigger10 = kernel_trigger_create(260);
 		break;
 
 	case 260:
-		_conv1 = 0;
+		_agentShould = 0;
 		_val6 = 4;
 		digi_play("201m03", 1, 255, 270);
 		break;
@@ -443,7 +443,7 @@ void Room201::daemon() {
 		if (_ctr1 >= 1) {
 			_ctr1 = 0;
 			sendWSMessage_140000(-1);
-			_conv1 = 0;
+			_agentShould = 0;
 			_trigger10 = kernel_trigger_create(300);
 
 		} else {
@@ -452,7 +452,7 @@ void Room201::daemon() {
 		break;
 
 	case 300:
-		_conv1 = 2;
+		_agentShould = 2;
 		digi_play("201x02", 1, 255, 310);
 		break;
 
@@ -467,7 +467,7 @@ void Room201::daemon() {
 		if (_ctr1 >= 1) {
 			_ctr1 = 0;
 			sendWSMessage_140000(325);
-			_conv1 = 8;
+			_agentShould = 8;
 		} else {
 			++_ctr1;
 		}
@@ -483,8 +483,8 @@ void Room201::daemon() {
 	case 507:
 		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
 			triggerMachineByHashCallback, "201 guy behind desk 1");
-		_num3 = 9;
-		_conv1 = 8;
+		_agentMode = 9;
+		_agentShould = 8;
 		_trigger10 = _trigger11 = _trigger12 = -1;
 		_flag3 = false;
 		kernel_timing_trigger(1, 511);
@@ -494,24 +494,24 @@ void Room201::daemon() {
 		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
 			triggerMachineByHashCallback, "201 guy behind desk 2");
 		sendWSMessage_10000(1, _agent, _nod, 1, 1, 510, _nod, 1, 1, 0);
-		_num3 = 0;
-		_conv1 = 0;
+		_agentMode = 0;
+		_agentShould = 0;
 		_trigger10 = _trigger11 = _trigger12 = -1;
 		_flag3 = false;
 		break;
 
 	case 510:
-		if (_num3 == 0 && _conv1 == 0 && _trigger10 != -1) {
+		if (_agentMode == 0 && _agentShould == 0 && _trigger10 != -1) {
 			kernel_trigger_dispatchx(_trigger10);
 			_trigger10 = -1;
 		}
 
-		if (_num3 == 9 && _conv1 == 8 && _trigger11 != -1) {
+		if (_agentMode == 9 && _agentShould == 8 && _trigger11 != -1) {
 			kernel_trigger_dispatchx(_trigger11);
 			_trigger11 = -1;
 		}
 
-		if (_num3 == 9 && _conv1 == 8 && _trigger11 != -1) {
+		if (_agentMode == 9 && _agentShould == 8 && _trigger11 != -1) {
 			kernel_trigger_dispatchx(_trigger11);
 			_trigger11 = -1;
 		}
@@ -524,50 +524,59 @@ void Room201::daemon() {
 		break;
 
 	case 511:
-		if (_num3 <= 0) {
-			switch (_conv1) {
+		if (_agentMode <= 0) {
+			switch (_agentShould) {
 			case 0:
 				sendWSMessage_10000(1, _agent, _nod, 1, 1, 510, _nod, 1, 1, 0);
 				break;
 
 			case 1:
 				sendWSMessage_10000(1, _agent, _nod, 1, 7, 510, _nod, 1, 1, 0);
-				_conv1 = 0;
+				_agentShould = 0;
+				_agentMode = 0;
 				break;
 
 			case 2:
 				sendWSMessage_10000(1, _agent, _nod, 7, 29, 510, _nod, 1, 1, 0);
-				_conv1 = 0;
+				_agentShould = 0;
+				_agentMode = 0;
 				break;
 
 			case 3:
 				_guyBow = series_load("GUY BOW");
 				sendWSMessage_10000(1, _agent, _guyBow, 1, 32, 510, _guyBow, 1, 1, 0);
-				_conv1 = 4;
+				_agentShould = 4;
 				break;
 
 			case 4:
 				sendWSMessage_10000(1, _agent, _nod, 1, 1, 510, _nod, 1, 1, 0);
 				series_unload(_guyBow);
-				_conv1 = 0;
+				_agentShould = 0;
 				break;
 
 			case 5:
 				sendWSMessage_10000(1, _agent, _guySeries1, 1, 49, 510, _nod, 1, 1, 0);
-				_conv1 = 0;
+				_agentShould = 0;
+				_agentMode = 0;
 				break;
 
 			case 8:
 			case 9:
-				sendWSMessage_10000(1, _agent, _guySeries1, 1, 49, 510, _nod, 1, 1, 0);
-				_conv1 = 0;
+				sendWSMessage_10000(1, _agent, _guyWriting, 1, 22, 510, _guyWriting, 22, 22, 0);
+				_agentMode = 9;
+				break;
+
+			case 10:
+				frame = imath_ranged_rand(1, 10) + 3;
+				sendWSMessage_10000(1, _agent, _nod, frame, frame, 510, _nod, frame, frame, 1);
+				_agentMode = 0;
 				break;
 
 			default:
 				break;
 			}
-		} else if (_num3 == 9) {
-			switch (_conv1) {
+		} else if (_agentMode == 9) {
+			switch (_agentShould) {
 			case 8:
 				sendWSMessage_10000(1, _agent, _guyWriting, 23, 32, 510, _guyWriting, 32, 23, 1);
 				break;
@@ -578,6 +587,7 @@ void Room201::daemon() {
 
 			default:
 				sendWSMessage_10000(1, _agent, _guyWriting, 22, 2, 510, _guyWriting, 1, 1, 0);
+				_agentMode = 0;
 				break;
 			}
 		}
@@ -605,17 +615,17 @@ void Room201::daemon() {
 
 	case 1010:
 		_conv2 = 7;
-		_conv1 = 0;
+		_agentShould = 0;
 		_trigger10 = kernel_trigger_create(1030);
 		break;
 
 	case 1030:
-		_conv1 = 10;
+		_agentShould = 10;
 		digi_play("201x03", 1, 255, 1035);
 		break;
 
 	case 1035:
-		_conv1 = 3;
+		_agentShould = 3;
 		_trigger10 = kernel_trigger_create(1040);
 		break;
 
@@ -623,13 +633,13 @@ void Room201::daemon() {
 		checkFlags();
 
 		if (_val1 == 0) {
-			_conv1 = 0;
+			_agentShould = 0;
 			kernel_timing_trigger(15, 1065);
 		} else if (_val1 == 1) {
-			_conv1 = 10;
+			_agentShould = 10;
 			digi_play("201x04", 1, 255, 9160);
 		} else {
-			_conv1 = 10;
+			_agentShould = 10;
 			digi_play("201x05", 1, 255, 9160);
 		}
 		break;
@@ -648,7 +658,7 @@ void Room201::daemon() {
 		break;
 
 	case 1073:
-		_conv1 = 0;
+		_agentShould = 0;
 		_trigger10 = kernel_trigger_create(1075);
 		break;
 
@@ -657,7 +667,7 @@ void Room201::daemon() {
 		break;
 
 	case 1080:
-		_conv1 = 8;
+		_agentShould = 8;
 		player_set_commands_allowed(true);
 
 		if (_G(flags)[V053] == 1)
@@ -852,7 +862,7 @@ void Room201::daemon() {
 	case 3000:
 		player_set_commands_allowed(false);
 		animateRipley();
-		_conv1 = 0;
+		_agentShould = 0;
 		kernel_timing_trigger(2, 3003);
 		break;
 
@@ -872,36 +882,36 @@ void Room201::daemon() {
 
 	case 3020:
 		_conv2 = 7;
-		_conv1 = 10;
+		_agentShould = 10;
 		digi_play("201x06", 1, 255, 3030);
 		break;
 
 	case 3030:
 		_conv2 = 8;
-		_conv1 = 0;
+		_agentShould = 0;
 		digi_play("201r28", 1, 255, 3040);
 		break;
 
 	case 3040:
 		_conv2 = 7;
-		_conv1 = 10;
+		_agentShould = 10;
 		digi_play("201x07", 1, 255, 3050);
 		break;
 
 	case 3050:
 		_conv2 = 8;
-		_conv1 = 0;
+		_agentShould = 0;
 		digi_play("201r29", 1, 255, 3060);
 		break;
 
 	case 3060:
 		_conv2 = 6;
-		_conv1 = 0;
+		_agentShould = 0;
 		_trigger10 = kernel_trigger_create(3070);
 		break;
 
 	case 3070:
-		_conv1 = 8;
+		_agentShould = 8;
 		_trigger4 = kernel_trigger_create(3080);
 		break;
 
@@ -1128,7 +1138,7 @@ void Room201::daemon() {
 
 			case 14:
 				_conv2 = 6;
-				_conv1 = 8;
+				_agentShould = 8;
 				_trigger4 = kernel_trigger_create(6000);
 				kernel_timing_trigger(1, 4010);
 
@@ -1526,7 +1536,7 @@ void Room201::parser() {
 		case -1:
 		case 666:
 			player_set_commands_allowed(false);
-			_conv1 = 0;
+			_agentShould = 0;
 			_G(kernel).trigger_mode = KT_DAEMON;
 			animateRipley();
 			_G(kernel).trigger_mode = KT_PARSE;
@@ -1535,7 +1545,7 @@ void Room201::parser() {
 
 		case 3:
 			_conv2 = 9;
-			_conv1 = 0;
+			_agentShould = 0;
 			break;
 		default:
 			break;
@@ -1696,7 +1706,7 @@ void Room201::conv201a() {
 
 	if (_G(kernel).trigger == 1) {
 		if (who <= 0) {
-			_conv1 = 0;
+			_agentShould = 0;
 
 		} else if (who == 1) {
 			_conv2 = 7;
@@ -1734,7 +1744,7 @@ void Room201::conv201a() {
 				_guyPassForm = series_load("GUY PASS FORM TO RIPLEY");
 				return;
 			} else {
-				_conv1 = 10;
+				_agentShould = 10;
 			}
 		} else if (who == 1) {
 			if (node != 14)
