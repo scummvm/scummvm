@@ -2324,10 +2324,10 @@ int GDSScene::countItemsInScene2() const {
 
 GameItem *GDSScene::getActiveItem() {
 	int16 itemNum = getGlobal(0x60);
-	if (!itemNum)
+	if (itemNum <= 0)
 		return nullptr;
 	for (auto &item : _gameItems) {
-		if (item._num == itemNum)
+		if (item._num == (uint16)itemNum)
 			return &item;
 	}
 	return nullptr;
