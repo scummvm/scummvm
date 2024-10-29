@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/debug.h"
+
 #include "qdengine/qd_fwd.h"
 #include "qdengine/parser/qdscr_parser.h"
 #include "qdengine/parser/xml_tag_buffer.h"
@@ -87,7 +89,11 @@ bool qdConditionGroup::save_script(Common::WriteStream &fh, int indent) const {
 	}
 
 	fh.writeString("<condition_group");
-	fh.writeString(Common::String::format(" type=\"%d\"", (int)_conditions_mode));
+	if (debugChannelSet(-1, kDebugLog))
+		fh.writeString(Common::String::format(" type=\"%s\"", _conditions_mode == CONDITIONS_AND ? "CONDITIONS_AND" : "CONDITIONS_OR"));
+	else
+		fh.writeString(Common::String::format(" type=\"%d\"", (int)_conditions_mode));
+
 	fh.writeString(">");
 
 	fh.writeString(Common::String::format("%u", _conditions.size()));
