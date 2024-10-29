@@ -1370,7 +1370,7 @@ bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 	MacDialogWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 4000 : 4001);
 
 	MacButton *buttonSave = (MacButton *)window->getWidget(kWidgetButton, 0);
-	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
+	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 2);
 
 	window->setDefaultWidget(buttonSave);
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
