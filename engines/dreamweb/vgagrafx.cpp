@@ -304,7 +304,7 @@ void DreamWebEngine::dumpZoom() {
 }
 
 void DreamWebEngine::crosshair() {
-	uint8 frame;
+	uint16 frame;
 	if ((_commandType != 3) && (_commandType < 10)) {
 		frame = 9;
 	} else {
