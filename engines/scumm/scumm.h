@@ -631,6 +631,9 @@ protected:
 
 	// Event handling
 public:
+	void beginTextInput();
+	void endTextInput();
+
 	void parseEvents();	// Used by IMuseDigital::startSound
 protected:
 	virtual void parseEvent(Common::Event event);

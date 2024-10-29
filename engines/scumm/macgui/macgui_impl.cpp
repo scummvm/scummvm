@@ -325,12 +325,13 @@ bool MacGuiImpl::handleMenu(int id, Common::String &name) {
 		return true;
 
 	case 201:	// Save
+		_vm->beginTextInput();
 		if (runSaveDialog(saveSlotToHandle, savegameName)) {
 			if (saveSlotToHandle > -1) {
 				_vm->saveGameState(saveSlotToHandle, savegameName);
 			}
 		}
-
+		_vm->endTextInput();
 		return true;
 
 	case 202:	// Restart

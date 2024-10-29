@@ -25,6 +25,8 @@
 #include "common/translation.h"
 #include "audio/mixer.h"
 
+#include "backends/keymapper/keymapper.h"
+
 #include "scumm/debugger.h"
 #include "scumm/dialogs.h"
 #include "scumm/insane/insane.h"
@@ -330,6 +332,20 @@ void ScummEngine::parseEvent(Common::Event event) {
 	default:
 		break;
 	}
+}
+
+void ScummEngine::beginTextInput() {
+	Common::Keymapper *keymapper = _system->getEventManager()->getKeymapper();
+	Common::Keymap *engineDefault = keymapper->getKeymap("engine-default");
+
+	engineDefault->setEnabled(false);
+}
+
+void ScummEngine::endTextInput() {
+	Common::Keymapper *keymapper = _system->getEventManager()->getKeymapper();
+	Common::Keymap *engineDefault = keymapper->getKeymap("engine-default");
+
+	engineDefault->setEnabled(true);
 }
 
 void ScummEngine::parseEvents() {
