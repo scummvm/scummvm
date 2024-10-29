@@ -142,6 +142,7 @@ bool SXVlink::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 							if (event.type == Common::EVENT_KEYDOWN) {
 								if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 									_videoFinished = true;
+									g_system->getEventManager()->purgeKeyboardEvents();
 								}
 							} else if (event.type == Common::EVENT_SCREEN_CHANGED) {
 								_gameRef->_renderer->onWindowChange();
