@@ -36,6 +36,9 @@ extern void dbg_SetCurrMachInstr(machine *m, int32 pcOffset, bool isPcode);
 extern void dbg_EndCurrMachInstr();
 extern void dbg_AddOpcodeToMachineInstr(int instruction);
 extern void dbg_AddParamToCurrMachInstr(const char *param);
+extern void dbg_AddGlobalParamToCurrMachInstr(int num, const char *prefix = nullptr);
+extern void dbg_AddRegParamToCurrMachInstr(int num, const char *prefix = nullptr);
+
 extern void dbg_ws_update();
 
 extern void dbg_LaunchSequence(Anim8 *myAnim8);

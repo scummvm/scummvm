@@ -391,7 +391,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 	int32 myIndex;
 	Anim8 *parentAnim8;
 	uint32 *dataArray;
-	Common::String param;
+	Common::String prefix;
 
 	// If the format indicates the argument is a local source (parent, register, or data)
 	if (myFormat == FMT_LOCAL_SRC) {
@@ -403,7 +403,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 		// Find out if the index has been previously stored in a special index register
 		if (myData & REG_SET_IDX_REG) {
 			myIndex = _GWS(indexReg);
-			param = "S";
+			prefix = "S";
 		} else {
 			// Else the index is part of the data segment for this arg
 			myIndex = myData & REG_SET_IDX;
@@ -425,7 +425,8 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 				return false;
 			}
 			*argPtr = &parentAnim8->myRegs[myIndex];
-			param += Common::String::format("PREG %d", myIndex);
+			prefix += "P";
+			dbg_AddRegParamToCurrMachInstr(myIndex, prefix.c_str());
 			break;
 
 		case LOCAL_FMT_REG:
@@ -436,7 +437,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 				return false;
 			}
 			*argPtr = &myAnim8->myRegs[myIndex];
-			param = Common::String::format("REG %d", myIndex);
+			dbg_AddRegParamToCurrMachInstr(myIndex, prefix.c_str());
 			break;
 
 		case LOCAL_FMT_DATA:
@@ -452,7 +453,8 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 			// Copy the data field into dataArg1, and set myArg1 to point to this location
 			*argValue = (int32)FROM_LE_32(dataArray[myIndex]);
 			*argPtr = argValue;
-			param = Common::String::format("DATA %d", myIndex);
+			prefix += Common::String::format("DATA %d", myIndex);
+			dbg_AddParamToCurrMachInstr(prefix.c_str());
 			break;
 		}
 	} else if (myFormat == FMT_GLOBAL_SRC) {
@@ -460,7 +462,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 		// Find out if the index has been previously stored in a special index register
 		if (myData & REG_SET_IDX_REG) {
 			myIndex = _GWS(indexReg);
-			param = "S";
+			prefix = "S";
 		} else {
 			// Else the index is part of the data segment for this arg
 			myIndex = myData & REG_SET_IDX;
@@ -468,7 +470,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 
 		// Finally, set myArg1 to point to the location in the ws_globals array, whichever index
 		*argPtr = &(_GWS(ws_globals)[myIndex]);
-		param += Common::String::format("GLOB %d", myIndex);
+		dbg_AddGlobalParamToCurrMachInstr(myIndex, prefix.c_str());
 	} else {
 		// Else the argument is not a variable, but an actual value
 
@@ -483,10 +485,9 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 
 		// myArg1 will point to this location
 		*argPtr = argValue;
-		param += Common::String::format("%d", *argValue);
+		prefix += Common::String::format("%d", *argValue);
+		dbg_AddParamToCurrMachInstr(prefix.c_str());
 	}
-
-	dbg_AddParamToCurrMachInstr(param.c_str());
 
 	return true;
 }

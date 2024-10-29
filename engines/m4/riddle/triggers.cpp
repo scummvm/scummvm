@@ -24,6 +24,7 @@
 #include "m4/adv_r/adv_control.h"
 #include "m4/core/imath.h"
 #include "m4/graphics/gr_series.h"
+#include "m4/detection.h"
 
 namespace M4 {
 namespace Riddle {
@@ -119,6 +120,8 @@ void sendWSMessage_10000(machine *mach, int destX, int destY, int facing, int tr
 	_G(globals)[GLB_TEMP_5] = kernel_trigger_create(trigger);
 	_G(globals)[GLB_TEMP_6] = complete_walk << 16;
 
+	debugC(1, kDebugMessages, "STARTWALK dest=(%d,%d), facing=%d, trigger=%d, complete_walk=%d",
+		destX, destY, facing, trigger, complete_walk);
 	sendWSMessage(STARTWALK << 16, 0, mach, 0, nullptr, 1);
 }
 

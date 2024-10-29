@@ -101,6 +101,84 @@ static const char *PCODE_OPCODES[40] = {
 	"op_CLOSE_STREAM_SS"
 };
 
+static const char *GLOBAL_NAMES[39] = {
+	"GLB_TIM",
+	"GLB_WATCH_DOG",
+	"GLB_MIN_Y",
+	"GLB_MAX_Y",
+	"GLB_MIN_SCALE",
+	"GLB_MAX_SCALE",
+	"GLB_SCALER",
+	"GLB_TEMP_1",
+	"GLB_TEMP_2",
+	"GLB_TEMP_3",
+	"GLB_TEMP_4",
+	"GLB_TEMP_5",
+	"GLB_TEMP_6",
+	"GLB_TEMP_7",
+	"GLB_TEMP_8",
+	"GLB_TEMP_9",
+	"GLB_TEMP_10",
+	"GLB_TEMP_11",
+	"GLB_TEMP_12",
+	"GLB_TEMP_13",
+	"GLB_TEMP_14",
+	"GLB_TEMP_15",
+	"GLB_TEMP_16",
+	"GLB_TEMP_17",
+	"GLB_TEMP_18",
+	"GLB_TEMP_19",
+	"GLB_TEMP_20",
+	"GLB_TEMP_21",
+	"GLB_TEMP_22",
+	"GLB_TEMP_23",
+	"GLB_TEMP_24",
+	"GLB_TEMP_25",
+	"GLB_TEMP_26",
+	"GLB_TEMP_27",
+	"GLB_TEMP_28",
+	"GLB_TEMP_29",
+	"GLB_TEMP_30",
+	"GLB_TEMP_31",
+	"GLB_TEMP_32",
+};
+
+static const char *REG_NAMES[33] = {
+	"IDX_TIMER",
+	"IDX_TAG",
+	"IDX_LAYER",
+	"IDX_W",
+	"IDX_H",
+	"IDX_X",
+	"IDX_Y",
+	"IDX_S",
+	"IDX_R",
+	"IDX_CELS_HASH",
+	"IDX_CELS_INDEX",
+	"IDX_CELS_COUNT",
+	"IDX_CELS_FRAME_RATE",
+	"IDX_CELS_PIX_SPEED",
+	"IDX_TARG_S",
+	"IDX_TARG_R",
+	"IDX_TARG_X",
+	"IDX_TARG_Y",
+	"IDX_DELTA_S",
+	"IDX_DELTA_R",
+	"IDX_DELTA_X",
+	"IDX_DELTA_Y",
+	"IDX_VELOCITY",
+	"IDX_THETA",
+	"IDX_ZTEMP1",
+	"IDX_ZTEMP2",
+	"IDX_ZTEMP3",
+	"IDX_ZTEMP4",
+	"IDX_ZTEMP5",
+	"IDX_ZTEMP6",
+	"IDX_ZTEMP7",
+	"IDX_ZTEMP8",
+	"IDX_MACH_ID"
+};
+
 static char g_instructionText[256];
 bool g_hasParams;
 bool g_isPcode;
@@ -141,6 +219,28 @@ void dbg_AddParamToCurrMachInstr(const char *param) {
 
 		Common::strcat_s(g_instructionText, param);
 		g_hasParams = true;
+	}
+}
+
+void dbg_AddGlobalParamToCurrMachInstr(int num, const char *prefix) {
+	if (debugChannelSet(1, kDebugScripts)) {
+		Common::String param;
+		if (prefix && *prefix)
+			param = Common::String::format("%s ", prefix);
+		param += (num < 39) ? GLOBAL_NAMES[num] :
+			Common::String::format("REG %d", num);
+		dbg_AddParamToCurrMachInstr(param.c_str());
+	}
+}
+
+void dbg_AddRegParamToCurrMachInstr(int num, const char *prefix) {
+	if (debugChannelSet(1, kDebugScripts)) {
+		Common::String param;
+		if (prefix && *prefix)
+			param = Common::String::format("%s ", prefix);
+		param += (num < 33) ? REG_NAMES[num] :
+			Common::String::format("REG %d", num);
+		dbg_AddParamToCurrMachInstr(param.c_str());
 	}
 }
 
