@@ -482,6 +482,8 @@ uint32 Image::loadVQT(Graphics::ManagedSurface *surf, uint32 toffset, Common::Se
 	// FIXME: This sometimes reads more than it needs to..
 	uint64 nbytes = stream->size() - stream->pos();
 	byte *buf = (byte *)malloc(nbytes + 8);
+	if (!buf)
+		error("Image::loadVQT: Alloc failed");
 	memset(buf, 0, nbytes + 8);
 	stream->read(buf, nbytes);
 	state.srcPtr = buf;
