@@ -712,35 +712,19 @@ void Adlib::OnTimer() {
 									// TODO: Continue from here
 								} while (true);
 							}
-							// TODO: Should be 1C85h
 							// l0017_1C85:
 							if (bp0C != 0) {
-								// TODO: Lots of struct accesses here
-								/*
-								l0017_1C8B:
-								mov	di,[bp-8h]
-								mov	byte ptr [di+222Ch],0h
-								mov	al,[bp-3h]
-								mov	di,[bp-8h]
-								mov	[di+227Fh],al
-								mov	al,[bp-3h]
-								xor	ah,ah
-								mov	di,ax
-								mov	al,[di+225Fh]
-								mov	di,[bp-8h]
-								cmp	al,[di+2288h]
-								jz	1CF2h
-								*/
-								// TODO: Proper loop condition
-								if (true) {
+								gArray222C[bp8] = 0;
+								gArray227F[bp8] = bp3;
+								// TODO: Original code uses a 16 bit register and clears the upper bit
+								// Not sure if this is really needed
+								if (gArray225F[bp3] != gArray2288[bp8]) {
 									// l0017_1CB1:
+									// TODO: Original uses 16 bit again and throws away
+									// upper 8
+									gArray2288[bp8] = gArray225F[bp3];
 									// TODO: Access an array via bp-3h
-									/* mov al, [bp - 3h]
-									xor	ah,ah
-									mov	di,ax
-									mov	al,[di+225Fh]
-									mov	di,[bp-8h]
-									mov	[di+2288h],al */
+									
 									// TODO: Move an offset in global 2248 forward based on
 									// the struct
 									/*
