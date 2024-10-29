@@ -144,6 +144,8 @@ bool SXVlink::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 									_videoFinished = true;
 									g_system->getEventManager()->purgeKeyboardEvents();
 								}
+							} else if (event.type == Common::EVENT_LBUTTONDOWN) {
+								_videoFinished = true;
 							} else if (event.type == Common::EVENT_SCREEN_CHANGED) {
 								_gameRef->_renderer->onWindowChange();
 							}
