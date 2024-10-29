@@ -71,7 +71,8 @@ enum DgdsGameId {
 	GID_SQ5DEMO,
 	GID_COMINGATTRACTIONS,
 	GID_QUARKY,
-	GID_CASTAWAY
+	GID_CASTAWAY,
+	GID_INVALID,
 };
 
 enum DgdsDetailLevel {

@@ -86,8 +86,7 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_detailLevel(kDgdsDetailHigh), _textSpeed(1), _justChangedScene1(false), _justChangedScene2(false),
 	_random("dgds"), _currentCursor(-1), _menuToTrigger(kMenuNone), _isLoading(true), _flipMode(false),
 	_rstFileName(nullptr), _difficulty(1), _menu(nullptr), _adsInterp(nullptr), _isDemo(false),
-	_dragonArcade(nullptr), _skipNextFrame(false) {
-	syncSoundSettings();
+	_dragonArcade(nullptr), _skipNextFrame(false), _gameId(GID_INVALID) {
 
 	_platform = gameDesc->platform;
 
@@ -476,6 +475,7 @@ static void _dumpFrame(const Graphics::ManagedSurface &surf, const char *name) {
 
 
 Common::Error DgdsEngine::run() {
+	syncSoundSettings();
 	_isLoading = true;
 	init(false);
 	loadGameFiles();
