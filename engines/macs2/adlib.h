@@ -86,9 +86,17 @@ namespace Macs2 {
 		// TODO: Initialization, access pattern
 		Common::Array<uint8> gArray222C;
 
+		// Array at [225Fh] - accessed with byte values
+		// TODO: Initialization, access pattern
+		Common::Array<uint8> gArray225F;
+
 		// Array at [227Fh] - accessed with byte values
 		// TODO: Initialization, access pattern, size
 		Common::Array<uint8> gArray227F;
+
+		// Array at [2288h] - accessed with byte values
+		// TODO: Initialization, access pattern, size
+		Common::Array<uint8> gArray2288;
 
 		// Array at [2235h] - accessed with bytes values
 		// TODO: Initialization, access pattern, size
