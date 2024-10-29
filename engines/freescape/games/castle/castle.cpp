@@ -364,7 +364,7 @@ void CastleEngine::initGameState() {
 	_gameStateVars[k8bitVariableShield] = 20;
 	_gameStateVars[k8bitVariableEnergy] = 1;
 	_gameStateVars[8] = 128; // -1
-	_countdown = INT_MAX;
+	_countdown = INT_MAX - 8;
 	_keysCollected.clear();
 	_spiritsMeter = 32;
 	_spiritsMeterMax = 64;

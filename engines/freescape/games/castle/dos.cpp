@@ -459,9 +459,9 @@ void CastleEngine::drawDOSUI(Graphics::Surface *surface) {
 	surface->fillRect(backRect, back);
 
 	Common::String message;
-	int deadline;
+	int deadline = -1;
 	getLatestMessages(message, deadline);
-	if (deadline <= _countdown) {
+	if (deadline > 0 && deadline <= _countdown) {
 		drawStringInSurface(message, 97, 182, front, back, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
