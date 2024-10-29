@@ -82,7 +82,7 @@ public:
 
 protected:
 	bool handleOperation(uint16 code, Common::SeekableReadStream *scr);
-	void handleRandomOp(uint16 code, Common::SeekableReadStream *scr);
+	void handleRandomOp(Common::SeekableReadStream *scr);
 	bool handleLogicOp(uint16 code,  Common::SeekableReadStream *scr);
 	bool logicOpResult(uint16 code, const TTMEnviro *env, const TTMSeq *seq, uint16 arg);
 	int16 randomOpGetProportion(uint16 code, Common::SeekableReadStream *scr);

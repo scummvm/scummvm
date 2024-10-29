@@ -334,7 +334,7 @@ void ADSInterpreter::findEndOrInitOp() {
 }
 
 bool ADSInterpreter::logicOpResult(uint16 code, const TTMEnviro *env, const TTMSeq *seq, uint16 arg) {
-	const char *tag = seq ? env->_tags.getValOrDefault(seq->_seqNum).c_str() : "";
+	const char *tag = (seq && env) ? env->_tags.getValOrDefault(seq->_seqNum).c_str() : "";
 	int16 envNum = env ? env->_enviro : 0;
 	int16 seqNum = seq ? seq->_seqNum : 0;
 	const char *optype = (code < 0x1300 ? "while" : "if");
@@ -468,13 +468,13 @@ int16 ADSInterpreter::randomOpGetProportion(uint16 code, Common::SeekableReadStr
 	return result;
 }
 
-void ADSInterpreter::handleRandomOp(uint16 code, Common::SeekableReadStream *scr) {
+void ADSInterpreter::handleRandomOp(Common::SeekableReadStream *scr) {
 	int16 max = 0;
 	int64 startpos = scr->pos();
 
 	// Collect the random proportions
-	code = scr->readUint16LE();
-	while (code != 0 && code != 0x30ff && scr->pos() < scr->size()) {
+	uint16 code = scr->readUint16LE();
+	while (code != 0 && code != 0x30FF && scr->pos() < scr->size()) {
 		int16 val = randomOpGetProportion(code, scr);
 		// leaves pointer at beginning of next op
 		max += val;
@@ -628,10 +628,12 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		return true;
 	}
 	case 0x3010: // RANDOM_START, 0 params
-	case 0x30FF: // RANDOM_END, 0 params
 		debug(10, "ADS 0x%04x: random %s", code, code == 0x3010 ? "start" : "end");
-		handleRandomOp(code, scr);
+		handleRandomOp(scr);
 		break;
+
+	case 0x30FF: // RANDOM_END, 0 params
+		error("Unexpected RANDOM END mid-stream (no RANDOM START?).");
 
 	case 0x4000: { // MOVE SEQ TO FRONT
 		enviro = scr->readUint16LE();
@@ -776,6 +778,7 @@ bool ADSInterpreter::run() {
 		}
 	}
 
+	assert(_adsData->scr || !_adsData->_maxSegments);
 	for (int i = 0; i < _adsData->_maxSegments; i++) {
 		int16 state = _adsData->_state[i];
 		int32 offset = _adsData->_segments[i];
@@ -800,7 +803,7 @@ bool ADSInterpreter::run() {
 		}
 
 		_adsData->_runningSegmentIdx = i;
-		if (_adsData->scr && state == 1) {
+		if (state == 1) {
 			_adsData->scr->seek(offset);
 			//debug("ADS: Run segment %d idx %d/%d", segnum, i, _adsData->_maxSegments);
 			runUntilBranchOpOrEnd();
