@@ -195,6 +195,7 @@ static byte _loadSndTrack(uint32 track, const byte** trackPtr, uint16* trackSiz,
 
 Sound::Sound(Audio::Mixer *mixer, ResourceManager *resource, Decompressor *decompressor) :
 	_mixer(mixer), _resource(resource), _decompressor(decompressor), _music(nullptr) {
+	ARRAYCLEAR(_channels);
 	_music = new SciMusic(true);
 	_music->init();
 }
@@ -223,11 +224,9 @@ void Sound::playAmigaSfx(const Common::String &filename, byte channel, byte volu
 
 	stopSfxForChannel(channel);
 
-	if (soundData) {
-		Channel *ch = &_channels[channel];
-		Audio::AudioStream *input = Audio::makeAIFFStream(soundData, DisposeAfterUse::YES);
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
-	}
+	Channel *ch = &_channels[channel];
+	Audio::AudioStream *input = Audio::makeAIFFStream(soundData, DisposeAfterUse::YES);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
 }
 
 void Sound::stopAllSfx() {
