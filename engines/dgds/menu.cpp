@@ -178,19 +178,18 @@ void Menu::configureGadget(MenuId menu, Gadget *gadget) {
 	// a bit of a hack - set up the gadget with the correct value before we draw it.
 	if (menu == kMenuControls) {
 		SliderGadget *slider = dynamic_cast<SliderGadget *>(gadget);
+		if (!slider)
+			return;
 		switch (gadget->_gadgetNo) {
 		case kMenuSliderControlsDifficulty:
-			assert(slider);
 			slider->setSteps(3, false);
 			slider->setValue(engine->getDifficulty()); // TODO: set a difficulty value
 			break;
 		case kMenuSliderControlsTextSpeed:
-			assert(slider);
 			slider->setSteps(10, false);
 			slider->setValue(9 - engine->getTextSpeed());
 			break;
 		case kMenuSliderControlsDetailLevel:
-			assert(slider);
 			slider->setSteps(2, true);
 			slider->setValue(engine->getDetailLevel());
 			break;
@@ -484,20 +483,29 @@ void Menu::handleClick(const Common::Point &mouse) {
 		drawMenu(kMenuRestart);
 		break;
 	case kMenuSliderControlsDifficulty: {
-		int16 setting = dynamic_cast<SliderGadget *>(gadget)->onClick(mouse);
+		SliderGadget *slider = dynamic_cast<SliderGadget *>(gadget);
+		if (!slider)
+			break;
+		int16 setting = slider->onClick(mouse);
 		engine->setDifficulty(setting);
 		// redraw for update.
 		drawMenu(_curMenu);
 		break;
 	}
 	case kMenuSliderControlsTextSpeed: {
-		int16 setting = dynamic_cast<SliderGadget *>(gadget)->onClick(mouse);
+		SliderGadget *slider = dynamic_cast<SliderGadget *>(gadget);
+		if (!slider)
+			break;
+		int16 setting = slider->onClick(mouse);
 		engine->setTextSpeed(9 - setting);
 		drawMenu(_curMenu);
 		break;
 	}
 	case kMenuSliderControlsDetailLevel: {
-		int16 setting = dynamic_cast<SliderGadget *>(gadget)->onClick(mouse);
+		SliderGadget *slider = dynamic_cast<SliderGadget *>(gadget);
+		if (!slider)
+			break;
+		int16 setting = slider->onClick(mouse);
 		engine->setDetailLevel(static_cast<DgdsDetailLevel>(setting));
 		drawMenu(_curMenu);
 		break;
