@@ -29,10 +29,6 @@ namespace M4 {
 void tt_read_header(SysFile *ifp, int32 *file_x, int32 *file_y,
 	int32 *num_x_tiles, int32 *num_y_tiles, int32 *tile_x, int32 *tile_y, RGB8 *pal) {
 	int32 value;
-	uint8 buf[4];
-	int	i;
-	//byte *byte_ptr;
-	void *bufferHandle;
 
 	// Initalize return parameters
 	*num_x_tiles = 0;
@@ -46,58 +42,22 @@ void tt_read_header(SysFile *ifp, int32 *file_x, int32 *file_y,
 	if (!ifp->exists())
 		error_show(FL, 'FNF!', ".TT file");
 
-	// Read chunk id
-	bufferHandle = &buf[0];
-	ifp->read((MemHandle)&bufferHandle, 4);
-	value = (buf[3] << 24) + (buf[2] << 16) + (buf[1] << 8) + buf[0];    //because in intel chip, swap order of high bits and low bits
+	ifp->readUint32LE();	// skip chunk ID
+	ifp->readUint32LE();	// skip chunk size
 
-	// Read chunk size
-	bufferHandle = &buf[0];
-	ifp->read((MemHandle)&bufferHandle, 4);
-	value = (buf[3] << 24) + (buf[2] << 16) + (buf[1] << 8) + buf[0];
-
-	// Read file_x size
-	bufferHandle = &buf[0];
-	ifp->read((MemHandle)&bufferHandle, 4);
-	*file_x = (buf[3] << 24) + (buf[2] << 16) + (buf[1] << 8) + buf[0];
-
-	// Read file_y size
-	bufferHandle = &buf[0];
-	ifp->read((MemHandle)&bufferHandle, 4);
-	*file_y = (buf[3] << 24) + (buf[2] << 16) + (buf[1] << 8) + buf[0];
-
-	// Read number of x tiles
-	bufferHandle = &buf[0];
-	ifp->read((MemHandle)&bufferHandle, 4);
-	*num_x_tiles = (buf[3] << 24) + (buf[2] << 16) + (buf[1] << 8) + buf[0];
-
-	// Read number of y	tiles
-	bufferHandle = &buf[0];
-	ifp->read((MemHandle)&bufferHandle, 4);
-	*num_y_tiles = (buf[3] << 24) + (buf[2] << 16) + (buf[1] << 8) + buf[0];
-
-	// Read size of tile_x
-	bufferHandle = &buf[0];
-	ifp->read((MemHandle)&bufferHandle, 4);
-	*tile_x = (buf[3] << 24) + (buf[2] << 16) + (buf[1] << 8) + buf[0];
-
-	// Read size of tile_y
-	bufferHandle = &buf[0];
-	ifp->read((MemHandle)&bufferHandle, 4);
-	*tile_y = (buf[3] << 24) + (buf[2] << 16) + (buf[1] << 8) + buf[0];
+	*file_x = ifp->readSint32LE();
+	*file_y = ifp->readSint32LE();
+	*num_x_tiles = ifp->readSint32LE();
+	*num_y_tiles = ifp->readSint32LE();
+	*tile_x = ifp->readSint32LE();
+	*tile_y = ifp->readSint32LE();
 
 	// Write color table
-	for (i = 0; i < 256; i++) {
-		//byte_ptr = (byte *)&value;
-		bufferHandle = &buf[0];
-		ifp->read((MemHandle)&bufferHandle, 4);
-		value = (buf[3] << 24) + (buf[2] << 16) + (buf[1] << 8) + buf[0];
+	for (int i = 0; i < 256; i++) {
+		value = ifp->readSint32LE();
 
-		//byte_ptr++;
 		pal[i].r = (value >> 16) & 0x0ff;
-		//byte_ptr++;
 		pal[i].g = (value >> 8) & 0x0ff;
-		//byte_ptr++;
 		pal[i].b = (value) & 0x0ff;
 	}
 }
@@ -105,10 +65,8 @@ void tt_read_header(SysFile *ifp, int32 *file_x, int32 *file_y,
 Buffer *tt_read(SysFile *ifp, int index, int32 tile_x, int32 tile_y) {
 	int32 tile_size;
 	int offset;
-	Buffer *out;
-	void *bufferHandle;
+	Buffer *out = (Buffer *)mem_alloc(sizeof(Buffer), "tile buffer");
 
-	out = (Buffer *)mem_alloc(sizeof(Buffer), "tile buffer");
 	if (!out)
 		error_show(FL, 'OOM!', "fail to allocate mem for buffer structure");
 
@@ -145,8 +103,7 @@ Buffer *tt_read(SysFile *ifp, int index, int32 tile_x, int32 tile_y) {
 	out->w = out->stride = tile_x;
 	out->h = tile_y;
 
-	bufferHandle = out->data;
-	ifp->read((MemHandle)&bufferHandle, tile_size);
+	ifp->read(out->data, tile_size);
 
 	return out;
 }

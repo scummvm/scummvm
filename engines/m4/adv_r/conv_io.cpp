@@ -735,7 +735,6 @@ Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want
 	Conv *convers = nullptr;
 	int32 cSize = 0;
 	char fullpathname[MAX_FILENAME_SIZE];
-	void *bufferHandle;
 
 	term_message("conv_load");
 
@@ -770,7 +769,9 @@ Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want
 		error_show(FL, 'CNVL', "couldn't conv_load %s", fullpathname);
 		conv_set_handle(nullptr);
 		convers = nullptr;
-		goto done;
+		fp.close();
+
+		return nullptr;
 	}
 
 	cSize = fp.size();
@@ -784,7 +785,9 @@ Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want
 	if (!convers) {
 		conv_set_handle(nullptr);
 		convers = nullptr;
-		goto done;
+		fp.close();
+
+		return nullptr;
 	}
 
 	convers->chunkSize = cSize;
@@ -798,14 +801,13 @@ Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want
 
 	convers->conv = (char *)mem_alloc(cSize * sizeof(char), "conv char data");
 
-	bufferHandle = convers->conv;
-	if (!fp.read((MemHandle)&bufferHandle, cSize)) {
+	if (!fp.read((byte *)convers->conv, cSize)) {
 		conv_set_handle(nullptr);
-		if (convers)
-			delete convers;
-
+		delete convers;
 		convers = nullptr;
-		goto done;
+		fp.close();
+
+		return nullptr;
 	}
 
 	conv_swap_words(convers);
@@ -823,7 +825,6 @@ Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want
 
 	conv_set_handle(convers);
 
-done:
 	fp.close();
 
 	return convers;

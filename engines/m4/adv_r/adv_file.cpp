@@ -243,16 +243,8 @@ GrBuff *load_codes(SysFile *code_file) {
 	if (!code_file)			
 		return nullptr;
 
-	int16 x_size, y_size;
-	char *bufferHandle;
-
-	bufferHandle = (char *)&x_size;
-	code_file->read((MemHandle)&bufferHandle, sizeof(int16));
-	bufferHandle = (char *)&y_size;
-	code_file->read((MemHandle)&bufferHandle, sizeof(int16));
-
-	x_size = convert_intel16(x_size);
-	y_size = convert_intel16(y_size);
+	int16 x_size = code_file->readSint16LE();
+	int16 y_size = code_file->readSint16LE();
 
 	GrBuff *temp = new GrBuff(x_size, y_size);
 	if (!temp) {
@@ -261,11 +253,10 @@ GrBuff *load_codes(SysFile *code_file) {
 	}
 
 	Buffer *mybuff = temp->get_buffer();
+	byte *bufferHandle = mybuff->data;
 
-	uint8 *buffer = mybuff->data;
-	bufferHandle = (char *)buffer;
 	for (int i = 0; i < y_size; i++) {
-		code_file->read((MemHandle)&bufferHandle, x_size);
+		code_file->read(bufferHandle, x_size);
 		bufferHandle += mybuff->stride;
 	}
 

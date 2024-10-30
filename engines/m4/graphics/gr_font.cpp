@@ -270,7 +270,8 @@ int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y, int32 w,
 	else
 		target_w = target->w;
 
-	x += 1; y += 1;
+	x += 1;
+	y += 1;
 	int32 skipTop = 0;
 	if (y < 0) {
 		skipTop = -y;
@@ -310,7 +311,7 @@ int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y, int32 w,
 			int32 offset = offsetArray[c];
 			Byte *charData = &fontPixData[offset];
 
-			int32 bytesInChar = (_G(font)->width[c] >> 2) + 1; //bytesPer[wdth];	// 2 bits per pixel
+			int32 bytesInChar = (_G(font)->width[c] >> 2) + 1; // bytesPer[wdth];	// 2 bits per pixel
 			if (skipTop)
 				charData += bytesInChar * skipTop;
 
@@ -344,7 +345,7 @@ int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y, int32 w,
 		cursX += w;
 	} // end while there is a character to draw loop
 
-	return(cursX);
+	return cursX;
 }
 
 int32 gr_font_write(Buffer *target, const char *out_string, int32 x, int32 y, int32 w, int32 auto_spacing) {
@@ -358,7 +359,6 @@ int32 gr_font_write(Buffer *target, const char *out_string, int32 x, int32 y, in
 Font *gr_font_load(const char *fontName) {
 	uint32 tag;
 	Font *newFont;
-	void *bufferHandle;
 
 	SysFile fontFile(fontName, BINARY);
 	if (!fontFile.exists())
@@ -386,8 +386,7 @@ Font *gr_font_load(const char *fontName) {
 	if (!newFont->width)
 		error_show(FL, 'OOM!', "_G(font) width table");
 
-	bufferHandle = newFont->width;
-	fontFile.read(&bufferHandle, 256);
+	fontFile.read(newFont->width, 256);
 
 	// read 'OFFS' into tag
 	tag = fontFile.readUint32LE();
@@ -399,11 +398,8 @@ Font *gr_font_load(const char *fontName) {
 	if (!newFont->offset)
 		error_show(FL, 'OOM!', "font offset table");
 
-	bufferHandle = newFont->offset;
-	fontFile.read(&bufferHandle, 256 * sizeof(int16));
-
 	for (int i = 0; i < 256; i++)
-		newFont->offset[i] = convert_intel16(newFont->offset[i]);
+		newFont->offset[i] = fontFile.readSint16LE();
 
 	// read 'PIXS' into tag
 	tag = fontFile.readUint32LE();
@@ -415,8 +411,7 @@ Font *gr_font_load(const char *fontName) {
 	if (!newFont->pixData)
 		error_show(FL, 'OOM!', "font pix data");
 
-	bufferHandle = newFont->pixData;
-	fontFile.read(&bufferHandle, newFont->dataSize);
+	fontFile.read(newFont->pixData, newFont->dataSize);
 
 	// we don't need to close the file, because the destructor will close fontFile automagically
 	return newFont;

@@ -420,13 +420,8 @@ static void swap_c_reply(c_reply_chunk *c) {
 }
 
 c_reply_chunk *get_c_reply(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	c_reply_chunk *c_r = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	c_r = (c_reply_chunk *)&s[cSize];
-
-	return c_r;
+	char *s = &(c->conv[c->myCNode]);
+	return (c_reply_chunk *)&s[cSize];
 }
 
 static void swap_w_reply(w_reply_chunk *c) {

@@ -122,6 +122,7 @@ public:
 	 */
 	uint32 read(MemHandle bufferHandle);
 	int32 read(MemHandle bufferHandle, int32 n);
+	int32 read(byte *bufferHandle, int32 n);
 
 	/**
 	 * Read in a 8-bit value
@@ -129,6 +130,14 @@ public:
 	byte readByte();
 	int8 readSByte() {
 		return (int8)readByte();
+	}
+
+	/**
+	 * Read in a 16-bit value
+	 */
+	uint16 readUint16LE();
+	int16 readSint16LE() {
+		return (int16)readUint16LE();
 	}
 
 	/**
