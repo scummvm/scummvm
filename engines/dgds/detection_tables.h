@@ -244,7 +244,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -259,7 +259,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -274,7 +274,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -289,7 +289,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::DE_DEU,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -373,4 +373,3 @@ static const ADGameDescription gameDescriptions[] = {
 };
 
 } // End of namespace Dgds
-
