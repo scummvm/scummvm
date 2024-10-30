@@ -26,7 +26,7 @@
 #include "dgds/dgds.h"
 #include "dgds/image.h"
 #include "dgds/includes.h"
-#include "dgds/dragon_arcade.h"
+#include "dgds/minigames/dragon_arcade.h"
 #include "dgds/sound.h"
 #include "dgds/scene.h"
 #include "dgds/drawing.h"

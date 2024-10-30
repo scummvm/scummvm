@@ -42,7 +42,7 @@
 #include "dgds/globals.h"
 #include "dgds/image.h"
 #include "dgds/inventory.h"
-#include "dgds/dragon_arcade.h"
+#include "dgds/minigames/dragon_arcade.h"
 #include "dgds/dragon_native.h"
 #include "dgds/hoc_intro.h"
 

@@ -8,8 +8,6 @@ MODULE_OBJS := \
 	dgds.o \
 	dgds_rect.o \
 	dialog.o \
-	dragon_arcade.o \
-	dragon_arcade_ttm.o \
 	dragon_native.o \
 	drawing.o \
 	font.o \
@@ -25,10 +23,12 @@ MODULE_OBJS := \
 	resource.o \
 	scene.o \
 	scripts.o \
-	shell_game.o \
 	sound.o \
 	sound_raw.o \
 	ttm.o \
+	minigames/dragon_arcade.o \
+	minigames/dragon_arcade_ttm.o \
+	minigames/shell_game.o \
 	sound/midiparser_sci.o \
 	sound/music.o \
 	sound/drivers/adlib.o \

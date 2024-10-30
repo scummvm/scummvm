@@ -21,7 +21,7 @@
 
 #include "common/intrinsics.h"
 
-#include "dgds/shell_game.h"
+#include "dgds/minigames/shell_game.h"
 #include "dgds/dgds.h"
 #include "dgds/globals.h"
 #include "dgds/font.h"

@@ -19,11 +19,11 @@
  *
  */
 
-#ifndef DGDS_DRAGON_ARCADE_H
-#define DGDS_DRAGON_ARCADE_H
+#ifndef DGDS_MINIGAMES_DRAGON_ARCADE_H
+#define DGDS_MINIGAMES_DRAGON_ARCADE_H
 
 #include "common/types.h"
-#include "engines/dgds/dragon_arcade_ttm.h"
+#include "engines/dgds/minigames/dragon_arcade_ttm.h"
 
 namespace Dgds {
 
@@ -225,4 +225,4 @@ private:
 
 } // end namespace Dgds
 
-#endif // DGDS_DRAGON_ARCADE_H
+#endif // DGDS_MINIGAMES_DRAGON_ARCADE_H

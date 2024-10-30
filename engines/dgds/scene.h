@@ -28,7 +28,7 @@
 
 #include "dgds/dialog.h"
 #include "dgds/dgds_rect.h"
-#include "dgds/shell_game.h"
+#include "dgds/minigames/shell_game.h"
 
 namespace Dgds {
 

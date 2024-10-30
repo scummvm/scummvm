@@ -19,9 +19,8 @@
  *
  */
 
-#include "dgds/dragon_arcade_ttm.h"
-
-#include "dgds/dragon_arcade.h"
+#include "dgds/minigames/dragon_arcade_ttm.h"
+#include "dgds/minigames/dragon_arcade.h"
 #include "dgds/ads.h"
 #include "dgds/drawing.h"
 #include "dgds/sound.h"

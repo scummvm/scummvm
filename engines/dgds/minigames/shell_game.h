@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef DGDS_SHELL_GAME_H
-#define DGDS_SHELL_GAME_H
+#ifndef DGDS_MINIGAMES_SHELL_GAME_H
+#define DGDS_MINIGAMES_SHELL_GAME_H
 
 #include "dgds/image.h"
 
@@ -64,4 +64,4 @@ private:
 
 } // end namespace Dgds
 
-#endif // DGDS_SHELL_GAME_H
+#endif // DGDS_MINIGAMES_SHELL_GAME_H

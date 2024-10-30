@@ -62,7 +62,7 @@
 #include "dgds/scripts.h"
 #include "dgds/sound.h"
 #include "dgds/game_palettes.h"
-#include "dgds/dragon_arcade.h"
+#include "dgds/minigames/dragon_arcade.h"
 #include "dgds/hoc_intro.h"
 
 // for frame contents debugging
