@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-30 17:31+0000\n"
+"PO-Revision-Date: 2024-10-30 18:43+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
@@ -8054,7 +8054,7 @@ msgstr "Otwórz ekwipunek"
 
 #: engines/hopkins/metaengine.cpp:250
 msgid "Option dialog"
-msgstr ""
+msgstr "Opcje"
 
 #: engines/hpl1/metaengine.cpp:76
 msgid "Forward"
@@ -8574,32 +8574,32 @@ msgstr "Uruchom grę ponownie"
 #. I18N: Shift Cursor during fight to top left
 #: engines/lure/metaengine.cpp:233
 msgid "Shift Cursor - Top left"
-msgstr ""
+msgstr "Kursor przesuwania - w górę i w lewo"
 
 #. I18N: Shift Cursor during fight to middle left
 #: engines/lure/metaengine.cpp:239
 msgid "Shift Cursor -  Middle left"
-msgstr ""
+msgstr "Kursor przesuwania - w lewo"
 
 #. I18N: Shift Cursor during fight to bottom left
 #: engines/lure/metaengine.cpp:245
 msgid "Shift Cursor - Bottom left"
-msgstr ""
+msgstr "Kursor przesuwania - w dół i w lewo"
 
 #. I18N: Shift Cursor during fight to top right
 #: engines/lure/metaengine.cpp:251
 msgid "Shift Cursor - Top right"
-msgstr ""
+msgstr "Kursor przesuwania - w górę i w prawo"
 
 #. I18N: Shift Cursor during fight to middle right
 #: engines/lure/metaengine.cpp:257
 msgid "Shift Cursor - Middle right"
-msgstr ""
+msgstr "Kursor przesuwania - w prawo"
 
 #. I18N: Shift Cursor during fight to bottom right
 #: engines/lure/metaengine.cpp:263
 msgid "Shift Cursor - Bottom right"
-msgstr ""
+msgstr "Kursor przesuwania - w dół i w prawo"
 
 #: engines/lure/metaengine.cpp:270
 msgid "Go to next index"
@@ -9698,34 +9698,24 @@ msgid "Swallow"
 msgstr "Jaskółka"
 
 #: engines/saga/metaengine.cpp:406
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "Reading speed"
-msgstr "Błąd odczytu danych"
+msgstr "Prędkość czytania"
 
 #: engines/saga/metaengine.cpp:411
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change music"
-msgstr "Zmień rozmiar czcionki"
+msgstr "Zmień muzykę"
 
 #: engines/saga/metaengine.cpp:416
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change sound"
-msgstr "Zmień tryb"
+msgstr "Zmień dźwięk"
 
 #: engines/saga/metaengine.cpp:421
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change voices"
-msgstr "Zmień tryb"
+msgstr "Zmień głosy"
 
 #: engines/saga/metaengine.cpp:426
-#, fuzzy
-#| msgid "Continue"
 msgid "Continue game"
-msgstr "Kontynuuj"
+msgstr "Kontynuuj grę"
 
 #: engines/saga/metaengine.cpp:436 engines/trecision/metaengine.cpp:156
 #: engines/vcruise/metaengine.cpp:177
@@ -9733,26 +9723,20 @@ msgid "Quit game"
 msgstr "Wyjdź z gry"
 
 #: engines/saga/metaengine.cpp:453
-#, fuzzy
-#| msgid "Cancel input"
 msgid "Cancel quit"
-msgstr "Anuluj wprowadzanie"
+msgstr "Anuluj wychodzenie"
 
 #: engines/saga/metaengine.cpp:458
 msgid "Okay"
 msgstr "OK"
 
 #: engines/saga/metaengine.cpp:463
-#, fuzzy
-#| msgid "Cancel download"
 msgid "Cancel load"
-msgstr "Anuluj pobieranie"
+msgstr "Anuluj wczytywanie"
 
 #: engines/saga/metaengine.cpp:473
-#, fuzzy
-#| msgid "Cancel autosave"
 msgid "Cancel save"
-msgstr "Anuluj autozapis"
+msgstr "Anuluj zapisywanie"
 
 #: engines/saga/music.cpp:98
 #, c-format
@@ -9916,10 +9900,8 @@ msgid "Casio CT-460 / CSM-1"
 msgstr "Casio CT-460 / CSM-1"
 
 #: engines/sci/detection_tables.h:1419 engines/sci/detection_tables.h:1430
-#, fuzzy
-#| msgid "Failed to initialize resources"
 msgid "Game does not contain menu resources"
-msgstr "Nie udało się zainicjować zasobów"
+msgstr "Gra nie zawiera zasobów menu"
 
 #: engines/sci/detection_tables.h:4594
 msgid "This demo uses an unimplemented version of Robot videos"
@@ -10286,7 +10268,7 @@ msgstr "Jakość muzyki:"
 #: engines/scumm/dialogs.cpp:1395
 msgid ""
 "Select music quality. The original lets you choose this from the Game menu."
-msgstr ""
+msgstr "Wybierz jakość muzyki. Oryginał pozwala wybrać ją z menu gry."
 
 #: engines/scumm/dialogs.cpp:1396
 msgid ""
@@ -10294,43 +10276,44 @@ msgid ""
 "detection and speed tests, but also allows changes through the Game menu to "
 "some degree."
 msgstr ""
+"Wybierz jakość muzyki. Oryginał określa podstawową konfigurację poprzez "
+"wykrywanie sprzętu i testy szybkości, ale pozwala również w pewnym stopniu "
+"na zmiany w menu gry."
 
 #: engines/scumm/dialogs.cpp:1483 engines/scumm/dialogs.cpp:1484
 msgid "auto"
-msgstr ""
+msgstr "Automatyczna"
 
 #: engines/scumm/dialogs.cpp:1483
 msgid "Low"
-msgstr ""
+msgstr "Niska"
 
 #: engines/scumm/dialogs.cpp:1483
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:75
-#, fuzzy
-#| msgid "100% - Medium"
 msgid "Medium"
-msgstr "100% - Średni"
+msgstr "Średnia"
 
 #: engines/scumm/dialogs.cpp:1483
 msgid "High"
-msgstr ""
+msgstr "Wysoka"
 
 #: engines/scumm/dialogs.cpp:1484
 msgid "Good"
-msgstr ""
+msgstr "Dobra"
 
 #: engines/scumm/dialogs.cpp:1484
 msgid "Better"
-msgstr ""
+msgstr "Lepsza"
 
 #: engines/scumm/dialogs.cpp:1485
 #, c-format
 msgid "Hardware Rating: %s   -   "
-msgstr ""
+msgstr "Ocena sprzętu: %s   -   "
 
 #: engines/scumm/dialogs.cpp:1485
 #, c-format
 msgid "Quality Selection: %s"
-msgstr ""
+msgstr "Wybrano jakość: %s"
 
 #: engines/scumm/dialogs.cpp:1499
 msgid "Playback Adjust:"
@@ -10406,9 +10389,6 @@ msgid "Enable online competitive mods"
 msgstr "Włącz konkurencyjne mody online"
 
 #: engines/scumm/dialogs.cpp:1713
-#, fuzzy
-#| msgid ""
-#| "Enables custom-made modifications intented for online competitive play."
 msgid "Enables custom-made modifications intended for online competitive play."
 msgstr ""
 "Włącza niestandardowe modyfikacje przeznaczone do rywalizacji w trybie "
@@ -10436,11 +10416,11 @@ msgstr "Umożliwia wykrywanie sesji gry w sieci lokalnej."
 
 #: engines/scumm/dialogs.cpp:1721
 msgid "Generate random maps"
-msgstr ""
+msgstr "Generuj losowe mapy"
 
 #: engines/scumm/dialogs.cpp:1721
 msgid "Allow random map generation (Based from Moonbase Console)."
-msgstr ""
+msgstr "Zezwalaj na losowe generowanie map (na podstawie konsoli Moonbase)."
 
 #: engines/scumm/dialogs.cpp:1723
 msgid ""
@@ -10987,27 +10967,25 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:672
 msgid "Run in original 640 x 480 resolution"
-msgstr ""
+msgstr "Uruchom w oryginalnej rozdzielczości 640x480"
 
 #: engines/scumm/metaengine.cpp:673
 msgid ""
 "This allows more accurate pause/restart banners, but might impact "
 "performance or shader/scaler usage."
 msgstr ""
+"Umożliwia to dokładniejsze wyświetlanie banerów pauzy/restartu, ale może "
+"mieć wpływ na wydajność lub wykorzystanie shaderów/skalerów."
 
 #: engines/scumm/metaengine.cpp:680
 msgid "Play simplified music"
 msgstr "Odtwarzaj uproszczoną muzykę"
 
 #: engines/scumm/metaengine.cpp:681
-#, fuzzy
-#| msgid ""
-#| "This music was presumably intended for low-end Macs, and uses only one "
-#| "channel."
 msgid "This music was intended for low-end Macs, and uses only one channel."
 msgstr ""
-"Ta muzyka była prawdopodobnie przeznaczona dla komputerów Mac z niższej "
-"półki i wykorzystuje tylko jeden kanał."
+"Ta muzyka była przeznaczona dla komputerów Mac z niższej półki i "
+"wykorzystuje tylko jeden kanał."
 
 #: engines/scumm/metaengine.cpp:689
 msgid "Enable smooth scrolling"
@@ -11029,18 +11007,13 @@ msgstr ""
 "Włącza mniej płynne przewijanie podczas szybkiego ruchu kamery w intrze."
 
 #: engines/scumm/metaengine.cpp:726
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
-#| "for a more complete experience."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
 "\" for a more complete experience."
 msgstr ""
 "Zezwól grze na korzystanie z wbudowanego interfejsu graficznego i "
-"oryginalnego menu zapisywania oraz wczytywania. Użyj go razem z opcją "
+"oryginalnego menu zapisywania oraz wczytywania. \t\tUżyj go razem z opcją "
 "\"Pytaj o potwierdzenie przy wyjściu”, aby uzyskać pełniejsze wrażenia."
 
 #: engines/scumm/metaengine.cpp:735
@@ -11072,14 +11045,13 @@ msgstr ""
 "napisy mogą nie być w pełni przetłumaczone."
 
 #: engines/scumm/metaengine.cpp:764
-#, fuzzy
-#| msgid "Disable demo mode"
 msgid "Enable demo/kiosk mode"
-msgstr "Wyłącz tryb demonstracyjny"
+msgstr "Włącz tryb demonstracyjny"
 
 #: engines/scumm/metaengine.cpp:765
 msgid "Enable demo/kiosk mode in the full retail version of Maniac Mansion."
 msgstr ""
+"Włącza tryb demonstracyjny w pełnej wersji detalicznej gry Maniac Mansion."
 
 #: engines/scumm/metaengine.cpp:864
 msgid "Down Left"
@@ -11119,6 +11091,16 @@ msgid ""
 "Please change the audio configuration accordingly in order to properly load "
 "this save file."
 msgstr ""
+"Ostrzeżenie: wykryto niezgodne ustawienia dźwięku między bieżącą "
+"konfiguracją a tym zapisem gry.\n"
+"\n"
+"Bieżące urządzenie muzyczne: %s (id %d)\n"
+"Urządzenia muzyczne zapisanego stanu gry: %s (id %d)\n"
+"\n"
+"Podjęta zostanie próba wczytania gry, ale może ona zachowywać się "
+"nieprawidłowo lub ulec awarii.\n"
+"Zmień odpowiednio konfigurację dźwięku, aby poprawnie załadować ten zapisany "
+"plik."
 
 #: engines/scumm/scumm.cpp:293
 msgid ""
@@ -11208,25 +11190,23 @@ msgstr "Czy chcesz zorganizować sesję gry sieciowej lub dołączyć do niej?"
 
 #. I18N: Random map generator for Moonbase Commander
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:55
-#, fuzzy
-#| msgid "Game Options"
 msgid "Random Map Options"
-msgstr "Opcje gry"
+msgstr "Opcje losowych map"
 
 #. I18N: Map generator algorthims
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:59
 msgid "Algorithm"
-msgstr ""
+msgstr "Algorytm"
 
 #. I18N: Spiff algorthim
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:63
 msgid "Spiff"
-msgstr ""
+msgstr "Spiff"
 
 #. I18N: Katton algorthim
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:65
 msgid "Katton"
-msgstr ""
+msgstr "Katton"
 
 #. I18N: Random algorthim
 #. I18N: Random map size
@@ -11240,25 +11220,21 @@ msgstr ""
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:112
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:124
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:136
-#, fuzzy
-#| msgid "Random seed:"
 msgid "Random"
-msgstr "Ziarno generatora:"
+msgstr "Losowy"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:67
 msgid "Picks the map algorithm randomly."
-msgstr ""
+msgstr "Wybiera algorytm mapy losowo."
 
 #. I18N: Map sizes
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:70
 msgid "Size"
-msgstr ""
+msgstr "Rozmiar"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:74
-#, fuzzy
-#| msgid "75% - Small"
 msgid "Small"
-msgstr "75% - Mały"
+msgstr "Mały"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:76
 msgid "Large"
@@ -11266,85 +11242,79 @@ msgstr "Duży"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:77
 msgid "Huge"
-msgstr ""
+msgstr "Ogromny"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:78
 msgid "SAI"
-msgstr ""
+msgstr "SAI"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:79
 msgid "Ridiculous"
-msgstr ""
+msgstr "Niedorzeczny"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:80
-#, fuzzy
-#| msgid "Map"
 msgid "Max"
-msgstr "Mapa"
+msgstr "Maksymalna"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:82
 msgid "Picks the map size randomly."
-msgstr ""
+msgstr "Losowo wybiera rozmiar mapy."
 
 #. I18N: Map tilesets
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:85
-#, fuzzy
-#| msgid "Reset"
 msgid "Tileset"
-msgstr "Przywróć"
+msgstr "Zestaw kafelków"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:99
 msgid "Picks the map tileset randomly."
-msgstr ""
+msgstr "Losowo wybiera zestaw kafelków mapy."
 
 #. I18N: Percentage of energy pools
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:102
 msgid "Energy"
-msgstr ""
+msgstr "Energia"
 
 #. I18N: Energy slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:107
 msgid "Scarce - Lots"
-msgstr ""
+msgstr "Mało - Dużo"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:112
 msgid "Picks the random amount of energy pools."
-msgstr ""
+msgstr "Wybiera losową liczbę puli energii."
 
 #. I18N: Percentage of terrain
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:115
 msgid "Terrain"
-msgstr ""
+msgstr "Teren"
 
 #. I18N: Terrain slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:120
 msgid "Barren - Rough"
-msgstr ""
+msgstr "Jałowy - Trudny"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:124
 msgid "Picks the random amount of terrain level."
-msgstr ""
+msgstr "Wybiera losową ilość poziomu terenu."
 
 #. I18N: Percentage of water
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:127
 msgid "Water"
-msgstr ""
+msgstr "Woda"
 
 #. I18N: Water slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:132
 msgid "Driest - Wettest"
-msgstr ""
+msgstr "Najsuchszy - Najmokrzejszy"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:136
 msgid "Picks the random amount of water."
-msgstr ""
+msgstr "Wybiera losową ilość wody."
 
 #. I18N: Generate new map
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:140
-#, fuzzy
-#| msgid "General"
 msgid "Generate"
-msgstr "Ogólne"
+msgstr "Generuj"
 
 #: engines/scumm/he/sound_he.cpp:1555
 msgid ""
@@ -11490,48 +11460,38 @@ msgstr "Domyślne mapowanie klawiatury"
 
 #. I18N: Opens in-game Diary
 #: engines/stark/metaengine.cpp:202
-#, fuzzy
-#| msgid "Game menu"
 msgid "Diary menu"
-msgstr "Menu gry"
+msgstr "Menu pamiętnika"
 
 #. I18N: Opens in-game conversation log
 #: engines/stark/metaengine.cpp:219
-#, fuzzy
-#| msgid "Next location"
 msgid "Conversation log"
-msgstr "Następna lokacja"
+msgstr "Dziennik konwersacji"
 
 #. I18N: Opens in-game Diary
 #: engines/stark/metaengine.cpp:225
 msgid "April's diary (initially disabled)"
-msgstr ""
+msgstr "Dziennik April (początkowo wyłączony)"
 
 #: engines/stark/metaengine.cpp:230
-#, fuzzy
-#| msgid "Fast replay"
 msgid "Video replay"
-msgstr "Szybka powtórka"
+msgstr "Powtórka wideo"
 
 #: engines/stark/metaengine.cpp:235
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game settings"
-msgstr "Opcje gry"
+msgstr "Ustawienia gry"
 
 #: engines/stark/metaengine.cpp:245 engines/wintermute/keymapper_tables.h:1345
 msgid "Toggle subtitles"
 msgstr "Przełącz napisy"
 
 #: engines/stark/metaengine.cpp:250
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit to menu"
-msgstr "Zamknij grę"
+msgstr "Wyjdź do menu"
 
 #: engines/stark/metaengine.cpp:255
 msgid "Cycle back through inventory cursor items"
-msgstr ""
+msgstr "Przechodź wstecz przez elementy kursora w ekwipunku"
 
 #: engines/stark/metaengine.cpp:261
 msgid "Cycle forward through inventory cursor items"
@@ -12115,10 +12075,8 @@ msgid "Voices: German"
 msgstr "Głosy: niemiecki"
 
 #: engines/twp/dialogs.cpp:32
-#, fuzzy
-#| msgid "Video"
 msgid "Video:"
-msgstr "Wideo"
+msgstr "Wideo:"
 
 #. I18N: Setting to switch toiled paper to be shown as "over".
 #: engines/twp/dialogs.cpp:37
@@ -12145,10 +12103,8 @@ msgid ""
 msgstr ""
 
 #: engines/twp/dialogs.cpp:44
-#, fuzzy
-#| msgid "Control"
 msgid "Controls:"
-msgstr "Kontrola"
+msgstr "Kontrolki:"
 
 #. I18N: Setting to invert verb colors or keep the original verb colors.
 #: engines/twp/dialogs.cpp:48
@@ -12277,28 +12233,20 @@ msgid "Select Choice 6"
 msgstr "Wybierz shader"
 
 #: engines/twp/metaengine.cpp:174
-#, fuzzy
-#| msgid "Select next music record"
 msgid "Select Next Actor"
-msgstr "Wybierz następne nagranie muzyczne"
+msgstr "Wybierz następnego aktora"
 
 #: engines/twp/metaengine.cpp:175
-#, fuzzy
-#| msgid "Previous action"
 msgid "Select Previous Actor"
-msgstr "Poprzednia akcja"
+msgstr "Wybierz poprzedniego aktora"
 
 #: engines/twp/metaengine.cpp:176
-#, fuzzy
-#| msgid "Skip text"
 msgid "Skip Text"
 msgstr "Pomiń tekst"
 
 #: engines/twp/metaengine.cpp:177
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show hotspots"
-msgstr "Pokazuj podpowiedzi"
+msgstr "Pokazuj punkty aktywne"
 
 #: engines/twp/twp.cpp:829
 msgid ""
@@ -12392,18 +12340,16 @@ msgid "Original Save"
 msgstr "Oryginalny zapis"
 
 #: engines/ultima/nuvie/metaengine.cpp:206
-#, fuzzy
-#| msgid "Ultima VIII"
 msgid "Ultima VI"
-msgstr "Ultima VIII"
+msgstr "Ultima VI"
 
 #: engines/ultima/nuvie/metaengine.cpp:208
 msgid "Martian Dreams"
-msgstr ""
+msgstr "Marsjańskie Sny"
 
 #: engines/ultima/nuvie/metaengine.cpp:210
 msgid "The Savage Empire"
-msgstr ""
+msgstr "Imperium Dzikich"
 
 #: engines/ultima/nuvie/save/save_game.cpp:207
 msgid "Transfer Character"
@@ -12468,34 +12414,30 @@ msgstr ""
 "Rozpoczyna nową grę po uruchomieniu, zamiast wchodzić do menu głównego."
 
 #: engines/vcruise/metaengine.cpp:86
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Use 16-color graphics"
-msgstr "Kolorowa grafika"
+msgstr "Użyj grafiki 16-kolorowej"
 
 #: engines/vcruise/metaengine.cpp:87
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Uses 16-color graphics."
-msgstr "Kolorowa grafika"
+msgstr "Używa grafiki 16-kolorowej."
 
 #: engines/vcruise/metaengine.cpp:97
-#, fuzzy
-#| msgid "Prerecorded sounds"
 msgid "Preload sounds"
-msgstr "Nagrane dźwięki"
+msgstr "Wstępnie ładowanie dźwięków"
 
 #: engines/vcruise/metaengine.cpp:98
 msgid "Preload sounds. May improve performance on slow hard drives."
 msgstr ""
+"Wstępne ładowanie dźwięków. Może poprawić wydajność na wolnych dyskach "
+"twardych."
 
 #: engines/vcruise/metaengine.cpp:108
 msgid "Faster video decoder (lower quality)"
-msgstr ""
+msgstr "Szybszy dekoder wideo (niższa jakość)"
 
 #: engines/vcruise/metaengine.cpp:109
 msgid "Reduce video decoding CPU usage at the cost of quality."
-msgstr ""
+msgstr "Zmniejsz użycie procesora podczas dekodowania wideo kosztem jakości."
 
 #: engines/vcruise/metaengine.cpp:157
 msgid "Display help screen"
