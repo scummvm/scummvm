@@ -5624,19 +5624,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_PALETTEMODS	},
 
-	// Space Quest 3 - Hebrew DOS (from the Space Quest Collection)
-	// Executable scanning reports "0.000.685", VERSION file reports "1.018"
-	// This translation is still a work in progress
-	{ "sq3", "", {
-		{"resource.map", 0, "55e91aeef1705bce2a9b79172682f36d", 5730},
-		{"resource.001", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 490247},
-		{"resource.002", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 715777},
-		{"resource.003", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 703370},
-		{"PATCHES/font.000", 0, "6fab182f1c071d1ed47be27776964baf", 3334},
-		AD_LISTEND},
-		Common::HE_ISR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_PALETTEMODS },
-
-
 	// Space Quest 3 - English DOS 6 x 360k Floppy (from misterhands, bug report Trac #10677 and goodoldgeorge, bug report Trac #10636)
 	// Executable scanning reports "0.000.685", VERSION file reports "1.018"
 	{"sq3", "", {
@@ -5728,6 +5715,25 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "0d8dfe42683b46f3131823233a91ce6a", 787066},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE, GUIO_STD16_MAC_PALETTEMODS	},
+		
+	// Space Quest 3 - Hebrew DOS (from the Space Quest Collection)
+	// Executable scanning reports "0.000.685", VERSION file reports "1.018"
+	// This translation is still a work in progress
+	{ "sq3", "", {
+		{"resource.map", 0, "55e91aeef1705bce2a9b79172682f36d", 5730},
+		{"resource.001", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 490247},
+		{"resource.002", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 715777},
+		{"resource.003", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 703370},
+		{"PATCHES/font.000", 0, "6fab182f1c071d1ed47be27776964baf", 3334},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_PALETTEMODS },
+		
+	// Space Quest 3 - Spanish fan translation. VERSION file reports "06/03/2002"
+	{ "sq3", "", {
+		{"resource.map", 0, "9ba042c797b62dd46d8979caeed61116", 3726},
+		{"resource.001", 0, "c47b9817cf13f16b803fcbce647e63f3", 1514692},
+		AD_LISTEND},
+		Common::ES_ESP, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_PALETTEMODS },
 
 #define GUIO_SQ4_CD GUIO5(GAMEOPTION_SQ4_SILVER_CURSORS,	\
 						  GAMEOPTION_PREFER_DIGITAL_SFX,	\
