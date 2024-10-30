@@ -2494,6 +2494,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "starrider",          "Star Rider" },
 	{ "trampelviecher",     "Trampelvieche: Eine Halloween-Kurzgeschichte" },
 	{ "wasserhasser",       "Wasser-Hasser" },
+	{ "whisperedworldta",   "The Whispered World" },
 	{ "wichtel",            "Wichtel" },
 
 	// Textfire Grand Prix 2002 (German)
@@ -6799,6 +6800,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("starrider", "040110", "6c42a3e46e29419d9d0e3786117ab94b", 222208, Common::DE_DEU),
 	ENTRY1("wasserhasser", "140105/z5", "b87ebdaca633e964a575abd70cb88c5a", 151040, Common::DE_DEU),
 	ENTRY1("wasserhasser", "140105/zblorb", "1d332f660aec117a4460d0555a2b30f6", 165336, Common::DE_DEU),
+	ENTRY1("whisperedworldta", "090401/Demo", "863627aea7e6095d75d175375072bdef", 146432, Common::DE_DEU),
 	ENTRY1("wichtel", "021006", "f52166e02c6bd5e0311145683f415ef5", 88576, Common::DE_DEU),
 
 	// Textfire Grand Prix 2002 (German)
