@@ -294,6 +294,9 @@ void CastleEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *inf
 void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
 
+	if (!_areaMap.contains(areaID) && isDemo())
+		return; // Abort area change if the destination does not exist (demo only)
+
 	if (!_exploredAreas.contains(areaID)) {
 		_gameStateVars[k8bitVariableScore] += 17500;
 		_exploredAreas[areaID] = true;
@@ -821,7 +824,10 @@ void CastleEngine::executeDestroy(FCLInstruction &instruction) {
 void CastleEngine::executePrint(FCLInstruction &instruction) {
 	uint16 index = instruction._source;
 	_currentAreaMessages.clear();
-	if (index >= 129) {
+	if (index == 128 && isDemo()) {
+		drawFullscreenRiddleAndWait(18);
+		return;
+	} else if (index >= 129) {
 		index = index - 129;
 		drawFullscreenRiddleAndWait(index);
 		return;
@@ -918,6 +924,8 @@ void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int
 }
 
 void CastleEngine::drawFullscreenRiddleAndWait(uint16 riddle) {
+	debugC(1, kFreescapeDebugCode, "Printing fullscreen riddle %d", riddle);
+
 	if (_savedScreen) {
 		_savedScreen->free();
 		delete _savedScreen;

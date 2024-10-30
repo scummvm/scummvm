@@ -583,6 +583,19 @@ void FreescapeEngine::executeMakeInvisible(FCLInstruction &instruction) {
 	debugC(1, kFreescapeDebugCode, "Making obj %d invisible in area %d!", objectID, areaID);
 	if (_areaMap.contains(areaID)) {
 		Object *obj = _areaMap[areaID]->objectWithID(objectID);
+
+		if (!obj) {
+			// Object is not in the area, but it should be invisible so we can return immediately
+			return;
+			/*obj = _areaMap[255]->objectWithID(objectID);
+			if (!obj) {
+				error("obj %d does not exists in area %d nor in the global one!", objectID, areaID);
+				return;
+			}
+			_currentArea->addObjectFromArea(objectID, _areaMap[255]);
+			obj = _areaMap[areaID]->objectWithID(objectID);*/
+		}
+
 		assert(obj); // We assume the object was there
 		obj->makeInvisible();
 	} else {
@@ -611,7 +624,8 @@ void FreescapeEngine::executeMakeVisible(FCLInstruction &instruction) {
 		if (!obj) {
 			obj = _areaMap[255]->objectWithID(objectID);
 			if (!obj) {
-				error("obj %d does not exists in area %d nor in the global one!", objectID, areaID);
+				if (!isCastle() || !isDemo())
+					error("obj %d does not exists in area %d nor in the global one!", objectID, areaID);
 				return;
 			}
 			_currentArea->addObjectFromArea(objectID, _areaMap[255]);
