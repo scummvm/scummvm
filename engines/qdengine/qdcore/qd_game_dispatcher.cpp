@@ -1649,6 +1649,7 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 		}
 		return false;
 	case qdCondition::CONDITION_KEYPRESS: {
+		warning("**** CONDITION_KEYPRESS");
 		int vkey;
 		if (!cnd->get_value(0, vkey)) return false;
 		return keyboardDispatcher::instance()->is_pressed(vkey);

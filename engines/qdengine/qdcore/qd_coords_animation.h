@@ -129,6 +129,8 @@ public:
 	//! Запись данных в сэйв.
 	bool save_data(Common::WriteStream &fh) const;
 
+	Common::String flag2str(int flags) const;
+
 private:
 
 	qdCoordsAnimationType _type;

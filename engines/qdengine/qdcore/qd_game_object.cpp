@@ -107,7 +107,11 @@ bool qdGameObject::save_script_body(Common::WriteStream &fh, int indent) const {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<flag>%d</flag>\r\n", flags()));
+
+		if (debugChannelSet(-1, kDebugLog))
+			fh.writeString(Common::String::format("<flag>%s</flag>\r\n", flag2str(flags()).c_str()));
+		else
+			fh.writeString(Common::String::format("<flag>%d</flag>\r\n", flags()));
 	}
 
 	return true;
