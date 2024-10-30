@@ -44,26 +44,26 @@ private:
 	int32 _field8A = 0;
 	int32 _field8E = 0;
 	int32 _field92 = 0;
-	int32 _fieldA2 = 0;
-	int32 _fieldA4 = 0;
-	int32 _fieldA6 = 0;
-	int32 _fieldA8 = 0;
-	int32 _fieldAA = 0;
-	int32 _fieldAE = 0;
-	int32 _fieldB2 = 0;
-	int32 _fieldB6 = 0;
-	int32 _fieldBA = 0;
-	int32 _fieldBE = 0;
+	bool _fieldA4 = false; // always false??
+	int32 _fieldA8 = 0; // unused ?
+	bool _fieldAA = false;
+	int32 _fieldAE_rnd = 0;
+	bool _fieldB2 = false;
+	int32 _fieldB6_counter = 0;
 	int32 _fieldC2 = 0;
-	int32 _fieldC6 = 0;
-	int32 _fieldCA = 0;
+	bool _fieldC6 = false; // always false??
 
+	bool _commandNotAllowedFl = false;
+	bool _digi207r04PlayedFl = false;
 	const char *_digiName = nullptr;
-	KernelTriggerType _nextTriggerMode = KT_PARSE;
-	bool _ripForegroundFl = false;
-
 	int32 _digiTriggerNum = 0;
 	int32 _dispatchTriggerNum = 0;
+	bool _dollarFl = false;
+	bool _hiddenWalkerFl = false; // Always false??
+	KernelTriggerType _nextTriggerMode = KT_PARSE;
+	bool _node1Entry2Fl = false;
+	bool _ripForegroundFl = false;
+	
 	int32 _leadPipeSeries = 0;
 	int32 _metalRimSeries = 0;
 	int32 _oneFrameMoneySpriteSeries = 0;
@@ -100,7 +100,7 @@ private:
 	machine *_sevenSpokesMach = nullptr;
 	machine *_wheelMach = nullptr;
 
-	void room207_sub3165C();
+	void convHandler();
 };
 
 } // namespace Rooms
