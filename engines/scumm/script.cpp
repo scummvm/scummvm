@@ -182,6 +182,10 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 	// release completely disables pulling the rope, instead. We
 	// choose to follow the latter, as it's simpler, and the former
 	// made Guybrush silent when trying to trigger this action.
+	//
+	// (The Special Edition is based on the original release with
+	// the buggy script, but it doesn't cause any fatal error,
+	// although it does glitch, when playing in Classic Mode.)
 	if (_game.id == GID_MONKEY2 && obj == 1047 && entry == 6 && whereIsObject(obj) == WIO_INVENTORY &&
 		enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		return 0;
