@@ -752,11 +752,12 @@ bool DgdsEngine::canSaveAutosaveCurrently() {
 }
 
 void DgdsEngine::enableKeymapper() {
-	_eventMan->getKeymapper()->setEnabled(true);
+	_eventMan->getKeymapper()->setEnabledKeymapType(Common::Keymap::kKeymapTypeGame);
 }
 
 void DgdsEngine::disableKeymapper() {
-	_eventMan->getKeymapper()->setEnabled(false);
+	// Don't totally disable keymapper, as we still want the console and screenshot keys to work.
+	_eventMan->getKeymapper()->setEnabledKeymapType(Common::Keymap::kKeymapTypeGui);
 }
 
 Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
