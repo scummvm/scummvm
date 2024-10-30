@@ -155,7 +155,7 @@ void CastleEngine::loadAssetsZXFullGame() {
 	_gfx->readFromPalette(7, r, g, b);
 	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
-	_keysBorderFrames.push_back(loadFrameWithHeader(&file, 0xdf7, red, white));
+	_keysBorderFrames.push_back(loadFrameWithHeader(&file, _language == Common::ES_ESP ? 0xe06 : 0xdf7, red, white));
 
 	uint32 green = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0, 0xff, 0);
 	_spiritsMeterIndicatorFrame = loadFrameWithHeader(&file, _language == Common::ES_ESP ? 0xe5e : 0xe4f, green, white);
