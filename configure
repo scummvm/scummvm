@@ -7032,8 +7032,8 @@ case $_host_cpu in
 		fi
 		_ext_neon=no
 		# SSE2 is always available on x86_64
-		if !(test "$have_clang" = yes && ((test $_clang_major -gt 5) || (test $_clang_major -eq 5 && test $_clang_minor -gt 0))) &&
-		   !(test "$have_gcc"   = yes && ((test $_cxx_major   -gt 4) || (test $_cxx_major   -eq 4 && test $_cxx_minor   -gt 9))); then
+		if ! (test "$have_clang" = yes && (test $_clang_major -gt 5 || (test $_clang_major -eq 5 && test $_clang_minor -gt 0))) &&
+		   ! (test "$have_gcc"   = yes && (test $_cxx_major   -gt 4 || (test $_cxx_major   -eq 4 && test $_cxx_minor   -gt 9))); then
 			# Need GCC 4.9+ or Clang 5.0+ for target pragma
 			_ext_avx2=no
 		fi
@@ -7046,8 +7046,8 @@ case $_host_cpu in
 			_ext_avx2=no
 		fi
 		_ext_neon=no
-		if !(test "$have_clang" = yes && ((test $_clang_major -gt 5) || (test $_clang_major -eq 5 && test $_clang_minor -gt 0))) &&
-		   !(test "$have_gcc"   = yes && ((test $_cxx_major   -gt 4) || (test $_cxx_major   -eq 4 && test $_cxx_minor   -gt 9))); then
+		if ! (test "$have_clang" = yes && (test $_clang_major -gt 5 || (test $_clang_major -eq 5 && test $_clang_minor -gt 0))) &&
+		   ! (test "$have_gcc"   = yes && (test $_cxx_major   -gt 4 || (test $_cxx_major   -eq 4 && test $_cxx_minor   -gt 9))); then
 			# Need GCC 4.9+ or Clang 5.0+ for target pragma
 			_ext_sse2=no
 			_ext_avx2=no
@@ -7067,8 +7067,8 @@ case $_host_cpu in
 		fi
 		_ext_sse2=no
 		_ext_avx2=no
-		if !(test "$have_clang" = yes && ((test $_clang_major -gt 19) || (test $_clang_major -eq 19 && test $_clang_minor -gt 1))) &&
-		   !(test "$have_gcc"   = yes && ((test $_cxx_major   -gt  4) || (test $_cxx_major   -eq  4 && test $_cxx_minor   -gt 9))); then
+		if ! (test "$have_clang" = yes && (test $_clang_major -gt 19 || (test $_clang_major -eq 19 && test $_clang_minor -gt 1))) &&
+		   ! (test "$have_gcc"   = yes && (test $_cxx_major   -gt  4 || (test $_cxx_major   -eq  4 && test $_cxx_minor   -gt 9))); then
 			# Need GCC 4.9+ or Clang 19.1+ for target pragma
 			_ext_neon=no
 		fi
