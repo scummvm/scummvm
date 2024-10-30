@@ -455,10 +455,12 @@ bool GeometricObject::collides(const Math::AABB &boundingBox_) {
 
 void GeometricObject::draw(Renderer *gfx, float offset) {
 	if (_cyclingColors) {
+		assert(_colours);
 		if (g_system->getMillis() % 10 == 0)
 			for (uint i = 0; i < _colours->size(); i++) {
 				(*_colours)[i] = ((*_colours)[i] + 1) % 0xf;
-				(*_ecolours)[i] = ((*_ecolours)[i] + 1) % 0xf;
+				if (_ecolours)
+					(*_ecolours)[i] = ((*_ecolours)[i] + 1) % 0xf;
 			}
 	}
 
