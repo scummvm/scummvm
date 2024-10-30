@@ -628,11 +628,12 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		return true;
 	}
 	case 0x3010: // RANDOM_START, 0 params
-		debug(10, "ADS 0x%04x: random %s", code, code == 0x3010 ? "start" : "end");
+		debug(10, "ADS 0x3010: random start");
 		handleRandomOp(scr);
 		break;
 
 	case 0x30FF: // RANDOM_END, 0 params
+		debug(10, "ADS 0x30FF: random end");
 		error("Unexpected RANDOM END mid-stream (no RANDOM START?).");
 
 	case 0x4000: { // MOVE SEQ TO FRONT
