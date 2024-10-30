@@ -226,6 +226,21 @@ GfxFontFromResource::GfxFontFromResource(ResourceManager *resMan, GfxScreen *scr
 		} else {
 			_chars[i].offset = _resourceData.getUint16LEAt(charOffsetIndex);
 		}
+
+		// WORKAROUND: validate the character offset. several fan games have
+		// invalid offsets for character 127. SSCI only uses an offset when
+		// drawing, so it is unaffected as long as the character isn't used.
+		// Fixes LSL2/LSL3 Polish, SQ3 Spanish. Bug #10509
+		if (!(_chars[i].offset + 2 <= _resourceData.size())) {
+			warning("%s glyph %d has invalid offset: %d, resource size: %d",
+				_resourceData.name().c_str(), i, _chars[i].offset, _resourceData.size());
+
+			_chars[i].width = 0;
+			_chars[i].height = 0;
+			_chars[i].offset = 0;
+			continue;
+		}
+
 		_chars[i].width = _resourceData.getUint8At(_chars[i].offset);
 		_chars[i].height = _resourceData.getUint8At(_chars[i].offset + 1);
 	}

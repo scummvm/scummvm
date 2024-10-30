@@ -131,24 +131,6 @@ static const byte lsl1RussianSound205[] = {
 	END
 };
 
-
-#pragma mark -
-#pragma mark Leisure Suit Larry 2 and 3
-
-// LSL2 and LSL3 Polish contain several corrupt fonts. In each of these, the
-//  offset for the final font entry (127) points beyond the end of the file.
-//  This would have been a problem for Sierra's intepreter except that it
-//  only parses characters when they're drawn and these games don't use
-//  character 127, which is blank in the Polish fonts that aren't corrupt.
-//  We parse and cache all characters up front so this is a problem for us.
-//  We fix it here by patching the character count in the header from 128 down
-//  to 127 so that the corrupt entries aren't processed. Bug #10509
-static const byte lsl2Lsl3PolishFont[] = {
-	SKIP(0x02),
-	REPLACE(1, 0x7F),
-	END
-};
-
 #pragma mark -
 #pragma mark Phantasmagoria
 
@@ -512,10 +494,6 @@ static const byte torinPassageRussianPic61101[] = {
 static const GameResourcePatch resourcePatches[] = {
 	{ GID_LAURABOW2,      SCI_MEDIA_CD,     Common::UNK_LANG, kResourceTypeView,      828, lauraBow2CdView828,         false },
 	{ GID_LSL1,           SCI_MEDIA_ALL,    Common::RU_RUS,   kResourceTypeSound,     205, lsl1RussianSound205,        false },
-	{ GID_LSL2,           SCI_MEDIA_ALL,    Common::PL_POL,   kResourceTypeFont,        1, lsl2Lsl3PolishFont,         false },
-	{ GID_LSL2,           SCI_MEDIA_ALL,    Common::PL_POL,   kResourceTypeFont,        7, lsl2Lsl3PolishFont,         false },
-	{ GID_LSL3,           SCI_MEDIA_ALL,    Common::PL_POL,   kResourceTypeFont,        1, lsl2Lsl3PolishFont,         false },
-	{ GID_LSL3,           SCI_MEDIA_ALL,    Common::PL_POL,   kResourceTypeFont,        9, lsl2Lsl3PolishFont,         false },
 	{ GID_PHANTASMAGORIA, SCI_MEDIA_ALL,    Common::UNK_LANG, kResourceTypeView,    64001, phant1View64001Palette,     false },
 	{ GID_PQ4,            SCI_MEDIA_CD,     Common::EN_ANY,   kResourceTypeView,    10988, pq4EnhancedAudioToggleView, true  },
 	{ GID_QFG1VGA,        SCI_MEDIA_ALL,    Common::UNK_LANG, kResourceTypePalette,   904, qfg1vgaPalette904,          false },
