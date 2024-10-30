@@ -209,13 +209,8 @@ static void swap_assign(assign_chunk *a) {
 }
 
 assign_chunk *get_asgn(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	assign_chunk *a = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	a = (assign_chunk *)&s[cSize];
-
-	return a;
+	char *s = &(c->conv[c->myCNode]);
+	return (assign_chunk *)&s[cSize];
 }
 
 static void swap_c_asgn(c_assign_chunk *c) {
@@ -231,13 +226,8 @@ static void swap_c_asgn(c_assign_chunk *c) {
 }
 
 c_assign_chunk *get_c_asgn(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	c_assign_chunk *c_a = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	c_a = (c_assign_chunk *)&s[cSize];
-
-	return c_a;
+	char *s = &(c->conv[c->myCNode]);
+	return (c_assign_chunk *)&s[cSize];
 }
 
 static void swap_conv(conv_chunk *c) {
@@ -246,13 +236,8 @@ static void swap_conv(conv_chunk *c) {
 }
 
 conv_chunk *get_conv(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	conv_chunk *c_v = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	c_v = (conv_chunk *)&s[cSize];
-
-	return c_v;
+	char *s = &(c->conv[c->myCNode]);
+	return (conv_chunk *)&s[cSize];
 }
 
 static void swap_decl(decl_chunk *d) {
@@ -262,13 +247,7 @@ static void swap_decl(decl_chunk *d) {
 }
 
 decl_chunk *get_decl(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	decl_chunk *d = nullptr;
-
-	s = c->conv;
-	d = (decl_chunk *)&s[cSize];
-
-	return d;
+	return (decl_chunk *)&c->conv[cSize];
 }
 
 static void swap_fall(fall_chunk *l) {
@@ -278,13 +257,8 @@ static void swap_fall(fall_chunk *l) {
 }
 
 fall_chunk *get_fall(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	fall_chunk *f = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	f = (fall_chunk *)&s[cSize];
-
-	return f;
+	char *s = &(c->conv[c->myCNode]);
+	return (fall_chunk *)&s[cSize];
 }
 
 static void swap_lnode(lnode_chunk *l) {
@@ -305,13 +279,8 @@ static void swap_lnode(lnode_chunk *l) {
 }
 
 lnode_chunk *get_lnode(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	lnode_chunk *l = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	l = (lnode_chunk *)&s[cSize];
-
-	return l;
+	char *s = &(c->conv[c->myCNode]);
+	return (lnode_chunk *)&s[cSize];
 }
 
 static void swap_node(node_chunk *n) {
@@ -331,13 +300,8 @@ static void swap_node(node_chunk *n) {
 }
 
 node_chunk *get_node(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	node_chunk *n = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	n = (node_chunk *)&s[cSize];
-
-	return n;
+	char *s = &(c->conv[c->myCNode]);
+	return (node_chunk *)&s[cSize];
 }
 
 static void swap_entry(entry_chunk *e) {
@@ -347,13 +311,8 @@ static void swap_entry(entry_chunk *e) {
 }
 
 entry_chunk *get_entry(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	entry_chunk *e = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	e = (entry_chunk *)&s[cSize];
-
-	return e;
+	char *s = &(c->conv[c->myCNode]);
+	return (entry_chunk *)&s[cSize];
 }
 
 entry_chunk *get_hash_entry(Conv *c, int32 cSize) {
@@ -372,13 +331,8 @@ static void swap_text(text_chunk *t) {
 }
 
 text_chunk *get_text(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	text_chunk *t = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	t = (text_chunk *)&s[cSize];
-
-	return t;
+	char *s = &(c->conv[c->myCNode]);
+	return (text_chunk *)&s[cSize];
 }
 
 static void swap_mesg(mesg_chunk *m) {
@@ -387,13 +341,8 @@ static void swap_mesg(mesg_chunk *m) {
 }
 
 mesg_chunk *get_mesg(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	mesg_chunk *m = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	m = (mesg_chunk *)&s[cSize];
-
-	return m;
+	char *s = &(c->conv[c->myCNode]);
+	return (mesg_chunk *)&s[cSize];
 }
 
 static void swap_reply(reply_chunk *r) {
@@ -402,13 +351,8 @@ static void swap_reply(reply_chunk *r) {
 }
 
 reply_chunk *get_reply(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	reply_chunk *r = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	r = (reply_chunk *)&s[cSize];
-
-	return r;
+	char *s = &(c->conv[c->myCNode]);
+	return (reply_chunk *)&s[cSize];
 }
 
 static void swap_c_reply(c_reply_chunk *c) {
@@ -430,13 +374,8 @@ static void swap_w_reply(w_reply_chunk *c) {
 }
 
 w_reply_chunk *get_w_reply(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	w_reply_chunk *w = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	w = (w_reply_chunk *)&s[cSize];
-
-	return w;
+	char *s = &(c->conv[c->myCNode]);
+	return (w_reply_chunk *)&s[cSize];
 }
 
 static void swap_w_entry(w_entry_chunk *w) {
@@ -445,14 +384,8 @@ static void swap_w_entry(w_entry_chunk *w) {
 }
 
 w_entry_chunk *get_w_entry(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	w_entry_chunk *w = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	w = (w_entry_chunk *)&s[cSize];
-
-	//swap_w_entry( w );
-	return w;
+	char *s = &(c->conv[c->myCNode]);
+	return (w_entry_chunk *)&s[cSize];
 }
 
 static void swap_goto(goto_chunk *g) {
@@ -461,13 +394,8 @@ static void swap_goto(goto_chunk *g) {
 }
 
 goto_chunk *get_goto(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	goto_chunk *g = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	g = (goto_chunk *)&s[cSize];
-
-	return g;
+	char *s = &(c->conv[c->myCNode]);
+	return (goto_chunk *)&s[cSize];
 }
 
 static void swap_c_goto(c_goto_chunk *c) {
@@ -479,13 +407,8 @@ static void swap_c_goto(c_goto_chunk *c) {
 }
 
 c_goto_chunk *get_c_goto(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	c_goto_chunk *cg = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	cg = (c_goto_chunk *)&s[cSize];
-
-	return cg;
+	char *s = &(c->conv[c->myCNode]);
+	return (c_goto_chunk *)&s[cSize];
 }
 
 static void swap_misc(misc_chunk *m) {
@@ -494,13 +417,8 @@ static void swap_misc(misc_chunk *m) {
 }
 
 misc_chunk *get_misc(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	misc_chunk *m = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	m = (misc_chunk *)&s[cSize];
-
-	return m;
+	char *s = &(c->conv[c->myCNode]);
+	return (misc_chunk *)&s[cSize];
 }
 
 static void swap_c_misc(c_misc_chunk *c) {
@@ -514,22 +432,13 @@ static void swap_c_misc(c_misc_chunk *c) {
 }
 
 c_misc_chunk *get_c_misc(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	c_misc_chunk *cm = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	cm = (c_misc_chunk *)&s[cSize];
-
-	return cm;
+	char *s = &(c->conv[c->myCNode]);
+	return (c_misc_chunk *)&s[cSize];
 }
 
 int32 get_long(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	int32 *l = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	l = (int32 *)&s[cSize];
-
+	char *s = &(c->conv[c->myCNode]);
+	int32 *l = (int32 *)&s[cSize];
 	return *l;
 }
 
