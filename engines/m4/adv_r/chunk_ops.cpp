@@ -316,13 +316,8 @@ entry_chunk *get_entry(Conv *c, int32 cSize) {
 }
 
 entry_chunk *get_hash_entry(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	entry_chunk *e = nullptr;
-
-	s = &(c->conv[0]);
-	e = (entry_chunk *)&s[cSize];
-
-	return e;
+	char *s = &(c->conv[0]);
+	return (entry_chunk *)&s[cSize];
 }
 
 static void swap_text(text_chunk *t) {
@@ -443,12 +438,7 @@ int32 get_long(Conv *c, int32 cSize) {
 }
 
 char *get_string(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	char *c_s = nullptr;
-
-	s = c->conv;
-	c_s = (char *)&s[cSize];
-	return c_s;
+	return &c->conv[cSize];
 }
 
 int conv_ops_cond_successful(int32 l_op, int32 op, int32 r_op) {
