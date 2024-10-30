@@ -845,7 +845,7 @@ static int conv_run(Conv *c) {
 						} else { //linear node.
 							conv_set_event(-1);
 
-							Common::strcpy_s(_G(player).verb, get_conv_name()); //was verb.
+							Common::strcpy_s(_G(player).verb, _GC(conv_name)); // was verb.
 							c->c_entry_num = 1;
 						}
 					}
@@ -859,7 +859,7 @@ static int conv_run(Conv *c) {
 						mouse_lock_sprite(5);
 
 						conv_set_event(-1);
-						Common::strcpy_s(_G(player).verb, get_conv_name());
+						Common::strcpy_s(_G(player).verb, _GC(conv_name));
 
 						ok = 0;
 					}
@@ -907,7 +907,7 @@ static void convtestCallback(void *a, void *) {
 	_G(cdd).mesg_snd_file = _G(cdd).snd_files[c->c_entry_num - 1];
 	_G(cdd).player_non_player = 1;
 
-	Common::strcpy_s(_G(player).verb, get_conv_name());
+	Common::strcpy_s(_G(player).verb, _GC(conv_name));
 	_G(player).command_ready = true;
 	conv_set_event(-1); // Must have or conv freezes.
 }

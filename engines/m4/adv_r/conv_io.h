@@ -109,8 +109,6 @@ void conv_reset_all();
 void conv_play(Conv *c);
 void conv_play();
 
-void set_conv_name(const char *s);
-const char *get_conv_name();
 const char *conv_sound_to_play();
 int32 conv_whos_talking();
 

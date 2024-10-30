@@ -85,14 +85,6 @@ void cdd_init(void) {
 	_G(cdd).mesg_snd_file = nullptr;
 }
 
-void set_conv_name(const char *s) {
-	Common::strcpy_s(_GC(conv_name), s);
-}
-
-const char *get_conv_name() {
-	return _GC(conv_name);
-}
-
 Conv *conv_get_handle(void) {
 	return _GC(globConv);
 }
@@ -336,7 +328,7 @@ void find_and_set_conv_name(Conv *c) {
 		case CONV_CHUNK:
 			conv = get_conv(c, ent);
 			assert(conv);
-			set_conv_name(get_string(c, c->myCNode + ent + sizeof(conv_chunk)));
+			Common::strcpy_s(_GC(conv_name), get_string(c, c->myCNode + ent + sizeof(conv_chunk)));
 			break;
 
 		default:
@@ -574,7 +566,7 @@ static Conv *conv_restore_state(Conv *c) {
 	ent = 0; c->myCNode = 0;
 
 	find_and_set_conv_name(c);
-	cstrncpy(fname, get_conv_name(), 8);
+	cstrncpy(fname, _GC(conv_name), 8);
 	fname[8] = '\0';
 
 	if (_GC(convSave).empty())
