@@ -133,9 +133,17 @@ void BaseRenderOpenGL3D::setLightParameters(int index, const DXVector3 &position
 		glLightfv(GL_LIGHT0 + index, GL_SPOT_DIRECTION, direction);
 
 		glLightf(GL_LIGHT0 + index, GL_SPOT_EXPONENT, 0.0f);
-		// wme sets the phi angle to 1.0 (in radians)
-		// so either 180/pi or (180/pi)/2 should give the same result
-		glLightf(GL_LIGHT0 + index, GL_SPOT_CUTOFF, (180.0f / (float)M_PI));
+		// WME sets the theta angle to 0.5 (radians) and (28.64789 degree) - inner cone
+		// WME sets the phi angle to 1.0 (radians) and (57.29578 degree) - outer cone
+		// inner cone - angle within which the spotlight has maximum intensity
+		// outer cone - angle at the edge of the spotlight's cone
+		// 0 <-> 28.64789 - maximum light intensity
+		// 28.64789 <-> 57.29578 - light fades smoothly to zero
+		// 57.29578 <-> 90 - there is no light
+		// The smooth transition between inner code and outer cone create soft spotlight
+		// There is no replacement for smooth transition in fixed OpenGL lights.
+		// So, inner cone angle is used instead for better visual match
+		glLightf(GL_LIGHT0 + index, GL_SPOT_CUTOFF, 0.5f * (180.0f / (float)M_PI));
 	} else {
 		glLightf(GL_LIGHT0 + index, GL_SPOT_CUTOFF, 180.0f);
 	}
