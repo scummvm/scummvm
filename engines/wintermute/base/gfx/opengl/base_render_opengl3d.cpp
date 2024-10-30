@@ -496,20 +496,38 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 	if (_state != RSTATE_2D || force) {
 		_state = RSTATE_2D;
 
-		// some states are still missing here
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 		glDisable(GL_LIGHTING);
 		glDisable(GL_DEPTH_TEST);
+
+		glEnable(GL_BLEND);
+		setSpriteBlendMode(Graphics::BLEND_NORMAL);
+
+		glEnable(GL_ALPHA_TEST);
+		glAlphaFunc(GL_GEQUAL, 0.0f);
+
+		glPolygonMode(GL_FRONT, GL_FILL);
+		glFrontFace(GL_CCW);
+		glEnable(GL_CULL_FACE);
 		glDisable(GL_STENCIL_TEST);
+
 		glDisable(GL_FOG);
 
-		glEnable(GL_CULL_FACE);
-		glFrontFace(GL_CCW);
-		glEnable(GL_ALPHA_TEST);
-		glEnable(GL_BLEND);
-		glAlphaFunc(GL_GEQUAL, 0.0f);
-		glPolygonMode(GL_FRONT, GL_FILL);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//
+		// WME has this. It's unknown if it's really needed
+		// Support this would require higher OpenGL version
+		//
+		// D3DTSS_COLOROP               = D3DTOP_MODULATE
+		// D3DTSS_COLORARG1             = D3DTA_TEXTURE
+		// D3DTSS_COLORARG              = D3DTA_DIFFUSE
+		// D3DTSS_ALPHAOP               = D3DTOP_MODULATE
+		// D3DTSS_ALPHAARG1             = D3DTA_TEXTURE
+		// D3DTSS_ALPHAARG2             = D3DTA_DIFFUSE
+		// D3DTSS_MIPFILTER             = D3DTEXF_NONE
+		// D3DTSS_TEXCOORDINDEX         = 0
+		// D3DTSS_TEXTURETRANSFORMFLAGS = D3DTTFF_DISABLE
 
 		glViewport(0, 0, _width, _height);
 		setProjection2D();
@@ -522,16 +540,31 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 	if (_state != RSTATE_3D || force) {
 		_state = RSTATE_3D;
 
+		glEnable(GL_NORMALIZE);
+
+		//
+		// WME has this. It's unknown if it's really needed
+		// Support this would require higher OpenGL version
+		//
+		// D3DTSS_COLORARG1 = D3DTA_TEXTURE
+		// D3DTSS_COLORARG2 = D3DTA_CURRENT
+		// D3DTSS_COLOROP   = D3DTOP_MODULATE
+		// D3DTSS_ALPHAOP   = D3DTOP_SELECTARG1
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LIGHTING);
-		glEnable(GL_BLEND);
-		// wme uses 8 as a reference value and Direct3D expects it to be in the range [0, 255]
+		glEnable(GL_ALPHA_TEST);
+		// WME uses 8 as a reference value and Direct3D expects it to be in the range [0, 255]
 		// 8 / 255 ~ 0.0313
 		glAlphaFunc(GL_GEQUAL, 0.0313f);
 
 		setAmbientLightRenderState();
 
-		glEnable(GL_NORMALIZE);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 
 		if (camera)
 			_camera = camera;
@@ -558,26 +591,30 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 			_farClipPlane = DEFAULT_FAR_PLANE;
 		}
 
+		// lighting
+		glEnable(GL_LIGHTING);
+
 		for (int i = 0; i < getMaxActiveLights(); ++i) {
 			glLightfv(GL_LIGHT0 + i, GL_POSITION, _lightPositions[i]);
 			glLightfv(GL_LIGHT0 + i, GL_SPOT_DIRECTION, _lightDirections[i]);
 		}
 
+		// fog
 		bool fogEnabled;
 		uint32 fogColor;
 		float fogStart, fogEnd;
 		_gameRef->getFogParams(&fogEnabled, &fogColor, &fogStart, &fogEnd);
 		if (fogEnabled) {
 			glEnable(GL_FOG);
+			GLfloat color[4] = { RGBCOLGetR(fogColor) / 255.0f,
+								 RGBCOLGetG(fogColor) / 255.0f,
+								 RGBCOLGetB(fogColor) / 255.0f,
+								 RGBCOLGetA(fogColor) / 255.0f };
+			glFogfv(GL_FOG_COLOR, color);
 			glFogi(GL_FOG_MODE, GL_LINEAR);
 			glFogf(GL_FOG_START, fogStart);
 			glFogf(GL_FOG_END, fogEnd);
 
-			GLfloat color[4] = { RGBCOLGetR(fogColor) / 255.0f,
-			                     RGBCOLGetG(fogColor) / 255.0f,
-			                     RGBCOLGetB(fogColor) / 255.0f,
-			                     RGBCOLGetA(fogColor) / 255.0f };
-			glFogfv(GL_FOG_COLOR, color);
 		} else {
 			glDisable(GL_FOG);
 		}
@@ -635,6 +672,7 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 
 	glBindTexture(GL_TEXTURE_2D, tex.getTextureName());
 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	// for sprites we clamp to the edge, to avoid line fragments at the edges
 	// this is not done by wme, though
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
