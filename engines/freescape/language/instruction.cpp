@@ -480,7 +480,7 @@ bool FreescapeEngine::checkIfGreaterOrEqual(FCLInstruction &instruction) {
 
 	uint16 variable = instruction._source;
 	int8 value = instruction._destination;
-	debugC(1, kFreescapeDebugCode, "Check if variable %d is greater than equal to %d!", variable, value);
+	debugC(1, kFreescapeDebugCode, "Check if variable %d with value %d is greater or equal to %d!", variable, (int8)_gameStateVars[variable], value);
 	return ((int8)_gameStateVars[variable] >= value);
 }
 
@@ -489,7 +489,7 @@ bool FreescapeEngine::checkIfLessOrEqual(FCLInstruction &instruction) {
 
 	uint16 variable = instruction._source;
 	int8 value = instruction._destination;
-	debugC(1, kFreescapeDebugCode, "Check if variable %d is less than equal to %d!", variable, value);
+	debugC(1, kFreescapeDebugCode, "Check if variable %d with value %d is less or equal to %d!", variable, (int8)_gameStateVars[variable], value);
 	return ((int8)_gameStateVars[variable] <= value);
 }
 
@@ -497,7 +497,7 @@ bool FreescapeEngine::checkIfLessOrEqual(FCLInstruction &instruction) {
 bool FreescapeEngine::executeEndIfNotEqual(FCLInstruction &instruction) {
 	uint16 variable = instruction._source;
 	uint16 value = instruction._destination;
-	debugC(1, kFreescapeDebugCode, "End condition if variable %d is not equal to %d!", variable, value);
+	debugC(1, kFreescapeDebugCode, "End condition if variable %d with value %d is not equal to %d!", variable, (int8)_gameStateVars[variable], value);
 	return (_gameStateVars[variable] != value);
 }
 

@@ -349,12 +349,12 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 		_gfx->_paperColor = 0;
 	resetInput();
 
-	if (entranceID > 0) {
+	/*if (entranceID > 0) {
 		Entrance *entrance = (Entrance *)_currentArea->entranceWithID(entranceID);
 		assert(entrance);
 		executeEntranceConditions(entrance);
 		executeMovementConditions();
-	}
+	}*/
 }
 
 void CastleEngine::initGameState() {
