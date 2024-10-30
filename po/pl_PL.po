@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-30 18:43+0000\n"
+"PO-Revision-Date: 2024-10-30 19:12+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
@@ -5383,6 +5383,7 @@ msgstr ""
 "W przypadku klawiatur zewnętrznych, w których brakuje klawiszy specjalnych, "
 "np. klawiatury Apple Magic Keyboard dla iPadów, klawisze specjalne można "
 "aktywować za pomocą następujących kombinacji klawiszy:\n"
+"\n"
 "\n"
 "| Kombinacja klawiszy | Akcja\n"
 "| --------------------|-------------------\n"
@@ -11491,58 +11492,48 @@ msgstr "Wyjdź do menu"
 
 #: engines/stark/metaengine.cpp:255
 msgid "Cycle back through inventory cursor items"
-msgstr "Przechodź wstecz przez elementy kursora w ekwipunku"
+msgstr "Przechodź do tyłu przez elementy kursora w ekwipunku"
 
 #: engines/stark/metaengine.cpp:261
 msgid "Cycle forward through inventory cursor items"
-msgstr ""
+msgstr "Przechodź do przodu przez elementy kursora w ekwipunku"
 
 #. I18N: A popup on screen shows shows the exits
 #: engines/stark/metaengine.cpp:274
 msgid "Display all exits on current location"
-msgstr ""
+msgstr "Wyświetl wszystkie wyjścia z bieżącej lokalizacji"
 
 #: engines/stark/metaengine.cpp:292
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Scroll up in inventory"
-msgstr "Otwórz/zamknij ekwipunek"
+msgstr "Przewijaj ekwipunek w górę"
 
 #: engines/stark/metaengine.cpp:299
-#, fuzzy
-#| msgid "Show inventory"
 msgid "Scroll down in inventory"
-msgstr "Pokaż ekwipunek"
+msgstr "Przewijaj ekwipunek w dół"
 
 #: engines/stark/metaengine.cpp:306
 msgid "Scroll up in your dialogues"
-msgstr ""
+msgstr "Przewijaj rozmowy w górę"
 
 #: engines/stark/metaengine.cpp:312
 msgid "Scroll down in your dialogues"
-msgstr ""
+msgstr "Przewijaj rozmowy w dół"
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "Highlight next dialogue"
 msgid "go to next dialogue"
-msgstr "Podświetl następny dialog"
+msgstr "idź do kolejnej rozmowy"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "Go to previous directory level"
 msgid "go to previous dialogues"
-msgstr "Przejdź do poprzedniego katalogu"
+msgstr "idź do poprzedniej rozmowę"
 
 #: engines/stark/metaengine.cpp:328
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Select dialogue"
-msgstr "Pomiń dialog"
+msgstr "Wybierz rozmowę"
 
 #: engines/stark/metaengine.cpp:335
 msgid "Skip video sequence or dialogue"
-msgstr ""
+msgstr "Pomiń sekwencję wideo albo rozmowę"
 
 #: engines/stark/stark.cpp:106
 msgid "Software renderer does not support modded assets"
@@ -11735,10 +11726,8 @@ msgid "Saturn CD version is not yet supported"
 msgstr "Wersja Saturn CD nie jest jeszcze obsługiwana"
 
 #: engines/tinsel/metaengine.cpp:43
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Remove Black Bars"
-msgstr "Ruch do tyłu"
+msgstr "Usuń czarne pasy"
 
 #: engines/tinsel/metaengine.cpp:44
 msgid ""
@@ -11746,38 +11735,34 @@ msgid ""
 "at 640x480. Enabling this option removes the forced letterbox effect, so "
 "that the game fits better on screens with an aspect ratio wider than 4:3."
 msgstr ""
+"Gra jest oryginalnie renderowana w rozdzielczości 640x432, która następnie "
+"jest wyświetlana w rozdzielczości 640x480 z czarnymi pasami. Włączenie tej "
+"opcji usuwa wymuszony efekt czarnych pasów, dzięki czemu gra lepiej pasuje "
+"do ekranów o proporcjach szerszych niż 4:3."
 
 #: engines/tinsel/metaengine.cpp:241
-#, fuzzy
-#| msgid "Game Options"
 msgid "Save/Load keymappings"
-msgstr "Opcje gry"
+msgstr "Mapowanie klawiszy zapisywania i wczytywania"
 
 #: engines/tinsel/metaengine.cpp:306
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Options Dialog"
-msgstr "Pomiń dialog"
+msgstr "Okno opcji"
 
 #: engines/tinsel/metaengine.cpp:340
-#, fuzzy
 msgid "Page Up in save/load menu"
-msgstr "Włóż dysk zapisu"
+msgstr "Strona w górę w menu zapisywania i wczytywania"
 
 #: engines/tinsel/metaengine.cpp:346
-#, fuzzy
 msgid "Page down in save/load menu"
-msgstr "Włóż dysk zapisu"
+msgstr "Strona w dół w menu zapisywania i wczytywania"
 
 #: engines/tinsel/metaengine.cpp:352
-#, fuzzy
 msgid "Go to start of save/load menu"
-msgstr "Włóż dysk zapisu"
+msgstr "Idź na początek menu zapisywania i wczytywania"
 
 #: engines/tinsel/metaengine.cpp:358
-#, fuzzy
 msgid "Go to end of save/load menu"
-msgstr "Włóż dysk zapisu"
+msgstr "Idź na koniec menu zapisywania i wczytywania"
 
 #: engines/tony/tony.cpp:248
 #, c-format
@@ -11814,22 +11799,17 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Nie udało się odnaleźć '%s' pliku."
 
 #: engines/trecision/metaengine.cpp:137
-#, fuzzy
-#| msgid "Skip line"
 msgid "Skip video"
-msgstr "Pomiń linię"
+msgstr "Pomiń wideo"
 
 #. I18N: Toggles walking speed of actor
 #: engines/trecision/metaengine.cpp:144
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fast walk"
-msgstr "Przełącz tryb szybki"
+msgstr "Przełącz szybkie chodzenie"
 
 #: engines/trecision/metaengine.cpp:163
-#, fuzzy
 msgid "Open system menu"
-msgstr "Menu gry"
+msgstr "Otwórz menu systemowe"
 
 #: engines/twine/detection.cpp:175
 msgid "This version requires Giflib which was not compiled into ScummVM"
@@ -12081,18 +12061,20 @@ msgstr "Wideo:"
 #. I18N: Setting to switch toiled paper to be shown as "over".
 #: engines/twp/dialogs.cpp:37
 msgid "Toilet paper over"
-msgstr ""
+msgstr "Brak papieru toaletowego"
 
 #: engines/twp/dialogs.cpp:38
 msgid ""
 "The toilet paper in some toilets will be shown \"over\".\n"
 "It's a joke option that has no effects on the gameplay."
 msgstr ""
+"W niektórych toaletach będzie informacja o braku papieru toaletowego.\n"
+"To żartobliwa opcja, która nie ma wpływu na rozgrywkę."
 
 #. I18N: Setting to enable or disable additional jokes in the game.
 #: engines/twp/dialogs.cpp:41
 msgid "Annoying in-jokes"
-msgstr ""
+msgstr "Irytujące żarty wewnętrzne"
 
 #: engines/twp/dialogs.cpp:42
 msgid ""
@@ -12101,6 +12083,10 @@ msgid ""
 "There is a game achievement that can be obtained only if the in-jokes option "
 "is switched on."
 msgstr ""
+"Gra będzie uwzględniać wewnętrzne żarty i odniesienia do poprzednich gier "
+"przygodowych, zarówno w formie dialogów, jak i obiektów.\n"
+"Istnieje osiągnięcie w grze, które można uzyskać tylko wtedy, gdy opcja "
+"wewnętrznych żartów jest włączona."
 
 #: engines/twp/dialogs.cpp:44
 msgid "Controls:"
@@ -12109,128 +12095,99 @@ msgstr "Kontrolki:"
 #. I18N: Setting to invert verb colors or keep the original verb colors.
 #: engines/twp/dialogs.cpp:48
 msgid "Invert verb colors"
-msgstr ""
+msgstr "Odwróć kolory czasownika"
 
 #. I18N: Setting to use retro or modern fonts.
 #: engines/twp/dialogs.cpp:50
 msgid "Retro Fonts"
-msgstr ""
+msgstr "Czcionki retro"
 
 #. I18N: Setting to use retro or modern verbs.
 #: engines/twp/dialogs.cpp:52
 msgid "Retro Verbs"
-msgstr ""
+msgstr "Czasowniki retro"
 
 #. I18N: Setting to use classic sentence or modern sentence.
 #: engines/twp/dialogs.cpp:54
 msgid "Classic Sentence"
-msgstr ""
+msgstr "Zdania klasyczne"
 
 #. I18N: Settings to enable or disable Ransome unbeeped DLC.
 #: engines/twp/dialogs.cpp:57
 msgid "Ransome *unbeeped* (DLC)"
-msgstr ""
+msgstr "DLC Ransome *unbeeped*"
 
 #: engines/twp/metaengine.cpp:151
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select highlighted verb"
-msgstr "Wybierz shader"
+msgstr "Zaznacz podświetlony czasownik"
 
 #: engines/twp/metaengine.cpp:156
-#, fuzzy
-#| msgid "Go to previous directory level"
 msgid "Go to previous object"
-msgstr "Przejdź do poprzedniego katalogu"
+msgstr "Idź do poprzedniego obiektu"
 
 #: engines/twp/metaengine.cpp:157
-#, fuzzy
 msgid "Go to next object"
-msgstr "Opcje"
+msgstr "Idź do następnego obiektu"
 
 #: engines/twp/metaengine.cpp:158
 msgid "Select verb/item Left"
-msgstr ""
+msgstr "Wybierz czasownik/element z lewej"
 
 #: engines/twp/metaengine.cpp:159
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Select verb/item Right"
-msgstr "Ślizg w prawo"
+msgstr "Wybierz czasownik/element z prawej"
 
 #: engines/twp/metaengine.cpp:160
 msgid "Select verb/item Up"
-msgstr ""
+msgstr "Wybierz czasownik/element u góry"
 
 #: engines/twp/metaengine.cpp:161
 msgid "Select verb/item Down"
-msgstr ""
+msgstr "Wybierz czasownik/element u dołu"
 
 #: engines/twp/metaengine.cpp:163
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 1"
-msgstr "Grupuj"
+msgstr "Wybierz aktora 1"
 
 #: engines/twp/metaengine.cpp:164
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 2"
-msgstr "Grupuj"
+msgstr "Wybierz aktora 2"
 
 #: engines/twp/metaengine.cpp:165
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 3"
-msgstr "Grupuj"
+msgstr "Wybierz aktora 3"
 
 #: engines/twp/metaengine.cpp:166
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 4"
-msgstr "Grupuj"
+msgstr "Wybierz aktora 4"
 
 #: engines/twp/metaengine.cpp:167
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 5"
-msgstr "Grupuj"
+msgstr "Wybierz aktora 5"
 
 #: engines/twp/metaengine.cpp:168
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 1"
-msgstr "Wybierz shader"
+msgstr "Zaznacz wybór 1"
 
 #: engines/twp/metaengine.cpp:169
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 2"
-msgstr "Wybierz shader"
+msgstr "Zaznacz wybór 2"
 
 #: engines/twp/metaengine.cpp:170
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 3"
-msgstr "Wybierz shader"
+msgstr "Zaznacz wybór 3"
 
 #: engines/twp/metaengine.cpp:171
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 4"
-msgstr "Wybierz shader"
+msgstr "Zaznacz wybór 4"
 
 #: engines/twp/metaengine.cpp:172
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 5"
-msgstr "Wybierz shader"
+msgstr "Zaznacz wybór 5"
 
 #: engines/twp/metaengine.cpp:173
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 6"
-msgstr "Wybierz shader"
+msgstr "Zaznacz wybór 6"
 
 #: engines/twp/metaengine.cpp:174
 msgid "Select Next Actor"
@@ -12251,7 +12208,7 @@ msgstr "Pokazuj punkty aktywne"
 #: engines/twp/twp.cpp:829
 msgid ""
 "You selected Ransome *unbeeped* (DLC) but the DLC has not been detected!"
-msgstr ""
+msgstr "Wybrano DLC Ransome *unbeeped*, ale nie zostało ono wykryte!"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
