@@ -32,7 +32,7 @@
 namespace Scumm {
 
 #define ASC_DEVICE_RATE		0x56EE8BA3
-#define VBL_UPDATE_RATE		0x003C25BD
+#define VBL_UPDATE_RATE		0x003C0000;
 #define PCM_BUFFER_RESERVE	64
 #define RATECNV_BIT_PRECSN	24
 
@@ -206,7 +206,9 @@ int MacPlayerAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	};
 
 	static const char errFnNames[2][8] = {"Buffers", "Drivers"};
-	int errNo = (!_buffers[0].size || !_buffers[1].size) ? 0 : ((_buffers[0].rateConvAcc == -1 || _buffers[1].rateConvAcc == -1) ? 1 : -1);
+	int errNo = -1;
+	for (int i = 0; i < _numGroups && errNo == -1; ++i) 
+		errNo = !_buffers[i].size ? 0 : (_buffers[i].rateConvAcc == -1 ? 1 : -1);
 	if (errNo != -1)
 		error("MacPlayerAudioStream::readBuffer(): init%s() must be called before playback", errFnNames[errNo]);
 
