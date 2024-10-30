@@ -727,15 +727,16 @@ void Adlib::OnTimer() {
 									
 									// TODO: Move an offset in global 2248 forward based on
 									// the struct
+									// TODO: Pushes
+									// push word ptr[224Ah]
+									// push word ptr[2248h]
+									// TODO: Is the data type wide enough?
+									// TODO: In the original code, we throw away the upper byte
+									// before the calculation
+
+									Func19BE(gArray2288[bp8] << 0x4);
 									/*
-									push word ptr[224Ah]
-									push	word ptr [2248h]
-									mov	di,[bp-8h]
-									mov	al,[di+2288h]
-									xor	ah,ah
-									shl	ax,4h
-									push	ax
-									call	far 0017h:19BEh
+									
 									mov	[bp-14h],ax
 									mov	[bp-12h],dx
 									mov	al,[bp-8h]
