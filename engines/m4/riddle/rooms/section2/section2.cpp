@@ -48,6 +48,12 @@ const char *S2_MEI_SHADOW_NAMES[] = {
 	"mctsh5"
 };
 
+const int16 S2_PEASANT_NORMAL_DIRS[] = { 240, -1 };
+const char *S2_PEASANT_NORMAL_NAMES[] = { "pesky walk pos3" };
+const int16 S2_PEASANT_SHADOW_DIRS[] = { 250, -1 };
+const char *S2_PEASANT_SHADOW_NAMES[] = { "shadow pesky walk pos3" };
+
+
 Section2::Section2() : Rooms::Section() {
 	add(201, &_room201);
 	add(202, &_room202);

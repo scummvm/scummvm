@@ -29,6 +29,65 @@ namespace Riddle {
 namespace Rooms {
 
 class Room203 : public Room {
+private:
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+	int _val5 = 0;
+	int _val6 = 0;
+	int _val7 = 0;
+	int _val8 = 0;
+	int _val9 = 0;
+	int _val10 = 0;
+	int _val11 = 0;
+	int _trigger1 = -1;
+	int _trigger2 = -1;
+	int _trigger3 = -1;
+	int _trigger4 = -1;
+	int _trigger5 = -1;
+	int _shadow3 = 0;
+	machine *_gk = nullptr;
+	int _gkFrame = 0;
+	int _gkMode = 0, _gkShould = 0;
+	machine *_oldLady = nullptr;
+	int _oldLadyFrame = 0;
+	int _oldLadyNoHelmet = 0;
+	int _oldLadyFeedingBirds = 0;
+	int _oldLadyMode = 0, _oldLadyShould = 0;
+	machine *_pigeons1 = nullptr;
+	machine *_pigeons3 = nullptr;
+	int _pigeonsSeries1 = 0;
+	int _pigeonsSeries3 = 0;
+	machine *_official = nullptr;
+	machine *_officialShadow = nullptr;
+	int _officialStander = 0;
+	int _officialMode = 0, _officialShould = 0;
+	int _officialTurn9_11 = 0;
+	int _officialTurn11_3 = 0;
+	int _officialTurn3_7 = 0;
+	machine *_peasant = nullptr;
+	machine *_peasantShadow = nullptr;
+	int _peasantSeries = 0;
+	int _peasantSeriesShadow = 0;
+	int _peasantRocks = 0;
+	int _peasantRocksShadow = 0;
+	int _peskyYellsThief = 0;
+	int _peasantMode = 0, _peasantShould = 0;
+	int _peasantX = 0;
+	int _peasantY = 0;
+	int _peasantScale = 0;
+	int _peasantLayer = 0;
+	bool _flag1 = false;
+
+	void setupHelmetHotspot();
+	void setupPeasantHotspot(int mode);
+	void setupGk();
+	void setupOldLady();
+	void setupPigeons();
+	void setupOfficial();
+	void setupPeasant();
+
 public:
 	Room203() : Room() {}
 	~Room203() override {}
