@@ -359,35 +359,6 @@ bool MacGuiImpl::handleMenu(int id, Common::String &name) {
 	case 303:	// Paste
 	case 304:	// Clear
 		return true;
-
-	// Window menu
-	case 402: // Tiny
-	case 403: // Medium
-	case 404: // Large
-		return true;
-
-	case 405: // Graphics Smoothing
-		_vm->mac_toggleSmoothing();
-		return true;
-
-	case 500: // Voice Only
-		ConfMan.setBool("subtitles", false);
-		ConfMan.setBool("speech_mute", false);
-		ConfMan.flushToDisk();
-		_vm->syncSoundSettings();
-		return true;
-	case 501: // Text Only
-		ConfMan.setBool("subtitles", true);
-		ConfMan.setBool("speech_mute", true);
-		ConfMan.flushToDisk();
-		_vm->syncSoundSettings();
-		return true;
-	case 502: // Voice and Text
-		ConfMan.setBool("subtitles", true);
-		ConfMan.setBool("speech_mute", false);
-		ConfMan.flushToDisk();
-		_vm->syncSoundSettings();
-		return true;
 	}
 
 	return false;
