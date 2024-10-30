@@ -45,7 +45,7 @@ MidiParser_SCI::MidiParser_SCI(SciMusic *music) :
 	// mididata contains delta in 1/60th second
 	// values of ppqn and tempo are found experimentally and may be wrong
 	_ppqn = 1;
-	setTempo(16667);
+	MidiParser::setTempo(16667);
 
 	_track = nullptr;
 	_pSnd = nullptr;
@@ -61,7 +61,7 @@ MidiParser_SCI::MidiParser_SCI(SciMusic *music) :
 }
 
 MidiParser_SCI::~MidiParser_SCI() {
-	unloadMusic();
+	MidiParser_SCI::unloadMusic();
 	// we do this, so that MidiParser won't be able to call his own ::allNotesOff()
 	//  this one would affect all channels and we can't let that happen
 	_driver = nullptr;
