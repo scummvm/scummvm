@@ -40,6 +40,9 @@
 #include "qdengine/qdcore/qd_animation.h"
 #include "qdengine/qdcore/qd_animation_frame.h"
 #include "qdengine/qdcore/qd_file_manager.h"
+#include "qdengine/qdcore/qd_game_dispatcher.h"
+#include "qdengine/qdcore/qd_game_object.h"
+#include "qdengine/qdcore/qd_game_scene.h"
 #include "qdengine/qdengine.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 
@@ -404,6 +407,28 @@ void showArchives() {
 	ImGui::End();
 }
 
+void showSceneObjects() {
+	if (!_state->_showSceneObjects)
+		return;
+
+	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(300, 250), ImGuiCond_FirstUseEver);
+
+	if (ImGui::Begin("Scene Objects", &_state->_showSceneObjects)) {
+		qdGameScene *scene;
+		if (qdGameDispatcher::get_dispatcher() && ((scene = qdGameDispatcher::get_dispatcher()->get_active_scene()))) {
+			if (!scene->object_list().empty()) {
+				for (auto &it : g_engine->_visible_objects) {
+					if (ImGui::Selectable((char *)transCyrillic(it->name()), _state->_objectToDisplay == it->name())) {
+						_state->_objectToDisplay = it->name();
+					}
+				}
+			}
+		}
+	}
+	ImGui::End();
+}
+
 void onImGuiInit() {
 	ImGuiIO &io = ImGui::GetIO();
 	io.Fonts->AddFontDefault();
@@ -452,12 +477,14 @@ void onImGuiRender() {
 			ImGui::SeparatorText("Windows");
 
 			ImGui::MenuItem("Archives", NULL, &_state->_showArchives);
+			ImGui::MenuItem("Scene Objects", NULL, &_state->_showSceneObjects);
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
 	}
 
 	showArchives();
+	showSceneObjects();
 }
 
 void onImGuiCleanup() {

@@ -47,10 +47,12 @@ struct FileTree {
 
 typedef struct ImGuiState {
 	bool _showArchives = false;
+	bool _showSceneObjects = false;
 
 	Common::HashMap<Common::String, ImGuiImage> _frames;
 
 	Common::Path _fileToDisplay;
+	Common::String _objectToDisplay;
 
 	int _qdaToDisplayFrame = -1;
 	int _qdaToDisplayFrameCount = 0;
