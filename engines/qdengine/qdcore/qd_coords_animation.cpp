@@ -268,7 +268,11 @@ bool qdCoordsAnimation::save_script(Common::WriteStream &fh, int indent) const {
 		fh.writeString(" name=\" \"");
 	}
 
-	fh.writeString(Common::String::format(" type=\"%d\"", (int)_type));
+	if (debugChannelSet(-1, kDebugLog))
+		fh.writeString(Common::String::format(" type=\"%s\"", _type == CA_INTERPOLATE_COORDS ? "CA_INTERPOLATE_COORDS" : "CA_WALK"));
+	else
+		fh.writeString(Common::String::format(" type=\"%d\"", (int)_type));
+
 	fh.writeString(Common::String::format(" speed=\"%f\"", _speed));
 	fh.writeString(Common::String::format(" animation_phase=\"%f\"", _animation_phase));
 
