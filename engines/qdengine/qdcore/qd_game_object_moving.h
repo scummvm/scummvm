@@ -350,6 +350,8 @@ public:
 	void set_path_attributes(int attr) const;
 	void clear_path_attributes(int attr) const;
 
+	Common::String control2str(int control) const;
+
 protected:
 
 	bool load_script_body(const xml::tag *p);

@@ -276,7 +276,11 @@ bool qdGameObjectMoving::save_script_body(Common::WriteStream &fh, int indent) c
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<control>%d</control>\r\n", _control_types));
+
+	if (debugChannelSet(-1, kDebugLog))
+		fh.writeString(Common::String::format("<control>%s</control>\r\n", control2str(_control_types).c_str()));
+	else
+		fh.writeString(Common::String::format("<control>%d</control>\r\n", _control_types));
 
 	return true;
 }
@@ -2701,4 +2705,46 @@ bool qdGameObjectMoving::get_debug_info(Common::String &buf) const {
 #endif
 	return true;
 }
+
+#define defFlag(x) { qdGameObjectMoving::x, #x }
+
+struct FlagsList {
+	int f;
+	const char *s;
+} static controlList[] = {
+	defFlag(CONTROL_MOUSE),
+	defFlag(CONTROL_KEYBOARD),
+	defFlag(CONTROL_COLLISION),
+	defFlag(CONTROL_AVOID_COLLISION),
+	defFlag(CONTROL_AUTO_MOVE),
+	defFlag(CONTROL_CLEAR_PATH),
+	defFlag(CONTROL_FOLLOW_ACTIVE_PERSONAGE),
+	defFlag(CONTROL_REPEAT_ACTIVE_PERSONAGE_MOVEMENT),
+	defFlag(CONTROL_ATTACHMENT_WITH_DIR_REL),
+	defFlag(CONTROL_ATTACHMENT_WITHOUT_DIR_REL),
+	defFlag(CONTROL_ATTACHMENT_TO_ACTIVE_WITH_MOVING),
+	defFlag(CONTROL_ACTIVE_CLICK_REACTING),
+	defFlag(CONTROL_ANIMATED_ROTATION),
+};
+
+Common::String qdGameObjectMoving::control2str(int fl) const {
+	Common::String res;
+
+	for (int i = 0; i < ARRAYSIZE(controlList); i++) {
+		if (fl & controlList[i].f) {
+			if (!res.empty())
+				res += " | ";
+
+			res += controlList[i].s;
+
+			fl &= ~controlList[i].f;
+		}
+	}
+
+	if (fl)
+		res += Common::String::format(" | %x", fl);
+
+	return res;
+}
+
 } // namespace QDEngine
