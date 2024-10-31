@@ -12511,10 +12511,8 @@ msgid "Use 16-color graphics"
 msgstr "Verwende 16-Farb-Grafik"
 
 #: engines/vcruise/metaengine.cpp:87
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Uses 16-color graphics."
-msgstr "Farb-Grafik"
+msgstr "Verwendet 16 Farben für die Grafik-Darstellung."
 
 #: engines/vcruise/metaengine.cpp:97
 #, fuzzy
