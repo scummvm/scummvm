@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-31 07:20+0000\n"
+"PO-Revision-Date: 2024-10-31 10:07+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -6717,34 +6717,24 @@ msgid "Toggle animation on/off"
 msgstr "Animationen ein-/ausschalten"
 
 #: engines/asylum/metaengine.cpp:232
-#, fuzzy
-#| msgid "Run a game"
 msgid "Return to gameplay"
-msgstr "Ein Spiel starten"
+msgstr "Zum Spiel zurückkehren"
 
 #: engines/asylum/metaengine.cpp:238
-#, fuzzy
-#| msgid "Previous Page"
 msgid "Previous resource"
-msgstr "Vorherige Seite"
+msgstr "Vorherige Ressource"
 
 #: engines/asylum/metaengine.cpp:245
-#, fuzzy
-#| msgid "[ Resources ]"
 msgid "Next resource"
-msgstr "[ Ressourcen ]"
+msgstr "Nächste Ressource"
 
 #: engines/asylum/metaengine.cpp:252
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous palette"
-msgstr "Vorherige Seite"
+msgstr "Vorherige Farbpalette"
 
 #: engines/asylum/metaengine.cpp:259
-#, fuzzy
-#| msgid "Next page"
 msgid "Next palette"
-msgstr "Nächste Seite"
+msgstr "Nächste Farbpalette"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:203
@@ -7268,50 +7258,36 @@ msgid "Default keymappings"
 msgstr "Standard-Tastenbelegungen"
 
 #: engines/cine/metaengine.cpp:260
-#, fuzzy
-#| msgid "Game Options"
 msgid "Key to mouse keymappings"
-msgstr "Spiel-Optionen"
+msgstr "Tastenkürzel mit Maus-Klicks verbinden"
 
 #: engines/cine/metaengine.cpp:261
-#, fuzzy
-#| msgid "Game Options"
 msgid "Exit screen keymappings"
-msgstr "Spiel-Optionen"
+msgstr "Tastenkürzel für den Beenden-Dialog"
 
 #: engines/cine/metaengine.cpp:277
 msgid "Exit Sony intro screen"
-msgstr ""
+msgstr "Sony-Intro-Bildschirm verlassen"
 
 #: engines/cine/metaengine.cpp:283
-#, fuzzy
-#| msgid "Select to end of line"
 msgid "Select option / Click in game"
-msgstr "Bis zum Ende der Zeile auswählen"
+msgstr "Option auswählen / Im Spiel klicken"
 
 #: engines/cine/metaengine.cpp:290
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open action menu / Close menu"
-msgstr "Hauptmenü öffnen"
+msgstr "Aktionsmenü öffnen / Menü schließen"
 
 #: engines/cine/metaengine.cpp:295
-#, fuzzy
-#| msgid "Default game keymap"
 msgid "Default game speed"
-msgstr "Standard-Tastenbelegung"
+msgstr "Standard-Spielgeschwindigkeit"
 
 #: engines/cine/metaengine.cpp:300
-#, fuzzy
-#| msgid "Show game credits"
 msgid "Slower game speed"
-msgstr "Abspann des Spieles anzeigen"
+msgstr "Langsamere Spielgeschwindigkeit"
 
 #: engines/cine/metaengine.cpp:307
-#, fuzzy
-#| msgid "Fast movie speed"
 msgid "Faster game speed"
-msgstr "Schnelles Film-Tempo"
+msgstr "Schnellere Spielgeschwindigkeit"
 
 #: engines/cine/metaengine.cpp:315 engines/grim/grim.cpp:506
 #: engines/hpl1/metaengine.cpp:90 engines/scumm/help.cpp:243
@@ -7320,10 +7296,8 @@ msgid "Examine"
 msgstr "Betrachte"
 
 #: engines/cine/metaengine.cpp:320 engines/saga/metaengine.cpp:394
-#, fuzzy
-#| msgid "Take off"
 msgid "Take"
-msgstr "Nimm ab"
+msgstr "Nehmen"
 
 #. I18N: Action in In Cold Blood
 #: engines/cine/metaengine.cpp:325 engines/crab/input/input.cpp:251
@@ -7351,69 +7325,53 @@ msgid "Use"
 msgstr "Benutze"
 
 #: engines/cine/metaengine.cpp:335
-#, fuzzy
-#| msgid "Active"
 msgid "Activate"
-msgstr "Aktiv"
+msgstr "Aktivieren"
 
 #: engines/cine/metaengine.cpp:340
 msgid "Speak"
-msgstr ""
+msgstr "Sprechen"
 
 #: engines/cine/metaengine.cpp:345
-#, fuzzy
-#| msgid "Action"
 msgid "Action menu"
-msgstr "Aktion"
+msgstr "Aktionsmenü"
 
 #: engines/cine/metaengine.cpp:351
-#, fuzzy
-#| msgid "Pause/Game menu"
 msgid "System menu"
-msgstr "Pause/Spielmenü"
+msgstr "Systemmenü"
 
 #. I18N: Opens collision map of where the actor can freely move
 #: engines/cine/metaengine.cpp:358
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Show collisions"
-msgstr "Sprachausgabe-Optionen"
+msgstr "Kollisionen anzeigen"
 
 #. I18N: Move Actor to top-left direction
 #: engines/cine/metaengine.cpp:393
-#, fuzzy
-#| msgid "Move left"
 msgid "Move up-left"
-msgstr "Nach links bewegen"
+msgstr "Nach oben links bewegen"
 
 #. I18N: Move Actor to top-right direction
 #: engines/cine/metaengine.cpp:399
-#, fuzzy
-#| msgid "Move right"
 msgid "Move up-right"
-msgstr "Nach rechts bewegen"
+msgstr "Nach oben rechts bewegen"
 
 #. I18N: Move Actor to bottom-left direction
 #: engines/cine/metaengine.cpp:405
-#, fuzzy
-#| msgid "Move down"
 msgid "Move down-left"
-msgstr "Nach unten bewegen"
+msgstr "Nach unten links bewegen"
 
 #. I18N: Move Actor to bottom-right direction
 #: engines/cine/metaengine.cpp:411
-#, fuzzy
-#| msgid "Move right"
 msgid "Move down-right"
-msgstr "Nach rechts bewegen"
+msgstr "Nach unten rechts bewegen"
 
 #: engines/cine/metaengine.cpp:416
 msgid "Menu option up"
-msgstr ""
+msgstr "Menü-Option nach oben"
 
 #: engines/cine/metaengine.cpp:421
 msgid "Menu option down"
-msgstr ""
+msgstr "Menü-Option nach unten"
 
 #: engines/cine/saveload.cpp:860
 msgid ""
@@ -7645,24 +7603,20 @@ msgid "Use alternative camera controls"
 msgstr "Alternative Kamerasteuerung verwenden"
 
 #: engines/freescape/metaengine.cpp:119
-#, fuzzy
-#| msgid "Filter graphics"
 msgid "Authentic graphics"
-msgstr "Bilineare Filterung"
+msgstr "Authentische Grafik"
 
 #: engines/freescape/metaengine.cpp:120
 msgid "Keep graphics as close as possible to the original"
-msgstr ""
+msgstr "Grafiken werden so originalgetreu wie möglich dargestellt"
 
 #: engines/freescape/metaengine.cpp:130
-#, fuzzy
-#| msgid "Enable storage"
 msgid "Enable rock travel"
-msgstr "Cloud aktivieren"
+msgstr "Felsen-Reise aktivieren"
 
 #: engines/freescape/metaengine.cpp:131
 msgid "Enable traveling using a rock shoot at start"
-msgstr ""
+msgstr "Aktiviere Reisen/Bewegungen über einen Fels-Abschuss am Spielstart"
 
 #: engines/freescape/movement.cpp:49 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
@@ -7680,21 +7634,15 @@ msgid "Shoot"
 msgstr "Schießen"
 
 #: engines/freescape/movement.cpp:72
-#, fuzzy
-#| msgid "Rotate"
 msgid "Rotate up"
-msgstr "Drehen"
+msgstr "Nach oben drehen"
 
 #: engines/freescape/movement.cpp:77
-#, fuzzy
-#| msgid "Rotate"
 msgid "Rotate down"
-msgstr "Drehen"
+msgstr "Nach unten drehen"
 
 #. I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
 #: engines/freescape/movement.cpp:90
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change mode"
 msgstr "Modus ändern"
 
@@ -7713,10 +7661,8 @@ msgstr "Info-Menü"
 
 #: engines/freescape/games/dark/dark.cpp:203
 #: engines/freescape/games/driller/driller.cpp:139
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Sound"
-msgstr "Stummschaltung umschalten"
+msgstr "Sound umschalten"
 
 #: engines/freescape/games/dark/dark.cpp:209
 #: engines/freescape/games/driller/driller.cpp:145
@@ -7731,18 +7677,14 @@ msgstr "Nach rechts drehen"
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:220
 #: engines/freescape/games/driller/driller.cpp:156
-#, fuzzy
-#| msgid "Increase the scale factor"
 msgid "Increase Step Size"
-msgstr "Skalier-Faktor erhöhen"
+msgstr "Schrittgröße vergrößern"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:226
 #: engines/freescape/games/driller/driller.cpp:162
-#, fuzzy
-#| msgid "Decrease the scale factor"
 msgid "Decrease Step Size"
-msgstr "Skalier-Faktor verringern"
+msgstr "Schrittgröße verkleinern"
 
 #: engines/freescape/games/dark/dark.cpp:231
 #: engines/freescape/games/driller/driller.cpp:167
@@ -7756,19 +7698,17 @@ msgstr "Nach unten fliegen"
 
 #: engines/freescape/games/dark/dark.cpp:243
 msgid "Enable/Disable Jetpack"
-msgstr ""
+msgstr "Jetpack aktivieren/deaktivieren"
 
 #. I18N: drilling rig is an in game item
 #: engines/freescape/games/driller/driller.cpp:180
-#, fuzzy
-#| msgid "Debug Apply Celling Grid"
 msgid "Deploy drilling rig"
-msgstr "Debug: Deckenraster anzeigen"
+msgstr "Bohr-Plattform einsetzen"
 
 #. I18N: drilling rig is an in game item
 #: engines/freescape/games/driller/driller.cpp:187
 msgid "Collect drilling rig"
-msgstr ""
+msgstr "Bohr-Plattform aufnehmen"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -8105,16 +8045,12 @@ msgid "GroovieV2 support is not compiled in"
 msgstr "Unterstützung für GroovieV2 ist nicht eingebaut"
 
 #: engines/groovie/metaengine.cpp:201
-#, fuzzy
-#| msgid "Available engines:"
 msgid "Groovie engine"
-msgstr "Verfügbare Spiele-Engines:"
+msgstr "Groovie-Engine"
 
 #: engines/groovie/metaengine.cpp:217
-#, fuzzy
-#| msgid "Skip the Hall of Records storyboard scenes"
 msgid "Skip or fast forward scene"
-msgstr "Szenenbuch-Sequenz in der Chronikhalle überspringen"
+msgstr "Szene überspringen oder schnell vorspulen"
 
 #: engines/groovie/saveload.cpp:52
 msgid "Reserved"
@@ -8167,16 +8103,12 @@ msgid "Enable Gore Mode when available"
 msgstr "Blutmodus aktivieren, wenn verfügbar"
 
 #: engines/hopkins/metaengine.cpp:231
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Open inventory"
-msgstr "Inventar öffnen/schließen"
+msgstr "Inventar öffnen"
 
 #: engines/hopkins/metaengine.cpp:250
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Option dialog"
-msgstr "Dialog überspringen"
+msgstr "Options-Dialog"
 
 #: engines/hpl1/metaengine.cpp:76
 msgid "Forward"
@@ -8401,13 +8333,15 @@ msgstr "Linker Button um anzugreifen, rechter Button, um Items aufzuheben"
 
 #: engines/kyra/metaengine.cpp:159
 msgid "Faithful AD&D rules"
-msgstr ""
+msgstr "Originalgetreue AD&D-Regeln"
 
 #: engines/kyra/metaengine.cpp:160
 msgid ""
 "Make implementation of AD&D rules more compliant with the AD&D 2nd edition "
 "handbook"
 msgstr ""
+"Die Implementierung der AD&D-Regeln erfolgt näher an den Standards, die in "
+"der zweiten Ausgabe des AD&D-Handbuchs beschrieben werden"
 
 #: engines/kyra/metaengine.cpp:251
 msgid "Lands of Lore support is not compiled in"
@@ -8682,90 +8616,66 @@ msgid "TTS Narrator"
 msgstr "Stimme der Sprachausgabe"
 
 #: engines/lure/metaengine.cpp:170
-#, fuzzy
-#| msgid "Game Options"
 msgid "Fight sequence keymappings"
-msgstr "Spiel-Optionen"
+msgstr "Tastenbelegungen für Kampfsequenzen"
 
 #: engines/lure/metaengine.cpp:171
-#, fuzzy
-#| msgid "Game Options"
 msgid "Index keymappings"
-msgstr "Spiel-Optionen"
+msgstr "Index-Tastenbelegungen"
 
 #: engines/lure/metaengine.cpp:172
-#, fuzzy
-#| msgid "Game Options"
 msgid "Yes/No keymappings"
-msgstr "Spiel-Optionen"
+msgstr "Tastenbelegungen für Ja/Nein-Abfragen"
 
 #: engines/lure/metaengine.cpp:197 engines/mads/metaengine.cpp:311
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restore game"
-msgstr "Spiel laden:"
+msgstr "Spiel wiederherstellen"
 
 #: engines/lure/metaengine.cpp:203
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restart game"
-msgstr "Spiel laden:"
+msgstr "Spiel neu starten"
 
 #. I18N: Shift Cursor during fight to top left
 #: engines/lure/metaengine.cpp:233
-#, fuzzy
-#| msgid "Cursor Left"
 msgid "Shift Cursor - Top left"
-msgstr "Zeiger nach links"
+msgstr "Maus-Cursor bewegen - Oben links"
 
 #. I18N: Shift Cursor during fight to middle left
 #: engines/lure/metaengine.cpp:239
 msgid "Shift Cursor -  Middle left"
-msgstr ""
+msgstr "Maus-Cursor bewegen -  Mitte links"
 
 #. I18N: Shift Cursor during fight to bottom left
 #: engines/lure/metaengine.cpp:245
 msgid "Shift Cursor - Bottom left"
-msgstr ""
+msgstr "Maus-Cursor bewegen - Unten links"
 
 #. I18N: Shift Cursor during fight to top right
 #: engines/lure/metaengine.cpp:251
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Shift Cursor - Top right"
-msgstr "Zeiger nach rechts"
+msgstr "Maus-Cursor bewegen - Oben rechts"
 
 #. I18N: Shift Cursor during fight to middle right
 #: engines/lure/metaengine.cpp:257
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Shift Cursor - Middle right"
-msgstr "Zeiger nach rechts"
+msgstr "Maus-Cursor bewegen - Mitte rechts"
 
 #. I18N: Shift Cursor during fight to bottom right
 #: engines/lure/metaengine.cpp:263
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Shift Cursor - Bottom right"
-msgstr "Zeiger nach rechts"
+msgstr "Maus-Cursor bewegen - Unten rechts"
 
 #: engines/lure/metaengine.cpp:270
-#, fuzzy
-#| msgid "Go to setup menu"
 msgid "Go to next index"
-msgstr "Gehe zum Setup-Menü"
+msgstr "Zum nächsten Index gehen"
 
 #: engines/lure/metaengine.cpp:277
-#, fuzzy
-#| msgid "Go to previous directory level"
 msgid "Go to previous index"
-msgstr "Zu höherer Pfadebene wechseln"
+msgstr "Zum vorherigen Index gehen"
 
 #: engines/lure/metaengine.cpp:284
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select index"
-msgstr "Shader auswählen"
+msgstr "Index auswählen"
 
 #: engines/made/detection_tables.h:445 engines/made/detection_tables.h:462
 msgid "The game is using unsupported engine"
@@ -8784,34 +8694,24 @@ msgstr ""
 "Soundtrack. Andernfalls spielt es MIDI-Musik ab."
 
 #: engines/made/metaengine.cpp:128
-#, fuzzy
-#| msgid "Cursor Up"
 msgid "Cursor up"
-msgstr "Zeiger hoch"
+msgstr "Cursor nach oben"
 
 #: engines/made/metaengine.cpp:135
-#, fuzzy
-#| msgid "Cursor Down"
 msgid "Cursor down"
-msgstr "Zeiger runter"
+msgstr "Cursor nach unten"
 
 #: engines/made/metaengine.cpp:142
-#, fuzzy
-#| msgid "Cursor Left"
 msgid "Cursor left"
-msgstr "Zeiger nach links"
+msgstr "Cursor nach links"
 
 #: engines/made/metaengine.cpp:149
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Cursor right"
-msgstr "Zeiger nach rechts"
+msgstr "Cursor nach rechts"
 
 #: engines/made/metaengine.cpp:174
-#, fuzzy
-#| msgid "Reload last save"
 msgid "Repeat last message"
-msgstr "Letzten Spielstand erneut laden"
+msgstr "Letzte Nachricht wiederholen"
 
 #: engines/mads/metaengine.cpp:63
 msgid "Easy mouse interface"
@@ -8834,68 +8734,48 @@ msgid "Naughty game mode"
 msgstr "Unanständiger Spielmodus"
 
 #: engines/mads/metaengine.cpp:276
-#, fuzzy
-#| msgid "Game Options"
 msgid "Start menu keymappings"
-msgstr "Spiel-Optionen"
+msgstr "Tastenkürzel für das Start-Menü"
 
 #: engines/mads/metaengine.cpp:299
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open game menu"
-msgstr "Hauptmenü öffnen"
+msgstr "Spielmenü öffnen"
 
 #: engines/mads/metaengine.cpp:317
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Scroll bar up"
-msgstr "Nach oben scrollen"
+msgstr "Scroll-Leiste nach oben"
 
 #: engines/mads/metaengine.cpp:323
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Scroll bar down"
-msgstr "Nach unten scrollen"
+msgstr "Scroll-Leiste nach unten"
 
 #: engines/mads/metaengine.cpp:331
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Start game"
-msgstr "Spiel laden:"
+msgstr "Spiel starten"
 
 #: engines/mads/metaengine.cpp:337
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Resume game"
-msgstr "Spiel laden:"
+msgstr "Spiel fortsetzen"
 
 #: engines/mads/metaengine.cpp:343
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show intro"
-msgstr "Hinweise anzeigen"
+msgstr "Intro anzeigen"
 
 #: engines/mads/metaengine.cpp:349
 msgid "Show credits"
 msgstr "Abspann anzeigen"
 
 #: engines/mads/metaengine.cpp:355
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Show quotes"
-msgstr "Sprachausgabe-Optionen"
+msgstr "Zitate anzeigen"
 
 #: engines/mads/metaengine.cpp:361 engines/stark/metaengine.cpp:280
-#, fuzzy
-#| msgid "Quit game"
 msgid "Exit game"
-msgstr "Spiel beenden"
+msgstr "Spiel verlassen"
 
 #: engines/mads/metaengine.cpp:368
-#, fuzzy
-#| msgid "Faster animations"
 msgid "Restart animation"
-msgstr "Schnellere Animationen"
+msgstr "Animation neu starten"
 
 #: engines/mm/metaengine.cpp:57
 msgid "Show item costs in standard inventory mode"
@@ -9790,42 +9670,30 @@ msgid "I Have No Mouth support not compiled in"
 msgstr "Unterstützung für I Have No Mouth ist nicht eingebaut"
 
 #: engines/saga/metaengine.cpp:268
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game keymapping"
-msgstr "Spiel-Optionen"
+msgstr "Spiele-Tastenkürzel"
 
 #: engines/saga/metaengine.cpp:269
-#, fuzzy
-#| msgid "Game Options"
 msgid "Option panel keymapping"
-msgstr "Spiel-Optionen"
+msgstr "Tastenkürzel für den Optionen-Bereich"
 
 #: engines/saga/metaengine.cpp:270
-#, fuzzy
-#| msgid "Game Options"
 msgid "Save panel keymapping"
-msgstr "Spiel-Optionen"
+msgstr "Tastenkürzel für den Speicher-Bereich"
 
 #: engines/saga/metaengine.cpp:271
-#, fuzzy
-#| msgid "Game Options"
 msgid "Load panel keymapping"
-msgstr "Spiel-Optionen"
+msgstr "Tastenkürzel für den Lade-Bereich"
 
 #: engines/saga/metaengine.cpp:272
-#, fuzzy
-#| msgid "Game Options"
 msgid "Quit panel keymapping"
-msgstr "Spiel-Optionen"
+msgstr "Tastenkürzel für den Beenden-Bereich"
 
 #: engines/saga/metaengine.cpp:273
 msgid "Converse panel keymapping"
-msgstr ""
+msgstr "Umgekehrte Bedienfeldtastaturbelegung"
 
 #: engines/saga/metaengine.cpp:284
-#, fuzzy
-#| msgid "Middle Click"
 msgid "Middle click"
 msgstr "Mittelklick"
 
@@ -9834,27 +9702,23 @@ msgstr "Mittelklick"
 #. typically to avoid detection if someone, like a boss, walks by while they are playing.
 #: engines/saga/metaengine.cpp:298
 msgid "Boss key"
-msgstr ""
+msgstr "Boss-Taste"
 
 #: engines/saga/metaengine.cpp:303
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Show options"
-msgstr "Sprachausgabe-Optionen"
+msgstr "Optionen anzeigen"
 
 #: engines/saga/metaengine.cpp:311
-#, fuzzy
-#| msgid "Next location"
 msgid "Exit conversation"
-msgstr "Nächster Ort"
+msgstr "Unterhaltung verlassen"
 
 #: engines/saga/metaengine.cpp:316
 msgid "Conversation position - Up"
-msgstr ""
+msgstr "Unterhaltungs-Position - Oben"
 
 #: engines/saga/metaengine.cpp:321
 msgid "Conversation position - Down"
-msgstr ""
+msgstr "Unterhaltungs-Position - Unten"
 
 #: engines/saga/metaengine.cpp:333 engines/scumm/help.cpp:80
 #: engines/stark/metaengine.cpp:286 engines/trecision/metaengine.cpp:150
@@ -9863,16 +9727,12 @@ msgid "Pause game"
 msgstr "Spielpause"
 
 #: engines/saga/metaengine.cpp:339
-#, fuzzy
-#| msgid "Speech"
 msgid "Abort speech"
-msgstr "Sprache"
+msgstr "Sprachausgabe abbrechen"
 
 #: engines/saga/metaengine.cpp:344
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Show dialogue"
-msgstr "Dialog überspringen"
+msgstr "Dialog anzeigen"
 
 #. I18N: Walk to where cursor points
 #: engines/saga/metaengine.cpp:349 engines/scumm/help.cpp:144
@@ -9889,10 +9749,8 @@ msgid "Look at"
 msgstr "Schau an"
 
 #: engines/saga/metaengine.cpp:359
-#, fuzzy
-#| msgid "Pick up"
 msgid "Pickup"
-msgstr "Nimm"
+msgstr "Aufnehmen"
 
 #: engines/saga/metaengine.cpp:364 engines/scumm/help.cpp:200
 #: engines/scumm/help.cpp:216 engines/scumm/help.cpp:252
@@ -9923,37 +9781,27 @@ msgstr "Drücke"
 
 #: engines/saga/metaengine.cpp:399
 msgid "Swallow"
-msgstr ""
+msgstr "Schlucken"
 
 #: engines/saga/metaengine.cpp:406
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "Reading speed"
-msgstr "Daten konnten nicht gelesen werden"
+msgstr "Lesegeschwindigkeit"
 
 #: engines/saga/metaengine.cpp:411
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change music"
-msgstr "Schriftgröße anpassen"
+msgstr "Musik ändern"
 
 #: engines/saga/metaengine.cpp:416
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change sound"
-msgstr "Modus ändern"
+msgstr "Sound ändern"
 
 #: engines/saga/metaengine.cpp:421
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change voices"
-msgstr "Modus ändern"
+msgstr "Sprachausgabe ändern"
 
 #: engines/saga/metaengine.cpp:426
-#, fuzzy
-#| msgid "Continue"
 msgid "Continue game"
-msgstr "Fortsetzen"
+msgstr "Spiel fortsetzen"
 
 #: engines/saga/metaengine.cpp:436 engines/trecision/metaengine.cpp:156
 #: engines/vcruise/metaengine.cpp:177
@@ -9961,26 +9809,20 @@ msgid "Quit game"
 msgstr "Spiel beenden"
 
 #: engines/saga/metaengine.cpp:453
-#, fuzzy
-#| msgid "Cancel input"
 msgid "Cancel quit"
-msgstr "Eingabe abbrechen"
+msgstr "Beenden abbrechen"
 
 #: engines/saga/metaengine.cpp:458
 msgid "Okay"
-msgstr ""
+msgstr "Okay"
 
 #: engines/saga/metaengine.cpp:463
-#, fuzzy
-#| msgid "Cancel download"
 msgid "Cancel load"
-msgstr "Download abbrechen"
+msgstr "Laden abbrechen"
 
 #: engines/saga/metaengine.cpp:473
-#, fuzzy
-#| msgid "Cancel autosave"
 msgid "Cancel save"
-msgstr "Autosave abbrechen"
+msgstr "Speichern abbrechen"
 
 #: engines/saga/music.cpp:98
 #, c-format
@@ -10149,10 +9991,8 @@ msgid "Casio CT-460 / CSM-1"
 msgstr "Casio CT-460 / CSM-1"
 
 #: engines/sci/detection_tables.h:1419 engines/sci/detection_tables.h:1430
-#, fuzzy
-#| msgid "Failed to initialize resources"
 msgid "Game does not contain menu resources"
-msgstr "Konnte Ressourcen nicht initialisieren"
+msgstr "Das Spiel enthält keine Menü-Ressourcen"
 
 #: engines/sci/detection_tables.h:4594
 msgid "This demo uses an unimplemented version of Robot videos"
@@ -10528,12 +10368,14 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1391
 msgid "Music Quality:"
-msgstr ""
+msgstr "Musikqualität:"
 
 #: engines/scumm/dialogs.cpp:1395
 msgid ""
 "Select music quality. The original lets you choose this from the Game menu."
 msgstr ""
+"Musik-Qualität auswählen. Im Originalspiel kannst Du diese aus dem Spielmenü "
+"auswählen."
 
 #: engines/scumm/dialogs.cpp:1396
 msgid ""
@@ -10541,43 +10383,44 @@ msgid ""
 "detection and speed tests, but also allows changes through the Game menu to "
 "some degree."
 msgstr ""
+"Musik-Qualität auswählen. Das Originalspiel erkennt die optimale Qualität "
+"basierend auf Hardware-Erkennung und Geschwindigkeitstests, erlaubt aber "
+"auch einige Anpassungen im Spielmenü."
 
 #: engines/scumm/dialogs.cpp:1483 engines/scumm/dialogs.cpp:1484
 msgid "auto"
-msgstr ""
+msgstr "automatisch"
 
 #: engines/scumm/dialogs.cpp:1483
 msgid "Low"
-msgstr ""
+msgstr "Niedrig"
 
 #: engines/scumm/dialogs.cpp:1483
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:75
-#, fuzzy
-#| msgid "100% - Medium"
 msgid "Medium"
-msgstr "100% - Mittel"
+msgstr "Mittel"
 
 #: engines/scumm/dialogs.cpp:1483
 msgid "High"
-msgstr ""
+msgstr "Hoch"
 
 #: engines/scumm/dialogs.cpp:1484
 msgid "Good"
-msgstr ""
+msgstr "Gut"
 
 #: engines/scumm/dialogs.cpp:1484
 msgid "Better"
-msgstr ""
+msgstr "Besser"
 
 #: engines/scumm/dialogs.cpp:1485
 #, c-format
 msgid "Hardware Rating: %s   -   "
-msgstr ""
+msgstr "Hardware-Bewertung: %s   -   "
 
 #: engines/scumm/dialogs.cpp:1485
 #, c-format
 msgid "Quality Selection: %s"
-msgstr ""
+msgstr "Qualitätsstufe: %s"
 
 #: engines/scumm/dialogs.cpp:1499
 msgid "Playback Adjust:"
@@ -10654,9 +10497,6 @@ msgid "Enable online competitive mods"
 msgstr "Mods für kompetitiven Mehrspieler-Modus aktivieren"
 
 #: engines/scumm/dialogs.cpp:1713
-#, fuzzy
-#| msgid ""
-#| "Enables custom-made modifications intented for online competitive play."
 msgid "Enables custom-made modifications intended for online competitive play."
 msgstr ""
 "Aktiviere zusätzliche Modifikationen, die für den kompetitiven Mehrspieler-"
