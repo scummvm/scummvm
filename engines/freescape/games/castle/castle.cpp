@@ -493,6 +493,8 @@ void CastleEngine::drawInfoMenu() {
 	int score = _gameStateVars[k8bitVariableScore];
 	int shield = _gameStateVars[k8bitVariableShield];
 	int spiritsDestroyed = _gameStateVars[k8bitVariableSpiritsDestroyed];
+	Common::Array<Common::Rect> keyRects;
+
 	if (isDOS()) {
 		g_system->lockMouse(false);
 		g_system->showMouse(true);
@@ -512,10 +514,15 @@ void CastleEngine::drawInfoMenu() {
 		drawStringInSurface(spiritsDestroyedString, 145 , 132,  front, black, surface);
 
 		for (int  i = 0; i < int(_keysCollected.size()) ; i++) {
-			if (i % 2 == 0)
-				surface->copyRectToSurfaceWithKey(*_keysBorderFrames[i], 58, 58 + (i / 2) * 18, Common::Rect(0, 0, _keysBorderFrames[i]->w, _keysBorderFrames[i]->h), black);
-			else
-				surface->copyRectToSurfaceWithKey(*_keysBorderFrames[i], 80, 58 + (i / 2) * 18, Common::Rect(0, 0, _keysBorderFrames[i]->w, _keysBorderFrames[i]->h), black);
+			int y = 58 + (i / 2) * 18;
+
+			if (i % 2 == 0) {
+				surface->copyRectToSurfaceWithKey(*_keysBorderFrames[i], 58, y, Common::Rect(0, 0, _keysBorderFrames[i]->w, _keysBorderFrames[i]->h), black);
+				keyRects.push_back(Common::Rect(58, y, 58 + _keysBorderFrames[i]->w / 2, y + _keysBorderFrames[i]->h));
+			} else {
+				surface->copyRectToSurfaceWithKey(*_keysBorderFrames[i], 80, y, Common::Rect(0, 0, _keysBorderFrames[i]->w, _keysBorderFrames[i]->h), black);
+				keyRects.push_back(Common::Rect(80, y, 80 + _keysBorderFrames[i]->w / 2, y + _keysBorderFrames[i]->h));
+			}
 		}
 	} else if (isSpectrum()) {
 		Common::Array<Common::String> lines;
@@ -544,10 +551,20 @@ void CastleEngine::drawInfoMenu() {
 		surface = drawStringsInSurface(lines, surface);
 	}
 
-	Texture *menuTexture = _gfx->createTexture(surface);
 	Common::Event event;
 	Common::Point mousePos;
 	bool cont = true;
+
+	Common::Rect loadGameRect(101, 67, 133, 79);
+	Common::Rect saveGameRect(101, 82, 133, 95);
+	Common::Rect toggleSoundRect(101, 101, 133, 114);
+	Common::Rect cycleRect(101, 116, 133, 129);
+	Common::Rect backRect(101, 131, 133, 144);
+
+	Graphics::Surface *originalSurface = new Graphics::Surface();
+	originalSurface->copyFrom(*surface);
+
+	Texture *menuTexture = _gfx->createTexture(surface);
 	while (!shouldQuit() && cont) {
 		while (_eventManager->pollEvent(event)) {
 
@@ -557,8 +574,10 @@ void CastleEngine::drawInfoMenu() {
 				if (event.customType == kActionLoad) {
 					_gfx->setViewport(_fullscreenViewArea);
 					_eventManager->purgeKeyboardEvents();
+					_eventManager->purgeMouseEvents();
 
 					loadGameDialog();
+					_eventManager->purgeMouseEvents();
 					if (isDOS() || isAmiga() || isAtariST()) {
 						g_system->lockMouse(false);
 						g_system->showMouse(true);
@@ -568,8 +587,10 @@ void CastleEngine::drawInfoMenu() {
 				} else if (event.customType == kActionSave) {
 					_gfx->setViewport(_fullscreenViewArea);
 					_eventManager->purgeKeyboardEvents();
+					_eventManager->purgeMouseEvents();
 
 					saveGameDialog();
+					_eventManager->purgeMouseEvents();
 					if (isDOS() || isAmiga() || isAtariST()) {
 						g_system->lockMouse(false);
 						g_system->showMouse(true);
@@ -598,7 +619,17 @@ void CastleEngine::drawInfoMenu() {
 					break;
 
 				mousePos = getNormalizedPosition(event.mouse);
-				if (Common::Rect(101, 67, 133, 79).contains(mousePos)) {
+				for (int i = 0; i < int(keyRects.size()); i++) {
+					if (keyRects[i].contains(mousePos)) {
+						surface->copyFrom(*originalSurface);
+						surface->frameRect(keyRects[i], front);
+						drawStringInSurface(_messagesList[ 145 + _keysCollected[i] ], 103, 41,  front, black, surface);
+						menuTexture->update(surface);
+						break;
+					}
+				}
+
+				if (loadGameRect.contains(mousePos)) {
 					_gfx->setViewport(_fullscreenViewArea);
 					_eventManager->purgeKeyboardEvents();
 					loadGameDialog();
@@ -606,7 +637,7 @@ void CastleEngine::drawInfoMenu() {
 					g_system->showMouse(true);
 
 					_gfx->setViewport(_viewArea);
-				} else if (Common::Rect(101, 82, 133, 95).contains(mousePos)) {
+				} else if (saveGameRect.contains(mousePos)) {
 					_gfx->setViewport(_fullscreenViewArea);
 					_eventManager->purgeKeyboardEvents();
 					saveGameDialog();
@@ -614,12 +645,12 @@ void CastleEngine::drawInfoMenu() {
 					g_system->showMouse(true);
 
 					_gfx->setViewport(_viewArea);
-				} else if (Common::Rect(101, 101, 133, 114).contains(mousePos)) {
+				} else if (toggleSoundRect.contains(mousePos)) {
 					// Toggle sounds
-				} else if (Common::Rect(101, 116, 133, 129).contains(mousePos)) {
+				} else if (cycleRect.contains(mousePos)) {
 					// Cycle between crawl, walk or run
 					// It can fail if there is no room
-				} else if (Common::Rect(101, 131, 133, 144).contains(mousePos))
+				} else if (backRect.contains(mousePos))
 					cont = false; // Back to game
 				break;
 			default:
@@ -639,8 +670,12 @@ void CastleEngine::drawInfoMenu() {
 	_savedScreen->free();
 	delete _savedScreen;
 	_savedScreen = nullptr;
+
+	originalSurface->free();
+	delete originalSurface;
 	surface->free();
 	delete surface;
+
 	delete menuTexture;
 	pauseToken.clear();
 	g_system->lockMouse(true);
@@ -789,8 +824,6 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 	surface->free();
 	delete surface;
 }
-
-
 
 // Same as FreescapeEngine::executeExecute but updates the spirits destroyed counter
 void CastleEngine::executeDestroy(FCLInstruction &instruction) {

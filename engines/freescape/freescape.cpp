@@ -662,9 +662,24 @@ void FreescapeEngine::processInput() {
 }
 
 Common::Point FreescapeEngine::getNormalizedPosition(Common::Point position) {
+	// Retrieve the screen and viewport dimensions
 	Common::Point resolution(g_system->getWidth(), g_system->getHeight());
-	position.x = _screenW * position.x / resolution.x;
-	position.y = _screenH * position.y / resolution.y;
+
+	int32 viewportWidth = MIN<int32>(resolution.x, resolution.y * float(4) / 3);
+	int32 viewportHeight = MIN<int32>(resolution.y, resolution.x * float(3) / 4);
+
+	// Calculate pillarbox offset
+	int32 offsetX = (resolution.x - viewportWidth) / 2;
+	int32 offsetY = (resolution.y - viewportHeight) / 2;
+
+	// Adjust mouse position by removing the offset
+	position.x -= offsetX;
+	position.y -= offsetY;
+
+	// Scale position to match the 320x200 internal resolution
+	position.x = position.x * 320 / viewportWidth;
+	position.y = position.y * 200 / viewportHeight;
+
 	return position;
 }
 
