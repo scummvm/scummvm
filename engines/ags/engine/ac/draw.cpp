@@ -843,7 +843,7 @@ static void sync_object_texture(ObjTexture &obj, bool has_alpha = false, bool op
 			}
 		} else { // if does not exist, then create and share one
 			obj.SpriteNotify.reset(new (uint32_t)(obj.SpriteID));
-			_G(drawstate).SpriteNotifyMap.insert(std::make_pair((int)obj.SpriteID, obj.SpriteNotify));
+			_G(drawstate).SpriteNotifyMap.insert(std::make_pair((sprkey_t)obj.SpriteID, obj.SpriteNotify));
 		}
 	} else {
 		obj.SpriteNotify = nullptr; // reset, for static sprite or without ID

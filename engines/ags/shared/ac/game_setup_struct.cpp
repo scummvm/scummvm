@@ -214,7 +214,7 @@ void GameSetupStruct::read_lipsync(Shared::Stream *in, GameDataVersion data_ver)
 		in->ReadArray(&lipSyncFrameLetters[0][0], MAXLIPSYNCFRAMES, 50);
 }
 
-void GameSetupStruct::read_messages(Shared::Stream *in, const std::array<int> &load_messages, GameDataVersion data_ver) {
+void GameSetupStruct::read_messages(Shared::Stream *in, const std::array<int32_t> &load_messages, GameDataVersion data_ver) {
 	char mbuf[GLOBALMESLENGTH];
 	for (int i = 0; i < MAXGLOBALMES; ++i) {
 		if (!load_messages[i])

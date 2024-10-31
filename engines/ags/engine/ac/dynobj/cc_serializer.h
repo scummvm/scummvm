@@ -27,7 +27,7 @@
 namespace AGS3 {
 
 struct AGSDeSerializer : ICCObjectCollectionReader {
-	void Unserialize(int index, const char *objectType, const char *serializedData, int dataSize) override;
+	void Unserialize(int32_t index, const char *objectType, const char *serializedData, int dataSize) override;
 };
 
 } // namespace AGS3

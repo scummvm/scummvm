@@ -26,7 +26,7 @@ namespace AGS3 {
 
 struct SpeechLipSyncLine {
 	char  filename[14];
-	std::vector<int> endtimeoffs;
+	std::vector<int32_t> endtimeoffs;
 	std::vector<short> frame;
 	short numPhonemes;
 };

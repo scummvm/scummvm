@@ -103,7 +103,7 @@ struct GameSetupStructBase {
 	struct SerializeInfo {
 		bool HasCCScript = false;
 		bool HasWordsDict = false;
-		std::array<int> HasMessages;
+		std::array<int32_t> HasMessages;
 		// File offset at which game data extensions begin
 		uint32_t ExtensionOffset = 0u;
 

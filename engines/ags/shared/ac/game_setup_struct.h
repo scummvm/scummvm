@@ -155,7 +155,7 @@ struct GameSetupStruct : public GameSetupStructBase {
 	// Part 2
 	void read_characters(Shared::Stream *in);
 	void read_lipsync(Shared::Stream *in, GameDataVersion data_ver);
-	void read_messages(Shared::Stream *in, const std::array<int> &load_messages, GameDataVersion data_ver);
+	void read_messages(Shared::Stream *in, const std::array<int32_t> &load_messages, GameDataVersion data_ver);
 
 	void ReadCharacters(Shared::Stream *in);
 	void WriteCharacters(Shared::Stream *out);

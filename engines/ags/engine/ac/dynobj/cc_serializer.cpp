@@ -41,7 +41,7 @@ using namespace AGS::Shared;
 
 // *** De-serialization of script objects
 
-void AGSDeSerializer::Unserialize(int index, const char *objectType, const char *serializedData, int dataSize) {
+void AGSDeSerializer::Unserialize(int32_t index, const char *objectType, const char *serializedData, int dataSize) {
 	if (dataSize < 0) {
 		quitprintf("Unserialise: invalid data size (%d) for object type '%s'", dataSize, objectType);
 		return; // TODO: don't quit, return error
