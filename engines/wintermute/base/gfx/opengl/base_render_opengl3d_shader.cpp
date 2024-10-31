@@ -281,7 +281,11 @@ bool BaseRenderOpenGL3DShader::setupLines() {
 		_state = RSTATE_LINES;
 
 		glDisable(GL_DEPTH_TEST);
+		glFrontFace(GL_CW);
+		glEnable(GL_CULL_FACE);
 		glEnable(GL_BLEND);
+		glEnable(GL_ALPHA_TEST);
+
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
@@ -699,8 +703,11 @@ void BaseRenderOpenGL3DShader::renderShadowGeometry(const BaseArray<AdWalkplane 
 	setSpriteBlendMode(Graphics::BLEND_UNKNOWN);
 	glBlendFunc(GL_ZERO, GL_ONE);
 
-	glFrontFace(GL_CW);
+	// no texture
+	_lastTexture = nullptr;
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glFrontFace(GL_CW);
 
 	// render blocks
 	for (uint i = 0; i < blocks.size(); i++) {
