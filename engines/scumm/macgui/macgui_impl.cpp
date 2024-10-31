@@ -229,13 +229,20 @@ void MacGuiImpl::initialize() {
 			Common::String string = menuDef->operator[](1);
 			int id = menu->addMenuItem(nullptr, name);
 
-			if ((_vm->_game.id == GID_MONKEY || _vm->_game.id == GID_MONKEY2) && id == 3) {
-				string += ";(-;Smooth Graphics/G";
-			}
+			// The CD version of Fate of Atlantis has a menu item
+			// for toggling graphics smoothing. We retroactively
+			// add that to the remaining V5 games, but not to
+			// Loom and Last Crusade.
 
-			// Floppy version
-			if (_vm->_game.id == GID_INDY4 && !string.contains("Smooth Graphics") && id == 3) {
-				string += ";(-;Smooth Graphics/G";
+			if (_vm->enhancementEnabled(kEnhUIUX)) {
+				if ((_vm->_game.id == GID_MONKEY || _vm->_game.id == GID_MONKEY2) && id == 3) {
+					string += ";(-;Smooth Graphics";
+				}
+
+				// Floppy version
+				if (_vm->_game.id == GID_INDY4 && !string.contains("Smooth Graphics") && id == 3) {
+					string += ";(-;Smooth Graphics";
+				}
 			}
 
 			menu->createSubMenuFromString(id, string.c_str(), 0);
@@ -449,7 +456,8 @@ void MacGuiImpl::updateWindowManager() {
 		menu->getSubMenuItem(windowMenu, 4)->enabled = false;
 		menu->getSubMenuItem(windowMenu, 5)->enabled = false;
 
-		menu->getSubMenuItem(windowMenu, 7)->checked = _vm->_useMacGraphicsSmoothing;
+		if (menu->numberOfMenuItems(windowMenu) >= 8)
+			menu->getSubMenuItem(windowMenu, 7)->checked = _vm->_useMacGraphicsSmoothing;
 
 		Graphics::MacMenuItem *speechMenu = menu->getMenuItem("Speech");
 
