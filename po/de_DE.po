@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-07-07 10:20+0000\n"
+"PO-Revision-Date: 2024-10-31 06:01+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.4\n"
+"X-Generator: Weblate 5.7.2\n"
 "X-Language-name: Deutsch\n"
 
 #. I18N: built on <build date> with <compiler>
@@ -3159,10 +3159,8 @@ msgid "PC-9801 (16 Colors)"
 msgstr "PC-9801 (16 Farben)"
 
 #: common/rendermode.cpp:48
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "PC-9801 (8 Colors)"
-msgstr "PC-9801 (16 Farben)"
+msgstr "PC-9801 (8 Farben)"
 
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:53
@@ -3171,7 +3169,7 @@ msgstr "Macintosh (schwarz-weiß)"
 
 #: common/rendermode.cpp:57
 msgid "VGA Grey Scale"
-msgstr ""
+msgstr "VGA Graustufen"
 
 #: common/rendermode.cpp:92
 msgctxt "lowres"
@@ -3746,10 +3744,8 @@ msgid "Matched game IDs for the %s engine:"
 msgstr "Übereinstimmende Spiele-IDs für die Engine %s:"
 
 #: engines/metaengine.cpp:39
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "Game not implemented"
-msgstr "Spiel-ID nicht unterstützt"
+msgstr "Spiel nicht implementiert"
 
 #: engines/metaengine.cpp:58 engines/saga/metaengine.cpp:267
 msgid "Default game keymap"
@@ -6108,10 +6104,8 @@ msgid "Do not emulate NTSC artifacts for text"
 msgstr "Keine NTSC-Artefakte für Texte emulieren"
 
 #: engines/adl/metaengine.cpp:104
-#, fuzzy
-#| msgid "Use silver cursors"
 msgid "Use checkered cursor"
-msgstr "Silberne Mauszeiger verwenden"
+msgstr "Schachbrettartigen Mauszeiger verwenden"
 
 #: engines/adl/metaengine.cpp:105
 msgid "Use the checkered cursor from later Apple II models"
