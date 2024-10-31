@@ -279,6 +279,61 @@ extern char const *const ESP_CITY_HALL_JAIL;
 // Scene 180 message
 extern char const *const ESP_THE_NEXT_DAY;
 
+// Russian version
+extern char const *const RUS_QUIT_CONFIRM_MSG;
+extern char const *const RUS_RESTART_MSG;
+extern char const *const RUS_GAME_PAUSED_MSG;
+extern char const *const RUS_QUIT_BTN_STRING;
+extern char const *const RUS_RESTART_BTN_STRING;
+extern char const *const RUS_SAVE_BTN_STRING;
+extern char const *const RUS_RESUME_BTN_STRING;
+
+// Dialog resources
+extern char const *const RUS_HELP_MSG;
+extern char const *const RUS_WATCH_INTRO_MSG;
+extern char const *const RUS_START_PLAY_BTN_STRING;
+extern char const *const RUS_INTRODUCTION_BTN_STRING;
+extern char const *const RUS_OPTIONS_MSG;
+
+// Blue Force messages
+extern char const *const RUS_BF_NAME;
+extern char const *const RUS_BF_COPYRIGHT;
+extern char const *const RUS_BF_ALL_RIGHTS_RESERVED;
+extern char const *const RUS_BF_19840518;
+extern char const *const RUS_BF_19840515;
+extern char const *const RUS_BF_3_DAYS;
+extern char const *const RUS_BF_11_YEARS;
+
+// Scene 50 tooltips
+extern char const *const RUS_GRANDMA_FRANNIE;
+extern char const *const RUS_MARINA;
+extern char const *const RUS_POLICE_DEPARTMENT;
+extern char const *const RUS_TONYS_BAR;
+extern char const *const RUS_CHILD_PROTECTIVE_SERVICES;
+extern char const *const RUS_ALLEY_CAT;
+extern char const *const RUS_CITY_HALL_JAIL;
+extern char const *const RUS_JAMISON_RYAN;
+extern char const *const RUS_BIKINI_HUT;
+
+// Scene 570 tooltips
+extern char const *const RUS_SCENE570_PASSWORD;
+extern char const *const RUS_SCENE570_C_DRIVE;
+extern char const *const RUS_SCENE570_RING;
+extern char const *const RUS_SCENE570_PROTO;
+extern char const *const RUS_SCENE570_WACKY;
+extern char const *const RUS_SCENE570_COBB;
+extern char const *const RUS_SCENE570_LETTER;
+extern char const *const RUS_SCENE570_RINGEXE;
+extern char const *const RUS_SCENE570_RINGDATA;
+extern char const *const RUS_SCENE570_PROTOEXE;
+extern char const *const RUS_SCENE570_PROTODATA;
+extern char const *const RUS_SCENE570_WACKYEXE;
+extern char const *const RUS_SCENE570_WACKYDATA;
+
+// Scene 180 message
+extern char const *const RUS_THE_NEXT_DAY;
+
+
 } // End of namespace BlueForce
 
 namespace Ringworld2 {

@@ -64,6 +64,8 @@ void Scene100::Action1::signal() {
 		} else {
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				setTextStrings(BF_NAME, ESP_BF_ALL_RIGHTS_RESERVED, this);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				setTextStrings(BF_NAME, RUS_BF_ALL_RIGHTS_RESERVED, this);
 			} else {
 				setTextStrings(BF_NAME, BF_ALL_RIGHTS_RESERVED, this);
 			}
@@ -151,6 +153,8 @@ void Scene100::Action2::signal() {
 			int rc;
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				rc = MessageDialog::show2(ESP_WATCH_INTRO_MSG, ESP_START_PLAY_BTN_STRING, ESP_INTRODUCTION_BTN_STRING);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				rc = MessageDialog::show2(RUS_WATCH_INTRO_MSG, RUS_START_PLAY_BTN_STRING, RUS_INTRODUCTION_BTN_STRING);
 			} else {
 				rc = MessageDialog::show2(WATCH_INTRO_MSG, START_PLAY_BTN_STRING, INTRODUCTION_BTN_STRING);
 			}
@@ -244,6 +248,8 @@ void Scene109::Action1::signal() {
 	case 2:
 		if (g_vm->getLanguage() == Common::ES_ESP) {
 			scene->_text.setup(ESP_BF_19840515, this);
+		} else if (g_vm->getLanguage() == Common::RU_RUS) {
+			scene->_text.setup(RUS_BF_19840515, this);
 		} else {
 			scene->_text.setup(BF_19840515, this);
 		}
@@ -2268,6 +2274,8 @@ void Scene140::Action1::signal() {
 		BF_GLOBALS._scenePalette.refresh();
 		if (g_vm->getLanguage() == Common::ES_ESP) {
 			scene->_text.setup(ESP_BF_19840518, this);
+		} else if (g_vm->getLanguage() == Common::RU_RUS) {
+			scene->_text.setup(RUS_BF_19840518, this);
 		} else {
 			scene->_text.setup(BF_19840518, this);
 		}
@@ -2634,6 +2642,8 @@ void Scene160::Action2::signal() {
 		scene->_sceneBounds.set(0, 0, 320, 200);
 		if (g_vm->getLanguage() == Common::ES_ESP) {
 			scene->_text.setup(ESP_BF_11_YEARS, this);
+		} else if (g_vm->getLanguage() == Common::RU_RUS) {
+			scene->_text.setup(RUS_BF_11_YEARS, this);
 		} else {
 			scene->_text.setup(BF_11_YEARS, this);
 		}
@@ -2683,6 +2693,8 @@ void Scene160::Action3::signal() {
 	case 0:
 		if (g_vm->getLanguage() == Common::ES_ESP) {
 			scene->_text.setup(ESP_BF_3_DAYS, this);
+		} else if (g_vm->getLanguage() == Common::RU_RUS) {
+			scene->_text.setup(RUS_BF_3_DAYS, this);
 		} else {
 			scene->_text.setup(BF_3_DAYS, this);
 		}
@@ -2812,6 +2824,8 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 	if ((BF_GLOBALS._bookmark == bLyleStoppedBy) && (BF_GLOBALS._dayNumber == 1)) {
 		if (g_vm->getLanguage() == Common::ES_ESP) {
 			_sceneMessage.setup(ESP_THE_NEXT_DAY);
+		} else if (g_vm->getLanguage() == Common::RU_RUS) {
+			_sceneMessage.setup(RUS_THE_NEXT_DAY);
 		} else {
 			_sceneMessage.setup(THE_NEXT_DAY);
 		}
@@ -2824,6 +2838,8 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 			((BF_GLOBALS._bookmark == bDoneAtLyles) && (BF_GLOBALS._dayNumber == 4))) {
 		if (g_vm->getLanguage() == Common::ES_ESP) {
 			_sceneMessage.setup(ESP_THE_NEXT_DAY);
+		} else if (g_vm->getLanguage() == Common::RU_RUS) {
+			_sceneMessage.setup(RUS_THE_NEXT_DAY);
 		} else {
 			_sceneMessage.setup(THE_NEXT_DAY);
 		}

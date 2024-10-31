@@ -369,19 +369,38 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 		_location4.set(Rect(313, 21, 325, 33), 114, ESP_TONYS_BAR, 8);
 		_location8.set(Rect(69, 79, 82, 88), 580, ESP_CHILD_PROTECTIVE_SERVICES, 256);
 		_location5.set(Rect(383, 57, 402, 70), 380, ESP_CITY_HALL_JAIL, 32);
+		_location2.set(Rect(443, 149, 508, 178), 330, MARINA, 2);
+		_location6.set(Rect(242, 131, 264, 144), 440, ALLEY_CAT, 64);
+		_location7.set(Rect(128, 32, 143, 42), 800, JAMISON_RYAN, 128);
+		_location9.set(Rect(349, 125, 359, 132),
+			(BF_GLOBALS._bookmark == bInspectionDone) || (BF_GLOBALS._bookmark == bCalledToDrunkStop) ? 551 : 550,
+			BIKINI_HUT, 16);
+	} else if (g_vm->getLanguage() == Common::RU_RUS) {
+		_location3.set(Rect(10, 92, 24, 105), 180, RUS_GRANDMA_FRANNIE, 4);
+		_location2.set(Rect(443, 149, 508, 178), 330, RUS_MARINA, 2);
+		_location1.set(Rect(573, 103, 604, 130), 190, RUS_POLICE_DEPARTMENT, 1);
+		_location4.set(Rect(313, 21, 325, 33), 114, RUS_TONYS_BAR, 8);
+		_location8.set(Rect(69, 79, 82, 88), 580, RUS_CHILD_PROTECTIVE_SERVICES, 256);
+		_location6.set(Rect(242, 131, 264, 144), 440, RUS_ALLEY_CAT, 64);
+		_location5.set(Rect(383, 57, 402, 70), 380, RUS_CITY_HALL_JAIL, 32);
+		_location7.set(Rect(128, 32, 143, 42), 800, RUS_JAMISON_RYAN, 128);
+		_location9.set(Rect(349, 125, 359, 132),
+			(BF_GLOBALS._bookmark == bInspectionDone) || (BF_GLOBALS._bookmark == bCalledToDrunkStop) ? 551 : 550,
+			RUS_BIKINI_HUT, 16);
 	} else {
 		_location3.set(Rect(10, 92, 24, 105), 180, GRANDMA_FRANNIE, 4);
 		_location1.set(Rect(573, 103, 604, 130), 190, POLICE_DEPARTMENT, 1);
 		_location4.set(Rect(313, 21, 325, 33), 114, TONYS_BAR, 8);
 		_location8.set(Rect(69, 79, 82, 88), 580, CHILD_PROTECTIVE_SERVICES, 256);
 		_location5.set(Rect(383, 57, 402, 70), 380, CITY_HALL_JAIL, 32);
+		_location2.set(Rect(443, 149, 508, 178), 330, MARINA, 2);
+		_location6.set(Rect(242, 131, 264, 144), 440, ALLEY_CAT, 64);
+		_location7.set(Rect(128, 32, 143, 42), 800, JAMISON_RYAN, 128);
+		_location9.set(Rect(349, 125, 359, 132),
+			(BF_GLOBALS._bookmark == bInspectionDone) || (BF_GLOBALS._bookmark == bCalledToDrunkStop) ? 551 : 550,
+			 BIKINI_HUT, 16);
 	}
-	_location2.set(Rect(443, 149, 508, 178), 330, MARINA, 2);
-	_location6.set(Rect(242, 131, 264, 144), 440, ALLEY_CAT, 64);
-	_location7.set(Rect(128, 32, 143, 42), 800, JAMISON_RYAN, 128);
-	_location9.set(Rect(349, 125, 359, 132),
-		(BF_GLOBALS._bookmark == bInspectionDone) || (BF_GLOBALS._bookmark == bCalledToDrunkStop) ? 551 : 550,
-		BIKINI_HUT, 16);
+
 
 	_item.setBounds(Rect(0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT));
 	BF_GLOBALS._sceneItems.push_back(&_item);

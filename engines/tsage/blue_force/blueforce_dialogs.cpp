@@ -472,6 +472,8 @@ void OptionsDialog::show() {
 		int rc;
 		if (g_vm->getLanguage() == Common::ES_ESP) {
 			rc = MessageDialog::show(ESP_QUIT_CONFIRM_MSG, ESP_CANCEL_BTN_STRING, ESP_QUIT_BTN_STRING);
+		} else if (g_vm->getLanguage() == Common::RU_RUS) {
+			rc = MessageDialog::show(RUS_QUIT_CONFIRM_MSG, RUS_CANCEL_BTN_STRING, RUS_QUIT_BTN_STRING);
 		} else {
 			rc = MessageDialog::show(QUIT_CONFIRM_MSG, CANCEL_BTN_STRING, QUIT_BTN_STRING);
 		}
@@ -494,6 +496,14 @@ OptionsDialog::OptionsDialog() {
 		_btnQuit.setText(ESP_QUIT_BTN_STRING);
 		_btnSound.setText(ESP_SOUND_BTN_STRING);
 		_btnResume.setText(ESP_RESUME_BTN_STRING);
+	} else if (g_vm->getLanguage() == Common::RU_RUS) {
+		_gfxMessage.set(RUS_OPTIONS_MSG, 140, ALIGN_LEFT);
+		_btnRestore.setText(RUS_RESTORE_BTN_STRING);
+		_btnSave.setText(RUS_SAVE_BTN_STRING);
+		_btnRestart.setText(RUS_RESTART_BTN_STRING);
+		_btnQuit.setText(RUS_QUIT_BTN_STRING);
+		_btnSound.setText(RUS_SOUND_BTN_STRING);
+		_btnResume.setText(RUS_RESUME_BTN_STRING);
 	} else {
 		_gfxMessage.set(OPTIONS_MSG, 140, ALIGN_LEFT);
 		_btnRestore.setText(RESTORE_BTN_STRING);

@@ -1963,6 +1963,8 @@ void SceneHotspot::doAction(int action) {
 		if (g_vm->getGameID() == GType_BlueForce)
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				SceneItem::display(ESP_LOOK_SCENE_HOTSPOT);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				SceneItem::display(RUS_LOOK_SCENE_HOTSPOT);
 			} else {
 				SceneItem::display(LOOK_SCENE_HOTSPOT);
 			}
@@ -1973,6 +1975,8 @@ void SceneHotspot::doAction(int action) {
 		if (g_vm->getGameID() == GType_BlueForce)
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				SceneItem::display(ESP_USE_SCENE_HOTSPOT);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				SceneItem::display(RUS_USE_SCENE_HOTSPOT);
 			} else {
 				SceneItem::display(USE_SCENE_HOTSPOT);
 			}
@@ -1983,6 +1987,8 @@ void SceneHotspot::doAction(int action) {
 		if (g_vm->getGameID() == GType_BlueForce)
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				SceneItem::display(ESP_TALK_SCENE_HOTSPOT);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				SceneItem::display(RUS_TALK_SCENE_HOTSPOT);
 			} else {
 				SceneItem::display(TALK_SCENE_HOTSPOT);
 			}
@@ -1995,6 +2001,8 @@ void SceneHotspot::doAction(int action) {
 		if (g_vm->getGameID() == GType_BlueForce)
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				SceneItem::display(ESP_DEFAULT_SCENE_HOTSPOT);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				SceneItem::display(RUS_DEFAULT_SCENE_HOTSPOT);
 			} else {
 				SceneItem::display(DEFAULT_SCENE_HOTSPOT);
 			}

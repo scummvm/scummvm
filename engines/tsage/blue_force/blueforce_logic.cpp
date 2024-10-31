@@ -300,6 +300,8 @@ void BlueForceGame::processEvent(Event &event) {
 			BF_GLOBALS._dialogCenter.y = 100;
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				MessageDialog::show(ESP_HELP_MSG, ESP_OK_BTN_STRING);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				MessageDialog::show(TsAGE::BlueForce::RUS_HELP_MSG, RUS_OK_BTN_STRING);
 			} else {
 				MessageDialog::show(HELP_MSG, OK_BTN_STRING);
 			}
@@ -334,6 +336,8 @@ void BlueForceGame::processEvent(Event &event) {
 			GfxDialog::setPalette();
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				MessageDialog::show(ESP_GAME_PAUSED_MSG, ESP_OK_BTN_STRING);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				MessageDialog::show(RUS_GAME_PAUSED_MSG, RUS_OK_BTN_STRING);
 			} else {
 				MessageDialog::show(GAME_PAUSED_MSG, OK_BTN_STRING);
 			}
@@ -982,6 +986,8 @@ void SceneHandlerExt::process(Event &event) {
 		int rc;
 		if (g_vm->getLanguage() == Common::ES_ESP) {
 			rc = MessageDialog::show2(ESP_WATCH_INTRO_MSG, ESP_START_PLAY_BTN_STRING, ESP_INTRODUCTION_BTN_STRING);
+		} else if (g_vm->getLanguage() == Common::RU_RUS) {
+			rc = MessageDialog::show2(RUS_WATCH_INTRO_MSG, RUS_START_PLAY_BTN_STRING, RUS_INTRODUCTION_BTN_STRING);
 		} else {
 			rc = MessageDialog::show2(WATCH_INTRO_MSG, START_PLAY_BTN_STRING, INTRODUCTION_BTN_STRING);
 		}

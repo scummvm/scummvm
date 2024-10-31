@@ -1571,7 +1571,12 @@ void Scene560::dispatch() {
  *--------------------------------------------------------------------------*/
 
 Scene570::PasswordEntry::PasswordEntry(): EventHandler() {
-	_passwordStr = SCENE570_PASSWORD;
+
+	if (g_vm->getLanguage() == Common::RU_RUS) {
+		_passwordStr = RUS_SCENE570_PASSWORD;
+	} else {
+		_passwordStr = SCENE570_PASSWORD;
+	}
 }
 
 void Scene570::PasswordEntry::synchronize(Serializer &s) {
@@ -1666,7 +1671,7 @@ void Scene570::PasswordEntry::checkPassword() {
 	// reimplementation in ScummVM, as the project name.
 	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;
 
-	if (!_entryBuffer.compareTo("JACKIE") || !_entryBuffer.compareTo("SCUMMVM")) {
+	if (!_entryBuffer.compareTo("JACKIE") || !_entryBuffer.compareTo("SCUMMVM") || !_entryBuffer.compareTo("L;TRB")) { // Third condition for the Russian version
 		// Password was correct
 		T2_GLOBALS._uiElements.addScore(30);
 		BF_GLOBALS._player.disableControl();
@@ -2082,23 +2087,47 @@ void Scene570::signal() {
 		_printerIcon.setDetails(570, 14, 15, -1, 2, (SceneItem *)NULL);
 
 		_iconManager.setup(2);
-		_folder1.setDetails(1, 1, 0, SCENE570_C_DRIVE);
-		_folder2.setDetails(1, 2, 1, SCENE570_RING);
-		_folder3.setDetails(1, 3, 1, SCENE570_PROTO);
-		_folder4.setDetails(1, 4, 1, SCENE570_WACKY);
+		if (g_vm->getLanguage() == Common::RU_RUS) {
+			_folder1.setDetails(1, 1, 0, RUS_SCENE570_C_DRIVE);
+			_folder2.setDetails(1, 2, 1, RUS_SCENE570_RING);
+			_folder3.setDetails(1, 3, 1, RUS_SCENE570_PROTO);
+			_folder4.setDetails(1, 4, 1, RUS_SCENE570_WACKY);
 
-		if (!BF_GLOBALS.getFlag(fDecryptedBluePrints))
-			_icon1.setDetails(3, 5, 0, SCENE570_COBB);
-		_icon2.setDetails(2, 7, 0, SCENE570_LETTER);
-		if (BF_GLOBALS.getFlag(fDecryptedBluePrints))
-			_icon3.setDetails(7, 6, 0, SCENE570_COBB);
+			if (!BF_GLOBALS.getFlag(fDecryptedBluePrints))
+				_icon1.setDetails(3, 5, 0, RUS_SCENE570_COBB);
 
-		_icon4.setDetails(6, 8, 1, SCENE570_RINGEXE);
-		_icon5.setDetails(5, 9, 1, SCENE570_RINGDATA);
-		_icon6.setDetails(6, 10, 2, SCENE570_PROTOEXE);
-		_icon7.setDetails(5, 11, 2, SCENE570_PROTODATA);
-		_icon8.setDetails(6, 12, 3, SCENE570_WACKYEXE);
-		_icon9.setDetails(5, 13, 3, SCENE570_WACKYDATA);
+			_icon2.setDetails(2, 7, 0, RUS_SCENE570_LETTER);
+
+			if (BF_GLOBALS.getFlag(fDecryptedBluePrints))
+				_icon3.setDetails(7, 6, 0, RUS_SCENE570_COBB);
+
+			_icon4.setDetails(6, 8, 1, RUS_SCENE570_RINGEXE);
+			_icon5.setDetails(5, 9, 1, RUS_SCENE570_RINGDATA);
+			_icon6.setDetails(6, 10, 2, RUS_SCENE570_PROTOEXE);
+			_icon7.setDetails(5, 11, 2, RUS_SCENE570_PROTODATA);
+			_icon8.setDetails(6, 12, 3, RUS_SCENE570_WACKYEXE);
+			_icon9.setDetails(5, 13, 3, RUS_SCENE570_WACKYDATA);
+		} else {
+			_folder1.setDetails(1, 1, 0, SCENE570_C_DRIVE);
+			_folder2.setDetails(1, 2, 1, SCENE570_RING);
+			_folder3.setDetails(1, 3, 1, SCENE570_PROTO);
+			_folder4.setDetails(1, 4, 1, SCENE570_WACKY);
+
+			if (!BF_GLOBALS.getFlag(fDecryptedBluePrints))
+				_icon1.setDetails(3, 5, 0, SCENE570_COBB);
+
+			_icon2.setDetails(2, 7, 0, SCENE570_LETTER);
+
+			if (BF_GLOBALS.getFlag(fDecryptedBluePrints))
+				_icon3.setDetails(7, 6, 0, SCENE570_COBB);
+
+			_icon4.setDetails(6, 8, 1, SCENE570_RINGEXE);
+			_icon5.setDetails(5, 9, 1, SCENE570_RINGDATA);
+			_icon6.setDetails(6, 10, 2, SCENE570_PROTOEXE);
+			_icon7.setDetails(5, 11, 2, SCENE570_PROTODATA);
+			_icon8.setDetails(6, 12, 3, SCENE570_WACKYEXE);
+			_icon9.setDetails(5, 13, 3, SCENE570_WACKYDATA);
+		}
 
 		_iconManager.refreshList();
 		BF_GLOBALS._player.enableControl();
@@ -2113,7 +2142,11 @@ void Scene570::signal() {
 		_object3.setFrame(1);
 		_object3.fixPriority(1);
 
-		_icon3.setDetails(7, 6, 0, SCENE570_COBB);
+		if (g_vm->getLanguage() == Common::RU_RUS) {
+			_icon3.setDetails(7, 6, 0, RUS_SCENE570_COBB);
+		} else {
+			_icon3.setDetails(7, 6, 0, SCENE570_COBB);
+		}
 		_iconManager.refreshList();
 		T2_GLOBALS._uiElements._active = true;
 		T2_GLOBALS._uiElements.show();

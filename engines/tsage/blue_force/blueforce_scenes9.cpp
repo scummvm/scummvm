@@ -3508,7 +3508,11 @@ void Scene935::Action1::signal() {
 		scene->addFader((const byte *)&v50ECC, 100, this);
 		break;
 	case 1:
-		scene->_visualSpeaker.setText("Jake! Hide in the closet!");
+		if (g_vm->getLanguage() == Common::RU_RUS) {
+			scene->_visualSpeaker.setText("\x84\xA6\xA5\xA9\xAA! \x8F\xE0\xEF\xE7\xEC\xE1\xEF \xA2 \xE8\xAA\xA0\xE4!"); // Джейк! Прячься в шкаф!
+		} else {
+			scene->_visualSpeaker.setText("Jake! Hide in the closet!");
+		}
 		for (int i = 1; i < 21; i++)
 			scene->transition((const byte *)&v50EEA, 5 * i, 935, NULL, 0, 255, 249, 255, 1);
 		setDelay(3);
@@ -3521,11 +3525,19 @@ void Scene935::Action1::signal() {
 		scene->_visualSpeaker._textPos.y = scene->_sceneBounds.top + 80;
 		scene->_visualSpeaker._color1 = 252;
 		scene->_visualSpeaker._color2 = 251;
-		scene->_visualSpeaker.setText("Jake! Hide in the closet!");
+		if (g_vm->getLanguage() == Common::RU_RUS) {
+			scene->_visualSpeaker.setText("\x84\xA6\xA5\xA9\xAA! \x8F\xE0\xEF\xE7\xEC\xE1\xEF \xA2 \xE8\xAA\xA0\xE4!"); // Джейк! Прячься в шкаф!
+		} else {
+			scene->_visualSpeaker.setText("Jake! Hide in the closet!");
+		}
 		setDelay(3);
 		break;
 	case 4:
-		scene->_visualSpeaker.setText("Jake! Hide in the closet!");
+		if (g_vm->getLanguage() == Common::RU_RUS) {
+			scene->_visualSpeaker.setText("\x84\xA6\xA5\xA9\xAA! \x8F\xE0\xEF\xE7\xEC\xE1\xEF \xA2 \xE8\xAA\xA0\xE4!"); // Джейк! Прячься в шкаф!
+		} else {
+			scene->_visualSpeaker.setText("Jake! Hide in the closet!");
+		}
 		for (int i = 1; i < 21; i++)
 			scene->transition((const byte *)&v50F26, 5 * i, 935, NULL, 0, 255, 249, 255, 1);
 		setDelay(3);
@@ -3538,11 +3550,19 @@ void Scene935::Action1::signal() {
 		scene->_visualSpeaker._textPos.y = scene->_sceneBounds.top + 150;
 		scene->_visualSpeaker._color1 = 250;
 		scene->_visualSpeaker._color2 = 249;
-		scene->_visualSpeaker.setText("Jake! Hide in the closet!");
+		if (g_vm->getLanguage() == Common::RU_RUS) {
+			scene->_visualSpeaker.setText("\x84\xA6\xA5\xA9\xAA! \x8F\xE0\xEF\xE7\xEC\xE1\xEF \xA2 \xE8\xAA\xA0\xE4!"); // Джейк! Прячься в шкаф!
+		} else {
+			scene->_visualSpeaker.setText("Jake! Hide in the closet!");
+		}
 		setDelay(3);
 		break;
 	case 7:
-		scene->_visualSpeaker.setText("Jake! Hide in the closet!");
+		if (g_vm->getLanguage() == Common::RU_RUS) {
+			scene->_visualSpeaker.setText("\x84\xA6\xA5\xA9\xAA! \x8F\xE0\xEF\xE7\xEC\xE1\xEF \xA2 \xE8\xAA\xA0\xE4!"); // Джейк! Прячься в шкаф!
+		} else {
+			scene->_visualSpeaker.setText("Jake! Hide in the closet!");
+		}
 		for (int i = 1; i < 21; i++)
 			scene->transition((const byte *)&v50F62, 5 * i, 935, NULL, 0, 255, 249, 255, 1);
 		setDelay(3);

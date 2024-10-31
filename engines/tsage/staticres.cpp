@@ -323,6 +323,59 @@ char const *const ESP_CITY_HALL_JAIL = "Ayuntamiento & C\240rcel";
 // Scene 180 messages
 char const *const ESP_THE_NEXT_DAY = "Al d\241a siguiente";
 
+// Russian version
+char const *const RUS_QUIT_CONFIRM_MSG = "\x82\xEB \xE5\xAE\xE2\xA8\xE2\xA5 \xA2\xEB\xA9\xE2\xA8 \xA8\xA7 \xA8\xA3\xE0\xEB?"; // "Вы хотите выйти из игры?"
+char const *const RUS_RESTART_MSG = "\x82\xEB \xE5\xAE\xE2\xA8\xE2\xA5 \xAD\xA0\xE7\xA0\xE2\xEC \xA7\xA0\xAD\xAE\xA2\xAE?";   // "Вы хотите начать заново?"
+char const *const RUS_GAME_PAUSED_MSG = "  \x8F\xA0\xE3\xA7\xA0.  ";                                                          // "  Пауза.  ";
+char const *const RUS_QUIT_BTN_STRING = " \x82\xEB\xA9\xE2\xA8";                                                              // " Выйти";
+char const *const RUS_RESTART_BTN_STRING = "\x87\xA0\xAD\xAE\xA2\xAE";                                                        // "Заново";
+char const *const RUS_SAVE_BTN_STRING = " \x87\xA0\xAF\xA8\xE1\xEC ";                                                         // " Запись ";
+char const *const RUS_RESUME_BTN_STRING = " \x8D\xA0\xA7\xA0\xA4 \xA2\r\xA8\xA3\xE0\xE3";                                     // " Назад в\rигру";
+
+// Dialog resources
+char const *const RUS_HELP_MSG = "\x91\xE2\xE0\xA0\xA6\xA8 \xAF\xAE\xE0\xEF\xA4\xAA\xA0\x14\r\x82\xA5\xE0\xE1\xA8\xEF ScummVM\r\r\x01 \x83\xAE\xE0\xEF\xE7\xA8\xA5 \xAA\xAB\xA0\xA2\xA8\xE8\xA8\rF2 - \x87\xA2\xE3\xAA\rF3 - \x82\xEB\xA9\xE2\xA8\rF4 - \x87\xA0\xAD\xAE\xA2\xAE\rF5 - \x87\xA0\xAF\xA8\xE1\xEC\rF7 - \x91\xE7\xA8\xE2\xA0\xE2\xEC\rF10 - \x8F\xA0\xE3\xA7\xA0"; // Стражи порядка\x14\rВерсия ScummVM\r\r\x01 Горячие клавиши\rF2 - Звук\rF3 - Выйти\rF4 - Заново\rF5 - Запись\rF6 - Считать\rF7 - Пауза"
+char const *const RUS_WATCH_INTRO_MSG = "    \x8F\xAE\xE1\xAC\xAE\xE2\xE0\xA5\xE2\xEC \xA2\xE1\xE2\xE3\xAF\xAB\xA5\xAD\xA8\xA5?    ";                                                                                                                                                                                                                                                                                          // "    Посмотреть вступление?    "
+char const *const RUS_START_PLAY_BTN_STRING = " \x8D\xA0\xE7\xA0\xE2\xEC  ";                                                                                                                                                                                                                                                                                                                                                   // " Начать ";
+char const *const RUS_INTRODUCTION_BTN_STRING = " \x82\xE1\xE2\xE3\xAF\xAB\xA5\xAD\xA8\xA5 ";                                                                                                                                                                                                                                                                                                                                  // " Вступление ";
+char const *const RUS_OPTIONS_MSG = "\x01\x8D\xA0\xE1\xE2\xE0\xAE\xA9\xAA\xA8";                                                                                                                                                                                                                                                                                                                                                // "\x01Настройки"
+
+// Blue Force general messages
+char const *const RUS_BF_NAME = "\x91\xE2\xE0\xA0\xA6\xA8 \xAF\xAE\xE0\xEF\xA4\xAA\xA0";	// "Стражи порядка"
+char const *const RUS_BF_COPYRIGHT = "\x80\xA2\xE2\xAE\xE0\xE1\xAA\xA8\xA5 \xAF\xE0\xA0\xA2\xA0, 1993 Tsunami Media, Inc.";	// "Авторские права, 1993 Tsunami Media, Inc."
+char const *const RUS_BF_ALL_RIGHTS_RESERVED = "\x82\xE1\xA5 \xAF\xE0\xA0\xA2\xA0 \xA7\xA0\xE9\xA8\xE9\xA5\xAD\xEB";	// "Все права защищены"
+char const *const RUS_BF_19840518 = "18 \xAC\xA0\xEF 1984 \xA3\xAE\xA4\xA0";	// "18 мая 1984 года"
+char const *const RUS_BF_19840515 = "15 \xAC\xA0\xEF 1984 \xA3\xAE\xA4\xA0";	// "15 мая 1984 года"
+char const *const RUS_BF_3_DAYS = "3 \xA4\xAD\xEF \xE1\xAF\xE3\xE1\xE2\xEF";	// "3 дня спустя"
+char const *const RUS_BF_11_YEARS = "11 \xAB\xA5\xE2 \xE1\xAF\xE3\xE1\xE2\xEF";	// "11 лет спустя"
+
+// Scene 50 hotspots
+char const *const RUS_GRANDMA_FRANNIE = "\x81\xA0\xA1\xE3\xAB\xEF \x94\xE0\xED\xAD\xAD\xA8";	// "Бабуля Фрэнни"
+char const *const RUS_MARINA = "\x8F\xE0\xA8\xE7\xA0\xAB";	// "Причал"
+char const *const RUS_POLICE_DEPARTMENT = "\x93\xAF\xE0\xA0\xA2\xAB\xA5\xAD\xA8\xA5";	// "Управление"
+char const *const RUS_TONYS_BAR = "\x81\xA0\xE0 \x92\xAE\xAD\xA8";	// "Бар Тони"
+char const *const RUS_CHILD_PROTECTIVE_SERVICES = "\x91\xAB\xE3\xA6\xA1\xA0 \xA7\xA0\xE9\xA8\xE2\xEB \xA4\xA5\xE2\xA5\xA9";	// "Служба защиты детей"
+char const *const RUS_ALLEY_CAT = "\x81\xAE\xE3\xAB\xA8\xAD\xA3";	// "Боулинг"
+char const *const RUS_CITY_HALL_JAIL = "\x90\xA0\xE2\xE3\xE8\xA0 \xA8 \xE2\xEE\xE0\xEC\xAC\xA0";	// "Ратуша и тюрьма"
+char const *const RUS_JAMISON_RYAN = "\x8E\xE4\xA8\xE1 \x84\xA6\xED\xAC\xA8\xE1\xAE\xAD\xA0";	// "Офис Джэмисона"
+char const *const RUS_BIKINI_HUT = "\x22\x81\xA8\xAA\xA8\xAD\xA8 \x95\xA0\xE2\x22";	// ""Бикини Хат""
+
+// Scene 570 computer messageS
+char const *const RUS_SCENE570_PASSWORD = "  \xAF\xA0\xE0\xAE\xAB\xEC -> ";	//"  пароль -> "
+char const *const RUS_SCENE570_C_DRIVE = "c:\\";
+char const *const RUS_SCENE570_RING = "ring";
+char const *const RUS_SCENE570_PROTO = "proto";
+char const *const RUS_SCENE570_WACKY = "wacky";
+char const *const RUS_SCENE570_COBB = "\xAA\xAE\xA1\xA1";	//"кобб"
+char const *const RUS_SCENE570_LETTER = "\xAF\xA8\xE1\xEC\xAC\xAE";	//"письмо"
+char const *const RUS_SCENE570_RINGEXE = "ringexe";
+char const *const RUS_SCENE570_RINGDATA = "ringdata";
+char const *const RUS_SCENE570_PROTOEXE = "protoexe";
+char const *const RUS_SCENE570_PROTODATA = "protodata";
+char const *const RUS_SCENE570_WACKYEXE = "wackyexe";
+char const *const RUS_SCENE570_WACKYDATA = "wackydat ";
+
+// Scene 180 messages
+char const *const RUS_THE_NEXT_DAY = "\x93\xE2\xE0\xAE\xAC";	// "Утром"
 
 } // End of namespace BlueForce
 
