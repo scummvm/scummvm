@@ -186,6 +186,21 @@ static const tSageGameDescription gameDescriptions[] = {
 		GF_FLOPPY | GF_ALT_REGIONS
 	},
 
+	// Blue Force CD Russian Fan translation by old-games.ru
+	{
+		{
+			"blueforce",
+			"CD",
+			AD_ENTRY1s("blue.rlb", "d7dcc78c36ae7a3e129d5e8a2535c2b6", 64029619),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
+		},
+		GType_BlueForce,
+		GF_CD | GF_ALT_REGIONS
+	},
+
 	// Found on Wacky Funsters!
 	{
 		{

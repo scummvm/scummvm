@@ -134,6 +134,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  TsAGE:
    - Added support for Russian CD fan-translation for Ringworld.
    - Added keymapper support.
+   - Added support for Russian CD fan-translation for Blue Force.
 
  Toon:
   - Added keymapper support.
