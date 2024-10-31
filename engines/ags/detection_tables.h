@@ -2209,6 +2209,8 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "mmmd19", "Maniac Dungeon Raum 19: Weihnachts-Edition" },
 	{ "mmmd20", "Maniac Dungeon Raum 20: Die Pharaonen-Grabkammer" },
 	{ "mmmd21", "Maniac Dungeon Raum 21: Durch Raum (21) und Zeit" },
+	{ "mmmd22", "Maniac Dungeon Raum 22: Unter Affen" },
+	{ "mmmd23", "Maniac Dungeon Raum 23: (R)ausgefallen" },
 	{ "mmmdasexperiment", "Maniac Mansion Mania: Das Experiment" },
 	{ "mmmdieeroberung", "Maniac Mansion Mania: Die Eroberung" },
 	{ "mmmeaster2010", "Maniac Mansion Mania Easter: Ostereiersuche 2010" },
@@ -7615,6 +7617,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("mmm36", "Der Liebesbrief.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 9499807, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmm37", "SandyEppi.exe", "ca70858da2a347bd8ec2dedcbb4113b4", 10311675, Common::DE_DEU),
 	GAME_ENTRY("mmm37", "MMM37.exe", "0710e2ec71042617f565c01824f0cf3c", 10092409),  // De-It
+	GAME_ENTRY_LANG("mmm37", "MMM37.exe", "07b6c61269775f714e681c3a184a8580", 10039367, Common::DE_DEU),  // Talkie
 	GAME_ENTRY_LANG("mmm38", "Rescue Mission.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 6912146, Common::DE_DEU),
 	GAME_ENTRY("mmm38", "mmm38.exe", "81083747db230fe1e7bbe64857467b56", 8701976),  // De-It
 	GAME_ENTRY_LANG("mmm39", "erinner.exe", "465f972675db2da6040518221af5b0ba", 10525885, Common::DE_DEU),
@@ -7628,6 +7631,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("mmm42", "psychobernie.exe", "0710e2ec71042617f565c01824f0cf3c", 6696188, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmm43", "Edna.exe", "0710e2ec71042617f565c01824f0cf3c", 5149386, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmm44", "Razor.exe", "0710e2ec71042617f565c01824f0cf3c", 4820839, Common::DE_DEU),
+	GAME_ENTRY_LANG_PLATFORM("mmm44", "Episode44.exe", "6f7e174b0ceabb4338cd332ea0d686a8", 27140384, Common::DE_DEU, "Director's Cut"),
 	GAME_ENTRY_LANG("mmm45", "MMM45.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 13327742, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmm46", "Lost.exe", "0710e2ec71042617f565c01824f0cf3c", 5143252, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmm47", "Ostern.exe", "5c183013f9d8ed144de05f239633a604", 7416584, Common::DE_DEU),
@@ -7715,6 +7719,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("mmmd19", "019.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 5157252, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmmd20", "020.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 4974813, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmmd21", "021.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 5588743, Common::DE_DEU),
+	GAME_ENTRY_LANG("mmmd22", "022.exe", "07b6c61269775f714e681c3a184a8580", 8055428, Common::DE_DEU),
+	GAME_ENTRY_LANG("mmmd23", "023.ags", "0cbdd9f6d60986a6f452f72a43e18f43", 10168407, Common::DE_DEU),
 	GAME_ENTRY("mmmeaster2010", "Ostereiersuche2010.exe", "2f19c54fbc8da902ad8cdebc56261da1", 9743112),  // De-It
 	GAME_ENTRY("mmmeaster2011", "Ostereiersuche2011.exe", "09d2b29962dc4c3b8ee0f03a60dc93b1", 9925586),  // De-It
 	GAME_ENTRY_LANG("mmmeaster2018", "easter18.exe", "fd1de819239fab19d8c5078d77c4d9d1", 12310225, Common::DE_DEU),
