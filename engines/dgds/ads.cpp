@@ -636,34 +636,52 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		debug(10, "ADS 0x30FF: random end");
 		error("Unexpected RANDOM END mid-stream (no RANDOM START?).");
 
-	case 0x4000: { // MOVE SEQ TO FRONT
-		enviro = scr->readUint16LE();
-		seqnum = scr->readUint16LE();
-		debug(10, "ADS 0x%04x: mov seq to front env %d seq %d", code, enviro, seqnum);
-		/*uint16 unk = */scr->readUint16LE();
-		if (seqnum < _adsData->_ttmSeqs.size()) {
-			// This is O(N) but the N is small and it's not called often.
-			TTMSeq seq = _adsData->_ttmSeqs.remove_at(seqnum);
-			_adsData->_ttmSeqs.insert_at(0, seq);
-		} else {
-			warning("ADS: 0x4000 Request to move env %d seq %d which doesn't exist", enviro, seqnum);
-		}
-
-		break;
-	}
-
-	case 0x4010: { // MOVE SEQ TO BACK
+	case 0x4000: { // MOVE SEQ TO BACK
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
 		debug(10, "ADS 0x%04x: mov seq to back env %d seq %d", code, enviro, seqnum);
 		/*uint16 unk = */scr->readUint16LE();
-		if (seqnum < _adsData->_ttmSeqs.size()) {
-			// This is O(N) but the N is small and it's not called often.
-			TTMSeq seq = _adsData->_ttmSeqs.remove_at(seqnum);
-			_adsData->_ttmSeqs.push_back(seq);
-		} else {
-			warning("ADS: 0x4010 Request to move env %d seq %d which doesn't exist", enviro, seqnum);
+		// This is O(N) but the N is small and it's not called often.
+		TTMSeq seq;
+		bool success = false;
+		for (uint i = 0; i < _adsData->_ttmSeqs.size(); i++) {
+			if (_adsData->_ttmSeqs[i]._enviro == enviro && _adsData->_ttmSeqs[i]._seqNum == seqnum) {
+				seq = _adsData->_ttmSeqs[i];
+				_adsData->_ttmSeqs.remove_at(i);
+				success = true;
+				break;
+			}
 		}
+
+		if (success)
+			_adsData->_ttmSeqs.push_back(seq);
+		else
+			warning("ADS: 0x4000 Request to move env %d seq %d which doesn't exist", enviro, seqnum);
+
+		break;
+	}
+
+	case 0x4010: { // MOVE SEQ TO FRONT
+		enviro = scr->readUint16LE();
+		seqnum = scr->readUint16LE();
+		debug(10, "ADS 0x%04x: mov seq to front env %d seq %d", code, enviro, seqnum);
+		/*uint16 unk = */scr->readUint16LE();
+		// This is O(N) but the N is small and it's not called often.
+		TTMSeq seq;
+		bool success = false;
+		for (uint i = 0; i < _adsData->_ttmSeqs.size(); i++) {
+			if (_adsData->_ttmSeqs[i]._enviro == enviro && _adsData->_ttmSeqs[i]._seqNum == seqnum) {
+				seq = _adsData->_ttmSeqs[i];
+				_adsData->_ttmSeqs.remove_at(i);
+				success = true;
+				break;
+			}
+		}
+
+		if (success)
+			_adsData->_ttmSeqs.insert_at(0, seq);
+		else
+			warning("ADS: 0x4010 Request to move env %d seq %d which doesn't exist", enviro, seqnum);
 
 		break;
 	}
