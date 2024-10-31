@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-31 11:57+0000\n"
+"PO-Revision-Date: 2024-10-31 11:58+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -12515,22 +12515,24 @@ msgid "Uses 16-color graphics."
 msgstr "Verwendet 16 Farben für die Grafik-Darstellung."
 
 #: engines/vcruise/metaengine.cpp:97
-#, fuzzy
-#| msgid "Prerecorded sounds"
 msgid "Preload sounds"
-msgstr "Aufgezeichnete Sound-Effekte"
+msgstr "Sounds vorladen"
 
 #: engines/vcruise/metaengine.cpp:98
 msgid "Preload sounds. May improve performance on slow hard drives."
 msgstr ""
+"Sounds werden vorgeladen. Dies kann die Leistung auf langsamen Festplatten "
+"verbessern."
 
 #: engines/vcruise/metaengine.cpp:108
 msgid "Faster video decoder (lower quality)"
-msgstr ""
+msgstr "Schneller Video-Decoder (niedrigere Qualität)"
 
 #: engines/vcruise/metaengine.cpp:109
 msgid "Reduce video decoding CPU usage at the cost of quality."
 msgstr ""
+"Reduziere die zum Video-Decoding benötigte CPU-Leistung auf Kosten der "
+"Qualität."
 
 #: engines/vcruise/metaengine.cpp:157
 msgid "Display help screen"
@@ -12558,7 +12560,7 @@ msgstr "Überspringe aktuelle Animation"
 
 #: engines/vcruise/metaengine.cpp:222
 msgid "Cycle item in scene (debug cheat)"
-msgstr ""
+msgstr "Durch Items in Szene wechseln (Debug-Cheat)"
 
 #: engines/vcruise/vcruise.cpp:92
 msgid "This game requires JPEG support, which was not compiled in."
