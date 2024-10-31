@@ -759,14 +759,17 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool &end_movement, bool real_
 				dr.normalize(dist);
 				r = R() + dr;
 			}
-		} else if (_impulse_timer > FLT_EPS || has_control_type(CONTROL_AUTO_MOVE)) {
+		} else if (_impulse_timer > FLT_EPS || g_engine->_gameVersion < 20050223 || has_control_type(CONTROL_AUTO_MOVE)) {
 			float time = dt;
-			if (!has_control_type(CONTROL_AUTO_MOVE)) {
+			if ((g_engine->_gameVersion < 20050223 && _impulse_timer > FLT_EPS) ||
+				(g_engine->_gameVersion > 20050223 && !has_control_type(CONTROL_AUTO_MOVE)) ){
 				if (_impulse_timer < dt) {
 					time = _impulse_timer;
 					if (real_moving)
 						_impulse_timer = 0.0f;
-					end_movement = true;
+
+					if (g_engine->_gameVersion > 20050223 || !has_control_type(CONTROL_AUTO_MOVE))
+						end_movement = true;
 				} else if (real_moving)
 					_impulse_timer -= dt;
 			}
