@@ -137,6 +137,16 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 		ckBlue = 255;
 	}
 
+	//
+	// ScummVM TGA decoder interpreting palette as RGB, but TGA data has as BGR
+	// swap R and B color components
+	//
+	if (img.getPaletteCount() != 0 && _filename.hasSuffix(".tga")) {
+		byte tmp = ckBlue;
+		ckBlue = ckRed;
+		ckRed = tmp;
+	}
+
 	_ckDefault = defaultCK;
 	_ckRed = ckRed;
 	_ckGreen = ckGreen;
