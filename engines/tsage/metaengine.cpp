@@ -168,12 +168,12 @@ Common::KeymapArray TSageMetaEngine::initKeymaps(const char *target) const {
 
 	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "tsage-default", _("Default keymappings"));
 	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
-	Keymap *blueForceKeyMap = new Keymap(Keymap::kKeymapTypeGame, "blueforce-shortcuts", _("Blue force keymappings"));
-	Keymap *ringworldKeyMap = new Keymap(Keymap::kKeymapTypeGame, "ringworld-shortcuts", _("Ringworld keymappings"));
 
 	Common::Action *act;
 
 	Common::String gameId = ConfMan.get("gameid", target);
+	Common::String extra = ConfMan.get("extra", target);
+	const bool isDemo = extra.contains("Demo");
 
 	act = new Common::Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
@@ -187,16 +187,56 @@ Common::KeymapArray TSageMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
 
-	{
-		act = new Common::Action("ESCAPE", _("Escape"));
-		act->setCustomEngineActionEvent(kActionEscape);
-		act->addDefaultInputMapping("ESCAPE");
-		gameKeyMap->addAction(act);
+	act = new Common::Action("ESCAPE", _("Escape"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	act->addDefaultInputMapping("ESCAPE");
+	gameKeyMap->addAction(act);
 
-		// I18N: Return refers to return/enter key
-		act = new Common::Action("RETURN", _("Return"));
-		act->setCustomEngineActionEvent(kActionReturn);
-		act->addDefaultInputMapping("RETURN");
+	// I18N: Return refers to return/enter key
+	act = new Common::Action("RETURN", _("Return"));
+	act->setCustomEngineActionEvent(kActionReturn);
+	act->addDefaultInputMapping("RETURN");
+	gameKeyMap->addAction(act);
+
+	act = new Common::Action("WALK", _("Walk"));
+	act->setCustomEngineActionEvent(kActionWalk);
+	act->addDefaultInputMapping("w");
+	gameKeyMap->addAction(act);
+
+	act = new Common::Action("LOOK", _("Look"));
+	act->setCustomEngineActionEvent(kActionLook);
+	act->addDefaultInputMapping("l");
+	gameKeyMap->addAction(act);
+
+	act = new Common::Action("USE", _("Use"));
+	act->setCustomEngineActionEvent(kActionUse);
+	act->addDefaultInputMapping("u");
+	gameKeyMap->addAction(act);
+
+	act = new Common::Action("TALK", _("Talk"));
+	act->setCustomEngineActionEvent(kActionTalk);
+	act->addDefaultInputMapping("t");
+	gameKeyMap->addAction(act);
+
+	act = new Common::Action("HELP", _("View Help"));
+	act->setCustomEngineActionEvent(kActionHelp);
+	act->addDefaultInputMapping("F1");
+	gameKeyMap->addAction(act);
+
+	act = new Common::Action("SOUNDOPTIONS", _("Sound options"));
+	act->setCustomEngineActionEvent(kActionSoundOptions);
+	act->addDefaultInputMapping("F2");
+	gameKeyMap->addAction(act);
+
+	act = new Common::Action("QUITGAME", _("Quit game"));
+	act->setCustomEngineActionEvent(kActionQuitGame);
+	act->addDefaultInputMapping("F3");
+	gameKeyMap->addAction(act);
+
+	if (!isDemo) {
+		act = new Common::Action("RESTARTGAME", _("Restart game"));
+		act->setCustomEngineActionEvent(kActionRestartGame);
+		act->addDefaultInputMapping("F4");
 		gameKeyMap->addAction(act);
 
 		act = new Common::Action("SAVEGAME", _("Save game"));
@@ -204,57 +244,10 @@ Common::KeymapArray TSageMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("F5");
 		gameKeyMap->addAction(act);
 
-		act = new Common::Action("WALK", _("Walk"));
-		act->setCustomEngineActionEvent(kActionWalk);
-		act->addDefaultInputMapping("w");
-		gameKeyMap->addAction(act);
-
-		act = new Common::Action("LOOK", _("Look"));
-		act->setCustomEngineActionEvent(kActionLook);
-		act->addDefaultInputMapping("l");
-		gameKeyMap->addAction(act);
-
-		act = new Common::Action("USE", _("Use"));
-		act->setCustomEngineActionEvent(kActionUse);
-		act->addDefaultInputMapping("u");
-		gameKeyMap->addAction(act);
-
-		act = new Common::Action("TALK", _("Talk"));
-		act->setCustomEngineActionEvent(kActionTalk);
-		act->addDefaultInputMapping("t");
-		gameKeyMap->addAction(act);
-
-		act = new Common::Action("HELP", _("View Help"));
-		act->setCustomEngineActionEvent(kActionHelp);
-		act->addDefaultInputMapping("F1");
-		gameKeyMap->addAction(act);
-
-		act = new Common::Action("SOUNDOPTIONS", _("Sound options"));
-		act->setCustomEngineActionEvent(kActionSoundOptions);
-		act->addDefaultInputMapping("F2");
-		gameKeyMap->addAction(act);
-
-		act = new Common::Action("QUITGAME", _("Quit game"));
-		act->setCustomEngineActionEvent(kActionQuitGame);
-		act->addDefaultInputMapping("F3");
-		gameKeyMap->addAction(act);
-
-		act = new Common::Action("RESTARTGAME", _("Restart game"));
-		act->setCustomEngineActionEvent(kActionRestartGame);
-		act->addDefaultInputMapping("F4");
-		gameKeyMap->addAction(act);
-
 		act = new Common::Action("RESTOREGAME", _("Restore game"));
 		act->setCustomEngineActionEvent(kActionRestoreGame);
 		act->addDefaultInputMapping("F7");
 		gameKeyMap->addAction(act);
-
-		if (gameId == "ringworld2") {
-			act = new Common::Action("CREDITS", _("Show credits"));
-			act->setCustomEngineActionEvent(kActionCredits);
-			act->addDefaultInputMapping("F8");
-			gameKeyMap->addAction(act);
-		}
 
 		act = new Common::Action("PAUSEGAME", _("Pause game"));
 		act->setCustomEngineActionEvent(kActionPauseGame);
@@ -263,6 +256,11 @@ Common::KeymapArray TSageMetaEngine::initKeymaps(const char *target) const {
 	}
 
 	if (gameId == "ringworld2") {
+		act = new Common::Action("CREDITS", _("Show credits"));
+		act->setCustomEngineActionEvent(kActionCredits);
+		act->addDefaultInputMapping("F8");
+		gameKeyMap->addAction(act);
+
 		act = new Common::Action("UP", _("Crawl North"));
 		act->setCustomEngineActionEvent(kActionMoveUpCrawlNorth);
 		act->addDefaultInputMapping("UP");
@@ -325,9 +323,7 @@ Common::KeymapArray TSageMetaEngine::initKeymaps(const char *target) const {
 		act->setCustomEngineActionEvent(kActionDrawCards);
 		act->addDefaultInputMapping("SPACE"); 
 		gameKeyMap->addAction(act);
-
 	}
-
 
 	KeymapArray keymaps(2);
 	keymaps[0] = engineKeyMap;
