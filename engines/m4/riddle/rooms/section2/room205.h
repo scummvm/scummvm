@@ -33,8 +33,41 @@ public:
 	Room205() : Room() {}
 	~Room205() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+
+private:
+	int32 _fieldD8 = 0;
+	int32 _fieldDC = 0;
+	int32 _fieldE0 = 0;
+	int32 _fieldE4 = 0;
+	int32 _fieldE8 = 0;
+	int32 _field198 = 0;
+	int32 _field19C = 0;
+	int32 _field1A0 = 0;
+
+	int32 _205FireInBrazierSeries = 0;
+	int32 _205GunFireSeries = 0;
+	int32 _205mc01Series = 0;
+	int32 _205mc02Series = 0;
+	int32 _205rp1Series = 0;
+	int32 _205rp02Series = 0;
+	int32 _205TabletsSeries = 0;
+	int32 _ripGetsShotSeries = 0;
+	int32 _ripTrekLowReacherPos5Series = 0;
+	int32 _ripTrekLowReachPos2Series = 0;
+	int32 _ripTrekMedReachHandPos1Series = 0;
+	
+	machine *_205CharcoalSpriteMach = nullptr;
+	machine *_205FireInBrazierMach = nullptr;
+	machine *_205GunInBrazierMach = nullptr;
+	machine *_205LeftEntranceTabletMach = nullptr;
+	machine *_205MeiStanderMach = nullptr;
+	machine *_205TabletsMach = nullptr;
+	machine *_mcEntranceTrekMach = nullptr;
 };
 
 } // namespace Rooms
