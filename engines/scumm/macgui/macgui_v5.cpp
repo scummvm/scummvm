@@ -932,9 +932,11 @@ bool MacV5Gui::handleEvent(Common::Event event) {
 	if (_vm->isPaused())
 		return false;
 
-	const char *rough = "rough";
+	bool checkRough = (_vm->_game.id != GID_MONKEY || _vm->enhancementEnabled(kEnhUIUX));
 
-	if (event.type == Common::EVENT_KEYDOWN) {
+	if (checkRough && event.type == Common::EVENT_KEYDOWN) {
+		const char *rough = "rough";
+
 		if (event.kbd.keycode == rough[_roughProgress]) {
 			_roughProgress++;
 			if (_roughProgress >= strlen(rough)) {
@@ -942,7 +944,12 @@ bool MacV5Gui::handleEvent(Common::Event event) {
 				if (_vm->_useMacGraphicsSmoothing && !_roughWarned) {
 					_roughWarned = true;
 
-					if (!_strsStrings[kMSIRoughCommandMsg].empty() && !runOkCancelDialog(_strsStrings[kMSIRoughCommandMsg]))
+					Common::String msg = _strsStrings[kMSIRoughCommandMsg];
+
+					if (msg.empty())
+						msg = "Warning: The 'rough' command will make your Mac screen look dangerously like a PC.  (eek!)";
+
+					if (!runOkCancelDialog(msg))
 						return false;
 				}
 				_vm->mac_toggleSmoothing();
