@@ -78,7 +78,8 @@ public:
 	virtual void displayShadow(BaseObject *object, const DXVector3 *light, bool lightPosRelative) = 0;
 	//HRESULT InvalidateTexture(LPDIRECT3DTEXTURE Texture);
 
-	virtual void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) = 0;
+	Graphics::TSpriteBlendMode _blendMode;
+	virtual void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode, bool forceChange = false) = 0;
 	// declared in sub class: virtual const char* GetName();
 	// declared in sub class: virtual HRESULT DisplayDebugInfo();
 

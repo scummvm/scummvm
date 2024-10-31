@@ -523,6 +523,8 @@ void BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
 	vertices[3 * vertexSize + 2] = b;
 	vertices[3 * vertexSize + 3] = a;
 
+	setSpriteBlendMode(Graphics::BLEND_UNKNOWN);
+
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -615,8 +617,13 @@ void BaseRenderOpenGL3D::displayShadow(BaseObject *object, const DXVector3 *ligh
 	glDepthMask(GL_TRUE);
 }
 
-void BaseRenderOpenGL3D::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) {
-	switch (blendMode) {
+void BaseRenderOpenGL3D::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode, bool forceChange) {
+	if (blendMode == _blendMode && !forceChange)
+		return;
+
+	_blendMode = blendMode;
+
+	switch (_blendMode) {
 	case Graphics::BLEND_NORMAL:
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		break;
@@ -626,12 +633,11 @@ void BaseRenderOpenGL3D::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode
 		break;
 
 	case Graphics::BLEND_SUBTRACTIVE:
-		// wme3d takes the color value here
 		glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
 		break;
 
 	default:
-		warning("BaseRenderOpenGL3D::setSpriteBlendMode unsupported blend mode %i", blendMode);
+		break;
 	}
 }
 
@@ -774,6 +780,7 @@ void BaseRenderOpenGL3D::renderShadowGeometry(const BaseArray<AdWalkplane *> &pl
 	setWorldTransform(matIdentity);
 
 	// disable color write
+	setSpriteBlendMode(Graphics::BLEND_UNKNOWN);
 	glBlendFunc(GL_ZERO, GL_ONE);
 
 	glFrontFace(GL_CW);

@@ -480,6 +480,8 @@ void BaseRenderOpenGL3DShader::fadeToColor(byte r, byte g, byte b, byte a) {
 	color.z() = b / 255.0f;
 	color.w() = a / 255.0f;
 
+	setSpriteBlendMode(Graphics::BLEND_UNKNOWN);
+
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -537,8 +539,14 @@ bool BaseRenderOpenGL3DShader::stencilSupported() {
 	return true;
 }
 
-void BaseRenderOpenGL3DShader::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) {
-	switch (blendMode) {
+void BaseRenderOpenGL3DShader::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode, bool forceChange) {
+
+	if (blendMode == _blendMode && !forceChange)
+		return;
+
+	_blendMode = blendMode;
+
+	switch (_blendMode) {
 	case Graphics::BLEND_NORMAL:
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		break;
@@ -548,12 +556,11 @@ void BaseRenderOpenGL3DShader::setSpriteBlendMode(Graphics::TSpriteBlendMode ble
 		break;
 
 	case Graphics::BLEND_SUBTRACTIVE:
-		// wme3d takes the color value here
 		glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
 		break;
 
 	default:
-		warning("BaseRenderOpenGL3DShader::setSpriteBlendMode unsupported blend mode %i", blendMode);
+		break;
 	}
 }
 
@@ -628,6 +635,7 @@ void BaseRenderOpenGL3DShader::renderShadowGeometry(const BaseArray<AdWalkplane 
 	setWorldTransform(matIdentity);
 
 	// disable color write
+	setSpriteBlendMode(Graphics::BLEND_UNKNOWN);
 	glBlendFunc(GL_ZERO, GL_ONE);
 
 	glFrontFace(GL_CW);

@@ -36,6 +36,8 @@ BaseRenderer3D::BaseRenderer3D(Wintermute::BaseGame *inGame) : BaseRenderer(inGa
 	_nearClipPlane = DEFAULT_NEAR_PLANE;
 	_farClipPlane = DEFAULT_FAR_PLANE;
 
+	_blendMode = Graphics::BLEND_UNKNOWN;
+
 	_spriteBatchMode = false;
 
 	_ambientLightColor = 0x00000000;

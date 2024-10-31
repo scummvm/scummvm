@@ -403,7 +403,7 @@ bool AdActor3DX::display() {
 		_gameRef->_renderer3D->displayShadow(this, &lightPos, true);
 	}
 
-	_gameRef->_renderer3D->setSpriteBlendMode(_blendMode);
+	_gameRef->_renderer3D->setSpriteBlendMode(_blendMode, true);
 	_gameRef->_renderer3D->setWorldTransform(_worldMatrix);
 
 	bool res = _xmodel->render();
