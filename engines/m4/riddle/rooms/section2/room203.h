@@ -22,13 +22,13 @@
 #ifndef M4_RIDDLE_ROOMS_SECTION2_ROOM203_H
 #define M4_RIDDLE_ROOMS_SECTION2_ROOM203_H
 
-#include "m4/riddle/rooms/room.h"
+#include "m4/riddle/rooms/section2/section2_room.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-class Room203 : public Room {
+class Room203 : public Section2Room {
 private:
 	int _val1 = 0;
 	int _val2 = 0;
@@ -47,6 +47,10 @@ private:
 	int _trigger4 = -1;
 	int _trigger5 = -1;
 	int _shadow3 = 0;
+	int _ripHeadTurn = 0;
+	int _ripLooksAtHeads = 0;
+	int _203sg01 = 0;
+	machine *_mei = nullptr;
 	machine *_gk = nullptr;
 	int _gkFrame = 0;
 	int _gkMode = 0, _gkShould = 0;
@@ -89,7 +93,7 @@ private:
 	void setupPeasant();
 
 public:
-	Room203() : Room() {}
+	Room203() : Section2Room() {}
 	~Room203() override {}
 
 	void init() override;

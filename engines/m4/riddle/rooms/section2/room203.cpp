@@ -38,6 +38,16 @@ const char *OFFICIAL_SHADOW_NAMES[] = {
 	"203of09s", "203of04s", "203of12s"
 };
 
+const int16 SNORMAL1_DIRS[] = { 200, -1 };
+const char *SNORMAL1_NAMES[] = { "203s01" };
+const int16 SSHADOW1_DIRS[] = { 210, -1 };
+const char *SSHADOW1_NAMES[] = { "203ssh01" };
+
+const int16 SNORMAL2_DIRS[] = { 240, -1 };
+const char *SNORMAL2_NAMES[] = { "203s02" };
+const int16 SSHADOW2_DIRS[] = { 250, -1 };
+const char *SSHADOW2_NAMES[] = { "203ssh02" };
+
 
 void Room203::init() {
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME)
@@ -168,6 +178,7 @@ void Room203::init() {
 		kernel_timing_trigger(1, 130);
 		ws_demand_location(348, 273, 1);
 		ws_walk(231, 331, nullptr, 303, 4);
+		break;
 
 	case 207:
 		MoveScreenDelta(_G(game_buff_ptr), -780, 0);
@@ -227,7 +238,78 @@ void Room203::init() {
 		break;
 
 	default:
-		// TODO
+		player_set_commands_allowed(false);
+		ws_demand_location(-40, 352, 3);
+
+		if (keyCheck()) {
+			_G(kernel).call_daemon_every_loop = true;
+			_gkShould = 0;
+
+			series_unload(3);
+			series_unload(4);
+			series_unload(13);
+			series_unload(14);
+
+			setupPigeons();
+			_ripHeadTurn = series_load("rip trek head turn pos3");
+			_203sg01 = series_load("203sg01");
+
+			series_load("mei chen trek walk pos1", 220);
+			series_load("mei chen trek walk pos2", 221);
+			series_load("mei chen trek walk pos3", 222);
+			series_load("mctsh1", 230);
+			series_load("mctsh2", 231);
+			series_load("mctsh3", 232);
+
+			ws_walk_load_walker_series(SNORMAL1_DIRS, SNORMAL1_NAMES);
+			ws_walk_load_shadow_series(SSHADOW1_DIRS, SSHADOW1_NAMES);
+			ws_walk_load_walker_series(SNORMAL2_DIRS, SNORMAL2_NAMES);
+			ws_walk_load_shadow_series(SSHADOW2_DIRS, SSHADOW2_NAMES);
+
+			_mei = triggerMachineByHash_3000(8, 4, *S2_MEI_NORMAL_DIRS, *S2_MEI_SHADOW_DIRS,
+				-95, 352, 3, triggerMachineByHashCallback3000, "mc");
+			ws_walk(196, 335, nullptr, 9000, 3);
+			sendWSMessage_10000(_mei, 173, 344, 3, -1, 1);
+			_G(player).disable_hyperwalk = true;
+
+		} else {
+			setupGk();
+
+			if (player_been_here(203)) {
+				_peasantMode = 4052;
+				_peasantShould = 4170;
+				_peasantX = 418;
+				_peasantY = 385;
+				_peasantLayer = 0x800;
+				_peasantScale = 75;
+
+				if (_G(flags)[V061]) {
+					hotspot_set_active("PEASANT", false);
+					hotspot_set_active("SOLDIER'S HELMET", false);
+				} else {
+					setupPeasant();
+				}
+
+				setupOldLady();
+				setupPigeons();
+				setupOfficial();
+				kernel_timing_trigger(1, 130);
+				ws_walk(115, 353, nullptr, 371, 3);
+
+			} else {
+				_ripLooksAtHeads = series_load("rip looks at heads pos2");
+				ws_walk_load_shadow_series(S2_MEI_SHADOW_DIRS, S2_MEI_SHADOW_NAMES);
+				ws_walk_load_walker_series(S2_MEI_NORMAL_DIRS, S2_MEI_NORMAL_NAMES);
+				_mei = triggerMachineByHash_3000(8, 4, *S2_MEI_NORMAL_DIRS, *S2_MEI_SHADOW_DIRS,
+					-40, 352, 3, triggerMachineByHashCallback3000, "mc");
+
+				if (_G(kittyScreaming))
+					kernel_timing_trigger(1, 31);
+				else
+					kernel_timing_trigger(60, 1);
+			}
+		}
+
 		break;
 	}
 
@@ -235,6 +317,13 @@ void Room203::init() {
 }
 
 void Room203::daemon() {
+	if (keyCheck() && _gkShould == 0 && _G(game_buff_ptr)->x1 >= 380) {
+		_gkShould = 1;
+		_G(kernel).call_daemon_every_loop = false;
+		digi_play("950_s13", 1, 255, -1, 950);
+	}
+
+
 }
 
 void Room203::setupHelmetHotspot() {
