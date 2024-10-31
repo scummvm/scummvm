@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-31 07:05+0000\n"
+"PO-Revision-Date: 2024-10-31 07:20+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -6469,50 +6469,46 @@ msgid "Text speed - Slow"
 msgstr "Text-Geschwindigkeit - Langsam"
 
 #: engines/agos/metaengine.cpp:331
-#, fuzzy
-#| msgid "Show Object Line"
 msgid "Show objects to interact"
-msgstr "Objektzeile anzeigen"
+msgstr "Objekte anzeigen, mit denen interagiert werden kann"
 
 #: engines/agos/metaengine.cpp:338
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Toggle background sounds on/off"
-msgstr "Sound-Effekte umschalten"
+msgstr "Hintergrund-Soundeffekte an-/ausschalten"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:347
-#, fuzzy
-#| msgid "Switching characters:"
 msgid "Switch characters"
-msgstr "Figuren wechseln:"
+msgstr "Figuren wechseln"
 
 #: engines/agos/metaengine.cpp:353
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle hitbox names on/off"
-msgstr "Musik umschalten"
+msgstr "Hitbox-Namen ein-/ausschalten"
 
 #: engines/agos/metaengine.cpp:360
 msgid "Switches between speech only and combined speech and subtitles"
 msgstr ""
+"Zwischen reiner Sprachausgabe und mit Untertiteln kombinierter Sprachausgabe "
+"wechseln"
 
 #: engines/agos/metaengine.cpp:366
 msgid "Switches between subtitles only and combined speech and subtitles"
 msgstr ""
+"Zwischen reinen Untertiteln und mit Untertiteln kombinierter Sprachausgabe "
+"wechseln"
 
 #: engines/agos/metaengine.cpp:376
 msgid "High speed mode on/off in Swampy Adventures"
-msgstr ""
+msgstr "Hochgeschwindigkeitsmodus in Swampy Adventures ein-/ausschalten"
 
 #: engines/agos/metaengine.cpp:382 engines/lure/metaengine.cpp:295
 #: engines/trecision/metaengine.cpp:181
 msgid "Press \"Yes\" key"
-msgstr ""
+msgstr "\"Ja\"-Taste drücken"
 
 #: engines/agos/metaengine.cpp:387 engines/lure/metaengine.cpp:310
 msgid "Press \"No\" key"
-msgstr ""
+msgstr "\"Nein\"-Taste drücken"
 
 #: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -6717,10 +6713,8 @@ msgid "Move right"
 msgstr "Nach rechts bewegen"
 
 #: engines/asylum/metaengine.cpp:226
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle animation on/off"
-msgstr "Musik umschalten"
+msgstr "Animationen ein-/ausschalten"
 
 #: engines/asylum/metaengine.cpp:232
 #, fuzzy
