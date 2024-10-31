@@ -98,6 +98,20 @@ public:
 	HolomapV1(TwinEEngine *engine) : Super(engine) {}
 	virtual ~HolomapV1() = default;
 
+	int32 _current = 0;
+	int32 _otimer = 0;
+	int32 _dalpha = 0;
+	int32 _dbeta = 0;
+	int32 _calpha = 0;
+	int32 _cbeta = 0;
+	int32 _cgamma = 0;
+	int32 _oalpha = 0;
+	int32 _obeta = 0;
+	bool _automove = false;
+	bool _flagredraw = false;
+	bool _dialstat = false;
+	bool _flagpal = false;
+
 	/**
 	 * Set Holomap location position
 	 * @param locationIdx Scene where position must be set

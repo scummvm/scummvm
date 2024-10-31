@@ -44,6 +44,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{TwinE::kDebugPalette, "palette", "Palette debugging"},
 	{TwinE::kDebugCollision, "collision", "Collision debugging"},
 	{TwinE::kDebugAnimation, "animation", "Animation debugging"},
+	{TwinE::kDebugHolomap, "holomap", "Holomap debugging"},
 	DEBUG_CHANNEL_END
 };
 

@@ -33,6 +33,7 @@
 #include "twine/debugger/debug_state.h"
 #include "twine/debugger/dt-internal.h"
 #include "twine/holomap.h"
+#include "twine/holomap_v1.h"
 #include "twine/parser/entity.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/screens.h"
@@ -186,6 +187,25 @@ static void holomapFlagsWindow(TwinEEngine *engine) {
 				ImGui::SetItemTooltip("%s", engine->_holomap->getLocationName(i));
 			}
 			ImGui::EndTable();
+		}
+
+		if (engine->isLBA1()) {
+			HolomapV1 *holomap = (HolomapV1*)engine->_holomap;
+
+			ImGuiEx::InputInt("current", &holomap->_current);
+			ImGuiEx::InputInt("otimer", &holomap->_otimer);
+			ImGuiEx::InputInt("dalpha", &holomap->_dalpha);
+			ImGuiEx::InputInt("dbeta", &holomap->_dbeta);
+			ImGuiEx::InputInt("calpha", &holomap->_calpha);
+			ImGuiEx::InputInt("cbeta", &holomap->_cbeta);
+			ImGuiEx::InputInt("cgamma", &holomap->_cgamma);
+			ImGuiEx::InputInt("oalpha", &holomap->_oalpha);
+			ImGuiEx::InputInt("obeta", &holomap->_obeta);
+
+			ImGui::Checkbox("automove", &holomap->_automove);
+			ImGui::Checkbox("flagredraw", &holomap->_flagredraw);
+			ImGui::Checkbox("dialstat", &holomap->_dialstat);
+			ImGui::Checkbox("flagpal", &holomap->_flagpal);
 		}
 	}
 	ImGui::End();

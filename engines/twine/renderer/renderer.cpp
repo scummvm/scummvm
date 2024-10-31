@@ -1856,8 +1856,8 @@ void Renderer::fillHolomapTriangles(const ComputedVertex &vertex0, const Compute
 }
 
 void Renderer::asmTexturedTriangleNoClip(const ComputedVertex vertexCoordinates[3], const ComputedVertex textureCoordinates[3], const uint8 *holomapImage, uint32 holomapImageSize) {
-	int32 lymin = SCENE_SIZE_MAX;
-	int32 lymax = SCENE_SIZE_MIN;
+	int32 lymin = 32000;
+	int32 lymax = -32000;
 	fillHolomapTriangles(vertexCoordinates[0], vertexCoordinates[1], textureCoordinates[0], textureCoordinates[1], lymin, lymax);
 	fillHolomapTriangles(vertexCoordinates[1], vertexCoordinates[2], textureCoordinates[1], textureCoordinates[2], lymin, lymax);
 	fillHolomapTriangles(vertexCoordinates[2], vertexCoordinates[0], textureCoordinates[2], textureCoordinates[0], lymin, lymax);

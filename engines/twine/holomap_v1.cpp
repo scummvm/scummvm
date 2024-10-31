@@ -301,8 +301,9 @@ void HolomapV1::drawHoloObj(const IVec3 &angle, int32 alpha, int32 beta, int16 s
 	const IVec3 &m = _engine->_renderer->worldRotatePoint(IVec3(0, 0, 1000 + size));
 	_engine->_renderer->setFollowCamera(0, 0, 0, angle.x, angle.y, angle.z, distance(zDistanceTrajectory));
 	_engine->_interface->unsetClip();
+	const IVec3 &m1 = _engine->_renderer->worldRotatePoint(m);
 	Common::Rect dirtyRect;
-	_engine->_renderer->renderIsoModel(m, alpha, beta, LBAAngles::ANGLE_0, _engine->_resources->_holomapPointModelPtr, dirtyRect);
+	_engine->_renderer->renderIsoModel(m1, alpha, beta, LBAAngles::ANGLE_0, _engine->_resources->_holomapPointModelPtr, dirtyRect);
 	_engine->copyBlockPhys(dirtyRect);
 }
 
@@ -570,20 +571,21 @@ void HolomapV1::holoMap() {
 		error("Failed to load holomap image");
 	}
 
-	int32 current = _engine->_scene->_numCube;
-	int32 otimer = _engine->timerRef;
-	int32 dalpha = ClampAngle(_listHoloPos[current].alpha);
-	int32 dbeta = ClampAngle(_listHoloPos[current].beta);
-	int32 calpha = dalpha;
-	int32 cbeta = dbeta;
-	int32 cgamma = 0;
-	int32 oalpha = dalpha;
-	int32 obeta = dbeta;
-	bool automove = false;
-	bool flagredraw = true;
-	bool dialstat = true;
-	bool flagpal = true;
+	_current = _engine->_scene->_numCube;
+	_otimer = _engine->timerRef;
+	_dalpha = ClampAngle(_listHoloPos[_current].alpha);
+	_dbeta = ClampAngle(_listHoloPos[_current].beta);
+	_calpha = _dalpha;
+	_cbeta = _dbeta;
+	_cgamma = 0;
+	_oalpha = _dalpha;
+	_obeta = _dbeta;
+	_automove = false;
+	_flagredraw = true;
+	_dialstat = true;
+	_flagpal = true;
 	_engine->_input->enableKeyMap(holomapKeyMapId);
+
 	for (;;) {
 		FrameMarker frame(_engine);
 		_engine->_input->readKeys();
@@ -592,106 +594,111 @@ void HolomapV1::holoMap() {
 		}
 
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapPrev)) {
-			current = searchPrevArrow(current);
-			if (current == -1) {
-				current = _engine->_scene->_numCube;
+			_current = searchPrevArrow(_current);
+			if (_current == -1) {
+				_current = _engine->_scene->_numCube;
 			}
-			dialstat = true;
-			oalpha = calpha;
-			obeta = cbeta;
-			otimer = _engine->timerRef;
-			dalpha = _listHoloPos[current].alpha;
-			dbeta = _listHoloPos[current].beta;
-			automove = true;
-			flagredraw = true;
+			_dialstat = true;
+			_oalpha = _calpha;
+			_obeta = _cbeta;
+			_otimer = _engine->timerRef;
+			_dalpha = _listHoloPos[_current].alpha;
+			_dbeta = _listHoloPos[_current].beta;
+			_automove = true;
+			_flagredraw = true;
+			debugC(1, TwinE::kDebugHolomap, "Holomap prev: %i (target angles: alpha %d, beta: %d)", _current, _dalpha, _dbeta);
 		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapNext)) {
-			current = searchNextArrow(current);
-			if (current == -1) {
-				current = _engine->_scene->_numCube;
+			_current = searchNextArrow(_current);
+			if (_current == -1) {
+				_current = _engine->_scene->_numCube;
 			}
-			dialstat = true;
-			oalpha = calpha;
-			obeta = cbeta;
-			otimer = _engine->timerRef;
-			dalpha = _listHoloPos[current].alpha;
-			dbeta = _listHoloPos[current].beta;
-			automove = true;
-			flagredraw = true;
+			_dialstat = true;
+			_oalpha = _calpha;
+			_obeta = _cbeta;
+			_otimer = _engine->timerRef;
+			_dalpha = _listHoloPos[_current].alpha;
+			_dbeta = _listHoloPos[_current].beta;
+			_automove = true;
+			_flagredraw = true;
+			debugC(1, TwinE::kDebugHolomap, "Holomap next: %i (target angles: alpha %d, beta: %d)", _current, _dalpha, _dbeta);
 		}
 
-		if (!automove) {
+		if (!_automove) {
 			if (_engine->_input->isActionActive(TwinEActionType::HolomapDown)) {
-				calpha += LBAAngles::ANGLE_2;
-				calpha = ClampAngle(calpha);
-				flagredraw = true;
+				_calpha += LBAAngles::ANGLE_2;
+				_calpha = ClampAngle(_calpha);
+				_flagredraw = true;
 			} else if (_engine->_input->isActionActive(TwinEActionType::HolomapUp)) {
-				calpha -= LBAAngles::ANGLE_2;
-				calpha = ClampAngle(calpha);
-				flagredraw = true;
+				_calpha -= LBAAngles::ANGLE_2;
+				_calpha = ClampAngle(_calpha);
+				_flagredraw = true;
 			}
 			if (_engine->_input->isActionActive(TwinEActionType::HolomapRight)) {
-				cbeta += LBAAngles::ANGLE_2;
-				cbeta = ClampAngle(cbeta);
-				flagredraw = true;
+				_cbeta += LBAAngles::ANGLE_2;
+				_cbeta = ClampAngle(_cbeta);
+				_flagredraw = true;
 			} else if (_engine->_input->isActionActive(TwinEActionType::HolomapLeft)) {
-				cbeta -= LBAAngles::ANGLE_2;
-				cbeta = ClampAngle(cbeta);
-				flagredraw = true;
+				_cbeta -= LBAAngles::ANGLE_2;
+				_cbeta = ClampAngle(_cbeta);
+				_flagredraw = true;
 			}
 		}
 
-		if (automove) {
-			const int32 dt = _engine->timerRef - otimer;
-			calpha = boundRuleThree(oalpha, dalpha, 75, dt);
-			cbeta = boundRuleThree(obeta, dbeta, 75, dt);
-			flagredraw = true;
+		if (_automove) {
+			const int32 dt = _engine->timerRef - _otimer;
+			_calpha = boundRuleThree(_oalpha, _dalpha, 75, dt);
+			_cbeta = boundRuleThree(_obeta, _dbeta, 75, dt);
+			_flagredraw = true;
+			debugC(1, TwinE::kDebugHolomap, "Holomap move: %i (target angles: alpha %d, beta: %d, current: alpha %d, beta %d)", _current, _dalpha, _dbeta, _calpha, _cbeta);
 		}
 
-		if (!flagpal) {
+		if (!_flagpal) {
 			// animate the water surface
 			_engine->setPalette(HOLOMAP_PALETTE_INDEX, NUM_HOLOMAPCOLORS, &_rotPal[3 * _rotPalPos]);
 			_rotPalPos++;
 			if (_rotPalPos == NUM_HOLOMAPCOLORS) {
 				_rotPalPos = 0;
 			}
-			flagredraw = true;
+			_flagredraw = true;
 		}
 
-		if (flagredraw) {
-			flagredraw = false;
+		if (_flagredraw) {
+			_flagredraw = false;
 			const Common::Rect &rect = _engine->centerOnScreenX(scale(300), 50, scale(280));
 			// clip reduces the bad effect of https://bugs.scummvm.org/ticket/12074
 			// but it's not part of the original code
 			_engine->_interface->memoClip();
 			_engine->_interface->setClip(rect);
 			_engine->_interface->box(rect, COLOR_BLACK);
-			_engine->_renderer->setInverseAngleCamera(calpha, cbeta, cgamma);
-			_engine->_renderer->setLightVector(calpha, cbeta, 0);
-			drawListPos(calpha, cbeta, cgamma, false);
-			_engine->_renderer->setInverseAngleCamera(calpha, cbeta, cgamma);
+			_engine->_renderer->setInverseAngleCamera(_calpha, _cbeta, _cgamma);
+			_engine->_renderer->setLightVector(_calpha, _cbeta, 0);
+			drawListPos(_calpha, _cbeta, _cgamma, false);
+			_engine->_renderer->setInverseAngleCamera(_calpha, _cbeta, _cgamma);
 			_engine->_renderer->setCameraRotation(0, 0, distance(ZOOM_BIG_HOLO));
 			drawHoloMap(holomapImagePtr, holomapImageSize);
-			drawListPos(calpha, cbeta, cgamma, true);
+			drawListPos(_calpha, _cbeta, _cgamma, true);
 			_engine->_interface->restoreClip();
-			if (automove) {
+			if (_automove) {
 				drawCursor();
 			}
+			_engine->copyBlockPhys(rect);
 		}
 
-		if (automove && dalpha == calpha && dbeta == cbeta) {
-			automove = false;
+		if (_automove && _dalpha == _calpha && _dbeta == _cbeta) {
+			_automove = false;
+			debugC(1, TwinE::kDebugHolomap, "Holomap stop auto move");
 		}
 
-		if (dialstat) {
-			_engine->_text->drawHolomapLocation(_listHoloPos[current].mess);
-			dialstat = false;
+		if (_dialstat) {
+			_engine->_text->drawHolomapLocation(_listHoloPos[_current].mess);
+			_dialstat = false;
 		}
 
 		++_engine->timerRef;
 		debugC(3, kDebugLevels::kDebugTimers, "Holomap time: %i", _engine->timerRef);
 
-		if (flagpal) {
-			flagpal = false;
+		if (_flagpal) {
+			_flagpal = false;
 			_engine->_screens->fadeToPal(_engine->_screens->_palettePcx);
 		}
 	}
