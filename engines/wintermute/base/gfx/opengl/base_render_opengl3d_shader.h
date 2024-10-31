@@ -133,13 +133,10 @@ private:
 	Common::Array<DXMatrix> _transformStack;
 
 	Math::Vector4d _flatShadowColor;
-	int _shadowTextureWidth;
-	int _shadowTextureHeight;
 
 	GLuint _spriteVBO;
 	GLuint _fadeVBO;
 	GLuint _lineVBO;
-	GLuint _flatShadowMaskVBO;
 	GLuint _flatShadowFrameBuffer;
 	GLuint _flatShadowRenderTexture;
 	GLuint _flatShadowDepthBuffer;
