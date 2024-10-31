@@ -32,7 +32,7 @@ class Room203 : public Section2Room {
 private:
 	int _val1 = 0;
 	int _val2 = 0;
-	int _val3 = 0;
+	const char *_digiName1 = nullptr;
 	int _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;
@@ -41,16 +41,30 @@ private:
 	int _val9 = 0;
 	int _val10 = 0;
 	int _val11 = 0;
+	int _val12 = 0;
 	int _trigger1 = -1;
 	int _trigger2 = -1;
 	int _trigger3 = -1;
 	int _trigger4 = -1;
 	int _trigger5 = -1;
 	int _shadow3 = 0;
+	machine *_ripley = nullptr;
+	machine *_stream1 = nullptr;
 	int _ripHeadTurn = 0;
 	int _ripLooksAtHeads = 0;
-	int _203sg01 = 0;
+	int _ripYouSeeToIt = 0;
+	int _ripLookAtHeadsTalkMei = 0;
+	int _ripKneeling = 0;
+	int _ripKneelingTalk = 0;
+	int _ripGivesPhoto = 0;
+	int _ripClimbsAndBacksDown = 0;
+	int _ripPointsAtHelmet = 0;
 	machine *_mei = nullptr;
+	int _meiTalkToRip = 0;
+	int _meiTurnAndTalk = 0;
+	int _meiRightHandOut = 0;
+	int _meiCheekLine = 0;
+	int _meiHallOfClassics = 0;
 	machine *_gk = nullptr;
 	int _gkFrame = 0;
 	int _gkMode = 0, _gkShould = 0;
@@ -59,6 +73,11 @@ private:
 	int _oldLadyNoHelmet = 0;
 	int _oldLadyFeedingBirds = 0;
 	int _oldLadyMode = 0, _oldLadyShould = 0;
+	int _oldLadyMode2 = 0;
+	int _oldLady1 = 0;
+	int _oldLadyPointsToPhoto = 0;
+	int _oldLadyPhotoPopup = 0;
+	int _oldLadyProtectsHelmet = 0;
 	machine *_pigeons1 = nullptr;
 	machine *_pigeons3 = nullptr;
 	int _pigeonsSeries1 = 0;
@@ -82,7 +101,17 @@ private:
 	int _peasantY = 0;
 	int _peasantScale = 0;
 	int _peasantLayer = 0;
+	int _peasantSquat9 = 0;
+	int _peasantSquat3 = 0;
 	bool _flag1 = false;
+	machine *_sg = nullptr;
+	int _203sg01 = 0;
+	machine *_g1 = nullptr;
+	machine *_g2 = nullptr;
+	int _unkMode = 0;
+	int _unkShould = 0;
+
+	int _ctr1 = 0;
 
 	void setupHelmetHotspot();
 	void setupPeasantHotspot(int mode);
