@@ -5192,6 +5192,7 @@ int alfont_set_font_size(ALFONT_FONT *f, int h) { return 0; }
 int alfont_set_font_size_ex(ALFONT_FONT *f, int h, int flags) { return 0; }
 int alfont_get_font_height(ALFONT_FONT *f) { return 0; }
 int alfont_get_font_real_height(ALFONT_FONT *f) { return 0; }
+void alfont_get_font_real_vextent(ALFONT_FONT *f, int *top, int *bottom) { *top = 0; *bottom = 0; }
 int alfont_text_mode(int mode) { return 0; }
 void alfont_textout_aa(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color) {}
 void alfont_textout(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color) {}
