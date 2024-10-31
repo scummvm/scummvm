@@ -463,9 +463,8 @@ void Scene::refreshBackground(int xAmount, int yAmount) {
 				// Check if the section is already loaded
 				if ((_enabledSections[xp * 16 + yp] == 0xffff) || ((xAmount == 0) && (yAmount == 0))) {
 					// Chunk isn't loaded, so load it in
-					Graphics::ManagedSurface s;
-					s.copyFrom(_backSurface.lockSurface());
-					GfxSurface::loadScreenSection(s, xp - xHalfOffset, yp - yHalfOffset, xp, yp);
+					Graphics::ManagedSurface *s = &_backSurface.lockSurface();
+					GfxSurface::loadScreenSection(*s, xp - xHalfOffset, yp - yHalfOffset, xp, yp);
 					_backSurface.unlockSurface();
 					changedFlag = true;
 				} else {
