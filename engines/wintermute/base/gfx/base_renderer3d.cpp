@@ -36,9 +36,14 @@ BaseRenderer3D::BaseRenderer3D(Wintermute::BaseGame *inGame) : BaseRenderer(inGa
 	_nearClipPlane = DEFAULT_NEAR_PLANE;
 	_farClipPlane = DEFAULT_FAR_PLANE;
 
+	_lastTexture = nullptr;
+
 	_blendMode = Graphics::BLEND_UNKNOWN;
 
 	_spriteBatchMode = false;
+	_batchBlendMode = Graphics::BLEND_UNKNOWN;
+	_batchAlphaDisable = false;
+	_batchTexture = nullptr;
 
 	_ambientLightColor = 0x00000000;
 	_ambientLightOverride = false;
@@ -57,12 +62,12 @@ void BaseRenderer3D::initLoop() {
 	setup2D();
 }
 
-bool BaseRenderer3D::drawSprite(BaseSurfaceOpenGL3D &tex, const Wintermute::Rect32 &rect,
+bool BaseRenderer3D::drawSprite(BaseSurface *texture, const Wintermute::Rect32 &rect,
 							float zoomX, float zoomY, const Wintermute::Vector2 &pos,
 							uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
 							bool mirrorX, bool mirrorY) {
 	Vector2 scale(zoomX / 100.0f, zoomY / 100.0f);
-	return drawSpriteEx(tex, rect, pos, Vector2(0.0f, 0.0f), scale, 0.0f, color, alphaDisable, blendMode, mirrorX, mirrorY);
+	return drawSpriteEx(texture, rect, pos, Vector2(0.0f, 0.0f), scale, 0.0f, color, alphaDisable, blendMode, mirrorX, mirrorY);
 }
 
 bool BaseRenderer3D::getProjectionParams(float *resWidth, float *resHeight, float *layerWidth, float *layerHeight,
@@ -163,6 +168,7 @@ void BaseRenderer3D::flipVertical(Graphics::Surface *s) {
 }
 
 bool BaseRenderer3D::flip() {
+	_lastTexture = nullptr;
 	g_system->updateScreen();
 	return true;
 }

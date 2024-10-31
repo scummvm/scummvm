@@ -49,6 +49,7 @@ ShadowVolumeOpenGL::~ShadowVolumeOpenGL() {
 bool ShadowVolumeOpenGL::render() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
+	_gameRef->_renderer3D->_lastTexture = nullptr;
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, 0, _vertices.data());

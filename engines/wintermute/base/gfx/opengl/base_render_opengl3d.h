@@ -56,6 +56,8 @@ public:
 	BaseRenderOpenGL3D(BaseGame *inGame = nullptr);
 	~BaseRenderOpenGL3D() override;
 
+	bool invalidateTexture(BaseSurfaceOpenGL3D *texture) override;
+
 	void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode, bool forceChange = false) override;
 
 	void setAmbientLightRenderState() override;
@@ -111,14 +113,11 @@ public:
 	
 	BaseSurface *createSurface() override;
 	
-	bool startSpriteBatch() override {
-		return STATUS_OK;
-	};
-	bool endSpriteBatch() override {
-		return STATUS_OK;
-	};
+	bool startSpriteBatch() override;
+	bool endSpriteBatch() override;
+	bool commitSpriteBatch() override;
 
-	bool drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, const Vector2 &pos, const Vector2 &rot, const Vector2 &scale,
+	bool drawSpriteEx(BaseSurface *texture, const Rect32 &rect, const Vector2 &pos, const Vector2 &rot, const Vector2 &scale,
 					  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) override;
 
 	void renderSceneGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,

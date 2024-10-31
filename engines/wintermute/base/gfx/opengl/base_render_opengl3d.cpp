@@ -297,16 +297,24 @@ bool BaseRenderOpenGL3D::setupLines() {
 		glEnable(GL_ALPHA_TEST);
 		glDisable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
+		_lastTexture = nullptr;
 	}
 
 	return true;
 }
 
-bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute::Rect32 &rect,
+bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurface *tex, const Wintermute::Rect32 &rect,
 								  const Wintermute::Vector2 &pos, const Wintermute::Vector2 &rot, const Wintermute::Vector2 &scale,
 								  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
 								  bool mirrorX, bool mirrorY) {
-	// original wme has a batch mode for sprites, we ignore this for the moment
+
+	BaseSurfaceOpenGL3D *texture = dynamic_cast<BaseSurfaceOpenGL3D *>(tex);
+
+	if (_spriteBatchMode) {
+		_batchTexture = texture;
+		_batchAlphaDisable = alphaDisable;
+		_batchBlendMode = blendMode;
+	}
 
 	if (_forceAlphaColor != 0) {
 		color = _forceAlphaColor;
@@ -315,16 +323,8 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 	float width = (rect.right - rect.left) * scale.x;
 	float height = (rect.bottom - rect.top) * scale.y;
 
-	glBindTexture(GL_TEXTURE_2D, tex.getTextureName());
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	// for sprites we clamp to the edge, to avoid line fragments at the edges
-	// this is not done by wme, though
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	int texWidth = tex.getGLTextureWidth();
-	int texHeight = tex.getGLTextureHeight();
+	int texWidth = texture->getGLTextureWidth();
+	int texHeight = texture->getGLTextureHeight();
 
 	float texLeft = (float)rect.left / (float)texWidth;
 	float texTop = (float)rect.top / (float)texHeight;
@@ -343,6 +343,12 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 	}
 
 	SpriteVertex vertices[4] = {};
+
+	// batch mode
+	if (_spriteBatchMode) {
+		// TODO
+		commitSpriteBatch();
+	}
 
 	// texture coords
 	vertices[0].u = texLeft;
@@ -400,34 +406,84 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 		}
 	}
 
-	if (alphaDisable) {
-		glDisable(GL_ALPHA_TEST);
-	}
+	if (_spriteBatchMode) {
+		// TODO
+	} else {
+		setSpriteBlendMode(blendMode);
+		if (alphaDisable) {
+			glDisable(GL_ALPHA_TEST);
+			//glDisable(GL_BLEND);
+		}
 
-	setSpriteBlendMode(blendMode);
+		if (_lastTexture != texture) {
+			_lastTexture = texture;
+			glBindTexture(GL_TEXTURE_2D, texture->getTextureName());
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			// for sprites we clamp to the edge, to avoid line fragments at the edges
+			// this is not done by wme, though
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glEnable(GL_TEXTURE_2D);
+		}
 
-	glEnable(GL_TEXTURE_2D);
-
-	glEnableClientState(GL_COLOR_ARRAY);
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-
-	glVertexPointer(3, GL_FLOAT, sizeof(SpriteVertex), &vertices[0].x);
-	glTexCoordPointer(2, GL_FLOAT, sizeof(SpriteVertex), &vertices[0].u);
-	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SpriteVertex), &vertices[0].r);
-
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-	glDisableClientState(GL_COLOR_ARRAY);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	if (alphaDisable) {
-		glEnable(GL_ALPHA_TEST);
+		glEnableClientState(GL_COLOR_ARRAY);
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisableClientState(GL_NORMAL_ARRAY);
+		
+		glVertexPointer(3, GL_FLOAT, sizeof(SpriteVertex), &vertices[0].x);
+		glTexCoordPointer(2, GL_FLOAT, sizeof(SpriteVertex), &vertices[0].u);
+		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SpriteVertex), &vertices[0].r);
+		
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		
+		glDisableClientState(GL_COLOR_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		
+		if (alphaDisable) {
+			glEnable(GL_ALPHA_TEST);
+			glEnable(GL_BLEND);
+		}
 	}
 
 	return true;
+}
+
+bool BaseRenderOpenGL3D::commitSpriteBatch() {
+	// render
+	setSpriteBlendMode(_batchBlendMode);
+	if (_batchAlphaDisable) {
+		glDisable(GL_ALPHA_TEST);
+		glDisable(GL_BLEND);
+	}
+
+	if (_lastTexture != _batchTexture) {
+		_lastTexture = _batchTexture;
+		glBindTexture(GL_TEXTURE_2D, _batchTexture->getTextureName());
+	}
+
+	// TODO
+
+	if (_batchAlphaDisable) {
+		glEnable(GL_ALPHA_TEST);
+		glEnable(GL_BLEND);
+	}
+
+	return true;
+}
+
+bool BaseRenderOpenGL3D::startSpriteBatch() {
+	//_spriteBatchMode = true;
+	return true;
+}
+
+bool BaseRenderOpenGL3D::endSpriteBatch() {
+	if (!_spriteBatchMode)
+		return false;
+
+	_spriteBatchMode = false;
+	return commitSpriteBatch();
 }
 
 bool BaseRenderOpenGL3D::setProjection() {
@@ -530,6 +586,7 @@ void BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
+	_lastTexture = nullptr;
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
@@ -650,6 +707,15 @@ int BaseRenderOpenGL3D::getMaxActiveLights() {
 	GLint maxLightCount = 0;
 	glGetIntegerv(GL_MAX_LIGHTS, &maxLightCount);
 	return maxLightCount;
+}
+
+bool BaseRenderOpenGL3D::invalidateTexture(BaseSurfaceOpenGL3D *texture) {
+	if (_lastTexture == texture)
+		_lastTexture = nullptr;
+	if (_batchTexture == texture)
+		_batchTexture = nullptr;
+
+	return true;
 }
 
 // implements D3D LightEnable()

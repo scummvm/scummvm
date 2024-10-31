@@ -74,6 +74,7 @@ ShadowVolumeOpenGLShader::~ShadowVolumeOpenGLShader() {
 bool ShadowVolumeOpenGLShader::render() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
+	_gameRef->_renderer3D->_lastTexture = nullptr;
 
 	return true;
 }
