@@ -51,6 +51,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  Draci:
   - Added keymapper support.
 
+ Dreamweb:
+  - Fixed crash when changing scenes, while holding some non-essential game
+    items.
+
  Freescape:
   - Added support for Atari/Amiga releases of Dark Side.
   - Improved handling of close colinear surfaces.
@@ -129,6 +133,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  TsAGE:
    - Added support for Russian CD fan-translation for Ringworld.
+   - Added keymapper support.
 
  Toon:
   - Added keymapper support.
