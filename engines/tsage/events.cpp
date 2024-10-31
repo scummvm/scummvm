@@ -118,6 +118,10 @@ bool EventsClass::getEvent(Event &evt, int eventMask) {
 			evt.eventType = EVENT_KEYPRESS;
 			evt.kbd = _event.kbd;
 			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			evt.eventType = EVENT_CUSTOM_ACTIONSTART;
+			evt.customType = _event.customType;
+			break;
 		default:
 			break;
 		}

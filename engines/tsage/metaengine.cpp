@@ -22,6 +22,11 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/translation.h"
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 
 #include "engines/advancedDetector.h"
 
@@ -154,10 +159,182 @@ public:
 		return SaveStateDescriptor();
 	}
 
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
+
+Common::KeymapArray TSageMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace TsAGE;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "tsage-default", _("Default keymappings"));
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
+
+	Common::Action *act;
+
+	Common::String gameId = ConfMan.get("gameid", target);
+	Common::String extra = ConfMan.get("extra", target);
+	const bool isDemo = extra.contains("Demo");
+
+	act = new Common::Action(kStandardActionLeftClick, _("Left click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action(kStandardActionRightClick, _("Right click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("ESCAPE", _("Escape"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	act->addDefaultInputMapping("ESCAPE");
+	gameKeyMap->addAction(act);
+
+	// I18N: Return refers to return/enter key
+	act = new Common::Action("RETURN", _("Return"));
+	act->setCustomEngineActionEvent(kActionReturn);
+	act->addDefaultInputMapping("RETURN");
+	gameKeyMap->addAction(act);
+
+	act = new Common::Action("WALK", _("Walk"));
+	act->setCustomEngineActionEvent(kActionWalk);
+	act->addDefaultInputMapping("w");
+	gameKeyMap->addAction(act);
+
+	act = new Common::Action("LOOK", _("Look"));
+	act->setCustomEngineActionEvent(kActionLook);
+	act->addDefaultInputMapping("l");
+	gameKeyMap->addAction(act);
+
+	act = new Common::Action("USE", _("Use"));
+	act->setCustomEngineActionEvent(kActionUse);
+	act->addDefaultInputMapping("u");
+	gameKeyMap->addAction(act);
+
+	act = new Common::Action("TALK", _("Talk"));
+	act->setCustomEngineActionEvent(kActionTalk);
+	act->addDefaultInputMapping("t");
+	gameKeyMap->addAction(act);
+
+	act = new Common::Action("HELP", _("View Help"));
+	act->setCustomEngineActionEvent(kActionHelp);
+	act->addDefaultInputMapping("F1");
+	gameKeyMap->addAction(act);
+
+	act = new Common::Action("SOUNDOPTIONS", _("Sound options"));
+	act->setCustomEngineActionEvent(kActionSoundOptions);
+	act->addDefaultInputMapping("F2");
+	gameKeyMap->addAction(act);
+
+	act = new Common::Action("QUITGAME", _("Quit game"));
+	act->setCustomEngineActionEvent(kActionQuitGame);
+	act->addDefaultInputMapping("F3");
+	gameKeyMap->addAction(act);
+
+	if (!isDemo) {
+		act = new Common::Action("RESTARTGAME", _("Restart game"));
+		act->setCustomEngineActionEvent(kActionRestartGame);
+		act->addDefaultInputMapping("F4");
+		gameKeyMap->addAction(act);
+
+		act = new Common::Action("SAVEGAME", _("Save game"));
+		act->setCustomEngineActionEvent(kActionSaveGame);
+		act->addDefaultInputMapping("F5");
+		gameKeyMap->addAction(act);
+
+		act = new Common::Action("RESTOREGAME", _("Restore game"));
+		act->setCustomEngineActionEvent(kActionRestoreGame);
+		act->addDefaultInputMapping("F7");
+		gameKeyMap->addAction(act);
+
+		act = new Common::Action("PAUSEGAME", _("Pause game"));
+		act->setCustomEngineActionEvent(kActionPauseGame);
+		act->addDefaultInputMapping("F10");
+		gameKeyMap->addAction(act);
+	}
+
+	if (gameId == "ringworld2") {
+		act = new Common::Action("CREDITS", _("Show credits"));
+		act->setCustomEngineActionEvent(kActionCredits);
+		act->addDefaultInputMapping("F8");
+		gameKeyMap->addAction(act);
+
+		act = new Common::Action("UP", _("Crawl North"));
+		act->setCustomEngineActionEvent(kActionMoveUpCrawlNorth);
+		act->addDefaultInputMapping("UP");
+		act->addDefaultInputMapping("KP8");
+		act->allowKbdRepeats();
+		gameKeyMap->addAction(act);
+
+		act = new Common::Action("DOWN", _("Crawl South"));
+		act->setCustomEngineActionEvent(kActionMoveDownCrawlSouth);
+		act->addDefaultInputMapping("DOWN");
+		act->addDefaultInputMapping("KP2");
+		act->allowKbdRepeats();
+		gameKeyMap->addAction(act);
+
+		act = new Common::Action("LEFT", _("Turn Left/Crawl West"));
+		act->setCustomEngineActionEvent(kActionMoveLeftCrawlWest);
+		act->addDefaultInputMapping("LEFT");
+		act->addDefaultInputMapping("KP4");
+		act->allowKbdRepeats();
+		gameKeyMap->addAction(act);
+
+		act = new Common::Action("RIGHT", _("Turn Right/Crawl East"));
+		act->setCustomEngineActionEvent(kActionMoveRightCrawlEast);
+		act->addDefaultInputMapping("RIGHT");
+		act->addDefaultInputMapping("KP6");
+		act->allowKbdRepeats();
+		gameKeyMap->addAction(act);
+
+		act = new Common::Action("INCREASESPEED", _("Increase speed"));
+		act->setCustomEngineActionEvent(kActionIncreaseSpeed);
+		act->addDefaultInputMapping("KP9"); 
+		gameKeyMap->addAction(act);
+
+		act = new Common::Action("DECREASESPEED", _("Decrease speed"));
+		act->setCustomEngineActionEvent(kActionDecreaseSpeed);
+		act->addDefaultInputMapping("KP3"); 
+		gameKeyMap->addAction(act);
+
+		act = new Common::Action("MINIMUMSPEED", _("Minimum speed"));
+		act->setCustomEngineActionEvent(kActionMinimumSpeed);
+		act->addDefaultInputMapping("KP1"); 
+		gameKeyMap->addAction(act);
+
+		act = new Common::Action("MAXIMUMSPEED", _("Maximum speed"));
+		act->setCustomEngineActionEvent(kActionMaximumSpeed);
+		act->addDefaultInputMapping("KP7");
+		gameKeyMap->addAction(act);
+
+		act = new Common::Action("LOWSPEED", _("Low speed"));
+		act->setCustomEngineActionEvent(kActionLowSpeed);
+		act->addDefaultInputMapping("KP_PERIOD");
+		gameKeyMap->addAction(act);
+
+		act = new Common::Action("MEDIUMSPEED", _("Medium speed"));
+		act->setCustomEngineActionEvent(kActionMediumSpeed);
+		act->addDefaultInputMapping("KP0"); 
+		gameKeyMap->addAction(act);
+
+		act = new Common::Action("DRAWCARDS", _("Draw Cards"));
+		act->setCustomEngineActionEvent(kActionDrawCards);
+		act->addDefaultInputMapping("SPACE"); 
+		gameKeyMap->addAction(act);
+	}
+
+	KeymapArray keymaps(2);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeyMap;
+
+	return keymaps;
+}
 
 #if PLUGIN_ENABLED_DYNAMIC(TSAGE)
 	REGISTER_PLUGIN_DYNAMIC(TSAGE, PLUGIN_TYPE_ENGINE, TSageMetaEngine);
 #else
 	REGISTER_PLUGIN_STATIC(TSAGE, PLUGIN_TYPE_ENGINE, TSageMetaEngine);
 #endif
+

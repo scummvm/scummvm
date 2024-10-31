@@ -34,6 +34,35 @@
 
 namespace TsAGE {
 
+enum TSAGEAction {
+	kActionNone,
+	kActionEscape,
+	kActionReturn,
+	kActionHelp,
+	kActionSoundOptions,
+	kActionQuitGame,
+	kActionRestartGame,
+	kActionSaveGame,
+	kActionRestoreGame,
+	kActionCredits,
+	kActionPauseGame,
+	kActionWalk,
+	kActionLook,
+	kActionUse,
+	kActionTalk,
+	kActionMoveUpCrawlNorth,
+	kActionMoveDownCrawlSouth,
+	kActionMoveLeftCrawlWest,
+	kActionMoveRightCrawlEast,
+	kActionIncreaseSpeed,
+	kActionDecreaseSpeed,
+	kActionMinimumSpeed,
+	kActionMaximumSpeed,
+	kActionLowSpeed,
+	kActionMediumSpeed,
+	kActionDrawCards
+};
+
 enum {
 	kRingDebugScripts = 1 << 0,
 	ktSageSound = 1 << 1,

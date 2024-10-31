@@ -320,7 +320,7 @@ void SequenceManager::signal() {
 }
 
 void SequenceManager::process(Event &event) {
-	if (((event.eventType == EVENT_BUTTON_DOWN) || (event.eventType == EVENT_KEYPRESS)) &&
+	if (((event.eventType == EVENT_BUTTON_DOWN) || (event.eventType == EVENT_KEYPRESS) || (event.eventType == EVENT_CUSTOM_ACTIONSTART)) &&
 		!event.handled && g_globals->_sceneObjects->contains(&_sceneText)) {
 		// Remove the text item
 		_sceneText.remove();
@@ -465,7 +465,7 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 	// Event handling loop
 	Event event;
 	while (!g_vm->shouldQuit()) {
-		while (!g_globals->_events.getEvent(event, EVENT_KEYPRESS | EVENT_BUTTON_DOWN | EVENT_MOUSE_MOVE) &&
+		while (!g_globals->_events.getEvent(event, EVENT_CUSTOM_ACTIONSTART | EVENT_KEYPRESS | EVENT_BUTTON_DOWN | EVENT_MOUSE_MOVE) &&
 				!g_vm->shouldQuit()) {
 			g_system->delayMillis(10);
 			GLOBALS._screen.update();
@@ -994,7 +994,7 @@ void StripManager::process(Event &event) {
 	if (event.handled)
 		return;
 
-	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+	if ((event.eventType == EVENT_CUSTOM_ACTIONSTART) && (event.customType == kActionEscape)) {
 		if (_obj44ListIndex != 10000) {
 			int currIndex = _obj44ListIndex;
 			while (!_obj44List[_obj44ListIndex]._list[1]._id) {
@@ -1011,7 +1011,7 @@ void StripManager::process(Event &event) {
 		_delayFrames = 0;
 		event.handled = true;
 		signal();
-	} else if (event.eventType & (EVENT_BUTTON_DOWN | EVENT_KEYPRESS)) {
+	} else if (event.eventType & (EVENT_BUTTON_DOWN | EVENT_KEYPRESS | EVENT_CUSTOM_ACTIONSTART)) {
 		// Move to next sequence in the strip
 		_delayFrames = 0;
 		event.handled = true;
