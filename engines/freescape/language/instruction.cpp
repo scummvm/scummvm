@@ -187,7 +187,7 @@ bool FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			continue;
 		}
 
-		if (instruction.getType() != Token::CONDITIONAL)
+		if (instruction.getType() != Token::CONDITIONAL && !instruction.isConditional())
 			executed = true;
 
 		switch (instruction.getType()) {
@@ -200,7 +200,7 @@ bool FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 
 		case Token::CONDITIONAL:
 			if (checkConditional(instruction, shot, collided, timer, activated))
-				executeCode(*instruction._thenInstructions, shot, collided, timer, activated);
+				executed = executeCode(*instruction._thenInstructions, shot, collided, timer, activated);
 			// else branch is always empty
 			assert(instruction._elseInstructions == nullptr);
 			break;

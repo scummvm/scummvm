@@ -142,13 +142,15 @@ Graphics::ManagedSurface *CastleEngine::loadFrameWithHeaderDOS(Common::SeekableR
 	return frame;
 }
 
+void CastleEngine::initDOS() {
+	_viewArea = Common::Rect(40, 33 - 2, 280, 152);
+}
+
 void CastleEngine::loadAssetsDOSFullGame() {
 	Common::File file;
 	Common::SeekableReadStream *stream = nullptr;
 
 	if (_renderMode == Common::kRenderEGA) {
-		_viewArea = Common::Rect(40, 33 - 2, 280, 152);
-
 		file.open("CME.EXE");
 		stream = unpackEXE(file);
 		if (stream) {
@@ -296,25 +298,6 @@ void CastleEngine::loadAssetsDOSFullGame() {
 	} else
 		error("Not implemented yet");
 
-	addGhosts();
-	// Discard the first three global conditions
-	// It is unclear why they hide/unhide objects that formed the spirits
-	for (int i = 0; i < 3; i++) {
-		debugC(kFreescapeDebugParser, "Discarding condition %s", _conditionSources[1].c_str());
-		_conditions.remove_at(1);
-		_conditionSources.remove_at(1);
-	}
-
-	_endArea = 1;
-	_endEntrance = 42;
-
-	Graphics::Surface *tmp;
-	tmp = loadBundledImage("castle_gate", false);
-	_gameOverBackgroundFrame = new Graphics::ManagedSurface;
-	_gameOverBackgroundFrame->copyFrom(*tmp);
-	_gameOverBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat);
-	tmp->free();
-	delete tmp;
 
 	// CPC
 	// file = gameDir.createReadStreamForMember("cm.bin");
@@ -328,8 +311,6 @@ void CastleEngine::loadAssetsDOSDemo() {
 	Common::SeekableReadStream *stream = nullptr;
 
 	if (_renderMode == Common::kRenderEGA) {
-		_viewArea = Common::Rect(40, 33, 280, 152);
-
 		file.open("CMDE.EXE");
 		stream = unpackEXE(file);
 		if (stream) {
@@ -441,26 +422,6 @@ void CastleEngine::loadAssetsDOSDemo() {
 	} else
 		error("Not implemented yet");
 
-
-	addGhosts();
-	// Discard the first three global conditions
-	// It is unclear why they hide/unhide objects that formed the spirits
-	for (int i = 0; i < 3; i++) {
-		debugC(kFreescapeDebugParser, "Discarding condition %s", _conditionSources[1].c_str());
-		_conditions.remove_at(1);
-		_conditionSources.remove_at(1);
-	}
-
-	_endArea = 1;
-	_endEntrance = 42;
-
-	Graphics::Surface *tmp;
-	tmp = loadBundledImage("castle_gate", false);
-	_gameOverBackgroundFrame = new Graphics::ManagedSurface;
-	_gameOverBackgroundFrame->copyFrom(*tmp);
-	_gameOverBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat);
-	tmp->free();
-	delete tmp;
 }
 
 void CastleEngine::drawDOSUI(Graphics::Surface *surface) {

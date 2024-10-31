@@ -197,7 +197,6 @@ void CastleEngine::loadAssetsZXFullGame() {
 	_thunderFrame = loadFrame(&file, _thunderFrame, thunderWidth, thunderHeight, front);
 
 	Graphics::Surface *tmp;
-
 	tmp = loadBundledImage("castle_riddle_top_frame");
 	_riddleTopFrame = new Graphics::ManagedSurface;
 	_riddleTopFrame->copyFrom(*tmp);
@@ -234,35 +233,8 @@ void CastleEngine::loadAssetsZXFullGame() {
 			it._value->addObjectFromArea(id, _areaMap[255]);
 		}
 	}
-	addGhosts();
 	_areaMap[1]->addFloor();
 	_areaMap[2]->addFloor();
-
-	// Discard the first three global conditions
-	// It is unclear why they hide/unhide objects that formed the spirits
-	for (int i = 0; i < 3; i++) {
-		debugC(kFreescapeDebugParser, "Discarding condition %s", _conditionSources[0].c_str());
-		_conditions.remove_at(0);
-		_conditionSources.remove_at(0);
-	}
-
-	_timeoutMessage = _messagesList[1];
-	// Shield is unused in Castle Master
-	_noEnergyMessage = _messagesList[1];
-	_fallenMessage = _messagesList[4];
-	_crushedMessage = _messagesList[3];
-	_outOfReachMessage = _messagesList[7];
-	_noEffectMessage = _messagesList[8];
-
-	_endArea = 1;
-	_endEntrance = 42;
-
-	tmp = loadBundledImage("castle_gate");
-	_gameOverBackgroundFrame = new Graphics::ManagedSurface;
-	_gameOverBackgroundFrame->copyFrom(*tmp);
-	_gameOverBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat);
-	tmp->free();
-	delete tmp;
 }
 
 void CastleEngine::drawZXUI(Graphics::Surface *surface) {

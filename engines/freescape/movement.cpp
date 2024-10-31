@@ -199,6 +199,9 @@ void FreescapeEngine::activate() {
 			debugC(1, kFreescapeDebugMove, "Must use interact = true when executing: %s", gobj->_conditionSource.c_str());
 
 		executeObjectConditions(gobj, false, false, true);
+	} else {
+		if (!_outOfReachMessage.empty())
+			insertTemporaryMessage(_outOfReachMessage, _countdown - 2);
 	}
 	//executeLocalGlobalConditions(true, false, false); // Only execute "on shot" room/global conditions
 }

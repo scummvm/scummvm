@@ -43,7 +43,9 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_soundIndexAreaChange = 5;
 	k8bitVariableShield = 29;
 
-	if (isSpectrum())
+	if (isDOS())
+		initDOS();
+	else if (isSpectrum())
 		initZX();
 
 	_playerHeightNumber = 1;
@@ -876,6 +878,35 @@ void CastleEngine::executeRedraw(FCLInstruction &instruction) {
 
 void CastleEngine::loadAssets() {
 	FreescapeEngine::loadAssets();
+
+	addGhosts();
+	// Discard the first three global conditions
+	// It is unclear why they hide/unhide objects that formed the spirits
+	for (int i = 0; i < 3; i++) {
+		debugC(kFreescapeDebugParser, "Discarding condition %s", _conditionSources[1].c_str());
+		_conditions.remove_at(1);
+		_conditionSources.remove_at(1);
+	}
+
+	_endArea = 1;
+	_endEntrance = 42;
+
+	_timeoutMessage = _messagesList[1];
+	// Shield is unused in Castle Master
+	_noEnergyMessage = _messagesList[2];
+	_crushedMessage = _messagesList[3];
+	_fallenMessage = _messagesList[4];
+	_outOfReachMessage = _messagesList[7];
+	_noEffectMessage = _messagesList[8];
+
+	Graphics::Surface *tmp;
+	tmp = loadBundledImage("castle_gate", !isDOS());
+	_gameOverBackgroundFrame = new Graphics::ManagedSurface;
+	_gameOverBackgroundFrame->copyFrom(*tmp);
+	_gameOverBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat);
+	tmp->free();
+	delete tmp;
+
 	if (isDOS()) {
 		for (auto &it : _areaMap) {
 			it._value->addStructure(_areaMap[255]);

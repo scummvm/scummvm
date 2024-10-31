@@ -64,6 +64,7 @@ public:
 	void drawOption();
 
 	void initZX();
+	void initDOS();
 
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawZXUI(Graphics::Surface *surface) override;
