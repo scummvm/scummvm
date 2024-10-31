@@ -23,6 +23,7 @@
 #include "engines/wintermute/base/base_game.h"
 
 #include "math/glmath.h"
+#include "common/config-manager.h"
 
 namespace Wintermute {
 
@@ -157,6 +158,37 @@ void BaseRenderer3D::flipVertical(Graphics::Surface *s) {
 		for (int x = 0; x < s->pitch; ++x)
 			SWAP(line1P[x], line2P[x]);
 	}
+}
+
+bool BaseRenderer3D::flip() {
+	g_system->updateScreen();
+	return true;
+}
+
+bool BaseRenderer3D::indicatorFlip() {
+	flip();
+	return true;
+}
+
+bool BaseRenderer3D::forcedFlip() {
+	flip();
+	return true;
+}
+
+bool BaseRenderer3D::windowedBlt() {
+	flip();
+	return true;
+}
+
+void BaseRenderer3D::onWindowChange() {
+	_windowed = !g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
+}
+
+void BaseRenderer3D::setWindowed(bool windowed) {
+	ConfMan.setBool("fullscreen", !windowed);
+	g_system->beginGFXTransaction();
+	g_system->setFeatureState(OSystem::kFeatureFullscreenMode, !windowed);
+	g_system->endGFXTransaction();
 }
 
 } // namespace Wintermute

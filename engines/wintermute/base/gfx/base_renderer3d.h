@@ -127,6 +127,10 @@ public:
 
 	DXViewport getViewPort();
 
+	void setWindowed(bool windowed) override;
+	void onWindowChange() override;
+	bool windowedBlt() override;
+
 	Graphics::PixelFormat getPixelFormat() const override;
 
 	virtual bool setProjection2D() = 0;
@@ -158,6 +162,9 @@ public:
 
 	Math::Matrix3 build2dTransformation(const Vector2 &center, float angle);
 
+	bool flip() override;
+	bool indicatorFlip() override;
+	bool forcedFlip() override;
 	virtual bool setViewport3D(DXViewport *viewport) = 0;
 
 	// ScummVM specific methods <--

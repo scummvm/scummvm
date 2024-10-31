@@ -126,15 +126,6 @@ bool BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
 	return true;
 }
 
-void Wintermute::BaseRenderOpenGL3D::onWindowChange() {
-	_windowed = !g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
-}
-
-bool Wintermute::BaseRenderOpenGL3D::flip() {
-	g_system->updateScreen();
-	return true;
-}
-
 bool BaseRenderOpenGL3D::fill(byte r, byte g, byte b, Common::Rect *rect) {
 	glClearColor(r / 255.0f, g / 255.0f, b / 255.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -498,11 +489,6 @@ bool BaseRenderOpenGL3D::drawLine(int x1, int y1, int x2, int y2, uint32 color) 
 	return true;
 }
 
-bool BaseRenderOpenGL3D::windowedBlt() {
-	flip();
-	return true;
-}
-
 void BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
 	setProjection2D();
 
@@ -832,13 +818,6 @@ void BaseRenderOpenGL3D::disableCulling() {
 	glDisable(GL_CULL_FACE);
 }
 
-void BaseRenderOpenGL3D::setWindowed(bool windowed) {
-	ConfMan.setBool("fullscreen", !windowed);
-	g_system->beginGFXTransaction();
-	g_system->setFeatureState(OSystem::kFeatureFullscreenMode, !windowed);
-	g_system->endGFXTransaction();
-}
-
 // implements D3D SetViewport() for 2D viewport
 bool BaseRenderOpenGL3D::setViewport(int left, int top, int right, int bottom) {
 	_viewportRect.setRect(left, top, right, bottom);
@@ -893,16 +872,6 @@ bool BaseRenderOpenGL3D::setProjectionTransform(const DXMatrix &transform) {
 	_projectionMatrix = transform;
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixf(transform);
-	return true;
-}
-
-bool BaseRenderOpenGL3D::indicatorFlip() {
-	flip();
-	return true;
-}
-
-bool BaseRenderOpenGL3D::forcedFlip() {
-	flip();
 	return true;
 }
 
