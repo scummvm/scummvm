@@ -2457,14 +2457,12 @@ bool EoBCoreEngine::characterAttackHitTest(int charIndex, int monsterIndex, int 
 	if (charIndex < 0)
 		return true;
 
-	// TODO double check disassembly here:
 	int p = item ? (_flags.gameID == GI_EOB1 ? _items[item].type : (_itemTypes[_items[item].type].extraProperties & 0x7F)) : 0;
 
 	if (_monsters[monsterIndex].flags & 0x20)
-		return true;// EOB 2 only ?
+		return true;
 
 	int t = _monsters[monsterIndex].type;
-	// TODO double check disassembly here:
 	int d = (p < 1 || p > 3) ? 0 : _items[item].value;
 
 	if (_flags.gameID == GI_EOB2) {
