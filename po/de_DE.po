@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-31 06:21+0000\n"
+"PO-Revision-Date: 2024-10-31 06:56+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -6775,10 +6775,8 @@ msgid "Soldier 714 Eye Cheat"
 msgstr "Soldier 714 Augen-Cheat"
 
 #: engines/bagel/metaengine.cpp:83
-#, fuzzy
-#| msgid "General"
 msgid "General Keys"
-msgstr "Allgemein"
+msgstr "Allgemeine Tasten"
 
 #: engines/bladerunner/bladerunner.cpp:405
 msgid "Failed to initialize resources"
@@ -7114,16 +7112,12 @@ msgstr ""
 "TTS verfügbar ist)"
 
 #: engines/cge/metaengine.cpp:199 engines/cge2/metaengine.cpp:212
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game Keymappings"
-msgstr "Spiel-Optionen"
+msgstr "Spiele-Tastenbelegungen"
 
 #: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:225
-#, fuzzy
-#| msgid "Skip"
 msgid "Exit/Skip"
-msgstr "Überspringen"
+msgstr "Verlassen/Überspringen"
 
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
 #: engines/hopkins/metaengine.cpp:238 engines/lure/metaengine.cpp:191
@@ -7146,16 +7140,12 @@ msgstr "Spiel laden"
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:234 engines/cge2/metaengine.cpp:248
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Info"
-msgstr "Spielmenü"
+msgstr "Spiele-Informationen"
 
 #. I18N: This opens a Quit Prompt where you have to choose
 #. [Confirm] or [Continue Playing] lines with Left Click.
 #: engines/cge/metaengine.cpp:242 engines/cge2/metaengine.cpp:256
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit Prompt"
 msgstr "Spiel beenden"
 
@@ -7167,42 +7157,42 @@ msgstr "Verändertes Item"
 
 #: engines/cge/metaengine.cpp:257
 msgid "Inventory Item 1 (Select/Deselect)"
-msgstr ""
+msgstr "Inventar-Gegenstand 1 (Auswählen/Abwählen)"
 
 #: engines/cge/metaengine.cpp:262
 msgid "Inventory Item 2 (Select/Deselect)"
-msgstr ""
+msgstr "Inventar-Gegenstand 2 (Auswählen/Abwählen)"
 
 #: engines/cge/metaengine.cpp:267
 msgid "Inventory Item 3 (Select/Deselect)"
-msgstr ""
+msgstr "Inventar-Gegenstand 3 (Auswählen/Abwählen)"
 
 #: engines/cge/metaengine.cpp:272
 msgid "Inventory Item 4 (Select/Deselect)"
-msgstr ""
+msgstr "Inventar-Gegenstand 4 (Auswählen/Abwählen)"
 
 #: engines/cge/metaengine.cpp:277
 msgid "Inventory Item 5 (Select/Deselect)"
-msgstr ""
+msgstr "Inventar-Gegenstand 5 (Auswählen/Abwählen)"
 
 #: engines/cge/metaengine.cpp:282
 msgid "Inventory Item 6 (Select/Deselect)"
-msgstr ""
+msgstr "Inventar-Gegenstand 6 (Auswählen/Abwählen)"
 
 #: engines/cge/metaengine.cpp:287
 msgid "Inventory Item 7 (Select/Deselect)"
-msgstr ""
+msgstr "Inventar-Gegenstand 7 (Auswählen/Abwählen)"
 
 #: engines/cge/metaengine.cpp:292
 msgid "Inventory Item 8 (Select/Deselect)"
-msgstr ""
+msgstr "Inventar-Gegenstand 8 (Auswählen/Abwählen)"
 
 #. I18N: There are 24 single-room/screen locations in the game.
 #. You switch between them from numbered buttons on interface.
 #. Sets the current access to only the first Location
 #: engines/cge/metaengine.cpp:300
 msgid "DEBUG: Access to Location 1"
-msgstr ""
+msgstr "DEBUG: Zugriff auf Location 1"
 
 #. I18N: Sets the current access to Locations 1 to 8.
 #: engines/cge/metaengine.cpp:306
