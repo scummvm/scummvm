@@ -58,19 +58,16 @@ BaseRenderer3D *makeOpenGL3DShaderRenderer(BaseGame *inGame) {
 }
 
 BaseRenderOpenGL3DShader::BaseRenderOpenGL3DShader(BaseGame *inGame) : BaseRenderer3D(inGame) {
-	_flatShadowMaskShader = nullptr;
+	_spriteVBO = 0;
 }
 
 BaseRenderOpenGL3DShader::~BaseRenderOpenGL3DShader() {
-	_camera = nullptr;
-
+	_camera = nullptr; // ref only
 	glDeleteBuffers(1, &_spriteVBO);
-	glDeleteTextures(1, &_flatShadowRenderTexture);
-	glDeleteRenderbuffers(1, &_flatShadowDepthBuffer);
-	glDeleteFramebuffers(1, &_flatShadowFrameBuffer);
 }
 
 bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed) {
+
 	glGenBuffers(1, &_spriteVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, _spriteVBO);
 	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(SpriteVertexShader), nullptr, GL_DYNAMIC_DRAW);
@@ -106,25 +103,16 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 		lightEnable(i, false);
 	}
 
-	_windowed = !ConfMan.getBool("fullscreen");
-	_width = width;
-	_height = height;
-
-	_nearClipPlane = 90.0f;
-	_farClipPlane = 10000.0f;
-
-	setViewport(0, 0, width, height);
-
 	float fadeVertexCoords[8];
 
-	fadeVertexCoords[0 * 2 + 0] = _viewportRect.left;
-	fadeVertexCoords[0 * 2 + 1] = _viewportRect.bottom;
-	fadeVertexCoords[1 * 2 + 0] = _viewportRect.left;
-	fadeVertexCoords[1 * 2 + 1] = _viewportRect.top;
-	fadeVertexCoords[2 * 2 + 0] = _viewportRect.right;
-	fadeVertexCoords[2 * 2 + 1] = _viewportRect.bottom;
-	fadeVertexCoords[3 * 2 + 0] = _viewportRect.right;
-	fadeVertexCoords[3 * 2 + 1] = _viewportRect.top;
+	fadeVertexCoords[0 * 2 + 0] = 0;
+	fadeVertexCoords[0 * 2 + 1] = height;
+	fadeVertexCoords[1 * 2 + 0] = 0;
+	fadeVertexCoords[1 * 2 + 1] = 0;
+	fadeVertexCoords[2 * 2 + 0] = width;
+	fadeVertexCoords[2 * 2 + 1] = height;
+	fadeVertexCoords[3 * 2 + 0] = width;
+	fadeVertexCoords[3 * 2 + 1] = 0;
 
 	glGenBuffers(1, &_fadeVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, _fadeVBO);
@@ -144,12 +132,17 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	_lineShader = OpenGL::Shader::fromFiles("wme_line", lineAttributes);
 	_lineShader->enableVertexAttribute("position", _lineVBO, 2, GL_FLOAT, false, 8, 0);
 
-	static const char *flatShadowXModelAttributes[] = { "position", nullptr };
-	_flatShadowXModelShader = OpenGL::Shader::fromFiles("wme_flat_shadow_modelx", flatShadowXModelAttributes);
 
-	_active = true;
+
+	_windowed = !ConfMan.getBool("fullscreen");
+	_width = width;
+	_height = height;
+
+	setViewport(0, 0, width, height);
 
 	setProjection();
+
+	_active = true;
 
 	return true;
 }
@@ -761,7 +754,7 @@ Mesh3DS *BaseRenderOpenGL3DShader::createMesh3DS() {
 }
 
 XMesh *BaseRenderOpenGL3DShader::createXMesh() {
-	return new XMeshOpenGLShader(_gameRef, _xmodelShader, _flatShadowXModelShader);
+	return new XMeshOpenGLShader(_gameRef, _xmodelShader);
 }
 
 ShadowVolume *BaseRenderOpenGL3DShader::createShadowVolume() {

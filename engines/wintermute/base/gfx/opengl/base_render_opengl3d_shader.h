@@ -130,9 +130,6 @@ private:
 	GLuint _spriteVBO;
 	GLuint _fadeVBO;
 	GLuint _lineVBO;
-	GLuint _flatShadowFrameBuffer;
-	GLuint _flatShadowRenderTexture;
-	GLuint _flatShadowDepthBuffer;
 	OpenGL::Shader *_spriteShader;
 	OpenGL::Shader *_fadeShader;
 	OpenGL::Shader *_xmodelShader;
@@ -140,8 +137,6 @@ private:
 	OpenGL::Shader *_shadowVolumeShader;
 	OpenGL::Shader *_shadowMaskShader;
 	OpenGL::Shader *_lineShader;
-	OpenGL::Shader *_flatShadowXModelShader;
-	OpenGL::Shader *_flatShadowMaskShader;
 };
 
 } // namespace Wintermute

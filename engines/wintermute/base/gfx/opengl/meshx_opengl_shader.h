@@ -38,7 +38,7 @@ namespace Wintermute {
 
 class XMeshOpenGLShader : public XMesh {
 public:
-	XMeshOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader, OpenGL::Shader *flatShadowShader);
+	XMeshOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader);
 	~XMeshOpenGLShader() override;
 
 	bool loadFromXData(const Common::String &filename, XFileData *xobj) override;

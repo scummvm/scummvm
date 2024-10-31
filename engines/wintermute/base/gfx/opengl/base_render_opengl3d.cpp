@@ -68,23 +68,10 @@ BaseRenderOpenGL3D::BaseRenderOpenGL3D(BaseGame *inGame) : BaseRenderer3D(inGame
 }
 
 BaseRenderOpenGL3D::~BaseRenderOpenGL3D() {
-	_camera = nullptr;
+	_camera = nullptr; // ref only
 }
 
 bool BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
-	_windowed = !ConfMan.getBool("fullscreen");
-	_width = width;
-	_height = height;
-
-	_nearClipPlane = 90.0f;
-	_farClipPlane = 10000.0f;
-
-	setViewport(0, 0, width, height);
-
-	_active = true;
-	// setup a proper state
-	setup2D(true);
-
 	_simpleShadow[0].x = -1.0f;
 	_simpleShadow[0].y = 0.0f;
 	_simpleShadow[0].z = 1.0f;
@@ -121,7 +108,17 @@ bool BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
 	_simpleShadow[3].u = 1.0f;
 	_simpleShadow[3].v = 0.0f;
 
+
+
+	_windowed = !ConfMan.getBool("fullscreen");
+	_width = width;
+	_height = height;
+
+	setViewport(0, 0, width, height);
+
 	setProjection();
+
+	_active = true;
 
 	return true;
 }

@@ -38,8 +38,8 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-XMeshOpenGLShader::XMeshOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader, OpenGL::Shader *flatShadowShader) :
-	XMesh(inGame), _shader(shader), _flatShadowShader(flatShadowShader) {
+XMeshOpenGLShader::XMeshOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader) :
+	XMesh(inGame), _shader(shader) {
 	glGenBuffers(1, &_vertexBuffer);
 	glGenBuffers(1, &_indexBuffer);
 }
