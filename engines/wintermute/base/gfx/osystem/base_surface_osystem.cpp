@@ -121,16 +121,6 @@ bool BaseSurfaceOSystem::finishLoad() {
 	_surface->free();
 	delete _surface;
 
-	//
-	// ScummVM TGA decoder interpreting palette as RGB, but TGA data has as BGR
-	// swap R and B color components
-	//
-	if (image->getPaletteCount() != 0 && _filename.hasSuffix(".tga")) {
-		byte tmp = _ckBlue;
-		_ckBlue = _ckRed;
-		_ckRed = tmp;
-	}
-
 	bool needsColorKey = false;
 	bool replaceAlpha = true;
 	if (image->getSurface()->format.bytesPerPixel == 1) {

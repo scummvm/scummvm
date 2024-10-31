@@ -161,9 +161,17 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 	}
 
 #ifdef SCUMM_BIG_ENDIAN
-	_imageData = img.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), img.getPalette(), img.getPaletteCount());
+	if (img.getSurface()->format.bytesPerPixel == 1 && _filename.hasSuffix(".tga")) {
+		_imageData = img.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 0, 8, 16), img.getPalette(), img.getPaletteCount());
+	} else {
+		_imageData = img.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), img.getPalette(), img.getPaletteCount());
+	}
 #else
-	_imageData = img.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), img.getPalette(), img.getPaletteCount());
+	if (img.getSurface()->format.bytesPerPixel == 1 && _filename.hasSuffix(".tga")) {
+		_imageData = img.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24), img.getPalette(), img.getPaletteCount());
+	} else {
+		_imageData = img.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), img.getPalette(), img.getPaletteCount());
+	}
 #endif
 
 	if (BaseEngine::instance().getTargetExecutable() < WME_LITE) {
