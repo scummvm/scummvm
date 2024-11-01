@@ -26,8 +26,6 @@
 namespace M4 {
 namespace Riddle {
 
-#define INVENTORY_COUNT 123
-
 struct InvObject {
 	const char *_name;
 	int16 _scene, _cel, _cursor;
@@ -180,6 +178,14 @@ void Inventory::set_scroll(int32 scroll) {
 void Inventory::remove(const Common::String &name) {
 	_GI(inventory)->remove(name);
 	_GI(inventory)->_must_redraw_all = true;
+}
+
+// Added for room 205
+const char * Inventory::get_name(int32 id) {
+	if (id < 0 || id >= INVENTORY_COUNT)
+		return "";
+
+	return INVENTORY_ITEMS[id]._name;
 }
 
 } // namespace Riddle

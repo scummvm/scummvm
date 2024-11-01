@@ -30,6 +30,8 @@
 namespace M4 {
 namespace Riddle {
 
+#define INVENTORY_COUNT 123
+
 struct InventoryItem {
 	const char *_asset = nullptr;
 	const char *_name = nullptr;
@@ -48,6 +50,8 @@ public:
 	void add(const Common::String &name, const Common::String &verbs, int32 sprite, int32 cursor) override;
 	void set_scroll(int32 scroll) override;
 	void remove(const Common::String &name) override;
+
+	static const char *get_name(int32 id);
 };
 
 } // namespace Riddle
