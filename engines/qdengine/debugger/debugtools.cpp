@@ -443,10 +443,14 @@ void showScenePersonages() {
 		qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher();
 		if (dp && ((scene = dp->get_active_scene()))) {
 			if (!scene->getPersonages()->empty()) {
-				if (ImGui::BeginTable("Personages", 2, ImGuiTableFlags_Borders)) {
+				if (ImGui::BeginTable("Personages", 6, ImGuiTableFlags_Borders)) {
 					ImGuiTableFlags flags = ImGuiTableColumnFlags_WidthFixed;
 					ImGui::TableSetupColumn("Name", flags);
 					ImGui::TableSetupColumn("Flags", flags);
+					ImGui::TableSetupColumn("Control", flags);
+					ImGui::TableSetupColumn("Movement", flags);
+					ImGui::TableSetupColumn("Anim Flags", flags);
+					ImGui::TableSetupColumn("Anim Status", flags);
 
 					ImGui::TableHeadersRow();
 
@@ -461,6 +465,23 @@ void showScenePersonages() {
 
 						qdGameObjectState *st = it->get_state(it->cur_state());
 						ImGui::Text("%s", st ? qdGameObjectState::flag2str(st->flags(), true).c_str() : "<none>");
+
+						ImGui::TableNextColumn();
+
+						ImGui::Text(qdGameObjectMoving::control2str(it->get_control_types(), true).c_str());
+
+						ImGui::TableNextColumn();
+
+						ImGui::Text(qdGameObjectMoving::movement2str(it->get_movement_mode(), true).c_str());
+
+						qdAnimation *anim = it->get_animation();
+						ImGui::TableNextColumn();
+
+						ImGui::Text(qdAnimation::flag2str(anim->flags(), true).c_str());
+
+						ImGui::TableNextColumn();
+
+						ImGui::Text(qdAnimation::status2str(anim->status(), true).c_str());
 					}
 
 					ImGui::EndTable();

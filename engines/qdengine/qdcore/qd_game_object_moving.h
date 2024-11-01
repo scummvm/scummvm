@@ -108,6 +108,9 @@ public:
 		_control_types &= ~type;
 	}
 
+	int get_control_types() { return _control_types; }
+	int get_movement_mode() { return _movement_mode; }
+
 	qdGameObjectStateWalk::movement_type_t movement_type() const;
 
 	bool is_walkable(const Vect3f &pos) const;
@@ -350,7 +353,8 @@ public:
 	void set_path_attributes(int attr) const;
 	void clear_path_attributes(int attr) const;
 
-	Common::String control2str(int control) const;
+	static Common::String control2str(int control, bool truncate = false);
+	static Common::String movement2str(int movement, bool truncate = false);
 
 protected:
 

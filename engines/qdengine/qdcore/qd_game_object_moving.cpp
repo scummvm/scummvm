@@ -2730,7 +2730,7 @@ struct FlagsList {
 	defFlag(CONTROL_ANIMATED_ROTATION),
 };
 
-Common::String qdGameObjectMoving::control2str(int fl) const {
+Common::String qdGameObjectMoving::control2str(int fl, bool truncate) {
 	Common::String res;
 
 	for (int i = 0; i < ARRAYSIZE(controlList); i++) {
@@ -2738,7 +2738,7 @@ Common::String qdGameObjectMoving::control2str(int fl) const {
 			if (!res.empty())
 				res += " | ";
 
-			res += controlList[i].s;
+			res += &controlList[i].s[truncate ? 8 : 0];
 
 			fl &= ~controlList[i].f;
 		}
@@ -2748,6 +2748,23 @@ Common::String qdGameObjectMoving::control2str(int fl) const {
 		res += Common::String::format(" | %x", fl);
 
 	return res;
+}
+
+#define defEnum(x) #x
+
+static const char *movementList[] = {
+	defEnum(MOVEMENT_MODE_STOP),
+	defEnum(MOVEMENT_MODE_TURN),
+	defEnum(MOVEMENT_MODE_START),
+	defEnum(MOVEMENT_MODE_MOVE),
+	defEnum(MOVEMENT_MODE_END),
+};
+
+Common::String qdGameObjectMoving::movement2str(int fl, bool truncate) {
+	if (fl > ARRAYSIZE(movementList) || fl < 0)
+		return Common::String::format("<%d>", fl);
+
+	return Common::String(&movementList[fl][truncate ? 14 : 0]);
 }
 
 } // namespace QDEngine

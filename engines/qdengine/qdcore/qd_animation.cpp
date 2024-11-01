@@ -1200,7 +1200,7 @@ struct FlagsList {
 	defFlag(QD_ANIMATION_FLAG_TILE_COMPRESS),
 };
 
-Common::String qdAnimation::flag2str(int fl) {
+Common::String qdAnimation::flag2str(int fl, bool truncate) {
 	Common::String res;
 
 	for (int i = 0; i < ARRAYSIZE(flagList); i++) {
@@ -1208,7 +1208,7 @@ Common::String qdAnimation::flag2str(int fl) {
 			if (!res.empty())
 				res += " | ";
 
-			res += flagList[i].s;
+			res += &flagList[i].s[truncate ? 18 : 0];
 
 			fl &= ~flagList[i].f;
 		}
@@ -1219,6 +1219,23 @@ Common::String qdAnimation::flag2str(int fl) {
 
 	return res;
 }
+
+#define defEnum(x) #x
+
+static const char *statusList[] = {
+	defEnum(QD_ANIMATION_STOPPED),
+	defEnum(QD_ANIMATION_PLAYING),
+	defEnum(QD_ANIMATION_PAUSED),
+	defEnum(QD_ANIMATION_END_PLAYING),
+};
+
+Common::String qdAnimation::status2str(int fl, bool truncate) {
+	if (fl > ARRAYSIZE(statusList) || fl < 0)
+		return Common::String::format("<%d>", fl);
+
+	return Common::String(&statusList[fl][truncate ? 13 : 0]);
+}
+
 
 
 } // namespace QDEngine
