@@ -196,7 +196,7 @@ void CastleEngine::loadAssetsDOSFullGame() {
 			_strenghtWeightsFrames = loadFramesWithHeaderDOS(stream, 4);
 			_spiritsMeterIndicatorBackgroundFrame = loadFrameWithHeaderDOS(stream);
 			_spiritsMeterIndicatorFrame = loadFrameWithHeaderDOS(stream);
-			loadFrameWithHeaderDOS(stream); // side
+			_spiritsMeterIndicatorSideFrame = loadFrameWithHeaderDOS(stream); // side
 			loadFrameWithHeaderDOS(stream); // ???
 
 			/*for (int i = 0; i < 6; i++)
@@ -465,7 +465,8 @@ void CastleEngine::drawDOSUI(Graphics::Surface *surface) {
 	surface->copyRectToSurface(*_flagFrames[flagFrameIndex], 285, 5, Common::Rect(0, 0, _flagFrames[flagFrameIndex]->w, _flagFrames[flagFrameIndex]->h));
 
 	surface->copyRectToSurface((const Graphics::Surface)*_spiritsMeterIndicatorBackgroundFrame, 136, 162, Common::Rect(0, 0, _spiritsMeterIndicatorBackgroundFrame->w, _spiritsMeterIndicatorBackgroundFrame->h));
-	surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_spiritsMeterIndicatorFrame, 125 + _spiritsMeterPosition, 161, Common::Rect(0, 0, _spiritsMeterIndicatorFrame->w, _spiritsMeterIndicatorFrame->h), black);
+	surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_spiritsMeterIndicatorFrame, 125 + 6 + _spiritsMeterPosition, 161, Common::Rect(0, 0, _spiritsMeterIndicatorFrame->w, _spiritsMeterIndicatorFrame->h), black);
+	surface->copyRectToSurface((const Graphics::Surface)*_spiritsMeterIndicatorSideFrame, 122 + 5 + 1, 157 + 5 - 1, Common::Rect(0, 0, _spiritsMeterIndicatorSideFrame->w / 2, _spiritsMeterIndicatorSideFrame->h));
 	//surface->copyRectToSurface(*_spiritsMeterIndicatorFrame, 100, 50, Common::Rect(0, 0, _spiritsMeterIndicatorFrame->w, _spiritsMeterIndicatorFrame->h));
 }
 

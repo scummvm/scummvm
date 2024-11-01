@@ -70,6 +70,7 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_optionTexture = nullptr;
 	_spiritsMeterIndicatorFrame = nullptr;
 	_spiritsMeterIndicatorBackgroundFrame = nullptr;
+	_spiritsMeterIndicatorSideFrame = nullptr;
 	_strenghtBackgroundFrame = nullptr;
 	_strenghtBarFrame = nullptr;
 	_thunderFrame = nullptr;
@@ -122,6 +123,11 @@ CastleEngine::~CastleEngine() {
 	if (_spiritsMeterIndicatorFrame) {
 		_spiritsMeterIndicatorFrame->free();
 		delete _spiritsMeterIndicatorFrame;
+	}
+
+	if (_spiritsMeterIndicatorSideFrame) {
+		_spiritsMeterIndicatorSideFrame->free();
+		delete _spiritsMeterIndicatorSideFrame;
 	}
 
 	if (_strenghtBackgroundFrame) {

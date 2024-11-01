@@ -106,6 +106,7 @@ public:
 	Common::Array<Graphics::ManagedSurface *>_keysMenuFrames;
 	Graphics::ManagedSurface *_spiritsMeterIndicatorBackgroundFrame;
 	Graphics::ManagedSurface *_spiritsMeterIndicatorFrame;
+	Graphics::ManagedSurface *_spiritsMeterIndicatorSideFrame;
 	Graphics::ManagedSurface *_strenghtBackgroundFrame;
 	Graphics::ManagedSurface *_strenghtBarFrame;
 	Common::Array<Graphics::ManagedSurface *> _strenghtWeightsFrames;
