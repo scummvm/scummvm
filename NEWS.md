@@ -12,6 +12,7 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Added support for Backyard Basketball.
   - Added support for Unrest.
   - Added support for Rise of the Dragon.
+  - Added support for Castle Master
 
  New platforms:
   - Added SailfishOS port.
@@ -64,6 +65,7 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Refactored font handling to use common classes.
   - Improved keymapper support coverage.
   - Correctly implement aspect ratio correction following dosbox implementation.
+  - More precise perspective matrix computation to match the original.
 
  Groovie:
   - Added keymapper support.
