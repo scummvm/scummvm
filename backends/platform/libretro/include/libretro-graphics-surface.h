@@ -28,19 +28,22 @@ public:
 	Graphics::ManagedSurface _screen;
 	Graphics::Surface _gameScreen;
 	Graphics::Surface _overlay;
-	Graphics::Surface _mouseImage;
-	Graphics::Palette _mousePalette;
+	Graphics::Surface _cursor;
+	Graphics::Palette _cursorPalette;
 	Graphics::Palette _gamePalette;
 
 private:
-	bool _mouseDontScale;
-	bool _mousePaletteEnabled;
-	bool _mouseVisible;
+	bool _cursorDontScale;
+	bool _cursorPaletteEnabled;
 	bool _screenUpdatePending;
-	int _mouseHotspotX;
-	int _mouseHotspotY;
-	int _mouseKeyColor;
+	int _cursorHotspotX;
+	int _cursorHotspotY;
+	int _cursorKeyColor;
 	int _screenChangeID;
+	int _cursorHotspotXScaled;
+	int _cursorHotspotYScaled;
+	float _cursorWidthScaled;
+	float _cursorHeightScaled;
 
 public:
 	LibretroGraphics();
@@ -60,7 +63,6 @@ public:
 	int16 getOverlayWidth(void) const override;
 	Graphics::PixelFormat getOverlayFormat() const override;
 	const Graphics::ManagedSurface *getScreen(void);
-	bool showMouse(bool visible) override;
 	void warpMouse(int x, int y) override;
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 255, bool dontScale = false, const Graphics::PixelFormat *format = NULL, const byte *mask = nullptr) override;
 	void setCursorPalette(const byte *colors, uint start, uint num) override;
@@ -78,7 +80,7 @@ public:
 
 	int getScreenChangeID() const override;
 	void beginGFXTransaction() override {}
-	OSystem::TransactionError endGFXTransaction() override { return OSystem::kTransactionSuccess; }
+	OSystem::TransactionError endGFXTransaction() override;
 	void fillScreen(uint32 col) override {}
 	void fillScreen(const Common::Rect &r, uint32 col) override {}
 	void setFocusRectangle(const Common::Rect &rect) override {}
@@ -87,7 +89,7 @@ public:
 	void realUpdateScreen(void);
 
 	bool gameNeedsAspectRatioCorrection() const override { return false; }
-	void handleResizeImpl(const int width, const int height) override {};
+	void handleResizeImpl(const int width, const int height) override;
 	void setSystemMousePosition(const int x, const int y) override {}
 	void setMousePosition(int x, int y);
 
@@ -96,5 +98,7 @@ public:
 protected:
 	void setPalette(const byte *colors, uint start, uint num) override;
 	void grabPalette(byte *colors, uint start, uint num) const override;
+private:
+	void overrideCursorScaling();
 };
 #endif //BACKENDS_LIBRETRO_GRAPHICS_SURFACE_H

@@ -169,3 +169,7 @@ void OSystem_libretro::resetGraphicsManager(void) {
 #endif
 		_graphicsManager = new LibretroGraphics();
 }
+
+bool OSystem_libretro::inLauncher() {
+	return (nullptr == ConfMan.getActiveDomain());
+}

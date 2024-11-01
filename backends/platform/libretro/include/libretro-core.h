@@ -42,6 +42,8 @@ int retro_setting_get_mouse_fine_control_speed_reduction(void);
 bool retro_setting_get_gamepad_cursor_only(void);
 float retro_setting_get_gamepad_cursor_speed(void);
 float retro_setting_get_gamepad_acceleration_time(void);
+int retro_setting_get_gui_res_w(void);
+int retro_setting_get_gui_res_h(void);
 
 void retro_set_size(unsigned width, unsigned height);
 

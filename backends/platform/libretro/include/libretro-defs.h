@@ -40,6 +40,7 @@
 #define AUDIO_STATUS_UPDATE_AV_INFO	    (1 << 5)
 #define AUDIO_STATUS_RESET_PENDING	    (1 << 6)
 #define AUDIO_STATUS_UPDATE_GEOMETRY    (1 << 7)
+#define AV_STATUS_UPDATE_GUI            (1 << 8)
 
 // Video status
 #define VIDEO_GRAPHIC_MODE_REQUEST_SW     (1 << 0)

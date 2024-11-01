@@ -573,6 +573,32 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		},
 		NULL,
 	},
+#ifdef USE_HIGHRES
+	{
+		"scummvm_gui_aspect_ratio",
+		"Video > Rapporto aspetto GUI",
+		"Rapporto aspetto ScummVM Launcher",
+		"Imposta il rapporto d'aspetto per ScummVM Launcher.",
+		NULL,
+		NULL,
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_gui_h_res",
+		"Video > Risoluzione GUI",
+		"Risoluzione ScummVM Launcher",
+		"Imposta la risoluzione per ScummVM Launcher.",
+		NULL,
+		NULL,
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+#endif
 	{ NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL },
 };
 struct retro_core_options_v2 options_it = {

@@ -656,6 +656,36 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"disabled"
 #endif
 	},
+#ifdef USE_HIGHRES
+	{
+		"scummvm_gui_aspect_ratio",
+		"Video > GUI aspect ratio",
+		"ScummVM Launcher aspect ratio",
+		"Set ScummVM Launcher aspect ratio.",
+		NULL,
+		"video",
+		{
+			{"0", "4:3"},
+			{"1", "16:9"},
+			{NULL, NULL},		},
+		"1"
+	},
+	{
+		"scummvm_gui_h_res",
+		"Video > GUI resolution",
+		"ScummVM Launcher resolution",
+		"Set ScummVM Launcher aspect ratio.",
+		NULL,
+		"video",
+		{
+			{"240", "LD"},
+			{"480", "SD"},
+			{"720", "HD"},
+			{"1080", "FHD"},
+			{NULL, NULL},		},
+		"720"
+	},
+#endif
 	{ NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL },
 };
 

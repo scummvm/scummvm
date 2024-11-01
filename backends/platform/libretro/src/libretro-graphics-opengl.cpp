@@ -44,19 +44,53 @@ void LibretroOpenGLGraphics::setMouseCursor(const void *buf, uint w, uint h, int
 	   @TODO: root cause to be investigated. */
 	delete _cursor;
 	_cursor = nullptr;
+
 	OpenGL::OpenGLGraphicsManager::setMouseCursor(buf, w, h, hotspotX, hotspotY, keycolor, dontScale, format, mask);
+
+	overrideCursorScaling();
+
+}
+
+void LibretroOpenGLGraphics::overrideCursorScaling(){
+	OpenGL::OpenGLGraphicsManager::recalculateCursorScaling();
+
+	if (_cursor){
+		const frac_t screenScaleFactor = _cursorDontScale ? intToFrac(1) : intToFrac(getWindowHeight()) / 200; /* hard coded as base resolution 320x200 is hard coded upstream */
+
+		_cursorHotspotXScaled = fracToInt(_cursorHotspotX * screenScaleFactor);
+		_cursorWidthScaled    = fracToDouble(_cursor->getWidth() * screenScaleFactor);
+
+		_cursorHotspotYScaled = fracToInt(_cursorHotspotY * screenScaleFactor);
+		_cursorHeightScaled   = fracToDouble(_cursor->getHeight() * screenScaleFactor);
+	}
 }
 
 void LibretroOpenGLGraphics::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	/* Override for ScummVM Launcher */
 	if (nullptr == ConfMan.getActiveDomain()){
-		width = RES_W_OVERLAY;
-		height = RES_H_OVERLAY;
+		width = retro_setting_get_gui_res_w();
+		height = retro_setting_get_gui_res_h();
 	}
+	/* no need to update now libretro gui res settings changes if not in ScummVM launcher */
+	if (! width)
+		return;
+
 	retro_set_size(width, height);
 	handleResize(width, height);
 	OpenGL::OpenGLGraphicsManager::initSize(width, height, format);
 	LIBRETRO_G_SYSTEM->refreshRetroSettings();
+}
+
+OSystem::TransactionError LibretroOpenGLGraphics::endGFXTransaction() {
+	OSystem::TransactionError res = OpenGL::OpenGLGraphicsManager::endGFXTransaction();
+	overrideCursorScaling();
+
+	return res;
+}
+
+void LibretroOpenGLGraphics::handleResizeImpl(const int width, const int height) {
+	OpenGL::OpenGLGraphicsManager::handleResizeImpl(width, height);
+	overrideCursorScaling();
 }
 
 void LibretroHWFramebuffer::activateInternal(){
@@ -74,5 +108,5 @@ void LibretroOpenGLGraphics::resetContext(OpenGL::ContextType contextType) {
 	notifyContextCreate(contextType, new LibretroHWFramebuffer(), rgba8888, rgba8888);
 
 	if (_overlayInGUI)
-		g_gui.scheduleFullRedraw();
+		g_gui.checkScreenChange();
 }

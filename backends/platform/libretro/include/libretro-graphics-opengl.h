@@ -36,8 +36,13 @@ public:
 	bool isOverlayInGUI(void){ return _overlayInGUI; }
 	void setMousePosition(int x, int y);
 	void resetContext(OpenGL::ContextType contextType);
+	OSystem::TransactionError endGFXTransaction() override;
+
 protected:
 	bool gameNeedsAspectRatioCorrection() const override { return false; }
+	void handleResizeImpl(const int width, const int height) override;
+private:
+	void overrideCursorScaling(void);
 };
 
 class LibretroHWFramebuffer : public OpenGL::Backbuffer {

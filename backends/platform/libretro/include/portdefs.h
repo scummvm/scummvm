@@ -38,7 +38,7 @@
    This conflicts with the use of _X as a variable name. */
 #undef _X
 
-#if defined(DINGUX) || defined(_3DS)
+#ifndef USE_HIGHRES
 #define RES_W_OVERLAY 320
 #define RES_H_OVERLAY 200
 #define RES_INIT_MAX_W 320
