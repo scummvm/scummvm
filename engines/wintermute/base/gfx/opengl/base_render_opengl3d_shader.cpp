@@ -488,6 +488,10 @@ bool BaseRenderOpenGL3DShader::setProjection() {
 	matProj.matrix._31 = -(offsetX + (mleft - mright) / 2 - modWidth) / viewportWidth * 2.0f;
 	matProj.matrix._32 =  (offsetY + (mtop - mbottom) / 2 - modHeight) / viewportHeight * 2.0f;
 
+	// convert DX [0, 1] depth range to OpenGL [-1, 1] depth range.
+	matProj.matrix._33 = (matProj.matrix._33 * 2.0f) - 1.0f;
+	matProj.matrix._43 *= 2.0f;
+
 	return setProjectionTransform(matProj);
 }
 
