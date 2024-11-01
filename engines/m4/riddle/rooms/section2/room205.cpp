@@ -962,7 +962,179 @@ void Room205::daemon() {
 
 		break;
 
+	case 669:
+		sendWSMessage_150000(_G(my_walker), 670);
+
+		break;
+
+	case 670:
+		_fieldDC = 0;
+		_fieldE0 = 0;
+		other_save_game_for_resurrection();
+		_G(game).new_section = 4;
+		_G(game).new_room = 413;
+
+		break;
+
+	case 901:
+		if (_fieldE0 || !player_commands_allowed()) {
+			kernel_timing_trigger(60, 901, nullptr);
+		} else if (_G(flags[V024])) {
+			digi_stop(1);
+
+			switch (imath_ranged_rand(1, 2)) {
+			case 1:
+				digi_play("205_s24", 1, 255, -1, -1);
+				break;
+
+			case 2:
+				digi_play("205_s25", 1, 255, -1, -1);
+				break;
+
+			default:
+
+				break;
+			}
+		} else {
+			player_set_commands_allowed(false);
+			intr_cancel_sentence();
+			digi_stop(1);
+			series_play("205 gun fire", 768, 0, -1, 3, 0, 100, 0, 0, 0,-1);
+
+			switch (_G(flags[V027])) {
+			case 0:
+				digi_play("205_s26", 1, 255, -1, -1);
+				kernel_timing_trigger(10, 902, nullptr);
+
+				break;
+
+			case 1:
+				digi_play("205_s27", 1, 255, -1, -1);
+				kernel_timing_trigger(10, 902, nullptr);
+
+				break;
+
+			case 2:
+				digi_play("205_s28", 1, 255, -1, -1);
+				kernel_timing_trigger(10, 902, nullptr);
+
+				break;
+
+			case 3:
+				kernel_timing_trigger(10, 906, nullptr);
+
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		break;
+
+	case 902:
+		player_update_info(_G(my_walker), &_G(player_info));
+		ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 903, 1, true);
+
+		break;
+
+	case 903:
+		setGlobals1(_ripGetsShotSeries, 1, 13, 13, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 904);
+
+		break;
+
+	case 904:
+		sendWSMessage_140000(_G(my_walker), 905);
+
+		break;
+
+	case 905:
+		_fieldDC = 0;
+		++_G(flags[V027]);
+		player_set_commands_allowed(true);
+		kernel_timing_trigger(imath_ranged_rand(1200, 1800), 901, nullptr);
+
+		break;
+
+	case 906:
+		player_update_info(_G(my_walker), &_G(player_info));
+		if (_G(player_info).x < 170) {
+			ws_walk(_G(my_walker), 190, _G(player_info).y, nullptr, 907, 1, true);
+		} else if (_G(player_info).x <= 470) {
+			kernel_timing_trigger(10, 907, nullptr);
+		} else {
+			ws_walk(_G(my_walker), 450, _G(player_info).y, nullptr, 907, 1, true);
+		}
+
+		break;
+
+	case 907:
+		digi_stop(1);
+		midi_stop();
+		digi_play("205_s29", 1, 255, -1, -1);
+		setGlobals1(_ripGetsShotSeries, 14, 32, 32, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 908);
+
+		break;
+
+	case 908:
+		kernel_timing_trigger(60, 909, nullptr);
+
+		break;
+
+	case 909:
+		player_set_commands_allowed(false);
+		disable_player_commands_and_fade_init(910);
+
+		break;
+
+	case 910:
+
+		sendWSMessage_150000(_G(my_walker), 666);
+		break;
+
+	case 1000:
+		_G(flags[V029]) = 1;
+		midi_play("vines", 191, -1, -1, 949);
+		digi_preload("205_s09", -1);
+		digi_preload("205_s10", -1);
+		digi_preload("205_s11", -1);
+		digi_preload("205_s13", -1);
+		digi_preload("205_s14", -1);
+		digi_preload("205_s15", -1);
+		digi_preload("205_s16", -1);
+		digi_preload("205_s17", -1);
+		digi_preload("205_s18", -1);
+		digi_preload("205_s19", -1);
+		digi_preload("205_s20", -1);
+		digi_preload("205_s21", -1);
+		digi_preload("205_s24", -1);
+		digi_preload("205_s25", -1);
+		digi_preload("205_s26", -1);
+		digi_preload("205_s27", -1);
+		digi_preload("205_s28", -1);
+		digi_preload("205_s29", -1);
+		_205Fite1Series = series_load("205FITE1", -1, nullptr);
+		_205Fite2Series = series_load("205FITE2", -1, nullptr);
+
+		if (_fieldE8) {
+			_fieldE8 = 0;
+			ws_unhide_walker(_G(my_walker));
+			ws_demand_location(_G(my_walker), 340, 284);
+			ws_demand_facing(_G(my_walker), 1);
+			player_set_commands_allowed(true);
+		}
+
+		terminateMachine(_205all0Mach);
+		series_unload(_205RipGetsBitchSlappedSeries);
+		terminateMachine(_205MeiStanderMach);
+		series_play("205FITE1", 3845, 0, 1001, 5, 0, 100, 0, 0, 0, 15);
+
+		break;
+
 	default:
+
 		break;
 	}
 }

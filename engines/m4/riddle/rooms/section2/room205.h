@@ -55,6 +55,8 @@ private:
 	int32 _205all5Series = 0;
 	int32 _205all6Series = 0;
 	int32 _205FireInBrazierSeries = 0;
+	int32 _205Fite1Series = 0;
+	int32 _205Fite2Series = 0;
 	int32 _205GunFireSeries = 0;
 	int32 _205GunPointedSeries = 0;
 	int32 _205ktlk1Series = 0;
@@ -63,6 +65,7 @@ private:
 	int32 _205mc02Series = 0;
 	int32 _205mc03Series = 0;
 	int32 _205mtlk1Series = 0;
+	int32 _205RipGetsBitchSlappedSeries = 0;
 	int32 _205rp01Series = 0;
 	int32 _205rp02Series = 0;
 	int32 _205rp03Series = 0;
@@ -99,7 +102,6 @@ private:
 	machine *_safariShadow1Mach = nullptr;
 	machine *_shenGuoShadow12Mach = nullptr;
 	machine *_shenSuitGunWalkerMach = nullptr;
-	int32 _205RipGetsBitchSlappedSeries = 0;
 };
 
 } // namespace Rooms
