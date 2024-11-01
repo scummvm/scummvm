@@ -67,6 +67,21 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Rise of the Dragon (PC) German
+	{
+		"rise",
+		0,
+		{
+			{"volume.vga", 0, "f4e9cdc69d3177e8eae81ab43ef2e490", 8992},
+			{"volume.001", 0, "0ae4a3512c2fd9b90d1670ed7c351ad6", 1168096},
+			AD_LISTEND
+		},
+		Common::DE_DEU,
+		Common::kPlatformDOS,
+		ADGF_TESTING,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Rise of the Dragon (PC) 16 Color, 1.2MB disks
 	{
 		"rise",
