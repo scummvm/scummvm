@@ -119,7 +119,7 @@ msgstr "Вгору"
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:138
 #: engines/sword1/control.cpp:2813 engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
-msgstr "Відміна"
+msgstr "Скасувати"
 
 #: gui/browser.cpp:82 gui/chooser.cpp:46 gui/filebrowser-dialog.cpp:69
 #: gui/remotebrowser.cpp:60 gui/shaderbrowser-dialog.cpp:81
