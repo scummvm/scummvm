@@ -38,8 +38,8 @@ private:
 	int _val6 = 0;
 	int _val7 = 0;
 	int _val8 = 0;
-	int _val9 = 0;
-	int _val10 = 0;
+	bool _showWalker = false;
+	bool _ripley80000 = false;
 	int _val11 = 0;
 	int _val12 = 0;
 	int _trigger1 = -1;
@@ -120,6 +120,7 @@ private:
 	void setupPigeons();
 	void setupOfficial();
 	void setupPeasant();
+	void peasantWalk();
 
 public:
 	Room203() : Section2Room() {}

@@ -63,9 +63,10 @@ void Room203::init() {
 	setupHelmetHotspot();
 
 	_val2 = _val4 = _val5 = 0;
-	_val6 = _val7 = _val8 = _val9 = 0;
-	_val10 = 0;
+	_val6 = _val7 = _val8 = 0;
+	_ripley80000 = 0;
 	_digiName1 = nullptr;
+	_showWalker = false;
 	_trigger1 = _trigger2 = _trigger3 = -1;
 	_trigger4 = _trigger5 = -1;
 
@@ -343,6 +344,10 @@ void Room203::daemon() {
 		digi_play("203m01", 1);
 		break;
 
+	case 6:
+		sendWSMessage_120000(_mei, 7);
+		break;
+
 	case 7:
 		_ctr1 = 0;
 		_ripLookAtHeadsTalkMei = series_load("rip look at heads talk mei");
@@ -352,12 +357,30 @@ void Room203::daemon() {
 		digi_play("203r01", 1, 255, 8);
 		break;
 
+	case 8:
+		if (_ctr1 >= 1) {
+			_ctr1 = 0;
+			sendWSMessage_120000(9);
+		} else {
+			++_ctr1;
+		}
+		break;
+
 	case 9:
 		sendWSMessage_150000(_mei, -1);
 		_meiCheekLine = series_load("mc cheek line");
 		setGlobals1(_meiCheekLine, 1, 30, 30, 35, 1, 38, 38, 38, 38, 1, 21, 45, 45, 45, 1);
 		sendWSMessage_110000(_mei, 10);
 		digi_play("203m02", 1, 255, 10);
+		break;
+
+	case 11:
+		if (_ctr1 >= 1) {
+			_ctr1 = 0;
+			sendWSMessage_130000(12);
+		} else {
+			++_ctr1;
+		}
 		break;
 
 	case 12:
@@ -370,6 +393,12 @@ void Room203::daemon() {
 		digi_play("203m03", 1);
 		break;
 
+	case 14:
+		sendWSMessage_150000(_mei, -1);
+		sendWSMessage_10000(_mei, 271, 337, 2, -1, 1);
+		kernel_timing_trigger(40, 15);
+		break;
+
 	case 17:
 		series_unload(_meiCheekLine);
 		series_unload(_ripLookAtHeadsTalkMei);
@@ -378,6 +407,11 @@ void Room203::daemon() {
 		setGlobals1(_meiRightHandOut, 1, 10, 10, 10, 1, 10, 1, 1, 1, 1);
 		sendWSMessage_110000(_mei, 18);
 		digi_play("203m04", 1, 255, 19);
+		break;
+
+	case 18:
+	case 25:
+		sendWSMessage_120000(_mei, -1);
 		break;
 
 	case 19:
@@ -405,6 +439,10 @@ void Room203::daemon() {
 		digi_play("203r04", 1, 255, 24);
 		break;
 
+	case 23:
+		sendWSMessage_120000(-1);
+		break;
+
 	case 24:
 		sendWSMessage_150000(_mei, -1);
 		_meiTalkToRip = series_load("mc talk to rip");
@@ -419,14 +457,33 @@ void Room203::daemon() {
 		digi_play("203r05", 1, 255, 27);
 		break;
 
+	case 27:
+		sendWSMessage_120000(28);
+		sendWSMessage_150000(_mei, -1);
+		sendWSMessage_10000(_mei, -40, 352, 2, 29, 1);
+		break;
+
 	case 28:
 		digi_play("203r05a", 1);
+		break;
+
+	case 29:
+		sendWSMessage_60000(_mei);
+		kernel_timing_trigger(1, 4567);
 		break;
 
 	case 30:
 		sendWSMessage_150000(1968);
 		player_set_commands_allowed(true);
 		_G(player).disable_hyperwalk = false;
+		break;
+
+	case 31:
+		_ripYouSeeToIt = series_load("rip says you see to it");
+		_meiTalkToRip = series_load("mc talk to rip");
+		_meiTurnAndTalk = series_load("mc turn and talk");
+		ws_demand_location(100, 360);
+		kernel_timing_trigger(1, 29);
 		break;
 
 	case 42:
@@ -560,6 +617,13 @@ void Room203::daemon() {
 		digi_preload("203p02");
 		break;
 
+	case 92:
+		if (_flag1)
+			digi_play("203p02", 1, 255, 93);
+		else
+			digi_unload("203p02");
+		break;
+
 	case 93:
 		kernel_timing_trigger(120, 92);
 		break;
@@ -579,8 +643,22 @@ void Room203::daemon() {
 		digi_play("203r28", 1, 255, 104);
 		break;
 
+	case 105:
+		sendWSMessage_120000(_official, 106);
+		break;
+
 	case 106:
 		sendWSMessage_150000(_official, 107);
+		break;
+
+	case 107:
+		sendWSMessage_120000(108);
+		break;
+
+	case 108:
+		sendWSMessage_150000(-1);
+		ws_walk(-30, 355, nullptr, -1);
+		kernel_timing_trigger(40, 109);
 		break;
 
 	case 109:
@@ -597,8 +675,193 @@ void Room203::daemon() {
 		player_set_commands_allowed(true);
 		break;
 
+	case 120:
+		switch (_peasantMode) {
+		case 4050:
+			switch (_peasantShould) {
+			case 4091:
+			case 4094:
+			case 4095:
+				if (_trigger2 != -1) {
+					kernel_trigger_dispatchx(kernel_trigger_create(_trigger2));
+					_trigger2 = -1;
+				} else {
+					kernel_trigger_dispatchx(kernel_trigger_create(121));
+				}
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 4051:
+			if (_peasantShould == 4110) {
+				if (_trigger2 != -1) {
+					kernel_trigger_dispatchx(kernel_trigger_create(_trigger2));
+					_trigger2 = -1;
+				} else {
+					player_update_info();
+
+					if (_G(player_info).x >= 450 && _G(player_info).x <= 8000) {
+						kernel_trigger_dispatchx(kernel_trigger_create(121));
+					} else {
+						player_set_commands_allowed(false);
+						_peasantShould = (_G(player_info).x < 450) ? 4117 : 4113;
+						peasantWalk();
+						kernel_timing_trigger(1, 121);
+					}
+				}
+			}
+			break;
+
+		case 4052:
+			switch (_peasantShould) {
+			case 4170:
+				if (_trigger2 != -1) {
+					kernel_trigger_dispatchx(kernel_trigger_create(_trigger2));
+					_trigger2 = -1;
+				} else {
+					player_update_info();
+
+					if (_G(player_info).x <= 450) {
+						kernel_trigger_dispatchx(kernel_trigger_create(121));
+					} else {
+						player_set_commands_allowed(false);
+						_peasantShould = 4175;
+						peasantWalk();
+						kernel_timing_trigger(1, 121);
+					}
+				}
+				break;
+
+			case 4174:
+			case 4175:
+				kernel_timing_trigger(1, 121);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 4053:
+			switch (_peasantShould) {
+			case 4160:
+				if (_trigger2 != -1) {
+					kernel_trigger_dispatchx(kernel_trigger_create(_trigger2));
+					_trigger2 = -1;
+				} else {
+					player_update_info();
+
+					if (_G(player_info).x >= 450 && _G(player_info).x <= 1040) {
+						kernel_trigger_dispatchx(kernel_trigger_create(121));
+					} else {
+						player_set_commands_allowed(false);
+						_peasantShould = (_G(player_info).x < 800) ? 4162 : 4166;
+						peasantWalk();
+						kernel_timing_trigger(1, 121);
+					}
+				}
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 4054:
+			switch (_peasantShould) {
+			case 4140:
+				if (_trigger2 != -1) {
+					kernel_trigger_dispatchx(kernel_trigger_create(_trigger2));
+					_trigger2 = -1;
+				} else {
+					player_update_info();
+
+					if (_G(player_info).x < 1040) {
+						player_set_commands_allowed(false);
+						_peasantShould = 4142;
+						peasantWalk();
+						kernel_timing_trigger(1, 121);
+					} else {
+						if (_val5) {
+							_peasantShould = _val5;
+							_val5 = 0;
+						}
+
+						kernel_trigger_dispatchx(kernel_trigger_create(121));
+					}
+				}
+				break;
+
+			case 4146:
+			case 4147:
+			case 4148:
+			case 4149:
+				kernel_timing_trigger(1, 121);
+				break;
+
+			case 4150:
+				kernel_trigger_dispatchx(kernel_trigger_create(121));
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 4055:
+		case 4056:
+		case 4058:
+		case 4059:
+			kernel_trigger_dispatchx(kernel_trigger_create(121));
+			break;
+
+		case 4057:
+			if (_trigger2 != -1) {
+				kernel_trigger_dispatchx(kernel_trigger_create(_trigger2));
+				_trigger2 = -1;
+			} else {
+				kernel_trigger_dispatchx(kernel_trigger_create(121));
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
 	case 125:
 		kernel_trigger_dispatchx(kernel_trigger_create(126));
+		break;
+
+	case 126:
+		// TODO
+		switch (_gkMode) {
+		case 3000:
+			break;
+		default:
+			break;
+		}
+		break;
+
+	case 150:
+		if (_unkMode == 1001 && _oldLadyMode2 == 1030 && _trigger5 != -1) {
+			kernel_trigger_dispatchx(_trigger5);
+			_trigger5 = -1;
+
+			if (_showWalker) {
+				ws_unhide_walker();
+				_showWalker = false;
+			}
+			if (_ripley80000) {
+				sendWSMessage_80000(_ripley);
+				_ripley80000 = false;
+			}
+		}
+
+		kernel_timing_trigger(3, 151);
 		break;
 
 	case 152:
@@ -675,8 +938,19 @@ void Room203::daemon() {
 		kernel_trigger_dispatchx(kernel_trigger_create(125));
 		break;
 
+	case 352:
+		if (_flag1)
+			digi_play("203p02", 1, 255, 93);
+		else
+			digi_unload("203p02");
+		break;
+
 	case 353:
 		kernel_timing_trigger(120, 352);
+		break;
+
+	case 360:
+		sendWSMessage_120000(_official, 363);
 		break;
 
 	case 366:
@@ -908,6 +1182,37 @@ void Room203::setupPeasant() {
 		_peasantScale, _peasantLayer, false, triggerMachineByHashCallback, "pp sh");
 	sendWSMessage_10000(1, _peasant, _peasantRocksShadow, 1, 1, -1,
 		_peasantRocksShadow, 1, 1, 0);
+}
+
+void Room203::peasantWalk() {
+	player_update_info();
+
+	switch (_peasantShould) {
+	case 4113:
+	case 4142:
+	case 4162:
+	case 4166:
+		if (_G(player_info).y > 310 && _G(player_info).y < 330 &&
+				_G(player_info).x > 735 && _G(player_info).x < 1140) {
+			if (_G(player_info).facing == 1 || _G(player_info).facing == 2 ||
+				_G(player_info).facing == 10 || _G(player_info).facing == 11)
+				ws_walk(_G(player_info).x, 294, nullptr, -1, 0);
+			else
+				ws_walk(_G(player_info).x, 350, nullptr, -1, 0);
+		}
+		break;
+
+	case 4117:
+	case 4175:
+		if (_G(player_info).y > 315 && _G(player_info).y < 335 &&
+				_G(player_info).x > 373 && _G(player_info).x < 763) {
+			ws_walk(_G(player_info).x, 350, nullptr, -1, 0);
+		}
+		break;
+
+	default:
+		break;
+	}
 }
 
 } // namespace Rooms
