@@ -736,32 +736,19 @@ void Adlib::OnTimer() {
 
 									// TODO: Not sure if I have the resurn value of Func19BE completely
 									uint16 bp12 = Func19BE(gArray2288[bp8] << 0x4);
-									Func2839();
+									// TODO: Args for 2839:
 									/*
-									
-									mov	di,[bp-8h]
-									mov	al,[di+2288h]
-									xor	ah,ah
-									shl	ax,4h
-									push	ax
-									call	far 0017h:19BEh
-									mov	[bp-14h],ax
-									mov	[bp-12h],dx
 									mov	al,[bp-8h]
 									push	ax
 									push	word ptr [bp-12h]
 									push	word ptr [bp-14h]
 									call	far 0017h:2839h */
-									
+									Func2839();
 								}
 								// l0017_1CF2:
 								if (g2291 == bp8) {
-									// TODO: Continue from here
 									// l0017_1CFF:
-									// TODO: Array access
-									/* mov al, [bp - 4h]
-									mov	di,[bp-8h]
-									mov	[di+2235h],al*/
+									gArray2235[bp4] = bp8;
 									// TODO: More array access
 									/* push word ptr[224Ah]
 									push	word ptr [2248h]
