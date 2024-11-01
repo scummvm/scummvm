@@ -567,6 +567,8 @@ public:
 		_transform_speed = tr_speed;
 	}
 
+	static Common::String flag2str(int fl, bool truncate = false);
+
 protected:
 
 	//! Загрузка данных из скрипта.
@@ -576,8 +578,6 @@ protected:
 
 	//! Возвращает true, если надо перезапустить звук.
 	virtual bool need_sound_restart() const;
-
-	Common::String flag2str(int fl) const;
 
 private:
 

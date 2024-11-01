@@ -262,7 +262,7 @@ struct FlagsList {
 	defFlag(QD_OBJ_STATE_FLAG_FADE_OUT),
 };
 
-Common::String qdGameObjectState::flag2str(int fl) const {
+Common::String qdGameObjectState::flag2str(int fl, bool truncate) {
 	Common::String res;
 
 	for (int i = 0; i < ARRAYSIZE(flagList); i++) {
@@ -270,7 +270,7 @@ Common::String qdGameObjectState::flag2str(int fl) const {
 			if (!res.empty())
 				res += " | ";
 
-			res += flagList[i].s;
+			res += &flagList[i].s[truncate ? 18 : 0];
 
 			fl &= ~flagList[i].f;
 		}

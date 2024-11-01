@@ -42,6 +42,7 @@
 #include "qdengine/qdcore/qd_file_manager.h"
 #include "qdengine/qdcore/qd_game_dispatcher.h"
 #include "qdengine/qdcore/qd_game_object.h"
+#include "qdengine/qdcore/qd_game_object_moving.h"
 #include "qdengine/qdcore/qd_game_scene.h"
 #include "qdengine/qdengine.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
@@ -416,7 +417,22 @@ void showSceneObjects() {
 
 	if (ImGui::Begin("Scene Objects", &_state->_showSceneObjects)) {
 		qdGameScene *scene;
-		if (qdGameDispatcher::get_dispatcher() && ((scene = qdGameDispatcher::get_dispatcher()->get_active_scene()))) {
+		qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher();
+		if (dp && ((scene = dp->get_active_scene()))) {
+			if (!scene->getPersonages()->empty()) {
+				for (auto &it : *scene->getPersonages()) {
+					Common::String name = Common::String::format("p-%s", transCyrillic(it->name()));
+					if (ImGui::Selectable(name.c_str(), _state->_objectToDisplay == it->name())) {
+						_state->_objectToDisplay = it->name();
+					}
+
+					ImGui::SameLine();
+
+					qdGameObjectState *st = it->get_state(it->cur_state());
+					ImGui::Text("%s", st ? qdGameObjectState::flag2str(st->flags(), true).c_str() : "<none>");
+				}
+			}
+
 			if (!scene->object_list().empty()) {
 				for (auto &it : g_engine->_visible_objects) {
 					if (ImGui::Selectable((char *)transCyrillic(it->name()), _state->_objectToDisplay == it->name())) {

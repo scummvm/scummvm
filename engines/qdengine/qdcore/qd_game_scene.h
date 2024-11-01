@@ -41,6 +41,8 @@ namespace QDEngine {
 
 class qdMiniGame;
 
+typedef Std::vector<qdGameObjectMoving *> personages_container_t;
+
 //! Сцена.
 class qdGameScene : public qdGameDispatcherBase, public qdFileOwner {
 public:
@@ -239,6 +241,8 @@ public:
 
 	bool set_camera_mode(const qdCameraMode &mode, qdGameObjectAnimated *object);
 
+	personages_container_t *getPersonages() { return &_personages; }
+
 #ifdef __QD_DEBUG_ENABLE__
 	bool get_resources_info(qdResourceInfoContainer &infos) const;
 #endif
@@ -262,7 +266,6 @@ private:
 	/// true если нужен перезапуск миниигры при загрузке из сэйва
 	bool _restart_minigame_on_load;
 
-	typedef Std::vector<qdGameObjectMoving *> personages_container_t;
 	//! список персонажей сцены
 	personages_container_t _personages;
 
