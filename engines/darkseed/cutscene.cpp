@@ -565,7 +565,7 @@ bool Cutscene::shipLaunchScene() {
 		}
 		break;
 	case 4:
-		// TODO play music 'launch'
+		g_engine->_sound->playMusic(StartMusicId::kLaunch);
 		_animIdx = 2;
 		_animCount = 49;
 		runAnim();
@@ -647,7 +647,7 @@ bool Cutscene::alienBornScene() {
 	}
 	case 2:
 		_animation.load("art/born.anm");
-		// TODO play alien music here.
+		g_engine->_sound->playMusic(StartMusicId::kAlien);
 		g_engine->fadeIn(_palette);
 		break;
 	case 3:
@@ -719,7 +719,7 @@ bool Cutscene::babyDollScene() {
 	case 2:
 		break;
 	case 3:
-		// TODO play doll music here.
+		g_engine->_sound->playMusic(StartMusicId::kDoll);
 		g_engine->fadeIn(_palette);
 		break;
 	case 4:
@@ -825,7 +825,7 @@ bool Cutscene::bookScene() {
 		}
 		break;
 	case 7:
-		// TODO play book music
+		g_engine->_sound->playMusic(StartMusicId::kBook);
 		registTime();
 		break;
 	case 8:
@@ -870,7 +870,7 @@ bool Cutscene::bookScene() {
 		}
 		break;
 	case 16:
-		// TODO stop audio
+		g_engine->_sound->killAllSound();
 		break;
 	default:
 		_movieStep = 9999;
@@ -908,7 +908,7 @@ bool Cutscene::nightmare2Scene() {
 	case 2:
 		break;
 	case 3:
-		// TODO play night2 music
+		g_engine->_sound->playMusic(StartMusicId::kNight2);
 		break;
 	case 4:
 		g_engine->fadeIn(_palette);
@@ -1011,7 +1011,7 @@ bool Cutscene::nightmare3Scene() { // TODO fix animation of values + face here.
 	}
 	case 2: {
 		_animation.load("art/valves.anm", -9340);
-		// TODO play night3 music here.
+		g_engine->_sound->playMusic(StartMusicId::kNight3);
 		g_engine->fadeIn(_palette);
 		break;
 	}
