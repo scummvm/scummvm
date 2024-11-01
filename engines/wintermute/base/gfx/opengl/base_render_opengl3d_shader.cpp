@@ -744,25 +744,21 @@ void BaseRenderOpenGL3DShader::disableCulling() {
 	glDisable(GL_CULL_FACE);
 }
 
-// implements D3D SetViewport() for 2D viewport
+// implements D3D SetViewport() for 2D renderer
 bool BaseRenderOpenGL3DShader::setViewport(int left, int top, int right, int bottom) {
 	_viewportRect.setRect(left, top, right, bottom);
 	_viewport._x = left;
 	_viewport._y = top;
 	_viewport._width = right - left;
 	_viewport._height = bottom - top;
-	_viewport._minZ = 0.0f;
-	_viewport._maxZ = 1.0f;
 	glViewport(left, _height - bottom, right - left, bottom - top);
-	glDepthRange(_viewport._minZ, _viewport._maxZ);
 	return true;
 }
 
-// implements D3D SetViewport() for 3D viewport
+// implements D3D SetViewport() for 3D renderer
 bool BaseRenderOpenGL3DShader::setViewport3D(DXViewport *viewport) {
 	_viewport = *viewport;
 	glViewport(_viewport._x, _height - _viewport._height, _viewport._width, _viewport._height);
-	glDepthRange(_viewport._minZ, _viewport._maxZ);
 	return true;
 }
 
