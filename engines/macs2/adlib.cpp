@@ -734,9 +734,17 @@ void Adlib::OnTimer() {
 									// TODO: In the original code, we throw away the upper byte
 									// before the calculation
 
-									Func19BE(gArray2288[bp8] << 0x4);
+									// TODO: Not sure if I have the resurn value of Func19BE completely
+									uint16 bp12 = Func19BE(gArray2288[bp8] << 0x4);
+									Func2839();
 									/*
 									
+									mov	di,[bp-8h]
+									mov	al,[di+2288h]
+									xor	ah,ah
+									shl	ax,4h
+									push	ax
+									call	far 0017h:19BEh
 									mov	[bp-14h],ax
 									mov	[bp-12h],dx
 									mov	al,[bp-8h]
