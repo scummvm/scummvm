@@ -341,7 +341,7 @@ bool MonkeyMacSndLoader::loadSound(const byte *data, uint32 dataSize) {
 		}
 	}
 
-	_blockSfx = (_isMusic && _loop);
+	_blockSfx = _isMusic;
 
 	return true;
 }
