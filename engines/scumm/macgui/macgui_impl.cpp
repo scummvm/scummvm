@@ -372,8 +372,6 @@ bool MacGuiImpl::handleMenu(int id, Common::String &name) {
 }
 
 void MacGuiImpl::updateWindowManager() {
-
-
 	Graphics::MacMenu *menu = _windowManager->getMenu();
 
 	if (!menu)
