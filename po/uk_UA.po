@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-27 09:25+0000\n"
+"PO-Revision-Date: 2024-11-01 14:57+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -119,7 +119,7 @@ msgstr "Вгору"
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:138
 #: engines/sword1/control.cpp:2813 engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
-msgstr "Відміна"
+msgstr "Скасувати"
 
 #: gui/browser.cpp:82 gui/chooser.cpp:46 gui/filebrowser-dialog.cpp:69
 #: gui/remotebrowser.cpp:60 gui/shaderbrowser-dialog.cpp:81
@@ -436,7 +436,7 @@ msgstr "Припинити завантаження"
 #: gui/downloaddialog.cpp:65
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr "Припинити"
+msgstr "Припинити завантаження"
 
 #: gui/downloaddialog.cpp:67 gui/downloadpacksdialog.cpp:202
 #: gui/downloadpacksdialog.cpp:282
@@ -3112,7 +3112,7 @@ msgstr "Втулок движка не підтримує збереження �
 
 #: common/error.cpp:72
 msgid "User canceled"
-msgstr "Відмінено користувачем"
+msgstr "Скасовано користувачем"
 
 #: common/error.cpp:76
 msgid "Unknown error"
@@ -3950,7 +3950,7 @@ msgstr "<синхронізація ...>"
 
 #: backends/cloud/storage.cpp:246
 msgid "Saved games sync was cancelled."
-msgstr "Синхронизацію збережених ігор припинено."
+msgstr "Синхронизацію збережених ігор скасовано."
 
 #: backends/cloud/storage.cpp:248
 msgid ""
@@ -9694,26 +9694,20 @@ msgid "Quit game"
 msgstr "Вийти з гри"
 
 #: engines/saga/metaengine.cpp:453
-#, fuzzy
-#| msgid "Cancel input"
 msgid "Cancel quit"
-msgstr "Відміна вводу"
+msgstr "Скасування виходу"
 
 #: engines/saga/metaengine.cpp:458
 msgid "Okay"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:463
-#, fuzzy
-#| msgid "Cancel download"
 msgid "Cancel load"
-msgstr "Припинити завантаження"
+msgstr "Скасувати завантаження"
 
 #: engines/saga/metaengine.cpp:473
-#, fuzzy
-#| msgid "Cancel autosave"
 msgid "Cancel save"
-msgstr "Відмінити автозбереження"
+msgstr "Скасувати збереження"
 
 #: engines/saga/music.cpp:98
 #, c-format
@@ -12607,7 +12601,7 @@ msgstr "GUI варіант B"
 #: engines/wintermute/keymapper_tables.h:547
 #: engines/wintermute/keymapper_tables.h:1117
 msgid "Phone cancel button"
-msgstr "Кнопка телефону Відміна"
+msgstr "Кнопка телефону Скасувати"
 
 #: engines/wintermute/keymapper_tables.h:288
 #: engines/wintermute/keymapper_tables.h:419
@@ -12942,7 +12936,7 @@ msgstr "Рух танцю направо"
 
 #: engines/wintermute/keymapper_tables.h:1283
 msgid "Cancel input"
-msgstr "Відміна вводу"
+msgstr "Скасування вводу"
 
 #: engines/wintermute/keymapper_tables.h:1409
 msgid "Hide hints"
