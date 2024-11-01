@@ -1013,17 +1013,19 @@ bool Sound::isSoundInUse(int sound) const {
 	if (sound == _currentCDSound)
 		return pollCD() != 0;
 
+	if (_mixer->isSoundIDActive(sound))
+		return true;
+
 	if (isSoundInQueue(sound))
 		return true;
 
-	if (!_vm->_res->isResourceLoaded(rtSound, sound))
+	if (sound > _vm->_numSounds || !_vm->_res->isResourceLoaded(rtSound, sound))
 		return false;
 
 	if (_vm->_imuse)
 		return _vm->_imuse->get_sound_active(sound);
-
-	if (_mixer->isSoundIDActive(sound))
-		return 1;
+	else if (_vm->_musicEngine)
+		return _vm->_musicEngine->getSoundStatus(sound);
 
 	return false;
 }
