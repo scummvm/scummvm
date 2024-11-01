@@ -252,15 +252,18 @@ void CastleEngine::drawZXUI(Graphics::Surface *surface) {
 	surface->fillRect(backRect, black);
 
 	Common::String message;
-	int deadline;
+	int deadline = -1;
 	getLatestMessages(message, deadline);
-	if (deadline <= _countdown) {
+	if (deadline > 0 && deadline <= _countdown) {
 		//debug("deadline: %d countdown: %d", deadline, _countdown);
 		drawStringInSurface(message, 120, 179, front, black, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
-	} else
-		drawStringInSurface(_currentArea->_name, 120, 179, front, black, surface);
+	} else {
+		if (_gameStateControl == kFreescapeGameStatePlaying) {
+			drawStringInSurface(_currentArea->_name, 120, 179, front, black, surface);
+		}
+	}
 
 	for (int k = 0; k < int(_keysCollected.size()); k++) {
 		surface->copyRectToSurface((const Graphics::Surface)*_keysBorderFrames[0], 99 - k * 4, 177, Common::Rect(0, 0, 6, 11));

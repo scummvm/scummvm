@@ -448,8 +448,12 @@ void CastleEngine::drawDOSUI(Graphics::Surface *surface) {
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else {
-		if (_gameStateControl == kFreescapeGameStatePlaying)
-			drawStringInSurface(_currentArea->_name, 97, 182, front, back, surface);
+		if (_gameStateControl == kFreescapeGameStatePlaying) {
+			if (ghostInArea())
+				drawStringInSurface(_messagesList[116], 97, 182, front, back, surface);
+			else
+				drawStringInSurface(_currentArea->_name, 97, 182, front, back, surface);
+		}
 	}
 
 	for (int k = 0; k < int(_keysCollected.size()); k++) {

@@ -138,6 +138,7 @@ private:
 	void drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics::Surface *surface);
 	void tryToCollectKey();
 	void addGhosts();
+	bool ghostInArea();
 	Texture *_optionTexture;
 	Font _fontRiddle;
 };

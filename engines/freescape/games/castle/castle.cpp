@@ -1230,15 +1230,8 @@ void CastleEngine::checkSensors() {
 		}
 	}
 
-	bool ghostInArea = false;
-	for (auto &it : _sensors) {
-		if (it->isDestroyed() || it->isInvisible())
-			continue;
-		ghostInArea = true;
-		break;
-	}
 
-	if (!ghostInArea) {
+	if (!ghostInArea()) {
 		_gfx->_shakeOffset = Common::Point();
 		return;
 	}
@@ -1256,6 +1249,16 @@ void CastleEngine::checkSensors() {
 	if (_ticks % 100 == 0) {
 		takeDamageFromSensor();
 	}
+}
+
+bool CastleEngine::ghostInArea() {
+	for (auto &it : _sensors) {
+		if (it->isDestroyed() || it->isInvisible())
+			continue;
+		return true;
+		break;
+	}
+	return false;
 }
 
 void CastleEngine::drawSensorShoot(Sensor *sensor) {
