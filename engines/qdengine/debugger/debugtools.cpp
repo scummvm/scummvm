@@ -419,25 +419,51 @@ void showSceneObjects() {
 		qdGameScene *scene;
 		qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher();
 		if (dp && ((scene = dp->get_active_scene()))) {
-			if (!scene->getPersonages()->empty()) {
-				for (auto &it : *scene->getPersonages()) {
-					Common::String name = Common::String::format("p-%s", transCyrillic(it->name()));
-					if (ImGui::Selectable(name.c_str(), _state->_objectToDisplay == it->name())) {
-						_state->_objectToDisplay = it->name();
-					}
-
-					ImGui::SameLine();
-
-					qdGameObjectState *st = it->get_state(it->cur_state());
-					ImGui::Text("%s", st ? qdGameObjectState::flag2str(st->flags(), true).c_str() : "<none>");
-				}
-			}
-
 			if (!scene->object_list().empty()) {
 				for (auto &it : g_engine->_visible_objects) {
 					if (ImGui::Selectable((char *)transCyrillic(it->name()), _state->_objectToDisplay == it->name())) {
 						_state->_objectToDisplay = it->name();
 					}
+				}
+			}
+		}
+	}
+	ImGui::End();
+}
+
+void showScenePersonages() {
+	if (!_state->_showScenePersonages)
+		return;
+
+	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(300, 250), ImGuiCond_FirstUseEver);
+
+	if (ImGui::Begin("Scene Personages", &_state->_showScenePersonages)) {
+		qdGameScene *scene;
+		qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher();
+		if (dp && ((scene = dp->get_active_scene()))) {
+			if (!scene->getPersonages()->empty()) {
+				if (ImGui::BeginTable("Personages", 2, ImGuiTableFlags_Borders)) {
+					ImGuiTableFlags flags = ImGuiTableColumnFlags_WidthFixed;
+					ImGui::TableSetupColumn("Name", flags);
+					ImGui::TableSetupColumn("Flags", flags);
+
+					ImGui::TableHeadersRow();
+
+					for (auto &it : *scene->getPersonages()) {
+						ImGui::TableNextRow();
+
+						ImGui::TableNextColumn();
+
+						ImGui::Text((char *)transCyrillic(it->name()));
+
+						ImGui::TableNextColumn();
+
+						qdGameObjectState *st = it->get_state(it->cur_state());
+						ImGui::Text("%s", st ? qdGameObjectState::flag2str(st->flags(), true).c_str() : "<none>");
+					}
+
+					ImGui::EndTable();
 				}
 			}
 		}
@@ -494,6 +520,7 @@ void onImGuiRender() {
 
 			ImGui::MenuItem("Archives", NULL, &_state->_showArchives);
 			ImGui::MenuItem("Scene Objects", NULL, &_state->_showSceneObjects);
+			ImGui::MenuItem("Scene Personages", NULL, &_state->_showScenePersonages);
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
@@ -501,6 +528,7 @@ void onImGuiRender() {
 
 	showArchives();
 	showSceneObjects();
+	showScenePersonages();
 }
 
 void onImGuiCleanup() {
