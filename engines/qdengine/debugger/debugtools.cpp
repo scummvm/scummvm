@@ -443,12 +443,14 @@ void showScenePersonages() {
 		qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher();
 		if (dp && ((scene = dp->get_active_scene()))) {
 			if (!scene->getPersonages()->empty()) {
-				if (ImGui::BeginTable("Personages", 6, ImGuiTableFlags_Borders)) {
+				if (ImGui::BeginTable("Personages", 7, ImGuiTableFlags_Borders)) {
 					ImGuiTableFlags flags = ImGuiTableColumnFlags_WidthFixed;
 					ImGui::TableSetupColumn("Name", flags);
 					ImGui::TableSetupColumn("Flags", flags);
 					ImGui::TableSetupColumn("Control", flags);
 					ImGui::TableSetupColumn("Movement", flags);
+
+					ImGui::TableSetupColumn("Frame", flags);
 					ImGui::TableSetupColumn("Anim Flags", flags);
 					ImGui::TableSetupColumn("Anim Status", flags);
 
@@ -475,6 +477,10 @@ void showScenePersonages() {
 						ImGui::Text(qdGameObjectMoving::movement2str(it->get_movement_mode(), true).c_str());
 
 						qdAnimation *anim = it->get_animation();
+						ImGui::TableNextColumn();
+
+						ImGui::Text("%d", anim->get_cur_frame_number());
+
 						ImGui::TableNextColumn();
 
 						ImGui::Text(qdAnimation::flag2str(anim->flags(), true).c_str());
