@@ -93,6 +93,14 @@ void LibretroOpenGLGraphics::handleResizeImpl(const int width, const int height)
 	overrideCursorScaling();
 }
 
+bool LibretroOpenGLGraphics::hasFeature(OSystem::Feature f) const {
+	return
+#ifdef SCUMMVM_NEON
+		(f == OSystem::kFeatureCpuNEON) ||
+#endif
+		OpenGL::OpenGLGraphicsManager::hasFeature(f);
+}
+
 void LibretroHWFramebuffer::activateInternal(){
 	GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, retro_get_hw_fb()));
 }

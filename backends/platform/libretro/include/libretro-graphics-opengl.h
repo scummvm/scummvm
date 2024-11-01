@@ -37,7 +37,7 @@ public:
 	void setMousePosition(int x, int y);
 	void resetContext(OpenGL::ContextType contextType);
 	OSystem::TransactionError endGFXTransaction() override;
-
+	bool hasFeature(OSystem::Feature f) const override;
 protected:
 	bool gameNeedsAspectRatioCorrection() const override { return false; }
 	void handleResizeImpl(const int width, const int height) override;
