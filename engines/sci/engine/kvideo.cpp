@@ -130,32 +130,47 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		Common::Path filename(s->_segMan->getString(argv[0]));
 
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
-			// Mac QuickTime
-			// The only argument is the string for the video
+			// Mac QuickTime: the only argument is the string for the video
+			videoDecoder.reset(new Video::QuickTimeDecoder());
+			if (!videoDecoder->loadFile(filename)) {
+				warning("Could not open '%s'", filename.toString().c_str());
+				return NULL_REG;
+			}
 
-			// Switch to 16bpp graphics for Cinepak
-			if (g_system->getScreenFormat().bytesPerPixel == 1) {
+			Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
+
+			if (videoDecoder->getPixelFormat() != screenFormat) {
+				// Attempt to switch to a screen format with higher bpp
 				const Common::List<Graphics::PixelFormat> supportedFormats = g_system->getSupportedFormats();
 				Common::List<Graphics::PixelFormat>::const_iterator it;
 				for (it = supportedFormats.begin(); it != supportedFormats.end(); ++it) {
-					if (it->bytesPerPixel == 2) {
-						const Graphics::PixelFormat format = *it;
-						g_sci->_gfxScreen->gfxDriver()->initScreen(&format);
-						switchedGraphicsMode = true;
-						syncLastFrame = false;
+					if (it->bytesPerPixel >= videoDecoder->getPixelFormat().bytesPerPixel) {
+						screenFormat = *it;
 						break;
 					}
 				}
 			}
 
-			if (g_system->getScreenFormat().bytesPerPixel == 1) {
-				warning("This video requires >8bpp color to be displayed, but could not switch to RGB color mode");
-				return NULL_REG;
+			if (screenFormat.isCLUT8()) {
+				// We got an indexed screen format, so dither the QuickTime video.
+				uint8 palette[256 * 3];
+				g_sci->_gfxScreen->grabPalette(palette, 0, 256);
+				videoDecoder->setDitheringPalette(palette);
+			} else {
+				// Init the screen again with an RGB source format.
+				// This is needed so that the GFX driver is aware that we'll be
+				// sending RGB instead of paletted graphics.
+				g_sci->_gfxScreen->gfxDriver()->initScreen(&screenFormat);
+				videoDecoder->setOutputPixelFormat(g_system->getScreenFormat());
 			}
 
-			videoDecoder.reset(new Video::QuickTimeDecoder());
-			if (!videoDecoder->loadFile(filename))
-				error("Could not open '%s'", filename.toString().c_str());
+			// Switch back to the normal screen format, once the QT video is done playing.
+			// This ensures that the source graphics are in paletted format, but the screen
+			// can be either in paletted or RGB format, if the user has checked the RGB
+			// mode checkbox.
+			switchedGraphicsMode = true;
+			// Never sync the last frame for QT movies
+			syncLastFrame = false;
 		} else {
 			// DOS SEQ
 			// SEQ's are called with no subops, just the string and delay
@@ -208,8 +223,8 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 
 		playVideo(*videoDecoder);
 
-		// HACK: Switch back to 8bpp if we played a true color video.
-		// We also won't be copying the screen to the SCI screen...
+		// Switch back to 8bpp if we played a true color video.
+		// We also won't be copying the screen to the SCI screen.
 		if (switchedGraphicsMode)
 			g_sci->_gfxScreen->gfxDriver()->initScreen();
 		else if (syncLastFrame) {
