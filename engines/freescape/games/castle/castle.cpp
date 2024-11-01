@@ -967,6 +967,9 @@ void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int
 			}
 
 			debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
+			if (i == 20 && j == 1 && _language == Common::ES_ESP)
+				size = size + 3;
+
 			while (size-- > 0) {
 				byte c = file->readByte();
 				if (c > 0x7F) {

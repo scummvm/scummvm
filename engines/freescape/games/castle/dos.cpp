@@ -271,7 +271,7 @@ void CastleEngine::loadAssetsDOSFullGame() {
 		switch (_language) {
 			case Common::ES_ESP:
 				stream = decryptFile("CMLS");
-				loadRiddles(stream, 0xaae - 2 - 21 * 2, 21);
+				loadRiddles(stream, 0xaae - 2 - 22 * 2, 22);
 				break;
 			case Common::FR_FRA:
 				stream = decryptFile("CMLF");
