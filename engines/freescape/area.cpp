@@ -448,6 +448,42 @@ bool Area::checkIfPlayerWasCrushed(const Math::AABB &boundingBox) {
 	return false;
 }
 
+Math::Vector3d Area::separateFromWall(const Math::Vector3d &_position) {
+	Math::Vector3d position = _position;
+	float sep = 8 / _scale;
+	for (auto &obj : _drawableObjects) {
+		if (!obj->isDestroyed() && !obj->isInvisible()) {
+			GeometricObject *gobj = (GeometricObject *)obj;
+			Math::Vector3d distance = gobj->_boundingBox.distance(position);
+			if (distance.length() > 0.0001)
+				continue;
+
+			position.z() = position.z() + sep;
+			distance = gobj->_boundingBox.distance(position);
+			if (distance.length() > 0.0001)
+				return position;
+
+			position = _position;
+			position.z() = position.z() - sep;
+			distance = gobj->_boundingBox.distance(position);
+			if (distance.length() > 0.0001)
+				return position;
+
+			position = _position;
+			position.x() = position.x() + sep;
+			distance = gobj->_boundingBox.distance(position);
+			if (distance.length() > 0.0001)
+				return position;
+
+			position = _position;
+			position.x() = position.x() - sep;
+			distance = gobj->_boundingBox.distance(position);
+			if (distance.length() > 0.0001)
+				return position;
+		}
+	}
+	return position;
+}
 
 Math::Vector3d Area::resolveCollisions(const Math::Vector3d &lastPosition_, const Math::Vector3d &newPosition_, int playerHeight) {
 	Math::Vector3d position = newPosition_;
