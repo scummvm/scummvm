@@ -12,6 +12,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
   - Unterstützung für Backyard Basketball hinzugefügt.
   - Unterstützung für Unrest hinzugefügt.
   - Unterstützung für Rise of the Dragon hinzugefügt.
+  - Unterstützung für Castle Master hinzugefügt.
 
  Neue Plattformen:
   - Unterstützung für SailfishOS hinzugefügt.
@@ -63,6 +64,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
   - Neuentwicklung der Schrift-Behandlung unter Nutzung gemeinsamer Klassen.
   - Verbesserte Unterstützung für Tastenkürzel.
   - Verbesserte Unterstützung für Seitenverhältniskorrektur, basierend auf DOSBox.
+  - Verbesserung der Matrix-Berechnung, die nun eher dem Original entspricht.
 
  Groovie:
   - Unterstützung für Tastenkürzel hinzugefügt.
