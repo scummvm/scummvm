@@ -372,7 +372,7 @@ static void _doScroll(Graphics::ManagedSurface &compBuf, int16 dir, int16 steps,
 	g_system->unlockScreen();
 }
 
-void TTMInterpreter::doWipeOp(uint16 code, TTMEnviro &env, TTMSeq &seq, const Common::Rect &r) {
+void TTMInterpreter::doWipeOp(uint16 code, const TTMEnviro &env, const TTMSeq &seq, const Common::Rect &r) {
 	//
 	// In the original games, these operations copy certain parts of the buffer on to
 	// the screen, and rely on the system's speed to make it happen faster than a regular
@@ -517,7 +517,7 @@ int16 TTMInterpreter::doOpInitCreditScroll(const Image *img) {
 	return scrollFinished;
 }
 
-void TTMInterpreter::doDrawDialogForStrings(TTMEnviro &env, TTMSeq &seq, int16 x, int16 y, int16 width, int16 height) {
+void TTMInterpreter::doDrawDialogForStrings(const TTMEnviro &env, const TTMSeq &seq, int16 x, int16 y, int16 width, int16 height) {
 	int16 fontno = seq._currentFontId;
 	if (fontno >= (int16)env._fonts.size()) {
 		warning("Trying to draw font no %d but only loaded %d", fontno, env._fonts.size());
@@ -1206,7 +1206,7 @@ bool TTMInterpreter::run(TTMEnviro &env, TTMSeq &seq) {
 	return true;
 }
 
-int32 TTMInterpreter::findGOTOTarget(TTMEnviro &env, TTMSeq &seq, int16 targetFrame) {
+int32 TTMInterpreter::findGOTOTarget(const TTMEnviro &env, const TTMSeq &seq, int16 targetFrame) {
 	int64 startpos = env.scr->pos();
 	int32 retval = -1;
 	for (int32 i = 0; i < (int)env._frameOffsets.size(); i++) {
@@ -1226,7 +1226,7 @@ int32 TTMInterpreter::findGOTOTarget(TTMEnviro &env, TTMSeq &seq, int16 targetFr
 	return retval;
 }
 
-void TTMInterpreter::findAndAddSequences(TTMEnviro &env, Common::Array<TTMSeq> &seqArray) {
+void TTMInterpreter::findAndAddSequences(TTMEnviro &env, Common::Array<Common::SharedPtr<TTMSeq>> &seqArray) {
 	int16 envno = env._enviro;
 	env.scr->seek(0);
 	uint16 op = 0;
@@ -1241,12 +1241,12 @@ void TTMInterpreter::findAndAddSequences(TTMEnviro &env, Common::Array<TTMSeq> &
 				break;
 			case 1:
 				if (op == 0x1111) {
-					TTMSeq newseq;
-					newseq._enviro = envno;
-					newseq._seqNum = env.scr->readUint16LE();
-					newseq._startFrame = frame;
-					newseq._currentFrame = frame;
-					newseq._lastFrame = -1;
+					Common::SharedPtr<TTMSeq> newseq(new TTMSeq());
+					newseq->_enviro = envno;
+					newseq->_seqNum = env.scr->readUint16LE();
+					newseq->_startFrame = frame;
+					newseq->_currentFrame = frame;
+					newseq->_lastFrame = -1;
 					//debug("findAndAddSequences: found env %d seq %d at %d", newseq._enviro, newseq._seqNum, (int)env.scr->pos());
 					seqArray.push_back(newseq);
 				} else {

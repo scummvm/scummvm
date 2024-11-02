@@ -121,17 +121,17 @@ public:
 	bool load(const Common::String &filename, TTMEnviro &env);
 	void unload();
 	bool run(TTMEnviro &env, TTMSeq &seq);
-	void findAndAddSequences(TTMEnviro &scriptData, Common::Array<TTMSeq> &seqArray);
+	void findAndAddSequences(TTMEnviro &scriptData, Common::Array<Common::SharedPtr<TTMSeq>> &seqArray);
 
 	static Common::String readTTMStringVal(Common::SeekableReadStream *scr);
 
 protected:
 	void handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval, const Common::Array<Common::Point> &pts);
-	int32 findGOTOTarget(TTMEnviro &env, TTMSeq &seq, int16 frame);
-	void doWipeOp(uint16 code, TTMEnviro &env, TTMSeq &seq, const Common::Rect &r);
+	int32 findGOTOTarget(const TTMEnviro &env, const TTMSeq &seq, int16 frame);
+	void doWipeOp(uint16 code, const TTMEnviro &env, const TTMSeq &seq, const Common::Rect &r);
 	int16 doOpInitCreditScroll(const Image *img);
 	bool doOpCreditsScroll(const Image *img, int16 ygap, int16 ymax, int16 xoff, int16 measuredWidth, const Common::Rect &clipRect);
-	void doDrawDialogForStrings(TTMEnviro &env, TTMSeq &seq, int16 x, int16 y, int16 width, int16 height);
+	void doDrawDialogForStrings(const TTMEnviro &env, const TTMSeq &seq, int16 x, int16 y, int16 width, int16 height);
 
 	DgdsEngine *_vm;
 	int _stackDepth;

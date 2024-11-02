@@ -845,6 +845,7 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 		_storedAreaBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 	}
 
+	debug("%s", _scene->dump("").c_str());
 	_scene->runEnterSceneOps();
 
 	return Common::kNoError;
