@@ -327,7 +327,7 @@ bool BitmapData::loadTile(Common::SeekableReadStream *o) {
 #ifndef SCUMM_LITTLE_ENDIAN
 			for (int y = 0; y < _height; ++y) {
 				uint16 *d16 = (uint16 *)d;
-				for (int x = 0; x < _width; ++x) {
+				for (int x = 0; x < _width; ++x)
 					d16[x] = o->readUint16LE();
 				d += _data[i].pitch;
 			}
