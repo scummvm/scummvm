@@ -706,6 +706,14 @@ void CastleEngine::drawFullscreenEndGameAndWait() {
 
 			// Events
 			switch (event.type) {
+			case Common::EVENT_LBUTTONDOWN:
+				if (magisterAlive) {
+					surface->copyRectToSurface(*_endGameThroneFrame, 121, 52, Common::Rect(0, 0, _endGameThroneFrame->w - 1, _endGameThroneFrame->h));
+					magisterAlive = false;
+				} else
+					cont = false;
+				break;
+
 			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				if (event.customType == kActionShoot) {
 					if (magisterAlive) {
@@ -809,8 +817,11 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 
 			// Events
 			switch (event.type) {
+			case Common::EVENT_LBUTTONDOWN:
+				cont = false;
+				break;
 			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-				if (event.customType == kActionShoot) {
+				if (event.customType == kActionShoot || event.customType == kActionChangeMode || event.customType == kActionSkip) {
 					cont = false;
 				}
 				break;
