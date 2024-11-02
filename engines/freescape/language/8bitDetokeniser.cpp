@@ -36,6 +36,9 @@ Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition
 	Common::Array<uint8>::size_type bytePointer = 0;
 	Common::Array<uint8>::size_type sizeOfTokenisedContent = tokenisedCondition.size();
 
+	if (sizeOfTokenisedContent == 0)
+		error("No tokenised content");
+
 	// on the 8bit platforms, all instructions have a conditional flag;
 	// we'll want to convert them into runs of "if shot? then", "if collided? then" or "if timer? then",
 	// and we'll want to start that from the top
