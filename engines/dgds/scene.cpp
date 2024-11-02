@@ -42,6 +42,8 @@
 #include "dgds/globals.h"
 #include "dgds/image.h"
 #include "dgds/inventory.h"
+#include "dgds/minigames/china_tank.h"
+#include "dgds/minigames/china_train.h"
 #include "dgds/minigames/dragon_arcade.h"
 #include "dgds/dragon_native.h"
 #include "dgds/hoc_intro.h"
@@ -160,15 +162,22 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 		}
 	} else if (DgdsEngine::getInstance()->getGameId() == GID_HOC) {
 		switch (code) {
-		case kSceneOpOpenChinaTankMenu:		return "openTankMenu";
+		case kSceneOpChinaTankInit:			return "tankInit";
+		case kSceneOpChinaTankEnd:			return "tankEnd";
+		case kSceneOpChinaTankTick:			return "tankTick";
+		case kSceneOpChinaScrollLeft:		return "scrollLeft";
+		case kSceneOpChinaScrollRight:		return "scrollRight";
+		case kSceneOpShellGameInit:			return "shellGameInit";
 		case kSceneOpShellGameEnd:			return "shellGameEnd";
 		case kSceneOpShellGameTick:			return "shellGameTick";
-		case kSceneOpOpenChinaTrainMenu:	return "trainMenu";
-		case kSceneOpOpenChinaOpenGameOverMenu: return "gameOverMenu";
-		case kSceneOpOpenChinaOpenSkipCreditsMenu: return "skipCreditsMenu";
+		case kSceneOpChinaTrainInit:		return "trainInit";
+		case kSceneOpChinaTrainEnd:			return "trainEnd";
+		case kSceneOpChinaTrainTick:		return "trainTick";
+		case kSceneOpChinaOpenGameOverMenu: return "gameOverMenu";
+		case kSceneOpChinaOpenSkipCreditsMenu: return "skipCreditsMenu";
 		case kSceneOpChinaOnIntroInit:		return "chinaOnIntroInit";
 		case kSceneOpChinaOnIntroTick:		return "chinaOnIntroTick";
-		case kSceneOpChinaOnIntroLeave:  	return "chinaOnIntroLeave";
+		case kSceneOpChinaOnIntroEnd:  		return "chinaOnIntroEnd";
 		default:
 			break;
 		}
@@ -770,15 +779,15 @@ bool Scene::runDragonOp(const SceneOp &op) {
 bool Scene::runChinaOp(const SceneOp &op) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	switch (op._opCode) {
-	case kSceneOpOpenChinaOpenGameOverMenu:
-		engine->setMenuToTrigger(kMenuGameOver);
+	case kSceneOpChinaTankInit:
+		engine->getChinaTank()->init();
 		break;
-	case kSceneOpOpenChinaOpenSkipCreditsMenu:
-		engine->setMenuToTrigger(kMenuSkipPlayIntro);
+	case kSceneOpChinaTankEnd:
+		engine->getChinaTank()->end();
 		break;
-	case kSceneOpOpenChinaTankMenu:
-	case kSceneOpOpenChinaTrainMenu:
-		engine->setMenuToTrigger(kMenuSkipArcade);
+	case kSceneOpChinaTankTick:
+		engine->getChinaTank()->tick();
+		//engine->setMenuToTrigger(kMenuSkipArcade);
 		break;
 	case kSceneOpShellGameTick:
 		engine->getShellGame()->shellGameTick();
@@ -786,17 +795,38 @@ bool Scene::runChinaOp(const SceneOp &op) {
 	case kSceneOpShellGameEnd:
 		engine->getShellGame()->shellGameEnd();
 		break;
+	case kSceneOpChinaTrainInit:
+		engine->getChinaTrain()->init();
+		break;
+	case kSceneOpChinaTrainEnd:
+		engine->getChinaTrain()->end();
+		break;
+	case kSceneOpChinaTrainTick:
+		engine->getChinaTrain()->tick();
+		break;
+	case kSceneOpChinaOpenGameOverMenu:
+		engine->setMenuToTrigger(kMenuGameOver);
+		break;
+	case kSceneOpChinaOpenSkipCreditsMenu:
+		engine->setMenuToTrigger(kMenuSkipPlayIntro);
+		break;
 	case kSceneOpChinaOnIntroInit:
 		engine->getHocIntro()->init();
 		break;
 	case kSceneOpChinaOnIntroTick:
 		engine->getHocIntro()->tick();
 		break;
-	case kSceneOpChinaOnIntroLeave:
-		engine->getHocIntro()->leave();
+	case kSceneOpChinaOnIntroEnd:
+		engine->getHocIntro()->end();
+		break;
+	case kSceneOpChinaScrollIntro:
+	case kSceneOpChinaScrollLeft:
+	case kSceneOpChinaScrollRight:
+		// These map to null functions.
 		break;
 	default:
-		warning("TODO: Implement china-specific scene opcode %d", op._opCode);
+		warning("TODO: Implement china-specific scene opcode %d (%s)", op._opCode,
+			_sceneOpCodeName(op._opCode).c_str());
 		break;
 	}
 	return false;

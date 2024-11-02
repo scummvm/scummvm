@@ -26,6 +26,8 @@ MODULE_OBJS := \
 	sound.o \
 	sound_raw.o \
 	ttm.o \
+	minigames/china_tank.o \
+	minigames/china_train.o \
 	minigames/dragon_arcade.o \
 	minigames/dragon_arcade_ttm.o \
 	minigames/shell_game.o \

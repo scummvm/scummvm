@@ -126,16 +126,23 @@ enum SceneOpCode {
 
 	// China-specific opcodes
 	kSceneOpChinaTankInit = 100,
-	kSceneOpChinaTankExit = 101,
-	kSceneOpOpenChinaTankMenu = 102,
+	kSceneOpChinaTankEnd = 101,
+	kSceneOpChinaTankTick = 102,
+	kSceneOpChinaSetLanding = 103,
+	kSceneOpChinaScrollIntro = 104,
+	kSceneOpChinaScrollLeft = 105,
+	kSceneOpChinaScrollRight = 107,
+	kSceneOpShellGameInit = 108,
 	kSceneOpShellGameEnd = 109,
 	kSceneOpShellGameTick = 110,
-	kSceneOpOpenChinaTrainMenu = 113,
-	kSceneOpOpenChinaOpenGameOverMenu = 114,	// args: none.
-	kSceneOpOpenChinaOpenSkipCreditsMenu = 115,	// args: none.
+	kSceneOpChinaTrainInit = 111,
+	kSceneOpChinaTrainEnd = 112,
+	kSceneOpChinaTrainTick = 113,
+	kSceneOpChinaOpenGameOverMenu = 114,	// args: none.
+	kSceneOpChinaOpenSkipCreditsMenu = 115,	// args: none.
 	kSceneOpChinaOnIntroTick = 116,	// args: none.
 	kSceneOpChinaOnIntroInit = 117,	// args: none.
-	kSceneOpChinaOnIntroLeave = 118,	// args: none.
+	kSceneOpChinaOnIntroEnd = 118,	// args: none.
 
 	// Beamish-specific opcodes
 	kSceneOpOpenBeamishGameOverMenu = 100,

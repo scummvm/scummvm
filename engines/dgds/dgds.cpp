@@ -63,6 +63,8 @@
 #include "dgds/sound.h"
 #include "dgds/game_palettes.h"
 #include "dgds/minigames/dragon_arcade.h"
+#include "dgds/minigames/china_tank.h"
+#include "dgds/minigames/china_train.h"
 #include "dgds/hoc_intro.h"
 
 // for frame contents debugging
@@ -86,7 +88,7 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_detailLevel(kDgdsDetailHigh), _textSpeed(1), _justChangedScene1(false), _justChangedScene2(false),
 	_random("dgds"), _currentCursor(-1), _menuToTrigger(kMenuNone), _isLoading(true), _flipMode(false),
 	_rstFileName(nullptr), _difficulty(1), _menu(nullptr), _adsInterp(nullptr), _isDemo(false),
-	_dragonArcade(nullptr), _skipNextFrame(false), _gameId(GID_INVALID) {
+_dragonArcade(nullptr), _chinaTank(nullptr), _chinaTrain(nullptr), _skipNextFrame(false), _gameId(GID_INVALID) {
 
 	_platform = gameDesc->platform;
 
@@ -131,6 +133,8 @@ DgdsEngine::~DgdsEngine() {
 	delete _shellGame;
 	delete _hocIntro;
 	delete _dragonArcade;
+	delete _chinaTank;
+	delete _chinaTrain;
 
 	_icons.reset();
 	_corners.reset();
@@ -327,6 +331,8 @@ void DgdsEngine::init(bool restarting) {
 		delete _dragonArcade;
 		delete _shellGame;
 		delete _hocIntro;
+		delete _chinaTank;
+		delete _chinaTrain;
 	}
 
 	_gamePals = new GamePalettes(_resource, _decompressor);
@@ -342,6 +348,8 @@ void DgdsEngine::init(bool restarting) {
 	else if (_gameId == GID_HOC) {
 		_shellGame = new ShellGame();
 		_hocIntro = new HocIntro();
+		_chinaTank = new ChinaTank();
+		_chinaTrain = new ChinaTrain();
 	}
 
 	_backgroundBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());

@@ -19,42 +19,25 @@
  *
  */
 
-#ifndef DGDS_HOC_INTRO_H
-#define DGDS_HOC_INTRO_H
+#include "common/system.h"
 
-#include "common/ptr.h"
-#include "dgds/image.h"
+#include "dgds/dgds.h"
+#include "dgds/minigames/china_train.h"
 
 namespace Dgds {
 
-/**
- * Native scene ops for Heart of China intro.
- */
-class HocIntro {
-public:
-	HocIntro();
-	void init();
-	void tick();
-	void end();
+ChinaTrain::ChinaTrain() {
+}
 
-private:
-	void clean1(int16 xoff);
-	void clean2(int16 xoff);
-	void draw1(int16 xoff);
-	void draw2(int16 xoff);
+void ChinaTrain::init() {
+}
 
-	void doCopy(int16 x1, int16 y1, int16 x2, int16 y2);
-	void doScroll();
+void ChinaTrain::tick() {
+	g_system->displayMessageOnOSD(Common::U32String("Train minigame not implemented yet!"));
+	DgdsEngine::getInstance()->setMenuToTrigger(kMenuSkipArcade);
+}
 
-	int16 _scrollCountdown1;
-	int16 _xOffset2042;
-	int16 _xOffset203e;
-	int16 _scrollCountdown2;
-	Common::SharedPtr<Image> _noMaskImg;
-	Common::SharedPtr<Image> _maskImg;
-	Common::Rect _drawWin;
-};
+void ChinaTrain::end() {
+}
 
 } // end namespace Dgds
-
-#endif // DGDS_HOC_INTRO_H

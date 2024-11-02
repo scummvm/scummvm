@@ -119,7 +119,7 @@ static int16 _clipXOffset(int16 x1, int16 x2) {
 	return x2;
 }
 
-void HocIntro::leave() {
+void HocIntro::end() {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	HocGlobals *globals = static_cast<HocGlobals *>(engine->getGameGlobals());
 	if (!globals->getIntroState())

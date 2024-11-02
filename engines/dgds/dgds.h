@@ -61,6 +61,8 @@ class Globals;
 class ShellGame;
 class DragonArcade;
 class HocIntro;
+class ChinaTank;
+class ChinaTrain;
 
 const float MS_PER_FRAME = 16.6667f;
 
@@ -144,6 +146,8 @@ private:
 	// HoC only
 	ShellGame *_shellGame;
 	HocIntro *_hocIntro;
+	ChinaTank *_chinaTank;
+	ChinaTrain *_chinaTrain;
 
 	FontManager *_fontManager;
 	Common::SharedPtr<Image> _corners;
@@ -246,6 +250,8 @@ public:
 	bool isInvButtonVisible() const;
 	ShellGame *getShellGame() { return _shellGame; }
 	HocIntro *getHocIntro() { return _hocIntro; }
+	ChinaTrain *getChinaTrain() { return _chinaTrain; }
+	ChinaTank *getChinaTank() { return _chinaTank; }
 	DragonArcade *getDragonArcade() { return _dragonArcade; }
 	void setSkipNextFrame() { _skipNextFrame = true; }
 
