@@ -32,7 +32,6 @@ class Room203 : public Section2Room {
 private:
 	int _val1 = 0;
 	int _val2 = 0;
-	const char *_digiName1 = nullptr;
 	int _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;
@@ -41,7 +40,8 @@ private:
 	bool _showWalker = false;
 	bool _ripley80000 = false;
 	int _val11 = 0;
-	int _val12 = 0;
+	const char *_digiName1 = nullptr;
+	int _digiTrigger1 = 0;
 	int _trigger1 = -1;
 	int _trigger2 = -1;
 	int _trigger3 = -1;
@@ -67,6 +67,8 @@ private:
 	int _meiHallOfClassics = 0;
 	machine *_gk = nullptr;
 	int _gkFrame = 0;
+	int _gkManyDoNeedPass = 0;
+	int _gkMayNotPass = 0;
 	int _gkMode = 0, _gkShould = 0;
 	machine *_oldLady = nullptr;
 	int _oldLadyFrame = 0;
@@ -78,6 +80,7 @@ private:
 	int _oldLadyPointsToPhoto = 0;
 	int _oldLadyPhotoPopup = 0;
 	int _oldLadyProtectsHelmet = 0;
+	int _oldLadyShowsPhoto = 0;
 	machine *_pigeons1 = nullptr;
 	machine *_pigeons3 = nullptr;
 	int _pigeonsSeries1 = 0;
@@ -87,8 +90,10 @@ private:
 	int _officialStander = 0;
 	int _officialMode = 0, _officialShould = 0;
 	int _officialTurn9_11 = 0;
+	int _officialTurn9_11_pointGun = 0;
 	int _officialTurn11_3 = 0;
 	int _officialTurn3_7 = 0;
+	int _officialMoveAlong = 0;
 	machine *_peasant = nullptr;
 	machine *_peasantShadow = nullptr;
 	int _peasantSeries = 0;

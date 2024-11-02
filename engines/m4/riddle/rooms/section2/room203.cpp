@@ -25,6 +25,7 @@
 #include "m4/adv_r/other.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/gui/gui_vmng_screen.h"
+#include "m4/m4.h"
 
 namespace M4 {
 namespace Riddle {
@@ -337,6 +338,14 @@ void Room203::daemon() {
 		kernel_timing_trigger(140, 4);
 		break;
 
+	case 3:
+		sendWSMessage_10000(_mei, 170, 352, 4, -1, 1);
+		break;
+
+	case 4:
+		ws_walk(115, 353, nullptr, 5, 3);
+		break;
+
 	case 5:
 		_meiHallOfClassics = series_load("mc hall of classics line");
 		setGlobals1(_meiHallOfClassics, 1, 8, 8, 8, 2, 35, 41, 41, 41);
@@ -374,6 +383,17 @@ void Room203::daemon() {
 		digi_play("203m02", 1, 255, 10);
 		break;
 
+	case 10:
+		if (_ctr1 >= 1) {
+			_ctr1 = 0;
+			sendWSMessage_120000(_mei, -1);
+			sendWSMessage_110000(11);
+			digi_play("203r02", 1, 255, 11);
+		} else {
+			++_ctr1;
+		}
+		break;
+
 	case 11:
 		if (_ctr1 >= 1) {
 			_ctr1 = 0;
@@ -399,6 +419,15 @@ void Room203::daemon() {
 		kernel_timing_trigger(40, 15);
 		break;
 
+	case 15:
+		sendWSMessage_150000(-1);
+		ws_walk(315, 353, nullptr, 16);
+		break;
+
+	case 16:
+		ws_walk(350, 328, nullptr, 17, 10);
+		break;
+
 	case 17:
 		series_unload(_meiCheekLine);
 		series_unload(_ripLookAtHeadsTalkMei);
@@ -418,7 +447,7 @@ void Room203::daemon() {
 		sendWSMessage_120000(_mei, -1);
 		_gkMode = 3001;
 		_digiName1 = "203g01";
-		_val12 = 20;
+		_digiTrigger1 = 20;
 		kernel_trigger_dispatchx(kernel_trigger_create(125));
 		break;
 
@@ -486,10 +515,60 @@ void Room203::daemon() {
 		kernel_timing_trigger(1, 29);
 		break;
 
+	case 40:
+		_oldLadyMode = 40;
+		_oldLady1 = series_load("old lady");
+		_oldLadyProtectsHelmet = series_load("old lady protect helmet");
+		_ripKneeling = series_load("rip kneels down to old lady");
+		_ripKneelingTalk = series_load("rip kneeling talks to old lady");
+		_ripPointsAtHelmet = series_load("rip points at helmet");
+		ws_hide_walker();
+
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x100, 0,
+			triggerMachineByHashCallback, "rip kneel");
+		sendWSMessage_10000(1, _ripley, _ripKneeling, 1, 31, 42, _ripKneeling, 31, 31, 0);
+		break;
+
 	case 42:
 		sendWSMessage_10000(1, _ripley, _ripKneelingTalk, 1, 16, 43,
 			_ripKneelingTalk, 16, 16, 0);
 		digi_play("203r20", 1, 255, 45);
+		break;
+
+	case 43:
+		sendWSMessage_10000(1, _ripley, _ripPointsAtHelmet, 1, 5, 44,
+			_ripPointsAtHelmet, 5, 5, 0);
+		break;
+
+	case 44:
+		sendWSMessage_10000(1, _ripley, _ripKneelingTalk, 5, 1, -1,
+			_ripKneelingTalk, 5, 5, 0);
+		break;
+
+	case 45:
+		sendWSMessage_10000(1, _oldLady, _oldLady1, 1, 7, 46, _oldLady1, 7, 7, 0);
+		break;
+
+	case 46:
+		sendWSMessage_10000(1, _oldLady, _oldLady1, 7, 1, 47, _oldLadyFrame, 1, 1, 0);
+		break;
+
+	case 47:
+		sendWSMessage_10000(1, _oldLady, _oldLadyProtectsHelmet, 1, 16, 48,
+			_oldLadyProtectsHelmet, 16, 16, 0);
+		break;
+
+	case 48:
+		sendWSMessage_10000(1, _oldLady, _oldLadyProtectsHelmet, 16, 1, 49, _oldLadyFrame, 1, 1, 0);
+		break;
+
+	case 49:
+		sendWSMessage_10000(1, _ripley, _ripKneelingTalk, 5, 1, 50,
+			_ripKneelingTalk, 1, 1, 0);
+		break;
+
+	case 50:
+		sendWSMessage_10000(1, _ripley, _ripKneeling, 31, 1, 51, _ripKneeling, 1, 1, 0);
 		break;
 
 	case 51:
@@ -502,6 +581,22 @@ void Room203::daemon() {
 		_oldLadyMode = 5666;
 		_oldLadyShould = 5100;
 		kernel_timing_trigger(1, 130);
+		break;
+
+	case 60:
+		_oldLadyMode = 60;
+		_oldLadyNoHelmet = series_load("old lady feeding no helmet");
+		ws_hide_walker();
+		_ripKneeling = series_load("rip kneels down to old lady");
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x100, 0,
+			triggerMachineByHashCallback, "rip kneel");
+		sendWSMessage_10000(1, _ripley, _ripKneeling, 1, 31, 62, _ripKneeling, 31, 31, 0);
+		break;
+
+	case 62:
+		series_unload(_ripKneeling);
+		_ripKneelingTalk = series_load("rip kneeling talks to old lady");
+		sendWSMessage_10000(1, _ripley, _ripKneelingTalk, 1, 5, 65, _ripKneelingTalk, 5, 5, 0);
 		break;
 
 	case 65:
@@ -518,6 +613,12 @@ void Room203::daemon() {
 		kernel_timing_trigger(60, 68);
 		break;
 
+	case 68:
+		_oldLadyShowsPhoto = series_load("old lady shows photo");
+		sendWSMessage_10000(1, _oldLady, _oldLadyShowsPhoto, 1, 23, 69,
+			_oldLadyShowsPhoto, 23, 23, 0);
+		break;
+
 	case 69:
 		_stream1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x100, 0,
 			triggerMachineByHashCallback, "POPUP OL & lover");
@@ -527,8 +628,31 @@ void Room203::daemon() {
 		kernel_timing_trigger(150, 70);
 		break;
 
+	case 70:
+		sendWSMessage_10000(1, _stream1, _oldLadyPhotoPopup, 5, 1, 71,
+			_oldLadyPhotoPopup, 1, 1, 0);
+		break;
+
+	case 71:
+		terminateMachineAndNull(_stream1);
+		series_unload(_oldLadyPhotoPopup);
+		series_unload(_oldLadyShowsPhoto);
+		_oldLadyPointsToPhoto = series_load("old lady points to photo");
+		sendWSMessage_10000(1, _oldLady, _oldLadyPointsToPhoto, 1, 12, 72,
+			_oldLadyPointsToPhoto, 12, 12, 0);
+		break;
+
 	case 72:
 		kernel_timing_trigger(15, 73);
+		break;
+
+	case 73:
+		sendWSMessage_10000(1, _oldLady, _oldLadyPointsToPhoto, 12, 1, 74,
+			_oldLadyPointsToPhoto, 1, 1, 0);
+		break;
+
+	case 74:
+		sendWSMessage_10000(1, _ripley, _ripGivesPhoto, 9, 1, 75, _ripGivesPhoto, 1, 1, 0);
 		break;
 
 	case 75:
@@ -543,9 +667,21 @@ void Room203::daemon() {
 		digi_play("203r21", 1);
 		break;
 
+	case 76:
+		digi_preload("203r21");
+		_stream1 = series_stream("old lady gives helmet", 5, 1, 79);
+		series_stream_break_on_frame(_stream1, 77, 62);
+		break;
+
 	case 77:
 		series_set_frame_rate(_stream1, 3000);
 		series_stream("old woman smiles", 5, 0, 78);
+		break;
+
+	case 78:
+		series_set_frame_rate(_stream1, 5);
+		ws_OverrideCrunchTime(_stream1);
+		series_stream_break_on_frame(_stream1, 87, 79);
 		break;
 
 	case 79:
@@ -567,6 +703,14 @@ void Room203::daemon() {
 	case 81:
 		series_set_frame_rate(_stream1, 5);
 		ws_OverrideCrunchTime(_stream1);
+		break;
+
+	case 82:
+		terminateMachineAndNull(_ripley);
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x100, 0,
+			triggerMachineByHashCallback, "rip kneel");
+		_ripKneeling = series_load("rip kneels down to old lady");
+		sendWSMessage_10000(1, _ripley, _ripKneeling, 31, 1, 84, _ripKneeling, 1, 1, 0);
 		break;
 
 	case 84:
@@ -628,6 +772,31 @@ void Room203::daemon() {
 		kernel_timing_trigger(120, 92);
 		break;
 
+	case 94:
+		if (_flag1) {
+			sendWSMessage_10000(1, _peasant, _peskyYellsThief, 19, 21, 95,
+				_peskyYellsThief, 21, 21, 0);
+		} else {
+			sendWSMessage_10000(1, _peasant, _peskyYellsThief, 19, 1, -1,
+				_peskyYellsThief, 1, 1, 0);
+		}
+		break;
+
+	case 95:
+		if (_flag1) {
+			sendWSMessage_10000(1, _peasant, _peskyYellsThief, 21, 19, 94,
+				_peskyYellsThief, 19, 19, 0);
+		} else {
+			sendWSMessage_10000(1, _peasant, _peskyYellsThief, 21, 1, -1,
+				_peskyYellsThief, 1, 1, 0);
+		}
+		break;
+
+	case 96:
+		sendWSMessage_10000(1, _ripley, _ripClimbsAndBacksDown, 75, 1, 97,
+			_ripClimbsAndBacksDown, 1, 1, 0);
+		break;
+
 	case 97:
 		terminateMachineAndNull(_ripley);
 		series_unload(_ripClimbsAndBacksDown);
@@ -636,11 +805,51 @@ void Room203::daemon() {
 		kernel_timing_trigger(3, 98);
 		break;
 
+	case 98:
+		ws_walk(_G(player_info).x, _G(player_info).y, nullptr, -1, 4);
+		terminateMachineAndNull(_official);
+		terminateMachineAndNull(_officialShadow);
+		ws_walk_load_shadow_series(OFFICIAL_SHADOW_DIRS, OFFICIAL_SHADOW_NAMES);
+		ws_walk_load_walker_series(OFFICIAL_NORMAL_DIRS, OFFICIAL_NORMAL_NAMES);
+		_official = triggerMachineByHash_3000(8, 5, *OFFICIAL_NORMAL_DIRS, *OFFICIAL_SHADOW_DIRS,
+			1300, 360, 9, triggerMachineByHashCallback3000, "official arresting");
+		sendWSMessage_10000(_official, 720, 345, 9, 99, 1);
+		break;
+
+	case 99:
+		_flag1 = false;
+		_officialTurn9_11_pointGun = series_load("official turn 9-11 point gun");
+		setGlobals1(_officialTurn9_11_pointGun, 1, 31, 31, 31, 0, 31, 13, 13, 13, 0, 13, 1, 1, 1);
+		sendWSMessage_110000(_official, 100);
+		break;
+
+	case 100:
+		sendWSMessage_120000(_official, -1);
+		ws_walk(656, 335, nullptr, 101, 9);
+		break;
+
+	case 101:
+		sendWSMessage_130000(_official, 102);
+		ws_walk(280, 345, nullptr, 103, 9);
+		break;
+
+	case 102:
+		sendWSMessage_150000(_official, -1);
+		g_engine->camera_shift_xy(0, 0);
+		sendWSMessage_10000(_official, 345, 355, 9, -1, 1);
+		break;
+
 	case 103:
 		_ripLookAtHeadsTalkMei = series_load("rip look at heads talk mei");
 		setGlobals1(_ripLookAtHeadsTalkMei, 11, 16, 16, 16, 1, 16, 11, 11, 11);
 		sendWSMessage_110000(-1);
 		digi_play("203r28", 1, 255, 104);
+		break;
+
+	case 104:
+		_officialMoveAlong = series_load("official move along");
+		setGlobals1(_officialMoveAlong, 1, 12, 12, 12, 0, 12, 1, 1, 1);
+		sendWSMessage_110000(_official, 105);
 		break;
 
 	case 105:
@@ -837,10 +1046,52 @@ void Room203::daemon() {
 		break;
 
 	case 126:
-		// TODO
 		switch (_gkMode) {
 		case 3000:
+			if (_gkShould == 3000 && _gkMode == 3000 && _trigger1 != -1) {
+				kernel_trigger_dispatchx(_trigger1);
+				_trigger1 = -1;
+			}
+
+			sendWSMessage_10000(1, _gk, _gkFrame, 1, 1, -1, _gkFrame, 1, 1, 0);
 			break;
+
+		case 3001:
+			_gkManyDoNeedPass = series_load("gk many do but need a pass");
+
+			if (_digiName1) {
+				digi_play(_digiName1, 1, 255, _digiTrigger1);
+				_digiName1 = nullptr;
+			}
+
+			sendWSMessage_10000(1, _gk, _gkManyDoNeedPass, 1, 15, 125,
+				_gkManyDoNeedPass, 15, 15, 0);
+			_gkShould = 3001;
+			_gkMode = 3002;
+			break;
+
+		case 3002:
+			sendWSMessage_10000(1, _gk, _gkManyDoNeedPass, 15, 1, 125, _gkFrame, 1, 1, 0);
+			_gkShould = 3001;
+			_gkMode = 3003;
+			break;
+
+		case 3003:
+			series_unload(_gkManyDoNeedPass);
+			_gkShould = _gkMode = 3000;
+			break;
+
+		case 3004:
+			if (_digiName1) {
+				digi_play(_digiName1, 1, 255, _digiTrigger1);
+				_digiName1 = nullptr;
+			}
+
+			sendWSMessage_10000(1, _gk, _gkMayNotPass, 1, 36, 125,
+				_gkManyDoNeedPass, 1, 1, 0);
+			_gkShould = _gkMode = 3000;
+			break;
+
 		default:
 			break;
 		}
@@ -949,8 +1200,72 @@ void Room203::daemon() {
 		kernel_timing_trigger(120, 352);
 		break;
 
+	case 354:
+		if (_flag1) {
+			sendWSMessage_10000(1, _peasant, _peskyYellsThief, 17, 21, 355,
+				_peskyYellsThief, 21, 21, 0);
+		} else {
+			sendWSMessage_10000(1, _peasant, _peskyYellsThief, 17, 1, -1,
+				_peskyYellsThief, 1, 1, 0);
+		}
+		break;
+
+	case 355:
+		if (_flag1) {
+			sendWSMessage_10000(1, _peasant, _peskyYellsThief, 21, 1, -1,
+				_peskyYellsThief, 1, 1, 0);
+		} else {
+			sendWSMessage_10000(1, _peasant, _peskyYellsThief, 21, 17, 354,
+				_peskyYellsThief, 17, 17, 0);
+		}
+		break;
+
+	case 356:
+		terminateMachineAndNull(_official);
+		_official = triggerMachineByHash_3000(8, 5, *OFFICIAL_NORMAL_DIRS,
+			*OFFICIAL_SHADOW_DIRS, 1436, 362, 9, triggerMachineByHashCallback3000,
+			"official arresting");
+		break;
+
+	case 357:
+		_flag1 = false;
+		setGlobals1(_officialTurn9_11, 1, 19, 19, 19);
+		sendWSMessage_110000(_official, 358);
+		break;
+
+	case 358:
+		sendWSMessage_150000(_official, -1);
+		ws_demand_facing(11);
+		sendWSMessage_10000(_official, 1025, 290, 11, 359, 1);
+		break;
+
+	case 359:
+		setGlobals1(_officialTurn11_3, 1, 39, 39, 39, 0, 39, 23, 23, 23, 0,
+			23, 39, 39, 39, 0, 39, 39, 39, 39, 0);
+		sendWSMessage_110000(_official, 360);
+		break;
+
 	case 360:
 		sendWSMessage_120000(_official, 363);
+		break;
+
+	case 363:
+		ws_demand_location(1100, 290, 9);
+		ws_walk(1060, 290, nullptr, 36, 7);
+		break;
+
+	case 364:
+		sendWSMessage_150000(_official, -1);
+		ws_demand_facing(_official, 9);
+		setGlobals1(_officialTurn3_7, 1, 27, 27, 27);
+		sendWSMessage_110000(_official, 365);
+		ws_walk(1062, 313, nullptr, 8888, 7);
+		break;
+
+	case 365:
+		sendWSMessage_150000(_official, -1);
+		ws_demand_facing(7);
+		sendWSMessage_10000(_official, 1010, 345, 9, 366, 1);
 		break;
 
 	case 366:
@@ -958,8 +1273,27 @@ void Room203::daemon() {
 		kernel_timing_trigger(50, 367);
 		break;
 
+	case 367:
+		g_engine->camera_shift_xy(0, 0);
+		sendWSMessage_10000(_official, 345, 355, 9, -1, 1);
+		break;
+
+	case 390:
+		sendWSMessage_10000(1, _pigeons1, _pigeonsSeries1, 1, 88, -1,
+			_pigeonsSeries1, 1, 88, 0);
+		break;
+
+	case 392:
+		sendWSMessage_10000(1, _pigeons3, _pigeonsSeries3, 1, 93, -1,
+			_pigeonsSeries3, 1, 93, 0);
+		break;
+
 	case 666:
 		digi_play("203r56", 1, 255, 667);
+		break;
+
+	case 667:
+		digi_unload("203r56");
 		break;
 
 	case 749:
@@ -1019,6 +1353,15 @@ void Room203::daemon() {
 		kernel_timing_trigger(60, 81);
 		break;
 
+	case 8888:
+		ws_walk(940, 345, nullptr, -1, 7);
+		break;
+
+	case 9000:
+		setGlobals1(_ripHeadTurn, 1, 4, 4, 4);
+		sendWSMessage_110000(9002);
+		break;
+
 	case 9002:
 		digi_play("203r51", 1, 255, 9004);
 		break;
@@ -1031,6 +1374,15 @@ void Room203::daemon() {
 		sendWSMessage_10000(_g1, 340, 350, 9, 9040, 0);
 		sendWSMessage_10000(_g2, -30, 360, 9, -1, 1);
 		sendWSMessage_140000(-1);
+		break;
+
+	case 9005:
+		sendWSMessage_10000(_g1, -30, 350, 9, -1, 1);
+		_sg = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x500, 0,
+			triggerMachineByHashCallback, "sg");
+		sendWSMessage_10000(1, _sg, _203sg01, 1, 1, -1, _203sg01, 1, 1, 0);
+		setGlobals1(_ripHeadTurn, 6, 9, 9, 9);
+		sendWSMessage_110000(9006);
 		break;
 
 	case 9006:
@@ -1056,6 +1408,15 @@ void Room203::daemon() {
 		kernel_timing_trigger(120, 9030);
 		break;
 
+	case 9011:
+		sendWSMessage_10000(_mei, 417, 240, 2, -1, 1);
+		break;
+
+	case 9014:
+		digi_play("203_s09", 2);
+		sendWSMessage_10000(1, _sg, _203sg01, 85, 130, 9020, _203sg01, 130, 130, 0);
+		break;
+
 	case 9020:
 		sendWSMessage_10000(1, _sg, _203sg01, 131, 155, -1, _203sg01, 155, 155, 0);
 		disable_player_commands_and_fade_init(9025);
@@ -1063,6 +1424,17 @@ void Room203::daemon() {
 
 	case 9025:
 		_G(game).setRoom(204);
+		break;
+
+	case 9030:
+		_G(camera_reacts_to_player) = false;
+		g_engine->camera_shift_xy(640, 0);
+		kernel_timing_trigger(30, 9013);
+		break;
+
+	case 9040:
+		series_stream("203pu99", 5, 0, -1);
+		sendWSMessage_10000(_g1, 200, 350, 9, 9005, 0);
 		break;
 
 	default:
