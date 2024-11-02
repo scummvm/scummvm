@@ -54,9 +54,12 @@ private:
 	int32 _205all4Series = 0;
 	int32 _205all5Series = 0;
 	int32 _205all6Series = 0;
+	int32 _205all7Series = 0;
 	int32 _205FireInBrazierSeries = 0;
 	int32 _205Fite1Series = 0;
 	int32 _205Fite2Series = 0;
+	int32 _205Fite3Series = 0;
+	int32 _205Fite4Series = 0;
 	int32 _205GunFireSeries = 0;
 	int32 _205GunPointedSeries = 0;
 	int32 _205ktlk1Series = 0;

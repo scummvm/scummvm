@@ -1133,6 +1133,168 @@ void Room205::daemon() {
 
 		break;
 
+	case 1001:
+		switch (imath_ranged_rand(1, 2)) {
+		case 1:
+			digi_play("205_s09", 2, 255, -1, -1);
+			break;
+
+		case 2:
+			digi_play("205_s10", 2, 255, -1, -1);
+			break;
+
+		default:
+			break;
+		}
+
+		series_play("205FITE1", 3845, 0, 1002, 5, 0, 100, 0, 0, 16, 29);
+
+		break;
+
+	case 1002:
+		switch (imath_ranged_rand(1, 2)) {
+		case 1:
+			digi_play("205_s09", 2, 255, -1, -1);
+			break;
+
+		case 2:
+			digi_play("205_s10", 2, 255, -1, -1);
+			break;
+
+		default:
+			break;
+		}
+
+		series_play("205FITE1", 3845, 0, 1003, 5, 0, 100, 0, 0, 30, 41);
+
+		break;
+
+	case 1003:
+		switch (imath_ranged_rand(1, 2)) {
+		case 1:
+			digi_play("205_s09", 2, 255, -1, -1);
+			break;
+
+		case 2:
+			digi_play("205_s10", 2, 255, -1, -1);
+			break;
+
+		default:
+			break;
+		}
+
+		_205all0Mach = series_play("205FITE1", 3845, 16, 1004, 5, 0, 100, 0, 0, 42, -1);
+
+		break;
+
+	case 1004:
+		terminateMachine(_205all0Mach);
+		series_unload(_205Fite1Series);
+		series_play("205FITE2", 3845, 1005, 5, 0, 100, 0, 0, 0, 29);
+
+		break;
+
+	case 1005:
+		digi_play("205_s14", 2, 255, -1, -1);
+		series_play("205FITE2", 3845, 0, 1006, 5, 0, 100, 0, 0, 30, 54);
+
+		break;
+
+	case 1006:
+		digi_play("205_s14", 2, 255, -1, -1);
+		series_play("205FITE2", 3845, 0, 1007, 5, 0, 100, 0, 0, 55, 66);
+
+		break;
+
+	case 1007:
+		switch (imath_ranged_rand(1, 2)) {
+		case 1:
+			digi_play("205_s09", 2, 255, -1, -1);
+			break;
+
+		case 2:
+			digi_play("205_s10", 2, 255, -1, -1);
+			break;
+
+		default:
+			break;
+		}
+
+		series_play("205FITE2", 3845, 0, 1008, 5, 0, 100, 0, 0, 67, 80);
+
+		break;
+
+	case 1008:
+		digi_play("205_s11", 2, 255, -1, -1);
+		series_play("205FITE2", 3845, 0, 1009, 5, 0, 100, 0, 0, 81, 91);
+
+		break;
+
+	case 1009:
+		digi_play("205_s13", 2, 255, -1, -1);
+		series_play("205FITE2", 3845, 0, 1010, 5, 0, 100, 0, 0, 92, 108);
+
+		break;
+
+	case 1010:
+		digi_play("205_s11", 2, 255, -1, -1);
+		series_play("205FITE2", 3845, 0, 1011, 5, 0, 100, 0, 0, 109, 131);
+
+		break;
+
+	case 1011:
+		digi_play("205_s14", 2, 255, -1, -1);
+		_205all0Mach = series_play("205FITE2", 3845, 16, 1013, 5, 0, 100, 0, 0, 132, -1);
+
+		break;
+
+	case 1013:
+		if (_fieldDC) {
+			kernel_timing_trigger(60, 1013, nullptr);
+		} else {
+			_fieldDC = 1;
+			_205Fite3Series = series_load("205FITE3", -1, nullptr);
+			terminateMachine(_205all0Mach);
+			series_unload(_205Fite2Series);
+			_205all0Mach = series_show("205FITE3", 3845, 16, -1, -1, 0, 100, 0, 0);
+			_205Fite4Series = series_load("205FITE4", -1, nullptr);
+			_fieldDC = 0;
+
+			kernel_timing_trigger(10, 1015, nullptr);
+		}
+
+		break;
+
+	case 1014:
+		_fieldE4 = 1;
+
+		break;
+
+	case 1015:
+		if (!_field1A0) {
+			kernel_timing_trigger(10, 1017, nullptr);
+		} else if (_fieldDC) {
+			kernel_timing_trigger(60, 1015, nullptr);
+		} else if (!_fieldE4) {
+			kernel_timing_trigger(10, 1015, nullptr);
+		} else {
+			_fieldDC = 1;
+			series_unload(_205Fite4Series);
+			_205all7Series = series_load("205ALL7", -1, nullptr);
+			_fieldDC = 0;
+			ws_walk(_G(my_walker), 482, 351, 0, 1016, 3, true);
+		}
+
+		break;
+
+	case 1016:
+		ws_hide_walker(_G(my_walker));
+		terminateMachine(_205all0Mach);
+		series_unload(_205Fite3Series);
+		series_play("205ALL7", 256, 0, 1037, 7, 0, 100, 0, 0, 9, -1);
+
+		break;
+
 	default:
 
 		break;
