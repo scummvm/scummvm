@@ -233,8 +233,13 @@ void CastleEngine::loadAssetsZXFullGame() {
 			it._value->addObjectFromArea(id, _areaMap[255]);
 		}
 	}
-	_areaMap[1]->addFloor();
-	_areaMap[2]->addFloor();
+	// Discard some global conditions
+	// It is unclear why they hide/unhide objects that formed the spirits
+	for (int i = 0; i < 3; i++) {
+		debugC(kFreescapeDebugParser, "Discarding condition %s", _conditionSources[0].c_str());
+		_conditions.remove_at(0);
+		_conditionSources.remove_at(0);
+	}
 }
 
 void CastleEngine::drawZXUI(Graphics::Surface *surface) {
