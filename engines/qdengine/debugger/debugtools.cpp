@@ -466,7 +466,8 @@ void showScenePersonages() {
 						ImGui::TableNextColumn();
 
 						qdGameObjectState *st = it->get_state(it->cur_state());
-						ImGui::Text("%s", st ? qdGameObjectState::flag2str(st->flags(), true).c_str() : "<none>");
+						ImGui::Text("%s", st ? qdGameObjectState::flag2str(st->flags(), true, true).c_str() : "<none>");
+						ImGui::SetItemTooltip("%s", st ? qdGameObjectState::flag2str(st->flags(), true).c_str() : "<none>");
 
 						ImGui::TableNextColumn();
 

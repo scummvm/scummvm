@@ -567,7 +567,7 @@ public:
 		_transform_speed = tr_speed;
 	}
 
-	static Common::String flag2str(int fl, bool truncate = false);
+	static Common::String flag2str(int fl, bool truncate = false, bool icon = false);
 
 protected:
 

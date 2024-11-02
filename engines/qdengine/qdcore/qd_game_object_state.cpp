@@ -21,6 +21,8 @@
 
 #include "common/debug.h"
 
+#include "backends/imgui/IconsMaterialSymbols.h"
+
 #include "qdengine/qd_fwd.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 #include "qdengine/system/sound/snd_dispatcher.h"
@@ -226,51 +228,55 @@ bool qdGameObjectState::is_default() const {
 	return false;
 }
 
-#define defFlag(x) { qdGameObjectState::x, #x }
+#define defFlag(x, i) { qdGameObjectState::x, #x, i }
 
 struct FlagsList {
 	int f;
 	const char *s;
+	const char *i;
 } static flagList[] = {
-	defFlag(QD_OBJ_STATE_FLAG_HIDDEN),
-	defFlag(QD_OBJ_STATE_FLAG_NOT_IN_TRIGGERS),
-	defFlag(QD_OBJ_STATE_FLAG_RESTORE_PREV_STATE),
-	defFlag(QD_OBJ_STATE_FLAG_HIDE_OBJECT),
-	defFlag(QD_OBJ_STATE_FLAG_GLOBAL_OWNER),
-	defFlag(QD_OBJ_STATE_FLAG_INVENTORY),
-	defFlag(QD_OBJ_STATE_FLAG_MOVE_TO_INVENTORY),
-	defFlag(QD_OBJ_STATE_FLAG_MOVE_TO_INVENTORY_FAILED),
-	defFlag(QD_OBJ_STATE_FLAG_HAS_BOUND),
-	defFlag(QD_OBJ_STATE_FLAG_ACTIVATION_TIMER),
-	defFlag(QD_OBJ_STATE_FLAG_ACTIVATION_TIMER_END),
-	defFlag(QD_OBJ_STATE_FLAG_DIALOG_PHRASE),
-	defFlag(QD_OBJ_STATE_FLAG_SOUND_SYNC),
-	defFlag(QD_OBJ_STATE_FLAG_ENABLE_INTERRUPT),
-	defFlag(QD_OBJ_STATE_FLAG_WAS_ACTIVATED),
-	defFlag(QD_OBJ_STATE_FLAG_DISABLE_WALK_INTERRUPT),
-	defFlag(QD_OBJ_STATE_FLAG_MOUSE_STATE),
-	defFlag(QD_OBJ_STATE_FLAG_MOUSE_HOVER_STATE),
-	defFlag(QD_OBJ_STATE_FLAG_STAY_IN_INVENTORY),
-	defFlag(QD_OBJ_STATE_FLAG_FORCED_LOAD),
-	defFlag(QD_OBJ_STATE_FLAG_ENABLE_SKIP),
-	defFlag(QD_OBJ_STATE_FLAG_MOVE_TO_ZONE),
-	defFlag(QD_OBJ_STATE_FLAG_MOVE_ON_OBJECT),
-	defFlag(QD_OBJ_STATE_FLAG_ACTIVATE_PERSONAGE),
-	defFlag(QD_OBJ_STATE_FLAG_AUTO_LOAD),
-	defFlag(QD_OBJ_STATE_FLAG_AUTO_SAVE),
-	defFlag(QD_OBJ_STATE_FLAG_FADE_IN),
-	defFlag(QD_OBJ_STATE_FLAG_FADE_OUT),
+	defFlag(QD_OBJ_STATE_FLAG_HIDDEN, ICON_MS_VISIBILITY_OFF),
+	defFlag(QD_OBJ_STATE_FLAG_NOT_IN_TRIGGERS, ICON_MS_STEP_OVER),
+	defFlag(QD_OBJ_STATE_FLAG_RESTORE_PREV_STATE, ICON_MS_SETTINGS_BACKUP_RESTORE),
+	defFlag(QD_OBJ_STATE_FLAG_HIDE_OBJECT, ICON_MS_HIDE_IMAGE),
+	defFlag(QD_OBJ_STATE_FLAG_GLOBAL_OWNER, ICON_MS_PUBLIC),
+	defFlag(QD_OBJ_STATE_FLAG_INVENTORY, ICON_MS_INVENTORY),
+	defFlag(QD_OBJ_STATE_FLAG_MOVE_TO_INVENTORY, ICON_MS_MOVE_TO_INBOX),
+	defFlag(QD_OBJ_STATE_FLAG_MOVE_TO_INVENTORY_FAILED, ICON_MS_INBOX_CUSTOMIZE),
+	defFlag(QD_OBJ_STATE_FLAG_HAS_BOUND, ICON_MS_OUTDOOR_GARDEN),
+	defFlag(QD_OBJ_STATE_FLAG_ACTIVATION_TIMER, ICON_MS_TIMER),
+	defFlag(QD_OBJ_STATE_FLAG_ACTIVATION_TIMER_END, ICON_MS_ALARM_ON),
+	defFlag(QD_OBJ_STATE_FLAG_DIALOG_PHRASE, ICON_MS_CHAT),
+	defFlag(QD_OBJ_STATE_FLAG_SOUND_SYNC, ICON_MS_BRAND_AWARENESS),
+	defFlag(QD_OBJ_STATE_FLAG_ENABLE_INTERRUPT, ICON_MS_FRONT_HAND),
+	defFlag(QD_OBJ_STATE_FLAG_WAS_ACTIVATED, ICON_MS_MANUFACTURING),
+	defFlag(QD_OBJ_STATE_FLAG_DISABLE_WALK_INTERRUPT, ICON_MS_PERSON_OFF),
+	defFlag(QD_OBJ_STATE_FLAG_MOUSE_STATE, ICON_MS_MOUSE),
+	defFlag(QD_OBJ_STATE_FLAG_MOUSE_HOVER_STATE, ICON_MS_TOUCHPAD_MOUSE),
+	defFlag(QD_OBJ_STATE_FLAG_STAY_IN_INVENTORY, ICON_MS_ASSIGNMENT_ADD),
+	defFlag(QD_OBJ_STATE_FLAG_FORCED_LOAD, ICON_MS_UPLOAD_FILE),
+	defFlag(QD_OBJ_STATE_FLAG_ENABLE_SKIP, ICON_MS_SKIP_NEXT),
+	defFlag(QD_OBJ_STATE_FLAG_MOVE_TO_ZONE, ICON_MS_DETECTION_AND_ZONE),
+	defFlag(QD_OBJ_STATE_FLAG_MOVE_ON_OBJECT, ICON_MS_PICTURE_IN_PICTURE),
+	defFlag(QD_OBJ_STATE_FLAG_ACTIVATE_PERSONAGE, ICON_MS_PERSON),
+	defFlag(QD_OBJ_STATE_FLAG_AUTO_LOAD, ICON_MS_UPLOAD),
+	defFlag(QD_OBJ_STATE_FLAG_AUTO_SAVE, ICON_MS_DOWNLOAD),
+	defFlag(QD_OBJ_STATE_FLAG_FADE_IN, ICON_MS_MASKED_TRANSITIONS),
+	defFlag(QD_OBJ_STATE_FLAG_FADE_OUT, ICON_MS_TRANSITION_FADE),
 };
 
-Common::String qdGameObjectState::flag2str(int fl, bool truncate) {
+Common::String qdGameObjectState::flag2str(int fl, bool truncate, bool icon) {
 	Common::String res;
 
 	for (int i = 0; i < ARRAYSIZE(flagList); i++) {
 		if (fl & flagList[i].f) {
-			if (!res.empty())
-				res += " | ";
+			if (!icon) {
+				if (!res.empty())
+					res += " | ";
 
-			res += &flagList[i].s[truncate ? 18 : 0];
+				res += &flagList[i].s[truncate ? 18 : 0];
+			} else
+				res += flagList[i].i;
 
 			fl &= ~flagList[i].f;
 		}
