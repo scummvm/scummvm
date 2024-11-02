@@ -1719,6 +1719,39 @@ void Room205::daemon() {
 
 		break;
 
+	case 1051:
+		setGlobals1(_ripTrekLowReachPos2Series, 1, 16, 16, 16, 0, 16, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 1052);
+
+		break;
+
+	case 1052:
+		digi_play("205R46", 1, 255, 1053, -1);
+
+		break;
+
+	case 1053:
+		sendWSMessage_120000(_G(my_walker), 1054);
+
+		break;
+
+	case 1054:
+		sendWSMessage_150000(_G(my_walker), -1);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "TABLET ", false);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "RIGHT TABLET", false);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "FALLEN TABLETS", true);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "GLASSES", true);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "MASTER LU'S TABLET", true);
+		player_set_commands_allowed(true);
+		_fieldDC = 0;
+
+		break;
+
+	case 1055:
+		_field198 = 1;
+
+		break;
+
 	default:
 
 		break;
