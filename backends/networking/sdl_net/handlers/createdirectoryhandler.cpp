@@ -68,7 +68,7 @@ void CreateDirectoryHandler::handle(Client &client) {
 	// transform virtual path to actual file system one
 	Common::String basePath;
 	Common::Path baseFSPath, fsPath;
-	if (!urlToPath(path, fsPath, basePath, baseFSPath) || path.empty()) {
+	if (!urlToPath(path, fsPath, basePath, baseFSPath)) {
 		handleError(client, Common::convertFromU32String(_("Invalid path!")));
 		return;
 	}
