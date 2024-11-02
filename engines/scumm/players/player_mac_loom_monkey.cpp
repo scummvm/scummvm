@@ -714,13 +714,13 @@ void LoomMonkeyMacSnd::sendSoundCommands(int timeStamp) {
 
 	if (_chanUse == 1 && _sndChannel) {
 		while (_loader->parseNextEvent(0, duration, note, skip, updateInstr)) {
-			if (timeStamp > 0) {
-				int ts = timeStamp;
-				timeStamp = MAX<int>(0, timeStamp - duration);
-				duration -= ts;
+			if (timeStamp > 0 && !skip) {
+				timeStamp -= duration;
+				if (timeStamp >= 0)
+					skip = true;
+				else if (timeStamp < 0)
+					duration = -timeStamp;
 			}
-			if (timeStamp)
-				continue;
 
 			if (updateInstr)
 				_sdrv->loadInstrument(_sndChannel, MacLowLevelPCMDriver::kEnqueue, _loader->getInstrData(0));
@@ -751,14 +751,13 @@ void LoomMonkeyMacSnd::sendSoundCommands(int timeStamp) {
 					busy &= ~(1 << i);
 					continue;
 				}
-				if (tmstmp[i] > 0) {
-					int ts = tmstmp[i];
-					tmstmp[i] = MAX<int>(0, tmstmp[i] - duration);
-					duration -= ts;
+				if (tmstmp[i] > 0 && !skip) {
+					tmstmp[i] -= duration;
+					if (tmstmp[i] >= 0)
+						skip = true;
+					else if (tmstmp[i] < 0)
+						duration = -tmstmp[i];
 				}
-
-				if (tmstmp[i])
-					continue;
 
 				if (updateInstr)
 					_sdrv->loadInstrument(_musChannels[i], MacLowLevelPCMDriver::kEnqueue, _loader->getInstrData(i + 1));
