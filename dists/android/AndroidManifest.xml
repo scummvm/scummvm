@@ -41,6 +41,7 @@
 		android:allowBackup="true"
 		android:appCategory="game"
 		android:description="@string/app_desc"
+		android:enableOnBackInvokedCallback="true"
 		android:icon="@mipmap/scummvm"
 		android:label="@string/app_name${nameSuffix}"
 		android:requestLegacyExternalStorage="true">
