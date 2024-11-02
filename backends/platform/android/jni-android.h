@@ -196,7 +196,7 @@ private:
 	static void syncVirtkeyboardState(JNIEnv *env, jobject self, jboolean newState);
 	static void setPause(JNIEnv *env, jobject self, jboolean value);
 
-	static void systemInsetsUpdated(JNIEnv *env, jobject self, jintArray insets);
+	static void systemInsetsUpdated(JNIEnv *env, jobject self, jintArray gestureInsets, jintArray systemInsets, jintArray cutoutInsets);
 
 	static jstring getNativeVersionInfo(JNIEnv *env, jobject self);
 	static jstring convertToJString(JNIEnv *env, const Common::U32String &str);

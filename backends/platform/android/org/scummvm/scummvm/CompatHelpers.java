@@ -16,6 +16,7 @@ import android.media.AudioAttributes;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
+import android.view.DisplayCutout;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowInsets;
@@ -83,7 +84,7 @@ class CompatHelpers {
 
 	static class SystemInsets {
 		public interface SystemInsetsListener {
-			void systemInsetsUpdated(int insets[]);
+			void systemInsetsUpdated(int[] gestureInsets, int[] systemInsets, int[] cutoutInsets);
 		}
 
 		public static void registerSystemInsetsListener(View v, SystemInsetsListener l) {
@@ -91,34 +92,87 @@ class CompatHelpers {
 				v.setOnApplyWindowInsetsListener(new OnApplyWindowInsetsListenerR(l));
 			} else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
 				v.setOnApplyWindowInsetsListener(new OnApplyWindowInsetsListenerQ(l));
-			} else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT_WATCH) {
-				v.setOnApplyWindowInsetsListener(new OnApplyWindowInsetsListenerKitKatW(l));
+			} else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+				v.setOnApplyWindowInsetsListener(new OnApplyWindowInsetsListenerP(l));
+			} else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+				v.setOnApplyWindowInsetsListener(new OnApplyWindowInsetsListenerLollipop(l));
 			} else {
 				// Not available
-				int[] insets = new int[] { 0, 0, 0, 0 };
-				l.systemInsetsUpdated(insets);
+				int[] gestureInsets = new int[] { 0, 0, 0, 0 };
+				int[] systemInsets = new int[] { 0, 0, 0, 0 };
+				int[] cutoutInsets = new int[] { 0, 0, 0, 0 };
+				l.systemInsetsUpdated(gestureInsets, systemInsets, cutoutInsets);
 			}
 		}
 
-		@RequiresApi(android.os.Build.VERSION_CODES.KITKAT_WATCH)
+		@RequiresApi(android.os.Build.VERSION_CODES.LOLLIPOP)
 		@SuppressWarnings("deprecation")
-		private static class OnApplyWindowInsetsListenerKitKatW implements View.OnApplyWindowInsetsListener {
-			private SystemInsetsListener l;
+		private static class OnApplyWindowInsetsListenerLollipop implements View.OnApplyWindowInsetsListener {
+			final private SystemInsetsListener l;
 
-			public OnApplyWindowInsetsListenerKitKatW(SystemInsetsListener l) {
+			public OnApplyWindowInsetsListenerLollipop(SystemInsetsListener l) {
 				this.l = l;
 			}
 
 			@Override
 			public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
 				// No system gestures inset before Android Q
-				int[] insetsArray = new int[] {
+				int[] gestureInsets = new int[] {
 					insets.getStableInsetLeft(),
 					insets.getStableInsetTop(),
 					insets.getStableInsetRight(),
 					insets.getStableInsetBottom()
 				};
-				l.systemInsetsUpdated(insetsArray);
+				int[] systemInsets = new int[] {
+					insets.getSystemWindowInsetLeft(),
+					insets.getSystemWindowInsetTop(),
+					insets.getSystemWindowInsetRight(),
+					insets.getSystemWindowInsetBottom()
+				};
+				// No cutouts before Android P
+				int[] cutoutInsets = new int[] { 0, 0, 0, 0 };
+				l.systemInsetsUpdated(gestureInsets, systemInsets, cutoutInsets);
+				return v.onApplyWindowInsets(insets);
+			}
+		}
+
+		@RequiresApi(android.os.Build.VERSION_CODES.P)
+		@SuppressWarnings("deprecation")
+		private static class OnApplyWindowInsetsListenerP implements View.OnApplyWindowInsetsListener {
+			final private SystemInsetsListener l;
+
+			public OnApplyWindowInsetsListenerP(SystemInsetsListener l) {
+				this.l = l;
+			}
+
+			@Override
+			public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+				// No system gestures inset before Android Q
+				int[] gestureInsets = new int[] {
+					insets.getStableInsetLeft(),
+					insets.getStableInsetTop(),
+					insets.getStableInsetRight(),
+					insets.getStableInsetBottom()
+				};
+				int[] systemInsets = new int[] {
+					insets.getSystemWindowInsetLeft(),
+					insets.getSystemWindowInsetTop(),
+					insets.getSystemWindowInsetRight(),
+					insets.getSystemWindowInsetBottom()
+				};
+				int[] cutoutInsets;
+				DisplayCutout cutout = insets.getDisplayCutout();
+				if (cutout == null) {
+					cutoutInsets = new int[] { 0, 0, 0, 0 };
+				} else {
+					cutoutInsets = new int[] {
+						cutout.getSafeInsetLeft(),
+						cutout.getSafeInsetTop(),
+						cutout.getSafeInsetRight(),
+						cutout.getSafeInsetBottom()
+					};
+				}
+				l.systemInsetsUpdated(gestureInsets, systemInsets, cutoutInsets);
 				return v.onApplyWindowInsets(insets);
 			}
 		}
@@ -126,7 +180,7 @@ class CompatHelpers {
 		@RequiresApi(android.os.Build.VERSION_CODES.Q)
 		@SuppressWarnings("deprecation")
 		private static class OnApplyWindowInsetsListenerQ implements View.OnApplyWindowInsetsListener {
-			private SystemInsetsListener l;
+			final private SystemInsetsListener l;
 
 			public OnApplyWindowInsetsListenerQ(SystemInsetsListener l) {
 				this.l = l;
@@ -134,22 +188,40 @@ class CompatHelpers {
 
 			@Override
 			public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
-				Insets insetsStruct = insets.getStableInsets();
-				int[] insetsArray = new int[] {
+				Insets insetsStruct = insets.getSystemGestureInsets();
+				int[] gestureInsets = new int[] {
 					insetsStruct.left,
 					insetsStruct.top,
 					insetsStruct.right,
 					insetsStruct.bottom,
 				};
-				l.systemInsetsUpdated(insetsArray);
+				insetsStruct = insets.getSystemWindowInsets();
+				int[] systemInsets = new int[] {
+					insetsStruct.left,
+					insetsStruct.top,
+					insetsStruct.right,
+					insetsStruct.bottom,
+				};
+				int[] cutoutInsets;
+				DisplayCutout cutout = insets.getDisplayCutout();
+				if (cutout == null) {
+					cutoutInsets = new int[] { 0, 0, 0, 0 };
+				} else {
+					cutoutInsets = new int[] {
+						cutout.getSafeInsetLeft(),
+						cutout.getSafeInsetTop(),
+						cutout.getSafeInsetRight(),
+						cutout.getSafeInsetBottom()
+					};
+				}
+				l.systemInsetsUpdated(gestureInsets, systemInsets, cutoutInsets);
 				return v.onApplyWindowInsets(insets);
 			}
 		}
 
 		@RequiresApi(android.os.Build.VERSION_CODES.R)
-		@SuppressWarnings("deprecation")
 		private static class OnApplyWindowInsetsListenerR implements View.OnApplyWindowInsetsListener {
-			private SystemInsetsListener l;
+			final private SystemInsetsListener l;
 
 			public OnApplyWindowInsetsListenerR(SystemInsetsListener l) {
 				this.l = l;
@@ -158,13 +230,32 @@ class CompatHelpers {
 			@Override
 			public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
 				Insets insetsStruct = insets.getInsetsIgnoringVisibility(WindowInsets.Type.systemGestures());
-				int[] insetsArray = new int[] {
+				int[] gestureInsets = new int[] {
 					insetsStruct.left,
 					insetsStruct.top,
 					insetsStruct.right,
 					insetsStruct.bottom,
 				};
-				l.systemInsetsUpdated(insetsArray);
+				insetsStruct = insets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars());
+				int[] systemInsets = new int[] {
+					insetsStruct.left,
+					insetsStruct.top,
+					insetsStruct.right,
+					insetsStruct.bottom,
+				};
+				int[] cutoutInsets;
+				DisplayCutout cutout = insets.getDisplayCutout();
+				if (cutout == null) {
+					cutoutInsets = new int[] { 0, 0, 0, 0 };
+				} else {
+					cutoutInsets = new int[] {
+						cutout.getSafeInsetLeft(),
+						cutout.getSafeInsetTop(),
+						cutout.getSafeInsetRight(),
+						cutout.getSafeInsetBottom()
+					};
+				}
+				l.systemInsetsUpdated(gestureInsets, systemInsets, cutoutInsets);
 				return v.onApplyWindowInsets(insets);
 			}
 		}
