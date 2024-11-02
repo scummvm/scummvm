@@ -42,6 +42,8 @@ uint16 FreescapeEngine::readPtr(Common::SeekableReadStream *file) {
 		uint16 hi = file->readUint16BE();
 		assert(hi < 256);
 		value = 256 * hi + lo;
+		if (value >= 0xFFFF / 2)
+			error("Failed to read pointer with value 0x%x", value);
 		value = 2 * value;
 	} else
 		value = file->readUint16LE();
@@ -802,8 +804,10 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		numberOfAreas = 87;
 	debugC(1, kFreescapeDebugParser, "Number of areas: %d", numberOfAreas);
 
-	uint32 dbSize = readPtr(file);
+	uint32 dbSize = readField(file, 16);
 	debugC(1, kFreescapeDebugParser, "Database ends at %x", dbSize);
+	if (isAmiga() || isAtariST())
+		debugC(1, kFreescapeDebugParser, "Extra field: %x", readField(file, 16));
 
 	uint8 startArea = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Start area: %d", startArea);

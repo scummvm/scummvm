@@ -95,7 +95,6 @@ void CastleEngine::loadAssetsAmigaDemo() {
 	file.seek(0x2be96); // Area 255
 	_areaMap[255] = load8bitArea(&file, 16);
 
-
 	file.seek(0x2cf28 + 0x28 - 0x2 + 0x28);
 	_border = loadFrameFromPlanesVertical(&file, 160, 200);
 	_border->convertToInPlace(_gfx->_texturePixelFormat, borderPalete, 16);
@@ -105,9 +104,6 @@ void CastleEngine::loadAssetsAmigaDemo() {
 	_areaMap[2]->_groundColor = 1;
 	for (auto &it : _areaMap)
 		it._value->addStructure(_areaMap[255]);
-
-	_areaMap[1]->addFloor();
-	_areaMap[2]->addFloor();
 }
 
 void CastleEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
