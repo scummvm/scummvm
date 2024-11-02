@@ -89,6 +89,7 @@ private:
 	int32 _unkInventoryId = 0;
 
 	machine *_205all0Mach = nullptr;
+	machine *_205all9Mach = nullptr;
 	machine *_205CharcoalSpriteMach = nullptr;
 	machine *_205FireInBrazierMach = nullptr;
 	machine *_205GunInBrazierMach = nullptr;

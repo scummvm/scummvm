@@ -1295,6 +1295,430 @@ void Room205::daemon() {
 
 		break;
 
+	case 1017:
+		terminateMachine(_205all0Mach);
+		series_play("205FITE3", 3845, 0, 1018, 5, 0, 100, 0, 0, 0, 13);
+
+		break;
+
+	case 1018:
+		switch (imath_ranged_rand(1, 2)) {
+		case 1:
+			digi_play("205_s09", 2, 255, -1, -1);
+			break;
+
+		case 2:
+			digi_play("205_s10", 2, 255, -1, -1);
+			break;
+
+		default:
+			break;
+		}
+
+		series_play("205FITE3", 3845, 0, 1019, 5, 0, 100, 0, 0, 14, 26);
+
+		break;
+
+	case 1019:
+		digi_play("205_s14", 2, 255, -1);
+		series_play("205FITE3", 3845, 0, 1020, 5, 0, 100, 0, 0, 27, 36);
+
+		break;
+
+	case 1020:
+		switch (imath_ranged_rand(1, 8)) {
+		case 1:
+			digi_play("205_s15", 2, 255, -1, -1);
+			break;
+
+		case 2:
+			digi_play("205_s16", 2, 255, -1, -1);
+			break;
+
+		case 3:
+			digi_play("205_s17", 2, 255, -1, -1);
+			break;
+
+		case 4:
+			digi_play("205_s18", 2, 255, -1, -1);
+			break;
+
+		case 5:
+			digi_play("205_s19", 2, 255, -1, -1);
+			break;
+
+		case 6:
+			digi_play("205_s20", 2, 255, -1, -1);
+			break;
+
+		case 7:
+			digi_play("205_s21", 2, 255, -1, -1);
+			break;
+
+		case 8:
+			digi_play("205_s11", 2, 255, -1, -1);
+			break;
+
+		default:
+			break;
+		}
+
+		series_play("205FITE3", 3845, 0, 1021, 5, 0, 100, 0, 0, 37, 45);
+		break;
+
+	case 1021:
+		switch (imath_ranged_rand(1, 8)) {
+		case 1:
+			digi_play("205_s15", 2, 255, -1, -1);
+			break;
+
+		case 2:
+			digi_play("205_s16", 2, 255, -1, -1);
+			break;
+
+		case 3:
+			digi_play("205_s17", 2, 255, -1, -1);
+			break;
+
+		case 4:
+			digi_play("205_s18", 2, 255, -1, -1);
+			break;
+
+		case 5:
+			digi_play("205_s19", 2, 255, -1, -1);
+			break;
+
+		case 6:
+			digi_play("205_s20", 2, 255, -1, -1);
+			break;
+
+		case 7:
+			digi_play("205_s21", 2, 255, -1, -1);
+			break;
+
+		case 8:
+			digi_play("205_s11", 2, 255, -1, -1);
+			break;
+
+		default:
+			break;
+		}
+
+		_205all0Mach = series_play("205FITE3", 3845, 16, 1021, 5, 0, 100, 0, 0, 46, -1);
+		break;
+
+	case 1022:
+		if (!_field198) {
+			kernel_timing_trigger(10, 1027, nullptr);
+		} else if (_fieldDC) {
+			player_set_commands_allowed(false);
+			_fieldE0 = 1;
+			kernel_timing_trigger(60, 1022);
+		} else {
+			player_set_commands_allowed(false);
+			intr_cancel_sentence();
+			series_unload(_205Fite4Series);
+
+			_fieldDC = 1;
+			_fieldE0 = 1;
+			series_unload(_205Fite3Series);
+			terminateMachine(_205all0Mach);
+			series_play("205KILLM", 3845, 0, 1023, 7, 0, 100, 0, 0, 0, -1);
+		}
+
+		break;
+
+	case 1023:
+		midi_stop();
+		digi_play("205m02", 1, 255, -1, -1);
+		ws_walk(_G(my_walker), 339, 285, nullptr, 1024, 1, true);
+
+		break;
+
+	case 1024:
+		series_play("205KILLR", 3845, 16, -1, 7, 0, 100, 0, 0, 0, -1);
+		setGlobals1(_ripGetsShotSeries, 1, 13, 13, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 1026);
+
+		break;
+
+	case 1026:
+		disable_player_commands_and_fade_init(669);
+		break;
+
+	case 1027:
+		terminateMachine(_205all0Mach);
+		series_play("205FITE4", 3845, 0, 1028, 7, 0, 100, 0, 0, 0, 27);
+
+		break;
+
+	case 1028:
+		switch (imath_ranged_rand(1, 2)) {
+		case 1:
+			digi_play("205_s09", 2, 255, -1, -1);
+			break;
+
+		case 2:
+			digi_play("205_s10", 2, 255, -1, -1);
+			break;
+
+		default:
+			break;
+		}
+
+		series_play("205FITE4", 3845, 0, 1029, 5, 0, 100, 0, 0, 28, 35);
+
+		break;
+
+	case 1029:
+		switch (imath_ranged_rand(1, 2)) {
+		case 1:
+			digi_play("205_s09", 2, 255, -1, -1);
+			break;
+
+		case 2:
+			digi_play("205_s10", 2, 255, -1, -1);
+			break;
+
+		default:
+			break;
+		}
+
+		series_play("205FITE4", 3845, 0, 1030, 5, 0, 100, 0, 0, 36, 47);
+
+		break;
+
+	case 1030:
+		switch (imath_ranged_rand(1, 2)) {
+		case 1:
+			digi_play("205_s09", 2, 255, -1, -1);
+			break;
+
+		case 2:
+			digi_play("205_s10", 2, 255, -1, -1);
+			break;
+
+		default:
+			break;
+		}
+
+		series_play("205FITE4", 3845, 0, 1031, 5, 0, 100, 0, 0, 48, 62);
+
+		break;
+
+	case 1031:
+		digi_play("205_s14", 2, 255, -1, -1);
+		series_play("205FITE4", 3845, 0, 1032, 5, 0, 100, 0, 0, 63, 70);
+
+		break;
+
+	case 1032:
+		digi_play("205_s14", 2, 255, -1, -1);
+		series_play("205FITE4", 3845, 0, 1033, 5, 0, 100, 0, 0, 71, 82);
+
+		break;
+
+	case 1033:
+		switch (imath_ranged_rand(1, 8)) {
+		case 1:
+			digi_play("205_s15", 2, 255, -1, -1);
+			break;
+
+		case 2:
+			digi_play("205_s16", 2, 255, -1, -1);
+			break;
+
+		case 3:
+			digi_play("205_s17", 2, 255, -1, -1);
+			break;
+
+		case 4:
+			digi_play("205_s18", 2, 255, -1, -1);
+			break;
+
+		case 5:
+			digi_play("205_s19", 2, 255, -1, -1);
+			break;
+
+		case 6:
+			digi_play("205_s20", 2, 255, -1, -1);
+			break;
+
+		case 7:
+			digi_play("205_s21", 2, 255, -1, -1);
+			break;
+
+		case 8:
+			digi_play("205_s11", 2, 255, -1, -1);
+			break;
+
+		default:
+			break;
+		}
+
+		series_play("205FITE4", 3845, 0, 1034, 5, 0, 100, 0, 0, 83, 86);
+
+		break;
+
+	case 1034:
+		switch (imath_ranged_rand(1, 8)) {
+		case 1:
+			digi_play("205_s15", 2, 255, -1, -1);
+			break;
+
+		case 2:
+			digi_play("205_s16", 2, 255, -1, -1);
+			break;
+
+		case 3:
+			digi_play("205_s17", 2, 255, -1, -1);
+			break;
+
+		case 4:
+			digi_play("205_s18", 2, 255, -1, -1);
+			break;
+
+		case 5:
+			digi_play("205_s19", 2, 255, -1, -1);
+			break;
+
+		case 6:
+			digi_play("205_s20", 2, 255, -1, -1);
+			break;
+
+		case 7:
+			digi_play("205_s21", 2, 255, -1, -1);
+			break;
+
+		case 8:
+			digi_play("205_s11", 2, 255, -1, -1);
+			break;
+
+		default:
+			break;
+		}
+
+		series_play("205FITE4", 3845, 0, 1035, 5, 0, 100, 0, 0, 87, 106);
+
+		break;
+
+	case 1035:
+		digi_play("205_s14", 2, 255, -1, -1);
+		series_play("205FITE4", 3845, 0, 1036, 5, 0, 100, 0, 0, 107, -1);
+
+		break;
+
+	case 1036:
+		_205all0Mach = series_show("205FITE3", 3845, 16, -1, -1, 0, 100, 0, 0);
+		kernel_timing_trigger(10, 1015, nullptr);
+
+		break;
+
+	case 1037:
+		_fieldDC = 1;
+		terminateMachine(_205TabletsMach);
+		series_unload(_205TabletsSeries);
+		series_unload(_205all7Series);
+		digi_preload("205_s31", -1);
+		digi_preload("205_s31a", -1);
+		_205rp1Mach = series_stream("205 TABLETS FALL", 7, 0, 1040);
+		series_stream_break_on_frame(_205rp1Mach, 20, 1038);
+
+		break;
+
+	case 1038:
+		digi_play("205_S31", 1, 255, -1, -1);
+		series_stream_break_on_frame(_205rp1Mach, 55, 1039);
+
+		break;
+
+	case 1039:
+		midi_stop();
+		digi_play("205_S31a", 1, 255, -1, -1);
+
+		break;
+
+	case 1040:
+		terminateMachine(_205rp1Mach);
+		ws_unhide_walker(_G(my_walker));
+		ws_demand_facing(_G(my_walker), 1);
+		ws_demand_location(_G(my_walker), 494, 351);
+		_205MeiStanderMach = series_show("205 MEI STANDER" ,3584, 16, -1, -1, 0, 100, 0, 0);
+		_candlemanShadow3Mach = series_show("CANDLEMAN SHADOW5", 3840, 16, -1, -1, 0, 50, 314, 248);
+		series_show("205 TABLETS DOWN", 3840, 16, -1, -1, 0, 100, 0, 0);
+		series_show("205GLASS", 3840, 16, -1, -1, 0, 100, 0, 0);
+		kernel_timing_trigger(180, 1041, nullptr);
+
+		break;
+
+	case 1041:
+		ws_walk(_G(my_walker), 324, 252, nullptr, 1042, 11, true);
+		_G(flags[V028]) = 1;
+
+		break;
+
+	case 1042:
+		ws_hide_walker(_G(my_walker));
+		terminateMachine(_205MeiStanderMach);
+		_safariShadow1Mach = series_show("SAFARI SHADOW 2", 3840, 16, -1, -1, 0, 51, 324, 252);
+		series_play("205ALL8", 256, 0, 1043, 7, 0, 100, 0, 0, 0, -1);
+		digi_play("205M03", 1, 255, 1044, -1);
+
+		break;
+
+	case 1043:
+		_205all0Mach = series_show("205ALL8", 256, 16, -1, -1, 24, 100, 0, 0);
+
+		break;
+
+	case 1044:
+		digi_play("205R44", 1, 255, 1045, -1);
+
+		break;
+
+	case 1045:
+		terminateMachine(_205all0Mach);
+		terminateMachine(_safariShadow1Mach);
+		_205all9Mach = series_play("205ALL9", 256, 16, 1046, 7, 0, 100, 0, 0, 0, 24);
+
+		break;
+
+	case 1046:
+		kernel_timing_trigger(90, 1047);
+
+		break;
+
+	case 1047:
+		terminateMachine(_205all9Mach);
+		series_play("205ALL9", 256, 0, 1048, 7, 0, 10, 0, 0, 25, -1);
+
+		break;
+
+	case 1048:
+		_safariShadow1Mach = series_show("SAFARI SHADOW 3", 3840, 16, -1, -1, 0, 53, 304, 257);
+		_205MeiStanderMach = series_play("205MTLK2", 1792, 16, -1, 7, 0, 100, 0, 0, 0, -1);
+		digi_play("205M04", 1, 255, 1049, -1);
+
+		break;
+
+	case 1049:
+		terminateMachine(_205MeiStanderMach);
+		_205rp1Mach = series_play("205RTLK6", 256, 16, -1, 7, 0, 100, 0, 0, 0, -1);
+		digi_play("205R45", 1, 255, 1050, -1);
+
+		break;
+
+	case 1050:
+		terminateMachine(_205rp1Mach);
+		_205MeiStanderMach = series_show("205 MEI STANDER", 3845, 16, -1, -1, 0, 100, 0, 0);
+		terminateMachine(_safariShadow1Mach);
+		ws_unhide_walker(_G(my_walker));
+		ws_demand_location(_G(my_walker), 302, 257);
+		ws_demand_facing(_G(my_walker), 3);
+		ws_walk(_G(my_walker), 382, 265, nullptr, 1051, 2, true);
+
+		break;
+
 	default:
 
 		break;
