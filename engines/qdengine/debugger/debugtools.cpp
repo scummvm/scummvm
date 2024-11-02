@@ -483,7 +483,8 @@ void showScenePersonages() {
 
 						ImGui::TableNextColumn();
 
-						ImGui::Text(qdAnimation::flag2str(anim->flags(), true).c_str());
+						ImGui::Text(qdAnimation::flag2str(anim->flags(), true, true).c_str());
+						ImGui::SetItemTooltip(qdAnimation::flag2str(anim->flags(), true).c_str());
 
 						ImGui::TableNextColumn();
 

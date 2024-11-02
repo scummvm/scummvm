@@ -273,7 +273,7 @@ public:
 			return _tileAnimation;
 	}
 
-	static Common::String flag2str(int fl, bool truncate = false);
+	static Common::String flag2str(int fl, bool truncate = false, bool icon = false);
 	static Common::String status2str(int fl, bool truncate = false);
 
 private:

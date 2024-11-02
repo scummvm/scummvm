@@ -22,6 +22,8 @@
 #include "common/debug.h"
 #include "common/file.h"
 
+#include "backends/imgui/IconsMaterialSymbols.h"
+
 #include "qdengine/qdengine.h"
 
 #include "qdengine/qd_fwd.h"
@@ -1182,33 +1184,37 @@ uint32 qdAnimation::resource_data_size() const {
 }
 #endif
 
-#define defFlag(x) { x, #x }
+#define defFlag(x, i) { x, #x, i }
 
 struct FlagsList {
 	int f;
 	const char *s;
+	const char *i;
 } static flagList[] = {
-	defFlag(QD_ANIMATION_FLAG_REFERENCE),
-	defFlag(QD_ANIMATION_FLAG_REFERENCE),
-	defFlag(QD_ANIMATION_FLAG_LOOP),
-	defFlag(QD_ANIMATION_FLAG_FLIP_HORIZONTAL),
-	defFlag(QD_ANIMATION_FLAG_FLIP_VERTICAL),
-	defFlag(QD_ANIMATION_FLAG_BLACK_FON),
-	defFlag(QD_ANIMATION_FLAG_SUPPRESS_ALPHA),
-	defFlag(QD_ANIMATION_FLAG_CROP),
-	defFlag(QD_ANIMATION_FLAG_COMPRESS),
-	defFlag(QD_ANIMATION_FLAG_TILE_COMPRESS),
+	defFlag(QD_ANIMATION_FLAG_REFERENCE, ICON_MS_ARTICLE_SHORTCUT),
+	defFlag(QD_ANIMATION_FLAG_LOOP, ICON_MS_REPEAT),
+	defFlag(QD_ANIMATION_FLAG_FLIP_HORIZONTAL, ICON_MS_ARROWS_OUTWARD),
+	defFlag(QD_ANIMATION_FLAG_FLIP_VERTICAL, ICON_MS_HEIGHT),
+	defFlag(QD_ANIMATION_FLAG_BLACK_FON, ICON_MS_BACKGROUND_REPLACE),
+	defFlag(QD_ANIMATION_FLAG_SUPPRESS_ALPHA, ICON_MS_IMAGE),
+	defFlag(QD_ANIMATION_FLAG_CROP, ICON_MS_CROP),
+	defFlag(QD_ANIMATION_FLAG_COMPRESS, ICON_MS_COMPRESS),
+	defFlag(QD_ANIMATION_FLAG_TILE_COMPRESS, ICON_MS_GRID_VIEW),
 };
 
-Common::String qdAnimation::flag2str(int fl, bool truncate) {
+Common::String qdAnimation::flag2str(int fl, bool truncate, bool icon) {
 	Common::String res;
 
 	for (int i = 0; i < ARRAYSIZE(flagList); i++) {
 		if (fl & flagList[i].f) {
-			if (!res.empty())
-				res += " | ";
+			if (!icon) {
+				if (!res.empty())
+					res += " | ";
 
-			res += &flagList[i].s[truncate ? 18 : 0];
+				res += &flagList[i].s[truncate ? 18 : 0];
+			} else {
+				res += flagList[i].i;
+			}
 
 			fl &= ~flagList[i].f;
 		}
