@@ -94,6 +94,7 @@ public:
 	void touchControlDraw(uint8 alpha, int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) override;
 
 protected:
+	void recalculateDisplayAreas() override;
 	void setSystemMousePosition(const int x, const int y) override {}
 
 	void showOverlay(bool inGUI) override;
