@@ -93,6 +93,8 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 
 	_spiritsMeter = 32;
 	_spiritsToKill = 26;
+	_spiritsMeterPosition = 0;
+	_spiritsMeterMax = 64;
 }
 
 CastleEngine::~CastleEngine() {
@@ -379,7 +381,6 @@ void CastleEngine::initGameState() {
 	_countdown = INT_MAX - 8;
 	_keysCollected.clear();
 	_spiritsMeter = 32;
-	_spiritsMeterMax = 64;
 
 	_exploredAreas[_startArea] = true;
 	if (_useRockTravel) // Enable cheat
