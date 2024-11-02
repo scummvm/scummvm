@@ -3962,6 +3962,8 @@ case $_backend in
 		append_var INCLUDES '-I$(srcdir)/backends/platform/'$_backend
 		append_var CXXFLAGS "-Wa,--noexecstack"
 		append_var LDFLAGS "-Wl,-z,noexecstack"
+		# Newer Android devices will have 16K pages so we must be aligned
+		append_var LDFLAGS "-Wl,-z,max-page-size=16384"
 		# removed the following directive - was causing compilation issues when not also explicitly using --disable-mt32emu
 		# append_var INCLUDES "-isystem $ANDROID_NDK/sources/cxx-stl/system/include"
 		_sdl=no
