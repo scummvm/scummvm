@@ -71,7 +71,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback,
 
 	// CompatHelpers.WindowInsets.SystemInsetsListener interface
 	@Override
-	final public native void systemInsetsUpdated(int insets[]);
+	final public native void systemInsetsUpdated(int[] gestureInsets, int[] systemInsets, int[] cutoutInsets);
 
 	// Callbacks from C++ peer instance
 	abstract protected void getDPI(float[] values);

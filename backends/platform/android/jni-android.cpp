@@ -138,7 +138,7 @@ const JNINativeMethod JNI::_natives[] = {
 		(void *)JNI::syncVirtkeyboardState },
 	{ "setPause", "(Z)V",
 		(void *)JNI::setPause },
-	{ "systemInsetsUpdated", "([I)V",
+	{ "systemInsetsUpdated", "([I[I[I)V",
 		(void *)JNI::systemInsetsUpdated },
 	{ "getNativeVersionInfo", "()Ljava/lang/String;",
 		(void *)JNI::getNativeVersionInfo }
@@ -968,10 +968,11 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 	}
 }
 
-void JNI::systemInsetsUpdated(JNIEnv *env, jobject self, jintArray insets) {
-	assert(env->GetArrayLength(insets) == ARRAYSIZE(gestures_insets));
+void JNI::systemInsetsUpdated(JNIEnv *env, jobject self, jintArray gestureInsets, jintArray systemInsets, jintArray cutoutInsets) {
+	assert(env->GetArrayLength(gestureInsets) == ARRAYSIZE(gestures_insets));
 
-	env->GetIntArrayRegion(insets, 0, ARRAYSIZE(gestures_insets), gestures_insets);
+	// TODO: handle systemInsets and cutoutInsets
+	env->GetIntArrayRegion(gestureInsets, 0, ARRAYSIZE(gestures_insets), gestures_insets);
 }
 
 jstring JNI::getNativeVersionInfo(JNIEnv *env, jobject self) {
