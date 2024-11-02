@@ -12,8 +12,11 @@ import android.view.InputDevice;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.window.OnBackInvokedCallback;
+import android.window.OnBackInvokedDispatcher;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import java.lang.ref.WeakReference;
 
@@ -127,6 +130,18 @@ public class ScummVMEvents implements
 		}
 	}
 
+	@RequiresApi(android.os.Build.VERSION_CODES.TIRAMISU)
+	private class OnBackInvoked implements OnBackInvokedCallback {
+		@Override
+		public void onBackInvoked() {
+			//Log.d(ScummVM.LOG_TAG,"Sending back key");
+			ScummVMEvents.this._scummvm.pushEvent(JE_SYS_KEY, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK,
+					0, 0, 0, 0);
+			ScummVMEvents.this._scummvm.pushEvent(JE_SYS_KEY, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_BACK,
+					0, 0, 0, 0);
+		}
+	}
+
 	final private ScummVMEventHandler _handler = new ScummVMEventHandler(this);
 
 //	/**
@@ -153,6 +168,10 @@ public class ScummVMEvents implements
 
 		_doubleTapMode = false;
 		_longPressTimeout = ViewConfiguration.getLongPressTimeout();
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+			activity.getOnBackInvokedDispatcher().registerOnBackInvokedCallback(OnBackInvokedDispatcher.PRIORITY_DEFAULT, new OnBackInvoked());
+		}
 	}
 
 	final static int MSG_SMENU_LONG_PRESS = 1;
