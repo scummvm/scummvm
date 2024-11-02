@@ -761,7 +761,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::UNK_LANG,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_PIRATED,
 		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDEREGA, GUIO_RENDERCGA)
 	},
 	{
