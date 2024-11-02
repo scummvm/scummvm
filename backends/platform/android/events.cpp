@@ -48,7 +48,7 @@ static inline T scalef(T in, float numerator, float denominator) {
 	return static_cast<float>(in) * numerator / denominator;
 }
 
-// analog joystick axis id (for internal use) - Should match the logic in ScummVMEventsModern.java
+// analog joystick axis id (for internal use) - Should match the logic in ScummVMEvents.java
 enum {
 	// auxiliary movement axis bitflags
 	JE_JOY_AXIS_X_bf        = 0x01, // (0x01 << 0)
@@ -853,9 +853,9 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		// arg2 = mouse y
 		// arg3 = AMOTION_EVENT_ACTION_DOWN, AMOTION_EVENT_ACTION_UP, AMOTION_EVENT_ACTION_MOVE
 		// NOTE: Typically in a double tap event:
-		//       Before the ACTION_DOWN event, we also have ALREADY pushed a JE_DOWN event (via ScummVMEventsBase's onDown())
-		//       and then a JE_TAP event (action UP) via ScummVMEventsBase's onSingleTapUp().
-		//       Before the ACTION_UP event, we also have ALREADY pushed a JE_DOWN event (via ScummVMEventsBase's onDown()).
+		//       Before the ACTION_DOWN event, we also have ALREADY pushed a JE_DOWN event (via ScummVMEvents's onDown())
+		//       and then a JE_TAP event (action UP) via ScummVMEvents's onSingleTapUp().
+		//       Before the ACTION_UP event, we also have ALREADY pushed a JE_DOWN event (via ScummVMEvents's onDown()).
 //		LOGD("JE_DOUBLE_TAP - x: %d y: %d, arg3: %d", arg1, arg2, arg3);
 
 		ev0.type = Common::EVENT_MOUSEMOVE;

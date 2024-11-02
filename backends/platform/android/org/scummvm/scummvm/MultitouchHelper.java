@@ -1,9 +1,9 @@
 
 package org.scummvm.scummvm;
 
-import static org.scummvm.scummvm.ScummVMEventsBase.JE_MOUSE_WHEEL_DOWN;
-import static org.scummvm.scummvm.ScummVMEventsBase.JE_MOUSE_WHEEL_UP;
-import static org.scummvm.scummvm.ScummVMEventsBase.JE_MULTI;
+import static org.scummvm.scummvm.ScummVMEvents.JE_MOUSE_WHEEL_DOWN;
+import static org.scummvm.scummvm.ScummVMEvents.JE_MOUSE_WHEEL_UP;
+import static org.scummvm.scummvm.ScummVMEvents.JE_MULTI;
 
 import android.os.Handler;
 import android.os.Looper;
