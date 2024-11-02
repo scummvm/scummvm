@@ -224,6 +224,7 @@ public:
 	void setFontColor(ThemeEngine::FontColor color);
 
 protected:
+	void reflowLayout() override;
 	void drawWidget() override;
 	void setFont(ThemeEngine::FontStyle font, Common::Language lang);
 };

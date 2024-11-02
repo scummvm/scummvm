@@ -305,7 +305,7 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, 
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kStaticTextWidget;
 	_label = text;
-	_align = Graphics::convertTextAlignH(g_gui.xmlEval()->getWidgetTextHAlign(name), g_gui.useRTL() && _useRTL);
+	_align = Graphics::kTextAlignInvalid;
 	setFont(font, lang);
 	_fontColor = ThemeEngine::FontColor::kFontColorNormal;
 	_useEllipsis = useEllipsis;
@@ -334,6 +334,14 @@ void StaticTextWidget::setAlign(Graphics::TextAlign align) {
 
 void StaticTextWidget::setFontColor(const ThemeEngine::FontColor color) {
 	_fontColor = color;
+}
+
+void StaticTextWidget::reflowLayout() {
+	Widget::reflowLayout();
+
+	if (_align == Graphics::kTextAlignInvalid) {
+		setAlign(g_gui.xmlEval()->getWidgetTextHAlign(_name));
+	}
 }
 
 void StaticTextWidget::drawWidget() {
