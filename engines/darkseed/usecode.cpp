@@ -334,7 +334,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 			return;
 		}
 		if (objNum == 114) {
-			gancAnim();
+			g_engine->_animation->gancAnim();
 			return;
 		}
 		if ((objNum == 28) && (_objectVar[28] == 2)) {
@@ -1732,10 +1732,6 @@ void UseCode::putObjUnderPillow(int objNum) {
 	_console->printTosText(946);
 	_console->addToCurrentLine(Common::String::format("%s", g_engine->_objectVar.getObjectName(objNum)));
 	_console->printTosText(947);
-}
-
-void UseCode::gancAnim() {
-	error("implement gancAnim()"); // TODO
 }
 
 static constexpr bool diggingxflipTbl[12] = {

@@ -87,7 +87,6 @@ private:
 	int16 getUseGunTosIdx(uint16 objNum);
 	int16 getUseWatchTosIdx(uint16 objNum);
 
-	void gancAnim();
 	void putObjUnderPillow(int objNum);
 
 	void startDigging(int16 targetObjNum);

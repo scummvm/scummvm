@@ -52,6 +52,7 @@ public:
 	void dCopAnim();
 	void sargoAnim();
 	void keeperAdmin();
+	void gancAnim();
 	void stuffPlayer();
 	void runDrekethSequence();
 	void libAnim(bool pickingUpReservedBook);
