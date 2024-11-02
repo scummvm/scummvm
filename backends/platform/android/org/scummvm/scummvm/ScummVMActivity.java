@@ -610,13 +610,13 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			resId = R.drawable.ic_action_keyboard;
 		} else {
 			switch(touchMode) {
-			case ScummVMEventsBase.TOUCH_MODE_TOUCHPAD:
+			case ScummVMEvents.TOUCH_MODE_TOUCHPAD:
 				resId = R.drawable.ic_action_touchpad;
 				break;
-			case ScummVMEventsBase.TOUCH_MODE_MOUSE:
+			case ScummVMEvents.TOUCH_MODE_MOUSE:
 				resId = R.drawable.ic_action_mouse;
 				break;
-			case ScummVMEventsBase.TOUCH_MODE_GAMEPAD:
+			case ScummVMEvents.TOUCH_MODE_GAMEPAD:
 				resId = R.drawable.ic_action_gamepad;
 				break;
 			default:
@@ -663,7 +663,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		public void onClick(View v) {
 			runOnUiThread(new Runnable() {
 				public void run() {
-					_scummvm.pushEvent(ScummVMEventsBase.JE_MENU, 0, 0, 0, 0, 0, 0);
+					_scummvm.pushEvent(ScummVMEvents.JE_MENU, 0, 0, 0, 0, 0, 0);
 				}
 			});
 		}
@@ -900,7 +900,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	}
 
 	private MyScummVM _scummvm;
-	private ScummVMEventsBase _events;
+	private ScummVMEvents _events;
 	private MouseHelper _mouseHelper;
 	private Thread _scummvm_thread;
 
@@ -1031,11 +1031,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			//_mouseHelper.attach(_main_surface);
 		}
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
-			_events = new ScummVMEventsModern(this, _scummvm, _mouseHelper);
-		} else {
-			_events = new ScummVMEventsBase(this, _scummvm, _mouseHelper);
-		}
+		_events = new ScummVMEvents(this, _scummvm, _mouseHelper);
 
 		setupTouchModeBtn(_events.getTouchMode());
 
