@@ -44,7 +44,7 @@ void Inventory::reset() {
 void Inventory::addItem(uint8 item) {
 	_inventory[_inventoryLength] = item;
 	_inventoryLength++;
-	// TODO playsound(6, 5, -1);
+	g_engine->playSound(6, 5, -1);
 	update();
 }
 
