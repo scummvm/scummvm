@@ -30,7 +30,7 @@ tasks.withType(JavaCompile).configureEach {
 apply plugin: 'com.android.application'
 
 android {
-    compileSdk 34
+    compileSdk 35
     ndkVersion "23.2.8568313"
 
     namespace "org.scummvm.scummvm"
@@ -41,7 +41,7 @@ android {
         base.archivesName = "ScummVM"
 
         minSdkVersion 16
-        targetSdkVersion 34
+        targetSdkVersion 35
 
         versionName "2.9.0"
         versionCode 2090001
