@@ -1,6 +1,5 @@
 package org.scummvm.scummvm;
 
-import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -82,7 +81,7 @@ public class ScummVMEvents implements
 	private final float[] _repeatingJoystickCenteredAxisValuesArray = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
 	private int _repeatingJoystickAxisIdBitFlags = 0x00;
 
-	final protected Context _context;
+	final protected ScummVMActivity _activity;
 	final protected ScummVM _scummvm;
 	final protected GestureDetector _gd;
 	final protected int _longPressTimeout;
@@ -140,15 +139,15 @@ public class ScummVMEvents implements
 //		return new ScummVMEventHandler(this);
 //	}
 
-	public ScummVMEvents(Context context, ScummVM scummvm, MouseHelper mouseHelper) {
-		_context = context;
+	public ScummVMEvents(ScummVMActivity activity, ScummVM scummvm, MouseHelper mouseHelper) {
+		_activity = activity;
 		_scummvm = scummvm;
 		// Careful, _mouseHelper can be null (if HoverListener is not available for the device API -- old devices, API < 9)
 		_mouseHelper = mouseHelper;
 
 		_multitouchHelper = new MultitouchHelper(_scummvm);
 
-		_gd = new GestureDetector(context, this);
+		_gd = new GestureDetector(activity, this);
 		_gd.setOnDoubleTapListener(this);
 		_gd.setIsLongpressEnabled(false);
 
@@ -166,11 +165,11 @@ public class ScummVMEvents implements
 			// this toggles the android keyboard (see showVirtualKeyboard() in ScummVMActivity.java)
 			// when menu key is long-pressed
 //			InputMethodManager imm = (InputMethodManager)
-//				_context.getSystemService(Context.INPUT_METHOD_SERVICE);
+//				_activity.getSystemService(Context.INPUT_METHOD_SERVICE);
 //
 //			if (imm != null)
 //				imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-			((ScummVMActivity) _context).toggleScreenKeyboard();
+			_activity.toggleScreenKeyboard();
 		} else if (msg.what == MSG_SBACK_LONG_PRESS) {
 			_scummvm.pushEvent(JE_SYS_KEY,
 			                   KeyEvent.ACTION_DOWN,
@@ -360,8 +359,8 @@ public class ScummVMEvents implements
 					return true;
 				} else if (action == KeyEvent.ACTION_UP) {
 					// Hide keyboard
-					if (((ScummVMActivity) _context).isScreenKeyboardShown()) {
-						((ScummVMActivity) _context).hideScreenKeyboard();
+					if (_activity.isScreenKeyboardShown()) {
+						_activity.hideScreenKeyboard();
 					}
 					return true;
 				}
@@ -626,13 +625,13 @@ public class ScummVMEvents implements
 //		}
 
 		if (ScummVMActivity.keyboardWithoutTextInputShown
-		    && ((ScummVMActivity) _context).isScreenKeyboardShown()
-		    && ((ScummVMActivity) _context).getScreenKeyboard().getY() <= event.getY() ) {
-			event.offsetLocation(-((ScummVMActivity) _context).getScreenKeyboard().getX(), -((ScummVMActivity) _context).getScreenKeyboard().getY());
+		    && _activity.isScreenKeyboardShown()
+		    && _activity.getScreenKeyboard().getY() <= event.getY() ) {
+			event.offsetLocation(-_activity.getScreenKeyboard().getX(), -_activity.getScreenKeyboard().getY());
 			// TODO maybe call the onTouchEvent of something else here?
-			((ScummVMActivity) _context).getScreenKeyboard().onTouchEvent(event);
+			_activity.getScreenKeyboard().onTouchEvent(event);
 			// correct the offset for continuing handling the event
-			event.offsetLocation(((ScummVMActivity) _context).getScreenKeyboard().getX(), ((ScummVMActivity) _context).getScreenKeyboard().getY());
+			event.offsetLocation(_activity.getScreenKeyboard().getX(), _activity.getScreenKeyboard().getY());
 		}
 
 		if (_mouseHelper != null) {
