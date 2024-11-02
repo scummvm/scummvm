@@ -121,6 +121,7 @@ public:
 
 private:
 	DXMatrix _projectionMatrix2d;
+	DXMatrix _glProjectionMatrix;
 
 	Common::Array<DXMatrix> _transformStack;
 

@@ -233,7 +233,7 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 
 	Math::Matrix4 viewMatrix, projectionMatrix;
 	viewMatrix.setData(_viewMatrix);
-	projectionMatrix.setData(_projectionMatrix);
+	projectionMatrix.setData(_glProjectionMatrix);
 	_xmodelShader->use();
 	_xmodelShader->setUniform("viewMatrix", viewMatrix);
 	_xmodelShader->setUniform("projMatrix", projectionMatrix);
@@ -487,11 +487,6 @@ bool BaseRenderOpenGL3DShader::setProjection() {
 	matProj.matrix._22 *= scaleRatio * scaleMod;
 	matProj.matrix._31 = -(offsetX + (mleft - mright) / 2 - modWidth) / viewportWidth * 2.0f;
 	matProj.matrix._32 =  (offsetY + (mtop - mbottom) / 2 - modHeight) / viewportHeight * 2.0f;
-
-	// convert DX [0, 1] depth range to OpenGL [-1, 1] depth range.
-	float range = 2.0f / (_farClipPlane - _nearClipPlane);
-	matProj.matrix._33 = range;
-	matProj.matrix._43 = -(_nearClipPlane + _farClipPlane) * range / 2;
 
 	return setProjectionTransform(matProj);
 }
@@ -819,6 +814,13 @@ bool BaseRenderOpenGL3DShader::setViewTransform(const DXMatrix &transform) {
 // implements SetTransform() D3DTS_PROJECTION
 bool BaseRenderOpenGL3DShader::setProjectionTransform(const DXMatrix &transform) {
 	_projectionMatrix = transform;
+
+	// convert DX [0, 1] depth range to OpenGL [-1, 1] depth range.
+	_glProjectionMatrix = transform;
+	float range = 2.0f / (_farClipPlane - _nearClipPlane);
+	_glProjectionMatrix.matrix._33 = range;
+	_glProjectionMatrix.matrix._43 = -(_nearClipPlane + _farClipPlane) * range / 2;
+
 	return true;
 }
 
