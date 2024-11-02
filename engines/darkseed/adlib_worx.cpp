@@ -170,6 +170,10 @@ AdLibIbkInstrumentDefinition MidiDriver_Worx_AdLib::WORX_INSTRUMENT_BANK[128] = 
 	{ 0x24, 0x31, 0x54, 0x10, 0x55, 0x50, 0xfd, 0x2d, 0x00, 0x00, 0x0e, 0x00, 0x00, 0x00, 0x00, 0x00 }
 };
 
+const uint16 MidiDriver_Worx_AdLib::OPL_NOTE_FREQUENCIES[12] = {
+	0x16B, 0x181, 0x198, 0x1B0, 0x1CA, 0x1E5, 0x202, 0x220, 0x241, 0x263, 0x287, 0x2AE
+};
+
 MidiDriver_Worx_AdLib::MidiDriver_Worx_AdLib(OPL::Config::OplType oplType, int timerFrequency) :
 	MidiDriver_ADLIB_Multisource::MidiDriver_ADLIB_Multisource(oplType, timerFrequency) {
 
@@ -177,10 +181,18 @@ MidiDriver_Worx_AdLib::MidiDriver_Worx_AdLib(OPL::Config::OplType oplType, int t
 
 	for (int i = 0; i < 128; i++) {
 		WORX_INSTRUMENT_BANK[i].toOplInstrumentDefinition(_instrumentBank[i]);
-	}
 
+		// The original code does not add the key scale level bits (bits 6 and 7)
+		// from the instrument definition to the level before it writes the 0x4x
+		// register value, so effectively, KSL is always disabled for operator 1.
+		// This is probably an oversight, but this behavior is implemented here
+		// by clearing the KSL bits of operator 1 in the instrument definition.
+		_instrumentBank[i].operator1.level &= 0x3F;
+	}
+	 
 	_defaultChannelVolume = 0x7F;
 	_channel10Melodic = true;
+	_instrumentWriteMode = INSTRUMENT_WRITE_MODE_FIRST_NOTE_ON;
 }
 
 MidiDriver_Worx_AdLib::~MidiDriver_Worx_AdLib() {
@@ -197,32 +209,45 @@ uint8 MidiDriver_Worx_AdLib::allocateOplChannel(uint8 channel, uint8 source, uin
 		uint8 oplChannel = _melodicChannels[i];
 		if (_activeNotes[oplChannel].channelAllocated && _activeNotes[oplChannel].source == source && _activeNotes[oplChannel].channel == channel &&
 				!_activeNotes[oplChannel].noteActive && unusedChannel == 0xFF) {
+			// This OPL channel is already allocated to this source and MIDI
+			// channel, but it is not playing a note. Use this channel.
 			unusedChannel = oplChannel;
 			break;
 		}
 		if (!_activeNotes[oplChannel].channelAllocated && unallocatedChannel == 0xFF) {
+			// This channel is unallocated. If no unallocated channel has been
+			// found yet, register this channel.
 			unallocatedChannel = oplChannel;
 		}
 		if (_activeNotes[oplChannel].channelAllocated && !(_activeNotes[oplChannel].source == source && _activeNotes[oplChannel].channel == channel) &&
 				!_activeNotes[oplChannel].noteActive && unusedAllocatedChannel == 0xFF) {
+			// This channel is allocated to a different source and/or MIDI
+			// channel, but it is not playing a note. If a channel of this
+			// type has not yet been found, register it.
 			unusedAllocatedChannel = oplChannel;
 		}
 	}
 
 	if (unusedChannel != 0xFF) {
+		// Found an allocated but unused channel.
 		allocatedChannel = unusedChannel;
 	}
 	else if (unallocatedChannel != 0xFF) {
+		// Found an unallocated channel.
 		allocatedChannel = unallocatedChannel;
 	}
 	else if (unusedAllocatedChannel != 0xFF) {
+		// Found an unused channel allocated to a different source / MIDI channel.
 		allocatedChannel = unusedAllocatedChannel;
 	}
 	else {
+		// All channels are playing notes. No channel is freed, so this will
+		// result in the note not being played. Return 0xFF.
 		_allocationMutex.unlock();
 		return allocatedChannel;
 	}
 
+	// Allocate the OPL channel to the source / MIDI channel.
 	_activeNotes[allocatedChannel].channelAllocated = true;
 	_activeNotes[allocatedChannel].source = source;
 	_activeNotes[allocatedChannel].channel = channel;
@@ -230,6 +255,35 @@ uint8 MidiDriver_Worx_AdLib::allocateOplChannel(uint8 channel, uint8 source, uin
 	_allocationMutex.unlock();
 
 	return allocatedChannel;
+}
+
+uint16 MidiDriver_Worx_AdLib::calculateFrequency(uint8 channel, uint8 source, uint8 note) {
+	// Notes for melodic instruments are transposed down by 13 semitones.
+	uint8 transposedNote = MAX(note - 12 - 1, 0);
+
+	// TODO Implement transpose based on transpose controllers
+
+	// Get F-num based on octave note. Note: Worx does not support pitch bend.
+	uint8 octaveNote = transposedNote % 12;
+	uint16 oplFrequency = OPL_NOTE_FREQUENCIES[octaveNote];
+
+	// Get block (octave).
+	uint8 block = transposedNote / 12;
+	block = MIN(block, (uint8) 7);
+
+	// Combine the block and frequency in the OPL Ax and Bx register format.
+	return oplFrequency | (block << 10);
+}
+
+uint8 MidiDriver_Worx_AdLib::calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum) {
+	// Worx calculates volume by scaling the instrument operator volume by the
+	// channel volume. Note velocity is not used.
+	uint8 operatorVolume = 0x3F - (instrumentDef.getOperatorDefinition(operatorNum).level & 0x3F);
+	uint8 channelVolume = _controlData[source][channel].volume;
+	// Note: the original code loses 1 bit of precision here (bit 0 is always 0).
+	uint8 unscaledVolume = (operatorVolume * channelVolume) >> 7;
+
+	return 0x3F - unscaledVolume;
 }
 
 } // namespace Darkseed

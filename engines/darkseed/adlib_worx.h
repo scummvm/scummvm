@@ -26,16 +26,38 @@
 
 namespace Darkseed {
 
+/**
+ * Implementation of the AdLib code from the Worx Toolkit library,
+ * based on version 2.1, as used by Dark Seed (CD version).
+ * Implements the OPL channel allocation algorithm and note frequency
+ * and volume calculation.
+ *
+ * TODO Implementation is incomplete, because Dark Seed does not use
+ * some functionality of the library:
+ * - OPL rhythm mode
+ * - Transpose controllers 0x68 and 0x69 (seems to be buggy)
+ */
 class MidiDriver_Worx_AdLib : public MidiDriver_ADLIB_Multisource {
 private:
+	/**
+	 * The OPL instrument bank of the Worx Toolkit.
+	 * This was taken from the Dark Seed executable and might have been
+	 * customized for the game.
+	 */
 	static AdLibIbkInstrumentDefinition WORX_INSTRUMENT_BANK[];
+	/**
+	 * The OPL frequency (F-num) for each octave note.
+	 */
+	static const uint16 OPL_NOTE_FREQUENCIES[];
 
 public:
-	MidiDriver_Worx_AdLib(OPL::Config::OplType oplType, int timerFrequency);
+	MidiDriver_Worx_AdLib(OPL::Config::OplType oplType, int timerFrequency = OPL::OPL::kDefaultCallbackFrequency);
 	~MidiDriver_Worx_AdLib();
 
 protected:
 	uint8 allocateOplChannel(uint8 channel, uint8 source, uint8 instrumentId) override;
+	uint16 calculateFrequency(uint8 channel, uint8 source, uint8 note) override;
+	uint8 calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum) override;
 };
 
 } // namespace Darkseed

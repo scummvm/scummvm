@@ -335,7 +335,12 @@ public:
 		 * write the instrument only once for many notes and allows parameters
 		 * of the instrument to be changed for the following notes.
 		 */
-		INSTRUMENT_WRITE_MODE_PROGRAM_CHANGE
+		INSTRUMENT_WRITE_MODE_PROGRAM_CHANGE,
+		/**
+		 * Will write the instrument definition on the first note played with
+		 * a new instrument on a channel.
+		 */
+		INSTRUMENT_WRITE_MODE_FIRST_NOTE_ON
 	};
 
 	/**
@@ -593,6 +598,11 @@ protected:
 		 * rhythm instruments (@see determineInstrument).
 		 */
 		uint8 instrumentId;
+		/**
+		 * The ID of the instrument that was last written to the OPL channel,
+		 * or -1 if no instrument was written yet.
+		 */
+		int16 lastWrittenInstrumentId;
 		/**
 		 * Pointer to the instrument definition used to play the note.
 		 */
@@ -1033,6 +1043,16 @@ protected:
 	 * @return The calculated unscaled operator volume (level).
 	 */
 	virtual uint8 calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum);
+	/**
+	 * Determines if volume settings should be applied to the operator level.
+	 * This depends on the type of the operator (carrier or modulator), which
+	 * depends on the type of connection specified in the instrument.
+	 * 
+	 * @param instrumentDef The instrument definition
+	 * @param operatorNum The number of the operator (0-1 or 0-3)
+	 * @return True if volume should be applied, false otherwise
+	 */
+	virtual bool isVolumeApplicableToOperator(OplInstrumentDefinition &instrumentDef, uint8 operatorNum);
 	/**
 	 * Determines the panning that should be applied to notes played on the
 	 * specified MIDI channel and source.

@@ -65,8 +65,7 @@ int MusicPlayer::open() {
 	} else {
 		switch (_deviceType) {
 			case MT_ADLIB:
-				// TODO Verify timer frequency
-				_driver = new MidiDriver_Worx_AdLib(OPL::Config::kOpl2, 250);
+				_driver = new MidiDriver_Worx_AdLib(OPL::Config::kOpl2);
 				// Some tracks do not set instruments and expect instrument 0
 				// to be set on each channel. Make sure this is done every time
 				// a track starts.
@@ -79,6 +78,7 @@ int MusicPlayer::open() {
 				break;
 		}
 
+		// CD version uses SMF data
 		_parser = MidiParser::createParser_SMF(0);
 	}
 
@@ -87,8 +87,10 @@ int MusicPlayer::open() {
 		_parser->property(MidiParser::mpDisableAutoStartPlayback, true);
 
 	int returnCode = _driver->open();
-	if (returnCode != 0)
+	if (returnCode != 0) {
 		error("MusicPlayer::open - Failed to open MIDI driver - error code %d.", returnCode);
+		return 1;
+	}
 
 	syncSoundSettings();
 
@@ -103,6 +105,7 @@ int MusicPlayer::open() {
 
 void MusicPlayer::onTimer(void *data) {
 	MusicPlayer *p = (MusicPlayer *)data;
+
 	Common::StackLock lock(p->_mutex);
 
 	if (p->_parser) {
@@ -112,6 +115,7 @@ void MusicPlayer::onTimer(void *data) {
 
 bool MusicPlayer::isPlaying() {
 	Common::StackLock lock(_mutex);
+
 	return _parser && _parser->isPlaying();
 }
 
@@ -172,6 +176,8 @@ void MusicPlayer::load(Common::SeekableReadStream *in, int32 size) {
 		in->seek(startPos);
 	}
 
+	if (isPlaying())
+		stop();
 	_parser->unloadMusic();
 	if (_musicData) {
 		delete[] _musicData;

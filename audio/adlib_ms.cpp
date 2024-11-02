@@ -429,6 +429,7 @@ void MidiDriver_ADLIB_Multisource::ActiveNote::init() {
 	noteCounterValue = 0;
 
 	instrumentId = 0;
+	lastWrittenInstrumentId = -1;
 	instrumentDef = nullptr;
 
 	channelAllocated = false;
@@ -739,6 +740,19 @@ void MidiDriver_ADLIB_Multisource::noteOn(uint8 channel, uint8 note, uint8 veloc
 		if (_instrumentWriteMode == INSTRUMENT_WRITE_MODE_NOTE_ON) {
 			// Write out the instrument definition, volume and panning.
 			writeInstrument(oplChannel, instrument);
+		}
+		else if (_instrumentWriteMode == INSTRUMENT_WRITE_MODE_FIRST_NOTE_ON) {
+			if (activeNote->lastWrittenInstrumentId != activeNote->instrumentId) {
+				// Write out the instrument definition, volume and panning.
+				writeInstrument(oplChannel, instrument);
+			}
+			else {
+				// Write out volume, if applicable.
+				for (int i = 0; i < activeNote->instrumentDef->getNumberOfOperators(); i++) {
+					if (isVolumeApplicableToOperator(*activeNote->instrumentDef, i))
+						writeVolume(oplChannel, i);
+				}
+			}
 		}
 
 		// Calculate and write frequency and block and write key on bit.
@@ -1624,51 +1638,8 @@ uint8 MidiDriver_ADLIB_Multisource::calculateVolume(uint8 channel, uint8 source,
 	// Get the volume (level) for this operator from the instrument definition.
 	uint8 operatorDefVolume = instrumentDef.getOperatorDefinition(operatorNum).level & 0x3F;
 
-	// Determine if volume settings should be applied to this operator. Carrier
-	// operators in FM synthesis and all operators in additive synthesis need
-	// to have volume settings applied; modulator operators just use the
-	// instrument definition volume.
-	bool applyVolume = false;
-	if (instrumentDef.rhythmType != RHYTHM_TYPE_UNDEFINED) {
-		applyVolume = (instrumentDef.rhythmType != RHYTHM_TYPE_BASS_DRUM || operatorNum == 1);
-	} else if (instrumentDef.fourOperator) {
-		// 4 operator instruments have 4 different operator connections.
-		uint8 connection = (instrumentDef.connectionFeedback0 & 0x01) | ((instrumentDef.connectionFeedback1 & 0x01) << 1);
-		switch (connection) {
-		case 0x00:
-			// 4FM
-			// Operator 3 is a carrier.
-			applyVolume = (operatorNum == 3);
-			break;
-		case 0x01:
-			// 1ADD+3FM
-			// Operator 0 is additive and operator 3 is a carrier.
-			applyVolume = (operatorNum == 0 || operatorNum == 3);
-			break;
-		case 0x10:
-			// 2FM+2FM
-			// Operators 1 and 3 are carriers.
-			applyVolume = (operatorNum == 1 || operatorNum == 3);
-			break;
-		case 0x11:
-			// 1ADD+2FM+1ADD
-			// Operators 0 and 3 are additive and operator 2 is a carrier.
-			applyVolume = (operatorNum == 0 || operatorNum == 2 || operatorNum == 3);
-			break;
-		default:
-			// Should not happen.
-			applyVolume = false;
-		}
-	} else {
-		// 2 operator instruments have 2 different operator connections:
-		// additive (0x01) or FM (0x00) synthesis.  Carrier operators in FM
-		// synthesis and all operators in additive synthesis need to have
-		// volume settings applied; modulator operators just use the instrument
-		// definition volume. In FM synthesis connection, operator 1 is a
-		// carrier.
-		applyVolume = (instrumentDef.connectionFeedback0 & 0x01) == 0x01 || operatorNum == 1;
-	}
-	if (!applyVolume)
+	// Determine if volume settings should be applied to this operator.
+	if (!isVolumeApplicableToOperator(instrumentDef, operatorNum))
 		// No need to apply volume settings; just use the instrument definition
 		// operator volume.
 		return operatorDefVolume;
@@ -1731,6 +1702,54 @@ uint8 MidiDriver_ADLIB_Multisource::calculateUnscaledVolume(uint8 channel, uint8
 
 	// Clip the volume to the maximum value.
 	return MIN((uint8)0x3F, unscaledVolume);
+}
+
+bool MidiDriver_ADLIB_Multisource::isVolumeApplicableToOperator(OplInstrumentDefinition &instrumentDef, uint8 operatorNum) {
+	// Determine if volume settings should be applied to this operator. Carrier
+	// operators in FM synthesis and all operators in additive synthesis need
+	// to have volume settings applied; modulator operators just use the
+	// instrument definition volume.
+	bool applyVolume = false;
+	if (instrumentDef.rhythmType != RHYTHM_TYPE_UNDEFINED) {
+		applyVolume = (instrumentDef.rhythmType != RHYTHM_TYPE_BASS_DRUM || operatorNum == 1);
+	} else if (instrumentDef.fourOperator) {
+		// 4 operator instruments have 4 different operator connections.
+		uint8 connection = (instrumentDef.connectionFeedback0 & 0x01) | ((instrumentDef.connectionFeedback1 & 0x01) << 1);
+		switch (connection) {
+		case 0x00:
+			// 4FM
+			// Operator 3 is a carrier.
+			applyVolume = (operatorNum == 3);
+			break;
+		case 0x01:
+			// 1ADD+3FM
+			// Operator 0 is additive and operator 3 is a carrier.
+			applyVolume = (operatorNum == 0 || operatorNum == 3);
+			break;
+		case 0x10:
+			// 2FM+2FM
+			// Operators 1 and 3 are carriers.
+			applyVolume = (operatorNum == 1 || operatorNum == 3);
+			break;
+		case 0x11:
+			// 1ADD+2FM+1ADD
+			// Operators 0 and 3 are additive and operator 2 is a carrier.
+			applyVolume = (operatorNum == 0 || operatorNum == 2 || operatorNum == 3);
+			break;
+		default:
+			// Should not happen.
+			applyVolume = false;
+		}
+	} else {
+		// 2 operator instruments have 2 different operator connections:
+		// additive (0x01) or FM (0x00) synthesis.  Carrier operators in FM
+		// synthesis and all operators in additive synthesis need to have
+		// volume settings applied; modulator operators just use the instrument
+		// definition volume. In FM synthesis connection, operator 1 is a
+		// carrier.
+		applyVolume = (instrumentDef.connectionFeedback0 & 0x01) == 0x01 || operatorNum == 1;
+	}
+	return applyVolume;
 }
 
 uint8 MidiDriver_ADLIB_Multisource::calculatePanning(uint8 channel, uint8 source) {
@@ -1839,6 +1858,7 @@ uint16 MidiDriver_ADLIB_Multisource::determineChannelRegisterOffset(uint8 oplCha
 void MidiDriver_ADLIB_Multisource::writeInstrument(uint8 oplChannel, InstrumentInfo instrument) {
 	ActiveNote *activeNote = (instrument.instrumentDef->rhythmType == RHYTHM_TYPE_UNDEFINED ? &_activeNotes[oplChannel] : &_activeRhythmNotes[instrument.instrumentDef->rhythmType - 1]);
 	activeNote->instrumentDef = instrument.instrumentDef;
+	activeNote->lastWrittenInstrumentId = instrument.instrumentId;
 
 	// Calculate operator volumes and write operator definitions to
 	// the OPL registers.

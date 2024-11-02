@@ -175,7 +175,6 @@ void Sound::killAllSound() {
 	stopMusic();
 }
 
-
 void Sound::syncSoundSettings() {
 	_musicPlayer->syncSoundSettings();
 }
