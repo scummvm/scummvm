@@ -752,7 +752,7 @@ int16 ADSInterpreter::getStateForSceneOp(uint16 segnum) {
 	if (idx < 0)
 		return 0;
 	if (!(_adsData->_state[idx] & 4)) {
-		for (const Common::SharedPtr<TTMSeq> seq: _adsData->_usedSeqs[idx]) {
+		for (const Common::SharedPtr<TTMSeq>& seq: _adsData->_usedSeqs[idx]) {
 			if (!seq)
 				return 0;
 			if (seq->_runFlag != kRunTypeStopped && !seq->_selfLoop)
