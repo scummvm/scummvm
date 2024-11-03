@@ -169,6 +169,9 @@ bool BaseRenderOpenGL3DShader::setup2D(bool force) {
 		glEnable(GL_BLEND);
 		setSpriteBlendMode(Graphics::BLEND_NORMAL);
 
+		glEnable(GL_ALPHA_TEST);
+		glAlphaFunc(GL_GEQUAL, 0.0f);
+
 		glPolygonMode(GL_FRONT, GL_FILL);
 		glFrontFace(GL_CCW);  // WME DX have CW
 		glEnable(GL_CULL_FACE);
@@ -188,6 +191,10 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 		glEnable(GL_DEPTH_TEST);
+		//glEnable(GL_ALPHA_TEST);
+		// WME uses 8 as a reference value and Direct3D expects it to be in the range [0, 255]
+		// 8 / 255 ~ 0.0313
+		//glAlphaFunc(GL_GEQUAL, 0.0313f);
 
 		setAmbientLightRenderState();
 
@@ -245,8 +252,6 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 	_xmodelShader->use();
 	_xmodelShader->setUniform("viewMatrix", viewMatrix);
 	_xmodelShader->setUniform("projMatrix", projectionMatrix);
-	// this is 8 / 255, since 8 is the value used by wme (as a DWORD)
-	_xmodelShader->setUniform1f("alphaRef", 0.031f);
 
 	_geometryShader->use();
 	_geometryShader->setUniform("viewMatrix", viewMatrix);
@@ -414,6 +419,7 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::
 	} else {
 		setSpriteBlendMode(blendMode);
 		if (alphaDisable) {
+			glDisable(GL_ALPHA_TEST);
 			glDisable(GL_BLEND);
 		}
 
@@ -431,13 +437,12 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::
 		glBindBuffer(GL_ARRAY_BUFFER, _spriteVBO);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(SpriteVertex), vertices);
 
-		_spriteShader->use();
-		_spriteShader->setUniform("alphaTest", !alphaDisable);
 		setProjection2D(_spriteShader);
 
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 		if (alphaDisable) {
+			glEnable(GL_ALPHA_TEST);
 			glEnable(GL_BLEND);
 		}
 	}
