@@ -177,6 +177,7 @@ private:
 	bool _isDemo;
 	bool _flipMode;
 	bool _skipNextFrame;
+	uint32 _thisFrameMs;
 
 public:
 	DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc);

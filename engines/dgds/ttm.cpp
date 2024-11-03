@@ -640,7 +640,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	case 0x1020: // SET DELAY:	    i:int   [0..n]
 		// TODO: Probably should do this accounting (as well as timeCut and dialogs)
 		// 		 in game frames, not millis.
-		_vm->adsInterpreter()->setScriptDelay((int)(ivals[0] * MS_PER_FRAME));
+		_vm->adsInterpreter()->setScriptDelay((int)ceil(ivals[0] * MS_PER_FRAME));
 		break;
 	case 0x1030: // SET BRUSH:	id:int [-1:n]
 		seq._brushNum = ivals[0];
@@ -1035,7 +1035,9 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		break;
 	}
 	case 0xc020: {	// LOAD SAMPLE: filename:str
-		_vm->_soundPlayer->loadMacMusic(sval.c_str());
+		// Ignore this?
+		//_vm->_soundPlayer->loadMusic(sval.c_str());
+		//_vm->_soundPlayer->stopMusic();
 		break;
 	}
 	case 0xc030: {	// SELECT SAMPLE: int: i
@@ -1043,7 +1045,11 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		break;
 	}
 	case 0xc050: {	// PLAY SAMPLE: int: i
-		_vm->_soundPlayer->playMusic(ivals[0]);
+		_vm->_soundPlayer->playMusicOrSFX(ivals[0]);
+		break;
+	}
+	case 0xc060: {	// STOP SAMPLE: int: i
+		_vm->_soundPlayer->stopMusicOrSFX(ivals[0]);
 		break;
 	}
 	case 0xc210: {  // LOAD RAW SFX filename:str
@@ -1101,9 +1107,6 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		if (_vm->_platform == Common::kPlatformAmiga) {
 			// TODO: remove hard-coded stuff..
 			_vm->_soundPlayer->playAmigaSfx("DYNAMIX.INS", 0, 255);
-		} else if (_vm->_platform == Common::kPlatformMacintosh) {
-			if (_vm->_soundPlayer->loadMacMusic(sval.c_str()))
-				_vm->_soundPlayer->playMusic(seq._currentSongId);
 		} else {
 			if (_vm->_soundPlayer->loadMusic(sval.c_str()))
 				_vm->_soundPlayer->playMusic(seq._currentSongId);

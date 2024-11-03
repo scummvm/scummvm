@@ -88,7 +88,8 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_detailLevel(kDgdsDetailHigh), _textSpeed(1), _justChangedScene1(false), _justChangedScene2(false),
 	_random("dgds"), _currentCursor(-1), _menuToTrigger(kMenuNone), _isLoading(true), _flipMode(false),
 	_rstFileName(nullptr), _difficulty(1), _menu(nullptr), _adsInterp(nullptr), _isDemo(false),
-_dragonArcade(nullptr), _chinaTank(nullptr), _chinaTrain(nullptr), _skipNextFrame(false), _gameId(GID_INVALID) {
+	_dragonArcade(nullptr), _chinaTank(nullptr), _chinaTrain(nullptr), _skipNextFrame(false),
+	_gameId(GID_INVALID), _thisFrameMs(0) {
 
 	_platform = gameDesc->platform;
 	_gameLang = gameDesc->language;
@@ -398,6 +399,9 @@ void DgdsEngine::loadGameFiles() {
 		break;
 	case GID_WILLY:
 		_gameGlobals = new WillyGlobals(_clock);
+		_soundPlayer->loadSFX("WILLYSND.SX");
+		_soundPlayer->loadMusic("WILLYMUS.SX");
+
 		if (_resource->hasResource("WILLY.GDS")) {
 			_gdsScene->load("WILLY.GDS", _resource, _decompressor);
 			_rstFileName = "WILLY.RST";

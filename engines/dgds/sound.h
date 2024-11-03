@@ -55,7 +55,6 @@ public:
 
 	void playAmigaSfx(const Common::String &filename, byte channel, byte volume);
 	bool loadMusic(const Common::String &filename);
-	bool loadMacMusic(const Common::String &filename);
 	void loadSFX(const Common::String &filename);
 
 	void playMusic(int num);
@@ -64,6 +63,9 @@ public:
 
 	void playSFX(int num);
 
+	void playMusicOrSFX(int num);
+	void stopMusicOrSFX(int num);
+
 	void stopSfxForChannel(byte channel);
 	void stopSfxByNum(int num);
 	void stopAllSfx();
@@ -71,7 +73,9 @@ public:
 	bool playPCM(const byte *data, uint32 size);
 
 private:
-	void loadPCSound(const Common::String &filename, Common::Array<SoundData> &dataArray);
+	void loadSNGSoundData(const Common::String &filename, Common::Array<SoundData> &dataArray);
+	bool loadSXSoundData(const Common::String &filename, Common::Array<SoundData> &dataArray, Common::HashMap<uint16, uint16> &idMap);
+
 	void playPCSound(int num, const Common::Array<SoundData> &dataArray, Audio::Mixer::SoundType soundType);
 
 	void processInitSound(uint32 obj, const SoundData &data, Audio::Mixer::SoundType soundType);
@@ -81,6 +85,7 @@ private:
 	void initSoundResource(MusicEntry *newSound, const SoundData &data, Audio::Mixer::SoundType soundType);
 
 	int mapSfxNum(int num) const;
+	int mapMusicNum(int num) const;
 
 	struct Channel _channels[2];
 
@@ -88,6 +93,7 @@ private:
 	Common::HashMap<uint16, uint16> _musicIdMap;
 
 	Common::Array<SoundData> _sfxData;
+	Common::HashMap<uint16, uint16> _sfxIdMap;
 
 	Common::String _currentMusic;
 
