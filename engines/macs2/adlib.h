@@ -47,6 +47,9 @@ namespace Macs2 {
 
 		uint16 Func19BE(uint8 offset);
 
+		// TODO: Function should take a pointer to data
+		uint16 Func19BE_TODO(uint8 offset);
+
 		// TODO: Maybe need to add the caller
 		void Func24FD();
 
