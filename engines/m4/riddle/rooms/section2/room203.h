@@ -42,6 +42,7 @@ private:
 	int _val11 = 0;
 	const char *_digiName1 = nullptr;
 	int _digiTrigger1 = 0;
+	const char *_digiName2 = nullptr;
 	int _trigger1 = -1;
 	int _trigger2 = -1;
 	int _trigger3 = -1;
@@ -59,6 +60,10 @@ private:
 	int _ripGivesPhoto = 0;
 	int _ripClimbsAndBacksDown = 0;
 	int _ripPointsAtHelmet = 0;
+	int _ripHandsBehBack = 0;
+	int _ripHandTalk = 0;
+	int _ripTalker = 0;
+	machine *_ripsh1 = nullptr;
 	machine *_mei = nullptr;
 	int _meiTalkToRip = 0;
 	int _meiTurnAndTalk = 0;
@@ -75,7 +80,7 @@ private:
 	int _oldLadyNoHelmet = 0;
 	int _oldLadyFeedingBirds = 0;
 	int _oldLadyMode = 0, _oldLadyShould = 0;
-	int _oldLadyMode2 = 0;
+	int _ripleyShould = 0;
 	int _oldLady1 = 0;
 	int _oldLadyPointsToPhoto = 0;
 	int _oldLadyPhotoPopup = 0;
@@ -94,6 +99,7 @@ private:
 	int _officialTurn11_3 = 0;
 	int _officialTurn3_7 = 0;
 	int _officialMoveAlong = 0;
+	int _officialThroughThere = 0;
 	machine *_peasant = nullptr;
 	machine *_peasantShadow = nullptr;
 	int _peasantSeries = 0;
@@ -101,7 +107,9 @@ private:
 	int _peasantRocks = 0;
 	int _peasantRocksShadow = 0;
 	int _peskyYellsThief = 0;
+	int _peskyBegLoop = 0;
 	int _peasantMode = 0, _peasantShould = 0;
+	int _peasantMode2 = 0;
 	int _peasantX = 0;
 	int _peasantY = 0;
 	int _peasantScale = 0;
@@ -113,7 +121,7 @@ private:
 	int _203sg01 = 0;
 	machine *_g1 = nullptr;
 	machine *_g2 = nullptr;
-	int _unkMode = 0;
+	int _ripleyMode = 0;
 	int _unkShould = 0;
 
 	int _ctr1 = 0;
@@ -133,6 +141,8 @@ public:
 
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms

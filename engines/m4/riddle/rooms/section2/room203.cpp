@@ -326,6 +326,8 @@ void Room203::init() {
 }
 
 void Room203::daemon() {
+	int frame;
+
 	if (keyCheck() && _gkShould == 0 && _G(game_buff_ptr)->x1 >= 380) {
 		_gkShould = 1;
 		_G(kernel).call_daemon_every_loop = false;
@@ -1097,8 +1099,137 @@ void Room203::daemon() {
 		}
 		break;
 
+	case 130:
+		switch (_oldLadyMode) {
+		case 30:
+			break;
+
+		case 5666:
+			if (_trigger3 != -1) {
+				kernel_trigger_dispatchx(kernel_trigger_create(_trigger3));
+				_trigger3 = -1;
+			} else if (_oldLadyShould == 5100) {
+				if (imath_ranged_rand(1, 80) < 20)
+					_oldLadyShould = 5101;
+
+				kernel_timing_trigger(30, 131);
+			}
+			break;
+
+		case 5668:
+			if (_trigger3 != -1) {
+				kernel_trigger_dispatchx(kernel_trigger_create(_trigger3));
+				_trigger3 = -1;
+			} else {
+				// Original has a whole switch statement, but all cases lead
+				// to the same trigger
+				kernel_trigger_dispatchx(kernel_trigger_create(131));
+			}
+			break;
+
+		case 5669:
+			if (_trigger3 != -1) {
+				kernel_trigger_dispatchx(kernel_trigger_create(_trigger3));
+				_trigger3 = -1;
+			} else {
+				switch (_oldLadyShould) {
+				case 5200:
+					if (imath_ranged_rand(1, 80) < 20)
+						_oldLadyShould = 5201;
+					break;
+
+				case 5202:
+					_oldLadyShould = 5200;
+					break;
+
+				default:
+					break;
+				}
+
+				kernel_timing_trigger(30, 131);
+			}
+			break;
+
+		default:
+			kernel_trigger_dispatchx(kernel_trigger_create(131));
+			break;
+		}
+		break;
+
+	case 131:
+#ifdef TODO
+		switch (_oldLadyMode) {
+		case 5100:
+			sendWSMessage_10000(1, _oldLady, _oldLadyFrame, 1, 1, 130, _oldLadyFrame, 1, 1, 0);
+			break;
+
+		case 5101:
+			sendWSMessage_10000(1, _oldLady, _oldLadyFeedingBirds, 1, 26, 131,
+				_oldLadyFeedingBirds, 26, 26, 0);
+			_oldLadyShould = 5102;
+			break;
+
+		case 5102:
+			sendWSMessage_10000(1, _oldLady, _oldLadyFeedingBirds, 26, 1, 131,
+				_oldLadyFrame, 1, 1, 0);
+			_oldLadyShould = 5100;
+			break;
+		default:
+			break;
+		}
+#endif
+		break;
+
+	case 140:
+		switch (_officialMode) {
+		case 2001:
+			switch (_officialShould) {
+			case 2010:
+				if (_trigger4 != -1) {
+					kernel_trigger_dispatchx(_trigger4);
+					_trigger4 = -1;
+				} else {
+					kernel_timing_trigger(2, 141);
+				}
+				break;
+
+			case 2020:
+			case 2040:
+				kernel_timing_trigger(2, 141);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 2002:
+			switch (_officialShould) {
+			case 2011:
+			case 2013:
+			case 2014:
+			case 2015:
+			case 2016:
+			case 2017:
+				kernel_trigger_dispatchx(kernel_trigger_create(141));
+				break;
+
+			case 2012:
+				kernel_timing_trigger(1, 141);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
 	case 150:
-		if (_unkMode == 1001 && _oldLadyMode2 == 1030 && _trigger5 != -1) {
+		if (_ripleyMode == 1001 && _ripleyShould == 1030 && _trigger5 != -1) {
 			kernel_trigger_dispatchx(_trigger5);
 			_trigger5 = -1;
 
@@ -1115,18 +1246,252 @@ void Room203::daemon() {
 		kernel_timing_trigger(3, 151);
 		break;
 
+	case 151:
+		switch (_ripleyMode) {
+		case 1001:
+			switch (_ripleyShould) {
+			case 1010:
+				conv_load("conv203d", 10, 10, 152);
+				conv_export_value_curr(_G(flags)[V054], 0);
+				conv_export_value_curr(0, 1);
+				conv_export_value_curr(0, 2);
+				conv_export_value_curr(_G(flags)[V073], 3);
+				conv_export_value_curr(_G(flags)[V043], 5);
+				conv_play();
+				_ripleyShould = 1030;
+				kernel_trigger_dispatchx(kernel_trigger_create(150));
+				break;
+
+			case 1020:
+			case 1030:
+				sendWSMessage_10000(1, _ripley, _ripHandsBehBack, 11, 11, 150,
+					_ripHandsBehBack, 11, 11, 0);
+				break;
+
+			case 1040:
+				_ripleyShould = 1060;
+				sendWSMessage_10000(1, _ripley, _ripHandsBehBack, 11, 1, 151,
+					_ripHandsBehBack, 1, 1, 0);
+				break;
+
+			case 1060:
+				terminateMachineAndNull(_ripley);
+				terminateMachineAndNull(_ripsh1);
+				series_unload(_ripHandsBehBack);
+				_peasantMode = 4058;
+				ws_unhide_walker();
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 1002:
+			switch (_ripleyShould) {
+			case 1110:
+				ws_hide_walker();
+				player_set_commands_allowed(false);
+				_oldLady1 = series_load("old lady");
+				_ripKneeling = series_load("rip kneels down to old lady");
+				_ripKneelingTalk = series_load("rip kneeling talks to old lady");
+
+				_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 640, -53, 100, 0x400, 0,
+					triggerMachineByHashCallback, "rip in conv");
+				sendWSMessage_10000(1, _ripley, _ripKneeling, 1, 31, 150, _ripKneeling, 31, 31, 0);
+				_ripleyShould = 1112;
+				_oldLadyMode = 5568;
+				_oldLadyShould = 5301;
+				kernel_trigger_dispatchx(kernel_trigger_create(130));
+				break;
+
+			case 1112:
+				sendWSMessage_10000(1, _ripley, _ripKneelingTalk, 1, 4, 150,
+					_ripKneelingTalk, 4, 4, 0);
+				_ripleyShould = 1113;
+				break;
+
+			case 1113:
+				conv_load("conv203e", 10, 10, 152);
+				conv_export_value_curr(_G(flags)[V051], 0);
+				conv_play();
+				_ripleyShould = 1130;
+				kernel_trigger_dispatchx(kernel_trigger_create(150));
+				break;
+
+			case 1120:
+				frame = imath_ranged_rand(5, 9);
+				sendWSMessage_10000(1, _ripley, _ripKneelingTalk, 1, frame, 150,
+					_ripKneelingTalk, frame, frame, 0);
+				break;
+
+			case 1121:
+				_oldLadyProtectsHelmet = series_load("old lady protect helmet");
+				_ripPointsAtHelmet = series_load("rip points at helmet");
+				_ripleyShould = 1122;
+
+				sendWSMessage_10000(1, _ripley, _ripPointsAtHelmet, 1, 5, 151,
+					_ripPointsAtHelmet, 5, 5, 0);
+				_oldLadyShould = 5308;
+				break;
+
+			case 1122:
+				_ripleyShould = 1123;
+				digi_play(_digiName2, 1, 255, 151);
+				break;
+
+			case 1123:
+				_ripleyShould = 1124;
+				sendWSMessage_10000(1, _ripley, _ripPointsAtHelmet, 5, 1, 151,
+					_ripKneelingTalk, 4, 4, 0);
+				break;
+
+			case 1124:
+				_ripleyShould = 1125;
+				sendWSMessage_10000(1, _oldLady, _oldLadyProtectsHelmet, 1, 16, 151,
+					_oldLadyProtectsHelmet, 16, 16, 0);
+				break;
+
+			case 1125:
+				_ripleyShould = 1126;
+				sendWSMessage_10000(1, _oldLady, _oldLadyProtectsHelmet, 16, 1, 151,
+					_oldLady1, 6, 6, 0);
+				break;
+
+			case 1126:
+				_ripleyShould = 1127;
+				series_stream("old woman cries for mommie", 5, 0, 151);
+				break;
+
+			case 1127:
+				_ripleyShould = 1128;
+				digi_preload("203r56");
+				kernel_timing_trigger(30, 666);
+				series_stream("rip blinks", 10, 0, 151);
+				break;
+
+			case 1128:
+				series_unload(_ripPointsAtHelmet);
+				series_unload(_oldLadyProtectsHelmet);
+				_oldLadyShould = 5302;
+				kernel_trigger_dispatchx(kernel_trigger_create(130));
+				_ripleyShould = 1130;
+				kernel_timing_trigger(1, 150);
+				conv_resume();
+				break;
+
+			case 1130:
+				sendWSMessage_10000(1, _ripley, _ripKneelingTalk, 4, 4, 150,
+					_ripKneelingTalk, 4, 4, 0);
+				break;
+
+			case 1140:
+				_ripleyShould = 1142;
+				sendWSMessage_10000(1, _ripley, _ripKneelingTalk, 4, 1, 151,
+					_ripKneelingTalk, 1, 1, 0);
+				break;
+
+			case 1142:
+				_ripleyShould = 1143;
+				sendWSMessage_10000(1, _ripley, _ripKneeling, 31, 1, 151, _ripKneeling, 1, 1, 0);
+				break;
+
+			case 1143:
+				terminateMachineAndNull(_ripley);
+				series_unload(_ripKneelingTalk);
+				series_unload(_ripKneeling);
+				_oldLadyShould = 5306;
+				ws_unhide_walker();
+				player_set_commands_allowed(true);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 1003:
+			switch (_ripleyShould) {
+			case 1210:
+				ws_hide_walker();
+				player_set_commands_allowed(false);
+				_ripHandTalk = series_load("rip trek hand talk pos3");
+				_ripTalker = series_load("rip trek talker pos3");
+				_officialThroughThere = series_load("official through there");
+
+				player_update_info();
+				_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+					_G(player_info).x, _G(player_info).y, _G(player_info).scale,
+					0x100, 0, triggerMachineByHashCallback, "rip talks official");
+				_ripsh1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+					_G(player_info).x, _G(player_info).y, _G(player_info).scale,
+					0x100, 0, triggerMachineByHashCallback, "rip talks official SHADOW");
+				sendWSMessage_10000(1, _ripley, _ripTalker, 1, 1, -1, _ripTalker, 1, 1, 0);
+				sendWSMessage_10000(1, _ripsh1, _shadow3, 1, 1, 150, _shadow3, 1, 1, 0);
+				_ripleyShould = 1211;
+				_officialMode = 2002;
+				_officialShould = 2011;
+				kernel_trigger_dispatchx(kernel_trigger_create(140));
+				break;
+
+			case 1211:
+				conv_load("conv203c", 10, 10, 152);
+				conv_export_value_curr(_G(flags)[V070], 0);
+				conv_export_pointer_curr(&_G(flags)[V071], 1);
+				conv_play();
+				_ripleyShould = 1230;
+				kernel_trigger_dispatchx(kernel_trigger_create(150));
+				break;
+
+			case 1220:
+				frame = imath_ranged_rand(1, 5);
+				sendWSMessage_10000(1, _ripley, _ripTalker, 1, frame, 150,
+					_ripTalker, frame, frame, 0);
+				break;
+
+			case 1221:
+				sendWSMessage_10000(1, _ripley, _ripHandTalk, 1, 16, 150,
+					_ripHandTalk, 1, 1, 0);
+				_ripleyShould = 1230;
+				break;
+
+			case 1230:
+				sendWSMessage_10000(1, _ripley, _ripTalker, 1, 1, 150, _ripTalker, 1, 1, 0);
+				break;
+
+			case 1240:
+				terminateMachineAndNull(_ripley);
+				terminateMachineAndNull(_ripsh1);
+				series_unload(_officialThroughThere);
+				series_unload(_ripTalker);
+				series_unload(_ripHandTalk);
+				_officialShould = 2017;
+				ws_unhide_walker();
+				player_set_commands_allowed(true);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
 	case 152:
 		_val2 = 0;
 
-		switch (_unkMode) {
+		switch (_ripleyMode) {
 		case 1001:
-			_oldLadyMode2 = 1040;
+			_ripleyShould = 1040;
 			break;
 		case 1002:
-			_oldLadyMode2 = (_unkShould == 1121) ? 1121 : 5303;
+			_ripleyShould = (_unkShould == 1121) ? 1121 : 5303;
 			break;
 		case 1003:
-			_oldLadyMode2 = 1240;
+			_ripleyShould = 1240;
 			break;
 		default:
 			break;
@@ -1412,6 +1777,14 @@ void Room203::daemon() {
 		sendWSMessage_10000(_mei, 417, 240, 2, -1, 1);
 		break;
 
+	case 9013:
+		if (g_engine->game_camera_panning()) {
+			kernel_timing_trigger(30, 9013);
+		} else {
+			sendWSMessage_10000(1, _sg, _203sg01, 1, 84, 9014, _203sg01, 84, 84, 0);
+		}
+		break;
+
 	case 9014:
 		digi_play("203_s09", 2);
 		sendWSMessage_10000(1, _sg, _203sg01, 85, 130, 9020, _203sg01, 130, 130, 0);
@@ -1585,6 +1958,34 @@ void Room203::peasantWalk() {
 	default:
 		break;
 	}
+}
+
+void Room203::pre_parser() {
+	// TODO
+}
+
+void Room203::parser() {
+#ifdef TODO
+	ws_hide_walker();
+	player_set_commands_allowed(false);
+	player_update_info();
+	_ripsh1 = series_place_sprite("ripsh1", 0, _G(player_info).x, _G(player_info).y,
+		_G(player_info).scale, 0x500);
+	_peskyBegLoop = series_load("pesky beg loop");
+	_ripHandsBehBack = series_load("rip trek hands beh back pos1");
+
+	_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+		_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x400, 0,
+		triggerMachineByHashCallback, "rip in conv");
+	_ripleyMode = 1001;
+	_ripleyShould = 1010;
+	sendWSMessage_10000(1, _ripley, _ripHandsBehBack, 1, 11, 150,
+		_ripHandsBehBack, 11, 11, 0);
+
+	_G(kernel).trigger_mode = KT_PARSE;
+	_peasantMode2 = _peasantMode;
+	_peasantMode = 4055;
+#endif
 }
 
 } // namespace Rooms
