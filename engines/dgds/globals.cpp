@@ -114,7 +114,9 @@ int16 Globals::setGlobal(uint16 num, int16 val) {
 			return global->set(val);
 	}
 
-	error("setGlobal: requested non-existing global %d", num);
+	// This happens eg looking at the Fisto box in RotD
+	warning("setGlobal: requested non-existing global %d", num);
+	return 0;
 }
 
 Common::Error Globals::syncState(Common::Serializer &s) {
