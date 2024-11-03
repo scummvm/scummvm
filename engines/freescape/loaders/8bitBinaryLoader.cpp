@@ -700,16 +700,18 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 			extraColor[1] = readField(file, 8);
 			extraColor[2] = readField(file, 8);
 			extraColor[3] = readField(file, 8);
+			debugC(1, kFreescapeDebugParser, "Extra colors: %x %x %x %x", extraColor[0], extraColor[1], extraColor[2], extraColor[3]);
 		}
 
 		if (isAmiga()) {
-			readField(file, 8);
-			readField(file, 8);
-			readField(file, 8);
-			readField(file, 8);
+			extraColor[0] = readField(file, 8);
+			extraColor[1] = readField(file, 8);
+			extraColor[2] = readField(file, 8);
+			extraColor[3] = readField(file, 8);
 			// TODO
 			groundColor = skyColor;
 			skyColor = 0;
+			debugC(1, kFreescapeDebugParser, "Extra colors: %x %x %x %x", extraColor[0], extraColor[1], extraColor[2], extraColor[3]);
 		}
 	}
 	debugC(1, kFreescapeDebugParser, "Area name: %s", name.c_str());

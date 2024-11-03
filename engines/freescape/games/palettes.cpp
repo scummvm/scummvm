@@ -164,6 +164,8 @@ void FreescapeEngine::loadPalettes(Common::SeekableReadStream *file, int offset)
 		numberOfAreas += 2;
 	else if (isDark())
 		numberOfAreas += 5;
+	else if (isCastle())
+		numberOfAreas += 10;
 
 	for (uint i = 0; i < numberOfAreas; i++) {
 		int label = readField(file, 8);
@@ -182,6 +184,7 @@ void FreescapeEngine::loadPalettes(Common::SeekableReadStream *file, int offset)
 			b = v & 0xf;
 			b = b << 4 | b;
 			palette[c][2] = b & 0xff;
+			debugC(1, kFreescapeDebugParser, "Color %d: %02x %02x %02x", c, palette[c][0], palette[c][1], palette[c][2]);
 		}
 
 		assert(!_paletteByArea.contains(label));

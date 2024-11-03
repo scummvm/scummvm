@@ -351,14 +351,33 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	_gfx->_keyColor = 0;
 	_gfx->clearColorPairArray();
 
-	if (isDOS() || isAmiga()) {
+	swapPalette(areaID);
+	if (isDOS()) {
 		_gfx->_colorPair[_currentArea->_underFireBackgroundColor] = _currentArea->_extraColor[0];
 		_gfx->_colorPair[_currentArea->_usualBackgroundColor] = _currentArea->_extraColor[1];
 		_gfx->_colorPair[_currentArea->_paperColor] = _currentArea->_extraColor[2];
 		_gfx->_colorPair[_currentArea->_inkColor] = _currentArea->_extraColor[3];
+	} else if (isAmiga()) {
+		// Unclear why these colors are always overwritten
+		byte (*palette)[16][3] = (byte (*)[16][3])_gfx->_palette;
+
+		(*palette)[1][0] = 0x44;
+		(*palette)[1][1] = 0x44;
+		(*palette)[1][2] = 0x44;
+
+		(*palette)[2][0] = 0x66;
+		(*palette)[2][1] = 0x66;
+		(*palette)[2][2] = 0x66;
+
+		(*palette)[3][0] = 0x88;
+		(*palette)[3][1] = 0x88;
+		(*palette)[3][2] = 0x88;
+
+		(*palette)[5][0] = 0xcc;
+		(*palette)[5][1] = 0xcc;
+		(*palette)[5][2] = 0xcc;
 	}
 
-	swapPalette(areaID);
 	if (isSpectrum() || isCPC())
 		_gfx->_paperColor = 0;
 	resetInput();

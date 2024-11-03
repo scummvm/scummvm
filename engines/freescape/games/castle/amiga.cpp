@@ -86,10 +86,25 @@ void CastleEngine::loadAssetsAmigaDemo() {
 		//charsRiddle.push_back(imgRiddle);
 		//charsRiddle[i]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGARiddleFontPalette, 16);
 	}
+	// 0x1356c
+
 	_font = Font(chars);
 	_font.setCharWidth(9);
 
 	load8bitBinary(&file, 0x162a6, 16);
+	for (int i = 0; i < 3; i++) {
+		debugC(1, kFreescapeDebugParser, "Continue to parse area index %d at offset %x", _areaMap.size() + i + 1, (int)file.pos());
+		Area *newArea = load8bitArea(&file, 16);
+		if (newArea) {
+			if (!_areaMap.contains(newArea->getAreaID()))
+				_areaMap[newArea->getAreaID()] = newArea;
+			else
+				error("Repeated area ID: %d", newArea->getAreaID());
+		} else {
+			error("Invalid area %d?", i);
+		}
+	}
+
 	loadPalettes(&file, 0x151a6);
 
 	file.seek(0x2be96); // Area 255
