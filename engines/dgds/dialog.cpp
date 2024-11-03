@@ -435,7 +435,7 @@ void Dialog::drawFindSelectionXY() {
 		x += _stringWidthIgnoringTrainingSpace(font, _str.substr(totalchars, _state->_strMouseLoc - totalchars));
 
 		// TODO: does this make sense?
-		if (_state->_loc.x + _state->_loc.width < (x + font->getCharWidth(_state->_strMouseLoc))) {
+		if (_state->_loc.x + _state->_loc.width < (x + font->getCharWidth(_str[_state->_strMouseLoc]))) {
 			if (_str[_state->_strMouseLoc] < '!') {
 				_state->_charHeight = 0;
 				_state->_charWidth = 0;
@@ -449,7 +449,7 @@ void Dialog::drawFindSelectionXY() {
 
 		_state->_lastMouseX = x;
 		_state->_lastMouseY = y;
-		_state->_charWidth = font->getCharWidth(_state->_strMouseLoc);
+		_state->_charWidth = font->getCharWidth(_str[_state->_strMouseLoc]);
 	}
 }
 

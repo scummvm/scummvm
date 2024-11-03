@@ -86,8 +86,8 @@ class FFont : public DgdsFont {
 public:
 	FFont(byte w, byte h, byte start, byte count, byte *data);
 	~FFont();
-	int getCharWidth(uint32 chr) const  override { return _w; }
-	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const  override;
+	int getCharWidth(uint32 chr) const override { return _w; }
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 	static FFont *load(Common::SeekableReadStream &input);
 
 protected:

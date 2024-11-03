@@ -166,7 +166,7 @@ void PFont::drawChar(Graphics::Surface* dst, uint32 chr, int x, int y, uint32 co
 int PFont::getCharWidth(uint32 chr) const {
 	if (!hasChar(chr))
 		return 0;
-	return _widths[chr - _start];
+	return _widths[(byte)chr - _start];
 }
 
 PFont *PFont::load(Common::SeekableReadStream &input, Decompressor *decompressor) {
