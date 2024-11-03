@@ -34,6 +34,7 @@
 
 #if defined(USE_OPENGL_SHADERS)
 
+#include "engines/wintermute/base/gfx/3dutils.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d_shader.h"
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/mesh3ds_opengl_shader.h"
@@ -59,15 +60,15 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 
 	glGenBuffers(1, &_spriteVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, _spriteVBO);
-	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(SpriteVertexShader), nullptr, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(SpriteVertex), nullptr, GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	static const char *spriteAttributes[] = {"position", "texcoord", "color", nullptr};
 	_spriteShader = OpenGL::Shader::fromFiles("wme_sprite", spriteAttributes);
 
-	_spriteShader->enableVertexAttribute("position", _spriteVBO, 2, GL_FLOAT, false, sizeof(SpriteVertexShader), 0);
-	_spriteShader->enableVertexAttribute("texcoord", _spriteVBO, 2, GL_FLOAT, false, sizeof(SpriteVertexShader), 8);
-	_spriteShader->enableVertexAttribute("color", _spriteVBO, 4, GL_FLOAT, false, sizeof(SpriteVertexShader), 16);
+	_spriteShader->enableVertexAttribute("position", _spriteVBO, 3, GL_FLOAT, false, sizeof(SpriteVertex), 0);
+	_spriteShader->enableVertexAttribute("texcoord", _spriteVBO, 2, GL_FLOAT, false, sizeof(SpriteVertex), 12);
+	_spriteShader->enableVertexAttribute("color", _spriteVBO, 4, GL_FLOAT, false, sizeof(SpriteVertex), 20);
 
 	static const char *geometryAttributes[] = { "position", "color", nullptr };
 	_geometryShader = OpenGL::Shader::fromFiles("wme_geometry", geometryAttributes);
@@ -327,7 +328,7 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::
 		SWAP(texTop, texBottom);
 	}
 
-	SpriteVertexShader vertices[4] = {};
+	SpriteVertex vertices[4] = {};
 
 	// batch mode
 	if (_spriteBatchMode) {
@@ -341,15 +342,19 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::
 	// texture coords
 	vertices[0].u = texLeft;
 	vertices[0].v = texBottom;
+	vertices[0].z = -0.9f;
 
 	vertices[1].u = texLeft;
 	vertices[1].v = texTop;
+	vertices[1].z = -0.9f;
 
 	vertices[2].u = texRight;
 	vertices[2].v = texBottom;
+	vertices[2].z = -0.9f;
 
 	vertices[3].u = texRight;
 	vertices[3].v = texTop;
+	vertices[3].z = -0.9f;
 
 	float offset = _height / 2.0f;
 	float correctedYPos = (pos.y - offset) * -1.0f + offset;
@@ -380,15 +385,14 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::
 		vertices[i].a = a / 255.0f;
 	}
 
-	Math::Matrix3 transform;
-	transform.setToIdentity();
-
 	if (angle != 0) {
-		Vector2 correctedRot(rot.x, (rot.y - offset) * -1.0f + offset);
-		transform = build2dTransformation(correctedRot, angle);
-		transform.transpose();
+		DXVector2 sc(1.0f, 1.0f);
+		DXVector2 rotation(rot.x, (rot.y - (_height / 2.0f)) * -1.0f + (_height / 2.0f));
+		transformVertices(vertices, &rotation, &sc, degToRad(-angle));
 	}
 
+	Math::Matrix3 transform;
+	transform.setToIdentity();
 	Math::Matrix4 projectionMatrix2d;
 	projectionMatrix2d.setData(_projectionMatrix2d);
 	_spriteShader->use();
@@ -397,7 +401,7 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::
 	_spriteShader->setUniform("projMatrix", projectionMatrix2d);
 
 	glBindBuffer(GL_ARRAY_BUFFER, _spriteVBO);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(SpriteVertexShader), vertices);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(SpriteVertex), vertices);
 
 	if (_spriteBatchMode) {
 		// TODO
@@ -443,6 +447,44 @@ bool BaseRenderOpenGL3DShader::endSpriteBatch() {
 
 	_spriteBatchMode = false;
 	return commitSpriteBatch();
+}
+
+DXMatrix *BaseRenderOpenGL3DShader::buildMatrix(DXMatrix* out, const DXVector2 *centre, const DXVector2 *scaling, float angle) {
+	DXMatrix matrices[5];
+
+	DXMatrixTranslation(&matrices[0], -centre->_x, -centre->_y, 0);
+	DXMatrixScaling(&matrices[1], scaling->_x, scaling->_y, 1);
+	DXMatrixIdentity(&matrices[2]);
+	DXMatrixIdentity(&matrices[3]);
+	DXMatrixRotationZ(&matrices[2], angle);
+	DXMatrixTranslation(&matrices[3], centre->_x, centre->_y, 0);
+
+	matrices[4] = matrices[0] * matrices[1] * matrices[2] * matrices[3];
+	*out = matrices[4];
+
+	return out;
+}
+
+void BaseRenderOpenGL3DShader::transformVertices(struct SpriteVertex *vertices, const DXVector2 *centre, const DXVector2 *scaling, float angle) {
+	DXMatrix matTransf, matVerts, matNew;
+
+	buildMatrix(&matTransf, centre, scaling, angle);
+
+	int cr;
+	for (cr = 0; cr < 4; cr++) {
+		matVerts(cr, 0) = vertices[cr].x;
+		matVerts(cr, 1) = vertices[cr].y;
+		matVerts(cr, 2) = vertices[cr].z;
+		matVerts(cr, 3) = 1.0f;
+	}
+
+	matNew = matVerts * matTransf;
+
+	for (cr = 0; cr < 4; cr++) {
+		vertices[cr].x = matNew(cr, 0);
+		vertices[cr].y = matNew(cr, 1);
+		vertices[cr].z = matNew(cr, 2);
+	}
 }
 
 bool BaseRenderOpenGL3DShader::setProjection() {
@@ -759,7 +801,7 @@ bool BaseRenderOpenGL3DShader::setViewport3D(DXViewport *viewport) {
 
 bool BaseRenderOpenGL3DShader::setProjection2D() {
 	float nearPlane = -1.0f;
-	float farPlane = 100.0f;
+	float farPlane = 1.0f;
 
 	DXMatrixIdentity(&_projectionMatrix2d);
 

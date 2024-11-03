@@ -395,16 +395,9 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurface *tex, const Wintermute::Rect32
 	}
 
 	if (angle != 0) {
-		Vector2 correctedRot(rot.x, (rot.y - offset) * -1.0f + offset);
-		Math::Matrix3 transform = build2dTransformation(correctedRot, angle);
-
-		for (int i = 0; i < 4; ++i) {
-			Math::Vector3d vertexPostion(vertices[i].x, vertices[i].y, 1.0f);
-			transform.transformVector(&vertexPostion);
-
-			vertices[i].x = vertexPostion.x();
-			vertices[i].y = vertexPostion.y();
-		}
+		DXVector2 sc(1.0f, 1.0f);
+		DXVector2 rotation(rot.x, (rot.y - (_height / 2.0f)) * -1.0f + (_height / 2.0f));
+		transformVertices(vertices, &rotation, &sc, degToRad(-angle));
 	}
 
 	if (_spriteBatchMode) {
@@ -485,6 +478,44 @@ bool BaseRenderOpenGL3D::endSpriteBatch() {
 
 	_spriteBatchMode = false;
 	return commitSpriteBatch();
+}
+
+DXMatrix *BaseRenderOpenGL3D::buildMatrix(DXMatrix* out, const DXVector2 *centre, const DXVector2 *scaling, float angle) {
+	DXMatrix matrices[5];
+
+	DXMatrixTranslation(&matrices[0], -centre->_x, -centre->_y, 0);
+	DXMatrixScaling(&matrices[1], scaling->_x, scaling->_y, 1);
+	DXMatrixIdentity(&matrices[2]);
+	DXMatrixIdentity(&matrices[3]);
+	DXMatrixRotationZ(&matrices[2], angle);
+	DXMatrixTranslation(&matrices[3], centre->_x, centre->_y, 0);
+
+	matrices[4] = matrices[0] * matrices[1] * matrices[2] * matrices[3];
+	*out = matrices[4];
+
+	return out;
+}
+
+void BaseRenderOpenGL3D::transformVertices(struct SpriteVertex *vertices, const DXVector2 *centre, const DXVector2 *scaling, float angle) {
+	DXMatrix matTransf, matVerts, matNew;
+
+	buildMatrix(&matTransf, centre, scaling, angle);
+
+	int cr;
+	for (cr = 0; cr < 4; cr++) {
+		matVerts(cr, 0) = vertices[cr].x;
+		matVerts(cr, 1) = vertices[cr].y;
+		matVerts(cr, 2) = vertices[cr].z;
+		matVerts(cr, 3) = 1.0f;
+	}
+
+	matNew = matVerts * matTransf;
+
+	for (cr = 0; cr < 4; cr++) {
+		vertices[cr].x = matNew(cr, 0);
+		vertices[cr].y = matNew(cr, 1);
+		vertices[cr].z = matNew(cr, 2);
+	}
 }
 
 bool BaseRenderOpenGL3D::setProjection() {

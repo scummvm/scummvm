@@ -42,11 +42,11 @@ class BaseSurfaceOpenGL3D;
 
 class BaseRenderOpenGL3D : public BaseRenderer3D {
 	struct SpriteVertex {
-		float u;
-		float v;
 		float x;
 		float y;
 		float z;
+		float u;
+		float v;
 		uint8 r;
 		uint8 g;
 		uint8 b;
@@ -94,6 +94,9 @@ public:
 
 	bool setViewport(int left, int top, int right, int bottom) override;
 	bool drawLine(int x1, int y1, int x2, int y2, uint32 color) override;
+
+	DXMatrix *buildMatrix(DXMatrix* out, const DXVector2 *centre, const DXVector2 *scaling, float angle);
+	void transformVertices(struct SpriteVertex *vertices, const DXVector2 *centre, const DXVector2 *scaling, float angle);
 
 	bool setProjection() override;
 	bool setProjection2D() override;
