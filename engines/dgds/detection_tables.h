@@ -112,6 +112,20 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Rise of the Dragon (Amiga) German (reported by gabberhead, #15453)
+	{
+		"rise",
+		0,
+		{
+			{"volume.rmf", 0, "7737489a8c452f0c497956eead46e4f0", 8964},
+			{"volume.001", 0, "4e693c2748ccd71a633b76abe2ed6f12", 525920},
+		},
+		Common::DE_DEU,
+		Common::kPlatformAmiga,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Rise of the Dragon (Macintosh)
 	{
 		"rise",
