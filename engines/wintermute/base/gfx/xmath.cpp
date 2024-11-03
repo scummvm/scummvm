@@ -32,6 +32,11 @@
 
 namespace Wintermute {
 
+DXVector2::DXVector2(float fx, float fy) {
+	_x = fx;
+	_y = fy;
+}
+
 DXVector3::DXVector3(const float *pf) {
 	_x = pf[0];
 	_y = pf[1];
@@ -140,6 +145,10 @@ DXVector4::operator const float* () const {
 
 DXMatrix::DXMatrix(const float *pf) {
 	memcpy(&matrix._11, pf, sizeof(DXMatrix::matrix));
+}
+
+float &DXMatrix::operator () (uint32 row, uint32 col) {
+	return _m[row][col];
 }
 
 DXMatrix::operator float* () {
@@ -527,6 +536,17 @@ DXVector3 *DXVec3TransformNormal(DXVector3 *pout, const DXVector3 *pv, const DXM
 	return pout;
 }
 
+DXVector4 *DXVec4Transform(DXVector4 *pout, const DXVector4 *pv, const DXMatrix *pm) {
+	DXVector4 out;
+
+	out._x = pm->_m[0][0] * pv->_x + pm->_m[1][0] * pv->_y + pm->_m[2][0] * pv->_z + pm->_m[3][0] * pv->_w;
+	out._y = pm->_m[0][1] * pv->_x + pm->_m[1][1] * pv->_y + pm->_m[2][1] * pv->_z + pm->_m[3][1] * pv->_w;
+	out._z = pm->_m[0][2] * pv->_x + pm->_m[1][2] * pv->_y + pm->_m[2][2] * pv->_z + pm->_m[3][2] * pv->_w;
+	out._w = pm->_m[0][3] * pv->_x + pm->_m[1][3] * pv->_y + pm->_m[2][3] * pv->_z + pm->_m[3][3] * pv->_w;
+	*pout = out;
+	return pout;
+}
+
 DXMatrix *DXMatrixMultiply(DXMatrix *pout, const DXMatrix *pm1, const DXMatrix *pm2) {
 	DXMatrix out;
 
@@ -619,6 +639,26 @@ DXMatrix *DXMatrixLookAtRH(DXMatrix *out, const DXVector3 *eye, const DXVector3 
 	out->_m[3][3] = 1.0f;
 
 	return out;
+}
+
+DXMatrix *DXMatrixOrthoLH(DXMatrix *pout, float w, float h, float zn, float zf) {
+	DXMatrixIdentity(pout);
+	pout->_m[0][0] = 2.0f / w;
+	pout->_m[1][1] = 2.0f / h;
+	pout->_m[2][2] = 1.0f / (zf - zn);
+	pout->_m[3][2] = zn / (zn - zf);
+	return pout;
+}
+
+DXMatrix *DXMatrixOrthoOffCenterLH(DXMatrix *pout, float l, float r, float b, float t, float zn, float zf) {
+	DXMatrixIdentity(pout);
+	pout->_m[0][0] = 2.0f / (r - l);
+	pout->_m[1][1] = 2.0f / (t - b);
+	pout->_m[2][2] = 1.0f / (zf -zn);
+	pout->_m[3][0] = -1.0f -2.0f * l / (r - l);
+	pout->_m[3][1] = 1.0f + 2.0f * t / (b - t);
+	pout->_m[3][2] = zn / (zn -zf);
+	return pout;
 }
 
 } // End of namespace Wintermute

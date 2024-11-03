@@ -44,6 +44,7 @@ struct DXVector2 {
 	float           _y;
 
 	DXVector2() {}
+	DXVector2(float fx, float fy);
 };
 
 struct DXVector3 {
@@ -127,6 +128,8 @@ struct DXMatrix {
 	DXMatrix() {}
 	DXMatrix(const float *pf);
 
+	float &operator () (uint32 row, uint32 col);
+
 	operator float* ();
 	operator const float* () const;
 
@@ -151,6 +154,8 @@ DXMatrix *DXMatrixPerspectiveFovLH(DXMatrix *pout,float fovy, float aspect, floa
 DXMatrix *DXMatrixPerspectiveFovRH(DXMatrix *pout, float fovy, float aspect, float zn, float zf);
 DXMatrix *DXMatrixLookAtLH(DXMatrix *out, const DXVector3 *eye, const DXVector3 *at, const DXVector3 *up);
 DXMatrix *DXMatrixLookAtRH(DXMatrix *out, const DXVector3 *eye, const DXVector3 *at, const DXVector3 *up);
+DXMatrix *DXMatrixOrthoLH(DXMatrix *pout, float w, float h, float zn, float zf);
+DXMatrix *DXMatrixOrthoOffCenterLH(DXMatrix *pout, float l, float r, float b, float t, float zn, float zf);
 DXMatrix *DXMatrixInverse(DXMatrix *pout, float *pdeterminant, const DXMatrix *pm);
 DXPlane *DXPlaneFromPointNormal(DXPlane *pout, const DXVector3 *pvpoint, const DXVector3 *pvnormal);
 DXPlane *DXPlaneFromPoints(DXPlane *pout, const DXVector3 *pv1, const DXVector3 *pv2, const DXVector3 *pv3);
@@ -170,6 +175,7 @@ DXMatrix *DXMatrixMultiply(DXMatrix *pout, const DXMatrix *pm1, const DXMatrix *
 DXVector3 *DXVec3Project(DXVector3 *pout, const DXVector3 *pv, const DXViewport *pviewport,
                          const DXMatrix *pprojection, const DXMatrix *pview, const DXMatrix *pworld);
 DXMatrix *DXMatrixTranspose(DXMatrix *pout, const DXMatrix *pm);
+DXVector4 *DXVec4Transform(DXVector4 *pout, const DXVector4 *pv, const DXMatrix *pm);
 
 static inline DXMatrix *DXMatrixIdentity(DXMatrix *pout) {
 	(*pout)._m[0][1] = 0.0f;
