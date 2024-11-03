@@ -27,6 +27,8 @@
 
 #include "engines/wintermute/base/gfx/xmaterial.h"
 #include "engines/wintermute/base/gfx/skin_mesh_helper.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/gfx/base_renderer3d.h"
 
 #include "graphics/opengl/system_headers.h"
 
@@ -48,6 +50,11 @@ XMeshOpenGL::~XMeshOpenGL() {
 //////////////////////////////////////////////////////////////////////////
 bool XMeshOpenGL::render(XModel *model) {
 	if (!_blendedMesh)
+		return false;
+
+	// For WME DX, mesh model is not visible, possible it's clipped.
+	// For OpenGL, mesh is visible, skip draw it here instead in core.
+	if (!_gameRef->_renderer3D->_camera)
 		return false;
 
 	auto fvf = _blendedMesh->getFVF();

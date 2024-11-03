@@ -472,7 +472,7 @@ bool XModel::updateShadowVol(ShadowVolume *shadow, DXMatrix *modelMat, DXVector3
 bool XModel::render() {
 	if (_rootFrame) {
 		// set culling
-		if(_owner && !_owner->_drawBackfaces) {
+		if (_owner && !_owner->_drawBackfaces) {
 			_gameRef->_renderer3D->enableCulling();
 		} else {
 			_gameRef->_renderer3D->disableCulling();
