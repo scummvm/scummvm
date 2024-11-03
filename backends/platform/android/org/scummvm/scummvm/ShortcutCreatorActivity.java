@@ -26,6 +26,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,7 +51,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class ShortcutCreatorActivity extends Activity {
+public class ShortcutCreatorActivity extends Activity implements CompatHelpers.SystemInsets.SystemInsetsListener  {
 	final protected static String LOG_TAG = "ShortcutCreatorActivity";
 
 	private IconsCache _cache;
@@ -90,6 +91,8 @@ public class ShortcutCreatorActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.shortcut_creator_activity);
+
+		CompatHelpers.SystemInsets.registerSystemInsetsListener(findViewById(R.id.shortcut_creator_root), this);
 
 		// We are only here to create a shortcut
 		if (!Intent.ACTION_CREATE_SHORTCUT.equals(getIntent().getAction())) {
@@ -152,6 +155,16 @@ public class ShortcutCreatorActivity extends Activity {
 		}
 
 		setResult(RESULT_CANCELED);
+	}
+
+	@Override
+	public void systemInsetsUpdated(int[] gestureInsets, int[] systemInsets, int[] cutoutInsets) {
+		LinearLayout root = findViewById(R.id.shortcut_creator_root);
+		// Ignore bottom as we have our list which can overflow
+		root.setPadding(
+			Math.max(systemInsets[0], cutoutInsets[0]),
+			Math.max(systemInsets[1], cutoutInsets[1]),
+			Math.max(systemInsets[2], cutoutInsets[2]), 0);
 	}
 
 	static private FileInputStream openFile(File path) {
