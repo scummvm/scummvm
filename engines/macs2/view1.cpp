@@ -974,6 +974,7 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0xFF, s);
 
 	// TODO: Left side
+	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0xFF, s);
 
 	// Bottom highlight
 	DrawHorizontalBorderHighlight(pos + Common::Point(1, size.y + 1), size.x - 1, 0xFF, s);
@@ -1019,6 +1020,26 @@ void View1::DrawHorizontalBorderHighlight(const Common::Point &pos, int16 width,
 	while (currentX < clippingRect.right) {
 		DrawSpriteClipped(currentX, currentY, clippingRect, sprite, s);
 		currentX += sprite.Width;
+	}
+}
+
+void View1::DrawVerticalBorderHighlight(const Common::Point &pos, int16 height, uint8 unknown, Graphics::ManagedSurface &s) {
+	// TODO: Only copy&paste from horizontal so far, need to check original code
+	// TODO: Add the assembly location we are at
+
+	// TODO: There is quite some setup going on in this function before we get to the drawing
+
+	Common::Rect clippingRect(pos, pos + Common::Point(1, height));
+	// TODO: Should check which texture we actually use at the moment
+
+	// TODO: Check which area we actually fill
+	uint16 currentX = clippingRect.left;
+	uint16 currentY = clippingRect.top;
+	const Sprite &sprite = g_engine->_borderSprite;
+
+	while (currentY < clippingRect.bottom) {
+		DrawSpriteClipped(currentX, currentY, clippingRect, sprite, s);
+		currentY += sprite.Height;
 	}
 }
 
