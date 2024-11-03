@@ -124,6 +124,9 @@ bool BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
 }
 
 bool BaseRenderOpenGL3D::fill(byte r, byte g, byte b, Common::Rect *rect) {
+	if(!_gameRef->_editorMode) {
+		glViewport(0, _height, _width, _height);
+	}
 	glClearColor(r / 255.0f, g / 255.0f, b / 255.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	return true;
