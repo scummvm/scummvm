@@ -88,7 +88,7 @@ public:
 	void transformVertices(struct SpriteVertex *vertices, const DXVector2 *centre, const DXVector2 *scaling, float angle);
 
 	bool setProjection() override;
-	bool setProjection2D() override;
+	bool setProjection2D(OpenGL::Shader *);
 	bool setWorldTransform(const DXMatrix &transform) override;
 	bool setViewTransform(const DXMatrix &transform) override;
 	bool setProjectionTransform(const DXMatrix &transform) override;
@@ -134,8 +134,9 @@ public:
 
 	bool setViewport3D(DXViewport *viewport) override;
 
+	OpenGL::Shader *_shadowMaskShader;
+
 private:
-	DXMatrix _projectionMatrix2d;
 	DXMatrix _glProjectionMatrix;
 
 	Common::Array<DXMatrix> _transformStack;
@@ -150,7 +151,6 @@ private:
 	OpenGL::Shader *_xmodelShader;
 	OpenGL::Shader *_geometryShader;
 	OpenGL::Shader *_shadowVolumeShader;
-	OpenGL::Shader *_shadowMaskShader;
 	OpenGL::Shader *_lineShader;
 };
 

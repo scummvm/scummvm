@@ -99,7 +99,7 @@ public:
 	void transformVertices(struct SpriteVertex *vertices, const DXVector2 *centre, const DXVector2 *scaling, float angle);
 
 	bool setProjection() override;
-	bool setProjection2D() override;
+	bool setProjection2D();
 	bool setWorldTransform(const DXMatrix &transform) override;
 	bool setViewTransform(const DXMatrix &transform) override;
 	bool setProjectionTransform(const DXMatrix &transform) override;

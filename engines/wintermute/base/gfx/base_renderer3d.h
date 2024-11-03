@@ -135,8 +135,6 @@ public:
 
 	Graphics::PixelFormat getPixelFormat() const override;
 
-	virtual bool setProjection2D() = 0;
-
 	virtual bool setWorldTransform(const DXMatrix &transform) = 0;
 	virtual bool setViewTransform(const DXMatrix &transform) = 0;
 	virtual bool setProjectionTransform(const DXMatrix &transform) = 0;

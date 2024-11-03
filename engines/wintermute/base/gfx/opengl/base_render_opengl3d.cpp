@@ -156,9 +156,6 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 		// D3DTSS_MIPFILTER             = D3DTEXF_NONE
 		// D3DTSS_TEXCOORDINDEX         = 0
 		// D3DTSS_TEXTURETRANSFORMFLAGS = D3DTTFF_DISABLE
-
-		glViewport(0, 0, _width, _height);
-		setProjection2D();
 	}
 
 	return true;
@@ -247,7 +244,6 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 			glDisable(GL_FOG);
 		}
 
-		glViewport(_viewportRect.left, _height - _viewportRect.bottom, _viewportRect.width(), _viewportRect.height());
 		setProjection();
 	}
 
@@ -367,19 +363,19 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurface *tex, const Wintermute::Rect32
 	// position coords
 	vertices[0].x = pos.x;
 	vertices[0].y = correctedYPos;
-	vertices[0].z = -0.9f;
+	vertices[0].z = 0.9f;
 
 	vertices[1].x = pos.x;
 	vertices[1].y = correctedYPos - height;
-	vertices[1].z = -0.9f;
+	vertices[1].z = 0.9f;
 
 	vertices[2].x = pos.x + width;
 	vertices[2].y = correctedYPos;
-	vertices[2].z = -0.9f;
+	vertices[2].z = 0.9f;
 
 	vertices[3].x = pos.x + width;
 	vertices[3].y = correctedYPos - height;
-	vertices[3].z = -0.9f;
+	vertices[3].z = 0.9f;
 
 	// not exactly sure about the color format, but this seems to work
 	byte a = RGBCOLGetA(color);
@@ -419,6 +415,8 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurface *tex, const Wintermute::Rect32
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			glEnable(GL_TEXTURE_2D);
 		}
+
+		setProjection2D();
 
 		glEnableClientState(GL_COLOR_ARRAY);
 		glEnableClientState(GL_VERTEX_ARRAY);
@@ -580,8 +578,6 @@ bool BaseRenderOpenGL3D::drawLine(int x1, int y1, int x2, int y2, uint32 color) 
 }
 
 void BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
-	setProjection2D();
-
 	const int vertexSize = 16;
 	byte vertices[4 * vertexSize];
 	float *vertexCoords = reinterpret_cast<float *>(vertices);
@@ -624,6 +620,8 @@ void BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
 	_lastTexture = nullptr;
+
+	setProjection2D();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
@@ -950,11 +948,19 @@ bool BaseRenderOpenGL3D::setViewport3D(DXViewport *viewport) {
 }
 
 bool BaseRenderOpenGL3D::setProjection2D() {
+	DXMatrix matrix2D;
+	DXMatrixOrthoOffCenterLH(&matrix2D, 0, _width, 0, _height, 0.0f, 1.0f);
+
+	// convert DX [0, 1] depth range to OpenGL [-1, 1] depth range.
+	matrix2D.matrix._33 = 2.0f;
+	matrix2D.matrix._43 = -1.0f;
+
 	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, _width, 0, _height, -1.0, 100.0);
+	glLoadMatrixf(matrix2D);
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
 	return true;
 }
 
@@ -988,6 +994,11 @@ bool BaseRenderOpenGL3D::setProjectionTransform(const DXMatrix &transform) {
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixf(finalMatrix);
+
+	glMatrixMode(GL_MODELVIEW);
+
+	glViewport(_viewportRect.left, _height - _viewportRect.bottom, _viewportRect.width(), _viewportRect.height());
+
 	return true;
 }
 

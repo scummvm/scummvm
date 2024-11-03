@@ -32,7 +32,7 @@
 
 #if defined(USE_OPENGL_SHADERS)
 
-#include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
+#include "engines/wintermute/base/gfx/opengl/base_render_opengl3d_shader.h"
 #include "engines/wintermute/base/gfx/opengl/shadow_volume_opengl_shader.h"
 
 namespace Wintermute {
@@ -144,9 +144,11 @@ bool ShadowVolumeOpenGLShader::renderToScene() {
 	glStencilFunc(GL_LEQUAL, 0x1, 0xFFFFFFFF);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
-	_gameRef->_renderer3D->setProjection2D();
-
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	BaseRenderOpenGL3DShader *renderer = dynamic_cast<BaseRenderOpenGL3DShader *>(_gameRef->_renderer3D);
+	renderer->_shadowMaskShader->use();
+	renderer->setProjection2D(renderer->_shadowMaskShader);
 
 	_maskShader->enableVertexAttribute("position", _shadowMaskVertexBuffer, 2, GL_FLOAT, false, 8, 0);
 	_maskShader->use(true);

@@ -159,10 +159,6 @@ bool BaseRenderOpenGL3DShader::setup2D(bool force) {
 		glFrontFace(GL_CCW);  // WME DX have CW
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		glViewport(0, 0, _width, _height);
-
-		setProjection2D();
 	}
 
 	return true;
@@ -218,8 +214,6 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 		} else {
 			// TODO: Disable fog in shader
 		}
-
-		glViewport(_viewportRect.left, _height - _viewportRect.bottom, _viewportRect.width(), _viewportRect.height());
 
 		setProjection();
 	}
@@ -280,6 +274,7 @@ bool BaseRenderOpenGL3DShader::setupLines() {
 		glEnable(GL_ALPHA_TEST);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
+		_lastTexture = nullptr;
 	}
 
 	return true;
@@ -342,19 +337,15 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::
 	// texture coords
 	vertices[0].u = texLeft;
 	vertices[0].v = texBottom;
-	vertices[0].z = -0.9f;
 
 	vertices[1].u = texLeft;
 	vertices[1].v = texTop;
-	vertices[1].z = -0.9f;
 
 	vertices[2].u = texRight;
 	vertices[2].v = texBottom;
-	vertices[2].z = -0.9f;
 
 	vertices[3].u = texRight;
 	vertices[3].v = texTop;
-	vertices[3].z = -0.9f;
 
 	float offset = _height / 2.0f;
 	float correctedYPos = (pos.y - offset) * -1.0f + offset;
@@ -362,15 +353,19 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::
 	// position coords
 	vertices[0].x = pos.x;
 	vertices[0].y = correctedYPos;
+	vertices[0].z = 0.9f;
 
 	vertices[1].x = pos.x;
 	vertices[1].y = correctedYPos - height;
+	vertices[1].z = 0.9f;
 
 	vertices[2].x = pos.x + width;
 	vertices[2].y = correctedYPos;
+	vertices[2].z = 0.9f;
 
 	vertices[3].x = pos.x + width;
 	vertices[3].y = correctedYPos - height;
+	vertices[3].z = 0.9f;
 
 	// not exactly sure about the color format, but this seems to work
 	byte a = RGBCOLGetA(color);
@@ -391,22 +386,18 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::
 		transformVertices(vertices, &rotation, &sc, degToRad(-angle));
 	}
 
-	Math::Matrix3 transform;
-	transform.setToIdentity();
-	Math::Matrix4 projectionMatrix2d;
-	projectionMatrix2d.setData(_projectionMatrix2d);
-	_spriteShader->use();
-	_spriteShader->setUniform("alphaTest", !alphaDisable);
-	_spriteShader->setUniform("transform", transform);
-	_spriteShader->setUniform("projMatrix", projectionMatrix2d);
-
-	glBindBuffer(GL_ARRAY_BUFFER, _spriteVBO);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(SpriteVertex), vertices);
-
 	if (_spriteBatchMode) {
 		// TODO
 	} else {
 		setSpriteBlendMode(blendMode);
+
+		glBindBuffer(GL_ARRAY_BUFFER, _spriteVBO);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(SpriteVertex), vertices);
+
+		_spriteShader->use();
+		_spriteShader->setUniform("alphaTest", !alphaDisable);
+		setProjection2D(_spriteShader);
+
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	}
 
@@ -551,11 +542,9 @@ bool BaseRenderOpenGL3DShader::drawLine(int x1, int y1, int x2, int y2, uint32 c
 	colorValue.z() = b / 255.0f;
 	colorValue.w() = a / 255.0f;
 
-	Math::Matrix4 projectionMatrix2d;
-	projectionMatrix2d.setData(_projectionMatrix2d);
 	_lineShader->use();
 	_lineShader->setUniform("color", colorValue);
-	_lineShader->setUniform("projMatrix", projectionMatrix2d);
+	setProjection2D(_lineShader);
 
 	glDrawArrays(GL_LINES, 0, 2);
 
@@ -564,8 +553,6 @@ bool BaseRenderOpenGL3DShader::drawLine(int x1, int y1, int x2, int y2, uint32 c
 }
 
 void BaseRenderOpenGL3DShader::fadeToColor(byte r, byte g, byte b, byte a) {
-	setProjection2D();
-
 	Math::Vector4d color;
 	color.x() = r / 255.0f;
 	color.y() = g / 255.0f;
@@ -581,11 +568,9 @@ void BaseRenderOpenGL3DShader::fadeToColor(byte r, byte g, byte b, byte a) {
 	glBindBuffer(GL_ARRAY_BUFFER, _fadeVBO);
 	_lastTexture = nullptr;
 
-	Math::Matrix4 projectionMatrix2d;
-	projectionMatrix2d.setData(_projectionMatrix2d);
 	_fadeShader->use();
 	_fadeShader->setUniform("color", color);
-	_fadeShader->setUniform("projMatrix", projectionMatrix2d);
+	setProjection2D(_fadeShader);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -799,24 +784,22 @@ bool BaseRenderOpenGL3DShader::setViewport3D(DXViewport *viewport) {
 	return true;
 }
 
-bool BaseRenderOpenGL3DShader::setProjection2D() {
-	float nearPlane = -1.0f;
-	float farPlane = 1.0f;
+bool BaseRenderOpenGL3DShader::setProjection2D(OpenGL::Shader *shader) {
+	DXMatrix matrix2D;
+	DXMatrixOrthoOffCenterLH(&matrix2D, 0, _width, 0, _height, 0.0f, 1.0f);
 
-	DXMatrixIdentity(&_projectionMatrix2d);
+	// convert DX [0, 1] depth range to OpenGL [-1, 1] depth range.
+	matrix2D.matrix._33 = 2.0f;
+	matrix2D.matrix._43 = -1.0f;
 
-	_projectionMatrix2d.matrix._11 = 2.0f / _width;
-	_projectionMatrix2d.matrix._22 = 2.0f / _height;
-	_projectionMatrix2d.matrix._33 = 2.0f / (farPlane - nearPlane);
-
-	_projectionMatrix2d.matrix._41 = -1.0f;
-	_projectionMatrix2d.matrix._42 = -1.0f;
-	_projectionMatrix2d.matrix._43 = -(farPlane + nearPlane) / (farPlane - nearPlane);
-
+	Math::Matrix3 transform;
+	transform.setToIdentity();
 	Math::Matrix4 projectionMatrix2d;
-	projectionMatrix2d.setData(_projectionMatrix2d);
-	_shadowMaskShader->use();
-	_shadowMaskShader->setUniform("projMatrix", projectionMatrix2d);
+	projectionMatrix2d.setData(matrix2D);
+	shader->use();
+	shader->setUniform("projMatrix", projectionMatrix2d);
+	shader->setUniform("transform", transform);
+
 	return true;
 }
 
@@ -857,6 +840,8 @@ bool BaseRenderOpenGL3DShader::setProjectionTransform(const DXMatrix &transform)
 	float range = 2.0f / (_farClipPlane - _nearClipPlane);
 	_glProjectionMatrix.matrix._33 = range;
 	_glProjectionMatrix.matrix._43 = -(_nearClipPlane + _farClipPlane) * range / 2;
+
+	glViewport(_viewportRect.left, _height - _viewportRect.bottom, _viewportRect.width(), _viewportRect.height());
 
 	return true;
 }
