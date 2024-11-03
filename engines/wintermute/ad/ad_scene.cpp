@@ -1420,16 +1420,9 @@ bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 		}
 #endif
 
-#ifndef ENABLE_WME3D
 		if (_gameRef->_editorMode || !obj->_editorOnly) {
 			obj->display();
 		}
-#else
-		// ScummVM: Don't render 3d models if there is no geometry
-		if ((_gameRef->_editorMode || !obj->_editorOnly) && (!objects[i]->_is3D || _geom)) {
-			obj->display();
-		}
-#endif
 		obj->_drawn = true;
 	}
 
