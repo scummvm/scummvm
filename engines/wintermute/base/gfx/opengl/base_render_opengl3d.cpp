@@ -329,9 +329,6 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurface *tex, const Wintermute::Rect32
 	float texRight = (float)rect.right / (float)texWidth;
 	float texBottom = (float)rect.bottom / (float)texHeight;
 
-	float offset = _height / 2.0f;
-	float correctedYPos = (pos.y - offset) * -1.0f + offset;
-
 	if (mirrorX) {
 		SWAP(texLeft, texRight);
 	}
