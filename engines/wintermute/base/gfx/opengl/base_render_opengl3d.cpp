@@ -348,18 +348,24 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurface *tex, const Wintermute::Rect32
 		commitSpriteBatch();
 	}
 
+	// Convert to OpenGL origin space
+	SWAP(texTop, texBottom);
+
 	// texture coords
 	vertices[0].u = texLeft;
-	vertices[0].v = texTop;
+	vertices[0].v = texBottom;
 
 	vertices[1].u = texLeft;
-	vertices[1].v = texBottom;
+	vertices[1].v = texTop;
 
 	vertices[2].u = texRight;
-	vertices[2].v = texTop;
+	vertices[2].v = texBottom;
 
 	vertices[3].u = texRight;
-	vertices[3].v = texBottom;
+	vertices[3].v = texTop;
+
+	float offset = _height / 2.0f;
+	float correctedYPos = (pos.y - offset) * -1.0f + offset;
 
 	// position coords
 	vertices[0].x = pos.x;
