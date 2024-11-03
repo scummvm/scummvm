@@ -476,7 +476,7 @@ static void _dumpFrame(const Graphics::ManagedSurface &surf, const char *name) {
 #ifdef DUMP_FRAME_DATA
 	/* For debugging, dump the frame contents.. */
 	Common::DumpFile outf;
-	uint32 now = g_engine->getTotalPlayTime();
+	uint32 now = DgdsEngine::getInstance()->getThisFrameMs();
 
 	byte palbuf[768];
 	g_system->getPaletteManager()->grabPalette(palbuf, 0, 256);
@@ -509,6 +509,8 @@ Common::Error DgdsEngine::run() {
 	uint32 frameCount = 0;
 
 	while (!shouldQuit()) {
+		_thisFrameMs = getTotalPlayTime();
+
 		Common::EventType mouseEvent = Common::EVENT_INVALID;
 		while (eventMan->pollEvent(ev)) {
 			if (ev.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
@@ -611,6 +613,7 @@ Common::Error DgdsEngine::run() {
 			}
 			_clock.update(false);
 		} else {
+			debug(10, "****  Starting frame %d time %d ****", frameCount, _thisFrameMs);
 
 			_scene->checkForClearedDialogs();
 
@@ -716,20 +719,20 @@ Common::Error DgdsEngine::run() {
 		g_system->updateScreen();
 
 		// Limit to 30 FPS
-		const uint32 thisFrameMillis = g_system->getMillis();
 		frameCount++;
 		if (_skipNextFrame) {
 			frameCount++;
 			_skipNextFrame = false;
 		}
-		const uint32 elapsedMillis = thisFrameMillis - startMillis;
+		const uint32 thisFrameEndMillis = g_system->getMillis();
+		const uint32 elapsedMillis = thisFrameEndMillis - startMillis;
 		const uint32 targetMillis = (frameCount * 1000 / 30);
 		if (targetMillis > elapsedMillis) {
 			// too fast, delay
 			g_system->delayMillis(targetMillis - elapsedMillis);
 		} else if (targetMillis < elapsedMillis) {
 			// too slow.. adjust expectations? :)
-			startMillis = g_system->getMillis();
+			startMillis = thisFrameEndMillis;
 			frameCount = 0;
 		}
 
@@ -850,9 +853,9 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 	s.syncAsByte(_justChangedScene2);
 
 	// sync engine play time to ensure various events run correctly.
-	uint32 playtime = g_engine->getTotalPlayTime();
+	uint32 playtime = DgdsEngine::getInstance()->getThisFrameMs();
 	s.syncAsUint32LE(playtime);
-	g_engine->setTotalPlayTime(playtime);
+	setTotalPlayTime(playtime);
 
 	s.syncString(_backgroundFile);
 	if (s.isLoading()) {

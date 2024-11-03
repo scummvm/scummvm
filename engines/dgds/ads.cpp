@@ -137,7 +137,7 @@ static const uint16 ADS_SEQ_OPCODES[] = {
 
 bool ADSInterpreter::updateSeqTimeAndFrame(const TTMEnviro *env, Common::SharedPtr<TTMSeq> seq) {
 	if (seq->_timeInterval != 0) {
-		uint32 now = g_engine->getTotalPlayTime();
+		uint32 now = DgdsEngine::getInstance()->getThisFrameMs();
 		if (now < seq->_timeNext) {
 			debug(10, "env %d seq %d (%s) not advancing from frame %d (now %d timeNext %d interval %d)", seq->_enviro,
 					seq->_seqNum, env->_tags.getValOrDefault(seq->_seqNum).c_str(), seq->_currentFrame, now, seq->_timeNext, seq->_timeInterval);
@@ -581,7 +581,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 			seq->_runFlag = kRunType1;
 		} else if (runCount < 0) {
 			// Negative run count sets the cut time
-			seq->_timeCut = g_engine->getTotalPlayTime() + (-runCount * MS_PER_FRAME);
+			seq->_timeCut = DgdsEngine::getInstance()->getThisFrameMs() + (-runCount * MS_PER_FRAME);
 			seq->_runFlag = kRunTypeTimeLimited;
 		} else {
 			seq->_runFlag = kRunTypeMulti;
@@ -873,7 +873,7 @@ bool ADSInterpreter::run() {
 				seq->_lastFrame = seq->_currentFrame;
 				result = true;
 				if (_adsData->_scriptDelay != -1 && seq->_timeInterval != _adsData->_scriptDelay) {
-					uint32 now = g_engine->getTotalPlayTime();
+					uint32 now = DgdsEngine::getInstance()->getThisFrameMs();
 					seq->_timeNext = now + _adsData->_scriptDelay;
 					seq->_timeInterval = _adsData->_scriptDelay;
 				}
@@ -909,7 +909,7 @@ bool ADSInterpreter::run() {
 			}
 		}
 
-		if (rflag == kRunTypeTimeLimited && seq->_timeCut <= g_engine->getTotalPlayTime()) {
+		if (rflag == kRunTypeTimeLimited && seq->_timeCut <= DgdsEngine::getInstance()->getThisFrameMs()) {
 			seq->_runFlag = kRunTypeFinished;
 		}
 	}

@@ -258,6 +258,7 @@ public:
 	ChinaTank *getChinaTank() { return _chinaTank; }
 	DragonArcade *getDragonArcade() { return _dragonArcade; }
 	void setSkipNextFrame() { _skipNextFrame = true; }
+	uint32 getThisFrameMs() const { return _thisFrameMs; }
 
 	static DgdsEngine *getInstance() { return static_cast<DgdsEngine *>(g_engine); }
 	void setFlipMode(bool mode) { _flipMode = mode; }

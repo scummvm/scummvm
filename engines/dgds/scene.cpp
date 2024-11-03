@@ -1463,7 +1463,7 @@ void SDSScene::showDialog(uint16 fileNum, uint16 dlgNum) {
 }
 
 bool SDSScene::checkDialogActive() {
-	uint32 timeNow = g_engine->getTotalPlayTime();
+	uint32 timeNow = DgdsEngine::getInstance()->getThisFrameMs();
 	bool retval = false;
 
 	_sceneDialogFlags = kDlgFlagNone;
@@ -1569,7 +1569,7 @@ bool SDSScene::checkForClearedDialogs() {
 
 bool SDSScene::drawAndUpdateDialogs(Graphics::ManagedSurface *dst) {
 	bool retval = false;
-	const DgdsEngine *engine = static_cast<const DgdsEngine *>(g_engine);
+	const DgdsEngine *engine = DgdsEngine::getInstance();
 	for (auto &dlg : _dialogs) {
 		if (dlg.hasFlag(kDlgFlagVisible) && !dlg.hasFlag(kDlgFlagLo4) &&
 				!dlg.hasFlag(kDlgFlagHi20) && !dlg.hasFlag(kDlgFlagHi40)) {
@@ -1602,7 +1602,7 @@ bool SDSScene::drawAndUpdateDialogs(Graphics::ManagedSurface *dst) {
 				int time = delay * (9 - engine->getTextSpeed());
 				assert(dlg._state);
 
-				dlg._state->_hideTime = g_engine->getTotalPlayTime() + time;
+				dlg._state->_hideTime = DgdsEngine::getInstance()->getThisFrameMs() + time;
 				dlg._state->_selectedAction = nullptr;
 				dlg.updateSelectedAction(0);
 				if (dlg._action.size() > 1 && !dlg._state->_selectedAction) {

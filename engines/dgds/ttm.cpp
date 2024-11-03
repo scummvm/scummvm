@@ -640,7 +640,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	case 0x1020: // SET DELAY:	    i:int   [0..n]
 		// TODO: Probably should do this accounting (as well as timeCut and dialogs)
 		// 		 in game frames, not millis.
-		_vm->adsInterpreter()->setScriptDelay((int)ceil(ivals[0] * MS_PER_FRAME));
+		_vm->adsInterpreter()->setScriptDelay((int)round(ivals[0] * MS_PER_FRAME));
 		break;
 	case 0x1030: // SET BRUSH:	id:int [-1:n]
 		seq._brushNum = ivals[0];
@@ -1289,8 +1289,11 @@ void TTMSeq::reset() {
 	_currentFontId = 0;
 	_currentPalId = 0;
 	_currentSongId = 0;
-	_currentBmpId = 0;
-	_currentGetPutId = 0;
+	if (DgdsEngine::getInstance()->getGameId() == GID_DRAGON) {
+		// These slots are not reset in HOC onward
+		_currentBmpId = 0;
+		_currentGetPutId = 0;
+	}
 	_currentFrame = _startFrame;
 	_gotoFrame = -1;
 	_drawColBG = 0xf;

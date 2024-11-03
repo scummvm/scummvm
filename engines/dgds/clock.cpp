@@ -146,7 +146,7 @@ static const int MILLIS_PER_GAME_MIN = 5000;
 static const int MILLIS_PER_TIMER_TICK = 60;
 
 void Clock::update(bool gameRunning) {
-	uint32 playTimeNow = g_engine->getTotalPlayTime();
+	uint32 playTimeNow = DgdsEngine::getInstance()->getThisFrameMs();
 	// These timers are updated whether or not the game is running
 	_gameTicksUp = playTimeNow / MILLIS_PER_TIMER_TICK;
 
