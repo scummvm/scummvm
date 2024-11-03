@@ -31,11 +31,9 @@ namespace Rooms {
 class Room203 : public Section2Room {
 private:
 	int _val1 = 0;
-	int _val2 = 0;
 	int _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;
-	int _val7 = 0;
 	int _val8 = 0;
 	bool _showWalker = false;
 	bool _ripley80000 = false;
@@ -43,6 +41,8 @@ private:
 	const char *_digiName1 = nullptr;
 	int _digiTrigger1 = 0;
 	const char *_digiName2 = nullptr;
+	const char *_digiName3 = nullptr;
+	int _digiTrigger3 = -1;
 	int _trigger1 = -1;
 	int _trigger2 = -1;
 	int _trigger3 = -1;
@@ -63,6 +63,8 @@ private:
 	int _ripHandsBehBack = 0;
 	int _ripHandTalk = 0;
 	int _ripTalker = 0;
+	int _ripArmsX = 0;
+	int _ripHeadDownTalkOff = 0;
 	machine *_ripsh1 = nullptr;
 	machine *_mei = nullptr;
 	int _meiTalkToRip = 0;
@@ -100,6 +102,7 @@ private:
 	int _officialTurn3_7 = 0;
 	int _officialMoveAlong = 0;
 	int _officialThroughThere = 0;
+	int _officialHalt = 0;
 	machine *_peasant = nullptr;
 	machine *_peasantShadow = nullptr;
 	int _peasantSeries = 0;
@@ -116,7 +119,10 @@ private:
 	int _peasantLayer = 0;
 	int _peasantSquat9 = 0;
 	int _peasantSquat3 = 0;
+	int _peasantSquatTo9 = 0;
+	int _peasantFromSquat3 = 0;
 	bool _flag1 = false;
+	bool _flag2 = false;
 	machine *_sg = nullptr;
 	int _203sg01 = 0;
 	machine *_g1 = nullptr;
@@ -134,6 +140,8 @@ private:
 	void setupOfficial();
 	void setupPeasant();
 	void peasantWalk();
+	void peasantAnim1();
+	void peasantAnim2();
 
 public:
 	Room203() : Section2Room() {}

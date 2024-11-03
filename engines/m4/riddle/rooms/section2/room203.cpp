@@ -63,11 +63,12 @@ void Room203::init() {
 	hotspot_set_active("SOLDIER'S HELMET", false);
 	setupHelmetHotspot();
 
-	_val2 = _val4 = _val5 = 0;
-	_val6 = _val7 = _val8 = 0;
+	_val4 = _val5 = 0;
+	_val6 = _val8 = 0;
 	_ripley80000 = 0;
-	_digiName1 = nullptr;
+	_digiName1 = _digiName3 = nullptr;
 	_showWalker = false;
+	_flag2 = false;
 	_trigger1 = _trigger2 = _trigger3 = -1;
 	_trigger4 = _trigger5 = -1;
 
@@ -702,6 +703,10 @@ void Room203::daemon() {
 		digi_play("203r22", 1, 255, 80);
 		break;
 
+	case 80:
+		digi_unload("203r22");
+		break;
+
 	case 81:
 		series_set_frame_rate(_stream1, 5);
 		ws_OverrideCrunchTime(_stream1);
@@ -728,7 +733,7 @@ void Room203::daemon() {
 		setupHelmetHotspot();
 		kernel_timing_trigger(1, 130);
 		ws_unhide_walker();
-		_val2 = 0;
+		_flag2 = false;
 		player_set_commands_allowed(true);
 		break;
 
@@ -1043,6 +1048,512 @@ void Room203::daemon() {
 		}
 		break;
 
+	case 121:
+		switch (_peasantMode) {
+		case 4050:
+			switch (_peasantShould) {
+			case 4091:
+				sendWSMessage_10000(1, _peasant, _peasantRocks, 1, 5, 120,
+					_peasantRocks, 5, 5, 0);
+				break;
+
+			case 4094:
+				_peasantSeries = series_load("pesky peasant reach for helmet");
+				_peasantSeriesShadow = series_load("shadow pp reach for helmet");
+				_peasantSquatTo9 = series_load("peasant squat to 9");
+				_peasantFromSquat3 = series_load("shadow pesky from squat to pos3");
+				terminateMachineAndNull(_peasant);
+				terminateMachineAndNull(_peasantShadow);
+
+				_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 745, 325, 75, 0x800, true,
+					triggerMachineByHashCallback, "pesky peasant");
+				_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 745, 325, 75, 0x800, true,
+					triggerMachineByHashCallback, "pesky peasant shadow");
+				peasantAnim1();
+				_peasantShould = 4095;
+				break;
+
+			case 4095:
+				terminateMachineAndNull(_peasant);
+				terminateMachineAndNull(_peasantShadow);
+				_peasant = triggerMachineByHash_3000(8, 6,
+					*PEASANT_NORMAL_DIRS, *PEASANT_SHADOW_DIRS,
+					763, 325, 3, triggerMachineByHashCallback3000, "pp_walking");
+				sendWSMessage_10000(_peasant, 1200, 332, 2, 120, 1);
+				_peasantMode = 4054;
+				_peasantShould = 4148;
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 4051:
+			switch (_peasantShould) {
+			case 4110:
+				sendWSMessage_10000(1, _peasant, _peasantRocks, 1, 5, 120,
+					_peasantRocks, 5, 5, 0);
+				break;
+
+			case 4113:
+				_peasantSquatTo9 = series_load("peasant squat to 9");
+				_peasantFromSquat3 = series_load("shadow pesky from squat to pos3");
+				_peasantSquat3 = series_load("peasant 3 to squat");
+				_peasantSquat9 = series_load("shadow pesky from 9 to squat");
+
+				terminateMachineAndNull(_peasant);
+				terminateMachineAndNull(_peasantShadow);
+				_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 745, 325, 75, 0x800, true,
+					triggerMachineByHashCallback, "pesky peasant");
+				_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 745, 325, 75, 0x800, true,
+					triggerMachineByHashCallback, "pesky peasant shadow");
+				peasantAnim1();
+				_peasantShould = 4114;
+				break;
+
+			case 4114:
+				terminateMachineAndNull(_peasant);
+				terminateMachineAndNull(_peasantShadow);
+				_peasant = triggerMachineByHash_3000(8, 6,
+					*PEASANT_NORMAL_DIRS, *PEASANT_SHADOW_DIRS,
+					763, 325, 3, triggerMachineByHashCallback3000, "pp_walk");
+				sendWSMessage_10000(_peasant, 932, 325, 3, 121, 1);
+				_peasantShould = 4115;
+				break;
+
+			case 4115:
+				sendWSMessage_60000(_peasant);
+				_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 950, 325, 75, 0x800, true,
+					triggerMachineByHashCallback, "pesky peasant");
+				_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 950, 325, 75, 0x800, true,
+					triggerMachineByHashCallback, "pesky peasant shadow");
+				peasantAnim2();
+				_peasantShould = 4116;
+				break;
+
+			case 4116:
+				_peasantMode = 4053;
+				_peasantShould = 4160;
+				setupPeasantHotspot(_peasantMode);
+				series_unload(_peasantSquat9);
+				series_unload(_peasantSquat3);
+				series_unload(_peasantFromSquat3);
+				series_unload(_peasantSquatTo9);
+
+				if (!_flag2)
+					player_set_commands_allowed(true);
+
+				kernel_timing_trigger(1, 120);
+				break;
+
+			case 4117:
+				_peasantSquatTo9 = series_load("peasant squat to 9");
+				_peasantFromSquat3 = series_load("shadow peskey from squat to pos3");
+				_peasantSquat3 = series_load("peasant 3 to squat");
+				_peasantSquat9 = series_load("shadow pesky from 9 to squat");
+
+				terminateMachineAndNull(_peasant);
+				terminateMachineAndNull(_peasantShadow);
+				_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 745, 325, 75, 0x800, false,
+					triggerMachineByHashCallback, "pesky peasant");
+				_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 745, 325, 75, 0x800, false,
+					triggerMachineByHashCallback, "pesky peasant shadow");
+				_peasantShould = 4118;
+				break;
+
+			case 4118:
+				terminateMachineAndNull(_peasant);
+				terminateMachineAndNull(_peasantShadow);
+				_peasant = triggerMachineByHash_3000(8, 6,
+					*PEASANT_NORMAL_DIRS, *PEASANT_SHADOW_DIRS,
+					727, 325, 9, triggerMachineByHashCallback3000, "pp_walking");
+				sendWSMessage_10000(_peasant, 436, 332, 9, 121, 1);
+				_peasantShould = 4119;
+				break;
+
+			case 4119:
+				sendWSMessage_60000(_peasant);
+				_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 418, 332, 75, 0x800, false,
+					triggerMachineByHashCallback, "pesky peasant");
+				_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 418, 332, 75, 0x800, false,
+					triggerMachineByHashCallback, "pesky peasant shadow");
+
+				peasantAnim2();
+				_peasantShould = 4120;
+				break;
+
+			case 4120:
+				_peasantMode = 4052;
+				_peasantShould = 4170;
+				setupPeasantHotspot(_peasantMode);
+				series_unload(_peasantSquat9);
+				series_unload(_peasantSquat3);
+				series_unload(_peasantFromSquat3);
+				series_unload(_peasantSquatTo9);
+				player_set_commands_allowed(true);
+				kernel_timing_trigger(1, 120);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 4052:
+			switch (_peasantShould) {
+			case 4170:
+				sendWSMessage_10000(1, _peasant, _peasantRocks, 1, 5, 120,
+					_peasantRocks, 5, 5, 0);
+				break;
+
+			case 4175:
+				_peasantSquatTo9 = series_load("peasant squat to 9");
+				_peasantFromSquat3 = series_load("shadow pesky from squat to pos3");
+				_peasantSquat3 = series_load("peasant 3 to squat");
+				_peasantSquat9 = series_load("shadow pesky from 9 to squat");
+
+				terminateMachineAndNull(_peasant);
+				terminateMachineAndNull(_peasantShadow);
+				_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 418, 332, 75, 0x800, true,
+					triggerMachineByHashCallback, "pesky peasant");
+				_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 418, 332, 75, 0x800, true,
+					triggerMachineByHashCallback, "pesky peasant shadow");
+				peasantAnim1();
+				_peasantShould = 4176;
+				break;
+
+			case 4176:
+				terminateMachineAndNull(_peasant);
+				terminateMachineAndNull(_peasantShadow);
+				_peasant = triggerMachineByHash_3000(8, 6,
+					*PEASANT_NORMAL_DIRS, *PEASANT_SHADOW_DIRS, 436, 332, 3,
+					triggerMachineByHashCallback3000, "pp_walking");
+				sendWSMessage_10000(_peasant, 727, 325, 3, 121, 1);
+				_peasantShould = 4177;
+				break;
+
+			case 4177:
+				sendWSMessage_60000(_peasant);
+				_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 745, 325, 75, 0x800, true,
+					triggerMachineByHashCallback, "pesky peasant");
+				_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 745, 325, 75, 0x800, true,
+					triggerMachineByHashCallback, "pesky peasant shadow");
+				peasantAnim2();
+				_peasantShould = 4178;
+				break;
+
+			case 4178:
+				series_unload(_peasantSquat9);
+				series_unload(_peasantSquat3);
+				series_unload(_peasantFromSquat3);
+				series_unload(_peasantSquatTo9);
+				_peasantMode = 4051;
+				_peasantShould = 4110;
+				setupPeasantHotspot(_peasantMode);
+				player_set_commands_allowed(true);
+				kernel_timing_trigger(1, 120);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 4053:
+			switch (_peasantShould) {
+			case 4160:
+				sendWSMessage_10000(1, _peasant, _peasantRocks, 1, 5, 120,
+					_peasantRocks, 5, 5, 0);
+				break;
+
+			case 4162:
+				_peasantSquatTo9 = series_load("peasant squat to 9");
+				_peasantFromSquat3 = series_load("shadow pesky from squat to pos3");
+				_peasantSquat3 = series_load("peasant 3 to squat");
+				_peasantSquat9 = series_load("shadow pesky from 9 to squat");
+
+				terminateMachineAndNull(_peasant);
+				terminateMachineAndNull(_peasantShadow);
+				_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 950, 325, 75, 0x800, false,
+					triggerMachineByHashCallback, "pesky peasant");
+				_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 950, 325, 75, 0x800, false,
+					triggerMachineByHashCallback, "pesky peasant shadow");
+				peasantAnim1();
+				_peasantShould = 4163;
+				break;
+
+			case 4163:
+				terminateMachineAndNull(_peasant);
+				terminateMachineAndNull(_peasantShadow);
+				_peasant = triggerMachineByHash_3000(8, 6,
+					*PEASANT_NORMAL_DIRS, *PEASANT_SHADOW_DIRS, 932, 325, 9,
+					triggerMachineByHashCallback3000, "pp_walking");
+				sendWSMessage_10000(_peasant, 763, 325, 9, 121, 1);
+				_peasantShould = 4164;
+				break;
+
+			case 4164:
+				sendWSMessage_60000(_peasant);
+				_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 745, 325, 75, 0x800, false,
+					triggerMachineByHashCallback, "pesky peasant");
+				_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 745, 325, 75, 0x800, false,
+					triggerMachineByHashCallback, "pesky peasant shadow");
+				peasantAnim2();
+				_peasantShould = 4165;
+				break;
+
+			case 4165:
+				_peasantMode = 4051;
+				_peasantShould = 4110;
+				setupPeasantHotspot(_peasantMode);
+				series_unload(_peasantSquat9);
+				series_unload(_peasantSquat3);
+				series_unload(_peasantFromSquat3);
+				series_unload(_peasantSquatTo9);
+				player_set_commands_allowed(true);
+				kernel_timing_trigger(1, 120);
+				break;
+
+			case 4166:
+				_peasantSquatTo9 = series_load("peasant squat to 9");
+				_peasantFromSquat3 = series_load("shadow pesky from squat to pos3");
+				_peasantSquat3 = series_load("peasant 3 to squat");
+				_peasantSquat9 = series_load("shadow pesky from 9 to squat");
+
+				terminateMachineAndNull(_peasant);
+				terminateMachineAndNull(_peasantShadow);
+				_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 950, 325, 75, 0x800, true,
+					triggerMachineByHashCallback, "pesky peasant");
+				_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 950, 325, 75, 0x800, true,
+					triggerMachineByHashCallback, "pesky peasant shadow");
+				peasantAnim1();
+				_peasantShould = 4167;
+				break;
+
+			case 4167:
+				terminateMachineAndNull(_peasant);
+				terminateMachineAndNull(_peasantShadow);
+				_peasant = triggerMachineByHash_3000(8, 6,
+					*PEASANT_NORMAL_DIRS, *PEASANT_SHADOW_DIRS, 968, 325, 3,
+					triggerMachineByHashCallback3000, "pp_walking");
+				sendWSMessage_10000(_peasant, 1082, 322, 3, 121, 1);
+				_peasantShould = 4168;
+				break;
+
+			case 4168:
+				sendWSMessage_60000(_peasant);
+				_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1100, 322, 75, 0x800, true,
+					triggerMachineByHashCallback, "pesky peasant");
+				_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1100, 322, 75, 0x800, true,
+					triggerMachineByHashCallback, "pesky peasant shadow");
+				peasantAnim2();
+				_peasantShould = 4169;
+				break;
+
+			case 4169:
+				_peasantMode = 4054;
+				_peasantShould = 4140;
+				setupPeasantHotspot(_peasantMode);
+				series_unload(_peasantSquat9);
+				series_unload(_peasantSquat3);
+				series_unload(_peasantFromSquat3);
+				series_unload(_peasantSquatTo9);
+
+				if (!_G(flags)[V061] && !_flag2)
+					player_set_commands_allowed(true);
+
+				kernel_timing_trigger(1, 120);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 4054:
+			switch (_peasantShould) {
+			case 4140:
+				sendWSMessage_10000(1, _peasant, _peasantRocks, 1, 5, 120,
+					_peasantRocks, 5, 5, 0);
+				break;
+
+			case 4142:
+				_peasantSquatTo9 = series_load("peasant squat to 9");
+				_peasantFromSquat3 = series_load("shadow pesky from squat to pos3");
+				_peasantSquat3 = series_load("peasant 3 to squat");
+				_peasantSquat9 = series_load("shadow pesky from 9 to squat");
+
+				terminateMachineAndNull(_peasant);
+				terminateMachineAndNull(_peasantShadow);
+				_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1100, 322, 75, 0x800, false,
+					triggerMachineByHashCallback, "pesky peasant");
+				_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1100, 322, 75, 0x800, false,
+					triggerMachineByHashCallback, "pesky peasant shadow");
+				peasantAnim1();
+				_peasantShould = 4143;
+				break;
+
+			case 4143:
+				terminateMachineAndNull(_peasant);
+				terminateMachineAndNull(_peasantShadow);
+				_peasant = triggerMachineByHash_3000(8, 6,
+					*PEASANT_NORMAL_DIRS, *PEASANT_SHADOW_DIRS, 1082, 322, 9,
+					triggerMachineByHashCallback3000, "pp_walking");
+				sendWSMessage_10000(_peasant, 968, 325, 9, 121, 1);
+				_peasantShould = 4144;
+				break;
+
+			case 4144:
+				sendWSMessage_60000(_peasant);
+				_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 950, 325, 75, 0x800, false,
+					triggerMachineByHashCallback, "pesky peasant");
+				_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 950, 325, 75, 0x800, false,
+					triggerMachineByHashCallback, "pesky peasant shadow");
+				peasantAnim2();
+				_peasantShould = 4145;
+				break;
+
+			case 4145:
+				_peasantMode = 4053;
+				_peasantShould = 4160;
+				setupPeasantHotspot(_peasantMode);
+
+				series_unload(_peasantSquat9);
+				series_unload(_peasantSquat3);
+				series_unload(_peasantFromSquat3);
+				series_unload(_peasantSquatTo9);
+
+				if (!_flag2)
+					player_set_commands_allowed(true);
+				kernel_timing_trigger(1, 120);
+				break;
+
+			case 4146:
+				_peasantSeries = series_load("pesky peasant reach for helmet");
+				_peasantSeriesShadow = series_load("shadow pp reach for helmet");
+				_peasantSquatTo9 = series_load("peasant squat to 9");
+				_peasantFromSquat3 = series_load("shadow pesky from squat to pos3");
+
+				terminateMachineAndNull(_peasant);
+				terminateMachineAndNull(_peasantShadow);
+				_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1100, 322, 75, 0x800, true,
+					triggerMachineByHashCallback, "pesky peasant");
+				_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1100, 322, 75, 0x800, true,
+					triggerMachineByHashCallback, "pesky peasant shadow");
+				peasantAnim1();
+				_peasantShould = 4147;
+				break;
+
+			case 4147:
+				terminateMachineAndNull(_peasant);
+				terminateMachineAndNull(_peasantShadow);
+				_peasant = triggerMachineByHash_3000(8, 6,
+					*PEASANT_NORMAL_DIRS, *PEASANT_SHADOW_DIRS, 1118, 322, 3,
+					triggerMachineByHashCallback3000, "pp_walking");
+				sendWSMessage_10000(_peasant, 1200, 332, 2, 121, 1);
+				_peasantShould = 4148;
+				break;
+
+			case 4148:
+				sendWSMessage_60000(_peasant);
+				_peasant = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1240, 332, 75, 0x800, false,
+					triggerMachineByHashCallback, "pesky peasant");
+				_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 1240, 332, 75, 0x800, false,
+					triggerMachineByHashCallback, "pesky peasant shadow");
+
+				sendWSMessage_10000(1, _peasant, _peasantSeries, 1, 36, 121,
+					_peasantSeries, 36, 23, 2);
+				sendWSMessage_10000(1, _peasantShadow, _peasantSeriesShadow, 1, 36, -1,
+					_peasantSeriesShadow, 36, 23, 2);
+				_peasantShould = 4149;
+				break;
+
+			case 4149:
+				series_unload(_peasantSquatTo9);
+				series_unload(_peasantFromSquat3);
+				player_set_commands_allowed(true);
+				_peasantMode = 4054;
+				_peasantShould = 4150;
+				setupPeasantHotspot(_peasantMode);
+				kernel_timing_trigger(1, 120);
+				break;
+
+			case 4150:
+				sendWSMessage_10000(1, _peasant, _peasantSeries, 23, 36, 121,
+					_peasantSeries, 36, 36, 0);
+				sendWSMessage_10000(1, _peasantShadow, _peasantSeriesShadow, 23, 36, -1,
+					_peasantSeriesShadow, 36, 36, 0);
+				_peasantShould = 4151;
+				break;
+
+			case 4151:
+				sendWSMessage_10000(1, _peasant, _peasantSeries, 36, 23, 120,
+					_peasantSeries, 23, 23, 0);
+				sendWSMessage_10000(1, _peasantShadow, _peasantSeriesShadow, 36, 23, -1,
+					_peasantSeriesShadow, 23, 23, 0);
+				_peasantShould = 4150;
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 4055:
+			sendWSMessage_10000(1, _peasant, _peskyBegLoop, 1, 16, 120,
+				_peskyBegLoop, 16, 16, 0);
+			_peasantMode = 4057;
+			break;
+
+		case 4056:
+			frame = imath_ranged_rand(17, 19);
+			sendWSMessage_10000(1, _peasant, _peskyBegLoop, frame, frame, 120,
+				_peskyBegLoop, frame, frame, 0);
+			break;
+
+		case 4057:
+			sendWSMessage_10000(1, _peasant, _peskyBegLoop, 16, 16, 120,
+				_peskyBegLoop, 16, 16, 0);
+			break;
+
+		case 4058:
+			sendWSMessage_10000(1, _peasant, _peskyBegLoop, 16, 1, 121,
+				_peasantRocks, 1, 1, 0);
+			_peasantMode = 4059;
+			break;
+
+		case 4059:
+			series_unload(_peskyBegLoop);
+
+			switch (_peasantMode2) {
+			case 4052:
+				_peasantMode = 4052;
+				_peasantShould = 4170;
+				break;
+			case 4053:
+				_peasantMode = 4053;
+				_peasantShould = 4160;
+				break;
+			case 4054:
+				_peasantMode = 4054;
+				_peasantShould = 4140;
+				break;
+			default:
+				_peasantMode = 4051;
+				_peasantShould = 4110;
+				break;
+			}
+
+			kernel_timing_trigger(1, 120);
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
 	case 125:
 		kernel_trigger_dispatchx(kernel_trigger_create(126));
 		break;
@@ -1157,27 +1668,104 @@ void Room203::daemon() {
 		break;
 
 	case 131:
-#ifdef TODO
 		switch (_oldLadyMode) {
-		case 5100:
-			sendWSMessage_10000(1, _oldLady, _oldLadyFrame, 1, 1, 130, _oldLadyFrame, 1, 1, 0);
+		case 5666:
+			switch (_oldLadyShould) {
+			case 5100:
+				sendWSMessage_10000(1, _oldLady, _oldLadyFrame, 1, 1, 130, _oldLadyFrame, 1, 1, 0);
+				break;
+
+			case 5101:
+				sendWSMessage_10000(1, _oldLady, _oldLadyFeedingBirds, 1, 26, 131,
+					_oldLadyFeedingBirds, 26, 26, 0);
+				_oldLadyShould = 5102;
+				break;
+
+			case 5102:
+				sendWSMessage_10000(1, _oldLady, _oldLadyFeedingBirds, 26, 1, 131,
+					_oldLadyFrame, 1, 1, 0);
+				_oldLadyShould = 5100;
+				break;
+
+			default:
+				break;
+			}
 			break;
 
-		case 5101:
-			sendWSMessage_10000(1, _oldLady, _oldLadyFeedingBirds, 1, 26, 131,
-				_oldLadyFeedingBirds, 26, 26, 0);
-			_oldLadyShould = 5102;
+		case 5668:
+			switch (_oldLadyShould) {
+			case 5301:
+				sendWSMessage_10000(1, _oldLady, _oldLady1, 1, 6, 130, _oldLady1, 6, 6, 0);
+				_oldLadyShould = 5302;
+				break;
+
+			case 5302:
+				sendWSMessage_10000(1, _oldLady, _oldLady1, 6, 6, 130, _oldLady1, 6, 6, 0);
+				break;
+
+			case 5303:
+				sendWSMessage_10000(1, _oldLady, _oldLady1, 6, 6, 131, _oldLady1, 6, 6, 0);
+				_oldLadyShould = 5304;
+				break;
+
+			case 5304:
+				sendWSMessage_10000(1, _oldLady, _oldLady1, 6, 6, 131, _oldLady1, 6, 6, 0);
+				_oldLadyShould = 5305;
+				break;
+
+			case 5305:
+				_ripleyShould = 1140;
+				_oldLadyShould = 5302;
+				kernel_trigger_dispatchx(kernel_trigger_create(130));
+				break;
+
+			case 5306:
+				sendWSMessage_10000(1, _oldLady, _oldLady1, 6, 1, 131, _oldLadyFrame, 1, 1, 0);
+				_oldLadyShould = 5307;
+				break;
+
+			case 5307:
+				series_unload(_oldLady1);
+				_oldLadyMode = 5666;
+				_oldLadyShould = 5100;
+				kernel_timing_trigger(120, 130);
+				break;
+
+			case 5308:
+				sendWSMessage_10000(1, _oldLady, _oldLady1, 6, 6, -1, _oldLady1, 6, 6, 0);
+				break;
+
+			default:
+				break;
+			}
 			break;
 
-		case 5102:
-			sendWSMessage_10000(1, _oldLady, _oldLadyFeedingBirds, 26, 1, 131,
-				_oldLadyFrame, 1, 1, 0);
-			_oldLadyShould = 5100;
+		case 5669:
+			switch (_oldLadyShould) {
+			case 5200:
+				sendWSMessage_10000(1, _oldLady, _oldLadyNoHelmet, 1, 1, 130,
+					_oldLadyNoHelmet, 1, 1, 0);
+				break;
+
+			case 5201:
+				sendWSMessage_10000(1, _oldLady, _oldLadyNoHelmet, 1, 36, 131,
+					_oldLadyNoHelmet, 36, 36, 0);
+				_oldLadyShould = 5202;
+				break;
+
+			case 5202:
+				sendWSMessage_10000(1, _oldLady, _oldLadyNoHelmet, 36, 1, 130,
+					_oldLadyFrame, 2, 2, 0);
+				break;
+
+			default:
+				break;
+			}
 			break;
+
 		default:
 			break;
 		}
-#endif
 		break;
 
 	case 140:
@@ -1216,6 +1804,178 @@ void Room203::daemon() {
 
 			case 2012:
 				kernel_timing_trigger(1, 141);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 141:
+		switch (_officialMode) {
+		case 2001:
+			switch (_officialShould) {
+			case 2010:
+				sendWSMessage_10000(1, _official, _officialStander, 1, 1, -1,
+					_officialStander, 1, 1, 0);
+				break;
+
+			case 2020:
+				ws_hide_walker();
+				_ripHandTalk = series_load("rip trek hand talk pos3");
+
+				player_update_info();
+				_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+					_G(player_info).x, _G(player_info).y, _G(player_info).scale,
+					0x100, 0, triggerMachineByHashCallback, "rip talks official");
+				_ripsh1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+					_G(player_info).x, _G(player_info).y, _G(player_info).scale,
+					0x100, 0, triggerMachineByHashCallback, "rip talks official SHADOW");
+				sendWSMessage_10000(1, _ripley, _ripHandTalk, 1, 16, -1, _ripHandTalk, 1, 1, 0);
+				sendWSMessage_10000(1, _ripsh1, _shadow3, 1, 1, -1, _shadow3, 1, 1, 0);
+
+				_officialShould = 2023;
+				digi_play("03_02p01", 1, 255, 141);
+				break;
+
+			case 2023:
+				_officialHalt = series_load("official halt");
+				sendWSMessage_10000(1, _official, _officialHalt, 1, 15, 141,
+					_officialHalt, 15, 15, 0);
+				digi_play("03_02n01", 1);
+				break;
+
+			case 2024:
+				sendWSMessage_10000(1, _official, _officialHalt, 15, 1, 141,
+					_officialStander, 1, 1, 0);
+				_officialShould = 2025;
+				break;
+
+			case 2025:
+				series_unload(_officialHalt);
+				series_unload(_ripHandTalk);
+				_ripArmsX = series_load("rip trek arms x pos3");
+				_officialThroughThere = series_load("official through there");
+				sendWSMessage_10000(1, _ripley, _ripArmsX, 1, 15, -1, _ripArmsX, 15, 15, 0);
+
+				_officialShould = 2026;
+				digi_play("03_06p02", 1, 255, 141);
+				break;
+
+			case 2026:
+				sendWSMessage_10000(1, _official, _officialThroughThere, 1, 14, 141,
+					_officialThroughThere, 14, 14, 0);
+				_officialShould = 2027;
+				digi_play("03_06n02", 1);
+				break;
+
+			case 2027:
+				sendWSMessage_10000(1, _official, _officialThroughThere, 14, 1, 141,
+					_officialStander, 1, 1, 0);
+				_officialShould = 2028;
+				break;
+
+			case 2028:
+				series_unload(_officialThroughThere);
+				_ripHeadDownTalkOff = series_load("rip head down talk off td33");
+				sendWSMessage_10000(1, _ripley, _ripHeadDownTalkOff, 1, 5, -1,
+					_ripHeadDownTalkOff, 3, 5, 1);
+				_officialShould = 2029;
+				digi_play("03_07p03", 1, 255, 141);
+				break;
+
+			case 2029:
+				sendWSMessage_10000(1, _ripley, _ripHeadDownTalkOff, 5, 1, 141,
+					_ripArmsX, 15, 15, 0);
+				_officialShould = 2030;
+				break;
+
+			case 2030:
+				sendWSMessage_10000(1, _ripley, _ripArmsX, 15, 1, 141, _ripArmsX, 1, 1, 0);
+				_officialShould = 2031;
+				break;
+
+			case 2031:
+				series_unload(_ripArmsX);
+				terminateMachineAndNull(_ripley);
+				terminateMachineAndNull(_ripsh1);
+				ws_unhide_walker();
+				_officialShould = 2010;
+				kernel_trigger_dispatchx(kernel_trigger_create(140));
+				player_set_commands_allowed(true);
+				break;
+
+			case 2040:
+				_officialHalt = series_load("official halt");
+
+				if (_digiName3) {
+					digi_play(_digiName3, 1, 255, _digiTrigger3);
+					_digiName3 = nullptr;
+				}
+
+				sendWSMessage_10000(1, _official, _officialHalt, 1, 15, 141,
+					_officialHalt, 15, 15, 0);
+				_officialShould = 2042;
+				break;
+
+			case 2042:
+				sendWSMessage_10000(1, _official, _officialHalt, 15, 1, 141,
+					_officialStander, 1, 1, 0);
+				_officialShould = 2043;
+				break;
+
+			case 2043:
+				series_unload(_officialHalt);
+				_officialShould = 2010;
+				kernel_trigger_dispatchx(kernel_trigger_create(140));
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 2002:
+			switch (_officialShould) {
+			case 2011:
+			case 2012:
+				sendWSMessage_10000(1, _official, _officialStander, 1, 1, 140,
+					_officialStander, 1, 1, 0);
+				_officialShould = 2012;
+				break;
+
+			case 2013:
+				frame = imath_ranged_rand(1, 5);
+				sendWSMessage_10000(1, _official, _officialStander, 1, frame, 140,
+					_officialStander, frame, frame, 0);
+				break;
+
+			case 2014:
+				sendWSMessage_10000(1, _official, _officialThroughThere, 1, 14, 141,
+					_officialThroughThere, 14, 14, 0);
+				_officialShould = 2015;
+				break;
+
+			case 2015:
+				sendWSMessage_10000(1, _official, _officialThroughThere, 14, 1, 140,
+					_officialStander, 1, 1, 0);
+				_officialShould = 2016;
+				break;
+
+			case 2016:
+				_officialShould = 2012;
+				kernel_trigger_dispatchx(kernel_trigger_create(140));
+				conv_resume();
+				break;
+
+			case 2017:
+				sendWSMessage_10000(1, _official, _officialStander, 1, 1, -1,
+					_officialStander, 1, 1, 0);
 				break;
 
 			default:
@@ -1481,7 +2241,7 @@ void Room203::daemon() {
 		break;
 
 	case 152:
-		_val2 = 0;
+		_flag2 = false;
 
 		switch (_ripleyMode) {
 		case 1001:
@@ -1816,12 +2576,41 @@ void Room203::daemon() {
 	}
 }
 
+void Room203::pre_parser() {
+	// TODO
+}
+
+void Room203::parser() {
+#ifdef TODO
+	ws_hide_walker();
+	player_set_commands_allowed(false);
+	player_update_info();
+	_ripsh1 = series_place_sprite("ripsh1", 0, _G(player_info).x, _G(player_info).y,
+		_G(player_info).scale, 0x500);
+	_peskyBegLoop = series_load("pesky beg loop");
+	_ripHandsBehBack = series_load("rip trek hands beh back pos1");
+
+	_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+		_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x400, 0,
+		triggerMachineByHashCallback, "rip in conv");
+	_ripleyMode = 1001;
+	_ripleyShould = 1010;
+	sendWSMessage_10000(1, _ripley, _ripHandsBehBack, 1, 11, 150,
+		_ripHandsBehBack, 11, 11, 0);
+
+	_G(kernel).trigger_mode = KT_PARSE;
+	_peasantMode2 = _peasantMode;
+	_peasantMode = 4055;
+#endif
+}
+
+
 void Room203::setupHelmetHotspot() {
 	for (HotSpotRec *hs = _G(currentSceneDef).hotspots; hs; hs = hs->next) {
 		if (!strcmp(hs->vocab, "SOLDIER'S HELMET")) {
 			hs->active = _G(flags)[V060] ?
 				!inv_player_has("SOLDIER'S HELMET") && hs->lr_x > 1200 :
-				hs->lr_x < 1200;
+			hs->lr_x < 1200;
 			break;
 		}
 	}
@@ -1938,7 +2727,7 @@ void Room203::peasantWalk() {
 	case 4162:
 	case 4166:
 		if (_G(player_info).y > 310 && _G(player_info).y < 330 &&
-				_G(player_info).x > 735 && _G(player_info).x < 1140) {
+			_G(player_info).x > 735 && _G(player_info).x < 1140) {
 			if (_G(player_info).facing == 1 || _G(player_info).facing == 2 ||
 				_G(player_info).facing == 10 || _G(player_info).facing == 11)
 				ws_walk(_G(player_info).x, 294, nullptr, -1, 0);
@@ -1950,7 +2739,7 @@ void Room203::peasantWalk() {
 	case 4117:
 	case 4175:
 		if (_G(player_info).y > 315 && _G(player_info).y < 335 &&
-				_G(player_info).x > 373 && _G(player_info).x < 763) {
+			_G(player_info).x > 373 && _G(player_info).x < 763) {
 			ws_walk(_G(player_info).x, 350, nullptr, -1, 0);
 		}
 		break;
@@ -1960,32 +2749,18 @@ void Room203::peasantWalk() {
 	}
 }
 
-void Room203::pre_parser() {
-	// TODO
+void Room203::peasantAnim1() {
+	sendWSMessage_10000(1, _peasant, _peasantSquatTo9, 1, 11, 121,
+		_peasantSquatTo9, 11, 11, 0);
+	sendWSMessage_10000(1, _peasantShadow, _peasantFromSquat3, 1, 11, -1,
+		_peasantFromSquat3, 11, 11, 0);
 }
 
-void Room203::parser() {
-#ifdef TODO
-	ws_hide_walker();
-	player_set_commands_allowed(false);
-	player_update_info();
-	_ripsh1 = series_place_sprite("ripsh1", 0, _G(player_info).x, _G(player_info).y,
-		_G(player_info).scale, 0x500);
-	_peskyBegLoop = series_load("pesky beg loop");
-	_ripHandsBehBack = series_load("rip trek hands beh back pos1");
-
-	_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
-		_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x400, 0,
-		triggerMachineByHashCallback, "rip in conv");
-	_ripleyMode = 1001;
-	_ripleyShould = 1010;
-	sendWSMessage_10000(1, _ripley, _ripHandsBehBack, 1, 11, 150,
-		_ripHandsBehBack, 11, 11, 0);
-
-	_G(kernel).trigger_mode = KT_PARSE;
-	_peasantMode2 = _peasantMode;
-	_peasantMode = 4055;
-#endif
+void Room203::peasantAnim2() {
+	sendWSMessage_10000(1, _peasant, _peasantSquat3, 6, 18, -1,
+		_peasantRocks, 1, 1, 0);
+	sendWSMessage_10000(1, _peasantShadow, _peasantSquat9, 6, 18, 121,
+		_peasantRocksShadow, 1, 1, 0);
 }
 
 } // namespace Rooms
