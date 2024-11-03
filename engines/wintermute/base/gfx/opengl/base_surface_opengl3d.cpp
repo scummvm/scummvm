@@ -114,7 +114,7 @@ bool BaseSurfaceOpenGL3D::displayTiled(int x, int y, Rect32 rect, int numTimesX,
 	prepareToDraw();
 
 	Vector2 scale(numTimesX, numTimesY);
-	_renderer->drawSpriteEx(dynamic_cast<BaseSurface *>(this), rect, Vector2(x, y), Vector2(0, 0), scale, 0, 0xFFFFFFFF, true, Graphics::BLEND_NORMAL, false, false);
+	_renderer->drawSpriteEx(dynamic_cast<BaseSurface *>(this), rect, Vector2(x, y), Vector2(0, 0), scale, 0, 0xFFFFFFFF, false, Graphics::BLEND_NORMAL, false, false);
 	return true;
 }
 
