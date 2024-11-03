@@ -146,6 +146,7 @@ bool ShadowVolumeOpenGLShader::renderToScene() {
 	glStencilFunc(GL_LEQUAL, 0x1, 0xFFFFFFFF);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
+	glDisable(GL_ALPHA_TEST);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	BaseRenderOpenGL3DShader *renderer = dynamic_cast<BaseRenderOpenGL3DShader *>(_gameRef->_renderer3D);
