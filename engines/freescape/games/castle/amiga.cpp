@@ -28,6 +28,25 @@
 
 namespace Freescape {
 
+byte kAmigaCastlePalette[16][3] = {
+	{0x00, 0x00, 0x00},
+	{0x44, 0x44, 0x44},
+	{0x66, 0x66, 0x66},
+	{0x88, 0x88, 0x88},
+	{0xaa, 0xaa, 0xaa},
+	{0xcc, 0xcc, 0xcc},
+	{0x00, 0x00, 0x88},
+	{0x66, 0xaa, 0x00},
+	{0x88, 0xcc, 0x00},
+	{0xcc, 0xee, 0x00},
+	{0xee, 0xee, 0x66},
+	{0x44, 0x88, 0x00},
+	{0xee, 0xaa, 0x00},
+	{0xcc, 0x44, 0x00},
+	{0x88, 0x44, 0x00},
+	{0xee, 0xee, 0xee},
+};
+
 Graphics::ManagedSurface *CastleEngine::loadFrameFromPlanesVertical(Common::SeekableReadStream *file, int widthInBytes, int height) {
 	Graphics::ManagedSurface *surface;
 	surface = new Graphics::ManagedSurface();
@@ -70,9 +89,6 @@ void CastleEngine::loadAssetsAmigaDemo() {
 	loadMessagesVariableSize(&file, 0x8bb2, 178);
 	loadRiddles(&file, 0x96c8 - 2 - 19 * 2, 19);
 
-	file.seek(0x3c6d0);
-	byte *borderPalete = loadPalette(&file);
-
 	file.seek(0x11eec);
 	Common::Array<Graphics::ManagedSurface *> chars;
 	for (int i = 0; i < 90; i++) {
@@ -81,7 +97,7 @@ void CastleEngine::loadAssetsAmigaDemo() {
 		//imgRiddle->copyFrom(*img);
 
 		chars.push_back(img);
-		chars[i]->convertToInPlace(_gfx->_texturePixelFormat, borderPalete, 16);
+		chars[i]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 
 		//charsRiddle.push_back(imgRiddle);
 		//charsRiddle[i]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGARiddleFontPalette, 16);
@@ -112,8 +128,7 @@ void CastleEngine::loadAssetsAmigaDemo() {
 
 	file.seek(0x2cf28 + 0x28 - 0x2 + 0x28);
 	_border = loadFrameFromPlanesVertical(&file, 160, 200);
-	_border->convertToInPlace(_gfx->_texturePixelFormat, borderPalete, 16);
-	delete[] borderPalete;
+	_border->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 	file.close();
 
 	_areaMap[2]->_groundColor = 1;
