@@ -48,6 +48,7 @@ BaseRenderer3D *makeOpenGL3DShaderRenderer(BaseGame *inGame) {
 }
 
 BaseRenderOpenGL3DShader::BaseRenderOpenGL3DShader(BaseGame *inGame) : BaseRenderer3D(inGame) {
+	setDefaultAmbientLightColor();
 	_spriteVBO = 0;
 }
 
@@ -150,15 +151,18 @@ bool BaseRenderOpenGL3DShader::setup2D(bool force) {
 	if (_state != RSTATE_2D || force) {
 		_state = RSTATE_2D;
 
-		// some states are still missing here
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_STENCIL_TEST);
 
-		glEnable(GL_CULL_FACE);
-		glFrontFace(GL_CCW);  // WME DX have CW
 		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		setSpriteBlendMode(Graphics::BLEND_NORMAL);
+
+		glPolygonMode(GL_FRONT, GL_FILL);
+		glFrontFace(GL_CCW);  // WME DX have CW
+		glEnable(GL_CULL_FACE);
+		glDisable(GL_STENCIL_TEST);
 	}
 
 	return true;
@@ -168,10 +172,17 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 	if (_state != RSTATE_3D || force) {
 		_state = RSTATE_3D;
 
+		glEnable(GL_NORMALIZE);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
 
 		setAmbientLightRenderState();
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 
 		if (camera)
 			_camera = camera;
@@ -239,12 +250,17 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 }
 
 void BaseRenderOpenGL3DShader::setAmbientLightRenderState() {
-	byte a = RGBCOLGetA(_ambientLightColor);
-	byte r = RGBCOLGetR(_ambientLightColor);
-	byte g = RGBCOLGetG(_ambientLightColor);
-	byte b = RGBCOLGetB(_ambientLightColor);
+	byte a = 0;
+	byte r = 0;
+	byte g = 0;
+	byte b = 0;
 
-	if (!_ambientLightOverride) {
+	if (_ambientLightOverride) {
+		a = RGBCOLGetA(_ambientLightColor);
+		r = RGBCOLGetR(_ambientLightColor);
+		g = RGBCOLGetG(_ambientLightColor);
+		b = RGBCOLGetB(_ambientLightColor);
+	} else {
 		uint32 color = _gameRef->getAmbientLightColor();
 
 		a = RGBCOLGetA(color);
@@ -259,20 +275,24 @@ void BaseRenderOpenGL3DShader::setAmbientLightRenderState() {
 	value.z() = b / 255.0f;
 	value.w() = a / 255.0f;
 
-	_xmodelShader->use();
-	_xmodelShader->setUniform("ambientLight", value);
+	if (_xmodelShader) {
+		_xmodelShader->use();
+		_xmodelShader->setUniform("ambientLight", value);
+	}
 }
 
 bool BaseRenderOpenGL3DShader::setupLines() {
 	if (_state != RSTATE_LINES) {
 		_state = RSTATE_LINES;
 
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glDisable(GL_DEPTH_TEST);
 		glFrontFace(GL_CW); // WME DX have CCW
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_BLEND);
 		glEnable(GL_ALPHA_TEST);
 
+		glDisable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		_lastTexture = nullptr;
 	}
@@ -299,13 +319,6 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::
 
 	float width = (rect.right - rect.left) * scale.x;
 	float height = (rect.bottom - rect.top) * scale.y;
-
-	glBindTexture(GL_TEXTURE_2D, texture->getTextureName());
-
-	// for sprites we clamp to the edge, to avoid line fragments at the edges
-	// this is not done by wme, though
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	int texWidth = texture->getGLTextureWidth();
 	int texHeight = texture->getGLTextureHeight();
@@ -390,6 +403,20 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::
 		// TODO
 	} else {
 		setSpriteBlendMode(blendMode);
+		if (alphaDisable) {
+			glDisable(GL_ALPHA_TEST);
+		}
+
+		if (_lastTexture != texture) {
+			_lastTexture = texture;
+			glBindTexture(GL_TEXTURE_2D, texture->getTextureName());
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			// for sprites we clamp to the edge, to avoid line fragments at the edges
+			// this is not done by wme, though
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glEnable(GL_TEXTURE_2D);
+		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, _spriteVBO);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(SpriteVertex), vertices);
@@ -399,6 +426,10 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::
 		setProjection2D(_spriteShader);
 
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+		if (alphaDisable) {
+			glEnable(GL_BLEND);
+		}
 	}
 
 	return true;
@@ -565,6 +596,7 @@ void BaseRenderOpenGL3DShader::fadeToColor(byte r, byte g, byte b, byte a) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
 	glBindBuffer(GL_ARRAY_BUFFER, _fadeVBO);
 	_lastTexture = nullptr;
 
@@ -727,6 +759,7 @@ void BaseRenderOpenGL3DShader::renderShadowGeometry(const BaseArray<AdWalkplane 
 
 	// no texture
 	_lastTexture = nullptr;
+	glDisable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glFrontFace(GL_CW); // WME DX have CCW
@@ -861,6 +894,8 @@ XMesh *BaseRenderOpenGL3DShader::createXMesh() {
 ShadowVolume *BaseRenderOpenGL3DShader::createShadowVolume() {
 	return new ShadowVolumeOpenGLShader(_gameRef, _shadowVolumeShader, _shadowMaskShader);
 }
+
+// ScummVM specific ends <--
 
 } // namespace Wintermute
 

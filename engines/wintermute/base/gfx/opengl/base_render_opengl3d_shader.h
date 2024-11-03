@@ -146,12 +146,12 @@ private:
 	GLuint _spriteVBO;
 	GLuint _fadeVBO;
 	GLuint _lineVBO;
-	OpenGL::Shader *_spriteShader;
-	OpenGL::Shader *_fadeShader;
-	OpenGL::Shader *_xmodelShader;
-	OpenGL::Shader *_geometryShader;
-	OpenGL::Shader *_shadowVolumeShader;
-	OpenGL::Shader *_lineShader;
+	OpenGL::Shader *_spriteShader{};
+	OpenGL::Shader *_fadeShader{};
+	OpenGL::Shader *_xmodelShader{};
+	OpenGL::Shader *_geometryShader{};
+	OpenGL::Shader *_shadowVolumeShader{};
+	OpenGL::Shader *_lineShader{};
 };
 
 } // namespace Wintermute

@@ -73,8 +73,9 @@ ShadowVolumeOpenGLShader::~ShadowVolumeOpenGLShader() {
 //////////////////////////////////////////////////////////////////////////
 bool ShadowVolumeOpenGLShader::render() {
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
+	glDisable(GL_TEXTURE_2D);
 	_gameRef->_renderer3D->_lastTexture = nullptr;
+	glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
 
 	return true;
 }
@@ -96,6 +97,7 @@ bool ShadowVolumeOpenGLShader::renderToStencilBuffer() {
 	// Disable z-buffer writes (note: z-testing still occurs), and enable the
 	// stencil-buffer
 	glDepthMask(GL_FALSE);
+	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_STENCIL_TEST);
 	glEnable(GL_CULL_FACE);
 
