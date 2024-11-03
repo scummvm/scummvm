@@ -137,7 +137,7 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 		glAlphaFunc(GL_GEQUAL, 0.0f);
 
 		glPolygonMode(GL_FRONT, GL_FILL);
-		glFrontFace(GL_CCW);
+		glFrontFace(GL_CCW); // DX have CW
 		glEnable(GL_CULL_FACE);
 		glDisable(GL_STENCIL_TEST);
 
@@ -287,7 +287,7 @@ bool BaseRenderOpenGL3D::setupLines() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glDisable(GL_LIGHTING);
 		glDisable(GL_DEPTH_TEST);
-		glFrontFace(GL_CW);
+		glFrontFace(GL_CW); // WME DX have CCW
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_BLEND);
 		glEnable(GL_ALPHA_TEST);
@@ -777,7 +777,7 @@ void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &pla
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
-	glFrontFace(GL_CW);
+	glFrontFace(GL_CW); // WME DX have CCW
 	glEnable(GL_BLEND);
 	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_TEXTURE_2D);
@@ -860,7 +860,7 @@ void BaseRenderOpenGL3D::renderShadowGeometry(const BaseArray<AdWalkplane *> &pl
 	glDisable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	glFrontFace(GL_CW);
+	glFrontFace(GL_CW); // WME DX have CCW
 
 	// render blocks
 	for (uint i = 0; i < blocks.size(); i++) {
@@ -888,7 +888,7 @@ void BaseRenderOpenGL3D::renderShadowGeometry(const BaseArray<AdWalkplane *> &pl
 
 // implements D3D SetRenderState() D3DRS_CULLMODE - CCW
 void BaseRenderOpenGL3D::enableCulling() {
-	glFrontFace(GL_CW);
+	glFrontFace(GL_CW); // WME DX have CCW
 	glEnable(GL_CULL_FACE);
 }
 

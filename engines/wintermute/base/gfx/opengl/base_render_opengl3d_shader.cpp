@@ -155,7 +155,7 @@ bool BaseRenderOpenGL3DShader::setup2D(bool force) {
 		glDisable(GL_STENCIL_TEST);
 
 		glEnable(GL_CULL_FACE);
-		glFrontFace(GL_CCW);
+		glFrontFace(GL_CCW);  // WME DX have CW
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -273,7 +273,7 @@ bool BaseRenderOpenGL3DShader::setupLines() {
 		_state = RSTATE_LINES;
 
 		glDisable(GL_DEPTH_TEST);
-		glFrontFace(GL_CW);
+		glFrontFace(GL_CW); // WME DX have CCW
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_BLEND);
 		glEnable(GL_ALPHA_TEST);
@@ -699,7 +699,7 @@ void BaseRenderOpenGL3DShader::renderShadowGeometry(const BaseArray<AdWalkplane 
 	_lastTexture = nullptr;
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	glFrontFace(GL_CW);
+	glFrontFace(GL_CW); // WME DX have CCW
 
 	// render blocks
 	for (uint i = 0; i < blocks.size(); i++) {
@@ -727,7 +727,7 @@ void BaseRenderOpenGL3DShader::renderShadowGeometry(const BaseArray<AdWalkplane 
 
 // implements D3D SetRenderState() D3DRS_CULLMODE - CCW
 void BaseRenderOpenGL3DShader::enableCulling() {
-	glFrontFace(GL_CW);
+	glFrontFace(GL_CW); // WME DX have CCW
 	glEnable(GL_CULL_FACE);
 }
 
