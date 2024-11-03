@@ -443,7 +443,7 @@ void showScenePersonages() {
 		qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher();
 		if (dp && ((scene = dp->get_active_scene()))) {
 			if (!scene->getPersonages()->empty()) {
-				if (ImGui::BeginTable("Personages", 7, ImGuiTableFlags_Borders)) {
+				if (ImGui::BeginTable("Personages", 8, ImGuiTableFlags_Borders)) {
 					ImGuiTableFlags flags = ImGuiTableColumnFlags_WidthFixed;
 					ImGui::TableSetupColumn("Name", flags);
 					ImGui::TableSetupColumn("Flags", flags);
@@ -451,6 +451,7 @@ void showScenePersonages() {
 					ImGui::TableSetupColumn("Movement", flags);
 
 					ImGui::TableSetupColumn("Frame", flags);
+					ImGui::TableSetupColumn("Time", flags);
 					ImGui::TableSetupColumn("Anim Flags", flags);
 					ImGui::TableSetupColumn("Anim Status", flags);
 
@@ -460,35 +461,31 @@ void showScenePersonages() {
 						ImGui::TableNextRow();
 
 						ImGui::TableNextColumn();
-
 						ImGui::Text((char *)transCyrillic(it->name()));
 
-						ImGui::TableNextColumn();
-
 						qdGameObjectState *st = it->get_state(it->cur_state());
+						ImGui::TableNextColumn();
 						ImGui::Text("%s", st ? qdGameObjectState::flag2str(st->flags(), true, true).c_str() : "<none>");
 						ImGui::SetItemTooltip("%s", st ? qdGameObjectState::flag2str(st->flags(), true).c_str() : "<none>");
 
 						ImGui::TableNextColumn();
-
 						ImGui::Text(qdGameObjectMoving::control2str(it->get_control_types(), true).c_str());
 
 						ImGui::TableNextColumn();
-
 						ImGui::Text(qdGameObjectMoving::movement2str(it->get_movement_mode(), true).c_str());
 
 						qdAnimation *anim = it->get_animation();
 						ImGui::TableNextColumn();
-
-						ImGui::Text("%d", anim->get_cur_frame_number());
+						ImGui::Text("%d / %d", anim->get_cur_frame_number(), anim->num_frames());
 
 						ImGui::TableNextColumn();
+						ImGui::Text("%f / %f", anim->cur_time(), anim->length());
 
+						ImGui::TableNextColumn();
 						ImGui::Text(qdAnimation::flag2str(anim->flags(), true, true).c_str());
 						ImGui::SetItemTooltip(qdAnimation::flag2str(anim->flags(), true).c_str());
 
 						ImGui::TableNextColumn();
-
 						ImGui::Text(qdAnimation::status2str(anim->status(), true).c_str());
 					}
 
