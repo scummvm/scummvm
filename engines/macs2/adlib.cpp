@@ -749,18 +749,14 @@ void Adlib::OnTimer() {
 								if (g2291 == bp8) {
 									// l0017_1CFF:
 									gArray2235[bp4] = bp8;
-									// TODO: More array access
+									// TODO: Argument missing so far
 									/* push word ptr[224Ah]
 									push	word ptr [2248h]
-									mov	al,[bp-3h]
-									xor	ah,ah
-									mov	di,ax
-									mov	al,[di+225Fh]
-									xor	ah,ah
-									shl	ax,4h
-									push	ax
-									call	far 0017h:19BEh
 									*/
+									// TODO: Original code throws away AH before and after
+									// the array access
+									uint16 value = gArray225F[bp3];
+									Func19BE_TODO(value << 4);
 								}
 								// TODO: The "or" one should go to 1E91h
 								// TODO: Should be 1CFF
@@ -809,6 +805,10 @@ uint16 Adlib::Func19BE(uint8 offset) {
 	// l0017_19EA
 	pos += offset;
 	return pos;
+}
+
+uint16 Adlib::Func19BE_TODO(uint8 offset) {
+	return uint16();
 }
 
 void Adlib::Func1A03() {
