@@ -40,18 +40,30 @@ namespace Wintermute {
 
 class BaseSurfaceOpenGL3D;
 
-struct SimpleShadowVertex {
-	float u;
-	float v;
-	float nx;
-	float ny;
-	float nz;
-	float x;
-	float y;
-	float z;
-};
-
 class BaseRenderOpenGL3D : public BaseRenderer3D {
+	struct SpriteVertex {
+		float u;
+		float v;
+		float x;
+		float y;
+		float z;
+		uint8 r;
+		uint8 g;
+		uint8 b;
+		uint8 a;
+	};
+
+	struct SimpleShadowVertex {
+		float u;
+		float v;
+		float nx;
+		float ny;
+		float nz;
+		float x;
+		float y;
+		float z;
+	};
+
 public:
 	BaseRenderOpenGL3D(BaseGame *inGame = nullptr);
 	~BaseRenderOpenGL3D() override;

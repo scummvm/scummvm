@@ -42,6 +42,17 @@ namespace Wintermute {
 class BaseSurfaceOpenGL3D;
 
 class BaseRenderOpenGL3DShader : public BaseRenderer3D {
+	struct SpriteVertexShader {
+		float x;
+		float y;
+		float u;
+		float v;
+		float r;
+		float g;
+		float b;
+		float a;
+	};
+
 public:
 	BaseRenderOpenGL3DShader(BaseGame *inGame = nullptr);
 	~BaseRenderOpenGL3DShader() override;

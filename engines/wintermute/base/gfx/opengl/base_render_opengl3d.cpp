@@ -44,18 +44,6 @@
 
 namespace Wintermute {
 
-struct SpriteVertex {
-	float u;
-	float v;
-	float x;
-	float y;
-	float z;
-	uint8 r;
-	uint8 g;
-	uint8 b;
-	uint8 a;
-};
-
 BaseRenderer3D *makeOpenGL3DRenderer(BaseGame *inGame) {
 	return new BaseRenderOpenGL3D(inGame);
 }
