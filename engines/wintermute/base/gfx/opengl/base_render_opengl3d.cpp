@@ -402,7 +402,7 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurface *tex, const Wintermute::Rect32
 		setSpriteBlendMode(blendMode);
 		if (alphaDisable) {
 			glDisable(GL_ALPHA_TEST);
-			//glDisable(GL_BLEND);
+			glDisable(GL_BLEND);
 		}
 
 		if (_lastTexture != texture) {
