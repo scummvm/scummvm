@@ -636,6 +636,7 @@ void Adlib::OnTimer() {
 				g225A++;
 			}
 			// l0017_1B5F:
+			uint8 bp1;
 			uint8 bp3 = g229B & 0x0F;
 			uint8 bp6 = g229B;
 			uint8 bp4 = peekByte();
@@ -756,7 +757,89 @@ void Adlib::OnTimer() {
 									// TODO: Original code throws away AH before and after
 									// the array access
 									uint16 value = gArray225F[bp3];
-									Func19BE_TODO(value << 4);
+									bp10 = Func19BE_TODO(value << 4);
+									
+									// TODO: Continue here
+									/*
+									
+									mov	al,[bp-5h]
+									and	al,7Fh
+									xor	ah,ah
+									shr	ax,1h
+									mov	dx,ax
+									mov	ax,3Fh
+									sub	ax,dx
+									shr	ax,1h
+									mov	[bp-1h],al
+									mov	al,[bp-1h]
+									xor	ah,ah
+									shr	ax,1h
+									mov	[bp-1h],al
+									push	word ptr [bp-0Eh]
+									push	word ptr [bp-10h]
+									push	2h
+									call	far 0017h:19BEh
+									mov	[bp-14h],ax
+									mov	[bp-12h],dx
+									mov	al,[225Eh]
+									xor	ah,ah
+									mov	bx,ax
+									les	di,[bp-14h]
+									mov	al,es:[di]
+									and	al,3Fh
+									xor	ah,ah
+									mov	dx,ax
+									mov	ax,3Fh
+									sub	ax,dx
+									mov	dx,ax
+									mov	al,[bp-1h]
+									xor	ah,ah
+									mul	dx
+									cwd
+									mov	cx,3Fh
+									idiv	cx
+									add	ax,bx
+									mov	dx,ax
+									les	di,[bp-14h]
+									mov	al,es:[di]
+									and	al,3Fh
+									xor	ah,ah
+									add	ax,dx
+									mov	[bp-2h],al
+									push	word ptr [bp-0Eh]
+									push	word ptr [bp-10h]
+									push	3h
+									call	far 0017h:19BEh
+									mov	[bp-14h],ax
+									mov	[bp-12h],dx
+									mov	al,[225Eh]
+									xor	ah,ah
+									mov	bx,ax
+									les	di,[bp-14h]
+									mov	al,es:[di]
+									and	al,3Fh
+									xor	ah,ah
+									mov	dx,ax
+									mov	ax,3Fh
+									sub	ax,dx
+									mov	dx,ax
+									mov	al,[bp-1h]
+									xor	ah,ah
+									mul	dx
+									cwd
+									mov	cx,3Fh
+									idiv	cx
+									add	ax,bx
+									mov	dx,ax
+									les	di,[bp-14h]
+									mov	al,es:[di]
+									and	al,3Fh
+									xor	ah,ah
+									add	ax,dx
+									mov	[bp-1h],al
+									cmp	byte ptr [bp-1h],3Fh
+									jbe	1DF0h
+									*/
 								}
 								// TODO: The "or" one should go to 1E91h
 								// TODO: Should be 1CFF
