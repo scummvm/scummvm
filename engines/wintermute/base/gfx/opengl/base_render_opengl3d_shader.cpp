@@ -138,6 +138,16 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	return true;
 }
 
+bool BaseRenderOpenGL3DShader::flip() {
+	_lastTexture = nullptr;
+	// Disable blend mode to prevent interfere with backend renderer
+	bool prevStateBlend = glIsEnabled(GL_BLEND);
+	glDisable(GL_BLEND);
+	g_system->updateScreen();
+	prevStateBlend ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
+	return true;
+}
+
 bool BaseRenderOpenGL3DShader::fill(byte r, byte g, byte b, Common::Rect *rect) {
 	if(!_gameRef->_editorMode) {
 		glViewport(0, _height, _width, _height);

@@ -79,6 +79,7 @@ public:
 	void dumpData(const char *filename) override {}
 	BaseImage *takeScreenshot() override;
 	void fadeToColor(byte r, byte g, byte b, byte a) override;
+	bool flip() override;
 	bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr) override;
 
 	bool setViewport(int left, int top, int right, int bottom) override;
