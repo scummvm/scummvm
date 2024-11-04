@@ -315,12 +315,12 @@ Common::KeymapArray StarkMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	gameKeyMap->addAction(act);
 
-	act = new Action("SCROLLUPINVPREVDILOG", _("go to next dialogue"));
+	act = new Action("SCROLLUPINVPREVDILOG", _("Go to next dialogue"));
 	act->setCustomEngineActionEvent(kActionNextDialogue);
 	act->addDefaultInputMapping("DOWN");
 	gameKeyMap->addAction(act);
 
-	act = new Action("SCROLLDOWNINVNEXTDILOG", _("go to previous dialogues"));
+	act = new Action("SCROLLDOWNINVNEXTDILOG", _("Go to previous dialogues"));
 	act->setCustomEngineActionEvent(kActionPrevDialogue);
 	act->addDefaultInputMapping("UP");
 	gameKeyMap->addAction(act);
