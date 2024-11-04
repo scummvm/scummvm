@@ -191,8 +191,8 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 		glEnable(GL_DEPTH_TEST);
-		// this is 8 / 255, since 8 is the value used by WME DX
-		_alphaRef = 8 / 255.f;
+		// WME uses 8 as a reference value and Direct3D expects it to be in the range [0, 255]
+		_alphaRef = 8 / 255.0f;
 
 		setAmbientLightRenderState();
 

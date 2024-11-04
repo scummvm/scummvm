@@ -193,8 +193,7 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 		glEnable(GL_LIGHTING);
 		glEnable(GL_ALPHA_TEST);
 		// WME uses 8 as a reference value and Direct3D expects it to be in the range [0, 255]
-		// 8 / 255 ~ 0.0313
-		glAlphaFunc(GL_GEQUAL, 0.0313f);
+		glAlphaFunc(GL_GEQUAL, 8 / 255.0f);
 
 		setAmbientLightRenderState();
 
