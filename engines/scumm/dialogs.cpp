@@ -1717,8 +1717,10 @@ HENetworkGameOptionsWidget::HENetworkGameOptionsWidget(GuiObject *boss, const Co
 		_enableSessionServer = new GUI::CheckboxWidget(widgetsBoss(), "HENetworkGameOptionsDialog.EnableSessionServer", _("Enable connection to Multiplayer Server"), _("Toggles the connection to the server that allows hosting and joining online multiplayer games over the Internet."), kEnableSessionCmd);
 		_enableLANBroadcast = new GUI::CheckboxWidget(widgetsBoss(), "HENetworkGameOptionsDialog.EnableLANBroadcast", _("Host games over LAN"), _("Allows the game sessions to be discovered over your local area network."));
 
-		if (_gameid == "moonbase")
+		if (_gameid == "moonbase") {
+			// I18N: Moonbase Console is a program name
 			_generateRandomMaps = new GUI::CheckboxWidget(widgetsBoss(), "HENetworkGameOptionsDialog.GenerateRandomMaps", _("Generate random maps"), _("Allow random map generation (Based from Moonbase Console)."));
+		}
 
 		_sessionServerAddr = new GUI::EditTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.SessionServerAddress", Common::U32String(""), _("Address of the server to connect to for hosting and joining online game sessions."));
 
