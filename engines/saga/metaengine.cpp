@@ -396,6 +396,7 @@ Common::KeymapArray SagaMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("k");
 		gameKeyMap->addAction(act);
 
+		// I18N: It is a verb for gulping, not a bird
 		act = new Action("SWALLOW", _("Swallow"));
 		act->setCustomEngineActionEvent(kActionSwallow);
 		act->addDefaultInputMapping("s");
