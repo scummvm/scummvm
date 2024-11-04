@@ -230,6 +230,18 @@ const ADExtraGuiOptionsMap optionsList[] = {
  	},
 #endif
 
+	{
+		GAMEOPTION_ENABLE_GMM_SAVE,
+		{
+			_s("Enable saving via the GMM"),
+			_s("Allows saving via the GMM. WARNING: saves created via the GMM may be corrupted and unusable. Use at your own risk!"),
+			"gmm_save_enabled",
+			false,
+			0,
+			0
+		}
+ 	},
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

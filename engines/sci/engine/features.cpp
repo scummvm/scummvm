@@ -862,6 +862,9 @@ bool GameFeatures::hasScriptObjectNames() const {
 }
 
 bool GameFeatures::canSaveFromGMM() const {
+	if (!ConfMan.getBool("gmm_save_enabled"))
+		return false;
+
 	switch (g_sci->getGameId()) {
 	// ==== Demos/mini-games with no saving functionality ====
 	case GID_ASTROCHICKEN:
