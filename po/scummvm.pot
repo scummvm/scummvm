@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-04 08:12+0000\n"
+"POT-Creation-Date: 2024-11-04 14:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3448,21 +3448,34 @@ msgid "Default game keymap"
 msgstr ""
 
 #: engines/metaengine.cpp:62 backends/platform/maemo/maemo.cpp:161
-#: engines/asylum/metaengine.cpp:159 engines/hdb/metaengine.cpp:207
-#: engines/parallaction/metaengine.cpp:112
+#: engines/agos/metaengine.cpp:232 engines/asylum/metaengine.cpp:159
+#: engines/cge/metaengine.cpp:203 engines/cge2/metaengine.cpp:216
+#: engines/cine/metaengine.cpp:265 engines/groovie/metaengine.cpp:205
+#: engines/hdb/metaengine.cpp:207 engines/hopkins/metaengine.cpp:213
+#: engines/lure/metaengine.cpp:177 engines/made/metaengine.cpp:107
+#: engines/mads/metaengine.cpp:280 engines/parallaction/metaengine.cpp:112
+#: engines/saga/metaengine.cpp:278 engines/stark/metaengine.cpp:189
+#: engines/tinsel/metaengine.cpp:246 engines/trecision/metaengine.cpp:125
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
 msgstr ""
 
 #: engines/metaengine.cpp:68 backends/platform/maemo/maemo.cpp:165
-#: engines/wintermute/keymapper_tables.h:256
+#: engines/saga/metaengine.cpp:284 engines/wintermute/keymapper_tables.h:256
 #: engines/wintermute/keymapper_tables.h:300
 #: engines/wintermute/keymapper_tables.h:2166
 msgid "Middle Click"
 msgstr ""
 
 #: engines/metaengine.cpp:73 backends/platform/maemo/maemo.cpp:169
-#: engines/asylum/metaengine.cpp:165 engines/parallaction/metaengine.cpp:118
+#: engines/agos/metaengine.cpp:238 engines/asylum/metaengine.cpp:165
+#: engines/cge/metaengine.cpp:209 engines/cge2/metaengine.cpp:222
+#: engines/cine/metaengine.cpp:271 engines/groovie/metaengine.cpp:211
+#: engines/hopkins/metaengine.cpp:219 engines/lure/metaengine.cpp:183
+#: engines/made/metaengine.cpp:114 engines/mads/metaengine.cpp:286
+#: engines/parallaction/metaengine.cpp:118 engines/saga/metaengine.cpp:289
+#: engines/stark/metaengine.cpp:195 engines/tinsel/metaengine.cpp:252
+#: engines/trecision/metaengine.cpp:131
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr ""
@@ -5695,26 +5708,6 @@ msgstr ""
 
 #: engines/agos/metaengine.cpp:229
 msgid "Yes/No keymapping"
-msgstr ""
-
-#: engines/agos/metaengine.cpp:232 engines/cge/metaengine.cpp:203
-#: engines/cge2/metaengine.cpp:216 engines/cine/metaengine.cpp:265
-#: engines/groovie/metaengine.cpp:205 engines/hopkins/metaengine.cpp:213
-#: engines/lure/metaengine.cpp:177 engines/made/metaengine.cpp:107
-#: engines/mads/metaengine.cpp:280 engines/saga/metaengine.cpp:278
-#: engines/stark/metaengine.cpp:189 engines/tinsel/metaengine.cpp:246
-#: engines/trecision/metaengine.cpp:125
-msgid "Left click"
-msgstr ""
-
-#: engines/agos/metaengine.cpp:238 engines/cge/metaengine.cpp:209
-#: engines/cge2/metaengine.cpp:222 engines/cine/metaengine.cpp:271
-#: engines/groovie/metaengine.cpp:211 engines/hopkins/metaengine.cpp:219
-#: engines/lure/metaengine.cpp:183 engines/made/metaengine.cpp:114
-#: engines/mads/metaengine.cpp:286 engines/saga/metaengine.cpp:289
-#: engines/stark/metaengine.cpp:195 engines/tinsel/metaengine.cpp:252
-#: engines/trecision/metaengine.cpp:131
-msgid "Right click"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:244
@@ -8673,10 +8666,6 @@ msgstr ""
 
 #: engines/saga/metaengine.cpp:273
 msgid "Converse panel keymapping"
-msgstr ""
-
-#: engines/saga/metaengine.cpp:284
-msgid "Middle click"
 msgstr ""
 
 #. I18N: the boss key is a feature,
