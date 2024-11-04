@@ -180,6 +180,394 @@ void Room205::pre_parser() {
 }
 
 void Room205::parser() {
+	bool ecx = player_said_any("look", "look at");
+	bool esi = player_said("take");
+	bool edi = player_said("gear");
+
+	if (player_said("GONG", "BRAZIER") || player_said("GONG", "GUN")) {
+		if (!_G(flags[V024])) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				_fieldDC = 1;
+				player_set_commands_allowed(false);
+				setGlobals1(_ripTrekMedReachHandPos1Series, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_G(my_walker), 3);
+
+				break;
+
+			case 3:
+				terminateMachine(_205FireInBrazierMach);
+				terminateMachine(_205GunPointedMach);
+				series_unload(_205FireInBrazierSeries);
+				series_show("205GONG", 1025, 16, -1, -1, 0, 100, 0, 0);
+				digi_play_loop("205_s34", 3, 25, -1, -1);
+				digi_play_loop("205_S23", 1, 255, -1, -1);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "GONG ", true);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "GUN", false);
+				inv_move_object("GONG", 999);
+				sendWSMessage_120000(_G(my_walker), 5);
+
+				break;
+
+			case 5:
+				sendWSMessage_150000(_G(my_walker), 7);
+
+				break;
+
+			case 7:
+				player_set_commands_allowed(true);
+				_G(flags[V024]) = 1;
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_timing_trigger(7200, 1055);
+				_fieldDC = 0;
+
+				break;
+
+			default:
+				break;
+			}
+		}
+	} // if (player_said("GONG", "BRAZIER") || player_said("GONG", "GUN"))
+	else if (player_said("MALLET", "GAP WITH JOURNAL") && _G(flags[V028]) && _G(flags[V024])) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			ws_hide_walker(_G(my_walker));
+			series_play("205 RIP GETS BOOK WITH MALLET", 256, 0, 1, 7, 0, 100, 0, 0, 0, -1);
+
+			break;
+
+		case 1:
+			series_play("205 RIP GETS BOOK WITH MALLET", 256, 2, 3, 7, 0, 100, 0, 0, 0, -1);
+			digi_play("205_s32", 1, 255, -1, -1);
+
+			break;
+
+		case 3:
+			ws_unhide_walker(_G(my_walker));
+			ws_walk(_G(my_walker), 215, 336, nullptr, 5, 11, true);
+
+			break;
+
+		case 5:
+			setGlobals1(_ripTrekMedReachHandPos1Series, 1, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 7);
+
+			break;
+
+		case 7:
+			digi_play("202_s01", 1, 255, -1, 202);
+			sendWSMessage_120000(_G(my_walker), 9);
+
+			break;
+
+		case 9:
+			sendWSMessage_150000(_G(my_walker), 11);
+
+			break;
+
+		case 11:
+			player_set_commands_allowed(true);
+			series_unload(_ripTrekMedReachHandPos1Series);
+			series_show("205 MALLET LAYED ON GONG", 1024, 16, -1, -1, 0, 100, 0, 0);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "GAP WITH JOURNAL", false);
+			hotspot_set_active(_G(currentSceneDef).hotspots, "MALLET ", true);
+			_G(flags[V025]) = 1;
+			inv_give_to_player("JOURNAL");
+			inv_move_object("MALLET", 999);
+
+			break;
+
+		default:
+			break;
+
+		}
+	} // if (player_said("MALLET", "GAP WITH JOURNAL") && _G(flags[V028]) && _G(flags[V024]))
+	else if (player_said("CHARCOAL", "JOURNAL") && _G(flags[V025]) && inv_player_has("CHARCOAL")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			ws_walk(_G(my_walker), 328, 253, nullptr, 1, 10, true);
+			_205JournalRippedPopupSeries = series_load("205 JOURNAL RIPPED POPUP", -1, nullptr);
+
+			break;
+		case 1:
+			ws_hide_walker(_G(my_walker));
+			player_update_info(_G(my_walker), &_G(player_info));
+			_safariShadow1Mach = series_show("SAFARI SHADOW 1", 2304, 16, -1, -1, 0, _G(player_info).scale, _G(player_info).x, _G(player_info).y);
+			series_play("205 RIP RUBS CHARCOAL", 256, 0, 2, 7, 0, 100, 0, 0, 0, 13);
+
+			break;
+
+		case 2:
+			series_play("205 RIP RUBS CHARCOAL", 256, 0, 3, 7, 0, 100, 0, 0, 14, 33);
+			digi_play("205_S33", 1, 255, -1, -1);
+
+			break;
+
+		case 3:
+			_205JournalCharcoalPopupMach = series_play("205 JOURNAL CHARCOAL POPUP", 256, 16, -1, 1, 0, 100, 0, 0, 0, -1);
+			_205MeiSighAndTalkSeries = series_load("205 MEI SIGH AND TALK", -1, nullptr);
+			kernel_timing_trigger(180, 5, nullptr);
+
+			break;
+
+		case 5:
+			terminateMachine(_205JournalCharcoalPopupMach);
+			series_play("205 JOURNAL CHARCOAL POPUP", 256, 2, 7, 1, 0, 100, 0, 0, 0, -1);
+
+			break;
+
+		case 7:
+			ws_unhide_walker(_G(my_walker));
+			terminateMachine(_safariShadow1Mach);
+			terminateMachine(_205MeiStanderMach);
+			_205MeiStanderMach = series_play("205 MEI SIGH AND TALK", 3845, 16, 9, 5, 0, 100, 0, 0, 0, 21);
+			digi_play("205M06", 1, 255, 15, -1);
+
+			break;
+
+		case 9:
+			series_unload(_205JournalRippedPopupSeries);
+			kernel_timing_trigger(180, 11);
+
+			break;
+
+		case 11:
+			terminateMachine(_205MeiStanderMach);
+			series_play("205 MEI SIGH AND TALK", 3845, 0, 13, 5, 0, 100, 0, 0, 22, -1);
+
+			break;
+
+		case 13:
+			terminateMachine(_205MeiStanderMach);
+			series_play("205 MEI SIGH AND TALK", 3845, 2, 14, 5, 0, 100, 0, 0, 22, 45);
+
+			break;
+
+		case 14:
+			series_show("205 MEI SIGH AND TALK", 3845, 16, -1, -1, 22, 100, 0, 0);
+
+			break;
+
+		case 15:
+			digi_play("205R58", 1, 255, 20, -1);
+			break;
+
+		case 20:
+			_G(flags[V290]) = 1;
+			disable_player_commands_and_fade_init(21);
+
+			break;
+		case 21:
+			inv_give_to_player("CHINESE YUAN");
+			inv_move_object("CHARCOAL", 999);
+			_G(game).new_section = 8;
+			_G(game).new_room = 850;
+
+			break;
+
+		default:
+			break;
+		}
+
+	} // if (player_said("CHARCOAL", "JOURNAL") && _G(flags[V025]) && inv_player_has("CHARCOAL"))
+
+	else if (edi && player_said_any("TABLET", "TABLET "))
+		digi_play("205R30", 1, 255, -1, -1);
+	else if (edi && player_said("GONG "))
+		digi_play("205R64", 1, 255, -1, -1);
+	else if (edi && player_said("LEFT TABLET")) {
+		if (_G(flags[V028])) {
+			digi_play("205r57", 1, 255, -1, -1);
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				_fieldE0 = 1;
+				kernel_timing_trigger(10, 1, nullptr);
+
+				break;
+
+			case 1:
+				if (_fieldDC) {
+					kernel_timing_trigger(60, 1, nullptr);
+				} else {
+					kernel_timing_trigger(10, 2, nullptr);
+					_fieldDC = 1;
+				}
+
+				break;
+
+			case 2:
+				digi_preload("205_S30");
+				digi_preload("205R33");
+				ws_hide_walker(_G(my_walker));
+				terminateMachine(_205LeftEntranceTabletMach);
+				series_stream("205LTEST", 7, 0, 7);
+				kernel_timing_trigger(240, 5, nullptr);
+
+				break;
+
+			case 5:
+				digi_play("205_S30", 1, 255, -1, -1);
+
+				break;
+
+			case 7:
+				digi_stop(1);
+				digi_unload("205_S30");
+				_G(flags[V023]) = 1;
+				_205LeftEntranceTabletMach = series_show("205 LEFT ENTRANCE TABLET", 257, 16, -1, -1, 0, 100, 0, 0);
+				if (_G (flags[V022])) {
+					digi_preload("205R31");
+					digi_play("205R31", 1, 255, 9, -1);
+				} else {
+					digi_preload("205R32");
+					digi_play("205R32", 1, 255, 9, -1);
+				}
+				ws_unhide_walker(_G(my_walker));
+
+				break;
+
+			case 9:
+				digi_unload("205R31");
+				digi_unload("205R32");
+				digi_play("205R33", 1, 255, 11, -1);
+
+				break;
+
+			case 11:
+				digi_unload("205R33");
+				_fieldDC = 0;
+				_fieldE0 = 0;
+				player_set_commands_allowed(true);
+
+				break;
+
+			default:
+				break;
+			}
+		}
+	} // if (edi && player_said("LEFT TABLET"))
+
+	else if (edi && player_said("RIGHT TABLET")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_fieldE0 = 1;
+			kernel_timing_trigger(10, 1, nullptr);
+
+			break;
+
+		case 1:
+			if (!_G(flags[V022]) && _fieldDC)
+				kernel_timing_trigger(60, 1, nullptr);
+			else
+				kernel_timing_trigger(10, 3, nullptr);
+
+			break;
+
+		case 3:
+			if (!_G(flags[V022])) {
+				_fieldDC = 1;
+				digi_preload("205_S30", -1);
+				digi_preload("205R34", -1);
+				ws_unhide_walker(_G(my_walker));
+				series_stream("205RTEST", 7, 0, 7);
+				kernel_timing_trigger(240, 5, nullptr);
+			} else if (!_G(flags[V024])) {
+				ws_walk(_G(my_walker), 450, 351, nullptr, 15, 1, true);
+				intr_cancel_sentence();
+			} else {
+				_field1A0 = 1;
+				hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN", false);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "SHEN GUO", true);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN ", true);
+				player_update_info(_G(my_walker), &_G(player_info));
+				ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, 0, 90, 10, true);
+			}
+			break;
+
+		case 5:
+			digi_play("205_S30", 1, 255, -1, -1);
+
+			break;
+
+		case 7:
+			digi_stop(1);
+			digi_unload("205_S30");
+			if (_G(flags[V023])) {
+				digi_preload("205R32");
+				digi_play("205R32", 1, 255, 9, -1);
+			} else {
+				digi_preload("205R31");
+				digi_play("205R31", 1, 255, 9, -1);
+			}
+
+			_G(flags[V022]) = 1;
+			ws_unhide_walker(_G(my_walker));
+			break;
+
+		case 9:
+			digi_unload("205R31");
+			digi_unload("205R32");
+			digi_play("205R34", 1, 255, 11, -1);
+
+			break;
+
+		case 11:
+			digi_unload("205R34");
+			_fieldDC = 0;
+			_fieldE0 = 0;
+			player_set_commands_allowed(true);
+
+			break;
+
+		case 15:
+			digi_play("205_s29", 1, 255, -1, -1);
+			kernel_timing_trigger(1, 20, nullptr);
+
+			break;
+
+		case 20:
+			setGlobals1(_ripGetsShotSeries, 14, 32, 32, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 25);
+
+			break;
+
+		case 25:
+			kernel_timing_trigger(60, 30, nullptr);
+			break;
+
+		case 30:
+			disable_player_commands_and_fade_init(35);
+			break;
+
+		case 35:
+			sendWSMessage_150000(_G(my_walker), 36);
+			break;
+
+		case 36:
+			_fieldDC = 0;
+			_fieldE0 = 0;
+			other_save_game_for_resurrection();
+			_G(game).new_section = 4;
+			_G(game).new_room = 413;
+
+			break;
+
+		case 99:
+			_fieldE4 = 1;
+			break;
+
+		default:
+			break;
+		}
+	} // if (edi && player_said("RIGHT TABLET"))
+
+
+	_G(player).command_ready = 0;
 }
 
 void Room205::daemon() {
