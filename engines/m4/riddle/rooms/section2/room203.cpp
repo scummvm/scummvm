@@ -2097,7 +2097,7 @@ void Room203::daemon() {
 
 			case 1122:
 				_ripleyShould = 1123;
-				digi_play(_digiName2, 1, 255, 151);
+				digi_play(_digiName2.c_str(), 1, 255, 151);
 				break;
 
 			case 1123:
@@ -2577,33 +2577,590 @@ void Room203::daemon() {
 }
 
 void Room203::pre_parser() {
-	// TODO
+	bool lookFlag = player_said_any("look", "look at");
+
+	if (lookFlag && player_said(" "))
+		_G(player).resetWalk();
+
+	if (lookFlag && player_said("ALLEY WALL") && _G(kernel).trigger == -1) {
+		_G(player).resetWalk();
+		ws_walk(710, 300, nullptr, 230, 11);
+		_G(kernel).trigger_mode = KT_PREPARSE;
+	}
 }
 
 void Room203::parser() {
-#ifdef TODO
-	ws_hide_walker();
-	player_set_commands_allowed(false);
-	player_update_info();
-	_ripsh1 = series_place_sprite("ripsh1", 0, _G(player_info).x, _G(player_info).y,
-		_G(player_info).scale, 0x500);
-	_peskyBegLoop = series_load("pesky beg loop");
-	_ripHandsBehBack = series_load("rip trek hands beh back pos1");
+	bool lookFlag = player_said_any("look", "look at");
+	bool talkFlag = player_said_any("talk", "talk to");
+	bool takeFlag = player_said("take");
 
-	_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
-		_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x400, 0,
-		triggerMachineByHashCallback, "rip in conv");
-	_ripleyMode = 1001;
-	_ripleyShould = 1010;
-	sendWSMessage_10000(1, _ripley, _ripHandsBehBack, 1, 11, 150,
-		_ripHandsBehBack, 11, 11, 0);
+	if (player_said("conv203c")) {
+		if (_G(kernel).trigger == 1) {
+			_ripleyShould = 1230;
+			_officialShould = 2012;
+			conv_resume();
+		} else {
+			conv203c();
+		}
+	} else if (player_said("conv203d")) {
+		conv203d();
+	} else if (player_said("conv203e")) {
+		conv203e();
+	} else if (player_said("enter bsa")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(1);
+			break;
+		case 1:
+			_G(game).setRoom(207);
+			break;
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("ARCHWAY")) {
+		_G(flags)[V073] = 1;
+		digi_play("203R15", 1);
+	} else if (player_said("archway")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_G(flags)[V073] = 1;
+			_officialMode = 2001;
+			_officialShould = 2040;
+			_digiName3 = "203O01";
+			_digiTrigger3 = -1;
+			_trigger4 = kernel_trigger_create(2);
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_trigger_dispatchx(kernel_trigger_create(140));
+			_G(kernel).trigger_mode = KT_PARSE;
+			break;
+		case 1:
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("leave")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(1);
+			break;
+		case 1:
+			_G(game).setRoom(201);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("gatekeeper")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripHeadTurn = series_load("203pass");
+			setGlobals1(_ripHeadTurn, 1, 6, 6, 6);
+			sendWSMessage_110000(2);
+			break;
+		case 1:
+			kernel_timing_trigger(60, 7);
+			break;
+		case 3:
+			ws_walk(400, 252, nullptr, 5, 1);
+			break;
+		case 5:
+			disable_player_commands_and_fade_init(5);
+			break;
+		case 6:
+			_G(game).setRoom(204);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("walk through")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_gkMayNotPass = series_load("gk may not pass");
+			_gkMode = 3004;
+			_digiName1 = "203g03";
+			_digiTrigger1 = -1;
+			_trigger1 = kernel_trigger_create(2);
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_trigger_dispatchx(kernel_trigger_create(125));
+			_G(kernel).trigger_mode = KT_PARSE;
+			break;
+		case 2:
+			series_unload(_gkMayNotPass);
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("HALL OF CLASSICS")) {
+		digi_play("203r12", 1);
+	} else if (lookFlag && player_said("GATEKEEPER")) {
+		digi_play("203r06", 1);
+	} else if (lookFlag && player_said("OLD LADY")) {
+		player_set_commands_allowed(false);
+		playSound("203r07", _G(kernel).trigger);
+	} else if (lookFlag && player_said("SOLDIER'S HELMET ")) {
+		digi_play("203r09a", 1);
+	} else if (lookFlag && HAS("SOLDIER'S HELMET") && !_G(flags)[V060]) {
+		_G(flags)[V051] = 1;
+		player_set_commands_allowed(false);
+		playSound("203r09", _G(kernel).trigger);
+	} else if (lookFlag && player_said("PEASANT")) {
+		digi_play("203r08", 1);
+	} else if (lookFlag && player_said("tree")) {
+		digi_play("203r63", 1);
+	} else if (player_said("SHRUNKEN HEAD", "BASKET")) {
+		digi_play("203r65", 1);
+	} else if (player_said("SOLDIER'S HELMET", "BASKET") && inv_player_has("SOLDIER'S HELMET")) {
+		digi_play("203r59", 1);
+	} else if (lookFlag && player_said("BASKET")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripTugsAtCollar = series_load("rip tugs at collar");
+			setGlobals1(_ripTugsAtCollar, 1, 9, 9, 9, 0, 9, 1, 1, 1);
+			sendWSMessage_110000(211);
+			digi_play("203CLRT1", 1);
+			break;
+		case 211:
+			sendWSMessage_120000(212);
+			break;
+		case 212:
+			sendWSMessage_150000(213);
+			break;
+		case 213:
+			series_unload(_ripTugsAtCollar);
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("BLACKSMITH'S WINDOW")) {
+		_G(flags)[V054] = 1;
+		_G(flags)[V036] = 1;
+		digi_play("203R34", 1);
+	} else if (lookFlag && player_said("sign")) {
+		digi_play("203R55", 1);
+	} else if (lookFlag && player_said("pigeons")) {
+		digi_play("203R57", 1);
+	} else if (lookFlag && player_said("HERBAL SHOP")) {
+		digi_play("203R11", 1);
+	} else if (lookFlag && player_said("OFFICIAL")) {
+		digi_play("203R13", 1);
+	} else if (lookFlag && player_said("ALLEY WALL")) {
+		if (_G(kernel).trigger != -1)
+			lookThroughHole("203r14", _G(kernel).trigger);
+	} else if (lookFlag && player_said("AWNING")) {
+		digi_play("203R16", 1);
+	} else if (lookFlag && player_said("WOODPILE")) {
+		digi_play("203R35", 1);
+	} else if (lookFlag && player_said("WINDOW")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			_G(flags)[V072] = _peasantMode;
+			disable_player_commands_and_fade_init(1);
+			break;
+		case 1:
+			_G(game).setRoom(202);
+			break;
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("DOOR")) {
+		digi_play("203R37", 1);
 
-	_G(kernel).trigger_mode = KT_PARSE;
-	_peasantMode2 = _peasantMode;
-	_peasantMode = 4055;
-#endif
+	} else if (talkFlag && player_said("OLD LADY")) {
+		g_engine->camera_shift_xy(760, 0);
+		player_set_commands_allowed(false);
+		_flag2 = true;
+
+		if (_G(flags)[V060]) {
+			playSound("203r23", _G(kernel).trigger);
+		} else {
+			_ripleyMode = 1002;
+			_ripleyShould = 1110;
+			_trigger3 = 153;
+		}
+	} else if (talkFlag && player_said("PEASANT")) {
+		ws_hide_walker();
+		player_set_commands_allowed(false);
+		player_update_info();
+		_ripsh1 = series_place_sprite("ripsh1", 0, _G(player_info).x, _G(player_info).y,
+			_G(player_info).scale, 0x500);
+		_peskyBegLoop = series_load("pesky beg loop");
+		_ripHandsBehBack = series_load("rip trek hands beh back pos1");
+
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x400, 0,
+			triggerMachineByHashCallback, "rip in conv");
+		_ripleyMode = 1001;
+		_ripleyShould = 1010;
+		sendWSMessage_10000(1, _ripley, _ripHandsBehBack, 1, 11, 150,
+			_ripHandsBehBack, 11, 11, 0);
+
+		_G(kernel).trigger_mode = KT_PARSE;
+		_peasantMode2 = _peasantMode;
+		_peasantMode = 4055;
+	} else if (talkFlag && player_said("OFFICIAL")) {
+		player_set_commands_allowed(false);
+		_G(flags)[V073] = 1;
+		_trigger4 = -1;
+		_G(kernel).trigger_mode = KT_DAEMON;
+
+		if (_G(flags)[V071]) {
+			_ripleyMode = 1003;
+			_ripleyShould = 1210;
+			kernel_trigger_dispatchx(kernel_trigger_create(150));
+			_G(kernel).trigger_mode = KT_PARSE;
+		} else {
+			_officialMode = 2001;
+			_officialShould = 2020;
+		}
+	} else if (talkFlag && player_said("GATEKEEPER")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+
+			if (_G(flags)[V069]) {
+				kernel_trigger_dispatchx(kernel_trigger_create(1));
+			} else {
+				_G(flags)[V069] = 1;
+				digi_play("203r17", 1, 255, 1);
+			}
+			break;
+		case 1:
+			_gkMayNotPass = series_load("gk may not pass");
+			_gkMode = 3004;
+			_digiName1 = "203g02";
+			_digiTrigger1 = -1;
+			_trigger1 = kernel_trigger_create(2);
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_trigger_dispatchx(kernel_trigger_create(125));
+			_G(kernel).trigger_mode = KT_PARSE;
+			break;
+		case 2:
+			series_unload(_gkMayNotPass);
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+
+	} else if (takeFlag && player_said("SOLDIER'S HELMET ")) {
+		digi_play("203R39", 1);
+	} else if (takeFlag && HERE("SOLDIER'S HELMET")) {
+		if (!_G(flags)[V061]) {
+			player_set_commands_allowed(false);
+			playSound("203r58", _G(kernel).trigger);
+		}
+	} else if (takeFlag && player_said("pigeons")) {
+		digi_play("203R62", 1);
+	} else if (player_said("SOLDIER'S HELMET", "tree") && inv_player_has("SOLDIER'S HELMET")) {
+		digi_play("203r60", 1);
+	} else if (player_said("BUCKET", "BASKET") && inv_player_has("BUCKET")) {
+		digi_play("203r61", 1);
+	} else if (takeFlag && player_said("WOODPILE")) {
+		digi_play("207R40", 1);
+	} else if (takeFlag && player_said("BASKET")) {
+		lookAtHeads("203r38", _G(kernel).trigger);
+	} else if (player_said("US DOLLARS", "PEASANT") && inv_player_has("US DOLLARS")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_peskyAction = series_load("rip trek med reach hand pos1");
+			setGlobals1(_peskyAction, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+			sendWSMessage_110000(1);
+			break;
+		case 1:
+			if (_G(flags)[V075]) {
+				digi_play("203r40b", 1, 255, 2);
+			} else {
+				digi_play("203r40a", 1, 255, 2);
+				_G(flags)[V075] = 1;
+			}
+			break;
+		case 2:
+			sendWSMessage_120000(3);
+			break;
+		case 3:
+			sendWSMessage_150000(4);
+			break;
+		case 4:
+			series_unload(_peskyAction);
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("CHINESE YUAN", "PEASANT") && inv_player_has("CHINESE YUAN")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_peskyBegLoop = series_load("pesky beg loop");
+			_peasantMode2 = _peasantMode;
+			_peasantMode = 4055;
+			_peskyAction = series_load("rip trek med reach hand pos1");
+			setGlobals1(_peskyAction, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+			sendWSMessage_110000(1);
+			break;
+		case 1:
+			_peasantMode = 4056;
+			digi_play("203p01", 1, 255, 2);
+			break;
+		case 2:
+			_peasantMode = 4058;
+			sendWSMessage_120000(3);
+			break;
+		case 3:
+			sendWSMessage_150000(4);
+			break;
+		case 4:
+			series_unload(_peskyAction);
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("OFFICIAL") && (HAS("US DOLLARS") || HAS("CHINESE YUAN"))) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripHandTalk = series_load("rip trek hand talk pos3");
+			setGlobals1(_ripHandTalk, 1, 4, 4, 4, 0, 4, 1, 1, 1);
+			sendWSMessage_110000(4);
+			break;
+		case 4:
+			_officialMode = 2001;
+			_officialShould = 2040;
+			_digiName3 = "203O02";
+			_digiTrigger3 = -1;
+			_trigger4 = kernel_trigger_create(5);
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_trigger_dispatchx(kernel_trigger_create(140));
+			_G(kernel).trigger_mode = KT_PARSE;
+			break;
+		case 5:
+			sendWSMessage_120000(6);
+			break;
+		case 6:
+			sendWSMessage_150000(7);
+			break;
+		case 7:
+			series_unload(_ripHandTalk);
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("SEVEN SPOKES", "ALLEY WALL") && inv_player_has("SEVEN SPOKES")) {
+		if (_G(flags)[V061]) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				ws_hide_walker();
+				_ripley = series_stream("climbs wall", 5, 3584, -1);
+				series_stream_break_on_frame(_ripley, 21, 203);
+				break;
+			case 202:
+				inv_move_object("SEVEN SPOKES", 999);
+				_G(game).setRoom(204);
+				break;
+			case 203:
+				digi_play("203_s06", 1, 100, -1);
+				series_stream_break_on_frame(_ripley, 49, 204);
+				break;
+			case 204:
+				series_stream_break_on_frame(_ripley, 63, 205);
+				break;
+			case 205:
+				series_stream_break_on_frame(_ripley, 74, 206);
+				digi_play("203_s06", 1, 100, -1);
+				break;
+			case 206:
+				series_stream_break_on_frame(_ripley, 121, 207);
+				digi_play("203_s06", 1, 100, -1);
+				break;
+			case 207:
+				series_stream_break_on_frame(_ripley, 123, 8833);
+				digi_play("203_s06", 1, 100, -1);
+				break;
+			case 208:
+				series_stream_break_on_frame(_ripley, 202, 209);
+				digi_play("203_s06", 1, 100, -1);
+				break;
+			case 209:
+				digi_play("203_s06", 1, 100, -1);
+				series_stream_break_on_frame(_ripley, 315, 3333);
+				break;
+			case 3333:
+				disable_player_commands_and_fade_init(202);
+				break;
+			case 8833:
+				digi_play("203_s07", 1, 100, -1);
+				series_stream_break_on_frame(_ripley, 151, 208);
+				break;
+			default:
+				break;
+			}
+		} else {
+			player_set_commands_allowed(false);
+			_G(player).disable_hyperwalk = true;
+			_trigger2 = 90;
+		}
+	} else if (player_said("OLD LADY") && (HAS("US DOLLARS") || HAS("CHINESE YUAN"))) {
+		if (_G(flags)[V051] != 0 && _G(flags)[V060] == 0) {
+			_trigger3 = 40;
+			player_set_commands_allowed(false);
+		} else {
+			playSound("203r19", _G(kernel).trigger);
+		}
+	} else if (player_said("RIPLEY PHOTO", "OLD LADY") && inv_player_has("RIPLEY PHOTO")) {
+		player_set_commands_allowed(false);
+		_flag2 = true;
+		g_engine->camera_shift_xy(760, 0);
+		_trigger3 = 60;
+	} else if (player_said("SOLDIER'S HELMET", "AWNING") && inv_player_has("SOLDIER'S HELMET")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			_G(flags)[V061] = 1;
+			ws_hide_walker();
+			player_set_commands_allowed(false);
+			hotspot_set_active("SOLDIER'S HELMET ", true);
+			series_load("one frame helmet");
+			_ripTossesHelmet = series_load("rip tosses helmet");
+			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 960, -53, 100, 0x100, 0,
+				triggerMachineByHashCallback, "rip throws helmet");
+			sendWSMessage_10000(1, _ripley, _ripTossesHelmet, 1, 33, 2, _ripTossesHelmet, 33, 33, 0);
+			break;
+		case 2:
+			digi_play("203_s03", 1);
+			sendWSMessage_10000(1, _ripley, _ripTossesHelmet, 33, 42, 3, _ripTossesHelmet, 42, 42, 0);
+			break;
+		case 3:
+			setupHelmetHotspot();
+			terminateMachineAndNull(_ripley);
+			series_unload(_ripTossesHelmet);
+			series_place_sprite("one frame helmet", 0, 960, -53, 100, 0x700);
+			ws_unhide_walker();
+			kernel_timing_trigger(3, 4);
+			break;
+		case 4:
+			inv_move_object("SOLDIER'S HELMET", 203);
+			player_update_info();
+			ws_walk(_G(player_info).x + 65, _G(player_info).y + 10, nullptr, -1, 10);
+			_val1 = 1;
+
+			if (_peasantMode == 4050) {
+				_peasantMode = 4050;
+				_peasantShould = 4094;
+			} else {
+				_val5 = 4146;
+			}
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("BUCKET", "AWNING") && inv_player_has("BUCKET")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			ws_hide_walker();
+			player_set_commands_allowed(false);
+			_ripTossesBucket = series_load("rip tosses bucket");
+			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 960, -53, 100, 0x100, false,
+				triggerMachineByHashCallback, "rip throws bucket");
+			sendWSMessage_10000(1, _ripley, _ripTossesBucket, 1, 47, 1,
+				_ripTossesBucket, 47, 47, 0);
+		case 1:
+			terminateMachineAndNull(_ripley);
+			ws_unhide_walker();
+			series_unload(_ripTossesBucket);
+			_oneFrameBucket = series_load("one frame bucket");
+			series_place_sprite("one frame bucket", 0, 960, -53, 100, 0x700);
+
+			if (_peasantShould == 4150 || _peasantShould == 4151)
+				player_set_commands_allowed(true);
+			else
+				_peasantShould = 4146;
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("GATEKEEPER") && (HAS("US DOLLARS") || HAS("CHINESE YUAN"))) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_gkMayNotPass = series_load("gk may not pass");
+			_peskyAction = series_load("rip trek med reach hand pos1");
+			setGlobals1(_peskyAction, 1, 10, 10, 10, 1, 10, 1, 1, 1, 1);
+			sendWSMessage_110000(1);
+			break;
+		case 1:
+			_gkMode = 3004;
+			_digiName1 = nullptr;
+			_digiTrigger1 = -1;
+			_trigger1 = kernel_trigger_create(2);
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_trigger_dispatchx(kernel_trigger_create(125));
+			_G(kernel).trigger_mode = KT_PARSE;
+			break;
+		case 2:
+			sendWSMessage_120000(3);
+			break;
+		case 3:
+			sendWSMessage_150000(4);
+			break;
+		case 4:
+			series_unload(_peskyAction);
+			series_unload(_gkMayNotPass);
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("SOLDIER'S HELMET", "PEASANT")) {
+		digi_play("203r64", 1);
+	} else if (player_said("journal") && !takeFlag && !lookFlag && !inv_player_has(_G(player).noun)) {
+		if (_G(flags)[kChinshiCartoon] == 1) {
+			digi_play("203r54", 1);
+		} else {
+			if (_G(kernel).trigger == 6) {
+				_G(flags)[V089] = 1;
+				_G(flags)[kChinshiCartoon] = 1;
+			}
+
+			sendWSMessage_multi("203r53");
+		}
+	} else if (lookFlag && inv_player_has(_G(player).noun)) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			if (_G(flags)[V050]) {
+				digi_play("203R36A", 1);
+			} else {
+				_G(flags)[V050] = 1;
+				player_set_commands_allowed(false);
+				_flag2 = true;
+				digi_play("203R36", 1, 255, 1);
+			}
+			break;
+		case 1:
+			_flag2 = false;
+			player_set_commands_allowed(true);
+			digi_play("203R36A", 1);
+			break;
+
+		default:
+			break;
+		}
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
 }
-
 
 void Room203::setupHelmetHotspot() {
 	for (HotSpotRec *hs = _G(currentSceneDef).hotspots; hs; hs = hs->next) {
@@ -2761,6 +3318,182 @@ void Room203::peasantAnim2() {
 		_peasantRocks, 1, 1, 0);
 	sendWSMessage_10000(1, _peasantShadow, _peasantSquat9, 6, 18, 121,
 		_peasantRocksShadow, 1, 1, 0);
+}
+
+void Room203::conv203c() {
+	const char *sound = conv_sound_to_play();
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+
+	if (sound) {
+		digi_play(sound, 1, 255, (node == 3 && entry == 0 && who == 0) ? -1 : 1);
+
+		if (who <= 0) {
+			_officialShould = (node == 3 && entry == 0) ? 2014 : 2013;
+		} else if (who == 1) {
+			_ripleyShould = (node == 1 && entry == 0) ? 1221 : 1220;
+		}
+	} else {
+		conv_resume();
+	}
+}
+
+void Room203::conv203d() {
+	const char *sound = conv_sound_to_play();
+	int who = conv_whos_talking();
+
+	if (_G(kernel).trigger == 1) {
+		if (who <= 0)
+			_peasantMode = 4057;
+		else if (who == 1)
+			_ripleyShould = 1030;
+		conv_resume();
+
+	} else {
+		if (who <= 0)
+			_peasantMode = 4056;
+		else if (who == 1)
+			_ripleyShould = 1020;
+
+		if (sound)
+			digi_play(sound, 1, 255, 1);
+		else
+			conv_resume();
+	}
+}
+
+void Room203::conv203e() {
+	const char *sound = conv_sound_to_play();
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+
+	if (_G(kernel).trigger == 1) {
+		if (who == 1)
+			_ripleyShould = 1130;
+
+		conv_resume();
+	} else {
+		if (who <= 0) {
+			_oldLadyShould = 5302;
+		} else if (who == 1) {
+			if (node == 1 && entry == 3) {
+				_digiName2 = sound;
+				_ripleyShould = 1121;
+			} else {
+				_unkShould = 1120;
+				_ripleyShould = 1120;
+			}
+		}
+
+		if (!sound) {
+			conv_resume();
+		} else if (node != 1 || entry != 3) {
+			digi_play(sound, 1, 255, 1);
+		}
+	}
+}
+
+void Room203::playSound(const char *digiName, int trigger) {
+	switch (trigger) {
+	case -1:
+		_flag2 = true;
+		player_set_commands_allowed(false);
+		_ripLookDown = series_load("rip trek look down pos3");
+		setGlobals1(_ripLookDown, 1, 3, 3, 3, 0, 3, 1, 1, 1);
+		sendWSMessage_110000(210);
+		break;
+
+	case 210:
+		digi_play(digiName, 1, 255, 211);
+		break;
+
+	case 211:
+		sendWSMessage_120000(212);
+		break;
+
+	case 212:
+		sendWSMessage_150000(213);
+		break;
+
+	case 213:
+		series_unload(_ripLookDown);
+		_flag2 = false;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room203::lookThroughHole(const char *digiName, int trigger) {
+	switch (trigger) {
+	case 230:
+		player_set_commands_allowed(false);
+		_ripLooksThroughHole = series_load("rip looks through hole pos1");
+		setGlobals1(_ripLooksThroughHole, 1, 12, 12, 12, 1, 12, 1, 1, 1);
+		sendWSMessage_110000(231);
+		break;
+
+	case 231:
+		if (digiName)
+			digi_play(digiName, 1, 255, 232);
+		else
+			kernel_timing_trigger(40, 232);
+		break;
+
+	case 232:
+		sendWSMessage_120000(233);
+		break;
+
+	case 233:
+		sendWSMessage_150000(234);
+		break;
+
+	case 234:
+		series_unload(_ripLooksThroughHole);
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room203::lookAtHeads(const char *digiName, int trigger) {
+	switch (trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_ripLookAtHeadsTalkMei = series_load("rip look at heads talk mei");
+		setGlobals1(_ripLookAtHeadsTalkMei, 11, 16, 16, 16, 1, 16, 11, 11, 11);
+		sendWSMessage_110000(220);
+		break;
+
+	case 220:
+		if (digiName)
+			digi_play(digiName, 1, 255, 221);
+		else
+			kernel_timing_trigger(40, 221);
+		break;
+
+	case 221:
+		sendWSMessage_120000(222);
+		break;
+
+	case 222:
+		sendWSMessage_150000(223);
+		break;
+
+	case 223:
+		series_unload(_ripLookAtHeadsTalkMei);
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
 }
 
 } // namespace Rooms

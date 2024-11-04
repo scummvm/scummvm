@@ -40,7 +40,7 @@ private:
 	int _val11 = 0;
 	const char *_digiName1 = nullptr;
 	int _digiTrigger1 = 0;
-	const char *_digiName2 = nullptr;
+	Common::String _digiName2;
 	const char *_digiName3 = nullptr;
 	int _digiTrigger3 = -1;
 	int _trigger1 = -1;
@@ -65,6 +65,11 @@ private:
 	int _ripTalker = 0;
 	int _ripArmsX = 0;
 	int _ripHeadDownTalkOff = 0;
+	int _ripLookDown = 0;
+	int _ripTugsAtCollar = 0;
+	int _ripLooksThroughHole = 0;
+	int _ripTossesHelmet = 0;
+	int _ripTossesBucket = 0;
 	machine *_ripsh1 = nullptr;
 	machine *_mei = nullptr;
 	int _meiTalkToRip = 0;
@@ -111,6 +116,7 @@ private:
 	int _peasantRocksShadow = 0;
 	int _peskyYellsThief = 0;
 	int _peskyBegLoop = 0;
+	int _peskyAction = 0;
 	int _peasantMode = 0, _peasantShould = 0;
 	int _peasantMode2 = 0;
 	int _peasantX = 0;
@@ -129,6 +135,7 @@ private:
 	machine *_g2 = nullptr;
 	int _ripleyMode = 0;
 	int _unkShould = 0;
+	int _oneFrameBucket = 0;
 
 	int _ctr1 = 0;
 
@@ -142,6 +149,12 @@ private:
 	void peasantWalk();
 	void peasantAnim1();
 	void peasantAnim2();
+	void conv203c();
+	void conv203d();
+	void conv203e();
+	void playSound(const char *digiName, int trigger);
+	void lookThroughHole(const char *digiName, int trigger);
+	void lookAtHeads(const char *digiName, int trigger);
 
 public:
 	Room203() : Section2Room() {}
