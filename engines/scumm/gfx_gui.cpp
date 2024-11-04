@@ -2285,7 +2285,7 @@ bool ScummEngine::userWriteLabelRoutine(Common::KeyState &ks, bool &leftMsClicke
 	bool hasLoadedState = false;
 	int firstChar = (_game.version == 4 && _game.id != GID_LOOM) ? 0 : 4;
 	bool opResult = true;
-	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+	beginTextInput();
 
 	while (!shouldQuit()) {
 		waitForTimer(1);
@@ -2296,7 +2296,7 @@ bool ScummEngine::userWriteLabelRoutine(Common::KeyState &ks, bool &leftMsClicke
 			clearClickedStatus();
 			opResult = executeMainMenuOperation(GUI_CTRL_OK_BUTTON, -1, -1, hasLoadedState);
 
-			_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+			endTextInput();
 			return opResult;
 		} else if (leftMsClicked) {
 			clearClickedStatus();
@@ -2327,7 +2327,7 @@ bool ScummEngine::userWriteLabelRoutine(Common::KeyState &ks, bool &leftMsClicke
 		clearClickedStatus();
 	}
 
-	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	endTextInput();
 	return false;
 }
 

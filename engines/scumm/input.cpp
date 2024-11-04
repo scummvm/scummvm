@@ -339,6 +339,7 @@ void ScummEngine::beginTextInput() {
 	Common::Keymap *engineDefault = keymapper->getKeymap("engine-default");
 
 	engineDefault->setEnabled(false);
+	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 }
 
 void ScummEngine::endTextInput() {
@@ -346,6 +347,7 @@ void ScummEngine::endTextInput() {
 	Common::Keymap *engineDefault = keymapper->getKeymap("engine-default");
 
 	engineDefault->setEnabled(true);
+	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
 void ScummEngine::parseEvents() {
