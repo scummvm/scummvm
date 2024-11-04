@@ -356,7 +356,7 @@ Common::KeymapArray SagaMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("l");
 		gameKeyMap->addAction(act);
 
-		act = new Action("PICKUP", _("Pickup"));
+		act = new Action("PICKUP", _("Pick up"));
 		act->setCustomEngineActionEvent(kActionPickUp);
 		act->addDefaultInputMapping("p");
 		gameKeyMap->addAction(act);
