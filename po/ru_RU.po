@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-10-30 19:12+0000\n"
-"Last-Translator: SkiffPL <skiff@windowslive.com>\n"
+"PO-Revision-Date: 2024-11-04 15:33+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
 "Language: ru_RU\n"
@@ -662,11 +662,11 @@ msgstr "Пути"
 
 #: gui/editgamedialog.cpp:291
 msgid "Check Integrity"
-msgstr ""
+msgstr "Проверить целостность"
 
 #: gui/editgamedialog.cpp:291
 msgid "Perform integrity check for all game files"
-msgstr ""
+msgstr "Выполнить проверку целостности всех файлов игры"
 
 #: gui/editgamedialog.cpp:296
 msgid "Game Path:"
@@ -838,24 +838,25 @@ msgstr "Примечания:"
 msgid ""
 "Verifying file integrity may take a long time to complete. Please wait...\n"
 msgstr ""
+"Проверка целостности файлов может занять много времени. Пожалуйста, "
+"подождите...\n"
 
 #: gui/integrity-dialog.cpp:107 gui/integrity-dialog.cpp:168
 msgid "Calculating file checksums..."
-msgstr ""
+msgstr "Расчет контрольных сумм файлов..."
 
 #: gui/integrity-dialog.cpp:120
 msgid "Launch Email Client"
-msgstr ""
+msgstr "Запустить почтовый клиент"
 
 #: gui/integrity-dialog.cpp:174
 msgid "Calculation complete"
 msgstr "Вычисления закончены"
 
 #: gui/integrity-dialog.cpp:263
-#, fuzzy, c-format
-#| msgid "Downloaded %s %S / %s %S"
+#, c-format
 msgid "Calculated %s %S / %s %S"
-msgstr "Загружено %s %S из %s %S"
+msgstr "Рассчитано %s %S из %s %S"
 
 #: gui/integrity-dialog.cpp:513
 msgid ""
@@ -865,21 +866,28 @@ msgid ""
 "If you are sure that this is a valid unknown variant, please send the "
 "following e-mail to integrity@scummvm.org"
 msgstr ""
+"### Результаты\n"
+"Ваш набор игровых файлов, похоже, нам неизвестен.\n"
+"\n"
+"Если вы уверены, что это по-настоящему неизвестный вариант, отправьте "
+"следующее электронное письмо на integrity@scummvm.org"
 
 #: gui/integrity-dialog.cpp:537
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
-msgstr ""
+msgstr "Похоже, в игре нет файлов. Вы уверены, что путь указан правильно?"
 
 #: gui/integrity-dialog.cpp:542
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
 msgstr ""
+"Похоже, что у игры нет метаданных, связанных с ней, поэтому ее невозможно "
+"распознать. Пожалуйста, введите правильные метаданные для игры."
 
 #: gui/integrity-dialog.cpp:569
 msgid "Files all OK"
-msgstr ""
+msgstr "Файлы все в порядке"
 
 #: gui/filebrowser-dialog.cpp:53
 msgid "Choose file for loading"
@@ -3131,10 +3139,8 @@ msgid "PC-9801 (16 Colors)"
 msgstr "PC-9801 (16 цветов)"
 
 #: common/rendermode.cpp:48
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "PC-9801 (8 Colors)"
-msgstr "PC-9801 (16 цветов)"
+msgstr "PC-9801 (8 цветов)"
 
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:53
@@ -3143,7 +3149,7 @@ msgstr "Macintosh (ч/б)"
 
 #: common/rendermode.cpp:57
 msgid "VGA Grey Scale"
-msgstr ""
+msgstr "VGA-шкала серого"
 
 #: common/rendermode.cpp:92
 msgctxt "lowres"
@@ -3348,6 +3354,8 @@ msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
 msgstr ""
+"Игр нет (пока)\n"
+"Откройте ScummVM и добавьте сюда свои игры."
 
 #: dists/android.strings.xml.cpp:59
 msgid "Game icon"
@@ -3710,10 +3718,8 @@ msgid "Matched game IDs for the %s engine:"
 msgstr "Возможные ID игры для движка %s:"
 
 #: engines/metaengine.cpp:39
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "Game not implemented"
-msgstr "Game id не поддерживается"
+msgstr "Игра не реализована"
 
 #: engines/metaengine.cpp:58 engines/saga/metaengine.cpp:267
 msgid "Default game keymap"
@@ -5522,11 +5528,11 @@ msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:46
 msgid "LIBRETRO PLAYLIST GENERATOR"
-msgstr ""
+msgstr "ГЕНЕРАТОР ПЛЕЙЛИСТОВ LIBRETRO"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:47
 msgid "(check '? > Libretro playlist' for detailed info)"
-msgstr ""
+msgstr "(подробную информацию см. в разделе «? > Плейлист Libretro»)"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:48
 msgid "Playlists Path"
@@ -5550,7 +5556,7 @@ msgstr "Всё в папку сохранения"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:60
 msgid "One in each game folder"
-msgstr ""
+msgstr "По одному в каждой папке с игрой"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:62
 msgid "Clear existing hooks"
