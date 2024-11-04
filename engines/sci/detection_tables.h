@@ -4612,14 +4612,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_PQ4_CD
 #undef GUIO_PQ4_MAC
 
-#define GUIO_PQSWAT_DEMO GUIO6(GUIO_NOSUBTITLES, \
+#define GUIO_PQSWAT_DEMO GUIO7(GUIO_NOSUBTITLES, \
 							   GUIO_NOMIDI, \
 							   GUIO_LINKMUSICTOSFX, \
 							   GUIO_LINKSPEECHTOSFX, \
 							   GUIO_NOASPECT, \
 							   GUIO_NOLAUNCHLOAD, \
 							   GAMEOPTION_ENABLE_GMM_SAVE)
-#define GUIO_PQSWAT      GUIO8(GUIO_NOSUBTITLES, \
+#define GUIO_PQSWAT      GUIO9(GUIO_NOSUBTITLES, \
 							   GUIO_NOMIDI, \
 							   GUIO_LINKMUSICTOSFX, \
 							   GUIO_LINKSPEECHTOSFX, \
@@ -5456,7 +5456,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO1(GUIO_NONE)	},
 
-#define GUIO_SQ1_ENGLISH_PC GUIO7(GUIO_NOSPEECH,                 \
+#define GUIO_SQ1_ENGLISH_PC GUIO8(GUIO_NOSPEECH,                 \
                                   GAMEOPTION_PREFER_DIGITAL_SFX, \
                                   GAMEOPTION_ORIGINAL_SAVELOAD,  \
                                   GAMEOPTION_MIDI_MODE,          \
