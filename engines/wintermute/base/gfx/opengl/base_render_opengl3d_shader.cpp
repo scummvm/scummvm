@@ -659,13 +659,8 @@ void BaseRenderOpenGL3DShader::displayShadow(BaseObject *object, const DXVector3
 	return;
 }
 
-bool BaseRenderOpenGL3DShader::stencilSupported() {
-	// assume that we have a stencil buffer
-	return true;
-}
 
 void BaseRenderOpenGL3DShader::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode, bool forceChange) {
-
 	if (blendMode == _blendMode && !forceChange)
 		return;
 
@@ -687,6 +682,11 @@ void BaseRenderOpenGL3DShader::setSpriteBlendMode(Graphics::TSpriteBlendMode ble
 	default:
 		break;
 	}
+}
+
+bool BaseRenderOpenGL3D::stencilSupported() {
+	// assume that we have a stencil buffer
+	return true;
 }
 
 int BaseRenderOpenGL3DShader::getMaxActiveLights() {
