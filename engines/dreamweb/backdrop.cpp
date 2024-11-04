@@ -267,7 +267,14 @@ void DreamWebEngine::showAllEx() {
 		uint16 currentFrame = 3 * i;
 		calcFrFrame(frameBase._frames[currentFrame], &width, &height, x, y, &objPos);
 		if ((width != 0) || (height != 0)) {
-			assert(currentFrame < 256);
+			// FIXME: this was an assert() that failed during normal gameplay.
+			// Now it's a warning, because it's unclear if the check is valid.
+			// It could have been a copy/paste mistake from showAllFree,
+			// where there are fewer iterations. See bugs: #15420, #15436
+			if (currentFrame >= 256) {
+				warning("showing extra frame %d >= 256", currentFrame);
+			}
+
 			showFrame(frameBase, x + _mapAdX, y + _mapAdY, currentFrame, 0);
 			objPos.index = i;
 			_exList.push_back(objPos);
