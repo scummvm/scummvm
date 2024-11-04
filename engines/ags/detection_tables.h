@@ -973,6 +973,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "christmasquest3", "Christmas Quest 3: Santa's Little Help Desk" },
 	{ "chtonic", "Chtonic" },
 	{ "chuckisland", "Chuck and the Island of Giants" },
+	{ "chupacrunch", "Chupacabra Crunch" },
 	{ "cicero", "Cicero" },
 	{ "cirquedezale", "Cirque de Zale" },
 	{ "city", "City" },
@@ -1609,6 +1610,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "horseparkfantasy", "Horse Park Fantasy" },
 	{ "hotelhansen", "Hotel Hansen" },
 	{ "hotelhijinks", "Hotel Hijinks" },
+	{ "hourcontact", "Hour's First Contact" },
 	{ "housedesade", "House of de Sade" },
 	{ "houseofhorror", "House of Horror" },
 	{ "housequest2", "House Quest 2" },
@@ -2328,6 +2330,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "musicmixer", "Boyd's Music Mixer" },
 	{ "mutagen", "Mutagen" },
 	{ "muuyeeb", "MuuYeeb the Ghost" },
+	{ "mvsmpatience", "Monsters vs. Martyrs: Patience is a Virtue" },
 	{ "myburdentokeep", "My Burden to Keep" },
 	{ "mycroftsim", "Mycroft Holmes Simulator 1895" },
 	{ "myfathersecret", "My Father's Secret" },
@@ -2987,6 +2990,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "spacewarep2", "Space War - Episode 2: Curien Strikes Back" },
 	{ "speedbuggy", "Speed Buggy: Manifold Destiny" },
 	{ "spellbound", "Spellbound: A Clive Mandrake Adventure" },
+	{ "sphinxtime", "The Sphinx of Time" },
 	{ "spia", "Spia" },
 	{ "spidertrek", "Spider Trek" },
 	{ "spilakassinn", "Spilakassinn - The Slot Machine" },
@@ -4613,6 +4617,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("phantomfellows", "TPF.exe", "93195fd3208f13c3d65ccd3972a72949", 2936807036, 0),  // GOG 1.1.0.6G
 	GAME_ENTRY_EN_STEAM("phoenixtales", "phoenixtales1.exe", "4e8d400018aa356e0e8a09dff6e4f4e2", 3922955),
 	GAME_ENTRY_EN("piratethemepark", "Pirate Theme Park.exe", "f7308b375ff8aebe23e909add49dbd4d", 31368047),  // itch.io
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973149282, 0),
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973495830, 0),
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973511911, 0),
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377890, 0), // En-Fr-De-Es
@@ -5304,6 +5309,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("murderinminnesota", "Game.exe", "495d45fb8adfd49690ae3b97921feec6", 15258174),  //v2 Windows
 	DEMO_ENTRY_EN("murderinminnesota", "Game.ags", "0b73e2b659b1dc266b3155e4d0f624cf", 12777518),  //v2 Linux
 	DEMO_ENTRY_EN("murderstarlight", "SherwellHolmes.exe", "0241777c2537fc5d077c05cde10bfa9f", 3917663),
+	DEMO_ENTRY_EN("mvsmpatience", "MvM Demo Patience is a Virtue.exe", "36d6add6c7e2925bb6bc1915323a8537", 142834773),
 	DEMO_ENTRY_EN("mybigsister", "my big sister.exe", "00a2ae796698e35fa6eb59343973e9ae", 50806260),
 	DEMO_ENTRY_EN("mybigsister", "my big sister.exe", "4dc50ca8b5d2c762fe86a528b09973cf", 90464651),
 	DEMO_ENTRY_EN("mythicalgambitflawlessfatality", "MGFF.exe", "4887d3dca056a0772741b42f66e018fb", 59711760),
@@ -6196,6 +6202,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("christmasquest", "christmas quest.exe", "f120690b506dd63cd7d1112ea6af2f77", 14042816),
 	GAME_ENTRY_EN("christmasquest2", "christmasquest2.exe", "06a03fe35791b0578068ab1873455463", 22683950),
 	GAME_ENTRY_EN("christmasquest3", "cq3.exe", "f0a7712890942b9155193cc4488a07bc", 50854625),
+	GAME_ENTRY_EN("chupacrunch", "Chupacabra Crunch.ags", "ecc5efbe07651b7f5af0b5a0646bbbaf", 2049457),  // v1
+	GAME_ENTRY_EN("chupacrunch", "Chupacabra Crunch.ags", "875e0c072015e9c0647ea43f9f0d4987", 2058408),  // v2
 	GAME_ENTRY_EN("cirquedezale", "cirque.exe", "3128b9f90e2f954ba704414ae854d10b", 8556710),  // v1.2
 	GAME_ENTRY_EN("cirquedezale", "cirque.exe", "3128b9f90e2f954ba704414ae854d10b", 8547131),  // v1.4
 	GAME_ENTRY_EN("cityofthieves", "City of Thieves.exe", "74dc062c5f68f3d70da911f2db5737b6", 54527105),
@@ -6985,6 +6993,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("horseparkfantasy", "Horse Park Fantasy.exe", "615e73fc1874e92d60a1996c2330ea36", 16576614),  // En-Fr?
 	GAME_ENTRY_EN("hotelhansen", "Hotel.exe", "3128b9f90e2f954ba704414ae854d10b", 4006863),  // v2.0
 	GAME_ENTRY_EN("hotelhijinks", "HH.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 1490538),
+	GAME_ENTRY_EN("hourcontact", "hourAl.ags", "9dd82bcbebcb20c8c6d4154c02b4b205", 6300399),
 	GAME_ENTRY_EN("housedesade", "House of de Sade.exe", "173f00e582eebd082d66f1291702b373", 85765288),
 	GAME_ENTRY_EN("housequest2", "house2.exe", "9cb3c8dc7a8ab9c44815955696be2677", 4471723),
 	GAME_ENTRY_EN_PLATFORM("howmany", "How many.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 5925587, "OROW"), //  v1.0
@@ -8653,6 +8662,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("spacewarep2", "Space.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 4084181),
 	GAME_ENTRY_EN("speedbuggy", "Speed Buggy Manifold Destiny.exe", "5ce6a602a8393537d433330d81be0983", 54982833),
 	GAME_ENTRY_EN("spellbound", "Spellbound.exe", "588e5b40901f9c85df35ac60b9417eac", 8809110),
+	GAME_ENTRY_EN("sphinxtime", "Sphinx.ags", "20ce766430a96f5d1ab43dca06133d6a", 18860506),
 	GAME_ENTRY_PLATFORM("spia", "Spia.exe", "2ac709a4ea3108235333846181c55603", 4471257, "Unfinished"),
 	GAME_ENTRY_EN("spidertrek", "Spider Trek.exe", "ba539d8020d4dcb134693e357e37e8ff", 4181363),  // Windows
 	GAME_ENTRY_EN("spidertrek", "Spider Trek.ags", "6ef42c5f6cd0a61f400f0f465a9f8717", 1073503),  // Linux
