@@ -30,6 +30,7 @@ Sprite::Sprite(uint16 width, uint16 height, uint16 pitch) : _width(width), _heig
 }
 
 bool Sprite::loadData(Common::SeekableReadStream &readStream) {
+	g_engine->waitForSpeech();
 	if (_width == 1 && _height == 1) {
 		byte b = readStream.readByte();
 		_pixels[0] = b >> 4;

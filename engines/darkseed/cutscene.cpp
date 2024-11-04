@@ -31,7 +31,7 @@ Cutscene::~Cutscene() {
 void Cutscene::play(char cutsceneId) {
 	_cutsceneId = cutsceneId;
 	_movieStep = 1;
-	g_engine->_sound->waitForSpeech();
+	g_engine->waitForSpeech();
 	g_engine->_cursor.showCursor(false);
 	g_engine->fadeOut();
 }

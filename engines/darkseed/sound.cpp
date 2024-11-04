@@ -79,6 +79,58 @@ static constexpr char startMusicDosCDFilenameTbl[][14] = {
 	"babydoll.mid"
 };
 
+static constexpr char sfxCDFilenameTbl[][14] = {
+	"",
+	"opendoor.sfx",
+	"showers2.sfx",
+	"razzsysb.sfx",
+	"medicine.sfx",
+	"pop.sfx",
+	"pickupit.sfx",
+	"rockener.sfx",
+	"pullleve.sfx",
+	"starship.sfx",
+	"podwrith.sfx",
+	"starterc.sfx",
+	"sigils.sfx",
+	"tombdoor.sfx",
+	"digging.sfx",
+	"opendoor.sfx",
+	"carstart.sfx",
+	"makehamm.sfx",
+	"picklock.sfx",
+	"impaled.sfx",
+	"evilbeas.sfx",
+	"laser.sfx",
+	"knock.sfx",
+	"bubblesi.sfx",
+	"phone.sfx",
+	"softphon.sfx",
+	"pulsar.sfx",
+	"doorbell.sfx",
+	"mirrorsm.sfx",
+	"softdoor.sfx",
+	"electroc.sfx",
+	"medicine.sfx",
+	"pourings.sfx",
+	"tuneinra.sfx",
+	"opendoor.sfx",
+	"showers1.sfx",
+	"yo.sfx",
+	"showers2.sfx",
+	"popii.sfx",
+	"carhorn.sfx",
+	"yo.sfx",
+	"secretdo.sfx",
+	"opendoor.sfx",
+	"tick.sfx",
+	"tock.sfx",
+	"chime.sfx",
+	"softchim.sfx",
+	"shakeurn.sfx",
+	"beaming.sfx"
+};
+
 Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer) {
 	_musicPlayer = new MusicPlayer(g_engine);
 	_didSpeech.resize(978);
@@ -114,14 +166,12 @@ bool Sound::isPlayingSpeech() const {
 	return _mixer->isSoundHandleActive(_speechHandle);
 }
 
-bool Sound::isPlayingMusic() {
-	return _musicPlayer->isPlaying();
+bool Sound::isPlayingSfx() const {
+	return _mixer->isSoundHandleActive(_sfxHandle);
 }
 
-void Sound::waitForSpeech() {
-	while (isPlayingSpeech()) {
-		// TODO poll events / wait a bit here.
-	}
+bool Sound::isPlayingMusic() {
+	return _musicPlayer->isPlaying();
 }
 
 void Sound::resetSpeech() {
@@ -182,6 +232,35 @@ void Sound::syncSoundSettings() {
 Common::Error Sound::sync(Common::Serializer &s) {
 	s.syncArray(_didSpeech.data(), _didSpeech.size(), Common::Serializer::Byte);
 	return Common::kNoError;
+}
+
+void Sound::playSfx(uint8 sfxId, int unk1, int unk2) {
+	if (g_engine->isCdVersion()) {
+		playDosCDSfx(sfxId);
+	}
+}
+
+void Sound::playDosCDSfx(int sfxId) {
+	if (sfxId == 0) {
+		// TODO midi SFX
+		return;
+	}
+	if (sfxId > 48) {
+		error("playDosCDSfx: Invalid sfxId %d", sfxId);
+	}
+	if (isPlayingSfx()) {
+		return;
+	}
+	Common::Path path = Common::Path("sound").join(sfxCDFilenameTbl[sfxId]);
+	Common::File f;
+	if (!f.open(path)) {
+		debug("Failed to load sfx. %s", path.toString().c_str());
+		return;
+	}
+	Common::SeekableReadStream *srcStream = f.readStream((uint32)f.size());
+	Audio::SeekableAudioStream *stream = Audio::makeVOCStream(srcStream,
+															  Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_sfxHandle, stream);
 }
 
 } // End of namespace Darkseed

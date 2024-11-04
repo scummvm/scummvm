@@ -26,6 +26,7 @@
 namespace Darkseed {
 
 bool Pic::load(const Common::Path &filename) {
+	g_engine->waitForSpeech();
 	Common::File file;
 	Common::Path fullPath = g_engine->getPictureFilePath(filename);
 	if (!file.open(fullPath)) {

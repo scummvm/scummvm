@@ -151,6 +151,8 @@ public:
 
 	void wait();
 
+	void waitForSpeech();
+
 	void syncSoundSettings() override;
 
 public:
@@ -226,7 +228,7 @@ public:
 	void drawFullscreenPic();
 	void lookCode(int objNum);
 	void handleObjCollision(int targetObjNum);
-	void playSound(int16 unk, uint8 unk1, int16 unk2);
+	void playSound(uint8 sfxId, uint8 unk1, int16 unk2);
 	void nextFrame(int nspAminIdx);
 
 	void throwmikeinjail();

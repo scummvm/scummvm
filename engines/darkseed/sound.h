@@ -60,6 +60,7 @@ enum class StartMusicId : uint8 {
 class Sound {
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _speechHandle;
+	Audio::SoundHandle _sfxHandle;
 	MusicPlayer *_musicPlayer;
 	Common::Array<uint8> _didSpeech;
 
@@ -73,15 +74,18 @@ public:
 
 	void playTosSpeech(int tosIdx);
 	bool isPlayingSpeech() const;
+	bool isPlayingSfx() const;
 	bool isPlayingMusic();
-	void waitForSpeech();
 	void resetSpeech();
 	void playMusic(MusicId musicId);
 	void playMusic(StartMusicId musicId);
 	void playMusic(Common::String const &filename, bool loop = false);
 	void stopMusic();
+	void playSfx(uint8 sfxId, int unk1, int unk2);
 	void syncSoundSettings();
 	void killAllSound();
+private:
+	void playDosCDSfx(int sfxId);
 };
 
 } // namespace Darkseed

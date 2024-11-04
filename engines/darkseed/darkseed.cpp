@@ -195,13 +195,15 @@ void DarkseedEngine::gameLoop() {
 						_animation->stuffPlayer();
 					}
 				} else {
-					_animation->dCopAnim();
-					changeToRoom(59, true);
-					_player->_position = {320, 200};
-					_player->updateSprite();
-					_inventory.gotoJailLogic();
+					if (_objectVar[56] > 0) {
+						_animation->dCopAnim();
+						changeToRoom(59, true);
+						_player->_position = {320, 200};
+						_player->updateSprite();
+						_inventory.gotoJailLogic();
 
-					playSound(0, 6, -1);
+						playSound(0, 6, -1);
+					}
 				}
 			}
 			if (_currentTimeInSeconds > 35999 && _currentTimeInSeconds < 36005 &&
@@ -1019,13 +1021,13 @@ void DarkseedEngine::handlePointerAction() {
 void DarkseedEngine::loadRoom(int roomNumber) {
 //	*(undefined *)&_erasemenu = 1; TODO do we need these?
 //	*(undefined2 *)&_gShipOff = 0;
-	_sound->waitForSpeech();
+	waitForSpeech();
 	if (roomNumber == 33 && _objectVar[62] == 101) {
 		_objectVar[62] = 0;
 	}
 	_printedcomeheredawson = false;
 	_objectVar.setObjectRunningCode(53, 0);
-	_objectVar[56] = 0;
+	_objectVar[56] = 0; // evil sargent anim spriteNumber
 	_objectVar.setObjectRunningCode(72, 0);
 	for (int i = 31; i < 34; i++) {
 		if (_objectVar.getMoveObjectRoom(i) == 99) {
@@ -1941,8 +1943,10 @@ void DarkseedEngine::getPackageObj(int packageType) {
 	}
 }
 
-void DarkseedEngine::playSound(int16 unk, uint8 unk1, int16 unk2) {
-	// TODO...
+void DarkseedEngine::playSound(uint8 sfxId, uint8 unk1, int16 unk2) {
+	// TODO... play sound
+	debug("Play SFX: %d", sfxId);
+	_sound->playSfx(sfxId, unk1, unk2);
 }
 
 void DarkseedEngine::nextFrame(int nspAminIdx) {
@@ -2252,7 +2256,7 @@ void DarkseedEngine::runObjects() {
 			}
 			if (_delbertspeech == 64) {
 				_console->printTosText(908);
-				_sound->waitForSpeech();
+				waitForSpeech();
 			} else if (_delbertspeech == 65) {
 				_animation->setupOtherNspAnimation(3, 20);
 				_animation->_spriteAnimCountdownTimer[1] = 3;
@@ -2571,6 +2575,17 @@ void DarkseedEngine::newGame() {
 		_console->printTosText(0xc);
 	} else if (_currentDay == 3) {
 		_console->printTosText(0xe);
+	}
+}
+
+void DarkseedEngine::waitForSpeech() {
+	while (_sound && _sound->isPlayingSpeech()) {
+		updateEvents();
+		if (_room) {
+			_room->update();
+		}
+		_screen->update();
+		wait();
 	}
 }
 

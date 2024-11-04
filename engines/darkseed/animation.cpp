@@ -321,7 +321,7 @@ void Animation::updateAnimation() {
 					_objectVar[47] = 1;
 					g_engine->_console->printTosText(922);
 				}
-				g_engine->_sound->waitForSpeech();
+				g_engine->waitForSpeech();
 				setupOtherNspAnimation(1, 9);
 			}
 		}
