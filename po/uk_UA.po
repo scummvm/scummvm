@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-11-01 14:57+0000\n"
+"PO-Revision-Date: 2024-11-04 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -5593,6 +5593,19 @@ msgid ""
 "\n"
 "The core also supports dedicated per game **hook** plain text files with **."
 msgstr ""
+"## Списки ігор Libretro для ScummVM core\n"
+"Списки ігор, які використовуються у інтерфейсах Libretro (наприклад, "
+"Retroarch), є простими текстовими списками, які використовуються для "
+"безпосереднього запуску гри з певним ядром (core) з інтерфейсу користувача. "
+"Ці списки структуровані таким чином, щоб передавати в ядро шлях до певного "
+"файлу вмісту, який потрібно завантажити (тобто ROM).\n"
+"\n"
+"Ядро ScummVM може прийняти як вміст шлях до будь-якого файлу в дійсній папці "
+"гри, система детектування спробує автоматично визначити гру з кореневої "
+"папки файлу вмісту та запустити гру з параметрами ScummVM за замовчуванням.\n"
+"\n"
+"Ядро також підтримує виділені для кожної гри файли **hook** звичайного "
+"тексту з **."
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
@@ -6575,6 +6588,11 @@ msgid ""
 "or\n"
 "2. Any .sav file inside the QfG2 Remake game directory"
 msgstr ""
+"Тепер у грі буде показано список персонажів, експортованих з ігор Sierra, "
+"які можна імпортувати:\n"
+"1. Файли збережень з назвою qfg1*.sav або qfg1vga*.sav у папці збереження "
+"ScummVM або\n"
+"2. Будь-який файл .sav у папці гри QfG2 Remake"
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
@@ -8663,10 +8681,8 @@ msgid "Exit game"
 msgstr "Вийти з гри"
 
 #: engines/mads/metaengine.cpp:368
-#, fuzzy
-#| msgid "Faster animations"
 msgid "Restart animation"
-msgstr "Швидша анімація"
+msgstr "Запустити анімацію наново"
 
 #: engines/mm/metaengine.cpp:57
 msgid "Show item costs in standard inventory mode"
@@ -9527,42 +9543,30 @@ msgid "I Have No Mouth support not compiled in"
 msgstr "Підтримку для I Have no Mouth не скомпільовано"
 
 #: engines/saga/metaengine.cpp:268
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game keymapping"
 msgstr "Мапа клавіш гри"
 
 #: engines/saga/metaengine.cpp:269
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Option panel keymapping"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш панелі налаштувань"
 
 #: engines/saga/metaengine.cpp:270
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Save panel keymapping"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш панелі збереження"
 
 #: engines/saga/metaengine.cpp:271
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Load panel keymapping"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш панелі завантаження"
 
 #: engines/saga/metaengine.cpp:272
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Quit panel keymapping"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш панелі виходу"
 
 #: engines/saga/metaengine.cpp:273
 msgid "Converse panel keymapping"
-msgstr ""
+msgstr "Мапа клавіш панелі діалогів"
 
 #: engines/saga/metaengine.cpp:284
-#, fuzzy
-#| msgid "Middle Click"
 msgid "Middle click"
 msgstr "Середній клік"
 
