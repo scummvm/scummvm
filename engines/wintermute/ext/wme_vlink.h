@@ -47,9 +47,9 @@ private:
 	Video::VideoDecoder *_videoDecoder{};
 	Graphics::Surface _surface;
 	int32 _volume;
-	bool _videoFinished;
-	bool _updateNeeded;
-	int32 _frame;
+	bool _videoFinished{};
+	bool _updateNeeded{};
+	int32 _frame{};
 	
 	static void timerCallback(void *instance);
 	void prepareFrame();

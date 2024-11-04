@@ -51,7 +51,7 @@ protected:
 	GLuint _indexBuffer;
 
 	OpenGL::Shader *_shader;
-	OpenGL::Shader *_flatShadowShader;
+	OpenGL::Shader *_flatShadowShader{};
 };
 
 } // namespace Wintermute
