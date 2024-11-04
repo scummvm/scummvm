@@ -221,7 +221,7 @@ Common::KeymapArray StarkMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("F4");
 	gameKeyMap->addAction(act);
 
-	// I18N: Opens in-game Diary
+	// I18N: Opens in-game Diary. April is the female protagonist name
 	act = new Action("APRILSDIARY", _("April's diary (initially disabled)"));
 	act->setCustomEngineActionEvent(kActionAprilsDiary);
 	act->addDefaultInputMapping("F5");
