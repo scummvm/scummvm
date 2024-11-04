@@ -175,13 +175,13 @@ Common::KeymapArray TSageMetaEngine::initKeymaps(const char *target) const {
 	Common::String extra = ConfMan.get("extra", target);
 	const bool isDemo = extra.contains("Demo");
 
-	act = new Common::Action(kStandardActionLeftClick, _("Left click"));
+	act = new Common::Action(kStandardActionLeftClick, _("Left Click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action(kStandardActionRightClick, _("Right click"));
+	act = new Common::Action(kStandardActionRightClick, _("Right Click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
@@ -291,17 +291,17 @@ Common::KeymapArray TSageMetaEngine::initKeymaps(const char *target) const {
 
 		act = new Common::Action("INCREASESPEED", _("Increase speed"));
 		act->setCustomEngineActionEvent(kActionIncreaseSpeed);
-		act->addDefaultInputMapping("KP9"); 
+		act->addDefaultInputMapping("KP9");
 		gameKeyMap->addAction(act);
 
 		act = new Common::Action("DECREASESPEED", _("Decrease speed"));
 		act->setCustomEngineActionEvent(kActionDecreaseSpeed);
-		act->addDefaultInputMapping("KP3"); 
+		act->addDefaultInputMapping("KP3");
 		gameKeyMap->addAction(act);
 
 		act = new Common::Action("MINIMUMSPEED", _("Minimum speed"));
 		act->setCustomEngineActionEvent(kActionMinimumSpeed);
-		act->addDefaultInputMapping("KP1"); 
+		act->addDefaultInputMapping("KP1");
 		gameKeyMap->addAction(act);
 
 		act = new Common::Action("MAXIMUMSPEED", _("Maximum speed"));
@@ -316,12 +316,12 @@ Common::KeymapArray TSageMetaEngine::initKeymaps(const char *target) const {
 
 		act = new Common::Action("MEDIUMSPEED", _("Medium speed"));
 		act->setCustomEngineActionEvent(kActionMediumSpeed);
-		act->addDefaultInputMapping("KP0"); 
+		act->addDefaultInputMapping("KP0");
 		gameKeyMap->addAction(act);
 
 		act = new Common::Action("DRAWCARDS", _("Draw Cards"));
 		act->setCustomEngineActionEvent(kActionDrawCards);
-		act->addDefaultInputMapping("SPACE"); 
+		act->addDefaultInputMapping("SPACE");
 		gameKeyMap->addAction(act);
 	}
 
@@ -337,4 +337,3 @@ Common::KeymapArray TSageMetaEngine::initKeymaps(const char *target) const {
 #else
 	REGISTER_PLUGIN_STATIC(TSAGE, PLUGIN_TYPE_ENGINE, TSageMetaEngine);
 #endif
-

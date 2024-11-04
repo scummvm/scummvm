@@ -213,13 +213,13 @@ Common::KeymapArray CGE2MetaEngine::initKeymaps(const char *target) const {
 
 	Common::Action *act;
 
-	act = new Common::Action(kStandardActionLeftClick, _("Left click"));
+	act = new Common::Action(kStandardActionLeftClick, _("Left Click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	keymap->addAction(act);
 
-	act = new Common::Action(kStandardActionRightClick, _("Right click"));
+	act = new Common::Action(kStandardActionRightClick, _("Right Click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");

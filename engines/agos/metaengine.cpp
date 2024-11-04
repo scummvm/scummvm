@@ -229,13 +229,13 @@ Common::KeymapArray AgosMetaEngine::initKeymaps(const char *target) const {
 	Keymap *yesNoKeymap = new Keymap(Keymap::kKeymapTypeGame, "game-Yes/No", _("Yes/No keymapping"));
 	Action *act;
 
-	act = new Action(kStandardActionLeftClick, _("Left click"));
+	act = new Action(kStandardActionLeftClick, _("Left Click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right click"));
+	act = new Action(kStandardActionRightClick, _("Right Click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");

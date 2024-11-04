@@ -43,7 +43,7 @@
 #include "gui/widgets/popup.h"
 
 namespace Sword1 {
-		
+
 #define GAMEOPTION_WINDOWS_AUDIO_MODE     GUIO_GAMEOPTIONS1
 #define GAMEOPTION_MULTILANGUAGE          GUIO_GAMEOPTIONS2
 #define GAMEOPTION_MULTILANGUAGE_EXTENDED GUIO_GAMEOPTIONS3
@@ -268,13 +268,13 @@ Common::KeymapArray SwordMetaEngine::initKeymaps(const char *target) const {
 
 	Action *act;
 
-	act = new Action(kStandardActionLeftClick, _("Left click"));
+	act = new Action(kStandardActionLeftClick, _("Left Click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right click"));
+	act = new Action(kStandardActionRightClick, _("Right Click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");

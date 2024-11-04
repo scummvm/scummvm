@@ -104,14 +104,14 @@ Common::KeymapArray MadeMetaEngine::initKeymaps(const char *target) const {
 
 	Action *act;
 
-	act = new Action(kStandardActionLeftClick, _("Left click"));
+	act = new Action(kStandardActionLeftClick, _("Left Click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	act->addDefaultInputMapping("KP_PLUS");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right click"));
+	act = new Action(kStandardActionRightClick, _("Right Click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
@@ -156,19 +156,19 @@ Common::KeymapArray MadeMetaEngine::initKeymaps(const char *target) const {
 	act = new Action("MENU", _("Menu"));
 	act->setCustomEngineActionEvent(kActionMenu);
 	act->addDefaultInputMapping("F1");
-	act->addDefaultInputMapping("JOY_GUIDE"); 
+	act->addDefaultInputMapping("JOY_GUIDE");
 	gameKeyMap->addAction(act);
 
 	act = new Action("SAVEGAME", _("Save game"));
 	act->setCustomEngineActionEvent(kActionSaveGame);
 	act->addDefaultInputMapping("F2");
-	act->addDefaultInputMapping("JOY_LEFT_SHOULDER"); 
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	gameKeyMap->addAction(act);
 
 	act = new Action("LOADGAME", _("Load game"));
 	act->setCustomEngineActionEvent(kActionLoadGame);
 	act->addDefaultInputMapping("F3");
-	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER"); 
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	gameKeyMap->addAction(act);
 
 	act = new Action("RPTMSG", _("Repeat last message"));

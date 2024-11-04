@@ -174,13 +174,13 @@ Common::KeymapArray LureMetaEngine::initKeymaps(const char *target) const {
 	Common::Action *act;
 
 	{
-		act = new Common::Action(kStandardActionLeftClick, _("Left click"));
+		act = new Common::Action(kStandardActionLeftClick, _("Left Click"));
 		act->setLeftClickEvent();
 		act->addDefaultInputMapping("MOUSE_LEFT");
 		act->addDefaultInputMapping("JOY_A");
 		engineKeyMap->addAction(act);
 
-		act = new Common::Action(kStandardActionRightClick, _("Right click"));
+		act = new Common::Action(kStandardActionRightClick, _("Right Click"));
 		act->setRightClickEvent();
 		act->addDefaultInputMapping("MOUSE_RIGHT");
 		act->addDefaultInputMapping("JOY_B");
@@ -221,7 +221,7 @@ Common::KeymapArray LureMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_LEFT");
 		fightKeyMap->addAction(act);
 
-		
+
 		// I18N: Move actor right during fight
 		act = new Common::Action("MOVERIGHT", _("Move right"));
 		act->setCustomEngineActionEvent(kActionFightMoveRight);

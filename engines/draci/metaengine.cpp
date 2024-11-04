@@ -140,13 +140,13 @@ Common::KeymapArray DraciMetaEngine::initKeymaps(const char *target) const {
 
 	Action *act;
 
-	act = new Action(kStandardActionLeftClick, _("Left click"));
+	act = new Action(kStandardActionLeftClick, _("Left Click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right click"));
+	act = new Action(kStandardActionRightClick, _("Right Click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
@@ -207,7 +207,7 @@ Common::KeymapArray DraciMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_UP");
 	gameKeyMap->addAction(act);
 
-	
+
 	KeymapArray keymaps(2);
 	keymaps[0] = engineKeyMap;
 	keymaps[1] = gameKeyMap;

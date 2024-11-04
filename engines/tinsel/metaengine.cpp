@@ -98,7 +98,7 @@ public:
 	bool removeSaveState(const char *target, int slot) const override;
 
 	// TODO: Add getSavegameFile(). See comments in loadGameState and removeSaveState
-	
+
 	void registerDefaultSettings(const Common::String &target) const override;
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 
@@ -243,13 +243,13 @@ Common::KeymapArray TinselMetaEngine::initKeymaps(const char *target) const {
 
 	Action *act;
 
-	act = new Action(kStandardActionLeftClick, _("Left click"));
+	act = new Action(kStandardActionLeftClick, _("Left Click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right click"));
+	act = new Action(kStandardActionRightClick, _("Right Click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");

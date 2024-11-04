@@ -110,28 +110,28 @@ Common::KeymapArray ComposerMetaEngine::initKeymaps(const char *target) const {
 
 	Action *act;
 
-	act = new Action(kStandardActionLeftClick, _("Left click"));
+	act = new Action(kStandardActionLeftClick, _("Left Click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right click"));
+	act = new Action(kStandardActionRightClick, _("Right Click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
-	
+
 	act = new Action(kStandardActionSkip, _("Skip"));
 	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
 	act->addDefaultInputMapping("ESCAPE");
 	act->addDefaultInputMapping("JOY_Y");
 	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
-					
+
 	return Keymap::arrayOf(engineKeyMap);
-}					
-					
+}
+
 Common::String getSaveName(Common::InSaveFile *in) {
 	Common::Serializer ser(in, nullptr);
 	Common::String name;

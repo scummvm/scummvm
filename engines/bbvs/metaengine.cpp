@@ -95,13 +95,13 @@ Common::KeymapArray BbvsMetaEngine::initKeymaps(const char *target) const {
 
 	Common::Action *act;
 
-	act = new Common::Action(kStandardActionLeftClick, _("Left click"));
+	act = new Common::Action(kStandardActionLeftClick, _("Left Click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action(kStandardActionRightClick, _("Right click"));
+	act = new Common::Action(kStandardActionRightClick, _("Right Click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
@@ -112,32 +112,32 @@ Common::KeymapArray BbvsMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_X");
 	act->addDefaultInputMapping("ESCAPE");
 	escapeKeyMap->addAction(act);
-	
+
 	act = new Common::Action("INVENTORY", _("Open inventory"));
 	act->setCustomEngineActionEvent(kActionInventory);
 	act->addDefaultInputMapping("i");
 	act->addDefaultInputMapping("SPACE");
 	act->addDefaultInputMapping("JOY_y");
 	gameKeyMap->addAction(act);
-	
+
 	act = new Common::Action("LOOK", _("Look"));
 	act->setCustomEngineActionEvent(kActionLook);
 	act->addDefaultInputMapping("l");
 	act->addDefaultInputMapping("JOY_DOWN");
 	gameKeyMap->addAction(act);
-	
+
 	act = new Common::Action("TALK", _("Talk"));
 	act->setCustomEngineActionEvent(kActionTalk);
 	act->addDefaultInputMapping("t");
 	act->addDefaultInputMapping("JOY_RIGHT");
 	gameKeyMap->addAction(act);
-	
+
 	act = new Common::Action("USE", _("Use"));
 	act->setCustomEngineActionEvent(kActionUse);
 	act->addDefaultInputMapping("u");
 	act->addDefaultInputMapping("JOY_LEFT");
 	gameKeyMap->addAction(act);
-	
+
 	act = new Common::Action("WALK", _("Walk"));
 	act->setCustomEngineActionEvent(kActionWalk);
 	act->addDefaultInputMapping("w");
