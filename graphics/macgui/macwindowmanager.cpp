@@ -206,7 +206,7 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::L
 
 	_hilitingWidget = false;
 
-	if (mode & kWMMode32bpp) {
+	if (mode & kWMModeTrueColor) {
 		_pixelformat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 		_macDrawPrimitives = new MacDrawPrimitives<uint32>();
 		// No implementation yet
@@ -1501,10 +1501,10 @@ void MacWindowManager::printWMMode(int debuglevel) {
 	if (_mode & kWMModeButtonDialogStyle)
 		out += " kWMModeButtonDialogStyle";
 
-	if (_mode & kWMMode32bpp)
-		out += " kWMMode32bpp";
+	if (_mode & kWMModeTrueColor)
+		out += " kWMModeTrueColor";
 	else
-		out += " !kWMMode32bpp";
+		out += " !kWMModeTrueColor";
 
 	if (_mode & kWMNoScummVMWallpaper)
 		out += " kWMNoScummVMWallpaper";

@@ -254,7 +254,7 @@ Common::Error DirectorEngine::run() {
 
 #ifdef USE_RGB_COLOR
 	if (ConfMan.getBool("true_color") || (getGameFlags() & GF_32BPP) || debugChannelSet(-1, kDebug32bpp))
-		_wmMode |= Graphics::kWMMode32bpp;
+		_wmMode |= Graphics::kWMModeTrueColor;
 #endif
 
 	if (getGameFlags() & GF_DESKTOP)
