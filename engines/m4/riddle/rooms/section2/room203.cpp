@@ -2571,7 +2571,8 @@ void Room203::daemon() {
 		break;
 
 	default:
-		error("Unhandled trigger");
+		if (_G(kernel).trigger < 9999)
+			error("Unhandled trigger");
 		break;
 	}
 }
