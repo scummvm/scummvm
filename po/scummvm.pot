@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-04 14:37+0000\n"
+"POT-Creation-Date: 2024-11-04 15:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3025,7 +3025,7 @@ msgstr ""
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:338 engines/hdb/metaengine.cpp:275
 #: engines/mohawk/myst_stacks/menu.cpp:317
-#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/saga/metaengine.cpp:448
+#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/saga/metaengine.cpp:449
 #: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
 #: engines/tinsel/metaengine.cpp:335 engines/zvision/metaengine.cpp:272
 #: engines/zvision/metaengine.cpp:290
@@ -3249,7 +3249,7 @@ msgstr ""
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
 #: engines/neverhood/menumodule.cpp:923 engines/parallaction/metaengine.cpp:131
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:407
-#: engines/prince/saveload.cpp:54 engines/saga/metaengine.cpp:468
+#: engines/prince/saveload.cpp:54 engines/saga/metaengine.cpp:469
 #: engines/sci/engine/guest_additions.cpp:747 engines/sci/engine/kfile.cpp:1104
 #: engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
@@ -6332,7 +6332,7 @@ msgstr ""
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
 #: engines/hopkins/metaengine.cpp:238 engines/lure/metaengine.cpp:191
 #: engines/made/metaengine.cpp:162 engines/mads/metaengine.cpp:305
-#: engines/saga/metaengine.cpp:441 engines/stark/metaengine.cpp:208
+#: engines/saga/metaengine.cpp:442 engines/stark/metaengine.cpp:208
 #: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:162
 #: engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
@@ -6341,7 +6341,7 @@ msgstr ""
 #: engines/cge/metaengine.cpp:227 engines/cge2/metaengine.cpp:241
 #: engines/hopkins/metaengine.cpp:244 engines/made/metaengine.cpp:168
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:431
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:432
 #: engines/stark/metaengine.cpp:213 engines/trecision/metaengine.cpp:175
 #: engines/vcruise/metaengine.cpp:167 engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
@@ -8719,8 +8719,12 @@ msgstr ""
 msgid "Look at"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:359
-msgid "Pickup"
+#: engines/saga/metaengine.cpp:359 engines/scumm/help.cpp:145
+#: engines/scumm/help.cpp:170 engines/scumm/help.cpp:199
+#: engines/scumm/help.cpp:214 engines/scumm/help.cpp:231
+#: engines/twp/metaengine.cpp:181 engines/wintermute/keymapper_tables.h:134
+#: engines/wintermute/keymapper_tables.h:1546
+msgid "Pick up"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:364 engines/scumm/help.cpp:200
@@ -8750,48 +8754,49 @@ msgstr ""
 msgid "Push"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:399
+#. I18N: It is a verb for gulping, not a bird
+#: engines/saga/metaengine.cpp:400
 msgid "Swallow"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:406
+#: engines/saga/metaengine.cpp:407
 msgid "Reading speed"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:411
+#: engines/saga/metaengine.cpp:412
 msgid "Change music"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:416
+#: engines/saga/metaengine.cpp:417
 msgid "Change sound"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:421
+#: engines/saga/metaengine.cpp:422
 msgid "Change voices"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:426
+#: engines/saga/metaengine.cpp:427
 msgid "Continue game"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:436 engines/trecision/metaengine.cpp:156
+#: engines/saga/metaengine.cpp:437 engines/trecision/metaengine.cpp:156
 #: engines/vcruise/metaengine.cpp:177
 msgid "Quit game"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:453
+#: engines/saga/metaengine.cpp:454
 msgid "Cancel quit"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:458
+#: engines/saga/metaengine.cpp:459
 msgid "Okay"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:463
+#: engines/saga/metaengine.cpp:464
 msgid "Cancel load"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:473
+#: engines/saga/metaengine.cpp:474
 msgid "Cancel save"
 msgstr ""
 
@@ -9378,15 +9383,16 @@ msgstr ""
 msgid "Allows the game sessions to be discovered over your local area network."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1721
+#. I18N: Moonbase Console is a program name
+#: engines/scumm/dialogs.cpp:1722
 msgid "Generate random maps"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1721
+#: engines/scumm/dialogs.cpp:1722
 msgid "Allow random map generation (Based from Moonbase Console)."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1723
+#: engines/scumm/dialogs.cpp:1725
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."
@@ -9543,14 +9549,6 @@ msgstr ""
 #: engines/scumm/help.cpp:134 engines/scumm/help.cpp:156
 #: engines/scumm/help.cpp:174
 msgid "Turn off"
-msgstr ""
-
-#: engines/scumm/help.cpp:145 engines/scumm/help.cpp:170
-#: engines/scumm/help.cpp:199 engines/scumm/help.cpp:214
-#: engines/scumm/help.cpp:231 engines/twp/metaengine.cpp:181
-#: engines/wintermute/keymapper_tables.h:134
-#: engines/wintermute/keymapper_tables.h:1546
-msgid "Pick up"
 msgstr ""
 
 #: engines/scumm/help.cpp:146 engines/scumm/help.cpp:171
@@ -10367,7 +10365,7 @@ msgstr ""
 msgid "Conversation log"
 msgstr ""
 
-#. I18N: Opens in-game Diary
+#. I18N: Opens in-game Diary. April is the female protagonist name
 #: engines/stark/metaengine.cpp:225
 msgid "April's diary (initially disabled)"
 msgstr ""
@@ -10418,11 +10416,11 @@ msgid "Scroll down in your dialogues"
 msgstr ""
 
 #: engines/stark/metaengine.cpp:318
-msgid "go to next dialogue"
+msgid "Go to next dialogue"
 msgstr ""
 
 #: engines/stark/metaengine.cpp:323
-msgid "go to previous dialogues"
+msgid "Go to previous dialogues"
 msgstr ""
 
 #: engines/stark/metaengine.cpp:328
