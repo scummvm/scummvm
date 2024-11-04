@@ -50,6 +50,7 @@ BaseRenderer3D *makeOpenGL3DShaderRenderer(BaseGame *inGame) {
 BaseRenderOpenGL3DShader::BaseRenderOpenGL3DShader(BaseGame *inGame) : BaseRenderer3D(inGame) {
 	setDefaultAmbientLightColor();
 	_spriteVBO = 0;
+	_alphaRef = 0;
 }
 
 BaseRenderOpenGL3DShader::~BaseRenderOpenGL3DShader() {
@@ -169,8 +170,7 @@ bool BaseRenderOpenGL3DShader::setup2D(bool force) {
 		glEnable(GL_BLEND);
 		setSpriteBlendMode(Graphics::BLEND_NORMAL);
 
-		glEnable(GL_ALPHA_TEST);
-		glAlphaFunc(GL_GEQUAL, 0.0f);
+		_alphaRef = 0.0f;
 
 		glPolygonMode(GL_FRONT, GL_FILL);
 		glFrontFace(GL_CCW);  // WME DX have CW
@@ -191,10 +191,8 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 		glEnable(GL_DEPTH_TEST);
-		//glEnable(GL_ALPHA_TEST);
-		// WME uses 8 as a reference value and Direct3D expects it to be in the range [0, 255]
-		// 8 / 255 ~ 0.0313
-		//glAlphaFunc(GL_GEQUAL, 0.0313f);
+		// this is 8 / 255, since 8 is the value used by WME DX
+		_alphaRef = 8 / 255.f;
 
 		setAmbientLightRenderState();
 
@@ -252,6 +250,9 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 	_xmodelShader->use();
 	_xmodelShader->setUniform("viewMatrix", viewMatrix);
 	_xmodelShader->setUniform("projMatrix", projectionMatrix);
+	_xmodelShader->setUniform1f("alphaRef", _alphaRef);
+	_xmodelShader->setUniform("alphaTest", true);
+
 
 	_geometryShader->use();
 	_geometryShader->setUniform("viewMatrix", viewMatrix);
@@ -305,7 +306,9 @@ bool BaseRenderOpenGL3DShader::setupLines() {
 		glFrontFace(GL_CW); // WME DX have CCW
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_BLEND);
-		glEnable(GL_ALPHA_TEST);
+		_lineShader->use();
+		_lineShader->setUniform1f("alphaRef", _alphaRef);
+		_lineShader->setUniform("alphaTest", true);
 
 		glDisable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -419,7 +422,7 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::
 	} else {
 		setSpriteBlendMode(blendMode);
 		if (alphaDisable) {
-			glDisable(GL_ALPHA_TEST);
+			_spriteShader->setUniform("alphaTest", false);
 			glDisable(GL_BLEND);
 		}
 
@@ -442,7 +445,7 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 		if (alphaDisable) {
-			glEnable(GL_ALPHA_TEST);
+			_spriteShader->setUniform("alphaTest", true);
 			glEnable(GL_BLEND);
 		}
 	}
@@ -454,7 +457,7 @@ bool BaseRenderOpenGL3DShader::commitSpriteBatch() {
 	// render
 	setSpriteBlendMode(_batchBlendMode);
 	if (_batchAlphaDisable) {
-		glDisable(GL_ALPHA_TEST);
+		_spriteShader->setUniform("alphaTest", false);
 		glDisable(GL_BLEND);
 	}
 
@@ -466,7 +469,7 @@ bool BaseRenderOpenGL3DShader::commitSpriteBatch() {
 	// TODO
 
 	if (_batchAlphaDisable) {
-		glEnable(GL_ALPHA_TEST);
+		_spriteShader->setUniform("alphaTest", true);
 		glEnable(GL_BLEND);
 	}
 

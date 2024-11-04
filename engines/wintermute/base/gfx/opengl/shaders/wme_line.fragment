@@ -1,7 +1,14 @@
 in vec4 Color;
 
+uniform float alphaRef;
+uniform UBOOL alphaTest;
+
 OUTPUT
 
 void main() {
 	outColor = Color;
+
+	if (UBOOL_TEST(alphaTest) && outColor.a < alphaRef) {
+		discard;
+	}
 }

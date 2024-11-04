@@ -139,6 +139,7 @@ public:
 
 private:
 	DXMatrix _glProjectionMatrix;
+	float _alphaRef;
 
 	Common::Array<DXMatrix> _transformStack;
 
