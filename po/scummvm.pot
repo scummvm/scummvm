@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-04 20:02+0000\n"
+"POT-Creation-Date: 2024-11-04 21:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3577,40 +3577,40 @@ msgstr ""
 msgid "RetroWave OPL3"
 msgstr ""
 
-#: audio/mididrv.cpp:225
+#: audio/mididrv.cpp:232
 #, c-format
 msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
 
-#: audio/mididrv.cpp:226 audio/mididrv.cpp:240 audio/mididrv.cpp:277
-#: audio/mididrv.cpp:294
+#: audio/mididrv.cpp:233 audio/mididrv.cpp:247 audio/mididrv.cpp:285
+#: audio/mididrv.cpp:302
 msgid "Attempting to fall back to the next available device..."
 msgstr ""
 
-#: audio/mididrv.cpp:239
+#: audio/mididrv.cpp:246
 #, c-format
 msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
 
-#: audio/mididrv.cpp:276
+#: audio/mididrv.cpp:284
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
 
-#: audio/mididrv.cpp:293
+#: audio/mididrv.cpp:301
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
 
-#: audio/mididrv.cpp:461
+#: audio/mididrv.cpp:469
 msgid "Starting MIDI dump"
 msgstr ""
 
