@@ -496,6 +496,9 @@ void AGOSEngine_Elvira2::userGame(bool load) {
 
 	listSaveGames();
 
+	Common::Keymapper *keymapper = AGOSEngine::getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+
 	if (!load) {
 		WindowBlock *window = _windowArray[num];
 		int16 slot = -1;
@@ -567,6 +570,8 @@ get_out:;
 
 	if (getGameType() == GType_ELVIRA2)
 		restartAnimation();
+
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 }
 
 int AGOSEngine_Elvira2::userGameGetKey(bool *b, uint maxChar) {
