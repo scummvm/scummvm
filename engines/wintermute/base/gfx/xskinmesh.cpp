@@ -371,7 +371,12 @@ bool DXSkinInfo::create(uint32 vertexCount, uint32 fvf, uint32 boneCount) {
 	if (!_bones) {
 		return false;
 	}
-	memset(_bones, 0, boneCount * sizeof(DXBone));
+	for (uint32 i = 0; i < boneCount; i++) {
+		_bones[i]._name = nullptr;
+		_bones[i]._numInfluences = 0;
+		_bones[i]._vertices = nullptr;
+		_bones[i]._weights = nullptr;
+	}
 	return true;
 }
 
@@ -897,8 +902,10 @@ static bool parseNormals(XFileData &fileData, struct MeshData *meshData) {
 		return false;
 	}
 
-	memcpy(meshData->_normals, normalsObj->_normals, meshData->_numNormals * sizeof(DXVector3));
 	for (i = 0; i < meshData->_numNormals; i++) {
+		meshData->_normals[i]._x = normalsObj->_normals[i]._x;
+		meshData->_normals[i]._y = normalsObj->_normals[i]._y;
+		meshData->_normals[i]._z = normalsObj->_normals[i]._z;
 		DXVec3Normalize(&meshData->_normals[i], &meshData->_normals[i]);
 	}
 
@@ -955,7 +962,11 @@ static bool parseMesh(XFileData *fileData, struct MeshData *meshData) {
 		return false;
 	}
 
-	memcpy(meshData->_vertices, meshObj->_vertices, meshData->_numVertices * sizeof(DXVector3));
+	for (i = 0; i < meshData->_numVertices; i++) {
+		meshData->_vertices[i]._x = meshObj->_vertices[i]._x;
+		meshData->_vertices[i]._y = meshObj->_vertices[i]._y;
+		meshData->_vertices[i]._z = meshObj->_vertices[i]._z;
+	}
 
 	uint32 index = 0;
 	for (i = 0; i < meshData->_numPolyFaces; i++) {
@@ -1059,7 +1070,11 @@ bool DXLoadSkinMesh(XFileData *fileData, DXBuffer &materialsOut, uint32 &numMate
 	uint32 totalVertices = meshData._numVertices;
 	if (meshData._fvf & DXFVF_NORMAL) {
 		meshData._vertexNormals = new DXVector3[meshData._numVertices];
-		memset(meshData._vertexNormals, 0, meshData._numVertices * sizeof(DXVector3));
+		for (i = 0; i < meshData._numVertices; i++) {
+			meshData._vertexNormals[i]._x = 0.0f;
+			meshData._vertexNormals[i]._y = 0.0f;
+			meshData._vertexNormals[i]._z = 0.0f;
+		}
 		uint32 numFaceIndices = meshData._numPolyFaces * 2 + meshData._numTriFaces;
 		for (i = 0; i < numFaceIndices; i++) {
 			uint32 vertexIndex = meshData._indices[i];
