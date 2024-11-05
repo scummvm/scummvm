@@ -633,7 +633,7 @@ void reset_drawobj_for_overlay(int objnum) {
 }
 
 void notify_sprite_changed(int sprnum, bool deleted) {
-	assert(sprnum >= 0 && sprnum < _GP(game).SpriteInfos.size());
+	assert(sprnum >= 0 && sprnum < (int)_GP(game).SpriteInfos.size());
 
 	// software renderer
 	// will need to know to redraw active cached sprite for objects.
