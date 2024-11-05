@@ -77,6 +77,10 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	GAMEl("nupogodi3", "3fbcdd27bf0a3defb6195c92b9b0a95f", 1675036,
 			"qd_game.exe", "18b4260f3f25ac0f394a8c618203dcba", 1855208, Common::LT_LTU),
 
+	// Jen počkej a Píseň pro zajíce
+	//GAMEl("nupogodi3", "???", 1675036,
+	//		"qd_game.exe", "???", 1855208, Common::CZ_CZE),
+
 #undef SUPPORT_STATUS
 #define SUPPORT_STATUS ADGF_UNSTABLE
 
@@ -129,6 +133,10 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	GAMEl("3mice1", "a6060f3d17ea2e50a03216332e517817", 10022470,
 			"qd_game.exe", "b8b3545b022f8e0975a8a948c03ad76e", 917504, Common::CS_CZE),
 
+	// Były Sobie Myszki Trzy: Na Spotkanie Cioci Myszy
+	//GAMEl("3mice1", "???", 10022470,
+	//		"qd_game.exe", "???", 917504, Common::PL_POL),
+
 	// Похождения бравого солдата Швейка
 	// 2007/09/07. Lazy Games
 	GAME("shveik", "3877afbb780996a5608a5b358dd59726", 30233418,
@@ -152,6 +160,10 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	//GAMEl("3mice2", "???", 8176962, Common::CZ_CZE),
 	GAMEd("3mice2", "dfd98feb2e7d3345a7babdeb3ed3e9a7", 800666, // Demo1
 			"demo1.exe", "ffe20c2dbb131b01fccc1211a41e76e7", 962560),
+
+	// Były Sobie Myszki Trzy: Urodzinowe Śledztwo
+	//GAMEl("3mice2", "???", 10022470,
+	//		"qd_game.exe", "???", 917504, Common::PL_POL),
 
 	{ // Demo2, original
 	  // Video is in MP4 format which is not supported
