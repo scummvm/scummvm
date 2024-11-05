@@ -21,6 +21,9 @@
 
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/translation.h"
+
+#include "gui/error.h"
 
 #include "ultima/ultima8/misc/debugger.h"
 
@@ -101,8 +104,14 @@ bool U8Game::startGame() {
 
 	auto *savers = new Common::File();
 	if (!savers->open("savegame/u8save.000")) {
-		warning("Unable to load savegame/u8save.000.");
+		Common::U32String errmsg = _(
+			"Missing Required File\n\n"
+			"Starting a game requires SAVEGAME/U8SAVE.000\n"
+			"from an original installation.\n\n"
+			"Please check you have copied all the files correctly.");
+		::GUI::displayErrorDialog(errmsg);
 		delete savers;
+		error("Unable to load savegame/u8save.000");
 		return false;
 	}
 	U8SaveFile *u8save = new U8SaveFile(savers);
