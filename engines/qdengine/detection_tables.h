@@ -108,6 +108,10 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	GAME("maski", "9a40b7491cac0dd80657cfe52e28ea74", 23128230,
 			"maski.exe", "1b7a4076bf1ed15e3eb642caeb337337", 761856),
 
+	// Три маленькие белые мышки и пираты северного моря
+	GAMEd("3mice1", "e6ad21f2f3241116b0f66a1d98f8e3f3", 403092,
+			"qd_game.exe", "da2dc5265cb7c55bcf1b24cd9deae9d1", 761856),
+
 	// Три маленькие белые мышки. Визит Морской крысы
 	// 2007/03/01. Lazy Games
 	GAME("3mice1", "63e79178e66c520a9094622ccdcaf9c5", 10006622,
