@@ -36,7 +36,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "shveik", "The Adventures of the Good Soldier Schweik" }, // Похождения бравого солдата Швейка
 	{ "klepa", "Klepa: Symbolic Rivets" },  // Клёпа: Символические Заклепки
 	{ "3mice2", "Marvellous Mice Adventures: Sea Rat's Birthday" }, // Три маленькие белые мышки. День рождения морской крысы
-	{ "dogncat", "Dog-n-cat: Island of Dr Rattardy" }, // Агентство "КотоПес": Остров доктора Крысарди
+	{ "dogncat", "Dog-n-cat: Island of Dr Ratiarty" }, // Агентство "КотоПес": Остров доктора Крысарди
 	{ "dogncat2", "Dog-n-cat: In the Footsteps of Unprecedented Beasts" }, // Агентство "КотоПес": По следам невиданных зверей
 
 	{ 0, 0 }
