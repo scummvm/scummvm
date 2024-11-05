@@ -13,6 +13,11 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Added support for Unrest.
   - Added support for Rise of the Dragon.
   - Added support for Castle Master.
+  - Added support for Wait for it! Issue 3. Song for a Hare.
+  - Added support for Mask Show.
+  - Added support for Marvellous Mice Adventures: Meeting Sea Rat.
+  - Added support for The Adventures of the Good Soldier Schweik.
+  - Added support for Marvellous Mice Adventures: Sea Rat's Birthday.
 
  New platforms:
   - Added SailfishOS port.
