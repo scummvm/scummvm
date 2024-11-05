@@ -329,8 +329,9 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
-	// Crusader games use basically the same engine as ultima8, but
-	// are less complete.
+	// Crusader games use a very similar engine to ultima8.
+	// complete.  Because each version requires a separate Usecode callback
+	// table, only fully patched versions are marked supported.
 
 	// GOG Crusader - No Remorse (V1.21)
 	{
@@ -341,6 +342,21 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_USECODE_DEFAULT,
+			GUI_OPTIONS_REMORSE
+		},
+		GAME_CRUSADER_REM,
+		0
+	},
+
+	// Crusader - No Remorse CD version (V1.10) provided by heff978 (#15065)
+	{
+		{
+			"remorse",
+			"",
+			AD_ENTRY1s("usecode/eusecode.flx", "73b413b1ef291c4512f16c719ad746f3", 419591),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
 			GUI_OPTIONS_REMORSE
 		},
 		GAME_CRUSADER_REM,
