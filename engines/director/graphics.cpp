@@ -507,6 +507,8 @@ Graphics::Primitives *DirectorEngine::getInkPrimitives() {
 	if (!_primitives) {
 		if (_pixelformat.bytesPerPixel == 1)
 			_primitives = new InkPrimitives<byte>();
+		else if (_pixelformat.bytesPerPixel == 2)
+			_primitives = new InkPrimitives<uint16>();
 		else
 			_primitives = new InkPrimitives<uint32>();
 	}
@@ -751,6 +753,9 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 				if (d->_wm->_pixelformat.bytesPerPixel == 1) {
 					primitives->drawPoint(destRect.left + j, destRect.top + i,
 										preprocessColor(*((byte *)srf->getBasePtr(srcPoint.x, srcPoint.y))), this);
+				} else if (d->_wm->_pixelformat.bytesPerPixel == 2) {
+					primitives->drawPoint(destRect.left + j, destRect.top + i,
+										preprocessColor(*((uint16 *)srf->getBasePtr(srcPoint.x, srcPoint.y))), this);
 				} else {
 					primitives->drawPoint(destRect.left + j, destRect.top + i,
 										preprocessColor(*((uint32 *)srf->getBasePtr(srcPoint.x, srcPoint.y))), this);
