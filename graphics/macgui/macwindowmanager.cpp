@@ -895,6 +895,8 @@ void MacWindowManager::drawDesktop() {
 					if (color > 0) {
 						*((byte *)_desktop->getBasePtr(i, j)) = findBestColor(r, g, b);
 					}
+				} else if (_pixelformat.bytesPerPixel == 2) {
+					*((uint16 *)_desktop->getBasePtr(i, j)) = color;
 				} else {
 					*((uint32 *)_desktop->getBasePtr(i, j)) = color;
 				}
@@ -1407,7 +1409,7 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 }
 
 uint32 MacWindowManager::findBestColor(byte cr, byte cg, byte cb) {
-	if (_pixelformat.bytesPerPixel == 4)
+	if (_pixelformat.bytesPerPixel != 1)
 		return _pixelformat.RGBToColor(cr, cg, cb);
 
 	return _paletteLookup.findBestColor(cr, cg, cb);
@@ -1415,6 +1417,11 @@ uint32 MacWindowManager::findBestColor(byte cr, byte cg, byte cb) {
 
 template <>
 void MacWindowManager::decomposeColor<uint32>(uint32 color, byte &r, byte &g, byte &b) {
+	_pixelformat.colorToRGB(color, r, g, b);
+}
+
+template<>
+void MacWindowManager::decomposeColor<uint16>(uint32 color, byte &r, byte &g, byte &b) {
 	_pixelformat.colorToRGB(color, r, g, b);
 }
 
@@ -1426,7 +1433,7 @@ void MacWindowManager::decomposeColor<byte>(uint32 color, byte& r, byte& g, byte
 }
 
 uint32 MacWindowManager::findBestColor(uint32 color) {
-	if (_pixelformat.bytesPerPixel == 4)
+	if (_pixelformat.bytesPerPixel != 1)
 		return color;
 
 	byte r, g, b;

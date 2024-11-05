@@ -136,6 +136,8 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 		byte r, g, b;
 		if (_wm->_pixelformat.bytesPerPixel == 4) {
 			_wm->decomposeColor<uint32>(fgcolor, r, g, b);
+		} else if (_wm->_pixelformat.bytesPerPixel == 2) {
+			_wm->decomposeColor<uint16>(fgcolor, r, g, b);
 		} else {
 			_wm->decomposeColor<byte>(fgcolor, r, g, b);
 		}

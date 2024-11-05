@@ -1221,6 +1221,8 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 			if (!topMenuEnabled || !menu->items[i]->enabled) {
 				if (_wm->_pixelformat.bytesPerPixel == 1) {
 					drawMenuPattern<byte>(_tempSurface, _screen, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, r->width(), _wm->_colorGreen);
+				} else if (_wm->_pixelformat.bytesPerPixel == 2) {
+					drawMenuPattern<uint16>(_tempSurface, _screen, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, r->width(), _wm->_colorGreen);
 				} else {
 					drawMenuPattern<uint32>(_tempSurface, _screen, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, r->width(), _wm->_colorGreen);
 				}
@@ -1229,6 +1231,8 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 		} else { // Delimiter
 			if (_wm->_pixelformat.bytesPerPixel == 1) {
 				drawMenuDelimiter<byte>(_screen, r, y + _menuDropdownItemHeight / 2, _wm->_colorBlack, _wm->_colorWhite);
+			} else if (_wm->_pixelformat.bytesPerPixel == 2) {
+				drawMenuDelimiter<uint16>(_screen, r, y + _menuDropdownItemHeight / 2, _wm->_colorBlack, _wm->_colorWhite);
 			} else {
 				drawMenuDelimiter<uint32>(_screen, r, y + _menuDropdownItemHeight / 2, _wm->_colorBlack, _wm->_colorWhite);
 			}
