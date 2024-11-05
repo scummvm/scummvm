@@ -91,6 +91,7 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 _dragonArcade(nullptr), _chinaTank(nullptr), _chinaTrain(nullptr), _skipNextFrame(false), _gameId(GID_INVALID) {
 
 	_platform = gameDesc->platform;
+	_gameLang = gameDesc->language;
 
 	if (!strcmp(gameDesc->gameId, "rise")) {
 		_gameId = GID_DRAGON;

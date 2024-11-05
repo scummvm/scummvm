@@ -63,6 +63,7 @@ enum MenuButtonIds {
 	kMenuOptionsSoundsOnOff = 137,
 	kMenuOptionsMusicOnOff = 140,
 	kMenuOptionsSoundsOnOffHoC = 175,
+	kMenuOptionsSoundsOnOffDE = 172, // German version
 	kMenuOptionsMusicOnOffHoC = 171,
 	kMenuOptionsVCR = 135,
 	kMenuOptionsPlay = 136,
@@ -149,24 +150,45 @@ void Menu::setScreenBuffer() {
 
 bool Menu::updateOptionsGadget(Gadget *gadget) {
 	Audio::Mixer *mixer = DgdsEngine::getInstance()->_mixer;
+	const char *mouseStr, *soundStr, *musicStr, *onStr, *offStr;
+	if (DgdsEngine::getInstance()->getGameLang() == Common::EN_ANY) {
+		mouseStr = "MOUSE";
+		soundStr = "SOUND";
+		musicStr = "MUSIC";
+		onStr = "ON";
+		offStr = "OFF";
+	} else if (DgdsEngine::getInstance()->getGameLang() == Common::DE_DEU) {
+		mouseStr = "MAUS";
+		soundStr = "TON";
+		musicStr = "MUSIK";
+		onStr = "AN";
+		offStr = "AUS";
+	} else {
+		error("Unsupported language %d", DgdsEngine::getInstance()->getGameLang());
+	}
 
 	switch (gadget->_gadgetNo) {
 	case kMenuOptionsJoystickOnOff:
 	case kMenuOptionsJoystickOnOffHoC:
-		gadget->_buttonName = "JOYSTICK ON";
-		return false;
+		gadget->_buttonName = Common::String::format("JOYSTICK %s", onStr);
+		return true;
 	case kMenuOptionsMouseOnOff:
 	case kMenuOptionsMouseOnOffHoC:
-		gadget->_buttonName = "MOUSE ON";
-		return false;
+		gadget->_buttonName = Common::String::format("%s %s", mouseStr, onStr);
+		return true;
 	case kMenuOptionsSoundsOnOff: // same id as kMenuMaybeBetterSaveYes
-	case kMenuOptionsSoundsOnOffHoC:
-		gadget->_buttonName = (!mixer->isSoundTypeMuted(Audio::Mixer::kSFXSoundType)) ? "SOUNDS ON" : "SOUNDS OFF";
+	case kMenuOptionsSoundsOnOffDE:
+	case kMenuOptionsSoundsOnOffHoC: {
+		bool isMuted = mixer->isSoundTypeMuted(Audio::Mixer::kSFXSoundType);
+		gadget->_buttonName = Common::String::format("%s %s", soundStr, isMuted ? offStr : onStr);
 		return true;
+	}
 	case kMenuOptionsMusicOnOff:
-	case kMenuOptionsMusicOnOffHoC:
-		gadget->_buttonName = (!mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType)) ? "MUSIC ON" : "MUSIC OFF";
+	case kMenuOptionsMusicOnOffHoC: {
+		bool isMuted = mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType);
+		gadget->_buttonName = Common::String::format("%s %s", musicStr, isMuted ? offStr : onStr);
 		return true;
+	}
 	default:
 		return false;
 	}
@@ -562,6 +584,7 @@ void Menu::handleClickOptionsMenu(const Common::Point &mouse) {
 		// Do nothing - we don't toggle joystick or mouse functionality
 		break;
 	case kMenuOptionsSoundsOnOff: // same id as kMenuMaybeBetterSaveYes
+	case kMenuOptionsSoundsOnOffDE:
 	case kMenuOptionsSoundsOnOffHoC:
 		soundType = Audio::Mixer::kSFXSoundType;
 		// fall through
@@ -571,12 +594,12 @@ void Menu::handleClickOptionsMenu(const Common::Point &mouse) {
 			mixer->muteSoundType(soundType, true);
 			warning("TODO: Sync volume and pause music");
 			//midiPlayer->syncVolume();
-			//midiPlayer->pause();
+			//engine->_soundPlayer->pauseMusic();
 		} else {
 			mixer->muteSoundType(soundType, false);
 			warning("TODO: Sync volume and resume music");
 			//midiPlayer->syncVolume();
-			//midiPlayer->resume();
+			//engine->_soundPlayer->resumeMusic();
 		}
 
 		updateOptionsGadget(gadget);

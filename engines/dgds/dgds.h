@@ -116,6 +116,7 @@ enum DragonArcadeKeyEvent {
 class DgdsEngine : public Engine {
 public:
 	Common::Platform _platform;
+	Common::Language _gameLang;
 	Sound *_soundPlayer;
 	Graphics::ManagedSurface _compositionBuffer;
 
@@ -186,6 +187,7 @@ public:
 	void restartGame();
 
 	DgdsGameId getGameId() const { return _gameId; }
+	Common::Language getGameLang() const { return _gameLang; }
 	Common::Platform getPlatform() const { return _platform; }
 
 	Graphics::ManagedSurface &getBackgroundBuffer() { return _backgroundBuffer; }

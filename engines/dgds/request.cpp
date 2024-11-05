@@ -286,7 +286,7 @@ bool RequestParser::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
 		parseREQChunk(rfdata._requests.back(), chunk, num);
 	} else if (chunk.getId() == ID_GAD) {
 		if (rfdata._requests.empty())
-			error("GAD chunk before any REQ chunks in Reqeust file %s", _filename.c_str());
+			error("GAD chunk before any REQ chunks in Request file %s", _filename.c_str());
 		parseGADChunk(rfdata._requests.back(), chunk, num);
 	}
 
@@ -497,25 +497,44 @@ Common::String SliderGadget::dump() const {
 }
 
 // Slider labels and title are hard-coded in game, not part of data files.
-static const char *_sliderTitleForGadget(uint16 num) {
-	switch (num) {
-	case 0x7B:	return "DIFFICULTY";
-	case 0x7D:	return "TEXT SPEED";
-	case 0x83:	return "DETAIL LEVEL";
-	case 0x98:	return "MOUSE SPEED";
-	case 0x9C:	return "BUTTON THRESHOLD";
-	default:	return "SLIDER";
+static const char *_sliderTitleForGadget(uint16 num, Common::Language language) {
+	if (language == Common::EN_ANY) {
+		switch (num) {
+		case 0x7B:	return "DIFFICULTY";
+		case 0x7D:	return "TEXT SPEED";
+		case 0x83:	return "DETAIL LEVEL";
+		case 0x98:	return "MOUSE SPEED";
+		case 0x9C:	return "BUTTON THRESHOLD";
+		default:	return "SLIDER";
+		}
+	} else if (language == Common::DE_DEU) {
+		switch (num) {
+		case 0x7B:	return "SCHWIERIGKEITSGRAD";
+		case 0x7D:	return "TEXT-VERWEILDAUER";
+		case 0x83:	return "DETAILS";
+		case 0x98:	return "GESCHWINDIGKEIT";
+		case 0x9C:	return "TASTENEMPFINDLICHKEIT";
+		default:	return "REGLER";
+		}
+	} else {
+		error("Unsupported language %d", language);
 	}
 }
 
-static const char *_sliderLabelsForGadget(uint16 num) {
-	switch (num) {
-	case 0x7B:	return "EASY         HARD";
-	case 0x7D:	return "SLOW         FAST";
-	case 0x83:	return "LOW        HIGH";
-	case 0x98:	return "SLOW         FAST";
-	case 0x9C:	return "LONG         SHORT";
-	default:	return "MIN         MAX";
+static const char *_sliderLabelsForGadget(uint16 num, Common::Language language) {
+	if (language == Common::EN_ANY) {
+		switch (num) {
+		case 0x7B:	return "EASY         HARD";
+		case 0x7D:	return "SLOW         FAST";
+		case 0x83:	return "LOW        HIGH";
+		case 0x98:	return "SLOW         FAST";
+		case 0x9C:	return "LONG         SHORT";
+		default:	return "MIN         MAX";
+		}
+	} else if (language == Common::DE_DEU) {
+		return "-             +";
+	} else {
+		error("Unsupported language %d", language);
 	}
 }
 
@@ -523,6 +542,7 @@ static const int SLIDER_HANDLE_FRAME = 28;
 
 void SliderGadget::draw(Graphics::ManagedSurface *dst) const {
 	const DgdsFont *font = RequestData::getMenuFont();
+	Common::Language language = DgdsEngine::getInstance()->getGameLang();
 
 	int16 x = _x + _parentX;
 	int16 y = _y + _parentY;
@@ -530,8 +550,8 @@ void SliderGadget::draw(Graphics::ManagedSurface *dst) const {
 	int16 x2 = x + _width;
 	int16 y2 = (y + _height) - 1;
 	int16 titley = (y - font->getFontHeight()) + 1;
-	const char *title = _sliderTitleForGadget(_gadgetNo);
-	const char *labels = _sliderLabelsForGadget(_gadgetNo);
+	const char *title = _sliderTitleForGadget(_gadgetNo, language);
+	const char *labels = _sliderLabelsForGadget(_gadgetNo, language);
 	int16 titleWidth = font->getStringWidth(title);
 
 	font->drawString(dst, title, x + (_width - titleWidth) / 2, titley, titleWidth, 0);

@@ -1424,7 +1424,14 @@ void SDSScene::addAndShowTiredDialog() {
 		dlg._flags = static_cast<DialogFlags>(kDlgFlagLo8 | kDlgFlagLeftJust | kDlgFlagFlatBg);
 		dlg._frameType = kDlgFrameThought;
 		dlg._time = 420;
-		dlg._str = "Boy, am I tired.  Better get some sleep in about an hour.";
+		if (DgdsEngine::getInstance()->getGameLang() == Common::EN_ANY) {
+			dlg._str = "Boy, am I tired.  Better get some sleep in about an hour.";
+		} else if (DgdsEngine::getInstance()->getGameLang() == Common::DE_DEU) {
+			dlg._str = "Mensch, bin ich m\x81""de!  Am Besten gehe ich bald mal ins Bett.";
+		} else {
+			error("Unsupported language %d", DgdsEngine::getInstance()->getGameLang());
+		}
+
 		_dialogs.push_back(dlg);
 	}
 	showDialog(0, TIRED_DLG_ID);
