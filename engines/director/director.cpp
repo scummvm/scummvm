@@ -119,7 +119,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 		SearchMan.addSubDirectoryMatching(_gameDataDir, directoryGlob, 0, 5);
 	}
 
-	if (debugChannelSet(-1, kDebug32bpp) || (getGameFlags() & GF_32BPP)) {
+	if (debugChannelSet(-1, kDebug32bpp) || (getGameFlags() & GF_TRUECOLOR)) {
 #ifdef USE_RGB_COLOR
 		_colorDepth = 32;
 #else
@@ -220,7 +220,7 @@ Common::Error DirectorEngine::run() {
 		_wmMode |= Graphics::kWMModeFullscreen | Graphics::kWMModeNoDesktop;
 
 #ifdef USE_RGB_COLOR
-	if (debugChannelSet(-1, kDebug32bpp) || (getGameFlags() & GF_32BPP))
+	if (debugChannelSet(-1, kDebug32bpp) || (getGameFlags() & GF_TRUECOLOR))
 		_wmMode |= Graphics::kWMModeTrueColor;
 #endif
 
