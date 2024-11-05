@@ -45,11 +45,12 @@ private:
 	int32 _fieldDC = 0;
 	int32 _fieldE0 = 0;
 	int32 _fieldE4 = 0;
-	int32 _fieldE8 = 0;
-	int32 _fieldEC = 0;
 	int32 _field198 = 0;
-	int32 _field19C = 0;
+	int32 _field19C = 0; // unused??
 	int32 _field1A0 = 0;
+
+	bool _askUnhideMyWalkerFl = false;
+	bool _showMeiTalkFl = false;
 
 	int32 _205all0Series = 0;
 	int32 _205all1Series = 0;

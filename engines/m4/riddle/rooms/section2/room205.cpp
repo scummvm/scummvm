@@ -73,7 +73,7 @@ void Room205::init() {
 	_field19C = 0;
 	_field1A0 = 0;
 	_fieldD8 = 0;
-	_fieldE8 = 0;
+	_askUnhideMyWalkerFl = false;
 	_fieldE4 = 0;
 	series_show("205PRIES", 3840, 16, -1, -1, 0, 100, 0, 0);
 	_205LeftEntranceTabletMach = series_show("205 LEFT ENTRANCE TABLET", 257, 16, -1, -1, 0, 100, 0, 0);
@@ -621,7 +621,7 @@ void Room205::parser() {
 		digi_play("205r54", 1, 255, -1, -1);
 	else if (esi && player_said("MALLET "))
 		digi_play("205r55", 1, 255, -1, -1);
-	else if (ecx && player_said("JOURNAL") && _G(flags[V025]) && !_fieldEC) {
+	else if (ecx && player_said("JOURNAL") && _G(flags[V025]) && !_showMeiTalkFl) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -658,7 +658,7 @@ void Room205::parser() {
 		case 9:
 			ws_unhide_walker(_G(my_walker));
 			terminateMachine(_safariShadow1Mach);
-			if (_fieldEC) {
+			if (_showMeiTalkFl) {
 				kernel_timing_trigger(10, 12, nullptr);
 			} else {
 				terminateMachine(_205MeiStanderMach);
@@ -672,7 +672,7 @@ void Room205::parser() {
 			_205MeiStanderMach = series_show("205 MEI TALKS", 3845, 16, -1, -1, 52, 100, 0, 0);
 			series_unload(_205JournalRippedPopupSeries);
 
-			_fieldEC = 1;
+			_showMeiTalkFl = true;
 			player_set_commands_allowed(true);
 
 			break;
@@ -682,7 +682,7 @@ void Room205::parser() {
 			_205MeiStanderMach = series_show("205 MEI TALKS", 3845, 16, -1, -1, 52, 100, 0, 0);
 			series_unload(_205JournalRippedPopupSeries);
 
-			_fieldEC = 1;
+			_showMeiTalkFl = true;
 			player_set_commands_allowed(true);
 
 			break;
@@ -691,7 +691,7 @@ void Room205::parser() {
 			break;
 
 		}
-	} // if (ecx && player_said("JOURNAL") && _G(flags[V025]) && !_fieldEC)
+	} // if (ecx && player_said("JOURNAL") && _G(flags[V025]) && !_showMeiTalkFl)
 
 	else if (ecx && player_said("BRAZIER"))
 		digi_play("205r66", 1, 255, -1, -1);
@@ -1569,7 +1569,7 @@ void Room205::daemon() {
 		digi_unload("205_s07");
 		digi_unload("205_s08");
 		kernel_timing_trigger(imath_ranged_rand(1200, 1800), 901, nullptr);
-		_fieldE8 = 1;
+		_askUnhideMyWalkerFl = true;
 		kernel_timing_trigger(10, 1000, nullptr);
 
 		break;
@@ -1737,8 +1737,8 @@ void Room205::daemon() {
 		_205Fite1Series = series_load("205FITE1", -1, nullptr);
 		_205Fite2Series = series_load("205FITE2", -1, nullptr);
 
-		if (_fieldE8) {
-			_fieldE8 = 0;
+		if (_askUnhideMyWalkerFl) {
+			_askUnhideMyWalkerFl = false;
 			ws_unhide_walker(_G(my_walker));
 			ws_demand_location(_G(my_walker), 340, 284);
 			ws_demand_facing(_G(my_walker), 1);
