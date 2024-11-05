@@ -231,7 +231,7 @@ GfxFontFromResource::GfxFontFromResource(ResourceManager *resMan, GfxScreen *scr
 		// invalid offsets for character 127. SSCI only uses an offset when
 		// drawing, so it is unaffected as long as the character isn't used.
 		// Fixes LSL2/LSL3 Polish, SQ3 Spanish. Bug #10509
-		if (!(_chars[i].offset + 2 <= _resourceData.size())) {
+		if (!(_chars[i].offset + 2 <= (int)_resourceData.size())) {
 			warning("%s glyph %d has invalid offset: %d, resource size: %d",
 				_resourceData.name().c_str(), i, _chars[i].offset, _resourceData.size());
 
