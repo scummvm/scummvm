@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-11-04 15:33+0000\n"
+"PO-Revision-Date: 2024-11-05 11:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -5560,11 +5560,11 @@ msgstr "По одному в каждой папке с игрой"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:62
 msgid "Clear existing hooks"
-msgstr ""
+msgstr "Убрать существующие хуки"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:64
 msgid "Generate playlist"
-msgstr ""
+msgstr "Создать плейлист"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:66
 msgid "Status: "
@@ -5588,7 +5588,7 @@ msgstr "Выберите каталог для плейлистов"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:173
 msgid "Libretro playlist"
-msgstr ""
+msgstr "Плейлист Libretro"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:176
 msgid ""
@@ -5605,6 +5605,20 @@ msgid ""
 "\n"
 "The core also supports dedicated per game **hook** plain text files with **."
 msgstr ""
+"## Плейлисты Libretro для ядра ScummVM\n"
+"Плейлисты, используемые в интерфейсах Libretro (например, Retroarch), "
+"представляют собой списки обычного текста, используемые для "
+"непосредственного запуска игры с определенным ядром из пользовательского "
+"интерфейса. Эти списки структурированы для передачи ядру пути к "
+"определенному файлу контента для загрузки (например, ROM).\n"
+"\n"
+"Ядро ScummVM может принимать в качестве контента путь к любому из файлов "
+"внутри допустимой папки игры, система детекции попытается автоматически "
+"определить игру из родительской папки файла контента и запустить игру с "
+"параметрами ScummVM по умолчанию.\n"
+"\n"
+"Ядро также поддерживает специфические для каждой игры **хуки** -- обычные "
+"текстовые файлы с **."
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
@@ -6066,14 +6080,12 @@ msgid "Do not emulate NTSC artifacts for text"
 msgstr "Не эмулируйте артефакты NTSC для текста"
 
 #: engines/adl/metaengine.cpp:104
-#, fuzzy
-#| msgid "Use silver cursors"
 msgid "Use checkered cursor"
-msgstr "Использовать серебряные курсоры"
+msgstr "Использовать курсор-шахматку"
 
 #: engines/adl/metaengine.cpp:105
 msgid "Use the checkered cursor from later Apple II models"
-msgstr ""
+msgstr "Используйте курсор-шахматку из более поздних моделей Apple II"
 
 #: engines/agi/detection_tables.h:261
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
@@ -6169,10 +6181,8 @@ msgstr "Добавить меню скорости (как в PC-версии)"
 #: engines/mads/metaengine.cpp:51 engines/mm/metaengine.cpp:46
 #: engines/saga/metaengine.cpp:52 engines/scumm/dialogs.cpp:1188
 #: engines/scumm/metaengine.cpp:755
-#, fuzzy
-#| msgid "Enable Discord integration"
 msgid "Enable copy protection"
-msgstr "Включить интеграцию с Discord"
+msgstr "Включить защиту от копирования"
 
 #: engines/agi/metaengine.cpp:184 engines/agos/metaengine.cpp:45
 #: engines/dreamweb/metaengine.cpp:37 engines/lure/metaengine.cpp:42
@@ -6181,6 +6191,8 @@ msgstr "Включить интеграцию с Discord"
 #: engines/scumm/metaengine.cpp:756
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
+"Включает оригинальную защиту от копирования, которая в противном случае была "
+"бы обойдена по умолчанию."
 
 #: engines/agi/metaengine.cpp:408 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
@@ -6327,23 +6339,19 @@ msgstr "Поддержка для AGOS 2 не скомпилирована"
 #. It is never disabled and it is not game specific
 #: engines/agos/metaengine.cpp:227
 msgid "AGOS main"
-msgstr ""
+msgstr "Главная AGOS"
 
 #: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
 #: engines/hopkins/metaengine.cpp:209 engines/lure/metaengine.cpp:169
 #: engines/made/metaengine.cpp:103 engines/mads/metaengine.cpp:275
 #: engines/stark/metaengine.cpp:185 engines/tinsel/metaengine.cpp:240
 #: engines/trecision/metaengine.cpp:121
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game keymappings"
 msgstr "Раскладки клавиш игры"
 
 #: engines/agos/metaengine.cpp:229
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Yes/No keymapping"
-msgstr "Раскладки клавиш игры"
+msgstr "Раскладка клавиш Да/Нет"
 
 #: engines/agos/metaengine.cpp:232 engines/cge/metaengine.cpp:203
 #: engines/cge2/metaengine.cpp:216 engines/cine/metaengine.cpp:265
@@ -6368,10 +6376,8 @@ msgid "Right click"
 msgstr "Правый щелчок"
 
 #: engines/agos/metaengine.cpp:244
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Exit cutscene"
-msgstr "Пропустить заставку"
+msgstr "Выйти из заставки"
 
 #: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:198
 msgid "Music volume down"
@@ -6392,10 +6398,8 @@ msgid "Toggle sound effect on/off"
 msgstr "Вкл/выкл звуковые эффекты"
 
 #: engines/agos/metaengine.cpp:278
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fast mode on/off"
-msgstr "Переключить быстрый режим"
+msgstr "Переключить быстрый режим вкл/выкл"
 
 #: engines/agos/metaengine.cpp:290 engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
@@ -6405,10 +6409,8 @@ msgid "Walk forward"
 msgstr "Идти вперёд"
 
 #: engines/agos/metaengine.cpp:296
-#, fuzzy
-#| msgid "Run backward"
 msgid "Turn backward"
-msgstr "Бежать назад"
+msgstr "Повернуть назад"
 
 #: engines/agos/metaengine.cpp:302 engines/mohawk/riven.cpp:901
 #: engines/wintermute/keymapper_tables.h:161
@@ -6427,34 +6429,24 @@ msgid "Turn right"
 msgstr "Повернуть направо"
 
 #: engines/agos/metaengine.cpp:316
-#, fuzzy
-#| msgid "Text speed slower / faster"
 msgid "Text speed - Fast"
-msgstr "Скорость текста медленнее / быстрее"
+msgstr "Скорость текста - быстрая"
 
 #: engines/agos/metaengine.cpp:321
-#, fuzzy
-#| msgid "Walking speed: Medium"
 msgid "Text speed - Medium"
-msgstr "Скорость ходьбы: Средняя"
+msgstr "Скорость текста - средняя"
 
 #: engines/agos/metaengine.cpp:326
-#, fuzzy
-#| msgid "Text speed slower / faster"
 msgid "Text speed - Slow"
-msgstr "Скорость текста медленнее / быстрее"
+msgstr "Скорость текста - медленная"
 
 #: engines/agos/metaengine.cpp:331
-#, fuzzy
-#| msgid "Show Object Line"
 msgid "Show objects to interact"
-msgstr "Показывать строку объектов"
+msgstr "Показывать объекты для взаимодействия"
 
 #: engines/agos/metaengine.cpp:338
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Toggle background sounds on/off"
-msgstr "Вкл/выкл звуковые эффекты"
+msgstr "Вкл/выкл фоновые звуки"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:347
@@ -6462,31 +6454,31 @@ msgid "Switch characters"
 msgstr "Смена героя"
 
 #: engines/agos/metaengine.cpp:353
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle hitbox names on/off"
-msgstr "Вкл/выкл музыку"
+msgstr "Вкл/выкл названия хитбоксов"
 
 #: engines/agos/metaengine.cpp:360
 msgid "Switches between speech only and combined speech and subtitles"
-msgstr ""
+msgstr "Переключение между режимами «только речь» и «речь и субтитры»"
 
 #: engines/agos/metaengine.cpp:366
 msgid "Switches between subtitles only and combined speech and subtitles"
 msgstr ""
+"Переключение между режимами «только субтитры» и «комбинированная речь и "
+"субтитры»"
 
 #: engines/agos/metaengine.cpp:376
 msgid "High speed mode on/off in Swampy Adventures"
-msgstr ""
+msgstr "Вкл/выкл режима высокой скорости в Swampy Adventures"
 
 #: engines/agos/metaengine.cpp:382 engines/lure/metaengine.cpp:295
 #: engines/trecision/metaengine.cpp:181
 msgid "Press \"Yes\" key"
-msgstr ""
+msgstr "Нажмите клавишу «Да»"
 
 #: engines/agos/metaengine.cpp:387 engines/lure/metaengine.cpp:310
 msgid "Press \"No\" key"
-msgstr ""
+msgstr "Нажмите клавишу «Нет»"
 
 #: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
