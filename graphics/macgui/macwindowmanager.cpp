@@ -193,9 +193,10 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::L
 
 	_hilitingWidget = false;
 
-	if (mode & kWMModeTrueColor)
-		_pixelformat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	else
+	if (mode & kWMModeTrueColor) {
+		// TODO: Use the overlay format instead of the first screen format
+		_pixelformat = g_system->getSupportedFormats().front();
+	} else
 		_pixelformat = PixelFormat::createFormatCLUT8();
 
 	if (patterns) {
