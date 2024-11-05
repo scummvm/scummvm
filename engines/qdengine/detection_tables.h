@@ -42,13 +42,15 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ 0, 0 }
 };
 
+#define SUPPORT_STATUS ADGF_UNSTABLE
+
 #define GAMEelf(id,extra,md5,size,exefile,exemd5,exesize,lang,flags) { \
         id, \
         nullptr, \
         AD_ENTRY2s("qd_game.qml", md5, size, exefile, exemd5, exesize), \
         lang, \
         Common::kPlatformWindows, \
-        (ADGF_UNSTABLE | ADGF_DROPPLATFORM | flags), \
+        (SUPPORT_STATUS | ADGF_DROPPLATFORM | flags), \
         GUIO1(GUIO_NONE) \
     }
 
@@ -65,6 +67,8 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	// Nykštukas Nosis
 	//GAMEl("karliknos", "???", 3225385, Common::LT_LIT),
 
+#undef SUPPORT_STATUS
+#define SUPPORT_STATUS ADGF_TESTING
 	// Ну, погоди! Выпуск 3. Песня для зайца
 	// 2003/12/11. K D-Lab
 	GAME("nupogodi3", "7394a5d28590680cfeb6a037101a9c81", 1675230,
@@ -72,6 +76,9 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	// Na, palauk! Zuikio dainos
 	GAMEl("nupogodi3", "3fbcdd27bf0a3defb6195c92b9b0a95f", 1675036,
 			"qd_game.exe", "18b4260f3f25ac0f394a8c618203dcba", 1855208, Common::LT_LTU),
+
+#undef SUPPORT_STATUS
+#define SUPPORT_STATUS ADGF_UNSTABLE
 
 	// Братья Пилоты. Обратная сторона Земли
 	// 2004/06/11. K D-Lab / Pipe Studio
@@ -103,6 +110,8 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	GAMEd("mng", "da3a6e591d4896ca3176c5866aef278f", 2541094,
 			"qd_game.exe", "233ac221814568e5c278f952e76495ce", 757760),
 
+#undef SUPPORT_STATUS
+#define SUPPORT_STATUS ADGF_TESTING
 	// Маски-шоу
 	// 2005/12/16. Lazy Games
 	GAME("maski", "9a40b7491cac0dd80657cfe52e28ea74", 23128230,
@@ -125,11 +134,16 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	GAME("shveik", "3877afbb780996a5608a5b358dd59726", 30233418,
 			"shveik.exe", "a56cb058b46e47754019652d27d974b3", 962560),
 
+#undef SUPPORT_STATUS
+#define SUPPORT_STATUS ADGF_UNSTABLE
+
 	// Клёпа: Символические Заклепки
 	// 2007/10/19. K-D Logic
 	GAME("klepa", "a09e1f072942d88c06abccfb820f46a9", 20260975,
 			"qd_game.exe", "a56cb058b46e47754019652d27d974b3", 962560),
 
+#undef SUPPORT_STATUS
+#define SUPPORT_STATUS ADGF_TESTING
 	// Три маленькие белые мышки. День рождения морской крысы
 	// 2007/12/27. Lazy Games
 	GAME("3mice2", "93d8311ff9c00453f25192743c9e98d9", 8176962,
@@ -156,7 +170,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	  // Video is recoded with: ffmpeg -i martha.mpg -b:v 6000k -maxrate:v 9000k martha-new.mpeg
 	  // The full game has this video also broken: the video frames get frozen at the last several seconds
 		"3mice2",
-		"Recoded video",
+		"Reencoded video",
 		AD_ENTRY3s("qd_game.qml", "6af4c6f11cf0994670bedb78efe22267", 1124576,
 				   "demo2.exe",   "ffe20c2dbb131b01fccc1211a41e76e7", 962560,
 				   "Resource/Video/martha.mpg", "4dc93c37c0cdd75c01c58412f68e4874", 32499712),
@@ -166,6 +180,8 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+#undef SUPPORT_STATUS
+#define SUPPORT_STATUS ADGF_UNSTABLE
 	// Агентство "КотоПес": Остров доктора Крысарди
 	// 2008/09/19 KD Vision Games
 	GAME("dogncat", "db4e0081fdaf575e82910cf7399cef62", 17759363,
