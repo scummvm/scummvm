@@ -441,7 +441,7 @@ DetectedGame DirectorMetaEngineDetection::toDetectedGame(const ADDetectedGame &a
 
 	if (desc->desc.platform == Common::kPlatformMacintosh || desc->desc.platform == Common::kPlatformPippin)
 		game.appendGUIOptions(Common::getGameGUIOptionsDescription(GAMEOPTION_GAMMA_CORRECTION));
-	if (!(desc->desc.flags & Director::GF_32BPP))
+	if (!(desc->desc.flags & Director::GF_TRUECOLOR))
 		game.appendGUIOptions(Common::getGameGUIOptionsDescription(GAMEOPTION_TRUE_COLOR));
 
 	return game;
