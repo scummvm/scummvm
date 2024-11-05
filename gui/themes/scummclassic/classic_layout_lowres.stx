@@ -147,7 +147,6 @@
 						height = 'Globals.Line.Height'
 						textalign = 'center'
 				/>
-				<space size  = 'Globals.Launcher.HelpButton.Width' />
 			</layout>
 			<layout type = 'horizontal' spacing = '2' padding = '0, 0, 0, 0'>
 				<widget name = 'SearchDesc'
