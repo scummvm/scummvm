@@ -448,7 +448,7 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 
 	// If the video gets stopped, for whatever reason, _video->getPalette() will not work.
 	// Cache it when possible.
-	if (g_director->_pixelformat.bytesPerPixel == 4) {
+	if (g_director->_pixelformat.bytesPerPixel != 1) {
 		const byte *videoPalette = _video->getPalette();
 		if (videoPalette) {
 			memcpy(_ditheringPalette, videoPalette, 256*3);
