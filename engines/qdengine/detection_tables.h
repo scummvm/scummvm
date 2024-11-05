@@ -79,6 +79,9 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	// Jen počkej a Píseň pro zajíce
 	GAMEl("nupogodi3", "c0fab62fe6f3a339e96b1dd4a034e40a", 1674743,
 			"qd_game.exe", "d5e942e1d588fbd127c812551c0b67ef", 909312, Common::CS_CZE),
+	// No počkaj! 3: Pieseň pre zajaca
+	//GAMEl("nupogodi3", "???", 1674743,
+	//		"qd_game.exe", "???", 909312, Common::SK_SVK),
 
 #undef SUPPORT_STATUS
 #define SUPPORT_STATUS ADGF_UNSTABLE
