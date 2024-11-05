@@ -534,7 +534,7 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 				int newId = macFont->getId();
 				int newSlant = macFont->getSlant();
 				int familyId = getFamilyId(newId, newSlant);
-				if (_fontInfo.contains(familyId)) {
+				if (_fontInfo.contains(familyId) && !(_mode & kWMModeForceMacFontsInWin95)) {
 					font = Graphics::loadTTFFontFromArchive(_fontInfo[familyId]->name, macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeMonochrome);
 					_uniFonts[macFont->getSize()] = font;
 				} else {
