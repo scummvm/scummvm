@@ -1236,7 +1236,7 @@ static const char *statusList[] = {
 };
 
 Common::String qdAnimation::status2str(int fl, bool truncate) {
-	if (fl > ARRAYSIZE(statusList) || fl < 0)
+	if (fl >= ARRAYSIZE(statusList) || fl < 0)
 		return Common::String::format("<%d>", fl);
 
 	return Common::String(&statusList[fl][truncate ? 13 : 0]);

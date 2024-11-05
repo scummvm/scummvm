@@ -2761,7 +2761,7 @@ static const char *movementList[] = {
 };
 
 Common::String qdGameObjectMoving::movement2str(int fl, bool truncate) {
-	if (fl > ARRAYSIZE(movementList) || fl < 0)
+	if (fl >= ARRAYSIZE(movementList) || fl < 0)
 		return Common::String::format("<%d>", fl);
 
 	return Common::String(&movementList[fl][truncate ? 14 : 0]);
