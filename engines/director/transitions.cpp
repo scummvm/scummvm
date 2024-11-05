@@ -751,6 +751,11 @@ void Window::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::Man
 							byte *src = (byte *)nextFrame->getBasePtr(x, y);
 
 							*dst = ((*dst & ~mask) | (*src & mask)) & 0xff;
+						} else if (g_director->_pixelformat.bytesPerPixel == 2) {
+							uint16 *dst = (uint16 *)_composeSurface->getBasePtr(x, y);
+							uint16 *src = (uint16 *)nextFrame->getBasePtr(x, y);
+
+							*dst = ((*dst & ~mask) | (*src & mask)) & 0xff;
 						} else {
 							uint32 *dst = (uint32 *)_composeSurface->getBasePtr(x, y);
 							uint32 *src = (uint32 *)nextFrame->getBasePtr(x, y);
@@ -872,6 +877,20 @@ void Window::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graph
 						if (pat & mask)
 							*dst = *src;
 
+						dst++;
+						src++;
+						mask >>= 1;
+					}
+				}
+			} else if (g_director->_pixelformat.bytesPerPixel == 2) {
+				uint16 *dst = (uint16 *)_composeSurface->getBasePtr(clipRect.left, y);
+				uint16 *src = (uint16 *)nextFrame->getBasePtr(clipRect.left, y);
+
+				for (int x = clipRect.left; x < clipRect.right;) {
+					byte mask = 0x80;
+					for (int b = 0; b < 8 && x < clipRect.right; b++, x++) {
+						if (pat & mask)
+							*dst = *src;
 						dst++;
 						src++;
 						mask >>= 1;

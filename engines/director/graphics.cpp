@@ -488,6 +488,8 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 Graphics::MacDrawPixPtr DirectorEngine::getInkDrawPixel() {
 	if (_pixelformat.bytesPerPixel == 1)
 		return &inkDrawPixel<byte>;
+	else if (_pixelformat.bytesPerPixel == 2)
+		return &inkDrawPixel<uint16>;
 	else
 		return &inkDrawPixel<uint32>;
 }
@@ -725,6 +727,9 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 				if (d->_wm->_pixelformat.bytesPerPixel == 1) {
 					(d->getInkDrawPixel())(destRect.left + j, destRect.top + i,
 										preprocessColor(*((byte *)srf->getBasePtr(srcPoint.x, srcPoint.y))), this);
+				} else if (d->_wm->_pixelformat.bytesPerPixel == 2) {
+					(d->getInkDrawPixel())(destRect.left + j, destRect.top + i,
+										   preprocessColor(*((uint16 *)srf->getBasePtr(srcPoint.x, srcPoint.y))), this);
 				} else {
 					(d->getInkDrawPixel())(destRect.left + j, destRect.top + i,
 										preprocessColor(*((uint32 *)srf->getBasePtr(srcPoint.x, srcPoint.y))), this);
