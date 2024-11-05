@@ -566,6 +566,237 @@ void Room205::parser() {
 		}
 	} // if (edi && player_said("RIGHT TABLET"))
 
+	else if (esi && player_said("CHARCOAL")) {
+		if (!_G(flags[V028])) {
+			digi_play("205r26", 1, 255, -1, -1);
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				setGlobals1(_ripTrekLowReacherPos5Series, 1, 25, 25, 25, 0, 25, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_G(my_walker), 3);
+
+				break;
+
+			case 3:
+				kernel_examine_inventory_object("PING CHARCOAL", nullptr, 5, 1, 144, 271, 4, nullptr, -1);
+
+				break;
+
+			case 4:
+				sendWSMessage_120000(_G(my_walker), 5);
+				inv_give_to_player("CHARCOAL");
+
+				break;
+
+			case 5:
+				sendWSMessage_150000(_G(my_walker), 7);
+
+				break;
+
+			case 7:
+				series_unload(_ripTrekLowReacherPos5Series);
+				player_set_commands_allowed(true);
+				hotspot_set_active(_G(currentSceneDef).hotspots, "CHARCOAL", false);
+
+				break;
+
+			default:
+				break;
+			}
+		}
+	} // if (esi && player_said("CHARCOAL"))
+
+	else if (esi && player_said("GAP WITH JOURNAL") && !_G(flags[V028]))
+		digi_play("205r27", 1, 255, -1, -1);
+	else if (esi && player_said_any("TABLET", "TABLET ", "LEFT TABLET", "RIGHT TABLET"))
+		digi_play("205r28", 1, 255, -1, -1);
+	else if (esi && player_said("BRAZIER"))
+		digi_play("205r29", 1, 255, -1, -1);
+	else if (esi && player_said("GLASSES"))
+		digi_play("205r56", 1, 255, -1, -1);
+	else if (esi && player_said("GUN"))
+		digi_play("205r53", 1, 255, -1, -1);
+	else if (esi && player_said("GONG "))
+		digi_play("205r54", 1, 255, -1, -1);
+	else if (esi && player_said("MALLET "))
+		digi_play("205r55", 1, 255, -1, -1);
+	else if (ecx && player_said("JOURNAL") && _G(flags[V025]) && !_fieldEC) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			ws_walk(_G(my_walker), 328, 253, nullptr, 1, 10, true);
+			_205JournalRippedPopupSeries = series_load("205 JOURNAL RIPPED POPUP", -1, nullptr);
+
+			break;
+
+		case 1:
+			ws_hide_walker(_G(my_walker));
+			player_update_info(_G(my_walker), &_G(player_info));
+			series_play("205 RIP SHOWS MEI TORN PAGE", 256, 0, 3, 7, 0, 100, 0, 0, 0, -1);
+			_safariShadow1Mach = series_show("SAFARI SHADOW 1", 2304, 16, -1, -1, 0, _G(player_info).scale, _G(player_info).x, _G(player_info).y);
+
+			break;
+
+		case 3:
+			_205JournalCharcoalPopupMach = series_play("205 JOURNAL RIPPED POPUP", 256, 16, -1, 1, 0, 100, 0, 0, 0, -1);
+			digi_play("205r23", 1, 255, 5, -1);
+
+			break;
+
+		case 5:
+			terminateMachine(_205JournalCharcoalPopupMach);
+			series_play("205 JOURNAL RIPPED POPUP", 256, 2, 7, 1, 0, 100, 0, 0, 0, -1);
+
+			break;
+
+		case 7:
+			series_play("205 RIP SHOWS MEI TORN PAGE", 256, 2, 9, 7, 0, 100, 0, 0, 0, -1);
+
+			break;
+
+		case 9:
+			ws_unhide_walker(_G(my_walker));
+			terminateMachine(_safariShadow1Mach);
+			if (_fieldEC) {
+				kernel_timing_trigger(10, 12, nullptr);
+			} else {
+				terminateMachine(_205MeiStanderMach);
+				series_play("205 MEI TALKS", 3845, 0, 11, 7, 0, 100, 0, 0, 0, -1);
+				digi_play("205M05", 1, 255, -1, -1);
+			}
+
+			break;
+
+		case 11:
+			_205MeiStanderMach = series_show("205 MEI TALKS", 3845, 16, -1, -1, 52, 100, 0, 0);
+			series_unload(_205JournalRippedPopupSeries);
+
+			_fieldEC = 1;
+			player_set_commands_allowed(true);
+
+			break;
+
+		case 12:
+			terminateMachine(_205MeiStanderMach);
+			_205MeiStanderMach = series_show("205 MEI TALKS", 3845, 16, -1, -1, 52, 100, 0, 0);
+			series_unload(_205JournalRippedPopupSeries);
+
+			_fieldEC = 1;
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+
+		}
+	} // if (ecx && player_said("JOURNAL") && _G(flags[V025]) && !_fieldEC)
+
+	else if (ecx && player_said("BRAZIER"))
+		digi_play("205r66", 1, 255, -1, -1);
+	else if (ecx && player_said("ARM"))
+		digi_play("205r12a", 1, 255, -1, -1);
+	else if (ecx && player_said("GUN")) {
+		if (!_G(flags[V024]))
+			digi_play("205R15", 1, 255, -1, -1);
+		else if (!_G(flags[V028]))
+			digi_play("205R16", 1, 255, -1, -1);
+		else
+			digi_play("205r48", 1, 255, -1, -1);
+	} // if (ecx && player_said("GUN"))
+
+	else if (ecx && player_said("GONG ")) {
+		if (_G(flags[V028]))
+			digi_play("205R48", 1, 255, -1, -1);
+		else if (!_G(flags[V024]))
+			digi_play("205R15", 1, 255, -1, -1);
+		else
+			digi_play("205R16", 1, 255, -1, -1);
+	} // if (ecx && player_said("GONG "))
+
+	else if (ecx && player_said("CHARCOAL") && !inv_player_has("CHARCOAL"))
+		digi_play("205R17", 1, 255, -1, -1);
+	else if (ecx && player_said("CHARCOAL") && inv_player_has("CHARCOAL")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			kernel_examine_inventory_object("PING CHARCOAL", _G(master_palette), 5, 1, 270, 150, 1, nullptr, -1);
+
+			break;
+
+		case 1:
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+
+			break;
+		}
+	} // if (ecx && player_said("CHARCOAL") && inv_player_has("CHARCOAL"))
+
+	else if (ecx && player_said("MASTER LU'S TABLET"))
+		digi_play("205R02", 1, 255, -1, -1);
+	else if (ecx && player_said_any("TABLET", "TABLET "))
+		digi_play("205R18", 1, 255, -1, -1);
+	else if (ecx && player_said_any("RIGHT TABLET", "LEFT TABLET")) {
+		if (_G(flags[V028]))
+			digi_play("205R18", 1, 255, -1, -1);
+		else
+			digi_play("205R19", 1, 255, -1, -1);
+	} else if (ecx && player_said("FALLEN TABLETS"))
+		digi_play("205R49", 1, 255, -1, -1);
+	else if (ecx && player_said_any("MEI CHEN", "MEI CHEN ")) {
+		if (_G(flags[V028]))
+			digi_play("205r50", 1, 255, -1, -1);
+		else
+			digi_play("205r20", 1, 255, -1, -1);
+	} else if (ecx && player_said_any("SHEN GUO", "SHEN GUO "))
+		digi_play("205r65", 1, 255, -1, -1);
+	else if (ecx && player_said("KEY"))
+		digi_play("205R22", 1, 255, -1, -1);
+	else if (ecx && player_said("GLASSES"))
+		digi_play("205r51", 1, 255, -1, -1);
+	else if (ecx && player_said("GAP WITH JOURNAL")) {
+		if (_G(flags[V028]))
+			digi_play("205R52", 1, 255, -1, -1);
+		else
+			digi_play("205r27", 1, 255, -1, -1);
+	} else if (ecx && player_said("MALLET "))
+		digi_play("205r55", 1, 255, -1, -1);
+	else if (ecx && player_said(" ")) {
+		if (_G(flags[V028]))
+			digi_play("205R47", 1, 255, -1, -1);
+		else
+			digi_play("205R14", 1, 255, -1, -1);
+	} else if (player_said("journal") && !esi && !ecx) {
+		if (_G(flags[V028]))
+			digi_play("205R43", 1, 255, -1, -1);
+		else
+			digi_play("205R42", 1, 255, -1, -1);
+	} else if (player_said("EXIT")) {
+		if (_G(flags[V025]))
+			digi_play("205r59", 1, 255, -1, -1);
+		else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				disable_player_commands_and_fade_init(1);
+
+				break;
+
+			case 1:
+				_G(game).new_room = 204;
+
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
 
 	_G(player).command_ready = 0;
 }

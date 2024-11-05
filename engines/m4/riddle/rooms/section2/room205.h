@@ -23,6 +23,7 @@
 #define M4_RIDDLE_ROOMS_SECTION2_ROOM205_H
 
 #include "m4/riddle/rooms/room.h"
+#include "m4/riddle/vars.h"
 
 namespace M4 {
 namespace Riddle {
@@ -45,6 +46,7 @@ private:
 	int32 _fieldE0 = 0;
 	int32 _fieldE4 = 0;
 	int32 _fieldE8 = 0;
+	int32 _fieldEC = 0;
 	int32 _field198 = 0;
 	int32 _field19C = 0;
 	int32 _field1A0 = 0;
@@ -96,6 +98,7 @@ private:
 	machine *_205FireInBrazierMach = nullptr;
 	machine *_205GunInBrazierMach = nullptr;
 	machine *_205GunPointedMach = nullptr;
+	machine *_205JournalCharcoalPopupMach = nullptr;
 	machine *_205LeftEntranceTabletMach = nullptr;
 	machine *_205MeiStanderMach = nullptr;
 	machine *_205rp1Mach = nullptr;
@@ -108,8 +111,6 @@ private:
 	machine *_safariShadow1Mach = nullptr;
 	machine *_shenGuoShadow12Mach = nullptr;
 	machine *_shenSuitGunWalkerMach = nullptr;
-
-	machine *_205JournalCharcoalPopupMach = nullptr;
 };
 
 } // namespace Rooms
