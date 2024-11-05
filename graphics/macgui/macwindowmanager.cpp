@@ -207,12 +207,20 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::L
 	_hilitingWidget = false;
 
 	if (mode & kWMModeTrueColor) {
-		_pixelformat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		// TODO: Use the overlay format instead of the first screen format
+		_pixelformat = g_system->getSupportedFormats().front();
+	} else
+		_pixelformat = PixelFormat::createFormatCLUT8();
+
+	if (_pixelformat.bytesPerPixel == 4) {
 		_macDrawPrimitives = new MacDrawPrimitives<uint32>();
 		// No implementation yet
 		_macDrawInvertPrimitives = nullptr;
+	} else if (_pixelformat.bytesPerPixel == 2) {
+		_macDrawPrimitives = new MacDrawPrimitives<uint16>();
+		// No implementation yet
+		_macDrawInvertPrimitives = nullptr;
 	} else {
-		_pixelformat = PixelFormat::createFormatCLUT8();
 		_macDrawPrimitives = new MacDrawPrimitives<byte>();
 		_macDrawInvertPrimitives = new MacDrawInvertPrimitives<byte>();
 	}
