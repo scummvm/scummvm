@@ -76,10 +76,9 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	// Na, palauk! Zuikio dainos
 	GAMEl("nupogodi3", "3fbcdd27bf0a3defb6195c92b9b0a95f", 1675036,
 			"qd_game.exe", "18b4260f3f25ac0f394a8c618203dcba", 1855208, Common::LT_LTU),
-
 	// Jen počkej a Píseň pro zajíce
-	//GAMEl("nupogodi3", "???", 1675036,
-	//		"qd_game.exe", "???", 1855208, Common::CZ_CZE),
+	GAMEl("nupogodi3", "c0fab62fe6f3a339e96b1dd4a034e40a", 1674743,
+			"qd_game.exe", "d5e942e1d588fbd127c812551c0b67ef", 909312, Common::CS_CZE),
 
 #undef SUPPORT_STATUS
 #define SUPPORT_STATUS ADGF_UNSTABLE
