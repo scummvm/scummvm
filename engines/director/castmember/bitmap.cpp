@@ -334,8 +334,10 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 		return nullptr;
 
 	// Check if we need to dither the image
-	int dstBpp = g_director->_wm->_pixelformat.bytesPerPixel;
-	int srcBpp = _picture->_surface.format.bytesPerPixel;
+	const Graphics::PixelFormat &dstFmt = g_director->_wm->_pixelformat;
+	const Graphics::PixelFormat &srcFmt = _picture->_surface.format;
+	int dstBpp = dstFmt.bytesPerPixel;
+	int srcBpp = srcFmt.bytesPerPixel;
 
 	const byte *pal = _picture->_palette;
 	bool previouslyDithered = _ditheredImg != nullptr;
@@ -370,8 +372,8 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 				_ditheredImg = getDitherImg();
 			}
 		} else {
-			// ScummVM using 32-bit video
-			//if (srcBpp > 1 && srcBpp != 4) {
+			// ScummVM using RGB video
+			//if (srcBpp > 1 && srcFmt != dstFmt) {
 				// non-indexed surface, convert to 32-bit
 			//	_ditheredImg = _picture->_surface.convertTo(g_director->_wm->_pixelformat, nullptr, 0, g_director->_wm->getPalette(), g_director->_wm->getPaletteSize());
 
@@ -475,10 +477,10 @@ Graphics::Surface *BitmapCastMember::getDitherImg() {
 		// Only redither 8-bit images in 8-bit mode if we have the remap palette flag set, or it is external
 		if (targetBpp == 1 && !movie->_remapPalettesWhenNeeded && !_external)
 			break;
-		// If we're in 32-bit mode, and not in puppet palette mode, then "redither" as well.
-		if (targetBpp == 4 && score->_puppetPalette && !_external)
+		// If we're in RGB mode, and not in puppet palette mode, then "redither" as well.
+		if (targetBpp != 1 && score->_puppetPalette && !_external)
 			break;
-		if (_external || (targetBpp == 4) || (castPaletteId != currentPaletteId && !isColorCycling)) {
+		if (_external || (targetBpp != 1) || (castPaletteId != currentPaletteId && !isColorCycling)) {
 			const auto pals = g_director->getLoadedPalettes();
 			CastMemberID palIndex = pals.contains(castPaletteId) ? castPaletteId : CastMemberID(kClutSystemMac, -1);
 			const PaletteV4 &srcPal = pals.getVal(palIndex);

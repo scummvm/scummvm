@@ -182,7 +182,7 @@ void DisplayResXtra::m_new(int nargs) {
 }
 
 void DisplayResXtra::m_dresGetDisplaySettings(int nargs) {
-	Common::String result = Common::String::format("%d %d %d %d noninterlaced color dynamic", g_director->_wm->getWidth(), g_director->_wm->getHeight(), g_director->_wm->_pixelformat.bytesPerPixel*8, 0);
+	Common::String result = Common::String::format("%d %d %d %d noninterlaced color dynamic", g_director->_wm->getWidth(), g_director->_wm->getHeight(), g_director->_colorDepth, 0);
 	g_lingo->push(Datum(result));
 }
 
@@ -193,7 +193,7 @@ XOBJSTUB(DisplayResXtra::m_dresShutdown, 0)
 XOBJSTUB(DisplayResXtra::m_dresDefaultDisplay, 0)
 
 void DisplayResXtra::m_dresGetCurrentDisplay(int nargs) {
-	Common::String result = Common::String::format("%d %d %d %d noninterlaced color dynamic", g_director->_wm->getWidth(), g_director->_wm->getHeight(), g_director->_wm->_pixelformat.bytesPerPixel*8, 0);
+	Common::String result = Common::String::format("%d %d %d %d noninterlaced color dynamic", g_director->_wm->getWidth(), g_director->_wm->getHeight(), g_director->_colorDepth, 0);
 	g_lingo->push(Datum(result));
 }
 
