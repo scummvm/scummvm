@@ -63,6 +63,8 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	_rnd = new Common::RandomSource("hypno");
 	_checkpoint = "";
 
+	_cursorCache = new CursorCache(this);
+
 	if (gd->extra)
 		_variant = gd->extra;
 	else
@@ -109,6 +111,7 @@ HypnoEngine::~HypnoEngine() {
 	// }
 
 	delete _rnd;
+	delete _cursorCache;
 	_compositeSurface->free();
 	delete _compositeSurface;
 

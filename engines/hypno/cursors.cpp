@@ -148,16 +148,35 @@ void HypnoEngine::changeCursor(const Common::String &cursor) {
 	CursorMan.showMouse(true);
 }
 
+Graphics::Surface *CursorCache::getCursor(const Common::String &cursor, uint32 n, byte **palette) {
+	if (cursor == _filename && n == _frame) {
+		*palette = _palette;
+		return _surface;
+	}
+
+	delete(_palette);
+	_palette = nullptr;
+
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+		_surface = nullptr;
+	}
+
+	_filename = cursor;
+	_frame = n;
+	_surface = _vm->decodeFrame(cursor, n, &_palette);
+	*palette = _palette;
+	return _surface;
+}
+
 void HypnoEngine::changeCursor(const Common::String &cursor, uint32 n, bool centerCursor) {
 	byte *palette;
-	Graphics::Surface *entry = decodeFrame(cursor, n, &palette);
+	Graphics::Surface *entry = _cursorCache->getCursor(cursor, n, &palette);
 	uint32 hotspotX = centerCursor ? entry->w / 2 : 0;
 	uint32 hotspotY = centerCursor ? entry->h / 2 : 0;
 	CursorMan.replaceCursor(*entry, hotspotX, hotspotY, 0, false);
 	CursorMan.replaceCursorPalette(palette, 0, 256);
-	entry->free();
-	delete entry;
-	free(palette);
 	CursorMan.showMouse(true);
 }
 

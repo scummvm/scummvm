@@ -78,6 +78,29 @@ enum SpiderColors {
 	kSpiderColorBlue = 252,
 };
 
+class HypnoEngine;
+
+class CursorCache {
+private:
+	HypnoEngine *_vm;
+	Common::String _filename;
+	uint32 _frame;
+	byte *_palette;
+	Graphics::Surface *_surface;
+
+public:
+	CursorCache(HypnoEngine *vm) : _vm(vm), _filename(""), _frame(0), _palette(nullptr), _surface(nullptr) {}
+
+	~CursorCache() {
+		if (_surface) {
+			_surface->free();
+			delete _surface;
+		}
+		free(_palette);
+	}
+
+	Graphics::Surface *getCursor(const Common::String &cursor, uint32 n, byte **palette);
+};
 
 class HypnoEngine : public Engine {
 private:
@@ -164,6 +187,7 @@ public:
 	// Cursors
 	Common::String _defaultCursor;
 	uint32 _defaultCursorIdx;
+	CursorCache *_cursorCache;
 	void disableCursor();
 	void defaultCursor();
 	virtual void changeCursor(const Common::String &cursor, uint32 n, bool centerCursor = false);
