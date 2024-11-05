@@ -365,9 +365,12 @@ bool ADSInterpreter::logicOpResult(uint16 code, const TTMEnviro *env, const TTMS
 		debugN(10, "ADS 0x%04x: %s finished env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
 		return seq->_runFlag == kRunTypeFinished;
 	case 0x1060: // WHILE NOT RUNNING
-	case 0x1360: // IF_NOT_RUNNING, 2 params
+	case 0x1360: { // IF_NOT_RUNNING, 2 params
 		debugN(10, "ADS 0x%04x: %s not running env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
-		return seq->_runFlag == kRunTypeStopped;
+		// Dragon only checks kRunTypeStopped, HoC onward also check for kRunTypeFinished
+		bool isDragon = _vm->getGameId() == GID_DRAGON;
+		return seq->_runFlag == kRunTypeStopped || (!isDragon && seq->_runFlag == kRunTypeFinished);
+	}
 	case 0x1070: // WHILE RUNNING
 	case 0x1370: // IF_RUNNING, 2 params
 		debugN(10, "ADS 0x%04x: %s running env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
@@ -788,9 +791,14 @@ bool ADSInterpreter::run() {
 		int16 flag = _adsData->_state[idx] & 0xfff7;
 		for (auto seq : _adsData->_usedSeqs[idx]) {
 			if (flag == 3) {
+				debug(10, "ADS: Segment idx %d, Reset seq %d", idx, seq->_seqNum);
 				seq->reset();
 			} else {
-				seq->_scriptFlag = flag;
+				if (flag != seq->_scriptFlag) {
+					//debug(10, "ADS: Segment idx %d, update seq %d scriptflag %d -> %d",
+					//	idx, seq->_seqNum, seq->_scriptFlag, flag);
+					seq->_scriptFlag = flag;
+				}
 			}
 		}
 	}
