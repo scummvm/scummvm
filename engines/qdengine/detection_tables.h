@@ -25,19 +25,19 @@ namespace QDEngine {
 const PlainGameDescriptor GAME_NAMES[] = {
 	{ "qdengine", "QDEngine game" },
 	{ "karliknos", "Little Longnose" }, // Карлик Нос
-	{ "nupogodi3", "Wait for it! Issue 3. Song for a hare" }, // Ну, погоди! Выпуск 3. Песня для зайца
+	{ "nupogodi3", "Wait for it! Issue 3. Song for a Hare" }, // Ну, погоди! Выпуск 3. Песня для зайца
 	{ "pilots3", "Pilot Brothers 3: Back Side of the Earth" }, // Братья Пилоты. Обратная сторона Земли
 	{ "pilots3d", "Pilot Brothers 3D. The Case of Garden Pests" }, // Братья Пилоты 3D. Дело об Огородных вредителях
 	{ "pilots3d-2", "Pilot Brothers 3D-2. Kennel Club Secrets" }, // Братья Пилоты 3D-2. Тайны Клуба Собаководов
-	{ "mng", "Mom don't worry" }, // Мама не горюй
-	{ "rybalka", "Features of national fishing" }, // Особенности национальной рыбалки
-	{ "maski", "Mask show" }, // Маски-шоу
+	{ "mng", "Mom don't Worry" }, // Мама не горюй
+	{ "rybalka", "Features of National Fishing" }, // Особенности национальной рыбалки
+	{ "maski", "Mask Show" }, // Маски-шоу
 	{ "3mice1", "Marvellous Mice Adventures: Meeting Sea Rat" }, // Три маленькие белые мышки. Визит Морской крысы
 	{ "shveik", "The Adventures of the Good Soldier Schweik" }, // Похождения бравого солдата Швейка
 	{ "klepa", "Klepa: Symbolic Rivets" },  // Клёпа: Символические Заклепки
 	{ "3mice2", "Marvellous Mice Adventures: Sea Rat's Birthday" }, // Три маленькие белые мышки. День рождения морской крысы
 	{ "dogncat", "Dog-n-cat: Island of Dr Rattardy" }, // Агентство "КотоПес": Остров доктора Крысарди
-	{ "dogncat2", "Dog-n-cat: In the footsteps of unprecedented beasts" }, // Агентство "КотоПес": По следам невиданных зверей
+	{ "dogncat2", "Dog-n-cat: In the Footsteps of Unprecedented Beasts" }, // Агентство "КотоПес": По следам невиданных зверей
 
 	{ 0, 0 }
 };
