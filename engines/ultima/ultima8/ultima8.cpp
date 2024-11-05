@@ -386,7 +386,10 @@ void Ultima8Engine::pauseEngineIntern(bool pause) {
 			midiPlayer->pause(pause);
 	}
 
-	_avatarMoverProcess->resetMovementFlags();
+	// This will normally be non-null except in the case of
+	// a fatal error on startup (eg missing files)
+	if (_avatarMoverProcess)
+		_avatarMoverProcess->resetMovementFlags();
 }
 
 bool Ultima8Engine::hasFeature(EngineFeature f) const {
