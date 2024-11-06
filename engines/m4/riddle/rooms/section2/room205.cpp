@@ -180,9 +180,9 @@ void Room205::pre_parser() {
 }
 
 void Room205::parser() {
-	bool ecx = player_said_any("look", "look at");
-	bool esi = player_said("take");
-	bool edi = player_said("gear");
+	bool lookFl = player_said_any("look", "look at");
+	bool takeFl = player_said("take");
+	bool gearFl = player_said("gear");
 
 	if (player_said("GONG", "BRAZIER") || player_said("GONG", "GUN")) {
 		if (!_G(flags[V024])) {
@@ -373,11 +373,11 @@ void Room205::parser() {
 
 	} // if (player_said("CHARCOAL", "JOURNAL") && _G(flags[V025]) && inv_player_has("CHARCOAL"))
 
-	else if (edi && player_said_any("TABLET", "TABLET "))
+	else if (gearFl && player_said_any("TABLET", "TABLET "))
 		digi_play("205R30", 1, 255, -1, -1);
-	else if (edi && player_said("GONG "))
+	else if (gearFl && player_said("GONG "))
 		digi_play("205R64", 1, 255, -1, -1);
-	else if (edi && player_said("LEFT TABLET")) {
+	else if (gearFl && player_said("LEFT TABLET")) {
 		if (_G(flags[V028])) {
 			digi_play("205r57", 1, 255, -1, -1);
 		} else {
@@ -451,7 +451,7 @@ void Room205::parser() {
 		}
 	} // if (edi && player_said("LEFT TABLET"))
 
-	else if (edi && player_said("RIGHT TABLET")) {
+	else if (gearFl && player_said("RIGHT TABLET")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -566,7 +566,7 @@ void Room205::parser() {
 		}
 	} // if (edi && player_said("RIGHT TABLET"))
 
-	else if (esi && player_said("CHARCOAL")) {
+	else if (takeFl && player_said("CHARCOAL")) {
 		if (!_G(flags[V028])) {
 			digi_play("205r26", 1, 255, -1, -1);
 		} else {
@@ -607,21 +607,21 @@ void Room205::parser() {
 		}
 	} // if (esi && player_said("CHARCOAL"))
 
-	else if (esi && player_said("GAP WITH JOURNAL") && !_G(flags[V028]))
+	else if (takeFl && player_said("GAP WITH JOURNAL") && !_G(flags[V028]))
 		digi_play("205r27", 1, 255, -1, -1);
-	else if (esi && player_said_any("TABLET", "TABLET ", "LEFT TABLET", "RIGHT TABLET"))
+	else if (takeFl && player_said_any("TABLET", "TABLET ", "LEFT TABLET", "RIGHT TABLET"))
 		digi_play("205r28", 1, 255, -1, -1);
-	else if (esi && player_said("BRAZIER"))
+	else if (takeFl && player_said("BRAZIER"))
 		digi_play("205r29", 1, 255, -1, -1);
-	else if (esi && player_said("GLASSES"))
+	else if (takeFl && player_said("GLASSES"))
 		digi_play("205r56", 1, 255, -1, -1);
-	else if (esi && player_said("GUN"))
+	else if (takeFl && player_said("GUN"))
 		digi_play("205r53", 1, 255, -1, -1);
-	else if (esi && player_said("GONG "))
+	else if (takeFl && player_said("GONG "))
 		digi_play("205r54", 1, 255, -1, -1);
-	else if (esi && player_said("MALLET "))
+	else if (takeFl && player_said("MALLET "))
 		digi_play("205r55", 1, 255, -1, -1);
-	else if (ecx && player_said("JOURNAL") && _G(flags[V025]) && !_showMeiTalkFl) {
+	else if (lookFl && player_said("JOURNAL") && _G(flags[V025]) && !_showMeiTalkFl) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -693,11 +693,11 @@ void Room205::parser() {
 		}
 	} // if (ecx && player_said("JOURNAL") && _G(flags[V025]) && !_showMeiTalkFl)
 
-	else if (ecx && player_said("BRAZIER"))
+	else if (lookFl && player_said("BRAZIER"))
 		digi_play("205r66", 1, 255, -1, -1);
-	else if (ecx && player_said("ARM"))
+	else if (lookFl && player_said("ARM"))
 		digi_play("205r12a", 1, 255, -1, -1);
-	else if (ecx && player_said("GUN")) {
+	else if (lookFl && player_said("GUN")) {
 		if (!_G(flags[V024]))
 			digi_play("205R15", 1, 255, -1, -1);
 		else if (!_G(flags[V028]))
@@ -706,7 +706,7 @@ void Room205::parser() {
 			digi_play("205r48", 1, 255, -1, -1);
 	} // if (ecx && player_said("GUN"))
 
-	else if (ecx && player_said("GONG ")) {
+	else if (lookFl && player_said("GONG ")) {
 		if (_G(flags[V028]))
 			digi_play("205R48", 1, 255, -1, -1);
 		else if (!_G(flags[V024]))
@@ -715,9 +715,9 @@ void Room205::parser() {
 			digi_play("205R16", 1, 255, -1, -1);
 	} // if (ecx && player_said("GONG "))
 
-	else if (ecx && player_said("CHARCOAL") && !inv_player_has("CHARCOAL"))
+	else if (lookFl && player_said("CHARCOAL") && !inv_player_has("CHARCOAL"))
 		digi_play("205R17", 1, 255, -1, -1);
-	else if (ecx && player_said("CHARCOAL") && inv_player_has("CHARCOAL")) {
+	else if (lookFl && player_said("CHARCOAL") && inv_player_has("CHARCOAL")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -736,41 +736,41 @@ void Room205::parser() {
 		}
 	} // if (ecx && player_said("CHARCOAL") && inv_player_has("CHARCOAL"))
 
-	else if (ecx && player_said("MASTER LU'S TABLET"))
+	else if (lookFl && player_said("MASTER LU'S TABLET"))
 		digi_play("205R02", 1, 255, -1, -1);
-	else if (ecx && player_said_any("TABLET", "TABLET "))
+	else if (lookFl && player_said_any("TABLET", "TABLET "))
 		digi_play("205R18", 1, 255, -1, -1);
-	else if (ecx && player_said_any("RIGHT TABLET", "LEFT TABLET")) {
+	else if (lookFl && player_said_any("RIGHT TABLET", "LEFT TABLET")) {
 		if (_G(flags[V028]))
 			digi_play("205R18", 1, 255, -1, -1);
 		else
 			digi_play("205R19", 1, 255, -1, -1);
-	} else if (ecx && player_said("FALLEN TABLETS"))
+	} else if (lookFl && player_said("FALLEN TABLETS"))
 		digi_play("205R49", 1, 255, -1, -1);
-	else if (ecx && player_said_any("MEI CHEN", "MEI CHEN ")) {
+	else if (lookFl && player_said_any("MEI CHEN", "MEI CHEN ")) {
 		if (_G(flags[V028]))
 			digi_play("205r50", 1, 255, -1, -1);
 		else
 			digi_play("205r20", 1, 255, -1, -1);
-	} else if (ecx && player_said_any("SHEN GUO", "SHEN GUO "))
+	} else if (lookFl && player_said_any("SHEN GUO", "SHEN GUO "))
 		digi_play("205r65", 1, 255, -1, -1);
-	else if (ecx && player_said("KEY"))
+	else if (lookFl && player_said("KEY"))
 		digi_play("205R22", 1, 255, -1, -1);
-	else if (ecx && player_said("GLASSES"))
+	else if (lookFl && player_said("GLASSES"))
 		digi_play("205r51", 1, 255, -1, -1);
-	else if (ecx && player_said("GAP WITH JOURNAL")) {
+	else if (lookFl && player_said("GAP WITH JOURNAL")) {
 		if (_G(flags[V028]))
 			digi_play("205R52", 1, 255, -1, -1);
 		else
 			digi_play("205r27", 1, 255, -1, -1);
-	} else if (ecx && player_said("MALLET "))
+	} else if (lookFl && player_said("MALLET "))
 		digi_play("205r55", 1, 255, -1, -1);
-	else if (ecx && player_said(" ")) {
+	else if (lookFl && player_said(" ")) {
 		if (_G(flags[V028]))
 			digi_play("205R47", 1, 255, -1, -1);
 		else
 			digi_play("205R14", 1, 255, -1, -1);
-	} else if (player_said("journal") && !esi && !ecx) {
+	} else if (player_said("journal") && !takeFl && !lookFl) {
 		if (_G(flags[V028]))
 			digi_play("205R43", 1, 255, -1, -1);
 		else
