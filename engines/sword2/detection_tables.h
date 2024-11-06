@@ -149,6 +149,18 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 
+	{ // USA English, Windows 2-CD. Bugreport #15287
+		"sword2",
+		"USA 2-CD",
+		AD_ENTRY3s("general.clu", "11e824864a75195652610e8b397382a6", 8030769,
+				   "text.clu",    "2b3ff1803200fc155c1de09e9b2875b5", 337938,
+				   "docks.clu",   "b39246fbb5b955a29f9a207c69bfc318", 20262263),
+		Common::EN_USA,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
 	{
 		"sword2",
 		"",
