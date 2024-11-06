@@ -585,7 +585,8 @@ Common::Error Ultima8Engine::startupGame() {
 	if (saveSlot == -1 && ConfMan.hasKey("lastSave"))
 		saveSlot = ConfMan.getInt("lastSave");
 
-	newGame(saveSlot);
+	if (!newGame(saveSlot))
+		return Common::kNoGameDataFoundError;
 
 	debug(1, "-- Game Initialized --");
 	return Common::kNoError;
@@ -1121,7 +1122,8 @@ bool Ultima8Engine::newGame(int saveSlot) {
 
 	setupCoreGumps();
 
-	_game->startGame();
+	if (!_game->startGame())
+		return false;
 
 	debug(1, "Create Camera...");
 	CameraProcess::SetCameraProcess(new CameraProcess(kMainActorId));
