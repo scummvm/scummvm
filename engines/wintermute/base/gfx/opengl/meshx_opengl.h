@@ -30,6 +30,9 @@
 
 #include "engines/wintermute/base/gfx/xmesh.h"
 
+class Effect3D;
+class Effect3DParams;
+
 #if defined(USE_OPENGL_GAME)
 
 namespace Wintermute {
@@ -41,6 +44,9 @@ public:
 
 	bool render(XModel *model) override;
 	bool renderFlatShadowModel() override;
+
+private:
+	void renderEffect(Material *material);
 };
 
 } // namespace Wintermute

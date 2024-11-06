@@ -26,6 +26,8 @@
  */
 
 #include "engines/wintermute/base/gfx/xmaterial.h"
+#include "engines/wintermute/base/gfx/3deffect.h"
+#include "engines/wintermute/base/gfx/3deffect_params.h"
 #include "engines/wintermute/base/gfx/skin_mesh_helper.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/base_renderer3d.h"
@@ -35,6 +37,7 @@
 #if defined(USE_OPENGL_GAME)
 
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
+#include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/meshx_opengl.h"
 
 namespace Wintermute {
@@ -96,21 +99,25 @@ bool XMeshOpenGL::render(XModel *model) {
 	}
 
 	for (uint32 i = 0; i < numAttrs; i++) {
-		int materialIndex = attrs[i]._attribId;
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, _materials[materialIndex]->_material._diffuse._data);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, _materials[materialIndex]->_material._diffuse._data);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, _materials[materialIndex]->_material._specular._data);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, _materials[materialIndex]->_material._emissive._data);
-		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, _materials[materialIndex]->_material._power);
-
+		Material *mat = _materials[attrs[i]._attribId];
 		bool textureEnable = false;
-		if (_materials[materialIndex]->getSurface()) {
+		if (mat->getSurface()) {
 			textureEnable = true;
 			glEnable(GL_TEXTURE_2D);
-			static_cast<BaseSurfaceOpenGL3D *>(_materials[materialIndex]->getSurface())->setTexture();
+			static_cast<BaseSurfaceOpenGL3D *>(mat->getSurface())->setTexture();
 		} else {
 			glDisable(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+
+		if (mat->getEffect()) {
+			renderEffect(mat);
+		} else {
+			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat->_material._diffuse._data);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat->_material._diffuse._data);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat->_material._specular._data);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, mat->_material._emissive._data);
+			glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, mat->_material._power);
 		}
 
 		glEnableClientState(GL_VERTEX_ARRAY);
@@ -142,6 +149,14 @@ bool XMeshOpenGL::render(XModel *model) {
 
 bool XMeshOpenGL::renderFlatShadowModel() {
 	return true;
+}
+
+void XMeshOpenGL::renderEffect(Material *material) {
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material->_material._diffuse._data);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, material->_material._diffuse._data);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, material->_material._specular._data);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, material->_material._emissive._data);
+	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, material->_material._power);
 }
 
 } // namespace Wintermute

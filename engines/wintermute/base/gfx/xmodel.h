@@ -31,6 +31,8 @@
 #include "engines/wintermute/base/base_object.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/gfx/xmath.h"
+#include "engines/wintermute/base/gfx/3deffect.h"
+#include "engines/wintermute/base/gfx/3deffect_params.h"
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/video/video_theora_player.h"
@@ -48,6 +50,8 @@ class FrameNode;
 class Material;
 class ShadowVolume;
 class XFileData;
+class Effect3D;
+class Effect3DParams;
 
 #define X_NUM_ANIMATION_CHANNELS 10
 
@@ -56,33 +60,64 @@ private:
 	class XModelMatSprite {
 	public:
 		char *_matName;
+		char *_effectFile;
 		BaseSprite *_sprite;
 		VideoTheoraPlayer *_theora;
+		Effect3D *_effect;
+		Effect3DParams *_effectParams;
 
 		XModelMatSprite() {
 			_matName = nullptr;
 			_sprite = nullptr;
 			_theora = nullptr;
+			_effect = nullptr;
+			_effectFile = nullptr;
+			_effectParams = nullptr;
 		}
 
 		XModelMatSprite(const char *matName, BaseSprite *sprite) {
 			_theora = nullptr;
 			_matName = nullptr;
+			_effect = nullptr;
 			BaseUtils::setString(&_matName, matName);
 			_sprite = sprite;
+			_effectFile = nullptr;
+			_effectParams = nullptr;
 		}
 
 		XModelMatSprite(const char *matName, VideoTheoraPlayer *theora) {
 			_sprite = nullptr;
 			_matName = nullptr;
+			_effect = nullptr;
 			BaseUtils::setString(&_matName, matName);
 			_theora = theora;
+			_effectFile = nullptr;
+			_effectParams = nullptr;
+		}
+
+		XModelMatSprite(const char *matName, Effect3D *effect) {
+			_sprite = nullptr;
+			_matName = nullptr;
+			_theora = nullptr;
+			BaseUtils::setString(&_matName, matName);
+			_effect = effect;
+			_effectFile = nullptr;
+			_effectParams = new Effect3DParams();
 		}
 
 		~XModelMatSprite() {
 			delete[] _matName;
+			_matName = nullptr;
+			delete _effectFile;
+			_effectFile = nullptr;
 			delete _sprite;
+			_sprite = nullptr;
 			delete _theora;
+			_theora = nullptr;
+			delete _effect;
+			_effect = nullptr;
+			delete _effectParams;
+			_effectParams = nullptr;
 		}
 
 		bool setSprite(BaseSprite *sprite) {
@@ -96,9 +131,22 @@ private:
 
 		bool setTheora(VideoTheoraPlayer *theora) {
 			delete _theora;
+			_theora = nullptr;
 			delete _sprite;
 			_sprite = nullptr;
 			_theora = theora;
+
+			return true;
+		}
+
+		bool setEffect(Effect3D *effect) {
+			delete _effect;
+			_effect = effect;
+
+			if (!_effectParams)
+				_effectParams = new Effect3DParams();
+			else
+				_effectParams->clear();
 
 			return true;
 		}
@@ -108,6 +156,36 @@ private:
 			persistMgr->transferPtr(TMEMBER(_sprite));
 
 			persistMgr->transferPtr(TMEMBER(_theora));
+
+			if (persistMgr->getIsSaving()) {
+				char *effectFileName = nullptr;
+				if (_effect)
+					BaseUtils::setString(&effectFileName, _effect->getFileName());
+				else
+					effectFileName = nullptr;
+
+				persistMgr->transferCharPtr(TMEMBER(effectFileName));
+				delete[] effectFileName;
+			} else {
+				persistMgr->transferCharPtr(TMEMBER(_effectFile));
+			}
+
+			if (persistMgr->getIsSaving()) {
+				bool hasParams = _effectParams != nullptr;
+				persistMgr->transferBool(TMEMBER(hasParams));
+
+				if (hasParams)
+					_effectParams->persist(persistMgr);
+			} else {
+				bool hasParams;
+				persistMgr->transferBool(TMEMBER(hasParams));
+
+				if (hasParams) {
+					_effectParams = new Effect3DParams();
+					_effectParams->persist(persistMgr);
+				} else
+					_effectParams = nullptr;
+			}
 
 			return true;
 		}
@@ -161,6 +239,10 @@ public:
 
 	bool setMaterialSprite(const char *materialName, const char *spriteFilename);
 	bool setMaterialTheora(const char *materialName, const char *theoraFilename);
+	bool setMaterialEffect(const char *materialName, const char *effectFilename);
+	bool removeMaterialEffect(const char *materialName);
+	bool setMaterialEffectParam(const char *materialName, const char *paramName, ScValue *val);
+	bool setMaterialEffectParam(const char *materialName, const char *paramName, DXVector4 val);
 	bool initializeSimple();
 
 	bool invalidateDeviceObjects() override;

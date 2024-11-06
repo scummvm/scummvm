@@ -44,6 +44,8 @@ class ShadowVolume;
 class VideoTheoraPlayer;
 class SkinMeshHelper;
 class DXMesh;
+class Effect3D;
+class Effect3DParams;
 struct XMeshObject;
 
 class XMesh : public BaseNamedObject {
@@ -66,6 +68,8 @@ public:
 
 	bool setMaterialSprite(const Common::String &matName, BaseSprite *sprite);
 	bool setMaterialTheora(const Common::String &matName, VideoTheoraPlayer *theora);
+	bool setMaterialEffect(const Common::String &matName, Effect3D *effect, Effect3DParams *params);
+	bool removeMaterialEffect(const Common::String &matName);
 
 	bool invalidateDeviceObjects();
 	bool restoreDeviceObjects();

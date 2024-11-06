@@ -33,6 +33,8 @@
 
 namespace Wintermute {
 
+class Effect3D;
+class Effect3DParams;
 class BaseSprite;
 class BaseSurface;
 class VideoTheoraPlayer;
@@ -48,7 +50,11 @@ public:
 	bool setTexture(const Common::String &filename, bool adoptName = false);
 	bool setSprite(BaseSprite *sprite, bool adoptName = false);
 	bool setTheora(VideoTheoraPlayer *theora, bool adoptName = false);
+	bool setEffect(Effect3D *effect, Effect3DParams *params, bool adoptName = false);
+
 	BaseSurface *getSurface();
+	Effect3D *getEffect() { return _effect; }
+	Effect3DParams *getEffectParams() { return _params; }
 
 	bool invalidateDeviceObjects();
 	bool restoreDeviceObjects();
@@ -59,6 +65,8 @@ private:
 	bool _ownedSurface;
 	BaseSprite *_sprite;
 	VideoTheoraPlayer *_theora;
+	Effect3D *_effect;
+	Effect3DParams *_params;
 };
 
 } // namespace Wintermute

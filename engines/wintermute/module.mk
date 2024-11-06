@@ -162,6 +162,8 @@ MODULE_OBJS += \
 	ad/ad_waypoint_group3d.o \
 	base/gfx/3dcamera.o \
 	base/gfx/3dlight.o \
+	base/gfx/3deffect.o \
+	base/gfx/3deffect_params.o \
 	base/gfx/3dface.o \
 	base/gfx/3dloader_3ds.o \
 	base/gfx/3dmesh.o \

@@ -39,6 +39,7 @@
 #include "engines/wintermute/base/gfx/xframe_node.h"
 #include "engines/wintermute/base/gfx/xmaterial.h"
 #include "engines/wintermute/base/gfx/xmodel.h"
+#include "engines/wintermute/base/gfx/3deffect.h"
 #include "engines/wintermute/base/gfx/xfile.h"
 #include "engines/wintermute/base/gfx/xfile_loader.h"
 #include "engines/wintermute/dcgf.h"
@@ -859,6 +860,97 @@ bool XModel::setMaterialTheora(const char *materialName, const char *theoraFilen
 }
 
 //////////////////////////////////////////////////////////////////////////
+bool XModel::setMaterialEffect(const char *materialName, const char *effectFilename) {
+	if (!materialName || !effectFilename)
+		return false;
+	if (!_rootFrame)
+		return false;
+
+
+	Effect3D *effect = new Effect3D(_gameRef);
+	if (!effect->createFromFile(effectFilename)) {
+		delete effect;
+		return false;
+	}
+
+	XModelMatSprite *matSprite = nullptr;
+	for (uint32 i = 0 ; i < _matSprites.size(); i++) {
+		if (scumm_stricmp(_matSprites[i]->_matName, materialName) == 0) {
+			matSprite = _matSprites[i];
+			break;
+		}
+	}
+	if (matSprite) {
+		matSprite->setEffect(effect);
+	} else {
+		matSprite = new XModelMatSprite(materialName, effect);
+		_matSprites.add(matSprite);
+	}
+	_rootFrame->setMaterialEffect(matSprite->_matName, matSprite->_effect, matSprite->_effectParams);
+
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool XModel::removeMaterialEffect(const char *materialName) {
+	if (!materialName)
+		return false;
+	if (!_rootFrame)
+		return false;
+
+	for (uint32 i = 0; i < _matSprites.size(); i++) {
+		if (scumm_stricmp(_matSprites[i]->_matName, materialName) == 0) {
+			delete _matSprites[i];
+			_matSprites[i] = nullptr;
+			_matSprites.remove_at(i);
+			_rootFrame->removeMaterialEffect(materialName);
+			return true;
+		}
+	}
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool XModel::setMaterialEffectParam(const char *materialName, const char *paramName, ScValue *val) {
+	if (!materialName)
+		return false;
+	if (!_rootFrame)
+		return false;
+
+
+	for (uint32 i = 0 ; i < _matSprites.size(); i++) {
+		if (scumm_stricmp(_matSprites[i]->_matName, materialName) == 0) {
+			if (_matSprites[i]->_effectParams) {
+				_matSprites[i]->_effectParams->setParam(paramName, val);
+				return true;
+			} else
+				return false;
+		}
+	}
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool XModel::setMaterialEffectParam(const char *materialName, const char *paramName, DXVector4 val) {
+	if (!materialName)
+		return false;
+	if (!_rootFrame)
+		return false;
+
+
+	for (uint32 i = 0; i < _matSprites.size(); i++) {
+		if (scumm_stricmp(_matSprites[i]->_matName, materialName) == 0) {
+			if (_matSprites[i]->_effectParams) {
+				_matSprites[i]->_effectParams->setParam(paramName, val);
+				return true;
+			} else
+				return false;
+		}
+	}
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
 bool XModel::initializeSimple() {
 	if (!_rootFrame) {
 		return false;
@@ -871,8 +963,18 @@ bool XModel::initializeSimple() {
 		} else if (_matSprites[i]->_sprite) {
 			_rootFrame->setMaterialSprite(_matSprites[i]->_matName, _matSprites[i]->_sprite);
 		}
+
+		if (_matSprites[i]->_effectFile) {
+			Effect3D *effect = new Effect3D(_gameRef);
+			if (effect->createFromFile(_matSprites[i]->_effectFile)) {
+				_matSprites[i]->_effect = effect;
+				_rootFrame->setMaterialEffect(_matSprites[i]->_matName, _matSprites[i]->_effect, _matSprites[i]->_effectParams);
+			} else {
+				delete effect;
+				effect = nullptr;
+			}
+		}
 	}
-	// TODO: Effects
 
 	if (_parentModel) {
 		findBones(false, _parentModel);

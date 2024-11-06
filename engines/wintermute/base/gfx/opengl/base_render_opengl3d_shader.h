@@ -42,6 +42,11 @@ namespace Wintermute {
 class BaseSurfaceOpenGL3D;
 
 class BaseRenderOpenGL3DShader : public BaseRenderer3D {
+	friend class BaseSurfaceOpenGL3DShader;
+	friend class Mesh3DSOpenGLShader;
+	friend class XMeshOpenGLShader;
+	friend class ShadowVolumeOpenGLShader;
+
 	struct SpriteVertex {
 		float x;
 		float y;

@@ -34,6 +34,7 @@
 #include "engines/wintermute/base/gfx/xmodel.h"
 #include "engines/wintermute/base/gfx/xbuffer.h"
 #include "engines/wintermute/base/gfx/xskinmesh.h"
+#include "engines/wintermute/base/gfx/3deffect.h"
 #include "engines/wintermute/base/gfx/3dutils.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/utils/path_util.h"
@@ -317,8 +318,28 @@ bool XMesh::setMaterialSprite(const Common::String &matName, BaseSprite *sprite)
 //////////////////////////////////////////////////////////////////////////
 bool XMesh::setMaterialTheora(const Common::String &matName, VideoTheoraPlayer *theora) {
 	for (uint32 i = 0; i < _materials.size(); i++) {
-		if (_materials[i]->getName() && scumm_stricmp(_materials[i]->getName(),  matName.c_str()) == 0) {
+		if (_materials[i]->getName() && scumm_stricmp(_materials[i]->getName(), matName.c_str()) == 0) {
 			_materials[i]->setTheora(theora);
+		}
+	}
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool XMesh::setMaterialEffect(const Common::String &matName, Effect3D *effect, Effect3DParams *params) {
+	for (uint32 i = 0; i < _materials.size(); i++) {
+		if (_materials[i]->getName() && scumm_stricmp(_materials[i]->getName(), matName.c_str()) == 0) {
+			_materials[i]->setEffect(effect, params);
+		}
+	}
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool XMesh::removeMaterialEffect(const Common::String &matName) {
+	for (uint32 i = 0; i < _materials.size(); i++) {
+		if (_materials[i]->getName() && scumm_stricmp(_materials[i]->getName(), matName.c_str()) == 0) {
+			_materials[i]->setEffect(nullptr, nullptr);
 		}
 	}
 	return true;

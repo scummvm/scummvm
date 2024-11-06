@@ -26,6 +26,8 @@
  */
 
 #include "engines/wintermute/base/gfx/xmaterial.h"
+#include "engines/wintermute/base/gfx/3deffect.h"
+#include "engines/wintermute/base/gfx/3deffect_params.h"
 #include "engines/wintermute/base/gfx/skin_mesh_helper.h"
 #include "engines/wintermute/base/gfx/base_renderer3d.h"
 #include "engines/wintermute/base/base_game.h"
@@ -35,6 +37,7 @@
 #if defined(USE_OPENGL_SHADERS)
 
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
+#include "engines/wintermute/base/gfx/opengl/base_render_opengl3d_shader.h"
 #include "engines/wintermute/base/gfx/opengl/meshx_opengl_shader.h"
 
 namespace Wintermute {
@@ -125,23 +128,24 @@ bool XMeshOpenGLShader::render(XModel *model) {
 	_shader->enableVertexAttribute("texcoord", _vertexBuffer, 2, GL_FLOAT, false, 4 * vertexSize, 4 * textureOffset);
 	_shader->enableVertexAttribute("normal", _vertexBuffer, 3, GL_FLOAT, false, 4 * vertexSize, 4 * normalOffset);
 
-	_shader->use(true);
-
 	for (uint32 i = 0; i < numAttrs; i++) {
-		int materialIndex = attrs[i]._attribId;
-
-		if (_materials[materialIndex]->getSurface()) {
+		Material *mat = _materials[attrs[i]._attribId];
+		if (mat->getSurface()) {
 			glEnable(GL_TEXTURE_2D);
-			static_cast<BaseSurfaceOpenGL3D *>(_materials[materialIndex]->getSurface())->setTexture();
+			static_cast<BaseSurfaceOpenGL3D *>(mat->getSurface())->setTexture();
 		} else {
 			glDisable(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 
-		// wme does not seem to care about specular or emissive light values
-		Math::Vector4d diffuse(_materials[materialIndex]->_material._diffuse._data);
-		_shader->setUniform("diffuse", diffuse);
-		_shader->setUniform("ambient", diffuse);
+		if (mat->getEffect()) {
+			renderEffect(mat);
+		} else {
+			Math::Vector4d diffuse(mat->_material._diffuse._data);
+			_shader->use(true);
+			_shader->setUniform("diffuse", diffuse);
+			_shader->setUniform("ambient", diffuse);
+		}
 
 		size_t offsetFace = 4 * attrsTable->_ptr[i]._faceStart * 3;
 		glDrawElements(GL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, GL_UNSIGNED_INT, (void *)offsetFace);
@@ -191,6 +195,13 @@ bool XMeshOpenGLShader::update(FrameNode *parentFrame) {
 	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * vertexSize * vertexCount, vertexData);
 
 	return true;
+}
+
+void XMeshOpenGLShader::renderEffect(Material *material) {
+	Math::Vector4d diffuse(material->_material._diffuse._data);
+	_shader->use(true);
+	_shader->setUniform("diffuse", diffuse);
+	_shader->setUniform("ambient", diffuse);
 }
 
 } // namespace Wintermute

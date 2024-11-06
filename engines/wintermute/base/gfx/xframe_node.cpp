@@ -445,6 +445,32 @@ bool FrameNode::setMaterialTheora(char *matName, VideoTheoraPlayer *theora) {
 }
 
 //////////////////////////////////////////////////////////////////////////
+bool FrameNode::setMaterialEffect(char *matName, Effect3D *effect, Effect3DParams *params) {
+	for (uint32 i = 0; i < _meshes.size(); i++) {
+		_meshes[i]->setMaterialEffect(matName, effect, params);
+	}
+
+	for (uint32 i = 0; i < _frames.size(); i++) {
+		_frames[i]->setMaterialEffect(matName, effect, params);
+	}
+
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool FrameNode::removeMaterialEffect(const char *matName) {
+	for (uint32 i = 0; i < _meshes.size(); i++) {
+		_meshes[i]->removeMaterialEffect(matName);
+	}
+
+	for (uint32 i = 0; i < _frames.size(); i++) {
+		_frames[i]->removeMaterialEffect(matName);
+	}
+
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
 bool FrameNode::invalidateDeviceObjects() {
 	for (uint32 i = 0; i < _meshes.size(); i++) {
 		_meshes[i]->invalidateDeviceObjects();

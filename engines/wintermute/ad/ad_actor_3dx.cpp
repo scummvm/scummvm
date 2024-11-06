@@ -48,6 +48,7 @@
 #include "engines/wintermute/base/gfx/3dshadow_volume.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/xmodel.h"
+#include "engines/wintermute/base/gfx/3deffect.h"
 #include "engines/wintermute/base/gfx/xmath.h"
 #include "engines/wintermute/base/gfx/3dutils.h"
 #include "engines/wintermute/base/particles/part_emitter.h"
@@ -1831,12 +1832,10 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetEffect") == 0) {
 		stack->correctParams(2);
-		/*const char *materialName =*/ stack->pop()->getString();
-		/*const char *effectFilename =*/ stack->pop()->getString();
+		const char *materialName = stack->pop()->getString();
+		const char *effectFilename = stack->pop()->getString();
 
-		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
-		//if (_xmodel && _xmodel->setMaterialEffect(materialName, effectFilename)) {
-		if (_xmodel) {
+		if (_xmodel && _xmodel->setMaterialEffect(materialName, effectFilename)) {
 			stack->pushBool(true);
 		} else {
 			stack->pushBool(false);
@@ -1849,12 +1848,10 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RemoveEffect") == 0) {
 		stack->correctParams(1);
-		/*const char *materialName =*/ stack->pop()->getString();
+		const char *materialName = stack->pop()->getString();
 		stack->pop();
 
-		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
-		// if (_xmodel && _xodel->removeMaterialEffect(materialName)) {
-		if (_xmodel) {
+		if (_xmodel && _xmodel->removeMaterialEffect(materialName)) {
 			stack->pushBool(true);
 		} else {
 			stack->pushBool(false);
@@ -1867,13 +1864,11 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetEffectParam") == 0) {
 		stack->correctParams(3);
-		/*const char *materialName =*/ stack->pop()->getString();
-		/*const char *paramName =*/ stack->pop()->getString();
-		/*ScValue *val =*/ stack->pop();
+		const char *materialName = stack->pop()->getString();
+		const char *paramName = stack->pop()->getString();
+		ScValue *val = stack->pop();
 
-		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
-		// if (_xmodel && _xmodel->setMaterialEffectParam(materialName, paramName, val)) {
-		if (_xmodel) {
+		if (_xmodel && _xmodel->setMaterialEffectParam(materialName, paramName, val)) {
 			stack->pushBool(true);
 		} else {
 			stack->pushBool(false);
@@ -1886,16 +1881,14 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetEffectParamVector") == 0) {
 		stack->correctParams(6);
-		/*const char *materialName =*/ stack->pop()->getString();
-		/*const char *paramName =*/ stack->pop()->getString();
-		/*float x =*/ stack->pop()->getFloat();
-		/*float y =*/ stack->pop()->getFloat();
-		/*float z =*/ stack->pop()->getFloat();
-		/*float w =*/ stack->pop()->getFloat();
+		const char *materialName = stack->pop()->getString();
+		const char *paramName = stack->pop()->getString();
+		float x = stack->pop()->getFloat();
+		float y = stack->pop()->getFloat();
+		float z = stack->pop()->getFloat();
+		float w = stack->pop()->getFloat();
 
-		//if (_xmodel && _xmodel->setMaterialEffectParam(materialName, paramName, DXVector4(x, y, z, w))) {
-		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
-		if (_xmodel) {
+		if (_xmodel && _xmodel->setMaterialEffectParam(materialName, paramName, DXVector4(x, y, z, w))) {
 			stack->pushBool(true);
 		} else {
 			stack->pushBool(false);
@@ -1908,18 +1901,16 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetEffectParamColor") == 0) {
 		stack->correctParams(3);
-		/*const char *materialName =*/ stack->pop()->getString();
-		/*const char *paramName =*/ stack->pop()->getString();
-		/*uint32 color =*/ stack->pop()->getInt();
+		const char *materialName = stack->pop()->getString();
+		const char *paramName = stack->pop()->getString();
+		uint32 color = stack->pop()->getInt();
 
-		//float r = RGBCOLGetR(color) / 255.0f;
-		//float g = RGBCOLGetG(color) / 255.0f;
-		//float b = RGBCOLGetB(color) / 255.0f;
-		//float a = RGBCOLGetA(color) / 255.0f;
+		float r = RGBCOLGetR(color) / 255.0f;
+		float g = RGBCOLGetG(color) / 255.0f;
+		float b = RGBCOLGetB(color) / 255.0f;
+		float a = RGBCOLGetA(color) / 255.0f;
 
-		//if (_xmodel && _xmodel->setMaterialEffectParam(materialName, paramName, DXVector4(r, g, b, a))) {
-		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
-		if (_xmodel) {
+		if (_xmodel && _xmodel->setMaterialEffectParam(materialName, paramName, DXVector4(r, g, b, a))) {
 			stack->pushBool(true);
 		} else {
 			stack->pushBool(false);
@@ -2478,8 +2469,6 @@ bool AdActor3DX::updatePartEmitter() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor3DX::parseEffect(byte *buffer) {
-	warning("AdActor3DX::parseEffect D3DX effect are not implemented");
-
 	TOKEN_TABLE_START(commands)
 		TOKEN_TABLE(MATERIAL)
 		TOKEN_TABLE(EFFECT_FILE)
@@ -2509,7 +2498,9 @@ bool AdActor3DX::parseEffect(byte *buffer) {
 	}
 
 	if (effectFile && material) {
-		// TODO: Implement
+		if (!_xmodel->setMaterialEffect(material, effectFile)) {
+			_gameRef->LOG(0, "Error assigning effect to material '%s'", material);
+		}
 	}
 
 	delete[] effectFile;

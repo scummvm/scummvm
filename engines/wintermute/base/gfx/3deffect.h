@@ -25,43 +25,30 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#ifndef WINTERMUTE_XMESH_OPENGL_SHADER_H
-#define WINTERMUTE_XMESH_OPENGL_SHADER_H
+#ifndef WINTERMUTE_3D_EFFECT_H
+#define WINTERMUTE_3D_EFFECT_H
 
-#include "engines/wintermute/base/gfx/xmesh.h"
-
-class Effect3D;
-class Effect3DParams;
-
-#if defined(USE_OPENGL_SHADERS)
-
-#include "graphics/opengl/shader.h"
+#include "engines/wintermute/base/base_named_object.h"
 
 namespace Wintermute {
 
-class XMeshOpenGLShader : public XMesh {
+//////////////////////////////////////////////////////////////////////////
+class Effect3D : public BaseClass {
 public:
-	XMeshOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader);
-	~XMeshOpenGLShader() override;
+	Effect3D(BaseGame *inGame);
+	~Effect3D();
 
-	bool loadFromXData(const Common::String &filename, XFileData *xobj) override;
-	bool render(XModel *model) override;
-	bool renderFlatShadowModel() override;
-	bool update(FrameNode *parentFrame) override;
+	bool createFromFile(const Common::String &filename);
+	uint32 getEffectHash() { return _effectHash; }
+	bool invalidateDeviceObjects();
+	bool restoreDeviceObjects();
+	const char *getFileName() { return _filename.c_str(); }
 
 private:
-	void renderEffect(Material *material);
-
-protected:
-	GLuint _vertexBuffer;
-	GLuint _indexBuffer;
-
-	OpenGL::Shader *_shader;
-	OpenGL::Shader *_flatShadowShader{};
+	Common::String _filename;
+	uint32 _effectHash;
 };
 
 } // namespace Wintermute
-
-#endif // defined(USE_OPENGL_SHADERS)
 
 #endif

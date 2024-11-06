@@ -41,6 +41,11 @@ namespace Wintermute {
 class BaseSurfaceOpenGL3D;
 
 class BaseRenderOpenGL3D : public BaseRenderer3D {
+	friend class BaseSurfaceOpenGL3D;
+	friend class Mesh3DSOpenGL;
+	friend class XMeshOpenGL;
+	friend class ShadowVolumeOpenGL;
+
 	struct SpriteVertex {
 		float x;
 		float y;
@@ -146,7 +151,7 @@ public:
 
 	bool setViewport3D(DXViewport *viewport) override;
 
-private:
+protected:
 	SimpleShadowVertex _simpleShadow[4]{};
 	Common::Array<DXVector4> _lightPositions;
 	Common::Array<DXVector3> _lightDirections;

@@ -851,6 +851,34 @@ bool BasePersistenceManager::transferVector3d(const char *name, DXVector3 *val) 
 }
 
 //////////////////////////////////////////////////////////////////////////
+// Vector4
+bool BasePersistenceManager::transferVector4d(const char *name, DXVector4 *val) {
+	if (_saving) {
+		putFloat(val->_x);
+		putFloat(val->_y);
+		putFloat(val->_z);
+		putFloat(val->_w);
+
+		if (_saveStream->err()) {
+			return STATUS_FAILED;
+		}
+
+		return STATUS_OK;
+	} else {
+		val->_x = getFloat();
+		val->_y = getFloat();
+		val->_z = getFloat();
+		val->_w = getFloat();
+
+		if (_loadStream->err()) {
+			return STATUS_FAILED;
+		}
+
+		return STATUS_OK;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
 // Matrix4
 bool BasePersistenceManager::transferMatrix4(const char *name, DXMatrix *val) {
 	if (_saving) {
