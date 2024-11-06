@@ -111,11 +111,14 @@ void SceneScriptAR01::InitializeScene() {
 	        && Game_Flag_Query(kFlagHC01toAR01)
 	) {
 		Scene_Loop_Set_Default(kAR01LoopMainLoop);
+	// TODO: Query check not required as NoSpinner is default else branch
+#if 0
 	} else if (!Game_Flag_Query(kFlagSpinnerAtAR01)
 	        &&  Game_Flag_Query(kFlagHC01toAR01)
 	) {
 		Scene_Loop_Set_Default(kAR01LoopMainLoopNoSpinner);
-	} else { // bug? branch content is equal to previous branch
+#endif
+	} else { // TODO: bug? branch content is equal to previous branch
 		Scene_Loop_Set_Default(kAR01LoopMainLoopNoSpinner);
 	}
 }

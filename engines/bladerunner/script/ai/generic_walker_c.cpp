@@ -490,6 +490,7 @@ bool AIScriptGenericWalkerC::preparePath() {
 		isInside = true;
 		if (Random_Query(0, 1)) {
 			AI_Movement_Track_Append(kActorGenwalkerC, 164, 0);
+#if 0
 			if (Random_Query(0, 1)) {
 				AI_Movement_Track_Append(kActorGenwalkerC, 163, 0);
 				AI_Movement_Track_Append(kActorGenwalkerC, 162, 0);
@@ -497,21 +498,24 @@ bool AIScriptGenericWalkerC::preparePath() {
 				AI_Movement_Track_Append(kActorGenwalkerC, 163, 0);
 				AI_Movement_Track_Append(kActorGenwalkerC, 162, 0);
 			} else {
+#endif
 				AI_Movement_Track_Append(kActorGenwalkerC, 163, 0);
 				AI_Movement_Track_Append(kActorGenwalkerC, 162, 0);
-			}
+			//}
 		} else {
 			AI_Movement_Track_Append(kActorGenwalkerC, 162, 0);
+#if 0
 			if (Random_Query(0, 1)) {
 				AI_Movement_Track_Append(kActorGenwalkerC, 163, 0);
 				AI_Movement_Track_Append(kActorGenwalkerC, 164, 0);
 			} else {
+#endif
 				if (Random_Query(0, 1)) {
 					AI_Movement_Track_Append_With_Facing(kActorGenwalkerC, 166, 0, 30);
 				}
 				AI_Movement_Track_Append(kActorGenwalkerC, 163, 0);
 				AI_Movement_Track_Append(kActorGenwalkerC, 164, 0);
-			}
+			//}
 		}
 		AI_Movement_Track_Repeat(kActorGenwalkerC);
 		return true;
