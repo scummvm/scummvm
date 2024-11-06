@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-11-06 20:00+0000\n"
+"PO-Revision-Date: 2024-11-06 20:18+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -6062,7 +6062,7 @@ msgstr "Draai achteruit"
 #: engines/wintermute/keymapper_tables.h:2122
 #: engines/wintermute/keymapper_tables.h:2223
 msgid "Turn left"
-msgstr "Draai Linksom"
+msgstr "Draai linksom"
 
 #: engines/agos/metaengine.cpp:308 engines/mohawk/riven.cpp:907
 #: engines/wintermute/keymapper_tables.h:167
@@ -6070,7 +6070,7 @@ msgstr "Draai Linksom"
 #: engines/wintermute/keymapper_tables.h:2128
 #: engines/wintermute/keymapper_tables.h:2230
 msgid "Turn right"
-msgstr "Draai Rechtsom"
+msgstr "Draai rechtsom"
 
 #: engines/agos/metaengine.cpp:316
 msgid "Text speed - Fast"
@@ -6085,16 +6085,12 @@ msgid "Text speed - Slow"
 msgstr "Tekst snelheid - Langzaam"
 
 #: engines/agos/metaengine.cpp:331
-#, fuzzy
-#| msgid "Show Object Line"
 msgid "Show objects to interact"
-msgstr "Toon Object Regel"
+msgstr "Toon objecten met interactie"
 
 #: engines/agos/metaengine.cpp:338
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Toggle background sounds on/off"
-msgstr "Geluidseffecten aan-/uitzetten"
+msgstr "Achtergrondgeluiden aan-/uitzetten"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:347
@@ -6102,10 +6098,8 @@ msgid "Switch characters"
 msgstr "Verwissel personages"
 
 #: engines/agos/metaengine.cpp:353
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle hitbox names on/off"
-msgstr "Muziek aan-/uitzetten"
+msgstr "Hitbox namen aan-/uitzetten"
 
 #: engines/agos/metaengine.cpp:360
 msgid "Switches between speech only and combined speech and subtitles"
@@ -6323,40 +6317,28 @@ msgid "Move right"
 msgstr "Beweeg naar rechts"
 
 #: engines/asylum/metaengine.cpp:226
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle animation on/off"
-msgstr "Muziek aan-/uitzetten"
+msgstr "Animatie aan-/uitzetten"
 
 #: engines/asylum/metaengine.cpp:232
-#, fuzzy
-#| msgid "In 2D games"
 msgid "Return to gameplay"
-msgstr "In 2D spellen"
+msgstr "Terug naar spel"
 
 #: engines/asylum/metaengine.cpp:238
-#, fuzzy
-#| msgid "Previous Page"
 msgid "Previous resource"
-msgstr "Vorige pagina"
+msgstr "Vorige resource"
 
 #: engines/asylum/metaengine.cpp:245
-#, fuzzy
-#| msgid "[ Resources ]"
 msgid "Next resource"
-msgstr "[ Bronnen ]"
+msgstr "Volgende resource"
 
 #: engines/asylum/metaengine.cpp:252
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous palette"
-msgstr "Vorige pagina"
+msgstr "Vorig palet"
 
 #: engines/asylum/metaengine.cpp:259
-#, fuzzy
-#| msgid "Next page"
 msgid "Next palette"
-msgstr "Volgende pagina"
+msgstr "Volgend palet"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:203
@@ -6381,10 +6363,8 @@ msgid "Soldier 714 Eye Cheat"
 msgstr ""
 
 #: engines/bagel/metaengine.cpp:83
-#, fuzzy
-#| msgid "General"
 msgid "General Keys"
-msgstr "Algemeen"
+msgstr "Algemene Toetsen"
 
 #: engines/bladerunner/bladerunner.cpp:405
 msgid "Failed to initialize resources"
@@ -6713,10 +6693,8 @@ msgid "Game Keymappings"
 msgstr "Spel Toetskoppelingen"
 
 #: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:225
-#, fuzzy
-#| msgid "Skip"
 msgid "Exit/Skip"
-msgstr "Overslaan"
+msgstr "Verlaten/Overslaan"
 
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
 #: engines/hopkins/metaengine.cpp:238 engines/lure/metaengine.cpp:191
