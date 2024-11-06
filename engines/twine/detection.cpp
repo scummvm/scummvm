@@ -155,6 +155,11 @@ static const ADGameDescription twineGameDescriptions[] = {
 	// 14 Oct 1994 at 13:22
 	TWINE_DETECTION_ENTRY("lba", "Relentless: Twinsen's Adventure - CD Original North America Version", AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513), Common::kPlatformDOS, TwinE::TF_VERSION_USA | ADGF_CD),
 
+	// Relentless: Little Big Adventure (Europe) (EN, FR, DE, IT, ES)
+	// text.hqr
+	// 22 February 1997 at 14:20
+	TWINE_DETECTION_ENTRY("lba", "", AD_ENTRY1s("text.hqr", "c30df57432c324a5f4673e013f88acf9", 258513), Common::kPlatformUnknown, 0),
+
 	// Little Big Adventure - Demo Version (FR)
 	// LBA.EXE
 	// 21 October 1994 at 15:25
