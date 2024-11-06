@@ -488,6 +488,9 @@ bool AIScriptGenericWalkerB::preparePath() {
 		isInside = true;
 		if (Random_Query(0, 1)) {
 			AI_Movement_Track_Append(kActorGenwalkerB, 164, 0);
+			// Original code does indeed have duplication of branches here
+			// TODO This could possible indicate intent of different movement tracks for the actor
+			// based on repeated "coin flips", but as it was the code block for each branch was identical.
 #if 0
 			if (Random_Query(0, 1)) {
 				AI_Movement_Track_Append(kActorGenwalkerB, 163, 0);
@@ -502,6 +505,11 @@ bool AIScriptGenericWalkerB::preparePath() {
 			//}
 		} else {
 			AI_Movement_Track_Append(kActorGenwalkerB, 162, 0);
+			// Original code does indeed have duplication of branches here (similar to above)
+			// TODO This could possible indicate intent of different movement tracks for the actor
+			// based on repeated "coin flips", but as it was the code block for each branch was identical.
+			// NOTE The code for generic walker A here is slightly different, setting based on a "coin flip"
+			// the actor's "facing".
 #if 0
 			if (Random_Query(0, 1)) {
 				AI_Movement_Track_Append(kActorGenwalkerB, 163, 0);
