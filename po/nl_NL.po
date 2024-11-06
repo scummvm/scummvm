@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-03-24 18:22+0000\n"
+"PO-Revision-Date: 2024-11-06 19:47+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.4\n"
+"X-Generator: Weblate 5.7.2\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "X-Language-name: Nederlands\n"
 
@@ -847,16 +847,13 @@ msgid "Launch Email Client"
 msgstr ""
 
 #: gui/integrity-dialog.cpp:174
-#, fuzzy
-#| msgid "Scan complete!"
 msgid "Calculation complete"
-msgstr "Klaar met zoeken!"
+msgstr "Berekening klaar"
 
 #: gui/integrity-dialog.cpp:263
-#, fuzzy, c-format
-#| msgid "Downloaded %s %S / %s %S"
+#, c-format
 msgid "Calculated %s %S / %s %S"
-msgstr "%s %S / %s %S gedownload"
+msgstr "Berekend %s %S / %s %S"
 
 #: gui/integrity-dialog.cpp:513
 msgid ""
@@ -3082,10 +3079,8 @@ msgid "PC-9801 (16 Colors)"
 msgstr "PC-9801 (16 Kleuren)"
 
 #: common/rendermode.cpp:48
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "PC-9801 (8 Colors)"
-msgstr "PC-9801 (16 Kleuren)"
+msgstr "PC-9801 (8 Kleuren)"
 
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:53
@@ -3178,10 +3173,8 @@ msgid "ScummVM"
 msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
-#, fuzzy
-#| msgid "ScummVM"
 msgid "ScummVM (debug)"
-msgstr "ScummVM"
+msgstr "ScummVM (debug)"
 
 #: dists/android.strings.xml.cpp:32
 msgid "Graphic adventure game engine"
@@ -3200,16 +3193,12 @@ msgid "Quit"
 msgstr "Stoppen"
 
 #: dists/android.strings.xml.cpp:35
-#, fuzzy
-#| msgid "Config File Error"
 msgid "Log File Error"
-msgstr "Configuratiebestand fout"
+msgstr "Logbestand Fout"
 
 #: dists/android.strings.xml.cpp:36
-#, fuzzy
-#| msgid "Unable to read ScummVM config file or create a new one!"
 msgid "Unable to read ScummVM log file or create a new one!"
-msgstr "Kan het ScummVM configuratiebestand niet lezen of creëer een nieuwe!"
+msgstr "Kan het ScummVM logbestand niet lezen of creëer een nieuwe!"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Config File Error"
@@ -3290,22 +3279,16 @@ msgid "Storage Access Framework Permissions for ScummVM were revoked!"
 msgstr "Storage Access Framework rechten van ScummVM zijn teruggetrokken!"
 
 #: dists/android.strings.xml.cpp:55
-#, fuzzy
-#| msgid "the video mode could not be changed"
 msgid "Configuration file could not be parsed"
-msgstr "de videomodus kon niet veranderd worden"
+msgstr "Configuratiebestand kon niet verwerkt worden"
 
 #: dists/android.strings.xml.cpp:56
-#, fuzzy
-#| msgid "In 2D games"
 msgid "Run a game"
-msgstr "In 2D spellen"
+msgstr "Speel een spel"
 
 #: dists/android.strings.xml.cpp:57
-#, fuzzy
-#| msgid "Search in game list"
 msgid "Search a game"
-msgstr "Zoek in lijst met spellen"
+msgstr "Zoek een spel"
 
 #: dists/android.strings.xml.cpp:58
 msgid ""
@@ -3314,16 +3297,12 @@ msgid ""
 msgstr ""
 
 #: dists/android.strings.xml.cpp:59
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game icon"
-msgstr "Spel Opties"
+msgstr "Spel pictogram"
 
 #: dists/android.strings.xml.cpp:60
-#, fuzzy
-#| msgid "Show object labels"
 msgid "Shortcut label"
-msgstr "Toon objectnamen"
+msgstr "Snelkoppeling tekst"
 
 #: dists/android.strings.xml.cpp:61
 msgid "Shortcut icon"
@@ -3680,10 +3659,8 @@ msgid "Matched game IDs for the %s engine:"
 msgstr "Matchende game IDs voor de %s engine:"
 
 #: engines/metaengine.cpp:39
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "Game not implemented"
-msgstr "Spel-ID niet ondersteund"
+msgstr "Spel niet geïmplementeerd"
 
 #: engines/metaengine.cpp:58 engines/saga/metaengine.cpp:267
 msgid "Default game keymap"
@@ -5240,16 +5217,12 @@ msgid "(check '? > Libretro playlist' for detailed info)"
 msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:48
-#, fuzzy
-#| msgid "Plugins Path:"
 msgid "Playlists Path"
-msgstr "Plugins Pad:"
+msgstr "Afspeellijsten Pad"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:49
-#, fuzzy
-#| msgid "Specifies where your saved games are put"
 msgid "Specifies where your playlist will be saved."
-msgstr "Bepaalt waar opgeslagen spellen worden bewaard"
+msgstr "Bepaalt waar jouw afspeellijsten worden bewaard."
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:52
 #, fuzzy
@@ -5258,10 +5231,8 @@ msgid "Playlist format:"
 msgstr "Platform:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:57
-#, fuzzy
-#| msgid "Goto location"
 msgid "Hooks location:"
-msgstr "Ga naar lokatie"
+msgstr "Hooks lokatie:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:59
 #, fuzzy
@@ -5282,16 +5253,12 @@ msgid "Generate playlist"
 msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:66
-#, fuzzy
-#| msgid "Status:"
 msgid "Status: "
-msgstr "Status:"
+msgstr "Status: "
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:148
-#, fuzzy
-#| msgid "Failed to save game to file."
 msgid "Failed, can't access playlist file"
-msgstr "Opslaan van spel in bestand is mislukt."
+msgstr "Mislukt, kan de afspeellijst niet openen"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:224
 #, fuzzy
@@ -5300,10 +5267,8 @@ msgid "cleaning failed"
 msgstr "Data lezen mislukt"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:226
-#, fuzzy
-#| msgid "Failed to read the file!"
 msgid "Failed, can't create hook files"
-msgstr "Bestand lezen niet gelukt!"
+msgstr "Niet gelukt, kan geen hook bestanden creëren"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:236
 #, fuzzy
@@ -6179,10 +6144,8 @@ msgstr "Geluidseffecten aan-/uitzetten"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:347
-#, fuzzy
-#| msgid "Switching characters:"
 msgid "Switch characters"
-msgstr "Verwissel personages:"
+msgstr "Verwissel personages"
 
 #: engines/agos/metaengine.cpp:353
 #, fuzzy
@@ -7791,10 +7754,8 @@ msgid "GroovieV2 support is not compiled in"
 msgstr "Ondersteuning voor GroovieV2 is niet meegecompileerd"
 
 #: engines/groovie/metaengine.cpp:201
-#, fuzzy
-#| msgid "Available engines:"
 msgid "Groovie engine"
-msgstr "Beschikbare engines:"
+msgstr "Groovie engine"
 
 #: engines/groovie/metaengine.cpp:217
 #, fuzzy
@@ -8376,16 +8337,12 @@ msgid "Yes/No keymappings"
 msgstr "Spel Toetskoppelingen"
 
 #: engines/lure/metaengine.cpp:197 engines/mads/metaengine.cpp:311
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restore game"
-msgstr "Laad opgeslagen spel:"
+msgstr "Laad opgeslagen spel"
 
 #: engines/lure/metaengine.cpp:203
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restart game"
-msgstr "Laad opgeslagen spel:"
+msgstr "Herstart spel"
 
 #. I18N: Shift Cursor during fight to top left
 #: engines/lure/metaengine.cpp:233
@@ -8534,16 +8491,12 @@ msgid "Scroll bar down"
 msgstr "Scroll omlaag"
 
 #: engines/mads/metaengine.cpp:331
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Start game"
-msgstr "Laad opgeslagen spel:"
+msgstr "Start spel"
 
 #: engines/mads/metaengine.cpp:337
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Resume game"
-msgstr "Laad opgeslagen spel:"
+msgstr "Hervat spel"
 
 #: engines/mads/metaengine.cpp:343
 #, fuzzy
@@ -11058,10 +11011,8 @@ msgstr ""
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:112
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:124
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:136
-#, fuzzy
-#| msgid "Random seed:"
 msgid "Random"
-msgstr "Random seed:"
+msgstr "Willekeurig"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:67
 msgid "Picks the map algorithm randomly."
@@ -12247,10 +12198,8 @@ msgid "Use 16-color graphics"
 msgstr "Kleurenafbeeldingen"
 
 #: engines/vcruise/metaengine.cpp:87
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Uses 16-color graphics."
-msgstr "Kleurenafbeeldingen"
+msgstr "Gebruikt 16 kleuren graphics."
 
 #: engines/vcruise/metaengine.cpp:97
 #, fuzzy
