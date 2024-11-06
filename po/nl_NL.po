@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-11-06 19:59+0000\n"
+"PO-Revision-Date: 2024-11-06 20:00+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -6077,16 +6077,12 @@ msgid "Text speed - Fast"
 msgstr "Tekst snelheid - Snel"
 
 #: engines/agos/metaengine.cpp:321
-#, fuzzy
-#| msgid "Walking speed: Medium"
 msgid "Text speed - Medium"
-msgstr "Loopsnelheid: Gemiddeld"
+msgstr "Tekst snelheid - Gemiddeld"
 
 #: engines/agos/metaengine.cpp:326
-#, fuzzy
-#| msgid "Text speed slower / faster"
 msgid "Text speed - Slow"
-msgstr "Tekst langzamer / sneller"
+msgstr "Tekst snelheid - Langzaam"
 
 #: engines/agos/metaengine.cpp:331
 #, fuzzy
