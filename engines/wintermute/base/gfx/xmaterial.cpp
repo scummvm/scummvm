@@ -74,7 +74,7 @@ bool Material::restoreDeviceObjects() {
 //////////////////////////////////////////////////////////////////////////
 bool Material::setTexture(const Common::String &filename, bool adoptName) {
 	if (adoptName) {
-		setName(PathUtil::getFileName(filename).c_str());
+		setName(PathUtil::getFileNameWithoutExtension(filename).c_str());
 	}
 
 	_textureFilename = filename;
@@ -93,7 +93,7 @@ bool Material::setTexture(const Common::String &filename, bool adoptName) {
 //////////////////////////////////////////////////////////////////////////
 bool Material::setSprite(BaseSprite *sprite, bool adoptName) {
 	if (adoptName) {
-		setName(PathUtil::getFileName(sprite->getFilename()).c_str());
+		setName(PathUtil::getFileNameWithoutExtension(sprite->getFilename()).c_str());
 	}
 
 	_textureFilename = sprite->getFilename();
@@ -113,7 +113,7 @@ bool Material::setSprite(BaseSprite *sprite, bool adoptName) {
 //////////////////////////////////////////////////////////////////////////
 bool Material::setTheora(VideoTheoraPlayer *theora, bool adoptName) {
 	if (adoptName) {
-		setName(PathUtil::getFileName(theora->_filename).c_str());
+		setName(PathUtil::getFileNameWithoutExtension(theora->_filename).c_str());
 	}
 	_textureFilename = theora->_filename;
 
