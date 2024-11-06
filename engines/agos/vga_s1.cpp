@@ -179,6 +179,15 @@ void AGOSEngine::vc47_addToVar() {
 
 void AGOSEngine::vc48_setPathFinder() {
 	uint16 a = (uint16)_variableArrayPtr[12];
+	// WORKAROUND: Check if the selected path is valid. There are cases
+	// where an invalid path is selected, such as when loading a save in
+	// the Dwarf Cave in Simon 1 (bug #6356). In such cases, we select
+	// the first available path, which fixes the problem in Simon 1.
+	if (!_pathFindArray[a - 1]) {
+		warning("vc48_setPathFinder: Invalid path, attempting to correct");
+		a = 1;
+	}
+
 	const uint16 *p = _pathFindArray[a - 1];
 
 	uint b = (uint16)_variableArray[13];
