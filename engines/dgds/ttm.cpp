@@ -930,8 +930,13 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 
 		Common::SharedPtr<Image> img = env._scriptShapes[bmpNo];
 		if (img) {
-			img->drawBitmap(frameno, env._xOff + ivals[0], env._yOff + ivals[1],
-					seq._drawWin, _vm->_compositionBuffer, flipMode, dstWidth, dstHeight);
+			int x = ivals[0];
+			int y = ivals[1];
+			if (_stackDepth > 0) {
+				x += env._xOff;
+				y += env._yOff;
+			}
+			img->drawBitmap(frameno, x, y, seq._drawWin, _vm->_compositionBuffer, flipMode, dstWidth, dstHeight);
 		} else {
 			warning("Trying to draw image %d in env %d which is not loaded", bmpNo, env._enviro);
 		}
