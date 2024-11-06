@@ -97,6 +97,21 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Rise of the Dragon (PC) 16 Color, 720kB disks (reported by ns394, #15442)
+	{
+		"rise",
+		"EGA",
+		{
+			{"volume.ega", 0, "3e4d62eb36fa5c8ca60e5cf59a307798", 6361},
+			{"volume.001", 0, "69dd06efe5bb562f4e1b094c5d043d93", 524553},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_TESTING,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Rise of the Dragon (Amiga)
 	{
 		"rise",
