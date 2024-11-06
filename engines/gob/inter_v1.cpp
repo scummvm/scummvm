@@ -1438,11 +1438,30 @@ void Inter_v1::o1_renewTimeInVars(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_speakerOn(OpFuncParams &params) {
-	_vm->_sound->speakerOn(_vm->_game->_script->readValExpr(), -1);
+	int16 frequency = _vm->_game->_script->readValExpr();
+	int32 length = -1;
+
+	_ignoreSpeakerOff = false;
+
+	// WORKAROUND: This is the footsteps sound in Gob2 CD.
+	// We explicitly set a length in this case and ignore the
+	// next speaker off command. This is the same workaround
+	// as the one for Goblins 3 in Inter_v3::o3_speakerOn().
+	// Fixes bug #15341
+	if (_vm->getGameType() == kGameTypeGob2 && frequency == 50) {
+		length = 5;
+
+		_ignoreSpeakerOff = true;
+	}
+
+	_vm->_sound->speakerOn(frequency, length);
 }
 
 void Inter_v1::o1_speakerOff(OpFuncParams &params) {
-	_vm->_sound->speakerOff();
+	if (!_ignoreSpeakerOff)
+		_vm->_sound->speakerOff();
+
+	_ignoreSpeakerOff = false;
 }
 
 void Inter_v1::o1_putPixel(OpFuncParams &params) {

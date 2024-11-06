@@ -351,6 +351,9 @@ protected:
 	void o1_initGoblin(OpGobParams &params);
 
 	void manipulateMap(int16 xPos, int16 yPos, int16 item);
+
+private:
+	bool _ignoreSpeakerOff = false;
 };
 
 class Inter_Geisha : public Inter_v1 {
