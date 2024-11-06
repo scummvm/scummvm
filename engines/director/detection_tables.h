@@ -6834,6 +6834,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 									  	      "hd_data/MENU.DXR", "4809a8c0c7c064f3ea0dbd6844260c67", 5070544, Common::FI_FIN, 501),
 	WINGAME2t_l("moominparty", "Windows 3.1", "MUMIN31.EXE", 	  "92fc805cebf17a05026b508293afd0c4", 938553,
 									  		  "HD_DATA/MENU.DXR", "4809a8c0c7c064f3ea0dbd6844260c67", 5070544, Common::FI_FIN, 501),
+	WINGAME2_l("moominparty", "Windows 95", "Mumin95.exe",	 "t:f11b230993af8dba0fd2efa0d3271c89", 1416715,
+											"DATA/MENU.DXR", "t:4809a8c0c7c064f3ea0dbd6844260c67", 5059198, Common::DA_DNK, 501),
+	WINDEMO2_l("moominparty", "Demo", "Mumin95.exe",	  "t:f11b230993af8dba0fd2efa0d3271c89", 1416715,
+									  "HD_DATA/MENU.DXR", "t:4809a8c0c7c064f3ea0dbd6844260c67", 5059198, Common::DA_DNK, 501),
 
 	WINGAME2_l("moordspel", "Launcher", "START.EXE",		   "t:da430559115b6fe11854313fdaa4babf", 1447063,
 										"TRAVEL/BAL_GX_F.MOV", "d:93ed396925332df6e302a67af8bc5e13", 139037, Common::NL_NLD, 500),
