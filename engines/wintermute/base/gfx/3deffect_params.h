@@ -70,7 +70,7 @@ public:
 		bool _initialized;
 
 		Common::String _valString;
-		int _valInt;
+		int32 _valInt;
 		float _valFloat;
 		DXVector4 _valVector;
 		bool _valBool;
