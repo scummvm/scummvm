@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-11-06 19:47+0000\n"
+"PO-Revision-Date: 2024-11-06 19:59+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -5225,20 +5225,16 @@ msgid "Specifies where your playlist will be saved."
 msgstr "Bepaalt waar jouw afspeellijsten worden bewaard."
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:52
-#, fuzzy
-#| msgid "Platform:"
 msgid "Playlist format:"
-msgstr "Platform:"
+msgstr "Afspeellijst formaat:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:57
 msgid "Hooks location:"
 msgstr "Hooks lokatie:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:59
-#, fuzzy
-#| msgid "Add a new folder"
 msgid "All in save folder"
-msgstr "Voeg een nieuwe map toe"
+msgstr "Algemene bewaarmap"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:60
 msgid "One in each game folder"
@@ -5261,20 +5257,16 @@ msgid "Failed, can't access playlist file"
 msgstr "Mislukt, kan de afspeellijst niet openen"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:224
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "cleaning failed"
-msgstr "Data lezen mislukt"
+msgstr "opschonen mislukt"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:226
 msgid "Failed, can't create hook files"
 msgstr "Niet gelukt, kan geen hook bestanden creëren"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:236
-#, fuzzy
-#| msgid "Select additional game directory"
 msgid "Select Playlist directory"
-msgstr "Selecteer additionele speldatamap"
+msgstr "Selecteer Afspeellijst map"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:173
 msgid "Libretro playlist"
@@ -5422,64 +5414,44 @@ msgid "BSD License"
 msgstr "BSD Licentie"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:329
-#, fuzzy
-#| msgid "GPL License"
 msgid "Apache License"
-msgstr "GPL Licentie"
+msgstr "Apache Licentie"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:330
-#, fuzzy
-#| msgid "BSD License"
 msgid "BSL License"
-msgstr "BSD Licentie"
+msgstr "BSL Licentie"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:331
-#, fuzzy
-#| msgid "GPL License"
 msgid "GLAD License"
-msgstr "GPL Licentie"
+msgstr "GLAD Licentie"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:332
-#, fuzzy
-#| msgid "BSD License"
 msgid "ISC License"
-msgstr "BSD Licentie"
+msgstr "ISC Licentie"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:333
-#, fuzzy
-#| msgid "GPL License"
 msgid "Lua License"
-msgstr "GPL Licentie"
+msgstr "Lua Licentie"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:334
-#, fuzzy
-#| msgid "GPL License"
 msgid "MIT License"
-msgstr "GPL Licentie"
+msgstr "MIT Licentie"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:335
-#, fuzzy
-#| msgid "GPL License"
 msgid "MKV License"
-msgstr "GPL Licentie"
+msgstr "MKV Licentie"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:336
-#, fuzzy
-#| msgid "GPL License"
 msgid "MPL License"
-msgstr "GPL Licentie"
+msgstr "MPL Licentie"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:337
-#, fuzzy
-#| msgid "GPL License"
 msgid "TinyGL License"
-msgstr "GPL Licentie"
+msgstr "TinyGL Licentie"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:338
-#, fuzzy
-#| msgid "Freefont License"
 msgid "Catharon License"
-msgstr "Freefont Licentie"
+msgstr "Catharon Licentie"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:79
@@ -5856,10 +5828,8 @@ msgstr "Voeg spelsnelheid menu toe (net als PC versie)"
 #: engines/mads/metaengine.cpp:51 engines/mm/metaengine.cpp:46
 #: engines/saga/metaengine.cpp:52 engines/scumm/dialogs.cpp:1188
 #: engines/scumm/metaengine.cpp:755
-#, fuzzy
-#| msgid "Enable Discord integration"
 msgid "Enable copy protection"
-msgstr "Discord integratie inschakelen"
+msgstr "Kopieerbeveiliging inschakelen"
 
 #: engines/agi/metaengine.cpp:184 engines/agos/metaengine.cpp:45
 #: engines/dreamweb/metaengine.cpp:37 engines/lure/metaengine.cpp:42
@@ -6020,16 +5990,12 @@ msgstr ""
 #: engines/made/metaengine.cpp:103 engines/mads/metaengine.cpp:275
 #: engines/stark/metaengine.cpp:185 engines/tinsel/metaengine.cpp:240
 #: engines/trecision/metaengine.cpp:121
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game keymappings"
-msgstr "Spel Toetskoppelingen"
+msgstr "Spel toetskoppelingen"
 
 #: engines/agos/metaengine.cpp:229
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Yes/No keymapping"
-msgstr "Spel Toetskoppelingen"
+msgstr "Ja/Nee toetskoppeling"
 
 #: engines/agos/metaengine.cpp:232 engines/cge/metaengine.cpp:203
 #: engines/cge2/metaengine.cpp:216 engines/cine/metaengine.cpp:265
@@ -6054,10 +6020,8 @@ msgid "Right click"
 msgstr "Rechter klik"
 
 #: engines/agos/metaengine.cpp:244
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Exit cutscene"
-msgstr "Cutscene overslaan"
+msgstr "Cutscene beëindigen"
 
 #: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:198
 msgid "Music volume down"
@@ -6078,8 +6042,6 @@ msgid "Toggle sound effect on/off"
 msgstr "Geluidseffecten aan-/uitzetten"
 
 #: engines/agos/metaengine.cpp:278
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fast mode on/off"
 msgstr "Snelle modus aan-/uitzetten"
 
@@ -6091,10 +6053,8 @@ msgid "Walk forward"
 msgstr "Loop vooruit"
 
 #: engines/agos/metaengine.cpp:296
-#, fuzzy
-#| msgid "Run backward"
 msgid "Turn backward"
-msgstr "Ren achteruit"
+msgstr "Draai achteruit"
 
 #: engines/agos/metaengine.cpp:302 engines/mohawk/riven.cpp:901
 #: engines/wintermute/keymapper_tables.h:161
@@ -6113,10 +6073,8 @@ msgid "Turn right"
 msgstr "Draai Rechtsom"
 
 #: engines/agos/metaengine.cpp:316
-#, fuzzy
-#| msgid "Text speed slower / faster"
 msgid "Text speed - Fast"
-msgstr "Tekst langzamer / sneller"
+msgstr "Tekst snelheid - Snel"
 
 #: engines/agos/metaengine.cpp:321
 #, fuzzy
