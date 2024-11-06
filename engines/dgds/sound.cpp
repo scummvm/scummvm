@@ -463,7 +463,7 @@ void Sound::processInitSound(uint32 obj, const SoundData &data, Audio::Mixer::So
 	newSound->volume = MUSIC_VOLUME_DEFAULT;
 	newSound->reverb = -1;	// initialize to SCI invalid, it'll be set correctly in soundInitSnd() below
 
-	debug("processInitSound: %08x number %d, loop %d, prio %d, vol %d", obj,
+	debug(10, "processInitSound: %08x number %d, loop %d, prio %d, vol %d", obj,
 			obj, newSound->loop, newSound->priority, newSound->volume);
 
 	initSoundResource(newSound, data, soundType);
@@ -562,7 +562,7 @@ void Sound::processPlaySound(uint32 obj, bool playBed, bool restoring, const Sou
 	musicSlot->playBed = playBed;
 	musicSlot->volume = MUSIC_VOLUME_DEFAULT;
 
-	debug("processPlaySound: %08x number %d, sz %d, loop %d, prio %d, vol %d, bed %d", obj,
+	debug(10, "processPlaySound: %08x number %d, sz %d, loop %d, prio %d, vol %d, bed %d", obj,
 			resourceId, data._size, musicSlot->loop, musicSlot->priority, musicSlot->volume, playBed ? 1 : 0);
 
 	_music->soundPlay(musicSlot, restoring);

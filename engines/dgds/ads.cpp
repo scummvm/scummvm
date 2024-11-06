@@ -186,7 +186,7 @@ void ADSInterpreter::findUsedSequencesForSegment(int idx) {
 						}
 					}
 					if (!already_added) {
-						debug("ADS seg no %d (idx %d) uses seq %d %d", segno, idx, envno, seqno);
+						debug(10, "ADS seg no %d (idx %d) uses seq %d %d", segno, idx, envno, seqno);
 						_adsData->_usedSeqs[idx].push_back(seq);
 					}
 				}

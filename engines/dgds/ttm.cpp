@@ -836,6 +836,11 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		env._getPuts[seq._currentGetPutId]._surf.reset(surf);
 		break;
 	}
+	case 0x5000:
+		// This opcode does nothing in SQ5 demo
+		debug("TTM: 0x5000: Implement opcode? (%d %d %d %d %d)",
+				ivals[0], ivals[1], ivals[2], ivals[3], ivals[4]);
+		break;
 	case 0xa000: // DRAW PIXEL x,y:int
 		if (seq._drawWin.contains(ivals[0], ivals[1]))
 			_vm->_compositionBuffer.setPixel(ivals[0], ivals[1], seq._drawColFG);
