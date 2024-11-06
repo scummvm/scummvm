@@ -28,12 +28,7 @@
 namespace M4 {
 namespace Riddle {
 
-// Starting hashes for walker machines/sequences/etc
-#define WALKER_HASH 8			  // machine/data starting hash for wilbur
-#define WALKER_SERIES_HASH 0
-#define NUM_WALKER_SERIES  8
-#define SHADOW_SERIES_HASH 8
-#define NUM_SHADOW_SERIES  5
+#define WALKER_HASH 8			  // Machine/data starting hash for Ripley
 
 const int16 RIPLEY_SERIES_DIRS[] = {
 	0, 1, 2, 3, 4, -4
@@ -120,36 +115,28 @@ machine *Walker::walk_initialize_walker() {
 	machine *m;
 	int32 s;
 
-	if (!_G(player).walker_in_this_scene) {
-		_G(player).walker_visible = false;
-		m = nullptr;
+	// Wilbur walker
+	_G(player).walker_type = WALKER_PLAYER;
+	_G(player).shadow_type = SHADOW_PLAYER;
 
-	} else {
-		_G(player).walker_visible = true;
+	_G(globals)[GLB_TEMP_1] = _G(player).walker_type << 16;
+	_G(globals)[GLB_TEMP_2] = *RIPLEY_SERIES_DIRS << 24;  // starting series hash of default walker	        GAMECTRL loads shadows starting @ 0
+	_G(globals)[GLB_TEMP_3] = *RIPLEY_SHADOWS_DIRS << 24;  // starting series hash of default walker shadows. GAMECTRL loads shadows starting @ 10
 
-		// Wilbur walker
-		_G(player).walker_type = WALKER_PLAYER;
-		_G(player).shadow_type = SHADOW_PLAYER;
+	// initialize with bogus data (this is for the real walker)
+	s = _G(globals)[GLB_MIN_SCALE] + FixedMul((400 << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
+	_G(globals)[GLB_TEMP_4] = 320 << 16;
+	_G(globals)[GLB_TEMP_5] = 400 << 16;
+	_G(globals)[GLB_TEMP_6] = s;
+	_G(globals)[GLB_TEMP_7] = 3 << 16;	 // facing
 
-		_G(globals)[GLB_TEMP_1] = _G(player).walker_type << 16;
-		_G(globals)[GLB_TEMP_2] = WALKER_SERIES_HASH << 24;  // starting series hash of default walker	        GAMECTRL loads shadows starting @ 0
-		_G(globals)[GLB_TEMP_3] = SHADOW_SERIES_HASH << 24;  // starting series hash of default walker shadows. GAMECTRL loads shadows starting @ 10
+	m = TriggerMachineByHash(WALKER_HASH, nullptr, _G(player).walker_type + WALKER_HASH, 0, player_walker_callback, false, "PLAYER WALKER");
 
-		// initialize with bogus data (this is for the real walker)
-		s = _G(globals)[GLB_MIN_SCALE] + FixedMul((400 << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
-		_G(globals)[GLB_TEMP_4] = 320 << 16;
-		_G(globals)[GLB_TEMP_5] = 400 << 16;
-		_G(globals)[GLB_TEMP_6] = s;
-		_G(globals)[GLB_TEMP_7] = 3 << 16;	 // facing
+	// we need to all init sequences to happen immediately (init coordinates)
+	cycleEngines(nullptr, &(_G(currentSceneDef).depth_table[0]),
+		nullptr, (uint8 *)&_G(master_palette)[0], _G(inverse_pal)->get_ptr(), true);
 
-		m = TriggerMachineByHash(WALKER_HASH, nullptr, _G(player).walker_type + WALKER_HASH, 0, player_walker_callback, false, "PLAYER WALKER");
-
-		// we need to all init sequences to happen immediately (init coordinates)
-		cycleEngines(nullptr, &(_G(currentSceneDef).depth_table[0]),
-			nullptr, (uint8 *)&_G(master_palette)[0], _G(inverse_pal)->get_ptr(), true);
-
-		_G(inverse_pal)->release();
-	}
+	_G(inverse_pal)->release();
 
 	return m;
 }
