@@ -13,6 +13,11 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
   - Unterstützung für Unrest hinzugefügt.
   - Unterstützung für Rise of the Dragon hinzugefügt.
   - Unterstützung für Castle Master hinzugefügt.
+  - Unterstützung für Wait for it! Issue 3. Song for a Hare. hinzugefügt.
+  - Unterstützung für Mask Show hinzugefügt.
+  - Unterstützung für Marvellous Mice Adventures: Meeting Sea Rat hinzugefügt.
+  - Unterstützung für The Adventures of the Good Soldier Schweik hinzugefügt.
+  - Unterstützung für Marvellous Mice Adventures: Sea Rat's Birthday hinzugefügt.
 
  Neue Plattformen:
   - Unterstützung für SailfishOS hinzugefügt.
