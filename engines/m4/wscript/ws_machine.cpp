@@ -1184,7 +1184,7 @@ void sendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
 	bool sendToAll;
 	globalMsgReq *myGlobalMsgs, *tempGlobalMsg;
 
-	debugC(1, kDebugMessages, "Message %xh, %xh, %s, %xh, %s, %d",
+	debugC(1, kDebugMessages, "Message %xh, %lxh, %s, %xh, %s, %d",
 		msgHash, msgValue, recvM ? recvM->machName : "NONE",
 		machHash, sendM ? sendM->machName : "NONE", msgCount);
 
