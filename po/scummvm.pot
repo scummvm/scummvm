@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-04 21:01+0000\n"
+"POT-Creation-Date: 2024-11-06 17:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -10669,7 +10669,7 @@ msgstr ""
 msgid "Open system menu"
 msgstr ""
 
-#: engines/twine/detection.cpp:182
+#: engines/twine/detection.cpp:188
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr ""
 
