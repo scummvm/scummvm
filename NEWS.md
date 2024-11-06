@@ -32,6 +32,8 @@ For a more comprehensive changelog of the latest experimental code, see:
  AGI:
   - Fixed duration of timed text boxes. They were shown only half as long as
     they should be, making e.g. the King's Quest III intro hard to read.
+  - The predictive input dialog popup when clicking on the prompt line or in an input field
+    is now an optional game setting, disabled by default.
 
  AGOS:
   - Added keymapper support.
@@ -43,6 +45,11 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  BBVS:
   - Added keymapper support.
+
+ Bladerunner:
+  - Fixed a soft-lock case for Izo at Hawker's Circle.
+  - The "Designers cut" setting can be set in advance and persist for a new game.
+  - Improved, reliable application of custom random seeds.
 
  Cine:
   - Added keymapper support.
@@ -71,6 +78,9 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Improved keymapper support coverage.
   - Correctly implement aspect ratio correction following dosbox implementation.
   - More precise perspective matrix computation to match the original.
+
+ GLK/ADVSYS:
+  - Fixed parsing for input commands.
 
  Groovie:
   - Added keymapper support.
@@ -154,6 +164,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Tucker:
   - Added keymapper support.
+  - Fixed being unable to enter the Lower Hall in 2nd Chapter.
 
  TwinE:
   - Several collision related fixes
