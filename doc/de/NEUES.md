@@ -31,6 +31,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  AGI:
   - Anzeigedauer für zeitbasierte Text-Boxen korrigiert. Diese wurden nur halb so lang wie vorgesehen
     angezeigt, weshalb unter anderem der Intro-Text in King's Quest III nur schwer zu lesen war.
+  - Der "vorhersagende" Eingabe-Dialog, der bei einem Eingabefeld angezeigt wird, ist jetzt eine optionale
+    Spiel-Einstellung und standardmäßig deaktiviert.
 
  AGOS:
   - Unterstützung für Tastenkürzel hinzugefügt.
@@ -42,6 +44,11 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  BBVS:
   - Unterstützung für Tastenkürzel hinzugefügt.
+
+ Bladerunner:
+  - Absturz für Izo in Hawker's Circle korrigiert.
+  - Die "Designers cut"-Einstellung kann jetzt im Voraus gesetzt werden und wird für ein neues Spiel übernommen.
+  - Verbesserte Zuverlässigkeit bei der Nutzung selbst gewählter Seeds für den Zufallsgenerator.
 
  Cine:
   - Unterstützung für Tastenkürzel hinzugefügt.
@@ -70,6 +77,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
   - Verbesserte Unterstützung für Tastenkürzel.
   - Verbesserte Unterstützung für Seitenverhältniskorrektur, basierend auf DOSBox.
   - Verbesserung der Matrix-Berechnung, die nun eher dem Original entspricht.
+
+ GLK/ADVSYS:
+  - Verbesserte Interpretation von Eingabe-Befehlen.
 
  Groovie:
   - Unterstützung für Tastenkürzel hinzugefügt.
@@ -151,6 +161,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Tucker:
   - Unterstützung für Tastenkürzel hinzugefügt.
+  - Fehler behoben, durch den die untere Halle im zweiten Kapitel nicht betreten werden konnte.
 
  TwinE:
   - Einige Fehler der Kollisionserkennung behoben.
