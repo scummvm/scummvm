@@ -3075,6 +3075,7 @@ void Room203::parser() {
 				triggerMachineByHashCallback, "rip throws bucket");
 			sendWSMessage_10000(1, _ripley, _ripTossesBucket, 1, 47, 1,
 				_ripTossesBucket, 47, 47, 0);
+			break;
 		case 1:
 			terminateMachineAndNull(_ripley);
 			ws_unhide_walker();
