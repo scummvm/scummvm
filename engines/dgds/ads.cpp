@@ -567,8 +567,11 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 
 		Common::SharedPtr<TTMSeq> seq = findTTMSeq(enviro, seqnum);
 		TTMEnviro *env = findTTMEnviro(enviro);
-		if (!seq || !env)
-			error("ADS invalid seq requested %d %d", enviro, seqnum);
+		if (!seq || !env) {
+			// This happens in Willy Beamish FDD scene 24
+			warning("ADS op %04x invalid env + seq requested %d %d", code, enviro, seqnum);
+			break;
+		}
 
 		debug(10, "ADS 0x%04x: add scene - env %d seq %d (%s) runCount %d prop %d", code,
 					enviro, seqnum, env->_tags.getValOrDefault(seqnum).c_str(), runCount, unk);

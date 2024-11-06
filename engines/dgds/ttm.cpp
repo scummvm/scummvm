@@ -595,6 +595,10 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		seq._currentPalId = 0;
 		break;
 	case 0x0080: // FREE SHAPE
+		// This is a one-shot op only in Willy Beamish - in HoC and Dragon it's done every time
+		// (although it may not make any difference)
+		if (seq._executed && DgdsEngine::getInstance()->getGameId() == GID_WILLY)
+			break;
 		//debug("0x0080: Free from slot %d for seq %d env %d", seq._currentBmpId, seq._seqNum, env._enviro);
 		env._scriptShapes[seq._currentBmpId].reset();
 		break;
