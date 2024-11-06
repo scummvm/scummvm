@@ -532,7 +532,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0x1050: // WHILE finished, 2 params
 	case 0x1060: // WHILE not running, 2 params
 	case 0x1070: // WHILE running, 2 params
-	case 0x1080: // WHILE count?, 1 param (HOC+ only)
+	case 0x1080: // WHILE countdown <= , 1 param (HOC+ only)
 	case 0x1090: // WHILE ??, 1 param (HOC+ only)
 	case 0x1310: // IF paused, 2 params
 	case 0x1320: // IF not paused, 2 params
@@ -687,6 +687,11 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		break;
 	}
 
+	case 0x1420: // AND, 0 params - should not hit this here.
+	case 0x1430: // OR, 0 params - should not hit this here.
+		warning("ADS: Unexpected logic opcode 0x%04x - should be after IF/WHILE", code);
+		break;
+
 	case 0xF000:
 		debug(10, "ADS 0x%04x: set state 2, current idx (%d)", code, _adsData->_runningSegmentIdx);
 		if (_adsData->_runningSegmentIdx != -1)
@@ -734,8 +739,14 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		return false;
 
 	//// unknown / to-be-implemented
-	case 0x1420: // AND, 0 params
-	case 0x1430: // OR, 0 params
+	// The next 6 are in HoC code but maybe never used?
+	case 0x13A0: // IF some_ads_variable[0] <=
+	case 0x13A1: // IF some_ads_variable[1] <=
+	case 0x13B0: // IF some_ads_variable[0] >
+	case 0x13B1: // IF some_ads_variable[1] >
+	case 0x13C0: // IF some_ads_variable[0] ==
+	case 0x13C1: // IF some_ads_variable[1] ==
+
 	case 0xFF10:
 	case 0xFFF0: // END_IF, 0 params
 	default: {
