@@ -84,7 +84,7 @@ static void movelist_handle_targetfix(const fixed &xpermove, const fixed &ypermo
 	else if ((ypermove & 0xffff0000) == 0)
 		targety -= tfix;
 	// Y per move is -1 exactly, don't snap to finish
-	else if (ypermove == 0xffff0000) {
+	else if ((ypermove & 0xffffffff) == 0xffff0000) {
 	}
 	// Y per move is > -1, so finish the move
 	else if ((ypermove & 0xffff0000) == 0xffff0000)
