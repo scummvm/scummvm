@@ -205,6 +205,8 @@ Sound::~Sound() {
 
 	for (auto &data: _sfxData)
 		delete [] data._data;
+
+	delete _music;
 }
 
 void Sound::playAmigaSfx(const Common::String &filename, byte channel, byte volume) {
