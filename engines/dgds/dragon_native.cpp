@@ -20,6 +20,7 @@
  */
 
 #include "dgds/dragon_native.h"
+#include "dgds/includes.h"
 #include "dgds/globals.h"
 #include "dgds/scene.h"
 
@@ -33,7 +34,7 @@ void DragonNative::drawCountdown(FontManager::FontType fontType, int16 x, int16 
 	int16 currentMins = engine->getClock().getMins();
 	const DgdsFont *fnt = engine->getFontMan()->getFont(fontType);
 	Common::String str = Common::String::format("%d", countdownEnd - currentMins);
-	fnt->drawString(&engine->_compositionBuffer, str, x, y, 320 - x, 10);
+	fnt->drawString(&engine->_compositionBuffer, str, x, y, SCREEN_WIDTH - x, 10);
 }
 
 

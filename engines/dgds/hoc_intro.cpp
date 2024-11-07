@@ -42,7 +42,7 @@ void HocIntro::init() {
 		return;
 
 	_scrollCountdown2 = 137;
-	_xOffset2042 = 320;
+	_xOffset2042 = SCREEN_WIDTH;
 	_scrollCountdown1 = 150;
 	engine->_soundPlayer->loadMusic("INTRO1.SNG");
 	engine->_soundPlayer->playMusic(0);
@@ -101,8 +101,8 @@ void HocIntro::doScroll() {
 	// set clip window
 	_drawWin.top = 0;
 	_drawWin.left = MAX((int16)0, _xOffset2042);
-	_drawWin.right = 320;
-	_drawWin.bottom = 200;
+	_drawWin.right = SCREEN_WIDTH;
+	_drawWin.bottom = SCREEN_HEIGHT;
 	clean1(_scrollCountdown2);
 	clean2(_xOffset2042);
 	draw1(_scrollCountdown2);
@@ -110,8 +110,8 @@ void HocIntro::doScroll() {
 }
 
 static int16 _clipXOffset(int16 x1, int16 x2) {
-	if (x1 + x2 > 320)
-		x2 = 320 - x1;
+	if (x1 + x2 > SCREEN_WIDTH)
+		x2 = SCREEN_WIDTH - x1;
 
 	if (x2 < 0)
 		x2 = 0;
@@ -142,7 +142,7 @@ void HocIntro::doCopy(int16 x1, int16 y1, int16 x2, int16 y2) {
 	if (xx < _drawWin.left)
 		xx = _drawWin.left;
 
-	if (xx < 320) {
+	if (xx < SCREEN_WIDTH) {
 		DgdsEngine *engine = DgdsEngine::getInstance();
 		Graphics::ManagedSurface &bg = engine->getBackgroundBuffer();
 		Graphics::ManagedSurface &comp = engine->_compositionBuffer;

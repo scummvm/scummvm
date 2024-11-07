@@ -359,7 +359,7 @@ struct VQTDecodeState {
 	uint32 offset;
 	const byte *srcPtr;
 	byte *dstPtr;
-	uint16 rowStarts[200];
+	uint16 rowStarts[SCREEN_HEIGHT];
 };
 
 static inline byte _getVqtBits(struct VQTDecodeState *state, uint16 nbits) {
@@ -474,7 +474,7 @@ uint32 Image::loadVQT(Graphics::ManagedSurface *surf, uint32 toffset, Common::Se
 	uint32 tw = surf->w;
 	uint32 th = surf->h;
 	assert(th != 0);
-	if (th > 200)
+	if (th > SCREEN_HEIGHT)
 		error("Max VQT height supported is 200px");
 	VQTDecodeState state;
 	state.dstPtr = (byte *)surf->getPixels();

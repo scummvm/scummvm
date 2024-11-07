@@ -220,7 +220,7 @@ void Inventory::drawItems(Graphics::ManagedSurface &surf) {
 		return;
 
 	// TODO: does this need to be adjusted ever?
-	const Common::Rect drawMask(0, 0, 320, 200);
+	const Common::Rect drawMask(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	int offset = _itemOffset;
 	Common::Array<GameItem> &items = engine->getGDSScene()->getGameItems();
 	for (auto & item: items) {

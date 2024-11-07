@@ -1881,7 +1881,7 @@ void DragonArcade::moveBladeX() {
 		}
 	} else if (_scrollVelocityX > 0) {
 		if (_scrollXOffset == 282) {
-			if (_npcState[0].x < 320)
+			if (_npcState[0].x < SCREEN_WIDTH)
 				_bladeXMove = 4;
 
 		} else if (0xa0 < _npcState[0].x) {

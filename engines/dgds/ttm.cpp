@@ -498,7 +498,7 @@ int16 TTMInterpreter::doOpInitCreditScroll(const Image *img) {
  bool TTMInterpreter::doOpCreditsScroll(const Image *img, int16 ygap, int16 ymax, int16 xoff, int16 measuredWidth, const Common::Rect &clipRect) {
 	int nframes = img->loadedFrameCount();
 	bool scrollFinished = true;
-	int y = 200 - ymax;
+	int y = SCREEN_HEIGHT - ymax;
 	for (int i = 0; i < nframes; i++) {
 		int width = img->width(i);
 		int height = img->height(i);
@@ -511,7 +511,7 @@ int16 TTMInterpreter::doOpInitCreditScroll(const Image *img) {
 			scrollFinished = false;
 		}
 		y += ygap + height;
-		if (y > 200)
+		if (y > SCREEN_HEIGHT)
 			break;
 	}
 	return scrollFinished;
@@ -780,7 +780,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 			// Speed 4 should complete fade in 2 seconds (eg, Dynamix logo fade)
 
 			// TODO: this is a pretty bad way to do it - should pump messages in this loop?
-			for (int i = 0; i < 320; i += ivals[3]) {
+			for (int i = 0; i < SCREEN_WIDTH; i += ivals[3]) {
 				int fade = MIN(i / 5, 63);
 				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], fade * 4);
 				g_system->updateScreen();
@@ -801,10 +801,10 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		if (ivals[3] == 0) {
 			_vm->getGamePals()->setPalette();
 		} else {
-			for (int i = 320; i > 0; i -= ivals[3]) {
+			for (int i = SCREEN_WIDTH; i > 0; i -= ivals[3]) {
 				int fade = MAX(0, MIN(i / 5, 63));
 				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], fade * 4);
-				if (i == 320) {
+				if (i == SCREEN_WIDTH) {
 					// update screen first to make the initial fade-in work
 					g_system->copyRectToScreen(_vm->_compositionBuffer.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 				}

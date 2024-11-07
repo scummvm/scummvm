@@ -199,7 +199,7 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 	case 0xA104: // DRAW FILLED RECT
 		if (_doingInit) {
 			ArcadeFloor data;
-			data.x = (page - 1) * 320 + ivals[0];
+			data.x = (page - 1) * SCREEN_WIDTH + ivals[0];
 			data.width = ivals[2];
 			data.yval = (byte)ivals[1];
 			data.flag = false;
@@ -213,7 +213,7 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 	case 0xA114: // DRAW EMPTY RECT
 		if (_doingInit) {
 			ArcadeFloor data;
-			data.x = (page - 1) * 320 + ivals[0];
+			data.x = (page - 1) * SCREEN_WIDTH + ivals[0];
 			data.width = ivals[2];
 			data.yval = (byte)ivals[1];
 			data.flag = true;

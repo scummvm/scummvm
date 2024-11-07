@@ -574,7 +574,7 @@ void SliderGadget::draw(Graphics::ManagedSurface *dst) const {
 
 	// Draw the slider control in the right spot
 	const Image *uiCorners = RequestData::getCorners();
-	uiCorners->drawBitmap(SLIDER_HANDLE_FRAME, x + _handleX, y, Common::Rect(0, 0, 320, 200), *dst);
+	uiCorners->drawBitmap(SLIDER_HANDLE_FRAME, x + _handleX, y, Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), *dst);
 }
 
 SliderGadget::SliderGadget() : _lock(false), _steps(0), _gadget2_i1(0),
