@@ -98,6 +98,9 @@ enum {
 	kTinselDebugMusic = 2 << 3
 };
 
+// Just for development
+#define NOIR_SKIP_INTRO 0
+
 #define DEBUG_BASIC 1
 #define DEBUG_INTERMEDIATE 2
 #define DEBUG_DETAILED 3
