@@ -21,6 +21,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "common/translation.h"
+
 namespace Sword2 {
 
 static const ADGameDescription gameDescriptions[] = {
@@ -411,6 +413,18 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
+
+	{	// Remastered version, not supported
+		"sword2",
+		_s("Remastered edition is not supported. Please, use the classic version"),
+		AD_ENTRY2s("general.clu", "5b237f3d0bbe05ceb94e271616c6e560", 33964,
+				   "docks.clu",   "9b5ddad1fb436b4897df9c6632cccbbe", 21641864),
+		Common::UNK_LANG,
+		Common::kPlatformUnknown,
+		ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+
 
 	AD_TABLE_END_MARKER
 };
