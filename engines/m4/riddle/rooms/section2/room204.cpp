@@ -62,7 +62,7 @@ void Room204::init() {
 	_field44 = -1;
 	_field48 = -1;
 	_fieldC4 = -1;
-	_fieldBC = -1;
+	_fieldBC_trigger = -1;
 	_fieldEC = -1;
 	_fieldF0 = -1;
 	_field104 = 0;
@@ -200,12 +200,381 @@ void Room204::init() {
 }
 
 void Room204::pre_parser() {
+	if (player_said("enter", "PAGODA") || player_said("walk to", "PAGODA") || player_said("walk to", "stairs")) {
+		if (player_been_here(205)) {
+			_G(player).need_to_walk = false;
+			_G(player).ready_to_walk = true;
+			_G(player).waiting_for_walk = false;
+		}
+	}
+
+	if (player_been_here(205) && inv_object_is_here("GONG")) {
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+	}
 }
 
 void Room204::parser() {
 }
 
 void Room204::daemon() {
+	switch (_G(kernel).trigger) {
+	case 5:
+		digi_play("204r47", 1, 255, -1, -1);
+		break;
+
+	case 9:
+		player_set_commands_allowed(false);
+		ws_hide_walker(_G(my_walker));
+		series_play("204rp99", 3840, 0, 11, 5, 0, 100, 0, 0, 0, -1);
+		kernel_timing_trigger(130, 11, nullptr);
+
+		break;
+
+	case 10:
+		player_set_commands_allowed(false);
+		ws_hide_walker(_G(my_walker));
+		series_play("204up", 3840, 16, 11, 5, 0, 100, 0, 0, 0, -1);
+		kernel_timing_trigger(90, 11, nullptr);
+
+		break;
+
+	case 11:
+		pal_fade_init(_G(master_palette), 21, 255, 0, 15, 12);
+		break;
+
+	case 12:
+		interface_show();
+		_G(game).new_room = 205;
+
+		break;
+
+	case 15:
+		ws_unhide_walker(_G(my_walker));
+		sendWSMessage_10000(_G(my_walker), 440, 330, 3, 50, true);
+
+		break;
+
+	case 50:
+		player_set_commands_allowed(true);
+		break;
+
+	case 500:
+		player_set_commands_allowed(false);
+		kernel_timing_trigger(1, 501, nullptr);
+
+		break;
+
+	case 501:
+		_ripDeltaMachineStateMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, _G(player_info).depth, 0, triggerMachineByHashCallback, "Rip Delta Machine State");
+		sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripDropsSeries, 1, 2, 502, _ripDropsSeries, 2, 2, 0);
+
+		break;
+
+	case 502:
+		digi_play("204_s02", 1, 255, -1, -1);
+		sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripDropsSeries, 3, 40, 503, _ripDropsSeries, 40, 40, 0);
+
+		break;
+
+	case 503:
+		digi_unload("204_s02");
+		terminateMachine(_ripDeltaMachineStateMach);
+		_ripDeltaMachineStateMach = nullptr;
+		series_unload(_ripDropsSeries);
+		ws_demand_location(_G(my_walker), 1750, 328);
+		ws_demand_facing(_G(my_walker), 5);
+		_ripTrekHeadTurnPos5Series = series_load("RIP TREK HEAD TURN POS5", -1, nullptr);
+		setGlobals1(_ripTrekHeadTurnPos5Series, 1, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 504);
+
+		break;
+
+	case 504:
+		sendWSMessage_140000(_G(my_walker), 505);
+		break;
+
+	case 505:
+		setGlobals1(_ripTrekHeadTurnPos5Series, 8, 12, 12, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 506);
+
+		break;
+
+	case 506:
+		sendWSMessage_140000(_G(my_walker), 507);
+		break;
+
+	case 507:
+		series_unload(_ripTrekHeadTurnPos5Series);
+		DisposePath(_mcMach->walkPath);
+		_mcMach->walkPath = CreateCustomPath(1770, 337, -1);
+
+		ws_custom_walk(_mcMach, 10, 509, true);
+
+		break;
+
+	case 509:
+		ws_walk(_G(my_walker), 1751, 329, nullptr, 512, 4, true);
+
+		break;
+
+	case 512:
+		digi_preload("204R03", -1);
+		_ripTrekLHandTalkPos4Series = series_load("RIP TREK L HAND TALK POS4", -1, nullptr);
+		setGlobals1(_ripTrekLHandTalkPos4Series, 1, 5, 5, 5, 0, 6, 9, 6, 9, 1, 10, 17, 1, 1, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 513);
+
+		break;
+
+	case 513:
+		sendWSMessage_120000(_G(my_walker), -1);
+		sendWSMessage_190000(_G(my_walker), 20);
+		digi_play("204r01", 1, 255, 515, -1);
+
+		break;
+
+	case 515:
+		sendWSMessage_130000(_G(my_walker), 516);
+
+		break;
+
+	case 516:
+		sendWSMessage_150000(_G(my_walker), 517);
+
+		break;
+
+	case 517:
+		series_unload(_ripTrekLHandTalkPos4Series);
+		_fieldD4 = 3;
+		_fieldDC = 1;
+		_field108 = 1;
+		kernel_timing_trigger(1, 574, nullptr);
+		kernel_timing_trigger(2, 518, nullptr);
+
+		break;
+
+	case 518:
+		_fieldD4 = 3;
+		_fieldBC_trigger = kernel_trigger_create(520);
+
+		break;
+
+	case 520:
+		_fieldD4 = 6;
+		_fieldC0_trigger = kernel_trigger_create(520);
+
+		break;
+
+	case 521:
+		digi_play("204m01", 1, 255, 522, -1);
+		break;
+
+	case 522:
+		_fieldD4 = 3;
+		_fieldBC_trigger = kernel_trigger_create(523);
+
+		break;
+
+	case 523:
+		_ripTrekLHandTalkPos4Series = series_load("RIP TREK L HAND TALK POS4", -1, nullptr);
+		setGlobals1(_ripTrekLHandTalkPos4Series, 1, 5, 5, 5, 0, 6, 9, 6, 9, 1, 10, 17, 1, 1, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 524);
+
+		break;
+
+	case 524:
+		sendWSMessage_120000(_G(my_walker), -1);
+		sendWSMessage_190000(_G(my_walker), 20);
+		digi_play("204r02", 1, 255, 525, -1);
+
+		break;
+
+	case 525:
+		sendWSMessage_130000(_G(my_walker), 526);
+		break;
+
+	case 526:
+		sendWSMessage_150000(_G(my_walker), 527);
+		break;
+
+	case 527:
+		series_unload(_ripTrekLHandTalkPos4Series);
+		_meiShowsRipHerPassesSeries = series_load("MEI SHOWS RIP HER PASSES", -1, nullptr);
+		_fieldD4 = 7;
+		_fieldCC_trigger = kernel_trigger_create(528);
+
+		break;
+
+	case 528:
+		digi_play("204m02", 1, 255, -1, -1);
+		kernel_examine_inventory_object("PING PASS", _G(master_palette), 5, 1, 370, 234, -1, nullptr, -1);
+		_fieldD4 = 3;
+		_fieldBC_trigger = kernel_trigger_create(529);
+
+		break;
+
+	case 529:
+		_ripTrekLHandTalkPos4Series = series_load("RIP TREK L HAND TALK POS4", -1, nullptr);
+		setGlobals1(_ripTrekLHandTalkPos4Series, 1, 5, 5, 5, 0, 6, 9, 6, 9, 1, 10, 17, 1, 1, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 530);
+
+		break;
+
+	case 530:
+		sendWSMessage_120000(_G(my_walker), -1);
+		sendWSMessage_190000(_G(my_walker), 20);
+		digi_play("204r03", 1, 255, 531, -1);
+
+		break;
+
+	case 531:
+	case 532:
+	case 533:
+	case 535:
+	case 536:
+	case 537:
+	case 538:
+	case 539:
+	case 540:
+	case 541:
+	case 542:
+	case 543:
+	case 544:
+	case 545:
+	case 546:
+	case 547:
+	case 548:
+	case 549:
+	case 550:
+	case 551:
+	case 555:
+	case 556:
+	case 557:
+	case 558:
+	case 559:
+	case 567:
+	case 569:
+	case 570:
+	case 571:
+	case 572:
+	case 574:
+	case 576:
+	case 577:
+	case 578:
+	case 579:
+	case 580:
+	case 581:
+	case 582:
+	case 583:
+	case 584:
+	case 588:
+	case 590:
+	case 592:
+	case 593:
+	case 594:
+	case 596:
+	case 597:
+	case 603:
+	case 604:
+	case 605:
+	case 606:
+	case 607:
+	case 608:
+	case 609:
+	case 611:
+	case 612:
+	case 613:
+	case 614:
+	case 615:
+	case 616:
+	case 619:
+	case 620:
+	case 621:
+	case 622:
+	case 623:
+	case 624:
+	case 625:
+	case 626:
+	case 629:
+	case 630:
+	case 631:
+	case 632:
+	case 633:
+	case 634:
+	case 635:
+	case 636:
+	case 637:
+	case 638:
+	case 639:
+	case 647:
+	case 648:
+	case 649:
+	case 650:
+	case 651:
+	case 652:
+	case 660:
+	case 661:
+	case 662:
+	case 663:
+	case 664:
+	case 665:
+	case 666:
+	case 667:
+	case 669:
+	case 670:
+	case 675:
+	case 676:
+	case 677:
+	case 678:
+	case 679:
+	case 680:
+	case 681:
+	case 682:
+	case 683:
+	case 684:
+	case 687:
+	case 688:
+	case 689:
+	case 691:
+	case 692:
+	case 693:
+	case 694:
+	case 695:
+	case 696:
+	case 697:
+	case 699:
+	case 700:
+	case 701:
+	case 702:
+	case 703:
+	case 708:
+	case 709:
+	case 710:
+	case 711:
+	case 712:
+	case 713:
+	case 714:
+	case 715:
+	case 716:
+	case 719:
+	case 720:
+	case 721:
+	case 722:
+	case 723:
+	case 725:
+	case 726:
+	case 727:
+	case 728:
+	case 729:
+	case 730:
+	case 1995:
+		break;
+
+	default:
+		break;
+	}
+
 }
 
 void Room204::initWalkerSeries() {

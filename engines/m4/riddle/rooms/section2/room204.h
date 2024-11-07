@@ -50,8 +50,11 @@ private:
 	int32 _field44 = 0;
 	int32 _field48 = 0;
 	int32 _field68 = 0;
-	int32 _fieldBC = 0;
+	int32 _fieldBC_trigger = 0;
+	int32 _fieldC0_trigger = 0;
 	int32 _fieldC4 = 0;
+	int32 _fieldCC_trigger = 0;
+	int32 _fieldD4 = 0;
 	int32 _fieldDC = 0;
 	int32 _fieldE0 = 0;
 	int32 _fieldE4 = 0;
@@ -65,11 +68,15 @@ private:
 
 	int32 _courtyardGongSeries = 0;
 	int32 _malletSpriteSeries = 0;
+	int32 _meiShowsRipHerPassesSeries = 0;
 	int32 _ripDropsSeries = 0;
+	int32 _ripTrekHeadTurnPos5Series = 0;
+	int32 _ripTrekLHandTalkPos4Series = 0;
 
 	machine *_courtyardGongMach = nullptr;
 	machine *_mcMach = nullptr;
 	machine *_malletSpriteMach = nullptr;
+	machine *_ripDeltaMachineStateMach = nullptr;
 	machine *_silverButterflyCoinMach = nullptr;
 };
 

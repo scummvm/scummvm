@@ -29,8 +29,6 @@ namespace M4 {
 #define _GT(X) _G(triggers)._##X
 
 int32 kernel_trigger_create(int32 trigger_num) {
-	int32 new_trigger;
-
 	if (trigger_num < 0)
 		return (trigger_num);
 
@@ -38,7 +36,7 @@ int32 kernel_trigger_create(int32 trigger_num) {
 		error_show(FL, 'BADT', "bad trigger. %d > 0xffff", trigger_num);
 	}
 
-	new_trigger = trigger_num + (_G(game).room_id << 16) + (_G(kernel).trigger_mode << 28);
+	int32 new_trigger = trigger_num + (_G(game).room_id << 16) + (_G(kernel).trigger_mode << 28);
 
 	return new_trigger;
 }
@@ -46,8 +44,8 @@ int32 kernel_trigger_create(int32 trigger_num) {
 bool kernel_trigger_dispatch_now(int32 trigger_num) {
 	if (g_engine->getGameType() == GType_Riddle)
 		return kernel_trigger_dispatchx(trigger_num);
-	else
-		return kernel_trigger_dispatchx(kernel_trigger_create(trigger_num));
+
+	return kernel_trigger_dispatchx(kernel_trigger_create(trigger_num));
 }
 
 void cisco_dispatch_triggers() {
