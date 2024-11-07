@@ -48,13 +48,13 @@ void setGlobals1(int series, int val2, int val3, int val4, int val5,
 	_G(globals)[GLB_TEMP_12] = val12 << 16;
 	_G(globals)[GLB_TEMP_13] = val13 << 16;
 	_G(globals)[GLB_TEMP_14] = val14 << 16;
-	_G(globals)[V021] = val15 << 16;
-	_G(globals)[V022] = val16 << 16;
-	_G(globals)[V024] = val17 << 16;
-	_G(globals)[V025] = val18 << 16;
-	_G(globals)[V026] = val19 << 16;
-	_G(globals)[V027] = val20 << 16;
-	_G(globals)[V028] = val21 << 16;
+	_G(globals)[GLB_TEMP_15] = val15 << 16;
+	_G(globals)[GLB_TEMP_16] = val16 << 16;
+	_G(globals)[GLB_TEMP_18] = val17 << 16;
+	_G(globals)[GLB_TEMP_19] = val18 << 16;
+	_G(globals)[GLB_TEMP_20] = val19 << 16;
+	_G(globals)[GLB_TEMP_21] = val20 << 16;
+	_G(globals)[GLB_TEMP_22] = val21 << 16;
 }
 
 void setGlobals3(int series, int val1, int val2) {
@@ -79,8 +79,8 @@ machine *triggerMachineByHash_3000(int myHash, int dataHash, int normalDir, int 
 	_G(globals)[GLB_TEMP_3] = shadowDir << 24;
 	_G(globals)[GLB_TEMP_4] = param1 << 16;
 	_G(globals)[GLB_TEMP_5] = param2 << 16;
-	_G(globals)[GLB_TEMP_6] = MulSF16((param2 << 16) - _G(globals)[V002],
-		_G(globals)[V006]) + _G(globals)[V004];
+	_G(globals)[GLB_TEMP_6] = MulSF16((param2 << 16) - _G(globals)[GLB_MIN_Y],
+		_G(globals)[GLB_SCALER]) + _G(globals)[GLB_MIN_SCALE];
 	_G(globals)[GLB_TEMP_7] = NUMS[index] << 16;
 
 	machine *result = TriggerMachineByHash(myHash, nullptr, dataHash + 8, 0,
@@ -114,8 +114,8 @@ void sendWSMessage_10000(machine *mach, int destX, int destY, int facing, int tr
 
 	_G(globals)[GLB_TEMP_1] = destX << 16;
 	_G(globals)[GLB_TEMP_2] = destY << 16;
-	_G(globals)[GLB_TEMP_3] = MulSF16((destY << 16) - _G(globals)[V002], _G(globals)[V006])
-		+ _G(globals)[V004];
+	_G(globals)[GLB_TEMP_3] = MulSF16((destY << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER])
+		+ _G(globals)[GLB_MIN_SCALE];
 	_G(globals)[GLB_TEMP_4] = (facing > 0 ? FACINGS[facing] : -1) << 16;
 	_G(globals)[GLB_TEMP_5] = kernel_trigger_create(trigger);
 	_G(globals)[GLB_TEMP_6] = complete_walk << 16;
@@ -189,7 +189,7 @@ void sendWSMessage_110000(machine *mach, int trigger) {
 	if (!trigger)
 		trigger = -1;
 
-	_G(globals)[V023] = kernel_trigger_create(trigger);
+	_G(globals)[GLB_TEMP_17] = kernel_trigger_create(trigger);
 	sendWSMessage(ACTION_17 << 16, 0, mach, 0, nullptr, 1);
 }
 
@@ -201,7 +201,7 @@ void sendWSMessage_120000(machine *mach, int trigger) {
 	if (!trigger)
 		trigger = -1;
 
-	_G(globals)[V023] = kernel_trigger_create(trigger);
+	_G(globals)[GLB_TEMP_17] = kernel_trigger_create(trigger);
 	sendWSMessage(ACTION_18 << 16, 0, mach, 0, nullptr, 1);
 }
 
@@ -213,7 +213,7 @@ void sendWSMessage_130000(machine *recv, int val1) {
 	if (val1 == 0)
 		val1 = -1;
 
-	_G(globals)[V023] = kernel_trigger_create(val1);
+	_G(globals)[GLB_TEMP_17] = kernel_trigger_create(val1);
 	sendWSMessage(ACTION_19 << 16, 0, recv, 0, 0, 1);
 }
 
@@ -225,7 +225,7 @@ void sendWSMessage_140000(machine *mach, int trigger) {
 	if (!trigger)
 		trigger = -1;
 
-	_G(globals)[V023] = kernel_trigger_create(trigger);
+	_G(globals)[GLB_TEMP_17] = kernel_trigger_create(trigger);
 	sendWSMessage(ACTION_20 << 16, 0, mach, 0, nullptr, 1);
 }
 
@@ -234,7 +234,7 @@ void sendWSMessage_140000(int trigger) {
 }
 
 void sendWSMessage_150000(machine *mach, int trigger) {
-	_G(globals)[V023] = kernel_trigger_create(trigger);
+	_G(globals)[GLB_TEMP_17] = kernel_trigger_create(trigger);
 	sendWSMessage(ACTION_21 << 16, 0, mach, 0, nullptr, 1);
 }
 
@@ -246,8 +246,8 @@ void sendWSMessage_160000(machine *mach, int val1, int trigger) {
 	if (!trigger)
 		trigger = -1;
 
-	_G(globals)[V023] = kernel_trigger_create(trigger);
-	_G(globals)[V024] = val1 << 16;
+	_G(globals)[GLB_TEMP_17] = kernel_trigger_create(trigger);
+	_G(globals)[GLB_TEMP_18] = val1 << 16;
 	sendWSMessage(ACTION_22 << 16, 0, mach, 0, nullptr, 1);
 }
 
@@ -258,7 +258,7 @@ void sendWSMessage_160000(int val1, int trigger) {
 void sendWSMessage_180000(machine *recv, int trigger) {
 	if (!trigger)
 		trigger = -1;
-	_G(globals)[V023] = kernel_trigger_create(trigger);
+	_G(globals)[GLB_TEMP_17] = kernel_trigger_create(trigger);
 
 	sendWSMessage(ACTION_24 << 16, 0, recv, 0, nullptr, 1);
 }
@@ -268,7 +268,7 @@ void sendWSMessage_180000(int trigger) {
 }
 
 void sendWSMessage_190000(machine *recv, int trigger) {
-	_G(globals)[V023] = trigger << 16;
+	_G(globals)[GLB_TEMP_17] = trigger << 16;
 	sendWSMessage(ACTION_25 << 16, 0, recv, 0, nullptr, 1);
 }
 
@@ -277,13 +277,13 @@ void sendWSMessage_190000(int trigger) {
 }
 
 void sendWSMessage_1a0000(machine *recv, int trigger) {
-	_G(globals)[V024] = trigger << 16;
+	_G(globals)[GLB_TEMP_18] = trigger << 16;
 	sendWSMessage(ACTION_26 << 16, 0, recv, 0, nullptr, 1);
 }
 
 void sendWSMessage_1e0000(machine *recv, int val1, int val2) {
-	_G(globals)[V023] = val1 << 16;
-	_G(globals)[V024] = val2 << 16;
+	_G(globals)[GLB_TEMP_17] = val1 << 16;
+	_G(globals)[GLB_TEMP_18] = val2 << 16;
 	sendWSMessage(ACTION_30 << 16, 0, recv, 0, nullptr, 1);
 }
 
@@ -292,8 +292,8 @@ void sendWSMessage_1e0000(int val1, int val2) {
 }
 
 void sendWSMessage_1f0000(machine *recv, int val1, int val2) {
-	_G(globals)[V023] = val1 << 16;
-	_G(globals)[V024] = val2 << 16;
+	_G(globals)[GLB_TEMP_17] = val1 << 16;
+	_G(globals)[GLB_TEMP_18] = val2 << 16;
 	sendWSMessage(ACTION_31 << 16, 0, recv, 0, nullptr, 1);
 }
 
@@ -302,12 +302,12 @@ void sendWSMessage_1f0000(int val1, int val2) {
 }
 
 void sendWSMessage_200000(machine *recv, int trigger) {
-	_G(globals)[V023] = (trigger << 16) / 100;
+	_G(globals)[GLB_TEMP_17] = (trigger << 16) / 100;
 	sendWSMessage(ACTION_32 << 16, 0, recv, 0, nullptr, 1);
 }
 
 void sendWSMessage_210000(machine *recv, int trigger) {
-	_G(globals)[V023] = (trigger << 16) / 100;
+	_G(globals)[GLB_TEMP_17] = (trigger << 16) / 100;
 	sendWSMessage(ACTION_33 << 16, 0, recv, 0, nullptr, 1);
 }
 

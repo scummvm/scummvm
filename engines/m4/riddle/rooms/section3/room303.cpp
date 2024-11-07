@@ -2005,8 +2005,8 @@ void Room303::priestTalk(bool flag, int trigger) {
 	_G(globals)[GLB_TEMP_10] = 0xD << 24;
 	_G(globals)[GLB_TEMP_5] = (flag ? 480 : 706) << 16;
 	_G(globals)[GLB_TEMP_6] = 1 << 24;
-	_G(globals)[GLB_TEMP_7] = MulSF16(_G(globals)[V006],
-		(1 << 24) - _G(globals)[V002]) + _G(globals)[V004];
+	_G(globals)[GLB_TEMP_7] = MulSF16((1 << 24) - _G(globals)[GLB_MIN_Y],
+		_G(globals)[GLB_SCALER]) + _G(globals)[GLB_MIN_SCALE];
 	_G(globals)[GLB_TEMP_8] = (flag ? 1 : 0) << 16;
 	_G(globals)[GLB_TEMP_11] = trigger << 16;
 	_G(globals)[GLB_TEMP_12] = 0xdc28;
