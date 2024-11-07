@@ -101,7 +101,10 @@ private:
 	static const int kQueuedInputEventDelay = 50;
 
 	struct EventWithDelay : public Common::Event {
-		/** The time which the delay starts counting from */
+		/** An original timestamp that identifies this event and the delayed ones connected to it that will follow */
+		uint32 originTimeMillis;
+
+		/** The time which the delay starts counting from. It can be set to be later than originTimeMillis */
 		uint32 referTimeMillis;
 
 		/** The delay for the event to be handled */
@@ -113,10 +116,11 @@ private:
 		/** A status flag indicating whether the "connected" event was handled */
 		bool connectedTypeExecuted;
 
-		EventWithDelay() : referTimeMillis(0), delayMillis(0), connectedType(Common::EVENT_INVALID), connectedTypeExecuted(false) {
+		EventWithDelay() : originTimeMillis(0), referTimeMillis(0), delayMillis(0), connectedType(Common::EVENT_INVALID), connectedTypeExecuted(false) {
 		}
 
 		void reset() {
+			originTimeMillis = 0;
 			referTimeMillis = 0;
 			delayMillis = 0;
 			connectedType = Common::EVENT_INVALID;

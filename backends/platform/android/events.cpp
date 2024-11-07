@@ -814,19 +814,21 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			Common::Event ev1 = ev0;
 			ev1.type = down; // mouse down
 			_event_queue_lock->lock();
+			uint32 originTimeForDelayedEventGrp = getMillis(true);
 			if (_touch_mode != TOUCH_MODE_TOUCHPAD) {
 				// In this case the mouse move is done in "direct mode"
 				// ie. the cursor jumps to where the tap occurred
 				// so we don't have relMouse coordinates to set for the event
 				// However, in Direct Touch mode, some games seem to expect a delay 
-				// between the move event and the subsequence mouse down event (eg. Curse of Monkey Island, Tony Tough)
-				// Thus, thie Mouse Button Down event is also sent with a delay
+				// between the move event and the subsequent mouse down event (eg. Curse of Monkey Island, Tony Tough)
+				// Thus, this Mouse Button Down event is also sent with a delay
 				_event_queue.push(ev0);
 				_delayedMouseBtnDownEvent.mouse = ev1.mouse;
 				_delayedMouseBtnDownEvent.type = down;
-				_delayedMouseBtnDownEvent.referTimeMillis = getMillis(true);
+				_delayedMouseBtnDownEvent.referTimeMillis = originTimeForDelayedEventGrp;
+				_delayedMouseBtnDownEvent.originTimeMillis = originTimeForDelayedEventGrp;
 				_delayedMouseBtnDownEvent.delayMillis = kQueuedInputEventDelay;
-				_delayedMouseBtnDownEvent.connectedType = ev0.type;
+				_delayedMouseBtnDownEvent.connectedType = ev0.type; // Common::EVENT_MOUSEMOVE
 				_delayedMouseBtnDownEvent.connectedTypeExecuted = false;
 			} else {
 				_event_queue.push(ev1);
@@ -837,9 +839,10 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			// Mouse-up event is handled with a small delay as some engines require such a delay for mouse up events (Gob, Toonstruck)
 			// See bug ticket: https://bugs.scummvm.org/ticket/5942
 //			LOGD("JE_TAP - VALID: ev0: mx %d my %d t: %d | ev1: mx %d my %d t: %d | ev2: mx %d my %d t: %d", ev0.mouse.x, ev0.mouse.y, ev0.type, ev1.mouse.x, ev1.mouse.y, ev1.type, ev2.mouse.x, ev2.mouse.y, ev2.type);
-			_delayedMouseBtnUpEvent.referTimeMillis = getMillis(true);
+			_delayedMouseBtnUpEvent.referTimeMillis = originTimeForDelayedEventGrp;
+			_delayedMouseBtnUpEvent.originTimeMillis = originTimeForDelayedEventGrp;
 			_delayedMouseBtnUpEvent.delayMillis = kQueuedInputEventDelay;
-			_delayedMouseBtnUpEvent.connectedType = ev1.type;
+			_delayedMouseBtnUpEvent.connectedType = ev1.type;  // down (EVENT_MBUTTONDOWN, EVENT_RBUTTONDOWN, EVENT_LBUTTONDOWN)
 			_delayedMouseBtnUpEvent.connectedTypeExecuted = false;
 			_event_queue_lock->unlock();
 		}
@@ -1042,8 +1045,12 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 			ev1.type = multitype;
 			if (ev1.type == Common::EVENT_RBUTTONDOWN || ev1.type == Common::EVENT_MBUTTONDOWN) {
+				// INFO: Cases for delayed actions:
+				// JE_MULTI: MV + DelayedDown + possible DelayedUp  (Direct Touch)
+				// JE_TAP:   MV + DelayedDown + DelayedUp           (Direct Touch)
+				// JE_TAP:   Down + DelayedUp                       (Touchpad)
 				pushDelayedTouchMouseBtnEvents();
-
+				uint32 originTimeForDelayedEventGrp = getMillis(true);
 				if (_touch_mode != TOUCH_MODE_TOUCHPAD) {
 					// Only send an early move event if:
 					// - in direct touch mode
@@ -1052,10 +1059,28 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 					_event_queue.push(ev0);
 					_delayedMouseBtnDownEvent.mouse = ev1.mouse;
 					_delayedMouseBtnDownEvent.type = ev1.type;
-					_delayedMouseBtnDownEvent.referTimeMillis = getMillis(true);
+					_delayedMouseBtnDownEvent.referTimeMillis = originTimeForDelayedEventGrp;
+					_delayedMouseBtnDownEvent.originTimeMillis = originTimeForDelayedEventGrp;
 					_delayedMouseBtnDownEvent.delayMillis = kQueuedInputEventDelay;
-					_delayedMouseBtnDownEvent.connectedType = ev0.type;
+					_delayedMouseBtnDownEvent.connectedType = ev0.type; // Common::EVENT_MOUSEMOVE
 					_delayedMouseBtnDownEvent.connectedTypeExecuted = false;
+					_event_queue_lock->unlock();
+				} else {
+					pushEvent(ev1);
+				}
+			} else  if (ev1.type == Common::EVENT_RBUTTONUP || ev1.type == Common::EVENT_MBUTTONUP) {
+				if (_touch_mode != TOUCH_MODE_TOUCHPAD && _delayedMouseBtnDownEvent.delayMillis > 0) {
+				// This is a case when the mouse up event for the multitouch gesture was sent too soon
+				// after the last down event (which in direct touch mode is "scheduled" for delayed execution)
+				// In that case, the mouse up event has to be delayed as well
+					_event_queue_lock->lock();
+					_delayedMouseBtnUpEvent.mouse = ev1.mouse;
+					_delayedMouseBtnUpEvent.type = ev1.type;
+					_delayedMouseBtnUpEvent.referTimeMillis = getMillis(true);
+					_delayedMouseBtnUpEvent.originTimeMillis = _delayedMouseBtnDownEvent.originTimeMillis;
+					_delayedMouseBtnUpEvent.delayMillis = kQueuedInputEventDelay;
+					_delayedMouseBtnUpEvent.connectedType = _delayedMouseBtnDownEvent.type;
+					_delayedMouseBtnUpEvent.connectedTypeExecuted = false;
 					_event_queue_lock->unlock();
 				} else {
 					pushEvent(ev1);
@@ -1460,8 +1485,20 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 
 	_event_queue_lock->lock();
 
-	// We currently allow only one delayed event at any time, and it's always a mouse up event that comes from a touch event/gesture
-	// Handling multiple delayed events gets complicated and is practically unnecessary too
+	// We currently allow only one delayed event group at any time,
+	// and it's always for events that come from a touch event/gesture.
+	// "Group" here means that these events are connected,
+	// and have to be executed one after the other in sequence,
+	// respecting the set delay for each of them.
+	// As of yet, the cases for delayed events are as follows:
+	// -- Direct Touch Mode --
+	// JE_MULTI: MOVE (instant) -> MOUSE_DOWN (DELAYED) -> MOUSE_UP (POSSIBLY DELAYED, BUT NOT ALWAYS)
+	// JE_TAP:   MOVE (instant) -> MOUSE_DOWN (DELAYED) -> MOUSE_UP (DELAYED)
+	//
+	// -- Touchpad Emulation Mode --
+	// JE_TAP:   DOWN (instant) -> MOUSE_UP (DELAYED)
+	//
+	// Handling multiple delayed event groups gets complicated and is practically unnecessary too
 	if (_delayedMouseBtnDownEvent.delayMillis > 0
 	    && _delayedMouseBtnDownEvent.connectedTypeExecuted
 	    && (getMillis(true) - _delayedMouseBtnDownEvent.referTimeMillis > _delayedMouseBtnDownEvent.delayMillis)) {
@@ -1469,8 +1506,10 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 		event = evHP;
 		if ((_delayedMouseBtnUpEvent.delayMillis > 0)
 		    && (event.type == _delayedMouseBtnUpEvent.connectedType)) {
-			_delayedMouseBtnUpEvent.connectedTypeExecuted = true;
-			_delayedMouseBtnUpEvent.referTimeMillis = getMillis(true);
+			if (_delayedMouseBtnDownEvent.originTimeMillis == _delayedMouseBtnUpEvent.originTimeMillis) {
+				_delayedMouseBtnUpEvent.connectedTypeExecuted = true;
+				_delayedMouseBtnUpEvent.referTimeMillis = getMillis(true);
+			}
 		}
 		_delayedMouseBtnDownEvent.reset();
 	} else if (_delayedMouseBtnUpEvent.delayMillis > 0
@@ -1486,11 +1525,13 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 	} else {
 		event = _event_queue.pop();
 		if ((_delayedMouseBtnDownEvent.delayMillis > 0)
-		    && (event.type == _delayedMouseBtnDownEvent.connectedType)) {
+		    && (event.type == _delayedMouseBtnDownEvent.connectedType
+		       && _delayedMouseBtnDownEvent.connectedTypeExecuted == false)) {
 			_delayedMouseBtnDownEvent.connectedTypeExecuted = true;
 			_delayedMouseBtnDownEvent.referTimeMillis = getMillis(true);
 		} else if ((_delayedMouseBtnUpEvent.delayMillis > 0)
-		    && (event.type == _delayedMouseBtnUpEvent.connectedType)) {
+		    && (event.type == _delayedMouseBtnUpEvent.connectedType
+		       && _delayedMouseBtnUpEvent.connectedTypeExecuted == false)) {
 			_delayedMouseBtnUpEvent.connectedTypeExecuted = true;
 			_delayedMouseBtnUpEvent.referTimeMillis = getMillis(true);
 		}
@@ -1518,17 +1559,20 @@ void OSystem_Android::pushEvent(const Common::Event &event1, const Common::Event
 	_event_queue_lock->unlock();
 }
 
+// This method force-feeds the pending delayed event to the queue
+// and hopes for the best, while not ignoring the new delayed events that follow.
+// This is done for responsiveness, albeit obviously it's not an ideal solution.
 void OSystem_Android::pushDelayedTouchMouseBtnEvents() {
 	_event_queue_lock->lock();
-	Common::Event evHP;
+	Common::Event evHP1, evHP2;
 	if (_delayedMouseBtnDownEvent.delayMillis > 0) {
-		evHP = _delayedMouseBtnDownEvent;
-		_event_queue.push(_delayedMouseBtnDownEvent);
+		evHP1 = _delayedMouseBtnDownEvent;
+		_event_queue.push(evHP1);
 		_delayedMouseBtnDownEvent.reset();
 	}
 	if (_delayedMouseBtnUpEvent.delayMillis > 0) {
-		evHP = _delayedMouseBtnUpEvent;
-		_event_queue.push(_delayedMouseBtnUpEvent);
+		evHP2 = _delayedMouseBtnUpEvent;
+		_event_queue.push(evHP2);
 		_delayedMouseBtnUpEvent.reset();
 	}
 	_event_queue_lock->unlock();
