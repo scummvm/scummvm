@@ -33,6 +33,10 @@
 #include "math/vector2d.h"
 #include "math/matrix4.h"
 
+#if defined(USE_TINYGL)
+#include "graphics/tinygl/tinygl.h"
+#endif
+
 namespace Tinsel {
 
 typedef Common::FixedStack<Math::Matrix4, 30> MatrixStack;

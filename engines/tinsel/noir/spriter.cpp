@@ -34,9 +34,14 @@
 
 #include "math/quat.h"
 
+#if defined(USE_TINYGL)
+#include "graphics/tinygl/tinygl.h"
+#endif
+
 namespace Tinsel {
 
 #define PALETTE_COUNT 22
+#define TEXTURE_COUNT 4
 #define MERGE_VERTICES_OFFSET 0.1f // find proper ratio, this is perhaps too big?
 
 static float ConvertAngle(uint32 angle) {
@@ -51,6 +56,11 @@ Spriter::Spriter() {
 }
 
 Spriter::~Spriter() {
+#if defined(USE_TINYGL)
+	if (_textureGenerated) {
+		tglDeleteTextures(TEXTURE_COUNT, _texture);
+	}
+#endif
 }
 
 const Math::Matrix4& Spriter::MatrixCurrent() const {
@@ -389,7 +399,39 @@ void Spriter::LoadVMC(const Common::String& textureName) {
 }
 
 void Spriter::UpdateTextures() {
-	// TODO apply pallete to textures
+#if defined(USE_TINYGL)
+	if (_textureGenerated) {
+		tglDeleteTextures(TEXTURE_COUNT, _texture);
+	}
+
+	tglGenTextures(TEXTURE_COUNT, _texture);
+	Common::Array<uint8> tex(256*256*3);
+
+	bool hasPalette = _palette.size() > 0;
+
+	for (uint i = 0; i < TEXTURE_COUNT; ++i) {
+		for (uint j = 0; j < 256 * 256; ++j) {
+			uint32 index = _textureData[(i * 65536) + j];
+			if (hasPalette) {
+				tex[(j * 3) + 0] = _palette[(index * 3) + 0];
+				tex[(j * 3) + 1] = _palette[(index * 3) + 1];
+				tex[(j * 3) + 2] = _palette[(index * 3) + 2];
+			} else {
+				tex[(j * 3) + 0] = index;
+				tex[(j * 3) + 1] = index;
+				tex[(j * 3) + 2] = index;
+			}
+		}
+		tglBindTexture(TGL_TEXTURE_2D, _texture[i]);
+		tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGB, 256, 256, 0, TGL_RGB, TGL_UNSIGNED_BYTE, tex.data());
+		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
+		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
+		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
+		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
+		tglBindTexture(TGL_TEXTURE_2D, 0);
+	}
+#endif
+	_textureGenerated = true;
 }
 
 void Spriter::SetPalette(SCNHANDLE hPalette) {
@@ -951,11 +993,70 @@ void Spriter::RenderMesh(Mesh& mesh, Vectors& vertices, Vectors &normals) {
 }
 
 void Spriter::RenderMeshPartColor(MeshPart& part, Vectors& vertices, Vectors &normals) {
-	// TODO
+#if defined(USE_TINYGL)
+	if(!part.cull) {
+		tglEnable(TGL_CULL_FACE);
+	}
+
+	for (auto& prim : part.primitives) {
+		TGLubyte r = (prim.color >> 0) & 0xff;
+		TGLubyte g = (prim.color >> 8) & 0xff;
+		TGLubyte b = (prim.color >> 16) & 0xff;
+
+		tglColor3ub(r, g, b);
+
+		if (part.numVertices == 4) {
+			tglBegin(TGL_QUADS);
+		} else {
+			tglBegin(TGL_TRIANGLES);
+		}
+		for (uint32 i = 0; i < part.numVertices; ++i) {
+			uint32 index = prim.indices[i];
+
+			Math::Vector3d n = normals[index].getNormalized();
+			tglNormal3f(n.x(), n.y(), n.z());
+
+			Math::Vector3d& v = vertices[index];
+			tglVertex3f(v.x(), v.y(), v.z());
+		}
+		tglEnd();
+	}
+	tglDisable(TGL_CULL_FACE);
+#endif
 }
 
 void Spriter::RenderMeshPartTexture(MeshPart& part, Vectors& vertices, Vectors &normals) {
-	// TODO
+#if defined(USE_TINYGL)
+	if (!part.cull) {
+		tglEnable(TGL_CULL_FACE);
+	}
+
+	tglEnable(TGL_TEXTURE_2D);
+	tglColor3f(1.0f, 1.0f, 1.0f);
+
+	for (auto& prim : part.primitives) {
+		tglBindTexture(TGL_TEXTURE_2D, _texture[prim.texture]);
+
+		if (part.numVertices == 4) {
+			tglBegin(TGL_QUADS);
+		} else {
+			tglBegin(TGL_TRIANGLES);
+		}
+		for (uint32 i = 0; i < part.numVertices; ++i) {
+			uint index = prim.indices[i];
+			tglTexCoord2f(prim.uv[i].getX() / 256.0f, prim.uv[i].getY() / 256.0f);
+
+			Math::Vector3d n = normals[index].getNormalized();
+			tglNormal3f(n.x(), n.y(), n.z());
+
+			Math::Vector3d& v = vertices[index];
+			tglVertex3f(v.x(), v.y(), v.z());
+		}
+		tglEnd();
+	}
+	tglDisable(TGL_TEXTURE_2D);
+	tglDisable(TGL_CULL_FACE);
+#endif
 }
 
 void Spriter::Load(const Common::String &modelName, const Common::String &textureName) {
@@ -1021,7 +1122,49 @@ void Spriter::RenderModel(Model &model) {
 	MatrixRotateZ(_view.rotation.z());
 	MatrixTranslate(-_view.position.x(), -_view.position.y(), -_view.position.z());
 
+#if defined(USE_TINYGL)
+	tglViewport(0, 0, _vm->screen().w, _vm->screen().h);
+
+	tglMatrixMode(TGL_PROJECTION);
+	tglLoadIdentity();
+	tglFrustum(-1.0f, 1.0f,  -3.0f / 4.0f, 3.0f / 4.0f, 1.0f, 1000.0f);
+	// opengl uses bottom left
+	tglScalef(1.0f, -1.0f, 1.0f);
+	// Z is inverted, and we need to invert the face orientation too
+	tglScalef(1.0f, 1.0f, -1.0f);
+	tglFrontFace(TGL_CW);
+
+	tglMatrixMode(TGL_MODELVIEW);
+	tglLoadIdentity();
+
+	// tglRotatef(_view.rotation.x(), 1.0f, 0.0f, 0.0f);
+	// tglRotatef(_view.rotation.y(), 0.0f, 1.0f, 0.0f);
+	// tglRotatef(_view.rotation.z(), 0.0f, 0.0f, 1.0f);
+	// tglTranslatef(-_view.position.x(), -_view.position.y(), -_view.position.z());
+
+	tglEnable(TGL_DEPTH_TEST);
+	tglDepthFunc(TGL_LESS);
+	tglDepthMask(TGL_TRUE);
+	tglClearDepth(1.0f);
+	tglShadeModel(TGL_SMOOTH);
+
+	tglClear(TGL_DEPTH_BUFFER_BIT);
+
+#if 0
+	// code just for debuging model rendering, to be removed
+	tglEnable(TGL_LIGHTING);
+	TGLfloat light_position[] = { 0.0, 0.0, 0.0, 1.0 };
+	tglLightfv(TGL_LIGHT0, TGL_POSITION, light_position);
+	tglLightf(TGL_LIGHT0, TGL_CONSTANT_ATTENUATION, 1000.0f);
+	tglEnable(TGL_LIGHT0);
+#endif
+#endif
+
 	RunRenderProgram(model, false);
+
+#if defined(USE_TINYGL)
+	TinyGL::presentBuffer();
+#endif
 }
 
 bool Spriter::SetStartFrame(Model &model, const AnimationInfo &anim, int frame) {

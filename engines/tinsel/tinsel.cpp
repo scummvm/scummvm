@@ -33,6 +33,10 @@
 
 #include "engines/util.h"
 
+#if defined(USE_TINYGL)
+#include "graphics/tinygl/tinygl.h"
+#endif
+
 #include "tinsel/actors.h"
 #include "tinsel/background.h"
 #include "tinsel/bmv.h"
@@ -1023,10 +1027,16 @@ Common::Error TinselEngine::run() {
 
 		initGraphics(width, height, &noirFormat);
 
-		_screenSurface.create(width, 432, noirFormat);
+#if defined(USE_TINYGL)
+		TinyGL::createContext(width, 432, noirFormat, 256, false, false);
+		TinyGL::getSurfaceRef(_screenSurface);
 
 		_spriter = new Spriter();
-		_spriter->Init(width, height);
+		_spriter->Init(width, 432);
+#else
+		error("Discworld Noir needs ScummVM with TinyGL enabled");
+		return Common::kUnknownError;
+#endif
 	} else if (getGameID() == GID_DW2) {
 		if (ConfMan.getBool("crop_black_bars"))
 			initGraphics(640, 432);
