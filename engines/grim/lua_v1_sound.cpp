@@ -130,10 +130,11 @@ void Lua_V1::ImSetParam() {
 	lua_Object paramObj = lua_getparam(2);
 	lua_Object valueObj = lua_getparam(3);
 
-	if (lua_isnumber(nameObj))
-		error("ImSetParam: getting name from number is not supported");
+	if (lua_isnumber(nameObj)) {
+		warning("ImSetParam: getting name from number is not supported");
+		return;
+	}
 	if (!lua_isstring(nameObj)) {
-		lua_pushnumber(-1.0);
 		return;
 	}
 
@@ -158,8 +159,11 @@ void Lua_V1::ImGetParam() {
 	lua_Object nameObj = lua_getparam(1);
 	lua_Object paramObj = lua_getparam(2);
 
-	if (lua_isnumber(nameObj))
-		error("ImGetParam: getting name from number is not supported");
+	if (lua_isnumber(nameObj)) {
+		warning("ImGetParam: getting name from number is not supported");
+		lua_pushnumber(-1.0);
+		return;
+	}
 	if (!lua_isstring(nameObj)) {
 		lua_pushnumber(-1.0);
 		return;
