@@ -26,6 +26,9 @@
 #include "common/translation.h"
 #include "common/md5.h"
 
+#include "gui/dialog.h"
+#include "gui/message.h"
+
 #include "audio/mididrv.h"
 
 #include "backends/keymapper/action.h"
@@ -372,6 +375,18 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine,
 		GUIErrorMessage(_("The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid piracy.\n"
 		                  "The full version is available for purchase from the iTunes Store."));
 		return Common::kUnsupportedGameidError;
+	}
+
+	if (res.game.heversion != 0 && !strcmp(res.extra, "Steam")) {
+		if (!strcmp(res.game.gameid, "baseball") ||
+			!strcmp(res.game.gameid, "soccer") ||
+			!strcmp(res.game.gameid, "baseball2001") ||
+			!strcmp(res.game.gameid, "basketball") ||
+			!strcmp(res.game.gameid, "football")) {
+			GUI::MessageDialog dialog(_("Warning: this re-release version contains patched game scripts,\n"
+										"and therefore it might crash or not work properly for the time being."));
+			dialog.runModal();
+		}
 	}
 
 	// If the GUI options were updated, we catch this here and update them in the users config

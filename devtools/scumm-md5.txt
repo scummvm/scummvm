@@ -446,6 +446,7 @@ baseball	Backyard Baseball
 	cf8d13446ec6cb6222287a925fd47c1d	-1	en	All	-	-	-	sev
 	94db6519da85b8d08c976d8e9a858ea7	10044774	All	All	HE CUP	Preview	-	sev
 	8aed489aba45d2b9fb8a04079c9c6e6a	12876596	All	All	HE CUP	Preview	Updated	sev
+	ff90541cd06403ebea117274a3203c49	-1	en	Windows	-	Steam	Steam Re-Release	Bosca
 
 baseball2001	Backyard Baseball 2001
 	a86f9c49355579c30d4a55b477c0d869	-1	en	All	-	-	-	Kirben
@@ -472,6 +473,7 @@ football2002	Backyard Football 2002
 soccer	Backyard Soccer
 	701246819d1a70573f41bf33fc19214f	-1	en	All	-	-	-	sev
 	55923e34363c8ec6541368101d84a3bf	67178	gb	Windows	-	-	-	Sarah Onfy
+	43950303291675b305178f37a56d72ec	-1	en	Windows	-	Steam	Steam Re-Release	Bosca
 
 SoccerMLS	Backyard Soccer MLS Edition
 	bfdf584b01503f0762baded581f6a0a2	-1	en	Windows	-	-	-	sev
