@@ -54,9 +54,9 @@ struct MOVER {
 	int     ItargetX, ItargetY;     /* Intermediate destination */
 	int     UtargetX, UtargetY;     /* Ultimate destination */
 
-	HPOLYGON hIpath;
-	HPOLYGON hUpath;
-	HPOLYGON hCpath;
+	HPOLYGON hIpath;	/* Intermediate path */
+	HPOLYGON hUpath;	/* Ultimate path */
+	HPOLYGON hCpath;	/* Current path */
 
 	bool over;
 	int	walkNumber;
@@ -119,12 +119,14 @@ struct MOVER {
 	int			paletteLength;
 	HPOLYGON	hRpath;		// Recent path
 
-	// Noir specific, just for 3D actors
-	MOVER_TYPE type;
-	SCNHANDLE hModelName;
-	SCNHANDLE hTextureName;
-	bool bIsValid;
+	// Noir specific fields
+	MOVER_TYPE	type;
+	SCNHANDLE	hModelName;
+	SCNHANDLE	hTextureName;
 
+	int			posX, posY, posZ;
+	int			animSpeed;
+	uint		nextIdleAnim;
 };
 
 struct MAINIT {
