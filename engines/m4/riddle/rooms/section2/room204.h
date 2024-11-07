@@ -41,9 +41,9 @@ public:
 
 private:
 	void initWalkerSeries();
-	void sub216B2();
-	void sub1F6AF();
-	void sub1F641();
+	void addMovingMeiHotspot();
+	void deleteMalletHotspot();
+	void addLookMalletHotspot();
 
 	int32 _field4 = 0;
 	int32 _field40 = 0;

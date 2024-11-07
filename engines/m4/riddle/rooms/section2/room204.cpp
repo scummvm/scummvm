@@ -96,10 +96,10 @@ void Room204::init() {
 				initWalkerSeries();
 
 				_mcMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, _fieldE0, 323, (_fieldDC == 1) ? 10 : 2, Walker::player_walker_callback, "mc walker room 204");
-				sub216B2();
+				addMovingMeiHotspot();
 				if (_fieldE0 == 472) {
-					sub1F6AF();
-					sub1F641();
+					deleteMalletHotspot();
+					addLookMalletHotspot();
 				}
 
 				kernel_timing_trigger(1, 630, nullptr);
@@ -191,7 +191,7 @@ void Room204::init() {
 				}
 
 				_mcMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, _fieldE4, 323, 2, Walker::player_walker_callback, "mc walker room 204");
-				sub216B2();
+				addMovingMeiHotspot();
 				kernel_timing_trigger(1, 630, nullptr);
 				kernel_timing_trigger(1, 578, nullptr);
 			}
@@ -213,13 +213,40 @@ void Room204::initWalkerSeries() {
 	ws_walk_load_walker_series(S8_SHADOW_DIRS1, S8_SHADOW_NAMES1, false);
 }
 
-void Room204::sub216B2() {
+void Room204::addMovingMeiHotspot() {
+	HotSpotRec *spot = hotspot_new(_fieldE4 - 10, 273, _fieldE4 + 10, 323);
+	hotspot_newVerb(spot, "TALK TO");
+	hotspot_newVocab(spot, "MEI CHEN");
+
+	spot->cursor_number = 7;
+	spot->feet_x = _fieldE4 + 20;
+	spot->feet_y = 333;
+	spot->facing = 10;
+
+	_G(currentSceneDef).hotspots = hotspot_add(_G(currentSceneDef).hotspots, spot, true);
 }
 
-void Room204::sub1F6AF() {
+void Room204::deleteMalletHotspot() {
+	HotSpotRec *spot = nullptr;
+	for (spot = _G(currentSceneDef).hotspots; spot != nullptr; spot = spot->next) {
+		if (scumm_stricmp(spot->vocab, "MALLET")) {
+			_G(currentSceneDef).hotspots = hotspot_delete_record(_G(currentSceneDef).hotspots, spot);
+			break;
+		}
+	}
 }
 
-void Room204::sub1F641() {
+void Room204::addLookMalletHotspot() {
+	HotSpotRec *spot = hotspot_new(460, 287, 470, 299);
+	hotspot_newVerb(spot, "LOOK AT");
+	hotspot_newVocab(spot, "MALLET");
+
+	spot->cursor_number = 6;
+	spot->feet_x = 473;
+	spot->feet_y = 331;
+	spot->facing = 11;
+
+	_G(currentSceneDef).hotspots = hotspot_add(_G(currentSceneDef).hotspots, spot, true);
 }
 
 } // namespace Rooms
