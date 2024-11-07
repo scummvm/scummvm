@@ -29,6 +29,7 @@
 #include "tinsel/object.h"
 #include "tinsel/pid.h"	// process identifiers
 #include "tinsel/tinsel.h"
+#include "tinsel/noir/spriter.h"
 
 namespace Tinsel {
 
@@ -231,7 +232,7 @@ void Background::DrawBackgnd() {
 
 			for (OBJECT* pObj = pPlay->pDispList; pObj != NULL; pObj = pObj->pNext) {
 				if (pObj->flags & DMA_3D) {
-					//SpriterRenderModel();
+					_vm->_spriter->Draw(0, 0, 0, 0, 0);
 					//AddClipRect(SpriterGetModelRect());
 					//AddClipRect(SpriterGetShadowRect());
 					//MergeClipRect();

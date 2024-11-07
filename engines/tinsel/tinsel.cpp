@@ -61,6 +61,7 @@
 #include "tinsel/tinsel.h"
 #include "tinsel/noir/notebook.h"
 #include "tinsel/noir/sysreel.h"
+#include "tinsel/noir/spriter.h"
 
 namespace Tinsel {
 
@@ -926,6 +927,7 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 
 TinselEngine::~TinselEngine() {
 	_system->getAudioCDManager()->stop();
+	delete _spriter;
 	delete _cursor;
 	delete _bg;
 	delete _font;
@@ -1022,6 +1024,9 @@ Common::Error TinselEngine::run() {
 		initGraphics(width, height, &noirFormat);
 
 		_screenSurface.create(width, 432, noirFormat);
+
+		_spriter = new Spriter();
+		_spriter->Init(width, height);
 	} else if (getGameID() == GID_DW2) {
 		if (ConfMan.getBool("crop_black_bars"))
 			initGraphics(640, 432);

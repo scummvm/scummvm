@@ -42,6 +42,7 @@
 #include "tinsel/timers.h"
 #include "tinsel/tinsel.h"
 #include "tinsel/token.h"
+#include "tinsel/noir/spriter.h"
 
 #include "common/textconsole.h"
 #include "common/util.h"
@@ -892,7 +893,7 @@ void T3SetMoverStanding(CORO_PARAM, MOVER *pMover, bool bImmediate) {
 
 	if (pMover->type == MOVER_3D) {
 		AnimateObjectFlags(pMover->actorObj, pMover->actorObj->flags | DMA_CHANGED, pMover->actorObj->hImg);
-		// SpriterSetSequence(0, bImmediate ? 0 : 8);
+		_vm->_spriter->SetSequence(0, bImmediate ? 0 : 8);
 		pMover->animSpeed = 0x10000;
 		pMover->nextIdleAnim = DwGetCurrentTime() + 24 + _vm->getRandomNumber(216);
 	}
@@ -939,7 +940,7 @@ void T3MoverProcess(CORO_PARAM, const void *param) {
 		warning("TODO: Finish implementation of T3MoverProcess() for Noir");
 
 		AnimateObjectFlags(pMover->actorObj, pMover->actorObj->flags | DMA_CHANGED, pMover->actorObj->hImg);
-		// SpriterSetSequence(0, 4);
+		_vm->_spriter->SetSequence(0, 4);
 
 		pMover->animSpeed = 0x10000;
 		pMover->nextIdleAnim = 0;

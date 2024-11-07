@@ -67,6 +67,7 @@
 #include "tinsel/token.h"
 #include "tinsel/noir/notebook.h"
 #include "tinsel/noir/sysreel.h"
+#include "tinsel/noir/spriter.h"
 
 #include "common/textconsole.h"
 
@@ -154,7 +155,7 @@ enum MASTER_LIB_CODES {
 	TRYPLAYSAMPLE, UNDIMMUSIC, UNHOOKSCENE, UNTAGACTOR, VIBRATE, WAITFRAME, WAITKEY,
 	WAITSCROLL, WAITTIME, WALK, WALKED, WALKEDPOLY, WALKEDTAG, WALKINGACTOR, WALKPOLY,
 	WALKTAG, WALKXPOS, WALKYPOS, WHICHCD, WHICHINVENTORY, ZZZZZZ, DEC3D, DECINVMAIN,
-	ADDNOTEBOOK, ADDINV3, ADDCONV, SET3DTEXTURE, FADEMUSIC, VOICEOVER, SETVIEW,
+	ADDNOTEBOOK, ADDINV3, ADDCONV, SET3DPALETTE, FADEMUSIC, VOICEOVER, SETVIEW,
 	HELDOBJECTORTOPIC, BOOKADDHYPERLINK, OPENNOTEBOOK, NTBPOLYENTRY, NTBPOLYPREVPAGE,
 	NTBPOLYNEXTPAGE, CROSSCLUE, HIGHEST_LIBCODE
 };
@@ -912,6 +913,7 @@ static int CursorPos(int xory) {
  * Declare 3d model for an actor.
  */
 void Dec3D(int ano, SCNHANDLE hModelName, SCNHANDLE hTextureName) {
+	static SCNHANDLE hModelNameLoaded = 0;
 	MOVER* pMover = GetMover(ano);
 	assert(pMover != nullptr);
 
@@ -919,13 +921,13 @@ void Dec3D(int ano, SCNHANDLE hModelName, SCNHANDLE hTextureName) {
 	pMover->hModelName = hModelName;
 	pMover->hTextureName = hTextureName;
 
-	// if (_hModelNameLoaded == 0) {
-	// 	_hModelNameLoaded = hModelName;
-	// 	const char* modelName = (const char *)_vm->_handle->LockMem(hModelName);
-	// 	const char* textureName = (const char *)_vm->_handle->LockMem(hTextureName);
-	// 	LoadModels(modelName, textureName);
-	// }
-	//assert(_hModelNameLoaded == hModelName);
+	if (hModelNameLoaded == 0) {
+		hModelNameLoaded = hModelName;
+		const char* modelName = (const char *)_vm->_handle->LockMem(hModelName);
+		const char* textureName = (const char *)_vm->_handle->LockMem(hTextureName);
+		_vm->_spriter->Load(modelName, textureName);
+	}
+	assert(hModelNameLoaded == hModelName);
 }
 
 /**
@@ -2720,6 +2722,13 @@ static void SendTag(CORO_PARAM, int tagno, TINSEL_EVENT event, HPOLYGON hp, int 
 
 		PolygonEvent(coroParam, GetTagHandle(tagno), event, 0, true, myEscape, result);
 	}
+}
+
+/**
+ * Set palette for 3D model in Noir
+ */
+static void Set3DPalette(SCNHANDLE hPalette) {
+	_vm->_spriter->SetPalette(hPalette);
 }
 
 /**
@@ -5226,7 +5235,7 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6], pp[7]);
 		break;
 	case 214:
-		mapping = NoirMapping{"SET3DTEXTURE", SET3DTEXTURE, 1};
+		mapping = NoirMapping{"SET3DPALETTE", SET3DPALETTE, 1};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 		break;
@@ -6357,9 +6366,9 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		}
 		return -1;
 
-	case SET3DTEXTURE:
+	case SET3DPALETTE:
 		// Noir only
-		warning("TODO: Implement SET3DTEXTURE(0x%08X)", pp[0]);
+		Set3DPalette(pp[0]);
 		return -1;
 
 	case SETACTOR:

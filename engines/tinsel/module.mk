@@ -52,6 +52,7 @@ MODULE_OBJS := \
 	noir/notebook.o \
 	noir/notebook_page.o \
 	noir/sysreel.o \
+	noir/spriter.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TINSEL), DYNAMIC_PLUGIN)
