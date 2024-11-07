@@ -1029,6 +1029,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "cookieginger",		"Cookie & Ginger"},
 	{ "crouton",			"Croûton"},
 	{ "dan",				"ダン" },											// Dan
+	{ "darlun",				"Darlun's Rambling Trip" }, // aka ダールンのきままな旅
 	{ "djrom",				"The DJ-ROM: Da CD-Extra of Hip-Hop Music" },
 	{ "digitalboy1",		"Digital Boy CD-ROM Vol. 1" },
 	{ "digitalboy2",		"Digital Boy CD-ROM Vol. 2" },
@@ -6349,6 +6350,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// 3 CDs, executables are only on CD 1
 	MACGAME1("crystalskull",  "", "Crystal Skull", "c148f66ae3511fb88733102aa27efe7e", 719459,  501),
 	WINGAME1t("crystalskull", "", "CRYS32.EXE",	   "3f5fd025e808943e1fa9b91ce63ef9b7", 1410495, 501),
+
+	MACGAME1f_l("darlun", "", "DARLUN", "4bc4f93f5c5169de9f2fee12071a68b9", 717372, Common::JA_JPN, 501, GF_32BPP),
+	WINGAME1tf_l("darlun", "", "DARLUN_P.EXE", "713a7ef3728ed1952745d204e520972a", 1440286, Common::JA_JPN, 501, GF_32BPP),
 
 	WINGAME2("davidsonps", "v1.0", "DPS32.EXE",	  "3460ad87d2ba57104e2810a77b53c220", 1401517,
 								   "DPSHOT.DXR",  "d980c9272bc723c57238a31790b71f11", 1354686, 500),
