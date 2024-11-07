@@ -49,6 +49,7 @@ enum {
 	DMA_CHANGED	= 0x0200,	///< object has changed in some way since the last frame
 	DMA_USERDEF	= 0x0400,	///< user defined flags start here
 	DMA_GHOST	= 0x0080,
+	DMA_3D		= 0x0400,	///< 3D objects for TinselV3
 
 	/** flags that effect an objects appearance */
 	DMA_HARDFLAGS	= (DMA_WNZ | DMA_CNZ | DMA_CONST | DMA_WA | DMA_FLIPH | DMA_FLIPV | DMA_TRANS)
