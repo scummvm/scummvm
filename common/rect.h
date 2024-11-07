@@ -389,7 +389,8 @@ struct Rect {
 
 	/**
 	 * Given target surface with size clip, this function ensures that
-	 * blit arguments @p dst and @p rect are within the @p clip rectangle.
+	 * blit arguments @p dst and @p rect are within the @p clip rectangle,
+	 * shrinking them as necessary.
 	 * @param dst  Blit destination coordinates.
 	 * @param rect Blit source rectangle.
 	 * @param clip Clip rectangle (size of destination surface).
