@@ -994,14 +994,20 @@ int Sound::isSoundRunning(int sound) const {
 
 /**
  * Check whether the sound resource with the specified ID is still
- * used. This is invoked by ScummEngine::isResourceInUse, to determine
+ * used. This is invoked by ScummEngine::isResourceInUse(), to determine
  * which resources can be expired from memory.
- * Technically, this works very similar to isSoundRunning, however it
+ * Technically, this works very similar to isSoundRunning(), however it
  * calls IMuse::get_sound_active() instead of IMuse::getSoundStatus().
  * The difference between those two is in how they treat sounds which
  * are being faded out: get_sound_active() returns true even when the
  * sound is being faded out, while getSoundStatus() returns false in
  * that case.
+ *
+ * Another difference is that isSoundRunning() checks if sound is greater
+ * than _numSounds before checking if the resource is loaded. That check is
+ * only for non-HE games. In HE games, a number higher than _numSounds
+ * represents a (streamed) music track. HE games have their own implementation
+ * of isSoundRunning(), while isSoundInUse() is used by all.
  */
 bool Sound::isSoundInUse(int sound) const {
 
@@ -1019,7 +1025,7 @@ bool Sound::isSoundInUse(int sound) const {
 	if (isSoundInQueue(sound))
 		return true;
 
-	if (sound > _vm->_numSounds || !_vm->_res->isResourceLoaded(rtSound, sound))
+	if (!_vm->_res->isResourceLoaded(rtSound, sound))
 		return false;
 
 	if (_vm->_imuse)
