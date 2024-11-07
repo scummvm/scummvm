@@ -108,9 +108,9 @@
 	// updated to make sure the virtual controller is connected/disconnected
 	// properly based on the orientation.
 	[coordinator animateAlongsideTransition:nil completion:^(id<UIViewControllerTransitionCoordinatorContext> context) {
-		UIInterfaceOrientation orientationAfter = [self interfaceOrientation];
-		if (orientationAfter != UIInterfaceOrientationUnknown) {
-			[self setCurrentOrientation:orientationAfter];
+		UIInterfaceOrientation orientation = [self interfaceOrientation];
+		if (orientation != UIInterfaceOrientationUnknown) {
+			[self setCurrentOrientation:orientation];
 			if (@available(iOS 11.0, *)) {
 				[self setNeedsUpdateOfScreenEdgesDeferringSystemGestures];
 			}

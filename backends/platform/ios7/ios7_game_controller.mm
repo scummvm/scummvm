@@ -44,7 +44,7 @@
 	return self;
 }
 
-- (CGPoint)getLocationInView:(UITouch *)touch; {
+- (CGPoint)getLocationInView:(UITouch *)touch {
 	CGPoint p = [touch locationInView:[self view]];
 	p.x *= [[self view] contentScaleFactor];
 	p.y *= [[self view] contentScaleFactor];
