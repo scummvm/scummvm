@@ -22,19 +22,55 @@
 #ifndef M4_RIDDLE_ROOMS_SECTION2_ROOM204_H
 #define M4_RIDDLE_ROOMS_SECTION2_ROOM204_H
 
-#include "m4/riddle/rooms/room.h"
+#include "m4/riddle/rooms/section2/section2_room.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-class Room204 : public Room {
+class Room204 : public Section2Room {
 public:
-	Room204() : Room() {}
+	Room204() : Section2Room() {}
 	~Room204() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+
+private:
+	void initWalkerSeries();
+	void sub216B2();
+	void sub1F6AF();
+	void sub1F641();
+
+	int32 _field4 = 0;
+	int32 _field40 = 0;
+	int32 _field44 = 0;
+	int32 _field48 = 0;
+	int32 _field68 = 0;
+	int32 _fieldBC = 0;
+	int32 _fieldC4 = 0;
+	int32 _fieldDC = 0;
+	int32 _fieldE0 = 0;
+	int32 _fieldE4 = 0;
+	int32 _fieldEC = 0;
+	int32 _fieldF0 = 0;
+	int32 _field104 = 0;
+	int32 _field108 = 0;
+	int32 _field180 = 0;
+	int32 _field184 = 0;
+	int32 _field188 = 0;
+
+	int32 _courtyardGongSeries = 0;
+	int32 _malletSpriteSeries = 0;
+	int32 _ripDropsSeries = 0;
+
+	machine *_courtyardGongMach = nullptr;
+	machine *_mcMach = nullptr;
+	machine *_malletSpriteMach = nullptr;
+	machine *_silverButterflyCoinMach = nullptr;
 };
 
 } // namespace Rooms
