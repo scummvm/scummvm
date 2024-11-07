@@ -36,10 +36,15 @@ void copyBlit(byte *dst, const byte *src,
 		return;
 
 	if (dstPitch == srcPitch && ((w * bytesPerPixel) == dstPitch)) {
+	  //Buffers have equal line pitch AND total number of bytes per line matches that pitch
+	  //Therefore we may copy a whole subset of h full-width raster lines in one go.
 		memcpy(dst, src, dstPitch * h);
 	} else {
+	  //Not transferring whole width of either source or destination buffer, therefore must copy line-by-line
 		for (uint i = 0; i < h; ++i) {
+		  //Copy sublength w of one full buffer raster line
 			memcpy(dst, src, w * bytesPerPixel);
+			//iterate both buffer pointers by respective pitch to horizontally align starting point of next raster line with that of the one just copied
 			dst += dstPitch;
 			src += srcPitch;
 		}
