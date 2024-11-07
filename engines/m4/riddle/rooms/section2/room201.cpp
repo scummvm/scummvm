@@ -520,6 +520,7 @@ void Room201::daemon() {
 			terminateMachineAndNull(_agent);
 		} else {
 			kernel_timing_trigger(1, 511);
+			sendWSMessage_150000(-1);
 		}
 		break;
 
@@ -1310,6 +1311,12 @@ void Room201::daemon() {
 		_G(game).setRoom(495);
 		break;
 
+	case 7000:
+		player_set_commands_allowed(false);
+		_ripleyShould = 15;
+		_trigger6 = kernel_trigger_create(7010);
+		break;
+
 	case 7010:
 		_ripleyShould = 17;
 		_trigger5 = kernel_trigger_create(7020);
@@ -1322,6 +1329,7 @@ void Room201::daemon() {
 		}
 
 		kernel_timing_trigger(1, 509);
+		conv_resume();
 		break;
 
 	case 7100:
@@ -1531,7 +1539,7 @@ void Room201::parser() {
 		// Handled
 	} else if (useFlag && _G(walker).ripley_said(USE)) {
 		// Handled
-	} else if (takeFlag && player_said("AGENT")) {
+	} else if (talkFlag && player_said("AGENT")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 		case 666:
