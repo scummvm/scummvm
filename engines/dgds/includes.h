@@ -86,8 +86,9 @@ namespace Dgds {
 
 #define EX_OVL MKTAG24('O', 'V', 'L')
 
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 200
+#define SCREEN_WIDTH (DgdsEngine::getInstance()->getGameId() != GID_CASTAWAY ? 320 : 640)
+#define SCREEN_HEIGHT (DgdsEngine::getInstance()->getGameId() != GID_CASTAWAY ? 200 : 480)
+#define SCREEN_HEIGHT_FIXED 200
 
 } // End of namespace Dgds
 
