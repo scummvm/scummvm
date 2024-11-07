@@ -1119,7 +1119,7 @@ void WinnieEngine::drawRoomPic() {
 
 	// draw room picture
 	_picture->setOffset(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0);
-	_picture->decodePictureFromBuffer(buffer + roomhdr.ofsPic - _roomOffset, 4096, false, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
+	_picture->decodePictureFromBuffer(buffer + roomhdr.ofsPic - _roomOffset, 4096, true, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 	_picture->setOffset(0, 0);
 	_picture->showPic(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 
