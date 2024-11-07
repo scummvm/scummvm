@@ -108,9 +108,14 @@ public:
 		kMSIAboutString40
 	};
 
+	enum ParsingMethod {
+		kStrC,
+		kStrPascal,
+	};
+
 	struct MacSTRSParsingEntry {
 		MacStringIds strId;
-		Common::String parsingMethod;
+		ParsingMethod parsingMethod;
 		int numStrings;
 	};
 
