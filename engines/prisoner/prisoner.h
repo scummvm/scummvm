@@ -567,6 +567,7 @@ public:
 	bool _clearBackgroundFlag;
 	bool _sceneFlag;
 	bool _mainMenuRequested;
+	bool _inGame;
 	bool _mainLoopDone;
 	int8 _selectedMenuIndex;
 
@@ -590,6 +591,8 @@ public:
 	bool _talkieEnabled;
 
 	bool _loadingSavegame;
+
+	PauseToken _pauseToken;
 
 	/* AutoSave */
 	bool _autoSaveRequested;
@@ -800,6 +803,7 @@ public:
 	/* Menu */
 	int16 _menuPanelResourceCacheSlots[MENU_PANELS::PANEL_SIZE_END];
 	Common::StringArray _menuItems;
+	Common::Array<bool> _activeMenuItems;
 
 	/* Dialog */
 	Common::StringArray _dialogStrings;
@@ -1121,6 +1125,7 @@ public:
 	ObjectStorage<MusicSlot, kMaxMusics> _musics;
 	void playMusic(int16 musicIndex);
 	void stopMusic(int16 musicIndex);
+	void stopMusics();
 	bool isMusicPlaying(int16 musicIndex);
 	void setMusicVolume(int16 musicIndex, uint volume);
 	int16 loadMusic(Common::String &pakName, int16 pakSlot, bool moduleWide);
@@ -1132,6 +1137,9 @@ public:
 	void setDefaultTextDisplayColors();
 	void setTextDisplayColor(int16 textDisplayNum, int16 outlineColor, int16 inkColor);
 
+	void pauseGame();
+	void resumeGame();
+
 	/* Menu */
 	void displayDialog(DIALOG_TYPE type, Common::String &titleStrId, Common::String &actionStrId, DialogAction dlgAction);
 	void loadDialogData();
@@ -1139,6 +1147,7 @@ public:
 	void loadOnscreenMenuText();
 	void runMainMenu_initMessages();
 	void runMainMenu_addClickBoxes(int16 x, int16 y);
+	void updateActiveMenuItems();
 	void handleMainMenuInput();
 	void drawClickBoxLabels();
 	void updateMenu(int16 x, int16 y);

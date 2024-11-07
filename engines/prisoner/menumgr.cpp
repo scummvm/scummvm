@@ -111,6 +111,9 @@ static const byte testfile_data[] = {
 	0x6B, 0x00, 0x00, 0x00, 0x00, 0x12, 0x3F, 0x07
 };
 
+Common::StringArray MenuIds = {"M_RETG", "M_NEWG", "M_LOADG", "M_SAVEG", "M_OPT", "EXIT_G", "MAINM"};
+
+
 extern void decryptBuffer(byte *buf, uint32 size);
 
 
@@ -164,7 +167,7 @@ void PrisonerEngine::loadMenuPanels() {
 
 	runMainMenu_initMessages();
 	runMainMenu_addClickBoxes(67, 77);
-	_selectedMenuIndex = 0;
+	_selectedMenuIndex = _inGame ? 0 : 1;
 	_menuMouseCursorActive = 1;
 	_menuMouseCursor = 13;
 }
@@ -173,20 +176,37 @@ void PrisonerEngine::loadOnscreenMenuText() {
 }
 
 void PrisonerEngine::runMainMenu_initMessages() {
-	Common::StringArray MenuIds = {"M_RETG", "M_NEWG", "M_LOADG", "M_SAVEG", "M_OPT", "EXIT_G", "MAINM"};
 	for (Common::StringArray::iterator id = MenuIds.begin(); id != MenuIds.end(); id++) {
 		_menuItems.push_back(getGlobalText(*id));
+	}
+
+	updateActiveMenuItems();
+}
+
+void PrisonerEngine::updateActiveMenuItems() {
+	_selectedMenuIndex = _inGame ? 0 : 1;
+	_activeMenuItems.clear();
+
+	for (uint8 i = 0; i < _menuItems.size(); i++) {
+		bool active = true;
+		if (!_inGame && (i == 0 || i == 3)) {
+			active = false;
+		}
+
+		_activeMenuItems.push_back(active);
 	}
 }
 
 void PrisonerEngine::runMainMenu_addClickBoxes(int16 x, int16 y) {
 	for (uint8 i = 0; i < _menuItems.size(); i++) {
-		addClickBox(
-			x + _mainMenuOffsets[i].x1,
-			y + _mainMenuOffsets[i].y1,
-			x + _mainMenuOffsets[i].x2,
-			y + _mainMenuOffsets[i].y2,
-			i);
+		if (_activeMenuItems[i]) {
+			addClickBox(
+				x + _mainMenuOffsets[i].x1,
+				y + _mainMenuOffsets[i].y1,
+				x + _mainMenuOffsets[i].x2,
+				y + _mainMenuOffsets[i].y2,
+				i);
+		}
 	}
 	// TODO: Remove after debugging
 	// addClickBox(x + 111, y + 119, x + 402, y + 140, 0);
@@ -216,13 +236,17 @@ void PrisonerEngine::handleMainMenuInput() {
 	}
 
 	if (keyState == Common::KEYCODE_DOWN) {
-		_selectedMenuIndex = (_selectedMenuIndex + 1) % MAIN_MENU_SIZE;
+		do {
+			_selectedMenuIndex = (_selectedMenuIndex + 1) % MAIN_MENU_SIZE;
+		} while (!_activeMenuItems[_selectedMenuIndex]);
 		inpKeybSetWaitRelease(true);
 	} else if (keyState == Common::KEYCODE_UP) {
-		_selectedMenuIndex = (_selectedMenuIndex - 1) % MAIN_MENU_SIZE;
-		if (_selectedMenuIndex < 0) {
-			_selectedMenuIndex += MAIN_MENU_SIZE;
-		}
+		do {
+			_selectedMenuIndex = (_selectedMenuIndex - 1) % MAIN_MENU_SIZE;
+			if (_selectedMenuIndex < 0) {
+				_selectedMenuIndex += MAIN_MENU_SIZE;
+			}
+		} while (!_activeMenuItems[_selectedMenuIndex]);
 		inpKeybSetWaitRelease(true);
 	} else if (keyState == Common::KEYCODE_RETURN) {
 		doMenuAction(_selectedMenuIndex);
@@ -256,6 +280,12 @@ void PrisonerEngine::handleDialogMenuInput() {
 }
 
 void PrisonerEngine::dialogActionNewGame() {
+	_inGame = true;
+
+	if (isPaused()) {
+		_pauseToken.clear();
+	}
+
 	_mainMenuRequested = false;
 	_newModuleIndex = -1;
 	leaveScene();
@@ -276,6 +306,9 @@ void PrisonerEngine::doMenuAction(uint8 clickBoxIndex) {
 	Common::String exitActionStr("DO_QUIT");
 
 	switch (clickBoxIndex) {
+	case RET_GAME:
+		resumeGame();
+		break;
 	case NEW_GAME:
 		inpKeybSetWaitRelease(true);
 		displayDialog(CANCEL, titleStr, newGameActionStr, &PrisonerEngine::dialogActionNewGame);
@@ -284,6 +317,9 @@ void PrisonerEngine::doMenuAction(uint8 clickBoxIndex) {
 		break;
 	case LOAD_GAME:
 		loadGameDialog();
+		break;
+	case SAVE_GAME:
+		saveGameDialog();
 		break;
 	case EXIT:
 		inpKeybSetWaitRelease(true);
@@ -345,8 +381,8 @@ void PrisonerEngine::updateMenu(int16 x, int16 y) {
 			y + off->y2,
 			_menuItems[i]);
 
-		if (_mainMenuRequested) {
-			if (i == 0 || i == 3)
+		if (_mainMenuRequested && !_inGame) {
+			if (!_activeMenuItems[i])
 				_screen->drawTransparentRect(
 					x + off->x1,
 					y + off->y1,

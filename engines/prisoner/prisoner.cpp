@@ -163,6 +163,7 @@ Common::Error PrisonerEngine::run() {
 	_autoSaveRequested = false;
 	_mainMenuRequested = false;
 	_isDialogMenuShowing = false;
+	_inGame = false;
 	_mainLoopDone = false;
 	_dialogRunning = false;
 	_screenTextShowing = false;
@@ -308,6 +309,7 @@ Common::Error PrisonerEngine::run() {
 			loadGameState(saveSlot);
 		}
 		_mainMenuRequested = false;
+		_inGame = true;
 	} else {
 		playIntroVideos();
 		// TODO: Later: _mainMenuRequested = true;
@@ -366,6 +368,11 @@ void PrisonerEngine::mainLoop() {
 			_screen->update();
 			_system->delayMillis(10);
 
+			continue;
+		}
+
+		if (isPaused()) {
+			handleInput(_cameraX + _mouseX, _cameraY + _mouseY);
 			continue;
 		}
 
@@ -541,6 +548,7 @@ void PrisonerEngine::playIntroVideos() {
 
 void PrisonerEngine::death() {
 	_mainMenuRequested = true;
+	_inGame = false;
 	_newModuleIndex = -1;
 	leaveScene();
 	//resetDirtyRects();
@@ -685,6 +693,26 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 	if (_isDialogMenuShowing) {
 		handleDialogMenuInput();
 		return 0;
+	}
+
+	if (_inGame) {
+		if (keyState == Common::KEYCODE_ESCAPE) {
+			inpKeybSetWaitRelease(true);
+			_mainMenuRequested = !_mainMenuRequested;
+			if (_mainMenuRequested) {
+				this->pauseGame();
+			} else {
+				// TODO CLEAR MENU (MAYBE VIA DIRTY RECTS?)
+				this->resumeGame();
+			}
+		} else if (keyState == Common::KEYCODE_p) {
+			inpKeybSetWaitRelease(true);
+			if (isPaused()) {
+				this->resumeGame();
+			} else {
+				this->pauseGame();
+			}
+		}
 	}
 
 	if (_mainMenuRequested) {
@@ -854,6 +882,7 @@ void PrisonerEngine::playMux(Common::String filename) {
 	}
 	if (_moduleScriptCalled) {
 		_mainMenuRequested = true;
+		_inGame = false;
 		// TODO: resetDirtyRects();
 		_screen->clear();
 	}
@@ -884,6 +913,18 @@ void PrisonerEngine::playMuxSoon(Common::String &filename, bool clearScreenAfter
 	_muxClearScreenAfter = clearScreenAfter;
 	_muxClearScreenBefore = clearScreenBefore;
 	_needToPlayMux = true;
+}
+
+void PrisonerEngine::pauseGame() {
+	updateActiveMenuItems();
+
+	debug("pause game");
+	_pauseToken = pauseEngine();
+}
+
+void PrisonerEngine::resumeGame() {
+	_mainMenuRequested = false;
+	_pauseToken.clear();
 }
 
 void PrisonerEngine::requestAutoSave(Common::String &pakName, int16 pakSlot, Common::String &identifier) {

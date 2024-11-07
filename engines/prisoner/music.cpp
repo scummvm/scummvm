@@ -54,6 +54,15 @@ void PrisonerEngine::stopMusic(int16 musicIndex) {
 	}
 }
 
+void PrisonerEngine::stopMusics() {
+	int16 index = 0;
+	while (!_musics[index++].isEmpty()) {
+		if (_musics[index].isPlaying) {
+			stopMusic(index);
+		}
+	}
+}
+
 bool PrisonerEngine::isMusicPlaying(int16 musicIndex) {
 	if (musicIndex >= 0) {
 		MusicSlot &musicSlot = _musics[musicIndex];
