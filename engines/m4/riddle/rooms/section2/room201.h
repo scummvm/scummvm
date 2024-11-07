@@ -47,7 +47,7 @@ private:
 	int _val8 = 0;
 	int _val9 = 0;
 	int _agentShould = 0;
-	int _conv2 = 0;
+	int _ripleyShould = 0;
 	int _nod = 0;
 	int _guyWriting = 0;
 	int _guyParcel = 0;
@@ -76,7 +76,7 @@ private:
 	int _meiTalkLoop = 0;
 	int _ripHandChin = -1;
 	int _ripTalk = -1;
-	int _num1 = 0;
+	int _ripleyMode = 0;
 	int _num2 = 0;
 	int _agentMode = 0;
 	int _trigger1 = -1;
