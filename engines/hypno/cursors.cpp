@@ -154,7 +154,7 @@ Graphics::Surface *CursorCache::getCursor(const Common::String &cursor, uint32 n
 		return _surface;
 	}
 
-	delete(_palette);
+	free(_palette);
 	_palette = nullptr;
 
 	if (_surface) {
