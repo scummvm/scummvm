@@ -273,13 +273,10 @@ void Movements::processBehaviourExecution(int actorIdx) {
 		} else {
 			if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
 				_engine->_animations->initAnim(AnimationTypes::kLeftPunch, AnimType::kAnimationThen, AnimationTypes::kStanding, actorIdx);
-				_lastJoyFlag = true;
 			} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
 				_engine->_animations->initAnim(AnimationTypes::kRightPunch, AnimType::kAnimationThen, AnimationTypes::kStanding, actorIdx);
-				_lastJoyFlag = true;
 			} else if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) {
 				_engine->_animations->initAnim(AnimationTypes::kKick, AnimType::kAnimationThen, AnimationTypes::kStanding, actorIdx);
-				_lastJoyFlag = true;
 			}
 		}
 		break;

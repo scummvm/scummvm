@@ -401,11 +401,13 @@ void Actor::hitObj(int32 actorIdx, int32 actorIdxAttacked, int32 hitforce, int32
 
 		_engine->_extra->initSpecial(actor->_posObj.x, actor->_posObj.y + 1000, actor->_posObj.z, ExtraSpecialType::kHitStars);
 
-		if (!actorIdxAttacked) {
+		if (IS_HERO(actorIdxAttacked)) {
 			_engine->_movements->_lastJoyFlag = true;
 		}
-
+		// TODO: in the original sources this in an else block - dotemu release doesn't have this (so we are going after dotmeu here)
+		// else {
 		actor->_lifePoint -= hitforce;
+		// }
 		if (actor->_lifePoint < 0) {
 			actor->_lifePoint = 0;
 		}
