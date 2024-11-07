@@ -965,6 +965,10 @@ void SaveLoadChooserGrid::open() {
 				_nextFreeSaveSlot = i + 1;
 			}
 		}
+
+		// Do not allow more slots than available
+		if (_nextFreeSaveSlot > maxSlot)
+			_nextFreeSaveSlot = -1;
 	}
 
 	updateSaves();
