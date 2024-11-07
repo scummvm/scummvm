@@ -213,6 +213,15 @@ void Room204::initWalkerSeries() {
 	ws_walk_load_walker_series(S8_SHADOW_DIRS1, S8_SHADOW_NAMES1, false);
 }
 
+void Room204::sub216B2() {
+}
+
+void Room204::sub1F6AF() {
+}
+
+void Room204::sub1F641() {
+}
+
 } // namespace Rooms
 } // namespace Riddle
 } // namespace M4
