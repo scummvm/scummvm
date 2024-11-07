@@ -2418,7 +2418,10 @@ void ScummEngine_v90he::o90_kernelGetFunctions() {
 		push(tmp);
 		break;
 	case 2001:
-		push(_logicHE->dispatch(args[1], num - 2, (int32 *)&args[2]));
+		if (_logicHE)
+			push(_logicHE->dispatch(args[1], num - 2, (int32 *)&args[2]));
+		else
+			push(0);
 		break;
 	default:
 		error("o90_kernelGetFunctions: default case %d", args[0]);
@@ -2482,7 +2485,8 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 		a->_heCondMask ^= tmp;
 		break;
 	case 2001:
-		_logicHE->dispatch(args[1], num - 2, (int32 *)&args[2]);
+		if (_logicHE)
+			_logicHE->dispatch(args[1], num - 2, (int32 *)&args[2]);
 		break;
 	case 201102: // Used in puttzoo iOS
 	case 20111014: // Used in spyfox iOS
