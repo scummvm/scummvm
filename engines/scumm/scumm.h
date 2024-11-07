@@ -1090,9 +1090,6 @@ public:
 
 	bool openFile(BaseScummFile &file, const Common::Path &filename, bool resourceFile = false);
 
-	/** Is this game a Mac m68k v5 game with iMuse? */
-	bool isMacM68kIMuse() const;
-
 protected:
 	int _resourceHeaderSize = 8;
 	byte _resourceMapper[128];

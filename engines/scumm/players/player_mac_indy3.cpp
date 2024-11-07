@@ -39,9 +39,14 @@ extern const uint32 g_pv2ModTblSize;
 
 class LegacyMusicDriver : public MacSoundDriver {
 public:
-	LegacyMusicDriver(uint16 numChannels, Common::Mutex &mutex, bool canInterpolate, bool internal16Bit) :
+	LegacyMusicDriver(uint16 numChannels, Audio::Mixer::SoundType sndType, Common::Mutex &mutex, bool canInterpolate, bool internal16Bit) :
 		MacSoundDriver(mutex, ASC_DEVICE_RATE, internal16Bit ? numChannels : 1, canInterpolate, internal16Bit),
-			_numChan(numChannels), _sndType(Audio::Mixer::kMusicSoundType) {}
+			_numChan(numChannels), _sndType(sndType) {
+		for (int i = 0; i < ARRAYSIZE(_status); ++i) {
+			if (sndType != i)
+				_status[i].flags |= kStatusDisabled;
+		}
+	}
 	virtual void start() = 0;
 	virtual void stop() = 0;
 
@@ -78,7 +83,7 @@ protected:
 
 class FourToneSynthDriver final : public LegacyMusicDriver {
 public:
-	FourToneSynthDriver(Common::Mutex &mutex, bool internal16bit);
+	FourToneSynthDriver(Audio::Mixer::SoundType sndType, Common::Mutex &mutex, bool internal16bit);
 	~FourToneSynthDriver() override;
 
 	void feed(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) override;
@@ -106,7 +111,7 @@ private:
 
 class SquareWaveSynthDriver final : public LegacyMusicDriver {
 public:
-	SquareWaveSynthDriver(Common::Mutex &mutex, bool internal16Bit);
+	SquareWaveSynthDriver(Audio::Mixer::SoundType sndType, Common::Mutex &mutex, bool internal16Bit);
 	~SquareWaveSynthDriver() override {};
 
 	void feed(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) override;
@@ -135,7 +140,7 @@ private:
 	uint32 _phase;
 };
 
-FourToneSynthDriver::FourToneSynthDriver(Common::Mutex &mutex, bool internal16Bit) : LegacyMusicDriver(4, mutex, false, internal16Bit), _duration(0), _pos(0), _chan(nullptr) {
+FourToneSynthDriver::FourToneSynthDriver(Audio::Mixer::SoundType sndType, Common::Mutex &mutex, bool internal16Bit) : LegacyMusicDriver(4, sndType, mutex, false, internal16Bit), _duration(0), _pos(0), _chan(nullptr) {
 	_chan = new Channel[_numChan];
 }
 
@@ -239,8 +244,8 @@ void FourToneSynthDriver::setRate(uint8 chan, uint16 rate) {
 	_chan[chan].rate = rate ? (0x5060000 / (rate >> ((rate < 1600) ? 4 : 6))) : 0;
 }
 
-SquareWaveSynthDriver::SquareWaveSynthDriver(Common::Mutex &mutex, bool internal16Bit) :
-	LegacyMusicDriver(1, mutex, false, internal16Bit), _count(0xffff), _duration(0), _amplitude(0), _phase(0), _pos(0) {
+SquareWaveSynthDriver::SquareWaveSynthDriver(Audio::Mixer::SoundType sndType, Common::Mutex &mutex, bool internal16Bit) :
+	LegacyMusicDriver(1, sndType, mutex, false, internal16Bit), _count(0xffff), _duration(0), _amplitude(0), _phase(0), _pos(0) {
 }
 
 void SquareWaveSynthDriver::feed(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) {
@@ -395,7 +400,7 @@ bool Indy3MacSnd::startDevices(uint32 outputRate, uint32 pcmDeviceRate, uint32 f
 		return false;
 
 	_sdrv = new MacLowLevelPCMDriver(_mixer->mutex(), pcmDeviceRate, internal16Bit);
-	FourToneSynthDriver *mdrv = new FourToneSynthDriver(_mixer->mutex(), internal16Bit);
+	FourToneSynthDriver *mdrv = new FourToneSynthDriver(Audio::Mixer::kMusicSoundType, _mixer->mutex(), internal16Bit);
 	if (!mdrv || !_sdrv)
 		return false;
 
@@ -406,12 +411,14 @@ bool Indy3MacSnd::startDevices(uint32 outputRate, uint32 pcmDeviceRate, uint32 f
 	_mdrv = mdrv;
 
 	_sfxChan = _sdrv->createChannel(Audio::Mixer::kSFXSoundType, MacLowLevelPCMDriver::kSampledSynth, 0, nullptr);
+	_sdrv->setFlags(MacSoundDriver::kStatusDisabled, Audio::Mixer::kMusicSoundType);
 
 	_drivers.push_back(_mdrv);
 	_drivers.push_back(_sdrv);
 
-	_macstr->initDrivers();
 	_macstr->initBuffers(feedBufferSize);
+	_macstr->addVolumeGroup(Audio::Mixer::kMusicSoundType);
+	_macstr->addVolumeGroup(Audio::Mixer::kSFXSoundType);
 	_macstr->setVblCallback(&_nextTickProc);
 
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, _macstr, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
@@ -494,14 +501,14 @@ void Indy3MacSnd::setQuality(int qual) {
 	_qmode = qual;
 
 	if (isHiQuality()) {
-		FourToneSynthDriver *mdrv = new FourToneSynthDriver(_mixer->mutex(), _16bit);
+		FourToneSynthDriver *mdrv = new FourToneSynthDriver(Audio::Mixer::kMusicSoundType, _mixer->mutex(), _16bit);
 		assert(mdrv);
 		for (int i = 0; i < mdrv->numChannels(); ++i)
 			mdrv->send(LegacyMusicDriver::kChanWaveform, i, _fourToneSynthWaveForm, sizeof(_fourToneSynthWaveForm));
 		_mdrv = mdrv;
 		_qualHi = true;
 	} else {
-		_mdrv = new SquareWaveSynthDriver(_mixer->mutex(), _16bit);
+		_mdrv = new SquareWaveSynthDriver(Audio::Mixer::kMusicSoundType, _mixer->mutex(), _16bit);
 		_qualHi = false;
 		assert(_mdrv);
 	}
@@ -577,10 +584,19 @@ void Indy3MacSnd::generateData(int8 *dst, uint32 len, Audio::Mixer::SoundType ty
 		(*i)->feed(dst, len, type, expectStereo);
 }
 
-const MacSoundDriver::Status &Indy3MacSnd::getDriverStatus(uint8 drvID, Audio::Mixer::SoundType type) const {
-	if (drvID >= _drivers.size())
-		error("Indy3MacSnd::getDriverCaps(): Invalid driver id %d", drvID);
-	return _drivers[drvID]->getStatus(type);
+const MacSoundDriver::Status &Indy3MacSnd::getDriverStatus(Audio::Mixer::SoundType type) const {
+	Common::Array<MacSoundDriver*>::const_iterator res = _drivers.end();
+	for (Common::Array<MacSoundDriver*>::const_iterator i = _drivers.begin(); i != _drivers.end(); ++i) {
+		if ((*i)->getStatus(type).flags & MacSoundDriver::kStatusDisabled)
+			continue;
+		if (res != _drivers.end())
+			warning("%s(): Multiple drivers for sound type %d", __FUNCTION__, type);
+		res = i;
+	}
+	if (res == _drivers.end())
+		error("%s(): No sound driver for type %d", __FUNCTION__, type);
+
+	return (*res)->getStatus(type);
 }
 
 void Indy3MacSnd::startSong(int id) {

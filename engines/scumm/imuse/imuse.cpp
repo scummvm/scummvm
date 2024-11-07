@@ -254,8 +254,6 @@ bool IMuseInternal::supportsPercussion(int sound) {
 		return _soundType != MDT_AMIGA && _soundType != MDT_MACINTOSH;
 
 	case MKTAG('M', 'A', 'C', ' '): // Occurs in the Mac version of FOA and MI2
-		// This is MIDI, i.e. uses MIDI style program changes, but without a
-		// special percussion channel.
 		return false;
 
 	case MKTAG('G', 'M', 'D', ' '):
@@ -269,8 +267,6 @@ bool IMuseInternal::supportsPercussion(int sound) {
 	// Old style 'RO' has equivalent properties to 'ROL'
 	if (ptr[0] == 'R' && ptr[1] == 'O')
 		return true;
-	// Euphony tracks show as 'SO' and have equivalent properties to 'ADL'
-	// FIXME: Right now we're pretending it's GM.
 	if (ptr[4] == 'S' && ptr[5] == 'O')
 		return true;
 
@@ -486,6 +482,11 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 
 	case IMuse::PROP_RECYCLE_PLAYERS:
 		_recycle_players = (value != 0);
+		break;
+
+	case IMuse::PROP_QUALITY:
+		if (_midi_native)
+			_midi_native->property(IMuse::PROP_QUALITY, value);
 		break;
 
 	default:

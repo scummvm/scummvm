@@ -85,9 +85,9 @@
 #include "scumm/util.h"
 #include "scumm/verbs.h"
 #include "scumm/imuse/drivers/pcspk.h"
-#include "scumm/imuse/drivers/mac_m68k.h"
 #include "scumm/imuse/drivers/amiga.h"
 #include "scumm/imuse/drivers/fmtowns.h"
+#include "scumm/imuse/drivers/macintosh.h"
 #include "scumm/imuse/drivers/midi.h"
 #include "scumm/detection_steam.h"
 
@@ -2166,6 +2166,9 @@ void ScummEngine::setupMusic(int midi) {
 	case MT_APPLEIIGS:
 		_sound->_musicType = MDT_APPLEIIGS;
 		break;
+	case MT_MACINTOSH:
+		_sound->_musicType = MDT_MACINTOSH;
+		break;
 	default:
 		_sound->_musicType = MDT_MIDI;
 		break;
@@ -2250,7 +2253,7 @@ void ScummEngine::setupMusic(int midi) {
 		// Adding AdLib capabilities to the player may still be a good
 		// idea, because there are plenty of sound resources that exist
 		// only as ADL and SPK.
-		_sound->_musicType = MDT_MIDI;
+		//_sound->_musicType = MDT_MIDI;
 	}
 
 	/* Bind the mixer to the system => mixer will be invoked
@@ -2331,16 +2334,13 @@ void ScummEngine::setupMusic(int midi) {
 		bool enable_gs = (_game.id == GID_TENTACLE || _game.id == GID_SAMNMAX) ? false : (ConfMan.getBool("enable_gs") && MidiDriver::getMusicType(dev) != MT_MT32);
 		bool newSystem = (_game.id == GID_SAMNMAX);
 
-		if (isMacM68kIMuse()) {
-			// We setup this driver as native MIDI driver to avoid playback
-			// of the Mac music via a selected MIDI device.
-			nativeMidiDriver = new IMuseDriver_MacM68k(_mixer);
-			// The Mac driver is never MT-32.
-			_native_mt32 = enable_gs = false;
-			// Ignore non-native drivers. This also ignores the multi MIDI setting.
-			useOnlyNative = true;
-		} else if (_sound->_musicType == MDT_AMIGA) {
+		if (_sound->_musicType == MDT_AMIGA) {
 			nativeMidiDriver = new IMuseDriver_Amiga(_mixer);
+			_native_mt32 = enable_gs = false;
+			useOnlyNative = true;
+		} else if (_sound->_musicType == MDT_MACINTOSH) {
+			//nativeMidiDriver = new IMuseDriver_MacM68k(_mixer);
+			nativeMidiDriver = new IMuseDriver_Mac_DJM(_mixer);
 			_native_mt32 = enable_gs = false;
 			useOnlyNative = true;
 		} else if (_sound->_musicType != MDT_ADLIB && _sound->_musicType != MDT_TOWNS && _sound->_musicType != MDT_PCSPK) {
@@ -2363,15 +2363,18 @@ void ScummEngine::setupMusic(int midi) {
 			}
 		}
 
-		_imuse = IMuse::create(this, nativeMidiDriver, adlibMidiDriver, isMacM68kIMuse() ? MDT_MACINTOSH : _sound->_musicType, _native_mt32);
+		_imuse = IMuse::create(this, nativeMidiDriver, adlibMidiDriver, _sound->_musicType, _native_mt32);
 
-		if (_game.platform == Common::kPlatformFMTowns) {
+		if (_sound->_musicType == MDT_TOWNS) {
 			_musicEngine = _townsPlayer = new Player_Towns_v2(this, _mixer, _imuse, true);
 			if (!_townsPlayer->init())
 				error("ScummEngine::setupMusic(): Failed to initialize FM-Towns audio driver");
 		} else {
 			_musicEngine = _imuse;
 		}
+
+		if (_sound->_musicType == MDT_MACINTOSH && ConfMan.hasKey("mac_snd_quality"))
+			_musicEngine->setQuality(ConfMan.getInt("mac_snd_quality"));
 
 		if (_imuse) {
 			_imuse->addSysexHandler

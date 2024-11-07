@@ -35,7 +35,7 @@ MODULE_OBJS := \
 	imuse/drivers/amiga.o \
 	imuse/drivers/fmtowns.o \
 	imuse/drivers/midi.o \
-	imuse/drivers/mac_m68k.o \
+	imuse/drivers/macintosh.o \
 	imuse/drivers/pcspk.o \
 	input.o \
 	ks_check.o \

@@ -287,7 +287,7 @@ public:
 	void send(MidiChannel *mc) override;
 	void copy_to(Instrument *dest) override { dest->macSfx(_program); }
 	bool is_valid() override {
-		return (_program < 128);
+		return (true);
 	}
 };
 
@@ -337,8 +337,6 @@ void Instrument::pcspk(const byte *instrument) {
 
 void Instrument::macSfx(byte prog) {
 	clear();
-	if (prog > 127)
-		return;
 	_type = itMacSfx;
 	_instrument = new Instrument_MacSfx(prog);
 }
@@ -402,10 +400,13 @@ void Instrument_Program::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsByte(_program);
 	if (s.isSaving()) {
 		s.syncAsByte(_soundTypeMT32);
+		s.syncAsByte(_nativeMT32Device);
 	} else {
 		byte tmp;
 		s.syncAsByte(tmp);
 		_soundTypeMT32 = (tmp > 0);
+		s.syncAsByte(tmp, VER(122));
+		_nativeMT32Device = (tmp > 0);
 	}
 }
 
@@ -534,9 +535,6 @@ void Instrument_PcSpk::send(MidiChannel *mc) {
 
 Instrument_MacSfx::Instrument_MacSfx(byte program) :
 	_program(program) {
-	if (program > 127) {
-		_program = 255;
-	}
 }
 
 Instrument_MacSfx::Instrument_MacSfx(Common::Serializer &s) {
@@ -551,9 +549,10 @@ void Instrument_MacSfx::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 void Instrument_MacSfx::send(MidiChannel *mc) {
-	if (_program > 127) {
+	if (!mc)
 		return;
-	}
-	mc->sysEx_customInstrument('MAC ', &_program, sizeof(_program));
+	mc->controlChange(0x20, 1);
+	mc->programChange(_program);
+	mc->controlChange(0x20, 0);
 }
 } // End of namespace Scumm

@@ -407,8 +407,7 @@ void Sound::triggerSound(int soundID) {
 	}
 	// Support for sampled sound effects in Monkey Island 1 and 2
 	else if (_vm->_game.platform != Common::kPlatformFMTowns
-	         // The Macintosh m68k versions of MI2/Indy4 just ignore SBL effects.
-	         && !_vm->isMacM68kIMuse()
+	         && _vm->_game.platform != Common::kPlatformMacintosh
 	         && READ_BE_UINT32(ptr) == MKTAG('S','B','L',' ')) {
 		debugC(DEBUG_SOUND, "Using SBL sound effect");
 

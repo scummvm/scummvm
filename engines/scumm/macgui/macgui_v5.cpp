@@ -845,7 +845,7 @@ bool MacV5Gui::runOptionsDialog() {
 	int textSpeed = _vm->_defaultTextSpeed;
 	int musicQuality = ConfMan.hasKey("mac_snd_quality") ? ConfMan.getInt("mac_snd_quality") : 0;
 	int musicQualityOption = (musicQuality == 0) ? 1 : (musicQuality - 1) % 3;
-	musicQuality = (musicQuality == 0) ? (_vm->VAR(_vm->VAR_SOUNDCARD) == 10 ? 0 : 2) : (musicQuality - 1) / 3;
+	musicQuality = (musicQuality == 0) ? 2 : (musicQuality - 1) / 3;
 
 	if (_vm->_game.id == GID_MONKEY) {
 		checkboxMusic = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 1);

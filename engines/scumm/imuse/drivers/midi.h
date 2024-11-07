@@ -24,14 +24,16 @@
 
 #include "audio/mididrv.h"
 
-namespace Scumm {
-
+namespace IMSMidi {
 class IMuseChannel_Midi;
 class IMuseChannel_MT32;
 struct ChannelNode;
+} // End of namespace IMSMidi
+
+namespace Scumm {
 
 class IMuseDriver_GMidi : public MidiDriver {
-	friend class IMuseChannel_Midi;
+	friend class IMSMidi::IMuseChannel_Midi;
 public:
 	IMuseDriver_GMidi(MidiDriver::DeviceHandle dev, bool rolandGSMode, bool newSystem);
 	virtual ~IMuseDriver_GMidi() override;
@@ -53,7 +55,7 @@ public:
 	MidiChannel *getPercussionChannel() override;
 
 protected:
-	IMuseChannel_Midi *getPart(int number);
+	IMSMidi::IMuseChannel_Midi *getPart(int number);
 	virtual void createChannels();
 	virtual void createParts();
 	virtual void releaseChannels();
@@ -62,7 +64,7 @@ protected:
 	const bool _newSystem;
 	byte _numChannels;
 	byte _numVoices;
-	IMuseChannel_Midi **_imsParts;
+	IMSMidi::IMuseChannel_Midi **_imsParts;
 
 private:
 	virtual void initDevice();
@@ -78,15 +80,15 @@ private:
 
 	const bool _gsMode;
 
-	ChannelNode *_idleChain;
-	ChannelNode *_activeChain;
+	IMSMidi::ChannelNode *_idleChain;
+	IMSMidi::ChannelNode *_activeChain;
 
 	uint16 *_notesPlaying;
 	uint16 *_notesSustained;
 };
 
 class IMuseDriver_MT32 final : public IMuseDriver_GMidi {
-	friend class IMuseChannel_MT32;
+	friend class IMSMidi::IMuseChannel_MT32;
 public:
 	IMuseDriver_MT32(MidiDriver::DeviceHandle dev, bool newSystem);
 	~IMuseDriver_MT32() override {}
@@ -101,7 +103,7 @@ private:
 	// Convenience function that allows to send the sysex message with the exact same arguments as they are used in the original drivers.
 	void sendMT32Sysex(uint32 addr, const byte *data, uint32 dataSize);
 
-	ChannelNode *_hwRealChain;
+	IMSMidi::ChannelNode *_hwRealChain;
 
 	const byte *_programsMapping;
 };

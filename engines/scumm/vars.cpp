@@ -871,8 +871,8 @@ void ScummEngine::setSoundCardVarToCurrentConfig() {
 			VAR(VAR_SOUNDCARD) = (ConfMan.hasKey("mac_snd_quality") && ConfMan.getInt("mac_snd_quality") > 0 && ConfMan.getInt("mac_snd_quality") < 4) ? 10 : 11;
 		else if (_game.id == GID_MONKEY)
 			VAR(VAR_SOUNDCARD) = 0xffff;
-		else
-			VAR(VAR_SOUNDCARD) = 3;
+		else // GID_MONKEY2 || GID_INDY4
+			VAR(VAR_SOUNDCARD) = 4;
 		break;
 	case MDT_NONE:
 	case MDT_PCSPK:

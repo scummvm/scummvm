@@ -28,7 +28,8 @@
 // dynamic allocation (instead of playing on fixed channels).
 //#define FORCE_NEWSTYLE_CHANNEL_ALLOCATION
 
-namespace Scumm {
+namespace IMSMidi {
+using namespace Scumm;
 
 /*******************************
 *		General Midi driver
@@ -379,6 +380,11 @@ void IMuseChannel_Midi::sendNoteOn(byte note, byte velocity) {
 	sendMidi(0x90, note, velocity);
 }
 
+} // End of namespace IMSMidi
+
+namespace Scumm {
+using namespace IMSMidi;
+
 IMuseDriver_GMidi::IMuseDriver_GMidi(MidiDriver::DeviceHandle dev, bool rolandGSMode, bool newSystem) : MidiDriver(), _drv(nullptr), _gsMode(rolandGSMode),
 	_imsParts(nullptr), _newSystem(newSystem), _numChannels(16), _notesPlaying(nullptr), _notesSustained(nullptr), _idleChain(nullptr), _activeChain(nullptr), _numVoices(12) {
 	_drv = MidiDriver::createMidi(dev);
@@ -633,6 +639,10 @@ void IMuseDriver_GMidi::deinitDevice() {
 	}
 }
 
+} // End of namespace Scumm
+
+namespace IMSMidi {
+
 /**************************
 *		MT-32 driver
 ***************************/
@@ -845,6 +855,10 @@ void IMuseChannel_MT32::sendSysexTimbreData(const byte *data, uint32 dataSize) c
 	assert(!_newSystem);
 	_mt32Drv->sendMT32Sysex(_sysexTimbreAddrBase, data, dataSize);
 }
+
+} // End of namespace IMSMidi
+
+namespace Scumm {
 
 IMuseDriver_MT32::IMuseDriver_MT32(MidiDriver::DeviceHandle dev, bool newSystem) : IMuseDriver_GMidi(dev, false, newSystem), _programsMapping(nullptr), _hwRealChain(nullptr) {
 #ifdef FORCE_NEWSTYLE_CHANNEL_ALLOCATION

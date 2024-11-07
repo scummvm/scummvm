@@ -200,10 +200,6 @@ Common::Path ScummEngine_v70he::generateFilename(const int room) const {
 	return Common::Path(result, Common::Path::kNoSeparator);
 }
 
-bool ScummEngine::isMacM68kIMuse() const {
-	return _game.platform == Common::kPlatformMacintosh && (_game.id == GID_MONKEY2 || _game.id == GID_INDY4) && !(_game.features & GF_MAC_CONTAINER);
-}
-
 } // End of namespace Scumm
 
 #pragma mark -
@@ -411,10 +407,13 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine,
 		res.language = Common::parseLanguage(ConfMan.get("language"));
 
 	// V3 FM-TOWNS games *always* should use the corresponding music driver,
-	// anything else makes no sense for them.
+	// anything else makes no sense for them. Same for Mac (but not limited to V3).
 	// TODO: Maybe allow the null driver, too?
 	if (res.game.platform == Common::kPlatformFMTowns && res.game.version == 3)
 		res.game.midi = MDT_TOWNS;
+	else if (res.game.platform == Common::kPlatformMacintosh && res.game.version < 6)
+		res.game.midi = MDT_MACINTOSH;
+
 	// Finally, we have massaged the GameDescriptor to our satisfaction, and can
 	// instantiate the appropriate game engine. Hooray!
 	switch (res.game.version) {

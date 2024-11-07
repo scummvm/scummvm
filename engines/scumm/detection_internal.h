@@ -862,14 +862,22 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 static Common::String customizeGuiOptions(const DetectorResult &res) {
 	Common::String guiOptions = res.game.guioptions;
 
-	int midiflags = res.game.midi;
-	// These games often have no detection entries of their own and therefore come with all the DOS audio options.
-	// We clear them here to avoid confusion and add the appropriate default sound option below. The games from
-	// version 5 onwards seem to have correct sound options in the detection tables.
-	if (res.game.version < 5 && (res.game.platform == Common::kPlatformAmiga || (res.game.platform == Common::kPlatformMacintosh && strncmp(res.extra, "Steam", 6)) || res.game.platform == Common::kPlatformC64))
-		midiflags = MDT_NONE;
-
 	static const uint mtypes[] = {MT_PCSPK, MT_CMS, MT_PCJR, MT_ADLIB, MT_C64, MT_AMIGA, MT_APPLEIIGS, MT_TOWNS, MT_PC98, MT_SEGACD, 0, 0, 0, 0, MT_MACINTOSH};
+	int midiflags = res.game.midi;
+
+	// These games often have no detection entries of their own and therefore come with all the DOS audio options.
+	// We clear them here to avoid confusion and add the appropriate default sound option below.
+	if (res.game.platform == Common::kPlatformAmiga || (res.game.platform == Common::kPlatformMacintosh && strncmp(res.extra, "Steam", 6)) || res.game.platform == Common::kPlatformC64) {
+		midiflags = MDT_NONE;
+		// Remove invalid types from options string
+		for (int i = 0; i < ARRAYSIZE(mtypes); ++i) {
+			if (!mtypes[i])
+				continue;
+			uint pos = guiOptions.findFirstOf(MidiDriver::musicType2GUIO(mtypes[i]));
+			if (pos != Common::String::npos)
+				guiOptions.erase(pos, 1);
+		}
+	}
 
 	for (int i = 0; i < ARRAYSIZE(mtypes); ++i) {
 		if (mtypes[i] && (midiflags & (1 << i)))
