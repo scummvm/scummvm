@@ -242,6 +242,7 @@ public:
 
 	bool hasFeature(EngineFeature f) const override {
 		return
+			(f == kSupportsReturnToLauncher) ||
 			(f == kSupportsLoadingDuringRuntime) ||
 			(f == kSupportsSavingDuringRuntime);
 	};
