@@ -54,6 +54,9 @@ inline static void convertPaletteToMap(uint32 *dst, const byte *src, uint colors
 
 /**
  * Blits a rectangle.
+ * Cautions: 
+ *  source & destination buffers must have same bpp
+ *  blit function has no protection against buffer overruns; w.bpp & h must not exceed respective byte dimensions (pitch & height) of either buffer
  *
  * @param dst			the buffer which will receive the converted graphics data
  * @param src			the buffer containing the original graphics data
