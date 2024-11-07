@@ -1208,7 +1208,7 @@ int TTparser::considerRequests(TTword *word) {
 			break;
 
 		case MKTAG('F', 'A', 'R', 'R'):
-			if (_conceptP->findBy20(0))
+			if (_conceptP && _conceptP->findBy20(0))
 				_conceptP->_field20 = 2;
 			break;
 
@@ -1251,12 +1251,13 @@ int TTparser::considerRequests(TTword *word) {
 			break;
 
 		case MKTAG('N', 'E', 'A', 'R'):
-			if (_conceptP->findBy20(0)) {
+			if (_conceptP && _conceptP->findBy20(0)) {
 				_conceptP->_field20 = 1;
 			} else {
 				TTpicture *newPictP = new TTpicture(TTstring("?"), WC_THING, 0, 0, 0, 0, 0);
 				status = addToConceptList(newPictP);
-				_conceptP->_field20 = 1;
+				if (_conceptP)
+					_conceptP->_field20 = 1;
 				if (!status)
 					delete newPictP;
 			}
