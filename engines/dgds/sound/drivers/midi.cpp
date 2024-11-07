@@ -1033,6 +1033,8 @@ int MidiPlayer_Midi::open() {
 		}
 	}
 
+	delete res;
+
 	return 0;
 }
 

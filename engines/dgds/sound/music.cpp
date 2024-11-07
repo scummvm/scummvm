@@ -67,6 +67,8 @@ SciMusic::SciMusic(bool useDigitalSFX) :
 }
 
 SciMusic::~SciMusic() {
+	clearPlayList();
+
 	if (_pMidiDrv) {
 		_pMidiDrv->close();
 		delete _pMidiDrv;

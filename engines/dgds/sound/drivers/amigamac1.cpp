@@ -961,6 +961,8 @@ int MidiPlayer_Mac1::open() {
 		return MidiDriver::MERR_DEVICE_NOT_AVAILABLE;
 	}
 
+	delete patch;
+
 	for (byte vi = 0; vi < kVoices; ++vi)
 		_voices.push_back(new MacVoice(*this, vi));
 
@@ -1150,6 +1152,8 @@ int MidiPlayer_Amiga1::open() {
 		freeInstruments();
 		return MidiDriver::MERR_DEVICE_NOT_AVAILABLE;
 	}
+
+	delete patch;
 
 	for (byte vi = 0; vi < kVoices; ++vi)
 		_voices.push_back(new AmigaVoice(*this, vi));

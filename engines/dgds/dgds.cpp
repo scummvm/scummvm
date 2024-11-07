@@ -127,9 +127,11 @@ DgdsEngine::~DgdsEngine() {
 	delete _resource;
 	delete _scene;
 	delete _gdsScene;
+	delete _gameGlobals;
 	delete _soundPlayer;
 	delete _fontManager;
 	delete _menu;
+	delete _adsInterp;
 	delete _inventory;
 	delete _shellGame;
 	delete _hocIntro;

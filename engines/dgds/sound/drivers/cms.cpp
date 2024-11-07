@@ -748,6 +748,8 @@ int MidiDriver_CMS::open() {
 		_voice[i] = new CMSVoice_V1(i, this, _cms, *_patchData);
 	}
 
+	delete res;
+
 	_playSwitch = true;
 	_masterVolume = 15;
 

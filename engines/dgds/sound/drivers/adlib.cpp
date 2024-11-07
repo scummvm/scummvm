@@ -863,6 +863,7 @@ int MidiPlayer_AdLib::open() {
 
 	if (res) {
 		ok = static_cast<MidiDriver_AdLib *>(_driver)->loadResource(*res);
+		delete res;
 	} else {
 		// Early SCI0 games have the sound bank embedded in the AdLib driver
 
