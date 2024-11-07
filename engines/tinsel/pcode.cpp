@@ -158,6 +158,19 @@ static const byte fragment14[] = {OP_LIBCALL | OPSIZE8, 58,
 };
 static const byte fragment15[] = { OP_JMPFALSE | OPSIZE16, FRAGMENT_WORD(154) };
 
+#if NOIR_SKIP_INTRO
+static const byte fragment_noir_skip_intro_1[] = {
+		OP_IMM + 1, FRAGMENT_DWORD(0x1e000000),         // scene = 0x1e = LOFFINTE.SCN
+		(OP_IMM + 1) | OPSIZE16, FRAGMENT_WORD(0x95),   // entrance = 0x95
+		(OP_ZERO + 1),                                  // no transition
+		(OP_LIBCALL + 1) | OPSIZE8, 99,                 // call NEWSCENE
+		OP_HALT + 1                                     // done
+};
+static const byte fragment_noir_skip_intro_2[] = {
+		(OP_JUMP + 1) | OPSIZE16, FRAGMENT_WORD(0x50f)  // jump to 0x50f, skip the discussion with Carlotta Von Uberwald
+};
+#endif
+
 #undef FRAGMENT_WORD
 
 const WorkaroundEntry workaroundList[] = {
@@ -229,6 +242,12 @@ const WorkaroundEntry workaroundList[] = {
 
 	// DW1-GRA: Fixes hang in Temple, when trying to use items on the big hammer
 	{TINSEL_V1, false, false, Common::kPlatformUnknown, 276915849, 0x98, sizeof(fragment15), fragment15},
+
+#if NOIR_SKIP_INTRO
+	// NOIR: Skip the menu and intro, and skip the first conversation.
+	{TINSEL_V3, false, false, Common::kPlatformUnknown, 0, 0x6a2, sizeof(fragment_noir_skip_intro_1), fragment_noir_skip_intro_1},
+	{TINSEL_V3, false, false, Common::kPlatformUnknown, 0x1f3dc654, 0x23c, sizeof(fragment_noir_skip_intro_2), fragment_noir_skip_intro_2},
+#endif
 
 	{TINSEL_V0, false, false, Common::kPlatformUnknown, 0, 0, 0, NULL}
 };
