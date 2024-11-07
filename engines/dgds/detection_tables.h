@@ -361,6 +361,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"resource.001", 0, "67a4ebacfa73d3f54e9c489d46f3e512", 1393208},
 			{"resource.002", 0, "de8375a3cf6bf347a0d8604b871883d3", 1456460},
 			{"resource.003", 0, "d22b65b330873828b18377a8276c071a", 1177135},
+			{"turbosci.exe", 0, "a6258fec3119c49c315e9e778e057017", 279008},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
@@ -404,6 +405,7 @@ static const ADGameDescription gameDescriptions[] = {
 		{
 			{"resource.map", 0, "374e6d05c5e0acd88fb5af748948c899", 1461},
 			{"resource.001", 0, "46acc7ab8f6d7f63838ffea5f87380e2", 1175645},
+			{"scrantic.exe", 0, "46ce1ae10fcfa52dd964fcfc86694509", 295952},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
