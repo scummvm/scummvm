@@ -42,8 +42,8 @@ private:
 	const char *_itemDigi4 = nullptr;
 	const char *_itemDigi5 = nullptr;
 	int _val4 = 0;
-	int _val5 = 0;
-	int _val6 = 0;
+	int _meiMode = 0;
+	int _meiShould = 0;
 	int _val8 = 0;
 	int _val9 = 0;
 	int _agentShould = 0;

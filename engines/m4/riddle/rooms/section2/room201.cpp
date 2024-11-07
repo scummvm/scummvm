@@ -126,8 +126,8 @@ void Room201::init() {
 					triggerMachineByHashCallback, "MC");
 				series_place_sprite("candleman shadow4", 0, 200, 238, 73, 0xf00);
 				sendWSMessage(1, _mei2, _meiHandHip, 22, 22, 2000, _meiHandHip, 22, 22, 0);
-				_val5 = 2;
-				_val6 = 2;
+				_meiMode = 2;
+				_meiShould = 2;
 				_trigger9 = -1;
 				_val8 = -1;
 				_val9 = -1;
@@ -355,13 +355,13 @@ void Room201::daemon() {
 		break;
 
 	case 210:
-		_val6 = 3;
+		_meiShould = 3;
 		digi_play("201m01", 1, 255, 215);
 		break;
 
 	case 215:
 		_ctr1 = 0;
-		_val6 = 0;
+		_meiShould = 0;
 		setGlobals1(_ripTalk, 1, 7, 1, 7, 1);
 		sendWSMessage_110000(217);
 		digi_play("201r02", 1, 255, 217);
@@ -378,12 +378,12 @@ void Room201::daemon() {
 
 	case 220:
 		series_unload(_ripTalk);
-		_val6 = 3;
+		_meiShould = 3;
 		digi_play("201m02", 1, 255, 230);
 		break;
 
 	case 230:
-		_val6 = 0;
+		_meiShould = 0;
 		kernel_timing_trigger(120, 235);
 		break;
 
@@ -419,17 +419,17 @@ void Room201::daemon() {
 
 	case 260:
 		_agentShould = 0;
-		_val6 = 4;
+		_meiShould = 4;
 		digi_play("201m03", 1, 255, 270);
 		break;
 
 	case 270:
-		_val6 = 0;
+		_meiShould = 0;
 		_trigger9 = kernel_trigger_create(279);
 		break;
 
 	case 279:
-		_val6 = 2;
+		_meiShould = 2;
 		ws_walk(356, 256, nullptr, 280, 3);
 		break;
 
@@ -520,7 +520,6 @@ void Room201::daemon() {
 			terminateMachineAndNull(_agent);
 		} else {
 			kernel_timing_trigger(1, 511);
-			sendWSMessage_150000(-1);
 		}
 		break;
 
@@ -699,22 +698,22 @@ void Room201::daemon() {
 		sendWSMessage_10000(1, _mei2, _meiWalk, 1, 1, 2000, _meiWalk, 1, 1, 0);
 		sendWSMessage_60000(_mei0);
 		kernel_timing_trigger(1, 9300);
-		_val5 = _val6 = 0;
+		_meiMode = _meiShould = 0;
 		_trigger9 = _val8 = _val9 = -1;
 		break;
 
 	case 2000:
-		if (_val5 == 0 && _val6 == 0 && _trigger9 != -1) {
+		if (_meiMode == 0 && _meiShould == 0 && _trigger9 != -1) {
 			kernel_trigger_dispatchx(_trigger9);
 			_trigger9 = -1;
 		}
 
-		if (_val5 == 2 && _val6 == 2 && _val8 != -1) {
+		if (_meiMode == 2 && _meiShould == 2 && _val8 != -1) {
 			kernel_trigger_dispatchx(_val8);
 			_val8 = -1;
 		}
 
-		if (_val5 == 5 && _val6 == 5 && _val9 != -1) {
+		if (_meiMode == 5 && _meiShould == 5 && _val9 != -1) {
 			kernel_trigger_dispatchx(_val9);
 			_val9 = -1;
 		}
@@ -723,9 +722,9 @@ void Room201::daemon() {
 		break;
 
 	case 2010:
-		switch (_val5) {
+		switch (_meiMode) {
 		case 0:
-			switch (_val6) {
+			switch (_meiShould) {
 			case 0:
 				sendWSMessage_10000(1, _mei2, _meiWalk, 1, 1, 2000, _meiWalk, 1, 1, 0);
 				break;
@@ -733,25 +732,25 @@ void Room201::daemon() {
 			case 2:
 				_meiHandHip = series_load("MEI TREK HAND ON HIP POS4");
 				sendWSMessage_10000(1, _mei2, _meiHandHip, 1, 21, 2000, _meiHandHip, 22, 22, 0);
-				_val5 = 2;
+				_meiMode = 2;
 				break;
 
 			case 3:
 				sendWSMessage_10000(1, _mei2, _meiTalker, 1, 1, 2000, _meiTalker, 1, 4, 1);
-				_val5 = 3;
+				_meiMode = 3;
 				break;
 
 			case 4:
 				_meiHeadTurn = series_load("MEI TREK HEAD TRN POS4");
 				sendWSMessage_10000(1, _mei2, _meiHeadTurn, 8, 9, 2000, _meiHeadTurn, 10, 10, 0);
-				_val5 = 4;
+				_meiMode = 4;
 				break;
 
 			case 5:
 			case 6:
 				_meiTalkLoop = series_load("MEI TREK TALK LOOP POS4");
 				sendWSMessage_10000(1, _mei2, _meiTalkLoop, 1, 14, 2000, _meiTalkLoop, 15, 15, 0);
-				_val5 = 5;
+				_meiMode = 5;
 				break;
 
 			default:
@@ -760,17 +759,17 @@ void Room201::daemon() {
 			break;
 
 		case 2:
-			switch (_val6) {
+			switch (_meiShould) {
 			case 0:
 				sendWSMessage_10000(1, _mei2, _meiHandHip, 21, 1, 2000, _meiWalk, 1, 1, 0);
-				_val6 = 1;
+				_meiShould = 1;
 				break;
 
 			case 1:
 				sendWSMessage_10000(1, _mei2, _meiWalk, 1, 1, 2000, _meiWalk, 1, 1, 0);
 				series_unload(_meiHandHip);
-				_val6 = 0;
-				_val5 = 0;
+				_meiShould = 0;
+				_meiMode = 0;
 				break;
 
 			case 2:
@@ -783,10 +782,10 @@ void Room201::daemon() {
 			break;
 
 		case 3:
-			switch (_val6) {
+			switch (_meiShould) {
 			case 0:
 				sendWSMessage_10000(1, _mei2, _meiTalker, 1, 1, 2000, _meiWalk, 1, 1, 0);
-				_val5 = 0;
+				_meiMode = 0;
 				break;
 
 			case 3:
@@ -801,15 +800,15 @@ void Room201::daemon() {
 			break;
 
 		case 4:
-			switch (_val6) {
+			switch (_meiShould) {
 			case 0:
 				sendWSMessage_10000(1, _mei2, _meiHeadTurn, 10, 8, 2000, _meiWalk, 1, 1, 0);
-				_val6 = 1;
+				_meiShould = 1;
 				break;
 
 			case 1:
 				sendWSMessage_10000(1, _mei2, _meiWalk, 1, 1, 2000, _meiWalk, 1, 1, 0);
-				_val5 = _val6 = 0;
+				_meiMode = _meiShould = 0;
 				series_unload(_meiHeadTurn);
 				break;
 
@@ -824,15 +823,15 @@ void Room201::daemon() {
 			break;
 
 		case 5:
-			switch (_val6) {
+			switch (_meiShould) {
 			case 0:
 				sendWSMessage_10000(1, _mei2, _meiTalkLoop, 15, 1, 2000, _meiWalk, 1, 1, 0);
-				_val6 = 1;
+				_meiShould = 1;
 				break;
 
 			case 1:
 				sendWSMessage_10000(1, _mei2, _meiWalk, 1, 1, 2000, _meiWalk, 1, 1, 0);
-				_val6 = _val5 = 0;
+				_meiShould = _meiMode = 0;
 				series_unload(_meiTalkLoop);
 				break;
 
@@ -842,12 +841,12 @@ void Room201::daemon() {
 
 			case 6:
 				sendWSMessage_10000(1, _mei2, _meiTalkLoop, 15, 29, 2000, _meiTalkLoop, 29, 29, 0);
-				_val6 = 7;
+				_meiShould = 7;
 				break;
 
 			case 7:
 				sendWSMessage_10000(1, _mei2, _meiTalkLoop, 29, 15, 2000, _meiTalkLoop, 15, 15, 0);
-				_val6 = 5;
+				_meiShould = 5;
 				break;
 
 			default:
@@ -1568,7 +1567,7 @@ void Room201::parser() {
 				_ctr2 = 0;
 				player_set_commands_allowed(false);
 				_ripTalk = series_load("RIP TREK TALK");
-				_val6 = 0;
+				_meiShould = 0;
 				setGlobals1(_ripTalk, 1, 7, 1, 7, 1);
 				sendWSMessage_110000(2);
 				digi_play("201r15", 1, 255, 2);
@@ -1585,17 +1584,17 @@ void Room201::parser() {
 
 			case 3:
 				series_unload(_ripTalk);
-				_val6 = 3;
+				_meiShould = 3;
 				digi_play("201m04", 1, 255, 4);
 				break;
 
 			case 4:
-				_val6 = 0;
+				_meiShould = 0;
 				_trigger9 = kernel_trigger_create(5);
 				break;
 
 			case 5:
-				_val6 = 2;
+				_meiShould = 2;
 				_val8 = kernel_trigger_create(6);
 				break;
 
@@ -1613,12 +1612,12 @@ void Room201::parser() {
 			case 666:
 				player_set_commands_allowed(false);
 				_ripTalk = series_load("RIP TREK TALK");
-				_val6 = 0;
+				_meiShould = 0;
 				_trigger9 = kernel_trigger_create(2);
 				break;
 
 			case 2:
-				_val6 = 5;
+				_meiShould = 5;
 				_val9 = kernel_trigger_create(3);
 				break;
 
@@ -1644,17 +1643,17 @@ void Room201::parser() {
 
 			case 5:
 				series_unload(_ripTalk);
-				_val6 = 6;
+				_meiShould = 6;
 				_val9 = kernel_trigger_create(6);
 				break;
 
 			case 6:
-				_val6 = 0;
+				_meiShould = 0;
 				_trigger9 = kernel_trigger_create(7);
 				break;
 
 			case 7:
-				_val6 = 2;
+				_meiShould = 2;
 				_val8 = kernel_trigger_create(8);
 				break;
 
