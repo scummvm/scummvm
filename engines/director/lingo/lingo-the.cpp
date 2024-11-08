@@ -1533,6 +1533,10 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheMemberNum:
 		{
 			CastMemberID castId = d.asMemberID();
+			// Setting the cast ID as a number will preserve whatever is in castLib
+			if (d.isNumeric() && (sprite->_castId.castLib != 0)) {
+				castId = CastMemberID(d.asInt(), sprite->_castId.castLib);
+			}
 			CastMember *castMember = movie->getCastMember(castId);
 
 			if (castMember && castMember->_type == kCastDigitalVideo) {
