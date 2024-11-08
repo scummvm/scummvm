@@ -1,3 +1,4 @@
 engines/sword2/animation.cpp
+engines/sword2/detection_tables.h
 engines/sword2/metaengine.cpp
 engines/sword2/sword2.cpp

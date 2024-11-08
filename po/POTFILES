@@ -1,3 +1,5 @@
+audio/mac_plugin.cpp
+
 gui/about.cpp
 gui/browser.cpp
 gui/chooser.cpp
@@ -40,6 +42,7 @@ common/engine_data.cpp
 common/error.cpp
 common/localization.cpp
 common/rendermode.cpp
+common/rotationmode.cpp
 common/translation.cpp
 common/updates.cpp
 common/util.cpp
