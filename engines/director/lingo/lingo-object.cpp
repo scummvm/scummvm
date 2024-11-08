@@ -104,7 +104,6 @@
 #include "director/lingo/xlibs/panel.h"
 #include "director/lingo/xlibs/popupmenuxobj.h"
 #include "director/lingo/xlibs/porta.h"
-#include "director/lingo/xlibs/portaxcmd.h"
 #include "director/lingo/xlibs/prefpath.h"
 #include "director/lingo/xlibs/printomatic.h"
 #include "director/lingo/xlibs/processxobj.h"
@@ -276,7 +275,6 @@ static struct XLibProto {
 	XLIBDEF(MiscX,				kXObj,			400),	// D4
 	XLIBDEF(MMaskXObj,			kXObj,			400),	// D4
 	XLIBDEF(MoovXObj,			kXObj,			300),	// D3
-	XLIBDEF(MovUtilsXObj,		kXObj,			400),	// D4
 	XLIBDEF(MoveMouseJPXObj,			kXObj,					400),	// D4
 	XLIBDEF(MoveMouseXObj,		kXObj,			400),	// D4
 	XLIBDEF(MovieIdxXObj,		kXObj,			400),	// D4
@@ -289,7 +287,6 @@ static struct XLibProto {
 	XLIBDEF(PanelXObj,			kXObj,			200),	// D2
 	XLIBDEF(PopUpMenuXObj,		kXObj,			200),	// D2
 	XLIBDEF(Porta,				kXObj,			300),	// D3
-	XLIBDEF(PortaXCMD,			kXObj,			300),	// D3
 	XLIBDEF(PrefPath,			kXObj,			400),	// D4
 	XLIBDEF(PrintOMaticXObj,	kXObj,			400),	// D4
 	XLIBDEF(ProcessXObj,		kXObj,			400),	// D4

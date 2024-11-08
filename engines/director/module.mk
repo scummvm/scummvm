@@ -133,7 +133,6 @@ MODULE_OBJS = \
 	lingo/xlibs/panel.o \
 	lingo/xlibs/popupmenuxobj.o \
 	lingo/xlibs/porta.o \
-	lingo/xlibs/portaxcmd.o \
 	lingo/xlibs/prefpath.o \
 	lingo/xlibs/printomatic.o \
 	lingo/xlibs/processxobj.o \
