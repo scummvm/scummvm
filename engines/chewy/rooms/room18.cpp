@@ -108,6 +108,11 @@ void Room18::entry() {
 	if (_G(gameState).R16F5Exit) {
 		// Hide cyber crown
 		_G(det)->hideStaticSpr(19);
+	}
+
+	if (!_G(gameState).R18SurimyThrown) {
+		// Hide cyber crown
+		_G(det)->hideStaticSpr(19);
 		_G(atds)->setControlBit(158, ATS_ACTIVE_BIT);
 	} else {
 		// Show cyber crown
