@@ -46,6 +46,7 @@ private:
 	void addLookMalletHotspot();
 
 	int32 _field4 = 0;
+	int32 _field2C = 0;
 	int32 _field40 = 0;
 	int32 _field44 = 0;
 	int32 _field48 = 0;
@@ -55,11 +56,14 @@ private:
 	int32 _fieldC4 = 0;
 	int32 _fieldCC_trigger = 0;
 	int32 _fieldD4 = 0;
+	int32 _fieldD8 = 0;
 	int32 _fieldDC = 0;
 	int32 _fieldE0 = 0;
-	int32 _fieldE4 = 0;
+	int32 _fieldE4_walkerDestX = 0;
 	int32 _fieldEC = 0;
 	int32 _fieldF0 = 0;
+	int32 _fieldFC_infoX = 0;
+	int32 _field100_infoY = 0;
 	int32 _field104 = 0;
 	int32 _field108 = 0;
 	int32 _field180 = 0;

@@ -171,26 +171,26 @@ void Room204::init() {
 				kernel_timing_trigger(1, 708, nullptr);
 				switch (imath_ranged_rand(1, 4)) {
 				case 1:
-					_fieldE4 = 1663;
+					_fieldE4_walkerDestX = 1663;
 					break;
 
 				case 2:
-					_fieldE4 = 1576;
+					_fieldE4_walkerDestX = 1576;
 					break;
 
 				case 3:
-					_fieldE4 = 1494;
+					_fieldE4_walkerDestX = 1494;
 					break;
 
 				case 4:
-					_fieldE4 = 1412;
+					_fieldE4_walkerDestX = 1412;
 					break;
 
 				default:
 					break;
 				}
 
-				_mcMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, _fieldE4, 323, 2, Walker::player_walker_callback, "mc walker room 204");
+				_mcMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, _fieldE4_walkerDestX, 323, 2, Walker::player_walker_callback, "mc walker room 204");
 				addMovingMeiHotspot();
 				kernel_timing_trigger(1, 630, nullptr);
 				kernel_timing_trigger(1, 578, nullptr);
@@ -429,31 +429,170 @@ void Room204::daemon() {
 		break;
 
 	case 531:
+		digi_unload("204R03");
+		sendWSMessage_130000(_G(my_walker), 532);
+
+		break;
+
 	case 532:
+		sendWSMessage_150000(_G(my_walker), 533);
+
+		break;
+
 	case 533:
+		series_unload(_ripTrekLHandTalkPos4Series);
+		inv_give_to_player("PASS");
+		_fieldD4 = 3;
+		_fieldBC_trigger = kernel_trigger_create(535);
+
+		break;
+
 	case 535:
+		_fieldD8 = 1;
+		_field2C = 1;
+		kernel_timing_trigger(5, 537, nullptr);
+
+		break;
+
 	case 536:
+		ws_walk(_G(my_walker), 1612, 328, nullptr, 538, 4, true);
+		kernel_timing_trigger(240, 537, nullptr);
+
+		break;
+
 	case 537:
+		DisposePath(_mcMach->walkPath);
+		_mcMach->walkPath = CreateCustomPath(1642, 333, -1);
+		ws_custom_walk(_mcMach, 10, -1, true);
+
+		break;
+
 	case 538:
+		ws_get_walker_info(_mcMach, &_fieldFC_infoX, &_field100_infoY, &_G(player_info).scale, &_G(player_info).depth, &_G(player_info).facing);
+		kernel_timing_trigger(1, (_fieldFC_infoX == 1642) ? 539 : 538, nullptr);
+
+		break;
+
 	case 539:
+		_ripTrekLHandTalkPos4Series = series_load("RIP TREK L HAND TALK POS4", -1, nullptr);
+		setGlobals1(_ripTrekLHandTalkPos4Series, 1, 5, 5, 5, 0, 6, 9, 6, 9, 1, 10, 17, 1, 1, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 540);
+
+		break;
+
 	case 540:
+		sendWSMessage_120000(_G(my_walker), -1);
+		sendWSMessage_190000(_G(my_walker), 20);
+		digi_play("204R34", 1, 255, 541, -1);
+
+		break;
+
 	case 541:
+		sendWSMessage_130000(_G(my_walker), 542);
+
+		break;
+
 	case 542:
+		sendWSMessage_150000(_G(my_walker), 543);
+
+		break;
+
 	case 543:
+		digi_play("204M20", 1, 255, 544, -1);
+
+		break;
+
 	case 544:
+		setGlobals1(_ripTrekLHandTalkPos4Series, 1, 5, 5, 5, 0, 6, 9, 6, 9, 1, 10, 17, 1, 1, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 545);
+
+		break;
+
 	case 545:
+		sendWSMessage_120000(_G(my_walker), -1);
+		sendWSMessage_190000(_G(my_walker), 20);
+		digi_play("204R35", 1, 255, 546, -1);
+
+		break;
+
 	case 546:
+		digi_play("204R36", 1, 255, 547, -1);
+
+		break;
+
 	case 547:
+		sendWSMessage_130000(_G(my_walker), 548);
+
+		break;
+
 	case 548:
+		sendWSMessage_150000(_G(my_walker), 549);
+
+		break;
+
 	case 549:
+		digi_play("204M21", 1, 255, 550, -1);
+
+		break;
+
 	case 550:
+		kernel_timing_trigger(60, 551, nullptr);
+
+		break;
+
 	case 551:
+		_fieldE4_walkerDestX = 1663;
+		DisposePath(_mcMach->walkPath);
+		_mcMach->walkPath = CreateCustomPath(_fieldE4_walkerDestX, 323, -1);
+		ws_custom_walk(_mcMach, 2, 555, true);
+
+		break;
+
 	case 555:
+		kernel_timing_trigger(1, 630, nullptr);
+		kernel_timing_trigger(1, 578, nullptr);
+
+		break;
+
 	case 556:
+		player_set_commands_allowed(false);
+		ws_walk(_G(my_walker), 1612, 328, nullptr, 558, 9, true);
+		kernel_timing_trigger(140, 557);
+
+		break;
+
 	case 557:
+		_fieldE4_walkerDestX = 1663;
+		DisposePath(_mcMach->walkPath);
+		_mcMach->walkPath = CreateCustomPath(1770, 330, _fieldE4_walkerDestX, 323, -1);
+		ws_custom_walk(_mcMach, 2, -1, true);
+
+		break;
+
 	case 558:
+		ws_get_walker_info(_mcMach, &_fieldFC_infoX, &_field100_infoY, &_G(player_info).scale, &_G(player_info).depth, &_G(player_info).facing);
+		kernel_timing_trigger(1, (_fieldFC_infoX == _fieldE4_walkerDestX) ? 559 : 558, nullptr);
+
+		break;
+
 	case 559:
+		kernel_timing_trigger(60, 630, nullptr);
+		kernel_timing_trigger(1, 578, nullptr);
+		break;
+
 	case 567:
+		if (_mcMach) {
+			_fieldE4_walkerDestX = 1663;
+			DisposePath(_mcMach->walkPath);
+			_mcMach->walkPath = CreateCustomPath(1720, 337, -1);
+			ws_custom_walk(_mcMach, 9, 583, true);
+			series_unload(_meiShowsRipHerPassesSeries);
+		} else {
+			kernel_timing_trigger(5, 567, nullptr);
+		}
+
+		break;
+
 	case 569:
 	case 570:
 	case 571:
@@ -504,6 +643,10 @@ void Room204::daemon() {
 	case 634:
 	case 635:
 	case 636:
+		sendWSMessage_150000(_G(my_walker), 637);
+
+		break;
+
 	case 637:
 	case 638:
 	case 639:
@@ -583,12 +726,12 @@ void Room204::initWalkerSeries() {
 }
 
 void Room204::addMovingMeiHotspot() {
-	HotSpotRec *spot = hotspot_new(_fieldE4 - 10, 273, _fieldE4 + 10, 323);
+	HotSpotRec *spot = hotspot_new(_fieldE4_walkerDestX - 10, 273, _fieldE4_walkerDestX + 10, 323);
 	hotspot_newVerb(spot, "TALK TO");
 	hotspot_newVocab(spot, "MEI CHEN");
 
 	spot->cursor_number = 7;
-	spot->feet_x = _fieldE4 + 20;
+	spot->feet_x = _fieldE4_walkerDestX + 20;
 	spot->feet_y = 333;
 	spot->facing = 10;
 
