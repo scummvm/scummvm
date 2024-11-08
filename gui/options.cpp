@@ -3330,6 +3330,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 #endif
+
 #ifdef USE_CLOUD
 #ifdef USE_SDL_NET
 	case kChooseRootDirCmd: {
