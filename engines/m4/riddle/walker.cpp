@@ -115,13 +115,15 @@ machine *Walker::walk_initialize_walker() {
 	machine *m;
 	int32 s;
 
-	// Wilbur walker
+	_G(player).walker_visible = true;
+
+	// Default walker
 	_G(player).walker_type = WALKER_PLAYER;
 	_G(player).shadow_type = SHADOW_PLAYER;
 
 	_G(globals)[GLB_TEMP_1] = _G(player).walker_type << 16;
-	_G(globals)[GLB_TEMP_2] = *RIPLEY_SERIES_DIRS << 24;  // starting series hash of default walker	        GAMECTRL loads shadows starting @ 0
-	_G(globals)[GLB_TEMP_3] = *RIPLEY_SHADOWS_DIRS << 24;  // starting series hash of default walker shadows. GAMECTRL loads shadows starting @ 10
+	_G(globals)[GLB_TEMP_2] = *RIPLEY_SERIES_DIRS << 24;	// Starting series hash of default walker
+	_G(globals)[GLB_TEMP_3] = *RIPLEY_SHADOWS_DIRS << 24;	// Starting series hash of default walker shadows
 
 	// initialize with bogus data (this is for the real walker)
 	s = _G(globals)[GLB_MIN_SCALE] + FixedMul((400 << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
@@ -132,7 +134,7 @@ machine *Walker::walk_initialize_walker() {
 
 	m = TriggerMachineByHash(WALKER_HASH, nullptr, _G(player).walker_type + WALKER_HASH, 0, player_walker_callback, false, "PLAYER WALKER");
 
-	// we need to all init sequences to happen immediately (init coordinates)
+	// We need to all init sequences to happen immediately (init coordinates)
 	cycleEngines(nullptr, &(_G(currentSceneDef).depth_table[0]),
 		nullptr, (uint8 *)&_G(master_palette)[0], _G(inverse_pal)->get_ptr(), true);
 
@@ -141,13 +143,9 @@ machine *Walker::walk_initialize_walker() {
 	return m;
 }
 
-void Walker::reset_walker_sprites() {
-	error("TODO: reset_walker_sprites");
-}
-
 void Walker::unloadSprites() {
 	if (_G(player).walker_in_this_scene) {
-		term_message("Unloading Wilbur walker...");
+		term_message("Unloading Ripley walker...");
 		player_update_info();
 
 		// Send message for the unload
@@ -184,25 +182,6 @@ void enable_player() {
 void disable_player() {
 	player_set_commands_allowed(false);
 	ws_hide_walker(_G(my_walker));
-}
-
-void player_walk_to(int32 x, int32 y, int32 facing_x, int32 facing_y, int trigger) {
-#ifdef TODO
-	_G(player_facing_x) = facing_x;
-	_G(player_facing_y) = facing_y;
-	_G(player_trigger) = trigger;
-	player_hotspot_walk_override(x, y, -1, gSET_FACING);
-#else
-	error("TODO: player_walk_to");
-#endif
-}
-
-void player_walk_to(int32 x, int32 y, int trigger) {
-#ifdef TODO
-	player_walk_to(x, y, _G(hotspot_x), _G(hotspot_y), trigger);
-#else
-	error("TODO: player_walk_to");
-#endif
 }
 
 } // namespace Riddle

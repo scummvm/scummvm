@@ -57,7 +57,6 @@ public:
 	bool walk_load_walker_and_shadow_series() override;
 	machine *walk_initialize_walker() override;
 
-	void reset_walker_sprites();
 	static void unloadSprites();
 
 	bool ripley_said(const char *const list[][2]);
@@ -65,9 +64,6 @@ public:
 
 void enable_player();
 void disable_player();
-void wilbur_abduct(int trigger);
-void player_walk_to(int32 x, int32 y, int32 facing_x, int32 facing_y, int trigger = -1);
-void player_walk_to(int32 x, int32 y, int trigger = -1);
 
 } // namespace Riddle
 } // namespace M4
