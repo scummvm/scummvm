@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-08 00:39+0000\n"
+"POT-Creation-Date: 2024-11-08 01:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -158,7 +158,7 @@ msgid ""
 "so your browser can forward data to ScummVM"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3813
+#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3814
 msgid "Stop server"
 msgstr ""
 
@@ -166,7 +166,7 @@ msgstr ""
 msgid "Run server"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:3814
+#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:3815
 msgid "Stop local webserver"
 msgstr ""
 
@@ -174,7 +174,7 @@ msgstr ""
 msgid "Run local webserver"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:248 gui/options.cpp:2842 gui/options.cpp:3821
+#: gui/cloudconnectionwizard.cpp:248 gui/options.cpp:2842 gui/options.cpp:3822
 msgid "Not running"
 msgstr ""
 
@@ -299,7 +299,7 @@ msgstr ""
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
-#: gui/launcher.cpp:502 gui/options.cpp:3515 gui/options.cpp:3898
+#: gui/launcher.cpp:502 gui/options.cpp:3516 gui/options.cpp:3899
 #: base/main.cpp:585 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
@@ -313,7 +313,7 @@ msgstr ""
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
-#: gui/launcher.cpp:502 gui/options.cpp:3515 gui/options.cpp:3898
+#: gui/launcher.cpp:502 gui/options.cpp:3516 gui/options.cpp:3899
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:606 engines/kyra/gui/saveload_eob.cpp:639
@@ -369,7 +369,7 @@ msgstr ""
 msgid "Interrupted."
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3506
+#: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3507
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -527,11 +527,11 @@ msgstr ""
 msgid "Proceed"
 msgstr ""
 
-#: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3350
+#: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3351
 msgid "icon packs"
 msgstr ""
 
-#: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3361
+#: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3362
 msgid "shader packs"
 msgstr ""
 
@@ -755,7 +755,7 @@ msgstr ""
 #: gui/options.cpp:1623 gui/options.cpp:1640 gui/options.cpp:1654
 #: gui/options.cpp:1671 gui/options.cpp:1707 gui/options.cpp:1723
 #: gui/options.cpp:2139 gui/options.cpp:2599 gui/options.cpp:2673
-#: gui/options.cpp:2889 gui/options.cpp:3393 audio/null.cpp:45
+#: gui/options.cpp:2889 gui/options.cpp:3394 audio/null.cpp:45
 #: backends/platform/android/options.cpp:150
 #: backends/platform/android/options.cpp:151
 #: backends/platform/android/options.cpp:179
@@ -780,7 +780,7 @@ msgctxt "lowres"
 msgid "Platform:"
 msgstr ""
 
-#: gui/editgamedialog.cpp:558 gui/options.cpp:3417
+#: gui/editgamedialog.cpp:558 gui/options.cpp:3418
 msgid "Select SoundFont"
 msgstr ""
 
@@ -2083,7 +2083,7 @@ msgid "View"
 msgstr ""
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2604 gui/options.cpp:3393
+#: gui/options.cpp:2604 gui/options.cpp:3394
 msgid "Last browser path: "
 msgstr ""
 
@@ -2277,7 +2277,7 @@ msgstr ""
 msgid "When was the last time saved games were synced with this storage"
 msgstr ""
 
-#: gui/options.cpp:2809 gui/options.cpp:3729
+#: gui/options.cpp:2809 gui/options.cpp:3730
 msgid "<never>"
 msgstr ""
 
@@ -2469,35 +2469,35 @@ msgstr ""
 msgid "Select directory for plugins"
 msgstr ""
 
-#: gui/options.cpp:3336
+#: gui/options.cpp:3337
 msgid "Select directory for Files Manager /root/"
 msgstr ""
 
-#: gui/options.cpp:3515
+#: gui/options.cpp:3516
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr ""
 
-#: gui/options.cpp:3524
+#: gui/options.cpp:3525
 msgid "Wait until current Storage finishes up and try again."
 msgstr ""
 
-#: gui/options.cpp:3727 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:3728 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr ""
 
-#: gui/options.cpp:3872
+#: gui/options.cpp:3873
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
 msgstr ""
 
-#: gui/options.cpp:3896
+#: gui/options.cpp:3897
 msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
 msgstr ""
 
-#: gui/options.cpp:3899
+#: gui/options.cpp:3900
 #, c-format
 msgid "Reverting automatically in %d seconds"
 msgstr ""
