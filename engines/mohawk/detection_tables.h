@@ -3789,6 +3789,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// From sev
+	{
+		{
+			"noah",
+			"",
+			AD_ENTRY1s("OUTLINE.TXT", "aba1304eca32cac54a7107ba76120601", 2151),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
+	},
+
 	// Dr. Seuss Reading Games
 	// Contains "Dr. Seuss's ABC" and "The Cat in the Hat"
 	{

@@ -68,6 +68,7 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"create", "The Story of Creation"},
 	{"daniel", "Daniel in the Lions' Den"},
 	{"harryhh","Harry and the Haunted House"},
+	{"noah", "Noah's Ark"},
 	{"stellaluna", "Stellaluna"},
 	{"sheila", "Sheila Rae, the Brave"},
 	{"rugratsps", "Rugrats Print Shop" },
