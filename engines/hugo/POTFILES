@@ -1,2 +1,3 @@
 engines/hugo/hugo.cpp
 engines/hugo/file.cpp
+engines/hugo/metaengine.cpp
