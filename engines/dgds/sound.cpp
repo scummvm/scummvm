@@ -306,14 +306,14 @@ bool Sound::loadSXSoundData(const Common::String &filename, Common::Array<SoundD
 	if (!filename.hasSuffixIgnoreCase(".sx"))
 		error("Unhandled SX file type: %s", filename.c_str());
 
-	Common::SeekableReadStream *stream = _resource->getResource(filename);
+	Common::SeekableReadStream *resStream = _resource->getResource(filename);
 
-	if (!stream) {
+	if (!resStream) {
 		warning("SX file %s not found", filename.c_str());
 		return false;
 	}
 
-	DgdsChunkReader chunk(stream);
+	DgdsChunkReader chunk(resStream);
 
 	while (chunk.readNextHeader(EX_SX, filename)) {
 		if (chunk.isContainer()) {
@@ -345,7 +345,7 @@ bool Sound::loadSXSoundData(const Common::String &filename, Common::Array<SoundD
 		}
 	}
 
-	delete stream;
+	delete resStream;
 	return true;
 }
 
@@ -386,11 +386,11 @@ void Sound::loadSNGSoundData(const Common::String &filename, Common::Array<Sound
 	if (!filename.hasSuffixIgnoreCase(".sng"))
 		error("Unhandled SNG file type: %s", filename.c_str());
 
-	Common::SeekableReadStream *resstream = _resource->getResource(filename);
-	if (!resstream)
+	Common::SeekableReadStream *resStream = _resource->getResource(filename);
+	if (!resStream)
 		error("Music file %s not found", filename.c_str());
 
-	DgdsChunkReader chunk(resstream);
+	DgdsChunkReader chunk(resStream);
 
 	while (chunk.readNextHeader(EX_SNG, filename)) {
 		if (chunk.isContainer()) {
@@ -422,7 +422,7 @@ void Sound::loadSNGSoundData(const Common::String &filename, Common::Array<Sound
 		}
 	}
 
-	delete resstream;
+	delete resStream;
 }
 
 int Sound::mapSfxNum(int num) const {
