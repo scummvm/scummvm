@@ -176,6 +176,7 @@ after		{ count(); return tAFTER; }		// D3
 and			{ count(); return tAND; }
 before		{ count(); return tBEFORE; }	// D3
 cast		{ count(); return tCAST; }
+castlib		{ count(); return tCASTLIB; }	// D5
 castlibs	{ count(); return tCASTLIBS; }	// D5
 char		{ count(); return tCHAR; }		// D3
 chars		{ count(); return tCHARS; }
@@ -220,6 +221,7 @@ line		{ count(); return tLINE; }
 lines		{ count(); return tLINES; }
 long		{ count(); return tLONG; }
 macro		{ count(); return tMACRO; }
+member		{ count(); return tMEMBER; }
 menu		{ count(); return tMENU; }
 menus		{ count(); return tMENUS; }
 menuItem	{ count(); return tMENUITEM;}
