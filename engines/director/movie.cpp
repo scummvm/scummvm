@@ -459,7 +459,9 @@ CastMember* Movie::createOrReplaceCastMember(CastMemberID memberID, CastMember* 
 
 bool Movie::eraseCastMember(CastMemberID memberID) {
 	if (_casts.contains(memberID.castLib)) {
-		return _casts.getVal(memberID.castLib)->eraseCastMember(memberID.member);
+		bool result = _casts.getVal(memberID.castLib)->eraseCastMember(memberID.member);
+		_score->refreshPointersForCastMemberID(memberID);
+		return result;
 	}
 
 	return false;
@@ -490,7 +492,9 @@ bool Movie::duplicateCastMember(CastMemberID source, CastMemberID target) {
 		CastMember *sourceMember = sourceCast->getCastMember(source.member);
 		CastMemberInfo *sourceInfo = sourceCast->getCastMemberInfo(source.member);
 		debugC(3, kDebugLoading, "Movie::DuplicateCastMember(): copying cast data from %s to %s (%s)", source.asString().c_str(), target.asString().c_str(), castType2str(sourceMember->_type));
-		return targetCast->duplicateCastMember(sourceMember, sourceInfo, target.member);
+		bool result = targetCast->duplicateCastMember(sourceMember, sourceInfo, target.member);
+		_score->refreshPointersForCastMemberID(target);
+		return result;
 	}
 	return false;
 }
