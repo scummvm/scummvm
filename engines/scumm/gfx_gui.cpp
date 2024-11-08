@@ -2257,7 +2257,7 @@ bool ScummEngine::canWriteGame(int slotId) {
 		return true;
 
 	listSavegames(saveList, ARRAYSIZE(saveList));
-	if (saveList[slotId - 1]) {
+	if (saveList[slotId]) {
 		convertMessageToString((const byte *)getGUIString(gsReplacePrompt), (byte *)msgLabelPtr, sizeof(msgLabelPtr));
 
 		// Fallback to a hardcoded string
