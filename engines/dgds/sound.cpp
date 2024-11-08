@@ -386,11 +386,11 @@ void Sound::loadSNGSoundData(const Common::String &filename, Common::Array<Sound
 	if (!filename.hasSuffixIgnoreCase(".sng"))
 		error("Unhandled SNG file type: %s", filename.c_str());
 
-	Common::SeekableReadStream *stream = _resource->getResource(filename);
-	if (!stream)
+	Common::SeekableReadStream *resstream = _resource->getResource(filename);
+	if (!resstream)
 		error("Music file %s not found", filename.c_str());
 
-	DgdsChunkReader chunk(stream);
+	DgdsChunkReader chunk(resstream);
 
 	while (chunk.readNextHeader(EX_SNG, filename)) {
 		if (chunk.isContainer()) {
@@ -422,7 +422,7 @@ void Sound::loadSNGSoundData(const Common::String &filename, Common::Array<Sound
 		}
 	}
 
-	delete stream;
+	delete resstream;
 }
 
 int Sound::mapSfxNum(int num) const {
