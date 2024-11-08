@@ -84,6 +84,7 @@ static BuiltinProto builtins[] = {
 	{ "deleteAt",		LB::b_deleteAt,		2, 2, 400, HBLTIN_LIST },	//			D4 h
 	{ "deleteOne",		LB::b_deleteOne,	2, 2, 400, HBLTIN_LIST },	//			D4 h, undocumented?
 	{ "deleteProp",		LB::b_deleteProp,	2, 2, 400, HBLTIN_LIST },	//			D4 h
+	{ "duplicate",		LB::b_duplicateList,1, 1, 500, FBLTIN_LIST },	//				D5 f
 	{ "findPos",		LB::b_findPos,		2, 2, 400, FBLTIN_LIST },	//			D4 f
 	{ "findPosNear",	LB::b_findPosNear,	2, 2, 400, FBLTIN_LIST },	//			D4 f
 	{ "getaProp",		LB::b_getaProp,		2, 2, 400, FBLTIN_LIST },	//			D4 f
@@ -772,6 +773,14 @@ void LB::b_deleteProp(int nargs) {
 		break;
 	}
 }
+
+
+void LB::b_duplicateList(int nargs) {
+	Datum list = g_lingo->pop();
+	TYPECHECK2(list, ARRAY, PARRAY);
+	g_lingo->push(list.clone());
+}
+
 
 void LB::b_findPos(int nargs) {
 	Datum prop = g_lingo->pop();
