@@ -125,8 +125,8 @@ void Room82::talkWithDirector() {
 		transitionAniNr = 7;
 
 		_G(gameState).flags30_40 = true;
-		_G(atds)->set_ats_str(473, 1, ATS_DATA);
-		_G(atds)->set_ats_str(467, 1, ATS_DATA);		
+		_G(atds)->set_all_ats_str(473, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(467, 1, ATS_DATA);		
 	}
 
 	Room66::proc8(2, 7, transitionAniNr, transitionDiaNr);

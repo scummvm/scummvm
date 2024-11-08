@@ -70,7 +70,7 @@ void Room2::electrifyWalkway1() {
 	_G(atds)->delControlBit(19, ATS_COUNT_BIT);
 	_G(atds)->delControlBit(25, ATS_ACTIVE_BIT);
 	_G(atds)->setControlBit(8, ATS_COUNT_BIT);
-	_G(atds)->set_ats_str(11, 1, ATS_DATA);
+	_G(atds)->set_all_ats_str(11, 1, ATS_DATA);
 }
 
 void Room2::electrifyWalkway2() {

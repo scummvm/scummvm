@@ -202,7 +202,7 @@ int16 Room41::use_lola() {
 		_G(det)->stopDetail(6);
 
 		_G(atds)->delControlBit(267, ATS_ACTIVE_BIT);
-		_G(atds)->set_ats_str(267, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(267, 1, ATS_DATA);
 		_G(atds)->hideDialogCloseupItem(11, 0, 3);
 		showCur();
 	}
@@ -228,7 +228,7 @@ int16 Room41::use_brief() {
 		stop_hoggy();
 		startAadWait(186);
 		start_hoggy();
-		_G(atds)->set_ats_str(206, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(206, 1, ATS_DATA);
 		_G(gameState).R28LetterBox = true;
 		_G(gameState).R40TrainMove = true;
 		_G(gameState).R28PostCar = true;

@@ -1050,7 +1050,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 				case TXT_MARK_USE:
 					switch (txtNr) {
 					case 90:
-						_G(atds)->set_ats_str(90, TXT_MARK_USE, _G(gameState).R13Band);
+						_G(atds)->set_all_ats_str(90, TXT_MARK_USE, _G(gameState).R13Band);
 						break;
 
 					case 124:
@@ -1072,7 +1072,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 
 					case 267:
 						if (!_G(gameState).R41LolaOk && _G(gameState).R41RepairInfo)
-							_G(atds)->set_ats_str(267, 1, ATS_DATA);
+							_G(atds)->set_all_ats_str(267, 1, ATS_DATA);
 						break;
 
 					case 283:
@@ -2240,7 +2240,7 @@ void useItemWithInvItem(int16 itemId) {
 
 	case WOOL_INV:
 		remove_inventory(WOOL_INV);
-		_G(atds)->set_ats_str(BOTTLE_INV, 1, INV_ATS_DATA);
+		_G(atds)->set_all_ats_str(BOTTLE_INV, 1, INV_ATS_DATA);
 		_G(gameState).R56WhiskyMix = true;
 		break;
 
@@ -2260,13 +2260,13 @@ void useItemWithInvItem(int16 itemId) {
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
 		startAadWait(_G(gameState)._personRoomNr[P_CHEWY] + 350);
 		_G(flags).InventMenu = true;
-		_G(atds)->set_ats_str(ARTIFACT_INV, 1, INV_ATS_DATA);
+		_G(atds)->set_all_ats_str(ARTIFACT_INV, 1, INV_ATS_DATA);
 		break;
 
 	case 88:
 		_G(gameState).changedArtifactOrigin = true;
 		startAadWait(350);
-		_G(atds)->set_ats_str(ARTIFACT_INV, 1, INV_ATS_DATA);
+		_G(atds)->set_all_ats_str(ARTIFACT_INV, 1, INV_ATS_DATA);
 		break;
 
 	case 102:

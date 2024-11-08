@@ -810,9 +810,9 @@ uint16 exit_flip_flop(int16 ani_nr, int16 eib_nr1, int16 eib_nr2,
 		_G(det)->startDetail(ani_nr, 1, flag);
 	flag ^= 1;
 	if (ats_nr1 != -1)
-		_G(atds)->set_ats_str(ats_nr1, flag, ATS_DATA);
+		_G(atds)->set_all_ats_str(ats_nr1, flag, ATS_DATA);
 	if (ats_nr2 != -1)
-		_G(atds)->set_ats_str(ats_nr2, flag, ATS_DATA);
+		_G(atds)->set_all_ats_str(ats_nr2, flag, ATS_DATA);
 	if (flag) {
 		if (eib_nr1 != -1)
 			_G(gameState).room_e_obj[eib_nr1].Attribut = spr_nr1;
@@ -887,11 +887,11 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		_G(gameState).R7Lever ^= 1;
 
 		if (!_G(gameState).R7Lever)
-			_G(atds)->set_ats_str(50, 0, ATS_DATA);
+			_G(atds)->set_all_ats_str(50, 0, ATS_DATA);
 		else if (!_G(gameState).R7BorkFlug)
-			_G(atds)->set_ats_str(50, 1, ATS_DATA);
+			_G(atds)->set_all_ats_str(50, 1, ATS_DATA);
 		else
-			_G(atds)->set_ats_str(50, 2, ATS_DATA);
+			_G(atds)->set_all_ats_str(50, 2, ATS_DATA);
 		break;
 
 	case SIB_KLINGEL_R7:
@@ -972,12 +972,12 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 	case SIB_FLUXO_R23:
 		_G(gameState).R23FluxoFlex = false;
-		_G(atds)->set_ats_str(112, 0, ATS_DATA);
+		_G(atds)->set_all_ats_str(112, 0, ATS_DATA);
 		_G(menu_item_vorwahl) = CUR_USE;
 		break;
 
 	case SIB_TRANSLATOR_23:
-		_G(atds)->set_ats_str(113, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(113, 1, ATS_DATA);
 		_G(menu_item_vorwahl) = CUR_USE;
 		break;
 
@@ -988,7 +988,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_GITTER_R16:
-		_G(atds)->set_ats_str(125, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(125, 1, ATS_DATA);
 		_G(gameState).room_e_obj[33].Attribut = EXIT_TOP;
 		break;
 
@@ -1071,12 +1071,12 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_PUTE_R34:
-		_G(atds)->set_ats_str(226, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(226, 1, ATS_DATA);
 		break;
 
 	case SIB_TOPF_R31:
 		_G(obj)->hide_sib(SIB_TOPF_R31);
-		_G(atds)->set_ats_str(242, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(242, 1, ATS_DATA);
 		_G(gameState).R31PflanzeWeg = true;
 		break;
 
@@ -1158,8 +1158,8 @@ void sib_event_inv(int16 sib_nr) {
 			delInventory(RED_CARD_INV);
 			start_aad(103, -1);
 			_G(det)->startDetail(6, 255, ANI_FRONT);
-			_G(atds)->set_ats_str(27, 1, ATS_DATA);
-			_G(atds)->set_ats_str(30, 1, ATS_DATA);
+			_G(atds)->set_all_ats_str(27, 1, ATS_DATA);
+			_G(atds)->set_all_ats_str(30, 1, ATS_DATA);
 		}
 		break;
 
@@ -1233,13 +1233,13 @@ void sib_event_inv(int16 sib_nr) {
 	case SIB_FLUXO_R23:
 		_G(gameState).R23FluxoFlex = true;
 		delInventory(_G(cur)->getInventoryCursor());
-		_G(atds)->set_ats_str(112, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(112, 1, ATS_DATA);
 		_G(menu_item_vorwahl) = CUR_USE;
 		break;
 
 	case SIB_TRANSLATOR_23:
 		delInventory(_G(cur)->getInventoryCursor());
-		_G(atds)->set_ats_str(113, 0, ATS_DATA);
+		_G(atds)->set_all_ats_str(113, 0, ATS_DATA);
 		_G(menu_item_vorwahl) = CUR_USE;
 		break;
 
@@ -1273,7 +1273,7 @@ void sib_event_inv(int16 sib_nr) {
 
 		if (_G(gameState).R18CartTerminal) {
 			_G(gameState).R18CartSave = true;
-			_G(atds)->set_ats_str(CARTRIDGE_INV, 1, INV_ATS_DATA);
+			_G(atds)->set_all_ats_str(CARTRIDGE_INV, 1, INV_ATS_DATA);
 			startAadWait(120);
 		} else {
 			startAadWait(121);

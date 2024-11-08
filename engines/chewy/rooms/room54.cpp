@@ -166,8 +166,8 @@ int16 Room54::use_schalter() {
 				aad_nr = 296;
 				_G(gameState).R54FputzerWeg = true;
 				_G(atds)->delControlBit(345, ATS_ACTIVE_BIT);
-				_G(atds)->set_ats_str(349, 1, ATS_DATA);
-				_G(atds)->set_ats_str(351, 1, ATS_DATA);
+				_G(atds)->set_all_ats_str(349, 1, ATS_DATA);
+				_G(atds)->set_all_ats_str(351, 1, ATS_DATA);
 			}
 
 			startAadWait(aad_nr);

@@ -69,8 +69,8 @@ void Room37::entry() {
 			_G(det)->hideStaticSpr(8);
 		} else if (_G(gameState).R37DogAshamed) {
 			_G(det)->showStaticSpr(0);
-			_G(atds)->set_ats_str(250, 1, ATS_DATA);
-			_G(atds)->set_ats_str(256, 1, ATS_DATA);
+			_G(atds)->set_all_ats_str(250, 1, ATS_DATA);
+			_G(atds)->set_all_ats_str(256, 1, ATS_DATA);
 			_G(atds)->delControlBit(251, ATS_ACTIVE_BIT);
 		}
 	}
@@ -147,8 +147,8 @@ int16 Room37::useGlass() {
 			flic_cut(FCUT_049);
 			invent_2_slot(DENTURES_INV);
 			_G(det)->hideStaticSpr(9);
-			_G(atds)->set_ats_str(250, 1, ATS_DATA);
-			_G(atds)->set_ats_str(256, 1, ATS_DATA);
+			_G(atds)->set_all_ats_str(250, 1, ATS_DATA);
+			_G(atds)->set_all_ats_str(256, 1, ATS_DATA);
 			_G(atds)->delControlBit(251, ATS_ACTIVE_BIT);
 			_G(obj)->show_sib(SIB_HFUTTER2_R37);
 			_G(gameState).R37TakenDenturesFromGlass = true;

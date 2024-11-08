@@ -140,9 +140,9 @@ TextEntry *Text::getText(uint chunk, uint entry, int type, int subEntry) {
 		error("getText(): Invalid chunk number requested, %d (min %d)", chunk, kADSTextMax);
 
 	TextEntry *d = new TextEntry();
-	const uint8 altSubString = !isInvDesc ?
-		getTextId(entry, subEntry, type) :
-		getTextId(origChunk, 0, type);
+	uint8 altSubString = !isInvDesc ?
+		getSubtextNum(entry, subEntry, type) :
+		getSubtextNum(origChunk, 0, type);
 
 	byte *data = getChunkData(chunk);
 	byte *ptr = data;
@@ -354,7 +354,7 @@ uint8 setNibble(uint8 value, uint8 subEntry, uint8 nibble) {
 		return (nibble << 4) | (value & 0x0F);
 }
 
-uint8 Text::getTextId(uint16 entry, uint8 subEntry, uint8 type) {
+uint8 Text::getSubtextNum(uint16 entry, uint8 subEntry, uint8 type) {
 	if (type != ATS_DATA && type != INV_USE_DATA && type != INV_ATS_DATA)
 		return 0;
 
@@ -363,7 +363,7 @@ uint8 Text::getTextId(uint16 entry, uint8 subEntry, uint8 type) {
 	return getNibble(value, subEntry);
 }
 
-void Text::setTextId(uint16 entry, uint8 subEntry, uint8 strNr, uint8 type) {
+void Text::setSubtextNum(uint16 entry, uint8 subEntry, uint8 strNr, uint8 type) {
 	if (type != ATS_DATA && type != INV_USE_DATA && type != INV_ATS_DATA)
 		return;
 

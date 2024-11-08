@@ -47,17 +47,17 @@ void Room8::entry() {
 		start_folter();
 	else
 		stop_folter();
-	_G(atds)->set_ats_str(60, 0, ATS_DATA);
+	_G(atds)->set_all_ats_str(60, 0, ATS_DATA);
 }
 
 void Room8::start_folter() {
-	_G(atds)->set_ats_str(67, 1, ATS_DATA);
+	_G(atds)->set_all_ats_str(67, 1, ATS_DATA);
 	_G(det)->stopDetail(19);
 	_G(det)->startDetail(13, 255, ANI_FRONT);
 }
 
 void Room8::stop_folter() {
-	_G(atds)->set_ats_str(67, 0, ATS_DATA);
+	_G(atds)->set_all_ats_str(67, 0, ATS_DATA);
 	_G(det)->startDetail(19, 255, ANI_FRONT);
 
 	_G(det)->stopDetail(13);

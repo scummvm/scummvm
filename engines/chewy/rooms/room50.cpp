@@ -111,7 +111,7 @@ void Room50::gedAction(int index) {
 void Room50::stop_cigar() {
 	_G(room)->set_timer_status(0, TIMER_STOP);
 	_G(det)->del_static_ani(0);
-	_G(atds)->set_ats_str(328, 1, ATS_DATA);
+	_G(atds)->set_all_ats_str(328, 1, ATS_DATA);
 	_G(det)->stopDetail(0);
 	_G(gameState).R50Zigarre = true;
 }
@@ -221,8 +221,8 @@ int16 Room50::use_gum() {
 
 		_G(obj)->addInventory(KEY_INV, &_G(room_blk));
 		inventory_2_cur(KEY_INV);
-		_G(atds)->set_ats_str(323, 1, ATS_DATA);
-		_G(atds)->set_ats_str(327, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(323, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(327, 1, ATS_DATA);
 		_G(gameState).room_e_obj[84].Attribut = EXIT_TOP;
 		showCur();
 	}

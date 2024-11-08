@@ -209,7 +209,7 @@ int16 Room12::use_terminal() {
 
 				load_chewy_taf(CHEWY_BORK);
 				_G(flags).NoScroll = false;
-				_G(atds)->set_ats_str(118, 0, ATS_DATA);
+				_G(atds)->set_all_ats_str(118, 0, ATS_DATA);
 				_G(det)->hideStaticSpr(12);
 				_G(menu_item) = CUR_WALK;
 				cursorChoice(_G(menu_item));

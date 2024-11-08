@@ -238,7 +238,7 @@ int16 Room63::use_schalter() {
 				_G(det)->showStaticSpr(1);
 				_G(det)->hideStaticSpr(2);
 				startAadWait(364);
-				_G(atds)->set_ats_str(385, 1, ATS_DATA);
+				_G(atds)->set_all_ats_str(385, 1, ATS_DATA);
 				showCur();
 			}
 		} else {
@@ -281,8 +281,8 @@ int16 Room63::use_girl() {
 		_G(det)->stopDetail(18);
 		_G(det)->showStaticSpr(10);
 		_G(det)->showStaticSpr(12);
-		_G(atds)->set_ats_str(381, 1, ATS_DATA);
-		_G(atds)->set_ats_str(382, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(381, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(382, 1, ATS_DATA);
 		_G(atds)->setControlBit(380, ATS_ACTIVE_BIT);
 		startAadWait(367);
 		showCur();
@@ -312,7 +312,7 @@ int16 Room63::use_aschenbecher() {
 				flic_cut(FCUT_080);
 				_G(atds)->setControlBit(381, ATS_ACTIVE_BIT);
 				_G(atds)->setControlBit(382, ATS_ACTIVE_BIT);
-				_G(atds)->set_ats_str(383, 1, ATS_DATA);
+				_G(atds)->set_all_ats_str(383, 1, ATS_DATA);
 				_G(gameState).R63Fire = true;
 				_G(gameState)._personHide[P_CHEWY] = false;
 				_G(gameState).scrollx = 0;

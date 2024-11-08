@@ -140,8 +140,8 @@ int16 Room55::use_stapel1() {
 			_G(det)->hideStaticSpr(0);
 			autoMove(5, P_CHEWY);
 			_G(det)->showStaticSpr(1);
-			_G(atds)->set_ats_str(354, 1, ATS_DATA);
-			_G(atds)->set_ats_str(355, 1, ATS_DATA);
+			_G(atds)->set_all_ats_str(354, 1, ATS_DATA);
+			_G(atds)->set_all_ats_str(355, 1, ATS_DATA);
 
 		} else if (_G(gameState).R55EscScriptOk && !_G(gameState).R55RaumOk) {
 			action_ret = true;
@@ -155,7 +155,7 @@ int16 Room55::use_stapel1() {
 			_G(gameState).R55EscScriptOk = true;
 			_G(det)->showStaticSpr(0);
 			delInventory(_G(cur)->getInventoryCursor());
-			_G(atds)->set_ats_str(354, 2, ATS_DATA);
+			_G(atds)->set_all_ats_str(354, 2, ATS_DATA);
 		} else {
 			startAadWait(326);
 		}
@@ -212,7 +212,7 @@ int16 Room55::use_telefon() {
 				startSetAILWait(2, 1, ANI_FRONT);
 				_G(det)->hideStaticSpr(0);
 				_G(det)->hideStaticSpr(8);
-				_G(atds)->set_ats_str(354, 1, ATS_DATA);
+				_G(atds)->set_all_ats_str(354, 1, ATS_DATA);
 				flic_cut(FCUT_071);
 				_G(gameState)._personRoomNr[P_HOWARD] = 55;
 

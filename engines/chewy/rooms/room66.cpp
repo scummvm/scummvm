@@ -171,7 +171,7 @@ int Room66::proc2() {
 	autoMove(0, P_CHEWY);
 	_G(gameState).flags26_40 = true;
 	_G(gameState).room_e_obj[100].Attribut = 3;
-	_G(atds)->set_ats_str(423, 1, ANI_GO);
+	_G(atds)->set_all_ats_str(423, 1, ANI_GO);
 	showCur();
 	
 	return 0;

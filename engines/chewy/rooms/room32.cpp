@@ -111,7 +111,7 @@ void Room32::use_schreibmaschine() {
 						flic_cut(FCUT_044);
 						register_cutscene(12);
 						_G(det)->showStaticSpr(5);
-						_G(atds)->set_ats_str(203, 1, ATS_DATA);
+						_G(atds)->set_all_ats_str(203, 1, ATS_DATA);
 						ani_nr = CH_TALK3;
 						dia_nr = 88;
 						_G(atds)->set_ats_str(231, TXT_MARK_LOOK, 0, ATS_DATA);
@@ -159,7 +159,7 @@ int16 Room32::get_script() {
 		invent_2_slot(MANUSKRIPT_INV);
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
 		_G(det)->hideStaticSpr(5);
-		_G(atds)->set_ats_str(203, 0, ATS_DATA);
+		_G(atds)->set_all_ats_str(203, 0, ATS_DATA);
 		start_spz(CH_TALK3, 1, ANI_FRONT, P_CHEWY);
 		startAadWait(91);
 	}

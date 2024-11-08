@@ -74,7 +74,7 @@ void Room28::entry(int16 eib_nr) {
 					waitShowScreen(10);
 					startAadWait(194);
 					_G(gameState).room_e_obj[62].Attribut = 255;
-					_G(atds)->set_ats_str(208, 1, ATS_DATA);
+					_G(atds)->set_all_ats_str(208, 1, ATS_DATA);
 					_G(flags).NoScroll = true;
 
 					auto_scroll(0, 0);
@@ -110,7 +110,7 @@ void Room28::entry(int16 eib_nr) {
 					flic_cut(FCUT_063);
 					_G(gameState).R28ChewyPump = false;
 					invent_2_slot(K_MASKE_INV);
-					_G(atds)->set_ats_str(209, 0, ATS_DATA);
+					_G(atds)->set_all_ats_str(209, 0, ATS_DATA);
 					_G(gameState).room_e_obj[69].Attribut = 255;
 					load_chewy_taf(CHEWY_NORMAL);
 
@@ -170,7 +170,7 @@ void Room28::haendler() {
 	_G(SetUpScreenFunc) = nullptr;
 	_G(gameState).R28ChewyPump = true;
 	delInventory(K_MASKE_INV);
-	_G(atds)->set_ats_str(209, 1, ATS_DATA);
+	_G(atds)->set_all_ats_str(209, 1, ATS_DATA);
 	_G(gameState).room_e_obj[69].Attribut = EXIT_TOP;
 	load_chewy_taf(CHEWY_PUMPKIN);
 
@@ -222,8 +222,8 @@ void Room28::use_surimy() {
 		flic_cut(FCUT_056);
 		ani_nr = CH_TALK3;
 		dia_nr = 140;
-		_G(atds)->set_ats_str(205, 1, ATS_DATA);
-		_G(atds)->set_ats_str(222, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(205, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(222, 1, ATS_DATA);
 
 	} else {
 		ani_nr = CH_TALK5;
@@ -266,7 +266,7 @@ void Room28::set_pump() {
 			if (_G(gameState).R39TranslatorUsed) {
 				_G(gameState).room_e_obj[69].Attribut = EXIT_TOP;
 			} else {
-				_G(atds)->set_ats_str(209, 1, ATS_DATA);
+				_G(atds)->set_all_ats_str(209, 1, ATS_DATA);
 			}
 
 			if (_G(gameState)._personRoomNr[P_HOWARD] == 28 && _G(gameState).R28PumpTxt < 3) {
@@ -301,7 +301,7 @@ void Room28::get_pump() {
 		startSetAILWait(tmp, 1, ANI_BACK);
 
 		invent_2_slot(K_MASKE_INV);
-		_G(atds)->set_ats_str(209, 0, ATS_DATA);
+		_G(atds)->set_all_ats_str(209, 0, ATS_DATA);
 		_G(gameState).room_e_obj[69].Attribut = 255;
 		_G(gameState)._personHide[P_CHEWY] = false;
 		load_chewy_taf(CHEWY_NORMAL);
@@ -330,7 +330,7 @@ int16 Room28::use_breifkasten() {
 		autoMove(8, P_CHEWY);
 		start_spz(CH_LGET_O, 1, ANI_FRONT, P_CHEWY);
 		startAadWait(179);
-		_G(atds)->set_ats_str(206, 0, ATS_DATA);
+		_G(atds)->set_all_ats_str(206, 0, ATS_DATA);
 		showCur();
 		invent_2_slot(MANUSKRIPT_INV);
 		_G(gameState).R28Manuskript = true;

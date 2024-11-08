@@ -204,7 +204,7 @@ int Room89::proc4() {
 	start_spz_wait(13, 1, false, P_CHEWY);
 
 	if (_G(gameState).flags33_4) {
-		_G(atds)->set_ats_str(514, 2, ATS_DATA);
+		_G(atds)->set_all_ats_str(514, 2, ATS_DATA);
 		_G(gameState).flags32_80 = true;
 		_G(det)->hideStaticSpr(6);
 		new_invent_2_cur(111);
@@ -214,7 +214,7 @@ int Room89::proc4() {
 		_G(det)->showStaticSpr(5);
 		_G(det)->showStaticSpr(6);
 		_G(gameState).flags33_4 = true;
-		_G(atds)->set_ats_str(514, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(514, 1, ATS_DATA);
 	}
 
 	showCur();

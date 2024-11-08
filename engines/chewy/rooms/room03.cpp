@@ -308,7 +308,7 @@ void Room3::probeTransfer() {
 	_G(auto_mov_vector)[SONDE_OBJ].Delay = _G(gameState).DelaySpeed;
 	_G(auto_mov_obj)[SONDE_OBJ].Mode = true;
 	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], 2, (const MovLine *)SONDE_MPKT1);
-	_G(atds)->set_ats_str(24, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->set_all_ats_str(24, ATS_ACTIVE_BIT, ATS_DATA);
 	
 	while (_G(mov_phasen)[SONDE_OBJ].Repeat != -1) {
 		set_ani_screen();
@@ -395,7 +395,7 @@ void Room3::probeTransfer() {
 
 		case 1:
 			g_engine->_sound->waitForSpeechToFinish();
-			_G(atds)->set_ats_str(24, 0, ATS_DATA);
+			_G(atds)->set_all_ats_str(24, 0, ATS_DATA);
 			_G(mov_phasen)[0].AtsText = 544;
 			switchRoom(1);
 			break;

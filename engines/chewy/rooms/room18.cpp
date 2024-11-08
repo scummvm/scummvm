@@ -117,7 +117,7 @@ void Room18::entry() {
 	} else {
 		// Show cyber crown
 		_G(det)->showStaticSpr(19);
-		_G(atds)->set_ats_str(153, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(153, 1, ATS_DATA);
 		_G(atds)->set_ats_str(149, TXT_MARK_LOOK, 1, ATS_DATA);
 
 		for (int16 i = 0; i < 3; i++)
@@ -323,7 +323,7 @@ int16 Room18::calcSurimy() {
 		_G(gameState).ScrollxStep = 2;
 		_G(auto_obj) = 0;
 
-		_G(atds)->set_ats_str(153, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(153, 1, ATS_DATA);
 		_G(atds)->set_ats_str(149, TXT_MARK_LOOK, 1, ATS_DATA);
 
 		for (int16 i = 0; i < 3; i++)

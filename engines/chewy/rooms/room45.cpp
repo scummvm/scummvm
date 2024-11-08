@@ -243,7 +243,7 @@ int16 Room45::use_boy() {
 		if (isCurInventory(DOLLAR175_INV)) {
 			action_ret = true;
 			new_invent_2_cur(CUTMAG_INV);
-			_G(atds)->set_ats_str(DOLLAR175_INV, 1, INV_ATS_DATA);
+			_G(atds)->set_all_ats_str(DOLLAR175_INV, 1, INV_ATS_DATA);
 			startAadWait(258);
 			_G(room)->set_timer_status(0, TIMER_STOP);
 			_G(det)->del_static_ani(0);

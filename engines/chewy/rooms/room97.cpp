@@ -435,7 +435,7 @@ int Room97::proc6() {
 	_G(gameState).flags36_2 = true;
 	_G(atds)->delControlBit(538, ATS_ACTIVE_BIT);
 	_G(atds)->setControlBit(531, ATS_ACTIVE_BIT);
-	_G(atds)->set_ats_str(530, 1, ATS_DATA);
+	_G(atds)->set_all_ats_str(530, 1, ATS_DATA);
 	_G(atds)->setControlBit(532, ATS_ACTIVE_BIT);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	_G(gameState).flags36_8 = true;
@@ -455,7 +455,7 @@ int Room97::proc7() {
 	_G(det)->hideStaticSpr(17);
 	startSetAILWait(22, 1, ANI_FRONT);
 	_G(atds)->setControlBit(538, ATS_ACTIVE_BIT);
-	_G(atds)->set_ats_str(530, 2, ATS_DATA);
+	_G(atds)->set_all_ats_str(530, 2, ATS_DATA);
 	new_invent_2_cur(SLIME_INV);
 	_G(gameState).flags36_4 = true;
 	setPersonPos(304, 102, P_CHEWY, P_RIGHT);
@@ -485,9 +485,9 @@ int Room97::proc8() {
 		_G(gameState).flags36_10 = true;
 		_G(gameState).flags36_8 = false;
 		_G(det)->startDetail(12, 255, false);
-		_G(atds)->set_ats_str(530, 3, ATS_DATA);
+		_G(atds)->set_all_ats_str(530, 3, ATS_DATA);
 		_G(atds)->delControlBit(532, ATS_ACTIVE_BIT);
-		_G(atds)->set_ats_str(532, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(532, 1, ATS_DATA);
 		_G(det)->startDetail(6, 255, false);
 		_G(det)->hideStaticSpr(14);
 		autoMove(3, P_CHEWY);

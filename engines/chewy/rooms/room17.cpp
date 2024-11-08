@@ -254,7 +254,7 @@ void Room17::door_kommando(int16 mode) {
 		}
 
 		_G(flags).AutoAniPlay = false;
-		_G(atds)->set_ats_str(144, _G(gameState).R17DoorCommand, ATS_DATA);
+		_G(atds)->set_all_ats_str(144, _G(gameState).R17DoorCommand, ATS_DATA);
 	}
 }
 
@@ -262,7 +262,7 @@ void Room17::close_door() {
 	if (_G(gameState).R17DoorCommand) {
 		_G(gameState).room_e_obj[36].Attribut = 255;
 		_G(gameState).R17DoorCommand = false;
-		_G(atds)->set_ats_str(144, _G(gameState).R17DoorCommand ? 1 : 0, ATS_DATA);
+		_G(atds)->set_all_ats_str(144, _G(gameState).R17DoorCommand ? 1 : 0, ATS_DATA);
 		_G(det)->hideStaticSpr(7);
 		_G(det)->startDetail(4, 1, ANI_BACK);
 	}
@@ -298,8 +298,8 @@ int16 Room17::energy_lever() {
 				_G(det)->startDetail(i + 6, 255, ANI_FRONT);
 		}
 
-		_G(atds)->set_ats_str(142, _G(gameState).R17EnergyOut ? 1 : 0, ATS_DATA);
-		_G(atds)->set_ats_str(140, _G(gameState).R17EnergyOut ? 1 : 0, ATS_DATA);
+		_G(atds)->set_all_ats_str(142, _G(gameState).R17EnergyOut ? 1 : 0, ATS_DATA);
+		_G(atds)->set_all_ats_str(140, _G(gameState).R17EnergyOut ? 1 : 0, ATS_DATA);
 		_G(det)->playSound(12, 0);
 
 		if (_G(gameState).R17EnergyOut) {

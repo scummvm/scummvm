@@ -68,7 +68,7 @@ void Room9::gtuer() {
 	_G(atds)->delControlBit(75, ATS_ACTIVE_BIT);
 	_G(atds)->delControlBit(76, ATS_ACTIVE_BIT);
 	_G(obj)->show_sib(34);
-	_G(atds)->set_ats_str(73, 1, ATS_DATA);
+	_G(atds)->set_all_ats_str(73, 1, ATS_DATA);
 }
 
 void Room9::surimy() {

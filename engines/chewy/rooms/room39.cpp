@@ -96,7 +96,7 @@ short Room39::use_howard() {
 				_G(det)->stopDetail(3);
 				startSetAILWait(4, 1, ANI_FRONT);
 				_G(det)->set_static_ani(5, -1);
-				_G(atds)->set_ats_str(62, 1, ATS_DATA);
+				_G(atds)->set_all_ats_str(62, 1, ATS_DATA);
 				startAadWait(169);
 				showCur();
 
@@ -255,7 +255,7 @@ int16 Room39::use_tv() {
 				_G(gameState)._personHide[P_CHEWY] = false;
 				ani_nr = CH_TALK5;
 				dia_nr = 99;
-				_G(atds)->set_ats_str(RECORDER_INV, _G(gameState).R39TvKanal + 1, INV_ATS_DATA);
+				_G(atds)->set_all_ats_str(RECORDER_INV, _G(gameState).R39TvKanal + 1, INV_ATS_DATA);
 				_G(gameState).R39TvRecord = _G(gameState).R39TvKanal + 1;
 			} else {
 				ani_nr = CH_TALK12;

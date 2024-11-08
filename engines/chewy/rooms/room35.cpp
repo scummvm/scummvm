@@ -52,7 +52,7 @@ int16 Room35::schublade() {
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			_G(det)->showStaticSpr(1);
 			_G(gameState).R35Schublade = true;
-			_G(atds)->set_ats_str(234, 1, ATS_DATA);
+			_G(atds)->set_all_ats_str(234, 1, ATS_DATA);
 		} else if (!_G(gameState).R35Falle) {
 			action_flag = true;
 			autoMove(3, P_CHEWY);
@@ -64,7 +64,7 @@ int16 Room35::schublade() {
 			start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(93);
 			_G(gameState)._personHide[P_CHEWY] = false;
-			_G(atds)->set_ats_str(234, 2, ATS_DATA);
+			_G(atds)->set_all_ats_str(234, 2, ATS_DATA);
 		}
 	}
 

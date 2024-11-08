@@ -134,18 +134,18 @@ void Room23::use_cartridge() {
 
 	if (_G(gameState).R18CartSave) {
 		_G(atds)->delControlBit(171, ATS_ACTIVE_BIT);
-		_G(atds)->set_ats_str(111, 2, ATS_DATA);
+		_G(atds)->set_all_ats_str(111, 2, ATS_DATA);
 		startSetAILWait(4, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(3);
 	} else {
-		_G(atds)->set_ats_str(111, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(111, 1, ATS_DATA);
 	}
 
 	_G(menu_item_vorwahl) = CUR_USE;
 }
 
 void Room23::get_cartridge() {
-	_G(atds)->set_ats_str(111, 0, ATS_DATA);
+	_G(atds)->set_all_ats_str(111, 0, ATS_DATA);
 	_G(atds)->setControlBit(171, ATS_ACTIVE_BIT);
 
 	_G(gameState).R23Cartridge = false;

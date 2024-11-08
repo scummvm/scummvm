@@ -250,7 +250,7 @@ int16 Room68::useParrot() {
 		_G(det)->showStaticSpr(12);
 		_G(det)->startDetail(21, 255, ANI_FRONT);
 		_G(atds)->delControlBit(408, ATS_ACTIVE_BIT);
-		_G(atds)->set_ats_str(407, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(407, 1, ATS_DATA);
 		showCur();
 	}
 	return action_flag;

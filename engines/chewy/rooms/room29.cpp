@@ -122,7 +122,7 @@ bool Room29::useWaterHose() {
 		_G(det)->showStaticSpr(8);
 		_G(det)->showStaticSpr(10);
 		_G(atds)->delControlBit(219, ATS_ACTIVE_BIT);
-		_G(atds)->set_ats_str(218, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(218, 1, ATS_DATA);
 
 		_G(gameState).R29Schlauch1 = false;
 		_G(gameState).R29WaterHose = true;

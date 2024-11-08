@@ -92,7 +92,7 @@ int16 Room22::chewy_amboss() {
 		_G(flags).NoPalAfterFlc = false;
 		flic_cut(FCUT_006);
 		_G(gameState).R22ChewyPlatt = true;
-		_G(atds)->set_ats_str(79, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(79, 1, ATS_DATA);
 		_G(flags).AutoAniPlay = false;
 
 		showCur();

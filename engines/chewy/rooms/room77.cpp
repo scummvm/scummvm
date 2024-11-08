@@ -35,7 +35,7 @@ void Room77::entry() {
 	_G(gameState).ScrollxStep = 2;
 	if (_G(gameState).r76State == 1) {
 		_G(gameState).flags29_4 = true;
-		_G(atds)->set_ats_str(452, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(452, 1, ATS_DATA);
 	}
 
 	if (_G(gameState).flags29_4) {
@@ -75,7 +75,7 @@ int Room77::proc1() {
 	int diaNr, aniId;
 	if (_G(gameState).flags29_8) {
 		start_spz_wait(14, 1, false, P_CHEWY);
-		_G(atds)->set_ats_str(463, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(463, 1, ATS_DATA);
 		_G(gameState).flags29_10 = true;
 		_G(gameState).flags29_40 = true;
 		diaNr = 441;
@@ -106,7 +106,7 @@ int Room77::proc2() {
 	if (_G(gameState).flags29_8) {
 		start_spz_wait(14, 1, false, P_CHEWY);
 		delInventory(_G(cur)->getInventoryCursor());
-		_G(atds)->set_ats_str(464, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(464, 1, ATS_DATA);
 		_G(gameState).flags29_20 = true;
 		_G(gameState).flags29_40 = true;
 		diaNr = 442;

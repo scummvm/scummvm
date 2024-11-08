@@ -224,7 +224,7 @@ int16 Room51::use_door(int16 txt_nr) {
 				_G(gameState).R51HotelRoom = true;
 				_G(gameState).room_e_obj[86].Attribut = EXIT_LEFT;
 				startAadWait(285);
-				_G(atds)->set_ats_str(329, 1, ATS_DATA);
+				_G(atds)->set_all_ats_str(329, 1, ATS_DATA);
 				_G(SetUpScreenFunc) = setup_func;
 
 			} else {

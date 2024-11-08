@@ -156,8 +156,8 @@ int Room86::proc2() {
 	autoMove(3, P_CHEWY);
 	proc3(true);
 	_G(atds)->delControlBit(499, ATS_ACTIVE_BIT);
-	_G(atds)->set_ats_str(497, 1, ATS_DATA);
-	_G(atds)->set_ats_str(498, 1, ATS_DATA);
+	_G(atds)->set_all_ats_str(497, 1, ATS_DATA);
+	_G(atds)->set_all_ats_str(498, 1, ATS_DATA);
 	_G(gameState).flags32_2 = true;
 	_G(gameState).room_e_obj[132].Attribut = EXIT_RIGHT;
 	start_spz(CH_TALK12, 255, false, P_CHEWY);
