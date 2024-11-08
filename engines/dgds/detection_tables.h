@@ -409,7 +409,7 @@ static const ADGameDescription gameDescriptions[] = {
 		{
 			{"resource.map", 0, "374e6d05c5e0acd88fb5af748948c899", 1461},
 			{"resource.001", 0, "46acc7ab8f6d7f63838ffea5f87380e2", 1175645},
-			{"scrantic.exe", 0, "46ce1ae10fcfa52dd964fcfc86694509", 295952},
+			{"scrantic.exe", 0, "34bd51a9697ce7ce833b90e189ef51b2", 295952},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
