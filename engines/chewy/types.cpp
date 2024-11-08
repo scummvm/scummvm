@@ -119,8 +119,8 @@ bool GameState::synchronize(Common::Serializer &s) {
 	s.syncAsByte(R17Location);
 	s.syncAsSint16LE(R23GliderExit);
 	syncArray(s, R24Lever, 3);
-	syncArray(s, R24HebelDir, 3);
-	syncArray(s, R24KristallLast, 3);
+	syncArray(s, R24LeverDir, 3);
+	syncArray(s, R24CrystalLast, 3);
 	s.syncAsByte(R25SurimyGo);
 	s.syncAsByte(R27HowardGed);
 	s.syncAsByte(R28PumpTxt1);

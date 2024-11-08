@@ -48,7 +48,7 @@ static const MovLine SURIMY_MPKT1[2] = {
 void Room9::entry() {
 	_G(gameState).R7ChewyFlug = false;
 
-	if (!_G(gameState).R9Gitter)
+	if (!_G(gameState).R9Grid)
 		setPersonPos(138, 91, P_CHEWY, P_LEFT);
 	else
 		_G(det)->showStaticSpr(5);
@@ -60,7 +60,7 @@ void Room9::entry() {
 }
 
 void Room9::gtuer() {
-	_G(gameState).R9Gitter = true;
+	_G(gameState).R9Grid = true;
 	_G(det)->showStaticSpr(5);
 	startSetAILWait(6, 1, ANI_FRONT);
 	setPersonPos(74, 93, P_CHEWY, P_LEFT);

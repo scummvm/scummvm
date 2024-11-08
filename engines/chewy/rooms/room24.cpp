@@ -31,7 +31,7 @@
 namespace Chewy {
 namespace Rooms {
 
-static const uint8 KRISTALL_SPR[3][3] = {
+static const uint8 CRYSTAL_SPR[3][3] = {
 	{ 14, 20, 13 },
 	{ 20, 13, 14 },
 	{ 13, 14, 20 },
@@ -57,11 +57,11 @@ void Room24::entry() {
 	else
 		_G(det)->hideStaticSpr(10);
 
-	calc_hebel_spr();
+	calc_lever_spr();
 	calc_animation(255);
 
 	for (int16 i = 0; i < 3; i++) {
-		if (KRISTALL_SPR[i][_G(gameState).R24Lever[i]] == 20)
+		if (CRYSTAL_SPR[i][_G(gameState).R24Lever[i]] == 20)
 			_G(det)->startDetail(5 + i * 4, 255, ANI_BACK);
 	}
 }
@@ -76,18 +76,18 @@ void Room24::xit() {
 	_G(flags).MainInput = true;
 }
 
-void Room24::use_hebel(int16 txt_nr) {
+void Room24::use_lever(int16 txt_nr) {
 	if (!_G(gameState).R24Lever[txt_nr - 161] ||
 		_G(gameState).R24Lever[txt_nr - 161] == 2) {
 		_G(gameState).R24Lever[txt_nr - 161] = 1;
-		_G(gameState).R24HebelDir[txt_nr - 161] ^= 1;
+		_G(gameState).R24LeverDir[txt_nr - 161] ^= 1;
 	} else {
-		if (_G(gameState).R24HebelDir[txt_nr - 161])
+		if (_G(gameState).R24LeverDir[txt_nr - 161])
 			_G(gameState).R24Lever[txt_nr - 161] = 0;
 		else
 			_G(gameState).R24Lever[txt_nr - 161] = 2;
 	}
-	calc_hebel_spr();
+	calc_lever_spr();
 	calc_animation(txt_nr - 161);
 
 	if (_G(gameState).R24Lever[0] == 1 && _G(gameState).R24Lever[1] == 0 && _G(gameState).R24Lever[2] == 2) {
@@ -107,15 +107,15 @@ void Room24::use_hebel(int16 txt_nr) {
 	}
 }
 
-void Room24::calc_hebel_spr() {
+void Room24::calc_lever_spr() {
 	if (!_G(gameState).R24FirstEntry) {
 		_G(gameState).R24FirstEntry = true;
 		_G(gameState).R24Lever[0] = 2;
-		_G(gameState).R24HebelDir[0] = 0;
+		_G(gameState).R24LeverDir[0] = 0;
 		_G(gameState).R24Lever[1] = 1;
-		_G(gameState).R24HebelDir[1] = 0;
+		_G(gameState).R24LeverDir[1] = 0;
 		_G(gameState).R24Lever[2] = 0;
-		_G(gameState).R24HebelDir[2] = 1;
+		_G(gameState).R24LeverDir[2] = 1;
 	}
 
 	for (int16 i = 0; i < 3; i++) {
@@ -127,26 +127,26 @@ void Room24::calc_hebel_spr() {
 	}
 }
 
-void Room24::calc_animation(int16 kristall_nr) {
-	if (kristall_nr != 255) {
+void Room24::calc_animation(int16 crystal_nr) {
+	if (crystal_nr != 255) {
 		hideCur();
 
-		if (KRISTALL_SPR[kristall_nr][_G(gameState).R24Lever[kristall_nr]] == 20) {
-			int16 ani_nr = _G(gameState).R24KristallLast[kristall_nr] == 13 ? 7 : 8;
-			_G(det)->playSound(ani_nr + kristall_nr * 4, 0);
+		if (CRYSTAL_SPR[crystal_nr][_G(gameState).R24Lever[crystal_nr]] == 20) {
+			int16 ani_nr = _G(gameState).R24CrystalLast[crystal_nr] == 13 ? 7 : 8;
+			_G(det)->playSound(ani_nr + crystal_nr * 4, 0);
 			_G(det)->stopSound(0);
-			_G(det)->hideStaticSpr(_G(gameState).R24KristallLast[kristall_nr] + kristall_nr * 2);
-			startSetAILWait(ani_nr + kristall_nr * 4, 1, ANI_BACK);
-			startSetAILWait(6 + kristall_nr * 4, 1, ANI_BACK);
-			_G(det)->startDetail(5 + kristall_nr * 4, 255, ANI_BACK);
+			_G(det)->hideStaticSpr(_G(gameState).R24CrystalLast[crystal_nr] + crystal_nr * 2);
+			startSetAILWait(ani_nr + crystal_nr * 4, 1, ANI_BACK);
+			startSetAILWait(6 + crystal_nr * 4, 1, ANI_BACK);
+			_G(det)->startDetail(5 + crystal_nr * 4, 255, ANI_BACK);
 
-		} else if (_G(gameState).R24KristallLast[kristall_nr] == 20) {
-			int16 ani_nr = KRISTALL_SPR[kristall_nr][_G(gameState).R24Lever[kristall_nr]] == 13 ? 7 : 8;
+		} else if (_G(gameState).R24CrystalLast[crystal_nr] == 20) {
+			int16 ani_nr = CRYSTAL_SPR[crystal_nr][_G(gameState).R24Lever[crystal_nr]] == 13 ? 7 : 8;
 			_G(det)->stopSound(0);
-			_G(det)->playSound(5 + ani_nr + kristall_nr * 4, 0);
-			_G(det)->stopDetail(5 + kristall_nr * 4);
-			startSetAILWait(6 + kristall_nr * 4, 1, ANI_FRONT);
-			startSetAILWait(ani_nr + kristall_nr * 4, 1, ANI_FRONT);
+			_G(det)->playSound(5 + ani_nr + crystal_nr * 4, 0);
+			_G(det)->stopDetail(5 + crystal_nr * 4);
+			startSetAILWait(6 + crystal_nr * 4, 1, ANI_FRONT);
+			startSetAILWait(ani_nr + crystal_nr * 4, 1, ANI_FRONT);
 		}
 
 		showCur();
@@ -156,8 +156,8 @@ void Room24::calc_animation(int16 kristall_nr) {
 		_G(det)->hideStaticSpr(13 + i);
 
 	for (int16 i = 0; i < 3; i++) {
-		_G(det)->showStaticSpr(KRISTALL_SPR[i][_G(gameState).R24Lever[i]] + i * 2);
-		_G(gameState).R24KristallLast[i] = KRISTALL_SPR[i][_G(gameState).R24Lever[i]];
+		_G(det)->showStaticSpr(CRYSTAL_SPR[i][_G(gameState).R24Lever[i]] + i * 2);
+		_G(gameState).R24CrystalLast[i] = CRYSTAL_SPR[i][_G(gameState).R24Lever[i]];
 	}
 }
 

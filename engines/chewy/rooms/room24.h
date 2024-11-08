@@ -27,13 +27,13 @@ namespace Rooms {
 
 class Room24 {
 private:
-	static void calc_hebel_spr();
-	static void calc_animation(int16 kristall_nr);
+	static void calc_lever_spr();
+	static void calc_animation(int16 crystal_nr);
 
 public:
 	static void entry();
 	static void xit();
-	static void use_hebel(int16 txt_nr);
+	static void use_lever(int16 txt_nr);
 };
 
 } // namespace Rooms

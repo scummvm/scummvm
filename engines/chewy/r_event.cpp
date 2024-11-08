@@ -884,9 +884,9 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_HEBEL_R7:
-		_G(gameState).R7Hebel ^= 1;
+		_G(gameState).R7Lever ^= 1;
 
-		if (!_G(gameState).R7Hebel)
+		if (!_G(gameState).R7Lever)
 			_G(atds)->set_ats_str(50, 0, ATS_DATA);
 		else if (!_G(gameState).R7BorkFlug)
 			_G(atds)->set_ats_str(50, 1, ATS_DATA);
@@ -915,9 +915,9 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_LHAKEN_R7:
-		if (_G(gameState).R7SeilLeft) {
+		if (_G(gameState).R7RopeLeft) {
 			if (_G(gameState).R7RHaken) {
-				_G(gameState).R7SeilOk = true;
+				_G(gameState).R7RopeOk = true;
 				autoMove(4, P_CHEWY);
 				_G(obj)->calc_rsi_flip_flop(SIB_LHAKEN_R7);
 				_G(obj)->calc_rsi_flip_flop(SIB_RHAKEN_R7);
@@ -993,24 +993,24 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_SCHALTER1_R21:
-		_G(det)->startDetail(0, 1, _G(gameState).R21Hebel1);
-		_G(gameState).R21Hebel1 ^= 1;
+		_G(det)->startDetail(0, 1, _G(gameState).R21Lever1);
+		_G(gameState).R21Lever1 ^= 1;
 		Room21::calc_laser();
-		_G(atds)->set_ats_str(126, TXT_MARK_LOOK, _G(gameState).R21Hebel1, ATS_DATA);
+		_G(atds)->set_ats_str(126, TXT_MARK_LOOK, _G(gameState).R21Lever1, ATS_DATA);
 		break;
 
 	case SIB_SCHALTER2_R21:
-		_G(det)->startDetail(1, 1, _G(gameState).R21Hebel2);
-		_G(gameState).R21Hebel2 ^= 1;
+		_G(det)->startDetail(1, 1, _G(gameState).R21Lever2);
+		_G(gameState).R21Lever2 ^= 1;
 		Room21::calc_laser();
-		_G(atds)->set_ats_str(127, TXT_MARK_LOOK, _G(gameState).R21Hebel2, ATS_DATA);
+		_G(atds)->set_ats_str(127, TXT_MARK_LOOK, _G(gameState).R21Lever2, ATS_DATA);
 		break;
 
 	case SIB_SCHALTER3_R21:
-		_G(det)->startDetail(2, 1, _G(gameState).R21Hebel3);
-		_G(gameState).R21Hebel3 ^= 1;
+		_G(det)->startDetail(2, 1, _G(gameState).R21Lever3);
+		_G(gameState).R21Lever3 ^= 1;
 		Room21::calc_laser();
-		_G(atds)->set_ats_str(128, TXT_MARK_LOOK, _G(gameState).R21Hebel3, ATS_DATA);
+		_G(atds)->set_ats_str(128, TXT_MARK_LOOK, _G(gameState).R21Lever3, ATS_DATA);
 		break;
 
 	case SIB_SEIL_R21:
@@ -1018,7 +1018,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_GITTER1_R21:
-		Room21::use_gitter_energie();
+		Room21::use_gitter_energy();
 		break;
 
 	case SIB_CART1_R18:
@@ -1026,7 +1026,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_DOORKNOB_R18:
-		if (_G(gameState).R18DoorBruecke) {
+		if (_G(gameState).R18DoorBridge) {
 			_G(det)->stopSound(0);
 			_G(det)->playSound(19, 1);
 		} else {
@@ -1039,9 +1039,9 @@ int16 sib_event_no_inv(int16 sib_nr) {
 				EXIT_LEFT, -1,
 				(int16)_G(gameState).R6DoorLeftF);
 		}
-		_G(gameState).R18DoorBruecke = exit_flip_flop(19, 40, 35, 148, -1, -1,
+		_G(gameState).R18DoorBridge = exit_flip_flop(19, 40, 35, 148, -1, -1,
 			EXIT_TOP, EXIT_LEFT,
-			(int16)_G(gameState).R18DoorBruecke);
+			(int16)_G(gameState).R18DoorBridge);
 		break;
 
 	case SIB_CART_FACH_R18:
@@ -1259,8 +1259,8 @@ void sib_event_inv(int16 sib_nr) {
 		break;
 
 	case SIB_GITTER2_R21:
-		_G(gameState).R21GitterMuell = exit_flip_flop(-1, 46, 27, 132, 90, -1,
-			EXIT_RIGHT, EXIT_RIGHT, _G(gameState).R21GitterMuell);
+		_G(gameState).R21GarbageGrid = exit_flip_flop(-1, 46, 27, 132, 90, -1,
+			EXIT_RIGHT, EXIT_RIGHT, _G(gameState).R21GarbageGrid);
 		_G(atds)->set_ats_str(90, TXT_MARK_USE, 2, ATS_DATA);
 		break;
 

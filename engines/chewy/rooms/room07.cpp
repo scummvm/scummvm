@@ -56,7 +56,7 @@ void Room7::hook(int16 sibNr) {
 	cursorChoice(_G(menu_item));
 
 	if (_G(gameState).R7RHaken) {
-		_G(gameState).R7SeilOk = true;
+		_G(gameState).R7RopeOk = true;
 		if (sibNr == SIB_LHAKEN_R7) {
 			_G(obj)->calc_rsi_flip_flop(SIB_LHAKEN_R7);
 			_G(obj)->calc_rsi_flip_flop(SIB_RHAKEN_R7);
@@ -65,7 +65,7 @@ void Room7::hook(int16 sibNr) {
 		_G(atds)->set_ats_str(55, TXT_MARK_LOOK, 1, ATS_DATA);
 		diaNr = 9;
 	} else {
-		_G(gameState).R7SeilLeft = true;
+		_G(gameState).R7RopeLeft = true;
 		diaNr = 48;
 	}
 
@@ -78,7 +78,7 @@ void Room7::bell() {
 	hideCur();
 	
 	if ((!_G(gameState).R7BellCount) ||
-		(_G(gameState).R7BellCount >= 2 && _G(gameState).R7SeilLeft && !_G(gameState).R7SeilOk)) {
+		(_G(gameState).R7BellCount >= 2 && _G(gameState).R7RopeLeft && !_G(gameState).R7RopeOk)) {
 		_G(gameState)._personHide[P_CHEWY] = true;
 		start_aad(5, 0);
 		startAniBlock(3, ABLOCK25);
@@ -125,7 +125,7 @@ void Room7::bell() {
 		_G(flags).NoScroll = false;
 		_G(det)->hideStaticSpr(7);
 
-	} else if (!_G(gameState).R7SeilOk) {
+	} else if (!_G(gameState).R7RopeOk) {
 		_G(gameState)._personHide[P_CHEWY] = true;
 		start_aad(7, 0);
 		startAniBlock(3, ABLOCK25);
@@ -149,7 +149,7 @@ void Room7::bell() {
 		_G(flags).NoScroll = false;
 		_G(det)->del_taf_tbl(192, 74, nullptr);
 
-	} else if (_G(gameState).R7SeilOk && !_G(gameState).R7BorkFlug) {
+	} else if (_G(gameState).R7RopeOk && !_G(gameState).R7BorkFlug) {
 		_G(gameState).R7BorkFlug = true;
 		_G(gameState)._personHide[P_CHEWY] = true;
 		start_aad(8, 0);

@@ -37,7 +37,7 @@ public:
 	static bool timer(int16 t_nr, int16 ani_nr);
 
 	static void calc_laser();
-	static void use_gitter_energie();
+	static void use_gitter_energy();
 	static int16 use_fenster();
 	static void salto();
 };

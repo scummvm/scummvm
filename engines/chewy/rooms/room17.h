@@ -41,7 +41,7 @@ public:
 	static void kletter_up();
 	static void calc_seil();
 	static void close_door();
-	static int16 energie_hebel();
+	static int16 energy_lever();
 	static int16 get_oel();
 
 };

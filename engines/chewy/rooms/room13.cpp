@@ -82,7 +82,7 @@ void Room13::entry() {
 			_G(gameState).R13Band = false;
 		}
 
-		if (_G(gameState).R21GitterMuell)
+		if (_G(gameState).R21GarbageGrid)
 			_G(det)->hideStaticSpr(6);
 	}
 }

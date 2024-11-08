@@ -141,7 +141,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 73:
-						if (!_G(gameState).R9Gitter) {
+						if (!_G(gameState).R9Grid) {
 							_G(gameState)._personHide[P_CHEWY] = true;
 							startSetAILWait(5, 1, ANI_FRONT);
 							_G(gameState)._personHide[P_CHEWY] = false;
@@ -251,7 +251,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 142:
-						retValue = Room17::energie_hebel();
+						retValue = Room17::energy_lever();
 						break;
 
 					case 146:
@@ -278,7 +278,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 					case 161:
 					case 162:
 					case 163:
-						Room24::use_hebel(txtNr);
+						Room24::use_lever(txtNr);
 						break;
 
 					case 165:

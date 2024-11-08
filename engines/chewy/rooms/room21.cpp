@@ -84,7 +84,7 @@ bool Room21::timer(int16 t_nr, int16 ani_nr) {
 }
 
 void Room21::calc_laser() {
-	if (_G(gameState).R21Hebel1 && !_G(gameState).R21Hebel2 && _G(gameState).R21Hebel3) {
+	if (_G(gameState).R21Lever1 && !_G(gameState).R21Lever2 && _G(gameState).R21Lever3) {
 		_G(gameState).R21Laser1Weg = true;
 		_G(det)->stopDetail(3);
 		_G(atds)->setControlBit(134, ATS_ACTIVE_BIT);
@@ -96,8 +96,8 @@ void Room21::calc_laser() {
 		_G(atds)->setControlBit(133, ATS_ACTIVE_BIT);
 	}
 
-	if (!_G(gameState).R21Hebel1 && _G(gameState).R21Hebel2 && !_G(gameState).R21Hebel3) {
-		if (!_G(obj)->checkInventory(SEIL_INV) && !_G(gameState).R17Seil) {
+	if (!_G(gameState).R21Lever1 && _G(gameState).R21Lever2 && !_G(gameState).R21Lever3) {
+		if (!_G(obj)->checkInventory(SEIL_INV) && !_G(gameState).R17Rope) {
 			_G(obj)->show_sib(SIB_SEIL_R21);
 			_G(atds)->delControlBit(129, ATS_ACTIVE_BIT);
 		}
@@ -223,9 +223,9 @@ void Room21::salto() {
 	}
 }
 
-void Room21::use_gitter_energie() {
-	_G(gameState).R21GitterEnergie = exit_flip_flop(-1, 47, -1, 131, 138, -1,
-		EXIT_BOTTOM, EXIT_TOP, (int16)_G(gameState).R21GitterEnergie);
+void Room21::use_gitter_energy() {
+	_G(gameState).R21EnergyGrid = exit_flip_flop(-1, 47, -1, 131, 138, -1,
+		EXIT_BOTTOM, EXIT_TOP, (int16)_G(gameState).R21EnergyGrid);
 	_G(auto_obj) = 0;
 	_G(gameState).R17Location = 1;
 	_G(gameState)._personHide[P_CHEWY] = true;
@@ -233,7 +233,7 @@ void Room21::use_gitter_energie() {
 	switchRoom(17);
 	_G(det)->hideStaticSpr(5);
 	startSetAILWait(9, 1, ANI_FRONT);
-	_G(gameState).R17GitterWeg = true;
+	_G(gameState).R17GridWeg = true;
 	_G(gameState)._personHide[P_CHEWY] = false;
 }
 
