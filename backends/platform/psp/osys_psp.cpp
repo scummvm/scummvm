@@ -63,8 +63,7 @@ void OSystem_PSP::initBackend() {
 	ConfMan.registerDefault("gfx_mode", "Fit to Screen");
 	ConfMan.registerDefault("kbdmouse_speed", 3);
 	ConfMan.registerDefault("joystick_deadzone", 3);
-	ConfMan.registerDefault("gm_device", "null");
-	
+
 	// Instantiate real time clock
 	PspRtc::instance();
 
