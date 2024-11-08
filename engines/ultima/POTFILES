@@ -11,4 +11,5 @@ engines/ultima/nuvie/save/save_game.cpp
 engines/ultima/ultima8/metaengine.cpp
 engines/ultima/ultima8/ultima8.cpp
 engines/ultima/ultima8/games/cru_game.cpp
+engines/ultima/ultima8/games/u8_game.cpp
 engines/ultima/ultima8/gumps/u8_save_gump.cpp
