@@ -452,6 +452,7 @@ baseball2001	Backyard Baseball 2001
 	a86f9c49355579c30d4a55b477c0d869	-1	en	All	-	-	-	Kirben
 
 	a194f15f51ee62badab74b9e7da97693	20507	en	All	-	Demo	-	khalek, sev
+	58c6b76a989650ced0bdf273bf5578f7	-1	en	Windows	-	Steam	Steam Re-Release	Bosca
 
 baseball2003	Backyard Baseball 2003
 	efe0a04a703e765ebebe92b6c8aa6b86	-1	en	All	-	-	-	Kirben, sev
