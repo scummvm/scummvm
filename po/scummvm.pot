@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-08 10:51+0000\n"
+"POT-Creation-Date: 2024-11-08 11:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3472,7 +3472,7 @@ msgstr ""
 
 #: engines/metaengine.cpp:62 backends/platform/maemo/maemo.cpp:161
 #: engines/agos/metaengine.cpp:232 engines/asylum/metaengine.cpp:159
-#: engines/bbvs/metaengine.cpp:98 engines/cge/metaengine.cpp:203
+#: engines/bbvs/metaengine.cpp:99 engines/cge/metaengine.cpp:203
 #: engines/cge2/metaengine.cpp:216 engines/cine/metaengine.cpp:265
 #: engines/composer/metaengine.cpp:113 engines/cruise/metaengine.cpp:147
 #: engines/draci/metaengine.cpp:143 engines/groovie/metaengine.cpp:205
@@ -3498,7 +3498,7 @@ msgstr ""
 
 #: engines/metaengine.cpp:73 backends/platform/maemo/maemo.cpp:169
 #: engines/agos/metaengine.cpp:238 engines/asylum/metaengine.cpp:165
-#: engines/bbvs/metaengine.cpp:104 engines/cge/metaengine.cpp:209
+#: engines/bbvs/metaengine.cpp:105 engines/cge/metaengine.cpp:209
 #: engines/cge2/metaengine.cpp:222 engines/cine/metaengine.cpp:271
 #: engines/composer/metaengine.cpp:119 engines/cruise/metaengine.cpp:153
 #: engines/draci/metaengine.cpp:149 engines/groovie/metaengine.cpp:211
@@ -6077,12 +6077,13 @@ msgstr ""
 msgid "Default keymappings"
 msgstr ""
 
-#: engines/bbvs/metaengine.cpp:94
+#. I18N: Escape is a key
+#: engines/bbvs/metaengine.cpp:95
 msgid "Escape keymappings"
 msgstr ""
 
 #. I18N: ESC key
-#: engines/bbvs/metaengine.cpp:110 engines/cruise/metaengine.cpp:197
+#: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:197
 #: engines/freescape/movement.cpp:96 engines/hugo/metaengine.cpp:160
 #: engines/lure/metaengine.cpp:209 engines/mads/metaengine.cpp:292
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
@@ -6092,24 +6093,24 @@ msgstr ""
 msgid "Escape"
 msgstr ""
 
-#: engines/bbvs/metaengine.cpp:116 engines/hopkins/metaengine.cpp:231
+#: engines/bbvs/metaengine.cpp:117 engines/hopkins/metaengine.cpp:231
 #: engines/illusions/metaengine.cpp:147
 msgid "Open inventory"
 msgstr ""
 
-#: engines/bbvs/metaengine.cpp:123 engines/dgds/metaengine.cpp:82
+#: engines/bbvs/metaengine.cpp:124 engines/dgds/metaengine.cpp:82
 #: engines/scumm/help.cpp:168 engines/scumm/help.cpp:232
 #: engines/tinsel/metaengine.cpp:300 engines/tsage/metaengine.cpp:206
 msgid "Look"
 msgstr ""
 
-#: engines/bbvs/metaengine.cpp:129 engines/scumm/help.cpp:175
+#: engines/bbvs/metaengine.cpp:130 engines/scumm/help.cpp:175
 #: engines/scumm/help.cpp:227 engines/tsage/metaengine.cpp:216
 msgid "Talk"
 msgstr ""
 
 #. I18N: Combat command in Might & Magic 1
-#: engines/bbvs/metaengine.cpp:135 engines/cine/metaengine.cpp:330
+#: engines/bbvs/metaengine.cpp:136 engines/cine/metaengine.cpp:330
 #: engines/hdb/metaengine.cpp:237 engines/mm/mm1/metaengine.cpp:81
 #: engines/saga/metaengine.cpp:379 engines/scumm/help.cpp:130
 #: engines/scumm/help.cpp:154 engines/scumm/help.cpp:172
@@ -6121,7 +6122,7 @@ msgstr ""
 msgid "Use"
 msgstr ""
 
-#: engines/bbvs/metaengine.cpp:141
+#: engines/bbvs/metaengine.cpp:142
 #: engines/freescape/games/castle/castle.cpp:286 engines/scumm/help.cpp:226
 #: engines/tsage/metaengine.cpp:201
 msgid "Walk"
@@ -11131,7 +11132,8 @@ msgstr ""
 msgid "Medium speed"
 msgstr ""
 
-#: engines/tsage/metaengine.cpp:322
+#. I18N: Pull cards from the deck
+#: engines/tsage/metaengine.cpp:323
 msgid "Draw Cards"
 msgstr ""
 
