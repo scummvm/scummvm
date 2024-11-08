@@ -26,8 +26,6 @@
 
 #include "mtropolis/detection.h"
 
-#include "common/translation.h"
-
 namespace MTropolis {
 
 static const MTropolisGameDescription gameDescriptions[] = {
