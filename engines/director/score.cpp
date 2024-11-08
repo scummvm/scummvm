@@ -806,8 +806,8 @@ void Score::updateSprites(RenderMode mode) {
 				_window->addDirtyRect(channel->getBbox());
 
 			if (currentSprite && currentSprite->_cast && currentSprite->_cast->_erase) {
-				_movie->eraseCastMember(currentSprite->_castId);
 				currentSprite->_cast->_erase = false;
+				_movie->eraseCastMember(currentSprite->_castId);
 
 				currentSprite->setCast(currentSprite->_castId);
 				nextSprite->setCast(nextSprite->_castId);
