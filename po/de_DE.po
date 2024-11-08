@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-08 11:49+0100\n"
-"PO-Revision-Date: 2024-11-08 09:31+0000\n"
+"PO-Revision-Date: 2024-11-08 13:13+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -22,7 +22,7 @@ msgstr ""
 
 #: audio/mac_plugin.cpp:30
 msgid "Apple Macintosh Audio"
-msgstr ""
+msgstr "Apple Macintosh-Audio"
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
@@ -1842,10 +1842,8 @@ msgid "Scaler:"
 msgstr "Skalierung:"
 
 #: gui/options.cpp:1666
-#, fuzzy
-#| msgid "Render mode:"
 msgid "Rotation mode:"
-msgstr "Render-Modus:"
+msgstr "Rotations-Modus:"
 
 #: gui/options.cpp:1680
 msgid "Shader:"
@@ -2824,10 +2822,8 @@ msgid "Do you really want to delete this saved game?"
 msgstr "Diesen Spielstand wirklich löschen?"
 
 #: gui/saveload-dialog.cpp:557
-#, fuzzy
-#| msgid "Error writing save file\n"
 msgid "Error deleting saved game"
-msgstr "Fehler beim Schreiben der Spielstand-Datei\n"
+msgstr "Fehler beim Löschen der Spielstand-Datei"
 
 #: gui/saveload-dialog.cpp:675 gui/saveload-dialog.cpp:1184
 msgid "Date: "
@@ -3187,16 +3183,12 @@ msgid "VGA Grey Scale"
 msgstr "VGA Graustufen"
 
 #: common/rendermode.cpp:58
-#, fuzzy
-#| msgid "PC-9821 (256 Colors)"
 msgid "Windows (256 Colors)"
-msgstr "PC-9821 (256 Farben)"
+msgstr "Windows (256 Farben)"
 
 #: common/rendermode.cpp:59
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "Windows (16 Colors)"
-msgstr "PC-9801 (16 Farben)"
+msgstr "Windows (16 Farben)"
 
 #: common/rendermode.cpp:96
 msgctxt "lowres"
@@ -3209,24 +3201,22 @@ msgid "Hercules Amber"
 msgstr "Hercules-Bernstein"
 
 #: common/rotationmode.cpp:33
-#, fuzzy
-#| msgid "Goto location"
 msgid "No rotation"
-msgstr "Zu Ort gehen"
+msgstr "NIcht drehen"
 
 #: common/rotationmode.cpp:34
 msgid "Clockwise"
-msgstr ""
+msgstr "Im Uhrzeigersinn"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:35
 msgid "180 degrees"
-msgstr ""
+msgstr "180 Grad"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:36
 msgid "Counter-clockwise"
-msgstr ""
+msgstr "Gegen den Uhrzeigersinn"
 
 #: common/updates.cpp:57
 msgid "Daily"
@@ -4919,75 +4909,6 @@ msgid "Touch Controls"
 msgstr "Touch-Steuerung"
 
 #: backends/platform/android/android.cpp:1070
-#, fuzzy
-#| msgid ""
-#| "## Touch control modes\n"
-#| "The touch control mode can be changed by tapping or clicking on the "
-#| "controller icon in the upper right corner\n"
-#| "### Direct mouse \n"
-#| "\n"
-#| "The touch controls are direct. The pointer jumps to where the finger "
-#| "touches the screen (default for menus).\n"
-#| "\n"
-#| "  ![Direct mouse mode](mouse.png \"Direct mouse mode\"){w=10em}\n"
-#| "\n"
-#| "### Touchpad emulation \n"
-#| "\n"
-#| "The touch controls are indirect, like on a laptop touchpad.\n"
-#| "\n"
-#| "  ![Touchpad mode](touchpad.png \"Touchpad mode\"){w=10em}\n"
-#| "\n"
-#| "### Gamepad emulation \n"
-#| "\n"
-#| "Fingers must be placed on lower left and right of the screen to emulate a "
-#| "directional pad and action buttons.\n"
-#| "\n"
-#| "  ![Gamepad mode](gamepad.png \"Gamepad mode\"){w=10em}\n"
-#| "\n"
-#| "To select the preferred touch mode for menus, 2D games, and 3D games, go "
-#| "to **Global Options > Backend > Choose the preferred touch mode**.\n"
-#| "\n"
-#| "## Touch actions \n"
-#| "\n"
-#| "### Two finger scroll \n"
-#| "\n"
-#| "To scroll, slide two fingers up or down the screen\n"
-#| "### Two finger tap\n"
-#| "\n"
-#| "To do a two finger tap, hold one finger down and then tap with a second "
-#| "finger.\n"
-#| "\n"
-#| "### Three finger tap\n"
-#| "\n"
-#| "To do a three finger tap, start with holding down one finger and "
-#| "progressively touch down the other two fingers, one at a time, while "
-#| "still holding down the previous fingers. Imagine you are impatiently "
-#| "tapping your fingers on a surface, but then slow down that movement so it "
-#| "is rhythmic, but not too slow.\n"
-#| "\n"
-#| "### Immersive Sticky fullscreen mode\n"
-#| "\n"
-#| "Swipe from the edge to reveal the system bars.  They remain semi-"
-#| "transparent and disappear after a few seconds unless you interact with "
-#| "them.\n"
-#| "\n"
-#| "### Global Main Menu\n"
-#| "\n"
-#| "To open the Global Main Menu, tap on the menu icon at the top right of "
-#| "the screen.\n"
-#| "\n"
-#| "  ![Menu icon](menu.png \"Menu icon\"){w=10em}\n"
-#| "\n"
-#| "## Virtual keyboard\n"
-#| "\n"
-#| "To open the virtual keyboard, long press on the controller icon at the "
-#| "top right of the screen, or tap on any editable text field. To hide the "
-#| "virtual keyboard, tap the controller icon again, or tap outside the text "
-#| "field.\n"
-#| "\n"
-#| "\n"
-#| "  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
-#| "\n"
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -5381,80 +5302,6 @@ msgstr ""
 "Glück!\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:264
-#, fuzzy
-#| msgid ""
-#| "## Touch control modes\n"
-#| "The touch control mode can be changed by tapping or clicking on the "
-#| "controller icon in the upper right corner, by swiping two fingers from "
-#| "left to right, or in the global settings from the Launcher go to **Global "
-#| "Options > Backend > Choose the preferred touch mode**. It's possible to "
-#| "configure the touch mode for three situations (ScummVM menus, 2D games "
-#| "and 3D games).\n"
-#| "\n"
-#| "### Direct mouse \n"
-#| "\n"
-#| "The touch controls are direct. The pointer jumps to where the finger "
-#| "touches the screen (default for menus).\n"
-#| "\n"
-#| "  ![Direct mouse mode](mouse.png \"Direct mouse mode\"){w=10em}\n"
-#| "\n"
-#| "### Touchpad emulation \n"
-#| "\n"
-#| "The touch controls are indirect, like on a laptop touchpad.\n"
-#| "\n"
-#| "  ![Touchpad mode](touchpad.png \"Touchpad mode\"){w=10em}\n"
-#| "\n"
-#| "To select the preferred touch mode for menus, 2D games, and 3D games, go "
-#| "to **Global Options > Backend > Choose the preferred touch mode**.\n"
-#| "\n"
-#| "## Touch actions \n"
-#| "\n"
-#| "| Gesture           | Action            \n"
-#| "| ------------------|-------------------\n"
-#| "| `One finger tap`  | Left mouse click  \n"
-#| "| `Two fingers tap` | Right mouse click \n"
-#| "| `Two fingers double tap` | ESC \n"
-#| "| `One finger press & hold for >0.5s` | Left mouse button hold and drag, "
-#| "such as for selection from action wheel in Curse of Monkey Island \n"
-#| "| `Two fingers press & hold for >0.5s` | Right mouse button hold and "
-#| "drag, such as for selection from action wheel in Tony Tough \n"
-#| "| `Two fingers swipe (left to right)` | Toggles between the touch modes \n"
-#| "| `Two fingers swipe (right to left)` | Toggles virtual controller (>iOS "
-#| "15) \n"
-#| "| `Two fingers swipe (top to bottom)` | Access Global Main Menu in "
-#| "games \n"
-#| "| `Pinch (zoom in/out)` | Enables/disables keyboard \n"
-#| "\n"
-#| "### Virtual Gamepad \n"
-#| "\n"
-#| "Devices running iOS 15 or later can connect virtual gamepad controller by "
-#| "swiping two fingers from right to left or through **Global Options > "
-#| "Backend**. The directional button can be configured to either a "
-#| "thumbstick or a dpad.\n"
-#| "**Note** While the virtual controller is connected it is not possible to "
-#| "perform mouse clicks using tap gestures since they are disabled as long "
-#| "as the virtual controller is visible. Left mouse clicks are performed by "
-#| "pressing the A button. Tap gestures are enabled again when virtual "
-#| "controller is disconnected.\n"
-#| "\n"
-#| "### Global Main Menu\n"
-#| "\n"
-#| "To open the Global Main Menu, tap on the menu icon at the top right of "
-#| "the screen or swipe two fingers downwards.\n"
-#| "\n"
-#| "  ![Menu icon](menu.png \"Menu icon\"){w=10em}\n"
-#| "\n"
-#| "## Virtual keyboard\n"
-#| "\n"
-#| "To open the virtual keyboard, long press on the controller icon at the "
-#| "top right of the screen, perform a pinch gesture (zoom out) or tap on any "
-#| "editable text field. To hide the virtual keyboard, tap the controller "
-#| "icon again, do an opposite pinch gesture (zoom in) or tap outside the "
-#| "text field.\n"
-#| "\n"
-#| "\n"
-#| "  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
-#| "\n"
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -6393,10 +6240,8 @@ msgstr ""
 "und in Menüs innerhalb des Spiels."
 
 #: engines/agi/metaengine.cpp:147
-#, fuzzy
-#| msgid "Predictive input dialog"
 msgid "Predictive Input Dialog on mouse click"
-msgstr "Vorausschauender Eingabe-Dialog"
+msgstr "Vorausschauender Eingabe-Dialog bei Mausklick"
 
 #: engines/agi/metaengine.cpp:148
 msgid ""
@@ -6405,6 +6250,10 @@ msgid ""
 "The Predictive Input Dialog can still be activated on demand if there's a "
 "specified key mapping for it"
 msgstr ""
+"Aktiviert den vorhersagenden Eingabedialog, wenn mit der linken Maus-Taste "
+"ein Eingabefeld angeklickt wird.\n"
+"Der vorhersagende Eingabedialog kann bei Bedarf auch jederzeit aufgerufen "
+"werden, wenn ein Tastenkürzel hinterlegt ist"
 
 #: engines/agi/metaengine.cpp:159
 msgid "Use Hercules hires font"
@@ -6988,10 +6837,8 @@ msgid "Default keymappings"
 msgstr "Standard-Tastenbelegungen"
 
 #: engines/bbvs/metaengine.cpp:94
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Escape keymappings"
-msgstr "Spiele-Tastenbelegungen"
+msgstr "Escape-Tastenbelegungen"
 
 #. I18N: ESC key
 #: engines/bbvs/metaengine.cpp:110 engines/cruise/metaengine.cpp:197
@@ -7729,29 +7576,21 @@ msgstr "Schnellladen"
 
 #. I18N: Game runs at faster speed
 #: engines/cruise/metaengine.cpp:160 engines/tucker/metaengine.cpp:196
-#, fuzzy
-#| msgid "Fast move modifier"
 msgid "Fast mode"
-msgstr "Modifikator für schnelle Bewegung"
+msgstr "Das Spiel wird schneller abgespielt"
 
 #. I18N: Opens menu with player commands
 #: engines/cruise/metaengine.cpp:173
-#, fuzzy
-#| msgid "Player Time:"
 msgid "Player menu"
-msgstr "Spielzeit:"
+msgstr "Spieler-Menü"
 
 #: engines/cruise/metaengine.cpp:179
-#, fuzzy
-#| msgid "Faster game speed"
 msgid "Increase game speed"
-msgstr "Schnellere Spielgeschwindigkeit"
+msgstr "Spielgeschwindigkeit erhöhen"
 
 #: engines/cruise/metaengine.cpp:185
-#, fuzzy
-#| msgid "Faster game speed"
 msgid "Decrease game speed"
-msgstr "Schnellere Spielgeschwindigkeit"
+msgstr "Spielgeschwindigkeit reduzieren"
 
 #: engines/cruise/metaengine.cpp:203 engines/mads/metaengine.cpp:361
 #: engines/stark/metaengine.cpp:280
@@ -7763,38 +7602,28 @@ msgid "Versailles 1685 support is not compiled in"
 msgstr "Unterstützung für Versailles 1685 ist nicht eingebaut"
 
 #: engines/dgds/metaengine.cpp:75
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Menu"
-msgstr "Stummschaltung umschalten"
+msgstr "Menü umschalten"
 
 #: engines/dgds/metaengine.cpp:76
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle Clock"
-msgstr "Kampfmodus umschalten"
+msgstr "Uhr umschalten"
 
 #: engines/dgds/metaengine.cpp:77
 msgid "Next dialog / menu item"
-msgstr ""
+msgstr "Nächstes Dialog-/Menü-Item"
 
 #: engines/dgds/metaengine.cpp:78
-#, fuzzy
-#| msgid "Previous palette"
 msgid "Previous dialog / menu item"
-msgstr "Vorherige Farbpalette"
+msgstr "Vorheriges Dialog-/Menü-Item"
 
 #: engines/dgds/metaengine.cpp:79
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Next object"
-msgstr "Gehe zum nächsten Objekt"
+msgstr "Nächstes Objekt"
 
 #: engines/dgds/metaengine.cpp:80
-#, fuzzy
-#| msgid "Go to previous object"
 msgid "Previous object"
-msgstr "Gehe zum vorherigen Objekt"
+msgstr "Vorheriges Objekt"
 
 #: engines/dgds/metaengine.cpp:81
 #, fuzzy
