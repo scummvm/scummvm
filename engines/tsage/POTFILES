@@ -1,3 +1,4 @@
 engines/tsage/detection_tables.h
 engines/tsage/dialogs.cpp
+engines/tsage/metaengine.cpp
 engines/tsage/scenes.cpp
