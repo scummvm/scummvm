@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-07 23:09+0000\n"
+"POT-Creation-Date: 2024-11-08 00:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: audio/mac_plugin.cpp:30
+msgid "Apple Macintosh Audio"
+msgstr ""
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
@@ -758,6 +762,7 @@ msgstr ""
 #: backends/platform/ios7/ios7_options.mm:132
 #: backends/platform/ios7/ios7_options.mm:133
 #: backends/platform/ios7/ios7_options.mm:158 engines/ags/dialogs.cpp:65
+#: engines/sword1/metaengine.cpp:98
 msgid "<default>"
 msgstr ""
 
@@ -2941,6 +2946,24 @@ msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr ""
 
+#: common/rotationmode.cpp:33
+msgid "No rotation"
+msgstr ""
+
+#: common/rotationmode.cpp:34
+msgid "Clockwise"
+msgstr ""
+
+#. I18N: Rotation mode
+#: common/rotationmode.cpp:35
+msgid "180 degrees"
+msgstr ""
+
+#. I18N: Rotation mode
+#: common/rotationmode.cpp:36
+msgid "Counter-clockwise"
+msgstr ""
+
 #: common/updates.cpp:57
 msgid "Daily"
 msgstr ""
@@ -3449,14 +3472,20 @@ msgstr ""
 
 #: engines/metaengine.cpp:62 backends/platform/maemo/maemo.cpp:161
 #: engines/agos/metaengine.cpp:232 engines/asylum/metaengine.cpp:159
-#: engines/cge/metaengine.cpp:203 engines/cge2/metaengine.cpp:216
-#: engines/cine/metaengine.cpp:265 engines/groovie/metaengine.cpp:205
+#: engines/bbvs/metaengine.cpp:98 engines/cge/metaengine.cpp:203
+#: engines/cge2/metaengine.cpp:216 engines/cine/metaengine.cpp:265
+#: engines/composer/metaengine.cpp:113 engines/cruise/metaengine.cpp:147
+#: engines/draci/metaengine.cpp:143 engines/groovie/metaengine.cpp:205
 #: engines/hdb/metaengine.cpp:207 engines/hopkins/metaengine.cpp:213
+#: engines/hugo/metaengine.cpp:97 engines/illusions/metaengine.cpp:94
 #: engines/lure/metaengine.cpp:177 engines/made/metaengine.cpp:107
 #: engines/mads/metaengine.cpp:280 engines/parallaction/metaengine.cpp:112
 #: engines/saga/metaengine.cpp:278 engines/stark/metaengine.cpp:189
-#: engines/tinsel/metaengine.cpp:246 engines/trecision/metaengine.cpp:125
-#: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
+#: engines/sword1/metaengine.cpp:271 engines/tinsel/metaengine.cpp:246
+#: engines/toon/metaengine.cpp:86 engines/touche/metaengine.cpp:122
+#: engines/trecision/metaengine.cpp:125 engines/tsage/metaengine.cpp:178
+#: engines/tucker/metaengine.cpp:172 engines/wintermute/keymapper_tables.h:42
+#: engines/zvision/metaengine.cpp:183
 msgid "Left Click"
 msgstr ""
 
@@ -3469,24 +3498,30 @@ msgstr ""
 
 #: engines/metaengine.cpp:73 backends/platform/maemo/maemo.cpp:169
 #: engines/agos/metaengine.cpp:238 engines/asylum/metaengine.cpp:165
-#: engines/cge/metaengine.cpp:209 engines/cge2/metaengine.cpp:222
-#: engines/cine/metaengine.cpp:271 engines/groovie/metaengine.cpp:211
-#: engines/hopkins/metaengine.cpp:219 engines/lure/metaengine.cpp:183
+#: engines/bbvs/metaengine.cpp:104 engines/cge/metaengine.cpp:209
+#: engines/cge2/metaengine.cpp:222 engines/cine/metaengine.cpp:271
+#: engines/composer/metaengine.cpp:119 engines/cruise/metaengine.cpp:153
+#: engines/draci/metaengine.cpp:149 engines/groovie/metaengine.cpp:211
+#: engines/hopkins/metaengine.cpp:219 engines/hugo/metaengine.cpp:104
+#: engines/illusions/metaengine.cpp:101 engines/lure/metaengine.cpp:183
 #: engines/made/metaengine.cpp:114 engines/mads/metaengine.cpp:286
 #: engines/parallaction/metaengine.cpp:118 engines/saga/metaengine.cpp:289
-#: engines/stark/metaengine.cpp:195 engines/tinsel/metaengine.cpp:252
-#: engines/trecision/metaengine.cpp:131
+#: engines/stark/metaengine.cpp:195 engines/sword1/metaengine.cpp:277
+#: engines/tinsel/metaengine.cpp:252 engines/toon/metaengine.cpp:92
+#: engines/touche/metaengine.cpp:128 engines/trecision/metaengine.cpp:131
+#: engines/tsage/metaengine.cpp:184 engines/tucker/metaengine.cpp:178
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr ""
 
 #. I18N: Action in In Cold Blood
 #: engines/metaengine.cpp:79 engines/agos/metaengine.cpp:252
-#: engines/crab/input/input.cpp:261 engines/grim/grim.cpp:549
-#: engines/hdb/metaengine.cpp:258 engines/icb/icb.cpp:137
-#: engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
+#: engines/crab/input/input.cpp:261 engines/cruise/metaengine.cpp:191
+#: engines/grim/grim.cpp:549 engines/hdb/metaengine.cpp:258
+#: engines/icb/icb.cpp:137 engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
 #: engines/mohawk/riven.cpp:876 engines/sky/metaengine.cpp:126
-#: engines/twine/metaengine.cpp:223 engines/wintermute/keymapper_tables.h:1608
+#: engines/tucker/metaengine.cpp:184 engines/twine/metaengine.cpp:223
+#: engines/wintermute/keymapper_tables.h:1608
 msgid "Pause"
 msgstr ""
 
@@ -3494,8 +3529,9 @@ msgstr ""
 msgid "Game menu"
 msgstr ""
 
-#: engines/metaengine.cpp:92 engines/freescape/movement.cpp:82
-#: engines/grim/grim.cpp:532 engines/grim/grim.cpp:628
+#: engines/metaengine.cpp:92 engines/composer/metaengine.cpp:125
+#: engines/freescape/movement.cpp:82 engines/grim/grim.cpp:532
+#: engines/grim/grim.cpp:628 engines/illusions/metaengine.cpp:142
 #: engines/made/metaengine.cpp:121 engines/mohawk/myst.cpp:566
 #: engines/mohawk/riven.cpp:847 engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
@@ -5104,7 +5140,8 @@ msgstr ""
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ONLINE HELP
 #: backends/platform/sdl/macosx/appmenu_osx.mm:312
-#: engines/bladerunner/metaengine.cpp:321 engines/zvision/metaengine.cpp:226
+#: engines/bladerunner/metaengine.cpp:321 engines/tucker/metaengine.cpp:215
+#: engines/zvision/metaengine.cpp:226
 msgid "Help"
 msgstr ""
 
@@ -5551,18 +5588,18 @@ msgid "Add game speed menu (similar to PC version)"
 msgstr ""
 
 #: engines/agi/metaengine.cpp:195 engines/agos/metaengine.cpp:44
-#: engines/dreamweb/metaengine.cpp:36 engines/lure/metaengine.cpp:41
-#: engines/mads/metaengine.cpp:51 engines/mm/metaengine.cpp:46
-#: engines/saga/metaengine.cpp:52 engines/scumm/dialogs.cpp:1188
-#: engines/scumm/metaengine.cpp:766
+#: engines/dreamweb/metaengine.cpp:36 engines/gob/metaengine.cpp:42
+#: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:51
+#: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
+#: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:766
 msgid "Enable copy protection"
 msgstr ""
 
 #: engines/agi/metaengine.cpp:196 engines/agos/metaengine.cpp:45
-#: engines/dreamweb/metaengine.cpp:37 engines/lure/metaengine.cpp:42
-#: engines/mads/metaengine.cpp:52 engines/mm/metaengine.cpp:47
-#: engines/saga/metaengine.cpp:53 engines/scumm/dialogs.cpp:1189
-#: engines/scumm/metaengine.cpp:767
+#: engines/dreamweb/metaengine.cpp:37 engines/gob/metaengine.cpp:43
+#: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:52
+#: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
+#: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:767
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
 
@@ -5698,11 +5735,16 @@ msgstr ""
 msgid "AGOS main"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
-#: engines/hopkins/metaengine.cpp:209 engines/lure/metaengine.cpp:169
-#: engines/made/metaengine.cpp:103 engines/mads/metaengine.cpp:275
-#: engines/stark/metaengine.cpp:185 engines/tinsel/metaengine.cpp:241
-#: engines/trecision/metaengine.cpp:121
+#: engines/agos/metaengine.cpp:228 engines/bbvs/metaengine.cpp:93
+#: engines/cine/metaengine.cpp:259 engines/cruise/metaengine.cpp:143
+#: engines/draci/metaengine.cpp:139 engines/hopkins/metaengine.cpp:209
+#: engines/hugo/metaengine.cpp:93 engines/illusions/metaengine.cpp:90
+#: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:103
+#: engines/mads/metaengine.cpp:275 engines/stark/metaengine.cpp:185
+#: engines/sword1/metaengine.cpp:267 engines/tinsel/metaengine.cpp:241
+#: engines/toon/metaengine.cpp:82 engines/touche/metaengine.cpp:119
+#: engines/trecision/metaengine.cpp:121 engines/tsage/metaengine.cpp:170
+#: engines/tucker/metaengine.cpp:168
 msgid "Game keymappings"
 msgstr ""
 
@@ -6023,6 +6065,68 @@ msgstr ""
 msgid "General Keys"
 msgstr ""
 
+#: engines/bbvs/metaengine.cpp:92 engines/cine/metaengine.cpp:258
+#: engines/cruise/metaengine.cpp:142 engines/draci/metaengine.cpp:138
+#: engines/hopkins/metaengine.cpp:208 engines/hugo/metaengine.cpp:92
+#: engines/illusions/metaengine.cpp:89 engines/lure/metaengine.cpp:168
+#: engines/made/metaengine.cpp:102 engines/mads/metaengine.cpp:274
+#: engines/stark/metaengine.cpp:184 engines/sword1/metaengine.cpp:266
+#: engines/tinsel/metaengine.cpp:240 engines/toon/metaengine.cpp:81
+#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
+#: engines/tucker/metaengine.cpp:167
+msgid "Default keymappings"
+msgstr ""
+
+#: engines/bbvs/metaengine.cpp:94
+msgid "Escape keymappings"
+msgstr ""
+
+#. I18N: ESC key
+#: engines/bbvs/metaengine.cpp:110 engines/cruise/metaengine.cpp:197
+#: engines/freescape/movement.cpp:96 engines/hugo/metaengine.cpp:160
+#: engines/lure/metaengine.cpp:209 engines/mads/metaengine.cpp:292
+#: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
+#: engines/saga/metaengine.cpp:328 engines/tinsel/metaengine.cpp:258
+#: engines/tsage/metaengine.cpp:190 engines/tucker/metaengine.cpp:221
+#: engines/twine/metaengine.cpp:388 engines/wintermute/keymapper_tables.h:60
+msgid "Escape"
+msgstr ""
+
+#: engines/bbvs/metaengine.cpp:116 engines/hopkins/metaengine.cpp:231
+#: engines/illusions/metaengine.cpp:147
+msgid "Open inventory"
+msgstr ""
+
+#: engines/bbvs/metaengine.cpp:123 engines/dgds/metaengine.cpp:82
+#: engines/scumm/help.cpp:168 engines/scumm/help.cpp:232
+#: engines/tinsel/metaengine.cpp:300 engines/tsage/metaengine.cpp:206
+msgid "Look"
+msgstr ""
+
+#: engines/bbvs/metaengine.cpp:129 engines/scumm/help.cpp:175
+#: engines/scumm/help.cpp:227 engines/tsage/metaengine.cpp:216
+msgid "Talk"
+msgstr ""
+
+#. I18N: Combat command in Might & Magic 1
+#: engines/bbvs/metaengine.cpp:135 engines/cine/metaengine.cpp:330
+#: engines/hdb/metaengine.cpp:237 engines/mm/mm1/metaengine.cpp:81
+#: engines/saga/metaengine.cpp:379 engines/scumm/help.cpp:130
+#: engines/scumm/help.cpp:154 engines/scumm/help.cpp:172
+#: engines/scumm/help.cpp:202 engines/scumm/help.cpp:217
+#: engines/scumm/help.cpp:228 engines/scumm/help.cpp:254
+#: engines/sky/metaengine.cpp:95 engines/tsage/metaengine.cpp:211
+#: engines/twp/metaengine.cpp:186 engines/wintermute/keymapper_tables.h:140
+#: engines/wintermute/keymapper_tables.h:1552
+msgid "Use"
+msgstr ""
+
+#: engines/bbvs/metaengine.cpp:141
+#: engines/freescape/games/castle/castle.cpp:286 engines/scumm/help.cpp:226
+#: engines/tsage/metaengine.cpp:201
+msgid "Walk"
+msgstr ""
+
 #: engines/bladerunner/bladerunner.cpp:405
 msgid "Failed to initialize resources"
 msgstr ""
@@ -6217,9 +6321,11 @@ msgstr ""
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SAVE GAME
-#: engines/bladerunner/metaengine.cpp:330
+#: engines/bladerunner/metaengine.cpp:330 engines/dgds/metaengine.cpp:74
+#: engines/freescape/games/castle/castle.cpp:244
 #: engines/freescape/games/dark/dark.cpp:183
 #: engines/freescape/games/driller/driller.cpp:132
+#: engines/freescape/games/eclipse/eclipse.cpp:190
 #: engines/pegasus/pegasus.cpp:2825
 msgid "Save Game"
 msgstr ""
@@ -6228,9 +6334,11 @@ msgstr ""
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. LOAD GAME
-#: engines/bladerunner/metaengine.cpp:339
+#: engines/bladerunner/metaengine.cpp:339 engines/dgds/metaengine.cpp:73
+#: engines/freescape/games/castle/castle.cpp:249
 #: engines/freescape/games/dark/dark.cpp:188
 #: engines/freescape/games/driller/driller.cpp:137
+#: engines/freescape/games/eclipse/eclipse.cpp:195
 #: engines/pegasus/pegasus.cpp:2831
 msgid "Load Game"
 msgstr ""
@@ -6264,8 +6372,11 @@ msgstr ""
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. QUIT GAME
 #: engines/bladerunner/metaengine.cpp:375 engines/dragons/metaengine.cpp:224
+#: engines/freescape/games/castle/castle.cpp:257
 #: engines/freescape/games/dark/dark.cpp:193
 #: engines/freescape/games/driller/driller.cpp:142
+#: engines/freescape/games/eclipse/eclipse.cpp:200
+#: engines/sword1/metaengine.cpp:295
 msgid "Quit Game"
 msgstr ""
 
@@ -6326,15 +6437,17 @@ msgid "Game Keymappings"
 msgstr ""
 
 #: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:225
+#: engines/sword1/metaengine.cpp:283
 msgid "Exit/Skip"
 msgstr ""
 
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
-#: engines/hopkins/metaengine.cpp:238 engines/lure/metaengine.cpp:191
-#: engines/made/metaengine.cpp:162 engines/mads/metaengine.cpp:305
-#: engines/saga/metaengine.cpp:442 engines/stark/metaengine.cpp:208
-#: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:162
-#: engines/wintermute/keymapper_tables.h:920
+#: engines/hopkins/metaengine.cpp:238 engines/hugo/metaengine.cpp:128
+#: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:162
+#: engines/mads/metaengine.cpp:305 engines/saga/metaengine.cpp:442
+#: engines/stark/metaengine.cpp:208 engines/toon/metaengine.cpp:112
+#: engines/trecision/metaengine.cpp:169 engines/tsage/metaengine.cpp:242
+#: engines/vcruise/metaengine.cpp:162 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr ""
 
@@ -6342,8 +6455,9 @@ msgstr ""
 #: engines/hopkins/metaengine.cpp:244 engines/made/metaengine.cpp:168
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:432
-#: engines/stark/metaengine.cpp:213 engines/trecision/metaengine.cpp:175
-#: engines/vcruise/metaengine.cpp:167 engines/wintermute/keymapper_tables.h:925
+#: engines/stark/metaengine.cpp:213 engines/toon/metaengine.cpp:118
+#: engines/trecision/metaengine.cpp:175 engines/vcruise/metaengine.cpp:167
+#: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
 msgstr ""
@@ -6471,13 +6585,6 @@ msgstr ""
 msgid "Empty autosave"
 msgstr ""
 
-#: engines/cine/metaengine.cpp:258 engines/hopkins/metaengine.cpp:208
-#: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:102
-#: engines/mads/metaengine.cpp:274 engines/stark/metaengine.cpp:184
-#: engines/tinsel/metaengine.cpp:240 engines/trecision/metaengine.cpp:120
-msgid "Default keymappings"
-msgstr ""
-
 #: engines/cine/metaengine.cpp:260
 msgid "Key to mouse keymappings"
 msgstr ""
@@ -6522,6 +6629,7 @@ msgstr ""
 
 #. I18N: Action in In Cold Blood
 #: engines/cine/metaengine.cpp:325 engines/crab/input/input.cpp:251
+#: engines/cruise/metaengine.cpp:166 engines/draci/metaengine.cpp:180
 #: engines/dragons/metaengine.cpp:148 engines/griffon/metaengine.cpp:152
 #: engines/grim/grim.cpp:521 engines/grim/grim.cpp:617
 #: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:94
@@ -6531,18 +6639,6 @@ msgstr ""
 #: engines/tinsel/metaengine.cpp:313 engines/twine/metaengine.cpp:370
 #: engines/zvision/metaengine.cpp:232
 msgid "Inventory"
-msgstr ""
-
-#. I18N: Combat command in Might & Magic 1
-#: engines/cine/metaengine.cpp:330 engines/hdb/metaengine.cpp:237
-#: engines/mm/mm1/metaengine.cpp:81 engines/saga/metaengine.cpp:379
-#: engines/scumm/help.cpp:130 engines/scumm/help.cpp:154
-#: engines/scumm/help.cpp:172 engines/scumm/help.cpp:202
-#: engines/scumm/help.cpp:217 engines/scumm/help.cpp:228
-#: engines/scumm/help.cpp:254 engines/sky/metaengine.cpp:95
-#: engines/twp/metaengine.cpp:186 engines/wintermute/keymapper_tables.h:140
-#: engines/wintermute/keymapper_tables.h:1552
-msgid "Use"
 msgstr ""
 
 #: engines/cine/metaengine.cpp:335
@@ -6676,14 +6772,107 @@ msgstr ""
 msgid "Quick Load"
 msgstr ""
 
+#. I18N: Game runs at faster speed
+#: engines/cruise/metaengine.cpp:160 engines/tucker/metaengine.cpp:196
+msgid "Fast mode"
+msgstr ""
+
+#. I18N: Opens menu with player commands
+#: engines/cruise/metaengine.cpp:173
+msgid "Player menu"
+msgstr ""
+
+#: engines/cruise/metaengine.cpp:179
+msgid "Increase game speed"
+msgstr ""
+
+#: engines/cruise/metaengine.cpp:185
+msgid "Decrease game speed"
+msgstr ""
+
+#: engines/cruise/metaengine.cpp:203 engines/mads/metaengine.cpp:361
+#: engines/stark/metaengine.cpp:280
+msgid "Exit game"
+msgstr ""
+
 #: engines/cryomni3d/metaengine.cpp:143
 msgid "Versailles 1685 support is not compiled in"
+msgstr ""
+
+#: engines/dgds/metaengine.cpp:75
+msgid "Toggle Menu"
+msgstr ""
+
+#: engines/dgds/metaengine.cpp:76
+msgid "Toggle Clock"
+msgstr ""
+
+#: engines/dgds/metaengine.cpp:77
+msgid "Next dialog / menu item"
+msgstr ""
+
+#: engines/dgds/metaengine.cpp:78
+msgid "Previous dialog / menu item"
+msgstr ""
+
+#: engines/dgds/metaengine.cpp:79
+msgid "Next object"
+msgstr ""
+
+#: engines/dgds/metaengine.cpp:80
+msgid "Previous object"
+msgstr ""
+
+#: engines/dgds/metaengine.cpp:81
+msgid "Pick up / Operate"
+msgstr ""
+
+#: engines/dgds/metaengine.cpp:83
+msgid "Activate Inventory Object"
+msgstr ""
+
+#: engines/dgds/metaengine.cpp:86
+msgid "Game Keys"
 msgstr ""
 
 #: engines/director/events.cpp:99
 msgid ""
 "The game prevents quitting at this moment. Are you sure you want to quit "
 "anyway?"
+msgstr ""
+
+#: engines/draci/metaengine.cpp:155
+msgid "Skip intro/Exit map or inventory"
+msgstr ""
+
+#: engines/draci/metaengine.cpp:161
+msgid "Open map"
+msgstr ""
+
+#. I18N: shows where the game actor is able to move
+#: engines/draci/metaengine.cpp:168
+msgid "Show walking map"
+msgstr ""
+
+#: engines/draci/metaengine.cpp:174
+msgid "Toggle walk speed"
+msgstr ""
+
+#: engines/draci/metaengine.cpp:186 engines/mohawk/myst.cpp:554
+#: engines/mohawk/riven.cpp:835 engines/nancy/input.cpp:225
+msgid "Open main menu"
+msgstr ""
+
+#: engines/draci/metaengine.cpp:192
+msgid "Toggle between mouse pointer and the last game item"
+msgstr ""
+
+#: engines/draci/metaengine.cpp:198
+msgid "Previous item in inventory"
+msgstr ""
+
+#: engines/draci/metaengine.cpp:204
+msgid "Next item in inventory"
 msgstr ""
 
 #: engines/dragons/dragons.cpp:1884
@@ -6843,32 +7032,53 @@ msgstr ""
 msgid "Change mode"
 msgstr ""
 
-#. I18N: ESC key
-#: engines/freescape/movement.cpp:96 engines/lure/metaengine.cpp:209
-#: engines/mads/metaengine.cpp:292 engines/mm/mm1/metaengine.cpp:41
-#: engines/mm/mm1/metaengine.cpp:47 engines/saga/metaengine.cpp:328
-#: engines/tinsel/metaengine.cpp:258 engines/twine/metaengine.cpp:388
-#: engines/wintermute/keymapper_tables.h:60
-msgid "Escape"
-msgstr ""
-
 #: engines/freescape/movement.cpp:101
 msgid "Info Menu"
 msgstr ""
 
+#: engines/freescape/games/castle/castle.cpp:234
+msgid "Select Prince"
+msgstr ""
+
+#: engines/freescape/games/castle/castle.cpp:239
+msgid "Select Princess"
+msgstr ""
+
+#: engines/freescape/games/castle/castle.cpp:266
 #: engines/freescape/games/dark/dark.cpp:203
 #: engines/freescape/games/driller/driller.cpp:150
+#: engines/freescape/games/eclipse/eclipse.cpp:208
 msgid "Toggle Sound"
 msgstr ""
 
+#: engines/freescape/games/castle/castle.cpp:271
 #: engines/freescape/games/dark/dark.cpp:209
 #: engines/freescape/games/driller/driller.cpp:156
+#: engines/freescape/games/eclipse/eclipse.cpp:213
 msgid "Rotate Left"
 msgstr ""
 
+#: engines/freescape/games/castle/castle.cpp:276
 #: engines/freescape/games/dark/dark.cpp:214
 #: engines/freescape/games/driller/driller.cpp:161
+#: engines/freescape/games/eclipse/eclipse.cpp:218
 msgid "Rotate Right"
+msgstr ""
+
+#. I18N: Action in In Cold Blood
+#: engines/freescape/games/castle/castle.cpp:281 engines/grim/grim.cpp:501
+#: engines/grim/grim.cpp:592 engines/hpl1/metaengine.cpp:82
+#: engines/icb/icb.cpp:131 engines/icb/icb.cpp:197
+msgid "Run"
+msgstr ""
+
+#: engines/freescape/games/castle/castle.cpp:292
+msgid "Crawl"
+msgstr ""
+
+#: engines/freescape/games/castle/castle.cpp:298
+#: engines/freescape/games/eclipse/eclipse.cpp:245
+msgid "Face Forward"
 msgstr ""
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
@@ -6905,6 +7115,26 @@ msgstr ""
 #. I18N: drilling rig is an in game item
 #: engines/freescape/games/driller/driller.cpp:198
 msgid "Collect drilling rig"
+msgstr ""
+
+#. I18N: Illustrates the angle at which you turn left or right.
+#: engines/freescape/games/eclipse/eclipse.cpp:224
+msgid "Change Angle"
+msgstr ""
+
+#. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
+#: engines/freescape/games/eclipse/eclipse.cpp:230
+msgid "Change Step Size"
+msgstr ""
+
+#: engines/freescape/games/eclipse/eclipse.cpp:235
+msgid "Toggle Height"
+msgstr ""
+
+#. I18N: Action of hero party in Might & Magic 1
+#: engines/freescape/games/eclipse/eclipse.cpp:240
+#: engines/kyra/engine/lol.cpp:516 engines/mm/mm1/metaengine.cpp:109
+msgid "Rest"
 msgstr ""
 
 #: engines/glk/glk_api.cpp:62
@@ -7036,13 +7266,6 @@ msgid ""
 "ScummVM found some problems with your game data files.\n"
 "Running ScummVM nevertheless may cause game bugs or even crashes.\n"
 "Do you still want to run %s?"
-msgstr ""
-
-#. I18N: Action in In Cold Blood
-#: engines/grim/grim.cpp:501 engines/grim/grim.cpp:592
-#: engines/hpl1/metaengine.cpp:82 engines/icb/icb.cpp:131
-#: engines/icb/icb.cpp:197
-msgid "Run"
 msgstr ""
 
 #: engines/grim/grim.cpp:511 engines/grim/grim.cpp:607
@@ -7229,7 +7452,7 @@ msgstr ""
 msgid "The Troy minigame is not supported yet. Skipping"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:44
+#: engines/hdb/metaengine.cpp:44 engines/illusions/metaengine.cpp:153
 msgid "Enable cheat mode"
 msgstr ""
 
@@ -7251,10 +7474,6 @@ msgstr ""
 
 #: engines/hopkins/metaengine.cpp:48 engines/hopkins/metaengine.cpp:60
 msgid "Enable Gore Mode when available"
-msgstr ""
-
-#: engines/hopkins/metaengine.cpp:231
-msgid "Open inventory"
 msgstr ""
 
 #: engines/hopkins/metaengine.cpp:250
@@ -7315,6 +7534,85 @@ msgstr ""
 msgid "Glowstick"
 msgstr ""
 
+#: engines/hugo/metaengine.cpp:111
+msgid "User help"
+msgstr ""
+
+#: engines/hugo/metaengine.cpp:117
+msgid "Toggle sound"
+msgstr ""
+
+#: engines/hugo/metaengine.cpp:122
+msgid "Repeat last line"
+msgstr ""
+
+#: engines/hugo/metaengine.cpp:135 engines/lure/metaengine.cpp:197
+#: engines/mads/metaengine.cpp:311 engines/tsage/metaengine.cpp:247
+msgid "Restore game"
+msgstr ""
+
+#: engines/hugo/metaengine.cpp:142 engines/mohawk/myst_stacks/menu.cpp:300
+#: engines/mohawk/riven_stacks/aspit.cpp:371
+msgid "New game"
+msgstr ""
+
+#: engines/hugo/metaengine.cpp:148 engines/wintermute/keymapper_tables.h:249
+#: engines/wintermute/keymapper_tables.h:396
+#: engines/wintermute/keymapper_tables.h:658
+#: engines/wintermute/keymapper_tables.h:864
+#: engines/wintermute/keymapper_tables.h:1442
+#: engines/wintermute/keymapper_tables.h:1519
+#: engines/wintermute/keymapper_tables.h:1667
+#: engines/wintermute/keymapper_tables.h:1679
+#: engines/wintermute/keymapper_tables.h:1688
+#: engines/wintermute/keymapper_tables.h:1950
+msgid "Show inventory"
+msgstr ""
+
+#: engines/hugo/metaengine.cpp:154
+msgid "Turbo mode"
+msgstr ""
+
+#. I18N: Move actor in the top direction
+#: engines/hugo/metaengine.cpp:167
+msgid "Move to top"
+msgstr ""
+
+#. I18N: Move actor in the bottom direction
+#: engines/hugo/metaengine.cpp:175
+msgid "Move to bottom"
+msgstr ""
+
+#. I18N: Move actor in the left direction
+#: engines/hugo/metaengine.cpp:183
+msgid "Move to left"
+msgstr ""
+
+#. I18N: Move actor in the right direction
+#: engines/hugo/metaengine.cpp:191
+msgid "Move to right"
+msgstr ""
+
+#. I18N: Move actor in the top-left direction
+#: engines/hugo/metaengine.cpp:199
+msgid "Move to top left"
+msgstr ""
+
+#. I18N: Move actor in the top-right direction
+#: engines/hugo/metaengine.cpp:205
+msgid "Move to top right"
+msgstr ""
+
+#. I18N: Move actor in the bottom-left direction
+#: engines/hugo/metaengine.cpp:211
+msgid "Move to bottom left"
+msgstr ""
+
+#. I18N: Move actor in the bottom-right direction
+#: engines/hugo/metaengine.cpp:217
+msgid "Move to bottom right"
+msgstr ""
+
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
 msgstr ""
@@ -7373,6 +7671,27 @@ msgstr ""
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:125 engines/icb/icb.cpp:191
 msgid "Side Step"
+msgstr ""
+
+#: engines/illusions/metaengine.cpp:108
+msgid "Move cursor up"
+msgstr ""
+
+#: engines/illusions/metaengine.cpp:115
+msgid "Move cursor down"
+msgstr ""
+
+#: engines/illusions/metaengine.cpp:122
+msgid "Move cursor left"
+msgstr ""
+
+#: engines/illusions/metaengine.cpp:129
+msgid "Move cursor right"
+msgstr ""
+
+#: engines/illusions/metaengine.cpp:136 engines/twine/metaengine.cpp:422
+#: engines/twine/metaengine.cpp:474 engines/twine/metaengine.cpp:490
+msgid "Abort"
 msgstr ""
 
 #: engines/kyra/detection_tables.h:75
@@ -7611,11 +7930,6 @@ msgstr ""
 msgid "Slide Right"
 msgstr ""
 
-#. I18N: Action of hero party in Might & Magic 1
-#: engines/kyra/engine/lol.cpp:516 engines/mm/mm1/metaengine.cpp:109
-msgid "Rest"
-msgstr ""
-
 #: engines/kyra/engine/lol.cpp:517
 msgid "Options"
 msgstr ""
@@ -7721,11 +8035,7 @@ msgstr ""
 msgid "Yes/No keymappings"
 msgstr ""
 
-#: engines/lure/metaengine.cpp:197 engines/mads/metaengine.cpp:311
-msgid "Restore game"
-msgstr ""
-
-#: engines/lure/metaengine.cpp:203
+#: engines/lure/metaengine.cpp:203 engines/tsage/metaengine.cpp:237
 msgid "Restart game"
 msgstr ""
 
@@ -7853,16 +8163,12 @@ msgstr ""
 msgid "Show intro"
 msgstr ""
 
-#: engines/mads/metaengine.cpp:349
+#: engines/mads/metaengine.cpp:349 engines/tsage/metaengine.cpp:259
 msgid "Show credits"
 msgstr ""
 
 #: engines/mads/metaengine.cpp:355
 msgid "Show quotes"
-msgstr ""
-
-#: engines/mads/metaengine.cpp:361 engines/stark/metaengine.cpp:280
-msgid "Exit game"
 msgstr ""
 
 #: engines/mads/metaengine.cpp:368
@@ -8159,11 +8465,6 @@ msgstr ""
 msgid "The game is paused. Press any key to continue."
 msgstr ""
 
-#: engines/mohawk/myst.cpp:554 engines/mohawk/riven.cpp:835
-#: engines/nancy/input.cpp:225
-msgid "Open main menu"
-msgstr ""
-
 #: engines/mohawk/myst.cpp:578 engines/mohawk/riven.cpp:859
 msgid "Load game state"
 msgstr ""
@@ -8200,11 +8501,6 @@ msgstr ""
 #: engines/mohawk/riven_stacks/aspit.cpp:370
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
-msgstr ""
-
-#: engines/mohawk/myst_stacks/menu.cpp:300
-#: engines/mohawk/riven_stacks/aspit.cpp:371
-msgid "New game"
 msgstr ""
 
 #: engines/mohawk/myst_stacks/menu.cpp:317
@@ -8336,6 +8632,20 @@ msgstr ""
 msgid "Force any playing movies to end"
 msgstr ""
 
+#: engines/mtropolis/mtropolis.cpp:111
+msgid ""
+"This game requires MPEG video support for some\n"
+"content but MPEG video support was not compiled in.\n"
+"The game will still play, but MPEG videos will not work."
+msgstr ""
+
+#: engines/mtropolis/mtropolis.cpp:121
+msgid ""
+"This game requires MPEG audio support for some\n"
+"content but MPEG audio support was not compiled in.\n"
+"The game will still play, but some audio will not work."
+msgstr ""
+
 #: engines/mtropolis/saveload.cpp:142
 msgid "Failed to read version information from save file"
 msgstr ""
@@ -8363,18 +8673,8 @@ msgstr ""
 msgid "An error occurred while writing the save game"
 msgstr ""
 
-#: engines/mtropolis/mtropolis.cpp:111
-msgid ""
-"This game requires MPEG video support for some\n"
-"content but MPEG video support was not compiled in.\n"
-"The game will still play, but MPEG videos will not work."
-msgstr ""
-
-#: engines/mtropolis/mtropolis.cpp:121
-msgid ""
-"This game requires MPEG audio support for some\n"
-"content but MPEG audio support was not compiled in.\n"
-"The game will still play, but some audio will not work."
+#: engines/mtropolis/plugin/standard.cpp:1670
+msgid "Image Viewer"
 msgstr ""
 
 #: engines/mutationofjb/util.cpp:32
@@ -8675,7 +8975,7 @@ msgstr ""
 msgid "Boss key"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:303
+#: engines/saga/metaengine.cpp:303 engines/toon/metaengine.cpp:148
 msgid "Show options"
 msgstr ""
 
@@ -8692,7 +8992,8 @@ msgid "Conversation position - Down"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:333 engines/scumm/help.cpp:80
-#: engines/stark/metaengine.cpp:286 engines/trecision/metaengine.cpp:150
+#: engines/stark/metaengine.cpp:286 engines/sword1/metaengine.cpp:289
+#: engines/trecision/metaengine.cpp:150 engines/tsage/metaengine.cpp:252
 #: engines/vcruise/metaengine.cpp:182
 msgid "Pause game"
 msgstr ""
@@ -8780,7 +9081,7 @@ msgid "Continue game"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:437 engines/trecision/metaengine.cpp:156
-#: engines/vcruise/metaengine.cpp:177
+#: engines/tsage/metaengine.cpp:231 engines/vcruise/metaengine.cpp:177
 msgid "Quit game"
 msgstr ""
 
@@ -9571,15 +9872,6 @@ msgstr ""
 msgid "Switch"
 msgstr ""
 
-#: engines/scumm/help.cpp:168 engines/scumm/help.cpp:232
-#: engines/tinsel/metaengine.cpp:300
-msgid "Look"
-msgstr ""
-
-#: engines/scumm/help.cpp:175 engines/scumm/help.cpp:227
-msgid "Talk"
-msgstr ""
-
 #: engines/scumm/help.cpp:176
 msgid "Travel"
 msgstr ""
@@ -9655,10 +9947,6 @@ msgstr ""
 
 #: engines/scumm/help.cpp:222
 msgid "Highlight next dialogue"
-msgstr ""
-
-#: engines/scumm/help.cpp:226
-msgid "Walk"
 msgstr ""
 
 #: engines/scumm/help.cpp:230
@@ -10384,7 +10672,8 @@ msgstr ""
 msgid "Game settings"
 msgstr ""
 
-#: engines/stark/metaengine.cpp:245 engines/wintermute/keymapper_tables.h:1345
+#: engines/stark/metaengine.cpp:245 engines/toon/metaengine.cpp:124
+#: engines/wintermute/keymapper_tables.h:1345
 msgid "Toggle subtitles"
 msgstr ""
 
@@ -10551,9 +10840,68 @@ msgstr ""
 msgid "This is the end of the Broken Sword 1 Demo"
 msgstr ""
 
+#: engines/sword1/metaengine.cpp:63
+msgid "English"
+msgstr ""
+
+#: engines/sword1/metaengine.cpp:63
+msgid "German"
+msgstr ""
+
+#: engines/sword1/metaengine.cpp:63
+msgid "French"
+msgstr ""
+
+#: engines/sword1/metaengine.cpp:63
+msgid "Italian"
+msgstr ""
+
+#: engines/sword1/metaengine.cpp:63
+msgid "Spanish"
+msgstr ""
+
+#: engines/sword1/metaengine.cpp:63
+msgid "Brazilian Portuguese"
+msgstr ""
+
+#: engines/sword1/metaengine.cpp:63
+msgid "Czech"
+msgstr ""
+
+#: engines/sword1/metaengine.cpp:86
+msgid "Text language:"
+msgstr ""
+
+#: engines/sword1/metaengine.cpp:87 engines/sword1/metaengine.cpp:95
+msgid "Set the language for the subtitles. This will not affect voices."
+msgstr ""
+
+#: engines/sword1/metaengine.cpp:114
+msgid "Simulate the audio engine from the Windows executable"
+msgstr ""
+
+#: engines/sword1/metaengine.cpp:115
+msgid ""
+"Makes the game use softer (logarithmic) audio curves, but removes fade-in "
+"and fade-out for sound effects, fade-in for music, and automatic music "
+"volume attenuation for when speech is playing"
+msgstr ""
+
+#: engines/sword1/metaengine.cpp:127
+msgid "Additional options:"
+msgstr ""
+
+#: engines/sword1/metaengine.cpp:301
+msgid "Main Menu"
+msgstr ""
+
 #: engines/sword2/animation.cpp:426
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
+msgstr ""
+
+#: engines/sword2/detection_tables.h:419
+msgid "Remastered edition is not supported. Please, use the classic version"
 msgstr ""
 
 #: engines/sword2/metaengine.cpp:43
@@ -10633,6 +10981,27 @@ msgstr ""
 msgid "Font variant not present in '%s' engine data file."
 msgstr ""
 
+#: engines/toon/metaengine.cpp:98
+msgid "Skip intro"
+msgstr ""
+
+#. I18N: Skips current line being spoken by a character
+#: engines/toon/metaengine.cpp:105
+msgid "Stop current voice"
+msgstr ""
+
+#: engines/toon/metaengine.cpp:130
+msgid "Mute music"
+msgstr ""
+
+#: engines/toon/metaengine.cpp:136
+msgid "Mute speech"
+msgstr ""
+
+#: engines/toon/metaengine.cpp:142
+msgid "Mute sound effects"
+msgstr ""
+
 #: engines/toon/toon.cpp:273
 #, c-format
 msgid "Saved game in slot #%d "
@@ -10662,6 +11031,40 @@ msgstr ""
 msgid "Unable to locate the '%s' data file."
 msgstr ""
 
+#: engines/touche/metaengine.cpp:135
+msgid "Skip sequence/open quit dialogue"
+msgstr ""
+
+#: engines/touche/metaengine.cpp:141
+msgid "Skip Dialogue"
+msgstr ""
+
+#: engines/touche/metaengine.cpp:147
+msgid "Open options menu"
+msgstr ""
+
+#. I18N: The actor walking pace is increased
+#: engines/touche/metaengine.cpp:154
+msgid "Enable fast walk"
+msgstr ""
+
+#. I18N: The actor walking pace is decreased
+#: engines/touche/metaengine.cpp:161
+msgid "Disable fast walk"
+msgstr ""
+
+#: engines/touche/metaengine.cpp:167
+msgid "Toggle fast mode"
+msgstr ""
+
+#: engines/touche/metaengine.cpp:173
+msgid "Toggle between voice/text/text and voice"
+msgstr ""
+
+#: engines/touche/metaengine.cpp:182
+msgid "Press \"Yes\" Key"
+msgstr ""
+
 #: engines/trecision/metaengine.cpp:137
 msgid "Skip video"
 msgstr ""
@@ -10673,6 +11076,76 @@ msgstr ""
 
 #: engines/trecision/metaengine.cpp:163
 msgid "Open system menu"
+msgstr ""
+
+#. I18N: Return refers to return/enter key
+#: engines/tsage/metaengine.cpp:196
+msgid "Return"
+msgstr ""
+
+#: engines/tsage/metaengine.cpp:221
+msgid "View Help"
+msgstr ""
+
+#: engines/tsage/metaengine.cpp:226
+msgid "Sound options"
+msgstr ""
+
+#: engines/tsage/metaengine.cpp:264
+msgid "Crawl North"
+msgstr ""
+
+#: engines/tsage/metaengine.cpp:271
+msgid "Crawl South"
+msgstr ""
+
+#: engines/tsage/metaengine.cpp:278
+msgid "Turn Left/Crawl West"
+msgstr ""
+
+#: engines/tsage/metaengine.cpp:285
+msgid "Turn Right/Crawl East"
+msgstr ""
+
+#: engines/tsage/metaengine.cpp:292
+msgid "Increase speed"
+msgstr ""
+
+#: engines/tsage/metaengine.cpp:297
+msgid "Decrease speed"
+msgstr ""
+
+#: engines/tsage/metaengine.cpp:302
+msgid "Minimum speed"
+msgstr ""
+
+#: engines/tsage/metaengine.cpp:307
+msgid "Maximum speed"
+msgstr ""
+
+#: engines/tsage/metaengine.cpp:312
+msgid "Low speed"
+msgstr ""
+
+#: engines/tsage/metaengine.cpp:317
+msgid "Medium speed"
+msgstr ""
+
+#: engines/tsage/metaengine.cpp:322
+msgid "Draw Cards"
+msgstr ""
+
+#: engines/tucker/metaengine.cpp:190
+msgid "Skip speech"
+msgstr ""
+
+#. I18N: Panel contains all actor actions and the artstyle is toggled
+#: engines/tucker/metaengine.cpp:203
+msgid "Toggle panel style"
+msgstr ""
+
+#: engines/tucker/metaengine.cpp:209
+msgid "Toggle text speech"
 msgstr ""
 
 #: engines/twine/detection.cpp:188
@@ -10818,11 +11291,6 @@ msgstr ""
 
 #: engines/twine/metaengine.cpp:384
 msgid "Scenery Zoom"
-msgstr ""
-
-#: engines/twine/metaengine.cpp:422 engines/twine/metaengine.cpp:474
-#: engines/twine/metaengine.cpp:490
-msgid "Abort"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:527
@@ -11362,19 +11830,6 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1983
 #: engines/wintermute/keymapper_tables.h:2103
 msgid "Show hints"
-msgstr ""
-
-#: engines/wintermute/keymapper_tables.h:249
-#: engines/wintermute/keymapper_tables.h:396
-#: engines/wintermute/keymapper_tables.h:658
-#: engines/wintermute/keymapper_tables.h:864
-#: engines/wintermute/keymapper_tables.h:1442
-#: engines/wintermute/keymapper_tables.h:1519
-#: engines/wintermute/keymapper_tables.h:1667
-#: engines/wintermute/keymapper_tables.h:1679
-#: engines/wintermute/keymapper_tables.h:1688
-#: engines/wintermute/keymapper_tables.h:1950
-msgid "Show inventory"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:269
