@@ -105,7 +105,6 @@ void OSystem_PSP2::initBackend() {
 	ConfMan.registerDefault("joystick_deadzone", 2);
 	ConfMan.registerDefault("touchpad_mouse_mode", false);
 	ConfMan.registerDefault("frontpanel_touchpad_mode", false);
-	ConfMan.registerDefault("gm_device", "null");
 
 	ConfMan.setBool("fullscreen", true);
 
