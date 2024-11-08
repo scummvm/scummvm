@@ -458,12 +458,14 @@ baseball2003	Backyard Baseball 2003
 
 basketball	Backyard Basketball
 	d2cc8e31bce61e6cf2951249e10638fe	-1	en	All	-	-	-	clone2727, Kirben
+	217cbb42286e2c286d2a511d229d96b9	-1	en	Windows	-	Steam	Steam Re-Release	Bosca
 
 football	Backyard Football
 	7fc6cdb46b4c9d384c52327f4bca6416	-1	en	All	-	-	-	sev
 
 	425205754fa749f4f0b0dd9d09fa45fd	-1	en	All	-	Demo	-	Joachim Eberhard
 	5bd335265a61caa3d78956ad9f88ba23	23135	en	All	-	Demo	-	sev
+	b83cfea649a94907062e176e41279a58	-1	en	Windows	-	Steam	Steam Re-Release	Bosca
 
 football2002	Backyard Football 2002
 	a095616d2d23ccf43b8e257711202cba	-1	en	All	-	-	-	clone2727
