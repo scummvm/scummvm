@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-08 11:49+0100\n"
-"PO-Revision-Date: 2024-09-19 08:37+0000\n"
+"PO-Revision-Date: 2024-11-08 13:13+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -17,12 +17,12 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.4\n"
+"X-Generator: Weblate 5.7.2\n"
 "X-Language-name: Italiano\n"
 
 #: audio/mac_plugin.cpp:30
 msgid "Apple Macintosh Audio"
-msgstr ""
+msgstr "Audio Apple Macintosh"
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
@@ -1837,10 +1837,8 @@ msgid "Scaler:"
 msgstr "Scaler:"
 
 #: gui/options.cpp:1666
-#, fuzzy
-#| msgid "Render mode:"
 msgid "Rotation mode:"
-msgstr "Resa grafica:"
+msgstr "Rotazione:"
 
 #: gui/options.cpp:1680
 msgid "Shader:"
@@ -2818,10 +2816,8 @@ msgid "Do you really want to delete this saved game?"
 msgstr "Sei sicuro di voler eliminare questo salvataggio?"
 
 #: gui/saveload-dialog.cpp:557
-#, fuzzy
-#| msgid "Error writing save file\n"
 msgid "Error deleting saved game"
-msgstr "Errore durante la scrittura del salvataggio\n"
+msgstr "Errore nell'eliminazione del salvataggio"
 
 #: gui/saveload-dialog.cpp:675 gui/saveload-dialog.cpp:1184
 msgid "Date: "
@@ -3172,7 +3168,7 @@ msgstr "PC-9801 (16 colori)"
 
 #: common/rendermode.cpp:48
 msgid "PC-9801 (8 Colors)"
-msgstr "PC-9801 (8 Colori)"
+msgstr "PC-9801 (8 colori)"
 
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:53
@@ -3184,16 +3180,12 @@ msgid "VGA Grey Scale"
 msgstr "VGA Scala di Grigi"
 
 #: common/rendermode.cpp:58
-#, fuzzy
-#| msgid "PC-9821 (256 Colors)"
 msgid "Windows (256 Colors)"
-msgstr "PC-9821 (256 colori)"
+msgstr "Windows (256 colori)"
 
 #: common/rendermode.cpp:59
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "Windows (16 Colors)"
-msgstr "PC-9801 (16 colori)"
+msgstr "Windows (16 colori)"
 
 #: common/rendermode.cpp:96
 msgctxt "lowres"
@@ -3206,24 +3198,22 @@ msgid "Hercules Amber"
 msgstr "Hercules Ambra"
 
 #: common/rotationmode.cpp:33
-#, fuzzy
-#| msgid "Goto location"
 msgid "No rotation"
-msgstr "Vai a Locazione"
+msgstr "Nessuna rotazione"
 
 #: common/rotationmode.cpp:34
 msgid "Clockwise"
-msgstr ""
+msgstr "90° oraria"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:35
 msgid "180 degrees"
-msgstr ""
+msgstr "180°"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:36
 msgid "Counter-clockwise"
-msgstr ""
+msgstr "90° antioraria"
 
 #: common/updates.cpp:57
 msgid "Daily"
