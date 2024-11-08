@@ -339,6 +339,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "mode",				"MODE" },
 	{ "moominhide",			"Hide and Seek with Moomin"},
 	{ "moominparty",		"The Great Moomin Party" },
+	{ "morebugs",			"More Bugs in Boxes" },
 	{ "mrsquack",			"Reading with Peter Cottontail: The Story of Mrs. Quack" },
 	{ "mummy",				"Mummy: Tomb of the Pharaoh" },
 	{ "muppetkidsearly5",	"Muppets Kids Early Learning Series Volume 5: Sound Patterns: Phonics" },
@@ -5041,6 +5042,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 				"01DALEN.DXR", "def141fe9bfc70f177ae721e640bebfe", 4015310, Common::NB_NOR, 404),
 	WINGAME2t_l("moominhide", "", "MUMIN.EXE", "c51444be1e70bb731d0c465d5bdd8ed2", 696095,
 				"01DALEN.DXR", "a100f801a8f0408a286d84c51e822182", 4016704, Common::NB_NOR, 404),
+
+	WINGAME2("morebugs", "", "START.EXE", "t:e8fe58e5f33d4e4b0884e1244706520d", 690647,
+				"START.DIR", "f:f9d3bf8fc0d98550d80f7585fb97d8a6", 24232, 404),
+	MACGAME1("morebugs", "", "More Bugs in Boxes", "r:9e9696433d18629b88714089034c086b", 306032, 404),
 
 	MACGAME1_l("moritaka", "", "WATARASE-BASHI", "c761bfe3a0865ca0f43cb5556230ed5b", 107527, Common::JA_JPN, 404),
 	PIPGAME1_l("moritaka", "", "Pippin Projector", "b708dcf9cdc19e6e186000ad93e41997", 73705, Common::JA_JPN, 404),
