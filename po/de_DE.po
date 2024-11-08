@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-11-06 19:47+0000\n"
+"PO-Revision-Date: 2024-11-08 09:31+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -6420,10 +6420,8 @@ msgid "Toggle music on/off"
 msgstr "Musik umschalten"
 
 #: engines/agos/metaengine.cpp:273
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Toggle sound effect on/off"
-msgstr "Sound-Effekte umschalten"
+msgstr "Sound-Effekt umschalten"
 
 #: engines/agos/metaengine.cpp:278
 msgid "Toggle fast mode on/off"
@@ -11573,10 +11571,8 @@ msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "Wenn Anti-Aliasing aktiv ist, wird der Text weicher dargestellt."
 
 #: engines/stark/metaengine.cpp:184
-#, fuzzy
-#| msgid "Default game keymap"
 msgid "Default keymapppings"
-msgstr "Standard-Tastenbelegung"
+msgstr "Standard-Tastenbelegungen"
 
 #. I18N: Opens in-game Diary
 #: engines/stark/metaengine.cpp:202
