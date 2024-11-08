@@ -91,6 +91,7 @@ Common::KeymapArray BbvsMetaEngine::initKeymaps(const char *target) const {
 
 	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "bbvs-default", _("Default keymappings"));
 	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
+	// I18N: Escape is a key
 	Keymap *escapeKeyMap = new Keymap(Keymap::kKeymapTypeGame, "escape-shortcuts", _("Escape keymappings"));
 
 	Common::Action *act;

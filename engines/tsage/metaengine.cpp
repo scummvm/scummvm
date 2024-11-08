@@ -319,6 +319,7 @@ Common::KeymapArray TSageMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("KP0");
 		gameKeyMap->addAction(act);
 
+		// I18N: Pull cards from the deck
 		act = new Common::Action("DRAWCARDS", _("Draw Cards"));
 		act->setCustomEngineActionEvent(kActionDrawCards);
 		act->addDefaultInputMapping("SPACE");
