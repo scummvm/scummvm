@@ -23,7 +23,6 @@
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
-#include "common/translation.h"
 
 #include "backends/platform/sdl/sailfish/sailfish.h"
 #include "backends/platform/sdl/sailfish/sailfish-window.h"
