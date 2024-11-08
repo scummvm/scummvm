@@ -326,12 +326,14 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 
 			// FIXME: shared cast movie scripts could come before main movie ones
 			// Movie scripts are fixed, so it's fine to look them up in advance.
-			LingoArchive *mainArchive = getMainLingoArch();
-			for (auto &it : mainArchive->scriptContexts[kMovieScript]) {
-				if (it._value->_eventHandlers.contains(event.event)) {
-					event.scriptType = kMovieScript;
-					event.scriptId = CastMemberID(it._key, DEFAULT_CAST_LIB);
-					return;
+			for (auto &cast : _casts) {
+				LingoArchive *archive = cast._value->_lingoArchive;
+				for (auto &it : archive->scriptContexts[kMovieScript]) {
+					if (it._value->_eventHandlers.contains(event.event)) {
+						event.scriptType = kMovieScript;
+						event.scriptId = CastMemberID(it._key, cast._key);
+						return;
+					}
 				}
 			}
 			LingoArchive *sharedArchive = getSharedLingoArch();

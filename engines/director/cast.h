@@ -84,7 +84,7 @@ struct TilePatternEntry {
 
 class Cast {
 public:
-	Cast(Movie *movie, uint16 castLibID, bool isShared = false, bool isExternal = false);
+	Cast(Movie *movie, uint16 castLibID, bool isShared = false, bool isExternal = false, uint16 libResourceId = 1024);
 	~Cast();
 
 	void loadArchive();
@@ -145,6 +145,7 @@ public:
 	uint16 _version;
 	Common::Platform _platform;
 	uint16 _castLibID;
+	uint16 _libResourceId;
 	bool _isExternal;
 
 	CharMap _macCharsToWin;
