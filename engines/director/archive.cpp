@@ -144,6 +144,10 @@ Common::SeekableReadStreamEndian *Archive::getFirstResource(uint32 tag) {
 	return getResource(tag, getResourceIDList(tag)[0]);
 }
 
+Common::SeekableReadStreamEndian *Archive::getFirstResource(uint32 tag, uint16 parentId) {
+	return getResource(tag, getResourceIDList(tag)[0]);
+}
+
 Common::SeekableReadStreamEndian *Archive::getResource(uint32 tag, uint16 id) {
 	if (!_types.contains(tag))
 		error("Archive::getResource(): Archive does not contain '%s' %d", tag2str(tag), id);
@@ -757,11 +761,10 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	uint32 casTag = MKTAG('C', 'A', 'S', '*');
 	if (_keyData.contains(casTag)) {
 		for (auto &it : _keyData[casTag]) {
-			uint32 libId = it._key - CAST_LIB_OFFSET;
 			for (auto &jt : it._value) {
 				if (Common::SeekableReadStreamEndian *casStream = getResource(casTag, jt)) {
 					Resource res = getResourceDetail(casTag, jt);
-					readCast(*casStream, libId);
+					readCast(*casStream, it._key);
 					delete casStream;
 				}
 			}
@@ -997,12 +1000,12 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableReadStreamEndian &stream, u
 	return true;
 }
 
-void RIFXArchive::readCast(Common::SeekableReadStreamEndian &casStream, uint16 libId) {
+void RIFXArchive::readCast(Common::SeekableReadStreamEndian &casStream, uint16 libResourceId) {
 	uint castTag = MKTAG('C', 'A', 'S', 't');
 
 	uint casSize = casStream.size() / 4;
 
-	debugCN(2, kDebugLoading, "CAS*: libId %d, %d members [", libId, casSize);
+	debugCN(2, kDebugLoading, "CAS*: libResourceId %d, %d members [", libResourceId, casSize);
 
 	for (uint i = 0; i < casSize; i++) {
 		uint32 castIndex = casStream.readUint32BE();
@@ -1013,7 +1016,7 @@ void RIFXArchive::readCast(Common::SeekableReadStreamEndian &casStream, uint16 l
 		}
 		Resource &res = _types[castTag][castIndex];
 		res.castId = i;
-		res.libId = libId;
+		res.libResourceId = libResourceId;
 	}
 	debugC(2, kDebugLoading, "]");
 }
@@ -1054,7 +1057,7 @@ void RIFXArchive::readKeyTable(Common::SeekableReadStreamEndian &keyStream) {
 		// The movie has the hardcoded ID 1024, which may collide with a cast member's ID
 		// when there are many chunks. This is not a problem since cast members and
 		// movies use different resource types, so we can tell them apart.
-		if (parentIndex == DEFAULT_CAST_LIB + CAST_LIB_OFFSET) {
+		if (parentIndex == 1024) {
 			_movieChunks.setVal(childTag, childIndex);
 		}
 	}
@@ -1067,6 +1070,17 @@ Common::SeekableReadStreamEndian *RIFXArchive::getFirstResource(uint32 tag) {
 Common::SeekableReadStreamEndian *RIFXArchive::getFirstResource(uint32 tag, bool fileEndianness) {
 	return getResource(tag, getResourceIDList(tag)[0], fileEndianness);
 }
+
+Common::SeekableReadStreamEndian *RIFXArchive::getFirstResource(uint32 tag, uint16 parentId) {
+	if (!_keyData.contains(tag))
+		return nullptr;
+	if (!_keyData[tag].contains(parentId))
+		return nullptr;
+	if (_keyData[tag][parentId].empty())
+		return nullptr;
+	return getResource(tag, _keyData[tag][parentId][0], false);
+}
+
 
 Common::SeekableReadStreamEndian *RIFXArchive::getResource(uint32 tag, uint16 id) {
 	return getResource(tag, id, false);

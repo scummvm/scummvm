@@ -24,7 +24,6 @@
 
 #define DEFAULT_CAST_LIB 1
 #define SHARED_CAST_LIB -1337
-#define CAST_LIB_OFFSET 1023
 
 namespace Common {
 struct Event;

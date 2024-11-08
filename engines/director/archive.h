@@ -43,7 +43,7 @@ struct Resource {
 	uint32 uncompSize;
 	uint32 compressionType;
 	uint32 castId;
-	uint32 libId;
+	uint32 libResourceId;
 	uint32 tag;
 	Common::String name;
 	Common::Array<Resource> children;
@@ -70,6 +70,7 @@ public:
 	bool hasResource(uint32 tag, const Common::String &resName) const;
 	virtual Common::SeekableReadStreamEndian *getResource(uint32 tag, uint16 id);
 	virtual Common::SeekableReadStreamEndian *getFirstResource(uint32 tag);
+	virtual Common::SeekableReadStreamEndian *getFirstResource(uint32 tag, uint16 parentId);
 	virtual Resource getResourceDetail(uint32 tag, uint16 id);
 	uint32 getOffset(uint32 tag, uint16 id) const;
 	uint16 findResourceID(uint32 tag, const Common::String &resName, bool ignoreCase = false) const;
@@ -135,6 +136,7 @@ public:
 	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0) override;
 	Common::SeekableReadStreamEndian *getFirstResource(uint32 tag) override;
 	virtual Common::SeekableReadStreamEndian *getFirstResource(uint32 tag, bool fileEndianness);
+	Common::SeekableReadStreamEndian *getFirstResource(uint32 tag, uint16 parentId) override;
 	Common::SeekableReadStreamEndian *getResource(uint32 tag, uint16 id) override;
 	virtual Common::SeekableReadStreamEndian *getResource(uint32 tag, uint16 id, bool fileEndianness);
 	Resource getResourceDetail(uint32 tag, uint16 id) override;
@@ -143,7 +145,7 @@ public:
 private:
 	bool readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset, Common::SeekableMemoryWriteStream *dumpStream, uint32 movieStartOffset);
 	bool readAfterburnerMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset);
-	void readCast(Common::SeekableReadStreamEndian &casStream, uint16 libId);
+	void readCast(Common::SeekableReadStreamEndian &casStream, uint16 libResourceId);
 	void readKeyTable(Common::SeekableReadStreamEndian &keyStream);
 
 protected:

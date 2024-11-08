@@ -341,7 +341,6 @@ bool Debugger::cmdChannels(int argc, const char **argv) {
 		Frame *frame = score->_scoreCache[frameId - 1];
 		if (frame) {
 			debugPrintf("%s\n", frame->formatChannelInfo().c_str());
-			delete frame;
 		} else {
 			debugPrintf("  not found\n");
 		}
@@ -360,7 +359,7 @@ bool Debugger::cmdCast(int argc, const char **argv) {
 		castId = atoi(argv[1]);
 
 	for (auto it : *movie->getCasts()) {
-		debugPrintf("Cast %d:\n", it._key);
+		debugPrintf("Cast %d (%s):\n", it._key, it._value->getMacName().c_str());
 		Cast *cast = it._value;
 		if (!cast) {
 			debugPrintf("[empty]\n");

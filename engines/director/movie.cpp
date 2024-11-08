@@ -180,7 +180,7 @@ void Movie::loadCastLibMapping(Common::SeekableReadStreamEndian &stream) {
 		if (_casts.contains(libId)) {
 			cast = _casts.getVal(libId);
 		} else {
-			cast = new Cast(this, libId, false, isExternal);
+			cast = new Cast(this, libId, false, isExternal, libResourceId);
 			_casts.setVal(libId, cast);
 		}
 		_castNames[name] = libId;

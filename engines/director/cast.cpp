@@ -59,12 +59,13 @@
 
 namespace Director {
 
-Cast::Cast(Movie *movie, uint16 castLibID, bool isShared, bool isExternal) {
+Cast::Cast(Movie *movie, uint16 castLibID, bool isShared, bool isExternal, uint16 libResourceId) {
 	_movie = movie;
 	_vm = _movie->getVM();
 	_lingo = _vm->getLingo();
 
 	_castLibID = castLibID;
+	_libResourceId = libResourceId;
 	_isShared = isShared;
 	_isExternal = isExternal;
 	_loadMutex = true;
@@ -638,11 +639,11 @@ void Cast::loadCast() {
 
 		for (auto &iterator : cast) {
 			Resource res = _castArchive->getResourceDetail(MKTAG('C', 'A', 'S', 't'), iterator);
-			debugC(2, kDebugLoading, "CASt: resource %d, castId %d, libId %d", iterator, res.castId, res.libId);
+			debugC(2, kDebugLoading, "CASt: resource %d, castId %d, libResourceId %d", iterator, res.castId, res.libResourceId);
 			// Only load cast members which belong to the requested library ID.
 			// External casts only have one library ID, so instead
 			// we use the movie's mapping.
-			if (res.libId != _castLibID && !_isExternal)
+			if (res.libResourceId != _libResourceId && !_isExternal)
 				continue;
 			Common::SeekableReadStreamEndian *stream = _castArchive->getResource(MKTAG('C', 'A', 'S', 't'), iterator);
 			loadCastData(*stream, res.castId, &res);
@@ -716,7 +717,7 @@ void Cast::loadCast() {
 	// For D4+ we may request to force Lingo scripts and skip precompiled bytecode
 	if (_version >= kFileVer400 && !debugChannelSet(-1, kDebugNoBytecode)) {
 		// Try to load script context
-		if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('L', 'c', 't', 'x'))) != nullptr) {
+		if ((r = _castArchive->getFirstResource(MKTAG('L', 'c', 't', 'x'), _libResourceId)) != nullptr) {
 			loadLingoContext(*r);
 			delete r;
 		}
