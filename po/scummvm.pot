@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-08 11:52+0000\n"
+"POT-Creation-Date: 2024-11-08 15:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -11723,6 +11723,14 @@ msgstr ""
 
 #: engines/vcruise/vcruise.cpp:377
 msgid "An unknown error occurred while attempting to load the saved game."
+msgstr ""
+
+#: engines/voyeur/metaengine.cpp:42
+msgid "Enable lockout system"
+msgstr ""
+
+#: engines/voyeur/metaengine.cpp:43
+msgid "Require a lockout code to start the game."
 msgstr ""
 
 #: engines/wintermute/metaengine.cpp:42
