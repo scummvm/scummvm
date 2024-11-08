@@ -883,7 +883,7 @@ void RequestData::drawBackgroundNoSliders(Graphics::ManagedSurface *dst, const C
 void RequestData::fillBackground(Graphics::ManagedSurface *dst, uint16 x, uint16 y, uint16 width, uint16 height, int16 startoffset) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 
-	if (engine->getGameId() == GID_DRAGON && engine->getDetailLevel() == kDgdsDetailHigh) {
+	if (engine->getGameId() == GID_DRAGON && engine->getDetailLevel() == kDgdsDetailHigh && !engine->isEGA()) {
 		Graphics::Surface area = dst->getSubArea(Common::Rect(Common::Point(x, y), width, height));
 		while (startoffset < 0)
 			startoffset += ARRAYSIZE(MenuBackgroundColors);

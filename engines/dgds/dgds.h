@@ -175,6 +175,7 @@ private:
 	const char *_rstFileName;
 
 	bool _isDemo;
+	bool _isEGA;
 	bool _flipMode;
 	bool _skipNextFrame;
 	uint32 _thisFrameMs;
@@ -262,6 +263,8 @@ public:
 
 	static DgdsEngine *getInstance() { return static_cast<DgdsEngine *>(g_engine); }
 	void setFlipMode(bool mode) { _flipMode = mode; }
+
+	bool isEGA() const { return _isEGA; }
 
 	void enableKeymapper();
 	void disableKeymapper();

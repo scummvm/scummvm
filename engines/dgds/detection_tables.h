@@ -21,6 +21,10 @@
 
 namespace Dgds {
 
+enum DgdsADGFFlags {
+	ADGF_DGDS_EGA = 1,
+};
+
 static const ADGameDescription gameDescriptions[] = {
 	// Rise of the Dragon (PC) GOG
 	{
@@ -93,7 +97,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_TESTING | ADGF_DGDS_EGA,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -108,7 +112,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_TESTING | ADGF_DGDS_EGA,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -292,7 +296,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
-	// Heart of China (PC) 720kb Floppy version
+	// Heart of China (PC) EGA 720kb Floppy version
 	{
 		"china",
 		0,
@@ -303,11 +307,11 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_UNSTABLE | ADGF_DGDS_EGA,
 		GUIO1(GUIO_NONE)
 	},
 
-	// Heart of China (PC) 1.2MB Floppy version
+	// Heart of China (PC) EGA 1.2MB Floppy version
 	{
 		"china",
 		0,
@@ -318,7 +322,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_UNSTABLE | ADGF_DGDS_EGA,
 		GUIO1(GUIO_NONE)
 	},
 

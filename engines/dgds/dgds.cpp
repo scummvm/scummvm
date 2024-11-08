@@ -93,6 +93,7 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_platform = gameDesc->platform;
 	_gameLang = gameDesc->language;
+	_isEGA = (gameDesc->flags & ADGF_DGDS_EGA);
 
 	if (!strcmp(gameDesc->gameId, "rise")) {
 		_gameId = GID_DRAGON;

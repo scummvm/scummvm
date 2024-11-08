@@ -86,12 +86,22 @@ int GamePalettes::loadPalette(const Common::String &filename) {
 			}
 			break;
 		} else if (chunk.isSection(ID_EGA)) {
-			for (uint k = 0; k < chunk.getSize() / 2; k++) {
-				byte egaCol = (chunkStream->readUint16LE() & 0xF);
-				byte r = EGA_COLORS[egaCol][0];
-				byte g = EGA_COLORS[egaCol][1];
-				byte b = EGA_COLORS[egaCol][2];
-				pal.set(k, r, g, b);
+			if (chunk.getSize() > 20) {
+				for (uint k = 0; k < chunk.getSize() / 2; k++) {
+					byte egaCol = (chunkStream->readUint16LE() & 0xF);
+					byte r = EGA_COLORS[egaCol][0];
+					byte g = EGA_COLORS[egaCol][1];
+					byte b = EGA_COLORS[egaCol][2];
+					pal.set(k, r, g, b);
+				}
+			} else {
+				for (uint k = 0; k < chunk.getSize(); k++) {
+					byte egaCol = (chunkStream->readByte());
+					byte r = EGA_COLORS[egaCol][0];
+					byte g = EGA_COLORS[egaCol][1];
+					byte b = EGA_COLORS[egaCol][2];
+					pal.set(k, r, g, b);
+				}
 			}
 			break;
 		} else if (chunk.isSection(ID_CGA)) {
