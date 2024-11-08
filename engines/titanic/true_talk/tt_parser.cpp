@@ -927,9 +927,10 @@ int TTparser::considerRequests(TTword *word) {
 
 		case SEEK_OWNERSHIP:
 			if (word->_id == 601) {
-				if (TTconcept::findByWordClass(_conceptP, WC_THING))
+				if (TTconcept::findByWordClass(_conceptP, WC_THING)) {
 					assert(_conceptP);
 					status = _conceptP->setOwner(word, false);
+				}
 
 				flag = true;
 			}
