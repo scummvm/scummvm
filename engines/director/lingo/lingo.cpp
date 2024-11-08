@@ -1274,6 +1274,30 @@ Common::Point Datum::asPoint() const {
 	return Common::Point(u.farr->arr[0].asInt(), u.farr->arr[1].asInt());
 }
 
+Datum Datum::clone() const {
+	Datum result;
+	switch (type) {
+		case ARRAY:
+			result.type = ARRAY;
+			result.u.farr = new FArray;
+			for (auto &it : u.farr->arr) {
+				result.u.farr->arr.push_back(it.clone());
+			}
+			break;
+		case PARRAY:
+			result.type = PARRAY;
+			result.u.parr = new PArray;
+			for (auto &it : u.parr->arr) {
+				result.u.parr->arr.push_back(PCell(it.p.clone(), it.v.clone()));
+			}
+			break;
+		default:
+			result = *this;
+			break;
+	}
+	return result;
+}
+
 bool Datum::isRef() const {
 	return (isVarRef() || isCastRef() || type == CHUNKREF);
 }
