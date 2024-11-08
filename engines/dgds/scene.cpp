@@ -25,7 +25,6 @@
 #include "common/rect.h"
 #include "common/system.h"
 #include "common/util.h"
-#include "common/translation.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"

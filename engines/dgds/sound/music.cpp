@@ -22,8 +22,6 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "common/config-manager.h"
-#include "common/translation.h"
-#include "gui/error.h"
 
 #include "dgds/sound/resource/sci_resource.h"
 #include "dgds/sound/midiparser_sci.h"
