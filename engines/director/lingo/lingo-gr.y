@@ -136,7 +136,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %token<f> tFLOAT
 %token<s> tVARID tSTRING tSYMBOL
 %token<s> tENDCLAUSE
-%token tCAST tFIELD tSCRIPT tWINDOW
+%token tCAST tFIELD tSCRIPT tWINDOW tMEMBER tCASTLIB
 %token tDELETE tDOWN tELSE tEXIT tFRAME tGLOBAL tGO tHILITE tIF tIN tINTO tMACRO tRETURN
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tFACTORY tOPEN tPLAY tINSTANCE
@@ -310,6 +310,7 @@ CMDID: tVARID
 	| tAFTER		{ $$ = new Common::String("after"); }
 	| tBEFORE		{ $$ = new Common::String("before"); }
 	| tCAST			{ $$ = new Common::String("cast"); }
+	| tCASTLIB		{ $$ = new Common::String("castLib"); }
 	| tCHAR			{ $$ = new Common::String("char"); }
 	| tCHARS		{ $$ = new Common::String("chars"); }
 	| tDATE			{ $$ = new Common::String("date"); }
@@ -327,6 +328,7 @@ CMDID: tVARID
 	| tLINE			{ $$ = new Common::String("line"); }
 	| tLINES		{ $$ = new Common::String("lines"); }
 	| tLONG			{ $$ = new Common::String("long"); }
+	| tMEMBER		{ $$ = new Common::String("member"); }
 	| tMENU			{ $$ = new Common::String("menu"); }
 	| tMENUITEM		{ $$ = new Common::String("menuItem"); }
 	| tMENUITEMS	{ $$ = new Common::String("menuItems"); }
@@ -670,6 +672,8 @@ varorthe: var
 
 chunk: tFIELD refargs		{ $$ = new FuncNode(new Common::String("field"), $refargs); }
 	| tCAST refargs			{ $$ = new FuncNode(new Common::String("cast"), $refargs); }
+	| tMEMBER refargs		{ $$ = new FuncNode(new Common::String("member"), $refargs); }
+	| tCASTLIB refargs		{ $$ = new FuncNode(new Common::String("castLib"), $refargs); }
 	| tCHAR expr[idx] tOF simpleexpr[src]	{
 		$$ = new ChunkExprNode(kChunkChar, $idx, nullptr, $src); }
 	| tCHAR expr[start] tTO expr[end] tOF simpleexpr[src]	{
