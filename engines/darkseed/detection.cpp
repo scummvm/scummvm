@@ -21,7 +21,6 @@
 
 #include "base/plugins.h"
 #include "common/file.h"
-#include "common/translation.h"
 #include "darkseed/detection.h"
 #include "darkseed/detection_tables.h"
 
