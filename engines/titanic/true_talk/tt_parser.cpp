@@ -928,6 +928,7 @@ int TTparser::considerRequests(TTword *word) {
 		case SEEK_OWNERSHIP:
 			if (word->_id == 601) {
 				if (TTconcept::findByWordClass(_conceptP, WC_THING))
+					assert(_conceptP);
 					status = _conceptP->setOwner(word, false);
 
 				flag = true;
@@ -1208,6 +1209,7 @@ int TTparser::considerRequests(TTword *word) {
 			break;
 
 		case MKTAG('F', 'A', 'R', 'R'):
+			assert(_conceptP);
 			if (_conceptP->findBy20(0))
 				_conceptP->_field20 = 2;
 			break;
@@ -1251,6 +1253,7 @@ int TTparser::considerRequests(TTword *word) {
 			break;
 
 		case MKTAG('N', 'E', 'A', 'R'):
+			assert(_conceptP);
 			if (_conceptP->findBy20(0)) {
 				_conceptP->_field20 = 1;
 			} else {
@@ -1392,7 +1395,7 @@ void TTparser::removeConcept(TTconcept *c) {
 		return;
 
 	if (_conceptP == c) {
-		// Concept specified is the ver ystart of the linked list, so reset head pointer
+		// Concept specified is the very start of the linked list, so reset head pointer
 		_conceptP = _conceptP->_nextP;
 	} else {
 		// Scan through the linked list, looking for the specific concept
@@ -1423,7 +1426,7 @@ int TTparser::checkForAction() {
 	bool flag = false;
 	bool actionFlag = false;
 
-	if (_conceptP && _currentWordP) {
+	if (_currentWordP && !_conceptP) {
 		// Firstly we need to get the next word to process, and remove it from
 		// the list pointed to by _currentWordP
 		TTword *word = _currentWordP;
