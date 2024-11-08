@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-09-19 19:33+0000\n"
-"PO-Revision-Date: 2024-11-04 15:08+0000\n"
+"PO-Revision-Date: 2024-11-08 09:00+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -11402,10 +11402,8 @@ msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "Якщо згладжування увімкнено, текст стає гладкішим."
 
 #: engines/stark/metaengine.cpp:184
-#, fuzzy
-#| msgid "Default game keymap"
 msgid "Default keymapppings"
-msgstr "Мапа клавіш за замовчунням"
+msgstr "Мапа клавіш за замовчуванням"
 
 #. I18N: Opens in-game Diary
 #: engines/stark/metaengine.cpp:202
