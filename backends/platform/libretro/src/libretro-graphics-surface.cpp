@@ -126,7 +126,7 @@ void LibretroGraphics::updateScreen() {
 }
 
 void LibretroGraphics::realUpdateScreen(void) {
-	const Graphics::Surface &srcSurface = (_overlayInGUI) ? _overlay : _gameScreen;
+	const Graphics::Surface &srcSurface = (_overlayVisible) ? _overlay : _gameScreen;
 
 	if (srcSurface.w && srcSurface.h)
 		_screen.blitFrom(srcSurface, Common::Rect(srcSurface.w,srcSurface.h),Common::Rect(_screen.w,_screen.h),&_gamePalette);
