@@ -89,16 +89,11 @@ bool Inventory::add(const Common::String &name, const Common::String &verb, int3
 		return false;
 	}
 
-	// Shift existing items up by one
-	for (int i = _num_cells; i > 0; --i)
-		_items[i] = _items[i - 1];
-
-	auto &item = _items[0];
+	auto &item = _items[_num_cells++];
 	item._name = name;
 	item._verb = verb;
 	item._cell = invSprite;
 	item._cursor = cursor;
-	++_num_cells;
 
 	_must_redraw_all = true;
 
