@@ -22,6 +22,7 @@
 #include "common/debug.h"
 #include "common/stream.h"
 #include "common/util.h"
+#include "common/textconsole.h"
 
 #include "dgds/decompress.h"
 
@@ -204,20 +205,30 @@ byte *Decompressor::decompress(Common::SeekableReadStream *input, int size, uint
 	uncompressedSize = input->readUint32LE();
 	byte *data = new byte[uncompressedSize];
 
+	uint32 result = 0;
+	uint32 expectedSize = size;
 	switch (compression) {
 	case 0x00:
-		input->read(data, size);
+		result = input->read(data, size);
 		break;
 	case 0x01:
-		_rleDecompressor.decompress(data, uncompressedSize, *input);
+		result = _rleDecompressor.decompress(data, uncompressedSize, *input);
+		expectedSize = uncompressedSize;
 		break;
 	case 0x02:
-		_lzwDecompressor.decompress(data, uncompressedSize, *input);
+		result = _lzwDecompressor.decompress(data, uncompressedSize, *input);
+		expectedSize = uncompressedSize;
 		break;
 	default:
 		input->skip(size);
-		debug("Unknown chunk compression: 0x%x", compression);
+		result = size;
+		warning("Unknown chunk compression: 0x%x", compression);
 		break;
+	}
+
+	if (result != expectedSize) {
+		warning("Loading resource with compression type %d - expected %d bytes, got %d",
+			compression, expectedSize, result);
 	}
 
 	return data;

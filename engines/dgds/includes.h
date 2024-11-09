@@ -29,6 +29,7 @@ namespace Dgds {
 #define ID_BIN MKTAG24('B', 'I', 'N')
 #define ID_CGA MKTAG24('C', 'G', 'A')
 #define ID_DAT MKTAG24('D', 'A', 'T')
+#define ID_DIM MKTAG24('D', 'I', 'M')
 #define ID_EGA MKTAG24('E', 'G', 'A')
 #define ID_FNM MKTAG24('F', 'N', 'M')
 #define ID_FNT MKTAG24('F', 'N', 'T')

@@ -73,8 +73,8 @@ public:
 	const Common::String &getFilename() const { return _filename; }
 
 private:
-	void loadBitmap4(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream, bool highByte);
-	void loadBitmap8(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream);
+	void loadBitmap4(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream, bool highByte, uint16 width, uint16 height);
+	void loadBitmap8(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream, uint16 width, uint16 height);
 	uint32 loadVQT(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream);
 	bool loadSCN(Graphics::ManagedSurface *surf, Common::SeekableReadStream *stream);
 

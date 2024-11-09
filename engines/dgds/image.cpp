@@ -73,18 +73,34 @@ void Image::drawScreen(const Common::String &filename, Graphics::ManagedSurface 
 
 	_filename = filename;
 
-	surface.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+	surface.fillRect(Common::Rect(surface.w, surface.h), 0);
+
+	uint16 xsize = surface.w;
+	uint16 ysize = surface.h;
 
 	DgdsChunkReader chunk(fileStream);
 	while (chunk.readNextHeader(ex, filename)) {
+		if (chunk.isContainer()) {
+			continue;
+		}
+
 		chunk.readContent(_decompressor);
 		Common::SeekableReadStream *stream = chunk.getContent();
 		if (chunk.isSection(ID_BIN)) {
-			loadBitmap4(&surface, 0, stream, false);
+			loadBitmap4(&surface, 0, stream, false, xsize, ysize);
+		} else if (chunk.isSection(ID_DIM)) {
+			xsize = stream->readUint16LE();
+			ysize = stream->readUint16LE();
+			if (xsize > surface.w || ysize > surface.h) {
+				error("Trying to load SCR size %d x %d which is larger than screen %d x %d",
+					xsize, ysize, surface.w, surface.h);
+			}
+			debug("screen file %s dims %d x %d into surface %d x %d",
+				filename.c_str(), xsize, ysize, surface.w, surface.h);
 		} else if (chunk.isSection(ID_VGA)) {
-			loadBitmap4(&surface, 0, stream, true);
+			loadBitmap4(&surface, 0, stream, true, xsize, ysize);
 		} else if (chunk.isSection(ID_MA8)) {
-			loadBitmap8(&surface, 0, stream);
+			loadBitmap8(&surface, 0, stream, xsize, ysize);
 		} else if (chunk.isSection(ID_VQT)) {
 			loadVQT(&surface, 0, stream);
 		}
@@ -101,6 +117,10 @@ int Image::frameCount(const Common::String &filename) {
 	int tileCount = -1;
 	DgdsChunkReader chunk(fileStream);
 	while (chunk.readNextHeader(EX_BMP, filename)) {
+		if (chunk.isContainer()) {
+			continue;
+		}
+
 		chunk.readContent(_decompressor);
 		Common::SeekableReadStream *stream = chunk.getContent();
 		if (chunk.isSection(ID_INF)) {
@@ -138,6 +158,10 @@ void Image::loadBitmap(const Common::String &filename) {
 
 	DgdsChunkReader chunk(fileStream);
 	while (chunk.readNextHeader(ex, filename)) {
+		if (chunk.isContainer()) {
+			continue;
+		}
+
 		chunk.readContent(_decompressor);
 		Common::SeekableReadStream *stream = chunk.getContent();
 		if (chunk.isSection(ID_INF)) {
@@ -172,11 +196,11 @@ void Image::loadBitmap(const Common::String &filename) {
 			}
 		} else if (chunk.isSection(ID_BIN)) {
 			for (auto & frame : _frames) {
-				loadBitmap4(frame.get(), 0, stream, false);
+				loadBitmap4(frame.get(), 0, stream, false, frame->w, frame->h);
 			}
 		} else if (chunk.isSection(ID_VGA)) {
 			for (auto & frame : _frames) {
-				loadBitmap4(frame.get(), 0, stream, true);
+				loadBitmap4(frame.get(), 0, stream, true, frame->w, frame->h);
 			}
 		} else if (chunk.isSection(ID_VQT)) {
 			// Postpone parsing this until we have the offsets, which come after.
@@ -321,33 +345,28 @@ void Image::drawScrollBitmap(int16 x, int16 y, int16 width, int16 height, int16 
 }
 
 
-void Image::loadBitmap4(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream, bool highByte) {
-	uint32 tw = surf->w;
-	uint32 th = surf->h;
+void Image::loadBitmap4(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream, bool highByte, uint16 tw, uint16 th) {
 	assert(th != 0);
 	byte *data = (byte *)surf->getPixels();
-	byte buf;
 
 	stream->skip(toffset >> 1);
 
 	if (highByte) {
 		for (uint i = 0; i < tw * th; i += 2) {
-			buf = stream->readByte();
-			data[i + 0] |= buf & 0xF0;
-			data[i + 1] |= (buf & 0x0F) << 4;
+			byte val = stream->readByte();
+			data[i + 0] |= val & 0xF0;
+			data[i + 1] |= (val & 0x0F) << 4;
 		}
 	} else {
 		for (uint i = 0; i < tw * th; i += 2) {
-			buf = stream->readByte();
-			data[i + 0] |= (buf & 0xF0) >> 4;
-			data[i + 1] |= buf & 0x0F;
+			byte val = stream->readByte();
+			data[i + 0] |= (val & 0xF0) >> 4;
+			data[i + 1] |= val & 0x0F;
 		}
 	}
 }
 
-void Image::loadBitmap8(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream) {
-	uint32 tw = surf->w;
-	uint32 th = surf->h;
+void Image::loadBitmap8(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream, uint16 tw, uint16 th) {
 	assert(th != 0);
 	byte *data = (byte *)surf->getPixels();
 
