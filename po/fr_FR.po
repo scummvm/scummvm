@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-08 11:49+0100\n"
-"PO-Revision-Date: 2024-11-09 14:43+0000\n"
+"PO-Revision-Date: 2024-11-09 15:12+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -11607,36 +11607,26 @@ msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read resources\n"
 "and instruments from. Music and Mac GUI will be disabled."
 msgstr ""
-"Impossible de trouver l'exécutable 'Monkey Island' Macintosh à partir duquel "
-"lire les ressources\n"
+"Impossible de trouver l'exécutable Macintosh de 'Monkey Island' à partir "
+"duquel lire les ressources\n"
 "et les instruments. La musique et l'interface graphique Mac seront "
 "désactivées."
 
 #: engines/scumm/scumm.cpp:1290
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
-#| "will\n"
-#| "be disabled."
 msgid ""
 "Could not find the 'Fate of Atlantis' Macintosh executable.\n"
 "Mac GUI will not be shown."
 msgstr ""
-"L'exécutable Macintosh de 'Indy' n'a pas été trouvé. Les polices haute\n"
-"résolution seront désactivées."
+"Impossible de trouver l'exécutable Macintosh de 'Fate of Atlantis'.\n"
+"L'interface graphique Mac sera masquée."
 
 #: engines/scumm/scumm.cpp:1310
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
-#| "will\n"
-#| "be disabled."
 msgid ""
 "Could not find the 'LeChuck's Revenge' Macintosh executable.\n"
 "Mac GUI will not be shown."
 msgstr ""
-"L'exécutable Macintosh de 'Indy' n'a pas été trouvé. Les polices haute\n"
-"résolution seront désactivées."
+"Impossible de trouver l'exécutable Macintosh de 'LeChuck's Revenge'.\n"
+"L'interface graphique Mac sera masquée."
 
 #: engines/scumm/scumm.cpp:1321
 #, c-format
@@ -11915,8 +11905,6 @@ msgid "Open control panel"
 msgstr "Ouvrir le panneau de contrôle"
 
 #: engines/sky/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle really fast mode"
 msgid "Toggle really fast mode on/off"
 msgstr "Act./Désact. mode très rapide"
 
@@ -12027,14 +12015,10 @@ msgid "Scroll down in your dialogues"
 msgstr "Faire défiler les dialogues vers le bas"
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "go to next dialogue"
 msgid "Go to next dialogue"
 msgstr "Réplique suivante"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "go to previous dialogues"
 msgid "Go to previous dialogues"
 msgstr "Réplique précédente"
 
@@ -12193,51 +12177,44 @@ msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "C'est la fin de la démo des Chevaliers de Baphomet"
 
 #: engines/sword1/metaengine.cpp:63
-#, fuzzy
-#| msgctxt "Options menu"
-#| msgid "Voices: English"
 msgid "English"
-msgstr "Voix : Anglais"
+msgstr "Anglais"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "German"
-msgstr ""
+msgstr "Allemand"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "French"
-msgstr ""
+msgstr "Français"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Italian"
-msgstr ""
+msgstr "Italien"
 
 #: engines/sword1/metaengine.cpp:63
-#, fuzzy
-#| msgid "Finish"
 msgid "Spanish"
-msgstr "Terminer"
+msgstr "Espagnol"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Brazilian Portuguese"
-msgstr ""
+msgstr "Portugais brésilien"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Czech"
-msgstr ""
+msgstr "Tchèque"
 
 #: engines/sword1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Game language:"
 msgid "Text language:"
-msgstr "Langue du jeu :"
+msgstr "Langue des textes :"
 
 #: engines/sword1/metaengine.cpp:87 engines/sword1/metaengine.cpp:95
 msgid "Set the language for the subtitles. This will not affect voices."
-msgstr ""
+msgstr "Définit la langue pour les sous-titres. Cela n'affecte pas les voix."
 
 #: engines/sword1/metaengine.cpp:114
 msgid "Simulate the audio engine from the Windows executable"
-msgstr ""
+msgstr "Simule le moteur audio à partir de l'exécutable Windows"
 
 #: engines/sword1/metaengine.cpp:115
 msgid ""
@@ -12245,18 +12222,18 @@ msgid ""
 "and fade-out for sound effects, fade-in for music, and automatic music "
 "volume attenuation for when speech is playing"
 msgstr ""
+"Le jeu utilise des courbes audio plus douces (logarithmiques), mais supprime "
+"les fondus d'entrée et de sortie pour les effets sonores, les fondus "
+"d'entrée pour la musique et l'atténuation automatique du volume de la "
+"musique lorsque des voix sont jouées"
 
 #: engines/sword1/metaengine.cpp:127
-#, fuzzy
-#| msgid "Directional button:"
 msgid "Additional options:"
-msgstr "Bouton de direction :"
+msgstr "Options supplémentaires :"
 
 #: engines/sword1/metaengine.cpp:301
-#, fuzzy
-#| msgid "Main Men~u~"
 msgid "Main Menu"
-msgstr "~M~enu Principal"
+msgstr "Menu Principal"
 
 #: engines/sword2/animation.cpp:426
 msgid ""
@@ -12266,14 +12243,10 @@ msgstr ""
 "des couleurs RGB et ne peut donc les afficher"
 
 #: engines/sword2/detection_tables.h:419
-#, fuzzy
-#| msgid ""
-#| "Enhanced Edition not supported. Please, use the original files which are "
-#| "part of the release."
 msgid "Remastered edition is not supported. Please, use the classic version"
 msgstr ""
-"Blade Runner Enhanced Edition n'est pas pris en charge. Veuillez utiliser "
-"les fichiers originaux inclus dans la version."
+"L'édition Remastered n'est pas prise en charge. Veuillez utiliser la version "
+"classique."
 
 #: engines/sword2/metaengine.cpp:43
 msgid "Show object labels"
@@ -12363,35 +12336,25 @@ msgstr ""
 "Variante de police de caractères non trouvée dans le fichier de données '%s'."
 
 #: engines/toon/metaengine.cpp:98
-#, fuzzy
-#| msgid "Skip line"
 msgid "Skip intro"
-msgstr "Passer la phrase"
+msgstr "Passer l'intro"
 
 #. I18N: Skips current line being spoken by a character
 #: engines/toon/metaengine.cpp:105
-#, fuzzy
-#| msgid "Skip current animation"
 msgid "Stop current voice"
-msgstr "Passer l'animation en cours"
+msgstr "Arrêter la voix en cours de lecture"
 
 #: engines/toon/metaengine.cpp:130
-#, fuzzy
-#| msgid "No music"
 msgid "Mute music"
-msgstr "Pas de musique"
+msgstr "Couper la musique"
 
 #: engines/toon/metaengine.cpp:136
-#, fuzzy
-#| msgid "Abort speech"
 msgid "Mute speech"
-msgstr "Abandonner le dialogue"
+msgstr "Couper les voix"
 
 #: engines/toon/metaengine.cpp:142
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Mute sound effects"
-msgstr "Activer/Désactiver les effets sonores"
+msgstr "Couper les effets sonores"
 
 #: engines/toon/toon.cpp:273
 #, c-format
@@ -12423,36 +12386,26 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Le fichier de données '%s' n'a pu être trouvé."
 
 #: engines/touche/metaengine.cpp:135
-#, fuzzy
-#| msgid "Skip video sequence or dialogue"
 msgid "Skip sequence/open quit dialogue"
-msgstr "Passer la séquence vidéo ou la réplique"
+msgstr "Passer la séquence/ouvrir la fenêtre Quitter"
 
 #: engines/touche/metaengine.cpp:141
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Skip Dialogue"
 msgstr "Passer les dialogues"
 
 #: engines/touche/metaengine.cpp:147
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open options menu"
-msgstr "Ouvrir le menu principal"
+msgstr "Ouvrir le menu Options"
 
 #. I18N: The actor walking pace is increased
 #: engines/touche/metaengine.cpp:154
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Enable fast walk"
-msgstr "Act./Désact. la marche rapide"
+msgstr "Activer la marche rapide"
 
 #. I18N: The actor walking pace is decreased
 #: engines/touche/metaengine.cpp:161
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Disable fast walk"
-msgstr "Act./Désact. la marche rapide"
+msgstr "Désactiver la marche rapide"
 
 #: engines/touche/metaengine.cpp:167
 msgid "Toggle fast mode"
@@ -12460,13 +12413,11 @@ msgstr "Act./Désact. mode rapide"
 
 #: engines/touche/metaengine.cpp:173
 msgid "Toggle between voice/text/text and voice"
-msgstr ""
+msgstr "Basculer entre voix/textes/textes et voix"
 
 #: engines/touche/metaengine.cpp:182
-#, fuzzy
-#| msgid "Press \"Yes\" key"
 msgid "Press \"Yes\" Key"
-msgstr "Appuyez sur la touche \"Oui\""
+msgstr "Appuyer sur la touche \"Oui\""
 
 #: engines/trecision/metaengine.cpp:137
 msgid "Skip video"
@@ -12483,70 +12434,48 @@ msgstr "Ouvrir le menu système"
 
 #. I18N: Return refers to return/enter key
 #: engines/tsage/metaengine.cpp:196
-#, fuzzy
-#| msgid "turn oN"
 msgid "Return"
-msgstr "Allumer"
+msgstr "Entrée"
 
 #: engines/tsage/metaengine.cpp:221
-#, fuzzy
-#| msgid "View"
 msgid "View Help"
-msgstr "Voir"
+msgstr "Voir l'aide"
 
 #: engines/tsage/metaengine.cpp:226
-#, fuzzy
-#| msgid "Show options"
 msgid "Sound options"
-msgstr "Afficher les options"
+msgstr "Options sonores"
 
 #: engines/tsage/metaengine.cpp:264
-#, fuzzy
-#| msgid "North"
 msgid "Crawl North"
-msgstr "Nord"
+msgstr "Ramper vers le Nord"
 
 #: engines/tsage/metaengine.cpp:271
-#, fuzzy
-#| msgid "South"
 msgid "Crawl South"
-msgstr "Sud"
+msgstr "Ramper vers le Sud"
 
 #: engines/tsage/metaengine.cpp:278
-#, fuzzy
-#| msgid "Turn left fast"
 msgid "Turn Left/Crawl West"
-msgstr "Tourner rapidement vers la Gauche"
+msgstr "Tourner à gauche/Ramper vers l'Ouest"
 
 #: engines/tsage/metaengine.cpp:285
-#, fuzzy
-#| msgid "Turn right fast"
 msgid "Turn Right/Crawl East"
-msgstr "Tourner rapidement vers la Droite"
+msgstr "Tourner à droite/Ramper vers l'Est"
 
 #: engines/tsage/metaengine.cpp:292
-#, fuzzy
-#| msgid "Increase Step Size"
 msgid "Increase speed"
-msgstr "Augmenter la taille des pas"
+msgstr "Augmenter la vitesse"
 
 #: engines/tsage/metaengine.cpp:297
-#, fuzzy
-#| msgid "Decrease Step Size"
 msgid "Decrease speed"
-msgstr "Diminuer la taille des pas"
+msgstr "Diminuer la vitesse"
 
 #: engines/tsage/metaengine.cpp:302
-#, fuzzy
-#| msgid "Reading speed"
 msgid "Minimum speed"
-msgstr "Vitesse de lecture"
+msgstr "Vitesse minimum"
 
 #: engines/tsage/metaengine.cpp:307
-#, fuzzy
-#| msgid "Maximum Volume"
 msgid "Maximum speed"
-msgstr "Volume Maximum"
+msgstr "Vitesse maximum"
 
 #: engines/tsage/metaengine.cpp:312
 #, fuzzy
