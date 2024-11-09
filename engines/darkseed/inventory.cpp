@@ -134,6 +134,7 @@ void Inventory::handleClick() {
 	}
 	int iconIdx = (clickPos.x - 140) / 37;
 	int icon = _iconList[iconIdx];
+	g_engine->playSound(5, 4, -1);
 	if (icon == 42) {
 		leftArrowClicked();
 	} else if (icon == 43) {

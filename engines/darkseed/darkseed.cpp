@@ -748,6 +748,7 @@ void DarkseedEngine::handleInput() {
 						_player->loadAnimations("opendoor.nsp");
 						_animation->setupOtherNspAnimation(0, 14);
 						// FUN_1208_0dac_sound_related(10,CONCAT11(extraout_AH,5));
+						playSound(1, 5, -1);
 						return;
 					}
 					if (currentRoomNumber == 6 && roomExit.roomNumber == 5 && bVar) {
@@ -761,6 +762,7 @@ void DarkseedEngine::handleInput() {
 						_player->loadAnimations("opendoor.nsp");
 						_animation->setupOtherNspAnimation(0, 25);
 						// FUN_1208_0dac_sound_related(24,CONCAT11(extraout_AH,5));
+						playSound(15, 5, -1); //open car door
 						return;
 					}
 					if (currentRoomNumber == 5 && roomExit.roomNumber == 6 && bVar) {
@@ -2580,6 +2582,17 @@ void DarkseedEngine::newGame() {
 
 void DarkseedEngine::waitForSpeech() {
 	while (_sound && _sound->isPlayingSpeech()) {
+		updateEvents();
+		if (_room) {
+			_room->update();
+		}
+		_screen->update();
+		wait();
+	}
+}
+
+void DarkseedEngine::waitForSpeechOrSfx() {
+	while (_sound && (_sound->isPlayingSpeech() || _sound->isPlayingSfx())) {
 		updateEvents();
 		if (_room) {
 			_room->update();

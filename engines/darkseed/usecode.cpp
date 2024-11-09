@@ -260,11 +260,9 @@ void Darkseed::UseCode::useCode(int objNum) {
 	if ((162 < objNum) && (objNum < 169)) {
 		g_engine->playSound(47, 5, -1);
 	}
-	if (objNum == 175) {
+	if (objNum == 175) { // car horn
 		g_engine->playSound(39, 5, -1);
-		//		while (iVar2 = VOCPlaying(), iVar2 != 0) {
-		//			VOCPoll();
-		//		}
+		g_engine->waitForSpeechOrSfx();
 		_console->printTosText(719);
 		return;
 	}

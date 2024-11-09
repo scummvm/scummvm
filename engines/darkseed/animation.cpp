@@ -251,6 +251,7 @@ void Animation::updateAnimation() {
 		}
 		if (_frameAdvanced && ((currentRoomNumber == 6 && _animIndexTbl[1] == 1) || (currentRoomNumber == 5 && _animIndexTbl[2] == 1))) {
 			//			FUN_1208_0dacg_engine->_sound_related(0xd,CONCAT11(uVar4,5));
+			g_engine->playSound(4, 5, -1);
 		}
 		if (!_objRestarted) {
 			if (currentRoomNumber == 6) {
@@ -273,6 +274,7 @@ void Animation::updateAnimation() {
 			advanceAnimationFrame(3);
 			if (_frameAdvanced && _animIndexTbl[3] == 1) {
 				// FUN_1208_0dacg_engine->_sound_related(0xd,CONCAT11(extraout_AH_05,5));
+				g_engine->playSound(4, 5, -1);
 			}
 			if (!_objRestarted) {
 				_player->_frameIdx = _player->_animations.getAnimAt(3)._frameNo[_player->_animations.getAnimAt(3)._frameNo[_animIndexTbl[3]]];
@@ -284,6 +286,7 @@ void Animation::updateAnimation() {
 			advanceAnimationFrame(0);
 			if (_frameAdvanced && _animIndexTbl[0] == 1) {
 				// FUN_1208_0dacg_engine->_sound_related(0xd,CONCAT11(extraout_AH_05,5));
+				g_engine->playSound(4, 5, -1);
 			}
 			if (!_objRestarted) {
 				_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
@@ -542,11 +545,21 @@ void Animation::updateAnimation() {
 	}
 	case 32:
 	case 33:
-	case 34: {
+	case 34: { // Take medicine from cabinet
 		_objectVar[112] = 1;
 		int animIdx = _otherNspAnimationType_maybe - 30;
 		advanceAnimationFrame(animIdx);
-		// TODO play sfx.
+		if (_frameAdvanced) {
+			if (_otherNspAnimationType_maybe == 33) {
+				if (_animIndexTbl[animIdx] == 12) {
+					g_engine->playSound(35, 5, -1); // water
+				}
+			} else if (_otherNspAnimationType_maybe == 32) {
+				if (_animIndexTbl[animIdx] == 1 || _animIndexTbl[animIdx] == 18) {
+					g_engine->playSound(34, 5, -1); // open / close cabinet
+				}
+			}
+		}
 		if (_isPlayingAnimation_maybe) {
 			_player->_frameIdx = _player->_animations.getAnimAt(animIdx)._frameNo[_animIndexTbl[animIdx]];
 		}
@@ -653,6 +666,9 @@ void Animation::updateAnimation() {
 		advanceAnimationFrame(iVar4);
 		_player->_frameIdx = _player->_animations.getAnimAt(iVar4)._frameNo[_player->_animations.getAnimAt(iVar4)._frameNo[_animIndexTbl[iVar4]]];
 		//		_HeroSpr = (uint) * (byte *)((int)&DAT_1060_7eb8 + *(int *)((int)&_ObjFrame + iVar4 * 2) + iVar4 * 202);
+		if (_frameAdvanced && _animIndexTbl[iVar4] == 3) { // TODO should we add this conditionally? This logic was missing from the original game. I assume they just forgot to add the sfx.
+			g_engine->playSound(8, 5, -1); // pull lever sound.
+		}
 		if (!_objRestarted || (_otherNspAnimationType_maybe != 46 && _otherNspAnimationType_maybe != 44)) {
 			if (_otherNspAnimationType_maybe == 45) {
 				_objectVar[117] = 1;
@@ -728,9 +744,9 @@ void Animation::updateAnimation() {
 				break;
 			}
 		}
-		if (_frameAdvanced && _animIndexTbl[0] == 1) {
+		if (_otherNspAnimationType_maybe == 55 && _frameAdvanced && _animIndexTbl[stairsIdx] == 4) {
 			// FUN_1208_0dacg_engine->_sound_related(0xd,CONCAT11(extraout_AH_05,5));
-			// PlaySound(1,5,-1);
+			g_engine->playSound(1, 5, -1); //open door to police station
 		}
 		break;
 	}
@@ -797,6 +813,9 @@ void Animation::updateAnimation() {
 			} else {
 				g_engine->_console->addTextLine("The cops ignore your demands for attention.");
 			}
+		}
+		if (_frameAdvanced && _player->_frameIdx == 1) {
+			g_engine->playSound(22, 5, -1);
 		}
 		break;
 	case 65:

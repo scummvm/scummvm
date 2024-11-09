@@ -152,6 +152,7 @@ public:
 	void wait();
 
 	void waitForSpeech();
+	void waitForSpeechOrSfx();
 
 	void syncSoundSettings() override;
 
