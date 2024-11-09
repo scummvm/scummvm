@@ -52,7 +52,7 @@ void Room207::init() {
 		_fieldA4 = false;
 		_commandNotAllowedFl = false;
 		_fieldA8 = 0;
-		_fieldAA = false;
+		_pipeFlag = false;
 		_fieldAE_rnd = 1;
 		_fieldB2 = false;
 	}
@@ -168,7 +168,7 @@ void Room207::pre_parser() {
 		_G(player).waiting_for_walk = false;
 	}
 
-	if (_fieldAA) {
+	if (_pipeFlag) {
 		_G(player).need_to_walk = false;
 		_G(player).ready_to_walk = true;
 		_G(player).waiting_for_walk = false;
@@ -265,12 +265,12 @@ void Room207::pre_parser() {
 }
 
 void Room207::parser() {
-	bool esi = player_said_any("look", "look at");
-	bool talkFl = player_said_any("talk", "talk to");
-	bool ecx = player_said("take");
-	bool edi = player_said_any("push", "pull", "gear", "open", "close");
+	bool lookFlag = player_said_any("look", "look at");
+	bool talkFlag = player_said_any("talk", "talk to");
+	bool takeFlag = player_said("take");
+	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
-	if (esi && player_said_any("anvil", "forge"))
+	if (lookFlag && player_said_any("anvil", "forge"))
 		_G(flags[V036] = 1);
 
 	if (_G(kernel).trigger == 747) {
@@ -289,9 +289,9 @@ void Room207::parser() {
 		convHandler();
 	else if (_G(kernel).trigger == 203)
 		_G(game).new_room = 203;
-	else if (talkFl && player_said("peasant")) {
+	else if (talkFlag && player_said("peasant")) {
 		player_set_commands_allowed(false);
-		player_update_info(_G(my_walker), &_G(player_info));
+		player_update_info();
 		_safariShadow3Mach = series_place_sprite("safari shadow 3", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
 		ws_hide_walker(_G(my_walker));
 		_ripHeadDownTalkOffTd33Series = series_load("rip head down talk off td33", -1, nullptr);
@@ -319,7 +319,7 @@ void Room207::parser() {
 			break;
 
 		case 3:
-			player_update_info(_G(my_walker), &_G(player_info));
+			player_update_info();
 			ws_hide_walker(_G(my_walker));
 			_safariShadow3Mach = series_place_sprite("safari shadow 1", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
 			series_ranged_play_xy("rip trek low reacher pos1", 1, 0, 0, 9, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 5, 4, false);
@@ -333,9 +333,9 @@ void Room207::parser() {
 			break;
 
 		case 5:
-			ws_unhide_walker(_G(my_walker));
+			ws_unhide_walker();
 			terminateMachine(_safariShadow3Mach);
-			ws_unhide_walker(_G(my_walker));
+			ws_unhide_walker();
 			series_unload(_ripTrekLowReacherPos1Series);
 
 			break;
@@ -357,14 +357,14 @@ void Room207::parser() {
 			case 2:
 				ws_hide_walker(_G(my_walker));
 				_ripTrekLowReacherPos1Series = series_load("rip trek low reach pos2", -1, nullptr);
-				player_update_info(_G(my_walker), &_G(player_info));
+				player_update_info();
 				_safariShadow3Mach = series_place_sprite("safari shadow 2", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
 				series_ranged_play_xy("rip trek low reach pos2", 1, 0, 0, 15, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 5, 3, false);
 
 				break;
 
 			case 3:
-				player_update_info(_G(my_walker), &_G(player_info));
+				player_update_info();
 				_ripTrekLowReachMach = series_ranged_play_xy("rip trek low reach pos2", 0, 2, 15, 15, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 300, -1, false);
 				inv_give_to_player("REBUS AMULET");
 				hotspot_set_active("REBUS AMULET", false);
@@ -380,14 +380,14 @@ void Room207::parser() {
 
 			case 4:
 				terminateMachine(_ripTrekLowReachMach);
-				player_update_info(_G(my_walker), &_G(player_info));
+				player_update_info();
 				series_ranged_play_xy("rip trek low reach pos2", 1, 2, 0, 15, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 5,5,false);
-				digi_play("207_s08", 2, 255, -1, -1);
+				digi_play("207_s08", 2);
 
 				break;
 
 			case 5:
-				ws_unhide_walker(_G(my_walker));
+				ws_unhide_walker();
 				terminateMachine(_safariShadow3Mach);
 				ws_walk(_G(my_walker), 418, 345, nullptr, 6,2,true);
 
@@ -396,23 +396,23 @@ void Room207::parser() {
 			case 6:
 				ws_hide_walker(_G(my_walker));
 				_ripTrekLowReacherPos1Series = series_load("rip trek low reach pos2", -1, nullptr);
-				player_update_info(_G(my_walker), &_G(player_info));
+				player_update_info();
 				_safariShadow3Mach = series_place_sprite("safari shadow 2", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
 				series_ranged_play_xy("rip trek low reach pos2", 1, 0, 0, 15, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 5, 7, false);
-				digi_play("207r35", 1, 255, -1, -1);
+				digi_play("207r35", 1);
 
 				break;
 
 			case 7:
 				_oneFrameMoneySpriteMach = series_show_sprite("one frame money sprite", 0, 3840);
-				player_update_info(_G(my_walker), &_G(player_info));
+				player_update_info();
 				series_ranged_play_xy("rip trek low reach pos2", 1, 2, 0, 15, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 5, 8, false);
 
 				break;
 
 			case 8:
 				terminateMachine(_safariShadow3Mach);
-				ws_unhide_walker(_G(my_walker));
+				ws_unhide_walker();
 				series_unload(_ripTrekLowReacherPos1Series);
 				player_set_commands_allowed(true);
 
@@ -432,14 +432,14 @@ void Room207::parser() {
 			case 2:
 				ws_hide_walker(_G(my_walker));
 				_ripTrekLowReacherPos1Series = series_load("rip trek med reach pos3", -1, nullptr);
-				player_update_info(_G(my_walker), &_G(player_info));
+				player_update_info();
 				_safariShadow3Mach = series_place_sprite("safari shadow 3", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
 				series_ranged_play_xy("rip trek med reach pos3", 1, 0, 0, 9, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 5, 3, false);
 
 				break;
 
 			case 3:
-				player_update_info(_G(my_walker), &_G(player_info));
+				player_update_info();
 				_ripTrekLowReachMach = series_ranged_play_xy("rip trek med reach pos3", -1, 2, 10, 10, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 300, -1, false);
 				_field92 = 7;
 
@@ -447,13 +447,13 @@ void Room207::parser() {
 
 			case 4:
 				terminateMachine(_ripTrekLowReachMach);
-				player_update_info(_G(my_walker), &_G(player_info));
+				player_update_info();
 				series_ranged_play_xy("rip trek med reach pos3", 1, 2, 0, 9, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 5, 5, false);
 
 				break;
 
 			case 5:
-				ws_unhide_walker(_G(my_walker));
+				ws_unhide_walker();
 				terminateMachine(_safariShadow3Mach);
 				series_unload(_ripTrekLowReacherPos1Series);
 				player_set_commands_allowed(true);
@@ -474,14 +474,14 @@ void Room207::parser() {
 			case 2:
 				ws_hide_walker(_G(my_walker));
 				_ripTrekLowReacherPos1Series = series_load("rip trek med reach pos3", -1, nullptr);
-				player_update_info(_G(my_walker), &_G(player_info));
+				player_update_info();
 				_safariShadow3Mach = series_place_sprite("safari shadow 3", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
 				series_ranged_play_xy("rip trek med reach pos3", 1, 0, 0, 9, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 5, 3, false);
 
 				break;
 
 			case 3:
-				player_update_info(_G(my_walker), &_G(player_info));
+				player_update_info();
 				_ripTrekLowReachMach = series_ranged_play_xy("rip trek med reach pos3", -1, 2, 10, 10, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 300, -1, false);
 				_field92 = 9;
 
@@ -494,13 +494,13 @@ void Room207::parser() {
 
 			case 5:
 				terminateMachine(_ripTrekLowReachMach);
-				player_update_info(_G(my_walker), &_G(player_info));
+				player_update_info();
 				series_ranged_play_xy("rip trek med reach pos3", 1, 2, 0, 9, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 5, 6, false);
 
 				break;
 
 			case 6:
-				ws_unhide_walker(_G(my_walker));
+				ws_unhide_walker();
 				terminateMachine(_safariShadow3Mach);
 				series_unload(_ripTrekLowReacherPos1Series);
 				player_set_commands_allowed(true);
@@ -514,9 +514,9 @@ void Room207::parser() {
 		}
 	} // if (player_said("give", "money"))
 
-	else if (ecx && player_said("junkpile"))
-		digi_play("207r35a", 1, 255, -1, -1);
-	else if (ecx && player_said("REBUS AMULET") && _G(flags[V061]) != 0 && _G(kernel).trigger > 0 && _G(kernel).trigger < 9) {
+	else if (takeFlag && player_said("junkpile"))
+		digi_play("207r35a", 1);
+	else if (takeFlag && player_said("REBUS AMULET") && _G(flags[V061]) != 0 && _G(kernel).trigger > 0 && _G(kernel).trigger < 9) {
 		switch (_G(kernel).trigger) {
 		case 1:
 			ws_walk(_G(my_walker), 456, 366, nullptr, 2, 2, true);
@@ -526,14 +526,14 @@ void Room207::parser() {
 			player_set_commands_allowed(false);
 			ws_hide_walker(_G(my_walker));
 			_ripTrekLowReacherPos1Series = series_load("rip trek low reach pos2", -1, nullptr);
-			player_update_info(_G(my_walker), &_G(player_info));
+			player_update_info();
 			_safariShadow3Mach = series_place_sprite("safari shadow 2", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
 			series_ranged_play_xy("rip trek low reach pos2", 1, 0, 0, 15, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 5, 3, false);
 
 			break;
 
 		case 3:
-			player_update_info(_G(my_walker), &_G(player_info));
+			player_update_info();
 			_ripTrekLowReachMach = series_ranged_play_xy("rip trek low reach pos2", -1, 2, 15, 15, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 300, -1, false);
 			inv_give_to_player("REBUS AMULET");
 			hotspot_set_active(_G(currentSceneDef).hotspots, "REBUS AMULET", false);
@@ -549,13 +549,13 @@ void Room207::parser() {
 
 		case 4:
 			terminateMachine(_ripTrekLowReachMach);
-			player_update_info(_G(my_walker), &_G(player_info));
+			player_update_info();
 			series_ranged_play_xy("rip trek low reach pos2", 1, 2, 0, 15, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 5, 5, false);
 
 			break;
 
 		case 5:
-			ws_unhide_walker(_G(my_walker));
+			ws_unhide_walker();
 			terminateMachine(_safariShadow3Mach);
 			ws_walk(_G(my_walker), 418, 345, nullptr, 6, 2, true);
 
@@ -564,23 +564,23 @@ void Room207::parser() {
 		case 6:
 			ws_hide_walker(_G(my_walker));
 			_ripTrekLowReacherPos1Series = series_load("rip trek low reach pos2", -1, nullptr);
-			player_update_info(_G(my_walker), &_G(player_info));
+			player_update_info();
 			_safariShadow3Mach = series_place_sprite("safari shadow 2", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
 			series_ranged_play_xy("rip trek low reach pos2", 1, 0, 0, 15, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 5, 7, false);
-			digi_play("207r35", 1, 255, -1, -1);
+			digi_play("207r35", 1);
 
 			break;
 
 		case 7:
 			_oneFrameMoneySpriteMach = series_show_sprite("one frame money sprite", 0, 3840);
-			player_update_info(_G(my_walker), &_G(player_info));
+			player_update_info();
 			series_ranged_play_xy("rip trek low reach pos2", 1, 2, 0, 15, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 5, 8, false);
 
 			break;
 
 		case 8:
 			terminateMachine(_safariShadow3Mach);
-			ws_unhide_walker(_G(my_walker));
+			ws_unhide_walker();
 			series_unload(_ripTrekLowReacherPos1Series);
 			player_set_commands_allowed(true);
 
@@ -589,12 +589,12 @@ void Room207::parser() {
 		default:
 			break;
 		}
-	} else if (ecx && player_said("REBUS AMULET") && _G(flags[V061]) == 0 && inv_object_is_here("REBUS AMULET"))
-		digi_play("207r35a", 1, 255, -1, -1);
+	} else if (takeFlag && player_said("REBUS AMULET") && _G(flags[V061]) == 0 && inv_object_is_here("REBUS AMULET"))
+		digi_play("207r35a", 1);
 	else if (_G(kernel).trigger == 666) {
 		digi_unload("ripwhis");
 	} // if (ecx && player_said("REBUS AMULET"))
-	else if ((ecx || edi) && player_said("wheel")) {
+	else if ((takeFlag || useFlag) && player_said("wheel")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
@@ -624,8 +624,8 @@ void Room207::parser() {
 			break;
 
 		case 3:
-			ws_unhide_walker(_G(my_walker));
-			player_update_info(_G(my_walker), &_G(player_info));
+			ws_unhide_walker();
+			player_update_info();
 			ws_demand_location(_G(my_walker), 5 + _G(player_info).x, 20 + _G(player_info).y);
 			_metalRimMach = series_show_sprite("metal rim", 0, 3840);
 			_sevenSpokesMach = series_show_sprite("SEVEN spokes", 0, 3840);
@@ -638,7 +638,7 @@ void Room207::parser() {
 
 		case 4:
 			series_stream_break_on_frame(_dropsWheelMach, 46, 1);
-			digi_play("207_s03", 2, 255, -1, -1);
+			digi_play("207_s03", 2);
 
 			break;
 
@@ -647,15 +647,15 @@ void Room207::parser() {
 		}
 	} // if ((ecx || edi) && player_said("wheel"))
 
-	else if (ecx && "PIPES") {
+	else if (takeFlag && "PIPES") {
 		_G(flags[V036]) = 1;
 		if (_G(flags[V061]) != 0 && inv_object_is_here("LEAD PIPE")) {
-			digi_play("207r36", 1, 255, -1, -1);
+			digi_play("207r36", 1);
 		} else {
 			switch (_G(kernel).trigger) {
 			case -1:
 			case 1:
-				if (inv_object_is_here("LEAD PIPE") || _fieldAA) {
+				if (inv_object_is_here("LEAD PIPE") || _pipeFlag) {
 					ws_walk(_G(my_walker), 279, 346, nullptr, 2, 7, true);
 					_ripForegroundFl = true;
 				}
@@ -666,42 +666,42 @@ void Room207::parser() {
 				player_set_commands_allowed(false);
 				ws_hide_walker(_G(my_walker));
 				_ripTrekLowReacherPos1Series = series_load("rip trek low reacher pos5", -1, nullptr);
-				player_update_info(_G(my_walker), &_G(player_info));
+				player_update_info();
 				series_play("rip trek low reacher pos5", 512, 128, 3, 3, 0, _G(player_info).scale, _G(player_info).x, _G(player_info).y, 0, 15);
 				_safariShadow3Mach = series_place_sprite("safari shadow 5", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
-
 				break;
 
 			case 3:
-				player_update_info(_G(my_walker), &_G(player_info));
+				player_update_info();
 				_ripTrekLowReacherPos5Mach = series_play("rip trek low reacher pos5", 512, 128, -1, 300, 0, _G(player_info).scale, _G(player_info).x, _G(player_info).y, 15, 15);
-				if (!_fieldAA) {
+
+				if (!_pipeFlag) {
+					inv_give_to_player("LEAD PIPE");
+					kernel_examine_inventory_object("ping LEAD PIPE", _G(master_palette), 5, 1, 179, 250, 4, nullptr, -1);
+					terminateMachine(_leadPipeMach2);
+				} else {
 					inv_move_object("LEAD PIPE", 207);
 					hotspot_set_active_xy(_G(currentSceneDef).hotspots, "PIPES", 277, 359, true);
 					_leadPipeMach2 = series_show_sprite("lead pipe", 0, 3840);
 					kernel_timing_trigger(1, 4, nullptr);
-					digi_play("207_s02", 2, 255, -1, -1);
-				} else {
-					inv_give_to_player("LEAD PIPE");
-					kernel_examine_inventory_object("ping LEAD PIPE", _G(master_palette), 5, 1, 179, 250, 4, nullptr, -1);
-					terminateMachine(_leadPipeMach2);
+					digi_play("207_s02", 2);
 				}
-
 				break;
 
 			case 4:
 				terminateMachine(_ripTrekLowReacherPos5Mach);
-				player_update_info(_G(my_walker), &_G(player_info));
-				series_play("rip trek low reacher pos5", 512, 130, 5, 3, 0, _G(player_info).scale, _G(player_info).x, _G(player_info).y, 0, 15);
-				digi_play("207_s01", 2, 255, -1, -1);
-
+				player_update_info();
+				series_play("rip trek low reacher pos5", 512, 130, 5, 3, 0,
+					_G(player_info).scale, _G(player_info).x, _G(player_info).y, 0, 15);
+				digi_play("207_s01", 2);
 				break;
 
 			case 5:
-				ws_unhide_walker(_G(my_walker));
+				ws_unhide_walker();
 				terminateMachine(_safariShadow3Mach);
 				series_unload(_ripTrekLowReacherPos1Series);
-				if (!_fieldAA) {
+
+				if (!_pipeFlag) {
 					hotspot_set_active(_G(currentSceneDef).hotspots, "PEASANT", false);
 					_field92 = 3;
 					_digiName = "207p01";
@@ -712,7 +712,6 @@ void Room207::parser() {
 					_digiTriggerNum = 7;
 				}
 				_nextTriggerMode = KT_PARSE;
-
 				break;
 
 			case 6:
@@ -722,15 +721,13 @@ void Room207::parser() {
 				_fieldB2 = true;
 				_G(kernel).trigger_mode = KT_DAEMON;
 				kernel_timing_trigger(60, 40, nullptr);
-
 				break;
 
 			case 7:
-				_fieldAA = false;
+				_pipeFlag = false;
 				_field92 = 0;
 				_commandNotAllowedFl = true;
 				_G(flags[V043]) = 1;
-
 				break;
 
 			default:
@@ -739,21 +736,21 @@ void Room207::parser() {
 		}
 	} // if (ecx && "PIPES")
 
-	else if (ecx && player_said("METAL RIM")) {
+	else if (takeFlag && player_said("METAL RIM")) {
 		_G(flags[V036]) = 1;
 
 		if (_G(flags[V061]) == 0) {
-			digi_play("207r29", 1, 255, -1, -1);
+			digi_play("207r29", 1);
 		} else {
 			switch (_G(kernel).trigger) {
 			case -1:
-				if (inv_object_is_here("METAL RIM") || _fieldAA) {
+				if (inv_object_is_here("METAL RIM") || _pipeFlag) {
 					player_set_commands_allowed(false);
-					player_update_info(_G(my_walker), &_G(player_info));
+					player_update_info();
 					_safariShadow3Mach = series_place_sprite("safari shadow 1", 0, _G(player_info).x, _G(player_info).y, -_G(player_info).scale, 3840);
 					ws_hide_walker(_G(my_walker));
 					_ripTrekLowReacherPos1Series = series_load("rip low reach pos1", -1, nullptr);
-					player_update_info(_G(my_walker), &_G(player_info));
+					player_update_info();
 					series_play("rip low reach pos1", 512, 128, 1, 5, 0, _G(player_info).scale, _G(player_info).x, _G(player_info).y, 0, 14);
 					_ripForegroundFl = false;
 				}
@@ -761,10 +758,10 @@ void Room207::parser() {
 				break;
 
 			case 1:
-				player_update_info(_G(my_walker), &_G(player_info));
+				player_update_info();
 				_ripTrekLowReacherPos5Mach = series_play("rip low reach pos1", 512, 128, -1, 300, 0, _G(player_info).scale, _G(player_info).x, _G(player_info).y, 14, 14);
 
-				if (!_fieldAA) {
+				if (!_pipeFlag) {
 					inv_give_to_player("METAL RIM");
 					kernel_examine_inventory_object("PING METAL RIM", _G(master_palette), 5, 1, 245, 244, 2, nullptr, -1);
 					terminateMachine(_metalRimMach);
@@ -772,7 +769,7 @@ void Room207::parser() {
 					inv_move_object("METAL RIM", 207);
 					hotspot_set_active(_G(currentSceneDef).hotspots, "METAL RIM", true);
 					_metalRimMach = series_show_sprite("metal rim", 0, 3840);
-					digi_play("207_s01", 2, 255, -1, -1);
+					digi_play("207_s01", 2);
 					kernel_timing_trigger(1, 2, nullptr);
 				}
 
@@ -780,18 +777,18 @@ void Room207::parser() {
 
 			case 2:
 				terminateMachine(_ripTrekLowReacherPos5Mach);
-				player_update_info(_G(my_walker), &_G(player_info));
+				player_update_info();
 				series_play("rip low reach pos1", 512, 130, 3, 5, 0, _G(player_info).scale, _G(player_info).x, _G(player_info).y, 0, 14);
-				digi_play("207_s06", 2, 255, -1, -1);
+				digi_play("207_s06", 2);
 
 				break;
 
 			case 3:
-				ws_unhide_walker(_G(my_walker));
+				ws_unhide_walker();
 				terminateMachine(_safariShadow3Mach);
 				series_unload(_ripTrekLowReacherPos1Series);
 
-				if (_fieldAA) {
+				if (_pipeFlag) {
 					_field92 = 3;
 					_digiName = "207p01a";
 					_digiTriggerNum = 5;
@@ -819,7 +816,7 @@ void Room207::parser() {
 				break;
 
 			case 5:
-				_fieldAA = false;
+				_pipeFlag = false;
 				_field92 = 0;
 				_commandNotAllowedFl = true;
 				_G(flags[V043]) = 1;
@@ -833,23 +830,23 @@ void Room207::parser() {
 
 	} // if (ecx && player_said("METAL RIM"))
 
-	else if (ecx && player_said("SEVEN SPOKES")) {
+	else if (takeFlag && player_said("SEVEN SPOKES")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			if (inv_object_is_here("SEVEN SPOKES")) {
 				player_set_commands_allowed(false);
-				player_update_info(_G(my_walker), &_G(player_info));
+				player_update_info();
 				_safariShadow3Mach = series_place_sprite("safari shadow 1", 0, _G(player_info).x, _G(player_info).y, -_G(player_info).scale, 3840);
 				ws_hide_walker(_G(my_walker));
 				_ripTrekLowReacherPos1Series = series_load("rip low reach pos1", -1, nullptr);
-				player_update_info(_G(my_walker), &_G(player_info));
+				player_update_info();
 				series_play("rip low reach pos1", 512, 128, 1, 5, 0, _G(player_info).scale, _G(player_info).x, _G(player_info).y, 0, 14);
 			}
 
 			break;
 
 		case 1:
-			player_update_info(_G(my_walker), &_G(player_info));
+			player_update_info();
 			_ripTrekLowReacherPos5Mach = series_play("rip low reach pos1", 512, 130, -1, 0, _G(player_info).scale, _G(player_info).x, _G(player_info).y, 14, 14);
 			inv_give_to_player("SEVEN SPOKES");
 			kernel_examine_inventory_object("ping SEVEN SPOKES", _G(master_palette), 5, 1, 241, 217, 2, nullptr, -1);
@@ -859,14 +856,14 @@ void Room207::parser() {
 
 		case 2:
 			terminateMachine(_ripTrekLowReacherPos5Mach);
-			player_update_info(_G(my_walker), &_G(player_info));
+			player_update_info();
 			series_play("rip low reach pos1", 512, 130, 3, 5, 0, _G(player_info).scale, _G(player_info).x, _G(player_info).y, 0, 14);
-			digi_play("207_s05", 2, 255, -1, -1);
+			digi_play("207_s05", 2);
 
 			break;
 
 		case 3:
-			ws_unhide_walker(_G(my_walker));
+			ws_unhide_walker();
 			terminateMachine(_safariShadow3Mach);
 			series_unload(_ripTrekLowReacherPos1Series);
 			hotspot_set_active(_G(currentSceneDef).hotspots, "SEVEN SPOKES", false);
@@ -880,25 +877,25 @@ void Room207::parser() {
 
 	} // if (ecx && player_said("SEVEN SPOKES"))
 
-	else if (!_fieldAA) {
-		if (esi && player_said("REBUS AMULET") && !inv_object_is_here("REBUS AMULET")) {
+	else if (!_pipeFlag) {
+		if (lookFlag && player_said("REBUS AMULET") && !inv_object_is_here("REBUS AMULET")) {
 			if (_G(flags[V061] == 0)) {
 				_G(flags[V061]) = 1;
-				digi_play("207r04", 1, 255, -1, -1);
+				digi_play("207r04", 1);
 			} else
-				digi_play("207r04a", 1, 255, -1, -1);
-		} else if (esi && player_said("junkpile")) {
+				digi_play("207r04a", 1);
+		} else if (lookFlag && player_said("junkpile")) {
 			if (_G(flags[V061]) == 0 && _G(flags[V063]) == 0) {
 				switch (_G(kernel).trigger) {
 				case -1:
 					player_set_commands_allowed(false);
-					player_update_info(_G(my_walker), &_G(player_info));
+					player_update_info();
 					_safariShadow3Mach = series_place_sprite("safari shadow 3", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3849);
 					ws_hide_walker(_G(my_walker));
 					_ripTrekLowReacherPos1Series = series_load("rip trek arms x pos3", -1, nullptr);
 					_ripHeadDownTalkOffTd33Series2 = series_load("rip head down talk off td33", -1, nullptr);
 					_digi207r04PlayedFl = false;
-					player_update_info(_G(my_walker), &_G(player_info));
+					player_update_info();
 					_ripTrekLowReachMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 1024, false, triggerMachineByHashCallback, "rip exchange goods");
 					sendWSMessage_10000(1, _ripTrekLowReachMach, _ripTrekLowReacherPos1Series, 1, 15, 1, _ripTrekLowReacherPos1Series, 1, 1, 0);
 
@@ -943,7 +940,7 @@ void Room207::parser() {
 					terminateMachine(_safariShadow3Mach);
 					series_unload(_ripHeadDownTalkOffTd33Series2);
 					series_unload(_ripTrekLowReacherPos1Series);
-					ws_unhide_walker(_G(my_walker));
+					ws_unhide_walker();
 					player_set_commands_allowed(true);
 					_G(flags[V043]) = 1;
 					_G(flags[V063]) = 1;
@@ -965,12 +962,12 @@ void Room207::parser() {
 				case -1:
 					player_set_commands_allowed(false);
 					_digi207r04PlayedFl = false;
-					player_update_info(_G(my_walker), &_G(player_info));
+					player_update_info();
 					_safariShadow3Mach = series_place_sprite("safari shadow 3", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
 					ws_hide_walker(_G(my_walker));
 					_ripTrekLowReacherPos1Series = series_load("rip trek arms x pos3", -1, nullptr);
 					_ripHeadDownTalkOffTd33Series2 = series_load("rip head down talk off td33", -1, nullptr);
-					player_update_info(_G(my_walker), &_G(player_info));
+					player_update_info();
 					_ripTrekLowReachMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 1024, false, triggerMachineByHashCallback, "rip exchange goods");
 					sendWSMessage_10000(1, _ripTrekLowReachMach, _ripTrekLowReacherPos1Series, 1, 15, 1, _ripTrekLowReacherPos1Series, 1, 1, 0);
 
@@ -1008,7 +1005,7 @@ void Room207::parser() {
 					terminateMachine(_safariShadow3Mach);
 					series_unload(_ripHeadDownTalkOffTd33Series2);
 					series_unload(_ripTrekLowReacherPos1Series);
-					ws_unhide_walker(_G(my_walker));
+					ws_unhide_walker();
 					player_set_commands_allowed(true);
 					_G(flags[V063]) = 1;
 					if (inv_object_is_here("REBUS AMULET")) {
@@ -1021,7 +1018,7 @@ void Room207::parser() {
 					break;
 				}
 			} else {
-				digi_play("207r03b", 1, 255, -1, -1);
+				digi_play("207r03b", 1);
 			}
 		}
 	} // if (_fieldAA == 0)
@@ -1044,50 +1041,50 @@ void Room207::parser() {
 		}
 	} // if (player_said("exit")) {
 
-	else if (esi && player_said("peasant")) {
+	else if (lookFlag && player_said("peasant")) {
 		if (_G(flags[V062]) == 0) {
-			digi_play("207r01", 1, 255, -1, -1);
+			digi_play("207r01", 1);
 			_G(flags[V062]) = 1;
 		} else {
-			digi_play("207r02", 1, 255, -1, -1);
+			digi_play("207r02", 1);
 		}
 	} // if (esi && player_said("peasant"))
 
-	else if (esi && player_said("SEVEN SPOKES") && inv_object_is_here("SEVEN SPOKES"))
-		digi_play("207r08", 1, 255, -1, -1);
-	else if (esi && player_said("METAL RIM") && inv_object_is_here("METAL RIM"))
-		digi_play("207r21", 1, 255, -1, -1);
-	else if (edi && (player_said("window") || player_said("door")))
-		digi_play("207r33", 1, 255, -1, -1);
-	else if (ecx && player_said("wooden rim"))
-		digi_play("207r25", 1, 255, -1, -1);
-	else if (ecx && player_said("wheel"))
-		digi_play("207r26", 1, 255, -1, -1);
-	else if (ecx && player_said("woodpile"))
-		digi_play("207r40", 1, 255, -1, -1);
-	else if (ecx && player_said("vase"))
-		digi_play("207r27", 1, 255, -1, -1);
-	else if (ecx && player_said("anvil"))
-		digi_play("207r28", 1, 255, -1, -1);
-	else if (ecx && player_said("cart"))
-		digi_play("207r29", 1, 255, -1, -1);
-	else if (ecx && player_said("sign"))
-		digi_play("207r30", 1, 255, -1, -1);
-	else if (ecx && player_said("jars"))
-		digi_play("207r31", 1, 255, -1, -1);
-	else if (ecx && player_said("vise"))
-		digi_play("207r32", 1, 255, -1, -1);
+	else if (lookFlag && player_said("SEVEN SPOKES") && inv_object_is_here("SEVEN SPOKES"))
+		digi_play("207r08", 1);
+	else if (lookFlag && player_said("METAL RIM") && inv_object_is_here("METAL RIM"))
+		digi_play("207r21", 1);
+	else if (useFlag && (player_said("window") || player_said("door")))
+		digi_play("207r33", 1);
+	else if (takeFlag && player_said("wooden rim"))
+		digi_play("207r25", 1);
+	else if (takeFlag && player_said("wheel"))
+		digi_play("207r26", 1);
+	else if (takeFlag && player_said("woodpile"))
+		digi_play("207r40", 1);
+	else if (takeFlag && player_said("vase"))
+		digi_play("207r27", 1);
+	else if (takeFlag && player_said("anvil"))
+		digi_play("207r28", 1);
+	else if (takeFlag && player_said("cart"))
+		digi_play("207r29", 1);
+	else if (takeFlag && player_said("sign"))
+		digi_play("207r30", 1);
+	else if (takeFlag && player_said("jars"))
+		digi_play("207r31", 1);
+	else if (takeFlag && player_said("vise"))
+		digi_play("207r32", 1);
 	else if (player_said("SOLDIER'S HELMET", "PEASANT"))
-		digi_play("203r64", 1, 255, -1, -1);
-	else if (esi && player_said("cart pieces"))
+		digi_play("203r64", 1);
+	else if (lookFlag && player_said("cart pieces"))
 		; // Nothing
 	else if (inv_player_has(_G(player).verb) && player_said("peasant"))
-		digi_play("203r50", 1, 255, -1, -1);
-	else if (esi && player_said(" ")) {
+		digi_play("203r50", 1);
+	else if (lookFlag && player_said(" ")) {
 		if (_G(flags[V054]) == 0)
-			digi_play("207r23a", 1, 255, -1, -1);
+			digi_play("207r23a", 1);
 		else
-			digi_play("207r23", 1, 255, -1, -1);
+			digi_play("207r23", 1);
 	} else if (!player_said("xxx"))
 		return;
 
@@ -1144,7 +1141,7 @@ void Room207::daemon() {
 			kernel_trigger_dispatchx(_dispatchTriggerNum);
 			_dispatchTriggerNum = -1;
 			if (_hiddenWalkerFl) {
-				ws_unhide_walker(_G(my_walker));
+				ws_unhide_walker();
 				_hiddenWalkerFl = false;
 			}
 
@@ -1210,7 +1207,7 @@ void Room207::daemon() {
 		terminateMachine(_safariShadow3Mach);
 		series_unload(_ripHeadDownTalkOffTd33Series);
 		series_unload(_ripTrekArmsXPos3Series);
-		ws_unhide_walker(_G(my_walker));
+		ws_unhide_walker();
 		player_set_commands_allowed(true);
 
 		break;
@@ -1251,7 +1248,7 @@ void Room207::daemon() {
 		_dispatchTriggerNum = -1;
 
 		if (_hiddenWalkerFl) {
-			ws_unhide_walker(_G(my_walker));
+			ws_unhide_walker();
 			_hiddenWalkerFl = false;
 		}
 		kernel_trigger_dispatchx(kernel_trigger_create(101));
@@ -1334,7 +1331,7 @@ void Room207::daemon() {
 					_digiName = nullptr;
 					_nextTriggerMode = KT_DAEMON;
 					_G(kernel).trigger_mode = KT_DAEMON;
-					_fieldAA = true;
+					_pipeFlag = true;
 				}
 
 				int32 rnd = imath_ranged_rand(17, 21);
@@ -1501,7 +1498,7 @@ void Room207::daemon() {
 			if (_field92 == 16) {
 				kernel_timing_trigger(30, 100, nullptr);
 			} else {
-				digi_play("203p01", 1, 255, -1, -1);
+				digi_play("203p01", 1);
 				sendWSMessage_10000(1, _ppSquatMach, _peskyBegLoopSeries, 15, 1, 111, _peskyBegLoopSeries, 1, 1, 0);
 			}
 
@@ -1591,7 +1588,7 @@ void Room207::daemon() {
 		_field92 = 2;
 		_field8E = 2;
 		player_set_commands_allowed(true);
-		_fieldAA = true;
+		_pipeFlag = true;
 		kernel_timing_trigger(1, 100, nullptr);
 		_fieldB6_counter = 0;
 		_fieldB2 = true;

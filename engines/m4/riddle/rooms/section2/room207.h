@@ -46,7 +46,7 @@ private:
 	int32 _field92 = 0;
 	bool _fieldA4 = false; // always false??
 	int32 _fieldA8 = 0; // unused ?
-	bool _fieldAA = false;
+	bool _pipeFlag = false;
 	int32 _fieldAE_rnd = 0;
 	bool _fieldB2 = false;
 	int32 _fieldB6_counter = 0;
