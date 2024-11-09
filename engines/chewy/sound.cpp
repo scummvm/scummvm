@@ -325,8 +325,8 @@ void Sound::playRoomMusic(int16 roomNum) {
 		}
 	}
 	
-	// Room 56 music (first vs second visit)
-	if (roomNum == 56 && _G(gameState).flags32_10 && _G(gameState).flags33_80)
+	// Room 56 (harbor) music - first vs second visit
+	if (roomNum == 56 && _G(gameState).flags32_10 && !_G(gameState).flags33_80)
 		musicIndex = 52;
 
 	if (musicIndex != _curMusic) {
