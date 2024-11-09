@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-08 11:49+0100\n"
-"PO-Revision-Date: 2024-11-09 09:18+0000\n"
+"PO-Revision-Date: 2024-11-09 09:32+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -3143,12 +3143,12 @@ msgstr "시계 방향"
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:35
 msgid "180 degrees"
-msgstr ""
+msgstr "180°"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:36
 msgid "Counter-clockwise"
-msgstr ""
+msgstr "반시계 방향"
 
 #: common/updates.cpp:57
 msgid "Daily"
@@ -4888,6 +4888,68 @@ msgid ""
 "  ![Keyboard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
 "\n"
 msgstr ""
+"## 터치 컨트롤 모드\n"
+"터치 컨트롤 모드는 오른쪽 상단 모서리에 있는 컨트롤러 아이콘을 탭하거나 "
+"클릭하여 변경할 수 있음\n"
+"### 직접 마우스 \n"
+"\n"
+"터치 컨트롤은 직접적입니다. 포인터는 (메뉴의 기본값) 손가락이 화면을 "
+"터치하는 곳으로 이동합니다.\n"
+"\n"
+"  ![Direct mouse mode](mouse.png \"Direct mouse mode\"){w=10em}\n"
+"\n"
+"### 터치패드 에뮬레이션 \n"
+"\n"
+"터치 컨트롤은 노트북 터치패드처럼 간접적입니다.\n"
+"\n"
+"  ![Touchpad mode](touchpad.png \"Touchpad mode\"){w=10em}\n"
+"\n"
+"### 게임패드 에뮬레이션 \n"
+"\n"
+"방향 패드와 액션 버튼을 에뮬레이션 하려면 손가락을 화면의 왼쪽과 오른쪽 "
+"아래에 놓아야 합니다.\n"
+"\n"
+"  ![Gamepad mode](gamepad.png \"Gamepad mode\"){w=10em}\n"
+"\n"
+"메뉴, 2D 게임, 3D 게임에 대한 기본 터치 모드를 선택하려면 **글로벌 옵션 > "
+"백엔드 > 기본 터치 모드 선택**으로 이동하세요.\n"
+"\n"
+"## 터치 동작 \n"
+"\n"
+"### 두 손가락 스크롤 \n"
+"\n"
+"스크롤하려면 두 손가락을 화면 위나 아래로 밀기\n"
+"### 두 손가락 탭\n"
+"\n"
+"두 손가락 탭을 하려면 한 손가락을 누른 다음 두 번째 손가락으로 탭합니다.\n"
+"\n"
+"### 세 손가락 탭\n"
+"\n"
+"세 손가락으로 탭하려면 한 손가락을 누른 상태에서 다른 두 손가락을 한 번에 "
+"하나씩 점진적으로 터치하면서 이전 손가락은 계속 누릅니다. 손가락을 표면에 "
+"대고 참을성 없이 탭하는 모습을 상상해 보세요. 하지만 그 움직임을 느리게 해서 "
+"리듬을 맞추되 너무 느리지 않게 합니다.\n"
+"\n"
+"### 몰입형 스티키 전체 화면 모드\n"
+"\n"
+"가장자리에서 밀어 시스템 바를 표시합니다.  바는 반투명 상태로 유지되며, "
+"상호작용하지 않는 한 몇 초 후에 사라집니다.\n"
+"\n"
+"### 글로벌 메인 메뉴\n"
+"\n"
+"글로벌 메인 메뉴를 열려면 화면 오른쪽 상단에 있는 메뉴 아이콘을 탭합니다.\n"
+"\n"
+"  ![Menu icon](menu.png \"Menu icon\"){w=10em}\n"
+"\n"
+"## 가상 키보드\n"
+"\n"
+"가상 키보드를 열려면 화면 오른쪽 상단의 컨트롤러 아이콘을 길게 누르거나 편집 "
+"가능한 텍스트 필드를 탭합니다. 가상 키보드를 숨기려면 컨트롤러 아이콘을 다시 "
+"탭하거나 텍스트 필드 밖을 탭합니다.\n"
+"\n"
+"\n"
+"  ![Keyboard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
+"\n"
 
 #: backends/platform/android/android.cpp:1126
 #: backends/platform/ios7/ios7_osys_misc.mm:336
@@ -5990,10 +6052,8 @@ msgstr ""
 "수 있습니다."
 
 #: engines/agi/metaengine.cpp:147
-#, fuzzy
-#| msgid "Predictive input dialog"
 msgid "Predictive Input Dialog on mouse click"
-msgstr "예측 입력 대화 상자"
+msgstr "마우스 클릭 시 예측 입력 대화 상자"
 
 #: engines/agi/metaengine.cpp:148
 msgid ""
@@ -6002,6 +6062,10 @@ msgid ""
 "The Predictive Input Dialog can still be activated on demand if there's a "
 "specified key mapping for it"
 msgstr ""
+"텍스트 입력 필드 내에서 왼쪽 마우스 버튼을 클릭할 때 특히 유용한 예측 입력 "
+"대화 상자를 활성화합니다.\n"
+"지정된 키 매핑이 있는 경우 예측 입력 대화 상자는 여전히 필요에 따라 활성화될 "
+"수 있음"
 
 #: engines/agi/metaengine.cpp:159
 msgid "Use Hercules hires font"
@@ -6563,10 +6627,8 @@ msgid "Default keymappings"
 msgstr "기본 키맵핑"
 
 #: engines/bbvs/metaengine.cpp:94
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Escape keymappings"
-msgstr "게임 키맵핑"
+msgstr "Escape 키맵핑"
 
 #. I18N: ESC key
 #: engines/bbvs/metaengine.cpp:110 engines/cruise/metaengine.cpp:197
@@ -7284,29 +7346,21 @@ msgstr "빠른 불러오기"
 
 #. I18N: Game runs at faster speed
 #: engines/cruise/metaengine.cpp:160 engines/tucker/metaengine.cpp:196
-#, fuzzy
-#| msgid "Fast move modifier"
 msgid "Fast mode"
-msgstr "빠른 이동 수정기"
+msgstr "빠른 모드"
 
 #. I18N: Opens menu with player commands
 #: engines/cruise/metaengine.cpp:173
-#, fuzzy
-#| msgid "Player Time:"
 msgid "Player menu"
-msgstr "플레이 시간:"
+msgstr "플레이어 메뉴"
 
 #: engines/cruise/metaengine.cpp:179
-#, fuzzy
-#| msgid "Faster game speed"
 msgid "Increase game speed"
-msgstr "더 빠른 게임 속도"
+msgstr "게임 속도 증가"
 
 #: engines/cruise/metaengine.cpp:185
-#, fuzzy
-#| msgid "Faster game speed"
 msgid "Decrease game speed"
-msgstr "더 빠른 게임 속도"
+msgstr "게임 속도 감소"
 
 #: engines/cruise/metaengine.cpp:203 engines/mads/metaengine.cpp:361
 #: engines/stark/metaengine.cpp:280
@@ -7318,20 +7372,16 @@ msgid "Versailles 1685 support is not compiled in"
 msgstr "Versailles 1685 지원이 컴파일 되지 않음"
 
 #: engines/dgds/metaengine.cpp:75
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Menu"
-msgstr "음소거 전환"
+msgstr "전환 메뉴"
 
 #: engines/dgds/metaengine.cpp:76
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle Clock"
-msgstr "전투 전환"
+msgstr "시계 전환"
 
 #: engines/dgds/metaengine.cpp:77
 msgid "Next dialog / menu item"
-msgstr ""
+msgstr "다음 대화 상자 / 메뉴 항목"
 
 #: engines/dgds/metaengine.cpp:78
 #, fuzzy
