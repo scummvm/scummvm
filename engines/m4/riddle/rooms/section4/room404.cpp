@@ -22,6 +22,7 @@
 #include "m4/riddle/rooms/section4/room404.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/riddle/riddle.h"
 
 namespace M4 {
 namespace Riddle {
@@ -552,9 +553,9 @@ void Room404::parser() {
 			digi_play("com016", 1);
 		} else if (_G(kernel).trigger == 6) {
 			_G(flags)[kCastleCartoon] = 1;
-			sendWSMessage_multi("com015");
+			sketchInJournal("com015");
 		} else {
-			sendWSMessage_multi("");
+			sketchInJournal("");
 		}
 	} else {
 		return;

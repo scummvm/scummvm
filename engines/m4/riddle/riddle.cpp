@@ -177,7 +177,7 @@ void RiddleEngine::global_parser() {
 				_G(flags)[kMocaMocheCartoon] = 1;
 			}
 			
-			sendWSMessage_multi("COM028");
+			sketchInJournal("COM028");
 		}
 	} else if ((player_said("journal", " ") || player_said("journal", "temple")) &&
 			!takeFlag && !lookFlag && !inv_player_has(_G(player).noun) &&
@@ -190,7 +190,7 @@ void RiddleEngine::global_parser() {
 				_G(flags)[V089] = 1;
 			}
 
-			sendWSMessage_multi("com032");
+			sketchInJournal("com032");
 		}
 	} else if (player_said("journal") && player_said_any(" ", "lava") &&
 			!takeFlag && !lookFlag && !inv_player_has(_G(player).noun) &&
@@ -203,7 +203,7 @@ void RiddleEngine::global_parser() {
 				_G(flags)[V089] = 1;
 			}
 
-			sendWSMessage_multi("605r13");
+			sketchInJournal("605r13");
 		}
 	} else if ((player_said("journal", "romanov emerald") ||
 			player_said("journal", "emerald/cork")) &&
@@ -216,7 +216,7 @@ void RiddleEngine::global_parser() {
 				_G(flags)[V089] = 1;
 			}
 
-			sendWSMessage_multi(nullptr);
+			sketchInJournal(nullptr);
 		}
 	} else if (player_said("journal", "rongorongo tablet") &&
 			!takeFlag && !lookFlag) {
@@ -227,7 +227,7 @@ void RiddleEngine::global_parser() {
 				_G(flags)[V288] = 1;
 			}
 
-			sendWSMessage_multi(nullptr);
+			sketchInJournal(nullptr);
 		}
 
 	} else if (lookFlag && player_said("JOURNAL")) {
@@ -626,6 +626,117 @@ void RiddleEngine::lookAtInventoryItem() {
 	}
 
 	kernel_examine_inventory_object(str.c_str(), 5, 1, 270, 150, kINVENTORY_CLOSEUP_END, digi);
+}
+
+void sketchInJournal(const char *digiName) {
+	int start = 0, finish = 0;
+
+	switch (_G(kernel).trigger) {
+	case -1:
+	case 8:
+		player_update_info();
+
+		switch (_G(player_info).facing) {
+		case 1:
+		case 2:
+			ws_walk(_G(player_info).x, _G(player_info).y, nullptr, 1, 2);
+			break;
+
+		case 3:
+			ws_walk(_G(player_info).x, _G(player_info).y, nullptr, 1, 3);
+			break;
+
+		case 4:
+		case 5:
+			ws_walk(_G(player_info).x, _G(player_info).y, nullptr, 1, 4);
+			break;
+
+		case 7:
+		case 8:
+			ws_walk(_G(player_info).x, _G(player_info).y, nullptr, 1, 8);
+			break;
+
+		case 9:
+			ws_walk(_G(player_info).x, _G(player_info).y, nullptr, 1, 9);
+			break;
+
+		case 10:
+		case 11:
+			ws_walk(_G(player_info).x, _G(player_info).y, nullptr, 1, 10);
+			break;
+
+		default:
+			break;
+		}
+
+		player_set_commands_allowed(false);
+		break;
+
+	case 1:
+		player_update_info();
+		digi_preload("950_s34");
+
+		switch (_G(player_info).facing) {
+		case 2:
+		case 10:
+			finish = 39;
+			start = 17;
+			_G(ripSketching) = series_load("RIP SKETCHING IN NOTEBOOK POS 2");
+			break;
+
+		case 3:
+		case 9:
+			finish = 36;
+			start = 22;
+			_G(ripSketching) = series_load("RIP SKETCHING IN NOTEBOOK POS 3");
+			break;
+
+		case 4:
+		case 8:
+			finish = 45;
+			start = 19;
+			_G(ripSketching) = series_load("RIP SKETCHING IN NOTEBOOK POS 4");
+			break;
+
+		default:
+			break;
+		}
+
+		setGlobals1(_G(ripSketching), 1, start, start, start, 0, start + 1, finish, finish, finish);
+		sendWSMessage_110000(3);
+		digi_play(digiName, 1);
+		break;
+
+	case 3:
+		if (_G(player_info).facing == 0 || _G(player_info).facing == 9)
+			sendWSMessage_190000(9);
+
+		sendWSMessage_120000(4);
+		digi_play("950_s34", 2, 200, 7);
+		break;
+
+	case 4:
+		sendWSMessage_110000(5);
+		break;
+
+	case 5:
+		sendWSMessage_140000(6);
+		break;
+
+	case 6:
+		series_unload(_G(ripSketching));
+		digi_unload("950_s34");
+		player_set_commands_allowed(true);
+		return;
+
+	case 7:
+		if (_G(player_info).facing == 3 || _G(player_info).facing == 9)
+			sendWSMessage_190000(5);
+		break;
+
+	default:
+		break;
+	}
 }
 
 } // namespace Riddle

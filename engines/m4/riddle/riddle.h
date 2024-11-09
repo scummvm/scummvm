@@ -93,6 +93,8 @@ public:
 	void global_parser() override;
 };
 
+extern void sketchInJournal(const char *digiName);
+
 } // namespace Riddle
 } // namespace M4
 

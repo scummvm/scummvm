@@ -27,8 +27,6 @@
 namespace M4 {
 namespace Riddle {
 
-extern void sendWSMessage_multi(const char *name);
-
 /**
  * Sets a bunch of globals. Sooooo many globals.
  */

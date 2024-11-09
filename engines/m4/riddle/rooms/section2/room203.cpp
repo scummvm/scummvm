@@ -25,7 +25,7 @@
 #include "m4/adv_r/other.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/gui/gui_vmng_screen.h"
-#include "m4/m4.h"
+#include "m4/riddle/riddle.h"
 
 namespace M4 {
 namespace Riddle {
@@ -3134,7 +3134,7 @@ void Room203::parser() {
 				_G(flags)[kChinshiCartoon] = 1;
 			}
 
-			sendWSMessage_multi("203r53");
+			sketchInJournal("203r53");
 		}
 	} else if (lookFlag && inv_player_has(_G(player).noun)) {
 		switch (_G(kernel).trigger) {

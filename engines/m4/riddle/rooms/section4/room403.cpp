@@ -24,6 +24,7 @@
 #include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
 #include "m4/gui/gui_vmng.h"
+#include "m4/riddle/riddle.h"
 
 namespace M4 {
 namespace Riddle {
@@ -2258,11 +2259,11 @@ void Room403::useJournal() {
 	} else if (_G(flags)[kEpitaphCartoon]) {
 		if (_G(kernel).trigger == 6)
 			_G(flags)[kGraveyardCartoon] = 1;
-		sendWSMessage_multi(nullptr);
+		sketchInJournal(nullptr);
 	} else {
 		if (_G(kernel).trigger == 6)
 			_G(flags)[kGraveyardCartoon] = 1;
-		sendWSMessage_multi("403r41");
+		sketchInJournal("403r41");
 	}
 }
 

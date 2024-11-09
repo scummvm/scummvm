@@ -24,6 +24,7 @@
 #include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
 #include "m4/adv_r/adv_file.h"
+#include "m4/riddle/riddle.h"
 
 namespace M4 {
 namespace Riddle {
@@ -473,7 +474,7 @@ void Room605::parser() {
 		} else {
 			if (_G(kernel).trigger == 6)
 				_G(flags)[V196] = 1;
-			sendWSMessage_multi(0);
+			sketchInJournal(0);
 		}
 	} else if (lookFlag && player_said("head")) {
 		digi_play("605r03", 1);

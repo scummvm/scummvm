@@ -24,6 +24,7 @@
 #include "m4/riddle/vars.h"
 #include "m4/adv_r/adv_file.h"
 #include "m4/adv_r/other.h"
+#include "m4/riddle/riddle.h"
 
 namespace M4 {
 namespace Riddle {
@@ -765,7 +766,7 @@ void Room510::parser() {
 				player_set_commands_allowed(false);
 
 				if (_flag1) {
-					sendWSMessage_multi(0);
+					sketchInJournal(0);
 				} else {
 					digi_play("com028", 1, 255, 100);
 					_flag1 = true;
@@ -777,10 +778,10 @@ void Room510::parser() {
 				break;
 			case 100:
 				_G(kernel).trigger = -1;
-				sendWSMessage_multi(0);
+				sketchInJournal(0);
 				break;
 			default:
-				sendWSMessage_multi(0);
+				sketchInJournal(0);
 				break;
 			}
 		}

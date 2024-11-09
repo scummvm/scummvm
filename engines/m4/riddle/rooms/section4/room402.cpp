@@ -23,6 +23,7 @@
 #include "m4/riddle/rooms/section4/section4.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/riddle/riddle.h"
 
 namespace M4 {
 namespace Riddle {
@@ -1568,7 +1569,7 @@ void Room402::parser() {
 				_G(flags)[kCastleCartoon] = 1;
 				_G(flags)[V089] = 1;
 			}
-			sendWSMessage_multi("com015");
+			sketchInJournal("com015");
 		}
 	} else if (lookFlag && player_said(" ")) {
 		digi_play("402r08", 1);

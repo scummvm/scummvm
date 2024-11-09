@@ -22,6 +22,7 @@
 #include "m4/riddle/rooms/section4/room405.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/riddle/riddle.h"
 
 namespace M4 {
 namespace Riddle {
@@ -699,7 +700,7 @@ void Room405::parser() {
 		} else {
 			if (_G(kernel).trigger == 6)
 				_G(flags)[kCastleCartoon] = 1;
-			sendWSMessage_multi("com015");
+			sketchInJournal("com015");
 		}
 	} else {
 		return;
