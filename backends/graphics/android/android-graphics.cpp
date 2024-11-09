@@ -166,12 +166,12 @@ void AndroidGraphicsManager::displayMessageOnOSD(const Common::U32String &msg) {
 }
 
 void AndroidGraphicsManager::recalculateDisplayAreas() {
-	Common::Rect oldDrawRect = _gameDrawRect;
+	Common::Rect oldDrawRect = _activeArea.drawRect;
 
 	OpenGLGraphicsManager::recalculateDisplayAreas();
 
-	int offsetX = _gameDrawRect.left - oldDrawRect.left;
-	int offsetY = _gameDrawRect.top - oldDrawRect.top;
+	int offsetX = _activeArea.drawRect.left - oldDrawRect.left;
+	int offsetY = _activeArea.drawRect.top - oldDrawRect.top;
 
 	int newX = _cursorX + offsetX;
 	int newY = _cursorY + offsetY;
