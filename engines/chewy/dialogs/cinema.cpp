@@ -72,7 +72,7 @@ void Cinema::execute() {
 					continue;
 
 				cutsceneName = _G(atds)->getTextEntry(98,
-					546 + cutscenes[topIndex + i], ATS_DATA);
+					546 + cutscenes[topIndex + i] - 1, ATS_DATA);
 				int yp = i * 10 + 68;
 
 				if (i == selected)
@@ -157,7 +157,7 @@ void Cinema::execute() {
 			_G(out)->setPointer((byte *)g_screen->getPixels());
 			_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 
-			flic_cut(CINEMA_FLICS[cutscenes[topIndex + selected]]);
+			flic_cut(CINEMA_FLICS[cutscenes[topIndex + selected] - 1]);
 			_G(fontMgr)->setFont(_G(font6));
 			showCur();
 			delay = 0;
