@@ -169,15 +169,22 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 		_dirtyChannels = _currentMovie->getScore()->getSpriteIntersections(r);
 
 		bool shouldClear = true;
+		Channel *trailChannel = nullptr;
 		for (auto &j : _dirtyChannels) {
 			if (j->_visible && r == j->getBbox() && j->isTrail()) {
 				shouldClear = false;
+				trailChannel = j;
 				break;
 			}
 		}
 
-		if (shouldClear)
+		if (shouldClear) {
 			blitTo->fillRect(r, _stageColor);
+		} else if (trailChannel) {
+			// Trail rendering mode; do not re-render the background and sprites underneath.
+			_dirtyChannels.clear();
+			_dirtyChannels.push_back(trailChannel);
+		}
 
 		for (int pass = 0; pass < 2; pass++) {
 			for (auto &j : _dirtyChannels) {
