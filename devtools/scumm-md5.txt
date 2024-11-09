@@ -317,15 +317,15 @@ atlantis	Indiana Jones and the Fate of Atlantis
 	1fbebd7b2b692df5297870447a80cfed	12030	de	DOS	Floppy	Floppy	-	Fingolfin
 	8f3758ff98c9c5d78e5d635222cad026	12030	it	DOS	Floppy	Floppy	-	Andrea Petrucci
 	9bd2a8f72613e715c199246dd511e10f	12030	es	DOS	Floppy	Floppy	-	abnog, Andrea Petrucci
-	06b187468113f9ae5a400b148a847fac	12075	en	Mac	Floppy	Floppy	six data files	Lars N sbye Christensen
-	d6dd0646404768a63e963891a96daadd	12035	en	Mac	Floppy	Floppy	two data files	Fingolfin
+	06b187468113f9ae5a400b148a847fac	12075	en	Mac	Mac Floppy	Floppy	six data files	Lars N sbye Christensen
+	d6dd0646404768a63e963891a96daadd	12035	en	Mac	Mac Floppy	Floppy	two data files	Fingolfin
 
 	182344899c2e2998fca0bebcd82aa81a	12035	en	DOS	-	CD	V1.0 10/9/92	Fingolfin
 	8d6a88fc58b72785621712fcffc03141	12035	he	DOS	-	CD	V1.0 10/9/92	phcoder
 	f3c5d9bf3f091bd1f18dc1013fba5396	638976	en	Windows	Steam	Steam	Steam Version	Ben Castricum, Filippos Karapetis
 	6a8133b63d46f6663fbcbb49d5a2edb1	520548	en	Mac	Steam	Steam	Steam Version	Filippos Karapetis
-	1a6e5ae2777a6a33f06ffc0226210934	11885	en	Mac	-	CD	V1.0 10/9/92	Scott Summers
-	2d9d46f23cb07bbc90b8ad464d3e4ff8	-1	en	Mac	-	CD	Mac bundle	Joachim Eberhard
+	1a6e5ae2777a6a33f06ffc0226210934	11885	en	Mac	Mac	CD	V1.0 10/9/92	Scott Summers
+	2d9d46f23cb07bbc90b8ad464d3e4ff8	-1	en	Mac	Mac	CD	Mac bundle	Joachim Eberhard
 	8e9417564f33790815445b2136efa667	11915	jp	Mac	-	CD	-	Petr Maruska
 	e8d0697906e53fee8b7e9f5652696da8	11915	jp	DOS	-	CD	-	Petr Maruska, tracker #4900
 	55b4494051b06e95bcaa0d6d8f6fb757	286720	en	Windows	Steam	Humble	Actually Humble version - Mataniko
