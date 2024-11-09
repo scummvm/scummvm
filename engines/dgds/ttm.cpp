@@ -34,7 +34,7 @@
 #include "dgds/sound.h"
 #include "dgds/font.h"
 #include "dgds/sound_raw.h"
-
+#include "dgds/drawing.h"
 
 namespace Dgds {
 
@@ -908,6 +908,19 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	case 0xa300:
 		doDrawDialogForStrings(env, seq, ivals[0], ivals[1], ivals[2], ivals[3]);
 		break;
+
+	case 0xa400: { // DRAW FILLED CIRCLE
+		int16 xr = ivals[2] / 2;
+		int16 yr = ivals[3] / 2;
+		Drawing::filledCircle(ivals[0] + xr, ivals[1] + yr, xr, yr, &_vm->_compositionBuffer, seq._drawColFG, seq._drawColBG);
+		break;
+	}
+	case 0xa420: { // DRAW EMPTY CIRCLE
+		int16 xr = ivals[2] / 2;
+		int16 yr = ivals[3] / 2;
+		Drawing::emptyCircle(ivals[0] + xr, ivals[1] + yr, xr, yr, &_vm->_compositionBuffer, seq._drawColFG);
+		break;
+	}
 	case 0xa500: // DRAW SPRITE: x,y,tile-id,bmp-id:int [-n,+n]
 	case 0xa510: // DRAW SPRITE FLIP V x,y:int
 	case 0xa520: // DRAW SPRITE FLIP H: x,y:int
