@@ -290,8 +290,8 @@ monkey2	Monkey Island 2: LeChuck's Revenge
 	69ea626f1f87eecb78ea0d6c6b983a1d	-1	it	DOS	-	-	-	Andrea Petrucci
 	bd126753de619a495f9f22adc951c8d5	11135	it	DOS	-	-	alt?	Andrea Petrucci
 	7974365d3dc0f43a2748c975f91ff042	11135	es	DOS	-	-	-	Andrea Petrucci
-	4cb9c3618f71668f8e4346c8f323fa82	10700	en	Mac	-	-	v1.0 11/5/92	Fingolfin
-	e246e02db9630533a40d99c9f54a8e01	10740	en	Mac	-	-	v1.0 11/5/92 alt?	Lars N&aelig;sbye Christensen
+	4cb9c3618f71668f8e4346c8f323fa82	10700	en	Mac	Mac	-	v1.0 11/5/92	Fingolfin
+	e246e02db9630533a40d99c9f54a8e01	10740	en	Mac	Mac	-	v1.0 11/5/92 alt?	Lars N&aelig;sbye Christensen
 
 	da09e666fc8f5b78d7b0ac65d1a3b56e	11135	en	FM-TOWNS	FM-TOWNS	-	-	dhewg, Andrea Petrucci
 	430bc518017b6fac046f58bab6baad5d	11135	jp	FM-TOWNS	FM-TOWNS	-	-	Antti Leimi, Andrea Petrucci
