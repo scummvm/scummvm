@@ -73,6 +73,7 @@ public:
 	Common::Error sync(Common::Serializer &s);
 
 	void playTosSpeech(int tosIdx);
+	void stopSpeech();
 	bool isPlayingSpeech() const;
 	bool isPlayingSfx() const;
 	bool isPlayingMusic();
@@ -82,6 +83,7 @@ public:
 	void playMusic(Common::String const &filename, bool loop = false);
 	void stopMusic();
 	void playSfx(uint8 sfxId, int unk1, int unk2);
+	void stopSfx();
 	void syncSoundSettings();
 	void killAllSound();
 private:

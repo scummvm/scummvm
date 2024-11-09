@@ -162,6 +162,10 @@ void Sound::playTosSpeech(int tosIdx) {
 	_didSpeech[tosIdx] = 1;
 }
 
+void Sound::stopSpeech() {
+	_mixer->stopHandle(_speechHandle);
+}
+
 bool Sound::isPlayingSpeech() const {
 	return _mixer->isSoundHandleActive(_speechHandle);
 }
@@ -223,6 +227,8 @@ void Sound::stopMusic() {
 
 void Sound::killAllSound() {
 	stopMusic();
+	stopSfx();
+	stopSpeech();
 }
 
 void Sound::syncSoundSettings() {
@@ -238,6 +244,10 @@ void Sound::playSfx(uint8 sfxId, int unk1, int unk2) {
 	if (g_engine->isCdVersion()) {
 		playDosCDSfx(sfxId);
 	}
+}
+
+void Sound::stopSfx() {
+	_mixer->stopHandle(_sfxHandle);
 }
 
 void Sound::playDosCDSfx(int sfxId) {

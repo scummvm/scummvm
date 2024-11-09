@@ -1941,7 +1941,6 @@ void DarkseedEngine::getPackageObj(int packageType) {
 }
 
 void DarkseedEngine::playSound(uint8 sfxId, uint8 unk1, int16 unk2) {
-	// TODO... play sound
 	debug("Play SFX: %d", sfxId);
 	_sound->playSfx(sfxId, unk1, unk2);
 }

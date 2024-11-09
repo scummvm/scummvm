@@ -169,7 +169,7 @@ void Animation::updateAnimation() {
 			_player->updateSprite();
 		}
 		break;
-	case 2:
+	case 2: // shower
 		advanceAnimationFrame(0);
 		if (!_objRestarted) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]];
@@ -181,7 +181,7 @@ void Animation::updateAnimation() {
 			_player->_walkTarget.x = 218;
 			_player->_walkTarget.y = 198;
 			_objectVar[52] = 0;
-			//			StopVOC(); TODO
+			g_engine->_sound->stopSfx();
 		}
 		break;
 	case 3:
