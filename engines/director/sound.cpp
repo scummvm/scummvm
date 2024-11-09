@@ -378,6 +378,8 @@ void DirectorSound::loadSampleSounds(uint type) {
 				break;
 			}
 		}
+		if (id != 0xFF)
+			break;
 	}
 
 	if (!archive) {
