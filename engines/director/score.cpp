@@ -268,26 +268,14 @@ int Score::getNextLabelNumber(int referenceFrame) {
 	if (_labels == nullptr || _labels->size() == 0)
 		return 0;
 
-	Common::SortedArray<Label *>::iterator i;
-
-	for (i = _labels->begin(); i != _labels->end(); ++i) {
-		if ((*i)->number >= referenceFrame) {
-			int n = (*i)->number;
-			++i;
-			if (i != _labels->end()) {
-				// return to the first marker to to the right
-				return (*i)->number;
-			} else {
-				// if no markers are to the right of the playback head,
-				// the playback head goes to the first marker to the left
-				return n;
-			}
+	for (auto &it : *_labels) {
+		if (it->number > referenceFrame) {
+			return it->number;
 		}
 	}
-
-	// If there are not markers to the left,
-	// the playback head goes to frame 1, (Director frame array start from 1, engine from 0)
-	return 0;
+	// if no markers are to the right of the playback head,
+	// return the last marker
+	return _labels->back()->number;
 }
 
 int Score::getPreviousLabelNumber(int referenceFrame) {
