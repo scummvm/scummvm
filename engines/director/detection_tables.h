@@ -626,6 +626,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "itc",				"Internet the City: A Guided Tour Through the Internet" },
 	{ "journey2life",		"The Journey to Life" },
 	{ "journey2source",		"Journey to the Source: An Expedition along the Yangtze River" },
+	{ "kingsice",			"Kings of the Ice: A History of World Hockey" },
 	{ "klondikegold",		"Klondike Gold - An Interactive History" },
 	{ "learningcoreldraw3",	"Learning CorelDRAW 3" },
 	{ "laughingbird",		"The Laughing Bird Restaurant" },
@@ -9099,6 +9100,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("kellyparade", "", "Kelly Club Pet Parade.exe", "c163f36141579ee374f7b4b2bddee95a", 2116952, 851),
 
 	WINGAME1("kidsmathsquest", "", "Ekmquest.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 4775408, 800),
+
+	// CD bundled with a hockey encyclopedia
+	// TRAC report #13301
+	WINGAME1("kingsice", "", "BASE/HOCKEY.EXE", "t:0c2d3a7ca37227925557d434ad44a0fc", 77070, 850),
 
 	// Vlaams Centrum voor Agro- en Visserijmarketing is a government agency that promotes agricultural products
 	// The CD-ROM offers the opportunity to work on healthy food, more specifically on fruit and vegetables
