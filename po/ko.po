@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-08 11:49+0100\n"
-"PO-Revision-Date: 2024-11-09 09:44+0000\n"
+"PO-Revision-Date: 2024-11-09 10:30+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -5270,6 +5270,73 @@ msgid ""
 "  ![Keyboard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
 "\n"
 msgstr ""
+"## 터치 컨트롤 모드\n"
+"터치 컨트롤 모드는 오른쪽 상단 모서리에 있는 컨트롤러 아이콘을 탭하거나 "
+"클릭하거나, 두 손가락을 왼쪽에서 오른쪽으로 쓸어 넘기거나, 런처의 글로벌 "
+"설정에서 **글로벌 옵션 > 백엔드 > 선호하는 터치 모드 선택**으로 이동하여 "
+"변경할 수 있습니다. 세 가지 상황(ScummVM 메뉴, 2D 게임 및 3D 게임)에 대해 "
+"터치 모드를 구성할 수 있습니다.\n"
+"\n"
+"### 직접 마우스 \n"
+"\n"
+"터치 컨트롤은 직접적입니다. 포인터는 메뉴의 기본값 손가락이 화면을 터치하는 "
+"곳으로 이동합니다.\n"
+"\n"
+"  ![Direct mouse mode](mouse.png \"Direct mouse mode\"){w=10em}\n"
+"\n"
+"### 터치패드 에뮬레이션 \n"
+"\n"
+"터치 컨트롤은 노트북의 터치패드처럼 간접적입니다.\n"
+"\n"
+"  ![Touchpad mode](touchpad.png \"Touchpad mode\"){w=10em}\n"
+"\n"
+"메뉴, 2D 게임, 3D 게임에 적합한 터치 모드를 선택하려면 **글로벌 옵션 > "
+"백엔드 > 원하는 터치 모드 선택**으로 이동하세요.\n"
+"\n"
+"## 터치 동작 \n"
+"\n"
+"| 제스처           | 동작            \n"
+"| ------------------|-------------------\n"
+"| `한 손가락 탭`  | 왼쪽 마우스 클릭  \n"
+"| `두 손가락 탭` | 오른쪽 마우스 클릭 \n"
+"| `두 손가락 두 번 탭` | ESC \n"
+"| `한 손가락으로 0.5초 이상 누르고 있음` | 왼쪽 마우스 버튼을 누른 채로 "
+"드래그하면 원숭이 섬의 저주의 액션 휠에서 선택할 수 있음 \n"
+"| `두 손가락으로 0.5초 이상 누르고 있음` | 오른쪽 마우스 버튼을 누른 채로 "
+"드래그하면 토니 터프의 액션 휠에서 선택할 수 있음 \n"
+"| `두 손가락으로 밀기 (왼쪽에서 오른쪽으로)` | 터치 모드 간 전환 \n"
+"| `두 손가락으로 밀기 (오른쪽에서 왼쪽으로)` | 가상 컨트롤러 전환 (>iOS 15) "
+"\n"
+"| `두 손가락으로 밀기 (위에서 아래로)` | 게임 내 글로벌 메인 메뉴 접속 \n"
+"| `핀치 (확대/축소)` | 키보드 활성화/비활성화 \n"
+"\n"
+"### 가상 게임패드 \n"
+"\n"
+"iOS 15 이상을 실행하는 장치는 두 손가락을 오른쪽에서 왼쪽으로 밀거나 **"
+"글로벌 옵션 > 백엔드**를 통해 가상 게임패드 컨트롤러를 연결할 수 있습니다. "
+"방향 버튼은 엄지스틱 또는 십자 패드로 구성할 수 있습니다.\n"
+"**참고** 가상 컨트롤러가 연결되어 있는 동안은 가상 컨트롤러가 표시되는 한 탭 "
+"제스처가 비활성화되어 있으므로 탭 제스처를 사용하여 마우스 클릭을 수행할 수 "
+"없습니다. 왼쪽 마우스 클릭은 A 버튼을 눌러 수행합니다. 가상 컨트롤러가 연결 "
+"해제되면 탭 제스처가 다시 ​​활성화됩니다..\n"
+"\n"
+"### 글로벌 메인 메뉴\n"
+"\n"
+"글로벌 메인 메뉴를 열려면 화면 오른쪽 상단에 있는 메뉴 아이콘을 탭하거나 두 "
+"손가락을 아래로 살짝 밉니다.\n"
+"\n"
+"  ![Menu icon](menu.png \"Menu icon\"){w=10em}\n"
+"\n"
+"## 가상 키보드\n"
+"\n"
+"가상 키보드를 열려면 화면 오른쪽 상단의 컨트롤러 아이콘을 길게 누르거나, "
+"핀치 제스처(축소)를 수행하거나, 편집 가능한 텍스트 필드를 탭합니다. 가상 "
+"키보드를 숨기려면 컨트롤러 아이콘을 다시 탭하거나, 반대로 핀치 제스처(확대)"
+"를 수행하거나, 텍스트 필드 밖을 탭합니다.\n"
+"\n"
+"\n"
+"  ![Keyboard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
+"\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:314
 msgid "External keyboard"
@@ -7396,10 +7463,8 @@ msgid "Previous object"
 msgstr "이전 개체"
 
 #: engines/dgds/metaengine.cpp:81
-#, fuzzy
-#| msgid "Previous action"
 msgid "Pick up / Operate"
-msgstr "이전 행동"
+msgstr "집다 / 운용"
 
 #: engines/dgds/metaengine.cpp:83
 msgid "Activate Inventory Object"
@@ -8232,10 +8297,8 @@ msgstr "왼쪽 하단으로 이동"
 
 #. I18N: Move actor in the bottom-right direction
 #: engines/hugo/metaengine.cpp:217
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to bottom right"
-msgstr "오른쪽으로 이동"
+msgstr "오른쪽 하단으로 이동"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -8298,28 +8361,20 @@ msgid "Side Step"
 msgstr "사이드 스텝"
 
 #: engines/illusions/metaengine.cpp:108
-#, fuzzy
-#| msgid "Move forward left"
 msgid "Move cursor up"
-msgstr "왼쪽 앞으로 이동"
+msgstr "커서를 위로 이동"
 
 #: engines/illusions/metaengine.cpp:115
-#, fuzzy
-#| msgid "Move forward left"
 msgid "Move cursor down"
-msgstr "왼쪽 앞으로 이동"
+msgstr "커서를 아래로 이동"
 
 #: engines/illusions/metaengine.cpp:122
-#, fuzzy
-#| msgid "Move forward left"
 msgid "Move cursor left"
-msgstr "왼쪽 앞으로 이동"
+msgstr "커서를 왼쪽으로 이동"
 
 #: engines/illusions/metaengine.cpp:129
-#, fuzzy
-#| msgid "Move forward right"
 msgid "Move cursor right"
-msgstr "오른쪽 앞으로 이동"
+msgstr "커서를 오른쪽으로 이동"
 
 #: engines/illusions/metaengine.cpp:136 engines/twine/metaengine.cpp:422
 #: engines/twine/metaengine.cpp:474 engines/twine/metaengine.cpp:490
@@ -8480,8 +8535,6 @@ msgstr "앞으로 이동"
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
 #: engines/wintermute/keymapper_tables.h:2238
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Move Backwards"
 msgstr "뒤로 이동"
 
@@ -9404,10 +9457,8 @@ msgid "An error occurred while writing the save game"
 msgstr "저장 게임을 쓰는 동안 오류가 발생함"
 
 #: engines/mtropolis/plugin/standard.cpp:1670
-#, fuzzy
-#| msgid "PNG Image File"
 msgid "Image Viewer"
-msgstr "PNG 이미지 파일"
+msgstr "이미지 뷰어"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
@@ -9977,13 +10028,15 @@ msgstr "법적 이유로 비활성화된 그래픽을 활성화"
 
 #: engines/sci/detection_options.h:236
 msgid "Enable saving via the GMM"
-msgstr ""
+msgstr "GMM을 통한 저장 활성화"
 
 #: engines/sci/detection_options.h:237
 msgid ""
 "Allows saving via the GMM. WARNING: saves created via the GMM may be "
 "corrupted and unusable. Use at your own risk!"
 msgstr ""
+"GMM을 통해 저장할 수 있습니다. 경고: GMM을 통해 생성된 저장은 손상되어 "
+"사용할 수 없을 수 있습니다. 사용 시 모든 위험을 감수하세요!"
 
 #: engines/sci/detection_options.h:251
 msgid "MIDI mode:"
@@ -11009,6 +11062,8 @@ msgid ""
 "Warning: this re-release version contains patched game scripts,\n"
 "and therefore it might crash or not work properly for the time being."
 msgstr ""
+"경고: 이 다시 출시된 버전에는 패치된 게임 스크립트가 포함되어 있으므로,\n"
+"당장은 충돌이 발생하거나 제대로 작동하지 않을 수 있습니다."
 
 #: engines/scumm/metaengine.cpp:486
 msgid "HE v71+ support is not compiled in"
@@ -11201,42 +11256,28 @@ msgstr ""
 "이 게임의 음악과 글꼴을 사용하려면 '룸' 매킨토시 실행 파일이 필요합니다."
 
 #: engines/scumm/scumm.cpp:1261
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Monkey Island' Macintosh executable to read the\n"
-#| "instruments from. Music will be disabled."
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read resources\n"
 "and instruments from. Music and Mac GUI will be disabled."
 msgstr ""
-"악기가 포함된 '원숭이 섬' 매킨토시 실행 파일을 찾을 수 없습니다.\n"
-"음악이 비활성화됩니다."
+"리소스와 악기를 읽을 수 있는 '원숭이 섬' 매킨토시 실행 파일을 찾을 수 없고 \n"
+"음악 및 맥 GUI가 비활성화됩니다."
 
 #: engines/scumm/scumm.cpp:1290
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
-#| "will\n"
-#| "be disabled."
 msgid ""
 "Could not find the 'Fate of Atlantis' Macintosh executable.\n"
 "Mac GUI will not be shown."
 msgstr ""
-"'Indy' 매킨토시 실행파일을 찾을 수 없습니다. 고해상도\n"
-"글꼴이 비활성화됩니다."
+"'인디아나 존스 : 아틀란티스의 운명' 매킨토시 실행 파일을 찾을 수 없습니다.\n"
+"맥 GUI가 표시되지 않습니다."
 
 #: engines/scumm/scumm.cpp:1310
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
-#| "will\n"
-#| "be disabled."
 msgid ""
 "Could not find the 'LeChuck's Revenge' Macintosh executable.\n"
 "Mac GUI will not be shown."
 msgstr ""
-"'Indy' 매킨토시 실행파일을 찾을 수 없습니다. 고해상도\n"
-"글꼴이 비활성화됩니다."
+"'원숭이 섬 2 : 르척의 복수' 매킨토시 실행 파일을 찾을 수 없습니다.\n"
+"맥 GUI가 표시되지 않습니다."
 
 #: engines/scumm/scumm.cpp:1321
 #, c-format
@@ -11502,10 +11543,8 @@ msgid "Open control panel"
 msgstr "제어판 열기"
 
 #: engines/sky/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle really fast mode"
 msgid "Toggle really fast mode on/off"
-msgstr "매우 빠른 모드 전환"
+msgstr "정말 빠른 모드 켜기/끄기 전환"
 
 #: engines/sky/metaengine.cpp:156
 msgid "Floppy intro"
@@ -11609,14 +11648,10 @@ msgid "Scroll down in your dialogues"
 msgstr "대화에서 아래로 스크롤"
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "go to next dialogue"
 msgid "Go to next dialogue"
 msgstr "다음 대화로 이동"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "go to previous dialogues"
 msgid "Go to previous dialogues"
 msgstr "이전 대화로 이동"
 
@@ -11763,51 +11798,44 @@ msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "이 브로큰 소드 1 데모는 끝났음"
 
 #: engines/sword1/metaengine.cpp:63
-#, fuzzy
-#| msgctxt "Options menu"
-#| msgid "Voices: English"
 msgid "English"
-msgstr "음성: 영어"
+msgstr "영어"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "German"
-msgstr ""
+msgstr "독일어"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "French"
-msgstr ""
+msgstr "프랑스어"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Italian"
-msgstr ""
+msgstr "이탈리아어"
 
 #: engines/sword1/metaengine.cpp:63
-#, fuzzy
-#| msgid "Finish"
 msgid "Spanish"
-msgstr "완료"
+msgstr "스페인어"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Brazilian Portuguese"
-msgstr ""
+msgstr "브라질 포르투갈어"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Czech"
-msgstr ""
+msgstr "체코어"
 
 #: engines/sword1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Game language:"
 msgid "Text language:"
-msgstr "게임 언어:"
+msgstr "텍스트 언어:"
 
 #: engines/sword1/metaengine.cpp:87 engines/sword1/metaengine.cpp:95
 msgid "Set the language for the subtitles. This will not affect voices."
-msgstr ""
+msgstr "자막 언어를 설정합니다. 음성에는 영향을 미치지 않습니다."
 
 #: engines/sword1/metaengine.cpp:114
 msgid "Simulate the audio engine from the Windows executable"
-msgstr ""
+msgstr "윈도우 실행 파일에서 오디오 엔진 시뮬레이션"
 
 #: engines/sword1/metaengine.cpp:115
 msgid ""
@@ -11815,18 +11843,16 @@ msgid ""
 "and fade-out for sound effects, fade-in for music, and automatic music "
 "volume attenuation for when speech is playing"
 msgstr ""
+"게임에서 더 부드러운(대수적) 오디오 곡선을 사용하지만 사운드 효과의 페이드인 "
+"및 페이드아웃, 음악의 페이드인, 음성 재생 시 자동 음악 볼륨 감쇠 기능을 제거"
 
 #: engines/sword1/metaengine.cpp:127
-#, fuzzy
-#| msgid "Directional button:"
 msgid "Additional options:"
-msgstr "방향 버튼:"
+msgstr "추가 옵션:"
 
 #: engines/sword1/metaengine.cpp:301
-#, fuzzy
-#| msgid "Main Men~u~"
 msgid "Main Menu"
-msgstr "메인 메뉴(~U~)"
+msgstr "메인 메뉴"
 
 #: engines/sword2/animation.cpp:426
 msgid ""
@@ -11834,12 +11860,8 @@ msgid ""
 msgstr "PSX 컷씬이 발견되었지만 ScummVM은 RGB 색상 지원 없이 빌드되었음"
 
 #: engines/sword2/detection_tables.h:419
-#, fuzzy
-#| msgid ""
-#| "Enhanced Edition not supported. Please, use the original files which are "
-#| "part of the release."
 msgid "Remastered edition is not supported. Please, use the classic version"
-msgstr "강화판은 지원되지 않습니다. 릴리스의 일부인 원본 파일을 사용하세요."
+msgstr "리마스터 버전은 지원되지 않습니다. 클래식 버전 사용"
 
 #: engines/sword2/metaengine.cpp:43
 msgid "Show object labels"
@@ -11922,35 +11944,25 @@ msgid "Font variant not present in '%s' engine data file."
 msgstr "'%s' 엔진 데이터 파일에 글꼴 변형이 없습니다."
 
 #: engines/toon/metaengine.cpp:98
-#, fuzzy
-#| msgid "Skip line"
 msgid "Skip intro"
-msgstr "대사 건너뛰기"
+msgstr "인트로 건너뛰기"
 
 #. I18N: Skips current line being spoken by a character
 #: engines/toon/metaengine.cpp:105
-#, fuzzy
-#| msgid "Skip current animation"
 msgid "Stop current voice"
-msgstr "현재 애니메이션 건너뛰기"
+msgstr "현재 음성 중지"
 
 #: engines/toon/metaengine.cpp:130
-#, fuzzy
-#| msgid "No music"
 msgid "Mute music"
-msgstr "음악 없음"
+msgstr "음악 음소거"
 
 #: engines/toon/metaengine.cpp:136
-#, fuzzy
-#| msgid "Abort speech"
 msgid "Mute speech"
-msgstr "음성 중단"
+msgstr "말 음소거"
 
 #: engines/toon/metaengine.cpp:142
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Mute sound effects"
-msgstr "사운드 효과 켜기/끄기 전환"
+msgstr "사운드 효과 음소거"
 
 #: engines/toon/toon.cpp:273
 #, c-format
@@ -11982,36 +11994,26 @@ msgid "Unable to locate the '%s' data file."
 msgstr "'%s' 데이터 파일을 찾을 수 없습니다."
 
 #: engines/touche/metaengine.cpp:135
-#, fuzzy
-#| msgid "Skip video sequence or dialogue"
 msgid "Skip sequence/open quit dialogue"
-msgstr "비디오 시퀀스 또는 대화 건너뛰기"
+msgstr "시퀀스 건너뛰기/종료 대화 상자 열기"
 
 #: engines/touche/metaengine.cpp:141
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Skip Dialogue"
 msgstr "대화 건너뛰기"
 
 #: engines/touche/metaengine.cpp:147
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open options menu"
-msgstr "메인 메뉴 열기"
+msgstr "옵션 메뉴 열기"
 
 #. I18N: The actor walking pace is increased
 #: engines/touche/metaengine.cpp:154
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Enable fast walk"
-msgstr "빠른 대화 전환"
+msgstr "빠른 걷기 활성화"
 
 #. I18N: The actor walking pace is decreased
 #: engines/touche/metaengine.cpp:161
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Disable fast walk"
-msgstr "빠른 대화 전환"
+msgstr "빠른 걷기 비활성화"
 
 #: engines/touche/metaengine.cpp:167
 msgid "Toggle fast mode"
@@ -12019,11 +12021,9 @@ msgstr "빠른 모드 전환"
 
 #: engines/touche/metaengine.cpp:173
 msgid "Toggle between voice/text/text and voice"
-msgstr ""
+msgstr "음성/텍스트/텍스트 및 음성 간 전환"
 
 #: engines/touche/metaengine.cpp:182
-#, fuzzy
-#| msgid "Press \"Yes\" key"
 msgid "Press \"Yes\" Key"
 msgstr "\"예\" 키를 누름"
 
@@ -12042,107 +12042,73 @@ msgstr "시스템 메뉴 열기"
 
 #. I18N: Return refers to return/enter key
 #: engines/tsage/metaengine.cpp:196
-#, fuzzy
-#| msgid "turn oN"
 msgid "Return"
-msgstr "켜기"
+msgstr "리턴"
 
 #: engines/tsage/metaengine.cpp:221
-#, fuzzy
-#| msgid "View"
 msgid "View Help"
-msgstr "보기"
+msgstr "도움말 보기"
 
 #: engines/tsage/metaengine.cpp:226
-#, fuzzy
-#| msgid "Show options"
 msgid "Sound options"
-msgstr "옵션 표시"
+msgstr "사운드 옵션"
 
 #: engines/tsage/metaengine.cpp:264
-#, fuzzy
-#| msgid "North"
 msgid "Crawl North"
-msgstr "북쪽"
+msgstr "북쪽으로 기어가기"
 
 #: engines/tsage/metaengine.cpp:271
-#, fuzzy
-#| msgid "South"
 msgid "Crawl South"
-msgstr "남쪽"
+msgstr "남쪽으로 기어가기"
 
 #: engines/tsage/metaengine.cpp:278
-#, fuzzy
-#| msgid "Turn left fast"
 msgid "Turn Left/Crawl West"
-msgstr "왼쪽으로 빠르게 회전"
+msgstr "좌회전/서쪽으로 기어가기"
 
 #: engines/tsage/metaengine.cpp:285
-#, fuzzy
-#| msgid "Turn right fast"
 msgid "Turn Right/Crawl East"
-msgstr "오른쪽으로 빠르게 회전"
+msgstr "우회전/동쪽으로 기어가기"
 
 #: engines/tsage/metaengine.cpp:292
-#, fuzzy
-#| msgid "Increase Step Size"
 msgid "Increase speed"
-msgstr "단계 크기 증가"
+msgstr "속도 증가"
 
 #: engines/tsage/metaengine.cpp:297
-#, fuzzy
-#| msgid "Decrease Step Size"
 msgid "Decrease speed"
-msgstr "단계 크기 감소"
+msgstr "속도 감소"
 
 #: engines/tsage/metaengine.cpp:302
-#, fuzzy
-#| msgid "Reading speed"
 msgid "Minimum speed"
-msgstr "읽기 속도"
+msgstr "최소 속도"
 
 #: engines/tsage/metaengine.cpp:307
-#, fuzzy
-#| msgid "Maximum Volume"
 msgid "Maximum speed"
-msgstr "최대 볼륨"
+msgstr "최대 속도"
 
 #: engines/tsage/metaengine.cpp:312
-#, fuzzy
-#| msgid "Slower game speed"
 msgid "Low speed"
-msgstr "더 느린 게임 속도"
+msgstr "낮은 속도"
 
 #: engines/tsage/metaengine.cpp:317
-#, fuzzy
-#| msgid "Reading speed"
 msgid "Medium speed"
-msgstr "읽기 속도"
+msgstr "중간 속도"
 
 #: engines/tsage/metaengine.cpp:322
-#, fuzzy
-#| msgid "Forwards"
 msgid "Draw Cards"
-msgstr "앞으로"
+msgstr "카드 뽑기"
 
 #: engines/tucker/metaengine.cpp:190
-#, fuzzy
-#| msgid "Speech"
 msgid "Skip speech"
-msgstr "음성"
+msgstr "말 건너뛰기"
 
 #. I18N: Panel contains all actor actions and the artstyle is toggled
 #: engines/tucker/metaengine.cpp:203
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle panel style"
-msgstr "빠른 모드 전환"
+msgstr "패널 스타일 전환"
 
 #: engines/tucker/metaengine.cpp:209
-#, fuzzy
-#| msgid "Use Text to speech"
 msgid "Toggle text speech"
-msgstr "TTS 사용"
+msgstr "TTS"
 
 #: engines/twine/detection.cpp:188
 msgid "This version requires Giflib which was not compiled into ScummVM"
