@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-08 11:49+0100\n"
-"PO-Revision-Date: 2024-11-09 12:18+0000\n"
+"PO-Revision-Date: 2024-11-09 12:51+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -8085,10 +8085,8 @@ msgstr "Ramper"
 
 #: engines/freescape/games/castle/castle.cpp:298
 #: engines/freescape/games/eclipse/eclipse.cpp:245
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Face Forward"
-msgstr "Avancer"
+msgstr "Marcher vers l'avant"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:220
@@ -8128,23 +8126,17 @@ msgstr "Ramener la plateforme de forage"
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/eclipse/eclipse.cpp:224
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change Angle"
-msgstr "Changer de mode"
+msgstr "Changer l'angle"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/eclipse/eclipse.cpp:230
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change Step Size"
-msgstr "Changer la taille de caractère"
+msgstr "Changer la taille des pas"
 
 #: engines/freescape/games/eclipse/eclipse.cpp:235
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Height"
-msgstr "Act./Désact. Muet"
+msgstr "Changer la hauteur"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/freescape/games/eclipse/eclipse.cpp:240
@@ -8600,22 +8592,16 @@ msgid "Glowstick"
 msgstr "Bâton lumineux"
 
 #: engines/hugo/metaengine.cpp:111
-#, fuzzy
-#| msgid "User canceled"
 msgid "User help"
-msgstr "Annulé par l'utilisateur"
+msgstr "Aide utilisateur"
 
 #: engines/hugo/metaengine.cpp:117
-#, fuzzy
-#| msgid "Toggle Sound"
 msgid "Toggle sound"
-msgstr "Act./Désact. Son"
+msgstr "Act./Désact. le son"
 
 #: engines/hugo/metaengine.cpp:122
-#, fuzzy
-#| msgid "Repeat last message"
 msgid "Repeat last line"
-msgstr "Répéter le dernier message"
+msgstr "Répéter la dernière ligne"
 
 #: engines/hugo/metaengine.cpp:135 engines/lure/metaengine.cpp:197
 #: engines/mads/metaengine.cpp:311 engines/tsage/metaengine.cpp:247
@@ -8641,64 +8627,48 @@ msgid "Show inventory"
 msgstr "Afficher l'inventaire"
 
 #: engines/hugo/metaengine.cpp:154
-#, fuzzy
-#| msgid "Improved mode"
 msgid "Turbo mode"
-msgstr "Mode jeu amélioré"
+msgstr "Mode Turbo"
 
 #. I18N: Move actor in the top direction
 #: engines/hugo/metaengine.cpp:167
-#, fuzzy
-#| msgid "Move up"
 msgid "Move to top"
-msgstr "Déplacement haut"
+msgstr "Déplacer vers le haut"
 
 #. I18N: Move actor in the bottom direction
 #: engines/hugo/metaengine.cpp:175
 msgid "Move to bottom"
-msgstr ""
+msgstr "Déplacer vers le bas"
 
 #. I18N: Move actor in the left direction
 #: engines/hugo/metaengine.cpp:183
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to left"
-msgstr "Déplacement gauche"
+msgstr "Déplacer vers la gauche"
 
 #. I18N: Move actor in the right direction
 #: engines/hugo/metaengine.cpp:191
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to right"
-msgstr "Déplacement droite"
+msgstr "Déplacer vers la droite"
 
 #. I18N: Move actor in the top-left direction
 #: engines/hugo/metaengine.cpp:199
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to top left"
-msgstr "Déplacement gauche"
+msgstr "Déplacer vers le haut-gauche"
 
 #. I18N: Move actor in the top-right direction
 #: engines/hugo/metaengine.cpp:205
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to top right"
-msgstr "Déplacement droite"
+msgstr "Déplacer vers le haut-droite"
 
 #. I18N: Move actor in the bottom-left direction
 #: engines/hugo/metaengine.cpp:211
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to bottom left"
-msgstr "Déplacement gauche"
+msgstr "Déplacer vers le bas-gauche"
 
 #. I18N: Move actor in the bottom-right direction
 #: engines/hugo/metaengine.cpp:217
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to bottom right"
-msgstr "Déplacement droite"
+msgstr "Déplacer vers le bas-droite"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -8764,16 +8734,12 @@ msgid "Side Step"
 msgstr "Pas de côté"
 
 #: engines/illusions/metaengine.cpp:108
-#, fuzzy
-#| msgid "Move cursor left"
 msgid "Move cursor up"
-msgstr "Déplacer le curseur à gauche"
+msgstr "Déplacer le curseur en haut"
 
 #: engines/illusions/metaengine.cpp:115
-#, fuzzy
-#| msgid "Move cursor left"
 msgid "Move cursor down"
-msgstr "Déplacer le curseur à gauche"
+msgstr "Déplacer le curseur en bas"
 
 #: engines/illusions/metaengine.cpp:122
 msgid "Move cursor left"
