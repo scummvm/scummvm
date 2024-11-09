@@ -1018,6 +1018,7 @@ Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream
 	_flyMode = stream->readByte();
 	_noClipMode = false;
 	_playerHeightNumber = stream->readUint32LE();
+	_playerStepIndex = stream->readUint32LE();
 	_countdown = stream->readUint32LE();
 	_ticks = 0;
 	if (!_currentArea || _currentArea->getAreaID() != areaID)
@@ -1058,6 +1059,7 @@ Common::Error FreescapeEngine::saveGameStream(Common::WriteStream *stream, bool 
 
 	stream->writeByte(_flyMode);
 	stream->writeUint32LE(_playerHeightNumber);
+	stream->writeUint32LE(_playerStepIndex);
 	stream->writeUint32LE(_countdown);
 	return saveGameStreamExtended(stream, isAutosave);
 }
