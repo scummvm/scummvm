@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-08 16:44+0000\n"
+"POT-Creation-Date: 2024-11-09 18:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -11301,51 +11301,6 @@ msgstr ""
 
 #: engines/twine/metaengine.cpp:532
 msgid "Next location"
-msgstr ""
-
-#: engines/twine/parser/text.cpp:34
-msgctxt "Options menu"
-msgid "High resolution on"
-msgstr ""
-
-#: engines/twine/parser/text.cpp:35
-msgctxt "Options menu"
-msgid "High resolution off"
-msgstr ""
-
-#: engines/twine/parser/text.cpp:36
-msgctxt "Options menu"
-msgid "Wall collision on"
-msgstr ""
-
-#: engines/twine/parser/text.cpp:37
-msgctxt "Options menu"
-msgid "Wall collision off"
-msgstr ""
-
-#: engines/twine/parser/text.cpp:38
-msgctxt "Options menu"
-msgid "Language selection"
-msgstr ""
-
-#: engines/twine/parser/text.cpp:39
-msgctxt "Options menu"
-msgid "Voices: None"
-msgstr ""
-
-#: engines/twine/parser/text.cpp:40
-msgctxt "Options menu"
-msgid "Voices: English"
-msgstr ""
-
-#: engines/twine/parser/text.cpp:41
-msgctxt "Options menu"
-msgid "Voices: French"
-msgstr ""
-
-#: engines/twine/parser/text.cpp:42
-msgctxt "Options menu"
-msgid "Voices: German"
 msgstr ""
 
 #: engines/twp/dialogs.cpp:32
