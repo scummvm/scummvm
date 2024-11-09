@@ -31,15 +31,16 @@ namespace TwinE {
 
 void TextData::initCustomTexts(TextBankId textBankId) {
 	if (textBankId == TextBankId::Options_and_menus) {
-		add(textBankId, TextEntry{_c("High resolution on", "Options menu").encode(Common::CodePage::kDos850), -1, TextId::kCustomHighResOptionOn});
-		add(textBankId, TextEntry{_c("High resolution off", "Options menu").encode(Common::CodePage::kDos850), -1, TextId::kCustomHighResOptionOff});
-		add(textBankId, TextEntry{_c("Wall collision on", "Options menu").encode(Common::CodePage::kDos850), -1, TextId::kCustomWallCollisionOn});
-		add(textBankId, TextEntry{_c("Wall collision off", "Options menu").encode(Common::CodePage::kDos850), -1, TextId::kCustomWallCollisionOff});
-		add(textBankId, TextEntry{_c("Language selection", "Options menu").encode(Common::CodePage::kDos850), -1, TextId::kCustomLanguageOption});
-		add(textBankId, TextEntry{_c("Voices: None", "Options menu").encode(Common::CodePage::kDos850), -1, TextId::kCustomVoicesNone});
-		add(textBankId, TextEntry{_c("Voices: English", "Options menu").encode(Common::CodePage::kDos850), -1, TextId::kCustomVoicesEnglish});
-		add(textBankId, TextEntry{_c("Voices: French", "Options menu").encode(Common::CodePage::kDos850), -1, TextId::kCustomVoicesFrench});
-		add(textBankId, TextEntry{_c("Voices: German", "Options menu").encode(Common::CodePage::kDos850), -1, TextId::kCustomVoicesGerman});
+		// TODO: add resource file for these custom strings to support other languages
+		add(textBankId, TextEntry{Common::U32String("High resolution on").encode(Common::CodePage::kDos850), -1, TextId::kCustomHighResOptionOn});
+		add(textBankId, TextEntry{Common::U32String("High resolution off").encode(Common::CodePage::kDos850), -1, TextId::kCustomHighResOptionOff});
+		add(textBankId, TextEntry{Common::U32String("Wall collision on").encode(Common::CodePage::kDos850), -1, TextId::kCustomWallCollisionOn});
+		add(textBankId, TextEntry{Common::U32String("Wall collision off").encode(Common::CodePage::kDos850), -1, TextId::kCustomWallCollisionOff});
+		add(textBankId, TextEntry{Common::U32String("Language selection").encode(Common::CodePage::kDos850), -1, TextId::kCustomLanguageOption});
+		add(textBankId, TextEntry{Common::U32String("Voices: None").encode(Common::CodePage::kDos850), -1, TextId::kCustomVoicesNone});
+		add(textBankId, TextEntry{Common::U32String("Voices: English").encode(Common::CodePage::kDos850), -1, TextId::kCustomVoicesEnglish});
+		add(textBankId, TextEntry{Common::U32String("Voices: French").encode(Common::CodePage::kDos850), -1, TextId::kCustomVoicesFrench});
+		add(textBankId, TextEntry{Common::U32String("Voices: German").encode(Common::CodePage::kDos850), -1, TextId::kCustomVoicesGerman});
 	}
 }
 
