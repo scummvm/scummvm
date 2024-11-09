@@ -143,7 +143,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Spanish SQ3.
    - Support for different rendering modes for number of games.
    - Added support for German KQ5.
-   - Implemented KQ5 FM Towns save/restore UI
+   - Implemented KQ5 FM Towns save/restore UI.
    - Added support for Russian Camelot, Laura Bow, PQ2.
    - Numerous script fixes to different games.
 
@@ -178,7 +178,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Discworld 1 Mac Japanese.
 
  Titanic:
-   - Fixed crash if the word 'that' was used in a conversation
+   - Fixed crash if the word 'that' was used in a conversation.
 
  Tony:
    - Fix crash with rapid cursor switching.
