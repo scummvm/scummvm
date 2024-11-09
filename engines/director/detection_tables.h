@@ -305,6 +305,9 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "mastermansion",		"Masterpiece Mansion" },
 	{ "mathacejr",			"Math Ace Jr." },  // aka Bit-Bot's Math Voyage
 	{ "mathmystery",		"Math Blaster Mystery: The Great Brain Robbery" },
+	{ "max1",				"Max and the Secret Formula" },
+	{ "max2",				"Max and Marie Go Shopping" },
+	{ "max3",				"Max and the Haunted Castle" },
 	{ "maze",				"The Riddle of the Maze" },
 	{ "mckenzie",			"McKenzie & Co." },
 	{ "mckenziemf",			"McKenzie & Co.: More Friends" }, // Expansion for McKenzie & Co.
@@ -959,9 +962,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "mathica",			"Mathica ... und Mathematik wird zum Abenteuer" },
 	{ "mats3",				"Mats und das rätselhafte Tier" },
 	{ "maus2",				"Die CD-ROM mit der Maus 2" },
-	{ "max1",				"Max and the Secret Formula" },
-	{ "max2",				"Max and Marie Go Shopping" },
-	{ "max3",				"Max and the Haunted Castle" },
 	{ "mrmore",				"Mr. More Interaktive" },
 	{ "otelo",				"o.tel.o Online 01011" },
 	{ "physicus2",			"Physicus: Die Rückkehr" },
@@ -4909,13 +4909,23 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// German title is Max und die Geheimformel
 	// German demo from CD ROM Hits 1995-10
-	WINDEMO1t_l("max1", "Demo", "MAX1DEMO.EXE", "6805c5c8e800dd10648494421506b2f7", 700829, Common::DE_DEU, 404),
-	MACDEMO1_l("max1", "Demo", "Max en de geheime... DEMO", "a2f5930615493c2358b2ad07e731c475", 502790, Common::NL_NLD, 404),
-	WINDEMO1_l("max1", "Demo", "MAX1DMA.EXE", "b35d311e2982849c08379f2d74519d58", 752991, Common::NL_NLD, 404),
+	// Dutch demo from Max en het gele-sokjes-spook (Max 3 Dutch)
+	// Full game is multilanguage English/French/German selectable in-game
+	MACGAME1_l("max1", "", "Max und die Geheimformel", "r:8b138db44d4421cc7294a9dc792ccf1b", 506648, Common::DE_DEU, 404),
+	WINGAME1_l("max1", "", "M1_START.EXE",			   "t:76e6725f201438a60d4d2a4a335919e9", 700937, Common::DE_DEU, 404),
+	MACDEMO1_l("max1", "Demo", "Max en de geheime... DEMO", "r:a2f5930615493c2358b2ad07e731c475", 502534, Common::NL_NLD, 404),
+	WINDEMO1_l("max1", "Demo", "MAX1DEMO.EXE",				"t:6805c5c8e800dd10648494421506b2f7", 700829, Common::DE_DEU, 404),
+	WINDEMO1_l("max1", "Demo", "MAX1DMA.EXE",				"d:b35d311e2982849c08379f2d74519d58", 752991, Common::NL_NLD, 404),
 
 	// German demo from CD ROM Hits 1995-10
-	WINDEMO1t_l("max2", "Demo", "MAX2DEMO.EXE", "e4a961e789ce970e3d23356d327b9f31", 700837, Common::DE_DEU, 404),
-	MACDEMO1_l("max2", "Demo", "Max en Merel... DEMO", "a2f5930615493c2358b2ad07e731c475", 502790, Common::NL_NLD, 404),
+	// Dutch demo from Max en het gele-sokjes-spook (Max 3 Dutch)
+	// Full game is multilanguage English/French/German selectable in-game
+	MACGAME1("max2", "", "Max and Marie Go Shopping", "r:9e6da4abedede80452f2b67cb8e03441", 484101, 404),
+	WINGAME2("max2", "", "MARIE.EXE",		  		  "t:3e3f8477d36f47953b7bfaa0f94c4f2b", 700909,
+						 "DATEN/ABSPANNE.DXR",		  "d:075f6c1ebecde0c63708cc77da0356d1", 408652, 404),
+	MACDEMO1_l("max2", "Demo", "Max en Merel... DEMO", "r:a2f5930615493c2358b2ad07e731c475", 502534, Common::NL_NLD, 404),
+	WINDEMO1_l("max2", "Demo", "MAX2DEMO.EXE",		   "t:e4a961e789ce970e3d23356d327b9f31", 700837, Common::DE_DEU, 404),
+	WINDEMO1_l("max2", "Demo", "MAX2DMA.EXE",		   "t:81b27347cb5daf92882725129f8aa688", 752991, Common::NL_NLD, 404),
 
 	// Max und das Schloßgespenst (original) published by Tivola (1996)
 	// Max en het gele-sokjes-spook published by Uitgeverij Bombilla, Amsterdam (1996)
@@ -4924,12 +4934,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// English and usually German are always selectable languages during gameplay
 	// Original Mac German filename is Max und das Schloßgespenst
 	// Original Mac French filename is Max et le château hanté
-	MACGAME1_l("max3", "", "Max und das Schlossgespenst",  "dd5bb78cb7db5c8fa7b87ddf3136b337", 504078, Common::DE_DEU, 404),
-	MACGAME1_l("max3", "", "Max et le chateau hante",      "504e7e5b53a02dbebd3d19bf9a9b73d9", 504078, Common::FR_FRA, 404),
-	MACGAME1_l("max3", "", "Max en het gele-sokjes-spook", "a2f5930615493c2358b2ad07e731c475", 502790, Common::NL_NLD, 404),
-	WINGAME2_l("max3", "", "MAX3.EXE",      "aba98fa8042bb9f87dedf00be1d19de2", 702881,
-						   "MAX/INTRO.DXR", "d24b1bf0650bf2be02da6b55bf045b2e", 3340376, Common::DE_DEU, 404),
-	WINGAME1_l("max3", "", "M3_START.EXE", "99cc0c88814c402d8de01e8980582d65", 702863, Common::FR_FRA, 404),
+	MACGAME1_l("max3", "", "xn--Max und das Schlogespenst-cbc", "r:dd5bb78cb7db5c8fa7b87ddf3136b337", 503822, Common::DE_DEU, 404),
+	MACGAME1_l("max3", "", "xn--Max et le chteau hant-70b4o",	"r:504e7e5b53a02dbebd3d19bf9a9b73d9", 503822, Common::FR_FRA, 404),
+	MACGAME1_l("max3", "", "Max en het gele-sokjes-spook",		"r:a2f5930615493c2358b2ad07e731c475", 502534, Common::NL_NLD, 404),
+	WINGAME2_l("max3", "", "MAX3.EXE",      "t:3b87b108d10cf079f3b1eb809b50462c",  702881,
+						   "MAX/INTRO.DXR", "d:d24b1bf0650bf2be02da6b55bf045b2e", 3340376, Common::DE_DEU, 404),
+	WINGAME1_l("max3", "", "M3_START.EXE",  "t:cf51be0d1390f77e680e137eac91e6ca",  702863, Common::FR_FRA, 404),
+	WINGAME1_l("max3", "", "M3START.EXE",	"t:2fddbfa177a730210a1a713dd27ca5a2",  703305, Common::NL_NLD, 404),
+
+	WINGAME1_l("max3", "Launcher", "M3ASTART.EXE", "t:5a4ccb348c8d0d2229f4cd3771cabf56",  691649, Common::NL_NLD, 404),
 
 	MACGAME1("maxissampler", "", "Maxis Power Mac CD-ROM Sampler", "01be45e7241194dad07938e7059b88e3", 483490, 404),
 	WINGAME2t("maxissampler", "", "SAMPLER.EXE", "5d0ee796571b99d402a06438ae2f3d56", 696815,
@@ -6775,6 +6788,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original Mac filename is Demonstraciä
 	// Found on Russian Max 3 CD from NRG
 	MACGAME1_l("max1max2", "Demo", "Demonstracia", "06ed90580400cd9e263525f84c8075fd", 705673, Common::RU_RUS, 500),
+
+	// Other releases are D4
+	// English, German, Polish selectable in-game
+	WINGAME2_l("max2", "", "START.EXE",			 "t:88d21b5cb6dd9fd6016574a04eb8af8e", 939743,
+						   "DATEN/ABSPANNE.DXR", "d:62113ac92ad51c24bf7fdf2242b8dfda", 407980, Common::PL_POL, 500),
 
 	// Original filename is 'メカフォルダ/メカドリル'
 	MACGAME1_l("mecadrill", "", "xn--jckd8d2dsc3c/xn--lck0c6ctbf", "16f51fc148898582fcdb6f58456ceb52", 719636, Common::JA_JPN, 501),
