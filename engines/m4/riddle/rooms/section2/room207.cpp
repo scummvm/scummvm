@@ -133,9 +133,10 @@ void Room207::init() {
 		if (_G(flags[V061]) == 0) {
 			player_set_commands_allowed(false);
 			_peasant3ToSquatSeries = series_load("peasant 3 to squat", -1, nullptr);
-			ws_walk_load_walker_series(S2_DIRS1, S2_NAMES1, false);
-			ws_walk_load_walker_series(S2_DIRS2, S2_NAMES2, false);
-			_ppWalkerMach = triggerMachineByHash_3000(8, 6, *S2_DIRS1, *S2_DIRS2, 660, 367, 9, triggerMachineByHashCallback3000, "pp walker");
+			ws_walk_load_walker_series(S2_PEASANT_NORMAL_DIRS, S2_PEASANT_NORMAL_NAMES);
+			ws_walk_load_shadow_series(S2_PEASANT_SHADOW_DIRS, S2_PEASANT_SHADOW_NAMES);
+
+			_ppWalkerMach = triggerMachineByHash_3000(8, 6, *S2_PEASANT_NORMAL_DIRS, *S2_PEASANT_SHADOW_DIRS, 660, 367, 9, triggerMachineByHashCallback3000, "pp walker");
 			sendWSMessage_10000(_ppWalkerMach, 562, 359, 9, 10, 1);
 		}
 
@@ -1130,7 +1131,9 @@ void Room207::daemon() {
 	case 11:
 		series_play_xy("shadow pesky rock loop", -1, 0, 514, 367, 97, 3849, 300, -1);
 		_ppSquatMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 514, 367, 97, 3840, false, triggerMachineByHashCallback, "pp squat");
-		sendWSMessage_10000(1, _ppSquatMach, 1, _peskyRockLoopSeries, 20, 101, _peskyRockLoopSeries, 20, 20, 0);
+		sendWSMessage_10000(1, _ppSquatMach, _peskyRockLoopSeries, 1, 20, 101,
+			_peskyRockLoopSeries, 20, 20, 0);
+		player_set_commands_allowed(true);
 		_field8E = 0;
 		_field92 = 0;
 

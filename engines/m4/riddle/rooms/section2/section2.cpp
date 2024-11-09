@@ -26,11 +26,6 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-const int16 S2_DIRS1[] = {240, -1};
-const char *S2_NAMES1[] = { "pesky walk pos3" };
-const int16 S2_DIRS2[] = {250, -1};
-const char *S2_NAMES2[] = { "shadow pesky walk pos3" };
-
 const int16 S2_MEI_NORMAL_DIRS[] = { 220, 221, 222, 223, 224, -1 };
 const char *S2_MEI_NORMAL_NAMES[] = {
 	"mei chen trek walk pos1",

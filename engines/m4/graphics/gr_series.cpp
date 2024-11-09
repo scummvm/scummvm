@@ -328,11 +328,12 @@ machine *series_plain_play(const char *seriesName, int32 loopCount, uint32 flags
 }
 
 machine *series_play_xy(const char *seriesName, int loopCount, int flags,
-		int x, int y, int scale, int depth, int layer, int frameRate) {
-	// TODO: proper implementation
-	warning("TODO: series_play_xy");
-	return series_play(seriesName, layer, flags, -1, frameRate, loopCount,
-		scale, x, y);
+		int x, int y, int scale, int layer, int frameRate, int trigger) {
+	if (loopCount == 1)
+		loopCount = 0;
+
+	return series_play(seriesName, layer, flags, trigger, frameRate,
+		loopCount, scale, x, y);
 }
 
 machine *series_simple_play(const char *seriesName, frac16 layer, bool stickWhenDone) {

@@ -115,7 +115,7 @@ machine *series_ranged_play_xy(const char *seriesName, int loopCount, int flags,
 machine *series_plain_play(const char *seriesName, int32 loopCount, uint32 flags,
 	int32 s, int32 layer, int32 frameRate, int32 trigger = -1, bool stickWhenDone = false);
 machine *series_play_xy(const char *seriesName, int loopCount, int flags,
-	int x, int y, int scale, int depth, int layer, int frameRate);
+	int x, int y, int scale, int layer, int frameRate, int trigger);
 
 machine *series_stream(const char *seriesName, int32 frameRate, int32 layer, int32 trigger);
 bool series_stream_break_on_frame(machine *m, int32 frameNum, int32 trigger);

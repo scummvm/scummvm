@@ -50,11 +50,6 @@ const char *SNORMAL2_NAMES[] = { "203s02" };
 const int16 SSHADOW2_DIRS[] = { 250, -1 };
 const char *SSHADOW2_NAMES[] = { "203ssh02" };
 
-const int16 PEASANT_NORMAL_DIRS[] = { 240, -1 };
-const char *PEASANT_NORMAL_NAMES[] = { "pesky walk pos3" };
-const int16 PEASANT_SHADOW_DIRS[] = { 250, -1 };
-const char *PEASANT_SHADOW_NAMES[] = { "shadow pesky walk pos3" };
-
 
 void Room203::init() {
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME)
@@ -328,6 +323,9 @@ void Room203::init() {
 
 void Room203::daemon() {
 	int frame;
+
+	if (_G(kernel).trigger < 9999)
+		warning("%d", _G(kernel).trigger);
 
 	if (keyCheck() && _gkShould == 0 && _G(game_buff_ptr)->x1 >= 380) {
 		_gkShould = 1;
@@ -1078,7 +1076,7 @@ void Room203::daemon() {
 				terminateMachineAndNull(_peasant);
 				terminateMachineAndNull(_peasantShadow);
 				_peasant = triggerMachineByHash_3000(8, 6,
-					*PEASANT_NORMAL_DIRS, *PEASANT_SHADOW_DIRS,
+					*S2_PEASANT_NORMAL_DIRS, *S2_PEASANT_SHADOW_DIRS,
 					763, 325, 3, triggerMachineByHashCallback3000, "pp_walking");
 				sendWSMessage_10000(_peasant, 1200, 332, 2, 120, 1);
 				_peasantMode = 4054;
@@ -1117,7 +1115,7 @@ void Room203::daemon() {
 				terminateMachineAndNull(_peasant);
 				terminateMachineAndNull(_peasantShadow);
 				_peasant = triggerMachineByHash_3000(8, 6,
-					*PEASANT_NORMAL_DIRS, *PEASANT_SHADOW_DIRS,
+					*S2_PEASANT_NORMAL_DIRS, *S2_PEASANT_SHADOW_DIRS,
 					763, 325, 3, triggerMachineByHashCallback3000, "pp_walk");
 				sendWSMessage_10000(_peasant, 932, 325, 3, 121, 1);
 				_peasantShould = 4115;
@@ -1167,7 +1165,7 @@ void Room203::daemon() {
 				terminateMachineAndNull(_peasant);
 				terminateMachineAndNull(_peasantShadow);
 				_peasant = triggerMachineByHash_3000(8, 6,
-					*PEASANT_NORMAL_DIRS, *PEASANT_SHADOW_DIRS,
+					*S2_PEASANT_NORMAL_DIRS, *S2_PEASANT_SHADOW_DIRS,
 					727, 325, 9, triggerMachineByHashCallback3000, "pp_walking");
 				sendWSMessage_10000(_peasant, 436, 332, 9, 121, 1);
 				_peasantShould = 4119;
@@ -1228,7 +1226,7 @@ void Room203::daemon() {
 				terminateMachineAndNull(_peasant);
 				terminateMachineAndNull(_peasantShadow);
 				_peasant = triggerMachineByHash_3000(8, 6,
-					*PEASANT_NORMAL_DIRS, *PEASANT_SHADOW_DIRS, 436, 332, 3,
+					*S2_PEASANT_NORMAL_DIRS, *S2_PEASANT_SHADOW_DIRS, 436, 332, 3,
 					triggerMachineByHashCallback3000, "pp_walking");
 				sendWSMessage_10000(_peasant, 727, 325, 3, 121, 1);
 				_peasantShould = 4177;
@@ -1288,7 +1286,7 @@ void Room203::daemon() {
 				terminateMachineAndNull(_peasant);
 				terminateMachineAndNull(_peasantShadow);
 				_peasant = triggerMachineByHash_3000(8, 6,
-					*PEASANT_NORMAL_DIRS, *PEASANT_SHADOW_DIRS, 932, 325, 9,
+					*S2_PEASANT_NORMAL_DIRS, *S2_PEASANT_SHADOW_DIRS, 932, 325, 9,
 					triggerMachineByHashCallback3000, "pp_walking");
 				sendWSMessage_10000(_peasant, 763, 325, 9, 121, 1);
 				_peasantShould = 4164;
@@ -1336,7 +1334,7 @@ void Room203::daemon() {
 				terminateMachineAndNull(_peasant);
 				terminateMachineAndNull(_peasantShadow);
 				_peasant = triggerMachineByHash_3000(8, 6,
-					*PEASANT_NORMAL_DIRS, *PEASANT_SHADOW_DIRS, 968, 325, 3,
+					*S2_PEASANT_NORMAL_DIRS, *S2_PEASANT_SHADOW_DIRS, 968, 325, 3,
 					triggerMachineByHashCallback3000, "pp_walking");
 				sendWSMessage_10000(_peasant, 1082, 322, 3, 121, 1);
 				_peasantShould = 4168;
@@ -1399,7 +1397,7 @@ void Room203::daemon() {
 				terminateMachineAndNull(_peasant);
 				terminateMachineAndNull(_peasantShadow);
 				_peasant = triggerMachineByHash_3000(8, 6,
-					*PEASANT_NORMAL_DIRS, *PEASANT_SHADOW_DIRS, 1082, 322, 9,
+					*S2_PEASANT_NORMAL_DIRS, *S2_PEASANT_SHADOW_DIRS, 1082, 322, 9,
 					triggerMachineByHashCallback3000, "pp_walking");
 				sendWSMessage_10000(_peasant, 968, 325, 9, 121, 1);
 				_peasantShould = 4144;
@@ -1450,7 +1448,7 @@ void Room203::daemon() {
 				terminateMachineAndNull(_peasant);
 				terminateMachineAndNull(_peasantShadow);
 				_peasant = triggerMachineByHash_3000(8, 6,
-					*PEASANT_NORMAL_DIRS, *PEASANT_SHADOW_DIRS, 1118, 322, 3,
+					*S2_PEASANT_NORMAL_DIRS, *S2_PEASANT_SHADOW_DIRS, 1118, 322, 3,
 					triggerMachineByHashCallback3000, "pp_walking");
 				sendWSMessage_10000(_peasant, 1200, 332, 2, 121, 1);
 				_peasantShould = 4148;
@@ -2268,8 +2266,8 @@ void Room203::daemon() {
 			hotspot_set_active("PEASANT", false);
 			hotspot_set_active("SOLDIER'S HELMET", false);
 		} else {
-			ws_walk_load_walker_series(PEASANT_NORMAL_DIRS, PEASANT_NORMAL_NAMES);
-			ws_walk_load_shadow_series(PEASANT_SHADOW_DIRS, PEASANT_SHADOW_NAMES);
+			ws_walk_load_walker_series(S2_PEASANT_NORMAL_DIRS, S2_PEASANT_NORMAL_NAMES);
+			ws_walk_load_shadow_series(S2_PEASANT_SHADOW_DIRS, S2_PEASANT_SHADOW_NAMES);
 			_peasantRocks = series_load("peasant rocks 5frames");
 			_peasantRocksShadow = series_load("shadow pesky rock loop");
 			_peasantSquat3 = series_load("peasant 3 to squat");
@@ -2447,8 +2445,8 @@ void Room203::daemon() {
 
 		_peasantRocks = series_load("peasant rocks 5frames");
 		_peasantRocksShadow = series_load("shadow pesky rock loop");
-		ws_walk_load_walker_series(PEASANT_NORMAL_DIRS, PEASANT_NORMAL_NAMES);
-		ws_walk_load_shadow_series(PEASANT_SHADOW_DIRS, PEASANT_SHADOW_NAMES);
+		ws_walk_load_walker_series(S2_PEASANT_NORMAL_DIRS, S2_PEASANT_NORMAL_NAMES);
+		ws_walk_load_shadow_series(S2_PEASANT_SHADOW_DIRS, S2_PEASANT_SHADOW_NAMES);
 
 		_peasantMode = 4050;
 		_peasantShould = 4091;
@@ -2586,6 +2584,7 @@ void Room203::pre_parser() {
 
 	if (lookFlag && player_said("ALLEY WALL") && _G(kernel).trigger == -1) {
 		_G(player).resetWalk();
+		_G(kernel).trigger_mode = KT_PARSE;
 		ws_walk(710, 300, nullptr, 230, 11);
 		_G(kernel).trigger_mode = KT_PREPARSE;
 	}
@@ -2655,7 +2654,7 @@ void Room203::parser() {
 		default:
 			break;
 		}
-	} else if (player_said("gatekeeper")) {
+	} else if (player_said("pass", "gatekeeper")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
