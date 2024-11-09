@@ -289,6 +289,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "lbpre",				"Maurice Sendak's Little Bear Preschool Thinking Adventures" },
 	{ "lbtpreschool",		"The Land Before Time: Preschool Adventure" },
 	{ "legendsofoz",		"The Legends of Oz" },
+	{ "legendsmyths",		"Legends & Myths" },
 	{ "letsdiscover",		"Let's Discover" },
 	{ "letters",			"Letters" },
 	{ "louiscatorze",		"Louis Cat Orze: The Mystery of the Queen's Necklace" },
@@ -4775,6 +4776,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("laughingbird", "", "The Laughing Bird Restaurant", "547553eca48ebc089e893ba1905c2b74", 673138, 404),
 
 	WINGAME1t("learningcoreldraw3", "", "PROGRAM/LRNDRAW3.EXE", "aa6fa44a1161fe91f3be54ded6b53cbf", 1152788, 404),
+
+	WINGAME1("legendsmyths", "", "LEGENDS.EXE", "t:284de969ddebeb649530f80c74a8e961", 691607, 404),
+	MACGAME1("legendsmyths", "", "Legends & Myths", "r:67f572196550aedb1f9523d782022be0", 482610, 404),
 
 	WINGAME2("leonardo", "2.0",			  "LEO.EXE", "t:d39f3010cadcb7204ceb8f00c3d41fb3", 692403,
 										  "LEOWINMV/INDEX.DIR", "t:17356e4b7703c1267b5dec7e7acd03eb", 779440, 404),
