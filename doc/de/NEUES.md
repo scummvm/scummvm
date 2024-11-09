@@ -4,218 +4,218 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 #### 2.9.0 (XX.XX.XXXX)
 
  Neue Spiele:
-  - Unterstützung für Orion Burger hinzugefügt.
-  - Unterstützung für Total Eclipse und Total Eclipse 2 hinzugefügt.
-  - Unterstützung für Thimbleweed Park hinzugefügt.
-  - Unterstützung für The Space Bar hinzugefügt.
-  - Unterstützung für Moonbase Commander hinzugefügt.
-  - Unterstützung für Backyard Basketball hinzugefügt.
-  - Unterstützung für Unrest hinzugefügt.
-  - Unterstützung für Rise of the Dragon hinzugefügt.
-  - Unterstützung für Castle Master hinzugefügt.
-  - Unterstützung für Wait for it! Issue 3. Song for a Hare. hinzugefügt.
-  - Unterstützung für Mask Show hinzugefügt.
-  - Unterstützung für Marvellous Mice Adventures: Meeting Sea Rat hinzugefügt.
-  - Unterstützung für The Adventures of the Good Soldier Schweik hinzugefügt.
-  - Unterstützung für Marvellous Mice Adventures: Sea Rat's Birthday hinzugefügt.
+   - Unterstützung für Orion Burger hinzugefügt.
+   - Unterstützung für Total Eclipse und Total Eclipse 2 hinzugefügt.
+   - Unterstützung für Thimbleweed Park hinzugefügt.
+   - Unterstützung für The Space Bar hinzugefügt.
+   - Unterstützung für Moonbase Commander hinzugefügt.
+   - Unterstützung für Backyard Basketball hinzugefügt.
+   - Unterstützung für Unrest hinzugefügt.
+   - Unterstützung für Rise of the Dragon hinzugefügt.
+   - Unterstützung für Castle Master hinzugefügt.
+   - Unterstützung für Wait for it! Issue 3. Song for a Hare. hinzugefügt.
+   - Unterstützung für Mask Show hinzugefügt.
+   - Unterstützung für Marvellous Mice Adventures: Meeting Sea Rat hinzugefügt.
+   - Unterstützung für The Adventures of the Good Soldier Schweik hinzugefügt.
+   - Unterstützung für Marvellous Mice Adventures: Sea Rat's Birthday hinzugefügt.
 
  Neue Plattformen:
-  - Unterstützung für SailfishOS hinzugefügt.
+   - Unterstützung für SailfishOS hinzugefügt.
 
  Allgemein:
-  - Fehler bei der Erkennung der GLSL-Version auf einigen OpenGL ES2-Plattformen behoben.
-  - libopenmpt wurde als neue, optionale Abhängigkeit zur Sound-Behandlung hinzugefügt.
-  - Die Option "Seitenverhältnis korrigieren" ist jetzt standardmäßig aktiv.
-  - libmpcdec (musepack) wurde als neue, optionale Abhängigkeit zur Sound-Behandlung hinzugefügt.
-  - Die Kommandozeilenoption --copy-protection wurde in die Benutzeroberfläche integriert.
+   - Fehler bei der Erkennung der GLSL-Version auf einigen OpenGL ES2-Plattformen behoben.
+   - libopenmpt wurde als neue, optionale Abhängigkeit zur Sound-Behandlung hinzugefügt.
+   - Die Option "Seitenverhältnis korrigieren" ist jetzt standardmäßig aktiv.
+   - libmpcdec (musepack) wurde als neue, optionale Abhängigkeit zur Sound-Behandlung hinzugefügt.
+   - Die Kommandozeilenoption --copy-protection wurde in die Benutzeroberfläche integriert.
 
  ADL:
-  - Der "gemusterte" Mauszeiger von Apple II wurde als Darstellungsoption hinzugefügt.
+   - Der "gemusterte" Mauszeiger von Apple II wurde als Darstellungsoption hinzugefügt.
 
  AGI:
-  - Anzeigedauer für zeitbasierte Text-Boxen korrigiert. Diese wurden nur halb so lang wie vorgesehen
-    angezeigt, weshalb unter anderem der Intro-Text in King's Quest III nur schwer zu lesen war.
-  - Der "vorhersagende" Eingabe-Dialog, der bei einem Eingabefeld angezeigt wird, ist jetzt eine optionale
-    Spiel-Einstellung und standardmäßig deaktiviert.
+   - Anzeigedauer für zeitbasierte Text-Boxen korrigiert. Diese wurden nur halb so lang wie vorgesehen
+     angezeigt, weshalb unter anderem der Intro-Text in King's Quest III nur schwer zu lesen war.
+   - Der "vorhersagende" Eingabe-Dialog, der bei einem Eingabefeld angezeigt wird, ist jetzt eine optionale
+     Spiel-Einstellung und standardmäßig deaktiviert.
 
  AGOS:
-  - Unterstützung für Tastenkürzel hinzugefügt.
+   - Unterstützung für Tastenkürzel hinzugefügt.
 
  AGS:
-  - Der AGS-Code wurde mit der Upstream-Version 3.6.0.58 synchronisiert.
-  - Fehlerhaftes Verhalten der Treppen in älteren Episoden von Maniac Mansion Mania korrigiert,
-    die durch fehlerhafte Wegfindung verursacht wurde.
+   - Der AGS-Code wurde mit der Upstream-Version 3.6.0.58 synchronisiert.
+   - Fehlerhaftes Verhalten der Treppen in älteren Episoden von Maniac Mansion Mania korrigiert,
+     die durch fehlerhafte Wegfindung verursacht wurde.
 
  Asylum:
-  - Die Steuerung ist jetzt auch über die Pfeiltasten der Tastatur möglich.
+   - Die Steuerung ist jetzt auch über die Pfeiltasten der Tastatur möglich.
 
  BBVS:
-  - Unterstützung für Tastenkürzel hinzugefügt.
+   - Unterstützung für Tastenkürzel hinzugefügt.
 
  Bladerunner:
-  - Absturz für Izo in Hawker's Circle korrigiert.
-  - Die "Designers cut"-Einstellung kann jetzt im Voraus gesetzt werden und wird für ein neues Spiel übernommen.
-  - Verbesserte Zuverlässigkeit bei der Nutzung selbst gewählter Seeds für den Zufallsgenerator.
+   - Absturz für Izo in Hawker's Circle korrigiert.
+   - Die "Designers cut"-Einstellung kann jetzt im Voraus gesetzt werden und wird für ein neues Spiel übernommen.
+   - Verbesserte Zuverlässigkeit bei der Nutzung selbst gewählter Seeds für den Zufallsgenerator.
 
  Cine:
-  - Unterstützung für Tastenkürzel hinzugefügt.
+   - Unterstützung für Tastenkürzel hinzugefügt.
 
  Composer:
-  - Unterstützung für Tastenkürzel hinzugefügt.
+   - Unterstützung für Tastenkürzel hinzugefügt.
 
  Cruise:
-  - Unterstützung für russische Fan-Übersetzung hinzugefügt.
-  - Unterstützung für Tastenkürzel hinzugefügt.
+   - Unterstützung für russische Fan-Übersetzung hinzugefügt.
+   - Unterstützung für Tastenkürzel hinzugefügt.
 
  Draci:
-  - Unterstützung für Tastenkürzel hinzugefügt.
+   - Unterstützung für Tastenkürzel hinzugefügt.
 
  Dreamweb:
-  - Absturz bei Raumwechsel behoben, der dann auftritt, wenn nicht-essentielle Spiele-Items
-    gehalten werden.
+   - Absturz bei Raumwechsel behoben, der dann auftritt, wenn nicht-essentielle Spiele-Items
+     gehalten werden.
 
  EFH:
-  - Mehrere Abstürze behoben, die auftreten, wenn das Spiel während einer Interaktion verlassen wird.
+   - Mehrere Abstürze behoben, die auftreten, wenn das Spiel während einer Interaktion verlassen wird.
 
  Freescape:
-  - Unterstützung für die Atari/Amiga-Versionen von Dark Side hinzugefügt.
-  - Verbesserte Behandlung von nahen kolinearen Oberflächen.
-  - "Authentische Grafik"-Modus hinzugefügt.
-  - Einige Fehler in den verschiedenen Render-Modi behoben.
-  - Neuentwicklung der Sound-Behandlung in einigen Spielen.
-  - Neuentwicklung der Schrift-Behandlung unter Nutzung gemeinsamer Klassen.
-  - Verbesserte Unterstützung für Tastenkürzel.
-  - Verbesserte Unterstützung für Seitenverhältniskorrektur, basierend auf DOSBox.
-  - Verbesserung der Matrix-Berechnung, die nun eher dem Original entspricht.
+   - Unterstützung für die Atari/Amiga-Versionen von Dark Side hinzugefügt.
+   - Verbesserte Behandlung von nahen kolinearen Oberflächen.
+   - "Authentische Grafik"-Modus hinzugefügt.
+   - Einige Fehler in den verschiedenen Render-Modi behoben.
+   - Neuentwicklung der Sound-Behandlung in einigen Spielen.
+   - Neuentwicklung der Schrift-Behandlung unter Nutzung gemeinsamer Klassen.
+   - Verbesserte Unterstützung für Tastenkürzel.
+   - Verbesserte Unterstützung für Seitenverhältniskorrektur, basierend auf DOSBox.
+   - Verbesserung der Matrix-Berechnung, die nun eher dem Original entspricht.
 
  GLK/ADVSYS:
-  - Verbesserte Interpretation von Eingabe-Befehlen.
+   - Verbesserte Interpretation von Eingabe-Befehlen.
 
  Groovie:
-  - Unterstützung für Tastenkürzel hinzugefügt.
+   - Unterstützung für Tastenkürzel hinzugefügt.
 
  Hopkins:
-  - Unterstützung für Tastenkürzel hinzugefügt.
+   - Unterstützung für Tastenkürzel hinzugefügt.
 
  Hugo:
-  - Unterstützung für Tastenkürzel hinzugefügt.
+   - Unterstützung für Tastenkürzel hinzugefügt.
 
  Illusions:
-  - Unterstützung für Tastenkürzel hinzugefügt.
+   - Unterstützung für Tastenkürzel hinzugefügt.
 
  Kyra:
-  - (EOB) Unterstützung für originale AD&D-Regeln hinzugefügt, um Verbesserungen und Fehlerbehebungen
-    im originalen Spiele-Code von Eye of the Beholder I und II zu realisieren.
-  - (EOB) Fehler behoben, durch den Charaktere mit mehreren Klassen eine fehlerhafte Anzahl von HP
-    verursacht durch Rundungsfehler erhalten haben.
-  - (EOB) Schaden von Projektil-Waffen korrigiert (laut der Regeln der zweiten Ausgabe der AD&D-Regeln).
-  - (EOB) Elben erhalten +1 Trefferpunkte mit Schwertern und Bogen (laut des offiziellen Spiele-Handbuchs).
-  - Die NPCs Ileria (weiblich) und Beohram (Paladin) in Eye of the Beholder I wurden verbessert.
-  - (EOB) Einige weitere Fehlerbehebungen.
+   - (EOB) Unterstützung für originale AD&D-Regeln hinzugefügt, um Verbesserungen und Fehlerbehebungen
+     im originalen Spiele-Code von Eye of the Beholder I und II zu realisieren.
+   - (EOB) Fehler behoben, durch den Charaktere mit mehreren Klassen eine fehlerhafte Anzahl von HP
+     verursacht durch Rundungsfehler erhalten haben.
+   - (EOB) Schaden von Projektil-Waffen korrigiert (laut der Regeln der zweiten Ausgabe der AD&D-Regeln).
+   - (EOB) Elben erhalten +1 Trefferpunkte mit Schwertern und Bogen (laut des offiziellen Spiele-Handbuchs).
+   - Die NPCs Ileria (weiblich) und Beohram (Paladin) in Eye of the Beholder I wurden verbessert.
+   - (EOB) Einige weitere Fehlerbehebungen.
 
  Lure:
-  - Unterstützung für Tastenkürzel hinzugefügt.
+   - Unterstützung für Tastenkürzel hinzugefügt.
 
  MADE:
-  - Unterstützung für Tastenkürzel hinzugefügt.
+   - Unterstützung für Tastenkürzel hinzugefügt.
 
  MADS:
-  - Unterstützung für Tastenkürzel hinzugefügt.
+   - Unterstützung für Tastenkürzel hinzugefügt.
 
  MM:
-  - Unterstützung für MT32/LAPC-1 für die Xeen-Engine hinzugefügt.
-  - Fehler in Xeen behoben, der dafür sorgt, dass einige Sound-Effekte abrupt beendet werden.
-  - Fehlerhafte SP/Edelstein-Voraussetzungen im erweiterten Modus von MM1 korrigiert.
-  - Spruch-Punkte und Edelsteine werden jetzt korrekt abgezogen, wenn Zaubersprüche verwendet werden.
+   - Unterstützung für MT32/LAPC-1 für die Xeen-Engine hinzugefügt.
+   - Fehler in Xeen behoben, der dafür sorgt, dass einige Sound-Effekte abrupt beendet werden.
+   - Fehlerhafte SP/Edelstein-Voraussetzungen im erweiterten Modus von MM1 korrigiert.
+   - Spruch-Punkte und Edelsteine werden jetzt korrekt abgezogen, wenn Zaubersprüche verwendet werden.
 
  NGI:
-  - Unterstützung für die litauische Version von Full Pipe hinzugefügt.
+   - Unterstützung für die litauische Version von Full Pipe hinzugefügt.
 
  SAGA:
-  - Unterstützung für Tastenkürzel hinzugefügt.
+   - Unterstützung für Tastenkürzel hinzugefügt.
 
  SCI:
-  - Unterstützung für russische Fan-Übersetzung von QFG3 hinzugefügt.
-  - Verbesserte Unterstützung für PCjr-Audio.
-  - Verbesserte Unterstützung für die Mac-Version von KQ6.
-  - Unterstützung für die spanische Version von SQ3 hinzugefügt.
-  - Unterstützung für verschiedene Render-Modi in zahlreichen Spielen hinzugefügt.
-  - Benutzeroberfläche zum speichern/laden in der FM-Towns-Version von KQ5 hinzugefügt.
-  - Unterstützung für die russische Versionen von Camelot, Laura Bow und PQ2 hinzugefügt.
-  - Zahlreiche Skriptfehler in verschiedenen Spielen behoben.
+   - Unterstützung für russische Fan-Übersetzung von QFG3 hinzugefügt.
+   - Verbesserte Unterstützung für PCjr-Audio.
+   - Verbesserte Unterstützung für die Mac-Version von KQ6.
+   - Unterstützung für die spanische Version von SQ3 hinzugefügt.
+   - Unterstützung für verschiedene Render-Modi in zahlreichen Spielen hinzugefügt.
+   - Benutzeroberfläche zum speichern/laden in der FM-Towns-Version von KQ5 hinzugefügt.
+   - Unterstützung für die russische Versionen von Camelot, Laura Bow und PQ2 hinzugefügt.
+   - Zahlreiche Skriptfehler in verschiedenen Spielen behoben.
 
  SCUMM:
-  - Karten-Generator von Moonbase Console in Moonbase Commander hinzugefügt.
-  - Verbesserung der Grafik-Unterstützung für die Mac-Versionen von MI1, MI2 und Fate of Atlantis.
-  - Verbesserung der Audio-Unterstützung für die Macintosh-Versionen von Loom, Last Crusade und MI1.
+   - Karten-Generator von Moonbase Console in Moonbase Commander hinzugefügt.
+   - Verbesserung der Grafik-Unterstützung für die Mac-Versionen von MI1, MI2 und Fate of Atlantis.
+   - Verbesserung der Audio-Unterstützung für die Macintosh-Versionen von Loom, Last Crusade und MI1.
 
  Sherlock:
-  - Unterstützung für die russische Übersetzung von Rose Tattoo hinzugefügt.
+   - Unterstützung für die russische Übersetzung von Rose Tattoo hinzugefügt.
 
  Stark:
-  - Unterstützung für Tastenkürzel hinzugefügt.
+   - Unterstützung für Tastenkürzel hinzugefügt.
 
  Sword1:
-  - Audio-Modus "Windows Audio-Engine" zu den ScummVM-Optionen hinzugefügt.
-    Diese Option erlaubt die Simulation der DirectSound Audio-Treiber basierend auf der
-	Windows 95-Programmdatei.
-	Dank dieser Option nutzt das Spiel weichere (logarithmische) Audio-Kurven, entfernt jedoch
-	Ein- und Ausblende-Effekte für Sound-Effekte, Einblende-Effekte für Musik und automatische
-	Lautstärken-Anpassung wenn die Sprachausgabe abgespielt wird. Diese Option ist standardmäßig
-	deaktiviert, da das Spiel vor dem Hintergrund von DOS- und AIL-Soundtreibern entwickelt wurde.
-	Diese Option steht nicht für die Macintosh- und PSX-Versionen zur Verfügung.
-  - Unterstützung für Tastenkürzel hinzugefügt.
-  - Verbesserte Unterstützung auf Big-Endian-Systemen.
+   - Audio-Modus "Windows Audio-Engine" zu den ScummVM-Optionen hinzugefügt.
+     Diese Option erlaubt die Simulation der DirectSound Audio-Treiber basierend auf der
+     Windows 95-Programmdatei.
+     Dank dieser Option nutzt das Spiel weichere (logarithmische) Audio-Kurven, entfernt jedoch
+     Ein- und Ausblende-Effekte für Sound-Effekte, Einblende-Effekte für Musik und automatische
+     Lautstärken-Anpassung wenn die Sprachausgabe abgespielt wird. Diese Option ist standardmäßig
+     deaktiviert, da das Spiel vor dem Hintergrund von DOS- und AIL-Soundtreibern entwickelt wurde.
+     Diese Option steht nicht für die Macintosh- und PSX-Versionen zur Verfügung.
+   - Unterstützung für Tastenkürzel hinzugefügt.
+   - Verbesserte Unterstützung auf Big-Endian-Systemen.
 
  Teenagent:
-  - Unterstützung für die polnische Diskettenversion hinzugefügt.
+   - Unterstützung für die polnische Diskettenversion hinzugefügt.
 
  Tinsel:
-  - Unterstützung für Tastenkürzel hinzugefügt.
-  - Unterstützung für die japanische Mac-Version von Discworld 1 hinzugefügt.
+   - Unterstützung für Tastenkürzel hinzugefügt.
+   - Unterstützung für die japanische Mac-Version von Discworld 1 hinzugefügt.
 
  Titanic:
-  - Absturz behoben, der auftritt, wenn das Wort "that" in einer Konversation verwendet wird.
+   - Absturz behoben, der auftritt, wenn das Wort "that" in einer Konversation verwendet wird.
 
  Tony:
-  - Absturz bei schnellem Cursor-Wechsel behoben.
+   - Absturz bei schnellem Cursor-Wechsel behoben.
 
  TsAGE:
-  - Unterstützung für russische Fan-Übersetzung von Ringworld hinzugefügt.
-  - Unterstützung für Tastenkürzel hinzugefügt.
+   - Unterstützung für russische Fan-Übersetzung von Ringworld hinzugefügt.
+   - Unterstützung für Tastenkürzel hinzugefügt.
 
  Toon:
-  - Unterstützung für Tastenkürzel hinzugefügt.
+   - Unterstützung für Tastenkürzel hinzugefügt.
 
  Touche:
-  - Unterstützung für Tastenkürzel hinzugefügt.
+   - Unterstützung für Tastenkürzel hinzugefügt.
 
  Trecision:
-  - Unterstützung für Tastenkürzel hinzugefügt.
+   - Unterstützung für Tastenkürzel hinzugefügt.
 
  Tucker:
-  - Unterstützung für Tastenkürzel hinzugefügt.
-  - Fehler behoben, durch den die untere Halle im zweiten Kapitel nicht betreten werden konnte.
+   - Unterstützung für Tastenkürzel hinzugefügt.
+   - Fehler behoben, durch den die untere Halle im zweiten Kapitel nicht betreten werden konnte.
 
  TwinE:
-  - Einige Fehler der Kollisionserkennung behoben.
+   - Einige Fehler der Kollisionserkennung behoben.
 
  Ultima:
-  - Standard-Tastenbelgung für Gamepasds in Ultima VIII angepasst.
-  - Verbesserung der Spieler-Bewegung über Tastatureingaben in Ultima VIII.
-  - Verwendung der Zielscheibe in Ultima VIII pausiert das Spiel nun nicht mehr.
-  - Die Minikarte in Ultima VIII verwendet jetzt die Farbpalette des Spiels.
-  - Item-Aufteilung in der Spiele-Karte von Ultima VIII korrigiert.
-  - Fehler in der Animation, Audio-Wiedergabe und Szenen-Wechsel in Ultima VIII korrigiert.
+   - Standard-Tastenbelgung für Gamepasds in Ultima VIII angepasst.
+   - Verbesserung der Spieler-Bewegung über Tastatureingaben in Ultima VIII.
+   - Verwendung der Zielscheibe in Ultima VIII pausiert das Spiel nun nicht mehr.
+   - Die Minikarte in Ultima VIII verwendet jetzt die Farbpalette des Spiels.
+   - Item-Aufteilung in der Spiele-Karte von Ultima VIII korrigiert.
+   - Fehler in der Animation, Audio-Wiedergabe und Szenen-Wechsel in Ultima VIII korrigiert.
 
  Voyeur:
-  - Unterstützung für die Interplay-Logo-Animation hinzugefügt.
+   - Unterstützung für die Interplay-Logo-Animation hinzugefügt.
 
  ZVision:
-  - Verbesserte Unterstützung von RTL-Sprachen.
+   - Verbesserte Unterstützung von RTL-Sprachen.
 
  macOS-Portierung:
-  - Der Auto-Updater verwendet nun Sparkle 2.x.
+   - Der Auto-Updater verwendet nun Sparkle 2.x.
 
 
 #### 2.8.1 (31.03.2024)
