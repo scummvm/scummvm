@@ -56,6 +56,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "arcadehockey",		"Classic Arcade Air Hockey" },
 	{ "arcadelander",		"Classic Arcade Lander" },
 	{ "arcadesubs",			"Classic Arcade Subs" },
+	{ "archegypt",			"Archibald's Guide to the Mysteries of Ancient Egypt" },
 	{ "arcofdoom",			"Arc of Doom" },
 	{ "artofmagic",			"Learn the Art of Magic with Jay Alexander" },
 	{ "artrageous",			"ArtRageous!" },
@@ -210,6 +211,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "goldilocks",			"Goldilocks Gamebook" },
 	{ "gordak",				"Gord@k" },
 	{ "gothos",				"Gothos" },
+	{ "grackon",			"Grackon's Curse" },
 	{ "grammarplaytime2",	"Grammar Playtime Vol.2: Asking Questions" },
 	{ "gundam0079",			"Gundam 0079: The War for Earth" },
 	{ "guscarn",			"Gus Goes to the Kooky Carnival" },
@@ -220,6 +222,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "hamletmurder",		"Hamlet: A Murder Mystery" },
 	{ "hamsterland1",		"Busy People of Hamsterland" },
 	{ "hamsterland2",		"Hamsterland: The Time Machine" },
+	{ "hawaiihigh",			"Hawaii High: The Mystery of the Tiki" },
 	{ "heidi",				"Heidi: Your World is the Mountains" },
 	{ "hellcab",			"Hell Cab" },
 	{ "hhouse",				"Gahan Wilson's The Ultimate Haunted House" },
@@ -455,6 +458,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "spellingbee",		"Arc Media Spelling Bee" },
 	{ "spyclub",			"Spy Club" },
 	{ "spykids3d",			"Spy Kids 3-D: Game Over" },
+	{ "starlords",			"Fate of the Starlords" },
 	{ "starwarped",			"Star Warped" },
 	{ "staytooned",			"Stay Tooned!" },
 	{ "superspy",			"SuperSpy 1" },
@@ -1381,6 +1385,7 @@ static const PlainGameDescriptor directorGames[] = {
 	// Polish titles
 	{ "kontyngent99",		"Katalog Samochodów Kontyngent '99" },
 	{ "pippiprzygody",		"Przygody Pippi!" },
+	{ "wikingowie",			"Wikingowie" },
 
 	// Portuguese titles
 	{ "activamulti1",		"Activa Multimédia - 1. Expedição através das Grandes Civilizações" },
@@ -2358,6 +2363,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("aquaplanet", "", "click me!", "f5277c53bacd27936158dd3867e587e2", 392441, Common::JA_JPN, 310),
 
+	WINGAME2("archegypt", "", "ARCHBALD.EXE", "t:baf0cb65cf0c87054158e34e5752c013", 370006,
+							  "ARCHBALD.MMM", "d:36794ecef5cf47f4978d3421032ac1f0", 579836, 310),
+
 	MACDEMO1_l("asylum300", "Demo", "ASYLUM 300 DEMO", "4c7fddccfe5ab2e9c6398efa5dbe37c1", 1038023, Common::JA_JPN, 313),
 	// From MacUser MacBin #5 (1994-04)
 	MACDEMO1_l("asylum300", "Demo", "ASYLUM 300 DEMO", "4c7fddccfe5ab2e9c6398efa5dbe37c1", 1038014, Common::JA_JPN, 313),
@@ -2611,6 +2619,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("gustown", "", "GUS.EXE",	 "65d06b5fef155a2473434571aff5bc29", 369999,
 							"CYBER.MMM", "c3b0a84cd1a8ae966c38a3deceed6496", 237702, 310),
 	MACDEMO1("gustown", "Demo", "CyberTown Demo", "7f443f2e63fd497a9ad85b10dc880a91", 384223, 313),
+
+	MACGAME1("hawaiihigh", "", "Click for Adventure! (8mb)", "rt:2a37313361f96a8232feb27db3593d7c", 383286, 310),
+	WINGAME2("hawaiihigh", "", "HAWAII.EXE", "t:437dcff5a9cdf4085a7463f9388b17ad", 712673,
+							   "SPLASH.MMM", "d:6e5132e9836588808bee73d4f43c331c", 343424, 310),
 
 	// Original filename is "   Hell Cab™"
 	MACGAME1("hellcab", "",      "xn--   Hell Cab-t35f", "8cbe0a140f28b2165a66d73f4f153572", 601701, 313),
@@ -4291,6 +4303,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("gordak", "", "GORDAK",	   "r:5f48d38b0c9b9c8790796d1eb1525713", 486726, 404),
 	WINGAME1("gordak", "", "GordakCD.exe", "t:0d9d03bf2462f22aed3cd3e7d49018df", 737262, 404),
 
+	MACGAME1("grackon", "", "Grackon",	   "rt:0746fe4037ecd5ba35349e0a81d1a0fa", 293330, 404),
+	WINGAME1("grackon", "", "GRACKON.EXE", "t:6eccb8f3da4883d0bc1bc38b93749255", 694293, 404),
+
 	MACDEMO2_l("greetingstudio", "Demo", "Click Me",   "r:17efee018a660458fae80de4364021ac", 484095,
 										 "MAIN.DIR",   "d:f5f8e6c76bb0659fc80fa2c1c263afa9", 3016176, Common::JA_JPN, 404),
 	WINDEMO1_l("greetingstudio", "Demo", "SHOWME.EXE", "711b37028bca19093720fcb281c08b4d", 754977, Common::JA_JPN, 404),
@@ -5660,6 +5675,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME2("ssseven", "", "SEVEN.EXE", "t:972ab398e28fc4b600405af200902bb9", 1892673,
 							"LINGO.INI", "d:4f75e838a13079b4fc75af0fd6f70f3c", 	   826, 404),
+
+	WINGAME1("starlords", "", "STARLORD/STARLORD.EXE", "t:a4c2b5b570652f0de2551d8f5727b404", 1043585, 404),
 
 	MACGAME1("stream", "Volume 1", "Stream_1", "cdb27c916044ae4dceb4b7326063fa03", 304217, 400),
 	WINGAME1("stream", "Volume 1", "STREAM_1.EXE", "147c76b43a5ec051381c238488f722d5", 690979, 400),
@@ -9544,6 +9561,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 											 "Comic/issues/wolverine.swf", "dbc67fe22aab4ce9a59ca220c2287588", 1282980, 800),
 	WINGAME2t("xmen-burgerking", "Wolverine", "xmen.exe", "c9a4619a36fd555966cb3d903ae8887f", 2250798,
 											  "Comic/issues/wolverine.swf", "61220a36d2e79f62c4e7350cf9b25659", 1282980, 800),
+
+	WINGAME2_l("wikingowie", "", "start.exe",	"t:fa81f0cf08376f3fbcd663c27e391f62", 2159360,
+								 "data/ed.dxr", "d:edd9f4bae9519d60e328c5fd1192ed81", 3818384, Common::PL_POL, 851),
 
 	// Original Mac filename is 妖精妖怪図鑑
 	MACGAME1_l("yokaizukan", "", "xn--lcs34da058ddt2bxt3a", "dd3c8aeb1d2847c77db701ad49ad8186", 163060, Common::JA_JPN, 850),
