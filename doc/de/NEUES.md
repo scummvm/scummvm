@@ -166,6 +166,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      Diese Option steht nicht für die Macintosh- und PSX-Versionen zur Verfügung.
    - Unterstützung für Tastenkürzel hinzugefügt.
    - Verbesserte Unterstützung auf Big-Endian-Systemen.
+   - Unterstützung für weitere Spiele-Versionen hinzugefügt.
+   - Die Sprache der Untertitel kann in der PC-Version nun wieder ausgewählt werden.
 
  Teenagent:
    - Unterstützung für die polnische Diskettenversion hinzugefügt.
@@ -275,6 +277,16 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      Indiana Jones and the Last Crusade bei der Verwendung von Menü-Tastenkürzeln behoben.
    - Die originalen Lade- und Speicher-Bildschirme in den Mac-Versionen von Indiana Jones
      and the last Crusade können nun korrekt aktiviert und deaktiviert werden.
+   - Unterstützung für die Macintosh-Benutzeroberfläche in Monkey Island 1, Monkey Island 2
+     und Indiana Jones and the Fate of Atlantis hinzugefügt.
+   - Unterstützung für EPX-Grafikfilter für die Macintosh-Versionen der Spiele hinzugefügt.
+   - Verhalten der Funktion zum automatischen Speichern von Spielständen bei der Verwendung der originalen Benutzeroberfläche korrigiert.
+   - Genauere Sound-Treiber für folgende Macintosh-Spiele hinzugefügt:
+     Indiana Jones and the Last Crusade, Loom und Monkey Island 1.
+   - Verbesserte Genauigkeit des MIDI-iMUSE-Systems.
+   - Das Grafik-System für Humongous Entertainment-Spiele wurde komplett neu entickelt,
+     weshalb diese Titel nun genauer dargestellt werden.
+   - Viele Verbesserungen der Genauigkeit der Engine.
 
  TWINE:
    - Leitern können nun wieder korrekt genutzt werden.
