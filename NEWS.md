@@ -169,6 +169,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      and it is also not available for Macintosh and PSX versions.
    - Added keymapper support.
    - Improved support on big-endian systems.
+   - Added more game variants.
+   - Restored the ability to choose language of subtitles on PC versions.
 
  Teenagent:
    - Added support for Polish floppy version.
@@ -275,11 +277,21 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Virtual keyboard now correctly triggers on/off wherever text input is needed.
 
  SCUMM:
-   - Fix screen corruption (and sometimes even crashes) in Mac Loom and
+   - Fixed screen corruption (and sometimes even crashes) in Mac Loom and
      Indiana Jones and the Last Crusade, most noticeably when using menu
      shortcut keys.
-   - Fix enabling/disabling of Open and Save in Mac Indiana Jones and the Last
+   - Fixed enabling/disabling of Open and Save in Mac Indiana Jones and the Last
      Crusade.
+   - Implemented old-style Macintosh GUI for: Monkey Island 1, Monkey Island 2
+     and Indiana Jones and the Fate of Atlantis.
+   - Implemented EPX graphics smoothing on Macintosh versions of the games.
+   - Restored correct autosaving behavior when using the original GUI option.
+   - Implemented more accurate sound drivers for the following Macintosh games:
+     Indiana Jones and the Last Crusade, Loom and Monkey Island 1.
+   - Made several accuracy fixes on the MIDI iMUSE system.
+   - The graphics system for Humongous Entertainment games has been completely
+     rewritten, leading to a more accurate visual experience on those titles.
+   - Made many more accuracy improvements throughout the engine.
 
  TWINE:
    - Fix ladder climbing regression.
