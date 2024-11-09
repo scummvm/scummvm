@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-08 11:49+0100\n"
-"PO-Revision-Date: 2024-11-09 14:38+0000\n"
+"PO-Revision-Date: 2024-11-09 14:43+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -11392,6 +11392,9 @@ msgid ""
 "Warning: this re-release version contains patched game scripts,\n"
 "and therefore it might crash or not work properly for the time being."
 msgstr ""
+"Attention : cette version ré-éditée contient des scripts de jeu patchés, il "
+"est\n"
+"possible qu'elle plante ou ne fonctionne pas correctement pour le moment."
 
 #: engines/scumm/metaengine.cpp:486
 msgid "HE v71+ support is not compiled in"
@@ -11600,16 +11603,14 @@ msgstr ""
 "polices de caractères."
 
 #: engines/scumm/scumm.cpp:1261
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Monkey Island' Macintosh executable to read the\n"
-#| "instruments from. Music will be disabled."
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read resources\n"
 "and instruments from. Music and Mac GUI will be disabled."
 msgstr ""
-"L'exécutable Macintosh de 'Monkey Island' n'a pas été trouvé pour\n"
-"y lire les instruments. La musique sera désactivée."
+"Impossible de trouver l'exécutable 'Monkey Island' Macintosh à partir duquel "
+"lire les ressources\n"
+"et les instruments. La musique et l'interface graphique Mac seront "
+"désactivées."
 
 #: engines/scumm/scumm.cpp:1290
 #, fuzzy
