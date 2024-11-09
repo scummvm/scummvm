@@ -44,7 +44,6 @@ static const uint8 CINEMA_FLICS[35] = {
 };
 
 void Cinema::execute() {
-	int16 txt_anz = 0;
 	int topIndex = 0;
 	int selected = 0;
 	bool flag = true;
@@ -172,19 +171,16 @@ void Cinema::execute() {
 		// The below are hacks to get the dialog to work in ScummVM
 		g_events->_kbInfo._scanCode = 0;
 		_G(minfo).button = 0;
-		txt_anz = 0;
 
-		if (!txt_anz) {
-			_G(cur)->updateCursor();
+		_G(cur)->updateCursor();
 
-			if (flag) {
-				flag = false;
-				_G(out)->setPointer((byte *)g_screen->getPixels());
-				_G(room)->set_ak_pal(&_G(room_blk));
-				_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
-			} else {
-				_G(out)->copyToScreen();
-			}
+		if (flag) {
+			flag = false;
+			_G(out)->setPointer((byte *)g_screen->getPixels());
+			_G(room)->set_ak_pal(&_G(room_blk));
+			_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
+		} else {
+			_G(out)->copyToScreen();
 		}
 
 		g_events->update();
