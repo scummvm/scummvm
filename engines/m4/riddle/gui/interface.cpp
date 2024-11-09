@@ -37,7 +37,7 @@ namespace GUI {
 
 Interface::Interface() : M4::Interface() {
 	_x1 = 0;
-	_y1 = 374;
+	_y1 = LETTERBOX_Y + 373;
 	_x2 = SCREEN_WIDTH;
 	_y2 = SCREEN_HEIGHT;
 }

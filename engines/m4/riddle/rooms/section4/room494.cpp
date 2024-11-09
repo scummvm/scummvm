@@ -32,7 +32,7 @@ namespace Riddle {
 namespace Rooms {
 
 void Room494::preload() {
-	_G(kernel).letter_box_y = 30;
+	_G(kernel).letter_box_y = LETTERBOX_Y;
 	_G(player).walker_type = WALKER_ALT;
 	_G(player).shadow_type = SHADOW_ALT;
 	_G(player).walker_in_this_scene = false;

@@ -32,6 +32,8 @@
 namespace M4 {
 namespace Riddle {
 
+#define LETTERBOX_Y 30
+
 enum global_triggers {
 	kINVENTORY_CLOSEUP_END = 990,
 	kCALLED_EACH_LOOP = 32764,

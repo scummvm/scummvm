@@ -48,7 +48,7 @@ void Vars::main_cold_data_init() {
 	_player.walker_loads_first = false;
 	_player.walker_visible = true;
 	_global_sound_room = 997;
-	_kernel.letter_box_y = 30;
+	_kernel.letter_box_y = LETTERBOX_Y;
 	_kernel.first_fade = 0;
 	_kernel.first_non_walker_cel_hash = 32;
 	_i_just_hyperwalked = false;
