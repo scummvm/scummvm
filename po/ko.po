@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-08 11:49+0100\n"
-"PO-Revision-Date: 2024-11-09 09:32+0000\n"
+"PO-Revision-Date: 2024-11-09 09:44+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -7384,22 +7384,16 @@ msgid "Next dialog / menu item"
 msgstr "다음 대화 상자 / 메뉴 항목"
 
 #: engines/dgds/metaengine.cpp:78
-#, fuzzy
-#| msgid "Previous palette"
 msgid "Previous dialog / menu item"
-msgstr "이전 팔레트"
+msgstr "이전 대화 상자 / 메뉴 항목"
 
 #: engines/dgds/metaengine.cpp:79
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Next object"
-msgstr "다음 개체로 이동"
+msgstr "다음 개체"
 
 #: engines/dgds/metaengine.cpp:80
-#, fuzzy
-#| msgid "Go to previous object"
 msgid "Previous object"
-msgstr "이전 개체로 이동"
+msgstr "이전 개체"
 
 #: engines/dgds/metaengine.cpp:81
 #, fuzzy
@@ -7408,16 +7402,12 @@ msgid "Pick up / Operate"
 msgstr "이전 행동"
 
 #: engines/dgds/metaengine.cpp:83
-#, fuzzy
-#| msgid "Animated inventory items"
 msgid "Activate Inventory Object"
-msgstr "애니메이션 인벤토리 항목"
+msgstr "인벤토리 객체 활성화"
 
 #: engines/dgds/metaengine.cpp:86
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game Keys"
-msgstr "게임 키맵핑"
+msgstr "게임 키"
 
 #: engines/director/events.cpp:99
 msgid ""
@@ -7427,26 +7417,20 @@ msgstr "이대로 진행하면 게임이 종료됩니다. 계속하시겠습니�
 
 #: engines/draci/metaengine.cpp:155
 msgid "Skip intro/Exit map or inventory"
-msgstr ""
+msgstr "인트로 건너뛰기/지도 또는 인벤토리 나가기"
 
 #: engines/draci/metaengine.cpp:161
-#, fuzzy
-#| msgid "Open Holomap"
 msgid "Open map"
-msgstr "홀로맵을 열기"
+msgstr "지도 열기"
 
 #. I18N: shows where the game actor is able to move
 #: engines/draci/metaengine.cpp:168
-#, fuzzy
-#| msgid "Show map"
 msgid "Show walking map"
-msgstr "지도 표시"
+msgstr "도보지도 표시"
 
 #: engines/draci/metaengine.cpp:174
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Toggle walk speed"
-msgstr "빠른 대화 전환"
+msgstr "걷기 속도 전환"
 
 #: engines/draci/metaengine.cpp:186 engines/mohawk/myst.cpp:554
 #: engines/mohawk/riven.cpp:835 engines/nancy/input.cpp:225
@@ -7455,19 +7439,15 @@ msgstr "메인 메뉴 열기"
 
 #: engines/draci/metaengine.cpp:192
 msgid "Toggle between mouse pointer and the last game item"
-msgstr ""
+msgstr "마우스 포인터와 마지막 게임 항목 간 전환"
 
 #: engines/draci/metaengine.cpp:198
-#, fuzzy
-#| msgid "Scroll up in inventory"
 msgid "Previous item in inventory"
-msgstr "인벤토리에서 위로 스크롤"
+msgstr "인벤토리 이전 항목"
 
 #: engines/draci/metaengine.cpp:204
-#, fuzzy
-#| msgid "Open inventory"
 msgid "Next item in inventory"
-msgstr "인벤토리 열기"
+msgstr "인벤토리 다음 항목"
 
 #: engines/dragons/dragons.cpp:1884
 #, c-format
@@ -7565,7 +7545,7 @@ msgstr "자동 드릴링"
 
 #: engines/freescape/metaengine.cpp:65
 msgid "Allow to successfully drill in any part of the area in Driller"
-msgstr ""
+msgstr "드릴러에서 영역의 어느 부분에서든 성공적으로 드릴링할 수 있음"
 
 #: engines/freescape/metaengine.cpp:75
 msgid "Disable demo mode"
@@ -7648,16 +7628,12 @@ msgid "Info Menu"
 msgstr "정보 메뉴"
 
 #: engines/freescape/games/castle/castle.cpp:234
-#, fuzzy
-#| msgid "Select index"
 msgid "Select Prince"
-msgstr "색인 선택"
+msgstr "왕자 선택"
 
 #: engines/freescape/games/castle/castle.cpp:239
-#, fuzzy
-#| msgid "Select index"
 msgid "Select Princess"
-msgstr "색인 선택"
+msgstr "공주 선택"
 
 #: engines/freescape/games/castle/castle.cpp:266
 #: engines/freescape/games/dark/dark.cpp:203
@@ -7689,14 +7665,12 @@ msgstr "달리기"
 
 #: engines/freescape/games/castle/castle.cpp:292
 msgid "Crawl"
-msgstr ""
+msgstr "기어가다"
 
 #: engines/freescape/games/castle/castle.cpp:298
 #: engines/freescape/games/eclipse/eclipse.cpp:245
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Face Forward"
-msgstr "앞으로 이동"
+msgstr "얼굴 앞으로"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:220
@@ -7736,23 +7710,17 @@ msgstr "드릴링 장비를 수집"
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/eclipse/eclipse.cpp:224
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change Angle"
-msgstr "모드 변경"
+msgstr "각도 변경"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/eclipse/eclipse.cpp:230
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change Step Size"
-msgstr "글꼴 크기 변경"
+msgstr "단계 크기 변경"
 
 #: engines/freescape/games/eclipse/eclipse.cpp:235
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Height"
-msgstr "음소거 전환"
+msgstr "높이 전환"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/freescape/games/eclipse/eclipse.cpp:240
@@ -8189,22 +8157,16 @@ msgid "Glowstick"
 msgstr "야광막대"
 
 #: engines/hugo/metaengine.cpp:111
-#, fuzzy
-#| msgid "User canceled"
 msgid "User help"
-msgstr "사용자가 취소함"
+msgstr "사용자 도움말"
 
 #: engines/hugo/metaengine.cpp:117
-#, fuzzy
-#| msgid "Toggle Sound"
 msgid "Toggle sound"
 msgstr "사운드 전환"
 
 #: engines/hugo/metaengine.cpp:122
-#, fuzzy
-#| msgid "Repeat last message"
 msgid "Repeat last line"
-msgstr "마지막 메시지 반복"
+msgstr "마지막 줄 반복"
 
 #: engines/hugo/metaengine.cpp:135 engines/lure/metaengine.cpp:197
 #: engines/mads/metaengine.cpp:311 engines/tsage/metaengine.cpp:247
@@ -8230,57 +8192,43 @@ msgid "Show inventory"
 msgstr "인벤토리 표시"
 
 #: engines/hugo/metaengine.cpp:154
-#, fuzzy
-#| msgid "Improved mode"
 msgid "Turbo mode"
-msgstr "개선된 모드"
+msgstr "터보 모드"
 
 #. I18N: Move actor in the top direction
 #: engines/hugo/metaengine.cpp:167
-#, fuzzy
-#| msgid "Move up"
 msgid "Move to top"
 msgstr "위로 이동"
 
 #. I18N: Move actor in the bottom direction
 #: engines/hugo/metaengine.cpp:175
 msgid "Move to bottom"
-msgstr ""
+msgstr "아래로 이동"
 
 #. I18N: Move actor in the left direction
 #: engines/hugo/metaengine.cpp:183
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to left"
 msgstr "왼쪽으로 이동"
 
 #. I18N: Move actor in the right direction
 #: engines/hugo/metaengine.cpp:191
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to right"
 msgstr "오른쪽으로 이동"
 
 #. I18N: Move actor in the top-left direction
 #: engines/hugo/metaengine.cpp:199
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to top left"
-msgstr "왼쪽으로 이동"
+msgstr "왼쪽 상단으로 이동"
 
 #. I18N: Move actor in the top-right direction
 #: engines/hugo/metaengine.cpp:205
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to top right"
-msgstr "오른쪽으로 이동"
+msgstr "오른쪽 상단으로 이동"
 
 #. I18N: Move actor in the bottom-left direction
 #: engines/hugo/metaengine.cpp:211
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to bottom left"
-msgstr "왼쪽으로 이동"
+msgstr "왼쪽 하단으로 이동"
 
 #. I18N: Move actor in the bottom-right direction
 #: engines/hugo/metaengine.cpp:217
