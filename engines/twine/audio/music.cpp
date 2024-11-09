@@ -190,7 +190,16 @@ bool Music::playTrackCDR(int32 track) {
 	}
 
 	AudioCDManager *cdrom = g_system->getAudioCDManager();
-	return cdrom->play(track + 1, 1, 0, 0);
+	int offset = 1;
+	// usually the tracks are starting at track_02.xxx for gog and steam releases.
+	// But some users might have ripped the original cd audio tracks and named them
+	// from track_01.xxx onwards. So we need to check if the first track exists.
+	//
+	// see https://bugs.scummvm.org/ticket/15410 and https://bugs.scummvm.org/ticket/14669
+	if (cdrom->existExtractedCDAudioFiles(1)) {
+		offset = 0;
+	}
+	return cdrom->play(track + offset, 1, 0, 0);
 }
 
 bool Music::initCdrom() {
