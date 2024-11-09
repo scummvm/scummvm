@@ -708,6 +708,8 @@ void flic_cut(int16 nr) {
 	int16 i, ret = 0;
 	bool keepPlaying = true;
 
+	EVENTS_CLEAR;
+
 	_G(out)->setPointer(nullptr);
 	g_engine->_sound->stopAllSounds();
 	g_events->delay(50);
