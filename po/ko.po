@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-08 11:49+0100\n"
-"PO-Revision-Date: 2024-10-02 16:41+0000\n"
+"PO-Revision-Date: 2024-11-09 09:18+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -22,7 +22,7 @@ msgstr ""
 
 #: audio/mac_plugin.cpp:30
 msgid "Apple Macintosh Audio"
-msgstr ""
+msgstr "애플 매킨토시 오디오"
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
@@ -1813,10 +1813,8 @@ msgid "Scaler:"
 msgstr "크기 조절:"
 
 #: gui/options.cpp:1666
-#, fuzzy
-#| msgid "Render mode:"
 msgid "Rotation mode:"
-msgstr "렌더 모드:"
+msgstr "회전 모드:"
 
 #: gui/options.cpp:1680
 msgid "Shader:"
@@ -2768,10 +2766,8 @@ msgid "Do you really want to delete this saved game?"
 msgstr "이 저장된 게임을 정말 삭제하겠습니까?"
 
 #: gui/saveload-dialog.cpp:557
-#, fuzzy
-#| msgid "Error writing save file\n"
 msgid "Error deleting saved game"
-msgstr "저장 파일 기록 오류\n"
+msgstr "저장된 게임 삭제 오류"
 
 #: gui/saveload-dialog.cpp:675 gui/saveload-dialog.cpp:1184
 msgid "Date: "
@@ -3119,16 +3115,12 @@ msgid "VGA Grey Scale"
 msgstr "VGA 회색 스케일"
 
 #: common/rendermode.cpp:58
-#, fuzzy
-#| msgid "PC-9821 (256 Colors)"
 msgid "Windows (256 Colors)"
-msgstr "PC-9821 (256 색)"
+msgstr "윈도우 (256 색)"
 
 #: common/rendermode.cpp:59
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "Windows (16 Colors)"
-msgstr "PC-9801 (16 색)"
+msgstr "윈도우 (16 색)"
 
 #: common/rendermode.cpp:96
 msgctxt "lowres"
@@ -3141,14 +3133,12 @@ msgid "Hercules Amber"
 msgstr "허큘리스 등색"
 
 #: common/rotationmode.cpp:33
-#, fuzzy
-#| msgid "Goto location"
 msgid "No rotation"
-msgstr "위치로 이동"
+msgstr "회전 없음"
 
 #: common/rotationmode.cpp:34
 msgid "Clockwise"
-msgstr ""
+msgstr "시계 방향"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:35
