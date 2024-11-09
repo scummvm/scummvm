@@ -484,6 +484,7 @@ void Room203::daemon() {
 		break;
 
 	case 26:
+		sendWSMessage_150000(-1);
 		setGlobals1(_ripLooksAtHeads, 1, 21, 21, 21, 1, 21, 1, 1, 1, 1);
 		sendWSMessage_110000(-1);
 		digi_play("203r05", 1, 255, 27);
