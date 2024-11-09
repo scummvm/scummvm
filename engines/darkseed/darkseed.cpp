@@ -1895,11 +1895,6 @@ void DarkseedEngine::lookCode(int objNum) {
 	_console->addTextLine(Common::String::format("You see the %s.", _objectVar.getObjectName(objNum)));
 }
 
-void DarkseedEngine::wonGame() {
-	error("implement wonGame()"); // TODO
-	//	_cutscene.play('Z');
-}
-
 void DarkseedEngine::printTime() {
 	_console->printTosText(958);
 	int hour = g_engine->_currentTimeInSeconds / 60 / 60 + 1;

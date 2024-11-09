@@ -145,8 +145,6 @@ public:
 
 	void playDayChangeCutscene();
 
-	void wonGame();
-
 	void removeFullscreenPic();
 
 	void wait();

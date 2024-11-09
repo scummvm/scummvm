@@ -469,13 +469,13 @@ void Animation::updateAnimation() {
 		} else {
 			_player->updateSprite();
 			if (_otherNspAnimationType_maybe == 14) {
-				// TODO
 				if (_objectVar.getObjectRunningCode(140) == 0 || g_engine->_room->_roomNumber != 6) {
 					g_engine->_previousRoomNumber = g_engine->_room->_roomNumber;
 					int newRoomNumber;
 					if (g_engine->_room->_roomNumber == 6) {
 						if (_player->_isAutoWalkingToBed && _objectVar[137] == 2) {
-							g_engine->wonGame();
+							wonGame();
+							return;
 						}
 						newRoomNumber = 10;
 					} else if (g_engine->_room->_roomNumber == 10) {
@@ -1325,6 +1325,78 @@ void Animation::libAnim(bool pickingUpReservedBook) {
 		_objectVar[62] = 0;
 		g_engine->_cutscene.play('G');
 	}
+}
+
+void Animation::wonGame() {
+	_player->loadAnimations("libparts.nsp");
+	g_engine->_room->loadLocationSprites("libmorph.nsp");
+	g_engine->showFullscreenPic("lib_babe.pic");
+
+	g_engine->_cursor.showCursor(false);
+	g_engine->_console->printTosText(925);
+
+	_animIndexTbl[0] = 0;
+	_spriteAnimCountdownTimer[0] = _player->_animations.getAnimAt(0)._frameDuration[0];
+	int counter = 68;
+	uint8 lipsIdx = 0;
+
+	while (counter < 70) {
+		g_engine->_sprites.clearSpriteDrawList();
+
+		g_engine->drawFullscreenPic();
+		g_engine->_console->draw();
+
+		if (!g_engine->_sound->isPlayingSpeech()) {
+			counter++;
+			if (counter == 69) {
+				g_engine->_console->printTosText(926);
+			}
+		}
+		g_engine->_animation->advanceAnimationFrame(0);
+		const Sprite &eyesSprite = _player->_animations.getSpriteAt(_player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]]);
+		g_engine->_sprites.addSpriteToDrawList(255, 114, &eyesSprite, 255, eyesSprite._width, eyesSprite._height, false);
+		g_engine->_animation->advanceAnimationFrame(1);
+
+		const Sprite &mouthSprite = _player->_animations.getSpriteAt(libList[lipsIdx]);
+		g_engine->_sprites.addSpriteToDrawList(255, 154, &mouthSprite, 255, mouthSprite._width, mouthSprite._height, false);
+
+		g_engine->_sprites.drawSprites();
+
+		g_engine->_screen->makeAllDirty();
+		g_engine->_screen->update();
+
+		lipsIdx++;
+		if (lipsIdx == 100) {
+			lipsIdx = 0;
+		}
+
+		g_system->delayMillis(50);
+	}
+
+	_objRestarted = false;
+	while (!_objRestarted) {
+		g_engine->_sprites.clearSpriteDrawList();
+		g_engine->_room->advanceFrame(0);
+		const Sprite &headMorph = g_engine->_room->_locationSprites.getSpriteAt(g_engine->_room->_locationSprites.getAnimAt(0)._frameNo[g_engine->_room->_locObjFrame[0]]);
+		g_engine->_sprites.addSpriteToDrawList(227, 50, &headMorph, 255, headMorph._width, headMorph._height, false);
+
+		g_engine->_sprites.drawSprites();
+
+		g_engine->_screen->makeAllDirty();
+		g_engine->_screen->update();
+		g_system->delayMillis(30);
+	}
+	g_engine->_console->printTosText(918);
+	g_engine->_sound->playMusic(MusicId::kVictory, false);
+	g_engine->showFullscreenPic("wonpic.pic");
+	g_engine->_console->draw();
+	g_engine->_screen->makeAllDirty();
+	g_engine->_screen->update();
+
+	while (g_engine->_sound->isPlayingMusic() && !g_engine->shouldQuit()) {
+		g_engine->waitxticks(1);
+	}
+	g_engine->_cutscene.play('Z');
 }
 
 } // End of namespace Darkseed

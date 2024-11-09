@@ -60,6 +60,7 @@ public:
 	void setupOtherNspAnimation(int nspAnimIdx, int animId);
 private:
 	void adddrekbutt();
+	void wonGame();
 };
 
 } // End of namespace Darkseed

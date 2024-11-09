@@ -180,7 +180,7 @@ void Sound::resetSpeech() {
 	}
 }
 
-void Sound::playMusic(MusicId musicId) {
+void Sound::playMusic(MusicId musicId, bool loop) {
 	if (musicId == MusicId::kNone) {
 		return;
 	}
@@ -188,7 +188,7 @@ void Sound::playMusic(MusicId musicId) {
 	playMusic(g_engine->isCdVersion()
 		? musicDosCDFilenameTbl[filenameIdx]
 		: musicDosFloppyFilenameTbl[filenameIdx],
-		true);
+		loop);
 }
 
 void Sound::playMusic(StartMusicId musicId) {

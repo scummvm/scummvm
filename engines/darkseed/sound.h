@@ -77,7 +77,7 @@ public:
 	bool isPlayingSfx() const;
 	bool isPlayingMusic();
 	void resetSpeech();
-	void playMusic(MusicId musicId);
+	void playMusic(MusicId musicId, bool loop = true);
 	void playMusic(StartMusicId musicId);
 	void playMusic(Common::String const &filename, bool loop = false);
 	void stopMusic();
