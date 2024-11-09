@@ -340,36 +340,38 @@ uint8 *Text::getBuffer(uint8 type) {
 	}
 }
 
-uint8 getNibble(uint8 curValue, uint8 subEntry) {
+uint8 getNibble(uint8 curValue, int8 subEntry) {
 	if ((subEntry + 1) % 2 == 0)
 		return curValue & 0x0F;
 	else
 		return (curValue >> 4) & 0x0F;
 }
 
-uint8 setNibble(uint8 curValue, uint8 subEntry, uint8 newValue) {
+uint8 setNibble(uint8 curValue, int8 subEntry, uint8 newValue) {
 	if ((subEntry + 1) % 2 == 0)
 		return (curValue & 0xF0) | (newValue & 0x0F);
 	else
 		return (newValue << 4) | (curValue & 0x0F);
 }
 
-uint8 Text::getSubtextNum(uint16 entry, uint8 txtMode, uint8 bufferType) {
+uint8 Text::getSubtextNum(uint16 entry, int8 txtMode, uint8 bufferType) {
 	if (bufferType != ATS_DATA && bufferType != INV_USE_DATA && bufferType != INV_ATS_DATA)
 		return 0;
 
+	const int8 mode = txtMode == -1 ? 0 : txtMode;
 	const uint8 *buffer = getBuffer(bufferType);
-	const uint8 curValue = buffer[(entry * MAX_ATS_STATUS) + (txtMode + 1) / 2];
-	return getNibble(curValue, txtMode);
+	const uint8 curValue = buffer[(entry * MAX_ATS_STATUS) + (mode + 1) / 2];
+	return getNibble(curValue, mode);
 }
 
-void Text::setSubtextNum(uint16 entry, uint8 txtMode, uint8 strNr, uint8 bufferType) {
+void Text::setSubtextNum(uint16 entry, int8 txtMode, uint8 strNr, uint8 bufferType) {
 	if (bufferType != ATS_DATA && bufferType != INV_USE_DATA && bufferType != INV_ATS_DATA)
 		return;
 
+	const int8 mode = txtMode == -1 ? 0 : txtMode;
 	uint8 *buffer = getBuffer(bufferType);
-	const uint8 curValue = buffer[(entry * MAX_ATS_STATUS) + (txtMode + 1) / 2];
-	buffer[(entry * MAX_ATS_STATUS) + (txtMode + 1) / 2] = setNibble(curValue, txtMode, (uint8)strNr);
+	const uint8 curValue = buffer[(entry * MAX_ATS_STATUS) + (mode + 1) / 2];
+	buffer[(entry * MAX_ATS_STATUS) + (mode + 1) / 2] = setNibble(curValue, mode, (uint8)strNr);
 }
 
 } // namespace Chewy
