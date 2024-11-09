@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-08 11:49+0100\n"
-"PO-Revision-Date: 2024-11-09 15:12+0000\n"
+"PO-Revision-Date: 2024-11-09 15:26+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -12246,7 +12246,7 @@ msgstr ""
 msgid "Remastered edition is not supported. Please, use the classic version"
 msgstr ""
 "L'édition Remastered n'est pas prise en charge. Veuillez utiliser la version "
-"classique."
+"classique"
 
 #: engines/sword2/metaengine.cpp:43
 msgid "Show object labels"
@@ -12478,41 +12478,29 @@ msgid "Maximum speed"
 msgstr "Vitesse maximum"
 
 #: engines/tsage/metaengine.cpp:312
-#, fuzzy
-#| msgid "Slower game speed"
 msgid "Low speed"
-msgstr "Vitesse du jeu plus lente"
+msgstr "Vitesse basse"
 
 #: engines/tsage/metaengine.cpp:317
-#, fuzzy
-#| msgid "Reading speed"
 msgid "Medium speed"
-msgstr "Vitesse de lecture"
+msgstr "Vitesse moyenne"
 
 #: engines/tsage/metaengine.cpp:322
-#, fuzzy
-#| msgid "Forwards"
 msgid "Draw Cards"
-msgstr "Avancer"
+msgstr "Piocher des cartes"
 
 #: engines/tucker/metaengine.cpp:190
-#, fuzzy
-#| msgid "Speech"
 msgid "Skip speech"
-msgstr "Voix"
+msgstr "Passer le dialogue"
 
 #. I18N: Panel contains all actor actions and the artstyle is toggled
 #: engines/tucker/metaengine.cpp:203
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle panel style"
-msgstr "Act./Désact. mode rapide"
+msgstr "Basculer entre styles de panneau"
 
 #: engines/tucker/metaengine.cpp:209
-#, fuzzy
-#| msgid "Use Text to speech"
 msgid "Toggle text speech"
-msgstr "Utiliser le synthétiseur vocal"
+msgstr "Basculer entre lignes de dialogue"
 
 #: engines/twine/detection.cpp:188
 msgid "This version requires Giflib which was not compiled into ScummVM"
