@@ -27,6 +27,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
   - libopenmpt wurde als neue, optionale Abhängigkeit zur Sound-Behandlung hinzugefügt.
   - Die Option "Seitenverhältnis korrigieren" ist jetzt standardmäßig aktiv.
   - libmpcdec (musepack) wurde als neue, optionale Abhängigkeit zur Sound-Behandlung hinzugefügt.
+  - Die Kommandozeilenoption --copy-protection wurde in die Benutzeroberfläche integriert.
+
+ ADL:
+  - Der "gemusterte" Mauszeiger von Apple II wurde als Darstellungsoption hinzugefügt.
 
  AGI:
   - Anzeigedauer für zeitbasierte Text-Boxen korrigiert. Diese wurden nur halb so lang wie vorgesehen
@@ -41,6 +45,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
   - Der AGS-Code wurde mit der Upstream-Version 3.6.0.58 synchronisiert.
   - Fehlerhaftes Verhalten der Treppen in älteren Episoden von Maniac Mansion Mania korrigiert,
     die durch fehlerhafte Wegfindung verursacht wurde.
+
+ Asylum:
+  - Die Steuerung ist jetzt auch über die Pfeiltasten der Tastatur möglich.
 
  BBVS:
   - Unterstützung für Tastenkürzel hinzugefügt.
@@ -66,6 +73,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Dreamweb:
   - Absturz bei Raumwechsel behoben, der dann auftritt, wenn nicht-essentielle Spiele-Items
     gehalten werden.
+
+ EFH:
+  - Mehrere Abstürze behoben, die auftreten, wenn das Spiel während einer Interaktion verlassen wird.
 
  Freescape:
   - Unterstützung für die Atari/Amiga-Versionen von Dark Side hinzugefügt.
@@ -93,7 +103,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Illusions:
   - Unterstützung für Tastenkürzel hinzugefügt.
 
- KYRA:
+ Kyra:
   - (EOB) Unterstützung für originale AD&D-Regeln hinzugefügt, um Verbesserungen und Fehlerbehebungen
     im originalen Spiele-Code von Eye of the Beholder I und II zu realisieren.
   - (EOB) Fehler behoben, durch den Charaktere mit mehreren Klassen eine fehlerhafte Anzahl von HP
@@ -115,16 +125,32 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  MM:
   - Unterstützung für MT32/LAPC-1 für die Xeen-Engine hinzugefügt.
   - Fehler in Xeen behoben, der dafür sorgt, dass einige Sound-Effekte abrupt beendet werden.
-  - Fehlerhafte SP/Edelstein-Voraussetzungen im erweiterten Modus von MM1 korrigiert. Spruch-Punkte und Edelsteine werden jetzt korrekt abgezogen, wenn Zaubersprüche verwendet werden.
+  - Fehlerhafte SP/Edelstein-Voraussetzungen im erweiterten Modus von MM1 korrigiert.
+  - Spruch-Punkte und Edelsteine werden jetzt korrekt abgezogen, wenn Zaubersprüche verwendet werden.
+
+ NGI:
+  - Unterstützung für die litauische Version von Full Pipe hinzugefügt.
 
  SAGA:
   - Unterstützung für Tastenkürzel hinzugefügt.
 
  SCI:
   - Unterstützung für russische Fan-Übersetzung von QFG3 hinzugefügt.
+  - Verbesserte Unterstützung für PCjr-Audio.
+  - Verbesserte Unterstützung für die Mac-Version von KQ6.
+  - Unterstützung für die spanische Version von SQ3 hinzugefügt.
+  - Unterstützung für verschiedene Render-Modi in zahlreichen Spielen hinzugefügt.
+  - Benutzeroberfläche zum speichern/laden in der FM-Towns-Version von KQ5 hinzugefügt.
+  - Unterstützung für die russische Versionen von Camelot, Laura Bow und PQ2 hinzugefügt.
+  - Zahlreiche Skriptfehler in verschiedenen Spielen behoben.
 
  SCUMM:
   - Karten-Generator von Moonbase Console in Moonbase Commander hinzugefügt.
+  - Verbesserung der Grafik-Unterstützung für die Mac-Versionen von MI1, MI2 und Fate of Atlantis.
+  - Verbesserung der Audio-Unterstützung für die Macintosh-Versionen von Loom, Last Crusade und MI1.
+
+ Sherlock:
+  - Unterstützung für die russische Übersetzung von Rose Tattoo hinzugefügt.
 
  Stark:
   - Unterstützung für Tastenkürzel hinzugefügt.
@@ -138,10 +164,18 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 	Lautstärken-Anpassung wenn die Sprachausgabe abgespielt wird. Diese Option ist standardmäßig
 	deaktiviert, da das Spiel vor dem Hintergrund von DOS- und AIL-Soundtreibern entwickelt wurde.
 	Diese Option steht nicht für die Macintosh- und PSX-Versionen zur Verfügung.
-  - Untersützung für Tastenkürzel hinzugefügt.
+  - Unterstützung für Tastenkürzel hinzugefügt.
+  - Verbesserte Unterstützung auf Big-Endian-Systemen.
+
+ Teenagent:
+  - Unterstützung für die polnische Diskettenversion hinzugefügt.
 
  Tinsel:
   - Unterstützung für Tastenkürzel hinzugefügt.
+  - Unterstützung für die japanische Mac-Version von Discworld 1 hinzugefügt.
+
+ Titanic:
+  - Absturz behoben, der auftritt, wenn das Wort "that" in einer Konversation verwendet wird.
 
  Tony:
   - Absturz bei schnellem Cursor-Wechsel behoben.
@@ -173,6 +207,12 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
   - Die Minikarte in Ultima VIII verwendet jetzt die Farbpalette des Spiels.
   - Item-Aufteilung in der Spiele-Karte von Ultima VIII korrigiert.
   - Fehler in der Animation, Audio-Wiedergabe und Szenen-Wechsel in Ultima VIII korrigiert.
+
+ Voyeur:
+  - Unterstützung für die Interplay-Logo-Animation hinzugefügt.
+
+ ZVision:
+  - Verbesserte Unterstützung von RTL-Sprachen.
 
  macOS-Portierung:
   - Der Auto-Updater verwendet nun Sparkle 2.x.
