@@ -127,7 +127,37 @@ void Room207::init() {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "PEASANT", false);
 	}
 
-	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
+	switch (_G(game).previous_room) {
+	case KERNEL_RESTORING_GAME:
+		if (!_G(flags)[V061]) {
+			if (_pipeFlag) {
+				hotspot_set_active("PEASANT", false);
+				Common::strcpy_s(_G(player).verb, "xxx");
+				Common::strcpy_s(_G(player).noun, "xxx");
+				_fieldB6_counter = 0;
+				kernel_timing_trigger(60, 40);
+			}
+
+			series_play_xy("shadow pesky rock loop", -1, 0, 514, 367, 97, 0xf09, 300, -1);
+			_ppSquatMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 514, 367, 97, 0xf00, false,
+				triggerMachineByHashCallback, "pp squat");
+
+			if (inv_player_has("LEAD PIPE")) {
+				_peskyPointsRipForegroundSeries = series_load("pesky points at rip foreground", -1, nullptr);
+				sendWSMessage_10000(1, _ppSquatMach, _peskyPointsRipForegroundSeries, 19, 19, 100,
+					_peskyPointsRipForegroundSeries, 19, 19, 0);
+			} else if (inv_player_has("METAL RIM")) {
+				_peskyPointsRipBackgroundSeries = series_load("pesky points at rip background", -1, nullptr);
+				sendWSMessage_10000(1, _ppSquatMach, _peskyPointsRipBackgroundSeries,
+					19, 19, 100, _peskyPointsRipBackgroundSeries, 19, 19, 0);
+			} else {
+				sendWSMessage_10000(1, _ppSquatMach, _peskyRockLoopSeries, 1, 20, 101,
+					_peskyRockLoopSeries, 20, 20, 0);
+			}
+		}
+		break;
+
+	default:
 		ws_demand_location(_G(my_walker), 375, 347);
 		ws_demand_facing(_G(my_walker), 10);
 		if (_G(flags[V061]) == 0) {
@@ -139,19 +169,6 @@ void Room207::init() {
 			_ppWalkerMach = triggerMachineByHash_3000(8, 6, *S2_PEASANT_NORMAL_DIRS, *S2_PEASANT_SHADOW_DIRS, 660, 367, 9, triggerMachineByHashCallback3000, "pp walker");
 			sendWSMessage_10000(_ppWalkerMach, 562, 359, 9, 10, 1);
 		}
-
-	} else { // KERNEL_RESTORING_GAME
-		series_play_xy("shadow pesky rock loop", -1, 0, 514, 367, 97, 3849, 300, -1);
-		_ppSquatMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 614, 367, 97, 3840, false, triggerMachineByHashCallback, "pp squat");
-
-		if (inv_player_has("LEAD PIPE")) {
-			_peskyPointsRipForegroundSeries = series_load("pesky points at rip foreground", -1, nullptr);
-			sendWSMessage_10000(1, _ppSquatMach, 1, _peskyPointsRipForegroundSeries, 19, 100, _peskyPointsRipForegroundSeries, 19, 19, 0);
-		} else if (inv_player_has("METAL RIM")) {
-			_peskyPointsRipBackgroundSeries = series_load("pesky points at rip background", -1, nullptr);
-			sendWSMessage_10000(1, _ppSquatMach, 1, _peskyPointsRipBackgroundSeries, 19, 100, _peskyPointsRipBackgroundSeries, 19, 19, 0);
-		} else
-			sendWSMessage_10000(1, _ppSquatMach, 1, _peskyRockLoopSeries, 20, 101, _peskyRockLoopSeries, 20, 20, 0);
 	}
 
 	digi_play("950_s02", 3, 30, -1, -1);
