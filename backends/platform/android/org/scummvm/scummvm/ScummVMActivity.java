@@ -1,8 +1,5 @@
 package org.scummvm.scummvm;
 
-import static android.content.res.Configuration.HARDKEYBOARDHIDDEN_NO;
-import static android.content.res.Configuration.KEYBOARD_QWERTY;
-
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -27,6 +24,7 @@ import android.os.Environment;
 import android.os.Process;
 import android.os.SystemClock;
 import android.provider.DocumentsContract;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -150,9 +148,12 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	}
 
 	private boolean isHWKeyboardConnected() {
+		// This setting is not documented but that's what is used on Android since 2014
+		final String SHOW_IME_WITH_HARD_KEYBOARD = "show_ime_with_hard_keyboard";
 		final Configuration config = getResources().getConfiguration();
-		return config.keyboard == KEYBOARD_QWERTY
-			&& config.hardKeyboardHidden == HARDKEYBOARDHIDDEN_NO;
+		return config.keyboard == Configuration.KEYBOARD_QWERTY &&
+			config.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO &&
+			Settings.Secure.getInt(getContentResolver(), SHOW_IME_WITH_HARD_KEYBOARD, 0) == 0;
 	}
 
 	public boolean isKeyboardOverlayShown() {
@@ -535,11 +536,11 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 	}
 
-	public void showScreenKeyboard() {
+	public void showScreenKeyboard(boolean force) {
 		final boolean bGlobalsCompatibilityHacksTextInputEmulatesHwKeyboard = true;
 		final int dGlobalsTextInputKeyboard = 1;
 
-		if (isHWKeyboardConnected()) {
+		if (!force && isHWKeyboardConnected()) {
 			return;
 		}
 
@@ -581,7 +582,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		if (isScreenKeyboardShown()) {
 			hideScreenKeyboard();
 		} else {
-			showScreenKeyboard();
+			showScreenKeyboard(true);
 		}
 	}
 
@@ -760,7 +761,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				public void run() {
 					//showKeyboard(enable);
 					if (enable) {
-						showScreenKeyboard();
+						showScreenKeyboard(false);
 					} else {
 						hideScreenKeyboard();
 					}
