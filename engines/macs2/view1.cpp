@@ -973,12 +973,14 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 	// Top side
 	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0xFF, s);
 
-	// TODO: Left side
+	// Left side
 	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0xFF, s);
 
 	// Bottom highlight
 	DrawHorizontalBorderHighlight(pos + Common::Point(1, size.y + 1), size.x - 1, 0xFF, s);
 
+	// Right side
+	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0xFF, s);
 }
 
 void View1::DrawBorderSide(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
