@@ -758,23 +758,21 @@ void Adlib::OnTimer() {
 									// the array access
 									uint16 value = gArray225F[bp3];
 									bp10 = Func19BE_TODO(value << 4);
-									
+									// TODO: Not sure about amount of bits necessary
+									// for the following calculations
+									uint16 temp = bp5;
+									temp &= 0x7F;
+									// TODO: We throw away AH - should be superfluous
+									// after the AND
+									temp = temp >> 0x1;
+									temp -= 0x3F;
+									temp = temp >> 0x1;
+									// TODO: Again throwing away AH in the original
+									bp1 = temp >> 0x1;
 									// TODO: Continue here
 									/*
 									
-									mov	al,[bp-5h]
-									and	al,7Fh
-									xor	ah,ah
-									shr	ax,1h
-									mov	dx,ax
-									mov	ax,3Fh
-									sub	ax,dx
-									shr	ax,1h
-									mov	[bp-1h],al
-									mov	al,[bp-1h]
-									xor	ah,ah
-									shr	ax,1h
-									mov	[bp-1h],al
+			
 									push	word ptr [bp-0Eh]
 									push	word ptr [bp-10h]
 									push	2h
