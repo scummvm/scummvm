@@ -248,6 +248,10 @@ bool DgdsChunkReader::isPacked() const {
 			packed = true;
 		else if (strcmp(_idStr, "VGA:") == 0)
 			packed = true;
+		else if (strcmp(_idStr, "EGA:") == 0)
+			packed = true;
+		else if (strcmp(_idStr, "HCG:") == 0)
+			packed = true;
 		break;
 	case EX_TDS:
 		if (0) {
