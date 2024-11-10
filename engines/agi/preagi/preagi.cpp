@@ -112,6 +112,7 @@ void PreAgiEngine::drawStr(int row, int col, int attr, const char *buffer) {
 
 		switch (code) {
 		case '\n':
+		case '\r': // winnie
 		case 0x8D:
 			if (++row == 200 / 8) return;
 			col = 0;
