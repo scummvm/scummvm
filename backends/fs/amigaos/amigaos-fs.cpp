@@ -136,7 +136,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 
 		IDOS->FreeDosObject(DOS_EXAMINEDATA, pExd);
 	} else {
-		debug(6, "IDOS->ExamineObjectTags() failed -> Not a directory (or it doesn't exist!");
+		debug(6, "IDOS->ExamineObjectTags() failed -> Not a directory (or it doesn't exist)!");
 	}
 }
 
