@@ -21,6 +21,7 @@
 
 #include "ags/shared/util/string_compat.h"
 #include "ags/shared/core/platform.h"
+#include "ags/lib/allegro/error.h"
 #include "common/str.h"
 
 namespace AGS3 {
@@ -52,6 +53,30 @@ char *ags_strdup(const char *s) {
 	char *result = (char *)malloc(len + 1);
 	memcpy(result, s, len + 1);
 	return result;
+}
+
+int ags_strncpy_s(char *dest, size_t dest_sz, const char *src, size_t count) {
+	// NOTE: implementation approximately mimics explanation for "strncpy_s":
+	// https://en.cppreference.com/w/c/string/byte/strncpy
+	assert(dest && dest_sz > 0 && ((dest + dest_sz - 1 < src) || (dest > src + count)));
+	if (!dest || dest_sz == 0 || ((dest <= src) && (dest + dest_sz - 1 >= src)) || ((src <= dest) && (src + count - 1 >= dest)))
+		return AL_EINVAL; // null buffer, or dest and src overlap
+	if (!src) {
+		dest[0] = 0; // ensure null terminator
+		return AL_EINVAL;
+	}
+
+	const size_t copy_len = (count < dest_sz - 1) ? count : dest_sz - 1; // reserve null-terminator
+	const char *psrc = src;
+	const char *src_end = src + copy_len;
+	char *pdst = dest;
+	for (; *psrc && (psrc != src_end); ++psrc, ++pdst)
+		*pdst = *psrc;
+	*pdst = 0; // ensure null terminator
+	assert((*psrc == 0) || ((psrc - src) == (int)count)); // assert that no *unintended* truncation occured
+	if ((*psrc != 0) && ((psrc - src) < (int)count))
+		return AL_ERANGE; // not enough dest buffer - error
+	return 0; // success
 }
 
 } // namespace AGS3

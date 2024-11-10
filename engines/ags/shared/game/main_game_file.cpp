@@ -564,14 +564,17 @@ void UpgradeCharacters(GameSetupStruct &game, GameDataVersion data_ver) {
 	const int numcharacters = _GP(game).numcharacters;
 
 	// Fixup character script names for 2.x (EGO -> cEgo)
+	// In 2.x versions the "scriptname" field in game data contained a name
+	// limited by 14 chars (although serialized in 20 bytes). After reading,
+	// it was exported as "cScriptname..." for the script.
 	if (data_ver <= kGameVersion_272) {
-		char namelwr[LEGACY_MAX_SCRIPT_NAME_LEN];
+		char namelwr[LEGACY_MAX_SCRIPT_NAME_LEN - 1];
 		for (int i = 0; i < numcharacters; i++) {
 			if (chars[i].scrname[0] == 0)
 				continue;
-			memcpy(namelwr, chars[i].scrname, LEGACY_MAX_SCRIPT_NAME_LEN);
+			ags_strncpy_s(namelwr, sizeof(namelwr), chars[i].scrname, LEGACY_MAX_SCRIPT_NAME_LEN - 2);
 			ags_strlwr(namelwr + 1); // lowercase starting with the second char
-			snprintf(chars[i].scrname, LEGACY_MAX_SCRIPT_NAME_LEN, "c%s", namelwr);
+			snprintf(chars[i].scrname, sizeof(chars[i].scrname), "c%s", namelwr);
 			chars2[i].scrname_new = chars[i].scrname;
 		}
 	}
