@@ -65,6 +65,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed unlocked cutscenes in cinema screen.
    - Fixed music in harbor during the second visit.
    - Fixed movement of Chewy's boat during the boat race.
+   - Fixed room placement of Nichelle after Kong attack.
 
  Cine:
    - Added keymapper support.
