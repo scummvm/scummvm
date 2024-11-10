@@ -58,6 +58,14 @@ For a more comprehensive changelog of the latest experimental code, see:
    - The "Designers cut" setting can be set in advance and persist for a new game.
    - Improved, reliable application of custom random seeds.
 
+ Chewy:
+   - Fixed cyber crown state before Surimy attack.
+   - Fixed changing hotspot subtexts.
+   - Fixed keyboard handling in the inventory screen.
+   - Fixed unlocked cutscenes in cinema screen.
+   - Fixed music in harbor during the second visit.
+   - Fixed movement of Chewy's boat during the boat race.
+
  Cine:
    - Added keymapper support.
 
