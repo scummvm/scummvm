@@ -135,14 +135,19 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Tastenkürzel hinzugefügt.
 
  SCI:
-   - Unterstützung für russische Fan-Übersetzung von QFG3 hinzugefügt.
+   - CGA- (4 Farben und schwarz/weiß) und Hercules-Rendering für die meisten
+     SCI 0-DOS-Spiele hinzugefügt. Zusätzlich wurde ein EGA-Dithering- und VGA-
+     Graustufenmodus für viele SCI 1-DOS-Spiele sowie ein 16-Farben-Modus für die
+     Windows-Version von KQ6 hinzugefügt. Für alle PC-98-Spiele steht jetzt ein
+     Modus für 8 Farben zur Verfügung.
    - Verbesserte Unterstützung für PCjr-Audio.
    - Verbesserte Unterstützung für die Mac-Version von KQ6.
-   - Unterstützung für die spanische Version von SQ3 hinzugefügt.
-   - Unterstützung für verschiedene Render-Modi in zahlreichen Spielen hinzugefügt.
    - Benutzeroberfläche zum speichern/laden in der FM-Towns-Version von KQ5 hinzugefügt.
-   - Unterstützung für die russische Versionen von Camelot, Laura Bow und PQ2 hinzugefügt.
    - Zahlreiche Skriptfehler in verschiedenen Spielen behoben.
+   - Unterstützung für die deutsche Version von KQ5 hinzugefügt.
+   - Unterstützung für die spanische Version von SQ3 hinzugefügt.
+   - Unterstützung für die russischen Versionen von Camelot, Laura Bow und PQ2 hinzugefügt.
+   - Unterstützung für die russische Fan-Übersetzung von QFG3 hinzugefügt.
 
  SCUMM:
    - Karten-Generator von Moonbase Console in Moonbase Commander hinzugefügt.
