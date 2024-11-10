@@ -80,14 +80,10 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Freescape:
    - Added support for Atari/Amiga releases of Dark Side.
-   - Improved handling of close colinear surfaces.
    - Added "authentic graphics" mode.
    - Fixed several glitches in the different render modes.
-   - Refactored sound handling for different games.
-   - Refactored font handling to use common classes.
    - Improved keymapper support coverage.
    - Correctly implement aspect ratio correction following dosbox implementation.
-   - More precise perspective matrix computation to match the original.
 
  GLK/ADVSYS:
    - Fixed parsing for input commands.
