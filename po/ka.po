@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-08 11:49+0100\n"
-"PO-Revision-Date: 2024-09-09 19:43+0000\n"
+"PO-Revision-Date: 2024-11-10 02:18+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.4\n"
+"X-Generator: Weblate 5.7.2\n"
 
 #: audio/mac_plugin.cpp:30
 msgid "Apple Macintosh Audio"
@@ -1703,10 +1703,8 @@ msgid "Scaler:"
 msgstr "მასშტაბი:"
 
 #: gui/options.cpp:1666
-#, fuzzy
-#| msgid "Render mode:"
 msgid "Rotation mode:"
-msgstr "რენდერის რეჟიმი:"
+msgstr "ბრუნვის რეჟიმი:"
 
 #: gui/options.cpp:1680
 msgid "Shader:"
@@ -2628,10 +2626,8 @@ msgid "Do you really want to delete this saved game?"
 msgstr "მართლა გნებავთ ამ შენახული თამაშის წაშლა?"
 
 #: gui/saveload-dialog.cpp:557
-#, fuzzy
-#| msgid "Error writing save file\n"
 msgid "Error deleting saved game"
-msgstr "შესანახი ფაილის ჩაწერის შეცდომა\n"
+msgstr "შენახული თამაშის წაშლის შეცდომა"
 
 #: gui/saveload-dialog.cpp:675 gui/saveload-dialog.cpp:1184
 msgid "Date: "
@@ -2943,16 +2939,12 @@ msgid "VGA Grey Scale"
 msgstr ""
 
 #: common/rendermode.cpp:58
-#, fuzzy
-#| msgid "PC-9821 (256 Colors)"
 msgid "Windows (256 Colors)"
-msgstr "PC-9821 (256 ფერი)"
+msgstr "Windows (256 ფერი)"
 
 #: common/rendermode.cpp:59
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "Windows (16 Colors)"
-msgstr "PC-9801 (16 ფერი)"
+msgstr "Windows (16 ფერი)"
 
 #: common/rendermode.cpp:96
 msgctxt "lowres"
@@ -2965,10 +2957,8 @@ msgid "Hercules Amber"
 msgstr "Hercules (ქარვისფერი)"
 
 #: common/rotationmode.cpp:33
-#, fuzzy
-#| msgid "Goto location"
 msgid "No rotation"
-msgstr "მდებარეობაზე გადასვლა"
+msgstr "ბრუნვის გარეშე"
 
 #: common/rotationmode.cpp:34
 msgid "Clockwise"
@@ -5585,10 +5575,8 @@ msgid ""
 msgstr ""
 
 #: engines/agi/metaengine.cpp:147
-#, fuzzy
-#| msgid "Predictive input dialog"
 msgid "Predictive Input Dialog on mouse click"
-msgstr "პროგნოზირებადი შეყვანის დიალოგი"
+msgstr "პროგნოზირებადი შეყვანის დიალოგი თაგუნას წკაპზე"
 
 #: engines/agi/metaengine.cpp:148
 msgid ""
@@ -6121,10 +6109,8 @@ msgid "Default keymappings"
 msgstr "ნაგულისხმევი კლავიატურის მალსახმობები"
 
 #: engines/bbvs/metaengine.cpp:94
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Escape keymappings"
-msgstr "თამაშის კლავიატურის მალსახმობები"
+msgstr "სპეციალური კლავიატურის მალსახმობები"
 
 #. I18N: ESC key
 #: engines/bbvs/metaengine.cpp:110 engines/cruise/metaengine.cpp:197
@@ -6819,29 +6805,21 @@ msgstr "სწრაფი ჩატვირთვა"
 
 #. I18N: Game runs at faster speed
 #: engines/cruise/metaengine.cpp:160 engines/tucker/metaengine.cpp:196
-#, fuzzy
-#| msgid "Fastest"
 msgid "Fast mode"
-msgstr "უსწრაფესი"
+msgstr "სწრაფი რეჟიმი"
 
 #. I18N: Opens menu with player commands
 #: engines/cruise/metaengine.cpp:173
-#, fuzzy
-#| msgid "Game menu"
 msgid "Player menu"
-msgstr "თამაშის მენიუ"
+msgstr "მოთამაშის მენიუ"
 
 #: engines/cruise/metaengine.cpp:179
-#, fuzzy
-#| msgid "Faster game speed"
 msgid "Increase game speed"
-msgstr "უფრო სწრაფი თამაშის სიჩქარე"
+msgstr "თამაშის სიჩქარის გაზრდა"
 
 #: engines/cruise/metaengine.cpp:185
-#, fuzzy
-#| msgid "Faster game speed"
 msgid "Decrease game speed"
-msgstr "უფრო სწრაფი თამაშის სიჩქარე"
+msgstr "თამაშის სიჩქარის შემცირება"
 
 #: engines/cruise/metaengine.cpp:203 engines/mads/metaengine.cpp:361
 #: engines/stark/metaengine.cpp:280
@@ -6853,56 +6831,40 @@ msgid "Versailles 1685 support is not compiled in"
 msgstr "Versailles 1685-ის მხარდაჭერა ჩაშენებული არაა"
 
 #: engines/dgds/metaengine.cpp:75
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Menu"
-msgstr "დადუმების გადართვა"
+msgstr "მენიუს გადართვა"
 
 #: engines/dgds/metaengine.cpp:76
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle Clock"
-msgstr "ბრძოლის გადართვა"
+msgstr "საათის გადართვა"
 
 #: engines/dgds/metaengine.cpp:77
 msgid "Next dialog / menu item"
 msgstr ""
 
 #: engines/dgds/metaengine.cpp:78
-#, fuzzy
-#| msgid "Previous palette"
 msgid "Previous dialog / menu item"
-msgstr "წინა პალიტრა"
+msgstr "წინა დიალოგი / მენიუს პუნქტი"
 
 #: engines/dgds/metaengine.cpp:79
-#, fuzzy
-#| msgid "Next location"
 msgid "Next object"
-msgstr "შემდეგი მდებარეობა"
+msgstr "შემდეგი ობიექტი"
 
 #: engines/dgds/metaengine.cpp:80
-#, fuzzy
-#| msgid "Go to previous object"
 msgid "Previous object"
-msgstr "გადასვლა წინა ობიექტზე"
+msgstr "წინა ობიექტი"
 
 #: engines/dgds/metaengine.cpp:81
-#, fuzzy
-#| msgid "Pick up"
 msgid "Pick up / Operate"
-msgstr "აღება"
+msgstr "აღება / მართვა"
 
 #: engines/dgds/metaengine.cpp:83
-#, fuzzy
-#| msgid "Animated inventory items"
 msgid "Activate Inventory Object"
-msgstr "ანიმირებული ინვენტარის ელემენტები"
+msgstr "ინვენტარის ობიექტის გააქტიურება"
 
 #: engines/dgds/metaengine.cpp:86
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game Keys"
-msgstr "თამაშის კლავიატურის მალსახმობები"
+msgstr "თამაშის მალსახმობები"
 
 #: engines/director/events.cpp:99
 msgid ""
@@ -6915,23 +6877,17 @@ msgid "Skip intro/Exit map or inventory"
 msgstr ""
 
 #: engines/draci/metaengine.cpp:161
-#, fuzzy
-#| msgid "Open Holomap"
 msgid "Open map"
-msgstr "ჰოლორუკის გახსნა"
+msgstr "რუკის გახსნა"
 
 #. I18N: shows where the game actor is able to move
 #: engines/draci/metaengine.cpp:168
-#, fuzzy
-#| msgid "Show map"
 msgid "Show walking map"
-msgstr "რუკის ჩვენება"
+msgstr "სასიარულო რუკის ჩვენება"
 
 #: engines/draci/metaengine.cpp:174
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Toggle walk speed"
-msgstr "სწრაფი სიარულის გადართვა"
+msgstr "სიარულის სიჩქარის გადართვა"
 
 #: engines/draci/metaengine.cpp:186 engines/mohawk/myst.cpp:554
 #: engines/mohawk/riven.cpp:835 engines/nancy/input.cpp:225
@@ -6943,16 +6899,12 @@ msgid "Toggle between mouse pointer and the last game item"
 msgstr ""
 
 #: engines/draci/metaengine.cpp:198
-#, fuzzy
-#| msgid "Scroll up in inventory"
 msgid "Previous item in inventory"
-msgstr "ინვენტარში მაღლა აწევა"
+msgstr "წინა ელემენტი ინვენტარში"
 
 #: engines/draci/metaengine.cpp:204
-#, fuzzy
-#| msgid "Open inventory"
 msgid "Next item in inventory"
-msgstr "ინვენტარის გახსნა"
+msgstr "შემდეგი ელემენტი ინტვენტარში"
 
 #: engines/dragons/dragons.cpp:1884
 #, c-format
@@ -7116,16 +7068,12 @@ msgid "Info Menu"
 msgstr "ინფორმაციის მენიუ"
 
 #: engines/freescape/games/castle/castle.cpp:234
-#, fuzzy
-#| msgid "Select index"
 msgid "Select Prince"
-msgstr "აირჩიეთ ინდექსი"
+msgstr "აირჩიეთ პრინცი"
 
 #: engines/freescape/games/castle/castle.cpp:239
-#, fuzzy
-#| msgid "Select index"
 msgid "Select Princess"
-msgstr "აირჩიეთ ინდექსი"
+msgstr "აირჩიეთ პრინცესა"
 
 #: engines/freescape/games/castle/castle.cpp:266
 #: engines/freescape/games/dark/dark.cpp:203
@@ -7161,10 +7109,8 @@ msgstr ""
 
 #: engines/freescape/games/castle/castle.cpp:298
 #: engines/freescape/games/eclipse/eclipse.cpp:245
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Face Forward"
-msgstr "წინ"
+msgstr "სახე წინ"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:220
@@ -7204,23 +7150,17 @@ msgstr ""
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/eclipse/eclipse.cpp:224
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change Angle"
-msgstr "რეჟიმის შეცვლა"
+msgstr "კუთხის შეცვლა"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/eclipse/eclipse.cpp:230
-#, fuzzy
-#| msgid "Increase Step Size"
 msgid "Change Step Size"
-msgstr "ნაბიჯის ზომის გაზრდა"
+msgstr "ნაბიჯის ზომის შეცვლა"
 
 #: engines/freescape/games/eclipse/eclipse.cpp:235
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Height"
-msgstr "დადუმების გადართვა"
+msgstr "სიმაღლის გადართვა"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/freescape/games/eclipse/eclipse.cpp:240
@@ -7626,14 +7566,10 @@ msgid "Glowstick"
 msgstr "მანათებელი ჯოხი"
 
 #: engines/hugo/metaengine.cpp:111
-#, fuzzy
-#| msgid "User canceled"
 msgid "User help"
-msgstr "გააუქმა მომხმარებელმა"
+msgstr "მომხმარებლის დახმარება"
 
 #: engines/hugo/metaengine.cpp:117
-#, fuzzy
-#| msgid "Toggle Sound"
 msgid "Toggle sound"
 msgstr "ხმის გადართვა"
 
@@ -7665,17 +7601,13 @@ msgid "Show inventory"
 msgstr "ინვენტარის ჩვენება"
 
 #: engines/hugo/metaengine.cpp:154
-#, fuzzy
-#| msgid "Improved mode"
 msgid "Turbo mode"
-msgstr "გაუმჯობესებული რეჟიმი"
+msgstr "ტურბორეჟიმი"
 
 #. I18N: Move actor in the top direction
 #: engines/hugo/metaengine.cpp:167
-#, fuzzy
-#| msgid "Move up"
 msgid "Move to top"
-msgstr "აწევა"
+msgstr "ზემოთ აწევა"
 
 #. I18N: Move actor in the bottom direction
 #: engines/hugo/metaengine.cpp:175
@@ -7684,45 +7616,33 @@ msgstr ""
 
 #. I18N: Move actor in the left direction
 #: engines/hugo/metaengine.cpp:183
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to left"
 msgstr "მარცხნივ გაწევა"
 
 #. I18N: Move actor in the right direction
 #: engines/hugo/metaengine.cpp:191
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to right"
 msgstr "მარჯვნივ გაწევა"
 
 #. I18N: Move actor in the top-left direction
 #: engines/hugo/metaengine.cpp:199
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to top left"
-msgstr "მარცხნივ გაწევა"
+msgstr "მარცხნივ ზემოთ აწევა"
 
 #. I18N: Move actor in the top-right direction
 #: engines/hugo/metaengine.cpp:205
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to top right"
-msgstr "მარჯვნივ გაწევა"
+msgstr "მარჯვნივ ზემოთ აწევა"
 
 #. I18N: Move actor in the bottom-left direction
 #: engines/hugo/metaengine.cpp:211
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to bottom left"
-msgstr "მარცხნივ გაწევა"
+msgstr "მარცხნივ ქვემოთ დაწევა"
 
 #. I18N: Move actor in the bottom-right direction
 #: engines/hugo/metaengine.cpp:217
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to bottom right"
-msgstr "მარჯვნივ გაწევა"
+msgstr "მარჯვნივ ქვემოთ დაწევა"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -7785,16 +7705,12 @@ msgid "Side Step"
 msgstr "ნაბიჯი გვერდით"
 
 #: engines/illusions/metaengine.cpp:108
-#, fuzzy
-#| msgid "Move cursor left"
 msgid "Move cursor up"
-msgstr "კურსორის მარცხნივ გაწევა"
+msgstr "კურსორის მაღლა აწევა"
 
 #: engines/illusions/metaengine.cpp:115
-#, fuzzy
-#| msgid "Move cursor left"
 msgid "Move cursor down"
-msgstr "კურსორის მარცხნივ გაწევა"
+msgstr "კურსორის დაბლა დაწევა"
 
 #: engines/illusions/metaengine.cpp:122
 msgid "Move cursor left"
@@ -7958,10 +7874,8 @@ msgstr "წინ"
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
 #: engines/wintermute/keymapper_tables.h:2238
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Move Backwards"
-msgstr "უკან"
+msgstr "უკან გაწევა"
 
 #: engines/kyra/engine/eobcommon.cpp:373
 msgid "Move Left"
@@ -10725,10 +10639,8 @@ msgid "Open control panel"
 msgstr ""
 
 #: engines/sky/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle fast mode on/off"
 msgid "Toggle really fast mode on/off"
-msgstr "სწრაფი რეჟიმის ჩართვა/გამორთვა"
+msgstr "მართლა სწრაფი რეჟიმის ჩართვა/გამორთვა"
 
 #: engines/sky/metaengine.cpp:156
 msgid "Floppy intro"
@@ -10830,14 +10742,10 @@ msgid "Scroll down in your dialogues"
 msgstr ""
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "go to next dialogue"
 msgid "Go to next dialogue"
 msgstr "გადასვლა შემდეგ დიალოგზე"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "go to previous dialogues"
 msgid "Go to previous dialogues"
 msgstr "გადასვლა წინა დიალოგებზე"
 
@@ -10964,11 +10872,8 @@ msgid "This is the end of the Broken Sword 1 Demo"
 msgstr ""
 
 #: engines/sword1/metaengine.cpp:63
-#, fuzzy
-#| msgctxt "Options menu"
-#| msgid "Voices: English"
 msgid "English"
-msgstr "ხმები: ინგლისური"
+msgstr "ინგლისური"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "German"
@@ -10983,10 +10888,8 @@ msgid "Italian"
 msgstr ""
 
 #: engines/sword1/metaengine.cpp:63
-#, fuzzy
-#| msgid "Finish"
 msgid "Spanish"
-msgstr "დასრულება"
+msgstr "ესპანური"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Brazilian Portuguese"
@@ -10997,10 +10900,8 @@ msgid "Czech"
 msgstr ""
 
 #: engines/sword1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Game language:"
 msgid "Text language:"
-msgstr "თამაშის ენა:"
+msgstr "ტექსტის ენა:"
 
 #: engines/sword1/metaengine.cpp:87 engines/sword1/metaengine.cpp:95
 msgid "Set the language for the subtitles. This will not affect voices."
@@ -11018,16 +10919,12 @@ msgid ""
 msgstr ""
 
 #: engines/sword1/metaengine.cpp:127
-#, fuzzy
-#| msgid "Directional button:"
 msgid "Additional options:"
-msgstr "მიმართულების ღილაკი:"
+msgstr "დამატებითი პარამეტრები:"
 
 #: engines/sword1/metaengine.cpp:301
-#, fuzzy
-#| msgid "Main Men~u~"
 msgid "Main Menu"
-msgstr "~მ~თავარი მენიუ"
+msgstr "მთავარი მენიუ"
 
 #: engines/sword2/animation.cpp:426
 msgid ""
@@ -11116,10 +11013,8 @@ msgid "Font variant not present in '%s' engine data file."
 msgstr ""
 
 #: engines/toon/metaengine.cpp:98
-#, fuzzy
-#| msgid "Skip line"
 msgid "Skip intro"
-msgstr "ხაზის გამოტოვება"
+msgstr "შესავლის გამოტოვება"
 
 #. I18N: Skips current line being spoken by a character
 #: engines/toon/metaengine.cpp:105
@@ -11127,22 +11022,16 @@ msgid "Stop current voice"
 msgstr ""
 
 #: engines/toon/metaengine.cpp:130
-#, fuzzy
-#| msgid "No music"
 msgid "Mute music"
-msgstr "მუსიკის გარეშე"
+msgstr "მუსიკის დადუმება"
 
 #: engines/toon/metaengine.cpp:136
-#, fuzzy
-#| msgid "Abort speech"
 msgid "Mute speech"
-msgstr "საუბრის შეწყვეტა"
+msgstr "საუბრის დადუმება"
 
 #: engines/toon/metaengine.cpp:142
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Mute sound effects"
-msgstr "სპეციალური ხმის ეფექტების ხმის სიძლიერე"
+msgstr "ხმის ეფექტების დადუმება"
 
 #: engines/toon/toon.cpp:273
 #, c-format
@@ -11178,30 +11067,22 @@ msgid "Skip sequence/open quit dialogue"
 msgstr ""
 
 #: engines/touche/metaengine.cpp:141
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Skip Dialogue"
 msgstr "დიალოგის გამოტოვება"
 
 #: engines/touche/metaengine.cpp:147
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open options menu"
-msgstr "მთავარი მენიუს გახსნა"
+msgstr "მორგების მენიუს გახსნა"
 
 #. I18N: The actor walking pace is increased
 #: engines/touche/metaengine.cpp:154
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Enable fast walk"
-msgstr "სწრაფი სიარულის გადართვა"
+msgstr "სწრაფი სიარულის ჩართვა"
 
 #. I18N: The actor walking pace is decreased
 #: engines/touche/metaengine.cpp:161
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Disable fast walk"
-msgstr "სწრაფი სიარულის გადართვა"
+msgstr "სწრაფი სიარულის გამორთვა"
 
 #: engines/touche/metaengine.cpp:167
 msgid "Toggle fast mode"
@@ -11230,22 +11111,16 @@ msgstr "სისტემის მენიუს გახსნა"
 
 #. I18N: Return refers to return/enter key
 #: engines/tsage/metaengine.cpp:196
-#, fuzzy
-#| msgid "turn oN"
 msgid "Return"
-msgstr "ჩართე"
+msgstr "დაბრუნება"
 
 #: engines/tsage/metaengine.cpp:221
-#, fuzzy
-#| msgid "View"
 msgid "View Help"
-msgstr "ნახვა"
+msgstr "დახმარების ნახვა"
 
 #: engines/tsage/metaengine.cpp:226
-#, fuzzy
-#| msgid "Show options"
 msgid "Sound options"
-msgstr "პარამეტრების ჩვენება"
+msgstr "ხმის მორგება"
 
 #: engines/tsage/metaengine.cpp:264
 msgid "Crawl North"
@@ -11256,77 +11131,53 @@ msgid "Crawl South"
 msgstr ""
 
 #: engines/tsage/metaengine.cpp:278
-#, fuzzy
-#| msgid "Turn Left"
 msgid "Turn Left/Crawl West"
-msgstr "მარცხნივ მობრუნება"
+msgstr "მარცხნივ მობრუნება/დასავლეთით გაცოცება"
 
 #: engines/tsage/metaengine.cpp:285
-#, fuzzy
-#| msgid "Turn Right"
 msgid "Turn Right/Crawl East"
-msgstr "მარჯვნივ მობრუნება"
+msgstr "მარჯვნივ მობრუნება/აღმოსავლეთით გაცოცება"
 
 #: engines/tsage/metaengine.cpp:292
-#, fuzzy
-#| msgid "Increase Step Size"
 msgid "Increase speed"
-msgstr "ნაბიჯის ზომის გაზრდა"
+msgstr "სიჩქარის გაზრდა"
 
 #: engines/tsage/metaengine.cpp:297
-#, fuzzy
-#| msgid "Decrease Step Size"
 msgid "Decrease speed"
-msgstr "ნაბიჯის ზომის შემცირება"
+msgstr "სიჩქარის შემცირება"
 
 #: engines/tsage/metaengine.cpp:302
-#, fuzzy
-#| msgid "Reading speed"
 msgid "Minimum speed"
-msgstr "კითხვის სიჩქარე"
+msgstr "მინიმალური სიჩქარე"
 
 #: engines/tsage/metaengine.cpp:307
-#, fuzzy
-#| msgid "Maximum Volume"
 msgid "Maximum speed"
-msgstr "მაქსიმალური ხმა"
+msgstr "მაქსიმალური სიჩქარე"
 
 #: engines/tsage/metaengine.cpp:312
-#, fuzzy
-#| msgid "Slower game speed"
 msgid "Low speed"
-msgstr "უფრო ნელი თამაშის სიჩქარე"
+msgstr "დაბალი სიჩქარე"
 
 #: engines/tsage/metaengine.cpp:317
-#, fuzzy
-#| msgid "Reading speed"
 msgid "Medium speed"
-msgstr "კითხვის სიჩქარე"
+msgstr "საშუალო სიჩქარე"
 
 #: engines/tsage/metaengine.cpp:322
-#, fuzzy
-#| msgid "Forwards"
 msgid "Draw Cards"
-msgstr "წინ"
+msgstr "ბარათების დახატვა"
 
 #: engines/tucker/metaengine.cpp:190
-#, fuzzy
-#| msgid "Speech"
 msgid "Skip speech"
-msgstr "საუბარი"
+msgstr "საუბრის გამოტოვება"
 
 #. I18N: Panel contains all actor actions and the artstyle is toggled
 #: engines/tucker/metaengine.cpp:203
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Toggle panel style"
-msgstr "სუბტიტრების გადართვა"
+msgstr "პანელის სტილის გადართვა"
 
 #: engines/tucker/metaengine.cpp:209
-#, fuzzy
-#| msgid "Use Text to speech"
 msgid "Toggle text speech"
-msgstr "ტექსტის-ხმამაღლა-წაკითხვის გამოყენება"
+msgstr "ტექსტის-ხმამაღლა-წაკითხვის გადართვა"
 
 #: engines/twine/detection.cpp:188
 msgid "This version requires Giflib which was not compiled into ScummVM"
