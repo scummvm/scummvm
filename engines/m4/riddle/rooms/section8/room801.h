@@ -53,13 +53,17 @@ private:
 	int32 _meiPrattleLoopSeries = 0;
 	int32 _mtcsh1Series = 0;
 	int32 _planeShadowSeries = 0;
+	int32 _ripClosesCellarSeries = 0;
 	int32 _ripEntersRootCellarSeries = 0;
 	int32 _ripKneelPotterySeries = 0;
 	int32 _ripLooksLRDownSeries = 0;
 	int32 _ripLooksToZeroSeries = 0;
+	int32 _ripOpensCellarSeries = 0;
 	int32 _ripReturnsFromRootCellarSeries = 0;
 	int32 _ripTrekHandOnChinSeries = 0;
 	int32 _ripTrekHandsBehBackSeries = 0;
+	int32 _ripTrekHandsHipPos5Series = 0;
+	int32 _ripTrekHatTipPos5Series = 0;
 	int32 _ripTrekHeadTurnSeries = 0;
 	int32 _ripTrekNodPos4Series = 0;
 	int32 _rptmr15Series = 0;
@@ -69,20 +73,13 @@ private:
 	int32 _unkVal1 = 0;
 	int32 _unkVal2 = 0;
 	int32 _unkVal3 = 0;
-	int32 _unkVal4 = 0;
 	int32 _unkVal5 = 0;
 	int32 _unkVal6 = 0;
 	int32 _unkVal7 = 0;
 
 	bool _unkFlag1 = false;
 	bool _unkFlag2 = false;
-	bool _unkFlag3 = false;
-
-	int32 _roomStates_field2A = 0;
-	int32 _roomStates_field4C2 = 0;
-	int32 _roomStates_field502 = 0;
-	int32 _roomStates_field7E = 0;
-	int32 _roomStates_ripTalking = 0;
+	bool _cellarOpenFl = false;
 
 	machine *_cellarDoorClosedMach = nullptr;
 	machine *_cellarDoorOpenMach = nullptr;
