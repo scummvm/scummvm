@@ -46,11 +46,17 @@ private:
 	void addLookMalletHotspot();
 
 	int32 _field4 = 0;
+	int32 _field10 = 0;
+	int32 _field14 = 0;
+	int32 _field18_triggerNum = 0;
+	int32 _field24_triggerNum = 0;
+	int32 _field28_triggerNum = 0;
 	int32 _field2C = 0;
 	int32 _field40 = 0;
-	int32 _field44 = 0;
-	int32 _field48 = 0;
+	int32 _field44_triggerNum = 0;
+	int32 _field48_triggerNum = 0;
 	int32 _field68 = 0;
+	int32 _field78_series = 0;
 	int32 _fieldBC_trigger = 0;
 	int32 _fieldC0_trigger = 0;
 	int32 _fieldC4 = 0;
@@ -70,17 +76,22 @@ private:
 	int32 _field184 = 0;
 	int32 _field188 = 0;
 
+	int32 _field90_series = 0;
+	int32 _ripTrekHandTalkPos3Series = 0;
 	int32 _courtyardGongSeries = 0;
 	int32 _malletSpriteSeries = 0;
 	int32 _meiShowsRipHerPassesSeries = 0;
 	int32 _ripDropsSeries = 0;
 	int32 _ripTrekHeadTurnPos5Series = 0;
 	int32 _ripTrekLHandTalkPos4Series = 0;
+	int32 _ripTrekLowReachPos2Series = 0;
+	int32 _ripTrekTalkerPos3Series = 0;
 
 	machine *_courtyardGongMach = nullptr;
 	machine *_mcMach = nullptr;
 	machine *_malletSpriteMach = nullptr;
 	machine *_ripDeltaMachineStateMach = nullptr;
+	machine *_safariShadow3Mach = nullptr;
 	machine *_silverButterflyCoinMach = nullptr;
 };
 

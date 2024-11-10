@@ -59,8 +59,8 @@ void Room204::init() {
 	_courtyardGongSeries = series_load("COURTYARD GONG", -1, nullptr);
 	_malletSpriteSeries = series_load("MALLET SPRITE", -1, nullptr);
 	_field68 = 0;
-	_field44 = -1;
-	_field48 = -1;
+	_field44_triggerNum = -1;
+	_field48_triggerNum = -1;
 	_fieldC4 = -1;
 	_fieldBC_trigger = -1;
 	_fieldEC = -1;
@@ -594,9 +594,340 @@ void Room204::daemon() {
 		break;
 
 	case 569:
+		_field14 = 1;
+		_field2C = 0;
+		player_update_info(_G(my_walker), &_G(player_info));
+		ws_hide_walker(_G(my_walker));
+		_ripDeltaMachineStateMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, _G(player_info).depth, _field68, triggerMachineByHashCallback, "Rip Absolute Machine State");
+		switch (_field10) {
+		case 8:
+			sendWSMessage_10000(1, _ripDeltaMachineStateMach, _field78_series, 1, 1, 571, _field78_series, 1, 1, 0);
+			_safariShadow3Mach = series_place_sprite("SAFARI SHADOW 3", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
+			_field14 = 8;
+			break;
+
+		case 11:
+			_ripTrekLowReachPos2Series = series_load("RIP TREK LOW REACH POS2", -1, nullptr);
+			sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekLowReachPos2Series, 1, 1, 571, _ripTrekLowReachPos2Series, 1, 1, 0);
+			_safariShadow3Mach = series_place_sprite("SAFARI SHADOW 2", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
+			_field14 = 11;
+
+			break;
+
+		case 16:
+			_ripTrekTalkerPos3Series = series_load("RIP TREK TALKER POS3", -1, nullptr);
+			_safariShadow3Mach = series_place_sprite("SAFARI SHADOW 3", 0, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 3840);
+			sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekTalkerPos3Series, 1, 1, 571, _ripTrekTalkerPos3Series, 1, 1, 0);
+			_field14 = 16;
+
+			break;
+
+		default:
+			break;
+		}
+
+		break;
+
 	case 570:
+		_field14 = 1;
+		_field2C = 0;
+		_field24_triggerNum = -1;
+
+		player_update_info(_G(my_walker), &_G(player_info));
+		ws_hide_walker(_G(my_walker));
+		_ripDeltaMachineStateMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, _G(player_info).depth, 0, triggerMachineByHashCallback, "Rip Delta Machine State");
+
+		if (_field10 == 8) {
+			sendWSMessage_10000(1, _ripDeltaMachineStateMach, _field78_series, 1, 1, 571, _field78_series, 1, 1, 0);
+			_field14 = 8;
+		}
+
+		_safariShadow3Mach = series_place_sprite("SAFARI SHADOW 3", 0, _G(player_info).x, _G(player_info).y, _G(player_info.scale), _G(player_info).depth);
+
+		break;
+
 	case 571:
+		if (_field14 == 8 && _field10 == 8 && _field18_triggerNum != -1) {
+			kernel_trigger_dispatchx(_field18_triggerNum);
+			_field18_triggerNum = -1;
+		}
+
+		if (_field14 == 9 && _field10 == 9 && _field24_triggerNum != -1) {
+			kernel_trigger_dispatchx(_field24_triggerNum);
+				_field24_triggerNum = -1;
+		}
+
+		if (_field14 == 12 && _field10 == 12 && _field44_triggerNum != -1) {
+			kernel_trigger_dispatchx(_field44_triggerNum);
+			_field44_triggerNum = -1;
+		}
+
+		if (_field14 == 13 && _field10 == 13 && _field48_triggerNum != -1) {
+			kernel_trigger_dispatchx(_field48_triggerNum);
+			_field48_triggerNum = -1;
+		}
+
+		if (_field14 == 11 && _field10 == 11 && _field18_triggerNum != -1) {
+			kernel_trigger_dispatchx(_field18_triggerNum);
+			_field18_triggerNum = -1;
+		}
+
+		if (_field14 == 14 && _field10 == 14 && _field28_triggerNum != -1) {
+			kernel_trigger_dispatchx(_field28_triggerNum);
+			_field28_triggerNum = -1;
+		}
+
+		if (_field14 == 16 && _field10 == 16 && _field18_triggerNum != -1) {
+			kernel_trigger_dispatchx(_field18_triggerNum);
+			_field18_triggerNum = -1;
+		}
+
+		if (_field14 == 21 && _field10 == 21 && _field28_triggerNum != -1) {
+			kernel_trigger_dispatchx(_field28_triggerNum);
+			_field28_triggerNum = -1;
+		}
+
+		if (!_field2C)
+			kernel_timing_trigger(1, 572, nullptr);
+		else {
+			terminateMachine(_ripDeltaMachineStateMach);
+			_ripDeltaMachineStateMach = nullptr;
+			ws_unhide_walker(_G(my_walker));
+			terminateMachine(_safariShadow3Mach);
+			_field68 = 0;
+
+			if (_field14 == 16)
+				series_unload(_ripTrekTalkerPos3Series);
+		}
+
+		break;
+
 	case 572:
+		switch (_field14) {
+		case 8:
+			switch (_field10) {
+			case 8:
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _field78_series, 1, 1, 571, _field78_series, 1, 1, 0);
+				_field14 = 8;
+
+				break;
+
+			case 9:
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _field78_series, 1, 16, 571, _field78_series, 16, 16, 0);
+				_field14 = 9;
+
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 9:
+			switch (_field10) {
+			case 9:
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _field78_series, 16, 16, 571, _field78_series, 16, 16, 0);
+				break;
+
+			case 10:
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _field78_series, 17, 34, 571, _field78_series, 34, 34, 0);
+				_field14 = 8;
+				_field10 = 8;
+
+				break;
+
+			default:
+				break;
+			}
+
+			break;
+
+		case 11:
+			switch (_field10) {
+			case 11:
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekLowReachPos2Series, 1, 1, 571, _ripTrekLowReachPos2Series, 1, 1, 0);
+				break;
+
+			case 12:
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekLowReachPos2Series, 1, 16, 571, _ripTrekLowReachPos2Series, 16, 16, 0);
+				_field14 = 12;
+
+				break;
+
+			case 13:
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekLowReachPos2Series, 1, 14, 571, _ripTrekLowReachPos2Series, 14, 14, 0);
+				_field14 = 13;
+
+				break;
+
+			case 14:
+			case 15:
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _field90_series, 1, 5, 571, _field90_series, 5, 5, 0);
+				_field14 = 14;
+
+				break;
+
+			default:
+				break;
+			}
+
+			break;
+
+		case 12:
+			switch (_field10) {
+			case 11:
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekLowReachPos2Series, 16, 1, 571, _ripTrekLowReachPos2Series, 1, 1, 0);
+				_field14 = 11;
+
+				break;
+
+			case 12:
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekLowReachPos2Series, 16, 16, 571, _ripTrekLowReachPos2Series, 16, 16, 0);
+				break;
+
+			default:
+				break;
+
+			}
+
+
+			break;
+
+		case 13:
+			if (_field10 == 11) {
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekLowReachPos2Series, 14, 1, 571, _ripTrekLowReachPos2Series, 1, 1, 0);
+				_field14 = 11;
+			} else if (_field10 == 13) {
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekLowReachPos2Series, 14, 14, 571, _ripTrekLowReachPos2Series, 14, 14, 0);
+			}
+
+			break;
+		case 14:
+			switch (_field10) {
+			case 11:
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _field90_series, 13, 19, 571, _field90_series, 19, 19, 0);
+				_field14 = 11;
+
+				break;
+
+			case 14:
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _field90_series, 5, 5, 571, _field90_series, 5, 5, 0);
+				break;
+
+			case 15: {
+				int32 rnd = imath_ranged_rand(6, 12);
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _field90_series, rnd, rnd, 571, _field90_series, rnd, rnd, 0);
+				}
+
+				break;
+
+			default:
+				break;
+			}
+
+			break;
+
+		case 16:
+			switch (_field10) {
+			case 16:
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekTalkerPos3Series, 1, 1, 571, _ripTrekTalkerPos3Series, 1, 1, 0);
+				break;
+
+			case 18:
+				_field10 = 16;
+				_field18_triggerNum = kernel_trigger_create(605);
+				kernel_timing_trigger(1, 571, nullptr);
+
+				break;
+
+			case 19: {
+				int32 rnd = imath_ranged_rand(1, 5);
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekTalkerPos3Series, rnd, rnd, 571, _ripTrekTalkerPos3Series, rnd, rnd, 0);
+				}
+
+				break;
+
+			case 20:
+			case 21:
+				_ripTrekHandTalkPos3Series = series_load("RIP TREK HAND TALK POS3", -1, nullptr);
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekHandTalkPos3Series, 1, 7, 571, _ripTrekHandTalkPos3Series, 7, 7, 0);
+				_field14 = 21;
+
+				break;
+
+			case 22:
+				_ripTrekHandTalkPos3Series = series_load("RIP TREK HAND TALK POS3", -1, nullptr);
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekHandTalkPos3Series, 1, 7, 571, _ripTrekHandTalkPos3Series, 7, 7, 0);
+				_field10 = 23;
+
+				break;
+
+			case 23:
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekHandTalkPos3Series, 8, 10, -1, _ripTrekHandTalkPos3Series, 8, 10, 4);
+				digi_play(conv_sound_to_play(), 1, 255, 571, -1);
+				_field10 = 24;
+
+				break;
+
+			case 24:
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekHandTalkPos3Series, 9, 16, 571, _ripTrekHandTalkPos3Series, 16, 16, 0);
+				_field10 = 25;
+
+				break;
+
+			case 25:
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekTalkerPos3Series, 1, 1, 571, _ripTrekTalkerPos3Series, 1, 1, 0);
+				series_unload(_ripTrekHandTalkPos3Series);
+				_field10 = 16;
+				conv_resume(conv_get_handle());
+
+				break;
+
+
+			default:
+				break;
+			}
+
+			break;
+
+		case 21:
+			switch (_field10) {
+			case 16:
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekHandTalkPos3Series, 9, 16, 571, _ripTrekHandTalkPos3Series, 16, 16, 0);
+				_field14 = 16;
+				_field10 = 17;
+
+				break;
+
+			case 17:
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekTalkerPos3Series, 1, 1, 571, _ripTrekTalkerPos3Series, 1, 1, 0);
+				series_unload(_ripTrekHandTalkPos3Series);
+				_field10 = 16;
+				_field14 = 16;
+
+				break;
+
+			case 20: {
+				int32 rnd = imath_ranged_rand(8, 10);
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekHandTalkPos3Series, rnd, rnd, 571, _ripTrekHandTalkPos3Series, rnd, rnd, 0);
+				}
+				break;
+
+			case 21:
+				sendWSMessage_10000(1, _ripDeltaMachineStateMach, _ripTrekHandTalkPos3Series, 8, 8, 571, _ripTrekHandTalkPos3Series, 8, 8, 0);
+				break;
+
+			default:
+				break;
+			}
+
+		default:
+			break;
+		}
+
+
+		break;
+
 	case 574:
 	case 576:
 	case 577:
