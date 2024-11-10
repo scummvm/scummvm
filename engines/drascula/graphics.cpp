@@ -551,6 +551,11 @@ void DrasculaEngine::playFLI(const char *filefli, int vel) {
 	globalSpeed = 1000 / vel;
 	FrameSSN = 0;
 	Common::SeekableReadStream *stream = _archives.open(filefli);
+
+	if (!stream) {
+		warning("playFLI: Failed to load file '%s'", filefli);
+		return;
+	}
 	LastFrame = _system->getMillis();
 
 	while (playFrameSSN(stream) && (!term_int) && !shouldQuit()) {
@@ -699,7 +704,8 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 	Common::SeekableReadStream *stream = _archives.open(animationFile);
 
 	if (!stream) {
-		error("Animation file %s not found", animationFile);
+		warning("Animation file %s not found", animationFile);
+		return true;
 	}
 
 	NFrames = stream->readSint32LE();
