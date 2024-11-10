@@ -46,7 +46,7 @@ void Room413::daemon() {
 		break;
 
 	case 27:
-		digi_play(_G(game).previous_room == 301 ? "413r02" : "4013r01", 1, 255, 30);
+		digi_play(_G(game).previous_room == 301 ? "413r02" : "413r01", 1, 255, 30);
 		break;
 
 	case 30:

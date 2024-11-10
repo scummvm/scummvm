@@ -215,7 +215,7 @@ void Room203::init() {
 				_peasantRocksShadow, 1, 1, 0);
 
 			digi_preload("203p02");
-			_flag1 = true;
+			_yellThiefFlag = true;
 			_officialMode = 2001;
 			_officialShould = 2010;
 
@@ -762,13 +762,13 @@ void Room203::daemon() {
 			_peskyYellsThief, 19, 19, 0);
 		sendWSMessage_10000(1, _peasantShadow, _peasantRocksShadow, 1, 1, -1,
 			_peasantRocksShadow, 1, 1, 0);
-		_flag1 = true;
+		_yellThiefFlag = true;
 		kernel_timing_trigger(100, 92);
 		digi_preload("203p02");
 		break;
 
 	case 92:
-		if (_flag1)
+		if (_yellThiefFlag)
 			digi_play("203p02", 1, 255, 93);
 		else
 			digi_unload("203p02");
@@ -779,7 +779,7 @@ void Room203::daemon() {
 		break;
 
 	case 94:
-		if (_flag1) {
+		if (_yellThiefFlag) {
 			sendWSMessage_10000(1, _peasant, _peskyYellsThief, 19, 21, 95,
 				_peskyYellsThief, 21, 21, 0);
 		} else {
@@ -789,7 +789,7 @@ void Room203::daemon() {
 		break;
 
 	case 95:
-		if (_flag1) {
+		if (_yellThiefFlag) {
 			sendWSMessage_10000(1, _peasant, _peskyYellsThief, 21, 19, 94,
 				_peskyYellsThief, 19, 19, 0);
 		} else {
@@ -823,7 +823,7 @@ void Room203::daemon() {
 		break;
 
 	case 99:
-		_flag1 = false;
+		_yellThiefFlag = false;
 		_officialTurn9_11_pointGun = series_load("official turn 9-11 point gun");
 		setGlobals1(_officialTurn9_11_pointGun, 1, 31, 31, 31, 0, 31, 13, 13, 13, 0, 13, 1, 1, 1);
 		sendWSMessage_110000(_official, 100);
@@ -2314,7 +2314,7 @@ void Room203::daemon() {
 		break;
 
 	case 352:
-		if (_flag1)
+		if (_yellThiefFlag)
 			digi_play("203p02", 1, 255, 93);
 		else
 			digi_unload("203p02");
@@ -2325,7 +2325,7 @@ void Room203::daemon() {
 		break;
 
 	case 354:
-		if (_flag1) {
+		if (_yellThiefFlag) {
 			sendWSMessage_10000(1, _peasant, _peskyYellsThief, 17, 21, 355,
 				_peskyYellsThief, 21, 21, 0);
 		} else {
@@ -2335,12 +2335,12 @@ void Room203::daemon() {
 		break;
 
 	case 355:
-		if (_flag1) {
-			sendWSMessage_10000(1, _peasant, _peskyYellsThief, 21, 1, -1,
-				_peskyYellsThief, 1, 1, 0);
-		} else {
+		if (_yellThiefFlag) {
 			sendWSMessage_10000(1, _peasant, _peskyYellsThief, 21, 17, 354,
 				_peskyYellsThief, 17, 17, 0);
+		} else {
+			sendWSMessage_10000(1, _peasant, _peskyYellsThief, 21, 1, -1,
+				_peskyYellsThief, 1, 1, 0);
 		}
 		break;
 
@@ -2349,10 +2349,11 @@ void Room203::daemon() {
 		_official = triggerMachineByHash_3000(8, 5, *OFFICIAL_NORMAL_DIRS,
 			*OFFICIAL_SHADOW_DIRS, 1436, 362, 9, triggerMachineByHashCallback3000,
 			"official arresting");
+		sendWSMessage_10000(_official, 1065, 355, 9, 357, 1);
 		break;
 
 	case 357:
-		_flag1 = false;
+		_yellThiefFlag = false;
 		setGlobals1(_officialTurn9_11, 1, 19, 19, 19);
 		sendWSMessage_110000(_official, 358);
 		break;
@@ -2375,7 +2376,7 @@ void Room203::daemon() {
 
 	case 363:
 		ws_demand_location(1100, 290, 9);
-		ws_walk(1060, 290, nullptr, 36, 7);
+		ws_walk(1060, 290, nullptr, 364, 7);
 		break;
 
 	case 364:

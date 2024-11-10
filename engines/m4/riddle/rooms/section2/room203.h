@@ -127,7 +127,7 @@ private:
 	int _peasantSquat3 = 0;
 	int _peasantSquatTo9 = 0;
 	int _peasantFromSquat3 = 0;
-	bool _flag1 = false;
+	bool _yellThiefFlag = false;
 	bool _flag2 = false;
 	machine *_sg = nullptr;
 	int _203sg01 = 0;

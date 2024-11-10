@@ -148,8 +148,8 @@ void Room207::init() {
 					_peskyPointsRipForegroundSeries, 19, 19, 0);
 			} else if (inv_player_has("METAL RIM")) {
 				_peskyPointsRipBackgroundSeries = series_load("pesky points at rip background", -1, nullptr);
-				sendWSMessage_10000(1, _ppSquatMach, _peskyPointsRipBackgroundSeries,
-					19, 19, 100, _peskyPointsRipBackgroundSeries, 19, 19, 0);
+				sendWSMessage_10000(1, _ppSquatMach, _peskyPointsRipBackgroundSeries, 19, 19, 100,
+					_peskyPointsRipBackgroundSeries, 19, 19, 0);
 			} else {
 				sendWSMessage_10000(1, _ppSquatMach, _peskyRockLoopSeries, 1, 20, 101,
 					_peskyRockLoopSeries, 20, 20, 0);
@@ -294,10 +294,10 @@ void Room207::parser() {
 		player_set_commands_allowed(false);
 
 		if (!_node1Entry2Fl) {
-			_field92 = 0;
+			_peasantShould = 0;
 			_fieldC2 = 3;
 		} else {
-			_field92 = 6;
+			_peasantShould = 6;
 			_commandNotAllowedFl = true;
 		}
 	} // if (_G(kernel).trigger == 747)
@@ -318,7 +318,7 @@ void Room207::parser() {
 		_fieldC6 = false;
 		_fieldC2 = 1;
 		sendWSMessage_10000(1, _ripInConvMach, _ripTrekArmsXPos3Series, 1, 15, 23, _ripTrekArmsXPos3Series, 15, 15, 0);
-		_field92 = 13;
+		_peasantShould = 13;
 	} // if (talkFl && player_said("peasant"))
 
 	else if (player_said("handout")) {
@@ -330,7 +330,7 @@ void Room207::parser() {
 			break;
 
 		case 2:
-			_field92 = 16;
+			_peasantShould = 16;
 			_ripTrekLowReacherPos1Series = series_load("rip trek low reacher pos1", -1, nullptr);
 
 			break;
@@ -345,7 +345,7 @@ void Room207::parser() {
 
 		case 4:
 			series_ranged_play_xy("rip trek low reacher pos1", 1, 2, 0, 9, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 6, 6, false);
-			_field92 = 0;
+			_peasantShould = 0;
 
 			break;
 
@@ -458,7 +458,7 @@ void Room207::parser() {
 			case 3:
 				player_update_info();
 				_ripTrekLowReachMach = series_ranged_play_xy("rip trek med reach pos3", -1, 2, 10, 10, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 300, -1, false);
-				_field92 = 7;
+				_peasantShould = 7;
 
 				break;
 
@@ -500,7 +500,7 @@ void Room207::parser() {
 			case 3:
 				player_update_info();
 				_ripTrekLowReachMach = series_ranged_play_xy("rip trek med reach pos3", -1, 2, 10, 10, _G(player_info).x, _G(player_info).y, _G(player_info).scale, 512, 300, -1, false);
-				_field92 = 9;
+				_peasantShould = 9;
 
 				break;
 
@@ -720,11 +720,11 @@ void Room207::parser() {
 
 				if (!_pipeFlag) {
 					hotspot_set_active(_G(currentSceneDef).hotspots, "PEASANT", false);
-					_field92 = 3;
+					_peasantShould = 3;
 					_digiName = "207p01";
 					_digiTriggerNum = 6;
 				} else {
-					_field92 = 3;
+					_peasantShould = 3;
 					_digiName = "207p01a";
 					_digiTriggerNum = 7;
 				}
@@ -732,7 +732,7 @@ void Room207::parser() {
 				break;
 
 			case 6:
-				_field92 = 2;
+				_peasantShould = 2;
 				player_set_commands_allowed(true);
 				_fieldB6_counter = 0;
 				_fieldB2 = true;
@@ -742,7 +742,7 @@ void Room207::parser() {
 
 			case 7:
 				_pipeFlag = false;
-				_field92 = 0;
+				_peasantShould = 0;
 				_commandNotAllowedFl = true;
 				_G(flags[V043]) = 1;
 				break;
@@ -806,7 +806,7 @@ void Room207::parser() {
 				series_unload(_ripTrekLowReacherPos1Series);
 
 				if (_pipeFlag) {
-					_field92 = 3;
+					_peasantShould = 3;
 					_digiName = "207p01a";
 					_digiTriggerNum = 5;
 					_nextTriggerMode = KT_PARSE;
@@ -814,7 +814,7 @@ void Room207::parser() {
 					player_set_commands_allowed(true);
 				} else {
 					hotspot_set_active(_G(currentSceneDef).hotspots, "PEASANT", false);
-					_field92 = 3;
+					_peasantShould = 3;
 					_digiName = "207p01";
 					_digiTriggerNum = 4;
 					_nextTriggerMode = KT_PARSE;
@@ -823,7 +823,7 @@ void Room207::parser() {
 
 			case 4:
 				hotspot_set_active(_G(currentSceneDef).hotspots, "METAL RIM", false);
-				_field92 = 2;
+				_peasantShould = 2;
 				player_set_commands_allowed(true);
 				_fieldB6_counter = 0;
 				_fieldB2 = true;
@@ -834,7 +834,7 @@ void Room207::parser() {
 
 			case 5:
 				_pipeFlag = false;
-				_field92 = 0;
+				_peasantShould = 0;
 				_commandNotAllowedFl = true;
 				_G(flags[V043]) = 1;
 
@@ -940,7 +940,7 @@ void Room207::parser() {
 
 				case 4:
 					sendWSMessage_10000(1, _ripTrekLowReachMach, _ripHeadDownTalkOffTd33Series2, 3, 3, -1, _ripHeadDownTalkOffTd33Series2, 3, 3, 1);
-					_field92 = 6;
+					_peasantShould = 6;
 
 					break;
 
@@ -1148,8 +1148,8 @@ void Room207::daemon() {
 		sendWSMessage_10000(1, _ppSquatMach, _peskyRockLoopSeries, 1, 20, 101,
 			_peskyRockLoopSeries, 20, 20, 0);
 		player_set_commands_allowed(true);
-		_field8E = 0;
-		_field92 = 0;
+		_peasantMode = 0;
+		_peasantShould = 0;
 
 		break;
 
@@ -1256,7 +1256,7 @@ void Room207::daemon() {
 		break;
 
 	case 100:
-		if (_field8E != 0 || _field92 != 0 || _dispatchTriggerNum == -1) {
+		if (_peasantMode != 0 || _peasantShould != 0 || _dispatchTriggerNum == -1) {
 			kernel_trigger_dispatchx(kernel_trigger_create(101));
 			break;
 		}
@@ -1273,9 +1273,9 @@ void Room207::daemon() {
 		break;
 
 	case 101:
-		switch (_field8E) {
+		switch (_peasantMode) {
 		case 2:
-			if (_field92 == 2) {
+			if (_peasantShould == 2) {
 				if (_commandNotAllowedFl) {
 					_commandNotAllowedFl =false;
 					player_set_commands_allowed(true);
@@ -1324,24 +1324,24 @@ void Room207::daemon() {
 					}
 				}
 
-			} else if (_field92 == 3) {
+			} else if (_peasantShould == 3) {
 				if (_ripForegroundFl)
 					sendWSMessage_10000(1, _ppSquatMach, _peskyPointsRipForegroundSeries, 17, 17, 100, _peskyPointsRipForegroundSeries, 17, 17, 1);
 				else
 					sendWSMessage_10000(1, _ppSquatMach, _peskyPointsRipBackgroundSeries, 17, 17, 100, _peskyPointsRipBackgroundSeries, 17, 17, 1);
-				_field8E = 3;
+				_peasantMode = 3;
 			} else { // _field92 != 2 && _field92 != 3
 				if (_ripForegroundFl)
 					sendWSMessage_10000(1, _ppSquatMach, _peskyPointsRipForegroundSeries, 18, 1, 115, _peskyRockLoopSeries, 1, 1, 0);
 				else
 					sendWSMessage_10000(1, _ppSquatMach, _peskyPointsRipBackgroundSeries, 18, 1, 118, _peskyRockLoopSeries, 1, 1, 0);
 
-				_field8E = 0;
+				_peasantMode = 0;
 				hotspot_set_active(_G(currentSceneDef).hotspots, "PEASANT", true);
 			}
 			break;
 		case 3:
-			if (_field92 == 3) {
+			if (_peasantShould == 3) {
 				if (_digiName) {
 					_G(kernel).trigger_mode = _nextTriggerMode;
 					digi_play(_digiName, 1, 255, _digiTriggerNum, 203);
@@ -1366,13 +1366,13 @@ void Room207::daemon() {
 				} else {
 					sendWSMessage_10000(1, _ppSquatMach, _peskyPointsRipBackgroundSeries, 17, 17, 100, _peskyPointsRipBackgroundSeries, 17, 17, 1);
 				}
-				_field8E = 2;
+				_peasantMode = 2;
 			}
 
 			break;
 
 		case 6:
-			if (_field92 == 6) {
+			if (_peasantShould == 6) {
 				if (_digi207r04PlayedFl) {
 					if (inv_player_has("REBUS AMULET")) {
 						sendWSMessage_10000(1, _ppSquatMach, _withoutAmuletSeries, 52, 1, 104, _withoutAmuletSeries, 1, 1, 0);
@@ -1390,20 +1390,20 @@ void Room207::daemon() {
 					sendWSMessage_10000(1, _ppSquatMach, _ppShowsAmuletTakesMoneySeries, 52, 1, 100, _ppShowsAmuletTakesMoneySeries, 1, 1, 1);
 				}
 
-				_field8E = 0;
+				_peasantMode = 0;
 			}
 
 			break;
 
 		case 7:
-			if (_field92 == 7) {
+			if (_peasantShould == 7) {
 				if (inv_player_has("REBUS AMULET")) {
 					sendWSMessage_10000(1, _ppSquatMach, _withoutAmuletSeries, 52, 52, -1, _withoutAmuletSeries, 52, 52, 0);
 				} else {
 					sendWSMessage_10000(1, _ppSquatMach, _ppShowsAmuletTakesMoneySeries, 52, 52, -1, _ppShowsAmuletTakesMoneySeries, 52, 52, 0);
 				}
 
-				_field8E = 8;
+				_peasantMode = 8;
 				inv_give_to_player("REBUS AMULET");
 				hotspot_set_active(_G(currentSceneDef).hotspots, "REBUS AMULET", false);
 				kernel_examine_inventory_object("ping rebus amulet", _G(master_palette), 5, 1, 329, 250, 103, nullptr, -1);
@@ -1412,7 +1412,7 @@ void Room207::daemon() {
 			break;
 
 		case 8:
-			if (_field92 == 8) {
+			if (_peasantShould == 8) {
 				if (inv_player_has("REBUS AMULET")) {
 					sendWSMessage_10000(1, _ppSquatMach, _withoutAmuletSeries, 52, 52, 100, _withoutAmuletSeries, 52, 52, 0);
 				} else {
@@ -1422,7 +1422,7 @@ void Room207::daemon() {
 
 			break;
 		case 9:
-			if (_field92 == 9) {
+			if (_peasantShould == 9) {
 				if (inv_player_has("REBUS AMULET")) {
 					sendWSMessage_10000(1, _ppSquatMach, _withoutAmuletSeries, 16, 16, -1, _withoutAmuletSeries, 16, 16, 0);
 				} else {
@@ -1430,7 +1430,7 @@ void Room207::daemon() {
 				}
 
 				kernel_timing_trigger(60, 100, nullptr);
-				_field8E = 10;
+				_peasantMode = 10;
 			}
 
 			break;
@@ -1438,10 +1438,10 @@ void Room207::daemon() {
 		case 10:
 			if (inv_player_has("REBUS AMULET")) {
 				sendWSMessage_10000(1, _ppSquatMach, _withoutAmuletSeries, 16, 1, 100, _withoutAmuletSeries, 1, 1, 0);
-				_field8E = 11;
+				_peasantMode = 11;
 			} else {
 				sendWSMessage_10000(1, _ppSquatMach, _ppShowsAmuletTakesMoneySeries, 16, 1, 100, _ppShowsAmuletTakesMoneySeries, 1, 1, 0);
-				_field8E = 11;
+				_peasantMode = 11;
 			}
 
 			break;
@@ -1452,8 +1452,8 @@ void Room207::daemon() {
 			sendWSMessage_10000(1, _ppSquatMach, _peskyRockLoopSeries, 1, 1, 100, _peskyRockLoopSeries, 1, 1, 0);
 			_G(kernel).trigger_mode = KT_PARSE;
 			kernel_timing_trigger(1, 4, nullptr);
-			_field8E = 0;
-			_field92 = 0;
+			_peasantMode = 0;
+			_peasantShould = 0;
 
 			break;
 
@@ -1465,12 +1465,12 @@ void Room207::daemon() {
 
 			sendWSMessage_10000(1, _ppSquatMach, _peskyRockLoopSeries, 1, 1, 100, _peskyRockLoopSeries, 1, 1, 0);
 
-			_field8E = 0;
-			_field92 = 0;
+			_peasantMode = 0;
+			_peasantShould = 0;
 			break;
 
 		case 14:
-			switch (_field92) {
+			switch (_peasantShould) {
 				case 6:
 				terminateMachine(_rebusAmuletMach);
 				if (inv_player_has("REBUS AMULET")) {
@@ -1512,7 +1512,7 @@ void Room207::daemon() {
 			break; // case 14
 
 		case 16:
-			if (_field92 == 16) {
+			if (_peasantShould == 16) {
 				kernel_timing_trigger(30, 100, nullptr);
 			} else {
 				digi_play("203p01", 1);
@@ -1522,8 +1522,8 @@ void Room207::daemon() {
 			break;
 
 		default:
-			if (_field8E <= 0) {
-				if (_field92 == 6) {
+			if (_peasantMode <= 0) {
+				if (_peasantShould == 6) {
 					terminateMachine(_ppSquatMach);
 					_ppSquatMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "pp squat");
 					terminateMachine(_rebusAmuletMach);
@@ -1532,8 +1532,8 @@ void Room207::daemon() {
 					} else {
 						sendWSMessage_10000(1, _ppSquatMach, _ppShowsAmuletTakesMoneySeries, 1, 52, 100, _ppShowsAmuletTakesMoneySeries, 52, 52, 0);
 					}
-					_field8E = 6;
-				} else if (_field92 == 7) {
+					_peasantMode = 6;
+				} else if (_peasantShould == 7) {
 					terminateMachine(_ppSquatMach);
 					_ppSquatMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "pp squat");
 					terminateMachine(_rebusAmuletMach);
@@ -1542,8 +1542,8 @@ void Room207::daemon() {
 					} else {
 						sendWSMessage_10000(1, _ppSquatMach, _ppShowsAmuletTakesMoneySeries, 1, 52, 100, _ppShowsAmuletTakesMoneySeries, 52, 52, 0);
 					}
-					_field8E = 7;
-				} else if (_field92 == 9) {
+					_peasantMode = 7;
+				} else if (_peasantShould == 9) {
 					terminateMachine(_ppSquatMach);
 					_ppSquatMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "pp squat");
 					if (inv_player_has("REBUS AMULET")) {
@@ -1551,8 +1551,8 @@ void Room207::daemon() {
 					} else {
 						sendWSMessage_10000(1, _ppSquatMach, _ppShowsAmuletTakesMoneySeries, 1, 16, 100, _ppShowsAmuletTakesMoneySeries, 16, 16, 0);
 					}
-					_field8E = 9;
-				} else if (_field92 == 13) {
+					_peasantMode = 9;
+				} else if (_peasantShould == 13) {
 					terminateMachine(_ppSquatMach);
 					_ppSquatMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 3840, false, triggerMachineByHashCallback, "pp squat");
 					if (inv_player_has("REBUS AMULET")) {
@@ -1560,14 +1560,14 @@ void Room207::daemon() {
 					} else {
 						sendWSMessage_10000(1, _ppSquatMach, _ppShowsAmuletTakesMoneySeries, 1, 14, 100, _ppShowsAmuletTakesMoneySeries, 14, 14, 0);
 					}
-					_field92 = 15;
-					_field8E = 14;
-				} else if (_field92 == 16) {
+					_peasantShould = 15;
+					_peasantMode = 14;
+				} else if (_peasantShould == 16) {
 					terminateMachine(_ppSquatMach);
 					_ppSquatMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 514, 367, 97, 3840, 0, triggerMachineByHashCallback, "pp squat");
 					sendWSMessage_10000(1, _ppSquatMach, _peskyBegLoopSeries, 1, 15, 110, _peskyBegLoopSeries, 15, 15, 0);
-					_field8E = 16;
-				} else if (_field92 <= 0) {
+					_peasantMode = 16;
+				} else if (_peasantShould <= 0) {
 					if (_commandNotAllowedFl) {
 						_commandNotAllowedFl = false;
 						player_set_commands_allowed(true);
@@ -1594,7 +1594,7 @@ void Room207::daemon() {
 						series = _peskyPointsRipBackgroundSeries = series_load("pesky points at rip background", -1, nullptr);
 					}
 					sendWSMessage_10000(1, _ppSquatMach, series, 1, 21, 100, series, 21, 21, 1);
-					_field8E = 2;
+					_peasantMode = 2;
 				}
 			}
 			break;
@@ -1602,8 +1602,8 @@ void Room207::daemon() {
 		break;
 
 	case 102:
-		_field92 = 2;
-		_field8E = 2;
+		_peasantShould = 2;
+		_peasantMode = 2;
 		player_set_commands_allowed(true);
 		_pipeFlag = true;
 		kernel_timing_trigger(1, 100, nullptr);
@@ -1622,7 +1622,7 @@ void Room207::daemon() {
 			sendWSMessage_10000(1, _ppSquatMach, _ppShowsAmuletTakesMoneySeries, 53, 74, 100, _ppShowsAmuletTakesMoneySeries, 74, 74, 0);
 		}
 
-		_field8E = 12;
+		_peasantMode = 12;
 		_commandNotAllowedFl = true;
 		_G(kernel).trigger_mode = KT_PARSE;
 
@@ -1630,7 +1630,7 @@ void Room207::daemon() {
 		break;
 
 	case 104:
-		_field8E = 12;
+		_peasantMode = 12;
 		_G(kernel).trigger_mode = KT_PARSE;
 		kernel_timing_trigger(30, 5, nullptr);
 		_G(kernel).trigger_mode = KT_DAEMON;
@@ -1642,7 +1642,7 @@ void Room207::daemon() {
 		terminateMachine(_ppSquatMach);
 		_ppSquatMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 514, 367, 97, 3840, 0, triggerMachineByHashCallback, "pp squat");
 		sendWSMessage_10000(1, _ppSquatMach, _peskyRockLoopSeries, 1, 1, 100, _peskyRockLoopSeries, 1, 1, 0);
-		_field8E = 0;
+		_peasantMode = 0;
 
 		break;
 
@@ -1656,8 +1656,8 @@ void Room207::daemon() {
 		else
 			sendWSMessage_10000(1, _ppSquatMach, _ppShowsAmuletTakesMoneySeries, 52, 1, 108, _ppShowsAmuletTakesMoneySeries, 1, 1, 0);
 
-		_field92 = 0;
-		_field8E = 0;
+		_peasantShould = 0;
+		_peasantMode = 0;
 
 		break;
 
@@ -1667,7 +1667,7 @@ void Room207::daemon() {
 		_rebusAmuletMach = series_show_sprite("rebus amulet", 0, 3840);
 		sendWSMessage_10000(1, _ppSquatMach, _peskyRockLoopSeries, 1, 1, 100, _peskyRockLoopSeries, 1, 1, 0);
 
-		_field8E = 0;
+		_peasantMode = 0;
 		_fieldC2 = 3;
 		_commandNotAllowedFl = false;
 		_node1Entry2Fl = false;
@@ -1687,7 +1687,7 @@ void Room207::daemon() {
 		_ppSquatMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 514, 367, 97, 3840, false, triggerMachineByHashCallback, "pp squat");
 		sendWSMessage_10000(1, _ppSquatMach, _peskyRockLoopSeries, 1, 1, 100, _peskyRockLoopSeries, 1, 1, 0);
 
-		_field8E = 0;
+		_peasantMode = 0;
 		_commandNotAllowedFl = true;
 
 		break;
@@ -1727,13 +1727,13 @@ void Room207::convHandler() {
 	if (_G(kernel).trigger == 1) {
 		int32 who = conv_whos_talking();
 		if (who <= 0)
-			_field92 = 15;
+			_peasantShould = 15;
 		else if (who == 1)
 			_fieldC2 = 0;
 	} else {
 		int32 who = conv_whos_talking();
 		if (who <= 0)
-			_field92 = 14;
+			_peasantShould = 14;
 		else if (who == 1) {
 			_fieldC2 = 2;
 			if (conv_current_node() == 1 && conv_current_entry() == 2)
@@ -1747,6 +1747,17 @@ void Room207::convHandler() {
 	}
 
 	conv_resume(conv_get_handle());
+}
+
+void Room207::syncGame(Common::Serializer &s) {
+	s.syncAsByte(_pipeFlag);
+	s.syncAsByte(_commandNotAllowedFl);
+	s.syncAsByte(_ripForegroundFl);
+
+	s.syncAsSint32LE(_peasantMode);
+	s.syncAsSint32LE(_peasantShould);
+	s.syncAsSint32LE(_field8A);
+	s.syncAsSint32LE(_fieldAE_rnd);
 }
 
 } // namespace Rooms
