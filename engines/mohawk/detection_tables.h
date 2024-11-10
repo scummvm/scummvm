@@ -1188,7 +1188,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"harryhh",
 			"v1.1",
-			AD_ENTRY1("HARRY.512", "8d786f0998f27e44603a2202d6786c25"),
+			AD_ENTRY1s("HARRY.512", "8d786f0998f27e44603a2202d6786c25", 2381),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
