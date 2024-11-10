@@ -33,7 +33,7 @@ using namespace Scumm;
 
 class DJMSoundChannel {
 public:
-	DJMSoundChannel(const uint32 *pitchTable) : _pitchTable(pitchTable), _frequency(0), _phase(0), _end(nullptr), _pos(nullptr), _smpBuffStart(nullptr), _smpBuffEnd(nullptr), _loopStart(nullptr), _loopEnd(nullptr), _pitch(0), _volume(0), _mute(0), _instr(nullptr), _baseFreq(0) {}
+	DJMSoundChannel(const uint32 *pitchTable) : _pitchTable(pitchTable), _frequency(0), _phase(0), _end(nullptr), _pos(nullptr), _smpBuffStart(nullptr), _smpBuffEnd(nullptr), _loopStart(nullptr), _loopEnd(nullptr), _pitch(0), _volume(0), _mute(1), _instr(nullptr), _baseFreq(0) {}
 	~DJMSoundChannel() {}
 
 	void recalcFrequency();
@@ -76,9 +76,11 @@ public:
 
 	void vblCallback() override;
 	void generateData(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) const override;
-	const MacSoundDriver::Status &getDriverStatus(Audio::Mixer::SoundType sndType) const override;
+	const MacSoundDriver::Status &getDriverStatus(Audio::Mixer::SoundType type) const override;
 
 	void dblBuffCallback(MacLowLevelPCMDriver::DoubleBuffer *dblBuffer) override;
+
+	void setMasterVolume(Audio::Mixer::SoundType type, uint16 volume);
 
 private:
 	void fillPitchTable();
@@ -95,7 +97,8 @@ private:
 	MacLowLevelPCMDriver *_sdrv;
 	Audio::SoundHandle _soundHandle;
 	MacPlayerAudioStream::CallbackProc _vblTskProc;
-	MacLowLevelPCMDriver::ChanHandle _chan;
+	MacLowLevelPCMDriver::ChanHandle _musicChan;
+	MacLowLevelPCMDriver::ChanHandle _sfxChan;
 	MacLowLevelPCMDriver::DBCallback _dbCbProc;
 
 	Audio::Mixer *_mixer;
@@ -213,7 +216,7 @@ void DJMSoundChannel::recalcFrequency() {
 }
 
 DJMSoundSystem::DJMSoundSystem(Audio::Mixer *mixer) : VblTaskClientDriver(), _mixer(mixer), _macstr(nullptr), _sdrv(nullptr), _vblTskProc(this, &VblTaskClientDriver::vblCallback),
-	_dbCbProc(this, &MacLowLevelPCMDriver::CallbackClient::dblBuffCallback), _chan(0), _quality(22), _feedBufferSize(1024), _channels(nullptr),
+	_dbCbProc(this, &MacLowLevelPCMDriver::CallbackClient::dblBuffCallback), _musicChan(0), _sfxChan(0), _quality(22), _feedBufferSize(1024), _channels(nullptr),
 		_timerParam(nullptr), _timerProc(nullptr), _pitchTable(nullptr), _ampTable(nullptr), _numChannels(8) {
 	_pitchTable = new uint32[128]();
 	assert(_pitchTable);
@@ -266,8 +269,10 @@ bool DJMSoundSystem::init(bool internal16Bit) {
 	if (!_sdrv)
 		return false;
 
-	_macstr->initDrivers();
 	_macstr->initBuffers(1024);
+	_macstr->addVolumeGroup(Audio::Mixer::kMusicSoundType);
+	_macstr->addVolumeGroup(Audio::Mixer::kSFXSoundType);
+	_macstr->scaleVolume(2);
 	_macstr->setVblCallback(&_vblTskProc);
 
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, _macstr, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
@@ -288,8 +293,9 @@ void DJMSoundSystem::deinit() {
 }
 
 bool DJMSoundSystem::start() {
-	_chan = _sdrv->createChannel(Audio::Mixer::kPlainSoundType, MacLowLevelPCMDriver::kSampledSynth, 0x8C, nullptr);
-	if (!_chan)
+	_musicChan = _sdrv->createChannel(Audio::Mixer::kMusicSoundType, MacLowLevelPCMDriver::kSampledSynth, 0x8C, nullptr);
+	_sfxChan = _sdrv->createChannel(Audio::Mixer::kSFXSoundType, MacLowLevelPCMDriver::kSampledSynth, 0x8C, nullptr);
+	if (!_musicChan || !_sfxChan)
 		return false;
 
 	uint32 rate = 0;
@@ -311,13 +317,16 @@ bool DJMSoundSystem::start() {
 		return false;
 	}
 
-	return _sdrv->playDoubleBuffer(_chan, 1, _internal16Bit ? 16 : 8, rate, &_dbCbProc, _internal16Bit ? 8 : 1);
+	return _sdrv->playDoubleBuffer(_musicChan, 1, _internal16Bit ? 16 : 8, rate, &_dbCbProc, _internal16Bit ? 8 : 1) &&
+		_sdrv->playDoubleBuffer(_sfxChan, 1, _internal16Bit ? 16 : 8, rate, &_dbCbProc, _internal16Bit ? 8 : 1);
 }
 
 void DJMSoundSystem::stop() {
 	Common::StackLock lock(_mixer->mutex());
-	if (_sdrv)
-		_sdrv->disposeChannel(_chan);
+	if (_sdrv) {
+		_sdrv->disposeChannel(_musicChan);
+		_sdrv->disposeChannel(_sfxChan);
+	}
 }
 
 void DJMSoundSystem::setQuality(int qual) {
@@ -420,8 +429,8 @@ void DJMSoundSystem::generateData(int8 *dst, uint32 len, Audio::Mixer::SoundType
 	_sdrv->feed(dst, len, type, expectStereo);
 }
 
-const MacSoundDriver::Status &DJMSoundSystem::getDriverStatus(Audio::Mixer::SoundType) const {
-	return _sdrv->getStatus(Audio::Mixer::kPlainSoundType);
+const MacSoundDriver::Status &DJMSoundSystem::getDriverStatus(Audio::Mixer::SoundType type) const {
+	return _sdrv->getStatus(type);
 }
 
 void DJMSoundSystem::dblBuffCallback(MacLowLevelPCMDriver::DoubleBuffer *dblBuffer) {
@@ -431,9 +440,13 @@ void DJMSoundSystem::dblBuffCallback(MacLowLevelPCMDriver::DoubleBuffer *dblBuff
 
 	for (int i = 0; i < _numChannels; ++i) {
 		DJMSoundChannel &c = *_channels[i];
-		if (c._mute) {
-			++sil;
-			continue;
+		if (c._mute ||
+			// This is our "trick" for telling apart music and sfx: We look at the sound bank that
+			// is currently in use, the musical one (1000 - 1127) or the sfx one (2000 - 2255).
+			(dblBuffer->chanHandle == _musicChan && c._instr.get()->id() >= 2000) ||
+			(dblBuffer->chanHandle == _sfxChan && c._instr.get()->id() < 2000)) {
+				++sil;
+				continue;
 		}
 
 		const byte *a = &_ampTable[(c._volume & ~3) << 6];
@@ -475,6 +488,11 @@ void DJMSoundSystem::dblBuffCallback(MacLowLevelPCMDriver::DoubleBuffer *dblBuff
 
 	dblBuffer->numFrames = _feedBufferSize;
 	dblBuffer->flags |= MacLowLevelPCMDriver::DoubleBuffer::kBufferReady;
+}
+
+void DJMSoundSystem::setMasterVolume(Audio::Mixer::SoundType type, uint16 volume) {
+	if (_macstr)
+		_macstr->setMasterVolume(type, volume);
 }
 
 void DJMSoundSystem::fillPitchTable() {
@@ -538,7 +556,7 @@ void IMuseChannel_Mac_DJM::noteOn(byte note, byte velocity)  {
 	node->_sustain = false;
 
 	_device->setInstrument(node->_number, _prog);
-	debug(4, "NOTE ON: chan '%d', note '%d', instr '%s'", node->_number, note, _prog.get()->name());
+	debug(4, "NOTE ON: chan '%d', note '%d', instr id '%d' ('%s')", node->_number, note, _prog.get()->id(), _prog.get()->name());
 	_device->noteOn(node->_number, ((note + _transpose) << 7) + _pitchBendEff, _volume); // ignoring velocity
 }
 
@@ -641,7 +659,7 @@ namespace Scumm {
 using namespace IMSMacintosh;
 
 IMuseDriver_Mac_DJM::IMuseDriver_Mac_DJM(Audio::Mixer *mixer) : MidiDriver(), _isOpen(false), _device(nullptr), _imsParts(nullptr), _channels(nullptr),
-	_numParts(24), _numChannels(8), _baseTempo(16667), _quality(1) {
+	_numParts(24), _numChannels(8), _baseTempo(16667), _quality(1), _musicVolume(0), _sfxVolume(0) {
 	_device = new DJMSoundSystem(mixer);
 }
 
@@ -661,7 +679,7 @@ int IMuseDriver_Mac_DJM::open() {
 		nullptr
 	};
 
-	if (!loadDefaultInstruments(fileNames, ARRAYSIZE(fileNames)) || !_device->init(true) || !_device->start())
+	if (!loadDefaultInstruments(fileNames, ARRAYSIZE(fileNames)) || !_device->init(false) || !_device->start())
 		return MERR_DEVICE_NOT_AVAILABLE;
 
 	_isOpen = true;
@@ -688,6 +706,23 @@ uint32 IMuseDriver_Mac_DJM::property(int prop, uint32 param) {
 			_quality = param;
 			if (_device)
 				_device->setQuality(param == MacSound::kQualityAuto || param == MacSound::kQualityHighest ? 2: 0);
+		}
+		break;
+
+	case IMuse::PROP_MUSICVOLUME:
+		res = _musicVolume;
+		if (param != (uint32)-1 && param != _musicVolume) {
+			_musicVolume = param;
+			if (_device)
+				_device->setMasterVolume(Audio::Mixer::kMusicSoundType, param);
+		}
+		break;
+	case IMuse::PROP_SFXVOLUME:
+		res = _sfxVolume;
+		if (param != (uint32)-1 && param != _sfxVolume) {
+			_sfxVolume = param;
+			if (_device)
+				_device->setMasterVolume(Audio::Mixer::kSFXSoundType, param);
 		}
 		break;
 	default:

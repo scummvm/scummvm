@@ -63,6 +63,8 @@ private:
 
 	bool _isOpen;
 	uint32 _quality;
+	uint32 _musicVolume;
+	uint32 _sfxVolume;
 
 	IMSMacintosh::DJMSoundSystem *_device;
 	IMSMacintosh::IMuseChannel_Mac_DJM **_imsParts;

@@ -119,9 +119,10 @@ public:
 			kBufferReady = 1,
 			kLastBufferLast = 4
 		};
-		DoubleBuffer() : numFrames(0), flags(0), data(0) {}
+		DoubleBuffer(ChanHandle hdl, uint32 numframes) : numFrames(numframes), flags(0), data(0), chanHandle(hdl) {}
 		~DoubleBuffer() { delete[] data; }
 		uint32 numFrames;
+		const ChanHandle chanHandle;
 		uint32 flags;
 		byte *data;
 	};
@@ -154,7 +155,7 @@ public:
 	void setTimbre(ChanHandle handle, ExecMode mode, uint16 timbre);
 	void callback(ChanHandle handle, ExecMode mode, uint16 arg1, const void *arg2);
 
-	bool playDoubleBuffer(ChanHandle handle, byte numChan, byte bitsPerSample, uint32 rate, DBCallback *callback, byte externalMixNumChan = 1);
+	bool playDoubleBuffer(ChanHandle handle, byte numChan, byte bitsPerSample, uint32 rate, DBCallback *callback, byte numMixChan = 1);
 
 	uint8 getChannelStatus(ChanHandle handle) const;
 	void clearChannelFlags(ChanHandle handle, uint8 flags);
@@ -164,7 +165,7 @@ private:
 	MacSndChannel *findAndCheckChannel(ChanHandle h, const char *caller, byte reqSynthType) const;
 	MacSndChannel *findChannel(ChanHandle h) const;
 	Common::Array<MacSndChannel*> _channels;
-	int _numInternalMixChannels;
+	int _numInternalMixChannels[4];
 	int32 *_mixBuffer = 0;
 	uint32 _mixBufferSize;
 };
@@ -185,6 +186,7 @@ public:
 	void initBuffers(uint32 feedBufferSize);
 	void initDrivers();
 	void addVolumeGroup(Audio::Mixer::SoundType type);
+	void scaleVolume(uint scale) { _scale = scale; }
 	typedef Common::Functor0Mem<void, VblTaskClientDriver> CallbackProc;
 	void setVblCallback(const CallbackProc *proc);
 	void clearBuffer();
@@ -203,6 +205,7 @@ private:
 
 	VblTaskClientDriver *_drv;
 	int _numGroups;
+	uint16 _scale;
 
 	uint32 _vblSmpQty;
 	uint32 _vblSmpQtyRem;

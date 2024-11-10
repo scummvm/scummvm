@@ -69,6 +69,7 @@ IMuseInternal::IMuseInternal(ScummEngine *vm, MidiDriverFlags sndType, bool nati
 	_trigger_count(0),
 	_snm_trigger_index(0),
 	_soundType(sndType),
+	_lowLevelVolumeControl(sndType == MDT_MACINTOSH),
 	_game_id(vm ? vm->_game.id : 0),
 	_mutex(vm ? vm->_mixer->mutex() : _dummyMutex) {
 	memset(_channel_volume, 0, sizeof(_channel_volume));
@@ -489,6 +490,12 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 			_midi_native->property(IMuse::PROP_QUALITY, value);
 		break;
 
+	case IMuse::PROP_MUSICVOLUME:
+	case IMuse::PROP_SFXVOLUME:
+		if (_midi_native && _lowLevelVolumeControl)
+			_midi_native->property(prop, value);
+		break;
+
 	default:
 		break;
 	}
@@ -515,6 +522,11 @@ void IMuseInternal::startSoundWithNoteOffset(int sound, int offset) {
 ////////////////////////////////////////
 
 void IMuseInternal::setMusicVolume(int vol) {
+	if (_lowLevelVolumeControl) {
+		property(IMuse::PROP_MUSICVOLUME, vol);
+		return;
+	}
+
 	Common::StackLock lock(_mutex);
 	if (vol > 255)
 		vol = 255;
@@ -530,6 +542,14 @@ void IMuseInternal::setMusicVolume(int vol) {
 	}
 	if (!_paused)
 		update_volumes();
+}
+
+void IMuseInternal::setSfxVolume(int vol) {
+	// This is supported only for drivers that can distinguish music from sound effects at the driver or emulator level.
+	// The imuse engine in its early version does not have volume groups. It simply (and successfully for the more relevant
+	// targets) relies on sound effects not being played through the imuse engine.
+	if (_lowLevelVolumeControl)
+		property(IMuse::PROP_SFXVOLUME, vol);
 }
 
 void IMuseInternal::startSound(int sound) {
@@ -1496,6 +1516,9 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *native_midi, MidiDriver
 	if (!_tempoFactor)
 		_tempoFactor = 100;
 	_master_volume = 255;
+
+	if (_lowLevelVolumeControl)
+		_music_volume = _music_volume_eff = 255;
 
 	for (i = 0; i != 8; i++)
 		_channel_volume[i] = _channel_volume_eff[i] = _volchan_table[i] = 127;

@@ -57,8 +57,6 @@ class  IMuseSysex_Scumm;
 #define TRIGGER_ID 0
 #define COMMAND_ID 1
 
-#define MDPG_TAG "MDpg"
-
 #define MUS_REDUCTION_TIMER_TICKS 16667 // 60 Hz
 
 
@@ -577,11 +575,21 @@ public:
 
 	// MusicEngine interface
 	void setMusicVolume(int vol) override;
+	void setSfxVolume(int vol) override;
 	void startSound(int sound) override;
 	void stopSound(int sound) override;
 	void stopAllSounds() override;
 	int getSoundStatus(int sound) const override;
 	int getMusicTimer() override;
+
+protected:
+	// Our normal volume control is high-level, i. e. it uses the imuse engine to generate the proper volume values and send these to the midi driver.
+	// For older titles (like MI2 and INDY4) who never had music and sfx volume controls in the original interpreters, this works well only if the
+	// engine can somehow distinguish between music and sound effects. It works for targets/platforms where this can be done by resource type, where
+	// the sfx resources aren't even played through the imuse engine. The imuse engine can then just assume that everything it plays is music. For
+	// MI2/INDY4 Macintosh it won't work like this, because both music and sound effects have the same resource type and are played through the imuse
+	// engine. For these targets it works better to pass the volume values on to the driver where other methods of distinction may be available.
+	const bool _lowLevelVolumeControl;
 
 public:
 	// Factory function

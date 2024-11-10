@@ -37,7 +37,30 @@ namespace Scumm {
 #define RATECNV_BIT_PRECSN	24
 
 
-class DoubleBufferIntern;
+class DoubleBufferIntern {
+public:
+	DoubleBufferIntern(MacLowLevelPCMDriver::ChanHandle hdl, uint32 numFrames, byte bitsPerSample, byte numChannels, MacLowLevelPCMDriver::DBCallback *cb, byte numMixChannels);
+	~DoubleBufferIntern();
+	void callback();
+	void update();
+
+	const int8 *data() const { return _data; }
+	uint32 bufferSize() const { return _processSize; }
+	uint32 flags() const { return _buff.flags; }
+	byte bitsPerSample() const { return _bitsPerSample; }
+	byte numMixChannels() const { return _numMixChan; }
+
+private:
+	MacLowLevelPCMDriver::DoubleBuffer _buff;
+	MacLowLevelPCMDriver::DBCallback *_callback;
+	int8 *_data;
+	byte _bitsPerSample;
+	byte _numChan;
+	byte _numMixChan;
+	uint32 _bufferSize;
+	uint32 _processSize;
+};
+
 class MacSndChannel {
 public:
 	MacSndChannel(MacLowLevelPCMDriver *drv, Audio::Mixer::SoundType sndtp, int synth, bool interp, bool enableL, bool enableR, MacLowLevelPCMDriver::ChanCallback *callback);
@@ -55,7 +78,7 @@ public:
 	void setTimbre(uint16 timbre);
 	void callback(uint16 p1, const void *p2);
 
-	bool playDoubleBuffer(byte numChan, byte bitsPerSample, uint32 rate, MacLowLevelPCMDriver::DBCallback *callback);
+	bool playDoubleBuffer(byte numChan, byte bitsPerSample, uint32 rate, MacLowLevelPCMDriver::DBCallback *callback, byte numMixChan = 1);
 
 	struct SoundCommand {
 		SoundCommand() : cmd(0), arg1(0), arg2(0), ptr(nullptr) {}
@@ -70,6 +93,8 @@ public:
 	void enqueueSndCmd(uint8 c, uint16 p1, uint32 p2, byte mode);
 	void enqueueSndCmd(uint8 c, uint16 p1, const void *p2, byte ptrType, byte mode);
 	bool idle() const;
+	bool dblBufferModeEnabled() const { return _dblBuff != nullptr; }
+	byte dblBuffNumMixChannels() const { return _dblBuff ? _dblBuff->numMixChannels() : 0; }
 
 	void setFlags(uint8 flags) { _flags |= flags; }
 	void clearFlags(uint8 flags) { _flags &= ~flags; }
@@ -148,31 +173,9 @@ uint32 fixMul(uint32 fx1, uint32 fx2) {
 	return (a << 16) + b + c + (d >> 16);
 }
 
-class DoubleBufferIntern {
-public:
-	DoubleBufferIntern(uint32 numFrames, byte bitsPerSample, byte numChannels, MacLowLevelPCMDriver::DBCallback *cb);
-	~DoubleBufferIntern();
-	void callback();
-	void update();
-
-	const int8 *data() const { return _data; }
-	uint32 bufferSize() const { return _processSize; }
-	uint32 flags() const { return _buff.flags; }
-	byte bitsPerSample() const { return _bitsPerSample; }
-
-private:
-	MacLowLevelPCMDriver::DoubleBuffer _buff;
-	MacLowLevelPCMDriver::DBCallback *_callback;
-	int8 *_data;
-	byte _bitsPerSample;
-	byte _numChan;
-	uint32 _bufferSize;
-	uint32 _processSize;
-};
-
 MacPlayerAudioStream::MacPlayerAudioStream(VblTaskClientDriver *drv, uint32 scummVMOutputrate, bool stereo, bool interpolate, bool internal16Bit) : Audio::AudioStream(), _drv(drv),
 	_vblSmpQty(0), _vblSmpQtyRem(0), _frameSize((stereo ? 2 : 1) * (internal16Bit ? 2 : 1)), _vblCountDown(0), _vblCountDownRem(0), _outputRate(scummVMOutputrate),
-		_vblCbProc(nullptr), _numGroups(1), _isStereo(stereo), _interp(interpolate), _smpInternalSize(internal16Bit ? 2 : 1) {
+		_vblCbProc(nullptr), _numGroups(1), _isStereo(stereo), _interp(interpolate), _smpInternalSize(internal16Bit ? 2 : 1), _scale(1) {
 	assert(_drv);
 	_buffers = new SmpBuffer[2];
 	_vblSmpQty = (_outputRate << 16) / VBL_UPDATE_RATE;
@@ -283,14 +286,14 @@ int MacPlayerAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 			int diff = smpN - _buffers[ii].lastL;
 			if (diff && _buffers[ii].rateConvAcc && interp)
 				diff = (diff * _buffers[ii].rateConvAcc) >> RATECNV_BIT_PRECSN;
-			smpL += (int32)((_buffers[ii].lastL + diff) * (_buffers[ii].volume / numch));
+			smpL += (int32)((_buffers[ii].lastL + diff) * (_buffers[ii].volume * _scale / numch));
 
 			if (_isStereo) {
 				smpN = _smpInternalSize == 2 ? *reinterpret_cast<int16*>(&_buffers[ii].pos[2]) : _buffers[ii].pos[1];
 				diff = smpN - _buffers[ii].lastR;
 				if (diff && _buffers[ii].rateConvAcc && interp)
 					diff = (diff * _buffers[ii].rateConvAcc) >> RATECNV_BIT_PRECSN;
-				smpR += (int32)((_buffers[ii].lastR + diff) * (_buffers[ii].volume / numch));
+				smpR += (int32)((_buffers[ii].lastR + diff) * (_buffers[ii].volume * _scale / numch));
 			}
 		}
 
@@ -345,7 +348,8 @@ void MacPlayerAudioStream::runVblTask() {
 }
 
 MacLowLevelPCMDriver::MacLowLevelPCMDriver(Common::Mutex &mutex, uint32 deviceRate, bool internal16Bit) :
-	MacSoundDriver(mutex, deviceRate, 0, true, internal16Bit), _numInternalMixChannels(1), _mixBufferSize(0), _mixBuffer(nullptr) {
+	MacSoundDriver(mutex, deviceRate, 0, true, internal16Bit), _mixBufferSize(0), _mixBuffer(nullptr) {
+	_numInternalMixChannels[0] = _numInternalMixChannels[1] = _numInternalMixChannels[2] = _numInternalMixChannels[3] = 1;
 }
 
 MacLowLevelPCMDriver::~MacLowLevelPCMDriver() {
@@ -386,7 +390,7 @@ void MacLowLevelPCMDriver::feed(int8 *dst, uint32 byteSize, Audio::Mixer::SoundT
 		if (_smpSize == 2)
 			*reinterpret_cast<int16*>(dst) += CLIP<int32>(*src, _smpMin, _smpMax);
 		else
-			*dst += CLIP<int32>(*src / _numInternalMixChannels, _smpMin, _smpMax);
+			*dst += CLIP<int32>(*src / _numInternalMixChannels[type], _smpMin, _smpMax);
 		dst += _smpSize;
 	}
 }
@@ -506,7 +510,7 @@ void MacLowLevelPCMDriver::callback(ChanHandle handle, ExecMode mode, uint16 arg
 	ch->enqueueSndCmd(13, arg1, arg2, 0, mode);
 }
 
-bool MacLowLevelPCMDriver::playDoubleBuffer(ChanHandle handle, byte numChan, byte bitsPerSample, uint32 rate, DBCallback *callback, byte externalMixNumChan) {
+bool MacLowLevelPCMDriver::playDoubleBuffer(ChanHandle handle, byte numChan, byte bitsPerSample, uint32 rate, DBCallback *callback, byte numMixChan) {
 	Common::StackLock lock(_mutex);
 	MacSndChannel *ch = findAndCheckChannel(handle, __FUNCTION__, kSampledSynth);
 	if (!ch)
@@ -517,9 +521,10 @@ bool MacLowLevelPCMDriver::playDoubleBuffer(ChanHandle handle, byte numChan, byt
 		return false;
 	}
 
-	_status[ch->_sndType].numExternalMixChannels = bitsPerSample > 8 ? externalMixNumChan : 1;
+	bool res = ch->playDoubleBuffer(numChan, bitsPerSample, rate, callback, numMixChan);
+	updateStatus(ch->_sndType);
 
-	return ch->playDoubleBuffer(numChan, bitsPerSample, rate, callback);
+	return res;
 }
 
 uint8 MacLowLevelPCMDriver::getChannelStatus(ChanHandle handle) const {
@@ -531,16 +536,23 @@ void MacLowLevelPCMDriver::clearChannelFlags(ChanHandle handle, uint8 flags) {
 }
 
 void MacLowLevelPCMDriver::updateStatus(Audio::Mixer::SoundType sndType) {
-	_numInternalMixChannels = _smpSize > 1 ? 1 : _channels.size();
-	_status[sndType].allowInterPolation = true;
 	int count = 0;
+	int count2 = 0;
+	_status[sndType].allowInterPolation = true;
 	for (Common::Array<MacSndChannel*>::const_iterator ch = _channels.begin(); ch != _channels.end(); ++ch) {
-		if ((*ch)->_sndType == sndType)
-			++count;
+		if ((*ch)->_sndType == sndType) {
+			if ((*ch)->dblBufferModeEnabled()) {
+				count += (*ch)->dblBuffNumMixChannels();
+				++count2;
+			} else {
+				++count;
+			}
+		}
 		if (!(*ch)->_interpolate)
 			_status[sndType].allowInterPolation = false;
 	}
 	_status[sndType].numExternalMixChannels = _smpSize > 1 ? count : 1;
+	_numInternalMixChannels[sndType] = _smpSize > 1 ? 1 : MAX<int>(_channels.size() - count2, 1);
 }
 
 MacSndChannel *MacLowLevelPCMDriver::findAndCheckChannel(ChanHandle h, const char *callingProcName, byte reqSynthType) const {
@@ -693,7 +705,7 @@ void MacSndChannel::callback(uint16 p1, const void *p2) {
 		(*_callback)(p1, p2);
 }
 
-bool MacSndChannel::playDoubleBuffer(byte numChan, byte bitsPerSample, uint32 rate, MacLowLevelPCMDriver::DBCallback *callback) {
+bool MacSndChannel::playDoubleBuffer(byte numChan, byte bitsPerSample, uint32 rate, MacLowLevelPCMDriver::DBCallback *callback, byte numMixChan) {
 	if (!numChan || !bitsPerSample || !rate || !callback) {
 		warning("%s(): Invalid argument", __FUNCTION__);
 		return false;
@@ -704,7 +716,7 @@ bool MacSndChannel::playDoubleBuffer(byte numChan, byte bitsPerSample, uint32 ra
 		return false;
 	}
 
-	_dblBuff = new DoubleBufferIntern(1024, bitsPerSample, numChan, callback);	
+	_dblBuff = new DoubleBufferIntern(getHandle(),  1024, bitsPerSample, numChan, callback, numMixChan);	
 	setupRateConv(_drv->getStatus().deviceRate, 0x10000, rate, false);
 	_duration = _tmrInc = _tmrPos = _loopSt = _loopEnd = _rcPos = _smpWtAcc = _phase = 0;
 
@@ -1193,8 +1205,7 @@ void MacSndChannel::makeSquareWave(int8 *dstBuff, uint16 dstSize, byte timbre) {
 		*d2++ = *d1++ ^ 0xff;
 }
 
-DoubleBufferIntern::DoubleBufferIntern(uint32 numFrames, byte bitsPerSample, byte numChannels, MacLowLevelPCMDriver::DBCallback *cb) : _bitsPerSample(bitsPerSample), _numChan(numChannels), _callback(cb), _data(nullptr), _bufferSize(0), _processSize(0) {
-	_buff.numFrames = numFrames;
+DoubleBufferIntern::DoubleBufferIntern(MacLowLevelPCMDriver::ChanHandle hdl, uint32 numFrames, byte bitsPerSample, byte numChannels, MacLowLevelPCMDriver::DBCallback *cb, byte numMixChan) : _buff(hdl, numFrames), _bitsPerSample(bitsPerSample), _numChan(numChannels), _callback(cb), _numMixChan(numMixChan), _data(nullptr), _bufferSize(0), _processSize(0) {
 	update();
 }
 
