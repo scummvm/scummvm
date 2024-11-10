@@ -36,15 +36,8 @@ void Room::preload() {
 }
 
 void Room::restoreAutosave() {
-	if (g_engine->autosaveExists()) {
-		_G(kernel).restore_slot = 0;
-		auto oldMode = _G(kernel).trigger_mode;
-		_G(kernel).trigger_mode = KT_DAEMON;
-		disable_player_commands_and_fade_init(255);
-
-		_G(kernel).trigger_mode = oldMode;
-		player_set_commands_allowed(false);
-	}
+	if (g_engine->loadGameState(0).getCode() != Common::kNoError)
+		error("Could not restore autosave");
 }
 
 int Room::checkFlags(bool flag) {
