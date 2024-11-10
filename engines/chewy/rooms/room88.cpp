@@ -49,7 +49,9 @@ void Room88::entry() {
 void Room88::xit() {
 	_G(gameState).flags31_8 = true;
 	_G(gameState)._personRoomNr[P_HOWARD] = _G(gameState).R88UsedMonkey ? 84 : 82;
-	_G(gameState)._personRoomNr[P_NICHELLE] = _G(gameState)._personRoomNr[P_HOWARD];
+	// Don't move Nichelle if she has been abducted in room 86
+	if (_G(gameState)._personRoomNr[P_NICHELLE] != 0)
+		_G(gameState)._personRoomNr[P_NICHELLE] = _G(gameState)._personRoomNr[P_HOWARD];
 }
 
 int Room88::proc1() {
