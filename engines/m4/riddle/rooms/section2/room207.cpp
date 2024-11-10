@@ -279,15 +279,8 @@ void Room207::pre_parser() {
 	}
 
 	if (player_said("CHINESE YUAN", "PEASANT") || player_said("US DOLLARS", "PEASANT")) {
-		if (!inv_object_is_here("REBUS AMULET")) {
-			_G(player).need_to_walk = false;
-			_G(player).ready_to_walk = true;
-			_G(player).waiting_for_walk = false;
-			Common::strcpy_s(_G(player).verb, "handout");
-		} else if (_G(flags[V063]) == 0) {
-			_G(player).need_to_walk = false;
-			_G(player).ready_to_walk = true;
-			_G(player).waiting_for_walk = false;
+		if (!inv_object_is_here("REBUS AMULET") || !_G(flags)[V063]) {
+			_G(player).resetWalk();
 			Common::strcpy_s(_G(player).verb, "handout");
 		} else {
 			if (player_said("US DOLLARS"))
@@ -297,6 +290,9 @@ void Room207::pre_parser() {
 			Common::strcpy_s(_G(player).noun, "money");
 			_G(player).need_to_walk = false;
 		}
+
+		_G(kernel).trigger_mode = KT_PARSE;
+		kernel_timing_trigger(1, 1);
 	}
 }
 
@@ -1176,18 +1172,18 @@ void Room207::daemon() {
 			_G(kernel).trigger_mode = KT_PARSE;
 			conv_load("conv203d", 10, 10, 747);
 			conv_set_shading(65);
-			conv_export_value(conv_get_handle(), _G(flags[V054]), 0);
+			conv_export_value_curr(_G(flags[V054]), 0);
 
 			if (inv_player_has("REBUS AMULET"))
-				conv_export_value(conv_get_handle(), 0, 1);
+				conv_export_value_curr(0, 1);
 			else
-				conv_export_value(conv_get_handle(), 1, 1);
+				conv_export_value_curr(_G(flags)[V063], 1);
 
-			conv_export_value(conv_get_handle(), 1, 2);
-			conv_export_value(conv_get_handle(), _G(flags[V073]), 3);
-			conv_export_value(conv_get_handle(), _G(flags[V043]), 5);
+			conv_export_value_curr(1, 2);
+			conv_export_value_curr(_G(flags)[V073], 3);
+			conv_export_value_curr(_G(flags)[V043], 5);
 
-			conv_play(conv_get_handle());
+			conv_play();
 			_fieldC2 = 0;
 			_G(kernel).trigger_mode = KT_DAEMON;
 			kernel_timing_trigger(1, 20, nullptr);
