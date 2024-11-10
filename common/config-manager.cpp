@@ -533,6 +533,9 @@ const String &ConfigManager::get(const String &key, const String &domName) const
 	if (domain->contains(key))
 		return (*domain)[key];
 
+	if (_appDomain.contains(key))
+		return _appDomain[key];
+
 	return _defaultsDomain.getValOrDefault(key);
 }
 
