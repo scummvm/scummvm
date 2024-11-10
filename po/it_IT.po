@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-08 11:49+0100\n"
-"PO-Revision-Date: 2024-11-08 13:13+0000\n"
+"PO-Revision-Date: 2024-11-10 17:21+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -6399,10 +6399,8 @@ msgstr ""
 "gioco."
 
 #: engines/agi/metaengine.cpp:147
-#, fuzzy
-#| msgid "Predictive input dialog"
 msgid "Predictive Input Dialog on mouse click"
-msgstr "Finestra input predittivo"
+msgstr "Mostra finestra input predittivo dopo clic mouse"
 
 #: engines/agi/metaengine.cpp:148
 msgid ""
@@ -6411,6 +6409,10 @@ msgid ""
 "The Predictive Input Dialog can still be activated on demand if there's a "
 "specified key mapping for it"
 msgstr ""
+"Apre automaticamente la finestra di Input Predittivo in seguito a un clic "
+"sinistro del mouse in una finestra di input testuale.\n"
+"La finestra di Input Predittivo può essere aperta in qualsiasi momento se un "
+"tasto è assegnato in Mappa Tasti"
 
 #: engines/agi/metaengine.cpp:159
 msgid "Use Hercules hires font"
@@ -6990,10 +6992,8 @@ msgid "Default keymappings"
 msgstr "Mappe tasti predefinite"
 
 #: engines/bbvs/metaengine.cpp:94
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Escape keymappings"
-msgstr "Mappature tasti gioco"
+msgstr "Mappatura tasto Escape"
 
 #. I18N: ESC key
 #: engines/bbvs/metaengine.cpp:110 engines/cruise/metaengine.cpp:197
@@ -7720,27 +7720,19 @@ msgstr "Carica Salvataggio rapido"
 
 #. I18N: Game runs at faster speed
 #: engines/cruise/metaengine.cpp:160 engines/tucker/metaengine.cpp:196
-#, fuzzy
-#| msgid "Fast move modifier"
 msgid "Fast mode"
-msgstr "Modificatore movimento veloce"
+msgstr "Modalità velocizzata"
 
 #. I18N: Opens menu with player commands
 #: engines/cruise/metaengine.cpp:173
-#, fuzzy
-#| msgid "Player Time:"
 msgid "Player menu"
-msgstr "Tempo di gioco:"
+msgstr "Menù giocatore"
 
 #: engines/cruise/metaengine.cpp:179
-#, fuzzy
-#| msgid "Faster game speed"
 msgid "Increase game speed"
-msgstr "Riduci velocità gioco"
+msgstr "Aumenta velocità gioco"
 
 #: engines/cruise/metaengine.cpp:185
-#, fuzzy
-#| msgid "Faster game speed"
 msgid "Decrease game speed"
 msgstr "Riduci velocità gioco"
 
@@ -7754,56 +7746,40 @@ msgid "Versailles 1685 support is not compiled in"
 msgstr "Il supporto per Versailles 1685 non è stato incluso nella compilazione"
 
 #: engines/dgds/metaengine.cpp:75
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Menu"
-msgstr "Audio muto"
+msgstr "Mostra/nascondi menù"
 
 #: engines/dgds/metaengine.cpp:76
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle Clock"
-msgstr "Attiva / Disattiva modalità combattimento"
+msgstr "Mostra/nascondi orologio"
 
 #: engines/dgds/metaengine.cpp:77
 msgid "Next dialog / menu item"
-msgstr ""
+msgstr "Riga di dialogo / Selezione menù successiva"
 
 #: engines/dgds/metaengine.cpp:78
-#, fuzzy
-#| msgid "Previous palette"
 msgid "Previous dialog / menu item"
-msgstr "Palette precedente"
+msgstr "Riga di dialogo / Selezione menù precedente"
 
 #: engines/dgds/metaengine.cpp:79
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Next object"
-msgstr "Seleziona oggetto successivo"
+msgstr "Oggetto successivo"
 
 #: engines/dgds/metaengine.cpp:80
-#, fuzzy
-#| msgid "Go to previous object"
 msgid "Previous object"
-msgstr "Seleziona oggetto precedente"
+msgstr "Oggetto precedente"
 
 #: engines/dgds/metaengine.cpp:81
-#, fuzzy
-#| msgid "Pick up action"
 msgid "Pick up / Operate"
-msgstr "Azione: Raccogli"
+msgstr "Raccogli / Utilizza"
 
 #: engines/dgds/metaengine.cpp:83
-#, fuzzy
-#| msgid "Animated inventory items"
 msgid "Activate Inventory Object"
-msgstr "Animazioni oggetti inventario"
+msgstr "Attiva Oggetto Inventario"
 
 #: engines/dgds/metaengine.cpp:86
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game Keys"
-msgstr "Mappa Tasti"
+msgstr "Tasti del Gioco"
 
 #: engines/director/events.cpp:99
 msgid ""
@@ -7815,26 +7791,20 @@ msgstr ""
 
 #: engines/draci/metaengine.cpp:155
 msgid "Skip intro/Exit map or inventory"
-msgstr ""
+msgstr "Salta introduzione/Chiudi mappa o inventario"
 
 #: engines/draci/metaengine.cpp:161
-#, fuzzy
-#| msgid "Open Holomap"
 msgid "Open map"
-msgstr "Mostra mappa olografica"
+msgstr "Apri mappa"
 
 #. I18N: shows where the game actor is able to move
 #: engines/draci/metaengine.cpp:168
-#, fuzzy
-#| msgid "Show map"
 msgid "Show walking map"
-msgstr "Mostra mappa"
+msgstr "Mostra aree camminabili"
 
 #: engines/draci/metaengine.cpp:174
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Toggle walk speed"
-msgstr "Attiva/disattiva camminata veloce"
+msgstr "Alterna velocità camminata"
 
 #: engines/draci/metaengine.cpp:186 engines/mohawk/myst.cpp:554
 #: engines/mohawk/riven.cpp:835 engines/nancy/input.cpp:225
@@ -7843,19 +7813,15 @@ msgstr "Apri menù principale"
 
 #: engines/draci/metaengine.cpp:192
 msgid "Toggle between mouse pointer and the last game item"
-msgstr ""
+msgstr "Alterna tra il puntatore del mouse e l'ultimo oggetto del gioco"
 
 #: engines/draci/metaengine.cpp:198
-#, fuzzy
-#| msgid "Scroll up in inventory"
 msgid "Previous item in inventory"
-msgstr "Scorri inventario verso l'alto"
+msgstr "Oggetto precedente nell'inventario"
 
 #: engines/draci/metaengine.cpp:204
-#, fuzzy
-#| msgid "Open inventory"
 msgid "Next item in inventory"
-msgstr "Apri Inventario"
+msgstr "Oggetto successivo nell'inventario"
 
 #: engines/dragons/dragons.cpp:1884
 #, c-format
@@ -7957,8 +7923,6 @@ msgid "Automatic drilling"
 msgstr "Perforazione automatica"
 
 #: engines/freescape/metaengine.cpp:65
-#, fuzzy
-#| msgid "Allow to succefully drill in any part of the area in Driller"
 msgid "Allow to successfully drill in any part of the area in Driller"
 msgstr "Permette di perforare con successo in qualsiasi area del gioco"
 
@@ -8045,16 +8009,12 @@ msgid "Info Menu"
 msgstr "Menù Informazioni"
 
 #: engines/freescape/games/castle/castle.cpp:234
-#, fuzzy
-#| msgid "Select index"
 msgid "Select Prince"
-msgstr "Seleziona indice"
+msgstr "Seleziona il Principe"
 
 #: engines/freescape/games/castle/castle.cpp:239
-#, fuzzy
-#| msgid "Select index"
 msgid "Select Princess"
-msgstr "Seleziona indice"
+msgstr "Seleziona la Principessa"
 
 #: engines/freescape/games/castle/castle.cpp:266
 #: engines/freescape/games/dark/dark.cpp:203
@@ -8086,14 +8046,12 @@ msgstr "Corri"
 
 #: engines/freescape/games/castle/castle.cpp:292
 msgid "Crawl"
-msgstr ""
+msgstr "Avanza lentamente"
 
 #: engines/freescape/games/castle/castle.cpp:298
 #: engines/freescape/games/eclipse/eclipse.cpp:245
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Face Forward"
-msgstr "Avanza"
+msgstr "Guarda in avanti"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:220
@@ -8133,23 +8091,17 @@ msgstr "Ritira trivella"
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/eclipse/eclipse.cpp:224
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change Angle"
-msgstr "Cambia modalità"
+msgstr "Modifica angolo di rotazione"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/eclipse/eclipse.cpp:230
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change Step Size"
-msgstr "Cambia dimensione testi"
+msgstr "Modifica lunghezza dei passi"
 
 #: engines/freescape/games/eclipse/eclipse.cpp:235
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Height"
-msgstr "Audio muto"
+msgstr "Alterna altezza"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/freescape/games/eclipse/eclipse.cpp:240
@@ -8599,22 +8551,16 @@ msgid "Glowstick"
 msgstr "Bengala"
 
 #: engines/hugo/metaengine.cpp:111
-#, fuzzy
-#| msgid "User canceled"
 msgid "User help"
-msgstr "Annullato dall'utente"
+msgstr "Aiuto per l'utente"
 
 #: engines/hugo/metaengine.cpp:117
-#, fuzzy
-#| msgid "Toggle Sound"
 msgid "Toggle sound"
 msgstr "Attiva/disattiva sonoro"
 
 #: engines/hugo/metaengine.cpp:122
-#, fuzzy
-#| msgid "Repeat last message"
 msgid "Repeat last line"
-msgstr "Ripeti ultimo messaggio"
+msgstr "Ripeti l'ultima linea di testo"
 
 #: engines/hugo/metaengine.cpp:135 engines/lure/metaengine.cpp:197
 #: engines/mads/metaengine.cpp:311 engines/tsage/metaengine.cpp:247
@@ -8640,64 +8586,48 @@ msgid "Show inventory"
 msgstr "Visualizza inventario"
 
 #: engines/hugo/metaengine.cpp:154
-#, fuzzy
-#| msgid "Improved mode"
 msgid "Turbo mode"
-msgstr "Modalità migliorata"
+msgstr "Modalità turbo"
 
 #. I18N: Move actor in the top direction
 #: engines/hugo/metaengine.cpp:167
-#, fuzzy
-#| msgid "Move up"
 msgid "Move to top"
 msgstr "Movimento verso l'alto"
 
 #. I18N: Move actor in the bottom direction
 #: engines/hugo/metaengine.cpp:175
 msgid "Move to bottom"
-msgstr ""
+msgstr "Movimento verso il basso"
 
 #. I18N: Move actor in the left direction
 #: engines/hugo/metaengine.cpp:183
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to left"
 msgstr "Movimento verso sinistra"
 
 #. I18N: Move actor in the right direction
 #: engines/hugo/metaengine.cpp:191
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to right"
 msgstr "Movimento verso destra"
 
 #. I18N: Move actor in the top-left direction
 #: engines/hugo/metaengine.cpp:199
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to top left"
-msgstr "Movimento verso sinistra"
+msgstr "Movimento verso l'alto e a sinistra"
 
 #. I18N: Move actor in the top-right direction
 #: engines/hugo/metaengine.cpp:205
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to top right"
-msgstr "Movimento verso destra"
+msgstr "Movimento verso l'alto e a destra"
 
 #. I18N: Move actor in the bottom-left direction
 #: engines/hugo/metaengine.cpp:211
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to bottom left"
-msgstr "Movimento verso sinistra"
+msgstr "Movimento verso il basso e a sinistra"
 
 #. I18N: Move actor in the bottom-right direction
 #: engines/hugo/metaengine.cpp:217
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to bottom right"
-msgstr "Movimento verso destra"
+msgstr "Movimento verso il basso e a destra"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -8762,16 +8692,12 @@ msgid "Side Step"
 msgstr "Movimento laterale"
 
 #: engines/illusions/metaengine.cpp:108
-#, fuzzy
-#| msgid "Move cursor left"
 msgid "Move cursor up"
-msgstr "Sposta cursore verso sinistra"
+msgstr "Sposta cursore verso l'alto"
 
 #: engines/illusions/metaengine.cpp:115
-#, fuzzy
-#| msgid "Move cursor left"
 msgid "Move cursor down"
-msgstr "Sposta cursore verso sinistra"
+msgstr "Sposta cursore verso il basso"
 
 #: engines/illusions/metaengine.cpp:122
 msgid "Move cursor left"
@@ -8949,8 +8875,6 @@ msgstr "Avanza"
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
 #: engines/wintermute/keymapper_tables.h:2238
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Move Backwards"
 msgstr "Arretra"
 
@@ -10489,13 +10413,16 @@ msgstr "Abilita elementi grafici che sono stati disattivati per ragioni legali"
 
 #: engines/sci/detection_options.h:236
 msgid "Enable saving via the GMM"
-msgstr ""
+msgstr "Abilita i salvataggi nel Menù Principale di ScummVM"
 
 #: engines/sci/detection_options.h:237
 msgid ""
 "Allows saving via the GMM. WARNING: saves created via the GMM may be "
 "corrupted and unusable. Use at your own risk!"
 msgstr ""
+"Permette di salvare tramite il Menù Principale di ScummVM. ATTENZIONE: i "
+"salvataggi creati in questo modo possono risultare corrotti e "
+"inutilizzabili. Usali a tuo rischio!"
 
 #: engines/sci/detection_options.h:251
 msgid "MIDI mode:"
@@ -11560,6 +11487,8 @@ msgid ""
 "Warning: this re-release version contains patched game scripts,\n"
 "and therefore it might crash or not work properly for the time being."
 msgstr ""
+"Attenzione: questa re-release contiene degli script modificati,\n"
+"che (per ora) possono causare crash o non funzionare correttamente."
 
 #: engines/scumm/metaengine.cpp:486
 msgid "HE v71+ support is not compiled in"
@@ -11763,42 +11692,30 @@ msgstr ""
 "e caratteri."
 
 #: engines/scumm/scumm.cpp:1261
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Monkey Island' Macintosh executable to read the\n"
-#| "instruments from. Music will be disabled."
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read resources\n"
 "and instruments from. Music and Mac GUI will be disabled."
 msgstr ""
-"L'eseguibile Macintosh di 'Monkey Island', necessario per caricare gli\n"
-"strumenti, non è stato trovato. La musica non verrà riprodotta."
+"L'eseguibile Macintosh di 'Monkey Island', necessario per caricare risorse "
+"e\n"
+"strumenti, non è stato trovato. La musica e l'interfaccia utente Mac "
+"verranno disabilitati."
 
 #: engines/scumm/scumm.cpp:1290
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
-#| "will\n"
-#| "be disabled."
 msgid ""
 "Could not find the 'Fate of Atlantis' Macintosh executable.\n"
 "Mac GUI will not be shown."
 msgstr ""
-"L'eseguibile Macintosh di 'Indy' non è stato trovato. I caratteri ad alta\n"
-"risoluzione saranno disabilitati."
+"L'eseguibile Macintosh di 'Fate of Atlantis' non è stato trovato.\n"
+"L'interfaccia utente Mac non verrà mostrata."
 
 #: engines/scumm/scumm.cpp:1310
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
-#| "will\n"
-#| "be disabled."
 msgid ""
 "Could not find the 'LeChuck's Revenge' Macintosh executable.\n"
 "Mac GUI will not be shown."
 msgstr ""
-"L'eseguibile Macintosh di 'Indy' non è stato trovato. I caratteri ad alta\n"
-"risoluzione saranno disabilitati."
+"L'eseguibile Macintosh di 'LeChuck's Revenge' non è stato trovato.\n"
+"L'interfaccia utente Mac non verrà mostrata."
 
 #: engines/scumm/scumm.cpp:1321
 #, c-format
@@ -12072,10 +11989,8 @@ msgid "Open control panel"
 msgstr "Apri pannello di controllo"
 
 #: engines/sky/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle really fast mode"
 msgid "Toggle really fast mode on/off"
-msgstr "Attiva modalità molto veloce"
+msgstr "Attiva/disattiva modalità molto veloce"
 
 #: engines/sky/metaengine.cpp:156
 msgid "Floppy intro"
@@ -12182,14 +12097,10 @@ msgid "Scroll down in your dialogues"
 msgstr "Scorri log dialoghi verso il basso"
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "go to next dialogue"
 msgid "Go to next dialogue"
 msgstr "Dialogo successivo"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "go to previous dialogues"
 msgid "Go to previous dialogues"
 msgstr "Dialogo precedente"
 
@@ -12347,51 +12258,44 @@ msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Questa è la fine della demo di Broken Sword 1"
 
 #: engines/sword1/metaengine.cpp:63
-#, fuzzy
-#| msgctxt "Options menu"
-#| msgid "Voices: English"
 msgid "English"
-msgstr "Voci: Inglese"
+msgstr "Inglese"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "German"
-msgstr ""
+msgstr "Tedesco"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "French"
-msgstr ""
+msgstr "Francese"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Italian"
-msgstr ""
+msgstr "Italiano"
 
 #: engines/sword1/metaengine.cpp:63
-#, fuzzy
-#| msgid "Finish"
 msgid "Spanish"
-msgstr "Interrompi"
+msgstr "Spagnolo"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Brazilian Portuguese"
-msgstr ""
+msgstr "Portoghese Brasiliano"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Czech"
-msgstr ""
+msgstr "Ceco"
 
 #: engines/sword1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Game language:"
 msgid "Text language:"
-msgstr "Lingua gioco:"
+msgstr "Lingua testi:"
 
 #: engines/sword1/metaengine.cpp:87 engines/sword1/metaengine.cpp:95
 msgid "Set the language for the subtitles. This will not affect voices."
-msgstr ""
+msgstr "Imposta la lingua dei sottotitoli. Il parlato rimarrà inalterato."
 
 #: engines/sword1/metaengine.cpp:114
 msgid "Simulate the audio engine from the Windows executable"
-msgstr ""
+msgstr "Simula il motore sonoro presente nell'eseguibile per Windows"
 
 #: engines/sword1/metaengine.cpp:115
 msgid ""
@@ -12399,18 +12303,18 @@ msgid ""
 "and fade-out for sound effects, fade-in for music, and automatic music "
 "volume attenuation for when speech is playing"
 msgstr ""
+"Il gioco utlizzerà delle curve audio più morbide (logaritmiche), ma verrano "
+"disabilitati: dissolvenze in entrata/uscita per gli effetti sonori, "
+"dissolvenze in entrata per la musica, attenuazione automatica del volume "
+"della musica durante il parlato."
 
 #: engines/sword1/metaengine.cpp:127
-#, fuzzy
-#| msgid "Directional button:"
 msgid "Additional options:"
-msgstr "Comando direzionale:"
+msgstr "Opzioni aggiuntive:"
 
 #: engines/sword1/metaengine.cpp:301
-#, fuzzy
-#| msgid "Main Men~u~"
 msgid "Main Menu"
-msgstr "Menu ~p~rincipale"
+msgstr "Menù Principale"
 
 #: engines/sword2/animation.cpp:426
 msgid ""
@@ -12420,14 +12324,10 @@ msgstr ""
 "senza il supporto colori RGB"
 
 #: engines/sword2/detection_tables.h:419
-#, fuzzy
-#| msgid ""
-#| "Enhanced Edition not supported. Please, use the original files which are "
-#| "part of the release."
 msgid "Remastered edition is not supported. Please, use the classic version"
 msgstr ""
-"La versione di Blade Runner \"Enhanced Edition\" non è supportata. "
-"Cortesemente, utilizza i files presenti nella versione originale."
+"La versione rimasterizzata non è supportata. Per favore, utilizza la "
+"versione classica"
 
 #: engines/sword2/metaengine.cpp:43
 msgid "Show object labels"
@@ -12516,35 +12416,25 @@ msgid "Font variant not present in '%s' engine data file."
 msgstr "Variante del font non presente nel file dati del motore '%s'."
 
 #: engines/toon/metaengine.cpp:98
-#, fuzzy
-#| msgid "Skip line"
 msgid "Skip intro"
-msgstr "Salta battuta dialogo"
+msgstr "Salta introduzione"
 
 #. I18N: Skips current line being spoken by a character
 #: engines/toon/metaengine.cpp:105
-#, fuzzy
-#| msgid "Skip current animation"
 msgid "Stop current voice"
-msgstr "Salta animazione in corso"
+msgstr "Interrompi dialogo in corso"
 
 #: engines/toon/metaengine.cpp:130
-#, fuzzy
-#| msgid "No music"
 msgid "Mute music"
-msgstr "Nessuna musica"
+msgstr "Silenzia la musica"
 
 #: engines/toon/metaengine.cpp:136
-#, fuzzy
-#| msgid "Abort speech"
 msgid "Mute speech"
-msgstr "Salta battuta dialogo"
+msgstr "Silenzia il parlato"
 
 #: engines/toon/metaengine.cpp:142
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Mute sound effects"
-msgstr "Attiva/disattiva effetti sonori"
+msgstr "Silenzia gli effetti sonori"
 
 #: engines/toon/toon.cpp:273
 #, c-format
@@ -12576,36 +12466,26 @@ msgid "Unable to locate the '%s' data file."
 msgstr "File dati '%s' non trovato."
 
 #: engines/touche/metaengine.cpp:135
-#, fuzzy
-#| msgid "Skip video sequence or dialogue"
 msgid "Skip sequence/open quit dialogue"
-msgstr "Salta sequenza d'intermezzo o dialogo"
+msgstr "Salta sequenza/apri finestra d'uscita"
 
 #: engines/touche/metaengine.cpp:141
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Skip Dialogue"
-msgstr "Salta battuta dialogo"
+msgstr "Salta dialogo"
 
 #: engines/touche/metaengine.cpp:147
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open options menu"
-msgstr "Apri menù principale"
+msgstr "Apri menù opzioni"
 
 #. I18N: The actor walking pace is increased
 #: engines/touche/metaengine.cpp:154
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Enable fast walk"
-msgstr "Attiva/disattiva camminata veloce"
+msgstr "Attiva camminata veloce"
 
 #. I18N: The actor walking pace is decreased
 #: engines/touche/metaengine.cpp:161
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Disable fast walk"
-msgstr "Attiva/disattiva camminata veloce"
+msgstr "Disattiva camminata veloce"
 
 #: engines/touche/metaengine.cpp:167
 msgid "Toggle fast mode"
@@ -12613,11 +12493,9 @@ msgstr "Attiva modalità veloce"
 
 #: engines/touche/metaengine.cpp:173
 msgid "Toggle between voice/text/text and voice"
-msgstr ""
+msgstr "Alterna tra Voce/Testo/Testo e Voce"
 
 #: engines/touche/metaengine.cpp:182
-#, fuzzy
-#| msgid "Press \"Yes\" key"
 msgid "Press \"Yes\" Key"
 msgstr "Premi tasto \"Si\""
 
@@ -12636,22 +12514,16 @@ msgstr "Mostra menù di sistema"
 
 #. I18N: Return refers to return/enter key
 #: engines/tsage/metaengine.cpp:196
-#, fuzzy
-#| msgid "turn oN"
 msgid "Return"
-msgstr "Accendi"
+msgstr "Invio"
 
 #: engines/tsage/metaengine.cpp:221
-#, fuzzy
-#| msgid "View"
 msgid "View Help"
-msgstr "Visualizza"
+msgstr "Mostra Aiuto"
 
 #: engines/tsage/metaengine.cpp:226
-#, fuzzy
-#| msgid "Show options"
 msgid "Sound options"
-msgstr "Mostra opzioni"
+msgstr "Opzioni sonoro"
 
 #: engines/tsage/metaengine.cpp:264
 #, fuzzy
