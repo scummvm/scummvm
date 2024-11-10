@@ -137,15 +137,18 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added keymapper support.
 
  SCI:
-   - Added support for Russian fan-translation of QFG3.
+   - Added CGA (4 colors and black/white) and Hercules render modes for most
+	 SCI 0 DOS games. Also added an EGA dithering mode and a VGA gray scale
+	 mode for many SCI 1 DOS games, a 16 colors mode for KQ6 Windows and
+	 8 colors modes for all PC-98 games.
    - Improved PCjr audio.
    - Better support for Mac KQ6.
-   - Added support for Spanish SQ3.
-   - Support for different rendering modes for number of games.
-   - Added support for German KQ5.
    - Implemented KQ5 FM Towns save/restore UI.
-   - Added support for Russian Camelot, Laura Bow, PQ2.
    - Numerous script fixes to different games.
+   - Added support for German KQ5.
+   - Added support for Spanish SQ3.
+   - Added support for Russian Camelot, Laura Bow, PQ2
+   - Added support for Russian fan-translation of QFG3.
 
  SCUMM:
    - Added map generator from Moonbase Console for Moonbase Commander.
