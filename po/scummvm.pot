@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-09 18:54+0000\n"
+"POT-Creation-Date: 2024-11-10 17:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2819,12 +2819,12 @@ msgstr ""
 msgid "Could not find any engine capable of running the selected game"
 msgstr ""
 
-#: common/engine_data.cpp:279 engines/ultima/shared/engine/data_archive.cpp:88
+#: common/engine_data.cpp:278 engines/ultima/shared/engine/data_archive.cpp:88
 #, c-format
 msgid "Could not locate engine data %s"
 msgstr ""
 
-#: common/engine_data.cpp:297 engines/ultima/shared/engine/data_archive.cpp:106
+#: common/engine_data.cpp:296 engines/ultima/shared/engine/data_archive.cpp:106
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
