@@ -347,7 +347,7 @@ void CastleEngine::loadAssetsDOSDemo() {
 			_strenghtWeightsFrames = loadFramesWithHeaderDOS(stream, 4);
 			_spiritsMeterIndicatorBackgroundFrame = loadFrameWithHeaderDOS(stream);
 			_spiritsMeterIndicatorFrame = loadFrameWithHeaderDOS(stream);
-			loadFrameWithHeaderDOS(stream); // side
+			_spiritsMeterIndicatorSideFrame = loadFrameWithHeaderDOS(stream); // side
 			loadFrameWithHeaderDOS(stream); // ???
 
 			stream->seek(0x221ae - 0x2a0);
