@@ -48,7 +48,6 @@ public:
 	}
 	Common::Path getPathInArchive() const override {
 		Common::Path name = _member->getPathInArchive();
-		assert(name.isRelativeTo(_innerfolder));
 		return _publicFolder.join(name.relativeTo(_innerfolder));
 	}
 	Common::U32String getDisplayName() const override {
