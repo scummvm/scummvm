@@ -177,25 +177,35 @@ private:
 	bool _checkUnalignedPitch = false;
 
 	struct GraphicsState {
-		GraphicsMode mode = GraphicsMode::Unknown;
-		int width = 0;
-		int height = 0;
-		Graphics::PixelFormat format;
-		bool aspectRatioCorrection = false;
+		GraphicsState()
+			: mode(GraphicsMode::Unknown)
+			, width(0)
+			, height(0)
+			, format(Graphics::PixelFormat()) {
+		}
 
-		enum PendingScreenChange {
-			kNone					= 0,
-			kVideoMode				= 1<<0,
-			kScreenAddress			= 1<<1,
-			kPalette				= 1<<2,
-			kAspectRatioCorrection	= 1<<3,
-			kShakeScreen            = 1<<4,
-			kAll					= kVideoMode | kScreenAddress | kPalette | kAspectRatioCorrection | kShakeScreen,
-		};
-		int change = kNone;
+		GraphicsMode mode;
+		int width;
+		int height;
+		Graphics::PixelFormat format;
 	};
 	GraphicsState _pendingState;
 	GraphicsState _currentState;
+
+	// feature flags
+	bool _aspectRatioCorrection = false;
+
+	enum PendingScreenChange {
+		kPendingNone                  = 0,
+		kPendingVideoMode             = 1<<0,
+		kPendingScreenAddress         = 1<<1,
+		kPendingAspectRatioCorrection = 1<<2,
+		kPendingPalette               = 1<<3,
+		kPendingShakeScreen           = 1<<4,
+		kPendingTransaction           = kPendingVideoMode | kPendingScreenAddress | kPendingAspectRatioCorrection,
+		kPendingAll                   = kPendingTransaction | kPendingPalette | kPendingShakeScreen
+	};
+	int _pendingScreenChange = kPendingNone;
 
 	enum {
 		FRONT_BUFFER,

@@ -315,14 +315,16 @@ bool AtariGraphicsManager::hasFeature(OSystem::Feature f) const {
 void AtariGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	if (!hasFeature(f))
 		return;
+
+	// flags must be set to _currentState and _pendingScreenChange here
 	
 	switch (f) {
 	case OSystem::Feature::kFeatureAspectRatioCorrection:
 		//debug("setFeatureState(kFeatureAspectRatioCorrection): %d", enable);
-		_pendingState.aspectRatioCorrection = enable;
-
-		if (_currentState.aspectRatioCorrection != _pendingState.aspectRatioCorrection)
-			_pendingState.change |= GraphicsState::kAspectRatioCorrection;
+		if (_aspectRatioCorrection != enable) {
+			_aspectRatioCorrection = enable;
+			_pendingScreenChange |= kPendingAspectRatioCorrection;
+		}
 		break;
 	default:
 		break;
@@ -333,7 +335,7 @@ bool AtariGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::Feature::kFeatureAspectRatioCorrection:
 		//debug("getFeatureState(kFeatureAspectRatioCorrection): %d", _aspectRatioCorrection);
-		return _currentState.aspectRatioCorrection;
+		return _aspectRatioCorrection;
 	case OSystem::Feature::kFeatureCursorPalette:
 		//debug("getFeatureState(kFeatureCursorPalette): %d", isOverlayVisible());
 		//return isOverlayVisible();
@@ -348,9 +350,6 @@ bool AtariGraphicsManager::setGraphicsMode(int mode, uint flags) {
 
 	_pendingState.mode = (GraphicsMode)mode;
 
-	if (_currentState.mode != _pendingState.mode)
-		_pendingState.change |= GraphicsState::kScreenAddress;
-
 	// this doesn't seem to be checked anywhere
 	return true;
 }
@@ -358,23 +357,16 @@ bool AtariGraphicsManager::setGraphicsMode(int mode, uint flags) {
 void AtariGraphicsManager::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	debug("initSize: %d, %d, %d", width, height, format ? format->bytesPerPixel : 1);
 
-	_pendingState.width = width;
+	_pendingState.width  = width;
 	_pendingState.height = height;
 	_pendingState.format = format ? *format : PIXELFORMAT_CLUT8;
-
-	if ((_pendingState.width > 0 && _pendingState.height > 0)
-		&& (_currentState.width != _pendingState.width || _currentState.height != _pendingState.height)) {
-		_pendingState.change |= GraphicsState::kVideoMode;
-	}
 }
 
 void AtariGraphicsManager::beginGFXTransaction() {
 	debug("beginGFXTransaction");
 
-	// these serve as a flag whether we are launching a game; if not, they will be always zeroed
-	_pendingState.width = 0;
-	_pendingState.height = 0;
-	_pendingState.change &= ~GraphicsState::kVideoMode;
+	_pendingState = GraphicsState();
+	_pendingScreenChange &= ~kPendingTransaction;
 }
 
 OSystem::TransactionError AtariGraphicsManager::endGFXTransaction() {
@@ -382,58 +374,71 @@ OSystem::TransactionError AtariGraphicsManager::endGFXTransaction() {
 
 	int error = OSystem::TransactionError::kTransactionSuccess;
 
-	if (_pendingState.mode < GraphicsMode::DirectRendering || _pendingState.mode > GraphicsMode::TripleBuffering)
-		error |= OSystem::TransactionError::kTransactionModeSwitchFailed;
-
-	if (_pendingState.format != PIXELFORMAT_CLUT8)
-		error |= OSystem::TransactionError::kTransactionFormatNotSupported;
-
-	if (_pendingState.width > 0 && _pendingState.height > 0) {
-		if (_pendingState.width > getMaximumScreenWidth() || _pendingState.height > getMaximumScreenHeight())
-			error |= OSystem::TransactionError::kTransactionSizeChangeFailed;
-
-		if (_pendingState.width % 16 != 0 && !hasSuperVidel()) {
-			warning("Requested width not divisible by 16, please report");
-			error |= OSystem::TransactionError::kTransactionSizeChangeFailed;
+	if (_pendingState.mode != GraphicsMode::Unknown) {
+		if (_pendingState.mode < GraphicsMode::DirectRendering || _pendingState.mode > GraphicsMode::TripleBuffering) {
+			error |= OSystem::TransactionError::kTransactionModeSwitchFailed;
+		} else if (_currentState.mode != _pendingState.mode) {
+			_pendingScreenChange |= kPendingScreenAddress;
 		}
 	}
 
+	if (_pendingState.width > 0 && _pendingState.height > 0) {
+		if (_pendingState.width > getMaximumScreenWidth() || _pendingState.height > getMaximumScreenHeight()) {
+			error |= OSystem::TransactionError::kTransactionSizeChangeFailed;
+		} else if (_pendingState.width % 16 != 0 && !hasSuperVidel()) {
+			warning("Requested width not divisible by 16, please report");
+			error |= OSystem::TransactionError::kTransactionSizeChangeFailed;
+		} else if (_currentState.width != _pendingState.width || _currentState.height != _pendingState.height) {
+			_pendingScreenChange |= kPendingVideoMode;
+		}
+	}
+
+	if (_pendingState.format.bytesPerPixel != 0
+		&& _pendingState.format != PIXELFORMAT_CLUT8)
+		error |= OSystem::TransactionError::kTransactionFormatNotSupported;
+
 	if (error != OSystem::TransactionError::kTransactionSuccess) {
 		warning("endGFXTransaction failed: %02x", (int)error);
-		// all our errors are fatal as we don't support rollback so make sure that
-		// initGraphicsAny() fails (note: setupGraphics() doesn't check errors at all)
-		error |= OSystem::TransactionError::kTransactionSizeChangeFailed;
+		_pendingScreenChange &= ~kPendingTransaction;
 		return static_cast<OSystem::TransactionError>(error);
 	}
 
-	// don't exit overlay unless there is real video mode to be set
-	if (_pendingState.width == 0 || _pendingState.height == 0) {
-		_ignoreHideOverlay = true;
-		return OSystem::kTransactionSuccess;
+	if (_pendingScreenChange & kPendingScreenAddress)
+		_currentState.mode = _pendingState.mode;
+
+	if ((_pendingScreenChange & kPendingVideoMode)
+		|| (_overlayVisible && _pendingState.width > 0 && _pendingState.height > 0 && _pendingState.format == PIXELFORMAT_CLUT8)) {
+		_currentState.width  = _pendingState.width;
+		_currentState.height = _pendingState.height;
+		_currentState.format = _pendingState.format;
+
+		if (_overlayVisible) {
+			// that's it, really. updateScreen() will take care of everything.
+			_checkUnalignedPitch = true;
+			_ignoreHideOverlay = false;
+			_overlayVisible = false;
+			// if being in the overlay, reset everything (same as hideOverlay() does)
+			_pendingScreenChange |= kPendingAll;
+		}
 	} else if (_overlayVisible) {
-		// that's it, really. updateScreen() will take care of everything.
-		_checkUnalignedPitch = true;
-		_ignoreHideOverlay = false;
-		_overlayVisible = false;
-		// if being in the overlay, reset everything (same as hideOverlay() does)
-		_pendingState.change |= GraphicsState::kAll;
+		// don't exit overlay unless there is real video mode to be set
+		_ignoreHideOverlay = true;
+		_pendingScreenChange &= ~kPendingTransaction;
+		return OSystem::kTransactionSuccess;
 	}
 
-	_chunkySurface.init(_pendingState.width, _pendingState.height, _pendingState.width,
-		_chunkySurface.getPixels(), _pendingState.format);
+	if (_pendingScreenChange & (kPendingScreenAddress | kPendingVideoMode)) {
+		_chunkySurface.init(_currentState.width, _currentState.height, _currentState.width,
+			_chunkySurface.getPixels(), _currentState.format);
 
-	_screen[FRONT_BUFFER]->reset(_pendingState.width, _pendingState.height, 8, true);
-	_screen[BACK_BUFFER1]->reset(_pendingState.width, _pendingState.height, 8, true);
-	_screen[BACK_BUFFER2]->reset(_pendingState.width, _pendingState.height, 8, true);
-	_workScreen = _screen[_pendingState.mode <= GraphicsMode::SingleBuffering ? FRONT_BUFFER : BACK_BUFFER1];
+		_screen[FRONT_BUFFER]->reset(_currentState.width, _currentState.height, 8, true);
+		_screen[BACK_BUFFER1]->reset(_currentState.width, _currentState.height, 8, true);
+		_screen[BACK_BUFFER2]->reset(_currentState.width, _currentState.height, 8, true);
+		_workScreen = _screen[_currentState.mode <= GraphicsMode::SingleBuffering ? FRONT_BUFFER : BACK_BUFFER1];
 
-	_palette.clear();
-	_pendingState.change |= GraphicsState::kPalette;
-
-	// no point of setting this in updateScreen(), it would only complicate code
-	_currentState = _pendingState;
-	// currently there is no use for this
-	_currentState.change = GraphicsState::kNone;
+		_palette.clear();
+		_pendingScreenChange |= kPendingPalette;
+	}
 
 	// apply new screen changes
 	updateScreen();
@@ -462,7 +467,7 @@ void AtariGraphicsManager::setPalette(const byte *colors, uint start, uint num) 
 		}
 	}
 
-	_pendingState.change |= GraphicsState::kPalette;
+	_pendingScreenChange |= kPendingPalette;
 }
 
 void AtariGraphicsManager::grabPalette(byte *colors, uint start, uint num) const {
@@ -522,28 +527,31 @@ void AtariGraphicsManager::unlockScreen() {
 		_screen[BACK_BUFFER2]->addDirtyRect(dstSurface, rect, directRendering);
 		_screen[FRONT_BUFFER]->addDirtyRect(dstSurface, rect, directRendering);
 	}
-
-	// doc says:
-	// Unlock the screen framebuffer, and mark it as dirty, i.e. during the
-	// next updateScreen() call, the whole screen will be updated.
-	//
-	// ... so no updateScreen() from here (otherwise Eco Quest's intro is crawling!)
 }
 
 void AtariGraphicsManager::fillScreen(uint32 col) {
-	debug("fillScreen: %d", col);
+	//debug("fillScreen: %d", col);
 
 	Graphics::Surface *screen = lockScreen();
+
 	screen->fillRect(Common::Rect(screen->w, screen->h), col);
+
 	unlockScreen();
 }
 
 void AtariGraphicsManager::fillScreen(const Common::Rect &r, uint32 col) {
-	debug("fillScreen: %dx%d %d", r.width(), r.height(), col);
+	//debug("fillScreen: %dx%d %d", r.width(), r.height(), col);
 
 	Graphics::Surface *screen = lockScreen();
-	if (screen)
+
+	if (r.width() == 1 && r.height() == 1) {
+		// handle special case for e.g. Eco Quest's intro
+		byte *ptr = (byte *)screen->getBasePtr(r.left, r.top);
+		*ptr = col;
+	} else {
 		screen->fillRect(r, col);
+	}
+
 	unlockScreen();
 }
 
@@ -614,10 +622,6 @@ void AtariGraphicsManager::updateScreen() {
 
 	_workScreen->clearDirtyRects();
 
-	if (!_overlayPending && (_pendingState.width == 0 || _pendingState.height == 0)) {
-		return;
-	}
-
 	if (screenUpdated
 		&& !isOverlayVisible()
 		&& _currentState.mode == GraphicsMode::TripleBuffering) {
@@ -658,30 +662,32 @@ void AtariGraphicsManager::updateScreen() {
 		// FRONT_BUFFER is displayed and still contains previously finished frame
 	}
 
-	const GraphicsState oldPendingState = _pendingState;
+	const int oldPendingScreenChange = _pendingScreenChange;
+	const bool oldAspectRatioCorrection = _aspectRatioCorrection;
 	if (_overlayPending) {
 		debug("Forcing overlay pending state");
-		_pendingState.change = GraphicsState::kAll;
+		_aspectRatioCorrection = false;
+		_pendingScreenChange = kPendingAll;
 	}
 
 	bool doShrinkVidelVisibleArea = false;
 	bool doSuperVidelReset = false;
-	if (_pendingState.change & GraphicsState::kAspectRatioCorrection) {
+	if (_pendingScreenChange & kPendingAspectRatioCorrection) {
 		assert(_workScreen->mode != -1);
 
-		if (_pendingState.aspectRatioCorrection && _currentState.height == 200 && !isOverlayVisible()) {
+		if (_aspectRatioCorrection && _currentState.height == 200 && !isOverlayVisible()) {
 			// apply machine-specific aspect ratio correction
 			if (!_vgaMonitor) {
 				_workScreen->mode &= ~PAL;
 				// 60 Hz
 				_workScreen->mode |= NTSC;
-				_pendingState.change |= GraphicsState::kVideoMode;
+				_pendingScreenChange |= kPendingVideoMode;
 			} else {
 				Screen *screen = _screen[FRONT_BUFFER];
 				s_aspectRatioCorrectionYOffset = (screen->surf.h - 2*MAX_V_SHAKE - screen->offsettedSurf->h) / 2;
-				_pendingState.change |= GraphicsState::kShakeScreen;
+				_pendingScreenChange |= kPendingShakeScreen;
 
-				if (_pendingState.change & GraphicsState::kVideoMode)
+				if (_pendingScreenChange & kPendingVideoMode)
 					doShrinkVidelVisibleArea = true;
 				else
 					s_shrinkVidelVisibleArea = true;
@@ -692,22 +698,22 @@ void AtariGraphicsManager::updateScreen() {
 				_workScreen->mode &= ~NTSC;
 				// 50 Hz
 				_workScreen->mode |= PAL;
-				_pendingState.change |= GraphicsState::kVideoMode;
+				_pendingScreenChange |= kPendingVideoMode;
 			} else {
 				s_aspectRatioCorrectionYOffset = 0;
 				s_shrinkVidelVisibleArea = false;
 
 				if (hasSuperVidel())
 					doSuperVidelReset = true;
-				_pendingState.change |= GraphicsState::kVideoMode;
+				_pendingScreenChange |= kPendingVideoMode;
 			}
 		}
 
-		_pendingState.change &= ~GraphicsState::kAspectRatioCorrection;
+		_pendingScreenChange &= ~kPendingAspectRatioCorrection;
 	}
 
 #ifdef SCREEN_ACTIVE
-	if (_pendingState.change & GraphicsState::kVideoMode) {
+	if (_pendingScreenChange & kPendingVideoMode) {
 		if (_workScreen->rez != -1) {
 			// unfortunately this reinitializes VDI, too
 			Setscreen(SCR_NOCHANGE, SCR_NOCHANGE, _workScreen->rez);
@@ -740,26 +746,26 @@ void AtariGraphicsManager::updateScreen() {
 		s_shrinkVidelVisibleArea = doShrinkVidelVisibleArea;
 
 		// keep kVideoMode for resetting the palette later
-		_pendingState.change &= ~(GraphicsState::kScreenAddress | GraphicsState::kShakeScreen);
+		_pendingScreenChange &= ~(kPendingScreenAddress | kPendingShakeScreen);
 	}
 
-	if (_pendingState.change & GraphicsState::kScreenAddress) {
+	if (_pendingScreenChange & kPendingScreenAddress) {
 		// takes effect in the nearest VBL interrupt but we always wait for Vsync() in this case
 		Vsync();
 		assert(s_screenSurf == nullptr);
 
 		s_screenSurf = isOverlayVisible() ? &_screen[OVERLAY_BUFFER]->surf : &_screen[FRONT_BUFFER]->surf;
-		_pendingState.change &= ~GraphicsState::kScreenAddress;
+		_pendingScreenChange &= ~kPendingScreenAddress;
 	}
 
-	if (_pendingState.change & GraphicsState::kShakeScreen) {
+	if (_pendingScreenChange & kPendingShakeScreen) {
 		// takes effect in the nearest VBL interrupt
 		if (!s_screenSurf)
 			s_screenSurf = isOverlayVisible() ? &_screen[OVERLAY_BUFFER]->surf : &_screen[FRONT_BUFFER]->surf;
-		_pendingState.change &= ~GraphicsState::kShakeScreen;
+		_pendingScreenChange &= ~kPendingShakeScreen;
 	}
 
-	if (_pendingState.change & (GraphicsState::kVideoMode | GraphicsState::kPalette)) {
+	if (_pendingScreenChange & (kPendingVideoMode | kPendingPalette)) {
 		if (!_tt) {
 			// takes effect in the nearest VBL interrupt
 			VsetRGB(0, isOverlayVisible() ? getOverlayPaletteSize() : 256, _workScreen->palette->falcon);
@@ -768,12 +774,13 @@ void AtariGraphicsManager::updateScreen() {
 			// don't cripple framerate only for a palette change)
 			EsetPalette(0, isOverlayVisible() ? getOverlayPaletteSize() : 256, _workScreen->palette->tt);
 		}
-		_pendingState.change &= ~(GraphicsState::kVideoMode | GraphicsState::kPalette);
+		_pendingScreenChange &= ~(kPendingVideoMode | kPendingPalette);
 	}
 #endif
 
 	if (_overlayPending) {
-		_pendingState = oldPendingState;
+		_aspectRatioCorrection = oldAspectRatioCorrection;
+		_pendingScreenChange = oldPendingScreenChange;
 		_overlayPending = false;
 	}
 
@@ -791,7 +798,7 @@ void AtariGraphicsManager::setShakePos(int shakeXOffset, int shakeYOffset) {
 		s_shakeYOffset = shakeYOffset;
 	}
 
-	_pendingState.change |= GraphicsState::kShakeScreen;
+	_pendingScreenChange |= kPendingShakeScreen;
 }
 
 void AtariGraphicsManager::showOverlay(bool inGUI) {
@@ -812,7 +819,7 @@ void AtariGraphicsManager::showOverlay(bool inGUI) {
 
 	_overlayVisible = true;
 
-	assert(_pendingState.change == GraphicsState::kNone);
+	assert(_pendingScreenChange == kPendingNone);
 	_overlayPending = true;
 	updateScreen();
 }
@@ -835,8 +842,8 @@ void AtariGraphicsManager::hideOverlay() {
 
 	_overlayVisible = false;
 
-	assert(_pendingState.change == GraphicsState::kNone);
-	_pendingState.change = GraphicsState::kAll;
+	assert(_pendingScreenChange == kPendingNone);
+	_pendingScreenChange = kPendingAll;
 	updateScreen();
 }
 
@@ -1023,6 +1030,12 @@ bool AtariGraphicsManager::notifyEvent(const Common::Event &event) {
 	case Common::EVENT_RETURN_TO_LAUNCHER:
 	case Common::EVENT_QUIT:
 		if (isOverlayVisible()) {
+			// clear work screen: this is needed if *next* game shows an error upon startup
+			Graphics::Surface &surf = _currentState.mode == GraphicsMode::DirectRendering
+				? *_screen[FRONT_BUFFER]->offsettedSurf
+				: _chunkySurface;
+			surf.fillRect(Common::Rect(surf.w, surf.h), 0);
+
 			_ignoreHideOverlay = true;
 			return false;
 		}
@@ -1032,15 +1045,10 @@ bool AtariGraphicsManager::notifyEvent(const Common::Event &event) {
 		switch ((CustomEventAction) event.customType) {
 		case kActionToggleAspectRatioCorrection:
 			if (hasFeature(OSystem::Feature::kFeatureAspectRatioCorrection)) {
-				_pendingState.aspectRatioCorrection = !_pendingState.aspectRatioCorrection;
+				_aspectRatioCorrection = !_aspectRatioCorrection;
+				_pendingScreenChange |= kPendingAspectRatioCorrection;
 
-				if (_currentState.aspectRatioCorrection != _pendingState.aspectRatioCorrection) {
-					_pendingState.change |= GraphicsState::kAspectRatioCorrection;
-
-					// would be updated in updateScreen() anyway
-					_currentState.aspectRatioCorrection = _pendingState.aspectRatioCorrection;
-					updateScreen();
-				}
+				updateScreen();
 				return true;
 			}
 			break;

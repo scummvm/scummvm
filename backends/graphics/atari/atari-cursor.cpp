@@ -211,10 +211,8 @@ bool Cursor::restoreBackground(const Graphics::Surface &srcSurface, bool force) 
 }
 
 bool Cursor::draw(bool directRendering, bool force) {
-	if (!isVisible() || (!force && !isChanged())) {
-		 _visibilityChanged = _positionChanged = _surfaceChanged = false;
+	if (!isVisible() || (!force && !isChanged()))
 		return false;
-	}
 
 	Graphics::Surface &dstSurface = *_parentScreen->offsettedSurf;
 	const int dstBitsPerPixel     = _manager->getBitsPerPixel(dstSurface.format);
