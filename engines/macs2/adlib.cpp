@@ -641,6 +641,8 @@ void Adlib::OnTimer() {
 			uint8 bp6 = g229B;
 			uint8 bp4 = peekByte();
 			uint16 bp10 = Func19BE(1);
+			// TODO: This and the adjacent value are actually a pointer adjusted by Func19BE
+			uint16 bp12;
 			uint8 bp5 = peekByteAt(bp10);
 			
 			if ((bp6 & 0x0F) == 0x90) {
@@ -769,16 +771,20 @@ void Adlib::OnTimer() {
 									temp = temp >> 0x1;
 									// TODO: Again throwing away AH in the original
 									bp1 = temp >> 0x1;
+									// TODO: Need to give as argument
+									// push word ptr[bp - 0Eh]
+									// push word ptr[bp - 10h]
+									bp12 = Func19BE_TODO(0x2);
+									// TODO: Set result back
+									// mov	[bp-14h],ax
+									// mov[bp - 12h], dx
 									// TODO: Continue here
 									/*
 									
 			
-									push	word ptr [bp-0Eh]
-									push	word ptr [bp-10h]
-									push	2h
-									call	far 0017h:19BEh
-									mov	[bp-14h],ax
-									mov	[bp-12h],dx
+									
+									
+									
 									mov	al,[225Eh]
 									xor	ah,ah
 									mov	bx,ax
