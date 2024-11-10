@@ -664,7 +664,7 @@ void Room207::parser() {
 		}
 	} // if ((ecx || edi) && player_said("wheel"))
 
-	else if (takeFlag && "PIPES") {
+	else if (takeFlag && player_said("PIPES")) {
 		_G(flags[V036]) = 1;
 		if (_G(flags[V061]) != 0 && inv_object_is_here("LEAD PIPE")) {
 			digi_play("207r36", 1);
