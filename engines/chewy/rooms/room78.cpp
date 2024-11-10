@@ -77,7 +77,7 @@ void Room78::entry() {
 				--delay;
 			else {
 				chewysBoatX -= 4;
-				if (chewysBoatX <= 276 && !chewysBoatFinished) {
+				if (chewysBoatX <= 76 && !chewysBoatFinished) {
 					if (_G(gameState).flags29_20) {
 						// Chewy's boat has a plugged hole
 						if (chewysBoatX > 0)
