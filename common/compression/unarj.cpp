@@ -822,6 +822,11 @@ Common::SharedArchiveContents ArjArchive::readContentsForPath(const Common::Path
 	byte *uncompressedData = new byte[uncompressedSize];
 	uint32 uncompressedPtr = 0;
 
+	if (!uncompressedData) {
+		warning("ArjArchive: Failed to allocate %d bytes", (uint32)uncompressedSize);
+		return Common::SharedArchiveContents();
+	}
+
 	for (uint chunk = 0; chunk < totalChunks; chunk++) {
 		File archiveFile;
 		ArjHeader *hdr = hdrs[chunk]._header;
