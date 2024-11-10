@@ -635,11 +635,11 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 463:
-						retValue = Room77::proc1();
+						retValue = Room77::procOpenBoatHoleWithCorkscrew();
 						break;
 
 					case 464:
-						retValue = Room77::proc2();
+						retValue = Room77::procPlugBoatHoleWithRubber();
 						break;
 
 					case 467:

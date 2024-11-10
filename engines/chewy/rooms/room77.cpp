@@ -66,7 +66,7 @@ void Room77::xit() {
 	_G(gameState).ScrollxStep = 1;
 }
 
-int Room77::proc1() {
+int Room77::procOpenBoatHoleWithCorkscrew() {
 	if (_G(gameState).flags29_4 || !isCurInventory(103))
 		return 0;
 
@@ -95,7 +95,7 @@ int Room77::proc1() {
 	return 1;
 }
 
-int Room77::proc2() {
+int Room77::procPlugBoatHoleWithRubber() {
 	if (_G(gameState).flags29_4 || !isCurInventory(100))
 		return 0;
 

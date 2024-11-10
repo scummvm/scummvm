@@ -61,59 +61,61 @@ void Room78::entry() {
 		flic_cut(FCUT_101);
 		destRoom = 79;
 	} else {
+		// Boat race - Chewy vs Chief
 		_G(det)->startDetail(0, 255, false);
 		_G(det)->startDetail(4, 255, false);
-		int det0DestX = 608;
-		int det4DestX = 570;
-		bool exitLoopFlag = false;
-		bool flag1 = false;
-		bool flag2 = false;
+		int chewysBoatX = 608;
+		int chiefsBoatX = 570;
+		bool chewysBoatFinished = false;
+		bool chiefsBoatFinished = false;
 
-		while (exitLoopFlag == 0) {
-			_G(det)->setDetailPos(0, det0DestX, 93);
-			_G(det)->setDetailPos(4, det4DestX, 57);
+		while (!(chewysBoatFinished && chiefsBoatFinished)) {
+			_G(det)->setDetailPos(0, chewysBoatX, 93);
+			_G(det)->setDetailPos(4, chiefsBoatX, 57);
 			
 			if (delay)
 				--delay;
 			else {
-				det0DestX -= 4;
-				if (det0DestX <= 276 && flag1 == 0) {
+				chewysBoatX -= 4;
+				if (chewysBoatX <= 276 && !chewysBoatFinished) {
 					if (_G(gameState).flags29_20) {
-						if (det0DestX > 0)
-							flag1 = true;
+						// Chewy's boat has a plugged hole
+						if (chewysBoatX > 0)
+							chewysBoatFinished = true;
 					} else {
-						flag1 = true;
+						// Chewy's boat has a hole
+						chewysBoatFinished = true;
 						_G(det)->stopDetail(0);
 						_G(det)->startDetail(1, 1, false);
 					}
 				}
 
-				det4DestX -= 4;
+				chiefsBoatX -= 4;
 				
-				if (det4DestX <= 222 && flag2 == 0) {
+				if (chiefsBoatX <= 222 && !chiefsBoatFinished) {
 					if (_G(gameState).flags29_10) {
-						flag2 = true;
+						// Chief's boat has a hole
+						chiefsBoatFinished = true;
 						_G(det)->stopDetail(4);
-						if (flag1 == 0) {
+						if (!chewysBoatFinished) {
 							_G(det)->startDetail(5, 1, false);
 						} else {
 							startSetAILWait(5, 1, ANI_FRONT);
 						}
 					} else {
-						if (det4DestX <= 0)
-							flag2 = true;
+						// Chief's boat has no hole
+						if (chiefsBoatX <= 0)
+							chiefsBoatFinished = true;
 					}
 				}
 
 				delay = _G(gameState).DelaySpeed / 3;
 			}
 
-			if (flag1 && flag2)
-				exitLoopFlag = true;
-
 			setupScreen(DO_SETUP);
 		}
 
+		// Race over. Check for plugged hole and opened hole flags
 		if (_G(gameState).flags29_10 && _G(gameState).flags29_20) {
 			_G(gameState).r76State = 1;
 			destRoom = 77;
