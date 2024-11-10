@@ -359,6 +359,10 @@ void Macs2Engine::readResourceFile() {
 	_borderHighlightHeight = _fileStream->readUint16LE();
 	_borderHighlightData = new byte[_borderHighlightWidth * _borderHighlightHeight];
 	_fileStream->read(_borderHighlightData, _borderHighlightWidth * _borderHighlightHeight);
+	_borderHighlightSprite.Width = _borderHighlightWidth;
+	_borderHighlightSprite.Height = _borderHighlightHeight;
+	_borderHighlightSprite.Data = Common::Array<uint8>(_borderHighlightData, _borderHighlightWidth * _borderHighlightHeight);
+
 
 	// The flag animation frames
 	_fileStream->seek(0x00250D47);
