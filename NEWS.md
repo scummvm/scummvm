@@ -97,6 +97,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Hugo:
    - Added keymapper support.
 
+ Hypno:
+   - Fixed lagging cursor on some platforms.
+
  Illusions:
    - Added keymapper support.
 
