@@ -2707,7 +2707,8 @@ void Room203::parser() {
 		playSound("203r07", _G(kernel).trigger);
 	} else if (lookFlag && player_said("SOLDIER'S HELMET ")) {
 		digi_play("203r09a", 1);
-	} else if (lookFlag && HAS("SOLDIER'S HELMET") && !_G(flags)[V060]) {
+	} else if (lookFlag && player_said("SOLDIER'S HELMET") &&
+			!inv_player_has("SOLDIER'S HELMET") && !_G(flags)[V060]) {
 		_G(flags)[V051] = 1;
 		player_set_commands_allowed(false);
 		playSound("203r09", _G(kernel).trigger);
@@ -3137,7 +3138,7 @@ void Room203::parser() {
 
 			sketchInJournal("203r53");
 		}
-	} else if (lookFlag && inv_player_has(_G(player).noun)) {
+	} else if (lookFlag && !inv_player_has(_G(player).noun)) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			if (_G(flags)[V050]) {
