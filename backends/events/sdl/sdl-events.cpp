@@ -417,7 +417,7 @@ Common::KeyCode SdlEventSource::SDLToOSystemKeycode(const SDL_Keycode key) {
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 void SdlEventSource::preprocessFingerDown(SDL_Event *event) {
-	// front (0) or back (1) panel
+	// front (1) or back (2) panel
 	SDL_TouchID port = event->tfinger.touchId;
 	// id (for multitouch)
 	SDL_FingerID id = event->tfinger.fingerId;
@@ -501,7 +501,7 @@ void SdlEventSource::finishSimulatedMouseClicks() {
 }
 
 bool SdlEventSource::preprocessFingerUp(SDL_Event *event, Common::Event *ev) {
-	// front (0) or back (1) panel
+	// front (1) or back (2) panel
 	SDL_TouchID port = event->tfinger.touchId;
 	// id (for multitouch)
 	SDL_FingerID id = event->tfinger.fingerId;
@@ -584,7 +584,7 @@ bool SdlEventSource::preprocessFingerUp(SDL_Event *event, Common::Event *ev) {
 }
 
 void SdlEventSource::preprocessFingerMotion(SDL_Event *event) {
-	// front (0) or back (1) panel
+	// front (1) or back (2) panel
 	SDL_TouchID port = event->tfinger.touchId;
 	// id (for multitouch)
 	SDL_FingerID id = event->tfinger.fingerId;

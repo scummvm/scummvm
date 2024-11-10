@@ -46,11 +46,11 @@ void PSP2EventSource::preprocessEvents(SDL_Event *event) {
 }
 
 bool PSP2EventSource::isTouchPortTouchpadMode(SDL_TouchID port) {
-	return port != 0 || ConfMan.getBool("frontpanel_touchpad_mode");
+	return port != 1 || ConfMan.getBool("frontpanel_touchpad_mode");
 }
 
 bool PSP2EventSource::isTouchPortActive(SDL_TouchID port) {
-	return port == 0 || ConfMan.getBool("touchpad_mouse_mode");
+	return port == 1 || ConfMan.getBool("touchpad_mouse_mode");
 }
 
 #endif
