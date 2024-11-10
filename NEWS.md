@@ -138,9 +138,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SCI:
    - Added CGA (4 colors and black/white) and Hercules render modes for most
-	 SCI 0 DOS games. Also added an EGA dithering mode and a VGA gray scale
-	 mode for many SCI 1 DOS games, a 16 colors mode for KQ6 Windows and
-	 8 colors modes for all PC-98 games.
+     SCI 0 DOS games. Also added an EGA dithering mode and a VGA gray scale
+     mode for many SCI 1 DOS games, a 16 colors mode for KQ6 Windows and
+     8 colors modes for all PC-98 games.
    - Improved PCjr audio.
    - Better support for Mac KQ6.
    - Implemented KQ5 FM Towns save/restore UI.
