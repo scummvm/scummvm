@@ -1121,9 +1121,6 @@ void retro_run(void) {
 			environ_cb(RETRO_ENVIRONMENT_SET_GEOMETRY, &info);
 
 		av_status &= ~(AV_STATUS_UPDATE_AV_INFO | AV_STATUS_UPDATE_GEOMETRY);
-#ifdef USE_OPENGL
-		context_reset();
-#endif
 	}
 
 	if (av_status & AUDIO_STATUS_UPDATE_LATENCY) {
