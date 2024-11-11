@@ -144,15 +144,6 @@ int16 OSystem_libretro::getScreenHeight(void){
 	return dynamic_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowHeight();
 }
 
-bool OSystem_libretro::isOverlayInGUI(void) {
-#ifdef USE_OPENGL
-	if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_HW)
-		return dynamic_cast<LibretroOpenGLGraphics *>(_graphicsManager)->isOverlayInGUI();
-	else
-#endif
-		return dynamic_cast<LibretroGraphics *>(_graphicsManager)->isOverlayInGUI();
-}
-
 void OSystem_libretro::resetGraphicsManager(void) {
 
 	if (_graphicsManager) {

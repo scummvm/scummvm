@@ -91,7 +91,6 @@ public:
 	void getScreen(const Graphics::ManagedSurface *&screen);
 	int16 getScreenWidth(void);
 	int16 getScreenHeight(void);
-	bool isOverlayInGUI(void);
 	bool inLauncher(void);
 
 #ifdef USE_OPENGL
