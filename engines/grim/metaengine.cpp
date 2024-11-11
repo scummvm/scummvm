@@ -118,19 +118,24 @@ Common::KeymapArray GrimMetaEngine::initKeymaps(const char *target) const {
 
 SaveStateList GrimMetaEngine::listSaves(const char *target) const {
 	Common::String gameId = ConfMan.get("gameid", target);
+	Common::String extra = ConfMan.get("extra", target);
+	const bool isDemo = extra.contains("Demo");
 	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = gameId == "monkey4" ? "efmi###.gsv" : "grim##.gsv";
+	SaveStateList saveList;
+	char str[256];
+	int32 strSize;
 
 	if (platform == Common::kPlatformPS2)
 		pattern = "efmi###.ps2";
 
+	if (isDemo)
+		return saveList; // Demos do not support saving
+
 	filenames = saveFileMan->listSavefiles(pattern);
 
-	SaveStateList saveList;
-	char str[256];
-	int32 strSize;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + 4);
