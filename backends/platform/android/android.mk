@@ -110,6 +110,7 @@ androiddistrelease: androidrelease
 		sed 's/$$/\r/' < $$i > release/`basename $$i`.txt; \
 	done
 
-.PHONY: androidclean androidrelease androidbundlerelease androidtest androiddistdebug androiddistrelease
+ANDROID_BUILD_RULES := androidrelease androidbundlerelease androidtest androiddistdebug androiddistrelease
+.PHONY: androidclean $(ANDROID_BUILD_RULES)
 
 include $(srcdir)/backends/platform/android/fatbundle.mk

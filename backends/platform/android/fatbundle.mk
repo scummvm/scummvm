@@ -29,7 +29,7 @@ endef
 SUBPATH_BUILDS :=
 $(foreach abi,$(OTHER_ABIS),$(eval $(call BUILD_ANDROID,$(abi))))
 
-androidfatbundlerelease: $(PATH_BUILD_LIBSSCUMMVM)
-	$(MAKE) $(AAB_MAIN_RELEASE)
+androidfatall $(subst android,androidfat,$(ANDROID_BUILD_RULES)): androidfat%: $(PATH_BUILD_LIBSSCUMMVM)
+	$(MAKE) $(if $(filter all,$*),$*,android$*)
 
-.PHONY: androidfatbundlerelease
+.PHONY: androidfatall $(subst android,androidfat,$(ANDROID_BUILD_RULES))
