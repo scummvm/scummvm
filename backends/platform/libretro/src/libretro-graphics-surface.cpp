@@ -169,7 +169,7 @@ void LibretroGraphics::warpMouse(int x, int y) {
 }
 
 void LibretroGraphics::overrideCursorScaling(){
-	const frac_t screenScaleFactor = _cursorDontScale ? intToFrac(1) : intToFrac(getWindowHeight()) / 200; /* hard coded as base resolution 320x200 is hard coded upstream */
+	const frac_t screenScaleFactor = (_cursorDontScale || ! _overlayVisible) ? intToFrac(1) : intToFrac(getWindowHeight()) / 200; /* hard coded as base resolution 320x200 is hard coded upstream */
 
 	_cursorHotspotXScaled = fracToInt(_cursorHotspotX * screenScaleFactor);
 	_cursorWidthScaled    = fracToDouble(_cursor.w * screenScaleFactor);
