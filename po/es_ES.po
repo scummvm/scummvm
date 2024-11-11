@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-08 11:49+0100\n"
-"PO-Revision-Date: 2024-11-08 13:13+0000\n"
+"PO-Revision-Date: 2024-11-11 10:40+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -11381,7 +11381,7 @@ msgstr "No se ha incluido el soporte para SCUMM v7-8."
 
 #: engines/scumm/metaengine.cpp:656
 msgid "Show Object Line"
-msgstr "Mostrar etiquetas de objetos"
+msgstr "Mostrar línea de objetos"
 
 #: engines/scumm/metaengine.cpp:657
 msgid "Show the names of objects at the bottom of the screen"
