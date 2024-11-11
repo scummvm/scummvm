@@ -155,6 +155,14 @@ void IMuseDigiFadesHandler::clearAllFades() {
 	for (int l = 0; l < DIMUSE_MAX_FADES; l++) {
 		_fades[l].status = 0;
 		_fades[l].sound = 0;
+		_fades[l].param = 0;
+		_fades[l].currentVal = 0;
+		_fades[l].counter = 0;
+		_fades[l].length = 0;
+		_fades[l].slope = 0;
+		_fades[l].slopeMod = 0;
+		_fades[l].modOvfloCounter = 0;
+		_fades[l].nudge = 0;
 	}
 	_fadesOn = 0;
 }
