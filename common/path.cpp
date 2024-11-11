@@ -1025,6 +1025,18 @@ Path Path::punycodeEncode() const {
 		}, tmp);
 }
 
+bool Path::punycodeNeedsEncode() const {
+	bool tmp;
+	return reduceComponents<bool &>(
+		[](bool &result, const String &in, bool last) -> bool & {
+			// If we already need encode, we still need it
+			if (result) return result;
+
+			result = punycode_needEncode(in);
+			return result;
+		}, tmp);
+}
+
 // For a path component creates a string with following property:
 // if 2 files have the same case-insensitive
 // identifier string then and only then we treat them as
