@@ -561,10 +561,10 @@ public:
 	/**
 	 * Use by ConfigManager to store a path in a protected fashion
 	 * All components are punyencoded and / is used as a delimiter for all platforms
+	 * Under Windows don't encode when it's not needed and make use of \ separator
+	 * in this case
 	 */
-	String toConfig() const {
-		return punycodeEncode().toString('/');
-	}
+	String toConfig() const;
 
 	/**
 	 * Used by ConfigManager to parse a configuration value in a backwards compatible way
