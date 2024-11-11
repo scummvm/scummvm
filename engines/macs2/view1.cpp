@@ -980,7 +980,7 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 	DrawHorizontalBorderHighlight(pos + Common::Point(1, size.y + 1), size.x - 1, 0xFF, s);
 
 	// Right side
-	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0xFF, s);
+	DrawVerticalBorderHighlight(pos + Common::Point(size.x + 1, 1), size.y - 1, 0xFF, s);
 }
 
 void View1::DrawBorderSide(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
@@ -1017,7 +1017,7 @@ void View1::DrawHorizontalBorderHighlight(const Common::Point &pos, int16 width,
 	// TODO: Check which area we actually fill
 	uint16 currentX = clippingRect.left;
 	uint16 currentY = clippingRect.top;
-	const Sprite &sprite = g_engine->_borderSprite;
+	const Sprite &sprite = g_engine->_borderHighlightSprite;
 
 	while (currentX < clippingRect.right) {
 		DrawSpriteClipped(currentX, currentY, clippingRect, sprite, s);

@@ -738,7 +738,7 @@ void Adlib::OnTimer() {
 									// before the calculation
 
 									// TODO: Not sure if I have the resurn value of Func19BE completely
-									uint16 bp12 = Func19BE(gArray2288[bp8] << 0x4);
+									bp12 = Func19BE(gArray2288[bp8] << 0x4);
 									// TODO: Args for 2839:
 									/*
 									mov	al,[bp-8h]
@@ -778,28 +778,24 @@ void Adlib::OnTimer() {
 									// TODO: Set result back
 									// mov	[bp-14h],ax
 									// mov[bp - 12h], dx
+									
+									temp = g225E; // TODO: xor	ah,ah
+									uint8 temp2 = temp; // bx = ax
+									// TODO: Read from [bp-14h] - using temp for al
+									// les	di,[bp-14h]
+									// mov al, es : [di]
+									temp &= 0x3F; // TODO: xor	ah,ah
+									uint8 temp3 = temp; // dx = ax
+									temp = 0x3F;
+									// TODO: Not sure if these should be 16 bit values
+									temp -= temp3;
+									temp3 = temp;
+									temp = bp1; // TODO: xor	ah,ah
+									// TODO: Should these be 16 bit?
+									temp = temp * temp3;
 									// TODO: Continue here
+									// TODO: cwd
 									/*
-									
-			
-									
-									
-									
-									mov	al,[225Eh]
-									xor	ah,ah
-									mov	bx,ax
-									les	di,[bp-14h]
-									mov	al,es:[di]
-									and	al,3Fh
-									xor	ah,ah
-									mov	dx,ax
-									mov	ax,3Fh
-									sub	ax,dx
-									mov	dx,ax
-									mov	al,[bp-1h]
-									xor	ah,ah
-									mul	dx
-									cwd
 									mov	cx,3Fh
 									idiv	cx
 									add	ax,bx
