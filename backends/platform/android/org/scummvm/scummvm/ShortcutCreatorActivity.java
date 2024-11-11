@@ -256,9 +256,14 @@ public class ShortcutCreatorActivity extends Activity implements CompatHelpers.S
 			builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
 				dialog.dismiss();
 
+				String label = desc.getText().toString();
+				// Generate an id which depends on the user description
+				// Without this, if the user changes the description but already has the same shortcut (also in the dynamic ones), the other label will be reused
+				String shortcutId = game.getTarget() + String.format("-%08x", label.hashCode());
+
 				Intent shortcut = new Intent(Intent.ACTION_MAIN, Uri.fromParts("scummvm", game.getTarget(), null),
 					ShortcutCreatorActivity.this, SplashActivity.class);
-				Intent result = CompatHelpers.ShortcutCreator.createShortcutResultIntent(ShortcutCreatorActivity.this, game.getTarget(), shortcut,
+				Intent result = CompatHelpers.ShortcutCreator.createShortcutResultIntent(ShortcutCreatorActivity.this, shortcutId, shortcut,
 					desc.getText().toString(), icon, R.drawable.ic_no_game_icon);
 				setResult(RESULT_OK, result);
 
