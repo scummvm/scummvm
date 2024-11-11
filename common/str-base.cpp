@@ -795,7 +795,7 @@ TEMPLATE void BASESTRING::replace(value_type from, value_type to) {
 	while(next) {
 		*next = to;
 		next++;
-		next = cMemChr(next + 1, from, end - next);
+		next = cMemChr(next, from, end - next);
 	}
 }
 
