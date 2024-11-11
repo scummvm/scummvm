@@ -143,6 +143,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SAGA:
    - Added keymapper support.
+   - Prevent reaching an unwinnable state when not performing key actions in
+     Nimdok's chapter in IHNM.
 
  SCI:
    - Added CGA (4 colors and black/white) and Hercules render modes for most
