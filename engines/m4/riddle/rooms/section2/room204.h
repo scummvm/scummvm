@@ -45,6 +45,8 @@ private:
 	void deleteMalletHotspot();
 	void addLookMalletHotspot();
 
+	void subDaemon_ADB7C();
+
 	int32 _field4 = 0;
 	int32 _field10 = 0;
 	int32 _field14 = 0;
@@ -60,7 +62,9 @@ private:
 	int32 _fieldBC_trigger = 0;
 	int32 _fieldC0_trigger = 0;
 	int32 _fieldC4 = 0;
+	int32 _fieldC8_trigger = 0;
 	int32 _fieldCC_trigger = 0;
+	int32 _fieldD0 = 0;
 	int32 _fieldD4 = 0;
 	int32 _fieldD8 = 0;
 	int32 _fieldDC = 0;
@@ -68,31 +72,49 @@ private:
 	int32 _fieldE4_walkerDestX = 0;
 	int32 _fieldEC = 0;
 	int32 _fieldF0 = 0;
+	int32 _fieldF4 = 0;
 	int32 _fieldFC_infoX = 0;
 	int32 _field100_infoY = 0;
 	int32 _field104 = 0;
 	int32 _field108 = 0;
+	int32 _field10C_x = 0;
+	int32 _field110_y = 0;
+	int32 _field114_facing = 0;
+	int32 _field118_scale = 0;
+	int32 _field11C_depth = 0;
+	int32 _field124 = 0;
+	int32 _field128 = 0;
+	int32 _field12C_triggerNum = 0;
+	int32 _field130 = 0;
 	int32 _field180 = 0;
 	int32 _field184 = 0;
 	int32 _field188 = 0;
 
+	int32 _acolyteGrabsMalletSeries = 0;
+	int32 _acolyteSaysHaltSeries;
 	int32 _field90_series = 0;
 	int32 _ripTrekHandTalkPos3Series = 0;
 	int32 _courtyardGongSeries = 0;
 	int32 _malletSpriteSeries = 0;
 	int32 _meiShowsRipHerPassesSeries = 0;
+	int32 _meiTalksPos3Series = 0;
+	int32 _meiTrekRtHandOutPos2Series = 0;
+	int32 _meiTrekTalkerPos4Series = 0;
 	int32 _ripDropsSeries = 0;
 	int32 _ripTrekHeadTurnPos5Series = 0;
 	int32 _ripTrekLHandTalkPos4Series = 0;
 	int32 _ripTrekLowReachPos2Series = 0;
 	int32 _ripTrekTalkerPos3Series = 0;
 
+	machine *_acolyteGuardingEntranceMach = nullptr;
 	machine *_courtyardGongMach = nullptr;
 	machine *_mcMach = nullptr;
 	machine *_malletSpriteMach = nullptr;
 	machine *_ripDeltaMachineStateMach = nullptr;
 	machine *_safariShadow3Mach = nullptr;
 	machine *_silverButterflyCoinMach = nullptr;
+	machine * _meiChenOtherStatesMach = nullptr;
+	machine * _safariShadow2Mach = nullptr;
 };
 
 } // namespace Rooms

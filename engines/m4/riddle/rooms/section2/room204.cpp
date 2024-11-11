@@ -551,6 +551,7 @@ void Room204::daemon() {
 	case 555:
 		kernel_timing_trigger(1, 630, nullptr);
 		kernel_timing_trigger(1, 578, nullptr);
+		player_set_commands_allowed(true);
 
 		break;
 
@@ -578,6 +579,8 @@ void Room204::daemon() {
 	case 559:
 		kernel_timing_trigger(60, 630, nullptr);
 		kernel_timing_trigger(1, 578, nullptr);
+		player_set_commands_allowed(true);
+
 		break;
 
 	case 567:
@@ -929,15 +932,390 @@ void Room204::daemon() {
 		break;
 
 	case 574:
+		_fieldC0_trigger = -1;
+		_fieldCC_trigger = -1;
+		_fieldD8 = -1;
+		_fieldC8_trigger = -1;
+		_fieldF4 = -1;
+		ws_get_walker_info(_mcMach, &_field10C_x, &_field110_y, &_field118_scale, &_field11C_depth, &_field114_facing);
+
+		if (_field110_y == 323)
+			_field11C_depth = 3840;
+
+		_meiChenOtherStatesMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, _field10C_x, _field110_y, _field118_scale, _field11C_depth, _fieldDC, triggerMachineByHashCallback, "Mei Chen other states machine");
+		_safariShadow2Mach = series_place_sprite("SAFARI SHADOW 2", 0, _field10C_x, _field110_y, _field118_scale, 3840);
+
+		switch (_fieldD4) {
+		case 3:
+			_meiTrekRtHandOutPos2Series = series_load("MEI TREK RT HAND OUT POS2", -1, nullptr);
+			sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiTrekRtHandOutPos2Series, 1, 1, 576, _meiTrekRtHandOutPos2Series, 1, 1, 0);
+			_fieldD0 = 3;
+			break;
+
+		case 4:
+			_meiTalksPos3Series = series_load("MEI TALKS POS3", -1, nullptr);
+			sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiTalksPos3Series, 1, 1, 576, _meiTalksPos3Series, 1, 1, 0);
+			_fieldD0 = 4;
+
+			break;
+
+		case 5:
+			_meiTrekTalkerPos4Series = series_load("MEI TREK TALKER POS4", -1, nullptr);
+			sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiTrekTalkerPos4Series, 1, 1, 576, _meiTrekTalkerPos4Series, 1, 1, 0);
+			_fieldD0 = 5;
+
+			break;
+
+		default:
+			break;
+		}
+
+		if (_field108 == 1)
+			subDaemon_ADB7C();
+
+		if (_field108 == 0)
+			ws_hide_walker(_mcMach);
+
+		break;
+
 	case 576:
+		if (_fieldD0 == 3 && _fieldD4 == 3 && _fieldBC_trigger != -1) {
+			kernel_trigger_dispatchx(_fieldBC_trigger);
+			_fieldBC_trigger = -1;
+		}
+
+		if (_fieldD0 == 4 && _fieldD4 == 4 && _fieldBC_trigger != -1) {
+			kernel_trigger_dispatchx(_fieldBC_trigger);
+			_fieldBC_trigger = -1;
+		}
+
+		if (_fieldD0 == 5 && _fieldD4 == 5 && _fieldBC_trigger != -1) {
+			kernel_trigger_dispatchx(_fieldBC_trigger);
+			_fieldBC_trigger = -1;
+		}
+
+		if (_fieldD0 == 6 && _fieldD4 == 6 && _fieldC0_trigger != -1) {
+			kernel_trigger_dispatchx(_fieldC0_trigger);
+			_fieldC0_trigger = -1;
+		}
+
+		if (_fieldD0 == 7 && _fieldD4 == 7 && _fieldCC_trigger != -1) {
+			kernel_trigger_dispatchx(_fieldCC_trigger);
+			_fieldCC_trigger = -1;
+		}
+
+		if (_fieldD8 != 1) {
+			kernel_timing_trigger(1, 577, nullptr);
+			break;
+		}
+
+		if (!_field108) {
+			ws_unhide_walker(_mcMach);
+		} else {
+			switch (_fieldD0) {
+			case 3:
+				_field114_facing = (_fieldDC == 1) ? 10 : 2;
+				break;
+
+			case 4:
+				_field114_facing = (_fieldDC == 1) ? 9 : 3;
+				break;
+
+			case 5:
+				_field114_facing = (_fieldDC == 1) ? 8 : 4;
+				break;
+
+			default:
+				break;
+			}
+
+			ws_walk_load_walker_series(S8_SHADOW_DIRS2, S8_SHADOW_NAMES2, false);
+			ws_walk_load_walker_series(S8_SHADOW_DIRS1, S8_SHADOW_NAMES1, false);
+			_mcMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, _field10C_x, _field110_y, _field114_facing, Walker::player_walker_callback, "mc");
+			kernel_timing_trigger(60, 630, nullptr);
+			if (_fieldC8_trigger != -1) {
+				kernel_trigger_dispatchx(_fieldC8_trigger);
+				_fieldC8_trigger = -1;
+			}
+		}
+
+		terminateMachine(_meiChenOtherStatesMach);
+		_meiChenOtherStatesMach = 0;
+		_fieldDC = 0;
+		terminateMachine(_safariShadow2Mach);
+
+		switch (_fieldD0) {
+		case 3:
+			series_unload(_meiTrekRtHandOutPos2Series);
+			break;
+
+		case 4:
+			series_unload(_meiTalksPos3Series);
+			break;
+
+		case 5:
+			series_unload(_meiTrekTalkerPos4Series);
+			break;
+
+		default:
+			break;
+
+		}
+
+		_field108 = 0;
+
+		break;
+
 	case 577:
+		switch (_fieldD0) {
+		case 3:
+			switch (_fieldD4) {
+			case 3:
+				sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiTrekRtHandOutPos2Series, 1, 1, 576, _meiTrekRtHandOutPos2Series, 1, 1, 0);
+				break;
+
+			case 6:
+				sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiTrekRtHandOutPos2Series, 1, 10, 576, _meiTrekRtHandOutPos2Series, 10, 10, 0);
+				_fieldD0 = 6;
+
+				break;
+
+			case 7:
+				sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiShowsRipHerPassesSeries, 1, 6, 576, _meiShowsRipHerPassesSeries, 6, 6, 0);
+				_fieldD0 = 7;
+
+				break;
+
+			default:
+				break;
+			}
+
+			break;
+		case 4:
+			switch (_fieldD4) {
+			case 4:
+				sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiTalksPos3Series, 1, 1, 576, _meiTalksPos3Series, 1, 1, 0);
+				break;
+
+			case 17: {
+				int32 rnd = imath_ranged_rand(1, 4);
+				sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiTalksPos3Series, rnd, rnd, 576, _meiTalksPos3Series, rnd, rnd, 0);
+
+				}
+				break;
+
+			default:
+				break;
+			}
+
+			break;
+
+		case 5:
+			switch (_fieldD4) {
+			case 5:
+				sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiTrekTalkerPos4Series, 1, 1, 576, _meiTrekTalkerPos4Series, 1, 1, 0);
+				break;
+
+			case 13: {
+				int32 rnd = imath_ranged_rand(1, 4);
+				sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiTrekTalkerPos4Series, rnd, rnd, 576, _meiTrekTalkerPos4Series, rnd, rnd, 0);
+
+			} break;
+
+			default:
+
+				break;
+			}
+
+			break;
+
+		case 6:
+			switch (_fieldD4) {
+			case 3:
+				sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiTrekRtHandOutPos2Series, 10, 1, 576, _meiTrekRtHandOutPos2Series, 1, 1, 0);
+				_fieldD0 = 3;
+
+				break;
+
+			case 6:
+				sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiTrekRtHandOutPos2Series, 10, 10, 576, _meiTrekRtHandOutPos2Series, 10, 10, 0);
+				break;
+
+			default:
+
+				break;
+			}
+
+			break;
+
+		case 7:
+			switch (_fieldD4) {
+			case 7:
+				sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiShowsRipHerPassesSeries, 6, 6, 576, _meiShowsRipHerPassesSeries, 6, 6, 0);
+
+			// Intentional fallthrough
+			case 3:
+				sendWSMessage_10000(1, _meiChenOtherStatesMach, _meiShowsRipHerPassesSeries, 6, 1, 576, _meiShowsRipHerPassesSeries, 1, 1, 0);
+				_fieldD0 = 3;
+
+				break;
+
+			default:
+				break;
+			}
+
+			break;
+
+		default:
+			break;
+		}
+
+		break;
+
 	case 578:
+		_field128 = 1;
+		_field124 = 1;
+		_field12C_triggerNum = -1;
+		_field130 = 0;
+
+		_acolyteGuardingEntranceMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 2048, 0, triggerMachineByHashCallback, "Acolyte Guarding Entrance");
+		_acolyteSaysHaltSeries = series_load("ACOLYTE SAYS HALT", -1, nullptr);
+
+		sendWSMessage_10000(1, _acolyteGuardingEntranceMach, _acolyteSaysHaltSeries, 1, 1, 579, _acolyteSaysHaltSeries, 1, 1, 0);
+
+		_field128 = 1;
+
+		break;
+
 	case 579:
+		if (_field124 == 1 && _field128 == 1 && _field12C_triggerNum != -1) {
+			kernel_trigger_dispatchx(_field12C_triggerNum);
+			_field12C_triggerNum = -1;
+		}
+
+		if (_field130 == 1) {
+			terminateMachine(_acolyteGuardingEntranceMach);
+			_acolyteGuardingEntranceMach = nullptr;
+			series_unload(_acolyteSaysHaltSeries);
+		}
+
+		kernel_timing_trigger(1, 580, nullptr);
+
+		break;
+
 	case 580:
+		switch (_field128) {
+		case 1:
+			switch (_field124) {
+			case 1:
+				sendWSMessage_10000(1, _acolyteGuardingEntranceMach, _acolyteSaysHaltSeries, 1, 1, -1, _acolyteSaysHaltSeries, 1, 1, 0);
+				kernel_timing_trigger(60, 579, nullptr);
+
+				break;
+
+			case 2:
+				sendWSMessage_10000(1, _acolyteGuardingEntranceMach, _acolyteSaysHaltSeries, 1, 16, 579, _acolyteSaysHaltSeries, 16, 16, 0);
+				_field128 = 2;
+
+				break;
+
+			case 3:
+				ws_hide_walker(_G(my_walker));
+				_acolyteGrabsMalletSeries = series_load("ACOLYTE GRABS MALLET", -1, nullptr);
+				sendWSMessage_10000(1, _acolyteGuardingEntranceMach, _acolyteGrabsMalletSeries, 1, 6, 579, _acolyteGrabsMalletSeries, 6, 6, 0);
+				_field128 = 3;
+				_field124 = 4;
+
+				break;
+			default:
+				break;
+			}
+
+			break;
+
+		case 2:
+			switch (_field124) {
+			case 1:
+				sendWSMessage_10000(1, _acolyteGuardingEntranceMach, _acolyteSaysHaltSeries, 16, 1, 579, _acolyteSaysHaltSeries, 1, 1, 0);
+				_field128 = 1;
+
+				break;
+
+			case 2:
+				sendWSMessage_10000(1, _acolyteGuardingEntranceMach, _acolyteSaysHaltSeries, 16, 16, 579, _acolyteSaysHaltSeries, 16, 16, 0);
+				break;
+
+			default:
+				break;
+			}
+
+		case 3:
+			switch (_field124) {
+			case 1:
+				ws_unhide_walker(_G(my_walker));
+				sendWSMessage_10000(1, _acolyteGuardingEntranceMach, _acolyteSaysHaltSeries, 1, 1, 579, _acolyteSaysHaltSeries, 1, 1, 0);
+				_field128 = 1;
+				hotspot_set_active(_G(currentSceneDef).hotspots, "MALLET", true);
+				_malletSpriteMach = series_place_sprite("MALLET SPRITE", 0, 0, 0, 100, 2304);
+				inv_move_object("MALLET", 204);
+				series_unload(_acolyteGrabsMalletSeries);
+
+				break;
+
+			case 3:
+				sendWSMessage_10000(1, _acolyteGuardingEntranceMach, _acolyteGrabsMalletSeries, 6, 6, 579, _acolyteGrabsMalletSeries, 6, 6, 0);
+
+				break;
+
+			case 4:
+				sendWSMessage_10000(1, _acolyteGuardingEntranceMach, _acolyteGrabsMalletSeries, 7, 43, 579, _acolyteGrabsMalletSeries, 43, 43, 0);
+				digi_play("204_s01", 1, 255, -1, -1);
+				_field124 = 1;
+
+				break;
+
+			default:
+				break;
+			}
+
+			break;
+
+		default:
+			break;
+		}
+
+		break;
+
 	case 581:
+		if (_fieldE0 != _fieldE4_walkerDestX) {
+			_fieldD4 = 3;
+			_fieldBC_trigger = kernel_trigger_create(582);
+		}
+
+		break;
+
 	case 582:
+		_fieldD8 = 1;
+		kernel_timing_trigger(1, 583, nullptr);
+
+		break;
+
 	case 583:
+		addMovingMeiHotspot();
+		DisposePath(_mcMach->walkPath);
+		_mcMach->walkPath = CreateCustomPath(_fieldE4_walkerDestX, 323, -1);
+		ws_custom_walk(_mcMach, 2, 584, true);
+		kernel_timing_trigger(1, 630, nullptr);
+
+		break;
+
 	case 584:
+		_fieldE0 = _fieldE4_walkerDestX;
+		kernel_timing_trigger(1, 578);
+		player_set_commands_allowed(true);
+
+		break;
+
 	case 588:
 	case 590:
 	case 592:
@@ -1024,6 +1402,11 @@ void Room204::daemon() {
 	case 703:
 	case 708:
 	case 709:
+		kernel_timing_trigger(1, 578, nullptr);
+		player_set_commands_allowed(true);
+
+		break;
+
 	case 710:
 	case 711:
 	case 712:
@@ -1090,6 +1473,10 @@ void Room204::addLookMalletHotspot() {
 	spot->facing = 11;
 
 	_G(currentSceneDef).hotspots = hotspot_add(_G(currentSceneDef).hotspots, spot, true);
+}
+
+void Room204::subDaemon_ADB7C() {
+	warning("STUB - subDaemon_ADB7C");
 }
 
 } // namespace Rooms
