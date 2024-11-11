@@ -499,6 +499,11 @@ public:
 	Path punycodeEncode() const;
 
 	/**
+	 * Returns whether the path will need to be Punycoded
+	 */
+	bool punycodeNeedsEncode() const;
+
+	/**
 	 * Convert all characters in the path to lowercase.
 	 *
 	 * Be aware that this only affects the case of ASCII characters. All
