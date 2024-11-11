@@ -67,9 +67,9 @@ struct CostumeData {
 	uint16 frame[16];
 
 	/* HE specific */
-	uint16 heJumpOffsetTable[16];
-	uint16 heJumpCountTable[16];
-	uint32 heCondMaskTable[16];
+	uint16 heJumpOffsetTable[16] = {};
+	uint16 heJumpCountTable[16] = {};
+	uint32 heCondMaskTable[16] = {};
 
 	void reset() {
 		animCounter = 0;

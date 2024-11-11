@@ -42,8 +42,34 @@ int IMuseDigiTriggersHandler::deinit() {
 int IMuseDigiTriggersHandler::clearAllTriggers() {
 	for (int l = 0; l < DIMUSE_MAX_TRIGGERS; l++) {
 		_trigs[l].sound = 0;
+		memset(_trigs[l].text, 0, sizeof(_trigs[l].text));
+		_trigs[l].opcode = 0;
+		_trigs[l].a = 0;
+		_trigs[l].b = 0;
+		_trigs[l].c = 0;
+		_trigs[l].d = 0;
+		_trigs[l].e = 0;
+		_trigs[l].f = 0;
+		_trigs[l].g = 0;
+		_trigs[l].h = 0;
+		_trigs[l].i = 0;
+		_trigs[l].j = 0;
 		_trigs[l].clearLater = 0;
+	}
+
+	for (int l = 0; l < DIMUSE_MAX_DEFERS; l++) {
 		_defers[l].counter = 0;
+		_defers[l].opcode = 0;
+		_defers[l].a = 0;
+		_defers[l].b = 0;
+		_defers[l].c = 0;
+		_defers[l].d = 0;
+		_defers[l].e = 0;
+		_defers[l].f = 0;
+		_defers[l].g = 0;
+		_defers[l].h = 0;
+		_defers[l].i = 0;
+		_defers[l].j = 0;
 	}
 	_defersOn = 0;
 	_midProcessing = 0;
