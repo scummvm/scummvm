@@ -991,7 +991,7 @@ bool Cutscene::nightmare2Scene() {
 	return true;
 }
 
-bool Cutscene::nightmare3Scene() { // TODO fix animation of values + face here.
+bool Cutscene::nightmare3Scene() {
 	switch (_movieStep) {
 	case 1: {
 		_palette.load("art/ship.pal");
@@ -1022,20 +1022,31 @@ bool Cutscene::nightmare3Scene() { // TODO fix animation of values + face here.
 		break;
 	case 4:
 		_animIdx = 0;
-		_animCount = 12;
-		// TODO speed = 2
+		_animCount = 24;
 		runAnim();
 		break;
 	case 5:
-		if (stepAnim(1)) {
+		if (stepValveAnim(false)) {
 			return true;
 		}
 		registTime();
 		break;
 	case 6:
+		_faceIdx = 0;
+		_animCount = 34;
+		break;
 	case 7:
+		if (stepValveAnim(true)) {
+			return true;
+		}
+		break;
 	case 8:
+		_animCount = 34;
+		break;
 	case 9:
+		if (stepValveAnim(false)) {
+			return true;
+		}
 		registTime();
 		break;
 	case 10:
@@ -1052,6 +1063,7 @@ bool Cutscene::nightmare3Scene() { // TODO fix animation of values + face here.
 		}
 		break;
 	default:
+		g_engine->_sound->stopMusic();
 		_movieStep = 9999;
 		return false;
 	}
@@ -1077,6 +1089,39 @@ bool Cutscene::stepAnim(int drawMode) {
 		return true;
 	}
 	return false;
+}
+
+bool Cutscene::stepValveAnim(bool doFaceAnim) {
+	if (_animDelayCount == 0) {
+		Img animLeftFrame;
+		_animation.getImg(_valvesIdx, animLeftFrame);
+		animLeftFrame.draw(1);
+
+		Img animRightFrame;
+		_animation.getImg(_valvesIdx + 6, animRightFrame);
+		animRightFrame.draw(1);
+
+		if (doFaceAnim && (_animCount % 2) == 0) {
+			Img faceFrame;
+			Common::Path facePath = Common::Path("art").join(Common::String::format("f%02d.img", _faceIdx + 2));
+			faceFrame.load(facePath);
+			faceFrame.draw(0, faceFrame.getWidth() - 6);
+			_faceIdx++;
+		}
+
+		_valvesIdx++;
+		if (_valvesIdx > 5) {
+			_valvesIdx = 0;
+		}
+		_animCount--;
+	}
+
+	_animDelayCount++;
+	if (_animDelayCount == 12) {
+		_animDelayCount = 0;
+	}
+
+	return _animCount > 0;
 }
 
 void Cutscene::putHouse() {

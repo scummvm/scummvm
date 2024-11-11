@@ -40,6 +40,8 @@ class Cutscene {
 	int _animDirection = 0;
 	uint32 _startTime = 0;
 	Morph *_morph = nullptr;
+	int _valvesIdx = 0;
+	int _faceIdx = 0;
 
 public:
 	Cutscene() {}
@@ -62,6 +64,8 @@ private:
 
 	void runAnim(int direction = 1);
 	bool stepAnim(int drawMode = 1);
+
+	bool stepValveAnim(bool doFaceAnim);
 
 	void putHouse();
 

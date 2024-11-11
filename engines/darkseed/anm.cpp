@@ -24,9 +24,7 @@
 
 namespace Darkseed {
 bool Anm::load(const Common::Path &filename, int deltaOffset) {
-	if (_file.isOpen()) {
-		_file.close();
-	}
+	close();
 	if (!_file.open(filename)) {
 		return false;
 	}
@@ -34,6 +32,12 @@ bool Anm::load(const Common::Path &filename, int deltaOffset) {
 	_assetFileId = _file.readUint16LE();
 	_deltaOffset = deltaOffset;
 	return true;
+}
+
+void Anm::close() {
+	if (_file.isOpen()) {
+		_file.close();
+	}
 }
 
 bool Anm::getImg(uint16 index, Img &img, bool includesPosition) {

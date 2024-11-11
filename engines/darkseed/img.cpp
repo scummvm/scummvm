@@ -106,16 +106,16 @@ Common::Array<uint8> &Img::getPixels() {
 	return _pixels;
 }
 
-void Img::draw(int drawMode) {
-	drawAt(_x, _y, drawMode);
+void Img::draw(int drawMode, int drawWidth) {
+	drawAt(_x, _y, drawMode, drawWidth);
 }
 
 void Img::drawAt(uint16 xPos, uint16 yPos, int drawMode, int drawWidth) {
+	int w = drawWidth != 0 ? drawWidth : _width;
 	if (drawMode != 0) {
 		uint8 *screen = (uint8 *)g_engine->_screen->getBasePtr(xPos, yPos);
 		uint8 *imgPixels = _pixels.data();
 		for (int sy = 0; sy < _height; sy++) {
-			int w = drawWidth != 0 ? drawWidth : _width;
 			for (int sx = 0; sx < w; sx++) {
 				if (drawMode == 1 && imgPixels[sx] != 0) {
 					screen[sx] ^= imgPixels[sx];
@@ -129,9 +129,9 @@ void Img::drawAt(uint16 xPos, uint16 yPos, int drawMode, int drawWidth) {
 			screen += g_engine->_screen->pitch;
 		}
 	} else {
-		g_engine->_screen->copyRectToSurface(_pixels.data(), _width, xPos, yPos, _width, _height);
+		g_engine->_screen->copyRectToSurface(_pixels.data(), _width, xPos, yPos, w, _height);
 	}
-	g_engine->_screen->addDirtyRect({{(int16)xPos, (int16)yPos}, (int16)_width, (int16)_height});
+	g_engine->_screen->addDirtyRect({{(int16)xPos, (int16)yPos}, (int16)w, (int16)_height});
 }
 
 } // namespace Darkseed

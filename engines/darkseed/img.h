@@ -40,7 +40,7 @@ public:
 	bool load(const Common::Path &filename);
 	bool load(Common::SeekableReadStream &readStream);
 	bool loadWithoutPosition(Common::SeekableReadStream &readStream);
-	void draw(int drawMode = 0);
+	void draw(int drawMode = 0, int drawWidth = 0);
 	void drawAt(uint16 xPos, uint16 yPos, int drawMode = 0, int drawWidth = 0);
 
 	Common::Array<uint8> &getPixels();
