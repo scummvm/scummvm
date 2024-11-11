@@ -856,12 +856,13 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION("soundfont")
-				Common::FSNode path(Common::Path::fromConfig(option));
+				Common::FSNode path(Common::Path::fromCommandLine(option));
 				if (!path.exists()) {
 					usage("Non-existent soundfont path '%s'", option);
 				} else if (!path.isReadable()) {
 					usage("Non-readable soundfont path '%s'", option);
 				}
+				settings["soundfont"] = path.getPath().toConfig();
 			END_OPTION
 
 #ifdef SDL_BACKEND
