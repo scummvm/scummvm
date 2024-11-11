@@ -42,7 +42,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  AGOS:
    - Added keymapper support.
    - Fixed timer handling in savegames, addressing issues such as crashing in
-     Waxworks Egypt Level 3 and Power Points not regenerating in Elviva 2.
+     Waxworks Egypt Level 3 and Power Points not regenerating in Elvira 2.
 
  AGS:
    - Syncronized with upstream AGS 3.6.0.58.
