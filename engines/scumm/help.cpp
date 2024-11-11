@@ -94,12 +94,11 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 	case 2:
 		title = _("Special keyboard commands:");
 		ADD_BIND("~, #", _("Show / Hide console"));
-		ADD_BIND(_("Ctrl") + U32String(" d"), _("Start the debugger"));
-		ADD_BIND(_("Ctrl") + U32String(" s"), _("Show memory consumption"));
+		ADD_BIND(_("Ctrl") + _("Alt") + U32String(" d"), _("Start the debugger"));
 		ADD_BIND(_("Ctrl") + U32String(" f"), _("Run in fast mode (*)"));
 		ADD_BIND(_("Ctrl") + U32String(" g"), _("Run in really fast mode (*)"));
 		ADD_BIND(_("Ctrl") + U32String(" m"), _("Toggle mouse capture"));
-		ADD_BIND(_("Ctrl") + U32String(" ") + _("Alt") + U32String(" 1-8"), _("Switch between graphics filters"));
+		ADD_BIND(_("Ctrl") + U32String(" ") + _("Alt") + U32String(" 9, 0"), _("Cycle between graphics filters"));
 		ADD_BIND(_("Ctrl") + U32String(" ") + _("Alt") + U32String(" +, -"), _("Increase / Decrease scale factor"));
 		ADD_BIND(_("Ctrl") + U32String(" ") + _("Alt") + U32String(" a"), _("Toggle aspect-ratio correction"));
 		ADD_LINE;

@@ -1200,7 +1200,7 @@ void ResourceManager::resourceStats() {
 		}
 	}
 
-	debug(1, "Total allocated size=%d, locked=%d(%d)", _allocatedSize, lockedSize, lockedNum);
+	debug("Total allocated size=%d, locked=%d(%d)", _allocatedSize, lockedSize, lockedNum);
 }
 
 void ScummEngine_v5::readMAXS(int blockSize) {
