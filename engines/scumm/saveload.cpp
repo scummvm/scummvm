@@ -53,7 +53,7 @@ struct SaveGameHeader {
 	uint32 type;
 	uint32 size;
 	uint32 ver;
-	char name[32];
+	char name[32] = {};
 };
 
 struct SaveInfoSection {
