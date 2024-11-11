@@ -81,27 +81,18 @@ $(AAB_MAIN_RELEASE): $(PATH_BUILD_GRADLE) $(PATH_BUILD_ASSETS) $(PATH_BUILD_ASSE
 	(cd $(PATH_BUILD); ./gradlew bundleRelease -PsplitAssets)
 	$(CP) $(PATH_BUILD)/build/outputs/bundle/release/$(AAB_MAIN_RELEASE) $@
 
-all: $(APK_MAIN)
-
 clean: androidclean
 
 # SUBPATH_BUILDS is set in fatbundle.mk
 androidclean:
 	$(RM) -rf $(PATH_BUILD) $(SUBPATH_BUILDS) *.apk *.aab
 
+all: $(APK_MAIN)
+
 androidrelease: $(APK_MAIN_RELEASE)
 androidbundlerelease: $(AAB_MAIN_RELEASE)
 
-androidtestmain: $(APK_MAIN)
-	(cd $(PATH_BUILD); ./gradlew installDebug)
-	# $(ADB) install -g -r $(APK_MAIN)
-	# $(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.scummvm.scummvm/.ScummVMActivity
-
 androidtest: $(APK_MAIN)
-	# @set -e; for apk in $^; do \
-	# 	$(ADB) install -g -r $$apk; \
-	# done
-	# $(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.scummvm.scummvm/.ScummVMActivity
 	(cd $(PATH_BUILD); ./gradlew installDebug)
 
 # used by buildbot!
@@ -119,6 +110,6 @@ androiddistrelease: androidrelease
 		sed 's/$$/\r/' < $$i > release/`basename $$i`.txt; \
 	done
 
-.PHONY: androidrelease androidbundlerelease androidtest $(PATH_BUILD_SRC)
+.PHONY: androidclean androidrelease androidbundlerelease androidtest androiddistdebug androiddistrelease
 
 include $(srcdir)/backends/platform/android/fatbundle.mk
