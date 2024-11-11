@@ -869,6 +869,16 @@ void Script::opReply(SCRIPTOP_PARAMS) {
 	}
 
 	str = thread->_strings->getString(strID);
+
+	// WORKAROUND for a soft lock after failing Nimdok's chapter - bug #15214:
+	// If the player hasn't interacted with the mirror in Nimdok's chapter
+	// (global flag 12), then the game enters an unwinnable state after the
+	// chapter ends. To avoid this, remove the dialog option where Nimdok orders
+	// the golem to follow him outside and end the chapter, if he hasn't
+	// interacted with the mirror yet.
+	if (_vm->getGameId() == GID_IHNM && strID == 246 && !(_vm->_globalFlags & (1 << 12)))
+		return;
+
 	if (_vm->_interface->converseAddText(str, strID, replyNum, flags, iparam1))
 		warning("Error adding ConverseText (%s, %d, %d, %d)", str, replyNum, flags, iparam1);
 }
