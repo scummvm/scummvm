@@ -66,8 +66,11 @@ void LibretroOpenGLGraphics::overrideCursorScaling(){
 }
 
 void LibretroOpenGLGraphics::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
+	bool force_gui_redraw = false;
 	/* Override for ScummVM Launcher */
 	if (nullptr == ConfMan.getActiveDomain()){
+		/* 0 w/h is used to notify libretro gui res settings is changed */
+		force_gui_redraw = (width == 0);
 		width = retro_setting_get_gui_res_w();
 		height = retro_setting_get_gui_res_h();
 	}
@@ -79,6 +82,9 @@ void LibretroOpenGLGraphics::initSize(uint width, uint height, const Graphics::P
 	handleResize(width, height);
 	OpenGL::OpenGLGraphicsManager::initSize(width, height, format);
 	LIBRETRO_G_SYSTEM->refreshRetroSettings();
+
+	if (force_gui_redraw)
+		g_gui.checkScreenChange();
 }
 
 OSystem::TransactionError LibretroOpenGLGraphics::endGFXTransaction() {
