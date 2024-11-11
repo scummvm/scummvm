@@ -202,7 +202,6 @@
 						height = 'Globals.Line.Height'
 						textalign = 'center'
 				/>
-				<space />
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 				<widget name = 'GameList'/>
@@ -303,7 +302,6 @@
 						height = 'Globals.Line.Height'
 						textalign = 'center'
 				/>
-				<space />
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
 				<widget name = 'GameList'/>
