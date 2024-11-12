@@ -65,7 +65,7 @@ $(PATH_BUILD_ASSETS)/assets/cacert.pem: $(DIST_ANDROID_CACERT_PEM)
 $(PATH_BUILD_ASSETS)/MD5SUMS: $(PATH_BUILD_ASSETS)/assets/cacert.pem
 else
 ifdef USE_CURL
-$(PATH_BUILD_ASSETS)/cacert.pem:
+$(PATH_BUILD_ASSETS)/assets/cacert.pem:
 	$(INSTALL) -d $(PATH_BUILD_ASSETS)/assets/
 	$(QUIET_CURL)$(CURL) -s https://curl.se/ca/cacert.pem --time-cond $(PATH_BUILD_ASSETS)/assets/cacert.pem --output $(PATH_BUILD_ASSETS)/assets/cacert.pem
 androidcacert:
