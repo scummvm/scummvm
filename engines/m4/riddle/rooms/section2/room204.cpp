@@ -1235,6 +1235,7 @@ void Room204::daemon() {
 				_field124 = 4;
 
 				break;
+
 			default:
 				break;
 			}
@@ -1256,6 +1257,8 @@ void Room204::daemon() {
 			default:
 				break;
 			}
+
+			break;
 
 		case 3:
 			switch (_field124) {
