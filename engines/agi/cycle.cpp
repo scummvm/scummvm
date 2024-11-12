@@ -136,6 +136,15 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 		if (getGameID() == GID_LSL1) {
 			setFlag(36, 0); // clear "ignore special" flag on every room change
 		}
+
+		// WORKAROUND: KQ3 has a script bug where listening to fish talk in room 31
+		// prevents hearing the critical mice conversation on the ship in room 86.
+		// Each scene uses a series of flag numbers, but they overlap. Bug #15130
+		if (getGameID() == GID_KQ3 && newRoomNr == 77) {
+			for (int16 flag = 193; flag <= 197; flag++) {
+				setFlag(flag, 0); // clear all mice flags when starting ship voyage
+			}
+		}
 	}
 }
 
