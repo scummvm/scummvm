@@ -2689,7 +2689,7 @@ esac
 # for the smaller sizes.
 echo_n "Alignment required... "
 case $_host_cpu in
-	i[3-6]86 | amd64 | x86_64 | powerpc* | ppc*)
+	i[3-6]86 | amd64 | x86_64 | powerpc* | ppc* | m68k)
 		# Unaligned access should work
 		_need_memalign=no
 		;;
