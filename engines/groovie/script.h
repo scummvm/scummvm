@@ -163,7 +163,7 @@ private:
 
 	void loadgame(uint slot);
 	bool preview_loadgame(uint slot);
-	void savegame(uint slot, const char name[27]);
+	void savegame(uint slot, const Common::String &name);
 	bool playvideofromref(uint32 fileref, bool loopUntilAudioDone = false);
 	bool playBackgroundSound(uint32 fileref, uint32 loops);
 	void printString(Graphics::Surface *surface, const char *str);

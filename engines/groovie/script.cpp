@@ -655,7 +655,7 @@ void Script::directGameSave(int slot, const Common::String &desc) {
 	savegame(slot, name);
 }
 
-void Script::savegame(uint slot, const char name[27]) {
+void Script::savegame(uint slot, const Common::String &name) {
 	char newchar;
 	debugC(0, kDebugScript, "savegame %d, canDirectSave: %d", slot, canDirectSave());
 	Common::OutSaveFile *file = SaveLoad::openForSaving(ConfMan.getActiveDomainName(), slot);
@@ -681,24 +681,24 @@ void Script::savegame(uint slot, const char name[27]) {
 	} else if (_version == kGroovieUHP) {
 		name_len = 27;
 	}
-	file->write(name, name_len);
+	file->write(name.c_str(), name_len);
 	file->write(_variables + name_len, 0x400 - name_len);
 	delete file;
 
 	// Cache the saved name
-	char cacheName[28];
+	Common::String cacheName;
 	for (uint i = 0; i < name_len; i++) {
-		newchar = name[i] + 0x30;
+		newchar = name.size() > i ? name[i] + 0x30 : ' ';
 		if ((newchar < 0x30 || newchar > 0x39) && (newchar < 0x41 || newchar > 0x7A) && newchar != 0x2E) {
-			cacheName[i] = '\0';
+			cacheName += '\0';
 			break;
 		} else if (newchar == 0x2E) { // '.', generated when space is pressed
-			cacheName[i] = ' ';
+			cacheName += ' ';
 		} else {
-			cacheName[i] = newchar;
+			cacheName += newchar;
 		}
 	}
-	cacheName[name_len] = '\0';
+
 	_saveNames[slot] = cacheName;
 }
 
@@ -1621,10 +1621,13 @@ void Script::o_savegame() {
 
 	debugC(0, kDebugScript, "Groovie::Script: SAVEGAME var[0x%04X] -> slot=%d", varnum, slot);
 
-	// TLC uses 19 characters, but there's no harm in copying the extra bytes for the other games
-	// the savegame function will trim it when needed
-	char name[19];
-	memcpy(name, _variables, 19);
+	Common::String name;
+	for (int i = 0; i < 27; i++) {
+		if (i < 19)
+			name += _variables[i];
+		else
+			name += '\0' - 0x30;
+	}
 	savegame(slot, name);
 }
 
