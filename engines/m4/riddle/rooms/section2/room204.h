@@ -46,6 +46,11 @@ private:
 	void addLookMalletHotspot();
 
 	void subDaemon_ADB7C();
+	void game_set_scale(int32 frontY, int32 backY, int32 frontS, int32 backS);
+	void subDaemon_215F4();
+	void subDaemon_ADBB0();
+	
+	int32 _dword1A189C = 0;
 
 	int32 _field4 = 0;
 	int32 _field10 = 0;
@@ -58,7 +63,9 @@ private:
 	int32 _field44_triggerNum = 0;
 	int32 _field48_triggerNum = 0;
 	int32 _field68 = 0;
+	int32 _field74_series = 0;
 	int32 _field78_series = 0;
+	int32 _field88 = 0;
 	int32 _fieldBC_trigger = 0;
 	int32 _fieldC0_trigger = 0;
 	int32 _fieldC4 = 0;
@@ -86,6 +93,15 @@ private:
 	int32 _field128 = 0;
 	int32 _field12C_triggerNum = 0;
 	int32 _field130 = 0;
+	int32 _field134 = 0;
+	int32 _field138 = 0;
+	int32 _field13C_triggerNum = 0;
+	int32 _field140 = 0;
+	int32 _field144 = 0;
+	int32 _field164 = 0;
+	int32 _field168 = 0;
+	int32 _field170 = 0;
+	int32 _field174 = 0;
 	int32 _field180 = 0;
 	int32 _field184 = 0;
 	int32 _field188 = 0;
@@ -106,16 +122,22 @@ private:
 	int32 _ripTrekLowReachPos2Series = 0;
 	int32 _ripTrekTalkerPos3Series = 0;
 
+	machine *_field148_mach = nullptr;
+
+	machine *_204pu05Mach = nullptr;
+	machine *_204pu99Mach = nullptr;
 	machine *_acolyteGuardingEntranceMach = nullptr;
 	machine *_courtyardGongMach = nullptr;
 	machine *_mcMach = nullptr;
 	machine *_malletSpriteMach = nullptr;
+	machine *_priestWalkerMach = nullptr;
 	machine *_ripDeltaMachineStateMach = nullptr;
 	machine *_safariShadow3Mach = nullptr;
 	machine *_silverButterflyCoinMach = nullptr;
-	machine * _meiChenOtherStatesMach = nullptr;
-	machine * _safariShadow2Mach = nullptr;
+	machine *_meiChenOtherStatesMach = nullptr;
+	machine *_safariShadow2Mach = nullptr;
 };
+
 
 } // namespace Rooms
 } // namespace Riddle

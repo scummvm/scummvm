@@ -31,6 +31,14 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+const int16 ROOM204_NORMAL_DIRS[] = {
+	200, -1, -1};
+const int16 ROOM204_SHADOW_DIRS[6] = {
+	210, -1, -1};
+static const char *ROOM204_NORMAL_NAMES[5] = { "priest walker" };
+static const char *ROOM204_SHADOW_NAMES[5] = { "kuangs shadow 2" };
+
+
 void Room204::preload() {
 	_G(player).walker_type = WALKER_ALT;
 	_G(player).shadow_type = SHADOW_ALT;
@@ -1317,27 +1325,215 @@ void Room204::daemon() {
 		break;
 
 	case 588:
+		MoveScreenDelta(_G(game_buff_ptr), 0, 0);
+		ws_walk_load_walker_series(ROOM204_NORMAL_DIRS, ROOM204_NORMAL_NAMES, false);
+		ws_walk_load_walker_series(ROOM204_SHADOW_DIRS, ROOM204_SHADOW_NAMES, false);
+		game_set_scale(369, 326, 100, 99);
+		_priestWalkerMach = triggerMachineByHash_3000(8, 14, *ROOM204_NORMAL_DIRS, *ROOM204_SHADOW_DIRS, 1864, 334, 3, triggerMachineByHashCallback3000, "Priest Walker");
+		game_set_scale(369, 326, 47, 38);
+		kernel_timing_trigger(20, 590, nullptr);
+
+		break;
+
 	case 590:
+		midi_play("PRIEST", 255, false, -1, 949);
+		series_stream("PRIEST ENTERS", 7, 0, 592);
+
+		break;
+
 	case 592:
+		game_set_scale(369, 326, 100, 99);
+		ws_demand_location(_priestWalkerMach, 360, 305);
+		game_set_scale(369, 326, 47, 38);
+		kernel_timing_trigger(5, 593, nullptr);
+
+		break;
+
 	case 593:
+		subDaemon_215F4();
+		kernel_timing_trigger(20, 594, nullptr);
+
+		break;
+
 	case 594:
+		if (_field148_mach)
+			_field13C_triggerNum = kernel_trigger_create(596);
+		else
+			kernel_timing_trigger(20, 594, nullptr);
+
+		break;
+
 	case 596:
+		_field134 = 1;
+		_field10 = 16;
+		_field68 = 1;
+
+		_field18_triggerNum = kernel_trigger_create(597);
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(2, 569, nullptr);
+
+		break;
+
 	case 597:
+		_field10 = 18;
+		player_set_commands_allowed(true);
+
+
+		break;
+
 	case 603:
+		if (_field134 == 1 && _field138 == 1 && _field13C_triggerNum != -1) {
+			kernel_trigger_dispatchx(_field13C_triggerNum);
+			_field13C_triggerNum = -1;
+		}
+
+		if (_field140 == 1) {
+			terminateMachine(_field148_mach);
+			_field148_mach = nullptr;
+
+			if (_field144 != -1) {
+				kernel_trigger_dispatchx(_field144);
+				_field144 = -1;
+			}
+		}
+
+		kernel_timing_trigger(1, 604, nullptr);
+
+		break;
+
 	case 604:
+		switch (_field134) {
+		case 1:
+			sendWSMessage_10000(1, _field148_mach, _field74_series, 2, 2, 603, _field74_series, 2, 2, 0);
+			break;
+
+		case 2: {
+			int32 rnd = imath_ranged_rand(1, 2);
+			sendWSMessage_10000(1, _field148_mach, _field74_series, 1, rnd, 603, _field74_series, rnd, rnd, 0);
+			}
+
+			break;
+
+		default:
+			break;
+		}
+
+		break;
+
 	case 605:
+		_field168 = 0;
+		_field170 = 0;
+		_field174 = 0;
+
+		_G(kernel).trigger_mode = KT_PARSE;
+
+		conv_load("conv204a", 10, 10, 747);
+		conv_export_value(conv_get_handle(), _G(flags[V071]) ? 0 : 1, 0);
+		conv_play(conv_get_handle());
+
+		break;
+
 	case 606:
+		if (_field164 == 1) {
+			player_set_commands_allowed(false);
+			kernel_timing_trigger(1, 714, nullptr);
+
+			_field164 = 0;
+			_G(flags[V056]) = 1;
+		} else if (_field168 == 1) {
+			player_set_commands_allowed(false);
+			_field168 = 0;
+			kernel_timing_trigger(1, 660, nullptr);
+		} else {
+			kernel_timing_trigger(1, 607, nullptr);
+		}
+
+		break;
+
 	case 607:
+		_field10 = 16;
+		_field18_triggerNum = kernel_trigger_create(608);
+		_field134 = 1;
+
+		break;
+
 	case 608:
+		_field2C = 1;
+		_field140 = 1;
+		player_set_commands_allowed(true);
+
+		break;
 	case 609:
+		player_set_commands_allowed(false);
+		_field108 = 1;
+		kernel_timing_trigger(5, 611, nullptr);
+
+		break;
+
 	case 611:
+		ws_get_walker_info(_mcMach, &_fieldFC_infoX, &_field100_infoY, &_G(player_info).scale, &_G(player_info).depth, &_G(player_info).facing);
+
+		if (_fieldFC_infoX == _fieldE4_walkerDestX) {
+			ws_walk(_G(my_walker), 1874, 333, nullptr, -1, 3, true);
+			kernel_timing_trigger(120, 613, nullptr);
+		} else
+			kernel_timing_trigger(60, 611, nullptr);
+
+		break;
+
 	case 612:
+		DisposePath(_mcMach->walkPath);
+		_mcMach->walkPath = CreateCustomPath(_fieldE4_walkerDestX + 1, 324, -1);
+		ws_custom_walk(_mcMach, 614, 1);
+
+		break;
+
 	case 613:
+		player_update_info(_G(my_walker), &_G(player_info));
+		if (_fieldE4_walkerDestX + 20 >= _G(player_info).x)
+			kernel_timing_trigger(15, 613, nullptr);
+		else
+			kernel_timing_trigger(1, 612, nullptr);
+
+		break;
+
 	case 614:
+		_dword1A189C = 0;
+		_meiTrekTalkerPos4Series = series_load("MEI TREK TALKER POS4", -1, nullptr);
+		setGlobals1(_meiTrekTalkerPos4Series, 1, 1, 1, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_mcMach, 615);
+		digi_play("COM038", 1, 255, 615, -1);
+
+		break;
+
 	case 615:
+		if (_dword1A189C >= 1) {
+			_dword1A189C = 0;
+			sendWSMessage_150000(_mcMach, 616);
+		} else {
+			++_dword1A189C;
+		}
+
+		break;
+
 	case 616:
+		series_unload(_meiTrekTalkerPos4Series);
+		ws_walk(_G(my_walker), _fieldE4_walkerDestX + 35, 333, nullptr, 619, 10, true);
+
+		break;
+
 	case 619:
+		digi_play("204R29", 1, 255, 620, -1);
+		break;
+
 	case 620:
+		_meiTrekTalkerPos4Series = series_load("MEI TREK TALKER POS4", -1, nullptr);
+		setGlobals1(_meiTrekTalkerPos4Series, 1, 1, 1, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_mcMach, 621);
+		digi_play("204M30", 1, 255, 621, -1);
+
+		break;
+
 	case 621:
 	case 622:
 	case 623:
@@ -1365,6 +1561,13 @@ void Room204::daemon() {
 	case 650:
 	case 651:
 	case 652:
+		_field40 = 0;
+		series_unload(_field88);
+		player_set_commands_allowed(true);
+		_field124 = 1;
+		player_set_commands_allowed(true);
+		break;
+
 	case 660:
 	case 661:
 	case 662:
@@ -1378,6 +1581,11 @@ void Room204::daemon() {
 	case 675:
 	case 676:
 	case 677:
+		_204pu99Mach = series_place_sprite("204PU99", 0, 0, 0, 100, 0);
+		kernel_timing_trigger(120, 678, nullptr);
+
+		break;
+
 	case 678:
 	case 679:
 	case 680:
@@ -1386,10 +1594,23 @@ void Room204::daemon() {
 	case 683:
 	case 684:
 	case 687:
+		break;
 	case 688:
+		_field2C = 1;
+		subDaemon_ADBB0();
+		kernel_timing_trigger(5, 689, nullptr);
+
+		break;
+
 	case 689:
 	case 691:
 	case 692:
+		DisposePath(_mcMach->walkPath);
+		_mcMach->walkPath = CreateCustomPath(526, 360, -1);
+		ws_custom_walk(_mcMach, 8, 693, true);
+
+		break;
+
 	case 693:
 	case 694:
 	case 695:
@@ -1412,10 +1633,22 @@ void Room204::daemon() {
 	case 712:
 	case 713:
 	case 714:
+		digi_preload("204R03C", -1);
+		_204pu05Mach = series_stream("204PU05", 5, 0, 716);
+		series_stream_break_on_frame(_204pu05Mach, 9, 715);
+
+		break;
+
 	case 715:
 	case 716:
 	case 719:
 	case 720:
+		_field10 = 16;
+		_204pu05Mach = series_stream("204PU04", 3, 0, 722);
+		series_stream_break_on_frame(_204pu05Mach, 6, 721);
+
+		break;
+
 	case 721:
 	case 722:
 	case 723:
@@ -1478,6 +1711,19 @@ void Room204::addLookMalletHotspot() {
 void Room204::subDaemon_ADB7C() {
 	warning("STUB - subDaemon_ADB7C");
 }
+
+void Room204::game_set_scale(int32 frontY, int32 backY, int32 frontS, int32 backS) {
+	warning("STUB - game_set_scale");
+}
+
+void Room204::subDaemon_215F4() {
+	warning("STUB - subDaemon_215F4");
+}
+
+void Room204::subDaemon_ADBB0() {
+	warning("STUB - subDaemon_ADBB0");
+}
+
 
 } // namespace Rooms
 } // namespace Riddle
