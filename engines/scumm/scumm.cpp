@@ -254,7 +254,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_debugMode = true;
 
 	_copyProtection = ConfMan.getBool("copy_protection");
-    if (ConfMan.getBool("demo_mode") || ConfMan.getBool("enable_demo_mode"))
+	if (ConfMan.getBool("demo_mode") || ConfMan.getBool("enable_demo_mode"))
 		_game.features |= GF_DEMO;
 	if (ConfMan.hasKey("nosubtitles")) {
 		// We replaced nosubtitles *ages* ago. Just convert it silently
