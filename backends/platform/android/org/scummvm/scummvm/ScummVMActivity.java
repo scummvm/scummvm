@@ -46,6 +46,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -1418,6 +1420,27 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 	}
 
+	private static boolean equalsStreamToStream(InputStream is1, InputStream is2) throws IOException {
+		byte[] buffer1 = new byte[1024];
+		byte[] buffer2 = new byte[1024];
+		int length1, length2;
+
+		while (true) {
+			length1 = is1.read(buffer1);
+			length2 = is2.read(buffer2);
+			if (length1 != length2) {
+				return false;
+			}
+			if (length1 == -1) {
+				// Both streams are finished at the same point
+				return true;
+			}
+			if (!Arrays.equals(buffer1, buffer2)) {
+				return false;
+			}
+		}
+	}
+
 	private static String getVersionInfoFromScummvmConfiguration(String fullIniFilePath) {
 		Map<String, Map<String, String>> parsedIniMap;
 		try (FileReader reader = new FileReader(fullIniFilePath)) {
@@ -1687,25 +1710,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			Log.d(ScummVM.LOG_TAG, "No viable existing ScummVM config version found");
 		}
 
-		//
-		// TODO The assets cleanup upgrading system is not perfect but it will have to do
-		//      A more efficient way would be to compare hash (when we deem that an upgrade is happening, so we will also still have to compare versions)
-		// Note that isSideUpgrading is also true each time we re-launch the app
-		// Also even during a side-upgrade we cleanup any redundant files (no longer part of our assets)
-
-		// By first checking for isDirty() and then comparing the Version objects,
-		// we don't need to also compare the Version descriptions (full version text) for a match too,
-		// since, if the full versions text do not match, it's because at least one of them is dirty.
-		// TODO: This does mean that "pre" (or similar) versions (eg. 2.2.1pre) will always be considered non-side-upgrades
-		//        and will re-copy the assets upon each launch
-		//       This should have a slight performance impact (for launch time) for those intermediate version releases,
-		//       but it's better than the alternative (comparing MD5 hashes for all files), and it should go away with the next proper release.
-		//       This solution should cover "git" versions properly
-		//       (ie. developer builds, built with release configuration (eg 2.3.0git) or debug configuration (eg. 2.3.0git9272-gc71ac4748b))
-		boolean isSideUpgrading = (!_currentScummVMVersion.isDirty()
-		                           && !maxOldVersionFound.isDirty()
-		                           && maxOldVersionFound.compareTo(_currentScummVMVersion) == 0);
-		copyAssetsToInternalMemory(isSideUpgrading);
+		updateAssetsToInternalMemory();
 
 		//
 		// Set global savepath
@@ -2021,10 +2026,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 	// clear up any possibly deprecated assets (when upgrading to a new version)
 	// Don't remove the scummvm.ini nor the scummvm.log file!
-	// Remove any files not in the filesItenary, even in a sideUpgrade
-	// Remove any files in the filesItenary only if not a sideUpgrade
+	// Remove any files not in the assetsToExtract
 	// Returns true if the dataDir was a directory and false otherwise
-	private static boolean assetsFolderCleanup(boolean sideUpgrade, File dataDir, String[] assetsToExtract) {
+	private static boolean assetsFolderCleanup(File dataDir, String[] assetsToExtract) {
 		HashSet<String> filesToKeep = new HashSet<>(Arrays.asList(assetsToExtract));
 
 		File[] extfiles = dataDir.listFiles();
@@ -2037,7 +2041,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		for (File extfile : extfiles) {
 			String name = extfile.getName();
 
-			if (filesToKeep.contains(name) && sideUpgrade) {
+			if (filesToKeep.contains(name)) {
 				continue;
 			}
 
@@ -2048,6 +2052,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				Log.d(ScummVM.LOG_TAG, "Deleting file:" + extfile.getName());
 				if (!extfile.delete()) {
 					Log.e(ScummVM.LOG_TAG, "Failed to delete file:" + extfile.getName());
+					// Ignore error, that will be a leftover
 				}
 			}
 		}
@@ -2059,12 +2064,13 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	// - We copy all the files from our assets (not a subset of them)
 	// Otherwise we would probably need to create a specifically named zip file with the selection of files we'd need to extract to the internal memory
 	// Returns true if the assetDir was a directory and false otherwise
-	private static boolean extractAssets(boolean sideUpgrade, AssetManager assetManager, String assetDir, File dataDir) {
+	private static boolean extractAssets(AssetManager assetManager, String assetDir, File dataDir) throws IOException {
 		String[] files = null;
 		try {
 			files = assetManager.list(assetDir);
 		} catch (IOException e) {
 			Log.e(ScummVM.LOG_TAG, "Failed to get asset file list.", e);
+			throw e;
 		}
 
 		if (files == null || files.length == 0) {
@@ -2078,13 +2084,13 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		// Starting from here, assetDir is a directory
 
 		// Cleanup old files
-		if (!assetsFolderCleanup(sideUpgrade, dataDir, files)) {
+		if (!assetsFolderCleanup(dataDir, files)) {
 			// dataDir is a file but we need a folder
 			if (dataDir.exists()) {
 				if (!dataDir.delete()) {
 					Log.e(ScummVM.LOG_TAG, "Failed to delete file:" + dataDir.getName());
 					// There is no point on continuing this
-					return true;
+					throw new IOException("Failed to delete file:" + dataDir.getName());
 				}
 			}
 		}
@@ -2093,7 +2099,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			if (!dataDir.mkdir()) {
 				Log.e(ScummVM.LOG_TAG, "Failed to create directory: " + dataDir.getPath());
 				// There is no point on continuing this
-				return true;
+				throw new IOException("Failed to create directory:" + dataDir.getName());
 			}
 		}
 
@@ -2101,7 +2107,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			String assetPath = (assetDir.length() > 0 ? assetDir + File.separator : "") + filename;
 			File dataPath = new File(dataDir, filename);
 
-			if (extractAssets(sideUpgrade, assetManager, assetPath, dataPath)) {
+			if (extractAssets(assetManager, assetPath, dataPath)) {
 				// This was a directory: no data to extract
 				continue;
 			}
@@ -2110,12 +2116,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			InputStream in = null;
 			OutputStream out = null;
 			try {
-				// sideUpgrade is set to true, if we upgrade to the same version -- just check for the files existence before copying
-				if (sideUpgrade && dataPath.exists()) {
-					Log.d(ScummVM.LOG_TAG, "Side-upgrade. No need to update asset file: " + assetPath);
-					continue;
-				}
-
 				Log.d(ScummVM.LOG_TAG, "Copying asset file: " + assetPath);
 				in = assetManager.open(assetPath);
 				out = new FileOutputStream(dataPath);
@@ -2142,7 +2142,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		return true;
 	}
 
-	private void copyAssetsToInternalMemory(boolean sideUpgrade) {
+	private void updateAssetsToInternalMemory() {
 		if (_actualScummVMDataDir == null) {
 			return;
 		}
@@ -2150,7 +2150,87 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		internalAppFolderCleanup(_actualScummVMDataDir);
 
 		AssetManager assetManager = getAssets();
-		extractAssets(sideUpgrade, assetManager, "assets", new File(_actualScummVMDataDir, "assets"));
+
+		// We need to compare MD5SUMS from our assets with what is on disk
+		File md5sumsPath = new File(_actualScummVMDataDir, "MD5SUMS");
+
+		Log.d(ScummVM.LOG_TAG, "Checking status of MD5SUMS");
+		// First: read MD5SUMS from our assets, we will need it
+		byte[] newSums = null;
+		{
+			InputStream newStreamAsset = null;
+			try {
+				newStreamAsset = assetManager.open("MD5SUMS");
+				ByteArrayOutputStream newStream = new ByteArrayOutputStream();
+				copyStreamToStream(newStreamAsset, newStream);
+				newSums = newStream.toByteArray();
+			} catch (IOException e) {
+				Log.e(ScummVM.LOG_TAG, "Failed to read MD5SUMS asset");
+			} finally {
+				if (newStreamAsset != null) {
+					try {
+						newStreamAsset.close();
+					} catch (IOException e) {
+						// NOOP
+					}
+				}
+				// Closing a ByteArrayOutputStream is useless
+			}
+		}
+
+		// Then: open the on disk file, check its size and if they match, compare the contents
+		if (newSums != null && newSums.length > 0) {
+			FileInputStream oldStream = null;
+			try {
+				oldStream = new FileInputStream(md5sumsPath);
+				if (oldStream.getChannel().size() == newSums.length &&
+					equalsStreamToStream(new ByteArrayInputStream(newSums), oldStream)) {
+					// The files are identical: nothing to do
+					Log.d(ScummVM.LOG_TAG, "MD5SUMS is already up to date");
+					return;
+				}
+			} catch (IOException e) {
+				Log.e(ScummVM.LOG_TAG, "Failed to read MD5SUMS file");
+			} finally {
+				if (oldStream != null) {
+					try {
+						oldStream.close();
+					} catch (IOException e) {
+						// NOOP
+					}
+				}
+			}
+		}
+
+		// Continue: with extracting the whole assets
+		try {
+			extractAssets(assetManager, "assets", new File(_actualScummVMDataDir, "assets"));
+		} catch (IOException e) {
+			Log.e(ScummVM.LOG_TAG, "An error happened while extracting the assets");
+			// Don't write the new MD5SUMS: we did not finish our work well
+			return;
+		}
+
+
+		// Finally: everything is now fresh, store the new sums
+		if (newSums != null) {
+			FileOutputStream newStream = null;
+			try {
+				newStream = new FileOutputStream(md5sumsPath);
+				newStream.write(newSums);
+			} catch (IOException e) {
+				Log.e(ScummVM.LOG_TAG, "Failed to write MD5SUMS file");
+				// If we fail to write MD5SUMS, we will try again at the next startup
+			} finally {
+				if (newStream != null) {
+					try {
+						newStream.close();
+					} catch (IOException e) {
+						// NOOP
+					}
+				}
+			}
+		}
 	}
 
 	// -------------------------------------------------------------------------------------------
