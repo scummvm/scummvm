@@ -304,6 +304,11 @@ public:
 	 */
 	String baseName() const;
 
+	/**
+	 * Returns number of components in this path,
+	 */
+	int numComponents() const;
+
 	/** Check whether this path is identical to path @p x. */
 	bool operator==(const Path &x) const {
 		return _str == x._str;

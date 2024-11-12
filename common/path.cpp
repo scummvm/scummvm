@@ -405,6 +405,27 @@ String Path::baseName() const {
 	return unescape(kNoSeparator, begin, end);
 }
 
+int Path::numComponents() const {
+	if (_str.empty())
+		return 0;
+
+	const char *str = _str.c_str();
+
+	if (isEscaped())
+		str++;
+
+	int num = 1;
+
+	const char *sep = strchr(str, SEPARATOR);
+	while (sep) {
+		str = sep + 1;
+		sep = strchr(str, SEPARATOR);
+		num++;
+	}
+
+	return num;
+}
+
 Path &Path::appendInPlace(const Path &x) {
 	if (x._str.empty()) {
 		return *this;
