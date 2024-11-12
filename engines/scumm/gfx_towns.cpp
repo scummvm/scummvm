@@ -544,7 +544,7 @@ void TownsScreen::addDirtyRect(int x, int y, int w, int h) {
 			if (r2 == _dirtyRects.end())
 				r2 = r;
 			else
-				_dirtyRects.erase(r);
+				r = _dirtyRects.erase(r);
 		}
 	}
 
