@@ -338,6 +338,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "mmiqtest",			"Multimedia IQ Test" },
 	{ "mmmath3",			"Mission Masters Math Grade 3: Defeat Dirty D!" },
 	{ "mode",				"MODE" },
+	{ "monroefiles",		"Hard Evidence: The Marilyn Monroe Files" },
 	{ "moominhide",			"Hide and Seek with Moomin"},
 	{ "moominparty",		"The Great Moomin Party" },
 	{ "morebugs",			"More Bugs in Boxes" },
@@ -600,6 +601,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "dayaftertrinity",	"The Day After Trinity: J. Robert Oppenheimer and the Atomic Bomb" },
 	{ "delphi4tutor",		"Borland Delphi 4 Tutor" },
 	{ "dinos",				"Multimedia Dinosaurs" },
+	{ "dominionvol1",		"Dominion Tank Police - Volume 1: Acts I & II" },
 	{ "draculaterror",		"Dracula: Truth and Terror" },
 	{ "dynamichuman",		"The Dynamic Human: The 3D Guide to Anatomy and Physiology" },
 	{ "easybass",			"Easy Bass" },
@@ -721,6 +723,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "universe",			"Invisible Universe" },
 	{ "unwrap",				"Unwrap the Magic: Holiday 2000 Interactive CD-ROM" }, // J.C.Penney
 	{ "ushistory",			"The History of the United States for Young People" },
+	{ "vangoghstarry",		"Van Gogh: Starry Night" },
 	{ "venetiandeer",		"Venetian Deer" },
 	{ "vote",				"Vote America: Your Field Guide to Electing a President" },
 	{ "vtarot",				"Virtual Tarot" },
@@ -1386,6 +1389,7 @@ static const PlainGameDescriptor directorGames[] = {
 
 	// Polish titles
 	{ "kontyngent99",		"Katalog Samochodów Kontyngent '99" },
+	{ "pasterzu",			"O dobrym pasterzu: Przypowieść biblijna" },
 	{ "pippiprzygody",		"Przygody Pippi!" },
 	{ "wikingowie",			"Wikingowie" },
 
@@ -1779,8 +1783,10 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "sslivepicture",		"Live Picture Screen Saver" },
 	{ "ssnatureasart",		"Nature as Art" },
 	{ "sspeekaboo",			"Winnie the Pooh Peek-a-Boo Screen Saver" },
+	{ "ssperiscope",		"Down Periscope Screen Saver" },
 	{ "ssrevwar",			"Revolutionary War Screen Saver" },
 	{ "ssseven",			"Seven Screen Saver" },
+	{ "ssspacejam",			"Space Jam Screen Saver" },
 	{ "tamafridgi",			"TamaFridgi" },
 
 	// Press kits with Director content
@@ -3988,6 +3994,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("dkmm2", "", "DKSDMac", "8554afe42cffb4add44bf37e48e1d954", 322661, 400),
 	WINGAME1("dkmm2", "", "DKSD2PC.EXE", "t:d43fd79cc7ec54a1b2b55562f4634b49", 862849, 404),
 
+	MACGAME1("dominionvol1", "", "Tank Police 16Bit PM", "r:d6c013a8b640b92f07737d38d85738f4",   60096, 404),
+	WINGAME1("dominionvol1", "", "8TANK1.EXE",			 "t:138743014cd3b685f9e34680d0c4cc37", 3823637, 404),
+
 	MACGAME1("doorswindows", "", "doors and windows-start", "01be45e7241194dad07938e7059b88e3", 483490, 404),
 	WINGAME1("doorswindows", "", "doorwin.EXE", "t:af8680b093a154b6ece67b16569260a7", 2400203, 404),
 
@@ -4939,6 +4948,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// German demo from CD ROM Hits 1995-10
 	// Dutch demo from Max en het gele-sokjes-spook (Max 3 Dutch)
+	// Polish version is D5
 	// Full game is multilanguage English/French/German selectable in-game
 	MACGAME1("max2", "", "Max and Marie Go Shopping", "r:9e6da4abedede80452f2b67cb8e03441", 484101, 404),
 	WINGAME2("max2", "", "MARIE.EXE",		  		  "t:3e3f8477d36f47953b7bfaa0f94c4f2b", 700909,
@@ -4951,6 +4961,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Max en het gele-sokjes-spook published by Uitgeverij Bombilla, Amsterdam (1996)
 	// Max et le château hanté published by E.M.M.E., Boulogne, Paris (2001)
 	// Макс и привидения из замка localized by New Media Generation (NMG), Yakimanka, Moscow (1997)
+	// Polish versions are D5, D7
 	// English and usually German are always selectable languages during gameplay
 	// Original Mac German filename is Max und das Schloßgespenst
 	// Original Mac French filename is Max et le château hanté
@@ -5040,6 +5051,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("monja", "", "monja", "cd6695c8488c2ad352336af5afdcf5bd", 481803, Common::JA_JPN, 404),
 	WINGAME1t_l("monja", "", "MONJA.EXE", "5bc2c8a824528ec4de0f8d8feb8f004e", 212008995, Common::JA_JPN, 404),
+
+	WINGAME1("monroefiles", "", "CP_TO_HD/HRDEVDNC.EXE", "t:da1bd3854d42b6b5f724e05a117134be", 751981, 404),
 
 	// Norwegian release: "Lek gjemsel med Mummitrollet"
 	MACGAME2_l("moominhide", "", "MUMIN", "8b138db44d4421cc7294a9dc792ccf1b", 499776,
@@ -5682,6 +5695,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("ssdietcoke", "", "DietCoke Animations", "6e86a061950bc3987ce2ddf531bfde34", 295426, 403),
 	MACGAME1("sslivepicture", "", "Live Picture Screen Saver", "4502263d183dd9dae0e3c3505fdf8ae1", 555539, 404),
 
+	WINGAME1("ssperiscope", "", "DPSAVER.EXE", "t:b86f04e643fc15e4d7537933202c2dbb", 1750455, 404),
+
 	WINGAME2("ssseven", "", "SEVEN.EXE", "t:972ab398e28fc4b600405af200902bb9", 1892673,
 							"LINGO.INI", "d:4f75e838a13079b4fc75af0fd6f70f3c", 	   826, 404),
 
@@ -5880,6 +5895,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1t_l("uruuruexcellent", "", "xn--68j4bvcxb0d", "bd4b12aa33ec2deae4e26b2f6f744ba7", 294107, Common::JA_JPN, 404),
 
 	WINGAME1t("ushistory", "", "HISTORY.EXE", "5660e6a7b772b5bf8867627ab0d7a58b", 703629, 404),
+
+	MACGAME1("vangoghstarry", "", "Starry Night",	   "rt:23a4fa8e525840af775c32da27cd9822", 491920, 404),
+	WINGAME1("vangoghstarry", "", "STARRY/STARRY.EXE", "t:771df3cf7c07a514c3f40e6a173ea387",  697909, 404),
 
 	// Animations published on https://www.vinceworld.com
 	WINGAME1("vc_automat", "", "AUTOMAT.EXE", "t:efef781acf04870bbd4fe30e1e87a6bf", 3862613, 404),
@@ -6820,6 +6838,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("max2", "", "START.EXE",			 "t:88d21b5cb6dd9fd6016574a04eb8af8e", 939743,
 						   "DATEN/ABSPANNE.DXR", "d:62113ac92ad51c24bf7fdf2242b8dfda", 407980, Common::PL_POL, 500),
 
+	// Published on CyberMycha issue 04, 2002
+	// Newer version is D7
+	// Other languages are D4
+	// English, German, Polish selectable in-game
+	WINGAME2_l("max3", "", "PLAY.EXE",			 "t:fe534da5181452a6cd7eceee2129337e", 1394003,
+						   "DATEN/ABSPANNE.DXR", "d:563f7b0d437d73e536f4c9937f52d5b1",  454362, Common::PL_POL, 500),
+
 	// Original filename is 'メカフォルダ/メカドリル'
 	MACGAME1_l("mecadrill", "", "xn--jckd8d2dsc3c/xn--lck0c6ctbf", "16f51fc148898582fcdb6f58456ceb52", 719636, Common::JA_JPN, 501),
 	// Decomposed variant of the above filename
@@ -7342,6 +7367,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// The low- and hi-res movies have the same filenames, so there can be only one installed at a time
 	MACGAME1("sshighlander", "v1.10e", "Highlander Screen Saver", "6b91ac61174d6a07bea6a8820a1fe172", 802522, 500),
 	WINGAME1("sshighlander", "", "Highlander Screen Saver.exe", "3460ad87d2ba57104e2810a77b53c220", 1976229, 500),
+
+	WINGAME2("ssspacejam", "", "SCREEN_T.EXE", "t:a92313e632b973ac80fff7ba999268d7", 1667915,
+							   "SCREEN_T.SCR", "d:12b3d110ee6bafb5012d76652483b46a", 64608, 500),
 
 	// Screen savers found on Let's Play with "Sakura" activity CD
 	// Windows versions on same disc are D6
@@ -8689,6 +8717,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("maisybday", "", "Maisy BDay",		"r:0944b962ebb00f4b5d5149d220f8449b", 113458,  702),
 	WINGAME1("maisybday", "", "Maisy BDay.exe", "t:26fc28194d1991645a9a42794bcb1b36", 2619122, 702),
 
+	// Max i Duch Zamku
+	// Other languages are D4
+	// CyberMycha version is D5
+	// TRAC report #15226
+	WINGAME1_l("max3", "", "M3_START.EXE",  "t:f30d96c8db93a3927ca97e28a86df0d4",  2677734, Common::PL_POL, 702),
+
 	// Mia Muis Op Zoek naar Oma Mimi's Medicijn (Dutch)
 	// English version is D10
 	MACGAME2_l("miareading1", "", "Mia",		  "rt:bd782e079df135d3410811818fe4d11d", 110498,
@@ -8729,6 +8763,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("oztma", "", "Start Oz", "0944b962ebb00f4b5d5149d220f8449b", 115200, 702),
 	WINGAME1("oztma", "", "Oz - TMA.exe", "7c18c9a6af2694156bf09ed195c1ab09", 2621536, 702),
+
+	WINGAME2("pasterzu", "", "start.exe",					  "t:3d0edd261c923ba51783ac2fd44f0906", 1258961,
+							 "Dobry Pasterz/proba/proba.dxr", "d:1a5550c37183be8b38cb92e3726227d1", 2537426, 700),
 
 	// Cover disc from Spanish PC Plus magazine. May simply load HTML pages from disc.
 	WINGAME2_l("pcplus64", "Cover Disc", "cd.exe",			"t:64a59792d16e68272bee73ed2111ba46", 5014518,
