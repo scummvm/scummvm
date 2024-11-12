@@ -373,11 +373,12 @@ void SoundManager::playSound(uint16 channelID) {
 		}
 	}
 
-	uint numLoops = chan.numLoops;
+	// FIXME: numLoops now unused. is this an oversight or just dead code?
+	//uint numLoops = chan.numLoops;
 	if (chan.playCommands & kPlayRandomTime) {
 		// We want to add randomized time delays between repeats, which is not doable with
 		// a simple LoopingAudioStream. The delays are added in soundEffectMaintenance();
-		numLoops = 1;
+		//numLoops = 1;
 
 		// Decrement the number of loops since we start playing immediately after
 		--chan.numLoops;
