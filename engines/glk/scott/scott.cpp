@@ -328,7 +328,7 @@ void Scott::delay(double seconds) {
 		do {
 			glk_select(&ev);
 			updates(ev);
-		} while (drawingVector());
+		} while (drawingVector() && !g_vm->shouldQuit());
 		if (_G(_gliSlowDraw))
 			seconds = 0.5;
 	}
@@ -338,7 +338,7 @@ void Scott::delay(double seconds) {
 	do {
 		glk_select(&ev);
 		updates(ev);
-	} while (ev.type != evtype_Timer);
+	} while (ev.type != evtype_Timer && !g_vm->shouldQuit());
 
 	glk_request_timer_events(0);
 }
@@ -1921,7 +1921,7 @@ int Scott::yesOrNo() {
 			}
 		} else
 			updates(ev);
-	} while (result == 0);
+	} while (result == 0 && !g_vm->shouldQuit());
 
 	return (result == 1);
 }
@@ -1941,7 +1941,7 @@ void Scott::hitEnter() {
 			}
 		} else
 			updates(ev);
-	} while (result == 0);
+	} while (result == 0 && !g_vm->shouldQuit());
 
 	return;
 }

@@ -206,6 +206,9 @@ int savageIslandMenu(uint8_t **sf, size_t *extent, int recIndex) {
 				g_scott->glk_request_char_event(_G(_bottomWindow));
 			}
 		}
+
+		if (g_vm->shouldQuit())
+			return 0;
 	} while (result == 0);
 
 	g_scott->glk_window_clear(_G(_bottomWindow));
@@ -235,7 +238,6 @@ int savageIslandMenu(uint8_t **sf, size_t *extent, int recIndex) {
 		return decrunchC64(sf, extent, rec);
 	} else {
 		error("savageIslandMenu: Failed loading file %s\n", rec._appendFile);
-		return 0;
 	}
 }
 
@@ -285,6 +287,9 @@ int mysteriousMenu(uint8_t **sf, size_t *extent, int recindex) {
 				g_scott->glk_request_char_event(_G(_bottomWindow));
 			}
 		}
+
+		if (g_vm->shouldQuit())
+			return 0;
 	} while (result == 0);
 
 	g_scott->glk_window_clear(_G(_bottomWindow));
@@ -311,7 +316,6 @@ int mysteriousMenu(uint8_t **sf, size_t *extent, int recindex) {
 		break;
 	default:
 		error("mysteriousMenu: Unknown Game");
-		break;
 	}
 
 	int length;
@@ -352,6 +356,9 @@ int mysteriousMenu2(uint8_t **sf, size_t *extent, int recindex) {
 				g_scott->glk_request_char_event(_G(_bottomWindow));
 			}
 		}
+
+		if (g_vm->shouldQuit())
+			return 0;
 	} while (result == 0);
 
 	g_scott->glk_window_clear(_G(_bottomWindow));
@@ -375,7 +382,6 @@ int mysteriousMenu2(uint8_t **sf, size_t *extent, int recindex) {
 		break;
 	default:
 		error("mysteriousMenu2: Unknown Game");
-		break;
 	}
 
 	int length;
@@ -389,7 +395,6 @@ int mysteriousMenu2(uint8_t **sf, size_t *extent, int recindex) {
 		return decrunchC64(sf, extent, rec);
 	} else {
 		error("mysteriousMenu2: Failed loading file %s", filename);
-		return 0;
 	}
 }
 
