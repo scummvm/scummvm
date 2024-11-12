@@ -6839,6 +6839,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// English, German, Polish selectable in-game
 	WINGAME2_l("max2", "", "START.EXE",			 "t:88d21b5cb6dd9fd6016574a04eb8af8e", 939743,
 						   "DATEN/ABSPANNE.DXR", "d:62113ac92ad51c24bf7fdf2242b8dfda", 407980, Common::PL_POL, 500),
+	// TRAC #15226
+	WINGAME2_l("max2", "", "START.EXE",			 "t:88d21b5cb6dd9fd6016574a04eb8af8e", 939743,
+						   "DATEN/ABSPANNE.DXR", "d:c4993281f09a7a2351c93ab6109dce18", 408716, Common::PL_POL, 500),
 
 	// Published on CyberMycha issue 04, 2002
 	// Newer version is D7
