@@ -39,6 +39,8 @@
 namespace Scumm {
 
 void ScummEngine::initBanners() {
+	memset(_bannerColors, 0, sizeof(_bannerColors));
+
 	setPalColor(7, 0x5A, 0x5A, 0x5A);
 	setPalColor(8, 0x46, 0x46, 0x46);
 	setPalColor(15, 0x8C, 0x8C, 0x8C);
