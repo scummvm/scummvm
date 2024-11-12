@@ -5532,9 +5532,50 @@ static const uint16 kq4PatchUnicornNightRide[] = {
 	PATCH_END
 };
 
+// In Lolotte's bedroom, opening the door and exiting the room while she is
+//  alive leaves the game in a broken state. Upon returning, the door appears
+//  open but ego cannot walk through it and complete the game.
+//
+// We fix this by always initializing ego:illegalBits based on the door global.
+//  To make room for this patch, we overwrite the code that sets ego:baseSetter
+//  to zero. The previous room already sets this when changing rooms.
+//
+// This bug was caused by a fix for a minor bug. In early versions, the door was
+//  always closed prior to killing Lolotte, even if it had already been opened.
+//  The player just had to open it again. In later versions, code was added to
+//  handle this, but it initialized the door without also initializing ego.
+//
+// Applies to: PC 1.006.003, PC 1.006.004, Amiga
+// Responsible method: Room82:init
+// Fixes bug: #15471
+static const uint16 kq4SignatureLolotteDoor[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x00d0),       // pushi baseSetter [ hard-coded for KQ4 late ]
+	0x78,                           // push1
+	0x76,                           // push0
+	SIG_ADDTOOFFSET(+5),
+	0x39, SIG_ADDTOOFFSET(+1),      // pushi illegalBits
+	0x78,                           // push1
+	0x38, SIG_UINT16(0xc000),       // pushi c000
+	SIG_ADDTOOFFSET(+10),
+	0x4a, 0x32,                     // send 32 [ ego ... illegalBits: c000 ... ]
+	SIG_END
+};
+
+static const uint16 kq4PatchLolotteDoor[] = {
+	PATCH_GETORIGINALBYTES(5, +11),
+	0x80, PATCH_UINT16(0x00e3),      // lag 00e3 [ 1 if door open, 0 if closed ]
+	0x0e,                            // shl  [ acc = 8000 if door open, c000 if closed ]
+	0x36,                            // push [ ego:illegalBits = acc ]
+	PATCH_ADDTOOFFSET(+10),
+	0x4a, 0x2c,                      // send 2a [ ego ... illegalBits: 8000 or c000 ... ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq4Signatures[] = {
 	{ false,    24, "missing waterfall view",                      1, kq4SignatureMissingWaterfallView,         kq4PatchMissingWaterfallView },
+	{  true,    82, "lolotte door",                                1, kq4SignatureLolotteDoor,                  kq4PatchLolotteDoor },
 	{  true,    90, "fall down stairs",                            1, kq4SignatureFallDownStairs,               kq4PatchFallDownStairs },
 	{  true,    98, "disable speed test",                          1, sci0EarlySpeedTestSignature,              sci0EarlySpeedTestPatch },
 	{  true,    98, "fix speed test overflow",                     1, sci0SpeedTestOverflowSignature,           sci0SpeedTestOverflowPatch },
