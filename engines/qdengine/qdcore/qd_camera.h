@@ -349,9 +349,6 @@ public:
 	bool draw_grid() const;
 	bool draw_cell(int x, int y, int z, int penWidth, uint32 color) const;
 
-	sGridCell *backup(sGridCell *ptrBuff);
-	bool restore(sGridCell *grid, int sx, int sy, int csx, int csy);
-
 	//! Установка текущего режима камеры.
 	/**
 	Если объект нулевой, то берется объект по-умолчанию.

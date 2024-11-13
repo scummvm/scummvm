@@ -878,26 +878,6 @@ void qdCamera::resize_grid(int sx, int sy) {
 	_GSY = sy;
 }
 
-sGridCell *qdCamera::backup(sGridCell *ptrBuff) {
-	memcpy(ptrBuff, _grid, sizeof(sGridCell) *_GSX * _GSY);
-	return ptrBuff;
-}
-
-bool qdCamera::restore(sGridCell *grid, int sx, int sy, int csx, int csy) {
-	if (_grid)
-		delete [] _grid;
-
-	_grid  = new sGridCell[sx * sy];
-	memcpy(_grid, grid, sizeof(sGridCell) * sx * sy);
-
-	_GSX = sx;
-	_GSY = sy;
-	_cellSX = csx;
-	_cellSY = csy;
-
-	return true;
-}
-
 bool qdCamera::set_grid_cell(const Vect2s &cell_pos, const sGridCell &cell) {
 	if (cell_pos.x >= 0 && cell_pos.x < _GSX && cell_pos.y >= 0 && cell_pos.y < _GSY) {
 		_grid[cell_pos.x + cell_pos.y * _GSX] = cell;
