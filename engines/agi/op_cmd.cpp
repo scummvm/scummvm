@@ -2162,6 +2162,17 @@ void cmdPrint(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	int16 textNr = parameter[0];
 
 	vm->_text->print(textNr);
+
+	// WORKAROUND: LSL1 prints the same message three times when giving whiskey to
+	// the man in room 14, but in our implementation it's not clear that these are
+	// three separate message boxes. The original interpreter immediately updated
+	// the screen when drawing and removing message boxes. In ours, the message
+	// appears stuck until pressing enter three times. If this happens in other
+	// games we can look into expanding this, but it may be the only one. Bug #15293
+	if (vm->getGameID() == GID_LSL1 && textNr == 22 && vm->getVar(VM_VAR_CURRENT_ROOM) == 14) {
+		vm->_gfx->updateScreen();
+		vm->_system->delayMillis(50);
+	}
 }
 
 void cmdPrintF(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
