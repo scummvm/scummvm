@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-12 22:41+0000\n"
+"POT-Creation-Date: 2024-11-13 20:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -548,7 +548,7 @@ msgid "GFX"
 msgstr ""
 
 #: gui/editgamedialog.cpp:164 gui/options.cpp:2070 gui/options.cpp:2251
-#: backends/graphics/atari/atari-graphics.cpp:1061
+#: backends/graphics/atari/atari-graphics.cpp:1066
 #: backends/graphics/sdl/sdl-graphics.cpp:481
 msgid "Graphics"
 msgstr ""
@@ -3806,7 +3806,7 @@ msgstr ""
 msgid "Choose a new folder"
 msgstr ""
 
-#: backends/graphics/atari/atari-graphics.cpp:1065
+#: backends/graphics/atari/atari-graphics.cpp:1070
 #: backends/graphics/sdl/sdl-graphics.cpp:503
 msgid "Toggle aspect ratio correction"
 msgstr ""
