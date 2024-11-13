@@ -1927,10 +1927,6 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncArray(_roomVars, _numRoomVariables, Common::Serializer::Sint32LE, VER(38));
 
 	int currentSoundCard = VAR_SOUNDCARD != 0xFF ? VAR(VAR_SOUNDCARD) : -1;
-	bool isMonkey1MacDefaultSoundCardValue =
-		(_game.id == GID_MONKEY &&
-		(_sound->_musicType & MidiDriverFlags::MDT_MACINTOSH) &&
-		currentSoundCard == 0xFFFF);
 
 	// The variables grew from 16 to 32 bit.
 	if (s.getVersion() < VER(15))
@@ -1938,11 +1934,10 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	else
 		s.syncArray(_scummVars, _numVariables, Common::Serializer::Sint32LE);
 
-	if (s.isLoading() && VAR_SOUNDCARD != 0xFF && (_game.heversion < 70 && _game.version <= 6)) {
-		if (currentSoundCard != VAR(VAR_SOUNDCARD) && !isMonkey1MacDefaultSoundCardValue) {
-			Common::String soundCards[] = {
+	if (_game.platform == Common::kPlatformDOS && s.isLoading() && VAR_SOUNDCARD != 0xFF && (_game.heversion < 70 && _game.version <= 6)) {
+		if (currentSoundCard != VAR(VAR_SOUNDCARD)) {
+			const char *soundCards[] = {
 				"PC Speaker", "IBM PCjr/Tandy", "Creative Music System", "AdLib", "Roland MT-32/CM-32L"
-				"", "", "", "", "", "", "Macintosh Low Quality Sound", "Macintosh High Quality Sound"
 			};
 			
 			GUI::MessageDialog dialog(
@@ -1950,7 +1945,8 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 					"Current music device: %s (id %d)\nSave file music device: %s (id %d)\n\n"
 					"Loading will be attempted, but the game may behave incorrectly or crash.\n"
 					"Please change the audio configuration accordingly in order to properly load this save file."),
-					soundCards[currentSoundCard].c_str(), currentSoundCard, soundCards[VAR(VAR_SOUNDCARD)].c_str(), VAR(VAR_SOUNDCARD))
+					currentSoundCard < ARRAYSIZE(soundCards) ? soundCards[currentSoundCard] : "invalid", currentSoundCard,
+					VAR(VAR_SOUNDCARD) < ARRAYSIZE(soundCards) ? soundCards[VAR(VAR_SOUNDCARD)] : "invalid", VAR(VAR_SOUNDCARD))
 			);
 			runDialog(dialog);
 		}
