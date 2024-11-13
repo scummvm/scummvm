@@ -57,7 +57,7 @@ bool RemoveRailNode(int32 nodeID, Buffer *walkCodes, bool restoreEdges);
 bool RailNodeExists(int32 nodeID, int32 *nodeX, int32 *nodeY);
 int16 GetEdgeLength(int32 node1, int32 node2);
 bool GetShortestPath(int32 origID, int32 destID, railNode **shortPath);
-railNode *CreateCustomPath(int32 coord, ...);
+railNode *CreateCustomPath(int coord, ...);
 void DisposePath(railNode *pathStart);
 bool intr_LineCrossesRect(int32 line_x1, int32 line_y1, int32 line_x2, int32 line_y2,
 	int32 rect_x1, int32 rect_y1, int32 rect_x2, int32 rect_y2);

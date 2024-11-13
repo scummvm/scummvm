@@ -324,9 +324,6 @@ void Room203::init() {
 void Room203::daemon() {
 	int frame;
 
-	if (_G(kernel).trigger < 9999)
-		warning("%d", _G(kernel).trigger);
-
 	if (keyCheck() && _gkShould == 0 && _G(game_buff_ptr)->x1 >= 380) {
 		_gkShould = 1;
 		_G(kernel).call_daemon_every_loop = false;

@@ -93,7 +93,7 @@ void Room814::init() {
 			_guessIndex = 11;
 			ws_walk(_G(my_walker), 1765, 348, nullptr, 0, 9, true);
 			DisposePath(_mcTrekMach->walkPath);
-			_mcTrekMach->walkPath = CreateCustomPath(1832, 325, 1815, 400, 0xffff);
+			_mcTrekMach->walkPath = CreateCustomPath(1832, 325, 1815, 400, -1);
 			ws_custom_walk(_mcTrekMach, 11, 1, true);
 		} else {
 			ws_walk(_G(my_walker), 1765, 348, nullptr, 1, 9, true);

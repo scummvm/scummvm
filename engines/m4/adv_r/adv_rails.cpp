@@ -761,7 +761,7 @@ static railNode *DuplicatePath(railNode *pathStart) {
 }
 
 
-railNode *CreateCustomPath(int32 coord, ...) {
+railNode *CreateCustomPath(int coord, ...) {
 	va_list argPtr;
 	railNode *firstNode, *prevNode = nullptr, *newNode;
 	int32 x, y;
@@ -772,13 +772,13 @@ railNode *CreateCustomPath(int32 coord, ...) {
 	// Set argPtr to point to the beginning of the variable arg list
 	va_start(argPtr, coord);
 
-	// Loop until coord == 0xffff
-	while (coord != 0xffff) {
+	// Loop until coord == -1
+	while (coord != -1) {
 		// Set x
 		x = coord;
 
 		// Read the next arg off the arg list, and set y
-		coord = va_arg(argPtr, int32);
+		coord = va_arg(argPtr, int);
 		y = coord;
 
 
@@ -803,8 +803,8 @@ railNode *CreateCustomPath(int32 coord, ...) {
 		prevNode = newNode;
 
 		// Read another arg, should be the next "x" for the next pair of args
-		if (coord != 65535) {
-			coord = va_arg(argPtr, int32);
+		if (coord != -1) {
+			coord = va_arg(argPtr, int);
 		}
 	}
 
