@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-08 11:49+0100\n"
-"PO-Revision-Date: 2024-09-04 21:43+0000\n"
+"PO-Revision-Date: 2024-11-13 11:43+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -17,12 +17,12 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.4\n"
+"X-Generator: Weblate 5.7.2\n"
 "X-Language-name: Català\n"
 
 #: audio/mac_plugin.cpp:30
 msgid "Apple Macintosh Audio"
-msgstr ""
+msgstr "Àudio d'Apple Macintosh"
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
@@ -1749,10 +1749,8 @@ msgid "Scaler:"
 msgstr "Escalat:"
 
 #: gui/options.cpp:1666
-#, fuzzy
-#| msgid "Render mode:"
 msgid "Rotation mode:"
-msgstr "Mode de renderització:"
+msgstr "Mode de rotació:"
 
 #: gui/options.cpp:1680
 msgid "Shader:"
@@ -2736,10 +2734,8 @@ msgid "Do you really want to delete this saved game?"
 msgstr "Realment voleu suprimir aquesta partida?"
 
 #: gui/saveload-dialog.cpp:557
-#, fuzzy
-#| msgid "Error writing save file\n"
 msgid "Error deleting saved game"
-msgstr "S'ha produït un error en desar la partida\n"
+msgstr "S'ha produït un error en suprimir la partida desada"
 
 #: gui/saveload-dialog.cpp:675 gui/saveload-dialog.cpp:1184
 msgid "Date: "
@@ -3063,16 +3059,12 @@ msgid "VGA Grey Scale"
 msgstr "Escala de grisos VGA"
 
 #: common/rendermode.cpp:58
-#, fuzzy
-#| msgid "PC-9821 (256 Colors)"
 msgid "Windows (256 Colors)"
-msgstr "PC-9821 (256 colors)"
+msgstr "Windows (256 colors)"
 
 #: common/rendermode.cpp:59
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "Windows (16 Colors)"
-msgstr "PC-9801 (16 colors)"
+msgstr "Windows (16 colors)"
 
 #: common/rendermode.cpp:96
 msgctxt "lowres"
@@ -3085,10 +3077,8 @@ msgid "Hercules Amber"
 msgstr "Hercules color ambre"
 
 #: common/rotationmode.cpp:33
-#, fuzzy
-#| msgid "Goto location"
 msgid "No rotation"
-msgstr "Ves a la ubicació"
+msgstr "Sense rotació"
 
 #: common/rotationmode.cpp:34
 msgid "Clockwise"
@@ -7099,10 +7089,8 @@ msgstr "Modificador de moviment ràpid"
 
 #. I18N: Opens menu with player commands
 #: engines/cruise/metaengine.cpp:173
-#, fuzzy
-#| msgid "Player Time:"
 msgid "Player menu"
-msgstr "Temps del jugador:"
+msgstr "Menú del jugador"
 
 #: engines/cruise/metaengine.cpp:179
 #, fuzzy
@@ -11390,14 +11378,10 @@ msgstr ""
 "color RGB"
 
 #: engines/sword2/detection_tables.h:419
-#, fuzzy
-#| msgid ""
-#| "Enhanced Edition not supported. Please, use the original files which are "
-#| "part of the release."
 msgid "Remastered edition is not supported. Please, use the classic version"
 msgstr ""
-"L'Enhanced Edition no està suportada. Utilitzeu els fitxers que formen part "
-"del joc original."
+"L'edició remasteritzada no està suportada. Si us plau, utilitza la versió "
+"clàssica"
 
 #: engines/sword2/metaengine.cpp:43
 msgid "Show object labels"
