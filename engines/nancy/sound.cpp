@@ -310,8 +310,17 @@ void SoundManager::loadSound(const SoundDescription &description, SoundEffectDes
 	Common::Path path(description.name + (g_nancy->getGameType() == kGameTypeVampire ? ".dwd" : ".his"));
 	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(path);
 	if (file) {
+		uint numLoops = chan.numLoops;
+		if (chan.playCommands & kPlayRandomTime) {
+			// We want to add randomized time delays between repeats, which is not doable with
+			// a simple LoopingAudioStream. The delays are added in soundEffectMaintenance();
+			numLoops = 1;
+
+			// Decrement the number of loops since we start playing immediately after
+			--chan.numLoops;
+		}
 		chan.stream = makeHISStream(file, DisposeAfterUse::YES, description.samplesPerSec);
-		chan.streamForMixer = Audio::makeLoopingAudioStream(chan.stream, chan.numLoops);
+		chan.streamForMixer = Audio::makeLoopingAudioStream(chan.stream, numLoops);
 	}
 }
 
@@ -371,17 +380,6 @@ void SoundManager::playSound(uint16 channelID) {
 			chan.nextStepTime = g_nancy->getTotalPlayTime() + chan.effectData->moveStepTime;
 			chan.stepsLeft = chan.effectData->numMoveSteps;
 		}
-	}
-
-	// FIXME: numLoops now unused. is this an oversight or just dead code?
-	//uint numLoops = chan.numLoops;
-	if (chan.playCommands & kPlayRandomTime) {
-		// We want to add randomized time delays between repeats, which is not doable with
-		// a simple LoopingAudioStream. The delays are added in soundEffectMaintenance();
-		//numLoops = 1;
-
-		// Decrement the number of loops since we start playing immediately after
-		--chan.numLoops;
 	}
 
 	_mixer->playStream(	chan.type,
