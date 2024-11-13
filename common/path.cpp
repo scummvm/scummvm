@@ -1153,47 +1153,31 @@ Path Path::fromConfig(const String &value) {
 }
 
 String Path::toConfig() const {
-#if defined(WIN32)
+#if defined(WIN32) && defined(UNICODE)
 	if (!isEscaped()) {
 		// If we are escaped, we have forbidden characters (slash or pipe) which must be encoded
 		// This can't happen on real Win32 paths
-#if defined(UNICODE)
 		// With UNICODE every path is encoded by the backend to UTF-8 strings all the configuration
 		// Except for (strange) cases where we would like to store paths containing backslashes,
 		// there is no need for escaping
 		if (strchr(_str.c_str(), Path::kNativeSeparator) == nullptr) {
 			return toString(Path::kNativeSeparator);
 		}
-#else
-		// Under WIN32 we try to store paths without punycoding the ':' for drives
-		// and using \ to keep the file simple.
-		// This also allows the configuration file to be backwards compatible for simple cases.
-		// Having non-ASCII characters in the path makes it punycoded anyway.
-		const char *start = nullptr;
-
-		// Check for DOS, Win32 device namespace and Win32 file name namespace style paths
-		// The checks are done from less costly to more
-		if (_str.size() >= 2 && _str[1] == ':' && Common::isAlpha(_str[0])) {
-			// This looks like a DOS drive specifier,
-			start = _str.c_str() + 2;
-		} else if (_str.size() >= 4 &&
-			_str[0] == SEPARATOR &&
-			_str[1] == SEPARATOR &&
-			_str[3] == SEPARATOR && (
-				_str[2] == '?' ||
-				_str[2] == '.')) {
-			// This looks like a Win32 device or drive namespaces specifier...
-			start = _str.c_str() + 4;
-			if (_str.size() >= 6 && _str[5] == ':' && Common::isAlpha(_str[4])) {
-				// ...which contains a drive specifier
-				start += 2;
-			}
-		}
-		// with some luck we don't need to punycode the path
-		if (start && !extract(start).punycodeNeedsEncode()) {
+	}
+#elif defined(__3DS__) || defined(__amigaos4__) || defined(__DS__) || defined(__MORPHOS__) || defined(NINTENDO_SWITCH) || defined(__PSP__) || defined(PSP2) || defined(__WII__) || defined(WIN32)
+	// For all platforms making use of : as a drive separator, avoid useless punycoding
+	if (!isEscaped()) {
+		// If we are escaped, we have forbidden characters which must be encoded
+		// Try to replace all : by SEPARATOR and check if we need puny encoding: if we don't, we are safe
+		Path tmp(*this);
+		tmp._str.replace(':', SEPARATOR);
+#if defined(WIN32)
+		// WIN32 can also make use of ? in Win32 devices namespace
+		tmp._str.replace('?', SEPARATOR);
+#endif
+		if (!tmp.punycodeNeedsEncode()) {
 			return toString(Path::kNativeSeparator);
 		}
-#endif
 	}
 #endif
 
