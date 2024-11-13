@@ -72,10 +72,18 @@ public:
 	void setFeatureState(OSystem::Feature f, bool enable) override;
 	bool getFeatureState(OSystem::Feature f) const override;
 
-	int getDefaultGraphicsMode() const override { return 0; }
-	bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) override { return true; }
-	int getGraphicsMode() const override { return 0; }
-	Graphics::Surface *lockScreen() override { return &_gameScreen; }
+	int getDefaultGraphicsMode() const override {
+		return 0;
+	}
+	bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) override {
+		return true;
+	}
+	int getGraphicsMode() const override {
+		return 0;
+	}
+	Graphics::Surface *lockScreen() override {
+		return &_gameScreen;
+	}
 	void unlockScreen() override {}
 
 	int getScreenChangeID() const override;
@@ -88,7 +96,9 @@ public:
 
 	void realUpdateScreen(void);
 
-	bool gameNeedsAspectRatioCorrection() const override { return false; }
+	bool gameNeedsAspectRatioCorrection() const override {
+		return false;
+	}
 	void handleResizeImpl(const int width, const int height) override;
 	void setSystemMousePosition(const int x, const int y) override {}
 	void setMousePosition(int x, int y);

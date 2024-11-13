@@ -94,8 +94,8 @@ void OSystem_libretro::engineInit() {
 
 	/* See LibretroPalette::set workaround */
 	/*if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_SW){
-		dynamic_cast<LibretroGraphics *>(_graphicsManager)->_mousePalette.reset();
-		dynamic_cast<LibretroGraphics *>(_graphicsManager)->_gamePalette.reset();
+	    dynamic_cast<LibretroGraphics *>(_graphicsManager)->_mousePalette.reset();
+	    dynamic_cast<LibretroGraphics *>(_graphicsManager)->_gamePalette.reset();
 	}*/
 }
 
@@ -136,11 +136,11 @@ void OSystem_libretro::resetGraphicsContext(void) {
 }
 #endif
 
-int16 OSystem_libretro::getScreenWidth(void){
+int16 OSystem_libretro::getScreenWidth(void) {
 	return dynamic_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowWidth();
 }
 
-int16 OSystem_libretro::getScreenHeight(void){
+int16 OSystem_libretro::getScreenHeight(void) {
 	return dynamic_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowHeight();
 }
 

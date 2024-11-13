@@ -86,7 +86,6 @@ public:
 	void refreshScreen(void);
 	void destroy(void);
 	void quit() override {}
-
 	void resetGraphicsManager(void);
 	void getScreen(const Graphics::ManagedSurface *&screen);
 	int16 getScreenWidth(void);
@@ -108,7 +107,6 @@ public:
 	Common::MutexInternal *createMutex(void) override;
 	void requestQuit(void);
 	void resetQuit(void);
-
 	void setMousePosition(int x, int y);
 
 	/* Utils */

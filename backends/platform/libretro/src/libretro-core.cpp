@@ -1106,10 +1106,10 @@ void retro_run(void) {
 	retro_update_options_display();
 
 #ifdef USE_HIGHRES
-		if (av_status & AV_STATUS_UPDATE_GUI) {
-			retro_gui_res_reset();
-			av_status &= ~AV_STATUS_UPDATE_GUI;
-		}
+	if (av_status & AV_STATUS_UPDATE_GUI) {
+		retro_gui_res_reset();
+		av_status &= ~AV_STATUS_UPDATE_GUI;
+	}
 #endif
 
 	if (av_status & (AV_STATUS_UPDATE_AV_INFO | AV_STATUS_UPDATE_GEOMETRY)) {

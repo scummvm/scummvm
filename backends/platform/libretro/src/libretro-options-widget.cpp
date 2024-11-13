@@ -218,7 +218,7 @@ bool LibretroOptionsWidget::generatePlaylist(Common::String playlistPath) {
 	filestream_close(playlistFile);
 
 	Common::String response;
-	if (success){
+	if (success) {
 		response = _("Done");
 		if (!cleanSuccess)
 			response += " (" +  _("cleaning failed") + ")";

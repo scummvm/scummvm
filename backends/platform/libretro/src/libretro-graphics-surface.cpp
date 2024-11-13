@@ -34,7 +34,7 @@ LibretroGraphics::LibretroGraphics() : _cursorPaletteEnabled(false),
 	_screenUpdatePending(false),
 	_gamePalette(256),
 	_cursorPalette(256),
-	_screenChangeID(1 << (sizeof(int) * 8 - 2)){}
+	_screenChangeID(1 << (sizeof(int) * 8 - 2)) {}
 
 LibretroGraphics::~LibretroGraphics() {
 	_gameScreen.free();
@@ -74,7 +74,7 @@ void LibretroGraphics::initSize(uint width, uint height, const Graphics::PixelFo
 	Graphics::PixelFormat actFormat = format ? *format : Graphics::PixelFormat::createFormatCLUT8();
 	bool force_gui_redraw = false;
 	/* Override for ScummVM Launcher */
-	if (nullptr == ConfMan.getActiveDomain()){
+	if (nullptr == ConfMan.getActiveDomain()) {
 		/* 0 w/h is used to notify libretro gui res settings is changed */
 		force_gui_redraw = (width == 0);
 		width = retro_setting_get_gui_res_w();
@@ -126,14 +126,14 @@ void LibretroGraphics::updateScreen() {
 }
 
 void LibretroGraphics::realUpdateScreen(void) {
-	const Graphics::Surface &srcSurface = (_overlayVisible) ? _overlay : _gameScreen;
+	const Graphics::Surface &srcSurface = _overlayVisible ? _overlay : _gameScreen;
 
 	if (srcSurface.w && srcSurface.h)
-		_screen.blitFrom(srcSurface, Common::Rect(srcSurface.w,srcSurface.h),Common::Rect(_screen.w,_screen.h),&_gamePalette);
+		_screen.blitFrom(srcSurface, Common::Rect(srcSurface.w, srcSurface.h), Common::Rect(_screen.w, _screen.h), &_gamePalette);
 
 	if (_cursorVisible && _cursor.w && _cursor.h) {
 		Common::Point topLeft(_cursorX - _cursorHotspotXScaled, _cursorY - _cursorHotspotYScaled);
-		_screen.transBlitFrom(_cursor, Common::Rect( _cursor.w, _cursor.h), Common::Rect(topLeft, topLeft + Common::Point(_cursorWidthScaled, _cursorHeightScaled)),  _cursorKeyColor, false, 0, 0xff, nullptr, false,  _cursorPaletteEnabled ? &_cursorPalette : &_gamePalette);
+		_screen.transBlitFrom(_cursor, Common::Rect(_cursor.w, _cursor.h), Common::Rect(topLeft, topLeft + Common::Point(_cursorWidthScaled, _cursorHeightScaled)),  _cursorKeyColor, false, 0, 0xff, nullptr, false,  _cursorPaletteEnabled ? &_cursorPalette : &_gamePalette);
 	}
 	_screenUpdatePending = false;
 }
@@ -168,7 +168,7 @@ void LibretroGraphics::warpMouse(int x, int y) {
 	WindowedGraphicsManager::warpMouse(x, y);
 }
 
-void LibretroGraphics::overrideCursorScaling(){
+void LibretroGraphics::overrideCursorScaling() {
 	const frac_t screenScaleFactor = (_cursorDontScale || ! _overlayVisible) ? intToFrac(1) : intToFrac(getWindowHeight()) / 200; /* hard coded as base resolution 320x200 is hard coded upstream */
 
 	_cursorHotspotXScaled = fracToInt(_cursorHotspotX * screenScaleFactor);
@@ -231,9 +231,9 @@ void LibretroGraphics::grabPalette(byte *colors, uint start, uint num) const {
 bool LibretroGraphics::hasFeature(OSystem::Feature f) const {
 	return (f == OSystem::kFeatureCursorPalette) ||
 #ifdef SCUMMVM_NEON
-		(f == OSystem::kFeatureCpuNEON) ||
+	       (f == OSystem::kFeatureCpuNEON) ||
 #endif
-		(f == OSystem::kFeatureCursorAlpha);
+	       (f == OSystem::kFeatureCursorAlpha);
 }
 
 void LibretroGraphics::setFeatureState(OSystem::Feature f, bool enable) {
@@ -245,7 +245,7 @@ bool LibretroGraphics::getFeatureState(OSystem::Feature f) const {
 	return (f == OSystem::kFeatureCursorPalette) ? _cursorPaletteEnabled : false;
 }
 
-void LibretroGraphics::setMousePosition(int x, int y){
+void LibretroGraphics::setMousePosition(int x, int y) {
 	WindowedGraphicsManager::setMousePosition(x, y);
 }
 

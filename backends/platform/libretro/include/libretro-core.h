@@ -24,12 +24,12 @@ extern retro_log_printf_t retro_log_cb;
 extern retro_input_state_t retro_input_cb;
 
 bool retro_get_input_bitmask_supported(void);
-void retro_osd_notification(const char* msg);
+void retro_osd_notification(const char *msg);
 int retro_get_input_device(void);
-const char * retro_get_core_dir(void);
-const char * retro_get_system_dir(void);
-const char * retro_get_save_dir(void);
-const char * retro_get_playlist_dir(void);
+const char *retro_get_core_dir(void);
+const char *retro_get_system_dir(void);
+const char *retro_get_save_dir(void);
+const char *retro_get_playlist_dir(void);
 
 bool retro_setting_get_timing_inaccuracies_enabled(void);
 float retro_setting_get_frame_rate(void);
@@ -50,6 +50,6 @@ void retro_set_size(unsigned width, unsigned height);
 uint8 retro_get_video_hw_mode(void);
 #ifdef USE_OPENGL
 uintptr_t retro_get_hw_fb(void);
-void * retro_get_proc_address(const char * name);
+void *retro_get_proc_address(const char *name);
 #endif
 #endif // LIBRETRO_CORE_H

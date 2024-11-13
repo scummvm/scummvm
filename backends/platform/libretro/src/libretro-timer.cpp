@@ -55,7 +55,7 @@ uint32 LibretroTimerManager::spentOnMainThread(void) {
 	return _spentOnMainThread;
 }
 
-uint8 LibretroTimerManager::getThreadSwitchCaller(void){
+uint8 LibretroTimerManager::getThreadSwitchCaller(void) {
 	return _threadSwitchCaller;
 }
 #endif

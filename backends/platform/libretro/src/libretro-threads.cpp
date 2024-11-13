@@ -171,6 +171,6 @@ int retro_get_scummvm_res() {
 	return scummvm_res;
 }
 
-bool retro_emu_thread_started(void){
+bool retro_emu_thread_started(void) {
 	return (bool)(status & EMU_STARTED);
 }

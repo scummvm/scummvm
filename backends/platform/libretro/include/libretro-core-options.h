@@ -649,7 +649,8 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 #ifdef USE_OPENGL
 			{"enabled", NULL},
 #endif
-			{NULL, NULL},		},
+			{NULL, NULL},
+		},
 #ifdef USE_OPENGL
 		"enabled"
 #else
@@ -667,7 +668,8 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		{
 			{"0", "4:3"},
 			{"1", "16:9"},
-			{NULL, NULL},		},
+			{NULL, NULL},
+		},
 		"1"
 	},
 	{
@@ -682,7 +684,8 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 			{"480", "SD"},
 			{"720", "HD"},
 			{"1080", "FHD"},
-			{NULL, NULL},		},
+			{NULL, NULL},
+		},
 		"720"
 	},
 #endif

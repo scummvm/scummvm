@@ -30,11 +30,11 @@ LibretroOpenGLGraphics::LibretroOpenGLGraphics(OpenGL::ContextType contextType) 
 	resetContext(contextType);
 }
 
-void LibretroOpenGLGraphics::refreshScreen(){
+void LibretroOpenGLGraphics::refreshScreen() {
 	dynamic_cast<LibretroTimerManager *>(LIBRETRO_G_SYSTEM->getTimerManager())->checkThread(THREAD_SWITCH_UPDATE);
 }
 
-void LibretroOpenGLGraphics::setMousePosition(int x, int y){
+void LibretroOpenGLGraphics::setMousePosition(int x, int y) {
 	OpenGL::OpenGLGraphicsManager::setMousePosition(x, y);
 }
 
@@ -51,10 +51,10 @@ void LibretroOpenGLGraphics::setMouseCursor(const void *buf, uint w, uint h, int
 
 }
 
-void LibretroOpenGLGraphics::overrideCursorScaling(){
+void LibretroOpenGLGraphics::overrideCursorScaling() {
 	OpenGL::OpenGLGraphicsManager::recalculateCursorScaling();
 
-	if (_cursor){
+	if (_cursor) {
 		const frac_t screenScaleFactor = (_cursorDontScale || ! _overlayVisible) ? intToFrac(1) : intToFrac(getWindowHeight()) / 200; /* hard coded as base resolution 320x200 is hard coded upstream */
 
 		_cursorHotspotXScaled = fracToInt(_cursorHotspotX * screenScaleFactor);
@@ -68,7 +68,7 @@ void LibretroOpenGLGraphics::overrideCursorScaling(){
 void LibretroOpenGLGraphics::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	bool force_gui_redraw = false;
 	/* Override for ScummVM Launcher */
-	if (nullptr == ConfMan.getActiveDomain()){
+	if (nullptr == ConfMan.getActiveDomain()) {
 		/* 0 w/h is used to notify libretro gui res settings is changed */
 		force_gui_redraw = (width == 0);
 		width = retro_setting_get_gui_res_w();
@@ -102,21 +102,21 @@ void LibretroOpenGLGraphics::handleResizeImpl(const int width, const int height)
 bool LibretroOpenGLGraphics::hasFeature(OSystem::Feature f) const {
 	return
 #ifdef SCUMMVM_NEON
-		(f == OSystem::kFeatureCpuNEON) ||
+	    (f == OSystem::kFeatureCpuNEON) ||
 #endif
-		OpenGL::OpenGLGraphicsManager::hasFeature(f);
+	    OpenGL::OpenGLGraphicsManager::hasFeature(f);
 }
 
-void LibretroHWFramebuffer::activateInternal(){
+void LibretroHWFramebuffer::activateInternal() {
 	GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, retro_get_hw_fb()));
 }
 
 void LibretroOpenGLGraphics::resetContext(OpenGL::ContextType contextType) {
 	const Graphics::PixelFormat rgba8888 =
 #ifdef SCUMM_LITTLE_ENDIAN
-									   Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	    Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
 #else
-									   Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	    Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 #endif
 	notifyContextDestroy();
 	notifyContextCreate(contextType, new LibretroHWFramebuffer(), rgba8888, rgba8888);

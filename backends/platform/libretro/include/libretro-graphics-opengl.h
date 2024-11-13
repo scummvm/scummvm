@@ -22,24 +22,30 @@
 #include "backends/graphics/opengl/texture.h"
 
 namespace OpenGL {
-	class Surface;
+class Surface;
 }
 
 class LibretroOpenGLGraphics : public OpenGL::OpenGLGraphicsManager {
 public:
 	LibretroOpenGLGraphics(OpenGL::ContextType contextType);
-	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) override { return true; };
+	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) override {
+		return true;
+	};
 	void refreshScreen() override;
 	void setSystemMousePosition(const int x, const int y) override {};
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) override;
 	void initSize(uint width, uint height, const Graphics::PixelFormat *format) override;
-	bool isOverlayInGUI(void){ return _overlayInGUI; }
+	bool isOverlayInGUI(void) {
+		return _overlayInGUI;
+	}
 	void setMousePosition(int x, int y);
 	void resetContext(OpenGL::ContextType contextType);
 	OSystem::TransactionError endGFXTransaction() override;
 	bool hasFeature(OSystem::Feature f) const override;
 protected:
-	bool gameNeedsAspectRatioCorrection() const override { return false; }
+	bool gameNeedsAspectRatioCorrection() const override {
+		return false;
+	}
 	void handleResizeImpl(const int width, const int height) override;
 private:
 	void overrideCursorScaling(void);
