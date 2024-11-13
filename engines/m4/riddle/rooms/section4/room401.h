@@ -34,8 +34,8 @@ private:
 	int _val2 = 0;
 	int _val3 = 0;
 	int32 _val4 = 0;
-	int _val5 = 0;
-	int _val6 = 0;
+	int _agentMode = 0;
+	int _agentShould = 0;
 	int _val7 = 0;
 	const char *_digiName1 = nullptr;
 	const char *_digiName2 = nullptr;
