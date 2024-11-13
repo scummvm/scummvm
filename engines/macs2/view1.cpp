@@ -693,8 +693,17 @@ void View1::draw() {
 	// Get mouse position
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
 
-	// Draw the position next to it
-	renderString(mousePos.x + 20, mousePos.y + 20, Common::String::format("%u %u", mousePos.x, mousePos.y));
+	if (_isShowingInventory) {
+		// Show the ID of the hovered item
+		GameObject* hoveredObject = getClickedInventoryItem(mousePos);
+		if (hoveredObject != nullptr) {
+			renderString(mousePos.x + 20, mousePos.y + 20, Common::String::format("%2.x", hoveredObject->Index));
+		}
+	} else {
+		// Draw the position next to it
+		renderString(mousePos.x + 20, mousePos.y + 20, Common::String::format("%u %u", mousePos.x, mousePos.y));
+	}
+	
 }
 
 bool View1::tick() {
@@ -973,7 +982,7 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 	// Top side
 	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0xFF, s);
 
-	// Left side
+	// Left sidei
 	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0xFF, s);
 
 	// Bottom highlight
