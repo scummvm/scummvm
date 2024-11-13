@@ -33,14 +33,11 @@
 
 // Audio status
 #define AUDIO_STATUS_MUTE               (1 << 0)
-#define AUDIO_STATUS_BUFFER_SUPPORT     (1 << 1)
-#define AUDIO_STATUS_BUFFER_ACTIVE      (1 << 2)
-#define AUDIO_STATUS_BUFFER_UNDERRUN    (1 << 3)
-#define AUDIO_STATUS_UPDATE_LATENCY     (1 << 4)
-#define AV_STATUS_UPDATE_AV_INFO        (1 << 5)
-#define AV_STATUS_RESET_PENDING         (1 << 6)
-#define AV_STATUS_UPDATE_GEOMETRY       (1 << 7)
-#define AV_STATUS_UPDATE_GUI            (1 << 8)
+#define AUDIO_STATUS_UPDATE_LATENCY     (1 << 1)
+#define AV_STATUS_UPDATE_AV_INFO        (1 << 2)
+#define AV_STATUS_RESET_PENDING         (1 << 3)
+#define AV_STATUS_UPDATE_GEOMETRY       (1 << 4)
+#define AV_STATUS_UPDATE_GUI            (1 << 5)
 
 // Video status
 #define VIDEO_GRAPHIC_MODE_REQUEST_SW     (1 << 0)

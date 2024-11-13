@@ -88,16 +88,7 @@ static unsigned gui_height = RES_H_OVERLAY;
 static unsigned max_width = RES_INIT_MAX_W;
 static unsigned max_height = RES_INIT_MAX_H;
 
-static uint32 current_frame = 0;
-static uint8 frameskip_no;
-static uint8 frameskip_type;
-static uint8 frameskip_threshold;
-static uint32 frameskip_counter = 0;
-
 static uint16 av_status = AUDIO_STATUS_MUTE;
-
-static unsigned retro_audio_buff_occupancy = 0;
-static uint8 retro_audio_buff_underrun_threshold = 25;
 
 static float frame_rate = 0;
 static uint16 sample_rate = 0;
@@ -107,9 +98,6 @@ static float audio_samples_accumulator = 0.0f;
 static int16 *audio_sample_buffer = NULL; // pointer to output buffer
 
 static bool input_bitmask_supported = false;
-static bool updating_variables = false;
-static int opt_frameskip_threshold_display = 0;
-static int opt_frameskip_no_display = 0;
 
 #ifdef USE_OPENGL
 static struct retro_hw_render_callback hw_render;
@@ -256,20 +244,6 @@ static void audio_run(void) {
 	}
 }
 
-static void retro_audio_buff_status_cb(bool active, unsigned occupancy, bool underrun_likely) {
-	if (active)
-		av_status |= AUDIO_STATUS_BUFFER_ACTIVE;
-	else
-		av_status &= ~AUDIO_STATUS_BUFFER_ACTIVE;
-
-	if (occupancy < retro_audio_buff_underrun_threshold)
-		av_status |= AUDIO_STATUS_BUFFER_UNDERRUN;
-	else if (occupancy > (retro_audio_buff_underrun_threshold << 2))
-		av_status &= ~AUDIO_STATUS_BUFFER_UNDERRUN;
-
-	retro_audio_buff_occupancy = occupancy;
-}
-
 void retro_osd_notification(const char *msg) {
 	if (!msg || *msg == '\0')
 		return;
@@ -283,7 +257,6 @@ void retro_osd_notification(const char *msg) {
 
 static void update_variables(void) {
 	struct retro_variable var;
-	updating_variables = true;
 
 	var.key = "scummvm_gamepad_cursor_only";
 	var.value = NULL;
@@ -358,36 +331,6 @@ static void update_variables(void) {
 		sample_rate = atoi(sample_rate_var);
 	} else
 		sample_rate = DEFAULT_SAMPLE_RATE;
-
-	var.key = "scummvm_frameskip_threshold";
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
-		frameskip_threshold = (uint8)strtol(var.value, NULL, 10);
-	}
-
-	var.key = "scummvm_frameskip_no";
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
-		frameskip_no = (uint8)strtol(var.value, NULL, 10) + 1;
-	}
-
-	var.key = "scummvm_frameskip_type";
-	var.value = NULL;
-	uint8 old_frameskip_type = frameskip_type;
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
-		opt_frameskip_threshold_display = 0;
-		opt_frameskip_no_display = 0;
-
-		if (strcmp(var.value, "disabled") == 0)
-			frameskip_type = 0;
-		else if (strcmp(var.value, "fixed") == 0) {
-			frameskip_type = 1;
-			opt_frameskip_no_display = 1;
-		} else if (strcmp(var.value, "auto") == 0)
-			frameskip_type = 2;
-		else if (strcmp(var.value, "manual") == 0) {
-			frameskip_type = 3;
-			opt_frameskip_threshold_display = 1;
-		}
-	}
 
 	var.key = "scummvm_mapper_up";
 	var.value = NULL;
@@ -575,21 +518,11 @@ static void update_variables(void) {
 	}
 #endif
 
-	if (!(av_status & AUDIO_STATUS_BUFFER_SUPPORT)) {
-		if (frameskip_type > 1) {
-			retro_log_cb(RETRO_LOG_WARN, "Selected frameskip mode not available.\n");
-			retro_osd_notification("Selected frameskip mode not available");
-			frameskip_type = 0;
-		}
-	}
-
-	if (old_frameskip_type != frameskip_type || old_frame_rate != frame_rate || old_sample_rate != sample_rate) {
+	if (old_frame_rate != frame_rate || old_sample_rate != sample_rate) {
 		av_status |= AUDIO_STATUS_UPDATE_LATENCY;
-		if (old_frame_rate != frame_rate || old_sample_rate != sample_rate) {
-			audio_buffer_init(sample_rate, (uint16) frame_rate);
-			if (g_system)
-				av_status |= (AV_STATUS_UPDATE_AV_INFO & AV_STATUS_RESET_PENDING);
-		}
+		audio_buffer_init(sample_rate, (uint16) frame_rate);
+		if (g_system)
+			av_status |= (AV_STATUS_UPDATE_AV_INFO & AV_STATUS_RESET_PENDING);
 	}
 
 	if (video_hw_mode & VIDEO_GRAPHIC_MODE_RESET_PENDING) {
@@ -600,34 +533,6 @@ static void update_variables(void) {
 		retro_osd_notification("Core reload is needed to apply HW acceleration setting change.");
 		video_hw_mode &= ~VIDEO_GRAPHIC_MODE_RESET_PENDING;
 	}
-
-	updating_variables = false;
-}
-
-static void retro_set_options_display(void) {
-	struct retro_core_option_display option_display;
-
-	option_display.visible = opt_frameskip_threshold_display;
-	option_display.key = "scummvm_frameskip_threshold";
-	environ_cb(RETRO_ENVIRONMENT_SET_CORE_OPTIONS_DISPLAY, &option_display);
-
-	option_display.visible = opt_frameskip_no_display;
-	option_display.key = "scummvm_frameskip_no";
-	environ_cb(RETRO_ENVIRONMENT_SET_CORE_OPTIONS_DISPLAY, &option_display);
-}
-
-static bool retro_update_options_display(void) {
-	if (updating_variables)
-		return false;
-
-	/* Core options */
-	bool updated = false;
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated) {
-		update_variables();
-		LIBRETRO_G_SYSTEM->refreshRetroSettings();
-		retro_set_options_display();
-	}
-	return updated;
 }
 
 bool retro_setting_get_gamepad_cursor_only(void) {
@@ -827,10 +732,6 @@ void retro_set_environment(retro_environment_t cb) {
 	environ_cb(RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME, &tmp);
 	libretro_fill_options_mapper_data(environ_cb);
 	libretro_set_core_options(environ_cb, &has_categories);
-
-	/* Core option display callback */
-	struct retro_core_options_update_display_callback update_display_callback = {retro_update_options_display};
-	environ_cb(RETRO_ENVIRONMENT_SET_CORE_OPTIONS_UPDATE_DISPLAY_CALLBACK, &update_display_callback);
 }
 
 unsigned retro_api_version(void) {
@@ -917,15 +818,9 @@ void retro_init(void) {
 
 	retro_log_cb(RETRO_LOG_DEBUG, "ScummVM core version: %s\n", __GIT_VERSION);
 
-	struct retro_audio_buffer_status_callback buf_status_cb;
-	buf_status_cb.callback = retro_audio_buff_status_cb;
-	av_status = environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK, &buf_status_cb) ? (av_status | AUDIO_STATUS_BUFFER_SUPPORT) : (av_status & ~AUDIO_STATUS_BUFFER_SUPPORT);
-
 	update_variables();
 	max_width = gui_width > max_width ? gui_width : max_width;
 	max_height = gui_height > max_height ? gui_height : max_height;
-
-	retro_set_options_display();
 
 	init_command_params();
 
@@ -1087,10 +982,6 @@ bool retro_load_game_special(unsigned game_type, const struct retro_game_info *i
 }
 
 void retro_run(void) {
-	/* Settings change is covered by RETRO_ENVIRONMENT_SET_CORE_OPTIONS_UPDATE_DISPLAY_CALLBACK
-	except in case of core options reset to defaults, for which the following call is needed*/
-	retro_update_options_display();
-
 #ifdef USE_HIGHRES
 	if (av_status & AV_STATUS_UPDATE_GUI) {
 		retro_gui_res_reset();
@@ -1116,8 +1007,6 @@ void retro_run(void) {
 		audio_latency = (uint32)((8.0f * frame_time_msec) + 0.5f);
 		audio_latency = (audio_latency + 0x1F) & ~0x1F;
 
-		retro_audio_buff_underrun_threshold = frame_time_msec * 100 / audio_latency;
-
 		/* This can only be called from within retro_run() */
 		environ_cb(RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY, &audio_latency);
 		av_status &= ~AUDIO_STATUS_UPDATE_LATENCY;
@@ -1133,32 +1022,7 @@ void retro_run(void) {
 	int audio_video_enable = 0;
 	environ_cb(RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE, &audio_video_enable);
 
-	bool skip_frame = false;
-
 	if (g_system) {
-
-		/* Determine frameskip need based on settings */
-		if (frameskip_type == 2)
-			skip_frame = ((av_status & (AUDIO_STATUS_BUFFER_UNDERRUN | AUDIO_STATUS_BUFFER_ACTIVE)) == (AUDIO_STATUS_BUFFER_UNDERRUN | AUDIO_STATUS_BUFFER_ACTIVE));
-		else if (frameskip_type == 1)
-			skip_frame = !(current_frame % frameskip_no == 0);
-		else if (frameskip_type == 3)
-			skip_frame = (retro_audio_buff_occupancy < frameskip_threshold);
-
-		/* No frame skipping if
-		- no incoming audio (e.g. GUI)
-		- doing a THREAD_SWITCH_UPDATE loop */
-		skip_frame = skip_frame && !(av_status & AUDIO_STATUS_MUTE);
-
-		/* Reset frameskip counter if not flagged */
-		if ((!skip_frame && frameskip_counter) || frameskip_counter >= FRAMESKIP_MAX) {
-			retro_log_cb(RETRO_LOG_DEBUG, "%d frame(s) skipped (%ld)\n", frameskip_counter, current_frame);
-			skip_frame = false;
-			frameskip_counter = 0;
-			/* Keep on skipping frames if flagged */
-		} else if (skip_frame)
-			frameskip_counter++;
-
 		/* Switch to ScummVM thread */
 		retro_switch_to_emu_thread();
 
@@ -1172,7 +1036,7 @@ void retro_run(void) {
 			audio_run();
 
 		/* Retrieve video */
-		if (!skip_frame && (audio_video_enable & 1)) {
+		if (audio_video_enable & 1) {
 			if (video_hw_mode & VIDEO_GRAPHIC_MODE_REQUEST_SW) {
 				const Graphics::ManagedSurface *screen;
 				LIBRETRO_G_SYSTEM->getScreen(screen);
@@ -1181,7 +1045,6 @@ void retro_run(void) {
 				video_cb(RETRO_HW_FRAME_BUFFER_VALID, LIBRETRO_G_SYSTEM->getScreenWidth(),  LIBRETRO_G_SYSTEM->getScreenHeight(), 0);
 
 		}
-		current_frame++;
 
 		poll_cb();
 		LIBRETRO_G_SYSTEM->processInputs();
