@@ -289,7 +289,7 @@ Common::Path OSystem_Win32::getDefaultDLCsPath() {
 		CreateDirectory(dlcsPath, nullptr);
 	}
 
-	return Common::Path(Win32::tcharToString(dlcsPath));
+	return Common::Path(Win32::tcharToString(dlcsPath), Common::Path::kNativeSeparator);
 }
 
 Common::Path OSystem_Win32::getScreenshotsPath() {
