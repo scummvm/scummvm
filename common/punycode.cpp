@@ -210,6 +210,11 @@ bool punycode_needEncode(const String &src) {
 	if (!src.size())
 		return false;
 
+	// If name begins with xn-- this could become ambiguous
+	if (src.size() > 4 && src[0] == 'x' && src[1] == 'n' &&
+		src[2] == '-' && src[3] == '-')
+		return true;
+
 	for (uint si = 0; si < src.size(); si++) {
 		if (src[si] & 0x80 || src[si] < 0x20 || strchr(SPECIAL_SYMBOLS, src[si])) {
 			return true;
