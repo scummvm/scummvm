@@ -5558,7 +5558,7 @@ static const uint16 kq4SignatureLolotteDoor[] = {
 	0x78,                           // push1
 	0x38, SIG_UINT16(0xc000),       // pushi c000
 	SIG_ADDTOOFFSET(+10),
-	0x4a, 0x32,                     // send 32 [ ego ... illegalBits: c000 ... ]
+	0x4a, 0x32,                     // send 32 [ ego ... baseSetter: 0 ... illegalBits: c000 ... ]
 	SIG_END
 };
 
@@ -5568,7 +5568,7 @@ static const uint16 kq4PatchLolotteDoor[] = {
 	0x0e,                            // shl  [ acc = 8000 if door open, c000 if closed ]
 	0x36,                            // push [ ego:illegalBits = acc ]
 	PATCH_ADDTOOFFSET(+10),
-	0x4a, 0x2c,                      // send 2a [ ego ... illegalBits: 8000 or c000 ... ]
+	0x4a, 0x2c,                      // send 2c [ ego ... illegalBits: 8000 or c000 ... ]
 	PATCH_END
 };
 
@@ -5589,7 +5589,7 @@ static const SciScriptPatcherEntry kq4Signatures[] = {
 
 // ===========================================================================
 // At least during the harpy scene, export 29 of script 0 is called and has an
-//  issue where temp[3] won't get inititialized, but is later used to set
+//  issue where temp[3] won't get initialized, but is later used to set
 //  master volume. This makes SSCI set the volume to max. We fix the procedure,
 //  so volume won't get modified in those cases.
 //
