@@ -67,7 +67,7 @@ private:
 	int32 _field68 = 0;
 	int32 _field74_series = 0;
 	int32 _field78_series = 0;
-	int32 _field88 = 0;
+	int32 _ripTrekMedReachHandPos1Series = 0;
 	int32 _fieldBC_trigger = 0;
 	int32 _fieldC0_trigger = 0;
 	int32 _fieldC4 = 0;
@@ -99,7 +99,7 @@ private:
 	int32 _field138 = 0;
 	int32 _field13C_triggerNum = 0;
 	int32 _field140 = 0;
-	int32 _field144 = 0;
+	int32 _field144_triggerNum = 0;
 	int32 _field164 = 0;
 	int32 _field168 = 0;
 	int32 _field170 = 0;
@@ -108,23 +108,23 @@ private:
 	int32 _field184 = 0;
 	int32 _field188 = 0;
 
+	int32 _field90_series = 0;
+
 	int32 _acolyteGrabsMalletSeries = 0;
 	int32 _acolyteSaysHaltSeries;
-	int32 _field90_series = 0;
-	int32 _ripTrekHandTalkPos3Series = 0;
 	int32 _courtyardGongSeries = 0;
 	int32 _malletSpriteSeries = 0;
 	int32 _meiShowsRipHerPassesSeries = 0;
 	int32 _meiTalksPos3Series = 0;
 	int32 _meiTrekRtHandOutPos2Series = 0;
 	int32 _meiTrekTalkerPos4Series = 0;
+	int32 _priestTurnsFrom3To9Series = 0;
 	int32 _ripDropsSeries = 0;
+	int32 _ripTrekHandTalkPos3Series = 0;
 	int32 _ripTrekHeadTurnPos5Series = 0;
 	int32 _ripTrekLHandTalkPos4Series = 0;
 	int32 _ripTrekLowReachPos2Series = 0;
 	int32 _ripTrekTalkerPos3Series = 0;
-
-	machine *_field148_mach = nullptr;
 
 	machine *_204pu05Mach = nullptr;
 	machine *_204pu99Mach = nullptr;
@@ -132,12 +132,13 @@ private:
 	machine *_courtyardGongMach = nullptr;
 	machine *_mcMach = nullptr;
 	machine *_malletSpriteMach = nullptr;
+	machine *_meiChenOtherStatesMach = nullptr;
+	machine *_priestTurningStateMach = nullptr;
 	machine *_priestWalkerMach = nullptr;
 	machine *_ripDeltaMachineStateMach = nullptr;
+	machine *_safariShadow2Mach = nullptr;
 	machine *_safariShadow3Mach = nullptr;
 	machine *_silverButterflyCoinMach = nullptr;
-	machine *_meiChenOtherStatesMach = nullptr;
-	machine *_safariShadow2Mach = nullptr;
 };
 
 

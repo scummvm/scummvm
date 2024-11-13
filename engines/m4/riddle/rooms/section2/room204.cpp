@@ -1359,7 +1359,7 @@ void Room204::daemon() {
 		break;
 
 	case 594:
-		if (_field148_mach)
+		if (_priestTurningStateMach)
 			_field13C_triggerNum = kernel_trigger_create(596);
 		else
 			kernel_timing_trigger(20, 594, nullptr);
@@ -1391,12 +1391,12 @@ void Room204::daemon() {
 		}
 
 		if (_field140 == 1) {
-			terminateMachine(_field148_mach);
-			_field148_mach = nullptr;
+			terminateMachine(_priestTurningStateMach);
+			_priestTurningStateMach = nullptr;
 
-			if (_field144 != -1) {
-				kernel_trigger_dispatchx(_field144);
-				_field144 = -1;
+			if (_field144_triggerNum != -1) {
+				kernel_trigger_dispatchx(_field144_triggerNum);
+				_field144_triggerNum = -1;
 			}
 		}
 
@@ -1407,12 +1407,12 @@ void Room204::daemon() {
 	case 604:
 		switch (_field134) {
 		case 1:
-			sendWSMessage_10000(1, _field148_mach, _field74_series, 2, 2, 603, _field74_series, 2, 2, 0);
+			sendWSMessage_10000(1, _priestTurningStateMach, _field74_series, 2, 2, 603, _field74_series, 2, 2, 0);
 			break;
 
 		case 2: {
 			int32 rnd = imath_ranged_rand(1, 2);
-			sendWSMessage_10000(1, _field148_mach, _field74_series, 1, rnd, 603, _field74_series, rnd, rnd, 0);
+			sendWSMessage_10000(1, _priestTurningStateMach, _field74_series, 1, rnd, 603, _field74_series, rnd, rnd, 0);
 			}
 
 			break;
@@ -1625,24 +1625,93 @@ void Room204::daemon() {
 		break;
 
 	case 631:
+		kernel_timing_trigger(1, 632, nullptr);
+		break;
+
 	case 632:
+		subDaemon_F601();
+		addMovingMeiHotspot();
+		_fieldE0 = _fieldE4_walkerDestX;
+
+		break;
+
 	case 633:
+		_ripTrekMedReachHandPos1Series = series_load("RIP TREK MED REACH HAND POS1", -1, nullptr);
+		ws_walk(_G(my_walker), 473, 331, nullptr, 634, 1, true);
+
+		break;
+
 	case 634:
+		setGlobals1(_ripTrekMedReachHandPos1Series, 1, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 635);
+
+		break;
+
 	case 635:
+		_malletSpriteMach = series_place_sprite("MALLET SPRITE", 0, 0, 0, 100, 2304);
+		sendWSMessage_120000(_G(my_walker), 636);
+		inv_move_object("MALLET", 204);
+
+		break;
+
 	case 636:
 		sendWSMessage_150000(_G(my_walker), 637);
 		break;
 
 	case 637:
+		if (_G(flags[V056]) == 1) {
+			hotspot_set_active(_G(currentSceneDef).hotspots, "MALLET", true);
+			player_set_commands_allowed(true);
+		} else {
+			series_unload(_ripTrekMedReachHandPos1Series);
+			ws_walk(_G(my_walker), 468, 338, nullptr, 638, 9, true);
+		}
+
+		break;
+
 	case 638:
+		DisposePath(_mcMach->walkPath);
+		_mcMach->walkPath = CreateCustomPath(555, 323, 473, 331, -1);
+		ws_custom_walk(_mcMach, 9, 639, true);
+		hotspot_set_active(_G(currentSceneDef).hotspots, "MALLET", true);
+		_field40 = 0;
+
+		break;
+
 	case 639:
+		_fieldD4 = 4;
+		_fieldDC = 1;
+		_field108 = 1;
+		kernel_timing_trigger(1, 574, nullptr);
+		_fieldBC_trigger = kernel_trigger_create(588);
+
+		break;
+
 	case 647:
+		digi_play("204R50", 1, 255, -1, -1);
+		_ripTrekMedReachHandPos1Series = series_load("RIP TREK MED REACH HAND POS1", -1, nullptr);
+		ws_walk(_G(my_walker), 473, 331, nullptr, 648, 1, true);
+
+		break;
+
 	case 648:
+		setGlobals1(_ripTrekMedReachHandPos1Series, 1, 10, 10, 10, 0, 10, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 649);
+
+		break;
+
 	case 649:
 		sendWSMessage_150000(_G(my_walker), 650);
 		break;
 
 	case 650:
+		hotspot_set_active(_G(currentSceneDef).hotspots, "MALLET", true);
+		_malletSpriteMach = series_place_sprite("MALLET SPRITE", 0, 0, 0, 100, 2304);
+		inv_move_object("MALLET", 204);
+		kernel_timing_trigger(5, 651, nullptr);
+
+		break;
+
 	case 651:
 		_field2C = 1;
 		kernel_timing_trigger(1, 652, nullptr);
@@ -1651,20 +1720,61 @@ void Room204::daemon() {
 
 	case 652:
 		_field40 = 0;
-		series_unload(_field88);
+		series_unload(_ripTrekMedReachHandPos1Series);
 		player_set_commands_allowed(true);
 		_field124 = 1;
 		player_set_commands_allowed(true);
+
 		break;
 
 	case 660:
+		_field134 = 1;
+		_field13C_triggerNum = kernel_trigger_create(661);
+
+		break;
+
 	case 661:
+		_field10 = 16;
+		_field140 = 1;
+		_field144_triggerNum = kernel_trigger_create(662);
+
+		break;
+
 	case 662:
+		_priestTurnsFrom3To9Series = series_load("PRIEST TURNS FROM 3 TO 9", -1, nullptr);
+		ws_hide_walker(_priestWalkerMach);
+		_priestTurningStateMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 360, 305, 100, 2048, false, triggerMachineByHashCallback, "Priest Turning State Machine");
+		sendWSMessage_10000(1, _priestTurningStateMach, _priestTurnsFrom3To9Series, 1, 37, 663, _priestTurnsFrom3To9Series, 37, 37, 0);
+		_field2C = 1;
+
+		break;
+
 	case 663:
+		terminateMachine(_priestTurningStateMach);
+		_priestTurningStateMach = nullptr;
+		series_unload(_priestTurnsFrom3To9Series);
+		ws_unhide_walker(_priestWalkerMach);
+		ws_demand_facing(_priestWalkerMach, 9);
+		kernel_timing_trigger(2, 664, nullptr);
+
+		break;
+
 	case 664:
+		game_set_scale(369, 326, 100, 99);
+		sendWSMessage_10000(_priestWalkerMach, 289, 305, 9, 665, 1);
+		game_set_scale(369, 326, 47, 38);
+
+		break;
+
 	case 665:
 	case 666:
 	case 667:
+		_field10 = 21;
+		_fieldD8 = 1;
+		_fieldC8_trigger = kernel_trigger_create(669);
+
+		break;
+
 	case 669:
 		kernel_timing_trigger(1, 630, nullptr);
 		_fieldDC = 1;
@@ -1687,12 +1797,31 @@ void Room204::daemon() {
 		break;
 
 	case 678:
+		terminateMachine(_204pu99Mach);
+		sendWSMessage_110000(_G(my_walker), 679);
+
+		break;
+
 	case 679:
+		sendWSMessage_140000(_G(my_walker), 680);
+		break;
+
 	case 680:
 	case 681:
+		_field140 = 1;
+		_field144_triggerNum = kernel_trigger_create(682);
+
+		break;
+
 	case 682:
 	case 683:
 	case 684:
+		game_set_scale(369, 326, 100, 99);
+		sendWSMessage_10000(_priestWalkerMach, 289, 305, 9, 687, 1);
+		game_set_scale(369, 326, 47, 38);
+
+		break;
+
 	case 687:
 		break;
 	case 688:
@@ -1704,6 +1833,11 @@ void Room204::daemon() {
 
 	case 689:
 	case 691:
+		_fieldD8 = 1;
+		_fieldC8_trigger = kernel_trigger_create(692);
+
+		break;
+
 	case 692:
 		DisposePath(_mcMach->walkPath);
 		_mcMach->walkPath = CreateCustomPath(526, 360, -1);
@@ -1712,6 +1846,9 @@ void Room204::daemon() {
 		break;
 
 	case 693:
+		ws_walk(_G(my_walker), 486, 367, nullptr, 694, 2, true);
+		break;
+
 	case 694:
 	case 695:
 	case 696:
@@ -1719,6 +1856,11 @@ void Room204::daemon() {
 	case 699:
 	case 700:
 	case 701:
+		_fieldD8 = 1;
+		_fieldC8_trigger = kernel_trigger_create(702);
+
+		break;
+
 	case 702:
 	case 703:
 		kernel_timing_trigger(1, 630, nullptr);
@@ -1740,6 +1882,9 @@ void Room204::daemon() {
 		break;
 
 	case 710:
+		pal_fade_init(_G(master_palette), 21, 255, 0, 15, 711);
+		break;
+
 	case 712:
 	case 713:
 	case 714:
@@ -1751,6 +1896,11 @@ void Room204::daemon() {
 
 	case 715:
 	case 716:
+		series_stream("PRIEST BOWS", 7, 0, 681);
+		digi_unload("204R03C");
+
+		break;
+
 	case 719:
 	case 720:
 		_field10 = 16;
@@ -1772,6 +1922,7 @@ void Room204::daemon() {
 		break;
 
 	case 1995:
+		midi_stop();
 		break;
 
 	default:
