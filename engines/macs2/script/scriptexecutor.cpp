@@ -841,8 +841,14 @@ l0037_A29C:
 
 l0037_A2A4:
 	jmp	0A32Ch
+*/
+	else if (value == 0x2D) {
+		out1 = Scenes::instance().CurrentSceneIndex;
+		out2 = 0;
+	}
 
-l0037_A2A7:
+	/*
+	l0037_A2A7:
 	cmp	ax,2Dh
 	jnz	0A2B9h
 
