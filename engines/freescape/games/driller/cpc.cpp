@@ -236,8 +236,8 @@ void DrillerEngine::drawCPCUI(Graphics::Surface *surface) {
 		surface->fillRect(shieldBar, front);
 	}
 
-	drawCompass(surface, 87, 156, _yaw, 10, front);
-	drawCompass(surface, 230, 156, _pitch - 30, 10, front);
+	drawCompass(surface, 87, 156, _yaw - 30, 10, 75, front);
+	drawCompass(surface, 230, 156, _pitch - 30, 10, 60, front);
 }
 
 } // End of namespace Freescape

@@ -47,7 +47,7 @@ public:
 
 	void drawInfoMenu() override;
 	void drawSensorShoot(Sensor *sensor) override;
-	void drawCompass(Graphics::Surface *surface, int x, int y, double degrees, double magnitude, uint32 color);
+	void drawCompass(Graphics::Surface *surface, int x, int y, double degrees, double magnitude, double fov, uint32 color);
 
 	void pressedKey(const int keycode) override;
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;

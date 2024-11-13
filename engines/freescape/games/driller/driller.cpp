@@ -970,8 +970,7 @@ void DrillerEngine::updateTimeVariables() {
 	}
 }
 
-void DrillerEngine::drawCompass(Graphics::Surface *surface, int x, int y, double degrees, double magnitude, uint32 color) {
-	double fov = 60;
+void DrillerEngine::drawCompass(Graphics::Surface *surface, int x, int y, double degrees, double magnitude, double fov, uint32 color) {
 	degrees = degrees + fov;
 	if (degrees >= 360)
 		degrees = degrees - 360;

@@ -156,12 +156,12 @@ Graphics::ManagedSurface *DrillerEngine::load8bitTitleImage(Common::SeekableRead
 	file->seek(offset);
 	for (int y = 0; y < 200; ++y) {
 		if (file->eos ()) break;
-		
+
 		// Start of line data (0x02) or [premature] end of data (0x00)
 		int sol = file->readByte();
 		if (sol == 0) break;
 		assert(sol == 2);
-		
+
 		int x = 0;
 		while (x < 320) {
 			int command = file->readByte();
@@ -414,7 +414,7 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 
 	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), playerStepsPos.x, playerStepsPos.y, front, back, surface);
 
-	Common::Point scorePos = _renderMode == Common::kRenderHercG ? Common::Point(522, 237) : Common::Point(238, 129);
+	Common::Point scorePos = _renderMode == Common::kRenderHercG ? Common::Point(522, 237) : Common::Point(239, 129);
 	drawStringInSurface(Common::String::format("%07d", score), scorePos.x, scorePos.y, front, back, surface);
 
 	int seconds, minutes, hours;
@@ -470,9 +470,9 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 
 	if (_indicators.size() >= 2) {
 		if (!_flyMode)
-			surface->copyRectToSurface(*_indicators[0], 132, 128, Common::Rect(_indicators[0]->w, _indicators[0]->h));
+			surface->copyRectToSurface(*_indicators[0], 132, 127, Common::Rect(_indicators[0]->w, _indicators[0]->h));
 		else
-			surface->copyRectToSurface(*_indicators[1], 132, 128, Common::Rect(_indicators[1]->w, _indicators[1]->h));
+			surface->copyRectToSurface(*_indicators[1], 132, 127, Common::Rect(_indicators[1]->w, _indicators[1]->h));
 	}
 
 	color = _renderMode == Common::kRenderHercG ? 1 : 2;
@@ -480,9 +480,9 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 	uint32 other = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	Common::Point compassYawPos = _renderMode == Common::kRenderHercG ? Common::Point(214, 264) : Common::Point(87, 156);
-	drawCompass(surface, compassYawPos.x, compassYawPos.y, _yaw, 10, other);
+	drawCompass(surface, compassYawPos.x, compassYawPos.y, _yaw - 30, 10, 75, other);
 	Common::Point compassPitchPos = _renderMode == Common::kRenderHercG ? Common::Point(502, 264) : Common::Point(230, 156);
-	drawCompass(surface, compassPitchPos.x, compassPitchPos.y, _pitch - 30, 10, other);
+	drawCompass(surface, compassPitchPos.x, compassPitchPos.y, _pitch - 30, 10, 60, other);
 }
 
 } // End of namespace Freescape
