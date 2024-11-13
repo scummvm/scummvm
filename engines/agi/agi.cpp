@@ -246,7 +246,8 @@ int AgiEngine::loadResource(int16 resourceType, int16 resourceNr) {
 			data = _loader->loadVolumeResource(&_game.dirSound[resourceNr]);
 
 			// "data" is freed by objects created by createFromRawResource on success
-			_game.sounds[resourceNr] = AgiSound::createFromRawResource(data, _game.dirSound[resourceNr].len, resourceNr, _soundemu);
+			const bool isAgiV1 = (getVersion() <= 0x2001);
+			_game.sounds[resourceNr] = AgiSound::createFromRawResource(data, _game.dirSound[resourceNr].len, resourceNr, _soundemu, isAgiV1);
 			if (_game.sounds[resourceNr] != nullptr) {
 				_game.dirSound[resourceNr].flags |= RES_LOADED;
 			} else {

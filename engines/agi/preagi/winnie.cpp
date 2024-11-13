@@ -1149,7 +1149,8 @@ bool WinnieEngine::playSound(ENUM_WTP_SOUND iSound) {
 	file.read(data, size);
 	file.close();
 
-	_game.sounds[0] = AgiSound::createFromRawResource(data, size, 0, _soundemu);
+	const bool isAgiV1 = true; // DOS uses AGIv1 sounds
+	_game.sounds[0] = AgiSound::createFromRawResource(data, size, 0, _soundemu, isAgiV1);
 	if (_game.sounds[0] == nullptr) {
 		return false;
 	}

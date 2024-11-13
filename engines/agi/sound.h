@@ -42,7 +42,7 @@ namespace Agi {
 /**
  * AGI sound resource types.
  * These values are the first 16-bit LE words of each resource's header,
- * except for Apple II and CoCo3, which do not have headers.
+ * except for AGIv1, Apple II, and CoCo3, which do not have headers.
  */
 enum AgiSoundEmuType {
 	AGI_SOUND_SAMPLE    = 0x0001,
@@ -96,7 +96,7 @@ public:
 	 * A named constructor for creating different types of AgiSound objects
 	 * from a raw sound resource.
 	 */
-	static AgiSound *createFromRawResource(uint8 *data, uint32 len, int resnum, int soundemu);
+	static AgiSound *createFromRawResource(uint8 *data, uint32 len, int resnum, int soundemu, bool isAgiV1);
 
 protected:
 	byte _resourceNr;

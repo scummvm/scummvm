@@ -46,7 +46,7 @@ SoundGen::~SoundGen() {
 // TODO: add support for variable sampling rate in the output device
 //
 
-AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, int soundemu) {
+AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, int soundemu, bool isAgiV1) {
 	if (data == nullptr || len < 2) // Check for too small resource or no resource at all
 		return nullptr;
 
@@ -54,16 +54,18 @@ AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, i
 	// These formats have no headers or predictable first bytes.
 	if (soundemu == SOUND_EMU_APPLE2) {
 		return new AgiSound(resnum, data, len, AGI_SOUND_APPLE2);
-	} else if (soundemu == SOUND_EMU_COCO3) {
+	}
+	if (soundemu == SOUND_EMU_COCO3) {
 		return new AgiSound(resnum, data, len, AGI_SOUND_COCO3);
 	}
 
-	uint16 type = READ_LE_UINT16(data);
-
-	// For V1 sound resources
-	if (type != AGI_SOUND_SAMPLE && (type & 0xFF) == AGI_SOUND_SAMPLE)
+	// Handle AGIv1; this format has no header or predictable first bytes.
+	// Must occur after platform check; Apple II always uses its format.
+	if (isAgiV1) {
 		return new PCjrSound(resnum, data, len, AGI_SOUND_4CHN);
+	}
 
+	uint16 type = READ_LE_UINT16(data);
 	switch (type) { // Create a sound object based on the type
 	case AGI_SOUND_SAMPLE:
 		return new IIgsSample(resnum, data, len, type);
