@@ -50,6 +50,7 @@ private:
 	int _trigger5 = -1;
 	int _shadow3 = 0;
 	machine *_ripley = nullptr;
+	machine *_ripsh1 = nullptr;
 	machine *_stream1 = nullptr;
 	int _ripHeadTurn = 0;
 	int _ripLooksAtHeads = 0;
@@ -70,7 +71,8 @@ private:
 	int _ripLooksThroughHole = 0;
 	int _ripTossesHelmet = 0;
 	int _ripTossesBucket = 0;
-	machine *_ripsh1 = nullptr;
+	int _ripleyMode = 0;
+	int _ripleyShould = 0;
 	machine *_mei = nullptr;
 	int _meiTalkToRip = 0;
 	int _meiTurnAndTalk = 0;
@@ -87,7 +89,6 @@ private:
 	int _oldLadyNoHelmet = 0;
 	int _oldLadyFeedingBirds = 0;
 	int _oldLadyMode = 0, _oldLadyShould = 0;
-	int _ripleyShould = 0;
 	int _oldLady1 = 0;
 	int _oldLadyPointsToPhoto = 0;
 	int _oldLadyPhotoPopup = 0;
@@ -133,7 +134,6 @@ private:
 	int _203sg01 = 0;
 	machine *_g1 = nullptr;
 	machine *_g2 = nullptr;
-	int _ripleyMode = 0;
 	int _unkShould = 0;
 	int _oneFrameBucket = 0;
 
@@ -164,6 +164,7 @@ public:
 	void daemon() override;
 	void pre_parser() override;
 	void parser() override;
+	void syncGame(Common::Serializer &s) override;
 };
 
 } // namespace Rooms

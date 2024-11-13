@@ -3166,6 +3166,20 @@ void Room203::parser() {
 	_G(player).command_ready = false;
 }
 
+void Room203::syncGame(Common::Serializer &s) {
+	s.syncAsSint32LE(_ripleyMode);
+	s.syncAsSint32LE(_ripleyShould);
+	s.syncAsSint32LE(_oldLadyMode);
+	s.syncAsSint32LE(_oldLadyShould);
+	s.syncAsSint32LE(_peasantMode);
+	s.syncAsSint32LE(_peasantMode2);
+	s.syncAsSint32LE(_peasantShould);
+	s.syncAsSint32LE(_officialMode);
+	s.syncAsSint32LE(_officialShould);
+	s.syncAsSint32LE(_gkMode);
+	s.syncAsSint32LE(_gkShould);
+}
+
 void Room203::setupHelmetHotspot() {
 	for (HotSpotRec *hs = _G(currentSceneDef).hotspots; hs; hs = hs->next) {
 		if (!strcmp(hs->vocab, "SOLDIER'S HELMET")) {
