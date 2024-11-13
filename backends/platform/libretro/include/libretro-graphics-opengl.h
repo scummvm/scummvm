@@ -35,9 +35,6 @@ public:
 	void setSystemMousePosition(const int x, const int y) override {};
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) override;
 	void initSize(uint width, uint height, const Graphics::PixelFormat *format) override;
-	bool isOverlayInGUI(void) {
-		return _overlayInGUI;
-	}
 	void setMousePosition(int x, int y);
 	void resetContext(OpenGL::ContextType contextType);
 	OSystem::TransactionError endGFXTransaction() override;
