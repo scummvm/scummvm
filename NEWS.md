@@ -45,9 +45,17 @@ For a more comprehensive changelog of the latest experimental code, see:
      Waxworks Egypt Level 3 and Power Points not regenerating in Elvira 2.
 
  AGS:
-   - Syncronized with upstream AGS 3.6.0.58.
+   - Syncronized with upstream AGS 3.6.1.29.
+   - Added commandline --language option to specify the game language overriding the GUI.
    - Fixed glitchy staircase in old Maniac Mansion Mania episodes, caused by
      imperfect pathfinding.
+   - Fixed savescreen not accepting keyboard input in a few games (e.g. An English Haunting).
+   - Fixed colorless texts in games using the SpriteFont plugin (e.g. Detective Gallo).
+   - Updated .mod playback and fixed looping not working in rare occasions.
+   - Fixed misbehaving legacy upscaler in old games.
+   - Fixed rare incorrect tinting when using AVX2 optimizations.
+   - Added a few checks for unsupported videos to prevent crashes.
+   - Multiple updates to the detection tables.
 
  Asylum:
    - Implemented moving with the arrow keys.
