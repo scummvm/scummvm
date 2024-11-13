@@ -64,7 +64,7 @@ struct TlcTatHeader {
 };
 
 struct TlcTatAnswer {
-	uint8  binScore[8];
+	uint8  binScore[16];
 };
 
 struct TlcTatQuestions {
