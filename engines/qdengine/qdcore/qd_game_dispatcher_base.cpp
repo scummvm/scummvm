@@ -98,17 +98,6 @@ bool qdGameDispatcherBase::get_object_scale(const char *p, float &sc) {
 	return false;
 }
 
-bool qdGameDispatcherBase::remove_object_scale(const char *p) {
-	for (scale_info_container_t::iterator it = _scale_infos.begin(); it != _scale_infos.end(); ++it) {
-		if (!strcmp(it->name(), p)) {
-			_scale_infos.erase(it);
-			return true;
-		}
-	}
-
-	return false;
-}
-
 qdScaleInfo *qdGameDispatcherBase::get_scale_info(const char *p) {
 	for (scale_info_container_t::iterator it = _scale_infos.begin(); it != _scale_infos.end(); ++it) {
 		if (!strcmp(it->name(), p)) {

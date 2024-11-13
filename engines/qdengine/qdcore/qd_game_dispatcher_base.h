@@ -135,7 +135,6 @@ public:
 	}
 	bool get_object_scale(const char *p, float &sc);
 	bool set_object_scale(const char *p, float sc);
-	bool remove_object_scale(const char *p);
 
 	virtual qdScaleInfo *get_scale_info(const char *p);
 
