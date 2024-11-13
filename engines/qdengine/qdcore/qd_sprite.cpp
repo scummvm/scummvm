@@ -124,7 +124,7 @@ qdSprite::qdSprite(int wid, int hei, int format):
 	_data = new byte[wid * hei * bytes_per_pix];
 }
 
-qdSprite::qdSprite(const qdSprite &spr) : _data(0),
+qdSprite::qdSprite(const qdSprite &spr) : qdResource(spr), _data(0),
 	_rle_data(0),
 	_flags(0) {
 	*this = spr;

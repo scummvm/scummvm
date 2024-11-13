@@ -368,8 +368,9 @@ private:
 			maxCoords = 279;
 		else if (obj == _bg2_l2Obj)
 			maxCoords = 267;
-		else if (obj == _bg3_l2Obj)
-			maxCoords = 258;
+		// FIXME: Remove this as covered by the default case?
+		//else if (obj == _bg3_l2Obj)
+		//	maxCoords = 258;
 		else
 			maxCoords = 258;
 
