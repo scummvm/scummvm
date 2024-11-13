@@ -48,7 +48,9 @@ private:
 	void subDaemon_ADB7C();
 	void game_set_scale(int32 frontY, int32 backY, int32 frontS, int32 backS);
 	void subDaemon_215F4();
+	void subDaemon_21781();
 	void subDaemon_ADBB0();
+	void subDaemon_F601();
 	
 	int32 _dword1A189C = 0;
 

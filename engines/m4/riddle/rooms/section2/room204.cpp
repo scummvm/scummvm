@@ -1538,13 +1538,92 @@ void Room204::daemon() {
 		break;
 
 	case 621:
+		if (_dword1A189C < 1) {
+			++_dword1A189C;
+		} else {
+			_dword1A189C = 0;
+			sendWSMessage_150000(_mcMach, 622);
+		}
+
+		break;
+
 	case 622:
+		series_unload(_meiTrekTalkerPos4Series);
+		DisposePath(_mcMach->walkPath);
+		_mcMach->walkPath = CreateCustomPath(_fieldE4_walkerDestX + 1, 343, -1);
+		ws_custom_walk(_mcMach, 4, 623, true);
+		player_update_info(_G(my_walker), &_G(player_info));
+		ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, -1, 4, true);
+
+		break;
+
 	case 623:
+		DisposePath(_mcMach->walkPath);
+		_mcMach->walkPath = CreateCustomPath(1874, 333, -1);
+		ws_custom_walk(_mcMach, 3, -1, true);
+		kernel_timing_trigger(360, 625, nullptr);
+
+		break;
+
 	case 624:
+		DisposePath(_mcMach->walkPath);
+		_mcMach->walkPath = CreateCustomPath(1874, 333, -1);
+		ws_custom_walk(_mcMach, 3, -1, true);
+		kernel_timing_trigger(240, 625, nullptr);
+
+		break;
+
 	case 625:
+		ws_walk(_G(my_walker), 1874, 333, nullptr, 626, 3, true);
+		break;
+
 	case 626:
+		pal_fade_init(_G(master_palette), 21, 255, 0, 30, 629);
+		break;
+
 	case 629:
+	case 711:
+		_G(game).new_room = 203;
+		break;
+
 	case 630:
+		if (_field108 != 1) {
+			player_update_info(_mcMach, &_G(player_info));
+			if (_G(game_buff_ptr)->x1 * -1 >= _G(player_info).x) {
+				hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN", false);
+				subDaemon_21781();
+
+				player_update_info(_mcMach, &_G(player_info));
+				if ((_G(game_buff_ptr)->x1 * -1) - 30 > _G(player_info).x) {
+					ws_demand_location(_mcMach, (_G(game_buff_ptr)->x1 * -1) - 30, 323);
+				}
+
+				DisposePath(_mcMach->walkPath);
+				_mcMach->walkPath = CreateCustomPath(_fieldE4_walkerDestX, 323, -1);
+
+				ws_custom_walk(_mcMach, (_fieldDC == 1) ? 10 : 2, 631, true);
+
+			} else if ((_G(game_buff_ptr)->x1 * -1) + 639 <= _G(player_info).x) {
+				hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN", false);
+				subDaemon_21781();
+
+				player_update_info(_mcMach, &_G(player_info));
+				if ((_G(game_buff_ptr)->x1 * -1) + 669 < _G(player_info).x) {
+					ws_demand_location(_mcMach, (_G(game_buff_ptr)->x1 * -1) + 669, 323);
+				}
+
+				DisposePath(_mcMach->walkPath);
+				_mcMach->walkPath = CreateCustomPath(_fieldE4_walkerDestX, 323, -1);
+
+				ws_custom_walk(_mcMach, (_fieldDC == 1) ? 10 : 2, 631, true);
+
+			}
+
+			kernel_timing_trigger(60, 630, nullptr);
+		}
+
+		break;
+
 	case 631:
 	case 632:
 	case 633:
@@ -1552,7 +1631,6 @@ void Room204::daemon() {
 	case 635:
 	case 636:
 		sendWSMessage_150000(_G(my_walker), 637);
-
 		break;
 
 	case 637:
@@ -1561,8 +1639,16 @@ void Room204::daemon() {
 	case 647:
 	case 648:
 	case 649:
+		sendWSMessage_150000(_G(my_walker), 650);
+		break;
+
 	case 650:
 	case 651:
+		_field2C = 1;
+		kernel_timing_trigger(1, 652, nullptr);
+
+		break;
+
 	case 652:
 		_field40 = 0;
 		series_unload(_field88);
@@ -1580,6 +1666,17 @@ void Room204::daemon() {
 	case 666:
 	case 667:
 	case 669:
+		kernel_timing_trigger(1, 630, nullptr);
+		_fieldDC = 1;
+		_fieldE0 = 555;
+
+		subDaemon_ADBB0();
+		subDaemon_F601();
+		addMovingMeiHotspot();
+		player_set_commands_allowed(true);
+
+		break;
+
 	case 670:
 	case 675:
 	case 676:
@@ -1624,6 +1721,17 @@ void Room204::daemon() {
 	case 701:
 	case 702:
 	case 703:
+		kernel_timing_trigger(1, 630, nullptr);
+		midi_fade_volume(0, 120);
+		kernel_timing_trigger(120, 1995, nullptr);
+		_fieldDC = 1;
+		_fieldE0 = 555;
+		subDaemon_F601();
+		addMovingMeiHotspot();
+		player_set_commands_allowed(true);
+
+		break;
+
 	case 708:
 	case 709:
 		kernel_timing_trigger(1, 578, nullptr);
@@ -1632,7 +1740,6 @@ void Room204::daemon() {
 		break;
 
 	case 710:
-	case 711:
 	case 712:
 	case 713:
 	case 714:
@@ -1661,6 +1768,9 @@ void Room204::daemon() {
 	case 728:
 	case 729:
 	case 730:
+		kernel_timing_trigger(1, 696, nullptr);
+		break;
+
 	case 1995:
 		break;
 
@@ -1723,8 +1833,16 @@ void Room204::subDaemon_215F4() {
 	warning("STUB - subDaemon_215F4");
 }
 
+void Room204::subDaemon_21781() {
+	warning("STUB - subDaemon_21781");
+}
+
 void Room204::subDaemon_ADBB0() {
 	warning("STUB - subDaemon_ADBB0");
+}
+
+void Room204::subDaemon_F601() {
+	warning("STUB - subDaemon_F601");
 }
 
 
