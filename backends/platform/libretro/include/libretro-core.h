@@ -31,7 +31,6 @@ const char *retro_get_system_dir(void);
 const char *retro_get_save_dir(void);
 const char *retro_get_playlist_dir(void);
 
-bool retro_setting_get_timing_inaccuracies_enabled(void);
 float retro_setting_get_frame_rate(void);
 uint16 retro_setting_get_sample_rate(void);
 uint16 retro_setting_get_audio_samples_buffer_size(void);

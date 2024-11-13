@@ -49,23 +49,12 @@ void OSystem_libretro::delayMillis(uint msecs) {
 	uint32 start_time = getMillis();
 	uint32 elapsed_time = 0;
 
-	if (retro_setting_get_timing_inaccuracies_enabled()) {
-		while (elapsed_time < msecs) {
-			/* When remaining delay would take us past the next thread switch time, we switch immediately
-			in order to burn as much as possible delay time in the main RetroArch thread as soon as possible. */
-			if (msecs - elapsed_time >= ((LibretroTimerManager *)_timerManager)->timeToNextSwitch())
-				((LibretroTimerManager *)_timerManager)->switchThread(THREAD_SWITCH_DELAY);
-			else
-				usleep(1000);
-			elapsed_time = getMillis() - start_time;
-		}
-	} else {
-		while (elapsed_time < msecs) {
-			if (!((LibretroTimerManager *)_timerManager)->checkThread(THREAD_SWITCH_DELAY))
-				usleep(1000);
-			elapsed_time = getMillis() - start_time;
-		}
+	while (elapsed_time < msecs) {
+		if (!((LibretroTimerManager *)_timerManager)->checkThread(THREAD_SWITCH_DELAY))
+			usleep(1000);
+		elapsed_time = getMillis() - start_time;
 	}
+
 }
 
 Common::MutexInternal *OSystem_libretro::createMutex(void) {

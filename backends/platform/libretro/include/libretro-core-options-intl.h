@@ -234,19 +234,6 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		NULL
 	},
 	{
-		"scummvm_allow_timing_inaccuracies",
-		"Timing > Consenti inaccuratezze di timing",
-		"Consenti inaccuratezze di timing",
-		"Consente inaccuratezze di timing che riducono significativamente le richeste di CPU. Anche se la maggior parte delle inaccuratezze sono impercettibili, in alcuni casi potrebbe introdurre problemi di sincronizzazione audio, quindi questa opzione andrebbe abilitata solo se il raggiungimento della piena velocità non è possibile in altro modo.",
-		NULL,
-		NULL,
-		{
-			{NULL, NULL},
-		},
-		NULL
-	},
-
-	{
 		"scummvm_framerate",
 		"Timing > Tetto frequenza dei fotogrammi",
 		"Tetto frequenza dei fotogrammi",

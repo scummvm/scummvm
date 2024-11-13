@@ -121,8 +121,7 @@ void LibretroGraphics::copyRectToScreen(const void *buf, int pitch, int x, int y
 
 void LibretroGraphics::updateScreen() {
 	_screenUpdatePending = true;
-	if (! retro_setting_get_timing_inaccuracies_enabled() && !_overlayInGUI)
-		dynamic_cast<LibretroTimerManager *>(LIBRETRO_G_SYSTEM->getTimerManager())->checkThread(THREAD_SWITCH_UPDATE);
+	dynamic_cast<LibretroTimerManager *>(LIBRETRO_G_SYSTEM->getTimerManager())->checkThread(THREAD_SWITCH_UPDATE);
 }
 
 void LibretroGraphics::realUpdateScreen(void) {

@@ -76,8 +76,6 @@ static float mouse_speed = 1.0f;
 static float gamepad_acceleration_time = 0.2f;
 static int mouse_fine_control_speed_reduction = 4;
 
-static bool timing_inaccuracies_enabled = false;
-
 char cmd_params[20][200];
 char cmd_params_num;
 
@@ -335,14 +333,6 @@ static void update_variables(void) {
 	var.value = NULL;
 	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
 		mouse_fine_control_speed_reduction = (int)atoi(var.value);
-	}
-
-	var.key = "scummvm_allow_timing_inaccuracies";
-	var.value = NULL;
-	timing_inaccuracies_enabled = false;
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
-		if (strcmp(var.value, "enabled") == 0)
-			timing_inaccuracies_enabled = true;
 	}
 
 	var.key = "scummvm_framerate";
@@ -638,10 +628,6 @@ static bool retro_update_options_display(void) {
 		retro_set_options_display();
 	}
 	return updated;
-}
-
-bool retro_setting_get_timing_inaccuracies_enabled() {
-	return timing_inaccuracies_enabled;
 }
 
 bool retro_setting_get_gamepad_cursor_only(void) {

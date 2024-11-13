@@ -302,20 +302,6 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"0"
 	},
 	{
-		"scummvm_allow_timing_inaccuracies",
-		"Timing > Allow Timing Inaccuracies",
-		"Allow Timing Inaccuracies",
-		"Allow timing inaccuracies that reduces CPU requirements. Though most timing deviations are imperceptible, in some cases it may introduce audio sync/timing issues, hence this option should be enabled only if full speed cannot be reached otherwise.",
-		NULL,
-		"timing",
-		{
-			{"disabled", NULL},
-			{"enabled", NULL},
-			{NULL, NULL},
-		},
-		"disabled"
-	},
-	{
 		"scummvm_framerate",
 		"Timing > Frame rate cap",
 		"Frame rate cap",
