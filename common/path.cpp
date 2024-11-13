@@ -1149,7 +1149,20 @@ Path Path::fromConfig(const String &value) {
 #endif
 
 	// If the path is not punyencoded this will be a no-op
-	return Path(value, '/').punycodeDecode();
+	Path tmp;
+	return Path(value, '/').reduceComponents<Path &>(
+		[](Path &path, const String &in, bool last) -> Path & {
+			// We encode the result as Latin-1: every byte has its own value
+			// This avoids error for non UTF-8 paths
+			String out = punycode_hasprefix(in) ?
+				     punycode_decodefilename(in).encode(kISO8859_1) :
+				     in;
+			path.appendInPlace(out, kNoSeparator);
+			if (!last) {
+				path._str += SEPARATOR;
+			}
+			return path;
+		}, tmp);
 }
 
 String Path::toConfig() const {
@@ -1181,7 +1194,19 @@ String Path::toConfig() const {
 	}
 #endif
 
-	return punycodeEncode().toString('/');
+	String tmp;
+	return reduceComponents<String &>(
+		[](String &path, const String &in, bool last) -> String & {
+			// We decode the result as Latin-1: every byte has its own value
+			// This avoids error for non UTF-8 paths
+			Common::String out = punycode_encodefilename(in.decode(kISO8859_1));
+			path += out;
+			if (!last) {
+				path += '/';
+			}
+			return path;
+		}, tmp);
+	return tmp;
 }
 
 Path Path::fromCommandLine(const String &value) {
