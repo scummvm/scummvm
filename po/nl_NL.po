@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-08 11:49+0100\n"
-"PO-Revision-Date: 2024-11-06 20:18+0000\n"
+"PO-Revision-Date: 2024-11-14 01:18+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -23,7 +23,7 @@ msgstr ""
 
 #: audio/mac_plugin.cpp:30
 msgid "Apple Macintosh Audio"
-msgstr ""
+msgstr "Apple Macintosh Geluid"
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
@@ -665,11 +665,11 @@ msgstr "Paden"
 
 #: gui/editgamedialog.cpp:291
 msgid "Check Integrity"
-msgstr ""
+msgstr "Controleer Integriteit"
 
 #: gui/editgamedialog.cpp:291
 msgid "Perform integrity check for all game files"
-msgstr ""
+msgstr "Voer een integriteitscontrole uit voor alle spelbestanden"
 
 #: gui/editgamedialog.cpp:296
 msgid "Game Path:"
@@ -842,15 +842,15 @@ msgstr "Notities:"
 #: gui/integrity-dialog.cpp:100
 msgid ""
 "Verifying file integrity may take a long time to complete. Please wait...\n"
-msgstr ""
+msgstr "Integriteit van bestanden controleren kan lang duren. Geduld a.u.b...\n"
 
 #: gui/integrity-dialog.cpp:107 gui/integrity-dialog.cpp:168
 msgid "Calculating file checksums..."
-msgstr ""
+msgstr "Bestand controlesom berekenen..."
 
 #: gui/integrity-dialog.cpp:120
 msgid "Launch Email Client"
-msgstr ""
+msgstr "Start Email programma"
 
 #: gui/integrity-dialog.cpp:174
 msgid "Calculation complete"
@@ -869,21 +869,30 @@ msgid ""
 "If you are sure that this is a valid unknown variant, please send the "
 "following e-mail to integrity@scummvm.org"
 msgstr ""
+"### Resultaten\n"
+"Uw set van spelbestanden is ons onbekend.\n"
+"\n"
+"Als u zeker bent dat dit een valide variant is, stuur dan de volgende e-mail "
+"naar integrity@scummvm.org"
 
 #: gui/integrity-dialog.cpp:537
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr ""
+"Het spel lijkt geen enkel bestand te hebben. Weet u zeker dat het pad juist "
+"is?"
 
 #: gui/integrity-dialog.cpp:542
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
 msgstr ""
+"Er lijkt geen metadata te zijn voor het spel, dus is het niet te matchen. "
+"Vul a.u.b. de juiste metadata in voor het spel."
 
 #: gui/integrity-dialog.cpp:569
 msgid "Files all OK"
-msgstr ""
+msgstr "Alle bestanden OK"
 
 #: gui/filebrowser-dialog.cpp:53
 msgid "Choose file for loading"
@@ -1342,7 +1351,7 @@ msgstr "Selecteer een groepeercriteria"
 
 #: gui/launcher.cpp:263
 msgid "Click here to see Help"
-msgstr ""
+msgstr "Klik hier voor Help"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
 #: gui/launcher.cpp:267 engines/dialogs.cpp:91
@@ -2747,10 +2756,8 @@ msgid "Do you really want to delete this saved game?"
 msgstr "Wilt u dit opgeslagen spel echt verwijderen?"
 
 #: gui/saveload-dialog.cpp:557
-#, fuzzy
-#| msgid "Error writing save file\n"
 msgid "Error deleting saved game"
-msgstr "Fout tijdens het opslaan van het spel\n"
+msgstr "Fout tijdens verwijderen van opgeslagen spel"
 
 #: gui/saveload-dialog.cpp:675 gui/saveload-dialog.cpp:1184
 msgid "Date: "
@@ -3104,7 +3111,7 @@ msgstr "Macintosh z/w"
 
 #: common/rendermode.cpp:57
 msgid "VGA Grey Scale"
-msgstr ""
+msgstr "VGA Grijstinten"
 
 #: common/rendermode.cpp:58
 #, fuzzy
@@ -3136,17 +3143,17 @@ msgstr "Ga naar lokatie"
 
 #: common/rotationmode.cpp:34
 msgid "Clockwise"
-msgstr ""
+msgstr "Met de klok mee"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:35
 msgid "180 degrees"
-msgstr ""
+msgstr "180 graden"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:36
 msgid "Counter-clockwise"
-msgstr ""
+msgstr "Tegen de klok in"
 
 #: common/updates.cpp:57
 msgid "Daily"
@@ -3342,6 +3349,8 @@ msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
 msgstr ""
+"(Nog) geen spellen\n"
+"Open ScummVM en voeg uw spellen hier toe."
 
 #: dists/android.strings.xml.cpp:59
 msgid "Game icon"
@@ -3353,7 +3362,7 @@ msgstr "Snelkoppeling tekst"
 
 #: dists/android.strings.xml.cpp:61
 msgid "Shortcut icon"
-msgstr ""
+msgstr "Snelkoppeling pictogram"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:32
@@ -5283,11 +5292,11 @@ msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:46
 msgid "LIBRETRO PLAYLIST GENERATOR"
-msgstr ""
+msgstr "LIBRETRO AFSPEELLIJST GENERATOR"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:47
 msgid "(check '? > Libretro playlist' for detailed info)"
-msgstr ""
+msgstr "(Ga naar '? > Libretro afspeellijst' voor gedetailleerde info)"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:48
 msgid "Playlists Path"
@@ -5311,15 +5320,15 @@ msgstr "Algemene bewaarmap"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:60
 msgid "One in each game folder"
-msgstr ""
+msgstr "Eén in elke spelmap"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:62
 msgid "Clear existing hooks"
-msgstr ""
+msgstr "Wis bestaande koppelingen"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:64
 msgid "Generate playlist"
-msgstr ""
+msgstr "Genereer afspeellijst"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:66
 msgid "Status: "
@@ -5343,7 +5352,7 @@ msgstr "Selecteer Afspeellijst map"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:233
 msgid "Libretro playlist"
-msgstr ""
+msgstr "Libretro afspeellijst"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:236
 msgid ""
@@ -5804,7 +5813,7 @@ msgstr "Gebruik zilveren muisaanwijzers"
 
 #: engines/adl/metaengine.cpp:105
 msgid "Use the checkered cursor from later Apple II models"
-msgstr ""
+msgstr "Gebruik de geruite cursor van latere Apple II modellen"
 
 #: engines/agi/detection_tables.h:261
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
@@ -5927,7 +5936,7 @@ msgstr "Kopieerbeveiliging inschakelen"
 #: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:767
 msgid "Enable any copy protection that would otherwise be bypassed by default."
-msgstr ""
+msgstr "Schakel kopieerbeveiliging in die standaard anders omzeilt zou worden."
 
 #: engines/agi/metaengine.cpp:420 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
@@ -6073,7 +6082,7 @@ msgstr "Ondersteuning voor AGOS 2 is niet meegecompileerd"
 #. It is never disabled and it is not game specific
 #: engines/agos/metaengine.cpp:227
 msgid "AGOS main"
-msgstr ""
+msgstr "AGOS basis"
 
 #: engines/agos/metaengine.cpp:228 engines/bbvs/metaengine.cpp:93
 #: engines/cine/metaengine.cpp:259 engines/cruise/metaengine.cpp:143
@@ -6171,24 +6180,25 @@ msgstr "Hitbox namen aan-/uitzetten"
 
 #: engines/agos/metaengine.cpp:360
 msgid "Switches between speech only and combined speech and subtitles"
-msgstr ""
+msgstr "Schakelt tussen alleen spraak en spraak gecombineerd met ondertitels"
 
 #: engines/agos/metaengine.cpp:366
 msgid "Switches between subtitles only and combined speech and subtitles"
 msgstr ""
+"Schakelt tussen alleen ondertitels en spraak gecombineerd met ondertitels"
 
 #: engines/agos/metaengine.cpp:376
 msgid "High speed mode on/off in Swampy Adventures"
-msgstr ""
+msgstr "Snelle modus aan/uit in Swampy Adventures"
 
 #: engines/agos/metaengine.cpp:382 engines/lure/metaengine.cpp:295
 #: engines/trecision/metaengine.cpp:181
 msgid "Press \"Yes\" key"
-msgstr ""
+msgstr "Druk \"Ja\" toets"
 
 #: engines/agos/metaengine.cpp:387 engines/lure/metaengine.cpp:310
 msgid "Press \"No\" key"
-msgstr ""
+msgstr "Druk \"Nee\" toets"
 
 #: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -6424,11 +6434,11 @@ msgstr "Evengoed laden"
 
 #: engines/bagel/metaengine.cpp:41
 msgid "Wait"
-msgstr ""
+msgstr "Wacht"
 
 #: engines/bagel/metaengine.cpp:42
 msgid "Soldier 714 Eye Cheat"
-msgstr ""
+msgstr "Soldier 714 Oog Valsspelen"
 
 #: engines/bagel/metaengine.cpp:83
 msgid "General Keys"
@@ -6915,27 +6925,27 @@ msgstr "Inventaris Voorwerp 8 (Selecteer / Deselecteer)"
 #. Sets the current access to only the first Location
 #: engines/cge/metaengine.cpp:300
 msgid "DEBUG: Access to Location 1"
-msgstr ""
+msgstr "DEBUG: Toegang tot Locatie 1"
 
 #. I18N: Sets the current access to Locations 1 to 8.
 #: engines/cge/metaengine.cpp:306
 msgid "DEBUG: Access to Locations 1-8"
-msgstr ""
+msgstr "DEBUG: Toegang tot Locaties 1-8"
 
 #. I18N: Sets the current access to Locations 1 to 16.
 #: engines/cge/metaengine.cpp:312
 msgid "DEBUG: Access to Locations 1-16"
-msgstr ""
+msgstr "DEBUG: Toegang tot Locaties 1-16"
 
 #. I18N: Sets the current access to Locations 1 to 23.
 #: engines/cge/metaengine.cpp:318
 msgid "DEBUG: Access to Locations 1-23"
-msgstr ""
+msgstr "DEBUG: Toegang tot Locaties 1-23"
 
 #. I18N: Sets the current access to Locations 1 to 24.
 #: engines/cge/metaengine.cpp:324
 msgid "DEBUG: Access to Locations 1-24"
-msgstr ""
+msgstr "DEBUG: Toegang tot Locaties 1-24"
 
 #: engines/cge2/metaengine.cpp:59
 msgid "Enable Text to Speech for Objects and Options"
@@ -7002,7 +7012,7 @@ msgstr "Spel Toetskoppelingen"
 
 #: engines/cine/metaengine.cpp:277
 msgid "Exit Sony intro screen"
-msgstr ""
+msgstr "Verlaat Sony intro scherm"
 
 #: engines/cine/metaengine.cpp:283
 #, fuzzy
@@ -7068,7 +7078,7 @@ msgstr "Actief"
 
 #: engines/cine/metaengine.cpp:340
 msgid "Speak"
-msgstr ""
+msgstr "Spreek"
 
 #: engines/cine/metaengine.cpp:345
 #, fuzzy
@@ -7119,11 +7129,11 @@ msgstr "Beweeg naar rechts"
 
 #: engines/cine/metaengine.cpp:416
 msgid "Menu option up"
-msgstr ""
+msgstr "Menu optie omhoog"
 
 #: engines/cine/metaengine.cpp:421
 msgid "Menu option down"
-msgstr ""
+msgstr "Menu optie omlaag"
 
 #: engines/cine/saveload.cpp:860
 msgid ""
@@ -7200,7 +7210,7 @@ msgstr "Logboek"
 
 #: engines/crab/input/input.cpp:256
 msgid "Traits"
-msgstr ""
+msgstr "Eigenschappen"
 
 #: engines/crab/input/input.cpp:266
 msgid "Quick Save"
@@ -7219,10 +7229,8 @@ msgstr "Snelle modus bewerker"
 
 #. I18N: Opens menu with player commands
 #: engines/cruise/metaengine.cpp:173
-#, fuzzy
-#| msgid "Player Time:"
 msgid "Player menu"
-msgstr "Speeltijd:"
+msgstr "Speler menu"
 
 #: engines/cruise/metaengine.cpp:179
 #, fuzzy
@@ -7261,7 +7269,7 @@ msgstr "Schakel Vechtmodus in/uit"
 
 #: engines/dgds/metaengine.cpp:77
 msgid "Next dialog / menu item"
-msgstr ""
+msgstr "Volgend dialoog / menu onderdeel"
 
 #: engines/dgds/metaengine.cpp:78
 #, fuzzy
@@ -7308,7 +7316,7 @@ msgstr ""
 
 #: engines/draci/metaengine.cpp:155
 msgid "Skip intro/Exit map or inventory"
-msgstr ""
+msgstr "Sla intro over/Verlaat map of inventaris"
 
 #: engines/draci/metaengine.cpp:161
 #, fuzzy
@@ -7336,7 +7344,7 @@ msgstr "Open hoofd menu"
 
 #: engines/draci/metaengine.cpp:192
 msgid "Toggle between mouse pointer and the last game item"
-msgstr ""
+msgstr "Schakel tussen muiswijzer en het laatste spel voorwerp"
 
 #: engines/draci/metaengine.cpp:198
 #, fuzzy
@@ -7492,7 +7500,7 @@ msgstr "Filter afbeeldingen"
 
 #: engines/freescape/metaengine.cpp:120
 msgid "Keep graphics as close as possible to the original"
-msgstr ""
+msgstr "laat het spel er zo veel mogelijk uitzien als het origineel eruit"
 
 #: engines/freescape/metaengine.cpp:130
 #, fuzzy
@@ -7586,7 +7594,7 @@ msgstr "Uitvoeren"
 
 #: engines/freescape/games/castle/castle.cpp:292
 msgid "Crawl"
-msgstr ""
+msgstr "Kruip"
 
 #: engines/freescape/games/castle/castle.cpp:298
 #: engines/freescape/games/eclipse/eclipse.cpp:245
@@ -7623,7 +7631,7 @@ msgstr "Lager/Vlieg omlaag"
 
 #: engines/freescape/games/dark/dark.cpp:243
 msgid "Enable/Disable Jetpack"
-msgstr ""
+msgstr "Jetpack Aan/Uit"
 
 #. I18N: drilling rig is an in game item
 #: engines/freescape/games/driller/driller.cpp:191
@@ -11922,14 +11930,9 @@ msgstr ""
 "ondersteuning"
 
 #: engines/sword2/detection_tables.h:419
-#, fuzzy
-#| msgid ""
-#| "Enhanced Edition not supported. Please, use the original files which are "
-#| "part of the release."
 msgid "Remastered edition is not supported. Please, use the classic version"
 msgstr ""
-"Enhanced Edition wordt niet ondersteund, gebruik a.u.b. de originele "
-"bestanden die onderdeel zijn van de uitgave."
+"Remastered Edition wordt niet ondersteund, gebruik a.u.b. de klassieke versie"
 
 #: engines/sword2/metaengine.cpp:43
 msgid "Show object labels"
