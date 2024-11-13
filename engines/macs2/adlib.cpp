@@ -793,18 +793,19 @@ void Adlib::OnTimer() {
 									temp = bp1; // TODO: xor	ah,ah
 									// TODO: Should these be 16 bit?
 									temp = temp * temp3;
-									// TODO: Continue here
+									
 									// TODO: cwd
+									uint16 tempCX = 0x3F;
+									temp /= tempCX;
+									temp += temp2;
+									temp3 = temp;
+									// TODO: Need to read from pointer
+									// les	di,[bp-14h]
+									// mov al, es : [di]
+									temp &= 0x3F; // TODO: xor ah,ah
+									temp += temp3;
+									// TODO: Continue here
 									/*
-									mov	cx,3Fh
-									idiv	cx
-									add	ax,bx
-									mov	dx,ax
-									les	di,[bp-14h]
-									mov	al,es:[di]
-									and	al,3Fh
-									xor	ah,ah
-									add	ax,dx
 									mov	[bp-2h],al
 									push	word ptr [bp-0Eh]
 									push	word ptr [bp-10h]
