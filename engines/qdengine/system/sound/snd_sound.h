@@ -43,15 +43,6 @@ public:
 	explicit sndSound(const wavSound *snd, const sndHandle *h = NULL) : _sound(snd), _handle(h), _flags(0) {}
 	~sndSound();
 
-	sndSound &operator = (const sndSound &s) {
-		if (this == &s) return *this;
-
-		_sound = s._sound;
-		_handle = s._handle;
-
-		return *this;
-	}
-
 	//! Состояние звука.
 	enum status_t {
 		//! звук не проигрывается
