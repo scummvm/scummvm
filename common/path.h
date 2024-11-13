@@ -164,9 +164,6 @@ private:
 	 */
 	bool compareComponents(bool (*comparator)(const String &x, const String &y), const Path &other) const;
 
-	static Path &punycode_decodefilename_helper(Path &path, const String &in, bool last);
-	static Path &punycode_encodefilename_helper(Path &path, const String &in, bool last);
-
 	/**
 	 * Determines if the path is escaped
 	 */
