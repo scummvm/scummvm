@@ -64,9 +64,11 @@ const int INT_INF = 0x7fffffff;
 inline float invSqrtFast(float x) {
 	x += 1e-7f; // Добавка, устраняющая деление на 0
 	float xhalf = 0.5f * x;
-	int i = *(int *)&x; // get bits for floating value
+
+	uint32 i;
+	memcpy(&i, &x, 4);
 	i = 0x5f375a86 - (i >> 1); // gives initial guess y0
-	x = *(float *)&i; // convert bits back to float
+	memcpy(&x, &i, 4);
 	x = x * (1.5f - xhalf * x * x); // Newton step, repeating increases accuracy
 	return x;
 }
