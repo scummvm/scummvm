@@ -8405,7 +8405,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// ein Fall für TKKG: Verrat an TKKG (bilingual DE/EN)
 	MACGAME2("tkkg5", "", "TKKG Start", "cf534db714fe9bd4c6059755094f9bed", 1037002,
 						  "Score.dxr",  "a9fc73baaaae5693650b555b173eb328", 27052, 602),
-	WINGAME1t("tkkg5", "", "TKKG5_95.ex_", "4e86d530315553774f70ad9ad61e0c52", 1597094, 602),
+	WINGAME1("tkkg5", "", "TKKG5_95.ex_", "t:4e86d530315553774f70ad9ad61e0c52", 1597094, 602),
+	WINGAME1("tkkg5", "", "TKKG5_32.ex_", "t:4e86d530315553774f70ad9ad61e0c52", 1597094, 602),
 
 	// ein Fall für TKKG: Der Fälscherbande auf der Spur (bilingual DE/EN)
 	MACGAME2("tkkg6", "", "TKKG-Start", "dd58f1859ddab9bf15867a510cf7bfe4", 1033758,
@@ -9534,7 +9535,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// ein Fall für TKKG: Voodoozauber (bilingual DE/EN)
 	MACGAME2("tkkg9", "", "TKKG-Start", "2c64a568bd26944452957a53af85b067", 197167,
 						  "Score.dxr", "d7300d214a30ec129cb4939aeddc3392", 17770, 800),
-	WINGAME1t("tkkg9", "", "TKKG 9.exe", "3284e5212dee57129a32ba86367ce816", 2329244, 800),
+	WINGAME1("tkkg9", "", "InData/TKKG 9.exe", "t:3284e5212dee57129a32ba86367ce816", 2329244, 800),
 
 	// ein Fall für TKKG: Panik im Internat (bilingual DE/EN)
 	MACGAME1("tkkg10", "", "TKKG10", "4ea5fc09f79eee6dded94dc40f303779", 197107, 800),
