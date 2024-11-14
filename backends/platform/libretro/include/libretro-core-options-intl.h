@@ -186,7 +186,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"scummvm_framerate",
 		"Timing > Tetto frequenza dei fotogrammi",
 		"Tetto frequenza dei fotogrammi",
-		"Imposta il limite superiore della frequenza dei fotogrammi. La riduzione del limite migliorara le prestazioni sui dispositivi di fascia bassa. Il cambio di questa impostazione causerà il reset del core.",
+		"Imposta il limite superiore della frequenza dei fotogrammi. La riduzione del limite migliora le prestazioni sui dispositivi di fascia bassa. Il cambio di questa impostazione causerà il reset del core.",
 		NULL,
 		NULL,
 		{
@@ -198,7 +198,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"scummvm_samplerate",
 		"Timing > Frequenza di campionamento",
 		"Frequenza di campionamento",
-		"Imposta la frequenza di campionamento. La riduzione della frequenza migliorara leggermente le prestazioni sui dispositivi di fascia bassa. Il cambio di questa impostazione causerà il reset del core.",
+		"Imposta la frequenza di campionamento. La riduzione della frequenza migliora leggermente le prestazioni sui dispositivi di fascia bassa. Il cambio di questa impostazione causerà il reset del core.",
 		NULL,
 		NULL,
 		{
