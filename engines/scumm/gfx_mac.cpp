@@ -133,7 +133,7 @@ void ScummEngine::mac_drawIndy3TextBox() {
 	byte *ptr = (byte *)s->getBasePtr(0, 2);
 	int pitch = s->pitch;
 
-	_macScreen->copyRectToSurface(ptr, pitch, x, y + 2 * _macScreenDrawOffset, w, h + 2 * _macScreenDrawOffset);
+	_macScreen->copyRectToSurface(ptr, pitch, x, y + 2 * _macScreenDrawOffset, w, h);
 	_textSurface.fillRect(Common::Rect(x, y, x + w, y + h), 0);
 
 	mac_markScreenAsDirty(x, y, w, h);
