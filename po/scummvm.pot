@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-14 18:44+0000\n"
+"POT-Creation-Date: 2024-11-14 18:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -8683,7 +8683,7 @@ msgstr ""
 msgid "Unable to locate the '%s' engine data file"
 msgstr ""
 
-#: engines/myst3/detection.cpp:181 engines/myst3/detection.cpp:195
+#: engines/myst3/detection.cpp:220 engines/myst3/detection.cpp:234
 msgid "PS2 version is not yet supported"
 msgstr ""
 
@@ -8695,7 +8695,7 @@ msgstr ""
 msgid "Enable widescreen rendering in fullscreen mode."
 msgstr ""
 
-#: engines/myst3/myst3.cpp:363
+#: engines/myst3/myst3.cpp:412
 #, c-format
 msgid ""
 "This version of Myst III has not been updated with the latest official "
@@ -8705,7 +8705,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/myst3/myst3.cpp:1591 engines/pegasus/pegasus.cpp:749
+#: engines/myst3/myst3.cpp:1640 engines/pegasus/pegasus.cpp:749
 msgid "Invalid file name for saving"
 msgstr ""
 
