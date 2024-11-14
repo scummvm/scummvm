@@ -1353,7 +1353,7 @@ void Room204::daemon() {
 		break;
 
 	case 593:
-		subDaemon_215F4();
+		initPriestWalker();
 		kernel_timing_trigger(20, 594, nullptr);
 
 		break;
@@ -1407,12 +1407,12 @@ void Room204::daemon() {
 	case 604:
 		switch (_field134) {
 		case 1:
-			sendWSMessage_10000(1, _priestTurningStateMach, _field74_series, 2, 2, 603, _field74_series, 2, 2, 0);
+			sendWSMessage_10000(1, _priestTurningStateMach, _priestWalkerSeries, 2, 2, 603, _priestWalkerSeries, 2, 2, 0);
 			break;
 
 		case 2: {
 			int32 rnd = imath_ranged_rand(1, 2);
-			sendWSMessage_10000(1, _priestTurningStateMach, _field74_series, 1, rnd, 603, _field74_series, rnd, rnd, 0);
+			sendWSMessage_10000(1, _priestTurningStateMach, _priestWalkerSeries, 1, rnd, 603, _priestWalkerSeries, rnd, rnd, 0);
 			}
 
 			break;
@@ -1629,7 +1629,7 @@ void Room204::daemon() {
 		break;
 
 	case 632:
-		subDaemon_F601();
+		deleteMeiCheiHotspot();
 		addMovingMeiHotspot();
 		_fieldE0 = _fieldE4_walkerDestX;
 
@@ -1799,7 +1799,7 @@ void Room204::daemon() {
 		_fieldE0 = 555;
 
 		subDaemon_ADBB0();
-		subDaemon_F601();
+		deleteMeiCheiHotspot();
 		addMovingMeiHotspot();
 		player_set_commands_allowed(true);
 
@@ -1969,7 +1969,7 @@ void Room204::daemon() {
 		kernel_timing_trigger(120, 1995, nullptr);
 		_fieldDC = 1;
 		_fieldE0 = 555;
-		subDaemon_F601();
+		deleteMeiCheiHotspot();
 		addMovingMeiHotspot();
 		player_set_commands_allowed(true);
 
@@ -2144,8 +2144,17 @@ void Room204::game_set_scale(int32 frontY, int32 backY, int32 frontS, int32 back
 	warning("STUB - game_set_scale");
 }
 
-void Room204::subDaemon_215F4() {
-	warning("STUB - subDaemon_215F4");
+void Room204::initPriestWalker() {
+	_field138 = 1;
+	_field134 = 1;
+	_field13C_triggerNum = -1;
+	_field140 = 0;
+	_field144_triggerNum = -1;
+	_priestTurningStateMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 360, 305, 100, 2048, false, triggerMachineByHashCallback, "Young Priest State Machine");
+	_priestWalkerSeries = series_load("PRIEST WALKER", -1, nullptr);
+	sendWSMessage_10000(1, _priestTurningStateMach, _priestWalkerSeries, 2, 2, 603, _priestWalkerSeries, 2, 2, 0);
+
+	_field138 = 1;
 }
 
 void Room204::subDaemon_21781() {
@@ -2156,8 +2165,13 @@ void Room204::subDaemon_ADBB0() {
 	warning("STUB - subDaemon_ADBB0");
 }
 
-void Room204::subDaemon_F601() {
-	warning("STUB - subDaemon_F601");
+void Room204::deleteMeiCheiHotspot() {
+	for (HotSpotRec *hs = _G(currentSceneDef).hotspots; hs; hs = hs->next) {
+		if (!strcmp(hs->vocab, "MEI CHEN")) {
+			hotspot_delete_record(_G(currentSceneDef).hotspots, hs);
+			break;
+		}
+	}
 }
 
 

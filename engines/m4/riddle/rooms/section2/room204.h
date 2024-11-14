@@ -40,17 +40,17 @@ public:
 	void daemon() override;
 
 private:
-	void initWalkerSeries();
+	void addLookMalletHotspot();
 	void addMovingMeiHotspot();
 	void deleteMalletHotspot();
-	void addLookMalletHotspot();
+	void deleteMeiCheiHotspot();
+	void game_set_scale(int32 frontY, int32 backY, int32 frontS, int32 backS);
+	void initWalkerSeries();
+	void initPriestWalker();
 
 	void subDaemon_ADB7C();
-	void game_set_scale(int32 frontY, int32 backY, int32 frontS, int32 backS);
-	void subDaemon_215F4();
 	void subDaemon_21781();
 	void subDaemon_ADBB0();
-	void subDaemon_F601();
 	
 	int32 _dword1A189C = 0;
 
@@ -65,9 +65,7 @@ private:
 	int32 _field44_triggerNum = 0;
 	int32 _field48_triggerNum = 0;
 	int32 _field68 = 0;
-	int32 _field74_series = 0;
 	int32 _field78_series = 0;
-	int32 _ripTrekMedReachHandPos1Series = 0;
 	int32 _fieldBC_trigger = 0;
 	int32 _fieldC0_trigger = 0;
 	int32 _fieldC4 = 0;
@@ -120,12 +118,14 @@ private:
 	int32 _meiTrekRtHandOutPos2Series = 0;
 	int32 _meiTrekTalkerPos4Series = 0;
 	int32 _priestTurnsFrom3To9Series = 0;
+	int32 _priestWalkerSeries = 0;
 	int32 _ripDropsSeries = 0;
 	int32 _ripSketchingInNotebookPos2Series = 0;
 	int32 _ripTrekHandTalkPos3Series = 0;
 	int32 _ripTrekHeadTurnPos5Series = 0;
 	int32 _ripTrekLHandTalkPos4Series = 0;
 	int32 _ripTrekLowReachPos2Series = 0;
+	int32 _ripTrekMedReachHandPos1Series = 0;
 	int32 _ripTrekTalkerPos3Series = 0;
 
 	machine *_204pu05Mach = nullptr;
