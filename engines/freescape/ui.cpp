@@ -203,6 +203,7 @@ void FreescapeEngine::borderScreen() {
 			lines.push_back("");
 			lines.push_back("");
 			lines.push_back(centerAndPadString("SPACEBAR:  BEGIN MISSION", pad));
+			lines.push_back("");
 			lines.push_back(centerAndPadString("COPYRIGHT 1988 INCENTIVE", pad));
 		} else if (isSpectrum()) {
 			if (isSpectrum() && isCastle())
