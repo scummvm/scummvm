@@ -241,7 +241,7 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 	ObjectArray nonPlanarObjects;
 	Object *floor = nullptr;
 	Common::HashMap<Object *, float> sizes;
-	float offset = gfx->_isAccelerated ? (1.0 / _scale) : 2.0;
+	float offset = (gfx->_isAccelerated ? 1.0 : 2.0) / _scale;
 
 	for (auto &obj : _drawableObjects) {
 		if (!obj->isDestroyed() && !obj->isInvisible()) {
@@ -359,13 +359,16 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 		}
 	}
 
+	// In theory, the ordering of the rendering should not matter,
+	// however, it seems that rendering the planar objects first
+	// triggers a bug in TinyGL where certain objects such as lines,
+	// are not rendered correctly. This is a workaround for that issue.
+	for (auto &obj : nonPlanarObjects) {
+		obj->draw(gfx);
+	}
 
 	for (auto &pair : offsetMap) {
 		pair._key->draw(gfx, pair._value);
-	}
-
-	for (auto &obj : nonPlanarObjects) {
-		obj->draw(gfx);
 	}
 
 	_lastTick = animationTicks;

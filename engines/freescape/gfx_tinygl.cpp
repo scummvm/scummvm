@@ -279,6 +279,7 @@ void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 
 void TinyGLRenderer::depthTesting(bool enabled) {
 	if (enabled) {
+		tglClear(TGL_DEPTH_BUFFER_BIT);
 		tglEnable(TGL_DEPTH_TEST);
 	} else {
 		tglDisable(TGL_DEPTH_TEST);
