@@ -174,10 +174,10 @@ void Sections::m4SceneLoad() {
 }
 
 void Sections::m4RunScene() {
-	game_control_cycle();
-
 	if (!player_been_here(_G(game).room_id))
 		player_enters_scene(_G(game).room_id);
+
+	game_control_cycle();
 }
 
 void Sections::m4EndScene() {
