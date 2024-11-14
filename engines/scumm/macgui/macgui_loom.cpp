@@ -50,7 +50,6 @@ MacLoomGui::MacLoomGui(ScummEngine *vm, const Common::Path &resourceFile) : MacG
 	// a large screen, and it's not saved.
 
 	_practiceBoxPos = Common::Point(215, 376 + 2 * _vm->_macScreenDrawOffset);
-	readStrings();
 }
 
 MacLoomGui::~MacLoomGui() {

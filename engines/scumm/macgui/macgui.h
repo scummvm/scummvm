@@ -48,7 +48,7 @@ public:
 
 	int getNumColors() const;
 
-	void initialize();
+	bool initialize();
 	void reset();
 	void update(int delta);
 	void updateWindowManager();

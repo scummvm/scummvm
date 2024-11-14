@@ -602,13 +602,13 @@ static MacGuiImpl::MacSTRSParsingEntry strsIndy4FloppyVariant2Table[] = {
 #undef SKIP_C
 #undef SKIP_P
 
-void MacGuiImpl::readStrings() {
+bool MacGuiImpl::readStrings() {
 	Common::MacResManager resource;
 	resource.open(_resourceFile);
 	uint32 strsLen = resource.getResLength(MKTAG('S', 'T', 'R', 'S'), 0);
 
 	if (strsLen <= 0)
-		return;
+		return false;
 
 	Common::SeekableReadStream *strsStream = resource.getResource(MKTAG('S', 'T', 'R', 'S'), 0);
 	uint8 *strsBlock = (uint8 *)malloc(strsLen);
@@ -676,8 +676,6 @@ void MacGuiImpl::readStrings() {
 			parsingTableSize = ARRAYSIZE(strsIndy4CDVariant2Table);
 			break;
 		}
-	} else {
-		error("MacGuiImpl::readStrings(): String parsing table not defined for this game");
 	}
 
 	if (parsingTable)
@@ -687,6 +685,8 @@ void MacGuiImpl::readStrings() {
 
 	free(strsBlock);
 	delete strsStream;
+
+	return parsingTable != nullptr;
 }
 
 void MacGuiImpl::parseSTRSBlock(uint8 *strsData, MacSTRSParsingEntry *parsingTable, int parsingTableSize) {
