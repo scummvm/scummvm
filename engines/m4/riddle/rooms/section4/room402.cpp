@@ -114,17 +114,12 @@ void Room402::init() {
 			_val13 = 2300;
 			ws_demand_facing(11);
 
-			if (_G(kittyScreaming)) {
+			if (!_G(kittyScreaming)) {
+				ws_demand_location(660, 290);
+				digi_play("402_S03", 1, 255, 19);
+			} else {
 				ws_demand_location(425, 285);
 				player_set_commands_allowed(true);
-			} else {
-				digi_preload("950_s22");
-				_ripDownStairs = series_load("RIP DOWN STAIRS");
-				ws_hide_walker();
-				_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, 0,
-					triggerMachineByHashCallback, "rip leaving castle");
-				sendWSMessage_10000(1, _ripEnterLeave, _ripDownStairs, 1, 27, 55,
-					_ripDownStairs, 27, 27, 0);
 			}
 
 		} else if (_G(flags)[V131] != 402) {

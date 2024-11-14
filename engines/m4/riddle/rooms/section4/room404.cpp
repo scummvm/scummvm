@@ -37,7 +37,7 @@ static const char *NORMAL_NAMES[] = {
 static const int16 SHADOW_DIRS[] = { 200, 201, -1 };
 static const char *SHADOW_NAMES[] = {
 	"butler walker shadow pos1",
-	"wolf walker shadow pos3"
+	"butler walker shadow pos3"
 };
 
 static const char *const SAID[][2] = {
