@@ -1955,6 +1955,14 @@ void Room204::daemon() {
 		break;
 
 	case 702:
+		DisposePath(_mcMach->walkPath);
+		_fieldDC = 1;
+		_fieldE4_walkerDestX = 555;
+		_mcMach->walkPath = CreateCustomPath(555, 323, -1);
+		ws_custom_walk(_mcMach, 10, 703, true);
+
+		break;
+
 	case 703:
 		kernel_timing_trigger(1, 630, nullptr);
 		midi_fade_volume(0, 120);
@@ -1968,6 +1976,11 @@ void Room204::daemon() {
 		break;
 
 	case 708:
+		player_set_commands_allowed(false);
+		ws_walk(_G(my_walker), 1580, 342, nullptr, 709, 9, true);
+
+		break;
+
 	case 709:
 		kernel_timing_trigger(1, 578, nullptr);
 		player_set_commands_allowed(true);
@@ -1979,7 +1992,26 @@ void Room204::daemon() {
 		break;
 
 	case 712:
+		series_unload(S8_SHADOW_DIRS2[4]);
+		series_unload(S8_SHADOW_DIRS2[3]);
+		series_unload(S8_SHADOW_DIRS2[2]);
+		series_unload(S8_SHADOW_DIRS2[1]);
+		series_unload(S8_SHADOW_DIRS2[0]);
+
+		series_unload(S8_SHADOW_DIRS1[4]);
+		series_unload(S8_SHADOW_DIRS1[3]);
+		series_unload(S8_SHADOW_DIRS1[2]);
+		series_unload(S8_SHADOW_DIRS1[1]);
+		series_unload(S8_SHADOW_DIRS1[0]);
+
+		break;
+
 	case 713:
+		series_unload(ROOM204_NORMAL_DIRS[0]);
+		series_unload(ROOM204_SHADOW_DIRS[0]);
+
+		break;
+
 	case 714:
 		digi_preload("204R03C", -1);
 		_204pu05Mach = series_stream("204PU05", 5, 0, 716);
@@ -1998,6 +2030,12 @@ void Room204::daemon() {
 		break;
 
 	case 719:
+		digi_preload("0507p02a", 204);
+		_field10 = 19;
+		digi_play(conv_sound_to_play(), 1, 255, 720, -1);
+
+		break;
+
 	case 720:
 		_field10 = 16;
 		_204pu05Mach = series_stream("204PU04", 3, 0, 722);
@@ -2010,7 +2048,15 @@ void Room204::daemon() {
 		break;
 
 	case 722:
+		series_stream("PRIEST REACTS", 7, 0, 723);
+		break;
+
 	case 723:
+		digi_unload("0507p02a");
+		conv_resume(conv_get_handle());
+
+		break;
+
 	case 725:
 		digi_play("204R37", 1, 255, 726, -1);
 		break;
