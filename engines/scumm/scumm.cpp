@@ -1275,8 +1275,12 @@ Common::Error ScummEngine::init() {
 				"fate_v1.5",
 				"Indy 12/15/92",
 				"Indy_12/15/92",
+				"Indy 12-15-92",
+				"Indy_12-15-92",
 				"Fate of Atlantis v1.5",
-				"Fate_of_Atlantis_v1.5"
+				"Fate_of_Atlantis_v1.5",
+				"Fate of Atlantis v.1.5",
+				"Fate_of_Atlantis_v.1.5"
 			};
 
 			for (int i = 0; i < ARRAYSIZE(indy4FileNames); i++) {
