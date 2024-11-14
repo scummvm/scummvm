@@ -307,7 +307,7 @@ void showArchive() {
 		ImGui::SameLine();
 
 		{ // Right pane
-			ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Border);
+			ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Borders);
 
 			ImGui::Text("Resource %s %d (%d bytes)", tag2str(_state->_archive.resType), _state->_archive.resId, _state->_archive.dataSize);
 

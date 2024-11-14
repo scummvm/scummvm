@@ -393,7 +393,7 @@ void showArchives() {
 		ImGui::SameLine();
 
 		{ // Right pane
-			ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Border);
+			ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Borders);
 
 			if (_state->_displayMode == kDisplayQDA) {
 				displayQDA();

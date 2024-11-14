@@ -283,7 +283,7 @@ static void drawResources() {
 	ImVec2 cursor = ImGui::GetCursorPos();
 	ImGui::SetCursorPos(ImVec2(cursor.x, cursor.y + 10.f));
 	ImGui::Text("Preview:");
-	ImGui::BeginChild("TexturePreview", ImVec2(0, 0), ImGuiChildFlags_Border | ImGuiChildFlags_ResizeX | ImGuiChildFlags_ResizeY);
+	ImGui::BeginChild("TexturePreview", ImVec2(0, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX | ImGuiChildFlags_ResizeY);
 	for (auto &res : g_twp->_resManager->_textures) {
 		if (_state->_textureSelected == res._key) {
 			ImGui::Image((ImTextureID)(intptr_t)res._value.id, ImVec2(res._value.width, res._value.height));
