@@ -600,7 +600,7 @@ void JNI::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 		const char *path = env->GetStringUTFChars(path_obj, 0);
 
 		if (path != 0) {
-			s.addDirectory(path, path, priority);
+			s.addDirectory(path, path, priority, 2);
 			env->ReleaseStringUTFChars(path_obj, path);
 		}
 
