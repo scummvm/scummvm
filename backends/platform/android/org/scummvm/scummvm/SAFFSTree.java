@@ -277,7 +277,6 @@ public class SAFFSTree {
 	}
 
 	public SAFFSNode getChild(SAFFSNode node, String name) {
-		final ContentResolver resolver = _context.getContentResolver();
 		final Uri searchUri = DocumentsContract.buildChildDocumentsUriUsingTree(_treeUri, node._documentId);
 
 		SAFFSNode newnode;
