@@ -191,7 +191,7 @@ void DarkEngine::loadAssetsDOSFullGame() {
 			error("Failed to open DSIDEC.EXE");
 
 		loadSpeakerFxDOS(&file, 0x3077 + 0x200, 0x2f28 + 0x200);
-		loadFonts(&file, 0x8496);
+		loadFonts(&file, 0x8497);
 		loadMessagesFixedSize(&file, 0x2d65, 16, 27);
 		loadGlobalObjects(&file, 0x2554, 23);
 		load8bitBinary(&file, 0x8600, 16);
