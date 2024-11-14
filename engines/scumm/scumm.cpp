@@ -1335,8 +1335,12 @@ Common::Error ScummEngine::init() {
 
 		memset(_completeScreenBuffer, 0, 320 * 200);
 
-		if (_macGui)
-			_macGui->initialize();
+		if (_macGui) {
+			if (!_macGui->initialize()) {
+				delete _macGui;
+				_macGui = nullptr;
+			}
+		}
 	}
 
 	// Initialize backend

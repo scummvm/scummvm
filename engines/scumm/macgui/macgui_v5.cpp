@@ -45,7 +45,6 @@ namespace Scumm {
 // ===========================================================================
 
 MacV5Gui::MacV5Gui(ScummEngine *vm, const Common::Path &resourceFile) : MacGuiImpl(vm, resourceFile) {
-	readStrings();
 }
 
 const Graphics::Font *MacV5Gui::getFontByScummId(int32 id) {

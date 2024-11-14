@@ -163,7 +163,10 @@ void MacGuiImpl::menuCallback(int id, Common::String &name, void *data) {
 	}
 }
 
-void MacGuiImpl::initialize() {
+bool MacGuiImpl::initialize() {
+	if (!readStrings())
+		return false;
+
 	uint32 menuMode = Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu |
 		Graphics::kWMModalMenuMode | Graphics::kWMModeNoCursorOverride | Graphics::kWMModeForceMacFonts;
 
@@ -286,6 +289,8 @@ void MacGuiImpl::initialize() {
 			break;
 		}
 	}
+
+	return true;
 }
 
 bool MacGuiImpl::handleMenu(int id, Common::String &name) {

@@ -226,7 +226,7 @@ protected:
 
 	bool runOkCancelDialog(Common::String text);
 
-	void readStrings();
+	bool readStrings();
 	void parseSTRSBlock(uint8 *strsData, MacSTRSParsingEntry *parsingTable, int parsingTableSize);
 
 	// These are non interactable, no point in having them as widgets for now...
@@ -708,7 +708,7 @@ public:
 	virtual bool handleEvent(Common::Event event);
 
 	static void menuCallback(int id, Common::String &name, void *data);
-	virtual void initialize();
+	virtual bool initialize();
 	void updateWindowManager();
 
 	const Graphics::Font *getFont(FontId fontId);

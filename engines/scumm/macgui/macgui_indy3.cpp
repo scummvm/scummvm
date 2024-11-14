@@ -928,8 +928,6 @@ MacIndy3Gui::MacIndy3Gui(ScummEngine *vm, const Common::Path &resourceFile) :
 
 	_dirtyRects.clear();
 	_textArea.create(448, 47, Graphics::PixelFormat::createFormatCLUT8());
-
-	readStrings();
 }
 
 MacIndy3Gui::~MacIndy3Gui() {
