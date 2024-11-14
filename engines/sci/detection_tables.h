@@ -1821,6 +1821,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAtariST, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
+	// King's Quest 4 - Italian fan translation
+	// Game version 1.001.111 (Sep 23, 1988)
+	// SCI interpreter version 0.000.274
+	{"kq4sci", "SCI", {
+		{"resource.map", 0, "548e64a8acb92023f7206094f03ba149", 5712},
+		{"resource.001", 0, "e7ff10b619a45742876e24fe64149471", 2266925},
+		AD_LISTEND},
+		Common::IT_ITA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
+
 	// King's Quest 4 - Russian
 	// Game version 1.001.111 (Sep 23, 1988)
 	// SCI interpreter version 0.000.274
