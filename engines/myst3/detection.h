@@ -26,17 +26,25 @@
 
 namespace Myst3 {
 
+static const uint32 kGameLocalizationTypeMask = 0xff;
 enum GameLocalizationType {
-	kLocMonolingual,
-	kLocMulti2,
-	kLocMulti6
+	kLocMonolingual = 0,
+	kLocMulti2 = 1,
+	kLocMulti6 = 2,
+};
+
+static const uint32 kGameLayoutTypeMask = 0xff << 8;
+enum GameLayoutType {
+	kLayoutFlattened = 0,
+	kLayoutCD = 1 << 8,
+	kLayoutDVD = 2 << 8,
 };
 
 struct Myst3GameDescription {
 	AD_GAME_DESCRIPTION_HELPERS(desc);
 
 	ADGameDescription desc;
-	uint32 localizationType;
+	uint32 flags;
 };
 
 #define GAMEOPTION_WIDESCREEN_MOD GUIO_GAMEOPTIONS1
