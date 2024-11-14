@@ -162,7 +162,13 @@ Common::Error Myst3Engine::run() {
 	_rnd = new Common::RandomSource("sprint");
 	setDebugger(new Console(this));
 	_scriptEngine = new Script(this);
-	_db = new Database(getPlatform(), getGameLanguage(), getGameLocalizationType());
+	Common::Language lang;
+	if (getGameLayoutType() != kLayoutFlattened) {
+		lang = Common::parseLanguage(ConfMan.get("language"));
+	} else {
+		lang = getGameLanguage();
+	}
+	_db = new Database(getPlatform(), lang, getGameLocalizationType());
 	_state = new GameState(getPlatform(), _db);
 	_scene = new Scene(this);
 	if (getPlatform() == Common::kPlatformXbox) {
@@ -251,39 +257,82 @@ void Myst3Engine::openArchives() {
 	Common::String menuLanguage;
 	Common::String textLanguage;
 
-	switch (getGameLanguage()) {
-	case Common::NL_NLD:
-		menuLanguage = "DUTCH";
-		break;
-	case Common::FR_FRA:
-		menuLanguage = "FRENCH";
-		break;
-	case Common::DE_DEU:
-		menuLanguage = "GERMAN";
-		break;
-	case Common::HE_ISR:
-		menuLanguage = "HEBREW";
-		break;
-	case Common::IT_ITA:
-		menuLanguage = "ITALIAN";
-		break;
-	case Common::ES_ESP:
-		menuLanguage = "SPANISH";
-		break;
-	case Common::JA_JPN:
-		menuLanguage = "JAPANESE";
-		break;
-	case Common::PL_POL:
-		menuLanguage = "POLISH";
-		break;
-	case Common::EN_ANY:
-	case Common::RU_RUS:
-	default:
-		menuLanguage = "ENGLISH";
-		break;
+	const uint32 localizationType = getGameLocalizationType();
+	const uint32 layoutType = getGameLayoutType();
+
+	if (layoutType == kLayoutCD || layoutType == kLayoutDVD) {
+		const char *languageDir;
+		switch (_db->getGameLanguageCode()) {
+		case kDutch:
+			languageDir = "Dutch";
+			menuLanguage = "DUTCH";
+			break;
+		case kFrench:
+			languageDir = "French";
+			menuLanguage = "FRENCH";
+			break;
+		case kGerman:
+			languageDir = "German";
+			menuLanguage = "GERMAN";
+			break;
+		case kItalian:
+			languageDir = "Italian";
+			menuLanguage = "ITALIAN";
+			break;
+		case kSpanish:
+			languageDir = "Spanish";
+			menuLanguage = "SPANISH";
+			break;
+		case kEnglish:
+		default:
+			languageDir = "English";
+			menuLanguage = "ENGLISH";
+			break;
+		}
+		Common::Path path(ConfMan.getPath("path"));
+		if (layoutType == kLayoutDVD) {
+			path = path.appendComponent(Common::String::format("Myst III %s", languageDir));
+			menuLanguage = "language";
+		} else {
+			path = path.appendComponent(languageDir);
+		}
+		SearchMan.remove("MYST3_language_dir");
+		SearchMan.addDirectory("MYST3_language_dir", path);
+	} else {
+		switch (getGameLanguage()) {
+		case Common::NL_NLD:
+			menuLanguage = "DUTCH";
+			break;
+		case Common::FR_FRA:
+			menuLanguage = "FRENCH";
+			break;
+		case Common::DE_DEU:
+			menuLanguage = "GERMAN";
+			break;
+		case Common::HE_ISR:
+			menuLanguage = "HEBREW";
+			break;
+		case Common::IT_ITA:
+			menuLanguage = "ITALIAN";
+			break;
+		case Common::ES_ESP:
+			menuLanguage = "SPANISH";
+			break;
+		case Common::JA_JPN:
+			menuLanguage = "JAPANESE";
+			break;
+		case Common::PL_POL:
+			menuLanguage = "POLISH";
+			break;
+		case Common::EN_ANY:
+		case Common::RU_RUS:
+		default:
+			menuLanguage = "ENGLISH";
+			break;
+		}
 	}
 
-	if (getGameLocalizationType() == kLocMulti6) {
+	if (localizationType == kLocMulti6) {
 		switch (ConfMan.getInt("text_language")) {
 		case kDutch:
 			textLanguage = "DUTCH";
@@ -308,14 +357,14 @@ void Myst3Engine::openArchives() {
 	} else if (getGameLanguage() == Common::HE_ISR) {
 		textLanguage = "ENGLISH"; // The Hebrew version does not have a "HEBREW.m3t" file
 	} else {
-		if (getGameLocalizationType() == kLocMonolingual || ConfMan.getInt("text_language")) {
+		if (localizationType == kLocMonolingual || ConfMan.getInt("text_language")) {
 			textLanguage = menuLanguage;
 		} else {
 			textLanguage = "ENGLISH";
 		}
 	}
 
-	if (getGameLocalizationType() != kLocMonolingual && getPlatform() != Common::kPlatformXbox && textLanguage == "ENGLISH") {
+	if (localizationType != kLocMonolingual && getPlatform() != Common::kPlatformXbox && textLanguage == "ENGLISH") {
 		textLanguage = "ENGLISHjp";
 	}
 
@@ -333,7 +382,7 @@ void Myst3Engine::openArchives() {
 
 	addArchive(textLanguage + ".m3t", true);
 
-	if (getGameLocalizationType() != kLocMonolingual || getPlatform() == Common::kPlatformXbox || getGameLanguage() == Common::HE_ISR) {
+	if (localizationType != kLocMonolingual || getPlatform() == Common::kPlatformXbox || getGameLanguage() == Common::HE_ISR) {
 		addArchive(menuLanguage + ".m3u", true);
 	}
 
@@ -1896,8 +1945,17 @@ void Myst3Engine::settingsApplyFromVars() {
 		ConfMan.setInt("overall_volume", _state->getOverallVolume() * 256 / 100);
 		ConfMan.setInt("music_volume", _state->getMusicVolume() * 256 / 100);
 		ConfMan.setInt("music_frequency", _state->getMusicFrequency());
-		ConfMan.setInt("audio_language", _state->getLanguageAudio());
-		ConfMan.setInt("text_language", _state->getLanguageText());
+		// Don't set languages if they are still the defaults
+		// This will allow the user to change the menu language in ScummVM and
+		// have the other settings follow the change
+		if (ConfMan.hasKey("audio_language") ||
+				ConfMan.getInt("audio_language") != _state->getLanguageAudio()) {
+			ConfMan.setInt("audio_language", _state->getLanguageAudio());
+		}
+		if (ConfMan.hasKey("text_language") ||
+				oldTextLanguage != _state->getLanguageText()) {
+			ConfMan.setInt("text_language", _state->getLanguageText());
+		}
 		ConfMan.setBool("water_effects", _state->getWaterEffects());
 
 		// The language changed, reload the correct archives

@@ -171,7 +171,11 @@ Common::Language Myst3Engine::getGameLanguage() const {
 }
 
 uint32 Myst3Engine::getGameLocalizationType() const {
-	return _gameDescription->localizationType;
+	return _gameDescription->flags & kGameLocalizationTypeMask;
+}
+
+uint32 Myst3Engine::getGameLayoutType() const {
+	return _gameDescription->flags & kGameLayoutTypeMask;
 }
 
 } // End of namespace Myst3
