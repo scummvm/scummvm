@@ -415,6 +415,67 @@ static MacGuiImpl::MacSTRSParsingEntry strsIndy4CDVariant1Table[] = {
 	{ MacGuiImpl::kMSIAboutString37,              MacGuiImpl::kStrPascal, 1 },
 };
 
+static MacGuiImpl::MacSTRSParsingEntry strsIndy4CDVariant2Table[] = {
+	SKIP_C(97),
+	SKIP_P(1),
+	{ MacGuiImpl::kMSIAboutGameName,              MacGuiImpl::kStrPascal, 1 },
+	SKIP_P(2),
+	{ MacGuiImpl::kMSIAreYouSureYouWantToQuit,    MacGuiImpl::kStrC,      1 },
+	{ MacGuiImpl::kMSIRoughCommandMsg,            MacGuiImpl::kStrC,      1 },
+	SKIP_C(1),
+	{ MacGuiImpl::kMSIAreYouSureYouWantToRestart, MacGuiImpl::kStrC,      1 },
+	SKIP_C(1),
+	SKIP_P(1),
+	{ MacGuiImpl::kMSIGameName,                   MacGuiImpl::kStrPascal, 1 },
+	SKIP_C(1),
+	{ MacGuiImpl::kMSIOpenGameFile,               MacGuiImpl::kStrPascal, 1 },
+	SKIP_P(1),
+	SKIP_P(1),
+	SKIP_P(1),
+	SKIP_P(1),
+	{ MacGuiImpl::kMSISaveGameFileAs,             MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIGameFile,                   MacGuiImpl::kStrPascal, 1 },
+	SKIP_C(6),
+	SKIP_P(2),
+	{ MacGuiImpl::kMSIAboutString1,               MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString2,               MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString3,               MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString4,               MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString5,               MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString6,               MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString7,               MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString8,               MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString9,               MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString10,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString11,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString12,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString13,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString14,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString15,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString16,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString17,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString18,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString19,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString20,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString21,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString22,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString23,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString24,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString25,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString26,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString27,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString28,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString29,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString30,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString31,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString32,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString33,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString34,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString35,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString36,              MacGuiImpl::kStrPascal, 1 },
+	{ MacGuiImpl::kMSIAboutString37,              MacGuiImpl::kStrPascal, 1 },
+};
+
 static MacGuiImpl::MacSTRSParsingEntry strsIndy4FloppyVariant1Table[] = {
 	SKIP_C(93),
 	SKIP_P(1),
@@ -608,6 +669,11 @@ void MacGuiImpl::readStrings() {
 			// V1.0 10-9-92
 			parsingTable = strsIndy4CDVariant1Table;
 			parsingTableSize = ARRAYSIZE(strsIndy4CDVariant1Table);
+			break;
+		case 6772: // CD
+			// fate_v1.5
+			parsingTable = strsIndy4CDVariant2Table;
+			parsingTableSize = ARRAYSIZE(strsIndy4CDVariant2Table);
 			break;
 		}
 	} else {
