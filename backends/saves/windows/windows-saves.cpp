@@ -57,14 +57,18 @@ WindowsSaveFileManager::WindowsSaveFileManager(bool isPortable) {
 
 Common::ErrorCode WindowsSaveFileManager::removeFile(const Common::FSNode &fileNode) {
 	TCHAR *tFile = Win32::stringToTchar(fileNode.getPath().toString(Common::Path::kNativeSeparator));
-	int result = _tremove(tFile);
+	BOOL result = DeleteFile(tFile);
 	free(tFile);
-	if (result == 0)
+	if (result)
 		return Common::kNoError;
-	if (errno == EACCES)
+
+	switch (GetLastError()) {
+	case ERROR_ACCESS_DENIED:
 		return Common::kWritePermissionDenied;
-	if (errno == ENOENT)
+
+	case ERROR_FILE_NOT_FOUND:
 		return Common::kPathDoesNotExist;
+	}
 	return Common::kUnknownError;
 }
 
