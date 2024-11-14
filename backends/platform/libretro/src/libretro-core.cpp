@@ -98,6 +98,7 @@ static float audio_samples_accumulator = 0.0f;
 static int16 *audio_sample_buffer = NULL; // pointer to output buffer
 
 static bool input_bitmask_supported = false;
+static bool updating_variables = false;
 
 #ifdef USE_OPENGL
 static struct retro_hw_render_callback hw_render;
@@ -257,6 +258,7 @@ void retro_osd_notification(const char *msg) {
 
 static void update_variables(void) {
 	struct retro_variable var;
+	updating_variables = true;
 
 	var.key = "scummvm_gamepad_cursor_only";
 	var.value = NULL;
@@ -533,6 +535,34 @@ static void update_variables(void) {
 		retro_osd_notification("Core reload is needed to apply HW acceleration setting change.");
 		video_hw_mode &= ~VIDEO_GRAPHIC_MODE_RESET_PENDING;
 	}
+
+	updating_variables = false;
+}
+
+static void retro_set_options_display(void) {
+	/*struct retro_core_option_display option_display;
+
+	option_display.visible = opt_frameskip_threshold_display;
+	option_display.key = "scummvm_frameskip_threshold";
+	environ_cb(RETRO_ENVIRONMENT_SET_CORE_OPTIONS_DISPLAY, &option_display);
+
+	option_display.visible = opt_frameskip_no_display;
+	option_display.key = "scummvm_frameskip_no";
+	environ_cb(RETRO_ENVIRONMENT_SET_CORE_OPTIONS_DISPLAY, &option_display);*/
+}
+
+static bool retro_update_options_display(void) {
+	if (updating_variables)
+		return false;
+
+	/* Core options */
+	bool updated = false;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated) {
+		update_variables();
+		LIBRETRO_G_SYSTEM->refreshRetroSettings();
+		retro_set_options_display();
+	}
+	return updated;
 }
 
 bool retro_setting_get_gamepad_cursor_only(void) {
@@ -732,6 +762,10 @@ void retro_set_environment(retro_environment_t cb) {
 	environ_cb(RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME, &tmp);
 	libretro_fill_options_mapper_data(environ_cb);
 	libretro_set_core_options(environ_cb, &has_categories);
+
+	/* Core option display callback */
+	struct retro_core_options_update_display_callback update_display_callback = {retro_update_options_display};
+	environ_cb(RETRO_ENVIRONMENT_SET_CORE_OPTIONS_UPDATE_DISPLAY_CALLBACK, &update_display_callback);
 }
 
 unsigned retro_api_version(void) {
@@ -821,6 +855,8 @@ void retro_init(void) {
 	update_variables();
 	max_width = gui_width > max_width ? gui_width : max_width;
 	max_height = gui_height > max_height ? gui_height : max_height;
+
+	retro_set_options_display();
 
 	init_command_params();
 
@@ -982,6 +1018,10 @@ bool retro_load_game_special(unsigned game_type, const struct retro_game_info *i
 }
 
 void retro_run(void) {
+	/* Settings change is covered by RETRO_ENVIRONMENT_SET_CORE_OPTIONS_UPDATE_DISPLAY_CALLBACK
+	except in case of core options reset to defaults, for which the following call is needed*/
+	retro_update_options_display();
+
 #ifdef USE_HIGHRES
 	if (av_status & AV_STATUS_UPDATE_GUI) {
 		retro_gui_res_reset();
