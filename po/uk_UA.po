@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-08 11:49+0100\n"
-"PO-Revision-Date: 2024-11-14 20:52+0000\n"
+"PO-Revision-Date: 2024-11-14 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -6884,7 +6884,7 @@ msgid ""
 "Enhanced Edition not supported. Please, use the original files which are "
 "part of the release."
 msgstr ""
-"Enhanced Edition не підтримується. Будь-ласка, викроистовуйте оригінальні "
+"Enhanced Edition не підтримується. Будь-ласка, використовуйте оригінальні "
 "файли, які також входять до релізу."
 
 #: engines/bladerunner/metaengine.cpp:45
@@ -8362,64 +8362,48 @@ msgid "Show inventory"
 msgstr "Показати інвентар"
 
 #: engines/hugo/metaengine.cpp:154
-#, fuzzy
-#| msgid "Improved mode"
 msgid "Turbo mode"
-msgstr "Покращений режим"
+msgstr "Турбо-режим"
 
 #. I18N: Move actor in the top direction
 #: engines/hugo/metaengine.cpp:167
-#, fuzzy
-#| msgid "Move up"
 msgid "Move to top"
-msgstr "Рухатись уверх"
+msgstr "Рухатись на гору"
 
 #. I18N: Move actor in the bottom direction
 #: engines/hugo/metaengine.cpp:175
 msgid "Move to bottom"
-msgstr ""
+msgstr "Рухатись до долу"
 
 #. I18N: Move actor in the left direction
 #: engines/hugo/metaengine.cpp:183
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to left"
 msgstr "Рухатись наліво"
 
 #. I18N: Move actor in the right direction
 #: engines/hugo/metaengine.cpp:191
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to right"
 msgstr "Рухатись направо"
 
 #. I18N: Move actor in the top-left direction
 #: engines/hugo/metaengine.cpp:199
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to top left"
-msgstr "Рухатись наліво"
+msgstr "Рухатись доверху-наліво"
 
 #. I18N: Move actor in the top-right direction
 #: engines/hugo/metaengine.cpp:205
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to top right"
-msgstr "Рухатись направо"
+msgstr "Рухатись доверху-направо"
 
 #. I18N: Move actor in the bottom-left direction
 #: engines/hugo/metaengine.cpp:211
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to bottom left"
-msgstr "Рухатись наліво"
+msgstr "Рухатись донизу-наліво"
 
 #. I18N: Move actor in the bottom-right direction
 #: engines/hugo/metaengine.cpp:217
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to bottom right"
-msgstr "Рухатись направо"
+msgstr "Рухатись донизу-направо"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -8482,28 +8466,20 @@ msgid "Side Step"
 msgstr "Крок в сторону"
 
 #: engines/illusions/metaengine.cpp:108
-#, fuzzy
-#| msgid "Move forward left"
 msgid "Move cursor up"
-msgstr "Рухатись уперед-вліво"
+msgstr "Перевести курсор догори"
 
 #: engines/illusions/metaengine.cpp:115
-#, fuzzy
-#| msgid "Move forward left"
 msgid "Move cursor down"
-msgstr "Рухатись уперед-вліво"
+msgstr "Перевести курсор донизу"
 
 #: engines/illusions/metaengine.cpp:122
-#, fuzzy
-#| msgid "Move forward left"
 msgid "Move cursor left"
-msgstr "Рухатись уперед-вліво"
+msgstr "Перевести курсор наліво"
 
 #: engines/illusions/metaengine.cpp:129
-#, fuzzy
-#| msgid "Move forward right"
 msgid "Move cursor right"
-msgstr "Рухатись уперед-вправо"
+msgstr "Перевести курсор направо"
 
 #: engines/illusions/metaengine.cpp:136 engines/twine/metaengine.cpp:422
 #: engines/twine/metaengine.cpp:474 engines/twine/metaengine.cpp:490
@@ -8666,8 +8642,6 @@ msgstr "Рухатись уперед"
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
 #: engines/wintermute/keymapper_tables.h:2238
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Move Backwards"
 msgstr "Рухатись назад"
 
@@ -10179,13 +10153,16 @@ msgstr ""
 
 #: engines/sci/detection_options.h:236
 msgid "Enable saving via the GMM"
-msgstr ""
+msgstr "Увімкнути збереження через GMM"
 
 #: engines/sci/detection_options.h:237
 msgid ""
 "Allows saving via the GMM. WARNING: saves created via the GMM may be "
 "corrupted and unusable. Use at your own risk!"
 msgstr ""
+"Дозволити зберігати через Головне Меню. УВАГА: збереження, створені через "
+"GMM, можуть бути пошкодженими та непридатними для використання. "
+"Використовуйте на свій страх і ризик!"
 
 #: engines/sci/detection_options.h:251
 msgid "MIDI mode:"
@@ -11230,6 +11207,9 @@ msgid ""
 "Warning: this re-release version contains patched game scripts,\n"
 "and therefore it might crash or not work properly for the time being."
 msgstr ""
+"Попередження: ця перевипущена версія містить виправлені ігрові скрипти,\n"
+"і тому вона на даний момент може вийти з ладу або не працювати належним "
+"чином."
 
 #: engines/scumm/metaengine.cpp:486
 msgid "HE v71+ support is not compiled in"
@@ -11427,42 +11407,28 @@ msgstr ""
 "шрифтів."
 
 #: engines/scumm/scumm.cpp:1261
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Monkey Island' Macintosh executable to read the\n"
-#| "instruments from. Music will be disabled."
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read resources\n"
 "and instruments from. Music and Mac GUI will be disabled."
 msgstr ""
 "Не вдалося знайти файл програми 'Monkey Island' Macintosh аби прочитати\n"
-"з нього інструменти. Музику було вимкнено."
+"з нього ресурси та інструменти. Музику та Mac GUI буде вимкнено."
 
 #: engines/scumm/scumm.cpp:1290
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
-#| "will\n"
-#| "be disabled."
 msgid ""
 "Could not find the 'Fate of Atlantis' Macintosh executable.\n"
 "Mac GUI will not be shown."
 msgstr ""
-"Не вдалося знайти файл програми 'Indy' Macintosh. Шрифти високої\n"
-"роздільності буде вимкнено."
+"Не вдалося знайти файл програми 'Fate of Atlantis' Macintosh.\n"
+"Mac GUI буде вимкнено."
 
 #: engines/scumm/scumm.cpp:1310
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
-#| "will\n"
-#| "be disabled."
 msgid ""
 "Could not find the 'LeChuck's Revenge' Macintosh executable.\n"
 "Mac GUI will not be shown."
 msgstr ""
-"Не вдалося знайти файл програми 'Indy' Macintosh. Шрифти високої\n"
-"роздільності буде вимкнено."
+"Не вдалося знайти файл програми 'LeChuck's Revenge' Macintosh.\n"
+"Mac GUI буде вимкнено."
 
 #: engines/scumm/scumm.cpp:1321
 #, c-format
@@ -11731,8 +11697,6 @@ msgid "Open control panel"
 msgstr "Відкрити панель керування"
 
 #: engines/sky/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle really fast mode"
 msgid "Toggle really fast mode on/off"
 msgstr "Перемикання дуже швидкого режиму"
 
@@ -11838,14 +11802,10 @@ msgid "Scroll down in your dialogues"
 msgstr "Прокрутити діалоги донизу"
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "go to next dialogue"
 msgid "Go to next dialogue"
 msgstr "Перейти до наступного діалогу"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "go to previous dialogues"
 msgid "Go to previous dialogues"
 msgstr "Перейти до попереднього діалогу"
 
@@ -11994,51 +11954,44 @@ msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "На цьому закінчується демо Broken Sword 1"
 
 #: engines/sword1/metaengine.cpp:63
-#, fuzzy
-#| msgctxt "Options menu"
-#| msgid "Voices: English"
 msgid "English"
-msgstr "Голоси: англійська"
+msgstr "Англійська"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "German"
-msgstr ""
+msgstr "Німецька"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "French"
-msgstr ""
+msgstr "Французська"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Italian"
-msgstr ""
+msgstr "Італійська"
 
 #: engines/sword1/metaengine.cpp:63
-#, fuzzy
-#| msgid "Finish"
 msgid "Spanish"
-msgstr "Закінчити"
+msgstr "Іспанська"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Brazilian Portuguese"
-msgstr ""
+msgstr "Бразильська португальська"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Czech"
-msgstr ""
+msgstr "Чеська"
 
 #: engines/sword1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Game language:"
 msgid "Text language:"
-msgstr "Мова гри.:"
+msgstr "Мова текстів:"
 
 #: engines/sword1/metaengine.cpp:87 engines/sword1/metaengine.cpp:95
 msgid "Set the language for the subtitles. This will not affect voices."
-msgstr ""
+msgstr "Встановити мову для субтитрів. Це не вплине на озвучку."
 
 #: engines/sword1/metaengine.cpp:114
 msgid "Simulate the audio engine from the Windows executable"
-msgstr ""
+msgstr "Змоделювати звуковий механізм із версії під Windows"
 
 #: engines/sword1/metaengine.cpp:115
 msgid ""
@@ -12046,16 +11999,15 @@ msgid ""
 "and fade-out for sound effects, fade-in for music, and automatic music "
 "volume attenuation for when speech is playing"
 msgstr ""
+"Змушує гру використовувати більш м’які (логарифмічні) звукові криві, але "
+"усуває наростання та згасання звукових ефектів, наростання музики та "
+"автоматичне ослаблення гучності музики під час озвучки"
 
 #: engines/sword1/metaengine.cpp:127
-#, fuzzy
-#| msgid "Directional button:"
 msgid "Additional options:"
-msgstr "Кнопка напрямку:"
+msgstr "Додаткові налаштування:"
 
 #: engines/sword1/metaengine.cpp:301
-#, fuzzy
-#| msgid "Main Men~u~"
 msgid "Main Menu"
 msgstr "Головне меню"
 
@@ -12066,14 +12018,10 @@ msgstr ""
 "Знайдено PSX ролики, але ScummVM було зібрано без підтримки кольорів RGB"
 
 #: engines/sword2/detection_tables.h:419
-#, fuzzy
-#| msgid ""
-#| "Enhanced Edition not supported. Please, use the original files which are "
-#| "part of the release."
 msgid "Remastered edition is not supported. Please, use the classic version"
 msgstr ""
-"Enhanced Edition не підтримується. Будь-ласка, викроистовуйте оригінальні "
-"файли, які також входять до релізу."
+"Remastered edition не підтримується. Будь-ласка, використовуйте класичну "
+"версію"
 
 #: engines/sword2/metaengine.cpp:43
 msgid "Show object labels"
@@ -12160,35 +12108,25 @@ msgid "Font variant not present in '%s' engine data file."
 msgstr "Варіант шрифту відстутній у файлі движка %s."
 
 #: engines/toon/metaengine.cpp:98
-#, fuzzy
-#| msgid "Skip line"
 msgid "Skip intro"
-msgstr "Пропустити рядок"
+msgstr "Пропустити вступ"
 
 #. I18N: Skips current line being spoken by a character
 #: engines/toon/metaengine.cpp:105
-#, fuzzy
-#| msgid "Skip current animation"
 msgid "Stop current voice"
-msgstr "Пропускає поточну анімацію"
+msgstr "Пропускає поточну озвучку"
 
 #: engines/toon/metaengine.cpp:130
-#, fuzzy
-#| msgid "No music"
 msgid "Mute music"
-msgstr "Без музики"
+msgstr "Вимкнути музику"
 
 #: engines/toon/metaengine.cpp:136
-#, fuzzy
-#| msgid "Abort speech"
 msgid "Mute speech"
-msgstr "Перервати озвучку"
+msgstr "Вимкнути озвучку"
 
 #: engines/toon/metaengine.cpp:142
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Mute sound effects"
-msgstr "Перемикання звукових ефектів"
+msgstr "Вимкнути звукові ефекти"
 
 #: engines/toon/toon.cpp:273
 #, c-format
@@ -12220,36 +12158,26 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Не вдалося знайти файл даних '%s'."
 
 #: engines/touche/metaengine.cpp:135
-#, fuzzy
-#| msgid "Skip video sequence or dialogue"
 msgid "Skip sequence/open quit dialogue"
-msgstr "Пропустити відеоряд або діалог"
+msgstr "Пропустити відеоряд/відкрити діалог виходу"
 
 #: engines/touche/metaengine.cpp:141
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Skip Dialogue"
 msgstr "Пропустити діалог"
 
 #: engines/touche/metaengine.cpp:147
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open options menu"
-msgstr "Відкрити головне меню"
+msgstr "Відкрити меню налаштувань"
 
 #. I18N: The actor walking pace is increased
 #: engines/touche/metaengine.cpp:154
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Enable fast walk"
-msgstr "Перемикання швидкої ходи"
+msgstr "Ввімкнути швидку ходу"
 
 #. I18N: The actor walking pace is decreased
 #: engines/touche/metaengine.cpp:161
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Disable fast walk"
-msgstr "Перемикання швидкої ходи"
+msgstr "Вимкнути швидку ходу"
 
 #: engines/touche/metaengine.cpp:167
 msgid "Toggle fast mode"
@@ -12257,13 +12185,11 @@ msgstr "Перемикання швидкого режиму"
 
 #: engines/touche/metaengine.cpp:173
 msgid "Toggle between voice/text/text and voice"
-msgstr ""
+msgstr "Перемикання між озвучкою/текстом/текстом і озвучкою"
 
 #: engines/touche/metaengine.cpp:182
-#, fuzzy
-#| msgid "Press \"Yes\" key"
 msgid "Press \"Yes\" Key"
-msgstr "Натисніть клавішу \"Так\""
+msgstr "Натиснути клавішу \"Так\""
 
 #: engines/trecision/metaengine.cpp:137
 msgid "Skip video"
@@ -12280,107 +12206,73 @@ msgstr "Відкрити системне меню"
 
 #. I18N: Return refers to return/enter key
 #: engines/tsage/metaengine.cpp:196
-#, fuzzy
-#| msgid "turn oN"
 msgid "Return"
-msgstr "Увімкнути"
+msgstr "Клавіша вводу"
 
 #: engines/tsage/metaengine.cpp:221
-#, fuzzy
-#| msgid "View"
 msgid "View Help"
-msgstr "Передивитися"
+msgstr "Переглянути допомогу"
 
 #: engines/tsage/metaengine.cpp:226
-#, fuzzy
-#| msgid "Show options"
 msgid "Sound options"
-msgstr "Показати налаштування"
+msgstr "Налаштування звуку"
 
 #: engines/tsage/metaengine.cpp:264
-#, fuzzy
-#| msgid "North"
 msgid "Crawl North"
-msgstr "Північ"
+msgstr "Повзти на північ"
 
 #: engines/tsage/metaengine.cpp:271
-#, fuzzy
-#| msgid "South"
 msgid "Crawl South"
-msgstr "Південь"
+msgstr "Повзти на південь"
 
 #: engines/tsage/metaengine.cpp:278
-#, fuzzy
-#| msgid "Turn left fast"
 msgid "Turn Left/Crawl West"
-msgstr "Швидко повернутися наліво"
+msgstr "Повернути наліво/Повзти на захід"
 
 #: engines/tsage/metaengine.cpp:285
-#, fuzzy
-#| msgid "Turn right fast"
 msgid "Turn Right/Crawl East"
-msgstr "Швидко повернутися направо"
+msgstr "Повернути направо/Повзти на схід"
 
 #: engines/tsage/metaengine.cpp:292
-#, fuzzy
-#| msgid "Increase Step Size"
 msgid "Increase speed"
-msgstr "Збільшити розмір кроку"
+msgstr "Збільшити швидкість"
 
 #: engines/tsage/metaengine.cpp:297
-#, fuzzy
-#| msgid "Decrease Step Size"
 msgid "Decrease speed"
-msgstr "Зменшити розмір кроку"
+msgstr "Зменшити швидкість"
 
 #: engines/tsage/metaengine.cpp:302
-#, fuzzy
-#| msgid "Reading speed"
 msgid "Minimum speed"
-msgstr "Швидкість читання"
+msgstr "Мінімальна швидкість"
 
 #: engines/tsage/metaengine.cpp:307
-#, fuzzy
-#| msgid "Maximum Volume"
 msgid "Maximum speed"
-msgstr "Максимальна Гучність"
+msgstr "Максимальна швидкість"
 
 #: engines/tsage/metaengine.cpp:312
-#, fuzzy
-#| msgid "Slower game speed"
 msgid "Low speed"
-msgstr "Повільніша швидкість гри"
+msgstr "Повільна швидкість"
 
 #: engines/tsage/metaengine.cpp:317
-#, fuzzy
-#| msgid "Reading speed"
 msgid "Medium speed"
-msgstr "Швидкість читання"
+msgstr "Середня швидкість"
 
 #: engines/tsage/metaengine.cpp:322
-#, fuzzy
-#| msgid "Forwards"
 msgid "Draw Cards"
-msgstr "Уперед"
+msgstr "Витягнути карти"
 
 #: engines/tucker/metaengine.cpp:190
-#, fuzzy
-#| msgid "Speech"
 msgid "Skip speech"
-msgstr "Озвучка"
+msgstr "Пропустити озвучку"
 
 #. I18N: Panel contains all actor actions and the artstyle is toggled
 #: engines/tucker/metaengine.cpp:203
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle panel style"
-msgstr "Перемикання швидкого режиму"
+msgstr "Перемикання стилю панелі"
 
 #: engines/tucker/metaengine.cpp:209
-#, fuzzy
-#| msgid "Use Text to speech"
 msgid "Toggle text speech"
-msgstr "Використовувати генератор мови"
+msgstr "Перемкнтуи мову озвучки"
 
 #: engines/twine/detection.cpp:188
 msgid "This version requires Giflib which was not compiled into ScummVM"
