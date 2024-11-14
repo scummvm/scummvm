@@ -77,7 +77,7 @@ public:
 	static void unloadSprites();
 
 	void wilbur_speech(const char *name, int trigger = -1, int room = -1, byte flags = 0,
-		int vol = 256, int channel = 1);
+		int vol = 255, int channel = 1);
 	void wilbur_say();
 	void wilburs_speech_finished();
 
@@ -129,7 +129,7 @@ void wilbur_abduct(int trigger);
 void player_walk_to(int32 x, int32 y, int32 facing_x, int32 facing_y, int trigger = -1);
 void player_walk_to(int32 x, int32 y, int trigger = -1);
 void wilbur_speech(const char *name, int trigger = -1, int room = -1, byte flags = 0,
-	int vol = 256, int channel = 1);
+	int vol = 255, int channel = 1);
 
 } // namespace Burger
 } // namespace M4
