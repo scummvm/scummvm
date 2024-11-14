@@ -238,7 +238,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"scummvm_framerate",
 		"Timing > Frame rate cap",
 		"Frame rate cap",
-		"Set core frame rate upper limit. Changing this setting will reset the core.",
+		"Set core frame rate upper limit. Reducing the limit will improve the performance on lower end devices. Changing this setting will reset the core.",
 		NULL,
 		"timing",
 		{
@@ -255,7 +255,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"scummvm_samplerate",
 		"Timing > Sample rate",
 		"Sample rate",
-		"Set core sample rate. Changing this setting will reset the core.",
+		"Set core sample rate. Reducing the rate will slightly improve the performance on lower end devices. Changing this setting will reset the core.",
 		NULL,
 		"timing",
 		{
