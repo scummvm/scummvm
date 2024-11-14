@@ -1767,7 +1767,15 @@ void Room204::daemon() {
 		break;
 
 	case 665:
+		digi_play((_field170 == 1) ? "204M26" : "204M27", 1, 255, 666, -1);
+		break;
+
 	case 666:
+		_field10 = 20;
+		digi_play((_field170 == 1) ? "204R48" : "204R49", 1, 255, 667, -1);
+
+		break;
+
 	case 667:
 		_field10 = 21;
 		_fieldD8 = 1;
@@ -1776,6 +1784,16 @@ void Room204::daemon() {
 		break;
 
 	case 669:
+		DisposePath(_mcMach->walkPath);
+		_fieldDC = 1;
+		_fieldE4_walkerDestX = 555;
+		_mcMach->walkPath = CreateCustomPath(555, 323, -1);
+		ws_custom_walk(_mcMach, 10, 670, true);
+		_fieldDC = 1;
+
+		break;
+
+	case 670:
 		kernel_timing_trigger(1, 630, nullptr);
 		_fieldDC = 1;
 		_fieldE0 = 555;
@@ -1787,9 +1805,24 @@ void Room204::daemon() {
 
 		break;
 
-	case 670:
 	case 675:
+		player_set_commands_allowed(false);
+		digi_preload("950_s34", -1);
+		CompactMem();
+		midi_play("RIPTHEM1", 180, 0, -1, 949);
+		_204pu99Series = series_load("204PU99", -1, nullptr);
+		_ripSketchingInNotebookPos2Series = series_load("RIP SKETCHING IN NOTEBOOK POS 2", -1, nullptr);
+		setGlobals1(_ripSketchingInNotebookPos2Series, 1, 17, 17, 17, 0, 18, 39, 39, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		sendWSMessage_110000(_G(my_walker), 676);
+
+		break;
+
 	case 676:
+		sendWSMessage_120000(_G(my_walker), 677);
+		digi_play("950_s34", 2, 200, -1, -1);
+
+		break;
+
 	case 677:
 		_204pu99Mach = series_place_sprite("204PU99", 0, 0, 0, 100, 0);
 		kernel_timing_trigger(120, 678, nullptr);
@@ -1807,6 +1840,13 @@ void Room204::daemon() {
 		break;
 
 	case 680:
+		series_unload(_204pu99Series);
+		series_unload(_ripSketchingInNotebookPos2Series);
+		digi_unload("950_s34");
+		kernel_timing_trigger(1, 697, nullptr);
+
+		break;
+
 	case 681:
 		_field140 = 1;
 		_field144_triggerNum = kernel_trigger_create(682);
@@ -1814,7 +1854,23 @@ void Room204::daemon() {
 		break;
 
 	case 682:
+		_priestTurnsFrom3To9Series = series_load("PRIEST TURNS FROM 3 TO 9", -1, nullptr);
+		ws_hide_walker(_priestWalkerMach);
+		_priestTurningStateMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 360, 305, 100, 2048, false, triggerMachineByHashCallback, "Priest Turning State Machine");
+		sendWSMessage_10000(1, _priestTurningStateMach, _priestTurnsFrom3To9Series, 1, 37, 683, _priestTurnsFrom3To9Series, 37, 37, 0);
+
+		break;
+
 	case 683:
+		terminateMachine(_priestTurningStateMach);
+		_priestTurningStateMach = nullptr;
+		series_unload(_priestTurnsFrom3To9Series);
+		ws_unhide_walker(_priestWalkerMach);
+		ws_demand_facing(_priestWalkerMach, 9);
+		kernel_timing_trigger(1, 684, nullptr);
+
+		break;
+
 	case 684:
 		game_set_scale(369, 326, 100, 99);
 		sendWSMessage_10000(_priestWalkerMach, 289, 305, 9, 687, 1);
@@ -1823,7 +1879,11 @@ void Room204::daemon() {
 		break;
 
 	case 687:
+		_field10 = 16;
+		_field18_triggerNum = kernel_trigger_create(688);
+
 		break;
+
 	case 688:
 		_field2C = 1;
 		subDaemon_ADBB0();
@@ -1832,6 +1892,14 @@ void Room204::daemon() {
 		break;
 
 	case 689:
+		if (_ripDeltaMachineStateMach) {
+			kernel_timing_trigger(10, 689, nullptr);
+		} else {
+			ws_walk(_G(my_walker), 486, 367, nullptr, 691, 4, true);
+		}
+
+		break;
+
 	case 691:
 		_fieldD8 = 1;
 		_fieldC8_trigger = kernel_trigger_create(692);
@@ -1850,11 +1918,36 @@ void Room204::daemon() {
 		break;
 
 	case 694:
+		_fieldD4 = 5;
+		_fieldDC = 1;
+		_field108 = 1;
+		kernel_timing_trigger(1, 574, nullptr);
+		_fieldBC_trigger = kernel_trigger_create(695);
+
+		break;
+
 	case 695:
+		kernel_timing_trigger(1, 725, nullptr);
+		break;
+
 	case 696:
+		kernel_timing_trigger(1, 675, nullptr);
+		break;
+
 	case 697:
+		_fieldD4 = 13;
+		digi_play("204M03", 1, 255, 699, -1);
+
+		break;
+
 	case 699:
+		kernel_timing_trigger(1, 700, nullptr);
+		break;
+
 	case 700:
+		digi_play("204R04", 1, 255, 701, -1);
+		break;
+
 	case 701:
 		_fieldD8 = 1;
 		_fieldC8_trigger = kernel_trigger_create(702);
@@ -1895,6 +1988,9 @@ void Room204::daemon() {
 		break;
 
 	case 715:
+		digi_play("204R03C", 1, 255, -1, -1);
+		break;
+
 	case 716:
 		series_stream("PRIEST BOWS", 7, 0, 681);
 		digi_unload("204R03C");
@@ -1910,13 +2006,35 @@ void Room204::daemon() {
 		break;
 
 	case 721:
+		digi_play("0507p02a", 1, 255, -1, 204);
+		break;
+
 	case 722:
 	case 723:
 	case 725:
+		digi_play("204R37", 1, 255, 726, -1);
+		break;
+
 	case 726:
+		_fieldD4 = 13;
+		digi_play("204M22", 1, 255, 727, -1);
+		break;
+
 	case 727:
+		_fieldD4 = 5;
+		digi_play("204R38", 1, 255, 728, -1);
+		break;
+
 	case 728:
+		_fieldD4 = 13;
+		digi_play("204M23", 1, 255, 729, -1);
+		break;
+
 	case 729:
+		_fieldD4 = 5;
+		digi_play("204R39", 1, 255, 730, -1);
+		break;
+
 	case 730:
 		kernel_timing_trigger(1, 696, nullptr);
 		break;

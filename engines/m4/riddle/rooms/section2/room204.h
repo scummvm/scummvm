@@ -109,7 +109,8 @@ private:
 	int32 _field188 = 0;
 
 	int32 _field90_series = 0;
-
+	
+	int32 _204pu99Series = 0;
 	int32 _acolyteGrabsMalletSeries = 0;
 	int32 _acolyteSaysHaltSeries;
 	int32 _courtyardGongSeries = 0;
@@ -120,6 +121,7 @@ private:
 	int32 _meiTrekTalkerPos4Series = 0;
 	int32 _priestTurnsFrom3To9Series = 0;
 	int32 _ripDropsSeries = 0;
+	int32 _ripSketchingInNotebookPos2Series = 0;
 	int32 _ripTrekHandTalkPos3Series = 0;
 	int32 _ripTrekHeadTurnPos5Series = 0;
 	int32 _ripTrekLHandTalkPos4Series = 0;
