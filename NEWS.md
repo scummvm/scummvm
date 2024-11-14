@@ -151,6 +151,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  NGI:
    - Added support for Lithuanian version of fullpipe.
 
+ PINK:
+   - Fixed crash after the girl turns into a mermaid.
+
  SAGA:
    - Added keymapper support.
    - Prevent reaching an unwinnable state when not performing key actions in
