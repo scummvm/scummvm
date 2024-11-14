@@ -642,6 +642,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "apprentice2", "Apprentice II: The Knight's Move" },
 	{ "aprofoundjourney", "A Profound Journey" },
 	{ "apunkwithwheels", "A punk with wheels" },
+	{ "apunkwithwheels2", "A punk with wheels 2" },
 	{ "aractaur", "Aractaur" },
 	{ "araindogstory", "A Raindog Story" },
 	{ "archeos", "Archeos" },
@@ -954,6 +955,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "cherrysquest", "Cherry's Quest For Coffee" },
 	{ "chessboard", "ChessBoard" },
 	{ "chezapa", "Chez Apa" },
+	{ "chiagaru", "Tokyo U Chiagaru Tryouts" },
 	{ "chickchaser", "Chick Chaser" },
 	{ "chicken", "Chicken" },
 	{ "chickenfraction", "Chicken Fraction" },
@@ -1047,6 +1049,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "crashedalien", "The Story Of The Alien That Crashed" },
 	{ "crashevadedestroy", "Crash! Evade! Destroy!" },
 	{ "crave", "Crave" },
+	{ "creativeromanian", "Creative Romanian" },
 	{ "crepefields", "Crepe Fields: A Scare Among Crows" },
 	{ "crimezone", "Crime Zone" },
 	{ "criminalist", "Criminalist" },
@@ -1083,6 +1086,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "dangerouslandsrt2", "Dangerous Lands: Rovendale Tactics 2" },
 	{ "dannydreadisoncall", "Danny Dread is On Call" },
 	{ "dantesday", "Dante's Day" },
+	{ "dariuscarnival", "Darius' Fun Carnival" },
 	{ "darkblack", "Dark Black" },
 	{ "darkdenim", "Darkness and Denim" },
 	{ "darkforce", "DarkForce: Peace Among Nations" },
@@ -1480,6 +1484,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "ghostvirus", "Ghost Virus Invasion" },
 	{ "ghostvoyage", "Ghost Voyage" },
 	{ "giftingspirit", "Gifting Spirit" },
+	{ "gillparty", "Gill's Party Bus" },
 	{ "girlandrabbit", "Educating Adventures of Girl and Rabbit" },
 	{ "girlinthehouse", "The Girl in the House" },
 	{ "gladiatorquest", "Gladiator Quest" },
@@ -2584,6 +2589,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "poeng", "POEng'n'Klik" },
 	{ "politicalenemy", "Political Enemy" },
 	{ "politicallyyours", "Politically Yours" },
+	{ "polybius", "POLYBIUS" },
 	{ "pompadourpete", "Pompadour Pete On The Road To Goblin Keep" },
 	{ "ponderabilia", "Ponderabilia" },
 	{ "pong", "PONG" },
@@ -4619,6 +4625,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("personalrocket", "PersonalRocket.exe", "7db052bc30700d1f30f5330f5814f519", 76071166),
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("phantomfellows", "TPF.exe", "93195fd3208f13c3d65ccd3972a72949", 2935770586, 0),  // GOG 1.1.0.2G
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("phantomfellows", "TPF.exe", "93195fd3208f13c3d65ccd3972a72949", 2936807036, 0),  // GOG 1.1.0.6G
+	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("phantomfellows", "TPF.exe", "93195fd3208f13c3d65ccd3972a72949", 2936913290, 0),  // GOG 1.1.1.4G
 	GAME_ENTRY_EN_STEAM("phoenixtales", "phoenixtales1.exe", "4e8d400018aa356e0e8a09dff6e4f4e2", 3922955),
 	GAME_ENTRY_EN("piratethemepark", "Pirate Theme Park.exe", "f7308b375ff8aebe23e909add49dbd4d", 31368047),  // itch.io
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973149282, 0),
@@ -5786,6 +5793,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("apprentice2", "app2.exe", "465f972675db2da6040518221af5b0ba", 34159191),
 	GAME_ENTRY_EN("aprofoundjourney", "apj.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 920131),
 	GAME_ENTRY_EN("apunkwithwheels", "A punk with wheels.exe", "d90cd956022235ed9b272fb0b2ab5792", 17924043),
+	GAME_ENTRY_EN("apunkwithwheels2", "A punk with wheels 2.ags", "6666966200babbebe47e63cc8b3d0049", 1379577),
 	GAME_ENTRY_EN_PLATFORM("aractaur", "aractaur.exe", "aecd482222ff54206e43a029b5f0b170", 5318963, "MAGS"),
 	GAME_ENTRY_EN("aractaur", "aractaur.exe", "6b4ceb9e327ac99479c08d825461f4cb", 5543430),
 	GAME_ENTRY_EN("araindogstory", "Raindog.exe", "09cf8b451781575fa3ba1a0e31f5fc66", 96888573),
@@ -6189,6 +6197,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("cherrysquest", "Coffee.exe", "1b0541ad9e6b6d3ceed71f6757f275c0", 9090885),
 	GAME_ENTRY_EN("chessboard", "ChessBoard.exe", "82da2565c456dcfb265ded6fe3189c0b", 2638884),
 	GAME_ENTRY_EN("chezapa", "chezapa.exe", "9cf51833e787cc919837d9a8bd8fc14c", 2870327),
+	GAME_ENTRY_EN("chiagaru", "tokyo_u_cheerleading_tryouts2024_english.exe", "615e73fc1874e92d60a1996c2330ea36", 178031358),
 	GAME_ENTRY_EN("chickchaser", "amy.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 7967935),
 	GAME_ENTRY_EN("chickchaser", "amy.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 7968024),
 	GAME_ENTRY_EN("chicken", "chicken.exe", "f120690b506dd63cd7d1112ea6af2f77", 1652888),
@@ -6307,6 +6316,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_PLATFORM("crave", "crave.exe", "28f82e420b82d07651b68114f90223c8", 205890180, "MAGS"),  //v1.04
 	GAME_ENTRY_EN("crave", "crave.exe", "7a436b9a2e8e80c8aaaeed09ef9e3d3d", 59212467),  //v1.09
 	GAME_ENTRY_EN("crave", "crave.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 59222727),  //v1.09 author site
+	GAME_ENTRY_EN("creativeromanian", "A1CR.ags", "d402fdf519404f4b1edd24e0d5202de3", 278264578),
 	GAME_ENTRY_EN("crepefields", "Crepe Fields.exe", "0e4ce1f719c288c65227f6073186bed7", 5928778),  // Windows
 	GAME_ENTRY_EN("crepefields", "Crepe Fields.ags", "c59c4cf5d4bb0ba6a6c5fe63b740c577", 3430714),  // Linux
 	GAME_ENTRY_EN("crepefields", "Crepe Fields.exe", "65d6e8fd7ed5d98e2c645c8af0cc18b2", 6023505),  // Windows 2.0
@@ -6348,6 +6358,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("dannydreadisoncall", "On Call.exe", "ef480ccb0831e452e55456e0ca24c761", 8787649),
 	GAME_ENTRY("dannydreadisoncall", "On Call.exe", "ef480ccb0831e452e55456e0ca24c761", 8791050),  //En-It
 	GAME_ENTRY_EN("dantesday", "Dante's Day.exe", "0500aacb6c176d47ac0f8158f055db83", 7504000),
+	GAME_ENTRY_EN_PLATFORM("dariuscarnival", "Darius' Fun carnival.exe", "8bf7402e2fafde47b7ebd30ae5f03792", 10431910, "Beta"),
 	GAME_ENTRY_EN("darkblack", "DarkBlack.exe", "e80586fdc2db32f65658b235d8cbc159", 8714374),
 	GAME_ENTRY_EN("darkdenim", "MAGS_10_22.exe", "d38b8cc442c00a319560244f54e10b85", 12662135),
 	GAME_ENTRY_EN("darkforce", "DarkForce.exe", "338fa79960d40689063af31c671b8729", 276608794),
@@ -6821,6 +6832,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("ghostvoyage", "Ghost Voyage.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 7870814),
 	GAME_ENTRY_EN("giftingspirit", "Gifting Spirit.exe", "7130eeba055e91ebf32d95a4751816d3", 10550723),  // Windows
 	GAME_ENTRY_EN("giftingspirit", "Gifting Spirit.ags", "d325fde1085cfebd7bac7672b0127ac8", 7514543),  // Linux
+	GAME_ENTRY_EN("gillparty", "GillParty.ags", "bf6498bcab8f07750f3ef947ba979f0c", 47485690),
 	GAME_ENTRY_EN("girlandrabbit", "Game.exe", "82da2565c456dcfb265ded6fe3189c0b", 2877964),
 	GAME_ENTRY_EN_PLATFORM("girlandrabbit", "Game.exe", "82da2565c456dcfb265ded6fe3189c0b", 2723432, "OROW"),
 	GAME_ENTRY_EN("girlinthehouse", "TheGirlInTheHouse.exe", "bbabdc84fb72ed9a340b2386118f0471", 464431933),
@@ -8167,6 +8179,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("poddwellers", "Pod Dwellers.ags", "593038a65aae682cbcd7be9fe51fa84b", 4196662),  // Windows
 	GAME_ENTRY_EN("poeng", "poe.exe", "618d7dce9631229b4579340b964c6810", 29811225),
 	GAME_ENTRY_EN("politicallyyours", "Politically Yours.exe", "031bce0ec1a563faffc19a62ea17e35f", 4640266),
+	GAME_ENTRY_EN("polybius", "POLYBIUS.ags", "c96f5b59eb5e271aac8a381a71617117", 34538177),
 	GAME_ENTRY_EN("pompadourpete", "4hg.exe", "615e73fc1874e92d60a1996c2330ea36", 6008514),
 	GAME_ENTRY_EN("ponderabilia", "Ponderabilia.exe", "615e73fc1874e92d60a1996c2330ea36", 21206289),
 	GAME_ENTRY_EN("pong", "Pong.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 611249),
@@ -9445,7 +9458,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("woo", "Woo.exe", "06a03fe35791b0578068ab1873455463", 4771204),  //v1.2.4
 	GAME_ENTRY_EN("woof", "woof.exe", "0710e2ec71042617f565c01824f0cf3c", 777374),
 	GAME_ENTRY_EN("woolyrockbottom", "Wooly.exe", "261d108f9213356a351b35b54867f342", 3409152),
-	GAME_ENTRY_EN("worldisweird", "worldweird.exe", "22fd810f7844c6366df3024b65a3411f", 341060078),
+	GAME_ENTRY_EN("worldisweird", "worldweird.exe", "22fd810f7844c6366df3024b65a3411f", 341060078),  // 1.0.1
+	GAME_ENTRY_EN("worldisweird", "worldweird23.exe", "b7c79c7b9200e733a05dc32d6ae58c2e", 116084350),  // 1.2.0
 	GAME_ENTRY_EN("worldoftoto", "WorldOfToto.ags", "03bf57f3cf0974e210dacd00ec7ba574", 135938736),
 	GAME_ENTRY_EN("worldoftoto", "WorldOfToto.exe", "2f2bc0b9c539d20529c0e343315d5f65", 139047620),
 	GAME_ENTRY("worldofwarcraftquest", "IMBA.exe", "3a96a134156aeccee37daae9a7d5232d", 31743641),  //En-De
@@ -9478,6 +9492,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("ziggyshorts", "ziggyhalemilkgame.exe", "b5d827e7fa1376f25ab30d9b700f99b4", 17145928),
 	GAME_ENTRY_EN("zippermeteor", "TheZipperMeteor.exe", "06a03fe35791b0578068ab1873455463", 11886514),
 	GAME_ENTRY_EN("zogmoonbuckle", "Zog_Moonbuckle.exe", "0a3d57052500c7e93510ca2c317b6991", 37433537),
+	GAME_ENTRY_EN("zogmoonbuckle", "Zog_Moonbuckle.exe", "897e7a83055ef58603d39b1412d40f3b", 37086335),  // 1.0.1
 	GAME_ENTRY_EN("zombiefish", "FZombie.exe", "3128b9f90e2f954ba704414ae854d10b", 4220305),
 	GAME_ENTRY_EN("zombienation", "zomnat v1.1.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 46111952),
 	GAME_ENTRY_EN("zombienation", "zomnat v1.1.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 46065287),
