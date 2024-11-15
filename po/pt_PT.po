@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-15 13:50+0000\n"
+"POT-Creation-Date: 2024-11-15 16:51+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -10328,7 +10328,7 @@ msgstr ""
 msgid "Enable the original GUI and Menu"
 msgstr "Ativa batotas"
 
-#: engines/scumm/dialogs.cpp:1182
+#: engines/scumm/dialogs.cpp:1182 engines/scumm/metaengine.cpp:737
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
@@ -11076,13 +11076,6 @@ msgid ""
 "intro."
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:737
-msgid ""
-"Allow the game to use the in-engine graphical interface and the original "
-"save/load menu. \t\tUse it together with the \"Ask for confirmation on "
-"exit\" for a more complete experience."
-msgstr ""
-
 #: engines/scumm/metaengine.cpp:746
 #, fuzzy
 msgid "Enable low latency audio mode"
@@ -11090,9 +11083,9 @@ msgstr "Ativa vozes com hélio"
 
 #: engines/scumm/metaengine.cpp:747
 msgid ""
-"Allows the game to use low latency audio, at the cost of sound accuracy. "
-"\t\tIt is recommended to enable this feature only if you incur in audio "
-"latency issues during normal gameplay."
+"Allows the game to use low latency audio, at the cost of sound accuracy. It "
+"is recommended to enable this feature only if you incur in audio latency "
+"issues during normal gameplay."
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:756
@@ -11102,7 +11095,7 @@ msgstr ""
 #: engines/scumm/metaengine.cpp:757
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
-"Meant To Be\", \t\twhich was cut in international releases. Beware though: "
+"Meant To Be\", which was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
 msgstr ""
 
