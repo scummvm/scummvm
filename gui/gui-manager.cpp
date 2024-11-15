@@ -152,7 +152,7 @@ void GuiManager::computeScaleFactor() {
 	if (_theme)
 		_theme->setBaseResolution(_baseWidth, _baseHeight, _scaleFactor);
 
-	debug(3, "Setting %d x %d -> %d x %d -- %g", w, h, _baseWidth, _baseHeight, _scaleFactor);
+	debug(1, "Setting %d x %d -> %d x %d -- %g", w, h, _baseWidth, _baseHeight, _scaleFactor);
 }
 
 Common::Keymap *GuiManager::getKeymap() const {
