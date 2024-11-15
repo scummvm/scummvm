@@ -1207,6 +1207,16 @@ public:
 	virtual float getHiDPIScreenFactor() const { return 1.0f; }
 
 	/**
+	 * Return the values for the safe area insets.
+	 * Returns the values needed for the  padding to make sure any graphical element
+	 * does not interefere with any system UI elements such as the notch or home indicator
+	 * on mobile devices.
+	 *
+	 * @return The values for the top inset.
+	 */
+	virtual void getSafeAreaInsets(int &l, int &r, int &t, int &b) const { l = 0; r = 0; t = 0; b = 0; }
+
+	/**
 	 * Blit a bitmap to the virtual screen.
 	 *
 	 * The real screen will not immediately be updated to reflect the changes.
