@@ -197,14 +197,14 @@ void TinyGLRenderer::renderCrossair(const Common::Point crossairPosition) {
 	copyToVertexArray(0, Math::Vector3d(crossairPosition.x - 3, crossairPosition.y, 0));
 	copyToVertexArray(1, Math::Vector3d(crossairPosition.x - 1, crossairPosition.y, 0));
 
-	copyToVertexArray(2, Math::Vector3d(crossairPosition.x + 1, crossairPosition.y, 0));
-	copyToVertexArray(3, Math::Vector3d(crossairPosition.x + 3, crossairPosition.y, 0));
+	copyToVertexArray(2, Math::Vector3d(crossairPosition.x + 2, crossairPosition.y, 0));
+	copyToVertexArray(3, Math::Vector3d(crossairPosition.x + 4, crossairPosition.y, 0));
 
 	copyToVertexArray(4, Math::Vector3d(crossairPosition.x, crossairPosition.y - 3, 0));
 	copyToVertexArray(5, Math::Vector3d(crossairPosition.x, crossairPosition.y - 1, 0));
 
-	copyToVertexArray(6, Math::Vector3d(crossairPosition.x, crossairPosition.y + 1, 0));
-	copyToVertexArray(7, Math::Vector3d(crossairPosition.x, crossairPosition.y + 3, 0));
+	copyToVertexArray(6, Math::Vector3d(crossairPosition.x, crossairPosition.y + 2, 0));
+	copyToVertexArray(7, Math::Vector3d(crossairPosition.x, crossairPosition.y + 4, 0));
 
 	tglVertexPointer(3, TGL_FLOAT, 0, _verts);
 	tglDrawArrays(TGL_LINES, 0, 8);
