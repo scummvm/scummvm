@@ -5176,8 +5176,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t("necrobius", "Beta", "WIN_APPS/N_BIUS.EXE", "c1b8ced1a94efcbaa86bdf12f28a0097", 692919, 404),
 	WINDEMO1("necrobius", "Demo", "N_BIUS.EXE", "d17330706956c2fda3ee482b39b0609f", 705049, 400),
 
-	MACGAME1_l("negi1", "", "Power", "1e817476c1d58b61cc74a08d685460fd", 100069, Common::JA_JPN, 404),
-	WINGAME1t_l("negi1", "", "NEGI.EXE", "295224cdc826db343629e7741f5163af", 751189, Common::JA_JPN, 400),
+	// Mac folder name is ねぎ
+	MACGAME1_l("negi1", "", "xn--x8j1c/Power", "r:1e817476c1d58b61cc74a08d685460fd", 100069, Common::JA_JPN, 404),
+	WINGAME1_l("negi1", "", "NEGI.EXE",		   "t:295224cdc826db343629e7741f5163af", 751189, Common::JA_JPN, 400),
 
 	// Rest of screensavers are D5
 	MACGAME1("nekojiruudonss", "Ashi", "ASHI", "bc1822fcc8cf27e2ffb1028c691fb06d", 395020, 402),
@@ -5193,7 +5194,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// decomposed version of the filename above
 	MACDEMO1_l("nendo", "Demo Movie", "xn--Nendo -1m4ea71b5dvgxa35ac", "bcd3c718db258701496b3c5bcb827ef2", 481803, Common::JA_JPN, 404),
 
-	MACGAME1("netmaze", "v1.1", "Netmaze 1.1", "ea646eccc9a53f44ce082459d4809a06", 483518, 404),
+	MACGAME1("netmaze", "v1.1", "Netmaze 1.1", "r:ea646eccc9a53f44ce082459d4809a06", 483518, 404),
 
 	WINDEMO1("newslinks", "Demo", "NEWS.EXE", "22900fa6922d71b1f880aa3cc0bbad1a", 16526563, 404),
 
@@ -5206,14 +5207,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("nightsky", "Sampler", "NIGHTSKY.EXE", "68f1fe67a5881fd47b08e905401d174c", 4300149, 404),
 
 	// Original filename is Visual日本地理DEMO
-	MACDEMO1_l("nihonchiri", "Demo", "Visual Nihon Chiri DEMO", "8b138db44d4421cc7294a9dc792ccf1b", 306940, Common::JA_JPN, 402),
+	MACDEMO1_l("nihonchiri", "Demo", "xn--VisualDEMO-2j3r152lqqdbs3d", "r:8b138db44d4421cc7294a9dc792ccf1b", 306684, Common::JA_JPN, 402),
 
 	// Published by Corel CD Home. Later released as Nikolai's Knights.
 	// Original Mac filename is In the Time of the Knights™
 	MACGAME2("nikolaiknights", "Corel", "KNIGHTS/xn--In the Time of the Knights-jf8p", "rt:5476497f10d40d59cd94df7197ffddc2", 488222,
 										"KNIGHTS/1_TIME.DXR",						   "d:75d8d359ae371ba60967177e8f3ce48b", 1720524, 404),
 	WINGAME2("nikolaiknights", "Corel", "KNIGHTS/KNIGHTS.EXE", "t:eb47d26b5a95ac2263763937e5a7e253",  740436,
-										"KNIGHTS/1_TIME.DXR",  "d:75d8d359ae371ba60967177e8f3ce48b", 1720524, 404),
+										"KNIGHTS/1_TIME.DXR",  "f:75d8d359ae371ba60967177e8f3ce48b", 1720524, 404),
 
 	// Later released as Nikolai's Toys
 	// Original Mac filename is NN’nN Toy Makers™
@@ -5239,13 +5240,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Demo executable name is ににんがしデモ
 	// Full version executable name is ににんがし
 	// There are also projectors to play audio in 11kHz or for systems with 4MB RAM
-	MACGAME1_l("niningashi", "",	 "Niningashi",		"0666ae690e459d3d0d91800ebd94de46", 290682, Common::JA_JPN, 402),
-	MACDEMO1_l("niningashi", "Demo", "Niningashi Demo", "0666ae690e459d3d0d91800ebd94de46", 290682, Common::JA_JPN, 402),
-	WINDEMO2_l("niningashi", "Demo", "S.EXE",			"0c8a24a885123f20992c0c74d8c5062c", 768683,
-									 "MAIN.DXR",		"8af3de22d679eb4e192429ca682bb974", 1119286, Common::JA_JPN, 404),
+	MACGAME1_l("niningashi", "",	 "xn--v8jwa2da4r",	   "r:0666ae690e459d3d0d91800ebd94de46", 290426, Common::JA_JPN, 402),
+	MACDEMO1_l("niningashi", "Demo", "xn--v8jwa2da4rrlpg", "r:0666ae690e459d3d0d91800ebd94de46", 290426, Common::JA_JPN, 402),
+	WINDEMO2_l("niningashi", "Demo", "S.EXE",			   "0c8a24a885123f20992c0c74d8c5062c", 768683,
+									 "MAIN.DXR",		   "8af3de22d679eb4e192429ca682bb974", 1119286, Common::JA_JPN, 404),
 
-	WINDEMO2t("nixon", "Demo", "NIXON.EXE",  "2136d259b08bff165dea5085938abd12", 3193595,
-							   "WATERGAT.E", "2ac9de0cd93580da85993f842eed8417", 3106294, 404),
+	WINDEMO2("nixon", "Demo", "NIXON.EXE",  "t:2136d259b08bff165dea5085938abd12", 3193595,
+							  "WATERGAT.E", "t:2ac9de0cd93580da85993f842eed8417", 3106294, 404),
 
 	// Pregnancy demo is from ADAM v1.11 for Mac and NMM v1.0
 	// Windows demo from Life's Greatest Mysteries v1.01
@@ -5254,26 +5255,26 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("nmm", "Demo", "NMM Demo", "17efee018a660458fae80de4364021ac", 481226, 404),
 	WINDEMO1t("nmm", "Demo", "NMMDEMO.EXE", "69404c5a228259b44356f1eb477317d2", 7622823, 404),
 
-	MACDEMO2_l("noahsark", "Demo", "GO", "97474208c44c78f26bef8b2011d341aa", 484067,
-								   "NOADATA/NOAm16h.dxr", "5ff168be3f36b3c7c1a27e0ba92af80a", 4313024, Common::JA_JPN, 404),
-	WINDEMO2t_l("noahsark", "Demo", "GO.EXE", "bf8926c2275b8e83f237812a18964dbd", 747005,
-									"NOADATA/NOAW08H.DXR", "c66f86fe178c6a0bb9c5165202c0f8c3", 2991026, Common::JA_JPN, 404),
+	MACDEMO2_l("noahsark", "Demo", "GO",				  "r:97474208c44c78f26bef8b2011d341aa",  484067,
+								   "NOADATA/NOAm16h.dxr", "d:5ff168be3f36b3c7c1a27e0ba92af80a", 4313024, Common::JA_JPN, 404),
+	WINDEMO2_l("noahsark", "Demo", "GO.EXE",			  "t:bf8926c2275b8e83f237812a18964dbd",  747005,
+								   "NOADATA/NOAW08H.DXR", "t:c66f86fe178c6a0bb9c5165202c0f8c3", 2991026, Common::JA_JPN, 404),
 
 	WINGAME1("noddytoytown", "", "MNWG/NODDY.EXE", "d16d57c823205e32759e1771bfdbb330", 4505770, 404),
 
 	WINDEMO2("noir", "Demo", "NOIRDEMO.EXE", "t:2fcfc8d2fefb872512159a111a7102a9", 10949309,
-							 "CYBRLOGO.AVI", "d:297569fc2092e65faea69e0fd14cc862",  2601192, 404),
+							 "CYBRLOGO.AVI", "f:297569fc2092e65faea69e0fd14cc862",  2601192, 404),
 
 	// Original filename is Nomis™ PPC
-	MACGAME1("nomis", "", "Nomis PPC", "6dd87d48277cf2cd886e5168266ce4bf", 58051, 403),
+	MACGAME1("nomis", "", "xn--Nomis PPC-9g2e", "r:6dd87d48277cf2cd886e5168266ce4bf", 57795, 403),
 
-	MACDEMO1("nurseryrhymes", "Sampler", "Nursery Rhymes Sampler", "cbce20666bfe47a9533331c6be1e6039", 285273, 400),
+	MACDEMO1("nurseryrhymes", "Sampler", "Nursery Rhymes Sampler", "r:cbce20666bfe47a9533331c6be1e6039", 285273, 404),
 	WINDEMO1("nurseryrhymes", "Sampler", "NURSERY.EXE", "c7cca77d8c1c88e8003db72abb05da0a", 4518423, 404),
 
 	WINDEMO1("nyack", "Demo", "NYACKDEM.EXE", "8902ed0bcaf2d78151f819ba41eaf124", 720431, 404),
 
 	// From CD Loisirs Nº6
-	MACDEMO1("onevolution", "Demo", "Stephen Jay Gould", "77f4098988d5386794d1530065f514cd", 301669, 400),
+	MACDEMO1("onevolution", "Demo", "Stephen Jay Gould", "r:77f4098988d5386794d1530065f514cd", 301669, 400),
 
 	MACGAME2("operafatal", "",	 "OPERA FATAL",		 "f5033f237ad1b1639fc46d01a82ac380", 285310,
 								 "Opera/SPRINT.Dxr", "3e86f01eeac5fa3349c5177378997a7f", 694912, 400),
@@ -5286,8 +5287,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME2("operafatal", "Hybrid release", "OPERA FATAL",		 "f5033f237ad1b1639fc46d01a82ac380", 285310,
 											 "Opera/SPRINT.Dxr", "26c83c0cac1d40e91487e3a142d29733", 479390, 404),
 
-	MACDEMO1("orgotto", "Demo", "ORGOTTO", "0c7bbb4b24823e5ab871cb4c1d6f3710", 484351, 404),
-	WINDEMO1("orgotto", "Demo", "ORGOTTO.EXE", "f9272ef143c610ebd4dcb8301aa9b678", 760137, 404),
+	MACDEMO1("orgotto", "Demo", "ORGOTTO",	   "r:0c7bbb4b24823e5ab871cb4c1d6f3710", 484095, 404),
+	WINDEMO1("orgotto", "Demo", "ORGOTTO.EXE", "t:46a65dad38808f407277b933b707289e", 760137, 404),
 
 	// Found on PC Gamer (US) demo discs #1,3,4,6
 	// V10 found on Czech Super Hry III (FMI)
@@ -5303,15 +5304,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("osaka1", "",	 "OSAKA.EXE", "c0479277618ab17bd9c79b5da66ab435", 1491097, Common::JA_JPN, 400),
 	WINDEMO2_l("osaka1", "Demo", "DEMO.EXE",  "763f360a098cf3bec7cbdc5685b1e4a3", 1193483,
 								 "START.DIR", "83190aa4c2db873334d36bac329ec670", 825036, Common::JA_JPN, 404),
-	MACDEMO2_l("osaka1", "Demo", "DEMO",	  "5a012e69fec2369ad2e8d73c42d928f3", 1096269,
-								 "START.DIR", "8b82c58788768cfa88115217de4e8995", 825192, Common::JA_JPN, 404),
+	MACDEMO2_l("osaka1", "Demo", "DEMO",	  "r:bcd3c718db258701496b3c5bcb827ef2", 483159,
+								 "START.DIR", "d:8b82c58788768cfa88115217de4e8995", 825192, Common::JA_JPN, 404),
 
 	// Mac folder ends with a space
 	MACGAME1("oslotg", "", "xn--Oslo -/OSLO's T&G", "rt:0464b60b020ff21b265c9e91f8cf79ce", 307171, 400),
 	WINGAME1("oslotg", "", "OSLO/OSLOTG.EXE",		"t:b3db5392d4e93dedb55926c7b494a0b9",  995939, 404),
 
-	WINGAME1("painters", "", "PAINTERS.EXE", "3cba94b585493ef5f22d0d650b6eb7fd", 895727, 404),
-	MACGAME1("painters", "", "Painters Painting", "0a81aee4106eec4ffc0cc564a7c15a23", 288774, 404),
+	MACGAME1("painters", "", "Painters Painting",	  "r:0a81aee4106eec4ffc0cc564a7c15a23", 288518, 404),
+	WINGAME1("painters", "", "PAINTERS/PAINTERS.EXE", "t:85812843bd70c38f5d304b7dfc461265", 895727, 404),
 
 	MACGAME1_l("panicook", "", "Panicook", "bcd3c718db258701496b3c5bcb827ef2", 484095, Common::JA_JPN, 404),
 	WINGAME1t_l("panicook", "", "PANICOOK.EXE", "50c3a90ab98c6c048014c27de116cdfd", 123273637, Common::JA_JPN, 404),
@@ -5320,11 +5321,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Full version isn't Director
 	// Found on Electronic Entertainment CD-ROM Sampler Disc (December 1995)
-	WINDEMO1t("panicpark", "Demo", "PANIC!.EXE", "171360aac3ee8ebbb1eee36cebe703f2", 2013371, 404),
+	WINDEMO1("panicpark", "Demo", "PANIC!.EXE", "t:171360aac3ee8ebbb1eee36cebe703f2", 2013371, 404),
 	// Found on The Best of Select: Games Special 4, batch file is the only other file in the folder
 	// This version lacks the flash1/flash2 sprites when winning the dart game
-	WINDEMO2t("panicpark", "Demo", "PANIC.EXE", "9d0fe435d9becfcc67f7c25ad1f88102", 2370615,
-								   "GOWIN.BAT", "206e3ef43a49e92cda0727a3ba870dc5", 10, 404),
+	WINDEMO2("panicpark", "Demo", "PANIC.EXE", "t:9d0fe435d9becfcc67f7c25ad1f88102", 2370615,
+								  "GOWIN.BAT", "t:206e3ef43a49e92cda0727a3ba870dc5",	  10, 404),
 
 	// Developed by Museworthy
 	MACGAME1("paparazzi", "", "MUSEWTHY/Paparazzi!", "0c7bbb4b24823e5ab871cb4c1d6f3710", 482610, 404),
@@ -5339,8 +5340,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Full version is bilingual. Demo is French only.
 	// Demo found on EMME Keys to Knowledge sampler CD
-	MACGAME1("paris", "",		"PARIS History & Splendour", "1c2e5371b835680e7c1ca8bcea008bef", 482838, 404),
-	WINGAME1("paris", "",		"PARISPC.EXE",	"efff9526abac439e895005efb07499cb", 234012595, 404),
+	MACGAME1("paris", "",		"PARIS History & Splendour", "r:1c2e5371b835680e7c1ca8bcea008bef",    482582, 404),
+	WINGAME1("paris", "",		"PARISPC.EXE",				 "t:fc1bf22dc0b102408212be5a51a0f115", 234012595, 404),
 	MACDEMO1_l("paris", "Demo", "DEMO PARIS INFO LINK-EMME", "1c2e5371b835680e7c1ca8bcea008bef", 482838, Common::FR_FRA, 404),
 	WINDEMO1_l("paris", "Demo", "DPARISPC.EXE", "875af2a4007c6ec11939ca0cc1f380d5", 719579, Common::FR_FRA, 404),
 
@@ -5354,10 +5355,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("pasosuke", "", "xn--PPC-873bpbxa3l", "6822defa470ade9836e0d90f365a035c", 58401, Common::JA_JPN, 404),
 	WINGAME1_l("pasosuke", "", "PASOSUKE.EXE", "81c32e386efd5b68848dacc0a24e8736", 746803, Common::JA_JPN, 404),
 
-	MACGAME1("paws", "", "Start the Dog!", "af8fad5423f5416fe7743198e3909294", 325061, 404),
-	MACDEMO1("paws", "Making of", "The Making of P.A.W.S", "a55b1e9e9d04a2234189a6bcfbe69e4c", 295404, 404),
-	WINGAME1("paws", "", "PAWS_HD/STARTDOG.EXE", "5c9a56c88b4bb8732377f93f62a885a4", 818961, 404),
-	WINDEMO1("paws", "Making of", "MAKEPAWS.EXE", "559f4c728a348c18b96cddaf102e3413", 874293, 404),
+	MACGAME1("paws", "",		  "P.A.W.S/Start the Dog!",		  	  "r:af8fad5423f5416fe7743198e3909294", 325061, 404),
+	MACDEMO1("paws", "Making of", "MAKING.MOV/The Making of P.A.W.S", "r:a55b1e9e9d04a2234189a6bcfbe69e4c", 295148, 404),
+	WINGAME1("paws", "",		  "PAWS_HD/STARTDOG.EXE",			  "t:d14fae9212e7d518045df4db5315c27e", 818961, 404),
+	WINDEMO1("paws", "Making of", "MAKEPAWS.EXE",					  "t:90b2060d6dca5adca60cd66aa092013d", 874293, 404),
 
 	WINDEMO1("pbbear", "Sampler", "PBBEAR.EXE", "dc58e6e06807f4a4a4cc278f8748659f", 696807, 404),
 
@@ -5412,7 +5413,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Mac version requires hard drive installation
 	// Choice of American or British English by selecting Language = 0 or 1 in PETER.INI
-	MACGAME1("peterrabbit", "", "Peter Rabbit (PowerMac)", "fd5cf6efd07077a06519145fc3700e63", 62616, 404),
+	MACGAME1("peterrabbit", "", "Peter Rabbit (PowerMac)", "r:fd5cf6efd07077a06519145fc3700e63", 62360, 404),
 
 	// These tile puzzles are identical except for the image
 	MACGAME1("pfarrypuzzle", "Flower", "Flower Puzzle", "cdb27c916044ae4dceb4b7326063fa03", 303940, 400),
