@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-15 16:51+0000\n"
+"POT-Creation-Date: 2024-11-15 17:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -95,8 +95,8 @@ msgstr ""
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
 #: gui/recorderdialog.cpp:212 gui/remotebrowser.cpp:59
 #: gui/saveload-dialog.cpp:64 gui/saveload-dialog.cpp:456
-#: gui/saveload-dialog.cpp:540 gui/saveload-dialog.cpp:835
-#: gui/saveload-dialog.cpp:1235 gui/shaderbrowser-dialog.cpp:80
+#: gui/saveload-dialog.cpp:540 gui/saveload-dialog.cpp:839
+#: gui/saveload-dialog.cpp:1243 gui/shaderbrowser-dialog.cpp:80
 #: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53 base/main.cpp:585
 #: dists/android.strings.xml.cpp:46 engines/engine.cpp:780
 #: backends/dialogs/gtk/gtk-dialogs.cpp:65
@@ -288,7 +288,7 @@ msgid "Back"
 msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:436 gui/imagealbum-dialog.cpp:104
-#: gui/saveload-dialog.cpp:836 engines/crab/input/input.cpp:181
+#: gui/saveload-dialog.cpp:840 engines/crab/input/input.cpp:181
 msgid "Next"
 msgstr ""
 
@@ -337,7 +337,7 @@ msgstr ""
 #: gui/integrity-dialog.cpp:176 gui/fluidsynth-dialog.cpp:153
 #: gui/launcher.cpp:558 gui/launcher.cpp:562 gui/massadd.cpp:90
 #: gui/options.cpp:2417 gui/predictivedialog.cpp:69
-#: gui/saveload-dialog.cpp:1236 dists/android.strings.xml.cpp:33
+#: gui/saveload-dialog.cpp:1244 dists/android.strings.xml.cpp:33
 #: engines/engine.cpp:583 engines/engine.cpp:606
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/agos/midi.cpp:320 engines/agos/midi.cpp:378
@@ -1194,7 +1194,7 @@ msgid ""
 "connect_cloud.html) "
 msgstr ""
 
-#: gui/imagealbum-dialog.cpp:103 gui/saveload-dialog.cpp:839
+#: gui/imagealbum-dialog.cpp:103 gui/saveload-dialog.cpp:843
 msgid "Prev"
 msgstr ""
 
@@ -2619,31 +2619,31 @@ msgstr ""
 msgid "Error deleting saved game"
 msgstr ""
 
-#: gui/saveload-dialog.cpp:675 gui/saveload-dialog.cpp:1184
+#: gui/saveload-dialog.cpp:675 gui/saveload-dialog.cpp:1192
 msgid "Date: "
 msgstr ""
 
-#: gui/saveload-dialog.cpp:679 gui/saveload-dialog.cpp:1190
+#: gui/saveload-dialog.cpp:679 gui/saveload-dialog.cpp:1198
 msgid "Time: "
 msgstr ""
 
-#: gui/saveload-dialog.cpp:685 gui/saveload-dialog.cpp:1198
+#: gui/saveload-dialog.cpp:685 gui/saveload-dialog.cpp:1206
 msgid "Playtime: "
 msgstr ""
 
-#: gui/saveload-dialog.cpp:1044
+#: gui/saveload-dialog.cpp:1052
 msgid "New Save"
 msgstr ""
 
-#: gui/saveload-dialog.cpp:1044
+#: gui/saveload-dialog.cpp:1052
 msgid "Create a new saved game"
 msgstr ""
 
-#: gui/saveload-dialog.cpp:1177
+#: gui/saveload-dialog.cpp:1185
 msgid "Name: "
 msgstr ""
 
-#: gui/saveload-dialog.cpp:1255
+#: gui/saveload-dialog.cpp:1263
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr ""
