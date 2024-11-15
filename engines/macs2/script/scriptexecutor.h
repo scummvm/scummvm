@@ -105,6 +105,20 @@ class GameObject;
 
 			private:
 
+			inline void ScriptUnimplementedOpcode(const char *source, uint16 opcode) {
+				SIS_Debug("Unimplemented opcode (%s): %.2x.", source, opcode);
+			}
+
+			inline void ScriptUnimplementedOpcode_Helper(uint16 opcode) {
+				// TODO: Could this also be done with a template?
+				ScriptUnimplementedOpcode("Helper", opcode);
+			}
+
+			inline void ScriptUnimplementedOpcode_Main(uint16 opcode) {
+				// TODO: Could this also be done with a template?
+				ScriptUnimplementedOpcode("Main", opcode);
+			}
+
 			// State variables from here
 
 			// Overall state
