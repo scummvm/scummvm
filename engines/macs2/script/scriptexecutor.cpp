@@ -34,19 +34,7 @@ namespace Script {
 #define ScriptNoEntry debug("Unhandled case in script handling.");
 #define STR_HELPER(x) #x
 
-	inline void ScriptUnimplementedOpcode(const char* source, uint16 opcode) {
-		debug("Unimplemented opcode (%s): %.2x.", source, opcode);
-	}
-
-	inline void ScriptUnimplementedOpcode_Helper(uint16 opcode) {
-		// TODO: Could this also be done with a template?
-		ScriptUnimplementedOpcode("Helper", opcode);
-	}
-
-	inline void ScriptUnimplementedOpcode_Main(uint16 opcode) {
-		// TODO: Could this also be done with a template?
-		ScriptUnimplementedOpcode("Main", opcode);
-	}
+	
 
 
 ScriptExecutor::ScriptExecutor() {
@@ -2073,6 +2061,18 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// TODO: What do 8XXh objects signify? Both return values are those
 			Func9F4D_Placeholder();
 			Func9F4D_Placeholder();
+		} else if (opcode1 == 0x35) {
+			// Object IDs
+			Func9F4D_Placeholder();
+			Func9F4D_Placeholder();
+			// Unknown category
+			Func9F4D_Placeholder();
+			Func9F4D_Placeholder();
+			Func9F4D_Placeholder();
+		} else if (opcode1 == 0x36) {
+			// Seems to not read anything
+		} else if (opcode1 == 0x37) {
+			// Seems to not read anything
 		} else if (opcode1 == 0x038) {
 			// TODO: Unknown opcode so far
 			// Seems to load something from an object or scene, but not sure

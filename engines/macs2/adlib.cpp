@@ -637,6 +637,7 @@ void Adlib::OnTimer() {
 			}
 			// l0017_1B5F:
 			uint8 bp1;
+			uint8 bp2;
 			uint8 bp3 = g229B & 0x0F;
 			uint8 bp6 = g229B;
 			uint8 bp4 = peekByte();
@@ -804,26 +805,31 @@ void Adlib::OnTimer() {
 									// mov al, es : [di]
 									temp &= 0x3F; // TODO: xor ah,ah
 									temp += temp3;
+									bp2 = temp;
+									// TODO: Need to pass arguments
+									// push	word ptr [bp-0Eh]
+									// push word ptr[bp - 10h]
+									Func19BE_TODO(0x3);
+									// TODO: Assign result to pointer
+									// mov	[bp-14h],ax
+									// mov[bp - 12h], dx
+									temp = g225E; // TODO: xor ah,ah
+									uint16 tempBX = temp;
+									// TODO: Assign from pointer
+									// les	di,[bp-14h]
+									// mov al, es : [di]
+									temp &= 0x3F; // TODO: xor ah, ah
+									uint16 tempDX = temp;
+									temp = 0x3F;
+									temp -= tempDX;
+									tempDX = temp;
+									temp = bp1; // TODO: xor ah, ah
+									temp *= tempDX;
+									// TODO: CWD
 									// TODO: Continue here
 									/*
-									mov	[bp-2h],al
-									push	word ptr [bp-0Eh]
-									push	word ptr [bp-10h]
-									push	3h
-									call	far 0017h:19BEh
-									mov	[bp-14h],ax
-									mov	[bp-12h],dx
-									mov	al,[225Eh]
-									xor	ah,ah
-									mov	bx,ax
-									les	di,[bp-14h]
-									mov	al,es:[di]
-									and	al,3Fh
-									xor	ah,ah
-									mov	dx,ax
-									mov	ax,3Fh
-									sub	ax,dx
-									mov	dx,ax
+								
+									
 									mov	al,[bp-1h]
 									xor	ah,ah
 									mul	dx
