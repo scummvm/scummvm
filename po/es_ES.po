@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-15 13:50+0000\n"
-"PO-Revision-Date: 2024-11-11 10:40+0000\n"
+"PO-Revision-Date: 2024-11-15 14:26+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -1536,16 +1536,12 @@ msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "¡ScummVM no ha encontrado ningún motor capaz de ejecutar el juego!"
 
 #: gui/launcher.cpp:665 gui/launcher.cpp:689
-#, fuzzy
-#| msgid ""
-#| "Did you add this directory to the SAF? Press the help button [?] on the "
-#| "top for detailed instructions"
 msgid ""
 "Have you given ScummVM access rights to this directory? Press the help "
 "button [?] on the top for detailed instructions"
 msgstr ""
-"¿Has añadido este directorio al SAF? Pulsa el botón de ayuda [?] de la parte "
-"superior para ver instrucciones detalladas"
+"¿Has dado a ScummVM permisos de acceso a este directorio? Pulsa el botón de "
+"ayuda [?] de la parte superior para ver instrucciones detalladas"
 
 #: gui/launcher.cpp:686
 msgid "ScummVM could not find any game in the specified directory!"
@@ -10971,8 +10967,6 @@ msgid "Run in really fast mode (*)"
 msgstr "Ejecutar en modo muy rápido (*)"
 
 #: engines/scumm/help.cpp:101
-#, fuzzy
-#| msgid "Switch between graphics filters"
 msgid "Cycle between graphics filters"
 msgstr "Alternar entre filtros gráficos"
 
@@ -12917,6 +12911,12 @@ msgid ""
 "\n"
 "Please check you have copied all the files correctly."
 msgstr ""
+"Falta un archivo necesario\n"
+"\n"
+"Para empezar una partida es necesario tener el archivo\n"
+"SAVEGAME/U8SAVE.000 de una instalación original.\n"
+"\n"
+"Comprueba que hayas copiado correctamente todos los archivos."
 
 #: engines/vcruise/metaengine.cpp:42
 msgid "Improved click sensitivity"
@@ -13039,14 +13039,12 @@ msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "Error desconocido al intentar cargar la partida guardada."
 
 #: engines/voyeur/metaengine.cpp:42
-#, fuzzy
-#| msgid "Enable rock travel"
 msgid "Enable lockout system"
-msgstr "Activar viaje con piedra"
+msgstr "Activar bloqueo anticopia"
 
 #: engines/voyeur/metaengine.cpp:43
 msgid "Require a lockout code to start the game."
-msgstr ""
+msgstr "Solicita un código de desbloqueo para poder empezar una partida."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
