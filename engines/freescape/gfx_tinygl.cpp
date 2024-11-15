@@ -130,7 +130,51 @@ void TinyGLRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, 
 	polygonOffset(false);
 }
 
-void TinyGLRenderer::renderPlayerShootBall(byte color, const Common::Point position, int frame, const Common::Rect viewArea) {}
+void TinyGLRenderer::renderPlayerShootBall(byte color, const Common::Point position, int frame, const Common::Rect viewArea) {
+	/*uint8 r, g, b;
+
+	tglMatrixMode(TGL_PROJECTION);
+	tglLoadIdentity();
+	tglOrtho(0, _screenW, _screenH, 0, 0, 1);
+	tglMatrixMode(TGL_MODELVIEW);
+	tglLoadIdentity();
+	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderZX) {
+		r = g = b = 255;
+	} else {
+		r = g = b = 255;
+		tglEnable(TGL_BLEND);
+		tglBlendFunc(TGL_ONE_MINUS_DST_COLOR, TGL_ZERO);
+	}
+
+	tglDisable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_FALSE);
+
+	tglColor3ub(r, g, b);
+	int triangleAmount = 20;
+	float twicePi = (float)(2.0 * M_PI);
+	float coef = (9 - frame) / 9.0;
+	float radius = (1 - coef) * 4.0;
+
+	Common::Point initial_position(viewArea.left + viewArea.width() / 2 + 2, viewArea.height() + viewArea.top);
+	Common::Point ball_position = coef * position + (1 - coef) * initial_position;
+
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	copyToVertexArray(0, Math::Vector3d(ball_position.x, ball_position.y, 0));
+
+	for(int i = 0; i <= triangleAmount; i++) {
+		float x = ball_position.x + (radius * cos(i *  twicePi / triangleAmount));
+		float y = ball_position.y + (radius * sin(i * twicePi / triangleAmount));
+		copyToVertexArray(i + 1, Math::Vector3d(x, y, 0));
+	}
+
+	tglVertexPointer(3, TGL_FLOAT, 0, _verts);
+	tglDrawArrays(TGL_TRIANGLE_FAN, 0, triangleAmount + 2);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
+
+	tglDisable(TGL_BLEND);
+	tglEnable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_TRUE);*/
+}
 
 
 void TinyGLRenderer::renderPlayerShootRay(byte color, const Common::Point position, const Common::Rect viewArea) {
