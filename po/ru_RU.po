@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-15 13:50+0000\n"
-"PO-Revision-Date: 2024-11-15 14:26+0000\n"
+"PO-Revision-Date: 2024-11-15 14:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -6738,28 +6738,20 @@ msgid "Return to gameplay"
 msgstr "Вернуться в игру"
 
 #: engines/asylum/metaengine.cpp:238
-#, fuzzy
-#| msgid "Previous Page"
 msgid "Previous resource"
-msgstr "Предыдущая страница"
+msgstr "Предыдущий ресурс"
 
 #: engines/asylum/metaengine.cpp:245
-#, fuzzy
-#| msgid "[ Resources ]"
 msgid "Next resource"
-msgstr "[ Ресурсы ]"
+msgstr "Следующий ресурс"
 
 #: engines/asylum/metaengine.cpp:252
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous palette"
-msgstr "Предыдущая страница"
+msgstr "Предыдущая палитра"
 
 #: engines/asylum/metaengine.cpp:259
-#, fuzzy
-#| msgid "Next page"
 msgid "Next palette"
-msgstr "Следующая страница"
+msgstr "Следующая палитра"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:203
@@ -6796,17 +6788,13 @@ msgstr "Общие клавиши"
 #: engines/tinsel/metaengine.cpp:240 engines/toon/metaengine.cpp:81
 #: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
 #: engines/tucker/metaengine.cpp:167
-#, fuzzy
-#| msgid "Default game keymap"
 msgid "Default keymappings"
-msgstr "Раскладка клавиш по умолчанию"
+msgstr "Раскладки клавиш по умолчанию"
 
 #. I18N: Escape is a key
 #: engines/bbvs/metaengine.cpp:95
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Escape keymappings"
-msgstr "Раскладки клавиш игры"
+msgstr "Раскладки клавиш выхода"
 
 #. I18N: ESC key
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:197
@@ -6821,10 +6809,8 @@ msgstr "Клавиша Esc"
 
 #: engines/bbvs/metaengine.cpp:117 engines/hopkins/metaengine.cpp:231
 #: engines/illusions/metaengine.cpp:147
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Open inventory"
-msgstr "Открыть/закрыть инвентарь"
+msgstr "Открыть инвентарь"
 
 #: engines/bbvs/metaengine.cpp:124 engines/dgds/metaengine.cpp:82
 #: engines/scumm/help.cpp:167 engines/scumm/help.cpp:231
@@ -7192,10 +7178,8 @@ msgstr "Раскладки клавиш игры"
 
 #: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:225
 #: engines/sword1/metaengine.cpp:283
-#, fuzzy
-#| msgid "Skip"
 msgid "Exit/Skip"
-msgstr "Пропустить"
+msgstr "Выйти/Пропустить"
 
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
 #: engines/hopkins/metaengine.cpp:238 engines/hugo/metaengine.cpp:128
@@ -7344,50 +7328,36 @@ msgid "Empty autosave"
 msgstr "Пустое автосохранение"
 
 #: engines/cine/metaengine.cpp:260
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Key to mouse keymappings"
-msgstr "Раскладки клавиш игры"
+msgstr "Раскладки клавиш для мыши"
 
 #: engines/cine/metaengine.cpp:261
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Exit screen keymappings"
-msgstr "Раскладки клавиш игры"
+msgstr "Раскладки клавиш экрана выхода"
 
 #: engines/cine/metaengine.cpp:277
 msgid "Exit Sony intro screen"
 msgstr ""
 
 #: engines/cine/metaengine.cpp:283
-#, fuzzy
-#| msgid "Select to end of line"
 msgid "Select option / Click in game"
-msgstr "Выделить до конца строки"
+msgstr "Выбрать опцию / Клик в игре"
 
 #: engines/cine/metaengine.cpp:290
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open action menu / Close menu"
-msgstr "Открыть главное меню"
+msgstr "Открыть меню действий / Закрыть меню"
 
 #: engines/cine/metaengine.cpp:295
-#, fuzzy
-#| msgid "Default game keymap"
 msgid "Default game speed"
-msgstr "Раскладка клавиш по умолчанию"
+msgstr "Скорость игры по умолчанию"
 
 #: engines/cine/metaengine.cpp:300
-#, fuzzy
-#| msgid "Show game credits"
 msgid "Slower game speed"
-msgstr "Показать авторов игры"
+msgstr "Замедленная скорость игры"
 
 #: engines/cine/metaengine.cpp:307
-#, fuzzy
-#| msgid "Fast movie speed"
 msgid "Faster game speed"
-msgstr "Режим ускоренного видео"
+msgstr "Ускоренная скорость игры"
 
 #: engines/cine/metaengine.cpp:315 engines/grim/grim.cpp:506
 #: engines/hpl1/metaengine.cpp:90 engines/scumm/help.cpp:242
@@ -7396,8 +7366,6 @@ msgid "Examine"
 msgstr "Проверить"
 
 #: engines/cine/metaengine.cpp:320 engines/saga/metaengine.cpp:394
-#, fuzzy
-#| msgid "Take off"
 msgid "Take"
 msgstr "Поднять"
 
@@ -7416,61 +7384,45 @@ msgid "Inventory"
 msgstr "Инвентарь"
 
 #: engines/cine/metaengine.cpp:335
-#, fuzzy
-#| msgid "Active"
 msgid "Activate"
-msgstr "Активно"
+msgstr "Активировать"
 
 #: engines/cine/metaengine.cpp:340
 msgid "Speak"
 msgstr ""
 
 #: engines/cine/metaengine.cpp:345
-#, fuzzy
-#| msgid "Action"
 msgid "Action menu"
-msgstr "Действие"
+msgstr "Меню действий"
 
 #: engines/cine/metaengine.cpp:351
-#, fuzzy
-#| msgid "Pause/Game menu"
 msgid "System menu"
-msgstr "Пауза/Меню игры"
+msgstr "Системное меню"
 
 #. I18N: Opens collision map of where the actor can freely move
 #: engines/cine/metaengine.cpp:358
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Show collisions"
-msgstr "Опции озвучки"
+msgstr "Показать коллизии"
 
 #. I18N: Move Actor to top-left direction
 #: engines/cine/metaengine.cpp:393
-#, fuzzy
-#| msgid "Move left"
 msgid "Move up-left"
-msgstr "Идти влево"
+msgstr "Переместиться вверх-влево"
 
 #. I18N: Move Actor to top-right direction
 #: engines/cine/metaengine.cpp:399
-#, fuzzy
-#| msgid "Move right"
 msgid "Move up-right"
-msgstr "Идти вправо"
+msgstr "Переместиться вверх-вправо"
 
 #. I18N: Move Actor to bottom-left direction
 #: engines/cine/metaengine.cpp:405
-#, fuzzy
-#| msgid "Move down"
 msgid "Move down-left"
-msgstr "Идти вниз"
+msgstr "Переместиться вниз-влево"
 
 #. I18N: Move Actor to bottom-right direction
 #: engines/cine/metaengine.cpp:411
-#, fuzzy
-#| msgid "Move right"
 msgid "Move down-right"
-msgstr "Идти вправо"
+msgstr "Переместиться вниз-вправо"
 
 #: engines/cine/metaengine.cpp:416
 msgid "Menu option up"
@@ -7567,34 +7519,24 @@ msgstr "Быстрая загрузка"
 
 #. I18N: Game runs at faster speed
 #: engines/cruise/metaengine.cpp:160 engines/tucker/metaengine.cpp:196
-#, fuzzy
-#| msgid "Fast move modifier"
 msgid "Fast mode"
-msgstr "Переключатель быстрого режима"
+msgstr "Быстрый режим"
 
 #. I18N: Opens menu with player commands
 #: engines/cruise/metaengine.cpp:173
-#, fuzzy
-#| msgid "Player Time:"
 msgid "Player menu"
-msgstr "Время Игрока:"
+msgstr "Меню игрока"
 
 #: engines/cruise/metaengine.cpp:179
-#, fuzzy
-#| msgid "Fast movie speed"
 msgid "Increase game speed"
-msgstr "Режим ускоренного видео"
+msgstr "Увеличить скорость игры"
 
 #: engines/cruise/metaengine.cpp:185
-#, fuzzy
-#| msgid "Fast movie speed"
 msgid "Decrease game speed"
-msgstr "Режим ускоренного видео"
+msgstr "Уменьшить скорость игры"
 
 #: engines/cruise/metaengine.cpp:203 engines/mads/metaengine.cpp:361
 #: engines/stark/metaengine.cpp:280
-#, fuzzy
-#| msgid "Quit game"
 msgid "Exit game"
 msgstr "Выйти из игры"
 
@@ -7603,56 +7545,40 @@ msgid "Versailles 1685 support is not compiled in"
 msgstr "Поддержка для Versailles 1685 не скомпилирована"
 
 #: engines/dgds/metaengine.cpp:75
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Menu"
-msgstr "Вкл/выкл звук"
+msgstr "Переключить меню"
 
 #: engines/dgds/metaengine.cpp:76
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle Clock"
-msgstr "Переключить режим боя"
+msgstr "Переключить часы"
 
 #: engines/dgds/metaengine.cpp:77
 msgid "Next dialog / menu item"
 msgstr ""
 
 #: engines/dgds/metaengine.cpp:78
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous dialog / menu item"
-msgstr "Предыдущая страница"
+msgstr "Предыдущий диалог / пункт меню"
 
 #: engines/dgds/metaengine.cpp:79
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Next object"
-msgstr "Перейти в на следующий объект"
+msgstr "Следующий объект"
 
 #: engines/dgds/metaengine.cpp:80
-#, fuzzy
-#| msgid "Go to previous object"
 msgid "Previous object"
-msgstr "Перейти на предыдущий объект"
+msgstr "Предыдущий объект"
 
 #: engines/dgds/metaengine.cpp:81
-#, fuzzy
-#| msgid "Previous action"
 msgid "Pick up / Operate"
-msgstr "Предыдущее действие"
+msgstr "Поднять / Действовать"
 
 #: engines/dgds/metaengine.cpp:83
-#, fuzzy
-#| msgid "Animated inventory items"
 msgid "Activate Inventory Object"
-msgstr "Анимированные объекты инвентаря"
+msgstr "Активировать объект инвентаря"
 
 #: engines/dgds/metaengine.cpp:86
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game Keys"
-msgstr "Раскладки клавиш игры"
+msgstr "Клавиши игры"
 
 #: engines/director/events.cpp:99
 msgid ""
@@ -7666,23 +7592,17 @@ msgid "Skip intro/Exit map or inventory"
 msgstr ""
 
 #: engines/draci/metaengine.cpp:161
-#, fuzzy
-#| msgid "Open Holomap"
 msgid "Open map"
-msgstr "Открыть голокарту"
+msgstr "Открыть карту"
 
 #. I18N: shows where the game actor is able to move
 #: engines/draci/metaengine.cpp:168
-#, fuzzy
-#| msgid "Show map"
 msgid "Show walking map"
-msgstr "Показать карту"
+msgstr "Показать карту ходьбы"
 
 #: engines/draci/metaengine.cpp:174
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle walk speed"
-msgstr "Переключить быстрый режим"
+msgstr "Переключить скорость ходьбы"
 
 #: engines/draci/metaengine.cpp:186 engines/mohawk/myst.cpp:554
 #: engines/mohawk/riven.cpp:835 engines/nancy/input.cpp:225
@@ -7694,16 +7614,12 @@ msgid "Toggle between mouse pointer and the last game item"
 msgstr ""
 
 #: engines/draci/metaengine.cpp:198
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Previous item in inventory"
-msgstr "Открыть/закрыть инвентарь"
+msgstr "Предыдущий предмет инвентаря"
 
 #: engines/draci/metaengine.cpp:204
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Next item in inventory"
-msgstr "Открыть/закрыть инвентарь"
+msgstr "Следующий предмет инвентаря"
 
 #: engines/dragons/dragons.cpp:1884
 #, c-format
@@ -7800,8 +7716,6 @@ msgid "Automatic drilling"
 msgstr "Автоматическое сверление"
 
 #: engines/freescape/metaengine.cpp:65
-#, fuzzy
-#| msgid "Allow to succefully drill in any part of the area in Driller"
 msgid "Allow to successfully drill in any part of the area in Driller"
 msgstr "Позволяет успешно сверлить любую часть пространства в Driller"
 
@@ -7838,20 +7752,16 @@ msgid "Use alternative camera controls"
 msgstr "Использовать альтернативное управление камерой"
 
 #: engines/freescape/metaengine.cpp:119
-#, fuzzy
-#| msgid "Filter graphics"
 msgid "Authentic graphics"
-msgstr "Фильтрование графики"
+msgstr "Аутентичная графика"
 
 #: engines/freescape/metaengine.cpp:120
 msgid "Keep graphics as close as possible to the original"
 msgstr ""
 
 #: engines/freescape/metaengine.cpp:130
-#, fuzzy
-#| msgid "Enable storage"
 msgid "Enable rock travel"
-msgstr "Включить хранилище"
+msgstr "Включить путешествие камнем"
 
 #: engines/freescape/metaengine.cpp:131
 msgid "Enable traveling using a rock shoot at start"
@@ -7873,21 +7783,15 @@ msgid "Shoot"
 msgstr "Стрелять"
 
 #: engines/freescape/movement.cpp:72
-#, fuzzy
-#| msgid "Rotate"
 msgid "Rotate up"
-msgstr "Повернуть"
+msgstr "Повернуть вверх"
 
 #: engines/freescape/movement.cpp:77
-#, fuzzy
-#| msgid "Rotate"
 msgid "Rotate down"
-msgstr "Повернуть"
+msgstr "Повернуть вниз"
 
 #. I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
 #: engines/freescape/movement.cpp:90
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change mode"
 msgstr "Изменить режим"
 
@@ -7896,25 +7800,19 @@ msgid "Info Menu"
 msgstr "Инфо-меню"
 
 #: engines/freescape/games/castle/castle.cpp:234
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Prince"
-msgstr "Выберите шейдер"
+msgstr "Выбрать принца"
 
 #: engines/freescape/games/castle/castle.cpp:239
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Princess"
-msgstr "Выберите шейдер"
+msgstr "Выбрать принцессу"
 
 #: engines/freescape/games/castle/castle.cpp:266
 #: engines/freescape/games/dark/dark.cpp:203
 #: engines/freescape/games/driller/driller.cpp:150
 #: engines/freescape/games/eclipse/eclipse.cpp:208
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Sound"
-msgstr "Вкл/выкл звук"
+msgstr "Переключить звук"
 
 #: engines/freescape/games/castle/castle.cpp:271
 #: engines/freescape/games/dark/dark.cpp:209
@@ -7943,26 +7841,20 @@ msgstr ""
 
 #: engines/freescape/games/castle/castle.cpp:298
 #: engines/freescape/games/eclipse/eclipse.cpp:245
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Face Forward"
-msgstr "Идти вперёд"
+msgstr "Лицом вперёд"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:220
 #: engines/freescape/games/driller/driller.cpp:167
-#, fuzzy
-#| msgid "Increase the scale factor"
 msgid "Increase Step Size"
-msgstr "Увеличить масштаб"
+msgstr "Увеличить размер шага"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:226
 #: engines/freescape/games/driller/driller.cpp:173
-#, fuzzy
-#| msgid "Decrease the scale factor"
 msgid "Decrease Step Size"
-msgstr "Уменьшить масштаб"
+msgstr "Уменьшить размер шага"
 
 #: engines/freescape/games/dark/dark.cpp:231
 #: engines/freescape/games/driller/driller.cpp:178
@@ -7990,23 +7882,17 @@ msgstr "Подобрать установку бурения"
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/eclipse/eclipse.cpp:224
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change Angle"
-msgstr "Изменить режим"
+msgstr "Изменить угол"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/eclipse/eclipse.cpp:230
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change Step Size"
-msgstr "Изменить размер шрифта"
+msgstr "Изменить размер шага"
 
 #: engines/freescape/games/eclipse/eclipse.cpp:235
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Height"
-msgstr "Вкл/выкл звук"
+msgstr "Переключить высоту"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/freescape/games/eclipse/eclipse.cpp:240
@@ -8337,10 +8223,8 @@ msgid "Groovie engine"
 msgstr "Движок Groovie"
 
 #: engines/groovie/metaengine.cpp:217
-#, fuzzy
-#| msgid "Skip the Hall of Records storyboard scenes"
 msgid "Skip or fast forward scene"
-msgstr "Пропустить сцены из Галереи Истории"
+msgstr "Пропустить или ускорить сцену"
 
 #: engines/groovie/saveload.cpp:52
 msgid "Reserved"
@@ -8391,10 +8275,8 @@ msgid "Enable Gore Mode when available"
 msgstr "Включить режим с изображением крови, если он доступен"
 
 #: engines/hopkins/metaengine.cpp:250
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Option dialog"
-msgstr "Пропустить диалог"
+msgstr "Диалог опций"
 
 #: engines/hpl1/metaengine.cpp:76
 msgid "Forward"
@@ -8451,22 +8333,16 @@ msgid "Glowstick"
 msgstr "Светящаяся палочка"
 
 #: engines/hugo/metaengine.cpp:111
-#, fuzzy
-#| msgid "User canceled"
 msgid "User help"
-msgstr "Прервано пользователем"
+msgstr "Помощь пользователя"
 
 #: engines/hugo/metaengine.cpp:117
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle sound"
-msgstr "Вкл/выкл звук"
+msgstr "Переключить звук"
 
 #: engines/hugo/metaengine.cpp:122
-#, fuzzy
-#| msgid "Reload last save"
 msgid "Repeat last line"
-msgstr "Прочитать последнее сохранение игры"
+msgstr "Повторить последнюю фразу"
 
 #: engines/hugo/metaengine.cpp:135 engines/lure/metaengine.cpp:197
 #: engines/mads/metaengine.cpp:311 engines/tsage/metaengine.cpp:247
@@ -8492,10 +8368,8 @@ msgid "Show inventory"
 msgstr "Показать инвентарь"
 
 #: engines/hugo/metaengine.cpp:154
-#, fuzzy
-#| msgid "Improved mode"
 msgid "Turbo mode"
-msgstr "Улучшенный режим"
+msgstr "Турбо-режим"
 
 #. I18N: Move actor in the top direction
 #: engines/hugo/metaengine.cpp:167
