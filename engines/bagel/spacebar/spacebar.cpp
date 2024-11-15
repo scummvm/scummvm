@@ -113,7 +113,7 @@ ErrorCode SpaceBarEngine::initialize() {
 		if (saveSlot != -1) {
 			bRestart = loadGameState(saveSlot).getCode() != Common::kNoError;
 
-		} else if (savesExist()) {
+		} else if (savesExist() && !isDemo()) {
 			bRestart = false;
 
 			CBagStartDialog cDlg(buildSysDir("START.BMP"), _masterWin);

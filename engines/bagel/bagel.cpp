@@ -148,11 +148,11 @@ bool BagelEngine::canSaveLoadFromWindow() const {
 }
 
 bool BagelEngine::canLoadGameStateCurrently(Common::U32String *msg) {
-	return canSaveLoadFromWindow();
+	return canSaveLoadFromWindow() && !isDemo();
 }
 
 bool BagelEngine::canSaveGameStateCurrently(Common::U32String *msg) {
-	return canSaveLoadFromWindow();
+	return canSaveLoadFromWindow() && !isDemo();
 }
 
 Common::Error BagelEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
