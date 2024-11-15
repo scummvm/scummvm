@@ -257,7 +257,7 @@ Short options are listed where they are available.
         - supereagle
         - pm
         - dotmatrix
-        - tv2x",default
+        - tv",default
         ``--screenshotpath=PATH``,,"Specify path where screenshot files are created. SDL backend only.",
         ``--screenshot-period=NUM``,,"When recording, triggers a screenshot every NUM milliseconds.(`Event Recorder <https://wiki.scummvm.org/index.php/Event_Recorder>`_)",60000
         ``--sfx-volume=NUM``,``-s``,":ref:`Sets the sfx volume <sfx>`, 0-255",192
