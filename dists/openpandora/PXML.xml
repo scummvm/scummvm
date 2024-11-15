@@ -4,11 +4,11 @@
     <package id="scummvm.djwillis.0001">
         <author name="DJWillis" website="https://www.scummvm.org/"/>
         <!-- version type can be alpha, beta or release, set to release in branch -->
-        <version major="2" minor="9" release="0" build="1" type="release"/>
+        <version major="2" minor="10" release="0" build="1" type="release"/>
         <!-- Both title and titles are needed -->
-        <title lang="en_US">ScummVM 2.9.0git</title>
+        <title lang="en_US">ScummVM 2.10.0git</title>
         <titles>
-            <title lang="en_US">ScummVM 2.9.0git</title>
+            <title lang="en_US">ScummVM 2.10.0git</title>
         </titles>
         <descriptions>
             <description lang="en_US">
@@ -25,7 +25,7 @@
         <exec command="./runscummvm.sh"/>
         <author name="DJWillis" website="https://www.scummvm.org/"/>
         <!-- version type can be alpha, beta or release, set to release in branch -->
-        <version major="2" minor="9" release="0" build="1" type="release"/>
+        <version major="2" minor="10" release="0" build="1" type="release"/>
         <!-- Both title and titles are needed -->
         <title lang="en_US">ScummVM</title>
         <titles>

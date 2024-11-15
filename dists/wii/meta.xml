@@ -2,7 +2,7 @@
 <app version="1">
   <name>ScummVM</name>
   <coder>The ScummVM Team</coder>
-  <version>2.9.0git@REVISION@</version>
+  <version>2.10.0git@REVISION@</version>
   <release_date>@TIMESTAMP@</release_date>
   <short_description>Point &amp; Click Adventures</short_description>
   <long_description>ScummVM is a program which allows you to run certain classic graphical point-and-click adventure games, provided you already have their data files. The clever part about this: ScummVM just replaces the executables shipped with the games, allowing you to play them on systems for which they were never designed!
