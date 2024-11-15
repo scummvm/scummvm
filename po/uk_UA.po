@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-15 13:50+0000\n"
-"PO-Revision-Date: 2024-11-15 14:26+0000\n"
+"PO-Revision-Date: 2024-11-15 16:47+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -8924,7 +8924,7 @@ msgstr "Перейти на попередній індекс"
 
 #: engines/lure/metaengine.cpp:284
 msgid "Select index"
-msgstr "Виберіть індекс"
+msgstr "Вибрати індекс"
 
 #: engines/made/detection_tables.h:445 engines/made/detection_tables.h:462
 msgid "The game is using unsupported engine"
