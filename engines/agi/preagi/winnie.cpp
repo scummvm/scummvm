@@ -796,12 +796,13 @@ void WinnieEngine::getMenuMouseSel(int *iSel, int fCanSel[], int x, int y) {
 	}
 }
 
-void WinnieEngine::makeSel(int *iSel, int fCanSel[]) {
+bool WinnieEngine::makeSel(int *iSel, int fCanSel[]) {
 	if (fCanSel[*iSel])
-		return;
+		return true;
 
 	keyHelp();
 	clrMenuSel(iSel, fCanSel);
+	return false;
 }
 
 void WinnieEngine::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
@@ -943,31 +944,55 @@ void WinnieEngine::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 					break;
 				case Common::KEYCODE_n:
 					*iSel = IDI_WTP_SEL_NORTH;
-					makeSel(iSel, fCanSel);
+					if (makeSel(iSel, fCanSel)) {
+						// Menu selection made, hide the mouse cursor
+						CursorMan.showMouse(false);
+						return;
+					}
 					break;
 				case Common::KEYCODE_s:
 					if (event.kbd.flags & Common::KBD_CTRL) {
 						flipFlag(VM_FLAG_SOUND_ON);
 					} else {
 						*iSel = IDI_WTP_SEL_SOUTH;
-						makeSel(iSel, fCanSel);
+						if (makeSel(iSel, fCanSel)) {
+							// Menu selection made, hide the mouse cursor
+							CursorMan.showMouse(false);
+							return;
+						}
 					}
 					break;
 				case Common::KEYCODE_e:
 					*iSel = IDI_WTP_SEL_EAST;
-					makeSel(iSel, fCanSel);
+					if (makeSel(iSel, fCanSel)) {
+						// Menu selection made, hide the mouse cursor
+						CursorMan.showMouse(false);
+						return;
+					}
 					break;
 				case Common::KEYCODE_w:
 					*iSel = IDI_WTP_SEL_WEST;
-					makeSel(iSel, fCanSel);
+					if (makeSel(iSel, fCanSel)) {
+						// Menu selection made, hide the mouse cursor
+						CursorMan.showMouse(false);
+						return;
+					}
 					break;
 				case Common::KEYCODE_t:
 					*iSel = IDI_WTP_SEL_TAKE;
-					makeSel(iSel, fCanSel);
+					if (makeSel(iSel, fCanSel)) {
+						// Menu selection made, hide the mouse cursor
+						CursorMan.showMouse(false);
+						return;
+					}
 					break;
 				case Common::KEYCODE_d:
 					*iSel = IDI_WTP_SEL_DROP;
-					makeSel(iSel, fCanSel);
+					if (makeSel(iSel, fCanSel)) {
+						// Menu selection made, hide the mouse cursor
+						CursorMan.showMouse(false);
+						return;
+					}
 					break;
 				case Common::KEYCODE_RETURN:
 					switch (*iSel) {
