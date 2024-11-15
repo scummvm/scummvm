@@ -130,7 +130,7 @@ void ccSetDebugHook(new_line_hook_type jibble) {
 	_G(new_line_hook) = jibble;
 }
 
-int call_function(const Plugins::PluginMethod &method, const RuntimeScriptValue *object, int numparm, const RuntimeScriptValue *parms) {
+NumberPtr call_function(const Plugins::PluginMethod &method, const RuntimeScriptValue *object, int numparm, const RuntimeScriptValue *parms) {
 	if (!method) {
 		cc_error("invalid method in call_function");
 		return -1;
