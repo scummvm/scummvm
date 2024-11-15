@@ -150,9 +150,6 @@ void OSystem_3DS::initBackend() {
 	if (!ConfMan.hasKey("vkeybd_pack_name")) {
 		ConfMan.set("vkeybd_pack_name", "vkeybd_small");
 	}
-	if (!ConfMan.hasKey("gui_theme")) {
-		ConfMan.set("gui_theme", "builtin");
-	}
 
 	_timerManager = new DefaultTimerManager();
 	_savefileManager = new DefaultSaveFileManager("sdmc:/3ds/scummvm/saves/");
