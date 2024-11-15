@@ -134,7 +134,7 @@ void SaveLoadCloudSyncProgressDialog::pollCloudMan() {
 	_progressBar->markAsDirty();
 
 	if (_parent) {
-		_parent->updateSaveList();
+		_parent->updateSaveList(true);
 		_parent->reflowLayout();
 	}
 }
@@ -284,7 +284,7 @@ void SaveLoadChooserDialog::handleTickle() {
 				}
 			}
 			_dialogWasShown = true;
-			updateSaveList();
+			updateSaveList(false);
 		}
 	}
 
@@ -316,7 +316,7 @@ void SaveLoadChooserDialog::reflowLayout() {
 	Dialog::reflowLayout();
 }
 
-void SaveLoadChooserDialog::updateSaveList() {
+void SaveLoadChooserDialog::updateSaveList(bool external) {
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	Common::Array<Common::String> files = CloudMan.getSyncingFiles(); //returns empty array if not syncing
 	g_system->getSavefileManager()->updateSavefilesList(files);
@@ -422,7 +422,7 @@ void SaveLoadChooserDialog::pollCloudMan() {
 	}
 
 	if (update)
-		updateSaveList();
+		updateSaveList(false);
 }
 #endif
 
@@ -482,7 +482,7 @@ int SaveLoadChooserSimple::runIntern() {
 
 	_resultString.clear();
 	reflowLayout();
-	updateSaveList();
+	updateSaveList(false);
 
 	return Dialog::runModal();
 }
@@ -543,7 +543,7 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 				if (_metaEngine->removeSaveState(_target.c_str(), saveSlot)) {
 					setResult(-1);
 					int scrollPos = _list->getCurrentScrollPos();
-					updateSaveList(); // resets scroll pos
+					updateSaveList(false); // resets scroll pos
 					_list->scrollTo(scrollPos);
 					updateSelection(true);
 				} else {
@@ -741,8 +741,8 @@ void SaveLoadChooserSimple::close() {
 	SaveLoadChooserDialog::close();
 }
 
-void SaveLoadChooserSimple::updateSaveList() {
-	SaveLoadChooserDialog::updateSaveList();
+void SaveLoadChooserSimple::updateSaveList(bool external) {
+	SaveLoadChooserDialog::updateSaveList(external);
 
 	int curSlot = 0;
 	int saveSlot = 0;
@@ -807,7 +807,11 @@ void SaveLoadChooserSimple::updateSaveList() {
 	else
 		_chooseButton->setEnabled(false);
 
-	g_gui.scheduleTopDialogRedraw();
+	if (external) {
+		g_gui.scheduleFullRedraw();
+	} else {
+		g_gui.scheduleTopDialogRedraw();
+	}
 }
 
 // SaveLoadChooserGrid implementation
@@ -904,10 +908,14 @@ void SaveLoadChooserGrid::handleMouseWheel(int x, int y, int direction) {
 	}
 }
 
-void SaveLoadChooserGrid::updateSaveList() {
-	SaveLoadChooserDialog::updateSaveList();
+void SaveLoadChooserGrid::updateSaveList(bool external) {
+	SaveLoadChooserDialog::updateSaveList(external);
 	updateSaves();
-	g_gui.scheduleTopDialogRedraw();
+	if (external) {
+		g_gui.scheduleFullRedraw();
+	} else {
+		g_gui.scheduleTopDialogRedraw();
+	}
 }
 
 void SaveLoadChooserGrid::open() {

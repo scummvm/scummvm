@@ -100,7 +100,7 @@ protected:
 	virtual int runIntern() = 0;
 
 	/** Common function to refresh the list on the screen. */
-	virtual void updateSaveList();
+	virtual void updateSaveList(bool external);
 
 	/**
 	* Common function to get saves list from MetaEngine.
@@ -162,7 +162,7 @@ public:
 	void open() override;
 	void close() override;
 protected:
-	void updateSaveList() override;
+	void updateSaveList(bool external) override;
 private:
 	int runIntern() override;
 
@@ -219,7 +219,7 @@ public:
 protected:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleMouseWheel(int x, int y, int direction) override;
-	void updateSaveList() override;
+	void updateSaveList(bool external) override;
 private:
 	int runIntern() override;
 
