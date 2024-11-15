@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-14 22:57+0000\n"
+"POT-Creation-Date: 2024-11-15 13:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1402,14 +1402,20 @@ msgstr ""
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 
-#: gui/launcher.cpp:665 gui/launcher.cpp:689
+#: gui/launcher.cpp:665
 msgid ""
-"Did you add this directory to the SAF? Press the help button [?] on the top "
-"for detailed instructions"
+"Have you given ScummVM access rights to this directory? Press the help "
+"button [?] on the top for detailed instructions"
 msgstr ""
 
 #: gui/launcher.cpp:686
 msgid "ScummVM could not find any game in the specified directory!"
+msgstr ""
+
+#: gui/launcher.cpp:689
+msgid ""
+"Did you add this directory to the SAF? Press the help button [?] on the top "
+"for detailed instructions"
 msgstr ""
 
 #. I18N: Unknown game variant
