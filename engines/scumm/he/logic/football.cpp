@@ -445,7 +445,9 @@ private:
 	int32 _maxX;
 	int32 _minX;
 
+#ifdef USE_ENET
 	int _requestedSessionIndex = -2;
+#endif
 };
 
 int32 LogicHEfootball2002::dispatch(int op, int numArgs, int32 *args) {
