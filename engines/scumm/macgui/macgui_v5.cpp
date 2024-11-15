@@ -940,7 +940,7 @@ bool MacV5Gui::handleEvent(Common::Event event) {
 			_roughProgress++;
 			if (_roughProgress >= strlen(rough)) {
 				_roughProgress = 0;
-				if (_vm->_useMacGraphicsSmoothing && !_roughWarned) {
+				if (_vm->isUsingOriginalGUI() && _vm->_useMacGraphicsSmoothing && !_roughWarned) {
 					_roughWarned = true;
 
 					Common::String msg = _strsStrings[kMSIRoughCommandMsg];
