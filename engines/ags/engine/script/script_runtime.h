@@ -102,7 +102,7 @@ void ccSetScriptAliveTimer(unsigned sys_poll_timeout, unsigned abort_timeout, un
 // reset the current while loop counter
 void ccNotifyScriptStillAlive();
 // for calling exported plugin functions old-style
-int call_function(const Plugins::PluginMethod &method, const RuntimeScriptValue *object, int numparm, const RuntimeScriptValue *parms);
+NumberPtr call_function(const Plugins::PluginMethod &method, const RuntimeScriptValue *object, int numparm, const RuntimeScriptValue *parms);
 
 } // namespace AGS3
 
