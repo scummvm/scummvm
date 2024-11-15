@@ -70,7 +70,7 @@ void Room405::init() {
 		_val9 = 0;
 	}
 
-	if (!_G(flags)[V338] || !inv_object_is_here("GERMAN BANKNOTE"))
+	if (!_G(flags)[kGermanBanknoteFound] || !inv_object_is_here("GERMAN BANKNOTE"))
 		hotspot_set_active("GERMAN BANKNOTE", false);
 
 	_safariShadow = series_load("SAFARI SHADOW 3");
@@ -674,6 +674,14 @@ void Room405::parser() {
 			default:
 				break;
 			}
+		}
+	} else if (lookFlag && player_said("SOFA")) {
+		if (!_G(flags)[kGermanBanknoteFound] && inv_object_is_here("GERMAN BANKNOTE")) {
+			_G(flags)[kGermanBanknoteFound] = 1;
+			doAction("405r15");
+			hotspot_set_active("GERMAN BANKNOTE", true);
+		} else {
+			doAction("405r12");
 		}
 	} else if (lookFlag && player_said("GERMAN BAKNOTE") && inv_object_is_here("GERMAN BAKNOTE")) {
 		doAction("405r17");
