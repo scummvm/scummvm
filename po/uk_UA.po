@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-15 13:50+0000\n"
-"PO-Revision-Date: 2024-11-14 21:13+0000\n"
+"PO-Revision-Date: 2024-11-15 14:26+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -1534,16 +1534,12 @@ msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM не може знайти движок для запуску вибраної гри!"
 
 #: gui/launcher.cpp:665 gui/launcher.cpp:689
-#, fuzzy
-#| msgid ""
-#| "Did you add this directory to the SAF? Press the help button [?] on the "
-#| "top for detailed instructions"
 msgid ""
 "Have you given ScummVM access rights to this directory? Press the help "
 "button [?] on the top for detailed instructions"
 msgstr ""
-"Чи ви додали папку у SAF? Натисніть кнопку допомоги [?] наверху екрану для "
-"докладних вказівок"
+"Чи ви надали ScummVM права доступу до цієї папки? Натисніть кнопку допомоги "
+"[?] наверху екрану для докладних вказівок"
 
 #: gui/launcher.cpp:686
 msgid "ScummVM could not find any game in the specified directory!"
@@ -10812,8 +10808,6 @@ msgid "Run in really fast mode (*)"
 msgstr "Виконати в дуже швидкому режимі (*)"
 
 #: engines/scumm/help.cpp:101
-#, fuzzy
-#| msgid "Switch between graphics filters"
 msgid "Cycle between graphics filters"
 msgstr "Переключення між графічними фільтрами"
 
@@ -12725,6 +12719,12 @@ msgid ""
 "\n"
 "Please check you have copied all the files correctly."
 msgstr ""
+"Відсутній необхідний файл\n"
+"\n"
+"Для запуску гри потрібен SAVEGAME/U8SAVE.000\n"
+"з оригінальної установки.\n"
+"\n"
+"Перевірте, чи правильно скопійовано всі файли."
 
 #: engines/vcruise/metaengine.cpp:42
 msgid "Improved click sensitivity"
@@ -12841,14 +12841,12 @@ msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "Виникла невідома помилка під час спроби завантаження збереження гри."
 
 #: engines/voyeur/metaengine.cpp:42
-#, fuzzy
-#| msgid "Enable rock travel"
 msgid "Enable lockout system"
-msgstr "Ввімкнути подорож через каміння"
+msgstr "Ввімкнути систему блокування"
 
 #: engines/voyeur/metaengine.cpp:43
 msgid "Require a lockout code to start the game."
-msgstr ""
+msgstr "Вимагати код блокування, щоб почати гру."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
