@@ -71,6 +71,8 @@ public:
 
 	virtual void renderFace(const Common::Array<Math::Vector3d> &vertices) override;
 
+	void drawCelestialBody(Math::Vector3d position, float radius, byte color) override;
+
 	virtual void flipBuffer() override;
 	virtual void drawFloor(uint8 color) override;
 	virtual Graphics::Surface *getScreenshot() override;

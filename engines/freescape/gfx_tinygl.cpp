@@ -277,6 +277,78 @@ void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 	tglDisableClientState(TGL_VERTEX_ARRAY);
 }
 
+void TinyGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, byte color) {
+	/*uint8 r1, g1, b1, r2, g2, b2;
+	byte *stipple = nullptr;
+	getRGBAt(color, 0, r1, g1, b1, r2, g2, b2, stipple);
+
+	int triangleAmount = 20;
+	float twicePi = (float)(2.0 * M_PI);*/
+
+	// Quick billboard effect inspired from this code:
+	// http://www.lighthouse3d.com/opengl/billboarding/index.php?billCheat
+	/*glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	GLfloat m[16];
+	glGetFloatv(GL_MODELVIEW_MATRIX, m);
+	for(int i = 1; i < 4; i++)
+		for(int j = 0; j < 4; j++ ) {
+			if (i == 2)
+				continue;
+			if (i == j)
+				m[i*4 + j] = 1.0;
+			else
+				m[i*4 + j] = 0.0;
+		}
+
+	glLoadMatrixf(m);*/
+	/*tglDisable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_FALSE);
+
+	setStippleData(stipple);
+	useColor(r1, g1, b1);
+
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	copyToVertexArray(0, position);
+	float adj = 1.25; // Perspective correction
+
+	for(int i = 0; i <= triangleAmount; i++) {
+		copyToVertexArray(i + 1,
+			Math::Vector3d(position.x(), position.y() + (radius * cos(i *  twicePi / triangleAmount)),
+						position.z() + (adj * radius * sin(i * twicePi / triangleAmount)))
+		);
+	}
+
+	tglVertexPointer(3, TGL_FLOAT, 0, _verts);
+	tglDrawArrays(TGL_TRIANGLE_FAN, 0, triangleAmount + 2);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
+
+	if (r1 != r2 || g1 != g2 || b1 != b2) {
+		useStipple(true);
+		useColor(r2, g2, b2);
+
+		tglEnableClientState(TGL_VERTEX_ARRAY);
+		copyToVertexArray(0, position);
+
+		for(int i = 0; i <= triangleAmount; i++) {
+			copyToVertexArray(i + 1,
+				Math::Vector3d(position.x(), position.y() + (radius * cos(i *  twicePi / triangleAmount)),
+							position.z() + (adj * radius * sin(i * twicePi / triangleAmount)))
+			);
+		}
+
+		tglVertexPointer(3, TGL_FLOAT, 0, _verts);
+		tglDrawArrays(TGL_TRIANGLE_FAN, 0, triangleAmount + 2);
+		tglDisableClientState(TGL_VERTEX_ARRAY);
+
+		useStipple(false);
+	}
+
+	tglEnable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_TRUE);
+	//tglPopMatrix();*/
+}
+
 void TinyGLRenderer::depthTesting(bool enabled) {
 	if (enabled) {
 		tglClear(TGL_DEPTH_BUFFER_BIT);
