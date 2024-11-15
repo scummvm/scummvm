@@ -593,8 +593,8 @@ void OSystem_Android::updateStartSettings(const Common::String &executable, Comm
 		return;
 	}
 
-	Common::Path gamesPath(JNI::getScummVMBasePath(), Common::Path::kNativeSeparator);
-	gamesPath.joinInPlace("assets/games");
+	Common::Path gamesPath(JNI::getScummVMAssetsPath(), Common::Path::kNativeSeparator);
+	gamesPath.joinInPlace("games");
 
 	// We need to init the ConfMan ourselves to cleanup outdated games
 	Common::SeekableReadStream *configStream = createConfigReadStream();
