@@ -982,7 +982,7 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 	// Top side
 	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0xFF, s);
 
-	// Left sidei
+	// Left side
 	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0xFF, s);
 
 	// Bottom highlight
