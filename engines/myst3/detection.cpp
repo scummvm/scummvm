@@ -268,7 +268,7 @@ public:
 		return debugFlagList;
 	}
 
-	DetectedGame toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const {
+	DetectedGame toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const override {
 		DetectedGame game = AdvancedMetaEngineDetection::toDetectedGame(adGame);
 
 		// The AdvancedDetector model only allows specifying a single supported
