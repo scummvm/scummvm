@@ -662,7 +662,7 @@ bool LauncherDialog::doGameDetection(const Common::Path &path) {
 		Common::U32String msg(_("ScummVM couldn't open the specified directory!"));
 #ifdef ANDROID_BACKEND
 		msg += Common::U32String("\n\n");
-		msg += _("Did you add this directory to the SAF? Press the help button [?] on the top for detailed instructions");
+		msg += _("Have you given ScummVM access rights to this directory? Press the help button [?] on the top for detailed instructions");
 #endif
 		MessageDialog alert(msg);
 		alert.runModal();
