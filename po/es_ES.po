@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-15 21:32+0000\n"
-"PO-Revision-Date: 2024-11-15 14:26+0000\n"
+"PO-Revision-Date: 2024-11-15 23:30+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -11452,30 +11452,20 @@ msgid "Enable low latency audio mode"
 msgstr "Modo de audio con baja latencia"
 
 #: engines/scumm/metaengine.cpp:747
-#, fuzzy
-#| msgid ""
-#| "Allows the game to use low latency audio, at the cost of sound accuracy. "
-#| "\t\tIt is recommended to enable this feature only if you incur in audio "
-#| "latency issues during normal gameplay."
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. It "
 "is recommended to enable this feature only if you incur in audio latency "
 "issues during normal gameplay."
 msgstr ""
 "Permite el uso de audio a baja latencia a costa de sacrificar fidelidad "
-"sonora. \t\tSe recomienda activar esta opción únicamente si sufres problemas "
-"de latencia de audio durante una partida normal."
+"sonora. Se recomienda activar esta opción únicamente si sufres problemas de "
+"latencia de audio durante una partida normal."
 
 #: engines/scumm/metaengine.cpp:756
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr "Activar la canción «A Pirate I Was Meant To Be»"
 
 #: engines/scumm/metaengine.cpp:757
-#, fuzzy
-#| msgid ""
-#| "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
-#| "Meant To Be\", \t\twhich was cut in international releases. Beware "
-#| "though: subtitles may not be fully translated."
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", which was cut in international releases. Beware though: "
