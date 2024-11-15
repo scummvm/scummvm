@@ -183,6 +183,18 @@ SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) {
 	_endflag = -1;
 	_playingSound = -1;
 
+	// FIXME: AGIv1 sounds are only supported by SoundGenPCJr, so we must not
+	// use SoundGenSarien for those games or it will crash because it expects
+	// the later AGI sound format. This means we cannot currently play these
+	// sounds in PC Speaker mode (SOUND_EMU_PC) or accept SOUND_EMU_NONE,
+	// because SoundGenSarien supports these but SoundGenPCJr does not.
+	if (agi->getVersion() <= 0x2001 && agi->getPlatform() == Common::kPlatformDOS) {
+		if (_vm->_soundemu != SOUND_EMU_PCJR) {
+			warning("Unsupported sound emulation %d for AGIv1 sounds, using PCjr", _vm->_soundemu);
+			_vm->_soundemu = SOUND_EMU_PCJR;
+		}
+	}
+
 	switch (_vm->_soundemu) {
 	default:
 	case SOUND_EMU_NONE:
