@@ -253,6 +253,10 @@ int16 ModularGraphicsBackend::getOverlayWidth() const {
 	return _graphicsManager->getOverlayWidth();
 }
 
+Common::Rect ModularGraphicsBackend::getSafeOverlayArea(int16 *width, int16 *height) const {
+	return _graphicsManager->getSafeOverlayArea(width, height);
+}
+
 float ModularGraphicsBackend::getHiDPIScreenFactor() const {
 	return _graphicsManager->getHiDPIScreenFactor();
 }
