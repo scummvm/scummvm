@@ -235,8 +235,8 @@ void TinyGLRenderer::useStipple(bool enabled) {
 			_renderMode == Common::kRenderCPC ||
 			_renderMode == Common::kRenderCGA)
 			tglPolygonStipple(_variableStippleArray);
-		/*else
-			tglPolygonStipple(_defaultStippleArray);*/
+		else
+			tglPolygonStipple(_defaultStippleArraySmall);
 	} else {
 		tglPolygonOffset(0, 0);
 		tglDisable(TGL_POLYGON_OFFSET_FILL);
