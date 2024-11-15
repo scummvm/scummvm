@@ -32,6 +32,9 @@ OutSaveFile::OutSaveFile(WriteStream *w): _wrapped(w) {}
 
 OutSaveFile::~OutSaveFile() {
 	delete _wrapped;
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+	CloudMan.syncSaves();
+#endif
 }
 
 bool OutSaveFile::err() const { return _wrapped->err(); }
@@ -40,9 +43,6 @@ void OutSaveFile::clearErr() { _wrapped->clearErr(); }
 
 void OutSaveFile::finalize() {
 	_wrapped->finalize();
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
-	CloudMan.syncSaves();
-#endif
 }
 
 bool OutSaveFile::flush() { return _wrapped->flush(); }
