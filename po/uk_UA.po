@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-15 16:51+0000\n"
-"PO-Revision-Date: 2024-11-15 16:47+0000\n"
+"PO-Revision-Date: 2024-11-15 17:22+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -11289,38 +11289,28 @@ msgid "Enable low latency audio mode"
 msgstr "Ввімкнути режим низької затримки звуку"
 
 #: engines/scumm/metaengine.cpp:747
-#, fuzzy
-#| msgid ""
-#| "Allows the game to use low latency audio, at the cost of sound accuracy. "
-#| "\t\tIt is recommended to enable this feature only if you incur in audio "
-#| "latency issues during normal gameplay."
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. It "
 "is recommended to enable this feature only if you incur in audio latency "
 "issues during normal gameplay."
 msgstr ""
 "Дозволяє грі використовувати аудіо з низькою затримкою, за рахунок точності "
-"відтворення. \t\tРекомендуємо вмикати цю опцію тільки в разі, якщо ви "
-"зтикаєтесь з затримками звуку під час гри."
+"відтворення. Рекомендуємо вмикати цю опцію тільки в разі, якщо ви зтикаєтесь "
+"з затримками звуку під час гри."
 
 #: engines/scumm/metaengine.cpp:756
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr "Увімкнути пісню \"Пірат, яким би я мав бути\" (ліричну)"
 
 #: engines/scumm/metaengine.cpp:757
-#, fuzzy
-#| msgid ""
-#| "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
-#| "Meant To Be\", \t\twhich was cut in international releases. Beware "
-#| "though: subtitles may not be fully translated."
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", which was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
 msgstr ""
-"Вмикає пісню на початку Розділу 3 ігри, \"Пірат, яким би я мав бути\","
-"\t\tкотру було вилучено з деяких перекладів гри. Важайте: субтитри можуть "
-"бути неповними."
+"Вмикає пісню на початку Розділу 3 ігри, \"Пірат, яким би я мав бути\", котру "
+"було вилучено з деяких перекладів гри. Важайте: субтитри можуть бути "
+"неповними."
 
 #: engines/scumm/metaengine.cpp:775
 msgid "Enable demo/kiosk mode"
