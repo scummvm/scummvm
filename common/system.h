@@ -1448,6 +1448,19 @@ public:
 	 */
 	virtual int16 getOverlayWidth() const = 0;
 
+	/**
+	 * Return the safe area for the overlay.
+	 * This area does not interfere with any system UI elements
+	 * such as the notch or home indicator on mobile devices.
+	 * Also returns the full overlay size.
+	 *
+	 * @param width   Returns the width of the overlay, if not nullptr
+	 * @param height  Returns the height of the overlay, if not nullptr
+	 *
+	 * @return The safe area in overlay coordinates.
+	 */
+	virtual Common::Rect getSafeOverlayArea(int16 *width = nullptr, int16 *height = nullptr) const;
+
 	/** @} */
 
 

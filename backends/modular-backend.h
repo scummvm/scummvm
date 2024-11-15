@@ -118,6 +118,7 @@ public:
 	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override final;
 	int16 getOverlayHeight() const override final;
 	int16 getOverlayWidth() const override final;
+	Common::Rect getSafeOverlayArea(int16 *width, int16 *height) const override final;
 
 	float getHiDPIScreenFactor() const override final;
 
