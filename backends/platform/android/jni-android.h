@@ -95,6 +95,7 @@ public:
 	static void setOrientation(int touchMode);
 	static void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 	static Common::String getScummVMBasePath();
+	static Common::String getScummVMAssetsPath();
 	static Common::String getScummVMConfigPath();
 	static Common::String getScummVMLogPath();
 	static jint getAndroidSDKVersionId();

@@ -502,6 +502,15 @@ Common::String JNI::getScummVMBasePath() {
 	return path;
 }
 
+Common::String JNI::getScummVMAssetsPath() {
+	Common::String basePath = getScummVMBasePath();
+	if (!basePath.empty() && basePath.lastChar() != '/') {
+		basePath += '/';
+	}
+	basePath += "assets";
+	return basePath;
+}
+
 Common::String JNI::getScummVMConfigPath() {
 	JNIEnv *env = JNI::getEnv();
 
