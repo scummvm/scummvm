@@ -465,14 +465,22 @@ void OpenGLShaderRenderer::setStippleData(byte *data) {
 void OpenGLShaderRenderer::useStipple(bool enabled) {
 	_triangleShader->use();
 	if (enabled) {
+		GLfloat factor = 0;
+		glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &factor);
 		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(0.0f, -1.0f);
-		_triangleShader->setUniform("useStipple", true);
+		glPolygonOffset(factor - 1.0f, -1.0f);
+		if (_renderMode == Common::kRenderZX    ||
+			_renderMode == Common::kRenderCPC   ||
+			_renderMode == Common::kRenderCGA   ||
+			_renderMode == Common::kRenderHercG)
+			setStippleData((byte *)_variableStippleArray);
+		else
+			setStippleData(_defaultStippleArray);
 	} else {
 		glPolygonOffset(0, 0);
 		glDisable(GL_POLYGON_OFFSET_FILL);
-		_triangleShader->setUniform("useStipple", false);
 	}
+	_triangleShader->setUniform("useStipple", enabled);
 }
 
 void OpenGLShaderRenderer::useColor(uint8 r, uint8 g, uint8 b) {
