@@ -43,7 +43,7 @@ struct AkosOffset;
 
 class AkosCostumeLoader : public BaseCostumeLoader {
 protected:
-	const byte *_akos;
+	const byte *_akos = nullptr;
 
 public:
 	AkosCostumeLoader(ScummEngine *vm) : BaseCostumeLoader(vm) {}
@@ -64,10 +64,10 @@ protected:
 
 class AkosRenderer : public BaseCostumeRenderer {
 protected:
-	uint16 _codec;
+	uint16 _codec = 0;
 
 	// actor _palette
-	uint16 _palette[256];
+	uint16 _palette[256] = {};
 	bool _useBompPalette;
 
 	// pointer to various parts of the costume resource
@@ -111,9 +111,9 @@ public:
 		_actorHitMode = false;
 	}
 
-	bool _actorHitMode;
-	int16 _actorHitX, _actorHitY;
-	bool _actorHitResult;
+	bool _actorHitMode = false;
+	int16 _actorHitX = 0, _actorHitY = 0;
+	bool _actorHitResult = false;
 
 	void setPalette(uint16 *_palette) override;
 	void setFacing(const Actor *a) override;

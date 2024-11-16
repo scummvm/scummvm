@@ -105,11 +105,8 @@ static const byte v0WalkboxSlantedModifier[0x16] = {
 };
 
 Actor::Actor(ScummEngine *scumm, int id) :
-	_vm(scumm), _number(id), _visible(false), _shadowMode(0), _flip(false), _frame(0), _walkbox(0), _talkPosX(0), _talkPosY(0),
-	_talkScript(0), _walkScript(0), _ignoreTurns(false), _drawToBackBuf(false), _layer(0), _heOffsX(0), _heOffsY(0), _heSkipLimbs(false),
-	_heCondMask(0), _hePaletteNum(0), _heShadow(0), _elevation(0), _facing(0), _targetFacing(0), _speedx(0), _speedy(0),
-	_animProgress(0), _animSpeed(0), _costumeNeedsInit(false) {
-		assert(_vm != nullptr);
+	_vm(scumm), _number(id) {
+	assert(_vm != nullptr);
 }
 
 ActorHE::ActorHE(ScummEngine *scumm, int id) : Actor(scumm,id) {

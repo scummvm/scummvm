@@ -88,20 +88,20 @@ public:
 class ScummDiskImage : public BaseScummFile {
 private:
 	Common::SeekableReadStream *_stream;
-	byte _roomDisks[59], _roomTracks[59], _roomSectors[59];
+	byte _roomDisks[59] = {}, _roomTracks[59] = {}, _roomSectors[59] = {};
 
-	byte *_buf;
+	byte *_buf = nullptr;
 
 	const GameSettings _game;
 
 	const Common::String _disk1, _disk2;
-	int _openedDisk;
+	int _openedDisk = 0;
 
-	int _numGlobalObjects;
-	int _numRooms;
-	int _numCostumes;
-	int _numScripts;
-	int _numSounds;
+	int _numGlobalObjects = 0;
+	int _numRooms = 0;
+	int _numCostumes = 0;
+	int _numScripts = 0;
+	int _numSounds = 0;
 	const int *_resourcesPerFile;
 
 	bool openDisk(char num);

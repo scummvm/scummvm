@@ -86,7 +86,7 @@ Common::Path ScummEngine::generateFilename(const int room) const {
 
 Common::Path ScummEngine_v60he::generateFilename(const int room) const {
 	Common::String result;
-	char id = 0;
+	char id;
 
 	switch (_filenamePattern.genMethod) {
 	case kGenHEMac:
