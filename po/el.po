@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-16 07:56+0000\n"
-"PO-Revision-Date: 2024-11-16 14:18+0000\n"
+"PO-Revision-Date: 2024-11-16 15:06+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -3862,7 +3862,7 @@ msgstr "Το παιχνίδι δεν έχει υλοποιηθεί"
 
 #: engines/metaengine.cpp:58 engines/saga/metaengine.cpp:267
 msgid "Default game keymap"
-msgstr "Προκαθορισμένες αντιστοιχίες"
+msgstr "Προκαθορισμένες αντιστοιχίες παιχνιδιού"
 
 #: engines/metaengine.cpp:62 backends/platform/maemo/maemo.cpp:161
 #: engines/agos/metaengine.cpp:232 engines/asylum/metaengine.cpp:159
@@ -6372,10 +6372,8 @@ msgstr ""
 "για κίνηση και τα μενού του παιχνιδιού."
 
 #: engines/agi/metaengine.cpp:147
-#, fuzzy
-#| msgid "Predictive input dialog"
 msgid "Predictive Input Dialog on mouse click"
-msgstr "Παράθυρο διαλόγου με πρόβλεψη κειμένου"
+msgstr "Παράθυρο διαλόγου πρόβλεψης κειμένου με κλικ ποντικού"
 
 #: engines/agi/metaengine.cpp:148
 msgid ""
@@ -6384,6 +6382,12 @@ msgid ""
 "The Predictive Input Dialog can still be activated on demand if there's a "
 "specified key mapping for it"
 msgstr ""
+"Ενεργοποιεί το βοηθητικό παράθυρο διαλόγου πρόβλεψης εισόδου κειμένου "
+"συγκεκριμένα για την περίπτωση που κάνετε κλικ με το αριστερό κουμπί του "
+"ποντικιού μέσα σε πεδία εισαγωγής κειμένου.\n"
+"Το παράθυρο διαλόγου πρόβλεψης κειμένου θα εξακολουθεί να μπορεί να "
+"ενεργοποιηθεί κατ'απαίτηση εφόσον έχει οριστεί κάποια αντιστοίχιση πλήκτρου ("
+"key mapping) για αυτό"
 
 #: engines/agi/metaengine.cpp:159
 msgid "Use Hercules hires font"
@@ -6420,10 +6424,8 @@ msgstr "Προσθήκη ενός μενού ταχύτητας (παρόμοι�
 #: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:51
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:766
-#, fuzzy
-#| msgid "Enable Discord integration"
 msgid "Enable copy protection"
-msgstr "Ενεργοποίηση διασύνδεσης με DIscord"
+msgstr "Ενεργοποίηση προστασίας από αντίγραφα"
 
 #: engines/agi/metaengine.cpp:196 engines/agos/metaengine.cpp:45
 #: engines/dreamweb/metaengine.cpp:37 engines/gob/metaengine.cpp:43
@@ -6432,6 +6434,8 @@ msgstr "Ενεργοποίηση διασύνδεσης με DIscord"
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:767
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
+"Ενεργοποιεί τους μηχανισμούς προστασίας από πειρατικά αντίγραφα (copy "
+"protection) που αλλιώς θα παρακάμπτονταν."
 
 #: engines/agi/metaengine.cpp:420 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
@@ -6583,7 +6587,7 @@ msgstr "Η υποστήριξη για το AGOS 2 δεν έχει ενσωμα�
 #. It is never disabled and it is not game specific
 #: engines/agos/metaengine.cpp:227
 msgid "AGOS main"
-msgstr ""
+msgstr "AGOS - Κύρια"
 
 #: engines/agos/metaengine.cpp:228 engines/bbvs/metaengine.cpp:93
 #: engines/cine/metaengine.cpp:259 engines/cruise/metaengine.cpp:143
@@ -6595,22 +6599,16 @@ msgstr ""
 #: engines/toon/metaengine.cpp:82 engines/touche/metaengine.cpp:119
 #: engines/trecision/metaengine.cpp:121 engines/tsage/metaengine.cpp:170
 #: engines/tucker/metaengine.cpp:168
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game keymappings"
-msgstr "Αντιστοίχιση Πλήκτρων"
+msgstr "Αντιστοίχιση πλήκτρων"
 
 #: engines/agos/metaengine.cpp:229
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Yes/No keymapping"
-msgstr "Αντιστοίχιση Πλήκτρων"
+msgstr "Αντιστοίχιση πλήκτρων για Ναι/Όχι"
 
 #: engines/agos/metaengine.cpp:244
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Exit cutscene"
-msgstr "Παράλειψη ταινίας"
+msgstr "Έξοδος από ταινία"
 
 #: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:198
 msgid "Music volume down"
@@ -6629,20 +6627,16 @@ msgid "Toggle sound effects on/off"
 msgstr "Εναλλαγή ηχητικών εφέ με/χωρίς"
 
 #: engines/agos/metaengine.cpp:278 engines/sky/metaengine.cpp:131
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fast mode on/off"
-msgstr "Εναλλαγή γρήγορης λειτουργίας"
+msgstr "Απ/ενεργοποίηση γρήγορης λειτουργίας"
 
 #: engines/agos/metaengine.cpp:290
 msgid "Walk forward"
 msgstr "Περπάτα μπροστά"
 
 #: engines/agos/metaengine.cpp:296
-#, fuzzy
-#| msgid "Run backward"
 msgid "Turn backward"
-msgstr "Τρέξε προς τα πίσω"
+msgstr "Στροφή προς τα πίσω"
 
 #: engines/agos/metaengine.cpp:302 engines/mohawk/riven.cpp:901
 #: engines/wintermute/keymapper_tables.h:161
@@ -6661,28 +6655,20 @@ msgid "Turn right"
 msgstr "Στρίψε δεξιά"
 
 #: engines/agos/metaengine.cpp:316
-#, fuzzy
-#| msgid "Text speed slower / faster"
 msgid "Text speed - Fast"
-msgstr "Ταχύτητα κειμένου πιο αργή / πιο γρήγορη"
+msgstr "Ταχύτητα κειμένου - Γρήγορη"
 
 #: engines/agos/metaengine.cpp:321
-#, fuzzy
-#| msgid "Walking speed: Medium"
 msgid "Text speed - Medium"
-msgstr "Ρυθμός περπατήματος: Μέτριος"
+msgstr "Ταχύτητα κειμένου - Μέτρια"
 
 #: engines/agos/metaengine.cpp:326
-#, fuzzy
-#| msgid "Text speed slower / faster"
 msgid "Text speed - Slow"
-msgstr "Ταχύτητα κειμένου πιο αργή / πιο γρήγορη"
+msgstr "Ταχύτητα κειμένου - Αργή"
 
 #: engines/agos/metaengine.cpp:331
-#, fuzzy
-#| msgid "Show Object Line"
 msgid "Show objects to interact"
-msgstr "Προβολή Γραμμής Αντικειμένων"
+msgstr "Προβολή αλληλεπιδράσιμων αντικειμένων"
 
 #: engines/agos/metaengine.cpp:338
 #, fuzzy
@@ -6716,11 +6702,11 @@ msgstr ""
 #: engines/agos/metaengine.cpp:382 engines/lure/metaengine.cpp:295
 #: engines/trecision/metaengine.cpp:181
 msgid "Press \"Yes\" key"
-msgstr ""
+msgstr "Πατήστε το πλήκτρο για \"Ναι\""
 
 #: engines/agos/metaengine.cpp:387 engines/lure/metaengine.cpp:310
 msgid "Press \"No\" key"
-msgstr ""
+msgstr "Πατήστε το πλήκτρο για \"Όχι\""
 
 #: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -6928,10 +6914,8 @@ msgid "Toggle animation on/off"
 msgstr "Εναλλαγή μουσικής με/χωρίς"
 
 #: engines/asylum/metaengine.cpp:232
-#, fuzzy
-#| msgid "In 2D games"
 msgid "Return to gameplay"
-msgstr "Στα 2D παιχνίδια"
+msgstr "Επιστροφή στο παιχνίδι"
 
 #: engines/asylum/metaengine.cpp:238
 #, fuzzy
@@ -6973,17 +6957,15 @@ msgstr "Φόρτωση όπως και να 'χει"
 
 #: engines/bagel/metaengine.cpp:41
 msgid "Wait"
-msgstr ""
+msgstr "Περιμένετε"
 
 #: engines/bagel/metaengine.cpp:42
 msgid "Soldier 714 Eye Cheat"
 msgstr ""
 
 #: engines/bagel/metaengine.cpp:83
-#, fuzzy
-#| msgid "General"
 msgid "General Keys"
-msgstr "Γενικά"
+msgstr "Γενικά Πλήκτρα"
 
 #: engines/bbvs/metaengine.cpp:92 engines/cine/metaengine.cpp:258
 #: engines/cruise/metaengine.cpp:142 engines/draci/metaengine.cpp:138
@@ -6994,10 +6976,8 @@ msgstr "Γενικά"
 #: engines/tinsel/metaengine.cpp:240 engines/toon/metaengine.cpp:81
 #: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
 #: engines/tucker/metaengine.cpp:167
-#, fuzzy
-#| msgid "Default game keymap"
 msgid "Default keymappings"
-msgstr "Προκαθορισμένες αντιστοιχίες"
+msgstr "Προκαθορισμένες αντιστοιχίσεις"
 
 #. I18N: Escape is a key
 #: engines/bbvs/metaengine.cpp:95
@@ -7570,7 +7550,7 @@ msgstr "Αντιστοίχιση Πλήκτρων"
 
 #: engines/cine/metaengine.cpp:277
 msgid "Exit Sony intro screen"
-msgstr ""
+msgstr "Έξοδος από την εισαγωγική οθόνη της Sony"
 
 #: engines/cine/metaengine.cpp:283
 #, fuzzy
@@ -7585,10 +7565,8 @@ msgid "Open action menu / Close menu"
 msgstr "Άνοιγμα κεντρικού μενού"
 
 #: engines/cine/metaengine.cpp:295
-#, fuzzy
-#| msgid "Default game keymap"
 msgid "Default game speed"
-msgstr "Προκαθορισμένες αντιστοιχίες"
+msgstr "Προκαθορισμένη ταχύτητα παιχνιδιού"
 
 #: engines/cine/metaengine.cpp:300
 #, fuzzy
@@ -7636,7 +7614,7 @@ msgstr "Ενεργό"
 
 #: engines/cine/metaengine.cpp:340
 msgid "Speak"
-msgstr ""
+msgstr "Μίλησε"
 
 #: engines/cine/metaengine.cpp:345
 #, fuzzy
@@ -8156,7 +8134,7 @@ msgstr "Εκτέλεση"
 
 #: engines/freescape/games/castle/castle.cpp:292
 msgid "Crawl"
-msgstr ""
+msgstr "Σύρσου"
 
 #: engines/freescape/games/castle/castle.cpp:298
 #: engines/freescape/games/eclipse/eclipse.cpp:245
@@ -8193,7 +8171,7 @@ msgstr "Κατέβα/Πέτα χαμηλότερα"
 
 #: engines/freescape/games/dark/dark.cpp:243
 msgid "Enable/Disable Jetpack"
-msgstr ""
+msgstr "Απ/ενεργοποίηση Jetpack"
 
 #. I18N: drilling rig is an in game item
 #: engines/freescape/games/driller/driller.cpp:191
@@ -8985,13 +8963,15 @@ msgstr "Αριστερό κουμπί για επίθεση, δεξί κουμπ
 
 #: engines/kyra/metaengine.cpp:159
 msgid "Faithful AD&D rules"
-msgstr ""
+msgstr "Πιστοί κανόνες AD&D"
 
 #: engines/kyra/metaengine.cpp:160
 msgid ""
 "Make implementation of AD&D rules more compliant with the AD&D 2nd edition "
 "handbook"
 msgstr ""
+"Η υλοποίηση των κανόνων AD&D θα είναι πιο συμμοφωμένη με τις οδηγίες της 2ης "
+"έκδοσης του εγχειριδίου AD&D"
 
 #: engines/kyra/metaengine.cpp:251
 msgid "Lands of Lore support is not compiled in"
@@ -10485,7 +10465,7 @@ msgstr "Σπρώξε"
 #. I18N: It is a verb for gulping, not a bird
 #: engines/saga/metaengine.cpp:400
 msgid "Swallow"
-msgstr ""
+msgstr "Κατάπιε"
 
 #: engines/saga/metaengine.cpp:407
 #, fuzzy
@@ -10530,7 +10510,7 @@ msgstr "Ακύρωση εντολής"
 
 #: engines/saga/metaengine.cpp:459
 msgid "Okay"
-msgstr ""
+msgstr "Εντάξει"
 
 #: engines/saga/metaengine.cpp:464
 #, fuzzy
@@ -10676,13 +10656,17 @@ msgstr "Ενεργοποίηση γραφικών που είχαν απενερ
 
 #: engines/sci/detection_options.h:236
 msgid "Enable saving via the GMM"
-msgstr ""
+msgstr "Ενεργοποίηση δυνατότητας αποθήκευσης από το μενού ScummVM (GMM)"
 
 #: engines/sci/detection_options.h:237
 msgid ""
 "Allows saving via the GMM. WARNING: saves created via the GMM may be "
 "corrupted and unusable. Use at your own risk!"
 msgstr ""
+"Επιτρέπει την αποθήκευση από το μενού ScummVM (GMM). ΠΡΟΣΟΧΗ: τα "
+"αποθηκευμένα αρχεία που δημιουργούνται μέσω του GMM μπορεί να είναι "
+"προβληματικά και άχρηστα. Κάντε χρήση αυτής της δυνατότητας με δική σας "
+"ευθύνη!"
 
 #: engines/sci/detection_options.h:251
 msgid "MIDI mode:"
