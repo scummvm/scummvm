@@ -60,7 +60,7 @@ protected:
 private:
 	Graphics::Surface *_practiceBox = nullptr;
 	Common::Point _practiceBoxPos;
-	int _practiceBoxNotes;
+	int _practiceBoxNotes = 0;
 };
 
 } // End of namespace Scumm
