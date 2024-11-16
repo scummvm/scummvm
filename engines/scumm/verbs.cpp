@@ -329,7 +329,7 @@ void ScummEngine_v2::initNESMouseOver() {
 void ScummEngine_v2::checkV2MouseOver(Common::Point pos) {
 	VirtScreen *vs = &_virtscr[kVerbVirtScreen];
 	Common::Rect rect;
-	byte *ptr, *dst;
+	byte *dst;
 	int i, x, y, new_box = -1;
 
 	// Don't do anything unless the inventory is active
@@ -351,7 +351,7 @@ void ScummEngine_v2::checkV2MouseOver(Common::Point pos) {
 		if (_mouseOverBoxV2 != -1) {
 			rect = _mouseOverBoxesV2[_mouseOverBoxV2].rect;
 
-			dst = ptr = vs->getPixels(rect.left, rect.top);
+			dst = vs->getPixels(rect.left, rect.top);
 
 			// Remove highlight.
 			for (y = rect.height() - 1; y >= 0; y--) {
@@ -368,7 +368,7 @@ void ScummEngine_v2::checkV2MouseOver(Common::Point pos) {
 		if (new_box != -1) {
 			rect = _mouseOverBoxesV2[new_box].rect;
 
-			dst = ptr = vs->getPixels(rect.left, rect.top);
+			dst = vs->getPixels(rect.left, rect.top);
 
 			// Apply highlight
 			for (y = rect.height() - 1; y >= 0; y--) {
