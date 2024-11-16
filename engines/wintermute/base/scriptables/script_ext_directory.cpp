@@ -122,6 +122,12 @@ bool SXDirectory::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 
 			warning("FBI\\scenes\\17-magic Directory.%s is not implemented! Returning empty array...", name);
 
+		} else if (strcmp(dirName, ".\\") == 0 && strcmp(name, "GetFiles") == 0) {
+			// Used in "Stroke of Fate: Operation Valkyrie" and "Stroke of Fate: Operation Bunker"
+			// to return list of log files to be removed.
+
+			// return empty list instead
+
 		} else {
 			// No currently known games need this
 
