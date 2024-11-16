@@ -44,15 +44,18 @@ private:
 	void addMovingMeiHotspot();
 	void deleteMalletHotspot();
 	void deleteMeiCheiHotspot();
-	void game_set_scale(int32 frontY, int32 backY, int32 frontS, int32 backS);
 	void initWalkerSeries();
 	void initPriestWalker();
+	void killMcMach();
+	void killPriestWalkerMach();
+	void setWalkerDestX();
 
-	void subDaemon_ADB7C();
-	void subDaemon_21781();
-	void subDaemon_ADBB0();
-	
+	void subParser_1F42C();
+	void subParser_1F71D();
+	void game_set_scale(int32 frontY, int32 backY, int32 frontS, int32 backS);
+
 	int32 _dword1A189C = 0;
+	int32 _dword1A1898 = 0;
 
 	int32 _field4 = 0;
 	int32 _field10 = 0;
@@ -61,6 +64,9 @@ private:
 	int32 _field24_triggerNum = 0;
 	int32 _field28_triggerNum = 0;
 	int32 _field2C = 0;
+	int32 _field34_x = 0;
+	int32 _field38_y = 0;
+	int32 _field3C_facing = 0;
 	int32 _field40 = 0;
 	int32 _field44_triggerNum = 0;
 	int32 _field48_triggerNum = 0;
@@ -100,6 +106,7 @@ private:
 	int32 _field144_triggerNum = 0;
 	int32 _field164 = 0;
 	int32 _field168 = 0;
+	int32 _field16C = 0;
 	int32 _field170 = 0;
 	int32 _field174 = 0;
 	int32 _field180 = 0;
@@ -113,6 +120,7 @@ private:
 	int32 _acolyteSaysHaltSeries;
 	int32 _courtyardGongSeries = 0;
 	int32 _malletSpriteSeries = 0;
+	int32 _meiReadsTabletsSeries = 0;
 	int32 _meiShowsRipHerPassesSeries = 0;
 	int32 _meiTalksPos3Series = 0;
 	int32 _meiTrekRtHandOutPos2Series = 0;

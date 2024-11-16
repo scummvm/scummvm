@@ -224,6 +224,400 @@ void Room204::pre_parser() {
 }
 
 void Room204::parser() {
+	bool esi = player_said_any("look", "look at");
+	bool takeFl = player_said("take");
+	bool talkFl = player_said_any("talk", "talk to");
+	bool edi = player_said("gear");
+	int32 ecx = 0;
+
+	if (player_said("conv204a")) {
+		subParser_1F42C();
+		goto done;
+	}
+
+	if (_G(kernel).trigger == 747) {
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(1, 606, nullptr);
+		goto done;
+	}
+
+	if (player_been_here(205) && esi && player_said_any("FOO DOG", "PAGODA", "BRONZE LANTERN", "CONFUCIAN ANALECTS", "CONFUCIAN ANALECTS ", "TABLETS OF HISTORY", "LAO-TZU TABLETS")) {
+		digi_play("204R62", 1, 255, -1, -1);
+		goto done;
+	}
+
+	if (!player_been_here(205)) {
+		if (inv_player_has("MALLET") && !_field40 && !_field16C
+			&& !(player_said("MALLET") && player_said_any("GONG", "ACOLYTE")) && !(esi && player_said("MALLET"))
+			&& !(takeFl && player_said("GONG")) && !(esi && player_said("MEI CHEN"))&&  !(edi && player_said("MALLET"))) {
+			_field124 = 2;
+			player_update_info(_G(my_walker), &_G(player_info));
+			_field40 = 1;
+			player_set_commands_allowed(false);
+			_field34_x = _G(player_info).x;
+			_field38_y = _G(player_info).y;
+			_field3C_facing = _G(player_info).facing;
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_timing_trigger(1, 647, nullptr);
+			goto done;
+		}
+
+		if (esi && player_said("SHIH CHI TABLETS")) {
+			player_update_info(_G(my_walker), &_G(player_info));
+			if (_G(player_info).x > 1500) {
+				_fieldDC = 0;
+				_fieldE4_walkerDestX = 1663;
+				ecx = 1;
+			}
+		}
+
+		if (esi && player_said("SHIH CHING TABLETS")) {
+			player_update_info(_G(my_walker), &_G(player_info));
+			if (_G(player_info).x > 1400) {
+				_fieldDC = 0;
+				_fieldE4_walkerDestX = 1494;
+				ecx = 1;
+			}
+		}
+
+		if (esi && player_said("CONFUCIAN ANALECTS")) {
+			player_update_info(_G(my_walker), &_G(player_info));
+			if (_G(player_info).x > 1280) {
+				_fieldDC = 0;
+				_fieldE4_walkerDestX = 1412;
+				ecx = 1;
+			}
+		}
+
+		if (esi && player_said("CONFUCIAN ANALECTS ") && !_field4) {
+			digi_play("204R52", 1, 255, -1, -1);
+			goto done;
+		}
+
+		if (esi && player_said("CONFUCIAN ANALECTS ")) {
+			switch (_G(kernel).trigger) {
+			case -1:
+			case 666:
+				player_set_commands_allowed(false);
+				_field108 = 1;
+				kernel_timing_trigger(5, 1, nullptr);
+
+				break;
+
+			case 1:
+				ws_get_walker_info(_mcMach, &_fieldFC_infoX, &_field100_infoY, &_G(player_info).scale, &_G(player_info).depth, &_G(player_info).facing);
+				if (_fieldFC_infoX == _fieldE4_walkerDestX) {
+					DisposePath(_mcMach->walkPath);
+					_mcMach->walkPath = CreateCustomPath(555, 323, 463, 359, 317, 367, -1);
+					ws_custom_walk(_mcMach, 9, 2, 1);
+				} else {
+					kernel_timing_trigger(60, 1);
+				}
+				break;
+
+			case 2:
+				_meiTalksPos3Series = series_load("MEI TALKS POS3", -1, nullptr);
+				setGlobals1(_meiTalksPos3Series, 1, 1, 1, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_mcMach, 3);
+
+				if (_field180 != 99999 && _field180) {
+					digi_play("204M13", 1, 255, 3, -1);
+				} else {
+					digi_play("204M06", 1, 255, 3, -1);
+					_field180 = 99999;
+				}
+
+			case 3:
+				if (_dword1A1898 >= 1) {
+					_dword1A1898 = 0;
+					sendWSMessage_150000(_mcMach, 4);
+				} else {
+					++_dword1A1898;
+				}
+
+				break;
+
+			case 4:
+				series_unload(_meiTalksPos3Series);
+				DisposePath(_mcMach->walkPath);
+
+				_fieldDC = 1;
+				_fieldE4_walkerDestX = 555;
+
+				_mcMach->walkPath = CreateCustomPath(463, 359, 555, 323, -1);
+				ws_custom_walk(_mcMach, 10, 5, true);
+
+				break;
+
+			case 5:
+				_field108 = 0;
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_timing_trigger(1, 630, nullptr);
+				_fieldE0 = 555;
+				deleteMeiCheiHotspot();
+				addMovingMeiHotspot();
+
+				break;
+
+			default:
+				break;
+
+			}
+
+			goto done;
+		} // if (esi && player_said("CONFUCIAN ANALECTS "))
+
+		if (esi && player_said("TAO-TE CHING TABLETS")) {
+			_fieldDC = 0;
+			_fieldE4_walkerDestX = 1328;
+			ecx = 1;
+		}
+
+		if (esi && player_said("SHIH CHI TABLETS")) {
+			player_update_info(_G(my_walker), &_G(player_info));
+			if (_G(player_info).x >= 1300) {
+				_fieldDC = 0;
+				_fieldE4_walkerDestX = 1245;
+				ecx = 1;
+			}
+		}
+
+		if (esi && player_said("LAO-TZU TABLETS")) {
+			player_update_info(_G(my_walker), &_G(player_info));
+			if (_G(player_info).x > 700) {
+				_fieldDC = 0;
+				_fieldE4_walkerDestX = 800;
+				ecx = 1;
+			}
+		}
+
+		if (esi && player_said("SHANG TABLETS")) {
+			player_update_info(_G(my_walker), &_G(player_info));
+			if (_G(player_info).x < 900) {
+				_fieldDC = 1;
+				_fieldE4_walkerDestX = 717;
+				ecx = 1;
+			}
+		}
+
+		if (esi && player_said("TABLETS OF HISTORY")) {
+			_fieldDC = 1;
+			_fieldE4_walkerDestX = 670;
+			ecx = 1;
+		}
+
+		if (esi && player_said("CONFUCIAN ANALECTS")) {
+			player_update_info(_G(my_walker), &_G(player_info));
+			if (_G(player_info).x < 1280) {
+				_fieldDC = 1;
+				_fieldE4_walkerDestX = 555;
+				ecx = 1;
+			}
+		}
+
+		if (esi && player_said("LAO-TZU TABLETS")) {
+			player_update_info(_G(my_walker), &_G(player_info));
+			if (_G(player_info).x < 640) {
+				_fieldDC = 1;
+				_fieldE4_walkerDestX = 472;
+				ecx = 1;
+			}
+		}
+
+		if (ecx == 1) {
+			if  (!_field4)
+				digi_play("204R52", 1, 255, -1, -1);
+			else {
+				switch (_G(kernel).trigger) {
+				case -1:
+				case 666:
+					player_set_commands_allowed(false);
+					_field104 = 1;
+					kernel_timing_trigger(1, 1, nullptr);
+
+					break;
+				case 1:
+					DisposePath(_mcMach->walkPath);
+					_mcMach->walkPath = CreateCustomPath(_fieldE4_walkerDestX, 323, -1);
+					_fieldE0 = 0;
+
+					_G(kernel).trigger_mode = KT_DAEMON;
+					ws_custom_walk(_mcMach, (_fieldDC == 1) ? 10 : 2, 632, true);
+					_G(kernel).trigger_mode = KT_PARSE;
+
+					kernel_timing_trigger(5, 2, nullptr);
+
+					break;
+
+				case 2:
+					if (_fieldE0 == _fieldE4_walkerDestX)
+						kernel_timing_trigger(30, 5, nullptr);
+					else
+						kernel_timing_trigger(1, 2, nullptr);
+
+					break;
+
+				case 5:
+					_meiReadsTabletsSeries = series_load("MEI READS TABLETS", -1, nullptr);
+					setGlobals1(_meiReadsTabletsSeries, 1, 15, 15, 15, 0, 16, 29, 29, 16, 2, 15, 1, 1, 1, 0, 0, 0, 0, 0, 0);
+					sendWSMessage_110000(_mcMach, 6);
+
+					break;
+
+				case 6:
+					sendWSMessage_120000(_mcMach, -1);
+					switch (_fieldE4_walkerDestX) {
+					case 472:
+						if (_field184 != 472 && _field184) {
+							digi_play("204M11", 1, 255, 7, -1);
+						} else {
+							digi_play("204M04", 1, 255, 7, -1);
+							_field184 = 472;
+						}
+
+						deleteMalletHotspot();
+						addLookMalletHotspot();
+
+						break;
+
+					case 555:
+						if (_field180 != 555 && _field180) {
+							digi_play("204M13", 1, 255, 7, -1);
+						} else {
+							digi_play("204M06", 1, 255, 7, -1);
+							_field180 = 555;
+						}
+
+						break;
+
+					case 670:
+						digi_play("204M10", 1, 255, 7, -1);
+						break;
+
+					case 717:
+						digi_play("204M05", 1, 255, 7, -1);
+						break;
+
+					case 800:
+						if (_field184 != 800 && _field184) {
+							digi_play("204M11", 1, 255, 7, -1);
+						} else {
+							digi_play("204M04", 1, 255, 7, -1);
+							_field184 = 800;
+						}
+
+						break;
+
+					case 1245:
+						if (_field188 != 1245 && _field188) {
+							digi_play("204M15", 1, 255, 7, -1);
+						} else {
+							digi_play("204M09", 1, 255, 7, -1);
+							_field188 = 1245;
+						}
+
+						break;
+
+					case 1328:
+						if (_field184 != 1328 && _field184) {
+							digi_play("204M14", 1, 255, 7, -1);
+						} else {
+							digi_play("204M04", 1, 255, 7, -1);
+							_field184 = 1328;
+						}
+
+						break;
+
+					case 1412:
+						if (_field180 != 1412 && _field180) {
+							digi_play("204M13", 1, 255, 7, -1);
+						} else {
+							digi_play("204M06", 1, 255, 7, -1);
+							_field180 = 1412;
+						}
+
+						break;
+
+					case 1494:
+						digi_play("204M07", 1, 255, 7, -1);
+						break;
+
+					case 1576:
+						digi_play("204M08", 1, 255, 7, -1);
+						break;
+
+					case 1663:
+						if (_field188 != 1663 && _field188) {
+							digi_play("204M15", 1, 255, 7, -1);
+						} else {
+							digi_play("204M09", 1, 255, 7, -1);
+							_field188 = 1663;
+						}
+
+						break;
+
+					default:
+						break;
+					}
+
+					break;
+
+				case 7:
+					sendWSMessage_130000(_mcMach, 8);
+					break;
+
+				case 8:
+					sendWSMessage_150000(_mcMach, 9);
+					break;
+
+				case 9:
+					series_unload(_meiReadsTabletsSeries);
+					_field104 = 0;
+					player_set_commands_allowed(true);
+
+					break;
+				}
+			}
+
+			goto done;
+		} // (ecx == 1)
+
+		if (player_said("walk through") && _field4 == 1) {
+			if (_G(flags[V056]) == 1) {
+				player_set_commands_allowed(false);
+				kernel_timing_trigger(2, 609, nullptr);
+			} else {
+				player_set_commands_allowed(false);
+				_G(kernel).trigger_mode = KT_DAEMON;
+				ws_walk(_G(my_walker), 1874, 333, nullptr, 710, 3, true);
+			}
+			goto done;
+		}
+
+		if (player_said("walk through") && _field4 == 0) {
+			player_set_commands_allowed(false);
+			_G(kernel).trigger_mode = KT_DAEMON;
+			ws_walk(_G(my_walker), 1874, 333, nullptr, 710, 3, true);
+			goto done;
+		}
+
+		if ((player_said("MALLET", "GONG") || (edi && player_said("MALLET"))) && inv_player_has("MALLET")) {
+			subParser_1F71D();
+			goto done;
+		}
+
+		warning("Incomplete...");
+	} // if (!player_been_here(205)
+
+	else {
+		warning("Incomplete...");
+	}
+
+
+
+
+done:
+	_G(player).command_ready = false;
 }
 
 void Room204::daemon() {
@@ -979,7 +1373,7 @@ void Room204::daemon() {
 		}
 
 		if (_field108 == 1)
-			subDaemon_ADB7C();
+			killMcMach();
 
 		if (_field108 == 0)
 			ws_hide_walker(_mcMach);
@@ -1591,7 +1985,7 @@ void Room204::daemon() {
 			player_update_info(_mcMach, &_G(player_info));
 			if (_G(game_buff_ptr)->x1 * -1 >= _G(player_info).x) {
 				hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN", false);
-				subDaemon_21781();
+				setWalkerDestX();
 
 				player_update_info(_mcMach, &_G(player_info));
 				if ((_G(game_buff_ptr)->x1 * -1) - 30 > _G(player_info).x) {
@@ -1605,7 +1999,7 @@ void Room204::daemon() {
 
 			} else if ((_G(game_buff_ptr)->x1 * -1) + 639 <= _G(player_info).x) {
 				hotspot_set_active(_G(currentSceneDef).hotspots, "MEI CHEN", false);
-				subDaemon_21781();
+				setWalkerDestX();
 
 				player_update_info(_mcMach, &_G(player_info));
 				if ((_G(game_buff_ptr)->x1 * -1) + 669 < _G(player_info).x) {
@@ -1798,7 +2192,7 @@ void Room204::daemon() {
 		_fieldDC = 1;
 		_fieldE0 = 555;
 
-		subDaemon_ADBB0();
+		killPriestWalkerMach();
 		deleteMeiCheiHotspot();
 		addMovingMeiHotspot();
 		player_set_commands_allowed(true);
@@ -1886,7 +2280,7 @@ void Room204::daemon() {
 
 	case 688:
 		_field2C = 1;
-		subDaemon_ADBB0();
+		killPriestWalkerMach();
 		kernel_timing_trigger(5, 689, nullptr);
 
 		break;
@@ -2136,12 +2530,10 @@ void Room204::addLookMalletHotspot() {
 	_G(currentSceneDef).hotspots = hotspot_add(_G(currentSceneDef).hotspots, spot, true);
 }
 
-void Room204::subDaemon_ADB7C() {
-	warning("STUB - subDaemon_ADB7C");
-}
-
-void Room204::game_set_scale(int32 frontY, int32 backY, int32 frontS, int32 backS) {
-	warning("STUB - game_set_scale");
+void Room204::killMcMach() {
+	sendWSMessage_60000(_mcMach);
+	_mcMach = nullptr;
+	kernel_timing_trigger(1, 712, nullptr);
 }
 
 void Room204::initPriestWalker() {
@@ -2157,12 +2549,39 @@ void Room204::initPriestWalker() {
 	_field138 = 1;
 }
 
-void Room204::subDaemon_21781() {
-	warning("STUB - subDaemon_21781");
+void Room204::setWalkerDestX() {
+	player_update_info(_G(my_walker), &_G(player_info));
+	ws_get_walker_info(_mcMach, &_fieldFC_infoX, &_field100_infoY, &_G(player_info).scale, &_G(player_info).depth, &_G(player_info).facing);
+
+	if (_field104) {
+		return;
+	}
+
+	if (_G(player_info).x > 0 && _G(player_info).x <= 639) {
+		_fieldE4_walkerDestX = 555;
+		_fieldDC = 1;
+	}
+
+	if (_G(player_info).x >= 640 && _G(player_info).x <= 959) {
+		_fieldE4_walkerDestX = 800;
+		_fieldDC = 1;
+	}
+
+	if (_G(player_info).x >= 960 && _G(player_info).x <= 1279) {
+		_fieldE4_walkerDestX = 1245;
+		_fieldDC = 0;
+	}
+
+	if (_G(player_info).x >= 1280) {
+		_fieldE4_walkerDestX = 1494;
+		_fieldDC = 0;
+	}
 }
 
-void Room204::subDaemon_ADBB0() {
-	warning("STUB - subDaemon_ADBB0");
+void Room204::killPriestWalkerMach() {
+	sendWSMessage_60000(_priestWalkerMach);
+	_priestWalkerMach = nullptr;
+	kernel_timing_trigger(1, 713, nullptr);
 }
 
 void Room204::deleteMeiCheiHotspot() {
@@ -2174,6 +2593,17 @@ void Room204::deleteMeiCheiHotspot() {
 	}
 }
 
+void Room204::subParser_1F42C() {
+	warning("STUB - subParser_1F42C");
+}
+
+void Room204::subParser_1F71D() {
+	warning("STUB - subParser_1F71D");
+}
+
+void Room204::game_set_scale(int32 frontY, int32 backY, int32 frontS, int32 backS) {
+	warning("STUB - game_set_scale");
+}
 
 } // namespace Rooms
 } // namespace Riddle
