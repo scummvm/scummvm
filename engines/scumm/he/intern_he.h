@@ -402,10 +402,10 @@ protected:
 #include "common/pack-end.h"	// END STRUCT PACKING
 
 	int _stringLength = 1;
-	byte _stringBuffer[4096];
+	byte _stringBuffer[4096] = {};
 
-	WizImageCommand _wizImageCommand;
-	FloodFillCommand _floodFillCommand;
+	WizImageCommand _wizImageCommand = {};
+	FloodFillCommand _floodFillCommand = {};
 
 public:
 	ScummEngine_v72he(OSystem *syst, const DetectorResult &dr);

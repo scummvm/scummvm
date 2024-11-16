@@ -41,7 +41,9 @@ Sprite::Sprite(ScummEngine_v90he *vm)
 	_activeSpriteCount(0),
 	_maxSpriteGroups(0),
 	_maxSprites(0),
-	_maxImageLists(0) {
+	_maxImageLists(0),
+	_imageLists(nullptr),
+	_imageListStack(nullptr) {
 }
 
 Sprite::~Sprite() {

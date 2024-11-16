@@ -61,14 +61,14 @@ private:
 
 	// op_1007 allocates some arrays
 	// they're then filled by op_1019
-	byte _collisionObjIds[4096], _collisionNodeEnabled[585];
+	byte _collisionObjIds[4096] = {}, _collisionNodeEnabled[585] = {};
 
 	// op_1011 has a subfunction
 	void calculateDistances(int32 worldPosArray, int32 a2, int32 closestActorArray, int32 maxDistance);
 
 	// array containing collision detection tree
-	bool _collisionTreeAllocated;
-	uint32 *_collisionTree;
+	bool _collisionTreeAllocated = false;
+	uint32 *_collisionTree = nullptr;
 	int addCollisionTreeChild(int depth, int index, int parent);
 
 	// op_1014 has several subops
@@ -85,11 +85,11 @@ private:
 
 	// op_1014 sets an array optionally based upon
 	// setCollisionOutputData; it is then used by op_1008
-	int _internalCollisionOutData[10];
+	int _internalCollisionOutData[10] = {};
 	Common::List<byte> _collisionObjs;
 
 	// op_1021 can (optionally) set two variables for use in op_1008
-	uint32 _var1021[2];
+	uint32 _var1021[2] = {};
 };
 
 int LogicHEsoccer::versionID() {

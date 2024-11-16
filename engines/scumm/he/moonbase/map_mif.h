@@ -86,11 +86,11 @@ public:
 
 	void generateMap(MapFile *map);
 
-	int _dimension; // 32 (small), 40 (medium), 48 (large), 56 (huge), 64 (SAI)
-	int _mapType;
-	char _name[17];
-	byte _cornerMap[MAX_TILE_COUNT][MAX_TILE_COUNT];
-	int8 _centerMap[MAX_TILE_COUNT][MAX_TILE_COUNT];
+	int _dimension = 0; // 32 (small), 40 (medium), 48 (large), 56 (huge), 64 (SAI)
+	int _mapType = 0;
+	char _name[17] = {};
+	byte _cornerMap[MAX_TILE_COUNT][MAX_TILE_COUNT] = { {}, {} };
+	int8 _centerMap[MAX_TILE_COUNT][MAX_TILE_COUNT] = { {}, {} };
 private:
 
 	void defineStartLocations(MapFile *map);
