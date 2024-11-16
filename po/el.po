@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-16 07:56+0000\n"
-"PO-Revision-Date: 2024-08-13 10:19+0000\n"
+"PO-Revision-Date: 2024-11-16 14:18+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -16,12 +16,12 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.4\n"
+"X-Generator: Weblate 5.7.2\n"
 "X-Language-name: Ελληνικά\n"
 
 #: audio/mac_plugin.cpp:30
 msgid "Apple Macintosh Audio"
-msgstr ""
+msgstr "Ήχος Apple Macintosh"
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
@@ -671,11 +671,11 @@ msgstr "Φάκελοι"
 
 #: gui/editgamedialog.cpp:291
 msgid "Check Integrity"
-msgstr ""
+msgstr "Έλεγχος ακεραιότητας"
 
 #: gui/editgamedialog.cpp:291
 msgid "Perform integrity check for all game files"
-msgstr ""
+msgstr "Εκτελεί έλεγχο ακεραιότητας δεδομένων για όλα τα αρχεία παιχνιδιού"
 
 #: gui/editgamedialog.cpp:296
 msgid "Game Path:"
@@ -845,7 +845,7 @@ msgstr ""
 
 #: gui/editrecorddialog.cpp:57
 msgid "Author:"
-msgstr "Συγγραφέας:"
+msgstr "Δημιουργός:"
 
 #: gui/editrecorddialog.cpp:59
 msgid "Notes:"
@@ -855,24 +855,25 @@ msgstr "Σημειώσεις:"
 msgid ""
 "Verifying file integrity may take a long time to complete. Please wait...\n"
 msgstr ""
+"Η εξακρίβωση της ακεραιότητας των αρχείων ενδέχεται να διαρκέσει αρκετό "
+"χρόνο μέχρι να ολοκληρωθεί. Παρακαλούμε περιμένετε...\n"
 
 #: gui/integrity-dialog.cpp:107 gui/integrity-dialog.cpp:168
 msgid "Calculating file checksums..."
-msgstr ""
+msgstr "Υπολογισμός αθροίσματος ελέγχου (checksum) των αρχείων..."
 
 #: gui/integrity-dialog.cpp:120
 msgid "Launch Email Client"
-msgstr ""
+msgstr "Εκκίνηση προγράμματος e-mail"
 
 #: gui/integrity-dialog.cpp:174
 msgid "Calculation complete"
 msgstr "Ο υπολογισμός ολοκληρώθηκε"
 
 #: gui/integrity-dialog.cpp:263
-#, fuzzy, c-format
-#| msgid "Downloaded %s %S / %s %S"
+#, c-format
 msgid "Calculated %s %S / %s %S"
-msgstr "Λήφθηκαν %s %S / %s %S"
+msgstr "Υπολογίστηκε %s %S / %s %S"
 
 #: gui/integrity-dialog.cpp:513
 msgid ""
@@ -882,21 +883,31 @@ msgid ""
 "If you are sure that this is a valid unknown variant, please send the "
 "following e-mail to integrity@scummvm.org"
 msgstr ""
+"### Αποτελέσματα\n"
+"Φαίνεται πως το σύνολο των αρχείων παιχνιδιού σας είναι άγνωστο σε μας.\n"
+"\n"
+"Αν είστε βέβαιοι ότι πρόκειται για έγκυρη άγνωστη έκδοση, παρακαλούμε να "
+"στείλετε το ακόλουθο e-mail στο integrity@scummvm.org"
 
 #: gui/integrity-dialog.cpp:537
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr ""
+"Το παιχνίδι δεν φαίνεται να έχει καθόλου αρχεία. Είστε βέβαιοι πως δώσατε το "
+"σωστό μονοπάτι;"
 
 #: gui/integrity-dialog.cpp:542
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
 msgstr ""
+"Το παιχνίδι φαίνεται να μην έχει μεταδεδομένα συσχετισμένα με αυτό, και "
+"συνεπώς είναι αδύνατο να γίνει αντιστοίχιση. Παρακαλούμε να συμπληρώσετε τα "
+"σωστά μεταδεδομένα για το παιχνίδι."
 
 #: gui/integrity-dialog.cpp:569
 msgid "Files all OK"
-msgstr ""
+msgstr "Τα αρχεία είναι εντάξει"
 
 #: gui/filebrowser-dialog.cpp:53
 msgid "Choose file for loading"
@@ -1489,7 +1500,7 @@ msgstr ""
 #: gui/launcher.cpp:288
 msgctxt "lowres"
 msgid "~R~emove Game"
-msgstr "~Α~φαίρ. Παιχν."
+msgstr "~Α~φαίρ. Παιχν"
 
 #. I18N: Button caption. Mass add games
 #: gui/launcher.cpp:291
@@ -1553,15 +1564,11 @@ msgstr ""
 "Το ScummVM δεν βρήκε κάποια μηχανή ικανή να εκτελέσει το επιλεγμένο παιχνίδι!"
 
 #: gui/launcher.cpp:665 gui/launcher.cpp:689
-#, fuzzy
-#| msgid ""
-#| "Did you add this directory to the SAF? Press the help button [?] on the "
-#| "top for detailed instructions"
 msgid ""
 "Have you given ScummVM access rights to this directory? Press the help "
 "button [?] on the top for detailed instructions"
 msgstr ""
-"Ίσως χρειάζεται να προσθέσετε τον φάκελο παιχνιδιού μέσω SAF; Πατήστε στο "
+"Έχετε δώσει στο ScummVM δικαίωμα πρόσβασης σε αυτό το φάκελο; Πατήστε στο "
 "κουμπί βοήθειας [?] στο πάνω μέρος της οθόνης για λεπτομερείς οδηγίες"
 
 #: gui/launcher.cpp:686
@@ -1859,10 +1866,8 @@ msgid "Scaler:"
 msgstr "Κλιμάκωση:"
 
 #: gui/options.cpp:1666
-#, fuzzy
-#| msgid "Render mode:"
 msgid "Rotation mode:"
-msgstr "Απόδοση γραφικών:"
+msgstr "Κατάσταση Περιστροφής:"
 
 #: gui/options.cpp:1680
 msgid "Shader:"
@@ -2811,7 +2816,7 @@ msgstr "Επεξεργασία"
 #: gui/recorderdialog.cpp:142 gui/recorderdialog.cpp:301
 #: gui/recorderdialog.cpp:308
 msgid "Author: "
-msgstr "Συγγραφέας: "
+msgstr "Δημιουργός: "
 
 #: gui/recorderdialog.cpp:144 gui/recorderdialog.cpp:302
 #: gui/recorderdialog.cpp:309
@@ -2824,7 +2829,7 @@ msgstr "Θέλετε σίγουρα να σβήσετε αυτή την εγγρ
 
 #: gui/recorderdialog.cpp:228
 msgid "Unknown Author"
-msgstr "Άγνωστος Συγγραφέας"
+msgstr "Άγνωστος Δημιουργός"
 
 #: gui/remotebrowser.cpp:128
 msgid "ScummVM could not access the directory!"
@@ -2864,10 +2869,8 @@ msgid "Do you really want to delete this saved game?"
 msgstr "Θέλετε σίγουρα να σβήσετε αυτό το αποθηκευμένο παιχνίδι;"
 
 #: gui/saveload-dialog.cpp:557
-#, fuzzy
-#| msgid "Error writing save file\n"
 msgid "Error deleting saved game"
-msgstr "Σφάλμα στην εγγραφή αποθηκευμένου παιχνιδιού\n"
+msgstr "Σφάλμα κατά τη διαγραφή αποθηκευμένου παιχνιδιού"
 
 #: gui/saveload-dialog.cpp:675 gui/saveload-dialog.cpp:1192
 msgid "Date: "
@@ -3227,10 +3230,8 @@ msgid "PC-9801 (16 Colors)"
 msgstr "PC-9801 (16 Χρώματα)"
 
 #: common/rendermode.cpp:48
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "PC-9801 (8 Colors)"
-msgstr "PC-9801 (16 Χρώματα)"
+msgstr "PC-9801 (8 Χρώματα)"
 
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:53
@@ -3239,19 +3240,15 @@ msgstr "Macintosh (ασπρόμαυρο)"
 
 #: common/rendermode.cpp:57
 msgid "VGA Grey Scale"
-msgstr ""
+msgstr "VGA Κλίμακα Γκρίζου"
 
 #: common/rendermode.cpp:58
-#, fuzzy
-#| msgid "PC-9821 (256 Colors)"
 msgid "Windows (256 Colors)"
-msgstr "PC-9821 (256 Χρώματα)"
+msgstr "Windows (256 Χρώματα)"
 
 #: common/rendermode.cpp:59
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "Windows (16 Colors)"
-msgstr "PC-9801 (16 Χρώματα)"
+msgstr "Windows (16 Χρώματα)"
 
 #: common/rendermode.cpp:96
 msgctxt "lowres"
@@ -3264,24 +3261,22 @@ msgid "Hercules Amber"
 msgstr "Πορτοκαλί Hercules"
 
 #: common/rotationmode.cpp:33
-#, fuzzy
-#| msgid "Goto location"
 msgid "No rotation"
-msgstr "Μετάβαση στην περιοχή"
+msgstr "Χωρίς περιστροφή"
 
 #: common/rotationmode.cpp:34
 msgid "Clockwise"
-msgstr ""
+msgstr "Δεξιόστροφα"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:35
 msgid "180 degrees"
-msgstr ""
+msgstr "180 μοίρες"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:36
 msgid "Counter-clockwise"
-msgstr ""
+msgstr "Αριστερόστροφα"
 
 #: common/updates.cpp:57
 msgid "Daily"
@@ -3355,10 +3350,8 @@ msgid "ScummVM"
 msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
-#, fuzzy
-#| msgid "ScummVM"
 msgid "ScummVM (debug)"
-msgstr "ScummVM"
+msgstr "ScummVM (debug)"
 
 #: dists/android.strings.xml.cpp:32
 msgid "Graphic adventure game engine"
@@ -3377,17 +3370,14 @@ msgid "Quit"
 msgstr "Έξοδος"
 
 #: dists/android.strings.xml.cpp:35
-#, fuzzy
-#| msgid "Config File Error"
 msgid "Log File Error"
-msgstr "Σφάλμα Αρχείου Ρυθμίσεων"
+msgstr "Σφάλμα Αρχείου Καταγραφής"
 
 #: dists/android.strings.xml.cpp:36
-#, fuzzy
-#| msgid "Unable to read ScummVM config file or create a new one!"
 msgid "Unable to read ScummVM log file or create a new one!"
 msgstr ""
-"Αδυναμία ανάγνωσης του αρχείου ρυθμίσεων του ScummVM ή δημιουργίας νέου!"
+"Αδυναμία ανάγνωσης του αρχείου καταγραφής (log) του ScummVM ή δημιουργίας "
+"νέου!"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Config File Error"
@@ -3475,44 +3465,36 @@ msgstr ""
 "Framework) για το ScummVM ανακλήθηκαν!"
 
 #: dists/android.strings.xml.cpp:55
-#, fuzzy
-#| msgid "the video mode could not be changed"
 msgid "Configuration file could not be parsed"
-msgstr "δεν ήταν δυνατή η αλλαγή της λειτουργίας βίντεο"
+msgstr "Αδυναμία ανάλυσης του αρχείου ρυθμίσεων"
 
 #: dists/android.strings.xml.cpp:56
-#, fuzzy
-#| msgid "In 2D games"
 msgid "Run a game"
-msgstr "Στα 2D παιχνίδια"
+msgstr "Εκτέλεση ενός παιχνιδιού"
 
 #: dists/android.strings.xml.cpp:57
-#, fuzzy
-#| msgid "Search in game list"
 msgid "Search a game"
-msgstr "Αναζήτηση στη λίστα παιχνιδιών"
+msgstr "Αναζήτηση ενός παιχνιδιού"
 
 #: dists/android.strings.xml.cpp:58
 msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
 msgstr ""
+"Κανένα παιχνίδι (ακόμα)\n"
+"Ανοίξτε το ScummVM και προσθέστε εδώ τα παιχνίδια σας."
 
 #: dists/android.strings.xml.cpp:59
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game icon"
-msgstr "Ρυθμίσεις Παιχνιδιού"
+msgstr "Εικονίδιο παιχνιδιού"
 
 #: dists/android.strings.xml.cpp:60
-#, fuzzy
-#| msgid "Show object labels"
 msgid "Shortcut label"
-msgstr "Προβολή ετικετών αντικειμένων"
+msgstr "Ετικέτα συντόμευσης"
 
 #: dists/android.strings.xml.cpp:61
 msgid "Shortcut icon"
-msgstr ""
+msgstr "Εικονίδιο συντόμευσης"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:32
@@ -3875,10 +3857,8 @@ msgid "Matched game IDs for the %s engine:"
 msgstr "Αντιστοιχισμένα αναγνωριστικά παιχνιδιού για την μηχανή %s:"
 
 #: engines/metaengine.cpp:39
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "Game not implemented"
-msgstr "Το αναγνωριστικό παιχνιδιού δεν υποστηρίζεται"
+msgstr "Το παιχνίδι δεν έχει υλοποιηθεί"
 
 #: engines/metaengine.cpp:58 engines/saga/metaengine.cpp:267
 msgid "Default game keymap"
@@ -5015,75 +4995,6 @@ msgid "Touch Controls"
 msgstr "Χειρισμός Αφής"
 
 #: backends/platform/android/android.cpp:1117
-#, fuzzy
-#| msgid ""
-#| "## Touch control modes\n"
-#| "The touch control mode can be changed by tapping or clicking on the "
-#| "controller icon in the upper right corner\n"
-#| "### Direct mouse \n"
-#| "\n"
-#| "The touch controls are direct. The pointer jumps to where the finger "
-#| "touches the screen (default for menus).\n"
-#| "\n"
-#| "  ![Direct mouse mode](mouse.png \"Direct mouse mode\"){w=10em}\n"
-#| "\n"
-#| "### Touchpad emulation \n"
-#| "\n"
-#| "The touch controls are indirect, like on a laptop touchpad.\n"
-#| "\n"
-#| "  ![Touchpad mode](touchpad.png \"Touchpad mode\"){w=10em}\n"
-#| "\n"
-#| "### Gamepad emulation \n"
-#| "\n"
-#| "Fingers must be placed on lower left and right of the screen to emulate a "
-#| "directional pad and action buttons.\n"
-#| "\n"
-#| "  ![Gamepad mode](gamepad.png \"Gamepad mode\"){w=10em}\n"
-#| "\n"
-#| "To select the preferred touch mode for menus, 2D games, and 3D games, go "
-#| "to **Global Options > Backend > Choose the preferred touch mode**.\n"
-#| "\n"
-#| "## Touch actions \n"
-#| "\n"
-#| "### Two finger scroll \n"
-#| "\n"
-#| "To scroll, slide two fingers up or down the screen\n"
-#| "### Two finger tap\n"
-#| "\n"
-#| "To do a two finger tap, hold one finger down and then tap with a second "
-#| "finger.\n"
-#| "\n"
-#| "### Three finger tap\n"
-#| "\n"
-#| "To do a three finger tap, start with holding down one finger and "
-#| "progressively touch down the other two fingers, one at a time, while "
-#| "still holding down the previous fingers. Imagine you are impatiently "
-#| "tapping your fingers on a surface, but then slow down that movement so it "
-#| "is rhythmic, but not too slow.\n"
-#| "\n"
-#| "### Immersive Sticky fullscreen mode\n"
-#| "\n"
-#| "Swipe from the edge to reveal the system bars.  They remain semi-"
-#| "transparent and disappear after a few seconds unless you interact with "
-#| "them.\n"
-#| "\n"
-#| "### Global Main Menu\n"
-#| "\n"
-#| "To open the Global Main Menu, tap on the menu icon at the top right of "
-#| "the screen.\n"
-#| "\n"
-#| "  ![Menu icon](menu.png \"Menu icon\"){w=10em}\n"
-#| "\n"
-#| "## Virtual keyboard\n"
-#| "\n"
-#| "To open the virtual keyboard, long press on the controller icon at the "
-#| "top right of the screen, or tap on any editable text field. To hide the "
-#| "virtual keyboard, tap the controller icon again, or tap outside the text "
-#| "field.\n"
-#| "\n"
-#| "\n"
-#| "  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
-#| "\n"
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -5160,13 +5071,13 @@ msgstr ""
 "όπου το δάχτυλο ακουμπά την οθόνη (αυτή είναι η προκαθορισμένη κατάσταση "
 "χειρισμού για τα μενού).\n"
 "\n"
-"  ![Λειτουργία άμεσου ποντικού](mouse.png \"Λειτουργία άμεσου ποντικού\")"
-"{w=10em}\n"
+"  ![Λειτουργία άμεσου ποντικού](mouse.png \"Λειτουργία άμεσου ποντικού\""
+"){w=10em}\n"
 "\n"
 " ### Προσομοίωση touchpad\n"
 " \n"
-" Ο χειρισμός αφής είναι έμμεσος και λειτουργεί όπως το touchpad ενός "
-"λάπτοπ.\n"
+" Ο χειρισμός αφής είναι έμμεσος και λειτουργεί όπως το touchpad ενός λάπτοπ."
+"\n"
 " \n"
 "   ![Λειτουργία touchpad](touchpad.png \"Λειτουργία touchpad\"){w=10em}\n"
 "\n"
@@ -5225,8 +5136,8 @@ msgstr ""
 "του πεδίου εισόδου κειμένου.\n"
 "\n"
 "\n"
-"  ![Εικονίδιο πληκτρολογίου](keyboard.png \"Εικονίδιο πληκτρολογίου\")"
-"{w=10em}\n"
+"  ![Εικονίδιο πληκτρολογίου](keyboard.png \"Εικονίδιο πληκτρολογίου\""
+"){w=10em}\n"
 "\n"
 
 #: backends/platform/android/android.cpp:1173
@@ -5492,80 +5403,6 @@ msgstr ""
 "οδηγό για το παιχνίδι. Καλή τύχη!\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:264
-#, fuzzy
-#| msgid ""
-#| "## Touch control modes\n"
-#| "The touch control mode can be changed by tapping or clicking on the "
-#| "controller icon in the upper right corner, by swiping two fingers from "
-#| "left to right, or in the global settings from the Launcher go to **Global "
-#| "Options > Backend > Choose the preferred touch mode**. It's possible to "
-#| "configure the touch mode for three situations (ScummVM menus, 2D games "
-#| "and 3D games).\n"
-#| "\n"
-#| "### Direct mouse \n"
-#| "\n"
-#| "The touch controls are direct. The pointer jumps to where the finger "
-#| "touches the screen (default for menus).\n"
-#| "\n"
-#| "  ![Direct mouse mode](mouse.png \"Direct mouse mode\"){w=10em}\n"
-#| "\n"
-#| "### Touchpad emulation \n"
-#| "\n"
-#| "The touch controls are indirect, like on a laptop touchpad.\n"
-#| "\n"
-#| "  ![Touchpad mode](touchpad.png \"Touchpad mode\"){w=10em}\n"
-#| "\n"
-#| "To select the preferred touch mode for menus, 2D games, and 3D games, go "
-#| "to **Global Options > Backend > Choose the preferred touch mode**.\n"
-#| "\n"
-#| "## Touch actions \n"
-#| "\n"
-#| "| Gesture           | Action            \n"
-#| "| ------------------|-------------------\n"
-#| "| `One finger tap`  | Left mouse click  \n"
-#| "| `Two fingers tap` | Right mouse click \n"
-#| "| `Two fingers double tap` | ESC \n"
-#| "| `One finger press & hold for >0.5s` | Left mouse button hold and drag, "
-#| "such as for selection from action wheel in Curse of Monkey Island \n"
-#| "| `Two fingers press & hold for >0.5s` | Right mouse button hold and "
-#| "drag, such as for selection from action wheel in Tony Tough \n"
-#| "| `Two fingers swipe (left to right)` | Toggles between the touch modes \n"
-#| "| `Two fingers swipe (right to left)` | Toggles virtual controller (>iOS "
-#| "15) \n"
-#| "| `Two fingers swipe (top to bottom)` | Access Global Main Menu in "
-#| "games \n"
-#| "| `Pinch (zoom in/out)` | Enables/disables keyboard \n"
-#| "\n"
-#| "### Virtual Gamepad \n"
-#| "\n"
-#| "Devices running iOS 15 or later can connect virtual gamepad controller by "
-#| "swiping two fingers from right to left or through **Global Options > "
-#| "Backend**. The directional button can be configured to either a "
-#| "thumbstick or a dpad.\n"
-#| "**Note** While the virtual controller is connected it is not possible to "
-#| "perform mouse clicks using tap gestures since they are disabled as long "
-#| "as the virtual controller is visible. Left mouse clicks are performed by "
-#| "pressing the A button. Tap gestures are enabled again when virtual "
-#| "controller is disconnected.\n"
-#| "\n"
-#| "### Global Main Menu\n"
-#| "\n"
-#| "To open the Global Main Menu, tap on the menu icon at the top right of "
-#| "the screen or swipe two fingers downwards.\n"
-#| "\n"
-#| "  ![Menu icon](menu.png \"Menu icon\"){w=10em}\n"
-#| "\n"
-#| "## Virtual keyboard\n"
-#| "\n"
-#| "To open the virtual keyboard, long press on the controller icon at the "
-#| "top right of the screen, perform a pinch gesture (zoom out) or tap on any "
-#| "editable text field. To hide the virtual keyboard, tap the controller "
-#| "icon again, do an opposite pinch gesture (zoom in) or tap outside the "
-#| "text field.\n"
-#| "\n"
-#| "\n"
-#| "  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
-#| "\n"
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -5652,13 +5489,13 @@ msgstr ""
 "όπου το δάχτυλο ακουμπά την οθόνη (αυτή είναι η προκαθορισμένη κατάσταση "
 "χειρισμού για τα μενού).\n"
 "\n"
-"  ![Λειτουργία άμεσου ποντικού](mouse.png \"Λειτουργία άμεσου ποντικού\")"
-"{w=10em}\n"
+"  ![Λειτουργία άμεσου ποντικού](mouse.png \"Λειτουργία άμεσου ποντικού\""
+"){w=10em}\n"
 "\n"
 " ### Προσομοίωση touchpad\n"
 " \n"
-" Ο χειρισμός αφής είναι έμμεσος και λειτουργεί όπως το touchpad ενός "
-"λάπτοπ.\n"
+" Ο χειρισμός αφής είναι έμμεσος και λειτουργεί όπως το touchpad ενός λάπτοπ."
+"\n"
 " \n"
 "   ![Λειτουργία touchpad](touchpad.png \"Λειτουργία touchpad\"){w=10em}\n"
 "\n"
@@ -5719,7 +5556,7 @@ msgstr ""
 "πατήστε σύντομα εκτός του πεδίου εισόδου κειμένου.\n"
 "\n"
 "\n"
-"  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
+"  ![Keyboard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
 "\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:314
@@ -5899,11 +5736,11 @@ msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:46
 msgid "LIBRETRO PLAYLIST GENERATOR"
-msgstr ""
+msgstr "ΓΕΝΝΗΤΡΙΑ PLAYLIST ΓΙΑ LIBRETRO"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:47
 msgid "(check '? > Libretro playlist' for detailed info)"
-msgstr ""
+msgstr "(βλέπε '? > Playlist Libretro' για λεπτομερείς πληροφορίες)"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:48
 msgid "Playlists Path"
@@ -5948,24 +5785,20 @@ msgid "Failed, can't access playlist file"
 msgstr "Αποτυχία λόγω αδυναμίας πρόσβασης στο αρχείο playlist"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:224
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "cleaning failed"
-msgstr "Η ανάγνωση δεδομένων απέτυχε"
+msgstr "o καθαρισμός απέτυχε"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:226
 msgid "Failed, can't create hook files"
 msgstr "Αποτυχία λόγω αδυναμίας δημιουργίας αρχείων hook"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:236
-#, fuzzy
-#| msgid "Select additional game directory"
 msgid "Select Playlist directory"
-msgstr "Επιλέξτε πρόσθετο φάκελο παιχνιδιού"
+msgstr "Επιλέξτε το φάκελο της Playlist"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:233
 msgid "Libretro playlist"
-msgstr ""
+msgstr "Playlist Libretro"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:236
 msgid ""
@@ -5982,6 +5815,21 @@ msgid ""
 "\n"
 "The core also supports dedicated per game **hook** plain text files with **."
 msgstr ""
+"## Playlists Libretro για τον πυρήνα ScummVM\n"
+"Οι playlists που χρησιμοποιούνται στις εφαρμογές Libretro (π.χ. Retroarch) "
+"είναι λίστες σε απλό κείμενο που χρησιμοποιούνται για την απευθείας εκκίνηση "
+"ενός παιχνιδιού με ένα συγκεκριμένο πυρήνα (core) από το περιβάλλον διεπαφής "
+"χρήστη. Οι λίστες αυτές είναι δομημένες ώστε να παρέχουν στον πυρήνα το "
+"μονοπάτι προς ένα συγκεκριμένο αρχείο περιεχομένου προς φόρτωση (π.χ. ROM).\n"
+"\n"
+"Ο πυρήνας ScummVM μπορεί να δεχτεί ως περιεχόμενο το μονοπάτι προς "
+"οποιοδήποτε από τα αρχεία που περιέχονται σε έναν έγκυρο φάκελο παιχνιδιού. "
+"Το σύστημα ανίχνευσης θα προσπαθήσει να καθορίσει αυτόματα το παιχνίδι από "
+"τον γονικό φάκελο του αρχείου περιεχομένου και να εκτελέσει το παιχνίδι με "
+"τις προκαθορισμένες επιλογές του ScummVM.\n"
+"\n"
+"Ο πυρήνας υποστηρίζει επίσης **hook** αρχεία κειμένου, αποκλειστικά ανά "
+"παιχνίδι με **."
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
@@ -6141,64 +5989,44 @@ msgid "BSD License"
 msgstr "Άδεια BSD"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:329
-#, fuzzy
-#| msgid "GPL License"
 msgid "Apache License"
-msgstr "Άδεια GPL"
+msgstr "Άδεια Apache"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:330
-#, fuzzy
-#| msgid "BSD License"
 msgid "BSL License"
-msgstr "Άδεια BSD"
+msgstr "Άδεια BSL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:331
-#, fuzzy
-#| msgid "GPL License"
 msgid "GLAD License"
-msgstr "Άδεια GPL"
+msgstr "Άδεια GLAD"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:332
-#, fuzzy
-#| msgid "BSD License"
 msgid "ISC License"
-msgstr "Άδεια BSD"
+msgstr "Άδεια ISC"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:333
-#, fuzzy
-#| msgid "GPL License"
 msgid "Lua License"
-msgstr "Άδεια GPL"
+msgstr "Άδεια Lua"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:334
-#, fuzzy
-#| msgid "GPL License"
 msgid "MIT License"
-msgstr "Άδεια GPL"
+msgstr "Άδεια MIT"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:335
-#, fuzzy
-#| msgid "GPL License"
 msgid "MKV License"
-msgstr "Άδεια GPL"
+msgstr "Άδεια MKV"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:336
-#, fuzzy
-#| msgid "GPL License"
 msgid "MPL License"
-msgstr "Άδεια GPL"
+msgstr "Άδεια MPL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:337
-#, fuzzy
-#| msgid "GPL License"
 msgid "TinyGL License"
-msgstr "Άδεια GPL"
+msgstr "Άδεια TinyGL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:338
-#, fuzzy
-#| msgid "Freefont License"
 msgid "Catharon License"
-msgstr "Άδεια Freefont"
+msgstr "Άδεια Catharon"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:79
@@ -7960,10 +7788,8 @@ msgstr "Ρύθμιση γρήγορης κίνησης"
 
 #. I18N: Opens menu with player commands
 #: engines/cruise/metaengine.cpp:173
-#, fuzzy
-#| msgid "Player Time:"
 msgid "Player menu"
-msgstr "Χρόνος Παιχνιδιού:"
+msgstr "Μενού Παίκτη"
 
 #: engines/cruise/metaengine.cpp:179
 #, fuzzy
@@ -8176,7 +8002,7 @@ msgstr "Προηχογραφημένα ηχητικά εφέ"
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
 "Χρήση προ-ηχογραφημένων ηχητικών εφέ υψηλής ποιότητας αντί ήχου εξομοίωσης "
-"ηχείου PC (PC speaker)"
+"απλού ηχείου (PC speaker)"
 
 #: engines/freescape/metaengine.cpp:53
 msgid "Extended timer"
@@ -8996,7 +8822,7 @@ msgstr "Όλα τα επίπεδα θα γίνουν διαθέσιμα στο �
 
 #: engines/hypno/metaengine.cpp:77
 msgid "Enable restored content"
-msgstr "Αποκατεστημένο περιεχόμενο"
+msgstr "Με αποκατεστημένο περιεχόμενο"
 
 #: engines/hypno/metaengine.cpp:78
 msgid "Add additional content that is not enabled the original implementation."
@@ -10508,13 +10334,12 @@ msgstr "Χρήση μιας πιο ευανάγνωστης, προσαρμοσ�
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:875
 msgid "Windows Trial version is not supported"
-msgstr ""
-"Η δοκιμαστική έκδοση για Windows (Windows Trial Version) δεν υποστηρίζεται"
+msgstr "Η δοκιμαστική έκδοση για Windows (Trial Version) δεν υποστηρίζεται"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:902
 msgid "macOS Trial version is not supported"
-msgstr "Η δοκιμαστική έκδοση για macOS (macOS Trial version) δεν υποστηρίζεται"
+msgstr "Η δοκιμαστική έκδοση για macOS (Trial version) δεν υποστηρίζεται"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:928
@@ -12191,11 +12016,11 @@ msgid ""
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please copy the game from the original media without compression."
 msgstr ""
-"Εντοπίστηκαν αρχεία ήχου συμπιεσμένα με τα Εργαλεία ScummVM (ScummVM Tools). "
-"Η μορφή συμπίεσης\n"
+"Εντοπίστηκαν αρχεία ήχου συμπιεσμένα με τα Εργαλεία ScummVM. Η μορφή "
+"συμπίεσης\n"
 "*.BUN/*.SOU δεν υποστηρίζεται πλέον για αυτό το παιχνίδι, και ο ήχος θα "
 "απενεργοποιηθεί.\n"
-"Παρακαλούμε να αντιγράψετε τα αυθεντικά (original) ασυμπίεστα αρχεία ήχου "
+"Παρακαλούμε να αντιγράψετε τα αυθεντικά (original), ασυμπίεστα, αρχεία ήχου "
 "του παιχνιδιού."
 
 #: engines/scumm/scumm.cpp:2191
@@ -12829,15 +12654,10 @@ msgstr ""
 "RGB"
 
 #: engines/sword2/detection_tables.h:419
-#, fuzzy
-#| msgid ""
-#| "Enhanced Edition not supported. Please, use the original files which are "
-#| "part of the release."
 msgid "Remastered edition is not supported. Please, use the classic version"
 msgstr ""
-"Η Enhanced Edition έκδοση δεν υποστηρίζεται. Παρακαλούμε, χρησιμοποιήστε τα "
-"αρχεία του αρχικού (original) παιχνιδιού που εμπεριέχονται σε αυτή την "
-"έκδοση."
+"Η Remastered edition δεν υποστηρίζεται. Παρακαλούμε, χρησιμοποιήστε την "
+"κλασσική έκδοση"
 
 #: engines/sword2/metaengine.cpp:43
 msgid "Show object labels"
@@ -13791,8 +13611,8 @@ msgstr "Επιβολή χρήσης απόδοσης εικόνας 2D (μόνο
 #: engines/wintermute/metaengine.cpp:68
 msgid "This setting forces ScummVM to use 2D renderer while running 2D games"
 msgstr ""
-"Η ρύθμιση αυτή εξαναγκάζει το ScummVM να χρησιμοποιήσει απόδοση εικόνας 2D "
-"(2D renderer) κατά την εκτέλεση παιχνιδιών 2D"
+"Η ρύθμιση αυτή εξαναγκάζει το ScummVM να χρησιμοποιήσει απόδοση 2D εικόνας ("
+"2D renderer) κατά την εκτέλεση παιχνιδιών 2D"
 
 #: engines/wintermute/metaengine.cpp:110
 msgid "FoxTail support is not compiled in"
