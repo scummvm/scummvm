@@ -1181,8 +1181,11 @@ Common::Error ScummEngine::init() {
 	if (_game.platform == Common::kPlatformMacintosh && _game.heversion == 0) {
 		Common::MacResManager resource;
 
-		_macScreen = new Graphics::Surface();
-		_macScreen->create(640, _useMacScreenCorrectHeight ? 480 : 400, Graphics::PixelFormat::createFormatCLUT8());
+		// Indy3 and LOOM *must* use the _macScreen
+		if (isUsingOriginalGUI() || _game.version == 3) {
+			_macScreen = new Graphics::Surface();
+			_macScreen->create(640, _useMacScreenCorrectHeight ? 480 : 400, Graphics::PixelFormat::createFormatCLUT8());
+		}
 
 		// \xAA is a trademark glyph in Mac OS Roman. We try that, but
 		// also the Windows version, the UTF-8 version, and just plain
@@ -1202,7 +1205,8 @@ Common::Error ScummEngine::init() {
 					macResourceFile = indyFileNames[i];
 
 					_textSurfaceMultiplier = 2;
-					_macGui = new MacGui(this, macResourceFile);
+					if (isUsingOriginalGUI())
+						_macGui = new MacGui(this, macResourceFile);
 					break;
 				}
 			}
@@ -1224,7 +1228,8 @@ Common::Error ScummEngine::init() {
 					macResourceFile = loomFileNames[i];
 
 					_textSurfaceMultiplier = 2;
-					_macGui = new MacGui(this, macResourceFile);
+					if (isUsingOriginalGUI())
+						_macGui = new MacGui(this, macResourceFile);
 					break;
 				}
 			}
@@ -1253,7 +1258,7 @@ Common::Error ScummEngine::init() {
 				GUI::MessageDialog dialog(_("Could not find the 'Monkey Island' Macintosh executable to read resources\n"
 											"and instruments from. Music and Mac GUI will be disabled."), _("OK"));
 				dialog.runModal();
-			} else {
+			} else if (isUsingOriginalGUI()) {
 				_macGui = new MacGui(this, macResourceFile);
 			}
 		} else if (_game.id == GID_INDY4 && _language != Common::JA_JPN) {
@@ -1287,7 +1292,7 @@ Common::Error ScummEngine::init() {
 											"Mac GUI will not be shown."),
 										_("OK"));
 				dialog.runModal();
-			} else {
+			} else if (isUsingOriginalGUI()) {
 				_macGui = new MacGui(this, macResourceFile);
 			}
 		} else if (_game.id == GID_MONKEY2) {
@@ -1307,7 +1312,7 @@ Common::Error ScummEngine::init() {
 											"Mac GUI will not be shown."),
 										  _("OK"));
 				dialog.runModal();
-			} else {
+			} else if (isUsingOriginalGUI()) {
 				_macGui = new MacGui(this, macResourceFile);
 			}
 		}
