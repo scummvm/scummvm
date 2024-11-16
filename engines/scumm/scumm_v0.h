@@ -152,7 +152,6 @@ protected:
 	void o_lights();
 	void o_unlockCostume();
 	void o_unlockScript();
-	void o_decrement();
 	void o_nop();
 	void o_getObjectOwner();
 	void o_getActorBitVar();

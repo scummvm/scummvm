@@ -47,8 +47,6 @@ protected:
 	void generateSpkSamples(int16 *data, uint len) override;
 	void generatePCjrSamples(int16 *data, uint len) override;
 
-	void restartSound();
-
 	void set_mplex(uint mplex);
 	void parseSpeakerChunk();
 	void nextSpeakerCmd();

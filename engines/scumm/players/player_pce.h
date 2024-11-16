@@ -104,9 +104,6 @@ private:
 	int16* _sampleBuffer;
 	int _sampleBufferCnt;
 
-	void init();
-	bool isPlaying();
-
 	void PSG_Write(int reg, byte data);
 
 	void setupWaveform(byte bank);
@@ -114,15 +111,10 @@ private:
 	void updateSound();
 	void procA731(channel_t *channel);
 	void processSoundData(channel_t *channel);
-	void procA9F3(int x);
 	void procAA62(channel_t *channel, int a);
-	uint16 procAAF6(int x);
 	void procAB7F(channel_t *channel);
 	void procAC24(channel_t *channel);
 	void procACEA(channel_t *channel, int a);
-	void procAD21(int a, int x);
-	void procAD29(int value);
-	void procAD3D(int a, int x);
 };
 
 } // End of namespace Scumm
