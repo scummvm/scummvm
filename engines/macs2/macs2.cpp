@@ -649,7 +649,19 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// TODO: Remove the now superfluous one
 	ReadBackgroundAnimations(_fileStream);
 
+	// Offset 51F7h
 	numPathfindingPoints = _fileStream->readUint16LE();
+
+	// Offset 51F9h
+	_fileStream->readUint16LE();
+
+	// Offset 51FBh
+	_fileStream->readUint16LE();
+
+	// Offset 51FDh - 5201h
+	word51FD = _fileStream->readUint16LE();
+	word51FF = _fileStream->readUint16LE();
+	word5201 = _fileStream->readUint16LE();
 	
 
 
@@ -661,7 +673,10 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// Refresh the surface
 	currentView->_backgroundSurface = _bgImageShip;
 
-
+	// Stop all characters from sending leftover events
+	for (auto currentCharacter : currentView->characters) {
+		currentCharacter->ExecuteScriptOnFinishLerp = false;
+	}
 	currentView->characters.clear();
 	for (auto currentObject : GameObjects::instance().Objects) {
 		if (currentObject->SceneIndex == newSceneIndex) {
