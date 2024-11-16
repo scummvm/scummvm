@@ -187,7 +187,7 @@ bool Cursor::restoreBackground(const Graphics::Surface &srcSurface, bool force) 
 	Graphics::Surface &dstSurface = *_parentScreen->offsettedSurf;
 	const int dstBitsPerPixel     = _manager->getBitsPerPixel(dstSurface.format);
 
-	//debug("Cursor::restoreBackground: %d %d %d %d", _savedRect.left, _savedRect.top, _savedRect.width(), _savedRect.height());
+	//atari_debug("Cursor::restoreBackground: %d %d %d %d", _savedRect.left, _savedRect.top, _savedRect.width(), _savedRect.height());
 
 	if (srcSurface.getPixels()) {
 		_manager->copyRectToSurface(
@@ -217,7 +217,7 @@ bool Cursor::draw(bool directRendering, bool force) {
 	Graphics::Surface &dstSurface = *_parentScreen->offsettedSurf;
 	const int dstBitsPerPixel     = _manager->getBitsPerPixel(dstSurface.format);
 
-	//debug("Cursor::draw: %d %d %d %d", _dstRect.left, _dstRect.top, _dstRect.width(), _dstRect.height());
+	//atari_debug("Cursor::draw: %d %d %d %d", _dstRect.left, _dstRect.top, _dstRect.width(), _dstRect.height());
 
 	// always work with aligned rect
 	_savedRect = _manager->alignRect(_dstRect);

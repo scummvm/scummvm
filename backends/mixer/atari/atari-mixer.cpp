@@ -27,8 +27,8 @@
 #include <mint/ostruct.h>
 #include <usound.h>	// https://github.com/mikrosk/usound
 
+#include "backends/platform/atari/atari-debug.h"
 #include "common/config-manager.h"
-#include "common/debug.h"
 
 #define DEFAULT_OUTPUT_RATE 24585
 #define DEFAULT_OUTPUT_CHANNELS 2
@@ -54,7 +54,7 @@ static void __attribute__((interrupt)) timerA(void)
 }
 
 AtariMixerManager::AtariMixerManager() : MixerManager() {
-	debug("AtariMixerManager()");
+	atari_debug("AtariMixerManager()");
 
 	suspendAudio();
 
@@ -77,7 +77,7 @@ AtariMixerManager::AtariMixerManager() : MixerManager() {
 }
 
 AtariMixerManager::~AtariMixerManager() {
-	debug("~AtariMixerManager()");
+	atari_debug("~AtariMixerManager()");
 
 	g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 
@@ -119,9 +119,9 @@ void AtariMixerManager::init() {
 	ConfMan.setInt("output_channels", _outputChannels);
 	ConfMan.setInt("audio_buffer_size", _samples);
 
-	debug("setting %d Hz mixing frequency (%d-bit, %s)",
+	atari_debug("setting %d Hz mixing frequency (%d-bit, %s)",
 		  _outputRate, obtained.format == AudioFormatSigned8 ? 8 : 16, _outputChannels == 1 ? "mono" : "stereo");
-	debug("sample buffer size: %d", _samples);
+	atari_debug("sample buffer size: %d", _samples);
 
 	ConfMan.flushToDisk();
 
@@ -145,7 +145,7 @@ void AtariMixerManager::init() {
 }
 
 void AtariMixerManager::suspendAudio() {
-	debug("suspendAudio");
+	atari_debug("suspendAudio");
 
 	Buffoper(0x00);
 	muted = true;
@@ -153,7 +153,7 @@ void AtariMixerManager::suspendAudio() {
 }
 
 int AtariMixerManager::resumeAudio() {
-	debug("resumeAudio");
+	atari_debug("resumeAudio");
 
 	_audioSuspended = false;
 	update();
@@ -167,7 +167,7 @@ bool AtariMixerManager::notifyEvent(const Common::Event &event) {
 		if (!muted) {
 			Buffoper(0x00);
 			muted = true;
-			debug("silencing the mixer");
+			atari_debug("silencing the mixer");
 		}
 		return false;
 	default:
@@ -248,6 +248,6 @@ void AtariMixerManager::update() {
 	}
 
 	if (processed > 0 && processed != _samples) {
-		warning("processed: %d, _samples: %d", processed, _samples);
+		atari_warning("processed: %d, _samples: %d", processed, _samples);
 	}
 }

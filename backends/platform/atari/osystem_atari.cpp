@@ -54,10 +54,10 @@
 #include "backends/keymapper/hardware-input.h"
 #include "backends/mixer/atari/atari-mixer.h"
 #include "backends/mutex/null/null-mutex.h"
+#include "backends/platform/atari/atari-debug.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "base/main.h"
-#include "gui/debugger.h"
 
 #define INPUT_ACTIVE
 
@@ -221,7 +221,7 @@ OSystem_Atari::OSystem_Atari() {
 }
 
 OSystem_Atari::~OSystem_Atari() {
-	debug("OSystem_Atari::~OSystem_Atari()");
+	atari_debug("OSystem_Atari::~OSystem_Atari()");
 
 	// _audiocdManager needs to be deleted before _mixerManager to avoid a crash.
 	delete _audiocdManager;
@@ -364,7 +364,7 @@ void OSystem_Atari::delayMillis(uint msecs) {
 }
 
 void OSystem_Atari::getTimeAndDate(TimeDate &td, bool skipRecord) const {
-	//debug("getTimeAndDate");
+	//atari_debug("getTimeAndDate");
 	time_t curTime = time(0);
 	struct tm t = *localtime(&curTime);
 	td.tm_sec = t.tm_sec;
@@ -394,26 +394,30 @@ Common::HardwareInputSet *OSystem_Atari::getHardwareInputSet() {
 }
 
 void OSystem_Atari::quit() {
-	debug("OSystem_Atari::quit()");
+	atari_debug("OSystem_Atari::quit()");
 
 	g_system->destroy();
 }
 
 void OSystem_Atari::logMessage(LogMessageType::Type type, const char *message) {
-	FILE *output = 0;
-
-	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
-		output = stdout;
-	else
-		output = stderr;
+	extern long nf_stderr_id;
 
 	static char str[1024+1];
 	snprintf(str, sizeof(str), "[%08d] %s", getMillis(), message);
 
-	fputs(str, output);
-	fflush(output);
+	if (nf_stderr_id) {
+		nf_print(str);
+	} else {
+		FILE *output = 0;
 
-	nf_print(str);
+		if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
+			output = stdout;
+		else
+			output = stderr;
+
+		fputs(str, output);
+		fflush(output);
+	}
 }
 
 void OSystem_Atari::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
@@ -471,7 +475,7 @@ void OSystem_Atari::update() {
 	} else if (checkGameDomain) {
 		const Common::ConfigManager::Domain *activeDomain = ConfMan.getActiveDomain();
 		if (activeDomain) {
-			warning("%s/%s calls update() from timer",
+			atari_warning("%s/%s calls update() from timer",
 				activeDomain->getValOrDefault("engineid").c_str(),
 				activeDomain->getValOrDefault("gameid").c_str());
 

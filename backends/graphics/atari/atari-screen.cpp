@@ -140,7 +140,7 @@ void Screen::addDirtyRect(const Graphics::Surface &srcSurface, const Common::Rec
 
 	if ((rect.width() == srcSurface.w && rect.height() == srcSurface.h)
 		|| dirtyRects.size() == 128) {	// 320x200 can hold at most 250 16x16 rectangles
-		//debug("addDirtyRect[%d]: purge %d x %d", (int)dirtyRects.size(), srcSurface.w, srcSurface.h);
+		//atari_debug("addDirtyRect[%d]: purge %d x %d", (int)dirtyRects.size(), srcSurface.w, srcSurface.h);
 
 		dirtyRects.clear();
 		dirtyRects.emplace(srcSurface.w, srcSurface.h);
