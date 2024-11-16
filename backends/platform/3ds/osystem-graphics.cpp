@@ -84,7 +84,7 @@ void OSystem_3DS::init3DSGraphics() {
 	                          DISPLAY_TRANSFER_FLAGS);
 
 	// Load and bind simple default shader (shader.v.pica)
-	_dvlb = DVLB_ParseFile((u32*)shader_shbin, shader_shbin_size);
+	_dvlb = DVLB_ParseFile((u32*)const_cast<u8 *>(shader_shbin), shader_shbin_size);
 	shaderProgramInit(&_program);
 	shaderProgramSetVsh(&_program, &_dvlb->DVLE[0]);
 	C3D_BindProgram(&_program);
