@@ -57,6 +57,15 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"darkseed",
 		"CD",
+		AD_ENTRY1s("TOS.EXE", "57581682c29fc7d242b463210b6e54b4", 144422),
+		Common::DE_DEU,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE | ADGF_CD,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"darkseed",
+		"CD",
 		AD_ENTRY1s("DARKSEED.EXE", "27321d178a553c4dc17d1a2a601a9a6f", 1432140),
 		Common::JA_JPN,
 		Common::kPlatformWindows,
