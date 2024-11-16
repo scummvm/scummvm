@@ -43,6 +43,7 @@ bool EmulateInstallUtilExternalCalls(BaseGame *, ScStack *, ScStack *, ScScript:
 bool EmulateDLLTestExternalCalls(BaseGame *, ScStack *, ScStack *, ScScript::TExternalFunction *);
 bool EmulateKernel32ExternalCalls(BaseGame *, ScStack *, ScStack *, ScScript::TExternalFunction *);
 bool EmulateHTTPConnectExternalCalls(BaseGame *, ScStack *, ScStack *, ScScript::TExternalFunction *);
+bool EmulateRoutineExternalCalls(BaseGame *, ScStack *, ScStack *, ScScript::TExternalFunction *);
 
 bool EmulateExternalCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, ScScript::TExternalFunction *function) {
 
@@ -90,6 +91,12 @@ bool EmulateExternalCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, S
 
 	if (strcmp(function->dll_name, "httpconnect.dll") == 0) {
 		if (!DID_FAIL(EmulateHTTPConnectExternalCalls(inGame, stack, thisStack, function))) {
+			return STATUS_OK;
+		}
+	}
+
+	if (strcmp(function->dll_name, "routine.dll") == 0) {
+		if (!DID_FAIL(EmulateRoutineExternalCalls(inGame, stack, thisStack, function))) {
 			return STATUS_OK;
 		}
 	}
