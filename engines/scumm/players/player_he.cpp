@@ -31,10 +31,11 @@ namespace Scumm {
 Player_HE::Player_HE(ScummEngine *scumm) :
 	_vm(scumm),
 	_currentMusic(-1),
-	_bank(NULL),
-	_parser(NULL),
-	_midi(NULL),
-	_masterVolume(256) {
+	_bank(nullptr),
+	_parser(nullptr),
+	_midi(nullptr),
+	_masterVolume(256),
+	_bankSize(0) {
 
 	for (int chan = 0; chan < 16; chan++)
 		_channelVolume[chan] = 127;

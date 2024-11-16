@@ -89,9 +89,9 @@ static const byte LengthCounts[32] = {
 
 class SoundGen {
 protected:
-	byte wavehold;
-	uint32 freq;	// short
-	uint32 CurD;
+	byte wavehold = 0;
+	uint32 freq = 0;	// short
+	uint32 CurD = 0;
 
 public:
 	byte Timer;
@@ -103,11 +103,11 @@ public:
 
 class Square : public SoundGen {
 protected:
-	byte volume, envelope, duty, swpspeed, swpdir, swpstep, swpenab;
-	byte Vol;
-	byte EnvCtr, Envelope, BendCtr;
-	bool Enabled, ValidFreq, Active;
-	bool EnvClk, SwpClk;
+	byte volume = 0, envelope = 0, duty = 0, swpspeed = 0, swpdir = 0, swpstep = 0, swpenab = 0;
+	byte Vol = 0;
+	byte EnvCtr = 0, Envelope = 0, BendCtr = 0;
+	bool Enabled = 0, ValidFreq = 0, Active = 0;
+	bool EnvClk = 0, SwpClk = 0;
 
 	void CheckActive();
 
@@ -236,10 +236,10 @@ void Square::HalfFrame() {
 
 class Triangle : public SoundGen {
 protected:
-	byte linear;
-	byte LinCtr;
-	bool Enabled, Active;
-	bool LinClk;
+	byte linear = 0;
+	byte LinCtr = 0;
+	bool Enabled = false, Active = false;
+	bool LinClk = false;
 
 	void CheckActive();
 
@@ -341,13 +341,11 @@ void Triangle::HalfFrame() {
 
 class Noise : public SoundGen {
 protected:
-	byte volume, envelope, datatype;
-	byte Vol;
-	byte EnvCtr, Envelope;
-	bool Enabled;
-	bool EnvClk;
-
-	void CheckActive();
+	byte volume = 0, envelope = 0, datatype = 0;
+	byte Vol = 0;
+	byte EnvCtr = 0, Envelope = 0;
+	bool Enabled = false;
+	bool EnvClk = false;
 
 public:
 	void Reset();

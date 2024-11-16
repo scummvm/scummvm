@@ -53,7 +53,7 @@ Player_V3A::Player_V3A(ScummEngine *scumm, Audio::Mixer *mixer)
 
 bool Player_V3A::init() {
 	byte *ptr;
-	int numInstruments = 0;
+	int numInstruments;
 
 	// Determine which sound resource contains the wavetable data and how large it is
 	// This is hardcoded into each game's executable
