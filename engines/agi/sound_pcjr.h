@@ -117,6 +117,9 @@ private:
 
 	uint8 *_v1data;
 	uint32 _v1size;
+	int _v1duration;
+
+	int _reg;
 };
 
 } // End of namespace Agi
