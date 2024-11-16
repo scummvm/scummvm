@@ -283,13 +283,13 @@ void UpdateClipRectSingle(OBJECT *pObj, Common::Point *pWin, Common::Rect *pClip
 			// object totally clipped vertically - ignore
 			return;
 
-		// set clip bit in objects flags
+		// set clip bit in object flags
 		currentObj.flags = pObj->flags | DMA_CLIP;
 	} else {	// object is not clipped - copy flags
 		currentObj.flags = pObj->flags;
 	}
 
-	// copy objects properties to local object
+	// copy object properties to local object
 	currentObj.width          = pObj->width;
 	currentObj.height         = pObj->height;
 	currentObj.xPos           = (short)x;

@@ -220,7 +220,7 @@ void Background::DrawBackgnd() {
 	// redraw all playfields within the clipping rectangles
 	const RectList &clipRects = GetClipRects();
 
-	// Noir 3D model's cliprect is updated the rendering.
+	// Noir 3D model's cliprect is updated for rendering.
 	if (TinselVersion == 3) {
 		for (unsigned int i = 0; i < _pCurBgnd->fieldArray.size(); i++) {
 			// get pointer to correct playfield

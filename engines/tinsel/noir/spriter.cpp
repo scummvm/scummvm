@@ -439,7 +439,7 @@ void Spriter::SetPalette(SCNHANDLE hPalette) {
 	uint32 paletteHeaderSize = 2 + 2;
 	uint32 paletteBodySize = PALETTE_COUNT * 256 * sizeof(uint16);
 
-	/* Select only one palette as they are sorded by light intensity */
+	/* Select only one palette, as they are sorted by light intensity */
 	uint32 paletteId = PALETTE_COUNT - 1;
 
 	Graphics::PixelFormat paletteFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
@@ -981,7 +981,7 @@ void Spriter::RenderMesh(Mesh& mesh, Vectors& vertices, Vectors &normals) {
 			RenderMeshPartColor(part, vertices, normals);
 			break;
 		case MESH_PART_TYPE_SOLID:
-			// This is just use white color
+			// This just uses white color
 			//RenderMeshPartColor(part, vertices, normals);
 			break;
 		case MESH_PART_TYPE_TEXTURE:
