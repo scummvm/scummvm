@@ -109,7 +109,7 @@ int16 Globals::getGlobal(uint16 num) {
 }
 
 int16 Globals::setGlobal(uint16 num, int16 val) {
-	//debug("setGlobal %d -> %d", num, val);
+	//debug(1, "setGlobal %d -> %d", num, val);
 	for (auto &global : _globals) {
 		if (global->getNum() == num)
 			return global->set(val);

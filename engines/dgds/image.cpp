@@ -95,7 +95,7 @@ void Image::drawScreen(const Common::String &filename, Graphics::ManagedSurface 
 				error("Trying to load SCR size %d x %d which is larger than screen %d x %d",
 					xsize, ysize, surface.w, surface.h);
 			}
-			debug("screen file %s dims %d x %d into surface %d x %d",
+			debug(1, "screen file %s dims %d x %d into surface %d x %d",
 				filename.c_str(), xsize, ysize, surface.w, surface.h);
 		} else if (chunk.isSection(ID_VGA)) {
 			loadBitmap4(&surface, 0, stream, true, xsize, ysize);
@@ -187,7 +187,7 @@ void Image::loadBitmap(const Common::String &filename) {
 			_matrixY = stream->readUint16LE();
 			uint32 mcount = (uint32)_matrixX * _matrixY;
 			_tileMatrix.resize(mcount);
-			debug("		%u x %u: mtx vals", _matrixX, _matrixY);
+			debug(1, "		%u x %u: mtx vals", _matrixX, _matrixY);
 
 			for (uint32 k = 0; k < mcount; k++) {
 				uint16 tile;

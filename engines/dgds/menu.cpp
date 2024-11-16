@@ -564,7 +564,7 @@ void Menu::handleClick(const Common::Point &mouse) {
 		drawMenu(_curMenu);
 		break;
 	default:
-		debug("Clicked ID %d", clickedMenuItem);
+		debug(1, "Clicked ID %d", clickedMenuItem);
 		break;
 	}
 }

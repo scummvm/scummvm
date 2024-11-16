@@ -785,7 +785,7 @@ void MidiParser_SCI::remapChannel(int channel, int devChannel) {
 	if (devChannel == -1)
 		return;
 
-//	debug("  restoring state: channel %d on devChannel %d", channel, devChannel);
+//	debug(1, "  restoring state: channel %d on devChannel %d", channel, devChannel);
 
 	// restore state
 	ChannelState &s = _channelState[channel];

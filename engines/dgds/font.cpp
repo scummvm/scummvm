@@ -52,7 +52,7 @@ DgdsFont *DgdsFont::load(const Common::String &filename, ResourceManager *resour
 		if (chunk.isSection(ID_FNT)) {
 			byte magic = stream->readByte();
 			stream->seek(-1, SEEK_CUR);
-			debug("    magic: %u", magic);
+			debug(1, "    magic: %u", magic);
 
 			if (magic != 0xFF)
 				font = FFont::load(*stream);
@@ -133,7 +133,7 @@ FFont *FFont::load(Common::SeekableReadStream &input) {
 
 	assert((4 + size) == input.size());
 
-	debug("FFont w: %u, h: %u, start: 0x%x, count: %u", w, h, start, count);
+	debug(1, "FFont w: %u, h: %u, start: 0x%x, count: %u", w, h, start, count);
 
 	byte *data = new byte[size];
 	input.read(data, size);
@@ -178,7 +178,7 @@ PFont *PFont::load(Common::SeekableReadStream &input, Decompressor *decompressor
 	byte count = input.readByte();
 	int size = input.readUint16LE();
 
-	debug("PFont magic: 0x%x, w: %u, h: %u, unk: %u, start: 0x%x, count: %u, size: %u",
+	debug(1, "PFont magic: 0x%x, w: %u, h: %u, unk: %u, start: 0x%x, count: %u, size: %u",
 			magic, w, h, unknown, start, count, size);
 
 	assert(magic == 0xFF);

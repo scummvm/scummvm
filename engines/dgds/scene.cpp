@@ -1581,7 +1581,7 @@ bool SDSScene::checkDialogActive() {
 				if (action) {
 					// Take a copy of the dialog because the actions might change the scene
 					Dialog dlgCopy = dlg;
-					debug("Dialog %d closing: run action (%d ops)", dlg._num, action->sceneOpList.size());
+					debug(1, "Dialog %d closing: run action (%d ops)", dlg._num, action->sceneOpList.size());
 					if (!runOps(action->sceneOpList)) {
 						// HACK: the scene changed, but we haven't yet drawn the foreground for the
 						// dialog, this is our last chance so do it now.  The game does it in a
@@ -1798,10 +1798,10 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 	GDSScene *gds = engine->getGDSScene();
 
 	if (area->_num == 0) {
-		debug("Mouseup on inventory.");
+		debug(1, "Mouseup on inventory.");
 		engine->getInventory()->open();
 	} else if (area->_num == 0xffff) {
-		debug("Mouseup on swap characters.");
+		debug(1, "Mouseup on swap characters.");
 		bool haveInvBtn = _hotAreaList.size() && _hotAreaList.front()._num == 0;
 		if (haveInvBtn)
 			removeInvButtonFromHotAreaList();
@@ -1812,7 +1812,7 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 			addInvButtonToHotAreaList();
 	} else {
 		if (_rbuttonDown) {
-			debug(" --> exec both-button click ops for area %d", area->_num);
+			debug(1, " --> exec both-button click ops for area %d", area->_num);
 			// A both-button-click event, find the interaction list.
 			const GameItem *activeItem = engine->getGDSScene()->getActiveItem();
 			if (activeItem) {
@@ -1827,13 +1827,13 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 					i = _findInteraction(_objInteractions2, activeItem->_num, area->_num);
 				}
 				if (i) {
-					debug(" --> exec %d both-click ops for item combo %d", i->opList.size(), activeItem->_num);
+					debug(1, " --> exec %d both-click ops for item combo %d", i->opList.size(), activeItem->_num);
 					if (!runOps(i->opList, engine->getGameGlobals()->getGameMinsToAddOnObjInteraction()))
 						return;
 				}
 			}
 		} else {
-			debug(" --> exec %d click ops for area %d", area->onLClickOps.size(), area->_num);
+			debug(1, " --> exec %d click ops for area %d", area->onLClickOps.size(), area->_num);
 			int16 addmins = engine->getGameGlobals()->getGameMinsToAddOnLClick();
 			runOps(area->onLClickOps, addmins);
 		}
@@ -1859,10 +1859,10 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 
 	for (const auto &item : gdsScene->getGameItems()) {
 		if (item._inSceneNum == _num && _isInRect(pt, item._rect)) {
-			debug("Dragged item %d onto item %d @ (%d, %d)", dragItem->_num, item._num, pt.x, pt.y);
+			debug(1, "Dragged item %d onto item %d @ (%d, %d)", dragItem->_num, item._num, pt.x, pt.y);
 			const ObjectInteraction *i = _findInteraction(gdsScene->getObjInteractions1(), dragItem->_num, item._num);
 			if (i) {
-				debug(" --> exec %d drag ops for item %d", i->opList.size(), item._num);
+				debug(1, " --> exec %d drag ops for item %d", i->opList.size(), item._num);
 				if (!runOps(i->opList, globals->getGameMinsToAddOnObjInteraction()))
 					return;
 			}
@@ -1875,34 +1875,34 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 			continue;
 
 		if (area._num == 0) {
-			debug("Item %d dropped on inventory.", dragItem->_num);
+			debug(1, "Item %d dropped on inventory.", dragItem->_num);
 			dragItem->_inSceneNum = 2;
 			if (engine->getGameId() == GID_HOC)
 				dragItem->_quality = Inventory::HOC_CHARACTER_QUALS[gdsScene->getGlobal(0x33)];
 
 			const ObjectInteraction *i = _findInteraction(gdsScene->getObjInteractions1(), dragItem->_num, 0xffff);
 			if (i) {
-				debug(" --> exec %d drag ops for area %d", i->opList.size(), 0xffff);
+				debug(1, " --> exec %d drag ops for area %d", i->opList.size(), 0xffff);
 				if (!runOps(i->opList, globals->getGameMinsToAddOnObjInteraction()))
 					return;
 			}
 		} else if (area._num == 0xffff) {
-			debug("Item %d dropped on other character button.", dragItem->_num);
+			debug(1, "Item %d dropped on other character button.", dragItem->_num);
 			dragItem->_inSceneNum = 2;
 			if (engine->getGameId() == GID_HOC)
 				dragItem->_quality = Inventory::HOC_CHARACTER_QUALS[gdsScene->getGlobal(0x34)];
 
 			const ObjectInteraction *i = _findInteraction(gdsScene->getObjInteractions1(), dragItem->_num, 0xffff);
 			if (i) {
-				debug(" --> exec %d drag ops for area %d", i->opList.size(), 0xffff);
+				debug(1, " --> exec %d drag ops for area %d", i->opList.size(), 0xffff);
 				if (!runOps(i->opList, globals->getGameMinsToAddOnObjInteraction()))
 					return;
 			}
 		} else {
-			debug("Dragged item %d onto area %d @ (%d, %d)", dragItem->_num, area._num, pt.x, pt.y);
+			debug(1, "Dragged item %d onto area %d @ (%d, %d)", dragItem->_num, area._num, pt.x, pt.y);
 			const ObjectInteraction *i = _findInteraction(scene->getObjInteractions1(), dragItem->_num, area._num);
 			if (i) {
-				debug(" --> exec %d drag ops for area %d", i->opList.size(), area._num);
+				debug(1, " --> exec %d drag ops for area %d", i->opList.size(), area._num);
 				if (!runOps(i->opList, globals->getGameMinsToAddOnObjInteraction()))
 					return;
 			}
@@ -1937,18 +1937,18 @@ void SDSScene::mouseRUp(const Common::Point &pt) {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 
 	if (area->_num == 0) {
-		debug("Mouse RUp on inventory.");
+		debug(1, "Mouse RUp on inventory.");
 		engine->getInventory()->setShowZoomBox(true);
 		engine->getInventory()->open();
 	} else if (area->_num == 0xffff) {
-		debug("Mouse RUp on character swap.");
+		debug(1, "Mouse RUp on character swap.");
 		int16 swapDlgFile = engine->getGDSScene()->getGlobal(0x36);
 		int16 swapDlgNum = engine->getGDSScene()->getGlobal(0x35);
 		if (swapDlgFile && swapDlgNum)
 			showDialog(swapDlgFile, swapDlgNum);
 	} else {
 		int16 addmins = engine->getGameGlobals()->getGameMinsToAddOnLClick();
-		debug("Mouse RUp on area %d, run %d ops (+%d mins)", area->_num, area->onRClickOps.size(), addmins);
+		debug(1, "Mouse RUp on area %d, run %d ops (+%d mins)", area->_num, area->onRClickOps.size(), addmins);
 		runOps(area->onRClickOps, addmins);
 	}
 }
@@ -2466,7 +2466,7 @@ Common::Error GDSScene::syncState(Common::Serializer &s) {
 		if (s.getVersion() > 1)
 			s.syncAsUint16LE(item._flags);
 		s.syncAsUint16LE(item._quality);
-		//debug("loaded item: %d %d %d %d", item._num, item._inSceneNum, item._flags, item._quality);
+		//debug(1, "loaded item: %d %d %d %d", item._num, item._inSceneNum, item._flags, item._quality);
 	}
 
 	uint16 nglobals = _perSceneGlobals.size();

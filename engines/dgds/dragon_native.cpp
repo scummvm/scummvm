@@ -64,7 +64,7 @@ static uint16 passcodeVal4 = 0;
 	if (globalval >= 30) {
 		// One of the keypad buttons
 		if (DRAGON_PASSCODE[passcodeVal4 + passcodeBlockNum * 15] == globalval - 30) {
-			debug("sceneOpUpdatePasscodeGlobal CORRECT: variables %d %d %d %d block %d, curval %d",
+			debug(1, "sceneOpUpdatePasscodeGlobal CORRECT: variables %d %d %d %d block %d, curval %d",
 				passcodeVal1, passcodeVal2, passcodeVal3, passcodeVal4, passcodeBlockNum, globalval);
 
 			// Correct entry! Increment the expected button
@@ -79,7 +79,7 @@ static uint16 passcodeVal4 = 0;
 			}
 		} else {
 			// Mistake
-			debug("sceneOpUpdatePasscodeGlobal WRONG: variables %d %d %d %d block %d, curval %d",
+			debug(1, "sceneOpUpdatePasscodeGlobal WRONG: variables %d %d %d %d block %d, curval %d",
 				passcodeVal1, passcodeVal2, passcodeVal3, passcodeVal4, passcodeBlockNum, globalval);
 			passcodeVal1 = 0;
 			passcodeVal2 = 5;
@@ -89,7 +89,7 @@ static uint16 passcodeVal4 = 0;
 		if (globalval > 4 || globalval == 0)
 			return;
 
-		debug("sceneOpUpdatePasscodeGlobal OTHER: variables %d %d %d %d block %d, curval %d",
+		debug(1, "sceneOpUpdatePasscodeGlobal OTHER: variables %d %d %d %d block %d, curval %d",
 				passcodeVal1, passcodeVal2, passcodeVal3, passcodeVal4, passcodeBlockNum, globalval);
 
 		if (globalval < 4) {

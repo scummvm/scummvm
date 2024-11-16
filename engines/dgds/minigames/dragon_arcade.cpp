@@ -361,7 +361,7 @@ void DragonArcade::checkEnemyFireStage0124() {
 		for (int j = 0; j < 4; j++) {
 			if (_npcState[i].x < 340 && -20 < _npcState[i].x &&
 				ENEMY_FIRE_ALLOWABLE_PAGES[j] == _npcState[i].ttmPage) {
-				debug("enemy %d @ %d firing type %d on page %d", i, _npcState[i].x, j, _npcState[i].ttmPage);
+				debug(1, "enemy %d @ %d firing type %d on page %d", i, _npcState[i].x, j, _npcState[i].ttmPage);
 				ImageFlipMode flipMode = (_npcState[i].ttmPage < 29) ? kImageFlipNone : kImageFlipH;
 				createBullet(ENEMY_FIRE_X_OFFSETS[j] + _npcState[i].xx - _scrollXOffset * 8 - 0xa0,
 							 ENEMY_FIRE_Y_OFFSETS[j] + _npcState[i].yy + 3, flipMode, 1);
@@ -1977,7 +1977,7 @@ void DragonArcade::handleMouseStates() {
 			// Not jumping left or right
 			_bladeState1 = 1;
 			_npcState[0].ttmPage = _bladePageOffset + 15;
-			debug("Move: blade jump up -> ttm %d", _npcState[0].ttmPage);
+			debug(1, "Move: blade jump up -> ttm %d", _npcState[0].ttmPage);
 		} else {
 			// Jump to left or right
 			if ((_bladeMoveFlag & kBladeMoveLeft) == kBladeMoveNone) {
@@ -1988,7 +1988,7 @@ void DragonArcade::handleMouseStates() {
 			_isMovingStage = false;
 			_bladeState1 = 2;
 			_npcState[0].ttmPage = _bladePageOffset + 45;
-			debug("Move: blade jump up -> ttm %d velocity %d", _npcState[0].ttmPage, _scrollVelocityX);
+			debug(1, "Move: blade jump up -> ttm %d velocity %d", _npcState[0].ttmPage, _scrollVelocityX);
 		}
 
 		if ((_bladeMoveFlagBeforeRButton & kBladeMoveDown) != kBladeMoveNone) {
@@ -1999,7 +1999,7 @@ void DragonArcade::handleMouseStates() {
 				} else {
 					_npcState[0].ttmPage = _bladePageOffset + 22;
 				}
-				debug("Move: blade jump down -> ttm %d", _npcState[0].ttmPage);
+				debug(1, "Move: blade jump down -> ttm %d", _npcState[0].ttmPage);
 				_arcadeTTM._startYOffset++;
 				_uint0a17++;
 				_currentYOffset = _arcadeTTM._startYOffset;

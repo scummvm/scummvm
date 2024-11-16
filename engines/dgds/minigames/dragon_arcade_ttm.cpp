@@ -55,7 +55,7 @@ int16 DragonArcadeTTM::load(const char *filename) {
 	for (envNum = 0; envNum < ARRAYSIZE(_ttmEnvs); envNum++) {
 		if (_ttmEnvs[envNum].scr == nullptr) {
 			env = &_ttmEnvs[envNum];
-			debug("Arcade TTM load %s into env %d", filename, envNum);
+			debug(1, "Arcade TTM load %s into env %d", filename, envNum);
 			break;
 		}
 	}
@@ -134,7 +134,7 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 		engine->adsInterpreter()->setScriptDelay((int)(ivals[0] * MS_PER_FRAME));
 		break;
 	case 0x1031: // SET BRUSH
-		//debug("Set brush %d for slot %d", ivals[0], _currentTTMNum);
+		//debug(1, "Set brush %d for slot %d", ivals[0], _currentTTMNum);
 		if (!_shapes2[_currentTTMNum]) {
 			_brushes[_currentTTMNum].reset();
 		} else {
@@ -143,7 +143,7 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 		break;
 	case 0x1051: // SET SHAPE
 		_shapes3[_currentTTMNum] = ivals[0];
-		//debug("Set img %d into slot %d", ivals[0], _currentTTMNum);
+		//debug(1, "Set img %d into slot %d", ivals[0], _currentTTMNum);
 		_shapes[_currentTTMNum] = _allShapes[ivals[0] * 5 + _currentTTMNum];
 		_shapes2[_currentTTMNum] = _allShapes[ivals[0] * 5 + _currentTTMNum];
 		break;
@@ -203,7 +203,7 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 			data.width = ivals[2];
 			data.yval = (byte)ivals[1];
 			data.flag = false;
-			debug("Floor: %s", data.dump().c_str());
+			debug(1, "Floor: %s", data.dump().c_str());
 			_floorData.push_back(data);
 		} else {
 			const Common::Rect rect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
@@ -217,7 +217,7 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 			data.width = ivals[2];
 			data.yval = (byte)ivals[1];
 			data.flag = true;
-			debug("Floor: %s", data.dump().c_str());
+			debug(1, "Floor: %s", data.dump().c_str());
 			_floorData.push_back(data);
 		} else {
 			const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2] - 1, ivals[3] - 1);
@@ -273,7 +273,7 @@ int16 DragonArcadeTTM::handleOperation(TTMEnviro &env, int16 page, uint16 op, by
 	case 0xF02F: {
 		_shapes[_currentTTMNum].reset(new Image(engine->getResourceManager(), engine->getDecompressor()));
 		_shapes[_currentTTMNum]->loadBitmap(sval);
-		debug("Load img %s into slot %d", sval.c_str(), _currentTTMNum);
+		debug(1, "Load img %s into slot %d", sval.c_str(), _currentTTMNum);
 		_shapes2[_currentTTMNum] = _shapes[_currentTTMNum];
 		_allShapes[_shapes3[_currentTTMNum] * 5 + _currentTTMNum] = _shapes[_currentTTMNum];
 		break;

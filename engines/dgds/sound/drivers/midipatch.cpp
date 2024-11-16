@@ -85,7 +85,7 @@ SciResource *getMidiPatchData(int num) {
 
 			int dataLen = stream->size() - (strLen + 2);
 			byte *data = new byte[dataLen];
-			debug("midi patch %s loading magic %d str '%s'", targetSection.c_str(), magic, buf);
+			debug(1, "midi patch %s loading magic %d str '%s'", targetSection.c_str(), magic, buf);
 			delete [] buf;
 			stream->read(data, dataLen);
 			return new SciResource(data, dataLen, num);

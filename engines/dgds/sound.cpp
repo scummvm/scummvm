@@ -55,7 +55,7 @@ static void _readHeader(const byte* &pos, uint32 &sci_header) {
 
 	pos += sci_header;
 	if (pos[0] == 0xF0) {
-		debug("SysEx transfer = %d bytes", pos[1]);
+		debug(1, "SysEx transfer = %d bytes", pos[1]);
 		pos += 2;
 		pos += 6;
 	}
@@ -83,19 +83,19 @@ static uint32 _availableSndTracks(const byte *data, uint32 size) {
 	while (pos[0] != 0xFF) {
 		byte drv = *pos++;
 
-		//debug("(%d)", drv);
+		//debug(1, "(%d)", drv);
 
 		while (pos[0] != 0xFF) {
 			uint16 off, siz;
 			_readPartHeader(pos, off, siz);
 			off += sci_header;
 
-			//debug("%06d:%d ", off, siz);
+			//debug(1, "%06d:%d ", off, siz);
 
-			//debug("Header bytes");
-			//debug("[%06X]  ", data[off]);
-			//debug("[%02X]  ", data[off+0]);
-			//debug("[%02X]  ", data[off+1]);
+			//debug(1, "Header bytes");
+			//debug(1, "[%06X]  ", data[off]);
+			//debug(1, "[%02X]  ", data[off+0]);
+			//debug(1, "[%02X]  ", data[off+1]);
 
 			bool digital_pcm = false;
 			if (READ_LE_UINT16(&data[off]) == 0x00FE) {
@@ -104,35 +104,35 @@ static uint32 _availableSndTracks(const byte *data, uint32 size) {
 
 			switch (drv) {
 			case 0:	if (digital_pcm) {
-					//debug("- Soundblaster");
+					//debug(1, "- Soundblaster");
 					tracks |= DIGITAL_PCM;
 				} else {
-					//debug("- Adlib");
+					//debug(1, "- Adlib");
 					tracks |= TRACK_ADLIB;
 				}
 				break;
 			case 7:
-				//debug("- General MIDI");
+				//debug(1, "- General MIDI");
 				tracks |= TRACK_GM;
 				break;
 			case 9:
-				//debug("- CMS");
+				//debug(1, "- CMS");
 				tracks |= TRACK_CMS;
 				break;
 			case 12:
-				//debug("- MT-32");
+				//debug(1, "- MT-32");
 				tracks |= TRACK_MT32;
 				break;
 			case 18:
-				//debug("- PC Speaker");
+				//debug(1, "- PC Speaker");
 				tracks |= TRACK_PCSPK;
 				break;
 			case 19:
-				//debug("- Tandy 1000");
+				//debug(1, "- Tandy 1000");
 				tracks |= TRACK_TANDY;
 				break;
 			default:
-				//debug("- Unknown %d", drv);
+				//debug(1, "- Unknown %d", drv);
 				warning("Unknown music type %d", drv);
 				break;
 			}
@@ -181,7 +181,7 @@ static byte _loadSndTrack(uint32 track, const byte** trackPtr, uint16* trackSiz,
 				trackSiz[part] = siz;
 				part++;
 			}
-			debug("- (%d) Play parts = %d", drv, part);
+			debug(1, "- (%d) Play parts = %d", drv, part);
 			return part;
 		} else {
 			pos = ptr;
@@ -276,7 +276,7 @@ bool Sound::playPCM(const byte *data, uint32 size) {
 		ptr += 8;
 
 		ptr += first;
-		debug(" - Digital PCM: %u Hz, [%u]=%u:%u",
+		debug(1, " - Digital PCM: %u Hz, [%u]=%u:%u",
 			  rate, length, first, last);
 		trackPtr[part] = ptr;
 		trackSiz[part] = length;
@@ -292,13 +292,13 @@ bool Sound::playPCM(const byte *data, uint32 size) {
 
 static void _readStrings(Common::SeekableReadStream *stream) {
 	uint16 count = stream->readUint16LE();
-	debug("        %u strs:", count);
+	debug(1, "        %u strs:", count);
 
 	for (uint16 k = 0; k < count; k++) {
 		uint16 idx = stream->readUint16LE();
 		Common::String str = stream->readString();
 
-		debug("        %2u: %2u, \"%s\"", k, idx, str.c_str());
+		debug(1, "        %2u: %2u, \"%s\"", k, idx, str.c_str());
 	}
 }
 
@@ -327,10 +327,10 @@ bool Sound::loadSXSoundData(const Common::String &filename, Common::Array<SoundD
 			uint16 type = stream->readUint16LE();
 			uint16 count = stream->readUint16LE();
 
-			debug("  SX INF %u [%u entries]:  (%s)", type, count, filename.c_str());
+			debug(1, "  SX INF %u [%u entries]:  (%s)", type, count, filename.c_str());
 			for (uint16 k = 0; k < count; k++) {
 				uint16 idx = stream->readUint16LE();
-				debug("        %2u: %u", k, idx);
+				debug(1, "        %2u: %u", k, idx);
 				idMap[idx] = k;
 			}
 		} else if (chunk.isSection(ID_TAG) || chunk.isSection(ID_FNM)) {
@@ -364,7 +364,7 @@ bool Sound::loadMusic(const Common::String &filename) {
 	}
 
 	_currentMusic = filename;
-	debug("Sound: Loaded music %s with %d entries", filename.c_str(), _musicData.size());
+	debug(1, "Sound: Loaded music %s with %d entries", filename.c_str(), _musicData.size());
 	return true;
 }
 
@@ -379,7 +379,7 @@ void Sound::loadSFX(const Common::String &filename) {
 		error("Unhandled SFX file type: %s", filename.c_str());
 	}
 
-	debug("Sound: Loaded sfx %s with %d entries", filename.c_str(), _sfxData.size());
+	debug(1, "Sound: Loaded sfx %s with %d entries", filename.c_str(), _sfxData.size());
 }
 
 void Sound::loadSNGSoundData(const Common::String &filename, Common::Array<SoundData> &dataArray) {
@@ -411,10 +411,10 @@ void Sound::loadSNGSoundData(const Common::String &filename, Common::Array<Sound
 			uint32 count = stream->size() / 2;
 			if (count > dataArray.size())
 				error("Sound: %s has more flags in INF than SNG entries.", filename.c_str());
-			debug("  SNG INF [%u entries]", count);
+			debug(1, "  SNG INF [%u entries]", count);
 			for (uint32 k = 0; k < count; k++) {
 				uint16 flags = stream->readUint16LE();
-				debug("        %2u: 0x%04x", k, flags);
+				debug(1, "        %2u: 0x%04x", k, flags);
 				dataArray[k]._flags = flags;
 			}
 		} else {
@@ -442,17 +442,17 @@ int Sound::mapMusicNum(int num) const {
 
 void Sound::playSFX(int num) {
 	int mappedNum = mapSfxNum(num);
-	debug("Sound: Play SFX %d (-> %d), have %d entries", num, mappedNum, _sfxData.size());
+	debug(1, "Sound: Play SFX %d (-> %d), have %d entries", num, mappedNum, _sfxData.size());
 	playPCSound(mappedNum, _sfxData, Audio::Mixer::kSFXSoundType);
 }
 
 void Sound::stopSfxByNum(int num) {
 	int mappedNum = mapSfxNum(num);
-	debug("Sound: Stop SFX %d (-> %d)", num, mappedNum);
+	debug(1, "Sound: Stop SFX %d (-> %d)", num, mappedNum);
 
 	MusicEntry *musicSlot = _music->getSlot(mappedNum + SND_RESOURCE_OFFSET);
 	if (!musicSlot) {
-		debug("stopSfxByNum: Slot for sfx num %d not found.", mappedNum);
+		debug(1, "stopSfxByNum: Slot for sfx num %d not found.", mappedNum);
 		return;
 	}
 
@@ -463,7 +463,7 @@ void Sound::stopSfxByNum(int num) {
 
 void Sound::playMusic(int num) {
 	int mappedNum = mapMusicNum(num);
-	debug("Sound: Play music %d (-> %d, %s), have %d entries", num, mappedNum, _currentMusic.c_str(), _musicData.size());
+	debug(1, "Sound: Play music %d (-> %d, %s), have %d entries", num, mappedNum, _currentMusic.c_str(), _musicData.size());
 	playPCSound(mappedNum, _musicData, Audio::Mixer::kMusicSoundType);
 }
 
@@ -625,7 +625,7 @@ void Sound::playPCSound(int num, const Common::Array<SoundData> &dataArray, Audi
 }
 
 void Sound::stopMusic() {
-	debug("Sound: Stop music.");
+	debug(1, "Sound: Stop music.");
 	_music->stopMusic();
 }
 
