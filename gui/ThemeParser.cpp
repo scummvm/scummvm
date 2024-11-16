@@ -958,7 +958,7 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 	if (node->values.contains("size")) {
 		int width, height;
 
-		if (parseList(node->values["size"], 2, &width, &height)) {
+		if (parseIntegerKey(node->values["size"], 2, &width, &height)) {
 			width = SCALEVALUE(width);
 			height = SCALEVALUE(height);
 		} else {
