@@ -146,6 +146,11 @@ int Sound::init() {
 }
 
 void Sound::playTosSpeech(int tosIdx) {
+	if (g_engine->isDosFloppy()) {
+		playFloppySpeech(tosIdx);
+		return;
+	}
+
 	if (!g_engine->isCdVersion() || _didSpeech[tosIdx] == 1) {
 		return;
 	}
@@ -271,6 +276,49 @@ void Sound::playDosCDSfx(int sfxId) {
 	Audio::SeekableAudioStream *stream = Audio::makeVOCStream(srcStream,
 															  Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_sfxHandle, stream);
+}
+
+void Sound::playFloppySpeech(int tosIdx) {
+	Common::String filename;
+
+	switch (tosIdx) {
+	case 927 : filename = "CL1.VOC"; break;
+	case 905 : filename = "CL2.VOC"; break;
+	case 906 : filename = "CL3.VOC"; break;
+	case 907 : filename = "D4A-1.VOC"; break;
+	case 909 : filename = "D5A-1.VOC"; break;
+	case 910 : filename = "D6A-2.VOC"; break;
+	case 908 : filename = "D6C-2.VOC"; break;
+	case 916 : filename = "G10A-1.VOC"; break;
+	case 917 : filename = "G10B-1.VOC"; break;
+	case 925 : filename = "GL0A.VOC"; break;
+	case 926 : filename = "GL1B.VOC"; break;
+	case 924 : filename = "GL2A.VOC"; break;
+	case 928 : filename = "GL3A.VOC"; break; // TODO is this correct?
+	case 922 : filename = "K15A-1.VOC"; break;
+	case 913 : filename = "K9A-3.VOC"; break;
+	case 914 : filename = "K9C-3.VOC"; break;
+	case 915 : filename = "K9E-3.VOC"; break;
+	case 904 : filename = "M1-1.VOC"; break;
+	case 918 : filename = "M11A-1.VOC"; break;
+	case 919 : filename = "O12A-1.VOC"; break;
+	case 920 : filename = "O13A-1.VOC"; break;
+	case 921 : filename = "O14A-1.VOC"; break;
+	case 923 : filename = "S16A-1.VOC"; break;
+	case 912 : filename = "S8A-2.VOC"; break;
+	default : return;
+	}
+
+	Common::Path path = Common::Path(filename);
+	Common::File f;
+	if (!f.open(path)) {
+		return;
+	}
+
+	Common::SeekableReadStream *srcStream = f.readStream((uint32)f.size());
+	Audio::SeekableAudioStream *stream = Audio::makeVOCStream(srcStream,
+															  Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream);
 }
 
 } // End of namespace Darkseed

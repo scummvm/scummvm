@@ -88,6 +88,7 @@ public:
 	void killAllSound();
 private:
 	void playDosCDSfx(int sfxId);
+	void playFloppySpeech(int tosIdx);
 };
 
 } // namespace Darkseed

@@ -172,8 +172,16 @@ public:
 		return _randomSource.getRandomNumber(maxNum);
 	}
 
+	bool isDosVersion() const {
+		return _gameDescription->platform == Common::kPlatformDOS;
+	}
+
 	bool isCdVersion() const {
 		return getFeatures() & ADGF_CD;
+	}
+
+	bool isDosFloppy() const {
+		return isDosVersion() && !isCdVersion();
 	}
 
 	bool hasFeature(EngineFeature f) const override {
