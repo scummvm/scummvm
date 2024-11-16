@@ -77,7 +77,7 @@ public:
 		_backboardIndex[1] = 0;
 	}
 
-	~CBBallCourt() {}
+	~CBBallCourt() = default;
 
 	int getPlayerIndex(int playerID);
 	CCollisionPlayer *getPlayerPtr(int playerID);
@@ -102,7 +102,7 @@ public:
 	Common::Array<CCollisionPlayer> _awayPlayerList;
 	int _objectCount;
 	int _backboardIndex[2];
-	U32Sphere _shotSpot[2];
+	U32Sphere _shotSpot[2] = {};
 };
 
 } // End of namespace Scumm

@@ -50,10 +50,10 @@ SoundHE::SoundHE(ScummEngine *parent, Audio::Mixer *mixer, Common::Mutex *mutex)
 	:
 	Sound(parent, mixer, false),
 	_vm((ScummEngine_v60he *)parent),
+	_mutex(mutex),
 	_overrideFreq(0),
 	_heSpoolingMusicTable(nullptr),
-	_heSpoolingMusicCount(0),
-	_mutex(mutex) {
+	_heSpoolingMusicCount(0) {
 
 	_createSndId = 0;
 	_createSndLastAppend = 0;
