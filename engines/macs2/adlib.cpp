@@ -826,31 +826,35 @@ void Adlib::OnTimer() {
 									temp = bp1; // TODO: xor ah, ah
 									temp *= tempDX;
 									// TODO: CWD
+									tempCX = 0x3F;
+									temp /= tempCX;
+									temp += tempBX;
+									tempDX = temp;
+									// TODO: Load from data
+									// les	di,[bp-14h]
+									// mov al, es : [di]
+									temp &= 0x3F; // TODO: xor ah,ah
+									temp += tempDX;
+									bp1 = temp; // TODO: al part only
+
 									// TODO: Continue here
 									/*
-								
-									
-									mov	al,[bp-1h]
-									xor	ah,ah
-									mul	dx
-									cwd
-									mov	cx,3Fh
-									idiv	cx
-									add	ax,bx
-									mov	dx,ax
-									les	di,[bp-14h]
-									mov	al,es:[di]
-									and	al,3Fh
-									xor	ah,ah
-									add	ax,dx
-									mov	[bp-1h],al
 									cmp	byte ptr [bp-1h],3Fh
 									jbe	1DF0h
 									*/
+
+									/*
+									l0017_1DEC:
+									mov	byte ptr [bp-1h],3Fh
+
+								l0017_1DF0:
+									cmp	byte ptr [bp-2h],3Fh
+									jbe	1DFAh
+
+								l0017_1DF6:
+									mov	byte ptr [bp-2h],3Fh
+										*/
 								}
-								// TODO: The "or" one should go to 1E91h
-								// TODO: Should be 1CFF
-								
 							}
 							
 

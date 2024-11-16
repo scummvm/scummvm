@@ -1703,6 +1703,10 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				c = new Character();
 				c->GameObject = GameObjects::instance().Objects[objectID - 1];
 			}
+			// Reset if the character can run the script again
+			// TODO: Not sure if this should also be this way
+			c->ExecuteScriptOnFinishLerp = false;
+
 			// This doubles as an indication if the character has been created previously
 			// and is already in the list
 			int index = currentView->GetCharacterArrayIndex(c);

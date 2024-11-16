@@ -228,6 +228,18 @@ public:
 	// [51F7h]
 	uint16 numPathfindingPoints;
 
+	// [51FDh]
+	uint16 word51FD;
+
+	// [51FFh]
+	uint16 word51FF;
+
+	// [5201h]
+	uint16 word5201;
+
+	
+
+
 	// Offset 50D3h - This is used in 0037:10C4 to terminate the loop
 	uint16 word50D3;
 
