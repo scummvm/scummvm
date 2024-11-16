@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-11-16 15:15+0000\n"
-"PO-Revision-Date: 2024-11-16 15:06+0000\n"
+"PO-Revision-Date: 2024-11-16 16:58+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -2090,7 +2090,7 @@ msgstr "Και τα δυο"
 
 #: gui/options.cpp:1915
 msgid "Subtitle speed:"
-msgstr "Ταχύτητα υποτίτλων:"
+msgstr "Ταχύτητα υπότιτλων:"
 
 #: gui/options.cpp:1917
 msgctxt "lowres"
@@ -2112,7 +2112,7 @@ msgstr "Και τα δυο"
 
 #: gui/options.cpp:1923
 msgid "Show subtitles and play speech"
-msgstr "Προβολή υποτίτλων και αναπαραγωγή φωνής"
+msgstr "Προβολή υπότιτλων και αναπαραγωγή φωνής"
 
 #: gui/options.cpp:1925
 msgctxt "lowres"
@@ -6298,14 +6298,12 @@ msgid "Do not emulate NTSC artifacts for text"
 msgstr "Να μη γίνει προσομοίωση \"παράσιτων\" του NTSC για το κείμενο"
 
 #: engines/adl/metaengine.cpp:104
-#, fuzzy
-#| msgid "Use silver cursors"
 msgid "Use checkered cursor"
-msgstr "Χρήση ασημένιων δρομέων"
+msgstr "Χρήση καρό κέρσορα"
 
 #: engines/adl/metaengine.cpp:105
 msgid "Use the checkered cursor from later Apple II models"
-msgstr ""
+msgstr "Χρήση του καρό κέρσορα από τα μεταγενέστερα μοντέλα Apple II"
 
 #: engines/agi/detection_tables.h:261
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
@@ -6671,10 +6669,8 @@ msgid "Show objects to interact"
 msgstr "Προβολή αλληλεπιδράσιμων αντικειμένων"
 
 #: engines/agos/metaengine.cpp:338
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Toggle background sounds on/off"
-msgstr "Εναλλαγή ηχητικών εφέ με/χωρίς"
+msgstr "Απ/ενεργοποίηση ήχων επένδυσης"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:347
@@ -6682,18 +6678,16 @@ msgid "Switch characters"
 msgstr "Αλλαγή χαρακτήρα"
 
 #: engines/agos/metaengine.cpp:353
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle hitbox names on/off"
-msgstr "Εναλλαγή μουσικής με/χωρίς"
+msgstr "Απ/ενεργοποίηση ονομάτων hitbox"
 
 #: engines/agos/metaengine.cpp:360
 msgid "Switches between speech only and combined speech and subtitles"
-msgstr ""
+msgstr "Εναλλαγή μεταξύ μόνο ομιλίας και συνδυασμού ομιλίας με υπότιτλους"
 
 #: engines/agos/metaengine.cpp:366
 msgid "Switches between subtitles only and combined speech and subtitles"
-msgstr ""
+msgstr "Εναλλαγή μεταξύ μόνο υπότιτλων και συνδυασμού ομιλίας με υπότιτλους"
 
 #: engines/agos/metaengine.cpp:376
 msgid "High speed mode on/off in Swampy Adventures"
@@ -6842,6 +6836,11 @@ msgid ""
 "or\n"
 "2. Any .sav file inside the QfG2 Remake game directory"
 msgstr ""
+"Το παιχνίδι θα παραθέσει χαρακτήρες που εξήχθησαν από παιχνίδια της Sierra, "
+"οι οποίοι μπορούν να εισαχθούν από:\n"
+"1. Αρχεία αποθήκευσης με ονομασία qfg1*.sav ή qfg1vga*.sav μέσα στο φάκελο "
+"αρχείων αποθήκευσης του ScummVM, ή\n"
+"2. Όποιο αρχείο .sav βρίσκεται εντός του φακέλου του παιχνιδιού QfG2 Remake"
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
@@ -6873,7 +6872,7 @@ msgstr "Εμφάνιση Μενού Παιχνιδιού"
 
 #: engines/asylum/metaengine.cpp:152
 msgid "Open character inventory"
-msgstr "Άνοιγμα Υπαρχόντων"
+msgstr "Άνοιγμα υπαρχόντων χαρακτήρα"
 
 #. I18N: Move Actor to upwards direction
 #: engines/asylum/metaengine.cpp:171 engines/asylum/metaengine.cpp:198
@@ -6908,38 +6907,28 @@ msgid "Move right"
 msgstr "Κίνηση δεξιά"
 
 #: engines/asylum/metaengine.cpp:226
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle animation on/off"
-msgstr "Εναλλαγή μουσικής με/χωρίς"
+msgstr "Απ/ενεργοποίηση κίνησης (animation)"
 
 #: engines/asylum/metaengine.cpp:232
 msgid "Return to gameplay"
 msgstr "Επιστροφή στο παιχνίδι"
 
 #: engines/asylum/metaengine.cpp:238
-#, fuzzy
-#| msgid "Previous Page"
 msgid "Previous resource"
-msgstr "Προηγούμενη Σελίδα"
+msgstr "Προηγούμενος πόρος"
 
 #: engines/asylum/metaengine.cpp:245
-#, fuzzy
-#| msgid "[ Resources ]"
 msgid "Next resource"
-msgstr "[ Πόροι ]"
+msgstr "Επόμενος πόρος"
 
 #: engines/asylum/metaengine.cpp:252
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous palette"
-msgstr "Προηγούμενη σελίδα"
+msgstr "Προηγούμενη παλέτα"
 
 #: engines/asylum/metaengine.cpp:259
-#, fuzzy
-#| msgid "Next page"
 msgid "Next palette"
-msgstr "Επόμενη σελίδα"
+msgstr "Επόμενη παλέτα"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:203
@@ -6961,7 +6950,7 @@ msgstr "Περιμένετε"
 
 #: engines/bagel/metaengine.cpp:42
 msgid "Soldier 714 Eye Cheat"
-msgstr ""
+msgstr "Κόλπο 'Μάτι του Στρατιώτη 714'"
 
 #: engines/bagel/metaengine.cpp:83
 msgid "General Keys"
@@ -6981,10 +6970,8 @@ msgstr "Προκαθορισμένες αντιστοιχίσεις"
 
 #. I18N: Escape is a key
 #: engines/bbvs/metaengine.cpp:95
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Escape keymappings"
-msgstr "Αντιστοίχιση Πλήκτρων"
+msgstr "Αντιστοιχίσεις πλήκτρου Escape"
 
 #. I18N: ESC key
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:197
@@ -6999,10 +6986,8 @@ msgstr "Πλήκτρο Escape"
 
 #: engines/bbvs/metaengine.cpp:117 engines/hopkins/metaengine.cpp:231
 #: engines/illusions/metaengine.cpp:147
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Open inventory"
-msgstr "Άνοιγμα/Κλείσιμο Υπαρχόντων"
+msgstr "Άνοιγμα υπαρχόντων"
 
 #: engines/bbvs/metaengine.cpp:124 engines/dgds/metaengine.cpp:82
 #: engines/scumm/help.cpp:167 engines/scumm/help.cpp:231
@@ -7149,7 +7134,7 @@ msgstr ""
 
 #: engines/bladerunner/metaengine.cpp:100
 msgid "Show subtitles during text crawl"
-msgstr "Προβολή υποτίτλων μαζί με το κρόουλ"
+msgstr "Προβολή υπότιτλων μαζί με το κρόουλ"
 
 #: engines/bladerunner/metaengine.cpp:101
 msgid "During the intro cutscene, show subtitles during the text crawl"
@@ -7504,7 +7489,7 @@ msgstr "Αφήγηση κειμένου για Υπότιτλους"
 #: engines/cge2/metaengine.cpp:72 engines/dreamweb/metaengine.cpp:86
 msgid "Use TTS to read the subtitles (if TTS is available)"
 msgstr ""
-"Χρήση λειτουργίας Αφήγησης Κειμένου (TTS) για την ανάγνωση υποτίτλων (αν "
+"Χρήση λειτουργίας Αφήγησης Κειμένου (TTS) για την ανάγνωση υπότιτλων (αν "
 "είναι διαθέσιμη)"
 
 #. I18N: This closes the Dialogue/text box.
@@ -9950,7 +9935,7 @@ msgid ""
 "Enables subtitles for important sound effects.  This may reduce the "
 "difficulty of sound recognition puzzles and minigames."
 msgstr ""
-"Ενεργοποιεί υπότιτλους για συμαντικά ηχητικά εφέ. Αυτό ενδέχεται να "
+"Ενεργοποιεί υπότιτλους για σημαντικά ηχητικά εφέ. Αυτό ενδέχεται να "
 "ελαττώσει τη δυσκολία γρίφων και επιμέρους παιχνιδιών (minigames) που "
 "απαιτούν αναγνώριση ήχων."
 
@@ -11733,7 +11718,7 @@ msgstr "Ένταση μουσικής: "
 
 #: engines/scumm/input.cpp:1424
 msgid "Subtitle speed: "
-msgstr "Ταχύτητα υποτίτλων: "
+msgstr "Ταχύτητα υπότιτλων: "
 
 #: engines/scumm/metaengine.cpp:375
 msgid ""
@@ -12353,7 +12338,7 @@ msgstr "Ρυθμίσεις Παιχνιδιού"
 #: engines/stark/metaengine.cpp:245 engines/toon/metaengine.cpp:124
 #: engines/wintermute/keymapper_tables.h:1345
 msgid "Toggle subtitles"
-msgstr "Εναλλαγή υποτίτλων"
+msgstr "Εναλλαγή υπότιτλων"
 
 #: engines/stark/metaengine.cpp:250
 #, fuzzy
