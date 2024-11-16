@@ -233,6 +233,7 @@ void Background::DrawBackgnd() {
 			for (OBJECT* pObj = pPlay->pDispList; pObj != NULL; pObj = pObj->pNext) {
 				if (pObj->flags & DMA_3D) {
 					_vm->_spriter->Draw(0, 0, 0, 0, 0);
+					// TODO: fix clip rect after the Spriter updates them
 					//AddClipRect(SpriterGetModelRect());
 					//AddClipRect(SpriterGetShadowRect());
 					//MergeClipRect();

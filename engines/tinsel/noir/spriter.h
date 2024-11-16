@@ -147,7 +147,7 @@ enum ModelFlags {
 
 struct Model {
 	Hunks hunks;
-	Hunks hunksU;
+	Hunks hunksOverlay; // The game script can load additional data to supplement the main model. E.g. a special animation.
 	uint animationCount;
 	uint field_0xe;
 	uint field_0xf;
