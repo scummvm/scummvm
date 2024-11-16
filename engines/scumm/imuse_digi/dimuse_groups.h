@@ -35,8 +35,8 @@ class IMuseDigiGroupsHandler {
 
 private:
 	IMuseDigital *_engine;
-	int _effVols[DIMUSE_MAX_GROUPS];
-	int _vols[DIMUSE_MAX_GROUPS];
+	int _effVols[DIMUSE_MAX_GROUPS] = {};
+	int _vols[DIMUSE_MAX_GROUPS] = {};
 public:
 	IMuseDigiGroupsHandler(IMuseDigital *engine);
 	~IMuseDigiGroupsHandler();
