@@ -395,7 +395,6 @@ class Insane {
 	void prepareScenePropScene(int32 scenePropNum, bool arg_4, bool arg_8);
 	int32 calcBenDamage(bool arg_0, bool arg_4);
 	int32 weaponDamage(int32 actornum);
-	void proc47(int32 actornum, int32 val);
 	bool weaponBenIsEffective();
 	bool actor1StateFlags(int state);
 	bool actor0StateFlags1(int state);
