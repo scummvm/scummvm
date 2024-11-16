@@ -560,8 +560,6 @@ void WinnieEngine::dropObj(int iRoom) {
 
 		if (isRightObj(iRoom, _gameStateWinnie.iObjHave, &iCode)) {
 			// object has been dropped in the right place
-			printStr(IDS_WTP_OK);
-			getSelection(kSelAnyKey);
 			playSound(IDI_WTP_SND_DROP_OK);
 			printObjStr(_gameStateWinnie.iObjHave, IDI_WTP_OBJ_DROP);
 			getSelection(kSelAnyKey);
@@ -598,11 +596,12 @@ void WinnieEngine::dropObj(int iRoom) {
 
 			// object has been dropped in the wrong place
 			printStr(IDS_WTP_WRONG_PLACE);
-			getSelection(kSelAnyKey);
-
 			playSound(IDI_WTP_SND_DROP);
-			drawRoomPic();
 
+			// draw the object by redrawing the room and
+			// reprinting the message. the original just
+			// drew the object.
+			drawRoomPic();
 			printStr(IDS_WTP_WRONG_PLACE);
 			getSelection(kSelAnyKey);
 
