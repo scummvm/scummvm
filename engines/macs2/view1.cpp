@@ -1079,6 +1079,27 @@ void View1::TriggerDialogueChoice(uint8 index) {
 	g_engine->RunScriptExecutor();
 }
 
+uint16 View1::CalculateCharacterScaling(uint16 characterY) const {
+	// l0037_93F4:
+	uint32 eax = g_engine->word51FD;
+	uint32 edx = 0;
+	uint32 ecx = eax;
+	uint32 ebx = edx;
+	eax = characterY;
+	eax -= ecx;
+	ebx = eax;
+	eax = g_engine->word51FF;
+	edx = 0;
+	eax *= ebx;
+	ebx = 0x64;
+	eax /= ebx;
+	ebx = eax;
+	eax = g_engine->word5201;
+	edx = 0;
+	eax += ebx;
+	return eax;
+}
+
 uint16 View1::GetHitObjectID(const Common::Point& pos) const {
 	// TODO: Naive implementation for now
 	for (auto currentCharacter : characters) {
@@ -1209,6 +1230,7 @@ bool Character::IsLineSegmentWalkable(const Common::Point &p1, const Common::Poi
 
 Character::Character() {
 	PathfindingOverlay = Common::Array<uint8>(320 * 200, 0);
+	ExecuteScriptOnFinishLerp = false;
 }
 
 bool Character::FindPath(Common::Point target) {
