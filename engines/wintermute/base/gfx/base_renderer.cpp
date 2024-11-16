@@ -359,22 +359,6 @@ void BaseRenderer::addRectToList(BaseActiveRect *rect) {
 	_rectList.push_back(rect);
 }
 
-bool BaseRenderer::saveScreenShot(const Common::String &filename, int sizeX, int sizeY) {
-	BaseImage *image = takeScreenshot();
-	if (image) {
-		if (sizeX != 0 && sizeY != 0) {
-			if (!DID_SUCCEED(image->resize(sizeX, sizeY))) {
-				delete image;
-				return false;
-			}
-		}
-		image->saveBMPFile(filename);
-		delete image;
-		return true;
-	}
-	return false;
-}
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::displayIndicator() {
 	if (!_indicatorDisplay || !_indicatorProgress) {
