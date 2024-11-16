@@ -39,33 +39,33 @@ extern mspace g_mspace;
 #endif
 
 #include "backends/graphics/atari/atari-graphics-superblitter.h"
-#include "common/debug.h"	// error() & warning()
+#include "backends/platform/atari/atari-debug.h"
 #include "common/scummsys.h"
 
 class AtariSuperVidelManager : public AtariGraphicsManager {
 public:
 	AtariSuperVidelManager() {
 #ifdef USE_SV_BLITTER
-		debug("SuperVidel FW Revision: %d, using %s", superVidelFwVersion, superVidelFwVersion >= 9
+		atari_debug("SuperVidel FW Revision: %d, using %s", superVidelFwVersion, superVidelFwVersion >= 9
 			? "fast async FIFO" : "slower sync blitting");
 #else
-		debug("SuperVidel FW Revision: %d, SuperBlitter not used", superVidelFwVersion);
+		atari_debug("SuperVidel FW Revision: %d, SuperBlitter not used", superVidelFwVersion);
 #endif
 		if (Supexec(hasSvRamBoosted))
-			debug("SV_XBIOS has the pmmu boost enabled");
+			atari_debug("SV_XBIOS has the pmmu boost enabled");
 		else
-			warning("SV_XBIOS has the pmmu boost disabled, set 'pmmu_boost = true' in C:\\SV.INF");
+			atari_warning("SV_XBIOS has the pmmu boost disabled, set 'pmmu_boost = true' in C:\\SV.INF");
 
 #ifdef USE_SV_BLITTER
 		size_t vramSize = ct60_vmalloc(-1) - (16 * 1024 * 1024);	// SV XBIOS seems to forget the initial 16 MB ST RAM mirror
 		_vramBase = vramSize > 0 ? (void *)ct60_vmalloc(vramSize) : nullptr;
 		if (_vramBase) {
 			g_mspace = create_mspace_with_base(_vramBase, vramSize, 0);
-			debug("Allocated VRAM at %p (%ld bytes)", _vramBase, vramSize);
+			atari_debug("Allocated VRAM at %p (%ld bytes)", _vramBase, vramSize);
 		}
 
 		if (!g_mspace)
-			warning("VRAM allocation failed");
+			atari_warning("VRAM allocation failed");
 #endif
 		// using virtual methods so must be done here
 		allocateSurfaces();

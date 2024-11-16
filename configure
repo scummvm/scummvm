@@ -3662,7 +3662,7 @@ if test -n "$_host"; then
 			if test "$_release_build" = "yes"; then
 				# --enable-release
 				append_var DEFINES  "-DNDEBUG"
-				#append_var DEFINES  "-DDISABLE_TEXT_CONSOLE"
+				append_var DEFINES  "-DDISABLE_TEXT_CONSOLE"
 			fi
 
 			append_var LDFLAGS "-Wl,--msuper-memory"
