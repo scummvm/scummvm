@@ -1034,8 +1034,7 @@ Common::Error TinselEngine::run() {
 		_spriter = new Spriter();
 		_spriter->Init(width, 432);
 #else
-		error("Discworld Noir needs ScummVM with TinyGL enabled");
-		return Common::kUnknownError;
+		return Common::Error(Common::kUnsupportedGameidError, _s("Discworld Noir needs ScummVM with TinyGL enabled"));
 #endif
 	} else if (getGameID() == GID_DW2) {
 		if (ConfMan.getBool("crop_black_bars"))
