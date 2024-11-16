@@ -37,6 +37,8 @@ Common::SeekableReadStream *openSfmFile(const Common::String &filename);
 Common::WriteStream *openSfmFileForWrite(const Common::String &filename);
 bool sfmFileExists(const Common::String &filename);
 Common::StringArray sfmFileList(const Common::String &mask);
+bool sfmFileRemove(const Common::String &filename);
+bool sfmFileRename(const Common::String &oldName, const Common::String &newName);
 
 } // End of namespace Wintermute
 
