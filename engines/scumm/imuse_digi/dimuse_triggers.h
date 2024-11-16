@@ -33,13 +33,14 @@ class IMuseDigiTriggersHandler {
 
 private:
 	IMuseDigital *_engine;
-	IMuseDigiTrigger _trigs[DIMUSE_MAX_TRIGGERS];
-	IMuseDigiDefer _defers[DIMUSE_MAX_DEFERS];
+	IMuseDigiTrigger _trigs[DIMUSE_MAX_TRIGGERS] = {};
+	IMuseDigiDefer _defers[DIMUSE_MAX_DEFERS] = {};
 
-	int  _defersOn;
-	int  _midProcessing;
-	char _textBuffer[256];
-	char _emptyMarker[1];
+	int  _defersOn = 0;
+	int  _midProcessing = 0;
+	char _textBuffer[256] = {};
+	char _emptyMarker[1] = {};
+
 public:
 	IMuseDigiTriggersHandler(IMuseDigital *engine);
 	~IMuseDigiTriggersHandler();
