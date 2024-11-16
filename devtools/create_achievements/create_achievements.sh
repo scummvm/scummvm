@@ -99,6 +99,7 @@ add_steam 425600
 add_steamlike_gog 425600 1444830704
 add_steam 431850
 add_steam 439310
+add_steam 448440
 add_steam 468530
 add_steam 509920
 add_steam 517910
@@ -132,9 +133,14 @@ add_steam 1026080
 add_steam 1028740
 add_steam 1036200
 add_steam 1060560
+add_steam 1098770
+add_steamlike_gog 1098770 1602588462
+add_steam 1133950
 add_steamlike_gog 1133950 2098172050
 add_steam 1142230
 add_steam 1147030
+add_steam 1172800
+add_steamlike_gog 1172800 1321012195
 add_steam 1181570
 add_steam 1182310
 add_steamlike_gog 1182310 1790032718
@@ -151,14 +157,29 @@ add_steam 1369520
 add_steamlike_gog 1369520 1392294208
 add_steam 1497290
 add_steam 1507530
+add_steam 1581490
+add_steamlike_gog 1581490 2134608058
+add_steam 1606640
 add_steam 1644080
 add_steam 1650590
+add_steam 1709730
 add_steamlike_gog 1709730 1086301307
+add_steam 1834750
 add_steam 1900280
+add_steam 1902850
 add_steamlike_gog 1902850 1123332294
+add_steam 2097090
 add_steam 2118540
+add_steam 2163620
 add_steam 2217060
+add_steam 2314850
+add_steamlike_gog 2314850 1562711791
+add_steam 2474030
+add_steam 2581560
+add_steamlike_gog 2581560 1855964876
+add_steam 2661780
 add_steam 2664930
+add_steam 2702680
 
 #TWINE games:
 add_steam 397330
