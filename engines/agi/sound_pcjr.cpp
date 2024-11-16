@@ -139,6 +139,8 @@ SoundGenPCJr::~SoundGenPCJr() {
 }
 
 void SoundGenPCJr::play(int resnum) {
+	Common::StackLock lock(_mutex);
+
 	PCjrSound *pcjrSound = (PCjrSound *)_vm->_game.sounds[resnum];
 
 	for (int i = 0; i < CHAN_MAX; i++) {
@@ -173,9 +175,9 @@ void SoundGenPCJr::play(int resnum) {
 }
 
 void SoundGenPCJr::stop() {
-	int i;
+	Common::StackLock lock(_mutex);
 
-	for (i = 0; i < CHAN_MAX; i++) {
+	for (int i = 0; i < CHAN_MAX; i++) {
 		_channel[i].avail = 0;
 		_tchannel[i].avail = 0;
 	}
@@ -545,8 +547,7 @@ int SoundGenPCJr::fillNoise(ToneChan *t, int16 *buf, int len) {
 }
 
 int SoundGenPCJr::readBuffer(int16 *stream, const int len) {
-	int streamCount;
-	int16 *sPtr, *cPtr;
+	Common::StackLock lock(_mutex);
 
 	if (_chanAllocated < len) {
 		free(_chanData);
@@ -563,9 +564,9 @@ int SoundGenPCJr::readBuffer(int16 *stream, const int len) {
 		// get channel data(chan.userdata)
 		if (chanGen(i, _chanData, len) == 0) {
 			// divide by number of channels then add to stream
-			streamCount = len;
-			sPtr = stream;
-			cPtr = _chanData;
+			int streamCount = len;
+			int16 *sPtr = stream;
+			int16 *cPtr = _chanData;
 
 			while (streamCount--)
 				*(sPtr++) += *(cPtr++) / CHAN_MAX;
