@@ -66,11 +66,11 @@ void grDispatcher::putSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 			byte *scr_buf = reinterpret_cast<byte *>(screenBuf + yTable[y] + x3);
 			zbuf_t *z_buf = zbuffer_ + SizeX * y + x;
 
-			const char *rle_header = p->header_ptr(py + i);
+			const int8 *rle_header = p->header_ptr(py + i);
 			const uint32 *rle_data = p->data_ptr(py + i);
 
 			int j = 0;
-			char count = 0;
+			int8 count = 0;
 			while (j < px) {
 				count = *rle_header++;
 				if (count > 0) {
@@ -197,11 +197,11 @@ void grDispatcher::putSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 			byte *scr_buf = reinterpret_cast<byte *>(screenBuf + yTable[y] + x3);
 			zbuf_t *z_buf = zbuffer_ + SizeX * y + x;
 
-			const char *rle_header = p->header_ptr(py + i);
+			const int8 *rle_header = p->header_ptr(py + i);
 			const uint32 *rle_data = p->data_ptr(py + i);
 
 			int j = 0;
-			char count = 0;
+			int8 count = 0;
 			while (j < px) {
 				count = *rle_header++;
 				if (count > 0) {
@@ -327,11 +327,11 @@ void grDispatcher::putSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 			uint16 *scr_buf = reinterpret_cast<uint16 *>(screenBuf + yTable[y] + x * 2);
 			zbuf_t *z_buf = zbuffer_ + y * SizeX + x;
 
-			const char *rle_header = p->header_ptr(py + i);
+			const int8 *rle_header = p->header_ptr(py + i);
 			const uint32 *rle_data = p->data_ptr(py + i);
 
 			int j = 0;
-			char count = 0;
+			int8 count = 0;
 			while (j < px) {
 				count = *rle_header++;
 				if (count > 0) {

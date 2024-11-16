@@ -139,13 +139,13 @@ bool RLEBuffer::encode(int sx, int sy, const byte *buf) {
 					index++;
 
 				while (index < sx && buffer[index] == buffer[index - 1])
-					index --;
+					index--;
 
-				_header.push_back(static_cast<char>(count - index));
+				_header.push_back(static_cast<int8>(count - index));
 				for (int i = count; i < index; i++)
 					_data.push_back(buffer[i]);
 			} else {
-				_header.push_back(static_cast<char>(index - count));
+				_header.push_back(static_cast<int8>(index - count));
 				_data.push_back(pixel);
 			}
 
@@ -161,7 +161,7 @@ bool RLEBuffer::encode(int sx, int sy, const byte *buf) {
 }
 
 bool RLEBuffer::decode_line(int y, byte *out_buf) const {
-	const char *header_ptr = &*(_header.begin() + _header_offset[y]);
+	const int8 *header_ptr = &*(_header.begin() + _header_offset[y]);
 	const uint32 *data_ptr = &*(_data.begin() + _data_offset[y]);
 
 	uint32 *out_ptr = reinterpret_cast<uint32 *>(out_buf);
@@ -169,7 +169,7 @@ bool RLEBuffer::decode_line(int y, byte *out_buf) const {
 	int size = line_header_length(y);
 
 	for (int i = 0; i < size; i++) {
-		char count = *header_ptr++;
+		int8 count = *header_ptr++;
 		if (count > 0) {
 			for (int j = 0; j < count; j++)
 				*out_ptr++ = *data_ptr;
@@ -187,11 +187,11 @@ bool RLEBuffer::decode_line(int y, byte *out_buf) const {
 }
 
 bool RLEBuffer::decode_pixel(int x, int y, uint32 &pixel) {
-	const char *header_ptr = &*(_header.begin() + _header_offset[y]);
+	const int8 *header_ptr = &*(_header.begin() + _header_offset[y]);
 	const uint32 *data_ptr = &*(_data.begin() + _data_offset[y]);
 
 	int xx = 0;
-	char count = *header_ptr++;
+	int8 count = *header_ptr++;
 
 	while (xx + abs(count) < x) {
 		if (count > 0) {
