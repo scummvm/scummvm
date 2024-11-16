@@ -42,7 +42,7 @@ namespace Tinsel {
 
 #define PALETTE_COUNT 22
 #define TEXTURE_COUNT 4
-#define MERGE_VERTICES_OFFSET 0.1f // find proper ratio, this is perhaps too big?
+#define MERGE_VERTICES_OFFSET 0.1f // TODO: find the proper ratio, this one is perhaps too big?
 
 static float ConvertAngle(uint32 angle) {
 	return ((float(angle & 0xfff) / 4095.0f) * 360.0f);
@@ -163,7 +163,7 @@ void Spriter::TransformSceneXYZ(int x, int y, int z, int& xOut, int& yOut) {
 
 	MatrixCurrent().transform(&v, true);
 
-	// apply viewport
+	// Apply the viewport
 	xOut = _view.centerX + v.x();
 	yOut = _view.centerY + v.y();
 }
@@ -334,17 +334,7 @@ void Spriter::LoadRBH(const Common::String& modelName, Hunks& hunks) {
 		} else if (tag == kRELC) {
 			uint srcIdx = f.readUint32LE();
 			uint dstIdx = f.readUint32LE();
-
-			// SCUMMVM implementation does not need to read offsets
-
-			// uint entries = (size - sizeof(uint32) * 2) / sizeof(uint32);
-			// uint32* dstDataPtr = (uint32*)_rbh[dstIdx].data.data();
-			// while (entries > 0)
-			// {
-			//	 uint offset = f.readUint32LE();
-			//	 --entries;
-			// }
-			f.skip(size - 8);
+			f.skip(size - 8); // ScummVM's implementation does not need to read the offsets for relocation
 			hunks[srcIdx].mappingIdx.push_back(dstIdx);
 		} else {
 			assert(false);
@@ -530,11 +520,12 @@ Common::Rect Spriter::Draw(int direction, int x, int y, int z, int tDelta) {
 		}
 	}
 
-	// do gradual direction change when model is idle - game is using 5 steps
+	// TODO: Do a gradual direction change when the model is idle - Noir is using 5 steps.
 	_modelMain.rotation.set(0, ConvertAngle(direction), 0);
 
 	RenderModel(_modelMain);
 
+	// TODO: Add the shadow rendering after the lights are implemented
 	// int shadowId = 3;
 	// if (_animId == 2) {
 	// 	shadowId = ((_modelMain.endFrame + 17) % 18) + 1;
@@ -674,7 +665,7 @@ Meshes Spriter::LoadMeshes(const Hunks &hunks, uint hunk, uint offset, int frame
 						prim.color = primitivesStream.readUint32LE();
 						break;
 					case MESH_PART_TYPE_SOLID:
-						assert(false); //not used?
+						assert(false); // TODO: not used? maybe in overlay model?
 						break;
 					case MESH_PART_TYPE_TEXTURE:
 						// Has texture
@@ -756,7 +747,7 @@ void Spriter::InitModel(Model &model, MeshInfo &meshInfo, Common::Array<Animatio
 
 	MatrixReset();
 
-	// Preprocess vertices - merge vertices
+	// Preprocess model - merge vertices that are close to each other
 	RunRenderProgram(model, true);
 
 	bool valid = true;
@@ -770,11 +761,11 @@ void Spriter::InitModel(Model &model, MeshInfo &meshInfo, Common::Array<Animatio
 		model.tables.translations.resize(animInfo.translateNum);
 	}
 
-	assert(valid); // Animation tables are incorrect
+	assert(valid); // Warn if animation tables are incorrect
 
 	for (uint i = 0; i < model.animationCount; ++i) {
+		// TODO: check if animation data has same number of frames for all transformation types
 		// SetStartFrame(model, animInfos[i], 0);
-		// check if animation data has same number of frames for all transformation types
 	}
 }
 
@@ -806,7 +797,7 @@ void Spriter::RunRenderProgram(Model &model, bool preprocess) {
 				break;
 			}
 			case UNUSED: {
-				// TODO
+				// TODO: Check where is this used. In some model overlay?
 				// uint16 entry = READ_LE_UINT16(&program[ip]);
 				ip += 2;
 				break;
@@ -928,7 +919,7 @@ void Spriter::FindSimilarVertices(Mesh& mesh, Vectors& vertices, Common::Array<u
 		for (uint j = 0; j < vertices.size() - 1; ++j) {
 			float d = vOut.getDistanceTo(vertices[j]);
 			if (d < MERGE_VERTICES_OFFSET) {
-				sameVertices[i_start + i] = j + 1; // 0 is reserved for not found
+				sameVertices[i_start + i] = j + 1; // 0 is reserved for "not found"
 				break;
 			}
 		}
@@ -948,7 +939,7 @@ void Spriter::MergeVertices(Mesh &mesh, Common::Array<uint16>& sameVertices) {
 }
 
 void Spriter::TransformMesh(Mesh& mesh, Vectors& vertices) {
-	// Transformed vertices from previous meshes might be in the current mesh.
+	// Transformed vertices from previous meshes might be used by the current mesh.
 	const Math::Matrix4 &m = MatrixCurrent();
 
 	for (auto& vIn : mesh.vertices) {
@@ -981,8 +972,9 @@ void Spriter::RenderMesh(Mesh& mesh, Vectors& vertices, Vectors &normals) {
 			RenderMeshPartColor(part, vertices, normals);
 			break;
 		case MESH_PART_TYPE_SOLID:
+			// TODO: Check where is this used. In some model overlay?
 			// This just uses white color
-			//RenderMeshPartColor(part, vertices, normals);
+			// RenderMeshPartColor(part, vertices, normals);
 			break;
 		case MESH_PART_TYPE_TEXTURE:
 			RenderMeshPartTexture(part, vertices, normals);
@@ -1067,9 +1059,8 @@ void Spriter::Load(const Common::String &modelName, const Common::String &textur
 
 	InitModel(_modelMain, _meshMain, _animMain, MODEL_HAS_TRANSLATION_TABLE | MODEL_HAS_ROTATION_TABLE);
 
-	// for (uint i = 0; i < _animMain.size(); ++i) {
-	// 		update max frame
-	// }
+	// TODO: Check where is this used. In some model overlay?
+	// for (uint i = 0; i < _animMain.size(); ++i) { }
 
 	_modelIdle = true;
 	_modelMain.time = 0;
@@ -1127,16 +1118,17 @@ void Spriter::RenderModel(Model &model) {
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
-	tglFrustum(-1.0f, 1.0f,  -3.0f / 4.0f, 3.0f / 4.0f, 1.0f, 1000.0f);
-	// opengl uses bottom left
+	tglFrustum(-1.0f, 1.0f, -3.0f / 4.0f, 3.0f / 4.0f, 1.0f, 1000.0f);
+	// GL uses bottom left system
 	tglScalef(1.0f, -1.0f, 1.0f);
-	// Z is inverted, and we need to invert the face orientation too
+	// Z is inverted in GL, we need to invert the face orientation too.
 	tglScalef(1.0f, 1.0f, -1.0f);
 	tglFrontFace(TGL_CW);
 
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
 
+	// TODO: Use GL's view matrix instead of the game one.
 	// tglRotatef(_view.rotation.x(), 1.0f, 0.0f, 0.0f);
 	// tglRotatef(_view.rotation.y(), 0.0f, 1.0f, 0.0f);
 	// tglRotatef(_view.rotation.z(), 0.0f, 0.0f, 1.0f);
@@ -1151,7 +1143,7 @@ void Spriter::RenderModel(Model &model) {
 	tglClear(TGL_DEPTH_BUFFER_BIT);
 
 #if 0
-	// code just for debuging model rendering, to be removed
+	// TODO: Remove. Used only for debugging of the normals calculation and rendering.
 	tglEnable(TGL_LIGHTING);
 	TGLfloat light_position[] = { 0.0, 0.0, 0.0, 1.0 };
 	tglLightfv(TGL_LIGHT0, TGL_POSITION, light_position);
