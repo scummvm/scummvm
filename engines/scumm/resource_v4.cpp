@@ -127,7 +127,7 @@ void ScummEngine_v4::readIndexFile() {
 	allocateArrays();
 
 	while (true) {
-		itemsize = _fileHandle->readUint32LE();
+		/*itemsize = */_fileHandle->readUint32LE();
 
 		if (_fileHandle->eos() || _fileHandle->err())
 			break;

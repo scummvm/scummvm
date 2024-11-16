@@ -408,8 +408,6 @@ int MacGuiImpl::MacDialogWindow::runDialog(Common::Array<int> &deferredActionIds
 	if (!_visible) {
 		show();
 
-		Common::Rect windowBounds(_innerSurface.w, _innerSurface.h);
-
 		for (uint i = 0; i < _widgets.size(); i++) {
 			if (_widgets[i]->isVisible()) {
 				_widgets[i]->setRedraw(true);

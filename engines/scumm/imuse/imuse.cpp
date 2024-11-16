@@ -125,7 +125,7 @@ byte *IMuseInternal::findStartOfSound(int sound, int ct) {
 		return ct == trFlag ? ptr + 4 : nullptr;
 
 	ptr += 4;
-	size = READ_BE_UINT32(ptr);
+	//size = READ_BE_UINT32(ptr);
 	ptr += 4;
 
 	// Okay, we're looking for one of those things: either
