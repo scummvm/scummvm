@@ -57,7 +57,7 @@ public:
 		return _data.size();
 	}
 
-	const char *header_ptr(int y = 0) const {
+	const int8 *header_ptr(int y = 0) const {
 		return &*(_header.begin() + _header_offset[y]);
 	}
 	const uint32 *data_ptr(int y = 0) const {
@@ -74,7 +74,7 @@ private:
 	Std::vector<uint32> _header_offset;
 	Std::vector<uint32> _data_offset;
 
-	Std::vector<char> _header;
+	Std::vector<int8> _header;
 	Std::vector<uint32> _data;
 
 	int _bits_per_pixel;

@@ -60,11 +60,11 @@ void grDispatcher::putSpr_rle(int x, int y, int sx, int sy, const class RLEBuffe
 	for (int i = 0; i < psy; i++) {
 		uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
 
-		const char *rle_header = p->header_ptr(py + i);
+		const int8 *rle_header = p->header_ptr(py + i);
 		const uint32 *rle_data = p->data_ptr(py + i);
 
 		int j = 0;
-		char count = 0;
+		int8 count = 0;
 		while (j < px) {
 			count = *rle_header++;
 			if (count > 0) {
@@ -265,11 +265,11 @@ void grDispatcher::putSprMask_rle(int x, int y, int sx, int sy, const RLEBuffer 
 	for (int i = 0; i < psy; i++) {
 		uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
 
-		const char *rle_header = p->header_ptr(py + i);
+		const int8 *rle_header = p->header_ptr(py + i);
 		const uint32 *rle_data = p->data_ptr(py + i);
 
 		int j = 0;
-		char count = 0;
+		int8 count = 0;
 		while (j < px) {
 			count = *rle_header++;
 			if (count > 0) {
