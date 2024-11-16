@@ -1102,13 +1102,11 @@ void Wiz::auxDecompDRLEStream(WizRawPixel *destPtr, const byte *dataStream, WizR
 				background8 += runCount;
 
 				destPtr = (WizRawPixel *)dest8;
-				backgroundPtr = (WizRawPixel *)background8;
 			} else {
 				dest16 += runCount;
 				background16 += runCount;
 
 				destPtr = (WizRawPixel *)dest16;
-				backgroundPtr = (WizRawPixel *)background16;
 			}
 
 			decompAmount -= runCount;
@@ -1127,13 +1125,11 @@ void Wiz::auxDecompDRLEStream(WizRawPixel *destPtr, const byte *dataStream, WizR
 					background8 += runCount;
 
 					destPtr = (WizRawPixel *)dest8;
-					backgroundPtr = (WizRawPixel *)background8;
 				} else {
 					dest16 += runCount;
 					background16 += runCount;
 
 					destPtr = (WizRawPixel *)dest16;
-					backgroundPtr = (WizRawPixel *)background16;
 				}
 			} else {
 				runCount += decompAmount;
@@ -1151,14 +1147,12 @@ void Wiz::auxDecompDRLEStream(WizRawPixel *destPtr, const byte *dataStream, WizR
 					background8 += runCount;
 
 					destPtr = (WizRawPixel *)dest8;
-					backgroundPtr = (WizRawPixel *)background8;
 				} else {
 					memcpy(dest16, background16, runCount * sizeof(WizRawPixel16));
 					dest16 += runCount;
 					background16 += runCount;
 
 					destPtr = (WizRawPixel *)dest16;
-					backgroundPtr = (WizRawPixel *)background16;
 				}
 			} else {
 				runCount += decompAmount;
