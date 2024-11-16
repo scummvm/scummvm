@@ -34,18 +34,18 @@ namespace Scumm {
 class KattonGenerator {
 public:
 	KattonGenerator(int seed);
-	~KattonGenerator();
+	~KattonGenerator() = default;
 
 	MapFile *generateMap(int water, int tileSet, int mapSize, int energy, int terrain);
 
 private:
-	int _seed;
+	int _seed = 0;
 
-	int _size; // 32, 40, 48, or 56
-	int _tileset;
-	int _startloc[20][2];
-	int _board[MAX_TILE_COUNT][MAX_TILE_COUNT];
-	int _special[MAX_TILE_COUNT][MAX_TILE_COUNT];
+	int _size = 0; // 32, 40, 48, or 56
+	int _tileset = 0;
+	int _startloc[20][2] = { {}, {} };;
+	int _board[MAX_TILE_COUNT][MAX_TILE_COUNT] = { {}, {} };
+	int _special[MAX_TILE_COUNT][MAX_TILE_COUNT] = { {}, {} };;
 
 	int getRandomNumber();
 

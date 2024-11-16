@@ -631,13 +631,13 @@ public:
 		NUM_IMAGES   = 255
 	};
 
-	WizBufferElement _wizBuffer[NUM_IMAGES];
-	uint16 _wizBufferIndex;
-	WizPolygon _polygons[NUM_POLYGONS];
+	WizBufferElement _wizBuffer[NUM_IMAGES] = {};
+	uint16 _wizBufferIndex = 0;
+	WizPolygon _polygons[NUM_POLYGONS] = {};
 
 	// For collision
-	WizRawPixel _compareBufferA[640];
-	WizRawPixel _compareBufferB[640];
+	WizRawPixel _compareBufferA[640] = {};
+	WizRawPixel _compareBufferB[640] = {};
 
 	Wiz(ScummEngine_v71he *vm);
 	~Wiz() {
@@ -968,7 +968,7 @@ public:
 
 	// TRLE
 	int _trlePutSize = 0;
-	byte _trleBuf[(128 * 2) * sizeof(WizRawPixel)];
+	byte _trleBuf[(128 * 2) * sizeof(WizRawPixel)] = {};
 
 	byte *trlePutDump(byte *dest, int nn);
 	byte *trlePutRun(byte *dest, int nn, int cc, int tcolor);
@@ -977,8 +977,8 @@ public:
 
 	// TRLE FLIP
 	bool _initializeAlphaTable = true;
-	float _alphaTable[256];
-	int _precomputed16bppTable[WIZ_QUANTIZED_ALPHA_COUNT][WIZ_COLOR16_COMPONENT_COUNT][WIZ_COLOR16_COMPONENT_COUNT];
+	float _alphaTable[256] = {};
+	int _precomputed16bppTable[WIZ_QUANTIZED_ALPHA_COUNT][WIZ_COLOR16_COMPONENT_COUNT][WIZ_COLOR16_COMPONENT_COUNT] = { {}, {}, {} };
 
 	void trleFLIPDecompressImage(
 		WizRawPixel *bufferPtr, const byte *compData, int bufferWidth, int bufferHeight,

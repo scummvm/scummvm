@@ -29,9 +29,6 @@ SpiffGenerator::SpiffGenerator(int seed) {
 	_seed = seed;
 }
 
-SpiffGenerator::~SpiffGenerator() {
-}
-
 MapFile *SpiffGenerator::generateMap(int water, int tileset, int mapSize, int energy, int terrain) {
 	_totalMapSizeG = mapSize;
 	_energyAmountG = (2 + energy) * _totalMapSizeG * _totalMapSizeG;
