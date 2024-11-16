@@ -648,11 +648,11 @@ void WinnieEngine::wind() {
 		return;
 
 	printStr(IDS_WTP_WIND_0);
-	playSound(IDI_WTP_SND_WIND_0);
+	playSound(IDI_WTP_SND_WIND_1); // not a bug, IDI_WTP_SND_WIND_0 isn't used here
 	getSelection(kSelAnyKey);
 
 	printStr(IDS_WTP_WIND_1);
-	playSound(IDI_WTP_SND_WIND_0);
+	playSound(IDI_WTP_SND_WIND_1);
 	getSelection(kSelAnyKey);
 
 	dropObjRnd();
