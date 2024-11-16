@@ -3727,7 +3727,7 @@ bool ImFont::IsGlyphRangeUnused(unsigned int c_begin, unsigned int c_last)
 
 void ImFont::SetGlyphVisible(ImWchar c, bool visible)
 {
-    if (ImFontGlyph* glyph = (ImFontGlyph*)(void*)FindGlyph((ImWchar)c))
+    if (ImFontGlyph* glyph = const_cast<ImFontGlyph *>(FindGlyph((ImWchar)c)))
         glyph->Visible = visible ? 1 : 0;
 }
 
