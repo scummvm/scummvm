@@ -492,7 +492,7 @@ void OpenGLRenderer::depthTesting(bool enabled) {
 void OpenGLRenderer::polygonOffset(bool enabled) {
 	if (enabled) {
 		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(-10.0f, 1.0f);
+		glPolygonOffset(-1.0f, 1.0f);
 	} else {
 		glPolygonOffset(0, 0);
 		glDisable(GL_POLYGON_OFFSET_FILL);
@@ -513,7 +513,7 @@ void OpenGLRenderer::useStipple(bool enabled) {
 		GLfloat factor = 0;
 		glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &factor);
 		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(factor - 1.0f, -1.0f);
+		glPolygonOffset(factor - 0.5f, -1.0f);
 		glEnable(GL_POLYGON_STIPPLE);
 		if (_renderMode == Common::kRenderZX    ||
 			_renderMode == Common::kRenderCPC   ||

@@ -273,7 +273,7 @@ void TinyGLRenderer::useStipple(bool enabled) {
 		TGLfloat factor = 0;
 		tglGetFloatv(TGL_POLYGON_OFFSET_FACTOR, &factor);
 		tglEnable(TGL_POLYGON_OFFSET_FILL);
-		tglPolygonOffset(factor - 1.0f, -1.0f);
+		tglPolygonOffset(factor - 0.5f, -1.0f);
 		tglEnable(TGL_POLYGON_STIPPLE);
 		if (_renderMode == Common::kRenderZX  ||
 			_renderMode == Common::kRenderCPC ||
