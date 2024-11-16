@@ -32,14 +32,14 @@ class Room403 : public Room {
 private:
 	machine *_bell = nullptr;
 	int _val1 = 0;
-	int _val2 = 0;
+	int _ripleyTrigger = -1;
 	int _val3 = 0;
-	int _val4 = 0;
+	int _wolfTrigger = -1;
 	int _val5 = 0;
-	int _val6 = 0;
-	int _val7 = 0;
-	int _val8 = 0;
-	int _val9 = 0;
+	int _ripleyMode = 0;
+	int _ripleyShould = 0;
+	int _wolfMode = 0;
+	int _wolfShould = 0;
 	int _val10 = 0;
 	Common::String _sound1;
 	int _val12 = 0;
@@ -98,6 +98,7 @@ public:
 	void daemon() override;
 	void pre_parser() override;
 	void parser() override;
+	void syncGame(Common::Serializer &s) override;
 };
 
 } // namespace Rooms
