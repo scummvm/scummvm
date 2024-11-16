@@ -619,7 +619,7 @@ void Room408::parser() {
 	} else if (lookFlag && player_said("TOPIARY")) {
 		digi_play("408r02", 1);
 	} else if (lookFlag && player_said("SUNDIAL")) {
-		digi_play(player_been_here(408) ? "408r32" : "408r04", 1);
+		digi_play(player_been_here(407) ? "408r32" : "408r04", 1);
 	} else if (lookFlag && player_said_any("BUSH", "BUSH ")) {
 		digi_play("408r05", 1);
 	} else if (lookFlag && player_said("PLANK") && inv_object_is_here("PLANK")) {

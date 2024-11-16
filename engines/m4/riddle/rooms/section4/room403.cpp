@@ -216,6 +216,9 @@ void Room403::init() {
 			} else {
 				_ventClosed = series_show("SPRITE OF VENT CLOSED", 0x600, 16);
 			}
+
+			player_set_commands_allowed(true);
+
 		} else if (_G(flags)[V132]) {
 			_G(flags)[V132] = 0;
 			_G(camera_reacts_to_player) = false;
@@ -241,12 +244,13 @@ void Room403::init() {
 				_val9 = 2300;
 			}
 
-			if (0) {
-				ws_demand_location(4, 296);
-				ws_walk(80, 300, nullptr, 300, 3);
-			} else {
+			if (_G(kittyScreaming)) {
 				MoveScreenDelta(-640, 0);
 				ws_demand_location(1110, 322);
+				player_set_commands_allowed(true);
+			} else {
+				ws_demand_location(4, 296);
+				ws_walk(80, 300, nullptr, 300, 3);
 			}
 		}
 	}

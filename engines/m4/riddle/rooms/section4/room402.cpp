@@ -1416,7 +1416,8 @@ void Room402::pre_parser() {
 		!player_said("POMERANIAN MARKS", "WOLF"))
 		_G(flags)[V112] = 1;
 
-	_val6 = 0;
+	if (_val6 == 0)
+		return;
 
 	if (player_said("POMERANIAN MARKS", "WOLF") && inv_player_has("POMERANIAN MARKS")) {
 		player_set_commands_allowed(false);
