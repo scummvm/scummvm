@@ -173,7 +173,7 @@ void debugout(const char *s) {
 				lp = 0;
 			} else if (*s == '\t') {
 				for (i = 0; i < 3; i++) linebuff[lp++] = ' ';
-			} else if (*s >= 0 && *s <= 9) linebuff[lp++] = ' ';
+			} else if (*s >= '0' && *s <= '9') linebuff[lp++] = ' ';
 			else linebuff[lp++] = *s;
 		}
 		linebuff[lp] = 0;
