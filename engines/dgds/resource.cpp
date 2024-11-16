@@ -332,7 +332,7 @@ Common::SeekableReadStream *DgdsChunkReader::readStream() {
 		output = new Common::SeekableSubReadStream(_sourceStream, _startPos, _startPos + _size, DisposeAfterUse::NO);
 	}
 
-	//debug("    %s %u%c", _idStr, _size, (_container ? '+' : ' '));
+	//debug(1, "    %s %u%c", _idStr, _size, (_container ? '+' : ' '));
 	return output;
 }
 

@@ -78,7 +78,7 @@ bool ADSInterpreter::load(const Common::String &filename) {
 	if (!_vm->getResourceManager()->hasResource(detailfile))
 		detailfile = filename;
 
-	debug("ADSInterpreter: load %s", detailfile.c_str());
+	debug(1, "ADSInterpreter: load %s", detailfile.c_str());
 
 	// Reset the state
 	_adsTexts.setVal(detailfile, ADSData());
@@ -91,7 +91,7 @@ bool ADSInterpreter::load(const Common::String &filename) {
 		if (file.empty())
 			continue;
 		_adsData->_scriptEnvs.resize(_adsData->_scriptEnvs.size() + 1);
-		debug("   load TTM %s to env %d", file.c_str(), _adsData->_scriptEnvs.size());
+		debug(1, "   load TTM %s to env %d", file.c_str(), _adsData->_scriptEnvs.size());
 		TTMEnviro &data = _adsData->_scriptEnvs.back();
 		data._enviro = _adsData->_scriptEnvs.size();
 		_ttmInterpreter->load(file, data);

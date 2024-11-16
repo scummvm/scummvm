@@ -821,7 +821,7 @@ void SciMusic::printPlayList(Console *con) {
 
 	for (uint32 i = 0; i < _playList.size(); i++) {
 		MusicEntry *song = _playList[i];
-		debug("%d: %08x (%s), resource id: %d, status: %s, %s type\n",
+		debug(1, "%d: %08x (%s), resource id: %d, status: %s, %s type\n",
 						i, song->soundObj,
 						"",//g_sci->getEngineState()->_segMan->getObjectName(song->soundObj),
 						song->resourceId, musicStatus[song->status],
@@ -838,28 +838,28 @@ void SciMusic::printSongInfo(uint32 obj, Console *con) {
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
 		MusicEntry *song = *i;
 		if (song->soundObj == obj) {
-			debug("Resource id: %d, status: %s\n", song->resourceId, musicStatus[song->status]);
-			debug("dataInc: %d, hold: %d, loop: %d\n", song->dataInc, song->hold, song->loop);
-			debug("signal: %d, priority: %d\n", song->signal, song->priority);
-			debug("ticker: %d, volume: %d\n", song->ticker, song->volume);
+			debug(1, "Resource id: %d, status: %s\n", song->resourceId, musicStatus[song->status]);
+			debug(1, "dataInc: %d, hold: %d, loop: %d\n", song->dataInc, song->hold, song->loop);
+			debug(1, "signal: %d, priority: %d\n", song->signal, song->priority);
+			debug(1, "ticker: %d, volume: %d\n", song->ticker, song->volume);
 
 			if (song->pMidiParser) {
-				debug("Type: MIDI\n");
+				debug(1, "Type: MIDI\n");
 				if (song->soundRes) {
 					SoundResource::Track *track = song->soundRes->getTrackByType(_pMidiDrv->getPlayId());
 					if (track) {
-						debug("Channels: %d\n", track->channelCount);
+						debug(1, "Channels: %d\n", track->channelCount);
 					}
 				}
 			} else if (song->pStreamAud || song->pLoopStream) {
-				debug("Type: digital audio (%s), sound active: %s\n",
+				debug(1, "Type: digital audio (%s), sound active: %s\n",
 					song->pStreamAud ? "non looping" : "looping",
 					_pMixer->isSoundHandleActive(song->hCurrentAud) ? "yes" : "no");
 				if (song->soundRes) {
-					debug("Sound resource information:\n");
+					debug(1, "Sound resource information:\n");
 					SoundResource::Track *track = song->soundRes->getTrackByType(_pMidiDrv->getPlayId());
 					if (track && track->digitalChannelNr != -1) {
-						debug("Sample size: %d, sample rate: %d, channels: %d, digital channel number: %d\n",
+						debug(1, "Sample size: %d, sample rate: %d, channels: %d, digital channel number: %d\n",
 							track->digitalSampleSize, track->digitalSampleRate, track->channelCount, track->digitalChannelNr);
 					}
 				}
@@ -869,7 +869,7 @@ void SciMusic::printSongInfo(uint32 obj, Console *con) {
 		}
 	}
 
-	debug("Song object not found in playlist");
+	debug(1, "Song object not found in playlist");
 }
 
 MusicEntry::MusicEntry() {
@@ -1041,7 +1041,7 @@ void SciMusic::remapChannels(bool mainThread) {
 	DeviceChannelUsage currentMap[16];
 
 #ifdef DEBUG_REMAP
-	debug("Remap results:");
+	debug(1, "Remap results:");
 #endif
 
 	// Save current map, and then start from an empty map
@@ -1091,7 +1091,7 @@ void SciMusic::remapChannels(bool mainThread) {
 				if (mainThread) song->pMidiParser->mainThreadEnd();
 #ifdef DEBUG_REMAP
 				if (channelUsed[j])
-					debug(" Unmapping song %d, channel %d", songIndex, j);
+					debug(1, " Unmapping song %d, channel %d", songIndex, j);
 #endif
 				(void)songIndex;
 			}
@@ -1119,7 +1119,7 @@ void SciMusic::remapChannels(bool mainThread) {
 		// If this channel was not yet mapped to the device, reset it
 		if (currentMap[i] != _channelMap[i]) {
 #ifdef DEBUG_REMAP
-			debug(" Mapping (dontRemap) song %d, channel %d to device channel %d", songIndex, _channelMap[i]._channel, i);
+			debug(1, " Mapping (dontRemap) song %d, channel %d to device channel %d", songIndex, _channelMap[i]._channel, i);
 #endif
 			resetDeviceChannel(i, mainThread);
 			if (mainThread) _channelMap[i]._song->pMidiParser->mainThreadBegin();
@@ -1150,7 +1150,7 @@ void SciMusic::remapChannels(bool mainThread) {
 				_channelMap[j] = map->_map[i];
 				map->_map[i]._song = nullptr; // mark as done
 #ifdef DEBUG_REMAP
-				debug(" Keeping song %d, channel %d on device channel %d", songIndex, _channelMap[j]._channel, j);
+				debug(1, " Keeping song %d, channel %d on device channel %d", songIndex, _channelMap[j]._channel, j);
 #endif
 				break;
 			}
@@ -1175,7 +1175,7 @@ void SciMusic::remapChannels(bool mainThread) {
 				_channelMap[j] = map->_map[i];
 				map->_map[i]._song = nullptr;
 #ifdef DEBUG_REMAP
-				debug(" Mapping song %d, channel %d to device channel %d", songIndex, _channelMap[j]._channel, j);
+				debug(1, " Mapping song %d, channel %d to device channel %d", songIndex, _channelMap[j]._channel, j);
 #endif
 				if (mainThread) _channelMap[j]._song->pMidiParser->mainThreadBegin();
 				_channelMap[j]._song->pMidiParser->remapChannel(_channelMap[j]._channel, j);
@@ -1198,7 +1198,7 @@ void SciMusic::remapChannels(bool mainThread) {
 
 ChannelRemapping *SciMusic::determineChannelMap() {
 #ifdef DEBUG_REMAP
-	debug("Remap: avail chans: %d-%d", _driverFirstChannel, _driverLastChannel);
+	debug(1, "Remap: avail chans: %d-%d", _driverFirstChannel, _driverLastChannel);
 #endif
 
 	ChannelRemapping *map = new ChannelRemapping;
@@ -1226,7 +1226,7 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 		// CHECKME: Is this condition correct?
 		if (!song->pMidiParser) {
 #ifdef DEBUG_REMAP
-			debug(" Song %d (%p), digital?", songIndex, (void*)song);
+			debug(1, " Song %d (%p), digital?", songIndex, (void*)song);
 #endif
 			continue;
 		}
@@ -1234,7 +1234,7 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 
 #ifdef DEBUG_REMAP
 		const char* name = g_sci->getEngineState()->_segMan->getObjectName(song->soundObj);
-		debug(" Song %d (%p) [%s], prio %d%s", songIndex, (void*)song, name, song->priority, song->playBed ? ", bed" : "");
+		debug(1, " Song %d (%p) [%s], prio %d%s", songIndex, (void*)song, name, song->priority, song->playBed ? ", bed" : "");
 #endif
 
 		// Store backup. If we fail to map this song, we will revert to this.
@@ -1249,13 +1249,13 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 			const MusicEntryChannel &channel = song->_chan[c];
 			if (channel._dontMap) {
 #ifdef DEBUG_REMAP
-				debug("  Channel %d dontMap, skipping", c);
+				debug(1, "  Channel %d dontMap, skipping", c);
 #endif
 				continue;
 			}
 			if (channel._mute) {
 #ifdef DEBUG_REMAP
-				debug("  Channel %d muted, skipping", c);
+				debug(1, "  Channel %d muted, skipping", c);
 #endif
 				continue;
 			}
@@ -1263,7 +1263,7 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 			bool dontRemap = channel._dontRemap || song->playBed;
 
 #ifdef DEBUG_REMAP
-			debug("  Channel %d: prio %d, %d voice%s%s", c, channel._prio, channel._voices, channel._voices == 1 ? "" : "s", dontRemap ? ", dontRemap" : "" );
+			debug(1, "  Channel %d: prio %d, %d voice%s%s", c, channel._prio, channel._voices, channel._voices == 1 ? "" : "s", dontRemap ? ", dontRemap" : "" );
 #endif
 
 			DeviceChannelUsage dc = { song, c };
@@ -1302,7 +1302,7 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 				// no empty channel, but this isn't an essential channel,
 				// so we just skip it.
 #ifdef DEBUG_REMAP
-				debug("   skipping non-essential");
+				debug(1, "   skipping non-essential");
 #endif
 				continue;
 			}
@@ -1317,7 +1317,7 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 			if (devChannel == -1) {
 				// failed to map this song.
 #ifdef DEBUG_REMAP
-				debug("   no free (or lower priority) channel found");
+				debug(1, "   no free (or lower priority) channel found");
 #endif
 				songMapped = false;
 				break;
@@ -1338,7 +1338,7 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 				// non-essential here for playBed songs.
 				if (prio > 0 || (song->playBed && DgdsEngine::getInstance()->getGameId() == GID_DRAGON)) {
 #ifdef DEBUG_REMAP
-					debug("   not enough voices; need %d, have %d. Skipping this channel.", neededVoices, map->_freeVoices);
+					debug(1, "   not enough voices; need %d, have %d. Skipping this channel.", neededVoices, map->_freeVoices);
 #endif
 					continue;
 				}
@@ -1346,14 +1346,14 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 					int j = map->lowestPrio();
 					if (j == -1) {
 #ifdef DEBUG_REMAP
-						debug("   not enough voices; need %d, have %d", neededVoices, map->_freeVoices);
+						debug(1, "   not enough voices; need %d, have %d", neededVoices, map->_freeVoices);
 #endif
 						// failed to free enough voices.
 						songMapped = false;
 						break;
 					}
 #ifdef DEBUG_REMAP
-					debug("   creating room for voices; evict %d", j);
+					debug(1, "   creating room for voices; evict %d", j);
 #endif
 					map->evict(j);
 				} while (map->_freeVoices < neededVoices);
@@ -1366,7 +1366,7 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 
 			// We have a channel and enough free voices now.
 #ifdef DEBUG_REMAP
-			debug("   trying to map to %d", devChannel);
+			debug(1, "   trying to map to %d", devChannel);
 #endif
 
 			map->_map[devChannel] = dc;
@@ -1378,7 +1378,7 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 			if (!dontRemap || devChannel == c) {
 				// If this channel fits here, we're done.
 #ifdef DEBUG_REMAP
-				debug("    OK");
+				debug(1, "    OK");
 #endif
 				continue;
 			}
@@ -1391,7 +1391,7 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 				continue;
 			}
 #ifdef DEBUG_REMAP
-			debug("    but %d is already dontRemap", c);
+			debug(1, "    but %d is already dontRemap", c);
 #endif
 
 			if (prio > 0) {
@@ -1419,7 +1419,7 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 		if (!songMapped) {
 			// We failed to map this song, so unmap all its channels.
 #ifdef DEBUG_REMAP
-			debug(" Failed song");
+			debug(1, " Failed song");
 #endif
 			*map = backupMap;
 		}

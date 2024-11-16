@@ -280,7 +280,7 @@ void MidiDriver_AdLib::send(uint32 b) {
 	byte op1 = (b >> 8) & 0xff;
 	byte op2 = (b >> 16) & 0xff;
 
-	//debug("midi send %02x %x %02x %02x", command, channel, op1, op2);
+	//debug(1, "midi send %02x %x %02x %02x", command, channel, op1, op2);
 
 	switch (command) {
 	case 0x80:

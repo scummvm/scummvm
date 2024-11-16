@@ -638,7 +638,7 @@ int16 SliderGadget::onClick(const Common::Point &mousePt) {
 	else
 		newVal--;
 
-	debug("clicked on slider %d, move val from %d -> %d", _gadgetNo, val, newVal);
+	debug(1, "clicked on slider %d, move val from %d -> %d", _gadgetNo, val, newVal);
 
 	newVal = CLIP((int)newVal, 0, _steps - 1);
 	setValue(newVal);

@@ -168,7 +168,7 @@ void DgdsEngine::loadIcons() {
 bool DgdsEngine::changeScene(int sceneNum) {
 	assert(_scene && _adsInterp);
 
-	debug("CHANGE SCENE %d -> %d (clock %s)", _scene->getNum(), sceneNum, _clock.dump().c_str());
+	debug(1, "CHANGE SCENE %d -> %d (clock %s)", _scene->getNum(), sceneNum, _clock.dump().c_str());
 
 	if (sceneNum == _scene->getNum()) {
 		warning("Tried to change from scene %d to itself, doing nothing.", sceneNum);
@@ -235,7 +235,7 @@ bool DgdsEngine::changeScene(int sceneNum) {
 	else
 		_adsInterp->unload();
 
-	debug("%s", _scene->dump("").c_str());
+	debug(1, "%s", _scene->dump("").c_str());
 	_scene->runEnterSceneOps();
 
 	_justChangedScene1 = true;
@@ -379,7 +379,7 @@ void DgdsEngine::loadGameFiles() {
 		_gdsScene->load("DRAGON.GDS", _resource, _decompressor);
 		_rstFileName = "DRAGON.RST";
 
-		debug("%s", _gdsScene->dump("").c_str());
+		debug(1, "%s", _gdsScene->dump("").c_str());
 
 		loadCorners("DCORNERS.BMP");
 		reqParser.parse(&invRequestData, "DINV.REQ");
@@ -392,7 +392,7 @@ void DgdsEngine::loadGameFiles() {
 		_gdsScene->load("HOC.GDS", _resource, _decompressor);
 		_rstFileName = "HOC.RST";
 
-		debug("%s", _gdsScene->dump("").c_str());
+		debug(1, "%s", _gdsScene->dump("").c_str());
 
 		loadCorners("HCORNERS.BMP");
 		reqParser.parse(&invRequestData, "HINV.REQ");
@@ -415,7 +415,7 @@ void DgdsEngine::loadGameFiles() {
 			loadCorners("SOWCORNERS.BMP");
 		}
 
-		debug("%s", _gdsScene->dump("").c_str());
+		debug(1, "%s", _gdsScene->dump("").c_str());
 
 		reqParser.parse(&invRequestData, "WINV.REQ");
 		reqParser.parse(&vcrRequestData, "WVCR.REQ");
@@ -426,7 +426,7 @@ void DgdsEngine::loadGameFiles() {
 		_gamePals->loadPalette("MRALLY.PAL");
 		_gdsScene->load("MRALLY.GDS", _resource, _decompressor);
 
-		debug("%s", _gdsScene->dump("").c_str());
+		debug(1, "%s", _gdsScene->dump("").c_str());
 
 		loadCorners("MCORNERS.BMP");
 		reqParser.parse(&invRequestData, "TOOLINFO.REQ");
@@ -462,8 +462,8 @@ void DgdsEngine::loadGameFiles() {
 	_inventory->setRequestData(invRequestData);
 	_menu->setRequestData(vcrRequestData);
 
-	debug("Parsed Inv Request:\n%s", invRequestData.dump().c_str());
-	debug("Parsed VCR Request:\n%s", vcrRequestData.dump().c_str());
+	debug(1, "Parsed Inv Request:\n%s", invRequestData.dump().c_str());
+	debug(1, "Parsed VCR Request:\n%s", vcrRequestData.dump().c_str());
 }
 
 void DgdsEngine::loadRestartFile() {
@@ -864,7 +864,7 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 		_storedAreaBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 	}
 
-	debug("%s", _scene->dump("").c_str());
+	debug(1, "%s", _scene->dump("").c_str());
 	_scene->runEnterSceneOps();
 
 	return Common::kNoError;

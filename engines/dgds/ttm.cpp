@@ -599,7 +599,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		// (although it may not make any difference)
 		if (seq._executed && DgdsEngine::getInstance()->getGameId() == GID_WILLY)
 			break;
-		//debug("0x0080: Free from slot %d for seq %d env %d", seq._currentBmpId, seq._seqNum, env._enviro);
+		//debug(1, "0x0080: Free from slot %d for seq %d env %d", seq._currentBmpId, seq._seqNum, env._enviro);
 		env._scriptShapes[seq._currentBmpId].reset();
 		break;
 	case 0x0090: // FREE FONT
@@ -650,7 +650,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		seq._brushNum = ivals[0];
 		break;
 	case 0x1050: // SELECT BMP:	    id:int [0:n]
-		//debug("0x1051: Select bmp %d for seq %d from env %d", ivals[0], seq._seqNum, env._enviro);
+		//debug(1, "0x1051: Select bmp %d for seq %d from env %d", ivals[0], seq._seqNum, env._enviro);
 		seq._currentBmpId = ivals[0];
 		break;
 	case 0x1060: // SELECT PAL:  id:int [0]
@@ -842,7 +842,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	}
 	case 0x5000:
 		// This opcode does nothing in SQ5 demo
-		debug("TTM: 0x5000: Implement opcode? (%d %d %d %d %d)",
+		debug(1, "TTM: 0x5000: Implement opcode? (%d %d %d %d %d)",
 				ivals[0], ivals[1], ivals[2], ivals[3], ivals[4]);
 		break;
 	case 0xa000: // DRAW PIXEL x,y:int
@@ -1099,7 +1099,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	case 0xf020: // LOAD BMP:	filename:str
 		if (seq._executed) // this is a one-shot op
 			break;
-		//debug("0xf020: Load bitmap %s to slot %d for env %d", sval.c_str(), env._enviro, seq._currentBmpId);
+		//debug(1, "0xf020: Load bitmap %s to slot %d for env %d", sval.c_str(), env._enviro, seq._currentBmpId);
 		env._scriptShapes[seq._currentBmpId].reset(new Image(_vm->getResourceManager(), _vm->getDecompressor()));
 		env._scriptShapes[seq._currentBmpId]->loadBitmap(sval);
 		break;
@@ -1262,10 +1262,10 @@ void TTMInterpreter::findAndAddSequences(TTMEnviro &env, Common::Array<Common::S
 	uint16 op = 0;
 	for (uint frame = 0; frame < env._totalFrames; frame++) {
 		env._frameOffsets[frame] = env.scr->pos();
-		//debug("findAndAddSequences: frame %d at offset %d", frame, (int)env.scr->pos());
+		//debug(1, "findAndAddSequences: frame %d at offset %d", frame, (int)env.scr->pos());
 		op = env.scr->readUint16LE();
 		while (op != 0x0ff0 && env.scr->pos() < env.scr->size()) {
-			//debug("findAndAddSequences: check ttm op %04x", op);
+			//debug(1, "findAndAddSequences: check ttm op %04x", op);
 			switch (op & 0xf) {
 			case 0:
 				break;
@@ -1277,7 +1277,7 @@ void TTMInterpreter::findAndAddSequences(TTMEnviro &env, Common::Array<Common::S
 					newseq->_startFrame = frame;
 					newseq->_currentFrame = frame;
 					newseq->_lastFrame = -1;
-					//debug("findAndAddSequences: found env %d seq %d at %d", newseq._enviro, newseq._seqNum, (int)env.scr->pos());
+					//debug(1, "findAndAddSequences: found env %d seq %d at %d", newseq._enviro, newseq._seqNum, (int)env.scr->pos());
 					seqArray.push_back(newseq);
 				} else {
 					env.scr->skip(2);
