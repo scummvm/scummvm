@@ -89,8 +89,8 @@ public:
 		_data = nullptr;
 	}
 protected:
-	const uint16 _offset;
-	const uint16 _size;
+	const uint16 _offset = 0;
+	const uint16 _size = 0;
 
 	char *_data;
 };
@@ -203,16 +203,17 @@ public:
 		_id = 0;
 	}
 private:
-	const uint16 _instoff;
-	const uint16 _voloff;
-	const uint16 _chan1off;
-	const uint16 _chan2off;
-	const uint16 _chan3off;
-	const uint16 _chan4off;
-	const uint16 _sampoff;
-	const bool _looped;
+	const uint16 _instoff = 0;
+	const uint16 _voloff = 0;
+	const uint16 _chan1off = 0;
+	const uint16 _chan2off = 0;
+	const uint16 _chan3off = 0;
+	const uint16 _chan4off = 0;
+	const uint16 _sampoff = 0;
+	const bool _looped = false;
 
-	char *_data;
+	char *_data = nullptr;
+
 	struct tchan {
 		uint16 dataptr_i;
 		uint16 dataptr;
@@ -221,7 +222,7 @@ private:
 		uint16 chan;
 		uint16 dur;
 		uint16 ticks;
-	} _chan[4];
+	} _chan[4] = {};
 };
 
 // plays a single waveform
@@ -247,10 +248,10 @@ public:
 		return true;
 	}
 private:
-	const uint16 _freq;
-	const uint8 _vol;
+	const uint16 _freq = 0;
+	const uint8 _vol = 0;
 
-	int _ticks;
+	int _ticks = 0;
 };
 
 // plays a single looped waveform
@@ -324,9 +325,9 @@ public:
 		return true;
 	}
 private:
-	const uint16 _duration;
+	const uint16 _duration = 0;
 
-	int _ticks;
+	int _ticks = 0;
 };
 
 // plays a single looped waveform which starts at one frequency and bends to another frequency, where it remains until stopped
@@ -361,12 +362,12 @@ public:
 		return true;
 	}
 private:
-	const uint16 _freq1;
-	const uint16 _freq2;
-	const uint8 _vol;
-	const uint16 _step;
+	const uint16 _freq1 = 0;
+	const uint16 _freq2 = 0;
+	const uint8 _vol = 0;
+	const uint16 _step = 0;
 
-	uint16 _curfreq;
+	uint16 _curfreq = 0;
 };
 
 // plays a single looped waveform starting at a specific frequency/volume, dropping in frequency and fading volume to zero
@@ -395,11 +396,11 @@ public:
 		return true;
 	}
 private:
-	const uint16 _freq;
-	const uint8 _vol;
+	const uint16 _freq = 0;
+	const uint8 _vol = 0;
 
-	uint16 _curfreq;
-	uint16 _curvol;
+	uint16 _curfreq = 0;
+	uint16 _curvol = 0;
 };
 
 // plays a single looped waveform, fading the volume from zero to maximum at one rate, then back to zero at another rate
@@ -514,12 +515,12 @@ public:
 		return true;
 	}
 private:
-	const uint16 _freq1;
-	const uint16 _freq2;
-	const uint16 _step;
+	const uint16 _freq1 = 0;
+	const uint16 _freq2 = 0;
+	const uint16 _step = 0;
 
-	uint16 _curfreq;
-	int _curvol;
+	uint16 _curfreq = 0;
+	int _curvol = 0;
 };
 
 // plays a single looped waveform, starting at one frequency, bending down to another frequency, and then back up to the original frequency
@@ -594,11 +595,11 @@ public:
 		return true;
 	}
 private:
-	const uint16 _freq1;
-	const uint16 _freq2;
+	const uint16 _freq1 = 0;
+	const uint16 _freq2 = 0;
 
-	uint16 _curfreq;
-	uint8 _curvol;
+	uint16 _curfreq = 0;
+	uint8 _curvol = 0;
 };
 
 // intermittently plays two looped waveforms for a specific duration
@@ -685,13 +686,13 @@ public:
 		return true;
 	}
 private:
-	const uint16 _freq;
-	const uint8 _vol;
-	const uint8 _loopwidth;
-	const uint8 _numloops;
+	const uint16 _freq = 0;
+	const uint8 _vol = 0;
+	const uint8 _loopwidth = 0;
+	const uint8 _numloops = 0;
 
-	int _loop;
-	int _loopctr;
+	int _loop = 0;
+	int _loopctr = 0;
 
 	void soundon() {
 		char *tmp_data = (char *)malloc(_size);
@@ -732,14 +733,14 @@ public:
 		return true;
 	}
 private:
-	const uint16 _freq;
-	const uint8 _vol;
-	const uint8 _numdurs;
-	const uint8 *_durations;
-	const bool _looped;
+	const uint16 _freq = 0;
+	const uint8 _vol = 0;
+	const uint8 _numdurs = 0;
+	const uint8 *_durations = nullptr;
+	const bool _looped = false;
 
-	int _ticks;
-	int _curdur;
+	int _ticks = 0;
+	int _curdur = 0;
 
 	void soundon() {
 		char *tmp_data = (char *)malloc(_size);
@@ -790,17 +791,17 @@ public:
 		return true;
 	}
 private:
-	const uint16 _offset1;
-	const uint16 _size1;
-	const uint16 _offset2;
-	const uint16 _size2;
-	const uint16 _freq1;
-	const uint16 _freq2;
-	const uint8 _vol;
+	const uint16 _offset1 = 0;
+	const uint16 _size1 = 0;
+	const uint16 _offset2 = 0;
+	const uint16 _size2 = 0;
+	const uint16 _freq1 = 0;
+	const uint16 _freq2 = 0;
+	const uint8 _vol = 0;
 
-	int _curfreq;
-	uint16 _loopnum;
-	uint16 _step;
+	int _curfreq = 0;
+	uint16 _loopnum = 0;
+	uint16 _step = 0;
 
 	void soundon(const char *data, int size) {
 		char *tmp_data1 = (char *)malloc(size);
@@ -858,20 +859,20 @@ public:
 		return true;
 	}
 private:
-	const uint16 _offset1;
-	const uint16 _size1;
-	const uint16 _offset2;
-	const uint16 _size2;
-	const uint8 _vol;
+	const uint16 _offset1 = 0;
+	const uint16 _size1 = 0;
+	const uint16 _offset2 = 0;
+	const uint16 _size2 = 0;
+	const uint8 _vol = 0;
 
-	uint16 _freq1;
-	int16 _step1;
-	uint16 _freq2;
-	int16 _step2;
-	uint16 _freq3;
-	int16 _step3;
-	uint16 _freq4;
-	int16 _step4;
+	uint16 _freq1 = 0;
+	int16 _step1 = 0;
+	uint16 _freq2 = 0;
+	int16 _step2 = 0;
+	uint16 _freq3 = 0;
+	int16 _step3 = 0;
+	uint16 _freq4 = 0;
+	int16 _step4 = 0;
 
 	void updatefreq(uint16 &freq, int16 &step, uint16 min, uint16 max) {
 		freq += step;
@@ -944,9 +945,9 @@ public:
 		return true;
 	}
 private:
-	const uint16 _dur;
+	const uint16 _dur = 0;
 
-	int _ticks;
+	int _ticks = 0;
 };
 
 // plays a single looped waveform and slowly fades volume to zero
@@ -1014,12 +1015,12 @@ public:
 		return true;
 	}
 private:
-	const uint16 _freq1;
-	const uint16 _freq2;
+	const uint16 _freq1 = 0;
+	const uint16 _freq2 = 0;
 
-	uint16 _curfreq;
-	int _curvol;
-	int _ticks;
+	uint16 _curfreq = 0;
+	int _curvol = 0;
+	int _ticks = 0;
 };
 
 // plays 4 looped waveforms, starting at specific frequencies and bending at different rates while fading volume to zero
@@ -1071,14 +1072,14 @@ public:
 		return true;
 	}
 private:
-	const uint16 _offset;
-	const uint16 _size;
+	const uint16 _offset = 0;
+	const uint16 _size = 0;
 
-	uint16 _freq1;
-	uint16 _freq2;
-	uint16 _freq3;
-	uint16 _freq4;
-	uint8 _vol;
+	uint16 _freq1 = 0;
+	uint16 _freq2 = 0;
+	uint16 _freq3 = 0;
+	uint16 _freq4 = 0;
+	uint8 _vol = 0;
 };
 
 // plays a single looped waveform, bending the frequency upward at a varying rate
@@ -1115,14 +1116,14 @@ public:
 		return true;
 	}
 private:
-	const uint16 _freq1;
-	const uint16 _freq2;
-	const uint16 _vol;
+	const uint16 _freq1 = 0;
+	const uint16 _freq2 = 0;
+	const uint16 _vol = 0;
 
-	uint16 _curfreq;
-	uint16 _bendrate;
-	uint16 _bendctr;
-	uint16 _holdctr;
+	uint16 _curfreq = 0;
+	uint16 _bendrate = 0;
+	uint16 _bendctr = 0;
+	uint16 _holdctr = 0;
 };
 
 // plays one waveform, then switches to a different looped waveform and slowly fades volume to zero
@@ -1160,14 +1161,14 @@ public:
 	}
 
 private:
-	const uint16 _offset1;
-	const uint16 _offset2;
-	const uint16 _size1;
-	const uint16 _size2;
-	const uint16 _freq;
+	const uint16 _offset1 = 0;
+	const uint16 _offset2 = 0;
+	const uint16 _size1 = 0;
+	const uint16 _size2 = 0;
+	const uint16 _freq = 0;
 
-	int _vol;
-	int _loop;
+	int _vol = 0;
+	int _loop = 0;
 };
 
 // plays 2 looped waveforms at different frequencies, pulsing at different frequencies and ramping the volume up and down once
@@ -1235,16 +1236,16 @@ public:
 		return true;
 	}
 private:
-	const uint16 _offset1;
-	const uint16 _size1;
-	const uint16 _offset2;
-	const uint16 _size2;
-	const uint16 _freq1;
-	const uint16 _freq2;
+	const uint16 _offset1 = 0;
+	const uint16 _size1 = 0;
+	const uint16 _offset2 = 0;
+	const uint16 _size2 = 0;
+	const uint16 _freq1 = 0;
+	const uint16 _freq2 = 0;
 
-	uint16 _loopnum;
-	uint16 _vol;
-	uint16 _beepcount;
+	uint16 _loopnum = 0;
+	uint16 _vol = 0;
+	uint16 _beepcount = 0;
 };
 
 // plays a stereo siren, sweeping up and down quickly several times before sweeping up slowly, stopping, and then going silent
@@ -1312,14 +1313,14 @@ public:
 		}
 	}
 private:
-	const uint16 _offset1;
-	const uint16 _offset2;
-	const uint16 _size1;
-	const uint16 _size2;
+	const uint16 _offset1 = 0;
+	const uint16 _offset2 = 0;
+	const uint16 _size1 = 0;
+	const uint16 _size2 = 0;
 
-	uint16 _loopnum;
-	int16 _freqmod;
-	uint16 _freq;
+	uint16 _loopnum = 0;
+	int16 _freqmod = 0;
+	uint16 _freq = 0;
 };
 
 // plays a looped waveform, increasing frequency and reducing volume once the frequency reaches a certain point
@@ -1355,10 +1356,10 @@ public:
 			return false;
 	}
 private:
-	const uint16 _offset;
-	const uint16 _size;
+	const uint16 _offset = 0;
+	const uint16 _size = 0;
 
-	uint16 _curfreq;
+	uint16 _curfreq = 0;
 };
 
 // plays a looped waveform, sweeping the frequency up while modulating it (alternating which channel updates) and fading volume out
@@ -1412,11 +1413,11 @@ public:
 		return true;
 	}
 private:
-	const uint16 _offset;
-	const uint16 _size;
+	const uint16 _offset = 0;
+	const uint16 _size = 0;
 
-	uint16 _loop;
-	uint16 _curfreq;
+	uint16 _loop = 0;
+	uint16 _curfreq = 0;
 };
 
 // just like Zak61, but sweeps frequency in the other direction
@@ -1567,15 +1568,15 @@ public:
 		return true;
 	}
 private:
-	const uint16 _offset;
-	const uint16 _size;
+	const uint16 _offset = 0;
+	const uint16 _size = 0;
 
-	uint16 _loop;
-	uint16 _playctr;
-	uint16 _wait1;
-	uint16 _wait2;
-	uint16 _wait3;
-	uint16 _wait4;
+	uint16 _loop = 0;
+	uint16 _playctr = 0;
+	uint16 _wait1 = 0;
+	uint16 _wait2 = 0;
+	uint16 _wait3 = 0;
+	uint16 _wait4 = 0;
 };
 
 // plays a "ding" (volume 0-max-0) followed by a sound sample, a pause, then loops again
@@ -1647,12 +1648,12 @@ public:
 		return true;
 	}
 private:
-	const uint16 _offset;
-	const uint16 _size;
+	const uint16 _offset = 0;
+	const uint16 _size = 0;
 
-	uint16 _mode;
-	uint16 _vol;
-	int16 _volmod;
+	uint16 _mode = 0;
+	uint16 _vol = 0;
+	int16 _volmod = 0;
 };
 
 // modulates volume on 4 samples, frequency on only 2 of them
@@ -1723,13 +1724,13 @@ public:
 		return true;
 	}
 private:
-	const uint16 _offset;
-	const uint16 _size;
+	const uint16 _offset = 0;
+	const uint16 _size = 0;
 
-	uint16 _freq[4];
-	uint16 _vol[4];
-	int16 _freqmod;
-	int16 _volmod[2];
+	uint16 _freq[4] = {};
+	uint16 _vol[4] = {};
+	int16 _freqmod = 0;
+	int16 _volmod[2] = {};
 };
 
 #define CRCToSound(CRC, SOUND) \

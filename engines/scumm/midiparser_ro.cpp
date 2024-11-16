@@ -33,11 +33,9 @@ namespace Scumm {
 
 class MidiParser_RO : public MidiParser {
 protected:
-	int _markerCount;     // Number of markers encountered in stream so far
-	int _lastMarkerCount; // Cache markers until parsed event is actually consumed
+	int _markerCount = 0;     // Number of markers encountered in stream so far
+	int _lastMarkerCount = 0; // Cache markers until parsed event is actually consumed
 
-protected:
-	void compressToType0();
 	void parseNextEvent (EventInfo &info) override;
 
 public:
