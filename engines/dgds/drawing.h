@@ -36,7 +36,7 @@ namespace Drawing {
 	void filledCircle(int x, int y, int xr, int yr, Graphics::ManagedSurface *dst, byte fgcol, byte bgcol);
 	void emptyCircle(int x, int y, int xr, int yr, Graphics::ManagedSurface *dst, byte fgcol);
 
-};
+}
 
 } // end namespace Dgds
 
