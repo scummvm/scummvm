@@ -98,6 +98,7 @@ MODULE_OBJS := \
 	ext/dll_img.o \
 	ext/dll_installutil.o \
 	ext/dll_kernel32.o \
+	ext/dll_protect.o \
 	ext/dll_routine.o \
 	ext/dll_shell32.o \
 	ext/dll_tools.o \

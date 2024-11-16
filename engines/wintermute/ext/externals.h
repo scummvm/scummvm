@@ -44,6 +44,7 @@ bool EmulateDLLTestExternalCalls(BaseGame *, ScStack *, ScStack *, ScScript::TEx
 bool EmulateKernel32ExternalCalls(BaseGame *, ScStack *, ScStack *, ScScript::TExternalFunction *);
 bool EmulateHTTPConnectExternalCalls(BaseGame *, ScStack *, ScStack *, ScScript::TExternalFunction *);
 bool EmulateRoutineExternalCalls(BaseGame *, ScStack *, ScStack *, ScScript::TExternalFunction *);
+bool EmulateProtectExternalCalls(BaseGame *, ScStack *, ScStack *, ScScript::TExternalFunction *);
 
 bool EmulateExternalCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, ScScript::TExternalFunction *function) {
 
@@ -81,6 +82,10 @@ bool EmulateExternalCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, S
 
 	if (strcmp(function->dll_name, "routine.dll") == 0) {
 		return EmulateRoutineExternalCalls(inGame, stack, thisStack, function);
+	}
+
+	if (strcmp(function->dll_name, "protect.dll") == 0) {
+		return EmulateProtectExternalCalls(inGame, stack, thisStack, function);
 	}
 
 	warning("External function %s from %s library is not known by ScummVM", function->name, function->dll_name);
