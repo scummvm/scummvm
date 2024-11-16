@@ -955,6 +955,9 @@ void Renderer::renderRectangle(const Math::Vector3d &originalOrigin, const Math:
 	Math::Vector3d size = originalSize;
 	Math::Vector3d origin = originalOrigin;
 
+	if (!_isAccelerated)
+		polygonOffset(true);
+
 	if (size.x() > 0 && size.y() > 0 && size.z() > 0) {
 		/* According to https://www.shdon.com/freescape/
 		If the bounding box is has all non-zero dimensions
@@ -1091,6 +1094,10 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 		}
 		polygonOffset(false);
 	} else {
+
+		if (!_isAccelerated)
+			polygonOffset(true);
+
 		if (size.x() == 0) {
 			for (int i = 0; i < int(ordinates->size()); i++) {
 				if (i % 3 == 0)

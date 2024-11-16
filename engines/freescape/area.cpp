@@ -241,7 +241,7 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 	ObjectArray nonPlanarObjects;
 	Object *floor = nullptr;
 	Common::HashMap<Object *, float> sizes;
-	float offset = (gfx->_isAccelerated ? 1.0 : 2.0) / _scale;
+	float offset = 1.0 / _scale;
 
 	for (auto &obj : _drawableObjects) {
 		if (!obj->isDestroyed() && !obj->isInvisible()) {
