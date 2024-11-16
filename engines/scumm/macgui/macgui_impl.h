@@ -468,10 +468,10 @@ public:
 	class MacSlider : public MacSliderBase {
 	private:
 		Common::Point _clickPos;
-		uint32 _nextRepeat;
+		uint32 _nextRepeat = 0;
 
-		int _pageSize;
-		int _paging;
+		int _pageSize = 0;
+		int _paging = 0;
 
 		bool _upArrowPressed = false;
 		bool _downArrowPressed = false;
