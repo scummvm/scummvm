@@ -70,11 +70,11 @@ private:
 	}
 
 protected:
-	int _delta;
-	int _count;
-	byte _interval; // must be unsigned byte ("interval < delta" possible)
-	int _limit;
-	bool _decInterval;
+	int _delta = 0;
+	int _count = 0;
+	byte _interval = 0; // must be unsigned byte ("interval < delta" possible)
+	int _limit = 0;
+	bool _decInterval = false;
 };
 
 /*
@@ -122,8 +122,8 @@ private:
 	}
 
 protected:
-	const byte *_params;
-	int _pos;
+	const byte *_params = 0;
+	int _pos = 0;
 };
 
 /*
@@ -167,8 +167,8 @@ private:
 	}
 
 protected:
-	const byte *_params;
-	int _pos;
+	const byte *_params = nullptr;
+	int _pos = 0;
 };
 
 /*
@@ -256,17 +256,17 @@ private:
 	}
 
 protected:
-	const byte *_params;
+	const byte *_params = nullptr;
 
-	byte _updateRemain1;
-	byte _updateRemain2;
+	byte _updateRemain1 = 0;
+	byte _updateRemain2 = 0;
 
-	uint16 _count;
-	byte _bitmask1;
-	byte _bitmask2;
-	byte _updateInterval1;
-	byte _updateInterval2;
-	byte _speakerShiftReg;
+	uint16 _count = 0;
+	byte _bitmask1 = 0;
+	byte _bitmask2 = 0;
+	byte _updateInterval1 = 0;
+	byte _updateInterval2 = 0;
+	byte _speakerShiftReg = 0;
 };
 
 /*
@@ -324,8 +324,8 @@ private:
 	}
 
 protected:
-	int _index;
-	int _param0;
+	int _index = 0;
+	int _param0 = 0;
 
 private:
 	static const byte _noiseTable[256];
