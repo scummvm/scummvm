@@ -45,23 +45,23 @@ namespace Scumm {
 class IMuseDigiInternalMixer {
 
 private:
-	int32 *_amp8Table;
-	int32 *_amp12Table;
-	int32 *_softLMID;
-	int32 *_softLTable;
+	int32 *_amp8Table = nullptr;
+	int32 *_amp12Table = nullptr;
+	int32 *_softLMID = nullptr;
+	int32 *_softLTable = nullptr;
 
-	uint8 *_mixBuf;
+	uint8 *_mixBuf = nullptr;
 
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _channelHandle;
-	int _mixBufSize;
-	int _radioChatter;
-	int _outWordSize;
-	int _outChannelCount;
-	int _sampleRate;
-	int _stereoReverseFlag;
-	bool _isEarlyDiMUSE;
-	bool _lowLatencyMode;
+	int _mixBufSize = 0;
+	int _radioChatter = 0;
+	int _outWordSize = 0;
+	int _outChannelCount = 0;
+	int _sampleRate = 0;
+	int _stereoReverseFlag = 0;
+	bool _isEarlyDiMUSE = false;
+	bool _lowLatencyMode = false;
 
 	void mixBits8Mono(uint8 *srcBuf, int32 inFrameCount, int feedSize, int32 mixBufStartIndex, int32 *ampTable, bool ftIs11025Hz);
 	void mixBits12Mono(uint8 *srcBuf, int32 inFrameCount, int feedSize, int32 mixBufStartIndex, int32 *ampTable);

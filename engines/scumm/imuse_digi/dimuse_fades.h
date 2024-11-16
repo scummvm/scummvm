@@ -32,8 +32,8 @@ class IMuseDigiFadesHandler {
 
 private:
 	IMuseDigital *_engine;
-	IMuseDigiFade _fades[DIMUSE_MAX_FADES];
-	int _fadesOn;
+	IMuseDigiFade _fades[DIMUSE_MAX_FADES] = {};
+	int _fadesOn = 0;
 
 	void clearAllFades();
 public:

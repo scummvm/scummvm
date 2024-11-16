@@ -76,22 +76,22 @@ private:
 
 	BundleDirCache *_cache;
 	BundleDirCache::AudioTable *_bundleTable;
-	BundleDirCache::IndexNode *_indexTable;
+	BundleDirCache::IndexNode *_indexTable = nullptr;
 	CompTable *_compTable;
 
-	int _numFiles;
-	int _numCompItems;
-	int _lastBlockDecompressedSize;
-	int _curSampleId;
-	int _curDecompressedFilePos;
+	int _numFiles = 0;
+	int _numCompItems = 0;
+	int _lastBlockDecompressedSize = 0;
+	int _curSampleId = 0;
+	int _curDecompressedFilePos = 0;
 	BaseScummFile *_file;
-	bool _compTableLoaded;
-	bool _isUncompressed;
-	int _fileBundleId;
-	byte _compOutputBuff[0x2000];
-	byte *_compInputBuff;
-	int _outputSize;
-	int _lastBlock;
+	bool _compTableLoaded = 0;
+	bool _isUncompressed = 0;
+	int _fileBundleId = 0;
+	byte _compOutputBuff[0x2000] = {};
+	byte *_compInputBuff = nullptr;
+	int _outputSize = 0;
+	int _lastBlock = 0;
 	bool loadCompTable(int32 index);
 
 public:
