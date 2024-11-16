@@ -142,6 +142,8 @@ public:
 		_width = _height = 0;
 		_skipLimbs = false;
 		_paletteNum = 0;
+		_actorDrawVirScr = false;
+		_numBlocks = 0;
 	}
 	virtual ~BaseCostumeRenderer() {}
 

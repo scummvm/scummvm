@@ -176,8 +176,8 @@ protected:
 		char name[40];
 		int id;
 	};
-	int _objectIDMapSize;
-	ObjectNameId *_objectIDMap;
+	int _objectIDMapSize = 0;
+	ObjectNameId *_objectIDMap = nullptr;
 
 	struct StampShot {
 		int slot;
@@ -188,12 +188,12 @@ protected:
 		int brightness;
 	};
 
-	int _savegameThumbnailV8Palette[256];
-	byte _savegameThumbnailV8[160 * 120]; // One fourth of the nominal 640x480 resolution
-	StampShot _stampShots[20];
+	int _savegameThumbnailV8Palette[256] = {};
+	byte _savegameThumbnailV8[160 * 120] = {}; // One fourth of the nominal 640x480 resolution
+	StampShot _stampShots[20] = {};
 	int _stampShotsInQueue = 0;
 
-	int _keyScriptKey, _keyScriptNo;
+	int _keyScriptKey = 0, _keyScriptNo = 0;
 
 public:
 	ScummEngine_v8(OSystem *syst, const DetectorResult &dr);

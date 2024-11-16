@@ -151,11 +151,11 @@ protected:
 		kDisplayDelay = 1500
 	};
 	Common::U32String _label;
-	const int _min, _max;
-	const uint16 _incKey, _decKey;
-	int _percentBarWidth;
-	int _value;
-	uint32 _timer;
+	const int _min = 0, _max = 0;
+	const uint16 _incKey = 0, _decKey = 0;
+	int _percentBarWidth = 0;
+	int _value = 0;
+	uint32 _timer = 0;
 };
 
 /**

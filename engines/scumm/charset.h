@@ -202,7 +202,7 @@ private:
 
 class CharsetRendererNES : public CharsetRendererCommon {
 protected:
-	byte *_trTable;
+	byte *_trTable = nullptr;
 
 	void drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height);
 
@@ -223,7 +223,7 @@ protected:
 	virtual int getDrawHeightIntern(uint16 chr);
 	virtual void setDrawCharIntern(uint16 chr) {}
 
-	const byte *_widthTable;
+	const byte *_widthTable = nullptr;
 
 public:
 	CharsetRendererV3(ScummEngine *vm) : CharsetRendererPC(vm) {}
@@ -285,7 +285,7 @@ public:
 
 class CharsetRendererMac : public CharsetRendererCommon {
 protected:
-	const Graphics::Font *_font;
+	const Graphics::Font *_font = nullptr;
 	bool _useCorrectFontSpacing;
 	bool _pad;
 	int _lastTop;
