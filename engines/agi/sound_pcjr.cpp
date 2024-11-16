@@ -296,6 +296,9 @@ int SoundGenPCJr::getNextNote_v1(int ch) {
 	byte *data = _v1data;
 	uint32 len = _v1size;
 
+	if (!_vm->getFlag(VM_FLAG_SOUND_ON))
+		return -1;
+
 	if (len <= 0 || data == nullptr) {
 		_channel[ch].avail = 0;
 		_channel[ch].attenuation = 0x0F;
