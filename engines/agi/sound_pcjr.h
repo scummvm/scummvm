@@ -108,6 +108,8 @@ private:
 	int fillSquare(ToneChan *t, int16 *buf, int len);
 
 private:
+	Common::Mutex _mutex;
+	
 	SndGenChan _channel[CHAN_MAX];
 	ToneChan _tchannel[CHAN_MAX];
 	int16 *_chanData;

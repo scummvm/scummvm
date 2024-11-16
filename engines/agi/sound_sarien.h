@@ -90,6 +90,8 @@ public:
 	}
 
 private:
+	Common::Mutex _mutex;
+
 	ChannelInfo _chn[NUM_CHANNELS];
 	uint8 _env;
 

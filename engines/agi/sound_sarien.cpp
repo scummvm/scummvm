@@ -122,15 +122,17 @@ SoundGenSarien::~SoundGenSarien() {
 }
 
 int SoundGenSarien::readBuffer(int16 *buffer, const int numSamples) {
+	Common::StackLock lock(_mutex);
+
 	fillAudio(buffer, numSamples / 2);
 
 	return numSamples;
 }
 
 void SoundGenSarien::play(int resnum) {
-	AgiSoundEmuType type;
+	Common::StackLock lock(_mutex);
 
-	type = (AgiSoundEmuType)_vm->_game.sounds[resnum]->type();
+	AgiSoundEmuType type = (AgiSoundEmuType)_vm->_game.sounds[resnum]->type();
 
 	assert(type == AGI_SOUND_4CHN);
 
@@ -160,6 +162,8 @@ void SoundGenSarien::play(int resnum) {
 }
 
 void SoundGenSarien::stop() {
+	Common::StackLock lock(_mutex);
+
 	_playingSound = -1;
 
 	for (int i = 0; i < NUM_CHANNELS; i++)
