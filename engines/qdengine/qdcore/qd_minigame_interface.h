@@ -25,7 +25,7 @@
 namespace Common {
 class ReadStream;
 class WriteStream;
-};
+}
 
 namespace QDEngine {
 
