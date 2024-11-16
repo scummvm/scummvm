@@ -1221,8 +1221,8 @@ int ccInstance::Run(int32_t curpc) {
 					// call only supports a 32-bit value. This is fine in most cases, since
 					// methods mostly set the ptr on GlobalReturnValue, so it doesn't reach here.
 					// But just in case, throw a wobbly if it reaches here with a 64-bit pointer
-					if (fnResult._ptr > reinterpret_cast<void *>(static_cast<uintptr>(0xffffffffu)))
-						error("Uhandled 64-bit pointer result from plugin method call");
+					if (fnResult.full() > static_cast<intptr_t>(0xffffffffu))
+						error("Unhandled 64-bit pointer result from plugin method call");
 
 					return_value.SetPluginArgument(fnResult);
 				}

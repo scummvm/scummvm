@@ -132,7 +132,7 @@ void MyListBox::additem(char *texx) {
 
 int MyListBox::processmessage(int mcode, int wParam, NumberPtr lParam) {
 	if (mcode == CLB_ADDITEM) {
-		additem((char *)lParam._ptr);
+		additem((char *)lParam.ptr());
 	} else if (mcode == CLB_CLEAR)
 		clearlist();
 	else if (mcode == CLB_GETCURSEL)
@@ -146,12 +146,12 @@ int MyListBox::processmessage(int mcode, int wParam, NumberPtr lParam) {
 		if (topitem + numonscreen <= selected)
 			topitem = (selected + 1) - numonscreen;
 	} else if (mcode == CLB_GETTEXT)
-		Common::strcpy_s((char *)lParam._ptr, 260, itemnames[wParam]);
+		Common::strcpy_s((char *)lParam.ptr(), 260, itemnames[wParam]);
 	else if (mcode == CLB_SETTEXT) {
 		if (wParam < items)
 			free(itemnames[wParam]);
 
-		char *newstri = (char *)lParam._ptr;
+		char *newstri = (char *)lParam.ptr();
 		size_t ln = strlen(newstri) + 2;
 		itemnames[wParam] = (char *)malloc(ln);
 		Common::strcpy_s(itemnames[wParam], ln, newstri);

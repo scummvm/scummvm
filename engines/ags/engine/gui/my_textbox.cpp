@@ -64,10 +64,10 @@ int MyTextBox::pressedon(int /*mx*/, int /*my*/) {
 int MyTextBox::processmessage(int mcode, int wParam, NumberPtr lParam) {
 
 	if (mcode == CTB_SETTEXT) {
-		snprintf(text, sizeof(text), "%s", (const char *)lParam._ptr);
+		snprintf(text, sizeof(text), "%s", (const char *)lParam.ptr());
 		needredraw = 1;
 	} else if (mcode == CTB_GETTEXT)
-		Common::strcpy_s((char *)lParam._ptr, 260, text); // FIXME! dangerous
+		Common::strcpy_s((char *)lParam.ptr(), 260, text); // FIXME! dangerous
 	else if (mcode == CTB_KEYPRESS) {
 		// NOTE: this deprecated control does not support UTF-8
 		int key = wParam;
