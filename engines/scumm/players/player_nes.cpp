@@ -91,12 +91,12 @@ class SoundGen {
 protected:
 	byte wavehold = 0;
 	uint32 freq = 0;	// short
-	uint32 CurD = 0;
+	uint32 CurD = 1;
 
 public:
-	byte Timer;
-	int32 Pos;
-	uint32 Cycles;	// short
+	byte Timer = 0;
+	int32 Pos = 0;
+	uint32 Cycles = 1;	// short
 
 	inline byte GetTimer() const { return Timer; }
 };
@@ -105,7 +105,7 @@ class Square : public SoundGen {
 protected:
 	byte volume = 0, envelope = 0, duty = 0, swpspeed = 0, swpdir = 0, swpstep = 0, swpenab = 0;
 	byte Vol = 0;
-	byte EnvCtr = 0, Envelope = 0, BendCtr = 0;
+	byte EnvCtr = 1, Envelope = 0, BendCtr = 1;
 	bool Enabled = 0, ValidFreq = 0, Active = 0;
 	bool EnvClk = 0, SwpClk = 0;
 
@@ -127,10 +127,7 @@ static const int8 Duties[4][8] = {
 };
 
 void Square::Reset() {
-	memset(this, 0, sizeof(*this));
-	Cycles = 1;
-	EnvCtr = 1;
-	BendCtr = 1;
+	*this = Square();
 }
 
 void Square::CheckActive() {
@@ -259,8 +256,7 @@ static const int8 TriDuty[32] = {
 };
 
 void Triangle::Reset() {
-	memset(this, 0, sizeof(*this));
-	Cycles = 1;
+	*this = Triangle();
 }
 
 void Triangle::CheckActive() {
@@ -343,7 +339,7 @@ class Noise : public SoundGen {
 protected:
 	byte volume = 0, envelope = 0, datatype = 0;
 	byte Vol = 0;
-	byte EnvCtr = 0, Envelope = 0;
+	byte EnvCtr = 1, Envelope = 0;
 	bool Enabled = false;
 	bool EnvClk = false;
 
@@ -361,11 +357,7 @@ static const uint32 NoiseFreq[16] = {
 };
 
 void Noise::Reset() {
-	memset(this, 0, sizeof(*this));
-	CurD = 1;
-	Cycles = 1;
-	EnvCtr = 1;
-
+	*this = Noise();
 }
 
 void Noise::Write(int Reg, byte Val) {
