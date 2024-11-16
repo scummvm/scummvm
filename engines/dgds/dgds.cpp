@@ -89,7 +89,7 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_random("dgds"), _currentCursor(-1), _menuToTrigger(kMenuNone), _isLoading(true), _flipMode(false),
 	_rstFileName(nullptr), _difficulty(1), _menu(nullptr), _adsInterp(nullptr), _isDemo(false),
 	_dragonArcade(nullptr), _chinaTank(nullptr), _chinaTrain(nullptr), _skipNextFrame(false),
-	_gameId(GID_INVALID), _thisFrameMs(0) {
+	_gameId(GID_INVALID), _thisFrameMs(0), _lastGlobalFade(-1), _lastGlobalFadedPal(0) {
 
 	_platform = gameDesc->platform;
 	_gameLang = gameDesc->language;
@@ -704,8 +704,13 @@ Common::Error DgdsEngine::run() {
 
 			bool haveActiveDialog = _scene->checkDialogActive();
 
-			_scene->drawAndUpdateDialogs(&_compositionBuffer);
-			_scene->drawVisibleHeads(&_compositionBuffer);
+			if (getGameId() == GID_WILLY) {
+				_scene->drawVisibleHeads(&_compositionBuffer);
+				_scene->drawAndUpdateDialogs(&_compositionBuffer);
+			} else {
+				_scene->drawAndUpdateDialogs(&_compositionBuffer);
+				_scene->drawVisibleHeads(&_compositionBuffer);
+			}
 
 			_dumpFrame(_compositionBuffer, "comp-with-dlg");
 
@@ -715,6 +720,29 @@ Common::Error DgdsEngine::run() {
 			g_system->copyRectToScreen(_compositionBuffer.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 			_justChangedScene1 = false;
 			_justChangedScene2 = false;
+		}
+
+		// Willy Beamish dims the palette of the screen while dialogs are active
+		if (_gameId == GID_WILLY) {
+			WillyGlobals *globals = static_cast<WillyGlobals *>(_gameGlobals);
+			int16 fade = globals->getPalFade();
+			fade = CLIP(fade, (int16)0, (int16)255);
+
+			// TODO: Same constants are in globals.cpp
+			static const int FADE_STARTCOL = 0x40;
+			static const int FADE_NUMCOLS = 0xC0;
+
+			if (_scene->hasVisibleHead()) {
+				fade = 0x80;
+			} else {
+				fade = 0;
+			}
+
+			if (_lastGlobalFade != fade || _lastGlobalFadedPal != _gamePals->getCurPalNum()) {
+				_gamePals->setFade(FADE_STARTCOL, FADE_NUMCOLS, 0, fade);
+				_lastGlobalFade = fade;
+				_lastGlobalFadedPal = _gamePals->getCurPalNum();
+			}
 		}
 
 		g_system->updateScreen();

@@ -22,6 +22,7 @@
 #include "dgds/globals.h"
 #include "dgds/dgds.h"
 #include "dgds/scene.h"
+#include "dgds/game_palettes.h"
 
 namespace Dgds {
 
@@ -285,23 +286,64 @@ Common::Error HocGlobals::syncState(Common::Serializer &s) {
 	return Common::kNoError;
 }
 
+static const int FADE_STARTCOL = 0x40;
+static const int FADE_NUMCOLS = 0xC0;
+
+
+class PaletteFadeGlobal : public RWI16Global {
+public:
+	PaletteFadeGlobal(uint16 num, int16 *val) : RWI16Global(num, val) {}
+	int16 set(int16 val) override {
+		val = CLIP(val, (int16)0, (int16)255);
+		int16 lastVal = get();
+		const int FADESTEP = 4;
+		if (lastVal != val) {
+			int step = (val > lastVal) ? FADESTEP : -FADESTEP;
+			int currentLevel = lastVal / FADESTEP;
+			int targetLevel = val / FADESTEP;
+			while (currentLevel != targetLevel) {
+				lastVal += step;
+				currentLevel = lastVal / FADESTEP;
+				DgdsEngine::getInstance()->getGamePals()->setFade(FADE_STARTCOL, FADE_NUMCOLS, 0, currentLevel);
+			}
+			RWI16Global::set(val);
+		}
+		return get();
+	}
+};
+
+class WillyDrawGlobal : public RWI16Global {
+public:
+	WillyDrawGlobal(uint16 num, int16 *val) : RWI16Global(num, val) {}
+	int16 set(int16 val) override {
+		int16 oldVal = get();
+		if (val != oldVal) {
+			val = CLIP(val, (int16)0, (int16)10);
+			warning("TODO: Implement set function for willy global 0x02 val %d.", val);
+			return RWI16Global::set(val);
+		}
+		return oldVal;
+	}
+};
+
+
 WillyGlobals::WillyGlobals(Clock &clock) : Globals(clock),
 	_unk2(4), _unk3(0), _unk4(0), _unk5(0), _unk74(0), _unk75(300),
-	_unk77(255), _unk78(0), _unk79(0), _unk80(0), _unk81(3), _unk82(1) {
+	_palFade(255), _unk78(0), _unk79(0), _unk80(0), _unk81(3), _unk82(1) {
 	_globals.push_back(new DetailLevelROGlobal(0x53));
 	_globals.push_back(new RWI16Global(0x52, &_unk82));
 	_globals.push_back(new RWI16Global(0x51, &_unk81));
 	_globals.push_back(new RWI16Global(0x50, &_unk80));
 	_globals.push_back(new RWI16Global(0x4F, &_unk79));
 	_globals.push_back(new RWI16Global(0x4E, &_unk78));
-	_globals.push_back(new RWI16Global(0x4D, &_unk77));
-	_globals.push_back(new RWI16Global(0x4C, &_unk77)); // TODO: Special set function 1833:665e. Same variable as 0x4D.
+	_globals.push_back(new RWI16Global(0x4D, &_palFade));
+	_globals.push_back(new PaletteFadeGlobal(0x4C, &_palFade));
 	_globals.push_back(new RWI16Global(0x4B, &_unk75));
 	_globals.push_back(new RWI16Global(0x4A, &_unk74));
 	_globals.push_back(new RWI16Global(0x05, &_unk5));
 	_globals.push_back(new RWI16Global(0x04, &_unk4));
 	_globals.push_back(new RWI16Global(0x03, &_unk3));
-	_globals.push_back(new RWI16Global(0x02, &_unk2)); // TODO: Special set function 1574:06ca
+	_globals.push_back(new WillyDrawGlobal(0x02, &_unk2));
 }
 
 Common::Error WillyGlobals::syncState(Common::Serializer &s) {
@@ -312,7 +354,7 @@ Common::Error WillyGlobals::syncState(Common::Serializer &s) {
 	s.syncAsSint16LE(_unk5);
 	s.syncAsSint16LE(_unk74);
 	s.syncAsSint16LE(_unk75);
-	s.syncAsSint16LE(_unk77);
+	s.syncAsSint16LE(_palFade);
 	s.syncAsSint16LE(_unk78);
 	s.syncAsSint16LE(_unk79);
 	s.syncAsSint16LE(_unk80);

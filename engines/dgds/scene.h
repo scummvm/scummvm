@@ -253,12 +253,13 @@ private:
 
 class TalkDataHeadFrame {
 public:
-	TalkDataHeadFrame() : _xoff(0), _yoff(0), _frameNo(0) {}
+	TalkDataHeadFrame() : _xoff(0), _yoff(0), _frameNo(0), _flipFlags(0) {}
 	Common::String dump(const Common::String &indent) const;
 
 	uint16 _frameNo;
 	uint16 _xoff;
 	uint16 _yoff;
+	uint16 _flipFlags;
 };
 
 enum HeadFlags {
@@ -275,7 +276,7 @@ enum HeadFlags {
 
 class TalkDataHead {
 public:
-	TalkDataHead() : _num(0), _drawType(0), _drawCol(0), _val3(0), _flags(kHeadFlagNone) {}
+	TalkDataHead() : _num(0), _drawType(0), _drawCol(0), _flags(kHeadFlagNone) {}
 	Common::String dump(const Common::String &indent) const;
 
 	uint16 _num;
@@ -283,8 +284,9 @@ public:
 	uint16 _drawCol;
 	DgdsRect _rect;
 	Common::Array<TalkDataHeadFrame> _headFrames;
-	uint16 _val3;
+	Common::String _bmpFile;
 	HeadFlags _flags;
+	Common::SharedPtr<Image> _shape;
 };
 
 class TalkData {
@@ -466,6 +468,7 @@ public:
 	void updateVisibleTalkers();
 	void loadTalkDataAndSetFlags(uint16 talknum, uint16 headnum);
 	void drawVisibleHeads(Graphics::ManagedSurface *dst);
+	bool hasVisibleHead() const;
 
 	// dragon-specific scene ops
 	void addAndShowTiredDialog();
@@ -491,6 +494,7 @@ private:
 	void drawHeadType1(Graphics::ManagedSurface *dst, const TalkDataHead &head, const Image &img);
 	void drawHeadType2(Graphics::ManagedSurface *dst, const TalkDataHead &head, const Image &img);
 	void drawHeadType3(Graphics::ManagedSurface *dst, const TalkDataHead &head, const Image &img);
+	void drawHeadType3Beamish(Graphics::ManagedSurface *dst, const TalkData &data, const TalkDataHead &head);
 
 	int _num;
 	Common::Array<SceneOp> _enterSceneOps;

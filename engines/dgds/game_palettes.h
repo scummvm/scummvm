@@ -59,6 +59,8 @@ public:
 
 	Common::Error syncState(Common::Serializer &s);
 
+	uint getCurPalNum() const { return _curPalNum; }
+
 private:
 	ResourceManager *_resourceMan;
 	Decompressor *_decompressor;

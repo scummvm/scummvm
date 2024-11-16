@@ -60,7 +60,7 @@ Dialog *Dialog::_lastDialogSelectionChangedFor = nullptr;
 
 Dialog::Dialog() : _num(0), _bgColor(0), _fontColor(0), _selectionBgCol(0), _selectonFontCol(0),
 	_fontSize(0), _flags(kDlgFlagNone), _frameType(kDlgFramePlain), _time(0), _nextDialogDlgNum(0),
-	_nextDialogFileNum(0), _fileNum(0), _unk1(0), _unk2(0)
+	_nextDialogFileNum(0), _fileNum(0), _talkDataNum(0), _talkDataHeadNum(0)
 {}
 
 
@@ -688,9 +688,9 @@ struct DialogAction *Dialog::pickAction(bool isClosing, bool isForceClose) {
 
 Common::String Dialog::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format(
-			"%sDialog<num %d %s bgcol %d fcol %d selbgcol %d selfontcol %d fntsz %d flags 0x%02x frame %d delay %d next %d:%d",
+			"%sDialog<num %d %s bgcol %d fcol %d selbgcol %d selfontcol %d fntsz %d flags 0x%02x frame %d delay %d next %d:%d talkdata %d:%d",
 			indent.c_str(), _num, _rect.dump("").c_str(), _bgColor, _fontColor, _selectionBgCol, _selectonFontCol, _fontSize,
-			_flags, _frameType, _time, _nextDialogFileNum, _nextDialogDlgNum);
+			_flags, _frameType, _time, _nextDialogFileNum, _nextDialogDlgNum, _talkDataNum, _talkDataHeadNum);
 	str += indent + "state=" + (_state ? _state->dump("") : "null");
 	str += "\n";
 	str += _dumpStructList(indent, "actions", _action);

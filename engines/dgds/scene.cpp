@@ -100,7 +100,7 @@ Common::String SceneConditions::dump(const Common::String &indent) const {
 
 
 Common::String HotArea::dump(const Common::String &indent) const {
-	Common::String str = Common::String::format("%sHotArea<%s num %d cursor %d unk1 %d unk2 %d",
+	Common::String str = Common::String::format("%sHotArea<%s num %d cursor %d cursor2 %d interactionFlag %d",
 			indent.c_str(), _rect.dump("").c_str(), _num, _cursorNum, _otherCursorNum, _objInteractionListFlag);
 	str += _dumpStructList(indent, "enableConditions", enableConditions);
 	str += _dumpStructList(indent, "onRClickOps", onRClickOps);
@@ -462,8 +462,8 @@ bool Scene::readDialogList(Common::SeekableReadStream *s, Common::Array<Dialog> 
 		}
 
 		if (isVersionOver(" 1.216")) {
-			dst._unk1 = s->readUint16LE();
-			dst._unk2 = s->readUint16LE();
+			dst._talkDataNum = s->readUint16LE();
+			dst._talkDataHeadNum = s->readUint16LE();
 		}
 
 		uint16 nbytes = s->readUint16LE();
@@ -1212,6 +1212,14 @@ bool SDSScene::readTalkData(Common::SeekableReadStream *s, TalkData &dst) {
 		h._rect.y = s->readUint16LE();
 		h._rect.width = s->readUint16LE();
 		h._rect.height = s->readUint16LE();
+		if (isVersionOver(" 1.220")) {
+			h._bmpFile = s->readString();
+			if (!h._bmpFile.empty()) {
+				DgdsEngine *engine = DgdsEngine::getInstance();
+				h._shape.reset(new Image(engine->getResourceManager(), engine->getDecompressor()));
+				h._shape->loadBitmap(h._bmpFile);
+			}
+		}
 		uint16 nsub = s->readUint16LE();
 		_checkListNotTooLong(nsub, "talk head frames");
 		h._headFrames.resize(nsub);
@@ -1219,6 +1227,9 @@ bool SDSScene::readTalkData(Common::SeekableReadStream *s, TalkData &dst) {
 			sub._frameNo = s->readUint16LE();
 			sub._xoff = s->readUint16LE();
 			sub._yoff = s->readUint16LE();
+			if (isVersionOver(" 1.221")) {
+				sub._flipFlags = s->readUint16LE();
+			}
 		}
 	}
 
@@ -1268,9 +1279,11 @@ bool SDSScene::loadTalkData(uint16 num) {
 			_talkData.front()._num = num;
 			_version = oldVer;
 
-			Image *img = new Image(resourceManager, decompressor);
-			img->loadBitmap(_talkData.front()._bmpFile);
-			_talkData.front()._shape.reset(img);
+			if (!_talkData.front()._bmpFile.empty()) {
+				Image *img = new Image(resourceManager, decompressor);
+				img->loadBitmap(_talkData.front()._bmpFile);
+				_talkData.front()._shape.reset(img);
+			}
 		}
 	}
 
@@ -1300,17 +1313,24 @@ void SDSScene::updateVisibleTalkers() {
 
 void SDSScene::drawHead(Graphics::ManagedSurface *dst, const TalkData &data, const TalkDataHead &head) {
 	uint drawtype = head._drawType ? head._drawType : 1;
-	if (!data._shape)
+	// Use specific head shape if available (eg, in Willy Beamish), if not use talk data shape
+	Common::SharedPtr<Image> img = head._shape;
+	if (!img)
+		img = data._shape;
+	if (!img)
 		return;
 	switch (drawtype) {
 	case 1:
-		drawHeadType1(dst, head, *data._shape);
+		drawHeadType1(dst, head, *img);
 		break;
 	case 2:
-		drawHeadType2(dst, head, *data._shape);
+		drawHeadType2(dst, head, *img);
 		break;
 	case 3:
-		drawHeadType3(dst, head, *data._shape);
+		if (DgdsEngine::getInstance()->getGameId() == GID_WILLY)
+			drawHeadType3Beamish(dst, data, head);
+		else
+			drawHeadType3(dst, head, *img);
 		break;
 	default:
 		error("Unsupported head draw type %d", drawtype);
@@ -1328,7 +1348,7 @@ void SDSScene::drawHeadType1(Graphics::ManagedSurface *dst, const TalkDataHead &
 	const int y = head._rect.y;
 	if (img.isLoaded()) {
 		for (const auto &frame : head._headFrames) {
-			img.drawBitmap(frame._frameNo, x + frame._xoff, y + frame._yoff, r, *dst);
+			img.drawBitmap(frame._frameNo & 0xff, x + frame._xoff, y + frame._yoff, r, *dst);
 		}
 	}
 }
@@ -1338,7 +1358,37 @@ void SDSScene::drawHeadType2(Graphics::ManagedSurface *dst, const TalkDataHead &
 		return;
 	const Common::Rect r = head._rect.toCommonRect();
 	for (const auto &frame : head._headFrames) {
-		img.drawBitmap(frame._frameNo, r.left + frame._xoff, r.top + frame._yoff, r, *dst);
+		img.drawBitmap(frame._frameNo & 0xff, r.left + frame._xoff, r.top + frame._yoff, r, *dst);
+	}
+}
+
+void SDSScene::drawHeadType3Beamish(Graphics::ManagedSurface *dst, const TalkData &data, const TalkDataHead &head) {
+	const Common::Rect r = head._rect.toCommonRect();
+
+	// Note: only really need the 1px border here but just fill the box.
+	dst->fillRect(r, 8);
+
+	Common::Rect fillRect(r);
+	fillRect.grow(-1);
+	dst->fillRect(fillRect, head._drawCol);
+
+	for (const auto &frame : head._headFrames) {
+		int frameNo = frame._frameNo & 0x7fff;
+		bool useHeadShape = frame._frameNo & 0x8000;
+
+		Common::SharedPtr<Image> img = useHeadShape ? head._shape : data._shape;
+		if (!img || !img->isLoaded() || frameNo >= img->loadedFrameCount())
+			continue;
+
+		ImageFlipMode flip = kImageFlipNone;
+		// Yes, the numerical values are revesed here (1 -> 2 and 2 -> 1).
+		// The head flip flags are reversed from the image draw flags.
+		if (frame._flipFlags & 1)
+			flip = static_cast<ImageFlipMode>(flip & kImageFlipH);
+		if (frame._flipFlags & 2)
+			flip = static_cast<ImageFlipMode>(flip & kImageFlipV);
+
+		img->drawBitmap(frameNo, r.left + frame._xoff, r.top + frame._yoff, fillRect, *dst);
 	}
 }
 
@@ -1348,8 +1398,9 @@ void SDSScene::drawHeadType3(Graphics::ManagedSurface *dst, const TalkDataHead &
 	if (!img.isLoaded())
 		return;
 	for (const auto &frame : head._headFrames) {
-		if (frame._frameNo < img.loadedFrameCount())
-			img.drawBitmap(frame._frameNo, r.left + frame._xoff, r.top + frame._yoff, r, *dst);
+		int frameNo = frame._frameNo;
+		if (frameNo < img.loadedFrameCount())
+			img.drawBitmap(frameNo, r.left + frame._xoff, r.top + frame._yoff, r, *dst);
 		else
 			dst->fillRect(r, 4);
 	}
@@ -1381,6 +1432,17 @@ void SDSScene::drawVisibleHeads(Graphics::ManagedSurface *dst) {
 		}
 	}
 }
+
+bool SDSScene::hasVisibleHead() const {
+	for (const auto &tds : _talkData) {
+		for (const auto &h : tds._heads) {
+			if (h._flags & kHeadFlagVisible)
+				return true;
+		}
+	}
+	return false;
+}
+
 
 void SDSScene::loadTalkDataAndSetFlags(uint16 talknum, uint16 headnum) {
 	updateVisibleTalkers();
@@ -1451,6 +1513,12 @@ void SDSScene::showDialog(uint16 fileNum, uint16 dlgNum) {
 			dialog.setFlag(kDlgFlagHi20);
 			dialog.setFlag(kDlgFlagVisible);
 			dialog.setFlag(kDlgFlagOpening);
+
+			// For beamish
+			if (dialog._talkDataHeadNum) {
+				loadTalkDataAndSetFlags(dialog._talkDataNum, dialog._talkDataHeadNum);
+			}
+
 			// hide time gets set the first time it's drawn.
 			if (_dlgWithFlagLo8IsClosing && dialog.hasFlag(kDlgFlagLo8)) {
 				_sceneDialogFlags = static_cast<DialogFlags>(_sceneDialogFlags | kDlgFlagLo8 | kDlgFlagVisible);
@@ -1501,6 +1569,12 @@ bool SDSScene::checkDialogActive() {
 		} else {
 			// this dialog is finished - call the ops and maybe show the next one
 			_dlgWithFlagLo8IsClosing = dlg.hasFlag(kDlgFlagLo8);
+
+			// For Willy Beamish
+			if (dlg._talkDataNum) {
+				freeTalkData(dlg._talkDataNum);
+			}
+
 			DialogAction *action = dlg.pickAction(true, clearDlgFlag);
 			if (action || dlg._action.empty()) {
 				dlg.setFlag(kDlgFlagHiFinished);
@@ -1523,6 +1597,7 @@ bool SDSScene::checkDialogActive() {
 					}
 				}
 			}
+
 			if (dlg._nextDialogDlgNum) {
 				dlg.setFlag(kDlgFlagHiFinished);
 				showDialog(dlg._nextDialogFileNum, dlg._nextDialogDlgNum);

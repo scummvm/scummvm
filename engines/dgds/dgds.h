@@ -179,6 +179,8 @@ private:
 	bool _flipMode;
 	bool _skipNextFrame;
 	uint32 _thisFrameMs;
+	int16 _lastGlobalFade; // Only used in Willy Beamish
+	uint _lastGlobalFadedPal;
 
 public:
 	DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc);
