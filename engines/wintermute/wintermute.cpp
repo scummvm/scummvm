@@ -105,6 +105,8 @@ Common::Error WintermuteEngine::run() {
 	_debugger = new Console(this);
 	setDebugger(_debugger);
 
+	_savingEnabled = true;
+
 //	DebugMan.enableDebugChannel("enginelog");
 	debugC(1, kWintermuteDebugLog, "Engine Debug-LOG enabled");
 	debugC(2, kWintermuteDebugSaveGame , "Savegame debugging-enabled");
@@ -342,11 +344,19 @@ Common::Error WintermuteEngine::saveGameState(int slot, const Common::String &de
 }
 
 bool WintermuteEngine::canSaveGameStateCurrently(Common::U32String *msg) {
-	return true;
+	return _savingEnabled;
 }
 
 bool WintermuteEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return true;
+}
+
+bool WintermuteEngine::canSaveAutosaveCurrently() {
+	return _savingEnabled;
+}
+
+void WintermuteEngine::savingEnable(bool enable) {
+	_savingEnabled = enable;
 }
 
 bool WintermuteEngine::getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption) {
