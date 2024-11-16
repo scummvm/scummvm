@@ -40,6 +40,7 @@ class DebugConsole : public GUI::Debugger {
 	bool Cmd_invAdd(int argc, const char **argv);
 	bool Cmd_invRemove(int argc, const char **argv);
 	bool Cmd_changeDay(int argc, const char **argv);
+	bool Cmd_searchTos(int argc, const char **argv);
 	bool validateObjVarIndex(int16 varIdx);
 	void printDayAndTime();
 

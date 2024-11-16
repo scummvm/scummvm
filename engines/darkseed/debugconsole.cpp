@@ -35,6 +35,7 @@ DebugConsole::DebugConsole(TosText *tosText) : _tosText(tosText) {
 	registerCmd("invAdd",   WRAP_METHOD(DebugConsole, Cmd_invAdd));
 	registerCmd("invRemove",   WRAP_METHOD(DebugConsole, Cmd_invRemove));
 	registerCmd("changeDay",   WRAP_METHOD(DebugConsole, Cmd_changeDay));
+	registerCmd("searchTos",   WRAP_METHOD(DebugConsole, Cmd_searchTos));
 }
 
 DebugConsole::~DebugConsole() {
@@ -177,6 +178,25 @@ bool DebugConsole::Cmd_changeDay(int argc, const char **argv) {
 	g_engine->_currentDay = newDay;
 	debugPrintf("Current day changed.\n");
 	printDayAndTime();
+	return true;
+}
+
+bool DebugConsole::Cmd_searchTos(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: searchTos \"search string\"\n");
+		return true;
+	}
+
+	Common::String searchString = Common::String(argv[1]);
+	searchString.toLowercase();
+
+	for (int i = 0; i < g_engine->_tosText->getNumEntries(); i++) {
+		Common::String entry = g_engine->_tosText->getText(i);
+		entry.toLowercase();
+		if (entry.contains(searchString)) {
+			debugPrintf("% 3d: %s\n", i, entry.c_str());
+		}
+	}
 	return true;
 }
 
