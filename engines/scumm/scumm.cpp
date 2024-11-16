@@ -1186,7 +1186,7 @@ Common::Error ScummEngine::init() {
 
 	Common::Path macResourceFile;
 
-	if (_game.platform == Common::kPlatformMacintosh) {
+	if (_game.platform == Common::kPlatformMacintosh && _game.heversion == 0) {
 		Common::MacResManager resource;
 
 		_macScreen = new Graphics::Surface();
