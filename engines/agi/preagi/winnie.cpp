@@ -428,6 +428,7 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 				break;
 			case IDO_WTP_SAVE_GAME:
 				saveGame();
+				getSelection(kSelAnyKey);
 				_room = IDI_WTP_ROOM_HOME;
 				return IDI_WTP_PAR_GOTO;
 			case IDO_WTP_LOAD_GAME:
