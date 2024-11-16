@@ -63,6 +63,8 @@ public:
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveAutosaveCurrently() override;
+	void savingEnable(bool enable);
 	// For detection-purposes:
 	static bool getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption);
 private:
@@ -73,6 +75,7 @@ private:
 	BaseGame *_game;
 	Wintermute::DebuggerController *_dbgController;
 	const WMEGameDescription *_gameDescription;
+	bool _savingEnabled{};
 
 	friend class Console;
 	friend class DebuggerController;

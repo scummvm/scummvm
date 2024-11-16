@@ -101,6 +101,7 @@ bool SXVlink::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 
 #ifdef USE_BINK
 		_gameRef->freeze();
+		((WintermuteEngine *)g_engine)->savingEnable(false);
 
 		Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(path);
 		if (file) {
@@ -167,6 +168,7 @@ bool SXVlink::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			BaseFileManager::getEngineInstance()->closeFile(file);
 		}
 
+		((WintermuteEngine *)g_engine)->savingEnable(true);
 		_gameRef->unfreeze();
 #else
 		warning("SXVlink::Play(%s) Bink playback not compiled in", path);
