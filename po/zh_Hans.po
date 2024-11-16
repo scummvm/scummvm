@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-15 21:32+0000\n"
+"POT-Creation-Date: 2024-11-16 07:56+0000\n"
 "PO-Revision-Date: 2024-07-04 15:43+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
@@ -118,7 +118,7 @@ msgstr "向上"
 #: engines/scumm/dialog-createsession.cpp:47
 #: engines/scumm/dialog-sessionselector.cpp:67
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:138
-#: engines/sword1/control.cpp:2813 engines/wintermute/wintermute.cpp:182
+#: engines/sword1/control.cpp:2813 engines/wintermute/wintermute.cpp:184
 msgid "Cancel"
 msgstr "取消"
 
@@ -3609,7 +3609,7 @@ msgstr ""
 "警告：ScummVM 尚未完全支持你要启动的游戏。因此它可能会不稳定，所有存档在 "
 "ScummVM 的未来版本中可能无效。"
 
-#: engines/engine.cpp:780 engines/wintermute/wintermute.cpp:182
+#: engines/engine.cpp:780 engines/wintermute/wintermute.cpp:184
 msgid "Start anyway"
 msgstr "仍然运行"
 
@@ -13001,19 +13001,19 @@ msgstr "未编译入 Hero Craft 支持"
 msgid "Wintermute3D support is not compiled in"
 msgstr "未编译入 Wintermute3D 支持"
 
-#: engines/wintermute/wintermute.cpp:148
+#: engines/wintermute/wintermute.cpp:150
 msgid "This game requires PNG, JPEG and Vorbis support."
 msgstr "此游戏需要 PNG、JPEG 与 Vorbis 支持。"
 
-#: engines/wintermute/wintermute.cpp:159
+#: engines/wintermute/wintermute.cpp:161
 msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgstr "此游戏需要 FoxTail 子引擎，但未被编译入游戏。"
 
-#: engines/wintermute/wintermute.cpp:170
+#: engines/wintermute/wintermute.cpp:172
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr "此游戏需要 HeroCraft 子引擎，但未被编译入游戏。"
 
-#: engines/wintermute/wintermute.cpp:181
+#: engines/wintermute/wintermute.cpp:183
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."

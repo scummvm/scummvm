@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-15 21:32+0000\n"
+"POT-Creation-Date: 2024-11-16 07:56+0000\n"
 "PO-Revision-Date: 2023-09-07 17:04+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -125,7 +125,7 @@ msgstr "Gå op"
 #: engines/scumm/dialog-createsession.cpp:47
 #: engines/scumm/dialog-sessionselector.cpp:67
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:138
-#: engines/sword1/control.cpp:2813 engines/wintermute/wintermute.cpp:182
+#: engines/sword1/control.cpp:2813 engines/wintermute/wintermute.cpp:184
 msgid "Cancel"
 msgstr "Annuller"
 
@@ -3678,7 +3678,7 @@ msgstr ""
 "ScummVM. Således, er det sandsynligt, at det er ustabilt, og alle gemte spil "
 "du foretager fungerer muligvis ikke i fremtidige versioner af ScummVM."
 
-#: engines/engine.cpp:780 engines/wintermute/wintermute.cpp:182
+#: engines/engine.cpp:780 engines/wintermute/wintermute.cpp:184
 msgid "Start anyway"
 msgstr "Start alligevel"
 
@@ -12928,25 +12928,25 @@ msgstr "Funktionaliteter som er kompileret ind:"
 msgid "Wintermute3D support is not compiled in"
 msgstr "Funktionaliteter som er kompileret ind:"
 
-#: engines/wintermute/wintermute.cpp:148
+#: engines/wintermute/wintermute.cpp:150
 msgid "This game requires PNG, JPEG and Vorbis support."
 msgstr "Spillet kræver understøttelse af PNG, JPEG og Vorbis."
 
-#: engines/wintermute/wintermute.cpp:159
+#: engines/wintermute/wintermute.cpp:161
 #, fuzzy
 msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgstr ""
 "Spillet kræver understøttelse af 3D-karakterer, hvilket er udenfor ScummVMs "
 "område."
 
-#: engines/wintermute/wintermute.cpp:170
+#: engines/wintermute/wintermute.cpp:172
 #, fuzzy
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr ""
 "Spillet kræver understøttelse af 3D-karakterer, hvilket er udenfor ScummVMs "
 "område."
 
-#: engines/wintermute/wintermute.cpp:181
+#: engines/wintermute/wintermute.cpp:183
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."

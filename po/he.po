@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-15 21:32+0000\n"
+"POT-Creation-Date: 2024-11-16 07:56+0000\n"
 "PO-Revision-Date: 2024-10-10 12:33+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -120,7 +120,7 @@ msgstr "למעלה"
 #: engines/scumm/dialog-createsession.cpp:47
 #: engines/scumm/dialog-sessionselector.cpp:67
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:138
-#: engines/sword1/control.cpp:2813 engines/wintermute/wintermute.cpp:182
+#: engines/sword1/control.cpp:2813 engines/wintermute/wintermute.cpp:184
 msgid "Cancel"
 msgstr "ביטול"
 
@@ -3608,7 +3608,7 @@ msgstr ""
 "להניח שהוא לא יציב, ומשחקים שנשמרו עשויים לא לעבוד בגירסאות עתידיות של "
 "ScummVM."
 
-#: engines/engine.cpp:780 engines/wintermute/wintermute.cpp:182
+#: engines/engine.cpp:780 engines/wintermute/wintermute.cpp:184
 msgid "Start anyway"
 msgstr "התחלה בכל מקרה"
 
@@ -12905,19 +12905,19 @@ msgstr "תמיכה במשחק Hero Craft לא נבנתה"
 msgid "Wintermute3D support is not compiled in"
 msgstr "תמיכה במנוע Wintermute3D לא נבנתה"
 
-#: engines/wintermute/wintermute.cpp:148
+#: engines/wintermute/wintermute.cpp:150
 msgid "This game requires PNG, JPEG and Vorbis support."
 msgstr "משחק זה דורש תמיכה ב- PNG, JPEG ו- Vorbis."
 
-#: engines/wintermute/wintermute.cpp:159
+#: engines/wintermute/wintermute.cpp:161
 msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgstr "משחק זה דורש את תת-מנוע FoxTail, שאינו נבנה."
 
-#: engines/wintermute/wintermute.cpp:170
+#: engines/wintermute/wintermute.cpp:172
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr "משחק זה דורש את תת-מנוע HeroCraft, שאינו נבנה."
 
-#: engines/wintermute/wintermute.cpp:181
+#: engines/wintermute/wintermute.cpp:183
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
