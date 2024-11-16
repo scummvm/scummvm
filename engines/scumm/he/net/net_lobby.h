@@ -185,10 +185,8 @@ protected:
 	void handleAcceptChallenge();
 
 	void startHostingGame(int playerId);
-	void handleHostGameResp(int resp);
 
 	void handleGameSession(int sessionId);
-	void handleGameRelay(int relayId);
 
 	void gameStarted(int hoster, int player, int playerNameArray);
 	void gameFinished();
