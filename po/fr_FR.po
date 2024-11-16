@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-15 17:23+0000\n"
-"PO-Revision-Date: 2024-11-09 15:26+0000\n"
+"POT-Creation-Date: 2024-11-16 15:10+0000\n"
+"PO-Revision-Date: 2024-11-16 14:18+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -77,17 +77,17 @@ msgstr "Affiche les fichiers marqués avec l'attribut caché"
 
 #: gui/browser.cpp:78 gui/remotebrowser.cpp:56
 msgid "Go up"
-msgstr "Remonter"
+msgstr "Précédent"
 
 #: gui/browser.cpp:78 gui/browser.cpp:80 gui/remotebrowser.cpp:56
 #: gui/remotebrowser.cpp:58
 msgid "Go to previous directory level"
-msgstr "Remonte d'un niveau dans l'arborescence de répertoire"
+msgstr "Remonte au niveau de répertoire précédent"
 
 #: gui/browser.cpp:80 gui/remotebrowser.cpp:58
 msgctxt "lowres"
 msgid "Go up"
-msgstr "Remonter"
+msgstr "Précédent"
 
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:64
 #: gui/downloaddlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:271
@@ -436,7 +436,7 @@ msgstr "Vers : "
 #: gui/downloadpacksdialog.cpp:246 gui/downloadpacksdialog.cpp:256
 #: gui/downloadpacksdialog.cpp:278 gui/downloadpacksdialog.cpp:293
 msgid "Cancel download"
-msgstr "Annuler téléch."
+msgstr "Annuler téléchargement"
 
 #: gui/downloaddialog.cpp:65
 msgctxt "lowres"
@@ -677,16 +677,16 @@ msgstr "Vérifie l'intégrité de tous les fichiers de jeu"
 
 #: gui/editgamedialog.cpp:296
 msgid "Game Path:"
-msgstr "Chemin du jeu :"
+msgstr "Jeu :"
 
 #: gui/editgamedialog.cpp:298
 msgctxt "lowres"
 msgid "Game Path:"
-msgstr "Chemin du jeu :"
+msgstr "Jeu :"
 
 #: gui/editgamedialog.cpp:303 gui/options.cpp:2554
 msgid "Extra Path:"
-msgstr "Chemin suppl. :"
+msgstr "Extra :"
 
 #: gui/editgamedialog.cpp:303 gui/editgamedialog.cpp:305
 #: gui/editgamedialog.cpp:306
@@ -697,7 +697,7 @@ msgstr ""
 #: gui/editgamedialog.cpp:305 gui/options.cpp:2556
 msgctxt "lowres"
 msgid "Extra Path:"
-msgstr "Chemin suppl. :"
+msgstr "Extra :"
 
 #: gui/editgamedialog.cpp:306 gui/options.cpp:2529 gui/options.cpp:2557
 #: gui/options.cpp:2566 gui/options.cpp:2849
@@ -795,7 +795,7 @@ msgstr "<défaut>"
 
 #: gui/editgamedialog.cpp:376
 msgid "Platform:"
-msgstr "Système :"
+msgstr "Plateforme :"
 
 #: gui/editgamedialog.cpp:376 gui/editgamedialog.cpp:378
 #: gui/editgamedialog.cpp:379
@@ -805,7 +805,7 @@ msgstr "Plateforme pour laquelle le jeu a été conçu"
 #: gui/editgamedialog.cpp:378
 msgctxt "lowres"
 msgid "Platform:"
-msgstr "Système :"
+msgstr "Plateforme :"
 
 #: gui/editgamedialog.cpp:558 gui/options.cpp:3418
 msgid "Select SoundFont"
@@ -1260,8 +1260,8 @@ msgid ""
 "\n"
 "6. In the browser window that opens, select the cloud service to connect. \n"
 "\n"
-"\t  ![Choose the cloud service](cloud_browser.png \"Choose the cloud "
-"service\"){w=70%}\n"
+"\t  ![Choose the cloud service](cloud_browser.png \"Choose the cloud service"
+"\"){w=70%}\n"
 "\n"
 "7. Sign in to the chosen cloud service. Once completed, return to ScummVM.\n"
 "\n"
@@ -1549,16 +1549,13 @@ msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM n'a pas pu trouver de moteur pour lancer le jeu sélectionné !"
 
 #: gui/launcher.cpp:665 gui/launcher.cpp:689
-#, fuzzy
-#| msgid ""
-#| "Did you add this directory to the SAF? Press the help button [?] on the "
-#| "top for detailed instructions"
 msgid ""
 "Have you given ScummVM access rights to this directory? Press the help "
 "button [?] on the top for detailed instructions"
 msgstr ""
-"Avez-vous ajouté ce répertoire au SAF ? Appuyez sur le bouton d'aide [?] en "
-"haut de l'écran pour obtenir des instructions détaillées"
+"Avez-vous donné à ScummVM les droits d'accès à ce répertoire ? Appuyez sur "
+"le bouton d'aide [?] en haut de l'écran pour obtenir des instructions "
+"détaillées"
 
 #: gui/launcher.cpp:686
 msgid "ScummVM could not find any game in the specified directory!"
@@ -1805,7 +1802,7 @@ msgstr ""
 #: gui/options.cpp:1443
 msgctxt "lowres"
 msgid "Pointer Speed:"
-msgstr "Vitesse du pointeur :"
+msgstr "Vitesse pointeur :"
 
 #: gui/options.cpp:1454
 msgid "Joy Deadzone:"
@@ -1818,7 +1815,7 @@ msgstr "Zone inactive du joystick analogique"
 #: gui/options.cpp:1456
 msgctxt "lowres"
 msgid "Joy Deadzone:"
-msgstr "Zone inactive du joystick :"
+msgstr "Zone inact. joy. :"
 
 #: gui/options.cpp:1552
 #, c-format
@@ -1867,7 +1864,7 @@ msgstr ""
 #: gui/options.cpp:1682
 msgctxt "lowres"
 msgid "Shader Path:"
-msgstr "Shader - Chemin :"
+msgstr "Shader :"
 
 #: gui/options.cpp:1683
 msgctxt "shader"
@@ -1900,12 +1897,12 @@ msgstr ""
 
 #: gui/options.cpp:1702
 msgid "Game 3D Renderer:"
-msgstr "Rendu 3D des jeux :"
+msgstr "Moteur de rendu 3D :"
 
 #: gui/options.cpp:1704
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
-msgstr "Moteur de rendu 3D du jeu :"
+msgstr "Moteur de rendu 3D :"
 
 #: gui/options.cpp:1721
 msgid "3D Anti-aliasing:"
@@ -1933,11 +1930,11 @@ msgstr "Corrige le rapport d'aspect pour les jeux"
 
 #: gui/options.cpp:1754
 msgid "Preferred device:"
-msgstr "Périph. préféré :"
+msgstr "Périphérique préféré :"
 
 #: gui/options.cpp:1754
 msgid "Music device:"
-msgstr "Périph. audio :"
+msgstr "Périphérique audio :"
 
 #: gui/options.cpp:1754 gui/options.cpp:1756
 msgid "Specifies preferred sound device or sound card emulator"
@@ -1996,7 +1993,7 @@ msgstr ""
 #: gui/options.cpp:1835
 msgctxt "lowres"
 msgid "SoundFont:"
-msgstr "SoundFont :"
+msgstr "Banque sons :"
 
 #: gui/options.cpp:1841
 msgctxt "soundfont"
@@ -2040,7 +2037,7 @@ msgstr ""
 #: gui/options.cpp:1868
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
-msgstr "Roland MT-32 exacte (pas d'ému GM)"
+msgstr "Roland MT-32 exacte (pas d'émul. GM)"
 
 #: gui/options.cpp:1871
 msgid "Roland GS device (enable MT-32 mappings)"
@@ -2112,7 +2109,7 @@ msgstr "Volume Musique :"
 #: gui/options.cpp:1949
 msgctxt "lowres"
 msgid "Music volume:"
-msgstr "Musique :"
+msgstr "Vol. musique :"
 
 #: gui/options.cpp:1958
 msgid "Mute all"
@@ -2120,16 +2117,16 @@ msgstr "Silence"
 
 #: gui/options.cpp:1961
 msgid "SFX volume:"
-msgstr "Volume Bruitage :"
+msgstr "Volume Bruitages :"
 
 #: gui/options.cpp:1961 gui/options.cpp:1963 gui/options.cpp:1966
 msgid "Special sound effects volume"
-msgstr "Volume des effets spéciaux sonores"
+msgstr "Volume des effets sonores et bruitages"
 
 #: gui/options.cpp:1963
 msgctxt "lowres"
 msgid "SFX volume:"
-msgstr "Bruitage :"
+msgstr "Vol. bruitages :"
 
 #: gui/options.cpp:1973
 msgid "Speech volume:"
@@ -2138,7 +2135,7 @@ msgstr "Volume Voix :"
 #: gui/options.cpp:1975
 msgctxt "lowres"
 msgid "Speech volume:"
-msgstr "Volumes Voix :"
+msgstr "Vol. Voix :"
 
 #: gui/options.cpp:2263
 msgid "Control"
@@ -2220,17 +2217,17 @@ msgstr "Défaut"
 
 #: gui/options.cpp:2544
 msgid "DLC Path:"
-msgstr "Chemin des DLC :"
+msgstr "DLC :"
 
 #: gui/options.cpp:2546
 msgctxt "lowres"
 msgid "DLC Path:"
-msgstr "Chemin des DLC :"
+msgstr "DLC :"
 
 #: gui/options.cpp:2554 gui/options.cpp:2556 gui/options.cpp:2557
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr ""
-"Spécifie un chemin vers des données supplémentaires utilisées par tous les "
+"Spécifie un chemin vers les données supplémentaires utilisées par tous les "
 "jeux ou ScummVM"
 
 #: gui/options.cpp:2563
@@ -3368,7 +3365,7 @@ msgstr "Erreur de chemin d'icônes"
 #: dists/android.strings.xml.cpp:42
 msgid "Unable to create or access default icons and shaders path!"
 msgstr ""
-"Impossible de créer ou d'accéder au chemin d'icônes et de shadders par "
+"Impossible de créer ou d'accéder au chemin d'icônes et de shaders par "
 "défaut !"
 
 #: dists/android.strings.xml.cpp:43
@@ -3377,7 +3374,7 @@ msgid ""
 "ScummVM Options"
 msgstr ""
 "Impossible d'accéder au chemin de sauvegarde défini globalement ! Veuillez "
-"rétablir le chemin par défaut à partir des options de ScummVM"
+"rétablir le chemin par défaut dans les options de ScummVM"
 
 #: dists/android.strings.xml.cpp:44
 msgid "Toggle virtual keyboard"
@@ -3539,12 +3536,12 @@ msgstr "À ~P~ropos"
 
 #: engines/dialogs.cpp:85 engines/dialogs.cpp:156
 msgid "~R~eturn to Launcher"
-msgstr "Retour au ~L~anceur"
+msgstr "~R~etour au lanceur"
 
 #: engines/dialogs.cpp:87 engines/dialogs.cpp:158
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
-msgstr "Retour au ~L~anceur"
+msgstr "~R~etour au lanceur"
 
 #: engines/dialogs.cpp:95 engines/engine.cpp:977 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
@@ -5096,8 +5093,8 @@ msgid ""
 "2. Inside the ScummVM file browser, select **Go Up** until you reach the "
 "root folder which has the **<Add a new folder>** option. \n"
 "\n"
-"  ![ScummVM file browser root](browser-root.png \"ScummVM file browser "
-"root\"){w=70%}\n"
+"  ![ScummVM file browser root](browser-root.png \"ScummVM file browser root"
+"\"){w=70%}\n"
 "\n"
 "3. Double-tap **<Add a new folder>**. In your device's file browser, "
 "navigate to the folder containing all your game folders. For example, **SD "
@@ -10459,14 +10456,14 @@ msgstr ""
 #: engines/sci/sci.cpp:450
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
-"market support for General MIDI for this game in their \"General MIDI "
-"Utility\". Please, apply this patch in order to enjoy MIDI music with this "
-"game. Once you have obtained it, you can unpack all of the included *.PAT "
-"files in your ScummVM extras folder and ScummVM will add the appropriate "
-"patch automatically. Alternatively, you can follow the instructions in the "
-"READ.ME file included in the patch and rename the associated *.PAT file to 4."
-"PAT and place it in the game folder. Without this patch, General MIDI music "
-"for this game will sound badly distorted."
+"market support for General MIDI for this game in their \"General MIDI Utility"
+"\". Please, apply this patch in order to enjoy MIDI music with this game. "
+"Once you have obtained it, you can unpack all of the included *.PAT files in "
+"your ScummVM extras folder and ScummVM will add the appropriate patch "
+"automatically. Alternatively, you can follow the instructions in the READ.ME "
+"file included in the patch and rename the associated *.PAT file to 4.PAT and "
+"place it in the game folder. Without this patch, General MIDI music for this "
+"game will sound badly distorted."
 msgstr ""
 "Vous avez sélectionné le son General MIDI. Sierra a ajouté le support pour "
 "General MIDI après la mise sur le marché de ce jeu par le biais de leur "
@@ -10996,8 +10993,6 @@ msgid "Run in really fast mode (*)"
 msgstr "Jouer en mode très rapide (*)"
 
 #: engines/scumm/help.cpp:101
-#, fuzzy
-#| msgid "Switch between graphics filters"
 msgid "Cycle between graphics filters"
 msgstr "Passer d'un filtre graphique à l'autre"
 
@@ -11485,18 +11480,13 @@ msgid "Enable low latency audio mode"
 msgstr "Activer le mode audio à faible latence"
 
 #: engines/scumm/metaengine.cpp:747
-#, fuzzy
-#| msgid ""
-#| "Allows the game to use low latency audio, at the cost of sound accuracy. "
-#| "\t\tIt is recommended to enable this feature only if you incur in audio "
-#| "latency issues during normal gameplay."
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. It "
 "is recommended to enable this feature only if you incur in audio latency "
 "issues during normal gameplay."
 msgstr ""
 "Permet au jeu d'utiliser une latence audio faible, au détriment de la "
-"précision du son. \t\tIl est recommandé d'activer cette fonctionnalité "
+"précision du son. Il est recommandé d'activer cette fonctionnalité "
 "uniquement si vous rencontrez des problèmes de latence audio pendant une "
 "partie normale."
 
@@ -11505,18 +11495,13 @@ msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr "Activer la chanson \"A Pirate I Was Meant To Be\""
 
 #: engines/scumm/metaengine.cpp:757
-#, fuzzy
-#| msgid ""
-#| "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
-#| "Meant To Be\", \t\twhich was cut in international releases. Beware "
-#| "though: subtitles may not be fully translated."
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", which was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
 msgstr ""
 "Active la chanson au début de la partie 3 du jeu, \"A Pirate I Was Meant To "
-"Be\", \t\tqui a été coupée dans les versions internationales. Attention "
+"Be\", qui a été coupée dans les versions internationales. Attention "
 "cependant : les sous-titres peuvent ne pas avoir été entièrement traduits."
 
 #: engines/scumm/metaengine.cpp:775
@@ -12693,8 +12678,8 @@ msgid ""
 msgstr ""
 "Le jeu comprendra des blagues et des références à d'anciens jeux d'aventure, "
 "sous la forme de conversations et d'objets.\n"
-"Il existe un succès de jeu qui ne peut être obtenu que si l'option "
-"\"blagues\" est activée."
+"Il existe un succès de jeu qui ne peut être obtenu que si l'option \"blagues"
+"\" est activée."
 
 #: engines/twp/dialogs.cpp:44
 msgid "Controls:"
@@ -12966,6 +12951,12 @@ msgid ""
 "\n"
 "Please check you have copied all the files correctly."
 msgstr ""
+"Fichier requis manquant\n"
+"\n"
+"Démarrer une partie nécessite SAVEGAME/U8SAVE.000\n"
+"depuis une installation d'origine.\n"
+"\n"
+"Assurez-vous d'avoir copié correctement tous les fichiers."
 
 #: engines/vcruise/metaengine.cpp:42
 msgid "Improved click sensitivity"
@@ -13091,14 +13082,12 @@ msgstr ""
 "Une erreur inconnue s'est produite lors du chargement de la sauvegarde."
 
 #: engines/voyeur/metaengine.cpp:42
-#, fuzzy
-#| msgid "Enable rock travel"
 msgid "Enable lockout system"
-msgstr "Activer le rock travel"
+msgstr "Activer le système de protection"
 
 #: engines/voyeur/metaengine.cpp:43
 msgid "Require a lockout code to start the game."
-msgstr ""
+msgstr "Exige un code de protection pour lancer le jeu."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
@@ -14234,8 +14223,8 @@ msgstr ""
 #~ "\n"
 #~ "    OS file browser selectable folder with \"Use this folder\" button\n"
 #~ "\n"
-#~ "  ![OS access permission dialog](fs-permission.png \"OS access "
-#~ "permission\")\n"
+#~ "  ![OS access permission dialog](fs-permission.png \"OS access permission"
+#~ "\")\n"
 #~ "\n"
 #~ "    OS file browser ask to grant ScummVM directory access permission\n"
 #~ "\n"
@@ -14321,8 +14310,8 @@ msgstr ""
 #~ "  4. Ensuite, un nouveau dossier \"ScummVMgames\" apparaîtra dans le "
 #~ "dossier \"racine\" (ou \"root\") du navigateur ScummVM.\n"
 #~ "\n"
-#~ "  ![Dossier SAF ajouté](browser-folder-in-list.png \"Dossier SAF "
-#~ "ajouté\")\n"
+#~ "  ![Dossier SAF ajouté](browser-folder-in-list.png \"Dossier SAF ajouté"
+#~ "\")\n"
 #~ "\n"
 #~ "    Navigateur de fichiers avec le dossier SAF ajouté à la racine\n"
 #~ "\n"

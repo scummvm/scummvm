@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-15 17:23+0000\n"
-"PO-Revision-Date: 2024-09-24 17:39+0000\n"
+"POT-Creation-Date: 2024-11-16 15:10+0000\n"
+"PO-Revision-Date: 2024-11-16 02:13+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -25,7 +25,7 @@ msgstr ""
 
 #: audio/mac_plugin.cpp:30
 msgid "Apple Macintosh Audio"
-msgstr ""
+msgstr "Áudio do Apple Macintosh"
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
@@ -1255,8 +1255,8 @@ msgid ""
 "\n"
 "6. In the browser window that opens, select the cloud service to connect. \n"
 "\n"
-"\t  ![Choose the cloud service](cloud_browser.png \"Choose the cloud "
-"service\"){w=70%}\n"
+"\t  ![Choose the cloud service](cloud_browser.png \"Choose the cloud service"
+"\"){w=70%}\n"
 "\n"
 "7. Sign in to the chosen cloud service. Once completed, return to ScummVM.\n"
 "\n"
@@ -1322,8 +1322,8 @@ msgstr ""
 "10. Você está pronto para começar! Use a funcionalidade da nuvem para "
 "sincronizar jogos salvos ou arquivos de jogos entre seus dispositivos.\n"
 "\n"
-"\t  ![Funcionalidade da nuvem](cloud_functions.png \"Funcionalidade da "
-"nuvem\"){w=70%}\n"
+"\t  ![Funcionalidade da nuvem](cloud_functions.png \"Funcionalidade da nuvem"
+"\"){w=70%}\n"
 "\n"
 "   Para obter mais informações, incluindo como usar o assistente de conexão "
 "manual, consulte nossa [documentação sobre nuvem](https://docs.scummvm.org/"
@@ -1542,16 +1542,12 @@ msgstr ""
 "selecionado!"
 
 #: gui/launcher.cpp:665 gui/launcher.cpp:689
-#, fuzzy
-#| msgid ""
-#| "Did you add this directory to the SAF? Press the help button [?] on the "
-#| "top for detailed instructions"
 msgid ""
 "Have you given ScummVM access rights to this directory? Press the help "
 "button [?] on the top for detailed instructions"
 msgstr ""
-"Você adicionou este diretório ao SAF? Pressione o botão de ajuda [?] na "
-"parte superior para obter instruções detalhadas"
+"Você deu direitos de acesso ao ScummVM para este diretório? Pressione o "
+"botão de ajuda [?] no topo para obter instruções detalhadas"
 
 #: gui/launcher.cpp:686
 msgid "ScummVM could not find any game in the specified directory!"
@@ -1844,10 +1840,8 @@ msgid "Scaler:"
 msgstr "Redimensionar:"
 
 #: gui/options.cpp:1666
-#, fuzzy
-#| msgid "Render mode:"
 msgid "Rotation mode:"
-msgstr "Renderização:"
+msgstr "Modo de rotação:"
 
 #: gui/options.cpp:1680
 msgid "Shader:"
@@ -2819,10 +2813,8 @@ msgid "Do you really want to delete this saved game?"
 msgstr "Você realmente quer excluir este jogo salvo?"
 
 #: gui/saveload-dialog.cpp:557
-#, fuzzy
-#| msgid "Error writing save file\n"
 msgid "Error deleting saved game"
-msgstr "Erro ao gravar arquivo de salvamento\n"
+msgstr "Erro ao apagar jogo salvo"
 
 #: gui/saveload-dialog.cpp:675 gui/saveload-dialog.cpp:1192
 msgid "Date: "
@@ -3185,16 +3177,12 @@ msgid "VGA Grey Scale"
 msgstr "VGA em Escala de Cinza"
 
 #: common/rendermode.cpp:58
-#, fuzzy
-#| msgid "PC-9821 (256 Colors)"
 msgid "Windows (256 Colors)"
-msgstr "PC-9821 (256 Cores)"
+msgstr "Windows (256 Cores)"
 
 #: common/rendermode.cpp:59
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "Windows (16 Colors)"
-msgstr "PC-9801 (16 Cores)"
+msgstr "Windows (16 Cores)"
 
 #: common/rendermode.cpp:96
 msgctxt "lowres"
@@ -3207,24 +3195,22 @@ msgid "Hercules Amber"
 msgstr "Hercules Âmbar"
 
 #: common/rotationmode.cpp:33
-#, fuzzy
-#| msgid "Goto location"
 msgid "No rotation"
-msgstr "Ir para local"
+msgstr "Sem rotação"
 
 #: common/rotationmode.cpp:34
 msgid "Clockwise"
-msgstr ""
+msgstr "Sentido horário"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:35
 msgid "180 degrees"
-msgstr ""
+msgstr "180 graus"
 
 #. I18N: Rotation mode
 #: common/rotationmode.cpp:36
 msgid "Counter-clockwise"
-msgstr ""
+msgstr "Sentido anti-horário"
 
 #: common/updates.cpp:57
 msgid "Daily"
@@ -4915,75 +4901,6 @@ msgid "Touch Controls"
 msgstr "Controles de Toque"
 
 #: backends/platform/android/android.cpp:1117
-#, fuzzy
-#| msgid ""
-#| "## Touch control modes\n"
-#| "The touch control mode can be changed by tapping or clicking on the "
-#| "controller icon in the upper right corner\n"
-#| "### Direct mouse \n"
-#| "\n"
-#| "The touch controls are direct. The pointer jumps to where the finger "
-#| "touches the screen (default for menus).\n"
-#| "\n"
-#| "  ![Direct mouse mode](mouse.png \"Direct mouse mode\"){w=10em}\n"
-#| "\n"
-#| "### Touchpad emulation \n"
-#| "\n"
-#| "The touch controls are indirect, like on a laptop touchpad.\n"
-#| "\n"
-#| "  ![Touchpad mode](touchpad.png \"Touchpad mode\"){w=10em}\n"
-#| "\n"
-#| "### Gamepad emulation \n"
-#| "\n"
-#| "Fingers must be placed on lower left and right of the screen to emulate a "
-#| "directional pad and action buttons.\n"
-#| "\n"
-#| "  ![Gamepad mode](gamepad.png \"Gamepad mode\"){w=10em}\n"
-#| "\n"
-#| "To select the preferred touch mode for menus, 2D games, and 3D games, go "
-#| "to **Global Options > Backend > Choose the preferred touch mode**.\n"
-#| "\n"
-#| "## Touch actions \n"
-#| "\n"
-#| "### Two finger scroll \n"
-#| "\n"
-#| "To scroll, slide two fingers up or down the screen\n"
-#| "### Two finger tap\n"
-#| "\n"
-#| "To do a two finger tap, hold one finger down and then tap with a second "
-#| "finger.\n"
-#| "\n"
-#| "### Three finger tap\n"
-#| "\n"
-#| "To do a three finger tap, start with holding down one finger and "
-#| "progressively touch down the other two fingers, one at a time, while "
-#| "still holding down the previous fingers. Imagine you are impatiently "
-#| "tapping your fingers on a surface, but then slow down that movement so it "
-#| "is rhythmic, but not too slow.\n"
-#| "\n"
-#| "### Immersive Sticky fullscreen mode\n"
-#| "\n"
-#| "Swipe from the edge to reveal the system bars.  They remain semi-"
-#| "transparent and disappear after a few seconds unless you interact with "
-#| "them.\n"
-#| "\n"
-#| "### Global Main Menu\n"
-#| "\n"
-#| "To open the Global Main Menu, tap on the menu icon at the top right of "
-#| "the screen.\n"
-#| "\n"
-#| "  ![Menu icon](menu.png \"Menu icon\"){w=10em}\n"
-#| "\n"
-#| "## Virtual keyboard\n"
-#| "\n"
-#| "To open the virtual keyboard, long press on the controller icon at the "
-#| "top right of the screen, or tap on any editable text field. To hide the "
-#| "virtual keyboard, tap the controller icon again, or tap outside the text "
-#| "field.\n"
-#| "\n"
-#| "\n"
-#| "  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
-#| "\n"
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -5134,8 +5051,8 @@ msgid ""
 "2. Inside the ScummVM file browser, select **Go Up** until you reach the "
 "root folder which has the **<Add a new folder>** option. \n"
 "\n"
-"  ![ScummVM file browser root](browser-root.png \"ScummVM file browser "
-"root\"){w=70%}\n"
+"  ![ScummVM file browser root](browser-root.png \"ScummVM file browser root"
+"\"){w=70%}\n"
 "\n"
 "3. Double-tap **<Add a new folder>**. In your device's file browser, "
 "navigate to the folder containing all your game folders. For example, **SD "
@@ -5191,8 +5108,8 @@ msgstr ""
 "pasta adicionada. Adicione um jogo selecionando a subpasta que contém os "
 "arquivos do jogo e toque em **Escolher**.\n"
 "\n"
-"  ![Pasta SAF adicionada](browser-folder-in-list.png \"Pasta SAF "
-"adicionada\"){w=70%}\n"
+"  ![Pasta SAF adicionada](browser-folder-in-list.png \"Pasta SAF adicionada"
+"\"){w=70%}\n"
 "\n"
 "As etapas 2 e 3 precisam ser realizadas apenas uma vez. Para adicionar mais "
 "jogos, repita as etapas 1 e 6.\n"
@@ -5373,80 +5290,6 @@ msgstr ""
 "considere buscar por um detonado dele. Boa sorte!\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:264
-#, fuzzy
-#| msgid ""
-#| "## Touch control modes\n"
-#| "The touch control mode can be changed by tapping or clicking on the "
-#| "controller icon in the upper right corner, by swiping two fingers from "
-#| "left to right, or in the global settings from the Launcher go to **Global "
-#| "Options > Backend > Choose the preferred touch mode**. It's possible to "
-#| "configure the touch mode for three situations (ScummVM menus, 2D games "
-#| "and 3D games).\n"
-#| "\n"
-#| "### Direct mouse \n"
-#| "\n"
-#| "The touch controls are direct. The pointer jumps to where the finger "
-#| "touches the screen (default for menus).\n"
-#| "\n"
-#| "  ![Direct mouse mode](mouse.png \"Direct mouse mode\"){w=10em}\n"
-#| "\n"
-#| "### Touchpad emulation \n"
-#| "\n"
-#| "The touch controls are indirect, like on a laptop touchpad.\n"
-#| "\n"
-#| "  ![Touchpad mode](touchpad.png \"Touchpad mode\"){w=10em}\n"
-#| "\n"
-#| "To select the preferred touch mode for menus, 2D games, and 3D games, go "
-#| "to **Global Options > Backend > Choose the preferred touch mode**.\n"
-#| "\n"
-#| "## Touch actions \n"
-#| "\n"
-#| "| Gesture           | Action            \n"
-#| "| ------------------|-------------------\n"
-#| "| `One finger tap`  | Left mouse click  \n"
-#| "| `Two fingers tap` | Right mouse click \n"
-#| "| `Two fingers double tap` | ESC \n"
-#| "| `One finger press & hold for >0.5s` | Left mouse button hold and drag, "
-#| "such as for selection from action wheel in Curse of Monkey Island \n"
-#| "| `Two fingers press & hold for >0.5s` | Right mouse button hold and "
-#| "drag, such as for selection from action wheel in Tony Tough \n"
-#| "| `Two fingers swipe (left to right)` | Toggles between the touch modes \n"
-#| "| `Two fingers swipe (right to left)` | Toggles virtual controller (>iOS "
-#| "15) \n"
-#| "| `Two fingers swipe (top to bottom)` | Access Global Main Menu in "
-#| "games \n"
-#| "| `Pinch (zoom in/out)` | Enables/disables keyboard \n"
-#| "\n"
-#| "### Virtual Gamepad \n"
-#| "\n"
-#| "Devices running iOS 15 or later can connect virtual gamepad controller by "
-#| "swiping two fingers from right to left or through **Global Options > "
-#| "Backend**. The directional button can be configured to either a "
-#| "thumbstick or a dpad.\n"
-#| "**Note** While the virtual controller is connected it is not possible to "
-#| "perform mouse clicks using tap gestures since they are disabled as long "
-#| "as the virtual controller is visible. Left mouse clicks are performed by "
-#| "pressing the A button. Tap gestures are enabled again when virtual "
-#| "controller is disconnected.\n"
-#| "\n"
-#| "### Global Main Menu\n"
-#| "\n"
-#| "To open the Global Main Menu, tap on the menu icon at the top right of "
-#| "the screen or swipe two fingers downwards.\n"
-#| "\n"
-#| "  ![Menu icon](menu.png \"Menu icon\"){w=10em}\n"
-#| "\n"
-#| "## Virtual keyboard\n"
-#| "\n"
-#| "To open the virtual keyboard, long press on the controller icon at the "
-#| "top right of the screen, perform a pinch gesture (zoom out) or tap on any "
-#| "editable text field. To hide the virtual keyboard, tap the controller "
-#| "icon again, do an opposite pinch gesture (zoom in) or tap outside the "
-#| "text field.\n"
-#| "\n"
-#| "\n"
-#| "  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
-#| "\n"
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -6395,10 +6238,8 @@ msgstr ""
 "menus do jogo."
 
 #: engines/agi/metaengine.cpp:147
-#, fuzzy
-#| msgid "Predictive input dialog"
 msgid "Predictive Input Dialog on mouse click"
-msgstr "Caixa de diálogo de entrada preditivo"
+msgstr "Diálogo de Entrada Preditiva ao clicar o mouse"
 
 #: engines/agi/metaengine.cpp:148
 msgid ""
@@ -6407,6 +6248,10 @@ msgid ""
 "The Predictive Input Dialog can still be activated on demand if there's a "
 "specified key mapping for it"
 msgstr ""
+"Habilita o Diálogo de Entrada Preditiva assistiva especificamente ao clicar "
+"com o botão esquerdo do mouse em campos de entrada de texto.\n"
+"O Diálogo de Entrada Preditiva também pode ser ativado sob demanda, caso "
+"exista um mapeamento de teclas configurado para essa função"
 
 #: engines/agi/metaengine.cpp:159
 msgid "Use Hercules hires font"
@@ -6981,10 +6826,8 @@ msgstr "Mapeamento padrão de teclas"
 
 #. I18N: Escape is a key
 #: engines/bbvs/metaengine.cpp:95
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Escape keymappings"
-msgstr "Mapeamento de teclas do jogo"
+msgstr "Mapeamentos da tecla ESC"
 
 #. I18N: ESC key
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:197
@@ -7716,29 +7559,21 @@ msgstr "Carregamento Rápido"
 
 #. I18N: Game runs at faster speed
 #: engines/cruise/metaengine.cpp:160 engines/tucker/metaengine.cpp:196
-#, fuzzy
-#| msgid "Fast move modifier"
 msgid "Fast mode"
-msgstr "Modificador de movimento rápido"
+msgstr "Modo rápido"
 
 #. I18N: Opens menu with player commands
 #: engines/cruise/metaengine.cpp:173
-#, fuzzy
-#| msgid "Player Time:"
 msgid "Player menu"
-msgstr "Tempo do Jogador:"
+msgstr "Menu do jogador"
 
 #: engines/cruise/metaengine.cpp:179
-#, fuzzy
-#| msgid "Faster game speed"
 msgid "Increase game speed"
 msgstr "Aumentar velocidade do jogo"
 
 #: engines/cruise/metaengine.cpp:185
-#, fuzzy
-#| msgid "Faster game speed"
 msgid "Decrease game speed"
-msgstr "Aumentar velocidade do jogo"
+msgstr "Reduzir velocidade do jogo"
 
 #: engines/cruise/metaengine.cpp:203 engines/mads/metaengine.cpp:361
 #: engines/stark/metaengine.cpp:280
@@ -7750,56 +7585,40 @@ msgid "Versailles 1685 support is not compiled in"
 msgstr "O suporte a Versailles 1685 não foi compilado"
 
 #: engines/dgds/metaengine.cpp:75
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Menu"
-msgstr "Ativar/desativar som"
+msgstr "Alternar Menu"
 
 #: engines/dgds/metaengine.cpp:76
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle Clock"
-msgstr "Alternar Modo de Combate"
+msgstr "Alternar Relógio"
 
 #: engines/dgds/metaengine.cpp:77
 msgid "Next dialog / menu item"
-msgstr ""
+msgstr "Diálogo / item de menu seguinte"
 
 #: engines/dgds/metaengine.cpp:78
-#, fuzzy
-#| msgid "Previous palette"
 msgid "Previous dialog / menu item"
-msgstr "Paleta anterior"
+msgstr "Diálogo / item de menu anterior"
 
 #: engines/dgds/metaengine.cpp:79
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Next object"
-msgstr "Ir para próximo objeto"
+msgstr "Próximo objeto"
 
 #: engines/dgds/metaengine.cpp:80
-#, fuzzy
-#| msgid "Go to previous object"
 msgid "Previous object"
-msgstr "Voltar para o objeto anterior"
+msgstr "Objeto anterior"
 
 #: engines/dgds/metaengine.cpp:81
-#, fuzzy
-#| msgid "Previous action"
 msgid "Pick up / Operate"
-msgstr "Ação anterior"
+msgstr "Pegar / Operar"
 
 #: engines/dgds/metaengine.cpp:83
-#, fuzzy
-#| msgid "Animated inventory items"
 msgid "Activate Inventory Object"
-msgstr "Inventário de itens animado"
+msgstr "Ativar Objeto de Inventário"
 
 #: engines/dgds/metaengine.cpp:86
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game Keys"
-msgstr "Mapeamento de Teclas do Jogo"
+msgstr "Teclas de Jogo"
 
 #: engines/director/events.cpp:99
 msgid ""
@@ -7811,26 +7630,20 @@ msgstr ""
 
 #: engines/draci/metaengine.cpp:155
 msgid "Skip intro/Exit map or inventory"
-msgstr ""
+msgstr "Pular intro/Sair do mapa ou inventário"
 
 #: engines/draci/metaengine.cpp:161
-#, fuzzy
-#| msgid "Open Holomap"
 msgid "Open map"
-msgstr "Abrir Holomapa"
+msgstr "Abrir mapa"
 
 #. I18N: shows where the game actor is able to move
 #: engines/draci/metaengine.cpp:168
-#, fuzzy
-#| msgid "Show map"
 msgid "Show walking map"
-msgstr "Exibir mapa"
+msgstr "Exibir mapa de viagem"
 
 #: engines/draci/metaengine.cpp:174
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Toggle walk speed"
-msgstr "Alternar caminhada rápida"
+msgstr "Alternar velocidade da caminhada"
 
 #: engines/draci/metaengine.cpp:186 engines/mohawk/myst.cpp:554
 #: engines/mohawk/riven.cpp:835 engines/nancy/input.cpp:225
@@ -7839,19 +7652,15 @@ msgstr "Abrir menu principal"
 
 #: engines/draci/metaengine.cpp:192
 msgid "Toggle between mouse pointer and the last game item"
-msgstr ""
+msgstr "Alterna entre ponteiro do mouse e o último item do jogo"
 
 #: engines/draci/metaengine.cpp:198
-#, fuzzy
-#| msgid "Scroll up in inventory"
 msgid "Previous item in inventory"
-msgstr "Rolar inventário para cima"
+msgstr "Item anterior do inventário"
 
 #: engines/draci/metaengine.cpp:204
-#, fuzzy
-#| msgid "Open inventory"
 msgid "Next item in inventory"
-msgstr "Abrir inventário"
+msgstr "Item seguinte do inventário"
 
 #: engines/dragons/dragons.cpp:1884
 #, c-format
@@ -7951,8 +7760,6 @@ msgid "Automatic drilling"
 msgstr "Perfuração automática"
 
 #: engines/freescape/metaengine.cpp:65
-#, fuzzy
-#| msgid "Allow to succefully drill in any part of the area in Driller"
 msgid "Allow to successfully drill in any part of the area in Driller"
 msgstr "Permite perfurar com sucesso em qualquer parte da área em Driller"
 
@@ -8037,16 +7844,12 @@ msgid "Info Menu"
 msgstr "Menu de Informação"
 
 #: engines/freescape/games/castle/castle.cpp:234
-#, fuzzy
-#| msgid "Select index"
 msgid "Select Prince"
-msgstr "Selecionar índice"
+msgstr "Selecionar Príncipe"
 
 #: engines/freescape/games/castle/castle.cpp:239
-#, fuzzy
-#| msgid "Select index"
 msgid "Select Princess"
-msgstr "Selecionar índice"
+msgstr "Selecionar Princesa"
 
 #: engines/freescape/games/castle/castle.cpp:266
 #: engines/freescape/games/dark/dark.cpp:203
@@ -8078,14 +7881,12 @@ msgstr "Correr"
 
 #: engines/freescape/games/castle/castle.cpp:292
 msgid "Crawl"
-msgstr ""
+msgstr "Rastejar"
 
 #: engines/freescape/games/castle/castle.cpp:298
 #: engines/freescape/games/eclipse/eclipse.cpp:245
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Face Forward"
-msgstr "Mover para Frente"
+msgstr "Virar para a frente"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:220
@@ -8125,23 +7926,17 @@ msgstr "Colete equipamento de perfuração"
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/eclipse/eclipse.cpp:224
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change Angle"
-msgstr "Alternar modo"
+msgstr "Mudar Ângulo"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/eclipse/eclipse.cpp:230
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change Step Size"
-msgstr "Mudar tamanho da fonte"
+msgstr "Mudar Tamanho do Passo"
 
 #: engines/freescape/games/eclipse/eclipse.cpp:235
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Height"
-msgstr "Ativar/desativar som"
+msgstr "Alternar Altura"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/freescape/games/eclipse/eclipse.cpp:240
@@ -8584,22 +8379,16 @@ msgid "Glowstick"
 msgstr "Bastão Luminoso"
 
 #: engines/hugo/metaengine.cpp:111
-#, fuzzy
-#| msgid "User canceled"
 msgid "User help"
-msgstr "Usuário cancelou"
+msgstr "Ajuda de usuário"
 
 #: engines/hugo/metaengine.cpp:117
-#, fuzzy
-#| msgid "Toggle Sound"
 msgid "Toggle sound"
-msgstr "Alternar Som"
+msgstr "Alternar som"
 
 #: engines/hugo/metaengine.cpp:122
-#, fuzzy
-#| msgid "Repeat last message"
 msgid "Repeat last line"
-msgstr "Repetir última mensagem"
+msgstr "Repetir última linha"
 
 #: engines/hugo/metaengine.cpp:135 engines/lure/metaengine.cpp:197
 #: engines/mads/metaengine.cpp:311 engines/tsage/metaengine.cpp:247
@@ -8625,64 +8414,48 @@ msgid "Show inventory"
 msgstr "Exibir inventário"
 
 #: engines/hugo/metaengine.cpp:154
-#, fuzzy
-#| msgid "Improved mode"
 msgid "Turbo mode"
-msgstr "Modo aperfeiçoado"
+msgstr "Modo turbo"
 
 #. I18N: Move actor in the top direction
 #: engines/hugo/metaengine.cpp:167
-#, fuzzy
-#| msgid "Move up"
 msgid "Move to top"
-msgstr "Mover para cima"
+msgstr "Mover para o topo"
 
 #. I18N: Move actor in the bottom direction
 #: engines/hugo/metaengine.cpp:175
 msgid "Move to bottom"
-msgstr ""
+msgstr "Mover para o final"
 
 #. I18N: Move actor in the left direction
 #: engines/hugo/metaengine.cpp:183
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to left"
-msgstr "Mover para esquerda"
+msgstr "Mover para a esquerda"
 
 #. I18N: Move actor in the right direction
 #: engines/hugo/metaengine.cpp:191
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to right"
-msgstr "Mover para direita"
+msgstr "Mover para a direita"
 
 #. I18N: Move actor in the top-left direction
 #: engines/hugo/metaengine.cpp:199
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to top left"
-msgstr "Mover para esquerda"
+msgstr "Mover para superior esquerda"
 
 #. I18N: Move actor in the top-right direction
 #: engines/hugo/metaengine.cpp:205
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to top right"
-msgstr "Mover para direita"
+msgstr "Mover para superior direita"
 
 #. I18N: Move actor in the bottom-left direction
 #: engines/hugo/metaengine.cpp:211
-#, fuzzy
-#| msgid "Move left"
 msgid "Move to bottom left"
-msgstr "Mover para esquerda"
+msgstr "Mover para abaixo à esquerda"
 
 #. I18N: Move actor in the bottom-right direction
 #: engines/hugo/metaengine.cpp:217
-#, fuzzy
-#| msgid "Move right"
 msgid "Move to bottom right"
-msgstr "Mover para direita"
+msgstr "Mover para abaixo à direita"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -8747,16 +8520,12 @@ msgid "Side Step"
 msgstr "Passo Lateral"
 
 #: engines/illusions/metaengine.cpp:108
-#, fuzzy
-#| msgid "Move cursor left"
 msgid "Move cursor up"
-msgstr "Mover cursor para esquerda"
+msgstr "Mover cursor para cima"
 
 #: engines/illusions/metaengine.cpp:115
-#, fuzzy
-#| msgid "Move cursor left"
 msgid "Move cursor down"
-msgstr "Mover cursor para esquerda"
+msgstr "Mover cursor para baixo"
 
 #: engines/illusions/metaengine.cpp:122
 msgid "Move cursor left"
@@ -8928,8 +8697,6 @@ msgstr "Mover para Frente"
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
 #: engines/wintermute/keymapper_tables.h:2238
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Move Backwards"
 msgstr "Mover para Trás"
 
@@ -10463,13 +10230,16 @@ msgstr "Habilita gráficos que foram desabilitados por motivos legais"
 
 #: engines/sci/detection_options.h:236
 msgid "Enable saving via the GMM"
-msgstr ""
+msgstr "Salvar pelo Menu Principal Global"
 
 #: engines/sci/detection_options.h:237
 msgid ""
 "Allows saving via the GMM. WARNING: saves created via the GMM may be "
 "corrupted and unusable. Use at your own risk!"
 msgstr ""
+"Permite salvar via GMM (Menu Principal Global). AVISO: salvamentos criados "
+"via GMM podem ser corrompidos e ficar inutilizáveis. Use por sua conta e "
+"risco!"
 
 #: engines/sci/detection_options.h:251
 msgid "MIDI mode:"
@@ -10594,21 +10364,21 @@ msgstr ""
 #: engines/sci/sci.cpp:450
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
-"market support for General MIDI for this game in their \"General MIDI "
-"Utility\". Please, apply this patch in order to enjoy MIDI music with this "
-"game. Once you have obtained it, you can unpack all of the included *.PAT "
-"files in your ScummVM extras folder and ScummVM will add the appropriate "
-"patch automatically. Alternatively, you can follow the instructions in the "
-"READ.ME file included in the patch and rename the associated *.PAT file to 4."
-"PAT and place it in the game folder. Without this patch, General MIDI music "
-"for this game will sound badly distorted."
+"market support for General MIDI for this game in their \"General MIDI Utility"
+"\". Please, apply this patch in order to enjoy MIDI music with this game. "
+"Once you have obtained it, you can unpack all of the included *.PAT files in "
+"your ScummVM extras folder and ScummVM will add the appropriate patch "
+"automatically. Alternatively, you can follow the instructions in the READ.ME "
+"file included in the patch and rename the associated *.PAT file to 4.PAT and "
+"place it in the game folder. Without this patch, General MIDI music for this "
+"game will sound badly distorted."
 msgstr ""
 "Você selecionou MIDI Geral como dispositivo de som. Sierra forneceu suporte "
-"pós-market para MIDI Geral para este jogo em seu \"Utilitário Geral de "
-"MIDI\". Por favor, aplique esta correção para poder aproveitar a música MIDI "
-"com este jogo. Assim que o obtiver, você poderá descompactar todos seus "
-"arquivos *.PAT inclusos na pasta de extras de seu ScummVM que irá adicionar "
-"a correção apropriada automaticamente. Alternativamente você pode seguir as "
+"pós-market para MIDI Geral para este jogo em seu \"Utilitário Geral de MIDI"
+"\". Por favor, aplique esta correção para poder aproveitar a música MIDI com "
+"este jogo. Assim que o obtiver, você poderá descompactar todos seus arquivos "
+"*.PAT inclusos na pasta de extras de seu ScummVM que irá adicionar a "
+"correção apropriada automaticamente. Alternativamente você pode seguir as "
 "instruções no arquivo READ.ME incluso na correção e renomear o arquivo "
 "associado *.PAT para 4.PAT e colocar dentro da pasta do jogo. Sem esta "
 "correção, a música por MIDI Geral para este jogo irá soar gravemente "
@@ -10858,8 +10628,8 @@ msgid ""
 "for a more complete experience."
 msgstr ""
 "Permite que o jogo use a interface gráfica da engine e o menu salvar/"
-"carregar originais. Utilize em conjunto com \"Solicitar confirmação ao "
-"sair\" para uma experiência mais completa."
+"carregar originais. Utilize em conjunto com \"Solicitar confirmação ao sair"
+"\" para uma experiência mais completa."
 
 #: engines/scumm/dialogs.cpp:1300
 msgid "Overture Timing:"
@@ -11125,10 +10895,8 @@ msgid "Run in really fast mode (*)"
 msgstr "Rodar em modo super rápido (*)"
 
 #: engines/scumm/help.cpp:101
-#, fuzzy
-#| msgid "Switch between graphics filters"
 msgid "Cycle between graphics filters"
-msgstr "Alterna entre os filtros gráficos"
+msgstr "Alterna entre filtros gráficos"
 
 #: engines/scumm/help.cpp:102
 msgid "Increase / Decrease scale factor"
@@ -11523,6 +11291,8 @@ msgid ""
 "Warning: this re-release version contains patched game scripts,\n"
 "and therefore it might crash or not work properly for the time being."
 msgstr ""
+"Aviso: esta versão de relançamento contém scripts de correção do jogo\n"
+"e, portanto, pode travar ou não funcionar corretamente por enquanto."
 
 #: engines/scumm/metaengine.cpp:486
 msgid "HE v71+ support is not compiled in"
@@ -11605,38 +11375,28 @@ msgid "Enable low latency audio mode"
 msgstr "Habilitar áudio de baixa latência"
 
 #: engines/scumm/metaengine.cpp:747
-#, fuzzy
-#| msgid ""
-#| "Allows the game to use low latency audio, at the cost of sound accuracy. "
-#| "\t\tIt is recommended to enable this feature only if you incur in audio "
-#| "latency issues during normal gameplay."
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. It "
 "is recommended to enable this feature only if you incur in audio latency "
 "issues during normal gameplay."
 msgstr ""
 "Permite que o jogo utilize áudio de baixa latência, sacrificando a precisão "
-"do som. \t\tÉ recomendável habilitar esse recurso apenas se você tiver "
-"problemas de atraso de áudio durante o jogo normal."
+"do som. É recomendável habilitar esse recurso apenas se você tiver problemas "
+"de atraso de áudio durante o jogo normal."
 
 #: engines/scumm/metaengine.cpp:756
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr "Habilitar a música \"A Pirate I Was Meant To Be\""
 
 #: engines/scumm/metaengine.cpp:757
-#, fuzzy
-#| msgid ""
-#| "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
-#| "Meant To Be\", \t\twhich was cut in international releases. Beware "
-#| "though: subtitles may not be fully translated."
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", which was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
 msgstr ""
-"Habilita a música no início da Parte 3 do jogo, \"A Pirate I Was Meant To "
-"Be\", \t\tque foi cortada em lançamentos internacionais. Observe que as "
-"legendas podem não estar totalmente traduzidas."
+"Habilita a música no início da Parte 3 do jogo, \"A Pirate I Was Meant To Be"
+"\", que foi cortada em lançamentos internacionais. Observe que as legendas "
+"podem não estar totalmente traduzidas."
 
 #: engines/scumm/metaengine.cpp:775
 msgid "Enable demo/kiosk mode"
@@ -11721,45 +11481,31 @@ msgstr ""
 "fontes."
 
 #: engines/scumm/scumm.cpp:1261
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Monkey Island' Macintosh executable to read the\n"
-#| "instruments from. Music will be disabled."
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read resources\n"
 "and instruments from. Music and Mac GUI will be disabled."
 msgstr ""
 "Não foi possível encontrar o executável de 'Monkey Island' do Macintosh para "
-"ler os\n"
-"instrumentos. A música será desabilitada."
+"ler recursos\n"
+"e instrumentos. A música e a interface do Mac serão desabilitados."
 
 #: engines/scumm/scumm.cpp:1294
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
-#| "will\n"
-#| "be disabled."
 msgid ""
 "Could not find the 'Fate of Atlantis' Macintosh executable.\n"
 "Mac GUI will not be shown."
 msgstr ""
-"Não foi possível encontrar o executável 'Indy' para Macintosh. Fontes de "
-"alta resolução\n"
-"serão desativadas."
+"Não foi possível encontrar o executável de 'Fate of Atlantis' para "
+"Macintosh.\n"
+"A interface do Mac não será exibida."
 
 #: engines/scumm/scumm.cpp:1314
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
-#| "will\n"
-#| "be disabled."
 msgid ""
 "Could not find the 'LeChuck's Revenge' Macintosh executable.\n"
 "Mac GUI will not be shown."
 msgstr ""
-"Não foi possível encontrar o executável 'Indy' para Macintosh. Fontes de "
-"alta resolução\n"
-"serão desativadas."
+"Não foi possível encontrar o executável de 'LeChuck's Revenge' para "
+"Macintosh.\n"
+"A interface do Mac não será exibida."
 
 #: engines/scumm/scumm.cpp:1325
 #, c-format
@@ -12038,10 +11784,8 @@ msgid "Open control panel"
 msgstr "Abrir painel de controle"
 
 #: engines/sky/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle really fast mode"
 msgid "Toggle really fast mode on/off"
-msgstr "Alternar para modo realmente rápido"
+msgstr "Ativar/desativar modo super rápido"
 
 #: engines/sky/metaengine.cpp:156
 msgid "Floppy intro"
@@ -12148,16 +11892,12 @@ msgid "Scroll down in your dialogues"
 msgstr "Rolar lista de diálogos para baixo"
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "go to next dialogue"
 msgid "Go to next dialogue"
-msgstr "ir para o próximo diálogo"
+msgstr "Ir para próximo diálogo"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "go to previous dialogues"
 msgid "Go to previous dialogues"
-msgstr "ir para o diálogo anterior"
+msgstr "Ir para diálogos anteriores"
 
 #: engines/stark/metaengine.cpp:328
 msgid "Select dialogue"
@@ -12310,51 +12050,44 @@ msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Este é o fim do demo de Broken Sword 1"
 
 #: engines/sword1/metaengine.cpp:63
-#, fuzzy
-#| msgctxt "Options menu"
-#| msgid "Voices: English"
 msgid "English"
-msgstr "Vozes: Inglês"
+msgstr "Inglês"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "German"
-msgstr ""
+msgstr "Alemão"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "French"
-msgstr ""
+msgstr "Francês"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Italian"
-msgstr ""
+msgstr "Italiano"
 
 #: engines/sword1/metaengine.cpp:63
-#, fuzzy
-#| msgid "Finish"
 msgid "Spanish"
-msgstr "Concluir"
+msgstr "Espanhol"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Brazilian Portuguese"
-msgstr ""
+msgstr "Português do Brasil"
 
 #: engines/sword1/metaengine.cpp:63
 msgid "Czech"
-msgstr ""
+msgstr "Checo"
 
 #: engines/sword1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Game language:"
 msgid "Text language:"
-msgstr "Idioma do jogo:"
+msgstr "Idioma do texto:"
 
 #: engines/sword1/metaengine.cpp:87 engines/sword1/metaengine.cpp:95
 msgid "Set the language for the subtitles. This will not affect voices."
-msgstr ""
+msgstr "Define o idioma das legendas. Isso não afetará as dublagens."
 
 #: engines/sword1/metaengine.cpp:114
 msgid "Simulate the audio engine from the Windows executable"
-msgstr ""
+msgstr "Simular a engine de áudio a partir do executável do Windows"
 
 #: engines/sword1/metaengine.cpp:115
 msgid ""
@@ -12362,18 +12095,17 @@ msgid ""
 "and fade-out for sound effects, fade-in for music, and automatic music "
 "volume attenuation for when speech is playing"
 msgstr ""
+"Faz o jogo usar curvas de áudio mais suaves (logarítmicas), mas remove o "
+"fade-in e o fade-out para efeitos sonoros, o fade-in para música e a "
+"atenuação automática do volume da música quando a fala está sendo reproduzida"
 
 #: engines/sword1/metaengine.cpp:127
-#, fuzzy
-#| msgid "Directional button:"
 msgid "Additional options:"
-msgstr "Botão direcional:"
+msgstr "Opções adicionais:"
 
 #: engines/sword1/metaengine.cpp:301
-#, fuzzy
-#| msgid "Main Men~u~"
 msgid "Main Menu"
-msgstr "Men~u~ Principal"
+msgstr "Menu Principal"
 
 #: engines/sword2/animation.cpp:426
 msgid ""
@@ -12383,14 +12115,9 @@ msgstr ""
 "paleta RGB"
 
 #: engines/sword2/detection_tables.h:419
-#, fuzzy
-#| msgid ""
-#| "Enhanced Edition not supported. Please, use the original files which are "
-#| "part of the release."
 msgid "Remastered edition is not supported. Please, use the classic version"
 msgstr ""
-"Enhanced Edition não é suportada. Por favor, utilize os arquivos originais "
-"que fazem parte do lançamento."
+"A Versão Remasterizada não é compatível. Por favor, utilize a versão clássica"
 
 #: engines/sword2/metaengine.cpp:43
 msgid "Show object labels"
@@ -12476,35 +12203,25 @@ msgid "Font variant not present in '%s' engine data file."
 msgstr "Variante de fonte não presente no arquivo '%s' de dados da engine."
 
 #: engines/toon/metaengine.cpp:98
-#, fuzzy
-#| msgid "Skip line"
 msgid "Skip intro"
-msgstr "Pula linha"
+msgstr "Pular introdução"
 
 #. I18N: Skips current line being spoken by a character
 #: engines/toon/metaengine.cpp:105
-#, fuzzy
-#| msgid "Skip current animation"
 msgid "Stop current voice"
-msgstr "Pular animação atual"
+msgstr "Parar diálogo atual"
 
 #: engines/toon/metaengine.cpp:130
-#, fuzzy
-#| msgid "No music"
 msgid "Mute music"
-msgstr "Sem música"
+msgstr "Silenciar música"
 
 #: engines/toon/metaengine.cpp:136
-#, fuzzy
-#| msgid "Abort speech"
 msgid "Mute speech"
-msgstr "Interromper fala"
+msgstr "Silenciar vozes"
 
 #: engines/toon/metaengine.cpp:142
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Mute sound effects"
-msgstr "Ligar/desligar efeitos sonoros"
+msgstr "Silenciar efeitos sonoros"
 
 #: engines/toon/toon.cpp:273
 #, c-format
@@ -12536,36 +12253,26 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Não foi possível localizar o arquivo de dados '%s'."
 
 #: engines/touche/metaengine.cpp:135
-#, fuzzy
-#| msgid "Skip video sequence or dialogue"
 msgid "Skip sequence/open quit dialogue"
-msgstr "Omitir sequência de vídeo ou diálogo"
+msgstr "Pular sequência/abrir diálogo de saída"
 
 #: engines/touche/metaengine.cpp:141
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Skip Dialogue"
-msgstr "Pular diálogo"
+msgstr "Pular Diálogo"
 
 #: engines/touche/metaengine.cpp:147
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open options menu"
-msgstr "Abrir menu principal"
+msgstr "Abrir menu de opções"
 
 #. I18N: The actor walking pace is increased
 #: engines/touche/metaengine.cpp:154
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Enable fast walk"
-msgstr "Alternar caminhada rápida"
+msgstr "Habilitar caminhada rápida"
 
 #. I18N: The actor walking pace is decreased
 #: engines/touche/metaengine.cpp:161
-#, fuzzy
-#| msgid "Toggle fast walk"
 msgid "Disable fast walk"
-msgstr "Alternar caminhada rápida"
+msgstr "Desabilitar caminhada rápida"
 
 #: engines/touche/metaengine.cpp:167
 msgid "Toggle fast mode"
@@ -12573,13 +12280,11 @@ msgstr "Alternar modo rápido"
 
 #: engines/touche/metaengine.cpp:173
 msgid "Toggle between voice/text/text and voice"
-msgstr ""
+msgstr "Alternar entre voz/texto/texto com voz"
 
 #: engines/touche/metaengine.cpp:182
-#, fuzzy
-#| msgid "Press \"Yes\" key"
 msgid "Press \"Yes\" Key"
-msgstr "Pressionar tecla \"Sim\""
+msgstr "Pressionar Tecla \"Sim\""
 
 #: engines/trecision/metaengine.cpp:137
 msgid "Skip video"
@@ -12596,108 +12301,74 @@ msgstr "Abrir menu do sistema"
 
 #. I18N: Return refers to return/enter key
 #: engines/tsage/metaengine.cpp:196
-#, fuzzy
-#| msgid "turn oN"
 msgid "Return"
-msgstr "Ligar"
+msgstr "Return"
 
 #: engines/tsage/metaengine.cpp:221
-#, fuzzy
-#| msgid "View"
 msgid "View Help"
-msgstr "Exibir"
+msgstr "Visualizar Ajuda"
 
 #: engines/tsage/metaengine.cpp:226
-#, fuzzy
-#| msgid "Show options"
 msgid "Sound options"
-msgstr "Exibir opções"
+msgstr "Opções de som"
 
 #: engines/tsage/metaengine.cpp:264
-#, fuzzy
-#| msgid "North"
 msgid "Crawl North"
-msgstr "Norte"
+msgstr "Arrastar para o Norte"
 
 #: engines/tsage/metaengine.cpp:271
-#, fuzzy
-#| msgid "South"
 msgid "Crawl South"
-msgstr "Sul"
+msgstr "Arrastar para o Sul"
 
 #: engines/tsage/metaengine.cpp:278
-#, fuzzy
-#| msgid "Turn left fast"
 msgid "Turn Left/Crawl West"
-msgstr "Virar à esquerda rápido"
+msgstr "Virar a Esquerda/Arrastar para Oeste"
 
 #: engines/tsage/metaengine.cpp:285
-#, fuzzy
-#| msgid "Turn right fast"
 msgid "Turn Right/Crawl East"
-msgstr "Virar à direita rápido"
+msgstr "Virar a Direita/Arrastar para Leste"
 
 #: engines/tsage/metaengine.cpp:292
-#, fuzzy
-#| msgid "Increase Step Size"
 msgid "Increase speed"
-msgstr "Aumentar Tamanho do Passo"
+msgstr "Aumentar velocidade"
 
 #: engines/tsage/metaengine.cpp:297
-#, fuzzy
-#| msgid "Decrease Step Size"
 msgid "Decrease speed"
-msgstr "Reduzir Tamanho do Passo"
+msgstr "Reduzir velocidade"
 
 #: engines/tsage/metaengine.cpp:302
-#, fuzzy
-#| msgid "Reading speed"
 msgid "Minimum speed"
-msgstr "Velocidade de leitura"
+msgstr "Velocidade mínima"
 
 #: engines/tsage/metaengine.cpp:307
-#, fuzzy
-#| msgid "Maximum Volume"
 msgid "Maximum speed"
-msgstr "Volume Máximo"
+msgstr "Velocidade máxima"
 
 #: engines/tsage/metaengine.cpp:312
-#, fuzzy
-#| msgid "Slower game speed"
 msgid "Low speed"
-msgstr "Reduzir velocidade do jogo"
+msgstr "Velocidade baixa"
 
 #: engines/tsage/metaengine.cpp:317
-#, fuzzy
-#| msgid "Reading speed"
 msgid "Medium speed"
-msgstr "Velocidade de leitura"
+msgstr "Velocidade média"
 
 #. I18N: Pull cards from the deck
 #: engines/tsage/metaengine.cpp:323
-#, fuzzy
-#| msgid "Forwards"
 msgid "Draw Cards"
-msgstr "Avançar"
+msgstr "Comprar Cartas"
 
 #: engines/tucker/metaengine.cpp:190
-#, fuzzy
-#| msgid "Speech"
 msgid "Skip speech"
-msgstr "Fala"
+msgstr "Pular fala"
 
 #. I18N: Panel contains all actor actions and the artstyle is toggled
 #: engines/tucker/metaengine.cpp:203
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle panel style"
-msgstr "Alternar modo rápido"
+msgstr "Alternar estilo do painel"
 
 #: engines/tucker/metaengine.cpp:209
-#, fuzzy
-#| msgid "Use Text to speech"
 msgid "Toggle text speech"
-msgstr "Usar texto para fala"
+msgstr "Alternar texto da fala"
 
 #: engines/twine/detection.cpp:188
 msgid "This version requires Giflib which was not compiled into ScummVM"
@@ -13151,6 +12822,12 @@ msgid ""
 "\n"
 "Please check you have copied all the files correctly."
 msgstr ""
+"Arquivo Necessário Ausente\n"
+"\n"
+"Iniciar um jogo requer SAVEGAME/U8SAVE.000\n"
+"de uma instalação original.\n"
+"\n"
+"Verifique se você copiou todos os arquivos corretamente."
 
 #: engines/vcruise/metaengine.cpp:42
 msgid "Improved click sensitivity"
@@ -13267,14 +12944,12 @@ msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "Ocorreu um erro desconhecido ao tentar carregar o jogo salvo."
 
 #: engines/voyeur/metaengine.cpp:42
-#, fuzzy
-#| msgid "Enable rock travel"
 msgid "Enable lockout system"
-msgstr "Permitir viagem com pedra"
+msgstr "Habilitar sistema de bloqueio"
 
 #: engines/voyeur/metaengine.cpp:43
 msgid "Require a lockout code to start the game."
-msgstr ""
+msgstr "Solicitar código de bloqueio para iniciar o jogo."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
@@ -14420,8 +14095,8 @@ msgstr ""
 #~ "\n"
 #~ "    OS file browser selectable folder with \"Use this folder\" button\n"
 #~ "\n"
-#~ "  ![OS access permission dialog](fs-permission.png \"OS access "
-#~ "permission\")\n"
+#~ "  ![OS access permission dialog](fs-permission.png \"OS access permission"
+#~ "\")\n"
 #~ "\n"
 #~ "    OS file browser ask to grant ScummVM directory access permission\n"
 #~ "\n"
@@ -14489,8 +14164,8 @@ msgstr ""
 #~ "\n"
 #~ "    Raiz do navegador de arquivos do sistema operacional\n"
 #~ "\n"
-#~ "  ![Pasta selecionável do SO](fs-folder.png \"Pasta selecionável do "
-#~ "SO\")\n"
+#~ "  ![Pasta selecionável do SO](fs-folder.png \"Pasta selecionável do SO"
+#~ "\")\n"
 #~ "\n"
 #~ "    Pasta selecionável pelo navegador de arquivos do sistema operacional "
 #~ "com o botão \"Utilizar esta pasta\"\n"
@@ -15372,8 +15047,8 @@ msgstr ""
 
 #~ msgid "You must map a key to the 'Hide toolbar' action to play this game"
 #~ msgstr ""
-#~ "Você precisa mapear uma tecla para ação do \"Ocultar barra de "
-#~ "ferramentas\" nesse jogo"
+#~ "Você precisa mapear uma tecla para ação do \"Ocultar barra de ferramentas"
+#~ "\" nesse jogo"
 
 #~ msgid "Map Zoom Up action (optional)"
 #~ msgstr "Mapear Zoom para Cima (opcional)"
@@ -15385,8 +15060,8 @@ msgstr ""
 #~ "Don't forget to map a key to 'Hide Toolbar' action to see the whole "
 #~ "inventory"
 #~ msgstr ""
-#~ "Não se esqueça de mapear uma tecla para \"Ocultar a barra de "
-#~ "ferramentas\" para ver todo o seu inventário"
+#~ "Não se esqueça de mapear uma tecla para \"Ocultar a barra de ferramentas"
+#~ "\" para ver todo o seu inventário"
 
 #, fuzzy
 #~ msgid "Saved games sync complete."

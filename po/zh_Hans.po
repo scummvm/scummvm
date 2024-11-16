@@ -7,17 +7,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-11-15 17:23+0000\n"
-"PO-Revision-Date: 2024-07-04 15:43+0000\n"
+"POT-Creation-Date: 2024-11-16 15:10+0000\n"
+"PO-Revision-Date: 2024-11-16 14:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
-"Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
-"projects/scummvm/scummvm/zh_Hans/>\n"
+"Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
+"org/projects/scummvm/scummvm/zh_Hans/>\n"
 "Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.4\n"
+"X-Generator: Weblate 5.7.2\n"
 
 #: audio/mac_plugin.cpp:30
 msgid "Apple Macintosh Audio"
@@ -1220,8 +1220,8 @@ msgid ""
 "\n"
 "6. In the browser window that opens, select the cloud service to connect. \n"
 "\n"
-"\t  ![Choose the cloud service](cloud_browser.png \"Choose the cloud "
-"service\"){w=70%}\n"
+"\t  ![Choose the cloud service](cloud_browser.png \"Choose the cloud service"
+"\"){w=70%}\n"
 "\n"
 "7. Sign in to the chosen cloud service. Once completed, return to ScummVM.\n"
 "\n"
@@ -4974,8 +4974,8 @@ msgid ""
 "2. Inside the ScummVM file browser, select **Go Up** until you reach the "
 "root folder which has the **<Add a new folder>** option. \n"
 "\n"
-"  ![ScummVM file browser root](browser-root.png \"ScummVM file browser "
-"root\"){w=70%}\n"
+"  ![ScummVM file browser root](browser-root.png \"ScummVM file browser root"
+"\"){w=70%}\n"
 "\n"
 "3. Double-tap **<Add a new folder>**. In your device's file browser, "
 "navigate to the folder containing all your game folders. For example, **SD "
@@ -6470,8 +6470,6 @@ msgid "Show objects to interact"
 msgstr "显示可交互物品"
 
 #: engines/agos/metaengine.cpp:338
-#, fuzzy
-#| msgid "Toggle background sounds On/Off"
 msgid "Toggle background sounds on/off"
 msgstr "开关背景音效"
 
@@ -6498,14 +6496,10 @@ msgstr "Swampy Adventures 中开关高速模式"
 
 #: engines/agos/metaengine.cpp:382 engines/lure/metaengine.cpp:295
 #: engines/trecision/metaengine.cpp:181
-#, fuzzy
-#| msgid "Press Yes Key"
 msgid "Press \"Yes\" key"
 msgstr "按下“是”按键"
 
 #: engines/agos/metaengine.cpp:387 engines/lure/metaengine.cpp:310
-#, fuzzy
-#| msgid "Press No Key"
 msgid "Press \"No\" key"
 msgstr "按下“否”按键"
 
@@ -6756,17 +6750,13 @@ msgstr "通用密钥"
 #: engines/tinsel/metaengine.cpp:240 engines/toon/metaengine.cpp:81
 #: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
 #: engines/tucker/metaengine.cpp:167
-#, fuzzy
-#| msgid "Default game keymap"
 msgid "Default keymappings"
-msgstr "默认游戏按键绑定"
+msgstr "默认按键绑定"
 
 #. I18N: Escape is a key
 #: engines/bbvs/metaengine.cpp:95
-#, fuzzy
-#| msgid "Game keymapping"
 msgid "Escape keymappings"
-msgstr "游戏按键绑定"
+msgstr "Esc 按键绑定"
 
 #. I18N: ESC key
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:197
@@ -6781,10 +6771,8 @@ msgstr "退出"
 
 #: engines/bbvs/metaengine.cpp:117 engines/hopkins/metaengine.cpp:231
 #: engines/illusions/metaengine.cpp:147
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Open inventory"
-msgstr "打开/关闭物品栏"
+msgstr "打开物品栏"
 
 #: engines/bbvs/metaengine.cpp:124 engines/dgds/metaengine.cpp:82
 #: engines/scumm/help.cpp:167 engines/scumm/help.cpp:231
@@ -7135,10 +7123,8 @@ msgstr "游戏按键绑定"
 
 #: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:225
 #: engines/sword1/metaengine.cpp:283
-#, fuzzy
-#| msgid "Skip"
 msgid "Exit/Skip"
-msgstr "跳过"
+msgstr "退出/跳过"
 
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
 #: engines/hopkins/metaengine.cpp:238 engines/hugo/metaengine.cpp:128
@@ -7285,16 +7271,12 @@ msgid "Empty autosave"
 msgstr "空自动存档"
 
 #: engines/cine/metaengine.cpp:260
-#, fuzzy
-#| msgid "Game keymapping"
 msgid "Key to mouse keymappings"
-msgstr "游戏按键绑定"
+msgstr "按键到鼠标绑定"
 
 #: engines/cine/metaengine.cpp:261
-#, fuzzy
-#| msgid "Quit panel keymapping"
 msgid "Exit screen keymappings"
-msgstr "退出面板按键绑定"
+msgstr "退出屏幕按键绑定"
 
 #: engines/cine/metaengine.cpp:277
 msgid "Exit Sony intro screen"
@@ -10371,14 +10353,14 @@ msgstr ""
 #: engines/sci/sci.cpp:450
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
-"market support for General MIDI for this game in their \"General MIDI "
-"Utility\". Please, apply this patch in order to enjoy MIDI music with this "
-"game. Once you have obtained it, you can unpack all of the included *.PAT "
-"files in your ScummVM extras folder and ScummVM will add the appropriate "
-"patch automatically. Alternatively, you can follow the instructions in the "
-"READ.ME file included in the patch and rename the associated *.PAT file to 4."
-"PAT and place it in the game folder. Without this patch, General MIDI music "
-"for this game will sound badly distorted."
+"market support for General MIDI for this game in their \"General MIDI Utility"
+"\". Please, apply this patch in order to enjoy MIDI music with this game. "
+"Once you have obtained it, you can unpack all of the included *.PAT files in "
+"your ScummVM extras folder and ScummVM will add the appropriate patch "
+"automatically. Alternatively, you can follow the instructions in the READ.ME "
+"file included in the patch and rename the associated *.PAT file to 4.PAT and "
+"place it in the game folder. Without this patch, General MIDI music for this "
+"game will sound badly distorted."
 msgstr ""
 "你选择了通用 MIDI 作为声音设备。Sierra 在其“通用 MIDI 实用程序”中为本游戏提供"
 "了通用 MIDI 后市场支持。请使用此补丁，以便在游戏中享受 MIDI 音乐。获得该补丁"
@@ -13653,8 +13635,8 @@ msgstr ""
 #, fuzzy
 #~| msgid ""
 #~| "Allow the game to use the in-engine graphical interface and the original "
-#~| "save/load menu. Use it together with the \"Ask for confirmation on "
-#~| "exit\" for a more complete experience."
+#~| "save/load menu. Use it together with the \"Ask for confirmation on exit"
+#~| "\" for a more complete experience."
 #~ msgid ""
 #~ "Allow the game to use the in-engine graphical interface and the original "
 #~ "save/load menu. \t\tUse it together with the \"Ask for confirmation on "
