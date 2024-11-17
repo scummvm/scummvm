@@ -43,9 +43,9 @@ private:
 
 	int _size = 0; // 32, 40, 48, or 56
 	int _tileset = 0;
-	int _startloc[20][2] = { {}, {} };;
+	int _startloc[20][2] = { {}, {} };
 	int _board[MAX_TILE_COUNT][MAX_TILE_COUNT] = { {}, {} };
-	int _special[MAX_TILE_COUNT][MAX_TILE_COUNT] = { {}, {} };;
+	int _special[MAX_TILE_COUNT][MAX_TILE_COUNT] = { {}, {} };
 
 	int getRandomNumber();
 

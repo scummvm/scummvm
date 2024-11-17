@@ -77,8 +77,8 @@ private:
 
 	int _mapCornerMaxG = 0; // size of random section
 	int _mapMiddleMaxG = 0;
-	int _mapCorner[MAXSIZE+1][MAXSIZE+1] = { {}, {} };;
-	int _mapMiddle[MAXSIZE][MAXSIZE] = { {}, {} };;
+	int _mapCorner[MAXSIZE+1][MAXSIZE+1] = { {}, {} };
+	int _mapMiddle[MAXSIZE][MAXSIZE] = { {}, {} };
 
 	float getRandomFloat();
 	int spiffRand(int min, int max);
