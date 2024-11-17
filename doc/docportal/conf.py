@@ -18,8 +18,8 @@
 # -- Project information -----------------------------------------------------
 
 project = 'ScummVM Documentation'
-copyright = '2020-2024, CadiH'
-author = 'CadiH'
+copyright = '2020-2024, ScummVM'
+author = 'ScummVM'
 
 
 # -- General configuration ---------------------------------------------------
