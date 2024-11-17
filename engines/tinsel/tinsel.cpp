@@ -28,6 +28,7 @@
 #include "common/fs.h"
 #include "common/config-manager.h"
 #include "common/serializer.h"
+#include "common/translation.h"
 
 #include "backends/audiocd/audiocd.h"
 
