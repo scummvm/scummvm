@@ -311,7 +311,7 @@ void Room403::daemon() {
 				break;
 
 			case 1101:
-				_ripleyShould = 1003;
+				_ripleyShould = 1103;
 				kernel_timing_trigger(1, 102);
 
 				conv_load("conv403a", 10, 10, 101);
@@ -320,7 +320,7 @@ void Room403::daemon() {
 				conv_export_value_curr(_G(flags)[V122], 2);
 				conv_export_value_curr(_G(flags)[V120], 3);
 
-				conv_export_value_curr(inv_player_has("POMERANIAN MARKS") ? 1 : 0, 5);
+				conv_export_value_curr(inv_player_has("POMERANIAN MARKS") ? 1 : 0, 4);
 				conv_export_pointer_curr(&_G(flags)[V114], 5);
 				conv_export_pointer_curr(&_G(flags)[V115], 6);
 				conv_export_value_curr(_G(flags)[V337], 10);
