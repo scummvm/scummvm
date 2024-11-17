@@ -1319,6 +1319,16 @@ Common::Point AnimFrame::GetBottomMiddleOffset() const {
 	return Common::Point(Width / 2, Height);
 }
 
+Sprite AnimFrame::AsSprite() {
+	// TODO: Shows that the separation makes little sense
+	Sprite result;
+	result.Data.resize(Width * Height);
+	result.Data.assign(Data, Data + Width * Height);
+	result.Width = Width;
+	result.Height = Height;
+	return result;
+}
+
 AnimFrame BackgroundAnimationBlob::GetFrame(uint32 index) {
 	AnimationReader animReader(Blob);
 	uint16 numAnimations = animReader.readNumAnimations();
