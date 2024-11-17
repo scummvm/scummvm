@@ -450,7 +450,8 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			oldy = _charset->getFontHeight();
 			_charset->setCurID(*buffer++);
 			buffer += 2;
-			memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
+			if (_charset->getCurID() != -1)
+				memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
 			_nextTop -= _charset->getFontHeight() - oldy;
 			break;
 		default:
@@ -1016,7 +1017,7 @@ void ScummEngine::displayDialog() {
 	else
 		_charset->setCurID(_string[0].charset);
 
-	if (_game.version >= 5)
+	if (_game.version >= 5 && _charset->getCurID() != -1)
 		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
@@ -1236,7 +1237,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	VirtScreen *vs = findVirtScreen(_charset->_top);
 	bool shadowModeFlag = (vs && vs->number == kMainVirtScreen);
 
-	if (_game.version >= 5)
+	if (_game.version >= 5 && _charset->getCurID() != -1)
 		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], _game.id == GID_DIG ? sizeof(_charsetColorMap) : 4);
 
 	fontHeight = _charset->getFontHeight();
