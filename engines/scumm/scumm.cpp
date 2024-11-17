@@ -1205,8 +1205,12 @@ Common::Error ScummEngine::init() {
 					macResourceFile = indyFileNames[i];
 
 					_textSurfaceMultiplier = 2;
-					if (isUsingOriginalGUI())
-						_macGui = new MacGui(this, macResourceFile);
+					// FIXME: THIS IS A TEMPORARY WORKAROUND!
+					// The reason why we are initializing the Mac GUI even without original GUI active
+					// is because the engine will attempt to load Mac fonts from resources... using the
+					// _macGui object. This is not optimal, ideally we would want to decouple resource
+					// handling from the responsibilities of a simulated OS interface.
+					_macGui = new MacGui(this, macResourceFile);
 					break;
 				}
 			}
@@ -1228,8 +1232,12 @@ Common::Error ScummEngine::init() {
 					macResourceFile = loomFileNames[i];
 
 					_textSurfaceMultiplier = 2;
-					if (isUsingOriginalGUI())
-						_macGui = new MacGui(this, macResourceFile);
+					// FIXME: THIS IS A TEMPORARY WORKAROUND!
+					// The reason why we are initializing the Mac GUI even without original GUI active
+					// is because the engine will attempt to load Mac fonts from resources... using the
+					// _macGui object. This is not optimal, ideally we would want to decouple resource
+					// handling from the responsibilities of a simulated OS interface.
+					_macGui = new MacGui(this, macResourceFile);
 					break;
 				}
 			}
