@@ -74,6 +74,8 @@ void Cutscene::update() {
 	}
 
 	if (_movieStep == 9999) {
+		g_engine->_sound->stopMusic();
+
 		if (_cutsceneId == 'E') {
 			g_engine->_previousRoomNumber = 38;
 			g_engine->changeToRoom(7);
@@ -87,10 +89,27 @@ void Cutscene::update() {
 			g_engine->newGame();
 		} else if (_cutsceneId == 'Y') {
 			play('I');
-		} else if (_cutsceneId == 'B' || _cutsceneId == 'C' || _cutsceneId == 'D' || _cutsceneId == 'G') {
-			g_engine->_cursor.showCursor(true); // TODO fade in here
+		} else if (_cutsceneId == 'B' || _cutsceneId == 'C') {
 			g_engine->_room->restorePalette();
 			g_engine->_frame.draw();
+			g_engine->doCircles();
+
+			if (g_engine->_currentDay == 2) {
+				g_engine->_console->printTosText(12);
+			} else if (g_engine->_currentDay == 3) {
+				g_engine->_console->printTosText(14);
+			}
+			g_engine->_console->draw();
+			g_engine->_screen->update();
+
+			g_engine->waitForSpeech();
+			g_engine->_systemTimerCounter = 4;
+			g_engine->_cursor.showCursor(true);
+			g_engine->_room->loadRoomMusic();
+		} else if (_cutsceneId == 'D' || _cutsceneId == 'G') {
+			g_engine->_room->restorePalette();
+			g_engine->_frame.draw();
+			g_engine->_cursor.showCursor(true);
 		}
 	}
 }
