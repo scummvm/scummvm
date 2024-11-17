@@ -605,16 +605,134 @@ void Room204::parser() {
 			subParser_1F71D();
 			goto done;
 		}
-
-		warning("Incomplete...");
 	} // if (!player_been_here(205)
 
-	else {
-		warning("Incomplete...");
+	if (esi && player_said("GONG") && !inv_player_has("GONG")) {
+		digi_play("204R10", 1, 255, -1, -1);
+		goto done;
 	}
 
+	if (esi && player_said("MALLET") && !inv_player_has("MALLET")) {
+		digi_play("204R11", 1, 255, -1, -1);
+		goto done;
+	}
 
+	if (esi && player_said("ZHENMU SHOU FIGURINE")) {
+		goto done;
+	}
 
+	if (esi && player_said("SILVER BUTTERFLY") && inv_player_has("SILVER BUTTERFLY")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			player_set_commands_allowed(false);
+			kernel_timing_trigger(30, 1, nullptr);
+
+			break;
+
+		case 1:
+			if (g_engine->game_camera_panning()) {
+				kernel_timing_trigger(5, 1, nullptr);
+			} else {
+				_ripTrekLowReachPos2Series = series_load("RIP TREK LOW REACH POS2", -1, nullptr);
+				setGlobals1(_ripTrekLowReachPos2Series, 1, 14, 14, 14, 0, 14, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_G(my_walker), 2);
+			}
+			break;
+
+		case 2:
+			digi_play("204R40", 1, 255, 3, -1);
+			break;
+
+		case 3:
+			sendWSMessage_120000(_G(my_walker), 4);
+			break;
+
+		case 4:
+			sendWSMessage_150000(_G(my_walker), 5);
+			break;
+
+		case 5:
+			series_unload(_ripTrekLowReachPos2Series);
+			player_set_commands_allowed(true);
+
+			break;
+
+		default:
+			break;
+		}
+
+		goto done;
+	} // esi && player_said("SILVER BUTTERFLY") && inv_player_has("SILVER BUTTERFLY")
+
+	if (esi && player_said("GIANT URN")) {
+		digi_play("204R09", 1, 255, -1, -1);
+		goto done;
+	}
+
+	if (player_said("enter", "PAGODA") || player_said("walk to", "PAGODA") || player_said("walk to", "stairs")) {
+		if (player_been_here(205)) {
+			_G(kernel).trigger_mode = KT_DAEMON;
+			ws_walk(_G(my_walker), 424, 331, nullptr, 10, 9, true);
+			goto done;
+		}
+
+		if (_field128 != 2) {
+			_field124 = 2;
+			goto done;
+		}
+	} else if (_field128 == 2) {
+		_field124 = 1;
+		goto done;
+	}
+
+	if (player_been_here(205)) {
+		if (talkFl && player_said("GONG")) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				if (inv_object_is_here("GONG")) {
+					ws_walk(_G(my_walker), 475, 332, nullptr, 1, 11, true);
+				}
+
+				break;
+
+			case 1:
+				player_set_commands_allowed(false);
+				_ripTrekMedReachHandPos1Series = series_load("RIP TREK MED REACH HAND POS1", -1, nullptr);
+				setGlobals1(_ripTrekMedReachHandPos1Series, 1, 10, 10, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(_G(my_walker), 2);
+
+				break;
+
+			case 2:
+				hotspot_set_active(_G(currentSceneDef).hotspots, "GONG", false);
+				inv_give_to_player("GONG");
+				kernel_examine_inventory_object("PING GONG", _G(master_palette), 5, 1, 370, 264, 3, nullptr, -1);
+				terminateMachine(_courtyardGongMach);
+
+				break;
+
+			case 3:
+				sendWSMessage_150000(_G(my_walker), 5);
+				break;
+
+			case 5:
+				series_unload(_ripTrekMedReachHandPos1Series);
+				player_set_commands_allowed(true);
+
+				break;
+
+			default:
+				break;
+			}
+
+			goto done;
+		}
+
+		warning("incomplete");
+	} // player_been_here(205)
+
+	warning("incomplete");
 
 done:
 	_G(player).command_ready = false;
