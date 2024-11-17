@@ -1,4 +1,4 @@
-sphinx~=7.2
-sphinx-design~=0.5
-sphinx_rtd_theme~=2.0
-sphinx-mdinclude~=0.5
+sphinx~=8.1
+sphinx-design~=0.6.1
+sphinx_rtd_theme~=3.0.2
+sphinx-mdinclude~=0.6.2
