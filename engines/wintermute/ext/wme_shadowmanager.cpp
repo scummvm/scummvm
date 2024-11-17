@@ -25,6 +25,7 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/ad/ad_object.h"
 #include "engines/wintermute/ext/wme_shadowmanager.h"
 #include "engines/wintermute/ext/plugin_event.h"
 
@@ -51,6 +52,7 @@ SXShadowManager::SXShadowManager(BaseGame *inGame, ScStack *stack) : BaseScripta
 	_minShadow = 0.1f;
 	_maxShadow = 1.0f;
 	_useSmartShadows = false;
+	_shadowColor = 0x80000000;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -99,9 +101,11 @@ bool SXShadowManager::scCallMethod(ScScript *script, ScStack *stack, ScStack *th
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "AddActor") == 0) {
 		stack->correctParams(1);
-		const char *actorName = stack->pop()->getString();
 
-		stack->pushBool(addActor(actorName));
+		AdObject *actorObj = (AdObject *)stack->pop()->getNative();
+		if (actorObj) {
+			stack->pushBool(addActor(actorObj));
+		}
 
 		return STATUS_OK;
 	}
@@ -264,8 +268,6 @@ ScValue *SXShadowManager::scGetProperty(const Common::String &name) {
 
 //////////////////////////////////////////////////////////////////////////
 bool SXShadowManager::scSetProperty(const char *name, ScValue *value) {
-	// DefaultLightPos, DefaultLightPosX, DefaultLightPosY, DefaultLightPosZ, MinShadow, MaxShadow, UseSmartShadows
-
 	//////////////////////////////////////////////////////////////////////////
 	// DefaultLightPos
 	//////////////////////////////////////////////////////////////////////////
@@ -339,8 +341,14 @@ bool SXShadowManager::persist(BasePersistenceManager *persistMgr) {
 			event._plugin = this
 		};
 		_gameRef->pluginEvents().subscribeEvent(event);
+#ifdef ENABLE_WME3D
+		_actors.clear();
+		// Actor list is not get restored, plugin is not design work this way.
+		// List get refreshed by game script on scene change.
+#endif
 	}
 
+	persistMgr->transferUint32(TMEMBER(_lastTime));
 	persistMgr->transferVector3d(TMEMBER(_defaultLightPos));
 	persistMgr->transferFloat(TMEMBER(_minShadow));
 	persistMgr->transferFloat(TMEMBER(_maxShadow));
@@ -360,19 +368,44 @@ void SXShadowManager::callback(void *eventData1, void *eventData2) {
 }
 
 void SXShadowManager::update() {
+#ifdef ENABLE_WME3D
+	if (_useSmartShadows) {
+		// TODO: value should be calculated, but for now it's a const
+		_shadowColor = 0x66000000;
+		for (auto it = _actors.begin(); it != _actors.end(); ++it) {
+			it->first->_shadowLightPos = _defaultLightPos;
+			it->first->_shadowColor = _shadowColor;
+		}
+	}
+#endif
 }
 
 void SXShadowManager::run() {
+	_lastTime = _gameRef->scGetProperty("CurrentTime")->getInt();
 }
 
 void SXShadowManager::stop() {
 }
 
-bool SXShadowManager::addActor(const char *actorName) {
+bool SXShadowManager::addActor(AdObject *actorObj) {
+#ifdef ENABLE_WME3D
+	if (_useSmartShadows) {
+		if (strcmp(actorObj->scGetProperty("Type")->getString(), "actor3dx") == 0) {
+			AdActor3DX *actor = (AdActor3DX *)actorObj;
+			_actors.push_back(Common::Pair<AdActor3DX *, uint32>(actor, actor->_shadowColor));
+		}
+	}
+#endif
 	return true;
 }
 
 bool SXShadowManager::removeAllActors() {
+#ifdef ENABLE_WME3D
+	for (auto it = _actors.begin(); it != _actors.end(); ++it) {
+		it->first->_shadowColor = it->second;
+		_actors.erase(it);
+	}
+#endif
 	return true;
 }
 
