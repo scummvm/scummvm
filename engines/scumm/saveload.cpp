@@ -520,12 +520,21 @@ uint32 *ScummEngine_v8::fetchScummVMSaveStateThumbnail(int slotId, bool isHeapSa
 			// Now take the pixels from the surface, extract the RGB components, process them
 			// with the brightness parameter, and store them in an appropriate structure
 			// which the SCUMM graphics pipeline can use...
-			byte r, g, b;
+			byte r = 0, g = 0, b = 0;
+			byte bpp = thumbnailSurface->format.bpp();
 			uint32 *processedThumbnail = new uint32[thumbnailSurface->w * thumbnailSurface->h];
 			for (int i = 0; i < thumbnailSurface->h; i++) {
 				for (int j = 0; j < thumbnailSurface->w; j++) {
-					uint32 *ptr = (uint32 *)thumbnailSurface->getBasePtr(j, i);
-					thumbnailSurface->format.colorToRGB(*ptr, r, g, b);
+					if (bpp == 32) {
+						uint32 *ptr = (uint32 *)thumbnailSurface->getBasePtr(j, i);
+						thumbnailSurface->format.colorToRGB(*ptr, r, g, b);
+					} else if (bpp == 16) {
+						uint16 *ptr = (uint16 *)thumbnailSurface->getBasePtr(j, i);
+						thumbnailSurface->format.colorToRGB(*ptr, r, g, b);
+					} else if (bpp == 8) {
+						uint8 *ptr = (uint8 *)thumbnailSurface->getBasePtr(j, i);
+						thumbnailSurface->format.colorToRGB(*ptr, r, g, b);
+					}
 
 					processedThumbnail[i * thumbnailSurface->w + j] = getPaletteColorFromRGB(
 						_currentPalette,
