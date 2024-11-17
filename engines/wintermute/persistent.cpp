@@ -174,6 +174,7 @@ void SystemClassRegistry::registerClasses() {
 	REGISTER_CLASS(SXSteamAPI, false)
 	REGISTER_CLASS(SXWMEGalaxyAPI, false)
 	REGISTER_CLASS(SXCommandLineHelper, false)
+	REGISTER_CLASS(SXVlink, false)
 
 	REGISTER_CLASS(UIButton, false)
 	REGISTER_CLASS(UIEdit, false)
