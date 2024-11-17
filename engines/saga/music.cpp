@@ -150,31 +150,6 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _par
 		if (_vm->getGameId() == GID_ITE) {
 			_musicContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
 		} else if (_vm->getGameId() == GID_IHNM) {
-			// I've listened to music from both the FM and the GM
-			// file, and I've tentatively reached the conclusion
-			// that they are both General MIDI. My guess is that
-			// the FM file has been reorchestrated to sound better
-			// on AdLib and other FM synths.
-			//
-			// Sev says the AdLib music does not sound like in the
-			// original, but I still think assuming General MIDI is
-			// the right thing to do. Some music, like the End
-			// Title (song 0) sound absolutely atrocious when piped
-			// through our MT-32 to GM mapping.
-			//
-			// It is, however, quite possible that the original
-			// used a different GM to FM mapping. If the original
-			// sounded markedly better, perhaps we should add some
-			// way of replacing our stock mapping in adlib.cpp?
-			//
-			// For the composer's own recording of the End Title,
-			// see http://www.johnottman.com/
-
-			// Oddly enough, the intro music (song 1) is very
-			// different in the two files. I have no idea why.
-			// Note that the IHNM demo has only got one music file
-			// (music.rsc). It is assumed that it contains FM music
-
 			// TODO If program flow gets here, this getContext call previously
 			// returned null...
 			_musicContext = _vm->_resource->getContext(GAME_MUSICFILE_FM);
