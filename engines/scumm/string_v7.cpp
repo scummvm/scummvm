@@ -466,7 +466,7 @@ void ScummEngine_v7::drawBlastTexts() {
 
 		_charset->setCurID(_blastTextQueue[i].charset);
 
-		if (_game.version == 7)
+		if (_game.version == 7 && _charset->getCurID() != -1)
 			memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], _game.id == GID_DIG ? sizeof(_charsetColorMap) : 4);
 
 		if (bt.flags & kStyleWordWrap) {
@@ -653,7 +653,7 @@ void ScummEngine_v7::displayDialog() {
 		_charset->_center = _string[0].center;
 	}
 
-	if (_game.version == 7)
+	if (_game.version == 7 && _charset->getCurID() != -1)
 		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], _game.id == GID_DIG ? sizeof(_charsetColorMap) : 4);
 
 	if (usingOldSystem && a && a->_charset) {
