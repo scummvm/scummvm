@@ -88,7 +88,7 @@ bool winVideo::open_file(const Common::Path fname) {
 	}
 
 	if (!_decoder->loadStream(_videostream)) {
-		warning("WinVideo::open: Failed to Load Stream");
+		warning("WinVideo::open: Failed to Load Stream for file '%s'", filename.c_str());
 		_videostream = nullptr;
 		return false;
 	}
