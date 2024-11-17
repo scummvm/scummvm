@@ -836,24 +836,17 @@ void Adlib::OnTimer() {
 									temp &= 0x3F; // TODO: xor ah,ah
 									temp += tempDX;
 									bp1 = temp; // TODO: al part only
-
-									// TODO: Continue here
-									/*
-									cmp	byte ptr [bp-1h],3Fh
-									jbe	1DF0h
-									*/
-
-									/*
-									l0017_1DEC:
-									mov	byte ptr [bp-1h],3Fh
-
-								l0017_1DF0:
-									cmp	byte ptr [bp-2h],3Fh
-									jbe	1DFAh
-
-								l0017_1DF6:
-									mov	byte ptr [bp-2h],3Fh
-										*/
+									if (bp1 > 0x3F) {
+										// l0017_1DEC:
+										bp1 = 0x3F;
+									}
+									// l0017_1DF0:
+									if (bp2 > 0x3F) {
+										// l0017_1DF6:
+										bp2 = 0x3F;
+									}
+									// 1DFAh
+									// TODO: Continue from here
 								}
 							}
 							
