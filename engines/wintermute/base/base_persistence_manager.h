@@ -98,12 +98,10 @@ public:
 	bool transferCharPtr(const char *name, char **val);
 	bool transferString(const char *name, Common::String *val);
 	bool transferVector2(const char *name, Vector2 *val);
-#ifdef ENABLE_WME3D
 	bool transferVector3d(const char *name, DXVector3 *val);
 	bool transferVector4d(const char *name, DXVector4 *val);
 	bool transferMatrix4(const char *name, DXMatrix *val);
 	bool transferAngle(const char *name, float *val);
-#endif
 	BasePersistenceManager(const Common::String &savePrefix = "", bool deleteSingleton = false);
 	virtual ~BasePersistenceManager();
 	bool checkVersion(byte  verMajor, byte verMinor, byte verBuild);

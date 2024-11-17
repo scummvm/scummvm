@@ -57,6 +57,7 @@ MODULE_OBJS := \
 	base/gfx/osystem/base_surface_osystem.o \
 	base/gfx/osystem/base_render_osystem.o \
 	base/gfx/osystem/render_ticket.o \
+	base/gfx/xmath.o \
 	base/particles/part_particle.o \
 	base/particles/part_emitter.o \
 	base/particles/part_force.o \
@@ -183,7 +184,6 @@ MODULE_OBJS += \
 	base/gfx/xfile_loader.o \
 	base/gfx/xframe_node.o \
 	base/gfx/xmaterial.o \
-	base/gfx/xmath.o \
 	base/gfx/xmesh.o \
 	base/gfx/xmodel.o \
 	base/gfx/xskinmesh.o \
