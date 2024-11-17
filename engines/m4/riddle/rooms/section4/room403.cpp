@@ -1574,7 +1574,7 @@ void Room403::pre_parser() {
 			_wolfShould = 2232;
 			_G(flags)[V111]++;
 
-			kernel_timing_trigger(1, 69, KT_DAEMON, KT_PREPARSE);
+			kernel_timing_trigger(1, 110, KT_DAEMON, KT_PREPARSE);
 		} else if (MONEY("US DOLLARS") || MONEY("CHINESE YUAN") ||
 				MONEY("PERUVIAN INTI") || MONEY("SIKKIMESE RUPEE")) {
 			_G(flags)[V116] = 1;
