@@ -115,8 +115,7 @@ class NumberPtr {
 public:
 	NumberPtr() : _value(0) {
 	}
-	NumberPtr(int32_t value) {
-		_value = value;
+	NumberPtr(int value) : _value(value) {
 	}
 	NumberPtr(void *ptr) : _value((intptr_t)ptr) {
 	}
