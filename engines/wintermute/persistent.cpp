@@ -84,6 +84,7 @@
 #include "engines/wintermute/ext/wme_commandlinehelper.h"
 #include "engines/wintermute/ext/wme_steam.h"
 #include "engines/wintermute/ext/wme_galaxy.h"
+#include "engines/wintermute/ext/wme_vlink.h"
 #include "engines/wintermute/ui/ui_button.h"
 #include "engines/wintermute/ui/ui_edit.h"
 #include "engines/wintermute/ui/ui_entity.h"
